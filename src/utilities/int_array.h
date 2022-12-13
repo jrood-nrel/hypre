@@ -21,11 +21,11 @@
 typedef struct
 {
    /* pointer to data and size of data */
-   HYPRE_Int            *data;
-   HYPRE_Int             size;
+   NALU_HYPRE_Int            *data;
+   NALU_HYPRE_Int             size;
 
    /* memory location of array data */
-   HYPRE_MemoryLocation  memory_location;
+   NALU_HYPRE_MemoryLocation  memory_location;
 } hypre_IntArray;
 
 /*--------------------------------------------------------------------------

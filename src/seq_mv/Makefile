@@ -16,7 +16,7 @@ C_COMPILE_FLAGS =\
 
 HEADERS =\
  csr_matrix.h\
- HYPRE_seq_mv.h\
+ NALU_HYPRE_seq_mv.h\
  mapped_matrix.h\
  multiblock_matrix.h\
  seq_mv.h\
@@ -28,10 +28,10 @@ FILES =\
  csr_matrix.c\
  csr_matvec.c\
  genpart.c\
- HYPRE_csr_matrix.c\
- HYPRE_mapped_matrix.c\
- HYPRE_multiblock_matrix.c\
- HYPRE_vector.c\
+ NALU_HYPRE_csr_matrix.c\
+ NALU_HYPRE_mapped_matrix.c\
+ NALU_HYPRE_multiblock_matrix.c\
+ NALU_HYPRE_vector.c\
  mapped_matrix.c\
  multiblock_matrix.c\
  vector.c\
@@ -80,7 +80,7 @@ COBJS = ${FILES:.c=.o}
 CUOBJS = ${CUFILES:.c=.obj}
 OBJS = ${COBJS} ${CUOBJS}
 
-SONAME = libHYPRE_seq_mv-${HYPRE_RELEASE_VERSION}${HYPRE_LIB_SUFFIX}
+SONAME = libNALU_HYPRE_seq_mv-${NALU_HYPRE_RELEASE_VERSION}${NALU_HYPRE_LIB_SUFFIX}
 
 ##################################################################
 # Targets
@@ -90,15 +90,15 @@ all:
 	$(MAKE) autogen
 	$(MAKE) lib
 
-lib: libHYPRE_seq_mv${HYPRE_LIB_SUFFIX}
-	cp -fR $(srcdir)/HYPRE_*.h $(HYPRE_BUILD_DIR)/include
-	cp -fR $(srcdir)/seq_mv.h $(HYPRE_BUILD_DIR)/include
-#	cp -fR libHYPRE* $(HYPRE_BUILD_DIR)/lib
+lib: libNALU_HYPRE_seq_mv${NALU_HYPRE_LIB_SUFFIX}
+	cp -fR $(srcdir)/NALU_HYPRE_*.h $(NALU_HYPRE_BUILD_DIR)/include
+	cp -fR $(srcdir)/seq_mv.h $(NALU_HYPRE_BUILD_DIR)/include
+#	cp -fR libHYPRE* $(NALU_HYPRE_BUILD_DIR)/lib
 
-install: libHYPRE_seq_mv${HYPRE_LIB_SUFFIX}
-	cp -fR $(srcdir)/HYPRE_*.h $(HYPRE_INC_INSTALL)
-	cp -fR $(srcdir)/seq_mv.h $(HYPRE_INC_INSTALL)
-#	cp -fR libHYPRE* $(HYPRE_LIB_INSTALL)
+install: libNALU_HYPRE_seq_mv${NALU_HYPRE_LIB_SUFFIX}
+	cp -fR $(srcdir)/NALU_HYPRE_*.h $(NALU_HYPRE_INC_INSTALL)
+	cp -fR $(srcdir)/seq_mv.h $(NALU_HYPRE_INC_INSTALL)
+#	cp -fR libHYPRE* $(NALU_HYPRE_LIB_INSTALL)
 
 clean: deleteautogen
 	rm -f *.o *.obj libHYPRE*
@@ -110,14 +110,14 @@ autogen:
 	@for number in 1 2 3 4 5 6 7 8 9 10; do \
 	   fn=csr_spgemm_device_numer$$number.c; \
 	   if [ ! -f $$fn ]; then \
-	      echo "#define HYPRE_SPGEMM_BIN $$number" > $$fn; \
+	      echo "#define NALU_HYPRE_SPGEMM_BIN $$number" > $$fn; \
 	      cat csr_spgemm_device_numer.in >> $$fn; \
 	   fi \
 	   done
 	@for number in 1 2 3 4 5 6 7 8 9 10; do \
 	   fn=csr_spgemm_device_symbl$$number.c; \
 	   if [ ! -f $$fn ]; then \
-	      echo "#define HYPRE_SPGEMM_BIN $$number" > $$fn; \
+	      echo "#define NALU_HYPRE_SPGEMM_BIN $$number" > $$fn; \
 	      cat csr_spgemm_device_symbl.in >> $$fn; \
 	   fi \
 	   done
@@ -132,12 +132,12 @@ deleteautogen:
 # Rules
 ##################################################################
 
-libHYPRE_seq_mv.a: ${OBJS}
+libNALU_HYPRE_seq_mv.a: ${OBJS}
 	@echo  "Building $@ ... "
 	${AR} $@ ${OBJS}
 	${RANLIB} $@
 
-libHYPRE_seq_mv.so libHYPRE_seq_mv.dylib: ${OBJS}
+libNALU_HYPRE_seq_mv.so libNALU_HYPRE_seq_mv.dylib: ${OBJS}
 	@echo  "Building $@ ... "
 	${BUILD_CC_SHARED} -o ${SONAME} ${OBJS} ${SHARED_SET_SONAME}${SONAME}
 	ln -s -f ${SONAME} $@

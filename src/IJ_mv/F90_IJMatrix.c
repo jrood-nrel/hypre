@@ -23,14 +23,14 @@ extern "C" {
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_ijmatrixsetobject, HYPRE_IJMATRIXSETOBJECT)
+hypre_F90_IFACE(hypre_ijmatrixsetobject, NALU_HYPRE_IJMATRIXSETOBJECT)
 ( hypre_F90_Obj *matrix,
   hypre_F90_Obj *object,
   hypre_F90_Int *ierr    )
 {
    *ierr = (hypre_F90_Int)
            ( hypre_IJMatrixSetObject(
-                hypre_F90_PassObj (HYPRE_IJMatrix, matrix),
+                hypre_F90_PassObj (NALU_HYPRE_IJMatrix, matrix),
                 (void *)         *object  ) );
 }
 

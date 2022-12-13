@@ -11,7 +11,7 @@
 
 #define AbsStencilShape(stencil, abs_shape)                     \
    {                                                            \
-      HYPRE_Int ii,jj,kk;                                       \
+      NALU_HYPRE_Int ii,jj,kk;                                       \
       ii = hypre_IndexX(stencil);                               \
       jj = hypre_IndexY(stencil);                               \
       kk = hypre_IndexZ(stencil);                               \
@@ -29,16 +29,16 @@
  *                   reaches over.
  *       }
  *--------------------------------------------------------------------------*/
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_FacZeroCFSten( hypre_SStructPMatrix *Af,
                      hypre_SStructPMatrix *Ac,
                      hypre_SStructGrid    *grid,
-                     HYPRE_Int             fine_part,
+                     NALU_HYPRE_Int             fine_part,
                      hypre_Index           rfactors )
 {
    hypre_BoxManager      *fboxman;
    hypre_BoxManEntry    **boxman_entries;
-   HYPRE_Int              nboxman_entries;
+   NALU_HYPRE_Int              nboxman_entries;
 
    hypre_SStructPGrid    *p_cgrid;
 
@@ -53,25 +53,25 @@ hypre_FacZeroCFSten( hypre_SStructPMatrix *Af,
    hypre_StructMatrix    *smatrix;
 
    hypre_StructStencil   *stencils;
-   HYPRE_Int              stencil_size;
+   NALU_HYPRE_Int              stencil_size;
 
    hypre_Index            refine_factors, upper_shift;
    hypre_Index            stride;
    hypre_Index            stencil_shape;
    hypre_Index            zero_index, ilower, iupper;
 
-   HYPRE_Int              nvars, var1, var2;
-   HYPRE_Int              ndim;
+   NALU_HYPRE_Int              nvars, var1, var2;
+   NALU_HYPRE_Int              ndim;
 
    hypre_Box             *ac_dbox;
-   HYPRE_Real            *ac_ptr;
+   NALU_HYPRE_Real            *ac_ptr;
    hypre_Index            loop_size;
 
-   HYPRE_Int              ci, i, j;
+   NALU_HYPRE_Int              ci, i, j;
 
-   HYPRE_Int              abs_shape;
+   NALU_HYPRE_Int              abs_shape;
 
-   HYPRE_Int              ierr = 0;
+   NALU_HYPRE_Int              ierr = 0;
 
    p_cgrid  = hypre_SStructPMatrixPGrid(Ac);
    nvars    = hypre_SStructPMatrixNVars(Ac);
@@ -186,7 +186,7 @@ hypre_FacZeroCFSten( hypre_SStructPMatrix *Af,
             }           /* if (stencils != NULL) */
          }              /* for (var2= 0; var2< nvars; var2++) */
 
-         hypre_TFree(boxman_entries, HYPRE_MEMORY_HOST);
+         hypre_TFree(boxman_entries, NALU_HYPRE_MEMORY_HOST);
       }   /* hypre_ForBoxI  ci */
    }      /* for (var1= 0; var1< nvars; var1++) */
 
@@ -213,15 +213,15 @@ hypre_FacZeroCFSten( hypre_SStructPMatrix *Af,
  *             extents.
  *       }
  *--------------------------------------------------------------------------*/
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_FacZeroFCSten( hypre_SStructPMatrix  *A,
                      hypre_SStructGrid     *grid,
-                     HYPRE_Int              fine_part)
+                     NALU_HYPRE_Int              fine_part)
 {
    MPI_Comm               comm =   hypre_SStructGridComm(grid);
    hypre_BoxManager      *fboxman;
    hypre_BoxManEntry    **boxman_entries;
-   HYPRE_Int              nboxman_entries;
+   NALU_HYPRE_Int              nboxman_entries;
 
    hypre_SStructPGrid    *p_fgrid;
    hypre_StructGrid      *fgrid;
@@ -235,7 +235,7 @@ hypre_FacZeroFCSten( hypre_SStructPMatrix  *A,
    hypre_StructMatrix    *smatrix;
 
    hypre_StructStencil   *stencils;
-   HYPRE_Int              stencil_size;
+   NALU_HYPRE_Int              stencil_size;
 
    hypre_Index            stride, ilower, iupper;
    hypre_Index            stencil_shape, shift_index;
@@ -244,17 +244,17 @@ hypre_FacZeroFCSten( hypre_SStructPMatrix  *A,
    hypre_Box              intersect_box;
    hypre_Index            size_ibox;
 
-   HYPRE_Int              nvars, var1, var2;
-   HYPRE_Int              ndim;
+   NALU_HYPRE_Int              nvars, var1, var2;
+   NALU_HYPRE_Int              ndim;
 
    hypre_Box             *a_dbox;
-   HYPRE_Real            *a_ptr;
+   NALU_HYPRE_Real            *a_ptr;
    hypre_Index            loop_size;
 
-   HYPRE_Int              fi, fj, i, j;
-   HYPRE_Int              abs_shape;
-   HYPRE_Int              myid, proc;
-   HYPRE_Int              ierr = 0;
+   NALU_HYPRE_Int              fi, fj, i, j;
+   NALU_HYPRE_Int              abs_shape;
+   NALU_HYPRE_Int              myid, proc;
+   NALU_HYPRE_Int              ierr = 0;
 
    hypre_MPI_Comm_rank(comm, &myid);
 
@@ -409,7 +409,7 @@ hypre_FacZeroFCSten( hypre_SStructPMatrix  *A,
             }         /* if (stencils != NULL) */
          }            /* for (var2= 0; var2< nvars; var2++) */
 
-         hypre_TFree(boxman_entries, HYPRE_MEMORY_HOST);
+         hypre_TFree(boxman_entries, NALU_HYPRE_MEMORY_HOST);
       }  /* hypre_ForBoxI(fi, fgrid_boxes) */
    }     /* for (var1= 0; var1< nvars; var1++) */
 

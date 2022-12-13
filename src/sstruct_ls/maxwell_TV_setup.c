@@ -21,7 +21,7 @@
  * hypre_MaxwellTV_Setup
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_MaxwellTV_Setup(void                 *maxwell_vdata,
                       hypre_SStructMatrix  *Aee_in,
                       hypre_SStructVector  *b_in,
@@ -37,7 +37,7 @@ hypre_MaxwellTV_Setup(void                 *maxwell_vdata,
    hypre_ParCSRMatrix    *T         = (maxwell_TV_data-> Tgrad);
 
    hypre_SStructMatrix   *Ann;
-   HYPRE_IJMatrix         Aen;
+   NALU_HYPRE_IJMatrix         Aen;
    hypre_SStructVector   *bn;
    hypre_SStructVector   *xn;
 
@@ -45,9 +45,9 @@ hypre_MaxwellTV_Setup(void                 *maxwell_vdata,
    hypre_ParCSRMatrix    *T_transpose;
    hypre_ParCSRMatrix    *transpose;
    hypre_ParCSRMatrix    *parcsr_mat;
-   HYPRE_Int              size, *size_ptr;
-   HYPRE_BigInt          *col_inds;
-   HYPRE_Real            *values;
+   NALU_HYPRE_Int              size, *size_ptr;
+   NALU_HYPRE_BigInt          *col_inds;
+   NALU_HYPRE_Real            *values;
 
    hypre_ParVector       *parvector_x;
    hypre_ParVector       *parvector_b;
@@ -65,11 +65,11 @@ hypre_MaxwellTV_Setup(void                 *maxwell_vdata,
    hypre_ParVector      **en_l;
    hypre_ParVector      **nVtemp_l;
    hypre_ParVector      **nVtemp2_l;
-   HYPRE_Int            **nCF_marker_l;
-   HYPRE_Real            *nrelax_weight;
-   HYPRE_Real            *nomega;
-   HYPRE_Int              nrelax_type;
-   HYPRE_Int              node_numlevels;
+   NALU_HYPRE_Int            **nCF_marker_l;
+   NALU_HYPRE_Real            *nrelax_weight;
+   NALU_HYPRE_Real            *nomega;
+   NALU_HYPRE_Int              nrelax_type;
+   NALU_HYPRE_Int              node_numlevels;
 
    hypre_ParCSRMatrix   **Aee_l;
    hypre_IJMatrix       **Pe_l;
@@ -80,32 +80,32 @@ hypre_MaxwellTV_Setup(void                 *maxwell_vdata,
    hypre_ParVector      **ee_l;
    hypre_ParVector      **eVtemp_l;
    hypre_ParVector      **eVtemp2_l;
-   HYPRE_Real            *erelax_weight;
-   HYPRE_Real            *eomega;
-   HYPRE_Int            **eCF_marker_l;
-   HYPRE_Int              erelax_type;
+   NALU_HYPRE_Real            *erelax_weight;
+   NALU_HYPRE_Real            *eomega;
+   NALU_HYPRE_Int            **eCF_marker_l;
+   NALU_HYPRE_Int              erelax_type;
 
 #if 0
    /* objects needed to fine the edge relaxation parameters */
-   HYPRE_Int              relax_type;
-   HYPRE_Int             *relax_types;
+   NALU_HYPRE_Int              relax_type;
+   NALU_HYPRE_Int             *relax_types;
    void                  *e_amg_vdata;
    hypre_ParAMGData      *e_amgData;
-   HYPRE_Int              numCGSweeps = 10;
-   HYPRE_Int            **amg_CF_marker;
+   NALU_HYPRE_Int              numCGSweeps = 10;
+   NALU_HYPRE_Int            **amg_CF_marker;
    hypre_ParCSRMatrix   **A_array;
 #endif
 
    hypre_SStructGrid     *node_grid;
    hypre_SStructGraph    *node_graph;
 
-   HYPRE_Int             *coarsen;
+   NALU_HYPRE_Int             *coarsen;
    hypre_SStructGrid    **egrid_l;
    hypre_SStructGrid     *edge_grid, *face_grid, *cell_grid;
    hypre_SStructGrid    **topological_edge, **topological_face, **topological_cell;
 
-   HYPRE_Int            **BdryRanks_l;
-   HYPRE_Int             *BdryRanksCnts_l;
+   NALU_HYPRE_Int            **BdryRanks_l;
+   NALU_HYPRE_Int             *BdryRanksCnts_l;
 
    hypre_SStructPGrid    *pgrid;
    hypre_StructGrid      *sgrid;
@@ -114,51 +114,51 @@ hypre_MaxwellTV_Setup(void                 *maxwell_vdata,
    hypre_Box             *box, *box_piece, *contract_box;
    hypre_BoxArray        *cboxes;
 
-   HYPRE_SStructVariable *vartypes, *vartype_edges, *vartype_faces, *vartype_cell;
+   NALU_HYPRE_SStructVariable *vartypes, *vartype_edges, *vartype_faces, *vartype_cell;
    hypre_SStructStencil **Ann_stencils;
 
    hypre_MaxwellOffProcRow **OffProcRows;
-   HYPRE_Int                 num_OffProcRows;
+   NALU_HYPRE_Int                 num_OffProcRows;
 
    hypre_Index            rfactor;
    hypre_Index            index, cindex, shape, loop_size, start, lindex;
-   HYPRE_Int              stencil_size;
-   HYPRE_Int              matrix_type = HYPRE_PARCSR;
+   NALU_HYPRE_Int              stencil_size;
+   NALU_HYPRE_Int              matrix_type = NALU_HYPRE_PARCSR;
 
-   HYPRE_Int              ndim = hypre_SStructMatrixNDim(Aee_in);
-   HYPRE_Int              nparts, part, vars, nboxes, lev_nboxes;
+   NALU_HYPRE_Int              ndim = hypre_SStructMatrixNDim(Aee_in);
+   NALU_HYPRE_Int              nparts, part, vars, nboxes, lev_nboxes;
 
-   HYPRE_Int              nrows;
-   HYPRE_BigInt           rank, start_rank, *jnode, *inode;
-   HYPRE_Int             *flag, *ncols;
-   HYPRE_BigInt          *flag2;
-   HYPRE_Real            *vals;
+   NALU_HYPRE_Int              nrows;
+   NALU_HYPRE_BigInt           rank, start_rank, *jnode, *inode;
+   NALU_HYPRE_Int             *flag, *ncols;
+   NALU_HYPRE_BigInt          *flag2;
+   NALU_HYPRE_Real            *vals;
 
-   HYPRE_Int              i, j, k, l, m;
-   HYPRE_BigInt           big_i, *big_i_ptr;
+   NALU_HYPRE_Int              i, j, k, l, m;
+   NALU_HYPRE_BigInt           big_i, *big_i_ptr;
 
    hypre_BoxManager      *node_boxman;
    hypre_BoxManEntry     *entry;
-   HYPRE_Int              kstart = 0, kend = 0;
-   HYPRE_BigInt           ilower, iupper;
-   HYPRE_BigInt           jlower, jupper;
-   HYPRE_Int              myproc;
+   NALU_HYPRE_Int              kstart = 0, kend = 0;
+   NALU_HYPRE_BigInt           ilower, iupper;
+   NALU_HYPRE_BigInt           jlower, jupper;
+   NALU_HYPRE_Int              myproc;
 
-   HYPRE_BigInt           first_local_row, last_local_row;
-   HYPRE_BigInt           first_local_col, last_local_col;
+   NALU_HYPRE_BigInt           first_local_row, last_local_row;
+   NALU_HYPRE_BigInt           first_local_col, last_local_col;
 
-   HYPRE_Int              edge_maxlevels, edge_numlevels, en_numlevels;
+   NALU_HYPRE_Int              edge_maxlevels, edge_numlevels, en_numlevels;
 
-   HYPRE_Int              constant_coef =  maxwell_TV_data -> constant_coef;
-   HYPRE_Int              trueV = 1;
-   HYPRE_Int              falseV = 0;
+   NALU_HYPRE_Int              constant_coef =  maxwell_TV_data -> constant_coef;
+   NALU_HYPRE_Int              trueV = 1;
+   NALU_HYPRE_Int              falseV = 0;
 
-   HYPRE_Int              ierr = 0;
+   NALU_HYPRE_Int              ierr = 0;
 #if DEBUG
    /*char                  filename[255];*/
 #endif
 
-   HYPRE_MemoryLocation   memory_location = hypre_ParCSRMatrixMemoryLocation(Aee);
+   NALU_HYPRE_MemoryLocation   memory_location = hypre_ParCSRMatrixMemoryLocation(Aee);
 
    hypre_MPI_Comm_rank(comm, &myproc);
 
@@ -181,11 +181,11 @@ hypre_MaxwellTV_Setup(void                 *maxwell_vdata,
     * Need to form the grid, graph, etc. for these matrices.
     *---------------------------------------------------------------------*/
    nparts = hypre_SStructMatrixNParts(Aee_in);
-   HYPRE_SStructGridCreate(comm, ndim, nparts, &node_grid);
+   NALU_HYPRE_SStructGridCreate(comm, ndim, nparts, &node_grid);
 
    /* grids can be constructed from the cell-centre grid of Aee_in */
-   vartypes = hypre_CTAlloc(HYPRE_SStructVariable,  1, HYPRE_MEMORY_HOST);
-   vartypes[0] = HYPRE_SSTRUCT_VARIABLE_NODE;
+   vartypes = hypre_CTAlloc(NALU_HYPRE_SStructVariable,  1, NALU_HYPRE_MEMORY_HOST);
+   vartypes[0] = NALU_HYPRE_SSTRUCT_VARIABLE_NODE;
 
    for (i = 0; i < nparts; i++)
    {
@@ -196,13 +196,13 @@ hypre_MaxwellTV_Setup(void                 *maxwell_vdata,
       hypre_ForBoxI(j, boxes)
       {
          box = hypre_BoxArrayBox(boxes, j);
-         HYPRE_SStructGridSetExtents(node_grid, i,
+         NALU_HYPRE_SStructGridSetExtents(node_grid, i,
                                      hypre_BoxIMin(box), hypre_BoxIMax(box));
       }
 
-      HYPRE_SStructGridSetVariables(node_grid, i, 1, vartypes);
+      NALU_HYPRE_SStructGridSetVariables(node_grid, i, 1, vartypes);
    }
-   HYPRE_SStructGridAssemble(node_grid);
+   NALU_HYPRE_SStructGridAssemble(node_grid);
 
    /* Ann stencils & graph */
    stencil_size = 1;
@@ -211,8 +211,8 @@ hypre_MaxwellTV_Setup(void                 *maxwell_vdata,
       stencil_size *= 3;
    }
 
-   Ann_stencils = hypre_CTAlloc(hypre_SStructStencil *,  1, HYPRE_MEMORY_HOST);
-   HYPRE_SStructStencilCreate(ndim, stencil_size, &Ann_stencils[0]);
+   Ann_stencils = hypre_CTAlloc(hypre_SStructStencil *,  1, NALU_HYPRE_MEMORY_HOST);
+   NALU_HYPRE_SStructStencilCreate(ndim, stencil_size, &Ann_stencils[0]);
 
    vars = 0; /* scalar equation, node-to-node */
    if (ndim > 2)
@@ -234,22 +234,22 @@ hypre_MaxwellTV_Setup(void                 *maxwell_vdata,
          for (i = -1; i < 2; i++)
          {
             hypre_SetIndex3(shape, i, j, k);
-            HYPRE_SStructStencilSetEntry(Ann_stencils[0], m, shape, vars);
+            NALU_HYPRE_SStructStencilSetEntry(Ann_stencils[0], m, shape, vars);
             m++;
          }
       }
    }
 
-   HYPRE_SStructGraphCreate(comm, node_grid, &node_graph);
+   NALU_HYPRE_SStructGraphCreate(comm, node_grid, &node_graph);
    for (part = 0; part < nparts; part++)
    {
-      HYPRE_SStructGraphSetStencil(node_graph, part, 0, Ann_stencils[0]);
+      NALU_HYPRE_SStructGraphSetStencil(node_graph, part, 0, Ann_stencils[0]);
    }
-   HYPRE_SStructGraphAssemble(node_graph);
+   NALU_HYPRE_SStructGraphAssemble(node_graph);
 
-   HYPRE_SStructMatrixCreate(comm, node_graph, &Ann);
-   HYPRE_SStructMatrixSetObjectType(Ann, HYPRE_PARCSR);
-   HYPRE_SStructMatrixInitialize(Ann);
+   NALU_HYPRE_SStructMatrixCreate(comm, node_graph, &Ann);
+   NALU_HYPRE_SStructMatrixSetObjectType(Ann, NALU_HYPRE_PARCSR);
+   NALU_HYPRE_SStructMatrixInitialize(Ann);
 
    /* Aen is constructed as an IJ matrix. Constructing it as a sstruct_matrix
     * would make it a square matrix. */
@@ -258,7 +258,7 @@ hypre_MaxwellTV_Setup(void                 *maxwell_vdata,
 
    hypre_SStructGridBoxProcFindBoxManEntry(node_grid, part, 0, i, myproc, &entry);
    pgrid = hypre_SStructGridPGrid(node_grid, part);
-   vartypes[0] = HYPRE_SSTRUCT_VARIABLE_NODE;
+   vartypes[0] = NALU_HYPRE_SSTRUCT_VARIABLE_NODE;
    j = vartypes[0];
    sgrid = hypre_SStructPGridVTSGrid(pgrid, j);
    boxes = hypre_StructGridBoxes(sgrid);
@@ -277,7 +277,7 @@ hypre_MaxwellTV_Setup(void                 *maxwell_vdata,
 
    part = nparts - 1;
    pgrid = hypre_SStructGridPGrid(node_grid, part);
-   vartypes[0] = HYPRE_SSTRUCT_VARIABLE_NODE;
+   vartypes[0] = NALU_HYPRE_SSTRUCT_VARIABLE_NODE;
    j = vartypes[0];
    sgrid = hypre_SStructPGridVTSGrid(pgrid, j);
    boxes = hypre_StructGridBoxes(sgrid);
@@ -295,67 +295,67 @@ hypre_MaxwellTV_Setup(void                 *maxwell_vdata,
    sgrid = hypre_SStructPGridVTSGrid(pgrid, j);
    boxes = hypre_StructGridBoxes(sgrid);
    box  = hypre_BoxArrayBox(boxes, hypre_BoxArraySize(boxes) - 1);
-   hypre_TFree(vartypes, HYPRE_MEMORY_HOST);
+   hypre_TFree(vartypes, NALU_HYPRE_MEMORY_HOST);
 
    hypre_SStructGridBoxProcFindBoxManEntry(grid, part, vars - 1,
                                            hypre_BoxArraySize(boxes) - 1,
                                            myproc, &entry);
    hypre_SStructBoxManEntryGetGlobalCSRank(entry, hypre_BoxIMax(box), &iupper);
 
-   HYPRE_IJMatrixCreate(comm, ilower, iupper, jlower, jupper, &Aen);
-   HYPRE_IJMatrixSetObjectType(Aen, HYPRE_PARCSR);
-   HYPRE_IJMatrixInitialize(Aen);
+   NALU_HYPRE_IJMatrixCreate(comm, ilower, iupper, jlower, jupper, &Aen);
+   NALU_HYPRE_IJMatrixSetObjectType(Aen, NALU_HYPRE_PARCSR);
+   NALU_HYPRE_IJMatrixInitialize(Aen);
 
    /* setup the Aen & Ann using matrix-matrix products
     * Aen's parscr matrix has not been formed yet-> fill up ij_matrix */
    parcsr_mat = hypre_ParMatmul(Aee, T);
-   HYPRE_ParCSRMatrixGetLocalRange((HYPRE_ParCSRMatrix) parcsr_mat,
+   NALU_HYPRE_ParCSRMatrixGetLocalRange((NALU_HYPRE_ParCSRMatrix) parcsr_mat,
                                    &first_local_row, &last_local_row,
                                    &first_local_col, &last_local_col);
 
-   size_ptr  = hypre_TAlloc(HYPRE_Int,    1, memory_location);
-   big_i_ptr = hypre_TAlloc(HYPRE_BigInt, 1, memory_location);
+   size_ptr  = hypre_TAlloc(NALU_HYPRE_Int,    1, memory_location);
+   big_i_ptr = hypre_TAlloc(NALU_HYPRE_BigInt, 1, memory_location);
 
    for (big_i = first_local_row; big_i <= last_local_row; big_i++)
    {
-      HYPRE_ParCSRMatrixGetRow((HYPRE_ParCSRMatrix) parcsr_mat,
+      NALU_HYPRE_ParCSRMatrixGetRow((NALU_HYPRE_ParCSRMatrix) parcsr_mat,
                                big_i, &size, &col_inds, &values);
 
       size_ptr[0]  = size;
       big_i_ptr[0] = big_i;
 
       //RL: this is very slow when using on device
-      HYPRE_IJMatrixSetValues(Aen, 1, size_ptr, big_i_ptr, (const HYPRE_BigInt *) col_inds,
-                              (const HYPRE_Real *) values);
+      NALU_HYPRE_IJMatrixSetValues(Aen, 1, size_ptr, big_i_ptr, (const NALU_HYPRE_BigInt *) col_inds,
+                              (const NALU_HYPRE_Real *) values);
 
-      HYPRE_ParCSRMatrixRestoreRow((HYPRE_ParCSRMatrix) parcsr_mat,
+      NALU_HYPRE_ParCSRMatrixRestoreRow((NALU_HYPRE_ParCSRMatrix) parcsr_mat,
                                    big_i, &size, &col_inds, &values);
    }
    hypre_ParCSRMatrixDestroy(parcsr_mat);
-   HYPRE_IJMatrixAssemble(Aen);
+   NALU_HYPRE_IJMatrixAssemble(Aen);
 
    /* Ann's parscr matrix has not been formed yet-> fill up ij_matrix */
    hypre_ParCSRMatrixTranspose(T, &T_transpose, 1);
    parcsr_mat = hypre_ParMatmul(T_transpose,
                                 (hypre_ParCSRMatrix *) hypre_IJMatrixObject(Aen));
-   HYPRE_ParCSRMatrixGetLocalRange((HYPRE_ParCSRMatrix) parcsr_mat,
+   NALU_HYPRE_ParCSRMatrixGetLocalRange((NALU_HYPRE_ParCSRMatrix) parcsr_mat,
                                    &first_local_row, &last_local_row,
                                    &first_local_col, &last_local_col);
 
    for (big_i = first_local_row; big_i <= last_local_row; big_i++)
    {
-      HYPRE_ParCSRMatrixGetRow((HYPRE_ParCSRMatrix) parcsr_mat,
+      NALU_HYPRE_ParCSRMatrixGetRow((NALU_HYPRE_ParCSRMatrix) parcsr_mat,
                                big_i, &size, &col_inds, &values);
 
       size_ptr[0]  = size;
       big_i_ptr[0] = big_i;
 
       //RL: this is very slow when using on device
-      HYPRE_IJMatrixSetValues(hypre_SStructMatrixIJMatrix(Ann),
-                              1, size_ptr, big_i_ptr, (const HYPRE_BigInt *) col_inds,
-                              (const HYPRE_Real *) values);
+      NALU_HYPRE_IJMatrixSetValues(hypre_SStructMatrixIJMatrix(Ann),
+                              1, size_ptr, big_i_ptr, (const NALU_HYPRE_BigInt *) col_inds,
+                              (const NALU_HYPRE_Real *) values);
 
-      HYPRE_ParCSRMatrixRestoreRow((HYPRE_ParCSRMatrix) parcsr_mat,
+      NALU_HYPRE_ParCSRMatrixRestoreRow((NALU_HYPRE_ParCSRMatrix) parcsr_mat,
                                    big_i, &size, &col_inds, &values);
    }
    hypre_ParCSRMatrixDestroy(parcsr_mat);
@@ -372,8 +372,8 @@ hypre_MaxwellTV_Setup(void                 *maxwell_vdata,
       nrows += hypre_StructGridLocalSize(sgrid);
    }
 
-   flag = hypre_CTAlloc(HYPRE_Int,  nrows, HYPRE_MEMORY_HOST);
-   flag2 = hypre_CTAlloc(HYPRE_BigInt,  nrows, HYPRE_MEMORY_HOST);
+   flag = hypre_CTAlloc(NALU_HYPRE_Int,  nrows, NALU_HYPRE_MEMORY_HOST);
+   flag2 = hypre_CTAlloc(NALU_HYPRE_BigInt,  nrows, NALU_HYPRE_MEMORY_HOST);
    for (i = 0; i < nrows; i++)
    {
       flag[i] = 1;
@@ -414,8 +414,8 @@ hypre_MaxwellTV_Setup(void                 *maxwell_vdata,
 
                   hypre_SStructBoxManEntryGetGlobalRank(entry, index,
                                                         &rank, matrix_type);
-                  flag[(HYPRE_Int)(rank - start_rank)] = 0;
-                  flag2[(HYPRE_Int)(rank - start_rank)] = rank;
+                  flag[(NALU_HYPRE_Int)(rank - start_rank)] = 0;
+                  flag2[(NALU_HYPRE_Int)(rank - start_rank)] = rank;
                }
                hypre_SerialBoxLoop0End();
             }  /* if (hypre_BoxVolume(box_piece) < i) */
@@ -434,10 +434,10 @@ hypre_MaxwellTV_Setup(void                 *maxwell_vdata,
       }
    }
 
-   inode = hypre_CTAlloc(HYPRE_BigInt, j, memory_location);
-   ncols = hypre_CTAlloc(HYPRE_Int,    j, memory_location);
-   jnode = hypre_CTAlloc(HYPRE_BigInt, j, memory_location);
-   vals = hypre_TAlloc(HYPRE_Real,    j, memory_location);
+   inode = hypre_CTAlloc(NALU_HYPRE_BigInt, j, memory_location);
+   ncols = hypre_CTAlloc(NALU_HYPRE_Int,    j, memory_location);
+   jnode = hypre_CTAlloc(NALU_HYPRE_BigInt, j, memory_location);
+   vals = hypre_TAlloc(NALU_HYPRE_Real,    j, memory_location);
 
    j = 0;
    for (i = 0; i < nrows; i++)
@@ -451,48 +451,48 @@ hypre_MaxwellTV_Setup(void                 *maxwell_vdata,
          j++;
       }
    }
-   hypre_TFree(flag, HYPRE_MEMORY_HOST);
-   hypre_TFree(flag2, HYPRE_MEMORY_HOST);
+   hypre_TFree(flag, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(flag2, NALU_HYPRE_MEMORY_HOST);
 
-   HYPRE_IJMatrixSetValues(hypre_SStructMatrixIJMatrix(Ann),
-                           j, ncols, (const HYPRE_BigInt*) inode,
-                           (const HYPRE_BigInt*) jnode, (const HYPRE_Real*) vals);
+   NALU_HYPRE_IJMatrixSetValues(hypre_SStructMatrixIJMatrix(Ann),
+                           j, ncols, (const NALU_HYPRE_BigInt*) inode,
+                           (const NALU_HYPRE_BigInt*) jnode, (const NALU_HYPRE_Real*) vals);
    hypre_TFree(ncols, memory_location);
    hypre_TFree(inode, memory_location);
    hypre_TFree(jnode, memory_location);
    hypre_TFree(vals,  memory_location);
 
-   HYPRE_SStructMatrixAssemble(Ann);
+   NALU_HYPRE_SStructMatrixAssemble(Ann);
 #if DEBUG
-   HYPRE_SStructMatrixPrint("sstruct.out.Ann",  Ann, 0);
-   HYPRE_IJMatrixPrint(Aen, "driver.out.Aen");
+   NALU_HYPRE_SStructMatrixPrint("sstruct.out.Ann",  Ann, 0);
+   NALU_HYPRE_IJMatrixPrint(Aen, "driver.out.Aen");
 #endif
 
    /* setup bn & xn using matvec. Assemble first and then perform matvec to get
       the nodal rhs and initial guess. */
-   HYPRE_SStructVectorCreate(comm, node_grid, &bn);
-   HYPRE_SStructVectorSetObjectType(bn, HYPRE_PARCSR);
-   HYPRE_SStructVectorInitialize(bn);
-   HYPRE_SStructVectorAssemble(bn);
+   NALU_HYPRE_SStructVectorCreate(comm, node_grid, &bn);
+   NALU_HYPRE_SStructVectorSetObjectType(bn, NALU_HYPRE_PARCSR);
+   NALU_HYPRE_SStructVectorInitialize(bn);
+   NALU_HYPRE_SStructVectorAssemble(bn);
 
    hypre_SStructVectorConvert(b_in, &parvector_x);
-   /*HYPRE_SStructVectorGetObject((HYPRE_SStructVector) b_in, (void **) &parvector_x);*/
-   HYPRE_SStructVectorGetObject((HYPRE_SStructVector) bn, (void **) &parvector_b);
+   /*NALU_HYPRE_SStructVectorGetObject((NALU_HYPRE_SStructVector) b_in, (void **) &parvector_x);*/
+   NALU_HYPRE_SStructVectorGetObject((NALU_HYPRE_SStructVector) bn, (void **) &parvector_b);
    hypre_ParCSRMatrixMatvec(1.0, T_transpose, parvector_x, 0.0, parvector_b);
 
-   HYPRE_SStructVectorCreate(comm, node_grid, &xn);
-   HYPRE_SStructVectorSetObjectType(xn, HYPRE_PARCSR);
-   HYPRE_SStructVectorInitialize(xn);
-   HYPRE_SStructVectorAssemble(xn);
+   NALU_HYPRE_SStructVectorCreate(comm, node_grid, &xn);
+   NALU_HYPRE_SStructVectorSetObjectType(xn, NALU_HYPRE_PARCSR);
+   NALU_HYPRE_SStructVectorInitialize(xn);
+   NALU_HYPRE_SStructVectorAssemble(xn);
 
    hypre_SStructVectorConvert(x_in, &parvector_x);
-   /*HYPRE_SStructVectorGetObject((HYPRE_SStructVector) x_in, (void **) &parvector_x);*/
-   HYPRE_SStructVectorGetObject((HYPRE_SStructVector) xn, (void **) &parvector_b);
+   /*NALU_HYPRE_SStructVectorGetObject((NALU_HYPRE_SStructVector) x_in, (void **) &parvector_x);*/
+   NALU_HYPRE_SStructVectorGetObject((NALU_HYPRE_SStructVector) xn, (void **) &parvector_b);
    hypre_ParCSRMatrixMatvec(1.0, T_transpose, parvector_x, 0.0, parvector_b);
 
    /* Destroy the node grid and graph. This only decrements reference counters. */
-   HYPRE_SStructGridDestroy(node_grid);
-   HYPRE_SStructGraphDestroy(node_graph);
+   NALU_HYPRE_SStructGridDestroy(node_grid);
+   NALU_HYPRE_SStructGraphDestroy(node_graph);
 
    /* create the multigrid components for the nodal matrix using amg. We need
       to extract the nodal mg components to form the system mg components. */
@@ -507,20 +507,20 @@ hypre_MaxwellTV_Setup(void                 *maxwell_vdata,
 
       node_numlevels = hypre_ParAMGDataNumLevels(amg_data);
 
-      Ann_l   = hypre_CTAlloc(hypre_ParCSRMatrix *,  node_numlevels, HYPRE_MEMORY_HOST);
-      Pn_l    = hypre_CTAlloc(hypre_ParCSRMatrix *,  node_numlevels, HYPRE_MEMORY_HOST);
-      RnT_l   = hypre_CTAlloc(hypre_ParCSRMatrix *,  node_numlevels, HYPRE_MEMORY_HOST);
-      bn_l    = hypre_CTAlloc(hypre_ParVector*,  node_numlevels, HYPRE_MEMORY_HOST);
-      xn_l    = hypre_CTAlloc(hypre_ParVector*,  node_numlevels, HYPRE_MEMORY_HOST);
-      resn_l  = hypre_CTAlloc(hypre_ParVector*,  node_numlevels, HYPRE_MEMORY_HOST);
-      en_l    = hypre_CTAlloc(hypre_ParVector*,  node_numlevels, HYPRE_MEMORY_HOST);
-      nVtemp_l = hypre_CTAlloc(hypre_ParVector*,  node_numlevels, HYPRE_MEMORY_HOST);
-      nVtemp2_l = hypre_CTAlloc(hypre_ParVector*,  node_numlevels, HYPRE_MEMORY_HOST);
+      Ann_l   = hypre_CTAlloc(hypre_ParCSRMatrix *,  node_numlevels, NALU_HYPRE_MEMORY_HOST);
+      Pn_l    = hypre_CTAlloc(hypre_ParCSRMatrix *,  node_numlevels, NALU_HYPRE_MEMORY_HOST);
+      RnT_l   = hypre_CTAlloc(hypre_ParCSRMatrix *,  node_numlevels, NALU_HYPRE_MEMORY_HOST);
+      bn_l    = hypre_CTAlloc(hypre_ParVector*,  node_numlevels, NALU_HYPRE_MEMORY_HOST);
+      xn_l    = hypre_CTAlloc(hypre_ParVector*,  node_numlevels, NALU_HYPRE_MEMORY_HOST);
+      resn_l  = hypre_CTAlloc(hypre_ParVector*,  node_numlevels, NALU_HYPRE_MEMORY_HOST);
+      en_l    = hypre_CTAlloc(hypre_ParVector*,  node_numlevels, NALU_HYPRE_MEMORY_HOST);
+      nVtemp_l = hypre_CTAlloc(hypre_ParVector*,  node_numlevels, NALU_HYPRE_MEMORY_HOST);
+      nVtemp2_l = hypre_CTAlloc(hypre_ParVector*,  node_numlevels, NALU_HYPRE_MEMORY_HOST);
 
       /* relaxation parameters */
-      nCF_marker_l = hypre_CTAlloc(HYPRE_Int *,  node_numlevels, HYPRE_MEMORY_HOST);
-      nrelax_weight = hypre_CTAlloc(HYPRE_Real,  node_numlevels, HYPRE_MEMORY_HOST);
-      nomega       = hypre_CTAlloc(HYPRE_Real,  node_numlevels, HYPRE_MEMORY_HOST);
+      nCF_marker_l = hypre_CTAlloc(NALU_HYPRE_Int *,  node_numlevels, NALU_HYPRE_MEMORY_HOST);
+      nrelax_weight = hypre_CTAlloc(NALU_HYPRE_Real,  node_numlevels, NALU_HYPRE_MEMORY_HOST);
+      nomega       = hypre_CTAlloc(NALU_HYPRE_Real,  node_numlevels, NALU_HYPRE_MEMORY_HOST);
       nrelax_type  = 6;  /* fast parallel hybrid */
 
       for (i = 0; i < node_numlevels; i++)
@@ -593,7 +593,7 @@ hypre_MaxwellTV_Setup(void                 *maxwell_vdata,
     * rfactor[i] > 1 for i < ndim.
     * Determine the number of levels for the edge problem */
    cboxes = hypre_BoxArrayCreate(0, ndim);
-   coarsen = hypre_CTAlloc(HYPRE_Int,  nparts, HYPRE_MEMORY_HOST);
+   coarsen = hypre_CTAlloc(NALU_HYPRE_Int,  nparts, NALU_HYPRE_MEMORY_HOST);
    edge_maxlevels = 0;
    for (part = 0; part < nparts; part++)
    {
@@ -624,7 +624,7 @@ hypre_MaxwellTV_Setup(void                 *maxwell_vdata,
 
    /* form the edge grids: coarsen the cell grid on each part and then
       set the boxes of these grids to be the boxes of the sstruct_grid. */
-   egrid_l   = hypre_TAlloc(hypre_SStructGrid *,  edge_maxlevels, HYPRE_MEMORY_HOST);
+   egrid_l   = hypre_TAlloc(hypre_SStructGrid *,  edge_maxlevels, NALU_HYPRE_MEMORY_HOST);
    hypre_SStructGridRef(grid, &egrid_l[0]);
 
    /* form the topological grids for the topological matrices. */
@@ -632,12 +632,12 @@ hypre_MaxwellTV_Setup(void                 *maxwell_vdata,
    /* Assuming same variable ordering on all parts */
    pgrid = hypre_SStructGridPGrid(grid, 0);
 
-   HYPRE_SStructGridCreate(comm, ndim, nparts, &edge_grid);
-   vartype_edges = hypre_CTAlloc(HYPRE_SStructVariable,  ndim, HYPRE_MEMORY_HOST);
+   NALU_HYPRE_SStructGridCreate(comm, ndim, nparts, &edge_grid);
+   vartype_edges = hypre_CTAlloc(NALU_HYPRE_SStructVariable,  ndim, NALU_HYPRE_MEMORY_HOST);
    if (ndim > 2)
    {
-      HYPRE_SStructGridCreate(comm, ndim, nparts, &face_grid);
-      vartype_faces = hypre_CTAlloc(HYPRE_SStructVariable,  ndim, HYPRE_MEMORY_HOST);
+      NALU_HYPRE_SStructGridCreate(comm, ndim, nparts, &face_grid);
+      vartype_faces = hypre_CTAlloc(NALU_HYPRE_SStructVariable,  ndim, NALU_HYPRE_MEMORY_HOST);
       for (i = 0; i < 3; i++)
       {
          vartype_edges[2] = hypre_SStructPGridVarType(pgrid, i);
@@ -647,20 +647,20 @@ hypre_MaxwellTV_Setup(void                 *maxwell_vdata,
          {
             case 5:
             {
-               vartype_edges[i] = HYPRE_SSTRUCT_VARIABLE_XEDGE;
-               vartype_faces[i] = HYPRE_SSTRUCT_VARIABLE_XFACE;
+               vartype_edges[i] = NALU_HYPRE_SSTRUCT_VARIABLE_XEDGE;
+               vartype_faces[i] = NALU_HYPRE_SSTRUCT_VARIABLE_XFACE;
                break;
             }
             case 6:
             {
-               vartype_edges[i] = HYPRE_SSTRUCT_VARIABLE_YEDGE;
-               vartype_faces[i] = HYPRE_SSTRUCT_VARIABLE_YFACE;
+               vartype_edges[i] = NALU_HYPRE_SSTRUCT_VARIABLE_YEDGE;
+               vartype_faces[i] = NALU_HYPRE_SSTRUCT_VARIABLE_YFACE;
                break;
             }
             case 7:
             {
-               vartype_edges[i] = HYPRE_SSTRUCT_VARIABLE_ZEDGE;
-               vartype_faces[i] = HYPRE_SSTRUCT_VARIABLE_ZFACE;
+               vartype_edges[i] = NALU_HYPRE_SSTRUCT_VARIABLE_ZEDGE;
+               vartype_faces[i] = NALU_HYPRE_SSTRUCT_VARIABLE_ZFACE;
                break;
             }
 
@@ -678,21 +678,21 @@ hypre_MaxwellTV_Setup(void                 *maxwell_vdata,
          {
             case 2:
             {
-               vartype_edges[i] = HYPRE_SSTRUCT_VARIABLE_XFACE;
+               vartype_edges[i] = NALU_HYPRE_SSTRUCT_VARIABLE_XFACE;
                break;
             }
             case 3:
             {
-               vartype_edges[i] = HYPRE_SSTRUCT_VARIABLE_YFACE;
+               vartype_edges[i] = NALU_HYPRE_SSTRUCT_VARIABLE_YFACE;
                break;
             }
          }  /* switch(j) */
       }     /* for (i= 0; i< 3; i++) */
    }
 
-   HYPRE_SStructGridCreate(comm, ndim, nparts, &cell_grid);
-   vartype_cell = hypre_CTAlloc(HYPRE_SStructVariable,  1, HYPRE_MEMORY_HOST);
-   vartype_cell[0] = HYPRE_SSTRUCT_VARIABLE_CELL;
+   NALU_HYPRE_SStructGridCreate(comm, ndim, nparts, &cell_grid);
+   vartype_cell = hypre_CTAlloc(NALU_HYPRE_SStructVariable,  1, NALU_HYPRE_MEMORY_HOST);
+   vartype_cell[0] = NALU_HYPRE_SSTRUCT_VARIABLE_CELL;
 
    for (i = 0; i < nparts; i++)
    {
@@ -703,37 +703,37 @@ hypre_MaxwellTV_Setup(void                 *maxwell_vdata,
       hypre_ForBoxI(j, boxes)
       {
          box = hypre_BoxArrayBox(boxes, j);
-         HYPRE_SStructGridSetExtents(edge_grid, i,
+         NALU_HYPRE_SStructGridSetExtents(edge_grid, i,
                                      hypre_BoxIMin(box), hypre_BoxIMax(box));
-         HYPRE_SStructGridSetExtents(cell_grid, i,
+         NALU_HYPRE_SStructGridSetExtents(cell_grid, i,
                                      hypre_BoxIMin(box), hypre_BoxIMax(box));
          if (ndim > 2)
          {
-            HYPRE_SStructGridSetExtents(face_grid, i,
+            NALU_HYPRE_SStructGridSetExtents(face_grid, i,
                                         hypre_BoxIMin(box), hypre_BoxIMax(box));
          }
       }
-      HYPRE_SStructGridSetVariables(edge_grid, i, ndim, vartype_edges);
-      HYPRE_SStructGridSetVariables(cell_grid, i, 1, vartype_cell);
+      NALU_HYPRE_SStructGridSetVariables(edge_grid, i, ndim, vartype_edges);
+      NALU_HYPRE_SStructGridSetVariables(cell_grid, i, 1, vartype_cell);
 
       if (ndim > 2)
       {
-         HYPRE_SStructGridSetVariables(face_grid, i, ndim, vartype_faces);
+         NALU_HYPRE_SStructGridSetVariables(face_grid, i, ndim, vartype_faces);
       }
    }
 
-   HYPRE_SStructGridAssemble(edge_grid);
-   topological_edge   = hypre_TAlloc(hypre_SStructGrid *,  edge_maxlevels, HYPRE_MEMORY_HOST);
+   NALU_HYPRE_SStructGridAssemble(edge_grid);
+   topological_edge   = hypre_TAlloc(hypre_SStructGrid *,  edge_maxlevels, NALU_HYPRE_MEMORY_HOST);
    topological_edge[0] = edge_grid;
 
-   HYPRE_SStructGridAssemble(cell_grid);
-   topological_cell   = hypre_TAlloc(hypre_SStructGrid *,  edge_maxlevels, HYPRE_MEMORY_HOST);
+   NALU_HYPRE_SStructGridAssemble(cell_grid);
+   topological_cell   = hypre_TAlloc(hypre_SStructGrid *,  edge_maxlevels, NALU_HYPRE_MEMORY_HOST);
    topological_cell[0] = cell_grid;
 
    if (ndim > 2)
    {
-      HYPRE_SStructGridAssemble(face_grid);
-      topological_face = hypre_TAlloc(hypre_SStructGrid *,  edge_maxlevels, HYPRE_MEMORY_HOST);
+      NALU_HYPRE_SStructGridAssemble(face_grid);
+      topological_face = hypre_TAlloc(hypre_SStructGrid *,  edge_maxlevels, NALU_HYPRE_MEMORY_HOST);
       topological_face[0] = face_grid;
    }
 
@@ -748,12 +748,12 @@ hypre_MaxwellTV_Setup(void                 *maxwell_vdata,
 
    for (l = 0; ; l++)
    {
-      HYPRE_SStructGridCreate(comm, ndim, nparts, &egrid_l[l + 1]);
-      HYPRE_SStructGridCreate(comm, ndim, nparts, &topological_edge[l + 1]);
-      HYPRE_SStructGridCreate(comm, ndim, nparts, &topological_cell[l + 1]);
+      NALU_HYPRE_SStructGridCreate(comm, ndim, nparts, &egrid_l[l + 1]);
+      NALU_HYPRE_SStructGridCreate(comm, ndim, nparts, &topological_edge[l + 1]);
+      NALU_HYPRE_SStructGridCreate(comm, ndim, nparts, &topological_cell[l + 1]);
       if (ndim > 2)
       {
-         HYPRE_SStructGridCreate(comm, ndim, nparts, &topological_face[l + 1]);
+         NALU_HYPRE_SStructGridCreate(comm, ndim, nparts, &topological_face[l + 1]);
       }
 
       /* coarsen the non-zero bounding boxes only if we have some. */
@@ -824,18 +824,18 @@ hypre_MaxwellTV_Setup(void                 *maxwell_vdata,
                   /* record empty, coarsened-away part */
                   coarsen[part] = falseV;
                   /* set up a dummy box so this grid can be destroyed */
-                  HYPRE_SStructGridSetExtents(egrid_l[l + 1], part,
+                  NALU_HYPRE_SStructGridSetExtents(egrid_l[l + 1], part,
                                               hypre_BoxIMin(box), hypre_BoxIMin(box));
 
-                  HYPRE_SStructGridSetExtents(topological_edge[l + 1], part,
+                  NALU_HYPRE_SStructGridSetExtents(topological_edge[l + 1], part,
                                               hypre_BoxIMin(box), hypre_BoxIMin(box));
 
-                  HYPRE_SStructGridSetExtents(topological_cell[l + 1], part,
+                  NALU_HYPRE_SStructGridSetExtents(topological_cell[l + 1], part,
                                               hypre_BoxIMin(box), hypre_BoxIMin(box));
 
                   if (ndim > 2)
                   {
-                     HYPRE_SStructGridSetExtents(topological_face[l + 1], part,
+                     NALU_HYPRE_SStructGridSetExtents(topological_face[l + 1], part,
                                                  hypre_BoxIMin(box), hypre_BoxIMin(box));
                   }
                   j++;
@@ -845,31 +845,31 @@ hypre_MaxwellTV_Setup(void                 *maxwell_vdata,
 
             vartypes = hypre_SStructPGridVarTypes(
                           hypre_SStructGridPGrid(egrid_l[l], part));
-            HYPRE_SStructGridSetVariables(egrid_l[l + 1], part, ndim,
+            NALU_HYPRE_SStructGridSetVariables(egrid_l[l + 1], part, ndim,
                                           vartypes);
 
-            HYPRE_SStructGridSetVariables(topological_edge[l + 1], part, ndim,
+            NALU_HYPRE_SStructGridSetVariables(topological_edge[l + 1], part, ndim,
                                           vartype_edges);
-            HYPRE_SStructGridSetVariables(topological_cell[l + 1], part, 1,
+            NALU_HYPRE_SStructGridSetVariables(topological_cell[l + 1], part, 1,
                                           vartype_cell);
             if (ndim > 2)
             {
-               HYPRE_SStructGridSetVariables(topological_face[l + 1], part, ndim,
+               NALU_HYPRE_SStructGridSetVariables(topological_face[l + 1], part, ndim,
                                              vartype_faces);
             }
          }  /* for (part= 0; part< nparts; part++) */
       }     /* if (j < nparts) */
 
-      HYPRE_SStructGridAssemble(egrid_l[l + 1]);
-      HYPRE_SStructGridAssemble(topological_edge[l + 1]);
-      HYPRE_SStructGridAssemble(topological_cell[l + 1]);
+      NALU_HYPRE_SStructGridAssemble(egrid_l[l + 1]);
+      NALU_HYPRE_SStructGridAssemble(topological_edge[l + 1]);
+      NALU_HYPRE_SStructGridAssemble(topological_cell[l + 1]);
       if (ndim > 2)
       {
-         HYPRE_SStructGridAssemble(topological_face[l + 1]);
+         NALU_HYPRE_SStructGridAssemble(topological_face[l + 1]);
       }
 
       lev_nboxes = 0;
-      hypre_MPI_Allreduce(&nboxes, &lev_nboxes, 1, HYPRE_MPI_INT, hypre_MPI_SUM,
+      hypre_MPI_Allreduce(&nboxes, &lev_nboxes, 1, NALU_HYPRE_MPI_INT, hypre_MPI_SUM,
                           hypre_SStructGridComm(egrid_l[l + 1]));
 
       if (lev_nboxes)  /* there were coarsen boxes */
@@ -903,12 +903,12 @@ hypre_MaxwellTV_Setup(void                 *maxwell_vdata,
 
       else
       {
-         HYPRE_SStructGridDestroy(egrid_l[l + 1]);
-         HYPRE_SStructGridDestroy(topological_edge[l + 1]);
-         HYPRE_SStructGridDestroy(topological_cell[l + 1]);
+         NALU_HYPRE_SStructGridDestroy(egrid_l[l + 1]);
+         NALU_HYPRE_SStructGridDestroy(topological_edge[l + 1]);
+         NALU_HYPRE_SStructGridDestroy(topological_cell[l + 1]);
          if (ndim > 2)
          {
-            HYPRE_SStructGridDestroy(topological_face[l + 1]);
+            NALU_HYPRE_SStructGridDestroy(topological_face[l + 1]);
          }
          break;
       }
@@ -922,13 +922,13 @@ hypre_MaxwellTV_Setup(void                 *maxwell_vdata,
    (maxwell_TV_data -> BdryRanksCnts_l) = BdryRanksCnts_l;
 
    hypre_BoxArrayDestroy(cboxes);
-   hypre_TFree(coarsen, HYPRE_MEMORY_HOST);
+   hypre_TFree(coarsen, NALU_HYPRE_MEMORY_HOST);
    /* okay to de-allocate vartypes now */
-   hypre_TFree(vartype_edges, HYPRE_MEMORY_HOST);
-   hypre_TFree(vartype_cell, HYPRE_MEMORY_HOST);
+   hypre_TFree(vartype_edges, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(vartype_cell, NALU_HYPRE_MEMORY_HOST);
    if (ndim > 2)
    {
-      hypre_TFree(vartype_faces, HYPRE_MEMORY_HOST);
+      hypre_TFree(vartype_faces, NALU_HYPRE_MEMORY_HOST);
    }
 
 
@@ -937,21 +937,21 @@ hypre_MaxwellTV_Setup(void                 *maxwell_vdata,
    (maxwell_TV_data -> en_numlevels)  = en_numlevels;
    (maxwell_TV_data -> edge_numlevels) = edge_numlevels;
 
-   Aee_l = hypre_TAlloc(hypre_ParCSRMatrix *,  edge_numlevels, HYPRE_MEMORY_HOST);
-   Aen_l = hypre_TAlloc(hypre_ParCSRMatrix *,  en_numlevels, HYPRE_MEMORY_HOST);
+   Aee_l = hypre_TAlloc(hypre_ParCSRMatrix *,  edge_numlevels, NALU_HYPRE_MEMORY_HOST);
+   Aen_l = hypre_TAlloc(hypre_ParCSRMatrix *,  en_numlevels, NALU_HYPRE_MEMORY_HOST);
 
    /* Pe_l are defined to be IJ matrices rather than directly parcsr. This
       was done so that in the topological formation, some of the ij matrix
       routines can be used. */
-   Pe_l    = hypre_TAlloc(hypre_IJMatrix  *,  edge_numlevels - 1, HYPRE_MEMORY_HOST);
-   ReT_l   = hypre_TAlloc(hypre_IJMatrix  *,  edge_numlevels - 1, HYPRE_MEMORY_HOST);
+   Pe_l    = hypre_TAlloc(hypre_IJMatrix  *,  edge_numlevels - 1, NALU_HYPRE_MEMORY_HOST);
+   ReT_l   = hypre_TAlloc(hypre_IJMatrix  *,  edge_numlevels - 1, NALU_HYPRE_MEMORY_HOST);
 
-   be_l    = hypre_TAlloc(hypre_ParVector *,  edge_numlevels, HYPRE_MEMORY_HOST);
-   xe_l    = hypre_TAlloc(hypre_ParVector *,  edge_numlevels, HYPRE_MEMORY_HOST);
-   rese_l  = hypre_TAlloc(hypre_ParVector *,  edge_numlevels, HYPRE_MEMORY_HOST);
-   ee_l    = hypre_TAlloc(hypre_ParVector *,  edge_numlevels, HYPRE_MEMORY_HOST);
-   eVtemp_l = hypre_TAlloc(hypre_ParVector *,  edge_numlevels, HYPRE_MEMORY_HOST);
-   eVtemp2_l = hypre_TAlloc(hypre_ParVector *,  edge_numlevels, HYPRE_MEMORY_HOST);
+   be_l    = hypre_TAlloc(hypre_ParVector *,  edge_numlevels, NALU_HYPRE_MEMORY_HOST);
+   xe_l    = hypre_TAlloc(hypre_ParVector *,  edge_numlevels, NALU_HYPRE_MEMORY_HOST);
+   rese_l  = hypre_TAlloc(hypre_ParVector *,  edge_numlevels, NALU_HYPRE_MEMORY_HOST);
+   ee_l    = hypre_TAlloc(hypre_ParVector *,  edge_numlevels, NALU_HYPRE_MEMORY_HOST);
+   eVtemp_l = hypre_TAlloc(hypre_ParVector *,  edge_numlevels, NALU_HYPRE_MEMORY_HOST);
+   eVtemp2_l = hypre_TAlloc(hypre_ParVector *,  edge_numlevels, NALU_HYPRE_MEMORY_HOST);
 
    Aee_l[0] = hypre_SStructMatrixParCSRMatrix(Aee_in);
    Aen_l[0] = (hypre_ParCSRMatrix *) hypre_IJMatrixObject(Aen),
@@ -1057,7 +1057,7 @@ hypre_MaxwellTV_Setup(void                 *maxwell_vdata,
             {
                hypre_MaxwellOffProcRowDestroy((void *) OffProcRows[i]);
             }
-            hypre_TFree(OffProcRows, HYPRE_MEMORY_HOST);
+            hypre_TFree(OffProcRows, NALU_HYPRE_MEMORY_HOST);
          }
 
          else
@@ -1200,7 +1200,7 @@ hypre_MaxwellTV_Setup(void                 *maxwell_vdata,
          {
             hypre_MaxwellOffProcRowDestroy((void *) OffProcRows[i]);
          }
-         hypre_TFree(OffProcRows, HYPRE_MEMORY_HOST);
+         hypre_TFree(OffProcRows, NALU_HYPRE_MEMORY_HOST);
       }
 
       else
@@ -1262,18 +1262,18 @@ hypre_MaxwellTV_Setup(void                 *maxwell_vdata,
    /* Can delete all topological grids. Not even referenced in IJMatrices. */
    for (l = 0; l < edge_numlevels; l++)
    {
-      HYPRE_SStructGridDestroy(topological_edge[l]);
-      HYPRE_SStructGridDestroy(topological_cell[l]);
+      NALU_HYPRE_SStructGridDestroy(topological_edge[l]);
+      NALU_HYPRE_SStructGridDestroy(topological_cell[l]);
       if (ndim > 2)
       {
-         HYPRE_SStructGridDestroy(topological_face[l]);
+         NALU_HYPRE_SStructGridDestroy(topological_face[l]);
       }
    }
-   hypre_TFree(topological_edge, HYPRE_MEMORY_HOST);
-   hypre_TFree(topological_cell, HYPRE_MEMORY_HOST);
+   hypre_TFree(topological_edge, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(topological_cell, NALU_HYPRE_MEMORY_HOST);
    if (ndim > 2)
    {
-      hypre_TFree(topological_face, HYPRE_MEMORY_HOST);
+      hypre_TFree(topological_face, NALU_HYPRE_MEMORY_HOST);
    }
 
 #if DEBUG
@@ -1295,9 +1295,9 @@ hypre_MaxwellTV_Setup(void                 *maxwell_vdata,
     * Needed for quick parallel over/under-relaxation.
     *-----------------------------------------------------*/
    erelax_type  = 2;
-   erelax_weight = hypre_TAlloc(HYPRE_Real,  edge_numlevels, HYPRE_MEMORY_HOST);
-   eomega       = hypre_TAlloc(HYPRE_Real,  edge_numlevels, HYPRE_MEMORY_HOST);
-   eCF_marker_l = hypre_TAlloc(HYPRE_Int *,  edge_numlevels, HYPRE_MEMORY_HOST);
+   erelax_weight = hypre_TAlloc(NALU_HYPRE_Real,  edge_numlevels, NALU_HYPRE_MEMORY_HOST);
+   eomega       = hypre_TAlloc(NALU_HYPRE_Real,  edge_numlevels, NALU_HYPRE_MEMORY_HOST);
+   eCF_marker_l = hypre_TAlloc(NALU_HYPRE_Int *,  edge_numlevels, NALU_HYPRE_MEMORY_HOST);
 
 #if 0
    relax_type = 6; /* SSOR */
@@ -1309,11 +1309,11 @@ hypre_MaxwellTV_Setup(void                 *maxwell_vdata,
       e_amg_vdata = (void *) hypre_BoomerAMGCreate();
       e_amgData = e_amg_vdata;
 
-      relax_types = hypre_CTAlloc(HYPRE_Int,  2, HYPRE_MEMORY_HOST);
+      relax_types = hypre_CTAlloc(NALU_HYPRE_Int,  2, NALU_HYPRE_MEMORY_HOST);
       relax_types[1] = relax_type;
 
-      amg_CF_marker = hypre_TAlloc(HYPRE_Int *,  1, HYPRE_MEMORY_HOST);
-      A_array      = hypre_TAlloc(hypre_ParCSRMatrix *,  1, HYPRE_MEMORY_HOST);
+      amg_CF_marker = hypre_TAlloc(NALU_HYPRE_Int *,  1, NALU_HYPRE_MEMORY_HOST);
+      A_array      = hypre_TAlloc(hypre_ParCSRMatrix *,  1, NALU_HYPRE_MEMORY_HOST);
 
       amg_CF_marker[0] = NULL;
       A_array[0]      = Aee_l[l];
@@ -1326,14 +1326,14 @@ hypre_MaxwellTV_Setup(void                 *maxwell_vdata,
       (e_amgData -> smooth_type)       = 0;
       hypre_BoomerAMGCGRelaxWt((void *) e_amgData, 0, numCGSweeps, &eomega[l]);
 
-      hypre_TFree((e_amgData -> A_array), HYPRE_MEMORY_HOST);
-      hypre_TFree((e_amgData -> CF_marker_array), HYPRE_MEMORY_HOST);
-      hypre_TFree((e_amgData -> grid_relax_type), HYPRE_MEMORY_HOST);
+      hypre_TFree((e_amgData -> A_array), NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree((e_amgData -> CF_marker_array), NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree((e_amgData -> grid_relax_type), NALU_HYPRE_MEMORY_HOST);
       (e_amgData -> A_array) = NULL;
       (e_amgData -> Vtemp ) = NULL;
       (e_amgData -> CF_marker_array) = NULL;
       (e_amgData -> grid_relax_type) = NULL;
-      hypre_TFree(e_amg_vdata, HYPRE_MEMORY_HOST);
+      hypre_TFree(e_amg_vdata, NALU_HYPRE_MEMORY_HOST);
       eomega[l] = 1.0;
    }
 #endif
@@ -1357,29 +1357,29 @@ hypre_MaxwellTV_Setup(void                 *maxwell_vdata,
    if ((maxwell_TV_data -> logging) > 0)
    {
       i = (maxwell_TV_data -> max_iter);
-      (maxwell_TV_data -> norms)     = hypre_TAlloc(HYPRE_Real,  i, HYPRE_MEMORY_HOST);
-      (maxwell_TV_data -> rel_norms) = hypre_TAlloc(HYPRE_Real,  i, HYPRE_MEMORY_HOST);
+      (maxwell_TV_data -> norms)     = hypre_TAlloc(NALU_HYPRE_Real,  i, NALU_HYPRE_MEMORY_HOST);
+      (maxwell_TV_data -> rel_norms) = hypre_TAlloc(NALU_HYPRE_Real,  i, NALU_HYPRE_MEMORY_HOST);
    }
 
    return ierr;
 }
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_CoarsenPGrid( hypre_SStructGrid  *fgrid,
                     hypre_Index         index,
                     hypre_Index         stride,
-                    HYPRE_Int           part,
+                    NALU_HYPRE_Int           part,
                     hypre_SStructGrid  *cgrid,
-                    HYPRE_Int          *nboxes)
+                    NALU_HYPRE_Int          *nboxes)
 {
-   HYPRE_Int ierr = 0;
+   NALU_HYPRE_Int ierr = 0;
 
    hypre_SStructPGrid *pgrid = hypre_SStructGridPGrid(fgrid, part);
    hypre_StructGrid   *sgrid = hypre_SStructPGridCellSGrid(pgrid);
 
    hypre_BoxArray     *boxes;
    hypre_Box          *box, *contract_box;
-   HYPRE_Int           i;
+   NALU_HYPRE_Int           i;
 
    /*-----------------------------------------
     * Set the coarse sgrid
@@ -1399,7 +1399,7 @@ hypre_CoarsenPGrid( hypre_SStructGrid  *fgrid,
                                   hypre_BoxIMax(contract_box));
 
       /* set box even if zero volume but don't count it */
-      HYPRE_SStructGridSetExtents(cgrid, part,
+      NALU_HYPRE_SStructGridSetExtents(cgrid, part,
                                   hypre_BoxIMin(contract_box),
                                   hypre_BoxIMax(contract_box));
 
@@ -1438,11 +1438,11 @@ hypre_BoxContraction( hypre_Box           *box,
    hypre_Box           *shifted_box;
    hypre_Box            intersect_box;
 
-   HYPRE_Int            ndim = hypre_StructGridNDim(sgrid);
+   NALU_HYPRE_Int            ndim = hypre_StructGridNDim(sgrid);
 
    hypre_Index          remainder, box_width;
-   HYPRE_Int            i, j, k, p;
-   HYPRE_Int            npos, nneg;
+   NALU_HYPRE_Int            i, j, k, p;
+   NALU_HYPRE_Int            npos, nneg;
 
 
    /* get the boxes out of the box manager - use these as the neighbor boxes */

@@ -23,12 +23,12 @@ hypre_SchwarzCreate()
 {
    hypre_SchwarzData *schwarz_data;
 
-   HYPRE_Int      variant;
-   HYPRE_Int      domain_type;
-   HYPRE_Int      overlap;
-   HYPRE_Int      num_functions;
-   HYPRE_Int      use_nonsymm;
-   HYPRE_Real     relax_weight;
+   NALU_HYPRE_Int      variant;
+   NALU_HYPRE_Int      domain_type;
+   NALU_HYPRE_Int      overlap;
+   NALU_HYPRE_Int      num_functions;
+   NALU_HYPRE_Int      use_nonsymm;
+   NALU_HYPRE_Real     relax_weight;
 
    /*-----------------------------------------------------------------------
     * Setup default values for parameters
@@ -42,7 +42,7 @@ hypre_SchwarzCreate()
    use_nonsymm = 0;
    relax_weight = 1.0;
 
-   schwarz_data = hypre_CTAlloc(hypre_SchwarzData, 1, HYPRE_MEMORY_HOST);
+   schwarz_data = hypre_CTAlloc(hypre_SchwarzData, 1, NALU_HYPRE_MEMORY_HOST);
 
    hypre_SchwarzSetVariant(schwarz_data, variant);
    hypre_SchwarzSetDomainType(schwarz_data, domain_type);
@@ -64,18 +64,18 @@ hypre_SchwarzCreate()
  * hypre_SchwarzDestroy
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SchwarzDestroy( void *data )
 {
    hypre_SchwarzData  *schwarz_data = (hypre_SchwarzData*) data;
 
    if (hypre_SchwarzDataScale(schwarz_data))
    {
-      hypre_TFree(hypre_SchwarzDataScale(schwarz_data), HYPRE_MEMORY_HOST);
+      hypre_TFree(hypre_SchwarzDataScale(schwarz_data), NALU_HYPRE_MEMORY_HOST);
    }
    if (hypre_SchwarzDataDofFunc(schwarz_data))
    {
-      hypre_TFree(hypre_SchwarzDataDofFunc(schwarz_data), HYPRE_MEMORY_HOST);
+      hypre_TFree(hypre_SchwarzDataDofFunc(schwarz_data), NALU_HYPRE_MEMORY_HOST);
    }
    hypre_CSRMatrixDestroy(hypre_SchwarzDataDomainStructure(schwarz_data));
    if (hypre_SchwarzDataVariant(schwarz_data) == 3)
@@ -86,16 +86,16 @@ hypre_SchwarzDestroy( void *data )
 
    if (hypre_SchwarzDataPivots(schwarz_data))
    {
-      hypre_TFree(hypre_SchwarzDataPivots(schwarz_data), HYPRE_MEMORY_HOST);
+      hypre_TFree(hypre_SchwarzDataPivots(schwarz_data), NALU_HYPRE_MEMORY_HOST);
    }
 
 
-   hypre_TFree(schwarz_data, HYPRE_MEMORY_HOST);
+   hypre_TFree(schwarz_data, NALU_HYPRE_MEMORY_HOST);
    return hypre_error_flag;
 
 }
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SchwarzSetup(void               *schwarz_vdata,
                    hypre_ParCSRMatrix *A,
                    hypre_ParVector    *f,
@@ -103,20 +103,20 @@ hypre_SchwarzSetup(void               *schwarz_vdata,
 {
 
    hypre_SchwarzData   *schwarz_data = (hypre_SchwarzData*) schwarz_vdata;
-   HYPRE_Int *dof_func;
-   HYPRE_Real *scale;
+   NALU_HYPRE_Int *dof_func;
+   NALU_HYPRE_Real *scale;
    hypre_CSRMatrix *domain_structure;
    hypre_CSRMatrix *A_boundary;
    hypre_ParVector *Vtemp;
 
-   HYPRE_Int *pivots = NULL;
+   NALU_HYPRE_Int *pivots = NULL;
 
-   HYPRE_Int variant = hypre_SchwarzDataVariant(schwarz_data);
-   HYPRE_Int domain_type = hypre_SchwarzDataDomainType(schwarz_data);
-   HYPRE_Int overlap = hypre_SchwarzDataOverlap(schwarz_data);
-   HYPRE_Int num_functions = hypre_SchwarzDataNumFunctions(schwarz_data);
-   HYPRE_Real relax_weight = hypre_SchwarzDataRelaxWeight(schwarz_data);
-   HYPRE_Int use_nonsymm = hypre_SchwarzDataUseNonSymm(schwarz_data);
+   NALU_HYPRE_Int variant = hypre_SchwarzDataVariant(schwarz_data);
+   NALU_HYPRE_Int domain_type = hypre_SchwarzDataDomainType(schwarz_data);
+   NALU_HYPRE_Int overlap = hypre_SchwarzDataOverlap(schwarz_data);
+   NALU_HYPRE_Int num_functions = hypre_SchwarzDataNumFunctions(schwarz_data);
+   NALU_HYPRE_Real relax_weight = hypre_SchwarzDataRelaxWeight(schwarz_data);
+   NALU_HYPRE_Int use_nonsymm = hypre_SchwarzDataUseNonSymm(schwarz_data);
 
 
    dof_func = hypre_SchwarzDataDofFunc(schwarz_data);
@@ -186,7 +186,7 @@ hypre_SchwarzSetup(void               *schwarz_vdata,
  * hypre_SchwarzSolve
  *--------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SchwarzSolve(void               *schwarz_vdata,
                    hypre_ParCSRMatrix *A,
                    hypre_ParVector    *f,
@@ -197,13 +197,13 @@ hypre_SchwarzSolve(void               *schwarz_vdata,
    hypre_CSRMatrix *domain_structure =
       hypre_SchwarzDataDomainStructure(schwarz_data);
    hypre_CSRMatrix *A_boundary = hypre_SchwarzDataABoundary(schwarz_data);
-   HYPRE_Real *scale = hypre_SchwarzDataScale(schwarz_data);
+   NALU_HYPRE_Real *scale = hypre_SchwarzDataScale(schwarz_data);
    hypre_ParVector *Vtemp = hypre_SchwarzDataVtemp(schwarz_data);
-   HYPRE_Int variant = hypre_SchwarzDataVariant(schwarz_data);
-   HYPRE_Real relax_wt = hypre_SchwarzDataRelaxWeight(schwarz_data);
-   HYPRE_Int use_nonsymm = hypre_SchwarzDataUseNonSymm(schwarz_data);
+   NALU_HYPRE_Int variant = hypre_SchwarzDataVariant(schwarz_data);
+   NALU_HYPRE_Real relax_wt = hypre_SchwarzDataRelaxWeight(schwarz_data);
+   NALU_HYPRE_Int use_nonsymm = hypre_SchwarzDataUseNonSymm(schwarz_data);
 
-   HYPRE_Int *pivots = hypre_SchwarzDataPivots(schwarz_data);
+   NALU_HYPRE_Int *pivots = hypre_SchwarzDataPivots(schwarz_data);
 
    if (domain_structure)
    {
@@ -240,26 +240,26 @@ hypre_SchwarzSolve(void               *schwarz_vdata,
  * hypre_SchwarzCFSolve
  *--------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SchwarzCFSolve(void               *schwarz_vdata,
                      hypre_ParCSRMatrix *A,
                      hypre_ParVector    *f,
                      hypre_ParVector    *u,
-                     HYPRE_Int *CF_marker,
-                     HYPRE_Int rlx_pt)
+                     NALU_HYPRE_Int *CF_marker,
+                     NALU_HYPRE_Int rlx_pt)
 {
    hypre_SchwarzData   *schwarz_data = (hypre_SchwarzData*) schwarz_vdata;
 
    hypre_CSRMatrix *domain_structure =
       hypre_SchwarzDataDomainStructure(schwarz_data);
-   HYPRE_Real *scale = hypre_SchwarzDataScale(schwarz_data);
+   NALU_HYPRE_Real *scale = hypre_SchwarzDataScale(schwarz_data);
    hypre_ParVector *Vtemp = hypre_SchwarzDataVtemp(schwarz_data);
-   HYPRE_Int variant = hypre_SchwarzDataVariant(schwarz_data);
-   HYPRE_Real relax_wt = hypre_SchwarzDataRelaxWeight(schwarz_data);
+   NALU_HYPRE_Int variant = hypre_SchwarzDataVariant(schwarz_data);
+   NALU_HYPRE_Real relax_wt = hypre_SchwarzDataRelaxWeight(schwarz_data);
 
-   HYPRE_Int use_nonsymm = hypre_SchwarzDataUseNonSymm(schwarz_data);
+   NALU_HYPRE_Int use_nonsymm = hypre_SchwarzDataUseNonSymm(schwarz_data);
 
-   HYPRE_Int *pivots = hypre_SchwarzDataPivots(schwarz_data);
+   NALU_HYPRE_Int *pivots = hypre_SchwarzDataPivots(schwarz_data);
 
    if (variant == 1)
    {
@@ -288,8 +288,8 @@ hypre_SchwarzCFSolve(void               *schwarz_vdata,
  * Routines to set various parameters
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_SchwarzSetVariant( void *data, HYPRE_Int variant )
+NALU_HYPRE_Int
+hypre_SchwarzSetVariant( void *data, NALU_HYPRE_Int variant )
 {
 
    hypre_SchwarzData  *schwarz_data = (hypre_SchwarzData*) data;
@@ -299,8 +299,8 @@ hypre_SchwarzSetVariant( void *data, HYPRE_Int variant )
 
 }
 
-HYPRE_Int
-hypre_SchwarzSetDomainType( void *data, HYPRE_Int domain_type )
+NALU_HYPRE_Int
+hypre_SchwarzSetDomainType( void *data, NALU_HYPRE_Int domain_type )
 {
 
    hypre_SchwarzData  *schwarz_data = (hypre_SchwarzData*) data;
@@ -310,8 +310,8 @@ hypre_SchwarzSetDomainType( void *data, HYPRE_Int domain_type )
 
 }
 
-HYPRE_Int
-hypre_SchwarzSetOverlap( void *data, HYPRE_Int overlap )
+NALU_HYPRE_Int
+hypre_SchwarzSetOverlap( void *data, NALU_HYPRE_Int overlap )
 {
 
    hypre_SchwarzData  *schwarz_data = (hypre_SchwarzData*) data;
@@ -321,8 +321,8 @@ hypre_SchwarzSetOverlap( void *data, HYPRE_Int overlap )
    return hypre_error_flag;
 }
 
-HYPRE_Int
-hypre_SchwarzSetNumFunctions( void *data, HYPRE_Int num_functions )
+NALU_HYPRE_Int
+hypre_SchwarzSetNumFunctions( void *data, NALU_HYPRE_Int num_functions )
 {
 
    hypre_SchwarzData  *schwarz_data = (hypre_SchwarzData*) data;
@@ -332,8 +332,8 @@ hypre_SchwarzSetNumFunctions( void *data, HYPRE_Int num_functions )
    return hypre_error_flag;
 }
 
-HYPRE_Int
-hypre_SchwarzSetNonSymm( void *data, HYPRE_Int value )
+NALU_HYPRE_Int
+hypre_SchwarzSetNonSymm( void *data, NALU_HYPRE_Int value )
 {
 
    hypre_SchwarzData  *schwarz_data = (hypre_SchwarzData*) data;
@@ -344,8 +344,8 @@ hypre_SchwarzSetNonSymm( void *data, HYPRE_Int value )
 
 }
 
-HYPRE_Int
-hypre_SchwarzSetRelaxWeight( void *data, HYPRE_Real relax_weight )
+NALU_HYPRE_Int
+hypre_SchwarzSetRelaxWeight( void *data, NALU_HYPRE_Real relax_weight )
 {
 
    hypre_SchwarzData  *schwarz_data = (hypre_SchwarzData*) data;
@@ -355,7 +355,7 @@ hypre_SchwarzSetRelaxWeight( void *data, HYPRE_Real relax_weight )
    return hypre_error_flag;
 }
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SchwarzSetDomainStructure( void *data, hypre_CSRMatrix *domain_structure )
 {
 
@@ -366,8 +366,8 @@ hypre_SchwarzSetDomainStructure( void *data, hypre_CSRMatrix *domain_structure )
    return hypre_error_flag;
 }
 
-HYPRE_Int
-hypre_SchwarzSetScale( void *data, HYPRE_Real *scale)
+NALU_HYPRE_Int
+hypre_SchwarzSetScale( void *data, NALU_HYPRE_Real *scale)
 {
 
    hypre_SchwarzData  *schwarz_data = (hypre_SchwarzData*) data;
@@ -377,12 +377,12 @@ hypre_SchwarzSetScale( void *data, HYPRE_Real *scale)
    return hypre_error_flag;
 }
 
-HYPRE_Int
-hypre_SchwarzReScale( void *data, HYPRE_Int size, HYPRE_Real value)
+NALU_HYPRE_Int
+hypre_SchwarzReScale( void *data, NALU_HYPRE_Int size, NALU_HYPRE_Real value)
 {
 
-   HYPRE_Int i;
-   HYPRE_Real *scale;
+   NALU_HYPRE_Int i;
+   NALU_HYPRE_Real *scale;
    hypre_SchwarzData  *schwarz_data = (hypre_SchwarzData*) data;
 
    scale = hypre_SchwarzDataScale(schwarz_data);
@@ -395,8 +395,8 @@ hypre_SchwarzReScale( void *data, HYPRE_Int size, HYPRE_Real value)
 
 }
 
-HYPRE_Int
-hypre_SchwarzSetDofFunc( void *data, HYPRE_Int *dof_func)
+NALU_HYPRE_Int
+hypre_SchwarzSetDofFunc( void *data, NALU_HYPRE_Int *dof_func)
 {
 
    hypre_SchwarzData  *schwarz_data = (hypre_SchwarzData*) data;

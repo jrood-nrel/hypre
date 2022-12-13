@@ -15,20 +15,20 @@
  * BoxLoop macros:
  *--------------------------------------------------------------------------*/
 
-#ifndef HYPRE_BOXLOOP_CUDA_HEADER
-#define HYPRE_BOXLOOP_CUDA_HEADER
+#ifndef NALU_HYPRE_BOXLOOP_CUDA_HEADER
+#define NALU_HYPRE_BOXLOOP_CUDA_HEADER
 
-#if (defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP)) && !defined(HYPRE_USING_RAJA) && !defined(HYPRE_USING_KOKKOS)
+#if (defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)) && !defined(NALU_HYPRE_USING_RAJA) && !defined(NALU_HYPRE_USING_KOKKOS)
 
-#define HYPRE_LAMBDA [=] __host__  __device__
+#define NALU_HYPRE_LAMBDA [=] __host__  __device__
 
 /* TODO: RL: support 4-D */
 typedef struct hypre_Boxloop_struct
 {
-   HYPRE_Int lsize0, lsize1, lsize2;
-   HYPRE_Int strides0, strides1, strides2;
-   HYPRE_Int bstart0, bstart1, bstart2;
-   HYPRE_Int bsize0, bsize1, bsize2;
+   NALU_HYPRE_Int lsize0, lsize1, lsize2;
+   NALU_HYPRE_Int strides0, strides1, strides2;
+   NALU_HYPRE_Int bstart0, bstart1, bstart2;
+   NALU_HYPRE_Int bsize0, bsize1, bsize2;
 } hypre_Boxloop;
 
 #ifdef __cplusplus
@@ -44,10 +44,10 @@ extern "C++"
    __global__ void
    forall_kernel( hypre_DeviceItem & item,
                   LOOP_BODY loop_body,
-                  HYPRE_Int length )
+                  NALU_HYPRE_Int length )
    {
-      const HYPRE_Int idx = hypre_gpu_get_grid_thread_id<1, 1>(item);
-      /* const HYPRE_Int number_threads = hypre_gpu_get_grid_num_threads<1,1>(item); */
+      const NALU_HYPRE_Int idx = hypre_gpu_get_grid_thread_id<1, 1>(item);
+      /* const NALU_HYPRE_Int number_threads = hypre_gpu_get_grid_num_threads<1,1>(item); */
 
       if (idx < length)
       {
@@ -57,28 +57,28 @@ extern "C++"
 
    template<typename LOOP_BODY>
    void
-   BoxLoopforall( HYPRE_Int length,
+   BoxLoopforall( NALU_HYPRE_Int length,
                   LOOP_BODY loop_body )
    {
-      const HYPRE_MemoryLocation memory_location = hypre_HandleMemoryLocation(hypre_handle());
-      const HYPRE_ExecutionPolicy exec_policy = hypre_GetExecPolicy1(memory_location);
+      const NALU_HYPRE_MemoryLocation memory_location = hypre_HandleMemoryLocation(hypre_handle());
+      const NALU_HYPRE_ExecutionPolicy exec_policy = hypre_GetExecPolicy1(memory_location);
 
-      if (exec_policy == HYPRE_EXEC_HOST)
+      if (exec_policy == NALU_HYPRE_EXEC_HOST)
       {
-#ifdef HYPRE_USING_OPENMP
-         #pragma omp parallel for HYPRE_SMP_SCHEDULE
+#ifdef NALU_HYPRE_USING_OPENMP
+         #pragma omp parallel for NALU_HYPRE_SMP_SCHEDULE
 #endif
-         for (HYPRE_Int idx = 0; idx < length; idx++)
+         for (NALU_HYPRE_Int idx = 0; idx < length; idx++)
          {
             loop_body(idx);
          }
       }
-      else if (exec_policy == HYPRE_EXEC_DEVICE)
+      else if (exec_policy == NALU_HYPRE_EXEC_DEVICE)
       {
          const dim3 bDim = hypre_GetDefaultDeviceBlockDimension();
          const dim3 gDim = hypre_GetDefaultDeviceGridDimension(length, "thread", bDim);
 
-         HYPRE_GPU_LAUNCH( forall_kernel, gDim, bDim, loop_body, length );
+         NALU_HYPRE_GPU_LAUNCH( forall_kernel, gDim, bDim, loop_body, length );
       }
    }
 
@@ -89,14 +89,14 @@ extern "C++"
    template <typename LOOP_BODY, typename REDUCER>
    __global__ void
    reductionforall_kernel( hypre_DeviceItem & item,
-                           HYPRE_Int length,
+                           NALU_HYPRE_Int length,
                            REDUCER   reducer,
                            LOOP_BODY loop_body )
    {
-      const HYPRE_Int thread_id = hypre_gpu_get_grid_thread_id<1, 1>(item);
-      const HYPRE_Int n_threads = hypre_gpu_get_grid_num_threads<1, 1>(item);
+      const NALU_HYPRE_Int thread_id = hypre_gpu_get_grid_thread_id<1, 1>(item);
+      const NALU_HYPRE_Int n_threads = hypre_gpu_get_grid_num_threads<1, 1>(item);
 
-      for (HYPRE_Int idx = thread_id; idx < length; idx += n_threads)
+      for (NALU_HYPRE_Int idx = thread_id; idx < length; idx += n_threads)
       {
          loop_body(idx, reducer);
       }
@@ -107,7 +107,7 @@ extern "C++"
 
    template<typename LOOP_BODY, typename REDUCER>
    void
-   ReductionBoxLoopforall( HYPRE_Int  length,
+   ReductionBoxLoopforall( NALU_HYPRE_Int  length,
                            REDUCER   & reducer,
                            LOOP_BODY  loop_body )
    {
@@ -116,23 +116,23 @@ extern "C++"
          return;
       }
 
-      const HYPRE_MemoryLocation memory_location = hypre_HandleMemoryLocation(hypre_handle());
-      const HYPRE_ExecutionPolicy exec_policy = hypre_GetExecPolicy1(memory_location);
+      const NALU_HYPRE_MemoryLocation memory_location = hypre_HandleMemoryLocation(hypre_handle());
+      const NALU_HYPRE_ExecutionPolicy exec_policy = hypre_GetExecPolicy1(memory_location);
 
-      if (exec_policy == HYPRE_EXEC_HOST)
+      if (exec_policy == NALU_HYPRE_EXEC_HOST)
       {
-         for (HYPRE_Int idx = 0; idx < length; idx++)
+         for (NALU_HYPRE_Int idx = 0; idx < length; idx++)
          {
             loop_body(idx, reducer);
          }
       }
-      else if (exec_policy == HYPRE_EXEC_DEVICE)
+      else if (exec_policy == NALU_HYPRE_EXEC_DEVICE)
       {
-         /* Assume gDim cannot exceed HYPRE_MAX_NTHREADS_BLOCK (the max size for the 2nd reduction)
+         /* Assume gDim cannot exceed NALU_HYPRE_MAX_NTHREADS_BLOCK (the max size for the 2nd reduction)
           * and bDim <= WARP * WARP (because we use 1 warp fro the block-level reduction) */
          const dim3 bDim = hypre_GetDefaultDeviceBlockDimension();
          dim3 gDim = hypre_GetDefaultDeviceGridDimension(length, "thread", bDim);
-         gDim.x = hypre_min(gDim.x, HYPRE_MAX_NTHREADS_BLOCK);
+         gDim.x = hypre_min(gDim.x, NALU_HYPRE_MAX_NTHREADS_BLOCK);
 
          reducer.nblocks = gDim.x;
 
@@ -142,7 +142,7 @@ extern "C++"
          hypre_printf("length= %d, blocksize = %d, gridsize = %d\n", length, bDim.x, gDim.x);
          */
 
-         HYPRE_GPU_LAUNCH( reductionforall_kernel, gDim, bDim, length, reducer, loop_body );
+         NALU_HYPRE_GPU_LAUNCH( reductionforall_kernel, gDim, bDim, length, reducer, loop_body );
       }
    }
 
@@ -152,8 +152,8 @@ extern "C++"
 
 /* Get 1-D length of the loop, in hypre__tot */
 #define hypre_newBoxLoopInit(ndim, loop_size)              \
-   HYPRE_Int hypre__tot = 1;                               \
-   for (HYPRE_Int hypre_d = 0; hypre_d < ndim; hypre_d ++) \
+   NALU_HYPRE_Int hypre__tot = 1;                               \
+   for (NALU_HYPRE_Int hypre_d = 0; hypre_d < ndim; hypre_d ++) \
    {                                                       \
       hypre__tot *= loop_size[hypre_d];                    \
    }
@@ -236,7 +236,7 @@ else                                                            \
 /* Given input 1-D 'idx' in box, get 3-D 'local_idx' in loop_size */
 #define hypre_newBoxLoopDeclare(box)                     \
    hypre_Index local_idx;                                \
-   HYPRE_Int idx_local = idx;                            \
+   NALU_HYPRE_Int idx_local = idx;                            \
    hypre_IndexD(local_idx, 0)  = idx_local % box.lsize0; \
    idx_local = idx_local / box.lsize0;                   \
    hypre_IndexD(local_idx, 1)  = idx_local % box.lsize1; \
@@ -245,8 +245,8 @@ else                                                            \
 
 /* Given input 3-D 'local_idx', get 1-D 'hypre__i' in 'box' */
 #define hypre_BoxLoopIncK(k, box, hypre__i)                                               \
-   HYPRE_Int hypre_boxD##k = 1;                                                           \
-   HYPRE_Int hypre__i = 0;                                                                \
+   NALU_HYPRE_Int hypre_boxD##k = 1;                                                           \
+   NALU_HYPRE_Int hypre__i = 0;                                                                \
    hypre__i += (hypre_IndexD(local_idx, 0) * box.strides0 + box.bstart0) * hypre_boxD##k; \
    hypre_boxD##k *= hypre_max(0, box.bsize0 + 1);                                         \
    hypre__i += (hypre_IndexD(local_idx, 1) * box.strides1 + box.bstart1) * hypre_boxD##k; \
@@ -264,7 +264,7 @@ else                                                            \
 #define hypre_BoxLoop0BeginCUDA(ndim, loop_size)                                                      \
 {                                                                                                     \
    hypre_newBoxLoopInit(ndim, loop_size);                                                             \
-   BoxLoopforall(hypre__tot, HYPRE_LAMBDA (HYPRE_Int idx)                                             \
+   BoxLoopforall(hypre__tot, NALU_HYPRE_LAMBDA (NALU_HYPRE_Int idx)                                             \
    {
 
 #define hypre_BoxLoop0EndCUDA()                                                                       \
@@ -276,7 +276,7 @@ else                                                            \
 {                                                                                                     \
    hypre_newBoxLoopInit(ndim, loop_size);                                                             \
    hypre_BoxLoopDataDeclareK(1, ndim, loop_size, dbox1, start1, stride1);                             \
-   BoxLoopforall(hypre__tot, HYPRE_LAMBDA (HYPRE_Int idx)                                             \
+   BoxLoopforall(hypre__tot, NALU_HYPRE_LAMBDA (NALU_HYPRE_Int idx)                                             \
    {                                                                                                  \
       hypre_newBoxLoopDeclare(databox1);                                                              \
       hypre_BoxLoopIncK(1, databox1, i1);
@@ -292,7 +292,7 @@ else                                                            \
    hypre_newBoxLoopInit(ndim, loop_size);                                                             \
    hypre_BoxLoopDataDeclareK(1, ndim, loop_size, dbox1, start1, stride1);                             \
    hypre_BoxLoopDataDeclareK(2, ndim, loop_size, dbox2, start2, stride2);                             \
-   BoxLoopforall(hypre__tot, HYPRE_LAMBDA (HYPRE_Int idx)                                             \
+   BoxLoopforall(hypre__tot, NALU_HYPRE_LAMBDA (NALU_HYPRE_Int idx)                                             \
    {                                                                                                  \
       hypre_newBoxLoopDeclare(databox1);                                                              \
       hypre_BoxLoopIncK(1, databox1, i1);                                                             \
@@ -311,7 +311,7 @@ else                                                            \
    hypre_BoxLoopDataDeclareK(1, ndim,loop_size, dbox1, start1, stride1);                              \
    hypre_BoxLoopDataDeclareK(2, ndim,loop_size, dbox2, start2, stride2);                              \
    hypre_BoxLoopDataDeclareK(3, ndim,loop_size, dbox3, start3, stride3);                              \
-   BoxLoopforall(hypre__tot, HYPRE_LAMBDA (HYPRE_Int idx)                                             \
+   BoxLoopforall(hypre__tot, NALU_HYPRE_LAMBDA (NALU_HYPRE_Int idx)                                             \
    {                                                                                                  \
       hypre_newBoxLoopDeclare(databox1);                                                              \
       hypre_BoxLoopIncK(1, databox1, i1);                                                             \
@@ -333,7 +333,7 @@ else                                                            \
    hypre_BoxLoopDataDeclareK(2, ndim, loop_size, dbox2, start2, stride2);                             \
    hypre_BoxLoopDataDeclareK(3, ndim, loop_size, dbox3, start3, stride3);                             \
    hypre_BoxLoopDataDeclareK(4, ndim, loop_size, dbox4, start4, stride4);                             \
-   BoxLoopforall(hypre__tot, HYPRE_LAMBDA (HYPRE_Int idx)                                             \
+   BoxLoopforall(hypre__tot, NALU_HYPRE_LAMBDA (NALU_HYPRE_Int idx)                                             \
    {                                                                                                  \
       hypre_newBoxLoopDeclare(databox1);                                                              \
       hypre_BoxLoopIncK(1, databox1, i1);                                                             \
@@ -351,7 +351,7 @@ else                                                            \
 {                                                                                                     \
    hypre_newBoxLoopInit(ndim, loop_size);                                                             \
    hypre_BasicBoxLoopDataDeclareK(1, ndim, loop_size, stride1);                                       \
-   BoxLoopforall(hypre__tot, HYPRE_LAMBDA (HYPRE_Int idx)                                             \
+   BoxLoopforall(hypre__tot, NALU_HYPRE_LAMBDA (NALU_HYPRE_Int idx)                                             \
    {                                                                                                  \
       hypre_newBoxLoopDeclare(databox1);                                                              \
       hypre_BoxLoopIncK(1, databox1, i1);
@@ -362,7 +362,7 @@ else                                                            \
    hypre_newBoxLoopInit(ndim, loop_size);                                                             \
    hypre_BasicBoxLoopDataDeclareK(1, ndim, loop_size, stride1);                                       \
    hypre_BasicBoxLoopDataDeclareK(2, ndim, loop_size, stride2);                                       \
-   BoxLoopforall(hypre__tot, HYPRE_LAMBDA (HYPRE_Int idx)                                             \
+   BoxLoopforall(hypre__tot, NALU_HYPRE_LAMBDA (NALU_HYPRE_Int idx)                                             \
    {                                                                                                  \
       hypre_newBoxLoopDeclare(databox1);                                                              \
       hypre_BoxLoopIncK(1, databox1, i1);                                                             \
@@ -371,7 +371,7 @@ else                                                            \
 /* Parallel for-loop */
 #define hypre_LoopBeginCUDA(size, idx)                                                                \
 {                                                                                                     \
-   BoxLoopforall(size, HYPRE_LAMBDA (HYPRE_Int idx)                                                   \
+   BoxLoopforall(size, NALU_HYPRE_LAMBDA (NALU_HYPRE_Int idx)                                                   \
    {
 
 #define hypre_LoopEndCUDA()                                                                           \
@@ -383,7 +383,7 @@ else                                                            \
 {                                                                                                                \
    hypre_newBoxLoopInit(ndim, loop_size);                                                                        \
    hypre_BoxLoopDataDeclareK(1, ndim, loop_size, dbox1, start1, stride1);                                        \
-   ReductionBoxLoopforall(hypre__tot, reducesum, HYPRE_LAMBDA (HYPRE_Int idx, decltype(reducesum) &reducesum)    \
+   ReductionBoxLoopforall(hypre__tot, reducesum, NALU_HYPRE_LAMBDA (NALU_HYPRE_Int idx, decltype(reducesum) &reducesum)    \
    {                                                                                                             \
       hypre_newBoxLoopDeclare(databox1);                                                                         \
       hypre_BoxLoopIncK(1, databox1, i1);
@@ -399,7 +399,7 @@ else                                                            \
    hypre_newBoxLoopInit(ndim, loop_size);                                                                        \
    hypre_BoxLoopDataDeclareK(1, ndim, loop_size, dbox1, start1, stride1);                                        \
    hypre_BoxLoopDataDeclareK(2, ndim, loop_size, dbox2, start2, stride2);                                        \
-   ReductionBoxLoopforall(hypre__tot, reducesum, HYPRE_LAMBDA (HYPRE_Int idx, decltype(reducesum) &reducesum)    \
+   ReductionBoxLoopforall(hypre__tot, reducesum, NALU_HYPRE_LAMBDA (NALU_HYPRE_Int idx, decltype(reducesum) &reducesum)    \
    {                                                                                                             \
       hypre_newBoxLoopDeclare(databox1);                                                                         \
       hypre_BoxLoopIncK(1, databox1, i1);                                                                        \
@@ -456,5 +456,5 @@ else                                                            \
 
 #endif
 
-#endif /* #ifndef HYPRE_BOXLOOP_CUDA_HEADER */
+#endif /* #ifndef NALU_HYPRE_BOXLOOP_CUDA_HEADER */
 

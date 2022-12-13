@@ -14,9 +14,9 @@
 #define MAX_DESC_LENGTH 60
 
 struct _timeLog_dh {
-  HYPRE_Int first;
-  HYPRE_Int last; 
-  HYPRE_Real time[MAX_TIME_MARKS];
+  NALU_HYPRE_Int first;
+  NALU_HYPRE_Int last; 
+  NALU_HYPRE_Real time[MAX_TIME_MARKS];
   char   desc[MAX_TIME_MARKS][MAX_DESC_LENGTH];
   Timer_dh timer; 
 };
@@ -26,7 +26,7 @@ struct _timeLog_dh {
 void TimeLog_dhCreate(TimeLog_dh *t)
 {
   START_FUNC_DH
-  HYPRE_Int i;
+  NALU_HYPRE_Int i;
   struct _timeLog_dh* tmp = (struct _timeLog_dh*)MALLOC_DH(sizeof(struct _timeLog_dh)); CHECK_V_ERROR;
   *t = tmp;
   tmp->first = tmp->last = 0;
@@ -86,8 +86,8 @@ void TimeLog_dhReset(TimeLog_dh t)
 {
   START_FUNC_DH
   if (t->last < MAX_TIME_MARKS - 2) {
-    HYPRE_Real total = 0.0;
-    HYPRE_Int i, first = t->first, last = t->last;
+    NALU_HYPRE_Real total = 0.0;
+    NALU_HYPRE_Int i, first = t->first, last = t->last;
     for (i=first; i<last; ++i) total += t->time[i];
     t->time[last] = total;
     hypre_sprintf(t->desc[last], "========== totals, and reset ==========\n");
@@ -104,9 +104,9 @@ void TimeLog_dhReset(TimeLog_dh t)
 void TimeLog_dhPrint(TimeLog_dh t, FILE *fp, bool allPrint)
 {
   START_FUNC_DH
-  HYPRE_Int i;
-  HYPRE_Real total = 0.0;
-  HYPRE_Real timeMax[MAX_TIME_MARKS]; HYPRE_Real timeMin[MAX_TIME_MARKS];
+  NALU_HYPRE_Int i;
+  NALU_HYPRE_Real total = 0.0;
+  NALU_HYPRE_Real timeMax[MAX_TIME_MARKS]; NALU_HYPRE_Real timeMin[MAX_TIME_MARKS];
   static bool wasSummed = false;
 
 

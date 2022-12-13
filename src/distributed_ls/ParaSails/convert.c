@@ -11,18 +11,18 @@
 
 #define MM_MAX_LINE_LENGTH 1000
 
-HYPRE_Int convert(FILE *infile, FILE *outfile)
+NALU_HYPRE_Int convert(FILE *infile, FILE *outfile)
 {
     char line[MM_MAX_LINE_LENGTH];
-    HYPRE_Int num_items_read, ret;
-    HYPRE_Int M, N, nz, nnz;
+    NALU_HYPRE_Int num_items_read, ret;
+    NALU_HYPRE_Int M, N, nz, nnz;
     hypre_longint offset;
-    HYPRE_Int *counts, *pointers;
-    HYPRE_Int row, col;
-    HYPRE_Real value;
-    HYPRE_Int *ind;
-    HYPRE_Real *val;
-    HYPRE_Int i, j;
+    NALU_HYPRE_Int *counts, *pointers;
+    NALU_HYPRE_Int row, col;
+    NALU_HYPRE_Real value;
+    NALU_HYPRE_Int *ind;
+    NALU_HYPRE_Real *val;
+    NALU_HYPRE_Int i, j;
 
     /* skip the comment section */
     do
@@ -41,8 +41,8 @@ HYPRE_Int convert(FILE *infile, FILE *outfile)
     offset = ftell(infile);
 
     /* allocate space for row counts */
-    counts   = hypre_CTAlloc(HYPRE_Int, M+1, HYPRE_MEMORY_HOST);
-    pointers = hypre_TAlloc(HYPRE_Int, (M+1) , HYPRE_MEMORY_HOST);
+    counts   = hypre_CTAlloc(NALU_HYPRE_Int, M+1, NALU_HYPRE_MEMORY_HOST);
+    pointers = hypre_TAlloc(NALU_HYPRE_Int, (M+1) , NALU_HYPRE_MEMORY_HOST);
 
     /* read the entire matrix */
     ret = hypre_fscanf(infile, "%d %d %lf\n", &row, &col, &value);
@@ -56,8 +56,8 @@ HYPRE_Int convert(FILE *infile, FILE *outfile)
     }
 
     /* allocate space for whole matrix */
-    ind = hypre_TAlloc(HYPRE_Int, nnz , HYPRE_MEMORY_HOST);
-    val = hypre_TAlloc(HYPRE_Real, nnz , HYPRE_MEMORY_HOST);
+    ind = hypre_TAlloc(NALU_HYPRE_Int, nnz , NALU_HYPRE_MEMORY_HOST);
+    val = hypre_TAlloc(NALU_HYPRE_Real, nnz , NALU_HYPRE_MEMORY_HOST);
 
     /* set pointer to beginning of each row */
     pointers[1] = 0;
@@ -87,17 +87,17 @@ HYPRE_Int convert(FILE *infile, FILE *outfile)
         for (j=0; j<counts[i]; j++)
             hypre_fprintf(outfile, "%d %d %.15e\n", i, *ind++, *val++);
 
-    hypre_TFree(counts, HYPRE_MEMORY_HOST);
-    hypre_TFree(pointers, HYPRE_MEMORY_HOST);
-    hypre_TFree(ind, HYPRE_MEMORY_HOST);
-    hypre_TFree(val, HYPRE_MEMORY_HOST);
+    hypre_TFree(counts, NALU_HYPRE_MEMORY_HOST);
+    hypre_TFree(pointers, NALU_HYPRE_MEMORY_HOST);
+    hypre_TFree(ind, NALU_HYPRE_MEMORY_HOST);
+    hypre_TFree(val, NALU_HYPRE_MEMORY_HOST);
 
     return 0;
 }
 
-main(HYPRE_Int argc, char *argv[])
+main(NALU_HYPRE_Int argc, char *argv[])
 {
-    HYPRE_Int ret;
+    NALU_HYPRE_Int ret;
     FILE *infile  = fopen(argv[1], "r");
     FILE *outfile = fopen(argv[2], "w");
 

@@ -16,7 +16,7 @@
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_RedBlackConstantCoefGS( void               *relax_vdata,
                               hypre_StructMatrix *A,
                               hypre_StructVector *b,
@@ -24,12 +24,12 @@ hypre_RedBlackConstantCoefGS( void               *relax_vdata,
 {
    hypre_RedBlackGSData  *relax_data = (hypre_RedBlackGSData  *)relax_vdata;
 
-   HYPRE_Int              max_iter    = (relax_data -> max_iter);
-   HYPRE_Int              zero_guess  = (relax_data -> zero_guess);
-   HYPRE_Int              rb_start    = (relax_data -> rb_start);
-   HYPRE_Int              diag_rank   = (relax_data -> diag_rank);
+   NALU_HYPRE_Int              max_iter    = (relax_data -> max_iter);
+   NALU_HYPRE_Int              zero_guess  = (relax_data -> zero_guess);
+   NALU_HYPRE_Int              rb_start    = (relax_data -> rb_start);
+   NALU_HYPRE_Int              diag_rank   = (relax_data -> diag_rank);
    hypre_ComputePkg      *compute_pkg = (relax_data -> compute_pkg);
-   HYPRE_Int              ndim = hypre_StructMatrixNDim(A);
+   NALU_HYPRE_Int              ndim = hypre_StructMatrixNDim(A);
 
    hypre_CommHandle      *comm_handle;
 
@@ -41,31 +41,31 @@ hypre_RedBlackConstantCoefGS( void               *relax_vdata,
    hypre_Box             *b_dbox;
    hypre_Box             *x_dbox;
 
-   HYPRE_Int              Ai, Astart, Ani, Anj;
-   HYPRE_Int              bstart, bni, bnj;
-   HYPRE_Int              xstart, xni, xnj;
-   HYPRE_Int              xoff0, xoff1, xoff2, xoff3, xoff4, xoff5;
+   NALU_HYPRE_Int              Ai, Astart, Ani, Anj;
+   NALU_HYPRE_Int              bstart, bni, bnj;
+   NALU_HYPRE_Int              xstart, xni, xnj;
+   NALU_HYPRE_Int              xoff0, xoff1, xoff2, xoff3, xoff4, xoff5;
 
-   HYPRE_Real            *Ap;
-   HYPRE_Real            *App;
-   HYPRE_Real            *bp;
-   HYPRE_Real            *xp;
+   NALU_HYPRE_Real            *Ap;
+   NALU_HYPRE_Real            *App;
+   NALU_HYPRE_Real            *bp;
+   NALU_HYPRE_Real            *xp;
 
    /* constant coefficient */
-   HYPRE_Int              constant_coeff = hypre_StructMatrixConstantCoefficient(A);
-   HYPRE_Real             App0, App1, App2, App3, App4, App5, AApd;
+   NALU_HYPRE_Int              constant_coeff = hypre_StructMatrixConstantCoefficient(A);
+   NALU_HYPRE_Real             App0, App1, App2, App3, App4, App5, AApd;
 
    hypre_IndexRef         start;
    hypre_Index            loop_size;
 
    hypre_StructStencil   *stencil;
    hypre_Index           *stencil_shape;
-   HYPRE_Int              stencil_size;
-   HYPRE_Int              offd[6];
+   NALU_HYPRE_Int              stencil_size;
+   NALU_HYPRE_Int              offd[6];
 
-   HYPRE_Int              iter, rb, redblack, d;
-   HYPRE_Int              compute_i, i, j;
-   HYPRE_Int              ni, nj, nk;
+   NALU_HYPRE_Int              iter, rb, redblack, d;
+   NALU_HYPRE_Int              compute_i, i, j;
+   NALU_HYPRE_Int              ni, nj, nk;
 
    /*----------------------------------------------------------
     * Initialize some things and deal with special cases

@@ -13,7 +13,7 @@
 void *
 hypre_StructKrylovCAlloc( size_t               count,
                           size_t               elt_size,
-                          HYPRE_MemoryLocation location)
+                          NALU_HYPRE_MemoryLocation location)
 {
    return ( (void*) hypre_CTAlloc(char, count * elt_size, location) );
 }
@@ -21,10 +21,10 @@ hypre_StructKrylovCAlloc( size_t               count,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_StructKrylovFree( void *ptr )
 {
-   hypre_TFree( ptr, HYPRE_MEMORY_HOST);
+   hypre_TFree( ptr, NALU_HYPRE_MEMORY_HOST);
 
    return hypre_error_flag;
 }
@@ -37,7 +37,7 @@ hypre_StructKrylovCreateVector( void *vvector )
 {
    hypre_StructVector *vector = (hypre_StructVector *)vvector;
    hypre_StructVector *new_vector;
-   HYPRE_Int          *num_ghost = hypre_StructVectorNumGhost(vector);
+   NALU_HYPRE_Int          *num_ghost = hypre_StructVectorNumGhost(vector);
 
    new_vector = hypre_StructVectorCreate( hypre_StructVectorComm(vector),
                                           hypre_StructVectorGrid(vector) );
@@ -52,22 +52,22 @@ hypre_StructKrylovCreateVector( void *vvector )
  *--------------------------------------------------------------------------*/
 
 void *
-hypre_StructKrylovCreateVectorArray(HYPRE_Int n, void *vvector )
+hypre_StructKrylovCreateVectorArray(NALU_HYPRE_Int n, void *vvector )
 {
    hypre_StructVector *vector = (hypre_StructVector *)vvector;
    hypre_StructVector **new_vector;
-   HYPRE_Int          *num_ghost = hypre_StructVectorNumGhost(vector);
-   HYPRE_Int i;
+   NALU_HYPRE_Int          *num_ghost = hypre_StructVectorNumGhost(vector);
+   NALU_HYPRE_Int i;
 
-   new_vector = hypre_CTAlloc(hypre_StructVector*, n, HYPRE_MEMORY_HOST);
+   new_vector = hypre_CTAlloc(hypre_StructVector*, n, NALU_HYPRE_MEMORY_HOST);
    for (i = 0; i < n; i++)
    {
-      HYPRE_StructVectorCreate(hypre_StructVectorComm(vector),
+      NALU_HYPRE_StructVectorCreate(hypre_StructVectorComm(vector),
                                hypre_StructVectorGrid(vector),
-                               (HYPRE_StructVector *) &new_vector[i] );
+                               (NALU_HYPRE_StructVector *) &new_vector[i] );
       hypre_StructVectorSetNumGhost(new_vector[i], num_ghost);
-      HYPRE_StructVectorInitialize((HYPRE_StructVector) new_vector[i]);
-      HYPRE_StructVectorAssemble((HYPRE_StructVector) new_vector[i]);
+      NALU_HYPRE_StructVectorInitialize((NALU_HYPRE_StructVector) new_vector[i]);
+      NALU_HYPRE_StructVectorAssemble((NALU_HYPRE_StructVector) new_vector[i]);
    }
 
    return ( (void *) new_vector );
@@ -76,7 +76,7 @@ hypre_StructKrylovCreateVectorArray(HYPRE_Int n, void *vvector )
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_StructKrylovDestroyVector( void *vvector )
 {
    hypre_StructVector *vector = (hypre_StructVector *)vvector;
@@ -102,12 +102,12 @@ hypre_StructKrylovMatvecCreate( void   *A,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_StructKrylovMatvec( void   *matvec_data,
-                          HYPRE_Complex  alpha,
+                          NALU_HYPRE_Complex  alpha,
                           void   *A,
                           void   *x,
-                          HYPRE_Complex  beta,
+                          NALU_HYPRE_Complex  beta,
                           void   *y           )
 {
    return ( hypre_StructMatvecCompute( matvec_data,
@@ -121,7 +121,7 @@ hypre_StructKrylovMatvec( void   *matvec_data,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_StructKrylovMatvecDestroy( void *matvec_data )
 {
    return ( hypre_StructMatvecDestroy( matvec_data ) );
@@ -130,7 +130,7 @@ hypre_StructKrylovMatvecDestroy( void *matvec_data )
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Real
+NALU_HYPRE_Real
 hypre_StructKrylovInnerProd( void *x,
                              void *y )
 {
@@ -142,7 +142,7 @@ hypre_StructKrylovInnerProd( void *x,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_StructKrylovCopyVector( void *x,
                               void *y )
 {
@@ -153,7 +153,7 @@ hypre_StructKrylovCopyVector( void *x,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_StructKrylovClearVector( void *x )
 {
    return ( hypre_StructVectorSetConstantValues( (hypre_StructVector *) x,
@@ -163,8 +163,8 @@ hypre_StructKrylovClearVector( void *x )
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_StructKrylovScaleVector( HYPRE_Complex  alpha,
+NALU_HYPRE_Int
+hypre_StructKrylovScaleVector( NALU_HYPRE_Complex  alpha,
                                void   *x     )
 {
    return ( hypre_StructScale( alpha, (hypre_StructVector *) x ) );
@@ -173,8 +173,8 @@ hypre_StructKrylovScaleVector( HYPRE_Complex  alpha,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_StructKrylovAxpy( HYPRE_Complex alpha,
+NALU_HYPRE_Int
+hypre_StructKrylovAxpy( NALU_HYPRE_Complex alpha,
                         void   *x,
                         void   *y )
 {
@@ -185,7 +185,7 @@ hypre_StructKrylovAxpy( HYPRE_Complex alpha,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_StructKrylovIdentitySetup( void *vdata,
                                  void *A,
                                  void *b,
@@ -198,7 +198,7 @@ hypre_StructKrylovIdentitySetup( void *vdata,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_StructKrylovIdentity( void *vdata,
                             void *A,
                             void *b,
@@ -211,10 +211,10 @@ hypre_StructKrylovIdentity( void *vdata,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_StructKrylovCommInfo( void  *A,
-                            HYPRE_Int   *my_id,
-                            HYPRE_Int   *num_procs )
+                            NALU_HYPRE_Int   *my_id,
+                            NALU_HYPRE_Int   *num_procs )
 {
    MPI_Comm comm = hypre_StructMatrixComm((hypre_StructMatrix *) A);
    hypre_MPI_Comm_size(comm, num_procs);

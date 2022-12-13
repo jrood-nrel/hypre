@@ -18,7 +18,7 @@ hypre_MaxwellTVCreate( MPI_Comm  comm )
    hypre_MaxwellData *maxwell_data;
    hypre_Index       *maxwell_rfactor;
 
-   maxwell_data = hypre_CTAlloc(hypre_MaxwellData,  1, HYPRE_MEMORY_HOST);
+   maxwell_data = hypre_CTAlloc(hypre_MaxwellData,  1, NALU_HYPRE_MEMORY_HOST);
 
    (maxwell_data -> comm)       = comm;
    (maxwell_data -> time_index) = hypre_InitializeTiming("Maxwell_Solver");
@@ -34,7 +34,7 @@ hypre_MaxwellTVCreate( MPI_Comm  comm )
    (maxwell_data -> print_level)    = 0;
    (maxwell_data -> logging)        = 0;
 
-   maxwell_rfactor = hypre_TAlloc(hypre_Index,  1, HYPRE_MEMORY_HOST);
+   maxwell_rfactor = hypre_TAlloc(hypre_Index,  1, NALU_HYPRE_MEMORY_HOST);
    hypre_SetIndex3(maxwell_rfactor[0], 2, 2, 2);
    (maxwell_data -> rfactor) = maxwell_rfactor;
 
@@ -46,34 +46,34 @@ hypre_MaxwellTVCreate( MPI_Comm  comm )
  * hypre_MaxwellTVDestroy
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_MaxwellTVDestroy( void *maxwell_vdata )
 {
    hypre_MaxwellData *maxwell_data = (hypre_MaxwellData *)maxwell_vdata;
 
-   HYPRE_Int l;
-   HYPRE_Int ierr = 0;
+   NALU_HYPRE_Int l;
+   NALU_HYPRE_Int ierr = 0;
 
    if (maxwell_data)
    {
-      hypre_TFree(maxwell_data-> rfactor, HYPRE_MEMORY_HOST);
+      hypre_TFree(maxwell_data-> rfactor, NALU_HYPRE_MEMORY_HOST);
 
       if ((maxwell_data -> logging) > 0)
       {
-         hypre_TFree(maxwell_data -> norms, HYPRE_MEMORY_HOST);
-         hypre_TFree(maxwell_data -> rel_norms, HYPRE_MEMORY_HOST);
+         hypre_TFree(maxwell_data -> norms, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(maxwell_data -> rel_norms, NALU_HYPRE_MEMORY_HOST);
       }
 
       if ((maxwell_data -> edge_numlevels) > 0)
       {
          for (l = 0; l < (maxwell_data-> edge_numlevels); l++)
          {
-            HYPRE_SStructGridDestroy(maxwell_data-> egrid_l[l]);
+            NALU_HYPRE_SStructGridDestroy(maxwell_data-> egrid_l[l]);
             hypre_ParVectorDestroy(maxwell_data-> rese_l[l]);
             hypre_ParVectorDestroy(maxwell_data-> ee_l[l]);
             hypre_ParVectorDestroy(maxwell_data-> eVtemp_l[l]);
             hypre_ParVectorDestroy(maxwell_data-> eVtemp2_l[l]);
-            hypre_TFree(maxwell_data -> eCF_marker_l[l], HYPRE_MEMORY_HOST);
+            hypre_TFree(maxwell_data -> eCF_marker_l[l], NALU_HYPRE_MEMORY_HOST);
 
             /* Cannot destroy Aee_l[0] since it points to the user
                Aee_in. */
@@ -86,28 +86,28 @@ hypre_MaxwellTVDestroy( void *maxwell_vdata )
 
             if (l < (maxwell_data-> edge_numlevels) - 1)
             {
-               HYPRE_IJMatrixDestroy(
-                  (HYPRE_IJMatrix)  (maxwell_data-> Pe_l[l]));
+               NALU_HYPRE_IJMatrixDestroy(
+                  (NALU_HYPRE_IJMatrix)  (maxwell_data-> Pe_l[l]));
             }
 
-            hypre_TFree(maxwell_data-> BdryRanks_l[l], HYPRE_MEMORY_HOST);
+            hypre_TFree(maxwell_data-> BdryRanks_l[l], NALU_HYPRE_MEMORY_HOST);
          }
-         hypre_TFree(maxwell_data-> egrid_l, HYPRE_MEMORY_HOST);
-         hypre_TFree(maxwell_data-> Aee_l, HYPRE_MEMORY_HOST);
-         hypre_TFree(maxwell_data-> be_l, HYPRE_MEMORY_HOST);
-         hypre_TFree(maxwell_data-> xe_l, HYPRE_MEMORY_HOST);
-         hypre_TFree(maxwell_data-> rese_l, HYPRE_MEMORY_HOST);
-         hypre_TFree(maxwell_data-> ee_l, HYPRE_MEMORY_HOST);
-         hypre_TFree(maxwell_data-> eVtemp_l, HYPRE_MEMORY_HOST);
-         hypre_TFree(maxwell_data-> eVtemp2_l, HYPRE_MEMORY_HOST);
-         hypre_TFree(maxwell_data-> Pe_l, HYPRE_MEMORY_HOST);
-         hypre_TFree(maxwell_data-> ReT_l, HYPRE_MEMORY_HOST);
-         hypre_TFree(maxwell_data-> eCF_marker_l, HYPRE_MEMORY_HOST);
-         hypre_TFree(maxwell_data-> erelax_weight, HYPRE_MEMORY_HOST);
-         hypre_TFree(maxwell_data-> eomega, HYPRE_MEMORY_HOST);
+         hypre_TFree(maxwell_data-> egrid_l, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(maxwell_data-> Aee_l, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(maxwell_data-> be_l, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(maxwell_data-> xe_l, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(maxwell_data-> rese_l, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(maxwell_data-> ee_l, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(maxwell_data-> eVtemp_l, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(maxwell_data-> eVtemp2_l, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(maxwell_data-> Pe_l, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(maxwell_data-> ReT_l, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(maxwell_data-> eCF_marker_l, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(maxwell_data-> erelax_weight, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(maxwell_data-> eomega, NALU_HYPRE_MEMORY_HOST);
 
-         hypre_TFree(maxwell_data-> BdryRanks_l, HYPRE_MEMORY_HOST);
-         hypre_TFree(maxwell_data-> BdryRanksCnts_l, HYPRE_MEMORY_HOST);
+         hypre_TFree(maxwell_data-> BdryRanks_l, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(maxwell_data-> BdryRanksCnts_l, NALU_HYPRE_MEMORY_HOST);
       }
 
       if ((maxwell_data -> node_numlevels) > 0)
@@ -121,22 +121,22 @@ hypre_MaxwellTVDestroy( void *maxwell_vdata )
          }
          hypre_BoomerAMGDestroy(maxwell_data-> amg_vdata);
 
-         hypre_TFree(maxwell_data-> Ann_l, HYPRE_MEMORY_HOST);
-         hypre_TFree(maxwell_data-> Pn_l, HYPRE_MEMORY_HOST);
-         hypre_TFree(maxwell_data-> RnT_l, HYPRE_MEMORY_HOST);
-         hypre_TFree(maxwell_data-> bn_l, HYPRE_MEMORY_HOST);
-         hypre_TFree(maxwell_data-> xn_l, HYPRE_MEMORY_HOST);
-         hypre_TFree(maxwell_data-> resn_l, HYPRE_MEMORY_HOST);
-         hypre_TFree(maxwell_data-> en_l, HYPRE_MEMORY_HOST);
-         hypre_TFree(maxwell_data-> nVtemp_l, HYPRE_MEMORY_HOST);
-         hypre_TFree(maxwell_data-> nVtemp2_l, HYPRE_MEMORY_HOST);
-         hypre_TFree(maxwell_data-> nCF_marker_l, HYPRE_MEMORY_HOST);
-         hypre_TFree(maxwell_data-> nrelax_weight, HYPRE_MEMORY_HOST);
-         hypre_TFree(maxwell_data-> nomega, HYPRE_MEMORY_HOST);
+         hypre_TFree(maxwell_data-> Ann_l, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(maxwell_data-> Pn_l, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(maxwell_data-> RnT_l, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(maxwell_data-> bn_l, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(maxwell_data-> xn_l, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(maxwell_data-> resn_l, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(maxwell_data-> en_l, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(maxwell_data-> nVtemp_l, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(maxwell_data-> nVtemp2_l, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(maxwell_data-> nCF_marker_l, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(maxwell_data-> nrelax_weight, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(maxwell_data-> nomega, NALU_HYPRE_MEMORY_HOST);
       }
 
-      HYPRE_SStructStencilDestroy(maxwell_data-> Ann_stencils[0]);
-      hypre_TFree(maxwell_data-> Ann_stencils, HYPRE_MEMORY_HOST);
+      NALU_HYPRE_SStructStencilDestroy(maxwell_data-> Ann_stencils[0]);
+      hypre_TFree(maxwell_data-> Ann_stencils, NALU_HYPRE_MEMORY_HOST);
 
       if ((maxwell_data -> en_numlevels) > 0)
       {
@@ -145,20 +145,20 @@ hypre_MaxwellTVDestroy( void *maxwell_vdata )
             hypre_ParCSRMatrixDestroy(maxwell_data-> Aen_l[l]);
          }
       }
-      hypre_TFree(maxwell_data-> Aen_l, HYPRE_MEMORY_HOST);
+      hypre_TFree(maxwell_data-> Aen_l, NALU_HYPRE_MEMORY_HOST);
 
-      HYPRE_SStructVectorDestroy(
-         (HYPRE_SStructVector) maxwell_data-> bn);
-      HYPRE_SStructVectorDestroy(
-         (HYPRE_SStructVector) maxwell_data-> xn);
-      HYPRE_SStructMatrixDestroy(
-         (HYPRE_SStructMatrix) maxwell_data-> Ann);
-      HYPRE_IJMatrixDestroy(maxwell_data-> Aen);
+      NALU_HYPRE_SStructVectorDestroy(
+         (NALU_HYPRE_SStructVector) maxwell_data-> bn);
+      NALU_HYPRE_SStructVectorDestroy(
+         (NALU_HYPRE_SStructVector) maxwell_data-> xn);
+      NALU_HYPRE_SStructMatrixDestroy(
+         (NALU_HYPRE_SStructMatrix) maxwell_data-> Ann);
+      NALU_HYPRE_IJMatrixDestroy(maxwell_data-> Aen);
 
       hypre_ParCSRMatrixDestroy(maxwell_data-> T_transpose);
 
       hypre_FinalizeTiming(maxwell_data -> time_index);
-      hypre_TFree(maxwell_data, HYPRE_MEMORY_HOST);
+      hypre_TFree(maxwell_data, NALU_HYPRE_MEMORY_HOST);
    }
 
    return (ierr);
@@ -167,13 +167,13 @@ hypre_MaxwellTVDestroy( void *maxwell_vdata )
 /*--------------------------------------------------------------------------
  * hypre_MaxwellSetRfactors
  *--------------------------------------------------------------------------*/
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_MaxwellSetRfactors(void         *maxwell_vdata,
-                         HYPRE_Int     rfactor[3] )
+                         NALU_HYPRE_Int     rfactor[3] )
 {
    hypre_MaxwellData *maxwell_data   = (hypre_MaxwellData *)maxwell_vdata;
    hypre_Index       *maxwell_rfactor = (maxwell_data -> rfactor);
-   HYPRE_Int          ierr       = 0;
+   NALU_HYPRE_Int          ierr       = 0;
 
    hypre_CopyIndex(rfactor, maxwell_rfactor[0]);
 
@@ -183,12 +183,12 @@ hypre_MaxwellSetRfactors(void         *maxwell_vdata,
 /*--------------------------------------------------------------------------
  * hypre_MaxwellSetGrad
  *--------------------------------------------------------------------------*/
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_MaxwellSetGrad(void               *maxwell_vdata,
                      hypre_ParCSRMatrix *T )
 {
    hypre_MaxwellData *maxwell_data = (hypre_MaxwellData *)maxwell_vdata;
-   HYPRE_Int          ierr       = 0;
+   NALU_HYPRE_Int          ierr       = 0;
 
    (maxwell_data -> Tgrad) =  T;
 
@@ -198,12 +198,12 @@ hypre_MaxwellSetGrad(void               *maxwell_vdata,
 /*--------------------------------------------------------------------------
  * hypre_MaxwellSetConstantCoef
  *--------------------------------------------------------------------------*/
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_MaxwellSetConstantCoef( void   *maxwell_vdata,
-                              HYPRE_Int     constant_coef)
+                              NALU_HYPRE_Int     constant_coef)
 {
    hypre_MaxwellData *maxwell_data = (hypre_MaxwellData *)maxwell_vdata;
-   HYPRE_Int          ierr        = 0;
+   NALU_HYPRE_Int          ierr        = 0;
 
    (maxwell_data -> constant_coef) = constant_coef;
 
@@ -213,12 +213,12 @@ hypre_MaxwellSetConstantCoef( void   *maxwell_vdata,
 /*--------------------------------------------------------------------------
  * hypre_MaxwellSetTol
  *--------------------------------------------------------------------------*/
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_MaxwellSetTol( void   *maxwell_vdata,
-                     HYPRE_Real  tol       )
+                     NALU_HYPRE_Real  tol       )
 {
    hypre_MaxwellData *maxwell_data = (hypre_MaxwellData *)maxwell_vdata;
-   HYPRE_Int          ierr        = 0;
+   NALU_HYPRE_Int          ierr        = 0;
 
    (maxwell_data -> tol) = tol;
 
@@ -228,12 +228,12 @@ hypre_MaxwellSetTol( void   *maxwell_vdata,
 /*--------------------------------------------------------------------------
  * hypre_MaxwellSetMaxIter
  *--------------------------------------------------------------------------*/
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_MaxwellSetMaxIter( void *maxwell_vdata,
-                         HYPRE_Int   max_iter  )
+                         NALU_HYPRE_Int   max_iter  )
 {
    hypre_MaxwellData *maxwell_data = (hypre_MaxwellData *)maxwell_vdata;
-   HYPRE_Int          ierr = 0;
+   NALU_HYPRE_Int          ierr = 0;
 
    (maxwell_data -> max_iter) = max_iter;
 
@@ -243,12 +243,12 @@ hypre_MaxwellSetMaxIter( void *maxwell_vdata,
 /*--------------------------------------------------------------------------
  * hypre_MaxwellSetRelChange
  *--------------------------------------------------------------------------*/
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_MaxwellSetRelChange( void *maxwell_vdata,
-                           HYPRE_Int   rel_change  )
+                           NALU_HYPRE_Int   rel_change  )
 {
    hypre_MaxwellData *maxwell_data = (hypre_MaxwellData *)maxwell_vdata;
-   HYPRE_Int          ierr = 0;
+   NALU_HYPRE_Int          ierr = 0;
 
    (maxwell_data -> rel_change) = rel_change;
 
@@ -259,12 +259,12 @@ hypre_MaxwellSetRelChange( void *maxwell_vdata,
  * hypre_MaxwellNumPreRelax
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_MaxwellSetNumPreRelax( void *maxwell_vdata,
-                             HYPRE_Int   num_pre_relax )
+                             NALU_HYPRE_Int   num_pre_relax )
 {
    hypre_MaxwellData *maxwell_data = (hypre_MaxwellData *)maxwell_vdata;
-   HYPRE_Int          ierr = 0;
+   NALU_HYPRE_Int          ierr = 0;
 
    (maxwell_data -> num_pre_relax) = num_pre_relax;
 
@@ -274,12 +274,12 @@ hypre_MaxwellSetNumPreRelax( void *maxwell_vdata,
 /*--------------------------------------------------------------------------
  * hypre_MaxwellSetNumPostRelax
  *--------------------------------------------------------------------------*/
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_MaxwellSetNumPostRelax( void *maxwell_vdata,
-                              HYPRE_Int   num_post_relax )
+                              NALU_HYPRE_Int   num_post_relax )
 {
    hypre_MaxwellData *maxwell_data = (hypre_MaxwellData *)maxwell_vdata;
-   HYPRE_Int          ierr = 0;
+   NALU_HYPRE_Int          ierr = 0;
 
    (maxwell_data -> num_post_relax) = num_post_relax;
 
@@ -289,12 +289,12 @@ hypre_MaxwellSetNumPostRelax( void *maxwell_vdata,
 /*--------------------------------------------------------------------------
  * hypre_MaxwellGetNumIterations
  *--------------------------------------------------------------------------*/
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_MaxwellGetNumIterations( void *maxwell_vdata,
-                               HYPRE_Int  *num_iterations )
+                               NALU_HYPRE_Int  *num_iterations )
 {
    hypre_MaxwellData *maxwell_data = (hypre_MaxwellData *)maxwell_vdata;
-   HYPRE_Int          ierr = 0;
+   NALU_HYPRE_Int          ierr = 0;
 
    *num_iterations = (maxwell_data -> num_iterations);
 
@@ -304,12 +304,12 @@ hypre_MaxwellGetNumIterations( void *maxwell_vdata,
 /*--------------------------------------------------------------------------
  * hypre_MaxwellSetPrintLevel
  *--------------------------------------------------------------------------*/
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_MaxwellSetPrintLevel( void *maxwell_vdata,
-                            HYPRE_Int   print_level)
+                            NALU_HYPRE_Int   print_level)
 {
    hypre_MaxwellData *maxwell_data = (hypre_MaxwellData *)maxwell_vdata;
-   HYPRE_Int          ierr = 0;
+   NALU_HYPRE_Int          ierr = 0;
 
    (maxwell_data -> print_level) = print_level;
 
@@ -319,12 +319,12 @@ hypre_MaxwellSetPrintLevel( void *maxwell_vdata,
 /*--------------------------------------------------------------------------
  * hypre_MaxwellSetLogging
  *--------------------------------------------------------------------------*/
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_MaxwellSetLogging( void *maxwell_vdata,
-                         HYPRE_Int   logging)
+                         NALU_HYPRE_Int   logging)
 {
    hypre_MaxwellData *maxwell_data = (hypre_MaxwellData *)maxwell_vdata;
-   HYPRE_Int          ierr = 0;
+   NALU_HYPRE_Int          ierr = 0;
 
    (maxwell_data -> logging) = logging;
 
@@ -334,18 +334,18 @@ hypre_MaxwellSetLogging( void *maxwell_vdata,
 /*--------------------------------------------------------------------------
  * hypre_MaxwellPrintLogging
  *--------------------------------------------------------------------------*/
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_MaxwellPrintLogging( void *maxwell_vdata,
-                           HYPRE_Int   myid)
+                           NALU_HYPRE_Int   myid)
 {
    hypre_MaxwellData *maxwell_data = (hypre_MaxwellData *)maxwell_vdata;
-   HYPRE_Int          ierr = 0;
-   HYPRE_Int          i;
-   HYPRE_Int          num_iterations = (maxwell_data -> num_iterations);
-   HYPRE_Int          logging       = (maxwell_data -> logging);
-   HYPRE_Int          print_level   = (maxwell_data -> print_level);
-   HYPRE_Real        *norms         = (maxwell_data -> norms);
-   HYPRE_Real        *rel_norms     = (maxwell_data -> rel_norms);
+   NALU_HYPRE_Int          ierr = 0;
+   NALU_HYPRE_Int          i;
+   NALU_HYPRE_Int          num_iterations = (maxwell_data -> num_iterations);
+   NALU_HYPRE_Int          logging       = (maxwell_data -> logging);
+   NALU_HYPRE_Int          print_level   = (maxwell_data -> print_level);
+   NALU_HYPRE_Real        *norms         = (maxwell_data -> norms);
+   NALU_HYPRE_Real        *rel_norms     = (maxwell_data -> rel_norms);
 
    if (myid == 0)
    {
@@ -365,18 +365,18 @@ hypre_MaxwellPrintLogging( void *maxwell_vdata,
    return ierr;
 }
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_MaxwellGetFinalRelativeResidualNorm( void   *maxwell_vdata,
-                                           HYPRE_Real *relative_residual_norm )
+                                           NALU_HYPRE_Real *relative_residual_norm )
 {
    hypre_MaxwellData *maxwell_data = (hypre_MaxwellData *)maxwell_vdata;
 
-   HYPRE_Int          max_iter        = (maxwell_data -> max_iter);
-   HYPRE_Int          num_iterations  = (maxwell_data -> num_iterations);
-   HYPRE_Int          logging         = (maxwell_data -> logging);
-   HYPRE_Real        *rel_norms       = (maxwell_data -> rel_norms);
+   NALU_HYPRE_Int          max_iter        = (maxwell_data -> max_iter);
+   NALU_HYPRE_Int          num_iterations  = (maxwell_data -> num_iterations);
+   NALU_HYPRE_Int          logging         = (maxwell_data -> logging);
+   NALU_HYPRE_Real        *rel_norms       = (maxwell_data -> rel_norms);
 
-   HYPRE_Int          ierr = 0;
+   NALU_HYPRE_Int          ierr = 0;
 
    if (logging > 0)
    {

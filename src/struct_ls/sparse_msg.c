@@ -22,7 +22,7 @@ hypre_SparseMSGCreate( MPI_Comm  comm )
 {
    hypre_SparseMSGData *smsg_data;
 
-   smsg_data = hypre_CTAlloc(hypre_SparseMSGData,  1, HYPRE_MEMORY_HOST);
+   smsg_data = hypre_CTAlloc(hypre_SparseMSGData,  1, NALU_HYPRE_MEMORY_HOST);
 
    (smsg_data -> comm)       = comm;
    (smsg_data -> time_index) = hypre_InitializeTiming("SparseMSG");
@@ -56,23 +56,23 @@ hypre_SparseMSGCreate( MPI_Comm  comm )
  * hypre_SparseMSGDestroy
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SparseMSGDestroy( void *smsg_vdata )
 {
-   HYPRE_Int ierr = 0;
+   NALU_HYPRE_Int ierr = 0;
 
    /* RDF */
 #if 0
    hypre_SparseMSGData *smsg_data = smsg_vdata;
 
-   HYPRE_Int fi, l;
+   NALU_HYPRE_Int fi, l;
 
    if (smsg_data)
    {
       if ((smsg_data -> logging) > 0)
       {
-         hypre_TFree(smsg_data -> norms, HYPRE_MEMORY_HOST);
-         hypre_TFree(smsg_data -> rel_norms, HYPRE_MEMORY_HOST);
+         hypre_TFree(smsg_data -> norms, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(smsg_data -> rel_norms, NALU_HYPRE_MEMORY_HOST);
       }
 
       if ((smsg_data -> num_levels) > 1)
@@ -114,35 +114,35 @@ hypre_SparseMSGDestroy( void *smsg_vdata )
             hypre_StructGridDestroy(smsg_data -> Pz_grid_array[l]);
          }
 
-         hypre_TFree(smsg_data -> data, HYPRE_MEMORY_HOST);
+         hypre_TFree(smsg_data -> data, NALU_HYPRE_MEMORY_HOST);
 
-         hypre_TFree(smsg_data -> relax_array, HYPRE_MEMORY_HOST);
-         hypre_TFree(smsg_data -> matvec_array, HYPRE_MEMORY_HOST);
-         hypre_TFree(smsg_data -> restrictx_array, HYPRE_MEMORY_HOST);
-         hypre_TFree(smsg_data -> restricty_array, HYPRE_MEMORY_HOST);
-         hypre_TFree(smsg_data -> restrictz_array, HYPRE_MEMORY_HOST);
-         hypre_TFree(smsg_data -> interpx_array, HYPRE_MEMORY_HOST);
-         hypre_TFree(smsg_data -> interpy_array, HYPRE_MEMORY_HOST);
-         hypre_TFree(smsg_data -> interpz_array, HYPRE_MEMORY_HOST);
-         hypre_TFree(smsg_data -> A_array, HYPRE_MEMORY_HOST);
-         hypre_TFree(smsg_data -> Px_array, HYPRE_MEMORY_HOST);
-         hypre_TFree(smsg_data -> Py_array, HYPRE_MEMORY_HOST);
-         hypre_TFree(smsg_data -> Pz_array, HYPRE_MEMORY_HOST);
-         hypre_TFree(smsg_data -> RTx_array, HYPRE_MEMORY_HOST);
-         hypre_TFree(smsg_data -> RTy_array, HYPRE_MEMORY_HOST);
-         hypre_TFree(smsg_data -> RTz_array, HYPRE_MEMORY_HOST);
-         hypre_TFree(smsg_data -> b_array, HYPRE_MEMORY_HOST);
-         hypre_TFree(smsg_data -> x_array, HYPRE_MEMORY_HOST);
-         hypre_TFree(smsg_data -> t_array, HYPRE_MEMORY_HOST);
-         hypre_TFree(smsg_data -> r_array, HYPRE_MEMORY_HOST);
-         hypre_TFree(smsg_data -> grid_array, HYPRE_MEMORY_HOST);
-         hypre_TFree(smsg_data -> Px_grid_array, HYPRE_MEMORY_HOST);
-         hypre_TFree(smsg_data -> Py_grid_array, HYPRE_MEMORY_HOST);
-         hypre_TFree(smsg_data -> Pz_grid_array, HYPRE_MEMORY_HOST);
+         hypre_TFree(smsg_data -> relax_array, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(smsg_data -> matvec_array, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(smsg_data -> restrictx_array, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(smsg_data -> restricty_array, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(smsg_data -> restrictz_array, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(smsg_data -> interpx_array, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(smsg_data -> interpy_array, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(smsg_data -> interpz_array, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(smsg_data -> A_array, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(smsg_data -> Px_array, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(smsg_data -> Py_array, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(smsg_data -> Pz_array, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(smsg_data -> RTx_array, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(smsg_data -> RTy_array, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(smsg_data -> RTz_array, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(smsg_data -> b_array, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(smsg_data -> x_array, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(smsg_data -> t_array, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(smsg_data -> r_array, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(smsg_data -> grid_array, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(smsg_data -> Px_grid_array, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(smsg_data -> Py_grid_array, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(smsg_data -> Pz_grid_array, NALU_HYPRE_MEMORY_HOST);
       }
 
       hypre_FinalizeTiming(smsg_data -> time_index);
-      hypre_TFree(smsg_data, HYPRE_MEMORY_HOST);
+      hypre_TFree(smsg_data, NALU_HYPRE_MEMORY_HOST);
    }
 #endif
    /* RDF */
@@ -154,12 +154,12 @@ hypre_SparseMSGDestroy( void *smsg_vdata )
  * hypre_SparseMSGSetTol
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SparseMSGSetTol( void   *smsg_vdata,
-                       HYPRE_Real  tol        )
+                       NALU_HYPRE_Real  tol        )
 {
    hypre_SparseMSGData *smsg_data = (hypre_SparseMSGData *)smsg_vdata;
-   HYPRE_Int       ierr = 0;
+   NALU_HYPRE_Int       ierr = 0;
 
    (smsg_data -> tol) = tol;
 
@@ -170,12 +170,12 @@ hypre_SparseMSGSetTol( void   *smsg_vdata,
  * hypre_SparseMSGSetMaxIter
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SparseMSGSetMaxIter( void *smsg_vdata,
-                           HYPRE_Int   max_iter   )
+                           NALU_HYPRE_Int   max_iter   )
 {
    hypre_SparseMSGData *smsg_data = (hypre_SparseMSGData *)smsg_vdata;
-   HYPRE_Int       ierr = 0;
+   NALU_HYPRE_Int       ierr = 0;
 
    (smsg_data -> max_iter) = max_iter;
 
@@ -186,13 +186,13 @@ hypre_SparseMSGSetMaxIter( void *smsg_vdata,
  * hypre_SparseMSGSetJump
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SparseMSGSetJump(  void *smsg_vdata,
-                         HYPRE_Int   jump       )
+                         NALU_HYPRE_Int   jump       )
 
 {
    hypre_SparseMSGData *smsg_data = (hypre_SparseMSGData *)smsg_vdata;
-   HYPRE_Int            ierr = 0;
+   NALU_HYPRE_Int            ierr = 0;
 
    (smsg_data -> jump) = jump;
 
@@ -203,12 +203,12 @@ hypre_SparseMSGSetJump(  void *smsg_vdata,
  * hypre_SparseMSGSetRelChange
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SparseMSGSetRelChange( void *smsg_vdata,
-                             HYPRE_Int   rel_change )
+                             NALU_HYPRE_Int   rel_change )
 {
    hypre_SparseMSGData *smsg_data = (hypre_SparseMSGData *)smsg_vdata;
-   HYPRE_Int       ierr = 0;
+   NALU_HYPRE_Int       ierr = 0;
 
    (smsg_data -> rel_change) = rel_change;
 
@@ -219,12 +219,12 @@ hypre_SparseMSGSetRelChange( void *smsg_vdata,
  * hypre_SparseMSGSetZeroGuess
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SparseMSGSetZeroGuess( void *smsg_vdata,
-                             HYPRE_Int   zero_guess )
+                             NALU_HYPRE_Int   zero_guess )
 {
    hypre_SparseMSGData *smsg_data = (hypre_SparseMSGData *)smsg_vdata;
-   HYPRE_Int       ierr = 0;
+   NALU_HYPRE_Int       ierr = 0;
 
    (smsg_data -> zero_guess) = zero_guess;
 
@@ -235,12 +235,12 @@ hypre_SparseMSGSetZeroGuess( void *smsg_vdata,
  * hypre_SparseMSGSetRelaxType
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SparseMSGSetRelaxType( void *smsg_vdata,
-                             HYPRE_Int   relax_type )
+                             NALU_HYPRE_Int   relax_type )
 {
    hypre_SparseMSGData *smsg_data = (hypre_SparseMSGData *)smsg_vdata;
-   HYPRE_Int       ierr = 0;
+   NALU_HYPRE_Int       ierr = 0;
 
    (smsg_data -> relax_type) = relax_type;
 
@@ -250,9 +250,9 @@ hypre_SparseMSGSetRelaxType( void *smsg_vdata,
 /*--------------------------------------------------------------------------
  * hypre_SparseMSGSetJacobiWeight
  *--------------------------------------------------------------------------*/
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SparseMSGSetJacobiWeight( void  *smsg_vdata,
-                                HYPRE_Real weight )
+                                NALU_HYPRE_Real weight )
 {
    hypre_SparseMSGData *smsg_data = (hypre_SparseMSGData *)smsg_vdata;
 
@@ -266,12 +266,12 @@ hypre_SparseMSGSetJacobiWeight( void  *smsg_vdata,
  * hypre_SparseMSGSetNumPreRelax
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SparseMSGSetNumPreRelax( void *smsg_vdata,
-                               HYPRE_Int   num_pre_relax )
+                               NALU_HYPRE_Int   num_pre_relax )
 {
    hypre_SparseMSGData *smsg_data = (hypre_SparseMSGData *)smsg_vdata;
-   HYPRE_Int       ierr = 0;
+   NALU_HYPRE_Int       ierr = 0;
 
    (smsg_data -> num_pre_relax) = num_pre_relax;
 
@@ -282,12 +282,12 @@ hypre_SparseMSGSetNumPreRelax( void *smsg_vdata,
  * hypre_SparseMSGSetNumPostRelax
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SparseMSGSetNumPostRelax( void *smsg_vdata,
-                                HYPRE_Int   num_post_relax )
+                                NALU_HYPRE_Int   num_post_relax )
 {
    hypre_SparseMSGData *smsg_data = (hypre_SparseMSGData *)smsg_vdata;
-   HYPRE_Int       ierr = 0;
+   NALU_HYPRE_Int       ierr = 0;
 
    (smsg_data -> num_post_relax) = num_post_relax;
 
@@ -298,12 +298,12 @@ hypre_SparseMSGSetNumPostRelax( void *smsg_vdata,
  * hypre_SparseMSGSetNumFineRelax
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SparseMSGSetNumFineRelax( void *smsg_vdata,
-                                HYPRE_Int   num_fine_relax )
+                                NALU_HYPRE_Int   num_fine_relax )
 {
    hypre_SparseMSGData *smsg_data = (hypre_SparseMSGData *)smsg_vdata;
-   HYPRE_Int       ierr = 0;
+   NALU_HYPRE_Int       ierr = 0;
 
    (smsg_data -> num_fine_relax) = num_fine_relax;
 
@@ -314,12 +314,12 @@ hypre_SparseMSGSetNumFineRelax( void *smsg_vdata,
  * hypre_SparseMSGSetLogging
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SparseMSGSetLogging( void *smsg_vdata,
-                           HYPRE_Int   logging    )
+                           NALU_HYPRE_Int   logging    )
 {
    hypre_SparseMSGData *smsg_data = (hypre_SparseMSGData *)smsg_vdata;
-   HYPRE_Int       ierr = 0;
+   NALU_HYPRE_Int       ierr = 0;
 
    (smsg_data -> logging) = logging;
 
@@ -330,12 +330,12 @@ hypre_SparseMSGSetLogging( void *smsg_vdata,
  * hypre_SparseMSGSetPrintLevel
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SparseMSGSetPrintLevel( void *smsg_vdata,
-                              HYPRE_Int   print_level    )
+                              NALU_HYPRE_Int   print_level    )
 {
    hypre_SparseMSGData *smsg_data = (hypre_SparseMSGData *)smsg_vdata;
-   HYPRE_Int       ierr = 0;
+   NALU_HYPRE_Int       ierr = 0;
 
    (smsg_data -> print_level) = print_level;
 
@@ -346,12 +346,12 @@ hypre_SparseMSGSetPrintLevel( void *smsg_vdata,
  * hypre_SparseMSGGetNumIterations
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SparseMSGGetNumIterations( void *smsg_vdata,
-                                 HYPRE_Int  *num_iterations )
+                                 NALU_HYPRE_Int  *num_iterations )
 {
    hypre_SparseMSGData *smsg_data = (hypre_SparseMSGData *)smsg_vdata;
-   HYPRE_Int       ierr = 0;
+   NALU_HYPRE_Int       ierr = 0;
 
    *num_iterations = (smsg_data -> num_iterations);
 
@@ -362,18 +362,18 @@ hypre_SparseMSGGetNumIterations( void *smsg_vdata,
  * hypre_SparseMSGPrintLogging
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SparseMSGPrintLogging( void *smsg_vdata,
-                             HYPRE_Int   myid       )
+                             NALU_HYPRE_Int   myid       )
 {
    hypre_SparseMSGData *smsg_data = (hypre_SparseMSGData *)smsg_vdata;
-   HYPRE_Int       ierr = 0;
-   HYPRE_Int       i;
-   HYPRE_Int       num_iterations  = (smsg_data -> num_iterations);
-   HYPRE_Int       logging   = (smsg_data -> logging);
-   HYPRE_Int     print_level = (smsg_data -> print_level);
-   HYPRE_Real     *norms     = (smsg_data -> norms);
-   HYPRE_Real     *rel_norms = (smsg_data -> rel_norms);
+   NALU_HYPRE_Int       ierr = 0;
+   NALU_HYPRE_Int       i;
+   NALU_HYPRE_Int       num_iterations  = (smsg_data -> num_iterations);
+   NALU_HYPRE_Int       logging   = (smsg_data -> logging);
+   NALU_HYPRE_Int     print_level = (smsg_data -> print_level);
+   NALU_HYPRE_Real     *norms     = (smsg_data -> norms);
+   NALU_HYPRE_Real     *rel_norms = (smsg_data -> rel_norms);
 
    if (myid == 0)
    {
@@ -397,18 +397,18 @@ hypre_SparseMSGPrintLogging( void *smsg_vdata,
  * hypre_SparseMSGGetFinalRelativeResidualNorm
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SparseMSGGetFinalRelativeResidualNorm( void   *smsg_vdata,
-                                             HYPRE_Real *relative_residual_norm )
+                                             NALU_HYPRE_Real *relative_residual_norm )
 {
    hypre_SparseMSGData *smsg_data = (hypre_SparseMSGData *)smsg_vdata;
 
-   HYPRE_Int       max_iter        = (smsg_data -> max_iter);
-   HYPRE_Int       num_iterations  = (smsg_data -> num_iterations);
-   HYPRE_Int       logging         = (smsg_data -> logging);
-   HYPRE_Real     *rel_norms       = (smsg_data -> rel_norms);
+   NALU_HYPRE_Int       max_iter        = (smsg_data -> max_iter);
+   NALU_HYPRE_Int       num_iterations  = (smsg_data -> num_iterations);
+   NALU_HYPRE_Int       logging         = (smsg_data -> logging);
+   NALU_HYPRE_Real     *rel_norms       = (smsg_data -> rel_norms);
 
-   HYPRE_Int       ierr = 0;
+   NALU_HYPRE_Int       ierr = 0;
 
 
    if (logging > 0)

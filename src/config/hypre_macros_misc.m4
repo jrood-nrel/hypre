@@ -4,17 +4,17 @@ dnl
 dnl SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 dnl **********************************************************************
-dnl * AC_HYPRE_CHECK_MPI
+dnl * AC_NALU_HYPRE_CHECK_MPI
 dnl *
 dnl try to determine what the MPI flags should be
-dnl AC_HYPRE_CHECK_MPI([ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
+dnl AC_NALU_HYPRE_CHECK_MPI([ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
 dnl ACTION-IF-FOUND is a list of shell commands to run
 dnl   if an MPI library is found, and
 dnl ACTION-IF-NOT-FOUND is a list of commands to run it
 dnl   if it is not found. If ACTION-IF-FOUND is not specified,
 dnl   the default action will define HAVE_MPI.
 dnl **********************************************************************
-AC_DEFUN([AC_HYPRE_CHECK_MPI],
+AC_DEFUN([AC_NALU_HYPRE_CHECK_MPI],
 [AC_PREREQ(2.57)dnl
 AC_PREREQ(2.50) dnl for AC_LANG_CASE
 
@@ -54,17 +54,17 @@ if test x = x"$MPILIBS"; then
   $2
   :
 else
-  AC_DEFINE(HYPRE_HAVE_MPI,1,[Define to 1 if an MPI library is found])
+  AC_DEFINE(NALU_HYPRE_HAVE_MPI,1,[Define to 1 if an MPI library is found])
   $1
   :
 fi
 ])
 
 dnl **********************************************************************
-dnl * AC_HYPRE_FIND_G2C
+dnl * AC_NALU_HYPRE_FIND_G2C
 dnl *  try to find libg2c.a
 dnl **********************************************************************
-AC_DEFUN([AC_HYPRE_FIND_G2C],
+AC_DEFUN([AC_NALU_HYPRE_FIND_G2C],
 [
 dnl AC_REQUIRE([AC_FC_LIBRARY_LDFLAGS])
 
@@ -89,11 +89,11 @@ dnl * This setting of LDFLAGS is not the right way to go (RDF)
 ])
 
 dnl **********************************************************************
-dnl * AC_HYPRE_OPTIMIZATION_FLAGS
+dnl * AC_NALU_HYPRE_OPTIMIZATION_FLAGS
 dnl *
 dnl * Set compile FLAGS for optimization
 dnl **********************************************************************
-AC_DEFUN([AC_HYPRE_OPTIMIZATION_FLAGS],
+AC_DEFUN([AC_NALU_HYPRE_OPTIMIZATION_FLAGS],
 [AC_PREREQ(2.57)dnl
 
 if test "x${hypre_user_chose_cflags}" = "xno"
@@ -209,11 +209,11 @@ then
 fi])
 
 dnl **********************************************************************
-dnl * AC_HYPRE_DEBUG_FLAGS
+dnl * AC_NALU_HYPRE_DEBUG_FLAGS
 dnl *
 dnl * Set compile FLAGS for debug
 dnl **********************************************************************
-AC_DEFUN([AC_HYPRE_DEBUG_FLAGS],
+AC_DEFUN([AC_NALU_HYPRE_DEBUG_FLAGS],
 [AC_PREREQ(2.57)dnl
 
 if test "x${hypre_user_chose_cflags}" = "xno"
@@ -329,7 +329,7 @@ then
 fi])
 
 dnl **********************************************************************
-dnl * AC_HYPRE_SET_ARCH
+dnl * AC_NALU_HYPRE_SET_ARCH
 dnl * Defines the architecture of the platform on which the code is to run.
 dnl * Cross-compiling is indicated by the host and build platforms being
 dnl * different values, which are usually user supplied on the command line.
@@ -346,7 +346,7 @@ dnl * fails, ARCH is set to the value, if any, of shell variable HOSTTYPE,
 dnl * otherwise ARCH is set to "unknown".
 dnl **********************************************************************
 
-AC_DEFUN([AC_HYPRE_SET_ARCH],
+AC_DEFUN([AC_NALU_HYPRE_SET_ARCH],
 [
    if test $host_alias = $build_alias
    then
@@ -386,48 +386,48 @@ AC_DEFUN([AC_HYPRE_SET_ARCH],
          dnl * $HOSTTYPE
          if test -z "$hypre_tarch_dir"; then
             AC_MSG_WARN(cannot find tarch, using \$HOSTTYPE as the architecture)
-            HYPRE_ARCH=$HOSTTYPE
+            NALU_HYPRE_ARCH=$HOSTTYPE
          else
-            HYPRE_ARCH="`$hypre_tarch`"
+            NALU_HYPRE_ARCH="`$hypre_tarch`"
 
-            if test -z "$HYPRE_ARCH" || test "$HYPRE_ARCH" = "unknown"; then
-               HYPRE_ARCH=$HOSTTYPE
+            if test -z "$NALU_HYPRE_ARCH" || test "$NALU_HYPRE_ARCH" = "unknown"; then
+               NALU_HYPRE_ARCH=$HOSTTYPE
             fi
          fi
 
-         dnl * if $HYPRE_ARCH is still empty, give it the value "unknown".
-         if test -z "$HYPRE_ARCH"; then
-            HYPRE_ARCH=unknown
+         dnl * if $NALU_HYPRE_ARCH is still empty, give it the value "unknown".
+         if test -z "$NALU_HYPRE_ARCH"; then
+            NALU_HYPRE_ARCH=unknown
             AC_MSG_WARN(architecture is unknown)
          else
-            AC_MSG_RESULT($HYPRE_ARCH)
+            AC_MSG_RESULT($NALU_HYPRE_ARCH)
          fi
       else
-         HYPRE_ARCH=$ARCH
-         AC_MSG_RESULT($HYPRE_ARCH)
+         NALU_HYPRE_ARCH=$ARCH
+         AC_MSG_RESULT($NALU_HYPRE_ARCH)
       fi
 
    else
-      HYPRE_ARCH=$host_alias
+      NALU_HYPRE_ARCH=$host_alias
       HOSTNAME=unknown
    fi
 dnl *
 dnl *    define type of architecture
-   case $HYPRE_ARCH in
+   case $NALU_HYPRE_ARCH in
       alpha)
-         AC_DEFINE(HYPRE_ALPHA,1,[Define to 1 for Alpha platforms])
+         AC_DEFINE(NALU_HYPRE_ALPHA,1,[Define to 1 for Alpha platforms])
          ;;
       sun* | solaris*)
-         AC_DEFINE(HYPRE_SOLARIS,1,[Define to 1 for Solaris.])
+         AC_DEFINE(NALU_HYPRE_SOLARIS,1,[Define to 1 for Solaris.])
          ;;
       hp* | HP*)
-         AC_DEFINE(HYPRE_HPPA,1,[Define to 1 for HP platforms])
+         AC_DEFINE(NALU_HYPRE_HPPA,1,[Define to 1 for HP platforms])
          ;;
       rs6000 | RS6000 | *bgl* | *BGL* | ppc64*)
-         AC_DEFINE(HYPRE_RS6000,1,[Define to 1 for RS6000 platforms])
+         AC_DEFINE(NALU_HYPRE_RS6000,1,[Define to 1 for RS6000 platforms])
          ;;
       IRIX64)
-         AC_DEFINE(HYPRE_IRIX64,1,[Define to 1 for IRIX64 platforms])
+         AC_DEFINE(NALU_HYPRE_IRIX64,1,[Define to 1 for IRIX64 platforms])
          ;;
       Linux | linux | LINUX)
          if test -r /etc/home.config
@@ -435,21 +435,21 @@ dnl *    define type of architecture
             systemtype=`grep ^SYS_TYPE /etc/home.config | cut -d" " -f2`
             case $systemtype in
                chaos*)
-                  AC_DEFINE(HYPRE_LINUX_CHAOS,1,[Define to 1 for Linux on platforms running any version of CHAOS])
+                  AC_DEFINE(NALU_HYPRE_LINUX_CHAOS,1,[Define to 1 for Linux on platforms running any version of CHAOS])
                   ;;
                *)
-                  AC_DEFINE(HYPRE_LINUX,1,[Define to 1 for Linux platform])
+                  AC_DEFINE(NALU_HYPRE_LINUX,1,[Define to 1 for Linux platform])
                   ;;
             esac
          else
-            AC_DEFINE(HYPRE_LINUX,1,[Define to 1 for Linux platform])
+            AC_DEFINE(NALU_HYPRE_LINUX,1,[Define to 1 for Linux platform])
          fi
          ;;
    esac
 
 dnl *
 dnl *    return architecture and host name values
-   AC_SUBST(HYPRE_ARCH)
+   AC_SUBST(NALU_HYPRE_ARCH)
    AC_SUBST(HOSTNAME)
 
 ])dnl

@@ -31,10 +31,10 @@
  * thread-safe and capable of managing device allocations on multiple devices.
  ******************************************************************************/
 
-#ifndef HYPRE_CUB_ALLOCATOR_HEADER
-#define HYPRE_CUB_ALLOCATOR_HEADER
+#ifndef NALU_HYPRE_CUB_ALLOCATOR_HEADER
+#define NALU_HYPRE_CUB_ALLOCATOR_HEADER
 
-#if defined(HYPRE_USING_CUDA) && defined(HYPRE_USING_DEVICE_POOL)
+#if defined(NALU_HYPRE_USING_CUDA) && defined(NALU_HYPRE_USING_DEVICE_POOL)
 
 #include <set>
 #include <map>
@@ -835,6 +835,6 @@ struct hypre_cub_CachingDeviceAllocator
    }
 };
 
-#endif // #if defined(HYPRE_USING_CUDA) && defined(HYPRE_USING_DEVICE_POOL)
-#endif // #ifndef HYPRE_CUB_ALLOCATOR_HEADER
+#endif // #if defined(NALU_HYPRE_USING_CUDA) && defined(NALU_HYPRE_USING_DEVICE_POOL)
+#endif // #ifndef NALU_HYPRE_CUB_ALLOCATOR_HEADER
 

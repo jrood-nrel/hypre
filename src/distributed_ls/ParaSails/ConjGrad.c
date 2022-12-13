@@ -18,11 +18,11 @@
 #include "ParaSails.h"
 #include "_hypre_blas.h"
 
-static HYPRE_Real InnerProd(HYPRE_Int n, HYPRE_Real *x, HYPRE_Real *y, MPI_Comm comm)
+static NALU_HYPRE_Real InnerProd(NALU_HYPRE_Int n, NALU_HYPRE_Real *x, NALU_HYPRE_Real *y, MPI_Comm comm)
 {
-    HYPRE_Real local_result, result;
+    NALU_HYPRE_Real local_result, result;
 
-    HYPRE_Int one = 1;
+    NALU_HYPRE_Int one = 1;
     local_result = hypre_ddot(&n, x, &one, y, &one);
 
     hypre_MPI_Allreduce(&local_result, &result, 1, hypre_MPI_REAL, hypre_MPI_SUM, comm);
@@ -30,21 +30,21 @@ static HYPRE_Real InnerProd(HYPRE_Int n, HYPRE_Real *x, HYPRE_Real *y, MPI_Comm 
     return result;
 }
 
-static void CopyVector(HYPRE_Int n, HYPRE_Real *x, HYPRE_Real *y)
+static void CopyVector(NALU_HYPRE_Int n, NALU_HYPRE_Real *x, NALU_HYPRE_Real *y)
 {
-    HYPRE_Int one = 1;
+    NALU_HYPRE_Int one = 1;
     hypre_F90_NAME_BLAS(dcopy, DCOPY)(&n, x, &one, y, &one);
 }
 
-static void ScaleVector(HYPRE_Int n, HYPRE_Real alpha, HYPRE_Real *x)
+static void ScaleVector(NALU_HYPRE_Int n, NALU_HYPRE_Real alpha, NALU_HYPRE_Real *x)
 {
-    HYPRE_Int one = 1;
+    NALU_HYPRE_Int one = 1;
     hypre_F90_NAME_BLAS(dscal, DSCAL)(&n, &alpha, x, &one);
 }
 
-static void Axpy(HYPRE_Int n, HYPRE_Real alpha, HYPRE_Real *x, HYPRE_Real *y)
+static void Axpy(NALU_HYPRE_Int n, NALU_HYPRE_Real alpha, NALU_HYPRE_Real *x, NALU_HYPRE_Real *y)
 {
-    HYPRE_Int one = 1;
+    NALU_HYPRE_Int one = 1;
     hypre_F90_NAME_BLAS(daxpy, DAXPY)(&n, &alpha, x, &one, y, &one);
 }
 
@@ -56,18 +56,18 @@ static void Axpy(HYPRE_Int n, HYPRE_Real alpha, HYPRE_Real *x, HYPRE_Real *y)
  * than 0.1 at that point.
  *--------------------------------------------------------------------------*/
 
-void PCG_ParaSails(Matrix *mat, ParaSails *ps, HYPRE_Real *b, HYPRE_Real *x,
-   HYPRE_Real tol, HYPRE_Int max_iter)
+void PCG_ParaSails(Matrix *mat, ParaSails *ps, NALU_HYPRE_Real *b, NALU_HYPRE_Real *x,
+   NALU_HYPRE_Real tol, NALU_HYPRE_Int max_iter)
 {
-   HYPRE_Real *p, *s, *r;
-   HYPRE_Real alpha, beta;
-   HYPRE_Real gamma, gamma_old;
-   HYPRE_Real bi_prod, i_prod, eps;
-   HYPRE_Int i = 0;
-   HYPRE_Int mype;
+   NALU_HYPRE_Real *p, *s, *r;
+   NALU_HYPRE_Real alpha, beta;
+   NALU_HYPRE_Real gamma, gamma_old;
+   NALU_HYPRE_Real bi_prod, i_prod, eps;
+   NALU_HYPRE_Int i = 0;
+   NALU_HYPRE_Int mype;
 
    /* local problem size */
-   HYPRE_Int n = mat->end_row - mat->beg_row + 1;
+   NALU_HYPRE_Int n = mat->end_row - mat->beg_row + 1;
 
    MPI_Comm comm = mat->comm;
    hypre_MPI_Comm_rank(comm, &mype);
@@ -85,9 +85,9 @@ void PCG_ParaSails(Matrix *mat, ParaSails *ps, HYPRE_Real *b, HYPRE_Real *x,
       return;
    }
 
-   p = hypre_TAlloc(HYPRE_Real, n , HYPRE_MEMORY_HOST);
-   s = hypre_TAlloc(HYPRE_Real, n , HYPRE_MEMORY_HOST);
-   r = hypre_TAlloc(HYPRE_Real, n , HYPRE_MEMORY_HOST);
+   p = hypre_TAlloc(NALU_HYPRE_Real, n , NALU_HYPRE_MEMORY_HOST);
+   s = hypre_TAlloc(NALU_HYPRE_Real, n , NALU_HYPRE_MEMORY_HOST);
+   r = hypre_TAlloc(NALU_HYPRE_Real, n , NALU_HYPRE_MEMORY_HOST);
 
    /* r = b - Ax */
    MatrixMatvec(mat, x, r);  /* r = Ax */
@@ -158,8 +158,8 @@ void PCG_ParaSails(Matrix *mat, ParaSails *ps, HYPRE_Real *b, HYPRE_Real *x,
       Axpy(n, 1.0, s, p);
    }
 
-   hypre_TFree(p, HYPRE_MEMORY_HOST);
-   hypre_TFree(s, HYPRE_MEMORY_HOST);
+   hypre_TFree(p, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(s, NALU_HYPRE_MEMORY_HOST);
 
    /* compute exact relative residual norm */
    MatrixMatvec(mat, x, r);  /* r = Ax */
@@ -167,7 +167,7 @@ void PCG_ParaSails(Matrix *mat, ParaSails *ps, HYPRE_Real *b, HYPRE_Real *x,
    Axpy(n, 1.0, b, r);       /* r = r + b */
    i_prod = InnerProd(n, r, r, comm);
 
-   hypre_TFree(r, HYPRE_MEMORY_HOST);
+   hypre_TFree(r, NALU_HYPRE_MEMORY_HOST);
 
    if (mype == 0)
       hypre_printf("Iter (%4d): computed rrn    : %e\n", i, sqrt(i_prod/bi_prod));

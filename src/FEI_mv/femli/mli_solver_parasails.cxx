@@ -85,7 +85,7 @@ int MLI_Solver_ParaSails::setup(MLI_Matrix *Amat_in)
    comm = hypre_ParCSRMatrixComm(A);
    MPI_Comm_rank(comm,&mypid);  
    MPI_Comm_size(comm,&nprocs);  
-   HYPRE_ParCSRMatrixGetRowPartitioning((HYPRE_ParCSRMatrix) A, &partition);
+   NALU_HYPRE_ParCSRMatrixGetRowPartitioning((NALU_HYPRE_ParCSRMatrix) A, &partition);
    start_row = partition[mypid];
    end_row   = partition[mypid+1] - 1;
    globalNRows = partition[nprocs];
@@ -124,17 +124,17 @@ int MLI_Solver_ParaSails::setup(MLI_Matrix *Amat_in)
     * set up other auxiliary vectors
     *-----------------------------------------------------------------*/
 
-   funcPtr = hypre_TAlloc( MLI_Function , 1, HYPRE_MEMORY_HOST);
+   funcPtr = hypre_TAlloc( MLI_Function , 1, NALU_HYPRE_MEMORY_HOST);
    MLI_Utils_HypreParVectorGetDestroyFunc(funcPtr);
    paramString = new char[20];
-   strcpy( paramString, "HYPRE_ParVector" );
+   strcpy( paramString, "NALU_HYPRE_ParVector" );
 
-   HYPRE_ParCSRMatrixGetRowPartitioning((HYPRE_ParCSRMatrix) A, &partition);
+   NALU_HYPRE_ParCSRMatrixGetRowPartitioning((NALU_HYPRE_ParCSRMatrix) A, &partition);
    hypreVec = hypre_ParVectorCreate(comm, globalNRows, partition);
    hypre_ParVectorInitialize(hypreVec);
    auxVec2_ = new MLI_Vector(hypreVec, paramString, funcPtr);
 
-   HYPRE_ParCSRMatrixGetRowPartitioning((HYPRE_ParCSRMatrix) A, &partition);
+   NALU_HYPRE_ParCSRMatrixGetRowPartitioning((NALU_HYPRE_ParCSRMatrix) A, &partition);
    hypreVec = hypre_ParVectorCreate(comm, globalNRows, partition);
    hypre_ParVectorInitialize(hypreVec);
    auxVec3_ = new MLI_Vector(hypreVec, paramString, funcPtr);
@@ -301,7 +301,7 @@ int MLI_Solver_ParaSails::applyParaSails(MLI_Vector *f_in, MLI_Vector *u_in)
    f           = (hypre_ParVector *) f_in->getVector();
    global_size = hypre_ParVectorGlobalSize(f);
    partition1  = hypre_ParVectorPartitioning(f);
-   partition2  = hypre_CTAlloc( int, num_procs+1 , HYPRE_MEMORY_HOST);
+   partition2  = hypre_CTAlloc( int, num_procs+1 , NALU_HYPRE_MEMORY_HOST);
    for ( i = 0; i <= num_procs; i++ ) partition2[i] = partition1[i];
    Vtemp = hypre_ParVectorCreate(comm, global_size, partition2);
    hypre_ParVectorInitialize(Vtemp);
@@ -382,7 +382,7 @@ int MLI_Solver_ParaSails::applyParaSailsTrans(MLI_Vector *f_in,
    f           = (hypre_ParVector *) f_in->getVector();
    global_size = hypre_ParVectorGlobalSize(f);
    partition1  = hypre_ParVectorPartitioning(f);
-   partition2  = hypre_CTAlloc( int, num_procs+1 , HYPRE_MEMORY_HOST);
+   partition2  = hypre_CTAlloc( int, num_procs+1 , NALU_HYPRE_MEMORY_HOST);
    for ( i = 0; i <= num_procs; i++ ) partition2[i] = partition1[i];
    Vtemp = hypre_ParVectorCreate(comm, global_size, partition2);
    Vtemp_local = hypre_ParVectorLocalVector(Vtemp);

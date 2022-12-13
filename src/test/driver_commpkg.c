@@ -20,12 +20,12 @@
 
 #include "_hypre_utilities.h"
 #include "_hypre_parcsr_mv.h"
-#include "HYPRE_parcsr_ls.h"
+#include "NALU_HYPRE_parcsr_ls.h"
 
 /* #include "_hypre_parcsr_ls.h"
  #include "HYPRE.h"
- #include "HYPRE_parcsr_mv.h"
- #include "HYPRE_krylov.h"  */
+ #include "NALU_HYPRE_parcsr_mv.h"
+ #include "NALU_HYPRE_krylov.h"  */
 
 
 
@@ -42,13 +42,13 @@
 #define   LOOP2  1
 
 
-HYPRE_Int myBuildParLaplacian (HYPRE_Int argc, char *argv [], HYPRE_Int arg_index,
-                               HYPRE_ParCSRMatrix *A_ptr, HYPRE_Int parmprint );
-HYPRE_Int myBuildParLaplacian27pt (HYPRE_Int argc, char *argv [], HYPRE_Int arg_index,
-                                   HYPRE_ParCSRMatrix *A_ptr, HYPRE_Int parmprint );
+NALU_HYPRE_Int myBuildParLaplacian (NALU_HYPRE_Int argc, char *argv [], NALU_HYPRE_Int arg_index,
+                               NALU_HYPRE_ParCSRMatrix *A_ptr, NALU_HYPRE_Int parmprint );
+NALU_HYPRE_Int myBuildParLaplacian27pt (NALU_HYPRE_Int argc, char *argv [], NALU_HYPRE_Int arg_index,
+                                   NALU_HYPRE_ParCSRMatrix *A_ptr, NALU_HYPRE_Int parmprint );
 
 
-void stats_mo(HYPRE_Real*, HYPRE_Int, HYPRE_Real *, HYPRE_Real *);
+void stats_mo(NALU_HYPRE_Real*, NALU_HYPRE_Int, NALU_HYPRE_Real *, NALU_HYPRE_Real *);
 
 /*==========================================================================*/
 
@@ -61,56 +61,56 @@ void stats_mo(HYPRE_Real*, HYPRE_Int, HYPRE_Real *, HYPRE_Real *);
  *         -laplacian              3D 7pt stencil
  *         -27pt                   3D 27pt laplacian
  *         -fromonecsrfile         read matrix from a csr file
- *         -commpkg <HYPRE_Int>          1 = new comm. package
+ *         -commpkg <NALU_HYPRE_Int>          1 = new comm. package
  *                                 2  =old
  *                                 3 = both (default)
- *         -loop <HYPRE_Int>             number of times to loop (default is 0)
+ *         -loop <NALU_HYPRE_Int>             number of times to loop (default is 0)
  *         -verbose                print more error checking
  *         -noparmprint            don't print the parameters
  *-------------------------------------------------------------------*/
 
 
-HYPRE_Int
-main( HYPRE_Int   argc,
+NALU_HYPRE_Int
+main( NALU_HYPRE_Int   argc,
       char *argv[] )
 {
 
 
-   HYPRE_Int        num_procs, myid;
-   HYPRE_Int        verbose = 0, build_matrix_type = 1;
-   HYPRE_Int        index, matrix_arg_index, commpkg_flag = 3;
-   HYPRE_Int        i, k, ierr = 0;
-   HYPRE_Int        row_start, row_end;
-   HYPRE_Int        col_start, col_end, global_num_rows;
-   HYPRE_Int       *row_part, *col_part;
+   NALU_HYPRE_Int        num_procs, myid;
+   NALU_HYPRE_Int        verbose = 0, build_matrix_type = 1;
+   NALU_HYPRE_Int        index, matrix_arg_index, commpkg_flag = 3;
+   NALU_HYPRE_Int        i, k, ierr = 0;
+   NALU_HYPRE_Int        row_start, row_end;
+   NALU_HYPRE_Int        col_start, col_end, global_num_rows;
+   NALU_HYPRE_Int       *row_part, *col_part;
    char      *csrfilename;
-   HYPRE_Int        preload = 0, loop = 0, loop2 = LOOP2;
-   HYPRE_Int        bcast_rows[2], *info;
+   NALU_HYPRE_Int        preload = 0, loop = 0, loop2 = LOOP2;
+   NALU_HYPRE_Int        bcast_rows[2], *info;
 
 
 
    hypre_ParCSRMatrix    *parcsr_A, *small_A;
-   HYPRE_ParCSRMatrix    A_temp, A_temp_small;
+   NALU_HYPRE_ParCSRMatrix    A_temp, A_temp_small;
    hypre_CSRMatrix       *A_CSR;
    hypre_ParCSRCommPkg   *comm_pkg;
 
 
-   HYPRE_Int                 nx, ny, nz;
-   HYPRE_Int                 P, Q, R;
-   HYPRE_Int                 p, q, r;
-   HYPRE_Real          values[4];
+   NALU_HYPRE_Int                 nx, ny, nz;
+   NALU_HYPRE_Int                 P, Q, R;
+   NALU_HYPRE_Int                 p, q, r;
+   NALU_HYPRE_Real          values[4];
 
    hypre_ParVector     *x_new;
    hypre_ParVector     *y_new, *y;
-   HYPRE_Int                 *row_starts;
-   HYPRE_Real          ans;
-   HYPRE_Real          start_time, end_time, total_time, *loop_times;
-   HYPRE_Real          T_avg, T_std;
+   NALU_HYPRE_Int                 *row_starts;
+   NALU_HYPRE_Real          ans;
+   NALU_HYPRE_Real          start_time, end_time, total_time, *loop_times;
+   NALU_HYPRE_Real          T_avg, T_std;
 
-   HYPRE_Int                   noparmprint = 0;
+   NALU_HYPRE_Int                   noparmprint = 0;
 
 #if mydebug
-   HYPRE_Int  j, tmp_int;
+   NALU_HYPRE_Int  j, tmp_int;
 #endif
 
    /*-----------------------------------------------------------
@@ -273,7 +273,7 @@ main( HYPRE_Int   argc,
       q = (( myid - p) / P) % Q;
       r = ( myid - p - P * q) / ( P * Q );
 
-      A_temp_small = (HYPRE_ParCSRMatrix) GenerateLaplacian(hypre_MPI_COMM_WORLD, nx, ny, nz,
+      A_temp_small = (NALU_HYPRE_ParCSRMatrix) GenerateLaplacian(hypre_MPI_COMM_WORLD, nx, ny, nz,
                                                             P, Q, R, p, q, r, values);
       small_A = (hypre_ParCSRMatrix *) A_temp_small;
 
@@ -311,7 +311,7 @@ main( HYPRE_Int   argc,
    }
 
 
-   loop_times = hypre_CTAlloc(HYPRE_Real,  loop, HYPRE_MEMORY_HOST);
+   loop_times = hypre_CTAlloc(NALU_HYPRE_Real,  loop, NALU_HYPRE_MEMORY_HOST);
 
 
 
@@ -356,7 +356,7 @@ main( HYPRE_Int   argc,
             end_time = end_time - start_time;
 
             hypre_MPI_Allreduce(&end_time, &total_time, 1,
-                                HYPRE_MPI_REAL, hypre_MPI_MAX, hypre_MPI_COMM_WORLD);
+                                NALU_HYPRE_MPI_REAL, hypre_MPI_MAX, hypre_MPI_COMM_WORLD);
 
             loop_times[i] += total_time;
 
@@ -523,9 +523,9 @@ main( HYPRE_Int   argc,
 
 #if time_gather
 
-            info = hypre_CTAlloc(HYPRE_Int,  num_procs, HYPRE_MEMORY_HOST);
+            info = hypre_CTAlloc(NALU_HYPRE_Int,  num_procs, NALU_HYPRE_MEMORY_HOST);
 
-            hypre_MPI_Allgather(bcast_rows, 1, HYPRE_MPI_INT, info, 1, HYPRE_MPI_INT, hypre_MPI_COMM_WORLD);
+            hypre_MPI_Allgather(bcast_rows, 1, NALU_HYPRE_MPI_INT, info, 1, NALU_HYPRE_MPI_INT, hypre_MPI_COMM_WORLD);
 
 #endif
 
@@ -537,7 +537,7 @@ main( HYPRE_Int   argc,
             end_time = end_time - start_time;
 
             hypre_MPI_Allreduce(&end_time, &total_time, 1,
-                                HYPRE_MPI_REAL, hypre_MPI_MAX, hypre_MPI_COMM_WORLD);
+                                NALU_HYPRE_MPI_REAL, hypre_MPI_MAX, hypre_MPI_COMM_WORLD);
 
             loop_times[i] += total_time;
 
@@ -727,12 +727,12 @@ main( HYPRE_Int   argc,
  *     throw away 1st timing
  *------------------------------------*/
 
-void stats_mo(HYPRE_Real array[], HYPRE_Int n, HYPRE_Real *Tavg, HYPRE_Real *Tstd)
+void stats_mo(NALU_HYPRE_Real array[], NALU_HYPRE_Int n, NALU_HYPRE_Real *Tavg, NALU_HYPRE_Real *Tstd)
 {
 
-   HYPRE_Int i;
-   HYPRE_Real atmp, tmp = 0.0;
-   HYPRE_Real avg = 0.0, std;
+   NALU_HYPRE_Int i;
+   NALU_HYPRE_Real atmp, tmp = 0.0;
+   NALU_HYPRE_Real avg = 0.0, std;
 
 
    for (i = 1; i < n; i++)
@@ -743,8 +743,8 @@ void stats_mo(HYPRE_Real array[], HYPRE_Int n, HYPRE_Real *Tavg, HYPRE_Real *Tst
    }
 
    n = n - 1;
-   avg = avg / (HYPRE_Real) n;
-   tmp = tmp / (HYPRE_Real) n;
+   avg = avg / (NALU_HYPRE_Real) n;
+   tmp = tmp / (NALU_HYPRE_Real) n;
 
    tmp = fabs(tmp - avg * avg);
    std = sqrt(tmp);
@@ -763,20 +763,20 @@ void stats_mo(HYPRE_Real array[], HYPRE_Int n, HYPRE_Real *Tavg, HYPRE_Real *Tst
  * Parameters given in command line.
  *----------------------------------------------------------------------*/
 
-HYPRE_Int
-myBuildParLaplacian27pt( HYPRE_Int                  argc,
+NALU_HYPRE_Int
+myBuildParLaplacian27pt( NALU_HYPRE_Int                  argc,
                          char                *argv[],
-                         HYPRE_Int                  arg_index,
-                         HYPRE_ParCSRMatrix  *A_ptr, HYPRE_Int parmprint  )
+                         NALU_HYPRE_Int                  arg_index,
+                         NALU_HYPRE_ParCSRMatrix  *A_ptr, NALU_HYPRE_Int parmprint  )
 {
-   HYPRE_Int                 nx, ny, nz;
-   HYPRE_Int                 P, Q, R;
+   NALU_HYPRE_Int                 nx, ny, nz;
+   NALU_HYPRE_Int                 P, Q, R;
 
-   HYPRE_ParCSRMatrix  A;
+   NALU_HYPRE_ParCSRMatrix  A;
 
-   HYPRE_Int                 num_procs, myid;
-   HYPRE_Int                 p, q, r;
-   HYPRE_Real         *values;
+   NALU_HYPRE_Int                 num_procs, myid;
+   NALU_HYPRE_Int                 p, q, r;
+   NALU_HYPRE_Real         *values;
 
    /*-----------------------------------------------------------
     * Initialize some stuff
@@ -857,7 +857,7 @@ myBuildParLaplacian27pt( HYPRE_Int                  argc,
     * Generate the matrix
     *-----------------------------------------------------------*/
 
-   values = hypre_CTAlloc(HYPRE_Real,  2, HYPRE_MEMORY_HOST);
+   values = hypre_CTAlloc(NALU_HYPRE_Real,  2, NALU_HYPRE_MEMORY_HOST);
 
    values[0] = 26.0;
    if (nx == 1 || ny == 1 || nz == 1)
@@ -870,10 +870,10 @@ myBuildParLaplacian27pt( HYPRE_Int                  argc,
    }
    values[1] = -1.;
 
-   A = (HYPRE_ParCSRMatrix) GenerateLaplacian27pt(hypre_MPI_COMM_WORLD,
+   A = (NALU_HYPRE_ParCSRMatrix) GenerateLaplacian27pt(hypre_MPI_COMM_WORLD,
                                                   nx, ny, nz, P, Q, R, p, q, r, values);
 
-   hypre_TFree(values, HYPRE_MEMORY_HOST);
+   hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
 
    *A_ptr = A;
 
@@ -887,21 +887,21 @@ myBuildParLaplacian27pt( HYPRE_Int                  argc,
  *----------------------------------------------------------------------*/
 
 
-HYPRE_Int
-myBuildParLaplacian( HYPRE_Int                  argc,
+NALU_HYPRE_Int
+myBuildParLaplacian( NALU_HYPRE_Int                  argc,
                      char                *argv[],
-                     HYPRE_Int                  arg_index,
-                     HYPRE_ParCSRMatrix  *A_ptr, HYPRE_Int parmprint    )
+                     NALU_HYPRE_Int                  arg_index,
+                     NALU_HYPRE_ParCSRMatrix  *A_ptr, NALU_HYPRE_Int parmprint    )
 {
-   HYPRE_Int                 nx, ny, nz;
-   HYPRE_Int                 P, Q, R;
-   HYPRE_Real          cx, cy, cz;
+   NALU_HYPRE_Int                 nx, ny, nz;
+   NALU_HYPRE_Int                 P, Q, R;
+   NALU_HYPRE_Real          cx, cy, cz;
 
-   HYPRE_ParCSRMatrix  A;
+   NALU_HYPRE_ParCSRMatrix  A;
 
-   HYPRE_Int                 num_procs, myid;
-   HYPRE_Int                 p, q, r;
-   HYPRE_Real         *values;
+   NALU_HYPRE_Int                 num_procs, myid;
+   NALU_HYPRE_Int                 p, q, r;
+   NALU_HYPRE_Real         *values;
 
    /*-----------------------------------------------------------
     * Initialize some stuff
@@ -994,7 +994,7 @@ myBuildParLaplacian( HYPRE_Int                  argc,
     * Generate the matrix
     *-----------------------------------------------------------*/
 
-   values = hypre_CTAlloc(HYPRE_Real,  4, HYPRE_MEMORY_HOST);
+   values = hypre_CTAlloc(NALU_HYPRE_Real,  4, NALU_HYPRE_MEMORY_HOST);
 
    values[1] = -cx;
    values[2] = -cy;
@@ -1014,10 +1014,10 @@ myBuildParLaplacian( HYPRE_Int                  argc,
       values[0] += 2.0 * cz;
    }
 
-   A = (HYPRE_ParCSRMatrix) GenerateLaplacian(hypre_MPI_COMM_WORLD, nx, ny, nz,
+   A = (NALU_HYPRE_ParCSRMatrix) GenerateLaplacian(hypre_MPI_COMM_WORLD, nx, ny, nz,
                                               P, Q, R, p, q, r, values);
 
-   hypre_TFree(values, HYPRE_MEMORY_HOST);
+   hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
 
 
    *A_ptr = A;

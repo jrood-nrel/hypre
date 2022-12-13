@@ -10,7 +10,7 @@
 
 #define AbsStencilShape(stencil, abs_shape) \
 {\
-   HYPRE_Int ii,jj,kk;\
+   NALU_HYPRE_Int ii,jj,kk;\
    ii = hypre_IndexX(stencil);\
    jj = hypre_IndexY(stencil);\
    kk = hypre_IndexZ(stencil);\
@@ -37,11 +37,11 @@ hypre_CFInterfaceExtents( hypre_Box              *fgrid_box,
    hypre_Box             *box;
 
    hypre_Index            stencil_shape, cstart, zero_index, neg_index;
-   HYPRE_Int              stencil_size;
-   HYPRE_Int              abs_stencil;
+   NALU_HYPRE_Int              stencil_size;
+   NALU_HYPRE_Int              abs_stencil;
 
-   HYPRE_Int              ndim = hypre_StructStencilNDim(stencils);
-   HYPRE_Int              i, j;
+   NALU_HYPRE_Int              ndim = hypre_StructStencilNDim(stencils);
+   NALU_HYPRE_Int              i, j;
 
    hypre_ClearIndex(zero_index);
    hypre_ClearIndex(neg_index);
@@ -122,7 +122,7 @@ hypre_CFInterfaceExtents( hypre_Box              *fgrid_box,
    return stencil_box_extents;
 }
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_CFInterfaceExtents2( hypre_Box              *fgrid_box,
                            hypre_Box              *cgrid_box,
                            hypre_StructStencil    *stencils,
@@ -135,13 +135,13 @@ hypre_CFInterfaceExtents2( hypre_Box              *fgrid_box,
    hypre_Box             *cfine_box;
 
    hypre_Index            stencil_shape, zero_index, neg_index;
-   HYPRE_Int              stencil_size;
-   HYPRE_Int              abs_stencil;
+   NALU_HYPRE_Int              stencil_size;
+   NALU_HYPRE_Int              abs_stencil;
 
-   HYPRE_Int              ndim = hypre_StructStencilNDim(stencils);
+   NALU_HYPRE_Int              ndim = hypre_StructStencilNDim(stencils);
 
-   HYPRE_Int              i;
-   HYPRE_Int              ierr = 0;
+   NALU_HYPRE_Int              i;
+   NALU_HYPRE_Int              ierr = 0;
 
    hypre_ClearIndex(zero_index);
    hypre_ClearIndex(neg_index);

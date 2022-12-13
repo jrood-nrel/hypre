@@ -9,7 +9,7 @@
 #define __MLI_SOLVER_AMG_H__
 
 #include <stdio.h>
-#include "HYPRE_config.h"
+#include "NALU_HYPRE_config.h"
 #include "_hypre_utilities.h"
 #include "_hypre_parcsr_ls.h"
 #include "mli_matrix.h"
@@ -23,7 +23,7 @@
 class MLI_Solver_AMG : public MLI_Solver
 {
    MLI_Matrix   *Amat_;
-   HYPRE_Solver precond_;
+   NALU_HYPRE_Solver precond_;
 
 public :
 

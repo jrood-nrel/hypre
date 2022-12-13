@@ -26,17 +26,17 @@ typedef struct
 {
    MPI_Comm      context;
 
-   HYPRE_BigInt M, N;                               /* number of rows and cols in matrix */
+   NALU_HYPRE_BigInt M, N;                               /* number of rows and cols in matrix */
 
    void         *auxiliary_data;           /* Placeholder for implmentation specific
                                               data */
 
    void         *local_storage;            /* Structure for storing local portion */
-   HYPRE_Int   	 local_storage_type;       /* Indicates the type of "local storage" */
+   NALU_HYPRE_Int   	 local_storage_type;       /* Indicates the type of "local storage" */
    void         *translator;               /* optional storage_type specfic structure
                                               for holding additional local info */
-#ifdef HYPRE_TIMING
-   HYPRE_Int     GetRow_timer;
+#ifdef NALU_HYPRE_TIMING
+   NALU_HYPRE_Int     GetRow_timer;
 #endif
 } hypre_DistributedMatrix;
 
@@ -56,7 +56,7 @@ typedef struct
 /*--------------------------------------------------------------------------
  * prototypes for operations on local objects
  *--------------------------------------------------------------------------*/
-#include "HYPRE_distributed_matrix_mv.h"
+#include "NALU_HYPRE_distributed_matrix_mv.h"
 #include "internal_protos.h"
 
 #endif

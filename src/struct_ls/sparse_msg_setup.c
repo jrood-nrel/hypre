@@ -39,7 +39,7 @@
  * hypre_SparseMSGSetup
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SparseMSGSetup( void               *smsg_vdata,
                       hypre_StructMatrix *A,
                       hypre_StructVector *b,
@@ -49,23 +49,23 @@ hypre_SparseMSGSetup( void               *smsg_vdata,
 
    MPI_Comm              comm = (smsg_data -> comm);
 
-   HYPRE_Int             max_iter;
-   HYPRE_Int             jump       = (smsg_data -> jump);
-   HYPRE_Int             relax_type = (smsg_data -> relax_type);
-   HYPRE_Int             usr_jacobi_weight = (smsg_data -> usr_jacobi_weight);
-   HYPRE_Real            jacobi_weight    = (smsg_data -> jacobi_weight);
-   HYPRE_Int            *num_grids  = (smsg_data -> num_grids);
-   HYPRE_Int             num_all_grids;
-   HYPRE_Int             num_levels;
+   NALU_HYPRE_Int             max_iter;
+   NALU_HYPRE_Int             jump       = (smsg_data -> jump);
+   NALU_HYPRE_Int             relax_type = (smsg_data -> relax_type);
+   NALU_HYPRE_Int             usr_jacobi_weight = (smsg_data -> usr_jacobi_weight);
+   NALU_HYPRE_Real            jacobi_weight    = (smsg_data -> jacobi_weight);
+   NALU_HYPRE_Int            *num_grids  = (smsg_data -> num_grids);
+   NALU_HYPRE_Int             num_all_grids;
+   NALU_HYPRE_Int             num_levels;
 
    hypre_StructGrid    **grid_a;
    hypre_StructGrid    **Px_grid_a;
    hypre_StructGrid    **Py_grid_a;
    hypre_StructGrid    **Pz_grid_a;
 
-   HYPRE_Real           *data;
-   HYPRE_Real           *tdata;
-   HYPRE_Int             data_size = 0;
+   NALU_HYPRE_Real           *data;
+   NALU_HYPRE_Real           *tdata;
+   NALU_HYPRE_Int             data_size = 0;
    hypre_StructMatrix  **A_a;
    hypre_StructMatrix  **Px_a;
    hypre_StructMatrix  **Py_a;
@@ -84,7 +84,7 @@ hypre_SparseMSGSetup( void               *smsg_vdata,
    hypre_StructVector  **visitx_a;
    hypre_StructVector  **visity_a;
    hypre_StructVector  **visitz_a;
-   HYPRE_Int            *grid_on;
+   NALU_HYPRE_Int            *grid_on;
 
    void                **relax_a;
    void                **matvec_a;
@@ -101,17 +101,17 @@ hypre_SparseMSGSetup( void               *smsg_vdata,
    hypre_Index           stridePR;
 
    hypre_StructGrid     *grid;
-   HYPRE_Int             dim;
+   NALU_HYPRE_Int             dim;
    hypre_Box            *cbox;
 
-   HYPRE_Int             d, l, lx, ly, lz;
-   HYPRE_Int             fi, ci;
+   NALU_HYPRE_Int             d, l, lx, ly, lz;
+   NALU_HYPRE_Int             fi, ci;
 
-   HYPRE_Int             b_num_ghost[]  = {0, 0, 0, 0, 0, 0};
-   HYPRE_Int             x_num_ghost[]  = {1, 1, 1, 1, 1, 1};
+   NALU_HYPRE_Int             b_num_ghost[]  = {0, 0, 0, 0, 0, 0};
+   NALU_HYPRE_Int             x_num_ghost[]  = {1, 1, 1, 1, 1, 1};
 
-   HYPRE_Int             ierr = 0;
-   HYPRE_MemoryLocation  memory_location = hypre_StructMatrixMemoryLocation(A);
+   NALU_HYPRE_Int             ierr = 0;
+   NALU_HYPRE_MemoryLocation  memory_location = hypre_StructMatrixMemoryLocation(A);
 #if DEBUG
    char                  filename[255];
 #endif
@@ -165,11 +165,11 @@ hypre_SparseMSGSetup( void               *smsg_vdata,
    (smsg_data -> num_all_grids) = num_all_grids;
    (smsg_data -> num_levels)    = num_levels;
 
-   grid_a = hypre_TAlloc(hypre_StructGrid *,  num_all_grids, HYPRE_MEMORY_HOST);
+   grid_a = hypre_TAlloc(hypre_StructGrid *,  num_all_grids, NALU_HYPRE_MEMORY_HOST);
    hypre_StructGridRef(grid, &grid_a[0]);
-   Px_grid_a = hypre_TAlloc(hypre_StructGrid *,  num_grids[0], HYPRE_MEMORY_HOST);
-   Py_grid_a = hypre_TAlloc(hypre_StructGrid *,  num_grids[1], HYPRE_MEMORY_HOST);
-   Pz_grid_a = hypre_TAlloc(hypre_StructGrid *,  num_grids[2], HYPRE_MEMORY_HOST);
+   Px_grid_a = hypre_TAlloc(hypre_StructGrid *,  num_grids[0], NALU_HYPRE_MEMORY_HOST);
+   Py_grid_a = hypre_TAlloc(hypre_StructGrid *,  num_grids[1], NALU_HYPRE_MEMORY_HOST);
+   Pz_grid_a = hypre_TAlloc(hypre_StructGrid *,  num_grids[2], NALU_HYPRE_MEMORY_HOST);
    Px_grid_a[0] = NULL;
    Py_grid_a[0] = NULL;
    Pz_grid_a[0] = NULL;
@@ -272,18 +272,18 @@ hypre_SparseMSGSetup( void               *smsg_vdata,
     *  Note: this is ordered to conserve memory
     *-----------------------------------------------------*/
 
-   A_a   = hypre_TAlloc(hypre_StructMatrix *,  num_all_grids, HYPRE_MEMORY_HOST);
-   Px_a  = hypre_TAlloc(hypre_StructMatrix *,  num_grids[0] - 1, HYPRE_MEMORY_HOST);
-   Py_a  = hypre_TAlloc(hypre_StructMatrix *,  num_grids[1] - 1, HYPRE_MEMORY_HOST);
-   Pz_a  = hypre_TAlloc(hypre_StructMatrix *,  num_grids[2] - 1, HYPRE_MEMORY_HOST);
-   RTx_a = hypre_TAlloc(hypre_StructMatrix *,  num_grids[0] - 1, HYPRE_MEMORY_HOST);
-   RTy_a = hypre_TAlloc(hypre_StructMatrix *,  num_grids[1] - 1, HYPRE_MEMORY_HOST);
-   RTz_a = hypre_TAlloc(hypre_StructMatrix *,  num_grids[2] - 1, HYPRE_MEMORY_HOST);
+   A_a   = hypre_TAlloc(hypre_StructMatrix *,  num_all_grids, NALU_HYPRE_MEMORY_HOST);
+   Px_a  = hypre_TAlloc(hypre_StructMatrix *,  num_grids[0] - 1, NALU_HYPRE_MEMORY_HOST);
+   Py_a  = hypre_TAlloc(hypre_StructMatrix *,  num_grids[1] - 1, NALU_HYPRE_MEMORY_HOST);
+   Pz_a  = hypre_TAlloc(hypre_StructMatrix *,  num_grids[2] - 1, NALU_HYPRE_MEMORY_HOST);
+   RTx_a = hypre_TAlloc(hypre_StructMatrix *,  num_grids[0] - 1, NALU_HYPRE_MEMORY_HOST);
+   RTy_a = hypre_TAlloc(hypre_StructMatrix *,  num_grids[1] - 1, NALU_HYPRE_MEMORY_HOST);
+   RTz_a = hypre_TAlloc(hypre_StructMatrix *,  num_grids[2] - 1, NALU_HYPRE_MEMORY_HOST);
 
-   visitx_a = hypre_CTAlloc(hypre_StructVector *,  num_all_grids, HYPRE_MEMORY_HOST);
-   visity_a = hypre_CTAlloc(hypre_StructVector *,  num_all_grids, HYPRE_MEMORY_HOST);
-   visitz_a = hypre_CTAlloc(hypre_StructVector *,  num_all_grids, HYPRE_MEMORY_HOST);
-   grid_on  = hypre_CTAlloc(HYPRE_Int,  num_all_grids, HYPRE_MEMORY_HOST);
+   visitx_a = hypre_CTAlloc(hypre_StructVector *,  num_all_grids, NALU_HYPRE_MEMORY_HOST);
+   visity_a = hypre_CTAlloc(hypre_StructVector *,  num_all_grids, NALU_HYPRE_MEMORY_HOST);
+   visitz_a = hypre_CTAlloc(hypre_StructVector *,  num_all_grids, NALU_HYPRE_MEMORY_HOST);
+   grid_on  = hypre_CTAlloc(NALU_HYPRE_Int,  num_all_grids, NALU_HYPRE_MEMORY_HOST);
 
 
    A_a[0] = hypre_StructMatrixRef(A);
@@ -487,10 +487,10 @@ hypre_SparseMSGSetup( void               *smsg_vdata,
     *  Set up vector structures
     *-----------------------------------------------------*/
 
-   b_a = hypre_TAlloc(hypre_StructVector *,  num_all_grids, HYPRE_MEMORY_HOST);
-   x_a = hypre_TAlloc(hypre_StructVector *,  num_all_grids, HYPRE_MEMORY_HOST);
-   t_a = hypre_TAlloc(hypre_StructVector *,  num_all_grids, HYPRE_MEMORY_HOST);
-   r_a = hypre_TAlloc(hypre_StructVector *,  num_all_grids, HYPRE_MEMORY_HOST);
+   b_a = hypre_TAlloc(hypre_StructVector *,  num_all_grids, NALU_HYPRE_MEMORY_HOST);
+   x_a = hypre_TAlloc(hypre_StructVector *,  num_all_grids, NALU_HYPRE_MEMORY_HOST);
+   t_a = hypre_TAlloc(hypre_StructVector *,  num_all_grids, NALU_HYPRE_MEMORY_HOST);
+   r_a = hypre_TAlloc(hypre_StructVector *,  num_all_grids, NALU_HYPRE_MEMORY_HOST);
    e_a = t_a;
 
    data_size = 0;
@@ -553,7 +553,7 @@ hypre_SparseMSGSetup( void               *smsg_vdata,
       }
    }
 
-   data = hypre_CTAlloc(HYPRE_Real, data_size, memory_location);
+   data = hypre_CTAlloc(NALU_HYPRE_Real, data_size, memory_location);
 
    (smsg_data -> data) = data;
    (smsg_data -> memory_location) = memory_location;
@@ -610,14 +610,14 @@ hypre_SparseMSGSetup( void               *smsg_vdata,
     *  Call setup routines
     *-----------------------------------------------------*/
 
-   relax_a     = hypre_CTAlloc(void *,  num_all_grids, HYPRE_MEMORY_HOST);
-   matvec_a    = hypre_CTAlloc(void *,  num_all_grids, HYPRE_MEMORY_HOST);
-   restrictx_a = hypre_CTAlloc(void *,  num_all_grids, HYPRE_MEMORY_HOST);
-   restricty_a = hypre_CTAlloc(void *,  num_all_grids, HYPRE_MEMORY_HOST);
-   restrictz_a = hypre_CTAlloc(void *,  num_all_grids, HYPRE_MEMORY_HOST);
-   interpx_a   = hypre_CTAlloc(void *,  num_all_grids, HYPRE_MEMORY_HOST);
-   interpy_a   = hypre_CTAlloc(void *,  num_all_grids, HYPRE_MEMORY_HOST);
-   interpz_a   = hypre_CTAlloc(void *,  num_all_grids, HYPRE_MEMORY_HOST);
+   relax_a     = hypre_CTAlloc(void *,  num_all_grids, NALU_HYPRE_MEMORY_HOST);
+   matvec_a    = hypre_CTAlloc(void *,  num_all_grids, NALU_HYPRE_MEMORY_HOST);
+   restrictx_a = hypre_CTAlloc(void *,  num_all_grids, NALU_HYPRE_MEMORY_HOST);
+   restricty_a = hypre_CTAlloc(void *,  num_all_grids, NALU_HYPRE_MEMORY_HOST);
+   restrictz_a = hypre_CTAlloc(void *,  num_all_grids, NALU_HYPRE_MEMORY_HOST);
+   interpx_a   = hypre_CTAlloc(void *,  num_all_grids, NALU_HYPRE_MEMORY_HOST);
+   interpy_a   = hypre_CTAlloc(void *,  num_all_grids, NALU_HYPRE_MEMORY_HOST);
+   interpz_a   = hypre_CTAlloc(void *,  num_all_grids, NALU_HYPRE_MEMORY_HOST);
 
    /* set up x-transfer routines */
    for (lx = 0; lx < (num_grids[0] - 1); lx++)
@@ -781,8 +781,8 @@ hypre_SparseMSGSetup( void               *smsg_vdata,
    if ((smsg_data -> logging) > 0)
    {
       max_iter = (smsg_data -> max_iter);
-      (smsg_data -> norms)     = hypre_TAlloc(HYPRE_Real,  max_iter, HYPRE_MEMORY_HOST);
-      (smsg_data -> rel_norms) = hypre_TAlloc(HYPRE_Real,  max_iter, HYPRE_MEMORY_HOST);
+      (smsg_data -> norms)     = hypre_TAlloc(NALU_HYPRE_Real,  max_iter, NALU_HYPRE_MEMORY_HOST);
+      (smsg_data -> rel_norms) = hypre_TAlloc(NALU_HYPRE_Real,  max_iter, NALU_HYPRE_MEMORY_HOST);
    }
 
 #if DEBUG

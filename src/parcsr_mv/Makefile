@@ -18,7 +18,7 @@ C_COMPILE_FLAGS = \
  ${CINCLUDES}
 
 HEADERS =\
- HYPRE_parcsr_mv.h\
+ NALU_HYPRE_parcsr_mv.h\
  _hypre_parcsr_mv.h\
  new_commpkg.h\
  numbers.h\
@@ -29,12 +29,12 @@ HEADERS =\
 
 FILES =\
  communicationT.c\
- F90_HYPRE_parcsr_matrix.c\
- F90_HYPRE_parcsr_vector.c\
+ F90_NALU_HYPRE_parcsr_matrix.c\
+ F90_NALU_HYPRE_parcsr_vector.c\
  F90_parcsr_matrix.c\
  F90_par_vector.c\
- HYPRE_parcsr_matrix.c\
- HYPRE_parcsr_vector.c\
+ NALU_HYPRE_parcsr_matrix.c\
+ NALU_HYPRE_parcsr_vector.c\
  gen_fffc.c\
  new_commpkg.c\
  numbers.c\
@@ -78,45 +78,45 @@ OBJS = ${COBJS} ${CUOBJS}
 
 DRIVER_OBJS = ${DRIVER_FILES:.c=.o}
 
-SONAME = libHYPRE_parcsr_mv-${HYPRE_RELEASE_VERSION}${HYPRE_LIB_SUFFIX}
+SONAME = libNALU_HYPRE_parcsr_mv-${NALU_HYPRE_RELEASE_VERSION}${NALU_HYPRE_LIB_SUFFIX}
 
 ##################################################################
 # Targets
 ##################################################################
 
-all: libHYPRE_parcsr_mv${HYPRE_LIB_SUFFIX}
-	cp -fR $(srcdir)/HYPRE_*.h $(HYPRE_BUILD_DIR)/include
-	cp -fR $(srcdir)/_hypre_parcsr_mv.h $(HYPRE_BUILD_DIR)/include
-#	cp -fR libHYPRE* $(HYPRE_BUILD_DIR)/lib
+all: libNALU_HYPRE_parcsr_mv${NALU_HYPRE_LIB_SUFFIX}
+	cp -fR $(srcdir)/NALU_HYPRE_*.h $(NALU_HYPRE_BUILD_DIR)/include
+	cp -fR $(srcdir)/_hypre_parcsr_mv.h $(NALU_HYPRE_BUILD_DIR)/include
+#	cp -fR libHYPRE* $(NALU_HYPRE_BUILD_DIR)/lib
 
-driver: driver.o libHYPRE_parcsr_mv${HYPRE_LIB_SUFFIX}
+driver: driver.o libNALU_HYPRE_parcsr_mv${NALU_HYPRE_LIB_SUFFIX}
 	@echo  "Linking" $@ "... "
 	${CC} -o driver driver.o ${LFLAGS}
 
-driver_matvec: driver_matvec.o libHYPRE_parcsr_mv${HYPRE_LIB_SUFFIX}
+driver_matvec: driver_matvec.o libNALU_HYPRE_parcsr_mv${NALU_HYPRE_LIB_SUFFIX}
 	@echo  "Linking" $@ "... "
 	${CC} -o driver_matvec driver_matvec.o ${LFLAGS}
 
-driver_matmul: driver_matmul.o libHYPRE_parcsr_mv${HYPRE_LIB_SUFFIX}
+driver_matmul: driver_matmul.o libNALU_HYPRE_parcsr_mv${NALU_HYPRE_LIB_SUFFIX}
 	@echo  "Linking" $@ "... "
 	${CC} -o driver_matmul driver_matmul.o ${LFLAGS}
 
-driver_boolmatmul: driver_boolmatmul.o libHYPRE_parcsr_mv${HYPRE_LIB_SUFFIX}
+driver_boolmatmul: driver_boolmatmul.o libNALU_HYPRE_parcsr_mv${NALU_HYPRE_LIB_SUFFIX}
 	@echo  "Linking" $@ "... "
 	${CC} -o driver_boolmatmul driver_boolmatmul.o ${LFLAGS}
 
-driver_aat: driver_aat.o libHYPRE_parcsr_mv${HYPRE_LIB_SUFFIX}
+driver_aat: driver_aat.o libNALU_HYPRE_parcsr_mv${NALU_HYPRE_LIB_SUFFIX}
 	@echo  "Linking" $@ "... "
 	${CC} -o driver_aat driver_aat.o ${LFLAGS}
 
-driver_boolaat: driver_boolaat.o libHYPRE_parcsr_mv${HYPRE_LIB_SUFFIX}
+driver_boolaat: driver_boolaat.o libNALU_HYPRE_parcsr_mv${NALU_HYPRE_LIB_SUFFIX}
 	@echo  "Linking" $@ "... "
 	${CC} -o driver_boolaat driver_boolaat.o ${LFLAGS}
 
-install: libHYPRE_parcsr_mv${HYPRE_LIB_SUFFIX}
-	cp -fR $(srcdir)/HYPRE_*.h $(HYPRE_INC_INSTALL)
-	cp -fR $(srcdir)/_hypre_parcsr_mv.h $(HYPRE_INC_INSTALL)
-#	cp -fR libHYPRE* $(HYPRE_LIB_INSTALL)
+install: libNALU_HYPRE_parcsr_mv${NALU_HYPRE_LIB_SUFFIX}
+	cp -fR $(srcdir)/NALU_HYPRE_*.h $(NALU_HYPRE_INC_INSTALL)
+	cp -fR $(srcdir)/_hypre_parcsr_mv.h $(NALU_HYPRE_INC_INSTALL)
+#	cp -fR libHYPRE* $(NALU_HYPRE_LIB_INSTALL)
 
 clean:
 	rm -f *.o *.obj libHYPRE*
@@ -129,12 +129,12 @@ distclean: clean
 # Rules
 ##################################################################
 
-libHYPRE_parcsr_mv.a: ${OBJS}
+libNALU_HYPRE_parcsr_mv.a: ${OBJS}
 	@echo  "Building $@ ... "
 	${AR} $@ ${OBJS}
 	${RANLIB} $@
 
-libHYPRE_parcsr_mv.so libHYPRE_parcsr_mv.dylib: ${OBJS}
+libNALU_HYPRE_parcsr_mv.so libNALU_HYPRE_parcsr_mv.dylib: ${OBJS}
 	@echo  "Building $@ ... "
 	${BUILD_CC_SHARED} -o ${SONAME} ${OBJS} ${SHARED_SET_SONAME}${SONAME}
 	ln -s -f ${SONAME} $@

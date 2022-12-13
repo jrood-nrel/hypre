@@ -15,10 +15,10 @@
  * BoxLoop macros:
  *--------------------------------------------------------------------------*/
 
-#ifndef HYPRE_BOXLOOP_RAJA_HEADER
-#define HYPRE_BOXLOOP_RAJA_HEADER
+#ifndef NALU_HYPRE_BOXLOOP_RAJA_HEADER
+#define NALU_HYPRE_BOXLOOP_RAJA_HEADER
 
-#if defined(HYPRE_USING_RAJA)
+#if defined(NALU_HYPRE_USING_RAJA)
 
 #ifdef __cplusplus
 extern "C++"
@@ -34,16 +34,16 @@ extern "C++"
 
 typedef struct hypre_Boxloop_struct
 {
-   HYPRE_Int lsize0, lsize1, lsize2;
-   HYPRE_Int strides0, strides1, strides2;
-   HYPRE_Int bstart0, bstart1, bstart2;
-   HYPRE_Int bsize0, bsize1, bsize2;
+   NALU_HYPRE_Int lsize0, lsize1, lsize2;
+   NALU_HYPRE_Int strides0, strides1, strides2;
+   NALU_HYPRE_Int bstart0, bstart1, bstart2;
+   NALU_HYPRE_Int bsize0, bsize1, bsize2;
 } hypre_Boxloop;
 
 
-#if defined(HYPRE_USING_CUDA) /* RAJA with CUDA, running on device */
+#if defined(NALU_HYPRE_USING_CUDA) /* RAJA with CUDA, running on device */
 
-#define BLOCKSIZE                HYPRE_1D_BLOCK_SIZE
+#define BLOCKSIZE                NALU_HYPRE_1D_BLOCK_SIZE
 #define hypre_RAJA_DEVICE        RAJA_DEVICE
 #define hypre_raja_exec_policy   cuda_exec<BLOCKSIZE>
 /* #define hypre_raja_reduce_policy cuda_reduce_atomic<BLOCKSIZE> */
@@ -58,14 +58,14 @@ printf("\n ERROR zypre_newBoxLoop: %s in %s(%d) function %s\n",cudaGetErrorStrin
 hypre_CheckErrorDevice(cudaDeviceSynchronize());
 */
 
-#elif defined(HYPRE_USING_DEVICE_OPENMP) /* RAJA with OpenMP (>4.5), running on device */
+#elif defined(NALU_HYPRE_USING_DEVICE_OPENMP) /* RAJA with OpenMP (>4.5), running on device */
 
 #define hypre_RAJA_DEVICE
 #define hypre_raja_exec_policy   omp_target_parallel_for_exec<BLOCKSIZE>
 #define hypre_raja_reduce_policy omp_target_reduce
 #define hypre_fence()
 
-#elif defined(HYPRE_USING_OPENMP) /* RAJA with OpenMP, running on host (CPU) */
+#elif defined(NALU_HYPRE_USING_OPENMP) /* RAJA with OpenMP, running on host (CPU) */
 
 #define hypre_RAJA_DEVICE
 #define hypre_raja_exec_policy   omp_for_exec
@@ -79,14 +79,14 @@ hypre_CheckErrorDevice(cudaDeviceSynchronize());
 #define hypre_raja_reduce_policy seq_reduce
 #define hypre_fence()
 
-#endif /* #if defined(HYPRE_USING_CUDA) */
+#endif /* #if defined(NALU_HYPRE_USING_CUDA) */
 
 
 
 
 #define zypre_BoxLoopIncK(k,box,hypre__i)                                               \
-   HYPRE_Int hypre_boxD##k = 1;                                                         \
-   HYPRE_Int hypre__i = 0;                                                              \
+   NALU_HYPRE_Int hypre_boxD##k = 1;                                                         \
+   NALU_HYPRE_Int hypre__i = 0;                                                              \
    hypre__i += (hypre_IndexD(local_idx, 0)*box.strides0 + box.bstart0) * hypre_boxD##k; \
    hypre_boxD##k *= hypre_max(0, box.bsize0 + 1);                                       \
    hypre__i += (hypre_IndexD(local_idx, 1)*box.strides1 + box.bstart1) * hypre_boxD##k; \
@@ -96,14 +96,14 @@ hypre_CheckErrorDevice(cudaDeviceSynchronize());
 
 
 #define zypre_newBoxLoopInit(ndim,loop_size)                                \
-  HYPRE_Int hypre__tot = 1;                                                 \
-  for (HYPRE_Int d = 0;d < ndim;d ++)                                       \
+  NALU_HYPRE_Int hypre__tot = 1;                                                 \
+  for (NALU_HYPRE_Int d = 0;d < ndim;d ++)                                       \
       hypre__tot *= loop_size[d];
 
 
 #define zypre_newBoxLoopDeclare(box)                                    \
   hypre_Index local_idx;                                                \
-  HYPRE_Int idx_local = idx;                                            \
+  NALU_HYPRE_Int idx_local = idx;                                            \
   hypre_IndexD(local_idx, 0)  = idx_local % box.lsize0;                 \
   idx_local = idx_local / box.lsize0;                                   \
   hypre_IndexD(local_idx, 1)  = idx_local % box.lsize1;                 \
@@ -148,7 +148,7 @@ hypre_CheckErrorDevice(cudaDeviceSynchronize());
 #define zypre_newBoxLoop0Begin(ndim, loop_size)                                                   \
 {                                                                                                 \
    zypre_newBoxLoopInit(ndim,loop_size);                                                          \
-   forall< hypre_raja_exec_policy >(RangeSegment(0, hypre__tot), [=] hypre_RAJA_DEVICE (HYPRE_Int idx) \
+   forall< hypre_raja_exec_policy >(RangeSegment(0, hypre__tot), [=] hypre_RAJA_DEVICE (NALU_HYPRE_Int idx) \
    {
 
 
@@ -162,7 +162,7 @@ hypre_CheckErrorDevice(cudaDeviceSynchronize());
 {                                                                                                  \
     zypre_newBoxLoopInit(ndim,loop_size);                                                          \
     zypre_BoxLoopDataDeclareK(1,ndim,loop_size,dbox1,start1,stride1);                              \
-    forall< hypre_raja_exec_policy >(RangeSegment(0, hypre__tot), [=] hypre_RAJA_DEVICE (HYPRE_Int idx) \
+    forall< hypre_raja_exec_policy >(RangeSegment(0, hypre__tot), [=] hypre_RAJA_DEVICE (NALU_HYPRE_Int idx) \
     {                                                                                              \
        zypre_newBoxLoopDeclare(databox1);                                                          \
        zypre_BoxLoopIncK(1,databox1,i1);
@@ -180,7 +180,7 @@ hypre_CheckErrorDevice(cudaDeviceSynchronize());
   zypre_newBoxLoopInit(ndim,loop_size);                                                          \
   zypre_BoxLoopDataDeclareK(1,ndim,loop_size,dbox1,start1,stride1);                              \
   zypre_BoxLoopDataDeclareK(2,ndim,loop_size,dbox2,start2,stride2);                              \
-  forall< hypre_raja_exec_policy >(RangeSegment(0, hypre__tot), [=] hypre_RAJA_DEVICE (HYPRE_Int idx) \
+  forall< hypre_raja_exec_policy >(RangeSegment(0, hypre__tot), [=] hypre_RAJA_DEVICE (NALU_HYPRE_Int idx) \
   {                                                                                              \
      zypre_newBoxLoopDeclare(databox1);                                                          \
      zypre_BoxLoopIncK(1,databox1,i1);                                                           \
@@ -201,7 +201,7 @@ hypre_CheckErrorDevice(cudaDeviceSynchronize());
    zypre_BoxLoopDataDeclareK(1,ndim,loop_size,dbox1,start1,stride1);                              \
    zypre_BoxLoopDataDeclareK(2,ndim,loop_size,dbox2,start2,stride2);                              \
    zypre_BoxLoopDataDeclareK(3,ndim,loop_size,dbox3,start3,stride3);                              \
-   forall< hypre_raja_exec_policy >(RangeSegment(0, hypre__tot), [=] hypre_RAJA_DEVICE (HYPRE_Int idx) \
+   forall< hypre_raja_exec_policy >(RangeSegment(0, hypre__tot), [=] hypre_RAJA_DEVICE (NALU_HYPRE_Int idx) \
    {                                                                                              \
       zypre_newBoxLoopDeclare(databox1);                                                          \
       zypre_BoxLoopIncK(1,databox1,i1);                                                           \
@@ -224,7 +224,7 @@ hypre_CheckErrorDevice(cudaDeviceSynchronize());
    zypre_BoxLoopDataDeclareK(2,ndim,loop_size,dbox2,start2,stride2);                              \
    zypre_BoxLoopDataDeclareK(3,ndim,loop_size,dbox3,start3,stride3);                              \
    zypre_BoxLoopDataDeclareK(4,ndim,loop_size,dbox4,start4,stride4);                              \
-   forall< hypre_raja_exec_policy >(RangeSegment(0, hypre__tot), [=] hypre_RAJA_DEVICE (HYPRE_Int idx) \
+   forall< hypre_raja_exec_policy >(RangeSegment(0, hypre__tot), [=] hypre_RAJA_DEVICE (NALU_HYPRE_Int idx) \
    {                                                                                              \
       zypre_newBoxLoopDeclare(databox1);                                                          \
       zypre_BoxLoopIncK(1,databox1,i1);                                                           \
@@ -279,7 +279,7 @@ hypre_CheckErrorDevice(cudaDeviceSynchronize());
     zypre_newBoxLoopInit(ndim,loop_size);                                                          \
     zypre_BasicBoxLoopDataDeclareK(1,ndim,loop_size,stride1);                                      \
     zypre_BasicBoxLoopDataDeclareK(2,ndim,loop_size,stride2);                                      \
-    forall< hypre_raja_exec_policy >(RangeSegment(0, hypre__tot), [=] hypre_RAJA_DEVICE (HYPRE_Int idx) \
+    forall< hypre_raja_exec_policy >(RangeSegment(0, hypre__tot), [=] hypre_RAJA_DEVICE (NALU_HYPRE_Int idx) \
     {                                                                                              \
        zypre_newBoxLoopDeclare(databox1);                                                          \
        zypre_BoxLoopIncK(1,databox1,i1);                                                           \
@@ -287,7 +287,7 @@ hypre_CheckErrorDevice(cudaDeviceSynchronize());
 
 #define hypre_LoopBegin(size,idx)                                                           \
 {                                                                                           \
-   forall< hypre_raja_exec_policy >(RangeSegment(0, size), [=] hypre_RAJA_DEVICE (HYPRE_Int idx) \
+   forall< hypre_raja_exec_policy >(RangeSegment(0, size), [=] hypre_RAJA_DEVICE (NALU_HYPRE_Int idx) \
    {
 
 #define hypre_LoopEnd()                                                        \
@@ -337,5 +337,5 @@ hypre_CheckErrorDevice(cudaDeviceSynchronize());
 
 #endif
 
-#endif /* #ifndef HYPRE_BOXLOOP_RAJA_HEADER */
+#endif /* #ifndef NALU_HYPRE_BOXLOOP_RAJA_HEADER */
 

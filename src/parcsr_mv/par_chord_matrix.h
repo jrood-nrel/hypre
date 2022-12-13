@@ -23,36 +23,36 @@ typedef struct
    MPI_Comm comm;
 
    /*  A structure: -------------------------------------------------------- */
-   HYPRE_Int num_inprocessors;
-   HYPRE_Int *inprocessor;
+   NALU_HYPRE_Int num_inprocessors;
+   NALU_HYPRE_Int *inprocessor;
 
    /* receiving in idof from different (in)processors; ---------------------- */
-   HYPRE_Int *num_idofs_inprocessor;
-   HYPRE_Int **idof_inprocessor;
+   NALU_HYPRE_Int *num_idofs_inprocessor;
+   NALU_HYPRE_Int **idof_inprocessor;
 
    /* symmetric information: ----------------------------------------------- */
    /* this can be replaces by CSR format: ---------------------------------- */
-   HYPRE_Int     *num_inchords;
-   HYPRE_Int     **inchord_idof;
-   HYPRE_Int     **inchord_rdof;
-   HYPRE_Complex **inchord_data;
+   NALU_HYPRE_Int     *num_inchords;
+   NALU_HYPRE_Int     **inchord_idof;
+   NALU_HYPRE_Int     **inchord_rdof;
+   NALU_HYPRE_Complex **inchord_data;
 
-   HYPRE_Int num_idofs;
-   HYPRE_Int num_rdofs;
+   NALU_HYPRE_Int num_idofs;
+   NALU_HYPRE_Int num_rdofs;
 
-   HYPRE_Int *firstindex_idof; /* not owned by my_id; ---------------------- */
-   HYPRE_Int *firstindex_rdof; /* not owned by my_id; ---------------------- */
+   NALU_HYPRE_Int *firstindex_idof; /* not owned by my_id; ---------------------- */
+   NALU_HYPRE_Int *firstindex_rdof; /* not owned by my_id; ---------------------- */
 
    /* --------------------------- mirror information: ---------------------- */
    /* participation of rdof in different processors; ----------------------- */
 
-   HYPRE_Int num_toprocessors;
-   HYPRE_Int *toprocessor;
+   NALU_HYPRE_Int num_toprocessors;
+   NALU_HYPRE_Int *toprocessor;
 
    /* rdofs to be sentto toprocessors; -------------------------------------
       ---------------------------------------------------------------------- */
-   HYPRE_Int *num_rdofs_toprocessor;
-   HYPRE_Int **rdof_toprocessor;
+   NALU_HYPRE_Int *num_rdofs_toprocessor;
+   NALU_HYPRE_Int **rdof_toprocessor;
 
 } hypre_ParChordMatrix;
 

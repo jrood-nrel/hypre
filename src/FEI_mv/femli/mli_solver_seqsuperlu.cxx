@@ -122,12 +122,12 @@ int MLI_Solver_SeqSuperLU::setup( MLI_Matrix *Amat )
       exit(1);
    }
    mliAmat_ = Amat;
-   if ( !strcmp( mliAmat_->getName(), "HYPRE_ParCSR" ) )
+   if ( !strcmp( mliAmat_->getName(), "NALU_HYPRE_ParCSR" ) )
    {
       hypreA = (hypre_ParCSRMatrix *) mliAmat_->getMatrix();
       ADiag = hypre_ParCSRMatrixDiag(hypreA);
    }
-   else if ( !strcmp( mliAmat_->getName(), "HYPRE_CSR" ) )
+   else if ( !strcmp( mliAmat_->getName(), "NALU_HYPRE_CSR" ) )
    {
       ADiag = (hypre_CSRMatrix *) mliAmat_->getMatrix();
    }
@@ -233,9 +233,9 @@ fclose(fp);
          }
          nnz = 0;
          for ( irow = 0; irow < nSubRows; irow++ ) nnz += countArray[irow];
-         cscJA = hypre_TAlloc(int,  (nSubRows+1) , HYPRE_MEMORY_HOST);
-         cscIA = hypre_TAlloc(int,  nnz , HYPRE_MEMORY_HOST);
-         cscAA = hypre_TAlloc(double,  nnz , HYPRE_MEMORY_HOST);
+         cscJA = hypre_TAlloc(int,  (nSubRows+1) , NALU_HYPRE_MEMORY_HOST);
+         cscIA = hypre_TAlloc(int,  nnz , NALU_HYPRE_MEMORY_HOST);
+         cscAA = hypre_TAlloc(double,  nnz , NALU_HYPRE_MEMORY_HOST);
          cscJA[0] = 0;
          nnz = 0;
          for ( icol = 1; icol <= nSubRows; icol++ ) 
@@ -303,9 +303,9 @@ fclose(fp);
                countArray[csrJA[icol]]++;
             }
          }
-         cscJA = hypre_TAlloc(int,  (nrows+1) , HYPRE_MEMORY_HOST);
-         cscAA = hypre_TAlloc(double,  nnz , HYPRE_MEMORY_HOST);
-         cscIA = hypre_TAlloc(int,  nnz , HYPRE_MEMORY_HOST);
+         cscJA = hypre_TAlloc(int,  (nrows+1) , NALU_HYPRE_MEMORY_HOST);
+         cscAA = hypre_TAlloc(double,  nnz , NALU_HYPRE_MEMORY_HOST);
+         cscIA = hypre_TAlloc(int,  nnz , NALU_HYPRE_MEMORY_HOST);
          cscJA[0] = 0;
          nnz = 0;
          for ( icol = 1; icol <= nrows; icol++ ) 
@@ -617,21 +617,21 @@ int MLI_Solver_SeqSuperLU::setParams(char *paramString, int argc, char **argv)
          printf("MLI_Solver_SeqSuperLU::setParams ERROR : needs 1 arg.\n");
          return 1;
       }
-      HYPRE_IJVector auxVec;
+      NALU_HYPRE_IJVector auxVec;
       PSmat_ = (MLI_Matrix *) argv[0];
       hypre_ParCSRMatrix *hypreAux;
       hypre_ParCSRMatrix *ps = (hypre_ParCSRMatrix *) PSmat_->getMatrix();
       int nCols = hypre_ParCSRMatrixNumCols(ps);
       int start = hypre_ParCSRMatrixFirstColDiag(ps);
       MPI_Comm vComm = hypre_ParCSRMatrixComm(ps);
-      HYPRE_IJVectorCreate(vComm, start, start+nCols-1, &auxVec);
-      HYPRE_IJVectorSetObjectType(auxVec, HYPRE_PARCSR);
-      HYPRE_IJVectorInitialize(auxVec);
-      HYPRE_IJVectorAssemble(auxVec);
-      HYPRE_IJVectorGetObject(auxVec, (void **) &hypreAux);
-      HYPRE_IJVectorSetObjectType(auxVec, -1);
-      HYPRE_IJVectorDestroy(auxVec);
-      strcpy( paramString, "HYPRE_ParVector" );
+      NALU_HYPRE_IJVectorCreate(vComm, start, start+nCols-1, &auxVec);
+      NALU_HYPRE_IJVectorSetObjectType(auxVec, NALU_HYPRE_PARCSR);
+      NALU_HYPRE_IJVectorInitialize(auxVec);
+      NALU_HYPRE_IJVectorAssemble(auxVec);
+      NALU_HYPRE_IJVectorGetObject(auxVec, (void **) &hypreAux);
+      NALU_HYPRE_IJVectorSetObjectType(auxVec, -1);
+      NALU_HYPRE_IJVectorDestroy(auxVec);
+      strcpy( paramString, "NALU_HYPRE_ParVector" );
       MLI_Function *funcPtr = new MLI_Function();
       MLI_Utils_HypreParVectorGetDestroyFunc(funcPtr);
       PSvec_ = new MLI_Vector( (void*) hypreAux, paramString, funcPtr );

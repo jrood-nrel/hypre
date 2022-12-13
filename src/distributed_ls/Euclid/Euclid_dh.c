@@ -70,14 +70,14 @@ void Euclid_dhCreate(Euclid_dh *ctxOUT)
   strcpy(ctx->krylovMethod, "bicgstab");
   ctx->maxIts = 200;
   ctx->rtol = 1e-5;
-  ctx->atol = HYPRE_REAL_MIN;
+  ctx->atol = NALU_HYPRE_REAL_MIN;
   ctx->its = 0;
   ctx->itsTotal = 0;
   ctx->setupCount = 0;
   ctx->logging = 0;
   ctx->printStats = (Parser_dhHasSwitch(parser_dh, "-printStats"));
 
-  { HYPRE_Int i;
+  { NALU_HYPRE_Int i;
     for (i=0; i<TIMING_BINS; ++i) ctx->timing[i] = 0.0;
     for (i=0; i<STATS_BINS; ++i) ctx->stats[i] = 0.0;
   }
@@ -127,8 +127,8 @@ void Euclid_dhDestroy(Euclid_dh ctx)
 void Euclid_dhSetup(Euclid_dh ctx)
 {
   START_FUNC_DH
-  HYPRE_Int m, n, beg_row;
-  HYPRE_Real t1;
+  NALU_HYPRE_Int m, n, beg_row;
+  NALU_HYPRE_Real t1;
   bool isSetup = ctx->isSetup;
   bool bj = false;
 
@@ -144,7 +144,7 @@ void Euclid_dhSetup(Euclid_dh ctx)
   /*----------------------------------------------------
    * zero array for statistical reporting
    *----------------------------------------------------*/
-  { HYPRE_Int i;
+  { NALU_HYPRE_Int i;
     for (i=0; i<STATS_BINS; ++i) ctx->stats[i] = 0.0;
   }
 
@@ -186,7 +186,7 @@ void Euclid_dhSetup(Euclid_dh ctx)
    * subdomain graph cannot change (user's responsibility?)
    *------------------------------------------------------------------------*/
   if (ctx->sg == NULL) {
-    HYPRE_Int blocks = np_dh;
+    NALU_HYPRE_Int blocks = np_dh;
     t1 = hypre_MPI_Wtime();
     if (np_dh == 1) {
       Parser_dhReadInt(parser_dh, "-blocks", &blocks); CHECK_V_ERROR;
@@ -225,7 +225,7 @@ void Euclid_dhSetup(Euclid_dh ctx)
   if (ctx->scale == NULL) {
     ctx->scale = (REAL_DH*)MALLOC_DH(m*sizeof(REAL_DH)); CHECK_V_ERROR;
   }
-  { HYPRE_Int i; for (i=0; i<m; ++i) ctx->scale[i] = 1.0; }
+  { NALU_HYPRE_Int i; for (i=0; i<m; ++i) ctx->scale[i] = 1.0; }
 
   /*------------------------------------------------------------------
    * allocate work vectors; used in factorization and triangular solves;
@@ -374,11 +374,11 @@ void invert_diagonals_private(Euclid_dh ctx)
 {
   START_FUNC_DH
   REAL_DH *aval = ctx->F->aval;
-  HYPRE_Int *diag = ctx->F->diag;
+  NALU_HYPRE_Int *diag = ctx->F->diag;
   if (aval == NULL || diag == NULL) {
     SET_INFO("can't invert diags; either F->aval or F->diag is NULL");
   } else {
-    HYPRE_Int i, m = ctx->F->m;
+    NALU_HYPRE_Int i, m = ctx->F->m;
     for (i=0; i<m; ++i) {
         aval[diag[i]] = 1.0/aval[diag[i]];
     }
@@ -394,10 +394,10 @@ void compute_rho_private(Euclid_dh ctx)
 {
   START_FUNC_DH
   if (ctx->F != NULL) {
-    HYPRE_Real bufLocal[3], bufGlobal[3];
-    HYPRE_Int m = ctx->m;
+    NALU_HYPRE_Real bufLocal[3], bufGlobal[3];
+    NALU_HYPRE_Int m = ctx->m;
 
-    ctx->stats[NZF_STATS] = (HYPRE_Real)ctx->F->rp[m];
+    ctx->stats[NZF_STATS] = (NALU_HYPRE_Real)ctx->F->rp[m];
     bufLocal[0] = ctx->stats[NZA_STATS];      /* nzA */
     bufLocal[1] = ctx->stats[NZF_STATS];      /* nzF */
     bufLocal[2] = ctx->stats[NZA_USED_STATS]; /* nzA used */
@@ -445,8 +445,8 @@ void factor_private(Euclid_dh ctx)
   /*-------------------------------------------------------------
    * Initialize object to hold factor.
    *-------------------------------------------------------------*/
-  { HYPRE_Int br = 0;
-    HYPRE_Int id = np_dh;
+  { NALU_HYPRE_Int br = 0;
+    NALU_HYPRE_Int id = np_dh;
     if (ctx->sg != NULL) {
       br = ctx->sg->beg_rowP[myid_dh];
       id = ctx->sg->o2n_sub[myid_dh];
@@ -588,12 +588,12 @@ void discard_indices_private(Euclid_dh ctx)
 {
   START_FUNC_DH
 #if 0
-  HYPRE_Int *rp = ctx->F->rp, *cval = ctx->F->cval;
-  HYPRE_Real *aval = ctx->F->aval;
-  HYPRE_Int m = F->m, *nabors = ctx->nabors, nc = ctx->naborCount;
-  HYPRE_Int i, j, k, idx, count = 0, start_of_row;
-  HYPRE_Int beg_row = ctx->beg_row, end_row = beg_row + m;
-  HYPRE_Int *diag = ctx->F->diag;
+  NALU_HYPRE_Int *rp = ctx->F->rp, *cval = ctx->F->cval;
+  NALU_HYPRE_Real *aval = ctx->F->aval;
+  NALU_HYPRE_Int m = F->m, *nabors = ctx->nabors, nc = ctx->naborCount;
+  NALU_HYPRE_Int i, j, k, idx, count = 0, start_of_row;
+  NALU_HYPRE_Int beg_row = ctx->beg_row, end_row = beg_row + m;
+  NALU_HYPRE_Int *diag = ctx->F->diag;
 
   /* if col is not locally owned, and doesn't belong to a
    * nabor in the (original) subdomain graph, we need to discard
@@ -602,10 +602,10 @@ void discard_indices_private(Euclid_dh ctx)
    */
   for (i=0; i<m; ++i) {
     for (j=rp[i]; j<rp[i+1]; ++j) {
-      HYPRE_Int col = cval[j];
+      NALU_HYPRE_Int col = cval[j];
       if (col < beg_row  || col >= end_row) {
         bool flag = true;
-        HYPRE_Int owner = find_owner_private_mpi(ctx, col); CHECK_V_ERROR;
+        NALU_HYPRE_Int owner = find_owner_private_mpi(ctx, col); CHECK_V_ERROR;
 
         for (k=0; k<nc; ++k) {
           if (nabors[k] == owner) {
@@ -630,8 +630,8 @@ void discard_indices_private(Euclid_dh ctx)
   start_of_row = 0;
   for (i=0; i<m; ++i) {
     for (j=start_of_row; j<rp[i+1]; ++j) {
-      HYPRE_Int    col = cval[j];
-      HYPRE_Real val = aval[j];
+      NALU_HYPRE_Int    col = cval[j];
+      NALU_HYPRE_Real val = aval[j];
       if (col != -1) {
         cval[idx] = col;
         aval[idx] = val;
@@ -658,10 +658,10 @@ void discard_indices_private(Euclid_dh ctx)
 
 #undef __FUNC__
 #define __FUNC__ "Euclid_dhSolve"
-void Euclid_dhSolve(Euclid_dh ctx, Vec_dh x, Vec_dh b, HYPRE_Int *its)
+void Euclid_dhSolve(Euclid_dh ctx, Vec_dh x, Vec_dh b, NALU_HYPRE_Int *its)
 {
   START_FUNC_DH
-  HYPRE_Int itsOUT;
+  NALU_HYPRE_Int itsOUT;
   Mat_dh A = (Mat_dh)ctx->A;
 
   if (! strcmp(ctx->krylovMethod, "cg")) {
@@ -681,8 +681,8 @@ void Euclid_dhSolve(Euclid_dh ctx, Vec_dh x, Vec_dh b, HYPRE_Int *its)
 void Euclid_dhPrintStats(Euclid_dh ctx, FILE *fp)
 {
   START_FUNC_DH
-  HYPRE_Real *timing;
-  HYPRE_Int nz;
+  NALU_HYPRE_Real *timing;
+  NALU_HYPRE_Int nz;
 
   nz = Factor_dhReadNz(ctx->F); CHECK_V_ERROR;
   timing = ctx->timing;
@@ -745,18 +745,18 @@ void Euclid_dhPrintStats(Euclid_dh ctx, FILE *fp)
 */
 #undef __FUNC__
 #define __FUNC__ "Euclid_dhPrintStatsShort"
-void Euclid_dhPrintStatsShort(Euclid_dh ctx, HYPRE_Real setup, HYPRE_Real solve, FILE *fp)
+void Euclid_dhPrintStatsShort(Euclid_dh ctx, NALU_HYPRE_Real setup, NALU_HYPRE_Real solve, FILE *fp)
 {
   START_FUNC_DH
-  HYPRE_Real *timing = ctx->timing;
-  /* HYPRE_Real *stats = ctx->stats; */
-  /* HYPRE_Real setup_factor; */
-  /* HYPRE_Real setup_other; */
-  HYPRE_Real apply_total;
-  HYPRE_Real apply_per_it;
-  /* HYPRE_Real nzUsedRatio; */
-  HYPRE_Real perIt;
-  HYPRE_Int blocks = np_dh;
+  NALU_HYPRE_Real *timing = ctx->timing;
+  /* NALU_HYPRE_Real *stats = ctx->stats; */
+  /* NALU_HYPRE_Real setup_factor; */
+  /* NALU_HYPRE_Real setup_other; */
+  NALU_HYPRE_Real apply_total;
+  NALU_HYPRE_Real apply_per_it;
+  /* NALU_HYPRE_Real nzUsedRatio; */
+  NALU_HYPRE_Real perIt;
+  NALU_HYPRE_Int blocks = np_dh;
 
   if (np_dh == 1) blocks = ctx->sg->blocks;
 
@@ -765,9 +765,9 @@ void Euclid_dhPrintStatsShort(Euclid_dh ctx, HYPRE_Real setup, HYPRE_Real solve,
   /* setup_factor  = timing[FACTOR_T]; */
   /* setup_other   = timing[SETUP_T] - setup_factor; */
   apply_total   = timing[TRI_SOLVE_T];
-  apply_per_it  = apply_total/(HYPRE_Real)ctx->its;
+  apply_per_it  = apply_total/(NALU_HYPRE_Real)ctx->its;
   /* nzUsedRatio   = stats[NZA_RATIO_STATS]; */
-  perIt         = solve/(HYPRE_Real)ctx->its;
+  perIt         = solve/(NALU_HYPRE_Real)ctx->its;
 
   fprintf_dh(fp, "\n");
   fprintf_dh(fp, "%6s %6s %6s %6s %6s %6s %6s %6s %6s %6s XX\n",
@@ -783,7 +783,7 @@ void Euclid_dhPrintStatsShort(Euclid_dh ctx, HYPRE_Real setup, HYPRE_Real solve,
                  setup+solve,       /* total time, from caller */
                  perIt,              /* time per iteration, solver+precond. */
                  apply_per_it,     /* time per iteration, solver+precond. */
-                 (HYPRE_Real)ctx->n    /* global unknnowns */
+                 (NALU_HYPRE_Real)ctx->n    /* global unknnowns */
              );
 
 
@@ -814,7 +814,7 @@ void Euclid_dhPrintStatsShort(Euclid_dh ctx, HYPRE_Real setup, HYPRE_Real solve,
                  ctx->rho_final,    /* rho */
                  ctx->sparseTolA,   /* sparseA tolerance */
                  nzUsedRatio,       /* percent of A that was used */
-                 (HYPRE_Real)ctx->n     /* global unknnowns */
+                 (NALU_HYPRE_Real)ctx->n     /* global unknnowns */
             );
 #endif
 
@@ -840,11 +840,11 @@ void Euclid_dhPrintStatsShort(Euclid_dh ctx, HYPRE_Real setup, HYPRE_Real solve,
 void Euclid_dhPrintStatsShorter(Euclid_dh ctx, FILE *fp)
 {
   START_FUNC_DH
-  HYPRE_Real *stats = ctx->stats;
+  NALU_HYPRE_Real *stats = ctx->stats;
 
-  HYPRE_Int    its           = ctx->its;
-  HYPRE_Real rho           = ctx->rho_final;
-  HYPRE_Real nzUsedRatio   = stats[NZA_RATIO_STATS];
+  NALU_HYPRE_Int    its           = ctx->its;
+  NALU_HYPRE_Real rho           = ctx->rho_final;
+  NALU_HYPRE_Real nzUsedRatio   = stats[NZA_RATIO_STATS];
 
 
   fprintf_dh(fp, "\nStats from last linear solve: YY\n");
@@ -860,7 +860,7 @@ void Euclid_dhPrintStatsShorter(Euclid_dh ctx, FILE *fp)
 void Euclid_dhPrintScaling(Euclid_dh ctx, FILE *fp)
 {
   START_FUNC_DH
-  HYPRE_Int i, m = ctx->m;
+  NALU_HYPRE_Int i, m = ctx->m;
 
   if (m > 10) m = 10;
 
@@ -882,9 +882,9 @@ void reduce_timings_private(Euclid_dh ctx)
 {
   START_FUNC_DH
   if (np_dh > 1) {
-    HYPRE_Real bufOUT[TIMING_BINS];
+    NALU_HYPRE_Real bufOUT[TIMING_BINS];
 
-    hypre_TMemcpy(bufOUT,  ctx->timing, HYPRE_Real, TIMING_BINS, HYPRE_MEMORY_HOST, HYPRE_MEMORY_HOST);
+    hypre_TMemcpy(bufOUT,  ctx->timing, NALU_HYPRE_Real, TIMING_BINS, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_HOST);
     hypre_MPI_Reduce(bufOUT, ctx->timing, TIMING_BINS, hypre_MPI_REAL, hypre_MPI_MAX, 0, comm_dh);
   }
 
@@ -897,8 +897,8 @@ void reduce_timings_private(Euclid_dh ctx)
 void Euclid_dhPrintHypreReport(Euclid_dh ctx, FILE *fp)
 {
   START_FUNC_DH
-  HYPRE_Real *timing;
-  HYPRE_Int nz;
+  NALU_HYPRE_Real *timing;
+  NALU_HYPRE_Int nz;
 
   nz = Factor_dhReadNz(ctx->F); CHECK_V_ERROR;
   timing = ctx->timing;

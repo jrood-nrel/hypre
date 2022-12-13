@@ -14,12 +14,12 @@
 typedef struct
 {
    hypre_StructMatrix *R;
-   HYPRE_Int           R_stored_as_transpose;
+   NALU_HYPRE_Int           R_stored_as_transpose;
    hypre_ComputePkg   *compute_pkg;
    hypre_Index         cindex;
    hypre_Index         stride;
 
-   HYPRE_Int           time_index;
+   NALU_HYPRE_Int           time_index;
 
 } hypre_SemiRestrictData;
 
@@ -31,7 +31,7 @@ hypre_SemiRestrictCreate( )
 {
    hypre_SemiRestrictData *restrict_data;
 
-   restrict_data = hypre_CTAlloc(hypre_SemiRestrictData,  1, HYPRE_MEMORY_HOST);
+   restrict_data = hypre_CTAlloc(hypre_SemiRestrictData,  1, NALU_HYPRE_MEMORY_HOST);
 
    (restrict_data -> time_index)  = hypre_InitializeTiming("SemiRestrict");
 
@@ -41,10 +41,10 @@ hypre_SemiRestrictCreate( )
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SemiRestrictSetup( void               *restrict_vdata,
                          hypre_StructMatrix *R,
-                         HYPRE_Int           R_stored_as_transpose,
+                         NALU_HYPRE_Int           R_stored_as_transpose,
                          hypre_StructVector *r,
                          hypre_StructVector *rc,
                          hypre_Index         cindex,
@@ -89,7 +89,7 @@ hypre_SemiRestrictSetup( void               *restrict_vdata,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SemiRestrict( void               *restrict_vdata,
                     hypre_StructMatrix *R,
                     hypre_StructVector *r,
@@ -97,16 +97,16 @@ hypre_SemiRestrict( void               *restrict_vdata,
 {
    hypre_SemiRestrictData *restrict_data = (hypre_SemiRestrictData *)restrict_vdata;
 
-   HYPRE_Int               R_stored_as_transpose;
+   NALU_HYPRE_Int               R_stored_as_transpose;
    hypre_ComputePkg       *compute_pkg;
    hypre_IndexRef          cindex;
    hypre_IndexRef          stride;
 
    hypre_StructGrid       *fgrid;
-   HYPRE_Int              *fgrid_ids;
+   NALU_HYPRE_Int              *fgrid_ids;
    hypre_StructGrid       *cgrid;
    hypre_BoxArray         *cgrid_boxes;
-   HYPRE_Int              *cgrid_ids;
+   NALU_HYPRE_Int              *cgrid_ids;
 
    hypre_CommHandle       *comm_handle;
 
@@ -118,12 +118,12 @@ hypre_SemiRestrict( void               *restrict_vdata,
    hypre_Box              *r_dbox;
    hypre_Box              *rc_dbox;
 
-   HYPRE_Int               Ri;
-   HYPRE_Int               constant_coefficient;
+   NALU_HYPRE_Int               Ri;
+   NALU_HYPRE_Int               constant_coefficient;
 
-   HYPRE_Real             *Rp0, *Rp1;
-   HYPRE_Real             *rp;
-   HYPRE_Real             *rcp;
+   NALU_HYPRE_Real             *Rp0, *Rp1;
+   NALU_HYPRE_Real             *rp;
+   NALU_HYPRE_Real             *rcp;
 
    hypre_Index             loop_size;
    hypre_IndexRef          start;
@@ -133,7 +133,7 @@ hypre_SemiRestrict( void               *restrict_vdata,
    hypre_StructStencil    *stencil;
    hypre_Index            *stencil_shape;
 
-   HYPRE_Int               compute_i, fi, ci, j;
+   NALU_HYPRE_Int               compute_i, fi, ci, j;
    hypre_StructVector     *rc_tmp;
    /*-----------------------------------------------------------------------
     * Initialize some things.
@@ -166,9 +166,9 @@ hypre_SemiRestrict( void               *restrict_vdata,
    cgrid_boxes = hypre_StructGridBoxes(cgrid);
    cgrid_ids = hypre_StructGridIDs(cgrid);
 
-#if 0 //defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP)
-   HYPRE_MemoryLocation data_location_f = hypre_StructGridDataLocation(fgrid);
-   HYPRE_MemoryLocation data_location_c = hypre_StructGridDataLocation(cgrid);
+#if 0 //defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
+   NALU_HYPRE_MemoryLocation data_location_f = hypre_StructGridDataLocation(fgrid);
+   NALU_HYPRE_MemoryLocation data_location_c = hypre_StructGridDataLocation(cgrid);
 
    if (data_location_f != data_location_c)
    {
@@ -221,7 +221,7 @@ hypre_SemiRestrict( void               *restrict_vdata,
          rc_dbox = hypre_BoxArrayBox(hypre_StructVectorDataSpace(rc), ci);
 
          // RL: PTROFFSET
-         HYPRE_Int Rp0_offset = 0, rp0_offset, rp1_offset;
+         NALU_HYPRE_Int Rp0_offset = 0, rp0_offset, rp1_offset;
 
          if (R_stored_as_transpose)
          {
@@ -259,7 +259,7 @@ hypre_SemiRestrict( void               *restrict_vdata,
 
             if ( constant_coefficient )
             {
-               HYPRE_Complex Rp0val, Rp1val;
+               NALU_HYPRE_Complex Rp0val, Rp1val;
                Ri = hypre_CCBoxIndexRank( R_dbox, startc );
 
                Rp0val = Rp0[Ri + Rp0_offset];
@@ -292,11 +292,11 @@ hypre_SemiRestrict( void               *restrict_vdata,
          }
       }
    }
-#if 0 //defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP)
+#if 0 //defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
    if (data_location_f != data_location_c)
    {
-      hypre_TMemcpy(hypre_StructVectorData(rc), hypre_StructVectorData(rc_tmp), HYPRE_Complex,
-                    hypre_StructVectorDataSize(rc_tmp), HYPRE_MEMORY_HOST, HYPRE_MEMORY_DEVICE);
+      hypre_TMemcpy(hypre_StructVectorData(rc), hypre_StructVectorData(rc_tmp), NALU_HYPRE_Complex,
+                    hypre_StructVectorDataSize(rc_tmp), NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_DEVICE);
       hypre_StructVectorDestroy(rc_tmp);
       hypre_StructGridDataLocation(cgrid) = data_location_c;
    }
@@ -314,7 +314,7 @@ hypre_SemiRestrict( void               *restrict_vdata,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SemiRestrictDestroy( void *restrict_vdata )
 {
    hypre_SemiRestrictData *restrict_data = (hypre_SemiRestrictData *)restrict_vdata;
@@ -324,7 +324,7 @@ hypre_SemiRestrictDestroy( void *restrict_vdata )
       hypre_StructMatrixDestroy(restrict_data -> R);
       hypre_ComputePkgDestroy(restrict_data -> compute_pkg);
       hypre_FinalizeTiming(restrict_data -> time_index);
-      hypre_TFree(restrict_data, HYPRE_MEMORY_HOST);
+      hypre_TFree(restrict_data, NALU_HYPRE_MEMORY_HOST);
    }
 
    return hypre_error_flag;

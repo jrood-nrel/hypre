@@ -242,14 +242,14 @@ void GLVis_PrintLocalCubicMesh(const char *meshfile_prefix,
    fclose(file);
 }
 
-#include "HYPRE_sstruct_mv.h"
+#include "NALU_HYPRE_sstruct_mv.h"
 #include "_hypre_sstruct_mv.h"
 
 /* Save a GLVis mesh file with the given prefix corresponding to the input
    SStruct grid assuming that the cells in each part are the same. The optional
    trans and origin parameters specify the coordinate transformation for each
    part, relative to a square Cartesian grid. */
-void GLVis_PrintSStructGrid(HYPRE_SStructGrid grid,
+void GLVis_PrintSStructGrid(NALU_HYPRE_SStructGrid grid,
                             const char *meshfile_prefix, int myid,
                             double *trans, double *origin)
 {
@@ -438,7 +438,7 @@ void GLVis_PrintSStructGrid(HYPRE_SStructGrid grid,
 /* Save a GLVis grid function (in a file with the given prefix) corresponding to
    the values of the input SStruct vector restricted to the specified SStruct
    variable. Currently only CELL and NODE variable types are supported. */
-void GLVis_PrintSStructVector(HYPRE_SStructVector sol,
+void GLVis_PrintSStructVector(NALU_HYPRE_SStructVector sol,
                               int var,
                               const char *solfile_prefix,
                               int myid)
@@ -459,7 +459,7 @@ void GLVis_PrintSStructVector(HYPRE_SStructVector sol,
    double *values;
    int ilower[3], iupper[3];
 
-   HYPRE_SStructVariable vartype = grid->pgrids[0]->vartypes[var];
+   NALU_HYPRE_SStructVariable vartype = grid->pgrids[0]->vartypes[var];
 
    char fe_coll[100];
    int var_off;
@@ -474,11 +474,11 @@ void GLVis_PrintSStructVector(HYPRE_SStructVector sol,
    /* set the finite element collection based on variable type */
    switch (vartype)
    {
-      case HYPRE_SSTRUCT_VARIABLE_CELL:
+      case NALU_HYPRE_SSTRUCT_VARIABLE_CELL:
          sprintf(fe_coll, "%s", "Local_L2_2D_P0");
          var_off = 0;
          break;
-      case HYPRE_SSTRUCT_VARIABLE_NODE:
+      case NALU_HYPRE_SSTRUCT_VARIABLE_NODE:
          sprintf(fe_coll, "%s", "Local_H1_2D_P1");
          var_off = 1;
          break;
@@ -521,9 +521,9 @@ void GLVis_PrintSStructVector(HYPRE_SStructVector sol,
             iupper[2] = hypre_BoxIMaxD(box, 2);
          }
 
-         HYPRE_SStructVectorGetBoxValues(sol, p, ilower, iupper, var, values);
+         NALU_HYPRE_SStructVectorGetBoxValues(sol, p, ilower, iupper, var, values);
 
-         if (vartype == HYPRE_SSTRUCT_VARIABLE_CELL)
+         if (vartype == NALU_HYPRE_SSTRUCT_VARIABLE_CELL)
          {
             for (k = 0; k < nk; k++)
                for (j = 0; j < nj; j++)
@@ -532,7 +532,7 @@ void GLVis_PrintSStructVector(HYPRE_SStructVector sol,
                      fprintf(file, "%.14e\n", values[i + j * ni]);
                   }
          }
-         else if (vartype == HYPRE_SSTRUCT_VARIABLE_NODE)
+         else if (vartype == NALU_HYPRE_SSTRUCT_VARIABLE_NODE)
          {
             if (dim == 2)
             {
@@ -575,7 +575,7 @@ void GLVis_PrintSStructVector(HYPRE_SStructVector sol,
    Struct grid assuming that the cells are the same. The optional trans and
    origin parameters specify a coordinate transformation, relative to a square
    Cartesian grid. */
-void GLVis_PrintStructGrid(HYPRE_StructGrid Grid,
+void GLVis_PrintStructGrid(NALU_HYPRE_StructGrid Grid,
                            const char *meshfile_prefix, int myid,
                            double *trans, double *origin)
 {
@@ -751,7 +751,7 @@ void GLVis_PrintStructGrid(HYPRE_StructGrid Grid,
 
 /* Save a Q0 GLVis grid function (in a file with the given prefix) corresponding
    to the values of the input Struct vector. */
-void GLVis_PrintStructVector(HYPRE_StructVector sol,
+void GLVis_PrintStructVector(NALU_HYPRE_StructVector sol,
                              const char *solfile_prefix,
                              int myid)
 {
@@ -807,7 +807,7 @@ void GLVis_PrintStructVector(HYPRE_StructVector sol,
          iupper[2] = hypre_BoxIMaxD(box, 2);
       }
 
-      HYPRE_StructVectorGetBoxValues(sol, ilower, iupper, values);
+      NALU_HYPRE_StructVectorGetBoxValues(sol, ilower, iupper, values);
 
       for (k = 0; k < nk; k++)
          for (j = 0; j < nj; j++)

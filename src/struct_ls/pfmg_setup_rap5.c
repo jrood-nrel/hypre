@@ -33,19 +33,19 @@ hypre_PFMGCreateCoarseOp5( hypre_StructMatrix *R,
                            hypre_StructMatrix *A,
                            hypre_StructMatrix *P,
                            hypre_StructGrid   *coarse_grid,
-                           HYPRE_Int           cdir        )
+                           NALU_HYPRE_Int           cdir        )
 {
    hypre_StructMatrix    *RAP;
 
    hypre_Index           *RAP_stencil_shape;
    hypre_StructStencil   *RAP_stencil;
-   HYPRE_Int              RAP_stencil_size;
-   HYPRE_Int              RAP_stencil_dim;
-   HYPRE_Int              RAP_num_ghost[] = {1, 1, 1, 1, 1, 1};
+   NALU_HYPRE_Int              RAP_stencil_size;
+   NALU_HYPRE_Int              RAP_stencil_dim;
+   NALU_HYPRE_Int              RAP_num_ghost[] = {1, 1, 1, 1, 1, 1};
 
    hypre_Index            index_temp;
-   HYPRE_Int              j, i;
-   HYPRE_Int              stencil_rank;
+   NALU_HYPRE_Int              j, i;
+   NALU_HYPRE_Int              stencil_rank;
 
    RAP_stencil_dim = 2;
 
@@ -66,7 +66,7 @@ hypre_PFMGCreateCoarseOp5( hypre_StructMatrix *R,
        * 5 point coarse grid stencil
        *--------------------------------------------------------------------*/
       RAP_stencil_size = 5;
-      RAP_stencil_shape = hypre_CTAlloc(hypre_Index,  RAP_stencil_size, HYPRE_MEMORY_HOST);
+      RAP_stencil_shape = hypre_CTAlloc(hypre_Index,  RAP_stencil_size, NALU_HYPRE_MEMORY_HOST);
       for (j = -1; j < 2; j++)
       {
          for (i = -1; i < 2; i++)
@@ -99,7 +99,7 @@ hypre_PFMGCreateCoarseOp5( hypre_StructMatrix *R,
        * in the standard lexicographic ordering.
        *--------------------------------------------------------------------*/
       RAP_stencil_size = 3;
-      RAP_stencil_shape = hypre_CTAlloc(hypre_Index,  RAP_stencil_size, HYPRE_MEMORY_HOST);
+      RAP_stencil_shape = hypre_CTAlloc(hypre_Index,  RAP_stencil_size, NALU_HYPRE_MEMORY_HOST);
       for (j = -1; j < 1; j++)
       {
          for (i = -1; i < 1; i++)
@@ -148,34 +148,34 @@ hypre_PFMGCreateCoarseOp5( hypre_StructMatrix *R,
  *    algorithm.  For constant_coefficient==2, see [issue663].
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_PFMGBuildCoarseOp5( hypre_StructMatrix *A,
                           hypre_StructMatrix *P,
                           hypre_StructMatrix *R,
-                          HYPRE_Int           cdir,
+                          NALU_HYPRE_Int           cdir,
                           hypre_Index         cindex,
                           hypre_Index         cstride,
                           hypre_StructMatrix *RAP     )
 {
-   HYPRE_Int             ndim = hypre_StructMatrixNDim(A);
+   NALU_HYPRE_Int             ndim = hypre_StructMatrixNDim(A);
    hypre_Index           index;
    hypre_Index           index_temp;
 
    hypre_StructGrid     *fgrid;
    hypre_BoxArray       *fgrid_boxes;
    hypre_Box            *fgrid_box;
-   HYPRE_Int            *fgrid_ids;
+   NALU_HYPRE_Int            *fgrid_ids;
    hypre_StructGrid     *cgrid;
    hypre_BoxArray       *cgrid_boxes;
    hypre_Box            *cgrid_box;
-   HYPRE_Int            *cgrid_ids;
+   NALU_HYPRE_Int            *cgrid_ids;
    hypre_IndexRef        cstart, bfstart, stridef;
    hypre_Index           fstart, bcstart, stridec;
    hypre_Index           loop_size;
 
-   HYPRE_Int             constant_coefficient;
+   NALU_HYPRE_Int             constant_coefficient;
 
-   HYPRE_Int             fi, ci, fbi;
+   NALU_HYPRE_Int             fi, ci, fbi;
 
    hypre_Box            *A_dbox;
    hypre_Box            *P_dbox;
@@ -184,17 +184,17 @@ hypre_PFMGBuildCoarseOp5( hypre_StructMatrix *A,
    hypre_BoxArray       *bdy_boxes, *tmp_boxes;
    hypre_Box            *bdy_box, *fcbox;
 
-   HYPRE_Real           *pb, *pa;
+   NALU_HYPRE_Real           *pb, *pa;
 
-   HYPRE_Real           *a_cc, *a_cw, *a_ce, *a_cb, *a_ca;
+   NALU_HYPRE_Real           *a_cc, *a_cw, *a_ce, *a_cb, *a_ca;
 
-   HYPRE_Real           *rap_cc, *rap_cw, *rap_ce;
-   HYPRE_Real           *rap_cb, *rap_ca;
+   NALU_HYPRE_Real           *rap_cc, *rap_cw, *rap_ce;
+   NALU_HYPRE_Real           *rap_cb, *rap_ca;
 
-   HYPRE_Real            center_int, center_bdy;
+   NALU_HYPRE_Real            center_int, center_bdy;
 
-   HYPRE_Int             OffsetA;
-   HYPRE_Int             OffsetP;
+   NALU_HYPRE_Int             OffsetA;
+   NALU_HYPRE_Int             OffsetP;
 
    stridef = cstride;
    hypre_SetIndex3(stridec, 1, 1, 1);
@@ -256,7 +256,7 @@ hypre_PFMGBuildCoarseOp5( hypre_StructMatrix *A,
       MapIndex(index_temp, cdir, index);
       pb = hypre_StructMatrixExtractPointerByIndex(P, fi, index);
       //RL PTROFFSET
-      HYPRE_Int pbOffset = hypre_BoxOffsetDistance(P_dbox, index);
+      NALU_HYPRE_Int pbOffset = hypre_BoxOffsetDistance(P_dbox, index);
 
       /*-----------------------------------------------------------------
        * Extract pointers for 5-point fine grid operator:
@@ -342,8 +342,8 @@ hypre_PFMGBuildCoarseOp5( hypre_StructMatrix *A,
                              A_dbox, fstart, stridef, iA,
                              RAP_dbox, cstart, stridec, iAc);
          {
-            HYPRE_Int iAm1, iAp1, iPm1, iPp1;
-            HYPRE_Real  west, east;
+            NALU_HYPRE_Int iAm1, iAp1, iPm1, iPp1;
+            NALU_HYPRE_Real  west, east;
 
             iAm1 = iA - OffsetA;
             iAp1 = iA + OffsetA;

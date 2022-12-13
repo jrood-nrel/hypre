@@ -10,7 +10,7 @@
 
 #define AbsStencilShape(stencil, abs_shape) \
 {\
-   HYPRE_Int ii,jj,kk;\
+   NALU_HYPRE_Int ii,jj,kk;\
    ii = hypre_IndexX(stencil);\
    jj = hypre_IndexY(stencil);\
    kk = hypre_IndexZ(stencil);\
@@ -27,7 +27,7 @@ hypre_CF_StenBox( hypre_Box              *fgrid_box,
                   hypre_Box              *cgrid_box,
                   hypre_Index             stencil_shape,
                   hypre_Index             rfactors,
-                  HYPRE_Int               ndim )
+                  NALU_HYPRE_Int               ndim )
 {
    hypre_Box              coarsen_box;
    hypre_Box              contracted_box;
@@ -41,7 +41,7 @@ hypre_CF_StenBox( hypre_Box              *fgrid_box,
    hypre_Index            temp_index;
    hypre_Index            shift_index;
 
-   HYPRE_Int              i, remainder, intersect_size;
+   NALU_HYPRE_Int              i, remainder, intersect_size;
 
    hypre_ClearIndex(temp_index);
    stenbox = hypre_BoxCreate(ndim);

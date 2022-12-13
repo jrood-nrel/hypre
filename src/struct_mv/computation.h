@@ -43,7 +43,7 @@ typedef struct hypre_ComputePkg_struct
 
    hypre_StructGrid      *grid;
    hypre_BoxArray        *data_space;
-   HYPRE_Int              num_values;
+   NALU_HYPRE_Int              num_values;
 
 } hypre_ComputePkg;
 

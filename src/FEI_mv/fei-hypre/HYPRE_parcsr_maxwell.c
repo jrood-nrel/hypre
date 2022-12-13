@@ -12,12 +12,12 @@
 
 #include "utilities/_hypre_utilities.h"
 #include "HYPRE.h"
-#include "IJ_mv/HYPRE_IJ_mv.h"
-#include "parcsr_mv/HYPRE_parcsr_mv.h"
+#include "IJ_mv/NALU_HYPRE_IJ_mv.h"
+#include "parcsr_mv/NALU_HYPRE_parcsr_mv.h"
 #include "parcsr_mv/_hypre_parcsr_mv.h"
-#include "parcsr_ls/HYPRE_parcsr_ls.h"
+#include "parcsr_ls/NALU_HYPRE_parcsr_ls.h"
 
-#include "HYPRE_FEI.h"
+#include "NALU_HYPRE_FEI.h"
 
 /*--------------------------------------------------------------------------
  * hypre_CotreeData
@@ -41,22 +41,22 @@ typedef struct
 
 /******************************************************************************
  *
- * HYPRE_ParCSRCotree interface
+ * NALU_HYPRE_ParCSRCotree interface
  *
  *****************************************************************************/
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRCotreeCreate
+ * NALU_HYPRE_ParCSRCotreeCreate
  *--------------------------------------------------------------------------*/
 
-int HYPRE_ParCSRCotreeCreate(MPI_Comm comm, HYPRE_Solver *solver)
+int NALU_HYPRE_ParCSRCotreeCreate(MPI_Comm comm, NALU_HYPRE_Solver *solver)
 {
    hypre_CotreeData *cotree_data;
    void             *void_data;
 
-   cotree_data = hypre_CTAlloc(hypre_CotreeData,  1, HYPRE_MEMORY_HOST);
+   cotree_data = hypre_CTAlloc(hypre_CotreeData,  1, NALU_HYPRE_MEMORY_HOST);
    void_data = (void *) cotree_data;
-   *solver = (HYPRE_Solver) void_data;
+   *solver = (NALU_HYPRE_Solver) void_data;
 
    (cotree_data -> Aee)                = NULL;
    (cotree_data -> Acc)                = NULL;
@@ -74,17 +74,17 @@ int HYPRE_ParCSRCotreeCreate(MPI_Comm comm, HYPRE_Solver *solver)
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRCotreeDestroy
+ * NALU_HYPRE_ParCSRCotreeDestroy
  *--------------------------------------------------------------------------*/
 
-int HYPRE_ParCSRCotreeDestroy(HYPRE_Solver solver)
+int NALU_HYPRE_ParCSRCotreeDestroy(NALU_HYPRE_Solver solver)
 {
    void             *cotree_vdata = (void *) solver;
    hypre_CotreeData *cotree_data = (hypre_CotreeData *) cotree_vdata;
 
    if (cotree_data)
    {
-      hypre_TFree(cotree_data, HYPRE_MEMORY_HOST);
+      hypre_TFree(cotree_data, NALU_HYPRE_MEMORY_HOST);
       if ((cotree_data->w) != NULL)
       {
          hypre_ParVectorDestroy(cotree_data->w);
@@ -130,11 +130,11 @@ int HYPRE_ParCSRCotreeDestroy(HYPRE_Solver solver)
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRCotreeSetup
+ * NALU_HYPRE_ParCSRCotreeSetup
  *--------------------------------------------------------------------------*/
 
-int HYPRE_ParCSRCotreeSetup(HYPRE_Solver solver, HYPRE_ParCSRMatrix A,
-                            HYPRE_ParVector b, HYPRE_ParVector x)
+int NALU_HYPRE_ParCSRCotreeSetup(NALU_HYPRE_Solver solver, NALU_HYPRE_ParCSRMatrix A,
+                            NALU_HYPRE_ParVector b, NALU_HYPRE_ParVector x)
 {
    int           *partition, *new_partition, nprocs, *tindices, ii;
    void *vsolver = (void *) solver;
@@ -150,7 +150,7 @@ int HYPRE_ParCSRCotreeSetup(HYPRE_Solver solver, HYPRE_ParCSRMatrix A,
 
    cotree_data->Aee = (hypre_ParCSRMatrix *) A;
    hypre_ParCSRMatrixGenSpanningTree(cotree_data->Gen, &tindices, 1);
-   submatrices = hypre_TAlloc(hypre_ParCSRMatrix *, 1, HYPRE_MEMORY_HOST);
+   submatrices = hypre_TAlloc(hypre_ParCSRMatrix *, 1, NALU_HYPRE_MEMORY_HOST);
    hypre_ParCSRMatrixExtractSubmatrices(cotree_data->Aee, tindices,
                                         &submatrices);
    cotree_data->Att = submatrices[0];
@@ -162,12 +162,12 @@ int HYPRE_ParCSRCotreeSetup(HYPRE_Solver solver, HYPRE_ParCSRMatrix A,
                                            &submatrices);
    cotree_data->Gt = submatrices[0];
    cotree_data->Gc = submatrices[1];
-   hypre_TFree(submatrices, HYPRE_MEMORY_HOST);
+   hypre_TFree(submatrices, NALU_HYPRE_MEMORY_HOST);
 
    comm = hypre_ParCSRMatrixComm((hypre_ParCSRMatrix *) A);
    MPI_Comm_size(comm, &nprocs);
    partition = hypre_ParVectorPartitioning((hypre_ParVector *) b);
-   new_partition = hypre_TAlloc(int, (nprocs+1) , HYPRE_MEMORY_HOST);
+   new_partition = hypre_TAlloc(int, (nprocs+1) , NALU_HYPRE_MEMORY_HOST);
    for (ii = 0; ii <= nprocs; ii++) new_partition[ii] = partition[ii];
    /*   partition = hypre_ParVectorPartitioning((hypre_ParVector *) b);  */
    new_vector = hypre_ParVectorCreate(hypre_ParVectorComm((hypre_ParVector *)b),
@@ -179,7 +179,7 @@ int HYPRE_ParCSRCotreeSetup(HYPRE_Solver solver, HYPRE_ParCSRMatrix A,
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRCotreeSolve
+ * NALU_HYPRE_ParCSRCotreeSolve
  * (1) Given initial E and f, compute residual R
  * (2) Use GMRES to solve for cotree system given Rc with preconditioner
  *     (a) (I + FF^t) solve
@@ -193,8 +193,8 @@ int HYPRE_ParCSRCotreeSetup(HYPRE_Solver solver, HYPRE_ParCSRMatrix A,
  * (3) z2 = y - F G_t z1
  *--------------------------------------------------------------------------*/
 
-int HYPRE_ParCSRCotreeSolve(HYPRE_Solver solver, HYPRE_ParCSRMatrix A,
-                            HYPRE_ParVector b, HYPRE_ParVector x)
+int NALU_HYPRE_ParCSRCotreeSolve(NALU_HYPRE_Solver solver, NALU_HYPRE_ParCSRMatrix A,
+                            NALU_HYPRE_ParVector b, NALU_HYPRE_ParVector x)
 {
    void *cotree_vdata = (void *) solver;
    hypre_CotreeData *cotree_data  = (hypre_CotreeData *)cotree_vdata;
@@ -203,19 +203,19 @@ int HYPRE_ParCSRCotreeSolve(HYPRE_Solver solver, HYPRE_ParCSRMatrix A,
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRCotreeSetTol
+ * NALU_HYPRE_ParCSRCotreeSetTol
  *--------------------------------------------------------------------------*/
 
-int HYPRE_ParCSRCotreeSetTol(HYPRE_Solver solver, double tol)
+int NALU_HYPRE_ParCSRCotreeSetTol(NALU_HYPRE_Solver solver, double tol)
 {
    return 0;
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRCotreeSetMaxIter
+ * NALU_HYPRE_ParCSRCotreeSetMaxIter
  *--------------------------------------------------------------------------*/
 
-int HYPRE_ParCSRCotreeSetMaxIter(HYPRE_Solver solver, int max_iter)
+int NALU_HYPRE_ParCSRCotreeSetMaxIter(NALU_HYPRE_Solver solver, int max_iter)
 {
    return 0;
 }

@@ -5,31 +5,31 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#ifndef HYPRE_PAR_RELAX_HEADER
-#define HYPRE_PAR_RELAX_HEADER
+#ifndef NALU_HYPRE_PAR_RELAX_HEADER
+#define NALU_HYPRE_PAR_RELAX_HEADER
 
 /* Non-Scale version */
 static inline void
-hypre_HybridGaussSeidelNS( HYPRE_Int     *A_diag_i,
-                           HYPRE_Int     *A_diag_j,
-                           HYPRE_Complex *A_diag_data,
-                           HYPRE_Int     *A_offd_i,
-                           HYPRE_Int     *A_offd_j,
-                           HYPRE_Complex *A_offd_data,
-                           HYPRE_Complex *f_data,
-                           HYPRE_Int     *cf_marker,
-                           HYPRE_Int      relax_points,
-                           HYPRE_Complex *l1_norms,
-                           HYPRE_Complex *u_data,
-                           HYPRE_Complex *v_tmp_data,
-                           HYPRE_Complex *v_ext_data,
-                           HYPRE_Int      ibegin,
-                           HYPRE_Int      iend,
-                           HYPRE_Int      iorder,
-                           HYPRE_Int      Skip_diag )
+hypre_HybridGaussSeidelNS( NALU_HYPRE_Int     *A_diag_i,
+                           NALU_HYPRE_Int     *A_diag_j,
+                           NALU_HYPRE_Complex *A_diag_data,
+                           NALU_HYPRE_Int     *A_offd_i,
+                           NALU_HYPRE_Int     *A_offd_j,
+                           NALU_HYPRE_Complex *A_offd_data,
+                           NALU_HYPRE_Complex *f_data,
+                           NALU_HYPRE_Int     *cf_marker,
+                           NALU_HYPRE_Int      relax_points,
+                           NALU_HYPRE_Complex *l1_norms,
+                           NALU_HYPRE_Complex *u_data,
+                           NALU_HYPRE_Complex *v_tmp_data,
+                           NALU_HYPRE_Complex *v_ext_data,
+                           NALU_HYPRE_Int      ibegin,
+                           NALU_HYPRE_Int      iend,
+                           NALU_HYPRE_Int      iorder,
+                           NALU_HYPRE_Int      Skip_diag )
 {
-   HYPRE_Int i;
-   const HYPRE_Complex zero = 0.0;
+   NALU_HYPRE_Int i;
+   const NALU_HYPRE_Complex zero = 0.0;
 
    /*-----------------------------------------------------------
     * Relax only C or F points as determined by relax_points.
@@ -42,18 +42,18 @@ hypre_HybridGaussSeidelNS( HYPRE_Int     *A_diag_i,
       {
          if ( (relax_points == 0 || cf_marker[i] == relax_points) && l1_norms[i] != zero )
          {
-            HYPRE_Int jj;
-            HYPRE_Complex res = f_data[i];
+            NALU_HYPRE_Int jj;
+            NALU_HYPRE_Complex res = f_data[i];
 
             for (jj = A_diag_i[i] + Skip_diag; jj < A_diag_i[i + 1]; jj++)
             {
-               const HYPRE_Int ii = A_diag_j[jj];
+               const NALU_HYPRE_Int ii = A_diag_j[jj];
                res -= A_diag_data[jj] * u_data[ii];
             }
 
             for (jj = A_offd_i[i]; jj < A_offd_i[i + 1]; jj++)
             {
-               const HYPRE_Int ii = A_offd_j[jj];
+               const NALU_HYPRE_Int ii = A_offd_j[jj];
                res -= A_offd_data[jj] * v_ext_data[ii];
             }
 
@@ -74,18 +74,18 @@ hypre_HybridGaussSeidelNS( HYPRE_Int     *A_diag_i,
       {
          if ( (relax_points == 0 || cf_marker[i] == relax_points) && A_diag_data[A_diag_i[i]] != zero )
          {
-            HYPRE_Int jj;
-            HYPRE_Complex res = f_data[i];
+            NALU_HYPRE_Int jj;
+            NALU_HYPRE_Complex res = f_data[i];
 
             for (jj = A_diag_i[i] + Skip_diag; jj < A_diag_i[i + 1]; jj++)
             {
-               const HYPRE_Int ii = A_diag_j[jj];
+               const NALU_HYPRE_Int ii = A_diag_j[jj];
                res -= A_diag_data[jj] * u_data[ii];
             }
 
             for (jj = A_offd_i[i]; jj < A_offd_i[i + 1]; jj++)
             {
-               const HYPRE_Int ii = A_offd_j[jj];
+               const NALU_HYPRE_Int ii = A_offd_j[jj];
                res -= A_offd_data[jj] * v_ext_data[ii];
             }
 
@@ -104,28 +104,28 @@ hypre_HybridGaussSeidelNS( HYPRE_Int     *A_diag_i,
 
 /* Non-Scale Threaded version */
 static inline void
-hypre_HybridGaussSeidelNSThreads( HYPRE_Int     *A_diag_i,
-                                  HYPRE_Int     *A_diag_j,
-                                  HYPRE_Complex *A_diag_data,
-                                  HYPRE_Int     *A_offd_i,
-                                  HYPRE_Int     *A_offd_j,
-                                  HYPRE_Complex *A_offd_data,
-                                  HYPRE_Complex *f_data,
-                                  HYPRE_Int     *cf_marker,
-                                  HYPRE_Int      relax_points,
-                                  HYPRE_Complex *l1_norms,
-                                  HYPRE_Complex *u_data,
-                                  HYPRE_Complex *v_tmp_data,
-                                  HYPRE_Complex *v_ext_data,
-                                  HYPRE_Int      ns,
-                                  HYPRE_Int      ne,
-                                  HYPRE_Int      ibegin,
-                                  HYPRE_Int      iend,
-                                  HYPRE_Int      iorder,
-                                  HYPRE_Int      Skip_diag )
+hypre_HybridGaussSeidelNSThreads( NALU_HYPRE_Int     *A_diag_i,
+                                  NALU_HYPRE_Int     *A_diag_j,
+                                  NALU_HYPRE_Complex *A_diag_data,
+                                  NALU_HYPRE_Int     *A_offd_i,
+                                  NALU_HYPRE_Int     *A_offd_j,
+                                  NALU_HYPRE_Complex *A_offd_data,
+                                  NALU_HYPRE_Complex *f_data,
+                                  NALU_HYPRE_Int     *cf_marker,
+                                  NALU_HYPRE_Int      relax_points,
+                                  NALU_HYPRE_Complex *l1_norms,
+                                  NALU_HYPRE_Complex *u_data,
+                                  NALU_HYPRE_Complex *v_tmp_data,
+                                  NALU_HYPRE_Complex *v_ext_data,
+                                  NALU_HYPRE_Int      ns,
+                                  NALU_HYPRE_Int      ne,
+                                  NALU_HYPRE_Int      ibegin,
+                                  NALU_HYPRE_Int      iend,
+                                  NALU_HYPRE_Int      iorder,
+                                  NALU_HYPRE_Int      Skip_diag )
 {
-   HYPRE_Int i;
-   const HYPRE_Complex zero = 0.0;
+   NALU_HYPRE_Int i;
+   const NALU_HYPRE_Complex zero = 0.0;
 
    /*-----------------------------------------------------------
     * Relax only C or F points as determined by relax_points.
@@ -144,12 +144,12 @@ hypre_HybridGaussSeidelNSThreads( HYPRE_Int     *A_diag_i,
           *-----------------------------------------------------------*/
          if ( (relax_points == 0 || cf_marker[i] == relax_points) && l1_norms[i] != zero )
          {
-            HYPRE_Int jj;
-            HYPRE_Complex res = f_data[i];
+            NALU_HYPRE_Int jj;
+            NALU_HYPRE_Complex res = f_data[i];
 
             for (jj = A_diag_i[i] + Skip_diag; jj < A_diag_i[i + 1]; jj++)
             {
-               const HYPRE_Int ii = A_diag_j[jj];
+               const NALU_HYPRE_Int ii = A_diag_j[jj];
                if (ii >= ns && ii < ne)
                {
                   res -= A_diag_data[jj] * u_data[ii];
@@ -162,7 +162,7 @@ hypre_HybridGaussSeidelNSThreads( HYPRE_Int     *A_diag_i,
 
             for (jj = A_offd_i[i]; jj < A_offd_i[i + 1]; jj++)
             {
-               const HYPRE_Int ii = A_offd_j[jj];
+               const NALU_HYPRE_Int ii = A_offd_j[jj];
                res -= A_offd_data[jj] * v_ext_data[ii];
             }
 
@@ -183,12 +183,12 @@ hypre_HybridGaussSeidelNSThreads( HYPRE_Int     *A_diag_i,
       {
          if ( (relax_points == 0 || cf_marker[i] == relax_points) && A_diag_data[A_diag_i[i]] != zero )
          {
-            HYPRE_Int jj;
-            HYPRE_Complex res = f_data[i];
+            NALU_HYPRE_Int jj;
+            NALU_HYPRE_Complex res = f_data[i];
 
             for (jj = A_diag_i[i] + Skip_diag; jj < A_diag_i[i + 1]; jj++)
             {
-               const HYPRE_Int ii = A_diag_j[jj];
+               const NALU_HYPRE_Int ii = A_diag_j[jj];
                if (ii >= ns && ii < ne)
                {
                   res -= A_diag_data[jj] * u_data[ii];
@@ -201,7 +201,7 @@ hypre_HybridGaussSeidelNSThreads( HYPRE_Int     *A_diag_i,
 
             for (jj = A_offd_i[i]; jj < A_offd_i[i + 1]; jj++)
             {
-               const HYPRE_Int ii = A_offd_j[jj];
+               const NALU_HYPRE_Int ii = A_offd_j[jj];
                res -= A_offd_data[jj] * v_ext_data[ii];
             }
 
@@ -220,30 +220,30 @@ hypre_HybridGaussSeidelNSThreads( HYPRE_Int     *A_diag_i,
 
 /* Scaled version */
 static inline void
-hypre_HybridGaussSeidel( HYPRE_Int     *A_diag_i,
-                         HYPRE_Int     *A_diag_j,
-                         HYPRE_Complex *A_diag_data,
-                         HYPRE_Int     *A_offd_i,
-                         HYPRE_Int     *A_offd_j,
-                         HYPRE_Complex *A_offd_data,
-                         HYPRE_Complex *f_data,
-                         HYPRE_Int     *cf_marker,
-                         HYPRE_Int      relax_points,
-                         HYPRE_Real     relax_weight,
-                         HYPRE_Real     omega,
-                         HYPRE_Real     one_minus_omega,
-                         HYPRE_Real     prod,
-                         HYPRE_Complex *l1_norms,
-                         HYPRE_Complex *u_data,
-                         HYPRE_Complex *v_tmp_data,
-                         HYPRE_Complex *v_ext_data,
-                         HYPRE_Int      ibegin,
-                         HYPRE_Int      iend,
-                         HYPRE_Int      iorder,
-                         HYPRE_Int      Skip_diag )
+hypre_HybridGaussSeidel( NALU_HYPRE_Int     *A_diag_i,
+                         NALU_HYPRE_Int     *A_diag_j,
+                         NALU_HYPRE_Complex *A_diag_data,
+                         NALU_HYPRE_Int     *A_offd_i,
+                         NALU_HYPRE_Int     *A_offd_j,
+                         NALU_HYPRE_Complex *A_offd_data,
+                         NALU_HYPRE_Complex *f_data,
+                         NALU_HYPRE_Int     *cf_marker,
+                         NALU_HYPRE_Int      relax_points,
+                         NALU_HYPRE_Real     relax_weight,
+                         NALU_HYPRE_Real     omega,
+                         NALU_HYPRE_Real     one_minus_omega,
+                         NALU_HYPRE_Real     prod,
+                         NALU_HYPRE_Complex *l1_norms,
+                         NALU_HYPRE_Complex *u_data,
+                         NALU_HYPRE_Complex *v_tmp_data,
+                         NALU_HYPRE_Complex *v_ext_data,
+                         NALU_HYPRE_Int      ibegin,
+                         NALU_HYPRE_Int      iend,
+                         NALU_HYPRE_Int      iorder,
+                         NALU_HYPRE_Int      Skip_diag )
 {
-   HYPRE_Int i;
-   const HYPRE_Complex zero = 0.0;
+   NALU_HYPRE_Int i;
+   const NALU_HYPRE_Complex zero = 0.0;
 
    /*-----------------------------------------------------------
     * Relax only C or F points as determined by relax_points.
@@ -257,21 +257,21 @@ hypre_HybridGaussSeidel( HYPRE_Int     *A_diag_i,
       {
          if ( (relax_points == 0 || cf_marker[i] == relax_points) && l1_norms[i] != zero )
          {
-            HYPRE_Int jj;
-            HYPRE_Complex res = f_data[i];
-            HYPRE_Complex res0 = 0.0;
-            HYPRE_Complex res2 = 0.0;
+            NALU_HYPRE_Int jj;
+            NALU_HYPRE_Complex res = f_data[i];
+            NALU_HYPRE_Complex res0 = 0.0;
+            NALU_HYPRE_Complex res2 = 0.0;
 
             for (jj = A_diag_i[i] + Skip_diag; jj < A_diag_i[i + 1]; jj++)
             {
-               const HYPRE_Int ii = A_diag_j[jj];
+               const NALU_HYPRE_Int ii = A_diag_j[jj];
                res0 -= A_diag_data[jj] * u_data[ii];
                res2 += A_diag_data[jj] * v_tmp_data[ii];
             }
 
             for (jj = A_offd_i[i]; jj < A_offd_i[i + 1]; jj++)
             {
-               const HYPRE_Int ii = A_offd_j[jj];
+               const NALU_HYPRE_Int ii = A_offd_j[jj];
                res -= A_offd_data[jj] * v_ext_data[ii];
             }
 
@@ -293,21 +293,21 @@ hypre_HybridGaussSeidel( HYPRE_Int     *A_diag_i,
       {
          if ( (relax_points == 0 || cf_marker[i] == relax_points) && A_diag_data[A_diag_i[i]] != zero )
          {
-            HYPRE_Int jj;
-            HYPRE_Complex res = f_data[i];
-            HYPRE_Complex res0 = 0.0;
-            HYPRE_Complex res2 = 0.0;
+            NALU_HYPRE_Int jj;
+            NALU_HYPRE_Complex res = f_data[i];
+            NALU_HYPRE_Complex res0 = 0.0;
+            NALU_HYPRE_Complex res2 = 0.0;
 
             for (jj = A_diag_i[i] + Skip_diag; jj < A_diag_i[i + 1]; jj++)
             {
-               const HYPRE_Int ii = A_diag_j[jj];
+               const NALU_HYPRE_Int ii = A_diag_j[jj];
                res0 -= A_diag_data[jj] * u_data[ii];
                res2 += A_diag_data[jj] * v_tmp_data[ii];
             }
 
             for (jj = A_offd_i[i]; jj < A_offd_i[i + 1]; jj++)
             {
-               const HYPRE_Int ii = A_offd_j[jj];
+               const NALU_HYPRE_Int ii = A_offd_j[jj];
                res -= A_offd_data[jj] * v_ext_data[ii];
             }
 
@@ -329,32 +329,32 @@ hypre_HybridGaussSeidel( HYPRE_Int     *A_diag_i,
 
 /* Scaled Threaded version */
 static inline void
-hypre_HybridGaussSeidelThreads( HYPRE_Int     *A_diag_i,
-                                HYPRE_Int     *A_diag_j,
-                                HYPRE_Complex *A_diag_data,
-                                HYPRE_Int     *A_offd_i,
-                                HYPRE_Int     *A_offd_j,
-                                HYPRE_Complex *A_offd_data,
-                                HYPRE_Complex *f_data,
-                                HYPRE_Int     *cf_marker,
-                                HYPRE_Int      relax_points,
-                                HYPRE_Real     relax_weight,
-                                HYPRE_Real     omega,
-                                HYPRE_Real     one_minus_omega,
-                                HYPRE_Real     prod,
-                                HYPRE_Complex *l1_norms,
-                                HYPRE_Complex *u_data,
-                                HYPRE_Complex *v_tmp_data,
-                                HYPRE_Complex *v_ext_data,
-                                HYPRE_Int      ns,
-                                HYPRE_Int      ne,
-                                HYPRE_Int      ibegin,
-                                HYPRE_Int      iend,
-                                HYPRE_Int      iorder,
-                                HYPRE_Int      Skip_diag )
+hypre_HybridGaussSeidelThreads( NALU_HYPRE_Int     *A_diag_i,
+                                NALU_HYPRE_Int     *A_diag_j,
+                                NALU_HYPRE_Complex *A_diag_data,
+                                NALU_HYPRE_Int     *A_offd_i,
+                                NALU_HYPRE_Int     *A_offd_j,
+                                NALU_HYPRE_Complex *A_offd_data,
+                                NALU_HYPRE_Complex *f_data,
+                                NALU_HYPRE_Int     *cf_marker,
+                                NALU_HYPRE_Int      relax_points,
+                                NALU_HYPRE_Real     relax_weight,
+                                NALU_HYPRE_Real     omega,
+                                NALU_HYPRE_Real     one_minus_omega,
+                                NALU_HYPRE_Real     prod,
+                                NALU_HYPRE_Complex *l1_norms,
+                                NALU_HYPRE_Complex *u_data,
+                                NALU_HYPRE_Complex *v_tmp_data,
+                                NALU_HYPRE_Complex *v_ext_data,
+                                NALU_HYPRE_Int      ns,
+                                NALU_HYPRE_Int      ne,
+                                NALU_HYPRE_Int      ibegin,
+                                NALU_HYPRE_Int      iend,
+                                NALU_HYPRE_Int      iorder,
+                                NALU_HYPRE_Int      Skip_diag )
 {
-   HYPRE_Int i;
-   const HYPRE_Complex zero = 0.0;
+   NALU_HYPRE_Int i;
+   const NALU_HYPRE_Complex zero = 0.0;
 
    /*-----------------------------------------------------------
     * Relax only C or F points as determined by relax_points.
@@ -367,14 +367,14 @@ hypre_HybridGaussSeidelThreads( HYPRE_Int     *A_diag_i,
       {
          if ( (relax_points == 0 || cf_marker[i] == relax_points) && l1_norms[i] != zero )
          {
-            HYPRE_Int jj;
-            HYPRE_Complex res = f_data[i];
-            HYPRE_Complex res0 = 0.0;
-            HYPRE_Complex res2 = 0.0;
+            NALU_HYPRE_Int jj;
+            NALU_HYPRE_Complex res = f_data[i];
+            NALU_HYPRE_Complex res0 = 0.0;
+            NALU_HYPRE_Complex res2 = 0.0;
 
             for (jj = A_diag_i[i] + Skip_diag; jj < A_diag_i[i + 1]; jj++)
             {
-               const HYPRE_Int ii = A_diag_j[jj];
+               const NALU_HYPRE_Int ii = A_diag_j[jj];
                if (ii >= ns && ii < ne)
                {
                   res0 -= A_diag_data[jj] * u_data[ii];
@@ -388,7 +388,7 @@ hypre_HybridGaussSeidelThreads( HYPRE_Int     *A_diag_i,
 
             for (jj = A_offd_i[i]; jj < A_offd_i[i + 1]; jj++)
             {
-               const HYPRE_Int ii = A_offd_j[jj];
+               const NALU_HYPRE_Int ii = A_offd_j[jj];
                res -= A_offd_data[jj] * v_ext_data[ii];
             }
 
@@ -410,14 +410,14 @@ hypre_HybridGaussSeidelThreads( HYPRE_Int     *A_diag_i,
       {
          if ( (relax_points == 0 || cf_marker[i] == relax_points) && A_diag_data[A_diag_i[i]] != zero )
          {
-            HYPRE_Int jj;
-            HYPRE_Complex res = f_data[i];
-            HYPRE_Complex res0 = 0.0;
-            HYPRE_Complex res2 = 0.0;
+            NALU_HYPRE_Int jj;
+            NALU_HYPRE_Complex res = f_data[i];
+            NALU_HYPRE_Complex res0 = 0.0;
+            NALU_HYPRE_Complex res2 = 0.0;
 
             for (jj = A_diag_i[i] + Skip_diag; jj < A_diag_i[i + 1]; jj++)
             {
-               const HYPRE_Int ii = A_diag_j[jj];
+               const NALU_HYPRE_Int ii = A_diag_j[jj];
                if (ii >= ns && ii < ne)
                {
                   res0 -= A_diag_data[jj] * u_data[ii];
@@ -431,7 +431,7 @@ hypre_HybridGaussSeidelThreads( HYPRE_Int     *A_diag_i,
 
             for (jj = A_offd_i[i]; jj < A_offd_i[i + 1]; jj++)
             {
-               const HYPRE_Int ii = A_offd_j[jj];
+               const NALU_HYPRE_Int ii = A_offd_j[jj];
                res -= A_offd_data[jj] * v_ext_data[ii];
             }
 
@@ -454,29 +454,29 @@ hypre_HybridGaussSeidelThreads( HYPRE_Int     *A_diag_i,
 
 /* Ordered Version */
 static inline void
-hypre_HybridGaussSeidelOrderedNS( HYPRE_Int     *A_diag_i,
-                                  HYPRE_Int     *A_diag_j,
-                                  HYPRE_Complex *A_diag_data,
-                                  HYPRE_Int     *A_offd_i,
-                                  HYPRE_Int     *A_offd_j,
-                                  HYPRE_Complex *A_offd_data,
-                                  HYPRE_Complex *f_data,
-                                  HYPRE_Int     *cf_marker,
-                                  HYPRE_Int      relax_points,
-                                  HYPRE_Complex *u_data,
-                                  HYPRE_Complex *v_tmp_data,
-                                  HYPRE_Complex *v_ext_data,
-                                  HYPRE_Int      ibegin,
-                                  HYPRE_Int      iend,
-                                  HYPRE_Int      iorder,
-                                  HYPRE_Int     *proc_ordering )
+hypre_HybridGaussSeidelOrderedNS( NALU_HYPRE_Int     *A_diag_i,
+                                  NALU_HYPRE_Int     *A_diag_j,
+                                  NALU_HYPRE_Complex *A_diag_data,
+                                  NALU_HYPRE_Int     *A_offd_i,
+                                  NALU_HYPRE_Int     *A_offd_j,
+                                  NALU_HYPRE_Complex *A_offd_data,
+                                  NALU_HYPRE_Complex *f_data,
+                                  NALU_HYPRE_Int     *cf_marker,
+                                  NALU_HYPRE_Int      relax_points,
+                                  NALU_HYPRE_Complex *u_data,
+                                  NALU_HYPRE_Complex *v_tmp_data,
+                                  NALU_HYPRE_Complex *v_ext_data,
+                                  NALU_HYPRE_Int      ibegin,
+                                  NALU_HYPRE_Int      iend,
+                                  NALU_HYPRE_Int      iorder,
+                                  NALU_HYPRE_Int     *proc_ordering )
 {
-   HYPRE_Int j;
-   const HYPRE_Complex zero = 0.0;
+   NALU_HYPRE_Int j;
+   const NALU_HYPRE_Complex zero = 0.0;
 
    for (j = ibegin; j != iend; j += iorder)
    {
-      const HYPRE_Int i = proc_ordering[j];
+      const NALU_HYPRE_Int i = proc_ordering[j];
       /*-----------------------------------------------------------
        * Relax only C or F points as determined by relax_points.
        * If i is of the right type ( C or F or All) and diagonal is
@@ -484,18 +484,18 @@ hypre_HybridGaussSeidelOrderedNS( HYPRE_Int     *A_diag_i,
        *-----------------------------------------------------------*/
       if ( (relax_points == 0 || cf_marker[i] == relax_points) && A_diag_data[A_diag_i[i]] != zero )
       {
-         HYPRE_Int jj;
-         HYPRE_Complex res = f_data[i];
+         NALU_HYPRE_Int jj;
+         NALU_HYPRE_Complex res = f_data[i];
 
          for (jj = A_diag_i[i] + 1; jj < A_diag_i[i + 1]; jj++)
          {
-            const HYPRE_Int ii = A_diag_j[jj];
+            const NALU_HYPRE_Int ii = A_diag_j[jj];
             res -= A_diag_data[jj] * u_data[ii];
          }
 
          for (jj = A_offd_i[i]; jj < A_offd_i[i + 1]; jj++)
          {
-            const HYPRE_Int ii = A_offd_j[jj];
+            const NALU_HYPRE_Int ii = A_offd_j[jj];
             res -= A_offd_data[jj] * v_ext_data[ii];
          }
 
@@ -504,5 +504,5 @@ hypre_HybridGaussSeidelOrderedNS( HYPRE_Int     *A_diag_i,
    } /* for ( i = ...) */
 }
 
-#endif /* #ifndef HYPRE_PAR_RELAX_HEADER */
+#endif /* #ifndef NALU_HYPRE_PAR_RELAX_HEADER */
 

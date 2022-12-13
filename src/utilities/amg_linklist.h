@@ -11,8 +11,8 @@
  *
  *****************************************************************************/
 
-#ifndef HYPRE_LINKLIST_HEADER
-#define HYPRE_LINKLIST_HEADER
+#ifndef NALU_HYPRE_LINKLIST_HEADER
+#define NALU_HYPRE_LINKLIST_HEADER
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -24,11 +24,11 @@ extern "C" {
 
 struct double_linked_list
 {
-   HYPRE_Int                  data;
+   NALU_HYPRE_Int                  data;
    struct double_linked_list *next_elt;
    struct double_linked_list *prev_elt;
-   HYPRE_Int                  head;
-   HYPRE_Int                  tail;
+   NALU_HYPRE_Int                  head;
+   NALU_HYPRE_Int                  tail;
 };
 
 typedef struct double_linked_list hypre_ListElement;

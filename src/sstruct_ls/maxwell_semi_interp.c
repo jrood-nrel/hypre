@@ -20,13 +20,13 @@
 /*--------------------------------------------------------------------------
  * hypre_Maxwell_Interp.c
  *--------------------------------------------------------------------------*/
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_CreatePTopology(void **PTopology_vdata_ptr)
 {
    hypre_PTopology   *PTopology;
-   HYPRE_Int          ierr = 0;
+   NALU_HYPRE_Int          ierr = 0;
 
-   PTopology = hypre_CTAlloc(hypre_PTopology, 1, HYPRE_MEMORY_HOST);
+   PTopology = hypre_CTAlloc(hypre_PTopology, 1, NALU_HYPRE_MEMORY_HOST);
 
    (PTopology ->  Face_iedge)   = NULL;
    (PTopology ->  Element_iedge) = NULL;
@@ -40,28 +40,28 @@ hypre_CreatePTopology(void **PTopology_vdata_ptr)
    return ierr;
 }
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_DestroyPTopology(void *PTopology_vdata)
 {
    hypre_PTopology       *PTopology = (hypre_PTopology       *)PTopology_vdata;
-   HYPRE_Int              ierr     = 0;
+   NALU_HYPRE_Int              ierr     = 0;
 
    if (PTopology)
    {
       if ( (PTopology -> Face_iedge) != NULL)
       {
-         HYPRE_IJMatrixDestroy(PTopology -> Face_iedge);
+         NALU_HYPRE_IJMatrixDestroy(PTopology -> Face_iedge);
       }
-      HYPRE_IJMatrixDestroy(PTopology -> Element_iedge);
-      HYPRE_IJMatrixDestroy(PTopology -> Edge_iedge);
+      NALU_HYPRE_IJMatrixDestroy(PTopology -> Element_iedge);
+      NALU_HYPRE_IJMatrixDestroy(PTopology -> Edge_iedge);
 
       if ( (PTopology -> Element_Face) != NULL)
       {
-         HYPRE_IJMatrixDestroy(PTopology -> Element_Face);
+         NALU_HYPRE_IJMatrixDestroy(PTopology -> Element_Face);
       }
-      HYPRE_IJMatrixDestroy(PTopology -> Element_Edge);
+      NALU_HYPRE_IJMatrixDestroy(PTopology -> Element_Edge);
    }
-   hypre_TFree(PTopology, HYPRE_MEMORY_HOST);
+   hypre_TFree(PTopology, NALU_HYPRE_MEMORY_HOST);
 
    return ierr;
 }
@@ -97,35 +97,35 @@ hypre_Maxwell_PTopology(  hypre_SStructGrid    *fgrid_edge,
 
    hypre_BoxArray       **contract_fedgeBoxes;
    hypre_Index          **Edge_cstarts, **upper_shifts, **lower_shifts;
-   HYPRE_Int            **cfbox_mapping, **fcbox_mapping;
+   NALU_HYPRE_Int            **cfbox_mapping, **fcbox_mapping;
 
    hypre_BoxManEntry     *entry;
-   HYPRE_BigInt           rank, rank2;
-   HYPRE_BigInt           start_rank1;
+   NALU_HYPRE_BigInt           rank, rank2;
+   NALU_HYPRE_BigInt           start_rank1;
 
-   HYPRE_Int              nFaces, nEdges, nElements, nedges;
-   HYPRE_Int              nxFaces, nyFaces, nzFaces;
-   /* HYPRE_Int              nxEdges, nyEdges, nzEdges; */
-   HYPRE_Int              n_xFace_iedges, n_yFace_iedges, n_zFace_iedges;
-   HYPRE_Int              n_Cell_iedges;
+   NALU_HYPRE_Int              nFaces, nEdges, nElements, nedges;
+   NALU_HYPRE_Int              nxFaces, nyFaces, nzFaces;
+   /* NALU_HYPRE_Int              nxEdges, nyEdges, nzEdges; */
+   NALU_HYPRE_Int              n_xFace_iedges, n_yFace_iedges, n_zFace_iedges;
+   NALU_HYPRE_Int              n_Cell_iedges;
 
-   HYPRE_Int              nElements_iedges, nFaces_iedges, nEdges_iedges;
-   HYPRE_Int              nElements_Faces, nElements_Edges;
+   NALU_HYPRE_Int              nElements_iedges, nFaces_iedges, nEdges_iedges;
+   NALU_HYPRE_Int              nElements_Faces, nElements_Edges;
 
-   HYPRE_BigInt          *iFace, *iEdge;
-   HYPRE_BigInt          *jFace_edge;
-   HYPRE_BigInt          *jEdge_iedge;
-   HYPRE_BigInt          *jElement_Face, *jedge_Edge;
-   HYPRE_BigInt          *iElement, *jElement_Edge, *iedgeEdge, *jElement_edge;
+   NALU_HYPRE_BigInt          *iFace, *iEdge;
+   NALU_HYPRE_BigInt          *jFace_edge;
+   NALU_HYPRE_BigInt          *jEdge_iedge;
+   NALU_HYPRE_BigInt          *jElement_Face, *jedge_Edge;
+   NALU_HYPRE_BigInt          *iElement, *jElement_Edge, *iedgeEdge, *jElement_edge;
 
-   HYPRE_Real            *vals_ElementEdge, *vals_ElementFace, *vals_edgeEdge, *vals_Faceedge;
-   HYPRE_Real            *vals_Elementedge, *vals_Edgeiedge;
-   HYPRE_Int             *ncols_Elementedge, *ncols_Edgeiedge, *ncols_edgeEdge, *ncols_Faceedge;
-   HYPRE_Int             *ncols_ElementFace, *ncols_ElementEdge;
-   HYPRE_Int             *bdryedge_location;
-   HYPRE_Real             fCedge_ratio;
-   HYPRE_Real            *stencil_vals, *upper, *lower, *diag, *face_w1, *face_w2;
-   HYPRE_Int             *off_proc_flag;
+   NALU_HYPRE_Real            *vals_ElementEdge, *vals_ElementFace, *vals_edgeEdge, *vals_Faceedge;
+   NALU_HYPRE_Real            *vals_Elementedge, *vals_Edgeiedge;
+   NALU_HYPRE_Int             *ncols_Elementedge, *ncols_Edgeiedge, *ncols_edgeEdge, *ncols_Faceedge;
+   NALU_HYPRE_Int             *ncols_ElementFace, *ncols_ElementEdge;
+   NALU_HYPRE_Int             *bdryedge_location;
+   NALU_HYPRE_Real             fCedge_ratio;
+   NALU_HYPRE_Real            *stencil_vals, *upper, *lower, *diag, *face_w1, *face_w2;
+   NALU_HYPRE_Int             *off_proc_flag;
 
    hypre_Index            cindex;
    hypre_Index            findex;
@@ -133,36 +133,36 @@ hypre_Maxwell_PTopology(  hypre_SStructGrid    *fgrid_edge,
    hypre_Index            loop_size, start, cstart, stride, low_index, hi_index;
    hypre_Index            ishift, jshift, kshift, zero_index, one_index;
    hypre_Index            lindex;
-   HYPRE_Int              n_boxoffsets;
+   NALU_HYPRE_Int              n_boxoffsets;
 
-   HYPRE_Int              nparts = hypre_SStructGridNParts(fgrid_element);
-   HYPRE_Int              ndim  = hypre_SStructGridNDim(fgrid_element);
+   NALU_HYPRE_Int              nparts = hypre_SStructGridNParts(fgrid_element);
+   NALU_HYPRE_Int              ndim  = hypre_SStructGridNDim(fgrid_element);
 
-   HYPRE_SStructVariable *vartypes, *Edge_vartypes, *Face_vartypes;
+   NALU_HYPRE_SStructVariable *vartypes, *Edge_vartypes, *Face_vartypes;
    hypre_Index           *varoffsets;
-   HYPRE_Int             *vartype_map;
-   HYPRE_Int              matrix_type = HYPRE_PARCSR;
+   NALU_HYPRE_Int             *vartype_map;
+   NALU_HYPRE_Int              matrix_type = NALU_HYPRE_PARCSR;
 
-   HYPRE_Int              nvars, Face_nvars, Edge_nvars, part, var, box, fboxi;
-   HYPRE_Int              tot_vars = 8;
+   NALU_HYPRE_Int              nvars, Face_nvars, Edge_nvars, part, var, box, fboxi;
+   NALU_HYPRE_Int              tot_vars = 8;
 
-   HYPRE_Int              t, i, j, k, l, m, n, p;
+   NALU_HYPRE_Int              t, i, j, k, l, m, n, p;
 
-   HYPRE_BigInt           ilower, iupper;
-   HYPRE_BigInt           jlower, jupper;
-   HYPRE_BigInt         **flower_ranks, **fupper_ranks;
-   HYPRE_BigInt         **clower_ranks, **cupper_ranks;
-   HYPRE_Int           ***n_CtoVbox, ****CtoVboxnums;
-   HYPRE_Int             *num_vboxes, **vboxnums;
+   NALU_HYPRE_BigInt           ilower, iupper;
+   NALU_HYPRE_BigInt           jlower, jupper;
+   NALU_HYPRE_BigInt         **flower_ranks, **fupper_ranks;
+   NALU_HYPRE_BigInt         **clower_ranks, **cupper_ranks;
+   NALU_HYPRE_Int           ***n_CtoVbox, ****CtoVboxnums;
+   NALU_HYPRE_Int             *num_vboxes, **vboxnums;
 
-   HYPRE_Int              size1;
-   HYPRE_Int              trueV = 1;
-   HYPRE_Int              falseV = 0;
-   HYPRE_Int              row_in;
+   NALU_HYPRE_Int              size1;
+   NALU_HYPRE_Int              trueV = 1;
+   NALU_HYPRE_Int              falseV = 0;
+   NALU_HYPRE_Int              row_in;
 
-   HYPRE_Int              myproc;
+   NALU_HYPRE_Int              myproc;
 
-   HYPRE_MemoryLocation   memory_location = hypre_ParCSRMatrixMemoryLocation(Aee);
+   NALU_HYPRE_MemoryLocation   memory_location = hypre_ParCSRMatrixMemoryLocation(Aee);
 
    hypre_BoxInit(&copy_box, ndim);
 
@@ -196,11 +196,11 @@ hypre_Maxwell_PTopology(  hypre_SStructGrid    *fgrid_edge,
     * We will continue to call them edges, but use the face variable
     * enumeration.
     *-------------------------------------------------------------------*/
-   varoffsets = hypre_CTAlloc(hypre_Index, tot_vars, HYPRE_MEMORY_HOST);
+   varoffsets = hypre_CTAlloc(hypre_Index, tot_vars, NALU_HYPRE_MEMORY_HOST);
 
    /* total of 8 variable types. Create a mapping between user enumeration
       to hypre enumeration. Only need for face and edge grids. */
-   vartype_map = hypre_CTAlloc(HYPRE_Int, 8, HYPRE_MEMORY_HOST);
+   vartype_map = hypre_CTAlloc(NALU_HYPRE_Int, 8, NALU_HYPRE_MEMORY_HOST);
 
    part = 0;
    p_cgrid = hypre_SStructGridPGrid(cgrid_face, part);   /* face cgrid */
@@ -377,12 +377,12 @@ hypre_Maxwell_PTopology(  hypre_SStructGrid    *fgrid_edge,
     *
     *  Also determine contracted cell-centred fboxes.
     *--------------------------------------------------------------------------*/
-   cfbox_mapping = hypre_TAlloc(HYPRE_Int *,  nparts, HYPRE_MEMORY_HOST);
-   fcbox_mapping = hypre_TAlloc(HYPRE_Int *,  nparts, HYPRE_MEMORY_HOST);
-   contract_fedgeBoxes = hypre_TAlloc(hypre_BoxArray *,  nparts, HYPRE_MEMORY_HOST);
-   Edge_cstarts = hypre_TAlloc(hypre_Index *,  nparts, HYPRE_MEMORY_HOST);
-   upper_shifts = hypre_TAlloc(hypre_Index *,  nparts, HYPRE_MEMORY_HOST);
-   lower_shifts = hypre_TAlloc(hypre_Index *,  nparts, HYPRE_MEMORY_HOST);
+   cfbox_mapping = hypre_TAlloc(NALU_HYPRE_Int *,  nparts, NALU_HYPRE_MEMORY_HOST);
+   fcbox_mapping = hypre_TAlloc(NALU_HYPRE_Int *,  nparts, NALU_HYPRE_MEMORY_HOST);
+   contract_fedgeBoxes = hypre_TAlloc(hypre_BoxArray *,  nparts, NALU_HYPRE_MEMORY_HOST);
+   Edge_cstarts = hypre_TAlloc(hypre_Index *,  nparts, NALU_HYPRE_MEMORY_HOST);
+   upper_shifts = hypre_TAlloc(hypre_Index *,  nparts, NALU_HYPRE_MEMORY_HOST);
+   lower_shifts = hypre_TAlloc(hypre_Index *,  nparts, NALU_HYPRE_MEMORY_HOST);
 
    for (i = 0; i < nparts; i++)
    {
@@ -390,13 +390,13 @@ hypre_Maxwell_PTopology(  hypre_SStructGrid    *fgrid_edge,
       var_fgrid = hypre_SStructPGridCellSGrid(p_fgrid);
       fboxes   = hypre_StructGridBoxes(var_fgrid);
       j        = hypre_BoxArraySize(fboxes);
-      fcbox_mapping[i] = hypre_CTAlloc(HYPRE_Int,  j, HYPRE_MEMORY_HOST);
+      fcbox_mapping[i] = hypre_CTAlloc(NALU_HYPRE_Int,  j, NALU_HYPRE_MEMORY_HOST);
 
       p_cgrid  = hypre_SStructGridPGrid(cgrid_element, i);
       var_cgrid = hypre_SStructPGridCellSGrid(p_cgrid);
       cboxes   = hypre_StructGridBoxes(var_cgrid);
       j        = hypre_BoxArraySize(fboxes);
-      cfbox_mapping[i] = hypre_CTAlloc(HYPRE_Int,  j, HYPRE_MEMORY_HOST);
+      cfbox_mapping[i] = hypre_CTAlloc(NALU_HYPRE_Int,  j, NALU_HYPRE_MEMORY_HOST);
 
       /* assuming if i1 > i2 and (box j1) is coarsened from (box i1)
          and (box j2) from (box i2), then j1 > j2. */
@@ -427,9 +427,9 @@ hypre_Maxwell_PTopology(  hypre_SStructGrid    *fgrid_edge,
 
       /* fill up the contracted box_array */
       contract_fedgeBoxes[i] = hypre_BoxArrayCreate(0, ndim);
-      Edge_cstarts[i] = hypre_TAlloc(hypre_Index,  hypre_BoxArraySize(fboxes), HYPRE_MEMORY_HOST);
-      upper_shifts[i] = hypre_TAlloc(hypre_Index,  hypre_BoxArraySize(fboxes), HYPRE_MEMORY_HOST);
-      lower_shifts[i] = hypre_TAlloc(hypre_Index,  hypre_BoxArraySize(fboxes), HYPRE_MEMORY_HOST);
+      Edge_cstarts[i] = hypre_TAlloc(hypre_Index,  hypre_BoxArraySize(fboxes), NALU_HYPRE_MEMORY_HOST);
+      upper_shifts[i] = hypre_TAlloc(hypre_Index,  hypre_BoxArraySize(fboxes), NALU_HYPRE_MEMORY_HOST);
+      lower_shifts[i] = hypre_TAlloc(hypre_Index,  hypre_BoxArraySize(fboxes), NALU_HYPRE_MEMORY_HOST);
       hypre_ForBoxI(j, fboxes)
       {
          fbox = hypre_BoxArrayBox(fboxes, j);
@@ -469,8 +469,8 @@ hypre_Maxwell_PTopology(  hypre_SStructGrid    *fgrid_edge,
    }  /* for (i= 0; i< nparts; i++) */
 
    /* variable rank bounds for this processor */
-   n_CtoVbox   = hypre_TAlloc(HYPRE_Int **,  nparts, HYPRE_MEMORY_HOST);
-   CtoVboxnums = hypre_TAlloc(HYPRE_Int ***,  nparts, HYPRE_MEMORY_HOST);
+   n_CtoVbox   = hypre_TAlloc(NALU_HYPRE_Int **,  nparts, NALU_HYPRE_MEMORY_HOST);
+   CtoVboxnums = hypre_TAlloc(NALU_HYPRE_Int ***,  nparts, NALU_HYPRE_MEMORY_HOST);
    for (part = 0; part < nparts; part++)
    {
       hypre_SStructCellGridBoxNumMap(fgrid_edge, part, &n_CtoVbox[part],
@@ -478,15 +478,15 @@ hypre_Maxwell_PTopology(  hypre_SStructGrid    *fgrid_edge,
    }
 
    /* variable rank bounds for this processor */
-   flower_ranks = hypre_TAlloc(HYPRE_BigInt *,  nparts, HYPRE_MEMORY_HOST);
-   fupper_ranks = hypre_TAlloc(HYPRE_BigInt *,  nparts, HYPRE_MEMORY_HOST);
+   flower_ranks = hypre_TAlloc(NALU_HYPRE_BigInt *,  nparts, NALU_HYPRE_MEMORY_HOST);
+   fupper_ranks = hypre_TAlloc(NALU_HYPRE_BigInt *,  nparts, NALU_HYPRE_MEMORY_HOST);
 
-   clower_ranks = hypre_TAlloc(HYPRE_BigInt *,  nparts, HYPRE_MEMORY_HOST);
-   cupper_ranks = hypre_TAlloc(HYPRE_BigInt *,  nparts, HYPRE_MEMORY_HOST);
+   clower_ranks = hypre_TAlloc(NALU_HYPRE_BigInt *,  nparts, NALU_HYPRE_MEMORY_HOST);
+   cupper_ranks = hypre_TAlloc(NALU_HYPRE_BigInt *,  nparts, NALU_HYPRE_MEMORY_HOST);
    for (part = 0; part < nparts; part++)
    {
-      flower_ranks[part] = hypre_CTAlloc(HYPRE_BigInt,  tot_vars, HYPRE_MEMORY_HOST);
-      fupper_ranks[part] = hypre_CTAlloc(HYPRE_BigInt,  tot_vars, HYPRE_MEMORY_HOST);
+      flower_ranks[part] = hypre_CTAlloc(NALU_HYPRE_BigInt,  tot_vars, NALU_HYPRE_MEMORY_HOST);
+      fupper_ranks[part] = hypre_CTAlloc(NALU_HYPRE_BigInt,  tot_vars, NALU_HYPRE_MEMORY_HOST);
 
       /* cell grid ranks */
       p_fgrid = hypre_SStructGridPGrid(fgrid_element, part);
@@ -507,8 +507,8 @@ hypre_Maxwell_PTopology(  hypre_SStructGrid    *fgrid_edge,
       hypre_SStructBoxManEntryGetGlobalRank(entry, findex, &fupper_ranks[part][0],
                                             matrix_type);
 
-      clower_ranks[part] = hypre_CTAlloc(HYPRE_BigInt,  tot_vars, HYPRE_MEMORY_HOST);
-      cupper_ranks[part] = hypre_CTAlloc(HYPRE_BigInt,  tot_vars, HYPRE_MEMORY_HOST);
+      clower_ranks[part] = hypre_CTAlloc(NALU_HYPRE_BigInt,  tot_vars, NALU_HYPRE_MEMORY_HOST);
+      cupper_ranks[part] = hypre_CTAlloc(NALU_HYPRE_BigInt,  tot_vars, NALU_HYPRE_MEMORY_HOST);
 
       p_cgrid = hypre_SStructGridPGrid(cgrid_element, part);
       var_cgrid = hypre_SStructPGridSGrid(p_cgrid, 0);
@@ -661,9 +661,9 @@ hypre_Maxwell_PTopology(  hypre_SStructGrid    *fgrid_edge,
                                            myproc, &entry);
    hypre_SStructBoxManEntryGetGlobalCSRank(entry, hypre_BoxIMax(fbox), &jupper);
 
-   HYPRE_IJMatrixCreate(comm, ilower, iupper, jlower, jupper, &Element_iedge);
-   HYPRE_IJMatrixSetObjectType(Element_iedge, HYPRE_PARCSR);
-   HYPRE_IJMatrixInitialize(Element_iedge);
+   NALU_HYPRE_IJMatrixCreate(comm, ilower, iupper, jlower, jupper, &Element_iedge);
+   NALU_HYPRE_IJMatrixSetObjectType(Element_iedge, NALU_HYPRE_PARCSR);
+   NALU_HYPRE_IJMatrixInitialize(Element_iedge);
 
    /* Edge_iedge. Note that even though not all the iedges are involved (e.g.,
     * truncated edges are not), we use the ranks determined by the Edge/edge grids.
@@ -705,9 +705,9 @@ hypre_Maxwell_PTopology(  hypre_SStructGrid    *fgrid_edge,
                                            hypre_BoxArraySize(fboxes) - 1, myproc, &entry);
    hypre_SStructBoxManEntryGetGlobalCSRank(entry, hypre_BoxIMax(fbox), &jupper);
 
-   HYPRE_IJMatrixCreate(comm, ilower, iupper, jlower, jupper, &Edge_iedge);
-   HYPRE_IJMatrixSetObjectType(Edge_iedge, HYPRE_PARCSR);
-   HYPRE_IJMatrixInitialize(Edge_iedge);
+   NALU_HYPRE_IJMatrixCreate(comm, ilower, iupper, jlower, jupper, &Edge_iedge);
+   NALU_HYPRE_IJMatrixSetObjectType(Edge_iedge, NALU_HYPRE_PARCSR);
+   NALU_HYPRE_IJMatrixInitialize(Edge_iedge);
 
    /* edge_Edge. Same for 2-d and 3-d. */
    /* lower rank */
@@ -749,9 +749,9 @@ hypre_Maxwell_PTopology(  hypre_SStructGrid    *fgrid_edge,
                                            hypre_BoxArraySize(cboxes) - 1, myproc, &entry);
    hypre_SStructBoxManEntryGetGlobalCSRank(entry, hypre_BoxIMax(cbox), &jupper);
 
-   HYPRE_IJMatrixCreate(comm, ilower, iupper, jlower, jupper, &edge_Edge);
-   HYPRE_IJMatrixSetObjectType(edge_Edge, HYPRE_PARCSR);
-   HYPRE_IJMatrixInitialize(edge_Edge);
+   NALU_HYPRE_IJMatrixCreate(comm, ilower, iupper, jlower, jupper, &edge_Edge);
+   NALU_HYPRE_IJMatrixSetObjectType(edge_Edge, NALU_HYPRE_PARCSR);
+   NALU_HYPRE_IJMatrixInitialize(edge_Edge);
 
    /* Face_iedge. Only needed in 3-d. */
    if (ndim == 3)
@@ -797,9 +797,9 @@ hypre_Maxwell_PTopology(  hypre_SStructGrid    *fgrid_edge,
                                               hypre_BoxArraySize(fboxes) - 1, myproc, &entry);
       hypre_SStructBoxManEntryGetGlobalCSRank(entry, hypre_BoxIMax(fbox), &jupper);
 
-      HYPRE_IJMatrixCreate(comm, ilower, iupper, jlower, jupper, &Face_iedge);
-      HYPRE_IJMatrixSetObjectType(Face_iedge, HYPRE_PARCSR);
-      HYPRE_IJMatrixInitialize(Face_iedge);
+      NALU_HYPRE_IJMatrixCreate(comm, ilower, iupper, jlower, jupper, &Face_iedge);
+      NALU_HYPRE_IJMatrixSetObjectType(Face_iedge, NALU_HYPRE_PARCSR);
+      NALU_HYPRE_IJMatrixInitialize(Face_iedge);
    }
 
    /* Element_Face. Only for 3-d since Element_Edge= Element_Face in 2-d. */
@@ -847,9 +847,9 @@ hypre_Maxwell_PTopology(  hypre_SStructGrid    *fgrid_edge,
                                               hypre_BoxArraySize(cboxes) - 1, myproc, &entry);
       hypre_SStructBoxManEntryGetGlobalCSRank(entry, hypre_BoxIMax(cbox), &jupper);
 
-      HYPRE_IJMatrixCreate(comm, ilower, iupper, jlower, jupper, &Element_Face);
-      HYPRE_IJMatrixSetObjectType(Element_Face, HYPRE_PARCSR);
-      HYPRE_IJMatrixInitialize(Element_Face);
+      NALU_HYPRE_IJMatrixCreate(comm, ilower, iupper, jlower, jupper, &Element_Face);
+      NALU_HYPRE_IJMatrixSetObjectType(Element_Face, NALU_HYPRE_PARCSR);
+      NALU_HYPRE_IJMatrixInitialize(Element_Face);
    }
 
    /* Element_Edge. Same for 2-d and 3-d. */
@@ -893,9 +893,9 @@ hypre_Maxwell_PTopology(  hypre_SStructGrid    *fgrid_edge,
                                            hypre_BoxArraySize(cboxes) - 1, myproc, &entry);
    hypre_SStructBoxManEntryGetGlobalCSRank(entry, hypre_BoxIMax(cbox), &jupper);
 
-   HYPRE_IJMatrixCreate(comm, ilower, iupper, jlower, jupper, &Element_Edge);
-   HYPRE_IJMatrixSetObjectType(Element_Edge, HYPRE_PARCSR);
-   HYPRE_IJMatrixInitialize(Element_Edge);
+   NALU_HYPRE_IJMatrixCreate(comm, ilower, iupper, jlower, jupper, &Element_Edge);
+   NALU_HYPRE_IJMatrixSetObjectType(Element_Edge, NALU_HYPRE_PARCSR);
+   NALU_HYPRE_IJMatrixInitialize(Element_Edge);
 
    /*------------------------------------------------------------------------------
     * fill up the parcsr matrices.
@@ -923,21 +923,21 @@ hypre_Maxwell_PTopology(  hypre_SStructGrid    *fgrid_edge,
 
    if (ndim == 3)
    {
-      iFace = hypre_CTAlloc(HYPRE_BigInt, nFaces, memory_location);
+      iFace = hypre_CTAlloc(NALU_HYPRE_BigInt, nFaces, memory_location);
    }
-   iEdge    = hypre_CTAlloc(HYPRE_BigInt, nEdges, memory_location);
-   iElement = hypre_CTAlloc(HYPRE_BigInt, nElements, memory_location);
+   iEdge    = hypre_CTAlloc(NALU_HYPRE_BigInt, nEdges, memory_location);
+   iElement = hypre_CTAlloc(NALU_HYPRE_BigInt, nElements, memory_location);
 
    /* array structures needed for forming ij_matrices */
 
    /* Element_edge. Same for 2-d and 3-d. */
-   ncols_Elementedge = hypre_CTAlloc(HYPRE_Int,  nElements, memory_location);
+   ncols_Elementedge = hypre_CTAlloc(NALU_HYPRE_Int,  nElements, memory_location);
    for (i = 0; i < nElements; i++)
    {
       ncols_Elementedge[i] = n_Cell_iedges;
    }
-   jElement_edge    = hypre_CTAlloc(HYPRE_BigInt, nElements_iedges, memory_location);
-   vals_Elementedge = hypre_CTAlloc(HYPRE_Real,   nElements_iedges, memory_location);
+   jElement_edge    = hypre_CTAlloc(NALU_HYPRE_BigInt, nElements_iedges, memory_location);
+   vals_Elementedge = hypre_CTAlloc(NALU_HYPRE_Real,   nElements_iedges, memory_location);
 
    /*---------------------------------------------------------------------------
     * Fill up the row/column ranks of Element_edge. Will need to distinguish
@@ -1118,10 +1118,10 @@ hypre_Maxwell_PTopology(  hypre_SStructGrid    *fgrid_edge,
       }  /* hypre_ForBoxI(i, cboxes) */
    }     /* for (part= 0; part< nparts; part++) */
 
-   HYPRE_IJMatrixSetValues(Element_iedge, nElements, ncols_Elementedge,
-                           (const HYPRE_BigInt*) iElement, (const HYPRE_BigInt*) jElement_edge,
-                           (const HYPRE_Real*) vals_Elementedge);
-   HYPRE_IJMatrixAssemble((HYPRE_IJMatrix) Element_iedge);
+   NALU_HYPRE_IJMatrixSetValues(Element_iedge, nElements, ncols_Elementedge,
+                           (const NALU_HYPRE_BigInt*) iElement, (const NALU_HYPRE_BigInt*) jElement_edge,
+                           (const NALU_HYPRE_Real*) vals_Elementedge);
+   NALU_HYPRE_IJMatrixAssemble((NALU_HYPRE_IJMatrix) Element_iedge);
 
    hypre_TFree(ncols_Elementedge, memory_location);
    hypre_TFree(jElement_edge, memory_location);
@@ -1138,7 +1138,7 @@ hypre_Maxwell_PTopology(  hypre_SStructGrid    *fgrid_edge,
     *------------------------------------------------------------------------------*/
    if (ndim == 3)
    {
-      ncols_Faceedge = hypre_CTAlloc(HYPRE_Int, nFaces, memory_location);
+      ncols_Faceedge = hypre_CTAlloc(NALU_HYPRE_Int, nFaces, memory_location);
       nFaces = 0;
       j = 0;
       for (part = 0; part < nparts; part++)
@@ -1211,8 +1211,8 @@ hypre_Maxwell_PTopology(  hypre_SStructGrid    *fgrid_edge,
          }    /* for (t= 0; t< Face_nvars; t++) */
       }       /* for (part= 0; part< nparts; part++) */
 
-      jFace_edge    = hypre_CTAlloc(HYPRE_BigInt, j, memory_location);
-      vals_Faceedge = hypre_CTAlloc(HYPRE_Real, j, memory_location);
+      jFace_edge    = hypre_CTAlloc(NALU_HYPRE_BigInt, j, memory_location);
+      vals_Faceedge = hypre_CTAlloc(NALU_HYPRE_Real, j, memory_location);
       for (i = 0; i < j; i++)
       {
          vals_Faceedge[i] = 1.0;
@@ -1539,10 +1539,10 @@ hypre_Maxwell_PTopology(  hypre_SStructGrid    *fgrid_edge,
          }      /* for (t= 0; t< Face_nvars; t++) */
       }         /* for (part= 0; part< nparts; part++) */
 
-      HYPRE_IJMatrixSetValues(Face_iedge, nFaces, ncols_Faceedge,
-                              (const HYPRE_BigInt*) iFace, (const HYPRE_BigInt*) jFace_edge,
-                              (const HYPRE_Real*) vals_Faceedge);
-      HYPRE_IJMatrixAssemble((HYPRE_IJMatrix) Face_iedge);
+      NALU_HYPRE_IJMatrixSetValues(Face_iedge, nFaces, ncols_Faceedge,
+                              (const NALU_HYPRE_BigInt*) iFace, (const NALU_HYPRE_BigInt*) jFace_edge,
+                              (const NALU_HYPRE_Real*) vals_Faceedge);
+      NALU_HYPRE_IJMatrixAssemble((NALU_HYPRE_IJMatrix) Face_iedge);
 
       hypre_TFree(ncols_Faceedge, memory_location);
       hypre_TFree(iFace, memory_location);
@@ -1555,7 +1555,7 @@ hypre_Maxwell_PTopology(  hypre_SStructGrid    *fgrid_edge,
     * Count the Edge_edge connections. Will need to distinguish 2-d and 3-d.
     *------------------------------------------------------------------------------*/
    /* nEdges should be correct for 2-d & 3-d */
-   ncols_Edgeiedge = hypre_CTAlloc(HYPRE_Int, nEdges, memory_location);
+   ncols_Edgeiedge = hypre_CTAlloc(NALU_HYPRE_Int, nEdges, memory_location);
 
    nEdges = 0;
    k = 0;
@@ -1616,8 +1616,8 @@ hypre_Maxwell_PTopology(  hypre_SStructGrid    *fgrid_edge,
       }  /* for (t= 0; t< Edge_nvars; t++) */
    }     /* for (part= 0; part< nparts; part++) */
 
-   jEdge_iedge    = hypre_CTAlloc(HYPRE_BigInt, k, memory_location);
-   vals_Edgeiedge = hypre_CTAlloc(HYPRE_Real, k, memory_location);
+   jEdge_iedge    = hypre_CTAlloc(NALU_HYPRE_BigInt, k, memory_location);
+   vals_Edgeiedge = hypre_CTAlloc(NALU_HYPRE_Real, k, memory_location);
    for (i = 0; i < k; i++)
    {
       vals_Edgeiedge[i] = 1.0;
@@ -1818,10 +1818,10 @@ hypre_Maxwell_PTopology(  hypre_SStructGrid    *fgrid_edge,
       }     /* for (t= 0; t< Edge_nvars; t++) */
    }        /* for (part= 0; part< nparts; part++) */
 
-   HYPRE_IJMatrixSetValues(Edge_iedge, nEdges, ncols_Edgeiedge,
-                           (const HYPRE_BigInt*) iEdge, (const HYPRE_BigInt*) jEdge_iedge,
-                           (const HYPRE_Real*) vals_Edgeiedge);
-   HYPRE_IJMatrixAssemble((HYPRE_IJMatrix) Edge_iedge);
+   NALU_HYPRE_IJMatrixSetValues(Edge_iedge, nEdges, ncols_Edgeiedge,
+                           (const NALU_HYPRE_BigInt*) iEdge, (const NALU_HYPRE_BigInt*) jEdge_iedge,
+                           (const NALU_HYPRE_Real*) vals_Edgeiedge);
+   NALU_HYPRE_IJMatrixAssemble((NALU_HYPRE_IJMatrix) Edge_iedge);
 
    hypre_TFree(ncols_Edgeiedge, memory_location);
    hypre_TFree(iEdge, memory_location);
@@ -1831,7 +1831,7 @@ hypre_Maxwell_PTopology(  hypre_SStructGrid    *fgrid_edge,
    /* Element_Face & Element_Edge. Element_Face only for 3-d. */
    if (ndim == 3)
    {
-      ncols_ElementFace = hypre_CTAlloc(HYPRE_Int, nElements, memory_location);
+      ncols_ElementFace = hypre_CTAlloc(NALU_HYPRE_Int, nElements, memory_location);
       j = 2 * ndim;
       for (i = 0; i < nElements; i++)
       {
@@ -1839,15 +1839,15 @@ hypre_Maxwell_PTopology(  hypre_SStructGrid    *fgrid_edge,
       }
 
       j *= nElements;
-      jElement_Face    = hypre_CTAlloc(HYPRE_BigInt, j, memory_location);
-      vals_ElementFace = hypre_CTAlloc(HYPRE_Real, j, memory_location);
+      jElement_Face    = hypre_CTAlloc(NALU_HYPRE_BigInt, j, memory_location);
+      vals_ElementFace = hypre_CTAlloc(NALU_HYPRE_Real, j, memory_location);
       for (i = 0; i < j; i++)
       {
          vals_ElementFace[i] = 1.0;
       }
    }
 
-   ncols_ElementEdge = hypre_CTAlloc(HYPRE_Int, nElements, memory_location);
+   ncols_ElementEdge = hypre_CTAlloc(NALU_HYPRE_Int, nElements, memory_location);
    j = 2 * ndim;
    k = (ndim - 1) * j;
    for (i = 0; i < nElements; i++)
@@ -1856,8 +1856,8 @@ hypre_Maxwell_PTopology(  hypre_SStructGrid    *fgrid_edge,
    }
 
    k *= nElements;
-   jElement_Edge   = hypre_CTAlloc(HYPRE_BigInt, k, memory_location);
-   vals_ElementEdge = hypre_CTAlloc(HYPRE_Real, k, memory_location);
+   jElement_Edge   = hypre_CTAlloc(NALU_HYPRE_BigInt, k, memory_location);
+   vals_ElementEdge = hypre_CTAlloc(NALU_HYPRE_Real, k, memory_location);
    for (i = 0; i < k; i++)
    {
       vals_ElementEdge[i] = 1.0;
@@ -2111,20 +2111,20 @@ hypre_Maxwell_PTopology(  hypre_SStructGrid    *fgrid_edge,
 
    if (ndim == 3)
    {
-      HYPRE_IJMatrixSetValues(Element_Face, nElements, ncols_ElementFace,
-                              (const HYPRE_BigInt*) iElement, (const HYPRE_BigInt*) jElement_Face,
-                              (const HYPRE_Real*) vals_ElementFace);
-      HYPRE_IJMatrixAssemble((HYPRE_IJMatrix) Element_Face);
+      NALU_HYPRE_IJMatrixSetValues(Element_Face, nElements, ncols_ElementFace,
+                              (const NALU_HYPRE_BigInt*) iElement, (const NALU_HYPRE_BigInt*) jElement_Face,
+                              (const NALU_HYPRE_Real*) vals_ElementFace);
+      NALU_HYPRE_IJMatrixAssemble((NALU_HYPRE_IJMatrix) Element_Face);
 
       hypre_TFree(ncols_ElementFace, memory_location);
       hypre_TFree(jElement_Face, memory_location);
       hypre_TFree(vals_ElementFace, memory_location);
    }  /* if (ndim == 3) */
 
-   HYPRE_IJMatrixSetValues(Element_Edge, nElements, ncols_ElementEdge,
-                           (const HYPRE_BigInt*) iElement, (const HYPRE_BigInt*) jElement_Edge,
-                           (const HYPRE_Real*) vals_ElementEdge);
-   HYPRE_IJMatrixAssemble((HYPRE_IJMatrix) Element_Edge);
+   NALU_HYPRE_IJMatrixSetValues(Element_Edge, nElements, ncols_ElementEdge,
+                           (const NALU_HYPRE_BigInt*) iElement, (const NALU_HYPRE_BigInt*) jElement_Edge,
+                           (const NALU_HYPRE_Real*) vals_ElementEdge);
+   NALU_HYPRE_IJMatrixAssemble((NALU_HYPRE_IJMatrix) Element_Edge);
 
    hypre_TFree(ncols_ElementEdge, memory_location);
    hypre_TFree(iElement, memory_location);
@@ -2150,8 +2150,8 @@ hypre_Maxwell_PTopology(  hypre_SStructGrid    *fgrid_edge,
     *-----------------------------------------------------------------------*/
 
    /* count the row/col connections */
-   iedgeEdge      = hypre_CTAlloc(HYPRE_BigInt, nedges, memory_location);
-   ncols_edgeEdge = hypre_CTAlloc(HYPRE_Int, nedges, memory_location);
+   iedgeEdge      = hypre_CTAlloc(NALU_HYPRE_BigInt, nedges, memory_location);
+   ncols_edgeEdge = hypre_CTAlloc(NALU_HYPRE_Int, nedges, memory_location);
 
    /*-----------------------------------------------------------------------
     * loop first over the fedges aligning with the agglomerate coarse edges.
@@ -2164,7 +2164,7 @@ hypre_Maxwell_PTopology(  hypre_SStructGrid    *fgrid_edge,
     *-----------------------------------------------------------------------*/
    j = 0;
    start_rank1 = hypre_SStructGridStartRank(fgrid_edge);
-   bdryedge_location = hypre_CTAlloc(HYPRE_Int, nedges, HYPRE_MEMORY_HOST);
+   bdryedge_location = hypre_CTAlloc(NALU_HYPRE_Int, nedges, NALU_HYPRE_MEMORY_HOST);
    for (part = 0; part < nparts; part++)
    {
       p_fgrid = hypre_SStructGridPGrid(fgrid_edge, part); /* edge grid */
@@ -2182,8 +2182,8 @@ hypre_Maxwell_PTopology(  hypre_SStructGrid    *fgrid_edge,
          box_array   = hypre_StructGridBoxes(var_fgrid);
 
          n_boxoffsets = ndim - 1;
-         boxoffset   = hypre_CTAlloc(hypre_Index, n_boxoffsets, HYPRE_MEMORY_HOST);
-         suboffset   = hypre_CTAlloc(hypre_Index, n_boxoffsets, HYPRE_MEMORY_HOST);
+         boxoffset   = hypre_CTAlloc(hypre_Index, n_boxoffsets, NALU_HYPRE_MEMORY_HOST);
+         suboffset   = hypre_CTAlloc(hypre_Index, n_boxoffsets, NALU_HYPRE_MEMORY_HOST);
          switch (var)
          {
             case 2: /* 2-d: x_face (vertical edges), stride=[rfactor[0],1,1] */
@@ -2338,8 +2338,8 @@ hypre_Maxwell_PTopology(  hypre_SStructGrid    *fgrid_edge,
             hypre_SerialBoxLoop1End(m);
 
          }   /* hypre_ForBoxI */
-         hypre_TFree(boxoffset, HYPRE_MEMORY_HOST);
-         hypre_TFree(suboffset, HYPRE_MEMORY_HOST);
+         hypre_TFree(boxoffset, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(suboffset, NALU_HYPRE_MEMORY_HOST);
       }  /* for (t= 0; t< nvars; t++) */
    }     /* for (part= 0; part< nparts; part++) */
 
@@ -2367,7 +2367,7 @@ hypre_Maxwell_PTopology(  hypre_SStructGrid    *fgrid_edge,
          fboxes = contract_fedgeBoxes[part];
 
          /* may need to shrink a given box in some boxoffset directions */
-         boxoffset = hypre_TAlloc(hypre_Index,  ndim, HYPRE_MEMORY_HOST);
+         boxoffset = hypre_TAlloc(hypre_Index,  ndim, NALU_HYPRE_MEMORY_HOST);
          for (t = 0; t < ndim; t++)
          {
             hypre_ClearIndex(boxoffset[t]);
@@ -2917,7 +2917,7 @@ hypre_Maxwell_PTopology(  hypre_SStructGrid    *fgrid_edge,
             }  /* switch */
          }     /* for (t= 0; t< Edge_nvars; t++) */
 
-         hypre_TFree(boxoffset, HYPRE_MEMORY_HOST);
+         hypre_TFree(boxoffset, NALU_HYPRE_MEMORY_HOST);
       }  /* for (part= 0; part< nparts; part++) */
    }     /* if (ndim == 3) */
 
@@ -3269,8 +3269,8 @@ hypre_Maxwell_PTopology(  hypre_SStructGrid    *fgrid_edge,
          j++;
       }
    }
-   vals_edgeEdge = hypre_CTAlloc(HYPRE_Real, k, memory_location);
-   jedge_Edge    = hypre_CTAlloc(HYPRE_BigInt, k, memory_location);
+   vals_edgeEdge = hypre_CTAlloc(NALU_HYPRE_Real, k, memory_location);
+   jedge_Edge    = hypre_CTAlloc(NALU_HYPRE_BigInt, k, memory_location);
    size1         = j;
 
    /*********************************************************************
@@ -3307,8 +3307,8 @@ hypre_Maxwell_PTopology(  hypre_SStructGrid    *fgrid_edge,
          box_array = hypre_StructGridBoxes(var_fgrid);
 
          n_boxoffsets = ndim - 1;
-         boxoffset   = hypre_CTAlloc(hypre_Index,  n_boxoffsets, HYPRE_MEMORY_HOST);
-         suboffset   = hypre_CTAlloc(hypre_Index,  n_boxoffsets, HYPRE_MEMORY_HOST);
+         boxoffset   = hypre_CTAlloc(hypre_Index,  n_boxoffsets, NALU_HYPRE_MEMORY_HOST);
+         suboffset   = hypre_CTAlloc(hypre_Index,  n_boxoffsets, NALU_HYPRE_MEMORY_HOST);
          switch (var)
          {
             case 2: /* 2-d: x_face (vertical edges), stride=[rfactor[0],1,1]
@@ -3453,7 +3453,7 @@ hypre_Maxwell_PTopology(  hypre_SStructGrid    *fgrid_edge,
             hypre_SerialBoxLoop1Begin(ndim, loop_size,
                                       &copy_box, start, stride, m);
             {
-               HYPRE_BigInt big_j;
+               NALU_HYPRE_BigInt big_j;
                zypre_BoxLoopGetIndex(lindex);
                hypre_SetIndex3(findex, lindex[0], lindex[1], lindex[2]);
                for (j = 0; j < 3; j++)
@@ -3492,8 +3492,8 @@ hypre_Maxwell_PTopology(  hypre_SStructGrid    *fgrid_edge,
             }
             hypre_SerialBoxLoop1End(m);
          }   /* hypre_ForBoxI */
-         hypre_TFree(boxoffset, HYPRE_MEMORY_HOST);
-         hypre_TFree(suboffset, HYPRE_MEMORY_HOST);
+         hypre_TFree(boxoffset, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(suboffset, NALU_HYPRE_MEMORY_HOST);
       }  /* for (t= 0; t< nvars; t++) */
    }     /* for (part= 0; part< nparts; part++) */
 
@@ -3510,12 +3510,12 @@ hypre_Maxwell_PTopology(  hypre_SStructGrid    *fgrid_edge,
             i = rfactor[j] - 1;
          }
       }
-      upper = hypre_CTAlloc(HYPRE_Real,  i, HYPRE_MEMORY_HOST);
-      lower = hypre_CTAlloc(HYPRE_Real,  i, HYPRE_MEMORY_HOST);
-      diag = hypre_CTAlloc(HYPRE_Real,  i, HYPRE_MEMORY_HOST);
-      face_w1 = hypre_CTAlloc(HYPRE_Real,  i, HYPRE_MEMORY_HOST);
-      face_w2 = hypre_CTAlloc(HYPRE_Real,  i, HYPRE_MEMORY_HOST);
-      off_proc_flag = hypre_CTAlloc(HYPRE_Int,  i + 1, HYPRE_MEMORY_HOST);
+      upper = hypre_CTAlloc(NALU_HYPRE_Real,  i, NALU_HYPRE_MEMORY_HOST);
+      lower = hypre_CTAlloc(NALU_HYPRE_Real,  i, NALU_HYPRE_MEMORY_HOST);
+      diag = hypre_CTAlloc(NALU_HYPRE_Real,  i, NALU_HYPRE_MEMORY_HOST);
+      face_w1 = hypre_CTAlloc(NALU_HYPRE_Real,  i, NALU_HYPRE_MEMORY_HOST);
+      face_w2 = hypre_CTAlloc(NALU_HYPRE_Real,  i, NALU_HYPRE_MEMORY_HOST);
+      off_proc_flag = hypre_CTAlloc(NALU_HYPRE_Int,  i + 1, NALU_HYPRE_MEMORY_HOST);
 
       for (part = 0; part < nparts; part++)
       {
@@ -3529,7 +3529,7 @@ hypre_Maxwell_PTopology(  hypre_SStructGrid    *fgrid_edge,
          fboxes = contract_fedgeBoxes[part];
 
          /* may need to shrink a given box in some boxoffset directions */
-         boxoffset = hypre_TAlloc(hypre_Index,  ndim, HYPRE_MEMORY_HOST);
+         boxoffset = hypre_TAlloc(hypre_Index,  ndim, NALU_HYPRE_MEMORY_HOST);
          for (t = 0; t < ndim; t++)
          {
             hypre_ClearIndex(boxoffset[t]);
@@ -3676,7 +3676,7 @@ hypre_Maxwell_PTopology(  hypre_SStructGrid    *fgrid_edge,
                               lower[n - 1] = stencil_vals[0];
                               diag[n - 1] = stencil_vals[1];
                               upper[n - 1] = stencil_vals[2];
-                              hypre_TFree(stencil_vals, HYPRE_MEMORY_HOST);
+                              hypre_TFree(stencil_vals, NALU_HYPRE_MEMORY_HOST);
                            }
 
                            /* solve systems to get weights. Must adjust face_w's so
@@ -3812,7 +3812,7 @@ hypre_Maxwell_PTopology(  hypre_SStructGrid    *fgrid_edge,
                               lower[n - 1] = stencil_vals[0];
                               diag[n - 1] = stencil_vals[1];
                               upper[n - 1] = stencil_vals[2];
-                              hypre_TFree(stencil_vals, HYPRE_MEMORY_HOST);
+                              hypre_TFree(stencil_vals, NALU_HYPRE_MEMORY_HOST);
                            }
 
                            /* solve systems to get weights. Must adjust face_w's so
@@ -3972,7 +3972,7 @@ hypre_Maxwell_PTopology(  hypre_SStructGrid    *fgrid_edge,
                               lower[n - 1] = stencil_vals[0];
                               diag[n - 1] = stencil_vals[1];
                               upper[n - 1] = stencil_vals[2];
-                              hypre_TFree(stencil_vals, HYPRE_MEMORY_HOST);
+                              hypre_TFree(stencil_vals, NALU_HYPRE_MEMORY_HOST);
                            }
 
                            /* solve systems to get weights. Must adjust face_w's so
@@ -4109,7 +4109,7 @@ hypre_Maxwell_PTopology(  hypre_SStructGrid    *fgrid_edge,
                               lower[n - 1] = stencil_vals[0];
                               diag[n - 1] = stencil_vals[1];
                               upper[n - 1] = stencil_vals[2];
-                              hypre_TFree(stencil_vals, HYPRE_MEMORY_HOST);
+                              hypre_TFree(stencil_vals, NALU_HYPRE_MEMORY_HOST);
                            }
 
                            /* solve systems to get weights. Must adjust face_w's so
@@ -4269,7 +4269,7 @@ hypre_Maxwell_PTopology(  hypre_SStructGrid    *fgrid_edge,
                               lower[n - 1] = stencil_vals[0];
                               diag[n - 1] = stencil_vals[1];
                               upper[n - 1] = stencil_vals[2];
-                              hypre_TFree(stencil_vals, HYPRE_MEMORY_HOST);
+                              hypre_TFree(stencil_vals, NALU_HYPRE_MEMORY_HOST);
                            }
 
                            /* solve systems to get weights. Must adjust face_w's so
@@ -4405,7 +4405,7 @@ hypre_Maxwell_PTopology(  hypre_SStructGrid    *fgrid_edge,
                               lower[n - 1] = stencil_vals[0];
                               diag[n - 1] = stencil_vals[1];
                               upper[n - 1] = stencil_vals[2];
-                              hypre_TFree(stencil_vals, HYPRE_MEMORY_HOST);
+                              hypre_TFree(stencil_vals, NALU_HYPRE_MEMORY_HOST);
                            }
 
                            /* solve systems to get weights. Must adjust face_w's so
@@ -4440,15 +4440,15 @@ hypre_Maxwell_PTopology(  hypre_SStructGrid    *fgrid_edge,
             }  /* switch */
          }     /* for (t= 0; t< Edge_nvars; t++) */
 
-         hypre_TFree(boxoffset, HYPRE_MEMORY_HOST);
+         hypre_TFree(boxoffset, NALU_HYPRE_MEMORY_HOST);
       }  /* for (part= 0; part< nparts; part++) */
 
-      hypre_TFree(upper, HYPRE_MEMORY_HOST);
-      hypre_TFree(lower, HYPRE_MEMORY_HOST);
-      hypre_TFree(diag, HYPRE_MEMORY_HOST);
-      hypre_TFree(face_w1, HYPRE_MEMORY_HOST);
-      hypre_TFree(face_w2, HYPRE_MEMORY_HOST);
-      hypre_TFree(off_proc_flag, HYPRE_MEMORY_HOST);
+      hypre_TFree(upper, NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(lower, NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(diag, NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(face_w1, NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(face_w2, NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(off_proc_flag, NALU_HYPRE_MEMORY_HOST);
    }  /* if (ndim == 3) */
 
    /* generate the interior interpolation weights/info */
@@ -5104,12 +5104,12 @@ hypre_Maxwell_PTopology(  hypre_SStructGrid    *fgrid_edge,
          }  /* switch */
       }     /* for (t= 0; t< Edge_nvars; t++) */
    }        /* for (part= 0; part< nparts; part++) */
-   hypre_TFree(bdryedge_location, HYPRE_MEMORY_HOST);
+   hypre_TFree(bdryedge_location, NALU_HYPRE_MEMORY_HOST);
 
-   HYPRE_IJMatrixSetValues(edge_Edge, size1, ncols_edgeEdge,
-                           (const HYPRE_BigInt*) iedgeEdge, (const HYPRE_BigInt*) jedge_Edge,
-                           (const HYPRE_Real*) vals_edgeEdge);
-   HYPRE_IJMatrixAssemble((HYPRE_IJMatrix) edge_Edge);
+   NALU_HYPRE_IJMatrixSetValues(edge_Edge, size1, ncols_edgeEdge,
+                           (const NALU_HYPRE_BigInt*) iedgeEdge, (const NALU_HYPRE_BigInt*) jedge_Edge,
+                           (const NALU_HYPRE_Real*) vals_edgeEdge);
+   NALU_HYPRE_IJMatrixAssemble((NALU_HYPRE_IJMatrix) edge_Edge);
 
    hypre_TFree(ncols_edgeEdge, memory_location);
    hypre_TFree(iedgeEdge, memory_location);
@@ -5128,16 +5128,16 @@ hypre_Maxwell_PTopology(  hypre_SStructGrid    *fgrid_edge,
       {
          for (t = 0; t < Edge_nvars; t++)
          {
-            hypre_TFree(CtoVboxnums[part][j][t], HYPRE_MEMORY_HOST);
+            hypre_TFree(CtoVboxnums[part][j][t], NALU_HYPRE_MEMORY_HOST);
          }
-         hypre_TFree(n_CtoVbox[part][j], HYPRE_MEMORY_HOST);
-         hypre_TFree(CtoVboxnums[part][j], HYPRE_MEMORY_HOST);
+         hypre_TFree(n_CtoVbox[part][j], NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(CtoVboxnums[part][j], NALU_HYPRE_MEMORY_HOST);
       }
-      hypre_TFree(n_CtoVbox[part], HYPRE_MEMORY_HOST);
-      hypre_TFree(CtoVboxnums[part], HYPRE_MEMORY_HOST);
+      hypre_TFree(n_CtoVbox[part], NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(CtoVboxnums[part], NALU_HYPRE_MEMORY_HOST);
    }
-   hypre_TFree(n_CtoVbox, HYPRE_MEMORY_HOST);
-   hypre_TFree(CtoVboxnums, HYPRE_MEMORY_HOST);
+   hypre_TFree(n_CtoVbox, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(CtoVboxnums, NALU_HYPRE_MEMORY_HOST);
 
    for (part = 0; part < nparts; part++)
    {
@@ -5146,30 +5146,30 @@ hypre_Maxwell_PTopology(  hypre_SStructGrid    *fgrid_edge,
       fboxes   = hypre_StructGridBoxes(var_fgrid);
 
       hypre_BoxArrayDestroy(contract_fedgeBoxes[part]);
-      hypre_TFree(Edge_cstarts[part], HYPRE_MEMORY_HOST);
-      hypre_TFree(upper_shifts[part], HYPRE_MEMORY_HOST);
-      hypre_TFree(lower_shifts[part], HYPRE_MEMORY_HOST);
-      hypre_TFree(cfbox_mapping[part], HYPRE_MEMORY_HOST);
-      hypre_TFree(fcbox_mapping[part], HYPRE_MEMORY_HOST);
-      hypre_TFree(fupper_ranks[part], HYPRE_MEMORY_HOST);
-      hypre_TFree(flower_ranks[part], HYPRE_MEMORY_HOST);
-      hypre_TFree(cupper_ranks[part], HYPRE_MEMORY_HOST);
-      hypre_TFree(clower_ranks[part], HYPRE_MEMORY_HOST);
+      hypre_TFree(Edge_cstarts[part], NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(upper_shifts[part], NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(lower_shifts[part], NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(cfbox_mapping[part], NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(fcbox_mapping[part], NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(fupper_ranks[part], NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(flower_ranks[part], NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(cupper_ranks[part], NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(clower_ranks[part], NALU_HYPRE_MEMORY_HOST);
    }
 
-   hypre_TFree(contract_fedgeBoxes, HYPRE_MEMORY_HOST);
-   hypre_TFree(Edge_cstarts, HYPRE_MEMORY_HOST);
-   hypre_TFree(upper_shifts, HYPRE_MEMORY_HOST);
-   hypre_TFree(lower_shifts, HYPRE_MEMORY_HOST);
-   hypre_TFree(cfbox_mapping, HYPRE_MEMORY_HOST);
-   hypre_TFree(fcbox_mapping, HYPRE_MEMORY_HOST);
-   hypre_TFree(fupper_ranks, HYPRE_MEMORY_HOST);
-   hypre_TFree(flower_ranks, HYPRE_MEMORY_HOST);
-   hypre_TFree(cupper_ranks, HYPRE_MEMORY_HOST);
-   hypre_TFree(clower_ranks, HYPRE_MEMORY_HOST);
+   hypre_TFree(contract_fedgeBoxes, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(Edge_cstarts, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(upper_shifts, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(lower_shifts, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(cfbox_mapping, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(fcbox_mapping, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(fupper_ranks, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(flower_ranks, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(cupper_ranks, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(clower_ranks, NALU_HYPRE_MEMORY_HOST);
 
-   hypre_TFree(varoffsets, HYPRE_MEMORY_HOST);
-   hypre_TFree(vartype_map, HYPRE_MEMORY_HOST);
+   hypre_TFree(varoffsets, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(vartype_map, NALU_HYPRE_MEMORY_HOST);
 
    if (ndim > 2)
    {
@@ -5198,44 +5198,44 @@ hypre_Maxwell_PTopology(  hypre_SStructGrid    *fgrid_edge,
  *    is [n c s]^t and we need to collapse in the x direction to get this
  *    3-pt stencil: collapse_dir= 0 & new_stencil_dir= 1.
  *--------------------------------------------------------------------------*/
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_CollapseStencilToStencil(hypre_ParCSRMatrix     *Aee,
                                hypre_SStructGrid      *grid,
-                               HYPRE_Int               part,
-                               HYPRE_Int               var,
+                               NALU_HYPRE_Int               part,
+                               NALU_HYPRE_Int               var,
                                hypre_Index             pt_location,
-                               HYPRE_Int               collapse_dir,
-                               HYPRE_Int               new_stencil_dir,
-                               HYPRE_Real            **collapsed_vals_ptr)
+                               NALU_HYPRE_Int               collapse_dir,
+                               NALU_HYPRE_Int               new_stencil_dir,
+                               NALU_HYPRE_Real            **collapsed_vals_ptr)
 {
-   HYPRE_Int                ierr = 0;
+   NALU_HYPRE_Int                ierr = 0;
 
-   HYPRE_Int                matrix_type = HYPRE_PARCSR;
-   HYPRE_BigInt             start_rank = hypre_ParCSRMatrixFirstRowIndex(Aee);
-   HYPRE_BigInt             end_rank   = hypre_ParCSRMatrixLastRowIndex(Aee);
+   NALU_HYPRE_Int                matrix_type = NALU_HYPRE_PARCSR;
+   NALU_HYPRE_BigInt             start_rank = hypre_ParCSRMatrixFirstRowIndex(Aee);
+   NALU_HYPRE_BigInt             end_rank   = hypre_ParCSRMatrixLastRowIndex(Aee);
 
    hypre_BoxManEntry       *entry;
 
-   HYPRE_BigInt            *ranks;
-   HYPRE_Int               *marker;     /* marker to record the rank groups */
-   HYPRE_Int                max_ranksize = 9;
+   NALU_HYPRE_BigInt            *ranks;
+   NALU_HYPRE_Int               *marker;     /* marker to record the rank groups */
+   NALU_HYPRE_Int                max_ranksize = 9;
 
-   HYPRE_Real              *collapsed_vals;
+   NALU_HYPRE_Real              *collapsed_vals;
 
    hypre_Index              index1, index2;
 
-   HYPRE_Int                size;
-   HYPRE_BigInt            *col_inds, *col_inds2;
-   HYPRE_Real              *values;
-   HYPRE_BigInt             rank, row_rank;
-   HYPRE_Int               *swap_inds;
+   NALU_HYPRE_Int                size;
+   NALU_HYPRE_BigInt            *col_inds, *col_inds2;
+   NALU_HYPRE_Real              *values;
+   NALU_HYPRE_BigInt             rank, row_rank;
+   NALU_HYPRE_Int               *swap_inds;
 
-   HYPRE_Int                i, j, m, centre, found;
-   HYPRE_Int                getrow_ierr;
-   HYPRE_Int                cnt;
+   NALU_HYPRE_Int                i, j, m, centre, found;
+   NALU_HYPRE_Int                getrow_ierr;
+   NALU_HYPRE_Int                cnt;
 
    /* create the collapsed stencil coefficients. Three components. */
-   collapsed_vals = hypre_CTAlloc(HYPRE_Real,  3, HYPRE_MEMORY_HOST);
+   collapsed_vals = hypre_CTAlloc(NALU_HYPRE_Real,  3, NALU_HYPRE_MEMORY_HOST);
 
    /* check if the row corresponding to pt_location is on this proc. If
       not, return an identity row. THIS SHOULD BE CORRECTED IN THE FUTURE
@@ -5253,8 +5253,8 @@ hypre_CollapseStencilToStencil(hypre_ParCSRMatrix     *Aee,
    /* Extract the ranks of the collapsed stencil pattern. Since only like-var
       collapsing, we assume that max stencil size is 9. This agrees with the
       assumed pattern surrounding pt_location. Concatenating done. */
-   ranks = hypre_TAlloc(HYPRE_BigInt,  max_ranksize, HYPRE_MEMORY_HOST);
-   marker = hypre_TAlloc(HYPRE_Int,  max_ranksize, HYPRE_MEMORY_HOST);
+   ranks = hypre_TAlloc(NALU_HYPRE_BigInt,  max_ranksize, NALU_HYPRE_MEMORY_HOST);
+   marker = hypre_TAlloc(NALU_HYPRE_Int,  max_ranksize, NALU_HYPRE_MEMORY_HOST);
 
    cnt = 0;
    centre = 0;
@@ -5289,15 +5289,15 @@ hypre_CollapseStencilToStencil(hypre_ParCSRMatrix     *Aee,
       centre of ranks, i.e., rank for index2= pt_location. Mark location of values,
       which will record the original location of values after the sorting. */
    row_rank = ranks[centre];
-   getrow_ierr = HYPRE_ParCSRMatrixGetRow((HYPRE_ParCSRMatrix) Aee, row_rank,
+   getrow_ierr = NALU_HYPRE_ParCSRMatrixGetRow((NALU_HYPRE_ParCSRMatrix) Aee, row_rank,
                                           &size, &col_inds, &values);
    if (getrow_ierr < 0)
    {
       hypre_printf("offproc collapsing problem");
    }
 
-   swap_inds = hypre_TAlloc(HYPRE_Int,  size, HYPRE_MEMORY_HOST);
-   col_inds2 = hypre_TAlloc(HYPRE_BigInt,  size, HYPRE_MEMORY_HOST);
+   swap_inds = hypre_TAlloc(NALU_HYPRE_Int,  size, NALU_HYPRE_MEMORY_HOST);
+   col_inds2 = hypre_TAlloc(NALU_HYPRE_BigInt,  size, NALU_HYPRE_MEMORY_HOST);
    for (i = 0; i < size; i++)
    {
       swap_inds[i] = i;
@@ -5328,13 +5328,13 @@ hypre_CollapseStencilToStencil(hypre_ParCSRMatrix     *Aee,
       }  /* while (!found) */
    }  /* for (i= 0; i< cnt; i++) */
 
-   HYPRE_ParCSRMatrixRestoreRow((HYPRE_ParCSRMatrix) Aee, row_rank, &size,
+   NALU_HYPRE_ParCSRMatrixRestoreRow((NALU_HYPRE_ParCSRMatrix) Aee, row_rank, &size,
                                 &col_inds, &values);
 
-   hypre_TFree(col_inds2, HYPRE_MEMORY_HOST);
-   hypre_TFree(ranks, HYPRE_MEMORY_HOST);
-   hypre_TFree(marker, HYPRE_MEMORY_HOST);
-   hypre_TFree(swap_inds, HYPRE_MEMORY_HOST);
+   hypre_TFree(col_inds2, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(ranks, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(marker, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(swap_inds, NALU_HYPRE_MEMORY_HOST);
 
    *collapsed_vals_ptr = collapsed_vals;
 
@@ -5344,23 +5344,23 @@ hypre_CollapseStencilToStencil(hypre_ParCSRMatrix     *Aee,
 /*--------------------------------------------------------------------------
  * hypre_TriDiagSolve: Direct tridiagonal solve
  *------------------------------------------------------------------------*/
-HYPRE_Int
-hypre_TriDiagSolve(HYPRE_Real *diag,
-                   HYPRE_Real *upper,
-                   HYPRE_Real *lower,
-                   HYPRE_Real *rhs,
-                   HYPRE_Int   size)
+NALU_HYPRE_Int
+hypre_TriDiagSolve(NALU_HYPRE_Real *diag,
+                   NALU_HYPRE_Real *upper,
+                   NALU_HYPRE_Real *lower,
+                   NALU_HYPRE_Real *rhs,
+                   NALU_HYPRE_Int   size)
 {
-   HYPRE_Int       ierr = 0;
+   NALU_HYPRE_Int       ierr = 0;
 
-   HYPRE_Int       i, size1;
-   HYPRE_Real     *copy_diag;
-   HYPRE_Real      multiplier;
+   NALU_HYPRE_Int       i, size1;
+   NALU_HYPRE_Real     *copy_diag;
+   NALU_HYPRE_Real      multiplier;
 
    size1 = size - 1;
 
    /* copy diag so that the matrix is not modified */
-   copy_diag = hypre_TAlloc(HYPRE_Real,  size, HYPRE_MEMORY_HOST);
+   copy_diag = hypre_TAlloc(NALU_HYPRE_Real,  size, NALU_HYPRE_MEMORY_HOST);
    for (i = 0; i < size; i++)
    {
       copy_diag[i] = diag[i];
@@ -5381,7 +5381,7 @@ hypre_TriDiagSolve(HYPRE_Real *diag,
       rhs[i] = (rhs[i] - upper[i] * rhs[i + 1]) / copy_diag[i];
    }
 
-   hypre_TFree(copy_diag, HYPRE_MEMORY_HOST);
+   hypre_TFree(copy_diag, NALU_HYPRE_MEMORY_HOST);
 
    return ierr;
 }

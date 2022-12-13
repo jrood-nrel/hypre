@@ -24,9 +24,9 @@ extern "C" {
     (input) A = | -----+----- |   --->   | -----+----- | (output)
                 \ A_bi | A_bb /          \   0  |  I   /
 */
-HYPRE_Int hypre_ParCSRMatrixEliminateRowsCols (hypre_ParCSRMatrix *A,
-                                               HYPRE_Int nrows_to_eliminate,
-                                               HYPRE_Int *rows_to_eliminate);
+NALU_HYPRE_Int hypre_ParCSRMatrixEliminateRowsCols (hypre_ParCSRMatrix *A,
+                                               NALU_HYPRE_Int nrows_to_eliminate,
+                                               NALU_HYPRE_Int *rows_to_eliminate);
 
 
 /*
@@ -35,27 +35,27 @@ HYPRE_Int hypre_ParCSRMatrixEliminateRowsCols (hypre_ParCSRMatrix *A,
   Eliminate the rows and columns of Adiag corresponding to the
   given sorted (!) list of rows. Put I on the eliminated diagonal.
 */
-HYPRE_Int hypre_CSRMatrixEliminateRowsColsDiag (hypre_ParCSRMatrix *A,
-                                                HYPRE_Int nrows_to_eliminate,
-                                                HYPRE_Int *rows_to_eliminate);
+NALU_HYPRE_Int hypre_CSRMatrixEliminateRowsColsDiag (hypre_ParCSRMatrix *A,
+                                                NALU_HYPRE_Int nrows_to_eliminate,
+                                                NALU_HYPRE_Int *rows_to_eliminate);
 
 /*
   Function:  hypre_CSRMatrixEliminateRowsOffd
 
   Eliminate the given list of rows of Aoffd.
 */
-HYPRE_Int hypre_CSRMatrixEliminateRowsOffd (hypre_ParCSRMatrix *A,
-                                            HYPRE_Int nrows_to_eliminate,
-                                            HYPRE_Int *rows_to_eliminate);
+NALU_HYPRE_Int hypre_CSRMatrixEliminateRowsOffd (hypre_ParCSRMatrix *A,
+                                            NALU_HYPRE_Int nrows_to_eliminate,
+                                            NALU_HYPRE_Int *rows_to_eliminate);
 
 /*
   Function:  hypre_CSRMatrixEliminateColsOffd
 
   Eliminate the given sorted (!) list of columns of Aoffd.
 */
-HYPRE_Int hypre_CSRMatrixEliminateColsOffd (hypre_CSRMatrix *Aoffd,
-                                            HYPRE_Int ncols_to_eliminate,
-                                            HYPRE_Int *cols_to_eliminate);
+NALU_HYPRE_Int hypre_CSRMatrixEliminateColsOffd (hypre_CSRMatrix *Aoffd,
+                                            NALU_HYPRE_Int ncols_to_eliminate,
+                                            NALU_HYPRE_Int *cols_to_eliminate);
 
 #ifdef __cplusplus
 }

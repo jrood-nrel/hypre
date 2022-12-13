@@ -57,10 +57,10 @@ int main(int argc, char *argv[])
    MPI_Comm_rank(MPI_COMM_WORLD, &mypid);
 
    /* Initialize HYPRE */
-   HYPRE_Init();
+   NALU_HYPRE_Init();
 
    /* Print GPU info */
-   /* HYPRE_PrintDeviceInfo(); */
+   /* NALU_HYPRE_PrintDeviceInfo(); */
 
    // Set default parameters
    n = 4 * nprocs;
@@ -573,7 +573,7 @@ int main(int argc, char *argv[])
    delete feiPtr;
 
    /* Finalize HYPRE */
-   HYPRE_Finalize();
+   NALU_HYPRE_Finalize();
 
    // Finalize MPI
    MPI_Finalize();

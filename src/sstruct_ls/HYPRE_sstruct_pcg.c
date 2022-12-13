@@ -10,9 +10,9 @@
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructPCGCreate( MPI_Comm             comm,
-                        HYPRE_SStructSolver *solver )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructPCGCreate( MPI_Comm             comm,
+                        NALU_HYPRE_SStructSolver *solver )
 {
    hypre_PCGFunctions * pcg_functions =
       hypre_PCGFunctionsCreate(
@@ -25,7 +25,7 @@ HYPRE_SStructPCGCreate( MPI_Comm             comm,
          hypre_SStructKrylovScaleVector, hypre_SStructKrylovAxpy,
          hypre_SStructKrylovIdentitySetup, hypre_SStructKrylovIdentity );
 
-   *solver = ( (HYPRE_SStructSolver) hypre_PCGCreate( pcg_functions ) );
+   *solver = ( (NALU_HYPRE_SStructSolver) hypre_PCGCreate( pcg_functions ) );
 
    return hypre_error_flag;
 }
@@ -33,8 +33,8 @@ HYPRE_SStructPCGCreate( MPI_Comm             comm,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructPCGDestroy( HYPRE_SStructSolver solver )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructPCGDestroy( NALU_HYPRE_SStructSolver solver )
 {
    return ( hypre_PCGDestroy( (void *) solver ) );
 }
@@ -42,174 +42,174 @@ HYPRE_SStructPCGDestroy( HYPRE_SStructSolver solver )
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructPCGSetup( HYPRE_SStructSolver solver,
-                       HYPRE_SStructMatrix A,
-                       HYPRE_SStructVector b,
-                       HYPRE_SStructVector x )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructPCGSetup( NALU_HYPRE_SStructSolver solver,
+                       NALU_HYPRE_SStructMatrix A,
+                       NALU_HYPRE_SStructVector b,
+                       NALU_HYPRE_SStructVector x )
 {
-   return ( HYPRE_PCGSetup( (HYPRE_Solver) solver,
-                            (HYPRE_Matrix) A,
-                            (HYPRE_Vector) b,
-                            (HYPRE_Vector) x ) );
+   return ( NALU_HYPRE_PCGSetup( (NALU_HYPRE_Solver) solver,
+                            (NALU_HYPRE_Matrix) A,
+                            (NALU_HYPRE_Vector) b,
+                            (NALU_HYPRE_Vector) x ) );
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructPCGSolve( HYPRE_SStructSolver solver,
-                       HYPRE_SStructMatrix A,
-                       HYPRE_SStructVector b,
-                       HYPRE_SStructVector x )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructPCGSolve( NALU_HYPRE_SStructSolver solver,
+                       NALU_HYPRE_SStructMatrix A,
+                       NALU_HYPRE_SStructVector b,
+                       NALU_HYPRE_SStructVector x )
 {
-   return ( HYPRE_PCGSolve( (HYPRE_Solver) solver,
-                            (HYPRE_Matrix) A,
-                            (HYPRE_Vector) b,
-                            (HYPRE_Vector) x ) );
+   return ( NALU_HYPRE_PCGSolve( (NALU_HYPRE_Solver) solver,
+                            (NALU_HYPRE_Matrix) A,
+                            (NALU_HYPRE_Vector) b,
+                            (NALU_HYPRE_Vector) x ) );
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructPCGSetTol( HYPRE_SStructSolver solver,
-                        HYPRE_Real          tol )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructPCGSetTol( NALU_HYPRE_SStructSolver solver,
+                        NALU_HYPRE_Real          tol )
 {
-   return ( HYPRE_PCGSetTol( (HYPRE_Solver) solver, tol ) );
+   return ( NALU_HYPRE_PCGSetTol( (NALU_HYPRE_Solver) solver, tol ) );
 }
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructPCGSetAbsoluteTol( HYPRE_SStructSolver solver,
-                                HYPRE_Real          tol )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructPCGSetAbsoluteTol( NALU_HYPRE_SStructSolver solver,
+                                NALU_HYPRE_Real          tol )
 {
-   return ( HYPRE_PCGSetAbsoluteTol( (HYPRE_Solver) solver, tol ) );
-}
-
-/*--------------------------------------------------------------------------
- *--------------------------------------------------------------------------*/
-
-HYPRE_Int
-HYPRE_SStructPCGSetMaxIter( HYPRE_SStructSolver solver,
-                            HYPRE_Int           max_iter )
-{
-   return ( HYPRE_PCGSetMaxIter( (HYPRE_Solver) solver, max_iter ) );
+   return ( NALU_HYPRE_PCGSetAbsoluteTol( (NALU_HYPRE_Solver) solver, tol ) );
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructPCGSetTwoNorm( HYPRE_SStructSolver solver,
-                            HYPRE_Int           two_norm )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructPCGSetMaxIter( NALU_HYPRE_SStructSolver solver,
+                            NALU_HYPRE_Int           max_iter )
 {
-   return ( HYPRE_PCGSetTwoNorm( (HYPRE_Solver) solver, two_norm ) );
+   return ( NALU_HYPRE_PCGSetMaxIter( (NALU_HYPRE_Solver) solver, max_iter ) );
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructPCGSetRelChange( HYPRE_SStructSolver solver,
-                              HYPRE_Int           rel_change )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructPCGSetTwoNorm( NALU_HYPRE_SStructSolver solver,
+                            NALU_HYPRE_Int           two_norm )
 {
-   return ( HYPRE_PCGSetRelChange( (HYPRE_Solver) solver, rel_change ) );
+   return ( NALU_HYPRE_PCGSetTwoNorm( (NALU_HYPRE_Solver) solver, two_norm ) );
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructPCGSetPrecond( HYPRE_SStructSolver          solver,
-                            HYPRE_PtrToSStructSolverFcn  precond,
-                            HYPRE_PtrToSStructSolverFcn  precond_setup,
+NALU_HYPRE_Int
+NALU_HYPRE_SStructPCGSetRelChange( NALU_HYPRE_SStructSolver solver,
+                              NALU_HYPRE_Int           rel_change )
+{
+   return ( NALU_HYPRE_PCGSetRelChange( (NALU_HYPRE_Solver) solver, rel_change ) );
+}
+
+/*--------------------------------------------------------------------------
+ *--------------------------------------------------------------------------*/
+
+NALU_HYPRE_Int
+NALU_HYPRE_SStructPCGSetPrecond( NALU_HYPRE_SStructSolver          solver,
+                            NALU_HYPRE_PtrToSStructSolverFcn  precond,
+                            NALU_HYPRE_PtrToSStructSolverFcn  precond_setup,
                             void                        *precond_data )
 {
-   return ( HYPRE_PCGSetPrecond( (HYPRE_Solver) solver,
-                                 (HYPRE_PtrToSolverFcn) precond,
-                                 (HYPRE_PtrToSolverFcn) precond_setup,
-                                 (HYPRE_Solver) precond_data ) );
+   return ( NALU_HYPRE_PCGSetPrecond( (NALU_HYPRE_Solver) solver,
+                                 (NALU_HYPRE_PtrToSolverFcn) precond,
+                                 (NALU_HYPRE_PtrToSolverFcn) precond_setup,
+                                 (NALU_HYPRE_Solver) precond_data ) );
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructPCGSetLogging( HYPRE_SStructSolver solver,
-                            HYPRE_Int           logging )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructPCGSetLogging( NALU_HYPRE_SStructSolver solver,
+                            NALU_HYPRE_Int           logging )
 {
-   return ( HYPRE_PCGSetLogging( (HYPRE_Solver) solver, logging ) );
+   return ( NALU_HYPRE_PCGSetLogging( (NALU_HYPRE_Solver) solver, logging ) );
 }
 
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructPCGSetPrintLevel( HYPRE_SStructSolver solver,
-                               HYPRE_Int           level )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructPCGSetPrintLevel( NALU_HYPRE_SStructSolver solver,
+                               NALU_HYPRE_Int           level )
 {
-   return ( HYPRE_PCGSetPrintLevel( (HYPRE_Solver) solver, level ) );
+   return ( NALU_HYPRE_PCGSetPrintLevel( (NALU_HYPRE_Solver) solver, level ) );
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructPCGGetNumIterations( HYPRE_SStructSolver  solver,
-                                  HYPRE_Int           *num_iterations )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructPCGGetNumIterations( NALU_HYPRE_SStructSolver  solver,
+                                  NALU_HYPRE_Int           *num_iterations )
 {
-   return ( HYPRE_PCGGetNumIterations( (HYPRE_Solver) solver, num_iterations ) );
+   return ( NALU_HYPRE_PCGGetNumIterations( (NALU_HYPRE_Solver) solver, num_iterations ) );
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructPCGGetFinalRelativeResidualNorm( HYPRE_SStructSolver  solver,
-                                              HYPRE_Real          *norm )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructPCGGetFinalRelativeResidualNorm( NALU_HYPRE_SStructSolver  solver,
+                                              NALU_HYPRE_Real          *norm )
 {
-   return ( HYPRE_PCGGetFinalRelativeResidualNorm( (HYPRE_Solver) solver, norm ) );
+   return ( NALU_HYPRE_PCGGetFinalRelativeResidualNorm( (NALU_HYPRE_Solver) solver, norm ) );
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructPCGGetResidual( HYPRE_SStructSolver  solver,
+NALU_HYPRE_Int
+NALU_HYPRE_SStructPCGGetResidual( NALU_HYPRE_SStructSolver  solver,
                              void              **residual )
 {
-   return ( HYPRE_PCGGetResidual( (HYPRE_Solver) solver, residual ) );
+   return ( NALU_HYPRE_PCGGetResidual( (NALU_HYPRE_Solver) solver, residual ) );
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructDiagScaleSetup( HYPRE_SStructSolver solver,
-                             HYPRE_SStructMatrix A,
-                             HYPRE_SStructVector y,
-                             HYPRE_SStructVector x      )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructDiagScaleSetup( NALU_HYPRE_SStructSolver solver,
+                             NALU_HYPRE_SStructMatrix A,
+                             NALU_HYPRE_SStructVector y,
+                             NALU_HYPRE_SStructVector x      )
 {
 
-   return ( HYPRE_StructDiagScaleSetup( (HYPRE_StructSolver) solver,
-                                        (HYPRE_StructMatrix) A,
-                                        (HYPRE_StructVector) y,
-                                        (HYPRE_StructVector) x ) );
+   return ( NALU_HYPRE_StructDiagScaleSetup( (NALU_HYPRE_StructSolver) solver,
+                                        (NALU_HYPRE_StructMatrix) A,
+                                        (NALU_HYPRE_StructVector) y,
+                                        (NALU_HYPRE_StructVector) x ) );
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructDiagScale( HYPRE_SStructSolver solver,
-                        HYPRE_SStructMatrix A,
-                        HYPRE_SStructVector y,
-                        HYPRE_SStructVector x      )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructDiagScale( NALU_HYPRE_SStructSolver solver,
+                        NALU_HYPRE_SStructMatrix A,
+                        NALU_HYPRE_SStructVector y,
+                        NALU_HYPRE_SStructVector x      )
 {
-   HYPRE_Int                nparts = hypre_SStructMatrixNParts(A);
+   NALU_HYPRE_Int                nparts = hypre_SStructMatrixNParts(A);
 
    hypre_SStructPMatrix    *pA;
    hypre_SStructPVector    *px;
@@ -218,8 +218,8 @@ HYPRE_SStructDiagScale( HYPRE_SStructSolver solver,
    hypre_StructVector      *sx;
    hypre_StructVector      *sy;
 
-   HYPRE_Int part, vi;
-   HYPRE_Int nvars;
+   NALU_HYPRE_Int part, vi;
+   NALU_HYPRE_Int nvars;
 
    for (part = 0; part < nparts; part++)
    {
@@ -233,10 +233,10 @@ HYPRE_SStructDiagScale( HYPRE_SStructSolver solver,
          sx = hypre_SStructPVectorSVector(px, vi);
          sy = hypre_SStructPVectorSVector(py, vi);
 
-         HYPRE_StructDiagScale( (HYPRE_StructSolver) solver,
-                                (HYPRE_StructMatrix) sA,
-                                (HYPRE_StructVector) sy,
-                                (HYPRE_StructVector) sx );
+         NALU_HYPRE_StructDiagScale( (NALU_HYPRE_StructSolver) solver,
+                                (NALU_HYPRE_StructMatrix) sA,
+                                (NALU_HYPRE_StructVector) sy,
+                                (NALU_HYPRE_StructVector) sx );
       }
    }
 

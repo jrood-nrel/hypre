@@ -9,7 +9,7 @@
 #include "seq_mv.h"
 #include "_hypre_utilities.hpp"
 
-#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP) || defined(HYPRE_USING_SYCL)
+#if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP) || defined(NALU_HYPRE_USING_SYCL)
 
 /* This function effectively does (in Matlab notation)
  *              C := alpha * A(:, a_colmap)
@@ -22,95 +22,95 @@
  *
  * if d_ja_map/d_jb_map == NULL, it is [0:n)
  */
-HYPRE_Int
-hypreDevice_CSRSpAdd( HYPRE_Int       ma, /* num of rows of A */
-                      HYPRE_Int       mb, /* num of rows of B */
-                      HYPRE_Int       n,  /* not used actually */
-                      HYPRE_Int       nnzA,
-                      HYPRE_Int       nnzB,
-                      HYPRE_Int      *d_ia,
-                      HYPRE_Int      *d_ja,
-                      HYPRE_Complex   alpha,
-                      HYPRE_Complex  *d_aa,
-                      HYPRE_Int      *d_ja_map,
-                      HYPRE_Int      *d_ib,
-                      HYPRE_Int      *d_jb,
-                      HYPRE_Complex   beta,
-                      HYPRE_Complex  *d_ab,
-                      HYPRE_Int      *d_jb_map,
-                      HYPRE_Int      *d_num_b,
-                      HYPRE_Int      *nnzC_out,
-                      HYPRE_Int     **d_ic_out,
-                      HYPRE_Int     **d_jc_out,
-                      HYPRE_Complex **d_ac_out)
+NALU_HYPRE_Int
+hypreDevice_CSRSpAdd( NALU_HYPRE_Int       ma, /* num of rows of A */
+                      NALU_HYPRE_Int       mb, /* num of rows of B */
+                      NALU_HYPRE_Int       n,  /* not used actually */
+                      NALU_HYPRE_Int       nnzA,
+                      NALU_HYPRE_Int       nnzB,
+                      NALU_HYPRE_Int      *d_ia,
+                      NALU_HYPRE_Int      *d_ja,
+                      NALU_HYPRE_Complex   alpha,
+                      NALU_HYPRE_Complex  *d_aa,
+                      NALU_HYPRE_Int      *d_ja_map,
+                      NALU_HYPRE_Int      *d_ib,
+                      NALU_HYPRE_Int      *d_jb,
+                      NALU_HYPRE_Complex   beta,
+                      NALU_HYPRE_Complex  *d_ab,
+                      NALU_HYPRE_Int      *d_jb_map,
+                      NALU_HYPRE_Int      *d_num_b,
+                      NALU_HYPRE_Int      *nnzC_out,
+                      NALU_HYPRE_Int     **d_ic_out,
+                      NALU_HYPRE_Int     **d_jc_out,
+                      NALU_HYPRE_Complex **d_ac_out)
 {
    /* trivial case */
    if (nnzA == 0 && nnzB == 0)
    {
-      *d_ic_out = hypre_CTAlloc(HYPRE_Int, ma + 1, HYPRE_MEMORY_DEVICE);
-      *d_jc_out = hypre_CTAlloc(HYPRE_Int,      0, HYPRE_MEMORY_DEVICE);
-      *d_ac_out = hypre_CTAlloc(HYPRE_Complex,  0, HYPRE_MEMORY_DEVICE);
+      *d_ic_out = hypre_CTAlloc(NALU_HYPRE_Int, ma + 1, NALU_HYPRE_MEMORY_DEVICE);
+      *d_jc_out = hypre_CTAlloc(NALU_HYPRE_Int,      0, NALU_HYPRE_MEMORY_DEVICE);
+      *d_ac_out = hypre_CTAlloc(NALU_HYPRE_Complex,  0, NALU_HYPRE_MEMORY_DEVICE);
       *nnzC_out = 0;
 
       return hypre_error_flag;
    }
 
-#ifdef HYPRE_PROFILE
-   hypre_profile_times[HYPRE_TIMER_ID_SPADD] -= hypre_MPI_Wtime();
+#ifdef NALU_HYPRE_PROFILE
+   hypre_profile_times[NALU_HYPRE_TIMER_ID_SPADD] -= hypre_MPI_Wtime();
 #endif
 
    /* expansion size */
-   HYPRE_Int nnzT = nnzA + nnzB, nnzC;
-   HYPRE_Int *d_it, *d_jt, *d_it_cp, *d_jt_cp, *d_ic, *d_jc;
-   HYPRE_Complex *d_at, *d_at_cp, *d_ac;
+   NALU_HYPRE_Int nnzT = nnzA + nnzB, nnzC;
+   NALU_HYPRE_Int *d_it, *d_jt, *d_it_cp, *d_jt_cp, *d_ic, *d_jc;
+   NALU_HYPRE_Complex *d_at, *d_at_cp, *d_ac;
 
    /* some trick here for memory alignment. maybe not worth it at all */
-   HYPRE_Int align = 32;
-   HYPRE_Int nnzT2 = (nnzT + align - 1) / align * align;
-   char *work_mem = hypre_TAlloc(char, (4 * sizeof(HYPRE_Int) + 2 * sizeof(HYPRE_Complex)) * nnzT2,
-                                 HYPRE_MEMORY_DEVICE);
+   NALU_HYPRE_Int align = 32;
+   NALU_HYPRE_Int nnzT2 = (nnzT + align - 1) / align * align;
+   char *work_mem = hypre_TAlloc(char, (4 * sizeof(NALU_HYPRE_Int) + 2 * sizeof(NALU_HYPRE_Complex)) * nnzT2,
+                                 NALU_HYPRE_MEMORY_DEVICE);
    char *work_mem_saved = work_mem;
 
-   //d_it = hypre_TAlloc(HYPRE_Int, nnzT, HYPRE_MEMORY_DEVICE);
-   //d_jt = hypre_TAlloc(HYPRE_Int, nnzT, HYPRE_MEMORY_DEVICE);
-   //d_at = hypre_TAlloc(HYPRE_Complex, nnzT, HYPRE_MEMORY_DEVICE);
-   d_it = (HYPRE_Int *) work_mem;
-   work_mem += sizeof(HYPRE_Int) * nnzT2;
-   d_jt = (HYPRE_Int *) work_mem;
-   work_mem += sizeof(HYPRE_Int) * nnzT2;
-   d_at = (HYPRE_Complex *) work_mem;
-   work_mem += sizeof(HYPRE_Complex) * nnzT2;
+   //d_it = hypre_TAlloc(NALU_HYPRE_Int, nnzT, NALU_HYPRE_MEMORY_DEVICE);
+   //d_jt = hypre_TAlloc(NALU_HYPRE_Int, nnzT, NALU_HYPRE_MEMORY_DEVICE);
+   //d_at = hypre_TAlloc(NALU_HYPRE_Complex, nnzT, NALU_HYPRE_MEMORY_DEVICE);
+   d_it = (NALU_HYPRE_Int *) work_mem;
+   work_mem += sizeof(NALU_HYPRE_Int) * nnzT2;
+   d_jt = (NALU_HYPRE_Int *) work_mem;
+   work_mem += sizeof(NALU_HYPRE_Int) * nnzT2;
+   d_at = (NALU_HYPRE_Complex *) work_mem;
+   work_mem += sizeof(NALU_HYPRE_Complex) * nnzT2;
 
    /* expansion: j */
    if (d_ja_map)
    {
-#if defined(HYPRE_USING_SYCL)
+#if defined(NALU_HYPRE_USING_SYCL)
       hypreSycl_gather(d_ja, d_ja + nnzA, d_ja_map, d_jt);
 #else
-      HYPRE_THRUST_CALL(gather, d_ja, d_ja + nnzA, d_ja_map, d_jt);
+      NALU_HYPRE_THRUST_CALL(gather, d_ja, d_ja + nnzA, d_ja_map, d_jt);
 #endif
    }
    else
    {
-      hypre_TMemcpy(d_jt, d_ja, HYPRE_Int, nnzA, HYPRE_MEMORY_DEVICE, HYPRE_MEMORY_DEVICE);
+      hypre_TMemcpy(d_jt, d_ja, NALU_HYPRE_Int, nnzA, NALU_HYPRE_MEMORY_DEVICE, NALU_HYPRE_MEMORY_DEVICE);
    }
    if (d_jb_map)
    {
-#if defined(HYPRE_USING_SYCL)
+#if defined(NALU_HYPRE_USING_SYCL)
       hypreSycl_gather(d_jb, d_jb + nnzB, d_jb_map, d_jt + nnzA);
 #else
-      HYPRE_THRUST_CALL(gather, d_jb, d_jb + nnzB, d_jb_map, d_jt + nnzA);
+      NALU_HYPRE_THRUST_CALL(gather, d_jb, d_jb + nnzB, d_jb_map, d_jt + nnzA);
 #endif
    }
    else
    {
-      hypre_TMemcpy(d_jt + nnzA, d_jb, HYPRE_Int, nnzB, HYPRE_MEMORY_DEVICE, HYPRE_MEMORY_DEVICE);
+      hypre_TMemcpy(d_jt + nnzA, d_jb, NALU_HYPRE_Int, nnzB, NALU_HYPRE_MEMORY_DEVICE, NALU_HYPRE_MEMORY_DEVICE);
    }
 
    /* expansion: a */
    if (alpha == 1.0)
    {
-      hypre_TMemcpy(d_at, d_aa, HYPRE_Complex, nnzA, HYPRE_MEMORY_DEVICE, HYPRE_MEMORY_DEVICE);
+      hypre_TMemcpy(d_at, d_aa, NALU_HYPRE_Complex, nnzA, NALU_HYPRE_MEMORY_DEVICE, NALU_HYPRE_MEMORY_DEVICE);
    }
    else
    {
@@ -119,7 +119,7 @@ hypreDevice_CSRSpAdd( HYPRE_Int       ma, /* num of rows of A */
 
    if (beta == 1.0)
    {
-      hypre_TMemcpy(d_at + nnzA, d_ab, HYPRE_Complex, nnzB, HYPRE_MEMORY_DEVICE, HYPRE_MEMORY_DEVICE);
+      hypre_TMemcpy(d_at + nnzA, d_ab, NALU_HYPRE_Complex, nnzB, NALU_HYPRE_MEMORY_DEVICE, NALU_HYPRE_MEMORY_DEVICE);
    }
    else
    {
@@ -139,18 +139,18 @@ hypreDevice_CSRSpAdd( HYPRE_Int       ma, /* num of rows of A */
    }
 
    /* make copy of (it, jt, at), since reduce cannot be done in-place */
-   //d_it_cp = hypre_TAlloc(HYPRE_Int,     nnzT, HYPRE_MEMORY_DEVICE);
-   //d_jt_cp = hypre_TAlloc(HYPRE_Int,     nnzT, HYPRE_MEMORY_DEVICE);
-   //d_at_cp = hypre_TAlloc(HYPRE_Complex, nnzT, HYPRE_MEMORY_DEVICE);
-   d_it_cp = (HYPRE_Int *) work_mem;
-   work_mem += sizeof(HYPRE_Int) * nnzT2;
-   d_jt_cp = (HYPRE_Int *) work_mem;
-   work_mem += sizeof(HYPRE_Int) * nnzT2;
-   d_at_cp = (HYPRE_Complex *) work_mem;
-   work_mem += sizeof(HYPRE_Complex) * nnzT2;
+   //d_it_cp = hypre_TAlloc(NALU_HYPRE_Int,     nnzT, NALU_HYPRE_MEMORY_DEVICE);
+   //d_jt_cp = hypre_TAlloc(NALU_HYPRE_Int,     nnzT, NALU_HYPRE_MEMORY_DEVICE);
+   //d_at_cp = hypre_TAlloc(NALU_HYPRE_Complex, nnzT, NALU_HYPRE_MEMORY_DEVICE);
+   d_it_cp = (NALU_HYPRE_Int *) work_mem;
+   work_mem += sizeof(NALU_HYPRE_Int) * nnzT2;
+   d_jt_cp = (NALU_HYPRE_Int *) work_mem;
+   work_mem += sizeof(NALU_HYPRE_Int) * nnzT2;
+   d_at_cp = (NALU_HYPRE_Complex *) work_mem;
+   work_mem += sizeof(NALU_HYPRE_Complex) * nnzT2;
 
-   hypre_assert( (size_t) (work_mem - work_mem_saved) == (4 * sizeof(HYPRE_Int) + 2 * sizeof(
-                                                             HYPRE_Complex)) * ((size_t)nnzT2) );
+   hypre_assert( (size_t) (work_mem - work_mem_saved) == (4 * sizeof(NALU_HYPRE_Int) + 2 * sizeof(
+                                                             NALU_HYPRE_Complex)) * ((size_t)nnzT2) );
 
    /* sort: lexicographical order (row, col): hypreDevice_StableSortByTupleKey */
    hypreDevice_StableSortByTupleKey(nnzT, d_it, d_jt, d_at, 0);
@@ -160,41 +160,41 @@ hypreDevice_CSRSpAdd( HYPRE_Int       ma, /* num of rows of A */
    nnzC = hypreDevice_ReduceByTupleKey(nnzT, d_it, d_jt, d_at, d_it_cp, d_jt_cp, d_at_cp);
 
    /* allocate final C */
-   d_jc = hypre_TAlloc(HYPRE_Int,     nnzC, HYPRE_MEMORY_DEVICE);
-   d_ac = hypre_TAlloc(HYPRE_Complex, nnzC, HYPRE_MEMORY_DEVICE);
+   d_jc = hypre_TAlloc(NALU_HYPRE_Int,     nnzC, NALU_HYPRE_MEMORY_DEVICE);
+   d_ac = hypre_TAlloc(NALU_HYPRE_Complex, nnzC, NALU_HYPRE_MEMORY_DEVICE);
 
-   hypre_TMemcpy(d_jc, d_jt_cp, HYPRE_Int,     nnzC, HYPRE_MEMORY_DEVICE, HYPRE_MEMORY_DEVICE);
-   hypre_TMemcpy(d_ac, d_at_cp, HYPRE_Complex, nnzC, HYPRE_MEMORY_DEVICE, HYPRE_MEMORY_DEVICE);
+   hypre_TMemcpy(d_jc, d_jt_cp, NALU_HYPRE_Int,     nnzC, NALU_HYPRE_MEMORY_DEVICE, NALU_HYPRE_MEMORY_DEVICE);
+   hypre_TMemcpy(d_ac, d_at_cp, NALU_HYPRE_Complex, nnzC, NALU_HYPRE_MEMORY_DEVICE, NALU_HYPRE_MEMORY_DEVICE);
 
    /* convert into ic: row idx --> row ptrs */
    d_ic = hypreDevice_CsrRowIndicesToPtrs(ma, nnzC, d_it_cp);
 
-#ifdef HYPRE_DEBUG
-   HYPRE_Int tmp_nnzC;
-   hypre_TMemcpy(&tmp_nnzC, &d_ic[ma], HYPRE_Int, 1, HYPRE_MEMORY_HOST, HYPRE_MEMORY_DEVICE);
+#ifdef NALU_HYPRE_DEBUG
+   NALU_HYPRE_Int tmp_nnzC;
+   hypre_TMemcpy(&tmp_nnzC, &d_ic[ma], NALU_HYPRE_Int, 1, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_DEVICE);
    hypre_assert(nnzC == tmp_nnzC);
 #endif
 
    /*
-   hypre_TFree(d_it,    HYPRE_MEMORY_DEVICE);
-   hypre_TFree(d_jt,    HYPRE_MEMORY_DEVICE);
-   hypre_TFree(d_at,    HYPRE_MEMORY_DEVICE);
-   hypre_TFree(d_it_cp, HYPRE_MEMORY_DEVICE);
-   hypre_TFree(d_jt_cp, HYPRE_MEMORY_DEVICE);
-   hypre_TFree(d_at_cp, HYPRE_MEMORY_DEVICE);
+   hypre_TFree(d_it,    NALU_HYPRE_MEMORY_DEVICE);
+   hypre_TFree(d_jt,    NALU_HYPRE_MEMORY_DEVICE);
+   hypre_TFree(d_at,    NALU_HYPRE_MEMORY_DEVICE);
+   hypre_TFree(d_it_cp, NALU_HYPRE_MEMORY_DEVICE);
+   hypre_TFree(d_jt_cp, NALU_HYPRE_MEMORY_DEVICE);
+   hypre_TFree(d_at_cp, NALU_HYPRE_MEMORY_DEVICE);
    */
-   hypre_TFree(work_mem_saved, HYPRE_MEMORY_DEVICE);
+   hypre_TFree(work_mem_saved, NALU_HYPRE_MEMORY_DEVICE);
 
    *nnzC_out = nnzC;
    *d_ic_out = d_ic;
    *d_jc_out = d_jc;
    *d_ac_out = d_ac;
 
-#ifdef HYPRE_PROFILE
-   hypre_profile_times[HYPRE_TIMER_ID_SPADD] += hypre_MPI_Wtime();
+#ifdef NALU_HYPRE_PROFILE
+   hypre_profile_times[NALU_HYPRE_TIMER_ID_SPADD] += hypre_MPI_Wtime();
 #endif
 
    return hypre_error_flag;
 }
 
-#endif // defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP) || defined(HYPRE_USING_SYCL)
+#endif // defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP) || defined(NALU_HYPRE_USING_SYCL)

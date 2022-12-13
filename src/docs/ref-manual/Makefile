@@ -33,5 +33,5 @@ pdf: html
 
 version.tex:
 	@ \
-	echo "\def\HYPREVersion{$(HYPRE_RELEASE_VERSION)}" > version.tex; \
-	echo "\def\HYPREVersionDate{$(HYPRE_RELEASE_DATE)}" >> version.tex
+	echo "\def\HYPREVersion{$(NALU_HYPRE_RELEASE_VERSION)}" > version.tex; \
+	echo "\def\HYPREVersionDate{$(NALU_HYPRE_RELEASE_DATE)}" >> version.tex

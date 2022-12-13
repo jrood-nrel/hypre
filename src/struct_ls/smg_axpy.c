@@ -11,26 +11,26 @@
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_SMGAxpy( HYPRE_Real          alpha,
+NALU_HYPRE_Int
+hypre_SMGAxpy( NALU_HYPRE_Real          alpha,
                hypre_StructVector *x,
                hypre_StructVector *y,
                hypre_Index         base_index,
                hypre_Index         base_stride )
 {
-   HYPRE_Int         ndim = hypre_StructVectorNDim(x);
+   NALU_HYPRE_Int         ndim = hypre_StructVectorNDim(x);
    hypre_Box        *x_data_box;
    hypre_Box        *y_data_box;
 
-   HYPRE_Real       *xp;
-   HYPRE_Real       *yp;
+   NALU_HYPRE_Real       *xp;
+   NALU_HYPRE_Real       *yp;
 
    hypre_BoxArray   *boxes;
    hypre_Box        *box;
    hypre_Index       loop_size;
    hypre_IndexRef    start;
 
-   HYPRE_Int         i;
+   NALU_HYPRE_Int         i;
 
    box = hypre_BoxCreate(ndim);
    boxes = hypre_StructGridBoxes(hypre_StructVectorGrid(y));

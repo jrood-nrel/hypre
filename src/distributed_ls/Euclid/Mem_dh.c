@@ -18,16 +18,16 @@
    * piece of memory obtained by calling MALLOC_DH 
    */
 typedef struct {
-    HYPRE_Real size;
-    HYPRE_Real cookie;
+    NALU_HYPRE_Real size;
+    NALU_HYPRE_Real cookie;
 } memRecord_dh;
 
 struct _mem_dh {
-  HYPRE_Real maxMem;        /* max allocated at any point in time */
-  HYPRE_Real curMem;        /* total currently allocated */
-  HYPRE_Real totalMem;      /* total cumulative malloced */
-  HYPRE_Real mallocCount;  /* number of times mem_dh->malloc has been called. */
-  HYPRE_Real freeCount;    /* number of times mem_dh->free has been called. */
+  NALU_HYPRE_Real maxMem;        /* max allocated at any point in time */
+  NALU_HYPRE_Real curMem;        /* total currently allocated */
+  NALU_HYPRE_Real totalMem;      /* total cumulative malloced */
+  NALU_HYPRE_Real mallocCount;  /* number of times mem_dh->malloc has been called. */
+  NALU_HYPRE_Real freeCount;    /* number of times mem_dh->free has been called. */
 };
 
 
@@ -74,7 +74,7 @@ void* Mem_dhMalloc(Mem_dh m, size_t size)
   address = PRIVATE_MALLOC(s);
 
   if (address == NULL) {
-    hypre_sprintf(msgBuf_dh, "PRIVATE_MALLOC failed; totalMem = %g; requested additional = %i", m->totalMem, (HYPRE_Int)s);
+    hypre_sprintf(msgBuf_dh, "PRIVATE_MALLOC failed; totalMem = %g; requested additional = %i", m->totalMem, (NALU_HYPRE_Int)s);
     SET_ERROR(NULL, msgBuf_dh);
   }
 
@@ -86,11 +86,11 @@ void* Mem_dhMalloc(Mem_dh m, size_t size)
    * error checking.  This is modeled after the PETSc code.
    */
   tmp = (memRecord_dh*)address;
-  tmp->size = (HYPRE_Real) s;
+  tmp->size = (NALU_HYPRE_Real) s;
 
   m->mallocCount += 1;
-  m->totalMem += (HYPRE_Real)s;
-  m->curMem += (HYPRE_Real)s;
+  m->totalMem += (NALU_HYPRE_Real)s;
+  m->curMem += (NALU_HYPRE_Real)s;
   m->maxMem = MAX(m->maxMem, m->curMem);
 
   END_FUNC_VAL_2( retval )
@@ -102,7 +102,7 @@ void* Mem_dhMalloc(Mem_dh m, size_t size)
 void Mem_dhFree(Mem_dh m, void *ptr)
 {
   START_FUNC_DH_2
-  HYPRE_Real size;
+  NALU_HYPRE_Real size;
   char *tmp = (char*)ptr;
   memRecord_dh *rec;
   tmp -= sizeof(memRecord_dh);
@@ -124,7 +124,7 @@ void  Mem_dhPrint(Mem_dh m, FILE* fp, bool allPrint)
   START_FUNC_DH_2
   if (fp == NULL) SET_V_ERROR("fp == NULL");
   if (myid_dh == 0 || allPrint) {
-    HYPRE_Real tmp;
+    NALU_HYPRE_Real tmp;
     hypre_fprintf(fp, "---------------------- Euclid memory report (start)\n");
     hypre_fprintf(fp, "malloc calls = %g\n", m->mallocCount);
     hypre_fprintf(fp, "free   calls = %g\n", m->freeCount);

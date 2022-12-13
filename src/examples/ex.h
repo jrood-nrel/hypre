@@ -9,16 +9,16 @@
  * Header file for examples
  *--------------------------------------------------------------------------*/
 
-#ifndef HYPRE_EXAMPLES_INCLUDES
-#define HYPRE_EXAMPLES_INCLUDES
+#ifndef NALU_HYPRE_EXAMPLES_INCLUDES
+#define NALU_HYPRE_EXAMPLES_INCLUDES
 
-#include <HYPRE_config.h>
+#include <NALU_HYPRE_config.h>
 
-#if defined(HYPRE_EXAMPLE_USING_CUDA)
+#if defined(NALU_HYPRE_EXAMPLE_USING_CUDA)
 
 #include <cuda_runtime.h>
 
-#ifndef HYPRE_USING_UNIFIED_MEMORY
+#ifndef NALU_HYPRE_USING_UNIFIED_MEMORY
 #error *** Running the examples on GPUs requires Unified Memory. Please reconfigure and rebuild with --enable-unified-memory ***
 #endif
 
@@ -42,6 +42,6 @@ gpu_calloc(size_t num, size_t size)
 #define malloc(size) gpu_malloc(size)
 #define calloc(num, size) gpu_calloc(num, size)
 #define free(ptr) ( cudaFree(ptr), ptr = NULL )
-#endif /* #if defined(HYPRE_EXAMPLE_USING_CUDA) */
-#endif /* #ifndef HYPRE_EXAMPLES_INCLUDES */
+#endif /* #if defined(NALU_HYPRE_EXAMPLE_USING_CUDA) */
+#endif /* #ifndef NALU_HYPRE_EXAMPLES_INCLUDES */
 

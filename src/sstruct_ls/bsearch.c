@@ -15,10 +15,10 @@
  * The routine returns location m or -1.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int hypre_LowerBinarySearch(HYPRE_Int *list, HYPRE_Int value, HYPRE_Int list_length)
+NALU_HYPRE_Int hypre_LowerBinarySearch(NALU_HYPRE_Int *list, NALU_HYPRE_Int value, NALU_HYPRE_Int list_length)
 {
-   HYPRE_Int low, high, m;
-   HYPRE_Int not_found = 1;
+   NALU_HYPRE_Int low, high, m;
+   NALU_HYPRE_Int not_found = 1;
 
    /* special case, list is size zero. */
    if (list_length < 1)
@@ -65,10 +65,10 @@ HYPRE_Int hypre_LowerBinarySearch(HYPRE_Int *list, HYPRE_Int value, HYPRE_Int li
  *      list[m] <= value < list[m+1].
  * The routine returns location m or -1.
  *--------------------------------------------------------------------------*/
-HYPRE_Int hypre_UpperBinarySearch(HYPRE_Int *list, HYPRE_Int value, HYPRE_Int list_length)
+NALU_HYPRE_Int hypre_UpperBinarySearch(NALU_HYPRE_Int *list, NALU_HYPRE_Int value, NALU_HYPRE_Int list_length)
 {
-   HYPRE_Int low, high, m;
-   HYPRE_Int not_found = 1;
+   NALU_HYPRE_Int low, high, m;
+   NALU_HYPRE_Int not_found = 1;
 
    /* special case, list is size zero. */
    if (list_length < 1)

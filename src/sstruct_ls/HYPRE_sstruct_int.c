@@ -7,17 +7,17 @@
 
 #include "_hypre_sstruct_ls.h"
 #include "interpreter.h"
-#include "HYPRE_MatvecFunctions.h"
+#include "NALU_HYPRE_MatvecFunctions.h"
 #include "temp_multivector.h"
 
 
-HYPRE_Int
-hypre_SStructPVectorSetRandomValues( hypre_SStructPVector *pvector, HYPRE_Int seed )
+NALU_HYPRE_Int
+hypre_SStructPVectorSetRandomValues( hypre_SStructPVector *pvector, NALU_HYPRE_Int seed )
 {
-   HYPRE_Int ierr = 0;
-   HYPRE_Int           nvars = hypre_SStructPVectorNVars(pvector);
+   NALU_HYPRE_Int ierr = 0;
+   NALU_HYPRE_Int           nvars = hypre_SStructPVectorNVars(pvector);
    hypre_StructVector *svector;
-   HYPRE_Int           var;
+   NALU_HYPRE_Int           var;
 
    hypre_SeedRand( seed );
 
@@ -31,13 +31,13 @@ hypre_SStructPVectorSetRandomValues( hypre_SStructPVector *pvector, HYPRE_Int se
    return ierr;
 }
 
-HYPRE_Int
-hypre_SStructVectorSetRandomValues( hypre_SStructVector *vector, HYPRE_Int seed )
+NALU_HYPRE_Int
+hypre_SStructVectorSetRandomValues( hypre_SStructVector *vector, NALU_HYPRE_Int seed )
 {
-   HYPRE_Int ierr = 0;
-   HYPRE_Int             nparts = hypre_SStructVectorNParts(vector);
+   NALU_HYPRE_Int ierr = 0;
+   NALU_HYPRE_Int             nparts = hypre_SStructVectorNParts(vector);
    hypre_SStructPVector *pvector;
-   HYPRE_Int             part;
+   NALU_HYPRE_Int             part;
 
    hypre_SeedRand( seed );
 
@@ -51,15 +51,15 @@ hypre_SStructVectorSetRandomValues( hypre_SStructVector *vector, HYPRE_Int seed 
    return ierr;
 }
 
-HYPRE_Int
-hypre_SStructSetRandomValues( void* v, HYPRE_Int seed )
+NALU_HYPRE_Int
+hypre_SStructSetRandomValues( void* v, NALU_HYPRE_Int seed )
 {
 
    return hypre_SStructVectorSetRandomValues( (hypre_SStructVector*)v, seed );
 }
 
-HYPRE_Int
-HYPRE_SStructSetupInterpreter( mv_InterfaceInterpreter *i )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructSetupInterpreter( mv_InterfaceInterpreter *i )
 {
    i->CreateVector = hypre_SStructKrylovCreateVector;
    i->DestroyVector = hypre_SStructKrylovDestroyVector;
@@ -91,8 +91,8 @@ HYPRE_SStructSetupInterpreter( mv_InterfaceInterpreter *i )
    return 0;
 }
 
-HYPRE_Int
-HYPRE_SStructSetupMatvec(HYPRE_MatvecFunctions * mv)
+NALU_HYPRE_Int
+NALU_HYPRE_SStructSetupMatvec(NALU_HYPRE_MatvecFunctions * mv)
 {
    mv->MatvecCreate = hypre_SStructKrylovMatvecCreate;
    mv->Matvec = hypre_SStructKrylovMatvec;

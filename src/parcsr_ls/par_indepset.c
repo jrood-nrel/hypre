@@ -29,17 +29,17 @@
   @see hypre_AMGIndepSet */
 /*--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_BoomerAMGIndepSetInit( hypre_ParCSRMatrix *S,
-                             HYPRE_Real         *measure_array,
-                             HYPRE_Int           seq_rand)
+                             NALU_HYPRE_Real         *measure_array,
+                             NALU_HYPRE_Int           seq_rand)
 {
    hypre_CSRMatrix *S_diag = hypre_ParCSRMatrixDiag(S);
    MPI_Comm         comm = hypre_ParCSRMatrixComm(S);
-   HYPRE_Int        S_num_nodes = hypre_CSRMatrixNumRows(S_diag);
-   HYPRE_BigInt     big_i;
-   HYPRE_Int        i, my_id;
-   HYPRE_Int        ierr = 0;
+   NALU_HYPRE_Int        S_num_nodes = hypre_CSRMatrixNumRows(S_diag);
+   NALU_HYPRE_BigInt     big_i;
+   NALU_HYPRE_Int        i, my_id;
+   NALU_HYPRE_Int        ierr = 0;
 
    hypre_MPI_Comm_rank(comm, &my_id);
    i = 2747 + my_id;
@@ -101,25 +101,25 @@ hypre_BoomerAMGIndepSetInit( hypre_ParCSRMatrix *S,
   @see hypre_InitAMGIndepSet */
 /*--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_BoomerAMGIndepSet( hypre_ParCSRMatrix *S,
-                         HYPRE_Real         *measure_array,
-                         HYPRE_Int          *graph_array,
-                         HYPRE_Int           graph_array_size,
-                         HYPRE_Int          *graph_array_offd,
-                         HYPRE_Int           graph_array_offd_size,
-                         HYPRE_Int          *IS_marker,
-                         HYPRE_Int          *IS_marker_offd     )
+                         NALU_HYPRE_Real         *measure_array,
+                         NALU_HYPRE_Int          *graph_array,
+                         NALU_HYPRE_Int           graph_array_size,
+                         NALU_HYPRE_Int          *graph_array_offd,
+                         NALU_HYPRE_Int           graph_array_offd_size,
+                         NALU_HYPRE_Int          *IS_marker,
+                         NALU_HYPRE_Int          *IS_marker_offd     )
 {
    hypre_CSRMatrix *S_diag   = hypre_ParCSRMatrixDiag(S);
-   HYPRE_Int       *S_diag_i = hypre_CSRMatrixI(S_diag);
-   HYPRE_Int       *S_diag_j = hypre_CSRMatrixJ(S_diag);
+   NALU_HYPRE_Int       *S_diag_i = hypre_CSRMatrixI(S_diag);
+   NALU_HYPRE_Int       *S_diag_j = hypre_CSRMatrixJ(S_diag);
    hypre_CSRMatrix *S_offd   = hypre_ParCSRMatrixOffd(S);
-   HYPRE_Int       *S_offd_i = hypre_CSRMatrixI(S_offd);
-   HYPRE_Int       *S_offd_j = NULL;
+   NALU_HYPRE_Int       *S_offd_i = hypre_CSRMatrixI(S_offd);
+   NALU_HYPRE_Int       *S_offd_j = NULL;
 
-   HYPRE_Int        local_num_vars = hypre_CSRMatrixNumRows(S_diag);
-   HYPRE_Int        i, j, ig, jS, jj;
+   NALU_HYPRE_Int        local_num_vars = hypre_CSRMatrixNumRows(S_diag);
+   NALU_HYPRE_Int        i, j, ig, jS, jj;
 
    /*-------------------------------------------------------
     * Initialize IS_marker by putting all nodes in

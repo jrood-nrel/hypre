@@ -7,43 +7,43 @@
 
 /******************************************************************************
  *
- * HYPRE_SStructMaxwell interface
+ * NALU_HYPRE_SStructMaxwell interface
  *
  *****************************************************************************/
 
 #include "_hypre_sstruct_ls.h"
 
 /*--------------------------------------------------------------------------
- * HYPRE_SStructMaxwellCreate
+ * NALU_HYPRE_SStructMaxwellCreate
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructMaxwellCreate(MPI_Comm comm, HYPRE_SStructSolver *solver)
+NALU_HYPRE_Int
+NALU_HYPRE_SStructMaxwellCreate(MPI_Comm comm, NALU_HYPRE_SStructSolver *solver)
 {
-   *solver = ( (HYPRE_SStructSolver) hypre_MaxwellTVCreate(comm) );
+   *solver = ( (NALU_HYPRE_SStructSolver) hypre_MaxwellTVCreate(comm) );
 
    return 0;
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_SStructMaxwellDestroy
+ * NALU_HYPRE_SStructMaxwellDestroy
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructMaxwellDestroy(HYPRE_SStructSolver solver)
+NALU_HYPRE_Int
+NALU_HYPRE_SStructMaxwellDestroy(NALU_HYPRE_SStructSolver solver)
 {
    return ( hypre_MaxwellTVDestroy( (void *) solver ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_SStructMaxwellSetup
+ * NALU_HYPRE_SStructMaxwellSetup
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructMaxwellSetup( HYPRE_SStructSolver  solver,
-                           HYPRE_SStructMatrix A,
-                           HYPRE_SStructVector b,
-                           HYPRE_SStructVector x )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructMaxwellSetup( NALU_HYPRE_SStructSolver  solver,
+                           NALU_HYPRE_SStructMatrix A,
+                           NALU_HYPRE_SStructVector b,
+                           NALU_HYPRE_SStructVector x )
 {
    return ( hypre_MaxwellTV_Setup( (void *) solver,
                                    (hypre_SStructMatrix *) A,
@@ -52,14 +52,14 @@ HYPRE_SStructMaxwellSetup( HYPRE_SStructSolver  solver,
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_SStructMaxwellSolve
+ * NALU_HYPRE_SStructMaxwellSolve
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructMaxwellSolve( HYPRE_SStructSolver solver,
-                           HYPRE_SStructMatrix A,
-                           HYPRE_SStructVector b,
-                           HYPRE_SStructVector x      )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructMaxwellSolve( NALU_HYPRE_SStructSolver solver,
+                           NALU_HYPRE_SStructMatrix A,
+                           NALU_HYPRE_SStructVector b,
+                           NALU_HYPRE_SStructVector x      )
 {
    return ( hypre_MaxwellSolve( (void *) solver,
                                 (hypre_SStructMatrix *) A,
@@ -68,14 +68,14 @@ HYPRE_SStructMaxwellSolve( HYPRE_SStructSolver solver,
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_SStructMaxwellSolve2
+ * NALU_HYPRE_SStructMaxwellSolve2
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructMaxwellSolve2( HYPRE_SStructSolver solver,
-                            HYPRE_SStructMatrix A,
-                            HYPRE_SStructVector b,
-                            HYPRE_SStructVector x      )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructMaxwellSolve2( NALU_HYPRE_SStructSolver solver,
+                            NALU_HYPRE_SStructMatrix A,
+                            NALU_HYPRE_SStructVector b,
+                            NALU_HYPRE_SStructVector x      )
 {
    return ( hypre_MaxwellSolve2( (void *) solver,
                                  (hypre_SStructMatrix *) A,
@@ -84,159 +84,159 @@ HYPRE_SStructMaxwellSolve2( HYPRE_SStructSolver solver,
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_MaxwellGrad
+ * NALU_HYPRE_MaxwellGrad
  *--------------------------------------------------------------------------*/
-HYPRE_Int
-HYPRE_MaxwellGrad( HYPRE_SStructGrid   grid,
-                   HYPRE_ParCSRMatrix *T )
+NALU_HYPRE_Int
+NALU_HYPRE_MaxwellGrad( NALU_HYPRE_SStructGrid   grid,
+                   NALU_HYPRE_ParCSRMatrix *T )
 
 {
-   *T = ( (HYPRE_ParCSRMatrix) hypre_Maxwell_Grad( (hypre_SStructGrid *) grid));
+   *T = ( (NALU_HYPRE_ParCSRMatrix) hypre_Maxwell_Grad( (hypre_SStructGrid *) grid));
    return 0;
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_SStructMaxwellSetGrad
+ * NALU_HYPRE_SStructMaxwellSetGrad
  *--------------------------------------------------------------------------*/
-HYPRE_Int
-HYPRE_SStructMaxwellSetGrad( HYPRE_SStructSolver  solver,
-                             HYPRE_ParCSRMatrix   T )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructMaxwellSetGrad( NALU_HYPRE_SStructSolver  solver,
+                             NALU_HYPRE_ParCSRMatrix   T )
 {
    return ( hypre_MaxwellSetGrad( (void *)               solver,
                                   (hypre_ParCSRMatrix *) T) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_SStructMaxwellSetRfactors
+ * NALU_HYPRE_SStructMaxwellSetRfactors
  *--------------------------------------------------------------------------*/
-HYPRE_Int
-HYPRE_SStructMaxwellSetRfactors( HYPRE_SStructSolver  solver,
-                                 HYPRE_Int            rfactors[3] )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructMaxwellSetRfactors( NALU_HYPRE_SStructSolver  solver,
+                                 NALU_HYPRE_Int            rfactors[3] )
 {
    return ( hypre_MaxwellSetRfactors( (void *)         solver,
                                       rfactors ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_SStructMaxwellSetTol
+ * NALU_HYPRE_SStructMaxwellSetTol
  *--------------------------------------------------------------------------*/
-HYPRE_Int
-HYPRE_SStructMaxwellSetTol( HYPRE_SStructSolver solver,
-                            HYPRE_Real          tol    )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructMaxwellSetTol( NALU_HYPRE_SStructSolver solver,
+                            NALU_HYPRE_Real          tol    )
 {
    return ( hypre_MaxwellSetTol( (void *) solver, tol ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_SStructMaxwellSetConstantCoef
+ * NALU_HYPRE_SStructMaxwellSetConstantCoef
  *--------------------------------------------------------------------------*/
-HYPRE_Int
-HYPRE_SStructMaxwellSetConstantCoef( HYPRE_SStructSolver solver,
-                                     HYPRE_Int           constant_coef)
+NALU_HYPRE_Int
+NALU_HYPRE_SStructMaxwellSetConstantCoef( NALU_HYPRE_SStructSolver solver,
+                                     NALU_HYPRE_Int           constant_coef)
 {
    return ( hypre_MaxwellSetConstantCoef( (void *) solver, constant_coef) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_SStructMaxwellSetMaxIter
+ * NALU_HYPRE_SStructMaxwellSetMaxIter
  *--------------------------------------------------------------------------*/
-HYPRE_Int
-HYPRE_SStructMaxwellSetMaxIter( HYPRE_SStructSolver solver,
-                                HYPRE_Int           max_iter  )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructMaxwellSetMaxIter( NALU_HYPRE_SStructSolver solver,
+                                NALU_HYPRE_Int           max_iter  )
 {
    return ( hypre_MaxwellSetMaxIter( (void *) solver, max_iter ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_SStructMaxwellSetRelChange
+ * NALU_HYPRE_SStructMaxwellSetRelChange
  *--------------------------------------------------------------------------*/
-HYPRE_Int
-HYPRE_SStructMaxwellSetRelChange( HYPRE_SStructSolver solver,
-                                  HYPRE_Int           rel_change  )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructMaxwellSetRelChange( NALU_HYPRE_SStructSolver solver,
+                                  NALU_HYPRE_Int           rel_change  )
 {
    return ( hypre_MaxwellSetRelChange( (void *) solver, rel_change ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_SStructMaxwellSetNumPreRelax
+ * NALU_HYPRE_SStructMaxwellSetNumPreRelax
  *--------------------------------------------------------------------------*/
-HYPRE_Int
-HYPRE_SStructMaxwellSetNumPreRelax( HYPRE_SStructSolver solver,
-                                    HYPRE_Int           num_pre_relax )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructMaxwellSetNumPreRelax( NALU_HYPRE_SStructSolver solver,
+                                    NALU_HYPRE_Int           num_pre_relax )
 {
    return ( hypre_MaxwellSetNumPreRelax( (void *) solver, num_pre_relax) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_SStructMaxwellSetNumPostRelax
+ * NALU_HYPRE_SStructMaxwellSetNumPostRelax
  *--------------------------------------------------------------------------*/
-HYPRE_Int
-HYPRE_SStructMaxwellSetNumPostRelax( HYPRE_SStructSolver solver,
-                                     HYPRE_Int           num_post_relax )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructMaxwellSetNumPostRelax( NALU_HYPRE_SStructSolver solver,
+                                     NALU_HYPRE_Int           num_post_relax )
 {
    return ( hypre_MaxwellSetNumPostRelax( (void *) solver, num_post_relax) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_SStructMaxwellSetLogging
+ * NALU_HYPRE_SStructMaxwellSetLogging
  *--------------------------------------------------------------------------*/
-HYPRE_Int
-HYPRE_SStructMaxwellSetLogging( HYPRE_SStructSolver solver,
-                                HYPRE_Int           logging )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructMaxwellSetLogging( NALU_HYPRE_SStructSolver solver,
+                                NALU_HYPRE_Int           logging )
 {
    return ( hypre_MaxwellSetLogging( (void *) solver, logging) );
 }
 
 /*--------------------------------------------------------------------------
-HYPRE_SStructMaxwellSetPrintLevel
+NALU_HYPRE_SStructMaxwellSetPrintLevel
 *--------------------------------------------------------------------------*/
-HYPRE_Int
-HYPRE_SStructMaxwellSetPrintLevel( HYPRE_SStructSolver solver,
-                                   HYPRE_Int           print_level )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructMaxwellSetPrintLevel( NALU_HYPRE_SStructSolver solver,
+                                   NALU_HYPRE_Int           print_level )
 {
    return ( hypre_MaxwellSetPrintLevel( (void *) solver, print_level) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_SStructMaxwellPrintLogging
+ * NALU_HYPRE_SStructMaxwellPrintLogging
  *--------------------------------------------------------------------------*/
-HYPRE_Int
-HYPRE_SStructMaxwellPrintLogging( HYPRE_SStructSolver solver,
-                                  HYPRE_Int           myid)
+NALU_HYPRE_Int
+NALU_HYPRE_SStructMaxwellPrintLogging( NALU_HYPRE_SStructSolver solver,
+                                  NALU_HYPRE_Int           myid)
 {
    return ( hypre_MaxwellPrintLogging( (void *) solver, myid) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_SStructMaxwellGetNumIterations
+ * NALU_HYPRE_SStructMaxwellGetNumIterations
  *--------------------------------------------------------------------------*/
-HYPRE_Int
-HYPRE_SStructMaxwellGetNumIterations( HYPRE_SStructSolver  solver,
-                                      HYPRE_Int           *num_iterations )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructMaxwellGetNumIterations( NALU_HYPRE_SStructSolver  solver,
+                                      NALU_HYPRE_Int           *num_iterations )
 {
    return ( hypre_MaxwellGetNumIterations( (void *) solver, num_iterations ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_SStructMaxwellGetFinalRelativeResidualNorm
+ * NALU_HYPRE_SStructMaxwellGetFinalRelativeResidualNorm
  *--------------------------------------------------------------------------*/
-HYPRE_Int
-HYPRE_SStructMaxwellGetFinalRelativeResidualNorm( HYPRE_SStructSolver  solver,
-                                                  HYPRE_Real          *norm   )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructMaxwellGetFinalRelativeResidualNorm( NALU_HYPRE_SStructSolver  solver,
+                                                  NALU_HYPRE_Real          *norm   )
 {
    return ( hypre_MaxwellGetFinalRelativeResidualNorm( (void *) solver, norm ) );
 }
 
 
 /*--------------------------------------------------------------------------
- * HYPRE_SStructMaxwellPhysBdy
+ * NALU_HYPRE_SStructMaxwellPhysBdy
  *--------------------------------------------------------------------------*/
-HYPRE_Int
-HYPRE_SStructMaxwellPhysBdy( HYPRE_SStructGrid  *grid_l,
-                             HYPRE_Int           num_levels,
-                             HYPRE_Int           rfactors[3],
-                             HYPRE_Int        ***BdryRanks_ptr,
-                             HYPRE_Int         **BdryRanksCnt_ptr )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructMaxwellPhysBdy( NALU_HYPRE_SStructGrid  *grid_l,
+                             NALU_HYPRE_Int           num_levels,
+                             NALU_HYPRE_Int           rfactors[3],
+                             NALU_HYPRE_Int        ***BdryRanks_ptr,
+                             NALU_HYPRE_Int         **BdryRanksCnt_ptr )
 {
    return ( hypre_Maxwell_PhysBdy( (hypre_SStructGrid  **) grid_l,
                                    num_levels,
@@ -246,12 +246,12 @@ HYPRE_SStructMaxwellPhysBdy( HYPRE_SStructGrid  *grid_l,
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_SStructMaxwellEliminateRowsCols
+ * NALU_HYPRE_SStructMaxwellEliminateRowsCols
  *--------------------------------------------------------------------------*/
-HYPRE_Int
-HYPRE_SStructMaxwellEliminateRowsCols( HYPRE_ParCSRMatrix  parA,
-                                       HYPRE_Int           nrows,
-                                       HYPRE_Int          *rows )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructMaxwellEliminateRowsCols( NALU_HYPRE_ParCSRMatrix  parA,
+                                       NALU_HYPRE_Int           nrows,
+                                       NALU_HYPRE_Int          *rows )
 {
    return ( hypre_ParCSRMatrixEliminateRowsCols( (hypre_ParCSRMatrix *) parA,
                                                  nrows,
@@ -259,11 +259,11 @@ HYPRE_SStructMaxwellEliminateRowsCols( HYPRE_ParCSRMatrix  parA,
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_SStructMaxwellZeroVector
+ * NALU_HYPRE_SStructMaxwellZeroVector
  *--------------------------------------------------------------------------*/
-HYPRE_Int HYPRE_SStructMaxwellZeroVector(HYPRE_ParVector  v,
-                                         HYPRE_Int       *rows,
-                                         HYPRE_Int        nrows)
+NALU_HYPRE_Int NALU_HYPRE_SStructMaxwellZeroVector(NALU_HYPRE_ParVector  v,
+                                         NALU_HYPRE_Int       *rows,
+                                         NALU_HYPRE_Int        nrows)
 {
    return ( hypre_ParVectorZeroBCValues( (hypre_ParVector *) v,
                                          rows,

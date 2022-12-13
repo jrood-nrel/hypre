@@ -29,7 +29,7 @@
 
 #define InverseMapCellRank(rank, stencil)       \
    {                                            \
-      HYPRE_Int ij,ii,jj,kk;                    \
+      NALU_HYPRE_Int ij,ii,jj,kk;                    \
       ij = (rank%4);                            \
       ii = (ij%2);                              \
       jj = (ij-ii)/2;                           \
@@ -43,7 +43,7 @@
 
 typedef struct
 {
-   HYPRE_Int             nvars;
+   NALU_HYPRE_Int             nvars;
    hypre_Index           stride;
 
    hypre_SStructPVector *fgrid_cvectors;     /* the grid of this vector may not
@@ -52,7 +52,7 @@ typedef struct
    hypre_BoxArrayArray **fullwgt_ownboxes;
    hypre_BoxArrayArray **fullwgt_sendboxes;
 
-   HYPRE_Int          ***own_cboxnums;       /* local crs boxnums of ownboxes */
+   NALU_HYPRE_Int          ***own_cboxnums;       /* local crs boxnums of ownboxes */
 
    hypre_CommPkg       **interlevel_comm;
    /*   hypre_CommPkg       **intralevel_comm;*/ /* may need to build an intra comm so
@@ -65,13 +65,13 @@ typedef struct
  * hypre_FacSemiRestrictCreate
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_FacSemiRestrictCreate2( void **fac_restrict_vdata_ptr)
 {
-   HYPRE_Int                   ierr = 0;
+   NALU_HYPRE_Int                   ierr = 0;
    hypre_FacSemiRestrictData2 *fac_restrict_data;
 
-   fac_restrict_data       = hypre_CTAlloc(hypre_FacSemiRestrictData2,  1, HYPRE_MEMORY_HOST);
+   fac_restrict_data       = hypre_CTAlloc(hypre_FacSemiRestrictData2,  1, NALU_HYPRE_MEMORY_HOST);
    *fac_restrict_vdata_ptr  = (void *) fac_restrict_data;
 
    return ierr;
@@ -95,15 +95,15 @@ hypre_FacSemiRestrictCreate2( void **fac_restrict_vdata_ptr)
  * recv_boxes.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_FacSemiRestrictSetup2( void                 *fac_restrict_vdata,
                              hypre_SStructVector  *r,
-                             HYPRE_Int             part_crse,
-                             HYPRE_Int             part_fine,
+                             NALU_HYPRE_Int             part_crse,
+                             NALU_HYPRE_Int             part_fine,
                              hypre_SStructPVector *rc,
                              hypre_Index           rfactors )
 {
-   HYPRE_Int                 ierr = 0;
+   NALU_HYPRE_Int                 ierr = 0;
 
    hypre_FacSemiRestrictData2 *fac_restrict_data = (hypre_FacSemiRestrictData2 *)fac_restrict_vdata;
    MPI_Comm                    comm = hypre_SStructPVectorComm(rc);
@@ -121,30 +121,30 @@ hypre_FacSemiRestrictSetup2( void                 *fac_restrict_vdata,
    hypre_BoxArrayArray       **fullwgt_sendboxes;
    hypre_BoxArray             *boxarray;
    hypre_BoxArray             *tmp_boxarray, *intersect_boxes;
-   HYPRE_Int                ***own_cboxnums;
+   NALU_HYPRE_Int                ***own_cboxnums;
 
    hypre_BoxArrayArray       **send_boxes, *send_rboxes;
-   HYPRE_Int                ***send_processes;
-   HYPRE_Int                ***send_remote_boxnums;
+   NALU_HYPRE_Int                ***send_processes;
+   NALU_HYPRE_Int                ***send_remote_boxnums;
 
    hypre_BoxArrayArray       **recv_boxes, *recv_rboxes;
-   HYPRE_Int                ***recv_processes;
-   HYPRE_Int                ***recv_remote_boxnums;
+   NALU_HYPRE_Int                ***recv_processes;
+   NALU_HYPRE_Int                ***recv_remote_boxnums;
 
    hypre_BoxManager           *boxman;
    hypre_BoxManEntry         **boxman_entries;
-   HYPRE_Int                   nboxman_entries;
+   NALU_HYPRE_Int                   nboxman_entries;
 
    hypre_Box                   box, scaled_box;
 
    hypre_Index                 zero_index, index, ilower, iupper;
-   HYPRE_Int                   ndim = hypre_SStructVectorNDim(r);
-   HYPRE_Int                   myproc, proc;
-   HYPRE_Int                   nvars, vars;
-   HYPRE_Int                   num_values;
+   NALU_HYPRE_Int                   ndim = hypre_SStructVectorNDim(r);
+   NALU_HYPRE_Int                   myproc, proc;
+   NALU_HYPRE_Int                   nvars, vars;
+   NALU_HYPRE_Int                   num_values;
 
-   HYPRE_Int                   i, cnt1, cnt2;
-   HYPRE_Int                   fi, ci;
+   NALU_HYPRE_Int                   i, cnt1, cnt2;
+   NALU_HYPRE_Int                   fi, ci;
 
    hypre_BoxInit(&box, ndim);
    hypre_BoxInit(&scaled_box, ndim);
@@ -206,7 +206,7 @@ hypre_FacSemiRestrictSetup2( void                 *fac_restrict_vdata,
     * will be subtracted from the cbox. Contraction can erroneously lead
     * to bigger identity boxes.
     *--------------------------------------------------------------------------*/
-   identity_arrayboxes = hypre_CTAlloc(hypre_BoxArrayArray *,  nvars, HYPRE_MEMORY_HOST);
+   identity_arrayboxes = hypre_CTAlloc(hypre_BoxArrayArray *,  nvars, NALU_HYPRE_MEMORY_HOST);
    pgrid = hypre_SStructPVectorPGrid(rc);
 
    hypre_ClearIndex(index);
@@ -258,7 +258,7 @@ hypre_FacSemiRestrictSetup2( void                 *fac_restrict_vdata,
                                  intersect_boxes, tmp_boxarray);
          hypre_MinUnionBoxes(hypre_BoxArrayArrayBoxArray(identity_arrayboxes[vars], ci));
 
-         hypre_TFree(boxman_entries, HYPRE_MEMORY_HOST);
+         hypre_TFree(boxman_entries, NALU_HYPRE_MEMORY_HOST);
          hypre_BoxArrayDestroy(intersect_boxes);
       }
    }
@@ -276,14 +276,14 @@ hypre_FacSemiRestrictSetup2( void                 *fac_restrict_vdata,
     * Note that no contraction is needed. Contraction can lead to erroneous
     * send_boxes.
     *--------------------------------------------------------------------------*/
-   interlevel_comm = hypre_CTAlloc(hypre_CommPkg *,  nvars, HYPRE_MEMORY_HOST);
-   fullwgt_sendboxes = hypre_CTAlloc(hypre_BoxArrayArray *,  nvars, HYPRE_MEMORY_HOST);
-   fullwgt_ownboxes = hypre_CTAlloc(hypre_BoxArrayArray *,  nvars, HYPRE_MEMORY_HOST);
-   own_cboxnums = hypre_CTAlloc(HYPRE_Int **,  nvars, HYPRE_MEMORY_HOST);
+   interlevel_comm = hypre_CTAlloc(hypre_CommPkg *,  nvars, NALU_HYPRE_MEMORY_HOST);
+   fullwgt_sendboxes = hypre_CTAlloc(hypre_BoxArrayArray *,  nvars, NALU_HYPRE_MEMORY_HOST);
+   fullwgt_ownboxes = hypre_CTAlloc(hypre_BoxArrayArray *,  nvars, NALU_HYPRE_MEMORY_HOST);
+   own_cboxnums = hypre_CTAlloc(NALU_HYPRE_Int **,  nvars, NALU_HYPRE_MEMORY_HOST);
 
-   send_boxes = hypre_CTAlloc(hypre_BoxArrayArray *,  nvars, HYPRE_MEMORY_HOST);
-   send_processes = hypre_CTAlloc(HYPRE_Int **,  nvars, HYPRE_MEMORY_HOST);
-   send_remote_boxnums = hypre_CTAlloc(HYPRE_Int **,  nvars, HYPRE_MEMORY_HOST);
+   send_boxes = hypre_CTAlloc(hypre_BoxArrayArray *,  nvars, NALU_HYPRE_MEMORY_HOST);
+   send_processes = hypre_CTAlloc(NALU_HYPRE_Int **,  nvars, NALU_HYPRE_MEMORY_HOST);
+   send_remote_boxnums = hypre_CTAlloc(NALU_HYPRE_Int **,  nvars, NALU_HYPRE_MEMORY_HOST);
 
    pgrid = hypre_SStructPVectorPGrid(rf);
    for (vars = 0; vars < nvars; vars++)
@@ -293,14 +293,14 @@ hypre_FacSemiRestrictSetup2( void                 *fac_restrict_vdata,
       boxarray = hypre_StructGridBoxes(hypre_SStructPGridSGrid(pgrid, vars));
       fullwgt_sendboxes[vars] = hypre_BoxArrayArrayCreate(hypre_BoxArraySize(boxarray), ndim);
       fullwgt_ownboxes[vars] = hypre_BoxArrayArrayCreate(hypre_BoxArraySize(boxarray), ndim);
-      own_cboxnums[vars]     = hypre_CTAlloc(HYPRE_Int *,  hypre_BoxArraySize(boxarray),
-                                             HYPRE_MEMORY_HOST);
+      own_cboxnums[vars]     = hypre_CTAlloc(NALU_HYPRE_Int *,  hypre_BoxArraySize(boxarray),
+                                             NALU_HYPRE_MEMORY_HOST);
 
       send_boxes[vars]         = hypre_BoxArrayArrayCreate(hypre_BoxArraySize(boxarray), ndim);
-      send_processes[vars]     = hypre_CTAlloc(HYPRE_Int *,  hypre_BoxArraySize(boxarray),
-                                               HYPRE_MEMORY_HOST);
-      send_remote_boxnums[vars] = hypre_CTAlloc(HYPRE_Int *,  hypre_BoxArraySize(boxarray),
-                                                HYPRE_MEMORY_HOST);
+      send_processes[vars]     = hypre_CTAlloc(NALU_HYPRE_Int *,  hypre_BoxArraySize(boxarray),
+                                               NALU_HYPRE_MEMORY_HOST);
+      send_remote_boxnums[vars] = hypre_CTAlloc(NALU_HYPRE_Int *,  hypre_BoxArraySize(boxarray),
+                                                NALU_HYPRE_MEMORY_HOST);
 
       hypre_ForBoxI(fi, boxarray)
       {
@@ -326,9 +326,9 @@ hypre_FacSemiRestrictSetup2( void                 *fac_restrict_vdata,
                cnt2++;
             }
          }
-         send_processes[vars][fi]     = hypre_CTAlloc(HYPRE_Int,  cnt1, HYPRE_MEMORY_HOST);
-         send_remote_boxnums[vars][fi] = hypre_CTAlloc(HYPRE_Int,  cnt1, HYPRE_MEMORY_HOST);
-         own_cboxnums[vars][fi]       = hypre_CTAlloc(HYPRE_Int,  cnt2, HYPRE_MEMORY_HOST);
+         send_processes[vars][fi]     = hypre_CTAlloc(NALU_HYPRE_Int,  cnt1, NALU_HYPRE_MEMORY_HOST);
+         send_remote_boxnums[vars][fi] = hypre_CTAlloc(NALU_HYPRE_Int,  cnt1, NALU_HYPRE_MEMORY_HOST);
+         own_cboxnums[vars][fi]       = hypre_CTAlloc(NALU_HYPRE_Int,  cnt2, NALU_HYPRE_MEMORY_HOST);
 
          cnt1 = 0; cnt2 = 0;
          for (i = 0; i < nboxman_entries; i++)
@@ -360,7 +360,7 @@ hypre_FacSemiRestrictSetup2( void                 *fac_restrict_vdata,
                cnt2++;
             }
          }
-         hypre_TFree(boxman_entries, HYPRE_MEMORY_HOST);
+         hypre_TFree(boxman_entries, NALU_HYPRE_MEMORY_HOST);
 
       }  /* hypre_ForBoxI(fi, boxarray) */
    }     /* for (vars= 0; vars< nvars; vars++) */
@@ -376,11 +376,11 @@ hypre_FacSemiRestrictSetup2( void                 *fac_restrict_vdata,
     * processors the refinement belongs in. The processors owning a chunk
     * are the recv_processors.
     *--------------------------------------------------------------------------*/
-   recv_boxes = hypre_CTAlloc(hypre_BoxArrayArray *,  nvars, HYPRE_MEMORY_HOST);
-   recv_processes = hypre_CTAlloc(HYPRE_Int **,  nvars, HYPRE_MEMORY_HOST);
+   recv_boxes = hypre_CTAlloc(hypre_BoxArrayArray *,  nvars, NALU_HYPRE_MEMORY_HOST);
+   recv_processes = hypre_CTAlloc(NALU_HYPRE_Int **,  nvars, NALU_HYPRE_MEMORY_HOST);
 
    /* dummy pointer for CommInfoCreate */
-   recv_remote_boxnums = hypre_CTAlloc(HYPRE_Int **,  nvars, HYPRE_MEMORY_HOST);
+   recv_remote_boxnums = hypre_CTAlloc(NALU_HYPRE_Int **,  nvars, NALU_HYPRE_MEMORY_HOST);
 
    pgrid = hypre_SStructPVectorPGrid(rc);
    for (vars = 0; vars < nvars; vars++)
@@ -390,9 +390,9 @@ hypre_FacSemiRestrictSetup2( void                 *fac_restrict_vdata,
       boxarray = hypre_StructGridBoxes(hypre_SStructPGridSGrid(pgrid, vars));
 
       recv_boxes[vars]    = hypre_BoxArrayArrayCreate(hypre_BoxArraySize(boxarray), ndim);
-      recv_processes[vars] = hypre_CTAlloc(HYPRE_Int *,  hypre_BoxArraySize(boxarray), HYPRE_MEMORY_HOST);
-      recv_remote_boxnums[vars] = hypre_CTAlloc(HYPRE_Int *,  hypre_BoxArraySize(boxarray),
-                                                HYPRE_MEMORY_HOST);
+      recv_processes[vars] = hypre_CTAlloc(NALU_HYPRE_Int *,  hypre_BoxArraySize(boxarray), NALU_HYPRE_MEMORY_HOST);
+      recv_remote_boxnums[vars] = hypre_CTAlloc(NALU_HYPRE_Int *,  hypre_BoxArraySize(boxarray),
+                                                NALU_HYPRE_MEMORY_HOST);
 
       hypre_ForBoxI(ci, boxarray)
       {
@@ -414,8 +414,8 @@ hypre_FacSemiRestrictSetup2( void                 *fac_restrict_vdata,
                cnt1++;
             }
          }
-         recv_processes[vars][ci] = hypre_CTAlloc(HYPRE_Int,  cnt1, HYPRE_MEMORY_HOST);
-         recv_remote_boxnums[vars][ci] = hypre_CTAlloc(HYPRE_Int,  cnt1, HYPRE_MEMORY_HOST);
+         recv_processes[vars][ci] = hypre_CTAlloc(NALU_HYPRE_Int,  cnt1, NALU_HYPRE_MEMORY_HOST);
+         recv_remote_boxnums[vars][ci] = hypre_CTAlloc(NALU_HYPRE_Int,  cnt1, NALU_HYPRE_MEMORY_HOST);
 
          cnt1 = 0;
          for (i = 0; i < nboxman_entries; i++)
@@ -441,7 +441,7 @@ hypre_FacSemiRestrictSetup2( void                 *fac_restrict_vdata,
             }  /* if (proc != myproc) */
          }     /* for (i= 0; i< nmap_entries; i++) */
 
-         hypre_TFree(boxman_entries, HYPRE_MEMORY_HOST);
+         hypre_TFree(boxman_entries, NALU_HYPRE_MEMORY_HOST);
 
       }        /* hypre_ForBoxI(ci, boxarray) */
    }           /* for (vars= 0; vars< nvars; vars++) */
@@ -467,12 +467,12 @@ hypre_FacSemiRestrictSetup2( void                 *fac_restrict_vdata,
                           &interlevel_comm[vars]);
       hypre_CommInfoDestroy(comm_info);
    }
-   hypre_TFree(send_boxes, HYPRE_MEMORY_HOST);
-   hypre_TFree(recv_boxes, HYPRE_MEMORY_HOST);
-   hypre_TFree(send_processes, HYPRE_MEMORY_HOST);
-   hypre_TFree(recv_processes, HYPRE_MEMORY_HOST);
-   hypre_TFree(send_remote_boxnums, HYPRE_MEMORY_HOST);
-   hypre_TFree(recv_remote_boxnums, HYPRE_MEMORY_HOST);
+   hypre_TFree(send_boxes, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(recv_boxes, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(send_processes, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(recv_processes, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(send_remote_boxnums, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(recv_remote_boxnums, NALU_HYPRE_MEMORY_HOST);
 
    (fac_restrict_data -> interlevel_comm) = interlevel_comm;
 
@@ -480,23 +480,23 @@ hypre_FacSemiRestrictSetup2( void                 *fac_restrict_vdata,
 
 }
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_FACRestrict2( void                 *  fac_restrict_vdata,
                     hypre_SStructVector  *  xf,
                     hypre_SStructPVector *  xc)
 {
-   HYPRE_Int ierr = 0;
+   NALU_HYPRE_Int ierr = 0;
 
    hypre_FacSemiRestrictData2 *restrict_data = (hypre_FacSemiRestrictData2 *)fac_restrict_vdata;
 
    hypre_SStructPVector   *fgrid_cvectors     = restrict_data->fgrid_cvectors;
    hypre_BoxArrayArray   **identity_arrayboxes = restrict_data->identity_arrayboxes;
    hypre_BoxArrayArray   **fullwgt_ownboxes   = restrict_data->fullwgt_ownboxes;
-   HYPRE_Int            ***own_cboxnums       = restrict_data->own_cboxnums;
+   NALU_HYPRE_Int            ***own_cboxnums       = restrict_data->own_cboxnums;
    hypre_CommPkg         **interlevel_comm = restrict_data-> interlevel_comm;
    hypre_CommHandle       *comm_handle;
 
-   HYPRE_Int               ndim           =  hypre_SStructVectorNDim(xf);
+   NALU_HYPRE_Int               ndim           =  hypre_SStructVectorNDim(xf);
 
    hypre_BoxArrayArray    *arrayarray_ownboxes;
 
@@ -509,7 +509,7 @@ hypre_FACRestrict2( void                 *  fac_restrict_vdata,
    hypre_BoxArray         *cgrid_boxes;
    hypre_BoxArray         *own_boxes;
    hypre_Box              *own_box;
-   HYPRE_Int              *boxnums;
+   NALU_HYPRE_Int              *boxnums;
 
    hypre_Box              *xc_temp_dbox;
    hypre_Box              *xf_dbox;
@@ -518,9 +518,9 @@ hypre_FACRestrict2( void                 *  fac_restrict_vdata,
    hypre_StructVector     *xc_var;
    hypre_StructVector     *xf_var;
 
-   HYPRE_Real           ***xfp;
-   HYPRE_Real           ***xcp;
-   HYPRE_Real           ***xcp_temp;
+   NALU_HYPRE_Real           ***xfp;
+   NALU_HYPRE_Real           ***xcp;
+   NALU_HYPRE_Real           ***xcp_temp;
 
    hypre_Index             loop_size, lindex;
    hypre_Index             start, fbox_size, node_offset;
@@ -529,20 +529,20 @@ hypre_FACRestrict2( void                 *  fac_restrict_vdata,
    hypre_Index             rfactors;
    hypre_Index             temp_index1, temp_index2;
 
-   HYPRE_Int               fi, ci;
-   HYPRE_Int               nvars, var;
-   /* HYPRE_Int               volume_crse_cell; */
+   NALU_HYPRE_Int               fi, ci;
+   NALU_HYPRE_Int               nvars, var;
+   /* NALU_HYPRE_Int               volume_crse_cell; */
 
-   HYPRE_Int               i, j, k;
-   HYPRE_Int               imax, jmax, kmax;
-   HYPRE_Int               icell, jcell, kcell, ijkcell;
+   NALU_HYPRE_Int               i, j, k;
+   NALU_HYPRE_Int               imax, jmax, kmax;
+   NALU_HYPRE_Int               icell, jcell, kcell, ijkcell;
 
-   HYPRE_Real             *sum;
-   HYPRE_Real              scaling;
+   NALU_HYPRE_Real             *sum;
+   NALU_HYPRE_Real              scaling;
 
-   HYPRE_Int               part_crse = 0;
-   HYPRE_Int               part_fine = 1;
-   HYPRE_Int               num_coarse_cells;
+   NALU_HYPRE_Int               part_crse = 0;
+   NALU_HYPRE_Int               part_fine = 1;
+   NALU_HYPRE_Int               num_coarse_cells;
 
    /*-----------------------------------------------------------------------
     * Initialize some things
@@ -582,7 +582,7 @@ hypre_FACRestrict2( void                 *  fac_restrict_vdata,
    {
       num_coarse_cells *= 2;
    }
-   sum = hypre_CTAlloc(HYPRE_Real,  num_coarse_cells, HYPRE_MEMORY_HOST);
+   sum = hypre_CTAlloc(NALU_HYPRE_Real,  num_coarse_cells, NALU_HYPRE_MEMORY_HOST);
 
    /*--------------------------------------------------------------------------
     * Scaling for averaging restriction.
@@ -620,27 +620,27 @@ hypre_FACRestrict2( void                 *  fac_restrict_vdata,
     *-----------------------------------------------------------------------*/
    if (ndim > 1)
    {
-      xcp_temp = hypre_TAlloc(HYPRE_Real **,  (ndim - 1), HYPRE_MEMORY_HOST);
-      xcp     = hypre_TAlloc(HYPRE_Real **,  (ndim - 1), HYPRE_MEMORY_HOST);
+      xcp_temp = hypre_TAlloc(NALU_HYPRE_Real **,  (ndim - 1), NALU_HYPRE_MEMORY_HOST);
+      xcp     = hypre_TAlloc(NALU_HYPRE_Real **,  (ndim - 1), NALU_HYPRE_MEMORY_HOST);
       for (k = 0; k < (ndim - 1); k++)
       {
-         xcp_temp[k] = hypre_TAlloc(HYPRE_Real *,  2, HYPRE_MEMORY_HOST);
-         xcp[k]     = hypre_TAlloc(HYPRE_Real *,  2, HYPRE_MEMORY_HOST);
+         xcp_temp[k] = hypre_TAlloc(NALU_HYPRE_Real *,  2, NALU_HYPRE_MEMORY_HOST);
+         xcp[k]     = hypre_TAlloc(NALU_HYPRE_Real *,  2, NALU_HYPRE_MEMORY_HOST);
       }
    }
-   else /* 1d does not really require these HYPRE_Real ptrs */
+   else /* 1d does not really require these NALU_HYPRE_Real ptrs */
    {
-      xcp_temp   = hypre_TAlloc(HYPRE_Real **,  1, HYPRE_MEMORY_HOST);
-      xcp        = hypre_TAlloc(HYPRE_Real **,  1, HYPRE_MEMORY_HOST);
-      xcp_temp[0] = hypre_TAlloc(HYPRE_Real *,  1, HYPRE_MEMORY_HOST);
-      xcp[0]     = hypre_TAlloc(HYPRE_Real *,  1, HYPRE_MEMORY_HOST);
+      xcp_temp   = hypre_TAlloc(NALU_HYPRE_Real **,  1, NALU_HYPRE_MEMORY_HOST);
+      xcp        = hypre_TAlloc(NALU_HYPRE_Real **,  1, NALU_HYPRE_MEMORY_HOST);
+      xcp_temp[0] = hypre_TAlloc(NALU_HYPRE_Real *,  1, NALU_HYPRE_MEMORY_HOST);
+      xcp[0]     = hypre_TAlloc(NALU_HYPRE_Real *,  1, NALU_HYPRE_MEMORY_HOST);
    }
 
    /* memory allocation of xfp is okay for all dimensions */
-   xfp = hypre_TAlloc(HYPRE_Real **,  rfactors[2], HYPRE_MEMORY_HOST);
+   xfp = hypre_TAlloc(NALU_HYPRE_Real **,  rfactors[2], NALU_HYPRE_MEMORY_HOST);
    for (k = 0; k < rfactors[2]; k++)
    {
-      xfp[k] = hypre_TAlloc(HYPRE_Real *,  rfactors[1], HYPRE_MEMORY_HOST);
+      xfp[k] = hypre_TAlloc(NALU_HYPRE_Real *,  rfactors[1], NALU_HYPRE_MEMORY_HOST);
    }
 
    for (var = 0; var < nvars; var++)
@@ -861,29 +861,29 @@ hypre_FACRestrict2( void                 *  fac_restrict_vdata,
       }     /* hypre_ForBoxI(ci, cgrid_boxes) */
    }        /* for (var= 0; var< nvars; var++) */
 
-   hypre_TFree(sum, HYPRE_MEMORY_HOST);
+   hypre_TFree(sum, NALU_HYPRE_MEMORY_HOST);
    for (k = 0; k < rfactors[2]; k++)
    {
-      hypre_TFree(xfp[k], HYPRE_MEMORY_HOST);
+      hypre_TFree(xfp[k], NALU_HYPRE_MEMORY_HOST);
    }
-   hypre_TFree(xfp, HYPRE_MEMORY_HOST);
+   hypre_TFree(xfp, NALU_HYPRE_MEMORY_HOST);
 
    if (ndim > 1)
    {
       for (k = 0; k < (ndim - 1); k++)
       {
-         hypre_TFree(xcp_temp[k], HYPRE_MEMORY_HOST);
-         hypre_TFree(xcp[k], HYPRE_MEMORY_HOST);
+         hypre_TFree(xcp_temp[k], NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(xcp[k], NALU_HYPRE_MEMORY_HOST);
       }
    }
    else
    {
-      hypre_TFree(xcp_temp[0], HYPRE_MEMORY_HOST);
-      hypre_TFree(xcp[0], HYPRE_MEMORY_HOST);
+      hypre_TFree(xcp_temp[0], NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(xcp[0], NALU_HYPRE_MEMORY_HOST);
    }
 
-   hypre_TFree(xcp_temp, HYPRE_MEMORY_HOST);
-   hypre_TFree(xcp, HYPRE_MEMORY_HOST);
+   hypre_TFree(xcp_temp, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(xcp, NALU_HYPRE_MEMORY_HOST);
 
    return ierr;
 }
@@ -892,13 +892,13 @@ hypre_FACRestrict2( void                 *  fac_restrict_vdata,
  * hypre_FacSemiRestrictDestroy
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_FacSemiRestrictDestroy2( void *fac_restrict_vdata )
 {
-   HYPRE_Int                   ierr = 0;
+   NALU_HYPRE_Int                   ierr = 0;
    hypre_FacSemiRestrictData2 *fac_restrict_data = (hypre_FacSemiRestrictData2 *)fac_restrict_vdata;
-   HYPRE_Int                   nvars;
-   HYPRE_Int                   i, j;
+   NALU_HYPRE_Int                   nvars;
+   NALU_HYPRE_Int                   i, j;
 
 
    if (fac_restrict_data)
@@ -912,21 +912,21 @@ hypre_FacSemiRestrictDestroy2( void *fac_restrict_vdata )
          hypre_BoxArrayArrayDestroy((fac_restrict_data -> fullwgt_sendboxes)[i]);
          for (j = 0; j < hypre_BoxArrayArraySize(fac_restrict_data->fullwgt_ownboxes[i]); j++)
          {
-            hypre_TFree((fac_restrict_data -> own_cboxnums)[i][j], HYPRE_MEMORY_HOST);
+            hypre_TFree((fac_restrict_data -> own_cboxnums)[i][j], NALU_HYPRE_MEMORY_HOST);
          }
-         hypre_TFree((fac_restrict_data -> own_cboxnums)[i], HYPRE_MEMORY_HOST);
+         hypre_TFree((fac_restrict_data -> own_cboxnums)[i], NALU_HYPRE_MEMORY_HOST);
 
          hypre_BoxArrayArrayDestroy((fac_restrict_data -> fullwgt_ownboxes)[i]);
          hypre_CommPkgDestroy((fac_restrict_data -> interlevel_comm)[i]);
       }
 
-      hypre_TFree(fac_restrict_data -> identity_arrayboxes, HYPRE_MEMORY_HOST);
-      hypre_TFree(fac_restrict_data -> fullwgt_sendboxes, HYPRE_MEMORY_HOST);
-      hypre_TFree(fac_restrict_data -> own_cboxnums, HYPRE_MEMORY_HOST);
-      hypre_TFree(fac_restrict_data -> fullwgt_ownboxes, HYPRE_MEMORY_HOST);
-      hypre_TFree(fac_restrict_data -> interlevel_comm, HYPRE_MEMORY_HOST);
+      hypre_TFree(fac_restrict_data -> identity_arrayboxes, NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(fac_restrict_data -> fullwgt_sendboxes, NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(fac_restrict_data -> own_cboxnums, NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(fac_restrict_data -> fullwgt_ownboxes, NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(fac_restrict_data -> interlevel_comm, NALU_HYPRE_MEMORY_HOST);
 
-      hypre_TFree(fac_restrict_data, HYPRE_MEMORY_HOST);
+      hypre_TFree(fac_restrict_data, NALU_HYPRE_MEMORY_HOST);
    }
    return ierr;
 

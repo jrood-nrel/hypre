@@ -344,7 +344,7 @@ int MLI_Solver_BSGS::solve(MLI_Vector *f_in, MLI_Vector *u_in)
 #endif
                hypre_VectorSize(sluB) = blkLeng;
                hypre_VectorSize(sluX) = blkLeng;
-               strcpy( vecName, "HYPRE_Vector" );
+               strcpy( vecName, "NALU_HYPRE_Vector" );
                mliB = new MLI_Vector((void*) sluB, vecName, NULL);
                mliX = new MLI_Vector((void*) sluX, vecName, NULL);
 
@@ -470,7 +470,7 @@ int MLI_Solver_BSGS::solve(MLI_Vector *f_in, MLI_Vector *u_in)
 #endif
                hypre_VectorSize(sluB) = blkLeng;
                hypre_VectorSize(sluX) = blkLeng;
-               strcpy( vecName, "HYPRE_Vector" );
+               strcpy( vecName, "NALU_HYPRE_Vector" );
                mliB = new MLI_Vector((void*) sluB, vecName, NULL);
                mliX = new MLI_Vector((void*) sluX, vecName, NULL);
 
@@ -632,7 +632,7 @@ int MLI_Solver_BSGS::composeOverlappedMatrix()
    MPI_Comm_rank(comm,&mypid);  
    MPI_Comm_size(comm,&nprocs);  
    if ( ! useOverlap_ || nprocs <= 1 ) return 0;
-   HYPRE_ParCSRMatrixGetRowPartitioning((HYPRE_ParCSRMatrix) A, &partition);
+   NALU_HYPRE_ParCSRMatrixGetRowPartitioning((NALU_HYPRE_ParCSRMatrix) A, &partition);
    startRow   = partition[mypid];
    endRow     = partition[mypid+1] - 1;
    localNRows = endRow - startRow + 1;
@@ -835,7 +835,7 @@ int MLI_Solver_BSGS::buildBlocks()
    comm = hypre_ParCSRMatrixComm(A);
    MPI_Comm_rank(comm,&mypid);  
    MPI_Comm_size(comm,&nprocs);  
-   HYPRE_ParCSRMatrixGetRowPartitioning((HYPRE_ParCSRMatrix) A, &partition);
+   NALU_HYPRE_ParCSRMatrixGetRowPartitioning((NALU_HYPRE_ParCSRMatrix) A, &partition);
    startRow   = partition[mypid];
    endRow     = partition[mypid+1] - 1;
    localNRows = endRow - startRow + 1;
@@ -887,7 +887,7 @@ int MLI_Solver_BSGS::buildBlocks()
    blockSolvers_ = new MLI_Solver_SeqSuperLU*[nBlocks_];
    for ( iB = 0; iB < nBlocks_; iB++ ) 
       blockSolvers_[iB] = new MLI_Solver_SeqSuperLU(sName);
-   funcPtr = hypre_TAlloc(MLI_Function, 1, HYPRE_MEMORY_HOST);
+   funcPtr = hypre_TAlloc(MLI_Function, 1, NALU_HYPRE_MEMORY_HOST);
 #ifdef HAVE_ESSL
    }
    else
@@ -967,7 +967,7 @@ int MLI_Solver_BSGS::buildBlocks()
       hypre_CSRMatrixJ(seqA)    = csrJA;
       hypre_CSRMatrixData(seqA) = csrAA;
       MLI_Utils_HypreCSRMatrixGetDestroyFunc(funcPtr);
-      strcpy( sName, "HYPRE_CSR" );
+      strcpy( sName, "NALU_HYPRE_CSR" );
       mliMat = new MLI_Matrix((void*) seqA, sName, funcPtr);
       blockSolvers_[iB]->setup( mliMat );
       delete mliMat;
@@ -1048,7 +1048,7 @@ int MLI_Solver_BSGS::adjustOffColIndices()
    A = (hypre_ParCSRMatrix *) Amat_->getMatrix();
    comm = hypre_ParCSRMatrixComm(A);
    MPI_Comm_rank(comm,&mypid);  
-   HYPRE_ParCSRMatrixGetRowPartitioning((HYPRE_ParCSRMatrix) A, &partition);
+   NALU_HYPRE_ParCSRMatrixGetRowPartitioning((NALU_HYPRE_ParCSRMatrix) A, &partition);
    startRow   = partition[mypid];
    endRow     = partition[mypid+1] - 1;
    localNRows = endRow - startRow + 1;

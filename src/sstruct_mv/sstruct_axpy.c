@@ -17,13 +17,13 @@
  * hypre_SStructPAxpy
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_SStructPAxpy( HYPRE_Complex         alpha,
+NALU_HYPRE_Int
+hypre_SStructPAxpy( NALU_HYPRE_Complex         alpha,
                     hypre_SStructPVector *px,
                     hypre_SStructPVector *py )
 {
-   HYPRE_Int nvars = hypre_SStructPVectorNVars(px);
-   HYPRE_Int var;
+   NALU_HYPRE_Int nvars = hypre_SStructPVectorNVars(px);
+   NALU_HYPRE_Int var;
 
    for (var = 0; var < nvars; var++)
    {
@@ -39,16 +39,16 @@ hypre_SStructPAxpy( HYPRE_Complex         alpha,
  * hypre_SStructAxpy
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_SStructAxpy( HYPRE_Complex        alpha,
+NALU_HYPRE_Int
+hypre_SStructAxpy( NALU_HYPRE_Complex        alpha,
                    hypre_SStructVector *x,
                    hypre_SStructVector *y )
 {
-   HYPRE_Int nparts = hypre_SStructVectorNParts(x);
-   HYPRE_Int part;
+   NALU_HYPRE_Int nparts = hypre_SStructVectorNParts(x);
+   NALU_HYPRE_Int part;
 
-   HYPRE_Int    x_object_type = hypre_SStructVectorObjectType(x);
-   HYPRE_Int    y_object_type = hypre_SStructVectorObjectType(y);
+   NALU_HYPRE_Int    x_object_type = hypre_SStructVectorObjectType(x);
+   NALU_HYPRE_Int    y_object_type = hypre_SStructVectorObjectType(y);
 
    if (x_object_type != y_object_type)
    {
@@ -57,7 +57,7 @@ hypre_SStructAxpy( HYPRE_Complex        alpha,
       return hypre_error_flag;
    }
 
-   if (x_object_type == HYPRE_SSTRUCT)
+   if (x_object_type == NALU_HYPRE_SSTRUCT)
    {
       for (part = 0; part < nparts; part++)
       {
@@ -67,7 +67,7 @@ hypre_SStructAxpy( HYPRE_Complex        alpha,
       }
    }
 
-   else if (x_object_type == HYPRE_PARCSR)
+   else if (x_object_type == NALU_HYPRE_PARCSR)
    {
       hypre_ParVector  *x_par;
       hypre_ParVector  *y_par;

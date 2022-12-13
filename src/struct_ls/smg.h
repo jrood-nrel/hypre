@@ -22,19 +22,19 @@ typedef struct
 {
    MPI_Comm              comm;
 
-   HYPRE_Int             memory_use;
-   HYPRE_Real            tol;
-   HYPRE_Int             max_iter;
-   HYPRE_Int             rel_change;
-   HYPRE_Int             zero_guess;
-   HYPRE_Int             max_levels;  /* max_level <= 0 means no limit */
+   NALU_HYPRE_Int             memory_use;
+   NALU_HYPRE_Real            tol;
+   NALU_HYPRE_Int             max_iter;
+   NALU_HYPRE_Int             rel_change;
+   NALU_HYPRE_Int             zero_guess;
+   NALU_HYPRE_Int             max_levels;  /* max_level <= 0 means no limit */
 
-   HYPRE_Int             num_levels;
+   NALU_HYPRE_Int             num_levels;
 
-   HYPRE_Int             num_pre_relax;  /* number of pre relaxation sweeps */
-   HYPRE_Int             num_post_relax; /* number of post relaxation sweeps */
+   NALU_HYPRE_Int             num_pre_relax;  /* number of pre relaxation sweeps */
+   NALU_HYPRE_Int             num_post_relax; /* number of post relaxation sweeps */
 
-   HYPRE_Int             cdir;  /* coarsening direction */
+   NALU_HYPRE_Int             cdir;  /* coarsening direction */
 
    /* base index space info */
    hypre_Index           base_index;
@@ -43,9 +43,9 @@ typedef struct
    hypre_StructGrid    **grid_l;
    hypre_StructGrid    **PT_grid_l;
 
-   HYPRE_MemoryLocation  memory_location; /* memory location of data */
-   HYPRE_Real           *data;
-   HYPRE_Real           *data_const;
+   NALU_HYPRE_MemoryLocation  memory_location; /* memory location of data */
+   NALU_HYPRE_Real           *data;
+   NALU_HYPRE_Real           *data_const;
    hypre_StructMatrix  **A_l;
    hypre_StructMatrix  **PT_l;
    hypre_StructMatrix  **R_l;
@@ -64,15 +64,15 @@ typedef struct
    void                **interp_data_l;
 
    /* log info (always logged) */
-   HYPRE_Int             num_iterations;
-   HYPRE_Int             time_index;
+   NALU_HYPRE_Int             num_iterations;
+   NALU_HYPRE_Int             time_index;
 
-   HYPRE_Int             print_level;
+   NALU_HYPRE_Int             print_level;
 
    /* additional log info (logged when `logging' > 0) */
-   HYPRE_Int             logging;
-   HYPRE_Real           *norms;
-   HYPRE_Real           *rel_norms;
+   NALU_HYPRE_Int             logging;
+   NALU_HYPRE_Real           *norms;
+   NALU_HYPRE_Real           *rel_norms;
 } hypre_SMGData;
 
 /*--------------------------------------------------------------------------

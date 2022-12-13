@@ -7,36 +7,36 @@
 
 #include "_hypre_utilities.h"
 
-#ifdef HYPRE_COMPLEX
+#ifdef NALU_HYPRE_COMPLEX
 
 #include <complex.h>
 
-HYPRE_Complex
-hypre_conj( HYPRE_Complex value )
+NALU_HYPRE_Complex
+hypre_conj( NALU_HYPRE_Complex value )
 {
    return conj(value);
 }
 
-HYPRE_Real
-hypre_cabs( HYPRE_Complex value )
+NALU_HYPRE_Real
+hypre_cabs( NALU_HYPRE_Complex value )
 {
    return cabs(value);
 }
 
-HYPRE_Real
-hypre_creal( HYPRE_Complex value )
+NALU_HYPRE_Real
+hypre_creal( NALU_HYPRE_Complex value )
 {
    return creal(value);
 }
 
-HYPRE_Real
-hypre_cimag( HYPRE_Complex value )
+NALU_HYPRE_Real
+hypre_cimag( NALU_HYPRE_Complex value )
 {
    return cimag(value);
 }
 
-HYPRE_Complex
-hypre_csqrt( HYPRE_Complex value )
+NALU_HYPRE_Complex
+hypre_csqrt( NALU_HYPRE_Complex value )
 {
    return csqrt(value);
 }

@@ -54,10 +54,10 @@ typedef struct
 {
    MPI_Comm              comm;
 
-   HYPRE_Int             num_levels;
+   NALU_HYPRE_Int             num_levels;
 
-   HYPRE_Int             ndim;
-   HYPRE_Int             cdir;         /* coarsening direction */
+   NALU_HYPRE_Int             ndim;
+   NALU_HYPRE_Int             cdir;         /* coarsening direction */
    hypre_Index           base_index;
    hypre_Index           base_stride;
 
@@ -66,18 +66,18 @@ typedef struct
    hypre_BoxArray       *base_points;
    hypre_BoxArray      **fine_points_l;
 
-   HYPRE_MemoryLocation  memory_location; /* memory location of data */
-   HYPRE_Real           *data;
-   HYPRE_Real           *data_const;
+   NALU_HYPRE_MemoryLocation  memory_location; /* memory location of data */
+   NALU_HYPRE_Real           *data;
+   NALU_HYPRE_Real           *data_const;
    hypre_StructMatrix  **A_l;
    hypre_StructVector  **x_l;
 
    hypre_ComputePkg    **down_compute_pkg_l;
    hypre_ComputePkg    **up_compute_pkg_l;
 
-   HYPRE_Int             time_index;
-   HYPRE_BigInt          solve_flops;
-   HYPRE_Int             max_levels;
+   NALU_HYPRE_Int             time_index;
+   NALU_HYPRE_BigInt          solve_flops;
+   NALU_HYPRE_Int             max_levels;
 } hypre_CyclicReductionData;
 
 /*--------------------------------------------------------------------------
@@ -89,7 +89,7 @@ hypre_CyclicReductionCreate( MPI_Comm  comm )
 {
    hypre_CyclicReductionData *cyc_red_data;
 
-   cyc_red_data = hypre_CTAlloc(hypre_CyclicReductionData,  1, HYPRE_MEMORY_HOST);
+   cyc_red_data = hypre_CTAlloc(hypre_CyclicReductionData,  1, NALU_HYPRE_MEMORY_HOST);
 
    (cyc_red_data -> comm) = comm;
    (cyc_red_data -> ndim) = 3;
@@ -117,17 +117,17 @@ hypre_CyclicReductionCreate( MPI_Comm  comm )
 hypre_StructMatrix *
 hypre_CycRedCreateCoarseOp( hypre_StructMatrix *A,
                             hypre_StructGrid   *coarse_grid,
-                            HYPRE_Int           cdir        )
+                            NALU_HYPRE_Int           cdir        )
 {
-   HYPRE_Int              ndim = hypre_StructMatrixNDim(A);
+   NALU_HYPRE_Int              ndim = hypre_StructMatrixNDim(A);
    hypre_StructMatrix    *Ac;
    hypre_Index           *Ac_stencil_shape;
    hypre_StructStencil   *Ac_stencil;
-   HYPRE_Int              Ac_stencil_size;
-   HYPRE_Int              Ac_num_ghost[] = {0, 0, 0, 0, 0, 0};
+   NALU_HYPRE_Int              Ac_stencil_size;
+   NALU_HYPRE_Int              Ac_num_ghost[] = {0, 0, 0, 0, 0, 0};
 
-   HYPRE_Int              i;
-   HYPRE_Int              stencil_rank;
+   NALU_HYPRE_Int              i;
+   NALU_HYPRE_Int              stencil_rank;
 
    /*-----------------------------------------------
     * Define Ac_stencil
@@ -144,7 +144,7 @@ hypre_CycRedCreateCoarseOp( hypre_StructMatrix *A,
    if (!hypre_StructMatrixSymmetric(A))
    {
       Ac_stencil_size = 3;
-      Ac_stencil_shape = hypre_CTAlloc(hypre_Index,  Ac_stencil_size, HYPRE_MEMORY_HOST);
+      Ac_stencil_shape = hypre_CTAlloc(hypre_Index,  Ac_stencil_size, NALU_HYPRE_MEMORY_HOST);
       for (i = -1; i < 2; i++)
       {
          /* Storage for 3 elements (c,w,e) */
@@ -167,7 +167,7 @@ hypre_CycRedCreateCoarseOp( hypre_StructMatrix *A,
    else
    {
       Ac_stencil_size = 2;
-      Ac_stencil_shape = hypre_CTAlloc(hypre_Index,  Ac_stencil_size, HYPRE_MEMORY_HOST);
+      Ac_stencil_shape = hypre_CTAlloc(hypre_Index,  Ac_stencil_size, NALU_HYPRE_MEMORY_HOST);
       for (i = -1; i < 1; i++)
       {
 
@@ -211,20 +211,20 @@ hypre_CycRedCreateCoarseOp( hypre_StructMatrix *A,
  * hypre_CycRedSetupCoarseOp
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_CycRedSetupCoarseOp( hypre_StructMatrix *A,
                            hypre_StructMatrix *Ac,
                            hypre_Index         cindex,
                            hypre_Index         cstride,
-                           HYPRE_Int           cdir )
+                           NALU_HYPRE_Int           cdir )
 {
    hypre_Index             index;
 
    hypre_StructGrid       *fgrid;
-   HYPRE_Int              *fgrid_ids;
+   NALU_HYPRE_Int              *fgrid_ids;
    hypre_StructGrid       *cgrid;
    hypre_BoxArray         *cgrid_boxes;
-   HYPRE_Int              *cgrid_ids;
+   NALU_HYPRE_Int              *cgrid_ids;
    hypre_Box              *cgrid_box;
    hypre_IndexRef          cstart;
    hypre_Index             stridec;
@@ -232,15 +232,15 @@ hypre_CycRedSetupCoarseOp( hypre_StructMatrix *A,
    hypre_IndexRef          stridef;
    hypre_Index             loop_size;
 
-   HYPRE_Int               fi, ci;
+   NALU_HYPRE_Int               fi, ci;
 
    hypre_Box              *A_dbox;
    hypre_Box              *Ac_dbox;
 
-   HYPRE_Real             *a_cc, *a_cw, *a_ce;
-   HYPRE_Real             *ac_cc, *ac_cw, *ac_ce;
+   NALU_HYPRE_Real             *a_cc, *a_cw, *a_ce;
+   NALU_HYPRE_Real             *ac_cc, *ac_cw, *ac_ce;
 
-   HYPRE_Int               offsetA;
+   NALU_HYPRE_Int               offsetA;
 
    stridef = cstride;
    hypre_SetIndex3(stridec, 1, 1, 1);
@@ -333,8 +333,8 @@ hypre_CycRedSetupCoarseOp( hypre_StructMatrix *A,
                              A_dbox, fstart, stridef, iA,
                              Ac_dbox, cstart, stridec, iAc);
          {
-            HYPRE_Int iAm1 = iA - offsetA;
-            HYPRE_Int iAp1 = iA + offsetA;
+            NALU_HYPRE_Int iAm1 = iA - offsetA;
+            NALU_HYPRE_Int iAp1 = iA + offsetA;
 
             ac_cw[iAc] = -a_cw[iA] * a_cw[iAm1] / a_cc[iAm1];
 
@@ -361,8 +361,8 @@ hypre_CycRedSetupCoarseOp( hypre_StructMatrix *A,
                              A_dbox, fstart, stridef, iA,
                              Ac_dbox, cstart, stridec, iAc);
          {
-            HYPRE_Int iAm1 = iA - offsetA;
-            HYPRE_Int iAp1 = iA + offsetA;
+            NALU_HYPRE_Int iAm1 = iA - offsetA;
+            NALU_HYPRE_Int iAp1 = iA + offsetA;
 
             ac_cw[iAc] = -a_cw[iA] * a_cw[iAm1] / a_cc[iAm1];
 
@@ -464,7 +464,7 @@ hypre_CycRedSetupCoarseOp( hypre_StructMatrix *A,
  * hypre_CyclicReductionSetup
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_CyclicReductionSetup( void               *cyc_red_vdata,
                             hypre_StructMatrix *A,
                             hypre_StructVector *b,
@@ -473,19 +473,19 @@ hypre_CyclicReductionSetup( void               *cyc_red_vdata,
    hypre_CyclicReductionData *cyc_red_data = (hypre_CyclicReductionData *) cyc_red_vdata;
 
    MPI_Comm                comm        = (cyc_red_data -> comm);
-   HYPRE_Int               cdir        = (cyc_red_data -> cdir);
+   NALU_HYPRE_Int               cdir        = (cyc_red_data -> cdir);
    hypre_IndexRef          base_index  = (cyc_red_data -> base_index);
    hypre_IndexRef          base_stride = (cyc_red_data -> base_stride);
 
-   HYPRE_Int               num_levels;
-   HYPRE_Int               max_levels = -1;
+   NALU_HYPRE_Int               num_levels;
+   NALU_HYPRE_Int               max_levels = -1;
    hypre_StructGrid      **grid_l;
    hypre_BoxArray         *base_points;
    hypre_BoxArray        **fine_points_l;
-   HYPRE_Real             *data;
-   HYPRE_Real             *data_const;
-   HYPRE_Int               data_size = 0;
-   HYPRE_Int               data_size_const = 0;
+   NALU_HYPRE_Real             *data;
+   NALU_HYPRE_Real             *data_const;
+   NALU_HYPRE_Int               data_size = 0;
+   NALU_HYPRE_Int               data_size_const = 0;
    hypre_StructMatrix    **A_l;
    hypre_StructVector    **x_l;
    hypre_ComputePkg      **down_compute_pkg_l;
@@ -498,11 +498,11 @@ hypre_CyclicReductionSetup( void               *cyc_red_vdata,
 
    hypre_StructGrid       *grid;
    hypre_Box              *cbox;
-   HYPRE_Int               l;
-   HYPRE_Int               flop_divisor;
-   HYPRE_Int               x_num_ghost[] = {0, 0, 0, 0, 0, 0};
+   NALU_HYPRE_Int               l;
+   NALU_HYPRE_Int               flop_divisor;
+   NALU_HYPRE_Int               x_num_ghost[] = {0, 0, 0, 0, 0, 0};
 
-   HYPRE_MemoryLocation    memory_location = hypre_StructMatrixMemoryLocation(A);
+   NALU_HYPRE_MemoryLocation    memory_location = hypre_StructMatrixMemoryLocation(A);
 
    /*-----------------------------------------------------
     * Set up coarse grids
@@ -519,10 +519,10 @@ hypre_CyclicReductionSetup( void               *cyc_red_vdata,
    }
 
 
-   grid_l    = hypre_TAlloc(hypre_StructGrid *,  num_levels, HYPRE_MEMORY_HOST);
+   grid_l    = hypre_TAlloc(hypre_StructGrid *,  num_levels, NALU_HYPRE_MEMORY_HOST);
    hypre_StructGridRef(grid, &grid_l[0]);
 
-#if 0 //defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP)
+#if 0 //defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
    data_location = hypre_StructGridDataLocation(grid);
 #endif
    for (l = 0; ; l++)
@@ -548,7 +548,7 @@ hypre_CyclicReductionSetup( void               *cyc_red_vdata,
 
       /* coarsen the grid */
       hypre_StructCoarsen(grid_l[l], cindex, stride, 1, &grid_l[l + 1]);
-#if 0 //defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP)
+#if 0 //defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
       hypre_StructGridDataLocation(grid_l[l + 1]) = data_location;
 #endif
    }
@@ -574,7 +574,7 @@ hypre_CyclicReductionSetup( void               *cyc_red_vdata,
     * Set up fine points
     *-----------------------------------------------------*/
 
-   fine_points_l   = hypre_TAlloc(hypre_BoxArray *,   num_levels, HYPRE_MEMORY_HOST);
+   fine_points_l   = hypre_TAlloc(hypre_BoxArray *,   num_levels, NALU_HYPRE_MEMORY_HOST);
 
    for (l = 0; l < (num_levels - 1); l++)
    {
@@ -598,8 +598,8 @@ hypre_CyclicReductionSetup( void               *cyc_red_vdata,
     * Set up matrix and vector structures
     *-----------------------------------------------------*/
 
-   A_l  = hypre_TAlloc(hypre_StructMatrix *,  num_levels, HYPRE_MEMORY_HOST);
-   x_l  = hypre_TAlloc(hypre_StructVector *,  num_levels, HYPRE_MEMORY_HOST);
+   A_l  = hypre_TAlloc(hypre_StructMatrix *,  num_levels, NALU_HYPRE_MEMORY_HOST);
+   x_l  = hypre_TAlloc(hypre_StructVector *,  num_levels, NALU_HYPRE_MEMORY_HOST);
 
    A_l[0] = hypre_StructMatrixRef(A);
    x_l[0] = hypre_StructVectorRef(x);
@@ -620,8 +620,8 @@ hypre_CyclicReductionSetup( void               *cyc_red_vdata,
       hypre_StructVectorSetDataSize(x_l[l + 1], &data_size, &data_size_const);
    }
 
-   data = hypre_CTAlloc(HYPRE_Real, data_size, memory_location);
-   data_const = hypre_CTAlloc(HYPRE_Real, data_size_const, HYPRE_MEMORY_HOST);
+   data = hypre_CTAlloc(NALU_HYPRE_Real, data_size, memory_location);
+   data_const = hypre_CTAlloc(NALU_HYPRE_Real, data_size_const, NALU_HYPRE_MEMORY_HOST);
 
    (cyc_red_data -> memory_location) = memory_location;
    (cyc_red_data -> data) = data;
@@ -633,8 +633,8 @@ hypre_CyclicReductionSetup( void               *cyc_red_vdata,
       data += hypre_StructMatrixDataSize(A_l[l + 1]);
       data_const += hypre_StructMatrixDataConstSize(A_l[l + 1]);
 
-#if 0 //defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP)
-      if (data_location != HYPRE_MEMORY_HOST)
+#if 0 //defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
+      if (data_location != NALU_HYPRE_MEMORY_HOST)
       {
          hypre_StructVectorInitializeData(x_l[l + 1], data);
          hypre_StructVectorAssemble(x_l[l + 1]);
@@ -672,8 +672,8 @@ hypre_CyclicReductionSetup( void               *cyc_red_vdata,
     * Set up compute packages
     *----------------------------------------------------------*/
 
-   down_compute_pkg_l = hypre_TAlloc(hypre_ComputePkg *,  (num_levels - 1), HYPRE_MEMORY_HOST);
-   up_compute_pkg_l   = hypre_TAlloc(hypre_ComputePkg *,  (num_levels - 1), HYPRE_MEMORY_HOST);
+   down_compute_pkg_l = hypre_TAlloc(hypre_ComputePkg *,  (num_levels - 1), NALU_HYPRE_MEMORY_HOST);
+   up_compute_pkg_l   = hypre_TAlloc(hypre_ComputePkg *,  (num_levels - 1), NALU_HYPRE_MEMORY_HOST);
 
    for (l = 0; l < (num_levels - 1); l++)
    {
@@ -713,9 +713,9 @@ hypre_CyclicReductionSetup( void               *cyc_red_vdata,
                    hypre_IndexY(base_stride) *
                    hypre_IndexZ(base_stride)  );
    (cyc_red_data -> solve_flops) =
-      hypre_StructVectorGlobalSize(x_l[0]) / 2 / (HYPRE_BigInt)flop_divisor;
+      hypre_StructVectorGlobalSize(x_l[0]) / 2 / (NALU_HYPRE_BigInt)flop_divisor;
    (cyc_red_data -> solve_flops) +=
-      5 * hypre_StructVectorGlobalSize(x_l[0]) / 2 / (HYPRE_BigInt)flop_divisor;
+      5 * hypre_StructVectorGlobalSize(x_l[0]) / 2 / (NALU_HYPRE_BigInt)flop_divisor;
    for (l = 1; l < (num_levels - 1); l++)
    {
       (cyc_red_data -> solve_flops) +=
@@ -758,7 +758,7 @@ hypre_CyclicReductionSetup( void               *cyc_red_vdata,
  * allowing one to assume initial guesses of zero on all grid levels.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_CyclicReduction( void               *cyc_red_vdata,
                        hypre_StructMatrix *A,
                        hypre_StructVector *b,
@@ -766,8 +766,8 @@ hypre_CyclicReduction( void               *cyc_red_vdata,
 {
    hypre_CyclicReductionData *cyc_red_data = (hypre_CyclicReductionData *)cyc_red_vdata;
 
-   HYPRE_Int             num_levels      = (cyc_red_data -> num_levels);
-   HYPRE_Int             cdir            = (cyc_red_data -> cdir);
+   NALU_HYPRE_Int             num_levels      = (cyc_red_data -> num_levels);
+   NALU_HYPRE_Int             cdir            = (cyc_red_data -> cdir);
    hypre_IndexRef        base_index      = (cyc_red_data -> base_index);
    hypre_IndexRef        base_stride     = (cyc_red_data -> base_stride);
    hypre_BoxArray       *base_points     = (cyc_red_data -> base_points);
@@ -778,10 +778,10 @@ hypre_CyclicReduction( void               *cyc_red_vdata,
    hypre_ComputePkg    **up_compute_pkg_l   = (cyc_red_data -> up_compute_pkg_l);
 
    hypre_StructGrid     *fgrid;
-   HYPRE_Int            *fgrid_ids;
+   NALU_HYPRE_Int            *fgrid_ids;
    hypre_StructGrid     *cgrid;
    hypre_BoxArray       *cgrid_boxes;
-   HYPRE_Int            *cgrid_ids;
+   NALU_HYPRE_Int            *cgrid_ids;
 
    hypre_CommHandle     *comm_handle;
 
@@ -794,10 +794,10 @@ hypre_CyclicReduction( void               *cyc_red_vdata,
    hypre_Box            *b_dbox;
    hypre_Box            *xc_dbox;
 
-   HYPRE_Real           *Ap, *Awp, *Aep;
-   HYPRE_Real           *xp, *xwp, *xep;
-   HYPRE_Real           *bp;
-   HYPRE_Real           *xcp;
+   NALU_HYPRE_Real           *Ap, *Awp, *Aep;
+   NALU_HYPRE_Real           *xp, *xwp, *xep;
+   NALU_HYPRE_Real           *bp;
+   NALU_HYPRE_Real           *xcp;
 
    hypre_Index           cindex;
    hypre_Index           stride;
@@ -808,7 +808,7 @@ hypre_CyclicReduction( void               *cyc_red_vdata,
    hypre_Index           startc;
    hypre_Index           stridec;
 
-   HYPRE_Int             compute_i, fi, ci, j, l;
+   NALU_HYPRE_Int             compute_i, fi, ci, j, l;
 
    hypre_BeginTiming(cyc_red_data -> time_index);
 
@@ -954,13 +954,13 @@ hypre_CyclicReduction( void               *cyc_red_vdata,
             Awp = hypre_StructMatrixExtractPointerByIndex(A_l[l], fi, index);
             xwp = hypre_StructVectorBoxData(x_l[l], fi);
             //RL:PTR_OFFSET
-            HYPRE_Int xwp_offset = hypre_BoxOffsetDistance(x_dbox, index);
+            NALU_HYPRE_Int xwp_offset = hypre_BoxOffsetDistance(x_dbox, index);
 
             hypre_SetIndex3(index, 0, 0, 0);
             hypre_IndexD(index, cdir) = 1;
             Aep = hypre_StructMatrixExtractPointerByIndex(A_l[l], fi, index);
             xep = hypre_StructVectorBoxData(x_l[l], fi);
-            HYPRE_Int xep_offset = hypre_BoxOffsetDistance(x_dbox, index);
+            NALU_HYPRE_Int xep_offset = hypre_BoxOffsetDistance(x_dbox, index);
 
             hypre_ForBoxI(j, compute_box_a)
             {
@@ -1123,13 +1123,13 @@ hypre_CyclicReduction( void               *cyc_red_vdata,
             Awp = hypre_StructMatrixExtractPointerByIndex(A_l[l], fi, index);
             //RL PTROFFSET
             xwp = hypre_StructVectorBoxData(x_l[l], fi);
-            HYPRE_Int xwp_offset = hypre_BoxOffsetDistance(x_dbox, index);
+            NALU_HYPRE_Int xwp_offset = hypre_BoxOffsetDistance(x_dbox, index);
 
             hypre_SetIndex3(index, 0, 0, 0);
             hypre_IndexD(index, cdir) = 1;
             Aep = hypre_StructMatrixExtractPointerByIndex(A_l[l], fi, index);
             xep = hypre_StructVectorBoxData(x_l[l], fi);
-            HYPRE_Int xep_offset = hypre_BoxOffsetDistance(x_dbox, index);
+            NALU_HYPRE_Int xep_offset = hypre_BoxOffsetDistance(x_dbox, index);
 
             hypre_ForBoxI(j, compute_box_a)
             {
@@ -1166,13 +1166,13 @@ hypre_CyclicReduction( void               *cyc_red_vdata,
  * hypre_CyclicReductionSetBase
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_CyclicReductionSetBase( void        *cyc_red_vdata,
                               hypre_Index  base_index,
                               hypre_Index  base_stride )
 {
    hypre_CyclicReductionData *cyc_red_data = (hypre_CyclicReductionData *)cyc_red_vdata;
-   HYPRE_Int                d;
+   NALU_HYPRE_Int                d;
 
    for (d = 0; d < 3; d++)
    {
@@ -1189,9 +1189,9 @@ hypre_CyclicReductionSetBase( void        *cyc_red_vdata,
  * hypre_CyclicReductionSetCDir
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_CyclicReductionSetCDir( void        *cyc_red_vdata,
-                              HYPRE_Int    cdir )
+                              NALU_HYPRE_Int    cdir )
 {
    hypre_CyclicReductionData *cyc_red_data = (hypre_CyclicReductionData *)cyc_red_vdata;
 
@@ -1204,16 +1204,16 @@ hypre_CyclicReductionSetCDir( void        *cyc_red_vdata,
  * hypre_CyclicReductionDestroy
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_CyclicReductionDestroy( void *cyc_red_vdata )
 {
    hypre_CyclicReductionData *cyc_red_data = (hypre_CyclicReductionData *)cyc_red_vdata;
 
-   HYPRE_Int l;
+   NALU_HYPRE_Int l;
 
    if (cyc_red_data)
    {
-      HYPRE_MemoryLocation memory_location = cyc_red_data -> memory_location;
+      NALU_HYPRE_MemoryLocation memory_location = cyc_red_data -> memory_location;
 
       hypre_BoxArrayDestroy(cyc_red_data -> base_points);
       hypre_StructGridDestroy(cyc_red_data -> grid_l[0]);
@@ -1230,15 +1230,15 @@ hypre_CyclicReductionDestroy( void *cyc_red_vdata )
       }
       hypre_BoxArrayDestroy(cyc_red_data -> fine_points_l[l]);
       hypre_TFree(cyc_red_data -> data, memory_location);
-      hypre_TFree(cyc_red_data -> grid_l, HYPRE_MEMORY_HOST);
-      hypre_TFree(cyc_red_data -> fine_points_l, HYPRE_MEMORY_HOST);
-      hypre_TFree(cyc_red_data -> A_l, HYPRE_MEMORY_HOST);
-      hypre_TFree(cyc_red_data -> x_l, HYPRE_MEMORY_HOST);
-      hypre_TFree(cyc_red_data -> down_compute_pkg_l, HYPRE_MEMORY_HOST);
-      hypre_TFree(cyc_red_data -> up_compute_pkg_l, HYPRE_MEMORY_HOST);
+      hypre_TFree(cyc_red_data -> grid_l, NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(cyc_red_data -> fine_points_l, NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(cyc_red_data -> A_l, NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(cyc_red_data -> x_l, NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(cyc_red_data -> down_compute_pkg_l, NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(cyc_red_data -> up_compute_pkg_l, NALU_HYPRE_MEMORY_HOST);
 
       hypre_FinalizeTiming(cyc_red_data -> time_index);
-      hypre_TFree(cyc_red_data, HYPRE_MEMORY_HOST);
+      hypre_TFree(cyc_red_data, NALU_HYPRE_MEMORY_HOST);
    }
 
    return hypre_error_flag;
@@ -1248,9 +1248,9 @@ hypre_CyclicReductionDestroy( void *cyc_red_vdata )
  * hypre_CyclicReductionDestroy
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_CyclicReductionSetMaxLevel( void   *cyc_red_vdata,
-                                  HYPRE_Int   max_level  )
+                                  NALU_HYPRE_Int   max_level  )
 {
    hypre_CyclicReductionData *cyc_red_data = (hypre_CyclicReductionData *)cyc_red_vdata;
    (cyc_red_data -> max_levels) = max_level;

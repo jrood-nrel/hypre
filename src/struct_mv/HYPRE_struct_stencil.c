@@ -7,24 +7,24 @@
 
 /******************************************************************************
  *
- * HYPRE_StructStencil interface
+ * NALU_HYPRE_StructStencil interface
  *
  *****************************************************************************/
 
 #include "_hypre_struct_mv.h"
 
 /*--------------------------------------------------------------------------
- * HYPRE_StructStencilCreate
+ * NALU_HYPRE_StructStencilCreate
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_StructStencilCreate( HYPRE_Int            dim,
-                           HYPRE_Int            size,
-                           HYPRE_StructStencil *stencil )
+NALU_HYPRE_Int
+NALU_HYPRE_StructStencilCreate( NALU_HYPRE_Int            dim,
+                           NALU_HYPRE_Int            size,
+                           NALU_HYPRE_StructStencil *stencil )
 {
    hypre_Index  *shape;
 
-   shape = hypre_CTAlloc(hypre_Index,  size, HYPRE_MEMORY_HOST);
+   shape = hypre_CTAlloc(hypre_Index,  size, NALU_HYPRE_MEMORY_HOST);
 
    *stencil = hypre_StructStencilCreate(dim, size, shape);
 
@@ -32,16 +32,16 @@ HYPRE_StructStencilCreate( HYPRE_Int            dim,
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_StructStencilSetElement
+ * NALU_HYPRE_StructStencilSetElement
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_StructStencilSetElement( HYPRE_StructStencil  stencil,
-                               HYPRE_Int            element_index,
-                               HYPRE_Int           *offset )
+NALU_HYPRE_Int
+NALU_HYPRE_StructStencilSetElement( NALU_HYPRE_StructStencil  stencil,
+                               NALU_HYPRE_Int            element_index,
+                               NALU_HYPRE_Int           *offset )
 {
    hypre_Index  *shape;
-   HYPRE_Int     d;
+   NALU_HYPRE_Int     d;
 
    shape = hypre_StructStencilShape(stencil);
    hypre_SetIndex(shape[element_index], 0);
@@ -54,11 +54,11 @@ HYPRE_StructStencilSetElement( HYPRE_StructStencil  stencil,
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_StructStencilDestroy
+ * NALU_HYPRE_StructStencilDestroy
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_StructStencilDestroy( HYPRE_StructStencil stencil )
+NALU_HYPRE_Int
+NALU_HYPRE_StructStencilDestroy( NALU_HYPRE_StructStencil stencil )
 {
    return ( hypre_StructStencilDestroy(stencil) );
 }

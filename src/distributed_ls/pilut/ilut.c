@@ -22,16 +22,16 @@
 /*************************************************************************
 * This function is the entry point of the hypre_ILUT factorization
 **************************************************************************/
-HYPRE_Int hypre_ILUT(DataDistType *ddist, HYPRE_DistributedMatrix matrix, FactorMatType *ldu,
-          HYPRE_Int maxnz, HYPRE_Real tol, hypre_PilutSolverGlobals *globals )
+NALU_HYPRE_Int hypre_ILUT(DataDistType *ddist, NALU_HYPRE_DistributedMatrix matrix, FactorMatType *ldu,
+          NALU_HYPRE_Int maxnz, NALU_HYPRE_Real tol, hypre_PilutSolverGlobals *globals )
 {
-  HYPRE_Int i, ierr;
+  NALU_HYPRE_Int i, ierr;
   ReduceMatType rmat;
-  HYPRE_Int dummy_row_ptr[2], size;
-  HYPRE_Real *values;
+  NALU_HYPRE_Int dummy_row_ptr[2], size;
+  NALU_HYPRE_Real *values;
 
-#ifdef HYPRE_DEBUG
-  HYPRE_Int logging = globals ? globals->logging : 0;
+#ifdef NALU_HYPRE_DEBUG
+  NALU_HYPRE_Int logging = globals ? globals->logging : 0;
   if (logging)
   {
      hypre_printf("hypre_ILUT, maxnz = %d\n ", maxnz);
@@ -39,40 +39,40 @@ HYPRE_Int hypre_ILUT(DataDistType *ddist, HYPRE_DistributedMatrix matrix, Factor
 #endif
 
   /* Allocate memory for ldu */
-  if (ldu->lsrowptr) hypre_TFree(ldu->lsrowptr, HYPRE_MEMORY_HOST);
+  if (ldu->lsrowptr) hypre_TFree(ldu->lsrowptr, NALU_HYPRE_MEMORY_HOST);
   ldu->lsrowptr = hypre_idx_malloc(ddist->ddist_lnrows, "hypre_ILUT: ldu->lsrowptr");
 
-  if (ldu->lerowptr) hypre_TFree(ldu->lerowptr, HYPRE_MEMORY_HOST);
+  if (ldu->lerowptr) hypre_TFree(ldu->lerowptr, NALU_HYPRE_MEMORY_HOST);
   ldu->lerowptr = hypre_idx_malloc(ddist->ddist_lnrows, "hypre_ILUT: ldu->lerowptr");
 
-  if (ldu->lcolind) hypre_TFree(ldu->lcolind, HYPRE_MEMORY_HOST);
+  if (ldu->lcolind) hypre_TFree(ldu->lcolind, NALU_HYPRE_MEMORY_HOST);
   ldu->lcolind  = hypre_idx_malloc_init(maxnz*ddist->ddist_lnrows, 0, "hypre_ILUT: ldu->lcolind");
 
-  if (ldu->lvalues) hypre_TFree(ldu->lvalues, HYPRE_MEMORY_HOST);
+  if (ldu->lvalues) hypre_TFree(ldu->lvalues, NALU_HYPRE_MEMORY_HOST);
   ldu->lvalues  =  hypre_fp_malloc_init(maxnz*ddist->ddist_lnrows, 0, "hypre_ILUT: ldu->lvalues");
 
-  if (ldu->usrowptr) hypre_TFree(ldu->usrowptr, HYPRE_MEMORY_HOST);
+  if (ldu->usrowptr) hypre_TFree(ldu->usrowptr, NALU_HYPRE_MEMORY_HOST);
   ldu->usrowptr = hypre_idx_malloc(ddist->ddist_lnrows, "hypre_ILUT: ldu->usrowptr");
 
-  if (ldu->uerowptr) hypre_TFree(ldu->uerowptr, HYPRE_MEMORY_HOST);
+  if (ldu->uerowptr) hypre_TFree(ldu->uerowptr, NALU_HYPRE_MEMORY_HOST);
   ldu->uerowptr = hypre_idx_malloc(ddist->ddist_lnrows, "hypre_ILUT: ldu->uerowptr");
 
-  if (ldu->ucolind) hypre_TFree(ldu->ucolind, HYPRE_MEMORY_HOST);
+  if (ldu->ucolind) hypre_TFree(ldu->ucolind, NALU_HYPRE_MEMORY_HOST);
   ldu->ucolind  = hypre_idx_malloc_init(maxnz*ddist->ddist_lnrows, 0, "hypre_ILUT: ldu->ucolind");
 
-  if (ldu->uvalues) hypre_TFree(ldu->uvalues, HYPRE_MEMORY_HOST);
+  if (ldu->uvalues) hypre_TFree(ldu->uvalues, NALU_HYPRE_MEMORY_HOST);
   ldu->uvalues  =  hypre_fp_malloc_init(maxnz*ddist->ddist_lnrows, 0.0, "hypre_ILUT: ldu->uvalues");
 
-  if (ldu->dvalues) hypre_TFree(ldu->dvalues, HYPRE_MEMORY_HOST);
+  if (ldu->dvalues) hypre_TFree(ldu->dvalues, NALU_HYPRE_MEMORY_HOST);
   ldu->dvalues = hypre_fp_malloc(ddist->ddist_lnrows, "hypre_ILUT: ldu->dvalues");
 
-  if (ldu->nrm2s) hypre_TFree(ldu->nrm2s, HYPRE_MEMORY_HOST);
+  if (ldu->nrm2s) hypre_TFree(ldu->nrm2s, NALU_HYPRE_MEMORY_HOST);
   ldu->nrm2s   = hypre_fp_malloc_init(ddist->ddist_lnrows, 0.0, "hypre_ILUT: ldu->nrm2s");
 
-  if (ldu->perm) hypre_TFree(ldu->perm, HYPRE_MEMORY_HOST);
+  if (ldu->perm) hypre_TFree(ldu->perm, NALU_HYPRE_MEMORY_HOST);
   ldu->perm  = hypre_idx_malloc_init(ddist->ddist_lnrows, 0, "hypre_ILUT: ldu->perm");
 
-  if (ldu->iperm) hypre_TFree(ldu->iperm, HYPRE_MEMORY_HOST);
+  if (ldu->iperm) hypre_TFree(ldu->iperm, NALU_HYPRE_MEMORY_HOST);
   ldu->iperm = hypre_idx_malloc_init(ddist->ddist_lnrows, 0, "hypre_ILUT: ldu->iperm");
 
   firstrow = ddist->ddist_rowdist[mype];
@@ -86,21 +86,21 @@ HYPRE_Int hypre_ILUT(DataDistType *ddist, HYPRE_DistributedMatrix matrix, Factor
       ldu->usrowptr[i] =
       ldu->uerowptr[i] = maxnz*i;
 
-    ierr = HYPRE_DistributedMatrixGetRow( matrix, firstrow+i, &size,
+    ierr = NALU_HYPRE_DistributedMatrixGetRow( matrix, firstrow+i, &size,
                NULL, &values);
     /* if (ierr) return(ierr);*/
     dummy_row_ptr[ 1 ] = size;
     hypre_ComputeAdd2Nrms( 1, dummy_row_ptr, values, &(ldu->nrm2s[i]) );
-    ierr = HYPRE_DistributedMatrixRestoreRow( matrix, firstrow+i, &size,
+    ierr = NALU_HYPRE_DistributedMatrixRestoreRow( matrix, firstrow+i, &size,
                NULL, &values);
   }
 
   /* Factor the internal nodes first */
   hypre_MPI_Barrier( pilut_comm );
 
-#ifdef HYPRE_TIMING
+#ifdef NALU_HYPRE_TIMING
   {
-   HYPRE_Int SerILUT_timer;
+   NALU_HYPRE_Int SerILUT_timer;
 
    SerILUT_timer = hypre_InitializeTiming( "Sequential hypre_ILUT done on each proc" );
 
@@ -111,16 +111,16 @@ HYPRE_Int hypre_ILUT(DataDistType *ddist, HYPRE_DistributedMatrix matrix, Factor
 
   hypre_MPI_Barrier( pilut_comm );
 
-#ifdef HYPRE_TIMING
+#ifdef NALU_HYPRE_TIMING
    hypre_EndTiming( SerILUT_timer );
    /* hypre_FinalizeTiming( SerILUT_timer ); */
   }
 #endif
 
   /* Factor the interface nodes */
-#ifdef HYPRE_TIMING
+#ifdef NALU_HYPRE_TIMING
   {
-   HYPRE_Int ParILUT_timer;
+   NALU_HYPRE_Int ParILUT_timer;
 
    ParILUT_timer = hypre_InitializeTiming( "Parallel portion of hypre_ILUT factorization" );
 
@@ -131,7 +131,7 @@ HYPRE_Int hypre_ILUT(DataDistType *ddist, HYPRE_DistributedMatrix matrix, Factor
 
   hypre_MPI_Barrier( pilut_comm );
 
-#ifdef HYPRE_TIMING
+#ifdef NALU_HYPRE_TIMING
    hypre_EndTiming( ParILUT_timer );
    /* hypre_FinalizeTiming( ParILUT_timer ); */
   }
@@ -139,10 +139,10 @@ HYPRE_Int hypre_ILUT(DataDistType *ddist, HYPRE_DistributedMatrix matrix, Factor
 
   /*hypre_free_multi(rmat.rmat_rnz, rmat.rmat_rrowlen,
              rmat.rmat_rcolind, rmat.rmat_rvalues, -1);*/
-  hypre_TFree(rmat.rmat_rnz, HYPRE_MEMORY_HOST);
-  hypre_TFree(rmat.rmat_rrowlen, HYPRE_MEMORY_HOST);
-  hypre_TFree(rmat.rmat_rcolind, HYPRE_MEMORY_HOST);
-  hypre_TFree(rmat.rmat_rvalues, HYPRE_MEMORY_HOST);
+  hypre_TFree(rmat.rmat_rnz, NALU_HYPRE_MEMORY_HOST);
+  hypre_TFree(rmat.rmat_rrowlen, NALU_HYPRE_MEMORY_HOST);
+  hypre_TFree(rmat.rmat_rcolind, NALU_HYPRE_MEMORY_HOST);
+  hypre_TFree(rmat.rmat_rvalues, NALU_HYPRE_MEMORY_HOST);
 
   return( ierr );
 }
@@ -152,10 +152,10 @@ HYPRE_Int hypre_ILUT(DataDistType *ddist, HYPRE_DistributedMatrix matrix, Factor
 * This function computes the 2 norms of the rows and adds them into the
 * nrm2s array ... Changed to "Add" by AJC, Dec 22 1997.
 **************************************************************************/
-void hypre_ComputeAdd2Nrms(HYPRE_Int num_rows, HYPRE_Int *rowptr, HYPRE_Real *values, HYPRE_Real *nrm2s)
+void hypre_ComputeAdd2Nrms(NALU_HYPRE_Int num_rows, NALU_HYPRE_Int *rowptr, NALU_HYPRE_Real *values, NALU_HYPRE_Real *nrm2s)
 {
-  HYPRE_Int i, j, n;
-  HYPRE_Real sum;
+  NALU_HYPRE_Int i, j, n;
+  NALU_HYPRE_Real sum;
 
   for (i=0; i<num_rows; i++) {
     n = rowptr[i+1]-rowptr[i];

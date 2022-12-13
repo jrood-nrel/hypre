@@ -13,10 +13,10 @@
  *   If p <= 0, it returns a -1.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_Log2( HYPRE_Int p )
+NALU_HYPRE_Int
+hypre_Log2( NALU_HYPRE_Int p )
 {
-   HYPRE_Int  e;
+   NALU_HYPRE_Int  e;
 
    if (p <= 0)
    {

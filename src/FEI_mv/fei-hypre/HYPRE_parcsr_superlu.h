@@ -7,12 +7,12 @@
 
 /******************************************************************************
  *
- * HYPRE_ParCSR_SuperLU interface
+ * NALU_HYPRE_ParCSR_SuperLU interface
  *
  *****************************************************************************/
 
-#ifndef __HYPRE_PARCSR_SUPERLU__
-#define __HYPRE_PARCSR_SUPERLU__
+#ifndef __NALU_HYPRE_PARCSR_SUPERLU__
+#define __NALU_HYPRE_PARCSR_SUPERLU__
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -28,13 +28,13 @@ extern "C"
 {
 #endif
 
-extern int HYPRE_ParCSR_SuperLUCreate(MPI_Comm comm, HYPRE_Solver *solver);
-extern int HYPRE_ParCSR_SuperLUDestroy(HYPRE_Solver solver);
-extern int HYPRE_ParCSR_SuperLUSetOutputLevel(HYPRE_Solver solver, int);
-extern int HYPRE_ParCSR_SuperLUSetup(HYPRE_Solver solver,HYPRE_ParCSRMatrix A,
-                        HYPRE_ParVector b,HYPRE_ParVector x);
-extern int HYPRE_ParCSR_SuperLUSolve(HYPRE_Solver solver,HYPRE_ParCSRMatrix A,
-                        HYPRE_ParVector b, HYPRE_ParVector x);
+extern int NALU_HYPRE_ParCSR_SuperLUCreate(MPI_Comm comm, NALU_HYPRE_Solver *solver);
+extern int NALU_HYPRE_ParCSR_SuperLUDestroy(NALU_HYPRE_Solver solver);
+extern int NALU_HYPRE_ParCSR_SuperLUSetOutputLevel(NALU_HYPRE_Solver solver, int);
+extern int NALU_HYPRE_ParCSR_SuperLUSetup(NALU_HYPRE_Solver solver,NALU_HYPRE_ParCSRMatrix A,
+                        NALU_HYPRE_ParVector b,NALU_HYPRE_ParVector x);
+extern int NALU_HYPRE_ParCSR_SuperLUSolve(NALU_HYPRE_Solver solver,NALU_HYPRE_ParCSRMatrix A,
+                        NALU_HYPRE_ParVector b, NALU_HYPRE_ParVector x);
 
 #ifdef __cplusplus
 }

@@ -14,18 +14,18 @@
  * hypre_SparseMSGFilterSetup
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SparseMSGFilterSetup( hypre_StructMatrix *A,
-                            HYPRE_Int          *num_grids,
-                            HYPRE_Int           lx,
-                            HYPRE_Int           ly,
-                            HYPRE_Int           lz,
-                            HYPRE_Int           jump,
+                            NALU_HYPRE_Int          *num_grids,
+                            NALU_HYPRE_Int           lx,
+                            NALU_HYPRE_Int           ly,
+                            NALU_HYPRE_Int           lz,
+                            NALU_HYPRE_Int           jump,
                             hypre_StructVector *visitx,
                             hypre_StructVector *visity,
                             hypre_StructVector *visitz    )
 {
-   HYPRE_Int             ierr = 0;
+   NALU_HYPRE_Int             ierr = 0;
 
    hypre_BoxArray        *compute_boxes;
    hypre_Box             *compute_box;
@@ -33,23 +33,23 @@ hypre_SparseMSGFilterSetup( hypre_StructMatrix *A,
    hypre_Box             *A_dbox;
    hypre_Box             *v_dbox;
 
-   HYPRE_Int              Ai;
-   HYPRE_Int              vi;
+   NALU_HYPRE_Int              Ai;
+   NALU_HYPRE_Int              vi;
 
-   HYPRE_Real            *Ap;
-   HYPRE_Real            *vxp;
-   HYPRE_Real            *vyp;
-   HYPRE_Real            *vzp;
-   HYPRE_Real             lambdax;
-   HYPRE_Real             lambday;
-   HYPRE_Real             lambdaz;
-   HYPRE_Real             lambda_max;
+   NALU_HYPRE_Real            *Ap;
+   NALU_HYPRE_Real            *vxp;
+   NALU_HYPRE_Real            *vyp;
+   NALU_HYPRE_Real            *vzp;
+   NALU_HYPRE_Real             lambdax;
+   NALU_HYPRE_Real             lambday;
+   NALU_HYPRE_Real             lambdaz;
+   NALU_HYPRE_Real             lambda_max;
 
    hypre_StructStencil   *stencil;
    hypre_Index           *stencil_shape;
-   HYPRE_Int              stencil_size;
+   NALU_HYPRE_Int              stencil_size;
 
-   HYPRE_Int              Astenc;
+   NALU_HYPRE_Int              Astenc;
 
    hypre_Index            loop_size;
    hypre_Index            cindex;
@@ -58,7 +58,7 @@ hypre_SparseMSGFilterSetup( hypre_StructMatrix *A,
    hypre_Index            stride;
    hypre_Index            stridev;
 
-   HYPRE_Int              i, si, dir, k, l;
+   NALU_HYPRE_Int              i, si, dir, k, l;
 
    /*----------------------------------------------------------
     * Initialize some things
@@ -116,11 +116,11 @@ hypre_SparseMSGFilterSetup( hypre_StructMatrix *A,
                           A_dbox, start,  stride,  Ai,
                           v_dbox, startv, stridev, vi);
       {
-         HYPRE_Real lambdax = 0.0;
-         HYPRE_Real lambday = 0.0;
-         HYPRE_Real lambdaz = 0.0;
-         HYPRE_Int si, dir, Astenc;
-         HYPRE_Real *Ap, lambda_max;
+         NALU_HYPRE_Real lambdax = 0.0;
+         NALU_HYPRE_Real lambday = 0.0;
+         NALU_HYPRE_Real lambdaz = 0.0;
+         NALU_HYPRE_Int si, dir, Astenc;
+         NALU_HYPRE_Real *Ap, lambda_max;
 
          for (si = 0; si < stencil_size; si++)
          {
@@ -184,15 +184,15 @@ hypre_SparseMSGFilterSetup( hypre_StructMatrix *A,
 
          if (dir == 0)
          {
-            vxp[vi] = (HYPRE_Real) ( ((HYPRE_Int) vxp[vi]) | k );
+            vxp[vi] = (NALU_HYPRE_Real) ( ((NALU_HYPRE_Int) vxp[vi]) | k );
          }
          else if (dir == 1)
          {
-            vyp[vi] = (HYPRE_Real) ( ((HYPRE_Int) vyp[vi]) | k );
+            vyp[vi] = (NALU_HYPRE_Real) ( ((NALU_HYPRE_Int) vyp[vi]) | k );
          }
          else if (dir == 2)
          {
-            vzp[vi] = (HYPRE_Real) ( ((HYPRE_Int) vzp[vi]) | k );
+            vzp[vi] = (NALU_HYPRE_Real) ( ((NALU_HYPRE_Int) vzp[vi]) | k );
          }
       }
       hypre_BoxLoop2End(Ai, vi);
@@ -205,15 +205,15 @@ hypre_SparseMSGFilterSetup( hypre_StructMatrix *A,
  * hypre_SparseMSGFilter
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SparseMSGFilter( hypre_StructVector *visit,
                        hypre_StructVector *e,
-                       HYPRE_Int           lx,
-                       HYPRE_Int           ly,
-                       HYPRE_Int           lz,
-                       HYPRE_Int           jump  )
+                       NALU_HYPRE_Int           lx,
+                       NALU_HYPRE_Int           ly,
+                       NALU_HYPRE_Int           lz,
+                       NALU_HYPRE_Int           jump  )
 {
-   HYPRE_Int             ierr = 0;
+   NALU_HYPRE_Int             ierr = 0;
 
    hypre_BoxArray        *compute_boxes;
    hypre_Box             *compute_box;
@@ -221,11 +221,11 @@ hypre_SparseMSGFilter( hypre_StructVector *visit,
    hypre_Box             *e_dbox;
    hypre_Box             *v_dbox;
 
-   HYPRE_Int              ei;
-   HYPRE_Int              vi;
+   NALU_HYPRE_Int              ei;
+   NALU_HYPRE_Int              vi;
 
-   HYPRE_Real            *ep;
-   HYPRE_Real            *vp;
+   NALU_HYPRE_Real            *ep;
+   NALU_HYPRE_Real            *vp;
 
    hypre_Index            loop_size;
    hypre_Index            cindex;
@@ -234,7 +234,7 @@ hypre_SparseMSGFilter( hypre_StructVector *visit,
    hypre_Index            stride;
    hypre_Index            stridev;
 
-   HYPRE_Int              i, k, l;
+   NALU_HYPRE_Int              i, k, l;
 
    /*-----------------------------------------------------
     * Compute encoding digit and strides
@@ -279,7 +279,7 @@ hypre_SparseMSGFilter( hypre_StructVector *visit,
                           e_dbox, start,  stride,  ei,
                           v_dbox, startv, stridev, vi);
       {
-         if ( !(((HYPRE_Int) vp[vi]) & k) )
+         if ( !(((NALU_HYPRE_Int) vp[vi]) & k) )
          {
             ep[ei] = 0.0;
          }
@@ -296,18 +296,18 @@ hypre_SparseMSGFilter( hypre_StructVector *visit,
  * hypre_SparseMSGFilterSetup
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SparseMSGFilterSetup( hypre_StructMatrix *A,
-                            HYPRE_Int          *num_grids,
-                            HYPRE_Int           lx,
-                            HYPRE_Int           ly,
-                            HYPRE_Int           lz,
-                            HYPRE_Int           jump,
+                            NALU_HYPRE_Int          *num_grids,
+                            NALU_HYPRE_Int           lx,
+                            NALU_HYPRE_Int           ly,
+                            NALU_HYPRE_Int           lz,
+                            NALU_HYPRE_Int           jump,
                             hypre_StructVector *visitx,
                             hypre_StructVector *visity,
                             hypre_StructVector *visitz    )
 {
-   HYPRE_Int             ierr = 0;
+   NALU_HYPRE_Int             ierr = 0;
 
    hypre_BoxArray        *compute_boxes;
    hypre_Box             *compute_box;
@@ -315,13 +315,13 @@ hypre_SparseMSGFilterSetup( hypre_StructMatrix *A,
    hypre_Box             *A_dbox;
    hypre_Box             *v_dbox;
 
-   HYPRE_Real            *vxp;
-   HYPRE_Real            *vyp;
-   HYPRE_Real            *vzp;
+   NALU_HYPRE_Real            *vxp;
+   NALU_HYPRE_Real            *vyp;
+   NALU_HYPRE_Real            *vzp;
 
    hypre_StructStencil   *stencil;
    hypre_Index           *stencil_shape;
-   HYPRE_Int              stencil_size;
+   NALU_HYPRE_Int              stencil_size;
 
    hypre_Index            loop_size;
    hypre_Index            cindex;
@@ -329,8 +329,8 @@ hypre_SparseMSGFilterSetup( hypre_StructMatrix *A,
    hypre_Index            startv;
    hypre_Index            stride;
    hypre_Index            stridev;
-   HYPRE_Int              i;
-   HYPRE_MemoryLocation   memory_location = hypre_StructMatrixMemoryLocation(A);
+   NALU_HYPRE_Int              i;
+   NALU_HYPRE_MemoryLocation   memory_location = hypre_StructMatrixMemoryLocation(A);
 
    /*----------------------------------------------------------
     * Initialize some things
@@ -355,20 +355,20 @@ hypre_SparseMSGFilterSetup( hypre_StructMatrix *A,
 
    compute_boxes = hypre_StructGridBoxes(hypre_StructMatrixGrid(A));
 
-   HYPRE_Int     **data_indices = hypre_StructMatrixDataIndices(A);
-   HYPRE_Complex  *matrixA_data = hypre_StructMatrixData(A);
-   HYPRE_Int      *data_indices_d; /* On device */
+   NALU_HYPRE_Int     **data_indices = hypre_StructMatrixDataIndices(A);
+   NALU_HYPRE_Complex  *matrixA_data = hypre_StructMatrixData(A);
+   NALU_HYPRE_Int      *data_indices_d; /* On device */
    hypre_Index    *stencil_shape_d;
 
-   if (hypre_GetExecPolicy1(memory_location) == HYPRE_EXEC_DEVICE)
+   if (hypre_GetExecPolicy1(memory_location) == NALU_HYPRE_EXEC_DEVICE)
    {
-      HYPRE_Int nboxes = hypre_BoxArraySize(compute_boxes);
-      data_indices_d  = hypre_TAlloc(HYPRE_Int, stencil_size * nboxes, memory_location);
+      NALU_HYPRE_Int nboxes = hypre_BoxArraySize(compute_boxes);
+      data_indices_d  = hypre_TAlloc(NALU_HYPRE_Int, stencil_size * nboxes, memory_location);
       stencil_shape_d = hypre_TAlloc(hypre_Index, stencil_size, memory_location);
-      hypre_TMemcpy(data_indices_d, data_indices[0], HYPRE_Int, stencil_size * nboxes,
-                    memory_location, HYPRE_MEMORY_HOST);
+      hypre_TMemcpy(data_indices_d, data_indices[0], NALU_HYPRE_Int, stencil_size * nboxes,
+                    memory_location, NALU_HYPRE_MEMORY_HOST);
       hypre_TMemcpy(stencil_shape_d, stencil_shape, hypre_Index, stencil_size,
-                    memory_location, HYPRE_MEMORY_HOST);
+                    memory_location, NALU_HYPRE_MEMORY_HOST);
    }
    else
    {
@@ -396,9 +396,9 @@ hypre_SparseMSGFilterSetup( hypre_StructMatrix *A,
                           A_dbox, start,  stride,  Ai,
                           v_dbox, startv, stridev, vi);
       {
-         HYPRE_Real lambdax, lambday, lambdaz;
-         HYPRE_Real *Ap;
-         HYPRE_Int si, Astenc;
+         NALU_HYPRE_Real lambdax, lambday, lambdaz;
+         NALU_HYPRE_Real *Ap;
+         NALU_HYPRE_Int si, Astenc;
 
          lambdax = 0.0;
          lambday = 0.0;
@@ -454,7 +454,7 @@ hypre_SparseMSGFilterSetup( hypre_StructMatrix *A,
 #undef DEVICE_VAR
    }
 
-   if (hypre_GetExecPolicy1(memory_location) == HYPRE_EXEC_DEVICE)
+   if (hypre_GetExecPolicy1(memory_location) == NALU_HYPRE_EXEC_DEVICE)
    {
       hypre_TFree(data_indices_d, memory_location);
       hypre_TFree(stencil_shape_d, memory_location);
@@ -467,15 +467,15 @@ hypre_SparseMSGFilterSetup( hypre_StructMatrix *A,
  * hypre_SparseMSGFilter
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SparseMSGFilter( hypre_StructVector *visit,
                        hypre_StructVector *e,
-                       HYPRE_Int           lx,
-                       HYPRE_Int           ly,
-                       HYPRE_Int           lz,
-                       HYPRE_Int           jump  )
+                       NALU_HYPRE_Int           lx,
+                       NALU_HYPRE_Int           ly,
+                       NALU_HYPRE_Int           lz,
+                       NALU_HYPRE_Int           jump  )
 {
-   HYPRE_Int             ierr = 0;
+   NALU_HYPRE_Int             ierr = 0;
 
    hypre_BoxArray        *compute_boxes;
    hypre_Box             *compute_box;
@@ -483,8 +483,8 @@ hypre_SparseMSGFilter( hypre_StructVector *visit,
    hypre_Box             *e_dbox;
    hypre_Box             *v_dbox;
 
-   HYPRE_Real            *ep;
-   HYPRE_Real            *vp;
+   NALU_HYPRE_Real            *ep;
+   NALU_HYPRE_Real            *vp;
 
    hypre_Index            loop_size;
    hypre_Index            cindex;
@@ -493,7 +493,7 @@ hypre_SparseMSGFilter( hypre_StructVector *visit,
    hypre_Index            stride;
    hypre_Index            stridev;
 
-   HYPRE_Int              i;
+   NALU_HYPRE_Int              i;
 
    /*-----------------------------------------------------
     * Compute encoding digit and strides

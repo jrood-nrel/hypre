@@ -11,55 +11,55 @@
  * hypre_GenerateLaplacian9pt
  *--------------------------------------------------------------------------*/
 
-HYPRE_ParCSRMatrix
+NALU_HYPRE_ParCSRMatrix
 GenerateRotate7pt( MPI_Comm       comm,
-                   HYPRE_BigInt   nx,
-                   HYPRE_BigInt   ny,
-                   HYPRE_Int      P,
-                   HYPRE_Int      Q,
-                   HYPRE_Int      p,
-                   HYPRE_Int      q,
-                   HYPRE_Real     alpha,
-                   HYPRE_Real     eps )
+                   NALU_HYPRE_BigInt   nx,
+                   NALU_HYPRE_BigInt   ny,
+                   NALU_HYPRE_Int      P,
+                   NALU_HYPRE_Int      Q,
+                   NALU_HYPRE_Int      p,
+                   NALU_HYPRE_Int      q,
+                   NALU_HYPRE_Real     alpha,
+                   NALU_HYPRE_Real     eps )
 {
    hypre_ParCSRMatrix *A;
    hypre_CSRMatrix *diag;
    hypre_CSRMatrix *offd;
 
-   HYPRE_Int    *diag_i;
-   HYPRE_Int    *diag_j;
-   HYPRE_Real *diag_data;
+   NALU_HYPRE_Int    *diag_i;
+   NALU_HYPRE_Int    *diag_j;
+   NALU_HYPRE_Real *diag_data;
 
-   HYPRE_Int    *offd_i;
-   HYPRE_Int    *offd_j;
-   HYPRE_Real *offd_data;
+   NALU_HYPRE_Int    *offd_i;
+   NALU_HYPRE_Int    *offd_j;
+   NALU_HYPRE_Real *offd_data;
 
-   HYPRE_Real *value;
-   HYPRE_Real ac, bc, cc, s, c, pi, x;
-   HYPRE_BigInt global_part[2];
-   HYPRE_BigInt ix, iy;
-   HYPRE_Int cnt, o_cnt;
-   HYPRE_Int local_num_rows;
-   HYPRE_BigInt *col_map_offd;
-   HYPRE_BigInt *big_offd_j = NULL;
-   HYPRE_Int row_index;
-   HYPRE_Int i;
+   NALU_HYPRE_Real *value;
+   NALU_HYPRE_Real ac, bc, cc, s, c, pi, x;
+   NALU_HYPRE_BigInt global_part[2];
+   NALU_HYPRE_BigInt ix, iy;
+   NALU_HYPRE_Int cnt, o_cnt;
+   NALU_HYPRE_Int local_num_rows;
+   NALU_HYPRE_BigInt *col_map_offd;
+   NALU_HYPRE_BigInt *big_offd_j = NULL;
+   NALU_HYPRE_Int row_index;
+   NALU_HYPRE_Int i;
 
-   HYPRE_Int nx_local, ny_local;
-   HYPRE_Int num_cols_offd;
-   HYPRE_BigInt grid_size;
+   NALU_HYPRE_Int nx_local, ny_local;
+   NALU_HYPRE_Int num_cols_offd;
+   NALU_HYPRE_BigInt grid_size;
 
-   HYPRE_BigInt *nx_part;
-   HYPRE_BigInt *ny_part;
+   NALU_HYPRE_BigInt *nx_part;
+   NALU_HYPRE_BigInt *ny_part;
 
-   HYPRE_Int num_procs;
-   HYPRE_Int P_busy, Q_busy;
+   NALU_HYPRE_Int num_procs;
+   NALU_HYPRE_Int P_busy, Q_busy;
 
    hypre_MPI_Comm_size(comm, &num_procs);
 
    grid_size = nx * ny;
 
-   value = hypre_CTAlloc(HYPRE_Real, 4, HYPRE_MEMORY_HOST);
+   value = hypre_CTAlloc(NALU_HYPRE_Real, 4, NALU_HYPRE_MEMORY_HOST);
    pi = 4.0 * atan(1.0);
    x = pi * alpha / 180.0;
    s = sin(x);
@@ -75,16 +75,16 @@ GenerateRotate7pt( MPI_Comm       comm,
    hypre_GeneratePartitioning(nx, P, &nx_part);
    hypre_GeneratePartitioning(ny, Q, &ny_part);
 
-   nx_local = (HYPRE_Int)(nx_part[p + 1] - nx_part[p]);
-   ny_local = (HYPRE_Int)(ny_part[q + 1] - ny_part[q]);
+   nx_local = (NALU_HYPRE_Int)(nx_part[p + 1] - nx_part[p]);
+   ny_local = (NALU_HYPRE_Int)(ny_part[q + 1] - ny_part[q]);
 
    local_num_rows = nx_local * ny_local;
 
    global_part[0] = ny_part[q] * nx + nx_part[p] * ny_local;
-   global_part[1] = global_part[0] + (HYPRE_BigInt)local_num_rows;
+   global_part[1] = global_part[0] + (NALU_HYPRE_BigInt)local_num_rows;
 
-   diag_i = hypre_CTAlloc(HYPRE_Int,  local_num_rows + 1, HYPRE_MEMORY_HOST);
-   offd_i = hypre_CTAlloc(HYPRE_Int,  local_num_rows + 1, HYPRE_MEMORY_HOST);
+   diag_i = hypre_CTAlloc(NALU_HYPRE_Int,  local_num_rows + 1, NALU_HYPRE_MEMORY_HOST);
+   offd_i = hypre_CTAlloc(NALU_HYPRE_Int,  local_num_rows + 1, NALU_HYPRE_MEMORY_HOST);
 
    P_busy = hypre_min(nx, P);
    Q_busy = hypre_min(ny, Q);
@@ -101,7 +101,7 @@ GenerateRotate7pt( MPI_Comm       comm,
 
    if (!local_num_rows) { num_cols_offd = 0; }
 
-   col_map_offd = hypre_CTAlloc(HYPRE_BigInt,  num_cols_offd, HYPRE_MEMORY_HOST);
+   col_map_offd = hypre_CTAlloc(NALU_HYPRE_BigInt,  num_cols_offd, NALU_HYPRE_MEMORY_HOST);
 
    cnt = 0;
    o_cnt = 0;
@@ -201,14 +201,14 @@ GenerateRotate7pt( MPI_Comm       comm,
       }
    }
 
-   diag_j    = hypre_CTAlloc(HYPRE_Int,  diag_i[local_num_rows], HYPRE_MEMORY_HOST);
-   diag_data = hypre_CTAlloc(HYPRE_Real, diag_i[local_num_rows], HYPRE_MEMORY_HOST);
+   diag_j    = hypre_CTAlloc(NALU_HYPRE_Int,  diag_i[local_num_rows], NALU_HYPRE_MEMORY_HOST);
+   diag_data = hypre_CTAlloc(NALU_HYPRE_Real, diag_i[local_num_rows], NALU_HYPRE_MEMORY_HOST);
 
    if (num_procs > 1)
    {
-      big_offd_j = hypre_CTAlloc(HYPRE_BigInt, offd_i[local_num_rows], HYPRE_MEMORY_HOST);
-      offd_j     = hypre_CTAlloc(HYPRE_Int,    offd_i[local_num_rows], HYPRE_MEMORY_HOST);
-      offd_data  = hypre_CTAlloc(HYPRE_Real,   offd_i[local_num_rows], HYPRE_MEMORY_HOST);
+      big_offd_j = hypre_CTAlloc(NALU_HYPRE_BigInt, offd_i[local_num_rows], NALU_HYPRE_MEMORY_HOST);
+      offd_j     = hypre_CTAlloc(NALU_HYPRE_Int,    offd_i[local_num_rows], NALU_HYPRE_MEMORY_HOST);
+      offd_data  = hypre_CTAlloc(NALU_HYPRE_Real,   offd_i[local_num_rows], NALU_HYPRE_MEMORY_HOST);
    }
 
    row_index = 0;
@@ -334,7 +334,7 @@ GenerateRotate7pt( MPI_Comm       comm,
 
    if (num_procs > 1)
    {
-      HYPRE_BigInt *work = hypre_CTAlloc(HYPRE_BigInt, o_cnt, HYPRE_MEMORY_HOST);
+      NALU_HYPRE_BigInt *work = hypre_CTAlloc(NALU_HYPRE_BigInt, o_cnt, NALU_HYPRE_MEMORY_HOST);
 
       for (i = 0; i < o_cnt; i++)
       {
@@ -360,8 +360,8 @@ GenerateRotate7pt( MPI_Comm       comm,
          offd_j[i] = hypre_BigBinarySearch(col_map_offd, big_offd_j[i], num_cols_offd);
       }
 
-      hypre_TFree(work, HYPRE_MEMORY_HOST);
-      hypre_TFree(big_offd_j, HYPRE_MEMORY_HOST);
+      hypre_TFree(work, NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(big_offd_j, NALU_HYPRE_MEMORY_HOST);
    }
 
    A = hypre_ParCSRMatrixCreate(comm, grid_size, grid_size,
@@ -384,14 +384,14 @@ GenerateRotate7pt( MPI_Comm       comm,
       hypre_CSRMatrixData(offd) = offd_data;
    }
 
-   hypre_CSRMatrixMemoryLocation(diag) = HYPRE_MEMORY_HOST;
-   hypre_CSRMatrixMemoryLocation(offd) = HYPRE_MEMORY_HOST;
+   hypre_CSRMatrixMemoryLocation(diag) = NALU_HYPRE_MEMORY_HOST;
+   hypre_CSRMatrixMemoryLocation(offd) = NALU_HYPRE_MEMORY_HOST;
 
    hypre_ParCSRMatrixMigrate(A, hypre_HandleMemoryLocation(hypre_handle()));
 
-   hypre_TFree(nx_part, HYPRE_MEMORY_HOST);
-   hypre_TFree(ny_part, HYPRE_MEMORY_HOST);
-   hypre_TFree(value,   HYPRE_MEMORY_HOST);
+   hypre_TFree(nx_part, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(ny_part, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(value,   NALU_HYPRE_MEMORY_HOST);
 
-   return (HYPRE_ParCSRMatrix) A;
+   return (NALU_HYPRE_ParCSRMatrix) A;
 }

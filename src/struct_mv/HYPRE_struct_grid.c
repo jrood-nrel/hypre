@@ -7,20 +7,20 @@
 
 /******************************************************************************
  *
- * HYPRE_StructGrid interface
+ * NALU_HYPRE_StructGrid interface
  *
  *****************************************************************************/
 
 #include "_hypre_struct_mv.h"
 
 /*--------------------------------------------------------------------------
- * HYPRE_StructGridCreate
+ * NALU_HYPRE_StructGridCreate
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_StructGridCreate( MPI_Comm          comm,
-                        HYPRE_Int         dim,
-                        HYPRE_StructGrid *grid )
+NALU_HYPRE_Int
+NALU_HYPRE_StructGridCreate( MPI_Comm          comm,
+                        NALU_HYPRE_Int         dim,
+                        NALU_HYPRE_StructGrid *grid )
 {
    hypre_StructGridCreate(comm, dim, grid);
 
@@ -28,28 +28,28 @@ HYPRE_StructGridCreate( MPI_Comm          comm,
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_StructGridDestroy
+ * NALU_HYPRE_StructGridDestroy
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_StructGridDestroy( HYPRE_StructGrid grid )
+NALU_HYPRE_Int
+NALU_HYPRE_StructGridDestroy( NALU_HYPRE_StructGrid grid )
 {
    return ( hypre_StructGridDestroy(grid) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_StructGridSetExtents
+ * NALU_HYPRE_StructGridSetExtents
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_StructGridSetExtents( HYPRE_StructGrid  grid,
-                            HYPRE_Int        *ilower,
-                            HYPRE_Int        *iupper )
+NALU_HYPRE_Int
+NALU_HYPRE_StructGridSetExtents( NALU_HYPRE_StructGrid  grid,
+                            NALU_HYPRE_Int        *ilower,
+                            NALU_HYPRE_Int        *iupper )
 {
    hypre_Index  new_ilower;
    hypre_Index  new_iupper;
 
-   HYPRE_Int    d;
+   NALU_HYPRE_Int    d;
 
    hypre_SetIndex(new_ilower, 0);
    hypre_SetIndex(new_iupper, 0);
@@ -63,16 +63,16 @@ HYPRE_StructGridSetExtents( HYPRE_StructGrid  grid,
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_SetStructGridPeriodicity
+ * NALU_HYPRE_SetStructGridPeriodicity
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_StructGridSetPeriodic( HYPRE_StructGrid  grid,
-                             HYPRE_Int        *periodic )
+NALU_HYPRE_Int
+NALU_HYPRE_StructGridSetPeriodic( NALU_HYPRE_StructGrid  grid,
+                             NALU_HYPRE_Int        *periodic )
 {
    hypre_Index  new_periodic;
 
-   HYPRE_Int    d;
+   NALU_HYPRE_Int    d;
 
    hypre_SetIndex(new_periodic, 0);
    for (d = 0; d < hypre_StructGridNDim(grid); d++)
@@ -84,30 +84,30 @@ HYPRE_StructGridSetPeriodic( HYPRE_StructGrid  grid,
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_StructGridAssemble
+ * NALU_HYPRE_StructGridAssemble
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_StructGridAssemble( HYPRE_StructGrid grid )
+NALU_HYPRE_Int
+NALU_HYPRE_StructGridAssemble( NALU_HYPRE_StructGrid grid )
 {
    return ( hypre_StructGridAssemble(grid) );
 }
 
 /*---------------------------------------------------------------------------
  * GEC0902
- * HYPRE_StructGridSetNumGhost
+ * NALU_HYPRE_StructGridSetNumGhost
  * to set the numghost array inside the struct_grid_struct using an internal
  * function. This is just a wrapper.
  *--------------------------------------------------------------------------*/
-HYPRE_Int
-HYPRE_StructGridSetNumGhost( HYPRE_StructGrid grid, HYPRE_Int *num_ghost )
+NALU_HYPRE_Int
+NALU_HYPRE_StructGridSetNumGhost( NALU_HYPRE_StructGrid grid, NALU_HYPRE_Int *num_ghost )
 {
    return ( hypre_StructGridSetNumGhost(grid, num_ghost) );
 }
 
-#if 0 //defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP)
-HYPRE_Int
-HYPRE_StructGridSetDataLocation( HYPRE_StructGrid grid, HYPRE_MemoryLocation data_location )
+#if 0 //defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
+NALU_HYPRE_Int
+NALU_HYPRE_StructGridSetDataLocation( NALU_HYPRE_StructGrid grid, NALU_HYPRE_MemoryLocation data_location )
 {
    return ( hypre_StructGridSetDataLocation(grid, data_location) );
 }

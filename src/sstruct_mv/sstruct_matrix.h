@@ -24,60 +24,60 @@ typedef struct
    hypre_SStructPGrid     *pgrid;
    hypre_SStructStencil  **stencils;     /* nvar array of stencils */
 
-   HYPRE_Int               nvars;
-   HYPRE_Int             **smaps;
+   NALU_HYPRE_Int               nvars;
+   NALU_HYPRE_Int             **smaps;
    hypre_StructStencil  ***sstencils;    /* nvar x nvar array of sstencils */
    hypre_StructMatrix   ***smatrices;    /* nvar x nvar array of smatrices */
-   HYPRE_Int             **symmetric;    /* Stencil entries symmetric?
+   NALU_HYPRE_Int             **symmetric;    /* Stencil entries symmetric?
                                           * (nvar x nvar array) */
 
    /* temporary storage for SetValues routines */
-   HYPRE_Int               sentries_size;
-   HYPRE_Int              *sentries;
+   NALU_HYPRE_Int               sentries_size;
+   NALU_HYPRE_Int              *sentries;
 
-   HYPRE_Int               accumulated;  /* AddTo values accumulated? */
+   NALU_HYPRE_Int               accumulated;  /* AddTo values accumulated? */
 
-   HYPRE_Int               ref_count;
+   NALU_HYPRE_Int               ref_count;
 
 } hypre_SStructPMatrix;
 
 typedef struct hypre_SStructMatrix_struct
 {
    MPI_Comm                comm;
-   HYPRE_Int               ndim;
+   NALU_HYPRE_Int               ndim;
    hypre_SStructGraph     *graph;
-   HYPRE_Int            ***splits;   /* S/U-matrix split for each stencil */
+   NALU_HYPRE_Int            ***splits;   /* S/U-matrix split for each stencil */
 
    /* S-matrix info */
-   HYPRE_Int               nparts;
+   NALU_HYPRE_Int               nparts;
    hypre_SStructPMatrix  **pmatrices;
-   HYPRE_Int            ***symmetric;    /* Stencil entries symmetric?
+   NALU_HYPRE_Int            ***symmetric;    /* Stencil entries symmetric?
                                           * (nparts x nvar x nvar array) */
 
    /* U-matrix info */
-   HYPRE_IJMatrix          ijmatrix;
+   NALU_HYPRE_IJMatrix          ijmatrix;
    hypre_ParCSRMatrix     *parcsrmatrix;
 
    /* temporary storage for SetValues routines */
-   HYPRE_Int               entries_size;
-   HYPRE_Int              *Sentries;
-   HYPRE_Int              *Uentries;
+   NALU_HYPRE_Int               entries_size;
+   NALU_HYPRE_Int              *Sentries;
+   NALU_HYPRE_Int              *Uentries;
 
-   HYPRE_Int               tmp_size;     /* size of the following 3 */
-   HYPRE_BigInt           *tmp_row_coords;
-   HYPRE_BigInt           *tmp_col_coords;
-   HYPRE_Complex          *tmp_coeffs;
-   HYPRE_BigInt           *d_tmp_row_coords;
-   HYPRE_BigInt           *d_tmp_col_coords;
-   HYPRE_Complex          *d_tmp_coeffs;
+   NALU_HYPRE_Int               tmp_size;     /* size of the following 3 */
+   NALU_HYPRE_BigInt           *tmp_row_coords;
+   NALU_HYPRE_BigInt           *tmp_col_coords;
+   NALU_HYPRE_Complex          *tmp_coeffs;
+   NALU_HYPRE_BigInt           *d_tmp_row_coords;
+   NALU_HYPRE_BigInt           *d_tmp_col_coords;
+   NALU_HYPRE_Complex          *d_tmp_coeffs;
 
-   HYPRE_Int               ns_symmetric; /* Non-stencil entries symmetric? */
-   HYPRE_Int               global_size;  /* Total number of nonzero coeffs */
+   NALU_HYPRE_Int               ns_symmetric; /* Non-stencil entries symmetric? */
+   NALU_HYPRE_Int               global_size;  /* Total number of nonzero coeffs */
 
-   HYPRE_Int               ref_count;
+   NALU_HYPRE_Int               ref_count;
 
    /* GEC0902   adding an object type to the matrix  */
-   HYPRE_Int               object_type;
+   NALU_HYPRE_Int               object_type;
 
 } hypre_SStructMatrix;
 

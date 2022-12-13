@@ -23,8 +23,8 @@ typedef struct
    hypre_BoxArray      *base_points;
    hypre_ComputePkg    *compute_pkg;
 
-   HYPRE_Int            time_index;
-   HYPRE_BigInt         flops;
+   NALU_HYPRE_Int            time_index;
+   NALU_HYPRE_BigInt         flops;
 
 } hypre_SMGResidualData;
 
@@ -37,7 +37,7 @@ hypre_SMGResidualCreate( )
 {
    hypre_SMGResidualData *residual_data;
 
-   residual_data = hypre_CTAlloc(hypre_SMGResidualData,  1, HYPRE_MEMORY_HOST);
+   residual_data = hypre_CTAlloc(hypre_SMGResidualData,  1, NALU_HYPRE_MEMORY_HOST);
 
    (residual_data -> time_index)  = hypre_InitializeTiming("SMGResidual");
 
@@ -52,14 +52,14 @@ hypre_SMGResidualCreate( )
  * hypre_SMGResidualSetup
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SMGResidualSetup( void               *residual_vdata,
                         hypre_StructMatrix *A,
                         hypre_StructVector *x,
                         hypre_StructVector *b,
                         hypre_StructVector *r              )
 {
-   HYPRE_Int ierr;
+   NALU_HYPRE_Int ierr;
 
    hypre_SMGResidualData  *residual_data = residual_vdata;
 
@@ -108,7 +108,7 @@ hypre_SMGResidualSetup( void               *residual_vdata,
 
    (residual_data -> flops) =
       (hypre_StructMatrixGlobalSize(A) + hypre_StructVectorGlobalSize(x)) /
-      (HYPRE_BigInt)(hypre_IndexX(base_stride) *
+      (NALU_HYPRE_BigInt)(hypre_IndexX(base_stride) *
                      hypre_IndexY(base_stride) *
                      hypre_IndexZ(base_stride)  );
 
@@ -119,14 +119,14 @@ hypre_SMGResidualSetup( void               *residual_vdata,
  * hypre_SMGResidual
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SMGResidual( void               *residual_vdata,
                    hypre_StructMatrix *A,
                    hypre_StructVector *x,
                    hypre_StructVector *b,
                    hypre_StructVector *r              )
 {
-   HYPRE_Int ierr;
+   NALU_HYPRE_Int ierr;
 
    hypre_SMGResidualData  *residual_data = residual_vdata;
 
@@ -145,39 +145,39 @@ hypre_SMGResidual( void               *residual_vdata,
    hypre_Box              *b_data_box;
    hypre_Box              *r_data_box;
 
-   HYPRE_Int               Ai;
-   HYPRE_Int               xi;
-   HYPRE_Int               bi;
-   HYPRE_Int               ri;
+   NALU_HYPRE_Int               Ai;
+   NALU_HYPRE_Int               xi;
+   NALU_HYPRE_Int               bi;
+   NALU_HYPRE_Int               ri;
 
-   HYPRE_Real             *Ap0;
-   HYPRE_Real             *xp0;
-   HYPRE_Real             *bp;
-   HYPRE_Real             *rp;
+   NALU_HYPRE_Real             *Ap0;
+   NALU_HYPRE_Real             *xp0;
+   NALU_HYPRE_Real             *bp;
+   NALU_HYPRE_Real             *rp;
 
    hypre_Index             loop_size;
    hypre_IndexRef          start;
 
    hypre_StructStencil    *stencil;
    hypre_Index            *stencil_shape;
-   HYPRE_Int               stencil_size;
+   NALU_HYPRE_Int               stencil_size;
 
-   HYPRE_Int               compute_i, i, j, si;
+   NALU_HYPRE_Int               compute_i, i, j, si;
 
-   HYPRE_Real        *Ap1, *Ap2;
-   HYPRE_Real        *Ap3, *Ap4;
-   HYPRE_Real        *Ap5, *Ap6;
-   HYPRE_Real        *Ap7, *Ap8, *Ap9;
-   HYPRE_Real        *Ap10, *Ap11, *Ap12, *Ap13, *Ap14;
-   HYPRE_Real        *Ap15, *Ap16, *Ap17, *Ap18;
-   HYPRE_Real        *Ap19, *Ap20, *Ap21, *Ap22, *Ap23, *Ap24, *Ap25, *Ap26;
-   HYPRE_Real        *xp1, *xp2;
-   HYPRE_Real        *xp3, *xp4;
-   HYPRE_Real        *xp5, *xp6;
-   HYPRE_Real        *xp7, *xp8, *xp9;
-   HYPRE_Real        *xp10, *xp11, *xp12, *xp13, *xp14;
-   HYPRE_Real        *xp15, *xp16, *xp17, *xp18;
-   HYPRE_Real        *xp19, *xp20, *xp21, *xp22, *xp23, *xp24, *xp25, *xp26;
+   NALU_HYPRE_Real        *Ap1, *Ap2;
+   NALU_HYPRE_Real        *Ap3, *Ap4;
+   NALU_HYPRE_Real        *Ap5, *Ap6;
+   NALU_HYPRE_Real        *Ap7, *Ap8, *Ap9;
+   NALU_HYPRE_Real        *Ap10, *Ap11, *Ap12, *Ap13, *Ap14;
+   NALU_HYPRE_Real        *Ap15, *Ap16, *Ap17, *Ap18;
+   NALU_HYPRE_Real        *Ap19, *Ap20, *Ap21, *Ap22, *Ap23, *Ap24, *Ap25, *Ap26;
+   NALU_HYPRE_Real        *xp1, *xp2;
+   NALU_HYPRE_Real        *xp3, *xp4;
+   NALU_HYPRE_Real        *xp5, *xp6;
+   NALU_HYPRE_Real        *xp7, *xp8, *xp9;
+   NALU_HYPRE_Real        *xp10, *xp11, *xp12, *xp13, *xp14;
+   NALU_HYPRE_Real        *xp15, *xp16, *xp17, *xp18;
+   NALU_HYPRE_Real        *xp19, *xp20, *xp21, *xp22, *xp23, *xp24, *xp25, *xp26;
 
    hypre_BeginTiming(residual_data -> time_index);
 
@@ -863,14 +863,14 @@ hypre_SMGResidual( void               *residual_vdata,
  * hypre_SMGResidualSetBase
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SMGResidualSetBase( void        *residual_vdata,
                           hypre_Index  base_index,
                           hypre_Index  base_stride )
 {
    hypre_SMGResidualData *residual_data = residual_vdata;
-   HYPRE_Int              d;
-   HYPRE_Int              ierr = 0;
+   NALU_HYPRE_Int              d;
+   NALU_HYPRE_Int              ierr = 0;
 
    for (d = 0; d < 3; d++)
    {
@@ -887,10 +887,10 @@ hypre_SMGResidualSetBase( void        *residual_vdata,
  * hypre_SMGResidualDestroy
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SMGResidualDestroy( void *residual_vdata )
 {
-   HYPRE_Int ierr;
+   NALU_HYPRE_Int ierr;
 
    hypre_SMGResidualData *residual_data = residual_vdata;
 
@@ -903,7 +903,7 @@ hypre_SMGResidualDestroy( void *residual_vdata )
       hypre_BoxArrayDestroy(residual_data -> base_points);
       hypre_ComputePkgDestroy(residual_data -> compute_pkg );
       hypre_FinalizeTiming(residual_data -> time_index);
-      hypre_TFree(residual_data, HYPRE_MEMORY_HOST);
+      hypre_TFree(residual_data, NALU_HYPRE_MEMORY_HOST);
    }
 
    return ierr;

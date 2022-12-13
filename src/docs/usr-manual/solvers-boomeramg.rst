@@ -28,7 +28,7 @@ manual.
 
 
 BoomerAMG's Create function differs from the synopsis in that it has only one
-parameter ``HYPRE_BoomerAMGCreate(HYPRE_Solver *solver)``. It uses the
+parameter ``NALU_HYPRE_BoomerAMGCreate(NALU_HYPRE_Solver *solver)``. It uses the
 communicator of the matrix A.
 
 
@@ -36,7 +36,7 @@ Coarsening Options
 ------------------------------------------------------------------------------
 
 Coarsening can be set by the user using the function
-``HYPRE_BoomerAMGSetCoarsenType``. A detailed description of various coarsening
+``NALU_HYPRE_BoomerAMGSetCoarsenType``. A detailed description of various coarsening
 techniques can be found in [HeYa2002]_, [Yang2005]_.
 
 Various coarsening techniques are available:
@@ -53,7 +53,7 @@ Various coarsening techniques are available:
 
 To use aggressive coarsening the user has to set the number of levels to which
 he wants to apply aggressive coarsening (starting with the finest level) via
-``HYPRE_BoomerAMGSetAggNumLevels``. Since aggressive coarsening requires long
+``NALU_HYPRE_BoomerAMGSetAggNumLevels``. Since aggressive coarsening requires long
 range interpolation, multipass interpolation is always used on levels with
 aggressive coarsening, unless the user specifies another long-range
 interpolation suitable for aggressive coarsening.
@@ -64,7 +64,7 @@ Note that the default coarsening is HMIS [DeYH2004]_.
 Interpolation Options
 ------------------------------------------------------------------------------
 
-Various interpolation techniques can be set using ``HYPRE_BoomerAMGSetInterpType``:
+Various interpolation techniques can be set using ``NALU_HYPRE_BoomerAMGSetInterpType``:
 
 * the "classical" interpolation as defined in [RuSt1987]_,
 * direct interpolation [Stue1999]_,
@@ -78,11 +78,11 @@ Various interpolation techniques can be set using ``HYPRE_BoomerAMGSetInterpType
 * the "classical" interpolation modified for hyperbolic PDEs.
 
 Jacobi interpolation is only use to improve certain interpolation operators and
-can be used with ``HYPRE_BoomerAMGSetPostInterpType``.  Since some of the
+can be used with ``NALU_HYPRE_BoomerAMGSetPostInterpType``.  Since some of the
 interpolation operators might generate large stencils, it is often possible and
 recommended to control complexity and truncate the interpolation operators using
-``HYPRE_BoomerAMGSetTruncFactor`` and/or ``HYPRE_BoomerAMGSetPMaxElmts``, or
-``HYPRE_BoomerAMGSetJacobiTruncTheshold`` (for Jacobi interpolation only).
+``NALU_HYPRE_BoomerAMGSetTruncFactor`` and/or ``NALU_HYPRE_BoomerAMGSetPMaxElmts``, or
+``NALU_HYPRE_BoomerAMGSetJacobiTruncTheshold`` (for Jacobi interpolation only).
 
 Note that the default interpolation is extended+i interpolation [DFNY2008]_
 truncated to 4 elements per row.
@@ -95,7 +95,7 @@ In order to reduce communication, there is a non-Galerkin coarse grid
 sparsification option available [FaSc2014]_.  This option can be used by itself
 or with existing strategies to reduce communication such as aggressive
 coarsening and HMIS coarsening.  To use, call
-``HYPRE_BoomerAMGSetNonGalerkTol``, which gives BoomerAMG a list of level
+``NALU_HYPRE_BoomerAMGSetNonGalerkTol``, which gives BoomerAMG a list of level
 specific non-Galerkin drop tolerances.  It is common to drop more aggressively
 on coarser levels.  A common choice of drop-tolerances is :math:`[0.0, 0.01,
 0.05]` where the value of 0.0 will skip the non-Galerkin process on the first
@@ -120,12 +120,12 @@ A good overview of parallel smoothers and their properties can be found in
 * hybrid block and Schwarz smoothers [Yang2004]_,
 * ILU and approximate inverse smoothers.
 
-Point relaxation schemes can be set using ``HYPRE_BoomerAMGSetRelaxType`` or, if
+Point relaxation schemes can be set using ``NALU_HYPRE_BoomerAMGSetRelaxType`` or, if
 one wants to specifically set the up cycle, down cycle or the coarsest grid,
-with ``HYPRE_BoomerAMGSetCycleRelaxType``. To use the more complicated
+with ``NALU_HYPRE_BoomerAMGSetCycleRelaxType``. To use the more complicated
 smoothers, e.g. block, Schwarz, ILU smoothers, it is necessary to use
-``HYPRE_BoomerAMGSetSmoothType`` and
-``HYPRE_BoomerAMGSetSmoothNumLevels``. There are further parameter choices for
+``NALU_HYPRE_BoomerAMGSetSmoothType`` and
+``NALU_HYPRE_BoomerAMGSetSmoothNumLevels``. There are further parameter choices for
 the individual smoothers, which are described in the reference manual.  The
 default relaxation type is l1-Gauss-Seidel, using a forward solve on the down
 cycle and a backward solve on the up-cycle, to keep symmetry. Note that if
@@ -140,13 +140,13 @@ AMG for systems of PDEs
 If the users wants to solve systems of PDEs and can provide information on which
 variables belong to which function, BoomerAMG's systems AMG version can also be
 used. Functions that enable the user to access the systems AMG version are
-``HYPRE_BoomerAMGSetNumFunctions``, ``HYPRE_BoomerAMGSetDofFunc`` and
-``HYPRE_BoomerAMGSetNodal``.
+``NALU_HYPRE_BoomerAMGSetNumFunctions``, ``NALU_HYPRE_BoomerAMGSetDofFunc`` and
+``NALU_HYPRE_BoomerAMGSetNodal``.
 
 If the user can provide the near null-space vectors, such as the rigid body
 modes for linear elasticity problems, an interpolation is available that will
-incorporate these vectors with ``HYPRE_BoomerAMGSetInterpVectors`` and
-``HYPRE_BoomerAMGSetInterpVecVariant``. This can lead to improved convergence
+incorporate these vectors with ``NALU_HYPRE_BoomerAMGSetInterpVectors`` and
+``NALU_HYPRE_BoomerAMGSetInterpVecVariant``. This can lead to improved convergence
 and scalability [BaKY2010]_.
 
 
@@ -187,59 +187,59 @@ on GPUs is shown below.
 
  cudaSetDevice(device_id); /* GPU binding */
  ...
- HYPRE_Init(); /* must be the first HYPRE function call */
+ NALU_HYPRE_Init(); /* must be the first HYPRE function call */
  ...
  /* AMG in GPU memory (default) */
- HYPRE_SetMemoryLocation(HYPRE_MEMORY_DEVICE);
+ NALU_HYPRE_SetMemoryLocation(NALU_HYPRE_MEMORY_DEVICE);
  /* setup AMG on GPUs */
- HYPRE_SetExecutionPolicy(HYPRE_EXEC_DEVICE);
+ NALU_HYPRE_SetExecutionPolicy(NALU_HYPRE_EXEC_DEVICE);
  /* use hypre's SpGEMM instead of vendor implementation */
- HYPRE_SetSpGemmUseVendor(FALSE);
+ NALU_HYPRE_SetSpGemmUseVendor(FALSE);
  /* use GPU RNG */
- HYPRE_SetUseGpuRand(TRUE);
+ NALU_HYPRE_SetUseGpuRand(TRUE);
  if (useHypreGpuMemPool)
  {
     /* use hypre's GPU memory pool */
-    HYPRE_SetGPUMemoryPoolSize(bin_growth, min_bin, max_bin, max_bytes);
+    NALU_HYPRE_SetGPUMemoryPoolSize(bin_growth, min_bin, max_bin, max_bytes);
  }
  else if (useUmpireGpuMemPool)
  {
     /* or use Umpire GPU memory pool */
-    HYPRE_SetUmpireUMPoolName("HYPRE_UM_POOL_TEST");
-    HYPRE_SetUmpireDevicePoolName("HYPRE_DEVICE_POOL_TEST");
+    NALU_HYPRE_SetUmpireUMPoolName("NALU_HYPRE_UM_POOL_TEST");
+    NALU_HYPRE_SetUmpireDevicePoolName("NALU_HYPRE_DEVICE_POOL_TEST");
  }
  ...
  /* setup IJ matrix A */
- HYPRE_IJMatrixCreate(comm, first_row, last_row, first_col, last_col, &ij_A);
- HYPRE_IJMatrixSetObjectType(ij_A, HYPRE_PARCSR);
+ NALU_HYPRE_IJMatrixCreate(comm, first_row, last_row, first_col, last_col, &ij_A);
+ NALU_HYPRE_IJMatrixSetObjectType(ij_A, NALU_HYPRE_PARCSR);
  /* GPU pointers; efficient in large chunks */
- HYPRE_IJMatrixAddToValues(ij_A, num_rows, num_cols, rows, cols, data);
- HYPRE_IJMatrixAssemble(ij_A);
- HYPRE_IJMatrixGetObject(ij_A, (void **) &parcsr_A);
+ NALU_HYPRE_IJMatrixAddToValues(ij_A, num_rows, num_cols, rows, cols, data);
+ NALU_HYPRE_IJMatrixAssemble(ij_A);
+ NALU_HYPRE_IJMatrixGetObject(ij_A, (void **) &parcsr_A);
  ...
  /* setup AMG */
- HYPRE_ParCSRPCGCreate(comm, &solver);
- HYPRE_BoomerAMGCreate(&precon);
- HYPRE_BoomerAMGSetRelaxType(precon, rlx_type); /* 3, 4, 6, 7, 18, 11, 12 */
- HYPRE_BoomerAMGSetRelaxOrder(precon, FALSE); /* must be false */
- HYPRE_BoomerAMGSetCoarsenType(precon, coarsen_type); /* 8 */
- HYPRE_BoomerAMGSetInterpType(precon, interp_type); /* 3, 15, 6, 14, 18 */
- HYPRE_BoomerAMGSetAggNumLevels(precon, agg_num_levels);
- HYPRE_BoomerAMGSetAggInterpType(precon, agg_interp_type); /* 5 or 7 */
- HYPRE_BoomerAMGSetKeepTranspose(precon, TRUE); /* keep transpose to avoid SpMTV */
- HYPRE_BoomerAMGSetRAP2(precon, FALSE); /* RAP in two multiplications
+ NALU_HYPRE_ParCSRPCGCreate(comm, &solver);
+ NALU_HYPRE_BoomerAMGCreate(&precon);
+ NALU_HYPRE_BoomerAMGSetRelaxType(precon, rlx_type); /* 3, 4, 6, 7, 18, 11, 12 */
+ NALU_HYPRE_BoomerAMGSetRelaxOrder(precon, FALSE); /* must be false */
+ NALU_HYPRE_BoomerAMGSetCoarsenType(precon, coarsen_type); /* 8 */
+ NALU_HYPRE_BoomerAMGSetInterpType(precon, interp_type); /* 3, 15, 6, 14, 18 */
+ NALU_HYPRE_BoomerAMGSetAggNumLevels(precon, agg_num_levels);
+ NALU_HYPRE_BoomerAMGSetAggInterpType(precon, agg_interp_type); /* 5 or 7 */
+ NALU_HYPRE_BoomerAMGSetKeepTranspose(precon, TRUE); /* keep transpose to avoid SpMTV */
+ NALU_HYPRE_BoomerAMGSetRAP2(precon, FALSE); /* RAP in two multiplications
                                            (default: FALSE) */
- HYPRE_ParCSRPCGSetPrecond(solver, HYPRE_BoomerAMGSolve, HYPRE_BoomerAMGSetup,
+ NALU_HYPRE_ParCSRPCGSetPrecond(solver, NALU_HYPRE_BoomerAMGSolve, NALU_HYPRE_BoomerAMGSetup,
                            precon);
- HYPRE_PCGSetup(solver, parcsr_A, b, x);
+ NALU_HYPRE_PCGSetup(solver, parcsr_A, b, x);
  ...
  /* solve */
- HYPRE_PCGSolve(solver, parcsr_A, b, x);
+ NALU_HYPRE_PCGSolve(solver, parcsr_A, b, x);
  ...
- HYPRE_Finalize(); /* must be the last HYPRE function call */
+ NALU_HYPRE_Finalize(); /* must be the last HYPRE function call */
 
-``HYPRE_Init()`` must be called and precede all the other ``HYPRE_`` functions, and
-``HYPRE_Finalize()`` must be called before exiting.
+``NALU_HYPRE_Init()`` must be called and precede all the other ``NALU_HYPRE_`` functions, and
+``NALU_HYPRE_Finalize()`` must be called before exiting.
 
 Miscellaneous
 ------------------------------------------------------------------------------
@@ -247,7 +247,7 @@ Miscellaneous
 For best performance, it might be necessary to set certain parameters, which
 will affect both coarsening and interpolation.  One important parameter is the
 strong threshold, which can be set using the function
-``HYPRE_BoomerAMGSetStrongThreshold``.  The default value is 0.25, which appears
+``NALU_HYPRE_BoomerAMGSetStrongThreshold``.  The default value is 0.25, which appears
 to be a good choice for 2-dimensional problems and the low complexity coarsening
 algorithms.  For 3-dimensional problems a better choice appears to be 0.5, when
 using the default coarsening algorithm. However, the choice of the strength

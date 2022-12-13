@@ -23,7 +23,7 @@ extern "C" {
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_setparvectordataowner, HYPRE_SETPARVECTORDATAOWNER)
+hypre_F90_IFACE(hypre_setparvectordataowner, NALU_HYPRE_SETPARVECTORDATAOWNER)
 ( hypre_F90_Obj *vector,
   hypre_F90_Int *owns_data,
   hypre_F90_Int *ierr       )
@@ -39,7 +39,7 @@ hypre_F90_IFACE(hypre_setparvectordataowner, HYPRE_SETPARVECTORDATAOWNER)
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_setparvectorconstantvalue, HYPRE_SETPARVECTORCONSTANTVALUE)
+hypre_F90_IFACE(hypre_setparvectorconstantvalue, NALU_HYPRE_SETPARVECTORCONSTANTVALUE)
 ( hypre_F90_Obj *vector,
   hypre_F90_Complex *value,
   hypre_F90_Int *ierr    )
@@ -55,7 +55,7 @@ hypre_F90_IFACE(hypre_setparvectorconstantvalue, HYPRE_SETPARVECTORCONSTANTVALUE
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_setparvectorrandomvalues, HYPRE_SETPARVECTORRANDOMVALUES)
+hypre_F90_IFACE(hypre_setparvectorrandomvalues, NALU_HYPRE_SETPARVECTORRANDOMVALUES)
 ( hypre_F90_Obj *vector,
   hypre_F90_Int *seed,
   hypre_F90_Int *ierr    )
@@ -71,7 +71,7 @@ hypre_F90_IFACE(hypre_setparvectorrandomvalues, HYPRE_SETPARVECTORRANDOMVALUES)
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_copyparvector, HYPRE_COPYPARVECTOR)
+hypre_F90_IFACE(hypre_copyparvector, NALU_HYPRE_COPYPARVECTOR)
 ( hypre_F90_Obj *x,
   hypre_F90_Obj *y,
   hypre_F90_Int *ierr )
@@ -87,7 +87,7 @@ hypre_F90_IFACE(hypre_copyparvector, HYPRE_COPYPARVECTOR)
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_scaleparvector, HYPRE_SCALEPARVECTOR)
+hypre_F90_IFACE(hypre_scaleparvector, NALU_HYPRE_SCALEPARVECTOR)
 ( hypre_F90_Obj *vector,
   hypre_F90_Complex *scale,
   hypre_F90_Int *ierr    )
@@ -103,7 +103,7 @@ hypre_F90_IFACE(hypre_scaleparvector, HYPRE_SCALEPARVECTOR)
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_paraxpy, HYPRE_PARAXPY)
+hypre_F90_IFACE(hypre_paraxpy, NALU_HYPRE_PARAXPY)
 ( hypre_F90_Complex *a,
   hypre_F90_Obj *x,
   hypre_F90_Obj *y,
@@ -121,7 +121,7 @@ hypre_F90_IFACE(hypre_paraxpy, HYPRE_PARAXPY)
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_parinnerprod, HYPRE_PARINNERPROD)
+hypre_F90_IFACE(hypre_parinnerprod, NALU_HYPRE_PARINNERPROD)
 ( hypre_F90_Obj *x,
   hypre_F90_Obj *y,
   hypre_F90_Complex *inner_prod,
@@ -140,7 +140,7 @@ hypre_F90_IFACE(hypre_parinnerprod, HYPRE_PARINNERPROD)
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_vectortoparvector, HYPRE_VECTORTOPARVECTOR)
+hypre_F90_IFACE(hypre_vectortoparvector, NALU_HYPRE_VECTORTOPARVECTOR)
 ( hypre_F90_Comm *comm,
   hypre_F90_Obj *vector,
   hypre_F90_BigIntArray *vec_starts,
@@ -161,7 +161,7 @@ hypre_F90_IFACE(hypre_vectortoparvector, HYPRE_VECTORTOPARVECTOR)
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_parvectortovectorall, HYPRE_PARVECTORTOVECTORALL)
+hypre_F90_IFACE(hypre_parvectortovectorall, NALU_HYPRE_PARVECTORTOVECTORALL)
 ( hypre_F90_Obj *par_vector,
   hypre_F90_Obj *vector,
   hypre_F90_Int *ierr        )

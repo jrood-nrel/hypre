@@ -22,60 +22,60 @@
 
 typedef struct
 {
-   HYPRE_Int            local_num_rows;    /* defines number of rows on this processor */
-   HYPRE_Int            local_num_rownnz;  /* defines number of nonzero rows on this processor */
-   HYPRE_Int            local_num_cols;    /* defines number of cols of diag */
+   NALU_HYPRE_Int            local_num_rows;    /* defines number of rows on this processor */
+   NALU_HYPRE_Int            local_num_rownnz;  /* defines number of nonzero rows on this processor */
+   NALU_HYPRE_Int            local_num_cols;    /* defines number of cols of diag */
 
-   HYPRE_Int            need_aux;                /* if need_aux = 1, aux_j, aux_data are used to
+   NALU_HYPRE_Int            need_aux;                /* if need_aux = 1, aux_j, aux_data are used to
                                                     generate the parcsr matrix (default),
                                                     for need_aux = 0, data is put directly into
                                                     parcsr structure (requires the knowledge of
                                                     offd_i and diag_i ) */
 
-   HYPRE_Int           *rownnz;                  /* row_nnz[i] contains the i-th nonzero row id */
-   HYPRE_Int           *row_length;              /* row_length[i] contains number of stored
+   NALU_HYPRE_Int           *rownnz;                  /* row_nnz[i] contains the i-th nonzero row id */
+   NALU_HYPRE_Int           *row_length;              /* row_length[i] contains number of stored
                                                     elements in i-th row */
-   HYPRE_Int           *row_space;               /* row_space[i] contains space allocated to
+   NALU_HYPRE_Int           *row_space;               /* row_space[i] contains space allocated to
                                                     i-th row */
 
-   HYPRE_Int           *diag_sizes;              /* user input row lengths of diag */
-   HYPRE_Int           *offd_sizes;              /* user input row lengths of diag */
+   NALU_HYPRE_Int           *diag_sizes;              /* user input row lengths of diag */
+   NALU_HYPRE_Int           *offd_sizes;              /* user input row lengths of diag */
 
-   HYPRE_BigInt       **aux_j;                   /* contains collected column indices */
-   HYPRE_Complex      **aux_data;                /* contains collected data */
+   NALU_HYPRE_BigInt       **aux_j;                   /* contains collected column indices */
+   NALU_HYPRE_Complex      **aux_data;                /* contains collected data */
 
-   HYPRE_Int           *indx_diag;               /* indx_diag[i] points to first empty space of portion
+   NALU_HYPRE_Int           *indx_diag;               /* indx_diag[i] points to first empty space of portion
                                                     in diag_j , diag_data assigned to row i */
-   HYPRE_Int           *indx_offd;               /* indx_offd[i] points to first empty space of portion
+   NALU_HYPRE_Int           *indx_offd;               /* indx_offd[i] points to first empty space of portion
                                                     in offd_j , offd_data assigned to row i */
 
-   HYPRE_Int            max_off_proc_elmts;      /* length of off processor stash set for
+   NALU_HYPRE_Int            max_off_proc_elmts;      /* length of off processor stash set for
                                                     SetValues and AddTOValues */
-   HYPRE_Int            current_off_proc_elmts;  /* current no. of elements stored in stash */
-   HYPRE_Int            off_proc_i_indx;         /* pointer to first empty space in
+   NALU_HYPRE_Int            current_off_proc_elmts;  /* current no. of elements stored in stash */
+   NALU_HYPRE_Int            off_proc_i_indx;         /* pointer to first empty space in
                                                     set_off_proc_i_set */
-   HYPRE_BigInt        *off_proc_i;              /* length 2*num_off_procs_elmts, contains info pairs
+   NALU_HYPRE_BigInt        *off_proc_i;              /* length 2*num_off_procs_elmts, contains info pairs
                                                     (code, no. of elmts) where code contains global
                                                     row no. if  SetValues, and (-global row no. -1)
                                                     if  AddToValues */
-   HYPRE_BigInt        *off_proc_j;              /* contains column indices
+   NALU_HYPRE_BigInt        *off_proc_j;              /* contains column indices
                                                   * ( global col id.)    if SetValues,
                                                   * (-global col id. -1) if AddToValues */
-   HYPRE_Complex       *off_proc_data;           /* contains corresponding data */
+   NALU_HYPRE_Complex       *off_proc_data;           /* contains corresponding data */
 
-   HYPRE_MemoryLocation memory_location;
+   NALU_HYPRE_MemoryLocation memory_location;
 
-#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP) || defined(HYPRE_USING_SYCL)
-   HYPRE_Int            max_stack_elmts;
-   HYPRE_Int            current_stack_elmts;
-   HYPRE_BigInt        *stack_i;
-   HYPRE_BigInt        *stack_j;
-   HYPRE_Complex       *stack_data;
+#if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP) || defined(NALU_HYPRE_USING_SYCL)
+   NALU_HYPRE_Int            max_stack_elmts;
+   NALU_HYPRE_Int            current_stack_elmts;
+   NALU_HYPRE_BigInt        *stack_i;
+   NALU_HYPRE_BigInt        *stack_j;
+   NALU_HYPRE_Complex       *stack_data;
    char                *stack_sora;              /* Set (1) or Add (0) */
-   HYPRE_Int            usr_on_proc_elmts;       /* user given num elmt on-proc */
-   HYPRE_Int            usr_off_proc_elmts;      /* user given num elmt off-proc */
-   HYPRE_Real           init_alloc_factor;
-   HYPRE_Real           grow_factor;
+   NALU_HYPRE_Int            usr_on_proc_elmts;       /* user given num elmt on-proc */
+   NALU_HYPRE_Int            usr_off_proc_elmts;      /* user given num elmt off-proc */
+   NALU_HYPRE_Real           init_alloc_factor;
+   NALU_HYPRE_Real           grow_factor;
 #endif
 } hypre_AuxParCSRMatrix;
 
@@ -109,7 +109,7 @@ typedef struct
 
 #define hypre_AuxParCSRMatrixMemoryLocation(matrix)       ((matrix) -> memory_location)
 
-#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP) || defined(HYPRE_USING_SYCL)
+#if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP) || defined(NALU_HYPRE_USING_SYCL)
 #define hypre_AuxParCSRMatrixMaxStackElmts(matrix)        ((matrix) -> max_stack_elmts)
 #define hypre_AuxParCSRMatrixCurrentStackElmts(matrix)    ((matrix) -> current_stack_elmts)
 #define hypre_AuxParCSRMatrixStackI(matrix)               ((matrix) -> stack_i)

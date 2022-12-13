@@ -11,36 +11,36 @@
  *
  *****************************************************************************/
 
-#ifdef HYPRE_DEBUG
+#ifdef NALU_HYPRE_DEBUG
 #include <gmalloc.h>
 #endif
 
-#include <HYPRE_config.h>
+#include <NALU_HYPRE_config.h>
 
 #include "_hypre_utilities.h"
 #include "HYPRE.h"
 
 /* Prototypes for DistributedMatrix */
-#include "HYPRE_distributed_matrix_types.h"
-#include "HYPRE_distributed_matrix_protos.h"
+#include "NALU_HYPRE_distributed_matrix_types.h"
+#include "NALU_HYPRE_distributed_matrix_protos.h"
 
 /* Matrix prototypes for ParCSR */
-#include "HYPRE_parcsr_mv.h"
+#include "NALU_HYPRE_parcsr_mv.h"
 
 /*--------------------------------------------------------------------------
- * HYPRE_ConvertParCSRMatrixToDistributedMatrix
+ * NALU_HYPRE_ConvertParCSRMatrixToDistributedMatrix
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ConvertParCSRMatrixToDistributedMatrix(
-   HYPRE_ParCSRMatrix parcsr_matrix,
-   HYPRE_DistributedMatrix *DistributedMatrix )
+NALU_HYPRE_Int
+NALU_HYPRE_ConvertParCSRMatrixToDistributedMatrix(
+   NALU_HYPRE_ParCSRMatrix parcsr_matrix,
+   NALU_HYPRE_DistributedMatrix *DistributedMatrix )
 {
    MPI_Comm comm;
-   HYPRE_BigInt M, N;
+   NALU_HYPRE_BigInt M, N;
 
-#ifdef HYPRE_TIMING
-   HYPRE_Int           timer;
+#ifdef NALU_HYPRE_TIMING
+   NALU_HYPRE_Int           timer;
    timer = hypre_InitializeTiming( "ConvertParCSRMatrisToDistributedMatrix");
    hypre_BeginTiming( timer );
 #endif
@@ -48,27 +48,27 @@ HYPRE_ConvertParCSRMatrixToDistributedMatrix(
 
    if (!parcsr_matrix)
    {
-      hypre_error(HYPRE_ERROR_ARG);
+      hypre_error(NALU_HYPRE_ERROR_ARG);
       return hypre_error_flag;
    }
 
-   HYPRE_ParCSRMatrixGetComm( parcsr_matrix, &comm);
+   NALU_HYPRE_ParCSRMatrixGetComm( parcsr_matrix, &comm);
 
-   HYPRE_DistributedMatrixCreate( comm, DistributedMatrix );
+   NALU_HYPRE_DistributedMatrixCreate( comm, DistributedMatrix );
 
-   HYPRE_DistributedMatrixSetLocalStorageType( *DistributedMatrix, HYPRE_PARCSR );
+   NALU_HYPRE_DistributedMatrixSetLocalStorageType( *DistributedMatrix, NALU_HYPRE_PARCSR );
 
-   HYPRE_DistributedMatrixInitialize( *DistributedMatrix );
+   NALU_HYPRE_DistributedMatrixInitialize( *DistributedMatrix );
 
-   HYPRE_DistributedMatrixSetLocalStorage( *DistributedMatrix, parcsr_matrix );
+   NALU_HYPRE_DistributedMatrixSetLocalStorage( *DistributedMatrix, parcsr_matrix );
 
 
-   HYPRE_ParCSRMatrixGetDims( parcsr_matrix, &M, &N);
-   HYPRE_DistributedMatrixSetDims( *DistributedMatrix, M, N);
+   NALU_HYPRE_ParCSRMatrixGetDims( parcsr_matrix, &M, &N);
+   NALU_HYPRE_DistributedMatrixSetDims( *DistributedMatrix, M, N);
 
-   HYPRE_DistributedMatrixAssemble( *DistributedMatrix );
+   NALU_HYPRE_DistributedMatrixAssemble( *DistributedMatrix );
 
-#ifdef HYPRE_TIMING
+#ifdef NALU_HYPRE_TIMING
    hypre_EndTiming( timer );
    /* hypre_FinalizeTiming( timer ); */
 #endif

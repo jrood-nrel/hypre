@@ -21,9 +21,9 @@ cat > $INTERNAL_HEADER <<@
 #include <stdio.h>
 #include <math.h>
 
-#include <HYPRE_config.h>
+#include <NALU_HYPRE_config.h>
 
-#include "HYPRE_seq_mv.h"
+#include "NALU_HYPRE_seq_mv.h"
 
 #include "_hypre_utilities.h"
 

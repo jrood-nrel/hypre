@@ -27,7 +27,7 @@ typedef struct
     int      *recvProc;
     int      *recvLeng;
 }
-HYPRE_ML_Matrix;
+NALU_HYPRE_ML_Matrix;
 
 #endif
 

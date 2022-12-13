@@ -7,53 +7,53 @@
 
 /******************************************************************************
  *
- * HYPRE_SStructFAC Routines
+ * NALU_HYPRE_SStructFAC Routines
  *
  *****************************************************************************/
 
 #include "_hypre_sstruct_ls.h"
 
 /*--------------------------------------------------------------------------
- * HYPRE_SStructFACCreate
+ * NALU_HYPRE_SStructFACCreate
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructFACCreate( MPI_Comm comm, HYPRE_SStructSolver *solver )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructFACCreate( MPI_Comm comm, NALU_HYPRE_SStructSolver *solver )
 {
-   *solver = ( (HYPRE_SStructSolver) hypre_FACCreate( comm ) );
+   *solver = ( (NALU_HYPRE_SStructSolver) hypre_FACCreate( comm ) );
 
    return 0;
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_SStructFACDestroy2
+ * NALU_HYPRE_SStructFACDestroy2
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructFACDestroy2( HYPRE_SStructSolver solver )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructFACDestroy2( NALU_HYPRE_SStructSolver solver )
 {
    return ( hypre_FACDestroy2( (void *) solver ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_SStructFACAMR_RAP
+ * NALU_HYPRE_SStructFACAMR_RAP
  *--------------------------------------------------------------------------*/
-HYPRE_Int
-HYPRE_SStructFACAMR_RAP( HYPRE_SStructMatrix  A,
-                         HYPRE_Int          (*rfactors)[HYPRE_MAXDIM],
-                         HYPRE_SStructMatrix *fac_A )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructFACAMR_RAP( NALU_HYPRE_SStructMatrix  A,
+                         NALU_HYPRE_Int          (*rfactors)[NALU_HYPRE_MAXDIM],
+                         NALU_HYPRE_SStructMatrix *fac_A )
 {
    return ( hypre_AMR_RAP(A, rfactors, fac_A) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_SStructFACSetup2
+ * NALU_HYPRE_SStructFACSetup2
  *--------------------------------------------------------------------------*/
-HYPRE_Int
-HYPRE_SStructFACSetup2( HYPRE_SStructSolver  solver,
-                        HYPRE_SStructMatrix  A,
-                        HYPRE_SStructVector  b,
-                        HYPRE_SStructVector  x )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructFACSetup2( NALU_HYPRE_SStructSolver  solver,
+                        NALU_HYPRE_SStructMatrix  A,
+                        NALU_HYPRE_SStructVector  b,
+                        NALU_HYPRE_SStructVector  x )
 {
    return ( hypre_FacSetup2( (void *) solver,
                              (hypre_SStructMatrix *)  A,
@@ -62,13 +62,13 @@ HYPRE_SStructFACSetup2( HYPRE_SStructSolver  solver,
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_SStructFACSolve3
+ * NALU_HYPRE_SStructFACSolve3
  *--------------------------------------------------------------------------*/
-HYPRE_Int
-HYPRE_SStructFACSolve3(HYPRE_SStructSolver solver,
-                       HYPRE_SStructMatrix A,
-                       HYPRE_SStructVector b,
-                       HYPRE_SStructVector x)
+NALU_HYPRE_Int
+NALU_HYPRE_SStructFACSolve3(NALU_HYPRE_SStructSolver solver,
+                       NALU_HYPRE_SStructMatrix A,
+                       NALU_HYPRE_SStructVector b,
+                       NALU_HYPRE_SStructVector x)
 {
    return ( hypre_FACSolve3((void *) solver,
                             (hypre_SStructMatrix *)  A,
@@ -77,35 +77,35 @@ HYPRE_SStructFACSolve3(HYPRE_SStructSolver solver,
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_SStructFACSetTol
+ * NALU_HYPRE_SStructFACSetTol
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructFACSetTol( HYPRE_SStructSolver solver,
-                        HYPRE_Real         tol    )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructFACSetTol( NALU_HYPRE_SStructSolver solver,
+                        NALU_HYPRE_Real         tol    )
 {
    return ( hypre_FACSetTol( (void *) solver, tol ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_SStructFACSetPLevels
+ * NALU_HYPRE_SStructFACSetPLevels
  *--------------------------------------------------------------------------*/
-HYPRE_Int
-HYPRE_SStructFACSetPLevels( HYPRE_SStructSolver  solver,
-                            HYPRE_Int            nparts,
-                            HYPRE_Int           *plevels)
+NALU_HYPRE_Int
+NALU_HYPRE_SStructFACSetPLevels( NALU_HYPRE_SStructSolver  solver,
+                            NALU_HYPRE_Int            nparts,
+                            NALU_HYPRE_Int           *plevels)
 {
    return ( hypre_FACSetPLevels( (void *) solver, nparts, plevels ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_SStructFACZeroCFSten
+ * NALU_HYPRE_SStructFACZeroCFSten
  *--------------------------------------------------------------------------*/
-HYPRE_Int
-HYPRE_SStructFACZeroCFSten( HYPRE_SStructMatrix  A,
-                            HYPRE_SStructGrid    grid,
-                            HYPRE_Int            part,
-                            HYPRE_Int            rfactors[HYPRE_MAXDIM] )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructFACZeroCFSten( NALU_HYPRE_SStructMatrix  A,
+                            NALU_HYPRE_SStructGrid    grid,
+                            NALU_HYPRE_Int            part,
+                            NALU_HYPRE_Int            rfactors[NALU_HYPRE_MAXDIM] )
 {
    hypre_SStructPMatrix   *Af = hypre_SStructMatrixPMatrix(A, part);
    hypre_SStructPMatrix   *Ac = hypre_SStructMatrixPMatrix(A, part - 1);
@@ -115,12 +115,12 @@ HYPRE_SStructFACZeroCFSten( HYPRE_SStructMatrix  A,
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_SStructFACZeroFCSten
+ * NALU_HYPRE_SStructFACZeroFCSten
  *--------------------------------------------------------------------------*/
-HYPRE_Int
-HYPRE_SStructFACZeroFCSten( HYPRE_SStructMatrix  A,
-                            HYPRE_SStructGrid    grid,
-                            HYPRE_Int            part )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructFACZeroFCSten( NALU_HYPRE_SStructMatrix  A,
+                            NALU_HYPRE_SStructGrid    grid,
+                            NALU_HYPRE_Int            part )
 {
    hypre_SStructPMatrix   *Af = hypre_SStructMatrixPMatrix(A, part);
 
@@ -129,177 +129,177 @@ HYPRE_SStructFACZeroFCSten( HYPRE_SStructMatrix  A,
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_SStructFACZeroAMRMatrixData
+ * NALU_HYPRE_SStructFACZeroAMRMatrixData
  *--------------------------------------------------------------------------*/
-HYPRE_Int
-HYPRE_SStructFACZeroAMRMatrixData( HYPRE_SStructMatrix  A,
-                                   HYPRE_Int            part_crse,
-                                   HYPRE_Int            rfactors[HYPRE_MAXDIM] )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructFACZeroAMRMatrixData( NALU_HYPRE_SStructMatrix  A,
+                                   NALU_HYPRE_Int            part_crse,
+                                   NALU_HYPRE_Int            rfactors[NALU_HYPRE_MAXDIM] )
 {
    return ( hypre_ZeroAMRMatrixData(A, part_crse, rfactors) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_SStructFACZeroAMRVectorData
+ * NALU_HYPRE_SStructFACZeroAMRVectorData
  *--------------------------------------------------------------------------*/
-HYPRE_Int
-HYPRE_SStructFACZeroAMRVectorData( HYPRE_SStructVector  b,
-                                   HYPRE_Int           *plevels,
-                                   HYPRE_Int          (*rfactors)[HYPRE_MAXDIM] )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructFACZeroAMRVectorData( NALU_HYPRE_SStructVector  b,
+                                   NALU_HYPRE_Int           *plevels,
+                                   NALU_HYPRE_Int          (*rfactors)[NALU_HYPRE_MAXDIM] )
 {
    return ( hypre_ZeroAMRVectorData(b, plevels, rfactors) );
 }
 
 
 /*--------------------------------------------------------------------------
- * HYPRE_SStructFACSetPRefinements
+ * NALU_HYPRE_SStructFACSetPRefinements
  *--------------------------------------------------------------------------*/
-HYPRE_Int
-HYPRE_SStructFACSetPRefinements( HYPRE_SStructSolver  solver,
-                                 HYPRE_Int            nparts,
-                                 HYPRE_Int          (*rfactors)[HYPRE_MAXDIM] )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructFACSetPRefinements( NALU_HYPRE_SStructSolver  solver,
+                                 NALU_HYPRE_Int            nparts,
+                                 NALU_HYPRE_Int          (*rfactors)[NALU_HYPRE_MAXDIM] )
 {
    return ( hypre_FACSetPRefinements( (void *)         solver,
                                       nparts,
                                       rfactors ) );
 }
 /*--------------------------------------------------------------------------
- * HYPRE_SStructFACSetMaxLevels
+ * NALU_HYPRE_SStructFACSetMaxLevels
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructFACSetMaxLevels( HYPRE_SStructSolver solver,
-                              HYPRE_Int           max_levels  )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructFACSetMaxLevels( NALU_HYPRE_SStructSolver solver,
+                              NALU_HYPRE_Int           max_levels  )
 {
    return ( hypre_FACSetMaxLevels( (void *) solver, max_levels ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_SStructFACSetMaxIter
+ * NALU_HYPRE_SStructFACSetMaxIter
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructFACSetMaxIter( HYPRE_SStructSolver solver,
-                            HYPRE_Int          max_iter  )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructFACSetMaxIter( NALU_HYPRE_SStructSolver solver,
+                            NALU_HYPRE_Int          max_iter  )
 {
    return ( hypre_FACSetMaxIter( (void *) solver, max_iter ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_SStructFACSetRelChange
+ * NALU_HYPRE_SStructFACSetRelChange
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructFACSetRelChange( HYPRE_SStructSolver solver,
-                              HYPRE_Int          rel_change  )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructFACSetRelChange( NALU_HYPRE_SStructSolver solver,
+                              NALU_HYPRE_Int          rel_change  )
 {
    return ( hypre_FACSetRelChange( (void *) solver, rel_change ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_SStructFACSetZeroGuess
+ * NALU_HYPRE_SStructFACSetZeroGuess
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructFACSetZeroGuess( HYPRE_SStructSolver solver )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructFACSetZeroGuess( NALU_HYPRE_SStructSolver solver )
 {
    return ( hypre_FACSetZeroGuess( (void *) solver, 1 ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_SStructFACSetNonZeroGuess
+ * NALU_HYPRE_SStructFACSetNonZeroGuess
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructFACSetNonZeroGuess( HYPRE_SStructSolver solver )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructFACSetNonZeroGuess( NALU_HYPRE_SStructSolver solver )
 {
    return ( hypre_FACSetZeroGuess( (void *) solver, 0 ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_SStructFACSetRelaxType
+ * NALU_HYPRE_SStructFACSetRelaxType
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructFACSetRelaxType( HYPRE_SStructSolver solver,
-                              HYPRE_Int          relax_type )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructFACSetRelaxType( NALU_HYPRE_SStructSolver solver,
+                              NALU_HYPRE_Int          relax_type )
 {
    return ( hypre_FACSetRelaxType( (void *) solver, relax_type) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_SStructFACSetJacobiWeight
+ * NALU_HYPRE_SStructFACSetJacobiWeight
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructFACSetJacobiWeight( HYPRE_SStructSolver solver,
-                                 HYPRE_Real          weight)
+NALU_HYPRE_Int
+NALU_HYPRE_SStructFACSetJacobiWeight( NALU_HYPRE_SStructSolver solver,
+                                 NALU_HYPRE_Real          weight)
 {
    return ( hypre_FACSetJacobiWeight( (void *) solver, weight) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_SStructFACSetNumPreRelax
+ * NALU_HYPRE_SStructFACSetNumPreRelax
  *--------------------------------------------------------------------------*/
-HYPRE_Int
-HYPRE_SStructFACSetNumPreRelax( HYPRE_SStructSolver solver,
-                                HYPRE_Int          num_pre_relax )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructFACSetNumPreRelax( NALU_HYPRE_SStructSolver solver,
+                                NALU_HYPRE_Int          num_pre_relax )
 {
    return ( hypre_FACSetNumPreSmooth( (void *) solver, num_pre_relax) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_SStructFACSetNumPostRelax
+ * NALU_HYPRE_SStructFACSetNumPostRelax
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructFACSetNumPostRelax( HYPRE_SStructSolver solver,
-                                 HYPRE_Int          num_post_relax )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructFACSetNumPostRelax( NALU_HYPRE_SStructSolver solver,
+                                 NALU_HYPRE_Int          num_post_relax )
 {
    return ( hypre_FACSetNumPostSmooth( (void *) solver, num_post_relax) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_SStructFACSetCoarseSolverType
+ * NALU_HYPRE_SStructFACSetCoarseSolverType
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructFACSetCoarseSolverType( HYPRE_SStructSolver solver,
-                                     HYPRE_Int           csolver_type)
+NALU_HYPRE_Int
+NALU_HYPRE_SStructFACSetCoarseSolverType( NALU_HYPRE_SStructSolver solver,
+                                     NALU_HYPRE_Int           csolver_type)
 {
    return ( hypre_FACSetCoarseSolverType( (void *) solver, csolver_type) );
 }
 
 
 /*--------------------------------------------------------------------------
- * HYPRE_SStructFACSetLogging
+ * NALU_HYPRE_SStructFACSetLogging
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructFACSetLogging( HYPRE_SStructSolver solver,
-                            HYPRE_Int          logging )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructFACSetLogging( NALU_HYPRE_SStructSolver solver,
+                            NALU_HYPRE_Int          logging )
 {
    return ( hypre_FACSetLogging( (void *) solver, logging) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_SStructFACGetNumIterations
+ * NALU_HYPRE_SStructFACGetNumIterations
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructFACGetNumIterations( HYPRE_SStructSolver  solver,
-                                  HYPRE_Int          *num_iterations )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructFACGetNumIterations( NALU_HYPRE_SStructSolver  solver,
+                                  NALU_HYPRE_Int          *num_iterations )
 {
    return ( hypre_FACGetNumIterations( (void *) solver, num_iterations ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_SStructFACGetFinalRelativeResidualNorm
+ * NALU_HYPRE_SStructFACGetFinalRelativeResidualNorm
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructFACGetFinalRelativeResidualNorm( HYPRE_SStructSolver  solver,
-                                              HYPRE_Real         *norm   )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructFACGetFinalRelativeResidualNorm( NALU_HYPRE_SStructSolver  solver,
+                                              NALU_HYPRE_Real         *norm   )
 {
    return ( hypre_FACGetFinalRelativeResidualNorm( (void *) solver, norm ) );
 }

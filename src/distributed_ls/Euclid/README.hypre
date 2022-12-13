@@ -67,7 +67,7 @@ Euclid recognizes the following command-line switches:
       if initial allocation is insufficient; carefull setting of
       this parameter, based on previous solutions, can increase
       memory usage; the "ideal" value that should have been set
-      is printed when HYPRE_ParCSREuclidPrintParams() is 
+      is printed when NALU_HYPRE_ParCSREuclidPrintParams() is 
       called.
 
    -printMat

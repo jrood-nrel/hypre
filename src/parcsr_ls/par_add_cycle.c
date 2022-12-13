@@ -18,7 +18,7 @@
  * hypre_BoomerAMGCycle
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_BoomerAMGAdditiveCycle( void              *amg_vdata)
 {
    hypre_ParAMGData *amg_data = (hypre_ParAMGData*) amg_vdata;
@@ -36,45 +36,45 @@ hypre_BoomerAMGAdditiveCycle( void              *amg_vdata)
    hypre_ParVector    *Ztemp;
    hypre_ParVector    *Xtilde, *Rtilde;
    hypre_IntArray    **CF_marker_array;
-   HYPRE_Int          *CF_marker;
+   NALU_HYPRE_Int          *CF_marker;
 
-   HYPRE_Int       num_levels;
-   HYPRE_Int       addlvl, add_end;
-   HYPRE_Int       additive;
-   HYPRE_Int       mult_additive;
-   HYPRE_Int       simple;
-   HYPRE_Int       add_last_lvl;
-   HYPRE_Int       i, j, num_rows;
-   HYPRE_Int       n_global;
-   HYPRE_Int       rlx_order;
+   NALU_HYPRE_Int       num_levels;
+   NALU_HYPRE_Int       addlvl, add_end;
+   NALU_HYPRE_Int       additive;
+   NALU_HYPRE_Int       mult_additive;
+   NALU_HYPRE_Int       simple;
+   NALU_HYPRE_Int       add_last_lvl;
+   NALU_HYPRE_Int       i, j, num_rows;
+   NALU_HYPRE_Int       n_global;
+   NALU_HYPRE_Int       rlx_order;
 
    /* Local variables  */
-   HYPRE_Int       Solve_err_flag = 0;
-   HYPRE_Int       level;
-   HYPRE_Int       coarse_grid;
-   HYPRE_Int       fine_grid;
-   HYPRE_Int       rlx_down;
-   HYPRE_Int       rlx_up;
-   HYPRE_Int       rlx_coarse;
-   HYPRE_Int      *grid_relax_type;
-   HYPRE_Int      *num_grid_sweeps;
+   NALU_HYPRE_Int       Solve_err_flag = 0;
+   NALU_HYPRE_Int       level;
+   NALU_HYPRE_Int       coarse_grid;
+   NALU_HYPRE_Int       fine_grid;
+   NALU_HYPRE_Int       rlx_down;
+   NALU_HYPRE_Int       rlx_up;
+   NALU_HYPRE_Int       rlx_coarse;
+   NALU_HYPRE_Int      *grid_relax_type;
+   NALU_HYPRE_Int      *num_grid_sweeps;
    hypre_Vector  **l1_norms;
-   HYPRE_Real      alpha, beta;
-   HYPRE_Real     *u_data;
-   HYPRE_Real     *v_data;
+   NALU_HYPRE_Real      alpha, beta;
+   NALU_HYPRE_Real     *u_data;
+   NALU_HYPRE_Real     *v_data;
    hypre_Vector   *l1_norms_lvl;
-   HYPRE_Real     *D_inv;
-   HYPRE_Real     *x_global;
-   HYPRE_Real     *r_global;
-   HYPRE_Real     *relax_weight;
-   HYPRE_Real     *omega;
+   NALU_HYPRE_Real     *D_inv;
+   NALU_HYPRE_Real     *x_global;
+   NALU_HYPRE_Real     *r_global;
+   NALU_HYPRE_Real     *relax_weight;
+   NALU_HYPRE_Real     *omega;
 
 #if 0
-   HYPRE_Real   *D_mat;
-   HYPRE_Real   *S_vec;
+   NALU_HYPRE_Real   *D_mat;
+   NALU_HYPRE_Real   *S_vec;
 #endif
 
-   HYPRE_ANNOTATE_FUNC_BEGIN;
+   NALU_HYPRE_ANNOTATE_FUNC_BEGIN;
 
    /* Acquire data and allocate storage */
 
@@ -121,7 +121,7 @@ hypre_BoomerAMGAdditiveCycle( void              *amg_vdata)
    rlx_coarse = grid_relax_type[3];
    for (level = 0; level < num_levels - 1; level++)
    {
-      HYPRE_ANNOTATE_MGLEVEL_BEGIN(level);
+      NALU_HYPRE_ANNOTATE_MGLEVEL_BEGIN(level);
 
       fine_grid = level;
       coarse_grid = level + 1;
@@ -138,14 +138,14 @@ hypre_BoomerAMGAdditiveCycle( void              *amg_vdata)
 
          if (rlx_down == 0)
          {
-            HYPRE_Real *A_data = hypre_CSRMatrixData(hypre_ParCSRMatrixDiag(A_array[fine_grid]));
-            HYPRE_Int *A_i = hypre_CSRMatrixI(hypre_ParCSRMatrixDiag(A_array[fine_grid]));
+            NALU_HYPRE_Real *A_data = hypre_CSRMatrixData(hypre_ParCSRMatrixDiag(A_array[fine_grid]));
+            NALU_HYPRE_Int *A_i = hypre_CSRMatrixI(hypre_ParCSRMatrixDiag(A_array[fine_grid]));
             num_rows = hypre_CSRMatrixNumRows(hypre_ParCSRMatrixDiag(A_array[fine_grid]));
             for (j = 0; j < num_grid_sweeps[1]; j++)
             {
                hypre_ParVectorCopy(F_array[fine_grid], Vtemp);
-#ifdef HYPRE_USING_OPENMP
-               #pragma omp parallel for private(i) HYPRE_SMP_SCHEDULE
+#ifdef NALU_HYPRE_USING_OPENMP
+               #pragma omp parallel for private(i) NALU_HYPRE_SMP_SCHEDULE
 #endif
                for (i = 0; i < num_rows; i++)
                {
@@ -174,8 +174,8 @@ hypre_BoomerAMGAdditiveCycle( void              *amg_vdata)
             for (j = 0; j < num_grid_sweeps[1]; j++)
             {
                hypre_ParVectorCopy(F_array[fine_grid], Vtemp);
-#ifdef HYPRE_USING_OPENMP
-               #pragma omp parallel for private(i) HYPRE_SMP_SCHEDULE
+#ifdef NALU_HYPRE_USING_OPENMP
+               #pragma omp parallel for private(i) NALU_HYPRE_SMP_SCHEDULE
 #endif
                for (i = 0; i < num_rows; i++)
                {
@@ -208,11 +208,11 @@ hypre_BoomerAMGAdditiveCycle( void              *amg_vdata)
                                    beta, F_array[coarse_grid]);
       }
 
-      HYPRE_ANNOTATE_MGLEVEL_END(level);
+      NALU_HYPRE_ANNOTATE_MGLEVEL_END(level);
    }
 
    /* additive smoothing and solve coarse grid */
-   HYPRE_ANNOTATE_MGLEVEL_BEGIN(num_levels - 1);
+   NALU_HYPRE_ANNOTATE_MGLEVEL_BEGIN(num_levels - 1);
    if (addlvl < num_levels)
    {
       if (simple > -1)
@@ -220,8 +220,8 @@ hypre_BoomerAMGAdditiveCycle( void              *amg_vdata)
          x_global = hypre_VectorData(hypre_ParVectorLocalVector(Xtilde));
          r_global = hypre_VectorData(hypre_ParVectorLocalVector(Rtilde));
          n_global = hypre_VectorSize(hypre_ParVectorLocalVector(Xtilde));
-#ifdef HYPRE_USING_OPENMP
-         #pragma omp parallel for private(i) HYPRE_SMP_SCHEDULE
+#ifdef NALU_HYPRE_USING_OPENMP
+         #pragma omp parallel for private(i) NALU_HYPRE_SMP_SCHEDULE
 #endif
          for (i = 0; i < n_global; i++)
          {
@@ -233,7 +233,7 @@ hypre_BoomerAMGAdditiveCycle( void              *amg_vdata)
          if (num_grid_sweeps[1] > 1)
          {
             n_global = hypre_VectorSize(hypre_ParVectorLocalVector(Rtilde));
-            hypre_ParVector *Tmptilde = hypre_CTAlloc(hypre_ParVector,  1, HYPRE_MEMORY_HOST);
+            hypre_ParVector *Tmptilde = hypre_CTAlloc(hypre_ParVector,  1, NALU_HYPRE_MEMORY_HOST);
             hypre_Vector *Tmptilde_local = hypre_SeqVectorCreate(n_global);
             hypre_SeqVectorInitialize(Tmptilde_local);
             hypre_ParVectorLocalVector(Tmptilde) = Tmptilde_local;
@@ -264,12 +264,12 @@ hypre_BoomerAMGAdditiveCycle( void              *amg_vdata)
                                    l1_norms[fine_grid] ? hypre_VectorData(l1_norms[fine_grid]) : NULL,
                                    U_array[fine_grid], Vtemp, Ztemp);
    }
-   HYPRE_ANNOTATE_MGLEVEL_END(num_levels - 1);
+   NALU_HYPRE_ANNOTATE_MGLEVEL_END(num_levels - 1);
 
    /* up cycle */
    for (level = num_levels - 1; level > 0; level--)
    {
-      HYPRE_ANNOTATE_MGLEVEL_BEGIN(level);
+      NALU_HYPRE_ANNOTATE_MGLEVEL_BEGIN(level);
 
       fine_grid = level - 1;
       coarse_grid = level;
@@ -298,7 +298,7 @@ hypre_BoomerAMGAdditiveCycle( void              *amg_vdata)
          else if (rlx_order)
          {
             CF_marker = hypre_IntArrayData(CF_marker_array[fine_grid]);
-            HYPRE_Int loc_relax_points[2];
+            NALU_HYPRE_Int loc_relax_points[2];
             loc_relax_points[0] = -1;
             loc_relax_points[1] = 1;
             for (j = 0; j < num_grid_sweeps[2]; j++)
@@ -333,16 +333,16 @@ hypre_BoomerAMGAdditiveCycle( void              *amg_vdata)
                                   beta, U_array[fine_grid]);
       }
 
-      HYPRE_ANNOTATE_MGLEVEL_END(level);
+      NALU_HYPRE_ANNOTATE_MGLEVEL_END(level);
    }
 
-   HYPRE_ANNOTATE_FUNC_END;
+   NALU_HYPRE_ANNOTATE_FUNC_END;
 
    return (Solve_err_flag);
 }
 
 
-HYPRE_Int hypre_CreateLambda(void *amg_vdata)
+NALU_HYPRE_Int hypre_CreateLambda(void *amg_vdata)
 {
    hypre_ParAMGData *amg_data = (hypre_ParAMGData*) amg_vdata;
 
@@ -359,8 +359,8 @@ HYPRE_Int hypre_CreateLambda(void *amg_vdata)
    hypre_ParCSRMatrix *Atilde;
    hypre_CSRMatrix *Atilde_diag;
    hypre_CSRMatrix *Atilde_offd;
-   HYPRE_Real    *Atilde_diag_data;
-   HYPRE_Real    *Atilde_offd_data;
+   NALU_HYPRE_Real    *Atilde_diag_data;
+   NALU_HYPRE_Real    *Atilde_offd_data;
    hypre_CSRMatrix *A_tmp_diag;
    hypre_CSRMatrix *A_tmp_offd;
    hypre_ParVector *Xtilde;
@@ -370,78 +370,78 @@ HYPRE_Int hypre_CreateLambda(void *amg_vdata)
    hypre_ParCSRCommPkg *comm_pkg;
    hypre_ParCSRCommPkg *L_comm_pkg = NULL;
    hypre_ParCSRCommHandle *comm_handle;
-   HYPRE_Real    *L_diag_data;
-   HYPRE_Real    *L_offd_data;
-   HYPRE_Real    *buf_data = NULL;
-   HYPRE_Real    *tmp_data;
-   HYPRE_Real    *x_data;
-   HYPRE_Real    *r_data;
+   NALU_HYPRE_Real    *L_diag_data;
+   NALU_HYPRE_Real    *L_offd_data;
+   NALU_HYPRE_Real    *buf_data = NULL;
+   NALU_HYPRE_Real    *tmp_data;
+   NALU_HYPRE_Real    *x_data;
+   NALU_HYPRE_Real    *r_data;
    hypre_Vector  *l1_norms;
-   HYPRE_Real    *A_tmp_diag_data;
-   HYPRE_Real    *A_tmp_offd_data;
-   HYPRE_Real    *D_data = NULL;
-   HYPRE_Real    *D_data_offd = NULL;
-   HYPRE_Int *L_diag_i;
-   HYPRE_Int *L_diag_j;
-   HYPRE_Int *L_offd_i;
-   HYPRE_Int *L_offd_j;
-   HYPRE_Int *Atilde_diag_i;
-   HYPRE_Int *Atilde_diag_j;
-   HYPRE_Int *Atilde_offd_i;
-   HYPRE_Int *Atilde_offd_j;
-   HYPRE_Int *A_tmp_diag_i;
-   HYPRE_Int *A_tmp_offd_i;
-   HYPRE_Int *A_tmp_diag_j;
-   HYPRE_Int *A_tmp_offd_j;
-   HYPRE_Int *L_recv_ptr = NULL;
-   HYPRE_Int *L_send_ptr = NULL;
-   HYPRE_Int *L_recv_procs = NULL;
-   HYPRE_Int *L_send_procs = NULL;
-   HYPRE_Int *L_send_map_elmts = NULL;
-   HYPRE_Int *recv_procs;
-   HYPRE_Int *send_procs;
-   HYPRE_Int *send_map_elmts;
-   HYPRE_Int *send_map_starts;
-   HYPRE_Int *recv_vec_starts;
-   HYPRE_Int *all_send_procs = NULL;
-   HYPRE_Int *all_recv_procs = NULL;
-   HYPRE_Int *remap = NULL;
-   HYPRE_Int *level_start;
+   NALU_HYPRE_Real    *A_tmp_diag_data;
+   NALU_HYPRE_Real    *A_tmp_offd_data;
+   NALU_HYPRE_Real    *D_data = NULL;
+   NALU_HYPRE_Real    *D_data_offd = NULL;
+   NALU_HYPRE_Int *L_diag_i;
+   NALU_HYPRE_Int *L_diag_j;
+   NALU_HYPRE_Int *L_offd_i;
+   NALU_HYPRE_Int *L_offd_j;
+   NALU_HYPRE_Int *Atilde_diag_i;
+   NALU_HYPRE_Int *Atilde_diag_j;
+   NALU_HYPRE_Int *Atilde_offd_i;
+   NALU_HYPRE_Int *Atilde_offd_j;
+   NALU_HYPRE_Int *A_tmp_diag_i;
+   NALU_HYPRE_Int *A_tmp_offd_i;
+   NALU_HYPRE_Int *A_tmp_diag_j;
+   NALU_HYPRE_Int *A_tmp_offd_j;
+   NALU_HYPRE_Int *L_recv_ptr = NULL;
+   NALU_HYPRE_Int *L_send_ptr = NULL;
+   NALU_HYPRE_Int *L_recv_procs = NULL;
+   NALU_HYPRE_Int *L_send_procs = NULL;
+   NALU_HYPRE_Int *L_send_map_elmts = NULL;
+   NALU_HYPRE_Int *recv_procs;
+   NALU_HYPRE_Int *send_procs;
+   NALU_HYPRE_Int *send_map_elmts;
+   NALU_HYPRE_Int *send_map_starts;
+   NALU_HYPRE_Int *recv_vec_starts;
+   NALU_HYPRE_Int *all_send_procs = NULL;
+   NALU_HYPRE_Int *all_recv_procs = NULL;
+   NALU_HYPRE_Int *remap = NULL;
+   NALU_HYPRE_Int *level_start;
 
-   HYPRE_Int       addlvl;
-   HYPRE_Int       additive;
-   HYPRE_Int       mult_additive;
-   HYPRE_Int       num_levels;
-   HYPRE_Int       num_add_lvls;
-   HYPRE_Int       num_procs;
-   HYPRE_Int       num_sends, num_recvs;
-   HYPRE_Int       num_sends_L = 0;
-   HYPRE_Int       num_recvs_L = 0;
-   HYPRE_Int       send_data_L = 0;
-   HYPRE_Int       num_rows_L = 0;
-   HYPRE_Int       num_rows_tmp = 0;
-   HYPRE_Int       num_cols_offd_L = 0;
-   HYPRE_Int       num_cols_offd = 0;
-   HYPRE_Int       level, i, j, k;
-   HYPRE_Int       this_proc, cnt, cnt_diag, cnt_offd;
-   HYPRE_Int       A_cnt_diag, A_cnt_offd;
-   HYPRE_Int       cnt_recv, cnt_send, cnt_row, row_start;
-   HYPRE_Int       start_diag, start_offd, indx, cnt_map;
-   HYPRE_Int       start, j_indx, index, cnt_level;
-   HYPRE_Int       max_sends, max_recvs;
-   HYPRE_Int       ns;
+   NALU_HYPRE_Int       addlvl;
+   NALU_HYPRE_Int       additive;
+   NALU_HYPRE_Int       mult_additive;
+   NALU_HYPRE_Int       num_levels;
+   NALU_HYPRE_Int       num_add_lvls;
+   NALU_HYPRE_Int       num_procs;
+   NALU_HYPRE_Int       num_sends, num_recvs;
+   NALU_HYPRE_Int       num_sends_L = 0;
+   NALU_HYPRE_Int       num_recvs_L = 0;
+   NALU_HYPRE_Int       send_data_L = 0;
+   NALU_HYPRE_Int       num_rows_L = 0;
+   NALU_HYPRE_Int       num_rows_tmp = 0;
+   NALU_HYPRE_Int       num_cols_offd_L = 0;
+   NALU_HYPRE_Int       num_cols_offd = 0;
+   NALU_HYPRE_Int       level, i, j, k;
+   NALU_HYPRE_Int       this_proc, cnt, cnt_diag, cnt_offd;
+   NALU_HYPRE_Int       A_cnt_diag, A_cnt_offd;
+   NALU_HYPRE_Int       cnt_recv, cnt_send, cnt_row, row_start;
+   NALU_HYPRE_Int       start_diag, start_offd, indx, cnt_map;
+   NALU_HYPRE_Int       start, j_indx, index, cnt_level;
+   NALU_HYPRE_Int       max_sends, max_recvs;
+   NALU_HYPRE_Int       ns;
 
    /* Local variables  */
-   HYPRE_Int       Solve_err_flag = 0;
-   HYPRE_Int       num_nonzeros_diag;
-   HYPRE_Int       num_nonzeros_offd;
+   NALU_HYPRE_Int       Solve_err_flag = 0;
+   NALU_HYPRE_Int       num_nonzeros_diag;
+   NALU_HYPRE_Int       num_nonzeros_offd;
 
    hypre_Vector  **l1_norms_ptr = NULL;
-   /*HYPRE_Real   *relax_weight = NULL;
-   HYPRE_Int      relax_type; */
-   HYPRE_Int       add_rlx;
-   HYPRE_Int       add_last_lvl, add_end;
-   HYPRE_Real  add_rlx_wt;
+   /*NALU_HYPRE_Real   *relax_weight = NULL;
+   NALU_HYPRE_Int      relax_type; */
+   NALU_HYPRE_Int       add_rlx;
+   NALU_HYPRE_Int       add_last_lvl, add_end;
+   NALU_HYPRE_Real  add_rlx_wt;
 
    /* Acquire data and allocate storage */
 
@@ -468,7 +468,7 @@ HYPRE_Int hypre_CreateLambda(void *amg_vdata)
    else { add_end = num_levels; }
    num_add_lvls = add_end + 1 - addlvl;
 
-   level_start = hypre_CTAlloc(HYPRE_Int,  num_add_lvls + 1, HYPRE_MEMORY_HOST);
+   level_start = hypre_CTAlloc(NALU_HYPRE_Int,  num_add_lvls + 1, NALU_HYPRE_MEMORY_HOST);
    send_data_L = 0;
    num_rows_L  = 0;
    num_cols_offd_L = 0;
@@ -510,8 +510,8 @@ HYPRE_Int hypre_CreateLambda(void *amg_vdata)
       max_sends = num_procs;
       max_recvs = num_procs;
    }
-   if (max_sends) { all_send_procs = hypre_CTAlloc(HYPRE_Int,  max_sends, HYPRE_MEMORY_HOST); }
-   if (max_recvs) { all_recv_procs = hypre_CTAlloc(HYPRE_Int,  max_recvs, HYPRE_MEMORY_HOST); }
+   if (max_sends) { all_send_procs = hypre_CTAlloc(NALU_HYPRE_Int,  max_sends, NALU_HYPRE_MEMORY_HOST); }
+   if (max_recvs) { all_recv_procs = hypre_CTAlloc(NALU_HYPRE_Int,  max_recvs, NALU_HYPRE_MEMORY_HOST); }
 
    cnt_send = 0;
    cnt_recv = 0;
@@ -552,12 +552,12 @@ HYPRE_Int hypre_CreateLambda(void *amg_vdata)
                   all_send_procs[num_sends_L++] = this_proc;
                }
             }
-            L_send_procs = hypre_CTAlloc(HYPRE_Int,  num_sends_L, HYPRE_MEMORY_HOST);
+            L_send_procs = hypre_CTAlloc(NALU_HYPRE_Int,  num_sends_L, NALU_HYPRE_MEMORY_HOST);
             for (j = 0; j < num_sends_L; j++)
             {
                L_send_procs[j] = all_send_procs[j];
             }
-            hypre_TFree(all_send_procs, HYPRE_MEMORY_HOST);
+            hypre_TFree(all_send_procs, NALU_HYPRE_MEMORY_HOST);
          }
          if (max_recvs)
          {
@@ -572,16 +572,16 @@ HYPRE_Int hypre_CreateLambda(void *amg_vdata)
                   all_recv_procs[num_recvs_L++] = this_proc;
                }
             }
-            L_recv_procs = hypre_CTAlloc(HYPRE_Int,  num_recvs_L, HYPRE_MEMORY_HOST);
+            L_recv_procs = hypre_CTAlloc(NALU_HYPRE_Int,  num_recvs_L, NALU_HYPRE_MEMORY_HOST);
             for (j = 0; j < num_recvs_L; j++)
             {
                L_recv_procs[j] = all_recv_procs[j];
             }
-            hypre_TFree(all_recv_procs, HYPRE_MEMORY_HOST);
+            hypre_TFree(all_recv_procs, NALU_HYPRE_MEMORY_HOST);
          }
 
-         L_recv_ptr = hypre_CTAlloc(HYPRE_Int,  num_recvs_L + 1, HYPRE_MEMORY_HOST);
-         L_send_ptr = hypre_CTAlloc(HYPRE_Int,  num_sends_L + 1, HYPRE_MEMORY_HOST);
+         L_recv_ptr = hypre_CTAlloc(NALU_HYPRE_Int,  num_recvs_L + 1, NALU_HYPRE_MEMORY_HOST);
+         L_send_ptr = hypre_CTAlloc(NALU_HYPRE_Int,  num_sends_L + 1, NALU_HYPRE_MEMORY_HOST);
 
          for (i = addlvl; i < add_end; i++)
          {
@@ -663,8 +663,8 @@ HYPRE_Int hypre_CreateLambda(void *amg_vdata)
          }
          if (max_sends)
          {
-            L_send_procs = hypre_CTAlloc(HYPRE_Int,  num_sends_L, HYPRE_MEMORY_HOST);
-            L_send_ptr = hypre_CTAlloc(HYPRE_Int,  num_sends_L + 1, HYPRE_MEMORY_HOST);
+            L_send_procs = hypre_CTAlloc(NALU_HYPRE_Int,  num_sends_L, NALU_HYPRE_MEMORY_HOST);
+            L_send_ptr = hypre_CTAlloc(NALU_HYPRE_Int,  num_sends_L + 1, NALU_HYPRE_MEMORY_HOST);
             num_sends_L = 0;
             for (j = 0; j < num_procs; j++)
             {
@@ -678,8 +678,8 @@ HYPRE_Int hypre_CreateLambda(void *amg_vdata)
          }
          if (max_recvs)
          {
-            L_recv_procs = hypre_CTAlloc(HYPRE_Int,  num_recvs_L, HYPRE_MEMORY_HOST);
-            L_recv_ptr = hypre_CTAlloc(HYPRE_Int,  num_recvs_L + 1, HYPRE_MEMORY_HOST);
+            L_recv_procs = hypre_CTAlloc(NALU_HYPRE_Int,  num_recvs_L, NALU_HYPRE_MEMORY_HOST);
+            L_recv_ptr = hypre_CTAlloc(NALU_HYPRE_Int,  num_recvs_L + 1, NALU_HYPRE_MEMORY_HOST);
             num_recvs_L = 0;
             for (j = 0; j < num_procs; j++)
             {
@@ -693,8 +693,8 @@ HYPRE_Int hypre_CreateLambda(void *amg_vdata)
          }
       }
    }
-   if (max_sends) { hypre_TFree(all_send_procs, HYPRE_MEMORY_HOST); }
-   if (max_recvs) { hypre_TFree(all_recv_procs, HYPRE_MEMORY_HOST); }
+   if (max_sends) { hypre_TFree(all_send_procs, NALU_HYPRE_MEMORY_HOST); }
+   if (max_recvs) { hypre_TFree(all_recv_procs, NALU_HYPRE_MEMORY_HOST); }
 
    L_diag = hypre_CSRMatrixCreate(num_rows_L, num_rows_L, num_nonzeros_diag);
    L_offd = hypre_CSRMatrixCreate(num_rows_L, num_cols_offd_L, num_nonzeros_offd);
@@ -734,26 +734,26 @@ HYPRE_Int hypre_CreateLambda(void *amg_vdata)
       Atilde_offd_i = hypre_CSRMatrixI(Atilde_offd);
    }
 
-   if (num_rows_L) { D_data = hypre_CTAlloc(HYPRE_Real, num_rows_L, HYPRE_MEMORY_HOST); }
+   if (num_rows_L) { D_data = hypre_CTAlloc(NALU_HYPRE_Real, num_rows_L, NALU_HYPRE_MEMORY_HOST); }
    if (send_data_L)
    {
-      L_send_map_elmts = hypre_CTAlloc(HYPRE_Int,  send_data_L, HYPRE_MEMORY_HOST);
-      buf_data = hypre_CTAlloc(HYPRE_Real, send_data_L, HYPRE_MEMORY_HOST);
+      L_send_map_elmts = hypre_CTAlloc(NALU_HYPRE_Int,  send_data_L, NALU_HYPRE_MEMORY_HOST);
+      buf_data = hypre_CTAlloc(NALU_HYPRE_Real, send_data_L, NALU_HYPRE_MEMORY_HOST);
    }
    if (num_cols_offd_L)
    {
-      D_data_offd = hypre_CTAlloc(HYPRE_Real, num_cols_offd_L, HYPRE_MEMORY_HOST);
-      /*L_col_map_offd = hypre_CTAlloc(HYPRE_Int, num_cols_offd_L);*/
-      remap = hypre_CTAlloc(HYPRE_Int,  num_cols_offd_L, HYPRE_MEMORY_HOST);
+      D_data_offd = hypre_CTAlloc(NALU_HYPRE_Real, num_cols_offd_L, NALU_HYPRE_MEMORY_HOST);
+      /*L_col_map_offd = hypre_CTAlloc(NALU_HYPRE_Int, num_cols_offd_L);*/
+      remap = hypre_CTAlloc(NALU_HYPRE_Int,  num_cols_offd_L, NALU_HYPRE_MEMORY_HOST);
    }
 
-   Rtilde = hypre_CTAlloc(hypre_ParVector,  1, HYPRE_MEMORY_HOST);
+   Rtilde = hypre_CTAlloc(hypre_ParVector,  1, NALU_HYPRE_MEMORY_HOST);
    Rtilde_local = hypre_SeqVectorCreate(num_rows_L);
    hypre_SeqVectorInitialize(Rtilde_local);
    hypre_ParVectorLocalVector(Rtilde) = Rtilde_local;
    hypre_ParVectorOwnsData(Rtilde) = 1;
 
-   Xtilde = hypre_CTAlloc(hypre_ParVector,  1, HYPRE_MEMORY_HOST);
+   Xtilde = hypre_CTAlloc(hypre_ParVector,  1, NALU_HYPRE_MEMORY_HOST);
    Xtilde_local = hypre_SeqVectorCreate(num_rows_L);
    hypre_SeqVectorInitialize(Xtilde_local);
    hypre_ParVectorLocalVector(Xtilde) = Xtilde_local;
@@ -855,9 +855,9 @@ HYPRE_Int hypre_CreateLambda(void *amg_vdata)
       /* Compute Lambda */
       if (add_rlx == 0)
       {
-         /*HYPRE_Real rlx_wt = relax_weight[level];*/
-#ifdef HYPRE_USING_OPENMP
-         #pragma omp for private(i) HYPRE_SMP_SCHEDULE
+         /*NALU_HYPRE_Real rlx_wt = relax_weight[level];*/
+#ifdef NALU_HYPRE_USING_OPENMP
+         #pragma omp for private(i) NALU_HYPRE_SMP_SCHEDULE
 #endif
          for (i = 0; i < num_rows_tmp; i++)
          {
@@ -875,8 +875,8 @@ HYPRE_Int hypre_CreateLambda(void *amg_vdata)
       else
       {
          l1_norms = l1_norms_ptr[level];
-#ifdef HYPRE_USING_OPENMP
-         #pragma omp for private(i) HYPRE_SMP_SCHEDULE
+#ifdef NALU_HYPRE_USING_OPENMP
+         #pragma omp for private(i) NALU_HYPRE_SMP_SCHEDULE
 #endif
          for (i = 0; i < num_rows_tmp; i++)
          {
@@ -962,7 +962,7 @@ HYPRE_Int hypre_CreateLambda(void *amg_vdata)
    }
    else
    {
-      L_send_ptr = hypre_CTAlloc(HYPRE_Int, 1, HYPRE_MEMORY_HOST);
+      L_send_ptr = hypre_CTAlloc(NALU_HYPRE_Int, 1, NALU_HYPRE_MEMORY_HOST);
    }
 
    if (L_recv_ptr)
@@ -975,7 +975,7 @@ HYPRE_Int hypre_CreateLambda(void *amg_vdata)
    }
    else
    {
-      L_recv_ptr = hypre_CTAlloc(HYPRE_Int, 1, HYPRE_MEMORY_HOST);
+      L_recv_ptr = hypre_CTAlloc(NALU_HYPRE_Int, 1, NALU_HYPRE_MEMORY_HOST);
    }
 
    /* Create and fill communication package */
@@ -985,7 +985,7 @@ HYPRE_Int hypre_CreateLambda(void *amg_vdata)
                                     L_send_map_elmts,
                                     &L_comm_pkg);
 
-   Lambda = hypre_CTAlloc(hypre_ParCSRMatrix, 1, HYPRE_MEMORY_HOST);
+   Lambda = hypre_CTAlloc(hypre_ParCSRMatrix, 1, NALU_HYPRE_MEMORY_HOST);
    hypre_ParCSRMatrixDiag(Lambda) = L_diag;
    hypre_ParCSRMatrixOffd(Lambda) = L_offd;
    hypre_ParCSRMatrixCommPkg(Lambda) = L_comm_pkg;
@@ -994,7 +994,7 @@ HYPRE_Int hypre_CreateLambda(void *amg_vdata)
 
    if (ns > 1)
    {
-      Atilde = hypre_CTAlloc(hypre_ParCSRMatrix,  1, HYPRE_MEMORY_HOST);
+      Atilde = hypre_CTAlloc(hypre_ParCSRMatrix,  1, NALU_HYPRE_MEMORY_HOST);
       hypre_ParCSRMatrixDiag(Atilde) = Atilde_diag;
       hypre_ParCSRMatrixOffd(Atilde) = Atilde_offd;
       hypre_ParCSRMatrixCommPkg(Atilde) = L_comm_pkg;
@@ -1007,17 +1007,17 @@ HYPRE_Int hypre_CreateLambda(void *amg_vdata)
    hypre_ParAMGDataRtilde(amg_data) = Rtilde;
    hypre_ParAMGDataXtilde(amg_data) = Xtilde;
 
-   hypre_TFree(D_data_offd, HYPRE_MEMORY_HOST);
-   hypre_TFree(D_data, HYPRE_MEMORY_HOST);
-   if (num_procs > 1) { hypre_TFree(buf_data, HYPRE_MEMORY_HOST); }
-   hypre_TFree(remap, HYPRE_MEMORY_HOST);
-   hypre_TFree(buf_data, HYPRE_MEMORY_HOST);
-   hypre_TFree(level_start, HYPRE_MEMORY_HOST);
+   hypre_TFree(D_data_offd, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(D_data, NALU_HYPRE_MEMORY_HOST);
+   if (num_procs > 1) { hypre_TFree(buf_data, NALU_HYPRE_MEMORY_HOST); }
+   hypre_TFree(remap, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(buf_data, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(level_start, NALU_HYPRE_MEMORY_HOST);
 
    return Solve_err_flag;
 }
 
-HYPRE_Int hypre_CreateDinv(void *amg_vdata)
+NALU_HYPRE_Int hypre_CreateDinv(void *amg_vdata)
 {
    hypre_ParAMGData *amg_data = (hypre_ParAMGData*) amg_vdata;
 
@@ -1032,28 +1032,28 @@ HYPRE_Int hypre_CreateDinv(void *amg_vdata)
    hypre_ParVector *Rtilde;
    hypre_Vector *Xtilde_local;
    hypre_Vector *Rtilde_local;
-   HYPRE_Real    *x_data;
-   HYPRE_Real    *r_data;
-   HYPRE_Real    *tmp_data;
-   HYPRE_Real    *D_inv = NULL;
-   /*HYPRE_Real    *relax_weight = NULL;
-   HYPRE_Real     relax_type;*/
+   NALU_HYPRE_Real    *x_data;
+   NALU_HYPRE_Real    *r_data;
+   NALU_HYPRE_Real    *tmp_data;
+   NALU_HYPRE_Real    *D_inv = NULL;
+   /*NALU_HYPRE_Real    *relax_weight = NULL;
+   NALU_HYPRE_Real     relax_type;*/
 
-   HYPRE_Int       addlvl;
-   HYPRE_Int       num_levels;
-   HYPRE_Int       num_rows_L;
-   HYPRE_Int       num_rows_tmp;
-   HYPRE_Int       level, i;
-   HYPRE_Int       add_rlx;
-   HYPRE_Real      add_rlx_wt;
-   HYPRE_Int       add_last_lvl, add_end;
+   NALU_HYPRE_Int       addlvl;
+   NALU_HYPRE_Int       num_levels;
+   NALU_HYPRE_Int       num_rows_L;
+   NALU_HYPRE_Int       num_rows_tmp;
+   NALU_HYPRE_Int       level, i;
+   NALU_HYPRE_Int       add_rlx;
+   NALU_HYPRE_Real      add_rlx_wt;
+   NALU_HYPRE_Int       add_last_lvl, add_end;
 
    /* Local variables  */
-   HYPRE_Int       Solve_err_flag = 0;
+   NALU_HYPRE_Int       Solve_err_flag = 0;
 
    hypre_Vector  **l1_norms_ptr = NULL;
    hypre_Vector   *l1_norms;
-   HYPRE_Int l1_start;
+   NALU_HYPRE_Int l1_start;
 
    /* Acquire data and allocate storage */
 
@@ -1082,13 +1082,13 @@ HYPRE_Int hypre_CreateDinv(void *amg_vdata)
       num_rows_L += num_rows_tmp;
    }
 
-   Rtilde = hypre_CTAlloc(hypre_ParVector,  1, HYPRE_MEMORY_HOST);
+   Rtilde = hypre_CTAlloc(hypre_ParVector,  1, NALU_HYPRE_MEMORY_HOST);
    Rtilde_local = hypre_SeqVectorCreate(num_rows_L);
    hypre_SeqVectorInitialize(Rtilde_local);
    hypre_ParVectorLocalVector(Rtilde) = Rtilde_local;
    hypre_ParVectorOwnsData(Rtilde) = 1;
 
-   Xtilde = hypre_CTAlloc(hypre_ParVector,  1, HYPRE_MEMORY_HOST);
+   Xtilde = hypre_CTAlloc(hypre_ParVector,  1, NALU_HYPRE_MEMORY_HOST);
    Xtilde_local = hypre_SeqVectorCreate(num_rows_L);
    hypre_SeqVectorInitialize(Xtilde_local);
    hypre_ParVectorLocalVector(Xtilde) = Xtilde_local;
@@ -1096,7 +1096,7 @@ HYPRE_Int hypre_CreateDinv(void *amg_vdata)
 
    x_data = hypre_VectorData(hypre_ParVectorLocalVector(Xtilde));
    r_data = hypre_VectorData(hypre_ParVectorLocalVector(Rtilde));
-   D_inv = hypre_CTAlloc(HYPRE_Real,  num_rows_L, HYPRE_MEMORY_HOST);
+   D_inv = hypre_CTAlloc(NALU_HYPRE_Real,  num_rows_L, NALU_HYPRE_MEMORY_HOST);
 
    l1_start = 0;
    for (level = addlvl; level < add_end; level++)
@@ -1126,11 +1126,11 @@ HYPRE_Int hypre_CreateDinv(void *amg_vdata)
 
       if (add_rlx == 0)
       {
-         /*HYPRE_Real rlx_wt = relax_weight[level];*/
-         HYPRE_Int *A_tmp_diag_i = hypre_CSRMatrixI(A_tmp_diag);
-         HYPRE_Real *A_tmp_diag_data = hypre_CSRMatrixData(A_tmp_diag);
-#ifdef HYPRE_USING_OPENMP
-         #pragma omp for private(i) HYPRE_SMP_SCHEDULE
+         /*NALU_HYPRE_Real rlx_wt = relax_weight[level];*/
+         NALU_HYPRE_Int *A_tmp_diag_i = hypre_CSRMatrixI(A_tmp_diag);
+         NALU_HYPRE_Real *A_tmp_diag_data = hypre_CSRMatrixData(A_tmp_diag);
+#ifdef NALU_HYPRE_USING_OPENMP
+         #pragma omp for private(i) NALU_HYPRE_SMP_SCHEDULE
 #endif
          for (i = 0; i < num_rows_tmp; i++)
          {
@@ -1140,8 +1140,8 @@ HYPRE_Int hypre_CreateDinv(void *amg_vdata)
       else
       {
          l1_norms = l1_norms_ptr[level];
-#ifdef HYPRE_USING_OPENMP
-         #pragma omp for private(i) HYPRE_SMP_SCHEDULE
+#ifdef NALU_HYPRE_USING_OPENMP
+         #pragma omp for private(i) NALU_HYPRE_SMP_SCHEDULE
 #endif
          for (i = 0; i < num_rows_tmp; i++)
          {

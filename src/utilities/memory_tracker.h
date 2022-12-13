@@ -8,20 +8,20 @@
 #ifndef hypre_MEMORY_TRACKER_HEADER
 #define hypre_MEMORY_TRACKER_HEADER
 
-#if defined(HYPRE_USING_MEMORY_TRACKER)
+#if defined(NALU_HYPRE_USING_MEMORY_TRACKER)
 
 extern size_t hypre_total_bytes[hypre_MEMORY_UNIFIED + 1];
 extern size_t hypre_peak_bytes[hypre_MEMORY_UNIFIED + 1];
 extern size_t hypre_current_bytes[hypre_MEMORY_UNIFIED + 1];
-extern HYPRE_Int hypre_memory_tracker_print;
-extern char hypre_memory_tracker_filename[HYPRE_MAX_FILE_NAME_LEN];
+extern NALU_HYPRE_Int hypre_memory_tracker_print;
+extern char hypre_memory_tracker_filename[NALU_HYPRE_MAX_FILE_NAME_LEN];
 
 typedef enum _hypre_MemoryTrackerEvent
 {
-   HYPRE_MEMORY_EVENT_ALLOC = 0,
-   HYPRE_MEMORY_EVENT_FREE,
-   HYPRE_MEMORY_EVENT_COPY,
-   HYPRE_MEMORY_NUM_EVENTS,
+   NALU_HYPRE_MEMORY_EVENT_ALLOC = 0,
+   NALU_HYPRE_MEMORY_EVENT_FREE,
+   NALU_HYPRE_MEMORY_EVENT_COPY,
+   NALU_HYPRE_MEMORY_NUM_EVENTS,
 } hypre_MemoryTrackerEvent;
 
 typedef enum _hypre_MemcpyType
@@ -43,9 +43,9 @@ typedef struct
    size_t                nbytes;
    hypre_MemoryLocation  memory_location;
    hypre_MemoryLocation  memory_location2;
-   char                  filename[HYPRE_MAX_FILE_NAME_LEN];
+   char                  filename[NALU_HYPRE_MAX_FILE_NAME_LEN];
    char                  function[256];
-   HYPRE_Int             line;
+   NALU_HYPRE_Int             line;
    size_t                pair;
 } hypre_MemoryTrackerEntry;
 
@@ -66,7 +66,7 @@ typedef struct
 typedef struct
 {
    size_t                   curr_time_step;
-   hypre_MemoryTrackerQueue queue[HYPRE_MEMORY_NUM_EVENTS];
+   hypre_MemoryTrackerQueue queue[NALU_HYPRE_MEMORY_NUM_EVENTS];
 } hypre_MemoryTracker;
 
 #define hypre_TAlloc(type, count, location)                                                         \
@@ -169,6 +169,6 @@ typedef struct
 }                                                                                                   \
 )
 
-#endif /* #if defined(HYPRE_USING_MEMORY_TRACKER) */
+#endif /* #if defined(NALU_HYPRE_USING_MEMORY_TRACKER) */
 #endif /* #ifndef hypre_MEMORY_TRACKER_HEADER */
 

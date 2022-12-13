@@ -20,8 +20,8 @@
 
 typedef struct
 {
-   HYPRE_Int             num_submatrices;
-   HYPRE_Int            *submatrix_types;
+   NALU_HYPRE_Int             num_submatrices;
+   NALU_HYPRE_Int            *submatrix_types;
    void                **submatrices;
 
 } hypre_MultiblockMatrix;

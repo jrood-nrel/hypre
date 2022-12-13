@@ -10,7 +10,7 @@
 #include "_hypre_utilities.h"
 #include "HYPRE.h"
 #include "_hypre_parcsr_mv.h"
-#include "HYPRE_IJ_mv.h"
+#include "NALU_HYPRE_IJ_mv.h"
 #include "mli_matrix.h"
 #include "mli_utils.h"
 
@@ -69,7 +69,7 @@ int MLI_Matrix::apply(double alpha, MLI_Vector *vec1, double beta,
    hypre_ParVector    *hypreV1, *hypreV2, *hypreV3;
    hypre_ParVector    *hypreV1S, *hypreV2S, *hypreV3S;
    hypre_ParCSRMatrix *hypreA = (hypre_ParCSRMatrix *) matrix_;
-   HYPRE_IJVector     IJV1, IJV2, IJV3;
+   NALU_HYPRE_IJVector     IJV1, IJV2, IJV3;
    MPI_Comm           comm;
 
 #ifdef MLI_DEBUG_DETAILED
@@ -80,31 +80,31 @@ int MLI_Matrix::apply(double alpha, MLI_Vector *vec1, double beta,
     * error checking
     * ----------------------------------------------------------------------*/
 
-   if (!strcmp(name_, "HYPRE_ParCSR") && !strcmp(name_, "HYPRE_ParCSRT"))
+   if (!strcmp(name_, "NALU_HYPRE_ParCSR") && !strcmp(name_, "NALU_HYPRE_ParCSRT"))
    {
-      printf("MLI_Matrix::apply ERROR : matrix not HYPRE_ParCSR.\n");
+      printf("MLI_Matrix::apply ERROR : matrix not NALU_HYPRE_ParCSR.\n");
       exit(1);
    }
    vname = vec1->getName();
-   if (strcmp(vname, "HYPRE_ParVector"))
+   if (strcmp(vname, "NALU_HYPRE_ParVector"))
    {
-      printf("MLI_Matrix::apply ERROR : vec1 not HYPRE_ParVector.\n");
+      printf("MLI_Matrix::apply ERROR : vec1 not NALU_HYPRE_ParVector.\n");
       printf("MLI_Matrix::vec1 of type = %s\n", vname);
       exit(1);
    }
    if (vec2 != NULL)
    {
       vname = vec2->getName();
-      if (strcmp(vname, "HYPRE_ParVector"))
+      if (strcmp(vname, "NALU_HYPRE_ParVector"))
       {
-         printf("MLI_Matrix::apply ERROR : vec2 not HYPRE_ParVector.\n");
+         printf("MLI_Matrix::apply ERROR : vec2 not NALU_HYPRE_ParVector.\n");
          exit(1);
       }
    }
    vname = vec3->getName();
-   if (strcmp(vname, "HYPRE_ParVector"))
+   if (strcmp(vname, "NALU_HYPRE_ParVector"))
    {
-      printf("MLI_Matrix::apply ERROR : vec3 not HYPRE_ParVector.\n");
+      printf("MLI_Matrix::apply ERROR : vec3 not NALU_HYPRE_ParVector.\n");
       exit(1);
    }
 
@@ -115,7 +115,7 @@ int MLI_Matrix::apply(double alpha, MLI_Vector *vec1, double beta,
    hypreA  = (hypre_ParCSRMatrix *) matrix_;
    hypreV1 = (hypre_ParVector *) vec1->getVector();
    nrowsV = hypre_VectorSize(hypre_ParVectorLocalVector(hypreV1));
-   if (!strcmp(name_, "HYPRE_ParCSR"))
+   if (!strcmp(name_, "NALU_HYPRE_ParCSR"))
       ncolsA = hypre_ParCSRMatrixNumCols(hypreA);
    else
       ncolsA = hypre_ParCSRMatrixNumRows(hypreA);
@@ -130,7 +130,7 @@ int MLI_Matrix::apply(double alpha, MLI_Vector *vec1, double beta,
       }
       else status = hypre_ParVectorSetConstantValues( hypreV3, 0.0e0 );
 
-      if (!strcmp(name_, "HYPRE_ParCSR"))
+      if (!strcmp(name_, "NALU_HYPRE_ParCSR"))
       {
          status += hypre_ParCSRMatrixMatvec(alpha,hypreA,hypreV1,beta,hypreV3);
       }
@@ -144,25 +144,25 @@ int MLI_Matrix::apply(double alpha, MLI_Vector *vec1, double beta,
    {
       comm = hypre_ParCSRMatrixComm(hypreA);
       MPI_Comm_rank(comm, &mypid);
-      if (!strcmp(name_, "HYPRE_ParCSR"))
-         HYPRE_ParCSRMatrixGetColPartitioning((HYPRE_ParCSRMatrix)hypreA,
+      if (!strcmp(name_, "NALU_HYPRE_ParCSR"))
+         NALU_HYPRE_ParCSRMatrixGetColPartitioning((NALU_HYPRE_ParCSRMatrix)hypreA,
                                            &partitioning);
       else
-         HYPRE_ParCSRMatrixGetColPartitioning((HYPRE_ParCSRMatrix)hypreA,
+         NALU_HYPRE_ParCSRMatrixGetColPartitioning((NALU_HYPRE_ParCSRMatrix)hypreA,
                                               &partitioning);
       startRow = partitioning[mypid];
       endRow   = partitioning[mypid+1];
       free(partitioning);
-      ierr  = HYPRE_IJVectorCreate(comm, startRow, endRow-1, &IJV1);
-      ierr += HYPRE_IJVectorSetObjectType(IJV1, HYPRE_PARCSR);
-      ierr += HYPRE_IJVectorInitialize(IJV1);
-      ierr += HYPRE_IJVectorAssemble(IJV1);
-      ierr += HYPRE_IJVectorGetObject(IJV1, (void **) &hypreV1S);
-      ierr  = HYPRE_IJVectorCreate(comm, startRow, endRow-1, &IJV3);
-      ierr += HYPRE_IJVectorSetObjectType(IJV3, HYPRE_PARCSR);
-      ierr += HYPRE_IJVectorInitialize(IJV3);
-      ierr += HYPRE_IJVectorAssemble(IJV3);
-      ierr += HYPRE_IJVectorGetObject(IJV3, (void **) &hypreV3S);
+      ierr  = NALU_HYPRE_IJVectorCreate(comm, startRow, endRow-1, &IJV1);
+      ierr += NALU_HYPRE_IJVectorSetObjectType(IJV1, NALU_HYPRE_PARCSR);
+      ierr += NALU_HYPRE_IJVectorInitialize(IJV1);
+      ierr += NALU_HYPRE_IJVectorAssemble(IJV1);
+      ierr += NALU_HYPRE_IJVectorGetObject(IJV1, (void **) &hypreV1S);
+      ierr  = NALU_HYPRE_IJVectorCreate(comm, startRow, endRow-1, &IJV3);
+      ierr += NALU_HYPRE_IJVectorSetObjectType(IJV3, NALU_HYPRE_PARCSR);
+      ierr += NALU_HYPRE_IJVectorInitialize(IJV3);
+      ierr += NALU_HYPRE_IJVectorAssemble(IJV3);
+      ierr += NALU_HYPRE_IJVectorGetObject(IJV3, (void **) &hypreV3S);
       V1S_data = hypre_VectorData(hypre_ParVectorLocalVector(hypreV1S));
       V3S_data = hypre_VectorData(hypre_ParVectorLocalVector(hypreV3S));
       hypreV1 = (hypre_ParVector *) vec1->getVector();
@@ -171,11 +171,11 @@ int MLI_Matrix::apply(double alpha, MLI_Vector *vec1, double beta,
       V3_data = hypre_VectorData(hypre_ParVectorLocalVector(hypreV3));
       if (vec2 != NULL)
       {
-         ierr  = HYPRE_IJVectorCreate(comm, startRow, endRow-1, &IJV2);
-         ierr += HYPRE_IJVectorSetObjectType(IJV2, HYPRE_PARCSR);
-         ierr += HYPRE_IJVectorInitialize(IJV2);
-         ierr += HYPRE_IJVectorAssemble(IJV2);
-         ierr += HYPRE_IJVectorGetObject(IJV2, (void **) &hypreV2S);
+         ierr  = NALU_HYPRE_IJVectorCreate(comm, startRow, endRow-1, &IJV2);
+         ierr += NALU_HYPRE_IJVectorSetObjectType(IJV2, NALU_HYPRE_PARCSR);
+         ierr += NALU_HYPRE_IJVectorInitialize(IJV2);
+         ierr += NALU_HYPRE_IJVectorAssemble(IJV2);
+         ierr += NALU_HYPRE_IJVectorGetObject(IJV2, (void **) &hypreV2S);
          hypreV2 = (hypre_ParVector *) vec2->getVector();
          V2_data = hypre_VectorData(hypre_ParVectorLocalVector(hypreV2));
          V2S_data = hypre_VectorData(hypre_ParVectorLocalVector(hypreV2S));
@@ -187,7 +187,7 @@ int MLI_Matrix::apply(double alpha, MLI_Vector *vec1, double beta,
          V3S_data[irow] = V3_data[index];
          if (vec2 != NULL) V2S_data[irow] = V2_data[index];
       }
-      if (!strcmp(name_, "HYPRE_ParCSR"))
+      if (!strcmp(name_, "NALU_HYPRE_ParCSR"))
       {
          status = hypre_ParCSRMatrixMatvec(alpha,hypreA,hypreV1S,
                                             beta,hypreV3S);
@@ -202,9 +202,9 @@ int MLI_Matrix::apply(double alpha, MLI_Vector *vec1, double beta,
          index = subMatrixEqnList_[irow];
          V3_data[index] = V3S_data[irow];
       }
-      ierr += HYPRE_IJVectorDestroy(IJV1);
-      ierr += HYPRE_IJVectorDestroy(IJV2);
-      ierr += HYPRE_IJVectorDestroy(IJV3);
+      ierr += NALU_HYPRE_IJVectorDestroy(IJV1);
+      ierr += NALU_HYPRE_IJVectorDestroy(IJV2);
+      ierr += NALU_HYPRE_IJVectorDestroy(IJV3);
       return status;
    }
    return 0;
@@ -220,13 +220,13 @@ MLI_Vector *MLI_Matrix::createVector()
    int                ierr, *partitioning;
    char               paramString[100];
    MPI_Comm           comm;
-   HYPRE_ParVector    newVec;
+   NALU_HYPRE_ParVector    newVec;
    hypre_ParCSRMatrix *hypreA;
-   HYPRE_IJVector     IJvec;
+   NALU_HYPRE_IJVector     IJvec;
    MLI_Vector         *mli_vec;
    MLI_Function       *funcPtr;
 
-   if (strcmp(name_, "HYPRE_ParCSR"))
+   if (strcmp(name_, "NALU_HYPRE_ParCSR"))
    {
       printf("MLI_Matrix::createVector ERROR - matrix has invalid type.\n");
       exit(1);
@@ -235,25 +235,25 @@ MLI_Vector *MLI_Matrix::createVector()
    comm = hypre_ParCSRMatrixComm(hypreA);
    MPI_Comm_rank(comm, &mypid);
    MPI_Comm_size(comm, &nprocs);
-   if (!strcmp(name_, "HYPRE_ParCSR"))
-      HYPRE_ParCSRMatrixGetColPartitioning((HYPRE_ParCSRMatrix)hypreA,
+   if (!strcmp(name_, "NALU_HYPRE_ParCSR"))
+      NALU_HYPRE_ParCSRMatrixGetColPartitioning((NALU_HYPRE_ParCSRMatrix)hypreA,
                                             &partitioning);
    else
-      HYPRE_ParCSRMatrixGetRowPartitioning((HYPRE_ParCSRMatrix)hypreA,
+      NALU_HYPRE_ParCSRMatrixGetRowPartitioning((NALU_HYPRE_ParCSRMatrix)hypreA,
                                             &partitioning);
    startRow = partitioning[mypid];
    endRow   = partitioning[mypid+1];
    free( partitioning );
-   ierr  = HYPRE_IJVectorCreate(comm, startRow, endRow-1, &IJvec);
-   ierr += HYPRE_IJVectorSetObjectType(IJvec, HYPRE_PARCSR);
-   ierr += HYPRE_IJVectorInitialize(IJvec);
-   ierr += HYPRE_IJVectorAssemble(IJvec);
-   ierr += HYPRE_IJVectorGetObject(IJvec, (void **) &newVec);
-   ierr += HYPRE_IJVectorSetObjectType(IJvec, -1);
-   ierr += HYPRE_IJVectorDestroy(IJvec);
+   ierr  = NALU_HYPRE_IJVectorCreate(comm, startRow, endRow-1, &IJvec);
+   ierr += NALU_HYPRE_IJVectorSetObjectType(IJvec, NALU_HYPRE_PARCSR);
+   ierr += NALU_HYPRE_IJVectorInitialize(IJvec);
+   ierr += NALU_HYPRE_IJVectorAssemble(IJvec);
+   ierr += NALU_HYPRE_IJVectorGetObject(IJvec, (void **) &newVec);
+   ierr += NALU_HYPRE_IJVectorSetObjectType(IJvec, -1);
+   ierr += NALU_HYPRE_IJVectorDestroy(IJvec);
    hypre_assert( !ierr );
-   HYPRE_ParVectorSetConstantValues(newVec, 0.0);
-   sprintf(paramString, "HYPRE_ParVector");
+   NALU_HYPRE_ParVectorSetConstantValues(newVec, 0.0);
+   sprintf(paramString, "NALU_HYPRE_ParVector");
    funcPtr = new MLI_Function();
    MLI_Utils_HypreParVectorGetDestroyFunc(funcPtr);
    mli_vec = new MLI_Vector((void*) newVec, paramString, funcPtr);
@@ -271,9 +271,9 @@ int MLI_Matrix::getMatrixInfo(char *paramString, int &intParams,
    int      matInfo[4];
    double   valInfo[3];
 
-   if (!strcmp(name_, "HYPRE_ParCSR") && !strcmp(name_, "HYPRE_ParCSRT"))
+   if (!strcmp(name_, "NALU_HYPRE_ParCSR") && !strcmp(name_, "NALU_HYPRE_ParCSRT"))
    {
-      printf("MLI_Matrix::getInfo ERROR : matrix not HYPRE_ParCSR.\n");
+      printf("MLI_Matrix::getInfo ERROR : matrix not NALU_HYPRE_ParCSR.\n");
       intParams  = -1;
       dbleParams = 0.0;
       return 1;
@@ -349,9 +349,9 @@ char *MLI_Matrix::getName()
 
 int MLI_Matrix::print(char *filename)
 {
-   if (!strcmp(name_, "HYPRE_ParCSR") && !strcmp(name_, "HYPRE_ParCSRT"))
+   if (!strcmp(name_, "NALU_HYPRE_ParCSR") && !strcmp(name_, "NALU_HYPRE_ParCSRT"))
    {
-      printf("MLI_Matrix::print ERROR : matrix not HYPRE_ParCSR.\n");
+      printf("MLI_Matrix::print ERROR : matrix not NALU_HYPRE_ParCSR.\n");
       return 1;
    }
    MLI_Utils_HypreMatrixPrint((void *) matrix_, filename);

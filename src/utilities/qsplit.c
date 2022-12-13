@@ -13,19 +13,19 @@
  * C version of the routine "qsplit" from SPARSKIT
  * Uses a quicksort-type algorithm to split data into
  * highest "NumberCut" values without completely sorting them.
- * Data is HYPRE_Real precision data.
+ * Data is NALU_HYPRE_Real precision data.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int hypre_DoubleQuickSplit(HYPRE_Real *values, HYPRE_Int *indices,
-                                 HYPRE_Int list_length, HYPRE_Int NumberKept )
+NALU_HYPRE_Int hypre_DoubleQuickSplit(NALU_HYPRE_Real *values, NALU_HYPRE_Int *indices,
+                                 NALU_HYPRE_Int list_length, NALU_HYPRE_Int NumberKept )
 {
-   HYPRE_Int ierr = 0;
-   HYPRE_Real interchange_value;
-   HYPRE_Real abskey;
-   HYPRE_Int interchange_index;
-   HYPRE_Int first, last;
-   HYPRE_Int mid, j;
-   HYPRE_Int done;
+   NALU_HYPRE_Int ierr = 0;
+   NALU_HYPRE_Real interchange_value;
+   NALU_HYPRE_Real abskey;
+   NALU_HYPRE_Int interchange_index;
+   NALU_HYPRE_Int first, last;
+   NALU_HYPRE_Int mid, j;
+   NALU_HYPRE_Int done;
 
    first = 0;
    last = list_length - 1;

@@ -7,7 +7,7 @@
 
 /******************************************************************************
  *
- * HYPRE_fei_vector functions
+ * NALU_HYPRE_fei_vector functions
  *
  *****************************************************************************/
 
@@ -22,18 +22,18 @@
 #include "fei_mv.h"
 //New FEI 2.23.02
 #include "fei_Data.hpp"
-#include "IJ_mv/HYPRE_IJ_mv.h"
-#include "parcsr_mv/HYPRE_parcsr_mv.h"
+#include "IJ_mv/NALU_HYPRE_IJ_mv.h"
+#include "parcsr_mv/NALU_HYPRE_parcsr_mv.h"
 
 /*****************************************************************************/
-/* HYPRE_FEVectorCreate function                                             */
+/* NALU_HYPRE_FEVectorCreate function                                             */
 /*---------------------------------------------------------------------------*/
 
 extern "C" int
-HYPRE_FEVectorCreate(MPI_Comm comm, HYPRE_FEMesh mesh, HYPRE_FEVector *vector)
+NALU_HYPRE_FEVectorCreate(MPI_Comm comm, NALU_HYPRE_FEMesh mesh, NALU_HYPRE_FEVector *vector)
 {
-   HYPRE_FEVector myVector;
-   myVector = (HYPRE_FEVector) hypre_TAlloc(HYPRE_FEVector, 1, HYPRE_MEMORY_HOST);
+   NALU_HYPRE_FEVector myVector;
+   myVector = (NALU_HYPRE_FEVector) hypre_TAlloc(NALU_HYPRE_FEVector, 1, NALU_HYPRE_MEMORY_HOST);
    myVector->mesh_ = mesh;
    myVector->comm_ = comm;
    (*vector) = myVector;
@@ -41,11 +41,11 @@ HYPRE_FEVectorCreate(MPI_Comm comm, HYPRE_FEMesh mesh, HYPRE_FEVector *vector)
 }
 
 /*****************************************************************************/
-/* HYPRE_FEVectorDestroy - Destroy a FEVector object.                        */
+/* NALU_HYPRE_FEVectorDestroy - Destroy a FEVector object.                        */
 /*---------------------------------------------------------------------------*/
 
 extern "C" int
-HYPRE_FEVectorDestroy(HYPRE_FEVector vector)
+NALU_HYPRE_FEVectorDestroy(NALU_HYPRE_FEVector vector)
 {
    if (vector)
    {
@@ -55,18 +55,18 @@ HYPRE_FEVectorDestroy(HYPRE_FEVector vector)
 }
 
 /*****************************************************************************/
-/* HYPRE_FEVectorGetRHS                                                      */
+/* NALU_HYPRE_FEVectorGetRHS                                                      */
 /*---------------------------------------------------------------------------*/
 
 extern "C" int
-HYPRE_FEVectorGetRHS(HYPRE_FEVector vector, void **object)
+NALU_HYPRE_FEVectorGetRHS(NALU_HYPRE_FEVector vector, void **object)
 {
    int               ierr=0;
-   HYPRE_FEMesh      mesh;
+   NALU_HYPRE_FEMesh      mesh;
    LinearSystemCore* lsc;
    Data              dataObj;
-   HYPRE_IJVector    X;
-   HYPRE_ParVector   XCSR;
+   NALU_HYPRE_IJVector    X;
+   NALU_HYPRE_ParVector   XCSR;
 
    if (vector == NULL)
       ierr = 1;
@@ -81,8 +81,8 @@ HYPRE_FEVectorGetRHS(HYPRE_FEVector vector, void **object)
          if (lsc != NULL)
          {
             lsc->copyOutRHSVector(1.0e0, dataObj); 
-            X = (HYPRE_IJVector) dataObj.getDataPtr();
-            HYPRE_IJVectorGetObject(X, (void **) &XCSR);
+            X = (NALU_HYPRE_IJVector) dataObj.getDataPtr();
+            NALU_HYPRE_IJVectorGetObject(X, (void **) &XCSR);
             (*object) = (void *) XCSR;
          }
          else
@@ -96,14 +96,14 @@ HYPRE_FEVectorGetRHS(HYPRE_FEVector vector, void **object)
 }
 
 /*****************************************************************************/
-/* HYPRE_FEVectorSetSol                                                      */
+/* NALU_HYPRE_FEVectorSetSol                                                      */
 /*---------------------------------------------------------------------------*/
 
 extern "C" int
-HYPRE_FEVectorSetSol(HYPRE_FEVector vector, void *object)
+NALU_HYPRE_FEVectorSetSol(NALU_HYPRE_FEVector vector, void *object)
 {
    int                ierr=0;
-   HYPRE_FEMesh       mesh;
+   NALU_HYPRE_FEMesh       mesh;
    LinearSystemCore   *lsc;
    Data               dataObj;
    LLNL_FEI_Impl      *fei1;

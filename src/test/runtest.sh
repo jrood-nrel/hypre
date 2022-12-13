@@ -413,7 +413,7 @@ function ExecuteTest
    cd $WorkingDir
    (cat $TestName.err.* > $TestName.err)
    (./$TestName.sh $RTOL $ATOL >> $TestName.err 2>&1)
-   if [ -z $HYPRE_NO_SAVED ]; then
+   if [ -z $NALU_HYPRE_NO_SAVED ]; then
       if [ -f $SaveName ]; then
          # diff -U3 -bI"time" ${TestName}.saved ${TestName}.out   # old way of diffing
          (../runcheck.sh $TestName.out $SaveName $RTOL $ATOL >> $TestName.err 2>&1)

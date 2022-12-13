@@ -17,7 +17,7 @@
  * - removed shmem validation
  */
 
-#include "HYPRE_config.h"
+#include "NALU_HYPRE_config.h"
 #include <stdlib.h>
 /* #include <unistd.h> */
 #include <time.h>
@@ -31,10 +31,10 @@
 /*************************************************************************
 * This function computes the max of a single element
 **************************************************************************/
-HYPRE_Int hypre_GlobalSEMax(HYPRE_Int value, MPI_Comm hypre_MPI_Context )
+NALU_HYPRE_Int hypre_GlobalSEMax(NALU_HYPRE_Int value, MPI_Comm hypre_MPI_Context )
 {
-  HYPRE_Int max;
-  hypre_MPI_Allreduce( &value, &max, 1, HYPRE_MPI_INT, hypre_MPI_MAX, hypre_MPI_Context );
+  NALU_HYPRE_Int max;
+  hypre_MPI_Allreduce( &value, &max, 1, NALU_HYPRE_MPI_INT, hypre_MPI_MAX, hypre_MPI_Context );
 
   return max;
 }
@@ -43,10 +43,10 @@ HYPRE_Int hypre_GlobalSEMax(HYPRE_Int value, MPI_Comm hypre_MPI_Context )
 /*************************************************************************
 * This function computes the max of a single element
 **************************************************************************/
-HYPRE_Int hypre_GlobalSEMin(HYPRE_Int value, MPI_Comm hypre_MPI_Context)
+NALU_HYPRE_Int hypre_GlobalSEMin(NALU_HYPRE_Int value, MPI_Comm hypre_MPI_Context)
 {
-  HYPRE_Int min;
-  hypre_MPI_Allreduce( &value, &min, 1, HYPRE_MPI_INT, hypre_MPI_MIN, hypre_MPI_Context );
+  NALU_HYPRE_Int min;
+  hypre_MPI_Allreduce( &value, &min, 1, NALU_HYPRE_MPI_INT, hypre_MPI_MIN, hypre_MPI_Context );
 
   return min;
 }
@@ -54,11 +54,11 @@ HYPRE_Int hypre_GlobalSEMin(HYPRE_Int value, MPI_Comm hypre_MPI_Context)
 /*************************************************************************
 * This function computes the max of a single element
 **************************************************************************/
-HYPRE_Int hypre_GlobalSESum(HYPRE_Int value, MPI_Comm hypre_MPI_Context)
+NALU_HYPRE_Int hypre_GlobalSESum(NALU_HYPRE_Int value, MPI_Comm hypre_MPI_Context)
 {
-  HYPRE_Int sum;
+  NALU_HYPRE_Int sum;
 
-  hypre_MPI_Allreduce( &value, &sum, 1, HYPRE_MPI_INT, hypre_MPI_SUM, hypre_MPI_Context );
+  hypre_MPI_Allreduce( &value, &sum, 1, NALU_HYPRE_MPI_INT, hypre_MPI_SUM, hypre_MPI_Context );
 
   return sum;
 }
@@ -66,9 +66,9 @@ HYPRE_Int hypre_GlobalSESum(HYPRE_Int value, MPI_Comm hypre_MPI_Context)
 /*************************************************************************
 * This function computes the max of a single element
 **************************************************************************/
-HYPRE_Real hypre_GlobalSEMaxDouble(HYPRE_Real value, MPI_Comm hypre_MPI_Context)
+NALU_HYPRE_Real hypre_GlobalSEMaxDouble(NALU_HYPRE_Real value, MPI_Comm hypre_MPI_Context)
 {
-  HYPRE_Real max;
+  NALU_HYPRE_Real max;
   hypre_MPI_Allreduce( &value, &max, 1, hypre_MPI_REAL, hypre_MPI_MAX, hypre_MPI_Context );
 
   return max;
@@ -77,9 +77,9 @@ HYPRE_Real hypre_GlobalSEMaxDouble(HYPRE_Real value, MPI_Comm hypre_MPI_Context)
 /*************************************************************************
 * This function computes the max of a single element
 **************************************************************************/
-HYPRE_Real hypre_GlobalSEMinDouble(HYPRE_Real value, MPI_Comm hypre_MPI_Context)
+NALU_HYPRE_Real hypre_GlobalSEMinDouble(NALU_HYPRE_Real value, MPI_Comm hypre_MPI_Context)
 {
-  HYPRE_Real min;
+  NALU_HYPRE_Real min;
   hypre_MPI_Allreduce( &value, &min, 1, hypre_MPI_REAL, hypre_MPI_MIN, hypre_MPI_Context );
 
   return min;
@@ -88,9 +88,9 @@ HYPRE_Real hypre_GlobalSEMinDouble(HYPRE_Real value, MPI_Comm hypre_MPI_Context)
 /*************************************************************************
 * This function computes the max of a single element
 **************************************************************************/
-HYPRE_Real hypre_GlobalSESumDouble(HYPRE_Real value, MPI_Comm hypre_MPI_Context)
+NALU_HYPRE_Real hypre_GlobalSESumDouble(NALU_HYPRE_Real value, MPI_Comm hypre_MPI_Context)
 {
-  HYPRE_Real sum;
+  NALU_HYPRE_Real sum;
   hypre_MPI_Allreduce( &value, &sum, 1, hypre_MPI_REAL, hypre_MPI_SUM, hypre_MPI_Context );
 
   return sum;

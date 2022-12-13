@@ -5,11 +5,11 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#ifndef HYPRE_IJ_MV_HEADER
-#define HYPRE_IJ_MV_HEADER
+#ifndef NALU_HYPRE_IJ_MV_HEADER
+#define NALU_HYPRE_IJ_MV_HEADER
 
-#include "HYPRE_config.h"
-#include "HYPRE_utilities.h"
+#include "NALU_HYPRE_config.h"
+#include "NALU_HYPRE_utilities.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -43,7 +43,7 @@ struct hypre_IJMatrix_struct;
 /**
  * The matrix object.
  **/
-typedef struct hypre_IJMatrix_struct *HYPRE_IJMatrix;
+typedef struct hypre_IJMatrix_struct *NALU_HYPRE_IJMatrix;
 
 /**
  * Create a matrix object.  Each process owns some unique consecutive
@@ -65,12 +65,12 @@ typedef struct hypre_IJMatrix_struct *HYPRE_IJMatrix;
  *
  * Collective.
  **/
-HYPRE_Int HYPRE_IJMatrixCreate(MPI_Comm        comm,
-                               HYPRE_BigInt    ilower,
-                               HYPRE_BigInt    iupper,
-                               HYPRE_BigInt    jlower,
-                               HYPRE_BigInt    jupper,
-                               HYPRE_IJMatrix *matrix);
+NALU_HYPRE_Int NALU_HYPRE_IJMatrixCreate(MPI_Comm        comm,
+                               NALU_HYPRE_BigInt    ilower,
+                               NALU_HYPRE_BigInt    iupper,
+                               NALU_HYPRE_BigInt    jlower,
+                               NALU_HYPRE_BigInt    jupper,
+                               NALU_HYPRE_IJMatrix *matrix);
 
 /**
  * Destroy a matrix object.  An object should be explicitly destroyed
@@ -81,14 +81,14 @@ HYPRE_Int HYPRE_IJMatrixCreate(MPI_Comm        comm,
  * references to the object.  The object will then be destroyed when
  * all internal reference counts go to zero.
  **/
-HYPRE_Int HYPRE_IJMatrixDestroy(HYPRE_IJMatrix matrix);
+NALU_HYPRE_Int NALU_HYPRE_IJMatrixDestroy(NALU_HYPRE_IJMatrix matrix);
 
 /**
  * Prepare a matrix object for setting coefficient values.  This
  * routine will also re-initialize an already assembled matrix,
  * allowing users to modify coefficient values.
  **/
-HYPRE_Int HYPRE_IJMatrixInitialize(HYPRE_IJMatrix matrix);
+NALU_HYPRE_Int NALU_HYPRE_IJMatrixInitialize(NALU_HYPRE_IJMatrix matrix);
 
 /**
  * Prepare a matrix object for setting coefficient values.  This
@@ -96,7 +96,7 @@ HYPRE_Int HYPRE_IJMatrixInitialize(HYPRE_IJMatrix matrix);
  * allowing users to modify coefficient values. This routine
  * also specifies the memory location, i.e. host or device.
  **/
-HYPRE_Int HYPRE_IJMatrixInitialize_v2(HYPRE_IJMatrix matrix, HYPRE_MemoryLocation memory_location);
+NALU_HYPRE_Int NALU_HYPRE_IJMatrixInitialize_v2(NALU_HYPRE_IJMatrix matrix, NALU_HYPRE_MemoryLocation memory_location);
 
 /**
  * Sets values for \e nrows rows or partial rows of the matrix.
@@ -116,51 +116,51 @@ HYPRE_Int HYPRE_IJMatrixInitialize_v2(HYPRE_IJMatrix matrix, HYPRE_MemoryLocatio
  *
  * Note that a threaded version (threaded over the number of rows)
  * will be called if
- * HYPRE_IJMatrixSetOMPFlag is set to a value != 0.
+ * NALU_HYPRE_IJMatrixSetOMPFlag is set to a value != 0.
  * This requires that rows[i] != rows[j] for i!= j
  * and is only efficient if a large number of rows is set in one call
- * to HYPRE_IJMatrixSetValues.
+ * to NALU_HYPRE_IJMatrixSetValues.
  *
  * Not collective.
  *
  **/
-HYPRE_Int HYPRE_IJMatrixSetValues(HYPRE_IJMatrix       matrix,
-                                  HYPRE_Int            nrows,
-                                  HYPRE_Int           *ncols,
-                                  const HYPRE_BigInt  *rows,
-                                  const HYPRE_BigInt  *cols,
-                                  const HYPRE_Complex *values);
+NALU_HYPRE_Int NALU_HYPRE_IJMatrixSetValues(NALU_HYPRE_IJMatrix       matrix,
+                                  NALU_HYPRE_Int            nrows,
+                                  NALU_HYPRE_Int           *ncols,
+                                  const NALU_HYPRE_BigInt  *rows,
+                                  const NALU_HYPRE_BigInt  *cols,
+                                  const NALU_HYPRE_Complex *values);
 
 /**
  * Sets all  matrix coefficients of an already assembled matrix to
  * \e value
  **/
-HYPRE_Int HYPRE_IJMatrixSetConstantValues(HYPRE_IJMatrix matrix,
-                                          HYPRE_Complex value);
+NALU_HYPRE_Int NALU_HYPRE_IJMatrixSetConstantValues(NALU_HYPRE_IJMatrix matrix,
+                                          NALU_HYPRE_Complex value);
 
 /**
  * Adds to values for \e nrows rows or partial rows of the matrix.
- * Usage details are analogous to \ref HYPRE_IJMatrixSetValues.
+ * Usage details are analogous to \ref NALU_HYPRE_IJMatrixSetValues.
  * Adds to any previous values at the specified locations, or, if
  * there was no value there before, inserts a new one.
  * AddToValues can be used to add to values on other processors.
  *
  * Note that a threaded version (threaded over the number of rows)
  * will be called if
- * HYPRE_IJMatrixSetOMPFlag is set to a value != 0.
+ * NALU_HYPRE_IJMatrixSetOMPFlag is set to a value != 0.
  * This requires that rows[i] != rows[j] for i!= j
  * and is only efficient if a large number of rows is added in one call
- * to HYPRE_IJMatrixAddToValues.
+ * to NALU_HYPRE_IJMatrixAddToValues.
  *
  * Not collective.
  *
  **/
-HYPRE_Int HYPRE_IJMatrixAddToValues(HYPRE_IJMatrix       matrix,
-                                    HYPRE_Int            nrows,
-                                    HYPRE_Int           *ncols,
-                                    const HYPRE_BigInt  *rows,
-                                    const HYPRE_BigInt  *cols,
-                                    const HYPRE_Complex *values);
+NALU_HYPRE_Int NALU_HYPRE_IJMatrixAddToValues(NALU_HYPRE_IJMatrix       matrix,
+                                    NALU_HYPRE_Int            nrows,
+                                    NALU_HYPRE_Int           *ncols,
+                                    const NALU_HYPRE_BigInt  *rows,
+                                    const NALU_HYPRE_BigInt  *cols,
+                                    const NALU_HYPRE_Complex *values);
 
 /**
  * Sets values for \e nrows rows or partial rows of the matrix.
@@ -170,13 +170,13 @@ HYPRE_Int HYPRE_IJMatrixAddToValues(HYPRE_IJMatrix       matrix,
  * of this, there can be gaps between the row data in these latter two arrays.
  *
  **/
-HYPRE_Int HYPRE_IJMatrixSetValues2(HYPRE_IJMatrix       matrix,
-                                   HYPRE_Int            nrows,
-                                   HYPRE_Int           *ncols,
-                                   const HYPRE_BigInt  *rows,
-                                   const HYPRE_Int     *row_indexes,
-                                   const HYPRE_BigInt  *cols,
-                                   const HYPRE_Complex *values);
+NALU_HYPRE_Int NALU_HYPRE_IJMatrixSetValues2(NALU_HYPRE_IJMatrix       matrix,
+                                   NALU_HYPRE_Int            nrows,
+                                   NALU_HYPRE_Int           *ncols,
+                                   const NALU_HYPRE_BigInt  *rows,
+                                   const NALU_HYPRE_Int     *row_indexes,
+                                   const NALU_HYPRE_BigInt  *cols,
+                                   const NALU_HYPRE_Complex *values);
 
 /**
  * Adds to values for \e nrows rows or partial rows of the matrix.
@@ -186,77 +186,77 @@ HYPRE_Int HYPRE_IJMatrixSetValues2(HYPRE_IJMatrix       matrix,
  * of this, there can be gaps between the row data in these latter two arrays.
  *
  **/
-HYPRE_Int HYPRE_IJMatrixAddToValues2(HYPRE_IJMatrix       matrix,
-                                     HYPRE_Int            nrows,
-                                     HYPRE_Int           *ncols,
-                                     const HYPRE_BigInt  *rows,
-                                     const HYPRE_Int     *row_indexes,
-                                     const HYPRE_BigInt  *cols,
-                                     const HYPRE_Complex *values);
+NALU_HYPRE_Int NALU_HYPRE_IJMatrixAddToValues2(NALU_HYPRE_IJMatrix       matrix,
+                                     NALU_HYPRE_Int            nrows,
+                                     NALU_HYPRE_Int           *ncols,
+                                     const NALU_HYPRE_BigInt  *rows,
+                                     const NALU_HYPRE_Int     *row_indexes,
+                                     const NALU_HYPRE_BigInt  *cols,
+                                     const NALU_HYPRE_Complex *values);
 
 /**
  * Finalize the construction of the matrix before using.
  **/
-HYPRE_Int HYPRE_IJMatrixAssemble(HYPRE_IJMatrix matrix);
+NALU_HYPRE_Int NALU_HYPRE_IJMatrixAssemble(NALU_HYPRE_IJMatrix matrix);
 
 /**
  * Gets number of nonzeros elements for \e nrows rows specified in \e rows
  * and returns them in \e ncols, which needs to be allocated by the
  * user.
  **/
-HYPRE_Int HYPRE_IJMatrixGetRowCounts(HYPRE_IJMatrix  matrix,
-                                     HYPRE_Int       nrows,
-                                     HYPRE_BigInt   *rows,
-                                     HYPRE_Int      *ncols);
+NALU_HYPRE_Int NALU_HYPRE_IJMatrixGetRowCounts(NALU_HYPRE_IJMatrix  matrix,
+                                     NALU_HYPRE_Int       nrows,
+                                     NALU_HYPRE_BigInt   *rows,
+                                     NALU_HYPRE_Int      *ncols);
 
 /**
  * Gets values for \e nrows rows or partial rows of the matrix.
  * Usage details are mostly
- * analogous to \ref HYPRE_IJMatrixSetValues.
+ * analogous to \ref NALU_HYPRE_IJMatrixSetValues.
  * Note that if nrows is negative, the routine will return
  * the column_indices and matrix coefficients of the
  * (-nrows) rows contained in rows.
  **/
-HYPRE_Int HYPRE_IJMatrixGetValues(HYPRE_IJMatrix  matrix,
-                                  HYPRE_Int       nrows,
-                                  HYPRE_Int      *ncols,
-                                  HYPRE_BigInt   *rows,
-                                  HYPRE_BigInt   *cols,
-                                  HYPRE_Complex  *values);
+NALU_HYPRE_Int NALU_HYPRE_IJMatrixGetValues(NALU_HYPRE_IJMatrix  matrix,
+                                  NALU_HYPRE_Int       nrows,
+                                  NALU_HYPRE_Int      *ncols,
+                                  NALU_HYPRE_BigInt   *rows,
+                                  NALU_HYPRE_BigInt   *cols,
+                                  NALU_HYPRE_Complex  *values);
 
 /**
  * Set the storage type of the matrix object to be constructed.
- * Currently, \e type can only be \c HYPRE_PARCSR.
+ * Currently, \e type can only be \c NALU_HYPRE_PARCSR.
  *
  * Not collective, but must be the same on all processes.
  *
- * @see HYPRE_IJMatrixGetObject
+ * @see NALU_HYPRE_IJMatrixGetObject
  **/
-HYPRE_Int HYPRE_IJMatrixSetObjectType(HYPRE_IJMatrix matrix,
-                                      HYPRE_Int      type);
+NALU_HYPRE_Int NALU_HYPRE_IJMatrixSetObjectType(NALU_HYPRE_IJMatrix matrix,
+                                      NALU_HYPRE_Int      type);
 
 /**
  * Get the storage type of the constructed matrix object.
  **/
-HYPRE_Int HYPRE_IJMatrixGetObjectType(HYPRE_IJMatrix  matrix,
-                                      HYPRE_Int      *type);
+NALU_HYPRE_Int NALU_HYPRE_IJMatrixGetObjectType(NALU_HYPRE_IJMatrix  matrix,
+                                      NALU_HYPRE_Int      *type);
 
 /**
  * Gets range of rows owned by this processor and range
  * of column partitioning for this processor.
  **/
-HYPRE_Int HYPRE_IJMatrixGetLocalRange(HYPRE_IJMatrix  matrix,
-                                      HYPRE_BigInt   *ilower,
-                                      HYPRE_BigInt   *iupper,
-                                      HYPRE_BigInt   *jlower,
-                                      HYPRE_BigInt   *jupper);
+NALU_HYPRE_Int NALU_HYPRE_IJMatrixGetLocalRange(NALU_HYPRE_IJMatrix  matrix,
+                                      NALU_HYPRE_BigInt   *ilower,
+                                      NALU_HYPRE_BigInt   *iupper,
+                                      NALU_HYPRE_BigInt   *jlower,
+                                      NALU_HYPRE_BigInt   *jupper);
 
 /**
  * Get a reference to the constructed matrix object.
  *
- * @see HYPRE_IJMatrixSetObjectType
+ * @see NALU_HYPRE_IJMatrixSetObjectType
  **/
-HYPRE_Int HYPRE_IJMatrixGetObject(HYPRE_IJMatrix   matrix,
+NALU_HYPRE_Int NALU_HYPRE_IJMatrixGetObject(NALU_HYPRE_IJMatrix   matrix,
                                   void           **object);
 
 /**
@@ -267,8 +267,8 @@ HYPRE_Int HYPRE_IJMatrixGetObject(HYPRE_IJMatrix   matrix,
  *
  * Not collective.
  **/
-HYPRE_Int HYPRE_IJMatrixSetRowSizes(HYPRE_IJMatrix   matrix,
-                                    const HYPRE_Int *sizes);
+NALU_HYPRE_Int NALU_HYPRE_IJMatrixSetRowSizes(NALU_HYPRE_IJMatrix   matrix,
+                                    const NALU_HYPRE_Int *sizes);
 
 /**
  * (Optional) Sets the exact number of nonzeros in each row of
@@ -282,9 +282,9 @@ HYPRE_Int HYPRE_IJMatrixSetRowSizes(HYPRE_IJMatrix   matrix,
  *
  * Not collective.
  **/
-HYPRE_Int HYPRE_IJMatrixSetDiagOffdSizes(HYPRE_IJMatrix   matrix,
-                                         const HYPRE_Int *diag_sizes,
-                                         const HYPRE_Int *offdiag_sizes);
+NALU_HYPRE_Int NALU_HYPRE_IJMatrixSetDiagOffdSizes(NALU_HYPRE_IJMatrix   matrix,
+                                         const NALU_HYPRE_Int *diag_sizes,
+                                         const NALU_HYPRE_Int *offdiag_sizes);
 
 /**
  * (Optional) Sets the maximum number of elements that are expected to be set
@@ -294,25 +294,25 @@ HYPRE_Int HYPRE_IJMatrixSetDiagOffdSizes(HYPRE_IJMatrix   matrix,
  *
  * Not collective.
  **/
-HYPRE_Int HYPRE_IJMatrixSetMaxOffProcElmts(HYPRE_IJMatrix matrix,
-                                           HYPRE_Int      max_off_proc_elmts);
+NALU_HYPRE_Int NALU_HYPRE_IJMatrixSetMaxOffProcElmts(NALU_HYPRE_IJMatrix matrix,
+                                           NALU_HYPRE_Int      max_off_proc_elmts);
 
 /**
  * (Optional) Sets the print level, if the user wants to print
  * error messages. The default is 0, i.e. no error messages are printed.
  *
  **/
-HYPRE_Int HYPRE_IJMatrixSetPrintLevel(HYPRE_IJMatrix matrix,
-                                      HYPRE_Int      print_level);
+NALU_HYPRE_Int NALU_HYPRE_IJMatrixSetPrintLevel(NALU_HYPRE_IJMatrix matrix,
+                                      NALU_HYPRE_Int      print_level);
 
 /**
  * (Optional) if set, will use a threaded version of
- * HYPRE_IJMatrixSetValues and HYPRE_IJMatrixAddToValues.
+ * NALU_HYPRE_IJMatrixSetValues and NALU_HYPRE_IJMatrixAddToValues.
  * This is only useful if a large number of rows is set or added to
  * at once.
  *
- * NOTE that the values in the rows array of HYPRE_IJMatrixSetValues
- * or HYPRE_IJMatrixAddToValues must be different from each other !!!
+ * NOTE that the values in the rows array of NALU_HYPRE_IJMatrixSetValues
+ * or NALU_HYPRE_IJMatrixAddToValues must be different from each other !!!
  *
  * This option is VERY inefficient if only a small number of rows
  * is set or added at once and/or
@@ -320,29 +320,29 @@ HYPRE_Int HYPRE_IJMatrixSetPrintLevel(HYPRE_IJMatrix matrix,
  * if values are added to off processor values.
  *
  **/
-HYPRE_Int HYPRE_IJMatrixSetOMPFlag(HYPRE_IJMatrix matrix,
-                                   HYPRE_Int      omp_flag);
+NALU_HYPRE_Int NALU_HYPRE_IJMatrixSetOMPFlag(NALU_HYPRE_IJMatrix matrix,
+                                   NALU_HYPRE_Int      omp_flag);
 
 /**
  * Read the matrix from file.  This is mainly for debugging purposes.
  **/
-HYPRE_Int HYPRE_IJMatrixRead(const char     *filename,
+NALU_HYPRE_Int NALU_HYPRE_IJMatrixRead(const char     *filename,
                              MPI_Comm        comm,
-                             HYPRE_Int       type,
-                             HYPRE_IJMatrix *matrix);
+                             NALU_HYPRE_Int       type,
+                             NALU_HYPRE_IJMatrix *matrix);
 
 /**
  * Read the matrix from MM file.  This is mainly for debugging purposes.
  **/
-HYPRE_Int HYPRE_IJMatrixReadMM(const char     *filename,
+NALU_HYPRE_Int NALU_HYPRE_IJMatrixReadMM(const char     *filename,
                                MPI_Comm        comm,
-                               HYPRE_Int       type,
-                               HYPRE_IJMatrix *matrix);
+                               NALU_HYPRE_Int       type,
+                               NALU_HYPRE_IJMatrix *matrix);
 
 /**
  * Print the matrix to file.  This is mainly for debugging purposes.
  **/
-HYPRE_Int HYPRE_IJMatrixPrint(HYPRE_IJMatrix  matrix,
+NALU_HYPRE_Int NALU_HYPRE_IJMatrixPrint(NALU_HYPRE_IJMatrix  matrix,
                               const char     *filename);
 
 /**@}*/
@@ -360,7 +360,7 @@ struct hypre_IJVector_struct;
 /**
  * The vector object.
  **/
-typedef struct hypre_IJVector_struct *HYPRE_IJVector;
+typedef struct hypre_IJVector_struct *NALU_HYPRE_IJVector;
 
 /**
  * Create a vector object.  Each process owns some unique consecutive
@@ -373,10 +373,10 @@ typedef struct hypre_IJVector_struct *HYPRE_IJVector;
  *
  * Collective.
  **/
-HYPRE_Int HYPRE_IJVectorCreate(MPI_Comm        comm,
-                               HYPRE_BigInt    jlower,
-                               HYPRE_BigInt    jupper,
-                               HYPRE_IJVector *vector);
+NALU_HYPRE_Int NALU_HYPRE_IJVectorCreate(MPI_Comm        comm,
+                               NALU_HYPRE_BigInt    jlower,
+                               NALU_HYPRE_BigInt    jupper,
+                               NALU_HYPRE_IJVector *vector);
 
 /**
  * Destroy a vector object.  An object should be explicitly destroyed
@@ -387,14 +387,14 @@ HYPRE_Int HYPRE_IJVectorCreate(MPI_Comm        comm,
  * references to the object.  The object will then be destroyed when
  * all internal reference counts go to zero.
  **/
-HYPRE_Int HYPRE_IJVectorDestroy(HYPRE_IJVector vector);
+NALU_HYPRE_Int NALU_HYPRE_IJVectorDestroy(NALU_HYPRE_IJVector vector);
 
 /**
  * Prepare a vector object for setting coefficient values.  This
  * routine will also re-initialize an already assembled vector,
  * allowing users to modify coefficient values.
  **/
-HYPRE_Int HYPRE_IJVectorInitialize(HYPRE_IJVector vector);
+NALU_HYPRE_Int NALU_HYPRE_IJVectorInitialize(NALU_HYPRE_IJVector vector);
 
 /**
  * Prepare a vector object for setting coefficient values.  This
@@ -402,8 +402,8 @@ HYPRE_Int HYPRE_IJVectorInitialize(HYPRE_IJVector vector);
  * allowing users to modify coefficient values. This routine
  * also specifies the memory location, i.e. host or device.
  **/
-HYPRE_Int HYPRE_IJVectorInitialize_v2( HYPRE_IJVector vector,
-                                       HYPRE_MemoryLocation memory_location );
+NALU_HYPRE_Int NALU_HYPRE_IJVectorInitialize_v2( NALU_HYPRE_IJVector vector,
+                                       NALU_HYPRE_MemoryLocation memory_location );
 
 /**
  * (Optional) Sets the maximum number of elements that are expected to be set
@@ -413,23 +413,23 @@ HYPRE_Int HYPRE_IJVectorInitialize_v2( HYPRE_IJVector vector,
  *
  * Not collective.
  **/
-HYPRE_Int HYPRE_IJVectorSetMaxOffProcElmts(HYPRE_IJVector vector,
-                                           HYPRE_Int      max_off_proc_elmts);
+NALU_HYPRE_Int NALU_HYPRE_IJVectorSetMaxOffProcElmts(NALU_HYPRE_IJVector vector,
+                                           NALU_HYPRE_Int      max_off_proc_elmts);
 
 /**
  * (Optional) Sets the number of components (vectors) of a multivector. A vector
  * is assumed to have a single component when this function is not called.
- * This function must be called prior to HYPRE_IJVectorInitialize.
+ * This function must be called prior to NALU_HYPRE_IJVectorInitialize.
  **/
-HYPRE_Int HYPRE_IJVectorSetNumComponents(HYPRE_IJVector  vector,
-                                         HYPRE_Int       num_components);
+NALU_HYPRE_Int NALU_HYPRE_IJVectorSetNumComponents(NALU_HYPRE_IJVector  vector,
+                                         NALU_HYPRE_Int       num_components);
 
 /**
  * (Optional) Sets the component identifier of a vector with multiple components (multivector).
  * This can be used for Set/AddTo/Get purposes.
  **/
-HYPRE_Int HYPRE_IJVectorSetComponent(HYPRE_IJVector  vector,
-                                     HYPRE_Int       component);
+NALU_HYPRE_Int NALU_HYPRE_IJVectorSetComponent(NALU_HYPRE_IJVector  vector,
+                                     NALU_HYPRE_Int       component);
 
 /**
  * Sets values in vector.  The arrays \e values and \e indices
@@ -444,29 +444,29 @@ HYPRE_Int HYPRE_IJVectorSetComponent(HYPRE_IJVector  vector,
  *
  * Not collective.
  **/
-HYPRE_Int HYPRE_IJVectorSetValues(HYPRE_IJVector       vector,
-                                  HYPRE_Int            nvalues,
-                                  const HYPRE_BigInt  *indices,
-                                  const HYPRE_Complex *values);
+NALU_HYPRE_Int NALU_HYPRE_IJVectorSetValues(NALU_HYPRE_IJVector       vector,
+                                  NALU_HYPRE_Int            nvalues,
+                                  const NALU_HYPRE_BigInt  *indices,
+                                  const NALU_HYPRE_Complex *values);
 
 /**
  * Adds to values in vector.  Usage details are analogous to
- * \ref HYPRE_IJVectorSetValues.
+ * \ref NALU_HYPRE_IJVectorSetValues.
  * Adds to any previous values at the specified locations, or, if
  * there was no value there before, inserts a new one.
  * AddToValues can be used to add to values on other processors.
  *
  * Not collective.
  **/
-HYPRE_Int HYPRE_IJVectorAddToValues(HYPRE_IJVector       vector,
-                                    HYPRE_Int            nvalues,
-                                    const HYPRE_BigInt  *indices,
-                                    const HYPRE_Complex *values);
+NALU_HYPRE_Int NALU_HYPRE_IJVectorAddToValues(NALU_HYPRE_IJVector       vector,
+                                    NALU_HYPRE_Int            nvalues,
+                                    const NALU_HYPRE_BigInt  *indices,
+                                    const NALU_HYPRE_Complex *values);
 
 /**
  * Finalize the construction of the vector before using.
  **/
-HYPRE_Int HYPRE_IJVectorAssemble(HYPRE_IJVector vector);
+NALU_HYPRE_Int NALU_HYPRE_IJVectorAssemble(NALU_HYPRE_IJVector vector);
 
 /**
  * Update vectors by setting (action 1) or
@@ -476,53 +476,53 @@ HYPRE_Int HYPRE_IJVectorAssemble(HYPRE_IJVector vector);
  *
  * Not collective.
  **/
-HYPRE_Int HYPRE_IJVectorUpdateValues(HYPRE_IJVector       vector,
-                                     HYPRE_Int            nvalues,
-                                     const HYPRE_BigInt  *indices,
-                                     const HYPRE_Complex *values,
-                                     HYPRE_Int            action);
+NALU_HYPRE_Int NALU_HYPRE_IJVectorUpdateValues(NALU_HYPRE_IJVector       vector,
+                                     NALU_HYPRE_Int            nvalues,
+                                     const NALU_HYPRE_BigInt  *indices,
+                                     const NALU_HYPRE_Complex *values,
+                                     NALU_HYPRE_Int            action);
 
 /**
  * Gets values in vector.  Usage details are analogous to
- * \ref HYPRE_IJVectorSetValues.
+ * \ref NALU_HYPRE_IJVectorSetValues.
  *
  * Not collective.
  **/
-HYPRE_Int HYPRE_IJVectorGetValues(HYPRE_IJVector   vector,
-                                  HYPRE_Int        nvalues,
-                                  const HYPRE_BigInt *indices,
-                                  HYPRE_Complex   *values);
+NALU_HYPRE_Int NALU_HYPRE_IJVectorGetValues(NALU_HYPRE_IJVector   vector,
+                                  NALU_HYPRE_Int        nvalues,
+                                  const NALU_HYPRE_BigInt *indices,
+                                  NALU_HYPRE_Complex   *values);
 
 /**
  * Set the storage type of the vector object to be constructed.
- * Currently, \e type can only be \c HYPRE_PARCSR.
+ * Currently, \e type can only be \c NALU_HYPRE_PARCSR.
  *
  * Not collective, but must be the same on all processes.
  *
- * @see HYPRE_IJVectorGetObject
+ * @see NALU_HYPRE_IJVectorGetObject
  **/
-HYPRE_Int HYPRE_IJVectorSetObjectType(HYPRE_IJVector vector,
-                                      HYPRE_Int      type);
+NALU_HYPRE_Int NALU_HYPRE_IJVectorSetObjectType(NALU_HYPRE_IJVector vector,
+                                      NALU_HYPRE_Int      type);
 
 /**
  * Get the storage type of the constructed vector object.
  **/
-HYPRE_Int HYPRE_IJVectorGetObjectType(HYPRE_IJVector  vector,
-                                      HYPRE_Int      *type);
+NALU_HYPRE_Int NALU_HYPRE_IJVectorGetObjectType(NALU_HYPRE_IJVector  vector,
+                                      NALU_HYPRE_Int      *type);
 
 /**
  * Returns range of the part of the vector owned by this processor.
  **/
-HYPRE_Int HYPRE_IJVectorGetLocalRange(HYPRE_IJVector  vector,
-                                      HYPRE_BigInt   *jlower,
-                                      HYPRE_BigInt   *jupper);
+NALU_HYPRE_Int NALU_HYPRE_IJVectorGetLocalRange(NALU_HYPRE_IJVector  vector,
+                                      NALU_HYPRE_BigInt   *jlower,
+                                      NALU_HYPRE_BigInt   *jupper);
 
 /**
  * Get a reference to the constructed vector object.
  *
- * @see HYPRE_IJVectorSetObjectType
+ * @see NALU_HYPRE_IJVectorSetObjectType
  **/
-HYPRE_Int HYPRE_IJVectorGetObject(HYPRE_IJVector   vector,
+NALU_HYPRE_Int NALU_HYPRE_IJVectorGetObject(NALU_HYPRE_IJVector   vector,
                                   void           **object);
 
 /**
@@ -530,29 +530,29 @@ HYPRE_Int HYPRE_IJVectorGetObject(HYPRE_IJVector   vector,
  * error messages. The default is 0, i.e. no error messages are printed.
  *
  **/
-HYPRE_Int HYPRE_IJVectorSetPrintLevel(HYPRE_IJVector vector,
-                                      HYPRE_Int      print_level);
+NALU_HYPRE_Int NALU_HYPRE_IJVectorSetPrintLevel(NALU_HYPRE_IJVector vector,
+                                      NALU_HYPRE_Int      print_level);
 
 /**
  * Read the vector from file.  This is mainly for debugging purposes.
  **/
-HYPRE_Int HYPRE_IJVectorRead(const char     *filename,
+NALU_HYPRE_Int NALU_HYPRE_IJVectorRead(const char     *filename,
                              MPI_Comm        comm,
-                             HYPRE_Int       type,
-                             HYPRE_IJVector *vector);
+                             NALU_HYPRE_Int       type,
+                             NALU_HYPRE_IJVector *vector);
 
 /**
  * Print the vector to file.  This is mainly for debugging purposes.
  **/
-HYPRE_Int HYPRE_IJVectorPrint(HYPRE_IJVector  vector,
+NALU_HYPRE_Int NALU_HYPRE_IJVectorPrint(NALU_HYPRE_IJVector  vector,
                               const char     *filename);
 
 /**
  * Computes the inner product between two vectors
  **/
-HYPRE_Int HYPRE_IJVectorInnerProd(HYPRE_IJVector  x,
-                                  HYPRE_IJVector  y,
-                                  HYPRE_Real     *prod);
+NALU_HYPRE_Int NALU_HYPRE_IJVectorInnerProd(NALU_HYPRE_IJVector  x,
+                                  NALU_HYPRE_IJVector  y,
+                                  NALU_HYPRE_Real     *prod);
 
 /**@}*/
 /**@}*/

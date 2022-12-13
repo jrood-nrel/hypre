@@ -11,22 +11,22 @@
  * Test driver for unstructured matrix interface
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-main( HYPRE_Int   argc,
+NALU_HYPRE_Int
+main( NALU_HYPRE_Int   argc,
       char *argv[] )
 {
    hypre_ParVector   *vector1;
    hypre_ParVector   *vector2;
    hypre_ParVector   *tmp_vector;
 
-   HYPRE_Int          num_procs, my_id;
-   HYPRE_BigInt   global_size = 20;
-   HYPRE_Int      local_size;
-   HYPRE_BigInt      first_index;
-   HYPRE_Int      i;
-   HYPRE_BigInt   *partitioning;
-   HYPRE_Complex  prod;
-   HYPRE_Complex  *data, *data2;
+   NALU_HYPRE_Int          num_procs, my_id;
+   NALU_HYPRE_BigInt   global_size = 20;
+   NALU_HYPRE_Int      local_size;
+   NALU_HYPRE_BigInt      first_index;
+   NALU_HYPRE_Int      i;
+   NALU_HYPRE_BigInt   *partitioning;
+   NALU_HYPRE_Complex  prod;
+   NALU_HYPRE_Complex  *data, *data2;
    hypre_Vector *vector;
    hypre_Vector *local_vector;
    hypre_Vector *local_vector2;
@@ -63,7 +63,7 @@ main( HYPRE_Int   argc,
       data2[i] = i + 1;
    }
 
-   /*   partitioning = hypre_CTAlloc(HYPRE_Int,4);
+   /*   partitioning = hypre_CTAlloc(NALU_HYPRE_Int,4);
       partitioning[0] = 0;
       partitioning[1] = 10;
       partitioning[2] = 10;

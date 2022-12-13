@@ -7,20 +7,20 @@
 
 /******************************************************************************
  *
- * Header file for HYPRE_utilities library
+ * Header file for NALU_HYPRE_utilities library
  *
  *****************************************************************************/
 
-#ifndef HYPRE_UTILITIES_HEADER
-#define HYPRE_UTILITIES_HEADER
+#ifndef NALU_HYPRE_UTILITIES_HEADER
+#define NALU_HYPRE_UTILITIES_HEADER
 
-#include <HYPRE_config.h>
+#include <NALU_HYPRE_config.h>
 
-#ifndef HYPRE_SEQUENTIAL
+#ifndef NALU_HYPRE_SEQUENTIAL
 #include "mpi.h"
 #endif
 
-#ifdef HYPRE_USING_OPENMP
+#ifdef NALU_HYPRE_USING_OPENMP
 #include <omp.h>
 #endif
 
@@ -32,23 +32,23 @@ extern "C" {
  * Big int stuff
  *--------------------------------------------------------------------------*/
 
-#if defined(HYPRE_BIGINT)
-typedef long long int HYPRE_BigInt;
-typedef long long int HYPRE_Int;
-#define HYPRE_MPI_BIG_INT MPI_LONG_LONG_INT
-#define HYPRE_MPI_INT MPI_LONG_LONG_INT
+#if defined(NALU_HYPRE_BIGINT)
+typedef long long int NALU_HYPRE_BigInt;
+typedef long long int NALU_HYPRE_Int;
+#define NALU_HYPRE_MPI_BIG_INT MPI_LONG_LONG_INT
+#define NALU_HYPRE_MPI_INT MPI_LONG_LONG_INT
 
-#elif defined(HYPRE_MIXEDINT)
-typedef long long int HYPRE_BigInt;
-typedef int HYPRE_Int;
-#define HYPRE_MPI_BIG_INT MPI_LONG_LONG_INT
-#define HYPRE_MPI_INT MPI_INT
+#elif defined(NALU_HYPRE_MIXEDINT)
+typedef long long int NALU_HYPRE_BigInt;
+typedef int NALU_HYPRE_Int;
+#define NALU_HYPRE_MPI_BIG_INT MPI_LONG_LONG_INT
+#define NALU_HYPRE_MPI_INT MPI_INT
 
 #else /* default */
-typedef int HYPRE_BigInt;
-typedef int HYPRE_Int;
-#define HYPRE_MPI_BIG_INT MPI_INT
-#define HYPRE_MPI_INT MPI_INT
+typedef int NALU_HYPRE_BigInt;
+typedef int NALU_HYPRE_Int;
+#define NALU_HYPRE_MPI_BIG_INT MPI_INT
+#define NALU_HYPRE_MPI_INT MPI_INT
 #endif
 
 /*--------------------------------------------------------------------------
@@ -57,136 +57,136 @@ typedef int HYPRE_Int;
 
 #include <float.h>
 
-#if defined(HYPRE_SINGLE)
-typedef float HYPRE_Real;
-#define HYPRE_REAL_MAX FLT_MAX
-#define HYPRE_REAL_MIN FLT_MIN
-#define HYPRE_REAL_EPSILON FLT_EPSILON
-#define HYPRE_REAL_MIN_EXP FLT_MIN_EXP
-#define HYPRE_MPI_REAL MPI_FLOAT
+#if defined(NALU_HYPRE_SINGLE)
+typedef float NALU_HYPRE_Real;
+#define NALU_HYPRE_REAL_MAX FLT_MAX
+#define NALU_HYPRE_REAL_MIN FLT_MIN
+#define NALU_HYPRE_REAL_EPSILON FLT_EPSILON
+#define NALU_HYPRE_REAL_MIN_EXP FLT_MIN_EXP
+#define NALU_HYPRE_MPI_REAL MPI_FLOAT
 
-#elif defined(HYPRE_LONG_DOUBLE)
-typedef long double HYPRE_Real;
-#define HYPRE_REAL_MAX LDBL_MAX
-#define HYPRE_REAL_MIN LDBL_MIN
-#define HYPRE_REAL_EPSILON LDBL_EPSILON
-#define HYPRE_REAL_MIN_EXP DBL_MIN_EXP
-#define HYPRE_MPI_REAL MPI_LONG_DOUBLE
+#elif defined(NALU_HYPRE_LONG_DOUBLE)
+typedef long double NALU_HYPRE_Real;
+#define NALU_HYPRE_REAL_MAX LDBL_MAX
+#define NALU_HYPRE_REAL_MIN LDBL_MIN
+#define NALU_HYPRE_REAL_EPSILON LDBL_EPSILON
+#define NALU_HYPRE_REAL_MIN_EXP DBL_MIN_EXP
+#define NALU_HYPRE_MPI_REAL MPI_LONG_DOUBLE
 
 #else /* default */
-typedef double HYPRE_Real;
-#define HYPRE_REAL_MAX DBL_MAX
-#define HYPRE_REAL_MIN DBL_MIN
-#define HYPRE_REAL_EPSILON DBL_EPSILON
-#define HYPRE_REAL_MIN_EXP DBL_MIN_EXP
-#define HYPRE_MPI_REAL MPI_DOUBLE
+typedef double NALU_HYPRE_Real;
+#define NALU_HYPRE_REAL_MAX DBL_MAX
+#define NALU_HYPRE_REAL_MIN DBL_MIN
+#define NALU_HYPRE_REAL_EPSILON DBL_EPSILON
+#define NALU_HYPRE_REAL_MIN_EXP DBL_MIN_EXP
+#define NALU_HYPRE_MPI_REAL MPI_DOUBLE
 #endif
 
-#if defined(HYPRE_COMPLEX)
-typedef double _Complex HYPRE_Complex;
-#define HYPRE_MPI_COMPLEX MPI_C_DOUBLE_COMPLEX  /* or MPI_LONG_DOUBLE ? */
+#if defined(NALU_HYPRE_COMPLEX)
+typedef double _Complex NALU_HYPRE_Complex;
+#define NALU_HYPRE_MPI_COMPLEX MPI_C_DOUBLE_COMPLEX  /* or MPI_LONG_DOUBLE ? */
 
 #else  /* default */
-typedef HYPRE_Real HYPRE_Complex;
-#define HYPRE_MPI_COMPLEX HYPRE_MPI_REAL
+typedef NALU_HYPRE_Real NALU_HYPRE_Complex;
+#define NALU_HYPRE_MPI_COMPLEX NALU_HYPRE_MPI_REAL
 #endif
 
 /*--------------------------------------------------------------------------
  * Sequential MPI stuff
  *--------------------------------------------------------------------------*/
 
-#ifdef HYPRE_SEQUENTIAL
-typedef HYPRE_Int MPI_Comm;
+#ifdef NALU_HYPRE_SEQUENTIAL
+typedef NALU_HYPRE_Int MPI_Comm;
 #endif
 
 /*--------------------------------------------------------------------------
  * HYPRE error codes
  *--------------------------------------------------------------------------*/
 
-#define HYPRE_ERROR_GENERIC         1   /* generic error */
-#define HYPRE_ERROR_MEMORY          2   /* unable to allocate memory */
-#define HYPRE_ERROR_ARG             4   /* argument error */
+#define NALU_HYPRE_ERROR_GENERIC         1   /* generic error */
+#define NALU_HYPRE_ERROR_MEMORY          2   /* unable to allocate memory */
+#define NALU_HYPRE_ERROR_ARG             4   /* argument error */
 /* bits 4-8 are reserved for the index of the argument error */
-#define HYPRE_ERROR_CONV          256   /* method did not converge as expected */
-#define HYPRE_MAX_FILE_NAME_LEN  1024   /* longest filename length used in hypre */
+#define NALU_HYPRE_ERROR_CONV          256   /* method did not converge as expected */
+#define NALU_HYPRE_MAX_FILE_NAME_LEN  1024   /* longest filename length used in hypre */
 
 /*--------------------------------------------------------------------------
  * HYPRE init/finalize
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int HYPRE_Init();
-HYPRE_Int HYPRE_Finalize();
+NALU_HYPRE_Int NALU_HYPRE_Init();
+NALU_HYPRE_Int NALU_HYPRE_Finalize();
 
 /*--------------------------------------------------------------------------
  * HYPRE error user functions
  *--------------------------------------------------------------------------*/
 
 /* Return the current hypre error flag */
-HYPRE_Int HYPRE_GetError();
+NALU_HYPRE_Int NALU_HYPRE_GetError();
 
 /* Check if the given error flag contains the given error code */
-HYPRE_Int HYPRE_CheckError(HYPRE_Int hypre_ierr, HYPRE_Int hypre_error_code);
+NALU_HYPRE_Int NALU_HYPRE_CheckError(NALU_HYPRE_Int hypre_ierr, NALU_HYPRE_Int hypre_error_code);
 
 /* Return the index of the argument (counting from 1) where
-   argument error (HYPRE_ERROR_ARG) has occured */
-HYPRE_Int HYPRE_GetErrorArg();
+   argument error (NALU_HYPRE_ERROR_ARG) has occured */
+NALU_HYPRE_Int NALU_HYPRE_GetErrorArg();
 
 /* Describe the given error flag in the given string */
-void HYPRE_DescribeError(HYPRE_Int hypre_ierr, char *descr);
+void NALU_HYPRE_DescribeError(NALU_HYPRE_Int hypre_ierr, char *descr);
 
 /* Clears the hypre error flag */
-HYPRE_Int HYPRE_ClearAllErrors();
+NALU_HYPRE_Int NALU_HYPRE_ClearAllErrors();
 
 /* Clears the given error code from the hypre error flag */
-HYPRE_Int HYPRE_ClearError(HYPRE_Int hypre_error_code);
+NALU_HYPRE_Int NALU_HYPRE_ClearError(NALU_HYPRE_Int hypre_error_code);
 
 /* Print GPU information */
-HYPRE_Int HYPRE_PrintDeviceInfo();
+NALU_HYPRE_Int NALU_HYPRE_PrintDeviceInfo();
 
 /*--------------------------------------------------------------------------
  * HYPRE Version routines
  *--------------------------------------------------------------------------*/
 
 /* RDF: This macro is used by the FEI code.  Want to eventually remove. */
-#define HYPRE_VERSION "HYPRE_RELEASE_NAME Date Compiled: " __DATE__ " " __TIME__
+#define NALU_HYPRE_VERSION "NALU_HYPRE_RELEASE_NAME Date Compiled: " __DATE__ " " __TIME__
 
 /**
  * Allocates and returns a string with version number information in it.
  **/
-HYPRE_Int
-HYPRE_Version( char **version_ptr );
+NALU_HYPRE_Int
+NALU_HYPRE_Version( char **version_ptr );
 
 /**
  * Returns version number information in integer form.  Use 'NULL' for values
  * not needed.  The argument {\tt single} is a single sortable integer
  * representation of the release number.
  **/
-HYPRE_Int
-HYPRE_VersionNumber( HYPRE_Int  *major_ptr,
-                     HYPRE_Int  *minor_ptr,
-                     HYPRE_Int  *patch_ptr,
-                     HYPRE_Int  *single_ptr );
+NALU_HYPRE_Int
+NALU_HYPRE_VersionNumber( NALU_HYPRE_Int  *major_ptr,
+                     NALU_HYPRE_Int  *minor_ptr,
+                     NALU_HYPRE_Int  *patch_ptr,
+                     NALU_HYPRE_Int  *single_ptr );
 
 /*--------------------------------------------------------------------------
  * HYPRE AP user functions
  *--------------------------------------------------------------------------*/
 
 /*Checks whether the AP is on */
-HYPRE_Int HYPRE_AssumedPartitionCheck();
+NALU_HYPRE_Int NALU_HYPRE_AssumedPartitionCheck();
 
 /*--------------------------------------------------------------------------
  * HYPRE memory location
  *--------------------------------------------------------------------------*/
 
-typedef enum _HYPRE_MemoryLocation
+typedef enum _NALU_HYPRE_MemoryLocation
 {
-   HYPRE_MEMORY_UNDEFINED = -1,
-   HYPRE_MEMORY_HOST,
-   HYPRE_MEMORY_DEVICE
-} HYPRE_MemoryLocation;
+   NALU_HYPRE_MEMORY_UNDEFINED = -1,
+   NALU_HYPRE_MEMORY_HOST,
+   NALU_HYPRE_MEMORY_DEVICE
+} NALU_HYPRE_MemoryLocation;
 
-HYPRE_Int HYPRE_SetMemoryLocation(HYPRE_MemoryLocation memory_location);
-HYPRE_Int HYPRE_GetMemoryLocation(HYPRE_MemoryLocation *memory_location);
+NALU_HYPRE_Int NALU_HYPRE_SetMemoryLocation(NALU_HYPRE_MemoryLocation memory_location);
+NALU_HYPRE_Int NALU_HYPRE_GetMemoryLocation(NALU_HYPRE_MemoryLocation *memory_location);
 
 #include <stdlib.h>
 
@@ -194,46 +194,46 @@ HYPRE_Int HYPRE_GetMemoryLocation(HYPRE_MemoryLocation *memory_location);
  * HYPRE execution policy
  *--------------------------------------------------------------------------*/
 
-typedef enum _HYPRE_ExecutionPolicy
+typedef enum _NALU_HYPRE_ExecutionPolicy
 {
-   HYPRE_EXEC_UNDEFINED = -1,
-   HYPRE_EXEC_HOST,
-   HYPRE_EXEC_DEVICE
-} HYPRE_ExecutionPolicy;
+   NALU_HYPRE_EXEC_UNDEFINED = -1,
+   NALU_HYPRE_EXEC_HOST,
+   NALU_HYPRE_EXEC_DEVICE
+} NALU_HYPRE_ExecutionPolicy;
 
-HYPRE_Int HYPRE_SetExecutionPolicy(HYPRE_ExecutionPolicy exec_policy);
-HYPRE_Int HYPRE_GetExecutionPolicy(HYPRE_ExecutionPolicy *exec_policy);
+NALU_HYPRE_Int NALU_HYPRE_SetExecutionPolicy(NALU_HYPRE_ExecutionPolicy exec_policy);
+NALU_HYPRE_Int NALU_HYPRE_GetExecutionPolicy(NALU_HYPRE_ExecutionPolicy *exec_policy);
 
 /*--------------------------------------------------------------------------
  * HYPRE UMPIRE
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int HYPRE_SetUmpireDevicePoolSize(size_t nbytes);
-HYPRE_Int HYPRE_SetUmpireUMPoolSize(size_t nbytes);
-HYPRE_Int HYPRE_SetUmpireHostPoolSize(size_t nbytes);
-HYPRE_Int HYPRE_SetUmpirePinnedPoolSize(size_t nbytes);
-HYPRE_Int HYPRE_SetUmpireDevicePoolName(const char *pool_name);
-HYPRE_Int HYPRE_SetUmpireUMPoolName(const char *pool_name);
-HYPRE_Int HYPRE_SetUmpireHostPoolName(const char *pool_name);
-HYPRE_Int HYPRE_SetUmpirePinnedPoolName(const char *pool_name);
+NALU_HYPRE_Int NALU_HYPRE_SetUmpireDevicePoolSize(size_t nbytes);
+NALU_HYPRE_Int NALU_HYPRE_SetUmpireUMPoolSize(size_t nbytes);
+NALU_HYPRE_Int NALU_HYPRE_SetUmpireHostPoolSize(size_t nbytes);
+NALU_HYPRE_Int NALU_HYPRE_SetUmpirePinnedPoolSize(size_t nbytes);
+NALU_HYPRE_Int NALU_HYPRE_SetUmpireDevicePoolName(const char *pool_name);
+NALU_HYPRE_Int NALU_HYPRE_SetUmpireUMPoolName(const char *pool_name);
+NALU_HYPRE_Int NALU_HYPRE_SetUmpireHostPoolName(const char *pool_name);
+NALU_HYPRE_Int NALU_HYPRE_SetUmpirePinnedPoolName(const char *pool_name);
 
 /*--------------------------------------------------------------------------
  * HYPRE GPU memory pool
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int HYPRE_SetGPUMemoryPoolSize(HYPRE_Int bin_growth, HYPRE_Int min_bin, HYPRE_Int max_bin,
+NALU_HYPRE_Int NALU_HYPRE_SetGPUMemoryPoolSize(NALU_HYPRE_Int bin_growth, NALU_HYPRE_Int min_bin, NALU_HYPRE_Int max_bin,
                                      size_t max_cached_bytes);
 
 /*--------------------------------------------------------------------------
  * HYPRE handle
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int HYPRE_SetSpTransUseVendor( HYPRE_Int use_vendor );
-HYPRE_Int HYPRE_SetSpMVUseVendor( HYPRE_Int use_vendor );
-/* Backwards compatibility with HYPRE_SetSpGemmUseCusparse() */
-#define HYPRE_SetSpGemmUseCusparse(use_vendor) HYPRE_SetSpGemmUseVendor(use_vendor)
-HYPRE_Int HYPRE_SetSpGemmUseVendor( HYPRE_Int use_vendor );
-HYPRE_Int HYPRE_SetUseGpuRand( HYPRE_Int use_curand );
+NALU_HYPRE_Int NALU_HYPRE_SetSpTransUseVendor( NALU_HYPRE_Int use_vendor );
+NALU_HYPRE_Int NALU_HYPRE_SetSpMVUseVendor( NALU_HYPRE_Int use_vendor );
+/* Backwards compatibility with NALU_HYPRE_SetSpGemmUseCusparse() */
+#define NALU_HYPRE_SetSpGemmUseCusparse(use_vendor) NALU_HYPRE_SetSpGemmUseVendor(use_vendor)
+NALU_HYPRE_Int NALU_HYPRE_SetSpGemmUseVendor( NALU_HYPRE_Int use_vendor );
+NALU_HYPRE_Int NALU_HYPRE_SetUseGpuRand( NALU_HYPRE_Int use_curand );
 
 #ifdef __cplusplus
 }

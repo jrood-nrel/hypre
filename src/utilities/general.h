@@ -40,7 +40,7 @@ typedef double                 hypre_double;
 #endif
 
 #ifndef hypre_round
-#define hypre_round(x)  ( ((x) < 0.0) ? ((HYPRE_Int)(x - 0.5)) : ((HYPRE_Int)(x + 0.5)) )
+#define hypre_round(x)  ( ((x) < 0.0) ? ((NALU_HYPRE_Int)(x - 0.5)) : ((NALU_HYPRE_Int)(x + 0.5)) )
 #endif
 
 #ifndef hypre_pow2

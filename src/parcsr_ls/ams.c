@@ -27,23 +27,23 @@
  * The default value of relax_type is 2.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_ParCSRRelax( hypre_ParCSRMatrix *A,              /* matrix to relax with */
                    hypre_ParVector    *f,              /* right-hand side */
-                   HYPRE_Int           relax_type,     /* relaxation type */
-                   HYPRE_Int           relax_times,    /* number of sweeps */
-                   HYPRE_Real         *l1_norms,       /* l1 norms of the rows of A */
-                   HYPRE_Real          relax_weight,   /* damping coefficient (usually <= 1) */
-                   HYPRE_Real          omega,          /* SOR parameter (usually in (0,2) */
-                   HYPRE_Real          max_eig_est,    /* for cheby smoothers */
-                   HYPRE_Real          min_eig_est,
-                   HYPRE_Int           cheby_order,
-                   HYPRE_Real          cheby_fraction,
+                   NALU_HYPRE_Int           relax_type,     /* relaxation type */
+                   NALU_HYPRE_Int           relax_times,    /* number of sweeps */
+                   NALU_HYPRE_Real         *l1_norms,       /* l1 norms of the rows of A */
+                   NALU_HYPRE_Real          relax_weight,   /* damping coefficient (usually <= 1) */
+                   NALU_HYPRE_Real          omega,          /* SOR parameter (usually in (0,2) */
+                   NALU_HYPRE_Real          max_eig_est,    /* for cheby smoothers */
+                   NALU_HYPRE_Real          min_eig_est,
+                   NALU_HYPRE_Int           cheby_order,
+                   NALU_HYPRE_Real          cheby_fraction,
                    hypre_ParVector    *u,              /* initial/updated approximation */
                    hypre_ParVector    *v,              /* temporary vector */
                    hypre_ParVector    *z               /* temporary vector */ )
 {
-   HYPRE_Int sweep;
+   NALU_HYPRE_Int sweep;
 
    for (sweep = 0; sweep < relax_times; sweep++)
    {
@@ -123,32 +123,32 @@ hypre_ParVector *hypre_ParVectorInDomainOf(hypre_ParCSRMatrix *A)
  * Extract the dim sub-vectors x_0,...,x_{dim-1} composing a parallel
  * block vector x. It is assumed that &x[i] = [x_0[i],...,x_{dim-1}[i]].
  *--------------------------------------------------------------------------*/
-#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP)
-template<HYPRE_Int dir>
+#if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
+template<NALU_HYPRE_Int dir>
 __global__ void
 hypreGPUKernel_ParVectorBlockSplitGather(hypre_DeviceItem &item,
-                                         HYPRE_Int   size,
-                                         HYPRE_Int   dim,
-                                         HYPRE_Real *x0,
-                                         HYPRE_Real *x1,
-                                         HYPRE_Real *x2,
-                                         HYPRE_Real *x)
+                                         NALU_HYPRE_Int   size,
+                                         NALU_HYPRE_Int   dim,
+                                         NALU_HYPRE_Real *x0,
+                                         NALU_HYPRE_Real *x1,
+                                         NALU_HYPRE_Real *x2,
+                                         NALU_HYPRE_Real *x)
 {
-   const HYPRE_Int i = hypre_gpu_get_grid_thread_id<1, 1>(item);
+   const NALU_HYPRE_Int i = hypre_gpu_get_grid_thread_id<1, 1>(item);
 
    if (i >= size * dim)
    {
       return;
    }
 
-   HYPRE_Real *xx[3];
+   NALU_HYPRE_Real *xx[3];
 
    xx[0] = x0;
    xx[1] = x1;
    xx[2] = x2;
 
-   const HYPRE_Int d = i % dim;
-   const HYPRE_Int k = i / dim;
+   const NALU_HYPRE_Int d = i % dim;
+   const NALU_HYPRE_Int k = i / dim;
 
    if (dir == 0)
    {
@@ -161,15 +161,15 @@ hypreGPUKernel_ParVectorBlockSplitGather(hypre_DeviceItem &item,
 }
 #endif
 
-HYPRE_Int hypre_ParVectorBlockSplit(hypre_ParVector *x,
+NALU_HYPRE_Int hypre_ParVectorBlockSplit(hypre_ParVector *x,
                                     hypre_ParVector *x_[3],
-                                    HYPRE_Int dim)
+                                    NALU_HYPRE_Int dim)
 {
-   HYPRE_Int i, d, size_;
-   HYPRE_Real *x_data, *x_data_[3];
+   NALU_HYPRE_Int i, d, size_;
+   NALU_HYPRE_Real *x_data, *x_data_[3];
 
-#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP)
-   HYPRE_ExecutionPolicy exec = hypre_GetExecPolicy1( hypre_ParVectorMemoryLocation(x) );
+#if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
+   NALU_HYPRE_ExecutionPolicy exec = hypre_GetExecPolicy1( hypre_ParVectorMemoryLocation(x) );
 #endif
 
    size_ = hypre_VectorSize(hypre_ParVectorLocalVector(x_[0]));
@@ -180,12 +180,12 @@ HYPRE_Int hypre_ParVectorBlockSplit(hypre_ParVector *x,
       x_data_[d] = hypre_VectorData(hypre_ParVectorLocalVector(x_[d]));
    }
 
-#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP)
-   if (exec == HYPRE_EXEC_DEVICE)
+#if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
+   if (exec == NALU_HYPRE_EXEC_DEVICE)
    {
       dim3 bDim = hypre_GetDefaultDeviceBlockDimension();
       dim3 gDim = hypre_GetDefaultDeviceGridDimension(size_ * dim, "thread", bDim);
-      HYPRE_GPU_LAUNCH( hypreGPUKernel_ParVectorBlockSplitGather<0>, gDim, bDim,
+      NALU_HYPRE_GPU_LAUNCH( hypreGPUKernel_ParVectorBlockSplitGather<0>, gDim, bDim,
                         size_, dim, x_data_[0], x_data_[1], x_data_[2], x_data);
    }
    else
@@ -208,15 +208,15 @@ HYPRE_Int hypre_ParVectorBlockSplit(hypre_ParVector *x,
  * x_0,...,x_{dim-1}, such that &x[i] = [x_0[i],...,x_{dim-1}[i]].
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int hypre_ParVectorBlockGather(hypre_ParVector *x,
+NALU_HYPRE_Int hypre_ParVectorBlockGather(hypre_ParVector *x,
                                      hypre_ParVector *x_[3],
-                                     HYPRE_Int dim)
+                                     NALU_HYPRE_Int dim)
 {
-   HYPRE_Int i, d, size_;
-   HYPRE_Real *x_data, *x_data_[3];
+   NALU_HYPRE_Int i, d, size_;
+   NALU_HYPRE_Real *x_data, *x_data_[3];
 
-#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP)
-   HYPRE_ExecutionPolicy exec = hypre_GetExecPolicy1( hypre_ParVectorMemoryLocation(x) );
+#if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
+   NALU_HYPRE_ExecutionPolicy exec = hypre_GetExecPolicy1( hypre_ParVectorMemoryLocation(x) );
 #endif
 
    size_ = hypre_VectorSize(hypre_ParVectorLocalVector(x_[0]));
@@ -227,12 +227,12 @@ HYPRE_Int hypre_ParVectorBlockGather(hypre_ParVector *x,
       x_data_[d] = hypre_VectorData(hypre_ParVectorLocalVector(x_[d]));
    }
 
-#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP)
-   if (exec == HYPRE_EXEC_DEVICE)
+#if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
+   if (exec == NALU_HYPRE_EXEC_DEVICE)
    {
       dim3 bDim = hypre_GetDefaultDeviceBlockDimension();
       dim3 gDim = hypre_GetDefaultDeviceGridDimension(size_ * dim, "thread", bDim);
-      HYPRE_GPU_LAUNCH( hypreGPUKernel_ParVectorBlockSplitGather<1>, gDim, bDim,
+      NALU_HYPRE_GPU_LAUNCH( hypreGPUKernel_ParVectorBlockSplitGather<1>, gDim, bDim,
                         size_, dim, x_data_[0], x_data_[1], x_data_[2], x_data);
    }
    else
@@ -256,12 +256,12 @@ HYPRE_Int hypre_ParVectorBlockGather(hypre_ParVector *x,
  * parallel vectors.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int hypre_BoomerAMGBlockSolve(void *B,
+NALU_HYPRE_Int hypre_BoomerAMGBlockSolve(void *B,
                                     hypre_ParCSRMatrix *A,
                                     hypre_ParVector *b,
                                     hypre_ParVector *x)
 {
-   HYPRE_Int d, dim = 1;
+   NALU_HYPRE_Int d, dim = 1;
 
    hypre_ParVector *b_[3];
    hypre_ParVector *x_[3];
@@ -305,24 +305,24 @@ HYPRE_Int hypre_BoomerAMGBlockSolve(void *B,
  * For every zero row in the matrix: set the diagonal element to 1.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int hypre_ParCSRMatrixFixZeroRowsHost(hypre_ParCSRMatrix *A)
+NALU_HYPRE_Int hypre_ParCSRMatrixFixZeroRowsHost(hypre_ParCSRMatrix *A)
 {
-   HYPRE_Int i, j;
-   HYPRE_Real l1_norm;
-   HYPRE_Int num_rows = hypre_ParCSRMatrixNumRows(A);
+   NALU_HYPRE_Int i, j;
+   NALU_HYPRE_Real l1_norm;
+   NALU_HYPRE_Int num_rows = hypre_ParCSRMatrixNumRows(A);
 
    hypre_CSRMatrix *A_diag = hypre_ParCSRMatrixDiag(A);
-   HYPRE_Int *A_diag_I = hypre_CSRMatrixI(A_diag);
-   HYPRE_Int *A_diag_J = hypre_CSRMatrixJ(A_diag);
-   HYPRE_Real *A_diag_data = hypre_CSRMatrixData(A_diag);
+   NALU_HYPRE_Int *A_diag_I = hypre_CSRMatrixI(A_diag);
+   NALU_HYPRE_Int *A_diag_J = hypre_CSRMatrixJ(A_diag);
+   NALU_HYPRE_Real *A_diag_data = hypre_CSRMatrixData(A_diag);
 
    hypre_CSRMatrix *A_offd = hypre_ParCSRMatrixOffd(A);
-   HYPRE_Int *A_offd_I = hypre_CSRMatrixI(A_offd);
-   HYPRE_Real *A_offd_data = hypre_CSRMatrixData(A_offd);
-   HYPRE_Int num_cols_offd = hypre_CSRMatrixNumCols(A_offd);
+   NALU_HYPRE_Int *A_offd_I = hypre_CSRMatrixI(A_offd);
+   NALU_HYPRE_Real *A_offd_data = hypre_CSRMatrixData(A_offd);
+   NALU_HYPRE_Int num_cols_offd = hypre_CSRMatrixNumCols(A_offd);
 
    /* a row will be considered zero if its l1 norm is less than eps */
-   HYPRE_Real eps = 0.0; /* DBL_EPSILON * 1e+4; */
+   NALU_HYPRE_Real eps = 0.0; /* DBL_EPSILON * 1e+4; */
 
    for (i = 0; i < num_rows; i++)
    {
@@ -359,28 +359,28 @@ HYPRE_Int hypre_ParCSRMatrixFixZeroRowsHost(hypre_ParCSRMatrix *A)
    return hypre_error_flag;
 }
 
-#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP)
+#if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
 __global__ void
 hypreGPUKernel_ParCSRMatrixFixZeroRows( hypre_DeviceItem    &item,
-                                        HYPRE_Int      nrows,
-                                        HYPRE_Int     *A_diag_i,
-                                        HYPRE_Int     *A_diag_j,
-                                        HYPRE_Complex *A_diag_data,
-                                        HYPRE_Int     *A_offd_i,
-                                        HYPRE_Complex *A_offd_data,
-                                        HYPRE_Int      num_cols_offd)
+                                        NALU_HYPRE_Int      nrows,
+                                        NALU_HYPRE_Int     *A_diag_i,
+                                        NALU_HYPRE_Int     *A_diag_j,
+                                        NALU_HYPRE_Complex *A_diag_data,
+                                        NALU_HYPRE_Int     *A_offd_i,
+                                        NALU_HYPRE_Complex *A_offd_data,
+                                        NALU_HYPRE_Int      num_cols_offd)
 {
-   HYPRE_Int row_i = hypre_gpu_get_grid_warp_id<1, 1>(item);
+   NALU_HYPRE_Int row_i = hypre_gpu_get_grid_warp_id<1, 1>(item);
 
    if (row_i >= nrows)
    {
       return;
    }
 
-   HYPRE_Int lane = hypre_gpu_get_lane_id<1>(item);
-   HYPRE_Real eps = 0.0; /* DBL_EPSILON * 1e+4; */
-   HYPRE_Real l1_norm = 0.0;
-   HYPRE_Int p1 = 0, q1, p2 = 0, q2 = 0;
+   NALU_HYPRE_Int lane = hypre_gpu_get_lane_id<1>(item);
+   NALU_HYPRE_Real eps = 0.0; /* DBL_EPSILON * 1e+4; */
+   NALU_HYPRE_Real l1_norm = 0.0;
+   NALU_HYPRE_Int p1 = 0, q1, p2 = 0, q2 = 0;
 
    if (lane < 2)
    {
@@ -391,20 +391,20 @@ hypreGPUKernel_ParCSRMatrixFixZeroRows( hypre_DeviceItem    &item,
       }
    }
 
-   q1 = warp_shuffle_sync(item, HYPRE_WARP_FULL_MASK, p1, 1);
-   p1 = warp_shuffle_sync(item, HYPRE_WARP_FULL_MASK, p1, 0);
+   q1 = warp_shuffle_sync(item, NALU_HYPRE_WARP_FULL_MASK, p1, 1);
+   p1 = warp_shuffle_sync(item, NALU_HYPRE_WARP_FULL_MASK, p1, 0);
    if (num_cols_offd)
    {
-      q2 = warp_shuffle_sync(item, HYPRE_WARP_FULL_MASK, p2, 1);
-      p2 = warp_shuffle_sync(item, HYPRE_WARP_FULL_MASK, p2, 0);
+      q2 = warp_shuffle_sync(item, NALU_HYPRE_WARP_FULL_MASK, p2, 1);
+      p2 = warp_shuffle_sync(item, NALU_HYPRE_WARP_FULL_MASK, p2, 0);
    }
 
-   for (HYPRE_Int j = p1 + lane; j < q1; j += HYPRE_WARP_SIZE)
+   for (NALU_HYPRE_Int j = p1 + lane; j < q1; j += NALU_HYPRE_WARP_SIZE)
    {
       l1_norm += fabs(A_diag_data[j]);
    }
 
-   for (HYPRE_Int j = p2 + lane; j < q2; j += HYPRE_WARP_SIZE)
+   for (NALU_HYPRE_Int j = p2 + lane; j < q2; j += NALU_HYPRE_WARP_SIZE)
    {
       l1_norm += fabs(A_offd_data[j]);
    }
@@ -413,7 +413,7 @@ hypreGPUKernel_ParCSRMatrixFixZeroRows( hypre_DeviceItem    &item,
 
    if (l1_norm <= eps)
    {
-      for (HYPRE_Int j = p1 + lane; j < q1; j += HYPRE_WARP_SIZE)
+      for (NALU_HYPRE_Int j = p1 + lane; j < q1; j += NALU_HYPRE_WARP_SIZE)
       {
          if (row_i == read_only_load(&A_diag_j[j]))
          {
@@ -425,30 +425,30 @@ hypreGPUKernel_ParCSRMatrixFixZeroRows( hypre_DeviceItem    &item,
          }
       }
 
-      for (HYPRE_Int j = p2 + lane; j < q2; j += HYPRE_WARP_SIZE)
+      for (NALU_HYPRE_Int j = p2 + lane; j < q2; j += NALU_HYPRE_WARP_SIZE)
       {
          A_offd_data[j] = 0.0;
       }
    }
 }
 
-HYPRE_Int hypre_ParCSRMatrixFixZeroRowsDevice(hypre_ParCSRMatrix *A)
+NALU_HYPRE_Int hypre_ParCSRMatrixFixZeroRowsDevice(hypre_ParCSRMatrix *A)
 {
-   HYPRE_Int        nrows         = hypre_ParCSRMatrixNumRows(A);
+   NALU_HYPRE_Int        nrows         = hypre_ParCSRMatrixNumRows(A);
    hypre_CSRMatrix *A_diag        = hypre_ParCSRMatrixDiag(A);
-   HYPRE_Real      *A_diag_data   = hypre_CSRMatrixData(A_diag);
-   HYPRE_Int       *A_diag_i      = hypre_CSRMatrixI(A_diag);
-   HYPRE_Int       *A_diag_j      = hypre_CSRMatrixJ(A_diag);
+   NALU_HYPRE_Real      *A_diag_data   = hypre_CSRMatrixData(A_diag);
+   NALU_HYPRE_Int       *A_diag_i      = hypre_CSRMatrixI(A_diag);
+   NALU_HYPRE_Int       *A_diag_j      = hypre_CSRMatrixJ(A_diag);
    hypre_CSRMatrix *A_offd        = hypre_ParCSRMatrixOffd(A);
-   HYPRE_Real      *A_offd_data   = hypre_CSRMatrixData(A_offd);
-   HYPRE_Int       *A_offd_i      = hypre_CSRMatrixI(A_offd);
-   HYPRE_Int        num_cols_offd = hypre_CSRMatrixNumCols(A_offd);
+   NALU_HYPRE_Real      *A_offd_data   = hypre_CSRMatrixData(A_offd);
+   NALU_HYPRE_Int       *A_offd_i      = hypre_CSRMatrixI(A_offd);
+   NALU_HYPRE_Int        num_cols_offd = hypre_CSRMatrixNumCols(A_offd);
    dim3             bDim, gDim;
 
    bDim = hypre_GetDefaultDeviceBlockDimension();
    gDim = hypre_GetDefaultDeviceGridDimension(nrows, "warp", bDim);
 
-   HYPRE_GPU_LAUNCH(hypreGPUKernel_ParCSRMatrixFixZeroRows, gDim, bDim,
+   NALU_HYPRE_GPU_LAUNCH(hypreGPUKernel_ParCSRMatrixFixZeroRows, gDim, bDim,
                     nrows, A_diag_i, A_diag_j, A_diag_data, A_offd_i, A_offd_data, num_cols_offd);
 
    //hypre_SyncComputeStream(hypre_handle());
@@ -457,11 +457,11 @@ HYPRE_Int hypre_ParCSRMatrixFixZeroRowsDevice(hypre_ParCSRMatrix *A)
 }
 #endif
 
-HYPRE_Int hypre_ParCSRMatrixFixZeroRows(hypre_ParCSRMatrix *A)
+NALU_HYPRE_Int hypre_ParCSRMatrixFixZeroRows(hypre_ParCSRMatrix *A)
 {
-#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP)
-   HYPRE_ExecutionPolicy exec = hypre_GetExecPolicy1( hypre_ParCSRMatrixMemoryLocation(A) );
-   if (exec == HYPRE_EXEC_DEVICE)
+#if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
+   NALU_HYPRE_ExecutionPolicy exec = hypre_GetExecPolicy1( hypre_ParCSRMatrixMemoryLocation(A) );
+   if (exec == NALU_HYPRE_EXEC_DEVICE)
    {
       return hypre_ParCSRMatrixFixZeroRowsDevice(A);
    }
@@ -489,85 +489,85 @@ HYPRE_Int hypre_ParCSRMatrixFixZeroRows(hypre_ParCSRMatrix *A)
  * cf_marker is not NULL.
  *--------------------------------------------------------------------------*/
 
-#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP) || defined(HYPRE_USING_SYCL)
-#if defined(HYPRE_USING_SYCL)
+#if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP) || defined(NALU_HYPRE_USING_SYCL)
+#if defined(NALU_HYPRE_USING_SYCL)
 struct l1_norm_op1
 #else
-struct l1_norm_op1 : public thrust::binary_function<HYPRE_Complex, HYPRE_Complex, HYPRE_Complex>
+struct l1_norm_op1 : public thrust::binary_function<NALU_HYPRE_Complex, NALU_HYPRE_Complex, NALU_HYPRE_Complex>
 #endif
 {
    __host__ __device__
-   HYPRE_Complex operator()(const HYPRE_Complex &x, const HYPRE_Complex &y) const
+   NALU_HYPRE_Complex operator()(const NALU_HYPRE_Complex &x, const NALU_HYPRE_Complex &y) const
    {
       return x <= 4.0 / 3.0 * y ? y : x;
    }
 };
 #endif
 
-HYPRE_Int hypre_ParCSRComputeL1Norms(hypre_ParCSRMatrix  *A,
-                                     HYPRE_Int            option,
-                                     HYPRE_Int           *cf_marker,
-                                     HYPRE_Real         **l1_norm_ptr)
+NALU_HYPRE_Int hypre_ParCSRComputeL1Norms(hypre_ParCSRMatrix  *A,
+                                     NALU_HYPRE_Int            option,
+                                     NALU_HYPRE_Int           *cf_marker,
+                                     NALU_HYPRE_Real         **l1_norm_ptr)
 {
-   HYPRE_Int i;
-   HYPRE_Int num_rows = hypre_ParCSRMatrixNumRows(A);
+   NALU_HYPRE_Int i;
+   NALU_HYPRE_Int num_rows = hypre_ParCSRMatrixNumRows(A);
    hypre_CSRMatrix *A_diag = hypre_ParCSRMatrixDiag(A);
    hypre_CSRMatrix *A_offd = hypre_ParCSRMatrixOffd(A);
-   HYPRE_Int num_cols_offd = hypre_CSRMatrixNumCols(A_offd);
+   NALU_HYPRE_Int num_cols_offd = hypre_CSRMatrixNumCols(A_offd);
 
-   HYPRE_MemoryLocation memory_location_l1 = hypre_ParCSRMatrixMemoryLocation(A);
+   NALU_HYPRE_MemoryLocation memory_location_l1 = hypre_ParCSRMatrixMemoryLocation(A);
 
-   HYPRE_ExecutionPolicy exec = hypre_GetExecPolicy1( memory_location_l1 );
+   NALU_HYPRE_ExecutionPolicy exec = hypre_GetExecPolicy1( memory_location_l1 );
 
-   if (exec == HYPRE_EXEC_HOST)
+   if (exec == NALU_HYPRE_EXEC_HOST)
    {
-      HYPRE_Int num_threads = hypre_NumThreads();
+      NALU_HYPRE_Int num_threads = hypre_NumThreads();
       if (num_threads > 1)
       {
          return hypre_ParCSRComputeL1NormsThreads(A, option, num_threads, cf_marker, l1_norm_ptr);
       }
    }
 
-   HYPRE_Real *l1_norm = hypre_TAlloc(HYPRE_Real, num_rows, memory_location_l1);
+   NALU_HYPRE_Real *l1_norm = hypre_TAlloc(NALU_HYPRE_Real, num_rows, memory_location_l1);
 
-   HYPRE_MemoryLocation memory_location_tmp =
-      exec == HYPRE_EXEC_HOST ? HYPRE_MEMORY_HOST : HYPRE_MEMORY_DEVICE;
+   NALU_HYPRE_MemoryLocation memory_location_tmp =
+      exec == NALU_HYPRE_EXEC_HOST ? NALU_HYPRE_MEMORY_HOST : NALU_HYPRE_MEMORY_DEVICE;
 
-   HYPRE_Real *diag_tmp = NULL;
+   NALU_HYPRE_Real *diag_tmp = NULL;
 
-   HYPRE_Int *cf_marker_offd = NULL;
+   NALU_HYPRE_Int *cf_marker_offd = NULL;
 
    /* collect the cf marker data from other procs */
    if (cf_marker != NULL)
    {
-      HYPRE_Int num_sends;
-      HYPRE_Int *int_buf_data = NULL;
+      NALU_HYPRE_Int num_sends;
+      NALU_HYPRE_Int *int_buf_data = NULL;
 
       hypre_ParCSRCommPkg  *comm_pkg = hypre_ParCSRMatrixCommPkg(A);
       hypre_ParCSRCommHandle *comm_handle;
 
       if (num_cols_offd)
       {
-         cf_marker_offd = hypre_CTAlloc(HYPRE_Int, num_cols_offd, memory_location_tmp);
+         cf_marker_offd = hypre_CTAlloc(NALU_HYPRE_Int, num_cols_offd, memory_location_tmp);
       }
       num_sends = hypre_ParCSRCommPkgNumSends(comm_pkg);
       if (hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends))
       {
-         int_buf_data = hypre_CTAlloc(HYPRE_Int, hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends),
+         int_buf_data = hypre_CTAlloc(NALU_HYPRE_Int, hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends),
                                       memory_location_tmp);
       }
-#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP) || defined(HYPRE_USING_SYCL)
-      if (exec == HYPRE_EXEC_DEVICE)
+#if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP) || defined(NALU_HYPRE_USING_SYCL)
+      if (exec == NALU_HYPRE_EXEC_DEVICE)
       {
          hypre_ParCSRCommPkgCopySendMapElmtsToDevice(comm_pkg);
-#if defined(HYPRE_USING_SYCL)
+#if defined(NALU_HYPRE_USING_SYCL)
          hypreSycl_gather( hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg),
                            hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg) + hypre_ParCSRCommPkgSendMapStart(comm_pkg,
                                                                                                              num_sends),
                            cf_marker,
                            int_buf_data );
 #else
-         HYPRE_THRUST_CALL( gather,
+         NALU_HYPRE_THRUST_CALL( gather,
                             hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg),
                             hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg) + hypre_ParCSRCommPkgSendMapStart(comm_pkg,
                                   num_sends),
@@ -575,7 +575,7 @@ HYPRE_Int hypre_ParCSRComputeL1Norms(hypre_ParCSRMatrix  *A,
                             int_buf_data );
 #endif
 
-#if defined(HYPRE_WITH_GPU_AWARE_MPI) && THRUST_CALL_BLOCKING == 0
+#if defined(NALU_HYPRE_WITH_GPU_AWARE_MPI) && THRUST_CALL_BLOCKING == 0
          /* RL: make sure int_buf_data is ready before issuing GPU-GPU MPI */
          hypre_ForceSyncComputeStream(hypre_handle());
 #endif
@@ -583,9 +583,9 @@ HYPRE_Int hypre_ParCSRComputeL1Norms(hypre_ParCSRMatrix  *A,
       else
 #endif
       {
-         HYPRE_Int index = 0;
-         HYPRE_Int start;
-         HYPRE_Int j;
+         NALU_HYPRE_Int index = 0;
+         NALU_HYPRE_Int start;
+         NALU_HYPRE_Int j;
          for (i = 0; i < num_sends; i++)
          {
             start = hypre_ParCSRCommPkgSendMapStart(comm_pkg, i);
@@ -638,8 +638,8 @@ HYPRE_Int hypre_ParCSRComputeL1Norms(hypre_ParCSRMatrix  *A,
       /* Set the abs(diag) element */
       hypre_CSRMatrixExtractDiagonal(A_diag, l1_norm, 1);
 
-      diag_tmp = hypre_TAlloc(HYPRE_Real, num_rows, memory_location_tmp);
-      hypre_TMemcpy(diag_tmp, l1_norm, HYPRE_Real, num_rows, memory_location_tmp, memory_location_l1);
+      diag_tmp = hypre_TAlloc(NALU_HYPRE_Real, num_rows, memory_location_tmp);
+      hypre_TMemcpy(diag_tmp, l1_norm, NALU_HYPRE_Real, num_rows, memory_location_tmp, memory_location_l1);
 
       /* Add the scaled l1 norm of the offd part */
       if (num_cols_offd)
@@ -648,13 +648,13 @@ HYPRE_Int hypre_ParCSRComputeL1Norms(hypre_ParCSRMatrix  *A,
       }
 
       /* Truncate according to Remark 6.2 */
-#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP) || defined(HYPRE_USING_SYCL)
-      if (exec == HYPRE_EXEC_DEVICE)
+#if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP) || defined(NALU_HYPRE_USING_SYCL)
+      if (exec == NALU_HYPRE_EXEC_DEVICE)
       {
-#if defined(HYPRE_USING_SYCL)
-         HYPRE_ONEDPL_CALL( std::transform, l1_norm, l1_norm + num_rows, diag_tmp, l1_norm, l1_norm_op1() );
+#if defined(NALU_HYPRE_USING_SYCL)
+         NALU_HYPRE_ONEDPL_CALL( std::transform, l1_norm, l1_norm + num_rows, diag_tmp, l1_norm, l1_norm_op1() );
 #else
-         HYPRE_THRUST_CALL( transform, l1_norm, l1_norm + num_rows, diag_tmp, l1_norm, l1_norm_op1() );
+         NALU_HYPRE_THRUST_CALL( transform, l1_norm, l1_norm + num_rows, diag_tmp, l1_norm, l1_norm_op1() );
 #endif
       }
       else
@@ -674,15 +674,15 @@ HYPRE_Int hypre_ParCSRComputeL1Norms(hypre_ParCSRMatrix  *A,
       /* Set the diag element */
       hypre_CSRMatrixExtractDiagonal(A_diag, l1_norm, 0);
 
-#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP) || defined(HYPRE_USING_SYCL)
-      if ( exec == HYPRE_EXEC_DEVICE)
+#if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP) || defined(NALU_HYPRE_USING_SYCL)
+      if ( exec == NALU_HYPRE_EXEC_DEVICE)
       {
-#if defined(HYPRE_USING_SYCL)
-         HYPRE_ONEDPL_CALL( std::replace_if, l1_norm, l1_norm + num_rows, [] (const auto & x) {return !x;},
+#if defined(NALU_HYPRE_USING_SYCL)
+         NALU_HYPRE_ONEDPL_CALL( std::replace_if, l1_norm, l1_norm + num_rows, [] (const auto & x) {return !x;},
          1.0 );
 #else
-         thrust::identity<HYPRE_Complex> identity;
-         HYPRE_THRUST_CALL( replace_if, l1_norm, l1_norm + num_rows, thrust::not1(identity), 1.0 );
+         thrust::identity<NALU_HYPRE_Complex> identity;
+         NALU_HYPRE_THRUST_CALL( replace_if, l1_norm, l1_norm + num_rows, thrust::not1(identity), 1.0 );
 #endif
       }
       else
@@ -705,28 +705,28 @@ HYPRE_Int hypre_ParCSRComputeL1Norms(hypre_ParCSRMatrix  *A,
    /* Handle negative definite matrices */
    if (!diag_tmp)
    {
-      diag_tmp = hypre_TAlloc(HYPRE_Real, num_rows, memory_location_tmp);
+      diag_tmp = hypre_TAlloc(NALU_HYPRE_Real, num_rows, memory_location_tmp);
    }
 
    /* Set the diag element */
    hypre_CSRMatrixExtractDiagonal(A_diag, diag_tmp, 0);
 
-#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP) || defined(HYPRE_USING_SYCL)
-   if (exec == HYPRE_EXEC_DEVICE)
+#if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP) || defined(NALU_HYPRE_USING_SYCL)
+   if (exec == NALU_HYPRE_EXEC_DEVICE)
    {
-#if defined(HYPRE_USING_SYCL)
+#if defined(NALU_HYPRE_USING_SYCL)
       hypreSycl_transform_if( l1_norm, l1_norm + num_rows, diag_tmp, l1_norm,
-                              std::negate<HYPRE_Real>(),
-                              is_negative<HYPRE_Real>() );
-      bool any_zero = 0.0 == HYPRE_ONEDPL_CALL( std::reduce, l1_norm, l1_norm + num_rows, 1.0,
-                                                oneapi::dpl::minimum<HYPRE_Real>() );
+                              std::negate<NALU_HYPRE_Real>(),
+                              is_negative<NALU_HYPRE_Real>() );
+      bool any_zero = 0.0 == NALU_HYPRE_ONEDPL_CALL( std::reduce, l1_norm, l1_norm + num_rows, 1.0,
+                                                oneapi::dpl::minimum<NALU_HYPRE_Real>() );
 #else
-      HYPRE_THRUST_CALL( transform_if, l1_norm, l1_norm + num_rows, diag_tmp, l1_norm,
-                         thrust::negate<HYPRE_Real>(),
-                         is_negative<HYPRE_Real>() );
-      //bool any_zero = HYPRE_THRUST_CALL( any_of, l1_norm, l1_norm + num_rows, thrust::not1(thrust::identity<HYPRE_Complex>()) );
-      bool any_zero = 0.0 == HYPRE_THRUST_CALL( reduce, l1_norm, l1_norm + num_rows, 1.0,
-                                                thrust::minimum<HYPRE_Real>() );
+      NALU_HYPRE_THRUST_CALL( transform_if, l1_norm, l1_norm + num_rows, diag_tmp, l1_norm,
+                         thrust::negate<NALU_HYPRE_Real>(),
+                         is_negative<NALU_HYPRE_Real>() );
+      //bool any_zero = NALU_HYPRE_THRUST_CALL( any_of, l1_norm, l1_norm + num_rows, thrust::not1(thrust::identity<NALU_HYPRE_Complex>()) );
+      bool any_zero = 0.0 == NALU_HYPRE_THRUST_CALL( reduce, l1_norm, l1_norm + num_rows, 1.0,
+                                                thrust::minimum<NALU_HYPRE_Real>() );
 #endif
       if ( any_zero )
       {
@@ -768,24 +768,24 @@ HYPRE_Int hypre_ParCSRComputeL1Norms(hypre_ParCSRMatrix  *A,
  *
  * For every row containing only a diagonal element: set it to d.
  *--------------------------------------------------------------------------*/
-#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP)
+#if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
 __global__ void
 hypreGPUKernel_ParCSRMatrixSetDiagRows(hypre_DeviceItem    &item,
-                                       HYPRE_Int      nrows,
-                                       HYPRE_Int     *A_diag_I,
-                                       HYPRE_Int     *A_diag_J,
-                                       HYPRE_Complex *A_diag_data,
-                                       HYPRE_Int     *A_offd_I,
-                                       HYPRE_Int      num_cols_offd,
-                                       HYPRE_Real     d)
+                                       NALU_HYPRE_Int      nrows,
+                                       NALU_HYPRE_Int     *A_diag_I,
+                                       NALU_HYPRE_Int     *A_diag_J,
+                                       NALU_HYPRE_Complex *A_diag_data,
+                                       NALU_HYPRE_Int     *A_offd_I,
+                                       NALU_HYPRE_Int      num_cols_offd,
+                                       NALU_HYPRE_Real     d)
 {
-   const HYPRE_Int i = hypre_gpu_get_grid_thread_id<1, 1>(item);
+   const NALU_HYPRE_Int i = hypre_gpu_get_grid_thread_id<1, 1>(item);
    if (i >= nrows)
    {
       return;
    }
 
-   HYPRE_Int j = read_only_load(&A_diag_I[i]);
+   NALU_HYPRE_Int j = read_only_load(&A_diag_I[i]);
 
    if ( (read_only_load(&A_diag_I[i + 1]) == j + 1) && (read_only_load(&A_diag_J[j]) == i) &&
         (!num_cols_offd || (read_only_load(&A_offd_I[i + 1]) == read_only_load(&A_offd_I[i]))) )
@@ -795,27 +795,27 @@ hypreGPUKernel_ParCSRMatrixSetDiagRows(hypre_DeviceItem    &item,
 }
 #endif
 
-HYPRE_Int hypre_ParCSRMatrixSetDiagRows(hypre_ParCSRMatrix *A, HYPRE_Real d)
+NALU_HYPRE_Int hypre_ParCSRMatrixSetDiagRows(hypre_ParCSRMatrix *A, NALU_HYPRE_Real d)
 {
-   HYPRE_Int i, j;
-   HYPRE_Int num_rows = hypre_ParCSRMatrixNumRows(A);
+   NALU_HYPRE_Int i, j;
+   NALU_HYPRE_Int num_rows = hypre_ParCSRMatrixNumRows(A);
 
    hypre_CSRMatrix *A_diag = hypre_ParCSRMatrixDiag(A);
-   HYPRE_Int *A_diag_I = hypre_CSRMatrixI(A_diag);
-   HYPRE_Int *A_diag_J = hypre_CSRMatrixJ(A_diag);
-   HYPRE_Real *A_diag_data = hypre_CSRMatrixData(A_diag);
+   NALU_HYPRE_Int *A_diag_I = hypre_CSRMatrixI(A_diag);
+   NALU_HYPRE_Int *A_diag_J = hypre_CSRMatrixJ(A_diag);
+   NALU_HYPRE_Real *A_diag_data = hypre_CSRMatrixData(A_diag);
 
    hypre_CSRMatrix *A_offd = hypre_ParCSRMatrixOffd(A);
-   HYPRE_Int *A_offd_I = hypre_CSRMatrixI(A_offd);
-   HYPRE_Int num_cols_offd = hypre_CSRMatrixNumCols(A_offd);
+   NALU_HYPRE_Int *A_offd_I = hypre_CSRMatrixI(A_offd);
+   NALU_HYPRE_Int num_cols_offd = hypre_CSRMatrixNumCols(A_offd);
 
-#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP)
-   HYPRE_ExecutionPolicy exec = hypre_GetExecPolicy1( hypre_ParCSRMatrixMemoryLocation(A) );
-   if (exec == HYPRE_EXEC_DEVICE)
+#if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
+   NALU_HYPRE_ExecutionPolicy exec = hypre_GetExecPolicy1( hypre_ParCSRMatrixMemoryLocation(A) );
+   if (exec == NALU_HYPRE_EXEC_DEVICE)
    {
       dim3 bDim = hypre_GetDefaultDeviceBlockDimension();
       dim3 gDim = hypre_GetDefaultDeviceGridDimension(num_rows, "thread", bDim);
-      HYPRE_GPU_LAUNCH( hypreGPUKernel_ParCSRMatrixSetDiagRows, gDim, bDim,
+      NALU_HYPRE_GPU_LAUNCH( hypreGPUKernel_ParCSRMatrixSetDiagRows, gDim, bDim,
                         num_rows, A_diag_I, A_diag_J, A_diag_data, A_offd_I, num_cols_offd, d);
    }
    else
@@ -845,7 +845,7 @@ void * hypre_AMSCreate()
 {
    hypre_AMSData *ams_data;
 
-   ams_data = hypre_CTAlloc(hypre_AMSData,  1, HYPRE_MEMORY_HOST);
+   ams_data = hypre_CTAlloc(hypre_AMSData,  1, NALU_HYPRE_MEMORY_HOST);
 
    /* Default parameters */
 
@@ -937,7 +937,7 @@ void * hypre_AMSCreate()
  * through the Set functions) is not destroyed.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int hypre_AMSDestroy(void *solver)
+NALU_HYPRE_Int hypre_AMSDestroy(void *solver)
 {
    hypre_AMSData *ams_data = (hypre_AMSData *) solver;
 
@@ -955,7 +955,7 @@ HYPRE_Int hypre_AMSDestroy(void *solver)
    if (!ams_data -> beta_is_zero)
       if (ams_data -> B_G)
       {
-         HYPRE_BoomerAMGDestroy(ams_data -> B_G);
+         NALU_HYPRE_BoomerAMGDestroy(ams_data -> B_G);
       }
 
    if (ams_data -> owns_Pi && ams_data -> Pi)
@@ -969,7 +969,7 @@ HYPRE_Int hypre_AMSDestroy(void *solver)
       }
    if (ams_data -> B_Pi)
    {
-      HYPRE_BoomerAMGDestroy(ams_data -> B_Pi);
+      NALU_HYPRE_BoomerAMGDestroy(ams_data -> B_Pi);
    }
 
    if (ams_data -> owns_Pi && ams_data -> Pix)
@@ -982,7 +982,7 @@ HYPRE_Int hypre_AMSDestroy(void *solver)
    }
    if (ams_data -> B_Pix)
    {
-      HYPRE_BoomerAMGDestroy(ams_data -> B_Pix);
+      NALU_HYPRE_BoomerAMGDestroy(ams_data -> B_Pix);
    }
    if (ams_data -> owns_Pi && ams_data -> Piy)
    {
@@ -994,7 +994,7 @@ HYPRE_Int hypre_AMSDestroy(void *solver)
    }
    if (ams_data -> B_Piy)
    {
-      HYPRE_BoomerAMGDestroy(ams_data -> B_Piy);
+      NALU_HYPRE_BoomerAMGDestroy(ams_data -> B_Piy);
    }
    if (ams_data -> owns_Pi && ams_data -> Piz)
    {
@@ -1006,7 +1006,7 @@ HYPRE_Int hypre_AMSDestroy(void *solver)
    }
    if (ams_data -> B_Piz)
    {
-      HYPRE_BoomerAMGDestroy(ams_data -> B_Piz);
+      NALU_HYPRE_BoomerAMGDestroy(ams_data -> B_Piz);
    }
 
    if (ams_data -> r0)
@@ -1052,7 +1052,7 @@ HYPRE_Int hypre_AMSDestroy(void *solver)
    }
    if (ams_data -> B_G0)
    {
-      HYPRE_BoomerAMGDestroy(ams_data -> B_G0);
+      NALU_HYPRE_BoomerAMGDestroy(ams_data -> B_G0);
    }
 
    hypre_SeqVectorDestroy(ams_data -> A_l1_norms);
@@ -1061,7 +1061,7 @@ HYPRE_Int hypre_AMSDestroy(void *solver)
 
    if (ams_data)
    {
-      hypre_TFree(ams_data, HYPRE_MEMORY_HOST);
+      hypre_TFree(ams_data, NALU_HYPRE_MEMORY_HOST);
    }
 
    return hypre_error_flag;
@@ -1073,8 +1073,8 @@ HYPRE_Int hypre_AMSDestroy(void *solver)
  * Set problem dimension (2 or 3). By default we assume dim = 3.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int hypre_AMSSetDimension(void *solver,
-                                HYPRE_Int dim)
+NALU_HYPRE_Int hypre_AMSSetDimension(void *solver,
+                                NALU_HYPRE_Int dim)
 {
    hypre_AMSData *ams_data = (hypre_AMSData *) solver;
 
@@ -1094,7 +1094,7 @@ HYPRE_Int hypre_AMSSetDimension(void *solver,
  * This function should be called before hypre_AMSSetup()!
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int hypre_AMSSetDiscreteGradient(void *solver,
+NALU_HYPRE_Int hypre_AMSSetDiscreteGradient(void *solver,
                                        hypre_ParCSRMatrix *G)
 {
    hypre_AMSData *ams_data = (hypre_AMSData *) solver;
@@ -1111,7 +1111,7 @@ HYPRE_Int hypre_AMSSetDiscreteGradient(void *solver,
  * called before hypre_AMSSetup()!
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int hypre_AMSSetCoordinateVectors(void *solver,
+NALU_HYPRE_Int hypre_AMSSetCoordinateVectors(void *solver,
                                         hypre_ParVector *x,
                                         hypre_ParVector *y,
                                         hypre_ParVector *z)
@@ -1134,7 +1134,7 @@ HYPRE_Int hypre_AMSSetCoordinateVectors(void *solver,
  * called before hypre_AMSSetup()!
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int hypre_AMSSetEdgeConstantVectors(void *solver,
+NALU_HYPRE_Int hypre_AMSSetEdgeConstantVectors(void *solver,
                                           hypre_ParVector *Gx,
                                           hypre_ParVector *Gy,
                                           hypre_ParVector *Gz)
@@ -1166,7 +1166,7 @@ HYPRE_Int hypre_AMSSetEdgeConstantVectors(void *solver,
  * The column numbering of Pi should be node-based, i.e. the x/y/z components of
  * the first node (vertex or high-order dof) should be listed first, followed by
  * the x/y/z components of the second node and so on (see the documentation of
- * HYPRE_BoomerAMGSetDofFunc).
+ * NALU_HYPRE_BoomerAMGSetDofFunc).
  *
  * If used, this function should be called before hypre_AMSSetup() and there is
  * no need to provide the vertex coordinates. Furthermore, only one of the sets
@@ -1176,7 +1176,7 @@ HYPRE_Int hypre_AMSSetEdgeConstantVectors(void *solver,
  * monolithic Pi (cycle_type < 10) require that Pi is not NULL.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int hypre_AMSSetInterpolations(void *solver,
+NALU_HYPRE_Int hypre_AMSSetInterpolations(void *solver,
                                      hypre_ParCSRMatrix *Pi,
                                      hypre_ParCSRMatrix *Pix,
                                      hypre_ParCSRMatrix *Piy,
@@ -1203,14 +1203,14 @@ HYPRE_Int hypre_AMSSetInterpolations(void *solver,
  * as Pi^T A Pi in hypre_AMSSetup().
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int hypre_AMSSetAlphaPoissonMatrix(void *solver,
+NALU_HYPRE_Int hypre_AMSSetAlphaPoissonMatrix(void *solver,
                                          hypre_ParCSRMatrix *A_Pi)
 {
    hypre_AMSData *ams_data = (hypre_AMSData *) solver;
    ams_data -> A_Pi = A_Pi;
 
    /* Penalize the eliminated degrees of freedom */
-   hypre_ParCSRMatrixSetDiagRows(A_Pi, HYPRE_REAL_MAX);
+   hypre_ParCSRMatrixSetDiagRows(A_Pi, NALU_HYPRE_REAL_MAX);
 
    /* Make sure that the first entry in each row is the diagonal one. */
    /* hypre_CSRMatrixReorder(hypre_ParCSRMatrixDiag(A_Pi)); */
@@ -1229,7 +1229,7 @@ HYPRE_Int hypre_AMSSetAlphaPoissonMatrix(void *solver,
  * that beta is 0 and use two-level (instead of three-level) methods.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int hypre_AMSSetBetaPoissonMatrix(void *solver,
+NALU_HYPRE_Int hypre_AMSSetBetaPoissonMatrix(void *solver,
                                         hypre_ParCSRMatrix *A_G)
 {
    hypre_AMSData *ams_data = (hypre_AMSData *) solver;
@@ -1241,7 +1241,7 @@ HYPRE_Int hypre_AMSSetBetaPoissonMatrix(void *solver,
    else
    {
       /* Penalize the eliminated degrees of freedom */
-      hypre_ParCSRMatrixSetDiagRows(A_G, HYPRE_REAL_MAX);
+      hypre_ParCSRMatrixSetDiagRows(A_G, NALU_HYPRE_REAL_MAX);
 
       /* Make sure that the first entry in each row is the diagonal one. */
       /* hypre_CSRMatrixReorder(hypre_ParCSRMatrixDiag(A_G)); */
@@ -1258,7 +1258,7 @@ HYPRE_Int hypre_AMSSetBetaPoissonMatrix(void *solver,
  * Should be called before hypre_AMSSetup()!
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int hypre_AMSSetInteriorNodes(void *solver,
+NALU_HYPRE_Int hypre_AMSSetInteriorNodes(void *solver,
                                     hypre_ParVector *interior_nodes)
 {
    hypre_AMSData *ams_data = (hypre_AMSData *) solver;
@@ -1275,8 +1275,8 @@ HYPRE_Int hypre_AMSSetInteriorNodes(void *solver,
  * The default value is every 5th iteration.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int hypre_AMSSetProjectionFrequency(void *solver,
-                                          HYPRE_Int projection_frequency)
+NALU_HYPRE_Int hypre_AMSSetProjectionFrequency(void *solver,
+                                          NALU_HYPRE_Int projection_frequency)
 {
    hypre_AMSData *ams_data = (hypre_AMSData *) solver;
    ams_data -> projection_frequency = projection_frequency;
@@ -1291,8 +1291,8 @@ HYPRE_Int hypre_AMSSetProjectionFrequency(void *solver,
  * set maxit to 1, tol to 0.0 and print_level to 0.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int hypre_AMSSetMaxIter(void *solver,
-                              HYPRE_Int maxit)
+NALU_HYPRE_Int hypre_AMSSetMaxIter(void *solver,
+                              NALU_HYPRE_Int maxit)
 {
    hypre_AMSData *ams_data = (hypre_AMSData *) solver;
    ams_data -> maxit = maxit;
@@ -1306,8 +1306,8 @@ HYPRE_Int hypre_AMSSetMaxIter(void *solver,
  * The default value is 1e-6.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int hypre_AMSSetTol(void *solver,
-                          HYPRE_Real tol)
+NALU_HYPRE_Int hypre_AMSSetTol(void *solver,
+                          NALU_HYPRE_Real tol)
 {
    hypre_AMSData *ams_data = (hypre_AMSData *) solver;
    ams_data -> tol = tol;
@@ -1339,8 +1339,8 @@ HYPRE_Int hypre_AMSSetTol(void *solver,
  * The default value is 1.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int hypre_AMSSetCycleType(void *solver,
-                                HYPRE_Int cycle_type)
+NALU_HYPRE_Int hypre_AMSSetCycleType(void *solver,
+                                NALU_HYPRE_Int cycle_type)
 {
    hypre_AMSData *ams_data = (hypre_AMSData *) solver;
    ams_data -> cycle_type = cycle_type;
@@ -1354,8 +1354,8 @@ HYPRE_Int hypre_AMSSetCycleType(void *solver,
  * The defaut values is 1 (print residual norm at each step).
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int hypre_AMSSetPrintLevel(void *solver,
-                                 HYPRE_Int print_level)
+NALU_HYPRE_Int hypre_AMSSetPrintLevel(void *solver,
+                                 NALU_HYPRE_Int print_level)
 {
    hypre_AMSData *ams_data = (hypre_AMSData *) solver;
    ams_data -> print_level = print_level;
@@ -1368,11 +1368,11 @@ HYPRE_Int hypre_AMSSetPrintLevel(void *solver,
  * Set relaxation parameters for A. Default values: 2, 1, 1.0, 1.0.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int hypre_AMSSetSmoothingOptions(void *solver,
-                                       HYPRE_Int A_relax_type,
-                                       HYPRE_Int A_relax_times,
-                                       HYPRE_Real A_relax_weight,
-                                       HYPRE_Real A_omega)
+NALU_HYPRE_Int hypre_AMSSetSmoothingOptions(void *solver,
+                                       NALU_HYPRE_Int A_relax_type,
+                                       NALU_HYPRE_Int A_relax_times,
+                                       NALU_HYPRE_Real A_relax_weight,
+                                       NALU_HYPRE_Real A_omega)
 {
    hypre_AMSData *ams_data = (hypre_AMSData *) solver;
    ams_data -> A_relax_type = A_relax_type;
@@ -1388,9 +1388,9 @@ HYPRE_Int hypre_AMSSetSmoothingOptions(void *solver,
  * Set parameters for chebyshev smoother for A. Default values: 2,.3.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int hypre_AMSSetChebySmoothingOptions(void *solver,
-                                            HYPRE_Int A_cheby_order,
-                                            HYPRE_Int A_cheby_fraction)
+NALU_HYPRE_Int hypre_AMSSetChebySmoothingOptions(void *solver,
+                                            NALU_HYPRE_Int A_cheby_order,
+                                            NALU_HYPRE_Int A_cheby_fraction)
 {
    hypre_AMSData *ams_data = (hypre_AMSData *) solver;
    ams_data -> A_cheby_order =  A_cheby_order;
@@ -1404,13 +1404,13 @@ HYPRE_Int hypre_AMSSetChebySmoothingOptions(void *solver,
  * Set AMG parameters for B_Pi. Default values: 10, 1, 3, 0.25, 0, 0.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int hypre_AMSSetAlphaAMGOptions(void *solver,
-                                      HYPRE_Int B_Pi_coarsen_type,
-                                      HYPRE_Int B_Pi_agg_levels,
-                                      HYPRE_Int B_Pi_relax_type,
-                                      HYPRE_Real B_Pi_theta,
-                                      HYPRE_Int B_Pi_interp_type,
-                                      HYPRE_Int B_Pi_Pmax)
+NALU_HYPRE_Int hypre_AMSSetAlphaAMGOptions(void *solver,
+                                      NALU_HYPRE_Int B_Pi_coarsen_type,
+                                      NALU_HYPRE_Int B_Pi_agg_levels,
+                                      NALU_HYPRE_Int B_Pi_relax_type,
+                                      NALU_HYPRE_Real B_Pi_theta,
+                                      NALU_HYPRE_Int B_Pi_interp_type,
+                                      NALU_HYPRE_Int B_Pi_Pmax)
 {
    hypre_AMSData *ams_data = (hypre_AMSData *) solver;
    ams_data -> B_Pi_coarsen_type = B_Pi_coarsen_type;
@@ -1428,8 +1428,8 @@ HYPRE_Int hypre_AMSSetAlphaAMGOptions(void *solver,
  * Set the AMG coarsest level relaxation for B_Pi. Default value: 8.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int hypre_AMSSetAlphaAMGCoarseRelaxType(void *solver,
-                                              HYPRE_Int B_Pi_coarse_relax_type)
+NALU_HYPRE_Int hypre_AMSSetAlphaAMGCoarseRelaxType(void *solver,
+                                              NALU_HYPRE_Int B_Pi_coarse_relax_type)
 {
    hypre_AMSData *ams_data =  (hypre_AMSData *)solver;
    ams_data -> B_Pi_coarse_relax_type = B_Pi_coarse_relax_type;
@@ -1442,13 +1442,13 @@ HYPRE_Int hypre_AMSSetAlphaAMGCoarseRelaxType(void *solver,
  * Set AMG parameters for B_G. Default values: 10, 1, 3, 0.25, 0, 0.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int hypre_AMSSetBetaAMGOptions(void *solver,
-                                     HYPRE_Int B_G_coarsen_type,
-                                     HYPRE_Int B_G_agg_levels,
-                                     HYPRE_Int B_G_relax_type,
-                                     HYPRE_Real B_G_theta,
-                                     HYPRE_Int B_G_interp_type,
-                                     HYPRE_Int B_G_Pmax)
+NALU_HYPRE_Int hypre_AMSSetBetaAMGOptions(void *solver,
+                                     NALU_HYPRE_Int B_G_coarsen_type,
+                                     NALU_HYPRE_Int B_G_agg_levels,
+                                     NALU_HYPRE_Int B_G_relax_type,
+                                     NALU_HYPRE_Real B_G_theta,
+                                     NALU_HYPRE_Int B_G_interp_type,
+                                     NALU_HYPRE_Int B_G_Pmax)
 {
    hypre_AMSData *ams_data = (hypre_AMSData *) solver;
    ams_data -> B_G_coarsen_type = B_G_coarsen_type;
@@ -1466,8 +1466,8 @@ HYPRE_Int hypre_AMSSetBetaAMGOptions(void *solver,
  * Set the AMG coarsest level relaxation for B_G. Default value: 8.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int hypre_AMSSetBetaAMGCoarseRelaxType(void *solver,
-                                             HYPRE_Int B_G_coarse_relax_type)
+NALU_HYPRE_Int hypre_AMSSetBetaAMGCoarseRelaxType(void *solver,
+                                             NALU_HYPRE_Int B_G_coarse_relax_type)
 {
    hypre_AMSData *ams_data = (hypre_AMSData *) solver;
    ams_data -> B_G_coarse_relax_type = B_G_coarse_relax_type;
@@ -1485,21 +1485,21 @@ HYPRE_Int hypre_AMSSetBetaAMGCoarseRelaxType(void *solver,
  * can be computed from the vectors Gx, Gy, Gz.
  *--------------------------------------------------------------------------*/
 
-#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP)
+#if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
 __global__ void
 hypreGPUKernel_AMSComputePi_copy1(hypre_DeviceItem &item,
-                                  HYPRE_Int  nnz,
-                                  HYPRE_Int  dim,
-                                  HYPRE_Int *j_in,
-                                  HYPRE_Int *j_out)
+                                  NALU_HYPRE_Int  nnz,
+                                  NALU_HYPRE_Int  dim,
+                                  NALU_HYPRE_Int *j_in,
+                                  NALU_HYPRE_Int *j_out)
 {
-   const HYPRE_Int i = hypre_gpu_get_grid_thread_id<1, 1>(item);
+   const NALU_HYPRE_Int i = hypre_gpu_get_grid_thread_id<1, 1>(item);
 
    if (i < nnz)
    {
-      const HYPRE_Int j = dim * i;
+      const NALU_HYPRE_Int j = dim * i;
 
-      for (HYPRE_Int d = 0; d < dim; d++)
+      for (NALU_HYPRE_Int d = 0; d < dim; d++)
       {
          j_out[j + d] = dim * read_only_load(&j_in[i]) + d;
       }
@@ -1508,25 +1508,25 @@ hypreGPUKernel_AMSComputePi_copy1(hypre_DeviceItem &item,
 
 __global__ void
 hypreGPUKernel_AMSComputePi_copy2(hypre_DeviceItem &item,
-                                  HYPRE_Int   nrows,
-                                  HYPRE_Int   dim,
-                                  HYPRE_Int  *i_in,
-                                  HYPRE_Real *data_in,
-                                  HYPRE_Real *Gx_data,
-                                  HYPRE_Real *Gy_data,
-                                  HYPRE_Real *Gz_data,
-                                  HYPRE_Real *data_out)
+                                  NALU_HYPRE_Int   nrows,
+                                  NALU_HYPRE_Int   dim,
+                                  NALU_HYPRE_Int  *i_in,
+                                  NALU_HYPRE_Real *data_in,
+                                  NALU_HYPRE_Real *Gx_data,
+                                  NALU_HYPRE_Real *Gy_data,
+                                  NALU_HYPRE_Real *Gz_data,
+                                  NALU_HYPRE_Real *data_out)
 {
-   const HYPRE_Int i = hypre_gpu_get_grid_warp_id<1, 1>(item);
+   const NALU_HYPRE_Int i = hypre_gpu_get_grid_warp_id<1, 1>(item);
 
    if (i >= nrows)
    {
       return;
    }
 
-   const HYPRE_Int lane_id = hypre_gpu_get_lane_id<1>(item);
-   HYPRE_Int j = 0, istart, iend;
-   HYPRE_Real t, G[3], *Gdata[3];
+   const NALU_HYPRE_Int lane_id = hypre_gpu_get_lane_id<1>(item);
+   NALU_HYPRE_Int j = 0, istart, iend;
+   NALU_HYPRE_Real t, G[3], *Gdata[3];
 
    Gdata[0] = Gx_data;
    Gdata[1] = Gy_data;
@@ -1537,25 +1537,25 @@ hypreGPUKernel_AMSComputePi_copy2(hypre_DeviceItem &item,
       j = read_only_load(i_in + i + lane_id);
    }
 
-   istart = warp_shuffle_sync(item, HYPRE_WARP_FULL_MASK, j, 0);
-   iend   = warp_shuffle_sync(item, HYPRE_WARP_FULL_MASK, j, 1);
+   istart = warp_shuffle_sync(item, NALU_HYPRE_WARP_FULL_MASK, j, 0);
+   iend   = warp_shuffle_sync(item, NALU_HYPRE_WARP_FULL_MASK, j, 1);
 
    if (lane_id < dim)
    {
       t = read_only_load(Gdata[lane_id] + i);
    }
 
-   for (HYPRE_Int d = 0; d < dim; d++)
+   for (NALU_HYPRE_Int d = 0; d < dim; d++)
    {
-      G[d] = warp_shuffle_sync(item, HYPRE_WARP_FULL_MASK, t, d);
+      G[d] = warp_shuffle_sync(item, NALU_HYPRE_WARP_FULL_MASK, t, d);
    }
 
-   for (j = istart + lane_id; j < iend; j += HYPRE_WARP_SIZE)
+   for (j = istart + lane_id; j < iend; j += NALU_HYPRE_WARP_SIZE)
    {
-      const HYPRE_Real v = data_in ? fabs(read_only_load(&data_in[j])) * 0.5 : 1.0;
-      const HYPRE_Int k = j * dim;
+      const NALU_HYPRE_Real v = data_in ? fabs(read_only_load(&data_in[j])) * 0.5 : 1.0;
+      const NALU_HYPRE_Int k = j * dim;
 
-      for (HYPRE_Int d = 0; d < dim; d++)
+      for (NALU_HYPRE_Int d = 0; d < dim; d++)
       {
          data_out[k + d] = v * G[d];
       }
@@ -1564,38 +1564,38 @@ hypreGPUKernel_AMSComputePi_copy2(hypre_DeviceItem &item,
 
 #endif
 
-HYPRE_Int hypre_AMSComputePi(hypre_ParCSRMatrix *A,
+NALU_HYPRE_Int hypre_AMSComputePi(hypre_ParCSRMatrix *A,
                              hypre_ParCSRMatrix *G,
                              hypre_ParVector *Gx,
                              hypre_ParVector *Gy,
                              hypre_ParVector *Gz,
-                             HYPRE_Int dim,
+                             NALU_HYPRE_Int dim,
                              hypre_ParCSRMatrix **Pi_ptr)
 {
    hypre_ParCSRMatrix *Pi;
 
    /* Compute Pi = [Pi_x, Pi_y, Pi_z] */
    {
-      HYPRE_Int i, j, d;
+      NALU_HYPRE_Int i, j, d;
 
-      HYPRE_Real *Gx_data, *Gy_data, *Gz_data;
+      NALU_HYPRE_Real *Gx_data, *Gy_data, *Gz_data;
 
       MPI_Comm comm = hypre_ParCSRMatrixComm(G);
-      HYPRE_BigInt global_num_rows = hypre_ParCSRMatrixGlobalNumRows(G);
-      HYPRE_BigInt global_num_cols = dim * hypre_ParCSRMatrixGlobalNumCols(G);
-      HYPRE_BigInt *row_starts = hypre_ParCSRMatrixRowStarts(G);
-      HYPRE_BigInt *col_starts;
-      HYPRE_Int col_starts_size;
-      HYPRE_Int num_cols_offd = dim * hypre_CSRMatrixNumCols(hypre_ParCSRMatrixOffd(G));
-      HYPRE_Int num_nonzeros_diag = dim * hypre_CSRMatrixNumNonzeros(hypre_ParCSRMatrixDiag(G));
-      HYPRE_Int num_nonzeros_offd = dim * hypre_CSRMatrixNumNonzeros(hypre_ParCSRMatrixOffd(G));
-      HYPRE_BigInt *col_starts_G = hypre_ParCSRMatrixColStarts(G);
+      NALU_HYPRE_BigInt global_num_rows = hypre_ParCSRMatrixGlobalNumRows(G);
+      NALU_HYPRE_BigInt global_num_cols = dim * hypre_ParCSRMatrixGlobalNumCols(G);
+      NALU_HYPRE_BigInt *row_starts = hypre_ParCSRMatrixRowStarts(G);
+      NALU_HYPRE_BigInt *col_starts;
+      NALU_HYPRE_Int col_starts_size;
+      NALU_HYPRE_Int num_cols_offd = dim * hypre_CSRMatrixNumCols(hypre_ParCSRMatrixOffd(G));
+      NALU_HYPRE_Int num_nonzeros_diag = dim * hypre_CSRMatrixNumNonzeros(hypre_ParCSRMatrixDiag(G));
+      NALU_HYPRE_Int num_nonzeros_offd = dim * hypre_CSRMatrixNumNonzeros(hypre_ParCSRMatrixOffd(G));
+      NALU_HYPRE_BigInt *col_starts_G = hypre_ParCSRMatrixColStarts(G);
 
       col_starts_size = 2;
-      col_starts = hypre_TAlloc(HYPRE_BigInt, col_starts_size, HYPRE_MEMORY_HOST);
+      col_starts = hypre_TAlloc(NALU_HYPRE_BigInt, col_starts_size, NALU_HYPRE_MEMORY_HOST);
       for (i = 0; i < col_starts_size; i++)
       {
-         col_starts[i] = (HYPRE_BigInt)dim * col_starts_G[i];
+         col_starts[i] = (NALU_HYPRE_BigInt)dim * col_starts_G[i];
       }
 
       Pi = hypre_ParCSRMatrixCreate(comm,
@@ -1609,7 +1609,7 @@ HYPRE_Int hypre_AMSComputePi(hypre_ParCSRMatrix *A,
 
       hypre_ParCSRMatrixOwnsData(Pi) = 1;
       hypre_ParCSRMatrixInitialize(Pi);
-      hypre_TFree(col_starts, HYPRE_MEMORY_HOST);
+      hypre_TFree(col_starts, NALU_HYPRE_MEMORY_HOST);
 
       Gx_data = hypre_VectorData(hypre_ParVectorLocalVector(Gx));
       if (dim >= 2)
@@ -1621,40 +1621,40 @@ HYPRE_Int hypre_AMSComputePi(hypre_ParCSRMatrix *A,
          Gz_data = hypre_VectorData(hypre_ParVectorLocalVector(Gz));
       }
 
-#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP)
-      HYPRE_ExecutionPolicy exec = hypre_GetExecPolicy2( hypre_ParCSRMatrixMemoryLocation(G),
+#if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
+      NALU_HYPRE_ExecutionPolicy exec = hypre_GetExecPolicy2( hypre_ParCSRMatrixMemoryLocation(G),
                                                          hypre_ParCSRMatrixMemoryLocation(Pi) );
 #endif
 
       /* Fill-in the diagonal part */
       {
          hypre_CSRMatrix *G_diag = hypre_ParCSRMatrixDiag(G);
-         HYPRE_Int *G_diag_I = hypre_CSRMatrixI(G_diag);
-         HYPRE_Int *G_diag_J = hypre_CSRMatrixJ(G_diag);
-         HYPRE_Real *G_diag_data = hypre_CSRMatrixData(G_diag);
+         NALU_HYPRE_Int *G_diag_I = hypre_CSRMatrixI(G_diag);
+         NALU_HYPRE_Int *G_diag_J = hypre_CSRMatrixJ(G_diag);
+         NALU_HYPRE_Real *G_diag_data = hypre_CSRMatrixData(G_diag);
 
-         HYPRE_Int G_diag_nrows = hypre_CSRMatrixNumRows(G_diag);
-         HYPRE_Int G_diag_nnz = hypre_CSRMatrixNumNonzeros(G_diag);
+         NALU_HYPRE_Int G_diag_nrows = hypre_CSRMatrixNumRows(G_diag);
+         NALU_HYPRE_Int G_diag_nnz = hypre_CSRMatrixNumNonzeros(G_diag);
 
          hypre_CSRMatrix *Pi_diag = hypre_ParCSRMatrixDiag(Pi);
-         HYPRE_Int *Pi_diag_I = hypre_CSRMatrixI(Pi_diag);
-         HYPRE_Int *Pi_diag_J = hypre_CSRMatrixJ(Pi_diag);
-         HYPRE_Real *Pi_diag_data = hypre_CSRMatrixData(Pi_diag);
+         NALU_HYPRE_Int *Pi_diag_I = hypre_CSRMatrixI(Pi_diag);
+         NALU_HYPRE_Int *Pi_diag_J = hypre_CSRMatrixJ(Pi_diag);
+         NALU_HYPRE_Real *Pi_diag_data = hypre_CSRMatrixData(Pi_diag);
 
-#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP)
-         if (exec == HYPRE_EXEC_DEVICE)
+#if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
+         if (exec == NALU_HYPRE_EXEC_DEVICE)
          {
             hypreDevice_IntScalen( G_diag_I, G_diag_nrows + 1, Pi_diag_I, dim );
 
             dim3 bDim = hypre_GetDefaultDeviceBlockDimension();
             dim3 gDim = hypre_GetDefaultDeviceGridDimension(G_diag_nnz, "thread", bDim);
 
-            HYPRE_GPU_LAUNCH( hypreGPUKernel_AMSComputePi_copy1, gDim, bDim,
+            NALU_HYPRE_GPU_LAUNCH( hypreGPUKernel_AMSComputePi_copy1, gDim, bDim,
                               G_diag_nnz, dim, G_diag_J, Pi_diag_J );
 
             gDim = hypre_GetDefaultDeviceGridDimension(G_diag_nrows, "warp", bDim);
 
-            HYPRE_GPU_LAUNCH( hypreGPUKernel_AMSComputePi_copy2, gDim, bDim,
+            NALU_HYPRE_GPU_LAUNCH( hypreGPUKernel_AMSComputePi_copy2, gDim, bDim,
                               G_diag_nrows, dim, G_diag_I, G_diag_data, Gx_data, Gy_data, Gz_data,
                               Pi_diag_data );
          }
@@ -1691,24 +1691,24 @@ HYPRE_Int hypre_AMSComputePi(hypre_ParCSRMatrix *A,
       /* Fill-in the off-diagonal part */
       {
          hypre_CSRMatrix *G_offd = hypre_ParCSRMatrixOffd(G);
-         HYPRE_Int *G_offd_I = hypre_CSRMatrixI(G_offd);
-         HYPRE_Int *G_offd_J = hypre_CSRMatrixJ(G_offd);
-         HYPRE_Real *G_offd_data = hypre_CSRMatrixData(G_offd);
+         NALU_HYPRE_Int *G_offd_I = hypre_CSRMatrixI(G_offd);
+         NALU_HYPRE_Int *G_offd_J = hypre_CSRMatrixJ(G_offd);
+         NALU_HYPRE_Real *G_offd_data = hypre_CSRMatrixData(G_offd);
 
-         HYPRE_Int G_offd_nrows = hypre_CSRMatrixNumRows(G_offd);
-         HYPRE_Int G_offd_ncols = hypre_CSRMatrixNumCols(G_offd);
-         HYPRE_Int G_offd_nnz = hypre_CSRMatrixNumNonzeros(G_offd);
+         NALU_HYPRE_Int G_offd_nrows = hypre_CSRMatrixNumRows(G_offd);
+         NALU_HYPRE_Int G_offd_ncols = hypre_CSRMatrixNumCols(G_offd);
+         NALU_HYPRE_Int G_offd_nnz = hypre_CSRMatrixNumNonzeros(G_offd);
 
          hypre_CSRMatrix *Pi_offd = hypre_ParCSRMatrixOffd(Pi);
-         HYPRE_Int *Pi_offd_I = hypre_CSRMatrixI(Pi_offd);
-         HYPRE_Int *Pi_offd_J = hypre_CSRMatrixJ(Pi_offd);
-         HYPRE_Real *Pi_offd_data = hypre_CSRMatrixData(Pi_offd);
+         NALU_HYPRE_Int *Pi_offd_I = hypre_CSRMatrixI(Pi_offd);
+         NALU_HYPRE_Int *Pi_offd_J = hypre_CSRMatrixJ(Pi_offd);
+         NALU_HYPRE_Real *Pi_offd_data = hypre_CSRMatrixData(Pi_offd);
 
-         HYPRE_BigInt *G_cmap = hypre_ParCSRMatrixColMapOffd(G);
-         HYPRE_BigInt *Pi_cmap = hypre_ParCSRMatrixColMapOffd(Pi);
+         NALU_HYPRE_BigInt *G_cmap = hypre_ParCSRMatrixColMapOffd(G);
+         NALU_HYPRE_BigInt *Pi_cmap = hypre_ParCSRMatrixColMapOffd(Pi);
 
-#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP)
-         if (exec == HYPRE_EXEC_DEVICE)
+#if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
+         if (exec == NALU_HYPRE_EXEC_DEVICE)
          {
             if (G_offd_ncols)
             {
@@ -1718,12 +1718,12 @@ HYPRE_Int hypre_AMSComputePi(hypre_ParCSRMatrix *A,
             dim3 bDim = hypre_GetDefaultDeviceBlockDimension();
             dim3 gDim = hypre_GetDefaultDeviceGridDimension(G_offd_nnz, "thread", bDim);
 
-            HYPRE_GPU_LAUNCH( hypreGPUKernel_AMSComputePi_copy1, gDim, bDim,
+            NALU_HYPRE_GPU_LAUNCH( hypreGPUKernel_AMSComputePi_copy1, gDim, bDim,
                               G_offd_nnz, dim, G_offd_J, Pi_offd_J );
 
             gDim = hypre_GetDefaultDeviceGridDimension(G_offd_nrows, "warp", bDim);
 
-            HYPRE_GPU_LAUNCH( hypreGPUKernel_AMSComputePi_copy2, gDim, bDim,
+            NALU_HYPRE_GPU_LAUNCH( hypreGPUKernel_AMSComputePi_copy2, gDim, bDim,
                               G_offd_nrows, dim, G_offd_I, G_offd_data, Gx_data, Gy_data, Gz_data,
                               Pi_offd_data );
          }
@@ -1760,7 +1760,7 @@ HYPRE_Int hypre_AMSComputePi(hypre_ParCSRMatrix *A,
          for (i = 0; i < G_offd_ncols; i++)
             for (d = 0; d < dim; d++)
             {
-               Pi_cmap[dim * i + d] = (HYPRE_BigInt)dim * G_cmap[i] + (HYPRE_BigInt)d;
+               Pi_cmap[dim * i + d] = (NALU_HYPRE_BigInt)dim * G_cmap[i] + (NALU_HYPRE_BigInt)d;
             }
       }
    }
@@ -1782,30 +1782,30 @@ HYPRE_Int hypre_AMSComputePi(hypre_ParCSRMatrix *A,
  * Gx, Gy, Gz.
  *--------------------------------------------------------------------------*/
 
-#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP)
+#if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
 __global__ void
 hypreGPUKernel_AMSComputePixyz_copy(hypre_DeviceItem &item,
-                                    HYPRE_Int   nrows,
-                                    HYPRE_Int   dim,
-                                    HYPRE_Int  *i_in,
-                                    HYPRE_Real *data_in,
-                                    HYPRE_Real *Gx_data,
-                                    HYPRE_Real *Gy_data,
-                                    HYPRE_Real *Gz_data,
-                                    HYPRE_Real *data_x_out,
-                                    HYPRE_Real *data_y_out,
-                                    HYPRE_Real *data_z_out )
+                                    NALU_HYPRE_Int   nrows,
+                                    NALU_HYPRE_Int   dim,
+                                    NALU_HYPRE_Int  *i_in,
+                                    NALU_HYPRE_Real *data_in,
+                                    NALU_HYPRE_Real *Gx_data,
+                                    NALU_HYPRE_Real *Gy_data,
+                                    NALU_HYPRE_Real *Gz_data,
+                                    NALU_HYPRE_Real *data_x_out,
+                                    NALU_HYPRE_Real *data_y_out,
+                                    NALU_HYPRE_Real *data_z_out )
 {
-   const HYPRE_Int i = hypre_gpu_get_grid_warp_id<1, 1>(item);
+   const NALU_HYPRE_Int i = hypre_gpu_get_grid_warp_id<1, 1>(item);
 
    if (i >= nrows)
    {
       return;
    }
 
-   const HYPRE_Int lane_id = hypre_gpu_get_lane_id<1>(item);
-   HYPRE_Int j = 0, istart, iend;
-   HYPRE_Real t, G[3], *Gdata[3], *Odata[3];
+   const NALU_HYPRE_Int lane_id = hypre_gpu_get_lane_id<1>(item);
+   NALU_HYPRE_Int j = 0, istart, iend;
+   NALU_HYPRE_Real t, G[3], *Gdata[3], *Odata[3];
 
    Gdata[0] = Gx_data;
    Gdata[1] = Gy_data;
@@ -1820,24 +1820,24 @@ hypreGPUKernel_AMSComputePixyz_copy(hypre_DeviceItem &item,
       j = read_only_load(i_in + i + lane_id);
    }
 
-   istart = warp_shuffle_sync(item, HYPRE_WARP_FULL_MASK, j, 0);
-   iend   = warp_shuffle_sync(item, HYPRE_WARP_FULL_MASK, j, 1);
+   istart = warp_shuffle_sync(item, NALU_HYPRE_WARP_FULL_MASK, j, 0);
+   iend   = warp_shuffle_sync(item, NALU_HYPRE_WARP_FULL_MASK, j, 1);
 
    if (lane_id < dim)
    {
       t = read_only_load(Gdata[lane_id] + i);
    }
 
-   for (HYPRE_Int d = 0; d < dim; d++)
+   for (NALU_HYPRE_Int d = 0; d < dim; d++)
    {
-      G[d] = warp_shuffle_sync(item, HYPRE_WARP_FULL_MASK, t, d);
+      G[d] = warp_shuffle_sync(item, NALU_HYPRE_WARP_FULL_MASK, t, d);
    }
 
-   for (j = istart + lane_id; j < iend; j += HYPRE_WARP_SIZE)
+   for (j = istart + lane_id; j < iend; j += NALU_HYPRE_WARP_SIZE)
    {
-      const HYPRE_Real v = data_in ? fabs(read_only_load(&data_in[j])) * 0.5 : 1.0;
+      const NALU_HYPRE_Real v = data_in ? fabs(read_only_load(&data_in[j])) * 0.5 : 1.0;
 
-      for (HYPRE_Int d = 0; d < dim; d++)
+      for (NALU_HYPRE_Int d = 0; d < dim; d++)
       {
          Odata[d][j] = v * G[d];
       }
@@ -1845,36 +1845,36 @@ hypreGPUKernel_AMSComputePixyz_copy(hypre_DeviceItem &item,
 }
 #endif
 
-HYPRE_Int hypre_AMSComputePixyz(hypre_ParCSRMatrix *A,
+NALU_HYPRE_Int hypre_AMSComputePixyz(hypre_ParCSRMatrix *A,
                                 hypre_ParCSRMatrix *G,
                                 hypre_ParVector *Gx,
                                 hypre_ParVector *Gy,
                                 hypre_ParVector *Gz,
-                                HYPRE_Int dim,
+                                NALU_HYPRE_Int dim,
                                 hypre_ParCSRMatrix **Pix_ptr,
                                 hypre_ParCSRMatrix **Piy_ptr,
                                 hypre_ParCSRMatrix **Piz_ptr)
 {
    hypre_ParCSRMatrix *Pix, *Piy, *Piz;
 
-#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP)
-   HYPRE_ExecutionPolicy exec = hypre_GetExecPolicy1( hypre_ParCSRMatrixMemoryLocation(G) );
+#if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
+   NALU_HYPRE_ExecutionPolicy exec = hypre_GetExecPolicy1( hypre_ParCSRMatrixMemoryLocation(G) );
 #endif
 
    /* Compute Pix, Piy, Piz  */
    {
-      HYPRE_Int i, j;
+      NALU_HYPRE_Int i, j;
 
-      HYPRE_Real *Gx_data, *Gy_data, *Gz_data;
+      NALU_HYPRE_Real *Gx_data, *Gy_data, *Gz_data;
 
       MPI_Comm comm = hypre_ParCSRMatrixComm(G);
-      HYPRE_BigInt global_num_rows = hypre_ParCSRMatrixGlobalNumRows(G);
-      HYPRE_BigInt global_num_cols = hypre_ParCSRMatrixGlobalNumCols(G);
-      HYPRE_BigInt *row_starts = hypre_ParCSRMatrixRowStarts(G);
-      HYPRE_BigInt *col_starts = hypre_ParCSRMatrixColStarts(G);
-      HYPRE_Int num_cols_offd = hypre_CSRMatrixNumCols(hypre_ParCSRMatrixOffd(G));
-      HYPRE_Int num_nonzeros_diag = hypre_CSRMatrixNumNonzeros(hypre_ParCSRMatrixDiag(G));
-      HYPRE_Int num_nonzeros_offd = hypre_CSRMatrixNumNonzeros(hypre_ParCSRMatrixOffd(G));
+      NALU_HYPRE_BigInt global_num_rows = hypre_ParCSRMatrixGlobalNumRows(G);
+      NALU_HYPRE_BigInt global_num_cols = hypre_ParCSRMatrixGlobalNumCols(G);
+      NALU_HYPRE_BigInt *row_starts = hypre_ParCSRMatrixRowStarts(G);
+      NALU_HYPRE_BigInt *col_starts = hypre_ParCSRMatrixColStarts(G);
+      NALU_HYPRE_Int num_cols_offd = hypre_CSRMatrixNumCols(hypre_ParCSRMatrixOffd(G));
+      NALU_HYPRE_Int num_nonzeros_diag = hypre_CSRMatrixNumNonzeros(hypre_ParCSRMatrixDiag(G));
+      NALU_HYPRE_Int num_nonzeros_offd = hypre_CSRMatrixNumNonzeros(hypre_ParCSRMatrixOffd(G));
 
       Pix = hypre_ParCSRMatrixCreate(comm,
                                      global_num_rows,
@@ -1929,37 +1929,37 @@ HYPRE_Int hypre_AMSComputePixyz(hypre_ParCSRMatrix *A,
       if (dim == 3)
       {
          hypre_CSRMatrix *G_diag = hypre_ParCSRMatrixDiag(G);
-         HYPRE_Int *G_diag_I = hypre_CSRMatrixI(G_diag);
-         HYPRE_Int *G_diag_J = hypre_CSRMatrixJ(G_diag);
-         HYPRE_Real *G_diag_data = hypre_CSRMatrixData(G_diag);
+         NALU_HYPRE_Int *G_diag_I = hypre_CSRMatrixI(G_diag);
+         NALU_HYPRE_Int *G_diag_J = hypre_CSRMatrixJ(G_diag);
+         NALU_HYPRE_Real *G_diag_data = hypre_CSRMatrixData(G_diag);
 
-         HYPRE_Int G_diag_nrows = hypre_CSRMatrixNumRows(G_diag);
-         HYPRE_Int G_diag_nnz = hypre_CSRMatrixNumNonzeros(G_diag);
+         NALU_HYPRE_Int G_diag_nrows = hypre_CSRMatrixNumRows(G_diag);
+         NALU_HYPRE_Int G_diag_nnz = hypre_CSRMatrixNumNonzeros(G_diag);
 
          hypre_CSRMatrix *Pix_diag = hypre_ParCSRMatrixDiag(Pix);
-         HYPRE_Int *Pix_diag_I = hypre_CSRMatrixI(Pix_diag);
-         HYPRE_Int *Pix_diag_J = hypre_CSRMatrixJ(Pix_diag);
-         HYPRE_Real *Pix_diag_data = hypre_CSRMatrixData(Pix_diag);
+         NALU_HYPRE_Int *Pix_diag_I = hypre_CSRMatrixI(Pix_diag);
+         NALU_HYPRE_Int *Pix_diag_J = hypre_CSRMatrixJ(Pix_diag);
+         NALU_HYPRE_Real *Pix_diag_data = hypre_CSRMatrixData(Pix_diag);
 
          hypre_CSRMatrix *Piy_diag = hypre_ParCSRMatrixDiag(Piy);
-         HYPRE_Int *Piy_diag_I = hypre_CSRMatrixI(Piy_diag);
-         HYPRE_Int *Piy_diag_J = hypre_CSRMatrixJ(Piy_diag);
-         HYPRE_Real *Piy_diag_data = hypre_CSRMatrixData(Piy_diag);
+         NALU_HYPRE_Int *Piy_diag_I = hypre_CSRMatrixI(Piy_diag);
+         NALU_HYPRE_Int *Piy_diag_J = hypre_CSRMatrixJ(Piy_diag);
+         NALU_HYPRE_Real *Piy_diag_data = hypre_CSRMatrixData(Piy_diag);
 
          hypre_CSRMatrix *Piz_diag = hypre_ParCSRMatrixDiag(Piz);
-         HYPRE_Int *Piz_diag_I = hypre_CSRMatrixI(Piz_diag);
-         HYPRE_Int *Piz_diag_J = hypre_CSRMatrixJ(Piz_diag);
-         HYPRE_Real *Piz_diag_data = hypre_CSRMatrixData(Piz_diag);
+         NALU_HYPRE_Int *Piz_diag_I = hypre_CSRMatrixI(Piz_diag);
+         NALU_HYPRE_Int *Piz_diag_J = hypre_CSRMatrixJ(Piz_diag);
+         NALU_HYPRE_Real *Piz_diag_data = hypre_CSRMatrixData(Piz_diag);
 
-#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP)
-         if (exec == HYPRE_EXEC_DEVICE)
+#if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
+         if (exec == NALU_HYPRE_EXEC_DEVICE)
          {
-            HYPRE_THRUST_CALL( copy_n,
+            NALU_HYPRE_THRUST_CALL( copy_n,
                                thrust::make_zip_iterator(thrust::make_tuple(G_diag_I, G_diag_I, G_diag_I)),
                                G_diag_nrows + 1,
                                thrust::make_zip_iterator(thrust::make_tuple(Pix_diag_I, Piy_diag_I, Piz_diag_I)) );
 
-            HYPRE_THRUST_CALL( copy_n,
+            NALU_HYPRE_THRUST_CALL( copy_n,
                                thrust::make_zip_iterator(thrust::make_tuple(G_diag_J, G_diag_J, G_diag_J)),
                                G_diag_nnz,
                                thrust::make_zip_iterator(thrust::make_tuple(Pix_diag_J, Piy_diag_J, Piz_diag_J)) );
@@ -1967,7 +1967,7 @@ HYPRE_Int hypre_AMSComputePixyz(hypre_ParCSRMatrix *A,
             dim3 bDim = hypre_GetDefaultDeviceBlockDimension();
             dim3 gDim = hypre_GetDefaultDeviceGridDimension(G_diag_nrows, "warp", bDim);
 
-            HYPRE_GPU_LAUNCH( hypreGPUKernel_AMSComputePixyz_copy, gDim, bDim,
+            NALU_HYPRE_GPU_LAUNCH( hypreGPUKernel_AMSComputePixyz_copy, gDim, bDim,
                               G_diag_nrows, dim, G_diag_I, G_diag_data, Gx_data, Gy_data, Gz_data,
                               Pix_diag_data, Piy_diag_data, Piz_diag_data );
          }
@@ -2000,32 +2000,32 @@ HYPRE_Int hypre_AMSComputePixyz(hypre_ParCSRMatrix *A,
       else if (dim == 2)
       {
          hypre_CSRMatrix *G_diag = hypre_ParCSRMatrixDiag(G);
-         HYPRE_Int *G_diag_I = hypre_CSRMatrixI(G_diag);
-         HYPRE_Int *G_diag_J = hypre_CSRMatrixJ(G_diag);
-         HYPRE_Real *G_diag_data = hypre_CSRMatrixData(G_diag);
+         NALU_HYPRE_Int *G_diag_I = hypre_CSRMatrixI(G_diag);
+         NALU_HYPRE_Int *G_diag_J = hypre_CSRMatrixJ(G_diag);
+         NALU_HYPRE_Real *G_diag_data = hypre_CSRMatrixData(G_diag);
 
-         HYPRE_Int G_diag_nrows = hypre_CSRMatrixNumRows(G_diag);
-         HYPRE_Int G_diag_nnz = hypre_CSRMatrixNumNonzeros(G_diag);
+         NALU_HYPRE_Int G_diag_nrows = hypre_CSRMatrixNumRows(G_diag);
+         NALU_HYPRE_Int G_diag_nnz = hypre_CSRMatrixNumNonzeros(G_diag);
 
          hypre_CSRMatrix *Pix_diag = hypre_ParCSRMatrixDiag(Pix);
-         HYPRE_Int *Pix_diag_I = hypre_CSRMatrixI(Pix_diag);
-         HYPRE_Int *Pix_diag_J = hypre_CSRMatrixJ(Pix_diag);
-         HYPRE_Real *Pix_diag_data = hypre_CSRMatrixData(Pix_diag);
+         NALU_HYPRE_Int *Pix_diag_I = hypre_CSRMatrixI(Pix_diag);
+         NALU_HYPRE_Int *Pix_diag_J = hypre_CSRMatrixJ(Pix_diag);
+         NALU_HYPRE_Real *Pix_diag_data = hypre_CSRMatrixData(Pix_diag);
 
          hypre_CSRMatrix *Piy_diag = hypre_ParCSRMatrixDiag(Piy);
-         HYPRE_Int *Piy_diag_I = hypre_CSRMatrixI(Piy_diag);
-         HYPRE_Int *Piy_diag_J = hypre_CSRMatrixJ(Piy_diag);
-         HYPRE_Real *Piy_diag_data = hypre_CSRMatrixData(Piy_diag);
+         NALU_HYPRE_Int *Piy_diag_I = hypre_CSRMatrixI(Piy_diag);
+         NALU_HYPRE_Int *Piy_diag_J = hypre_CSRMatrixJ(Piy_diag);
+         NALU_HYPRE_Real *Piy_diag_data = hypre_CSRMatrixData(Piy_diag);
 
-#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP)
-         if (exec == HYPRE_EXEC_DEVICE)
+#if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
+         if (exec == NALU_HYPRE_EXEC_DEVICE)
          {
-            HYPRE_THRUST_CALL( copy_n,
+            NALU_HYPRE_THRUST_CALL( copy_n,
                                thrust::make_zip_iterator(thrust::make_tuple(G_diag_I, G_diag_I)),
                                G_diag_nrows + 1,
                                thrust::make_zip_iterator(thrust::make_tuple(Pix_diag_I, Piy_diag_I)) );
 
-            HYPRE_THRUST_CALL( copy_n,
+            NALU_HYPRE_THRUST_CALL( copy_n,
                                thrust::make_zip_iterator(thrust::make_tuple(G_diag_J, G_diag_J)),
                                G_diag_nnz,
                                thrust::make_zip_iterator(thrust::make_tuple(Pix_diag_J, Piy_diag_J)) );
@@ -2033,7 +2033,7 @@ HYPRE_Int hypre_AMSComputePixyz(hypre_ParCSRMatrix *A,
             dim3 bDim = hypre_GetDefaultDeviceBlockDimension();
             dim3 gDim = hypre_GetDefaultDeviceGridDimension(G_diag_nrows, "warp", bDim);
 
-            HYPRE_GPU_LAUNCH( hypreGPUKernel_AMSComputePixyz_copy, gDim, bDim,
+            NALU_HYPRE_GPU_LAUNCH( hypreGPUKernel_AMSComputePixyz_copy, gDim, bDim,
                               G_diag_nrows, dim, G_diag_I, G_diag_data, Gx_data, Gy_data, NULL,
                               Pix_diag_data, Piy_diag_data, NULL );
          }
@@ -2063,27 +2063,27 @@ HYPRE_Int hypre_AMSComputePixyz(hypre_ParCSRMatrix *A,
       else
       {
          hypre_CSRMatrix *G_diag = hypre_ParCSRMatrixDiag(G);
-         HYPRE_Int *G_diag_I = hypre_CSRMatrixI(G_diag);
-         HYPRE_Int *G_diag_J = hypre_CSRMatrixJ(G_diag);
-         HYPRE_Real *G_diag_data = hypre_CSRMatrixData(G_diag);
+         NALU_HYPRE_Int *G_diag_I = hypre_CSRMatrixI(G_diag);
+         NALU_HYPRE_Int *G_diag_J = hypre_CSRMatrixJ(G_diag);
+         NALU_HYPRE_Real *G_diag_data = hypre_CSRMatrixData(G_diag);
 
-         HYPRE_Int G_diag_nrows = hypre_CSRMatrixNumRows(G_diag);
-         HYPRE_Int G_diag_nnz = hypre_CSRMatrixNumNonzeros(G_diag);
+         NALU_HYPRE_Int G_diag_nrows = hypre_CSRMatrixNumRows(G_diag);
+         NALU_HYPRE_Int G_diag_nnz = hypre_CSRMatrixNumNonzeros(G_diag);
 
          hypre_CSRMatrix *Pix_diag = hypre_ParCSRMatrixDiag(Pix);
-         HYPRE_Int *Pix_diag_I = hypre_CSRMatrixI(Pix_diag);
-         HYPRE_Int *Pix_diag_J = hypre_CSRMatrixJ(Pix_diag);
-         HYPRE_Real *Pix_diag_data = hypre_CSRMatrixData(Pix_diag);
+         NALU_HYPRE_Int *Pix_diag_I = hypre_CSRMatrixI(Pix_diag);
+         NALU_HYPRE_Int *Pix_diag_J = hypre_CSRMatrixJ(Pix_diag);
+         NALU_HYPRE_Real *Pix_diag_data = hypre_CSRMatrixData(Pix_diag);
 
-#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP)
-         if (exec == HYPRE_EXEC_DEVICE)
+#if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
+         if (exec == NALU_HYPRE_EXEC_DEVICE)
          {
-            HYPRE_THRUST_CALL( copy_n,
+            NALU_HYPRE_THRUST_CALL( copy_n,
                                G_diag_I,
                                G_diag_nrows + 1,
                                Pix_diag_I );
 
-            HYPRE_THRUST_CALL( copy_n,
+            NALU_HYPRE_THRUST_CALL( copy_n,
                                G_diag_J,
                                G_diag_nnz,
                                Pix_diag_J );
@@ -2091,7 +2091,7 @@ HYPRE_Int hypre_AMSComputePixyz(hypre_ParCSRMatrix *A,
             dim3 bDim = hypre_GetDefaultDeviceBlockDimension();
             dim3 gDim = hypre_GetDefaultDeviceGridDimension(G_diag_nrows, "warp", bDim);
 
-            HYPRE_GPU_LAUNCH( hypreGPUKernel_AMSComputePixyz_copy, gDim, bDim,
+            NALU_HYPRE_GPU_LAUNCH( hypreGPUKernel_AMSComputePixyz_copy, gDim, bDim,
                               G_diag_nrows, dim, G_diag_I, G_diag_data, Gx_data, NULL, NULL,
                               Pix_diag_data, NULL, NULL );
          }
@@ -2121,46 +2121,46 @@ HYPRE_Int hypre_AMSComputePixyz(hypre_ParCSRMatrix *A,
       if (dim == 3)
       {
          hypre_CSRMatrix *G_offd = hypre_ParCSRMatrixOffd(G);
-         HYPRE_Int *G_offd_I = hypre_CSRMatrixI(G_offd);
-         HYPRE_Int *G_offd_J = hypre_CSRMatrixJ(G_offd);
-         HYPRE_Real *G_offd_data = hypre_CSRMatrixData(G_offd);
+         NALU_HYPRE_Int *G_offd_I = hypre_CSRMatrixI(G_offd);
+         NALU_HYPRE_Int *G_offd_J = hypre_CSRMatrixJ(G_offd);
+         NALU_HYPRE_Real *G_offd_data = hypre_CSRMatrixData(G_offd);
 
-         HYPRE_Int G_offd_nrows = hypre_CSRMatrixNumRows(G_offd);
-         HYPRE_Int G_offd_ncols = hypre_CSRMatrixNumCols(G_offd);
-         HYPRE_Int G_offd_nnz = hypre_CSRMatrixNumNonzeros(G_offd);
+         NALU_HYPRE_Int G_offd_nrows = hypre_CSRMatrixNumRows(G_offd);
+         NALU_HYPRE_Int G_offd_ncols = hypre_CSRMatrixNumCols(G_offd);
+         NALU_HYPRE_Int G_offd_nnz = hypre_CSRMatrixNumNonzeros(G_offd);
 
          hypre_CSRMatrix *Pix_offd = hypre_ParCSRMatrixOffd(Pix);
-         HYPRE_Int *Pix_offd_I = hypre_CSRMatrixI(Pix_offd);
-         HYPRE_Int *Pix_offd_J = hypre_CSRMatrixJ(Pix_offd);
-         HYPRE_Real *Pix_offd_data = hypre_CSRMatrixData(Pix_offd);
+         NALU_HYPRE_Int *Pix_offd_I = hypre_CSRMatrixI(Pix_offd);
+         NALU_HYPRE_Int *Pix_offd_J = hypre_CSRMatrixJ(Pix_offd);
+         NALU_HYPRE_Real *Pix_offd_data = hypre_CSRMatrixData(Pix_offd);
 
          hypre_CSRMatrix *Piy_offd = hypre_ParCSRMatrixOffd(Piy);
-         HYPRE_Int *Piy_offd_I = hypre_CSRMatrixI(Piy_offd);
-         HYPRE_Int *Piy_offd_J = hypre_CSRMatrixJ(Piy_offd);
-         HYPRE_Real *Piy_offd_data = hypre_CSRMatrixData(Piy_offd);
+         NALU_HYPRE_Int *Piy_offd_I = hypre_CSRMatrixI(Piy_offd);
+         NALU_HYPRE_Int *Piy_offd_J = hypre_CSRMatrixJ(Piy_offd);
+         NALU_HYPRE_Real *Piy_offd_data = hypre_CSRMatrixData(Piy_offd);
 
          hypre_CSRMatrix *Piz_offd = hypre_ParCSRMatrixOffd(Piz);
-         HYPRE_Int *Piz_offd_I = hypre_CSRMatrixI(Piz_offd);
-         HYPRE_Int *Piz_offd_J = hypre_CSRMatrixJ(Piz_offd);
-         HYPRE_Real *Piz_offd_data = hypre_CSRMatrixData(Piz_offd);
+         NALU_HYPRE_Int *Piz_offd_I = hypre_CSRMatrixI(Piz_offd);
+         NALU_HYPRE_Int *Piz_offd_J = hypre_CSRMatrixJ(Piz_offd);
+         NALU_HYPRE_Real *Piz_offd_data = hypre_CSRMatrixData(Piz_offd);
 
-         HYPRE_BigInt *G_cmap = hypre_ParCSRMatrixColMapOffd(G);
-         HYPRE_BigInt *Pix_cmap = hypre_ParCSRMatrixColMapOffd(Pix);
-         HYPRE_BigInt *Piy_cmap = hypre_ParCSRMatrixColMapOffd(Piy);
-         HYPRE_BigInt *Piz_cmap = hypre_ParCSRMatrixColMapOffd(Piz);
+         NALU_HYPRE_BigInt *G_cmap = hypre_ParCSRMatrixColMapOffd(G);
+         NALU_HYPRE_BigInt *Pix_cmap = hypre_ParCSRMatrixColMapOffd(Pix);
+         NALU_HYPRE_BigInt *Piy_cmap = hypre_ParCSRMatrixColMapOffd(Piy);
+         NALU_HYPRE_BigInt *Piz_cmap = hypre_ParCSRMatrixColMapOffd(Piz);
 
-#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP)
-         if (exec == HYPRE_EXEC_DEVICE)
+#if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
+         if (exec == NALU_HYPRE_EXEC_DEVICE)
          {
             if (G_offd_ncols)
             {
-               HYPRE_THRUST_CALL( copy_n,
+               NALU_HYPRE_THRUST_CALL( copy_n,
                                   thrust::make_zip_iterator(thrust::make_tuple(G_offd_I, G_offd_I, G_offd_I)),
                                   G_offd_nrows + 1,
                                   thrust::make_zip_iterator(thrust::make_tuple(Pix_offd_I, Piy_offd_I, Piz_offd_I)) );
             }
 
-            HYPRE_THRUST_CALL( copy_n,
+            NALU_HYPRE_THRUST_CALL( copy_n,
                                thrust::make_zip_iterator(thrust::make_tuple(G_offd_J, G_offd_J, G_offd_J)),
                                G_offd_nnz,
                                thrust::make_zip_iterator(thrust::make_tuple(Pix_offd_J, Piy_offd_J, Piz_offd_J)) );
@@ -2168,7 +2168,7 @@ HYPRE_Int hypre_AMSComputePixyz(hypre_ParCSRMatrix *A,
             dim3 bDim = hypre_GetDefaultDeviceBlockDimension();
             dim3 gDim = hypre_GetDefaultDeviceGridDimension(G_offd_nrows, "warp", bDim);
 
-            HYPRE_GPU_LAUNCH( hypreGPUKernel_AMSComputePixyz_copy, gDim, bDim,
+            NALU_HYPRE_GPU_LAUNCH( hypreGPUKernel_AMSComputePixyz_copy, gDim, bDim,
                               G_offd_nrows, dim, G_offd_I, G_offd_data, Gx_data, Gy_data, Gz_data,
                               Pix_offd_data, Piy_offd_data, Piz_offd_data );
          }
@@ -2209,40 +2209,40 @@ HYPRE_Int hypre_AMSComputePixyz(hypre_ParCSRMatrix *A,
       else if (dim == 2)
       {
          hypre_CSRMatrix *G_offd = hypre_ParCSRMatrixOffd(G);
-         HYPRE_Int *G_offd_I = hypre_CSRMatrixI(G_offd);
-         HYPRE_Int *G_offd_J = hypre_CSRMatrixJ(G_offd);
-         HYPRE_Real *G_offd_data = hypre_CSRMatrixData(G_offd);
+         NALU_HYPRE_Int *G_offd_I = hypre_CSRMatrixI(G_offd);
+         NALU_HYPRE_Int *G_offd_J = hypre_CSRMatrixJ(G_offd);
+         NALU_HYPRE_Real *G_offd_data = hypre_CSRMatrixData(G_offd);
 
-         HYPRE_Int G_offd_nrows = hypre_CSRMatrixNumRows(G_offd);
-         HYPRE_Int G_offd_ncols = hypre_CSRMatrixNumCols(G_offd);
-         HYPRE_Int G_offd_nnz = hypre_CSRMatrixNumNonzeros(G_offd);
+         NALU_HYPRE_Int G_offd_nrows = hypre_CSRMatrixNumRows(G_offd);
+         NALU_HYPRE_Int G_offd_ncols = hypre_CSRMatrixNumCols(G_offd);
+         NALU_HYPRE_Int G_offd_nnz = hypre_CSRMatrixNumNonzeros(G_offd);
 
          hypre_CSRMatrix *Pix_offd = hypre_ParCSRMatrixOffd(Pix);
-         HYPRE_Int *Pix_offd_I = hypre_CSRMatrixI(Pix_offd);
-         HYPRE_Int *Pix_offd_J = hypre_CSRMatrixJ(Pix_offd);
-         HYPRE_Real *Pix_offd_data = hypre_CSRMatrixData(Pix_offd);
+         NALU_HYPRE_Int *Pix_offd_I = hypre_CSRMatrixI(Pix_offd);
+         NALU_HYPRE_Int *Pix_offd_J = hypre_CSRMatrixJ(Pix_offd);
+         NALU_HYPRE_Real *Pix_offd_data = hypre_CSRMatrixData(Pix_offd);
 
          hypre_CSRMatrix *Piy_offd = hypre_ParCSRMatrixOffd(Piy);
-         HYPRE_Int *Piy_offd_I = hypre_CSRMatrixI(Piy_offd);
-         HYPRE_Int *Piy_offd_J = hypre_CSRMatrixJ(Piy_offd);
-         HYPRE_Real *Piy_offd_data = hypre_CSRMatrixData(Piy_offd);
+         NALU_HYPRE_Int *Piy_offd_I = hypre_CSRMatrixI(Piy_offd);
+         NALU_HYPRE_Int *Piy_offd_J = hypre_CSRMatrixJ(Piy_offd);
+         NALU_HYPRE_Real *Piy_offd_data = hypre_CSRMatrixData(Piy_offd);
 
-         HYPRE_BigInt *G_cmap = hypre_ParCSRMatrixColMapOffd(G);
-         HYPRE_BigInt *Pix_cmap = hypre_ParCSRMatrixColMapOffd(Pix);
-         HYPRE_BigInt *Piy_cmap = hypre_ParCSRMatrixColMapOffd(Piy);
+         NALU_HYPRE_BigInt *G_cmap = hypre_ParCSRMatrixColMapOffd(G);
+         NALU_HYPRE_BigInt *Pix_cmap = hypre_ParCSRMatrixColMapOffd(Pix);
+         NALU_HYPRE_BigInt *Piy_cmap = hypre_ParCSRMatrixColMapOffd(Piy);
 
-#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP)
-         if (exec == HYPRE_EXEC_DEVICE)
+#if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
+         if (exec == NALU_HYPRE_EXEC_DEVICE)
          {
             if (G_offd_ncols)
             {
-               HYPRE_THRUST_CALL( copy_n,
+               NALU_HYPRE_THRUST_CALL( copy_n,
                                   thrust::make_zip_iterator(thrust::make_tuple(G_offd_I, G_offd_I)),
                                   G_offd_nrows + 1,
                                   thrust::make_zip_iterator(thrust::make_tuple(Pix_offd_I, Piy_offd_I)) );
             }
 
-            HYPRE_THRUST_CALL( copy_n,
+            NALU_HYPRE_THRUST_CALL( copy_n,
                                thrust::make_zip_iterator(thrust::make_tuple(G_offd_J, G_offd_J)),
                                G_offd_nnz,
                                thrust::make_zip_iterator(thrust::make_tuple(Pix_offd_J, Piy_offd_J)) );
@@ -2250,7 +2250,7 @@ HYPRE_Int hypre_AMSComputePixyz(hypre_ParCSRMatrix *A,
             dim3 bDim = hypre_GetDefaultDeviceBlockDimension();
             dim3 gDim = hypre_GetDefaultDeviceGridDimension(G_offd_nrows, "warp", bDim);
 
-            HYPRE_GPU_LAUNCH( hypreGPUKernel_AMSComputePixyz_copy, gDim, bDim,
+            NALU_HYPRE_GPU_LAUNCH( hypreGPUKernel_AMSComputePixyz_copy, gDim, bDim,
                               G_offd_nrows, dim, G_offd_I, G_offd_data, Gx_data, Gy_data, NULL,
                               Pix_offd_data, Piy_offd_data, NULL );
          }
@@ -2287,34 +2287,34 @@ HYPRE_Int hypre_AMSComputePixyz(hypre_ParCSRMatrix *A,
       else
       {
          hypre_CSRMatrix *G_offd = hypre_ParCSRMatrixOffd(G);
-         HYPRE_Int *G_offd_I = hypre_CSRMatrixI(G_offd);
-         HYPRE_Int *G_offd_J = hypre_CSRMatrixJ(G_offd);
-         HYPRE_Real *G_offd_data = hypre_CSRMatrixData(G_offd);
+         NALU_HYPRE_Int *G_offd_I = hypre_CSRMatrixI(G_offd);
+         NALU_HYPRE_Int *G_offd_J = hypre_CSRMatrixJ(G_offd);
+         NALU_HYPRE_Real *G_offd_data = hypre_CSRMatrixData(G_offd);
 
-         HYPRE_Int G_offd_nrows = hypre_CSRMatrixNumRows(G_offd);
-         HYPRE_Int G_offd_ncols = hypre_CSRMatrixNumCols(G_offd);
-         HYPRE_Int G_offd_nnz = hypre_CSRMatrixNumNonzeros(G_offd);
+         NALU_HYPRE_Int G_offd_nrows = hypre_CSRMatrixNumRows(G_offd);
+         NALU_HYPRE_Int G_offd_ncols = hypre_CSRMatrixNumCols(G_offd);
+         NALU_HYPRE_Int G_offd_nnz = hypre_CSRMatrixNumNonzeros(G_offd);
 
          hypre_CSRMatrix *Pix_offd = hypre_ParCSRMatrixOffd(Pix);
-         HYPRE_Int *Pix_offd_I = hypre_CSRMatrixI(Pix_offd);
-         HYPRE_Int *Pix_offd_J = hypre_CSRMatrixJ(Pix_offd);
-         HYPRE_Real *Pix_offd_data = hypre_CSRMatrixData(Pix_offd);
+         NALU_HYPRE_Int *Pix_offd_I = hypre_CSRMatrixI(Pix_offd);
+         NALU_HYPRE_Int *Pix_offd_J = hypre_CSRMatrixJ(Pix_offd);
+         NALU_HYPRE_Real *Pix_offd_data = hypre_CSRMatrixData(Pix_offd);
 
-         HYPRE_BigInt *G_cmap = hypre_ParCSRMatrixColMapOffd(G);
-         HYPRE_BigInt *Pix_cmap = hypre_ParCSRMatrixColMapOffd(Pix);
+         NALU_HYPRE_BigInt *G_cmap = hypre_ParCSRMatrixColMapOffd(G);
+         NALU_HYPRE_BigInt *Pix_cmap = hypre_ParCSRMatrixColMapOffd(Pix);
 
-#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP)
-         if (exec == HYPRE_EXEC_DEVICE)
+#if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
+         if (exec == NALU_HYPRE_EXEC_DEVICE)
          {
             if (G_offd_ncols)
             {
-               HYPRE_THRUST_CALL( copy_n,
+               NALU_HYPRE_THRUST_CALL( copy_n,
                                   G_offd_I,
                                   G_offd_nrows + 1,
                                   Pix_offd_I );
             }
 
-            HYPRE_THRUST_CALL( copy_n,
+            NALU_HYPRE_THRUST_CALL( copy_n,
                                G_offd_J,
                                G_offd_nnz,
                                Pix_offd_J );
@@ -2322,7 +2322,7 @@ HYPRE_Int hypre_AMSComputePixyz(hypre_ParCSRMatrix *A,
             dim3 bDim = hypre_GetDefaultDeviceBlockDimension();
             dim3 gDim = hypre_GetDefaultDeviceGridDimension(G_offd_nrows, "warp", bDim);
 
-            HYPRE_GPU_LAUNCH( hypreGPUKernel_AMSComputePixyz_copy, gDim, bDim,
+            NALU_HYPRE_GPU_LAUNCH( hypreGPUKernel_AMSComputePixyz_copy, gDim, bDim,
                               G_offd_nrows, dim, G_offd_I, G_offd_data, Gx_data, NULL, NULL,
                               Pix_offd_data, NULL, NULL );
          }
@@ -2367,28 +2367,28 @@ HYPRE_Int hypre_AMSComputePixyz(hypre_ParCSRMatrix *A,
    return hypre_error_flag;
 }
 
-#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP)
+#if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
 __global__ void
 hypreGPUKernel_AMSComputeGPi_copy2(hypre_DeviceItem &item,
-                                   HYPRE_Int   nrows,
-                                   HYPRE_Int   dim,
-                                   HYPRE_Int  *i_in,
-                                   HYPRE_Real *data_in,
-                                   HYPRE_Real *Gx_data,
-                                   HYPRE_Real *Gy_data,
-                                   HYPRE_Real *Gz_data,
-                                   HYPRE_Real *data_out)
+                                   NALU_HYPRE_Int   nrows,
+                                   NALU_HYPRE_Int   dim,
+                                   NALU_HYPRE_Int  *i_in,
+                                   NALU_HYPRE_Real *data_in,
+                                   NALU_HYPRE_Real *Gx_data,
+                                   NALU_HYPRE_Real *Gy_data,
+                                   NALU_HYPRE_Real *Gz_data,
+                                   NALU_HYPRE_Real *data_out)
 {
-   const HYPRE_Int i = hypre_gpu_get_grid_warp_id<1, 1>(item);
+   const NALU_HYPRE_Int i = hypre_gpu_get_grid_warp_id<1, 1>(item);
 
    if (i >= nrows)
    {
       return;
    }
 
-   const HYPRE_Int lane_id = hypre_gpu_get_lane_id<1>(item);
-   HYPRE_Int j = 0, istart, iend;
-   HYPRE_Real t, G[3], *Gdata[3];
+   const NALU_HYPRE_Int lane_id = hypre_gpu_get_lane_id<1>(item);
+   NALU_HYPRE_Int j = 0, istart, iend;
+   NALU_HYPRE_Real t, G[3], *Gdata[3];
 
    Gdata[0] = Gx_data;
    Gdata[1] = Gy_data;
@@ -2399,27 +2399,27 @@ hypreGPUKernel_AMSComputeGPi_copy2(hypre_DeviceItem &item,
       j = read_only_load(i_in + i + lane_id);
    }
 
-   istart = warp_shuffle_sync(item, HYPRE_WARP_FULL_MASK, j, 0);
-   iend   = warp_shuffle_sync(item, HYPRE_WARP_FULL_MASK, j, 1);
+   istart = warp_shuffle_sync(item, NALU_HYPRE_WARP_FULL_MASK, j, 0);
+   iend   = warp_shuffle_sync(item, NALU_HYPRE_WARP_FULL_MASK, j, 1);
 
    if (lane_id < dim - 1)
    {
       t = read_only_load(Gdata[lane_id] + i);
    }
 
-   for (HYPRE_Int d = 0; d < dim - 1; d++)
+   for (NALU_HYPRE_Int d = 0; d < dim - 1; d++)
    {
-      G[d] = warp_shuffle_sync(item, HYPRE_WARP_FULL_MASK, t, d);
+      G[d] = warp_shuffle_sync(item, NALU_HYPRE_WARP_FULL_MASK, t, d);
    }
 
-   for (j = istart + lane_id; j < iend; j += HYPRE_WARP_SIZE)
+   for (j = istart + lane_id; j < iend; j += NALU_HYPRE_WARP_SIZE)
    {
-      const HYPRE_Real u = read_only_load(&data_in[j]);
-      const HYPRE_Real v = fabs(u) * 0.5;
-      const HYPRE_Int k = j * dim;
+      const NALU_HYPRE_Real u = read_only_load(&data_in[j]);
+      const NALU_HYPRE_Real v = fabs(u) * 0.5;
+      const NALU_HYPRE_Int k = j * dim;
 
       data_out[k] = u;
-      for (HYPRE_Int d = 0; d < dim - 1; d++)
+      for (NALU_HYPRE_Int d = 0; d < dim - 1; d++)
       {
          data_out[k + d + 1] = v * G[d];
       }
@@ -2435,12 +2435,12 @@ hypreGPUKernel_AMSComputeGPi_copy2(hypre_DeviceItem &item,
  * to the edge finite elements space.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int hypre_AMSComputeGPi(hypre_ParCSRMatrix *A,
+NALU_HYPRE_Int hypre_AMSComputeGPi(hypre_ParCSRMatrix *A,
                               hypre_ParCSRMatrix *G,
                               hypre_ParVector *Gx,
                               hypre_ParVector *Gy,
                               hypre_ParVector *Gz,
-                              HYPRE_Int dim,
+                              NALU_HYPRE_Int dim,
                               hypre_ParCSRMatrix **GPi_ptr)
 {
    hypre_ParCSRMatrix *GPi;
@@ -2450,25 +2450,25 @@ HYPRE_Int hypre_AMSComputeGPi(hypre_ParCSRMatrix *A,
 
    /* Compute GPi = [Pi_x, Pi_y, Pi_z, G] */
    {
-      HYPRE_Int i, j, d;
+      NALU_HYPRE_Int i, j, d;
 
-      HYPRE_Real *Gx_data, *Gy_data, *Gz_data;
+      NALU_HYPRE_Real *Gx_data, *Gy_data, *Gz_data;
 
       MPI_Comm comm = hypre_ParCSRMatrixComm(G);
-      HYPRE_BigInt global_num_rows = hypre_ParCSRMatrixGlobalNumRows(G);
-      HYPRE_BigInt global_num_cols = dim * hypre_ParCSRMatrixGlobalNumCols(G);
-      HYPRE_BigInt *row_starts = hypre_ParCSRMatrixRowStarts(G);
-      HYPRE_BigInt *col_starts;
-      HYPRE_Int col_starts_size;
-      HYPRE_Int num_cols_offd = dim * hypre_CSRMatrixNumCols(hypre_ParCSRMatrixOffd(G));
-      HYPRE_Int num_nonzeros_diag = dim * hypre_CSRMatrixNumNonzeros(hypre_ParCSRMatrixDiag(G));
-      HYPRE_Int num_nonzeros_offd = dim * hypre_CSRMatrixNumNonzeros(hypre_ParCSRMatrixOffd(G));
-      HYPRE_BigInt *col_starts_G = hypre_ParCSRMatrixColStarts(G);
+      NALU_HYPRE_BigInt global_num_rows = hypre_ParCSRMatrixGlobalNumRows(G);
+      NALU_HYPRE_BigInt global_num_cols = dim * hypre_ParCSRMatrixGlobalNumCols(G);
+      NALU_HYPRE_BigInt *row_starts = hypre_ParCSRMatrixRowStarts(G);
+      NALU_HYPRE_BigInt *col_starts;
+      NALU_HYPRE_Int col_starts_size;
+      NALU_HYPRE_Int num_cols_offd = dim * hypre_CSRMatrixNumCols(hypre_ParCSRMatrixOffd(G));
+      NALU_HYPRE_Int num_nonzeros_diag = dim * hypre_CSRMatrixNumNonzeros(hypre_ParCSRMatrixDiag(G));
+      NALU_HYPRE_Int num_nonzeros_offd = dim * hypre_CSRMatrixNumNonzeros(hypre_ParCSRMatrixOffd(G));
+      NALU_HYPRE_BigInt *col_starts_G = hypre_ParCSRMatrixColStarts(G);
       col_starts_size = 2;
-      col_starts = hypre_TAlloc(HYPRE_BigInt, col_starts_size, HYPRE_MEMORY_HOST);
+      col_starts = hypre_TAlloc(NALU_HYPRE_BigInt, col_starts_size, NALU_HYPRE_MEMORY_HOST);
       for (i = 0; i < col_starts_size; i++)
       {
-         col_starts[i] = (HYPRE_BigInt) dim * col_starts_G[i];
+         col_starts[i] = (NALU_HYPRE_BigInt) dim * col_starts_G[i];
       }
 
       GPi = hypre_ParCSRMatrixCreate(comm,
@@ -2493,40 +2493,40 @@ HYPRE_Int hypre_AMSComputeGPi(hypre_ParCSRMatrix *A,
          Gz_data = hypre_VectorData(hypre_ParVectorLocalVector(Gz));
       }
 
-#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP)
-      HYPRE_ExecutionPolicy exec = hypre_GetExecPolicy2( hypre_ParCSRMatrixMemoryLocation(G),
+#if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
+      NALU_HYPRE_ExecutionPolicy exec = hypre_GetExecPolicy2( hypre_ParCSRMatrixMemoryLocation(G),
                                                          hypre_ParCSRMatrixMemoryLocation(GPi) );
 #endif
 
       /* Fill-in the diagonal part */
       {
          hypre_CSRMatrix *G_diag = hypre_ParCSRMatrixDiag(G);
-         HYPRE_Int *G_diag_I = hypre_CSRMatrixI(G_diag);
-         HYPRE_Int *G_diag_J = hypre_CSRMatrixJ(G_diag);
-         HYPRE_Real *G_diag_data = hypre_CSRMatrixData(G_diag);
+         NALU_HYPRE_Int *G_diag_I = hypre_CSRMatrixI(G_diag);
+         NALU_HYPRE_Int *G_diag_J = hypre_CSRMatrixJ(G_diag);
+         NALU_HYPRE_Real *G_diag_data = hypre_CSRMatrixData(G_diag);
 
-         HYPRE_Int G_diag_nrows = hypre_CSRMatrixNumRows(G_diag);
-         HYPRE_Int G_diag_nnz = hypre_CSRMatrixNumNonzeros(G_diag);
+         NALU_HYPRE_Int G_diag_nrows = hypre_CSRMatrixNumRows(G_diag);
+         NALU_HYPRE_Int G_diag_nnz = hypre_CSRMatrixNumNonzeros(G_diag);
 
          hypre_CSRMatrix *GPi_diag = hypre_ParCSRMatrixDiag(GPi);
-         HYPRE_Int *GPi_diag_I = hypre_CSRMatrixI(GPi_diag);
-         HYPRE_Int *GPi_diag_J = hypre_CSRMatrixJ(GPi_diag);
-         HYPRE_Real *GPi_diag_data = hypre_CSRMatrixData(GPi_diag);
+         NALU_HYPRE_Int *GPi_diag_I = hypre_CSRMatrixI(GPi_diag);
+         NALU_HYPRE_Int *GPi_diag_J = hypre_CSRMatrixJ(GPi_diag);
+         NALU_HYPRE_Real *GPi_diag_data = hypre_CSRMatrixData(GPi_diag);
 
-#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP)
-         if (exec == HYPRE_EXEC_DEVICE)
+#if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
+         if (exec == NALU_HYPRE_EXEC_DEVICE)
          {
             hypreDevice_IntScalen( G_diag_I, G_diag_nrows + 1, GPi_diag_I, dim );
 
             dim3 bDim = hypre_GetDefaultDeviceBlockDimension();
             dim3 gDim = hypre_GetDefaultDeviceGridDimension(G_diag_nnz, "thread", bDim);
 
-            HYPRE_GPU_LAUNCH( hypreGPUKernel_AMSComputePi_copy1, gDim, bDim,
+            NALU_HYPRE_GPU_LAUNCH( hypreGPUKernel_AMSComputePi_copy1, gDim, bDim,
                               G_diag_nnz, dim, G_diag_J, GPi_diag_J );
 
             gDim = hypre_GetDefaultDeviceGridDimension(G_diag_nrows, "warp", bDim);
 
-            HYPRE_GPU_LAUNCH( hypreGPUKernel_AMSComputeGPi_copy2, gDim, bDim,
+            NALU_HYPRE_GPU_LAUNCH( hypreGPUKernel_AMSComputeGPi_copy2, gDim, bDim,
                               G_diag_nrows, dim, G_diag_I, G_diag_data, Gx_data, Gy_data, Gz_data,
                               GPi_diag_data );
          }
@@ -2564,24 +2564,24 @@ HYPRE_Int hypre_AMSComputeGPi(hypre_ParCSRMatrix *A,
       /* Fill-in the off-diagonal part */
       {
          hypre_CSRMatrix *G_offd = hypre_ParCSRMatrixOffd(G);
-         HYPRE_Int *G_offd_I = hypre_CSRMatrixI(G_offd);
-         HYPRE_Int *G_offd_J = hypre_CSRMatrixJ(G_offd);
-         HYPRE_Real *G_offd_data = hypre_CSRMatrixData(G_offd);
+         NALU_HYPRE_Int *G_offd_I = hypre_CSRMatrixI(G_offd);
+         NALU_HYPRE_Int *G_offd_J = hypre_CSRMatrixJ(G_offd);
+         NALU_HYPRE_Real *G_offd_data = hypre_CSRMatrixData(G_offd);
 
-         HYPRE_Int G_offd_nrows = hypre_CSRMatrixNumRows(G_offd);
-         HYPRE_Int G_offd_ncols = hypre_CSRMatrixNumCols(G_offd);
-         HYPRE_Int G_offd_nnz = hypre_CSRMatrixNumNonzeros(G_offd);
+         NALU_HYPRE_Int G_offd_nrows = hypre_CSRMatrixNumRows(G_offd);
+         NALU_HYPRE_Int G_offd_ncols = hypre_CSRMatrixNumCols(G_offd);
+         NALU_HYPRE_Int G_offd_nnz = hypre_CSRMatrixNumNonzeros(G_offd);
 
          hypre_CSRMatrix *GPi_offd = hypre_ParCSRMatrixOffd(GPi);
-         HYPRE_Int *GPi_offd_I = hypre_CSRMatrixI(GPi_offd);
-         HYPRE_Int *GPi_offd_J = hypre_CSRMatrixJ(GPi_offd);
-         HYPRE_Real *GPi_offd_data = hypre_CSRMatrixData(GPi_offd);
+         NALU_HYPRE_Int *GPi_offd_I = hypre_CSRMatrixI(GPi_offd);
+         NALU_HYPRE_Int *GPi_offd_J = hypre_CSRMatrixJ(GPi_offd);
+         NALU_HYPRE_Real *GPi_offd_data = hypre_CSRMatrixData(GPi_offd);
 
-         HYPRE_BigInt *G_cmap = hypre_ParCSRMatrixColMapOffd(G);
-         HYPRE_BigInt *GPi_cmap = hypre_ParCSRMatrixColMapOffd(GPi);
+         NALU_HYPRE_BigInt *G_cmap = hypre_ParCSRMatrixColMapOffd(G);
+         NALU_HYPRE_BigInt *GPi_cmap = hypre_ParCSRMatrixColMapOffd(GPi);
 
-#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP)
-         if (exec == HYPRE_EXEC_DEVICE)
+#if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
+         if (exec == NALU_HYPRE_EXEC_DEVICE)
          {
             if (G_offd_ncols)
             {
@@ -2591,12 +2591,12 @@ HYPRE_Int hypre_AMSComputeGPi(hypre_ParCSRMatrix *A,
             dim3 bDim = hypre_GetDefaultDeviceBlockDimension();
             dim3 gDim = hypre_GetDefaultDeviceGridDimension(G_offd_nnz, "thread", bDim);
 
-            HYPRE_GPU_LAUNCH( hypreGPUKernel_AMSComputePi_copy1, gDim, bDim,
+            NALU_HYPRE_GPU_LAUNCH( hypreGPUKernel_AMSComputePi_copy1, gDim, bDim,
                               G_offd_nnz, dim, G_offd_J, GPi_offd_J );
 
             gDim = hypre_GetDefaultDeviceGridDimension(G_offd_nrows, "warp", bDim);
 
-            HYPRE_GPU_LAUNCH( hypreGPUKernel_AMSComputeGPi_copy2, gDim, bDim,
+            NALU_HYPRE_GPU_LAUNCH( hypreGPUKernel_AMSComputeGPi_copy2, gDim, bDim,
                               G_offd_nrows, dim, G_offd_I, G_offd_data, Gx_data, Gy_data, Gz_data,
                               GPi_offd_data );
          }
@@ -2655,39 +2655,39 @@ HYPRE_Int hypre_AMSComputeGPi(hypre_ParCSRMatrix *A,
  * - hypre_AMSSetDiscreteGradient()
  * - hypre_AMSSetCoordinateVectors() or hypre_AMSSetEdgeConstantVectors
  *--------------------------------------------------------------------------*/
-#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP)
+#if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
 __global__ void
 hypreGPUKernel_FixInterNodes( hypre_DeviceItem    &item,
-                              HYPRE_Int      nrows,
-                              HYPRE_Int     *G0t_diag_i,
-                              HYPRE_Complex *G0t_diag_data,
-                              HYPRE_Int     *G0t_offd_i,
-                              HYPRE_Complex *G0t_offd_data,
-                              HYPRE_Real    *interior_nodes_data)
+                              NALU_HYPRE_Int      nrows,
+                              NALU_HYPRE_Int     *G0t_diag_i,
+                              NALU_HYPRE_Complex *G0t_diag_data,
+                              NALU_HYPRE_Int     *G0t_offd_i,
+                              NALU_HYPRE_Complex *G0t_offd_data,
+                              NALU_HYPRE_Real    *interior_nodes_data)
 {
-   HYPRE_Int row_i = hypre_gpu_get_grid_warp_id<1, 1>(item);
+   NALU_HYPRE_Int row_i = hypre_gpu_get_grid_warp_id<1, 1>(item);
 
    if (row_i >= nrows)
    {
       return;
    }
 
-   HYPRE_Int lane = hypre_gpu_get_lane_id<1>(item);
-   HYPRE_Int not1 = 0;
+   NALU_HYPRE_Int lane = hypre_gpu_get_lane_id<1>(item);
+   NALU_HYPRE_Int not1 = 0;
 
    if (lane == 0)
    {
       not1 = read_only_load(&interior_nodes_data[row_i]) != 1.0;
    }
 
-   not1 = warp_shuffle_sync(item, HYPRE_WARP_FULL_MASK, not1, 0);
+   not1 = warp_shuffle_sync(item, NALU_HYPRE_WARP_FULL_MASK, not1, 0);
 
    if (!not1)
    {
       return;
    }
 
-   HYPRE_Int p1 = 0, q1, p2 = 0, q2 = 0;
+   NALU_HYPRE_Int p1 = 0, q1, p2 = 0, q2 = 0;
    bool nonempty_offd = G0t_offd_data != NULL;
 
    if (lane < 2)
@@ -2699,19 +2699,19 @@ hypreGPUKernel_FixInterNodes( hypre_DeviceItem    &item,
       }
    }
 
-   q1 = warp_shuffle_sync(item, HYPRE_WARP_FULL_MASK, p1, 1);
-   p1 = warp_shuffle_sync(item, HYPRE_WARP_FULL_MASK, p1, 0);
+   q1 = warp_shuffle_sync(item, NALU_HYPRE_WARP_FULL_MASK, p1, 1);
+   p1 = warp_shuffle_sync(item, NALU_HYPRE_WARP_FULL_MASK, p1, 0);
    if (nonempty_offd)
    {
-      q2 = warp_shuffle_sync(item, HYPRE_WARP_FULL_MASK, p2, 1);
-      p2 = warp_shuffle_sync(item, HYPRE_WARP_FULL_MASK, p2, 0);
+      q2 = warp_shuffle_sync(item, NALU_HYPRE_WARP_FULL_MASK, p2, 1);
+      p2 = warp_shuffle_sync(item, NALU_HYPRE_WARP_FULL_MASK, p2, 0);
    }
 
-   for (HYPRE_Int j = p1 + lane; j < q1; j += HYPRE_WARP_SIZE)
+   for (NALU_HYPRE_Int j = p1 + lane; j < q1; j += NALU_HYPRE_WARP_SIZE)
    {
       G0t_diag_data[j] = 0.0;
    }
-   for (HYPRE_Int j = p2 + lane; j < q2; j += HYPRE_WARP_SIZE)
+   for (NALU_HYPRE_Int j = p2 + lane; j < q2; j += NALU_HYPRE_WARP_SIZE)
    {
       G0t_offd_data[j] = 0.0;
    }
@@ -2719,33 +2719,33 @@ hypreGPUKernel_FixInterNodes( hypre_DeviceItem    &item,
 
 __global__ void
 hypreGPUKernel_AMSSetupScaleGGt( hypre_DeviceItem &item,
-                                 HYPRE_Int   Gt_num_rows,
-                                 HYPRE_Int  *Gt_diag_i,
-                                 HYPRE_Int  *Gt_diag_j,
-                                 HYPRE_Real *Gt_diag_data,
-                                 HYPRE_Int  *Gt_offd_i,
-                                 HYPRE_Real *Gt_offd_data,
-                                 HYPRE_Real *Gx_data,
-                                 HYPRE_Real *Gy_data,
-                                 HYPRE_Real *Gz_data )
+                                 NALU_HYPRE_Int   Gt_num_rows,
+                                 NALU_HYPRE_Int  *Gt_diag_i,
+                                 NALU_HYPRE_Int  *Gt_diag_j,
+                                 NALU_HYPRE_Real *Gt_diag_data,
+                                 NALU_HYPRE_Int  *Gt_offd_i,
+                                 NALU_HYPRE_Real *Gt_offd_data,
+                                 NALU_HYPRE_Real *Gx_data,
+                                 NALU_HYPRE_Real *Gy_data,
+                                 NALU_HYPRE_Real *Gz_data )
 {
-   HYPRE_Int row_i = hypre_gpu_get_grid_warp_id<1, 1>(item);
+   NALU_HYPRE_Int row_i = hypre_gpu_get_grid_warp_id<1, 1>(item);
 
    if (row_i >= Gt_num_rows)
    {
       return;
    }
 
-   HYPRE_Int lane = hypre_gpu_get_lane_id<1>(item);
-   HYPRE_Real h2 = 0.0;
-   HYPRE_Int ne, p1 = 0, q1, p2 = 0, q2 = 0;
+   NALU_HYPRE_Int lane = hypre_gpu_get_lane_id<1>(item);
+   NALU_HYPRE_Real h2 = 0.0;
+   NALU_HYPRE_Int ne, p1 = 0, q1, p2 = 0, q2 = 0;
 
    if (lane < 2)
    {
       p1 = read_only_load(Gt_diag_i + row_i + lane);
    }
-   q1 = warp_shuffle_sync(item, HYPRE_WARP_FULL_MASK, p1, 1);
-   p1 = warp_shuffle_sync(item, HYPRE_WARP_FULL_MASK, p1, 0);
+   q1 = warp_shuffle_sync(item, NALU_HYPRE_WARP_FULL_MASK, p1, 1);
+   p1 = warp_shuffle_sync(item, NALU_HYPRE_WARP_FULL_MASK, p1, 0);
    ne = q1 - p1;
 
    if (ne == 0)
@@ -2759,46 +2759,46 @@ hypreGPUKernel_AMSSetupScaleGGt( hypre_DeviceItem &item,
       {
          p2 = read_only_load(Gt_offd_i + row_i + lane);
       }
-      q2 = warp_shuffle_sync(item, HYPRE_WARP_FULL_MASK, p2, 1);
-      p2 = warp_shuffle_sync(item, HYPRE_WARP_FULL_MASK, p2, 0);
+      q2 = warp_shuffle_sync(item, NALU_HYPRE_WARP_FULL_MASK, p2, 1);
+      p2 = warp_shuffle_sync(item, NALU_HYPRE_WARP_FULL_MASK, p2, 0);
    }
 
-   for (HYPRE_Int j = p1 + lane; j < q1; j += HYPRE_WARP_SIZE)
+   for (NALU_HYPRE_Int j = p1 + lane; j < q1; j += NALU_HYPRE_WARP_SIZE)
    {
-      const HYPRE_Int k = read_only_load(&Gt_diag_j[j]);
-      const HYPRE_Real Gx = read_only_load(&Gx_data[k]);
-      const HYPRE_Real Gy = read_only_load(&Gy_data[k]);
-      const HYPRE_Real Gz = read_only_load(&Gz_data[k]);
+      const NALU_HYPRE_Int k = read_only_load(&Gt_diag_j[j]);
+      const NALU_HYPRE_Real Gx = read_only_load(&Gx_data[k]);
+      const NALU_HYPRE_Real Gy = read_only_load(&Gy_data[k]);
+      const NALU_HYPRE_Real Gz = read_only_load(&Gz_data[k]);
 
       h2 += Gx * Gx + Gy * Gy + Gz * Gz;
    }
 
    h2 = warp_allreduce_sum(item, h2) / ne;
 
-   for (HYPRE_Int j = p1 + lane; j < q1; j += HYPRE_WARP_SIZE)
+   for (NALU_HYPRE_Int j = p1 + lane; j < q1; j += NALU_HYPRE_WARP_SIZE)
    {
       Gt_diag_data[j] *= h2;
    }
 
-   for (HYPRE_Int j = p2 + lane; j < q2; j += HYPRE_WARP_SIZE)
+   for (NALU_HYPRE_Int j = p2 + lane; j < q2; j += NALU_HYPRE_WARP_SIZE)
    {
       Gt_offd_data[j] *= h2;
    }
 }
 #endif
 
-HYPRE_Int hypre_AMSSetup(void *solver,
+NALU_HYPRE_Int hypre_AMSSetup(void *solver,
                          hypre_ParCSRMatrix *A,
                          hypre_ParVector *b,
                          hypre_ParVector *x)
 {
-#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP)
-   HYPRE_ExecutionPolicy exec = hypre_GetExecPolicy1( hypre_ParCSRMatrixMemoryLocation(A) );
+#if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
+   NALU_HYPRE_ExecutionPolicy exec = hypre_GetExecPolicy1( hypre_ParCSRMatrixMemoryLocation(A) );
 #endif
 
    hypre_AMSData *ams_data = (hypre_AMSData *) solver;
 
-   HYPRE_Int input_info = 0;
+   NALU_HYPRE_Int input_info = 0;
 
    ams_data -> A = A;
 
@@ -2817,23 +2817,23 @@ HYPRE_Int hypre_AMSSetup(void *solver,
       hypre_ParCSRMatrixTranspose(ams_data -> G, &G0t, 1);
 
       {
-         HYPRE_Int i, j;
-         HYPRE_Int nv = hypre_ParCSRMatrixNumCols(ams_data -> G);
+         NALU_HYPRE_Int i, j;
+         NALU_HYPRE_Int nv = hypre_ParCSRMatrixNumCols(ams_data -> G);
          hypre_CSRMatrix *G0td = hypre_ParCSRMatrixDiag(G0t);
-         HYPRE_Int *G0tdI = hypre_CSRMatrixI(G0td);
-         HYPRE_Real *G0tdA = hypre_CSRMatrixData(G0td);
+         NALU_HYPRE_Int *G0tdI = hypre_CSRMatrixI(G0td);
+         NALU_HYPRE_Real *G0tdA = hypre_CSRMatrixData(G0td);
          hypre_CSRMatrix *G0to = hypre_ParCSRMatrixOffd(G0t);
-         HYPRE_Int *G0toI = hypre_CSRMatrixI(G0to);
-         HYPRE_Real *G0toA = hypre_CSRMatrixData(G0to);
-         HYPRE_Real *interior_nodes_data = hypre_VectorData(
+         NALU_HYPRE_Int *G0toI = hypre_CSRMatrixI(G0to);
+         NALU_HYPRE_Real *G0toA = hypre_CSRMatrixData(G0to);
+         NALU_HYPRE_Real *interior_nodes_data = hypre_VectorData(
                                               hypre_ParVectorLocalVector((hypre_ParVector*) ams_data -> interior_nodes));
 
-#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP)
-         if (exec == HYPRE_EXEC_DEVICE)
+#if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
+         if (exec == NALU_HYPRE_EXEC_DEVICE)
          {
             dim3 bDim = hypre_GetDefaultDeviceBlockDimension();
             dim3 gDim = hypre_GetDefaultDeviceGridDimension(nv, "warp", bDim);
-            HYPRE_GPU_LAUNCH( hypreGPUKernel_FixInterNodes, gDim, bDim,
+            NALU_HYPRE_GPU_LAUNCH( hypreGPUKernel_FixInterNodes, gDim, bDim,
                               nv, G0tdI, G0tdA, G0toI, G0toA, interior_nodes_data );
          }
          else
@@ -2859,8 +2859,8 @@ HYPRE_Int hypre_AMSSetup(void *solver,
       hypre_ParCSRMatrixTranspose(G0t, & ams_data -> G0, 1);
 
       /* Construct the subspace matrix A_G0 = G0^T G0 */
-#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP)
-      if (exec == HYPRE_EXEC_DEVICE)
+#if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
+      if (exec == NALU_HYPRE_EXEC_DEVICE)
       {
          ams_data -> A_G0 = hypre_ParCSRMatMat(G0t, ams_data -> G0);
       }
@@ -2872,31 +2872,31 @@ HYPRE_Int hypre_AMSSetup(void *solver,
       hypre_ParCSRMatrixFixZeroRows(ams_data -> A_G0);
 
       /* Create AMG solver for A_G0 */
-      HYPRE_BoomerAMGCreate(&ams_data -> B_G0);
-      HYPRE_BoomerAMGSetCoarsenType(ams_data -> B_G0, ams_data -> B_G_coarsen_type);
-      HYPRE_BoomerAMGSetAggNumLevels(ams_data -> B_G0, ams_data -> B_G_agg_levels);
-      HYPRE_BoomerAMGSetRelaxType(ams_data -> B_G0, ams_data -> B_G_relax_type);
-      HYPRE_BoomerAMGSetNumSweeps(ams_data -> B_G0, 1);
-      HYPRE_BoomerAMGSetMaxLevels(ams_data -> B_G0, 25);
-      HYPRE_BoomerAMGSetTol(ams_data -> B_G0, 0.0);
-      HYPRE_BoomerAMGSetMaxIter(ams_data -> B_G0, 3); /* use just a few V-cycles */
-      HYPRE_BoomerAMGSetStrongThreshold(ams_data -> B_G0, ams_data -> B_G_theta);
-      HYPRE_BoomerAMGSetInterpType(ams_data -> B_G0, ams_data -> B_G_interp_type);
-      HYPRE_BoomerAMGSetPMaxElmts(ams_data -> B_G0, ams_data -> B_G_Pmax);
-      HYPRE_BoomerAMGSetMinCoarseSize(ams_data -> B_G0, 2); /* don't coarsen to 0 */
+      NALU_HYPRE_BoomerAMGCreate(&ams_data -> B_G0);
+      NALU_HYPRE_BoomerAMGSetCoarsenType(ams_data -> B_G0, ams_data -> B_G_coarsen_type);
+      NALU_HYPRE_BoomerAMGSetAggNumLevels(ams_data -> B_G0, ams_data -> B_G_agg_levels);
+      NALU_HYPRE_BoomerAMGSetRelaxType(ams_data -> B_G0, ams_data -> B_G_relax_type);
+      NALU_HYPRE_BoomerAMGSetNumSweeps(ams_data -> B_G0, 1);
+      NALU_HYPRE_BoomerAMGSetMaxLevels(ams_data -> B_G0, 25);
+      NALU_HYPRE_BoomerAMGSetTol(ams_data -> B_G0, 0.0);
+      NALU_HYPRE_BoomerAMGSetMaxIter(ams_data -> B_G0, 3); /* use just a few V-cycles */
+      NALU_HYPRE_BoomerAMGSetStrongThreshold(ams_data -> B_G0, ams_data -> B_G_theta);
+      NALU_HYPRE_BoomerAMGSetInterpType(ams_data -> B_G0, ams_data -> B_G_interp_type);
+      NALU_HYPRE_BoomerAMGSetPMaxElmts(ams_data -> B_G0, ams_data -> B_G_Pmax);
+      NALU_HYPRE_BoomerAMGSetMinCoarseSize(ams_data -> B_G0, 2); /* don't coarsen to 0 */
       /* Generally, don't use exact solve on the coarsest level (matrix may be singular) */
-      HYPRE_BoomerAMGSetCycleRelaxType(ams_data -> B_G0, ams_data -> B_G_coarse_relax_type, 3);
-      HYPRE_BoomerAMGSetup(ams_data -> B_G0,
-                           (HYPRE_ParCSRMatrix)ams_data -> A_G0,
+      NALU_HYPRE_BoomerAMGSetCycleRelaxType(ams_data -> B_G0, ams_data -> B_G_coarse_relax_type, 3);
+      NALU_HYPRE_BoomerAMGSetup(ams_data -> B_G0,
+                           (NALU_HYPRE_ParCSRMatrix)ams_data -> A_G0,
                            0, 0);
 
       /* Construct the preconditioner for ams_data->A = A + G0 G0^T.
          NOTE: this can be optimized significantly by taking into account that
          the sparsity pattern of A is subset of the sparsity pattern of G0 G0^T */
       {
-#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP)
+#if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
          hypre_ParCSRMatrix *A;
-         if (exec == HYPRE_EXEC_DEVICE)
+         if (exec == NALU_HYPRE_EXEC_DEVICE)
          {
             A = hypre_ParCSRMatMat(ams_data -> G0, G0t);
          }
@@ -2908,44 +2908,44 @@ HYPRE_Int hypre_AMSSetup(void *solver,
          hypre_ParCSRMatrix *B = Aorig;
          hypre_ParCSRMatrix **C_ptr = &ams_data -> A;
          hypre_ParCSRMatrix *C;
-         HYPRE_Real factor, lfactor;
+         NALU_HYPRE_Real factor, lfactor;
          /* scale (penalize) G0 G0^T before adding it to the matrix */
          {
-            HYPRE_Int i;
-            HYPRE_Int B_num_rows = hypre_CSRMatrixNumRows(hypre_ParCSRMatrixDiag(B));
-            HYPRE_Real *B_diag_data = hypre_CSRMatrixData(hypre_ParCSRMatrixDiag(B));
-            HYPRE_Real *B_offd_data = hypre_CSRMatrixData(hypre_ParCSRMatrixOffd(B));
-            HYPRE_Int *B_diag_i = hypre_CSRMatrixI(hypre_ParCSRMatrixDiag(B));
-            HYPRE_Int *B_offd_i = hypre_CSRMatrixI(hypre_ParCSRMatrixOffd(B));
+            NALU_HYPRE_Int i;
+            NALU_HYPRE_Int B_num_rows = hypre_CSRMatrixNumRows(hypre_ParCSRMatrixDiag(B));
+            NALU_HYPRE_Real *B_diag_data = hypre_CSRMatrixData(hypre_ParCSRMatrixDiag(B));
+            NALU_HYPRE_Real *B_offd_data = hypre_CSRMatrixData(hypre_ParCSRMatrixOffd(B));
+            NALU_HYPRE_Int *B_diag_i = hypre_CSRMatrixI(hypre_ParCSRMatrixDiag(B));
+            NALU_HYPRE_Int *B_offd_i = hypre_CSRMatrixI(hypre_ParCSRMatrixOffd(B));
             lfactor = -1;
-#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP)
-            if (exec == HYPRE_EXEC_DEVICE)
+#if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
+            if (exec == NALU_HYPRE_EXEC_DEVICE)
             {
-               HYPRE_Int nnz_diag = hypre_CSRMatrixNumNonzeros(hypre_ParCSRMatrixDiag(B));
-               HYPRE_Int nnz_offd = hypre_CSRMatrixNumNonzeros(hypre_ParCSRMatrixOffd(B));
-#if defined(HYPRE_DEBUG)
-               HYPRE_Int nnz;
-               hypre_TMemcpy(&nnz, &B_diag_i[B_num_rows], HYPRE_Int, 1, HYPRE_MEMORY_HOST, HYPRE_MEMORY_DEVICE);
+               NALU_HYPRE_Int nnz_diag = hypre_CSRMatrixNumNonzeros(hypre_ParCSRMatrixDiag(B));
+               NALU_HYPRE_Int nnz_offd = hypre_CSRMatrixNumNonzeros(hypre_ParCSRMatrixOffd(B));
+#if defined(NALU_HYPRE_DEBUG)
+               NALU_HYPRE_Int nnz;
+               hypre_TMemcpy(&nnz, &B_diag_i[B_num_rows], NALU_HYPRE_Int, 1, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_DEVICE);
                hypre_assert(nnz == nnz_diag);
-               hypre_TMemcpy(&nnz, &B_offd_i[B_num_rows], HYPRE_Int, 1, HYPRE_MEMORY_HOST, HYPRE_MEMORY_DEVICE);
+               hypre_TMemcpy(&nnz, &B_offd_i[B_num_rows], NALU_HYPRE_Int, 1, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_DEVICE);
                hypre_assert(nnz == nnz_offd);
 #endif
                if (nnz_diag)
                {
-                  lfactor = HYPRE_THRUST_CALL( reduce,
-                                               thrust::make_transform_iterator(B_diag_data,            absolute_value<HYPRE_Real>()),
-                                               thrust::make_transform_iterator(B_diag_data + nnz_diag, absolute_value<HYPRE_Real>()),
+                  lfactor = NALU_HYPRE_THRUST_CALL( reduce,
+                                               thrust::make_transform_iterator(B_diag_data,            absolute_value<NALU_HYPRE_Real>()),
+                                               thrust::make_transform_iterator(B_diag_data + nnz_diag, absolute_value<NALU_HYPRE_Real>()),
                                                -1.0,
-                                               thrust::maximum<HYPRE_Real>() );
+                                               thrust::maximum<NALU_HYPRE_Real>() );
                }
 
                if (nnz_offd)
                {
-                  lfactor = HYPRE_THRUST_CALL( reduce,
-                                               thrust::make_transform_iterator(B_offd_data,            absolute_value<HYPRE_Real>()),
-                                               thrust::make_transform_iterator(B_offd_data + nnz_offd, absolute_value<HYPRE_Real>()),
+                  lfactor = NALU_HYPRE_THRUST_CALL( reduce,
+                                               thrust::make_transform_iterator(B_offd_data,            absolute_value<NALU_HYPRE_Real>()),
+                                               thrust::make_transform_iterator(B_offd_data + nnz_offd, absolute_value<NALU_HYPRE_Real>()),
                                                lfactor,
-                                               thrust::maximum<HYPRE_Real>() );
+                                               thrust::maximum<NALU_HYPRE_Real>() );
 
                }
             }
@@ -2965,7 +2965,7 @@ HYPRE_Int hypre_AMSSetup(void *solver,
             }
 
             lfactor *= 1e-10; /* scaling factor: max|A_ij|*1e-10 */
-            hypre_MPI_Allreduce(&lfactor, &factor, 1, HYPRE_MPI_REAL, hypre_MPI_MAX, hypre_ParCSRMatrixComm(A));
+            hypre_MPI_Allreduce(&lfactor, &factor, 1, NALU_HYPRE_MPI_REAL, hypre_MPI_MAX, hypre_ParCSRMatrixComm(A));
          }
 
          hypre_ParCSRMatrixAdd(factor, A, 1.0, B, &C);
@@ -2973,32 +2973,32 @@ HYPRE_Int hypre_AMSSetup(void *solver,
          /*hypre_CSRMatrix *A_local, *B_local, *C_local, *C_tmp;
 
          MPI_Comm comm = hypre_ParCSRMatrixComm(A);
-         HYPRE_BigInt global_num_rows = hypre_ParCSRMatrixGlobalNumRows(A);
-         HYPRE_BigInt global_num_cols = hypre_ParCSRMatrixGlobalNumCols(A);
-         HYPRE_BigInt *row_starts = hypre_ParCSRMatrixRowStarts(A);
-         HYPRE_BigInt *col_starts = hypre_ParCSRMatrixColStarts(A);
-         HYPRE_Int A_num_cols_offd = hypre_CSRMatrixNumCols(hypre_ParCSRMatrixOffd(A));
-         HYPRE_Int A_num_nonzeros_diag = hypre_CSRMatrixNumNonzeros(hypre_ParCSRMatrixDiag(A));
-         HYPRE_Int A_num_nonzeros_offd = hypre_CSRMatrixNumNonzeros(hypre_ParCSRMatrixOffd(A));
-         HYPRE_Int B_num_cols_offd = hypre_CSRMatrixNumCols(hypre_ParCSRMatrixOffd(B));
-         HYPRE_Int B_num_nonzeros_diag = hypre_CSRMatrixNumNonzeros(hypre_ParCSRMatrixDiag(B));
-         HYPRE_Int B_num_nonzeros_offd = hypre_CSRMatrixNumNonzeros(hypre_ParCSRMatrixOffd(B));
+         NALU_HYPRE_BigInt global_num_rows = hypre_ParCSRMatrixGlobalNumRows(A);
+         NALU_HYPRE_BigInt global_num_cols = hypre_ParCSRMatrixGlobalNumCols(A);
+         NALU_HYPRE_BigInt *row_starts = hypre_ParCSRMatrixRowStarts(A);
+         NALU_HYPRE_BigInt *col_starts = hypre_ParCSRMatrixColStarts(A);
+         NALU_HYPRE_Int A_num_cols_offd = hypre_CSRMatrixNumCols(hypre_ParCSRMatrixOffd(A));
+         NALU_HYPRE_Int A_num_nonzeros_diag = hypre_CSRMatrixNumNonzeros(hypre_ParCSRMatrixDiag(A));
+         NALU_HYPRE_Int A_num_nonzeros_offd = hypre_CSRMatrixNumNonzeros(hypre_ParCSRMatrixOffd(A));
+         NALU_HYPRE_Int B_num_cols_offd = hypre_CSRMatrixNumCols(hypre_ParCSRMatrixOffd(B));
+         NALU_HYPRE_Int B_num_nonzeros_diag = hypre_CSRMatrixNumNonzeros(hypre_ParCSRMatrixDiag(B));
+         NALU_HYPRE_Int B_num_nonzeros_offd = hypre_CSRMatrixNumNonzeros(hypre_ParCSRMatrixOffd(B));
 
          A_local = hypre_MergeDiagAndOffd(A);
          B_local = hypre_MergeDiagAndOffd(B);*/
          /* scale (penalize) G0 G0^T before adding it to the matrix */
          /*{
-            HYPRE_Int i, nnz = hypre_CSRMatrixNumNonzeros(A_local);
-            HYPRE_Real *data = hypre_CSRMatrixData(A_local);
-            HYPRE_Real *dataB = hypre_CSRMatrixData(B_local);
-            HYPRE_Int nnzB = hypre_CSRMatrixNumNonzeros(B_local);
-            HYPRE_Real factor, lfactor;
+            NALU_HYPRE_Int i, nnz = hypre_CSRMatrixNumNonzeros(A_local);
+            NALU_HYPRE_Real *data = hypre_CSRMatrixData(A_local);
+            NALU_HYPRE_Real *dataB = hypre_CSRMatrixData(B_local);
+            NALU_HYPRE_Int nnzB = hypre_CSRMatrixNumNonzeros(B_local);
+            NALU_HYPRE_Real factor, lfactor;
             lfactor = -1;
             for (i = 0; i < nnzB; i++)
                if (fabs(dataB[i]) > lfactor)
                   lfactor = fabs(dataB[i]);
             lfactor *= 1e-10;
-            hypre_MPI_Allreduce(&lfactor, &factor, 1, HYPRE_MPI_REAL, hypre_MPI_MAX,
+            hypre_MPI_Allreduce(&lfactor, &factor, 1, NALU_HYPRE_MPI_REAL, hypre_MPI_MAX,
                                 hypre_ParCSRMatrixComm(A));
             for (i = 0; i < nnz; i++)
                data[i] *= factor;
@@ -3041,7 +3041,7 @@ HYPRE_Int hypre_AMSSetup(void *solver,
    /* Compute the l1 norm of the rows of A */
    if (ams_data -> A_relax_type >= 1 && ams_data -> A_relax_type <= 4)
    {
-      HYPRE_Real *l1_norm_data = NULL;
+      NALU_HYPRE_Real *l1_norm_data = NULL;
 
       hypre_ParCSRComputeL1Norms(ams_data -> A, ams_data -> A_relax_type, NULL, &l1_norm_data);
 
@@ -3143,25 +3143,25 @@ HYPRE_Int hypre_AMSSetup(void *solver,
    /* Create the AMG solver on the range of G^T */
    if (!ams_data -> beta_is_zero && ams_data -> cycle_type != 20)
    {
-      HYPRE_BoomerAMGCreate(&ams_data -> B_G);
-      HYPRE_BoomerAMGSetCoarsenType(ams_data -> B_G, ams_data -> B_G_coarsen_type);
-      HYPRE_BoomerAMGSetAggNumLevels(ams_data -> B_G, ams_data -> B_G_agg_levels);
-      HYPRE_BoomerAMGSetRelaxType(ams_data -> B_G, ams_data -> B_G_relax_type);
-      HYPRE_BoomerAMGSetNumSweeps(ams_data -> B_G, 1);
-      HYPRE_BoomerAMGSetMaxLevels(ams_data -> B_G, 25);
-      HYPRE_BoomerAMGSetTol(ams_data -> B_G, 0.0);
-      HYPRE_BoomerAMGSetMaxIter(ams_data -> B_G, 1);
-      HYPRE_BoomerAMGSetStrongThreshold(ams_data -> B_G, ams_data -> B_G_theta);
-      HYPRE_BoomerAMGSetInterpType(ams_data -> B_G, ams_data -> B_G_interp_type);
-      HYPRE_BoomerAMGSetPMaxElmts(ams_data -> B_G, ams_data -> B_G_Pmax);
-      HYPRE_BoomerAMGSetMinCoarseSize(ams_data -> B_G, 2); /* don't coarsen to 0 */
+      NALU_HYPRE_BoomerAMGCreate(&ams_data -> B_G);
+      NALU_HYPRE_BoomerAMGSetCoarsenType(ams_data -> B_G, ams_data -> B_G_coarsen_type);
+      NALU_HYPRE_BoomerAMGSetAggNumLevels(ams_data -> B_G, ams_data -> B_G_agg_levels);
+      NALU_HYPRE_BoomerAMGSetRelaxType(ams_data -> B_G, ams_data -> B_G_relax_type);
+      NALU_HYPRE_BoomerAMGSetNumSweeps(ams_data -> B_G, 1);
+      NALU_HYPRE_BoomerAMGSetMaxLevels(ams_data -> B_G, 25);
+      NALU_HYPRE_BoomerAMGSetTol(ams_data -> B_G, 0.0);
+      NALU_HYPRE_BoomerAMGSetMaxIter(ams_data -> B_G, 1);
+      NALU_HYPRE_BoomerAMGSetStrongThreshold(ams_data -> B_G, ams_data -> B_G_theta);
+      NALU_HYPRE_BoomerAMGSetInterpType(ams_data -> B_G, ams_data -> B_G_interp_type);
+      NALU_HYPRE_BoomerAMGSetPMaxElmts(ams_data -> B_G, ams_data -> B_G_Pmax);
+      NALU_HYPRE_BoomerAMGSetMinCoarseSize(ams_data -> B_G, 2); /* don't coarsen to 0 */
 
       /* Generally, don't use exact solve on the coarsest level (matrix may be singular) */
-      HYPRE_BoomerAMGSetCycleRelaxType(ams_data -> B_G, ams_data -> B_G_coarse_relax_type, 3);
+      NALU_HYPRE_BoomerAMGSetCycleRelaxType(ams_data -> B_G, ams_data -> B_G_coarse_relax_type, 3);
 
       if (ams_data -> cycle_type == 0)
       {
-         HYPRE_BoomerAMGSetMaxLevels(ams_data -> B_G, 2);
+         NALU_HYPRE_BoomerAMGSetMaxLevels(ams_data -> B_G, 2);
       }
 
       /* If not given, construct the coarse space matrix by RAP */
@@ -3177,8 +3177,8 @@ HYPRE_Int hypre_AMSSetup(void *solver,
             hypre_MatvecCommPkgCreate(ams_data -> A);
          }
 
-#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP)
-         if (exec == HYPRE_EXEC_DEVICE)
+#if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
+         if (exec == NALU_HYPRE_EXEC_DEVICE)
          {
             ams_data -> A_G = hypre_ParCSRMatrixRAPKT(ams_data -> G,
                                                       ams_data -> A,
@@ -3199,63 +3199,63 @@ HYPRE_Int hypre_AMSSetup(void *solver,
          ams_data -> owns_A_G = 1;
       }
 
-      HYPRE_BoomerAMGSetup(ams_data -> B_G,
-                           (HYPRE_ParCSRMatrix)ams_data -> A_G,
+      NALU_HYPRE_BoomerAMGSetup(ams_data -> B_G,
+                           (NALU_HYPRE_ParCSRMatrix)ams_data -> A_G,
                            NULL, NULL);
    }
 
    if (ams_data -> cycle_type > 10 && ams_data -> cycle_type != 20)
       /* Create the AMG solvers on the range of Pi{x,y,z}^T */
    {
-      HYPRE_BoomerAMGCreate(&ams_data -> B_Pix);
-      HYPRE_BoomerAMGSetCoarsenType(ams_data -> B_Pix, ams_data -> B_Pi_coarsen_type);
-      HYPRE_BoomerAMGSetAggNumLevels(ams_data -> B_Pix, ams_data -> B_Pi_agg_levels);
-      HYPRE_BoomerAMGSetRelaxType(ams_data -> B_Pix, ams_data -> B_Pi_relax_type);
-      HYPRE_BoomerAMGSetNumSweeps(ams_data -> B_Pix, 1);
-      HYPRE_BoomerAMGSetMaxLevels(ams_data -> B_Pix, 25);
-      HYPRE_BoomerAMGSetTol(ams_data -> B_Pix, 0.0);
-      HYPRE_BoomerAMGSetMaxIter(ams_data -> B_Pix, 1);
-      HYPRE_BoomerAMGSetStrongThreshold(ams_data -> B_Pix, ams_data -> B_Pi_theta);
-      HYPRE_BoomerAMGSetInterpType(ams_data -> B_Pix, ams_data -> B_Pi_interp_type);
-      HYPRE_BoomerAMGSetPMaxElmts(ams_data -> B_Pix, ams_data -> B_Pi_Pmax);
-      HYPRE_BoomerAMGSetMinCoarseSize(ams_data -> B_Pix, 2);
+      NALU_HYPRE_BoomerAMGCreate(&ams_data -> B_Pix);
+      NALU_HYPRE_BoomerAMGSetCoarsenType(ams_data -> B_Pix, ams_data -> B_Pi_coarsen_type);
+      NALU_HYPRE_BoomerAMGSetAggNumLevels(ams_data -> B_Pix, ams_data -> B_Pi_agg_levels);
+      NALU_HYPRE_BoomerAMGSetRelaxType(ams_data -> B_Pix, ams_data -> B_Pi_relax_type);
+      NALU_HYPRE_BoomerAMGSetNumSweeps(ams_data -> B_Pix, 1);
+      NALU_HYPRE_BoomerAMGSetMaxLevels(ams_data -> B_Pix, 25);
+      NALU_HYPRE_BoomerAMGSetTol(ams_data -> B_Pix, 0.0);
+      NALU_HYPRE_BoomerAMGSetMaxIter(ams_data -> B_Pix, 1);
+      NALU_HYPRE_BoomerAMGSetStrongThreshold(ams_data -> B_Pix, ams_data -> B_Pi_theta);
+      NALU_HYPRE_BoomerAMGSetInterpType(ams_data -> B_Pix, ams_data -> B_Pi_interp_type);
+      NALU_HYPRE_BoomerAMGSetPMaxElmts(ams_data -> B_Pix, ams_data -> B_Pi_Pmax);
+      NALU_HYPRE_BoomerAMGSetMinCoarseSize(ams_data -> B_Pix, 2);
 
-      HYPRE_BoomerAMGCreate(&ams_data -> B_Piy);
-      HYPRE_BoomerAMGSetCoarsenType(ams_data -> B_Piy, ams_data -> B_Pi_coarsen_type);
-      HYPRE_BoomerAMGSetAggNumLevels(ams_data -> B_Piy, ams_data -> B_Pi_agg_levels);
-      HYPRE_BoomerAMGSetRelaxType(ams_data -> B_Piy, ams_data -> B_Pi_relax_type);
-      HYPRE_BoomerAMGSetNumSweeps(ams_data -> B_Piy, 1);
-      HYPRE_BoomerAMGSetMaxLevels(ams_data -> B_Piy, 25);
-      HYPRE_BoomerAMGSetTol(ams_data -> B_Piy, 0.0);
-      HYPRE_BoomerAMGSetMaxIter(ams_data -> B_Piy, 1);
-      HYPRE_BoomerAMGSetStrongThreshold(ams_data -> B_Piy, ams_data -> B_Pi_theta);
-      HYPRE_BoomerAMGSetInterpType(ams_data -> B_Piy, ams_data -> B_Pi_interp_type);
-      HYPRE_BoomerAMGSetPMaxElmts(ams_data -> B_Piy, ams_data -> B_Pi_Pmax);
-      HYPRE_BoomerAMGSetMinCoarseSize(ams_data -> B_Piy, 2);
+      NALU_HYPRE_BoomerAMGCreate(&ams_data -> B_Piy);
+      NALU_HYPRE_BoomerAMGSetCoarsenType(ams_data -> B_Piy, ams_data -> B_Pi_coarsen_type);
+      NALU_HYPRE_BoomerAMGSetAggNumLevels(ams_data -> B_Piy, ams_data -> B_Pi_agg_levels);
+      NALU_HYPRE_BoomerAMGSetRelaxType(ams_data -> B_Piy, ams_data -> B_Pi_relax_type);
+      NALU_HYPRE_BoomerAMGSetNumSweeps(ams_data -> B_Piy, 1);
+      NALU_HYPRE_BoomerAMGSetMaxLevels(ams_data -> B_Piy, 25);
+      NALU_HYPRE_BoomerAMGSetTol(ams_data -> B_Piy, 0.0);
+      NALU_HYPRE_BoomerAMGSetMaxIter(ams_data -> B_Piy, 1);
+      NALU_HYPRE_BoomerAMGSetStrongThreshold(ams_data -> B_Piy, ams_data -> B_Pi_theta);
+      NALU_HYPRE_BoomerAMGSetInterpType(ams_data -> B_Piy, ams_data -> B_Pi_interp_type);
+      NALU_HYPRE_BoomerAMGSetPMaxElmts(ams_data -> B_Piy, ams_data -> B_Pi_Pmax);
+      NALU_HYPRE_BoomerAMGSetMinCoarseSize(ams_data -> B_Piy, 2);
 
-      HYPRE_BoomerAMGCreate(&ams_data -> B_Piz);
-      HYPRE_BoomerAMGSetCoarsenType(ams_data -> B_Piz, ams_data -> B_Pi_coarsen_type);
-      HYPRE_BoomerAMGSetAggNumLevels(ams_data -> B_Piz, ams_data -> B_Pi_agg_levels);
-      HYPRE_BoomerAMGSetRelaxType(ams_data -> B_Piz, ams_data -> B_Pi_relax_type);
-      HYPRE_BoomerAMGSetNumSweeps(ams_data -> B_Piz, 1);
-      HYPRE_BoomerAMGSetMaxLevels(ams_data -> B_Piz, 25);
-      HYPRE_BoomerAMGSetTol(ams_data -> B_Piz, 0.0);
-      HYPRE_BoomerAMGSetMaxIter(ams_data -> B_Piz, 1);
-      HYPRE_BoomerAMGSetStrongThreshold(ams_data -> B_Piz, ams_data -> B_Pi_theta);
-      HYPRE_BoomerAMGSetInterpType(ams_data -> B_Piz, ams_data -> B_Pi_interp_type);
-      HYPRE_BoomerAMGSetPMaxElmts(ams_data -> B_Piz, ams_data -> B_Pi_Pmax);
-      HYPRE_BoomerAMGSetMinCoarseSize(ams_data -> B_Piz, 2);
+      NALU_HYPRE_BoomerAMGCreate(&ams_data -> B_Piz);
+      NALU_HYPRE_BoomerAMGSetCoarsenType(ams_data -> B_Piz, ams_data -> B_Pi_coarsen_type);
+      NALU_HYPRE_BoomerAMGSetAggNumLevels(ams_data -> B_Piz, ams_data -> B_Pi_agg_levels);
+      NALU_HYPRE_BoomerAMGSetRelaxType(ams_data -> B_Piz, ams_data -> B_Pi_relax_type);
+      NALU_HYPRE_BoomerAMGSetNumSweeps(ams_data -> B_Piz, 1);
+      NALU_HYPRE_BoomerAMGSetMaxLevels(ams_data -> B_Piz, 25);
+      NALU_HYPRE_BoomerAMGSetTol(ams_data -> B_Piz, 0.0);
+      NALU_HYPRE_BoomerAMGSetMaxIter(ams_data -> B_Piz, 1);
+      NALU_HYPRE_BoomerAMGSetStrongThreshold(ams_data -> B_Piz, ams_data -> B_Pi_theta);
+      NALU_HYPRE_BoomerAMGSetInterpType(ams_data -> B_Piz, ams_data -> B_Pi_interp_type);
+      NALU_HYPRE_BoomerAMGSetPMaxElmts(ams_data -> B_Piz, ams_data -> B_Pi_Pmax);
+      NALU_HYPRE_BoomerAMGSetMinCoarseSize(ams_data -> B_Piz, 2);
 
       /* Generally, don't use exact solve on the coarsest level (matrices may be singular) */
-      HYPRE_BoomerAMGSetCycleRelaxType(ams_data -> B_Pix, ams_data -> B_Pi_coarse_relax_type, 3);
-      HYPRE_BoomerAMGSetCycleRelaxType(ams_data -> B_Piy, ams_data -> B_Pi_coarse_relax_type, 3);
-      HYPRE_BoomerAMGSetCycleRelaxType(ams_data -> B_Piz, ams_data -> B_Pi_coarse_relax_type, 3);
+      NALU_HYPRE_BoomerAMGSetCycleRelaxType(ams_data -> B_Pix, ams_data -> B_Pi_coarse_relax_type, 3);
+      NALU_HYPRE_BoomerAMGSetCycleRelaxType(ams_data -> B_Piy, ams_data -> B_Pi_coarse_relax_type, 3);
+      NALU_HYPRE_BoomerAMGSetCycleRelaxType(ams_data -> B_Piz, ams_data -> B_Pi_coarse_relax_type, 3);
 
       if (ams_data -> cycle_type == 0)
       {
-         HYPRE_BoomerAMGSetMaxLevels(ams_data -> B_Pix, 2);
-         HYPRE_BoomerAMGSetMaxLevels(ams_data -> B_Piy, 2);
-         HYPRE_BoomerAMGSetMaxLevels(ams_data -> B_Piz, 2);
+         NALU_HYPRE_BoomerAMGSetMaxLevels(ams_data -> B_Pix, 2);
+         NALU_HYPRE_BoomerAMGSetMaxLevels(ams_data -> B_Piy, 2);
+         NALU_HYPRE_BoomerAMGSetMaxLevels(ams_data -> B_Piz, 2);
       }
 
       /* Construct the coarse space matrices by RAP */
@@ -3264,8 +3264,8 @@ HYPRE_Int hypre_AMSSetup(void *solver,
          hypre_MatvecCommPkgCreate(ams_data -> Pix);
       }
 
-#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP)
-      if (exec == HYPRE_EXEC_DEVICE)
+#if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
+      if (exec == NALU_HYPRE_EXEC_DEVICE)
       {
          ams_data -> A_Pix = hypre_ParCSRMatrixRAPKT(ams_data -> Pix, ams_data -> A, ams_data -> Pix, 1);
       }
@@ -3282,8 +3282,8 @@ HYPRE_Int hypre_AMSSetup(void *solver,
          for some kinds of boundary conditions with contact). */
       hypre_ParCSRMatrixFixZeroRows(ams_data -> A_Pix);
 
-      HYPRE_BoomerAMGSetup(ams_data -> B_Pix,
-                           (HYPRE_ParCSRMatrix)ams_data -> A_Pix,
+      NALU_HYPRE_BoomerAMGSetup(ams_data -> B_Pix,
+                           (NALU_HYPRE_ParCSRMatrix)ams_data -> A_Pix,
                            NULL, NULL);
 
       if (ams_data -> Piy)
@@ -3293,8 +3293,8 @@ HYPRE_Int hypre_AMSSetup(void *solver,
             hypre_MatvecCommPkgCreate(ams_data -> Piy);
          }
 
-#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP)
-         if (exec == HYPRE_EXEC_DEVICE)
+#if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
+         if (exec == NALU_HYPRE_EXEC_DEVICE)
          {
             ams_data -> A_Piy = hypre_ParCSRMatrixRAPKT(ams_data -> Piy,
                                                         ams_data -> A,
@@ -3313,8 +3313,8 @@ HYPRE_Int hypre_AMSSetup(void *solver,
             for some kinds of boundary conditions with contact). */
          hypre_ParCSRMatrixFixZeroRows(ams_data -> A_Piy);
 
-         HYPRE_BoomerAMGSetup(ams_data -> B_Piy,
-                              (HYPRE_ParCSRMatrix)ams_data -> A_Piy,
+         NALU_HYPRE_BoomerAMGSetup(ams_data -> B_Piy,
+                              (NALU_HYPRE_ParCSRMatrix)ams_data -> A_Piy,
                               NULL, NULL);
       }
 
@@ -3325,8 +3325,8 @@ HYPRE_Int hypre_AMSSetup(void *solver,
             hypre_MatvecCommPkgCreate(ams_data -> Piz);
          }
 
-#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP)
-         if (exec == HYPRE_EXEC_DEVICE)
+#if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
+         if (exec == NALU_HYPRE_EXEC_DEVICE)
          {
             ams_data -> A_Piz = hypre_ParCSRMatrixRAPKT(ams_data -> Piz,
                                                         ams_data -> A,
@@ -3345,33 +3345,33 @@ HYPRE_Int hypre_AMSSetup(void *solver,
             for some kinds of boundary conditions with contact). */
          hypre_ParCSRMatrixFixZeroRows(ams_data -> A_Piz);
 
-         HYPRE_BoomerAMGSetup(ams_data -> B_Piz,
-                              (HYPRE_ParCSRMatrix)ams_data -> A_Piz,
+         NALU_HYPRE_BoomerAMGSetup(ams_data -> B_Piz,
+                              (NALU_HYPRE_ParCSRMatrix)ams_data -> A_Piz,
                               NULL, NULL);
       }
    }
    else
       /* Create the AMG solver on the range of Pi^T */
    {
-      HYPRE_BoomerAMGCreate(&ams_data -> B_Pi);
-      HYPRE_BoomerAMGSetCoarsenType(ams_data -> B_Pi, ams_data -> B_Pi_coarsen_type);
-      HYPRE_BoomerAMGSetAggNumLevels(ams_data -> B_Pi, ams_data -> B_Pi_agg_levels);
-      HYPRE_BoomerAMGSetRelaxType(ams_data -> B_Pi, ams_data -> B_Pi_relax_type);
-      HYPRE_BoomerAMGSetNumSweeps(ams_data -> B_Pi, 1);
-      HYPRE_BoomerAMGSetMaxLevels(ams_data -> B_Pi, 25);
-      HYPRE_BoomerAMGSetTol(ams_data -> B_Pi, 0.0);
-      HYPRE_BoomerAMGSetMaxIter(ams_data -> B_Pi, 1);
-      HYPRE_BoomerAMGSetStrongThreshold(ams_data -> B_Pi, ams_data -> B_Pi_theta);
-      HYPRE_BoomerAMGSetInterpType(ams_data -> B_Pi, ams_data -> B_Pi_interp_type);
-      HYPRE_BoomerAMGSetPMaxElmts(ams_data -> B_Pi, ams_data -> B_Pi_Pmax);
-      HYPRE_BoomerAMGSetMinCoarseSize(ams_data -> B_Pi, 2); /* don't coarsen to 0 */
+      NALU_HYPRE_BoomerAMGCreate(&ams_data -> B_Pi);
+      NALU_HYPRE_BoomerAMGSetCoarsenType(ams_data -> B_Pi, ams_data -> B_Pi_coarsen_type);
+      NALU_HYPRE_BoomerAMGSetAggNumLevels(ams_data -> B_Pi, ams_data -> B_Pi_agg_levels);
+      NALU_HYPRE_BoomerAMGSetRelaxType(ams_data -> B_Pi, ams_data -> B_Pi_relax_type);
+      NALU_HYPRE_BoomerAMGSetNumSweeps(ams_data -> B_Pi, 1);
+      NALU_HYPRE_BoomerAMGSetMaxLevels(ams_data -> B_Pi, 25);
+      NALU_HYPRE_BoomerAMGSetTol(ams_data -> B_Pi, 0.0);
+      NALU_HYPRE_BoomerAMGSetMaxIter(ams_data -> B_Pi, 1);
+      NALU_HYPRE_BoomerAMGSetStrongThreshold(ams_data -> B_Pi, ams_data -> B_Pi_theta);
+      NALU_HYPRE_BoomerAMGSetInterpType(ams_data -> B_Pi, ams_data -> B_Pi_interp_type);
+      NALU_HYPRE_BoomerAMGSetPMaxElmts(ams_data -> B_Pi, ams_data -> B_Pi_Pmax);
+      NALU_HYPRE_BoomerAMGSetMinCoarseSize(ams_data -> B_Pi, 2); /* don't coarsen to 0 */
 
       /* Generally, don't use exact solve on the coarsest level (matrix may be singular) */
-      HYPRE_BoomerAMGSetCycleRelaxType(ams_data -> B_Pi, ams_data -> B_Pi_coarse_relax_type, 3);
+      NALU_HYPRE_BoomerAMGSetCycleRelaxType(ams_data -> B_Pi, ams_data -> B_Pi_coarse_relax_type, 3);
 
       if (ams_data -> cycle_type == 0)
       {
-         HYPRE_BoomerAMGSetMaxLevels(ams_data -> B_Pi, 2);
+         NALU_HYPRE_BoomerAMGSetMaxLevels(ams_data -> B_Pi, 2);
       }
 
       /* If not given, construct the coarse space matrix by RAP and
@@ -3397,29 +3397,29 @@ HYPRE_Int hypre_AMSSetup(void *solver,
 
                /* scale GGt by h^2 */
                {
-                  HYPRE_Real h2;
-                  HYPRE_Int i, j, k, ne;
+                  NALU_HYPRE_Real h2;
+                  NALU_HYPRE_Int i, j, k, ne;
 
                   hypre_CSRMatrix *Gt_diag = hypre_ParCSRMatrixDiag(Gt);
-                  HYPRE_Int Gt_num_rows = hypre_CSRMatrixNumRows(Gt_diag);
-                  HYPRE_Int *Gt_diag_I = hypre_CSRMatrixI(Gt_diag);
-                  HYPRE_Int *Gt_diag_J = hypre_CSRMatrixJ(Gt_diag);
-                  HYPRE_Real *Gt_diag_data = hypre_CSRMatrixData(Gt_diag);
+                  NALU_HYPRE_Int Gt_num_rows = hypre_CSRMatrixNumRows(Gt_diag);
+                  NALU_HYPRE_Int *Gt_diag_I = hypre_CSRMatrixI(Gt_diag);
+                  NALU_HYPRE_Int *Gt_diag_J = hypre_CSRMatrixJ(Gt_diag);
+                  NALU_HYPRE_Real *Gt_diag_data = hypre_CSRMatrixData(Gt_diag);
 
                   hypre_CSRMatrix *Gt_offd = hypre_ParCSRMatrixOffd(Gt);
-                  HYPRE_Int *Gt_offd_I = hypre_CSRMatrixI(Gt_offd);
-                  HYPRE_Real *Gt_offd_data = hypre_CSRMatrixData(Gt_offd);
+                  NALU_HYPRE_Int *Gt_offd_I = hypre_CSRMatrixI(Gt_offd);
+                  NALU_HYPRE_Real *Gt_offd_data = hypre_CSRMatrixData(Gt_offd);
 
-                  HYPRE_Real *Gx_data = hypre_VectorData(hypre_ParVectorLocalVector(ams_data -> Gx));
-                  HYPRE_Real *Gy_data = hypre_VectorData(hypre_ParVectorLocalVector(ams_data -> Gy));
-                  HYPRE_Real *Gz_data = hypre_VectorData(hypre_ParVectorLocalVector(ams_data -> Gz));
+                  NALU_HYPRE_Real *Gx_data = hypre_VectorData(hypre_ParVectorLocalVector(ams_data -> Gx));
+                  NALU_HYPRE_Real *Gy_data = hypre_VectorData(hypre_ParVectorLocalVector(ams_data -> Gy));
+                  NALU_HYPRE_Real *Gz_data = hypre_VectorData(hypre_ParVectorLocalVector(ams_data -> Gz));
 
-#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP)
-                  if (exec == HYPRE_EXEC_DEVICE)
+#if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
+                  if (exec == NALU_HYPRE_EXEC_DEVICE)
                   {
                      dim3 bDim = hypre_GetDefaultDeviceBlockDimension();
                      dim3 gDim = hypre_GetDefaultDeviceGridDimension(Gt_num_rows, "warp", bDim);
-                     HYPRE_GPU_LAUNCH( hypreGPUKernel_AMSSetupScaleGGt, gDim, bDim,
+                     NALU_HYPRE_GPU_LAUNCH( hypreGPUKernel_AMSSetupScaleGGt, gDim, bDim,
                                        Gt_num_rows, Gt_diag_I, Gt_diag_J, Gt_diag_data, Gt_offd_I, Gt_offd_data,
                                        Gx_data, Gy_data, Gz_data );
                   }
@@ -3468,8 +3468,8 @@ HYPRE_Int hypre_AMSSetup(void *solver,
                   }
                }
 
-#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP)
-               if (exec == HYPRE_EXEC_DEVICE)
+#if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
+               if (exec == NALU_HYPRE_EXEC_DEVICE)
                {
                   GGt = hypre_ParCSRMatMat(ams_data -> G, Gt);
                }
@@ -3491,16 +3491,16 @@ HYPRE_Int hypre_AMSSetup(void *solver,
                   hypre_CSRMatrix *A_local, *B_local, *C_local;
 
                   MPI_Comm comm = hypre_ParCSRMatrixComm(A);
-                  HYPRE_BigInt global_num_rows = hypre_ParCSRMatrixGlobalNumRows(A);
-                  HYPRE_BigInt global_num_cols = hypre_ParCSRMatrixGlobalNumCols(A);
-                  HYPRE_BigInt *row_starts = hypre_ParCSRMatrixRowStarts(A);
-                  HYPRE_BigInt *col_starts = hypre_ParCSRMatrixColStarts(A);
-                  HYPRE_Int A_num_cols_offd = hypre_CSRMatrixNumCols(hypre_ParCSRMatrixOffd(A));
-                  HYPRE_Int A_num_nonzeros_diag = hypre_CSRMatrixNumNonzeros(hypre_ParCSRMatrixDiag(A));
-                  HYPRE_Int A_num_nonzeros_offd = hypre_CSRMatrixNumNonzeros(hypre_ParCSRMatrixOffd(A));
-                  HYPRE_Int B_num_cols_offd = hypre_CSRMatrixNumCols(hypre_ParCSRMatrixOffd(B));
-                  HYPRE_Int B_num_nonzeros_diag = hypre_CSRMatrixNumNonzeros(hypre_ParCSRMatrixDiag(B));
-                  HYPRE_Int B_num_nonzeros_offd = hypre_CSRMatrixNumNonzeros(hypre_ParCSRMatrixOffd(B));
+                  NALU_HYPRE_BigInt global_num_rows = hypre_ParCSRMatrixGlobalNumRows(A);
+                  NALU_HYPRE_BigInt global_num_cols = hypre_ParCSRMatrixGlobalNumCols(A);
+                  NALU_HYPRE_BigInt *row_starts = hypre_ParCSRMatrixRowStarts(A);
+                  NALU_HYPRE_BigInt *col_starts = hypre_ParCSRMatrixColStarts(A);
+                  NALU_HYPRE_Int A_num_cols_offd = hypre_CSRMatrixNumCols(hypre_ParCSRMatrixOffd(A));
+                  NALU_HYPRE_Int A_num_nonzeros_diag = hypre_CSRMatrixNumNonzeros(hypre_ParCSRMatrixDiag(A));
+                  NALU_HYPRE_Int A_num_nonzeros_offd = hypre_CSRMatrixNumNonzeros(hypre_ParCSRMatrixOffd(A));
+                  NALU_HYPRE_Int B_num_cols_offd = hypre_CSRMatrixNumCols(hypre_ParCSRMatrixOffd(B));
+                  NALU_HYPRE_Int B_num_nonzeros_diag = hypre_CSRMatrixNumNonzeros(hypre_ParCSRMatrixDiag(B));
+                  NALU_HYPRE_Int B_num_nonzeros_offd = hypre_CSRMatrixNumNonzeros(hypre_ParCSRMatrixOffd(B));
 
                   A_local = hypre_MergeDiagAndOffd(A);
                   B_local = hypre_MergeDiagAndOffd(B);
@@ -3528,8 +3528,8 @@ HYPRE_Int hypre_AMSSetup(void *solver,
 
                hypre_ParCSRMatrixDestroy(GGt);
 
-#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP)
-               if (exec == HYPRE_EXEC_DEVICE)
+#if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
+               if (exec == NALU_HYPRE_EXEC_DEVICE)
                {
                   ams_data -> A_Pi = hypre_ParCSRMatrixRAPKT(ams_data -> Pi, ApGGt, ams_data -> Pi, 1);
                }
@@ -3545,8 +3545,8 @@ HYPRE_Int hypre_AMSSetup(void *solver,
          }
          else
          {
-#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP)
-            if (exec == HYPRE_EXEC_DEVICE)
+#if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
+            if (exec == NALU_HYPRE_EXEC_DEVICE)
             {
                ams_data -> A_Pi = hypre_ParCSRMatrixRAPKT(ams_data -> Pi, ams_data -> A, ams_data -> Pi, 1);
             }
@@ -3564,21 +3564,21 @@ HYPRE_Int hypre_AMSSetup(void *solver,
 
          if (ams_data -> cycle_type != 20)
          {
-            HYPRE_BoomerAMGSetNumFunctions(ams_data -> B_Pi, ams_data -> dim);
+            NALU_HYPRE_BoomerAMGSetNumFunctions(ams_data -> B_Pi, ams_data -> dim);
          }
          else
          {
-            HYPRE_BoomerAMGSetNumFunctions(ams_data -> B_Pi, ams_data -> dim + 1);
+            NALU_HYPRE_BoomerAMGSetNumFunctions(ams_data -> B_Pi, ams_data -> dim + 1);
          }
-         /* HYPRE_BoomerAMGSetNodal(ams_data -> B_Pi, 1); */
+         /* NALU_HYPRE_BoomerAMGSetNodal(ams_data -> B_Pi, 1); */
       }
 
       /* Make sure that A_Pi has no zero rows (this can happen for
          some kinds of boundary conditions with contact). */
       hypre_ParCSRMatrixFixZeroRows(ams_data -> A_Pi);
 
-      HYPRE_BoomerAMGSetup(ams_data -> B_Pi,
-                           (HYPRE_ParCSRMatrix)ams_data -> A_Pi,
+      NALU_HYPRE_BoomerAMGSetup(ams_data -> B_Pi,
+                           (NALU_HYPRE_ParCSRMatrix)ams_data -> A_Pi,
                            0, 0);
    }
 
@@ -3610,22 +3610,22 @@ HYPRE_Int hypre_AMSSetup(void *solver,
  * Solve the system A x = b.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int hypre_AMSSolve(void *solver,
+NALU_HYPRE_Int hypre_AMSSolve(void *solver,
                          hypre_ParCSRMatrix *A,
                          hypre_ParVector *b,
                          hypre_ParVector *x)
 {
    hypre_AMSData *ams_data = (hypre_AMSData *) solver;
 
-   HYPRE_Int i, my_id = -1;
-   HYPRE_Real r0_norm, r_norm, b_norm, relative_resid = 0, old_resid;
+   NALU_HYPRE_Int i, my_id = -1;
+   NALU_HYPRE_Real r0_norm, r_norm, b_norm, relative_resid = 0, old_resid;
 
    char cycle[30];
    hypre_ParCSRMatrix *Ai[5], *Pi[5];
-   HYPRE_Solver Bi[5];
-   HYPRE_PtrToSolverFcn HBi[5];
+   NALU_HYPRE_Solver Bi[5];
+   NALU_HYPRE_PtrToSolverFcn HBi[5];
    hypre_ParVector *ri[5], *gi[5];
-   HYPRE_Int needZ = 0;
+   NALU_HYPRE_Int needZ = 0;
 
    hypre_ParVector *z = ams_data -> zz;
 
@@ -3635,11 +3635,11 @@ HYPRE_Int hypre_AMSSolve(void *solver,
    Ai[3] = ams_data -> A_Piy;  Pi[3] = ams_data -> Piy;
    Ai[4] = ams_data -> A_Piz;  Pi[4] = ams_data -> Piz;
 
-   Bi[0] = ams_data -> B_G;    HBi[0] = (HYPRE_PtrToSolverFcn) hypre_BoomerAMGSolve;
-   Bi[1] = ams_data -> B_Pi;   HBi[1] = (HYPRE_PtrToSolverFcn) hypre_BoomerAMGBlockSolve;
-   Bi[2] = ams_data -> B_Pix;  HBi[2] = (HYPRE_PtrToSolverFcn) hypre_BoomerAMGSolve;
-   Bi[3] = ams_data -> B_Piy;  HBi[3] = (HYPRE_PtrToSolverFcn) hypre_BoomerAMGSolve;
-   Bi[4] = ams_data -> B_Piz;  HBi[4] = (HYPRE_PtrToSolverFcn) hypre_BoomerAMGSolve;
+   Bi[0] = ams_data -> B_G;    HBi[0] = (NALU_HYPRE_PtrToSolverFcn) hypre_BoomerAMGSolve;
+   Bi[1] = ams_data -> B_Pi;   HBi[1] = (NALU_HYPRE_PtrToSolverFcn) hypre_BoomerAMGBlockSolve;
+   Bi[2] = ams_data -> B_Pix;  HBi[2] = (NALU_HYPRE_PtrToSolverFcn) hypre_BoomerAMGSolve;
+   Bi[3] = ams_data -> B_Piy;  HBi[3] = (NALU_HYPRE_PtrToSolverFcn) hypre_BoomerAMGSolve;
+   Bi[4] = ams_data -> B_Piz;  HBi[4] = (NALU_HYPRE_PtrToSolverFcn) hypre_BoomerAMGSolve;
 
    ri[0] = ams_data -> r1;     gi[0] = ams_data -> g1;
    ri[1] = ams_data -> r2;     gi[1] = ams_data -> g2;
@@ -3648,10 +3648,10 @@ HYPRE_Int hypre_AMSSolve(void *solver,
    ri[4] = ams_data -> r1;     gi[4] = ams_data -> g1;
 
    /* may need to create an additional temporary vector for relaxation */
-#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP)
-   HYPRE_ExecutionPolicy exec = hypre_GetExecPolicy1( hypre_ParCSRMatrixMemoryLocation(A) );
+#if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
+   NALU_HYPRE_ExecutionPolicy exec = hypre_GetExecPolicy1( hypre_ParCSRMatrixMemoryLocation(A) );
 
-   if (exec == HYPRE_EXEC_DEVICE)
+   if (exec == NALU_HYPRE_EXEC_DEVICE)
    {
       needZ = ams_data -> A_relax_type == 2 || ams_data -> A_relax_type == 4 ||
               ams_data -> A_relax_type == 16;
@@ -3845,14 +3845,14 @@ HYPRE_Int hypre_AMSSolve(void *solver,
 
    if (my_id == 0 && ams_data -> print_level > 0 && ams_data -> maxit > 1)
       hypre_printf("\n\n Average Convergence Factor = %f\n\n",
-                   pow((r_norm / r0_norm), (1.0 / (HYPRE_Real) i)));
+                   pow((r_norm / r0_norm), (1.0 / (NALU_HYPRE_Real) i)));
 
    ams_data -> num_iterations = i;
    ams_data -> rel_resid_norm = relative_resid;
 
    if (ams_data -> num_iterations == ams_data -> maxit && ams_data -> tol > 0.0)
    {
-      hypre_error(HYPRE_ERROR_CONV);
+      hypre_error(NALU_HYPRE_ERROR_CONV);
    }
 
    return hypre_error_flag;
@@ -3871,24 +3871,24 @@ HYPRE_Int hypre_AMSSolve(void *solver,
  * to additive, based on residual computed at '('.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int hypre_ParCSRSubspacePrec(/* fine space matrix */
+NALU_HYPRE_Int hypre_ParCSRSubspacePrec(/* fine space matrix */
    hypre_ParCSRMatrix *A0,
    /* relaxation parameters */
-   HYPRE_Int A0_relax_type,
-   HYPRE_Int A0_relax_times,
-   HYPRE_Real *A0_l1_norms,
-   HYPRE_Real A0_relax_weight,
-   HYPRE_Real A0_omega,
-   HYPRE_Real A0_max_eig_est,
-   HYPRE_Real A0_min_eig_est,
-   HYPRE_Int A0_cheby_order,
-   HYPRE_Real A0_cheby_fraction,
+   NALU_HYPRE_Int A0_relax_type,
+   NALU_HYPRE_Int A0_relax_times,
+   NALU_HYPRE_Real *A0_l1_norms,
+   NALU_HYPRE_Real A0_relax_weight,
+   NALU_HYPRE_Real A0_omega,
+   NALU_HYPRE_Real A0_max_eig_est,
+   NALU_HYPRE_Real A0_min_eig_est,
+   NALU_HYPRE_Int A0_cheby_order,
+   NALU_HYPRE_Real A0_cheby_fraction,
    /* subspace matrices */
    hypre_ParCSRMatrix **A,
    /* subspace preconditioners */
-   HYPRE_Solver *B,
+   NALU_HYPRE_Solver *B,
    /* hypre solver functions for B */
-   HYPRE_PtrToSolverFcn *HB,
+   NALU_HYPRE_PtrToSolverFcn *HB,
    /* subspace interpolations */
    hypre_ParCSRMatrix **P,
    /* temporary subspace vectors */
@@ -3907,7 +3907,7 @@ HYPRE_Int hypre_ParCSRSubspacePrec(/* fine space matrix */
    hypre_ParVector *z)
 {
    char *op;
-   HYPRE_Int use_saved_residual = 0;
+   NALU_HYPRE_Int use_saved_residual = 0;
 
    for (op = cycle; *op != '\0'; op++)
    {
@@ -3950,7 +3950,7 @@ HYPRE_Int hypre_ParCSRSubspacePrec(/* fine space matrix */
       /* subspace correction: y += P B^{-1} P^t r */
       else
       {
-         HYPRE_Int i = *op - '1';
+         NALU_HYPRE_Int i = *op - '1';
          if (i < 0)
          {
             hypre_error_in_arg(16);
@@ -3973,8 +3973,8 @@ HYPRE_Int hypre_ParCSRSubspacePrec(/* fine space matrix */
          }
 
          hypre_ParVectorSetConstantValues(g[i], 0.0);
-         (*HB[i]) (B[i], (HYPRE_Matrix)A[i],
-                   (HYPRE_Vector)r[i], (HYPRE_Vector)g[i]);
+         (*HB[i]) (B[i], (NALU_HYPRE_Matrix)A[i],
+                   (NALU_HYPRE_Vector)r[i], (NALU_HYPRE_Vector)g[i]);
          hypre_ParCSRMatrixMatvec(1.0, P[i], g[i], 0.0, g0);
          hypre_ParVectorAxpy(1.0, g0, y);
       }
@@ -3989,8 +3989,8 @@ HYPRE_Int hypre_ParCSRSubspacePrec(/* fine space matrix */
  * Get the number of AMS iterations.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int hypre_AMSGetNumIterations(void *solver,
-                                    HYPRE_Int *num_iterations)
+NALU_HYPRE_Int hypre_AMSGetNumIterations(void *solver,
+                                    NALU_HYPRE_Int *num_iterations)
 {
    hypre_AMSData *ams_data = (hypre_AMSData *) solver;
    *num_iterations = ams_data -> num_iterations;
@@ -4003,8 +4003,8 @@ HYPRE_Int hypre_AMSGetNumIterations(void *solver,
  * Get the final relative residual norm in AMS.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int hypre_AMSGetFinalRelativeResidualNorm(void *solver,
-                                                HYPRE_Real *rel_resid_norm)
+NALU_HYPRE_Int hypre_AMSGetFinalRelativeResidualNorm(void *solver,
+                                                NALU_HYPRE_Real *rel_resid_norm)
 {
    hypre_AMSData *ams_data = (hypre_AMSData *) solver;
    *rel_resid_norm = ams_data -> rel_resid_norm;
@@ -4025,7 +4025,7 @@ HYPRE_Int hypre_AMSGetFinalRelativeResidualNorm(void *solver,
  * the values in the zero-conductivity regions contain kernel components.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int hypre_AMSProjectOutGradients(void *solver,
+NALU_HYPRE_Int hypre_AMSProjectOutGradients(void *solver,
                                        hypre_ParVector *x)
 {
    hypre_AMSData *ams_data = (hypre_AMSData *) solver;
@@ -4058,23 +4058,23 @@ HYPRE_Int hypre_AMSProjectOutGradients(void *solver,
  *                          sign of edge_vertex[2*i+1] - edge_vertex[2*i].
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int hypre_AMSConstructDiscreteGradient(hypre_ParCSRMatrix *A,
+NALU_HYPRE_Int hypre_AMSConstructDiscreteGradient(hypre_ParCSRMatrix *A,
                                              hypre_ParVector *x_coord,
-                                             HYPRE_BigInt *edge_vertex,
-                                             HYPRE_Int edge_orientation,
+                                             NALU_HYPRE_BigInt *edge_vertex,
+                                             NALU_HYPRE_Int edge_orientation,
                                              hypre_ParCSRMatrix **G_ptr)
 {
    hypre_ParCSRMatrix *G;
 
-   HYPRE_Int nedges;
+   NALU_HYPRE_Int nedges;
 
    nedges = hypre_ParCSRMatrixNumRows(A);
 
    /* Construct the local part of G based on edge_vertex and the edge
       and vertex partitionings from A and x_coord */
    {
-      HYPRE_Int i, *I = hypre_CTAlloc(HYPRE_Int,  nedges + 1, HYPRE_MEMORY_HOST);
-      HYPRE_Real *data = hypre_CTAlloc(HYPRE_Real,  2 * nedges, HYPRE_MEMORY_HOST);
+      NALU_HYPRE_Int i, *I = hypre_CTAlloc(NALU_HYPRE_Int,  nedges + 1, NALU_HYPRE_MEMORY_HOST);
+      NALU_HYPRE_Real *data = hypre_CTAlloc(NALU_HYPRE_Real,  2 * nedges, NALU_HYPRE_MEMORY_HOST);
       hypre_CSRMatrix *local = hypre_CSRMatrixCreate (nedges,
                                                       hypre_ParVectorGlobalSize(x_coord),
                                                       2 * nedges);
@@ -4176,34 +4176,34 @@ HYPRE_Int hypre_AMSConstructDiscreteGradient(hypre_ParCSRMatrix *A,
  * be called before hypre_AMSSetup().
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int hypre_AMSFEISetup(void *solver,
+NALU_HYPRE_Int hypre_AMSFEISetup(void *solver,
                             hypre_ParCSRMatrix *A,
                             hypre_ParVector *b,
                             hypre_ParVector *x,
-                            HYPRE_Int num_vert,
-                            HYPRE_Int num_local_vert,
-                            HYPRE_BigInt *vert_number,
-                            HYPRE_Real *vert_coord,
-                            HYPRE_Int num_edges,
-                            HYPRE_BigInt *edge_vertex)
+                            NALU_HYPRE_Int num_vert,
+                            NALU_HYPRE_Int num_local_vert,
+                            NALU_HYPRE_BigInt *vert_number,
+                            NALU_HYPRE_Real *vert_coord,
+                            NALU_HYPRE_Int num_edges,
+                            NALU_HYPRE_BigInt *edge_vertex)
 {
    hypre_AMSData *ams_data = (hypre_AMSData *) solver;
 
-   HYPRE_Int i, j;
+   NALU_HYPRE_Int i, j;
 
    hypre_ParCSRMatrix *G;
    hypre_ParVector *x_coord, *y_coord, *z_coord;
-   HYPRE_Real *x_data, *y_data, *z_data;
+   NALU_HYPRE_Real *x_data, *y_data, *z_data;
 
    MPI_Comm comm = hypre_ParCSRMatrixComm(A);
-   HYPRE_BigInt vert_part[2], num_global_vert;
-   HYPRE_BigInt vert_start, vert_end;
-   HYPRE_BigInt big_local_vert = (HYPRE_BigInt) num_local_vert;
+   NALU_HYPRE_BigInt vert_part[2], num_global_vert;
+   NALU_HYPRE_BigInt vert_start, vert_end;
+   NALU_HYPRE_BigInt big_local_vert = (NALU_HYPRE_BigInt) num_local_vert;
 
    /* Find the processor partitioning of the vertices */
-   hypre_MPI_Scan(&big_local_vert, &vert_part[1], 1, HYPRE_MPI_BIG_INT, hypre_MPI_SUM, comm);
+   hypre_MPI_Scan(&big_local_vert, &vert_part[1], 1, NALU_HYPRE_MPI_BIG_INT, hypre_MPI_SUM, comm);
    vert_part[0] = vert_part[1] - big_local_vert;
-   hypre_MPI_Allreduce(&big_local_vert, &num_global_vert, 1, HYPRE_MPI_BIG_INT, hypre_MPI_SUM, comm);
+   hypre_MPI_Allreduce(&big_local_vert, &num_global_vert, 1, NALU_HYPRE_MPI_BIG_INT, hypre_MPI_SUM, comm);
 
    /* Construct hypre parallel vectors for the vertex coordinates */
    x_coord = hypre_ParVectorCreate(comm, num_global_vert, vert_part);
@@ -4229,7 +4229,7 @@ HYPRE_Int hypre_AMSFEISetup(void *solver,
    {
       if (vert_number[i] >= vert_start && vert_number[i] <= vert_end)
       {
-         j = (HYPRE_Int)(vert_number[i] - vert_start);
+         j = (NALU_HYPRE_Int)(vert_number[i] - vert_start);
          x_data[j] = vert_coord[3 * i];
          y_data[j] = vert_coord[3 * i + 1];
          z_data[j] = vert_coord[3 * i + 2];
@@ -4244,9 +4244,9 @@ HYPRE_Int hypre_AMSFEISetup(void *solver,
 
    /* Construct the local part of G based on edge_vertex */
    {
-      /* HYPRE_Int num_edges = hypre_ParCSRMatrixNumRows(A); */
-      HYPRE_Int *I = hypre_CTAlloc(HYPRE_Int,  num_edges + 1, HYPRE_MEMORY_HOST);
-      HYPRE_Real *data = hypre_CTAlloc(HYPRE_Real,  2 * num_edges, HYPRE_MEMORY_HOST);
+      /* NALU_HYPRE_Int num_edges = hypre_ParCSRMatrixNumRows(A); */
+      NALU_HYPRE_Int *I = hypre_CTAlloc(NALU_HYPRE_Int,  num_edges + 1, NALU_HYPRE_MEMORY_HOST);
+      NALU_HYPRE_Real *data = hypre_CTAlloc(NALU_HYPRE_Real,  2 * num_edges, NALU_HYPRE_MEMORY_HOST);
       hypre_CSRMatrix *local = hypre_CSRMatrixCreate (num_edges,
                                                       num_global_vert,
                                                       2 * num_edges);
@@ -4302,7 +4302,7 @@ HYPRE_Int hypre_AMSFEISetup(void *solver,
  * be called before hypre_AMSDestroy().
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int hypre_AMSFEIDestroy(void *solver)
+NALU_HYPRE_Int hypre_AMSFEIDestroy(void *solver)
 {
    hypre_AMSData *ams_data = (hypre_AMSData *) solver;
 
@@ -4344,52 +4344,52 @@ HYPRE_Int hypre_AMSFEIDestroy(void *solver)
  * cf_marker is not NULL.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int hypre_ParCSRComputeL1NormsThreads(hypre_ParCSRMatrix *A,
-                                            HYPRE_Int           option,
-                                            HYPRE_Int           num_threads,
-                                            HYPRE_Int          *cf_marker,
-                                            HYPRE_Real        **l1_norm_ptr)
+NALU_HYPRE_Int hypre_ParCSRComputeL1NormsThreads(hypre_ParCSRMatrix *A,
+                                            NALU_HYPRE_Int           option,
+                                            NALU_HYPRE_Int           num_threads,
+                                            NALU_HYPRE_Int          *cf_marker,
+                                            NALU_HYPRE_Real        **l1_norm_ptr)
 {
-   HYPRE_Int i, j, k;
-   HYPRE_Int num_rows = hypre_ParCSRMatrixNumRows(A);
+   NALU_HYPRE_Int i, j, k;
+   NALU_HYPRE_Int num_rows = hypre_ParCSRMatrixNumRows(A);
 
    hypre_CSRMatrix *A_diag = hypre_ParCSRMatrixDiag(A);
-   HYPRE_Int *A_diag_I = hypre_CSRMatrixI(A_diag);
-   HYPRE_Int *A_diag_J = hypre_CSRMatrixJ(A_diag);
-   HYPRE_Real *A_diag_data = hypre_CSRMatrixData(A_diag);
+   NALU_HYPRE_Int *A_diag_I = hypre_CSRMatrixI(A_diag);
+   NALU_HYPRE_Int *A_diag_J = hypre_CSRMatrixJ(A_diag);
+   NALU_HYPRE_Real *A_diag_data = hypre_CSRMatrixData(A_diag);
 
    hypre_CSRMatrix *A_offd = hypre_ParCSRMatrixOffd(A);
-   HYPRE_Int *A_offd_I = hypre_CSRMatrixI(A_offd);
-   HYPRE_Int *A_offd_J = hypre_CSRMatrixJ(A_offd);
-   HYPRE_Real *A_offd_data = hypre_CSRMatrixData(A_offd);
-   HYPRE_Int num_cols_offd = hypre_CSRMatrixNumCols(A_offd);
+   NALU_HYPRE_Int *A_offd_I = hypre_CSRMatrixI(A_offd);
+   NALU_HYPRE_Int *A_offd_J = hypre_CSRMatrixJ(A_offd);
+   NALU_HYPRE_Real *A_offd_data = hypre_CSRMatrixData(A_offd);
+   NALU_HYPRE_Int num_cols_offd = hypre_CSRMatrixNumCols(A_offd);
 
-   HYPRE_Real diag;
-   HYPRE_Real *l1_norm = hypre_TAlloc(HYPRE_Real, num_rows, hypre_ParCSRMatrixMemoryLocation(A));
-   HYPRE_Int ii, ns, ne, rest, size;
+   NALU_HYPRE_Real diag;
+   NALU_HYPRE_Real *l1_norm = hypre_TAlloc(NALU_HYPRE_Real, num_rows, hypre_ParCSRMatrixMemoryLocation(A));
+   NALU_HYPRE_Int ii, ns, ne, rest, size;
 
-   HYPRE_Int *cf_marker_offd = NULL;
-   HYPRE_Int cf_diag;
+   NALU_HYPRE_Int *cf_marker_offd = NULL;
+   NALU_HYPRE_Int cf_diag;
 
    /* collect the cf marker data from other procs */
    if (cf_marker != NULL)
    {
-      HYPRE_Int index;
-      HYPRE_Int num_sends;
-      HYPRE_Int start;
-      HYPRE_Int *int_buf_data = NULL;
+      NALU_HYPRE_Int index;
+      NALU_HYPRE_Int num_sends;
+      NALU_HYPRE_Int start;
+      NALU_HYPRE_Int *int_buf_data = NULL;
 
       hypre_ParCSRCommPkg  *comm_pkg = hypre_ParCSRMatrixCommPkg(A);
       hypre_ParCSRCommHandle *comm_handle;
 
       if (num_cols_offd)
       {
-         cf_marker_offd = hypre_CTAlloc(HYPRE_Int,  num_cols_offd, HYPRE_MEMORY_HOST);
+         cf_marker_offd = hypre_CTAlloc(NALU_HYPRE_Int,  num_cols_offd, NALU_HYPRE_MEMORY_HOST);
       }
       num_sends = hypre_ParCSRCommPkgNumSends(comm_pkg);
       if (hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends))
-         int_buf_data = hypre_CTAlloc(HYPRE_Int,
-                                      hypre_ParCSRCommPkgSendMapStart(comm_pkg,  num_sends), HYPRE_MEMORY_HOST);
+         int_buf_data = hypre_CTAlloc(NALU_HYPRE_Int,
+                                      hypre_ParCSRCommPkgSendMapStart(comm_pkg,  num_sends), NALU_HYPRE_MEMORY_HOST);
       index = 0;
       for (i = 0; i < num_sends; i++)
       {
@@ -4402,11 +4402,11 @@ HYPRE_Int hypre_ParCSRComputeL1NormsThreads(hypre_ParCSRMatrix *A,
       comm_handle = hypre_ParCSRCommHandleCreate(11, comm_pkg, int_buf_data,
                                                  cf_marker_offd);
       hypre_ParCSRCommHandleDestroy(comm_handle);
-      hypre_TFree(int_buf_data, HYPRE_MEMORY_HOST);
+      hypre_TFree(int_buf_data, NALU_HYPRE_MEMORY_HOST);
    }
 
-#ifdef HYPRE_USING_OPENMP
-   #pragma omp parallel for private(i,ii,j,k,ns,ne,rest,size,diag,cf_diag) HYPRE_SMP_SCHEDULE
+#ifdef NALU_HYPRE_USING_OPENMP
+   #pragma omp parallel for private(i,ii,j,k,ns,ne,rest,size,diag,cf_diag) NALU_HYPRE_SMP_SCHEDULE
 #endif
    for (k = 0; k < num_threads; k++)
    {
@@ -4634,7 +4634,7 @@ HYPRE_Int hypre_ParCSRComputeL1NormsThreads(hypre_ParCSRMatrix *A,
 
    }
 
-   hypre_TFree(cf_marker_offd, HYPRE_MEMORY_HOST);
+   hypre_TFree(cf_marker_offd, NALU_HYPRE_MEMORY_HOST);
 
    *l1_norm_ptr = l1_norm;
 

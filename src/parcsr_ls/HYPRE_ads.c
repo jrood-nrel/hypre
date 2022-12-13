@@ -8,32 +8,32 @@
 #include "_hypre_parcsr_ls.h"
 
 /*--------------------------------------------------------------------------
- * HYPRE_ADSCreate
+ * NALU_HYPRE_ADSCreate
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int HYPRE_ADSCreate(HYPRE_Solver *solver)
+NALU_HYPRE_Int NALU_HYPRE_ADSCreate(NALU_HYPRE_Solver *solver)
 {
-   *solver = (HYPRE_Solver) hypre_ADSCreate();
+   *solver = (NALU_HYPRE_Solver) hypre_ADSCreate();
    return hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ADSDestroy
+ * NALU_HYPRE_ADSDestroy
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int HYPRE_ADSDestroy(HYPRE_Solver solver)
+NALU_HYPRE_Int NALU_HYPRE_ADSDestroy(NALU_HYPRE_Solver solver)
 {
    return hypre_ADSDestroy((void *) solver);
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ADSSetup
+ * NALU_HYPRE_ADSSetup
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int HYPRE_ADSSetup (HYPRE_Solver solver,
-                          HYPRE_ParCSRMatrix A,
-                          HYPRE_ParVector b,
-                          HYPRE_ParVector x)
+NALU_HYPRE_Int NALU_HYPRE_ADSSetup (NALU_HYPRE_Solver solver,
+                          NALU_HYPRE_ParCSRMatrix A,
+                          NALU_HYPRE_ParVector b,
+                          NALU_HYPRE_ParVector x)
 {
    return hypre_ADSSetup((void *) solver,
                          (hypre_ParCSRMatrix *) A,
@@ -42,13 +42,13 @@ HYPRE_Int HYPRE_ADSSetup (HYPRE_Solver solver,
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ADSSolve
+ * NALU_HYPRE_ADSSolve
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int HYPRE_ADSSolve (HYPRE_Solver solver,
-                          HYPRE_ParCSRMatrix A,
-                          HYPRE_ParVector b,
-                          HYPRE_ParVector x)
+NALU_HYPRE_Int NALU_HYPRE_ADSSolve (NALU_HYPRE_Solver solver,
+                          NALU_HYPRE_ParCSRMatrix A,
+                          NALU_HYPRE_ParVector b,
+                          NALU_HYPRE_ParVector x)
 {
    return hypre_ADSSolve((void *) solver,
                          (hypre_ParCSRMatrix *) A,
@@ -58,35 +58,35 @@ HYPRE_Int HYPRE_ADSSolve (HYPRE_Solver solver,
 
 
 /*--------------------------------------------------------------------------
- * HYPRE_ADSSetDiscreteCurl
+ * NALU_HYPRE_ADSSetDiscreteCurl
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int HYPRE_ADSSetDiscreteCurl(HYPRE_Solver solver,
-                                   HYPRE_ParCSRMatrix C)
+NALU_HYPRE_Int NALU_HYPRE_ADSSetDiscreteCurl(NALU_HYPRE_Solver solver,
+                                   NALU_HYPRE_ParCSRMatrix C)
 {
    return hypre_ADSSetDiscreteCurl((void *) solver,
                                    (hypre_ParCSRMatrix *) C);
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ADSSetDiscreteGradient
+ * NALU_HYPRE_ADSSetDiscreteGradient
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int HYPRE_ADSSetDiscreteGradient(HYPRE_Solver solver,
-                                       HYPRE_ParCSRMatrix G)
+NALU_HYPRE_Int NALU_HYPRE_ADSSetDiscreteGradient(NALU_HYPRE_Solver solver,
+                                       NALU_HYPRE_ParCSRMatrix G)
 {
    return hypre_ADSSetDiscreteGradient((void *) solver,
                                        (hypre_ParCSRMatrix *) G);
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ADSSetCoordinateVectors
+ * NALU_HYPRE_ADSSetCoordinateVectors
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int HYPRE_ADSSetCoordinateVectors(HYPRE_Solver solver,
-                                        HYPRE_ParVector x,
-                                        HYPRE_ParVector y,
-                                        HYPRE_ParVector z)
+NALU_HYPRE_Int NALU_HYPRE_ADSSetCoordinateVectors(NALU_HYPRE_Solver solver,
+                                        NALU_HYPRE_ParVector x,
+                                        NALU_HYPRE_ParVector y,
+                                        NALU_HYPRE_ParVector z)
 {
    return hypre_ADSSetCoordinateVectors((void *) solver,
                                         (hypre_ParVector *) x,
@@ -95,18 +95,18 @@ HYPRE_Int HYPRE_ADSSetCoordinateVectors(HYPRE_Solver solver,
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ADSSetInterpolations
+ * NALU_HYPRE_ADSSetInterpolations
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int HYPRE_ADSSetInterpolations(HYPRE_Solver solver,
-                                     HYPRE_ParCSRMatrix RT_Pi,
-                                     HYPRE_ParCSRMatrix RT_Pix,
-                                     HYPRE_ParCSRMatrix RT_Piy,
-                                     HYPRE_ParCSRMatrix RT_Piz,
-                                     HYPRE_ParCSRMatrix ND_Pi,
-                                     HYPRE_ParCSRMatrix ND_Pix,
-                                     HYPRE_ParCSRMatrix ND_Piy,
-                                     HYPRE_ParCSRMatrix ND_Piz)
+NALU_HYPRE_Int NALU_HYPRE_ADSSetInterpolations(NALU_HYPRE_Solver solver,
+                                     NALU_HYPRE_ParCSRMatrix RT_Pi,
+                                     NALU_HYPRE_ParCSRMatrix RT_Pix,
+                                     NALU_HYPRE_ParCSRMatrix RT_Piy,
+                                     NALU_HYPRE_ParCSRMatrix RT_Piz,
+                                     NALU_HYPRE_ParCSRMatrix ND_Pi,
+                                     NALU_HYPRE_ParCSRMatrix ND_Pix,
+                                     NALU_HYPRE_ParCSRMatrix ND_Piy,
+                                     NALU_HYPRE_ParCSRMatrix ND_Piz)
 {
    return hypre_ADSSetInterpolations((void *) solver,
                                      (hypre_ParCSRMatrix *) RT_Pi,
@@ -121,54 +121,54 @@ HYPRE_Int HYPRE_ADSSetInterpolations(HYPRE_Solver solver,
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ADSSetMaxIter
+ * NALU_HYPRE_ADSSetMaxIter
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int HYPRE_ADSSetMaxIter(HYPRE_Solver solver,
-                              HYPRE_Int maxit)
+NALU_HYPRE_Int NALU_HYPRE_ADSSetMaxIter(NALU_HYPRE_Solver solver,
+                              NALU_HYPRE_Int maxit)
 {
    return hypre_ADSSetMaxIter((void *) solver, maxit);
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ADSSetTol
+ * NALU_HYPRE_ADSSetTol
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int HYPRE_ADSSetTol(HYPRE_Solver solver,
-                          HYPRE_Real tol)
+NALU_HYPRE_Int NALU_HYPRE_ADSSetTol(NALU_HYPRE_Solver solver,
+                          NALU_HYPRE_Real tol)
 {
    return hypre_ADSSetTol((void *) solver, tol);
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ADSSetCycleType
+ * NALU_HYPRE_ADSSetCycleType
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int HYPRE_ADSSetCycleType(HYPRE_Solver solver,
-                                HYPRE_Int cycle_type)
+NALU_HYPRE_Int NALU_HYPRE_ADSSetCycleType(NALU_HYPRE_Solver solver,
+                                NALU_HYPRE_Int cycle_type)
 {
    return hypre_ADSSetCycleType((void *) solver, cycle_type);
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ADSSetPrintLevel
+ * NALU_HYPRE_ADSSetPrintLevel
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int HYPRE_ADSSetPrintLevel(HYPRE_Solver solver,
-                                 HYPRE_Int print_level)
+NALU_HYPRE_Int NALU_HYPRE_ADSSetPrintLevel(NALU_HYPRE_Solver solver,
+                                 NALU_HYPRE_Int print_level)
 {
    return hypre_ADSSetPrintLevel((void *) solver, print_level);
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ADSSetSmoothingOptions
+ * NALU_HYPRE_ADSSetSmoothingOptions
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int HYPRE_ADSSetSmoothingOptions(HYPRE_Solver solver,
-                                       HYPRE_Int relax_type,
-                                       HYPRE_Int relax_times,
-                                       HYPRE_Real relax_weight,
-                                       HYPRE_Real omega)
+NALU_HYPRE_Int NALU_HYPRE_ADSSetSmoothingOptions(NALU_HYPRE_Solver solver,
+                                       NALU_HYPRE_Int relax_type,
+                                       NALU_HYPRE_Int relax_times,
+                                       NALU_HYPRE_Real relax_weight,
+                                       NALU_HYPRE_Real omega)
 {
    return hypre_ADSSetSmoothingOptions((void *) solver,
                                        relax_type,
@@ -178,12 +178,12 @@ HYPRE_Int HYPRE_ADSSetSmoothingOptions(HYPRE_Solver solver,
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ADSSetChebyOptions
+ * NALU_HYPRE_ADSSetChebyOptions
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int HYPRE_ADSSetChebySmoothingOptions(HYPRE_Solver solver,
-                                            HYPRE_Int cheby_order,
-                                            HYPRE_Int cheby_fraction)
+NALU_HYPRE_Int NALU_HYPRE_ADSSetChebySmoothingOptions(NALU_HYPRE_Solver solver,
+                                            NALU_HYPRE_Int cheby_order,
+                                            NALU_HYPRE_Int cheby_fraction)
 {
    return hypre_ADSSetChebySmoothingOptions((void *) solver,
                                             cheby_order,
@@ -191,17 +191,17 @@ HYPRE_Int HYPRE_ADSSetChebySmoothingOptions(HYPRE_Solver solver,
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ADSSetAMSOptions
+ * NALU_HYPRE_ADSSetAMSOptions
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int HYPRE_ADSSetAMSOptions(HYPRE_Solver solver,
-                                 HYPRE_Int cycle_type,
-                                 HYPRE_Int coarsen_type,
-                                 HYPRE_Int agg_levels,
-                                 HYPRE_Int relax_type,
-                                 HYPRE_Real strength_threshold,
-                                 HYPRE_Int interp_type,
-                                 HYPRE_Int Pmax)
+NALU_HYPRE_Int NALU_HYPRE_ADSSetAMSOptions(NALU_HYPRE_Solver solver,
+                                 NALU_HYPRE_Int cycle_type,
+                                 NALU_HYPRE_Int coarsen_type,
+                                 NALU_HYPRE_Int agg_levels,
+                                 NALU_HYPRE_Int relax_type,
+                                 NALU_HYPRE_Real strength_threshold,
+                                 NALU_HYPRE_Int interp_type,
+                                 NALU_HYPRE_Int Pmax)
 {
    return hypre_ADSSetAMSOptions((void *) solver,
                                  cycle_type,
@@ -214,16 +214,16 @@ HYPRE_Int HYPRE_ADSSetAMSOptions(HYPRE_Solver solver,
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ADSSetAlphaAMGOptions
+ * NALU_HYPRE_ADSSetAlphaAMGOptions
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int HYPRE_ADSSetAMGOptions(HYPRE_Solver solver,
-                                 HYPRE_Int coarsen_type,
-                                 HYPRE_Int agg_levels,
-                                 HYPRE_Int relax_type,
-                                 HYPRE_Real strength_threshold,
-                                 HYPRE_Int interp_type,
-                                 HYPRE_Int Pmax)
+NALU_HYPRE_Int NALU_HYPRE_ADSSetAMGOptions(NALU_HYPRE_Solver solver,
+                                 NALU_HYPRE_Int coarsen_type,
+                                 NALU_HYPRE_Int agg_levels,
+                                 NALU_HYPRE_Int relax_type,
+                                 NALU_HYPRE_Real strength_threshold,
+                                 NALU_HYPRE_Int interp_type,
+                                 NALU_HYPRE_Int Pmax)
 {
    return hypre_ADSSetAMGOptions((void *) solver,
                                  coarsen_type,
@@ -235,22 +235,22 @@ HYPRE_Int HYPRE_ADSSetAMGOptions(HYPRE_Solver solver,
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ADSGetNumIterations
+ * NALU_HYPRE_ADSGetNumIterations
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int HYPRE_ADSGetNumIterations(HYPRE_Solver solver,
-                                    HYPRE_Int *num_iterations)
+NALU_HYPRE_Int NALU_HYPRE_ADSGetNumIterations(NALU_HYPRE_Solver solver,
+                                    NALU_HYPRE_Int *num_iterations)
 {
    return hypre_ADSGetNumIterations((void *) solver,
                                     num_iterations);
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ADSGetFinalRelativeResidualNorm
+ * NALU_HYPRE_ADSGetFinalRelativeResidualNorm
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int HYPRE_ADSGetFinalRelativeResidualNorm(HYPRE_Solver solver,
-                                                HYPRE_Real *rel_resid_norm)
+NALU_HYPRE_Int NALU_HYPRE_ADSGetFinalRelativeResidualNorm(NALU_HYPRE_Solver solver,
+                                                NALU_HYPRE_Real *rel_resid_norm)
 {
    return hypre_ADSGetFinalRelativeResidualNorm((void *) solver,
                                                 rel_resid_norm);

@@ -7,12 +7,12 @@
 
 #include "_hypre_sstruct_ls.h"
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_ParVectorZeroBCValues(hypre_ParVector *v,
-                            HYPRE_Int       *rows,
-                            HYPRE_Int        nrows)
+                            NALU_HYPRE_Int       *rows,
+                            NALU_HYPRE_Int        nrows)
 {
-   HYPRE_Int   ierr = 0;
+   NALU_HYPRE_Int   ierr = 0;
 
    hypre_Vector *v_local = hypre_ParVectorLocalVector(v);
 
@@ -21,17 +21,17 @@ hypre_ParVectorZeroBCValues(hypre_ParVector *v,
    return ierr;
 }
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SeqVectorZeroBCValues(hypre_Vector *v,
-                            HYPRE_Int    *rows,
-                            HYPRE_Int     nrows)
+                            NALU_HYPRE_Int    *rows,
+                            NALU_HYPRE_Int     nrows)
 {
-   HYPRE_Real  *vector_data = hypre_VectorData(v);
-   HYPRE_Int      i;
-   HYPRE_Int      ierr  = 0;
+   NALU_HYPRE_Real  *vector_data = hypre_VectorData(v);
+   NALU_HYPRE_Int      i;
+   NALU_HYPRE_Int      ierr  = 0;
 
-#if defined(HYPRE_USING_OPENMP)
-   #pragma omp parallel for private(i) HYPRE_SMP_SCHEDULE
+#if defined(NALU_HYPRE_USING_OPENMP)
+   #pragma omp parallel for private(i) NALU_HYPRE_SMP_SCHEDULE
 #endif
    for (i = 0; i < nrows; i++)
    {

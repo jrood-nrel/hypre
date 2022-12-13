@@ -39,11 +39,11 @@ void Vec_dhDestroy(Vec_dh v)
 
 #undef __FUNC__
 #define __FUNC__ "Vec_dhInit"
-void Vec_dhInit(Vec_dh v, HYPRE_Int size)
+void Vec_dhInit(Vec_dh v, NALU_HYPRE_Int size)
 {
   START_FUNC_DH
   v->n = size;
-  v->vals = (HYPRE_Real*)MALLOC_DH(size*sizeof(HYPRE_Real)); CHECK_V_ERROR;
+  v->vals = (NALU_HYPRE_Real*)MALLOC_DH(size*sizeof(NALU_HYPRE_Real)); CHECK_V_ERROR;
   END_FUNC_DH
 }
 
@@ -55,7 +55,7 @@ void Vec_dhCopy(Vec_dh x, Vec_dh y)
   if (x->vals == NULL) SET_V_ERROR("x->vals is NULL");
   if (y->vals == NULL) SET_V_ERROR("y->vals is NULL");
   if (x->n != y->n) SET_V_ERROR("x and y are different lengths");
-  hypre_TMemcpy(y->vals,  x->vals, HYPRE_Real, x->n, HYPRE_MEMORY_HOST, HYPRE_MEMORY_HOST);
+  hypre_TMemcpy(y->vals,  x->vals, NALU_HYPRE_Real, x->n, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_HOST);
   END_FUNC_DH
 }
 
@@ -66,22 +66,22 @@ void Vec_dhDuplicate(Vec_dh v, Vec_dh *out)
 {
   START_FUNC_DH
   Vec_dh tmp;
-  HYPRE_Int size = v->n;
+  NALU_HYPRE_Int size = v->n;
   if (v->vals == NULL) SET_V_ERROR("v->vals is NULL");
   Vec_dhCreate(out); CHECK_V_ERROR;
   tmp = *out;
   tmp->n = size;
-  tmp->vals = (HYPRE_Real*)MALLOC_DH(size*sizeof(HYPRE_Real)); CHECK_V_ERROR;
+  tmp->vals = (NALU_HYPRE_Real*)MALLOC_DH(size*sizeof(NALU_HYPRE_Real)); CHECK_V_ERROR;
   END_FUNC_DH
 }
 
 #undef __FUNC__
 #define __FUNC__ "Vec_dhSet"
-void Vec_dhSet(Vec_dh v, HYPRE_Real value)
+void Vec_dhSet(Vec_dh v, NALU_HYPRE_Real value)
 {
   START_FUNC_DH
-  HYPRE_Int i, m = v->n;
-  HYPRE_Real *vals = v->vals;
+  NALU_HYPRE_Int i, m = v->n;
+  NALU_HYPRE_Real *vals = v->vals;
   if (v->vals == NULL) SET_V_ERROR("v->vals is NULL");
   for (i=0; i<m; ++i) vals[i] = value;
   END_FUNC_DH
@@ -92,9 +92,9 @@ void Vec_dhSet(Vec_dh v, HYPRE_Real value)
 void Vec_dhSetRand(Vec_dh v)
 {
   START_FUNC_DH
-  HYPRE_Int i, m = v->n;
-  HYPRE_Real max = 0.0;
-  HYPRE_Real *vals = v->vals;
+  NALU_HYPRE_Int i, m = v->n;
+  NALU_HYPRE_Real max = 0.0;
+  NALU_HYPRE_Real *vals = v->vals;
 
   if (v->vals == NULL) SET_V_ERROR("v->vals is NULL");
 
@@ -114,8 +114,8 @@ void Vec_dhSetRand(Vec_dh v)
 void Vec_dhPrint(Vec_dh v, SubdomainGraph_dh sg, char *filename)
 {
   START_FUNC_DH
-  HYPRE_Real *vals = v->vals;
-  HYPRE_Int pe, i, m = v->n;
+  NALU_HYPRE_Real *vals = v->vals;
+  NALU_HYPRE_Int pe, i, m = v->n;
   FILE *fp;
 
   if (v->vals == NULL) SET_V_ERROR("v->vals is NULL");
@@ -144,14 +144,14 @@ void Vec_dhPrint(Vec_dh v, SubdomainGraph_dh sg, char *filename)
    * case 2: single mpi task, multiple subdomains
    *--------------------------------------------------------*/
   else if (np_dh == 1) {
-    HYPRE_Int i, j;
+    NALU_HYPRE_Int i, j;
 
     fp=openFile_dh(filename, "w"); CHECK_V_ERROR;
 
     for (i=0; i<sg->blocks; ++i) {
-      HYPRE_Int oldBlock = sg->n2o_sub[i];
-      HYPRE_Int beg_row = sg->beg_rowP[oldBlock];
-      HYPRE_Int end_row = beg_row + sg->row_count[oldBlock];
+      NALU_HYPRE_Int oldBlock = sg->n2o_sub[i];
+      NALU_HYPRE_Int beg_row = sg->beg_rowP[oldBlock];
+      NALU_HYPRE_Int end_row = beg_row + sg->row_count[oldBlock];
 
 hypre_printf("seq: block= %i  beg= %i  end= %i\n", oldBlock, beg_row, end_row);
 
@@ -166,7 +166,7 @@ hypre_printf("seq: block= %i  beg= %i  end= %i\n", oldBlock, beg_row, end_row);
    * case 3: multiple mpi tasks, one subdomain per task
    *--------------------------------------------------------*/
   else {
-    HYPRE_Int id = sg->o2n_sub[myid_dh];
+    NALU_HYPRE_Int id = sg->o2n_sub[myid_dh];
     for (pe=0; pe<np_dh; ++pe) {
       hypre_MPI_Barrier(comm_dh);
       if (id == pe) {
@@ -212,13 +212,13 @@ void Vec_dhPrintBIN(Vec_dh v, SubdomainGraph_dh sg, char *filename)
 
 #undef __FUNC__
 #define __FUNC__ "Vec_dhRead"
-void Vec_dhRead(Vec_dh *vout, HYPRE_Int ignore, char *filename)
+void Vec_dhRead(Vec_dh *vout, NALU_HYPRE_Int ignore, char *filename)
 {
   START_FUNC_DH
   Vec_dh tmp;
   FILE *fp;
-  HYPRE_Int items, n, i;
-  HYPRE_Real *v, w;
+  NALU_HYPRE_Int items, n, i;
+  NALU_HYPRE_Real *v, w;
   char junk[MAX_JUNK];
 
   Vec_dhCreate(&tmp); CHECK_V_ERROR;
@@ -256,7 +256,7 @@ void Vec_dhRead(Vec_dh *vout, HYPRE_Int ignore, char *filename)
 
   /* allocate storage */
   tmp->n = n;
-  v = tmp->vals =  (HYPRE_Real*)MALLOC_DH(n*sizeof(HYPRE_Real)); CHECK_V_ERROR;
+  v = tmp->vals =  (NALU_HYPRE_Real*)MALLOC_DH(n*sizeof(NALU_HYPRE_Real)); CHECK_V_ERROR;
 
   /* reset file, and skip over header again */
   rewind(fp);

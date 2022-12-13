@@ -5,12 +5,12 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#ifndef HYPRE_ONEDPL_H
-#define HYPRE_ONEDPL_H
+#ifndef NALU_HYPRE_ONEDPL_H
+#define NALU_HYPRE_ONEDPL_H
 
-#include "HYPRE_config.h"
+#include "NALU_HYPRE_config.h"
 
-#if defined(HYPRE_USING_SYCL)
+#if defined(NALU_HYPRE_USING_SYCL)
 
 /* oneAPI DPL headers */
 /* NOTE: these must be included before standard C++ headers */
@@ -59,7 +59,7 @@ Iter3 hypreSycl_transform_if(Iter1 first, Iter1 last, Iter2 mask,
    using T = typename std::iterator_traits<Iter1>::value_type;
    const auto n = std::distance(first, last);
    auto begin_for_each = oneapi::dpl::make_zip_iterator(first, mask, result);
-   HYPRE_ONEDPL_CALL( std::for_each,
+   NALU_HYPRE_ONEDPL_CALL( std::for_each,
                       begin_for_each, begin_for_each + n,
                       transform_if_unary_zip_mask_fun<T, Pred, UnaryOperation>(pred, unary_op) );
    return result + n;
@@ -95,7 +95,7 @@ Iter3 hypreSycl_copy_if(Iter1 first, Iter1 last, Iter2 mask,
       std::is_same<typename std::iterator_traits<Iter3>::iterator_category,
       std::random_access_iterator_tag>::value,
       "Iterators passed to algorithms must be random-access iterators.");
-   auto ret_val = HYPRE_ONEDPL_CALL( std::copy_if,
+   auto ret_val = NALU_HYPRE_ONEDPL_CALL( std::copy_if,
                                      oneapi::dpl::make_zip_iterator(first, mask),
                                      oneapi::dpl::make_zip_iterator(last, mask + std::distance(first, last)),
                                      oneapi::dpl::make_zip_iterator(result, oneapi::dpl::discard_iterator()),
@@ -116,13 +116,13 @@ Iter1 hypreSycl_remove_if(Iter1 first, Iter1 last, Iter2 mask, Pred pred)
       std::random_access_iterator_tag>::value,
       "Iterators passed to algorithms must be random-access iterators.");
    using ValueType = typename std::iterator_traits<Iter2>::value_type;
-   Iter2 mask_cpy = hypre_CTAlloc(ValueType, std::distance(first, last), HYPRE_MEMORY_DEVICE);
-   hypre_TMemcpy(mask_cpy, mask, ValueType, std::distance(first, last), HYPRE_MEMORY_DEVICE, HYPRE_MEMORY_DEVICE);
-   auto ret_val = HYPRE_ONEDPL_CALL( std::remove_if,
+   Iter2 mask_cpy = hypre_CTAlloc(ValueType, std::distance(first, last), NALU_HYPRE_MEMORY_DEVICE);
+   hypre_TMemcpy(mask_cpy, mask, ValueType, std::distance(first, last), NALU_HYPRE_MEMORY_DEVICE, NALU_HYPRE_MEMORY_DEVICE);
+   auto ret_val = NALU_HYPRE_ONEDPL_CALL( std::remove_if,
                                      oneapi::dpl::make_zip_iterator(first, mask_cpy),
                                      oneapi::dpl::make_zip_iterator(last, mask_cpy + std::distance(first, last)),
                                      predicate_key_fun<Pred>(pred));
-   hypre_TFree(mask_cpy, HYPRE_MEMORY_DEVICE);
+   hypre_TFree(mask_cpy, NALU_HYPRE_MEMORY_DEVICE);
    return std::get<0>(ret_val.base());
 }
 
@@ -136,7 +136,7 @@ Iter3 hypreSycl_remove_copy_if(Iter1 first, Iter1 last, Iter2 mask, Iter3 result
       std::is_same<typename std::iterator_traits<Iter2>::iterator_category,
       std::random_access_iterator_tag>::value,
       "Iterators passed to algorithms must be random-access iterators.");
-   auto ret_val = HYPRE_ONEDPL_CALL( std::remove_copy_if,
+   auto ret_val = NALU_HYPRE_ONEDPL_CALL( std::remove_copy_if,
                                      oneapi::dpl::make_zip_iterator(first, mask),
                                      oneapi::dpl::make_zip_iterator(last, mask + std::distance(first, last)),
                                      oneapi::dpl::make_zip_iterator(result, oneapi::dpl::discard_iterator()),
@@ -187,7 +187,7 @@ void hypreSycl_scatter(InputIter1 first, InputIter1 last,
       "Iterators passed to algorithms must be random-access iterators.");
    auto perm_result =
       oneapi::dpl::make_permutation_iterator(result, map);
-   HYPRE_ONEDPL_CALL( oneapi::dpl::copy, first, last, perm_result);
+   NALU_HYPRE_ONEDPL_CALL( oneapi::dpl::copy, first, last, perm_result);
 }
 
 // Equivalent of thrust::gather
@@ -209,7 +209,7 @@ OutputIter hypreSycl_gather(InputIter1 map_first, InputIter1 map_last,
    auto perm_begin =
       oneapi::dpl::make_permutation_iterator(input_first, map_first);
    const auto n = ::std::distance(map_first, map_last);
-   return HYPRE_ONEDPL_CALL( oneapi::dpl::copy, perm_begin, perm_begin + n, result);
+   return NALU_HYPRE_ONEDPL_CALL( oneapi::dpl::copy, perm_begin, perm_begin + n, result);
 }
 
 // Equivalent of thrust::sequence (with step=1)
@@ -221,7 +221,7 @@ void hypreSycl_sequence(Iter first, Iter last, T init = 0)
       std::random_access_iterator_tag>::value,
       "Iterators passed to algorithms must be random-access iterators.");
    using DiffType = typename std::iterator_traits<Iter>::difference_type;
-   HYPRE_ONEDPL_CALL( std::transform,
+   NALU_HYPRE_ONEDPL_CALL( std::transform,
                       oneapi::dpl::counting_iterator<DiffType>(init),
                       oneapi::dpl::counting_iterator<DiffType>(init + std::distance(first, last)),
                       first,
@@ -240,7 +240,7 @@ void hypreSycl_stable_sort_by_key(Iter1 keys_first, Iter1 keys_last, Iter2 value
       "Iterators passed to algorithms must be random-access iterators.");
    const auto n = std::distance(keys_first, keys_last);
    auto zipped_begin = oneapi::dpl::make_zip_iterator(keys_first, values_first);
-   HYPRE_ONEDPL_CALL( std::stable_sort,
+   NALU_HYPRE_ONEDPL_CALL( std::stable_sort,
                       zipped_begin,
                       zipped_begin + n,
    [](auto lhs, auto rhs) { return std::get<0>(lhs) < std::get<0>(rhs); } );

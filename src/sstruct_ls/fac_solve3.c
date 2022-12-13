@@ -15,7 +15,7 @@
 
 #define DEBUG 0
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_FACSolve3( void                 *fac_vdata,
                  hypre_SStructMatrix  *A_user,
                  hypre_SStructVector  *b_in,
@@ -36,23 +36,23 @@ hypre_FACSolve3( void                 *fac_vdata,
    void                   **restrict_data_level = (fac_data-> restrict_data_level);
    void                   **interp_data_level  = (fac_data-> interp_data_level);
    void                    *matvec_data        = (fac_data-> matvec_data);
-   HYPRE_SStructSolver      csolver            = (fac_data-> csolver);
+   NALU_HYPRE_SStructSolver      csolver            = (fac_data-> csolver);
 
-   HYPRE_Int                max_level          = (fac_data-> max_levels);
-   HYPRE_Int               *levels             = (fac_data-> level_to_part);
-   HYPRE_Int                max_cycles         = (fac_data-> max_cycles);
-   HYPRE_Int                rel_change         = (fac_data-> rel_change);
-   HYPRE_Int                zero_guess         = (fac_data-> zero_guess);
-   HYPRE_Int                num_pre_smooth     = (fac_data-> num_pre_smooth);
-   HYPRE_Int                num_post_smooth    = (fac_data-> num_post_smooth);
-   HYPRE_Int                csolver_type       = (fac_data-> csolver_type);
-   HYPRE_Int                logging            = (fac_data-> logging);
-   HYPRE_Real              *norms              = (fac_data-> norms);
-   HYPRE_Real              *rel_norms          = (fac_data-> rel_norms);
-   HYPRE_Real               tol                = (fac_data-> tol);
+   NALU_HYPRE_Int                max_level          = (fac_data-> max_levels);
+   NALU_HYPRE_Int               *levels             = (fac_data-> level_to_part);
+   NALU_HYPRE_Int                max_cycles         = (fac_data-> max_cycles);
+   NALU_HYPRE_Int                rel_change         = (fac_data-> rel_change);
+   NALU_HYPRE_Int                zero_guess         = (fac_data-> zero_guess);
+   NALU_HYPRE_Int                num_pre_smooth     = (fac_data-> num_pre_smooth);
+   NALU_HYPRE_Int                num_post_smooth    = (fac_data-> num_post_smooth);
+   NALU_HYPRE_Int                csolver_type       = (fac_data-> csolver_type);
+   NALU_HYPRE_Int                logging            = (fac_data-> logging);
+   NALU_HYPRE_Real              *norms              = (fac_data-> norms);
+   NALU_HYPRE_Real              *rel_norms          = (fac_data-> rel_norms);
+   NALU_HYPRE_Real               tol                = (fac_data-> tol);
 
-   HYPRE_Int                part_crse = 0;
-   HYPRE_Int                part_fine = 1;
+   NALU_HYPRE_Int                part_crse = 0;
+   NALU_HYPRE_Int                part_fine = 1;
 
    hypre_SStructPMatrix    *pA;
    hypre_SStructPVector    *px;
@@ -61,11 +61,11 @@ hypre_FACSolve3( void                 *fac_vdata,
    hypre_ParVector         *parx;
    hypre_ParVector         *pary;
 
-   HYPRE_Real               b_dot_b = 0, r_dot_r, eps = 0;
-   HYPRE_Real               e_dot_e = 0, e_dot_e_l, x_dot_x = 1;
+   NALU_HYPRE_Real               b_dot_b = 0, r_dot_r, eps = 0;
+   NALU_HYPRE_Real               e_dot_e = 0, e_dot_e_l, x_dot_x = 1;
 
-   HYPRE_Int                level, i;
-   HYPRE_Int                ierr = 0;
+   NALU_HYPRE_Int                level, i;
+   NALU_HYPRE_Int                ierr = 0;
 
    /*--------------------------------------------------------------
     * Special cases
@@ -259,14 +259,14 @@ hypre_FACSolve3( void                 *fac_vdata,
       level = 0;
       if (csolver_type == 1)
       {
-         HYPRE_PCGSolve((HYPRE_Solver) csolver,
-                        (HYPRE_Matrix) A_level[0],
-                        (HYPRE_Vector) b_level[0],
-                        (HYPRE_Vector) x_level[0]);
+         NALU_HYPRE_PCGSolve((NALU_HYPRE_Solver) csolver,
+                        (NALU_HYPRE_Matrix) A_level[0],
+                        (NALU_HYPRE_Vector) b_level[0],
+                        (NALU_HYPRE_Vector) x_level[0]);
       }
       else if (csolver_type == 2)
       {
-         HYPRE_SStructSysPFMGSolve(csolver, A_level[0], b_level[0], x_level[0]);
+         NALU_HYPRE_SStructSysPFMGSolve(csolver, A_level[0], b_level[0], x_level[0]);
       }
       hypre_SStructPCopy(hypre_SStructVectorPVector(x_level[0], part_crse),
                          hypre_SStructVectorPVector(x_level[0], part_fine));

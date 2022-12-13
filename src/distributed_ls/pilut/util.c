@@ -23,9 +23,9 @@
 * This function finds the minimum value in the array removes it and
 * returns it. It decreases the size of the array.
 **************************************************************************/
-HYPRE_Int hypre_ExtractMinLR( hypre_PilutSolverGlobals *globals )
+NALU_HYPRE_Int hypre_ExtractMinLR( hypre_PilutSolverGlobals *globals )
 {
-  HYPRE_Int i, j=0 ;
+  NALU_HYPRE_Int i, j=0 ;
 
   for (i=1; i<lastlr; i++) {
     if (hypre_lr[i] < hypre_lr[j])
@@ -45,11 +45,11 @@ HYPRE_Int hypre_ExtractMinLR( hypre_PilutSolverGlobals *globals )
 /*************************************************************************
 * This function sort an (idx,val) array in increasing idx values
 **************************************************************************/
-void hypre_IdxIncSort(HYPRE_Int n, HYPRE_Int *idx, HYPRE_Real *val)
+void hypre_IdxIncSort(NALU_HYPRE_Int n, NALU_HYPRE_Int *idx, NALU_HYPRE_Real *val)
 {
-  HYPRE_Int i, j, min;
-  HYPRE_Real tmpval;
-  HYPRE_Int tmpidx;
+  NALU_HYPRE_Int i, j, min;
+  NALU_HYPRE_Real tmpval;
+  NALU_HYPRE_Int tmpidx;
 
   for (i=0; i<n; i++) {
     min = i;
@@ -70,11 +70,11 @@ void hypre_IdxIncSort(HYPRE_Int n, HYPRE_Int *idx, HYPRE_Real *val)
 /*************************************************************************
 * This function sort an (idx,val) array in decreasing abs val 
 **************************************************************************/
-void hypre_ValDecSort(HYPRE_Int n, HYPRE_Int *idx, HYPRE_Real *val)
+void hypre_ValDecSort(NALU_HYPRE_Int n, NALU_HYPRE_Int *idx, NALU_HYPRE_Real *val)
 {
-  HYPRE_Int i, j, max;
-  HYPRE_Int tmpidx;
-  HYPRE_Real tmpval;
+  NALU_HYPRE_Int i, j, max;
+  NALU_HYPRE_Int tmpidx;
+  NALU_HYPRE_Real tmpval;
 
   for (i=0; i<n; i++) {
     max = i;
@@ -98,9 +98,9 @@ void hypre_ValDecSort(HYPRE_Int n, HYPRE_Int *idx, HYPRE_Real *val)
 * This function takes an (idx, val) array and compacts it so that every 
 * entry with idx[] = -1, gets removed. It returns the new count
 **************************************************************************/
-HYPRE_Int hypre_CompactIdx(HYPRE_Int n, HYPRE_Int *idx, HYPRE_Real *val)
+NALU_HYPRE_Int hypre_CompactIdx(NALU_HYPRE_Int n, NALU_HYPRE_Int *idx, NALU_HYPRE_Real *val)
 {
-  HYPRE_Int i, j;
+  NALU_HYPRE_Int i, j;
 
   j = n-1;
   for (i=0; i<n; i++) {
@@ -129,9 +129,9 @@ HYPRE_Int hypre_CompactIdx(HYPRE_Int n, HYPRE_Int *idx, HYPRE_Real *val)
 /*************************************************************************
 * This function prints an (idx, val) pair
 **************************************************************************/
-void hypre_PrintIdxVal(HYPRE_Int n, HYPRE_Int *idx, HYPRE_Real *val)
+void hypre_PrintIdxVal(NALU_HYPRE_Int n, NALU_HYPRE_Int *idx, NALU_HYPRE_Real *val)
 {
-  HYPRE_Int i;
+  NALU_HYPRE_Int i;
 
   hypre_printf("%3d ", n);
   for (i=0; i<n; i++) 
@@ -145,7 +145,7 @@ void hypre_PrintIdxVal(HYPRE_Int n, HYPRE_Int *idx, HYPRE_Real *val)
 /*************************************************************************
 * This function compares 2 KeyValueType variables for sorting in inc order
 **************************************************************************/
-HYPRE_Int hypre_DecKeyValueCmp(const void *v1, const void *v2)
+NALU_HYPRE_Int hypre_DecKeyValueCmp(const void *v1, const void *v2)
 {
   KeyValueType *n1, *n2;
 
@@ -160,19 +160,19 @@ HYPRE_Int hypre_DecKeyValueCmp(const void *v1, const void *v2)
 /*************************************************************************
 * This function sorts an array of type KeyValueType in increasing order
 **************************************************************************/
-void hypre_SortKeyValueNodesDec(KeyValueType *nodes, HYPRE_Int n)
+void hypre_SortKeyValueNodesDec(KeyValueType *nodes, NALU_HYPRE_Int n)
 {
-	hypre_tex_qsort((char *)nodes, (size_t)n, (size_t)sizeof(KeyValueType), (HYPRE_Int (*) (char*,char*))hypre_DecKeyValueCmp);
+	hypre_tex_qsort((char *)nodes, (size_t)n, (size_t)sizeof(KeyValueType), (NALU_HYPRE_Int (*) (char*,char*))hypre_DecKeyValueCmp);
 }
 
 
 /*************************************************************************
 * This function sums the entries in an array
 **************************************************************************/
-HYPRE_Int hypre_sasum(HYPRE_Int n, HYPRE_Int *x)
+NALU_HYPRE_Int hypre_sasum(NALU_HYPRE_Int n, NALU_HYPRE_Int *x)
 {
-  HYPRE_Int sum = 0;
-  HYPRE_Int i;
+  NALU_HYPRE_Int sum = 0;
+  NALU_HYPRE_Int i;
 
   for (i=0; i<n; i++)
     sum += x[i];
@@ -184,31 +184,31 @@ HYPRE_Int hypre_sasum(HYPRE_Int n, HYPRE_Int *x)
 /*************************************************************************
 * This function compares 2 ints for sorting in inc order
 **************************************************************************/
-static HYPRE_Int incshort(const void *v1, const void *v2)
+static NALU_HYPRE_Int incshort(const void *v1, const void *v2)
 {
-  return (*((HYPRE_Int *)v1) - *((HYPRE_Int *)v2));
+  return (*((NALU_HYPRE_Int *)v1) - *((NALU_HYPRE_Int *)v2));
 }
 
 /*************************************************************************
 * This function compares 2 ints for sorting in dec order
 **************************************************************************/
-static HYPRE_Int decshort(const void *v1, const void *v2)
+static NALU_HYPRE_Int decshort(const void *v1, const void *v2)
 {
-  return (*((HYPRE_Int *)v2) - *((HYPRE_Int *)v1));
+  return (*((NALU_HYPRE_Int *)v2) - *((NALU_HYPRE_Int *)v1));
 }
 
 /*************************************************************************
 * These functions sorts an array of XXX
 **************************************************************************/
-void hypre_sincsort(HYPRE_Int n, HYPRE_Int *a)
+void hypre_sincsort(NALU_HYPRE_Int n, NALU_HYPRE_Int *a)
 {
-  hypre_tex_qsort((char *)a, (size_t)n, (size_t)sizeof(HYPRE_Int), (HYPRE_Int (*) (char*,char*))incshort);
+  hypre_tex_qsort((char *)a, (size_t)n, (size_t)sizeof(NALU_HYPRE_Int), (NALU_HYPRE_Int (*) (char*,char*))incshort);
 }
 
 
-void hypre_sdecsort(HYPRE_Int n, HYPRE_Int *a)
+void hypre_sdecsort(NALU_HYPRE_Int n, NALU_HYPRE_Int *a)
 {
-  hypre_tex_qsort((char *)a, (size_t)n, (size_t)sizeof(HYPRE_Int),(HYPRE_Int (*) (char*,char*)) decshort);
+  hypre_tex_qsort((char *)a, (size_t)n, (size_t)sizeof(NALU_HYPRE_Int),(NALU_HYPRE_Int (*) (char*,char*)) decshort);
 }
 
 

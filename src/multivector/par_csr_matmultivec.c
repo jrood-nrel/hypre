@@ -27,9 +27,9 @@
  *
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_ParCSRMatrixMatMultiVec(HYPRE_Complex alpha, hypre_ParCSRMatrix *A,
-                              hypre_ParMultivector *x, HYPRE_Complex beta,
+NALU_HYPRE_Int
+hypre_ParCSRMatrixMatMultiVec(NALU_HYPRE_Complex alpha, hypre_ParCSRMatrix *A,
+                              hypre_ParMultivector *x, NALU_HYPRE_Complex beta,
                               hypre_ParMultivector *y)
 {
    hypre_ParCSRCommMultiHandle   *comm_handle;
@@ -38,22 +38,22 @@ hypre_ParCSRMatrixMatMultiVec(HYPRE_Complex alpha, hypre_ParCSRMatrix *A,
    hypre_CSRMatrix     *offd   = hypre_ParCSRMatrixOffd(A);
    hypre_Multivector  *x_local  = hypre_ParMultivectorLocalVector(x);
    hypre_Multivector  *y_local  = hypre_ParMultivectorLocalVector(y);
-   HYPRE_Int                 num_rows = hypre_CSRMatrixNumRows(diag);
-   HYPRE_Int                 num_cols = hypre_CSRMatrixNumCols(diag);
-   HYPRE_Int                 *x_active_ind = x->active_indices;
-   HYPRE_Int                 *y_active_ind = y->active_indices;
+   NALU_HYPRE_Int                 num_rows = hypre_CSRMatrixNumRows(diag);
+   NALU_HYPRE_Int                 num_cols = hypre_CSRMatrixNumCols(diag);
+   NALU_HYPRE_Int                 *x_active_ind = x->active_indices;
+   NALU_HYPRE_Int                 *y_active_ind = y->active_indices;
 
    hypre_Multivector   *x_tmp;
-   HYPRE_Int        x_size = hypre_MultivectorSize(x_local);
-   HYPRE_Int        y_size = hypre_MultivectorSize(y_local);
-   HYPRE_Int        num_vectors = hypre_MultivectorNumVectors(x_local);
-   HYPRE_Int         num_cols_offd = hypre_CSRMatrixNumCols(offd);
-   HYPRE_Int        ierr = 0, send_leng, num_vec_sends, endp1;
-   HYPRE_Int         num_sends, i, j, jj, index, start, offset, length, jv;
-   HYPRE_Int        num_active_vectors;
+   NALU_HYPRE_Int        x_size = hypre_MultivectorSize(x_local);
+   NALU_HYPRE_Int        y_size = hypre_MultivectorSize(y_local);
+   NALU_HYPRE_Int        num_vectors = hypre_MultivectorNumVectors(x_local);
+   NALU_HYPRE_Int         num_cols_offd = hypre_CSRMatrixNumCols(offd);
+   NALU_HYPRE_Int        ierr = 0, send_leng, num_vec_sends, endp1;
+   NALU_HYPRE_Int         num_sends, i, j, jj, index, start, offset, length, jv;
+   NALU_HYPRE_Int        num_active_vectors;
 
-   HYPRE_Complex     *x_tmp_data, *x_buf_data;
-   HYPRE_Complex     *x_local_data = hypre_MultivectorData(x_local);
+   NALU_HYPRE_Complex     *x_tmp_data, *x_buf_data;
+   NALU_HYPRE_Complex     *x_local_data = hypre_MultivectorData(x_local);
 
    /*---------------------------------------------------------------------
     * count the number of active vectors -> num_vec_sends
@@ -96,11 +96,11 @@ hypre_ParCSRMatrixMatMultiVec(HYPRE_Complex alpha, hypre_ParCSRMatrix *A,
     * allocate temporary and send buffers and communication handle
     *--------------------------------------------------------------------*/
 
-   x_buf_data = hypre_CTAlloc(HYPRE_Complex,  num_vec_sends * send_leng, HYPRE_MEMORY_HOST);
+   x_buf_data = hypre_CTAlloc(NALU_HYPRE_Complex,  num_vec_sends * send_leng, NALU_HYPRE_MEMORY_HOST);
    x_tmp = hypre_SeqMultivectorCreate( num_cols_offd, num_vectors );
    hypre_SeqMultivectorInitialize(x_tmp);
    x_tmp_data = hypre_MultivectorData(x_tmp);
-   comm_handle = hypre_CTAlloc(hypre_ParCSRCommMultiHandle,  1, HYPRE_MEMORY_HOST);
+   comm_handle = hypre_CTAlloc(hypre_ParCSRCommMultiHandle,  1, NALU_HYPRE_MEMORY_HOST);
 
    /*---------------------------------------------------------------------
     * put the send data into the send buffer
@@ -135,7 +135,7 @@ hypre_ParCSRMatrixMatMultiVec(HYPRE_Complex alpha, hypre_ParCSRMatrix *A,
 
    hypre_ParCSRCommMultiHandleDestroy(comm_handle);
    comm_handle = NULL;
-   hypre_TFree(comm_handle, HYPRE_MEMORY_HOST);
+   hypre_TFree(comm_handle, NALU_HYPRE_MEMORY_HOST);
 
    if (num_cols_offd)
    {
@@ -144,7 +144,7 @@ hypre_ParCSRMatrixMatMultiVec(HYPRE_Complex alpha, hypre_ParCSRMatrix *A,
 
    hypre_SeqMultivectorDestroy(x_tmp);
    x_tmp = NULL;
-   hypre_TFree(x_buf_data, HYPRE_MEMORY_HOST);
+   hypre_TFree(x_buf_data, NALU_HYPRE_MEMORY_HOST);
 
    return ierr;
 }
@@ -156,9 +156,9 @@ hypre_ParCSRMatrixMatMultiVec(HYPRE_Complex alpha, hypre_ParCSRMatrix *A,
  *
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_ParCSRMatrixMultiMatVecT(HYPRE_Complex alpha, hypre_ParCSRMatrix *A,
-                               hypre_ParMultivector *x, HYPRE_Complex beta,
+NALU_HYPRE_Int
+hypre_ParCSRMatrixMultiMatVecT(NALU_HYPRE_Complex alpha, hypre_ParCSRMatrix *A,
+                               hypre_ParMultivector *x, NALU_HYPRE_Complex beta,
                                hypre_ParMultivector *y)
 {
    hypre_ParCSRCommMultiHandle   *comm_handle;
@@ -167,21 +167,21 @@ hypre_ParCSRMatrixMultiMatVecT(HYPRE_Complex alpha, hypre_ParCSRMatrix *A,
    hypre_CSRMatrix     *offd   = hypre_ParCSRMatrixOffd(A);
    hypre_Multivector   *x_local  = hypre_ParMultivectorLocalVector(x);
    hypre_Multivector   *y_local  = hypre_ParMultivectorLocalVector(y);
-   HYPRE_Int                 num_rows = hypre_CSRMatrixNumRows(diag);
-   HYPRE_Int                 num_cols = hypre_CSRMatrixNumCols(diag);
-   HYPRE_Int                 *x_active_ind = x->active_indices;
+   NALU_HYPRE_Int                 num_rows = hypre_CSRMatrixNumRows(diag);
+   NALU_HYPRE_Int                 num_cols = hypre_CSRMatrixNumCols(diag);
+   NALU_HYPRE_Int                 *x_active_ind = x->active_indices;
 
    hypre_Multivector   *y_tmp;
-   HYPRE_Int        x_size = hypre_MultivectorSize(x_local);
-   HYPRE_Int        y_size = hypre_MultivectorSize(y_local);
-   HYPRE_Int        num_vectors = hypre_MultivectorNumVectors(x_local);
-   HYPRE_Int         num_cols_offd = hypre_CSRMatrixNumCols(offd);
-   HYPRE_Int        ierr = 0, send_leng, num_vec_sends, endp1;
-   HYPRE_Int         num_sends, i, j, jj, index, start, offset, length, jv;
-   HYPRE_Int        num_active_vectors;
+   NALU_HYPRE_Int        x_size = hypre_MultivectorSize(x_local);
+   NALU_HYPRE_Int        y_size = hypre_MultivectorSize(y_local);
+   NALU_HYPRE_Int        num_vectors = hypre_MultivectorNumVectors(x_local);
+   NALU_HYPRE_Int         num_cols_offd = hypre_CSRMatrixNumCols(offd);
+   NALU_HYPRE_Int        ierr = 0, send_leng, num_vec_sends, endp1;
+   NALU_HYPRE_Int         num_sends, i, j, jj, index, start, offset, length, jv;
+   NALU_HYPRE_Int        num_active_vectors;
 
-   HYPRE_Complex     *y_tmp_data, *y_buf_data;
-   HYPRE_Complex     *y_local_data = hypre_MultivectorData(y_local);
+   NALU_HYPRE_Complex     *y_tmp_data, *y_buf_data;
+   NALU_HYPRE_Complex     *y_local_data = hypre_MultivectorData(y_local);
 
    /*---------------------------------------------------------------------
     * count the number of active vectors -> num_vec_sends
@@ -224,11 +224,11 @@ hypre_ParCSRMatrixMultiMatVecT(HYPRE_Complex alpha, hypre_ParCSRMatrix *A,
    * allocate temporary and send buffers and communication handle
    *--------------------------------------------------------------------*/
 
-   y_buf_data = hypre_CTAlloc(HYPRE_Complex,  num_vec_sends * send_leng, HYPRE_MEMORY_HOST);
+   y_buf_data = hypre_CTAlloc(NALU_HYPRE_Complex,  num_vec_sends * send_leng, NALU_HYPRE_MEMORY_HOST);
    y_tmp = hypre_SeqMultivectorCreate( num_cols_offd, num_vectors );
    hypre_SeqMultivectorInitialize(y_tmp);
    y_tmp_data = hypre_MultivectorData(y_tmp);
-   comm_handle = hypre_CTAlloc(hypre_ParCSRCommMultiHandle,  1, HYPRE_MEMORY_HOST);
+   comm_handle = hypre_CTAlloc(hypre_ParCSRCommMultiHandle,  1, NALU_HYPRE_MEMORY_HOST);
 
    /*---------------------------------------------------------------------
     * put the send data into the send buffer
@@ -263,7 +263,7 @@ hypre_ParCSRMatrixMultiMatVecT(HYPRE_Complex alpha, hypre_ParCSRMatrix *A,
 
    hypre_ParCSRCommMultiHandleDestroy(comm_handle);
    comm_handle = NULL;
-   hypre_TFree(comm_handle, HYPRE_MEMORY_HOST);
+   hypre_TFree(comm_handle, NALU_HYPRE_MEMORY_HOST);
 
    if (num_cols_offd)
    {
@@ -272,7 +272,7 @@ hypre_ParCSRMatrixMultiMatVecT(HYPRE_Complex alpha, hypre_ParCSRMatrix *A,
 
    hypre_SeqMultivectorDestroy(y_tmp);
    y_tmp = NULL;
-   hypre_TFree(y_buf_data, HYPRE_MEMORY_HOST);
+   hypre_TFree(y_buf_data, NALU_HYPRE_MEMORY_HOST);
 
    return ierr;
 }

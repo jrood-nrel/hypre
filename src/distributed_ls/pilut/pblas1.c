@@ -26,10 +26,10 @@
 * This function computes the 2 norm of a vector. The result is returned
 * at all the processors
 **************************************************************************/
-HYPRE_Real hypre_p_dnrm2(DataDistType *ddist, HYPRE_Real *x, hypre_PilutSolverGlobals *globals)
+NALU_HYPRE_Real hypre_p_dnrm2(DataDistType *ddist, NALU_HYPRE_Real *x, hypre_PilutSolverGlobals *globals)
 {
-  HYPRE_Int incx=1;
-  HYPRE_Real sum;
+  NALU_HYPRE_Int incx=1;
+  NALU_HYPRE_Real sum;
 
   sum = SNRM2(&(ddist->ddist_lnrows), x, &incx);
   return sqrt(hypre_GlobalSESumDouble(sum*sum, pilut_comm));
@@ -40,10 +40,10 @@ HYPRE_Real hypre_p_dnrm2(DataDistType *ddist, HYPRE_Real *x, hypre_PilutSolverGl
 * This function computes the dot product of 2 vectors. 
 * The result is returned at all the processors
 **************************************************************************/
-HYPRE_Real hypre_p_ddot(DataDistType *ddist, HYPRE_Real *x, HYPRE_Real *y,
+NALU_HYPRE_Real hypre_p_ddot(DataDistType *ddist, NALU_HYPRE_Real *x, NALU_HYPRE_Real *y,
               hypre_PilutSolverGlobals *globals)
 {
-  HYPRE_Int incx=1;
+  NALU_HYPRE_Int incx=1;
 
   return hypre_GlobalSESumDouble(SDOT(&(ddist->ddist_lnrows), x, &incx, y, &incx), 
          pilut_comm );
@@ -53,9 +53,9 @@ HYPRE_Real hypre_p_ddot(DataDistType *ddist, HYPRE_Real *x, HYPRE_Real *y,
 /*************************************************************************
 * This function performs y = alpha*x, where alpha resides on pe 0
 **************************************************************************/
-void hypre_p_daxy(DataDistType *ddist, HYPRE_Real alpha, HYPRE_Real *x, HYPRE_Real *y)
+void hypre_p_daxy(DataDistType *ddist, NALU_HYPRE_Real alpha, NALU_HYPRE_Real *x, NALU_HYPRE_Real *y)
 {
-  HYPRE_Int i, local_lnrows=ddist->ddist_lnrows;
+  NALU_HYPRE_Int i, local_lnrows=ddist->ddist_lnrows;
 
   for (i=0; i<local_lnrows; i++)
     y[i] = alpha*x[i];
@@ -65,9 +65,9 @@ void hypre_p_daxy(DataDistType *ddist, HYPRE_Real alpha, HYPRE_Real *x, HYPRE_Re
 /*************************************************************************
 * This function performs y = alpha*x+y, where alpha resides on pe 0
 **************************************************************************/
-void hypre_p_daxpy(DataDistType *ddist, HYPRE_Real alpha, HYPRE_Real *x, HYPRE_Real *y)
+void hypre_p_daxpy(DataDistType *ddist, NALU_HYPRE_Real alpha, NALU_HYPRE_Real *x, NALU_HYPRE_Real *y)
 {
-  HYPRE_Int i, local_lnrows=ddist->ddist_lnrows;
+  NALU_HYPRE_Int i, local_lnrows=ddist->ddist_lnrows;
 
   for (i=0; i<local_lnrows; i++)
     y[i] += alpha*x[i];
@@ -78,10 +78,10 @@ void hypre_p_daxpy(DataDistType *ddist, HYPRE_Real alpha, HYPRE_Real *x, HYPRE_R
 /*************************************************************************
 * This function performs z = alpha*x+beta*y, where alpha resides on pe 0
 **************************************************************************/
-void hypre_p_daxbyz(DataDistType *ddist, HYPRE_Real alpha, HYPRE_Real *x, HYPRE_Real beta, 
-              HYPRE_Real *y, HYPRE_Real *z)
+void hypre_p_daxbyz(DataDistType *ddist, NALU_HYPRE_Real alpha, NALU_HYPRE_Real *x, NALU_HYPRE_Real beta, 
+              NALU_HYPRE_Real *y, NALU_HYPRE_Real *z)
 {
-  HYPRE_Int i, local_lnrows=ddist->ddist_lnrows;
+  NALU_HYPRE_Int i, local_lnrows=ddist->ddist_lnrows;
 
   for (i=0; i<local_lnrows; i++)
     z[i] = alpha*x[i] + beta*y[i];
@@ -90,10 +90,10 @@ void hypre_p_daxbyz(DataDistType *ddist, HYPRE_Real alpha, HYPRE_Real *x, HYPRE_
 /*************************************************************************
 * This function prints a vector
 **************************************************************************/
-HYPRE_Int hypre_p_vprintf(DataDistType *ddist, HYPRE_Real *x,
+NALU_HYPRE_Int hypre_p_vprintf(DataDistType *ddist, NALU_HYPRE_Real *x,
                     hypre_PilutSolverGlobals *globals )
 {
-  HYPRE_Int pe, i;
+  NALU_HYPRE_Int pe, i;
 
   for (pe=0; pe<npes; pe++) {
     if (mype == pe) {

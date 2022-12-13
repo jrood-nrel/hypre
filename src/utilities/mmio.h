@@ -22,9 +22,9 @@
 
 typedef char MM_typecode[4];
 
-HYPRE_Int hypre_mm_is_valid(MM_typecode matcode); /* too complex for a macro */
-HYPRE_Int hypre_mm_read_banner(FILE *f, MM_typecode *matcode);
-HYPRE_Int hypre_mm_read_mtx_crd_size(FILE *f, HYPRE_Int *M, HYPRE_Int *N, HYPRE_Int *nz);
+NALU_HYPRE_Int hypre_mm_is_valid(MM_typecode matcode); /* too complex for a macro */
+NALU_HYPRE_Int hypre_mm_read_banner(FILE *f, MM_typecode *matcode);
+NALU_HYPRE_Int hypre_mm_read_mtx_crd_size(FILE *f, NALU_HYPRE_Int *M, NALU_HYPRE_Int *N, NALU_HYPRE_Int *nz);
 
 /********************* MM_typecode query fucntions ***************************/
 

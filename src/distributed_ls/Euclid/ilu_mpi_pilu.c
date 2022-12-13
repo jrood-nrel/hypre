@@ -18,12 +18,12 @@
 /* #include "ExternalRows_dh.h" */
 /* #include "SubdomainGraph_dh.h" */
 
-static void iluk_symbolic_row_private(HYPRE_Int localRow, HYPRE_Int len, HYPRE_Int *CVAL, 
-                                      HYPRE_Real *AVAL, ExternalRows_dh extRows, 
+static void iluk_symbolic_row_private(NALU_HYPRE_Int localRow, NALU_HYPRE_Int len, NALU_HYPRE_Int *CVAL, 
+                                      NALU_HYPRE_Real *AVAL, ExternalRows_dh extRows, 
                                       SortedList_dh sList, Euclid_dh ctx, 
                                       bool debug);
 
-static void iluk_numeric_row_private(HYPRE_Int new_row, ExternalRows_dh extRows, 
+static void iluk_numeric_row_private(NALU_HYPRE_Int new_row, ExternalRows_dh extRows, 
                                       SortedList_dh slist, Euclid_dh ctx,
                                       bool debug);
 
@@ -32,14 +32,14 @@ static void iluk_numeric_row_private(HYPRE_Int new_row, ExternalRows_dh extRows,
 void iluk_mpi_pilu(Euclid_dh ctx)
 {
   START_FUNC_DH
-  HYPRE_Int from = ctx->from, to = ctx->to;
-  HYPRE_Int i, m; 
-  HYPRE_Int *n2o_row; /* *o2n_col; */
-  HYPRE_Int *rp, *cval, *diag, *fill;
-  HYPRE_Int beg_row, beg_rowP, end_rowP;
+  NALU_HYPRE_Int from = ctx->from, to = ctx->to;
+  NALU_HYPRE_Int i, m; 
+  NALU_HYPRE_Int *n2o_row; /* *o2n_col; */
+  NALU_HYPRE_Int *rp, *cval, *diag, *fill;
+  NALU_HYPRE_Int beg_row, beg_rowP, end_rowP;
   SubdomainGraph_dh sg = ctx->sg;
-  HYPRE_Int *CVAL, len, idx = 0, count;
-  HYPRE_Real *AVAL;
+  NALU_HYPRE_Int *CVAL, len, idx = 0, count;
+  NALU_HYPRE_Real *AVAL;
   REAL_DH *aval;
   Factor_dh F = ctx->F;
   SortedList_dh slist = ctx->slist;
@@ -78,8 +78,8 @@ void iluk_mpi_pilu(Euclid_dh ctx)
   /* loop over rows to be factored (i references local rows) */
   for (i=from; i<to; ++i) {
 
-    HYPRE_Int row = n2o_row[i];            /* local row number */
-    HYPRE_Int globalRow = row + beg_row;   /* global row number */
+    NALU_HYPRE_Int row = n2o_row[i];            /* local row number */
+    NALU_HYPRE_Int globalRow = row + beg_row;   /* global row number */
 
     if (debug) {
       hypre_fprintf(logFile, "\nILU_pilu global: %i  old_Local: %i =========================================================\n", i+1+beg_rowP, row+1);
@@ -88,7 +88,7 @@ void iluk_mpi_pilu(Euclid_dh ctx)
     EuclidGetRow(ctx->A, globalRow, &len, &CVAL, &AVAL); CHECK_V_ERROR;
 
     if (debug) {
-      HYPRE_Int h;
+      NALU_HYPRE_Int h;
       hypre_fprintf(logFile, "ILU_pilu  EuclidGetRow:\n");
       for (h=0; h<len; ++h) hypre_fprintf(logFile, "    %i   %g\n", 1+CVAL[h], AVAL[h]);
     }
@@ -131,7 +131,7 @@ void iluk_mpi_pilu(Euclid_dh ctx)
 
     /* Copy factor to permanent storage */
     if (bj) {   /* for debugging: blockJacobi case */
-      HYPRE_Int col;
+      NALU_HYPRE_Int col;
       while (count--) {
         SRecord *sr = SortedList_dhGetSmallest(slist); CHECK_V_ERROR;
         col = sr->col;
@@ -172,7 +172,7 @@ void iluk_mpi_pilu(Euclid_dh ctx)
     rp[i+1] = idx;
 
     /* Insert pointer to diagonal */
-    { HYPRE_Int temp = rp[i];
+    { NALU_HYPRE_Int temp = rp[i];
       bool flag = true;
       while (temp < idx) {
         if (cval[temp] == i+beg_rowP) {
@@ -184,7 +184,7 @@ void iluk_mpi_pilu(Euclid_dh ctx)
       }
       if (flag) {
         if (logFile != NULL) {
-          HYPRE_Int k;
+          NALU_HYPRE_Int k;
           hypre_fprintf(logFile, "Failed to find diag in localRow %i (globalRow %i; ct= %i)\n   ", 
                                 1+i, i+1+beg_rowP, rp[i+1] - rp[i]);
           for (k=rp[i]; k<rp[i+1]; ++k) {
@@ -197,7 +197,7 @@ void iluk_mpi_pilu(Euclid_dh ctx)
       }
     }
 /*
-    { HYPRE_Int temp = rp[i]; 
+    { NALU_HYPRE_Int temp = rp[i]; 
       while (cval[temp] != i+beg_row) ++temp;
       diag[i] = temp;
     }
@@ -213,7 +213,7 @@ void iluk_mpi_pilu(Euclid_dh ctx)
 
   /* adjust to local (zero) based, if block jacobi factorization */
   if (bj) {
-    HYPRE_Int nz = rp[m];
+    NALU_HYPRE_Int nz = rp[m];
     for (i=0; i<nz; ++i) cval[i] -= beg_rowP;
   }
 
@@ -223,28 +223,28 @@ void iluk_mpi_pilu(Euclid_dh ctx)
 
 #undef __FUNC__
 #define __FUNC__ "iluk_symbolic_row_private"
-void iluk_symbolic_row_private(HYPRE_Int localRow, HYPRE_Int len, HYPRE_Int *CVAL, 
-                               HYPRE_Real *AVAL, ExternalRows_dh extRows, 
+void iluk_symbolic_row_private(NALU_HYPRE_Int localRow, NALU_HYPRE_Int len, NALU_HYPRE_Int *CVAL, 
+                               NALU_HYPRE_Real *AVAL, ExternalRows_dh extRows, 
                                SortedList_dh slist, Euclid_dh ctx, bool debug)
 {
   START_FUNC_DH
-  HYPRE_Int       level = ctx->level, m = ctx->m;
-  HYPRE_Int       beg_row = ctx->sg->beg_row[myid_dh];
-  HYPRE_Int       beg_rowP = ctx->sg->beg_rowP[myid_dh];
-  HYPRE_Int       *cval = ctx->F->cval, *diag = ctx->F->diag; 
-  HYPRE_Int       *rp = ctx->F->rp, *fill = ctx->F->fill;
-  HYPRE_Int       j, node, col;
-  HYPRE_Int       end_rowP = beg_rowP + m;
-  HYPRE_Int       level_1, level_2;
-  HYPRE_Int       *cvalPtr, *fillPtr;
+  NALU_HYPRE_Int       level = ctx->level, m = ctx->m;
+  NALU_HYPRE_Int       beg_row = ctx->sg->beg_row[myid_dh];
+  NALU_HYPRE_Int       beg_rowP = ctx->sg->beg_rowP[myid_dh];
+  NALU_HYPRE_Int       *cval = ctx->F->cval, *diag = ctx->F->diag; 
+  NALU_HYPRE_Int       *rp = ctx->F->rp, *fill = ctx->F->fill;
+  NALU_HYPRE_Int       j, node, col;
+  NALU_HYPRE_Int       end_rowP = beg_rowP + m;
+  NALU_HYPRE_Int       level_1, level_2;
+  NALU_HYPRE_Int       *cvalPtr, *fillPtr;
   SRecord   sr, *srPtr;
   REAL_DH   scale, *avalPtr;
-  HYPRE_Real    thresh = ctx->sparseTolA;
+  NALU_HYPRE_Real    thresh = ctx->sparseTolA;
   bool      wasInserted;
-  HYPRE_Int       count = 0;
+  NALU_HYPRE_Int       count = 0;
 
   scale = ctx->scale[localRow];
-  ctx->stats[NZA_STATS] += (HYPRE_Real)len;
+  ctx->stats[NZA_STATS] += (NALU_HYPRE_Real)len;
 
   /* insert col indices in sorted linked list */
   sr.level = 0;
@@ -272,7 +272,7 @@ void iluk_symbolic_row_private(HYPRE_Int localRow, HYPRE_Int len, HYPRE_Int *CVA
       hypre_fprintf(logFile, "ILU_pilu   inserted missing diagonal: %i\n", 1+localRow+beg_row);
     }
   }
-  ctx->stats[NZA_USED_STATS] += (HYPRE_Real)count;
+  ctx->stats[NZA_USED_STATS] += (NALU_HYPRE_Real)count;
 
   /* update row from previously factored rows */
   sr.val = 0.0;
@@ -330,18 +330,18 @@ void iluk_symbolic_row_private(HYPRE_Int localRow, HYPRE_Int len, HYPRE_Int *CVA
 
 #undef __FUNC__
 #define __FUNC__ "iluk_numeric_row_private"
-void iluk_numeric_row_private(HYPRE_Int new_row, ExternalRows_dh extRows, 
+void iluk_numeric_row_private(NALU_HYPRE_Int new_row, ExternalRows_dh extRows, 
                                 SortedList_dh slist, Euclid_dh ctx, bool debug)
 {
   START_FUNC_DH
-  HYPRE_Int    m = ctx->m;
-  HYPRE_Int    beg_rowP = ctx->sg->beg_rowP[myid_dh];
-  HYPRE_Int    end_rowP = beg_rowP + m;
-  HYPRE_Int    len, row;
-  HYPRE_Int    *rp = ctx->F->rp, *cval = ctx->F->cval, *diag = ctx->F->diag;
+  NALU_HYPRE_Int    m = ctx->m;
+  NALU_HYPRE_Int    beg_rowP = ctx->sg->beg_rowP[myid_dh];
+  NALU_HYPRE_Int    end_rowP = beg_rowP + m;
+  NALU_HYPRE_Int    len, row;
+  NALU_HYPRE_Int    *rp = ctx->F->rp, *cval = ctx->F->cval, *diag = ctx->F->diag;
   REAL_DH *avalPtr, *aval = ctx->F->aval;
-  HYPRE_Int     *cvalPtr;
-  HYPRE_Real  multiplier, pc, pv;
+  NALU_HYPRE_Int     *cvalPtr;
+  NALU_HYPRE_Real  multiplier, pc, pv;
   SRecord sr, *srPtr;
 
   /* note: non-zero entries from A were inserted in list during iluk_symbolic_row_private */
@@ -357,7 +357,7 @@ void iluk_numeric_row_private(HYPRE_Int new_row, ExternalRows_dh extRows,
     row = srPtr->col;
 
     if (row >= beg_rowP && row < end_rowP) {
-      HYPRE_Int local_row = row - beg_rowP;
+      NALU_HYPRE_Int local_row = row - beg_rowP;
 
       len = rp[local_row+1] - diag[local_row];
       cvalPtr = cval + diag[local_row];

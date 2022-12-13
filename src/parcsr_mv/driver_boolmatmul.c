@@ -11,8 +11,8 @@
  * Test driver for Boolean matrix multiplication, C=A*B .
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-main( HYPRE_Int   argc,
+NALU_HYPRE_Int
+main( NALU_HYPRE_Int   argc,
       char *argv[] )
 {
    hypre_ParCSRBooleanMatrix     *A;
@@ -20,9 +20,9 @@ main( HYPRE_Int   argc,
    hypre_ParCSRBooleanMatrix     *C;
    hypre_CSRBooleanMatrix *As;
    hypre_CSRBooleanMatrix *Bs;
-   HYPRE_BigInt *row_starts, *col_starts;
-   HYPRE_Int num_procs, my_id;
-   HYPRE_Int a_nrows, a_ncols, b_nrows, b_ncols;
+   NALU_HYPRE_BigInt *row_starts, *col_starts;
+   NALU_HYPRE_Int num_procs, my_id;
+   NALU_HYPRE_Int a_nrows, a_ncols, b_nrows, b_ncols;
 
    /* Initialize MPI */
    hypre_MPI_Init(&argc, &argv);

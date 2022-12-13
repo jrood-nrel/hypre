@@ -15,31 +15,31 @@
 typedef struct hypre_ParFSAIData_struct
 {
    /* FSAI Setup data */
-   HYPRE_Int             algo_type;       /* FSAI algorithm implementation type */
-   HYPRE_Int             max_steps;       /* Maximum iterations run per row */
-   HYPRE_Int
+   NALU_HYPRE_Int             algo_type;       /* FSAI algorithm implementation type */
+   NALU_HYPRE_Int             max_steps;       /* Maximum iterations run per row */
+   NALU_HYPRE_Int
    max_step_size;   /* Maximum number of nonzero elements added to a row of G per step */
-   HYPRE_Real            kap_tolerance;   /* Minimum amount of change between two steps */
+   NALU_HYPRE_Real            kap_tolerance;   /* Minimum amount of change between two steps */
    hypre_ParCSRMatrix   *Gmat;            /* Matrix holding FSAI factor. M^(-1) = G'G */
    hypre_ParCSRMatrix   *GTmat;           /* Matrix holding the transpose of the FSAI factor */
 
    /* FSAI Setup info */
-   HYPRE_Real            density;         /* Density of matrix G wrt A */
+   NALU_HYPRE_Real            density;         /* Density of matrix G wrt A */
 
    /* Solver Problem Data */
-   HYPRE_Int             zero_guess;      /* Flag indicating x0 = 0 */
-   HYPRE_Int             eig_max_iters;   /* Iters for computing max. eigenvalue of G^T*G*A */
-   HYPRE_Int             max_iterations;  /* Maximum iterations run for the solver */
-   HYPRE_Int             num_iterations;  /* Number of iterations the solver ran */
-   HYPRE_Real            omega;           /* Step size for Preconditioned Richardson Solver */
-   HYPRE_Real            tolerance;         /* Tolerance for the solver */
-   HYPRE_Real            rel_resnorm;     /* available if logging > 1 */
+   NALU_HYPRE_Int             zero_guess;      /* Flag indicating x0 = 0 */
+   NALU_HYPRE_Int             eig_max_iters;   /* Iters for computing max. eigenvalue of G^T*G*A */
+   NALU_HYPRE_Int             max_iterations;  /* Maximum iterations run for the solver */
+   NALU_HYPRE_Int             num_iterations;  /* Number of iterations the solver ran */
+   NALU_HYPRE_Real            omega;           /* Step size for Preconditioned Richardson Solver */
+   NALU_HYPRE_Real            tolerance;         /* Tolerance for the solver */
+   NALU_HYPRE_Real            rel_resnorm;     /* available if logging > 1 */
    hypre_ParVector      *r_work;          /* work vector used to compute the residual */
    hypre_ParVector      *z_work;          /* work vector used for applying FSAI */
 
    /* log info */
-   HYPRE_Int             logging;
-   HYPRE_Int             print_level;
+   NALU_HYPRE_Int             logging;
+   NALU_HYPRE_Int             print_level;
 } hypre_ParFSAIData;
 
 /*--------------------------------------------------------------------------

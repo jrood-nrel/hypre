@@ -12,68 +12,68 @@
 #endif
 
 /* examples in Ruge & Stuben paper */
-static HYPRE_Int rs_example = 1;
-static HYPRE_Real rs_l = 3.0;
+static NALU_HYPRE_Int rs_example = 1;
+static NALU_HYPRE_Real rs_l = 3.0;
 
 /*--------------------------------------------------------------------------
  * hypre_GenerateVarDifConv: with the FD discretization and examples
  *                           in Ruge-Stuben's paper ``Algebraic Multigrid''
  *--------------------------------------------------------------------------*/
 
-HYPRE_ParCSRMatrix
+NALU_HYPRE_ParCSRMatrix
 GenerateRSVarDifConv( MPI_Comm         comm,
-                      HYPRE_BigInt     nx,
-                      HYPRE_BigInt     ny,
-                      HYPRE_BigInt     nz,
-                      HYPRE_Int        P,
-                      HYPRE_Int        Q,
-                      HYPRE_Int        R,
-                      HYPRE_Int        p,
-                      HYPRE_Int        q,
-                      HYPRE_Int        r,
-                      HYPRE_Real       eps,
-                      HYPRE_ParVector *rhs_ptr,
-                      HYPRE_Int        type)
+                      NALU_HYPRE_BigInt     nx,
+                      NALU_HYPRE_BigInt     ny,
+                      NALU_HYPRE_BigInt     nz,
+                      NALU_HYPRE_Int        P,
+                      NALU_HYPRE_Int        Q,
+                      NALU_HYPRE_Int        R,
+                      NALU_HYPRE_Int        p,
+                      NALU_HYPRE_Int        q,
+                      NALU_HYPRE_Int        r,
+                      NALU_HYPRE_Real       eps,
+                      NALU_HYPRE_ParVector *rhs_ptr,
+                      NALU_HYPRE_Int        type)
 {
    hypre_ParCSRMatrix *A;
    hypre_CSRMatrix *diag;
    hypre_CSRMatrix *offd;
    hypre_ParVector *par_rhs;
    hypre_Vector *rhs;
-   HYPRE_Real *rhs_data;
+   NALU_HYPRE_Real *rhs_data;
 
-   HYPRE_Int    *diag_i;
-   HYPRE_Int    *diag_j;
-   HYPRE_Real *diag_data;
+   NALU_HYPRE_Int    *diag_i;
+   NALU_HYPRE_Int    *diag_j;
+   NALU_HYPRE_Real *diag_data;
 
-   HYPRE_Int    *offd_i;
-   HYPRE_Int    *offd_j;
-   HYPRE_BigInt *big_offd_j;
-   HYPRE_Real *offd_data;
+   NALU_HYPRE_Int    *offd_i;
+   NALU_HYPRE_Int    *offd_j;
+   NALU_HYPRE_BigInt *big_offd_j;
+   NALU_HYPRE_Real *offd_data;
 
-   HYPRE_BigInt global_part[2];
-   HYPRE_BigInt ix, iy, iz;
-   HYPRE_Int cnt, o_cnt;
-   HYPRE_Int local_num_rows;
-   HYPRE_BigInt *col_map_offd;
-   HYPRE_Int row_index;
-   HYPRE_Int i, j;
+   NALU_HYPRE_BigInt global_part[2];
+   NALU_HYPRE_BigInt ix, iy, iz;
+   NALU_HYPRE_Int cnt, o_cnt;
+   NALU_HYPRE_Int local_num_rows;
+   NALU_HYPRE_BigInt *col_map_offd;
+   NALU_HYPRE_Int row_index;
+   NALU_HYPRE_Int i, j;
 
-   HYPRE_Int nx_local, ny_local, nz_local;
-   HYPRE_Int num_cols_offd;
-   HYPRE_BigInt grid_size;
+   NALU_HYPRE_Int nx_local, ny_local, nz_local;
+   NALU_HYPRE_Int num_cols_offd;
+   NALU_HYPRE_BigInt grid_size;
 
 
-   HYPRE_BigInt *nx_part;
-   HYPRE_BigInt *ny_part;
-   HYPRE_BigInt *nz_part;
+   NALU_HYPRE_BigInt *nx_part;
+   NALU_HYPRE_BigInt *ny_part;
+   NALU_HYPRE_BigInt *nz_part;
 
-   HYPRE_Int num_procs, my_id;
-   HYPRE_Int P_busy, Q_busy, R_busy;
+   NALU_HYPRE_Int num_procs, my_id;
+   NALU_HYPRE_Int P_busy, Q_busy, R_busy;
 
-   HYPRE_Real hhx, hhy, hhz;
-   HYPRE_Real xx, yy, zz;
-   HYPRE_Real afp, afm, bfp, bfm, cfp, cfm, di, ai, mux, ei, bi,
+   NALU_HYPRE_Real hhx, hhy, hhz;
+   NALU_HYPRE_Real xx, yy, zz;
+   NALU_HYPRE_Real afp, afm, bfp, bfm, cfp, cfm, di, ai, mux, ei, bi,
               muy, fi, ci, muz, dfm, dfp, efm, efp, ffm, ffp, gi;
 
    hypre_MPI_Comm_size(comm, &num_procs);
@@ -90,18 +90,18 @@ GenerateRSVarDifConv( MPI_Comm         comm,
    hypre_GeneratePartitioning(ny, Q, &ny_part);
    hypre_GeneratePartitioning(nz, R, &nz_part);
 
-   nx_local = (HYPRE_Int)(nx_part[p + 1] - nx_part[p]);
-   ny_local = (HYPRE_Int)(ny_part[q + 1] - ny_part[q]);
-   nz_local = (HYPRE_Int)(nz_part[r + 1] - nz_part[r]);
+   nx_local = (NALU_HYPRE_Int)(nx_part[p + 1] - nx_part[p]);
+   ny_local = (NALU_HYPRE_Int)(ny_part[q + 1] - ny_part[q]);
+   nz_local = (NALU_HYPRE_Int)(nz_part[r + 1] - nz_part[r]);
 
    local_num_rows = nx_local * ny_local * nz_local;
 
    global_part[0] = nz_part[r] * nx * ny + (ny_part[q] * nx + nx_part[p] * ny_local) * nz_local;
-   global_part[1] = global_part[0] + (HYPRE_BigInt)local_num_rows;
+   global_part[1] = global_part[0] + (NALU_HYPRE_BigInt)local_num_rows;
 
-   diag_i = hypre_CTAlloc(HYPRE_Int,  local_num_rows + 1, HYPRE_MEMORY_HOST);
-   offd_i = hypre_CTAlloc(HYPRE_Int,  local_num_rows + 1, HYPRE_MEMORY_HOST);
-   rhs_data = hypre_CTAlloc(HYPRE_Real,  local_num_rows, HYPRE_MEMORY_HOST);
+   diag_i = hypre_CTAlloc(NALU_HYPRE_Int,  local_num_rows + 1, NALU_HYPRE_MEMORY_HOST);
+   offd_i = hypre_CTAlloc(NALU_HYPRE_Int,  local_num_rows + 1, NALU_HYPRE_MEMORY_HOST);
+   rhs_data = hypre_CTAlloc(NALU_HYPRE_Real,  local_num_rows, NALU_HYPRE_MEMORY_HOST);
 
    P_busy = hypre_min(nx, P);
    Q_busy = hypre_min(ny, Q);
@@ -117,11 +117,11 @@ GenerateRSVarDifConv( MPI_Comm         comm,
 
    if (!local_num_rows) { num_cols_offd = 0; }
 
-   col_map_offd = hypre_CTAlloc(HYPRE_BigInt,  num_cols_offd, HYPRE_MEMORY_HOST);
+   col_map_offd = hypre_CTAlloc(NALU_HYPRE_BigInt,  num_cols_offd, NALU_HYPRE_MEMORY_HOST);
 
-   hhx = 1.0 / (HYPRE_Real)(nx + 1);
-   hhy = 1.0 / (HYPRE_Real)(ny + 1);
-   hhz = 1.0 / (HYPRE_Real)(nz + 1);
+   hhx = 1.0 / (NALU_HYPRE_Real)(nx + 1);
+   hhy = 1.0 / (NALU_HYPRE_Real)(ny + 1);
+   hhz = 1.0 / (NALU_HYPRE_Real)(nz + 1);
 
    cnt = 1;
    o_cnt = 1;
@@ -208,14 +208,14 @@ GenerateRSVarDifConv( MPI_Comm         comm,
       }
    }
 
-   diag_j = hypre_CTAlloc(HYPRE_Int,  diag_i[local_num_rows], HYPRE_MEMORY_HOST);
-   diag_data = hypre_CTAlloc(HYPRE_Real,  diag_i[local_num_rows], HYPRE_MEMORY_HOST);
+   diag_j = hypre_CTAlloc(NALU_HYPRE_Int,  diag_i[local_num_rows], NALU_HYPRE_MEMORY_HOST);
+   diag_data = hypre_CTAlloc(NALU_HYPRE_Real,  diag_i[local_num_rows], NALU_HYPRE_MEMORY_HOST);
 
    if (num_procs > 1)
    {
-      big_offd_j = hypre_CTAlloc(HYPRE_BigInt,  offd_i[local_num_rows], HYPRE_MEMORY_HOST);
-      offd_j = hypre_CTAlloc(HYPRE_Int,  offd_i[local_num_rows], HYPRE_MEMORY_HOST);
-      offd_data = hypre_CTAlloc(HYPRE_Real,  offd_i[local_num_rows], HYPRE_MEMORY_HOST);
+      big_offd_j = hypre_CTAlloc(NALU_HYPRE_BigInt,  offd_i[local_num_rows], NALU_HYPRE_MEMORY_HOST);
+      offd_j = hypre_CTAlloc(NALU_HYPRE_Int,  offd_i[local_num_rows], NALU_HYPRE_MEMORY_HOST);
+      offd_data = hypre_CTAlloc(NALU_HYPRE_Real,  offd_i[local_num_rows], NALU_HYPRE_MEMORY_HOST);
    }
 
    row_index = 0;
@@ -223,13 +223,13 @@ GenerateRSVarDifConv( MPI_Comm         comm,
    o_cnt = 0;
    for (iz = nz_part[r]; iz < nz_part[r + 1]; iz++)
    {
-      zz = (HYPRE_Real)(iz + 1) * hhz;
+      zz = (NALU_HYPRE_Real)(iz + 1) * hhz;
       for (iy = ny_part[q]; iy < ny_part[q + 1]; iy++)
       {
-         yy = (HYPRE_Real)(iy + 1) * hhy;
+         yy = (NALU_HYPRE_Real)(iy + 1) * hhy;
          for (ix = nx_part[p]; ix < nx_part[p + 1]; ix++)
          {
-            xx = (HYPRE_Real)(ix + 1) * hhx;
+            xx = (NALU_HYPRE_Real)(ix + 1) * hhx;
             afp = -eps * afun_rs(xx + 0.5 * hhx, yy, zz) / hhx / hhx;
             afm = -eps * afun_rs(xx - 0.5 * hhx, yy, zz) / hhx / hhx;
             bfp = -eps * bfun_rs(xx, yy + 0.5 * hhy, zz) / hhy / hhy;
@@ -415,7 +415,7 @@ GenerateRSVarDifConv( MPI_Comm         comm,
                offd_j[i] = j;
                break;
             }
-      hypre_TFree(big_offd_j, HYPRE_MEMORY_HOST);
+      hypre_TFree(big_offd_j, NALU_HYPRE_MEMORY_HOST);
    }
 
    par_rhs = hypre_ParVectorCreate(comm, grid_size, global_part);
@@ -442,39 +442,39 @@ GenerateRSVarDifConv( MPI_Comm         comm,
       hypre_CSRMatrixData(offd) = offd_data;
    }
 
-   hypre_TFree(nx_part, HYPRE_MEMORY_HOST);
-   hypre_TFree(ny_part, HYPRE_MEMORY_HOST);
-   hypre_TFree(nz_part, HYPRE_MEMORY_HOST);
+   hypre_TFree(nx_part, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(ny_part, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(nz_part, NALU_HYPRE_MEMORY_HOST);
 
-   *rhs_ptr = (HYPRE_ParVector) par_rhs;
+   *rhs_ptr = (NALU_HYPRE_ParVector) par_rhs;
 
-   return (HYPRE_ParCSRMatrix) A;
+   return (NALU_HYPRE_ParCSRMatrix) A;
 }
 
-HYPRE_Real afun_rs(HYPRE_Real xx, HYPRE_Real yy, HYPRE_Real zz)
+NALU_HYPRE_Real afun_rs(NALU_HYPRE_Real xx, NALU_HYPRE_Real yy, NALU_HYPRE_Real zz)
 {
-   HYPRE_Real value;
+   NALU_HYPRE_Real value;
    value = 1.0;
    return value;
 }
 
-HYPRE_Real bfun_rs(HYPRE_Real xx, HYPRE_Real yy, HYPRE_Real zz)
+NALU_HYPRE_Real bfun_rs(NALU_HYPRE_Real xx, NALU_HYPRE_Real yy, NALU_HYPRE_Real zz)
 {
-   HYPRE_Real value;
+   NALU_HYPRE_Real value;
    value = 1.0;
    return value;
 }
 
-HYPRE_Real cfun_rs(HYPRE_Real xx, HYPRE_Real yy, HYPRE_Real zz)
+NALU_HYPRE_Real cfun_rs(NALU_HYPRE_Real xx, NALU_HYPRE_Real yy, NALU_HYPRE_Real zz)
 {
-   HYPRE_Real value;
+   NALU_HYPRE_Real value;
    value = 1.0;
    return value;
 }
 
-HYPRE_Real dfun_rs(HYPRE_Real xx, HYPRE_Real yy, HYPRE_Real zz)
+NALU_HYPRE_Real dfun_rs(NALU_HYPRE_Real xx, NALU_HYPRE_Real yy, NALU_HYPRE_Real zz)
 {
-   HYPRE_Real value;
+   NALU_HYPRE_Real value;
    if (rs_example == 1)
    {
       value = sin(rs_l * M_PI / 8.0);
@@ -490,9 +490,9 @@ HYPRE_Real dfun_rs(HYPRE_Real xx, HYPRE_Real yy, HYPRE_Real zz)
    return value;
 }
 
-HYPRE_Real efun_rs(HYPRE_Real xx, HYPRE_Real yy, HYPRE_Real zz)
+NALU_HYPRE_Real efun_rs(NALU_HYPRE_Real xx, NALU_HYPRE_Real yy, NALU_HYPRE_Real zz)
 {
-   HYPRE_Real value;
+   NALU_HYPRE_Real value;
    if (rs_example == 1)
    {
       value = cos(rs_l * M_PI / 8.0);
@@ -508,30 +508,30 @@ HYPRE_Real efun_rs(HYPRE_Real xx, HYPRE_Real yy, HYPRE_Real zz)
    return value;
 }
 
-HYPRE_Real ffun_rs(HYPRE_Real xx, HYPRE_Real yy, HYPRE_Real zz)
+NALU_HYPRE_Real ffun_rs(NALU_HYPRE_Real xx, NALU_HYPRE_Real yy, NALU_HYPRE_Real zz)
 {
-   HYPRE_Real value;
+   NALU_HYPRE_Real value;
    value = efun_rs(xx, yy, zz);
    return value;
 }
 
-HYPRE_Real gfun_rs(HYPRE_Real xx, HYPRE_Real yy, HYPRE_Real zz)
+NALU_HYPRE_Real gfun_rs(NALU_HYPRE_Real xx, NALU_HYPRE_Real yy, NALU_HYPRE_Real zz)
 {
-   HYPRE_Real value;
+   NALU_HYPRE_Real value;
    value = 0.0;
    return value;
 }
 
-HYPRE_Real rfun_rs(HYPRE_Real xx, HYPRE_Real yy, HYPRE_Real zz)
+NALU_HYPRE_Real rfun_rs(NALU_HYPRE_Real xx, NALU_HYPRE_Real yy, NALU_HYPRE_Real zz)
 {
-   HYPRE_Real value;
+   NALU_HYPRE_Real value;
    value = 1.0;
    return value;
 }
 
-HYPRE_Real bndfun_rs(HYPRE_Real xx, HYPRE_Real yy, HYPRE_Real zz)
+NALU_HYPRE_Real bndfun_rs(NALU_HYPRE_Real xx, NALU_HYPRE_Real yy, NALU_HYPRE_Real zz)
 {
-   HYPRE_Real value;
+   NALU_HYPRE_Real value;
    value = 0.0;
    return value;
 }

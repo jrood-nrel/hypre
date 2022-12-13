@@ -3,12 +3,12 @@
 !
 !     SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-      integer HYPRE_ERROR_GENERIC
-      integer HYPRE_ERROR_MEMORY
-      integer HYPRE_ERROR_ARG
-      integer HYPRE_ERROR_CONV
-      parameter (HYPRE_ERROR_GENERIC = 1)
-      parameter (HYPRE_ERROR_MEMORY  = 2)
-      parameter (HYPRE_ERROR_ARG     = 4)
-      parameter (HYPRE_ERROR_CONV    = 256)
+      integer NALU_HYPRE_ERROR_GENERIC
+      integer NALU_HYPRE_ERROR_MEMORY
+      integer NALU_HYPRE_ERROR_ARG
+      integer NALU_HYPRE_ERROR_CONV
+      parameter (NALU_HYPRE_ERROR_GENERIC = 1)
+      parameter (NALU_HYPRE_ERROR_MEMORY  = 2)
+      parameter (NALU_HYPRE_ERROR_ARG     = 4)
+      parameter (NALU_HYPRE_ERROR_CONV    = 256)
 

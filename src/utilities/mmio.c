@@ -18,7 +18,7 @@
 #include <ctype.h>
 #include "_hypre_utilities.h"
 
-HYPRE_Int hypre_mm_is_valid(MM_typecode matcode)
+NALU_HYPRE_Int hypre_mm_is_valid(MM_typecode matcode)
 {
    if (!hypre_mm_is_matrix(matcode)) { return 0; }
    if (hypre_mm_is_dense(matcode) && hypre_mm_is_pattern(matcode)) { return 0; }
@@ -27,7 +27,7 @@ HYPRE_Int hypre_mm_is_valid(MM_typecode matcode)
    return 1;
 }
 
-HYPRE_Int hypre_mm_read_banner(FILE *f, MM_typecode *matcode)
+NALU_HYPRE_Int hypre_mm_read_banner(FILE *f, MM_typecode *matcode)
 {
    char line[MM_MAX_LINE_LENGTH];
    char banner[MM_MAX_TOKEN_LENGTH];
@@ -137,10 +137,10 @@ HYPRE_Int hypre_mm_read_banner(FILE *f, MM_typecode *matcode)
    return 0;
 }
 
-HYPRE_Int hypre_mm_read_mtx_crd_size(FILE *f, HYPRE_Int *M, HYPRE_Int *N, HYPRE_Int *nz )
+NALU_HYPRE_Int hypre_mm_read_mtx_crd_size(FILE *f, NALU_HYPRE_Int *M, NALU_HYPRE_Int *N, NALU_HYPRE_Int *nz )
 {
    char line[MM_MAX_LINE_LENGTH];
-   HYPRE_Int num_items_read;
+   NALU_HYPRE_Int num_items_read;
 
    /* set return null parameter values, in case we exit with errors */
    *M = *N = *nz = 0;

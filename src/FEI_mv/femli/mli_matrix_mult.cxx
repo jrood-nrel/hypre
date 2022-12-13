@@ -10,7 +10,7 @@
 #include "_hypre_utilities.h"
 #include "HYPRE.h"
 #include "_hypre_parcsr_mv.h"
-#include "HYPRE_IJ_mv.h"
+#include "NALU_HYPRE_IJ_mv.h"
 #include "mli_matrix.h"
 #include "mli_matrix_misc.h"
 #include "mli_utils.h"
@@ -49,8 +49,8 @@ void MLI_Matrix_MatMatMult( MLI_Matrix *Amat, MLI_Matrix *Bmat,
     * check to make sure both matrices are ParCSR matrices
     * ----------------------------------------------------------------------*/
 
-   if ( strcmp(Amat->getName(),"HYPRE_ParCSR") ||
-        strcmp(Bmat->getName(),"HYPRE_ParCSR") )
+   if ( strcmp(Amat->getName(),"NALU_HYPRE_ParCSR") ||
+        strcmp(Bmat->getName(),"NALU_HYPRE_ParCSR") )
    {
       printf("MLI_Matrix_MatMatMult ERROR - matrix has invalid type.\n");
       exit(1);
@@ -359,14 +359,14 @@ void MLI_Matrix_MatMatMult( MLI_Matrix *Amat, MLI_Matrix *Bmat,
     * matrix matrix multiply - perform the actual multiplication
     * ----------------------------------------------------------------------*/
 
-   CDiagIA = hypre_TAlloc(int,  (CNRows+1) , HYPRE_MEMORY_HOST);
-   CDiagJA = hypre_TAlloc(int,  CDiagNnz , HYPRE_MEMORY_HOST);
-   CDiagAA = hypre_TAlloc(double,  CDiagNnz , HYPRE_MEMORY_HOST);
-   COffdIA = hypre_TAlloc(int,  (CNRows+1) , HYPRE_MEMORY_HOST);
+   CDiagIA = hypre_TAlloc(int,  (CNRows+1) , NALU_HYPRE_MEMORY_HOST);
+   CDiagJA = hypre_TAlloc(int,  CDiagNnz , NALU_HYPRE_MEMORY_HOST);
+   CDiagAA = hypre_TAlloc(double,  CDiagNnz , NALU_HYPRE_MEMORY_HOST);
+   COffdIA = hypre_TAlloc(int,  (CNRows+1) , NALU_HYPRE_MEMORY_HOST);
    if ( COffdNnz > 0 )
    {
-      COffdJA = hypre_TAlloc(int,  COffdNnz , HYPRE_MEMORY_HOST);
-      COffdAA = hypre_TAlloc(double,  COffdNnz , HYPRE_MEMORY_HOST);
+      COffdJA = hypre_TAlloc(int,  COffdNnz , NALU_HYPRE_MEMORY_HOST);
+      COffdAA = hypre_TAlloc(double,  COffdNnz , NALU_HYPRE_MEMORY_HOST);
    }
    else
    {
@@ -378,7 +378,7 @@ void MLI_Matrix_MatMatMult( MLI_Matrix *Amat, MLI_Matrix *Bmat,
    for ( ib = 0; ib < CNRows; ib++ ) CDiagReg[ib] = -1;
    for ( ib = 0; ib < CExtNCols; ib++ ) COffdReg[ib] = -1;
    CColMap = NULL;
-   if (COffdNCols > 0) CColMap = hypre_TAlloc(int, COffdNCols , HYPRE_MEMORY_HOST);
+   if (COffdNCols > 0) CColMap = hypre_TAlloc(int, COffdNCols , NALU_HYPRE_MEMORY_HOST);
    for ( ia = 0; ia < BExtNRows; ia++ ) CColMap[ia] = BColMap[ia];
    for ( ia = BExtNRows; ia < COffdNCols; ia++ )
       CColMap[ia] = extColList[ia-BExtNRows];
@@ -562,7 +562,7 @@ void MLI_Matrix_MatMatMult( MLI_Matrix *Amat, MLI_Matrix *Bmat,
    }
 
    /* -----------------------------------------------------------------------
-    * finally form HYPRE_ParCSRMatrix for the product
+    * finally form NALU_HYPRE_ParCSRMatrix for the product
     * ----------------------------------------------------------------------*/
 
 #if 0
@@ -580,8 +580,8 @@ void MLI_Matrix_MatMatMult( MLI_Matrix *Amat, MLI_Matrix *Bmat,
    }
 #endif
 
-   CRowStarts = hypre_TAlloc(int,  (nprocs+1) , HYPRE_MEMORY_HOST);
-   CColStarts = hypre_TAlloc(int,  (nprocs+1) , HYPRE_MEMORY_HOST);
+   CRowStarts = hypre_TAlloc(int,  (nprocs+1) , NALU_HYPRE_MEMORY_HOST);
+   CColStarts = hypre_TAlloc(int,  (nprocs+1) , NALU_HYPRE_MEMORY_HOST);
    for ( ia = 0; ia <= nprocs; ia++ ) CRowStarts[ia] = ARowStarts[ia];
    for ( ia = 0; ia <= nprocs; ia++ ) CColStarts[ia] = BColStarts[ia];
    hypreC = hypre_ParCSRMatrixCreate(mpiComm, CNRows, CNCols, CRowStarts,
@@ -600,7 +600,7 @@ void MLI_Matrix_MatMatMult( MLI_Matrix *Amat, MLI_Matrix *Bmat,
       hypre_ParCSRMatrixColMapOffd(hypreC) = CColMap;
    }
 
-   sprintf(paramString, "HYPRE_ParCSR");
+   sprintf(paramString, "NALU_HYPRE_ParCSR");
    funcPtr = new MLI_Function();
    MLI_Utils_HypreParCSRMatrixGetDestroyFunc(funcPtr);
    (*Cmat) = new MLI_Matrix((void *) hypreC, paramString, funcPtr);

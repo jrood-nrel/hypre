@@ -22,24 +22,24 @@
 
 typedef struct
 {
-   HYPRE_Int            max_off_proc_elmts;      /* length of off processor stash for
+   NALU_HYPRE_Int            max_off_proc_elmts;      /* length of off processor stash for
                                                     SetValues and AddToValues*/
-   HYPRE_Int            current_off_proc_elmts;  /* current no. of elements stored in stash */
-   HYPRE_BigInt        *off_proc_i;              /* contains column indices */
-   HYPRE_Complex       *off_proc_data;           /* contains corresponding data */
+   NALU_HYPRE_Int            current_off_proc_elmts;  /* current no. of elements stored in stash */
+   NALU_HYPRE_BigInt        *off_proc_i;              /* contains column indices */
+   NALU_HYPRE_Complex       *off_proc_data;           /* contains corresponding data */
 
-   HYPRE_MemoryLocation memory_location;
+   NALU_HYPRE_MemoryLocation memory_location;
 
-#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP) || defined(HYPRE_USING_SYCL)
-   HYPRE_Int            max_stack_elmts;      /* length of stash for SetValues and AddToValues*/
-   HYPRE_Int            current_stack_elmts;  /* current no. of elements stored in stash */
-   HYPRE_BigInt        *stack_i;              /* contains row indices */
-   HYPRE_BigInt        *stack_voff;           /* contains vector offsets for multivectors */
-   HYPRE_Complex       *stack_data;           /* contains corresponding data */
+#if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP) || defined(NALU_HYPRE_USING_SYCL)
+   NALU_HYPRE_Int            max_stack_elmts;      /* length of stash for SetValues and AddToValues*/
+   NALU_HYPRE_Int            current_stack_elmts;  /* current no. of elements stored in stash */
+   NALU_HYPRE_BigInt        *stack_i;              /* contains row indices */
+   NALU_HYPRE_BigInt        *stack_voff;           /* contains vector offsets for multivectors */
+   NALU_HYPRE_Complex       *stack_data;           /* contains corresponding data */
    char                *stack_sora;
-   HYPRE_Int            usr_off_proc_elmts;   /* the num of off-proc elements usr guided */
-   HYPRE_Real           init_alloc_factor;
-   HYPRE_Real           grow_factor;
+   NALU_HYPRE_Int            usr_off_proc_elmts;   /* the num of off-proc elements usr guided */
+   NALU_HYPRE_Real           init_alloc_factor;
+   NALU_HYPRE_Real           grow_factor;
 #endif
 } hypre_AuxParVector;
 
@@ -54,7 +54,7 @@ typedef struct
 
 #define hypre_AuxParVectorMemoryLocation(vector)       ((vector) -> memory_location)
 
-#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP) || defined(HYPRE_USING_SYCL)
+#if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP) || defined(NALU_HYPRE_USING_SYCL)
 #define hypre_AuxParVectorMaxStackElmts(vector)        ((vector) -> max_stack_elmts)
 #define hypre_AuxParVectorCurrentStackElmts(vector)    ((vector) -> current_stack_elmts)
 #define hypre_AuxParVectorStackI(vector)               ((vector) -> stack_i)

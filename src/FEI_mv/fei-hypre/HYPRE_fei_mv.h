@@ -5,10 +5,10 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#ifndef HYPRE_FE_MV_HEADER
-#define HYPRE_FE_MV_HEADER
+#ifndef NALU_HYPRE_FE_MV_HEADER
+#define NALU_HYPRE_FE_MV_HEADER
 
-#include "HYPRE_utilities.h"
+#include "NALU_HYPRE_utilities.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -36,13 +36,13 @@ extern "C" {
 /*@{*/
 
 struct hypre_FEMesh_struct;
-typedef struct hypre_FEMesh_struct *HYPRE_FEMesh;
+typedef struct hypre_FEMesh_struct *NALU_HYPRE_FEMesh;
 
 /**
  * Create a FE Mesh object.  
  **/
 
-int HYPRE_FEMeshCreate(MPI_Comm comm, HYPRE_FEMesh *mesh);
+int NALU_HYPRE_FEMeshCreate(MPI_Comm comm, NALU_HYPRE_FEMesh *mesh);
 
 /**
  * Destroy an FE Mesh object.  An object should be explicitly destroyed
@@ -50,26 +50,26 @@ int HYPRE_FEMeshCreate(MPI_Comm comm, HYPRE_FEMesh *mesh);
  * access to it.  
  **/
 
-int HYPRE_FEMeshDestroy(HYPRE_FEMesh mesh);
+int NALU_HYPRE_FEMeshDestroy(NALU_HYPRE_FEMesh mesh);
 
 /**
  * load an FE object
  **/
 
-int HYPRE_FEMeshSetFEObject(HYPRE_FEMesh mesh, void *, void *);
+int NALU_HYPRE_FEMeshSetFEObject(NALU_HYPRE_FEMesh mesh, void *, void *);
 
 /**
  * initialize all fields in the finite element mesh
  **/
 
-int HYPRE_FEMeshInitFields(HYPRE_FEMesh mesh, int numFields, 
+int NALU_HYPRE_FEMeshInitFields(NALU_HYPRE_FEMesh mesh, int numFields, 
                            int *fieldSizes, int *fieldIDs);
 
 /**
  * initialize an element block
  **/
 
-int HYPRE_FEMeshInitElemBlock(HYPRE_FEMesh mesh, int blockID, int nElements,
+int NALU_HYPRE_FEMeshInitElemBlock(NALU_HYPRE_FEMesh mesh, int blockID, int nElements,
                 int numNodesPerElement, int *numFieldsPerNode,
                 int **nodalFieldIDs, int numElemDOFFieldsPerElement,
                 int *elemDOFFieldIDs, int interleaveStrategy);
@@ -78,14 +78,14 @@ int HYPRE_FEMeshInitElemBlock(HYPRE_FEMesh mesh, int blockID, int nElements,
  * initialize the connectivity of a given element
  **/
 
-int HYPRE_FEMeshInitElem(HYPRE_FEMesh mesh, int blockID, int elemID,
+int NALU_HYPRE_FEMeshInitElem(NALU_HYPRE_FEMesh mesh, int blockID, int elemID,
                          int *elemConn);
 
 /**
  * initialize the shared nodes between processors
  **/
 
-int HYPRE_FEMeshInitSharedNodes(HYPRE_FEMesh mesh, int nShared,
+int NALU_HYPRE_FEMeshInitSharedNodes(NALU_HYPRE_FEMesh mesh, int nShared,
                                 int *sharedIDs, int *sharedLeng,
                                 int **sharedProcs);
 
@@ -93,13 +93,13 @@ int HYPRE_FEMeshInitSharedNodes(HYPRE_FEMesh mesh, int nShared,
  * initialization complete
  **/
 
-int HYPRE_FEMeshInitComplete(HYPRE_FEMesh mesh);
+int NALU_HYPRE_FEMeshInitComplete(NALU_HYPRE_FEMesh mesh);
 
 /**
  * load node boundary conditions
  **/
 
-int HYPRE_FEMeshLoadNodeBCs(HYPRE_FEMesh mesh, int numNodes,
+int NALU_HYPRE_FEMeshLoadNodeBCs(NALU_HYPRE_FEMesh mesh, int numNodes,
                             int *nodeIDs, int fieldID, double **alpha,
                             double **beta, double **gamma);
 
@@ -117,46 +117,46 @@ struct hypre_FEMatrix_struct;
 /**
  * The matrix object
  **/
-typedef struct hypre_FEMatrix_struct *HYPRE_FEMatrix;
+typedef struct hypre_FEMatrix_struct *NALU_HYPRE_FEMatrix;
 
 /**
  * create a new FE matrix
  **/
 
-int HYPRE_FEMatrixCreate(MPI_Comm comm, HYPRE_FEMesh mesh, 
-                         HYPRE_FEMatrix *matrix);
+int NALU_HYPRE_FEMatrixCreate(MPI_Comm comm, NALU_HYPRE_FEMesh mesh, 
+                         NALU_HYPRE_FEMatrix *matrix);
 
 /**
  * destroy a new FE matrix
  **/
 
-int HYPRE_FEMatrixDestroy(HYPRE_FEMatrix matrix);
+int NALU_HYPRE_FEMatrixDestroy(NALU_HYPRE_FEMatrix matrix);
    
 /**
  * prepare a matrix object for setting coefficient values
  **/
 
-int HYPRE_FEMatrixInitialize(HYPRE_FEMatrix matrix);
+int NALU_HYPRE_FEMatrixInitialize(NALU_HYPRE_FEMatrix matrix);
    
 /**
  * signal that loading has been completed
  **/
 
-int HYPRE_FEMatrixAssemble(HYPRE_FEMatrix matrix);
+int NALU_HYPRE_FEMatrixAssemble(NALU_HYPRE_FEMatrix matrix);
    
 /**
  * Set the storage type of the matrix object to be constructed.
  * Currently, {\tt type} can only be {\tt HYPRE\_PARCSR} (default).
  *
  **/
-int HYPRE_FEMatrixSetObjectType(HYPRE_FEMatrix  matrix, int type);
+int NALU_HYPRE_FEMatrixSetObjectType(NALU_HYPRE_FEMatrix  matrix, int type);
 
 /**
  * Get a reference to the constructed matrix object.
  *
- * @see HYPRE_FEMatrixSetObjectType
+ * @see NALU_HYPRE_FEMatrixSetObjectType
  **/
-int HYPRE_FEMatrixGetObject(HYPRE_FEMatrix matrix, void **object);
+int NALU_HYPRE_FEMatrixGetObject(NALU_HYPRE_FEMatrix matrix, void **object);
 
 /*@}*/
 
@@ -172,40 +172,40 @@ struct hypre_FEVector_struct;
 /**
  * The vector object.
  **/
-typedef struct hypre_FEVector_struct *HYPRE_FEVector;
+typedef struct hypre_FEVector_struct *NALU_HYPRE_FEVector;
 
 /**
  * Create a vector object.
  **/
-int HYPRE_FEVectorCreate(MPI_Comm comm, HYPRE_FEMesh mesh,
-                         HYPRE_FEVector  *vector);
+int NALU_HYPRE_FEVectorCreate(MPI_Comm comm, NALU_HYPRE_FEMesh mesh,
+                         NALU_HYPRE_FEVector  *vector);
 
 /**
  * Destroy a vector object.
  **/
-int HYPRE_FEVectorDestroy(HYPRE_FEVector vector);
+int NALU_HYPRE_FEVectorDestroy(NALU_HYPRE_FEVector vector);
 
 /**
  * Prepare a vector object for setting coefficient values.
  **/
-int HYPRE_FEVectorInitialize(HYPRE_FEVector vector);
+int NALU_HYPRE_FEVectorInitialize(NALU_HYPRE_FEVector vector);
 
 
 /**
  * Finalize the construction of the vector before using.
  **/
-int HYPRE_FEVectorAssemble(HYPRE_FEVector vector);
+int NALU_HYPRE_FEVectorAssemble(NALU_HYPRE_FEVector vector);
 
 /**
  * Set the storage type of the vector object to be constructed.
  * Currently, {\tt type} can only be {\tt HYPRE\_PARCSR} (default).
  **/
-int HYPRE_FEVectorSetObjectType(HYPRE_FEVector vector, int type);
+int NALU_HYPRE_FEVectorSetObjectType(NALU_HYPRE_FEVector vector, int type);
 
 /**
  * Get a reference to the constructed vector object.
  **/
-int HYPRE_FEVectorGetObject(HYPRE_FEVector vector, void **object);
+int NALU_HYPRE_FEVectorGetObject(NALU_HYPRE_FEVector vector, void **object);
 
 /*@}*/
 /*@}*/

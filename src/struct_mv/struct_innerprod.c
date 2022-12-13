@@ -18,18 +18,18 @@
  * hypre_StructInnerProd
  *--------------------------------------------------------------------------*/
 
-HYPRE_Real
+NALU_HYPRE_Real
 hypre_StructInnerProd( hypre_StructVector *x,
                        hypre_StructVector *y )
 {
-   HYPRE_Real       final_innerprod_result;
-   HYPRE_Real       process_result;
+   NALU_HYPRE_Real       final_innerprod_result;
+   NALU_HYPRE_Real       process_result;
 
    hypre_Box       *x_data_box;
    hypre_Box       *y_data_box;
 
-   HYPRE_Complex   *xp;
-   HYPRE_Complex   *yp;
+   NALU_HYPRE_Complex   *xp;
+   NALU_HYPRE_Complex   *yp;
 
    hypre_BoxArray  *boxes;
    hypre_Box       *box;
@@ -37,14 +37,14 @@ hypre_StructInnerProd( hypre_StructVector *x,
    hypre_IndexRef   start;
    hypre_Index      unit_stride;
 
-   HYPRE_Int        ndim = hypre_StructVectorNDim(x);
-   HYPRE_Int        i;
+   NALU_HYPRE_Int        ndim = hypre_StructVectorNDim(x);
+   NALU_HYPRE_Int        i;
 
-#if 0 //defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP)
-   const HYPRE_Int  data_location = hypre_StructGridDataLocation(hypre_StructVectorGrid(y));
+#if 0 //defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
+   const NALU_HYPRE_Int  data_location = hypre_StructGridDataLocation(hypre_StructVectorGrid(y));
 #endif
 
-   HYPRE_Real       local_result = 0.0;
+   NALU_HYPRE_Real       local_result = 0.0;
 
    hypre_SetIndex(unit_stride, 1);
 
@@ -62,24 +62,24 @@ hypre_StructInnerProd( hypre_StructVector *x,
 
       hypre_BoxGetSize(box, loop_size);
 
-#if defined(HYPRE_USING_KOKKOS) || defined(HYPRE_USING_SYCL)
-      HYPRE_Real box_sum = 0.0;
-#elif defined(HYPRE_USING_RAJA)
-      ReduceSum<hypre_raja_reduce_policy, HYPRE_Real> box_sum(0.0);
-#elif defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP)
-      ReduceSum<HYPRE_Real> box_sum(0.0);
+#if defined(NALU_HYPRE_USING_KOKKOS) || defined(NALU_HYPRE_USING_SYCL)
+      NALU_HYPRE_Real box_sum = 0.0;
+#elif defined(NALU_HYPRE_USING_RAJA)
+      ReduceSum<hypre_raja_reduce_policy, NALU_HYPRE_Real> box_sum(0.0);
+#elif defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
+      ReduceSum<NALU_HYPRE_Real> box_sum(0.0);
 #else
-      HYPRE_Real box_sum = 0.0;
+      NALU_HYPRE_Real box_sum = 0.0;
 #endif
 
-#ifdef HYPRE_BOX_REDUCTION
-#undef HYPRE_BOX_REDUCTION
+#ifdef NALU_HYPRE_BOX_REDUCTION
+#undef NALU_HYPRE_BOX_REDUCTION
 #endif
 
-#if defined(HYPRE_USING_DEVICE_OPENMP)
-#define HYPRE_BOX_REDUCTION map(tofrom: box_sum) reduction(+:box_sum)
+#if defined(NALU_HYPRE_USING_DEVICE_OPENMP)
+#define NALU_HYPRE_BOX_REDUCTION map(tofrom: box_sum) reduction(+:box_sum)
 #else
-#define HYPRE_BOX_REDUCTION reduction(+:box_sum)
+#define NALU_HYPRE_BOX_REDUCTION reduction(+:box_sum)
 #endif
 
 #define DEVICE_VAR is_device_ptr(yp,xp)
@@ -88,18 +88,18 @@ hypre_StructInnerProd( hypre_StructVector *x,
                                    y_data_box, start, unit_stride, yi,
                                    box_sum)
       {
-         HYPRE_Real tmp = xp[xi] * hypre_conj(yp[yi]);
+         NALU_HYPRE_Real tmp = xp[xi] * hypre_conj(yp[yi]);
          box_sum += tmp;
       }
       hypre_BoxLoop2ReductionEnd(xi, yi, box_sum);
 
-      local_result += (HYPRE_Real) box_sum;
+      local_result += (NALU_HYPRE_Real) box_sum;
    }
 
-   process_result = (HYPRE_Real) local_result;
+   process_result = (NALU_HYPRE_Real) local_result;
 
    hypre_MPI_Allreduce(&process_result, &final_innerprod_result, 1,
-                       HYPRE_MPI_REAL, hypre_MPI_SUM, hypre_StructVectorComm(x));
+                       NALU_HYPRE_MPI_REAL, hypre_MPI_SUM, hypre_StructVectorComm(x));
 
    hypre_IncFLOPCount(2 * hypre_StructVectorGlobalSize(x));
 

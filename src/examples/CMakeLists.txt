@@ -23,14 +23,14 @@ set(EXAMPLE_SRCS
   ex18.c
 )
 
-if (HYPRE_BIGINT)
+if (NALU_HYPRE_BIGINT)
   list(APPEND EXAMPLE_SRCS
     ex5big.c
     ex15big.c
   )
 endif()
 
-if (HYPRE_COMPLEX)
+if (NALU_HYPRE_COMPLEX)
   list(APPEND EXAMPLE_SRCS
     ex18comp.c
   )

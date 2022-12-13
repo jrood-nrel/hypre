@@ -10,12 +10,12 @@
 #include <stdio.h>
 
 #include "utilities/_hypre_utilities.h"
-#include "IJ_mv/HYPRE_IJ_mv.h"
+#include "IJ_mv/NALU_HYPRE_IJ_mv.h"
 #include "parcsr_mv/_hypre_parcsr_mv.h"
 #include "parcsr_ls/_hypre_parcsr_ls.h"
 #include "seq_mv/seq_mv.h"
 
-#include "HYPRE_FEI.h"
+#include "NALU_HYPRE_FEI.h"
 
 extern void hypre_qsort0(int*, int, int);
 extern void hypre_qsort1(int*, double*, int, int);
@@ -27,7 +27,7 @@ extern void hypre_qsort1(int*, double*, int, int);
 /* (read by a single processor)                                            */
 /*-------------------------------------------------------------------------*/
 
-void HYPRE_LSI_Get_IJAMatrixFromFile(double **val, int **ia,
+void NALU_HYPRE_LSI_Get_IJAMatrixFromFile(double **val, int **ia,
      int **ja, int *N, double **rhs, char *matfile, char *rhsfile)
 {
     int    i, j, Nrows, nnz, icount, rowindex, colindex, curr_row;
@@ -50,9 +50,9 @@ void HYPRE_LSI_Get_IJAMatrixFromFile(double **val, int **ia,
        printf("Error : nrows,nnz = %d %d\n", Nrows, nnz);
        exit(1);
     }
-    mat_ia = hypre_TAlloc(int, (Nrows+1) , HYPRE_MEMORY_HOST);
-    mat_ja = hypre_TAlloc(int,  nnz , HYPRE_MEMORY_HOST);
-    mat_a  = hypre_TAlloc(double,  nnz , HYPRE_MEMORY_HOST);
+    mat_ia = hypre_TAlloc(int, (Nrows+1) , NALU_HYPRE_MEMORY_HOST);
+    mat_ja = hypre_TAlloc(int,  nnz , NALU_HYPRE_MEMORY_HOST);
+    mat_a  = hypre_TAlloc(double,  nnz , NALU_HYPRE_MEMORY_HOST);
     mat_ia[0] = 0;
 
     curr_row = 0;
@@ -95,7 +95,7 @@ void HYPRE_LSI_Get_IJAMatrixFromFile(double **val, int **ia,
        exit(1);
     }
     fflush(stdout);
-    rhs_local  = hypre_TAlloc(double,  Nrows , HYPRE_MEMORY_HOST);
+    rhs_local  = hypre_TAlloc(double,  Nrows , NALU_HYPRE_MEMORY_HOST);
     m = 0;
     for ( k = 0; k < ncnt; k++ ) {
        fscanf(fp, "%d %lg", &rnum, &dtemp);
@@ -115,10 +115,10 @@ void HYPRE_LSI_Get_IJAMatrixFromFile(double **val, int **ia,
 
 
 /***************************************************************************/
-/* HYPRE_LSI_Search - this is a modification of hypre_BinarySearch         */
+/* NALU_HYPRE_LSI_Search - this is a modification of hypre_BinarySearch         */
 /*-------------------------------------------------------------------------*/
 
-int HYPRE_LSI_Search(int *list,int value,int list_length)
+int NALU_HYPRE_LSI_Search(int *list,int value,int list_length)
 {
    int low, high, m;
    int not_found = 1;
@@ -152,7 +152,7 @@ int HYPRE_LSI_Search(int *list,int value,int list_length)
 /* (borrowed from the search routine in ML)                                 */
 /* ------------------------------------------------------------------------ */
 
-int HYPRE_LSI_Search2(int key, int nlist, int *list)
+int NALU_HYPRE_LSI_Search2(int key, int nlist, int *list)
 {
    int  nfirst, nlast, nmid, found, index;
 
@@ -178,30 +178,30 @@ int HYPRE_LSI_Search2(int key, int nlist, int *list)
 /* this function extracts the matrix in a CSR format                        */
 /* ------------------------------------------------------------------------ */
 
-int HYPRE_LSI_GetParCSRMatrix(HYPRE_IJMatrix Amat, int nrows, int nnz,
+int NALU_HYPRE_LSI_GetParCSRMatrix(NALU_HYPRE_IJMatrix Amat, int nrows, int nnz,
                               int *ia_ptr, int *ja_ptr, double *a_ptr)
 {
     int                nz, i, j, ierr, rowSize, *colInd, nz_ptr, *colInd2;
     int                firstNnz;
     double             *colVal, *colVal2;
-    HYPRE_ParCSRMatrix A_csr;
+    NALU_HYPRE_ParCSRMatrix A_csr;
 
     nz        = 0;
     nz_ptr    = 0;
     ia_ptr[0] = nz_ptr;
 
     /* ---old_IJ----------------------------------------------------------- */
-    /*A_csr  = (HYPRE_ParCSRMatrix) HYPRE_IJMatrixGetLocalStorage(Amat);*/
+    /*A_csr  = (NALU_HYPRE_ParCSRMatrix) NALU_HYPRE_IJMatrixGetLocalStorage(Amat);*/
     /* ---new_IJ----------------------------------------------------------- */
-    HYPRE_IJMatrixGetObject(Amat, (void**) &A_csr);
+    NALU_HYPRE_IJMatrixGetObject(Amat, (void**) &A_csr);
     /* -------------------------------------------------------------------- */
 
     for ( i = 0; i < nrows; i++ )
     {
-       ierr = HYPRE_ParCSRMatrixGetRow(A_csr,i,&rowSize,&colInd,&colVal);
+       ierr = NALU_HYPRE_ParCSRMatrixGetRow(A_csr,i,&rowSize,&colInd,&colVal);
        hypre_assert(!ierr);
-       colInd2 = hypre_TAlloc(int, rowSize , HYPRE_MEMORY_HOST);
-       colVal2 = hypre_TAlloc(double, rowSize , HYPRE_MEMORY_HOST);
+       colInd2 = hypre_TAlloc(int, rowSize , NALU_HYPRE_MEMORY_HOST);
+       colVal2 = hypre_TAlloc(double, rowSize , NALU_HYPRE_MEMORY_HOST);
        for ( j = 0; j < rowSize; j++ )
        {
           colInd2[j] = colInd[j];
@@ -210,7 +210,7 @@ int HYPRE_LSI_GetParCSRMatrix(HYPRE_IJMatrix Amat, int nrows, int nnz,
        hypre_qsort1(colInd2, colVal2, 0, rowSize-1);
        for ( j = 0; j < rowSize-1; j++ )
           if ( colInd2[j] == colInd2[j+1] )
-             printf("HYPRE_LSI_GetParCSRMatrix-duplicate colind at row %d \n",i);
+             printf("NALU_HYPRE_LSI_GetParCSRMatrix-duplicate colind at row %d \n",i);
 
        firstNnz = 0;
        for ( j = 0; j < rowSize; j++ )
@@ -220,7 +220,7 @@ int HYPRE_LSI_GetParCSRMatrix(HYPRE_IJMatrix Amat, int nrows, int nnz,
              if (nz_ptr > 0 && firstNnz > 0 && colInd2[j] == ja_ptr[nz_ptr-1])
              {
                 a_ptr[nz_ptr-1] += colVal2[j];
-                printf("HYPRE_LSI_GetParCSRMatrix:: repeated col in row %d\n",i);
+                printf("NALU_HYPRE_LSI_GetParCSRMatrix:: repeated col in row %d\n",i);
              }
              else
              {
@@ -228,7 +228,7 @@ int HYPRE_LSI_GetParCSRMatrix(HYPRE_IJMatrix Amat, int nrows, int nnz,
                 a_ptr[nz_ptr++]  = colVal2[j];
                 if ( nz_ptr > nnz )
                 {
-                   printf("HYPRE_LSI_GetParCSRMatrix Error (1) - %d %d.\n",i,
+                   printf("NALU_HYPRE_LSI_GetParCSRMatrix Error (1) - %d %d.\n",i,
                           nrows);
                    exit(1);
                 }
@@ -236,16 +236,16 @@ int HYPRE_LSI_GetParCSRMatrix(HYPRE_IJMatrix Amat, int nrows, int nnz,
              }
           } else nz++;
        }
-       hypre_TFree(colInd2, HYPRE_MEMORY_HOST);
-       hypre_TFree(colVal2, HYPRE_MEMORY_HOST);
+       hypre_TFree(colInd2, NALU_HYPRE_MEMORY_HOST);
+       hypre_TFree(colVal2, NALU_HYPRE_MEMORY_HOST);
        ia_ptr[i+1] = nz_ptr;
-       ierr = HYPRE_ParCSRMatrixRestoreRow(A_csr,i,&rowSize,&colInd,&colVal);
+       ierr = NALU_HYPRE_ParCSRMatrixRestoreRow(A_csr,i,&rowSize,&colInd,&colVal);
        hypre_assert(!ierr);
     }
     /*
     if ( nnz != nz_ptr )
     {
-       printf("HYPRE_LSI_GetParCSRMatrix note : matrix sparsity has been \n");
+       printf("NALU_HYPRE_LSI_GetParCSRMatrix note : matrix sparsity has been \n");
        printf("      changed since matConfigure - %d > %d ?\n", nnz, nz_ptr);
        printf("      number of zeros            = %d \n", nz );
     }
@@ -257,7 +257,7 @@ int HYPRE_LSI_GetParCSRMatrix(HYPRE_IJMatrix Amat, int nrows, int nnz,
 /* sort integers                                                        */
 /* -------------------------------------------------------------------- */
 
-void HYPRE_LSI_qsort1a( int *ilist, int *ilist2, int left, int right)
+void NALU_HYPRE_LSI_qsort1a( int *ilist, int *ilist2, int left, int right)
 {
    int i, last, mid, itemp;
 
@@ -289,15 +289,15 @@ void HYPRE_LSI_qsort1a( int *ilist, int *ilist2, int left, int right)
    itemp        = ilist2[left];
    ilist2[left] = ilist2[last];
    ilist2[last] = itemp;
-   HYPRE_LSI_qsort1a(ilist, ilist2, left, last-1);
-   HYPRE_LSI_qsort1a(ilist, ilist2, last+1, right);
+   NALU_HYPRE_LSI_qsort1a(ilist, ilist2, left, last-1);
+   NALU_HYPRE_LSI_qsort1a(ilist, ilist2, last+1, right);
 }
 
 /* ******************************************************************** */
 /* sort a given list in increasing order                                */
 /* -------------------------------------------------------------------- */
 
-int HYPRE_LSI_SplitDSort2(double *dlist, int nlist, int *ilist, int limit)
+int NALU_HYPRE_LSI_SplitDSort2(double *dlist, int nlist, int *ilist, int limit)
 {
    int    itemp, *iarray1, *iarray2, count1, count2, i;
    double dtemp, *darray1, *darray2;
@@ -314,9 +314,9 @@ int HYPRE_LSI_SplitDSort2(double *dlist, int nlist, int *ilist, int limit)
    }
    count1 = 0;
    count2 = 0;
-   iarray1 = hypre_TAlloc(int,  2 * nlist , HYPRE_MEMORY_HOST);
+   iarray1 = hypre_TAlloc(int,  2 * nlist , NALU_HYPRE_MEMORY_HOST);
    iarray2 = iarray1 + nlist;
-   darray1 = hypre_TAlloc(double,  2 * nlist , HYPRE_MEMORY_HOST);
+   darray1 = hypre_TAlloc(double,  2 * nlist , NALU_HYPRE_MEMORY_HOST);
    darray2 = darray1 + nlist;
 
    if ( darray2 == NULL )
@@ -351,14 +351,14 @@ int HYPRE_LSI_SplitDSort2(double *dlist, int nlist, int *ilist, int limit)
       dlist[count1+1+i] = darray2[i];
       ilist[count1+1+i] = iarray2[i];
    }
-   hypre_TFree(darray1, HYPRE_MEMORY_HOST);
-   hypre_TFree(iarray1, HYPRE_MEMORY_HOST);
+   hypre_TFree(darray1, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(iarray1, NALU_HYPRE_MEMORY_HOST);
    if ( count1+1 == limit ) return 0;
    else if ( count1+1 < limit )
-      HYPRE_LSI_SplitDSort2(&(dlist[count1+1]),count2,&(ilist[count1+1]),
+      NALU_HYPRE_LSI_SplitDSort2(&(dlist[count1+1]),count2,&(ilist[count1+1]),
                      limit-count1-1);
    else
-      HYPRE_LSI_SplitDSort2( dlist, count1, ilist, limit );
+      NALU_HYPRE_LSI_SplitDSort2( dlist, count1, ilist, limit );
    return 0;
 }
 
@@ -366,7 +366,7 @@ int HYPRE_LSI_SplitDSort2(double *dlist, int nlist, int *ilist, int limit)
 /* sort a given list in increasing order                                */
 /* -------------------------------------------------------------------- */
 
-int HYPRE_LSI_SplitDSort(double *dlist, int nlist, int *ilist, int limit)
+int NALU_HYPRE_LSI_SplitDSort(double *dlist, int nlist, int *ilist, int limit)
 {
    int    i, first, last, itemp, cur_index;
    double dtemp, cur_val;
@@ -421,12 +421,12 @@ int HYPRE_LSI_SplitDSort(double *dlist, int nlist, int *ilist, int limit)
 /* copy from one vector to another (identity preconditioning)           */
 /* -------------------------------------------------------------------- */
 
-int HYPRE_LSI_SolveIdentity(HYPRE_Solver solver, HYPRE_ParCSRMatrix Amat,
-                            HYPRE_ParVector b, HYPRE_ParVector x)
+int NALU_HYPRE_LSI_SolveIdentity(NALU_HYPRE_Solver solver, NALU_HYPRE_ParCSRMatrix Amat,
+                            NALU_HYPRE_ParVector b, NALU_HYPRE_ParVector x)
 {
    (void) solver;
    (void) Amat;
-   HYPRE_ParVectorCopy( b, x );
+   NALU_HYPRE_ParVectorCopy( b, x );
    return 0;
 }
 
@@ -434,18 +434,18 @@ int HYPRE_LSI_SolveIdentity(HYPRE_Solver solver, HYPRE_ParCSRMatrix Amat,
 /* Cuthill McKee reordering algorithm                                   */
 /* -------------------------------------------------------------------- */
 
-int HYPRE_LSI_Cuthill(int n, int *ia, int *ja, double *aa, int *order_array,
+int NALU_HYPRE_LSI_Cuthill(int n, int *ia, int *ja, double *aa, int *order_array,
                       int *reorder_array)
 {
    int    nnz, *nz_array, cnt, i, j, *tag_array, *queue, nqueue, qhead;
    int    root, norder, mindeg, *ia2, *ja2;
    double *aa2;
 
-   nz_array = hypre_TAlloc(int,  n , HYPRE_MEMORY_HOST);
+   nz_array = hypre_TAlloc(int,  n , NALU_HYPRE_MEMORY_HOST);
    nnz      = ia[n];
    for ( i = 0; i < n; i++ ) nz_array[i] = ia[i+1] - ia[i];
-   tag_array = hypre_TAlloc(int,  n , HYPRE_MEMORY_HOST);
-   queue     = hypre_TAlloc(int,  n , HYPRE_MEMORY_HOST);
+   tag_array = hypre_TAlloc(int,  n , NALU_HYPRE_MEMORY_HOST);
+   queue     = hypre_TAlloc(int,  n , NALU_HYPRE_MEMORY_HOST);
    for ( i = 0; i < n; i++ ) tag_array[i] = 0;
    norder = 0;
    mindeg = 10000000;
@@ -466,7 +466,7 @@ int HYPRE_LSI_Cuthill(int n, int *ia, int *ja, double *aa, int *order_array,
    }
    if ( root == -1 )
    {
-      printf("HYPRE_LSI_Cuthill ERROR : Amat is diagonal\n");
+      printf("NALU_HYPRE_LSI_Cuthill ERROR : Amat is diagonal\n");
       exit(1);
    }
    nqueue = 0;
@@ -490,9 +490,9 @@ int HYPRE_LSI_Cuthill(int n, int *ia, int *ja, double *aa, int *order_array,
          for ( j = 0; j < n; j++ )
             if ( tag_array[j] == 0 ) queue[nqueue++] = j;
    }
-   ia2 = hypre_TAlloc(int,  (n+1) , HYPRE_MEMORY_HOST);
-   ja2 = hypre_TAlloc(int,  nnz , HYPRE_MEMORY_HOST);
-   aa2 = hypre_TAlloc(double,  nnz , HYPRE_MEMORY_HOST);
+   ia2 = hypre_TAlloc(int,  (n+1) , NALU_HYPRE_MEMORY_HOST);
+   ja2 = hypre_TAlloc(int,  nnz , NALU_HYPRE_MEMORY_HOST);
+   aa2 = hypre_TAlloc(double,  nnz , NALU_HYPRE_MEMORY_HOST);
    ia2[0] = 0;
    nnz = 0;
    for ( i = 0; i < n; i++ )
@@ -508,12 +508,12 @@ int HYPRE_LSI_Cuthill(int n, int *ia, int *ja, double *aa, int *order_array,
    for ( i = 0; i < nnz; i++ ) ja[i] = reorder_array[ja2[i]];
    for ( i = 0; i < nnz; i++ ) aa[i] = aa2[i];
    for ( i = 0; i <= n; i++ )  ia[i] = ia2[i];
-   hypre_TFree(ia2, HYPRE_MEMORY_HOST);
-   hypre_TFree(ja2, HYPRE_MEMORY_HOST);
-   hypre_TFree(aa2, HYPRE_MEMORY_HOST);
-   hypre_TFree(nz_array, HYPRE_MEMORY_HOST);
-   hypre_TFree(tag_array, HYPRE_MEMORY_HOST);
-   hypre_TFree(queue, HYPRE_MEMORY_HOST);
+   hypre_TFree(ia2, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(ja2, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(aa2, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(nz_array, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(tag_array, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(queue, NALU_HYPRE_MEMORY_HOST);
    return 0;
 }
 
@@ -521,7 +521,7 @@ int HYPRE_LSI_Cuthill(int n, int *ia, int *ja, double *aa, int *order_array,
 /* matrix of a dense matrix                                             */
 /* -------------------------------------------------------------------- */
 
-int HYPRE_LSI_MatrixInverse( double **Amat, int ndim, double ***Cmat )
+int NALU_HYPRE_LSI_MatrixInverse( double **Amat, int ndim, double ***Cmat )
 {
    int    i, j, k;
    double denom, **Bmat, dmax;
@@ -530,9 +530,9 @@ int HYPRE_LSI_MatrixInverse( double **Amat, int ndim, double ***Cmat )
    if ( ndim == 1 )
    {
       if ( habs(Amat[0][0]) <= 1.0e-16 ) return -1;
-      Bmat = hypre_TAlloc(double*,  ndim , HYPRE_MEMORY_HOST);
+      Bmat = hypre_TAlloc(double*,  ndim , NALU_HYPRE_MEMORY_HOST);
       for ( i = 0; i < ndim; i++ )
-         Bmat[i] = hypre_TAlloc(double,  ndim , HYPRE_MEMORY_HOST);
+         Bmat[i] = hypre_TAlloc(double,  ndim , NALU_HYPRE_MEMORY_HOST);
       Bmat[0][0] = 1.0 / Amat[0][0];
       (*Cmat) = Bmat;
       return 0;
@@ -541,9 +541,9 @@ int HYPRE_LSI_MatrixInverse( double **Amat, int ndim, double ***Cmat )
    {
       denom = Amat[0][0] * Amat[1][1] - Amat[0][1] * Amat[1][0];
       if ( habs( denom ) <= 1.0e-16 ) return -1;
-      Bmat = hypre_TAlloc(double*,  ndim , HYPRE_MEMORY_HOST);
+      Bmat = hypre_TAlloc(double*,  ndim , NALU_HYPRE_MEMORY_HOST);
       for ( i = 0; i < ndim; i++ )
-         Bmat[i] = hypre_TAlloc(double,  ndim , HYPRE_MEMORY_HOST);
+         Bmat[i] = hypre_TAlloc(double,  ndim , NALU_HYPRE_MEMORY_HOST);
       Bmat[0][0] = Amat[1][1] / denom;
       Bmat[1][1] = Amat[0][0] / denom;
       Bmat[0][1] = - ( Amat[0][1] / denom );
@@ -553,10 +553,10 @@ int HYPRE_LSI_MatrixInverse( double **Amat, int ndim, double ***Cmat )
    }
    else
    {
-      Bmat = hypre_TAlloc(double*,  ndim , HYPRE_MEMORY_HOST);
+      Bmat = hypre_TAlloc(double*,  ndim , NALU_HYPRE_MEMORY_HOST);
       for ( i = 0; i < ndim; i++ )
       {
-         Bmat[i] = hypre_TAlloc(double,  ndim , HYPRE_MEMORY_HOST);
+         Bmat[i] = hypre_TAlloc(double,  ndim , NALU_HYPRE_MEMORY_HOST);
          for ( j = 0; j < ndim; j++ ) Bmat[i][j] = 0.0;
          Bmat[i][i] = 1.0;
       }
@@ -616,7 +616,7 @@ int HYPRE_LSI_MatrixInverse( double **Amat, int ndim, double ***Cmat )
 /* find the separators of a matrix                                      */
 /* -------------------------------------------------------------------- */
 
-int HYPRE_LSI_PartitionMatrix( int nRows, int startRow, int *rowLengths,
+int NALU_HYPRE_LSI_PartitionMatrix( int nRows, int startRow, int *rowLengths,
                                int **colIndices, double **colValues,
                                int *nLabels, int **labels)
 {
@@ -641,9 +641,9 @@ int HYPRE_LSI_PartitionMatrix( int nRows, int startRow, int *rowLengths,
    /* search for constraint rows                                     */
    /*----------------------------------------------------------------*/
 
-   localLabels = hypre_TAlloc(int,  actualNRows , HYPRE_MEMORY_HOST);
+   localLabels = hypre_TAlloc(int,  actualNRows , NALU_HYPRE_MEMORY_HOST);
    for ( irow = 0; irow < actualNRows; irow++ ) localLabels[irow] = -1;
-   indSet = hypre_TAlloc(int,  actualNRows , HYPRE_MEMORY_HOST);
+   indSet = hypre_TAlloc(int,  actualNRows , NALU_HYPRE_MEMORY_HOST);
 
    labelNum = 0;
    rowCnt   = actualNRows;
@@ -655,7 +655,7 @@ int HYPRE_LSI_PartitionMatrix( int nRows, int startRow, int *rowLengths,
          if ( localLabels[irow] == -1 ) {root = irow; break;}
       if ( root == -1 )
       {
-         printf("HYPRE_LSI_PartitionMatrix : something wrong.\n");
+         printf("NALU_HYPRE_LSI_PartitionMatrix : something wrong.\n");
          exit(1);
       }
       indHead = indTail = 0;
@@ -688,19 +688,19 @@ int HYPRE_LSI_PartitionMatrix( int nRows, int startRow, int *rowLengths,
    }
    if ( labelNum > 4 )
    {
-      printf("HYPRE_LSI_PartitionMatrix : number of labels %d too large.\n",
+      printf("NALU_HYPRE_LSI_PartitionMatrix : number of labels %d too large.\n",
              labelNum+1);
-      hypre_TFree(localLabels, HYPRE_MEMORY_HOST);
+      hypre_TFree(localLabels, NALU_HYPRE_MEMORY_HOST);
       (*nLabels) = 0;
       (*labels)  = NULL;
    }
    else
    {
-      printf("HYPRE_LSI_PartitionMatrix : number of labels = %d.\n",
+      printf("NALU_HYPRE_LSI_PartitionMatrix : number of labels = %d.\n",
              labelNum);
       (*labels)  = localLabels;
    }
-   hypre_TFree(indSet, HYPRE_MEMORY_HOST);
+   hypre_TFree(indSet, NALU_HYPRE_MEMORY_HOST);
    return 0;
 }
 

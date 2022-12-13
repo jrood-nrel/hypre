@@ -10,8 +10,8 @@
 #include <math.h>
 
 #include "_hypre_utilities.h"
-#include "HYPRE_struct_ls.h"
-#include "HYPRE_krylov.h"
+#include "NALU_HYPRE_struct_ls.h"
+#include "NALU_HYPRE_krylov.h"
 
 #include "_hypre_struct_mv.h"
 #include "_hypre_struct_mv.hpp"
@@ -24,20 +24,20 @@ hypre_int
 main( hypre_int argc,
       char *argv[] )
 {
-   HYPRE_Int         arg_index;
-   HYPRE_Int         print_usage;
-   HYPRE_Int         nx, ny, nz;
-   HYPRE_Int         P, Q, R;
-   HYPRE_Int         time_index;
-   HYPRE_Int         num_procs, myid;
-   HYPRE_Int         dim;
-   HYPRE_Int         rep, reps, fail, sum;
-   HYPRE_Int         size;
+   NALU_HYPRE_Int         arg_index;
+   NALU_HYPRE_Int         print_usage;
+   NALU_HYPRE_Int         nx, ny, nz;
+   NALU_HYPRE_Int         P, Q, R;
+   NALU_HYPRE_Int         time_index;
+   NALU_HYPRE_Int         num_procs, myid;
+   NALU_HYPRE_Int         dim;
+   NALU_HYPRE_Int         rep, reps, fail, sum;
+   NALU_HYPRE_Int         size;
    hypre_Box        *x1_data_box, *x2_data_box, *x3_data_box, *x4_data_box;
-   //HYPRE_Int         xi1, xi2, xi3, xi4;
-   HYPRE_Int         xi1;
-   HYPRE_Real       *xp1, *xp2, *xp3, *xp4;
-   HYPRE_Real       *d_xp1, *d_xp2, *d_xp3, *d_xp4;
+   //NALU_HYPRE_Int         xi1, xi2, xi3, xi4;
+   NALU_HYPRE_Int         xi1;
+   NALU_HYPRE_Real       *xp1, *xp2, *xp3, *xp4;
+   NALU_HYPRE_Real       *d_xp1, *d_xp2, *d_xp3, *d_xp4;
    hypre_Index       loop_size, start, unit_stride, index;
 
    /*-----------------------------------------------------------
@@ -50,9 +50,9 @@ main( hypre_int argc,
    hypre_MPI_Comm_size(hypre_MPI_COMM_WORLD, &num_procs );
    hypre_MPI_Comm_rank(hypre_MPI_COMM_WORLD, &myid );
 
-   HYPRE_Init();
+   NALU_HYPRE_Init();
 
-#if defined(HYPRE_USING_KOKKOS)
+#if defined(NALU_HYPRE_USING_KOKKOS)
    Kokkos::initialize (argc, argv);
 #endif
 
@@ -174,15 +174,15 @@ main( hypre_int argc,
    hypre_CopyBox(x1_data_box, x4_data_box);
 
    size = (nx + 2) * (ny + 2) * (nz + 2);
-   xp1 = hypre_CTAlloc(HYPRE_Real, size, HYPRE_MEMORY_HOST);
-   xp2 = hypre_CTAlloc(HYPRE_Real, size, HYPRE_MEMORY_HOST);
-   xp3 = hypre_CTAlloc(HYPRE_Real, size, HYPRE_MEMORY_HOST);
-   xp4 = hypre_CTAlloc(HYPRE_Real, size, HYPRE_MEMORY_HOST);
+   xp1 = hypre_CTAlloc(NALU_HYPRE_Real, size, NALU_HYPRE_MEMORY_HOST);
+   xp2 = hypre_CTAlloc(NALU_HYPRE_Real, size, NALU_HYPRE_MEMORY_HOST);
+   xp3 = hypre_CTAlloc(NALU_HYPRE_Real, size, NALU_HYPRE_MEMORY_HOST);
+   xp4 = hypre_CTAlloc(NALU_HYPRE_Real, size, NALU_HYPRE_MEMORY_HOST);
 
-   d_xp1 = hypre_CTAlloc(HYPRE_Real, size, HYPRE_MEMORY_DEVICE);
-   d_xp2 = hypre_CTAlloc(HYPRE_Real, size, HYPRE_MEMORY_DEVICE);
-   d_xp3 = hypre_CTAlloc(HYPRE_Real, size, HYPRE_MEMORY_DEVICE);
-   d_xp4 = hypre_CTAlloc(HYPRE_Real, size, HYPRE_MEMORY_DEVICE);
+   d_xp1 = hypre_CTAlloc(NALU_HYPRE_Real, size, NALU_HYPRE_MEMORY_DEVICE);
+   d_xp2 = hypre_CTAlloc(NALU_HYPRE_Real, size, NALU_HYPRE_MEMORY_DEVICE);
+   d_xp3 = hypre_CTAlloc(NALU_HYPRE_Real, size, NALU_HYPRE_MEMORY_DEVICE);
+   d_xp4 = hypre_CTAlloc(NALU_HYPRE_Real, size, NALU_HYPRE_MEMORY_DEVICE);
 
    if (reps < 0)
    {
@@ -226,7 +226,7 @@ main( hypre_int argc,
       {
          zypre_BoxLoopGetIndex(index);
          hypre_printf("*(%d,%d,%d) = %d\n",
-                      index[0], index[1], index[2], (HYPRE_Int) xp1[xi1]);
+                      index[0], index[1], index[2], (NALU_HYPRE_Int) xp1[xi1]);
          fail = 1;
       }
    }
@@ -353,8 +353,8 @@ main( hypre_int argc,
    for (rep = 0; rep < reps; rep++)
    {
       xi1 = 0;
-#undef HYPRE_OMP_CLAUSE
-#define HYPRE_OMP_CLAUSE firstprivate(xi1)
+#undef NALU_HYPRE_OMP_CLAUSE
+#define NALU_HYPRE_OMP_CLAUSE firstprivate(xi1)
       zypre_BoxLoop0Begin(dim, loop_size);
       {
          xp1[xi1] += xp1[xi1];
@@ -434,32 +434,32 @@ main( hypre_int argc,
     * Reduction Loops
     *-----------------------------------------------------------*/
    {
-      HYPRE_Int i;
+      NALU_HYPRE_Int i;
       for (i = 0; i < size; i++)
       {
          xp1[i] = cos(i + 1.0);
          xp2[i] = sin(i + 2.0);
       }
-      hypre_TMemcpy(d_xp1, xp1, HYPRE_Real, size, HYPRE_MEMORY_DEVICE, HYPRE_MEMORY_HOST);
-      hypre_TMemcpy(d_xp2, xp2, HYPRE_Real, size, HYPRE_MEMORY_DEVICE, HYPRE_MEMORY_HOST);
+      hypre_TMemcpy(d_xp1, xp1, NALU_HYPRE_Real, size, NALU_HYPRE_MEMORY_DEVICE, NALU_HYPRE_MEMORY_HOST);
+      hypre_TMemcpy(d_xp2, xp2, NALU_HYPRE_Real, size, NALU_HYPRE_MEMORY_DEVICE, NALU_HYPRE_MEMORY_HOST);
    }
 
-#if defined(HYPRE_USING_KOKKOS)
-   HYPRE_Real reducer = 0.0;
-#elif defined(HYPRE_USING_RAJA)
-   ReduceSum<hypre_raja_reduce_policy, HYPRE_Real> reducer(0.0);
-#elif defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP)
-   ReduceSum<HYPRE_Real> reducer(0.0);
+#if defined(NALU_HYPRE_USING_KOKKOS)
+   NALU_HYPRE_Real reducer = 0.0;
+#elif defined(NALU_HYPRE_USING_RAJA)
+   ReduceSum<hypre_raja_reduce_policy, NALU_HYPRE_Real> reducer(0.0);
+#elif defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
+   ReduceSum<NALU_HYPRE_Real> reducer(0.0);
 #else
-   HYPRE_Real reducer = 0.0;
+   NALU_HYPRE_Real reducer = 0.0;
 #endif
-   HYPRE_Real box_sum1 = 0.0, box_sum2 = 0.0;
+   NALU_HYPRE_Real box_sum1 = 0.0, box_sum2 = 0.0;
 
-#undef HYPRE_BOX_REDUCTION
-#if defined(HYPRE_USING_DEVICE_OPENMP)
-#define HYPRE_BOX_REDUCTION map(tofrom:reducer) reduction(+:reducer)
+#undef NALU_HYPRE_BOX_REDUCTION
+#if defined(NALU_HYPRE_USING_DEVICE_OPENMP)
+#define NALU_HYPRE_BOX_REDUCTION map(tofrom:reducer) reduction(+:reducer)
 #else
-#define HYPRE_BOX_REDUCTION reduction(+:reducer)
+#define NALU_HYPRE_BOX_REDUCTION reduction(+:reducer)
 #endif
 
    /*-----------------------------------------------------------
@@ -481,7 +481,7 @@ main( hypre_int argc,
       }
       hypre_BoxLoop1ReductionEnd(xi1, reducer);
 #undef DEVICE_VAR
-      box_sum1 += (HYPRE_Real) reducer;
+      box_sum1 += (NALU_HYPRE_Real) reducer;
    }
    hypre_EndTiming(time_index);
 
@@ -501,7 +501,7 @@ main( hypre_int argc,
       }
       hypre_BoxLoop2ReductionEnd(xi1, xi2, reducer);
 #undef DEVICE_VAR
-      box_sum2 += (HYPRE_Real) reducer;
+      box_sum2 += (NALU_HYPRE_Real) reducer;
    }
    hypre_EndTiming(time_index);
 
@@ -512,15 +512,15 @@ main( hypre_int argc,
    /*-----------------------------------------------------------
     * Time host boxloops
     *-----------------------------------------------------------*/
-   HYPRE_Real zbox_sum1 = 0.0, zbox_sum2 = 0.0;
+   NALU_HYPRE_Real zbox_sum1 = 0.0, zbox_sum2 = 0.0;
 
    /* Time BoxLoop1 */
    time_index = hypre_InitializeTiming("BoxLoopReduction1");
    hypre_BeginTiming(time_index);
    for (rep = 0; rep < reps; rep++)
    {
-#undef HYPRE_BOX_REDUCTION
-#define HYPRE_BOX_REDUCTION reduction(+:zbox_sum1)
+#undef NALU_HYPRE_BOX_REDUCTION
+#define NALU_HYPRE_BOX_REDUCTION reduction(+:zbox_sum1)
       zypre_BoxLoop1Begin(dim, loop_size,
                           x1_data_box, start, unit_stride, xi1);
       {
@@ -535,8 +535,8 @@ main( hypre_int argc,
    hypre_BeginTiming(time_index);
    for (rep = 0; rep < reps; rep++)
    {
-#undef HYPRE_BOX_REDUCTION
-#define HYPRE_BOX_REDUCTION reduction(+:zbox_sum2)
+#undef NALU_HYPRE_BOX_REDUCTION
+#define NALU_HYPRE_BOX_REDUCTION reduction(+:zbox_sum2)
       zypre_BoxLoop2Begin(dim, loop_size,
                           x1_data_box, start, unit_stride, xi1,
                           x2_data_box, start, unit_stride, xi2);
@@ -563,21 +563,21 @@ main( hypre_int argc,
    hypre_BoxDestroy(x3_data_box);
    hypre_BoxDestroy(x4_data_box);
 
-   hypre_TFree(xp1, HYPRE_MEMORY_HOST);
-   hypre_TFree(xp2, HYPRE_MEMORY_HOST);
-   hypre_TFree(xp3, HYPRE_MEMORY_HOST);
-   hypre_TFree(xp4, HYPRE_MEMORY_HOST);
+   hypre_TFree(xp1, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(xp2, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(xp3, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(xp4, NALU_HYPRE_MEMORY_HOST);
 
-   hypre_TFree(d_xp1, HYPRE_MEMORY_DEVICE);
-   hypre_TFree(d_xp2, HYPRE_MEMORY_DEVICE);
-   hypre_TFree(d_xp3, HYPRE_MEMORY_DEVICE);
-   hypre_TFree(d_xp4, HYPRE_MEMORY_DEVICE);
+   hypre_TFree(d_xp1, NALU_HYPRE_MEMORY_DEVICE);
+   hypre_TFree(d_xp2, NALU_HYPRE_MEMORY_DEVICE);
+   hypre_TFree(d_xp3, NALU_HYPRE_MEMORY_DEVICE);
+   hypre_TFree(d_xp4, NALU_HYPRE_MEMORY_DEVICE);
 
-#if defined(HYPRE_USING_KOKKOS)
+#if defined(NALU_HYPRE_USING_KOKKOS)
    Kokkos::finalize ();
 #endif
 
-   HYPRE_Finalize();
+   NALU_HYPRE_Finalize();
 
    /* Finalize MPI */
    hypre_MPI_Finalize();

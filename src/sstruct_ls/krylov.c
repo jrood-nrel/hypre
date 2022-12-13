@@ -9,12 +9,12 @@
 #include "_hypre_sstruct_ls.h"
 
 
-HYPRE_Int hypre_SStructKrylovCopyVector( void *x, void *y );
+NALU_HYPRE_Int hypre_SStructKrylovCopyVector( void *x, void *y );
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SStructKrylovIdentitySetup( void *vdata,
                                   void *A,
                                   void *b,
@@ -27,7 +27,7 @@ hypre_SStructKrylovIdentitySetup( void *vdata,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SStructKrylovIdentity( void *vdata,
                              void *A,
                              void *b,

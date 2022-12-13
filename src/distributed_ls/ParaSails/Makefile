@@ -51,17 +51,17 @@ FILES =\
 
 OBJS = ${FILES:.c=.o}
 
-SONAME = libHYPRE_ParaSails-${HYPRE_RELEASE_VERSION}${HYPRE_LIB_SUFFIX}
+SONAME = libNALU_HYPRE_ParaSails-${NALU_HYPRE_RELEASE_VERSION}${NALU_HYPRE_LIB_SUFFIX}
 
 ##################################################################
 # Targets
 ##################################################################
 
-all: libHYPRE_ParaSails${HYPRE_LIB_SUFFIX}
-#	cp -fR libHYPRE* $(HYPRE_BUILD_DIR)/lib
+all: libNALU_HYPRE_ParaSails${NALU_HYPRE_LIB_SUFFIX}
+#	cp -fR libHYPRE* $(NALU_HYPRE_BUILD_DIR)/lib
 
-install: libHYPRE_ParaSails${HYPRE_LIB_SUFFIX}
-#	cp -fR libHYPRE* $(HYPRE_LIB_INSTALL)
+install: libNALU_HYPRE_ParaSails${NALU_HYPRE_LIB_SUFFIX}
+#	cp -fR libHYPRE* $(NALU_HYPRE_LIB_INSTALL)
 
 clean:
 	rm -f *.o libHYPRE*
@@ -73,12 +73,12 @@ distclean: clean
 # Rules
 ##################################################################
 
-libHYPRE_ParaSails.a: ${OBJS}
+libNALU_HYPRE_ParaSails.a: ${OBJS}
 	@echo  "Building $@ ... "
 	${AR} $@ ${OBJS}
 	${RANLIB} $@
 
-libHYPRE_ParaSails.so libHYPRE_ParaSails.dylib: ${OBJS}
+libNALU_HYPRE_ParaSails.so libNALU_HYPRE_ParaSails.dylib: ${OBJS}
 	@echo  "Building $@ ... "
 	${BUILD_CC_SHARED} -o ${SONAME} ${OBJS} ${SHARED_SET_SONAME}${SONAME}
 	ln -s -f ${SONAME} $@

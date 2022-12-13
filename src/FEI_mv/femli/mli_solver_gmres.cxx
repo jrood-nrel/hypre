@@ -171,7 +171,7 @@ int MLI_Solver_GMRES::solve(MLI_Vector *b_in, MLI_Vector *u_in)
    A = (hypre_ParCSRMatrix *) Amat_->getMatrix();
    b = (hypre_ParVector *) b_in->getVector();
    u = (hypre_ParVector *) u_in->getVector();
-   HYPRE_ParCSRMatrixGetComm((HYPRE_ParCSRMatrix) A, &comm);
+   NALU_HYPRE_ParCSRMatrixGetComm((NALU_HYPRE_ParCSRMatrix) A, &comm);
    MPI_Comm_rank(comm, &mypid);
    
    /*-----------------------------------------------------------------
@@ -179,8 +179,8 @@ int MLI_Solver_GMRES::solve(MLI_Vector *b_in, MLI_Vector *u_in)
     *-----------------------------------------------------------------*/
 
    r  = (hypre_ParVector *) rVec_->getVector();
-   p  = hypre_TAlloc(hypre_ParVector *,  (KDim_+1), HYPRE_MEMORY_HOST); 
-   z  = hypre_TAlloc(hypre_ParVector *,  (KDim_+1), HYPRE_MEMORY_HOST); 
+   p  = hypre_TAlloc(hypre_ParVector *,  (KDim_+1), NALU_HYPRE_MEMORY_HOST); 
+   z  = hypre_TAlloc(hypre_ParVector *,  (KDim_+1), NALU_HYPRE_MEMORY_HOST); 
    for ( i = 0; i <= KDim_; i++ )
       p[i] = (hypre_ParVector *) pVec_[i]->getVector();
    for ( i = 0; i <= KDim_; i++ )

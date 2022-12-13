@@ -34,19 +34,19 @@ parameters here, and refer the reader to the reference manual for more details
 on the parameters and their defaults.
 
 
-* ``HYPRE_ILUCreate:`` Create the hypre_ILU solver object.
-* ``HYPRE_ILUSetType:`` Set the type of ILU factorization to do. Here, the user specifies 
+* ``NALU_HYPRE_ILUCreate:`` Create the hypre_ILU solver object.
+* ``NALU_HYPRE_ILUSetType:`` Set the type of ILU factorization to do. Here, the user specifies 
   one of several flavors of parallel ILU based on the different combinations of local 
   factorizations and global Schur complement solves. Please refer to the reference manual 
   for more details about the different options available to the user.
-* (Optional) ``HYPRE_ILUSetLevelOfFill:`` Set the level of fill used by the level-based ILUk strategy.
-* (Optional) ``HYPRE_ILUSetSchurMaxIter:`` Set the maximum number of iterations for solving 
+* (Optional) ``NALU_HYPRE_ILUSetLevelOfFill:`` Set the level of fill used by the level-based ILUk strategy.
+* (Optional) ``NALU_HYPRE_ILUSetSchurMaxIter:`` Set the maximum number of iterations for solving 
   the Schur complement system.
-* (Optional) ``HYPRE_ILUSetMaxIter:`` Set the maximum number of iterations when used as a 
+* (Optional) ``NALU_HYPRE_ILUSetMaxIter:`` Set the maximum number of iterations when used as a 
   solver or smoother.
-* ``HYPRE_ILUSetup:`` Setup and hypre_ILU solver object.
-* ``HYPRE_ILUSolve:`` Solve the linear system.
-* ``HYPRE_ILUDestroy:`` Destroy the hypre_ILU solver object
+* ``NALU_HYPRE_ILUSetup:`` Setup and hypre_ILU solver object.
+* ``NALU_HYPRE_ILUSolve:`` Solve the linear system.
+* ``NALU_HYPRE_ILUDestroy:`` Destroy the hypre_ILU solver object
 
 For more details about additional solver options and parameters, please refer to
 the reference manual.  NOTE: The hypre_ILU solver is currently only supported by the

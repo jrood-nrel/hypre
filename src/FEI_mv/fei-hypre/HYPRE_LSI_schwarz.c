@@ -7,7 +7,7 @@
 
 /******************************************************************************
  *
- * HYPRE_Schwarz interface
+ * NALU_HYPRE_Schwarz interface
  *
  *****************************************************************************/
 
@@ -17,11 +17,11 @@
 
 #include "utilities/_hypre_utilities.h"
 #include "HYPRE.h"
-#include "IJ_mv/HYPRE_IJ_mv.h"
-#include "parcsr_mv/HYPRE_parcsr_mv.h"
+#include "IJ_mv/NALU_HYPRE_IJ_mv.h"
+#include "parcsr_mv/NALU_HYPRE_parcsr_mv.h"
 #include "parcsr_mv/_hypre_parcsr_mv.h"
-#include "parcsr_ls/HYPRE_parcsr_ls.h"
-#include "HYPRE_MHMatrix.h"
+#include "parcsr_ls/NALU_HYPRE_parcsr_ls.h"
+#include "NALU_HYPRE_MHMatrix.h"
 
 #ifdef HAVE_ML
 
@@ -30,10 +30,10 @@
 
 #endif
 
-#include "HYPRE_MHMatrix.h"
-#include "HYPRE_FEI.h"
+#include "NALU_HYPRE_MHMatrix.h"
+#include "NALU_HYPRE_FEI.h"
 
-typedef struct HYPRE_LSI_Schwarz_Struct
+typedef struct NALU_HYPRE_LSI_Schwarz_Struct
 {
    MPI_Comm      comm;
    MH_Matrix     *mh_mat;
@@ -53,31 +53,31 @@ typedef struct HYPRE_LSI_Schwarz_Struct
    int           block_size;
    int           *blk_sizes;
    int           **blk_indices;
-} HYPRE_LSI_Schwarz;
+} NALU_HYPRE_LSI_Schwarz;
 
-extern int  HYPRE_LSI_MLConstructMHMatrix(HYPRE_ParCSRMatrix,MH_Matrix *,
+extern int  NALU_HYPRE_LSI_MLConstructMHMatrix(NALU_HYPRE_ParCSRMatrix,MH_Matrix *,
                                           MPI_Comm, int *, MH_Context *);
-extern int  HYPRE_LSI_SchwarzDecompose(HYPRE_LSI_Schwarz *sch_ptr,
+extern int  NALU_HYPRE_LSI_SchwarzDecompose(NALU_HYPRE_LSI_Schwarz *sch_ptr,
                  MH_Matrix *Amat, int total_recv_leng, int *recv_lengths,
                  int *ext_ja, double *ext_aa, int *map, int *map2,
                  int Noffset);
-extern int  HYPRE_LSI_ILUTDecompose(HYPRE_LSI_Schwarz *sch_ptr);
+extern int  NALU_HYPRE_LSI_ILUTDecompose(NALU_HYPRE_LSI_Schwarz *sch_ptr);
 extern void hypre_qsort0(int *, int, int);
-extern int  HYPRE_LSI_SplitDSort(double*,int,int*,int);
+extern int  NALU_HYPRE_LSI_SplitDSort(double*,int,int*,int);
 extern int  MH_ExchBdry(double *, void *);
-extern int  HYPRE_LSI_Search(int *, int, int);
+extern int  NALU_HYPRE_LSI_Search(int *, int, int);
 
 #define habs(x) ((x) > 0 ? (x) : -(x))
 
 /*--------------------------------------------------------------------------
- * HYPRE_LSI_SchwarzCreate - Return a Schwarz preconditioner object "solver"
+ * NALU_HYPRE_LSI_SchwarzCreate - Return a Schwarz preconditioner object "solver"
  *-------------------------------------------------------------------------*/
 
-int HYPRE_LSI_SchwarzCreate( MPI_Comm comm, HYPRE_Solver *solver )
+int NALU_HYPRE_LSI_SchwarzCreate( MPI_Comm comm, NALU_HYPRE_Solver *solver )
 {
-   HYPRE_LSI_Schwarz *sch_ptr;
+   NALU_HYPRE_LSI_Schwarz *sch_ptr;
 
-   sch_ptr = hypre_TAlloc(HYPRE_LSI_Schwarz, 1, HYPRE_MEMORY_HOST);
+   sch_ptr = hypre_TAlloc(NALU_HYPRE_LSI_Schwarz, 1, NALU_HYPRE_MEMORY_HOST);
 
    if (sch_ptr == NULL) return 1;
 
@@ -99,88 +99,88 @@ int HYPRE_LSI_SchwarzCreate( MPI_Comm comm, HYPRE_Solver *solver )
    sch_ptr->blk_indices = NULL;
    sch_ptr->ntimes      = 1;
    sch_ptr->output_level = 0;
-   *solver = (HYPRE_Solver) sch_ptr;
+   *solver = (NALU_HYPRE_Solver) sch_ptr;
    return 0;
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_LSI_SchwarzDestroy - Destroy a Schwarz object.
+ * NALU_HYPRE_LSI_SchwarzDestroy - Destroy a Schwarz object.
  *-------------------------------------------------------------------------*/
 
-int HYPRE_LSI_SchwarzDestroy( HYPRE_Solver solver )
+int NALU_HYPRE_LSI_SchwarzDestroy( NALU_HYPRE_Solver solver )
 {
    int               i;
-   HYPRE_LSI_Schwarz *sch_ptr;
+   NALU_HYPRE_LSI_Schwarz *sch_ptr;
 
-   sch_ptr = (HYPRE_LSI_Schwarz *) solver;
+   sch_ptr = (NALU_HYPRE_LSI_Schwarz *) solver;
    if ( sch_ptr->bmat_ia  != NULL )
    {
       for ( i = 0; i < sch_ptr->nblocks; i++ )
-         hypre_TFree(sch_ptr->bmat_ia[i], HYPRE_MEMORY_HOST);
-      hypre_TFree(sch_ptr->bmat_ia, HYPRE_MEMORY_HOST);
+         hypre_TFree(sch_ptr->bmat_ia[i], NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(sch_ptr->bmat_ia, NALU_HYPRE_MEMORY_HOST);
    }
    if ( sch_ptr->bmat_ja  != NULL )
    {
       for ( i = 0; i < sch_ptr->nblocks; i++ )
-         hypre_TFree(sch_ptr->bmat_ja[i], HYPRE_MEMORY_HOST);
-      hypre_TFree(sch_ptr->bmat_ja, HYPRE_MEMORY_HOST);
+         hypre_TFree(sch_ptr->bmat_ja[i], NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(sch_ptr->bmat_ja, NALU_HYPRE_MEMORY_HOST);
    }
    if ( sch_ptr->bmat_aa  != NULL )
    {
       for ( i = 0; i < sch_ptr->nblocks; i++ )
-         hypre_TFree(sch_ptr->bmat_aa[i], HYPRE_MEMORY_HOST);
-      hypre_TFree(sch_ptr->bmat_aa, HYPRE_MEMORY_HOST);
+         hypre_TFree(sch_ptr->bmat_aa[i], NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(sch_ptr->bmat_aa, NALU_HYPRE_MEMORY_HOST);
    }
    if ( sch_ptr->aux_bmat_ia  != NULL )
    {
       for ( i = 0; i < sch_ptr->nblocks; i++ )
-         hypre_TFree(sch_ptr->aux_bmat_ia[i], HYPRE_MEMORY_HOST);
-      hypre_TFree(sch_ptr->aux_bmat_ia, HYPRE_MEMORY_HOST);
+         hypre_TFree(sch_ptr->aux_bmat_ia[i], NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(sch_ptr->aux_bmat_ia, NALU_HYPRE_MEMORY_HOST);
    }
    if ( sch_ptr->aux_bmat_ja  != NULL )
    {
       for ( i = 0; i < sch_ptr->nblocks; i++ )
-         hypre_TFree(sch_ptr->aux_bmat_ja[i], HYPRE_MEMORY_HOST);
-      hypre_TFree(sch_ptr->aux_bmat_ja, HYPRE_MEMORY_HOST);
+         hypre_TFree(sch_ptr->aux_bmat_ja[i], NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(sch_ptr->aux_bmat_ja, NALU_HYPRE_MEMORY_HOST);
    }
    if ( sch_ptr->aux_bmat_aa  != NULL )
    {
       for ( i = 0; i < sch_ptr->nblocks; i++ )
-         hypre_TFree(sch_ptr->aux_bmat_aa[i], HYPRE_MEMORY_HOST);
-      hypre_TFree(sch_ptr->aux_bmat_aa, HYPRE_MEMORY_HOST);
+         hypre_TFree(sch_ptr->aux_bmat_aa[i], NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(sch_ptr->aux_bmat_aa, NALU_HYPRE_MEMORY_HOST);
    }
    if ( sch_ptr->blk_sizes != NULL )
-      hypre_TFree(sch_ptr->blk_sizes, HYPRE_MEMORY_HOST);
+      hypre_TFree(sch_ptr->blk_sizes, NALU_HYPRE_MEMORY_HOST);
    if ( sch_ptr->blk_indices != NULL )
    {
       for ( i = 0; i < sch_ptr->nblocks; i++ )
          if ( sch_ptr->blk_indices[i] != NULL )
-            hypre_TFree(sch_ptr->blk_indices[i], HYPRE_MEMORY_HOST);
+            hypre_TFree(sch_ptr->blk_indices[i], NALU_HYPRE_MEMORY_HOST);
    }
    if ( sch_ptr->mh_mat != NULL )
    {
-      hypre_TFree(sch_ptr->mh_mat->sendProc, HYPRE_MEMORY_HOST);
-      hypre_TFree(sch_ptr->mh_mat->sendLeng, HYPRE_MEMORY_HOST);
-      hypre_TFree(sch_ptr->mh_mat->recvProc, HYPRE_MEMORY_HOST);
-      hypre_TFree(sch_ptr->mh_mat->recvLeng, HYPRE_MEMORY_HOST);
+      hypre_TFree(sch_ptr->mh_mat->sendProc, NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(sch_ptr->mh_mat->sendLeng, NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(sch_ptr->mh_mat->recvProc, NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(sch_ptr->mh_mat->recvLeng, NALU_HYPRE_MEMORY_HOST);
       for ( i = 0; i < sch_ptr->mh_mat->sendProcCnt; i++ )
-         hypre_TFree(sch_ptr->mh_mat->sendList[i], HYPRE_MEMORY_HOST);
-      hypre_TFree(sch_ptr->mh_mat->sendList, HYPRE_MEMORY_HOST);
-      hypre_TFree(sch_ptr->mh_mat, HYPRE_MEMORY_HOST);
+         hypre_TFree(sch_ptr->mh_mat->sendList[i], NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(sch_ptr->mh_mat->sendList, NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(sch_ptr->mh_mat, NALU_HYPRE_MEMORY_HOST);
    }
    sch_ptr->mh_mat = NULL;
-   hypre_TFree(sch_ptr, HYPRE_MEMORY_HOST);
+   hypre_TFree(sch_ptr, NALU_HYPRE_MEMORY_HOST);
 
    return 0;
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_LSI_SchwarzSetOutputLevel - Set debug level
+ * NALU_HYPRE_LSI_SchwarzSetOutputLevel - Set debug level
  *-------------------------------------------------------------------------*/
 
-int HYPRE_LSI_SchwarzSetOutputLevel(HYPRE_Solver solver, int level)
+int NALU_HYPRE_LSI_SchwarzSetOutputLevel(NALU_HYPRE_Solver solver, int level)
 {
-   HYPRE_LSI_Schwarz *sch_ptr = (HYPRE_LSI_Schwarz *) solver;
+   NALU_HYPRE_LSI_Schwarz *sch_ptr = (NALU_HYPRE_LSI_Schwarz *) solver;
 
    sch_ptr->output_level = level;
 
@@ -188,12 +188,12 @@ int HYPRE_LSI_SchwarzSetOutputLevel(HYPRE_Solver solver, int level)
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_LSI_SchwarzSetBlockSize - Set block size
+ * NALU_HYPRE_LSI_SchwarzSetBlockSize - Set block size
  *-------------------------------------------------------------------------*/
 
-int HYPRE_LSI_SchwarzSetNBlocks(HYPRE_Solver solver, int nblks)
+int NALU_HYPRE_LSI_SchwarzSetNBlocks(NALU_HYPRE_Solver solver, int nblks)
 {
-   HYPRE_LSI_Schwarz *sch_ptr = (HYPRE_LSI_Schwarz *) solver;
+   NALU_HYPRE_LSI_Schwarz *sch_ptr = (NALU_HYPRE_LSI_Schwarz *) solver;
 
    sch_ptr->nblocks = nblks;
 
@@ -201,12 +201,12 @@ int HYPRE_LSI_SchwarzSetNBlocks(HYPRE_Solver solver, int nblks)
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_LSI_SchwarzSetBlockSize - Set block size
+ * NALU_HYPRE_LSI_SchwarzSetBlockSize - Set block size
  *-------------------------------------------------------------------------*/
 
-int HYPRE_LSI_SchwarzSetBlockSize(HYPRE_Solver solver, int blksize)
+int NALU_HYPRE_LSI_SchwarzSetBlockSize(NALU_HYPRE_Solver solver, int blksize)
 {
-   HYPRE_LSI_Schwarz *sch_ptr = (HYPRE_LSI_Schwarz *) solver;
+   NALU_HYPRE_LSI_Schwarz *sch_ptr = (NALU_HYPRE_LSI_Schwarz *) solver;
 
    sch_ptr->block_size = blksize;
 
@@ -214,12 +214,12 @@ int HYPRE_LSI_SchwarzSetBlockSize(HYPRE_Solver solver, int blksize)
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_LSI_SchwarzSetILUTFillin - Set fillin for block solve
+ * NALU_HYPRE_LSI_SchwarzSetILUTFillin - Set fillin for block solve
  *-------------------------------------------------------------------------*/
 
-int HYPRE_LSI_SchwarzSetILUTFillin(HYPRE_Solver solver, double fillin)
+int NALU_HYPRE_LSI_SchwarzSetILUTFillin(NALU_HYPRE_Solver solver, double fillin)
 {
-   HYPRE_LSI_Schwarz *sch_ptr = (HYPRE_LSI_Schwarz *) solver;
+   NALU_HYPRE_LSI_Schwarz *sch_ptr = (NALU_HYPRE_LSI_Schwarz *) solver;
 
    sch_ptr->fillin = fillin;
 
@@ -227,11 +227,11 @@ int HYPRE_LSI_SchwarzSetILUTFillin(HYPRE_Solver solver, double fillin)
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_LSI_SchwarzSolve - Solve function for Schwarz.
+ * NALU_HYPRE_LSI_SchwarzSolve - Solve function for Schwarz.
  *-------------------------------------------------------------------------*/
 
-int HYPRE_LSI_SchwarzSolve( HYPRE_Solver solver, HYPRE_ParCSRMatrix Amat,
-                            HYPRE_ParVector b,   HYPRE_ParVector x )
+int NALU_HYPRE_LSI_SchwarzSolve( NALU_HYPRE_Solver solver, NALU_HYPRE_ParCSRMatrix Amat,
+                            NALU_HYPRE_ParVector b,   NALU_HYPRE_ParVector x )
 {
    int               i, j, cnt, blk, index, max_blk_size, nrows;
    int               ntimes, Nrows, extNrows, nblocks, *indptr, column;
@@ -239,7 +239,7 @@ int HYPRE_LSI_SchwarzSolve( HYPRE_Solver solver, HYPRE_ParCSRMatrix Amat,
    double            *dbuffer, *aux_mat_aa, *solbuf, *xbuffer;
    double            *rhs, *soln, *mat_aa, ddata;
    MH_Context        *context;
-   HYPRE_LSI_Schwarz *sch_ptr = (HYPRE_LSI_Schwarz *) solver;
+   NALU_HYPRE_LSI_Schwarz *sch_ptr = (NALU_HYPRE_LSI_Schwarz *) solver;
 
    /* ---------------------------------------------------------
     * fetch vectors
@@ -265,11 +265,11 @@ int HYPRE_LSI_SchwarzSolve( HYPRE_Solver solver, HYPRE_ParCSRMatrix Amat,
     * initialize memory for interprocessor communication
     * ---------------------------------------------------------*/
 
-   dbuffer = hypre_TAlloc(double, extNrows , HYPRE_MEMORY_HOST);
+   dbuffer = hypre_TAlloc(double, extNrows , NALU_HYPRE_MEMORY_HOST);
    for ( i = 0; i < Nrows; i++ ) dbuffer[i] = rhs[i];
    for ( i = 0; i < Nrows; i++ ) soln[i]    = 0.0;
 
-   context = hypre_TAlloc(MH_Context, 1, HYPRE_MEMORY_HOST);
+   context = hypre_TAlloc(MH_Context, 1, NALU_HYPRE_MEMORY_HOST);
    context->comm = sch_ptr->comm;
    context->Amat = sch_ptr->mh_mat;
 
@@ -279,9 +279,9 @@ int HYPRE_LSI_SchwarzSolve( HYPRE_Solver solver, HYPRE_ParCSRMatrix Amat,
 
    if ( extNrows > Nrows ) MH_ExchBdry(dbuffer, context);
 
-   solbuf  = hypre_TAlloc(double, max_blk_size , HYPRE_MEMORY_HOST);
-   idiag   = hypre_TAlloc(int, max_blk_size , HYPRE_MEMORY_HOST);
-   xbuffer = hypre_TAlloc(double, extNrows , HYPRE_MEMORY_HOST);
+   solbuf  = hypre_TAlloc(double, max_blk_size , NALU_HYPRE_MEMORY_HOST);
+   idiag   = hypre_TAlloc(int, max_blk_size , NALU_HYPRE_MEMORY_HOST);
+   xbuffer = hypre_TAlloc(double, extNrows , NALU_HYPRE_MEMORY_HOST);
    for ( i = Nrows; i < extNrows; i++ ) xbuffer[i] = 0.0;
 
    /* ---------------------------------------------------------
@@ -436,21 +436,21 @@ int HYPRE_LSI_SchwarzSolve( HYPRE_Solver solver, HYPRE_ParCSRMatrix Amat,
    /* clean up                                                  */
    /* --------------------------------------------------------- */
 
-   hypre_TFree(xbuffer, HYPRE_MEMORY_HOST);
-   hypre_TFree(idiag, HYPRE_MEMORY_HOST);
-   hypre_TFree(solbuf, HYPRE_MEMORY_HOST);
-   hypre_TFree(dbuffer, HYPRE_MEMORY_HOST);
-   hypre_TFree(context, HYPRE_MEMORY_HOST);
+   hypre_TFree(xbuffer, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(idiag, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(solbuf, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(dbuffer, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(context, NALU_HYPRE_MEMORY_HOST);
 
    return 0;
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_LSI_SchwarzSetup - Set up function for LSI_Schwarz.
+ * NALU_HYPRE_LSI_SchwarzSetup - Set up function for LSI_Schwarz.
  *-------------------------------------------------------------------------*/
 
-int HYPRE_LSI_SchwarzSetup(HYPRE_Solver solver, HYPRE_ParCSRMatrix A_csr,
-                           HYPRE_ParVector b,   HYPRE_ParVector x )
+int NALU_HYPRE_LSI_SchwarzSetup(NALU_HYPRE_Solver solver, NALU_HYPRE_ParCSRMatrix A_csr,
+                           NALU_HYPRE_ParVector b,   NALU_HYPRE_ParVector x )
 {
    int               i, offset, total_recv_leng, *recv_lengths=NULL;
    int               *int_buf=NULL, mypid, nprocs, overlap_flag=1,*parray;
@@ -459,7 +459,7 @@ int HYPRE_LSI_SchwarzSetup(HYPRE_Solver solver, HYPRE_ParCSRMatrix A_csr,
    MH_Context        *context=NULL;
    MH_Matrix         *mh_mat=NULL;
    MPI_Comm          comm;
-   HYPRE_LSI_Schwarz *sch_ptr = (HYPRE_LSI_Schwarz *) solver;
+   NALU_HYPRE_LSI_Schwarz *sch_ptr = (NALU_HYPRE_LSI_Schwarz *) solver;
 
    /* --------------------------------------------------------- */
    /* get the row information in my processors                  */
@@ -468,21 +468,21 @@ int HYPRE_LSI_SchwarzSetup(HYPRE_Solver solver, HYPRE_ParCSRMatrix A_csr,
    comm = sch_ptr->comm;
    MPI_Comm_rank(comm, &mypid);
    MPI_Comm_size(comm, &nprocs);
-   HYPRE_ParCSRMatrixGetRowPartitioning(A_csr, &row_partition);
+   NALU_HYPRE_ParCSRMatrixGetRowPartitioning(A_csr, &row_partition);
 
    /* --------------------------------------------------------- */
    /* convert the incoming CSR matrix into a MH matrix          */
    /* --------------------------------------------------------- */
 
-   context = hypre_TAlloc(MH_Context, 1, HYPRE_MEMORY_HOST);
+   context = hypre_TAlloc(MH_Context, 1, NALU_HYPRE_MEMORY_HOST);
    context->comm = comm;
    context->globalEqns = row_partition[nprocs];
-   context->partition = hypre_TAlloc(int, (nprocs+1), HYPRE_MEMORY_HOST);
+   context->partition = hypre_TAlloc(int, (nprocs+1), NALU_HYPRE_MEMORY_HOST);
    for (i=0; i<=nprocs; i++) context->partition[i] = row_partition[i];
-   hypre_TFree( row_partition , HYPRE_MEMORY_HOST);
-   mh_mat = hypre_TAlloc( MH_Matrix, 1, HYPRE_MEMORY_HOST);
+   hypre_TFree( row_partition , NALU_HYPRE_MEMORY_HOST);
+   mh_mat = hypre_TAlloc( MH_Matrix, 1, NALU_HYPRE_MEMORY_HOST);
    context->Amat = mh_mat;
-   HYPRE_LSI_MLConstructMHMatrix(A_csr, mh_mat, comm,
+   NALU_HYPRE_LSI_MLConstructMHMatrix(A_csr, mh_mat, comm,
                                  context->partition,context);
    sch_ptr->Nrows = mh_mat->Nrows;
    sch_ptr->mh_mat = mh_mat;
@@ -493,7 +493,7 @@ int HYPRE_LSI_SchwarzSetup(HYPRE_Solver solver, HYPRE_ParCSRMatrix A_csr,
 
    if ( overlap_flag )
    {
-      HYPRE_LSI_DDIlutComposeOverlappedMatrix(mh_mat, &total_recv_leng,
+      NALU_HYPRE_LSI_DDIlutComposeOverlappedMatrix(mh_mat, &total_recv_leng,
             &recv_lengths, &int_buf, &dble_buf, &map, &map2,&offset,comm);
    }
    else
@@ -504,39 +504,39 @@ int HYPRE_LSI_SchwarzSetup(HYPRE_Solver solver, HYPRE_ParCSRMatrix A_csr,
       dble_buf = NULL;
       map = NULL;
       map2 = NULL;
-      parray  = hypre_TAlloc(int, nprocs , HYPRE_MEMORY_HOST);
-      parray2 = hypre_TAlloc(int, nprocs , HYPRE_MEMORY_HOST);
+      parray  = hypre_TAlloc(int, nprocs , NALU_HYPRE_MEMORY_HOST);
+      parray2 = hypre_TAlloc(int, nprocs , NALU_HYPRE_MEMORY_HOST);
       for ( i = 0; i < nprocs; i++ ) parray2[i] = 0;
       parray2[mypid] = mh_mat->Nrows;
       MPI_Allreduce(parray2,parray,nprocs,MPI_INT,MPI_SUM,MPI_COMM_WORLD);
       offset = 0;
       for (i = 0; i < mypid; i++) offset += parray[i];
-      hypre_TFree(parray, HYPRE_MEMORY_HOST);
-      hypre_TFree(parray2, HYPRE_MEMORY_HOST);
+      hypre_TFree(parray, NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(parray2, NALU_HYPRE_MEMORY_HOST);
    }
 
    /* --------------------------------------------------------- */
    /* perform decomposition on local matrix                     */
    /* --------------------------------------------------------- */
 
-   HYPRE_LSI_SchwarzDecompose(sch_ptr,mh_mat,total_recv_leng,recv_lengths,
+   NALU_HYPRE_LSI_SchwarzDecompose(sch_ptr,mh_mat,total_recv_leng,recv_lengths,
                               int_buf, dble_buf, map, map2, offset);
 
    /* --------------------------------------------------------- */
    /* clean up                                                  */
    /* --------------------------------------------------------- */
 
-   hypre_TFree(map, HYPRE_MEMORY_HOST);
-   hypre_TFree(map2, HYPRE_MEMORY_HOST);
-   hypre_TFree(int_buf, HYPRE_MEMORY_HOST);
-   hypre_TFree(dble_buf, HYPRE_MEMORY_HOST);
-   hypre_TFree(recv_lengths, HYPRE_MEMORY_HOST);
-   hypre_TFree(context->partition, HYPRE_MEMORY_HOST);
-   hypre_TFree(context, HYPRE_MEMORY_HOST);
-   hypre_TFree(mh_mat->rowptr, HYPRE_MEMORY_HOST);
-   hypre_TFree(mh_mat->colnum, HYPRE_MEMORY_HOST);
-   hypre_TFree(mh_mat->values, HYPRE_MEMORY_HOST);
-   hypre_TFree(mh_mat->map, HYPRE_MEMORY_HOST);
+   hypre_TFree(map, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(map2, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(int_buf, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(dble_buf, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(recv_lengths, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(context->partition, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(context, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(mh_mat->rowptr, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(mh_mat->colnum, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(mh_mat->values, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(mh_mat->map, NALU_HYPRE_MEMORY_HOST);
 
    return 0;
 }
@@ -545,7 +545,7 @@ int HYPRE_LSI_SchwarzSetup(HYPRE_Solver solver, HYPRE_ParCSRMatrix A_csr,
 /* function for doing Schwarz decomposition                               */
 /**************************************************************************/
 
-int HYPRE_LSI_SchwarzDecompose(HYPRE_LSI_Schwarz *sch_ptr,MH_Matrix *Amat,
+int NALU_HYPRE_LSI_SchwarzDecompose(NALU_HYPRE_LSI_Schwarz *sch_ptr,MH_Matrix *Amat,
            int total_recv_leng, int *recv_lengths, int *ext_ja,
            double *ext_aa, int *map, int *map2, int Noffset)
 {
@@ -582,7 +582,7 @@ int HYPRE_LSI_SchwarzDecompose(HYPRE_LSI_Schwarz *sch_ptr,MH_Matrix *Amat,
             ext_ja[j] = index - Noffset;
          else
          {
-            col_ind = HYPRE_LSI_Search(map, index, extNrows-Nrows);
+            col_ind = NALU_HYPRE_LSI_Search(map, index, extNrows-Nrows);
             if ( col_ind >= 0 ) ext_ja[j] = map2[col_ind] + Nrows;
             else                ext_ja[j] = -1;
          }
@@ -600,7 +600,7 @@ int HYPRE_LSI_SchwarzDecompose(HYPRE_LSI_Schwarz *sch_ptr,MH_Matrix *Amat,
    {
       nblocks = 1;
       max_blk_size = extNrows;
-      sch_ptr->blk_sizes   = hypre_TAlloc(int, nblocks , HYPRE_MEMORY_HOST);
+      sch_ptr->blk_sizes   = hypre_TAlloc(int, nblocks , NALU_HYPRE_MEMORY_HOST);
       blk_size = sch_ptr->blk_sizes;
       blk_size[0] = extNrows;
    }
@@ -616,17 +616,17 @@ int HYPRE_LSI_SchwarzDecompose(HYPRE_LSI_Schwarz *sch_ptr,MH_Matrix *Amat,
          nblocks  = (Nrows - sch_ptr->block_size / 2) / sch_ptr->block_size + 1;
          sch_ptr->nblocks = nblocks;
       }
-      sch_ptr->blk_indices = hypre_TAlloc(int*, nblocks , HYPRE_MEMORY_HOST);
-      sch_ptr->blk_sizes   = hypre_TAlloc(int, nblocks , HYPRE_MEMORY_HOST);
+      sch_ptr->blk_indices = hypre_TAlloc(int*, nblocks , NALU_HYPRE_MEMORY_HOST);
+      sch_ptr->blk_sizes   = hypre_TAlloc(int, nblocks , NALU_HYPRE_MEMORY_HOST);
       blk_indices  = sch_ptr->blk_indices;
       blk_size     = sch_ptr->blk_sizes;
-      tmp_blk_leng = hypre_TAlloc(int, nblocks , HYPRE_MEMORY_HOST);
+      tmp_blk_leng = hypre_TAlloc(int, nblocks , NALU_HYPRE_MEMORY_HOST);
       for ( i = 0; i < nblocks-1; i++ ) blk_size[i] = sch_ptr->block_size;
       blk_size[nblocks-1] = Nrows - sch_ptr->block_size * (nblocks - 1 );
       for ( i = 0; i < nblocks; i++ )
       {
          tmp_blk_leng[i] = 5 * blk_size[i] + 5;
-         blk_indices[i] = hypre_TAlloc(int, tmp_blk_leng[i] , HYPRE_MEMORY_HOST);
+         blk_indices[i] = hypre_TAlloc(int, tmp_blk_leng[i] , NALU_HYPRE_MEMORY_HOST);
          for (j = 0; j < blk_size[i]; j++)
             blk_indices[i][j] = sch_ptr->block_size * i + j;
       }
@@ -644,10 +644,10 @@ int HYPRE_LSI_SchwarzDecompose(HYPRE_LSI_Schwarz *sch_ptr,MH_Matrix *Amat,
             {
                tmp_indices = blk_indices[i];
                tmp_blk_leng[i] = 2 * ( blk_size[i] + rowleng ) + 2;
-               blk_indices[i] = hypre_TAlloc(int, tmp_blk_leng[i] , HYPRE_MEMORY_HOST);
+               blk_indices[i] = hypre_TAlloc(int, tmp_blk_leng[i] , NALU_HYPRE_MEMORY_HOST);
                for (k = 0; k < blk_size[i]; k++)
                   blk_indices[i][k] = tmp_indices[k];
-               hypre_TFree(tmp_indices, HYPRE_MEMORY_HOST);
+               hypre_TFree(tmp_indices, NALU_HYPRE_MEMORY_HOST);
             }
             for ( k = 0; k < rowleng; k++ )
             {
@@ -663,24 +663,24 @@ int HYPRE_LSI_SchwarzDecompose(HYPRE_LSI_Schwarz *sch_ptr,MH_Matrix *Amat,
          blk_size[i] = ncnt + 1;
          if ( blk_size[i] > max_blk_size ) max_blk_size = blk_size[i];
       }
-      hypre_TFree(tmp_blk_leng, HYPRE_MEMORY_HOST);
+      hypre_TFree(tmp_blk_leng, NALU_HYPRE_MEMORY_HOST);
    }
 
    /* --------------------------------------------------------- */
    /* compute the memory requirements for each block            */
    /* --------------------------------------------------------- */
 
-   sch_ptr->bmat_ia = hypre_TAlloc(int*, nblocks , HYPRE_MEMORY_HOST);
-   sch_ptr->bmat_ja = hypre_TAlloc(int*, nblocks , HYPRE_MEMORY_HOST);
-   sch_ptr->bmat_aa = hypre_TAlloc(double*, nblocks , HYPRE_MEMORY_HOST);
+   sch_ptr->bmat_ia = hypre_TAlloc(int*, nblocks , NALU_HYPRE_MEMORY_HOST);
+   sch_ptr->bmat_ja = hypre_TAlloc(int*, nblocks , NALU_HYPRE_MEMORY_HOST);
+   sch_ptr->bmat_aa = hypre_TAlloc(double*, nblocks , NALU_HYPRE_MEMORY_HOST);
    bmat_ia = sch_ptr->bmat_ia;
    bmat_ja = sch_ptr->bmat_ja;
    bmat_aa = sch_ptr->bmat_aa;
    if ( nblocks != 1 )
    {
-      sch_ptr->aux_bmat_ia = hypre_TAlloc(int*, nblocks , HYPRE_MEMORY_HOST);
-      sch_ptr->aux_bmat_ja = hypre_TAlloc(int*, nblocks , HYPRE_MEMORY_HOST);
-      sch_ptr->aux_bmat_aa = hypre_TAlloc(double*, nblocks , HYPRE_MEMORY_HOST);
+      sch_ptr->aux_bmat_ia = hypre_TAlloc(int*, nblocks , NALU_HYPRE_MEMORY_HOST);
+      sch_ptr->aux_bmat_ja = hypre_TAlloc(int*, nblocks , NALU_HYPRE_MEMORY_HOST);
+      sch_ptr->aux_bmat_aa = hypre_TAlloc(double*, nblocks , NALU_HYPRE_MEMORY_HOST);
       aux_bmat_ia = sch_ptr->aux_bmat_ia;
       aux_bmat_ja = sch_ptr->aux_bmat_ja;
       aux_bmat_aa = sch_ptr->aux_bmat_aa;
@@ -696,8 +696,8 @@ int HYPRE_LSI_SchwarzDecompose(HYPRE_LSI_Schwarz *sch_ptr,MH_Matrix *Amat,
    /* compose each block into sch_ptr                           */
    /* --------------------------------------------------------- */
 
-   cols = hypre_TAlloc(int,  max_blk_size , HYPRE_MEMORY_HOST);
-   vals = hypre_TAlloc(double,  max_blk_size , HYPRE_MEMORY_HOST);
+   cols = hypre_TAlloc(int,  max_blk_size , NALU_HYPRE_MEMORY_HOST);
+   vals = hypre_TAlloc(double,  max_blk_size , NALU_HYPRE_MEMORY_HOST);
 
    for ( i = 0; i < nblocks; i++ )
    {
@@ -726,24 +726,24 @@ int HYPRE_LSI_SchwarzDecompose(HYPRE_LSI_Schwarz *sch_ptr,MH_Matrix *Amat,
          for ( k = 0; k < rowleng; k++ )
          {
             if ( nblocks > 1 )
-               index = HYPRE_LSI_Search( blk_indices[i], cols[k], blk_size[i]);
+               index = NALU_HYPRE_LSI_Search( blk_indices[i], cols[k], blk_size[i]);
             else
                index = cols[k];
             if ( index >= 0 ) nnz++;
             else              aux_nnz++;
          }
       }
-      bmat_ia[i] = hypre_TAlloc(int,  (length + 1) , HYPRE_MEMORY_HOST);
-      bmat_ja[i] = hypre_TAlloc(int,  nnz , HYPRE_MEMORY_HOST);
-      bmat_aa[i] = hypre_TAlloc(double,  nnz , HYPRE_MEMORY_HOST);
+      bmat_ia[i] = hypre_TAlloc(int,  (length + 1) , NALU_HYPRE_MEMORY_HOST);
+      bmat_ja[i] = hypre_TAlloc(int,  nnz , NALU_HYPRE_MEMORY_HOST);
+      bmat_aa[i] = hypre_TAlloc(double,  nnz , NALU_HYPRE_MEMORY_HOST);
       mat_ia = bmat_ia[i];
       mat_ja = bmat_ja[i];
       mat_aa = bmat_aa[i];
       if ( nblocks > 1 )
       {
-         aux_bmat_ia[i] = hypre_TAlloc(int,  (blk_size[i] + 1) , HYPRE_MEMORY_HOST);
-         aux_bmat_ja[i] = hypre_TAlloc(int,  aux_nnz , HYPRE_MEMORY_HOST);
-         aux_bmat_aa[i] = hypre_TAlloc(double,  aux_nnz , HYPRE_MEMORY_HOST);
+         aux_bmat_ia[i] = hypre_TAlloc(int,  (blk_size[i] + 1) , NALU_HYPRE_MEMORY_HOST);
+         aux_bmat_ja[i] = hypre_TAlloc(int,  aux_nnz , NALU_HYPRE_MEMORY_HOST);
+         aux_bmat_aa[i] = hypre_TAlloc(double,  aux_nnz , NALU_HYPRE_MEMORY_HOST);
       }
 
       /* ------------------------------------------------------ */
@@ -787,7 +787,7 @@ int HYPRE_LSI_SchwarzDecompose(HYPRE_LSI_Schwarz *sch_ptr,MH_Matrix *Amat,
          for ( k = 0; k < rowleng; k++ )
          {
             if ( nblocks > 1 )
-               index = HYPRE_LSI_Search( blk_indices[i], cols[k], blk_size[i]);
+               index = NALU_HYPRE_LSI_Search( blk_indices[i], cols[k], blk_size[i]);
             else index = cols[k];
             if ( index >= 0 )
             {
@@ -808,14 +808,14 @@ int HYPRE_LSI_SchwarzDecompose(HYPRE_LSI_Schwarz *sch_ptr,MH_Matrix *Amat,
             printf("block %d has index %d\n", i, mat_ja[j]);
    }
 
-   hypre_TFree(cols, HYPRE_MEMORY_HOST);
-   hypre_TFree(vals, HYPRE_MEMORY_HOST);
+   hypre_TFree(cols, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(vals, NALU_HYPRE_MEMORY_HOST);
 
    /* --------------------------------------------------------- */
    /* decompose each block                                      */
    /* --------------------------------------------------------- */
 
-   HYPRE_LSI_ILUTDecompose( sch_ptr );
+   NALU_HYPRE_LSI_ILUTDecompose( sch_ptr );
 
    return 0;
 }
@@ -824,7 +824,7 @@ int HYPRE_LSI_SchwarzDecompose(HYPRE_LSI_Schwarz *sch_ptr,MH_Matrix *Amat,
 /* function for doing ILUT decomposition                                 */
 /*************************************************************************/
 
-int HYPRE_LSI_ILUTDecompose( HYPRE_LSI_Schwarz *sch_ptr )
+int NALU_HYPRE_LSI_ILUTDecompose( NALU_HYPRE_LSI_Schwarz *sch_ptr )
 {
 
    int    i, j, k, blk, nrows, rleng, *cols, *track_array, track_leng;
@@ -848,12 +848,12 @@ int HYPRE_LSI_ILUTDecompose( HYPRE_LSI_Schwarz *sch_ptr )
    fillin = sch_ptr->fillin;
    tau    = sch_ptr->threshold;
 
-   track_array = hypre_TAlloc(int,  max_blk_size , HYPRE_MEMORY_HOST);
-   sortcols    = hypre_TAlloc(int,  max_blk_size , HYPRE_MEMORY_HOST);
-   sortvals    = hypre_TAlloc(double,  max_blk_size , HYPRE_MEMORY_HOST);
-   dble_buf    = hypre_TAlloc(double,  max_blk_size , HYPRE_MEMORY_HOST);
-   diagonal    = hypre_TAlloc(double,  max_blk_size , HYPRE_MEMORY_HOST);
-   rowNorms    = hypre_TAlloc(double,  max_blk_size , HYPRE_MEMORY_HOST);
+   track_array = hypre_TAlloc(int,  max_blk_size , NALU_HYPRE_MEMORY_HOST);
+   sortcols    = hypre_TAlloc(int,  max_blk_size , NALU_HYPRE_MEMORY_HOST);
+   sortvals    = hypre_TAlloc(double,  max_blk_size , NALU_HYPRE_MEMORY_HOST);
+   dble_buf    = hypre_TAlloc(double,  max_blk_size , NALU_HYPRE_MEMORY_HOST);
+   diagonal    = hypre_TAlloc(double,  max_blk_size , NALU_HYPRE_MEMORY_HOST);
+   rowNorms    = hypre_TAlloc(double,  max_blk_size , NALU_HYPRE_MEMORY_HOST);
    for ( i = 0; i < max_blk_size; i++ ) dble_buf[i] = 0.0;
 
    /* --------------------------------------------------------- */
@@ -871,9 +871,9 @@ int HYPRE_LSI_ILUTDecompose( HYPRE_LSI_Schwarz *sch_ptr )
       nrows   = sch_ptr->blk_sizes[blk];
       nnz     = mat_ia[nrows];
       new_nnz = (int) (nnz * ( 1.0 + fillin ));
-      new_ia  = hypre_TAlloc(int,  (nrows + 1 ) , HYPRE_MEMORY_HOST);
-      new_ja  = hypre_TAlloc(int,  new_nnz , HYPRE_MEMORY_HOST);
-      new_aa  = hypre_TAlloc(double,  new_nnz , HYPRE_MEMORY_HOST);
+      new_ia  = hypre_TAlloc(int,  (nrows + 1 ) , NALU_HYPRE_MEMORY_HOST);
+      new_ja  = hypre_TAlloc(int,  new_nnz , NALU_HYPRE_MEMORY_HOST);
+      new_aa  = hypre_TAlloc(double,  new_nnz , NALU_HYPRE_MEMORY_HOST);
       nnz       = 0;
       new_ia[0] = nnz;
       for ( i = 0; i < nrows; i++ )
@@ -964,7 +964,7 @@ int HYPRE_LSI_ILUTDecompose( HYPRE_LSI_Schwarz *sch_ptr )
          }
          if ( sortcnt > Lcount )
          {
-            HYPRE_LSI_SplitDSort(sortvals,sortcnt,sortcols,Lcount);
+            NALU_HYPRE_LSI_SplitDSort(sortvals,sortcnt,sortcols,Lcount);
             for ( j = Lcount; j < sortcnt; j++ ) dble_buf[sortcols[j]] = 0.0;
          }
          for ( j = 0; j < rleng; j++ )
@@ -1006,7 +1006,7 @@ int HYPRE_LSI_ILUTDecompose( HYPRE_LSI_Schwarz *sch_ptr )
          }
          if ( sortcnt > Ucount )
          {
-            HYPRE_LSI_SplitDSort(sortvals,sortcnt,sortcols,Ucount);
+            NALU_HYPRE_LSI_SplitDSort(sortvals,sortcnt,sortcols,Ucount);
             for ( j = Ucount; j < sortcnt; j++ ) dble_buf[sortcols[j]] = 0.0;
          }
          for ( j = 0; j < rleng; j++ )
@@ -1030,9 +1030,9 @@ int HYPRE_LSI_ILUTDecompose( HYPRE_LSI_Schwarz *sch_ptr )
          dble_buf[i] = 0.0;
          new_ia[i+1] = nnz;
       }
-      hypre_TFree(mat_ia, HYPRE_MEMORY_HOST);
-      hypre_TFree(mat_ja, HYPRE_MEMORY_HOST);
-      hypre_TFree(mat_aa, HYPRE_MEMORY_HOST);
+      hypre_TFree(mat_ia, NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(mat_ja, NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(mat_aa, NALU_HYPRE_MEMORY_HOST);
       sch_ptr->bmat_ia[blk] = new_ia;
       sch_ptr->bmat_ja[blk] = new_ja;
       sch_ptr->bmat_aa[blk] = new_aa;
@@ -1051,12 +1051,12 @@ int HYPRE_LSI_ILUTDecompose( HYPRE_LSI_Schwarz *sch_ptr )
       }
    }
 
-   hypre_TFree(track_array, HYPRE_MEMORY_HOST);
-   hypre_TFree(dble_buf, HYPRE_MEMORY_HOST);
-   hypre_TFree(diagonal, HYPRE_MEMORY_HOST);
-   hypre_TFree(rowNorms, HYPRE_MEMORY_HOST);
-   hypre_TFree(sortcols, HYPRE_MEMORY_HOST);
-   hypre_TFree(sortvals, HYPRE_MEMORY_HOST);
+   hypre_TFree(track_array, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(dble_buf, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(diagonal, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(rowNorms, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(sortcols, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(sortvals, NALU_HYPRE_MEMORY_HOST);
 
    return 0;
 }

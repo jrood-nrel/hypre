@@ -17,8 +17,8 @@ C_COMPILE_FLAGS = \
 ${CINCLUDES}
 
 HEADERS = \
- HYPRE_DistributedMatrixPilutSolver_protos.h\
- HYPRE_DistributedMatrixPilutSolver_types.h\
+ NALU_HYPRE_DistributedMatrixPilutSolver_protos.h\
+ NALU_HYPRE_DistributedMatrixPilutSolver_types.h\
  DistributedMatrixPilutSolver.h\
  const.h\
  ilu.h\
@@ -31,7 +31,7 @@ FILES =\
  debug.c\
  distributed_qsort.c\
  distributed_qsort_si.c\
- HYPRE_DistributedMatrixPilutSolver.c\
+ NALU_HYPRE_DistributedMatrixPilutSolver.c\
  ilut.c\
  parilut.c\
  parutil.c\
@@ -42,19 +42,19 @@ FILES =\
 
 OBJS = ${FILES:.c=.o}
 
-SONAME = libHYPRE_DistributedMatrixPilutSolver-${HYPRE_RELEASE_VERSION}${HYPRE_LIB_SUFFIX}
+SONAME = libNALU_HYPRE_DistributedMatrixPilutSolver-${NALU_HYPRE_RELEASE_VERSION}${NALU_HYPRE_LIB_SUFFIX}
 
 ##################################################################
 # Targets
 ##################################################################
 
-all: libHYPRE_DistributedMatrixPilutSolver${HYPRE_LIB_SUFFIX}
-	cp -fR $(srcdir)/HYPRE_*.h $(HYPRE_BUILD_DIR)/include
-#	cp -fR libHYPRE* $(HYPRE_BUILD_DIR)/lib
+all: libNALU_HYPRE_DistributedMatrixPilutSolver${NALU_HYPRE_LIB_SUFFIX}
+	cp -fR $(srcdir)/NALU_HYPRE_*.h $(NALU_HYPRE_BUILD_DIR)/include
+#	cp -fR libHYPRE* $(NALU_HYPRE_BUILD_DIR)/lib
 
-install: libHYPRE_DistributedMatrixPilutSolver${HYPRE_LIB_SUFFIX}
-	cp -fR $(srcdir)/HYPRE_*.h $(HYPRE_INC_INSTALL)
-#	cp -fR libHYPRE* $(HYPRE_LIB_INSTALL)
+install: libNALU_HYPRE_DistributedMatrixPilutSolver${NALU_HYPRE_LIB_SUFFIX}
+	cp -fR $(srcdir)/NALU_HYPRE_*.h $(NALU_HYPRE_INC_INSTALL)
+#	cp -fR libHYPRE* $(NALU_HYPRE_LIB_INSTALL)
 
 clean:
 	rm -f *.o libHYPRE*
@@ -66,12 +66,12 @@ distclean: clean
 # Main rules
 ##################################################################
 
-libHYPRE_DistributedMatrixPilutSolver.a: ${OBJS}
+libNALU_HYPRE_DistributedMatrixPilutSolver.a: ${OBJS}
 	@echo "Building $@ ... "
 	${AR} $@ ${OBJS}
 	${RANLIB} $@
 
-libHYPRE_DistributedMatrixPilutSolver.so libHYPRE_DistributedMatrixPilutSolver.dylib: ${OBJS}
+libNALU_HYPRE_DistributedMatrixPilutSolver.so libNALU_HYPRE_DistributedMatrixPilutSolver.dylib: ${OBJS}
 	@echo  "Building $@ ... "
 	${BUILD_CC_SHARED} -o ${SONAME} ${OBJS} ${SHARED_SET_SONAME}${SONAME}
 	ln -s -f ${SONAME} $@

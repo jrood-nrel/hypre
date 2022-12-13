@@ -8,13 +8,13 @@
 #ifndef hypre_LOBPCG_SOLVER
 #define hypre_LOBPCG_SOLVER
 
-#include "HYPRE_krylov.h"
+#include "NALU_HYPRE_krylov.h"
 
 #include "fortran_matrix.h"
 #include "multivector.h"
 #include "interpreter.h"
 #include "temp_multivector.h"
-#include "HYPRE_MatvecFunctions.h"
+#include "NALU_HYPRE_MatvecFunctions.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -44,31 +44,31 @@ extern "C" {
  * @{
  **/
 
-#ifndef HYPRE_SOLVER_STRUCT
-#define HYPRE_SOLVER_STRUCT
+#ifndef NALU_HYPRE_SOLVER_STRUCT
+#define NALU_HYPRE_SOLVER_STRUCT
 struct hypre_Solver_struct;
 /**
  * The solver object.
  **/
-typedef struct hypre_Solver_struct *HYPRE_Solver;
+typedef struct hypre_Solver_struct *NALU_HYPRE_Solver;
 #endif
 
-#ifndef HYPRE_MATRIX_STRUCT
-#define HYPRE_MATRIX_STRUCT
+#ifndef NALU_HYPRE_MATRIX_STRUCT
+#define NALU_HYPRE_MATRIX_STRUCT
 struct hypre_Matrix_struct;
 /**
  * The matrix object.
  **/
-typedef struct hypre_Matrix_struct *HYPRE_Matrix;
+typedef struct hypre_Matrix_struct *NALU_HYPRE_Matrix;
 #endif
 
-#ifndef HYPRE_VECTOR_STRUCT
-#define HYPRE_VECTOR_STRUCT
+#ifndef NALU_HYPRE_VECTOR_STRUCT
+#define NALU_HYPRE_VECTOR_STRUCT
 struct hypre_Vector_struct;
 /**
  * The vector object.
  **/
-typedef struct hypre_Vector_struct *HYPRE_Vector;
+typedef struct hypre_Vector_struct *NALU_HYPRE_Vector;
 #endif
 
 /**@}*/
@@ -85,104 +85,104 @@ typedef struct hypre_Vector_struct *HYPRE_Vector;
 /**
  * LOBPCG constructor.
  */
-HYPRE_Int HYPRE_LOBPCGCreate(mv_InterfaceInterpreter *interpreter,
-                             HYPRE_MatvecFunctions   *mvfunctions,
-                             HYPRE_Solver            *solver);
+NALU_HYPRE_Int NALU_HYPRE_LOBPCGCreate(mv_InterfaceInterpreter *interpreter,
+                             NALU_HYPRE_MatvecFunctions   *mvfunctions,
+                             NALU_HYPRE_Solver            *solver);
 
 /**
  * LOBPCG destructor.
  */
-HYPRE_Int HYPRE_LOBPCGDestroy(HYPRE_Solver solver);
+NALU_HYPRE_Int NALU_HYPRE_LOBPCGDestroy(NALU_HYPRE_Solver solver);
 
 /**
  * (Optional) Set the preconditioner to use.  If not called, preconditioning is
  * not used.
  **/
-HYPRE_Int HYPRE_LOBPCGSetPrecond(HYPRE_Solver         solver,
-                                 HYPRE_PtrToSolverFcn precond,
-                                 HYPRE_PtrToSolverFcn precond_setup,
-                                 HYPRE_Solver         precond_solver);
+NALU_HYPRE_Int NALU_HYPRE_LOBPCGSetPrecond(NALU_HYPRE_Solver         solver,
+                                 NALU_HYPRE_PtrToSolverFcn precond,
+                                 NALU_HYPRE_PtrToSolverFcn precond_setup,
+                                 NALU_HYPRE_Solver         precond_solver);
 
 /**
  **/
-HYPRE_Int HYPRE_LOBPCGGetPrecond(HYPRE_Solver  solver,
-                                 HYPRE_Solver *precond_data_ptr);
+NALU_HYPRE_Int NALU_HYPRE_LOBPCGGetPrecond(NALU_HYPRE_Solver  solver,
+                                 NALU_HYPRE_Solver *precond_data_ptr);
 
 /**
  * Set up \e A and the preconditioner (if there is one).
  **/
-HYPRE_Int HYPRE_LOBPCGSetup(HYPRE_Solver solver,
-                            HYPRE_Matrix A,
-                            HYPRE_Vector b,
-                            HYPRE_Vector x);
+NALU_HYPRE_Int NALU_HYPRE_LOBPCGSetup(NALU_HYPRE_Solver solver,
+                            NALU_HYPRE_Matrix A,
+                            NALU_HYPRE_Vector b,
+                            NALU_HYPRE_Vector x);
 
 /**
  * (Optional) Set up \e B.  If not called, B = I.
  **/
-HYPRE_Int HYPRE_LOBPCGSetupB(HYPRE_Solver solver,
-                             HYPRE_Matrix B,
-                             HYPRE_Vector x);
+NALU_HYPRE_Int NALU_HYPRE_LOBPCGSetupB(NALU_HYPRE_Solver solver,
+                             NALU_HYPRE_Matrix B,
+                             NALU_HYPRE_Vector x);
 
 /**
  * (Optional) Set the preconditioning to be applied to Tx = b, not Ax = b.
  **/
-HYPRE_Int HYPRE_LOBPCGSetupT(HYPRE_Solver solver,
-                             HYPRE_Matrix T,
-                             HYPRE_Vector x);
+NALU_HYPRE_Int NALU_HYPRE_LOBPCGSetupT(NALU_HYPRE_Solver solver,
+                             NALU_HYPRE_Matrix T,
+                             NALU_HYPRE_Vector x);
 
 /**
  * Solve A x = lambda B x, y'x = 0.
  **/
-HYPRE_Int HYPRE_LOBPCGSolve(HYPRE_Solver       solver,
+NALU_HYPRE_Int NALU_HYPRE_LOBPCGSolve(NALU_HYPRE_Solver       solver,
                             mv_MultiVectorPtr  y,
                             mv_MultiVectorPtr  x,
-                            HYPRE_Real        *lambda );
+                            NALU_HYPRE_Real        *lambda );
 
 /**
  * (Optional) Set the absolute convergence tolerance.
  **/
-HYPRE_Int HYPRE_LOBPCGSetTol(HYPRE_Solver solver,
-                             HYPRE_Real   tol);
+NALU_HYPRE_Int NALU_HYPRE_LOBPCGSetTol(NALU_HYPRE_Solver solver,
+                             NALU_HYPRE_Real   tol);
 
 /**
  * (Optional) Set the relative convergence tolerance.
  **/
-HYPRE_Int HYPRE_LOBPCGSetRTol(HYPRE_Solver solver,
-                              HYPRE_Real   tol);
+NALU_HYPRE_Int NALU_HYPRE_LOBPCGSetRTol(NALU_HYPRE_Solver solver,
+                              NALU_HYPRE_Real   tol);
 
 /**
  * (Optional) Set maximum number of iterations.
  **/
-HYPRE_Int HYPRE_LOBPCGSetMaxIter(HYPRE_Solver solver,
-                                 HYPRE_Int          max_iter);
+NALU_HYPRE_Int NALU_HYPRE_LOBPCGSetMaxIter(NALU_HYPRE_Solver solver,
+                                 NALU_HYPRE_Int          max_iter);
 
 /**
  * Define which initial guess for inner PCG iterations to use: \e mode = 0:
  * use zero initial guess, otherwise use RHS.
  **/
-HYPRE_Int HYPRE_LOBPCGSetPrecondUsageMode(HYPRE_Solver solver,
-                                          HYPRE_Int          mode);
+NALU_HYPRE_Int NALU_HYPRE_LOBPCGSetPrecondUsageMode(NALU_HYPRE_Solver solver,
+                                          NALU_HYPRE_Int          mode);
 
 /**
  * (Optional) Set the amount of printing to do to the screen.
  **/
-HYPRE_Int HYPRE_LOBPCGSetPrintLevel(HYPRE_Solver solver,
-                                    HYPRE_Int          level);
+NALU_HYPRE_Int NALU_HYPRE_LOBPCGSetPrintLevel(NALU_HYPRE_Solver solver,
+                                    NALU_HYPRE_Int          level);
 
 /* Returns the pointer to residual norms matrix (blockSize x 1) */
 utilities_FortranMatrix*
-HYPRE_LOBPCGResidualNorms(HYPRE_Solver solver);
+NALU_HYPRE_LOBPCGResidualNorms(NALU_HYPRE_Solver solver);
 
 /* Returns the pointer to residual norms history matrix (blockSize x maxIter) */
 utilities_FortranMatrix*
-HYPRE_LOBPCGResidualNormsHistory(HYPRE_Solver solver);
+NALU_HYPRE_LOBPCGResidualNormsHistory(NALU_HYPRE_Solver solver);
 
 /* Returns the pointer to eigenvalue history matrix (blockSize x maxIter) */
 utilities_FortranMatrix*
-HYPRE_LOBPCGEigenvaluesHistory(HYPRE_Solver solver);
+NALU_HYPRE_LOBPCGEigenvaluesHistory(NALU_HYPRE_Solver solver);
 
 /* Returns the number of iterations performed by LOBPCG */
-HYPRE_Int HYPRE_LOBPCGIterations(HYPRE_Solver solver);
+NALU_HYPRE_Int NALU_HYPRE_LOBPCGIterations(NALU_HYPRE_Solver solver);
 
 void hypre_LOBPCGMultiOperatorB(void *data,
                                 void *x,

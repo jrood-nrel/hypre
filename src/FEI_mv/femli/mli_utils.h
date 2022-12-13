@@ -31,9 +31,9 @@ typedef struct
    MPI_Comm comm_;
    int      degree_;
    double   *diagonal_;
-   HYPRE_ParVector hypreRes_;
+   NALU_HYPRE_ParVector hypreRes_;
 }
-HYPRE_MLI_mJacobi;
+NALU_HYPRE_MLI_mJacobi;
 
 /************************************************************************
  * place holder for function pointers
@@ -85,23 +85,23 @@ int    MLI_Utils_HypreMatrixReadHBFormat(char *filename, MPI_Comm comm,
                  void **mat);
 int    MLI_Utils_DoubleVectorRead(char *, MPI_Comm, int, int, double *vec);
 int    MLI_Utils_DoubleParVectorRead(char *, MPI_Comm, int, int, double *vec);
-int    MLI_Utils_ParCSRMLISetup(HYPRE_Solver, HYPRE_ParCSRMatrix, 
-                                HYPRE_ParVector, HYPRE_ParVector);
-int    MLI_Utils_ParCSRMLISolve(HYPRE_Solver, HYPRE_ParCSRMatrix, 
-                                HYPRE_ParVector, HYPRE_ParVector);
-int    MLI_Utils_mJacobiCreate(MPI_Comm, HYPRE_Solver *);
-int    MLI_Utils_mJacobiDestroy(HYPRE_Solver);
-int    MLI_Utils_mJacobiSetParams(HYPRE_Solver, int);
-int    MLI_Utils_mJacobiSetup(HYPRE_Solver, HYPRE_ParCSRMatrix, 
-                              HYPRE_ParVector, HYPRE_ParVector);
-int    MLI_Utils_mJacobiSolve(HYPRE_Solver, HYPRE_ParCSRMatrix, 
-                              HYPRE_ParVector, HYPRE_ParVector);
-int    MLI_Utils_HyprePCGSolve(CMLI *, HYPRE_Matrix, HYPRE_Vector, 
-                               HYPRE_Vector);
-int    MLI_Utils_HypreGMRESSolve(void *, HYPRE_Matrix, HYPRE_Vector, 
-                                 HYPRE_Vector, char *);
-int    MLI_Utils_HypreBiCGSTABSolve(CMLI *, HYPRE_Matrix, HYPRE_Vector, 
-                                    HYPRE_Vector);
+int    MLI_Utils_ParCSRMLISetup(NALU_HYPRE_Solver, NALU_HYPRE_ParCSRMatrix, 
+                                NALU_HYPRE_ParVector, NALU_HYPRE_ParVector);
+int    MLI_Utils_ParCSRMLISolve(NALU_HYPRE_Solver, NALU_HYPRE_ParCSRMatrix, 
+                                NALU_HYPRE_ParVector, NALU_HYPRE_ParVector);
+int    MLI_Utils_mJacobiCreate(MPI_Comm, NALU_HYPRE_Solver *);
+int    MLI_Utils_mJacobiDestroy(NALU_HYPRE_Solver);
+int    MLI_Utils_mJacobiSetParams(NALU_HYPRE_Solver, int);
+int    MLI_Utils_mJacobiSetup(NALU_HYPRE_Solver, NALU_HYPRE_ParCSRMatrix, 
+                              NALU_HYPRE_ParVector, NALU_HYPRE_ParVector);
+int    MLI_Utils_mJacobiSolve(NALU_HYPRE_Solver, NALU_HYPRE_ParCSRMatrix, 
+                              NALU_HYPRE_ParVector, NALU_HYPRE_ParVector);
+int    MLI_Utils_HyprePCGSolve(CMLI *, NALU_HYPRE_Matrix, NALU_HYPRE_Vector, 
+                               NALU_HYPRE_Vector);
+int    MLI_Utils_HypreGMRESSolve(void *, NALU_HYPRE_Matrix, NALU_HYPRE_Vector, 
+                                 NALU_HYPRE_Vector, char *);
+int    MLI_Utils_HypreBiCGSTABSolve(CMLI *, NALU_HYPRE_Matrix, NALU_HYPRE_Vector, 
+                                    NALU_HYPRE_Vector);
 int    MLI_Utils_BinarySearch(int, int *, int);
 int    MLI_Utils_IntQSort2(int *, int *, int, int);
 int    MLI_Utils_IntQSort2a(int *, double *, int, int);

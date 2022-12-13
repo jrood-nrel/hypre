@@ -13,10 +13,10 @@
 /* #include "euclid_common.h" */
 
 typedef struct _srecord {
-    HYPRE_Int    col;
-    HYPRE_Int    level;
-    HYPRE_Real val;
-    HYPRE_Int next;
+    NALU_HYPRE_Int    col;
+    NALU_HYPRE_Int    level;
+    NALU_HYPRE_Real val;
+    NALU_HYPRE_Int next;
 } SRecord;
 
 
@@ -25,9 +25,9 @@ extern void SortedList_dhDestroy(SortedList_dh sList);
 extern void SortedList_dhInit(SortedList_dh sList, SubdomainGraph_dh sg);
 extern void SortedList_dhEnforceConstraint(SortedList_dh sList, SubdomainGraph_dh sg);
 
-extern void SortedList_dhReset(SortedList_dh sList, HYPRE_Int row);
+extern void SortedList_dhReset(SortedList_dh sList, NALU_HYPRE_Int row);
 
-extern HYPRE_Int SortedList_dhReadCount(SortedList_dh sList);
+extern NALU_HYPRE_Int SortedList_dhReadCount(SortedList_dh sList);
   /* returns number of records inserted since last reset */
 
 extern void SortedList_dhResetGetSmallest(SortedList_dh sList);
@@ -60,7 +60,7 @@ extern void SortedList_dhInsertOrUpdateVal(SortedList_dh sList, SRecord *sr);
      factorization routines.
    */
 
-extern bool SortedList_dhPermuteAndInsert(SortedList_dh sList, SRecord *sr, HYPRE_Real thresh);
+extern bool SortedList_dhPermuteAndInsert(SortedList_dh sList, SRecord *sr, NALU_HYPRE_Real thresh);
   /* permutes sr->col, and inserts record in sorted list.
      Note: the contents of the passed variable "sr" may be changed.
      Note: this performs sparsification 

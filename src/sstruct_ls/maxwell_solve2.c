@@ -14,7 +14,7 @@
  * u_edge to change per call.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_MaxwellSolve2( void                *maxwell_vdata,
                      hypre_SStructMatrix *A_in,
                      hypre_SStructVector *f,
@@ -25,12 +25,12 @@ hypre_MaxwellSolve2( void                *maxwell_vdata,
    hypre_ParVector       *f_edge;
    hypre_ParVector       *u_edge;
 
-   HYPRE_Int              max_iter     = maxwell_data-> max_iter;
-   HYPRE_Real             tol          = maxwell_data-> tol;
-   HYPRE_Int              rel_change   = maxwell_data-> rel_change;
-   HYPRE_Int              zero_guess   = maxwell_data-> zero_guess;
-   HYPRE_Int              npre_relax   = maxwell_data-> num_pre_relax;
-   HYPRE_Int              npost_relax  = maxwell_data-> num_post_relax;
+   NALU_HYPRE_Int              max_iter     = maxwell_data-> max_iter;
+   NALU_HYPRE_Real             tol          = maxwell_data-> tol;
+   NALU_HYPRE_Int              rel_change   = maxwell_data-> rel_change;
+   NALU_HYPRE_Int              zero_guess   = maxwell_data-> zero_guess;
+   NALU_HYPRE_Int              npre_relax   = maxwell_data-> num_pre_relax;
+   NALU_HYPRE_Int              npost_relax  = maxwell_data-> num_post_relax;
 
    hypre_ParCSRMatrix   **Ann_l        = maxwell_data-> Ann_l;
    hypre_ParCSRMatrix   **Pn_l         = maxwell_data-> Pn_l;
@@ -40,11 +40,11 @@ hypre_MaxwellSolve2( void                *maxwell_vdata,
    hypre_ParVector      **resn_l       = maxwell_data-> resn_l;
    hypre_ParVector      **en_l         = maxwell_data-> en_l;
    hypre_ParVector      **nVtemp2_l    = maxwell_data-> nVtemp2_l;
-   HYPRE_Int            **nCF_marker_l = maxwell_data-> nCF_marker_l;
-   HYPRE_Real            *nrelax_weight = maxwell_data-> nrelax_weight;
-   HYPRE_Real            *nomega       = maxwell_data-> nomega;
-   HYPRE_Int              nrelax_type  = maxwell_data-> nrelax_type;
-   HYPRE_Int              node_numlevs = maxwell_data-> node_numlevels;
+   NALU_HYPRE_Int            **nCF_marker_l = maxwell_data-> nCF_marker_l;
+   NALU_HYPRE_Real            *nrelax_weight = maxwell_data-> nrelax_weight;
+   NALU_HYPRE_Real            *nomega       = maxwell_data-> nomega;
+   NALU_HYPRE_Int              nrelax_type  = maxwell_data-> nrelax_type;
+   NALU_HYPRE_Int              node_numlevs = maxwell_data-> node_numlevels;
 
    hypre_ParCSRMatrix    *Tgrad        = maxwell_data-> Tgrad;
    hypre_ParCSRMatrix    *T_transpose  = maxwell_data-> T_transpose;
@@ -57,26 +57,26 @@ hypre_MaxwellSolve2( void                *maxwell_vdata,
    hypre_ParVector      **rese_l       = maxwell_data-> rese_l;
    hypre_ParVector      **ee_l         = maxwell_data-> ee_l;
    hypre_ParVector      **eVtemp2_l    = maxwell_data-> eVtemp2_l;
-   HYPRE_Int            **eCF_marker_l = maxwell_data-> eCF_marker_l;
-   HYPRE_Real            *erelax_weight = maxwell_data-> erelax_weight;
-   HYPRE_Real            *eomega       = maxwell_data-> eomega;
-   HYPRE_Int              erelax_type  = maxwell_data-> erelax_type;
-   HYPRE_Int              edge_numlevs = maxwell_data-> edge_numlevels;
+   NALU_HYPRE_Int            **eCF_marker_l = maxwell_data-> eCF_marker_l;
+   NALU_HYPRE_Real            *erelax_weight = maxwell_data-> erelax_weight;
+   NALU_HYPRE_Real            *eomega       = maxwell_data-> eomega;
+   NALU_HYPRE_Int              erelax_type  = maxwell_data-> erelax_type;
+   NALU_HYPRE_Int              edge_numlevs = maxwell_data-> edge_numlevels;
 
-   HYPRE_Int            **BdryRanks_l  = maxwell_data-> BdryRanks_l;
-   HYPRE_Int             *BdryRanksCnts_l = maxwell_data-> BdryRanksCnts_l;
+   NALU_HYPRE_Int            **BdryRanks_l  = maxwell_data-> BdryRanks_l;
+   NALU_HYPRE_Int             *BdryRanksCnts_l = maxwell_data-> BdryRanksCnts_l;
 
-   HYPRE_Int              logging      = maxwell_data-> logging;
-   HYPRE_Real            *norms        = maxwell_data-> norms;
-   HYPRE_Real            *rel_norms    = maxwell_data-> rel_norms;
+   NALU_HYPRE_Int              logging      = maxwell_data-> logging;
+   NALU_HYPRE_Real            *norms        = maxwell_data-> norms;
+   NALU_HYPRE_Real            *rel_norms    = maxwell_data-> rel_norms;
 
-   HYPRE_Int              relax_local, cycle_param;
+   NALU_HYPRE_Int              relax_local, cycle_param;
 
-   HYPRE_Real             b_dot_b = 0, r_dot_r, eps = 0;
-   HYPRE_Real             e_dot_e, x_dot_x;
+   NALU_HYPRE_Real             b_dot_b = 0, r_dot_r, eps = 0;
+   NALU_HYPRE_Real             e_dot_e, x_dot_x;
 
-   HYPRE_Int              i, j;
-   HYPRE_Int              level;
+   NALU_HYPRE_Int              i, j;
+   NALU_HYPRE_Int              level;
 
    /* added for the relaxation routines */
    hypre_ParVector *ze = NULL;

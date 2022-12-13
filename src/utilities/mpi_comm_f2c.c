@@ -5,9 +5,9 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include <HYPRE_config.h>
+#include <NALU_HYPRE_config.h>
 #include "fortran.h"
-#ifndef HYPRE_SEQUENTIAL
+#ifndef NALU_HYPRE_SEQUENTIAL
 #include <mpi.h>
 #endif
 
@@ -16,7 +16,7 @@
 
 #if 0 /* This function is problematic and no longer needed anyway. */
 void
-hypre_F90_IFACE(hypre_mpi_comm_f2c, HYPRE_MPI_COMM_F2C)
+hypre_F90_IFACE(hypre_mpi_comm_f2c, NALU_HYPRE_MPI_COMM_F2C)
 (hypre_F90_Obj  *c_comm,
  hypre_F90_Comm *f_comm,
  hypre_F90_Int  *ierr)

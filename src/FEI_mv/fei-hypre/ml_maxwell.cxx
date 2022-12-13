@@ -6,7 +6,7 @@
  ******************************************************************************/
 
 // *************************************************************************
-// test program for HYPRE_LinSysCore
+// test program for NALU_HYPRE_LinSysCore
 // *************************************************************************
 
 //***************************************************************************
@@ -23,10 +23,10 @@
 
 #include "HYPRE.h"
 #include "utilities/_hypre_utilities.h"
-#include "IJ_mv/HYPRE_IJ_mv.h"
-#include "parcsr_mv/HYPRE_parcsr_mv.h"
-#include "parcsr_ls/HYPRE_parcsr_ls.h"
-#include "HYPRE_LinSysCore.h"
+#include "IJ_mv/NALU_HYPRE_IJ_mv.h"
+#include "parcsr_mv/NALU_HYPRE_parcsr_mv.h"
+#include "parcsr_ls/NALU_HYPRE_parcsr_ls.h"
+#include "NALU_HYPRE_LinSysCore.h"
 
 #define HABS(x) ((x) > 0 ? (x) : -(x))
 
@@ -59,7 +59,7 @@ void fei_hypre_test(int argc, char *argv[])
     int    *rowLengths, **colIndices;
     double *val, *rhs, *sol;
     char   tname[20], *paramString = new char[100];
-    HYPRE_ParCSRMatrix G_csr;
+    NALU_HYPRE_ParCSRMatrix G_csr;
     Data               data;
 
     //------------------------------------------------------------------
@@ -70,7 +70,7 @@ void fei_hypre_test(int argc, char *argv[])
     MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
     MPI_Comm_size(MPI_COMM_WORLD, &num_procs);
 
-    HYPRE_LinSysCore H(MPI_COMM_WORLD);
+    NALU_HYPRE_LinSysCore H(MPI_COMM_WORLD);
 
     //------------------------------------------------------------------
     // read edge matrix
@@ -107,9 +107,9 @@ void fei_hypre_test(int argc, char *argv[])
     // read gradient matrix
     //------------------------------------------------------------------
 
-    HYPRE_LinSysCore G(MPI_COMM_WORLD);
+    NALU_HYPRE_LinSysCore G(MPI_COMM_WORLD);
     hypre_read_matrix(&val, &ia, &ja, &nrows, &ncols, "Grad.ij");
-    if (nrows != ncols) G.HYPRE_LSC_SetColMap(0, ncols-1);
+    if (nrows != ncols) G.NALU_HYPRE_LSC_SetColMap(0, ncols-1);
     G.createMatricesAndVectors(nrows, 1, nrows);
     rowLengths = new int[nrows];
     colIndices = new int*[nrows];
@@ -135,7 +135,7 @@ void fei_hypre_test(int argc, char *argv[])
     delete [] ia;
     delete [] ja;
     delete [] val;
-    HYPRE_IJMatrixGetObject(G.HYA_, (void**) &G_csr);
+    NALU_HYPRE_IJMatrixGetObject(G.HYA_, (void**) &G_csr);
     data.setDataPtr((void *) G_csr);
     strcpy(tname, "GEN");
     data.setTypeName(tname);
@@ -197,9 +197,9 @@ void fei_hypre_test(int argc, char *argv[])
 }
 
 #if 0
-    HYPRE_IJVectorGetObject(H.HYx_, (void**) &x_csr);
-    HYPRE_IJVectorGetObject(H.HYb_, (void**) &b_csr);
-    HYPRE_IJMatrixGetObject(H.HYA_, (void**) &A_csr);
+    NALU_HYPRE_IJVectorGetObject(H.HYx_, (void**) &x_csr);
+    NALU_HYPRE_IJVectorGetObject(H.HYb_, (void**) &b_csr);
+    NALU_HYPRE_IJMatrixGetObject(H.HYA_, (void**) &A_csr);
 #endif
 
 //***************************************************************************

@@ -20,15 +20,15 @@ function(add_hypre_executables EXE_SRCS)
   foreach(SRC_FILE IN LISTS ${EXE_SRCS})
     get_filename_component(SRC_FILENAME ${SRC_FILE} NAME)
 
-    if (HYPRE_USING_CUDA)
+    if (NALU_HYPRE_USING_CUDA)
       # If CUDA is enabled, tag source files to be compiled with nvcc.
       set_source_files_properties(${SRC_FILENAME} PROPERTIES LANGUAGE CUDA)
-    endif (HYPRE_USING_CUDA)
+    endif (NALU_HYPRE_USING_CUDA)
 
-    if (HYPRE_USING_SYCL)
+    if (NALU_HYPRE_USING_SYCL)
       # If SYCL is enabled, tag source files to be compiled with dpcpp.
       set_source_files_properties(${SRC_FILENAME} PROPERTIES LANGUAGE CXX)
-    endif (HYPRE_USING_SYCL)
+    endif (NALU_HYPRE_USING_SYCL)
 
 
     string(REPLACE ".c" "" EXE_NAME ${SRC_FILENAME})
@@ -36,14 +36,14 @@ function(add_hypre_executables EXE_SRCS)
     add_executable(${EXE_NAME} ${SRC_FILE})
 
     # Link libraries
-    set(HYPRE_LIBS "HYPRE")
+    set(NALU_HYPRE_LIBS "HYPRE")
 
     # Link libraries for Unix systems
     if (UNIX)
-      list(APPEND HYPRE_LIBS m)
+      list(APPEND NALU_HYPRE_LIBS m)
     endif (UNIX)
 
     # Append the additional libraries and options
-    target_link_libraries(${EXE_NAME} PRIVATE "${HYPRE_LIBS}")
+    target_link_libraries(${EXE_NAME} PRIVATE "${NALU_HYPRE_LIBS}")
   endforeach(SRC_FILE)
 endfunction()

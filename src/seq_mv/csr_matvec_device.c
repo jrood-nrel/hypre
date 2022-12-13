@@ -15,54 +15,54 @@
 #include "_hypre_utilities.hpp"
 #include "seq_mv.hpp"
 
-#if defined(HYPRE_USING_GPU)
+#if defined(NALU_HYPRE_USING_GPU)
 
 #if CUSPARSE_VERSION >= CUSPARSE_NEWSPMM_VERSION
-#define HYPRE_CUSPARSE_SPMV_ALG CUSPARSE_SPMV_CSR_ALG2
-#define HYPRE_CUSPARSE_SPMM_ALG CUSPARSE_SPMM_CSR_ALG3
+#define NALU_HYPRE_CUSPARSE_SPMV_ALG CUSPARSE_SPMV_CSR_ALG2
+#define NALU_HYPRE_CUSPARSE_SPMM_ALG CUSPARSE_SPMM_CSR_ALG3
 
 #elif CUSPARSE_VERSION >= CUSPARSE_NEWAPI_VERSION
-#define HYPRE_CUSPARSE_SPMV_ALG CUSPARSE_CSRMV_ALG2
-#define HYPRE_CUSPARSE_SPMM_ALG CUSPARSE_SPMM_CSR_ALG1
+#define NALU_HYPRE_CUSPARSE_SPMV_ALG CUSPARSE_CSRMV_ALG2
+#define NALU_HYPRE_CUSPARSE_SPMM_ALG CUSPARSE_SPMM_CSR_ALG1
 
 #else
-#define HYPRE_CUSPARSE_SPMV_ALG CUSPARSE_CSRMV_ALG2
-#define HYPRE_CUSPARSE_SPMM_ALG CUSPARSE_CSRMM_ALG1
+#define NALU_HYPRE_CUSPARSE_SPMV_ALG CUSPARSE_CSRMV_ALG2
+#define NALU_HYPRE_CUSPARSE_SPMM_ALG CUSPARSE_CSRMM_ALG1
 #endif
 
 /* y = alpha * A * x + beta * y
  * This function is supposed to be only used inside the other functions in this file
  */
-static inline HYPRE_Int
-hypre_CSRMatrixMatvecDevice2( HYPRE_Int        trans,
-                              HYPRE_Complex    alpha,
+static inline NALU_HYPRE_Int
+hypre_CSRMatrixMatvecDevice2( NALU_HYPRE_Int        trans,
+                              NALU_HYPRE_Complex    alpha,
                               hypre_CSRMatrix *A,
                               hypre_Vector    *x,
-                              HYPRE_Complex    beta,
+                              NALU_HYPRE_Complex    beta,
                               hypre_Vector    *y,
-                              HYPRE_Int        offset )
+                              NALU_HYPRE_Int        offset )
 {
    /* Sanity check */
    if (hypre_VectorData(x) == hypre_VectorData(y))
    {
-      hypre_error_w_msg(HYPRE_ERROR_GENERIC,
+      hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC,
                         "ERROR::x and y are the same pointer in hypre_CSRMatrixMatvecDevice2");
    }
 
-#if defined(HYPRE_USING_CUSPARSE)  || \
-    defined(HYPRE_USING_ROCSPARSE) || \
-    defined(HYPRE_USING_ONEMKLSPARSE)
+#if defined(NALU_HYPRE_USING_CUSPARSE)  || \
+    defined(NALU_HYPRE_USING_ROCSPARSE) || \
+    defined(NALU_HYPRE_USING_ONEMKLSPARSE)
 
    /* Input variables */
-   HYPRE_Int  num_vectors_x      = hypre_VectorNumVectors(x);
-   HYPRE_Int  num_vectors_y      = hypre_VectorNumVectors(y);
+   NALU_HYPRE_Int  num_vectors_x      = hypre_VectorNumVectors(x);
+   NALU_HYPRE_Int  num_vectors_y      = hypre_VectorNumVectors(y);
 
    /* Local variables */
-   HYPRE_Int  use_vendor = hypre_HandleSpMVUseVendor(hypre_handle());
+   NALU_HYPRE_Int  use_vendor = hypre_HandleSpMVUseVendor(hypre_handle());
 
-#if defined(HYPRE_USING_CUSPARSE) && CUSPARSE_VERSION >= CUSPARSE_NEWAPI_VERSION
-   HYPRE_Int  multivec_storage_x = hypre_VectorMultiVecStorageMethod(x);
-   HYPRE_Int  multivec_storage_y = hypre_VectorMultiVecStorageMethod(y);
+#if defined(NALU_HYPRE_USING_CUSPARSE) && CUSPARSE_VERSION >= CUSPARSE_NEWAPI_VERSION
+   NALU_HYPRE_Int  multivec_storage_x = hypre_VectorMultiVecStorageMethod(x);
+   NALU_HYPRE_Int  multivec_storage_y = hypre_VectorMultiVecStorageMethod(y);
 
    /* Force use of hypre's SpMV for row-wise multivectors */
    if ((num_vectors_x > 1 && multivec_storage_x == 1) ||
@@ -80,23 +80,23 @@ hypre_CSRMatrixMatvecDevice2( HYPRE_Int        trans,
 
    if (use_vendor)
    {
-#if defined(HYPRE_USING_CUSPARSE)
+#if defined(NALU_HYPRE_USING_CUSPARSE)
       hypre_CSRMatrixMatvecCusparse(trans, alpha, A, x, beta, y, offset);
 
-#elif defined(HYPRE_USING_ROCSPARSE)
+#elif defined(NALU_HYPRE_USING_ROCSPARSE)
       hypre_CSRMatrixMatvecRocsparse(trans, alpha, A, x, beta, y, offset);
 
-#elif defined(HYPRE_USING_ONEMKLSPARSE)
+#elif defined(NALU_HYPRE_USING_ONEMKLSPARSE)
       hypre_CSRMatrixMatvecOnemklsparse(trans, alpha, A, x, beta, y, offset);
 #endif
    }
    else
-#endif // defined(HYPRE_USING_CUSPARSE) || defined(HYPRE_USING_ROCSPARSE) ...
+#endif // defined(NALU_HYPRE_USING_CUSPARSE) || defined(NALU_HYPRE_USING_ROCSPARSE) ...
    {
-#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP) ||defined(HYPRE_USING_SYCL)
+#if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP) ||defined(NALU_HYPRE_USING_SYCL)
       hypre_CSRMatrixSpMVDevice(trans, alpha, A, x, beta, y, 0);
 
-#elif defined(HYPRE_USING_DEVICE_OPENMP)
+#elif defined(NALU_HYPRE_USING_DEVICE_OPENMP)
       hypre_CSRMatrixMatvecOMPOffload(trans, alpha, A, x, beta, y, offset);
 #endif
    }
@@ -105,20 +105,20 @@ hypre_CSRMatrixMatvecDevice2( HYPRE_Int        trans,
 }
 
 /* y = alpha * A * x + beta * b */
-HYPRE_Int
-hypre_CSRMatrixMatvecDevice( HYPRE_Int        trans,
-                             HYPRE_Complex    alpha,
+NALU_HYPRE_Int
+hypre_CSRMatrixMatvecDevice( NALU_HYPRE_Int        trans,
+                             NALU_HYPRE_Complex    alpha,
                              hypre_CSRMatrix *A,
                              hypre_Vector    *x,
-                             HYPRE_Complex    beta,
+                             NALU_HYPRE_Complex    beta,
                              hypre_Vector    *b,
                              hypre_Vector    *y,
-                             HYPRE_Int        offset )
+                             NALU_HYPRE_Int        offset )
 {
-#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP)
+#if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
    //hypre_GpuProfilingPushRange("CSRMatrixMatvec");
 #endif
-   HYPRE_Int   num_vectors = hypre_VectorNumVectors(x);
+   NALU_HYPRE_Int   num_vectors = hypre_VectorNumVectors(x);
 
    // TODO: RL: do we need offset > 0 at all?
    hypre_assert(offset == 0);
@@ -127,8 +127,8 @@ hypre_CSRMatrixMatvecDevice( HYPRE_Int        trans,
    hypre_assert(!(offset != 0 && num_vectors > 1));
    hypre_assert(num_vectors > 0);
 
-   HYPRE_Int nx = trans ? hypre_CSRMatrixNumRows(A) : hypre_CSRMatrixNumCols(A);
-   HYPRE_Int ny = trans ? hypre_CSRMatrixNumCols(A) : hypre_CSRMatrixNumRows(A);
+   NALU_HYPRE_Int nx = trans ? hypre_CSRMatrixNumRows(A) : hypre_CSRMatrixNumCols(A);
+   NALU_HYPRE_Int ny = trans ? hypre_CSRMatrixNumCols(A) : hypre_CSRMatrixNumRows(A);
 
    //RL: Note the "<=", since the vectors sometimes can be temporary work spaces that have
    //    large sizes than the needed (such as in par_cheby.c)
@@ -136,19 +136,19 @@ hypre_CSRMatrixMatvecDevice( HYPRE_Int        trans,
    hypre_assert(nx <= hypre_VectorSize(x));
    hypre_assert(ny <= hypre_VectorSize(b));
 
-   //hypre_CSRMatrixPrefetch(A, HYPRE_MEMORY_DEVICE);
-   //hypre_SeqVectorPrefetch(x, HYPRE_MEMORY_DEVICE);
-   //hypre_SeqVectorPrefetch(b, HYPRE_MEMORY_DEVICE);
+   //hypre_CSRMatrixPrefetch(A, NALU_HYPRE_MEMORY_DEVICE);
+   //hypre_SeqVectorPrefetch(x, NALU_HYPRE_MEMORY_DEVICE);
+   //hypre_SeqVectorPrefetch(b, NALU_HYPRE_MEMORY_DEVICE);
    //if (hypre_VectorData(b) != hypre_VectorData(y))
    //{
-   //   hypre_SeqVectorPrefetch(y, HYPRE_MEMORY_DEVICE);
+   //   hypre_SeqVectorPrefetch(y, NALU_HYPRE_MEMORY_DEVICE);
    //}
 
    if (hypre_VectorData(b) != hypre_VectorData(y))
    {
       hypre_TMemcpy( hypre_VectorData(y) + offset,
                      hypre_VectorData(b) + offset,
-                     HYPRE_Complex,
+                     NALU_HYPRE_Complex,
                      (ny - offset) * num_vectors,
                      hypre_VectorMemoryLocation(y),
                      hypre_VectorMemoryLocation(b) );
@@ -166,14 +166,14 @@ hypre_CSRMatrixMatvecDevice( HYPRE_Int        trans,
 
    hypre_SyncComputeStream(hypre_handle());
 
-#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP)
+#if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
    //hypre_GpuProfilingPopRange();
 #endif
 
    return hypre_error_flag;
 }
 
-#if defined(HYPRE_USING_CUSPARSE)
+#if defined(NALU_HYPRE_USING_CUSPARSE)
 #if CUSPARSE_VERSION >= CUSPARSE_NEWAPI_VERSION
 
 /*--------------------------------------------------------------------------
@@ -184,19 +184,19 @@ hypre_CSRMatrixMatvecDevice( HYPRE_Int        trans,
  * Note: The descriptor variables are not saved to allow for generic input
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_CSRMatrixMatvecCusparseNewAPI( HYPRE_Int        trans,
-                                     HYPRE_Complex    alpha,
+NALU_HYPRE_Int
+hypre_CSRMatrixMatvecCusparseNewAPI( NALU_HYPRE_Int        trans,
+                                     NALU_HYPRE_Complex    alpha,
                                      hypre_CSRMatrix *A,
                                      hypre_Vector    *x,
-                                     HYPRE_Complex    beta,
+                                     NALU_HYPRE_Complex    beta,
                                      hypre_Vector    *y,
-                                     HYPRE_Int        offset )
+                                     NALU_HYPRE_Int        offset )
 {
    /* Input variables */
-   HYPRE_Int         num_vectors = hypre_VectorNumVectors(x);
-   HYPRE_Int         num_cols    = trans ? hypre_CSRMatrixNumRows(A) : hypre_CSRMatrixNumCols(A);
-   HYPRE_Int         num_rows    = trans ? hypre_CSRMatrixNumCols(A) : hypre_CSRMatrixNumRows(A);
+   NALU_HYPRE_Int         num_vectors = hypre_VectorNumVectors(x);
+   NALU_HYPRE_Int         num_cols    = trans ? hypre_CSRMatrixNumRows(A) : hypre_CSRMatrixNumCols(A);
+   NALU_HYPRE_Int         num_rows    = trans ? hypre_CSRMatrixNumCols(A) : hypre_CSRMatrixNumRows(A);
    hypre_CSRMatrix  *AT;
    hypre_CSRMatrix  *B;
 
@@ -241,7 +241,7 @@ hypre_CSRMatrixMatvecCusparseNewAPI( HYPRE_Int        trans,
    {
       if (num_vectors == 1)
       {
-         HYPRE_CUSPARSE_CALL( cusparseSpMV_bufferSize(handle,
+         NALU_HYPRE_CUSPARSE_CALL( cusparseSpMV_bufferSize(handle,
                                                       CUSPARSE_OPERATION_NON_TRANSPOSE,
                                                       &alpha,
                                                       matA,
@@ -249,12 +249,12 @@ hypre_CSRMatrixMatvecCusparseNewAPI( HYPRE_Int        trans,
                                                       &beta,
                                                       vecY,
                                                       data_type,
-                                                      HYPRE_CUSPARSE_SPMV_ALG,
+                                                      NALU_HYPRE_CUSPARSE_SPMV_ALG,
                                                       &bufferSize) );
       }
       else
       {
-         HYPRE_CUSPARSE_CALL( cusparseSpMM_bufferSize(handle,
+         NALU_HYPRE_CUSPARSE_CALL( cusparseSpMM_bufferSize(handle,
                                                       CUSPARSE_OPERATION_NON_TRANSPOSE,
                                                       CUSPARSE_OPERATION_NON_TRANSPOSE,
                                                       &alpha,
@@ -263,17 +263,17 @@ hypre_CSRMatrixMatvecCusparseNewAPI( HYPRE_Int        trans,
                                                       &beta,
                                                       matY,
                                                       data_type,
-                                                      HYPRE_CUSPARSE_SPMM_ALG,
+                                                      NALU_HYPRE_CUSPARSE_SPMM_ALG,
                                                       &bufferSize) );
       }
 
-      dBuffer = hypre_TAlloc(char, bufferSize, HYPRE_MEMORY_DEVICE);
+      dBuffer = hypre_TAlloc(char, bufferSize, NALU_HYPRE_MEMORY_DEVICE);
       hypre_CSRMatrixGPUMatSpMVBuffer(A) = dBuffer;
 
 #if CUSPARSE_VERSION >= CUSPARSE_NEWSPMM_VERSION
       if (num_vectors > 1)
       {
-         HYPRE_CUSPARSE_CALL( cusparseSpMM_preprocess(handle,
+         NALU_HYPRE_CUSPARSE_CALL( cusparseSpMM_preprocess(handle,
                                                       CUSPARSE_OPERATION_NON_TRANSPOSE,
                                                       CUSPARSE_OPERATION_NON_TRANSPOSE,
                                                       &alpha,
@@ -282,7 +282,7 @@ hypre_CSRMatrixMatvecCusparseNewAPI( HYPRE_Int        trans,
                                                       &beta,
                                                       matY,
                                                       data_type,
-                                                      HYPRE_CUSPARSE_SPMM_ALG,
+                                                      NALU_HYPRE_CUSPARSE_SPMM_ALG,
                                                       dBuffer) );
       }
 #endif
@@ -290,7 +290,7 @@ hypre_CSRMatrixMatvecCusparseNewAPI( HYPRE_Int        trans,
 
    if (num_vectors == 1)
    {
-      HYPRE_CUSPARSE_CALL( cusparseSpMV(handle,
+      NALU_HYPRE_CUSPARSE_CALL( cusparseSpMV(handle,
                                         CUSPARSE_OPERATION_NON_TRANSPOSE,
                                         &alpha,
                                         matA,
@@ -298,12 +298,12 @@ hypre_CSRMatrixMatvecCusparseNewAPI( HYPRE_Int        trans,
                                         &beta,
                                         vecY,
                                         data_type,
-                                        HYPRE_CUSPARSE_SPMV_ALG,
+                                        NALU_HYPRE_CUSPARSE_SPMV_ALG,
                                         dBuffer) );
    }
    else
    {
-      HYPRE_CUSPARSE_CALL( cusparseSpMM(handle,
+      NALU_HYPRE_CUSPARSE_CALL( cusparseSpMM(handle,
                                         CUSPARSE_OPERATION_NON_TRANSPOSE,
                                         CUSPARSE_OPERATION_NON_TRANSPOSE,
                                         &alpha,
@@ -312,23 +312,23 @@ hypre_CSRMatrixMatvecCusparseNewAPI( HYPRE_Int        trans,
                                         &beta,
                                         matY,
                                         data_type,
-                                        HYPRE_CUSPARSE_SPMM_ALG,
+                                        NALU_HYPRE_CUSPARSE_SPMM_ALG,
                                         dBuffer) );
    }
 
    hypre_SyncComputeStream(hypre_handle());
 
    /* Free memory */
-   HYPRE_CUSPARSE_CALL( cusparseDestroySpMat(matA) );
+   NALU_HYPRE_CUSPARSE_CALL( cusparseDestroySpMat(matA) );
    if (num_vectors == 1)
    {
-      HYPRE_CUSPARSE_CALL( cusparseDestroyDnVec(vecX) );
-      HYPRE_CUSPARSE_CALL( cusparseDestroyDnVec(vecY) );
+      NALU_HYPRE_CUSPARSE_CALL( cusparseDestroyDnVec(vecX) );
+      NALU_HYPRE_CUSPARSE_CALL( cusparseDestroyDnVec(vecY) );
    }
    else
    {
-      HYPRE_CUSPARSE_CALL( cusparseDestroyDnMat(matX) );
-      HYPRE_CUSPARSE_CALL( cusparseDestroyDnMat(matY) );
+      NALU_HYPRE_CUSPARSE_CALL( cusparseDestroyDnMat(matX) );
+      NALU_HYPRE_CUSPARSE_CALL( cusparseDestroyDnMat(matY) );
    }
    if (trans)
    {
@@ -340,16 +340,16 @@ hypre_CSRMatrixMatvecCusparseNewAPI( HYPRE_Int        trans,
 
 #else // #if CUSPARSE_VERSION >= CUSPARSE_NEWAPI_VERSION
 
-HYPRE_Int
-hypre_CSRMatrixMatvecCusparseOldAPI( HYPRE_Int        trans,
-                                     HYPRE_Complex    alpha,
+NALU_HYPRE_Int
+hypre_CSRMatrixMatvecCusparseOldAPI( NALU_HYPRE_Int        trans,
+                                     NALU_HYPRE_Complex    alpha,
                                      hypre_CSRMatrix *A,
                                      hypre_Vector    *x,
-                                     HYPRE_Complex    beta,
+                                     NALU_HYPRE_Complex    beta,
                                      hypre_Vector    *y,
-                                     HYPRE_Int        offset )
+                                     NALU_HYPRE_Int        offset )
 {
-#ifdef HYPRE_BIGINT
+#ifdef NALU_HYPRE_BIGINT
 #error "ERROR: cusparse old API should not be used when bigint is enabled!"
 #endif
    cusparseHandle_t handle = hypre_HandleCusparseHandle(hypre_handle());
@@ -365,7 +365,7 @@ hypre_CSRMatrixMatvecCusparseOldAPI( HYPRE_Int        trans,
       B = A;
    }
 
-   HYPRE_CUSPARSE_CALL( hypre_cusparse_csrmv(handle,
+   NALU_HYPRE_CUSPARSE_CALL( hypre_cusparse_csrmv(handle,
                                              CUSPARSE_OPERATION_NON_TRANSPOSE,
                                              hypre_CSRMatrixNumRows(B) - offset,
                                              hypre_CSRMatrixNumCols(B),
@@ -389,14 +389,14 @@ hypre_CSRMatrixMatvecCusparseOldAPI( HYPRE_Int        trans,
 
 #endif // #if CUSPARSE_VERSION >= CUSPARSE_NEWAPI_VERSION
 
-HYPRE_Int
-hypre_CSRMatrixMatvecCusparse( HYPRE_Int        trans,
-                               HYPRE_Complex    alpha,
+NALU_HYPRE_Int
+hypre_CSRMatrixMatvecCusparse( NALU_HYPRE_Int        trans,
+                               NALU_HYPRE_Complex    alpha,
                                hypre_CSRMatrix *A,
                                hypre_Vector    *x,
-                               HYPRE_Complex    beta,
+                               NALU_HYPRE_Complex    beta,
                                hypre_Vector    *y,
-                               HYPRE_Int        offset )
+                               NALU_HYPRE_Int        offset )
 {
 #if CUSPARSE_VERSION >= CUSPARSE_NEWAPI_VERSION
    /* Luke E: The generic API is techinically supported on 10.1,10.2 as a preview,
@@ -414,17 +414,17 @@ hypre_CSRMatrixMatvecCusparse( HYPRE_Int        trans,
    return hypre_error_flag;
 }
 
-#endif // #if defined(HYPRE_USING_CUSPARSE)
+#endif // #if defined(NALU_HYPRE_USING_CUSPARSE)
 
-#if defined(HYPRE_USING_ROCSPARSE)
-HYPRE_Int
-hypre_CSRMatrixMatvecRocsparse( HYPRE_Int        trans,
-                                HYPRE_Complex    alpha,
+#if defined(NALU_HYPRE_USING_ROCSPARSE)
+NALU_HYPRE_Int
+hypre_CSRMatrixMatvecRocsparse( NALU_HYPRE_Int        trans,
+                                NALU_HYPRE_Complex    alpha,
                                 hypre_CSRMatrix *A,
                                 hypre_Vector    *x,
-                                HYPRE_Complex    beta,
+                                NALU_HYPRE_Complex    beta,
                                 hypre_Vector    *y,
-                                HYPRE_Int        offset )
+                                NALU_HYPRE_Int        offset )
 {
    rocsparse_handle handle = hypre_HandleCusparseHandle(hypre_handle());
    rocsparse_mat_descr descr = hypre_CSRMatrixGPUMatDescr(A);
@@ -441,7 +441,7 @@ hypre_CSRMatrixMatvecRocsparse( HYPRE_Int        trans,
       B = A;
    }
 
-   HYPRE_ROCSPARSE_CALL( hypre_rocsparse_csrmv(handle,
+   NALU_HYPRE_ROCSPARSE_CALL( hypre_rocsparse_csrmv(handle,
                                                rocsparse_operation_none,
                                                hypre_CSRMatrixNumRows(B) - offset,
                                                hypre_CSRMatrixNumCols(B),
@@ -463,17 +463,17 @@ hypre_CSRMatrixMatvecRocsparse( HYPRE_Int        trans,
 
    return hypre_error_flag;
 }
-#endif // #if defined(HYPRE_USING_ROCSPARSE)
+#endif // #if defined(NALU_HYPRE_USING_ROCSPARSE)
 
-#if defined(HYPRE_USING_ONEMKLSPARSE)
-HYPRE_Int
-hypre_CSRMatrixMatvecOnemklsparse( HYPRE_Int        trans,
-                                   HYPRE_Complex    alpha,
+#if defined(NALU_HYPRE_USING_ONEMKLSPARSE)
+NALU_HYPRE_Int
+hypre_CSRMatrixMatvecOnemklsparse( NALU_HYPRE_Int        trans,
+                                   NALU_HYPRE_Complex    alpha,
                                    hypre_CSRMatrix *A,
                                    hypre_Vector    *x,
-                                   HYPRE_Complex    beta,
+                                   NALU_HYPRE_Complex    beta,
                                    hypre_Vector    *y,
-                                   HYPRE_Int        offset )
+                                   NALU_HYPRE_Int        offset )
 {
    sycl::queue *compute_queue = hypre_HandleComputeStream(hypre_handle());
    hypre_CSRMatrix *AT;
@@ -485,7 +485,7 @@ hypre_CSRMatrixMatvecOnemklsparse( HYPRE_Int        trans,
       matA_handle = hypre_CSRMatrixGPUMatHandle(AT);
    }
 
-   HYPRE_ONEMKL_CALL( oneapi::mkl::sparse::gemv(*compute_queue,
+   NALU_HYPRE_ONEMKL_CALL( oneapi::mkl::sparse::gemv(*compute_queue,
                                                 oneapi::mkl::transpose::nontrans,
                                                 alpha,
                                                 matA_handle,
@@ -500,6 +500,6 @@ hypre_CSRMatrixMatvecOnemklsparse( HYPRE_Int        trans,
 
    return hypre_error_flag;
 }
-#endif // #if defined(HYPRE_USING_ROCSPARSE)
+#endif // #if defined(NALU_HYPRE_USING_ROCSPARSE)
 
-#endif // #if defined(HYPRE_USING_GPU)
+#endif // #if defined(NALU_HYPRE_USING_GPU)

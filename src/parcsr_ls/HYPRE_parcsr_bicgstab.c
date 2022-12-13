@@ -8,11 +8,11 @@
 #include "_hypre_parcsr_ls.h"
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRBiCGSTABCreate
+ * NALU_HYPRE_ParCSRBiCGSTABCreate
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ParCSRBiCGSTABCreate( MPI_Comm comm, HYPRE_Solver *solver )
+NALU_HYPRE_Int
+NALU_HYPRE_ParCSRBiCGSTABCreate( MPI_Comm comm, NALU_HYPRE_Solver *solver )
 {
    hypre_BiCGSTABFunctions * bicgstab_functions;
 
@@ -31,184 +31,184 @@ HYPRE_ParCSRBiCGSTABCreate( MPI_Comm comm, HYPRE_Solver *solver )
          hypre_ParKrylovScaleVector, hypre_ParKrylovAxpy,
          hypre_ParKrylovCommInfo,
          hypre_ParKrylovIdentitySetup, hypre_ParKrylovIdentity );
-   *solver = ( (HYPRE_Solver) hypre_BiCGSTABCreate( bicgstab_functions) );
+   *solver = ( (NALU_HYPRE_Solver) hypre_BiCGSTABCreate( bicgstab_functions) );
 
    return hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRBiCGSTABDestroy
+ * NALU_HYPRE_ParCSRBiCGSTABDestroy
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ParCSRBiCGSTABDestroy( HYPRE_Solver solver )
+NALU_HYPRE_Int
+NALU_HYPRE_ParCSRBiCGSTABDestroy( NALU_HYPRE_Solver solver )
 {
    return ( hypre_BiCGSTABDestroy( (void *) solver ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRBiCGSTABSetup
+ * NALU_HYPRE_ParCSRBiCGSTABSetup
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ParCSRBiCGSTABSetup( HYPRE_Solver solver,
-                           HYPRE_ParCSRMatrix A,
-                           HYPRE_ParVector b,
-                           HYPRE_ParVector x      )
+NALU_HYPRE_Int
+NALU_HYPRE_ParCSRBiCGSTABSetup( NALU_HYPRE_Solver solver,
+                           NALU_HYPRE_ParCSRMatrix A,
+                           NALU_HYPRE_ParVector b,
+                           NALU_HYPRE_ParVector x      )
 {
-   return ( HYPRE_BiCGSTABSetup( solver,
-                                 (HYPRE_Matrix) A,
-                                 (HYPRE_Vector) b,
-                                 (HYPRE_Vector) x ) );
+   return ( NALU_HYPRE_BiCGSTABSetup( solver,
+                                 (NALU_HYPRE_Matrix) A,
+                                 (NALU_HYPRE_Vector) b,
+                                 (NALU_HYPRE_Vector) x ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRBiCGSTABSolve
+ * NALU_HYPRE_ParCSRBiCGSTABSolve
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ParCSRBiCGSTABSolve( HYPRE_Solver solver,
-                           HYPRE_ParCSRMatrix A,
-                           HYPRE_ParVector b,
-                           HYPRE_ParVector x      )
+NALU_HYPRE_Int
+NALU_HYPRE_ParCSRBiCGSTABSolve( NALU_HYPRE_Solver solver,
+                           NALU_HYPRE_ParCSRMatrix A,
+                           NALU_HYPRE_ParVector b,
+                           NALU_HYPRE_ParVector x      )
 {
-   return ( HYPRE_BiCGSTABSolve( solver,
-                                 (HYPRE_Matrix) A,
-                                 (HYPRE_Vector) b,
-                                 (HYPRE_Vector) x ) );
+   return ( NALU_HYPRE_BiCGSTABSolve( solver,
+                                 (NALU_HYPRE_Matrix) A,
+                                 (NALU_HYPRE_Vector) b,
+                                 (NALU_HYPRE_Vector) x ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRBiCGSTABSetTol
+ * NALU_HYPRE_ParCSRBiCGSTABSetTol
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ParCSRBiCGSTABSetTol( HYPRE_Solver solver,
-                            HYPRE_Real         tol    )
+NALU_HYPRE_Int
+NALU_HYPRE_ParCSRBiCGSTABSetTol( NALU_HYPRE_Solver solver,
+                            NALU_HYPRE_Real         tol    )
 {
-   return ( HYPRE_BiCGSTABSetTol( solver, tol ) );
+   return ( NALU_HYPRE_BiCGSTABSetTol( solver, tol ) );
 }
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRBiCGSTABSetAbsoluteTol
+ * NALU_HYPRE_ParCSRBiCGSTABSetAbsoluteTol
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ParCSRBiCGSTABSetAbsoluteTol( HYPRE_Solver solver,
-                                    HYPRE_Real         a_tol    )
+NALU_HYPRE_Int
+NALU_HYPRE_ParCSRBiCGSTABSetAbsoluteTol( NALU_HYPRE_Solver solver,
+                                    NALU_HYPRE_Real         a_tol    )
 {
-   return ( HYPRE_BiCGSTABSetAbsoluteTol( solver, a_tol ) );
+   return ( NALU_HYPRE_BiCGSTABSetAbsoluteTol( solver, a_tol ) );
 }
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRBiCGSTABSetMinIter
+ * NALU_HYPRE_ParCSRBiCGSTABSetMinIter
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ParCSRBiCGSTABSetMinIter( HYPRE_Solver solver,
-                                HYPRE_Int          min_iter )
+NALU_HYPRE_Int
+NALU_HYPRE_ParCSRBiCGSTABSetMinIter( NALU_HYPRE_Solver solver,
+                                NALU_HYPRE_Int          min_iter )
 {
-   return ( HYPRE_BiCGSTABSetMinIter( solver, min_iter ) );
-}
-
-/*--------------------------------------------------------------------------
- * HYPRE_ParCSRBiCGSTABSetMaxIter
- *--------------------------------------------------------------------------*/
-
-HYPRE_Int
-HYPRE_ParCSRBiCGSTABSetMaxIter( HYPRE_Solver solver,
-                                HYPRE_Int          max_iter )
-{
-   return ( HYPRE_BiCGSTABSetMaxIter( solver, max_iter ) );
+   return ( NALU_HYPRE_BiCGSTABSetMinIter( solver, min_iter ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRBiCGSTABSetStopCrit
+ * NALU_HYPRE_ParCSRBiCGSTABSetMaxIter
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ParCSRBiCGSTABSetStopCrit( HYPRE_Solver solver,
-                                 HYPRE_Int          stop_crit )
+NALU_HYPRE_Int
+NALU_HYPRE_ParCSRBiCGSTABSetMaxIter( NALU_HYPRE_Solver solver,
+                                NALU_HYPRE_Int          max_iter )
 {
-   return ( HYPRE_BiCGSTABSetStopCrit( solver, stop_crit ) );
+   return ( NALU_HYPRE_BiCGSTABSetMaxIter( solver, max_iter ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRBiCGSTABSetPrecond
+ * NALU_HYPRE_ParCSRBiCGSTABSetStopCrit
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ParCSRBiCGSTABSetPrecond( HYPRE_Solver         solver,
-                                HYPRE_PtrToParSolverFcn precond,
-                                HYPRE_PtrToParSolverFcn precond_setup,
-                                HYPRE_Solver         precond_solver )
+NALU_HYPRE_Int
+NALU_HYPRE_ParCSRBiCGSTABSetStopCrit( NALU_HYPRE_Solver solver,
+                                 NALU_HYPRE_Int          stop_crit )
 {
-   return ( HYPRE_BiCGSTABSetPrecond( solver,
-                                      (HYPRE_PtrToSolverFcn) precond,
-                                      (HYPRE_PtrToSolverFcn) precond_setup,
+   return ( NALU_HYPRE_BiCGSTABSetStopCrit( solver, stop_crit ) );
+}
+
+/*--------------------------------------------------------------------------
+ * NALU_HYPRE_ParCSRBiCGSTABSetPrecond
+ *--------------------------------------------------------------------------*/
+
+NALU_HYPRE_Int
+NALU_HYPRE_ParCSRBiCGSTABSetPrecond( NALU_HYPRE_Solver         solver,
+                                NALU_HYPRE_PtrToParSolverFcn precond,
+                                NALU_HYPRE_PtrToParSolverFcn precond_setup,
+                                NALU_HYPRE_Solver         precond_solver )
+{
+   return ( NALU_HYPRE_BiCGSTABSetPrecond( solver,
+                                      (NALU_HYPRE_PtrToSolverFcn) precond,
+                                      (NALU_HYPRE_PtrToSolverFcn) precond_setup,
                                       precond_solver ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRBiCGSTABGetPrecond
+ * NALU_HYPRE_ParCSRBiCGSTABGetPrecond
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ParCSRBiCGSTABGetPrecond( HYPRE_Solver  solver,
-                                HYPRE_Solver *precond_data_ptr )
+NALU_HYPRE_Int
+NALU_HYPRE_ParCSRBiCGSTABGetPrecond( NALU_HYPRE_Solver  solver,
+                                NALU_HYPRE_Solver *precond_data_ptr )
 {
-   return ( HYPRE_BiCGSTABGetPrecond( solver, precond_data_ptr ) );
+   return ( NALU_HYPRE_BiCGSTABGetPrecond( solver, precond_data_ptr ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRBiCGSTABSetLogging
+ * NALU_HYPRE_ParCSRBiCGSTABSetLogging
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ParCSRBiCGSTABSetLogging( HYPRE_Solver solver,
-                                HYPRE_Int logging)
+NALU_HYPRE_Int
+NALU_HYPRE_ParCSRBiCGSTABSetLogging( NALU_HYPRE_Solver solver,
+                                NALU_HYPRE_Int logging)
 {
-   return ( HYPRE_BiCGSTABSetLogging( solver, logging ) );
+   return ( NALU_HYPRE_BiCGSTABSetLogging( solver, logging ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRBiCGSTABSetPrintLevel
+ * NALU_HYPRE_ParCSRBiCGSTABSetPrintLevel
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ParCSRBiCGSTABSetPrintLevel( HYPRE_Solver solver,
-                                   HYPRE_Int print_level)
+NALU_HYPRE_Int
+NALU_HYPRE_ParCSRBiCGSTABSetPrintLevel( NALU_HYPRE_Solver solver,
+                                   NALU_HYPRE_Int print_level)
 {
-   return ( HYPRE_BiCGSTABSetPrintLevel( solver, print_level ) );
+   return ( NALU_HYPRE_BiCGSTABSetPrintLevel( solver, print_level ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRBiCGSTABGetNumIterations
+ * NALU_HYPRE_ParCSRBiCGSTABGetNumIterations
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ParCSRBiCGSTABGetNumIterations( HYPRE_Solver  solver,
-                                      HYPRE_Int                *num_iterations )
+NALU_HYPRE_Int
+NALU_HYPRE_ParCSRBiCGSTABGetNumIterations( NALU_HYPRE_Solver  solver,
+                                      NALU_HYPRE_Int                *num_iterations )
 {
-   return ( HYPRE_BiCGSTABGetNumIterations( solver, num_iterations ) );
+   return ( NALU_HYPRE_BiCGSTABGetNumIterations( solver, num_iterations ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRBiCGSTABGetFinalRelativeResidualNorm
+ * NALU_HYPRE_ParCSRBiCGSTABGetFinalRelativeResidualNorm
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ParCSRBiCGSTABGetFinalRelativeResidualNorm( HYPRE_Solver  solver,
-                                                  HYPRE_Real         *norm   )
+NALU_HYPRE_Int
+NALU_HYPRE_ParCSRBiCGSTABGetFinalRelativeResidualNorm( NALU_HYPRE_Solver  solver,
+                                                  NALU_HYPRE_Real         *norm   )
 {
-   return ( HYPRE_BiCGSTABGetFinalRelativeResidualNorm( solver, norm ) );
+   return ( NALU_HYPRE_BiCGSTABGetFinalRelativeResidualNorm( solver, norm ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRBiCGSTABGetResidual
+ * NALU_HYPRE_ParCSRBiCGSTABGetResidual
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ParCSRBiCGSTABGetResidual( HYPRE_Solver  solver,
-                                 HYPRE_ParVector *residual)
+NALU_HYPRE_Int
+NALU_HYPRE_ParCSRBiCGSTABGetResidual( NALU_HYPRE_Solver  solver,
+                                 NALU_HYPRE_ParVector *residual)
 {
-   return ( HYPRE_BiCGSTABGetResidual( solver, (void *) residual ) );
+   return ( NALU_HYPRE_BiCGSTABGetResidual( solver, (void *) residual ) );
 }

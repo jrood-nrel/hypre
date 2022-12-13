@@ -7,7 +7,7 @@
 
 /******************************************************************************
  *
- * HYPRE_fei_matrix functions
+ * NALU_HYPRE_fei_matrix functions
  *
  *****************************************************************************/
 
@@ -22,14 +22,14 @@
 #include "fei_mv.h"
 
 /*****************************************************************************/
-/* HYPRE_FEMeshCreate function                                               */
+/* NALU_HYPRE_FEMeshCreate function                                               */
 /*---------------------------------------------------------------------------*/
 
 extern "C" int
-HYPRE_FEMeshCreate(MPI_Comm comm, HYPRE_FEMesh *meshptr)
+NALU_HYPRE_FEMeshCreate(MPI_Comm comm, NALU_HYPRE_FEMesh *meshptr)
 {
-   HYPRE_FEMesh myMesh;
-   myMesh = (HYPRE_FEMesh) hypre_TAlloc(HYPRE_FEMesh, 1, HYPRE_MEMORY_HOST);
+   NALU_HYPRE_FEMesh myMesh;
+   myMesh = (NALU_HYPRE_FEMesh) hypre_TAlloc(NALU_HYPRE_FEMesh, 1, NALU_HYPRE_MEMORY_HOST);
    myMesh->comm_   = comm;
    myMesh->linSys_ = NULL;
    myMesh->feiPtr_ = NULL;
@@ -39,11 +39,11 @@ HYPRE_FEMeshCreate(MPI_Comm comm, HYPRE_FEMesh *meshptr)
 }
 
 /*****************************************************************************/
-/* HYPRE_FEMatrixDestroy - Destroy a FEMatrix object.                        */
+/* NALU_HYPRE_FEMatrixDestroy - Destroy a FEMatrix object.                        */
 /*---------------------------------------------------------------------------*/
 
 extern "C" int
-HYPRE_FEMeshDestroy(HYPRE_FEMesh mesh)
+NALU_HYPRE_FEMeshDestroy(NALU_HYPRE_FEMesh mesh)
 {
    LLNL_FEI_Impl    *fei;
    LinearSystemCore *lsc;
@@ -66,11 +66,11 @@ HYPRE_FEMeshDestroy(HYPRE_FEMesh mesh)
 }
 
 /*****************************************************************************/
-/* HYPRE_FEMatrixSetFEIObject                                                */
+/* NALU_HYPRE_FEMatrixSetFEIObject                                                */
 /*---------------------------------------------------------------------------*/
 
 extern "C" int
-HYPRE_FEMeshSetFEIObject(HYPRE_FEMesh mesh, void *feiObj, void *lscObj)
+NALU_HYPRE_FEMeshSetFEIObject(NALU_HYPRE_FEMesh mesh, void *feiObj, void *lscObj)
 {
    int  numParams=1;
    char *paramString[1];
@@ -85,7 +85,7 @@ HYPRE_FEMeshSetFEIObject(HYPRE_FEMesh mesh, void *feiObj, void *lscObj)
          mesh->linSys_ = lscObj;
          if (lscObj == NULL)
          {
-            printf("HYPRE_FEMeshSetObject ERROR : lscObj not given.\n");
+            printf("NALU_HYPRE_FEMeshSetObject ERROR : lscObj not given.\n");
             mesh->feiPtr_ = NULL;
             return 1;
          }
@@ -117,11 +117,11 @@ HYPRE_FEMeshSetFEIObject(HYPRE_FEMesh mesh, void *feiObj, void *lscObj)
 }
 
 /*****************************************************************************/
-/* HYPRE_FEMeshParameters                                                    */
+/* NALU_HYPRE_FEMeshParameters                                                    */
 /*---------------------------------------------------------------------------*/
 
 extern "C" int
-HYPRE_FEMeshParameters(HYPRE_FEMesh mesh, int numParams, char **paramStrings) 
+NALU_HYPRE_FEMeshParameters(NALU_HYPRE_FEMesh mesh, int numParams, char **paramStrings) 
 {
    LLNL_FEI_Impl      *fei1;
 #ifdef HAVE_FEI
@@ -150,11 +150,11 @@ HYPRE_FEMeshParameters(HYPRE_FEMesh mesh, int numParams, char **paramStrings)
    return ierr;
 }
 /*****************************************************************************/
-/* HYPRE_FEMeshInitFields                                                    */
+/* NALU_HYPRE_FEMeshInitFields                                                    */
 /*---------------------------------------------------------------------------*/
 
 extern "C" int
-HYPRE_FEMeshInitFields(HYPRE_FEMesh mesh, int numFields, int *fieldSizes, 
+NALU_HYPRE_FEMeshInitFields(NALU_HYPRE_FEMesh mesh, int numFields, int *fieldSizes, 
                        int *fieldIDs)
 {
    LLNL_FEI_Impl      *fei1;
@@ -185,11 +185,11 @@ HYPRE_FEMeshInitFields(HYPRE_FEMesh mesh, int numFields, int *fieldSizes,
 }
 
 /*****************************************************************************/
-/* HYPRE_FEMeshInitElemBlock                                                 */
+/* NALU_HYPRE_FEMeshInitElemBlock                                                 */
 /*---------------------------------------------------------------------------*/
 
 extern "C" int
-HYPRE_FEMeshInitElemBlock(HYPRE_FEMesh mesh, int blockID, int nElements, 
+NALU_HYPRE_FEMeshInitElemBlock(NALU_HYPRE_FEMesh mesh, int blockID, int nElements, 
                           int numNodesPerElement, int *numFieldsPerNode, 
                           int **nodalFieldIDs,
                           int numElemDOFFieldsPerElement,
@@ -232,11 +232,11 @@ HYPRE_FEMeshInitElemBlock(HYPRE_FEMesh mesh, int blockID, int nElements,
 }
 
 /*****************************************************************************/
-/* HYPRE_FEMeshInitElem                                                      */
+/* NALU_HYPRE_FEMeshInitElem                                                      */
 /*---------------------------------------------------------------------------*/
 
 extern "C" int
-HYPRE_FEMeshInitElem(HYPRE_FEMesh mesh, int blockID, int elemID, int *elemConn)
+NALU_HYPRE_FEMeshInitElem(NALU_HYPRE_FEMesh mesh, int blockID, int elemID, int *elemConn)
 {
    int ierr=1;
    LLNL_FEI_Impl      *fei1;
@@ -266,11 +266,11 @@ HYPRE_FEMeshInitElem(HYPRE_FEMesh mesh, int blockID, int elemID, int *elemConn)
 }
 
 /*****************************************************************************/
-/* HYPRE_FEMeshInitSharedNodes                                               */
+/* NALU_HYPRE_FEMeshInitSharedNodes                                               */
 /*---------------------------------------------------------------------------*/
 
 extern "C" int
-HYPRE_FEMeshInitSharedNodes(HYPRE_FEMesh mesh, int nShared, int* sharedIDs, 
+NALU_HYPRE_FEMeshInitSharedNodes(NALU_HYPRE_FEMesh mesh, int nShared, int* sharedIDs, 
                             int* sharedLeng, int** sharedProcs)
 {
    int ierr=1;
@@ -304,11 +304,11 @@ HYPRE_FEMeshInitSharedNodes(HYPRE_FEMesh mesh, int nShared, int* sharedIDs,
 }
 
 /*****************************************************************************/
-/* HYPRE_FEMeshInitComplete                                                  */
+/* NALU_HYPRE_FEMeshInitComplete                                                  */
 /*---------------------------------------------------------------------------*/
 
 extern "C" int
-HYPRE_FEMeshInitComplete(HYPRE_FEMesh mesh)
+NALU_HYPRE_FEMeshInitComplete(NALU_HYPRE_FEMesh mesh)
 {
    int ierr=1;
    LLNL_FEI_Impl      *fei1;
@@ -338,11 +338,11 @@ HYPRE_FEMeshInitComplete(HYPRE_FEMesh mesh)
 }
 
 /*****************************************************************************/
-/* HYPRE_FEMeshLoadNodeBCs                                                   */
+/* NALU_HYPRE_FEMeshLoadNodeBCs                                                   */
 /*---------------------------------------------------------------------------*/
 
 extern "C" int
-HYPRE_FEMeshLoadNodeBCs(HYPRE_FEMesh mesh, int nNodes, int* nodeIDs, 
+NALU_HYPRE_FEMeshLoadNodeBCs(NALU_HYPRE_FEMesh mesh, int nNodes, int* nodeIDs, 
                         int fieldID, double** alpha, double** beta, 
                         double** gamma)
 
@@ -375,11 +375,11 @@ HYPRE_FEMeshLoadNodeBCs(HYPRE_FEMesh mesh, int nNodes, int* nodeIDs,
 }
 
 /*****************************************************************************/
-/* HYPRE_FEMeshSumInElem                                                     */
+/* NALU_HYPRE_FEMeshSumInElem                                                     */
 /*---------------------------------------------------------------------------*/
 
 extern "C" int
-HYPRE_FEMeshSumInElem(HYPRE_FEMesh mesh, int blockID, int elemID, int* elemConn,
+NALU_HYPRE_FEMeshSumInElem(NALU_HYPRE_FEMesh mesh, int blockID, int elemID, int* elemConn,
                       double** elemStiffness, double *elemLoad, int elemFormat)
 {
    int ierr=1;
@@ -413,11 +413,11 @@ HYPRE_FEMeshSumInElem(HYPRE_FEMesh mesh, int blockID, int elemID, int* elemConn,
 }
 
 /*****************************************************************************/
-/* HYPRE_FEMeshSumInElemMatrix                                               */
+/* NALU_HYPRE_FEMeshSumInElemMatrix                                               */
 /*---------------------------------------------------------------------------*/
 
 extern "C" int
-HYPRE_FEMeshSumInElemMatrix(HYPRE_FEMesh mesh, int blockID, int elemID,
+NALU_HYPRE_FEMeshSumInElemMatrix(NALU_HYPRE_FEMesh mesh, int blockID, int elemID,
                             int* elemConn, double** elemStiffness, int elemFormat)
 {
    int ierr=1;
@@ -451,11 +451,11 @@ HYPRE_FEMeshSumInElemMatrix(HYPRE_FEMesh mesh, int blockID, int elemID,
 }
 
 /*****************************************************************************/
-/* HYPRE_FEMeshSumInElemRHS                                                  */
+/* NALU_HYPRE_FEMeshSumInElemRHS                                                  */
 /*---------------------------------------------------------------------------*/
 
 extern "C" int
-HYPRE_FEMeshSumInElemRHS(HYPRE_FEMesh mesh, int blockID, int elemID,
+NALU_HYPRE_FEMeshSumInElemRHS(NALU_HYPRE_FEMesh mesh, int blockID, int elemID,
                          int* elemConn, double* elemLoad)
 {
    int ierr=1;
@@ -486,11 +486,11 @@ HYPRE_FEMeshSumInElemRHS(HYPRE_FEMesh mesh, int blockID, int elemID,
 }
 
 /*****************************************************************************/
-/* HYPRE_FEMeshLoadComplete                                                  */
+/* NALU_HYPRE_FEMeshLoadComplete                                                  */
 /*---------------------------------------------------------------------------*/
 
 extern "C" int
-HYPRE_FEMeshLoadComplete(HYPRE_FEMesh mesh)
+NALU_HYPRE_FEMeshLoadComplete(NALU_HYPRE_FEMesh mesh)
 {
    int ierr=1;
    LLNL_FEI_Impl      *fei1;
@@ -520,11 +520,11 @@ HYPRE_FEMeshLoadComplete(HYPRE_FEMesh mesh)
 }
 
 /*****************************************************************************/
-/* HYPRE_FEMeshSolve                                                         */
+/* NALU_HYPRE_FEMeshSolve                                                         */
 /*---------------------------------------------------------------------------*/
 
 extern "C" int
-HYPRE_FEMeshSolve(HYPRE_FEMesh mesh)
+NALU_HYPRE_FEMeshSolve(NALU_HYPRE_FEMesh mesh)
 {
    int ierr=1;
    LLNL_FEI_Impl      *fei1;
@@ -554,11 +554,11 @@ HYPRE_FEMeshSolve(HYPRE_FEMesh mesh)
 }
 
 /*****************************************************************************/
-/* HYPRE_FEMeshGetBlockNodeIDList                                            */
+/* NALU_HYPRE_FEMeshGetBlockNodeIDList                                            */
 /*---------------------------------------------------------------------------*/
 
 extern "C" int
-HYPRE_FEMeshGetBlockNodeIDList(HYPRE_FEMesh mesh, int blockID, int numNodes, 
+NALU_HYPRE_FEMeshGetBlockNodeIDList(NALU_HYPRE_FEMesh mesh, int blockID, int numNodes, 
                                int *nodeIDList)
 {
    int ierr=1;
@@ -594,11 +594,11 @@ HYPRE_FEMeshGetBlockNodeIDList(HYPRE_FEMesh mesh, int blockID, int numNodes,
 }
 
 /*****************************************************************************/
-/* HYPRE_FEMeshGetBlockNodeSolution                                          */
+/* NALU_HYPRE_FEMeshGetBlockNodeSolution                                          */
 /*---------------------------------------------------------------------------*/
 
 extern "C" int
-HYPRE_FEMeshGetBlockNodeSolution(HYPRE_FEMesh mesh, int blockID, int numNodes, 
+NALU_HYPRE_FEMeshGetBlockNodeSolution(NALU_HYPRE_FEMesh mesh, int blockID, int numNodes, 
                    int *nodeIDList, int *solnOffsets, double *solnValues)
 {
    int ierr=1;

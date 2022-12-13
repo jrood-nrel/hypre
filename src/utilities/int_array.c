@@ -19,11 +19,11 @@
  *--------------------------------------------------------------------------*/
 
 hypre_IntArray *
-hypre_IntArrayCreate( HYPRE_Int size )
+hypre_IntArrayCreate( NALU_HYPRE_Int size )
 {
    hypre_IntArray  *array;
 
-   array = hypre_CTAlloc(hypre_IntArray, 1, HYPRE_MEMORY_HOST);
+   array = hypre_CTAlloc(hypre_IntArray, 1, NALU_HYPRE_MEMORY_HOST);
 
    hypre_IntArrayData(array) = NULL;
    hypre_IntArraySize(array) = size;
@@ -37,18 +37,18 @@ hypre_IntArrayCreate( HYPRE_Int size )
  * hypre_IntArrayDestroy
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_IntArrayDestroy( hypre_IntArray *array )
 {
-   HYPRE_Int ierr = 0;
+   NALU_HYPRE_Int ierr = 0;
 
    if (array)
    {
-      HYPRE_MemoryLocation memory_location = hypre_IntArrayMemoryLocation(array);
+      NALU_HYPRE_MemoryLocation memory_location = hypre_IntArrayMemoryLocation(array);
 
       hypre_TFree(hypre_IntArrayData(array), memory_location);
 
-      hypre_TFree(array, HYPRE_MEMORY_HOST);
+      hypre_TFree(array, NALU_HYPRE_MEMORY_HOST);
    }
 
    return ierr;
@@ -58,11 +58,11 @@ hypre_IntArrayDestroy( hypre_IntArray *array )
  * hypre_IntArrayInitialize
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_IntArrayInitialize_v2( hypre_IntArray *array, HYPRE_MemoryLocation memory_location )
+NALU_HYPRE_Int
+hypre_IntArrayInitialize_v2( hypre_IntArray *array, NALU_HYPRE_MemoryLocation memory_location )
 {
-   HYPRE_Int  size = hypre_IntArraySize(array);
-   HYPRE_Int  ierr = 0;
+   NALU_HYPRE_Int  size = hypre_IntArraySize(array);
+   NALU_HYPRE_Int  ierr = 0;
 
    hypre_IntArrayMemoryLocation(array) = memory_location;
 
@@ -72,16 +72,16 @@ hypre_IntArrayInitialize_v2( hypre_IntArray *array, HYPRE_MemoryLocation memory_
     * when being used, and freed */
    if ( !hypre_IntArrayData(array) )
    {
-      hypre_IntArrayData(array) = hypre_CTAlloc(HYPRE_Int, size, memory_location);
+      hypre_IntArrayData(array) = hypre_CTAlloc(NALU_HYPRE_Int, size, memory_location);
    }
 
    return ierr;
 }
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_IntArrayInitialize( hypre_IntArray *array )
 {
-   HYPRE_Int ierr;
+   NALU_HYPRE_Int ierr;
 
    ierr = hypre_IntArrayInitialize_v2( array, hypre_IntArrayMemoryLocation(array) );
 
@@ -95,17 +95,17 @@ hypre_IntArrayInitialize( hypre_IntArray *array )
  * if size of x is larger than y only the first size_y elements of x are
  * copied to y
  *--------------------------------------------------------------------------*/
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_IntArrayCopy( hypre_IntArray *x,
                     hypre_IntArray *y )
 {
-   HYPRE_Int ierr = 0;
+   NALU_HYPRE_Int ierr = 0;
 
    size_t size = hypre_min( hypre_IntArraySize(x), hypre_IntArraySize(y) );
 
    hypre_TMemcpy( hypre_IntArrayData(y),
                   hypre_IntArrayData(x),
-                  HYPRE_Int,
+                  NALU_HYPRE_Int,
                   size,
                   hypre_IntArrayMemoryLocation(y),
                   hypre_IntArrayMemoryLocation(x) );
@@ -119,9 +119,9 @@ hypre_IntArrayCopy( hypre_IntArray *x,
  *--------------------------------------------------------------------------*/
 
 hypre_IntArray *
-hypre_IntArrayCloneDeep_v2( hypre_IntArray *x, HYPRE_MemoryLocation memory_location )
+hypre_IntArrayCloneDeep_v2( hypre_IntArray *x, NALU_HYPRE_MemoryLocation memory_location )
 {
-   HYPRE_Int    size = hypre_IntArraySize(x);
+   NALU_HYPRE_Int    size = hypre_IntArraySize(x);
 
    hypre_IntArray *y = hypre_IntArrayCreate( size );
 
@@ -141,19 +141,19 @@ hypre_IntArrayCloneDeep( hypre_IntArray *x )
  * hypre_IntArraySetConstantValues
  *--------------------------------------------------------------------------*/
 
-#if defined(HYPRE_USING_GPU)
-HYPRE_Int
+#if defined(NALU_HYPRE_USING_GPU)
+NALU_HYPRE_Int
 hypre_IntArraySetConstantValuesDevice( hypre_IntArray *v,
-                                       HYPRE_Int       value )
+                                       NALU_HYPRE_Int       value )
 {
-   HYPRE_Int *array_data = hypre_IntArrayData(v);
-   HYPRE_Int  size       = hypre_IntArraySize(v);
+   NALU_HYPRE_Int *array_data = hypre_IntArrayData(v);
+   NALU_HYPRE_Int  size       = hypre_IntArraySize(v);
 
-#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP) || defined(HYPRE_USING_SYCL)
+#if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP) || defined(NALU_HYPRE_USING_SYCL)
    hypreDevice_IntFilln( array_data, size, value );
 
-#elif defined(HYPRE_USING_DEVICE_OPENMP)
-   HYPRE_Int i;
+#elif defined(NALU_HYPRE_USING_DEVICE_OPENMP)
+   NALU_HYPRE_Int i;
    #pragma omp target teams distribute parallel for private(i) is_device_ptr(array_data)
    for (i = 0; i < size; i++)
    {
@@ -167,31 +167,31 @@ hypre_IntArraySetConstantValuesDevice( hypre_IntArray *v,
 }
 #endif
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_IntArraySetConstantValues( hypre_IntArray *v,
-                                 HYPRE_Int       value )
+                                 NALU_HYPRE_Int       value )
 {
-   HYPRE_Int *array_data = hypre_IntArrayData(v);
-   HYPRE_Int  size       = hypre_IntArraySize(v);
+   NALU_HYPRE_Int *array_data = hypre_IntArrayData(v);
+   NALU_HYPRE_Int  size       = hypre_IntArraySize(v);
 
    if (size <= 0)
    {
       return hypre_error_flag;
    }
 
-#if defined(HYPRE_USING_GPU)
-   HYPRE_ExecutionPolicy exec = hypre_GetExecPolicy1(hypre_IntArrayMemoryLocation(v));
+#if defined(NALU_HYPRE_USING_GPU)
+   NALU_HYPRE_ExecutionPolicy exec = hypre_GetExecPolicy1(hypre_IntArrayMemoryLocation(v));
 
-   if (exec == HYPRE_EXEC_DEVICE)
+   if (exec == NALU_HYPRE_EXEC_DEVICE)
    {
       hypre_IntArraySetConstantValuesDevice(v, value);
    }
    else
 #endif
    {
-      HYPRE_Int i;
-#if defined(HYPRE_USING_OPENMP)
-      #pragma omp parallel for private(i) HYPRE_SMP_SCHEDULE
+      NALU_HYPRE_Int i;
+#if defined(NALU_HYPRE_USING_OPENMP)
+      #pragma omp parallel for private(i) NALU_HYPRE_SMP_SCHEDULE
 #endif
       for (i = 0; i < size; i++)
       {

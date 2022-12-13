@@ -121,22 +121,22 @@ int MLI_Solver_Jacobi::setup(MLI_Matrix *Amat)
     * create temporary vector
     *-----------------------------------------------------------------*/
 
-   funcPtr = hypre_TAlloc( MLI_Function , 1, HYPRE_MEMORY_HOST);
+   funcPtr = hypre_TAlloc( MLI_Function , 1, NALU_HYPRE_MEMORY_HOST);
    MLI_Utils_HypreParVectorGetDestroyFunc(funcPtr);
    paramString = new char[20];
-   strcpy( paramString, "HYPRE_ParVector" );
+   strcpy( paramString, "NALU_HYPRE_ParVector" );
 
-   HYPRE_ParCSRMatrixGetRowPartitioning((HYPRE_ParCSRMatrix) A, &partition);
+   NALU_HYPRE_ParCSRMatrixGetRowPartitioning((NALU_HYPRE_ParCSRMatrix) A, &partition);
    hypreVec = hypre_ParVectorCreate(comm, globalNRows, partition);
    hypre_ParVectorInitialize(hypreVec);
    auxVec_ = new MLI_Vector(hypreVec, paramString, funcPtr);
 
-   HYPRE_ParCSRMatrixGetRowPartitioning((HYPRE_ParCSRMatrix) A, &partition);
+   NALU_HYPRE_ParCSRMatrixGetRowPartitioning((NALU_HYPRE_ParCSRMatrix) A, &partition);
    hypreVec = hypre_ParVectorCreate(comm, globalNRows, partition);
    hypre_ParVectorInitialize(hypreVec);
    auxVec2_ = new MLI_Vector(hypreVec, paramString, funcPtr);
 
-   HYPRE_ParCSRMatrixGetRowPartitioning((HYPRE_ParCSRMatrix) A, &partition);
+   NALU_HYPRE_ParCSRMatrixGetRowPartitioning((NALU_HYPRE_ParCSRMatrix) A, &partition);
    hypreVec = hypre_ParVectorCreate(comm, globalNRows, partition);
    hypre_ParVectorInitialize(hypreVec);
    auxVec3_ = new MLI_Vector(hypreVec, paramString, funcPtr);
@@ -227,8 +227,8 @@ int MLI_Solver_Jacobi::solve(MLI_Vector *fIn, MLI_Vector *uIn)
             }
          }
 
-#ifdef HYPRE_USING_OPENMP
-#pragma omp parallel for private(i) HYPRE_SMP_SCHEDULE
+#ifdef NALU_HYPRE_USING_OPENMP
+#pragma omp parallel for private(i) NALU_HYPRE_SMP_SCHEDULE
 #endif
          for ( i = 0; i < localNRows; i++ ) 
             uData[i] += weight * rData[i] * diagonal_[i];
@@ -258,8 +258,8 @@ int MLI_Solver_Jacobi::solve(MLI_Vector *fIn, MLI_Vector *uIn)
          if ( zeroInitialGuess_ == 0 )
             hypre_ParCSRMatrixMatvec(-1.0, A, u2, 1.0, r);
  
-#ifdef HYPRE_USING_OPENMP
-#pragma omp parallel for private(i) HYPRE_SMP_SCHEDULE
+#ifdef NALU_HYPRE_USING_OPENMP
+#pragma omp parallel for private(i) NALU_HYPRE_SMP_SCHEDULE
 #endif
          for ( i = 0; i < localNRows; i++ ) 
             u2Data[i] += weight * rData[i] * diagonal_[i];

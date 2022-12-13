@@ -4,12 +4,12 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 
-set(HYPRE_fei_HEADERS
+set(NALU_HYPRE_fei_HEADERS
   cfei-hypre.h
   cfei_hypre.h
   hypre_cfei.h
-  HYPRE_LinSysCore.h
-  HYPRE_FEI_includes.h
+  NALU_HYPRE_LinSysCore.h
+  NALU_HYPRE_FEI_includes.h
   LLNL_FEI_Fei.h
   LLNL_FEI_Impl.h
   LLNL_FEI_LSCore.h
@@ -17,21 +17,21 @@ set(HYPRE_fei_HEADERS
   LLNL_FEI_Solver.h
 )
 
-set(HYPRE_fei_SRCS 
-  HYPRE_LSI_Dsuperlu.c
-  HYPRE_LSI_ddict.c
-  HYPRE_LSI_ddilut.c
-  HYPRE_LSI_ml.c
-  HYPRE_LSI_mlmaxwell.c
-  HYPRE_LSI_poly.c
-  HYPRE_LSI_schwarz.c
-  HYPRE_parcsr_TFQmr.c
-  HYPRE_parcsr_bicgs.c
-  HYPRE_parcsr_bicgstabl.c
-  HYPRE_parcsr_fgmres.c
-  HYPRE_parcsr_lsicg.c
-  HYPRE_parcsr_symqmr.c
-  HYPRE_parcsr_maxwell.c
+set(NALU_HYPRE_fei_SRCS 
+  NALU_HYPRE_LSI_Dsuperlu.c
+  NALU_HYPRE_LSI_ddict.c
+  NALU_HYPRE_LSI_ddilut.c
+  NALU_HYPRE_LSI_ml.c
+  NALU_HYPRE_LSI_mlmaxwell.c
+  NALU_HYPRE_LSI_poly.c
+  NALU_HYPRE_LSI_schwarz.c
+  NALU_HYPRE_parcsr_TFQmr.c
+  NALU_HYPRE_parcsr_bicgs.c
+  NALU_HYPRE_parcsr_bicgstabl.c
+  NALU_HYPRE_parcsr_fgmres.c
+  NALU_HYPRE_parcsr_lsicg.c
+  NALU_HYPRE_parcsr_symqmr.c
+  NALU_HYPRE_parcsr_maxwell.c
   SymQMR.c
   TFQmr.c
   bicgs.c
@@ -41,29 +41,29 @@ set(HYPRE_fei_SRCS
   hypre_lsi_ddamg.c
   hypre_lsi_misc.c
   lsicg.c
-  FEI_HYPRE_Impl.cxx
+  FEI_NALU_HYPRE_Impl.cxx
   LLNL_FEI_Impl.cxx
   LLNL_FEI_Fei.cxx
   LLNL_FEI_LSCore.cxx
   LLNL_FEI_Solver.cxx
   LLNL_FEI_Matrix.cxx
-  HYPRE_LSC_aux.cxx
-  HYPRE_LSI_UZAWA.cxx
-  HYPRE_LSI_blkprec.cxx
-  HYPRE_LSI_mli.cxx
-  HYPRE_LinSysCore.cxx
-  HYPRE_SlideReduction.cxx
+  NALU_HYPRE_LSC_aux.cxx
+  NALU_HYPRE_LSI_UZAWA.cxx
+  NALU_HYPRE_LSI_blkprec.cxx
+  NALU_HYPRE_LSI_mli.cxx
+  NALU_HYPRE_LinSysCore.cxx
+  NALU_HYPRE_SlideReduction.cxx
   cfei_hypre.cxx
   hypre_cfei.cxx
   hypre_schur_reduce.cxx
   hypre_slide_reduce.cxx
-  HYPRE_fei_mesh.cxx
-  HYPRE_fei_matrix.cxx
-  HYPRE_fei_vector.cxx 
+  NALU_HYPRE_fei_mesh.cxx
+  NALU_HYPRE_fei_matrix.cxx
+  NALU_HYPRE_fei_vector.cxx 
 )
 
-install (FILES ${HYPRE_fei_HEADERS} DESTINATION include)
+install (FILES ${NALU_HYPRE_fei_HEADERS} DESTINATION include)
 
 target_sources(${PROJECT_NAME}
-  PRIVATE ${HYPRE_fei_SRCS}
+  PRIVATE ${NALU_HYPRE_fei_SRCS}
 )

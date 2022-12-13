@@ -8,12 +8,12 @@
 #ifndef hypre_THREADING_HEADER
 #define hypre_THREADING_HEADER
 
-#ifdef HYPRE_USING_OPENMP
+#ifdef NALU_HYPRE_USING_OPENMP
 
-HYPRE_Int hypre_NumThreads( void );
-HYPRE_Int hypre_NumActiveThreads( void );
-HYPRE_Int hypre_GetThreadNum( void );
-void      hypre_SetNumThreads(HYPRE_Int nt);
+NALU_HYPRE_Int hypre_NumThreads( void );
+NALU_HYPRE_Int hypre_NumActiveThreads( void );
+NALU_HYPRE_Int hypre_GetThreadNum( void );
+void      hypre_SetNumThreads(NALU_HYPRE_Int nt);
 
 #else
 
@@ -24,7 +24,7 @@ void      hypre_SetNumThreads(HYPRE_Int nt);
 
 #endif
 
-void hypre_GetSimpleThreadPartition( HYPRE_Int *begin, HYPRE_Int *end, HYPRE_Int n );
+void hypre_GetSimpleThreadPartition( NALU_HYPRE_Int *begin, NALU_HYPRE_Int *end, NALU_HYPRE_Int n );
 
 #endif
 

@@ -7,7 +7,7 @@
 
 /******************************************************************************
  *
- * HYPRE_DDICT interface
+ * NALU_HYPRE_DDICT interface
  *
  *****************************************************************************/
 
@@ -17,11 +17,11 @@
 
 #include "utilities/_hypre_utilities.h"
 #include "HYPRE.h"
-#include "IJ_mv/HYPRE_IJ_mv.h"
-#include "parcsr_mv/HYPRE_parcsr_mv.h"
+#include "IJ_mv/NALU_HYPRE_IJ_mv.h"
+#include "parcsr_mv/NALU_HYPRE_parcsr_mv.h"
 #include "parcsr_mv/_hypre_parcsr_mv.h"
-#include "parcsr_ls/HYPRE_parcsr_ls.h"
-#include "HYPRE_MHMatrix.h"
+#include "parcsr_ls/NALU_HYPRE_parcsr_ls.h"
+#include "NALU_HYPRE_MHMatrix.h"
 
 #ifdef HAVE_ML
 
@@ -30,9 +30,9 @@
 
 #endif
 
-#include "HYPRE_MHMatrix.h"
-#include "HYPRE_FEI.h"
-typedef struct HYPRE_LSI_DDICT_Struct
+#include "NALU_HYPRE_MHMatrix.h"
+#include "NALU_HYPRE_FEI.h"
+typedef struct NALU_HYPRE_LSI_DDICT_Struct
 {
    MPI_Comm  comm;
    MH_Matrix *mh_mat;
@@ -44,25 +44,25 @@ typedef struct HYPRE_LSI_DDICT_Struct
    double    *mat_aa;
    int       outputLevel;
 }
-HYPRE_LSI_DDICT;
+NALU_HYPRE_LSI_DDICT;
 
-extern int  HYPRE_LSI_MLConstructMHMatrix(HYPRE_ParCSRMatrix,MH_Matrix *,
+extern int  NALU_HYPRE_LSI_MLConstructMHMatrix(NALU_HYPRE_ParCSRMatrix,MH_Matrix *,
                                      MPI_Comm, int *, MH_Context *);
-extern int  HYPRE_LSI_DDICTComposeOverlappedMatrix(MH_Matrix *, int *,
+extern int  NALU_HYPRE_LSI_DDICTComposeOverlappedMatrix(MH_Matrix *, int *,
                  int **recv_lengths, int **int_buf, double **dble_buf,
                  int **sindex_array, int **sindex_array2, int *offset);
-extern int  HYPRE_LSI_DDICTGetRowLengths(MH_Matrix *Amat, int *leng, int **);
-extern int  HYPRE_LIS_DDICTGetOffProcRows(MH_Matrix *Amat, int leng, int *,
+extern int  NALU_HYPRE_LSI_DDICTGetRowLengths(MH_Matrix *Amat, int *leng, int **);
+extern int  NALU_HYPRE_LIS_DDICTGetOffProcRows(MH_Matrix *Amat, int leng, int *,
                  int Noffset, int *map, int *map2, int **int_buf,
                  double **dble_buf);
-extern int  HYPRE_LSI_DDICTDecompose(HYPRE_LSI_DDICT *ict_ptr,MH_Matrix *Amat,
+extern int  NALU_HYPRE_LSI_DDICTDecompose(NALU_HYPRE_LSI_DDICT *ict_ptr,MH_Matrix *Amat,
                  int total_recv_leng, int *recv_lengths, int *ext_ja,
                  double *ext_aa, int *map, int *map2, int Noffset);
-extern void HYPRE_LSI_qsort1a(int *, int *, int, int);
-extern int  HYPRE_LSI_SplitDSort(double *,int,int*,int);
-extern int  HYPRE_LSI_Search(int *, int, int);
+extern void NALU_HYPRE_LSI_qsort1a(int *, int *, int, int);
+extern int  NALU_HYPRE_LSI_SplitDSort(double *,int,int*,int);
+extern int  NALU_HYPRE_LSI_Search(int *, int, int);
 
-extern int  HYPRE_LSI_DDICTFactorize(HYPRE_LSI_DDICT *ict_ptr, double *mat_aa,
+extern int  NALU_HYPRE_LSI_DDICTFactorize(NALU_HYPRE_LSI_DDICT *ict_ptr, double *mat_aa,
                  int *mat_ja, int *mat_ia, double *rowNorms);
 
 extern int  MH_ExchBdry(double *, void *);
@@ -72,14 +72,14 @@ extern int  MH_GetRow(void *, int, int *, int, int *, double *, int *);
 #define habs(x) ((x) > 0 ? (x) : -(x))
 
 /*****************************************************************************/
-/* HYPRE_LSI_DDICTCreate - Return a DDICT preconditioner object "solver".    */
+/* NALU_HYPRE_LSI_DDICTCreate - Return a DDICT preconditioner object "solver".    */
 /*---------------------------------------------------------------------------*/
 
-int HYPRE_LSI_DDICTCreate( MPI_Comm comm, HYPRE_Solver *solver )
+int NALU_HYPRE_LSI_DDICTCreate( MPI_Comm comm, NALU_HYPRE_Solver *solver )
 {
-   HYPRE_LSI_DDICT *ict_ptr;
+   NALU_HYPRE_LSI_DDICT *ict_ptr;
 
-   ict_ptr = hypre_TAlloc(HYPRE_LSI_DDICT, 1, HYPRE_MEMORY_HOST);
+   ict_ptr = hypre_TAlloc(NALU_HYPRE_LSI_DDICT, 1, NALU_HYPRE_MEMORY_HOST);
 
    if (ict_ptr == NULL) return 1;
 
@@ -91,47 +91,47 @@ int HYPRE_LSI_DDICTCreate( MPI_Comm comm, HYPRE_Solver *solver )
    ict_ptr->mat_aa      = NULL;
    ict_ptr->outputLevel = 0;
 
-   *solver = (HYPRE_Solver) ict_ptr;
+   *solver = (NALU_HYPRE_Solver) ict_ptr;
 
    return 0;
 }
 
 /*****************************************************************************/
-/* HYPRE_LSI_DDICTDestroy - Destroy a DDICT object.                          */
+/* NALU_HYPRE_LSI_DDICTDestroy - Destroy a DDICT object.                          */
 /*---------------------------------------------------------------------------*/
 
-int HYPRE_LSI_DDICTDestroy( HYPRE_Solver solver )
+int NALU_HYPRE_LSI_DDICTDestroy( NALU_HYPRE_Solver solver )
 {
    int              i;
-   HYPRE_LSI_DDICT *ict_ptr;
+   NALU_HYPRE_LSI_DDICT *ict_ptr;
 
-   ict_ptr = (HYPRE_LSI_DDICT *) solver;
-   hypre_TFree(ict_ptr->mat_ja, HYPRE_MEMORY_HOST);
-   hypre_TFree(ict_ptr->mat_aa, HYPRE_MEMORY_HOST);
+   ict_ptr = (NALU_HYPRE_LSI_DDICT *) solver;
+   hypre_TFree(ict_ptr->mat_ja, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(ict_ptr->mat_aa, NALU_HYPRE_MEMORY_HOST);
    if ( ict_ptr->mh_mat != NULL )
    {
-      hypre_TFree(ict_ptr->mh_mat->sendProc, HYPRE_MEMORY_HOST);
-      hypre_TFree(ict_ptr->mh_mat->sendLeng, HYPRE_MEMORY_HOST);
-      hypre_TFree(ict_ptr->mh_mat->recvProc, HYPRE_MEMORY_HOST);
-      hypre_TFree(ict_ptr->mh_mat->recvLeng, HYPRE_MEMORY_HOST);
+      hypre_TFree(ict_ptr->mh_mat->sendProc, NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(ict_ptr->mh_mat->sendLeng, NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(ict_ptr->mh_mat->recvProc, NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(ict_ptr->mh_mat->recvLeng, NALU_HYPRE_MEMORY_HOST);
       for ( i = 0; i < ict_ptr->mh_mat->sendProcCnt; i++ )
-         hypre_TFree(ict_ptr->mh_mat->sendList[i], HYPRE_MEMORY_HOST);
-      hypre_TFree(ict_ptr->mh_mat->sendList, HYPRE_MEMORY_HOST);
-      hypre_TFree(ict_ptr, HYPRE_MEMORY_HOST);
+         hypre_TFree(ict_ptr->mh_mat->sendList[i], NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(ict_ptr->mh_mat->sendList, NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(ict_ptr, NALU_HYPRE_MEMORY_HOST);
    }
    ict_ptr->mh_mat = NULL;
-   hypre_TFree(ict_ptr, HYPRE_MEMORY_HOST);
+   hypre_TFree(ict_ptr, NALU_HYPRE_MEMORY_HOST);
 
    return 0;
 }
 
 /*****************************************************************************/
-/* HYPRE_LSI_DDICTSetFillin - Set the fill-in parameter.                     */
+/* NALU_HYPRE_LSI_DDICTSetFillin - Set the fill-in parameter.                     */
 /*---------------------------------------------------------------------------*/
 
-int HYPRE_LSI_DDICTSetFillin(HYPRE_Solver solver, double fillin)
+int NALU_HYPRE_LSI_DDICTSetFillin(NALU_HYPRE_Solver solver, double fillin)
 {
-   HYPRE_LSI_DDICT *ict_ptr = (HYPRE_LSI_DDICT *) solver;
+   NALU_HYPRE_LSI_DDICT *ict_ptr = (NALU_HYPRE_LSI_DDICT *) solver;
 
    ict_ptr->fillin = fillin;
 
@@ -139,12 +139,12 @@ int HYPRE_LSI_DDICTSetFillin(HYPRE_Solver solver, double fillin)
 }
 
 /*****************************************************************************/
-/* HYPRE_LSI_DDICTSetDropTolerance - Set the threshold for dropping          */
+/* NALU_HYPRE_LSI_DDICTSetDropTolerance - Set the threshold for dropping          */
 /*---------------------------------------------------------------------------*/
 
-int HYPRE_LSI_DDICTSetDropTolerance(HYPRE_Solver solver, double thresh)
+int NALU_HYPRE_LSI_DDICTSetDropTolerance(NALU_HYPRE_Solver solver, double thresh)
 {
-   HYPRE_LSI_DDICT *ict_ptr = (HYPRE_LSI_DDICT *) solver;
+   NALU_HYPRE_LSI_DDICT *ict_ptr = (NALU_HYPRE_LSI_DDICT *) solver;
 
    ict_ptr->thresh = thresh;
 
@@ -152,12 +152,12 @@ int HYPRE_LSI_DDICTSetDropTolerance(HYPRE_Solver solver, double thresh)
 }
 
 /*****************************************************************************/
-/* HYPRE_LSI_DDICTSetOutputLevel - Set debug level                           */
+/* NALU_HYPRE_LSI_DDICTSetOutputLevel - Set debug level                           */
 /*---------------------------------------------------------------------------*/
 
-int HYPRE_LSI_DDICTSetOutputLevel(HYPRE_Solver solver, int level)
+int NALU_HYPRE_LSI_DDICTSetOutputLevel(NALU_HYPRE_Solver solver, int level)
 {
-   HYPRE_LSI_DDICT *ict_ptr = (HYPRE_LSI_DDICT *) solver;
+   NALU_HYPRE_LSI_DDICT *ict_ptr = (NALU_HYPRE_LSI_DDICT *) solver;
 
    ict_ptr->outputLevel = level;
 
@@ -165,15 +165,15 @@ int HYPRE_LSI_DDICTSetOutputLevel(HYPRE_Solver solver, int level)
 }
 
 /*****************************************************************************/
-/* HYPRE_LSI_DDICTSolve - Solve function for DDICT.                          */
+/* NALU_HYPRE_LSI_DDICTSolve - Solve function for DDICT.                          */
 /*---------------------------------------------------------------------------*/
 
-int HYPRE_LSI_DDICTSolve( HYPRE_Solver solver, HYPRE_ParCSRMatrix A,
-                       HYPRE_ParVector b,   HYPRE_ParVector x )
+int NALU_HYPRE_LSI_DDICTSolve( NALU_HYPRE_Solver solver, NALU_HYPRE_ParCSRMatrix A,
+                       NALU_HYPRE_ParVector b,   NALU_HYPRE_ParVector x )
 {
    int             i, j, Nrows, extNrows, *mat_ja, *ibuf, length;
    double          *rhs, *soln, *dbuf, *mat_aa, *dbuf2, dtmp;
-   HYPRE_LSI_DDICT *ict_ptr = (HYPRE_LSI_DDICT *) solver;
+   NALU_HYPRE_LSI_DDICT *ict_ptr = (NALU_HYPRE_LSI_DDICT *) solver;
    MH_Context      *context;
 
    rhs  = hypre_VectorData(hypre_ParVectorLocalVector((hypre_ParVector *) b));
@@ -186,13 +186,13 @@ int HYPRE_LSI_DDICTSolve( HYPRE_Solver solver, HYPRE_ParCSRMatrix A,
 
    if ( extNrows > 0 )
    {
-      dbuf  = hypre_TAlloc(double, extNrows , HYPRE_MEMORY_HOST);
-      dbuf2 = hypre_TAlloc(double, extNrows , HYPRE_MEMORY_HOST);
+      dbuf  = hypre_TAlloc(double, extNrows , NALU_HYPRE_MEMORY_HOST);
+      dbuf2 = hypre_TAlloc(double, extNrows , NALU_HYPRE_MEMORY_HOST);
       for ( i = 0; i < Nrows; i++ ) dbuf[i] = rhs[i];
    }
    else dbuf = dbuf2 = NULL;
 
-   context = hypre_TAlloc(MH_Context, 1, HYPRE_MEMORY_HOST);
+   context = hypre_TAlloc(MH_Context, 1, NALU_HYPRE_MEMORY_HOST);
    context->Amat = ict_ptr->mh_mat;
    context->comm = MPI_COMM_WORLD;
 
@@ -212,7 +212,7 @@ int HYPRE_LSI_DDICTSolve( HYPRE_Solver solver, HYPRE_ParCSRMatrix A,
       for ( j = mat_ja[i]; j < mat_ja[i+1]; j++ )
          dbuf2[mat_ja[j]] -= ( dtmp * mat_aa[j] );
    }
-   hypre_TFree(dbuf, HYPRE_MEMORY_HOST);
+   hypre_TFree(dbuf, NALU_HYPRE_MEMORY_HOST);
 
    for ( i = 0; i < Nrows; i++ ) soln[i] = dbuf2[i];
 
@@ -220,26 +220,26 @@ int HYPRE_LSI_DDICTSolve( HYPRE_Solver solver, HYPRE_ParCSRMatrix A,
 
    for ( i = 0; i < length; i++ ) soln[ibuf[i]] = soln[ibuf[i]] + dbuf[i];
 
-   hypre_TFree(ibuf, HYPRE_MEMORY_HOST);
-   hypre_TFree(dbuf, HYPRE_MEMORY_HOST);
-   hypre_TFree(dbuf2, HYPRE_MEMORY_HOST);
-   hypre_TFree(context, HYPRE_MEMORY_HOST);
+   hypre_TFree(ibuf, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(dbuf, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(dbuf2, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(context, NALU_HYPRE_MEMORY_HOST);
 
    return 0;
 }
 
 /*****************************************************************************/
-/* HYPRE_LSI_DDICTSetup - Set up function for LSI_DDICT.                     */
+/* NALU_HYPRE_LSI_DDICTSetup - Set up function for LSI_DDICT.                     */
 /*---------------------------------------------------------------------------*/
 
-int HYPRE_LSI_DDICTSetup(HYPRE_Solver solver, HYPRE_ParCSRMatrix A_csr,
-                          HYPRE_ParVector b,   HYPRE_ParVector x )
+int NALU_HYPRE_LSI_DDICTSetup(NALU_HYPRE_Solver solver, NALU_HYPRE_ParCSRMatrix A_csr,
+                          NALU_HYPRE_ParVector b,   NALU_HYPRE_ParVector x )
 {
    int             i, j, offset, total_recv_leng, *recv_lengths=NULL;
    int             *int_buf=NULL, mypid, nprocs, overlap_flag=1,*parray;
    int             *map=NULL, *map2=NULL, *row_partition=NULL,*parray2;
    double          *dble_buf=NULL;
-   HYPRE_LSI_DDICT *ict_ptr = (HYPRE_LSI_DDICT *) solver;
+   NALU_HYPRE_LSI_DDICT *ict_ptr = (NALU_HYPRE_LSI_DDICT *) solver;
    MH_Context      *context=NULL;
    MH_Matrix       *mh_mat=NULL;
 
@@ -249,21 +249,21 @@ int HYPRE_LSI_DDICTSetup(HYPRE_Solver solver, HYPRE_ParCSRMatrix A_csr,
 
    MPI_Comm_rank(MPI_COMM_WORLD, &mypid);
    MPI_Comm_size(MPI_COMM_WORLD, &nprocs);
-   HYPRE_ParCSRMatrixGetRowPartitioning(A_csr, &row_partition);
+   NALU_HYPRE_ParCSRMatrixGetRowPartitioning(A_csr, &row_partition);
 
    /* ---------------------------------------------------------------- */
    /* convert the incoming CSR matrix into a MH matrix                 */
    /* ---------------------------------------------------------------- */
 
-   context = hypre_TAlloc(MH_Context, 1, HYPRE_MEMORY_HOST);
+   context = hypre_TAlloc(MH_Context, 1, NALU_HYPRE_MEMORY_HOST);
    context->comm = MPI_COMM_WORLD;
    context->globalEqns = row_partition[nprocs];
-   context->partition = hypre_TAlloc(int, (nprocs+1), HYPRE_MEMORY_HOST);
+   context->partition = hypre_TAlloc(int, (nprocs+1), NALU_HYPRE_MEMORY_HOST);
    for (i=0; i<=nprocs; i++) context->partition[i] = row_partition[i];
-   hypre_TFree( row_partition , HYPRE_MEMORY_HOST);
-   mh_mat = hypre_TAlloc( MH_Matrix, 1, HYPRE_MEMORY_HOST);
+   hypre_TFree( row_partition , NALU_HYPRE_MEMORY_HOST);
+   mh_mat = hypre_TAlloc( MH_Matrix, 1, NALU_HYPRE_MEMORY_HOST);
    context->Amat = mh_mat;
-   HYPRE_LSI_MLConstructMHMatrix(A_csr,mh_mat,MPI_COMM_WORLD,
+   NALU_HYPRE_LSI_MLConstructMHMatrix(A_csr,mh_mat,MPI_COMM_WORLD,
                                  context->partition,context);
 
    /* ---------------------------------------------------------------- */
@@ -272,7 +272,7 @@ int HYPRE_LSI_DDICTSetup(HYPRE_Solver solver, HYPRE_ParCSRMatrix A_csr,
 
    if ( overlap_flag )
    {
-      HYPRE_LSI_DDICTComposeOverlappedMatrix(mh_mat, &total_recv_leng,
+      NALU_HYPRE_LSI_DDICTComposeOverlappedMatrix(mh_mat, &total_recv_leng,
                  &recv_lengths, &int_buf, &dble_buf, &map, &map2,&offset);
    }
    else
@@ -283,22 +283,22 @@ int HYPRE_LSI_DDICTSetup(HYPRE_Solver solver, HYPRE_ParCSRMatrix A_csr,
       dble_buf = NULL;
       map = NULL;
       map2 = NULL;
-      parray  = hypre_TAlloc(int, nprocs , HYPRE_MEMORY_HOST);
-      parray2 = hypre_TAlloc(int, nprocs , HYPRE_MEMORY_HOST);
+      parray  = hypre_TAlloc(int, nprocs , NALU_HYPRE_MEMORY_HOST);
+      parray2 = hypre_TAlloc(int, nprocs , NALU_HYPRE_MEMORY_HOST);
       for ( i = 0; i < nprocs; i++ ) parray2[i] = 0;
       parray2[mypid] = mh_mat->Nrows;
       MPI_Allreduce(parray2,parray,nprocs,MPI_INT,MPI_SUM,MPI_COMM_WORLD);
       offset = 0;
       for (i = 0; i < mypid; i++) offset += parray[i];
-      hypre_TFree(parray, HYPRE_MEMORY_HOST);
-      hypre_TFree(parray2, HYPRE_MEMORY_HOST);
+      hypre_TFree(parray, NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(parray2, NALU_HYPRE_MEMORY_HOST);
    }
 
    /* ---------------------------------------------------------------- */
    /* perform ICT decomposition on local matrix                        */
    /* ---------------------------------------------------------------- */
 
-   HYPRE_LSI_DDICTDecompose(ict_ptr,mh_mat,total_recv_leng,recv_lengths,
+   NALU_HYPRE_LSI_DDICTDecompose(ict_ptr,mh_mat,total_recv_leng,recv_lengths,
                              int_buf, dble_buf, map,map2, offset);
 
    if ( mypid == 0 && ict_ptr->outputLevel > 2 )
@@ -309,13 +309,13 @@ int HYPRE_LSI_DDICTSetup(HYPRE_Solver solver, HYPRE_ParCSRMatrix A_csr,
                    ict_ptr->mat_aa[j]);
    }
    ict_ptr->mh_mat = mh_mat;
-   hypre_TFree(recv_lengths, HYPRE_MEMORY_HOST);
-   hypre_TFree(int_buf, HYPRE_MEMORY_HOST);
-   hypre_TFree(dble_buf, HYPRE_MEMORY_HOST);
-   hypre_TFree(map, HYPRE_MEMORY_HOST);
-   hypre_TFree(map2, HYPRE_MEMORY_HOST);
-   hypre_TFree(context->partition, HYPRE_MEMORY_HOST);
-   hypre_TFree(context, HYPRE_MEMORY_HOST);
+   hypre_TFree(recv_lengths, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(int_buf, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(dble_buf, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(map, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(map2, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(context->partition, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(context, NALU_HYPRE_MEMORY_HOST);
    return 0;
 }
 
@@ -323,7 +323,7 @@ int HYPRE_LSI_DDICTSetup(HYPRE_Solver solver, HYPRE_ParCSRMatrix A_csr,
 /* subroutines used for constructing overlapped matrix                       */
 /*---------------------------------------------------------------------------*/
 
-int HYPRE_LSI_DDICTGetRowLengths(MH_Matrix *Amat, int *leng, int **recv_leng)
+int NALU_HYPRE_LSI_DDICTGetRowLengths(MH_Matrix *Amat, int *leng, int **recv_leng)
 {
    int         i, j, m, mypid, index, *temp_list, allocated_space, length;
    int         nRecv, *recvProc, *recvLeng, *cols, total_recv, mtype, msgtype;
@@ -357,8 +357,8 @@ int HYPRE_LSI_DDICTGetRowLengths(MH_Matrix *Amat, int *leng, int **recv_leng)
    /* post receives for all messages                                   */
    /* ---------------------------------------------------------------- */
 
-   (*recv_leng) = hypre_TAlloc(int, total_recv , HYPRE_MEMORY_HOST);
-   if (nRecv > 0) Request = hypre_TAlloc(MPI_Request, nRecv, HYPRE_MEMORY_HOST);
+   (*recv_leng) = hypre_TAlloc(int, total_recv , NALU_HYPRE_MEMORY_HOST);
+   if (nRecv > 0) Request = hypre_TAlloc(MPI_Request, nRecv, NALU_HYPRE_MEMORY_HOST);
    offset = 0;
    mtype = 2001;
    for (i = 0; i < nRecv; i++)
@@ -375,36 +375,36 @@ int HYPRE_LSI_DDICTGetRowLengths(MH_Matrix *Amat, int *leng, int **recv_leng)
    /* write out all messages                                           */
    /* ---------------------------------------------------------------- */
 
-   context = hypre_TAlloc(MH_Context, 1, HYPRE_MEMORY_HOST);
+   context = hypre_TAlloc(MH_Context, 1, NALU_HYPRE_MEMORY_HOST);
    context->Amat = Amat;
    allocated_space = 100;
-   cols = hypre_TAlloc(int, allocated_space , HYPRE_MEMORY_HOST);
-   vals = hypre_TAlloc(double, allocated_space , HYPRE_MEMORY_HOST);
+   cols = hypre_TAlloc(int, allocated_space , NALU_HYPRE_MEMORY_HOST);
+   vals = hypre_TAlloc(double, allocated_space , NALU_HYPRE_MEMORY_HOST);
    for (i = 0; i < nSend; i++)
    {
       proc_id   = sendProc[i];
       length    = sendLeng[i];
-      temp_list = hypre_TAlloc(int, sendLeng[i] , HYPRE_MEMORY_HOST);
+      temp_list = hypre_TAlloc(int, sendLeng[i] , NALU_HYPRE_MEMORY_HOST);
       for (j = 0; j < length; j++)
       {
          index = sendList[i][j];
          while (MH_GetRow(context,1,&index,allocated_space,cols,vals,&m)==0)
          {
-            hypre_TFree(cols, HYPRE_MEMORY_HOST);
-            hypre_TFree(vals, HYPRE_MEMORY_HOST);
+            hypre_TFree(cols, NALU_HYPRE_MEMORY_HOST);
+            hypre_TFree(vals, NALU_HYPRE_MEMORY_HOST);
             allocated_space += 200 + 1;
-            cols = hypre_TAlloc(int, allocated_space , HYPRE_MEMORY_HOST);
-            vals = hypre_TAlloc(double, allocated_space , HYPRE_MEMORY_HOST);
+            cols = hypre_TAlloc(int, allocated_space , NALU_HYPRE_MEMORY_HOST);
+            vals = hypre_TAlloc(double, allocated_space , NALU_HYPRE_MEMORY_HOST);
          }
          temp_list[j] = m;
       }
       msgtype = mtype;
       MPI_Send((void*)temp_list,length,MPI_INT,proc_id,msgtype,MPI_COMM_WORLD);
-      hypre_TFree(temp_list, HYPRE_MEMORY_HOST);
+      hypre_TFree(temp_list, NALU_HYPRE_MEMORY_HOST);
    }
-   hypre_TFree(cols, HYPRE_MEMORY_HOST);
-   hypre_TFree(vals, HYPRE_MEMORY_HOST);
-   hypre_TFree(context, HYPRE_MEMORY_HOST);
+   hypre_TFree(cols, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(vals, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(context, NALU_HYPRE_MEMORY_HOST);
 
    /* ---------------------------------------------------------------- */
    /* wait for messages                                                */
@@ -416,7 +416,7 @@ int HYPRE_LSI_DDICTGetRowLengths(MH_Matrix *Amat, int *leng, int **recv_leng)
    }
 
    if (nRecv > 0)
-      hypre_TFree(Request, HYPRE_MEMORY_HOST);
+      hypre_TFree(Request, NALU_HYPRE_MEMORY_HOST);
    return 0;
 }
 
@@ -424,7 +424,7 @@ int HYPRE_LSI_DDICTGetRowLengths(MH_Matrix *Amat, int *leng, int **recv_leng)
 /* needed for overlapped smoothers                                           */
 /*---------------------------------------------------------------------------*/
 
-int HYPRE_LSI_DDICTGetOffProcRows(MH_Matrix *Amat, int leng, int *recv_leng,
+int NALU_HYPRE_LSI_DDICTGetOffProcRows(MH_Matrix *Amat, int leng, int *recv_leng,
                            int Noffset, int *map, int *map2, int **int_buf,
                            double **dble_buf)
 {
@@ -459,13 +459,13 @@ int HYPRE_LSI_DDICTGetOffProcRows(MH_Matrix *Amat, int leng, int *recv_leng,
    /* ---------------------------------------------------------------- */
 
    if ( nRecv > 0 )
-        request     = hypre_TAlloc(MPI_Request , nRecv, HYPRE_MEMORY_HOST);
+        request     = hypre_TAlloc(MPI_Request , nRecv, NALU_HYPRE_MEMORY_HOST);
    else request = NULL;
 
    if ( total_recv > 0 )
    {
-      (*int_buf)  = hypre_TAlloc(int, total_recv , HYPRE_MEMORY_HOST);
-      (*dble_buf) = hypre_TAlloc(double, total_recv , HYPRE_MEMORY_HOST);
+      (*int_buf)  = hypre_TAlloc(int, total_recv , NALU_HYPRE_MEMORY_HOST);
+      (*dble_buf) = hypre_TAlloc(double, total_recv , NALU_HYPRE_MEMORY_HOST);
    }
 
    /* ---------------------------------------------------------------- */
@@ -493,12 +493,12 @@ int HYPRE_LSI_DDICTGetOffProcRows(MH_Matrix *Amat, int leng, int *recv_leng,
    /* send rows to other processors                                    */
    /* ---------------------------------------------------------------- */
 
-   context = hypre_TAlloc(MH_Context, 1, HYPRE_MEMORY_HOST);
+   context = hypre_TAlloc(MH_Context, 1, NALU_HYPRE_MEMORY_HOST);
    context->Amat = Amat;
    mtype = 2002;
    allocated_space = 100;
-   cols = hypre_TAlloc(int, allocated_space , HYPRE_MEMORY_HOST);
-   vals = hypre_TAlloc(double, allocated_space , HYPRE_MEMORY_HOST);
+   cols = hypre_TAlloc(int, allocated_space , NALU_HYPRE_MEMORY_HOST);
+   vals = hypre_TAlloc(double, allocated_space , NALU_HYPRE_MEMORY_HOST);
    for (i = 0; i < nSend; i++)
    {
       proc_id   = sendProc[i];
@@ -509,15 +509,15 @@ int HYPRE_LSI_DDICTGetOffProcRows(MH_Matrix *Amat, int leng, int *recv_leng,
          index = sendList[i][j];
          while (MH_GetRow(context,1,&index,allocated_space,cols,vals,&m)==0)
          {
-            hypre_TFree(cols, HYPRE_MEMORY_HOST);
-            hypre_TFree(vals, HYPRE_MEMORY_HOST);
+            hypre_TFree(cols, NALU_HYPRE_MEMORY_HOST);
+            hypre_TFree(vals, NALU_HYPRE_MEMORY_HOST);
             allocated_space += 200 + 1;
-            cols = hypre_TAlloc(int, allocated_space , HYPRE_MEMORY_HOST);
-            vals = hypre_TAlloc(double, allocated_space , HYPRE_MEMORY_HOST);
+            cols = hypre_TAlloc(int, allocated_space , NALU_HYPRE_MEMORY_HOST);
+            vals = hypre_TAlloc(double, allocated_space , NALU_HYPRE_MEMORY_HOST);
          }
          nnz += m;
       }
-      if ( nnz > 0 ) send_buf = hypre_TAlloc(double,  nnz , HYPRE_MEMORY_HOST);
+      if ( nnz > 0 ) send_buf = hypre_TAlloc(double,  nnz , NALU_HYPRE_MEMORY_HOST);
       offset = 0;
       for (j = 0; j < length; j++)
       {
@@ -530,10 +530,10 @@ int HYPRE_LSI_DDICTGetOffProcRows(MH_Matrix *Amat, int leng, int *recv_leng,
       MPI_Send((void*) send_buf, nnz, MPI_DOUBLE, proc_id, msgtype,
                        MPI_COMM_WORLD);
       if ( nnz > 0 )
-         hypre_TFree(send_buf, HYPRE_MEMORY_HOST);
+         hypre_TFree(send_buf, NALU_HYPRE_MEMORY_HOST);
    }
-   hypre_TFree(cols, HYPRE_MEMORY_HOST);
-   hypre_TFree(vals, HYPRE_MEMORY_HOST);
+   hypre_TFree(cols, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(vals, NALU_HYPRE_MEMORY_HOST);
 
    /* ---------------------------------------------------------------- */
    /* wait for all messages                                            */
@@ -569,8 +569,8 @@ int HYPRE_LSI_DDICTGetOffProcRows(MH_Matrix *Amat, int leng, int *recv_leng,
    /* ---------------------------------------------------------------- */
 
    mtype = 2003;
-   cols = hypre_TAlloc(int, allocated_space , HYPRE_MEMORY_HOST);
-   vals = hypre_TAlloc(double, allocated_space , HYPRE_MEMORY_HOST);
+   cols = hypre_TAlloc(int, allocated_space , NALU_HYPRE_MEMORY_HOST);
+   vals = hypre_TAlloc(double, allocated_space , NALU_HYPRE_MEMORY_HOST);
    for (i = 0; i < nSend; i++)
    {
       proc_id   = sendProc[i];
@@ -582,7 +582,7 @@ int HYPRE_LSI_DDICTGetOffProcRows(MH_Matrix *Amat, int leng, int *recv_leng,
          MH_GetRow(context,1,&index,allocated_space,cols,vals,&m);
          nnz += m;
       }
-      if ( nnz > 0 ) isend_buf = hypre_TAlloc(int,  nnz , HYPRE_MEMORY_HOST);
+      if ( nnz > 0 ) isend_buf = hypre_TAlloc(int,  nnz , NALU_HYPRE_MEMORY_HOST);
       offset = 0;
       for (j = 0; j < length; j++)
       {
@@ -599,10 +599,10 @@ int HYPRE_LSI_DDICTGetOffProcRows(MH_Matrix *Amat, int leng, int *recv_leng,
       MPI_Send((void*) isend_buf, nnz, MPI_INT, proc_id, msgtype,
                        MPI_COMM_WORLD);
       if ( nnz > 0 )
-         hypre_TFree(isend_buf, HYPRE_MEMORY_HOST);
+         hypre_TFree(isend_buf, NALU_HYPRE_MEMORY_HOST);
    }
-   hypre_TFree(cols, HYPRE_MEMORY_HOST);
-   hypre_TFree(vals, HYPRE_MEMORY_HOST);
+   hypre_TFree(cols, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(vals, NALU_HYPRE_MEMORY_HOST);
 
    /* ----------------------------------------------------------- */
    /* post receives for all messages                              */
@@ -613,8 +613,8 @@ int HYPRE_LSI_DDICTGetOffProcRows(MH_Matrix *Amat, int leng, int *recv_leng,
       MPI_Wait(request+i, &status);
    }
 
-   hypre_TFree(request, HYPRE_MEMORY_HOST);
-   hypre_TFree(context, HYPRE_MEMORY_HOST);
+   hypre_TFree(request, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(context, NALU_HYPRE_MEMORY_HOST);
    return 0;
 }
 
@@ -622,7 +622,7 @@ int HYPRE_LSI_DDICTGetOffProcRows(MH_Matrix *Amat, int leng, int *recv_leng,
 /* construct an enlarged overlapped local matrix                             */
 /*---------------------------------------------------------------------------*/
 
-int HYPRE_LSI_DDICTComposeOverlappedMatrix(MH_Matrix *mh_mat,
+int NALU_HYPRE_LSI_DDICTComposeOverlappedMatrix(MH_Matrix *mh_mat,
               int *total_recv_leng, int **recv_lengths, int **int_buf,
               double **dble_buf, int **sindex_array, int **sindex_array2,
               int *offset)
@@ -660,39 +660,39 @@ int HYPRE_LSI_DDICTComposeOverlappedMatrix(MH_Matrix *mh_mat,
    /* compose NrowsOffset and processor offsets proc_array             */
    /* ---------------------------------------------------------------- */
 
-   proc_array  = hypre_TAlloc(int, nprocs , HYPRE_MEMORY_HOST);
-   proc_array2 = hypre_TAlloc(int, nprocs , HYPRE_MEMORY_HOST);
+   proc_array  = hypre_TAlloc(int, nprocs , NALU_HYPRE_MEMORY_HOST);
+   proc_array2 = hypre_TAlloc(int, nprocs , NALU_HYPRE_MEMORY_HOST);
    for ( i = 0; i < nprocs; i++ ) proc_array2[i] = 0;
    proc_array2[mypid] = Nrows;
    MPI_Allreduce(proc_array2,proc_array,nprocs,MPI_INT,MPI_SUM,MPI_COMM_WORLD);
    NrowsOffset = 0;
    for (i = 0; i < mypid; i++) NrowsOffset += proc_array[i];
    for (i = 1; i < nprocs; i++) proc_array[i] += proc_array[i-1];
-   hypre_TFree(proc_array2, HYPRE_MEMORY_HOST);
+   hypre_TFree(proc_array2, NALU_HYPRE_MEMORY_HOST);
 
    /* ---------------------------------------------------------------- */
    /* compose the column index map (index_array,index_array2)          */
    /* ---------------------------------------------------------------- */
 
-   context = hypre_TAlloc(MH_Context, 1, HYPRE_MEMORY_HOST);
+   context = hypre_TAlloc(MH_Context, 1, NALU_HYPRE_MEMORY_HOST);
    context->comm = MPI_COMM_WORLD;
    context->Amat = mh_mat;
-   dble_array  = hypre_TAlloc(double, extNrows , HYPRE_MEMORY_HOST);
+   dble_array  = hypre_TAlloc(double, extNrows , NALU_HYPRE_MEMORY_HOST);
    for (i = Nrows; i < extNrows; i++) dble_array[i] = 0.0;
    for (i = 0; i < Nrows; i++) dble_array[i] = 1.0 * ( i + NrowsOffset );
    MH_ExchBdry(dble_array, context);
    if ( extNrows-Nrows > 0 )
-      index_array = hypre_TAlloc(int, (extNrows-Nrows) , HYPRE_MEMORY_HOST);
+      index_array = hypre_TAlloc(int, (extNrows-Nrows) , NALU_HYPRE_MEMORY_HOST);
    else
       index_array = NULL;
    for (i = Nrows; i < extNrows; i++) index_array[i-Nrows] = dble_array[i];
    if ( extNrows-Nrows > 0 )
-      index_array2  = hypre_TAlloc(int, (extNrows-Nrows) , HYPRE_MEMORY_HOST);
+      index_array2  = hypre_TAlloc(int, (extNrows-Nrows) , NALU_HYPRE_MEMORY_HOST);
    else
       index_array2 = NULL;
    for (i = 0; i < extNrows-Nrows; i++) index_array2[i] = i;
-   hypre_TFree(dble_array, HYPRE_MEMORY_HOST);
-   hypre_TFree(context, HYPRE_MEMORY_HOST);
+   hypre_TFree(dble_array, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(context, NALU_HYPRE_MEMORY_HOST);
 
    /* ---------------------------------------------------------------- */
    /* send the lengths of each row to remote processor                 */
@@ -700,12 +700,12 @@ int HYPRE_LSI_DDICTComposeOverlappedMatrix(MH_Matrix *mh_mat,
    /* in total_recv_leng, recv_lengths, int_buf, dble_buf              */
    /* ---------------------------------------------------------------- */
 
-   HYPRE_LSI_DDICTGetRowLengths(mh_mat, total_recv_leng, recv_lengths);
-   HYPRE_LSI_DDICTGetOffProcRows(mh_mat, *total_recv_leng, *recv_lengths,
+   NALU_HYPRE_LSI_DDICTGetRowLengths(mh_mat, total_recv_leng, recv_lengths);
+   NALU_HYPRE_LSI_DDICTGetOffProcRows(mh_mat, *total_recv_leng, *recv_lengths,
               NrowsOffset,index_array,index_array2,int_buf, dble_buf);
 
-   hypre_TFree(proc_array, HYPRE_MEMORY_HOST);
-   HYPRE_LSI_qsort1a(index_array, index_array2, 0, extNrows-Nrows-1);
+   hypre_TFree(proc_array, NALU_HYPRE_MEMORY_HOST);
+   NALU_HYPRE_LSI_qsort1a(index_array, index_array2, 0, extNrows-Nrows-1);
    (*sindex_array) = index_array;
    (*sindex_array2) = index_array2;
    (*offset) = NrowsOffset;
@@ -716,7 +716,7 @@ int HYPRE_LSI_DDICTComposeOverlappedMatrix(MH_Matrix *mh_mat,
 /* function for doing ICT decomposition                                      */
 /*---------------------------------------------------------------------------*/
 
-int HYPRE_LSI_DDICTDecompose(HYPRE_LSI_DDICT *ict_ptr,MH_Matrix *Amat,
+int NALU_HYPRE_LSI_DDICTDecompose(NALU_HYPRE_LSI_DDICT *ict_ptr,MH_Matrix *Amat,
            int total_recv_leng, int *recv_lengths, int *ext_ja, double *ext_aa,
            int *map, int *map2, int Noffset)
 {
@@ -741,15 +741,15 @@ int HYPRE_LSI_DDICTDecompose(HYPRE_LSI_DDICT *ict_ptr,MH_Matrix *Amat,
    /* ---------------------------------------------------------------- */
 
    allocated_space = extNrows;
-   cols     = hypre_TAlloc(int, allocated_space , HYPRE_MEMORY_HOST);
-   vals     = hypre_TAlloc(double, allocated_space , HYPRE_MEMORY_HOST);
-   rowNorms = hypre_TAlloc(double, extNrows , HYPRE_MEMORY_HOST);
+   cols     = hypre_TAlloc(int, allocated_space , NALU_HYPRE_MEMORY_HOST);
+   vals     = hypre_TAlloc(double, allocated_space , NALU_HYPRE_MEMORY_HOST);
+   rowNorms = hypre_TAlloc(double, extNrows , NALU_HYPRE_MEMORY_HOST);
 
    /* ---------------------------------------------------------------- */
    /* compute the storage requirement for the ILU matrix               */
    /* ---------------------------------------------------------------- */
 
-   context = hypre_TAlloc(MH_Context, 1, HYPRE_MEMORY_HOST);
+   context = hypre_TAlloc(MH_Context, 1, NALU_HYPRE_MEMORY_HOST);
    context->Amat = Amat;
    total_nnz     = 0;
    for ( i = 0; i < Nrows; i++ )
@@ -757,11 +757,11 @@ int HYPRE_LSI_DDICTDecompose(HYPRE_LSI_DDICT *ict_ptr,MH_Matrix *Amat,
       rowNorms[i] = 0.0;
       while (MH_GetRow(context,1,&i,allocated_space,cols,vals,&row_leng)==0)
       {
-         hypre_TFree(vals, HYPRE_MEMORY_HOST);
-         hypre_TFree(cols, HYPRE_MEMORY_HOST);
+         hypre_TFree(vals, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(cols, NALU_HYPRE_MEMORY_HOST);
          allocated_space += 200 + 1;
-         cols = hypre_TAlloc(int, allocated_space , HYPRE_MEMORY_HOST);
-         vals = hypre_TAlloc(double, allocated_space , HYPRE_MEMORY_HOST);
+         cols = hypre_TAlloc(int, allocated_space , NALU_HYPRE_MEMORY_HOST);
+         vals = hypre_TAlloc(double, allocated_space , NALU_HYPRE_MEMORY_HOST);
       }
       total_nnz += row_leng;
       for ( j = 0; j < row_leng; j++ ) rowNorms[i] += habs(vals[j]);
@@ -769,9 +769,9 @@ int HYPRE_LSI_DDICTDecompose(HYPRE_LSI_DDICT *ict_ptr,MH_Matrix *Amat,
 rowNorms[i] = 1.0;
    }
    for ( i = 0; i < total_recv_leng; i++ ) total_nnz += recv_lengths[i];
-   mat_ia = hypre_TAlloc(int,  (extNrows + 1 ) , HYPRE_MEMORY_HOST);
-   mat_ja = hypre_TAlloc(int,  total_nnz , HYPRE_MEMORY_HOST);
-   mat_aa = hypre_TAlloc(double,  total_nnz , HYPRE_MEMORY_HOST);
+   mat_ia = hypre_TAlloc(int,  (extNrows + 1 ) , NALU_HYPRE_MEMORY_HOST);
+   mat_ja = hypre_TAlloc(int,  total_nnz , NALU_HYPRE_MEMORY_HOST);
+   mat_aa = hypre_TAlloc(double,  total_nnz , NALU_HYPRE_MEMORY_HOST);
 
    /* ---------------------------------------------------------------- */
    /* construct the orginal matrix in CSR format                       */
@@ -804,7 +804,7 @@ rowNorms[i] = 1.0;
             ext_ja[j] = index - Noffset;
          else
          {
-            ind2 = HYPRE_LSI_Search(map, index, extNrows-Nrows);
+            ind2 = NALU_HYPRE_LSI_Search(map, index, extNrows-Nrows);
             if ( ind2 >= 0 ) ext_ja[j] = map2[ind2] + Nrows;
             else             ext_ja[j] = -1;
          }
@@ -829,23 +829,23 @@ rowNorms[i+Nrows] = 1.0;
    /* clean up a little                                                */
    /* ---------------------------------------------------------------- */
 
-   hypre_TFree(Amat->rowptr, HYPRE_MEMORY_HOST);
-   hypre_TFree(Amat->colnum, HYPRE_MEMORY_HOST);
-   hypre_TFree(Amat->values, HYPRE_MEMORY_HOST);
-   hypre_TFree(context, HYPRE_MEMORY_HOST);
-   hypre_TFree(cols, HYPRE_MEMORY_HOST);
-   hypre_TFree(vals, HYPRE_MEMORY_HOST);
+   hypre_TFree(Amat->rowptr, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(Amat->colnum, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(Amat->values, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(context, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(cols, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(vals, NALU_HYPRE_MEMORY_HOST);
 
    /* ---------------------------------------------------------------- */
    /* call ICT factorization                                           */
    /* ---------------------------------------------------------------- */
 
-   HYPRE_LSI_DDICTFactorize(ict_ptr, mat_aa, mat_ja, mat_ia, rowNorms);
+   NALU_HYPRE_LSI_DDICTFactorize(ict_ptr, mat_aa, mat_ja, mat_ia, rowNorms);
 
-   hypre_TFree(mat_aa , HYPRE_MEMORY_HOST);
-   hypre_TFree(mat_ia , HYPRE_MEMORY_HOST);
-   hypre_TFree(mat_ja , HYPRE_MEMORY_HOST);
-   hypre_TFree(rowNorms, HYPRE_MEMORY_HOST);
+   hypre_TFree(mat_aa , NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(mat_ia , NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(mat_ja , NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(rowNorms, NALU_HYPRE_MEMORY_HOST);
 
    if ( ict_ptr->outputLevel > 0 )
    {
@@ -860,7 +860,7 @@ rowNorms[i+Nrows] = 1.0;
 /* function for doing ICT factorization                                      */
 /*---------------------------------------------------------------------------*/
 
-int HYPRE_LSI_DDICTFactorize(HYPRE_LSI_DDICT *ict_ptr, double *mat_aa,
+int NALU_HYPRE_LSI_DDICTFactorize(NALU_HYPRE_LSI_DDICT *ict_ptr, double *mat_aa,
                  int *mat_ja, int *mat_ia, double *rowNorms)
 {
    int    i, j, row_leng, first, row_beg, row_endp1, track_leng, *track_array;
@@ -890,15 +890,15 @@ int HYPRE_LSI_DDICTFactorize(HYPRE_LSI_DDICT *ict_ptr, double *mat_aa,
    /* allocate permanent and temporary storage                         */
    /* ---------------------------------------------------------------- */
 
-   track_array = hypre_TAlloc(int,  extNrows , HYPRE_MEMORY_HOST);
-   sortcols    = hypre_TAlloc(int,  extNrows , HYPRE_MEMORY_HOST);
-   sortvals    = hypre_TAlloc(double,  extNrows , HYPRE_MEMORY_HOST);
-   dble_buf    = hypre_TAlloc(double,  extNrows , HYPRE_MEMORY_HOST);
-   msr_iptr    = hypre_TAlloc(int,  (totalFill+extNrows+1) , HYPRE_MEMORY_HOST);
-   msc_jptr    = hypre_TAlloc(int,  (totalFill+extNrows+1) , HYPRE_MEMORY_HOST);
-   msc_jend    = hypre_TAlloc(int,  (extNrows + 1 ) , HYPRE_MEMORY_HOST);
-   msr_aptr    = hypre_TAlloc(double,  (totalFill+extNrows) , HYPRE_MEMORY_HOST);
-   msc_aptr    = hypre_TAlloc(double,  (totalFill+extNrows) , HYPRE_MEMORY_HOST);
+   track_array = hypre_TAlloc(int,  extNrows , NALU_HYPRE_MEMORY_HOST);
+   sortcols    = hypre_TAlloc(int,  extNrows , NALU_HYPRE_MEMORY_HOST);
+   sortvals    = hypre_TAlloc(double,  extNrows , NALU_HYPRE_MEMORY_HOST);
+   dble_buf    = hypre_TAlloc(double,  extNrows , NALU_HYPRE_MEMORY_HOST);
+   msr_iptr    = hypre_TAlloc(int,  (totalFill+extNrows+1) , NALU_HYPRE_MEMORY_HOST);
+   msc_jptr    = hypre_TAlloc(int,  (totalFill+extNrows+1) , NALU_HYPRE_MEMORY_HOST);
+   msc_jend    = hypre_TAlloc(int,  (extNrows + 1 ) , NALU_HYPRE_MEMORY_HOST);
+   msr_aptr    = hypre_TAlloc(double,  (totalFill+extNrows) , NALU_HYPRE_MEMORY_HOST);
+   msc_aptr    = hypre_TAlloc(double,  (totalFill+extNrows) , NALU_HYPRE_MEMORY_HOST);
    msc_jptr[0] = msc_jend[0] = extNrows + 1;
    for ( i = 1; i <= extNrows; i++ )
    {
@@ -994,7 +994,7 @@ int HYPRE_LSI_DDICTFactorize(HYPRE_LSI_DDICT *ict_ptr, double *mat_aa,
       }
       if ( sortcnt > Lcount )
       {
-         HYPRE_LSI_SplitDSort(sortvals,sortcnt,sortcols,Lcount);
+         NALU_HYPRE_LSI_SplitDSort(sortvals,sortcnt,sortcols,Lcount);
          for ( j = Lcount; j < sortcnt; j++ ) dble_buf[sortcols[j]] = 0.0;
          for ( j = 0; j < row_leng; j++ )
          {
@@ -1128,13 +1128,13 @@ int HYPRE_LSI_DDICTFactorize(HYPRE_LSI_DDICT *ict_ptr, double *mat_aa,
    /* deallocate temporary storage space                         */
    /* ---------------------------------------------------------- */
 
-   hypre_TFree(track_array, HYPRE_MEMORY_HOST);
-   hypre_TFree(sortcols, HYPRE_MEMORY_HOST);
-   hypre_TFree(sortvals, HYPRE_MEMORY_HOST);
-   hypre_TFree(dble_buf, HYPRE_MEMORY_HOST);
-   hypre_TFree(msc_jptr, HYPRE_MEMORY_HOST);
-   hypre_TFree(msc_jend, HYPRE_MEMORY_HOST);
-   hypre_TFree(msc_aptr, HYPRE_MEMORY_HOST);
+   hypre_TFree(track_array, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(sortcols, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(sortvals, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(dble_buf, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(msc_jptr, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(msc_jend, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(msc_aptr, NALU_HYPRE_MEMORY_HOST);
 
    ict_ptr->mat_ja = msr_iptr;
    ict_ptr->mat_aa = msr_aptr;

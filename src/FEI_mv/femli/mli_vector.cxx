@@ -12,7 +12,7 @@
 
 #include "HYPRE.h"
 #include "mli_vector.h"
-#include "HYPRE_IJ_mv.h"
+#include "NALU_HYPRE_IJ_mv.h"
 #include "_hypre_parcsr_mv.h"
 #include "mli_utils.h"
 
@@ -63,9 +63,9 @@ void *MLI_Vector::getVector()
 
 int MLI_Vector::setConstantValue(double value)
 {
-   if ( strcmp( name_, "HYPRE_ParVector" ) )
+   if ( strcmp( name_, "NALU_HYPRE_ParVector" ) )
    {
-      printf("MLI_Vector::setConstantValue ERROR - type not HYPRE_ParVector\n");
+      printf("MLI_Vector::setConstantValue ERROR - type not NALU_HYPRE_ParVector\n");
       exit(1);
    }
    hypre_ParVector *vec = (hypre_ParVector *) vector_;
@@ -78,12 +78,12 @@ int MLI_Vector::setConstantValue(double value)
 
 int MLI_Vector::copy(MLI_Vector *vec2)
 {
-   if ( strcmp( name_, "HYPRE_ParVector" ) )
+   if ( strcmp( name_, "NALU_HYPRE_ParVector" ) )
    {
       printf("MLI_Vector::copy ERROR - invalid type (from).\n");
       exit(1);
    }
-   if ( strcmp( vec2->getName(), "HYPRE_ParVector" ) )
+   if ( strcmp( vec2->getName(), "NALU_HYPRE_ParVector" ) )
    {
       printf("MLI_Vector::copy ERROR - invalid type (to).\n");
       exit(1);
@@ -100,7 +100,7 @@ int MLI_Vector::copy(MLI_Vector *vec2)
 
 int MLI_Vector::print(char *filename)
 {
-   if ( strcmp( name_, "HYPRE_ParVector" ) )
+   if ( strcmp( name_, "NALU_HYPRE_ParVector" ) )
    {
       printf("MLI_Vector::innerProduct ERROR - invalid type.\n");
       exit(1);
@@ -117,7 +117,7 @@ int MLI_Vector::print(char *filename)
 
 double MLI_Vector::norm2()
 {
-   if ( strcmp( name_, "HYPRE_ParVector" ) )
+   if ( strcmp( name_, "NALU_HYPRE_ParVector" ) )
    {
       printf("MLI_Vector::innerProduct ERROR - invalid type.\n");
       exit(1);
@@ -141,7 +141,7 @@ MLI_Vector *MLI_Vector::clone()
    double          *darray;
    MLI_Function    *funcPtr;
 
-   if ( strcmp( name_, "HYPRE_ParVector" ) )
+   if ( strcmp( name_, "NALU_HYPRE_ParVector" ) )
    {
       printf("MLI_Vector::clone ERROR - invalid type.\n");
       exit(1);
@@ -151,10 +151,10 @@ MLI_Vector *MLI_Vector::clone()
    MPI_Comm_rank(comm,&mypid);
    MPI_Comm_size(comm,&nprocs);
    vpartition = hypre_ParVectorPartitioning(vec);
-   partitioning = hypre_CTAlloc(int,nprocs+1, HYPRE_MEMORY_HOST);
+   partitioning = hypre_CTAlloc(int,nprocs+1, NALU_HYPRE_MEMORY_HOST);
    for ( i = 0; i < nprocs+1; i++ ) partitioning[i] = vpartition[i];
    globalSize = hypre_ParVectorGlobalSize(vec);
-   newVec = hypre_CTAlloc(hypre_ParVector, 1, HYPRE_MEMORY_HOST);
+   newVec = hypre_CTAlloc(hypre_ParVector, 1, NALU_HYPRE_MEMORY_HOST);
    hypre_ParVectorComm(newVec) = comm;
    hypre_ParVectorGlobalSize(newVec) = globalSize;
    hypre_ParVectorFirstIndex(newVec) = partitioning[mypid];
@@ -166,7 +166,7 @@ MLI_Vector *MLI_Vector::clone()
    darray = hypre_VectorData(seqVec);
    for (i = 0; i < nlocals; i++) darray[i] = 0.0;
    hypre_ParVectorLocalVector(newVec) = seqVec;
-   sprintf(paramString,"HYPRE_ParVector");
+   sprintf(paramString,"NALU_HYPRE_ParVector");
    funcPtr = new MLI_Function();
    MLI_Utils_HypreParVectorGetDestroyFunc(funcPtr);
    MLI_Vector *mliVec = new MLI_Vector(newVec, paramString, funcPtr);

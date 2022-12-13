@@ -24,20 +24,20 @@ typedef struct
    /* The Laplacian matrix G^t M G */
    hypre_ParCSRMatrix *A_G;
    /* AMG preconditioner for A_G */
-   HYPRE_Solver B1_G;
+   NALU_HYPRE_Solver B1_G;
    /* PCG-AMG solver for A_G */
-   HYPRE_Solver B2_G;
+   NALU_HYPRE_Solver B2_G;
 
    /* Eigensystem for A x = lambda M x, G^t x = 0 */
-   HYPRE_Int block_size;
+   NALU_HYPRE_Int block_size;
    void *eigenvectors;
-   HYPRE_Real *eigenvalues;
+   NALU_HYPRE_Real *eigenvalues;
 
    /* Eigensolver (LOBPCG) options */
-   HYPRE_Int maxit;
-   HYPRE_Real atol;
-   HYPRE_Real rtol;
-   HYPRE_Int print_level;
+   NALU_HYPRE_Int maxit;
+   NALU_HYPRE_Real atol;
+   NALU_HYPRE_Real rtol;
+   NALU_HYPRE_Int print_level;
 
    /* Matrix-vector interface interpreter */
    void *interpreter;

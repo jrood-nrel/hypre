@@ -18,13 +18,13 @@
 
 #include "_hypre_utilities.h"
 #include "HYPRE.h"
-#include "HYPRE_parcsr_mv.h"
+#include "NALU_HYPRE_parcsr_mv.h"
 
-#include "HYPRE_IJ_mv.h"
-#include "HYPRE_parcsr_ls.h"
+#include "NALU_HYPRE_IJ_mv.h"
+#include "NALU_HYPRE_parcsr_ls.h"
 #include "_hypre_parcsr_ls.h"
 #include "_hypre_parcsr_mv.h"
-#include "HYPRE_krylov.h"
+#include "NALU_HYPRE_krylov.h"
 
 #include "cuda_profiler_api.h"
 
@@ -34,50 +34,50 @@ extern "C" {
 
 
 
-HYPRE_Int BuildParFromFile (HYPRE_Int argc, char *argv [], HYPRE_Int arg_index,
-                            HYPRE_ParCSRMatrix *A_ptr );
-HYPRE_Int BuildParRhsFromFile (HYPRE_Int argc, char *argv [], HYPRE_Int arg_index,
-                               HYPRE_ParVector *b_ptr );
+NALU_HYPRE_Int BuildParFromFile (NALU_HYPRE_Int argc, char *argv [], NALU_HYPRE_Int arg_index,
+                            NALU_HYPRE_ParCSRMatrix *A_ptr );
+NALU_HYPRE_Int BuildParRhsFromFile (NALU_HYPRE_Int argc, char *argv [], NALU_HYPRE_Int arg_index,
+                               NALU_HYPRE_ParVector *b_ptr );
 
-HYPRE_Int BuildParLaplacian (HYPRE_Int argc, char *argv [], HYPRE_Int arg_index,
-                             HYPRE_ParCSRMatrix *A_ptr );
-HYPRE_Int BuildParSysLaplacian (HYPRE_Int argc, char *argv [], HYPRE_Int arg_index,
-                                HYPRE_ParCSRMatrix *A_ptr );
-HYPRE_Int BuildParDifConv (HYPRE_Int argc, char *argv [], HYPRE_Int arg_index,
-                           HYPRE_ParCSRMatrix *A_ptr);
-HYPRE_Int BuildFuncsFromFiles (HYPRE_Int argc, char *argv [], HYPRE_Int arg_index,
-                               HYPRE_ParCSRMatrix A, HYPRE_Int **dof_func_ptr );
-HYPRE_Int BuildFuncsFromOneFile (HYPRE_Int argc, char *argv [], HYPRE_Int arg_index,
-                                 HYPRE_ParCSRMatrix A, HYPRE_Int **dof_func_ptr );
-HYPRE_Int BuildParLaplacian9pt (HYPRE_Int argc, char *argv [], HYPRE_Int arg_index,
-                                HYPRE_ParCSRMatrix *A_ptr );
-HYPRE_Int BuildParLaplacian27pt (HYPRE_Int argc, char *argv [], HYPRE_Int arg_index,
-                                 HYPRE_ParCSRMatrix *A_ptr );
-HYPRE_Int BuildParRotate7pt (HYPRE_Int argc, char *argv [], HYPRE_Int arg_index,
-                             HYPRE_ParCSRMatrix *A_ptr );
-HYPRE_Int BuildParVarDifConv (HYPRE_Int argc, char *argv [], HYPRE_Int arg_index,
-                              HYPRE_ParCSRMatrix *A_ptr, HYPRE_ParVector *rhs_ptr );
-HYPRE_ParCSRMatrix GenerateSysLaplacian (MPI_Comm comm, HYPRE_Int nx, HYPRE_Int ny, HYPRE_Int nz,
-                                         HYPRE_Int P, HYPRE_Int Q, HYPRE_Int R, HYPRE_Int p, HYPRE_Int q, HYPRE_Int r,
-                                         HYPRE_Int num_fun, HYPRE_Real *mtrx, HYPRE_Real *value);
-HYPRE_ParCSRMatrix GenerateSysLaplacianVCoef (MPI_Comm comm, HYPRE_Int nx, HYPRE_Int ny,
-                                              HYPRE_Int nz,
-                                              HYPRE_Int P, HYPRE_Int Q, HYPRE_Int R, HYPRE_Int p, HYPRE_Int q, HYPRE_Int r,
-                                              HYPRE_Int num_fun, HYPRE_Real *mtrx, HYPRE_Real *value);
-HYPRE_Int SetSysVcoefValues(HYPRE_Int num_fun, HYPRE_Int nx, HYPRE_Int ny, HYPRE_Int nz,
-                            HYPRE_Real vcx, HYPRE_Real vcy, HYPRE_Real vcz, HYPRE_Int mtx_entry, HYPRE_Real *values);
+NALU_HYPRE_Int BuildParLaplacian (NALU_HYPRE_Int argc, char *argv [], NALU_HYPRE_Int arg_index,
+                             NALU_HYPRE_ParCSRMatrix *A_ptr );
+NALU_HYPRE_Int BuildParSysLaplacian (NALU_HYPRE_Int argc, char *argv [], NALU_HYPRE_Int arg_index,
+                                NALU_HYPRE_ParCSRMatrix *A_ptr );
+NALU_HYPRE_Int BuildParDifConv (NALU_HYPRE_Int argc, char *argv [], NALU_HYPRE_Int arg_index,
+                           NALU_HYPRE_ParCSRMatrix *A_ptr);
+NALU_HYPRE_Int BuildFuncsFromFiles (NALU_HYPRE_Int argc, char *argv [], NALU_HYPRE_Int arg_index,
+                               NALU_HYPRE_ParCSRMatrix A, NALU_HYPRE_Int **dof_func_ptr );
+NALU_HYPRE_Int BuildFuncsFromOneFile (NALU_HYPRE_Int argc, char *argv [], NALU_HYPRE_Int arg_index,
+                                 NALU_HYPRE_ParCSRMatrix A, NALU_HYPRE_Int **dof_func_ptr );
+NALU_HYPRE_Int BuildParLaplacian9pt (NALU_HYPRE_Int argc, char *argv [], NALU_HYPRE_Int arg_index,
+                                NALU_HYPRE_ParCSRMatrix *A_ptr );
+NALU_HYPRE_Int BuildParLaplacian27pt (NALU_HYPRE_Int argc, char *argv [], NALU_HYPRE_Int arg_index,
+                                 NALU_HYPRE_ParCSRMatrix *A_ptr );
+NALU_HYPRE_Int BuildParRotate7pt (NALU_HYPRE_Int argc, char *argv [], NALU_HYPRE_Int arg_index,
+                             NALU_HYPRE_ParCSRMatrix *A_ptr );
+NALU_HYPRE_Int BuildParVarDifConv (NALU_HYPRE_Int argc, char *argv [], NALU_HYPRE_Int arg_index,
+                              NALU_HYPRE_ParCSRMatrix *A_ptr, NALU_HYPRE_ParVector *rhs_ptr );
+NALU_HYPRE_ParCSRMatrix GenerateSysLaplacian (MPI_Comm comm, NALU_HYPRE_Int nx, NALU_HYPRE_Int ny, NALU_HYPRE_Int nz,
+                                         NALU_HYPRE_Int P, NALU_HYPRE_Int Q, NALU_HYPRE_Int R, NALU_HYPRE_Int p, NALU_HYPRE_Int q, NALU_HYPRE_Int r,
+                                         NALU_HYPRE_Int num_fun, NALU_HYPRE_Real *mtrx, NALU_HYPRE_Real *value);
+NALU_HYPRE_ParCSRMatrix GenerateSysLaplacianVCoef (MPI_Comm comm, NALU_HYPRE_Int nx, NALU_HYPRE_Int ny,
+                                              NALU_HYPRE_Int nz,
+                                              NALU_HYPRE_Int P, NALU_HYPRE_Int Q, NALU_HYPRE_Int R, NALU_HYPRE_Int p, NALU_HYPRE_Int q, NALU_HYPRE_Int r,
+                                              NALU_HYPRE_Int num_fun, NALU_HYPRE_Real *mtrx, NALU_HYPRE_Real *value);
+NALU_HYPRE_Int SetSysVcoefValues(NALU_HYPRE_Int num_fun, NALU_HYPRE_Int nx, NALU_HYPRE_Int ny, NALU_HYPRE_Int nz,
+                            NALU_HYPRE_Real vcx, NALU_HYPRE_Real vcy, NALU_HYPRE_Real vcz, NALU_HYPRE_Int mtx_entry, NALU_HYPRE_Real *values);
 
-HYPRE_Int BuildParCoordinates (HYPRE_Int argc, char *argv [], HYPRE_Int arg_index,
-                               HYPRE_Int *coorddim_ptr, float **coord_ptr );
+NALU_HYPRE_Int BuildParCoordinates (NALU_HYPRE_Int argc, char *argv [], NALU_HYPRE_Int arg_index,
+                               NALU_HYPRE_Int *coorddim_ptr, float **coord_ptr );
 
-void testPMIS(HYPRE_ParCSRMatrix parcsr_A);
-void testPMIS2(HYPRE_ParCSRMatrix parcsr_A);
-void testPMIS3(HYPRE_ParCSRMatrix parcsr_A);
-void testTranspose(HYPRE_ParCSRMatrix parcsr_A);
-void testAdd(HYPRE_ParCSRMatrix parcsr_A);
-void testFFFC(HYPRE_ParCSRMatrix parcsr_A);
+void testPMIS(NALU_HYPRE_ParCSRMatrix parcsr_A);
+void testPMIS2(NALU_HYPRE_ParCSRMatrix parcsr_A);
+void testPMIS3(NALU_HYPRE_ParCSRMatrix parcsr_A);
+void testTranspose(NALU_HYPRE_ParCSRMatrix parcsr_A);
+void testAdd(NALU_HYPRE_ParCSRMatrix parcsr_A);
+void testFFFC(NALU_HYPRE_ParCSRMatrix parcsr_A);
 
-HYPRE_Int CompareParCSRDH(HYPRE_ParCSRMatrix hmat, HYPRE_ParCSRMatrix dmat, HYPRE_Real tol);
+NALU_HYPRE_Int CompareParCSRDH(NALU_HYPRE_ParCSRMatrix hmat, NALU_HYPRE_ParCSRMatrix dmat, NALU_HYPRE_Real tol);
 
 #ifdef __cplusplus
 }
@@ -87,23 +87,23 @@ hypre_int
 main( hypre_int argc,
       char *argv[] )
 {
-   HYPRE_Int           arg_index;
-   HYPRE_Int           print_usage;
-   HYPRE_Int           build_matrix_type;
-   HYPRE_Int           build_matrix_arg_index;
-   HYPRE_Int           ierr = 0;
+   NALU_HYPRE_Int           arg_index;
+   NALU_HYPRE_Int           print_usage;
+   NALU_HYPRE_Int           build_matrix_type;
+   NALU_HYPRE_Int           build_matrix_arg_index;
+   NALU_HYPRE_Int           ierr = 0;
    void               *object;
 
-   HYPRE_IJMatrix     ij_A = NULL;
-   HYPRE_ParCSRMatrix parcsr_A   = NULL;
+   NALU_HYPRE_IJMatrix     ij_A = NULL;
+   NALU_HYPRE_ParCSRMatrix parcsr_A   = NULL;
 
-   HYPRE_Int       time_index;
+   NALU_HYPRE_Int       time_index;
    MPI_Comm        comm = hypre_MPI_COMM_WORLD;
-   HYPRE_Int       test = 1;
-   //HYPRE_Int       i;
-   //HYPRE_Real      *data;
+   NALU_HYPRE_Int       test = 1;
+   //NALU_HYPRE_Int       i;
+   //NALU_HYPRE_Real      *data;
 
-   HYPRE_Int myid, num_procs;
+   NALU_HYPRE_Int myid, num_procs;
 
    /*-----------------------------------------------------------
     * Initialize some stuff
@@ -116,14 +116,14 @@ main( hypre_int argc,
 
    /*-----------------------------------------------------------------
     * GPU Device binding
-    * Must be done before HYPRE_Init() and should not be changed after
+    * Must be done before NALU_HYPRE_Init() and should not be changed after
     *-----------------------------------------------------------------*/
    hypre_bind_device(myid, num_procs, hypre_MPI_COMM_WORLD);
 
    /*-----------------------------------------------------------
     * Initialize : must be the first HYPRE function to call
     *-----------------------------------------------------------*/
-   HYPRE_Init();
+   NALU_HYPRE_Init();
 
    hypre_SetNumThreads(5);
    hypre_printf("CPU #OMP THREADS %d\n", hypre_NumThreads());
@@ -224,9 +224,9 @@ main( hypre_int argc,
     * Print driver parameters
     *-----------------------------------------------------------*/
 
-   HYPRE_SetSpGemmUseVendor(0);
+   NALU_HYPRE_SetSpGemmUseVendor(0);
    /* use cuRand for PMIS */
-   HYPRE_SetUseGpuRand(1);
+   NALU_HYPRE_SetUseGpuRand(1);
 
    /*-----------------------------------------------------------
     * Set up matrix
@@ -235,8 +235,8 @@ main( hypre_int argc,
    hypre_BeginTiming(time_index);
    if ( build_matrix_type == -1 )
    {
-      ierr = HYPRE_IJMatrixRead( argv[build_matrix_arg_index], comm,
-                                 HYPRE_PARCSR, &ij_A );
+      ierr = NALU_HYPRE_IJMatrixRead( argv[build_matrix_arg_index], comm,
+                                 NALU_HYPRE_PARCSR, &ij_A );
       if (ierr)
       {
          hypre_printf("ERROR: Problem reading in the system matrix!\n");
@@ -276,8 +276,8 @@ main( hypre_int argc,
 
    if (build_matrix_type < 0)
    {
-      ierr += HYPRE_IJMatrixGetObject( ij_A, &object);
-      parcsr_A = (HYPRE_ParCSRMatrix) object;
+      ierr += NALU_HYPRE_IJMatrixGetObject( ij_A, &object);
+      parcsr_A = (NALU_HYPRE_ParCSRMatrix) object;
    }
 
    hypre_EndTiming(time_index);
@@ -319,23 +319,23 @@ main( hypre_int argc,
 
    if (build_matrix_type == -1)
    {
-      HYPRE_IJMatrixDestroy(ij_A);
+      NALU_HYPRE_IJMatrixDestroy(ij_A);
    }
    else
    {
-      HYPRE_ParCSRMatrixDestroy(parcsr_A);
+      NALU_HYPRE_ParCSRMatrixDestroy(parcsr_A);
    }
 
 final:
 
    /* Finalize Hypre */
-   HYPRE_Finalize();
+   NALU_HYPRE_Finalize();
 
    /* Finalize MPI */
    hypre_MPI_Finalize();
 
    /* when using cuda-memcheck --leak-check full, uncomment this */
-#if defined(HYPRE_USING_GPU)
+#if defined(NALU_HYPRE_USING_GPU)
    hypre_ResetCudaDevice(hypre_handle());
 #endif
 
@@ -351,17 +351,17 @@ final:
  * Parameters given in command line.
  *----------------------------------------------------------------------*/
 
-HYPRE_Int
-BuildParFromFile( HYPRE_Int            argc,
+NALU_HYPRE_Int
+BuildParFromFile( NALU_HYPRE_Int            argc,
                   char                *argv[],
-                  HYPRE_Int            arg_index,
-                  HYPRE_ParCSRMatrix  *A_ptr     )
+                  NALU_HYPRE_Int            arg_index,
+                  NALU_HYPRE_ParCSRMatrix  *A_ptr     )
 {
    char               *filename;
 
-   HYPRE_ParCSRMatrix A;
+   NALU_HYPRE_ParCSRMatrix A;
 
-   HYPRE_Int                 myid;
+   NALU_HYPRE_Int                 myid;
 
    /*-----------------------------------------------------------
     * Initialize some stuff
@@ -396,7 +396,7 @@ BuildParFromFile( HYPRE_Int            argc,
     * Generate the matrix
     *-----------------------------------------------------------*/
 
-   HYPRE_ParCSRMatrixRead(hypre_MPI_COMM_WORLD, filename, &A);
+   NALU_HYPRE_ParCSRMatrixRead(hypre_MPI_COMM_WORLD, filename, &A);
 
    *A_ptr = A;
 
@@ -411,17 +411,17 @@ BuildParFromFile( HYPRE_Int            argc,
  * numbers
  *----------------------------------------------------------------------*/
 
-HYPRE_Int
-BuildParRhsFromFile( HYPRE_Int            argc,
+NALU_HYPRE_Int
+BuildParRhsFromFile( NALU_HYPRE_Int            argc,
                      char                *argv[],
-                     HYPRE_Int            arg_index,
-                     HYPRE_ParVector      *b_ptr     )
+                     NALU_HYPRE_Int            arg_index,
+                     NALU_HYPRE_ParVector      *b_ptr     )
 {
    char               *filename;
 
-   HYPRE_ParVector b;
+   NALU_HYPRE_ParVector b;
 
-   HYPRE_Int                 myid;
+   NALU_HYPRE_Int                 myid;
 
    /*-----------------------------------------------------------
     * Initialize some stuff
@@ -456,7 +456,7 @@ BuildParRhsFromFile( HYPRE_Int            argc,
     * Generate the matrix
     *-----------------------------------------------------------*/
 
-   HYPRE_ParVectorRead(hypre_MPI_COMM_WORLD, filename, &b);
+   NALU_HYPRE_ParVectorRead(hypre_MPI_COMM_WORLD, filename, &b);
 
    *b_ptr = b;
 
@@ -471,29 +471,29 @@ BuildParRhsFromFile( HYPRE_Int            argc,
  * Parameters given in command line.
  *----------------------------------------------------------------------*/
 
-HYPRE_Int
-BuildParLaplacian( HYPRE_Int            argc,
+NALU_HYPRE_Int
+BuildParLaplacian( NALU_HYPRE_Int            argc,
                    char                *argv[],
-                   HYPRE_Int            arg_index,
-                   HYPRE_ParCSRMatrix  *A_ptr     )
+                   NALU_HYPRE_Int            arg_index,
+                   NALU_HYPRE_ParCSRMatrix  *A_ptr     )
 {
-   HYPRE_Int                 nx, ny, nz;
-   HYPRE_Int                 P, Q, R;
-   HYPRE_Real          cx, cy, cz;
+   NALU_HYPRE_Int                 nx, ny, nz;
+   NALU_HYPRE_Int                 P, Q, R;
+   NALU_HYPRE_Real          cx, cy, cz;
 
-   HYPRE_ParCSRMatrix  A;
+   NALU_HYPRE_ParCSRMatrix  A;
 
-   HYPRE_Int                 num_procs, myid;
-   HYPRE_Int                 p, q, r;
-   HYPRE_Int                 num_fun = 1;
-   HYPRE_Real         *values;
-   HYPRE_Real         *mtrx;
+   NALU_HYPRE_Int                 num_procs, myid;
+   NALU_HYPRE_Int                 p, q, r;
+   NALU_HYPRE_Int                 num_fun = 1;
+   NALU_HYPRE_Real         *values;
+   NALU_HYPRE_Real         *mtrx;
 
-   HYPRE_Real          ep = .1;
+   NALU_HYPRE_Real          ep = .1;
 
-   HYPRE_Int                 system_vcoef = 0;
-   HYPRE_Int                 sys_opt = 0;
-   HYPRE_Int                 vcoef_opt = 0;
+   NALU_HYPRE_Int                 system_vcoef = 0;
+   NALU_HYPRE_Int                 sys_opt = 0;
+   NALU_HYPRE_Int                 vcoef_opt = 0;
 
 
    /*-----------------------------------------------------------
@@ -613,7 +613,7 @@ BuildParLaplacian( HYPRE_Int            argc,
     * Generate the matrix
     *-----------------------------------------------------------*/
 
-   values = hypre_CTAlloc(HYPRE_Real,  4, HYPRE_MEMORY_HOST);
+   values = hypre_CTAlloc(NALU_HYPRE_Real,  4, NALU_HYPRE_MEMORY_HOST);
 
    values[1] = -cx;
    values[2] = -cy;
@@ -634,11 +634,11 @@ BuildParLaplacian( HYPRE_Int            argc,
    }
 
    if (num_fun == 1)
-      A = (HYPRE_ParCSRMatrix) GenerateLaplacian(hypre_MPI_COMM_WORLD,
+      A = (NALU_HYPRE_ParCSRMatrix) GenerateLaplacian(hypre_MPI_COMM_WORLD,
                                                  nx, ny, nz, P, Q, R, p, q, r, values);
    else
    {
-      mtrx = hypre_CTAlloc(HYPRE_Real,  num_fun * num_fun, HYPRE_MEMORY_HOST);
+      mtrx = hypre_CTAlloc(NALU_HYPRE_Real,  num_fun * num_fun, NALU_HYPRE_MEMORY_HOST);
 
       if (num_fun == 2)
       {
@@ -782,7 +782,7 @@ BuildParLaplacian( HYPRE_Int            argc,
 
       if (!system_vcoef)
       {
-         A = (HYPRE_ParCSRMatrix) GenerateSysLaplacian(hypre_MPI_COMM_WORLD,
+         A = (NALU_HYPRE_ParCSRMatrix) GenerateSysLaplacian(hypre_MPI_COMM_WORLD,
                                                        nx, ny, nz, P, Q,
                                                        R, p, q, r, num_fun, mtrx, values);
       }
@@ -790,9 +790,9 @@ BuildParLaplacian( HYPRE_Int            argc,
       {
 
 
-         HYPRE_Real *mtrx_values;
+         NALU_HYPRE_Real *mtrx_values;
 
-         mtrx_values = hypre_CTAlloc(HYPRE_Real,  num_fun * num_fun * 4, HYPRE_MEMORY_HOST);
+         mtrx_values = hypre_CTAlloc(NALU_HYPRE_Real,  num_fun * num_fun * 4, NALU_HYPRE_MEMORY_HOST);
 
          if (num_fun == 2)
          {
@@ -845,7 +845,7 @@ BuildParLaplacian( HYPRE_Int            argc,
             }
             else if (vcoef_opt == 4) /* use with default sys_opt  - ulrike ex 4*/
             {
-               HYPRE_Real ep2 = ep;
+               NALU_HYPRE_Real ep2 = ep;
 
                /* mtrx[0] */
                SetSysVcoefValues(num_fun, nx, ny, nz, ep * 1.0, 1.0, 1.0, 0, mtrx_values);
@@ -861,7 +861,7 @@ BuildParLaplacian( HYPRE_Int            argc,
             }
             else if (vcoef_opt == 5) /* use with default sys_opt  - */
             {
-               HYPRE_Real  alp, beta;
+               NALU_HYPRE_Real  alp, beta;
                alp = .001;
                beta = 10;
 
@@ -924,7 +924,7 @@ BuildParLaplacian( HYPRE_Int            argc,
 
          }
 
-         A = (HYPRE_ParCSRMatrix) GenerateSysLaplacianVCoef(hypre_MPI_COMM_WORLD,
+         A = (NALU_HYPRE_ParCSRMatrix) GenerateSysLaplacianVCoef(hypre_MPI_COMM_WORLD,
                                                             nx, ny, nz, P, Q,
                                                             R, p, q, r, num_fun, mtrx, mtrx_values);
 
@@ -932,13 +932,13 @@ BuildParLaplacian( HYPRE_Int            argc,
 
 
 
-         hypre_TFree(mtrx_values, HYPRE_MEMORY_HOST);
+         hypre_TFree(mtrx_values, NALU_HYPRE_MEMORY_HOST);
       }
 
-      hypre_TFree(mtrx, HYPRE_MEMORY_HOST);
+      hypre_TFree(mtrx, NALU_HYPRE_MEMORY_HOST);
    }
 
-   hypre_TFree(values, HYPRE_MEMORY_HOST);
+   hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
 
    *A_ptr = A;
 
@@ -951,7 +951,7 @@ BuildParLaplacian( HYPRE_Int            argc,
  *  0 : zero
  * -1 : negative
  *----------------------------------------------------------------------*/
-static inline HYPRE_Int sign_double(HYPRE_Real a)
+static inline NALU_HYPRE_Int sign_double(NALU_HYPRE_Real a)
 {
    return ( (0.0 < a) - (0.0 > a) );
 }
@@ -965,24 +965,24 @@ static inline HYPRE_Int sign_double(HYPRE_Real a)
  *
  *----------------------------------------------------------------------*/
 
-HYPRE_Int
-BuildParDifConv( HYPRE_Int            argc,
+NALU_HYPRE_Int
+BuildParDifConv( NALU_HYPRE_Int            argc,
                  char                *argv[],
-                 HYPRE_Int            arg_index,
-                 HYPRE_ParCSRMatrix  *A_ptr)
+                 NALU_HYPRE_Int            arg_index,
+                 NALU_HYPRE_ParCSRMatrix  *A_ptr)
 {
-   HYPRE_Int           nx, ny, nz;
-   HYPRE_Int           P, Q, R;
-   HYPRE_Real          cx, cy, cz;
-   HYPRE_Real          ax, ay, az, atype;
-   HYPRE_Real          hinx, hiny, hinz;
-   HYPRE_Int           sign_prod;
+   NALU_HYPRE_Int           nx, ny, nz;
+   NALU_HYPRE_Int           P, Q, R;
+   NALU_HYPRE_Real          cx, cy, cz;
+   NALU_HYPRE_Real          ax, ay, az, atype;
+   NALU_HYPRE_Real          hinx, hiny, hinz;
+   NALU_HYPRE_Int           sign_prod;
 
-   HYPRE_ParCSRMatrix  A;
+   NALU_HYPRE_ParCSRMatrix  A;
 
-   HYPRE_Int           num_procs, myid;
-   HYPRE_Int           p, q, r;
-   HYPRE_Real         *values;
+   NALU_HYPRE_Int           num_procs, myid;
+   NALU_HYPRE_Int           p, q, r;
+   NALU_HYPRE_Real         *values;
 
    /*-----------------------------------------------------------
     * Initialize some stuff
@@ -1107,7 +1107,7 @@ BuildParDifConv( HYPRE_Int            argc,
     *    [5]: Y+
     *    [6]: Z+
     */
-   values = hypre_CTAlloc(HYPRE_Real,  7, HYPRE_MEMORY_HOST);
+   values = hypre_CTAlloc(NALU_HYPRE_Real,  7, NALU_HYPRE_MEMORY_HOST);
 
    values[0] = 0.;
 
@@ -1240,10 +1240,10 @@ BuildParDifConv( HYPRE_Int            argc,
       }
    }
 
-   A = (HYPRE_ParCSRMatrix) GenerateDifConv(hypre_MPI_COMM_WORLD,
+   A = (NALU_HYPRE_ParCSRMatrix) GenerateDifConv(hypre_MPI_COMM_WORLD,
                                             nx, ny, nz, P, Q, R, p, q, r, values);
 
-   hypre_TFree(values, HYPRE_MEMORY_HOST);
+   hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
 
    *A_ptr = A;
 
@@ -1255,20 +1255,20 @@ BuildParDifConv( HYPRE_Int            argc,
  * Parameters given in command line.
  *----------------------------------------------------------------------*/
 
-HYPRE_Int
-BuildParLaplacian9pt( HYPRE_Int                  argc,
+NALU_HYPRE_Int
+BuildParLaplacian9pt( NALU_HYPRE_Int                  argc,
                       char                *argv[],
-                      HYPRE_Int                  arg_index,
-                      HYPRE_ParCSRMatrix  *A_ptr     )
+                      NALU_HYPRE_Int                  arg_index,
+                      NALU_HYPRE_ParCSRMatrix  *A_ptr     )
 {
-   HYPRE_Int                 nx, ny;
-   HYPRE_Int                 P, Q;
+   NALU_HYPRE_Int                 nx, ny;
+   NALU_HYPRE_Int                 P, Q;
 
-   HYPRE_ParCSRMatrix  A;
+   NALU_HYPRE_ParCSRMatrix  A;
 
-   HYPRE_Int                 num_procs, myid;
-   HYPRE_Int                 p, q;
-   HYPRE_Real         *values;
+   NALU_HYPRE_Int                 num_procs, myid;
+   NALU_HYPRE_Int                 p, q;
+   NALU_HYPRE_Real         *values;
 
    /*-----------------------------------------------------------
     * Initialize some stuff
@@ -1344,7 +1344,7 @@ BuildParLaplacian9pt( HYPRE_Int                  argc,
     * Generate the matrix
     *-----------------------------------------------------------*/
 
-   values = hypre_CTAlloc(HYPRE_Real,  2, HYPRE_MEMORY_HOST);
+   values = hypre_CTAlloc(NALU_HYPRE_Real,  2, NALU_HYPRE_MEMORY_HOST);
 
    values[1] = -1.;
 
@@ -1362,10 +1362,10 @@ BuildParLaplacian9pt( HYPRE_Int                  argc,
       values[0] += 4.0;
    }
 
-   A = (HYPRE_ParCSRMatrix) GenerateLaplacian9pt(hypre_MPI_COMM_WORLD,
+   A = (NALU_HYPRE_ParCSRMatrix) GenerateLaplacian9pt(hypre_MPI_COMM_WORLD,
                                                  nx, ny, P, Q, p, q, values);
 
-   hypre_TFree(values, HYPRE_MEMORY_HOST);
+   hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
 
    *A_ptr = A;
 
@@ -1376,20 +1376,20 @@ BuildParLaplacian9pt( HYPRE_Int                  argc,
  * Parameters given in command line.
  *----------------------------------------------------------------------*/
 
-HYPRE_Int
-BuildParLaplacian27pt( HYPRE_Int                  argc,
+NALU_HYPRE_Int
+BuildParLaplacian27pt( NALU_HYPRE_Int                  argc,
                        char                *argv[],
-                       HYPRE_Int                  arg_index,
-                       HYPRE_ParCSRMatrix  *A_ptr     )
+                       NALU_HYPRE_Int                  arg_index,
+                       NALU_HYPRE_ParCSRMatrix  *A_ptr     )
 {
-   HYPRE_Int                 nx, ny, nz;
-   HYPRE_Int                 P, Q, R;
+   NALU_HYPRE_Int                 nx, ny, nz;
+   NALU_HYPRE_Int                 P, Q, R;
 
-   HYPRE_ParCSRMatrix  A;
+   NALU_HYPRE_ParCSRMatrix  A;
 
-   HYPRE_Int                 num_procs, myid;
-   HYPRE_Int                 p, q, r;
-   HYPRE_Real         *values;
+   NALU_HYPRE_Int                 num_procs, myid;
+   NALU_HYPRE_Int                 p, q, r;
+   NALU_HYPRE_Real         *values;
 
    /*-----------------------------------------------------------
     * Initialize some stuff
@@ -1470,7 +1470,7 @@ BuildParLaplacian27pt( HYPRE_Int                  argc,
     * Generate the matrix
     *-----------------------------------------------------------*/
 
-   values = hypre_CTAlloc(HYPRE_Real,  2, HYPRE_MEMORY_HOST);
+   values = hypre_CTAlloc(NALU_HYPRE_Real,  2, NALU_HYPRE_MEMORY_HOST);
 
    values[0] = 26.0;
    if (nx == 1 || ny == 1 || nz == 1)
@@ -1483,10 +1483,10 @@ BuildParLaplacian27pt( HYPRE_Int                  argc,
    }
    values[1] = -1.;
 
-   A = (HYPRE_ParCSRMatrix) GenerateLaplacian27pt(hypre_MPI_COMM_WORLD,
+   A = (NALU_HYPRE_ParCSRMatrix) GenerateLaplacian27pt(hypre_MPI_COMM_WORLD,
                                                   nx, ny, nz, P, Q, R, p, q, r, values);
 
-   hypre_TFree(values, HYPRE_MEMORY_HOST);
+   hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
 
    *A_ptr = A;
 
@@ -1499,20 +1499,20 @@ BuildParLaplacian27pt( HYPRE_Int                  argc,
  * Parameters given in command line.
  *----------------------------------------------------------------------*/
 
-HYPRE_Int
-BuildParRotate7pt( HYPRE_Int                  argc,
+NALU_HYPRE_Int
+BuildParRotate7pt( NALU_HYPRE_Int                  argc,
                    char                *argv[],
-                   HYPRE_Int                  arg_index,
-                   HYPRE_ParCSRMatrix  *A_ptr     )
+                   NALU_HYPRE_Int                  arg_index,
+                   NALU_HYPRE_ParCSRMatrix  *A_ptr     )
 {
-   HYPRE_Int                 nx, ny;
-   HYPRE_Int                 P, Q;
+   NALU_HYPRE_Int                 nx, ny;
+   NALU_HYPRE_Int                 P, Q;
 
-   HYPRE_ParCSRMatrix  A;
+   NALU_HYPRE_ParCSRMatrix  A;
 
-   HYPRE_Int                 num_procs, myid;
-   HYPRE_Int                 p, q;
-   HYPRE_Real          eps, alpha;
+   NALU_HYPRE_Int                 num_procs, myid;
+   NALU_HYPRE_Int                 p, q;
+   NALU_HYPRE_Real          eps, alpha;
 
    /*-----------------------------------------------------------
     * Initialize some stuff
@@ -1599,7 +1599,7 @@ BuildParRotate7pt( HYPRE_Int                  argc,
     * Generate the matrix
     *-----------------------------------------------------------*/
 
-   A = (HYPRE_ParCSRMatrix) GenerateRotate7pt(hypre_MPI_COMM_WORLD,
+   A = (NALU_HYPRE_ParCSRMatrix) GenerateRotate7pt(hypre_MPI_COMM_WORLD,
                                               nx, ny, P, Q, p, q, alpha, eps);
 
    *A_ptr = A;
@@ -1617,23 +1617,23 @@ BuildParRotate7pt( HYPRE_Int                  argc,
  *
  *----------------------------------------------------------------------*/
 
-HYPRE_Int
-BuildParVarDifConv( HYPRE_Int                  argc,
+NALU_HYPRE_Int
+BuildParVarDifConv( NALU_HYPRE_Int                  argc,
                     char                *argv[],
-                    HYPRE_Int                  arg_index,
-                    HYPRE_ParCSRMatrix  *A_ptr,
-                    HYPRE_ParVector  *rhs_ptr     )
+                    NALU_HYPRE_Int                  arg_index,
+                    NALU_HYPRE_ParCSRMatrix  *A_ptr,
+                    NALU_HYPRE_ParVector  *rhs_ptr     )
 {
-   HYPRE_Int                 nx, ny, nz;
-   HYPRE_Int                 P, Q, R;
+   NALU_HYPRE_Int                 nx, ny, nz;
+   NALU_HYPRE_Int                 P, Q, R;
 
-   HYPRE_ParCSRMatrix  A;
-   HYPRE_ParVector  rhs;
+   NALU_HYPRE_ParCSRMatrix  A;
+   NALU_HYPRE_ParVector  rhs;
 
-   HYPRE_Int           num_procs, myid;
-   HYPRE_Int           p, q, r;
-   HYPRE_Int           type;
-   HYPRE_Real          eps;
+   NALU_HYPRE_Int           num_procs, myid;
+   NALU_HYPRE_Int           p, q, r;
+   NALU_HYPRE_Int           type;
+   NALU_HYPRE_Real          eps;
 
    /*-----------------------------------------------------------
     * Initialize some stuff
@@ -1730,12 +1730,12 @@ BuildParVarDifConv( HYPRE_Int                  argc,
 
    if (0 == type)
    {
-      A = (HYPRE_ParCSRMatrix) GenerateVarDifConv(hypre_MPI_COMM_WORLD,
+      A = (NALU_HYPRE_ParCSRMatrix) GenerateVarDifConv(hypre_MPI_COMM_WORLD,
                                                   nx, ny, nz, P, Q, R, p, q, r, eps, &rhs);
    }
    else
    {
-      A = (HYPRE_ParCSRMatrix) GenerateRSVarDifConv(hypre_MPI_COMM_WORLD,
+      A = (NALU_HYPRE_ParCSRMatrix) GenerateRSVarDifConv(hypre_MPI_COMM_WORLD,
                                                     nx, ny, nz, P, Q, R, p, q, r, eps, &rhs,
                                                     type);
    }
@@ -1749,13 +1749,13 @@ BuildParVarDifConv( HYPRE_Int                  argc,
 /**************************************************************************/
 
 
-HYPRE_Int SetSysVcoefValues(HYPRE_Int num_fun, HYPRE_Int nx, HYPRE_Int ny, HYPRE_Int nz,
-                            HYPRE_Real vcx,
-                            HYPRE_Real vcy, HYPRE_Real vcz, HYPRE_Int mtx_entry, HYPRE_Real *values)
+NALU_HYPRE_Int SetSysVcoefValues(NALU_HYPRE_Int num_fun, NALU_HYPRE_Int nx, NALU_HYPRE_Int ny, NALU_HYPRE_Int nz,
+                            NALU_HYPRE_Real vcx,
+                            NALU_HYPRE_Real vcy, NALU_HYPRE_Real vcz, NALU_HYPRE_Int mtx_entry, NALU_HYPRE_Real *values)
 {
 
 
-   HYPRE_Int sz = num_fun * num_fun;
+   NALU_HYPRE_Int sz = num_fun * num_fun;
 
    values[1 * sz + mtx_entry] = -vcx;
    values[2 * sz + mtx_entry] = -vcy;
@@ -1783,20 +1783,20 @@ HYPRE_Int SetSysVcoefValues(HYPRE_Int num_fun, HYPRE_Int nx, HYPRE_Int ny, HYPRE
  * Build coordinates for 1D/2D/3D
  *----------------------------------------------------------------------*/
 
-HYPRE_Int
-BuildParCoordinates( HYPRE_Int                  argc,
+NALU_HYPRE_Int
+BuildParCoordinates( NALU_HYPRE_Int                  argc,
                      char                *argv[],
-                     HYPRE_Int                  arg_index,
-                     HYPRE_Int                 *coorddim_ptr,
+                     NALU_HYPRE_Int                  arg_index,
+                     NALU_HYPRE_Int                 *coorddim_ptr,
                      float               **coord_ptr     )
 {
-   HYPRE_Int                 nx, ny, nz;
-   HYPRE_Int                 P, Q, R;
+   NALU_HYPRE_Int                 nx, ny, nz;
+   NALU_HYPRE_Int                 P, Q, R;
 
-   HYPRE_Int                 num_procs, myid;
-   HYPRE_Int                 p, q, r;
+   NALU_HYPRE_Int                 num_procs, myid;
+   NALU_HYPRE_Int                 p, q, r;
 
-   HYPRE_Int                 coorddim;
+   NALU_HYPRE_Int                 coorddim;
    float               *coordinates;
 
    /*-----------------------------------------------------------
@@ -1873,27 +1873,27 @@ BuildParCoordinates( HYPRE_Int                  argc,
 
 
 void
-testPMIS(HYPRE_ParCSRMatrix parcsr_A)
+testPMIS(NALU_HYPRE_ParCSRMatrix parcsr_A)
 {
-   HYPRE_Int         nC1 = 0, nC2 = 0, i;
-   HYPRE_Int         time_index;
+   NALU_HYPRE_Int         nC1 = 0, nC2 = 0, i;
+   NALU_HYPRE_Int         time_index;
    hypre_IntArray   *h_CF_marker  = NULL;
    hypre_IntArray   *h_CF_marker2 = NULL;
-   HYPRE_Int        *d_CF_marker  = NULL;
-   HYPRE_Real        max_row_sum = 1.0;
-   HYPRE_Int         num_functions = 1;
-   HYPRE_Real        strong_threshold = 0.25;
-   HYPRE_Int         debug_flag = 0;
-   HYPRE_Int         local_num_rows;
-   HYPRE_Int         first_local_row, last_local_row;
-   HYPRE_Int         first_local_col, last_local_col;
+   NALU_HYPRE_Int        *d_CF_marker  = NULL;
+   NALU_HYPRE_Real        max_row_sum = 1.0;
+   NALU_HYPRE_Int         num_functions = 1;
+   NALU_HYPRE_Real        strong_threshold = 0.25;
+   NALU_HYPRE_Int         debug_flag = 0;
+   NALU_HYPRE_Int         local_num_rows;
+   NALU_HYPRE_Int         first_local_row, last_local_row;
+   NALU_HYPRE_Int         first_local_col, last_local_col;
    MPI_Comm          comm = hypre_MPI_COMM_WORLD;
-   HYPRE_Int         num_procs, myid;
+   NALU_HYPRE_Int         num_procs, myid;
 
    hypre_MPI_Comm_size(hypre_MPI_COMM_WORLD, &num_procs );
    hypre_MPI_Comm_rank(hypre_MPI_COMM_WORLD, &myid );
 
-   HYPRE_ParCSRMatrixGetLocalRange( parcsr_A,
+   NALU_HYPRE_ParCSRMatrixGetLocalRange( parcsr_A,
                                     &first_local_row, &last_local_row,
                                     &first_local_col, &last_local_col );
 
@@ -1901,7 +1901,7 @@ testPMIS(HYPRE_ParCSRMatrix parcsr_A)
    //local_num_cols = last_local_col - first_local_col + 1;
 
    /* Soc on HOST */
-   HYPRE_ParCSRMatrix parcsr_S   = NULL;
+   NALU_HYPRE_ParCSRMatrix parcsr_S   = NULL;
 
    hypre_BoomerAMGCreateSHost(parcsr_A, strong_threshold, max_row_sum,
                               num_functions, NULL, &parcsr_S);
@@ -1918,7 +1918,7 @@ testPMIS(HYPRE_ParCSRMatrix parcsr_A)
    hypre_ClearTiming();
 
    /* Soc on DEVICE */
-   HYPRE_ParCSRMatrix parcsr_S_device  = NULL;
+   NALU_HYPRE_ParCSRMatrix parcsr_S_device  = NULL;
    hypre_BoomerAMGCreateSDevice(parcsr_A, strong_threshold, max_row_sum,
                                 num_functions, NULL, &parcsr_S_device);
    /* PMIS on DEVICE */
@@ -1934,8 +1934,8 @@ testPMIS(HYPRE_ParCSRMatrix parcsr_A)
    hypre_FinalizeTiming(time_index);
    hypre_ClearTiming();
 
-   //h_CF_marker2 = hypre_TAlloc(HYPRE_Int, local_num_rows, HYPRE_MEMORY_HOST);
-   //hypre_TMemcpy(h_CF_marker2, d_CF_marker, HYPRE_Int, local_num_rows, HYPRE_MEMORY_HOST, HYPRE_MEMORY_DEVICE);
+   //h_CF_marker2 = hypre_TAlloc(NALU_HYPRE_Int, local_num_rows, NALU_HYPRE_MEMORY_HOST);
+   //hypre_TMemcpy(h_CF_marker2, d_CF_marker, NALU_HYPRE_Int, local_num_rows, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_DEVICE);
 
    for (i = 0; i < local_num_rows; i++)
    {
@@ -1955,9 +1955,9 @@ testPMIS(HYPRE_ParCSRMatrix parcsr_A)
       }
    }
 
-   HYPRE_Int allnC1, allnC2;
-   hypre_MPI_Allreduce(&nC1, &allnC1, 1, HYPRE_MPI_INT, hypre_MPI_SUM, comm);
-   hypre_MPI_Allreduce(&nC2, &allnC2, 1, HYPRE_MPI_INT, hypre_MPI_SUM, comm);
+   NALU_HYPRE_Int allnC1, allnC2;
+   hypre_MPI_Allreduce(&nC1, &allnC1, 1, NALU_HYPRE_MPI_INT, hypre_MPI_SUM, comm);
+   hypre_MPI_Allreduce(&nC2, &allnC2, 1, NALU_HYPRE_MPI_INT, hypre_MPI_SUM, comm);
    if (myid == 0)
    {
       printf("nC1 %d nC2 %d\n", allnC1, allnC2);
@@ -1967,28 +1967,28 @@ testPMIS(HYPRE_ParCSRMatrix parcsr_A)
    hypre_ParCSRMatrixDestroy(parcsr_S_device);
    hypre_IntArrayDestroy(h_CF_marker);
    hypre_IntArrayDestroy(h_CF_marker2);
-   hypre_TFree(d_CF_marker,  HYPRE_MEMORY_DEVICE);
+   hypre_TFree(d_CF_marker,  NALU_HYPRE_MEMORY_DEVICE);
 }
 
 void
-testPMIS3(HYPRE_ParCSRMatrix parcsr_A)
+testPMIS3(NALU_HYPRE_ParCSRMatrix parcsr_A)
 {
-   HYPRE_Int         nC2 = 0, i;
+   NALU_HYPRE_Int         nC2 = 0, i;
    hypre_IntArray   *h_CF_marker2 = NULL;
-   HYPRE_Real        max_row_sum = 1.0;
-   HYPRE_Int         num_functions = 1;
-   HYPRE_Real        strong_threshold = 0.25;
-   HYPRE_Int         debug_flag = 0;
-   HYPRE_Int         local_num_rows;
-   HYPRE_Int         first_local_row, last_local_row;
-   HYPRE_Int         first_local_col, last_local_col;
+   NALU_HYPRE_Real        max_row_sum = 1.0;
+   NALU_HYPRE_Int         num_functions = 1;
+   NALU_HYPRE_Real        strong_threshold = 0.25;
+   NALU_HYPRE_Int         debug_flag = 0;
+   NALU_HYPRE_Int         local_num_rows;
+   NALU_HYPRE_Int         first_local_row, last_local_row;
+   NALU_HYPRE_Int         first_local_col, last_local_col;
    MPI_Comm          comm = hypre_MPI_COMM_WORLD;
-   HYPRE_Int         num_procs, myid;
+   NALU_HYPRE_Int         num_procs, myid;
 
    hypre_MPI_Comm_size(hypre_MPI_COMM_WORLD, &num_procs );
    hypre_MPI_Comm_rank(hypre_MPI_COMM_WORLD, &myid );
 
-   HYPRE_ParCSRMatrixGetLocalRange( parcsr_A,
+   NALU_HYPRE_ParCSRMatrixGetLocalRange( parcsr_A,
                                     &first_local_row, &last_local_row,
                                     &first_local_col, &last_local_col );
 
@@ -1996,7 +1996,7 @@ testPMIS3(HYPRE_ParCSRMatrix parcsr_A)
    //local_num_cols = last_local_col - first_local_col + 1;
 
    /* Soc on DEVICE */
-   HYPRE_ParCSRMatrix parcsr_S_device  = NULL;
+   NALU_HYPRE_ParCSRMatrix parcsr_S_device  = NULL;
    hypre_BoomerAMGCreateSDevice(parcsr_A, strong_threshold, max_row_sum,
                                 num_functions, NULL, &parcsr_S_device);
    /* PMIS on DEVICE */
@@ -2015,8 +2015,8 @@ testPMIS3(HYPRE_ParCSRMatrix parcsr_A)
       }
    }
 
-   HYPRE_Int allnC2;
-   hypre_MPI_Allreduce(&nC2, &allnC2, 1, HYPRE_MPI_INT, hypre_MPI_SUM, comm);
+   NALU_HYPRE_Int allnC2;
+   hypre_MPI_Allreduce(&nC2, &allnC2, 1, NALU_HYPRE_MPI_INT, hypre_MPI_SUM, comm);
    if (myid == 0)
    {
       printf("nC2 %d\n", allnC2);
@@ -2027,25 +2027,25 @@ testPMIS3(HYPRE_ParCSRMatrix parcsr_A)
 }
 
 void
-testPMIS2(HYPRE_ParCSRMatrix parcsr_A)
+testPMIS2(NALU_HYPRE_ParCSRMatrix parcsr_A)
 {
-   HYPRE_Int         nC2 = 0, i;
+   NALU_HYPRE_Int         nC2 = 0, i;
    hypre_IntArray   *h_CF_marker  = NULL;
    hypre_IntArray   *h_CF_marker2 = NULL;
-   HYPRE_Real        max_row_sum = 1.0;
-   HYPRE_Int         num_functions = 1;
-   HYPRE_Real        strong_threshold = 0.25;
-   HYPRE_Int         debug_flag = 0;
-   HYPRE_Int         local_num_rows;
-   HYPRE_Int         first_local_row, last_local_row;
-   HYPRE_Int         first_local_col, last_local_col;
+   NALU_HYPRE_Real        max_row_sum = 1.0;
+   NALU_HYPRE_Int         num_functions = 1;
+   NALU_HYPRE_Real        strong_threshold = 0.25;
+   NALU_HYPRE_Int         debug_flag = 0;
+   NALU_HYPRE_Int         local_num_rows;
+   NALU_HYPRE_Int         first_local_row, last_local_row;
+   NALU_HYPRE_Int         first_local_col, last_local_col;
    MPI_Comm          comm = hypre_ParCSRMatrixComm(parcsr_A);
-   HYPRE_Int         num_procs, myid;
+   NALU_HYPRE_Int         num_procs, myid;
 
    hypre_MPI_Comm_size(comm, &num_procs );
    hypre_MPI_Comm_rank(comm, &myid );
 
-   HYPRE_ParCSRMatrixGetLocalRange( parcsr_A,
+   NALU_HYPRE_ParCSRMatrixGetLocalRange( parcsr_A,
                                     &first_local_row, &last_local_row,
                                     &first_local_col, &last_local_col );
 
@@ -2053,7 +2053,7 @@ testPMIS2(HYPRE_ParCSRMatrix parcsr_A)
    //local_num_cols = last_local_col - first_local_col + 1;
 
    /* Soc on DEVICE */
-   HYPRE_ParCSRMatrix parcsr_S_device  = NULL;
+   NALU_HYPRE_ParCSRMatrix parcsr_S_device  = NULL;
    hypre_BoomerAMGCreateSDevice(parcsr_A, strong_threshold, max_row_sum,
                                 num_functions, NULL, &parcsr_S_device);
    /* PMIS on DEVICE */
@@ -2061,7 +2061,7 @@ testPMIS2(HYPRE_ParCSRMatrix parcsr_A)
    hypre_IntArrayInitialize(h_CF_marker);
    hypre_BoomerAMGCoarsenPMISDevice(parcsr_S_device, parcsr_A, 2, debug_flag, &h_CF_marker);
 
-   HYPRE_Int coarse_pnts_global[2];
+   NALU_HYPRE_Int coarse_pnts_global[2];
    hypre_BoomerAMGCoarseParms(comm, local_num_rows, 1, NULL, h_CF_marker, NULL,
                               coarse_pnts_global);
 
@@ -2078,7 +2078,7 @@ testPMIS2(HYPRE_ParCSRMatrix parcsr_A)
 
    hypre_ParCSRMatrixPrintIJ(AH, 0, 0, "AH");
 
-   HYPRE_Int local_num_rows2 = hypre_ParCSRMatrixNumRows(AH);
+   NALU_HYPRE_Int local_num_rows2 = hypre_ParCSRMatrixNumRows(AH);
 
    hypre_ParCSRMatrix *S2;
    hypre_BoomerAMGCreateSDevice(AH, strong_threshold, max_row_sum,
@@ -2100,8 +2100,8 @@ testPMIS2(HYPRE_ParCSRMatrix parcsr_A)
       }
    }
 
-   HYPRE_Int allnC2;
-   hypre_MPI_Allreduce(&nC2, &allnC2, 1, HYPRE_MPI_INT, hypre_MPI_SUM, comm);
+   NALU_HYPRE_Int allnC2;
+   hypre_MPI_Allreduce(&nC2, &allnC2, 1, NALU_HYPRE_MPI_INT, hypre_MPI_SUM, comm);
    if (myid == 0)
    {
       printf("nC2 %d\n", allnC2);
@@ -2114,19 +2114,19 @@ testPMIS2(HYPRE_ParCSRMatrix parcsr_A)
 }
 
 void
-testTranspose(HYPRE_ParCSRMatrix parcsr_A)
+testTranspose(NALU_HYPRE_ParCSRMatrix parcsr_A)
 {
-   HYPRE_Int    myid;
+   NALU_HYPRE_Int    myid;
    hypre_MPI_Comm_rank(hypre_MPI_COMM_WORLD, &myid);
 
-   HYPRE_Real tol = 0.0;
-   HYPRE_Int  ierr = 0;
+   NALU_HYPRE_Real tol = 0.0;
+   NALU_HYPRE_Int  ierr = 0;
 
-   HYPRE_ParCSRMatrix parcsr_AT;
+   NALU_HYPRE_ParCSRMatrix parcsr_AT;
    hypre_ParCSRMatrixTransposeDevice(parcsr_A, &parcsr_AT, 1);
 
-   HYPRE_ParCSRMatrix parcsr_AT_h;
-   HYPRE_ParCSRMatrix parcsr_A_h = hypre_ParCSRMatrixClone_v2(parcsr_A, 1, HYPRE_MEMORY_HOST);
+   NALU_HYPRE_ParCSRMatrix parcsr_AT_h;
+   NALU_HYPRE_ParCSRMatrix parcsr_A_h = hypre_ParCSRMatrixClone_v2(parcsr_A, 1, NALU_HYPRE_MEMORY_HOST);
    hypre_ParCSRMatrixTransposeHost(parcsr_A_h, &parcsr_AT_h, 1);
 
    ierr += CompareParCSRDH(parcsr_AT_h, parcsr_AT, tol); hypre_assert(!ierr);
@@ -2148,25 +2148,25 @@ testTranspose(HYPRE_ParCSRMatrix parcsr_A)
    hypre_ParCSRMatrixDestroy(parcsr_A_h);
 
    //
-   HYPRE_Int    first_local_row, last_local_row;
-   HYPRE_Int    first_local_col, last_local_col;
-   HYPRE_ParCSRMatrixGetLocalRange( parcsr_A,
+   NALU_HYPRE_Int    first_local_row, last_local_row;
+   NALU_HYPRE_Int    first_local_col, last_local_col;
+   NALU_HYPRE_ParCSRMatrixGetLocalRange( parcsr_A,
                                     &first_local_row, &last_local_row,
                                     &first_local_col, &last_local_col );
-   HYPRE_Int local_num_rows = last_local_row - first_local_row + 1;
-   HYPRE_ParCSRMatrix parcsr_S_device  = NULL;
+   NALU_HYPRE_Int local_num_rows = last_local_row - first_local_row + 1;
+   NALU_HYPRE_ParCSRMatrix parcsr_S_device  = NULL;
    hypre_BoomerAMGCreateSDevice(parcsr_A, 0.25, 1.0, 1, NULL, &parcsr_S_device);
    hypre_IntArray *h_CF_marker = hypre_IntArrayCreate(local_num_rows);
    hypre_IntArrayInitialize(h_CF_marker);
    hypre_BoomerAMGCoarsenPMISDevice(parcsr_S_device, parcsr_A, 2, 0, &h_CF_marker);
    hypre_ParCSRMatrix *P, *PT, *P_h, *PT_h, *P2;
-   HYPRE_Int coarse_pnts_global[2];
+   NALU_HYPRE_Int coarse_pnts_global[2];
    MPI_Comm comm = hypre_ParCSRMatrixComm(parcsr_A);
    hypre_BoomerAMGCoarseParms(comm, local_num_rows, 1, NULL, h_CF_marker, NULL, coarse_pnts_global);
    hypre_BoomerAMGBuildDirInterpDevice(parcsr_A, hypre_IntArrayData(h_CF_marker), parcsr_S_device,
                                        coarse_pnts_global, 1, NULL,
                                        0, 0.0, 0, 3, &P);
-   P_h = hypre_ParCSRMatrixClone_v2(P, 1, HYPRE_MEMORY_HOST);
+   P_h = hypre_ParCSRMatrixClone_v2(P, 1, NALU_HYPRE_MEMORY_HOST);
 
    hypre_ParCSRMatrixTransposeDevice(P, &PT, 1);
    hypre_ParCSRMatrixTransposeHost(P_h, &PT_h, 1);
@@ -2189,22 +2189,22 @@ testTranspose(HYPRE_ParCSRMatrix parcsr_A)
 }
 
 void
-testAdd(HYPRE_ParCSRMatrix parcsr_A)
+testAdd(NALU_HYPRE_ParCSRMatrix parcsr_A)
 {
-   HYPRE_Int    myid;
+   NALU_HYPRE_Int    myid;
    hypre_MPI_Comm_rank(hypre_MPI_COMM_WORLD, &myid);
 
-   HYPRE_Real tol = 1e-14;
-   HYPRE_Int  ierr = 0;
-   HYPRE_Real alpha = 3.141592654, beta = 2.718281828 * 9.9;
+   NALU_HYPRE_Real tol = 1e-14;
+   NALU_HYPRE_Int  ierr = 0;
+   NALU_HYPRE_Real alpha = 3.141592654, beta = 2.718281828 * 9.9;
 
-   HYPRE_ParCSRMatrix parcsr_A2 = hypre_ParCSRMatMatDevice(parcsr_A, parcsr_A);
-   HYPRE_ParCSRMatrix parcsr_C;
+   NALU_HYPRE_ParCSRMatrix parcsr_A2 = hypre_ParCSRMatMatDevice(parcsr_A, parcsr_A);
+   NALU_HYPRE_ParCSRMatrix parcsr_C;
    hypre_ParCSRMatrixAddDevice(alpha, parcsr_A, beta, parcsr_A2, &parcsr_C);
 
-   HYPRE_ParCSRMatrix parcsr_A_h = hypre_ParCSRMatrixClone_v2(parcsr_A, 1, HYPRE_MEMORY_HOST);
-   HYPRE_ParCSRMatrix parcsr_A2_h = hypre_ParCSRMatrixClone_v2(parcsr_A2, 1, HYPRE_MEMORY_HOST);
-   HYPRE_ParCSRMatrix parcsr_C_h;
+   NALU_HYPRE_ParCSRMatrix parcsr_A_h = hypre_ParCSRMatrixClone_v2(parcsr_A, 1, NALU_HYPRE_MEMORY_HOST);
+   NALU_HYPRE_ParCSRMatrix parcsr_A2_h = hypre_ParCSRMatrixClone_v2(parcsr_A2, 1, NALU_HYPRE_MEMORY_HOST);
+   NALU_HYPRE_ParCSRMatrix parcsr_C_h;
    hypre_ParCSRMatrixAddHost(alpha, parcsr_A_h, beta, parcsr_A2_h, &parcsr_C_h);
    ierr += CompareParCSRDH(parcsr_C_h, parcsr_C, tol); hypre_assert(!ierr);
 
@@ -2215,27 +2215,27 @@ testAdd(HYPRE_ParCSRMatrix parcsr_A)
    hypre_ParCSRMatrixDestroy(parcsr_C_h);
 
    //
-   HYPRE_Int    first_local_row, last_local_row;
-   HYPRE_Int    first_local_col, last_local_col;
-   HYPRE_ParCSRMatrixGetLocalRange( parcsr_A,
+   NALU_HYPRE_Int    first_local_row, last_local_row;
+   NALU_HYPRE_Int    first_local_col, last_local_col;
+   NALU_HYPRE_ParCSRMatrixGetLocalRange( parcsr_A,
                                     &first_local_row, &last_local_row,
                                     &first_local_col, &last_local_col );
-   HYPRE_Int local_num_rows = last_local_row - first_local_row + 1;
-   HYPRE_ParCSRMatrix parcsr_S_device  = NULL;
+   NALU_HYPRE_Int local_num_rows = last_local_row - first_local_row + 1;
+   NALU_HYPRE_ParCSRMatrix parcsr_S_device  = NULL;
    hypre_BoomerAMGCreateSDevice(parcsr_A, 0.25, 1.0, 1, NULL, &parcsr_S_device);
    hypre_IntArray *h_CF_marker = hypre_IntArrayCreate(local_num_rows);
    hypre_IntArrayInitialize(h_CF_marker);
    hypre_BoomerAMGCoarsenPMISDevice(parcsr_S_device, parcsr_A, 2, 0, &h_CF_marker);
    hypre_ParCSRMatrix *P, *AP, *P_h, *AP_h;
-   HYPRE_Int coarse_pnts_global[2];
+   NALU_HYPRE_Int coarse_pnts_global[2];
    MPI_Comm comm = hypre_ParCSRMatrixComm(parcsr_A);
    hypre_BoomerAMGCoarseParms(comm, local_num_rows, 1, NULL, h_CF_marker, NULL, coarse_pnts_global);
    hypre_BoomerAMGBuildDirInterpDevice(parcsr_A, hypre_IntArrayData(h_CF_marker), parcsr_S_device,
                                        coarse_pnts_global, 1, NULL,
                                        0, 0.0, 0, 3, &P);
    AP = hypre_ParCSRMatMatDevice(parcsr_A, P);
-   P_h = hypre_ParCSRMatrixClone_v2(P, 1, HYPRE_MEMORY_HOST);
-   AP_h = hypre_ParCSRMatrixClone_v2(AP, 1, HYPRE_MEMORY_HOST);
+   P_h = hypre_ParCSRMatrixClone_v2(P, 1, NALU_HYPRE_MEMORY_HOST);
+   AP_h = hypre_ParCSRMatrixClone_v2(AP, 1, NALU_HYPRE_MEMORY_HOST);
    hypre_ParCSRMatrixAddDevice(alpha, P, beta, AP, &parcsr_C);
    hypre_ParCSRMatrixAddHost(alpha, P_h, beta, AP_h, &parcsr_C_h);
 
@@ -2257,27 +2257,27 @@ testAdd(HYPRE_ParCSRMatrix parcsr_A)
 }
 
 void
-testFFFC(HYPRE_ParCSRMatrix parcsr_A)
+testFFFC(NALU_HYPRE_ParCSRMatrix parcsr_A)
 {
-   HYPRE_Real        max_row_sum = 1.0;
-   HYPRE_Real        strong_threshold = 0.25;
-   HYPRE_Int         debug_flag = 0;
-   HYPRE_Int         num_functions = 1;
+   NALU_HYPRE_Real        max_row_sum = 1.0;
+   NALU_HYPRE_Real        strong_threshold = 0.25;
+   NALU_HYPRE_Int         debug_flag = 0;
+   NALU_HYPRE_Int         num_functions = 1;
    hypre_IntArray   *h_CF_marker  = NULL;
-   HYPRE_Int         local_num_rows;
-   HYPRE_Int         first_local_row, last_local_row;
-   HYPRE_Int         first_local_col, last_local_col;
-   HYPRE_BigInt      coarse_pnts_global[2];
-   HYPRE_Int         ierr = 0;
-   HYPRE_Int         myid;
+   NALU_HYPRE_Int         local_num_rows;
+   NALU_HYPRE_Int         first_local_row, last_local_row;
+   NALU_HYPRE_Int         first_local_col, last_local_col;
+   NALU_HYPRE_BigInt      coarse_pnts_global[2];
+   NALU_HYPRE_Int         ierr = 0;
+   NALU_HYPRE_Int         myid;
 
    hypre_MPI_Comm_rank(hypre_MPI_COMM_WORLD, &myid);
-   HYPRE_ParCSRMatrix parcsr_A_h;
-   HYPRE_ParCSRMatrix AFF, AFC, W;
-   HYPRE_ParCSRMatrix AFF_h, AFC_h, W_h;
-   HYPRE_ParCSRMatrix parcsr_S_h, parcsr_S_device;
+   NALU_HYPRE_ParCSRMatrix parcsr_A_h;
+   NALU_HYPRE_ParCSRMatrix AFF, AFC, W;
+   NALU_HYPRE_ParCSRMatrix AFF_h, AFC_h, W_h;
+   NALU_HYPRE_ParCSRMatrix parcsr_S_h, parcsr_S_device;
 
-   HYPRE_ParCSRMatrixGetLocalRange( parcsr_A,
+   NALU_HYPRE_ParCSRMatrixGetLocalRange( parcsr_A,
                                     &first_local_row, &last_local_row,
                                     &first_local_col, &last_local_col );
 
@@ -2297,8 +2297,8 @@ testFFFC(HYPRE_ParCSRMatrix parcsr_A)
                                         parcsr_S_device, &AFC, &AFF);
 
    /* FFFC on Host */
-   parcsr_A_h = hypre_ParCSRMatrixClone_v2(parcsr_A, 1, HYPRE_MEMORY_HOST);
-   parcsr_S_h = hypre_ParCSRMatrixClone_v2(parcsr_S_device, 0, HYPRE_MEMORY_HOST);
+   parcsr_A_h = hypre_ParCSRMatrixClone_v2(parcsr_A, 1, NALU_HYPRE_MEMORY_HOST);
+   parcsr_S_h = hypre_ParCSRMatrixClone_v2(parcsr_S_device, 0, NALU_HYPRE_MEMORY_HOST);
    hypre_MatvecCommPkgCreate(parcsr_A_h);
    hypre_ParCSRMatrixGenerateFFFCHost(parcsr_A_h, hypre_IntArrayData(h_CF_marker),
                                       coarse_pnts_global, parcsr_S_h, &AFC_h, &AFF_h);
@@ -2308,7 +2308,7 @@ testFFFC(HYPRE_ParCSRMatrix parcsr_A)
    W   = hypre_ParCSRMatMatDevice(AFF, AFC);
 
    /* check */
-   HYPRE_Real tol = 1e-15;
+   NALU_HYPRE_Real tol = 1e-15;
    ierr += CompareParCSRDH(AFF_h, AFF, tol); hypre_assert(!ierr);
    ierr += CompareParCSRDH(AFC_h, AFC, tol); hypre_assert(!ierr);
    ierr += CompareParCSRDH(W_h,     W, tol); hypre_assert(!ierr);
@@ -2319,7 +2319,7 @@ testFFFC(HYPRE_ParCSRMatrix parcsr_A)
    }
 
    /* done */
-   hypre_TFree(h_CF_marker, HYPRE_MEMORY_HOST);
+   hypre_TFree(h_CF_marker, NALU_HYPRE_MEMORY_HOST);
    hypre_IntArrayDestroy(h_CF_marker);
    hypre_ParCSRMatrixDestroy(parcsr_A_h);
    hypre_ParCSRMatrixDestroy(AFF);
@@ -2330,14 +2330,14 @@ testFFFC(HYPRE_ParCSRMatrix parcsr_A)
    hypre_ParCSRMatrixDestroy(W_h);
 }
 
-HYPRE_Int
-CompareParCSRDH(HYPRE_ParCSRMatrix hmat, HYPRE_ParCSRMatrix dmat, HYPRE_Real tol)
+NALU_HYPRE_Int
+CompareParCSRDH(NALU_HYPRE_ParCSRMatrix hmat, NALU_HYPRE_ParCSRMatrix dmat, NALU_HYPRE_Real tol)
 {
-   HYPRE_ParCSRMatrix hmat2, emat;
-   HYPRE_Real enorm, fnorm, rnorm;
-   HYPRE_Int i, ecode = 0, ecode_total = 0;
+   NALU_HYPRE_ParCSRMatrix hmat2, emat;
+   NALU_HYPRE_Real enorm, fnorm, rnorm;
+   NALU_HYPRE_Int i, ecode = 0, ecode_total = 0;
 
-   hmat2 = hypre_ParCSRMatrixClone_v2(dmat, 1, HYPRE_MEMORY_HOST);
+   hmat2 = hypre_ParCSRMatrixClone_v2(dmat, 1, NALU_HYPRE_MEMORY_HOST);
 
    if (hypre_ParCSRMatrixNumRows(hmat) != hypre_ParCSRMatrixNumRows(hmat2))
    {
@@ -2376,7 +2376,7 @@ CompareParCSRDH(HYPRE_ParCSRMatrix hmat, HYPRE_ParCSRMatrix dmat, HYPRE_Real tol
       ecode ++;
    }
 
-   hypre_MPI_Allreduce(&ecode, &ecode_total, 1, HYPRE_MPI_INT, hypre_MPI_SUM, hypre_MPI_COMM_WORLD);
+   hypre_MPI_Allreduce(&ecode, &ecode_total, 1, NALU_HYPRE_MPI_INT, hypre_MPI_SUM, hypre_MPI_COMM_WORLD);
 
    hypre_ParCSRMatrixAdd(1.0, hmat, -1.0, hmat2, &emat);
    enorm = hypre_ParCSRMatrixFnorm(emat);

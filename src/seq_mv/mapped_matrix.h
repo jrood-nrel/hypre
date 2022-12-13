@@ -21,7 +21,7 @@
 typedef struct
 {
    void               *matrix;
-   HYPRE_Int         (*ColMap)(HYPRE_Int, void *);
+   NALU_HYPRE_Int         (*ColMap)(NALU_HYPRE_Int, void *);
    void               *MapData;
 
 } hypre_MappedMatrix;

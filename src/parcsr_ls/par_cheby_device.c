@@ -15,7 +15,7 @@
 #include "_hypre_parcsr_mv.h"
 #include "float.h"
 
-#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP)
+#if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
 #include "_hypre_utilities.hpp"
 
 /**
@@ -111,14 +111,14 @@ struct xpyz
  * @param[out] v Temp vector
  * @param[out] v Temp Vector
  */
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_ParCSRRelax_Cheby_SolveDevice(hypre_ParCSRMatrix *A, /* matrix to relax with */
                                     hypre_ParVector    *f, /* right-hand side */
-                                    HYPRE_Real         *ds_data,
-                                    HYPRE_Real         *coefs,
-                                    HYPRE_Int           order, /* polynomial order */
-                                    HYPRE_Int           scale, /* scale by diagonal?*/
-                                    HYPRE_Int           variant,
+                                    NALU_HYPRE_Real         *ds_data,
+                                    NALU_HYPRE_Real         *coefs,
+                                    NALU_HYPRE_Int           order, /* polynomial order */
+                                    NALU_HYPRE_Int           scale, /* scale by diagonal?*/
+                                    NALU_HYPRE_Int           variant,
                                     hypre_ParVector    *u,          /* initial/updated approximation */
                                     hypre_ParVector    *v,          /* temporary vector */
                                     hypre_ParVector    *r,          /*another temp vector */
@@ -126,20 +126,20 @@ hypre_ParCSRRelax_Cheby_SolveDevice(hypre_ParCSRMatrix *A, /* matrix to relax wi
                                     hypre_ParVector    *tmp_vec)       /*a potential temp vector */
 {
    hypre_CSRMatrix *A_diag = hypre_ParCSRMatrixDiag(A);
-   HYPRE_Real      *u_data = hypre_VectorData(hypre_ParVectorLocalVector(u));
-   HYPRE_Real      *f_data = hypre_VectorData(hypre_ParVectorLocalVector(f));
-   HYPRE_Real      *v_data = hypre_VectorData(hypre_ParVectorLocalVector(v));
+   NALU_HYPRE_Real      *u_data = hypre_VectorData(hypre_ParVectorLocalVector(u));
+   NALU_HYPRE_Real      *f_data = hypre_VectorData(hypre_ParVectorLocalVector(f));
+   NALU_HYPRE_Real      *v_data = hypre_VectorData(hypre_ParVectorLocalVector(v));
 
-   HYPRE_Real *r_data = hypre_VectorData(hypre_ParVectorLocalVector(r));
+   NALU_HYPRE_Real *r_data = hypre_VectorData(hypre_ParVectorLocalVector(r));
 
-   HYPRE_Int i;
-   HYPRE_Int num_rows = hypre_CSRMatrixNumRows(A_diag);
+   NALU_HYPRE_Int i;
+   NALU_HYPRE_Int num_rows = hypre_CSRMatrixNumRows(A_diag);
 
-   HYPRE_Real  mult;
+   NALU_HYPRE_Real  mult;
 
-   HYPRE_Int cheby_order;
+   NALU_HYPRE_Int cheby_order;
 
-   HYPRE_Real *tmp_data;
+   NALU_HYPRE_Real *tmp_data;
 
    /* u = u + p(A)r */
 
@@ -150,7 +150,7 @@ hypre_ParCSRRelax_Cheby_SolveDevice(hypre_ParCSRMatrix *A, /* matrix to relax wi
    cheby_order = order - 1;
 
    hypre_assert(hypre_VectorSize(hypre_ParVectorLocalVector(orig_u_vec)) >= num_rows);
-   HYPRE_Real *orig_u = hypre_VectorData(hypre_ParVectorLocalVector(orig_u_vec));
+   NALU_HYPRE_Real *orig_u = hypre_VectorData(hypre_ParVectorLocalVector(orig_u_vec));
 
    if (!scale)
    {
@@ -159,12 +159,12 @@ hypre_ParCSRRelax_Cheby_SolveDevice(hypre_ParCSRMatrix *A, /* matrix to relax wi
       hypre_ParCSRMatrixMatvec(-1.0, A, u, 1.0, r);
 
       /* o = u; u = r .* coef */
-      HYPRE_THRUST_CALL(
+      NALU_HYPRE_THRUST_CALL(
          for_each,
          thrust::make_zip_iterator(thrust::make_tuple(orig_u, u_data, r_data)),
          thrust::make_zip_iterator(thrust::make_tuple(orig_u + num_rows, u_data + num_rows,
                                                       r_data + num_rows)),
-         save_and_scale<HYPRE_Real>(coefs[cheby_order]));
+         save_and_scale<NALU_HYPRE_Real>(coefs[cheby_order]));
 
       for (i = cheby_order - 1; i >= 0; i--)
       {
@@ -193,26 +193,26 @@ hypre_ParCSRRelax_Cheby_SolveDevice(hypre_ParCSRMatrix *A, /* matrix to relax wi
 
       /* TODO: It might be possible to merge this and the next call to:
        * r[j] = ds_data[j] * (f_data[j] + tmp_data[j]); o[j] = u[j]; u[j] = r[j] * coef */
-      HYPRE_THRUST_CALL(for_each,
+      NALU_HYPRE_THRUST_CALL(for_each,
                         thrust::make_zip_iterator(thrust::make_tuple(r_data, ds_data, f_data, tmp_data)),
                         thrust::make_zip_iterator(thrust::make_tuple(r_data, ds_data, f_data, tmp_data)) + num_rows,
-                        wxypz<HYPRE_Real>());
+                        wxypz<NALU_HYPRE_Real>());
 
       /* save original u, then start
          the iteration by multiplying r by the cheby coef.*/
 
       /* o = u;  u = r * coef */
-      HYPRE_THRUST_CALL(for_each,
+      NALU_HYPRE_THRUST_CALL(for_each,
                         thrust::make_zip_iterator(thrust::make_tuple(orig_u, u_data, r_data)),
                         thrust::make_zip_iterator(thrust::make_tuple(orig_u, u_data, r_data)) + num_rows,
-                        save_and_scale<HYPRE_Real>(coefs[cheby_order]));
+                        save_and_scale<NALU_HYPRE_Real>(coefs[cheby_order]));
 
       /* now do the other coefficients */
       for (i = cheby_order - 1; i >= 0; i--)
       {
          /* v = D^(-1/2)AD^(-1/2)u */
          /* tmp = ds .* u */
-         HYPRE_THRUST_CALL( transform, ds_data, ds_data + num_rows, u_data, tmp_data, _1 * _2 );
+         NALU_HYPRE_THRUST_CALL( transform, ds_data, ds_data + num_rows, u_data, tmp_data, _1 * _2 );
 
          hypre_ParCSRMatrixMatvec(1.0, A, tmp_vec, 0.0, v);
 
@@ -220,21 +220,21 @@ hypre_ParCSRRelax_Cheby_SolveDevice(hypre_ParCSRMatrix *A, /* matrix to relax wi
          mult = coefs[i];
 
          /* u = coef * r + ds .* v */
-         HYPRE_THRUST_CALL(for_each,
+         NALU_HYPRE_THRUST_CALL(for_each,
                            thrust::make_zip_iterator(thrust::make_tuple(u_data, r_data, ds_data, v_data)),
                            thrust::make_zip_iterator(thrust::make_tuple(u_data, r_data, ds_data, v_data)) + num_rows,
-                           waxpyz<HYPRE_Real>(mult));
+                           waxpyz<NALU_HYPRE_Real>(mult));
       } /* end of cheby_order loop */
 
       /* now we have to scale u_data before adding it to u_orig*/
 
       /* u = orig_u + ds .* u */
-      HYPRE_THRUST_CALL(
+      NALU_HYPRE_THRUST_CALL(
          for_each,
          thrust::make_zip_iterator(thrust::make_tuple(u_data, orig_u, ds_data)),
          thrust::make_zip_iterator(thrust::make_tuple(u_data + num_rows, orig_u + num_rows,
                                                       ds_data + num_rows)),
-         xpyz<HYPRE_Real>());
+         xpyz<NALU_HYPRE_Real>());
 
 
    } /* end of scaling code */

@@ -229,10 +229,10 @@ int MLI_OneLevel::setup()
       printf("MLI_OneLevel::setup at level %d - no Pmat\n", levelNum_);
       exit(1);
    } 
-   if ( !strcmp(Amat_->getName(),"HYPRE_ParCSR") && 
-        !strcmp(Amat_->getName(),"HYPRE_ParCSRT"))
+   if ( !strcmp(Amat_->getName(),"NALU_HYPRE_ParCSR") && 
+        !strcmp(Amat_->getName(),"NALU_HYPRE_ParCSRT"))
    {
-      printf("MLI_OneLevel::setup ERROR : Amat not HYPRE_ParCSR.\n");
+      printf("MLI_OneLevel::setup ERROR : Amat not NALU_HYPRE_ParCSR.\n");
       exit(1);
    }
    if ( vecRes_ != NULL ) delete vecRes_;

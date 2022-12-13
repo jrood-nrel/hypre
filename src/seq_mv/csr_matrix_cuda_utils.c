@@ -9,7 +9,7 @@
 #include "_hypre_utilities.hpp"
 #include "seq_mv.hpp"
 
-#if defined(HYPRE_USING_CUSPARSE)
+#if defined(NALU_HYPRE_USING_CUSPARSE)
 #if CUSPARSE_VERSION >= CUSPARSE_NEWAPI_VERSION
 /*
  * @brief Creates a cuda csr descriptor for a raw CSR matrix
@@ -23,13 +23,13 @@
  * @return Descriptor
  */
 cusparseSpMatDescr_t
-hypre_CSRMatrixToCusparseSpMat_core( HYPRE_Int      n,
-                                     HYPRE_Int      m,
-                                     HYPRE_Int      offset,
-                                     HYPRE_Int      nnz,
-                                     HYPRE_Int     *i,
-                                     HYPRE_Int     *j,
-                                     HYPRE_Complex *data)
+hypre_CSRMatrixToCusparseSpMat_core( NALU_HYPRE_Int      n,
+                                     NALU_HYPRE_Int      m,
+                                     NALU_HYPRE_Int      offset,
+                                     NALU_HYPRE_Int      nnz,
+                                     NALU_HYPRE_Int     *i,
+                                     NALU_HYPRE_Int     *j,
+                                     NALU_HYPRE_Complex *data)
 {
    const cudaDataType        data_type  = hypre_HYPREComplexToCudaDataType();
    const cusparseIndexType_t index_type = hypre_HYPREIntToCusparseIndexType();
@@ -44,7 +44,7 @@ hypre_CSRMatrixToCusparseSpMat_core( HYPRE_Int      n,
                  "Matrix has no nonzeros");
    */
 
-   HYPRE_CUSPARSE_CALL( cusparseCreateCsr(&matA,
+   NALU_HYPRE_CUSPARSE_CALL( cusparseCreateCsr(&matA,
                                           n - offset,
                                           m,
                                           nnz,
@@ -68,7 +68,7 @@ hypre_CSRMatrixToCusparseSpMat_core( HYPRE_Int      n,
  */
 cusparseSpMatDescr_t
 hypre_CSRMatrixToCusparseSpMat(const hypre_CSRMatrix *A,
-                               HYPRE_Int        offset)
+                               NALU_HYPRE_Int        offset)
 {
    return hypre_CSRMatrixToCusparseSpMat_core( hypre_CSRMatrixNumRows(A),
                                                hypre_CSRMatrixNumCols(A),
@@ -88,14 +88,14 @@ hypre_CSRMatrixToCusparseSpMat(const hypre_CSRMatrix *A,
  */
 cusparseDnVecDescr_t
 hypre_VectorToCusparseDnVec(const hypre_Vector *x,
-                            HYPRE_Int     offset,
-                            HYPRE_Int     size_override)
+                            NALU_HYPRE_Int     offset,
+                            NALU_HYPRE_Int     size_override)
 {
    const cudaDataType data_type = hypre_HYPREComplexToCudaDataType();
 
    cusparseDnVecDescr_t vecX;
 
-   HYPRE_CUSPARSE_CALL( cusparseCreateDnVec(&vecX,
+   NALU_HYPRE_CUSPARSE_CALL( cusparseCreateDnVec(&vecX,
                                             size_override >= 0 ? size_override : hypre_VectorSize(x) - offset,
                                             hypre_VectorData(x) + offset,
                                             data_type) );
@@ -111,15 +111,15 @@ hypre_VectorToCusparseDnVec(const hypre_Vector *x,
 cusparseDnMatDescr_t
 hypre_VectorToCusparseDnMat(const hypre_Vector *x)
 {
-   HYPRE_Int             storage = hypre_VectorMultiVecStorageMethod(x);
-   HYPRE_Int             num_vectors = hypre_VectorNumVectors(x);
-   HYPRE_Int             size = hypre_VectorSize(x);
-   HYPRE_Complex        *data = hypre_VectorData(x);
+   NALU_HYPRE_Int             storage = hypre_VectorMultiVecStorageMethod(x);
+   NALU_HYPRE_Int             num_vectors = hypre_VectorNumVectors(x);
+   NALU_HYPRE_Int             size = hypre_VectorSize(x);
+   NALU_HYPRE_Complex        *data = hypre_VectorData(x);
 
    cudaDataType          data_type = hypre_HYPREComplexToCudaDataType();
    cusparseDnMatDescr_t  matX;
 
-   HYPRE_CUSPARSE_CALL( cusparseCreateDnMat(&matX,
+   NALU_HYPRE_CUSPARSE_CALL( cusparseCreateDnMat(&matX,
                                             size,
                                             num_vectors,
                                             (storage == 0) ? size : num_vectors,
@@ -131,4 +131,4 @@ hypre_VectorToCusparseDnMat(const hypre_Vector *x)
 
 
 #endif // #if CUSPARSE_VERSION >= CUSPARSE_NEWAPI_VERSION
-#endif // #if defined(HYPRE_USING_CUSPARSE)
+#endif // #if defined(NALU_HYPRE_USING_CUSPARSE)

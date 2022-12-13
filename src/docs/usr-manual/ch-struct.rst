@@ -106,22 +106,22 @@ the grid on process 0 (the code for process 1 is similar).
 
 .. code-block:: c
    
-       HYPRE_StructGrid grid;
+       NALU_HYPRE_StructGrid grid;
        int ndim        = 2;
        int ilower[][2] = {{-3,1}, {0,1}};
        int iupper[][2] = {{-1,2}, {2,4}};
       
        /* Create the grid object */
-   1:  HYPRE_StructGridCreate(MPI_COMM_WORLD, ndim, &grid);
+   1:  NALU_HYPRE_StructGridCreate(MPI_COMM_WORLD, ndim, &grid);
        
        /* Set grid extents for the first box */
-   2:  HYPRE_StructGridSetExtents(grid, ilower[0], iupper[0]);
+   2:  NALU_HYPRE_StructGridSetExtents(grid, ilower[0], iupper[0]);
        
        /* Set grid extents for the second box */
-   3:  HYPRE_StructGridSetExtents(grid, ilower[1], iupper[1]);
+   3:  NALU_HYPRE_StructGridSetExtents(grid, ilower[1], iupper[1]);
        
        /* Assemble the grid */
-   4:  HYPRE_StructGridAssemble(grid);
+   4:  NALU_HYPRE_StructGridAssemble(grid);
 
 The images along the top illustrate the result of the numbered lines of code.
 The ``Create()`` routine creates an empty 2D grid object that lives on the
@@ -187,19 +187,19 @@ all processes.
 
 .. code-block:: c
    
-         HYPRE_StructStencil stencil;
+         NALU_HYPRE_StructStencil stencil;
          int ndim         = 2;
          int size         = 5;
          int entry;
          int offsets[][2] = {{0,0}, {-1,0}, {1,0}, {0,-1}, {0,1}};
          
          /* Create the stencil object */
-     1:  HYPRE_StructStencilCreate(ndim, size, &stencil);
+     1:  NALU_HYPRE_StructStencilCreate(ndim, size, &stencil);
          
          /* Set stencil entries */
          for (entry = 0; entry < size; entry++)
          {
-   2-6:     HYPRE_StructStencilSetElement(stencil, entry, offsets[entry]);
+   2-6:     NALU_HYPRE_StructStencilSetElement(stencil, entry, offsets[entry]);
          }
          
          /* Thats it!  There is no assemble routine */
@@ -241,13 +241,13 @@ are ignored here temporarily).
 
 .. code-block:: c
    
-   HYPRE_StructMatrix  A;
+   NALU_HYPRE_StructMatrix  A;
    double              values[36];
    int                 stencil_indices[2] = {0,3};
    int                 i;
    
-   HYPRE_StructMatrixCreate(MPI_COMM_WORLD, grid, stencil, &A);
-   HYPRE_StructMatrixInitialize(A);
+   NALU_HYPRE_StructMatrixCreate(MPI_COMM_WORLD, grid, stencil, &A);
+   NALU_HYPRE_StructMatrixInitialize(A);
    
    for (i = 0; i < 36; i += 2)
    {
@@ -255,15 +255,15 @@ are ignored here temporarily).
       values[i+1] = -1.0;
    }
    
-   HYPRE_StructMatrixSetBoxValues(A, ilower[0], iupper[0], 2,
+   NALU_HYPRE_StructMatrixSetBoxValues(A, ilower[0], iupper[0], 2,
                                   stencil_indices, values);
-   HYPRE_StructMatrixSetBoxValues(A, ilower[1], iupper[1], 2,
+   NALU_HYPRE_StructMatrixSetBoxValues(A, ilower[1], iupper[1], 2,
                                   stencil_indices, values);
    
    /* set boundary conditions */
    ...
    
-   HYPRE_StructMatrixAssemble(A);
+   NALU_HYPRE_StructMatrixAssemble(A);
 
 The ``Create()`` routine creates an empty matrix object.  The ``Initialize()``
 routine indicates that the matrix coefficients (or values) are ready to be set.
@@ -305,7 +305,7 @@ could be used:
    }
    
    i = 3;
-   HYPRE_StructMatrixSetBoxValues(A, ilower, iupper, 1, &i, values);
+   NALU_HYPRE_StructMatrixSetBoxValues(A, ilower, iupper, 1, &i, values);
    
    /* complete implementation of boundary conditions */
    ...
@@ -327,22 +327,22 @@ On process 0, the following code sets up the right-hand-side vector values.
 
 .. code-block:: c
 
-   HYPRE_StructVector  b;
+   NALU_HYPRE_StructVector  b;
    double              values[18];
    int                 i;
    
-   HYPRE_StructVectorCreate(MPI_COMM_WORLD, grid, &b);
-   HYPRE_StructVectorInitialize(b);
+   NALU_HYPRE_StructVectorCreate(MPI_COMM_WORLD, grid, &b);
+   NALU_HYPRE_StructVectorInitialize(b);
    
    for (i = 0; i < 18; i++)
    {
       values[i]   =  0.0;
    }
    
-   HYPRE_StructVectorSetBoxValues(b, ilower[0], iupper[0], values);
-   HYPRE_StructVectorSetBoxValues(b, ilower[1], iupper[1], values);
+   NALU_HYPRE_StructVectorSetBoxValues(b, ilower[0], iupper[0], values);
+   NALU_HYPRE_StructVectorSetBoxValues(b, ilower[1], iupper[1], values);
    
-   HYPRE_StructVectorAssemble(b);
+   NALU_HYPRE_StructVectorAssemble(b);
 
 The ``Create()`` routine creates an empty vector object.  The ``Initialize()``
 routine indicates that the vector coefficients (or values) are ready to be set.
@@ -374,7 +374,7 @@ on, the following line of code needs to be inserted somewhere between the
 
 .. code-block:: c
    
-   HYPRE_StructMatrixSetSymmetric(A, 1);
+   NALU_HYPRE_StructMatrixSetSymmetric(A, 1);
 
 The coefficients for the entire stencil can be passed in as before.  Note that
 symmetric storage may or may not actually be used, depending on the underlying

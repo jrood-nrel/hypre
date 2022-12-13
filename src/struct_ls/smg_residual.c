@@ -23,8 +23,8 @@ typedef struct
    hypre_BoxArray      *base_points;
    hypre_ComputePkg    *compute_pkg;
 
-   HYPRE_Int            time_index;
-   HYPRE_BigInt         flops;
+   NALU_HYPRE_Int            time_index;
+   NALU_HYPRE_BigInt         flops;
 
 } hypre_SMGResidualData;
 
@@ -36,7 +36,7 @@ hypre_SMGResidualCreate( )
 {
    hypre_SMGResidualData *residual_data;
 
-   residual_data = hypre_CTAlloc(hypre_SMGResidualData,  1, HYPRE_MEMORY_HOST);
+   residual_data = hypre_CTAlloc(hypre_SMGResidualData,  1, NALU_HYPRE_MEMORY_HOST);
 
    (residual_data -> time_index)  = hypre_InitializeTiming("SMGResidual");
 
@@ -50,7 +50,7 @@ hypre_SMGResidualCreate( )
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SMGResidualSetup( void               *residual_vdata,
                         hypre_StructMatrix *A,
                         hypre_StructVector *x,
@@ -101,7 +101,7 @@ hypre_SMGResidualSetup( void               *residual_vdata,
 
    (residual_data -> flops) =
       (hypre_StructMatrixGlobalSize(A) + hypre_StructVectorGlobalSize(x)) /
-      (HYPRE_BigInt)(hypre_IndexX(base_stride) *
+      (NALU_HYPRE_BigInt)(hypre_IndexX(base_stride) *
                      hypre_IndexY(base_stride) *
                      hypre_IndexZ(base_stride)  );
 
@@ -111,7 +111,7 @@ hypre_SMGResidualSetup( void               *residual_vdata,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SMGResidual( void               *residual_vdata,
                    hypre_StructMatrix *A,
                    hypre_StructVector *x,
@@ -135,19 +135,19 @@ hypre_SMGResidual( void               *residual_vdata,
    hypre_Box              *b_data_box;
    hypre_Box              *r_data_box;
 
-   HYPRE_Real             *Ap;
-   HYPRE_Real             *xp;
-   HYPRE_Real             *bp;
-   HYPRE_Real             *rp;
+   NALU_HYPRE_Real             *Ap;
+   NALU_HYPRE_Real             *xp;
+   NALU_HYPRE_Real             *bp;
+   NALU_HYPRE_Real             *rp;
 
    hypre_Index             loop_size;
    hypre_IndexRef          start;
 
    hypre_StructStencil    *stencil;
    hypre_Index            *stencil_shape;
-   HYPRE_Int               stencil_size;
+   NALU_HYPRE_Int               stencil_size;
 
-   HYPRE_Int               compute_i, i, j, si;
+   NALU_HYPRE_Int               compute_i, i, j, si;
 
    hypre_BeginTiming(residual_data -> time_index);
 
@@ -235,7 +235,7 @@ hypre_SMGResidual( void               *residual_vdata,
                Ap = hypre_StructMatrixBoxData(A, i, si);
                xp = hypre_StructVectorBoxData(x, i);
                //RL:PTROFFSET
-               HYPRE_Int xp_off = hypre_BoxOffsetDistance(x_data_box, stencil_shape[si]);
+               NALU_HYPRE_Int xp_off = hypre_BoxOffsetDistance(x_data_box, stencil_shape[si]);
 
                hypre_BoxGetStrideSize(compute_box, base_stride,
                                       loop_size);
@@ -264,13 +264,13 @@ hypre_SMGResidual( void               *residual_vdata,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SMGResidualSetBase( void        *residual_vdata,
                           hypre_Index  base_index,
                           hypre_Index  base_stride )
 {
    hypre_SMGResidualData *residual_data = (hypre_SMGResidualData  *)residual_vdata;
-   HYPRE_Int              d;
+   NALU_HYPRE_Int              d;
 
    for (d = 0; d < 3; d++)
    {
@@ -286,7 +286,7 @@ hypre_SMGResidualSetBase( void        *residual_vdata,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SMGResidualDestroy( void *residual_vdata )
 {
    hypre_SMGResidualData *residual_data = (hypre_SMGResidualData  *)residual_vdata;
@@ -300,7 +300,7 @@ hypre_SMGResidualDestroy( void *residual_vdata )
       hypre_BoxArrayDestroy(residual_data -> base_points);
       hypre_ComputePkgDestroy(residual_data -> compute_pkg );
       hypre_FinalizeTiming(residual_data -> time_index);
-      hypre_TFree(residual_data, HYPRE_MEMORY_HOST);
+      hypre_TFree(residual_data, NALU_HYPRE_MEMORY_HOST);
    }
 
    return hypre_error_flag;

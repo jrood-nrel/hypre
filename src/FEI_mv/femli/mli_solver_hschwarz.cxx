@@ -38,7 +38,7 @@ MLI_Solver_HSchwarz::MLI_Solver_HSchwarz(char *name) : MLI_Solver(name)
 MLI_Solver_HSchwarz::~MLI_Solver_HSchwarz()
 {
    if ( mliVec_       != NULL ) delete mliVec_;
-   if ( smoother_     != NULL ) HYPRE_SchwarzDestroy( smoother_ );
+   if ( smoother_     != NULL ) NALU_HYPRE_SchwarzDestroy( smoother_ );
 }
 
 /******************************************************************************
@@ -59,12 +59,12 @@ int MLI_Solver_HSchwarz::setup(MLI_Matrix *mat)
 
 int MLI_Solver_HSchwarz::solve(MLI_Vector *fIn, MLI_Vector *uIn)
 {
-   HYPRE_ParCSRMatrix A;
-   HYPRE_ParVector    u, f;
-   A = (HYPRE_ParCSRMatrix) Amat_->getMatrix();
-   u = (HYPRE_ParVector) uIn->getVector();
-   f = (HYPRE_ParVector) fIn->getVector();
-   HYPRE_SchwarzSolve(smoother_, A, f, u);
+   NALU_HYPRE_ParCSRMatrix A;
+   NALU_HYPRE_ParVector    u, f;
+   A = (NALU_HYPRE_ParCSRMatrix) Amat_->getMatrix();
+   u = (NALU_HYPRE_ParVector) uIn->getVector();
+   f = (NALU_HYPRE_ParVector) fIn->getVector();
+   NALU_HYPRE_SchwarzSolve(smoother_, A, f, u);
    return 0;
 }
 
@@ -132,7 +132,7 @@ int MLI_Solver_HSchwarz::calcOmega()
    hypre_ParCSRMatrix *A;
    hypre_ParVector    *vTemp;
    hypre_ParAMGData   *amgData;
-   HYPRE_Solver       *smoother;
+   NALU_HYPRE_Solver       *smoother;
 
    A = (hypre_ParCSRMatrix *) Amat_->getMatrix();
    amgData = (hypre_ParAMGData *) hypre_BoomerAMGCreate();
@@ -150,22 +150,22 @@ int MLI_Solver_HSchwarz::calcOmega()
    amgData->smooth_num_levels = 1;
    amgData->smooth_num_sweeps = one;
 
-   smoother = hypre_CTAlloc(HYPRE_Solver, one, HYPRE_MEMORY_HOST);
+   smoother = hypre_CTAlloc(NALU_HYPRE_Solver, one, NALU_HYPRE_MEMORY_HOST);
    amgData->smoother = smoother;
-   HYPRE_SchwarzCreate(&smoother[0]);
-   HYPRE_SchwarzSetNumFunctions(smoother[0], blkSize_);
-   HYPRE_SchwarzSetVariant(smoother[0], zero);
-   HYPRE_SchwarzSetOverlap(smoother[0], zero);
-   HYPRE_SchwarzSetDomainType(smoother[0], one);
-   HYPRE_SchwarzSetRelaxWeight(smoother[0], dOne);
+   NALU_HYPRE_SchwarzCreate(&smoother[0]);
+   NALU_HYPRE_SchwarzSetNumFunctions(smoother[0], blkSize_);
+   NALU_HYPRE_SchwarzSetVariant(smoother[0], zero);
+   NALU_HYPRE_SchwarzSetOverlap(smoother[0], zero);
+   NALU_HYPRE_SchwarzSetDomainType(smoother[0], one);
+   NALU_HYPRE_SchwarzSetRelaxWeight(smoother[0], dOne);
    if (relaxWeight_ >= 1.0)
       hypre_BoomerAMGCGRelaxWt((void *)amgData,level,numCGSweeps,&relaxWeight_);
    //printf("HSchwarz : relaxWt = %e (%d)\n", relaxWeight_, blkSize_);
-   HYPRE_SchwarzSetRelaxWeight(smoother[0], relaxWeight_);
-   HYPRE_SchwarzSetup(smoother[0], (HYPRE_ParCSRMatrix) A, 
-                      (HYPRE_ParVector) vTemp, (HYPRE_ParVector) vTemp);
+   NALU_HYPRE_SchwarzSetRelaxWeight(smoother[0], relaxWeight_);
+   NALU_HYPRE_SchwarzSetup(smoother[0], (NALU_HYPRE_ParCSRMatrix) A, 
+                      (NALU_HYPRE_ParVector) vTemp, (NALU_HYPRE_ParVector) vTemp);
    smoother_ = smoother[0];
-   hypre_TFree(amgData, HYPRE_MEMORY_HOST);
+   hypre_TFree(amgData, NALU_HYPRE_MEMORY_HOST);
    delete [] amgData->A_array;
    delete [] amgData->CF_marker_array;
    return 0;

@@ -19,12 +19,12 @@
  * If the boxes do not intersect, the result is a box with zero volume.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_IntersectBoxes( hypre_Box *box1,
                       hypre_Box *box2,
                       hypre_Box *ibox )
 {
-   HYPRE_Int d, ndim = hypre_BoxNDim(box1);
+   NALU_HYPRE_Int d, ndim = hypre_BoxNDim(box1);
 
    for (d = 0; d < ndim; d++)
    {
@@ -41,12 +41,12 @@ hypre_IntersectBoxes( hypre_Box *box1,
  * Compute (box1 - box2) and append result to box_array.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SubtractBoxes( hypre_Box      *box1,
                      hypre_Box      *box2,
                      hypre_BoxArray *box_array )
 {
-   HYPRE_Int   d, size, maxboxes, ndim = hypre_BoxNDim(box1);
+   NALU_HYPRE_Int   d, size, maxboxes, ndim = hypre_BoxNDim(box1);
    hypre_Box  *box;
    hypre_Box  *rembox;
 
@@ -109,7 +109,7 @@ hypre_SubtractBoxes( hypre_Box      *box1,
  * Compute (box_array1 - box_array2) and replace box_array1 with result.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SubtractBoxArrays( hypre_BoxArray *box_array1,
                          hypre_BoxArray *box_array2,
                          hypre_BoxArray *tmp_box_array )
@@ -119,7 +119,7 @@ hypre_SubtractBoxArrays( hypre_BoxArray *box_array1,
    hypre_BoxArray  box_array;
    hypre_Box      *box1;
    hypre_Box      *box2;
-   HYPRE_Int       i, k;
+   NALU_HYPRE_Int       i, k;
 
    hypre_ForBoxI(i, box_array2)
    {
@@ -185,26 +185,26 @@ hypre_SubtractBoxArrays( hypre_BoxArray *box_array1,
 
 /* ONLY3D */
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_UnionBoxes( hypre_BoxArray *boxes )
 {
    hypre_Box       *box;
 
-   HYPRE_Int       *block_index[3];
-   HYPRE_Int        block_sz[3], block_volume;
-   HYPRE_Int       *block;
-   HYPRE_Int        index;
-   HYPRE_Int        size;
-   HYPRE_Int        factor[3];
+   NALU_HYPRE_Int       *block_index[3];
+   NALU_HYPRE_Int        block_sz[3], block_volume;
+   NALU_HYPRE_Int       *block;
+   NALU_HYPRE_Int        index;
+   NALU_HYPRE_Int        size;
+   NALU_HYPRE_Int        factor[3];
 
-   HYPRE_Int        iminmax[2], imin[3], imax[3];
-   HYPRE_Int        ii[3], dd[3];
-   HYPRE_Int        join;
-   HYPRE_Int        i_tmp0, i_tmp1;
-   HYPRE_Int        ioff, joff, koff;
-   HYPRE_Int        bi, d, i, j, k;
+   NALU_HYPRE_Int        iminmax[2], imin[3], imax[3];
+   NALU_HYPRE_Int        ii[3], dd[3];
+   NALU_HYPRE_Int        join;
+   NALU_HYPRE_Int        i_tmp0, i_tmp1;
+   NALU_HYPRE_Int        ioff, joff, koff;
+   NALU_HYPRE_Int        bi, d, i, j, k;
 
-   HYPRE_Int        index_not_there;
+   NALU_HYPRE_Int        index_not_there;
 
    /*------------------------------------------------------
     * If the size of boxes is less than 2, return
@@ -220,7 +220,7 @@ hypre_UnionBoxes( hypre_BoxArray *boxes )
     *------------------------------------------------------*/
 
    i_tmp0 = 2 * hypre_BoxArraySize(boxes);
-   block_index[0] = hypre_TAlloc(HYPRE_Int,  3 * i_tmp0, HYPRE_MEMORY_HOST);
+   block_index[0] = hypre_TAlloc(NALU_HYPRE_Int,  3 * i_tmp0, NALU_HYPRE_MEMORY_HOST);
    block_sz[0] = 0;
    for (d = 1; d < 3; d++)
    {
@@ -285,7 +285,7 @@ hypre_UnionBoxes( hypre_BoxArray *boxes )
     * Set up the block array
     *------------------------------------------------------*/
 
-   block = hypre_CTAlloc(HYPRE_Int,  block_volume, HYPRE_MEMORY_HOST);
+   block = hypre_CTAlloc(NALU_HYPRE_Int,  block_volume, NALU_HYPRE_MEMORY_HOST);
 
    hypre_ForBoxI(bi, boxes)
    {
@@ -437,8 +437,8 @@ hypre_UnionBoxes( hypre_BoxArray *boxes )
     * Clean up and return
     *---------------------------------------------------------*/
 
-   hypre_TFree(block_index[0], HYPRE_MEMORY_HOST);
-   hypre_TFree(block, HYPRE_MEMORY_HOST);
+   hypre_TFree(block_index[0], NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(block, NALU_HYPRE_MEMORY_HOST);
 
    return hypre_error_flag;
 }
@@ -454,7 +454,7 @@ hypre_UnionBoxes( hypre_BoxArray *boxes )
 
 /* ONLY3D */
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_MinUnionBoxes( hypre_BoxArray *boxes )
 {
    hypre_BoxArrayArray     *rotated_array;
@@ -462,10 +462,10 @@ hypre_MinUnionBoxes( hypre_BoxArray *boxes )
    hypre_Box               *box, *rotated_box;
    hypre_Index              lower, upper;
 
-   HYPRE_Int                i, j, size, min_size, array;
+   NALU_HYPRE_Int                i, j, size, min_size, array;
 
    size = hypre_BoxArraySize(boxes);
-   rotated_box = hypre_CTAlloc(hypre_Box,  1, HYPRE_MEMORY_HOST);
+   rotated_box = hypre_CTAlloc(hypre_Box,  1, NALU_HYPRE_MEMORY_HOST);
    rotated_array = hypre_BoxArrayArrayCreate(5, hypre_BoxArrayNDim(boxes));
 
    for (i = 0; i < 5; i++)
@@ -545,7 +545,7 @@ hypre_MinUnionBoxes( hypre_BoxArray *boxes )
 
       } /*switch(i) */
    }    /* for (i= 0; i< 5; i++) */
-   hypre_TFree(rotated_box, HYPRE_MEMORY_HOST);
+   hypre_TFree(rotated_box, NALU_HYPRE_MEMORY_HOST);
 
    hypre_UnionBoxes(boxes);
 

@@ -17,21 +17,21 @@
 typedef struct
 {
    /* the entries will be the same for all procs */
-   HYPRE_Int           ndim;             /* number of dimensions */
+   NALU_HYPRE_Int           ndim;             /* number of dimensions */
    hypre_BoxArray     *regions;          /* areas of the grid with boxes */
-   HYPRE_Int           num_regions;      /* how many regions */
-   HYPRE_Int          *proc_partitions;  /* proc ids assigned to each region
+   NALU_HYPRE_Int           num_regions;      /* how many regions */
+   NALU_HYPRE_Int          *proc_partitions;  /* proc ids assigned to each region
                                             (this is size num_regions +1) */
    hypre_Index        *divisions;        /* number of proc divisions in each
                                             direction for each region */
    /* these entries are specific to each proc */
    hypre_BoxArray     *my_partition;        /* my portion of grid (at most 2) */
    hypre_BoxArray     *my_partition_boxes;  /* boxes in my portion */
-   HYPRE_Int          *my_partition_proc_ids;
-   HYPRE_Int          *my_partition_boxnums;
-   HYPRE_Int           my_partition_ids_size;
-   HYPRE_Int           my_partition_ids_alloc;
-   HYPRE_Int           my_partition_num_distinct_procs;
+   NALU_HYPRE_Int          *my_partition_proc_ids;
+   NALU_HYPRE_Int          *my_partition_boxnums;
+   NALU_HYPRE_Int           my_partition_ids_size;
+   NALU_HYPRE_Int           my_partition_ids_alloc;
+   NALU_HYPRE_Int           my_partition_num_distinct_procs;
 
 } hypre_StructAssumedPart;
 

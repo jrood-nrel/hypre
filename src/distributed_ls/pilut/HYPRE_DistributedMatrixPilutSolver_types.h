@@ -11,10 +11,10 @@
  *
  *****************************************************************************/
 
-#ifndef HYPRE_DISTRIBUTED_MATRIX_SOLVER_PILUT_TYPES_HEADER
-#define HYPRE_DISTRIBUTED_MATRIX_SOLVER_PILUT_TYPES_HEADER
+#ifndef NALU_HYPRE_DISTRIBUTED_MATRIX_SOLVER_PILUT_TYPES_HEADER
+#define NALU_HYPRE_DISTRIBUTED_MATRIX_SOLVER_PILUT_TYPES_HEADER
 
 
-typedef void *HYPRE_DistributedMatrixPilutSolver;
+typedef void *NALU_HYPRE_DistributedMatrixPilutSolver;
 
 #endif

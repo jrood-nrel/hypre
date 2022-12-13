@@ -13,7 +13,7 @@
 
 
 /* returns 1 if the assumed partition is in use */
-HYPRE_Int HYPRE_AssumedPartitionCheck()
+NALU_HYPRE_Int NALU_HYPRE_AssumedPartitionCheck()
 {
    return 1;
 }

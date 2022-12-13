@@ -93,7 +93,7 @@ OBJS = ${LAPACK_FILES:.c=.o}
 all: ${OBJS} dlamch.o
 
 install: all
-	cp -fR $(srcdir)/_hypre_lapack.h $(HYPRE_INC_INSTALL)
+	cp -fR $(srcdir)/_hypre_lapack.h $(NALU_HYPRE_INC_INSTALL)
 
 clean:
 	rm -rf *.o

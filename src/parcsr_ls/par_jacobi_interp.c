@@ -8,25 +8,25 @@
 #include "_hypre_parcsr_ls.h"
 #include "par_amg.h"
 
-/* #define HYPRE_JACINT_PRINT_ROW_SUMS*/
-/* #define HYPRE_JACINT_PRINT_SOME_ROWS */
-/* #define HYPRE_JACINT_PRINT_MATRICES*/
-#define HYPRE_MAX_PRINTABLE_MATRIX 125
-/*#define HYPRE_JACINT_PRINT_DIAGNOSTICS*/
+/* #define NALU_HYPRE_JACINT_PRINT_ROW_SUMS*/
+/* #define NALU_HYPRE_JACINT_PRINT_SOME_ROWS */
+/* #define NALU_HYPRE_JACINT_PRINT_MATRICES*/
+#define NALU_HYPRE_MAX_PRINTABLE_MATRIX 125
+/*#define NALU_HYPRE_JACINT_PRINT_DIAGNOSTICS*/
 
 void hypre_BoomerAMGJacobiInterp( hypre_ParCSRMatrix * A,
                                   hypre_ParCSRMatrix ** P,
                                   hypre_ParCSRMatrix * S,
-                                  HYPRE_Int num_functions, HYPRE_Int * dof_func,
-                                  HYPRE_Int * CF_marker, HYPRE_Int level,
-                                  HYPRE_Real truncation_threshold,
-                                  HYPRE_Real truncation_threshold_minus )
+                                  NALU_HYPRE_Int num_functions, NALU_HYPRE_Int * dof_func,
+                                  NALU_HYPRE_Int * CF_marker, NALU_HYPRE_Int level,
+                                  NALU_HYPRE_Real truncation_threshold,
+                                  NALU_HYPRE_Real truncation_threshold_minus )
 /* nji steps of Jacobi interpolation, with nji presently just set in the code.*/
 {
-   HYPRE_Real weight_AF = 1.0;  /* weight multiplied by A's fine row elements */
-   HYPRE_Int * dof_func_offd = NULL;
-   HYPRE_Int nji = 1;
-   HYPRE_Int iji;
+   NALU_HYPRE_Real weight_AF = 1.0;  /* weight multiplied by A's fine row elements */
+   NALU_HYPRE_Int * dof_func_offd = NULL;
+   NALU_HYPRE_Int nji = 1;
+   NALU_HYPRE_Int iji;
 
    hypre_ParCSRMatrix_dof_func_offd( A,
                                      num_functions,
@@ -43,18 +43,18 @@ void hypre_BoomerAMGJacobiInterp( hypre_ParCSRMatrix * A,
 
    if ( dof_func_offd != NULL )
    {
-      hypre_TFree( dof_func_offd, HYPRE_MEMORY_HOST);
+      hypre_TFree( dof_func_offd, NALU_HYPRE_MEMORY_HOST);
    }
 }
 
 void hypre_BoomerAMGJacobiInterp_1( hypre_ParCSRMatrix * A,
                                     hypre_ParCSRMatrix ** P,
                                     hypre_ParCSRMatrix * S,
-                                    HYPRE_Int * CF_marker, HYPRE_Int level,
-                                    HYPRE_Real truncation_threshold,
-                                    HYPRE_Real truncation_threshold_minus,
-                                    HYPRE_Int * dof_func, HYPRE_Int * dof_func_offd,
-                                    HYPRE_Real weight_AF)
+                                    NALU_HYPRE_Int * CF_marker, NALU_HYPRE_Int level,
+                                    NALU_HYPRE_Real truncation_threshold,
+                                    NALU_HYPRE_Real truncation_threshold_minus,
+                                    NALU_HYPRE_Int * dof_func, NALU_HYPRE_Int * dof_func_offd,
+                                    NALU_HYPRE_Real weight_AF)
 /* One step of Jacobi interpolation:
    A is the linear system.
    P is an interpolation matrix, input and output
@@ -78,36 +78,36 @@ void hypre_BoomerAMGJacobiInterp_1( hypre_ParCSRMatrix * A,
    hypre_ParCSRMatrix * C;
    hypre_CSRMatrix *P_diag = hypre_ParCSRMatrixDiag(*P);
    /*hypre_CSRMatrix *P_offd = hypre_ParCSRMatrixOffd(*P);
-   HYPRE_Real      *P_diag_data = hypre_CSRMatrixData(P_diag);*/
-   HYPRE_Int       *P_diag_i = hypre_CSRMatrixI(P_diag);
-   /*HYPRE_Int             *P_diag_j = hypre_CSRMatrixJ(P_diag);
-   HYPRE_Real      *P_offd_data = hypre_CSRMatrixData(P_offd);
-   HYPRE_Int             *P_offd_i = hypre_CSRMatrixI(P_offd);
+   NALU_HYPRE_Real      *P_diag_data = hypre_CSRMatrixData(P_diag);*/
+   NALU_HYPRE_Int       *P_diag_i = hypre_CSRMatrixI(P_diag);
+   /*NALU_HYPRE_Int             *P_diag_j = hypre_CSRMatrixJ(P_diag);
+   NALU_HYPRE_Real      *P_offd_data = hypre_CSRMatrixData(P_offd);
+   NALU_HYPRE_Int             *P_offd_i = hypre_CSRMatrixI(P_offd);
    hypre_CSRMatrix *C_diag;
    hypre_CSRMatrix *C_offd;
    hypre_CSRMatrix *Pnew_diag;
    hypre_CSRMatrix *Pnew_offd;*/
-   HYPRE_Int   num_rows_diag_P = hypre_CSRMatrixNumRows(P_diag);
-   HYPRE_Int i;
-   /*HYPRE_Int Jnochanges=0, Jchanges, Pnew_num_nonzeros*/;
-   HYPRE_Int CF_coarse = 0;
-   HYPRE_Int * J_marker = hypre_CTAlloc( HYPRE_Int,  num_rows_diag_P, HYPRE_MEMORY_HOST);
-   HYPRE_Int nc, ncmax, ncmin, nc1;
-   HYPRE_Int num_procs, my_id;
+   NALU_HYPRE_Int   num_rows_diag_P = hypre_CSRMatrixNumRows(P_diag);
+   NALU_HYPRE_Int i;
+   /*NALU_HYPRE_Int Jnochanges=0, Jchanges, Pnew_num_nonzeros*/;
+   NALU_HYPRE_Int CF_coarse = 0;
+   NALU_HYPRE_Int * J_marker = hypre_CTAlloc( NALU_HYPRE_Int,  num_rows_diag_P, NALU_HYPRE_MEMORY_HOST);
+   NALU_HYPRE_Int nc, ncmax, ncmin, nc1;
+   NALU_HYPRE_Int num_procs, my_id;
    MPI_Comm comm = hypre_ParCSRMatrixComm( A );
-#ifdef HYPRE_JACINT_PRINT_ROW_SUMS
-   HYPRE_Int m, nmav, npav;
-   HYPRE_Real PIi, PIimax, PIimin, PIimav, PIipav, randthresh;
-   HYPRE_Real eps = 1.0e-17;
+#ifdef NALU_HYPRE_JACINT_PRINT_ROW_SUMS
+   NALU_HYPRE_Int m, nmav, npav;
+   NALU_HYPRE_Real PIi, PIimax, PIimin, PIimav, PIipav, randthresh;
+   NALU_HYPRE_Real eps = 1.0e-17;
 #endif
-#ifdef HYPRE_JACINT_PRINT_MATRICES
+#ifdef NALU_HYPRE_JACINT_PRINT_MATRICES
    char filename[80];
-   HYPRE_Int i_dummy, j_dummy;
-   HYPRE_Int *base_i_ptr = &i_dummy;
-   HYPRE_Int *base_j_ptr = &j_dummy;
+   NALU_HYPRE_Int i_dummy, j_dummy;
+   NALU_HYPRE_Int *base_i_ptr = &i_dummy;
+   NALU_HYPRE_Int *base_j_ptr = &j_dummy;
 #endif
-#ifdef HYPRE_JACINT_PRINT_SOME_ROWS
-   HYPRE_Int sample_rows[50], n_sample_rows = 0, isamp;
+#ifdef NALU_HYPRE_JACINT_PRINT_SOME_ROWS
+   NALU_HYPRE_Int sample_rows[50], n_sample_rows = 0, isamp;
 #endif
 
    hypre_MPI_Comm_size(comm, &num_procs);
@@ -119,7 +119,7 @@ void hypre_BoomerAMGJacobiInterp_1( hypre_ParCSRMatrix * A,
       J_marker[i] = CF_marker[i];
       if (CF_marker[i] >= 0) { ++CF_coarse; }
    }
-#ifdef HYPRE_JACINT_PRINT_DIAGNOSTICS
+#ifdef NALU_HYPRE_JACINT_PRINT_DIAGNOSTICS
    hypre_printf("%i %i Jacobi_Interp_1, P has %i+%i=%i nonzeros, local sum %e\n", my_id, level,
                 hypre_CSRMatrixNumNonzeros(P_diag), hypre_CSRMatrixNumNonzeros(P_offd),
                 hypre_CSRMatrixNumNonzeros(P_diag) + hypre_CSRMatrixNumNonzeros(P_offd),
@@ -127,7 +127,7 @@ void hypre_BoomerAMGJacobiInterp_1( hypre_ParCSRMatrix * A,
 #endif
 
    /* row sum computations, for output */
-#ifdef HYPRE_JACINT_PRINT_ROW_SUMS
+#ifdef NALU_HYPRE_JACINT_PRINT_ROW_SUMS
    PIimax = -1.0e12, PIimin = 1.0e12, PIimav = 0, PIipav = 0;
    nmav = 0, npav = 0;
    for ( i = 0; i < num_rows_diag_P; ++i )
@@ -181,15 +181,15 @@ void hypre_BoomerAMGJacobiInterp_1( hypre_ParCSRMatrix * A,
       }
 #endif
 
-#ifdef HYPRE_JACINT_PRINT_SOME_ROWS
+#ifdef NALU_HYPRE_JACINT_PRINT_SOME_ROWS
    Jchanges = num_rows_diag_P - Jnochanges - CF_coarse;
    hypre_printf("some rows to be changed: ");
-   randthresh = 15 / (HYPRE_Real)Jchanges;
+   randthresh = 15 / (NALU_HYPRE_Real)Jchanges;
    for ( i = 0; i < num_rows_diag_P; ++i )
    {
       if ( J_marker[i] < 0 )
       {
-         if ( ((HYPRE_Real)hypre_Rand()) < randthresh )
+         if ( ((NALU_HYPRE_Real)hypre_Rand()) < randthresh )
          {
             hypre_printf( "%i: ", i );
             for ( m = P_diag_i[i]; m < P_diag_i[i + 1]; ++m )
@@ -204,14 +204,14 @@ void hypre_BoomerAMGJacobiInterp_1( hypre_ParCSRMatrix * A,
    }
    hypre_printf("\n");
 #endif
-#ifdef HYPRE_JACINT_PRINT_DIAGNOSTICS
+#ifdef NALU_HYPRE_JACINT_PRINT_DIAGNOSTICS
    hypre_printf("%i %i P has %i rows, %i changeable, %i don't change-good, %i coarse\n",
                 my_id, level, num_rows_diag_P, Jchanges, Jnochanges, CF_coarse );
    hypre_printf("%i %i min,max diag cols per row: %i, %i;  no.rows w.<=1 col: %i\n", my_id, level,
                 ncmin, ncmax, nc1 );
 #endif
-#ifdef HYPRE_JACINT_PRINT_MATRICES
-   if ( num_rows_diag_P <= HYPRE_MAX_PRINTABLE_MATRIX )
+#ifdef NALU_HYPRE_JACINT_PRINT_MATRICES
+   if ( num_rows_diag_P <= NALU_HYPRE_MAX_PRINTABLE_MATRIX )
    {
       hypre_sprintf( filename, "Ain%i", level );
       hypre_ParCSRMatrixPrintIJ( A, 0, 0, filename);
@@ -232,11 +232,11 @@ void hypre_BoomerAMGJacobiInterp_1( hypre_ParCSRMatrix * A,
       As a matrix, C is the size of A*P.  But only the marked rows have
       been computed.
    */
-#ifdef HYPRE_JACINT_PRINT_MATRICES
+#ifdef NALU_HYPRE_JACINT_PRINT_MATRICES
    hypre_sprintf( filename, "C%i", level );
-   if ( num_rows_diag_P <= HYPRE_MAX_PRINTABLE_MATRIX ) { hypre_ParCSRMatrixPrintIJ( C, 0, 0, filename); }
+   if ( num_rows_diag_P <= NALU_HYPRE_MAX_PRINTABLE_MATRIX ) { hypre_ParCSRMatrixPrintIJ( C, 0, 0, filename); }
 #endif
-#ifdef HYPRE_JACINT_PRINT_DIAGNOSTICS
+#ifdef NALU_HYPRE_JACINT_PRINT_DIAGNOSTICS
    C_diag = hypre_ParCSRMatrixDiag(C);
    C_offd = hypre_ParCSRMatrixOffd(C);
    hypre_printf("%i %i Jacobi_Interp_1 after matmul, C has %i+%i=%i nonzeros, local sum %e\n",
@@ -253,9 +253,9 @@ void hypre_BoomerAMGJacobiInterp_1( hypre_ParCSRMatrix * A,
       array should select exactly the right number of diagonal elements (the number
       of rows of AP_FC).
    */
-#ifdef HYPRE_JACINT_PRINT_MATRICES
+#ifdef NALU_HYPRE_JACINT_PRINT_MATRICES
    hypre_sprintf( filename, "Cout%i", level );
-   if ( num_rows_diag_P <= HYPRE_MAX_PRINTABLE_MATRIX ) { hypre_ParCSRMatrixPrintIJ( C, 0, 0, filename); }
+   if ( num_rows_diag_P <= NALU_HYPRE_MAX_PRINTABLE_MATRIX ) { hypre_ParCSRMatrixPrintIJ( C, 0, 0, filename); }
 #endif
 
    Pnew = hypre_ParMatMinus_F( *P, C, J_marker );
@@ -264,7 +264,7 @@ void hypre_BoomerAMGJacobiInterp_1( hypre_ParCSRMatrix * A,
       argument are affected, and they should exactly correspond to all the rows
       of the second argument.
    */
-#ifdef HYPRE_JACINT_PRINT_DIAGNOSTICS
+#ifdef NALU_HYPRE_JACINT_PRINT_DIAGNOSTICS
    Pnew_diag = hypre_ParCSRMatrixDiag(Pnew);
    Pnew_offd = hypre_ParCSRMatrixOffd(Pnew);
    Pnew_num_nonzeros = hypre_CSRMatrixNumNonzeros(Pnew_diag) + hypre_CSRMatrixNumNonzeros(Pnew_offd);
@@ -298,7 +298,7 @@ void hypre_BoomerAMGJacobiInterp_1( hypre_ParCSRMatrix * A,
    P_diag_i = hypre_CSRMatrixI(P_diag);
 
    /* row sum computations, for output */
-#ifdef HYPRE_JACINT_PRINT_ROW_SUMS
+#ifdef NALU_HYPRE_JACINT_PRINT_ROW_SUMS
    P_offd = hypre_ParCSRMatrixOffd(*P);
    P_diag_data = hypre_CSRMatrixData(P_diag);
    P_diag_j = hypre_CSRMatrixJ(P_diag);
@@ -330,7 +330,7 @@ void hypre_BoomerAMGJacobiInterp_1( hypre_ParCSRMatrix * A,
    hypre_printf("%i %i P out max,min row sums %e %e\n", my_id, level, PIimax, PIimin );
 #endif
 
-#ifdef HYPRE_JACINT_PRINT_SOME_ROWS
+#ifdef NALU_HYPRE_JACINT_PRINT_SOME_ROWS
    hypre_printf("some changed rows: ");
    for ( isamp = 0; isamp < n_sample_rows; ++isamp )
    {
@@ -353,7 +353,7 @@ void hypre_BoomerAMGJacobiInterp_1( hypre_ParCSRMatrix * A,
          ncmax = hypre_max( nc, ncmax );
          ncmin = hypre_min( nc, ncmin );
       }
-#ifdef HYPRE_JACINT_PRINT_DIAGNOSTICS
+#ifdef NALU_HYPRE_JACINT_PRINT_DIAGNOSTICS
    hypre_printf("%i %i P has %i rows, %i changeable, %i too good, %i coarse\n",
                 my_id, level, num_rows_diag_P, num_rows_diag_P - Jnochanges - CF_coarse, Jnochanges, CF_coarse );
    hypre_printf("%i %i min,max diag cols per row: %i, %i;  no.rows w.<=1 col: %i\n", my_id, level,
@@ -370,18 +370,18 @@ void hypre_BoomerAMGJacobiInterp_1( hypre_ParCSRMatrix * A,
       1. Judging by around line 299 of par_interp.c, they typical use of CF_marker
       is that CF_marker>=0 means Coarse, CF_marker<0 means Fine.
    */
-#ifdef HYPRE_JACINT_PRINT_MATRICES
+#ifdef NALU_HYPRE_JACINT_PRINT_MATRICES
    hypre_sprintf( filename, "Pout%i", level );
-   if ( num_rows_diag_P <= HYPRE_MAX_PRINTABLE_MATRIX ) { hypre_ParCSRMatrixPrintIJ( *P, 0, 0, filename); }
+   if ( num_rows_diag_P <= NALU_HYPRE_MAX_PRINTABLE_MATRIX ) { hypre_ParCSRMatrixPrintIJ( *P, 0, 0, filename); }
 #endif
 
-   hypre_TFree( J_marker, HYPRE_MEMORY_HOST);
+   hypre_TFree( J_marker, NALU_HYPRE_MEMORY_HOST);
 
 }
 
 void hypre_BoomerAMGTruncateInterp( hypre_ParCSRMatrix *P,
-                                    HYPRE_Real eps, HYPRE_Real dlt,
-                                    HYPRE_Int * CF_marker )
+                                    NALU_HYPRE_Real eps, NALU_HYPRE_Real dlt,
+                                    NALU_HYPRE_Int * CF_marker )
 /* Truncate the interpolation matrix P, but only in rows for which the
    marker is <0.  Truncation means that an element P(i,j) is set to 0 if
    P(i,j)>0 and P(i,j)<eps*max( P(i,j) )  or if
@@ -404,26 +404,26 @@ void hypre_BoomerAMGTruncateInterp( hypre_ParCSRMatrix *P,
 {
    hypre_CSRMatrix *P_diag = hypre_ParCSRMatrixDiag(P);
    hypre_CSRMatrix *P_offd = hypre_ParCSRMatrixOffd(P);
-   HYPRE_Real      *P_diag_data = hypre_CSRMatrixData(P_diag);
-   HYPRE_Int       *P_diag_i = hypre_CSRMatrixI(P_diag);
-   HYPRE_Int       *P_diag_j = hypre_CSRMatrixJ(P_diag);
-   HYPRE_Real      *P_offd_data = hypre_CSRMatrixData(P_offd);
-   HYPRE_Int       *P_offd_i = hypre_CSRMatrixI(P_offd);
-   HYPRE_Int       *P_offd_j = hypre_CSRMatrixJ(P_offd);
-   HYPRE_Int       *new_P_diag_i;
-   HYPRE_Int       *new_P_offd_i;
-   HYPRE_Int   num_rows_diag_P = hypre_CSRMatrixNumRows(P_diag);
-   HYPRE_Int   num_rows_offd_P = hypre_CSRMatrixNumRows(P_offd);
-   HYPRE_Int num_nonzeros_diag = hypre_CSRMatrixNumNonzeros(P_diag);
-   HYPRE_Int num_nonzeros_offd = hypre_CSRMatrixNumNonzeros(P_offd);
+   NALU_HYPRE_Real      *P_diag_data = hypre_CSRMatrixData(P_diag);
+   NALU_HYPRE_Int       *P_diag_i = hypre_CSRMatrixI(P_diag);
+   NALU_HYPRE_Int       *P_diag_j = hypre_CSRMatrixJ(P_diag);
+   NALU_HYPRE_Real      *P_offd_data = hypre_CSRMatrixData(P_offd);
+   NALU_HYPRE_Int       *P_offd_i = hypre_CSRMatrixI(P_offd);
+   NALU_HYPRE_Int       *P_offd_j = hypre_CSRMatrixJ(P_offd);
+   NALU_HYPRE_Int       *new_P_diag_i;
+   NALU_HYPRE_Int       *new_P_offd_i;
+   NALU_HYPRE_Int   num_rows_diag_P = hypre_CSRMatrixNumRows(P_diag);
+   NALU_HYPRE_Int   num_rows_offd_P = hypre_CSRMatrixNumRows(P_offd);
+   NALU_HYPRE_Int num_nonzeros_diag = hypre_CSRMatrixNumNonzeros(P_diag);
+   NALU_HYPRE_Int num_nonzeros_offd = hypre_CSRMatrixNumNonzeros(P_offd);
 #if 0
    MPI_Comm comm = hypre_ParCSRMatrixComm( P );
-   HYPRE_Real vmax1, vmin1;
+   NALU_HYPRE_Real vmax1, vmin1;
 #endif
-   HYPRE_Real vmax = 0.0;
-   HYPRE_Real vmin = 0.0;
-   HYPRE_Real v, old_sum, new_sum, scale, wmax, wmin;
-   HYPRE_Int i1, m, m1d, m1o;
+   NALU_HYPRE_Real vmax = 0.0;
+   NALU_HYPRE_Real vmin = 0.0;
+   NALU_HYPRE_Real v, old_sum, new_sum, scale, wmax, wmin;
+   NALU_HYPRE_Int i1, m, m1d, m1o;
 
    /* compute vmax = eps*max(P(i,j)), vmin = eps*min(P(i,j)) */
    for ( i1 = 0; i1 < num_rows_diag_P; i1++ )
@@ -447,8 +447,8 @@ void hypre_BoomerAMGTruncateInterp( hypre_ParCSRMatrix *P,
       someplace better.  I don't like adding communication here, for a minor reason.
    */
    vmax1 = vmax; vmin1 = vmin;
-   hypre_MPI_Allreduce( &vmax1, &vmax, 1, HYPRE_MPI_REAL, hypre_MPI_MAX, comm );
-   hypre_MPI_Allreduce( &vmin1, &vmin, 1, HYPRE_MPI_REAL, hypre_MPI_MIN, comm );
+   hypre_MPI_Allreduce( &vmax1, &vmax, 1, NALU_HYPRE_MPI_REAL, hypre_MPI_MAX, comm );
+   hypre_MPI_Allreduce( &vmin1, &vmin, 1, NALU_HYPRE_MPI_REAL, hypre_MPI_MIN, comm );
 #endif
    if ( vmax <= 0.0 ) { vmax =  1.0; }  /* make sure no v is v>vmax if no v is v>0 */
    if ( vmin >= 0.0 ) { vmin = -1.0; }  /* make sure no v is v<vmin if no v is v<0 */
@@ -461,8 +461,8 @@ void hypre_BoomerAMGTruncateInterp( hypre_ParCSRMatrix *P,
       Elements of Coarse rows (CF_marker>=0) are always kept.
       The arrays are not re-allocated, so there will generally be unused space
       at the ends of the arrays. */
-   new_P_diag_i = hypre_CTAlloc( HYPRE_Int,  num_rows_diag_P + 1, HYPRE_MEMORY_HOST);
-   new_P_offd_i = hypre_CTAlloc( HYPRE_Int,  num_rows_offd_P + 1, HYPRE_MEMORY_HOST);
+   new_P_diag_i = hypre_CTAlloc( NALU_HYPRE_Int,  num_rows_diag_P + 1, NALU_HYPRE_MEMORY_HOST);
+   new_P_offd_i = hypre_CTAlloc( NALU_HYPRE_Int,  num_rows_offd_P + 1, NALU_HYPRE_MEMORY_HOST);
    m1d = P_diag_i[0];
    m1o = P_offd_i[0];
    for ( i1 = 0; i1 < num_rows_diag_P; i1++ )
@@ -529,8 +529,8 @@ void hypre_BoomerAMGTruncateInterp( hypre_ParCSRMatrix *P,
       P_diag_i[i1] = new_P_diag_i[i1];
       if ( i1 <= num_rows_offd_P && num_nonzeros_offd > 0 ) { P_offd_i[i1] = new_P_offd_i[i1]; }
    }
-   hypre_TFree( new_P_diag_i, HYPRE_MEMORY_HOST);
-   if ( num_rows_offd_P > 0 ) { hypre_TFree( new_P_offd_i, HYPRE_MEMORY_HOST); }
+   hypre_TFree( new_P_diag_i, NALU_HYPRE_MEMORY_HOST);
+   if ( num_rows_offd_P > 0 ) { hypre_TFree( new_P_offd_i, NALU_HYPRE_MEMORY_HOST); }
 
    hypre_CSRMatrixNumNonzeros(P_diag) = num_nonzeros_diag;
    hypre_CSRMatrixNumNonzeros(P_offd) = num_nonzeros_offd;
@@ -549,22 +549,22 @@ void hypre_BoomerAMGTruncateInterp( hypre_ParCSRMatrix *P,
   and pass the result into them through an argument (less communication, less computation).
 */
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_ParCSRMatrix_dof_func_offd(
    hypre_ParCSRMatrix    *A,
-   HYPRE_Int                    num_functions,
-   HYPRE_Int                   *dof_func,
-   HYPRE_Int                  **dof_func_offd )
+   NALU_HYPRE_Int                    num_functions,
+   NALU_HYPRE_Int                   *dof_func,
+   NALU_HYPRE_Int                  **dof_func_offd )
 {
    hypre_ParCSRCommPkg     *comm_pkg = hypre_ParCSRMatrixCommPkg(A);
    hypre_ParCSRCommHandle  *comm_handle;
    hypre_CSRMatrix    *A_offd          = hypre_ParCSRMatrixOffd(A);
 
-   HYPRE_Int             num_cols_offd = 0;
-   HYPRE_Int                 Solve_err_flag = 0;
-   HYPRE_Int         num_sends;
-   HYPRE_Int             *int_buf_data;
-   HYPRE_Int         index, start, i, j;
+   NALU_HYPRE_Int             num_cols_offd = 0;
+   NALU_HYPRE_Int                 Solve_err_flag = 0;
+   NALU_HYPRE_Int         num_sends;
+   NALU_HYPRE_Int             *int_buf_data;
+   NALU_HYPRE_Int         index, start, i, j;
 
    num_cols_offd = hypre_CSRMatrixNumCols(A_offd);
    *dof_func_offd = NULL;
@@ -572,7 +572,7 @@ hypre_ParCSRMatrix_dof_func_offd(
    {
       if (num_functions > 1)
       {
-         *dof_func_offd = hypre_CTAlloc(HYPRE_Int,  num_cols_offd, HYPRE_MEMORY_HOST);
+         *dof_func_offd = hypre_CTAlloc(NALU_HYPRE_Int,  num_cols_offd, NALU_HYPRE_MEMORY_HOST);
       }
    }
 
@@ -590,8 +590,8 @@ hypre_ParCSRMatrix_dof_func_offd(
    num_sends = hypre_ParCSRCommPkgNumSends(comm_pkg);
    if (num_functions > 1)
    {
-      int_buf_data = hypre_CTAlloc(HYPRE_Int, hypre_ParCSRCommPkgSendMapStart(comm_pkg,
-                                                                              num_sends), HYPRE_MEMORY_HOST);
+      int_buf_data = hypre_CTAlloc(NALU_HYPRE_Int, hypre_ParCSRCommPkgSendMapStart(comm_pkg,
+                                                                              num_sends), NALU_HYPRE_MEMORY_HOST);
       index = 0;
       for (i = 0; i < num_sends; i++)
       {
@@ -605,7 +605,7 @@ hypre_ParCSRMatrix_dof_func_offd(
                                                   *dof_func_offd);
 
       hypre_ParCSRCommHandleDestroy(comm_handle);
-      hypre_TFree(int_buf_data, HYPRE_MEMORY_HOST);
+      hypre_TFree(int_buf_data, NALU_HYPRE_MEMORY_HOST);
    }
 
    return (Solve_err_flag);

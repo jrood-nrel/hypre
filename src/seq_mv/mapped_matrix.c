@@ -23,7 +23,7 @@ hypre_MappedMatrixCreate(  )
    hypre_MappedMatrix  *matrix;
 
 
-   matrix = hypre_CTAlloc(hypre_MappedMatrix,  1, HYPRE_MEMORY_HOST);
+   matrix = hypre_CTAlloc(hypre_MappedMatrix,  1, NALU_HYPRE_MEMORY_HOST);
 
    return ( matrix );
 }
@@ -32,17 +32,17 @@ hypre_MappedMatrixCreate(  )
  * hypre_MappedMatrixDestroy
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_MappedMatrixDestroy( hypre_MappedMatrix *matrix )
 {
-   HYPRE_Int  ierr = 0;
+   NALU_HYPRE_Int  ierr = 0;
 
    if (matrix)
    {
-      hypre_TFree(hypre_MappedMatrixMatrix(matrix), HYPRE_MEMORY_HOST);
-      hypre_TFree(hypre_MappedMatrixMapData(matrix), HYPRE_MEMORY_HOST);
+      hypre_TFree(hypre_MappedMatrixMatrix(matrix), NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(hypre_MappedMatrixMapData(matrix), NALU_HYPRE_MEMORY_HOST);
 
-      hypre_TFree(matrix, HYPRE_MEMORY_HOST);
+      hypre_TFree(matrix, NALU_HYPRE_MEMORY_HOST);
    }
 
    return ierr;
@@ -53,14 +53,14 @@ hypre_MappedMatrixDestroy( hypre_MappedMatrix *matrix )
  * hypre_MappedMatrixLimitedDestroy
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_MappedMatrixLimitedDestroy( hypre_MappedMatrix *matrix )
 {
-   HYPRE_Int  ierr = 0;
+   NALU_HYPRE_Int  ierr = 0;
 
    if (matrix)
    {
-      hypre_TFree(matrix, HYPRE_MEMORY_HOST);
+      hypre_TFree(matrix, NALU_HYPRE_MEMORY_HOST);
    }
 
    return ierr;
@@ -71,10 +71,10 @@ hypre_MappedMatrixLimitedDestroy( hypre_MappedMatrix *matrix )
  * hypre_MappedMatrixInitialize
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_MappedMatrixInitialize( hypre_MappedMatrix *matrix )
 {
-   HYPRE_Int    ierr = 0;
+   NALU_HYPRE_Int    ierr = 0;
 
    return ierr;
 }
@@ -84,10 +84,10 @@ hypre_MappedMatrixInitialize( hypre_MappedMatrix *matrix )
  * hypre_MappedMatrixAssemble
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_MappedMatrixAssemble( hypre_MappedMatrix *matrix )
 {
-   HYPRE_Int    ierr = 0;
+   NALU_HYPRE_Int    ierr = 0;
 
    if ( matrix == NULL )
    {
@@ -127,8 +127,8 @@ hypre_MappedMatrixPrint(hypre_MappedMatrix *matrix  )
  * hypre_MappedMatrixGetColIndex
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_MappedMatrixGetColIndex(hypre_MappedMatrix *matrix, HYPRE_Int j  )
+NALU_HYPRE_Int
+hypre_MappedMatrixGetColIndex(hypre_MappedMatrix *matrix, NALU_HYPRE_Int j  )
 {
    return ( hypre_MappedMatrixColIndex(matrix, j) );
 }
@@ -147,10 +147,10 @@ hypre_MappedMatrixGetMatrix(hypre_MappedMatrix *matrix )
  * hypre_MappedMatrixSetMatrix
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_MappedMatrixSetMatrix(hypre_MappedMatrix *matrix, void *matrix_data  )
 {
-   HYPRE_Int ierr = 0;
+   NALU_HYPRE_Int ierr = 0;
 
    hypre_MappedMatrixMatrix(matrix) = matrix_data;
 
@@ -161,11 +161,11 @@ hypre_MappedMatrixSetMatrix(hypre_MappedMatrix *matrix, void *matrix_data  )
  * hypre_MappedMatrixSetColMap
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_MappedMatrixSetColMap(hypre_MappedMatrix *matrix,
-                            HYPRE_Int (*ColMap)(HYPRE_Int, void *)  )
+                            NALU_HYPRE_Int (*ColMap)(NALU_HYPRE_Int, void *)  )
 {
-   HYPRE_Int ierr = 0;
+   NALU_HYPRE_Int ierr = 0;
 
    hypre_MappedMatrixColMap(matrix) = ColMap;
 
@@ -176,11 +176,11 @@ hypre_MappedMatrixSetColMap(hypre_MappedMatrix *matrix,
  * hypre_MappedMatrixSetMapData
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_MappedMatrixSetMapData(hypre_MappedMatrix *matrix,
                              void *map_data )
 {
-   HYPRE_Int ierr = 0;
+   NALU_HYPRE_Int ierr = 0;
 
    hypre_MappedMatrixMapData(matrix) = map_data;
 

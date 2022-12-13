@@ -18,27 +18,27 @@
  * hypre_ParVector
  *--------------------------------------------------------------------------*/
 
-#ifndef HYPRE_PAR_VECTOR_STRUCT
-#define HYPRE_PAR_VECTOR_STRUCT
+#ifndef NALU_HYPRE_PAR_VECTOR_STRUCT
+#define NALU_HYPRE_PAR_VECTOR_STRUCT
 #endif
 
 typedef struct hypre_ParVector_struct
 {
    MPI_Comm              comm;
 
-   HYPRE_BigInt          global_size;
-   HYPRE_BigInt          first_index;
-   HYPRE_BigInt          last_index;
-   HYPRE_BigInt          partitioning[2];
+   NALU_HYPRE_BigInt          global_size;
+   NALU_HYPRE_BigInt          first_index;
+   NALU_HYPRE_BigInt          last_index;
+   NALU_HYPRE_BigInt          partitioning[2];
    /* stores actual length of data in local vector to allow memory
     * manipulations for temporary vectors*/
-   HYPRE_Int             actual_local_size;
+   NALU_HYPRE_Int             actual_local_size;
    hypre_Vector         *local_vector;
 
    /* Does the Vector create/destroy `data'? */
-   HYPRE_Int             owns_data;
+   NALU_HYPRE_Int             owns_data;
    /* If the vector is all zeros */
-   HYPRE_Int             all_zeros;
+   NALU_HYPRE_Int             all_zeros;
 
    hypre_IJAssumedPart  *assumed_partition; /* only populated if this partition needed
                                               (for setting off-proc elements, for example)*/
@@ -61,7 +61,7 @@ typedef struct hypre_ParVector_struct
 
 #define hypre_ParVectorAssumedPartition(vector) ((vector) -> assumed_partition)
 
-static inline HYPRE_MemoryLocation
+static inline NALU_HYPRE_MemoryLocation
 hypre_ParVectorMemoryLocation(hypre_ParVector *vector)
 {
    return hypre_VectorMemoryLocation(hypre_ParVectorLocalVector(vector));

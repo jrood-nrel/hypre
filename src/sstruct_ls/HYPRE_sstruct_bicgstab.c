@@ -10,9 +10,9 @@
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructBiCGSTABCreate( MPI_Comm             comm,
-                             HYPRE_SStructSolver *solver )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructBiCGSTABCreate( MPI_Comm             comm,
+                             NALU_HYPRE_SStructSolver *solver )
 {
    hypre_BiCGSTABFunctions * bicgstab_functions =
       hypre_BiCGSTABFunctionsCreate(
@@ -25,7 +25,7 @@ HYPRE_SStructBiCGSTABCreate( MPI_Comm             comm,
          hypre_SStructKrylovCommInfo,
          hypre_SStructKrylovIdentitySetup, hypre_SStructKrylovIdentity );
 
-   *solver = ( (HYPRE_SStructSolver) hypre_BiCGSTABCreate( bicgstab_functions ) );
+   *solver = ( (NALU_HYPRE_SStructSolver) hypre_BiCGSTABCreate( bicgstab_functions ) );
 
    return hypre_error_flag;
 }
@@ -33,8 +33,8 @@ HYPRE_SStructBiCGSTABCreate( MPI_Comm             comm,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructBiCGSTABDestroy( HYPRE_SStructSolver solver )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructBiCGSTABDestroy( NALU_HYPRE_SStructSolver solver )
 {
    return ( hypre_BiCGSTABDestroy( (void *) solver ) );
 }
@@ -42,147 +42,147 @@ HYPRE_SStructBiCGSTABDestroy( HYPRE_SStructSolver solver )
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructBiCGSTABSetup( HYPRE_SStructSolver solver,
-                            HYPRE_SStructMatrix A,
-                            HYPRE_SStructVector b,
-                            HYPRE_SStructVector x )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructBiCGSTABSetup( NALU_HYPRE_SStructSolver solver,
+                            NALU_HYPRE_SStructMatrix A,
+                            NALU_HYPRE_SStructVector b,
+                            NALU_HYPRE_SStructVector x )
 {
-   return ( HYPRE_BiCGSTABSetup( (HYPRE_Solver) solver,
-                                 (HYPRE_Matrix) A,
-                                 (HYPRE_Vector) b,
-                                 (HYPRE_Vector) x ) );
+   return ( NALU_HYPRE_BiCGSTABSetup( (NALU_HYPRE_Solver) solver,
+                                 (NALU_HYPRE_Matrix) A,
+                                 (NALU_HYPRE_Vector) b,
+                                 (NALU_HYPRE_Vector) x ) );
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructBiCGSTABSolve( HYPRE_SStructSolver solver,
-                            HYPRE_SStructMatrix A,
-                            HYPRE_SStructVector b,
-                            HYPRE_SStructVector x )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructBiCGSTABSolve( NALU_HYPRE_SStructSolver solver,
+                            NALU_HYPRE_SStructMatrix A,
+                            NALU_HYPRE_SStructVector b,
+                            NALU_HYPRE_SStructVector x )
 {
-   return ( HYPRE_BiCGSTABSolve( (HYPRE_Solver) solver,
-                                 (HYPRE_Matrix) A,
-                                 (HYPRE_Vector) b,
-                                 (HYPRE_Vector) x ) );
+   return ( NALU_HYPRE_BiCGSTABSolve( (NALU_HYPRE_Solver) solver,
+                                 (NALU_HYPRE_Matrix) A,
+                                 (NALU_HYPRE_Vector) b,
+                                 (NALU_HYPRE_Vector) x ) );
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructBiCGSTABSetTol( HYPRE_SStructSolver solver,
-                             HYPRE_Real          tol )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructBiCGSTABSetTol( NALU_HYPRE_SStructSolver solver,
+                             NALU_HYPRE_Real          tol )
 {
-   return ( HYPRE_BiCGSTABSetTol( (HYPRE_Solver) solver, tol ) );
+   return ( NALU_HYPRE_BiCGSTABSetTol( (NALU_HYPRE_Solver) solver, tol ) );
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructBiCGSTABSetAbsoluteTol( HYPRE_SStructSolver solver,
-                                     HYPRE_Real          tol )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructBiCGSTABSetAbsoluteTol( NALU_HYPRE_SStructSolver solver,
+                                     NALU_HYPRE_Real          tol )
 {
-   return ( HYPRE_BiCGSTABSetAbsoluteTol( (HYPRE_Solver) solver, tol ) );
+   return ( NALU_HYPRE_BiCGSTABSetAbsoluteTol( (NALU_HYPRE_Solver) solver, tol ) );
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructBiCGSTABSetMinIter( HYPRE_SStructSolver solver,
-                                 HYPRE_Int           min_iter )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructBiCGSTABSetMinIter( NALU_HYPRE_SStructSolver solver,
+                                 NALU_HYPRE_Int           min_iter )
 {
-   return ( HYPRE_BiCGSTABSetMinIter( (HYPRE_Solver) solver, min_iter ) );
+   return ( NALU_HYPRE_BiCGSTABSetMinIter( (NALU_HYPRE_Solver) solver, min_iter ) );
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructBiCGSTABSetMaxIter( HYPRE_SStructSolver solver,
-                                 HYPRE_Int           max_iter )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructBiCGSTABSetMaxIter( NALU_HYPRE_SStructSolver solver,
+                                 NALU_HYPRE_Int           max_iter )
 {
-   return ( HYPRE_BiCGSTABSetMaxIter( (HYPRE_Solver) solver, max_iter ) );
+   return ( NALU_HYPRE_BiCGSTABSetMaxIter( (NALU_HYPRE_Solver) solver, max_iter ) );
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructBiCGSTABSetStopCrit( HYPRE_SStructSolver solver,
-                                  HYPRE_Int           stop_crit )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructBiCGSTABSetStopCrit( NALU_HYPRE_SStructSolver solver,
+                                  NALU_HYPRE_Int           stop_crit )
 {
-   return ( HYPRE_BiCGSTABSetStopCrit( (HYPRE_Solver) solver, stop_crit ) );
+   return ( NALU_HYPRE_BiCGSTABSetStopCrit( (NALU_HYPRE_Solver) solver, stop_crit ) );
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructBiCGSTABSetPrecond( HYPRE_SStructSolver          solver,
-                                 HYPRE_PtrToSStructSolverFcn  precond,
-                                 HYPRE_PtrToSStructSolverFcn  precond_setup,
+NALU_HYPRE_Int
+NALU_HYPRE_SStructBiCGSTABSetPrecond( NALU_HYPRE_SStructSolver          solver,
+                                 NALU_HYPRE_PtrToSStructSolverFcn  precond,
+                                 NALU_HYPRE_PtrToSStructSolverFcn  precond_setup,
                                  void *          precond_data )
 {
-   return ( HYPRE_BiCGSTABSetPrecond( (HYPRE_Solver) solver,
-                                      (HYPRE_PtrToSolverFcn) precond,
-                                      (HYPRE_PtrToSolverFcn) precond_setup,
-                                      (HYPRE_Solver) precond_data ) );
+   return ( NALU_HYPRE_BiCGSTABSetPrecond( (NALU_HYPRE_Solver) solver,
+                                      (NALU_HYPRE_PtrToSolverFcn) precond,
+                                      (NALU_HYPRE_PtrToSolverFcn) precond_setup,
+                                      (NALU_HYPRE_Solver) precond_data ) );
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructBiCGSTABSetLogging( HYPRE_SStructSolver solver,
-                                 HYPRE_Int           logging )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructBiCGSTABSetLogging( NALU_HYPRE_SStructSolver solver,
+                                 NALU_HYPRE_Int           logging )
 {
-   return ( HYPRE_BiCGSTABSetLogging( (HYPRE_Solver) solver, logging ) );
+   return ( NALU_HYPRE_BiCGSTABSetLogging( (NALU_HYPRE_Solver) solver, logging ) );
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructBiCGSTABSetPrintLevel( HYPRE_SStructSolver solver,
-                                    HYPRE_Int           print_level )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructBiCGSTABSetPrintLevel( NALU_HYPRE_SStructSolver solver,
+                                    NALU_HYPRE_Int           print_level )
 {
-   return ( HYPRE_BiCGSTABSetPrintLevel( (HYPRE_Solver) solver, print_level ) );
+   return ( NALU_HYPRE_BiCGSTABSetPrintLevel( (NALU_HYPRE_Solver) solver, print_level ) );
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructBiCGSTABGetNumIterations( HYPRE_SStructSolver  solver,
-                                       HYPRE_Int           *num_iterations )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructBiCGSTABGetNumIterations( NALU_HYPRE_SStructSolver  solver,
+                                       NALU_HYPRE_Int           *num_iterations )
 {
-   return ( HYPRE_BiCGSTABGetNumIterations( (HYPRE_Solver) solver,
+   return ( NALU_HYPRE_BiCGSTABGetNumIterations( (NALU_HYPRE_Solver) solver,
                                             num_iterations ) );
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructBiCGSTABGetFinalRelativeResidualNorm( HYPRE_SStructSolver  solver,
-                                                   HYPRE_Real          *norm )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructBiCGSTABGetFinalRelativeResidualNorm( NALU_HYPRE_SStructSolver  solver,
+                                                   NALU_HYPRE_Real          *norm )
 {
-   return ( HYPRE_BiCGSTABGetFinalRelativeResidualNorm( (HYPRE_Solver) solver,
+   return ( NALU_HYPRE_BiCGSTABGetFinalRelativeResidualNorm( (NALU_HYPRE_Solver) solver,
                                                         norm ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_SStructBiCGSTABGetResidual
+ * NALU_HYPRE_SStructBiCGSTABGetResidual
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructBiCGSTABGetResidual( HYPRE_SStructSolver  solver,
+NALU_HYPRE_Int
+NALU_HYPRE_SStructBiCGSTABGetResidual( NALU_HYPRE_SStructSolver  solver,
                                   void          **residual)
 {
-   return ( HYPRE_BiCGSTABGetResidual( (HYPRE_Solver) solver, residual ) );
+   return ( NALU_HYPRE_BiCGSTABGetResidual( (NALU_HYPRE_Solver) solver, residual ) );
 }

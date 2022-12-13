@@ -24,58 +24,58 @@
  * hypre_AMGNodalSchwarzSmoother: (Not used currently)
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_AMGNodalSchwarzSmoother( hypre_CSRMatrix    *A,
-                               HYPRE_Int                 num_functions,
-                               HYPRE_Int                   option,
+                               NALU_HYPRE_Int                 num_functions,
+                               NALU_HYPRE_Int                   option,
                                hypre_CSRMatrix   **domain_structure_pointer)
 {
    /*  option =      0: nodal symGS;
        1: next to nodal symGS (overlapping Schwarz) */
 
-   HYPRE_Int *i_domain_dof, *j_domain_dof;
-   HYPRE_Real *domain_matrixinverse;
-   HYPRE_Int num_domains;
+   NALU_HYPRE_Int *i_domain_dof, *j_domain_dof;
+   NALU_HYPRE_Real *domain_matrixinverse;
+   NALU_HYPRE_Int num_domains;
    hypre_CSRMatrix *domain_structure;
 
-   HYPRE_Int *i_dof_node, *j_dof_node;
-   HYPRE_Int *i_node_dof, *j_node_dof;
+   NALU_HYPRE_Int *i_dof_node, *j_dof_node;
+   NALU_HYPRE_Int *i_node_dof, *j_node_dof;
 
-   HYPRE_Int *i_node_dof_dof, *j_node_dof_dof;
+   NALU_HYPRE_Int *i_node_dof_dof, *j_node_dof_dof;
 
-   HYPRE_Int *i_node_node, *j_node_node;
+   NALU_HYPRE_Int *i_node_node, *j_node_node;
 
-   HYPRE_Int num_nodes;
+   NALU_HYPRE_Int num_nodes;
 
-   HYPRE_Int *i_dof_dof = hypre_CSRMatrixI(A);
-   HYPRE_Int *j_dof_dof = hypre_CSRMatrixJ(A);
-   HYPRE_Real *a_dof_dof = hypre_CSRMatrixData(A);
-   HYPRE_Int num_dofs = hypre_CSRMatrixNumRows(A);
+   NALU_HYPRE_Int *i_dof_dof = hypre_CSRMatrixI(A);
+   NALU_HYPRE_Int *j_dof_dof = hypre_CSRMatrixJ(A);
+   NALU_HYPRE_Real *a_dof_dof = hypre_CSRMatrixData(A);
+   NALU_HYPRE_Int num_dofs = hypre_CSRMatrixNumRows(A);
 
 
-   HYPRE_Int ierr = 0;
-   HYPRE_Int i, j, k, l_loc, i_loc, j_loc;
-   HYPRE_Int i_dof, j_dof;
-   HYPRE_Int *i_local_to_global;
-   HYPRE_Int *i_global_to_local;
+   NALU_HYPRE_Int ierr = 0;
+   NALU_HYPRE_Int i, j, k, l_loc, i_loc, j_loc;
+   NALU_HYPRE_Int i_dof, j_dof;
+   NALU_HYPRE_Int *i_local_to_global;
+   NALU_HYPRE_Int *i_global_to_local;
 
-   HYPRE_Int *i_int;
-   HYPRE_Int *i_int_to_local;
+   NALU_HYPRE_Int *i_int;
+   NALU_HYPRE_Int *i_int_to_local;
 
-   HYPRE_Int int_dof_counter, local_dof_counter, max_local_dof_counter = 0;
+   NALU_HYPRE_Int int_dof_counter, local_dof_counter, max_local_dof_counter = 0;
 
-   HYPRE_Int domain_dof_counter = 0, domain_matrixinverse_counter = 0;
+   NALU_HYPRE_Int domain_dof_counter = 0, domain_matrixinverse_counter = 0;
 
-   HYPRE_Real *AE;
+   NALU_HYPRE_Real *AE;
 
    char uplo = 'L';
 
-   HYPRE_Int cnt;
+   NALU_HYPRE_Int cnt;
 
    /* PCG arrays: ---------------------------------------------------
-      HYPRE_Real *x, *rhs, *v, *w, *d, *aux;
+      NALU_HYPRE_Real *x, *rhs, *v, *w, *d, *aux;
 
-      HYPRE_Int max_iter;
+      NALU_HYPRE_Int max_iter;
 
       ------------------------------------------------------------------ */
 
@@ -86,8 +86,8 @@ hypre_AMGNodalSchwarzSmoother( hypre_CSRMatrix    *A,
    /*hypre_printf("\nnum_nodes: %d, num_dofs: %d = %d x %d\n", num_nodes, num_dofs,
      num_nodes, num_functions);*/
 
-   i_dof_node = hypre_CTAlloc(HYPRE_Int,  num_dofs + 1, HYPRE_MEMORY_HOST);
-   j_dof_node = hypre_CTAlloc(HYPRE_Int,  num_dofs, HYPRE_MEMORY_HOST);
+   i_dof_node = hypre_CTAlloc(NALU_HYPRE_Int,  num_dofs + 1, NALU_HYPRE_MEMORY_HOST);
+   j_dof_node = hypre_CTAlloc(NALU_HYPRE_Int,  num_dofs, NALU_HYPRE_MEMORY_HOST);
 
    for (i = 0; i < num_dofs + 1; i++)
    {
@@ -122,8 +122,8 @@ hypre_AMGNodalSchwarzSmoother( hypre_CSRMatrix    *A,
                                 i_dof_node, j_dof_node,
                                 num_nodes, num_dofs, num_nodes);
 
-   hypre_TFree(i_node_dof_dof, HYPRE_MEMORY_HOST);
-   hypre_TFree(j_node_dof_dof, HYPRE_MEMORY_HOST);
+   hypre_TFree(i_node_dof_dof, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(j_node_dof_dof, NALU_HYPRE_MEMORY_HOST);
 
    /* compute for each node the local information: -------------------- */
 
@@ -172,30 +172,30 @@ hypre_AMGNodalSchwarzSmoother( hypre_CSRMatrix    *A,
 
    num_domains = num_nodes;
 
-   i_domain_dof = hypre_CTAlloc(HYPRE_Int,  num_domains + 1, HYPRE_MEMORY_HOST);
+   i_domain_dof = hypre_CTAlloc(NALU_HYPRE_Int,  num_domains + 1, NALU_HYPRE_MEMORY_HOST);
 
    if (option == 1)
    {
-      j_domain_dof = hypre_CTAlloc(HYPRE_Int,  domain_dof_counter, HYPRE_MEMORY_HOST);
+      j_domain_dof = hypre_CTAlloc(NALU_HYPRE_Int,  domain_dof_counter, NALU_HYPRE_MEMORY_HOST);
    }
    else
    {
-      j_domain_dof = hypre_CTAlloc(HYPRE_Int,  num_dofs, HYPRE_MEMORY_HOST);
+      j_domain_dof = hypre_CTAlloc(NALU_HYPRE_Int,  num_dofs, NALU_HYPRE_MEMORY_HOST);
    }
 
    if (option == 1)
    {
-      domain_matrixinverse = hypre_CTAlloc(HYPRE_Real,  domain_matrixinverse_counter, HYPRE_MEMORY_HOST);
+      domain_matrixinverse = hypre_CTAlloc(NALU_HYPRE_Real,  domain_matrixinverse_counter, NALU_HYPRE_MEMORY_HOST);
    }
    else
    {
-      domain_matrixinverse = hypre_CTAlloc(HYPRE_Real,  num_dofs * num_functions, HYPRE_MEMORY_HOST);
+      domain_matrixinverse = hypre_CTAlloc(NALU_HYPRE_Real,  num_dofs * num_functions, NALU_HYPRE_MEMORY_HOST);
    }
 
-   i_local_to_global = hypre_CTAlloc(HYPRE_Int,  max_local_dof_counter, HYPRE_MEMORY_HOST);
+   i_local_to_global = hypre_CTAlloc(NALU_HYPRE_Int,  max_local_dof_counter, NALU_HYPRE_MEMORY_HOST);
 
-   i_int_to_local = hypre_CTAlloc(HYPRE_Int,  max_local_dof_counter, HYPRE_MEMORY_HOST);
-   i_int          = hypre_CTAlloc(HYPRE_Int,  max_local_dof_counter, HYPRE_MEMORY_HOST);
+   i_int_to_local = hypre_CTAlloc(NALU_HYPRE_Int,  max_local_dof_counter, NALU_HYPRE_MEMORY_HOST);
+   i_int          = hypre_CTAlloc(NALU_HYPRE_Int,  max_local_dof_counter, NALU_HYPRE_MEMORY_HOST);
 
    for (l_loc = 0; l_loc < max_local_dof_counter; l_loc++)
    {
@@ -228,7 +228,7 @@ hypre_AMGNodalSchwarzSmoother( hypre_CSRMatrix    *A,
          for (k = i_dof_dof[j_node_dof[j]]; k < i_dof_dof[j_node_dof[j] + 1]; k++)
             if (i_global_to_local[j_dof_dof[k]] < 0)
             {
-               hypre_error_w_msg(HYPRE_ERROR_GENERIC, "WRONG local indexing: ====================== \n");
+               hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "WRONG local indexing: ====================== \n");
             }
 
       int_dof_counter = 0;
@@ -271,7 +271,7 @@ hypre_AMGNodalSchwarzSmoother( hypre_CSRMatrix    *A,
          /* hypre_printf("ierr_AE_inv: %d\n", ierr); */
          hypre_dpotrf(&uplo, &local_dof_counter, AE,
                       &local_dof_counter, &ierr);
-         if (ierr == 1) { hypre_error_w_msg(HYPRE_ERROR_GENERIC, "Error! Matrix not SPD\n"); }
+         if (ierr == 1) { hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "Error! Matrix not SPD\n"); }
 
          for (i_loc = 0; i_loc < local_dof_counter; i_loc++)
             j_domain_dof[domain_dof_counter + i_loc]
@@ -305,7 +305,7 @@ hypre_AMGNodalSchwarzSmoother( hypre_CSRMatrix    *A,
          hypre_dpotrf(&uplo, &local_dof_counter, AE,
                       &local_dof_counter, &ierr);
 
-         if (ierr) { hypre_error_w_msg(HYPRE_ERROR_GENERIC, " error in dpotrf !!!\n"); }
+         if (ierr) { hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, " error in dpotrf !!!\n"); }
 
          for (i_loc = 0; i_loc < int_dof_counter; i_loc++)
          {
@@ -336,18 +336,18 @@ hypre_AMGNodalSchwarzSmoother( hypre_CSRMatrix    *A,
 
    i_domain_dof[num_nodes] = domain_dof_counter;
 
-   hypre_TFree(i_dof_node, HYPRE_MEMORY_HOST);
-   hypre_TFree(j_dof_node, HYPRE_MEMORY_HOST);
+   hypre_TFree(i_dof_node, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(j_dof_node, NALU_HYPRE_MEMORY_HOST);
 
-   hypre_TFree(i_node_dof, HYPRE_MEMORY_HOST);
-   hypre_TFree(j_node_dof, HYPRE_MEMORY_HOST);
-   hypre_TFree(i_node_node, HYPRE_MEMORY_HOST);
-   hypre_TFree(j_node_node, HYPRE_MEMORY_HOST);
+   hypre_TFree(i_node_dof, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(j_node_dof, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(i_node_node, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(j_node_node, NALU_HYPRE_MEMORY_HOST);
 
-   hypre_TFree(i_int, HYPRE_MEMORY_HOST);
-   hypre_TFree(i_int_to_local, HYPRE_MEMORY_HOST);
+   hypre_TFree(i_int, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(i_int_to_local, NALU_HYPRE_MEMORY_HOST);
 
-   hypre_TFree(i_local_to_global, HYPRE_MEMORY_HOST);
+   hypre_TFree(i_local_to_global, NALU_HYPRE_MEMORY_HOST);
 
    domain_structure = hypre_CSRMatrixCreate(num_domains, max_local_dof_counter,
                                             i_domain_dof[num_domains]);
@@ -360,64 +360,64 @@ hypre_AMGNodalSchwarzSmoother( hypre_CSRMatrix    *A,
    return hypre_error_flag;
 }
 
-HYPRE_Int hypre_ParMPSchwarzSolve(hypre_ParCSRMatrix *par_A,
+NALU_HYPRE_Int hypre_ParMPSchwarzSolve(hypre_ParCSRMatrix *par_A,
                                   hypre_CSRMatrix *A_boundary,
                                   hypre_ParVector *rhs_vector,
                                   hypre_CSRMatrix *domain_structure,
                                   hypre_ParVector *par_x,
-                                  HYPRE_Real relax_wt,
-                                  HYPRE_Real *scale,
-                                  hypre_ParVector *Vtemp, HYPRE_Int *pivots,
-                                  HYPRE_Int use_nonsymm)
+                                  NALU_HYPRE_Real relax_wt,
+                                  NALU_HYPRE_Real *scale,
+                                  hypre_ParVector *Vtemp, NALU_HYPRE_Int *pivots,
+                                  NALU_HYPRE_Int use_nonsymm)
 {
    hypre_ParCSRCommPkg *comm_pkg = hypre_ParCSRMatrixCommPkg(par_A);
-   HYPRE_Int num_sends = 0;
-   HYPRE_Int *send_map_starts;
-   HYPRE_Int *send_map_elmts;
+   NALU_HYPRE_Int num_sends = 0;
+   NALU_HYPRE_Int *send_map_starts;
+   NALU_HYPRE_Int *send_map_elmts;
 
    hypre_ParCSRCommHandle *comm_handle;
 
-   HYPRE_Int ierr = 0;
-   /* HYPRE_Int num_dofs; */
+   NALU_HYPRE_Int ierr = 0;
+   /* NALU_HYPRE_Int num_dofs; */
    hypre_CSRMatrix *A_diag;
-   HYPRE_Int *A_diag_i;
-   HYPRE_Int *A_diag_j;
-   HYPRE_Real *A_diag_data;
+   NALU_HYPRE_Int *A_diag_i;
+   NALU_HYPRE_Int *A_diag_j;
+   NALU_HYPRE_Real *A_diag_data;
    hypre_CSRMatrix *A_offd;
-   HYPRE_Int *A_offd_i;
-   HYPRE_Int *A_offd_j;
-   HYPRE_Real *A_offd_data;
-   HYPRE_Real *x;
-   HYPRE_Real *x_ext;
-   HYPRE_Real *x_ext_old;
-   HYPRE_Real *rhs;
-   HYPRE_Real *rhs_ext;
-   HYPRE_Real *vtemp_data;
-   HYPRE_Real *aux;
-   HYPRE_Real *buf_data;
+   NALU_HYPRE_Int *A_offd_i;
+   NALU_HYPRE_Int *A_offd_j;
+   NALU_HYPRE_Real *A_offd_data;
+   NALU_HYPRE_Real *x;
+   NALU_HYPRE_Real *x_ext;
+   NALU_HYPRE_Real *x_ext_old;
+   NALU_HYPRE_Real *rhs;
+   NALU_HYPRE_Real *rhs_ext;
+   NALU_HYPRE_Real *vtemp_data;
+   NALU_HYPRE_Real *aux;
+   NALU_HYPRE_Real *buf_data;
    /*hypre_Vector *x_vector;*/
    MPI_Comm comm = hypre_ParCSRMatrixComm(par_A);
-   HYPRE_Int num_domains = hypre_CSRMatrixNumRows(domain_structure);
-   HYPRE_Int max_domain_size = hypre_CSRMatrixNumCols(domain_structure);
-   HYPRE_Int *i_domain_dof = hypre_CSRMatrixI(domain_structure);
-   HYPRE_Int *j_domain_dof = hypre_CSRMatrixJ(domain_structure);
-   HYPRE_Real *domain_matrixinverse = hypre_CSRMatrixData(domain_structure);
-   HYPRE_Int *A_boundary_i;
-   HYPRE_Int *A_boundary_j;
-   HYPRE_Real *A_boundary_data;
-   HYPRE_Int num_variables;
-   HYPRE_Int num_cols_offd;
+   NALU_HYPRE_Int num_domains = hypre_CSRMatrixNumRows(domain_structure);
+   NALU_HYPRE_Int max_domain_size = hypre_CSRMatrixNumCols(domain_structure);
+   NALU_HYPRE_Int *i_domain_dof = hypre_CSRMatrixI(domain_structure);
+   NALU_HYPRE_Int *j_domain_dof = hypre_CSRMatrixJ(domain_structure);
+   NALU_HYPRE_Real *domain_matrixinverse = hypre_CSRMatrixData(domain_structure);
+   NALU_HYPRE_Int *A_boundary_i;
+   NALU_HYPRE_Int *A_boundary_j;
+   NALU_HYPRE_Real *A_boundary_data;
+   NALU_HYPRE_Int num_variables;
+   NALU_HYPRE_Int num_cols_offd;
 
-   HYPRE_Int piv_counter = 0;
-   HYPRE_Int one = 1;
+   NALU_HYPRE_Int piv_counter = 0;
+   NALU_HYPRE_Int one = 1;
    char uplo = 'L';
 
-   HYPRE_Int jj, i, j, k, j_loc, k_loc;
-   HYPRE_Int index;
+   NALU_HYPRE_Int jj, i, j, k, j_loc, k_loc;
+   NALU_HYPRE_Int index;
 
-   HYPRE_Int matrix_size, matrix_size_counter = 0;
+   NALU_HYPRE_Int matrix_size, matrix_size_counter = 0;
 
-   HYPRE_Int num_procs;
+   NALU_HYPRE_Int num_procs;
 
    hypre_MPI_Comm_size(comm, &num_procs);
 
@@ -450,7 +450,7 @@ HYPRE_Int hypre_ParMPSchwarzSolve(hypre_ParCSRMatrix *par_A,
       A_boundary_j = hypre_CSRMatrixJ(A_boundary);
       A_boundary_data = hypre_CSRMatrixData(A_boundary);
    }
-   aux = hypre_CTAlloc(HYPRE_Real,  max_domain_size, HYPRE_MEMORY_HOST);
+   aux = hypre_CTAlloc(NALU_HYPRE_Real,  max_domain_size, NALU_HYPRE_MEMORY_HOST);
 
    hypre_ParVectorCopy(rhs_vector, Vtemp);
    hypre_ParCSRMatrixMatvec(-1.0, par_A, par_x, 1.0, Vtemp);
@@ -461,10 +461,10 @@ HYPRE_Int hypre_ParMPSchwarzSolve(hypre_ParCSRMatrix *par_A,
       send_map_starts = hypre_ParCSRCommPkgSendMapStarts(comm_pkg);
       send_map_elmts = hypre_ParCSRCommPkgSendMapElmts(comm_pkg);
 
-      buf_data = hypre_CTAlloc(HYPRE_Real,  send_map_starts[num_sends], HYPRE_MEMORY_HOST);
-      x_ext = hypre_CTAlloc(HYPRE_Real,  num_cols_offd, HYPRE_MEMORY_HOST);
-      x_ext_old = hypre_CTAlloc(HYPRE_Real,  num_cols_offd, HYPRE_MEMORY_HOST);
-      rhs_ext = hypre_CTAlloc(HYPRE_Real,  num_cols_offd, HYPRE_MEMORY_HOST);
+      buf_data = hypre_CTAlloc(NALU_HYPRE_Real,  send_map_starts[num_sends], NALU_HYPRE_MEMORY_HOST);
+      x_ext = hypre_CTAlloc(NALU_HYPRE_Real,  num_cols_offd, NALU_HYPRE_MEMORY_HOST);
+      x_ext_old = hypre_CTAlloc(NALU_HYPRE_Real,  num_cols_offd, NALU_HYPRE_MEMORY_HOST);
+      rhs_ext = hypre_CTAlloc(NALU_HYPRE_Real,  num_cols_offd, NALU_HYPRE_MEMORY_HOST);
 
       index = 0;
       for (i = 0; i < num_sends; i++)
@@ -570,7 +570,7 @@ HYPRE_Int hypre_ParMPSchwarzSolve(hypre_ParCSRMatrix *par_A,
                       &matrix_size, aux,
                       &matrix_size, &ierr);
       }
-      if (ierr) { hypre_error(HYPRE_ERROR_GENERIC); }
+      if (ierr) { hypre_error(NALU_HYPRE_ERROR_GENERIC); }
       jj = 0;
       for (j = i_domain_dof[i]; j < i_domain_dof[i + 1]; j++)
       {
@@ -713,7 +713,7 @@ HYPRE_Int hypre_ParMPSchwarzSolve(hypre_ParCSRMatrix *par_A,
                       &matrix_size, &ierr);
       }
 
-      if (ierr) { hypre_error(HYPRE_ERROR_GENERIC); }
+      if (ierr) { hypre_error(NALU_HYPRE_ERROR_GENERIC); }
       jj = 0;
       for (j = i_domain_dof[i]; j < i_domain_dof[i + 1]; j++)
       {
@@ -750,56 +750,56 @@ HYPRE_Int hypre_ParMPSchwarzSolve(hypre_ParCSRMatrix *par_A,
          }
       }
 
-      hypre_TFree(buf_data, HYPRE_MEMORY_HOST);
-      hypre_TFree(x_ext, HYPRE_MEMORY_HOST);
-      hypre_TFree(x_ext_old, HYPRE_MEMORY_HOST);
-      hypre_TFree(rhs_ext, HYPRE_MEMORY_HOST);
+      hypre_TFree(buf_data, NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(x_ext, NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(x_ext_old, NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(rhs_ext, NALU_HYPRE_MEMORY_HOST);
    }
    for (i = 0; i < num_variables; i++)
    {
       x[i] *= scale[i];
    }
 
-   hypre_TFree(aux, HYPRE_MEMORY_HOST);
+   hypre_TFree(aux, NALU_HYPRE_MEMORY_HOST);
 
    return hypre_error_flag;
 
 }
 
-HYPRE_Int hypre_MPSchwarzSolve(hypre_ParCSRMatrix *par_A,
+NALU_HYPRE_Int hypre_MPSchwarzSolve(hypre_ParCSRMatrix *par_A,
                                hypre_Vector *rhs_vector,
                                hypre_CSRMatrix *domain_structure,
                                hypre_ParVector *par_x,
-                               HYPRE_Real relax_wt,
-                               hypre_Vector *aux_vector, HYPRE_Int *pivots,
-                               HYPRE_Int use_nonsymm)
+                               NALU_HYPRE_Real relax_wt,
+                               hypre_Vector *aux_vector, NALU_HYPRE_Int *pivots,
+                               NALU_HYPRE_Int use_nonsymm)
 {
-   HYPRE_Int ierr = 0;
-   /* HYPRE_Int num_dofs; */
-   HYPRE_Int *i_dof_dof;
-   HYPRE_Int *j_dof_dof;
-   HYPRE_Real *a_dof_dof;
-   HYPRE_Real *x;
+   NALU_HYPRE_Int ierr = 0;
+   /* NALU_HYPRE_Int num_dofs; */
+   NALU_HYPRE_Int *i_dof_dof;
+   NALU_HYPRE_Int *j_dof_dof;
+   NALU_HYPRE_Real *a_dof_dof;
+   NALU_HYPRE_Real *x;
    hypre_Vector *rhs;
-   HYPRE_Real *aux;
+   NALU_HYPRE_Real *aux;
    hypre_CSRMatrix *A;
    hypre_Vector *x_vector;
    MPI_Comm comm = hypre_ParCSRMatrixComm(par_A);
-   HYPRE_Int num_domains = hypre_CSRMatrixNumRows(domain_structure);
-   HYPRE_Int *i_domain_dof = hypre_CSRMatrixI(domain_structure);
-   HYPRE_Int *j_domain_dof = hypre_CSRMatrixJ(domain_structure);
-   HYPRE_Real *domain_matrixinverse = hypre_CSRMatrixData(domain_structure);
+   NALU_HYPRE_Int num_domains = hypre_CSRMatrixNumRows(domain_structure);
+   NALU_HYPRE_Int *i_domain_dof = hypre_CSRMatrixI(domain_structure);
+   NALU_HYPRE_Int *j_domain_dof = hypre_CSRMatrixJ(domain_structure);
+   NALU_HYPRE_Real *domain_matrixinverse = hypre_CSRMatrixData(domain_structure);
 
-   HYPRE_Int piv_counter = 0;
-   HYPRE_Int one = 1;
+   NALU_HYPRE_Int piv_counter = 0;
+   NALU_HYPRE_Int one = 1;
    char uplo = 'L';
 
-   HYPRE_Int jj, i, j, k; /*, j_loc, k_loc;*/
+   NALU_HYPRE_Int jj, i, j, k; /*, j_loc, k_loc;*/
 
 
-   HYPRE_Int matrix_size, matrix_size_counter = 0;
+   NALU_HYPRE_Int matrix_size, matrix_size_counter = 0;
 
-   HYPRE_Int num_procs;
+   NALU_HYPRE_Int num_procs;
 
    hypre_MPI_Comm_size(comm, &num_procs);
 
@@ -866,7 +866,7 @@ HYPRE_Int hypre_MPSchwarzSolve(hypre_ParCSRMatrix *par_A,
                       &matrix_size, &ierr);
       }
 
-      if (ierr) { hypre_error(HYPRE_ERROR_GENERIC); }
+      if (ierr) { hypre_error(NALU_HYPRE_ERROR_GENERIC); }
       jj = 0;
       for (j = i_domain_dof[i]; j < i_domain_dof[i + 1]; j++)
       {
@@ -914,7 +914,7 @@ HYPRE_Int hypre_MPSchwarzSolve(hypre_ParCSRMatrix *par_A,
                       &matrix_size, &ierr);
       }
 
-      if (ierr) { hypre_error(HYPRE_ERROR_GENERIC); }
+      if (ierr) { hypre_error(NALU_HYPRE_ERROR_GENERIC); }
       jj = 0;
       for (j = i_domain_dof[i]; j < i_domain_dof[i + 1]; j++)
       {
@@ -930,40 +930,40 @@ HYPRE_Int hypre_MPSchwarzSolve(hypre_ParCSRMatrix *par_A,
    return hypre_error_flag;
 }
 
-HYPRE_Int hypre_MPSchwarzCFSolve(hypre_ParCSRMatrix *par_A,
+NALU_HYPRE_Int hypre_MPSchwarzCFSolve(hypre_ParCSRMatrix *par_A,
                                  hypre_Vector *rhs_vector,
                                  hypre_CSRMatrix *domain_structure,
                                  hypre_ParVector *par_x,
-                                 HYPRE_Real relax_wt,
+                                 NALU_HYPRE_Real relax_wt,
                                  hypre_Vector *aux_vector,
-                                 HYPRE_Int *CF_marker,
-                                 HYPRE_Int rlx_pt, HYPRE_Int *pivots,
-                                 HYPRE_Int use_nonsymm)
+                                 NALU_HYPRE_Int *CF_marker,
+                                 NALU_HYPRE_Int rlx_pt, NALU_HYPRE_Int *pivots,
+                                 NALU_HYPRE_Int use_nonsymm)
 {
-   HYPRE_Int ierr = 0;
-   /* HYPRE_Int num_dofs; */
-   HYPRE_Int *i_dof_dof;
-   HYPRE_Int *j_dof_dof;
-   HYPRE_Real *a_dof_dof;
-   HYPRE_Real *x;
+   NALU_HYPRE_Int ierr = 0;
+   /* NALU_HYPRE_Int num_dofs; */
+   NALU_HYPRE_Int *i_dof_dof;
+   NALU_HYPRE_Int *j_dof_dof;
+   NALU_HYPRE_Real *a_dof_dof;
+   NALU_HYPRE_Real *x;
    hypre_Vector *rhs;
-   HYPRE_Real *aux;
+   NALU_HYPRE_Real *aux;
    hypre_CSRMatrix *A;
    hypre_Vector *x_vector;
    MPI_Comm comm = hypre_ParCSRMatrixComm(par_A);
-   HYPRE_Int num_domains = hypre_CSRMatrixNumRows(domain_structure);
-   HYPRE_Int *i_domain_dof = hypre_CSRMatrixI(domain_structure);
-   HYPRE_Int *j_domain_dof = hypre_CSRMatrixJ(domain_structure);
-   HYPRE_Real *domain_matrixinverse = hypre_CSRMatrixData(domain_structure);
+   NALU_HYPRE_Int num_domains = hypre_CSRMatrixNumRows(domain_structure);
+   NALU_HYPRE_Int *i_domain_dof = hypre_CSRMatrixI(domain_structure);
+   NALU_HYPRE_Int *j_domain_dof = hypre_CSRMatrixJ(domain_structure);
+   NALU_HYPRE_Real *domain_matrixinverse = hypre_CSRMatrixData(domain_structure);
 
-   HYPRE_Int piv_counter = 0;
-   HYPRE_Int one = 1;
+   NALU_HYPRE_Int piv_counter = 0;
+   NALU_HYPRE_Int one = 1;
    char uplo = 'L';
-   HYPRE_Int jj, i, j, k; /*, j_loc, k_loc;*/
+   NALU_HYPRE_Int jj, i, j, k; /*, j_loc, k_loc;*/
 
-   HYPRE_Int matrix_size, matrix_size_counter = 0;
+   NALU_HYPRE_Int matrix_size, matrix_size_counter = 0;
 
-   HYPRE_Int num_procs;
+   NALU_HYPRE_Int num_procs;
 
    hypre_MPI_Comm_size(comm, &num_procs);
 
@@ -1034,7 +1034,7 @@ HYPRE_Int hypre_MPSchwarzCFSolve(hypre_ParCSRMatrix *par_A,
                          &matrix_size, &ierr);
          }
 
-         if (ierr) { hypre_error(HYPRE_ERROR_GENERIC); }
+         if (ierr) { hypre_error(NALU_HYPRE_ERROR_GENERIC); }
          jj = 0;
          for (j = i_domain_dof[i]; j < i_domain_dof[i + 1]; j++)
          {
@@ -1086,7 +1086,7 @@ HYPRE_Int hypre_MPSchwarzCFSolve(hypre_ParCSRMatrix *par_A,
                          &matrix_size, &ierr);
          }
 
-         if (ierr) { hypre_error(HYPRE_ERROR_GENERIC); }
+         if (ierr) { hypre_error(NALU_HYPRE_ERROR_GENERIC); }
          jj = 0;
          for (j = i_domain_dof[i]; j < i_domain_dof[i + 1]; j++)
          {
@@ -1103,40 +1103,40 @@ HYPRE_Int hypre_MPSchwarzCFSolve(hypre_ParCSRMatrix *par_A,
    return hypre_error_flag;
 }
 
-HYPRE_Int hypre_MPSchwarzFWSolve(hypre_ParCSRMatrix *par_A,
+NALU_HYPRE_Int hypre_MPSchwarzFWSolve(hypre_ParCSRMatrix *par_A,
                                  hypre_Vector *rhs_vector,
                                  hypre_CSRMatrix *domain_structure,
                                  hypre_ParVector *par_x,
-                                 HYPRE_Real relax_wt,
-                                 hypre_Vector *aux_vector, HYPRE_Int *pivots,
-                                 HYPRE_Int use_nonsymm)
+                                 NALU_HYPRE_Real relax_wt,
+                                 hypre_Vector *aux_vector, NALU_HYPRE_Int *pivots,
+                                 NALU_HYPRE_Int use_nonsymm)
 {
-   HYPRE_Int ierr = 0;
-   /* HYPRE_Int num_dofs; */
-   HYPRE_Int *i_dof_dof;
-   HYPRE_Int *j_dof_dof;
-   HYPRE_Real *a_dof_dof;
-   HYPRE_Real *x;
+   NALU_HYPRE_Int ierr = 0;
+   /* NALU_HYPRE_Int num_dofs; */
+   NALU_HYPRE_Int *i_dof_dof;
+   NALU_HYPRE_Int *j_dof_dof;
+   NALU_HYPRE_Real *a_dof_dof;
+   NALU_HYPRE_Real *x;
    hypre_Vector *rhs;
-   HYPRE_Real *aux;
+   NALU_HYPRE_Real *aux;
    hypre_CSRMatrix *A;
    hypre_Vector *x_vector;
    MPI_Comm comm = hypre_ParCSRMatrixComm(par_A);
-   HYPRE_Int num_domains = hypre_CSRMatrixNumRows(domain_structure);
-   HYPRE_Int *i_domain_dof = hypre_CSRMatrixI(domain_structure);
-   HYPRE_Int *j_domain_dof = hypre_CSRMatrixJ(domain_structure);
-   HYPRE_Real *domain_matrixinverse = hypre_CSRMatrixData(domain_structure);
+   NALU_HYPRE_Int num_domains = hypre_CSRMatrixNumRows(domain_structure);
+   NALU_HYPRE_Int *i_domain_dof = hypre_CSRMatrixI(domain_structure);
+   NALU_HYPRE_Int *j_domain_dof = hypre_CSRMatrixJ(domain_structure);
+   NALU_HYPRE_Real *domain_matrixinverse = hypre_CSRMatrixData(domain_structure);
 
 
-   HYPRE_Int piv_counter = 0;
-   HYPRE_Int one = 1;
+   NALU_HYPRE_Int piv_counter = 0;
+   NALU_HYPRE_Int one = 1;
    char uplo = 'L';
-   HYPRE_Int jj, i, j, k; /*, j_loc, k_loc;*/
+   NALU_HYPRE_Int jj, i, j, k; /*, j_loc, k_loc;*/
 
 
-   HYPRE_Int matrix_size, matrix_size_counter = 0;
+   NALU_HYPRE_Int matrix_size, matrix_size_counter = 0;
 
-   HYPRE_Int num_procs;
+   NALU_HYPRE_Int num_procs;
 
    hypre_MPI_Comm_size(comm, &num_procs);
 
@@ -1198,7 +1198,7 @@ HYPRE_Int hypre_MPSchwarzFWSolve(hypre_ParCSRMatrix *par_A,
       }
 
 
-      if (ierr) { hypre_error(HYPRE_ERROR_GENERIC); }
+      if (ierr) { hypre_error(NALU_HYPRE_ERROR_GENERIC); }
       jj = 0;
       for (j = i_domain_dof[i]; j < i_domain_dof[i + 1]; j++)
       {
@@ -1216,42 +1216,42 @@ HYPRE_Int hypre_MPSchwarzFWSolve(hypre_ParCSRMatrix *par_A,
    return hypre_error_flag;
 }
 
-HYPRE_Int hypre_MPSchwarzCFFWSolve(hypre_ParCSRMatrix *par_A,
+NALU_HYPRE_Int hypre_MPSchwarzCFFWSolve(hypre_ParCSRMatrix *par_A,
                                    hypre_Vector *rhs_vector,
                                    hypre_CSRMatrix *domain_structure,
                                    hypre_ParVector *par_x,
-                                   HYPRE_Real relax_wt,
+                                   NALU_HYPRE_Real relax_wt,
                                    hypre_Vector *aux_vector,
-                                   HYPRE_Int *CF_marker,
-                                   HYPRE_Int rlx_pt, HYPRE_Int *pivots,
-                                   HYPRE_Int use_nonsymm)
+                                   NALU_HYPRE_Int *CF_marker,
+                                   NALU_HYPRE_Int rlx_pt, NALU_HYPRE_Int *pivots,
+                                   NALU_HYPRE_Int use_nonsymm)
 {
-   HYPRE_Int ierr = 0;
-   /* HYPRE_Int num_dofs; */
-   HYPRE_Int *i_dof_dof;
-   HYPRE_Int *j_dof_dof;
-   HYPRE_Real *a_dof_dof;
-   HYPRE_Real *x;
+   NALU_HYPRE_Int ierr = 0;
+   /* NALU_HYPRE_Int num_dofs; */
+   NALU_HYPRE_Int *i_dof_dof;
+   NALU_HYPRE_Int *j_dof_dof;
+   NALU_HYPRE_Real *a_dof_dof;
+   NALU_HYPRE_Real *x;
    hypre_Vector *rhs;
-   HYPRE_Real *aux;
+   NALU_HYPRE_Real *aux;
    hypre_CSRMatrix *A;
    hypre_Vector *x_vector;
    MPI_Comm comm = hypre_ParCSRMatrixComm(par_A);
-   HYPRE_Int num_domains = hypre_CSRMatrixNumRows(domain_structure);
-   HYPRE_Int *i_domain_dof = hypre_CSRMatrixI(domain_structure);
-   HYPRE_Int *j_domain_dof = hypre_CSRMatrixJ(domain_structure);
-   HYPRE_Real *domain_matrixinverse = hypre_CSRMatrixData(domain_structure);
+   NALU_HYPRE_Int num_domains = hypre_CSRMatrixNumRows(domain_structure);
+   NALU_HYPRE_Int *i_domain_dof = hypre_CSRMatrixI(domain_structure);
+   NALU_HYPRE_Int *j_domain_dof = hypre_CSRMatrixJ(domain_structure);
+   NALU_HYPRE_Real *domain_matrixinverse = hypre_CSRMatrixData(domain_structure);
 
-   HYPRE_Int piv_counter = 0;
-   HYPRE_Int one = 1;
+   NALU_HYPRE_Int piv_counter = 0;
+   NALU_HYPRE_Int one = 1;
 
    char uplo = 'L';
-   HYPRE_Int jj, i, j, k; /*, j_loc, k_loc;*/
+   NALU_HYPRE_Int jj, i, j, k; /*, j_loc, k_loc;*/
 
 
-   HYPRE_Int matrix_size, matrix_size_counter = 0;
+   NALU_HYPRE_Int matrix_size, matrix_size_counter = 0;
 
-   HYPRE_Int num_procs;
+   NALU_HYPRE_Int num_procs;
 
    hypre_MPI_Comm_size(comm, &num_procs);
 
@@ -1323,7 +1323,7 @@ HYPRE_Int hypre_MPSchwarzCFFWSolve(hypre_ParCSRMatrix *par_A,
                          &matrix_size, &ierr);
          }
 
-         if (ierr) { hypre_error(HYPRE_ERROR_GENERIC); }
+         if (ierr) { hypre_error(NALU_HYPRE_ERROR_GENERIC); }
          jj = 0;
          for (j = i_domain_dof[i]; j < i_domain_dof[i + 1]; j++)
          {
@@ -1342,23 +1342,23 @@ HYPRE_Int hypre_MPSchwarzCFFWSolve(hypre_ParCSRMatrix *par_A,
    return hypre_error_flag;
 }
 
-HYPRE_Int
-transpose_matrix_create(  HYPRE_Int **i_face_element_pointer,
-                          HYPRE_Int **j_face_element_pointer,
-                          HYPRE_Int *i_element_face, HYPRE_Int *j_element_face,
-                          HYPRE_Int num_elements, HYPRE_Int num_faces)
+NALU_HYPRE_Int
+transpose_matrix_create(  NALU_HYPRE_Int **i_face_element_pointer,
+                          NALU_HYPRE_Int **j_face_element_pointer,
+                          NALU_HYPRE_Int *i_element_face, NALU_HYPRE_Int *j_element_face,
+                          NALU_HYPRE_Int num_elements, NALU_HYPRE_Int num_faces)
 {
    /* FILE *f; */
-   HYPRE_Int i, j;
+   NALU_HYPRE_Int i, j;
 
-   HYPRE_Int *i_face_element, *j_face_element;
+   NALU_HYPRE_Int *i_face_element, *j_face_element;
 
    /* ======================================================================
       first create face_element graph: -------------------------------------
       ====================================================================== */
 
-   i_face_element = hypre_TAlloc(HYPRE_Int, (num_faces + 1), HYPRE_MEMORY_HOST);
-   j_face_element = hypre_TAlloc(HYPRE_Int, i_element_face[num_elements], HYPRE_MEMORY_HOST);
+   i_face_element = hypre_TAlloc(NALU_HYPRE_Int, (num_faces + 1), NALU_HYPRE_MEMORY_HOST);
+   j_face_element = hypre_TAlloc(NALU_HYPRE_Int, i_element_face[num_elements], NALU_HYPRE_MEMORY_HOST);
 
 
    for (i = 0; i < num_faces; i++)
@@ -1403,25 +1403,25 @@ transpose_matrix_create(  HYPRE_Int **i_face_element_pointer,
    return 0;
 
 }
-HYPRE_Int
-matrix_matrix_product(    HYPRE_Int **i_element_edge_pointer,
-                          HYPRE_Int **j_element_edge_pointer,
-                          HYPRE_Int *i_element_face, HYPRE_Int *j_element_face,
-                          HYPRE_Int *i_face_edge, HYPRE_Int *j_face_edge,
-                          HYPRE_Int num_elements, HYPRE_Int num_faces, HYPRE_Int num_edges)
+NALU_HYPRE_Int
+matrix_matrix_product(    NALU_HYPRE_Int **i_element_edge_pointer,
+                          NALU_HYPRE_Int **j_element_edge_pointer,
+                          NALU_HYPRE_Int *i_element_face, NALU_HYPRE_Int *j_element_face,
+                          NALU_HYPRE_Int *i_face_edge, NALU_HYPRE_Int *j_face_edge,
+                          NALU_HYPRE_Int num_elements, NALU_HYPRE_Int num_faces, NALU_HYPRE_Int num_edges)
 {
    /* FILE *f; */
-   HYPRE_Int i, j, k, l, m;
+   NALU_HYPRE_Int i, j, k, l, m;
 
-   HYPRE_Int i_edge_on_local_list, i_edge_on_list;
-   HYPRE_Int local_element_edge_counter = 0, element_edge_counter = 0;
-   HYPRE_Int *j_local_element_edge;
+   NALU_HYPRE_Int i_edge_on_local_list, i_edge_on_list;
+   NALU_HYPRE_Int local_element_edge_counter = 0, element_edge_counter = 0;
+   NALU_HYPRE_Int *j_local_element_edge;
 
-   HYPRE_Int *i_element_edge, *j_element_edge;
+   NALU_HYPRE_Int *i_element_edge, *j_element_edge;
 
-   j_local_element_edge = hypre_TAlloc(HYPRE_Int, (num_edges + 1), HYPRE_MEMORY_HOST);
+   j_local_element_edge = hypre_TAlloc(NALU_HYPRE_Int, (num_edges + 1), NALU_HYPRE_MEMORY_HOST);
 
-   i_element_edge = hypre_TAlloc(HYPRE_Int, (num_elements + 1), HYPRE_MEMORY_HOST);
+   i_element_edge = hypre_TAlloc(NALU_HYPRE_Int, (num_elements + 1), NALU_HYPRE_MEMORY_HOST);
 
    for (i = 0; i < num_elements + 1; i++)
    {
@@ -1461,7 +1461,7 @@ matrix_matrix_product(    HYPRE_Int **i_element_edge_pointer,
       }
    }
 
-   hypre_TFree(j_local_element_edge, HYPRE_MEMORY_HOST);
+   hypre_TFree(j_local_element_edge, NALU_HYPRE_MEMORY_HOST);
 
    for (i = 0; i < num_elements; i++)
    {
@@ -1475,8 +1475,8 @@ matrix_matrix_product(    HYPRE_Int **i_element_edge_pointer,
 
    i_element_edge[0] = 0;
 
-   j_element_edge = hypre_TAlloc(HYPRE_Int, i_element_edge[num_elements]
-                                 , HYPRE_MEMORY_HOST);
+   j_element_edge = hypre_TAlloc(NALU_HYPRE_Int, i_element_edge[num_elements]
+                                 , NALU_HYPRE_MEMORY_HOST);
 
    /* fill--in the actual j_element_edge array: --------------------- */
 
@@ -1505,7 +1505,7 @@ matrix_matrix_product(    HYPRE_Int **i_element_edge_pointer,
                if (element_edge_counter >=
                    i_element_edge[num_elements])
                {
-                  hypre_error_w_msg(HYPRE_ERROR_GENERIC, "error in j_element_edge size: \n");
+                  hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "error in j_element_edge size: \n");
                   break;
                }
 
@@ -1557,49 +1557,49 @@ matrix_matrix_product(    HYPRE_Int **i_element_edge_pointer,
  *             in AMG);
  *
  *****************************************************************************/
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_AMGCreateDomainDof(hypre_CSRMatrix     *A,
-                         HYPRE_Int domain_type, HYPRE_Int overlap,
-                         HYPRE_Int num_functions, HYPRE_Int *dof_func,
+                         NALU_HYPRE_Int domain_type, NALU_HYPRE_Int overlap,
+                         NALU_HYPRE_Int num_functions, NALU_HYPRE_Int *dof_func,
                          hypre_CSRMatrix    **domain_structure_pointer,
-                         HYPRE_Int **piv_pointer, HYPRE_Int use_nonsymm)
+                         NALU_HYPRE_Int **piv_pointer, NALU_HYPRE_Int use_nonsymm)
 {
 
-   HYPRE_Int *i_domain_dof, *j_domain_dof;
-   HYPRE_Real *domain_matrixinverse;
-   HYPRE_Int num_domains;
+   NALU_HYPRE_Int *i_domain_dof, *j_domain_dof;
+   NALU_HYPRE_Real *domain_matrixinverse;
+   NALU_HYPRE_Int num_domains;
    hypre_CSRMatrix *domain_structure = NULL;
 
-   HYPRE_Int *i_dof_dof = hypre_CSRMatrixI(A);
-   HYPRE_Int *j_dof_dof = hypre_CSRMatrixJ(A);
-   HYPRE_Real *a_dof_dof = hypre_CSRMatrixData(A);
-   HYPRE_Int num_dofs = hypre_CSRMatrixNumRows(A);
+   NALU_HYPRE_Int *i_dof_dof = hypre_CSRMatrixI(A);
+   NALU_HYPRE_Int *j_dof_dof = hypre_CSRMatrixJ(A);
+   NALU_HYPRE_Real *a_dof_dof = hypre_CSRMatrixData(A);
+   NALU_HYPRE_Int num_dofs = hypre_CSRMatrixNumRows(A);
 
-   /* HYPRE_Int *i_dof_to_accept_weight; */
-   HYPRE_Int *i_dof_to_prefer_weight,
+   /* NALU_HYPRE_Int *i_dof_to_accept_weight; */
+   NALU_HYPRE_Int *i_dof_to_prefer_weight,
              *w_dof_dof, *i_dof_weight;
-   HYPRE_Int *i_dof_to_aggregate, *i_aggregate_dof, *j_aggregate_dof;
+   NALU_HYPRE_Int *i_dof_to_aggregate, *i_aggregate_dof, *j_aggregate_dof;
 
-   HYPRE_Int *i_dof_index;
+   NALU_HYPRE_Int *i_dof_index;
 
-   HYPRE_Int ierr = 0;
-   HYPRE_Int i, j, k,  l_loc, i_loc, j_loc;
-   HYPRE_Int i_dof;
-   HYPRE_Int *i_local_to_global;
-   HYPRE_Int *i_global_to_local;
+   NALU_HYPRE_Int ierr = 0;
+   NALU_HYPRE_Int i, j, k,  l_loc, i_loc, j_loc;
+   NALU_HYPRE_Int i_dof;
+   NALU_HYPRE_Int *i_local_to_global;
+   NALU_HYPRE_Int *i_global_to_local;
 
-   HYPRE_Int local_dof_counter, max_local_dof_counter = 0;
+   NALU_HYPRE_Int local_dof_counter, max_local_dof_counter = 0;
 
-   HYPRE_Int domain_dof_counter = 0, domain_matrixinverse_counter = 0;
-   HYPRE_Int nf;
+   NALU_HYPRE_Int domain_dof_counter = 0, domain_matrixinverse_counter = 0;
+   NALU_HYPRE_Int nf;
 
-   HYPRE_Real *AE;
+   NALU_HYPRE_Real *AE;
 
-   HYPRE_Int piv_counter = 0;
-   HYPRE_Int *ipiv;
-   HYPRE_Int *piv = NULL;
+   NALU_HYPRE_Int piv_counter = 0;
+   NALU_HYPRE_Int *ipiv;
+   NALU_HYPRE_Int *piv = NULL;
    char uplo = 'L';
-   HYPRE_Int cnt;
+   NALU_HYPRE_Int cnt;
 
    /* --------------------------------------------------------------------- */
 
@@ -1619,14 +1619,14 @@ hypre_AMGCreateDomainDof(hypre_CSRMatrix     *A,
       return hypre_error_flag;
    }
 
-   i_aggregate_dof = hypre_CTAlloc(HYPRE_Int, num_dofs + 1, HYPRE_MEMORY_HOST);
-   j_aggregate_dof = hypre_CTAlloc(HYPRE_Int, num_dofs, HYPRE_MEMORY_HOST);
+   i_aggregate_dof = hypre_CTAlloc(NALU_HYPRE_Int, num_dofs + 1, NALU_HYPRE_MEMORY_HOST);
+   j_aggregate_dof = hypre_CTAlloc(NALU_HYPRE_Int, num_dofs, NALU_HYPRE_MEMORY_HOST);
 
    if (domain_type == 2)
    {
-      i_dof_to_prefer_weight = hypre_CTAlloc(HYPRE_Int, num_dofs, HYPRE_MEMORY_HOST);
-      w_dof_dof = hypre_CTAlloc(HYPRE_Int, i_dof_dof[num_dofs], HYPRE_MEMORY_HOST);
-      i_dof_weight = hypre_CTAlloc(HYPRE_Int, num_dofs, HYPRE_MEMORY_HOST);
+      i_dof_to_prefer_weight = hypre_CTAlloc(NALU_HYPRE_Int, num_dofs, NALU_HYPRE_MEMORY_HOST);
+      w_dof_dof = hypre_CTAlloc(NALU_HYPRE_Int, i_dof_dof[num_dofs], NALU_HYPRE_MEMORY_HOST);
+      i_dof_weight = hypre_CTAlloc(NALU_HYPRE_Int, num_dofs, NALU_HYPRE_MEMORY_HOST);
 
       for (i = 0; i < num_dofs; i++)
          for (j = i_dof_dof[i]; j < i_dof_dof[i + 1]; j++)
@@ -1652,9 +1652,9 @@ hypre_AMGCreateDomainDof(hypre_CSRMatrix     *A,
                             num_dofs, num_dofs,
                             &num_domains);
 
-      hypre_TFree(i_dof_to_prefer_weight, HYPRE_MEMORY_HOST);
-      hypre_TFree(i_dof_weight, HYPRE_MEMORY_HOST);
-      hypre_TFree(w_dof_dof, HYPRE_MEMORY_HOST);
+      hypre_TFree(i_dof_to_prefer_weight, NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(i_dof_weight, NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(w_dof_dof, NALU_HYPRE_MEMORY_HOST);
    }
    else
    {
@@ -1694,16 +1694,16 @@ hypre_AMGCreateDomainDof(hypre_CSRMatrix     *A,
 
    if (overlap == 1)
    {
-      i_domain_dof = hypre_CTAlloc(HYPRE_Int,  num_domains + 1, HYPRE_MEMORY_HOST);
+      i_domain_dof = hypre_CTAlloc(NALU_HYPRE_Int,  num_domains + 1, NALU_HYPRE_MEMORY_HOST);
 
-      i_dof_index = hypre_CTAlloc(HYPRE_Int,  num_dofs, HYPRE_MEMORY_HOST);
+      i_dof_index = hypre_CTAlloc(NALU_HYPRE_Int,  num_dofs, NALU_HYPRE_MEMORY_HOST);
 
       for (i = 0; i < num_dofs; i++)
       {
          i_dof_index[i] = -1;
       }
 
-      i_dof_to_aggregate = hypre_CTAlloc(HYPRE_Int,  num_dofs, HYPRE_MEMORY_HOST);
+      i_dof_to_aggregate = hypre_CTAlloc(NALU_HYPRE_Int,  num_dofs, NALU_HYPRE_MEMORY_HOST);
       for (i = 0; i < num_domains; i++)
          for (j = i_aggregate_dof[i]; j < i_aggregate_dof[i + 1]; j++)
          {
@@ -1731,7 +1731,7 @@ hypre_AMGCreateDomainDof(hypre_CSRMatrix     *A,
       }
 
       i_domain_dof[num_domains] =  domain_dof_counter;
-      j_domain_dof = hypre_CTAlloc(HYPRE_Int, domain_dof_counter, HYPRE_MEMORY_HOST);
+      j_domain_dof = hypre_CTAlloc(NALU_HYPRE_Int, domain_dof_counter, NALU_HYPRE_MEMORY_HOST);
 
       for (i = 0; i < num_dofs; i++)
       {
@@ -1758,16 +1758,16 @@ hypre_AMGCreateDomainDof(hypre_CSRMatrix     *A,
                }
       }
 
-      hypre_TFree(i_aggregate_dof, HYPRE_MEMORY_HOST);
-      hypre_TFree(j_aggregate_dof, HYPRE_MEMORY_HOST);
-      hypre_TFree(i_dof_to_aggregate, HYPRE_MEMORY_HOST);
-      hypre_TFree(i_dof_index, HYPRE_MEMORY_HOST);
+      hypre_TFree(i_aggregate_dof, NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(j_aggregate_dof, NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(i_dof_to_aggregate, NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(i_dof_index, NALU_HYPRE_MEMORY_HOST);
    }
    else if (overlap == 2)
    {
-      i_domain_dof = hypre_CTAlloc(HYPRE_Int,  num_domains + 1, HYPRE_MEMORY_HOST);
+      i_domain_dof = hypre_CTAlloc(NALU_HYPRE_Int,  num_domains + 1, NALU_HYPRE_MEMORY_HOST);
 
-      i_dof_index = hypre_CTAlloc(HYPRE_Int,  num_dofs, HYPRE_MEMORY_HOST);
+      i_dof_index = hypre_CTAlloc(NALU_HYPRE_Int,  num_dofs, NALU_HYPRE_MEMORY_HOST);
 
       for (i = 0; i < num_dofs; i++)
       {
@@ -1802,7 +1802,7 @@ hypre_AMGCreateDomainDof(hypre_CSRMatrix     *A,
       }
 
       i_domain_dof[num_domains] =  domain_dof_counter;
-      j_domain_dof = hypre_CTAlloc(HYPRE_Int, domain_dof_counter, HYPRE_MEMORY_HOST);
+      j_domain_dof = hypre_CTAlloc(NALU_HYPRE_Int, domain_dof_counter, NALU_HYPRE_MEMORY_HOST);
 
       domain_dof_counter = 0;
       for (i = 0; i < num_domains; i++)
@@ -1825,9 +1825,9 @@ hypre_AMGCreateDomainDof(hypre_CSRMatrix     *A,
             }
       }
 
-      hypre_TFree(i_aggregate_dof, HYPRE_MEMORY_HOST);
-      hypre_TFree(j_aggregate_dof, HYPRE_MEMORY_HOST);
-      hypre_TFree(i_dof_index, HYPRE_MEMORY_HOST);
+      hypre_TFree(i_aggregate_dof, NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(j_aggregate_dof, NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(i_dof_index, NALU_HYPRE_MEMORY_HOST);
    }
    else
    {
@@ -1853,15 +1853,15 @@ hypre_AMGCreateDomainDof(hypre_CSRMatrix     *A,
       }
    }
 
-   domain_matrixinverse = hypre_CTAlloc(HYPRE_Real,  domain_matrixinverse_counter, HYPRE_MEMORY_HOST);
+   domain_matrixinverse = hypre_CTAlloc(NALU_HYPRE_Real,  domain_matrixinverse_counter, NALU_HYPRE_MEMORY_HOST);
    if (use_nonsymm)
    {
-      piv = hypre_CTAlloc(HYPRE_Int,  piv_counter, HYPRE_MEMORY_HOST);
+      piv = hypre_CTAlloc(NALU_HYPRE_Int,  piv_counter, NALU_HYPRE_MEMORY_HOST);
    }
 
-   i_local_to_global = hypre_CTAlloc(HYPRE_Int,  max_local_dof_counter, HYPRE_MEMORY_HOST);
+   i_local_to_global = hypre_CTAlloc(NALU_HYPRE_Int,  max_local_dof_counter, NALU_HYPRE_MEMORY_HOST);
 
-   i_global_to_local = hypre_CTAlloc(HYPRE_Int, num_dofs, HYPRE_MEMORY_HOST);
+   i_global_to_local = hypre_CTAlloc(NALU_HYPRE_Int, num_dofs, NALU_HYPRE_MEMORY_HOST);
 
    for (i = 0; i < num_dofs; i++)
    {
@@ -1927,13 +1927,13 @@ hypre_AMGCreateDomainDof(hypre_CSRMatrix     *A,
 
    }
 
-   hypre_TFree(i_local_to_global, HYPRE_MEMORY_HOST);
-   hypre_TFree(i_global_to_local, HYPRE_MEMORY_HOST);
+   hypre_TFree(i_local_to_global, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(i_global_to_local, NALU_HYPRE_MEMORY_HOST);
 
    domain_structure = hypre_CSRMatrixCreate(num_domains, max_local_dof_counter,
                                             i_domain_dof[num_domains]);
 
-   hypre_CSRMatrixMemoryLocation(domain_structure) = HYPRE_MEMORY_HOST;
+   hypre_CSRMatrixMemoryLocation(domain_structure) = NALU_HYPRE_MEMORY_HOST;
 
    hypre_CSRMatrixI(domain_structure) = i_domain_dof;
    hypre_CSRMatrixJ(domain_structure) = j_domain_dof;
@@ -1948,33 +1948,33 @@ hypre_AMGCreateDomainDof(hypre_CSRMatrix     *A,
 
 /* unacceptable faces: i_face_to_prefer_weight[] = -1; ------------------*/
 
-HYPRE_Int hypre_AMGeAgglomerate(HYPRE_Int *i_AE_element, HYPRE_Int *j_AE_element,
-                                HYPRE_Int *i_face_face, HYPRE_Int *j_face_face, HYPRE_Int *w_face_face,
-                                HYPRE_Int *i_face_element, HYPRE_Int *j_face_element,
-                                HYPRE_Int *i_element_face, HYPRE_Int *j_element_face,
-                                HYPRE_Int *i_face_to_prefer_weight,
-                                HYPRE_Int *i_face_weight,
-                                HYPRE_Int num_faces, HYPRE_Int num_elements,
-                                HYPRE_Int *num_AEs_pointer)
+NALU_HYPRE_Int hypre_AMGeAgglomerate(NALU_HYPRE_Int *i_AE_element, NALU_HYPRE_Int *j_AE_element,
+                                NALU_HYPRE_Int *i_face_face, NALU_HYPRE_Int *j_face_face, NALU_HYPRE_Int *w_face_face,
+                                NALU_HYPRE_Int *i_face_element, NALU_HYPRE_Int *j_face_element,
+                                NALU_HYPRE_Int *i_element_face, NALU_HYPRE_Int *j_element_face,
+                                NALU_HYPRE_Int *i_face_to_prefer_weight,
+                                NALU_HYPRE_Int *i_face_weight,
+                                NALU_HYPRE_Int num_faces, NALU_HYPRE_Int num_elements,
+                                NALU_HYPRE_Int *num_AEs_pointer)
 {
-   HYPRE_Int ierr = 0;
-   HYPRE_Int i, j, k, l;
+   NALU_HYPRE_Int ierr = 0;
+   NALU_HYPRE_Int i, j, k, l;
 
-   HYPRE_Int face_to_eliminate;
-   HYPRE_Int max_weight_old, max_weight;
+   NALU_HYPRE_Int face_to_eliminate;
+   NALU_HYPRE_Int max_weight_old, max_weight;
 
-   HYPRE_Int AE_counter = 0, AE_element_counter = 0;
+   NALU_HYPRE_Int AE_counter = 0, AE_element_counter = 0;
 
-   /* HYPRE_Int i_element_face_counter; */
+   /* NALU_HYPRE_Int i_element_face_counter; */
 
-   HYPRE_Int *i_element_to_AE;
+   NALU_HYPRE_Int *i_element_to_AE;
 
-   HYPRE_Int *previous, *next, *first;
-   HYPRE_Int head, tail, last;
+   NALU_HYPRE_Int *previous, *next, *first;
+   NALU_HYPRE_Int head, tail, last;
 
-   HYPRE_Int face_max_weight, face_local_max_weight, preferred_weight;
+   NALU_HYPRE_Int face_max_weight, face_local_max_weight, preferred_weight;
 
-   HYPRE_Int weight, weight_max;
+   NALU_HYPRE_Int weight, weight_max;
 
    max_weight = 1;
    for (i = 0; i < num_faces; i++)
@@ -1987,11 +1987,11 @@ HYPRE_Int hypre_AMGeAgglomerate(HYPRE_Int *i_AE_element, HYPRE_Int *j_AE_element
       if (max_weight < weight) { max_weight = weight; }
    }
 
-   first = hypre_CTAlloc(HYPRE_Int,  max_weight + 1, HYPRE_MEMORY_HOST);
+   first = hypre_CTAlloc(NALU_HYPRE_Int,  max_weight + 1, NALU_HYPRE_MEMORY_HOST);
 
-   next = hypre_CTAlloc(HYPRE_Int,  num_faces, HYPRE_MEMORY_HOST);
+   next = hypre_CTAlloc(NALU_HYPRE_Int,  num_faces, NALU_HYPRE_MEMORY_HOST);
 
-   previous = hypre_CTAlloc(HYPRE_Int,  num_faces + 1, HYPRE_MEMORY_HOST);
+   previous = hypre_CTAlloc(NALU_HYPRE_Int,  num_faces + 1, NALU_HYPRE_MEMORY_HOST);
 
    tail = num_faces;
    head = -1;
@@ -2010,7 +2010,7 @@ HYPRE_Int hypre_AMGeAgglomerate(HYPRE_Int *i_AE_element, HYPRE_Int *j_AE_element
       first[weight] = tail;
    }
 
-   i_element_to_AE = hypre_CTAlloc(HYPRE_Int,  num_elements, HYPRE_MEMORY_HOST);
+   i_element_to_AE = hypre_CTAlloc(NALU_HYPRE_Int,  num_elements, NALU_HYPRE_MEMORY_HOST);
 
    /*=======================================================================
      AGGLOMERATION PROCEDURE:
@@ -2099,7 +2099,7 @@ HYPRE_Int hypre_AMGeAgglomerate(HYPRE_Int *i_AE_element, HYPRE_Int *j_AE_element
 
    if (face_max_weight == -1)
    {
-      hypre_error_w_msg(HYPRE_ERROR_GENERIC,
+      hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC,
                         "all faces are unacceptable, i.e., no faces to eliminate !\n");
 
       *num_AEs_pointer = 1;
@@ -2485,22 +2485,22 @@ end_agglomerate:
       if (i_face_to_prefer_weight[i] == -1) { i_face_weight[i] = -1; }
 
 
-   hypre_TFree(i_element_to_AE, HYPRE_MEMORY_HOST);
+   hypre_TFree(i_element_to_AE, NALU_HYPRE_MEMORY_HOST);
 
-   hypre_TFree(previous, HYPRE_MEMORY_HOST);
-   hypre_TFree(next, HYPRE_MEMORY_HOST);
-   hypre_TFree(first, HYPRE_MEMORY_HOST);
+   hypre_TFree(previous, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(next, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(first, NALU_HYPRE_MEMORY_HOST);
 
    return ierr;
 }
 
-HYPRE_Int hypre_update_entry(HYPRE_Int weight, HYPRE_Int *weight_max,
-                             HYPRE_Int *previous, HYPRE_Int *next, HYPRE_Int *first, HYPRE_Int *last,
-                             HYPRE_Int head, HYPRE_Int tail,
-                             HYPRE_Int i)
+NALU_HYPRE_Int hypre_update_entry(NALU_HYPRE_Int weight, NALU_HYPRE_Int *weight_max,
+                             NALU_HYPRE_Int *previous, NALU_HYPRE_Int *next, NALU_HYPRE_Int *first, NALU_HYPRE_Int *last,
+                             NALU_HYPRE_Int head, NALU_HYPRE_Int tail,
+                             NALU_HYPRE_Int i)
 
 {
-   HYPRE_Int weight0;
+   NALU_HYPRE_Int weight0;
 
    if (previous[i] != head) { next[previous[i]] = next[i]; }
    previous[next[i]] = previous[i];
@@ -2553,12 +2553,12 @@ HYPRE_Int hypre_update_entry(HYPRE_Int weight, HYPRE_Int *weight_max,
    return 0;
 }
 
-HYPRE_Int hypre_remove_entry(HYPRE_Int weight, HYPRE_Int *weight_max,
-                             HYPRE_Int *previous, HYPRE_Int *next, HYPRE_Int *first, HYPRE_Int *last,
-                             HYPRE_Int head, HYPRE_Int tail,
-                             HYPRE_Int i)
+NALU_HYPRE_Int hypre_remove_entry(NALU_HYPRE_Int weight, NALU_HYPRE_Int *weight_max,
+                             NALU_HYPRE_Int *previous, NALU_HYPRE_Int *next, NALU_HYPRE_Int *first, NALU_HYPRE_Int *last,
+                             NALU_HYPRE_Int head, NALU_HYPRE_Int tail,
+                             NALU_HYPRE_Int i)
 {
-   HYPRE_Int weight0;
+   NALU_HYPRE_Int weight0;
 
    if (previous[i] != head) { next[previous[i]] = next[i]; }
    previous[next[i]] = previous[i];
@@ -2582,12 +2582,12 @@ HYPRE_Int hypre_remove_entry(HYPRE_Int weight, HYPRE_Int *weight_max,
    return 0;
 }
 
-HYPRE_Int hypre_move_entry(HYPRE_Int weight, HYPRE_Int *weight_max,
-                           HYPRE_Int *previous, HYPRE_Int *next, HYPRE_Int *first, HYPRE_Int *last,
-                           HYPRE_Int head, HYPRE_Int tail,
-                           HYPRE_Int i)
+NALU_HYPRE_Int hypre_move_entry(NALU_HYPRE_Int weight, NALU_HYPRE_Int *weight_max,
+                           NALU_HYPRE_Int *previous, NALU_HYPRE_Int *next, NALU_HYPRE_Int *first, NALU_HYPRE_Int *last,
+                           NALU_HYPRE_Int head, NALU_HYPRE_Int tail,
+                           NALU_HYPRE_Int i)
 {
-   HYPRE_Int  weight0;
+   NALU_HYPRE_Int  weight0;
 
    if (previous[i] != head) { next[previous[i]] = next[i]; }
    previous[next[i]] = previous[i];
@@ -2607,9 +2607,9 @@ HYPRE_Int hypre_move_entry(HYPRE_Int weight, HYPRE_Int *weight_max,
   hypre_matinv:  X <--  A**(-1) ;  A IS POSITIVE DEFINITE (non--symmetric);
   ---------------------------------------------------------------------*/
 
-HYPRE_Int hypre_matinv(HYPRE_Real *x, HYPRE_Real *a, HYPRE_Int k)
+NALU_HYPRE_Int hypre_matinv(NALU_HYPRE_Real *x, NALU_HYPRE_Real *a, NALU_HYPRE_Int k)
 {
-   HYPRE_Int i, j, l, ierr = 0;
+   NALU_HYPRE_Int i, j, l, ierr = 0;
 
    for (i = 0; i < k; i++)
    {
@@ -2673,17 +2673,17 @@ HYPRE_Int hypre_matinv(HYPRE_Real *x, HYPRE_Real *a, HYPRE_Int k)
    return ierr;
 }
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_parCorrRes( hypre_ParCSRMatrix *A,
                   hypre_ParVector    *x,
                   hypre_Vector       *rhs,
                   hypre_Vector      **tmp_ptr )
 {
-   HYPRE_Int i, j, index, start;
-   HYPRE_Int num_sends, num_cols_offd;
-   HYPRE_Int local_size;
-   HYPRE_Real *x_buf_data, *x_tmp_data, *x_local_data;
-   HYPRE_MemoryLocation memory_location = hypre_ParCSRMatrixMemoryLocation(A);
+   NALU_HYPRE_Int i, j, index, start;
+   NALU_HYPRE_Int num_sends, num_cols_offd;
+   NALU_HYPRE_Int local_size;
+   NALU_HYPRE_Real *x_buf_data, *x_tmp_data, *x_local_data;
+   NALU_HYPRE_MemoryLocation memory_location = hypre_ParCSRMatrixMemoryLocation(A);
 
    hypre_ParCSRCommPkg *comm_pkg;
    hypre_CSRMatrix *offd;
@@ -2701,8 +2701,8 @@ hypre_parCorrRes( hypre_ParCSRMatrix *A,
    if (num_cols_offd)
    {
       num_sends = hypre_ParCSRCommPkgNumSends(comm_pkg);
-      x_buf_data = hypre_CTAlloc(HYPRE_Real,
-                                 hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends), HYPRE_MEMORY_HOST);
+      x_buf_data = hypre_CTAlloc(NALU_HYPRE_Real,
+                                 hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends), NALU_HYPRE_MEMORY_HOST);
 
       index = 0;
       for (i = 0; i < num_sends; i++)
@@ -2730,7 +2730,7 @@ hypre_parCorrRes( hypre_ParCSRMatrix *A,
       hypre_CSRMatrixMatvec(-1.0, offd, x_tmp, 1.0, tmp_vector);
 
       hypre_SeqVectorDestroy(x_tmp);
-      hypre_TFree(x_buf_data, HYPRE_MEMORY_HOST);
+      hypre_TFree(x_buf_data, NALU_HYPRE_MEMORY_HOST);
    }
    else
    {
@@ -2745,37 +2745,37 @@ hypre_parCorrRes( hypre_ParCSRMatrix *A,
 }
 
 
-HYPRE_Int hypre_AdSchwarzSolve(hypre_ParCSRMatrix *par_A,
+NALU_HYPRE_Int hypre_AdSchwarzSolve(hypre_ParCSRMatrix *par_A,
                                hypre_ParVector *par_rhs,
                                hypre_CSRMatrix *domain_structure,
-                               HYPRE_Real *scale,
+                               NALU_HYPRE_Real *scale,
                                hypre_ParVector *par_x,
-                               hypre_ParVector *par_aux, HYPRE_Int *pivots,
-                               HYPRE_Int use_nonsymm)
+                               hypre_ParVector *par_aux, NALU_HYPRE_Int *pivots,
+                               NALU_HYPRE_Int use_nonsymm)
 {
-   HYPRE_Int ierr = 0;
-   HYPRE_Real *x;
-   HYPRE_Real *aux;
-   HYPRE_Real *tmp;
+   NALU_HYPRE_Int ierr = 0;
+   NALU_HYPRE_Real *x;
+   NALU_HYPRE_Real *aux;
+   NALU_HYPRE_Real *tmp;
    hypre_Vector *x_vector;
    hypre_Vector *aux_vector;
    MPI_Comm comm = hypre_ParCSRMatrixComm(par_A);
-   HYPRE_Int num_domains;
-   HYPRE_Int max_domain_size;
-   HYPRE_Int *i_domain_dof;
-   HYPRE_Int *j_domain_dof;
-   HYPRE_Real *domain_matrixinverse;
+   NALU_HYPRE_Int num_domains;
+   NALU_HYPRE_Int max_domain_size;
+   NALU_HYPRE_Int *i_domain_dof;
+   NALU_HYPRE_Int *j_domain_dof;
+   NALU_HYPRE_Real *domain_matrixinverse;
 
-   HYPRE_Int piv_counter = 0;
-   HYPRE_Int one = 1;
+   NALU_HYPRE_Int piv_counter = 0;
+   NALU_HYPRE_Int one = 1;
    char uplo = 'L';
 
-   HYPRE_Int jj, i, j; /*, j_loc, k_loc;*/
+   NALU_HYPRE_Int jj, i, j; /*, j_loc, k_loc;*/
 
 
-   HYPRE_Int matrix_size, matrix_size_counter = 0;
+   NALU_HYPRE_Int matrix_size, matrix_size_counter = 0;
 
-   HYPRE_Int num_procs;
+   NALU_HYPRE_Int num_procs;
 
    hypre_MPI_Comm_size(comm, &num_procs);
 
@@ -2797,7 +2797,7 @@ HYPRE_Int hypre_AdSchwarzSolve(hypre_ParCSRMatrix *par_A,
 
    hypre_ParVectorCopy(par_rhs, par_aux);
    hypre_ParCSRMatrixMatvec(-1.0, par_A, par_x, 1.0, par_aux);
-   tmp = hypre_CTAlloc(HYPRE_Real, max_domain_size, HYPRE_MEMORY_HOST);
+   tmp = hypre_CTAlloc(NALU_HYPRE_Real, max_domain_size, NALU_HYPRE_MEMORY_HOST);
 
    /* forward solve: ----------------------------------------------- */
 
@@ -2830,7 +2830,7 @@ HYPRE_Int hypre_AdSchwarzSolve(hypre_ParCSRMatrix *par_A,
                       &matrix_size, &ierr);
       }
 
-      if (ierr) { hypre_error(HYPRE_ERROR_GENERIC); }
+      if (ierr) { hypre_error(NALU_HYPRE_ERROR_GENERIC); }
       jj = 0;
       for (j = i_domain_dof[i]; j < i_domain_dof[i + 1]; j++)
       {
@@ -2841,43 +2841,43 @@ HYPRE_Int hypre_AdSchwarzSolve(hypre_ParCSRMatrix *par_A,
 
    }
 
-   hypre_TFree(tmp, HYPRE_MEMORY_HOST);
+   hypre_TFree(tmp, NALU_HYPRE_MEMORY_HOST);
 
    return hypre_error_flag;
 }
 
-HYPRE_Int hypre_AdSchwarzCFSolve(hypre_ParCSRMatrix *par_A,
+NALU_HYPRE_Int hypre_AdSchwarzCFSolve(hypre_ParCSRMatrix *par_A,
                                  hypre_ParVector *par_rhs,
                                  hypre_CSRMatrix *domain_structure,
-                                 HYPRE_Real *scale,
+                                 NALU_HYPRE_Real *scale,
                                  hypre_ParVector *par_x,
                                  hypre_ParVector *par_aux,
-                                 HYPRE_Int *CF_marker,
-                                 HYPRE_Int rlx_pt, HYPRE_Int *pivots,
-                                 HYPRE_Int use_nonsymm)
+                                 NALU_HYPRE_Int *CF_marker,
+                                 NALU_HYPRE_Int rlx_pt, NALU_HYPRE_Int *pivots,
+                                 NALU_HYPRE_Int use_nonsymm)
 {
-   HYPRE_Int ierr = 0;
-   HYPRE_Real *x;
-   HYPRE_Real *aux;
-   HYPRE_Real *tmp;
+   NALU_HYPRE_Int ierr = 0;
+   NALU_HYPRE_Real *x;
+   NALU_HYPRE_Real *aux;
+   NALU_HYPRE_Real *tmp;
    hypre_Vector *x_vector;
    hypre_Vector *aux_vector;
    MPI_Comm comm = hypre_ParCSRMatrixComm(par_A);
-   HYPRE_Int num_domains;
-   HYPRE_Int max_domain_size;
-   HYPRE_Int *i_domain_dof;
-   HYPRE_Int *j_domain_dof;
-   HYPRE_Real *domain_matrixinverse;
+   NALU_HYPRE_Int num_domains;
+   NALU_HYPRE_Int max_domain_size;
+   NALU_HYPRE_Int *i_domain_dof;
+   NALU_HYPRE_Int *j_domain_dof;
+   NALU_HYPRE_Real *domain_matrixinverse;
 
-   HYPRE_Int piv_counter = 0;
-   HYPRE_Int one = 1;
+   NALU_HYPRE_Int piv_counter = 0;
+   NALU_HYPRE_Int one = 1;
 
    char uplo = 'L';
-   HYPRE_Int jj, i, j; /*, j_loc, k_loc;*/
+   NALU_HYPRE_Int jj, i, j; /*, j_loc, k_loc;*/
 
-   HYPRE_Int matrix_size, matrix_size_counter = 0;
+   NALU_HYPRE_Int matrix_size, matrix_size_counter = 0;
 
-   HYPRE_Int num_procs;
+   NALU_HYPRE_Int num_procs;
 
    hypre_MPI_Comm_size(comm, &num_procs);
 
@@ -2899,7 +2899,7 @@ HYPRE_Int hypre_AdSchwarzCFSolve(hypre_ParCSRMatrix *par_A,
 
    hypre_ParVectorCopy(par_rhs, par_aux);
    hypre_ParCSRMatrixMatvec(-1.0, par_A, par_x, 1.0, par_aux);
-   tmp = hypre_CTAlloc(HYPRE_Real, max_domain_size, HYPRE_MEMORY_HOST);
+   tmp = hypre_CTAlloc(NALU_HYPRE_Real, max_domain_size, NALU_HYPRE_MEMORY_HOST);
 
    /* forward solve: ----------------------------------------------- */
 
@@ -2935,7 +2935,7 @@ HYPRE_Int hypre_AdSchwarzCFSolve(hypre_ParCSRMatrix *par_A,
                          &matrix_size, &ierr);
          }
 
-         if (ierr) { hypre_error(HYPRE_ERROR_GENERIC); }
+         if (ierr) { hypre_error(NALU_HYPRE_ERROR_GENERIC); }
          jj = 0;
          for (j = i_domain_dof[i]; j < i_domain_dof[i + 1]; j++)
          {
@@ -2946,24 +2946,24 @@ HYPRE_Int hypre_AdSchwarzCFSolve(hypre_ParCSRMatrix *par_A,
       }
    }
 
-   hypre_TFree(tmp, HYPRE_MEMORY_HOST);
+   hypre_TFree(tmp, NALU_HYPRE_MEMORY_HOST);
 
    return hypre_error_flag;
 }
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_GenerateScale(hypre_CSRMatrix *domain_structure,
-                    HYPRE_Int              num_variables,
-                    HYPRE_Real       relaxation_weight,
-                    HYPRE_Real     **scale_pointer)
+                    NALU_HYPRE_Int              num_variables,
+                    NALU_HYPRE_Real       relaxation_weight,
+                    NALU_HYPRE_Real     **scale_pointer)
 {
-   HYPRE_Int num_domains = hypre_CSRMatrixNumRows(domain_structure);
-   HYPRE_Int *i_domain_dof = hypre_CSRMatrixI(domain_structure);
-   HYPRE_Int *j_domain_dof = hypre_CSRMatrixJ(domain_structure);
-   HYPRE_Int i, j;
-   HYPRE_Real *scale;
+   NALU_HYPRE_Int num_domains = hypre_CSRMatrixNumRows(domain_structure);
+   NALU_HYPRE_Int *i_domain_dof = hypre_CSRMatrixI(domain_structure);
+   NALU_HYPRE_Int *j_domain_dof = hypre_CSRMatrixJ(domain_structure);
+   NALU_HYPRE_Int i, j;
+   NALU_HYPRE_Real *scale;
 
-   scale = hypre_CTAlloc(HYPRE_Real,  num_variables, HYPRE_MEMORY_HOST);
+   scale = hypre_CTAlloc(NALU_HYPRE_Real,  num_variables, NALU_HYPRE_MEMORY_HOST);
 
    for (i = 0; i < num_domains; i++)
       for (j = i_domain_dof[i]; j < i_domain_dof[i + 1]; j++)
@@ -2981,46 +2981,46 @@ hypre_GenerateScale(hypre_CSRMatrix *domain_structure,
    return hypre_error_flag;
 }
 
-HYPRE_Int hypre_ParAdSchwarzSolve(hypre_ParCSRMatrix *A,
+NALU_HYPRE_Int hypre_ParAdSchwarzSolve(hypre_ParCSRMatrix *A,
                                   hypre_ParVector *F,
                                   hypre_CSRMatrix *domain_structure,
-                                  HYPRE_Real *scale,
+                                  NALU_HYPRE_Real *scale,
                                   hypre_ParVector *X,
                                   hypre_ParVector *Vtemp,
-                                  HYPRE_Int *pivots,
-                                  HYPRE_Int use_nonsymm)
+                                  NALU_HYPRE_Int *pivots,
+                                  NALU_HYPRE_Int use_nonsymm)
 {
    hypre_ParCSRCommPkg *comm_pkg = hypre_ParCSRMatrixCommPkg(A);
-   HYPRE_Int num_sends = 0;
-   HYPRE_Int *send_map_starts;
-   HYPRE_Int *send_map_elmts;
+   NALU_HYPRE_Int num_sends = 0;
+   NALU_HYPRE_Int *send_map_starts;
+   NALU_HYPRE_Int *send_map_elmts;
 
    hypre_ParCSRCommHandle *comm_handle;
 
-   HYPRE_Int ierr = 0;
-   HYPRE_Real *x_data;
-   HYPRE_Real *x_ext_data;
-   HYPRE_Real *aux;
-   HYPRE_Real *vtemp_data;
-   HYPRE_Real *vtemp_ext_data;
-   HYPRE_Int num_domains, max_domain_size;
-   HYPRE_Int *i_domain_dof;
-   HYPRE_Int *j_domain_dof;
-   HYPRE_Real *domain_matrixinverse;
+   NALU_HYPRE_Int ierr = 0;
+   NALU_HYPRE_Real *x_data;
+   NALU_HYPRE_Real *x_ext_data;
+   NALU_HYPRE_Real *aux;
+   NALU_HYPRE_Real *vtemp_data;
+   NALU_HYPRE_Real *vtemp_ext_data;
+   NALU_HYPRE_Int num_domains, max_domain_size;
+   NALU_HYPRE_Int *i_domain_dof;
+   NALU_HYPRE_Int *j_domain_dof;
+   NALU_HYPRE_Real *domain_matrixinverse;
    hypre_CSRMatrix *A_diag = hypre_ParCSRMatrixDiag(A);
-   HYPRE_Int num_variables;
-   HYPRE_Int num_cols_offd;
-   HYPRE_Real *scale_ext;
-   HYPRE_Real *buf_data;
-   HYPRE_Int index;
+   NALU_HYPRE_Int num_variables;
+   NALU_HYPRE_Int num_cols_offd;
+   NALU_HYPRE_Real *scale_ext;
+   NALU_HYPRE_Real *buf_data;
+   NALU_HYPRE_Int index;
 
-   HYPRE_Int piv_counter = 0;
-   HYPRE_Int one = 1;
+   NALU_HYPRE_Int piv_counter = 0;
+   NALU_HYPRE_Int one = 1;
 
    char uplo = 'L';
-   HYPRE_Int jj, i, j, j_loc; /*, j_loc, k_loc;*/
+   NALU_HYPRE_Int jj, i, j, j_loc; /*, j_loc, k_loc;*/
 
-   HYPRE_Int matrix_size, matrix_size_counter = 0;
+   NALU_HYPRE_Int matrix_size, matrix_size_counter = 0;
 
    /* initiate:      ----------------------------------------------- */
    num_variables = hypre_CSRMatrixNumRows(A_diag);
@@ -3043,7 +3043,7 @@ HYPRE_Int hypre_ParAdSchwarzSolve(hypre_ParCSRMatrix *A,
    i_domain_dof = hypre_CSRMatrixI(domain_structure);
    j_domain_dof = hypre_CSRMatrixJ(domain_structure);
    domain_matrixinverse = hypre_CSRMatrixData(domain_structure);
-   aux = hypre_CTAlloc(HYPRE_Real,  max_domain_size, HYPRE_MEMORY_HOST);
+   aux = hypre_CTAlloc(NALU_HYPRE_Real,  max_domain_size, NALU_HYPRE_MEMORY_HOST);
 
    if (comm_pkg)
    {
@@ -3051,10 +3051,10 @@ HYPRE_Int hypre_ParAdSchwarzSolve(hypre_ParCSRMatrix *A,
       send_map_starts = hypre_ParCSRCommPkgSendMapStarts(comm_pkg);
       send_map_elmts = hypre_ParCSRCommPkgSendMapElmts(comm_pkg);
 
-      buf_data = hypre_CTAlloc(HYPRE_Real,  send_map_starts[num_sends], HYPRE_MEMORY_HOST);
-      x_ext_data = hypre_CTAlloc(HYPRE_Real,  num_cols_offd, HYPRE_MEMORY_HOST);
-      vtemp_ext_data = hypre_CTAlloc(HYPRE_Real,  num_cols_offd, HYPRE_MEMORY_HOST);
-      scale_ext = hypre_CTAlloc(HYPRE_Real,  num_cols_offd, HYPRE_MEMORY_HOST);
+      buf_data = hypre_CTAlloc(NALU_HYPRE_Real,  send_map_starts[num_sends], NALU_HYPRE_MEMORY_HOST);
+      x_ext_data = hypre_CTAlloc(NALU_HYPRE_Real,  num_cols_offd, NALU_HYPRE_MEMORY_HOST);
+      vtemp_ext_data = hypre_CTAlloc(NALU_HYPRE_Real,  num_cols_offd, NALU_HYPRE_MEMORY_HOST);
+      scale_ext = hypre_CTAlloc(NALU_HYPRE_Real,  num_cols_offd, NALU_HYPRE_MEMORY_HOST);
 
       index = 0;
       for (i = 0; i < num_sends; i++)
@@ -3126,7 +3126,7 @@ HYPRE_Int hypre_ParAdSchwarzSolve(hypre_ParCSRMatrix *A,
                       &matrix_size, &ierr);
       }
 
-      if (ierr) { hypre_error(HYPRE_ERROR_GENERIC); }
+      if (ierr) { hypre_error(NALU_HYPRE_ERROR_GENERIC); }
       jj = 0;
       for (j = i_domain_dof[i]; j < i_domain_dof[i + 1]; j++)
       {
@@ -3161,12 +3161,12 @@ HYPRE_Int hypre_ParAdSchwarzSolve(hypre_ParCSRMatrix *A,
          }
       }
 
-      hypre_TFree(buf_data, HYPRE_MEMORY_HOST);
-      hypre_TFree(x_ext_data, HYPRE_MEMORY_HOST);
-      hypre_TFree(vtemp_ext_data, HYPRE_MEMORY_HOST);
-      hypre_TFree(scale_ext, HYPRE_MEMORY_HOST);
+      hypre_TFree(buf_data, NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(x_ext_data, NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(vtemp_ext_data, NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(scale_ext, NALU_HYPRE_MEMORY_HOST);
    }
-   hypre_TFree(aux, HYPRE_MEMORY_HOST);
+   hypre_TFree(aux, NALU_HYPRE_MEMORY_HOST);
 
    return hypre_error_flag;
 }
@@ -3183,74 +3183,74 @@ HYPRE_Int hypre_ParAdSchwarzSolve(hypre_ParCSRMatrix *A,
  *             in AMG);
  *
  *****************************************************************************/
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_ParAMGCreateDomainDof(hypre_ParCSRMatrix   *A,
-                            HYPRE_Int domain_type, HYPRE_Int overlap,
-                            HYPRE_Int num_functions, HYPRE_Int *dof_func,
+                            NALU_HYPRE_Int domain_type, NALU_HYPRE_Int overlap,
+                            NALU_HYPRE_Int num_functions, NALU_HYPRE_Int *dof_func,
                             hypre_CSRMatrix     **domain_structure_pointer,
-                            HYPRE_Int **piv_pointer, HYPRE_Int use_nonsymm)
+                            NALU_HYPRE_Int **piv_pointer, NALU_HYPRE_Int use_nonsymm)
 
 {
    hypre_CSRMatrix *domain_structure = NULL;
-   HYPRE_Int *i_domain_dof, *j_domain_dof;
-   HYPRE_Real *domain_matrixinverse;
-   HYPRE_Int num_domains;
+   NALU_HYPRE_Int *i_domain_dof, *j_domain_dof;
+   NALU_HYPRE_Real *domain_matrixinverse;
+   NALU_HYPRE_Int num_domains;
 
    hypre_CSRMatrix *A_diag = hypre_ParCSRMatrixDiag(A);
-   HYPRE_Int *a_diag_i = hypre_CSRMatrixI(A_diag);
-   HYPRE_Int *a_diag_j = hypre_CSRMatrixJ(A_diag);
-   HYPRE_Real *a_diag_data = hypre_CSRMatrixData(A_diag);
-   HYPRE_Int num_variables = hypre_CSRMatrixNumRows(A_diag);
-   HYPRE_BigInt first_col_diag = hypre_ParCSRMatrixFirstColDiag(A);
-   HYPRE_BigInt col_0 = first_col_diag - 1 ;
-   HYPRE_BigInt col_n = first_col_diag + (HYPRE_BigInt)num_variables;
+   NALU_HYPRE_Int *a_diag_i = hypre_CSRMatrixI(A_diag);
+   NALU_HYPRE_Int *a_diag_j = hypre_CSRMatrixJ(A_diag);
+   NALU_HYPRE_Real *a_diag_data = hypre_CSRMatrixData(A_diag);
+   NALU_HYPRE_Int num_variables = hypre_CSRMatrixNumRows(A_diag);
+   NALU_HYPRE_BigInt first_col_diag = hypre_ParCSRMatrixFirstColDiag(A);
+   NALU_HYPRE_BigInt col_0 = first_col_diag - 1 ;
+   NALU_HYPRE_BigInt col_n = first_col_diag + (NALU_HYPRE_BigInt)num_variables;
 
    hypre_CSRMatrix *A_offd = hypre_ParCSRMatrixOffd(A);
-   HYPRE_Int *a_offd_i = hypre_CSRMatrixI(A_offd);
-   HYPRE_Int *a_offd_j = hypre_CSRMatrixJ(A_offd);
-   HYPRE_Real *a_offd_data = hypre_CSRMatrixData(A_offd);
-   HYPRE_Int num_cols_offd = hypre_CSRMatrixNumCols(A_offd);
-   HYPRE_BigInt *col_map_offd = hypre_ParCSRMatrixColMapOffd(A);
+   NALU_HYPRE_Int *a_offd_i = hypre_CSRMatrixI(A_offd);
+   NALU_HYPRE_Int *a_offd_j = hypre_CSRMatrixJ(A_offd);
+   NALU_HYPRE_Real *a_offd_data = hypre_CSRMatrixData(A_offd);
+   NALU_HYPRE_Int num_cols_offd = hypre_CSRMatrixNumCols(A_offd);
+   NALU_HYPRE_BigInt *col_map_offd = hypre_ParCSRMatrixColMapOffd(A);
 
    hypre_CSRMatrix *A_ext;
-   HYPRE_Int *a_ext_i;
-   HYPRE_BigInt *a_ext_j;
-   HYPRE_Real *a_ext_data;
+   NALU_HYPRE_Int *a_ext_i;
+   NALU_HYPRE_BigInt *a_ext_j;
+   NALU_HYPRE_Real *a_ext_data;
 
-   /* HYPRE_Int *i_dof_to_accept_weight; */
-   HYPRE_Int *i_dof_to_prefer_weight,
+   /* NALU_HYPRE_Int *i_dof_to_accept_weight; */
+   NALU_HYPRE_Int *i_dof_to_prefer_weight,
              *w_dof_dof, *i_dof_weight;
-   HYPRE_Int *i_dof_to_aggregate, *i_aggregate_dof, *j_aggregate_dof;
+   NALU_HYPRE_Int *i_dof_to_aggregate, *i_aggregate_dof, *j_aggregate_dof;
 
-   HYPRE_Int *i_dof_index;
-   HYPRE_Int *i_dof_index_offd;
-   HYPRE_Int *i_proc;
-   /* HYPRE_Int *row_starts = hypre_ParCSRMatrixRowStarts(A);*/
+   NALU_HYPRE_Int *i_dof_index;
+   NALU_HYPRE_Int *i_dof_index_offd;
+   NALU_HYPRE_Int *i_proc;
+   /* NALU_HYPRE_Int *row_starts = hypre_ParCSRMatrixRowStarts(A);*/
    hypre_ParCSRCommPkg *comm_pkg = hypre_ParCSRMatrixCommPkg(A);
-   HYPRE_Int num_recvs = 0;
-   HYPRE_Int *recv_vec_starts = NULL;
+   NALU_HYPRE_Int num_recvs = 0;
+   NALU_HYPRE_Int *recv_vec_starts = NULL;
 
-   HYPRE_Int ierr = 0;
-   HYPRE_Int i, j, k, l_loc, i_loc, j_loc;
-   HYPRE_Int i_dof;
-   HYPRE_Int nf;
-   HYPRE_Int *i_local_to_global;
-   HYPRE_Int *i_global_to_local;
+   NALU_HYPRE_Int ierr = 0;
+   NALU_HYPRE_Int i, j, k, l_loc, i_loc, j_loc;
+   NALU_HYPRE_Int i_dof;
+   NALU_HYPRE_Int nf;
+   NALU_HYPRE_Int *i_local_to_global;
+   NALU_HYPRE_Int *i_global_to_local;
 
-   HYPRE_Int local_dof_counter, max_local_dof_counter = 0;
+   NALU_HYPRE_Int local_dof_counter, max_local_dof_counter = 0;
 
-   HYPRE_Int domain_dof_counter = 0, domain_matrixinverse_counter = 0;
+   NALU_HYPRE_Int domain_dof_counter = 0, domain_matrixinverse_counter = 0;
 
-   HYPRE_Real *AE;
+   NALU_HYPRE_Real *AE;
 
 
-   HYPRE_Int *ipiv;
+   NALU_HYPRE_Int *ipiv;
    char uplo = 'L';
-   HYPRE_Int piv_counter;
-   HYPRE_Int *piv = NULL;
+   NALU_HYPRE_Int piv_counter;
+   NALU_HYPRE_Int *piv = NULL;
 
-   HYPRE_Int cnt, indx;
-   HYPRE_Int num_procs, my_id;
+   NALU_HYPRE_Int cnt, indx;
+   NALU_HYPRE_Int num_procs, my_id;
 
    if (num_variables == 0)
    {
@@ -3272,13 +3272,13 @@ hypre_ParAMGCreateDomainDof(hypre_ParCSRMatrix   *A,
 
    /*hypre_printf("----------- create artificials domain by agglomeration;  ======\n");
     */
-   i_aggregate_dof = hypre_CTAlloc(HYPRE_Int, num_variables + 1, HYPRE_MEMORY_HOST);
-   j_aggregate_dof = hypre_CTAlloc(HYPRE_Int, num_variables, HYPRE_MEMORY_HOST);
+   i_aggregate_dof = hypre_CTAlloc(NALU_HYPRE_Int, num_variables + 1, NALU_HYPRE_MEMORY_HOST);
+   j_aggregate_dof = hypre_CTAlloc(NALU_HYPRE_Int, num_variables, NALU_HYPRE_MEMORY_HOST);
 
    if (domain_type == 2)
    {
-      i_dof_to_prefer_weight = hypre_CTAlloc(HYPRE_Int,  num_variables, HYPRE_MEMORY_HOST);
-      w_dof_dof = hypre_CTAlloc(HYPRE_Int,  a_diag_i[num_variables], HYPRE_MEMORY_HOST);
+      i_dof_to_prefer_weight = hypre_CTAlloc(NALU_HYPRE_Int,  num_variables, NALU_HYPRE_MEMORY_HOST);
+      w_dof_dof = hypre_CTAlloc(NALU_HYPRE_Int,  a_diag_i[num_variables], NALU_HYPRE_MEMORY_HOST);
 
       for (i = 0; i < num_variables; i++)
          for (j = a_diag_i[i]; j < a_diag_i[i + 1]; j++)
@@ -3296,7 +3296,7 @@ hypre_ParAMGCreateDomainDof(hypre_ParCSRMatrix   *A,
       /*hypre_printf("end computing weights for agglomeration procedure: --------\n");
        */
 
-      i_dof_weight = hypre_CTAlloc(HYPRE_Int,  num_variables, HYPRE_MEMORY_HOST);
+      i_dof_weight = hypre_CTAlloc(NALU_HYPRE_Int,  num_variables, NALU_HYPRE_MEMORY_HOST);
       hypre_AMGeAgglomerate(i_aggregate_dof, j_aggregate_dof,
                             a_diag_i, a_diag_j, w_dof_dof,
                             a_diag_i, a_diag_j,
@@ -3306,9 +3306,9 @@ hypre_ParAMGCreateDomainDof(hypre_ParCSRMatrix   *A,
                             num_variables, num_variables,
                             &num_domains);
 
-      hypre_TFree(i_dof_to_prefer_weight, HYPRE_MEMORY_HOST);
-      hypre_TFree(i_dof_weight, HYPRE_MEMORY_HOST);
-      hypre_TFree(w_dof_dof, HYPRE_MEMORY_HOST);
+      hypre_TFree(i_dof_to_prefer_weight, NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(i_dof_weight, NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(w_dof_dof, NALU_HYPRE_MEMORY_HOST);
    }
    else
    {
@@ -3329,16 +3329,16 @@ hypre_ParAMGCreateDomainDof(hypre_ParCSRMatrix   *A,
     */
    if (overlap == 1)
    {
-      i_domain_dof = hypre_CTAlloc(HYPRE_Int,  num_domains + 1, HYPRE_MEMORY_HOST);
+      i_domain_dof = hypre_CTAlloc(NALU_HYPRE_Int,  num_domains + 1, NALU_HYPRE_MEMORY_HOST);
 
-      i_dof_to_aggregate = hypre_CTAlloc(HYPRE_Int,  num_variables, HYPRE_MEMORY_HOST);
+      i_dof_to_aggregate = hypre_CTAlloc(NALU_HYPRE_Int,  num_variables, NALU_HYPRE_MEMORY_HOST);
       for (i = 0; i < num_domains; i++)
          for (j = i_aggregate_dof[i]; j < i_aggregate_dof[i + 1]; j++)
          {
             i_dof_to_aggregate[j_aggregate_dof[j]] = i;
          }
 
-      i_proc = hypre_CTAlloc(HYPRE_Int,  num_cols_offd, HYPRE_MEMORY_HOST);
+      i_proc = hypre_CTAlloc(NALU_HYPRE_Int,  num_cols_offd, NALU_HYPRE_MEMORY_HOST);
 
       for (i = 0; i < num_cols_offd; i++)
       {
@@ -3368,9 +3368,9 @@ hypre_ParAMGCreateDomainDof(hypre_ParCSRMatrix   *A,
 
       /* make domains from aggregates: *********************************/
 
-      i_dof_index = hypre_CTAlloc(HYPRE_Int,  num_variables, HYPRE_MEMORY_HOST);
+      i_dof_index = hypre_CTAlloc(NALU_HYPRE_Int,  num_variables, NALU_HYPRE_MEMORY_HOST);
 
-      i_dof_index_offd = hypre_CTAlloc(HYPRE_Int,  num_cols_offd, HYPRE_MEMORY_HOST);
+      i_dof_index_offd = hypre_CTAlloc(NALU_HYPRE_Int,  num_cols_offd, NALU_HYPRE_MEMORY_HOST);
 
       for (i = 0; i < num_variables; i++)
       {
@@ -3422,7 +3422,7 @@ hypre_ParAMGCreateDomainDof(hypre_ParCSRMatrix   *A,
       }
 
       i_domain_dof[num_domains] =  domain_dof_counter;
-      j_domain_dof = hypre_CTAlloc(HYPRE_Int,  domain_dof_counter, HYPRE_MEMORY_HOST);
+      j_domain_dof = hypre_CTAlloc(NALU_HYPRE_Int,  domain_dof_counter, NALU_HYPRE_MEMORY_HOST);
 
       domain_dof_counter = 0;
       for (i = 0; i < num_domains; i++)
@@ -3454,18 +3454,18 @@ hypre_ParAMGCreateDomainDof(hypre_ParCSRMatrix   *A,
          }
       }
 
-      hypre_TFree(i_aggregate_dof, HYPRE_MEMORY_HOST);
-      hypre_TFree(j_aggregate_dof, HYPRE_MEMORY_HOST);
-      hypre_TFree(i_dof_to_aggregate, HYPRE_MEMORY_HOST);
-      hypre_TFree(i_dof_index, HYPRE_MEMORY_HOST);
-      hypre_TFree(i_dof_index_offd, HYPRE_MEMORY_HOST);
-      hypre_TFree(i_proc, HYPRE_MEMORY_HOST);
+      hypre_TFree(i_aggregate_dof, NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(j_aggregate_dof, NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(i_dof_to_aggregate, NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(i_dof_index, NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(i_dof_index_offd, NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(i_proc, NALU_HYPRE_MEMORY_HOST);
    }
    else if (overlap == 2)
    {
-      i_domain_dof = hypre_CTAlloc(HYPRE_Int,  num_domains + 1, HYPRE_MEMORY_HOST);
+      i_domain_dof = hypre_CTAlloc(NALU_HYPRE_Int,  num_domains + 1, NALU_HYPRE_MEMORY_HOST);
 
-      i_dof_to_aggregate = hypre_CTAlloc(HYPRE_Int,  num_variables, HYPRE_MEMORY_HOST);
+      i_dof_to_aggregate = hypre_CTAlloc(NALU_HYPRE_Int,  num_variables, NALU_HYPRE_MEMORY_HOST);
       for (i = 0; i < num_domains; i++)
          for (j = i_aggregate_dof[i]; j < i_aggregate_dof[i + 1]; j++)
          {
@@ -3474,9 +3474,9 @@ hypre_ParAMGCreateDomainDof(hypre_ParCSRMatrix   *A,
 
       /* make domains from aggregates: *********************************/
 
-      i_dof_index = hypre_CTAlloc(HYPRE_Int,  num_variables, HYPRE_MEMORY_HOST);
+      i_dof_index = hypre_CTAlloc(NALU_HYPRE_Int,  num_variables, NALU_HYPRE_MEMORY_HOST);
 
-      i_dof_index_offd = hypre_CTAlloc(HYPRE_Int,  num_cols_offd, HYPRE_MEMORY_HOST);
+      i_dof_index_offd = hypre_CTAlloc(NALU_HYPRE_Int,  num_cols_offd, NALU_HYPRE_MEMORY_HOST);
 
       for (i = 0; i < num_variables; i++)
       {
@@ -3535,7 +3535,7 @@ hypre_ParAMGCreateDomainDof(hypre_ParCSRMatrix   *A,
       }
 
       i_domain_dof[num_domains] =  domain_dof_counter;
-      j_domain_dof = hypre_CTAlloc(HYPRE_Int,  domain_dof_counter, HYPRE_MEMORY_HOST);
+      j_domain_dof = hypre_CTAlloc(NALU_HYPRE_Int,  domain_dof_counter, NALU_HYPRE_MEMORY_HOST);
 
       domain_dof_counter = 0;
       for (i = 0; i < num_domains; i++)
@@ -3575,11 +3575,11 @@ hypre_ParAMGCreateDomainDof(hypre_ParCSRMatrix   *A,
          }
       }
 
-      hypre_TFree(i_aggregate_dof, HYPRE_MEMORY_HOST);
-      hypre_TFree(j_aggregate_dof, HYPRE_MEMORY_HOST);
-      hypre_TFree(i_dof_to_aggregate, HYPRE_MEMORY_HOST);
-      hypre_TFree(i_dof_index, HYPRE_MEMORY_HOST);
-      hypre_TFree(i_dof_index_offd, HYPRE_MEMORY_HOST);
+      hypre_TFree(i_aggregate_dof, NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(j_aggregate_dof, NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(i_dof_to_aggregate, NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(i_dof_index, NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(i_dof_index_offd, NALU_HYPRE_MEMORY_HOST);
    }
    else
    {
@@ -3605,10 +3605,10 @@ hypre_ParAMGCreateDomainDof(hypre_ParCSRMatrix   *A,
       }
    }
 
-   domain_matrixinverse = hypre_CTAlloc(HYPRE_Real,  domain_matrixinverse_counter, HYPRE_MEMORY_HOST);
+   domain_matrixinverse = hypre_CTAlloc(NALU_HYPRE_Real,  domain_matrixinverse_counter, NALU_HYPRE_MEMORY_HOST);
    if (use_nonsymm)
    {
-      piv = hypre_CTAlloc(HYPRE_Int,  piv_counter, HYPRE_MEMORY_HOST);
+      piv = hypre_CTAlloc(NALU_HYPRE_Int,  piv_counter, NALU_HYPRE_MEMORY_HOST);
    }
 
    if (num_procs > 1)
@@ -3623,9 +3623,9 @@ hypre_ParAMGCreateDomainDof(hypre_ParCSRMatrix   *A,
       A_ext = NULL;
    }
 
-   i_local_to_global = hypre_CTAlloc(HYPRE_Int,  max_local_dof_counter, HYPRE_MEMORY_HOST);
+   i_local_to_global = hypre_CTAlloc(NALU_HYPRE_Int,  max_local_dof_counter, NALU_HYPRE_MEMORY_HOST);
 
-   i_global_to_local = hypre_CTAlloc(HYPRE_Int,  num_variables + num_cols_offd, HYPRE_MEMORY_HOST);
+   i_global_to_local = hypre_CTAlloc(NALU_HYPRE_Int,  num_variables + num_cols_offd, NALU_HYPRE_MEMORY_HOST);
 
    for (i = 0; i < num_variables + num_cols_offd; i++)
    {
@@ -3680,15 +3680,15 @@ hypre_ParAMGCreateDomainDof(hypre_ParCSRMatrix   *A,
          }
          else
          {
-            HYPRE_BigInt jj;
-            HYPRE_Int j2;
+            NALU_HYPRE_BigInt jj;
+            NALU_HYPRE_Int j2;
             i_dof -= num_variables;
             for (j = a_ext_i[i_dof]; j < a_ext_i[i_dof + 1]; j++)
             {
                jj = a_ext_j[j];
                if (jj > col_0 && jj < col_n)
                {
-                  j2 = (HYPRE_Int)(jj - first_col_diag);
+                  j2 = (NALU_HYPRE_Int)(jj - first_col_diag);
                }
                else
                {
@@ -3732,8 +3732,8 @@ hypre_ParAMGCreateDomainDof(hypre_ParCSRMatrix   *A,
 
    }
 
-   hypre_TFree(i_local_to_global, HYPRE_MEMORY_HOST);
-   hypre_TFree(i_global_to_local, HYPRE_MEMORY_HOST);
+   hypre_TFree(i_local_to_global, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(i_global_to_local, NALU_HYPRE_MEMORY_HOST);
    hypre_CSRMatrixDestroy(A_ext);
 
    domain_structure = hypre_CSRMatrixCreate(num_domains, max_local_dof_counter,
@@ -3748,28 +3748,28 @@ hypre_ParAMGCreateDomainDof(hypre_ParCSRMatrix   *A,
    return hypre_error_flag;
 }
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_ParGenerateScale(hypre_ParCSRMatrix *A,
                        hypre_CSRMatrix *domain_structure,
-                       HYPRE_Real       relaxation_weight,
-                       HYPRE_Real     **scale_pointer)
+                       NALU_HYPRE_Real       relaxation_weight,
+                       NALU_HYPRE_Real     **scale_pointer)
 {
-   HYPRE_Int num_domains = hypre_CSRMatrixNumRows(domain_structure);
-   HYPRE_Int *i_domain_dof = hypre_CSRMatrixI(domain_structure);
-   HYPRE_Int *j_domain_dof = hypre_CSRMatrixJ(domain_structure);
-   HYPRE_Int i, j;
-   HYPRE_Real *scale;
-   HYPRE_Real *scale_ext;
-   HYPRE_Real *scale_int;
+   NALU_HYPRE_Int num_domains = hypre_CSRMatrixNumRows(domain_structure);
+   NALU_HYPRE_Int *i_domain_dof = hypre_CSRMatrixI(domain_structure);
+   NALU_HYPRE_Int *j_domain_dof = hypre_CSRMatrixJ(domain_structure);
+   NALU_HYPRE_Int i, j;
+   NALU_HYPRE_Real *scale;
+   NALU_HYPRE_Real *scale_ext;
+   NALU_HYPRE_Real *scale_int;
 
    hypre_ParCSRCommPkg *comm_pkg = hypre_ParCSRMatrixCommPkg(A);
-   HYPRE_Int num_sends = 0;
-   HYPRE_Int *send_map_starts;
-   HYPRE_Int *send_map_elmts;
+   NALU_HYPRE_Int num_sends = 0;
+   NALU_HYPRE_Int *send_map_starts;
+   NALU_HYPRE_Int *send_map_elmts;
 
-   HYPRE_Int num_variables = hypre_ParCSRMatrixNumRows(A);
-   HYPRE_Int num_cols_offd = hypre_CSRMatrixNumCols(hypre_ParCSRMatrixOffd(A));
-   HYPRE_Int j_loc, index, start;
+   NALU_HYPRE_Int num_variables = hypre_ParCSRMatrixNumRows(A);
+   NALU_HYPRE_Int num_cols_offd = hypre_CSRMatrixNumCols(hypre_ParCSRMatrixOffd(A));
+   NALU_HYPRE_Int j_loc, index, start;
 
    hypre_ParCSRCommHandle *comm_handle;
 
@@ -3780,8 +3780,8 @@ hypre_ParGenerateScale(hypre_ParCSRMatrix *A,
       send_map_elmts = hypre_ParCSRCommPkgSendMapElmts(comm_pkg);
    }
 
-   scale = hypre_CTAlloc(HYPRE_Real,  num_variables, HYPRE_MEMORY_HOST);
-   if (num_cols_offd) { scale_ext = hypre_CTAlloc(HYPRE_Real, num_cols_offd, HYPRE_MEMORY_HOST); }
+   scale = hypre_CTAlloc(NALU_HYPRE_Real,  num_variables, NALU_HYPRE_MEMORY_HOST);
+   if (num_cols_offd) { scale_ext = hypre_CTAlloc(NALU_HYPRE_Real, num_cols_offd, NALU_HYPRE_MEMORY_HOST); }
 
    for (i = 0; i < num_domains; i++)
    {
@@ -3800,7 +3800,7 @@ hypre_ParGenerateScale(hypre_ParCSRMatrix *A,
    }
    if (comm_pkg)
    {
-      scale_int = hypre_CTAlloc(HYPRE_Real,  send_map_starts[num_sends], HYPRE_MEMORY_HOST);
+      scale_int = hypre_CTAlloc(NALU_HYPRE_Real,  send_map_starts[num_sends], NALU_HYPRE_MEMORY_HOST);
       comm_handle = hypre_ParCSRCommHandleCreate (2, comm_pkg, scale_ext, scale_int);
 
       hypre_ParCSRCommHandleDestroy(comm_handle);
@@ -3817,8 +3817,8 @@ hypre_ParGenerateScale(hypre_ParCSRMatrix *A,
       }
    }
 
-   if (comm_pkg) { hypre_TFree(scale_int, HYPRE_MEMORY_HOST); }
-   if (num_cols_offd) { hypre_TFree(scale_ext, HYPRE_MEMORY_HOST); }
+   if (comm_pkg) { hypre_TFree(scale_int, NALU_HYPRE_MEMORY_HOST); }
+   if (num_cols_offd) { hypre_TFree(scale_ext, NALU_HYPRE_MEMORY_HOST); }
 
    for (i = 0; i < num_variables; i++)
    {
@@ -3830,46 +3830,46 @@ hypre_ParGenerateScale(hypre_ParCSRMatrix *A,
    return hypre_error_flag;
 }
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_ParGenerateHybridScale(hypre_ParCSRMatrix *A,
                              hypre_CSRMatrix  *domain_structure,
                              hypre_CSRMatrix **A_boundary_pointer,
-                             HYPRE_Real      **scale_pointer)
+                             NALU_HYPRE_Real      **scale_pointer)
 {
    hypre_CSRMatrix *A_ext;
-   HYPRE_Int *A_ext_i;
-   HYPRE_BigInt *A_ext_j;
-   HYPRE_Real *A_ext_data;
+   NALU_HYPRE_Int *A_ext_i;
+   NALU_HYPRE_BigInt *A_ext_j;
+   NALU_HYPRE_Real *A_ext_data;
 
    hypre_CSRMatrix *A_boundary;
-   HYPRE_Int *A_boundary_i;
-   HYPRE_Int *A_boundary_j;
-   HYPRE_Real *A_boundary_data;
+   NALU_HYPRE_Int *A_boundary_i;
+   NALU_HYPRE_Int *A_boundary_j;
+   NALU_HYPRE_Real *A_boundary_data;
 
-   HYPRE_Int num_domains = hypre_CSRMatrixNumRows(domain_structure);
-   HYPRE_Int *i_domain_dof = hypre_CSRMatrixI(domain_structure);
-   HYPRE_Int *j_domain_dof = hypre_CSRMatrixJ(domain_structure);
-   HYPRE_Int i, j, jj;
-   HYPRE_Real *scale;
-   HYPRE_Real *scale_ext;
-   HYPRE_Real *scale_int;
+   NALU_HYPRE_Int num_domains = hypre_CSRMatrixNumRows(domain_structure);
+   NALU_HYPRE_Int *i_domain_dof = hypre_CSRMatrixI(domain_structure);
+   NALU_HYPRE_Int *j_domain_dof = hypre_CSRMatrixJ(domain_structure);
+   NALU_HYPRE_Int i, j, jj;
+   NALU_HYPRE_Real *scale;
+   NALU_HYPRE_Real *scale_ext;
+   NALU_HYPRE_Real *scale_int;
 
    hypre_ParCSRCommPkg *comm_pkg = hypre_ParCSRMatrixCommPkg(A);
-   HYPRE_Int num_sends = 0;
-   HYPRE_Int *send_map_starts;
-   HYPRE_Int *send_map_elmts;
-   HYPRE_Int *index_ext;
+   NALU_HYPRE_Int num_sends = 0;
+   NALU_HYPRE_Int *send_map_starts;
+   NALU_HYPRE_Int *send_map_elmts;
+   NALU_HYPRE_Int *index_ext;
 
-   HYPRE_Int num_variables = hypre_ParCSRMatrixNumRows(A);
-   HYPRE_Int num_cols_offd = hypre_CSRMatrixNumCols(hypre_ParCSRMatrixOffd(A));
-   HYPRE_Int j_loc, index, start;
-   HYPRE_BigInt col_0, col_n;
-   HYPRE_BigInt *col_map_offd = hypre_ParCSRMatrixColMapOffd(A);
+   NALU_HYPRE_Int num_variables = hypre_ParCSRMatrixNumRows(A);
+   NALU_HYPRE_Int num_cols_offd = hypre_CSRMatrixNumCols(hypre_ParCSRMatrixOffd(A));
+   NALU_HYPRE_Int j_loc, index, start;
+   NALU_HYPRE_BigInt col_0, col_n;
+   NALU_HYPRE_BigInt *col_map_offd = hypre_ParCSRMatrixColMapOffd(A);
 
    hypre_ParCSRCommHandle *comm_handle;
 
    col_0 = hypre_ParCSRMatrixFirstColDiag(A) - 1;
-   col_n = col_0 + (HYPRE_Int)num_variables;
+   col_n = col_0 + (NALU_HYPRE_Int)num_variables;
 
    A_boundary = NULL;
 
@@ -3880,11 +3880,11 @@ hypre_ParGenerateHybridScale(hypre_ParCSRMatrix *A,
       send_map_elmts = hypre_ParCSRCommPkgSendMapElmts(comm_pkg);
    }
 
-   scale = hypre_CTAlloc(HYPRE_Real,  num_variables, HYPRE_MEMORY_HOST);
+   scale = hypre_CTAlloc(NALU_HYPRE_Real,  num_variables, NALU_HYPRE_MEMORY_HOST);
    if (num_cols_offd)
    {
-      scale_ext = hypre_CTAlloc(HYPRE_Real, num_cols_offd, HYPRE_MEMORY_HOST);
-      index_ext = hypre_CTAlloc(HYPRE_Int, num_cols_offd, HYPRE_MEMORY_HOST);
+      scale_ext = hypre_CTAlloc(NALU_HYPRE_Real, num_cols_offd, NALU_HYPRE_MEMORY_HOST);
+      index_ext = hypre_CTAlloc(NALU_HYPRE_Int, num_cols_offd, NALU_HYPRE_MEMORY_HOST);
    }
 
    for (i = 0; i < num_variables; i++)
@@ -3915,14 +3915,14 @@ hypre_ParGenerateHybridScale(hypre_ParCSRMatrix *A,
    }
    if (comm_pkg)
    {
-      scale_int = hypre_CTAlloc(HYPRE_Real,  send_map_starts[num_sends], HYPRE_MEMORY_HOST);
+      scale_int = hypre_CTAlloc(NALU_HYPRE_Real,  send_map_starts[num_sends], NALU_HYPRE_MEMORY_HOST);
       comm_handle = hypre_ParCSRCommHandleCreate(2, comm_pkg, scale_ext, scale_int);
 
       hypre_ParCSRCommHandleDestroy(comm_handle);
       comm_handle = NULL;
       A_ext = hypre_ParCSRMatrixExtractBExt(A, A, 1);
       A_ext_i = hypre_CSRMatrixI(A_ext);
-      A_boundary_i = hypre_CTAlloc(HYPRE_Int, num_cols_offd + 1, HYPRE_MEMORY_HOST);
+      A_boundary_i = hypre_CTAlloc(NALU_HYPRE_Int, num_cols_offd + 1, NALU_HYPRE_MEMORY_HOST);
       A_ext_j = hypre_CSRMatrixBigJ(A_ext);
       A_ext_data = hypre_CSRMatrixData(A_ext);
       /* compress A_ext to contain only local data and
@@ -3933,7 +3933,7 @@ hypre_ParGenerateHybridScale(hypre_ParCSRMatrix *A,
          A_boundary_i[i] = index;
          for (j = A_ext_i[i]; j < A_ext_i[i + 1]; j++)
          {
-            HYPRE_BigInt j_col;
+            NALU_HYPRE_BigInt j_col;
             j_col = A_ext_j[j];
             if (j_col > col_0 && j_col < col_n)
             {
@@ -3962,8 +3962,8 @@ hypre_ParGenerateHybridScale(hypre_ParCSRMatrix *A,
 
       if (index)
       {
-         A_boundary_j = hypre_CTAlloc(HYPRE_Int, index, HYPRE_MEMORY_HOST);
-         A_boundary_data = hypre_CTAlloc(HYPRE_Real, index, HYPRE_MEMORY_HOST);
+         A_boundary_j = hypre_CTAlloc(NALU_HYPRE_Int, index, NALU_HYPRE_MEMORY_HOST);
+         A_boundary_data = hypre_CTAlloc(NALU_HYPRE_Real, index, NALU_HYPRE_MEMORY_HOST);
       }
 
       index = 0;
@@ -3971,7 +3971,7 @@ hypre_ParGenerateHybridScale(hypre_ParCSRMatrix *A,
       {
          if (A_ext_j[i] > -1)
          {
-            A_boundary_j[index] = (HYPRE_Int)A_ext_j[i];
+            A_boundary_j[index] = (NALU_HYPRE_Int)A_ext_j[i];
             A_boundary_data[index] = A_ext_data[i];
             index++;
          }
@@ -3993,11 +3993,11 @@ hypre_ParGenerateHybridScale(hypre_ParCSRMatrix *A,
       }
    }
 
-   if (comm_pkg) { hypre_TFree(scale_int, HYPRE_MEMORY_HOST); }
+   if (comm_pkg) { hypre_TFree(scale_int, NALU_HYPRE_MEMORY_HOST); }
    if (num_cols_offd)
    {
-      hypre_TFree(scale_ext, HYPRE_MEMORY_HOST);
-      hypre_TFree(index_ext, HYPRE_MEMORY_HOST);
+      hypre_TFree(scale_ext, NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(index_ext, NALU_HYPRE_MEMORY_HOST);
    }
 
    for (i = 0; i < num_variables; i++)

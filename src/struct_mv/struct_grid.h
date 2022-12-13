@@ -22,28 +22,28 @@ typedef struct hypre_StructGrid_struct
 {
    MPI_Comm             comm;
 
-   HYPRE_Int            ndim;         /* Number of grid dimensions */
+   NALU_HYPRE_Int            ndim;         /* Number of grid dimensions */
 
    hypre_BoxArray      *boxes;        /* Array of boxes in this process */
-   HYPRE_Int           *ids;          /* Unique IDs for boxes */
+   NALU_HYPRE_Int           *ids;          /* Unique IDs for boxes */
    hypre_Index          max_distance; /* Neighborhood size - in each dimension*/
 
    hypre_Box           *bounding_box; /* Bounding box around grid */
 
-   HYPRE_Int            local_size;   /* Number of grid points locally */
-   HYPRE_BigInt         global_size;  /* Total number of grid points */
+   NALU_HYPRE_Int            local_size;   /* Number of grid points locally */
+   NALU_HYPRE_BigInt         global_size;  /* Total number of grid points */
 
    hypre_Index          periodic;     /* Indicates if grid is periodic */
-   HYPRE_Int            num_periods;  /* number of box set periods */
+   NALU_HYPRE_Int            num_periods;  /* number of box set periods */
 
    hypre_Index         *pshifts;      /* shifts of periodicity */
 
 
-   HYPRE_Int            ref_count;
+   NALU_HYPRE_Int            ref_count;
 
 
-   HYPRE_Int            ghlocal_size; /* Number of vars in box including ghosts */
-   HYPRE_Int            num_ghost[2 * HYPRE_MAXDIM]; /* ghost layer size */
+   NALU_HYPRE_Int            ghlocal_size; /* Number of vars in box including ghosts */
+   NALU_HYPRE_Int            num_ghost[2 * NALU_HYPRE_MAXDIM]; /* ghost layer size */
 
    hypre_BoxManager    *boxman;
 } hypre_StructGrid;
@@ -73,7 +73,7 @@ typedef struct hypre_StructGrid_struct
 #define hypre_StructGridNumBoxes(grid)      (hypre_BoxArraySize(hypre_StructGridBoxes(grid)))
 
 #define hypre_StructGridIDPeriod(grid)      hypre_BoxNeighborsIDPeriod(hypre_StructGridNeighbors(grid))
-#if 0 //defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP)
+#if 0 //defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
 #define hypre_StructGridDataLocation(grid)  ((grid) -> data_location)
 #endif
 /*--------------------------------------------------------------------------
@@ -82,10 +82,10 @@ typedef struct hypre_StructGrid_struct
 
 #define hypre_ForStructGridBoxI(i, grid)    hypre_ForBoxI(i, hypre_StructGridBoxes(grid))
 
-#if 0 //defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP)
-#define HYPRE_MIN_GPU_SIZE                  (131072)
-#define hypre_SetDeviceOn()                 hypre_HandleStructExecPolicy(hypre_handle()) = HYPRE_EXEC_DEVICE
-#define hypre_SetDeviceOff()                hypre_HandleStructExecPolicy(hypre_handle()) = HYPRE_EXEC_HOST
+#if 0 //defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
+#define NALU_HYPRE_MIN_GPU_SIZE                  (131072)
+#define hypre_SetDeviceOn()                 hypre_HandleStructExecPolicy(hypre_handle()) = NALU_HYPRE_EXEC_DEVICE
+#define hypre_SetDeviceOff()                hypre_HandleStructExecPolicy(hypre_handle()) = NALU_HYPRE_EXEC_HOST
 #endif
 
 #endif

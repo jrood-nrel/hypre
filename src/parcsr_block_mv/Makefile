@@ -23,12 +23,12 @@ C_COMPILE_FLAGS = \
  ${CINCLUDES}
 
 LFLAGS = \
-  -L. -lHYPRE_parcsr_block_mv -L../hypre/lib -lHYPRE_krylov \
-      -lHYPRE_parcsr_ls -lHYPRE_ParaSails -lHYPRE_Euclid \
-      -lHYPRE_DistributedMatrixPilutSolver -lHYPRE_IJ_mv \
-      -lHYPRE_parcsr_mv -lHYPRE_seq_mv -lHYPRE_DistributedMatrix \
-      -lHYPRE_MatrixMatrix -lHYPRE_utilities -lm
-# -L. -lHYPRE_parcsr_block_mv -L../hypre/lib -lHYPRE_LSI -lHYPRE_superlu -lm
+  -L. -lNALU_HYPRE_parcsr_block_mv -L../hypre/lib -lNALU_HYPRE_krylov \
+      -lNALU_HYPRE_parcsr_ls -lNALU_HYPRE_ParaSails -lNALU_HYPRE_Euclid \
+      -lNALU_HYPRE_DistributedMatrixPilutSolver -lNALU_HYPRE_IJ_mv \
+      -lNALU_HYPRE_parcsr_mv -lNALU_HYPRE_seq_mv -lNALU_HYPRE_DistributedMatrix \
+      -lNALU_HYPRE_MatrixMatrix -lNALU_HYPRE_utilities -lm
+# -L. -lNALU_HYPRE_parcsr_block_mv -L../hypre/lib -lNALU_HYPRE_LSI -lNALU_HYPRE_superlu -lm
 
 HEADERS =\
  csr_block_matrix.h\
@@ -53,18 +53,18 @@ DRIVER_FILES =
 OBJS = ${FILES:.c=.o}
 DRIVER_OBJS = ${DRIVER_FILES:.c=.o}
 
-SONAME = libHYPRE_parcsr_block_mv-${HYPRE_RELEASE_VERSION}${HYPRE_LIB_SUFFIX}
+SONAME = libNALU_HYPRE_parcsr_block_mv-${NALU_HYPRE_RELEASE_VERSION}${NALU_HYPRE_LIB_SUFFIX}
 
 ##################################################################
 # Targets
 ##################################################################
 
-all: libHYPRE_parcsr_block_mv${HYPRE_LIB_SUFFIX}
-	cp -fR $(srcdir)/par_csr_block_matrix.h $(HYPRE_BUILD_DIR)/include	
-	cp -fR $(srcdir)/csr_block_matrix.h $(HYPRE_BUILD_DIR)/include
-#	cp -fR libHYPRE_* $(HYPRE_BUILD_DIR)/lib/.
+all: libNALU_HYPRE_parcsr_block_mv${NALU_HYPRE_LIB_SUFFIX}
+	cp -fR $(srcdir)/par_csr_block_matrix.h $(NALU_HYPRE_BUILD_DIR)/include	
+	cp -fR $(srcdir)/csr_block_matrix.h $(NALU_HYPRE_BUILD_DIR)/include
+#	cp -fR libNALU_HYPRE_* $(NALU_HYPRE_BUILD_DIR)/lib/.
 
-driver: driver.o libHYPRE_parcsr_block_mv${HYPRE_LIB_SUFFIX}
+driver: driver.o libNALU_HYPRE_parcsr_block_mv${NALU_HYPRE_LIB_SUFFIX}
 	@echo  "Linking" $@ "... "
 	${CC} -o driver driver.o ${LFLAGS} 
 
@@ -72,29 +72,29 @@ driver_matvec: driver_matvec.o
 	@echo  "Linking" $@ "... "
 	${CC} -o driver_matvec driver_matvec.o ${LFLAGS} 
 
-driver_matmul: driver_matmul.o libHYPRE_parcsr_mv${HYPRE_LIB_SUFFIX}
+driver_matmul: driver_matmul.o libNALU_HYPRE_parcsr_mv${NALU_HYPRE_LIB_SUFFIX}
 	@echo  "Linking" $@ "... "
 	${CC} -o driver_matmul driver_matmul.o ${LFLAGS} 
 
-driver_boolmatmul: driver_boolmatmul.o libHYPRE_parcsr_mv${HYPRE_LIB_SUFFIX}
+driver_boolmatmul: driver_boolmatmul.o libNALU_HYPRE_parcsr_mv${NALU_HYPRE_LIB_SUFFIX}
 	@echo  "Linking" $@ "... "
 	${CC} -o driver_boolmatmul driver_boolmatmul.o ${LFLAGS} 
 
-driver_aat: driver_aat.o libHYPRE_parcsr_mv${HYPRE_LIB_SUFFIX}
+driver_aat: driver_aat.o libNALU_HYPRE_parcsr_mv${NALU_HYPRE_LIB_SUFFIX}
 	@echo  "Linking" $@ "... "
 	${CC} -o driver_aat driver_aat.o ${LFLAGS} 
 
-driver_boolaat: driver_boolaat.o libHYPRE_parcsr_mv${HYPRE_LIB_SUFFIX}
+driver_boolaat: driver_boolaat.o libNALU_HYPRE_parcsr_mv${NALU_HYPRE_LIB_SUFFIX}
 	@echo  "Linking" $@ "... "
 	${CC} -o driver_boolaat driver_boolaat.o ${LFLAGS} 
 
-install: libHYPRE_parcsr_block_mv${HYPRE_LIB_SUFFIX}
-	cp -fR $(srcdir)/par_csr_block_matrix.h $(HYPRE_INC_INSTALL)/.
-	cp -fR $(srcdir)/csr_block_matrix.h $(HYPRE_INC_INSTALL)/.
-#	cp -fR libHYPRE_* $(HYPRE_LIB_INSTALL)/.
+install: libNALU_HYPRE_parcsr_block_mv${NALU_HYPRE_LIB_SUFFIX}
+	cp -fR $(srcdir)/par_csr_block_matrix.h $(NALU_HYPRE_INC_INSTALL)/.
+	cp -fR $(srcdir)/csr_block_matrix.h $(NALU_HYPRE_INC_INSTALL)/.
+#	cp -fR libNALU_HYPRE_* $(NALU_HYPRE_LIB_INSTALL)/.
 
 clean:
-	rm -rf *.o libHYPRE_*
+	rm -rf *.o libNALU_HYPRE_*
 	rm -f driver driver_matvec driver_matmul
 
 distclean: clean
@@ -103,12 +103,12 @@ distclean: clean
 # Rules
 ##################################################################
 
-libHYPRE_parcsr_block_mv.a: ${OBJS}
+libNALU_HYPRE_parcsr_block_mv.a: ${OBJS}
 	@echo  "Building $@ ... "
 	${AR} $@ ${OBJS}
 	${RANLIB} $@
 
-libHYPRE_parcsr_block_mv.so libHYPRE_parcsr_block_mv.dylib: ${OBJS}
+libNALU_HYPRE_parcsr_block_mv.so libNALU_HYPRE_parcsr_block_mv.dylib: ${OBJS}
 	@echo  "Building $@ ... "
 	${BUILD_CC_SHARED} -o ${SONAME} ${OBJS} ${SHARED_SET_SONAME}${SONAME}
 	ln -s -f ${SONAME} $@

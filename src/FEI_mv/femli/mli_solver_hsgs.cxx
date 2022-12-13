@@ -175,6 +175,6 @@ int MLI_Solver_HSGS::calcOmega()
    //printf("HYPRE/FEI/MLI HSGS : relaxOmega = %e\n", relaxOmega_);
    delete [] amgData->A_array;
    delete [] amgData->CF_marker_array;
-   hypre_TFree(amgData, HYPRE_MEMORY_HOST);
+   hypre_TFree(amgData, NALU_HYPRE_MEMORY_HOST);
    return 0;
 }

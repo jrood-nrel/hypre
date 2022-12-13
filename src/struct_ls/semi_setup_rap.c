@@ -11,7 +11,7 @@
 
 #define hypre_MapRAPMarker(indexRAP, rank)      \
    {                                            \
-      HYPRE_Int imacro,jmacro,kmacro;           \
+      NALU_HYPRE_Int imacro,jmacro,kmacro;           \
       imacro = hypre_IndexX(indexRAP);          \
       jmacro = hypre_IndexY(indexRAP);          \
       kmacro = hypre_IndexZ(indexRAP);          \
@@ -23,7 +23,7 @@
 
 #define hypre_InverseMapRAPMarker(rank, indexRAP)       \
    {                                                    \
-      HYPRE_Int imacro,ijmacro,jmacro,kmacro;           \
+      NALU_HYPRE_Int imacro,ijmacro,jmacro,kmacro;           \
       ijmacro = (rank%9);                               \
       imacro  = (ijmacro%3);                            \
       jmacro  = (ijmacro-imacro)/3;                     \
@@ -43,34 +43,34 @@ hypre_SemiCreateRAPOp( hypre_StructMatrix *R,
                        hypre_StructMatrix *A,
                        hypre_StructMatrix *P,
                        hypre_StructGrid   *coarse_grid,
-                       HYPRE_Int           cdir,
-                       HYPRE_Int           P_stored_as_transpose )
+                       NALU_HYPRE_Int           cdir,
+                       NALU_HYPRE_Int           P_stored_as_transpose )
 {
    hypre_StructMatrix    *RAP;
 
    hypre_Index           *RAP_stencil_shape;
    hypre_StructStencil   *RAP_stencil;
-   HYPRE_Int              RAP_stencil_size;
-   HYPRE_Int              dim;
-   HYPRE_Int              RAP_num_ghost[] = {1, 1, 1, 1, 1, 1};
+   NALU_HYPRE_Int              RAP_stencil_size;
+   NALU_HYPRE_Int              dim;
+   NALU_HYPRE_Int              RAP_num_ghost[] = {1, 1, 1, 1, 1, 1};
 
-   HYPRE_Int             *not_cdirs;
+   NALU_HYPRE_Int             *not_cdirs;
    hypre_StructStencil   *A_stencil;
-   HYPRE_Int              A_stencil_size;
+   NALU_HYPRE_Int              A_stencil_size;
    hypre_Index           *A_stencil_shape;
 
    hypre_Index            indexR;
    hypre_Index            indexRA;
    hypre_Index            indexRAP;
-   HYPRE_Int              Rloop, Aloop;
+   NALU_HYPRE_Int              Rloop, Aloop;
 
-   HYPRE_Int              j, i;
-   HYPRE_Int              d;
-   HYPRE_Int              stencil_rank;
+   NALU_HYPRE_Int              j, i;
+   NALU_HYPRE_Int              d;
+   NALU_HYPRE_Int              stencil_rank;
 
-   HYPRE_Int             *RAP_marker;
-   HYPRE_Int              RAP_marker_size;
-   HYPRE_Int              RAP_marker_rank;
+   NALU_HYPRE_Int             *RAP_marker;
+   NALU_HYPRE_Int              RAP_marker_size;
+   NALU_HYPRE_Int              RAP_marker_rank;
 
    A_stencil = hypre_StructMatrixStencil(A);
    dim = hypre_StructStencilNDim(A_stencil);
@@ -87,7 +87,7 @@ hypre_SemiCreateRAPOp( hypre_StructMatrix *R,
    {
       RAP_marker_size *= 3;
    }
-   RAP_marker = hypre_CTAlloc(HYPRE_Int,  RAP_marker_size, HYPRE_MEMORY_HOST);
+   RAP_marker = hypre_CTAlloc(NALU_HYPRE_Int,  RAP_marker_size, NALU_HYPRE_MEMORY_HOST);
 
    /*-----------------------------------------------------------------------
     * Define RAP_stencil
@@ -178,7 +178,7 @@ hypre_SemiCreateRAPOp( hypre_StructMatrix *R,
    {
       if (dim > 1)
       {
-         not_cdirs = hypre_CTAlloc(HYPRE_Int,  dim - 1, HYPRE_MEMORY_HOST);
+         not_cdirs = hypre_CTAlloc(NALU_HYPRE_Int,  dim - 1, NALU_HYPRE_MEMORY_HOST);
       }
 
       for (d = 1; d < dim; d++)
@@ -222,7 +222,7 @@ hypre_SemiCreateRAPOp( hypre_StructMatrix *R,
 
       if (dim > 1)
       {
-         hypre_TFree(not_cdirs, HYPRE_MEMORY_HOST);
+         hypre_TFree(not_cdirs, NALU_HYPRE_MEMORY_HOST);
       }
    }
 
@@ -236,7 +236,7 @@ hypre_SemiCreateRAPOp( hypre_StructMatrix *R,
       }
    }
 
-   RAP_stencil_shape = hypre_CTAlloc(hypre_Index,  RAP_stencil_size, HYPRE_MEMORY_HOST);
+   RAP_stencil_shape = hypre_CTAlloc(hypre_Index,  RAP_stencil_size, NALU_HYPRE_MEMORY_HOST);
 
    stencil_rank = 0;
    for (i = 0; i < RAP_marker_size; i++)
@@ -265,7 +265,7 @@ hypre_SemiCreateRAPOp( hypre_StructMatrix *R,
     *-----------------------------------------------------------------------*/
    hypre_StructMatrixSetNumGhost(RAP, RAP_num_ghost);
 
-   hypre_TFree(RAP_marker, HYPRE_MEMORY_HOST);
+   hypre_TFree(RAP_marker, NALU_HYPRE_MEMORY_HOST);
 
    return RAP;
 }
@@ -273,29 +273,29 @@ hypre_SemiCreateRAPOp( hypre_StructMatrix *R,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SemiBuildRAP( hypre_StructMatrix *A,
                     hypre_StructMatrix *P,
                     hypre_StructMatrix *R,
-                    HYPRE_Int           cdir,
+                    NALU_HYPRE_Int           cdir,
                     hypre_Index         cindex,
                     hypre_Index         cstride,
-                    HYPRE_Int           P_stored_as_transpose,
+                    NALU_HYPRE_Int           P_stored_as_transpose,
                     hypre_StructMatrix *RAP     )
 {
 
    hypre_Index           index;
 
    hypre_StructStencil  *coarse_stencil;
-   HYPRE_Int             coarse_stencil_size;
+   NALU_HYPRE_Int             coarse_stencil_size;
    hypre_Index          *coarse_stencil_shape;
-   HYPRE_Int            *coarse_symm_elements;
+   NALU_HYPRE_Int            *coarse_symm_elements;
 
    hypre_StructGrid     *fgrid;
-   HYPRE_Int            *fgrid_ids;
+   NALU_HYPRE_Int            *fgrid_ids;
    hypre_StructGrid     *cgrid;
    hypre_BoxArray       *cgrid_boxes;
-   HYPRE_Int            *cgrid_ids;
+   NALU_HYPRE_Int            *cgrid_ids;
    hypre_Box            *cgrid_box;
    hypre_IndexRef        cstart;
    hypre_Index           stridec;
@@ -303,32 +303,32 @@ hypre_SemiBuildRAP( hypre_StructMatrix *A,
    hypre_IndexRef        stridef;
    hypre_Index           loop_size;
 
-   HYPRE_Int             fi, ci;
+   NALU_HYPRE_Int             fi, ci;
 
    hypre_Box            *A_dbox;
    hypre_Box            *P_dbox;
    hypre_Box            *R_dbox;
    hypre_Box            *RAP_dbox;
 
-   HYPRE_Real           *pa, *pb;
-   HYPRE_Real           *ra, *rb;
+   NALU_HYPRE_Real           *pa, *pb;
+   NALU_HYPRE_Real           *ra, *rb;
 
-   HYPRE_Real           *a_ptr;
+   NALU_HYPRE_Real           *a_ptr;
 
-   HYPRE_Real           *rap_ptrS, *rap_ptrU, *rap_ptrD;
+   NALU_HYPRE_Real           *rap_ptrS, *rap_ptrU, *rap_ptrD;
 
-   HYPRE_Int             symm_path_multiplier;
+   NALU_HYPRE_Int             symm_path_multiplier;
 
-   HYPRE_Int             COffsetA;
-   HYPRE_Int             COffsetP;
-   HYPRE_Int             AOffsetP;
+   NALU_HYPRE_Int             COffsetA;
+   NALU_HYPRE_Int             COffsetP;
+   NALU_HYPRE_Int             AOffsetP;
 
-   HYPRE_Int             RAPloop;
-   HYPRE_Int             diag;
-   HYPRE_Int             dim;
-   HYPRE_Int             d;
+   NALU_HYPRE_Int             RAPloop;
+   NALU_HYPRE_Int             diag;
+   NALU_HYPRE_Int             dim;
+   NALU_HYPRE_Int             d;
 
-   HYPRE_Real            zero = 0.0;
+   NALU_HYPRE_Real            zero = 0.0;
 
    coarse_stencil = hypre_StructMatrixStencil(RAP);
    coarse_stencil_size = hypre_StructStencilSize(coarse_stencil);
@@ -392,7 +392,7 @@ hypre_SemiBuildRAP( hypre_StructMatrix *A,
 
       hypre_SetIndex(index, 0);
       //RL:PTROFFSET
-      HYPRE_Int pb_offset = 0;
+      NALU_HYPRE_Int pb_offset = 0;
       if (P_stored_as_transpose)
       {
          hypre_IndexD(index, cdir) = 1;
@@ -433,7 +433,7 @@ hypre_SemiBuildRAP( hypre_StructMatrix *A,
        *-----------------------------------------------------------------*/
 
       hypre_SetIndex(index, 0);
-      HYPRE_Int rb_offset = 0;
+      NALU_HYPRE_Int rb_offset = 0;
       if (P_stored_as_transpose)
       {
          hypre_IndexD(index, cdir) = 1;
@@ -554,7 +554,7 @@ hypre_SemiBuildRAP( hypre_StructMatrix *A,
                                             A_dbox, fstart, stridef, iA,
                                             RAP_dbox, cstart, stridec, iAc);
                         {
-                           HYPRE_Int iAp, iPp;
+                           NALU_HYPRE_Int iAp, iPp;
                            /* path 1 : (stay,stay) */
                            rap_ptrS[iAc] +=          a_ptr[iA]           ;
 
@@ -589,7 +589,7 @@ hypre_SemiBuildRAP( hypre_StructMatrix *A,
                                             A_dbox, fstart, stridef, iA,
                                             RAP_dbox, cstart, stridec, iAc);
                         {
-                           HYPRE_Int iAp, iPp;
+                           NALU_HYPRE_Int iAp, iPp;
                            /* path 1 : (stay,stay) */
                            rap_ptrS[iAc] +=          a_ptr[iA]           ;
 
@@ -661,7 +661,7 @@ hypre_SemiBuildRAP( hypre_StructMatrix *A,
                                          A_dbox, fstart, stridef, iA,
                                          RAP_dbox, cstart, stridec, iAc);
                      {
-                        HYPRE_Int iAp, iPp;
+                        NALU_HYPRE_Int iAp, iPp;
                         /* Path 1 : (stay,up) & symmetric path  */
                         iPp = iP + AOffsetP;
                         rap_ptrS[iAc] += symm_path_multiplier *
@@ -729,7 +729,7 @@ hypre_SemiBuildRAP( hypre_StructMatrix *A,
                                          A_dbox, fstart, stridef, iA,
                                          RAP_dbox, cstart, stridec, iAc);
                      {
-                        HYPRE_Int iAp, iPp;
+                        NALU_HYPRE_Int iAp, iPp;
                         /* Path 1 : (stay,up) */
                         iPp = iP + COffsetP + AOffsetP;
                         rap_ptrU[iAc] +=          a_ptr[iA]  * pb[iPp + pb_offset];
@@ -819,7 +819,7 @@ hypre_SemiBuildRAP( hypre_StructMatrix *A,
                      /*--------------------------------------------------
                       * If RAP stencil index is zero except in coarsened
                       * direction and RAP is symmetric, must
-                      * HYPRE_Real entry when modifying the diagonal.
+                      * NALU_HYPRE_Real entry when modifying the diagonal.
                       *--------------------------------------------------*/
                      symm_path_multiplier = 1;
                      diag = 0;

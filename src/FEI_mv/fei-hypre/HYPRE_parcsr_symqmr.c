@@ -12,15 +12,15 @@
 
 #include "utilities/_hypre_utilities.h"
 #include "HYPRE.h"
-#include "IJ_mv/HYPRE_IJ_mv.h"
-#include "parcsr_mv/HYPRE_parcsr_mv.h"
+#include "IJ_mv/NALU_HYPRE_IJ_mv.h"
+#include "parcsr_mv/NALU_HYPRE_parcsr_mv.h"
 #include "parcsr_mv/_hypre_parcsr_mv.h"
-#include "parcsr_ls/HYPRE_parcsr_ls.h"
+#include "parcsr_ls/NALU_HYPRE_parcsr_ls.h"
 
-#include "HYPRE_FEI.h"
+#include "NALU_HYPRE_FEI.h"
 /******************************************************************************
  *
- * HYPRE_ParCSRSymQMR interface
+ * NALU_HYPRE_ParCSRSymQMR interface
  *
  *****************************************************************************/
 
@@ -38,114 +38,114 @@ extern int  hypre_SymQMRGetNumIterations(void *, int *);
 extern int  hypre_SymQMRGetFinalRelativeResidualNorm(void *, double *);
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRSymQMRCreate
+ * NALU_HYPRE_ParCSRSymQMRCreate
  *--------------------------------------------------------------------------*/
 
-int HYPRE_ParCSRSymQMRCreate( MPI_Comm comm, HYPRE_Solver *solver )
+int NALU_HYPRE_ParCSRSymQMRCreate( MPI_Comm comm, NALU_HYPRE_Solver *solver )
 {
-   *solver = (HYPRE_Solver) hypre_SymQMRCreate( );
+   *solver = (NALU_HYPRE_Solver) hypre_SymQMRCreate( );
 
    return 0;
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRSymQMRDestroy
+ * NALU_HYPRE_ParCSRSymQMRDestroy
  *--------------------------------------------------------------------------*/
 
-int HYPRE_ParCSRSymQMRDestroy( HYPRE_Solver solver )
+int NALU_HYPRE_ParCSRSymQMRDestroy( NALU_HYPRE_Solver solver )
 {
    return( hypre_SymQMRDestroy( (void *) solver ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRSymQMRSetup
+ * NALU_HYPRE_ParCSRSymQMRSetup
  *--------------------------------------------------------------------------*/
 
-int HYPRE_ParCSRSymQMRSetup( HYPRE_Solver solver, HYPRE_ParCSRMatrix A,
-                             HYPRE_ParVector b, HYPRE_ParVector x      )
+int NALU_HYPRE_ParCSRSymQMRSetup( NALU_HYPRE_Solver solver, NALU_HYPRE_ParCSRMatrix A,
+                             NALU_HYPRE_ParVector b, NALU_HYPRE_ParVector x      )
 {
    return( hypre_SymQMRSetup( (void *) solver, (void *) A, (void *) b,
                               (void *) x ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRSymQMRSolve
+ * NALU_HYPRE_ParCSRSymQMRSolve
  *--------------------------------------------------------------------------*/
 
-int HYPRE_ParCSRSymQMRSolve( HYPRE_Solver solver, HYPRE_ParCSRMatrix A,
-                                HYPRE_ParVector b, HYPRE_ParVector x      )
+int NALU_HYPRE_ParCSRSymQMRSolve( NALU_HYPRE_Solver solver, NALU_HYPRE_ParCSRMatrix A,
+                                NALU_HYPRE_ParVector b, NALU_HYPRE_ParVector x      )
 {
    return( hypre_SymQMRSolve( (void *) solver, (void *) A,
                               (void *) b, (void *) x ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRSymQMRSetTol
+ * NALU_HYPRE_ParCSRSymQMRSetTol
  *--------------------------------------------------------------------------*/
 
-int HYPRE_ParCSRSymQMRSetTol( HYPRE_Solver solver, double tol    )
+int NALU_HYPRE_ParCSRSymQMRSetTol( NALU_HYPRE_Solver solver, double tol    )
 {
    return( hypre_SymQMRSetTol( (void *) solver, tol ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRSymQMRSetMaxIter
+ * NALU_HYPRE_ParCSRSymQMRSetMaxIter
  *--------------------------------------------------------------------------*/
 
-int HYPRE_ParCSRSymQMRSetMaxIter( HYPRE_Solver solver, int max_iter )
+int NALU_HYPRE_ParCSRSymQMRSetMaxIter( NALU_HYPRE_Solver solver, int max_iter )
 {
    return( hypre_SymQMRSetMaxIter( (void *) solver, max_iter ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRSymQMRSetStopCrit
+ * NALU_HYPRE_ParCSRSymQMRSetStopCrit
  *--------------------------------------------------------------------------*/
 
-int HYPRE_ParCSRSymQMRSetStopCrit( HYPRE_Solver solver, int stop_crit )
+int NALU_HYPRE_ParCSRSymQMRSetStopCrit( NALU_HYPRE_Solver solver, int stop_crit )
 {
    return( hypre_SymQMRSetStopCrit( (void *) solver, stop_crit ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRSymQMRSetPrecond
+ * NALU_HYPRE_ParCSRSymQMRSetPrecond
  *--------------------------------------------------------------------------*/
 
-int HYPRE_ParCSRSymQMRSetPrecond( HYPRE_Solver  solver,
-          int (*precond)      (HYPRE_Solver sol, HYPRE_ParCSRMatrix matrix,
-			       HYPRE_ParVector b, HYPRE_ParVector x),
-          int (*precond_setup)(HYPRE_Solver sol, HYPRE_ParCSRMatrix matrix,
-			       HYPRE_ParVector b, HYPRE_ParVector x),
+int NALU_HYPRE_ParCSRSymQMRSetPrecond( NALU_HYPRE_Solver  solver,
+          int (*precond)      (NALU_HYPRE_Solver sol, NALU_HYPRE_ParCSRMatrix matrix,
+			       NALU_HYPRE_ParVector b, NALU_HYPRE_ParVector x),
+          int (*precond_setup)(NALU_HYPRE_Solver sol, NALU_HYPRE_ParCSRMatrix matrix,
+			       NALU_HYPRE_ParVector b, NALU_HYPRE_ParVector x),
           void                *precond_data )
 {
    return( hypre_SymQMRSetPrecond( (void *) solver,
-								   (HYPRE_Int (*)(void*,void*,void*,void*))precond,
-								   (HYPRE_Int (*)(void*,void*,void*,void*))precond_setup,
+								   (NALU_HYPRE_Int (*)(void*,void*,void*,void*))precond,
+								   (NALU_HYPRE_Int (*)(void*,void*,void*,void*))precond_setup,
 								   precond_data ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRSymQMRSetLogging
+ * NALU_HYPRE_ParCSRSymQMRSetLogging
  *--------------------------------------------------------------------------*/
 
-int HYPRE_ParCSRSymQMRSetLogging( HYPRE_Solver solver, int logging)
+int NALU_HYPRE_ParCSRSymQMRSetLogging( NALU_HYPRE_Solver solver, int logging)
 {
    return( hypre_SymQMRSetLogging( (void *) solver, logging ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRSymQMRetNumIterations
+ * NALU_HYPRE_ParCSRSymQMRetNumIterations
  *--------------------------------------------------------------------------*/
 
-int HYPRE_ParCSRSymQMRGetNumIterations(HYPRE_Solver solver,int *num_iterations)
+int NALU_HYPRE_ParCSRSymQMRGetNumIterations(NALU_HYPRE_Solver solver,int *num_iterations)
 {
    return( hypre_SymQMRGetNumIterations( (void *) solver, num_iterations ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRSymQMRGetFinalRelativeResidualNorm
+ * NALU_HYPRE_ParCSRSymQMRGetFinalRelativeResidualNorm
  *--------------------------------------------------------------------------*/
 
-int HYPRE_ParCSRSymQMRGetFinalRelativeResidualNorm( HYPRE_Solver  solver,
+int NALU_HYPRE_ParCSRSymQMRGetFinalRelativeResidualNorm( NALU_HYPRE_Solver  solver,
                                                        double *norm   )
 {
    return( hypre_SymQMRGetFinalRelativeResidualNorm( (void *) solver, norm ) );

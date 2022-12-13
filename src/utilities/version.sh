@@ -26,10 +26,10 @@ esac
 # we need to get the path info from the command line
 VPATH=`dirname $0`
 VFILE="${VPATH}/../configure"
-VERSION=`grep "HYPRE_VERSION=" $VFILE | cut -d= -f 2 | sed 's/"//g'`
-NUMBER=`grep "HYPRE_NUMBER=" $VFILE | cut -d= -f 2`
-DATE=`grep "HYPRE_DATE=" $VFILE | cut -d= -f 2 | sed 's/"//g'`
-TIME=`grep "HYPRE_TIME=" $VFILE | cut -d= -f 2 | sed 's/"//g'`
+VERSION=`grep "NALU_HYPRE_VERSION=" $VFILE | cut -d= -f 2 | sed 's/"//g'`
+NUMBER=`grep "NALU_HYPRE_NUMBER=" $VFILE | cut -d= -f 2`
+DATE=`grep "NALU_HYPRE_DATE=" $VFILE | cut -d= -f 2 | sed 's/"//g'`
+TIME=`grep "NALU_HYPRE_TIME=" $VFILE | cut -d= -f 2 | sed 's/"//g'`
 
 # this is the no-option print line
 VPRINT=`echo hypre Version $VERSION Date: $DATE`

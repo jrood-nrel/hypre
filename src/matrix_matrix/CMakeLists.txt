@@ -4,12 +4,12 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 set(HDRS
-  HYPRE_matrix_matrix_protos.h
+  NALU_HYPRE_matrix_matrix_protos.h
 )
 
 set(SRCS
-  HYPRE_ConvertParCSRMatrixToDistributedMatrix.c
-  HYPRE_ConvertPETScMatrixToDistributedMatrix.c
+  NALU_HYPRE_ConvertParCSRMatrixToDistributedMatrix.c
+  NALU_HYPRE_ConvertPETScMatrixToDistributedMatrix.c
 )
 
 target_sources(${PROJECT_NAME}
@@ -18,4 +18,4 @@ target_sources(${PROJECT_NAME}
 )
 
 convert_filenames_to_full_paths(HDRS)
-set(HYPRE_HEADERS ${HYPRE_HEADERS} ${HDRS} PARENT_SCOPE)
+set(NALU_HYPRE_HEADERS ${NALU_HYPRE_HEADERS} ${HDRS} PARENT_SCOPE)

@@ -8,11 +8,11 @@
 #include "_hypre_parcsr_ls.h"
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRLGMRESCreate
+ * NALU_HYPRE_ParCSRLGMRESCreate
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ParCSRLGMRESCreate( MPI_Comm comm, HYPRE_Solver *solver )
+NALU_HYPRE_Int
+NALU_HYPRE_ParCSRLGMRESCreate( MPI_Comm comm, NALU_HYPRE_Solver *solver )
 {
    hypre_LGMRESFunctions * lgmres_functions;
 
@@ -32,195 +32,195 @@ HYPRE_ParCSRLGMRESCreate( MPI_Comm comm, HYPRE_Solver *solver )
          hypre_ParKrylovClearVector,
          hypre_ParKrylovScaleVector, hypre_ParKrylovAxpy,
          hypre_ParKrylovIdentitySetup, hypre_ParKrylovIdentity );
-   *solver = ( (HYPRE_Solver) hypre_LGMRESCreate( lgmres_functions ) );
+   *solver = ( (NALU_HYPRE_Solver) hypre_LGMRESCreate( lgmres_functions ) );
 
    return hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRLGMRESDestroy
+ * NALU_HYPRE_ParCSRLGMRESDestroy
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ParCSRLGMRESDestroy( HYPRE_Solver solver )
+NALU_HYPRE_Int
+NALU_HYPRE_ParCSRLGMRESDestroy( NALU_HYPRE_Solver solver )
 {
    return ( hypre_LGMRESDestroy( (void *) solver ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRLGMRESSetup
+ * NALU_HYPRE_ParCSRLGMRESSetup
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ParCSRLGMRESSetup( HYPRE_Solver solver,
-                         HYPRE_ParCSRMatrix A,
-                         HYPRE_ParVector b,
-                         HYPRE_ParVector x      )
+NALU_HYPRE_Int
+NALU_HYPRE_ParCSRLGMRESSetup( NALU_HYPRE_Solver solver,
+                         NALU_HYPRE_ParCSRMatrix A,
+                         NALU_HYPRE_ParVector b,
+                         NALU_HYPRE_ParVector x      )
 {
-   return ( HYPRE_LGMRESSetup( solver,
-                               (HYPRE_Matrix) A,
-                               (HYPRE_Vector) b,
-                               (HYPRE_Vector) x ) );
+   return ( NALU_HYPRE_LGMRESSetup( solver,
+                               (NALU_HYPRE_Matrix) A,
+                               (NALU_HYPRE_Vector) b,
+                               (NALU_HYPRE_Vector) x ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRLGMRESSolve
+ * NALU_HYPRE_ParCSRLGMRESSolve
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ParCSRLGMRESSolve( HYPRE_Solver solver,
-                         HYPRE_ParCSRMatrix A,
-                         HYPRE_ParVector b,
-                         HYPRE_ParVector x      )
+NALU_HYPRE_Int
+NALU_HYPRE_ParCSRLGMRESSolve( NALU_HYPRE_Solver solver,
+                         NALU_HYPRE_ParCSRMatrix A,
+                         NALU_HYPRE_ParVector b,
+                         NALU_HYPRE_ParVector x      )
 {
-   return ( HYPRE_LGMRESSolve( solver,
-                               (HYPRE_Matrix) A,
-                               (HYPRE_Vector) b,
-                               (HYPRE_Vector) x ) );
+   return ( NALU_HYPRE_LGMRESSolve( solver,
+                               (NALU_HYPRE_Matrix) A,
+                               (NALU_HYPRE_Vector) b,
+                               (NALU_HYPRE_Vector) x ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRLGMRESSetKDim
+ * NALU_HYPRE_ParCSRLGMRESSetKDim
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ParCSRLGMRESSetKDim( HYPRE_Solver solver,
-                           HYPRE_Int    k_dim    )
+NALU_HYPRE_Int
+NALU_HYPRE_ParCSRLGMRESSetKDim( NALU_HYPRE_Solver solver,
+                           NALU_HYPRE_Int    k_dim    )
 {
-   return ( HYPRE_LGMRESSetKDim( solver, k_dim ) );
+   return ( NALU_HYPRE_LGMRESSetKDim( solver, k_dim ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRLGMRESSetAugDim
+ * NALU_HYPRE_ParCSRLGMRESSetAugDim
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ParCSRLGMRESSetAugDim( HYPRE_Solver solver,
-                             HYPRE_Int    aug_dim    )
+NALU_HYPRE_Int
+NALU_HYPRE_ParCSRLGMRESSetAugDim( NALU_HYPRE_Solver solver,
+                             NALU_HYPRE_Int    aug_dim    )
 {
-   return ( HYPRE_LGMRESSetAugDim( solver, aug_dim ) );
+   return ( NALU_HYPRE_LGMRESSetAugDim( solver, aug_dim ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRLGMRESSetTol
+ * NALU_HYPRE_ParCSRLGMRESSetTol
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ParCSRLGMRESSetTol( HYPRE_Solver solver,
-                          HYPRE_Real   tol    )
+NALU_HYPRE_Int
+NALU_HYPRE_ParCSRLGMRESSetTol( NALU_HYPRE_Solver solver,
+                          NALU_HYPRE_Real   tol    )
 {
-   return ( HYPRE_LGMRESSetTol( solver, tol ) );
+   return ( NALU_HYPRE_LGMRESSetTol( solver, tol ) );
 }
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRLGMRESSetAbsoluteTol
+ * NALU_HYPRE_ParCSRLGMRESSetAbsoluteTol
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ParCSRLGMRESSetAbsoluteTol( HYPRE_Solver solver,
-                                  HYPRE_Real   a_tol    )
+NALU_HYPRE_Int
+NALU_HYPRE_ParCSRLGMRESSetAbsoluteTol( NALU_HYPRE_Solver solver,
+                                  NALU_HYPRE_Real   a_tol    )
 {
-   return ( HYPRE_LGMRESSetAbsoluteTol( solver, a_tol ) );
+   return ( NALU_HYPRE_LGMRESSetAbsoluteTol( solver, a_tol ) );
 }
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRLGMRESSetMinIter
+ * NALU_HYPRE_ParCSRLGMRESSetMinIter
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ParCSRLGMRESSetMinIter( HYPRE_Solver solver,
-                              HYPRE_Int    min_iter )
+NALU_HYPRE_Int
+NALU_HYPRE_ParCSRLGMRESSetMinIter( NALU_HYPRE_Solver solver,
+                              NALU_HYPRE_Int    min_iter )
 {
-   return ( HYPRE_LGMRESSetMinIter( solver, min_iter ) );
-}
-
-/*--------------------------------------------------------------------------
- * HYPRE_ParCSRLGMRESSetMaxIter
- *--------------------------------------------------------------------------*/
-
-HYPRE_Int
-HYPRE_ParCSRLGMRESSetMaxIter( HYPRE_Solver solver,
-                              HYPRE_Int    max_iter )
-{
-   return ( HYPRE_LGMRESSetMaxIter( solver, max_iter ) );
+   return ( NALU_HYPRE_LGMRESSetMinIter( solver, min_iter ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRLGMRESSetPrecond
+ * NALU_HYPRE_ParCSRLGMRESSetMaxIter
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ParCSRLGMRESSetPrecond( HYPRE_Solver          solver,
-                              HYPRE_PtrToParSolverFcn  precond,
-                              HYPRE_PtrToParSolverFcn  precond_setup,
-                              HYPRE_Solver          precond_solver )
+NALU_HYPRE_Int
+NALU_HYPRE_ParCSRLGMRESSetMaxIter( NALU_HYPRE_Solver solver,
+                              NALU_HYPRE_Int    max_iter )
 {
-   return ( HYPRE_LGMRESSetPrecond( solver,
-                                    (HYPRE_PtrToSolverFcn) precond,
-                                    (HYPRE_PtrToSolverFcn) precond_setup,
+   return ( NALU_HYPRE_LGMRESSetMaxIter( solver, max_iter ) );
+}
+
+/*--------------------------------------------------------------------------
+ * NALU_HYPRE_ParCSRLGMRESSetPrecond
+ *--------------------------------------------------------------------------*/
+
+NALU_HYPRE_Int
+NALU_HYPRE_ParCSRLGMRESSetPrecond( NALU_HYPRE_Solver          solver,
+                              NALU_HYPRE_PtrToParSolverFcn  precond,
+                              NALU_HYPRE_PtrToParSolverFcn  precond_setup,
+                              NALU_HYPRE_Solver          precond_solver )
+{
+   return ( NALU_HYPRE_LGMRESSetPrecond( solver,
+                                    (NALU_HYPRE_PtrToSolverFcn) precond,
+                                    (NALU_HYPRE_PtrToSolverFcn) precond_setup,
                                     precond_solver ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRLGMRESGetPrecond
+ * NALU_HYPRE_ParCSRLGMRESGetPrecond
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ParCSRLGMRESGetPrecond( HYPRE_Solver  solver,
-                              HYPRE_Solver *precond_data_ptr )
+NALU_HYPRE_Int
+NALU_HYPRE_ParCSRLGMRESGetPrecond( NALU_HYPRE_Solver  solver,
+                              NALU_HYPRE_Solver *precond_data_ptr )
 {
-   return ( HYPRE_LGMRESGetPrecond( solver, precond_data_ptr ) );
+   return ( NALU_HYPRE_LGMRESGetPrecond( solver, precond_data_ptr ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRLGMRESSetLogging
+ * NALU_HYPRE_ParCSRLGMRESSetLogging
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ParCSRLGMRESSetLogging( HYPRE_Solver solver,
-                              HYPRE_Int logging)
+NALU_HYPRE_Int
+NALU_HYPRE_ParCSRLGMRESSetLogging( NALU_HYPRE_Solver solver,
+                              NALU_HYPRE_Int logging)
 {
-   return ( HYPRE_LGMRESSetLogging( solver, logging ) );
+   return ( NALU_HYPRE_LGMRESSetLogging( solver, logging ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRLGMRESSetPrintLevel
+ * NALU_HYPRE_ParCSRLGMRESSetPrintLevel
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ParCSRLGMRESSetPrintLevel( HYPRE_Solver solver,
-                                 HYPRE_Int print_level)
+NALU_HYPRE_Int
+NALU_HYPRE_ParCSRLGMRESSetPrintLevel( NALU_HYPRE_Solver solver,
+                                 NALU_HYPRE_Int print_level)
 {
-   return ( HYPRE_LGMRESSetPrintLevel( solver, print_level ) );
+   return ( NALU_HYPRE_LGMRESSetPrintLevel( solver, print_level ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRLGMRESGetNumIterations
+ * NALU_HYPRE_ParCSRLGMRESGetNumIterations
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ParCSRLGMRESGetNumIterations( HYPRE_Solver  solver,
-                                    HYPRE_Int    *num_iterations )
+NALU_HYPRE_Int
+NALU_HYPRE_ParCSRLGMRESGetNumIterations( NALU_HYPRE_Solver  solver,
+                                    NALU_HYPRE_Int    *num_iterations )
 {
-   return ( HYPRE_LGMRESGetNumIterations( solver, num_iterations ) );
+   return ( NALU_HYPRE_LGMRESGetNumIterations( solver, num_iterations ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRLGMRESGetFinalRelativeResidualNorm
+ * NALU_HYPRE_ParCSRLGMRESGetFinalRelativeResidualNorm
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ParCSRLGMRESGetFinalRelativeResidualNorm( HYPRE_Solver  solver,
-                                                HYPRE_Real   *norm   )
+NALU_HYPRE_Int
+NALU_HYPRE_ParCSRLGMRESGetFinalRelativeResidualNorm( NALU_HYPRE_Solver  solver,
+                                                NALU_HYPRE_Real   *norm   )
 {
-   return ( HYPRE_LGMRESGetFinalRelativeResidualNorm( solver, norm ) );
+   return ( NALU_HYPRE_LGMRESGetFinalRelativeResidualNorm( solver, norm ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRLGMRESGetResidual
+ * NALU_HYPRE_ParCSRLGMRESGetResidual
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ParCSRLGMRESGetResidual( HYPRE_Solver  solver,
-                               HYPRE_ParVector *residual)
+NALU_HYPRE_Int
+NALU_HYPRE_ParCSRLGMRESGetResidual( NALU_HYPRE_Solver  solver,
+                               NALU_HYPRE_ParVector *residual)
 {
-   return ( HYPRE_LGMRESGetResidual( solver, (void *) residual ) );
+   return ( NALU_HYPRE_LGMRESGetResidual( solver, (void *) residual ) );
 }

@@ -15,41 +15,41 @@
 #define F2C_INCLUDE
 
 /* MPI is not needed here, so don't include mpi.h */
-#include "HYPRE_config.h"
-#ifndef HYPRE_SEQUENTIAL
-#define HYPRE_SEQUENTIAL
+#include "NALU_HYPRE_config.h"
+#ifndef NALU_HYPRE_SEQUENTIAL
+#define NALU_HYPRE_SEQUENTIAL
 #endif
 #include "_hypre_utilities.h"
 #include "math.h"
 
-#if defined(HYPRE_SINGLE)
+#if defined(NALU_HYPRE_SINGLE)
 #define sqrt sqrtf
-#elif defined(HYPRE_LONG_DOUBLE)
+#elif defined(NALU_HYPRE_LONG_DOUBLE)
 #define sqrt sqrtl
 #endif
 
-#ifdef HYPRE_BIGINT
-typedef long long int HYPRE_LongInt;
-typedef unsigned long long int HYPRE_ULongInt;
+#ifdef NALU_HYPRE_BIGINT
+typedef long long int NALU_HYPRE_LongInt;
+typedef unsigned long long int NALU_HYPRE_ULongInt;
 #else 
-typedef long int HYPRE_LongInt;
-typedef unsigned long int HYPRE_ULongInt;
+typedef long int NALU_HYPRE_LongInt;
+typedef unsigned long int NALU_HYPRE_ULongInt;
 #endif
 
-/* F2C_INTEGER will normally be `HYPRE_Int' but would be `long' on 16-bit systems */
+/* F2C_INTEGER will normally be `NALU_HYPRE_Int' but would be `long' on 16-bit systems */
 /* we assume short, float are OK */
 
-/* integer changed to HYPRE_Int - edmond 1/12/00 */
+/* integer changed to NALU_HYPRE_Int - edmond 1/12/00 */
 
-typedef HYPRE_Int integer;
-typedef HYPRE_ULongInt uinteger;
+typedef NALU_HYPRE_Int integer;
+typedef NALU_HYPRE_ULongInt uinteger;
 typedef char *address;
 typedef short int shortint;
 typedef float real;
-typedef HYPRE_Real doublereal;
+typedef NALU_HYPRE_Real doublereal;
 typedef struct { real r, i; } complex;
 typedef struct { doublereal r, i; } doublecomplex;
-typedef HYPRE_LongInt logical;
+typedef NALU_HYPRE_LongInt logical;
 typedef short int shortlogical;
 typedef char logical1;
 typedef char integer1;
@@ -60,7 +60,7 @@ typedef unsigned @F2C_LONGINT@ ulongint;	/* system-dependent */
 #define qbit_clear(a,b)	((a) & ~((ulongint)1 << (b)))
 #define qbit_set(a,b)	((a) |  ((ulongint)1 << (b)))
 #endif
-/* typedef long long HYPRE_Int longint; */ /* RDF: removed */
+/* typedef long long NALU_HYPRE_Int longint; */ /* RDF: removed */
 
 #define TRUE_ (1)
 #define FALSE_ (0)
@@ -79,9 +79,9 @@ typedef short flag;
 typedef short ftnlen;
 typedef short ftnint;
 #else
-typedef HYPRE_LongInt /* HYPRE_Int or long HYPRE_Int */ flag;
-typedef HYPRE_Int /* HYPRE_Int or long HYPRE_Int */ ftnlen; /* changed by edmond */
-typedef HYPRE_LongInt /* HYPRE_Int or long HYPRE_Int */ ftnint;
+typedef NALU_HYPRE_LongInt /* NALU_HYPRE_Int or long NALU_HYPRE_Int */ flag;
+typedef NALU_HYPRE_Int /* NALU_HYPRE_Int or long NALU_HYPRE_Int */ ftnlen; /* changed by edmond */
+typedef NALU_HYPRE_LongInt /* NALU_HYPRE_Int or long NALU_HYPRE_Int */ ftnint;
 #endif
 
 /*external read, write*/
@@ -174,20 +174,20 @@ union Multitype {	/* for multiple entry points */
 
 typedef union Multitype Multitype;
 
-/*typedef long HYPRE_Int Long;*/	/* No longer used; formerly in Namelist */
+/*typedef long NALU_HYPRE_Int Long;*/	/* No longer used; formerly in Namelist */
 
 struct Vardesc {	/* for Namelist */
 	char *name;
 	char *addr;
 	ftnlen *dims;
-	HYPRE_Int  type;
+	NALU_HYPRE_Int  type;
 	};
 typedef struct Vardesc Vardesc;
 
 struct Namelist {
 	char *name;
 	Vardesc **vars;
-	HYPRE_Int nvars;
+	NALU_HYPRE_Int nvars;
 	};
 typedef struct Namelist Namelist;
 
@@ -209,7 +209,7 @@ typedef struct Namelist Namelist;
 
 #define F2C_proc_par_types 1
 #ifdef __cplusplus
-typedef HYPRE_Int /* Unknown procedure type */ (*U_fp)(...);
+typedef NALU_HYPRE_Int /* Unknown procedure type */ (*U_fp)(...);
 typedef shortint (*J_fp)(...);
 typedef integer (*I_fp)(...);
 typedef real (*R_fp)(...);
@@ -219,9 +219,9 @@ typedef /* Double Complex */ VOID (*Z_fp)(...);
 typedef logical (*L_fp)(...);
 typedef shortlogical (*K_fp)(...);
 typedef /* Character */ VOID (*H_fp)(...);
-typedef /* Subroutine */ HYPRE_Int (*S_fp)(...);
+typedef /* Subroutine */ NALU_HYPRE_Int (*S_fp)(...);
 #else
-typedef HYPRE_Int /* Unknown procedure type */ (*U_fp)();
+typedef NALU_HYPRE_Int /* Unknown procedure type */ (*U_fp)();
 typedef shortint (*J_fp)();
 typedef integer (*I_fp)();
 typedef real (*R_fp)();
@@ -231,12 +231,12 @@ typedef /* Double Complex */ VOID (*Z_fp)();
 typedef logical (*L_fp)();
 typedef shortlogical (*K_fp)();
 typedef /* Character */ VOID (*H_fp)();
-typedef /* Subroutine */ HYPRE_Int (*S_fp)();
+typedef /* Subroutine */ NALU_HYPRE_Int (*S_fp)();
 #endif
 /* E_fp is for real functions when -R is not specified */
 typedef VOID C_f;	/* complex function */
 typedef VOID H_f;	/* character function */
-typedef VOID Z_f;	/* HYPRE_Real complex function */
+typedef VOID Z_f;	/* NALU_HYPRE_Real complex function */
 typedef doublereal E_f;	/* real function with -R not specified */
 
 /* undef any lower-case symbols that your C compiler predefines, e.g.: */

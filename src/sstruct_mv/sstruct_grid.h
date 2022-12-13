@@ -22,21 +22,21 @@
  * migrated onto and off of the internal (non-replicated) grids.
  *--------------------------------------------------------------------------*/
 
-typedef HYPRE_Int hypre_SStructVariable;
+typedef NALU_HYPRE_Int hypre_SStructVariable;
 
 typedef struct
 {
-   HYPRE_SStructVariable  type;
-   HYPRE_Int              rank;     /* local rank */
-   HYPRE_Int              proc;
+   NALU_HYPRE_SStructVariable  type;
+   NALU_HYPRE_Int              rank;     /* local rank */
+   NALU_HYPRE_Int              proc;
 
 } hypre_SStructUVar;
 
 typedef struct
 {
-   HYPRE_Int              part;
+   NALU_HYPRE_Int              part;
    hypre_Index            cell;
-   HYPRE_Int              nuvars;
+   NALU_HYPRE_Int              nuvars;
    hypre_SStructUVar     *uvars;
 
 } hypre_SStructUCVar;
@@ -44,31 +44,31 @@ typedef struct
 typedef struct
 {
    MPI_Comm                comm;             /* TODO: use different comms */
-   HYPRE_Int               ndim;
-   HYPRE_Int               nvars;            /* number of variables */
-   HYPRE_SStructVariable  *vartypes;         /* types of variables */
+   NALU_HYPRE_Int               ndim;
+   NALU_HYPRE_Int               nvars;            /* number of variables */
+   NALU_HYPRE_SStructVariable  *vartypes;         /* types of variables */
    hypre_StructGrid       *sgrids[8];        /* struct grids for each vartype */
    hypre_BoxArray         *iboxarrays[8];    /* interface boxes */
 
    hypre_BoxArray         *pneighbors;
    hypre_Index            *pnbor_offsets;
 
-   HYPRE_Int               local_size;       /* Number of variables locally */
-   HYPRE_BigInt            global_size;      /* Total number of variables */
+   NALU_HYPRE_Int               local_size;       /* Number of variables locally */
+   NALU_HYPRE_BigInt            global_size;      /* Total number of variables */
 
    hypre_Index             periodic;         /* Indicates if pgrid is periodic */
 
    /* GEC0902 additions for ghost expansion of boxes */
 
-   HYPRE_Int               ghlocal_size;     /* Number of vars including ghosts */
+   NALU_HYPRE_Int               ghlocal_size;     /* Number of vars including ghosts */
 
-   HYPRE_Int               cell_sgrid_done;  /* =1 implies cell grid already assembled */
+   NALU_HYPRE_Int               cell_sgrid_done;  /* =1 implies cell grid already assembled */
 } hypre_SStructPGrid;
 
 typedef struct
 {
    hypre_Box    box;
-   HYPRE_Int    part;
+   NALU_HYPRE_Int    part;
    hypre_Index  ilower; /* box ilower, but on the neighbor index-space */
    hypre_Index  coord;  /* lives on local index-space */
    hypre_Index  dir;    /* lives on local index-space */
@@ -83,21 +83,21 @@ enum hypre_SStructBoxManInfoType
 
 typedef struct
 {
-   HYPRE_Int  type;
-   HYPRE_BigInt offset;
-   HYPRE_BigInt ghoffset;
+   NALU_HYPRE_Int  type;
+   NALU_HYPRE_BigInt offset;
+   NALU_HYPRE_BigInt ghoffset;
 
 } hypre_SStructBoxManInfo;
 
 typedef struct
 {
-   HYPRE_Int    type;
-   HYPRE_BigInt offset;   /* minimum offset for this box */
-   HYPRE_BigInt ghoffset; /* minimum offset ghost for this box */
-   HYPRE_Int    proc;     /* redundant with the proc in the entry, but
+   NALU_HYPRE_Int    type;
+   NALU_HYPRE_BigInt offset;   /* minimum offset for this box */
+   NALU_HYPRE_BigInt ghoffset; /* minimum offset ghost for this box */
+   NALU_HYPRE_Int    proc;     /* redundant with the proc in the entry, but
                              makes some coding easier */
-   HYPRE_Int    boxnum;   /* this is different from the entry id */
-   HYPRE_Int    part;     /* part the box lives on */
+   NALU_HYPRE_Int    boxnum;   /* this is different from the entry id */
+   NALU_HYPRE_Int    part;     /* part the box lives on */
    hypre_Index  ilower;   /* box ilower, but on the neighbor index-space */
    hypre_Index  coord;    /* lives on local index-space */
    hypre_Index  dir;      /* lives on local index-space */
@@ -109,57 +109,57 @@ typedef struct
 typedef struct
 {
    hypre_CommInfo  *comm_info;
-   HYPRE_Int        send_part;
-   HYPRE_Int        recv_part;
-   HYPRE_Int        send_var;
-   HYPRE_Int        recv_var;
+   NALU_HYPRE_Int        send_part;
+   NALU_HYPRE_Int        recv_part;
+   NALU_HYPRE_Int        send_var;
+   NALU_HYPRE_Int        recv_var;
 
 } hypre_SStructCommInfo;
 
 typedef struct hypre_SStructGrid_struct
 {
    MPI_Comm                   comm;
-   HYPRE_Int                  ndim;
-   HYPRE_Int                  nparts;
+   NALU_HYPRE_Int                  ndim;
+   NALU_HYPRE_Int                  nparts;
 
    /* s-variable info */
    hypre_SStructPGrid       **pgrids;
 
    /* neighbor info */
-   HYPRE_Int                 *nneighbors;
+   NALU_HYPRE_Int                 *nneighbors;
    hypre_SStructNeighbor    **neighbors;
    hypre_Index              **nbor_offsets;
-   HYPRE_Int                **nvneighbors;
+   NALU_HYPRE_Int                **nvneighbors;
    hypre_SStructNeighbor   ***vneighbors;
    hypre_SStructCommInfo    **vnbor_comm_info; /* for updating shared data */
-   HYPRE_Int                  vnbor_ncomms;
+   NALU_HYPRE_Int                  vnbor_ncomms;
 
    /* u-variables info: During construction, array entries are consecutive.
     * After 'Assemble', entries are referenced via local cell rank. */
-   HYPRE_Int                  nucvars;
+   NALU_HYPRE_Int                  nucvars;
    hypre_SStructUCVar       **ucvars;
 
    /* info for fem-based user input (for each part) */
-   HYPRE_Int                 *fem_nvars;
-   HYPRE_Int                **fem_vars;
+   NALU_HYPRE_Int                 *fem_nvars;
+   NALU_HYPRE_Int                **fem_vars;
    hypre_Index              **fem_offsets;
 
    /* info for mapping (part, index, var) --> rank */
    hypre_BoxManager        ***boxmans;      /* manager for each part, var */
    hypre_BoxManager        ***nbor_boxmans; /* manager for each part, var */
 
-   HYPRE_BigInt               start_rank;
+   NALU_HYPRE_BigInt               start_rank;
 
-   HYPRE_Int                  local_size;  /* Number of variables locally */
-   HYPRE_BigInt               global_size; /* Total number of variables */
+   NALU_HYPRE_Int                  local_size;  /* Number of variables locally */
+   NALU_HYPRE_BigInt               global_size; /* Total number of variables */
 
-   HYPRE_Int                  ref_count;
+   NALU_HYPRE_Int                  ref_count;
 
    /* GEC0902 additions for ghost expansion of boxes */
 
-   HYPRE_Int               ghlocal_size;  /* GEC0902 Number of vars including ghosts */
-   HYPRE_BigInt            ghstart_rank;  /* GEC0902 start rank including ghosts  */
-   HYPRE_Int               num_ghost[2 * HYPRE_MAXDIM]; /* ghost layer size */
+   NALU_HYPRE_Int               ghlocal_size;  /* GEC0902 Number of vars including ghosts */
+   NALU_HYPRE_BigInt            ghstart_rank;  /* GEC0902 start rank including ghosts  */
+   NALU_HYPRE_Int               num_ghost[2 * NALU_HYPRE_MAXDIM]; /* ghost layer size */
 
 } hypre_SStructGrid;
 
@@ -219,14 +219,14 @@ typedef struct hypre_SStructGrid_struct
 #define hypre_SStructPGridSGrid(pgrid, var) \
 ((pgrid) -> sgrids[hypre_SStructPGridVarType(pgrid, var)])
 #define hypre_SStructPGridCellSGrid(pgrid) \
-((pgrid) -> sgrids[HYPRE_SSTRUCT_VARIABLE_CELL])
+((pgrid) -> sgrids[NALU_HYPRE_SSTRUCT_VARIABLE_CELL])
 #define hypre_SStructPGridVTSGrid(pgrid, vartype) ((pgrid) -> sgrids[vartype])
 
 #define hypre_SStructPGridIBoxArrays(pgrid)       ((pgrid) -> iboxarrays)
 #define hypre_SStructPGridIBoxArray(pgrid, var) \
 ((pgrid) -> iboxarrays[hypre_SStructPGridVarType(pgrid, var)])
 #define hypre_SStructPGridCellIBoxArray(pgrid) \
-((pgrid) -> iboxarrays[HYPRE_SSTRUCT_VARIABLE_CELL])
+((pgrid) -> iboxarrays[NALU_HYPRE_SSTRUCT_VARIABLE_CELL])
 #define hypre_SStructPGridVTIBoxArray(pgrid, vartype) \
 ((pgrid) -> iboxarrays[vartype])
 

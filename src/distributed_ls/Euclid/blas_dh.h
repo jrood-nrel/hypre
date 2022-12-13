@@ -20,12 +20,12 @@
 #define MatVec       matvec_euclid_seq
 #endif
 
-extern void matvec_euclid_seq(HYPRE_Int n, HYPRE_Int *rp, HYPRE_Int *cval, HYPRE_Real *aval, HYPRE_Real *x, HYPRE_Real *y);
-extern HYPRE_Real InnerProd(HYPRE_Int local_n, HYPRE_Real *x, HYPRE_Real *y);
-extern HYPRE_Real Norm2(HYPRE_Int local_n, HYPRE_Real *x);
-extern void Axpy(HYPRE_Int n, HYPRE_Real alpha, HYPRE_Real *x, HYPRE_Real *y);
-extern HYPRE_Real Norm2(HYPRE_Int n, HYPRE_Real *x);
-extern void CopyVec(HYPRE_Int n, HYPRE_Real *xIN, HYPRE_Real *yOUT);
-extern void ScaleVec(HYPRE_Int n, HYPRE_Real alpha, HYPRE_Real *x);
+extern void matvec_euclid_seq(NALU_HYPRE_Int n, NALU_HYPRE_Int *rp, NALU_HYPRE_Int *cval, NALU_HYPRE_Real *aval, NALU_HYPRE_Real *x, NALU_HYPRE_Real *y);
+extern NALU_HYPRE_Real InnerProd(NALU_HYPRE_Int local_n, NALU_HYPRE_Real *x, NALU_HYPRE_Real *y);
+extern NALU_HYPRE_Real Norm2(NALU_HYPRE_Int local_n, NALU_HYPRE_Real *x);
+extern void Axpy(NALU_HYPRE_Int n, NALU_HYPRE_Real alpha, NALU_HYPRE_Real *x, NALU_HYPRE_Real *y);
+extern NALU_HYPRE_Real Norm2(NALU_HYPRE_Int n, NALU_HYPRE_Real *x);
+extern void CopyVec(NALU_HYPRE_Int n, NALU_HYPRE_Real *xIN, NALU_HYPRE_Real *yOUT);
+extern void ScaleVec(NALU_HYPRE_Int n, NALU_HYPRE_Real alpha, NALU_HYPRE_Real *x);
 
 #endif

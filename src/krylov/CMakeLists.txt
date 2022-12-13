@@ -4,9 +4,9 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 set(HDRS
-  HYPRE_krylov.h
-  HYPRE_lobpcg.h
-  HYPRE_MatvecFunctions.h
+  NALU_HYPRE_krylov.h
+  NALU_HYPRE_lobpcg.h
+  NALU_HYPRE_MatvecFunctions.h
   krylov.h
   lobpcg.h
 )
@@ -18,15 +18,15 @@ set(SRCS
   gmres.c
   flexgmres.c
   lgmres.c
-  HYPRE_bicgstab.c
-  HYPRE_cgnr.c
-  HYPRE_gmres.c
-  HYPRE_cogmres.c
-  HYPRE_lgmres.c
-  HYPRE_flexgmres.c
-  HYPRE_pcg.c
+  NALU_HYPRE_bicgstab.c
+  NALU_HYPRE_cgnr.c
+  NALU_HYPRE_gmres.c
+  NALU_HYPRE_cogmres.c
+  NALU_HYPRE_lgmres.c
+  NALU_HYPRE_flexgmres.c
+  NALU_HYPRE_pcg.c
   pcg.c
-  HYPRE_lobpcg.c
+  NALU_HYPRE_lobpcg.c
   lobpcg.c
 )
 
@@ -36,4 +36,4 @@ target_sources(${PROJECT_NAME}
 )
 
 convert_filenames_to_full_paths(HDRS)
-set(HYPRE_HEADERS ${HYPRE_HEADERS} ${HDRS} PARENT_SCOPE)
+set(NALU_HYPRE_HEADERS ${NALU_HYPRE_HEADERS} ${HDRS} PARENT_SCOPE)

@@ -18,84 +18,84 @@
 
 typedef struct
 {
-   HYPRE_MemoryLocation  memory_location;   /* memory location of matrices/vectors in AMGData */
+   NALU_HYPRE_MemoryLocation  memory_location;   /* memory location of matrices/vectors in AMGData */
 
    /* setup params */
-   HYPRE_Int      max_levels;
-   HYPRE_Real     strong_threshold;
-   HYPRE_Int      coarsen_cut_factor;
-   HYPRE_Real     strong_thresholdR; /* theta for build R: defines strong F neighbors */
-   HYPRE_Real     filter_thresholdR; /* theta for filtering R  */
-   HYPRE_Real     max_row_sum;
-   HYPRE_Real     trunc_factor;
-   HYPRE_Real     agg_trunc_factor;
-   HYPRE_Real     agg_P12_trunc_factor;
-   HYPRE_Real     jacobi_trunc_threshold;
-   HYPRE_Real     S_commpkg_switch;
-   HYPRE_Real     CR_rate;
-   HYPRE_Real     CR_strong_th;
-   HYPRE_Real     A_drop_tol;
-   HYPRE_Int      A_drop_type;
-   HYPRE_Int      measure_type;
-   HYPRE_Int      setup_type;
-   HYPRE_Int      coarsen_type;
-   HYPRE_Int      P_max_elmts;
-   HYPRE_Int      interp_type;
-   HYPRE_Int      sep_weight;
-   HYPRE_Int      agg_interp_type;
-   HYPRE_Int      agg_P_max_elmts;
-   HYPRE_Int      agg_P12_max_elmts;
-   HYPRE_Int      restr_par;
-   HYPRE_Int      is_triangular;
-   HYPRE_Int      gmres_switch;
-   HYPRE_Int      agg_num_levels;
-   HYPRE_Int      num_paths;
-   HYPRE_Int      post_interp_type;
-   HYPRE_Int      num_CR_relax_steps;
-   HYPRE_Int      IS_type;
-   HYPRE_Int      CR_use_CG;
-   HYPRE_Int      cgc_its;
-   HYPRE_Int      max_coarse_size;
-   HYPRE_Int      min_coarse_size;
-   HYPRE_Int      seq_threshold;
-   HYPRE_Int      redundant;
-   HYPRE_Int      participate;
-   HYPRE_Int      Sabs;
+   NALU_HYPRE_Int      max_levels;
+   NALU_HYPRE_Real     strong_threshold;
+   NALU_HYPRE_Int      coarsen_cut_factor;
+   NALU_HYPRE_Real     strong_thresholdR; /* theta for build R: defines strong F neighbors */
+   NALU_HYPRE_Real     filter_thresholdR; /* theta for filtering R  */
+   NALU_HYPRE_Real     max_row_sum;
+   NALU_HYPRE_Real     trunc_factor;
+   NALU_HYPRE_Real     agg_trunc_factor;
+   NALU_HYPRE_Real     agg_P12_trunc_factor;
+   NALU_HYPRE_Real     jacobi_trunc_threshold;
+   NALU_HYPRE_Real     S_commpkg_switch;
+   NALU_HYPRE_Real     CR_rate;
+   NALU_HYPRE_Real     CR_strong_th;
+   NALU_HYPRE_Real     A_drop_tol;
+   NALU_HYPRE_Int      A_drop_type;
+   NALU_HYPRE_Int      measure_type;
+   NALU_HYPRE_Int      setup_type;
+   NALU_HYPRE_Int      coarsen_type;
+   NALU_HYPRE_Int      P_max_elmts;
+   NALU_HYPRE_Int      interp_type;
+   NALU_HYPRE_Int      sep_weight;
+   NALU_HYPRE_Int      agg_interp_type;
+   NALU_HYPRE_Int      agg_P_max_elmts;
+   NALU_HYPRE_Int      agg_P12_max_elmts;
+   NALU_HYPRE_Int      restr_par;
+   NALU_HYPRE_Int      is_triangular;
+   NALU_HYPRE_Int      gmres_switch;
+   NALU_HYPRE_Int      agg_num_levels;
+   NALU_HYPRE_Int      num_paths;
+   NALU_HYPRE_Int      post_interp_type;
+   NALU_HYPRE_Int      num_CR_relax_steps;
+   NALU_HYPRE_Int      IS_type;
+   NALU_HYPRE_Int      CR_use_CG;
+   NALU_HYPRE_Int      cgc_its;
+   NALU_HYPRE_Int      max_coarse_size;
+   NALU_HYPRE_Int      min_coarse_size;
+   NALU_HYPRE_Int      seq_threshold;
+   NALU_HYPRE_Int      redundant;
+   NALU_HYPRE_Int      participate;
+   NALU_HYPRE_Int      Sabs;
 
    /* solve params */
-   HYPRE_Int      max_iter;
-   HYPRE_Int      min_iter;
-   HYPRE_Int      fcycle;
-   HYPRE_Int      cycle_type;
-   HYPRE_Int     *num_grid_sweeps;
-   HYPRE_Int     *grid_relax_type;
-   HYPRE_Int    **grid_relax_points;
-   HYPRE_Int      relax_order;
-   HYPRE_Int      user_coarse_relax_type;
-   HYPRE_Int      user_relax_type;
-   HYPRE_Int      user_num_sweeps;
-   HYPRE_Real     user_relax_weight;
-   HYPRE_Real     outer_wt;
-   HYPRE_Real    *relax_weight;
-   HYPRE_Real    *omega;
-   HYPRE_Int      converge_type;
-   HYPRE_Real     tol;
-   HYPRE_Int      partial_cycle_coarsest_level;
-   HYPRE_Int      partial_cycle_control;
+   NALU_HYPRE_Int      max_iter;
+   NALU_HYPRE_Int      min_iter;
+   NALU_HYPRE_Int      fcycle;
+   NALU_HYPRE_Int      cycle_type;
+   NALU_HYPRE_Int     *num_grid_sweeps;
+   NALU_HYPRE_Int     *grid_relax_type;
+   NALU_HYPRE_Int    **grid_relax_points;
+   NALU_HYPRE_Int      relax_order;
+   NALU_HYPRE_Int      user_coarse_relax_type;
+   NALU_HYPRE_Int      user_relax_type;
+   NALU_HYPRE_Int      user_num_sweeps;
+   NALU_HYPRE_Real     user_relax_weight;
+   NALU_HYPRE_Real     outer_wt;
+   NALU_HYPRE_Real    *relax_weight;
+   NALU_HYPRE_Real    *omega;
+   NALU_HYPRE_Int      converge_type;
+   NALU_HYPRE_Real     tol;
+   NALU_HYPRE_Int      partial_cycle_coarsest_level;
+   NALU_HYPRE_Int      partial_cycle_control;
 
 
    /* problem data */
    hypre_ParCSRMatrix  *A;
-   HYPRE_Int            num_variables;
-   HYPRE_Int            num_functions;
-   HYPRE_Int            nodal;
-   HYPRE_Int            nodal_levels;
-   HYPRE_Int            nodal_diag;
-   HYPRE_Int            keep_same_sign;
-   HYPRE_Int            num_points;
+   NALU_HYPRE_Int            num_variables;
+   NALU_HYPRE_Int            num_functions;
+   NALU_HYPRE_Int            nodal;
+   NALU_HYPRE_Int            nodal_levels;
+   NALU_HYPRE_Int            nodal_diag;
+   NALU_HYPRE_Int            keep_same_sign;
+   NALU_HYPRE_Int            num_points;
    hypre_IntArray      *dof_func;
-   HYPRE_Int           *dof_point;
-   HYPRE_Int           *point_dof_map;
+   NALU_HYPRE_Int           *dof_point;
+   NALU_HYPRE_Int           *point_dof_map;
 
    /* data generated in the setup phase */
    hypre_ParCSRMatrix **A_array;
@@ -105,9 +105,9 @@ typedef struct
    hypre_ParCSRMatrix **R_array;
    hypre_IntArray     **CF_marker_array;
    hypre_IntArray     **dof_func_array;
-   HYPRE_Int          **dof_point_array;
-   HYPRE_Int          **point_dof_map_array;
-   HYPRE_Int            num_levels;
+   NALU_HYPRE_Int          **dof_point_array;
+   NALU_HYPRE_Int          **point_dof_map_array;
+   NALU_HYPRE_Int            num_levels;
    hypre_Vector       **l1_norms;
 
    /* Block data */
@@ -115,160 +115,160 @@ typedef struct
    hypre_ParCSRBlockMatrix **P_block_array;
    hypre_ParCSRBlockMatrix **R_block_array;
 
-   HYPRE_Int block_mode;
+   NALU_HYPRE_Int block_mode;
 
    /* data for more complex smoothers */
-   HYPRE_Int            smooth_num_levels;
-   HYPRE_Int            smooth_type;
-   HYPRE_Solver        *smoother;
-   HYPRE_Int            smooth_num_sweeps;
-   HYPRE_Int            schw_variant;
-   HYPRE_Int            schw_overlap;
-   HYPRE_Int            schw_domain_type;
-   HYPRE_Real           schwarz_rlx_weight;
-   HYPRE_Int            schwarz_use_nonsymm;
-   HYPRE_Int            ps_sym;
-   HYPRE_Int            ps_level;
-   HYPRE_Int            pi_max_nz_per_row;
-   HYPRE_Int            eu_level;
-   HYPRE_Int            eu_bj;
-   HYPRE_Real           ps_threshold;
-   HYPRE_Real           ps_filter;
-   HYPRE_Real           pi_drop_tol;
-   HYPRE_Real           eu_sparse_A;
+   NALU_HYPRE_Int            smooth_num_levels;
+   NALU_HYPRE_Int            smooth_type;
+   NALU_HYPRE_Solver        *smoother;
+   NALU_HYPRE_Int            smooth_num_sweeps;
+   NALU_HYPRE_Int            schw_variant;
+   NALU_HYPRE_Int            schw_overlap;
+   NALU_HYPRE_Int            schw_domain_type;
+   NALU_HYPRE_Real           schwarz_rlx_weight;
+   NALU_HYPRE_Int            schwarz_use_nonsymm;
+   NALU_HYPRE_Int            ps_sym;
+   NALU_HYPRE_Int            ps_level;
+   NALU_HYPRE_Int            pi_max_nz_per_row;
+   NALU_HYPRE_Int            eu_level;
+   NALU_HYPRE_Int            eu_bj;
+   NALU_HYPRE_Real           ps_threshold;
+   NALU_HYPRE_Real           ps_filter;
+   NALU_HYPRE_Real           pi_drop_tol;
+   NALU_HYPRE_Real           eu_sparse_A;
    char                *euclidfile;
-   HYPRE_Int            ilu_lfil;
-   HYPRE_Int            ilu_type;
-   HYPRE_Int            ilu_max_row_nnz;
-   HYPRE_Int            ilu_max_iter;
-   HYPRE_Real           ilu_droptol;
-   HYPRE_Int            ilu_tri_solve;
-   HYPRE_Int            ilu_lower_jacobi_iters;
-   HYPRE_Int            ilu_upper_jacobi_iters;
-   HYPRE_Int            ilu_reordering_type;
+   NALU_HYPRE_Int            ilu_lfil;
+   NALU_HYPRE_Int            ilu_type;
+   NALU_HYPRE_Int            ilu_max_row_nnz;
+   NALU_HYPRE_Int            ilu_max_iter;
+   NALU_HYPRE_Real           ilu_droptol;
+   NALU_HYPRE_Int            ilu_tri_solve;
+   NALU_HYPRE_Int            ilu_lower_jacobi_iters;
+   NALU_HYPRE_Int            ilu_upper_jacobi_iters;
+   NALU_HYPRE_Int            ilu_reordering_type;
 
-   HYPRE_Int            fsai_max_steps;
-   HYPRE_Int            fsai_max_step_size;
-   HYPRE_Int            fsai_eig_max_iters;
-   HYPRE_Real           fsai_kap_tolerance;
+   NALU_HYPRE_Int            fsai_max_steps;
+   NALU_HYPRE_Int            fsai_max_step_size;
+   NALU_HYPRE_Int            fsai_eig_max_iters;
+   NALU_HYPRE_Real           fsai_kap_tolerance;
 
-   HYPRE_Real          *max_eig_est;
-   HYPRE_Real          *min_eig_est;
-   HYPRE_Int            cheby_eig_est;
-   HYPRE_Int            cheby_order;
-   HYPRE_Int            cheby_variant;
-   HYPRE_Int            cheby_scale;
-   HYPRE_Real           cheby_fraction;
+   NALU_HYPRE_Real          *max_eig_est;
+   NALU_HYPRE_Real          *min_eig_est;
+   NALU_HYPRE_Int            cheby_eig_est;
+   NALU_HYPRE_Int            cheby_order;
+   NALU_HYPRE_Int            cheby_variant;
+   NALU_HYPRE_Int            cheby_scale;
+   NALU_HYPRE_Real           cheby_fraction;
    hypre_Vector       **cheby_ds;
-   HYPRE_Real         **cheby_coefs;
+   NALU_HYPRE_Real         **cheby_coefs;
 
-   HYPRE_Real           cum_nnz_AP;
+   NALU_HYPRE_Real           cum_nnz_AP;
 
    /* data needed for non-Galerkin option */
-   HYPRE_Int           nongalerk_num_tol;
-   HYPRE_Real         *nongalerk_tol;
-   HYPRE_Real          nongalerkin_tol;
-   HYPRE_Real         *nongal_tol_array;
+   NALU_HYPRE_Int           nongalerk_num_tol;
+   NALU_HYPRE_Real         *nongalerk_tol;
+   NALU_HYPRE_Real          nongalerkin_tol;
+   NALU_HYPRE_Real         *nongal_tol_array;
 
    /* data generated in the solve phase */
    hypre_ParVector   *Vtemp;
    hypre_Vector      *Vtemp_local;
-   HYPRE_Real        *Vtemp_local_data;
-   HYPRE_Real         cycle_op_count;
+   NALU_HYPRE_Real        *Vtemp_local_data;
+   NALU_HYPRE_Real         cycle_op_count;
    hypre_ParVector   *Rtemp;
    hypre_ParVector   *Ptemp;
    hypre_ParVector   *Ztemp;
 
    /* fields used by GSMG and LS interpolation */
-   HYPRE_Int          gsmg;        /* nonzero indicates use of GSMG */
-   HYPRE_Int          num_samples; /* number of sample vectors */
+   NALU_HYPRE_Int          gsmg;        /* nonzero indicates use of GSMG */
+   NALU_HYPRE_Int          num_samples; /* number of sample vectors */
 
    /* log info */
-   HYPRE_Int        logging;
-   HYPRE_Int        num_iterations;
+   NALU_HYPRE_Int        logging;
+   NALU_HYPRE_Int        num_iterations;
 #ifdef CUMNUMIT
-   HYPRE_Int        cum_num_iterations;
+   NALU_HYPRE_Int        cum_num_iterations;
 #endif
-   HYPRE_Real       rel_resid_norm;
+   NALU_HYPRE_Real       rel_resid_norm;
    hypre_ParVector *residual; /* available if logging>1 */
 
    /* output params */
-   HYPRE_Int      print_level;
+   NALU_HYPRE_Int      print_level;
    char           log_file_name[256];
-   HYPRE_Int      debug_flag;
+   NALU_HYPRE_Int      debug_flag;
 
    /* whether to print the constructed coarse grids BM Oct 22, 2006 */
-   HYPRE_Int      plot_grids;
+   NALU_HYPRE_Int      plot_grids;
    char           plot_filename[251];
 
    /* coordinate data BM Oct 17, 2006 */
-   HYPRE_Int      coorddim;
+   NALU_HYPRE_Int      coorddim;
    float         *coordinates;
 
    /* data for fitting vectors in interpolation */
-   HYPRE_Int          num_interp_vectors;
-   HYPRE_Int          num_levels_interp_vectors; /* not set by user */
+   NALU_HYPRE_Int          num_interp_vectors;
+   NALU_HYPRE_Int          num_levels_interp_vectors; /* not set by user */
    hypre_ParVector  **interp_vectors;
    hypre_ParVector ***interp_vectors_array;
-   HYPRE_Int          interp_vec_variant;
-   HYPRE_Int          interp_vec_first_level;
-   HYPRE_Real         interp_vectors_abs_q_trunc;
-   HYPRE_Int          interp_vectors_q_max;
-   HYPRE_Int          interp_refine;
-   HYPRE_Int          smooth_interp_vectors;
-   HYPRE_Real       *expandp_weights; /* currently not set by user */
+   NALU_HYPRE_Int          interp_vec_variant;
+   NALU_HYPRE_Int          interp_vec_first_level;
+   NALU_HYPRE_Real         interp_vectors_abs_q_trunc;
+   NALU_HYPRE_Int          interp_vectors_q_max;
+   NALU_HYPRE_Int          interp_refine;
+   NALU_HYPRE_Int          smooth_interp_vectors;
+   NALU_HYPRE_Real       *expandp_weights; /* currently not set by user */
 
    /* enable redundant coarse grid solve */
-   HYPRE_Solver         coarse_solver;
+   NALU_HYPRE_Solver         coarse_solver;
    hypre_ParCSRMatrix  *A_coarse;
    hypre_ParVector     *f_coarse;
    hypre_ParVector     *u_coarse;
    MPI_Comm             new_comm;
 
    /* store matrix, vector and communication info for Gaussian elimination */
-   HYPRE_Int   gs_setup;
-   HYPRE_Real *A_mat, *A_inv;
-   HYPRE_Real *b_vec;
-   HYPRE_Int  *comm_info;
+   NALU_HYPRE_Int   gs_setup;
+   NALU_HYPRE_Real *A_mat, *A_inv;
+   NALU_HYPRE_Real *b_vec;
+   NALU_HYPRE_Int  *comm_info;
 
    /* information for multiplication with Lambda - additive AMG */
-   HYPRE_Int      additive;
-   HYPRE_Int      mult_additive;
-   HYPRE_Int      simple;
-   HYPRE_Int      add_last_lvl;
-   HYPRE_Int      add_P_max_elmts;
-   HYPRE_Real     add_trunc_factor;
-   HYPRE_Int      add_rlx_type;
-   HYPRE_Real     add_rlx_wt;
+   NALU_HYPRE_Int      additive;
+   NALU_HYPRE_Int      mult_additive;
+   NALU_HYPRE_Int      simple;
+   NALU_HYPRE_Int      add_last_lvl;
+   NALU_HYPRE_Int      add_P_max_elmts;
+   NALU_HYPRE_Real     add_trunc_factor;
+   NALU_HYPRE_Int      add_rlx_type;
+   NALU_HYPRE_Real     add_rlx_wt;
    hypre_ParCSRMatrix *Lambda;
    hypre_ParCSRMatrix *Atilde;
    hypre_ParVector *Rtilde;
    hypre_ParVector *Xtilde;
-   HYPRE_Real *D_inv;
+   NALU_HYPRE_Real *D_inv;
 
    /* Use 2 mat-mat-muls instead of triple product*/
-   HYPRE_Int rap2;
-   HYPRE_Int keepTranspose;
-   HYPRE_Int modularized_matmat;
+   NALU_HYPRE_Int rap2;
+   NALU_HYPRE_Int keepTranspose;
+   NALU_HYPRE_Int modularized_matmat;
 
    /* information for preserving indices as coarse grid points */
-   HYPRE_Int      num_C_points;
-   HYPRE_Int      C_points_coarse_level;
-   HYPRE_Int     *C_points_local_marker;
-   HYPRE_BigInt  *C_points_marker;
+   NALU_HYPRE_Int      num_C_points;
+   NALU_HYPRE_Int      C_points_coarse_level;
+   NALU_HYPRE_Int     *C_points_local_marker;
+   NALU_HYPRE_BigInt  *C_points_marker;
 
    /* information for preserving indices as special fine grid points */
-   HYPRE_Int      num_isolated_F_points;
-   HYPRE_BigInt  *isolated_F_points_marker;
+   NALU_HYPRE_Int      num_isolated_F_points;
+   NALU_HYPRE_BigInt  *isolated_F_points_marker;
 
    /* information for preserving indices as fine grid points */
-   HYPRE_Int      num_F_points;
-   HYPRE_BigInt  *F_points_marker;
+   NALU_HYPRE_Int      num_F_points;
+   NALU_HYPRE_BigInt  *F_points_marker;
 
-#ifdef HYPRE_USING_DSUPERLU
+#ifdef NALU_HYPRE_USING_DSUPERLU
    /* Parameters and data for SuperLU_Dist */
-   HYPRE_Int dslu_threshold;
-   HYPRE_Solver dslu_solver;
+   NALU_HYPRE_Int dslu_threshold;
+   NALU_HYPRE_Solver dslu_solver;
 #endif
 
 } hypre_ParAMGData;
@@ -525,7 +525,7 @@ typedef struct
 #define hypre_ParAMGDataFPointsMarker(amg_data)  ((amg_data)->F_points_marker)
 
 /* Parameters and data for SuperLU_Dist */
-#ifdef HYPRE_USING_DSUPERLU
+#ifdef NALU_HYPRE_USING_DSUPERLU
 #define hypre_ParAMGDataDSLUThreshold(amg_data) ((amg_data)->dslu_threshold)
 #define hypre_ParAMGDataDSLUSolver(amg_data) ((amg_data)->dslu_solver)
 #endif

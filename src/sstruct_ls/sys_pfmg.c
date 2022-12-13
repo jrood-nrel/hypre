@@ -16,7 +16,7 @@ hypre_SysPFMGCreate( MPI_Comm  comm )
 {
    hypre_SysPFMGData *sys_pfmg_data;
 
-   sys_pfmg_data = hypre_CTAlloc(hypre_SysPFMGData,  1, HYPRE_MEMORY_HOST);
+   sys_pfmg_data = hypre_CTAlloc(hypre_SysPFMGData,  1, NALU_HYPRE_MEMORY_HOST);
 
    (sys_pfmg_data -> comm)       = comm;
    (sys_pfmg_data -> time_index) = hypre_InitializeTiming("SYS_PFMG");
@@ -48,19 +48,19 @@ hypre_SysPFMGCreate( MPI_Comm  comm )
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SysPFMGDestroy( void *sys_pfmg_vdata )
 {
    hypre_SysPFMGData *sys_pfmg_data = (hypre_SysPFMGData *)sys_pfmg_vdata;
 
-   HYPRE_Int l;
+   NALU_HYPRE_Int l;
 
    if (sys_pfmg_data)
    {
       if ((sys_pfmg_data -> logging) > 0)
       {
-         hypre_TFree(sys_pfmg_data -> norms, HYPRE_MEMORY_HOST);
-         hypre_TFree(sys_pfmg_data -> rel_norms, HYPRE_MEMORY_HOST);
+         hypre_TFree(sys_pfmg_data -> norms, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(sys_pfmg_data -> rel_norms, NALU_HYPRE_MEMORY_HOST);
       }
 
       if ((sys_pfmg_data -> num_levels) > -1)
@@ -75,10 +75,10 @@ hypre_SysPFMGDestroy( void *sys_pfmg_vdata )
             hypre_SysSemiRestrictDestroy(sys_pfmg_data -> restrict_data_l[l]);
             hypre_SysSemiInterpDestroy(sys_pfmg_data -> interp_data_l[l]);
          }
-         hypre_TFree(sys_pfmg_data -> relax_data_l, HYPRE_MEMORY_HOST);
-         hypre_TFree(sys_pfmg_data -> matvec_data_l, HYPRE_MEMORY_HOST);
-         hypre_TFree(sys_pfmg_data -> restrict_data_l, HYPRE_MEMORY_HOST);
-         hypre_TFree(sys_pfmg_data -> interp_data_l, HYPRE_MEMORY_HOST);
+         hypre_TFree(sys_pfmg_data -> relax_data_l, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(sys_pfmg_data -> matvec_data_l, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(sys_pfmg_data -> restrict_data_l, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(sys_pfmg_data -> interp_data_l, NALU_HYPRE_MEMORY_HOST);
 
          hypre_SStructPVectorDestroy(sys_pfmg_data -> tx_l[0]);
          /*hypre_SStructPGridDestroy(sys_pfmg_data -> grid_l[0]);*/
@@ -95,21 +95,21 @@ hypre_SysPFMGDestroy( void *sys_pfmg_vdata )
             hypre_SStructPVectorDestroy(sys_pfmg_data -> x_l[l + 1]);
             hypre_SStructPVectorDestroy(sys_pfmg_data -> tx_l[l + 1]);
          }
-         hypre_TFree(sys_pfmg_data -> data, HYPRE_MEMORY_HOST);
-         hypre_TFree(sys_pfmg_data -> cdir_l, HYPRE_MEMORY_HOST);
-         hypre_TFree(sys_pfmg_data -> active_l, HYPRE_MEMORY_HOST);
-         hypre_TFree(sys_pfmg_data -> grid_l, HYPRE_MEMORY_HOST);
-         hypre_TFree(sys_pfmg_data -> P_grid_l, HYPRE_MEMORY_HOST);
-         hypre_TFree(sys_pfmg_data -> A_l, HYPRE_MEMORY_HOST);
-         hypre_TFree(sys_pfmg_data -> P_l, HYPRE_MEMORY_HOST);
-         hypre_TFree(sys_pfmg_data -> RT_l, HYPRE_MEMORY_HOST);
-         hypre_TFree(sys_pfmg_data -> b_l, HYPRE_MEMORY_HOST);
-         hypre_TFree(sys_pfmg_data -> x_l, HYPRE_MEMORY_HOST);
-         hypre_TFree(sys_pfmg_data -> tx_l, HYPRE_MEMORY_HOST);
+         hypre_TFree(sys_pfmg_data -> data, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(sys_pfmg_data -> cdir_l, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(sys_pfmg_data -> active_l, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(sys_pfmg_data -> grid_l, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(sys_pfmg_data -> P_grid_l, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(sys_pfmg_data -> A_l, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(sys_pfmg_data -> P_l, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(sys_pfmg_data -> RT_l, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(sys_pfmg_data -> b_l, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(sys_pfmg_data -> x_l, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(sys_pfmg_data -> tx_l, NALU_HYPRE_MEMORY_HOST);
       }
 
       hypre_FinalizeTiming(sys_pfmg_data -> time_index);
-      hypre_TFree(sys_pfmg_data, HYPRE_MEMORY_HOST);
+      hypre_TFree(sys_pfmg_data, NALU_HYPRE_MEMORY_HOST);
    }
 
    return hypre_error_flag;
@@ -118,9 +118,9 @@ hypre_SysPFMGDestroy( void *sys_pfmg_vdata )
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SysPFMGSetTol( void   *sys_pfmg_vdata,
-                     HYPRE_Real  tol       )
+                     NALU_HYPRE_Real  tol       )
 {
    hypre_SysPFMGData *sys_pfmg_data = (hypre_SysPFMGData *)sys_pfmg_vdata;
 
@@ -132,9 +132,9 @@ hypre_SysPFMGSetTol( void   *sys_pfmg_vdata,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SysPFMGSetMaxIter( void *sys_pfmg_vdata,
-                         HYPRE_Int   max_iter  )
+                         NALU_HYPRE_Int   max_iter  )
 {
    hypre_SysPFMGData *sys_pfmg_data = (hypre_SysPFMGData *)sys_pfmg_vdata;
 
@@ -146,9 +146,9 @@ hypre_SysPFMGSetMaxIter( void *sys_pfmg_vdata,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SysPFMGSetRelChange( void *sys_pfmg_vdata,
-                           HYPRE_Int   rel_change  )
+                           NALU_HYPRE_Int   rel_change  )
 {
    hypre_SysPFMGData *sys_pfmg_data = (hypre_SysPFMGData *)sys_pfmg_vdata;
 
@@ -160,9 +160,9 @@ hypre_SysPFMGSetRelChange( void *sys_pfmg_vdata,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SysPFMGSetZeroGuess( void *sys_pfmg_vdata,
-                           HYPRE_Int   zero_guess )
+                           NALU_HYPRE_Int   zero_guess )
 {
    hypre_SysPFMGData *sys_pfmg_data = (hypre_SysPFMGData *)sys_pfmg_vdata;
 
@@ -174,9 +174,9 @@ hypre_SysPFMGSetZeroGuess( void *sys_pfmg_vdata,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SysPFMGSetRelaxType( void *sys_pfmg_vdata,
-                           HYPRE_Int   relax_type )
+                           NALU_HYPRE_Int   relax_type )
 {
    hypre_SysPFMGData *sys_pfmg_data = (hypre_SysPFMGData *)sys_pfmg_vdata;
 
@@ -187,9 +187,9 @@ hypre_SysPFMGSetRelaxType( void *sys_pfmg_vdata,
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SysPFMGSetJacobiWeight( void  *sys_pfmg_vdata,
-                              HYPRE_Real weight )
+                              NALU_HYPRE_Real weight )
 {
    hypre_SysPFMGData *sys_pfmg_data = (hypre_SysPFMGData *)sys_pfmg_vdata;
 
@@ -202,9 +202,9 @@ hypre_SysPFMGSetJacobiWeight( void  *sys_pfmg_vdata,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SysPFMGSetNumPreRelax( void *sys_pfmg_vdata,
-                             HYPRE_Int   num_pre_relax )
+                             NALU_HYPRE_Int   num_pre_relax )
 {
    hypre_SysPFMGData *sys_pfmg_data = (hypre_SysPFMGData *)sys_pfmg_vdata;
 
@@ -216,9 +216,9 @@ hypre_SysPFMGSetNumPreRelax( void *sys_pfmg_vdata,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SysPFMGSetNumPostRelax( void *sys_pfmg_vdata,
-                              HYPRE_Int   num_post_relax )
+                              NALU_HYPRE_Int   num_post_relax )
 {
    hypre_SysPFMGData *sys_pfmg_data = (hypre_SysPFMGData *)sys_pfmg_vdata;
 
@@ -230,9 +230,9 @@ hypre_SysPFMGSetNumPostRelax( void *sys_pfmg_vdata,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SysPFMGSetSkipRelax( void *sys_pfmg_vdata,
-                           HYPRE_Int  skip_relax )
+                           NALU_HYPRE_Int  skip_relax )
 {
    hypre_SysPFMGData *sys_pfmg_data = (hypre_SysPFMGData *)sys_pfmg_vdata;
 
@@ -244,9 +244,9 @@ hypre_SysPFMGSetSkipRelax( void *sys_pfmg_vdata,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SysPFMGSetDxyz( void   *sys_pfmg_vdata,
-                      HYPRE_Real *dxyz       )
+                      NALU_HYPRE_Real *dxyz       )
 {
    hypre_SysPFMGData *sys_pfmg_data = (hypre_SysPFMGData *)sys_pfmg_vdata;
 
@@ -260,9 +260,9 @@ hypre_SysPFMGSetDxyz( void   *sys_pfmg_vdata,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SysPFMGSetLogging( void *sys_pfmg_vdata,
-                         HYPRE_Int   logging)
+                         NALU_HYPRE_Int   logging)
 {
    hypre_SysPFMGData *sys_pfmg_data = (hypre_SysPFMGData *)sys_pfmg_vdata;
 
@@ -274,9 +274,9 @@ hypre_SysPFMGSetLogging( void *sys_pfmg_vdata,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SysPFMGSetPrintLevel( void *sys_pfmg_vdata,
-                            HYPRE_Int   print_level)
+                            NALU_HYPRE_Int   print_level)
 {
    hypre_SysPFMGData *sys_pfmg_data = (hypre_SysPFMGData *)sys_pfmg_vdata;
 
@@ -288,9 +288,9 @@ hypre_SysPFMGSetPrintLevel( void *sys_pfmg_vdata,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SysPFMGGetNumIterations( void *sys_pfmg_vdata,
-                               HYPRE_Int  *num_iterations )
+                               NALU_HYPRE_Int  *num_iterations )
 {
    hypre_SysPFMGData *sys_pfmg_data = (hypre_SysPFMGData *)sys_pfmg_vdata;
 
@@ -302,17 +302,17 @@ hypre_SysPFMGGetNumIterations( void *sys_pfmg_vdata,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SysPFMGPrintLogging( void *sys_pfmg_vdata,
-                           HYPRE_Int   myid)
+                           NALU_HYPRE_Int   myid)
 {
    hypre_SysPFMGData *sys_pfmg_data = (hypre_SysPFMGData *)sys_pfmg_vdata;
-   HYPRE_Int          i;
-   HYPRE_Int          num_iterations  = (sys_pfmg_data -> num_iterations);
-   HYPRE_Int          logging   = (sys_pfmg_data -> logging);
-   HYPRE_Int          print_level   = (sys_pfmg_data -> print_level);
-   HYPRE_Real        *norms     = (sys_pfmg_data -> norms);
-   HYPRE_Real        *rel_norms = (sys_pfmg_data -> rel_norms);
+   NALU_HYPRE_Int          i;
+   NALU_HYPRE_Int          num_iterations  = (sys_pfmg_data -> num_iterations);
+   NALU_HYPRE_Int          logging   = (sys_pfmg_data -> logging);
+   NALU_HYPRE_Int          print_level   = (sys_pfmg_data -> print_level);
+   NALU_HYPRE_Real        *norms     = (sys_pfmg_data -> norms);
+   NALU_HYPRE_Real        *rel_norms = (sys_pfmg_data -> rel_norms);
 
    if (myid == 0)
    {
@@ -335,16 +335,16 @@ hypre_SysPFMGPrintLogging( void *sys_pfmg_vdata,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SysPFMGGetFinalRelativeResidualNorm( void   *sys_pfmg_vdata,
-                                           HYPRE_Real *relative_residual_norm )
+                                           NALU_HYPRE_Real *relative_residual_norm )
 {
    hypre_SysPFMGData *sys_pfmg_data = (hypre_SysPFMGData *)sys_pfmg_vdata;
 
-   HYPRE_Int          max_iter        = (sys_pfmg_data -> max_iter);
-   HYPRE_Int          num_iterations  = (sys_pfmg_data -> num_iterations);
-   HYPRE_Int          logging         = (sys_pfmg_data -> logging);
-   HYPRE_Real        *rel_norms       = (sys_pfmg_data -> rel_norms);
+   NALU_HYPRE_Int          max_iter        = (sys_pfmg_data -> max_iter);
+   NALU_HYPRE_Int          num_iterations  = (sys_pfmg_data -> num_iterations);
+   NALU_HYPRE_Int          logging         = (sys_pfmg_data -> logging);
+   NALU_HYPRE_Real        *rel_norms       = (sys_pfmg_data -> rel_norms);
 
    if (logging > 0)
    {

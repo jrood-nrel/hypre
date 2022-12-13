@@ -19,8 +19,8 @@
  * hypre_IJVectorDistribute
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_IJVectorDistribute( HYPRE_IJVector vector, const HYPRE_Int *vec_starts )
+NALU_HYPRE_Int
+hypre_IJVectorDistribute( NALU_HYPRE_IJVector vector, const NALU_HYPRE_Int *vec_starts )
 {
    hypre_IJVector *vec = (hypre_IJVector *) vector;
 
@@ -30,7 +30,7 @@ hypre_IJVectorDistribute( HYPRE_IJVector vector, const HYPRE_Int *vec_starts )
       exit(1);
    }
 
-   if ( hypre_IJVectorObjectType(vec) == HYPRE_PARCSR )
+   if ( hypre_IJVectorObjectType(vec) == NALU_HYPRE_PARCSR )
 
    {
       return ( hypre_IJVectorDistributePar(vec, vec_starts) );
@@ -49,8 +49,8 @@ hypre_IJVectorDistribute( HYPRE_IJVector vector, const HYPRE_Int *vec_starts )
  * hypre_IJVectorZeroValues
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_IJVectorZeroValues( HYPRE_IJVector vector )
+NALU_HYPRE_Int
+hypre_IJVectorZeroValues( NALU_HYPRE_IJVector vector )
 {
    hypre_IJVector *vec = (hypre_IJVector *) vector;
 
@@ -60,17 +60,17 @@ hypre_IJVectorZeroValues( HYPRE_IJVector vector )
       exit(1);
    }
 
-   /*  if ( hypre_IJVectorObjectType(vec) == HYPRE_PETSC )
+   /*  if ( hypre_IJVectorObjectType(vec) == NALU_HYPRE_PETSC )
 
       return( hypre_IJVectorZeroValuesPETSc(vec) );
 
-   else if ( hypre_IJVectorObjectType(vec) == HYPRE_ISIS )
+   else if ( hypre_IJVectorObjectType(vec) == NALU_HYPRE_ISIS )
 
       return( hypre_IJVectorZeroValuesISIS(vec) );
 
    else */
 
-   if ( hypre_IJVectorObjectType(vec) == HYPRE_PARCSR )
+   if ( hypre_IJVectorObjectType(vec) == NALU_HYPRE_PARCSR )
    {
       return ( hypre_IJVectorZeroValuesPar(vec) );
    }

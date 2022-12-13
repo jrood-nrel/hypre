@@ -11,16 +11,16 @@
  * hypre_SeqVectorMassAxpy8
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_SeqVectorMassAxpy8( HYPRE_Complex *alpha,
+NALU_HYPRE_Int
+hypre_SeqVectorMassAxpy8( NALU_HYPRE_Complex *alpha,
                           hypre_Vector **x,
-                          hypre_Vector  *y, HYPRE_Int k)
+                          hypre_Vector  *y, NALU_HYPRE_Int k)
 {
-   HYPRE_Complex  *x_data = hypre_VectorData(x[0]);
-   HYPRE_Complex  *y_data = hypre_VectorData(y);
-   HYPRE_Int       size   = hypre_VectorSize(x[0]);
+   NALU_HYPRE_Complex  *x_data = hypre_VectorData(x[0]);
+   NALU_HYPRE_Complex  *y_data = hypre_VectorData(y);
+   NALU_HYPRE_Int       size   = hypre_VectorSize(x[0]);
 
-   HYPRE_Int      i, j, jstart, restk;
+   NALU_HYPRE_Int      i, j, jstart, restk;
 
 
    restk = (k - (k / 8 * 8));
@@ -30,8 +30,8 @@ hypre_SeqVectorMassAxpy8( HYPRE_Complex *alpha,
       for (j = 0; j < k - 7; j += 8)
       {
          jstart = j * size;
-#if defined(HYPRE_USING_OPENMP)
-         #pragma omp parallel for private(i) HYPRE_SMP_SCHEDULE
+#if defined(NALU_HYPRE_USING_OPENMP)
+         #pragma omp parallel for private(i) NALU_HYPRE_SMP_SCHEDULE
 #endif
          for (i = 0; i < size; i++)
          {
@@ -45,8 +45,8 @@ hypre_SeqVectorMassAxpy8( HYPRE_Complex *alpha,
    if (restk == 1)
    {
       jstart = (k - 1) * size;
-#if defined(HYPRE_USING_OPENMP)
-      #pragma omp parallel for private(i) HYPRE_SMP_SCHEDULE
+#if defined(NALU_HYPRE_USING_OPENMP)
+      #pragma omp parallel for private(i) NALU_HYPRE_SMP_SCHEDULE
 #endif
       for (i = 0; i < size; i++)
       {
@@ -56,8 +56,8 @@ hypre_SeqVectorMassAxpy8( HYPRE_Complex *alpha,
    else if (restk == 2)
    {
       jstart = (k - 2) * size;
-#if defined(HYPRE_USING_OPENMP)
-      #pragma omp parallel for private(i) HYPRE_SMP_SCHEDULE
+#if defined(NALU_HYPRE_USING_OPENMP)
+      #pragma omp parallel for private(i) NALU_HYPRE_SMP_SCHEDULE
 #endif
       for (i = 0; i < size; i++)
       {
@@ -67,8 +67,8 @@ hypre_SeqVectorMassAxpy8( HYPRE_Complex *alpha,
    else if (restk == 3)
    {
       jstart = (k - 3) * size;
-#if defined(HYPRE_USING_OPENMP)
-      #pragma omp parallel for private(i) HYPRE_SMP_SCHEDULE
+#if defined(NALU_HYPRE_USING_OPENMP)
+      #pragma omp parallel for private(i) NALU_HYPRE_SMP_SCHEDULE
 #endif
       for (i = 0; i < size; i++)
       {
@@ -80,8 +80,8 @@ hypre_SeqVectorMassAxpy8( HYPRE_Complex *alpha,
    else if (restk == 4)
    {
       jstart = (k - 4) * size;
-#if defined(HYPRE_USING_OPENMP)
-      #pragma omp parallel for private(i) HYPRE_SMP_SCHEDULE
+#if defined(NALU_HYPRE_USING_OPENMP)
+      #pragma omp parallel for private(i) NALU_HYPRE_SMP_SCHEDULE
 #endif
       for (i = 0; i < size; i++)
       {
@@ -91,8 +91,8 @@ hypre_SeqVectorMassAxpy8( HYPRE_Complex *alpha,
    }
    else if (restk == 5)
    {
-#if defined(HYPRE_USING_OPENMP)
-      #pragma omp parallel for private(i) HYPRE_SMP_SCHEDULE
+#if defined(NALU_HYPRE_USING_OPENMP)
+      #pragma omp parallel for private(i) NALU_HYPRE_SMP_SCHEDULE
 #endif
       for (i = 0; i < size; i++)
       {
@@ -104,8 +104,8 @@ hypre_SeqVectorMassAxpy8( HYPRE_Complex *alpha,
    else if (restk == 6)
    {
       jstart = (k - 6) * size;
-#if defined(HYPRE_USING_OPENMP)
-      #pragma omp parallel for private(i) HYPRE_SMP_SCHEDULE
+#if defined(NALU_HYPRE_USING_OPENMP)
+      #pragma omp parallel for private(i) NALU_HYPRE_SMP_SCHEDULE
 #endif
       for (i = 0; i < size; i++)
       {
@@ -117,8 +117,8 @@ hypre_SeqVectorMassAxpy8( HYPRE_Complex *alpha,
    else if (restk == 7)
    {
       jstart = (k - 7) * size;
-#if defined(HYPRE_USING_OPENMP)
-      #pragma omp parallel for private(i) HYPRE_SMP_SCHEDULE
+#if defined(NALU_HYPRE_USING_OPENMP)
+      #pragma omp parallel for private(i) NALU_HYPRE_SMP_SCHEDULE
 #endif
       for (i = 0; i < size; i++)
       {
@@ -136,16 +136,16 @@ hypre_SeqVectorMassAxpy8( HYPRE_Complex *alpha,
  * hypre_SeqVectorMassAxpy4
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_SeqVectorMassAxpy4( HYPRE_Complex *alpha,
+NALU_HYPRE_Int
+hypre_SeqVectorMassAxpy4( NALU_HYPRE_Complex *alpha,
                           hypre_Vector **x,
-                          hypre_Vector  *y, HYPRE_Int k)
+                          hypre_Vector  *y, NALU_HYPRE_Int k)
 {
-   HYPRE_Complex  *x_data = hypre_VectorData(x[0]);
-   HYPRE_Complex  *y_data = hypre_VectorData(y);
-   HYPRE_Int       size   = hypre_VectorSize(x[0]);
+   NALU_HYPRE_Complex  *x_data = hypre_VectorData(x[0]);
+   NALU_HYPRE_Complex  *y_data = hypre_VectorData(y);
+   NALU_HYPRE_Int       size   = hypre_VectorSize(x[0]);
 
-   HYPRE_Int      i, j, jstart, restk;
+   NALU_HYPRE_Int      i, j, jstart, restk;
 
 
    restk = (k - (k / 4 * 4));
@@ -155,8 +155,8 @@ hypre_SeqVectorMassAxpy4( HYPRE_Complex *alpha,
       for (j = 0; j < k - 3; j += 4)
       {
          jstart = j * size;
-#if defined(HYPRE_USING_OPENMP)
-         #pragma omp parallel for private(i) HYPRE_SMP_SCHEDULE
+#if defined(NALU_HYPRE_USING_OPENMP)
+         #pragma omp parallel for private(i) NALU_HYPRE_SMP_SCHEDULE
 #endif
          for (i = 0; i < size; i++)
          {
@@ -168,8 +168,8 @@ hypre_SeqVectorMassAxpy4( HYPRE_Complex *alpha,
    if (restk == 1)
    {
       jstart = (k - 1) * size;
-#if defined(HYPRE_USING_OPENMP)
-      #pragma omp parallel for private(i) HYPRE_SMP_SCHEDULE
+#if defined(NALU_HYPRE_USING_OPENMP)
+      #pragma omp parallel for private(i) NALU_HYPRE_SMP_SCHEDULE
 #endif
       for (i = 0; i < size; i++)
       {
@@ -179,8 +179,8 @@ hypre_SeqVectorMassAxpy4( HYPRE_Complex *alpha,
    else if (restk == 2)
    {
       jstart = (k - 2) * size;
-#if defined(HYPRE_USING_OPENMP)
-      #pragma omp parallel for private(i) HYPRE_SMP_SCHEDULE
+#if defined(NALU_HYPRE_USING_OPENMP)
+      #pragma omp parallel for private(i) NALU_HYPRE_SMP_SCHEDULE
 #endif
       for (i = 0; i < size; i++)
       {
@@ -190,8 +190,8 @@ hypre_SeqVectorMassAxpy4( HYPRE_Complex *alpha,
    else if (restk == 3)
    {
       jstart = (k - 3) * size;
-#if defined(HYPRE_USING_OPENMP)
-      #pragma omp parallel for private(i) HYPRE_SMP_SCHEDULE
+#if defined(NALU_HYPRE_USING_OPENMP)
+      #pragma omp parallel for private(i) NALU_HYPRE_SMP_SCHEDULE
 #endif
       for (i = 0; i < size; i++)
       {
@@ -208,16 +208,16 @@ hypre_SeqVectorMassAxpy4( HYPRE_Complex *alpha,
  * hypre_SeqVectorMassAxpy
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_SeqVectorMassAxpy( HYPRE_Complex *alpha,
+NALU_HYPRE_Int
+hypre_SeqVectorMassAxpy( NALU_HYPRE_Complex *alpha,
                          hypre_Vector **x,
-                         hypre_Vector  *y, HYPRE_Int k, HYPRE_Int unroll)
+                         hypre_Vector  *y, NALU_HYPRE_Int k, NALU_HYPRE_Int unroll)
 {
-   HYPRE_Complex  *x_data = hypre_VectorData(x[0]);
-   HYPRE_Complex  *y_data = hypre_VectorData(y);
-   HYPRE_Int       size   = hypre_VectorSize(x[0]);
+   NALU_HYPRE_Complex  *x_data = hypre_VectorData(x[0]);
+   NALU_HYPRE_Complex  *y_data = hypre_VectorData(y);
+   NALU_HYPRE_Int       size   = hypre_VectorSize(x[0]);
 
-   HYPRE_Int      i, j, jstart;
+   NALU_HYPRE_Int      i, j, jstart;
 
    if (unroll == 8)
    {
@@ -234,8 +234,8 @@ hypre_SeqVectorMassAxpy( HYPRE_Complex *alpha,
       for (j = 0; j < k; j++)
       {
          jstart = j * size;
-#if defined(HYPRE_USING_OPENMP)
-         #pragma omp parallel for private(i) HYPRE_SMP_SCHEDULE
+#if defined(NALU_HYPRE_USING_OPENMP)
+         #pragma omp parallel for private(i) NALU_HYPRE_SMP_SCHEDULE
 #endif
          for (i = 0; i < size; i++)
          {
@@ -250,30 +250,30 @@ hypre_SeqVectorMassAxpy( HYPRE_Complex *alpha,
 /*--------------------------------------------------------------------------
  * hypre_SeqVectorMassInnerProd8
  *--------------------------------------------------------------------------*/
-HYPRE_Int hypre_SeqVectorMassInnerProd8( hypre_Vector *x,
-                                         hypre_Vector **y, HYPRE_Int k, HYPRE_Real *result)
+NALU_HYPRE_Int hypre_SeqVectorMassInnerProd8( hypre_Vector *x,
+                                         hypre_Vector **y, NALU_HYPRE_Int k, NALU_HYPRE_Real *result)
 {
-   HYPRE_Complex *x_data = hypre_VectorData(x);
-   HYPRE_Complex *y_data = hypre_VectorData(y[0]);
-   HYPRE_Int      size   = hypre_VectorSize(x);
+   NALU_HYPRE_Complex *x_data = hypre_VectorData(x);
+   NALU_HYPRE_Complex *y_data = hypre_VectorData(y[0]);
+   NALU_HYPRE_Int      size   = hypre_VectorSize(x);
 
-   HYPRE_Int      i, j, restk;
-   HYPRE_Real res1;
-   HYPRE_Real res2;
-   HYPRE_Real res3;
-   HYPRE_Real res4;
-   HYPRE_Real res5;
-   HYPRE_Real res6;
-   HYPRE_Real res7;
-   HYPRE_Real res8;
-   HYPRE_Int jstart;
-   HYPRE_Int jstart1;
-   HYPRE_Int jstart2;
-   HYPRE_Int jstart3;
-   HYPRE_Int jstart4;
-   HYPRE_Int jstart5;
-   HYPRE_Int jstart6;
-   HYPRE_Int jstart7;
+   NALU_HYPRE_Int      i, j, restk;
+   NALU_HYPRE_Real res1;
+   NALU_HYPRE_Real res2;
+   NALU_HYPRE_Real res3;
+   NALU_HYPRE_Real res4;
+   NALU_HYPRE_Real res5;
+   NALU_HYPRE_Real res6;
+   NALU_HYPRE_Real res7;
+   NALU_HYPRE_Real res8;
+   NALU_HYPRE_Int jstart;
+   NALU_HYPRE_Int jstart1;
+   NALU_HYPRE_Int jstart2;
+   NALU_HYPRE_Int jstart3;
+   NALU_HYPRE_Int jstart4;
+   NALU_HYPRE_Int jstart5;
+   NALU_HYPRE_Int jstart6;
+   NALU_HYPRE_Int jstart7;
 
    restk = (k - (k / 8 * 8));
 
@@ -297,8 +297,8 @@ HYPRE_Int hypre_SeqVectorMassInnerProd8( hypre_Vector *x,
          jstart5 = jstart4 + size;
          jstart6 = jstart5 + size;
          jstart7 = jstart6 + size;
-#if defined(HYPRE_USING_OPENMP)
-         #pragma omp parallel for private(i) reduction(+:res1,res2,res3,res4,res5,res6,res7,res8) HYPRE_SMP_SCHEDULE
+#if defined(NALU_HYPRE_USING_OPENMP)
+         #pragma omp parallel for private(i) reduction(+:res1,res2,res3,res4,res5,res6,res7,res8) NALU_HYPRE_SMP_SCHEDULE
 #endif
          for (i = 0; i < size; i++)
          {
@@ -325,8 +325,8 @@ HYPRE_Int hypre_SeqVectorMassInnerProd8( hypre_Vector *x,
    {
       res1 = 0;
       jstart = (k - 1) * size;
-#if defined(HYPRE_USING_OPENMP)
-      #pragma omp parallel for private(i) reduction(+:res1) HYPRE_SMP_SCHEDULE
+#if defined(NALU_HYPRE_USING_OPENMP)
+      #pragma omp parallel for private(i) reduction(+:res1) NALU_HYPRE_SMP_SCHEDULE
 #endif
       for (i = 0; i < size; i++)
       {
@@ -340,8 +340,8 @@ HYPRE_Int hypre_SeqVectorMassInnerProd8( hypre_Vector *x,
       res2 = 0;
       jstart = (k - 2) * size;
       jstart1 = jstart + size;
-#if defined(HYPRE_USING_OPENMP)
-      #pragma omp parallel for private(i) reduction(+:res1,res2) HYPRE_SMP_SCHEDULE
+#if defined(NALU_HYPRE_USING_OPENMP)
+      #pragma omp parallel for private(i) reduction(+:res1,res2) NALU_HYPRE_SMP_SCHEDULE
 #endif
       for (i = 0; i < size; i++)
       {
@@ -359,8 +359,8 @@ HYPRE_Int hypre_SeqVectorMassInnerProd8( hypre_Vector *x,
       jstart = (k - 3) * size;
       jstart1 = jstart + size;
       jstart2 = jstart1 + size;
-#if defined(HYPRE_USING_OPENMP)
-      #pragma omp parallel for private(i) reduction(+:res1,res2,res3) HYPRE_SMP_SCHEDULE
+#if defined(NALU_HYPRE_USING_OPENMP)
+      #pragma omp parallel for private(i) reduction(+:res1,res2,res3) NALU_HYPRE_SMP_SCHEDULE
 #endif
       for (i = 0; i < size; i++)
       {
@@ -382,8 +382,8 @@ HYPRE_Int hypre_SeqVectorMassInnerProd8( hypre_Vector *x,
       jstart1 = jstart + size;
       jstart2 = jstart1 + size;
       jstart3 = jstart2 + size;
-#if defined(HYPRE_USING_OPENMP)
-      #pragma omp parallel for private(i) reduction(+:res1,res2,res3,res4) HYPRE_SMP_SCHEDULE
+#if defined(NALU_HYPRE_USING_OPENMP)
+      #pragma omp parallel for private(i) reduction(+:res1,res2,res3,res4) NALU_HYPRE_SMP_SCHEDULE
 #endif
       for (i = 0; i < size; i++)
       {
@@ -409,8 +409,8 @@ HYPRE_Int hypre_SeqVectorMassInnerProd8( hypre_Vector *x,
       jstart2 = jstart1 + size;
       jstart3 = jstart2 + size;
       jstart4 = jstart3 + size;
-#if defined(HYPRE_USING_OPENMP)
-      #pragma omp parallel for private(i) reduction(+:res1,res2,res3,res4,res5) HYPRE_SMP_SCHEDULE
+#if defined(NALU_HYPRE_USING_OPENMP)
+      #pragma omp parallel for private(i) reduction(+:res1,res2,res3,res4,res5) NALU_HYPRE_SMP_SCHEDULE
 #endif
       for (i = 0; i < size; i++)
       {
@@ -440,8 +440,8 @@ HYPRE_Int hypre_SeqVectorMassInnerProd8( hypre_Vector *x,
       jstart3 = jstart2 + size;
       jstart4 = jstart3 + size;
       jstart5 = jstart4 + size;
-#if defined(HYPRE_USING_OPENMP)
-      #pragma omp parallel for private(i) reduction(+:res1,res2,res3,res4,res5,res6) HYPRE_SMP_SCHEDULE
+#if defined(NALU_HYPRE_USING_OPENMP)
+      #pragma omp parallel for private(i) reduction(+:res1,res2,res3,res4,res5,res6) NALU_HYPRE_SMP_SCHEDULE
 #endif
       for (i = 0; i < size; i++)
       {
@@ -475,8 +475,8 @@ HYPRE_Int hypre_SeqVectorMassInnerProd8( hypre_Vector *x,
       jstart4 = jstart3 + size;
       jstart5 = jstart4 + size;
       jstart6 = jstart5 + size;
-#if defined(HYPRE_USING_OPENMP)
-      #pragma omp parallel for private(i) reduction(+:res1,res2,res3,res4,res5,res6,res7) HYPRE_SMP_SCHEDULE
+#if defined(NALU_HYPRE_USING_OPENMP)
+      #pragma omp parallel for private(i) reduction(+:res1,res2,res3,res4,res5,res6,res7) NALU_HYPRE_SMP_SCHEDULE
 #endif
       for (i = 0; i < size; i++)
       {
@@ -504,22 +504,22 @@ HYPRE_Int hypre_SeqVectorMassInnerProd8( hypre_Vector *x,
 /*--------------------------------------------------------------------------
  * hypre_SeqVectorMassInnerProd4
  *--------------------------------------------------------------------------*/
-HYPRE_Int hypre_SeqVectorMassInnerProd4( hypre_Vector *x,
-                                         hypre_Vector **y, HYPRE_Int k, HYPRE_Real *result)
+NALU_HYPRE_Int hypre_SeqVectorMassInnerProd4( hypre_Vector *x,
+                                         hypre_Vector **y, NALU_HYPRE_Int k, NALU_HYPRE_Real *result)
 {
-   HYPRE_Complex *x_data = hypre_VectorData(x);
-   HYPRE_Complex *y_data = hypre_VectorData(y[0]);
-   HYPRE_Int      size   = hypre_VectorSize(x);
+   NALU_HYPRE_Complex *x_data = hypre_VectorData(x);
+   NALU_HYPRE_Complex *y_data = hypre_VectorData(y[0]);
+   NALU_HYPRE_Int      size   = hypre_VectorSize(x);
 
-   HYPRE_Int      i, j, restk;
-   HYPRE_Real res1;
-   HYPRE_Real res2;
-   HYPRE_Real res3;
-   HYPRE_Real res4;
-   HYPRE_Int jstart;
-   HYPRE_Int jstart1;
-   HYPRE_Int jstart2;
-   HYPRE_Int jstart3;
+   NALU_HYPRE_Int      i, j, restk;
+   NALU_HYPRE_Real res1;
+   NALU_HYPRE_Real res2;
+   NALU_HYPRE_Real res3;
+   NALU_HYPRE_Real res4;
+   NALU_HYPRE_Int jstart;
+   NALU_HYPRE_Int jstart1;
+   NALU_HYPRE_Int jstart2;
+   NALU_HYPRE_Int jstart3;
 
    restk = (k - (k / 4 * 4));
 
@@ -535,8 +535,8 @@ HYPRE_Int hypre_SeqVectorMassInnerProd4( hypre_Vector *x,
          jstart1 = jstart + size;
          jstart2 = jstart1 + size;
          jstart3 = jstart2 + size;
-#if defined(HYPRE_USING_OPENMP)
-         #pragma omp parallel for private(i) reduction(+:res1,res2,res3,res4) HYPRE_SMP_SCHEDULE
+#if defined(NALU_HYPRE_USING_OPENMP)
+         #pragma omp parallel for private(i) reduction(+:res1,res2,res3,res4) NALU_HYPRE_SMP_SCHEDULE
 #endif
          for (i = 0; i < size; i++)
          {
@@ -555,8 +555,8 @@ HYPRE_Int hypre_SeqVectorMassInnerProd4( hypre_Vector *x,
    {
       res1 = 0;
       jstart = (k - 1) * size;
-#if defined(HYPRE_USING_OPENMP)
-      #pragma omp parallel for private(i) reduction(+:res1) HYPRE_SMP_SCHEDULE
+#if defined(NALU_HYPRE_USING_OPENMP)
+      #pragma omp parallel for private(i) reduction(+:res1) NALU_HYPRE_SMP_SCHEDULE
 #endif
       for (i = 0; i < size; i++)
       {
@@ -570,8 +570,8 @@ HYPRE_Int hypre_SeqVectorMassInnerProd4( hypre_Vector *x,
       res2 = 0;
       jstart = (k - 2) * size;
       jstart1 = jstart + size;
-#if defined(HYPRE_USING_OPENMP)
-      #pragma omp parallel for private(i) reduction(+:res1,res2) HYPRE_SMP_SCHEDULE
+#if defined(NALU_HYPRE_USING_OPENMP)
+      #pragma omp parallel for private(i) reduction(+:res1,res2) NALU_HYPRE_SMP_SCHEDULE
 #endif
       for (i = 0; i < size; i++)
       {
@@ -589,8 +589,8 @@ HYPRE_Int hypre_SeqVectorMassInnerProd4( hypre_Vector *x,
       jstart = (k - 3) * size;
       jstart1 = jstart + size;
       jstart2 = jstart1 + size;
-#if defined(HYPRE_USING_OPENMP)
-      #pragma omp parallel for private(i) reduction(+:res1,res2,res3) HYPRE_SMP_SCHEDULE
+#if defined(NALU_HYPRE_USING_OPENMP)
+      #pragma omp parallel for private(i) reduction(+:res1,res2,res3) NALU_HYPRE_SMP_SCHEDULE
 #endif
       for (i = 0; i < size; i++)
       {
@@ -610,39 +610,39 @@ HYPRE_Int hypre_SeqVectorMassInnerProd4( hypre_Vector *x,
 /*--------------------------------------------------------------------------
  * hypre_SeqVectorMassDotpTwo8
  *--------------------------------------------------------------------------*/
-HYPRE_Int hypre_SeqVectorMassDotpTwo8( hypre_Vector *x, hypre_Vector *y,
-                                       hypre_Vector **z, HYPRE_Int k, HYPRE_Real *result_x, HYPRE_Real *result_y)
+NALU_HYPRE_Int hypre_SeqVectorMassDotpTwo8( hypre_Vector *x, hypre_Vector *y,
+                                       hypre_Vector **z, NALU_HYPRE_Int k, NALU_HYPRE_Real *result_x, NALU_HYPRE_Real *result_y)
 {
-   HYPRE_Complex *x_data = hypre_VectorData(x);
-   HYPRE_Complex *y_data = hypre_VectorData(y);
-   HYPRE_Complex *z_data = hypre_VectorData(z[0]);
-   HYPRE_Int      size   = hypre_VectorSize(x);
+   NALU_HYPRE_Complex *x_data = hypre_VectorData(x);
+   NALU_HYPRE_Complex *y_data = hypre_VectorData(y);
+   NALU_HYPRE_Complex *z_data = hypre_VectorData(z[0]);
+   NALU_HYPRE_Int      size   = hypre_VectorSize(x);
 
-   HYPRE_Int      i, j, restk;
-   HYPRE_Real res_x1;
-   HYPRE_Real res_x2;
-   HYPRE_Real res_x3;
-   HYPRE_Real res_x4;
-   HYPRE_Real res_x5;
-   HYPRE_Real res_x6;
-   HYPRE_Real res_x7;
-   HYPRE_Real res_x8;
-   HYPRE_Real res_y1;
-   HYPRE_Real res_y2;
-   HYPRE_Real res_y3;
-   HYPRE_Real res_y4;
-   HYPRE_Real res_y5;
-   HYPRE_Real res_y6;
-   HYPRE_Real res_y7;
-   HYPRE_Real res_y8;
-   HYPRE_Int jstart;
-   HYPRE_Int jstart1;
-   HYPRE_Int jstart2;
-   HYPRE_Int jstart3;
-   HYPRE_Int jstart4;
-   HYPRE_Int jstart5;
-   HYPRE_Int jstart6;
-   HYPRE_Int jstart7;
+   NALU_HYPRE_Int      i, j, restk;
+   NALU_HYPRE_Real res_x1;
+   NALU_HYPRE_Real res_x2;
+   NALU_HYPRE_Real res_x3;
+   NALU_HYPRE_Real res_x4;
+   NALU_HYPRE_Real res_x5;
+   NALU_HYPRE_Real res_x6;
+   NALU_HYPRE_Real res_x7;
+   NALU_HYPRE_Real res_x8;
+   NALU_HYPRE_Real res_y1;
+   NALU_HYPRE_Real res_y2;
+   NALU_HYPRE_Real res_y3;
+   NALU_HYPRE_Real res_y4;
+   NALU_HYPRE_Real res_y5;
+   NALU_HYPRE_Real res_y6;
+   NALU_HYPRE_Real res_y7;
+   NALU_HYPRE_Real res_y8;
+   NALU_HYPRE_Int jstart;
+   NALU_HYPRE_Int jstart1;
+   NALU_HYPRE_Int jstart2;
+   NALU_HYPRE_Int jstart3;
+   NALU_HYPRE_Int jstart4;
+   NALU_HYPRE_Int jstart5;
+   NALU_HYPRE_Int jstart6;
+   NALU_HYPRE_Int jstart7;
 
    restk = (k - (k / 8 * 8));
 
@@ -674,8 +674,8 @@ HYPRE_Int hypre_SeqVectorMassDotpTwo8( hypre_Vector *x, hypre_Vector *y,
          jstart5 = jstart4 + size;
          jstart6 = jstart5 + size;
          jstart7 = jstart6 + size;
-#if defined(HYPRE_USING_OPENMP)
-         #pragma omp parallel for private(i) reduction(+:res_x1,res_x2,res_x3,res_x4,res_x5,res_x6,res_x7,res_x8,res_y1,res_y2,res_y3,res_y4,res_y5,res_y6,res_y7,res_y8) HYPRE_SMP_SCHEDULE
+#if defined(NALU_HYPRE_USING_OPENMP)
+         #pragma omp parallel for private(i) reduction(+:res_x1,res_x2,res_x3,res_x4,res_x5,res_x6,res_x7,res_x8,res_y1,res_y2,res_y3,res_y4,res_y5,res_y6,res_y7,res_y8) NALU_HYPRE_SMP_SCHEDULE
 #endif
          for (i = 0; i < size; i++)
          {
@@ -719,8 +719,8 @@ HYPRE_Int hypre_SeqVectorMassDotpTwo8( hypre_Vector *x, hypre_Vector *y,
       res_x1 = 0;
       res_y1 = 0;
       jstart = (k - 1) * size;
-#if defined(HYPRE_USING_OPENMP)
-      #pragma omp parallel for private(i) reduction(+:res_x1,res_y1) HYPRE_SMP_SCHEDULE
+#if defined(NALU_HYPRE_USING_OPENMP)
+      #pragma omp parallel for private(i) reduction(+:res_x1,res_y1) NALU_HYPRE_SMP_SCHEDULE
 #endif
       for (i = 0; i < size; i++)
       {
@@ -738,8 +738,8 @@ HYPRE_Int hypre_SeqVectorMassDotpTwo8( hypre_Vector *x, hypre_Vector *y,
       res_y2 = 0;
       jstart = (k - 2) * size;
       jstart1 = jstart + size;
-#if defined(HYPRE_USING_OPENMP)
-      #pragma omp parallel for private(i) reduction(+:res_x1,res_x2,res_y1,res_y2) HYPRE_SMP_SCHEDULE
+#if defined(NALU_HYPRE_USING_OPENMP)
+      #pragma omp parallel for private(i) reduction(+:res_x1,res_x2,res_y1,res_y2) NALU_HYPRE_SMP_SCHEDULE
 #endif
       for (i = 0; i < size; i++)
       {
@@ -764,8 +764,8 @@ HYPRE_Int hypre_SeqVectorMassDotpTwo8( hypre_Vector *x, hypre_Vector *y,
       jstart = (k - 3) * size;
       jstart1 = jstart + size;
       jstart2 = jstart1 + size;
-#if defined(HYPRE_USING_OPENMP)
-      #pragma omp parallel for private(i) reduction(+:res_x1,res_x2,res_x3,res_y1,res_y2,res_y3) HYPRE_SMP_SCHEDULE
+#if defined(NALU_HYPRE_USING_OPENMP)
+      #pragma omp parallel for private(i) reduction(+:res_x1,res_x2,res_x3,res_y1,res_y2,res_y3) NALU_HYPRE_SMP_SCHEDULE
 #endif
       for (i = 0; i < size; i++)
       {
@@ -797,8 +797,8 @@ HYPRE_Int hypre_SeqVectorMassDotpTwo8( hypre_Vector *x, hypre_Vector *y,
       jstart1 = jstart + size;
       jstart2 = jstart1 + size;
       jstart3 = jstart2 + size;
-#if defined(HYPRE_USING_OPENMP)
-      #pragma omp parallel for private(i) reduction(+:res_x1,res_x2,res_x3,res_x4,res_y1,res_y2,res_y3,res_y4) HYPRE_SMP_SCHEDULE
+#if defined(NALU_HYPRE_USING_OPENMP)
+      #pragma omp parallel for private(i) reduction(+:res_x1,res_x2,res_x3,res_x4,res_y1,res_y2,res_y3,res_y4) NALU_HYPRE_SMP_SCHEDULE
 #endif
       for (i = 0; i < size; i++)
       {
@@ -837,8 +837,8 @@ HYPRE_Int hypre_SeqVectorMassDotpTwo8( hypre_Vector *x, hypre_Vector *y,
       jstart2 = jstart1 + size;
       jstart3 = jstart2 + size;
       jstart4 = jstart3 + size;
-#if defined(HYPRE_USING_OPENMP)
-      #pragma omp parallel for private(i) reduction(+:res_x1,res_x2,res_x3,res_x4,res_x5,res_y1,res_y2,res_y3,res_y4,res_y5) HYPRE_SMP_SCHEDULE
+#if defined(NALU_HYPRE_USING_OPENMP)
+      #pragma omp parallel for private(i) reduction(+:res_x1,res_x2,res_x3,res_x4,res_x5,res_y1,res_y2,res_y3,res_y4,res_y5) NALU_HYPRE_SMP_SCHEDULE
 #endif
       for (i = 0; i < size; i++)
       {
@@ -884,8 +884,8 @@ HYPRE_Int hypre_SeqVectorMassDotpTwo8( hypre_Vector *x, hypre_Vector *y,
       jstart3 = jstart2 + size;
       jstart4 = jstart3 + size;
       jstart5 = jstart4 + size;
-#if defined(HYPRE_USING_OPENMP)
-      #pragma omp parallel for private(i) reduction(+:res_x1,res_x2,res_x3,res_x4,res_x5,res_x6,res_y1,res_y2,res_y3,res_y4,res_y5,res_y6) HYPRE_SMP_SCHEDULE
+#if defined(NALU_HYPRE_USING_OPENMP)
+      #pragma omp parallel for private(i) reduction(+:res_x1,res_x2,res_x3,res_x4,res_x5,res_x6,res_y1,res_y2,res_y3,res_y4,res_y5,res_y6) NALU_HYPRE_SMP_SCHEDULE
 #endif
       for (i = 0; i < size; i++)
       {
@@ -938,8 +938,8 @@ HYPRE_Int hypre_SeqVectorMassDotpTwo8( hypre_Vector *x, hypre_Vector *y,
       jstart4 = jstart3 + size;
       jstart5 = jstart4 + size;
       jstart6 = jstart5 + size;
-#if defined(HYPRE_USING_OPENMP)
-      #pragma omp parallel for private(i) reduction(+:res_x1,res_x2,res_x3,res_x4,res_x5,res_x6,res_x7,res_y1,res_y2,res_y3,res_y4,res_y5,res_y6,res_y7) HYPRE_SMP_SCHEDULE
+#if defined(NALU_HYPRE_USING_OPENMP)
+      #pragma omp parallel for private(i) reduction(+:res_x1,res_x2,res_x3,res_x4,res_x5,res_x6,res_x7,res_y1,res_y2,res_y3,res_y4,res_y5,res_y6,res_y7) NALU_HYPRE_SMP_SCHEDULE
 #endif
       for (i = 0; i < size; i++)
       {
@@ -981,27 +981,27 @@ HYPRE_Int hypre_SeqVectorMassDotpTwo8( hypre_Vector *x, hypre_Vector *y,
 /*--------------------------------------------------------------------------
  * hypre_SeqVectorMassDotpTwo4
  *--------------------------------------------------------------------------*/
-HYPRE_Int hypre_SeqVectorMassDotpTwo4( hypre_Vector *x, hypre_Vector *y,
-                                       hypre_Vector **z, HYPRE_Int k, HYPRE_Real *result_x, HYPRE_Real *result_y)
+NALU_HYPRE_Int hypre_SeqVectorMassDotpTwo4( hypre_Vector *x, hypre_Vector *y,
+                                       hypre_Vector **z, NALU_HYPRE_Int k, NALU_HYPRE_Real *result_x, NALU_HYPRE_Real *result_y)
 {
-   HYPRE_Complex *x_data = hypre_VectorData(x);
-   HYPRE_Complex *y_data = hypre_VectorData(y);
-   HYPRE_Complex *z_data = hypre_VectorData(z[0]);
-   HYPRE_Int      size   = hypre_VectorSize(x);
+   NALU_HYPRE_Complex *x_data = hypre_VectorData(x);
+   NALU_HYPRE_Complex *y_data = hypre_VectorData(y);
+   NALU_HYPRE_Complex *z_data = hypre_VectorData(z[0]);
+   NALU_HYPRE_Int      size   = hypre_VectorSize(x);
 
-   HYPRE_Int      i, j, restk;
-   HYPRE_Real res_x1;
-   HYPRE_Real res_x2;
-   HYPRE_Real res_x3;
-   HYPRE_Real res_x4;
-   HYPRE_Real res_y1;
-   HYPRE_Real res_y2;
-   HYPRE_Real res_y3;
-   HYPRE_Real res_y4;
-   HYPRE_Int jstart;
-   HYPRE_Int jstart1;
-   HYPRE_Int jstart2;
-   HYPRE_Int jstart3;
+   NALU_HYPRE_Int      i, j, restk;
+   NALU_HYPRE_Real res_x1;
+   NALU_HYPRE_Real res_x2;
+   NALU_HYPRE_Real res_x3;
+   NALU_HYPRE_Real res_x4;
+   NALU_HYPRE_Real res_y1;
+   NALU_HYPRE_Real res_y2;
+   NALU_HYPRE_Real res_y3;
+   NALU_HYPRE_Real res_y4;
+   NALU_HYPRE_Int jstart;
+   NALU_HYPRE_Int jstart1;
+   NALU_HYPRE_Int jstart2;
+   NALU_HYPRE_Int jstart3;
 
    restk = (k - (k / 4 * 4));
 
@@ -1021,8 +1021,8 @@ HYPRE_Int hypre_SeqVectorMassDotpTwo4( hypre_Vector *x, hypre_Vector *y,
          jstart1 = jstart + size;
          jstart2 = jstart1 + size;
          jstart3 = jstart2 + size;
-#if defined(HYPRE_USING_OPENMP)
-         #pragma omp parallel for private(i) reduction(+:res_x1,res_x2,res_x3,res_x4,res_y1,res_y2,res_y3,res_y4) HYPRE_SMP_SCHEDULE
+#if defined(NALU_HYPRE_USING_OPENMP)
+         #pragma omp parallel for private(i) reduction(+:res_x1,res_x2,res_x3,res_x4,res_y1,res_y2,res_y3,res_y4) NALU_HYPRE_SMP_SCHEDULE
 #endif
          for (i = 0; i < size; i++)
          {
@@ -1050,8 +1050,8 @@ HYPRE_Int hypre_SeqVectorMassDotpTwo4( hypre_Vector *x, hypre_Vector *y,
       res_x1 = 0;
       res_y1 = 0;
       jstart = (k - 1) * size;
-#if defined(HYPRE_USING_OPENMP)
-      #pragma omp parallel for private(i) reduction(+:res_x1,res_y1) HYPRE_SMP_SCHEDULE
+#if defined(NALU_HYPRE_USING_OPENMP)
+      #pragma omp parallel for private(i) reduction(+:res_x1,res_y1) NALU_HYPRE_SMP_SCHEDULE
 #endif
       for (i = 0; i < size; i++)
       {
@@ -1069,8 +1069,8 @@ HYPRE_Int hypre_SeqVectorMassDotpTwo4( hypre_Vector *x, hypre_Vector *y,
       res_y2 = 0;
       jstart = (k - 2) * size;
       jstart1 = jstart + size;
-#if defined(HYPRE_USING_OPENMP)
-      #pragma omp parallel for private(i) reduction(+:res_x1,res_x2,res_y1,res_y2) HYPRE_SMP_SCHEDULE
+#if defined(NALU_HYPRE_USING_OPENMP)
+      #pragma omp parallel for private(i) reduction(+:res_x1,res_x2,res_y1,res_y2) NALU_HYPRE_SMP_SCHEDULE
 #endif
       for (i = 0; i < size; i++)
       {
@@ -1095,8 +1095,8 @@ HYPRE_Int hypre_SeqVectorMassDotpTwo4( hypre_Vector *x, hypre_Vector *y,
       jstart = (k - 3) * size;
       jstart1 = jstart + size;
       jstart2 = jstart1 + size;
-#if defined(HYPRE_USING_OPENMP)
-      #pragma omp parallel for private(i) reduction(+:res_x1,res_x2,res_x3,res_y1,res_y2,res_y3) HYPRE_SMP_SCHEDULE
+#if defined(NALU_HYPRE_USING_OPENMP)
+      #pragma omp parallel for private(i) reduction(+:res_x1,res_x2,res_x3,res_y1,res_y2,res_y3) NALU_HYPRE_SMP_SCHEDULE
 #endif
       for (i = 0; i < size; i++)
       {
@@ -1119,15 +1119,15 @@ HYPRE_Int hypre_SeqVectorMassDotpTwo4( hypre_Vector *x, hypre_Vector *y,
    return hypre_error_flag;
 }
 
-HYPRE_Int hypre_SeqVectorMassInnerProd( hypre_Vector *x,
-                                        hypre_Vector **y, HYPRE_Int k, HYPRE_Int unroll, HYPRE_Real *result)
+NALU_HYPRE_Int hypre_SeqVectorMassInnerProd( hypre_Vector *x,
+                                        hypre_Vector **y, NALU_HYPRE_Int k, NALU_HYPRE_Int unroll, NALU_HYPRE_Real *result)
 {
-   HYPRE_Complex *x_data = hypre_VectorData(x);
-   HYPRE_Complex *y_data = hypre_VectorData(y[0]);
-   HYPRE_Real res;
-   HYPRE_Int      size   = hypre_VectorSize(x);
+   NALU_HYPRE_Complex *x_data = hypre_VectorData(x);
+   NALU_HYPRE_Complex *y_data = hypre_VectorData(y[0]);
+   NALU_HYPRE_Real res;
+   NALU_HYPRE_Int      size   = hypre_VectorSize(x);
 
-   HYPRE_Int      i, j, jstart;
+   NALU_HYPRE_Int      i, j, jstart;
 
    if (unroll == 8)
    {
@@ -1145,8 +1145,8 @@ HYPRE_Int hypre_SeqVectorMassInnerProd( hypre_Vector *x,
       {
          res = 0;
          jstart = j * size;
-#if defined(HYPRE_USING_OPENMP)
-         #pragma omp parallel for private(i) reduction(+:res) HYPRE_SMP_SCHEDULE
+#if defined(NALU_HYPRE_USING_OPENMP)
+         #pragma omp parallel for private(i) reduction(+:res) NALU_HYPRE_SMP_SCHEDULE
 #endif
          for (i = 0; i < size; i++)
          {
@@ -1163,17 +1163,17 @@ HYPRE_Int hypre_SeqVectorMassInnerProd( hypre_Vector *x,
  * hypre_SeqVectorMassDotpTwo
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int hypre_SeqVectorMassDotpTwo( hypre_Vector *x, hypre_Vector *y,
-                                      hypre_Vector **z, HYPRE_Int k,  HYPRE_Int unroll,
-                                      HYPRE_Real *result_x, HYPRE_Real *result_y)
+NALU_HYPRE_Int hypre_SeqVectorMassDotpTwo( hypre_Vector *x, hypre_Vector *y,
+                                      hypre_Vector **z, NALU_HYPRE_Int k,  NALU_HYPRE_Int unroll,
+                                      NALU_HYPRE_Real *result_x, NALU_HYPRE_Real *result_y)
 {
-   HYPRE_Complex *x_data = hypre_VectorData(x);
-   HYPRE_Complex *y_data = hypre_VectorData(y);
-   HYPRE_Complex *z_data = hypre_VectorData(z[0]);
-   HYPRE_Real res_x, res_y;
-   HYPRE_Int      size   = hypre_VectorSize(x);
+   NALU_HYPRE_Complex *x_data = hypre_VectorData(x);
+   NALU_HYPRE_Complex *y_data = hypre_VectorData(y);
+   NALU_HYPRE_Complex *z_data = hypre_VectorData(z[0]);
+   NALU_HYPRE_Real res_x, res_y;
+   NALU_HYPRE_Int      size   = hypre_VectorSize(x);
 
-   HYPRE_Int      i, j, jstart;
+   NALU_HYPRE_Int      i, j, jstart;
 
    if (unroll == 8)
    {
@@ -1192,8 +1192,8 @@ HYPRE_Int hypre_SeqVectorMassDotpTwo( hypre_Vector *x, hypre_Vector *y,
          res_x = 0; //result_x[j];
          res_y = 0; //result_y[j];
          jstart = j * size;
-#if defined(HYPRE_USING_OPENMP)
-         #pragma omp parallel for private(i) reduction(+:res_x,res_y) HYPRE_SMP_SCHEDULE
+#if defined(NALU_HYPRE_USING_OPENMP)
+         #pragma omp parallel for private(i) reduction(+:res_x,res_y) NALU_HYPRE_SMP_SCHEDULE
 #endif
          for (i = 0; i < size; i++)
          {

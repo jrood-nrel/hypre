@@ -7,7 +7,7 @@
 
 /******************************************************************************
  *
- * HYPRE_fei_matrix functions
+ * NALU_HYPRE_fei_matrix functions
  *
  *****************************************************************************/
 
@@ -15,21 +15,21 @@
 #include <stdio.h>
 #include <math.h>
 
-#include "IJ_mv/HYPRE_IJ_mv.h"
-#include "parcsr_mv/HYPRE_parcsr_mv.h"
+#include "IJ_mv/NALU_HYPRE_IJ_mv.h"
+#include "parcsr_mv/NALU_HYPRE_parcsr_mv.h"
 #include "fei_mv.h"
 //NEW FEI 2.23.02
 #include "fei_Data.hpp"
 
 /*****************************************************************************/
-/* HYPRE_FEMatrixCreate function                                             */
+/* NALU_HYPRE_FEMatrixCreate function                                             */
 /*---------------------------------------------------------------------------*/
 
 extern "C" int
-HYPRE_FEMatrixCreate(MPI_Comm comm, HYPRE_FEMesh mesh, HYPRE_FEMatrix *matrix)
+NALU_HYPRE_FEMatrixCreate(MPI_Comm comm, NALU_HYPRE_FEMesh mesh, NALU_HYPRE_FEMatrix *matrix)
 {
-   HYPRE_FEMatrix myMatrix;
-   myMatrix = (HYPRE_FEMatrix) hypre_TAlloc(HYPRE_FEMatrix, 1, HYPRE_MEMORY_HOST);
+   NALU_HYPRE_FEMatrix myMatrix;
+   myMatrix = (NALU_HYPRE_FEMatrix) hypre_TAlloc(NALU_HYPRE_FEMatrix, 1, NALU_HYPRE_MEMORY_HOST);
    myMatrix->comm_ = comm;
    myMatrix->mesh_ = mesh;
    (*matrix) = myMatrix;
@@ -37,11 +37,11 @@ HYPRE_FEMatrixCreate(MPI_Comm comm, HYPRE_FEMesh mesh, HYPRE_FEMatrix *matrix)
 }
 
 /*****************************************************************************/
-/* HYPRE_FEMatrixDestroy - Destroy a FEMatrix object.                        */
+/* NALU_HYPRE_FEMatrixDestroy - Destroy a FEMatrix object.                        */
 /*---------------------------------------------------------------------------*/
 
 extern "C" int
-HYPRE_FEMatrixDestroy(HYPRE_FEMatrix matrix)
+NALU_HYPRE_FEMatrixDestroy(NALU_HYPRE_FEMatrix matrix)
 {
    if (matrix)
    {
@@ -51,18 +51,18 @@ HYPRE_FEMatrixDestroy(HYPRE_FEMatrix matrix)
 }
 
 /*****************************************************************************/
-/* HYPRE_FEMatrixGetObject                                                   */
+/* NALU_HYPRE_FEMatrixGetObject                                                   */
 /*---------------------------------------------------------------------------*/
 
 extern "C" int
-HYPRE_FEMatrixGetObject(HYPRE_FEMatrix matrix, void **object)
+NALU_HYPRE_FEMatrixGetObject(NALU_HYPRE_FEMatrix matrix, void **object)
 {
    int                ierr=0;
-   HYPRE_FEMesh       mesh;
+   NALU_HYPRE_FEMesh       mesh;
    LinearSystemCore*  lsc;
    Data               dataObj;
-   HYPRE_IJMatrix     A;
-   HYPRE_ParCSRMatrix ACSR;
+   NALU_HYPRE_IJMatrix     A;
+   NALU_HYPRE_ParCSRMatrix ACSR;
 
    if (matrix == NULL)
       ierr = 1;
@@ -77,8 +77,8 @@ HYPRE_FEMatrixGetObject(HYPRE_FEMatrix matrix, void **object)
          if (lsc != NULL)
          {
             lsc->copyOutMatrix(1.0e0, dataObj); 
-            A = (HYPRE_IJMatrix) dataObj.getDataPtr();
-            HYPRE_IJMatrixGetObject(A, (void **) &ACSR);
+            A = (NALU_HYPRE_IJMatrix) dataObj.getDataPtr();
+            NALU_HYPRE_IJMatrixGetObject(A, (void **) &ACSR);
             (*object) = (void *) ACSR;
          }
          else

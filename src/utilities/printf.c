@@ -12,7 +12,7 @@
 #define hypre_printf_buffer_len 4096
 char hypre_printf_buffer[hypre_printf_buffer_len];
 
-// #ifdef HYPRE_BIGINT
+// #ifdef NALU_HYPRE_BIGINT
 
 /* these prototypes are missing by default for some compilers */
 /*
@@ -21,21 +21,21 @@ int vfscanf( FILE *stream , const char *format, va_list arg );
 int vsscanf( const char *s , const char *format, va_list arg );
 */
 
-HYPRE_Int
+NALU_HYPRE_Int
 new_format( const char *format,
             char **newformat_ptr )
 {
    const char *fp;
    char       *newformat, *nfp;
-   HYPRE_Int   newformatlen;
-   HYPRE_Int   copychar;
-   HYPRE_Int   foundpercent = 0;
+   NALU_HYPRE_Int   newformatlen;
+   NALU_HYPRE_Int   copychar;
+   NALU_HYPRE_Int   foundpercent = 0;
 
    newformatlen = 2 * strlen(format) + 1; /* worst case is all %d's to %lld's */
 
    if (newformatlen > hypre_printf_buffer_len)
    {
-      newformat = hypre_TAlloc(char, newformatlen, HYPRE_MEMORY_HOST);
+      newformat = hypre_TAlloc(char, newformatlen, NALU_HYPRE_MEMORY_HOST);
    }
    else
    {
@@ -63,7 +63,7 @@ new_format( const char *format,
          switch (*fp)
          {
             case 'b': /* used for BigInt type in hypre */
-#if defined(HYPRE_BIGINT) || defined(HYPRE_MIXEDINT)
+#if defined(NALU_HYPRE_BIGINT) || defined(NALU_HYPRE_MIXEDINT)
                *nfp = 'l'; nfp++;
                *nfp = 'l'; nfp++;
 #endif
@@ -71,7 +71,7 @@ new_format( const char *format,
                foundpercent = 0; break;
             case 'd':
             case 'i':
-#if defined(HYPRE_BIGINT)
+#if defined(NALU_HYPRE_BIGINT)
                *nfp = 'l'; nfp++;
                *nfp = 'l'; nfp++;
 #endif
@@ -81,8 +81,8 @@ new_format( const char *format,
             case 'E':
             case 'g':
             case 'G':
-#if defined(HYPRE_SINGLE)          /* no modifier */
-#elif defined(HYPRE_LONG_DOUBLE)   /* modify with 'L' */
+#if defined(NALU_HYPRE_SINGLE)          /* no modifier */
+#elif defined(NALU_HYPRE_LONG_DOUBLE)   /* modify with 'L' */
                *nfp = 'L'; nfp++;
 #else                              /* modify with 'l' (default is _double_) */
                *nfp = 'l'; nfp++;
@@ -114,21 +114,21 @@ new_format( const char *format,
    return 0;
 }
 
-HYPRE_Int
+NALU_HYPRE_Int
 free_format( char *newformat )
 {
    if (newformat != hypre_printf_buffer)
    {
-      hypre_TFree(newformat, HYPRE_MEMORY_HOST);
+      hypre_TFree(newformat, NALU_HYPRE_MEMORY_HOST);
    }
 
    return 0;
 }
 
-HYPRE_Int
-hypre_ndigits( HYPRE_BigInt number )
+NALU_HYPRE_Int
+hypre_ndigits( NALU_HYPRE_BigInt number )
 {
-   HYPRE_Int     ndigits = 0;
+   NALU_HYPRE_Int     ndigits = 0;
 
    while (number)
    {
@@ -141,12 +141,12 @@ hypre_ndigits( HYPRE_BigInt number )
 
 /* printf functions */
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_printf( const char *format, ...)
 {
    va_list   ap;
    char     *newformat;
-   HYPRE_Int ierr = 0;
+   NALU_HYPRE_Int ierr = 0;
 
    va_start(ap, format);
    new_format(format, &newformat);
@@ -159,12 +159,12 @@ hypre_printf( const char *format, ...)
    return ierr;
 }
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_fprintf( FILE *stream, const char *format, ...)
 {
    va_list   ap;
    char     *newformat;
-   HYPRE_Int ierr = 0;
+   NALU_HYPRE_Int ierr = 0;
 
    va_start(ap, format);
    new_format(format, &newformat);
@@ -175,12 +175,12 @@ hypre_fprintf( FILE *stream, const char *format, ...)
    return ierr;
 }
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_sprintf( char *s, const char *format, ...)
 {
    va_list   ap;
    char     *newformat;
-   HYPRE_Int ierr = 0;
+   NALU_HYPRE_Int ierr = 0;
 
    va_start(ap, format);
    new_format(format, &newformat);
@@ -193,12 +193,12 @@ hypre_sprintf( char *s, const char *format, ...)
 
 /* scanf functions */
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_scanf( const char *format, ...)
 {
    va_list   ap;
    char     *newformat;
-   HYPRE_Int ierr = 0;
+   NALU_HYPRE_Int ierr = 0;
 
    va_start(ap, format);
    new_format(format, &newformat);
@@ -209,12 +209,12 @@ hypre_scanf( const char *format, ...)
    return ierr;
 }
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_fscanf( FILE *stream, const char *format, ...)
 {
    va_list   ap;
    char     *newformat;
-   HYPRE_Int ierr = 0;
+   NALU_HYPRE_Int ierr = 0;
 
    va_start(ap, format);
    new_format(format, &newformat);
@@ -225,12 +225,12 @@ hypre_fscanf( FILE *stream, const char *format, ...)
    return ierr;
 }
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_sscanf( char *s, const char *format, ...)
 {
    va_list   ap;
    char     *newformat;
-   HYPRE_Int ierr = 0;
+   NALU_HYPRE_Int ierr = 0;
 
    va_start(ap, format);
    new_format(format, &newformat);
@@ -241,11 +241,11 @@ hypre_sscanf( char *s, const char *format, ...)
    return ierr;
 }
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_ParPrintf(MPI_Comm comm, const char *format, ...)
 {
-   HYPRE_Int my_id;
-   HYPRE_Int ierr = hypre_MPI_Comm_rank(comm, &my_id);
+   NALU_HYPRE_Int my_id;
+   NALU_HYPRE_Int ierr = hypre_MPI_Comm_rank(comm, &my_id);
 
    if (ierr)
    {
@@ -271,6 +271,6 @@ hypre_ParPrintf(MPI_Comm comm, const char *format, ...)
 // #else
 //
 // /* this is used only to eliminate compiler warnings */
-// HYPRE_Int hypre_printf_empty;
+// NALU_HYPRE_Int hypre_printf_empty;
 //
 // #endif

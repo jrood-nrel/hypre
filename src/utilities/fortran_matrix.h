@@ -8,15 +8,15 @@
 #ifndef FORTRAN_STYLE_MATRIX
 #define FORTRAN_STYLE_MATRIX
 
-#include "HYPRE_utilities.h"
+#include "NALU_HYPRE_utilities.h"
 
 typedef struct
 {
-   HYPRE_BigInt globalHeight;
-   HYPRE_BigInt height;
-   HYPRE_BigInt width;
-   HYPRE_Real* value;
-   HYPRE_Int    ownsValues;
+   NALU_HYPRE_BigInt globalHeight;
+   NALU_HYPRE_BigInt height;
+   NALU_HYPRE_BigInt width;
+   NALU_HYPRE_Real* value;
+   NALU_HYPRE_Int    ownsValues;
 } utilities_FortranMatrix;
 
 #ifdef __cplusplus
@@ -26,21 +26,21 @@ extern "C" {
 utilities_FortranMatrix*
 utilities_FortranMatrixCreate(void);
 void
-utilities_FortranMatrixAllocateData( HYPRE_BigInt h, HYPRE_BigInt w,
+utilities_FortranMatrixAllocateData( NALU_HYPRE_BigInt h, NALU_HYPRE_BigInt w,
                                      utilities_FortranMatrix* mtx );
 void
-utilities_FortranMatrixWrap( HYPRE_Real*, HYPRE_BigInt gh, HYPRE_BigInt h, HYPRE_BigInt w,
+utilities_FortranMatrixWrap( NALU_HYPRE_Real*, NALU_HYPRE_BigInt gh, NALU_HYPRE_BigInt h, NALU_HYPRE_BigInt w,
                              utilities_FortranMatrix* mtx );
 void
 utilities_FortranMatrixDestroy( utilities_FortranMatrix* mtx );
 
-HYPRE_BigInt
+NALU_HYPRE_BigInt
 utilities_FortranMatrixGlobalHeight( utilities_FortranMatrix* mtx );
-HYPRE_BigInt
+NALU_HYPRE_BigInt
 utilities_FortranMatrixHeight( utilities_FortranMatrix* mtx );
-HYPRE_BigInt
+NALU_HYPRE_BigInt
 utilities_FortranMatrixWidth( utilities_FortranMatrix* mtx );
-HYPRE_Real*
+NALU_HYPRE_Real*
 utilities_FortranMatrixValues( utilities_FortranMatrix* mtx );
 
 void
@@ -56,11 +56,11 @@ void
 utilities_FortranMatrixSymmetrize( utilities_FortranMatrix* mtx );
 
 void
-utilities_FortranMatrixCopy( utilities_FortranMatrix* src, HYPRE_Int t,
+utilities_FortranMatrixCopy( utilities_FortranMatrix* src, NALU_HYPRE_Int t,
                              utilities_FortranMatrix* dest );
 void
-utilities_FortranMatrixIndexCopy( HYPRE_Int* index,
-                                  utilities_FortranMatrix* src, HYPRE_Int t,
+utilities_FortranMatrixIndexCopy( NALU_HYPRE_Int* index,
+                                  utilities_FortranMatrix* src, NALU_HYPRE_Int t,
                                   utilities_FortranMatrix* dest );
 
 void
@@ -70,7 +70,7 @@ void
 utilities_FortranMatrixGetDiagonal( utilities_FortranMatrix* mtx,
                                     utilities_FortranMatrix* d );
 void
-utilities_FortranMatrixAdd( HYPRE_Real a,
+utilities_FortranMatrixAdd( NALU_HYPRE_Real a,
                             utilities_FortranMatrix* mtxA,
                             utilities_FortranMatrix* mtxB,
                             utilities_FortranMatrix* mtxC );
@@ -81,30 +81,30 @@ void
 utilities_FortranMatrixMultiplyD( utilities_FortranMatrix* mtx,
                                   utilities_FortranMatrix* d );
 void
-utilities_FortranMatrixMultiply( utilities_FortranMatrix* mtxA, HYPRE_Int tA,
-                                 utilities_FortranMatrix* mtxB, HYPRE_Int tB,
+utilities_FortranMatrixMultiply( utilities_FortranMatrix* mtxA, NALU_HYPRE_Int tA,
+                                 utilities_FortranMatrix* mtxB, NALU_HYPRE_Int tB,
                                  utilities_FortranMatrix* mtxC );
-HYPRE_Real
+NALU_HYPRE_Real
 utilities_FortranMatrixFNorm( utilities_FortranMatrix* mtx );
 
-HYPRE_Real
+NALU_HYPRE_Real
 utilities_FortranMatrixValue( utilities_FortranMatrix* mtx,
-                              HYPRE_BigInt i, HYPRE_BigInt j );
-HYPRE_Real*
+                              NALU_HYPRE_BigInt i, NALU_HYPRE_BigInt j );
+NALU_HYPRE_Real*
 utilities_FortranMatrixValuePtr( utilities_FortranMatrix* mtx,
-                                 HYPRE_BigInt i, HYPRE_BigInt j );
-HYPRE_Real
+                                 NALU_HYPRE_BigInt i, NALU_HYPRE_BigInt j );
+NALU_HYPRE_Real
 utilities_FortranMatrixMaxValue( utilities_FortranMatrix* mtx );
 
 void
 utilities_FortranMatrixSelectBlock( utilities_FortranMatrix* mtx,
-                                    HYPRE_BigInt iFrom, HYPRE_BigInt iTo,
-                                    HYPRE_BigInt jFrom, HYPRE_BigInt jTo,
+                                    NALU_HYPRE_BigInt iFrom, NALU_HYPRE_BigInt iTo,
+                                    NALU_HYPRE_BigInt jFrom, NALU_HYPRE_BigInt jTo,
                                     utilities_FortranMatrix* block );
 void
 utilities_FortranMatrixUpperInv( utilities_FortranMatrix* u );
 
-HYPRE_Int
+NALU_HYPRE_Int
 utilities_FortranMatrixPrint( utilities_FortranMatrix* mtx, const char *fileName);
 
 #ifdef __cplusplus

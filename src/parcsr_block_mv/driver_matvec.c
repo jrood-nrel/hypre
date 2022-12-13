@@ -12,13 +12,13 @@
 #include "../krylov/krylov.h"
 #include "par_csr_block_matrix.h"
 
-extern HYPRE_Int MyBuildParLaplacian9pt(HYPRE_ParCSRMatrix  *A_ptr);
+extern NALU_HYPRE_Int MyBuildParLaplacian9pt(NALU_HYPRE_ParCSRMatrix  *A_ptr);
 
 /*--------------------------------------------------------------------------
  * Test driver for unstructured matrix interface
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int main( HYPRE_Int   argc, char *argv[] )
+NALU_HYPRE_Int main( NALU_HYPRE_Int   argc, char *argv[] )
 {
    hypre_ParCSRMatrix      *par_matrix, *g_matrix, **submatrices;
    hypre_CSRMatrix         *A_diag, *A_offd;
@@ -29,18 +29,18 @@ HYPRE_Int main( HYPRE_Int   argc, char *argv[] )
    hypre_Vector        *y_local;
    hypre_ParVector     *x;
    hypre_ParVector     *y;
-   HYPRE_Solver        gmres_solver, precon;
-   HYPRE_Int                 *diag_i, *diag_j, *offd_i, *offd_j;
-   HYPRE_Int                 *diag_i2, *diag_j2, *offd_i2, *offd_j2;
-   HYPRE_Complex       *diag_d, *diag_d2, *offd_d, *offd_d2;
-   HYPRE_Int                   mypid, local_size, nprocs;
-   HYPRE_Int                   global_num_rows, global_num_cols, num_cols_offd;
-   HYPRE_Int                   num_nonzeros_diag, num_nonzeros_offd, *colMap;
-   HYPRE_Int                   ii, jj, kk, row, col, nnz, *indices, *colMap2;
-   HYPRE_Complex               *data, ddata, *y_data;
-   HYPRE_Int                   *row_starts, *col_starts, *rstarts, *cstarts;
-   HYPRE_Int                   *row_starts2, *col_starts2;
-   HYPRE_Int                 block_size = 2, bnnz = 4, *index_set;
+   NALU_HYPRE_Solver        gmres_solver, precon;
+   NALU_HYPRE_Int                 *diag_i, *diag_j, *offd_i, *offd_j;
+   NALU_HYPRE_Int                 *diag_i2, *diag_j2, *offd_i2, *offd_j2;
+   NALU_HYPRE_Complex       *diag_d, *diag_d2, *offd_d, *offd_d2;
+   NALU_HYPRE_Int                   mypid, local_size, nprocs;
+   NALU_HYPRE_Int                   global_num_rows, global_num_cols, num_cols_offd;
+   NALU_HYPRE_Int                   num_nonzeros_diag, num_nonzeros_offd, *colMap;
+   NALU_HYPRE_Int                   ii, jj, kk, row, col, nnz, *indices, *colMap2;
+   NALU_HYPRE_Complex               *data, ddata, *y_data;
+   NALU_HYPRE_Int                   *row_starts, *col_starts, *rstarts, *cstarts;
+   NALU_HYPRE_Int                   *row_starts2, *col_starts2;
+   NALU_HYPRE_Int                 block_size = 2, bnnz = 4, *index_set;
    FILE                *fp;
 
    /* --------------------------------------------- */
@@ -52,7 +52,7 @@ HYPRE_Int main( HYPRE_Int   argc, char *argv[] )
    hypre_MPI_Comm_size(hypre_MPI_COMM_WORLD, &nprocs);
 
    /* build and fetch matrix */
-   MyBuildParLaplacian9pt((HYPRE_ParCSRMatrix *) &par_matrix);
+   MyBuildParLaplacian9pt((NALU_HYPRE_ParCSRMatrix *) &par_matrix);
    global_num_rows = hypre_ParCSRMatrixGlobalNumRows(par_matrix);
    global_num_cols = hypre_ParCSRMatrixGlobalNumCols(par_matrix);
    row_starts = hypre_ParCSRMatrixRowStarts(par_matrix);
@@ -85,9 +85,9 @@ HYPRE_Int main( HYPRE_Int   argc, char *argv[] )
    /* build block matrix                            */
    /* --------------------------------------------- */
 
-   rstarts = hypre_CTAlloc(HYPRE_Int,  nprocs + 1, HYPRE_MEMORY_HOST);
+   rstarts = hypre_CTAlloc(NALU_HYPRE_Int,  nprocs + 1, NALU_HYPRE_MEMORY_HOST);
    for (ii = 0; ii <= nprocs; ii++) { rstarts[ii] = row_starts[ii]; }
-   cstarts = hypre_CTAlloc(HYPRE_Int,  nprocs + 1, HYPRE_MEMORY_HOST);
+   cstarts = hypre_CTAlloc(NALU_HYPRE_Int,  nprocs + 1, NALU_HYPRE_MEMORY_HOST);
    for (ii = 0; ii <= nprocs; ii++) { cstarts[ii] = col_starts[ii]; }
 
    par_blk_matrix = hypre_ParCSRBlockMatrixCreate(hypre_MPI_COMM_WORLD, block_size,
@@ -95,7 +95,7 @@ HYPRE_Int main( HYPRE_Int   argc, char *argv[] )
                                                   cstarts, num_cols_offd, num_nonzeros_diag,
                                                   num_nonzeros_offd);
    colMap  = hypre_ParCSRMatrixColMapOffd(par_matrix);
-   if (num_cols_offd > 0) { colMap2 = hypre_CTAlloc(HYPRE_Int,  num_cols_offd, HYPRE_MEMORY_HOST); }
+   if (num_cols_offd > 0) { colMap2 = hypre_CTAlloc(NALU_HYPRE_Int,  num_cols_offd, NALU_HYPRE_MEMORY_HOST); }
    else { colMap2 = NULL; }
    for (ii = 0; ii < num_cols_offd; ii++) { colMap2[ii] = colMap[ii]; }
    hypre_ParCSRBlockMatrixColMapOffd(par_blk_matrix) = colMap2;
@@ -103,9 +103,9 @@ HYPRE_Int main( HYPRE_Int   argc, char *argv[] )
    diag_j = hypre_CSRMatrixJ(hypre_ParCSRMatrixDiag(par_matrix));
    diag_d = hypre_CSRMatrixData(hypre_ParCSRMatrixDiag(par_matrix));
    diag = hypre_ParCSRBlockMatrixDiag(par_blk_matrix);
-   diag_i2 = hypre_CTAlloc(HYPRE_Int,  local_size + 1, HYPRE_MEMORY_HOST);
-   diag_j2 = hypre_CTAlloc(HYPRE_Int,  num_nonzeros_diag, HYPRE_MEMORY_HOST);
-   diag_d2 = hypre_CTAlloc(HYPRE_Complex,  num_nonzeros_diag * bnnz, HYPRE_MEMORY_HOST);
+   diag_i2 = hypre_CTAlloc(NALU_HYPRE_Int,  local_size + 1, NALU_HYPRE_MEMORY_HOST);
+   diag_j2 = hypre_CTAlloc(NALU_HYPRE_Int,  num_nonzeros_diag, NALU_HYPRE_MEMORY_HOST);
+   diag_d2 = hypre_CTAlloc(NALU_HYPRE_Complex,  num_nonzeros_diag * bnnz, NALU_HYPRE_MEMORY_HOST);
    for (ii = 0; ii <= local_size; ii++) { diag_i2[ii] = diag_i[ii]; }
    for (ii = 0; ii < num_nonzeros_diag; ii++) { diag_j2[ii] = diag_j[ii]; }
    hypre_CSRBlockMatrixI(diag) = diag_i2;
@@ -131,15 +131,15 @@ HYPRE_Int main( HYPRE_Int   argc, char *argv[] )
    offd_j = hypre_CSRMatrixJ(hypre_ParCSRMatrixOffd(par_matrix));
    offd_d = hypre_CSRMatrixData(hypre_ParCSRMatrixOffd(par_matrix));
    offd   = hypre_ParCSRBlockMatrixOffd(par_blk_matrix);
-   offd_i2 = hypre_CTAlloc(HYPRE_Int,  local_size + 1, HYPRE_MEMORY_HOST);
+   offd_i2 = hypre_CTAlloc(NALU_HYPRE_Int,  local_size + 1, NALU_HYPRE_MEMORY_HOST);
    for (ii = 0; ii <= local_size; ii++) { offd_i2[ii] = offd_i[ii]; }
    hypre_CSRBlockMatrixI(offd) = offd_i2;
    if (num_cols_offd)
    {
-      offd_j2 = hypre_CTAlloc(HYPRE_Int,  num_nonzeros_offd, HYPRE_MEMORY_HOST);
+      offd_j2 = hypre_CTAlloc(NALU_HYPRE_Int,  num_nonzeros_offd, NALU_HYPRE_MEMORY_HOST);
       for (ii = 0; ii < num_nonzeros_offd; ii++) { offd_j2[ii] = offd_j[ii]; }
       hypre_CSRBlockMatrixJ(offd) = offd_j2;
-      offd_d2 = hypre_CTAlloc(HYPRE_Complex,  num_nonzeros_offd * bnnz, HYPRE_MEMORY_HOST);
+      offd_d2 = hypre_CTAlloc(NALU_HYPRE_Complex,  num_nonzeros_offd * bnnz, NALU_HYPRE_MEMORY_HOST);
       for (ii = 0; ii < num_nonzeros_offd; ii++)
       {
          for (jj = 0; jj < block_size; jj++)
@@ -167,9 +167,9 @@ HYPRE_Int main( HYPRE_Int   argc, char *argv[] )
    /* build block matrix transpose                  */
    /* --------------------------------------------- */
 
-   rstarts = hypre_CTAlloc(HYPRE_Int,  nprocs + 1, HYPRE_MEMORY_HOST);
+   rstarts = hypre_CTAlloc(NALU_HYPRE_Int,  nprocs + 1, NALU_HYPRE_MEMORY_HOST);
    for (ii = 0; ii <= nprocs; ii++) { rstarts[ii] = row_starts[ii]; }
-   cstarts = hypre_CTAlloc(HYPRE_Int,  nprocs + 1, HYPRE_MEMORY_HOST);
+   cstarts = hypre_CTAlloc(NALU_HYPRE_Int,  nprocs + 1, NALU_HYPRE_MEMORY_HOST);
    for (ii = 0; ii <= nprocs; ii++) { cstarts[ii] = col_starts[ii]; }
 
    par_blk_matrixT = hypre_ParCSRBlockMatrixCreate(hypre_MPI_COMM_WORLD, block_size,
@@ -177,16 +177,16 @@ HYPRE_Int main( HYPRE_Int   argc, char *argv[] )
                                                    cstarts, num_cols_offd, num_nonzeros_diag,
                                                    num_nonzeros_offd);
    colMap  = hypre_ParCSRMatrixColMapOffd(par_matrix);
-   colMap2 = hypre_CTAlloc(HYPRE_Int,  num_cols_offd, HYPRE_MEMORY_HOST);
+   colMap2 = hypre_CTAlloc(NALU_HYPRE_Int,  num_cols_offd, NALU_HYPRE_MEMORY_HOST);
    for (ii = 0; ii < num_cols_offd; ii++) { colMap2[ii] = colMap[ii]; }
    hypre_ParCSRBlockMatrixColMapOffd(par_blk_matrixT) = colMap2;
    diag_i = hypre_CSRMatrixI(hypre_ParCSRMatrixDiag(par_matrix));
    diag_j = hypre_CSRMatrixJ(hypre_ParCSRMatrixDiag(par_matrix));
    diag_d = hypre_CSRMatrixData(hypre_ParCSRMatrixDiag(par_matrix));
    diag = hypre_ParCSRBlockMatrixDiag(par_blk_matrixT);
-   diag_i2 = hypre_CTAlloc(HYPRE_Int,  local_size + 1, HYPRE_MEMORY_HOST);
-   diag_j2 = hypre_CTAlloc(HYPRE_Int,  num_nonzeros_diag, HYPRE_MEMORY_HOST);
-   diag_d2 = hypre_CTAlloc(HYPRE_Complex,  num_nonzeros_diag * bnnz, HYPRE_MEMORY_HOST);
+   diag_i2 = hypre_CTAlloc(NALU_HYPRE_Int,  local_size + 1, NALU_HYPRE_MEMORY_HOST);
+   diag_j2 = hypre_CTAlloc(NALU_HYPRE_Int,  num_nonzeros_diag, NALU_HYPRE_MEMORY_HOST);
+   diag_d2 = hypre_CTAlloc(NALU_HYPRE_Complex,  num_nonzeros_diag * bnnz, NALU_HYPRE_MEMORY_HOST);
    for (ii = 0; ii <= local_size; ii++) { diag_i2[ii] = diag_i[ii]; }
    for (ii = 0; ii < num_nonzeros_diag; ii++) { diag_j2[ii] = diag_j[ii]; }
    hypre_CSRBlockMatrixI(diag) = diag_i2;
@@ -212,15 +212,15 @@ HYPRE_Int main( HYPRE_Int   argc, char *argv[] )
    offd_j = hypre_CSRMatrixJ(hypre_ParCSRMatrixOffd(par_matrix));
    offd_d = hypre_CSRMatrixData(hypre_ParCSRMatrixOffd(par_matrix));
    offd   = hypre_ParCSRBlockMatrixOffd(par_blk_matrixT);
-   offd_i2 = hypre_CTAlloc(HYPRE_Int,  local_size + 1, HYPRE_MEMORY_HOST);
+   offd_i2 = hypre_CTAlloc(NALU_HYPRE_Int,  local_size + 1, NALU_HYPRE_MEMORY_HOST);
    for (ii = 0; ii <= local_size; ii++) { offd_i2[ii] = offd_i[ii]; }
    hypre_CSRBlockMatrixI(offd) = offd_i2;
    if (num_cols_offd)
    {
-      offd_j2 = hypre_CTAlloc(HYPRE_Int,  num_nonzeros_offd, HYPRE_MEMORY_HOST);
+      offd_j2 = hypre_CTAlloc(NALU_HYPRE_Int,  num_nonzeros_offd, NALU_HYPRE_MEMORY_HOST);
       for (ii = 0; ii < num_nonzeros_offd; ii++) { offd_j2[ii] = offd_j[ii]; }
       hypre_CSRBlockMatrixJ(offd) = offd_j2;
-      offd_d2 = hypre_CTAlloc(HYPRE_Complex,  num_nonzeros_offd * bnnz, HYPRE_MEMORY_HOST);
+      offd_d2 = hypre_CTAlloc(NALU_HYPRE_Complex,  num_nonzeros_offd * bnnz, NALU_HYPRE_MEMORY_HOST);
       for (ii = 0; ii < num_nonzeros_offd; ii++)
       {
          for (jj = 0; jj < block_size; jj++)
@@ -248,7 +248,7 @@ HYPRE_Int main( HYPRE_Int   argc, char *argv[] )
    /* block matvec                                  */
    /* --------------------------------------------- */
 
-   col_starts2 = hypre_CTAlloc(HYPRE_Int,  nprocs + 1, HYPRE_MEMORY_HOST);
+   col_starts2 = hypre_CTAlloc(NALU_HYPRE_Int,  nprocs + 1, NALU_HYPRE_MEMORY_HOST);
    for (ii = 0; ii <= nprocs; ii++)
    {
       col_starts2[ii] = col_starts[ii] * block_size;
@@ -260,7 +260,7 @@ HYPRE_Int main( HYPRE_Int   argc, char *argv[] )
    data = hypre_VectorData(x_local);
    local_size = col_starts2[mypid + 1] - col_starts2[mypid];
    for (ii = 0; ii < local_size; ii++) { data[ii] = 1.0; }
-   row_starts2 = hypre_CTAlloc(HYPRE_Int,  nprocs + 1, HYPRE_MEMORY_HOST);
+   row_starts2 = hypre_CTAlloc(NALU_HYPRE_Int,  nprocs + 1, NALU_HYPRE_MEMORY_HOST);
    for (ii = 0; ii <= nprocs; ii++)
    {
       row_starts2[ii] = row_starts[ii] * block_size;
@@ -346,16 +346,16 @@ HYPRE_Int main( HYPRE_Int   argc, char *argv[] )
 
 #if 0
    /* --------------------------------------------- */
-   /* read in A_ee and create a HYPRE_ParCSRMatrix  */
+   /* read in A_ee and create a NALU_HYPRE_ParCSRMatrix  */
    /* --------------------------------------------- */
 
    if (nprocs == 1)
    {
       fp = fopen("Amat_ee", "r");
       hypre_fscanf(fp, "%d %d", &global_num_rows, &num_nonzeros_diag);
-      diag_i = hypre_TAlloc(HYPRE_Int, (global_num_rows + 1), HYPRE_MEMORY_HOST);
-      diag_j = hypre_TAlloc(HYPRE_Int, num_nonzeros_diag, HYPRE_MEMORY_HOST);
-      diag_d = hypre_TAlloc(HYPRE_Complex, num_nonzeros_diag, HYPRE_MEMORY_HOST);
+      diag_i = hypre_TAlloc(NALU_HYPRE_Int, (global_num_rows + 1), NALU_HYPRE_MEMORY_HOST);
+      diag_j = hypre_TAlloc(NALU_HYPRE_Int, num_nonzeros_diag, NALU_HYPRE_MEMORY_HOST);
+      diag_d = hypre_TAlloc(NALU_HYPRE_Complex, num_nonzeros_diag, NALU_HYPRE_MEMORY_HOST);
       row = 0;
       nnz = 0;
       diag_i[0] = 0;
@@ -374,8 +374,8 @@ HYPRE_Int main( HYPRE_Int   argc, char *argv[] )
       fclose(fp);
       hypre_printf("nrows = %d, nnz = %d\n", row + 1, nnz);
 
-      row_starts = hypre_TAlloc(HYPRE_Int, 2, HYPRE_MEMORY_HOST);
-      col_starts = hypre_TAlloc(HYPRE_Int, 2, HYPRE_MEMORY_HOST);
+      row_starts = hypre_TAlloc(NALU_HYPRE_Int, 2, NALU_HYPRE_MEMORY_HOST);
+      col_starts = hypre_TAlloc(NALU_HYPRE_Int, 2, NALU_HYPRE_MEMORY_HOST);
       row_starts[0] = col_starts[0] = 0;
       row_starts[1] = col_starts[1] = global_num_rows;
       num_cols_offd = 0;
@@ -395,9 +395,9 @@ HYPRE_Int main( HYPRE_Int   argc, char *argv[] )
       fp = fopen("Gmat", "r");
       hypre_fscanf(fp, "%d %d %d", &global_num_rows, &global_num_cols,
                    &num_nonzeros_diag);
-      diag_i = hypre_TAlloc(HYPRE_Int, (global_num_rows + 1), HYPRE_MEMORY_HOST);
-      diag_j = hypre_TAlloc(HYPRE_Int, num_nonzeros_diag, HYPRE_MEMORY_HOST);
-      diag_d = hypre_TAlloc(HYPRE_Complex, num_nonzeros_diag, HYPRE_MEMORY_HOST);
+      diag_i = hypre_TAlloc(NALU_HYPRE_Int, (global_num_rows + 1), NALU_HYPRE_MEMORY_HOST);
+      diag_j = hypre_TAlloc(NALU_HYPRE_Int, num_nonzeros_diag, NALU_HYPRE_MEMORY_HOST);
+      diag_d = hypre_TAlloc(NALU_HYPRE_Complex, num_nonzeros_diag, NALU_HYPRE_MEMORY_HOST);
       row = 0;
       nnz = 0;
       diag_i[0] = 0;
@@ -415,8 +415,8 @@ HYPRE_Int main( HYPRE_Int   argc, char *argv[] )
       diag_i[global_num_rows] = nnz;
       fclose(fp);
 
-      row_starts = hypre_TAlloc(HYPRE_Int, 2, HYPRE_MEMORY_HOST);
-      col_starts = hypre_TAlloc(HYPRE_Int, 2, HYPRE_MEMORY_HOST);
+      row_starts = hypre_TAlloc(NALU_HYPRE_Int, 2, NALU_HYPRE_MEMORY_HOST);
+      col_starts = hypre_TAlloc(NALU_HYPRE_Int, 2, NALU_HYPRE_MEMORY_HOST);
       row_starts[0] = col_starts[0] = 0;
       row_starts[1] = global_num_rows;
       col_starts[1] = global_num_cols;
@@ -436,7 +436,7 @@ HYPRE_Int main( HYPRE_Int   argc, char *argv[] )
 
       hypre_ParCSRMatrixGenSpanningTree(g_matrix, &indices, 0);
       submatrices = (hypre_ParCSRMatrix **)
-                    hypre_TAlloc(hypre_ParCSRMatrix*, 4, HYPRE_MEMORY_HOST);
+                    hypre_TAlloc(hypre_ParCSRMatrix*, 4, NALU_HYPRE_MEMORY_HOST);
       hypre_ParCSRMatrixExtractSubmatrices(par_matrix, indices, &submatrices);
    }
 #endif
@@ -445,29 +445,29 @@ HYPRE_Int main( HYPRE_Int   argc, char *argv[] )
 
    if (nprocs == 1)
    {
-      MyBuildParLaplacian9pt((HYPRE_ParCSRMatrix *) &par_matrix);
+      MyBuildParLaplacian9pt((NALU_HYPRE_ParCSRMatrix *) &par_matrix);
       row_starts = hypre_ParCSRMatrixRowStarts(par_matrix);
       col_starts = hypre_ParCSRMatrixColStarts(par_matrix);
-      HYPRE_ParCSRGMRESCreate(hypre_MPI_COMM_WORLD, &gmres_solver);
-      HYPRE_GMRESSetKDim(gmres_solver, 10);
-      HYPRE_GMRESSetMaxIter(gmres_solver, 1000);
-      HYPRE_GMRESSetTol(gmres_solver, 1.0e-6);
-      HYPRE_GMRESSetLogging(gmres_solver, 1);
-      HYPRE_GMRESSetPrintLevel(gmres_solver, 2);
-      HYPRE_BlockTridiagCreate(&precon);
-      HYPRE_BlockTridiagSetPrintLevel(precon, 0);
-      HYPRE_BlockTridiagSetAMGNumSweeps(precon, 1);
+      NALU_HYPRE_ParCSRGMRESCreate(hypre_MPI_COMM_WORLD, &gmres_solver);
+      NALU_HYPRE_GMRESSetKDim(gmres_solver, 10);
+      NALU_HYPRE_GMRESSetMaxIter(gmres_solver, 1000);
+      NALU_HYPRE_GMRESSetTol(gmres_solver, 1.0e-6);
+      NALU_HYPRE_GMRESSetLogging(gmres_solver, 1);
+      NALU_HYPRE_GMRESSetPrintLevel(gmres_solver, 2);
+      NALU_HYPRE_BlockTridiagCreate(&precon);
+      NALU_HYPRE_BlockTridiagSetPrintLevel(precon, 0);
+      NALU_HYPRE_BlockTridiagSetAMGNumSweeps(precon, 1);
       local_size = col_starts[mypid + 1] - col_starts[mypid];
-      index_set = hypre_CTAlloc(HYPRE_Int,  local_size + 1, HYPRE_MEMORY_HOST);
+      index_set = hypre_CTAlloc(NALU_HYPRE_Int,  local_size + 1, NALU_HYPRE_MEMORY_HOST);
       jj = 0;
       /* for (ii = 0; ii < local_size/2; ii++) index_set[jj++] = ii * 2; */
       for (ii = 0; ii < local_size / 2; ii++) { index_set[jj++] = ii; }
-      HYPRE_BlockTridiagSetIndexSet(precon, jj, index_set);
-      HYPRE_GMRESSetPrecond(gmres_solver,
-                            (HYPRE_PtrToSolverFcn) HYPRE_BlockTridiagSolve,
-                            (HYPRE_PtrToSolverFcn) HYPRE_BlockTridiagSetup,
+      NALU_HYPRE_BlockTridiagSetIndexSet(precon, jj, index_set);
+      NALU_HYPRE_GMRESSetPrecond(gmres_solver,
+                            (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_BlockTridiagSolve,
+                            (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_BlockTridiagSetup,
                             precon);
-      col_starts2 = hypre_CTAlloc(HYPRE_Int,  nprocs + 1, HYPRE_MEMORY_HOST);
+      col_starts2 = hypre_CTAlloc(NALU_HYPRE_Int,  nprocs + 1, NALU_HYPRE_MEMORY_HOST);
       for (ii = 0; ii <= nprocs; ii++) { col_starts2[ii] = col_starts[ii]; }
       x = hypre_ParVectorCreate(hypre_MPI_COMM_WORLD, global_num_cols, col_starts2);
       hypre_ParVectorInitialize(x);
@@ -475,7 +475,7 @@ HYPRE_Int main( HYPRE_Int   argc, char *argv[] )
       local_size = col_starts2[mypid + 1] - col_starts2[mypid];
       data = hypre_VectorData(x_local);
       for (ii = 0; ii < local_size; ii++) { data[ii] = 0.0; }
-      row_starts2 = hypre_CTAlloc(HYPRE_Int,  nprocs + 1, HYPRE_MEMORY_HOST);
+      row_starts2 = hypre_CTAlloc(NALU_HYPRE_Int,  nprocs + 1, NALU_HYPRE_MEMORY_HOST);
       for (ii = 0; ii <= nprocs; ii++) { row_starts2[ii] = row_starts[ii]; }
       y = hypre_ParVectorCreate(hypre_MPI_COMM_WORLD, global_num_rows, row_starts2);
       hypre_ParVectorInitialize(y);
@@ -483,10 +483,10 @@ HYPRE_Int main( HYPRE_Int   argc, char *argv[] )
       data = hypre_VectorData(y_local);
       for (ii = 0; ii < local_size; ii++) { data[ii] = 1.0; }
 
-      HYPRE_GMRESSetup(gmres_solver, (HYPRE_Matrix) par_matrix,
-                       (HYPRE_Vector) y, (HYPRE_Vector) x);
-      HYPRE_GMRESSolve(gmres_solver, (HYPRE_Matrix) par_matrix,
-                       (HYPRE_Vector) y, (HYPRE_Vector) x);
+      NALU_HYPRE_GMRESSetup(gmres_solver, (NALU_HYPRE_Matrix) par_matrix,
+                       (NALU_HYPRE_Vector) y, (NALU_HYPRE_Vector) x);
+      NALU_HYPRE_GMRESSolve(gmres_solver, (NALU_HYPRE_Matrix) par_matrix,
+                       (NALU_HYPRE_Vector) y, (NALU_HYPRE_Vector) x);
 
       hypre_ParVectorDestroy(x);
       hypre_ParVectorDestroy(y);
@@ -503,14 +503,14 @@ HYPRE_Int main( HYPRE_Int   argc, char *argv[] )
  * Parameters given in command line.
  *----------------------------------------------------------------------*/
 
-HYPRE_Int MyBuildParLaplacian9pt(HYPRE_ParCSRMatrix  *A_ptr)
+NALU_HYPRE_Int MyBuildParLaplacian9pt(NALU_HYPRE_ParCSRMatrix  *A_ptr)
 {
-   HYPRE_Int                 nx, ny;
-   HYPRE_Int                 P, Q;
-   HYPRE_ParCSRMatrix  A;
-   HYPRE_Int                 num_procs, myid;
-   HYPRE_Int                 p, q;
-   HYPRE_Complex      *values;
+   NALU_HYPRE_Int                 nx, ny;
+   NALU_HYPRE_Int                 P, Q;
+   NALU_HYPRE_ParCSRMatrix  A;
+   NALU_HYPRE_Int                 num_procs, myid;
+   NALU_HYPRE_Int                 p, q;
+   NALU_HYPRE_Complex      *values;
 
    /*-----------------------------------------------------------
     * Initialize some stuff
@@ -551,15 +551,15 @@ HYPRE_Int MyBuildParLaplacian9pt(HYPRE_ParCSRMatrix  *A_ptr)
     * Generate the matrix
     *-----------------------------------------------------------*/
 
-   values = hypre_CTAlloc(HYPRE_Complex,  2, HYPRE_MEMORY_HOST);
+   values = hypre_CTAlloc(NALU_HYPRE_Complex,  2, NALU_HYPRE_MEMORY_HOST);
    values[1] = -1.;
    values[0] = 0.;
    if (nx > 1) { values[0] += 2.0; }
    if (ny > 1) { values[0] += 2.0; }
    if (nx > 1 && ny > 1) { values[0] += 4.0; }
-   A = (HYPRE_ParCSRMatrix) GenerateLaplacian9pt(hypre_MPI_COMM_WORLD,
+   A = (NALU_HYPRE_ParCSRMatrix) GenerateLaplacian9pt(hypre_MPI_COMM_WORLD,
                                                  nx, ny, P, Q, p, q, values);
-   hypre_TFree(values, HYPRE_MEMORY_HOST);
+   hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
    *A_ptr = A;
    return (0);
 }

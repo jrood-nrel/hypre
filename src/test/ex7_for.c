@@ -48,8 +48,8 @@
 
 #include <math.h>
 #include "_hypre_utilities.h"
-#include "HYPRE_krylov.h"
-#include "HYPRE_sstruct_ls.h"
+#include "NALU_HYPRE_krylov.h"
+#include "NALU_HYPRE_sstruct_ls.h"
 
 #ifdef M_PI
 #define PI M_PI
@@ -61,16 +61,16 @@
 #define Eval(F,i,j) (F( (ilower[0]+(i))*h, (ilower[1]+(j))*h ))
 #define bcEval(F,i,j) (F( (bc_ilower[0]+(i))*h, (bc_ilower[1]+(j))*h ))
 
-#ifdef HYPRE_FORTRAN
+#ifdef NALU_HYPRE_FORTRAN
 #include "fortran.h"
 #include "hypre_struct_fortran_test.h"
 #include "hypre_sstruct_fortran_test.h"
 #endif
 
-HYPRE_Int optionK, optionB, optionC, optionU0, optionF;
+NALU_HYPRE_Int optionK, optionB, optionC, optionU0, optionF;
 
 /* Diffusion coefficient */
-HYPRE_Real K(HYPRE_Real x, HYPRE_Real y)
+NALU_HYPRE_Real K(NALU_HYPRE_Real x, NALU_HYPRE_Real y)
 {
    switch (optionK)
    {
@@ -102,7 +102,7 @@ HYPRE_Real K(HYPRE_Real x, HYPRE_Real y)
 }
 
 /* Convection vector, first component */
-HYPRE_Real B1(HYPRE_Real x, HYPRE_Real y)
+NALU_HYPRE_Real B1(NALU_HYPRE_Real x, NALU_HYPRE_Real y)
 {
    switch (optionB)
    {
@@ -120,7 +120,7 @@ HYPRE_Real B1(HYPRE_Real x, HYPRE_Real y)
 }
 
 /* Convection vector, second component */
-HYPRE_Real B2(HYPRE_Real x, HYPRE_Real y)
+NALU_HYPRE_Real B2(NALU_HYPRE_Real x, NALU_HYPRE_Real y)
 {
    switch (optionB)
    {
@@ -138,7 +138,7 @@ HYPRE_Real B2(HYPRE_Real x, HYPRE_Real y)
 }
 
 /* Reaction coefficient */
-HYPRE_Real C(HYPRE_Real x, HYPRE_Real y)
+NALU_HYPRE_Real C(NALU_HYPRE_Real x, NALU_HYPRE_Real y)
 {
    switch (optionC)
    {
@@ -154,7 +154,7 @@ HYPRE_Real C(HYPRE_Real x, HYPRE_Real y)
 }
 
 /* Boundary condition */
-HYPRE_Real U0(HYPRE_Real x, HYPRE_Real y)
+NALU_HYPRE_Real U0(NALU_HYPRE_Real x, NALU_HYPRE_Real y)
 {
    switch (optionU0)
    {
@@ -170,7 +170,7 @@ HYPRE_Real U0(HYPRE_Real x, HYPRE_Real y)
 }
 
 /* Right-hand side */
-HYPRE_Real F(HYPRE_Real x, HYPRE_Real y)
+NALU_HYPRE_Real F(NALU_HYPRE_Real x, NALU_HYPRE_Real y)
 {
    switch (optionF)
    {
@@ -203,30 +203,30 @@ HYPRE_Real F(HYPRE_Real x, HYPRE_Real y)
    }
 }
 
-HYPRE_Int main (HYPRE_Int argc, char *argv[])
+NALU_HYPRE_Int main (NALU_HYPRE_Int argc, char *argv[])
 {
-   HYPRE_Int i, j, k;
+   NALU_HYPRE_Int i, j, k;
 
-   HYPRE_Int myid, num_procs;
+   NALU_HYPRE_Int myid, num_procs;
 
-   HYPRE_Int n, N, pi, pj;
-   HYPRE_Real h, h2;
-   HYPRE_Int ilower[2], iupper[2];
+   NALU_HYPRE_Int n, N, pi, pj;
+   NALU_HYPRE_Real h, h2;
+   NALU_HYPRE_Int ilower[2], iupper[2];
 
-   HYPRE_Int solver_id;
-   HYPRE_Int n_pre, n_post;
-   HYPRE_Int rap, relax, skip, sym;
-   HYPRE_Int time_index;
+   NALU_HYPRE_Int solver_id;
+   NALU_HYPRE_Int n_pre, n_post;
+   NALU_HYPRE_Int rap, relax, skip, sym;
+   NALU_HYPRE_Int time_index;
 
-   HYPRE_Int object_type;
+   NALU_HYPRE_Int object_type;
 
-   HYPRE_Int num_iterations;
-   HYPRE_Real final_res_norm;
+   NALU_HYPRE_Int num_iterations;
+   NALU_HYPRE_Real final_res_norm;
 
-   HYPRE_Int print_solution;
+   NALU_HYPRE_Int print_solution;
 
    /* We are using struct solvers for this example */
-#ifdef HYPRE_FORTRAN
+#ifdef NALU_HYPRE_FORTRAN
    hypre_F90_Obj grid;
    hypre_F90_Obj stencil;
    hypre_F90_Obj graph;
@@ -236,32 +236,32 @@ HYPRE_Int main (HYPRE_Int argc, char *argv[])
 
    hypre_F90_Obj solver;
    hypre_F90_Obj precond;
-   HYPRE_Int      precond_id;
+   NALU_HYPRE_Int      precond_id;
 
    hypre_F90_Obj long_temp_COMM;
-   HYPRE_Int      temp_COMM;
+   NALU_HYPRE_Int      temp_COMM;
 
-   HYPRE_Int      zero = 0;
-   HYPRE_Int      one = 1;
-   HYPRE_Int      two = 2;
-   HYPRE_Int      three = 3;
-   HYPRE_Int      five = 5;
-   HYPRE_Int      fifty = 50;
-   HYPRE_Int      twohundred = 200;
-   HYPRE_Int      fivehundred = 500;
+   NALU_HYPRE_Int      zero = 0;
+   NALU_HYPRE_Int      one = 1;
+   NALU_HYPRE_Int      two = 2;
+   NALU_HYPRE_Int      three = 3;
+   NALU_HYPRE_Int      five = 5;
+   NALU_HYPRE_Int      fifty = 50;
+   NALU_HYPRE_Int      twohundred = 200;
+   NALU_HYPRE_Int      fivehundred = 500;
 
-   HYPRE_Real   zerodot = 0.;
-   HYPRE_Real   tol = 1.e-6;
+   NALU_HYPRE_Real   zerodot = 0.;
+   NALU_HYPRE_Real   tol = 1.e-6;
 #else
-   HYPRE_SStructGrid     grid;
-   HYPRE_SStructStencil  stencil;
-   HYPRE_SStructGraph    graph;
-   HYPRE_SStructMatrix   A;
-   HYPRE_SStructVector   b;
-   HYPRE_SStructVector   x;
+   NALU_HYPRE_SStructGrid     grid;
+   NALU_HYPRE_SStructStencil  stencil;
+   NALU_HYPRE_SStructGraph    graph;
+   NALU_HYPRE_SStructMatrix   A;
+   NALU_HYPRE_SStructVector   b;
+   NALU_HYPRE_SStructVector   x;
 
-   HYPRE_StructSolver   solver;
-   HYPRE_StructSolver   precond;
+   NALU_HYPRE_StructSolver   solver;
+   NALU_HYPRE_StructSolver   precond;
 #endif
 
    /* Initialize MPI */
@@ -288,8 +288,8 @@ HYPRE_Int main (HYPRE_Int argc, char *argv[])
 
    /* Parse command line */
    {
-      HYPRE_Int arg_index = 0;
-      HYPRE_Int print_usage = 0;
+      NALU_HYPRE_Int arg_index = 0;
+      NALU_HYPRE_Int print_usage = 0;
 
       while (arg_index < argc)
       {
@@ -441,96 +441,96 @@ HYPRE_Int main (HYPRE_Int argc, char *argv[])
 
    /* 1. Set up a 2D grid */
    {
-      HYPRE_Int ndim = 2;
-      HYPRE_Int nparts = 1;
-      HYPRE_Int nvars = 1;
-      HYPRE_Int part = 0;
-      HYPRE_Int i;
+      NALU_HYPRE_Int ndim = 2;
+      NALU_HYPRE_Int nparts = 1;
+      NALU_HYPRE_Int nvars = 1;
+      NALU_HYPRE_Int part = 0;
+      NALU_HYPRE_Int i;
 
       /* Create an empty 2D grid object */
-#ifdef HYPRE_FORTRAN
-      temp_COMM = (HYPRE_Int) hypre_MPI_COMM_WORLD;
+#ifdef NALU_HYPRE_FORTRAN
+      temp_COMM = (NALU_HYPRE_Int) hypre_MPI_COMM_WORLD;
       long_temp_COMM = (hypre_F90_Obj) hypre_MPI_COMM_WORLD;
-      HYPRE_SStructGridCreate(&temp_COMM, &ndim, &nparts, &grid);
+      NALU_HYPRE_SStructGridCreate(&temp_COMM, &ndim, &nparts, &grid);
 #else
-      HYPRE_SStructGridCreate(hypre_MPI_COMM_WORLD, ndim, nparts, &grid);
+      NALU_HYPRE_SStructGridCreate(hypre_MPI_COMM_WORLD, ndim, nparts, &grid);
 #endif
 
       /* Add a new box to the grid */
-#ifdef HYPRE_FORTRAN
-      HYPRE_SStructGridSetExtents(&grid, &part, &ilower[0], &iupper[0]);
+#ifdef NALU_HYPRE_FORTRAN
+      NALU_HYPRE_SStructGridSetExtents(&grid, &part, &ilower[0], &iupper[0]);
 #else
-      HYPRE_SStructGridSetExtents(grid, part, ilower, iupper);
+      NALU_HYPRE_SStructGridSetExtents(grid, part, ilower, iupper);
 #endif
 
       /* Set the variable type for each part */
       {
-#ifdef HYPRE_FORTRAN
-         hypre_F90_Obj vartypes[1] = {HYPRE_SSTRUCT_VARIABLE_CELL};
+#ifdef NALU_HYPRE_FORTRAN
+         hypre_F90_Obj vartypes[1] = {NALU_HYPRE_SSTRUCT_VARIABLE_CELL};
 #else
-         HYPRE_SStructVariable vartypes[1] = {HYPRE_SSTRUCT_VARIABLE_CELL};
+         NALU_HYPRE_SStructVariable vartypes[1] = {NALU_HYPRE_SSTRUCT_VARIABLE_CELL};
 #endif
 
          for (i = 0; i < nparts; i++)
-#ifdef HYPRE_FORTRAN
-            HYPRE_SStructGridSetVariables(&grid, &i, &nvars, &vartypes[0]);
+#ifdef NALU_HYPRE_FORTRAN
+            NALU_HYPRE_SStructGridSetVariables(&grid, &i, &nvars, &vartypes[0]);
 #else
-            HYPRE_SStructGridSetVariables(grid, i, nvars, vartypes);
+            NALU_HYPRE_SStructGridSetVariables(grid, i, nvars, vartypes);
 #endif
       }
 
       /* This is a collective call finalizing the grid assembly.
          The grid is now ``ready to be used'' */
-#ifdef HYPRE_FORTRAN
-      HYPRE_SStructGridAssemble(&grid);
+#ifdef NALU_HYPRE_FORTRAN
+      NALU_HYPRE_SStructGridAssemble(&grid);
 #else
-      HYPRE_SStructGridAssemble(grid);
+      NALU_HYPRE_SStructGridAssemble(grid);
 #endif
    }
 
    /* 2. Define the discretization stencil */
    {
-      HYPRE_Int ndim = 2;
-      HYPRE_Int var = 0;
+      NALU_HYPRE_Int ndim = 2;
+      NALU_HYPRE_Int var = 0;
 
       if (sym == 0)
       {
          /* Define the geometry of the stencil */
-         HYPRE_Int offsets[5][2] = {{0, 0}, {-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+         NALU_HYPRE_Int offsets[5][2] = {{0, 0}, {-1, 0}, {1, 0}, {0, -1}, {0, 1}};
 
          /* Create an empty 2D, 5-pt stencil object */
-#ifdef HYPRE_FORTRAN
-         HYPRE_SStructStencilCreate(&ndim, &five, &stencil);
+#ifdef NALU_HYPRE_FORTRAN
+         NALU_HYPRE_SStructStencilCreate(&ndim, &five, &stencil);
 #else
-         HYPRE_SStructStencilCreate(ndim, 5, &stencil);
+         NALU_HYPRE_SStructStencilCreate(ndim, 5, &stencil);
 #endif
 
          /* Assign stencil entries */
          for (i = 0; i < 5; i++)
-#ifdef HYPRE_FORTRAN
-            HYPRE_SStructStencilSetEntry(&stencil, &i, offsets[i], &var);
+#ifdef NALU_HYPRE_FORTRAN
+            NALU_HYPRE_SStructStencilSetEntry(&stencil, &i, offsets[i], &var);
 #else
-            HYPRE_SStructStencilSetEntry(stencil, i, offsets[i], var);
+            NALU_HYPRE_SStructStencilSetEntry(stencil, i, offsets[i], var);
 #endif
       }
       else /* Symmetric storage */
       {
          /* Define the geometry of the stencil */
-         HYPRE_Int offsets[3][2] = {{0, 0}, {1, 0}, {0, 1}};
+         NALU_HYPRE_Int offsets[3][2] = {{0, 0}, {1, 0}, {0, 1}};
 
          /* Create an empty 2D, 3-pt stencil object */
-#ifdef HYPRE_FORTRAN
-         HYPRE_SStructStencilCreate(&ndim, &three, &stencil);
+#ifdef NALU_HYPRE_FORTRAN
+         NALU_HYPRE_SStructStencilCreate(&ndim, &three, &stencil);
 #else
-         HYPRE_SStructStencilCreate(ndim, 3, &stencil);
+         NALU_HYPRE_SStructStencilCreate(ndim, 3, &stencil);
 #endif
 
          /* Assign stencil entries */
          for (i = 0; i < 3; i++)
-#ifdef HYPRE_FORTRAN
-            HYPRE_SStructStencilSetEntry(&stencil, &i, offsets[i], &var);
+#ifdef NALU_HYPRE_FORTRAN
+            NALU_HYPRE_SStructStencilSetEntry(&stencil, &i, offsets[i], &var);
 #else
-            HYPRE_SStructStencilSetEntry(stencil, i, offsets[i], var);
+            NALU_HYPRE_SStructStencilSetEntry(stencil, i, offsets[i], var);
 #endif
       }
    }
@@ -538,77 +538,77 @@ HYPRE_Int main (HYPRE_Int argc, char *argv[])
    /* 3. Set up the Graph  - this determines the non-zero structure
       of the matrix */
    {
-      HYPRE_Int var = 0;
-      HYPRE_Int part = 0;
+      NALU_HYPRE_Int var = 0;
+      NALU_HYPRE_Int part = 0;
 
       /* Create the graph object */
-#ifdef HYPRE_FORTRAN
-      HYPRE_SStructGraphCreate(&temp_COMM, &grid, &graph);
+#ifdef NALU_HYPRE_FORTRAN
+      NALU_HYPRE_SStructGraphCreate(&temp_COMM, &grid, &graph);
 #else
-      HYPRE_SStructGraphCreate(hypre_MPI_COMM_WORLD, grid, &graph);
+      NALU_HYPRE_SStructGraphCreate(hypre_MPI_COMM_WORLD, grid, &graph);
 #endif
 
       /* Now we need to tell the graph which stencil to use for each
          variable on each part (we only have one variable and one part)*/
-#ifdef HYPRE_FORTRAN
-      HYPRE_SStructGraphSetStencil(&graph, &part, &var, &stencil);
+#ifdef NALU_HYPRE_FORTRAN
+      NALU_HYPRE_SStructGraphSetStencil(&graph, &part, &var, &stencil);
 #else
-      HYPRE_SStructGraphSetStencil(graph, part, var, stencil);
+      NALU_HYPRE_SStructGraphSetStencil(graph, part, var, stencil);
 #endif
 
       /* Here we could establish connections between parts if we
          had more than one part. */
 
       /* Assemble the graph */
-#ifdef HYPRE_FORTRAN
-      HYPRE_SStructGraphAssemble(&graph);
+#ifdef NALU_HYPRE_FORTRAN
+      NALU_HYPRE_SStructGraphAssemble(&graph);
 #else
-      HYPRE_SStructGraphAssemble(graph);
+      NALU_HYPRE_SStructGraphAssemble(graph);
 #endif
    }
 
    /* 4. Set up SStruct Vectors for b and x */
    {
-      HYPRE_Real *values;
+      NALU_HYPRE_Real *values;
 
       /* We have one part and one variable. */
-      HYPRE_Int part = 0;
-      HYPRE_Int var = 0;
+      NALU_HYPRE_Int part = 0;
+      NALU_HYPRE_Int var = 0;
 
       /* Create an empty vector object */
-#ifdef HYPRE_FORTRAN
-      HYPRE_SStructVectorCreate(&temp_COMM, &grid, &b);
-      HYPRE_SStructVectorCreate(&temp_COMM, &grid, &x);
+#ifdef NALU_HYPRE_FORTRAN
+      NALU_HYPRE_SStructVectorCreate(&temp_COMM, &grid, &b);
+      NALU_HYPRE_SStructVectorCreate(&temp_COMM, &grid, &x);
 #else
-      HYPRE_SStructVectorCreate(hypre_MPI_COMM_WORLD, grid, &b);
-      HYPRE_SStructVectorCreate(hypre_MPI_COMM_WORLD, grid, &x);
+      NALU_HYPRE_SStructVectorCreate(hypre_MPI_COMM_WORLD, grid, &b);
+      NALU_HYPRE_SStructVectorCreate(hypre_MPI_COMM_WORLD, grid, &x);
 #endif
 
-      /* Set the object type (by default HYPRE_SSTRUCT). This determines the
+      /* Set the object type (by default NALU_HYPRE_SSTRUCT). This determines the
          data structure used to store the matrix.  If you want to use unstructured
-         solvers, e.g. BoomerAMG, the object type should be HYPRE_PARCSR.
+         solvers, e.g. BoomerAMG, the object type should be NALU_HYPRE_PARCSR.
          If the problem is purely structured (with one part), you may want to use
-         HYPRE_STRUCT to access the structured solvers. Here we have a purely
+         NALU_HYPRE_STRUCT to access the structured solvers. Here we have a purely
          structured example. */
-      object_type = HYPRE_STRUCT;
-#ifdef HYPRE_FORTRAN
-      HYPRE_SStructVectorSetObjectType(&b, &object_type);
-      HYPRE_SStructVectorSetObjectType(&x, &object_type);
+      object_type = NALU_HYPRE_STRUCT;
+#ifdef NALU_HYPRE_FORTRAN
+      NALU_HYPRE_SStructVectorSetObjectType(&b, &object_type);
+      NALU_HYPRE_SStructVectorSetObjectType(&x, &object_type);
 #else
-      HYPRE_SStructVectorSetObjectType(b, object_type);
-      HYPRE_SStructVectorSetObjectType(x, object_type);
+      NALU_HYPRE_SStructVectorSetObjectType(b, object_type);
+      NALU_HYPRE_SStructVectorSetObjectType(x, object_type);
 #endif
 
       /* Indicate that the vector coefficients are ready to be set */
-#ifdef HYPRE_FORTRAN
-      HYPRE_SStructVectorInitialize(&b);
-      HYPRE_SStructVectorInitialize(&x);
+#ifdef NALU_HYPRE_FORTRAN
+      NALU_HYPRE_SStructVectorInitialize(&b);
+      NALU_HYPRE_SStructVectorInitialize(&x);
 #else
-      HYPRE_SStructVectorInitialize(b);
-      HYPRE_SStructVectorInitialize(x);
+      NALU_HYPRE_SStructVectorInitialize(b);
+      NALU_HYPRE_SStructVectorInitialize(x);
 #endif
 
-      values = hypre_CTAlloc(HYPRE_Real, (n * n), HYPRE_MEMORY_HOST);
+      values = hypre_CTAlloc(NALU_HYPRE_Real, (n * n), NALU_HYPRE_MEMORY_HOST);
 
       /* Set the values of b in left-to-right, bottom-to-top order */
       for (k = 0, j = 0; j < n; j++)
@@ -616,10 +616,10 @@ HYPRE_Int main (HYPRE_Int argc, char *argv[])
          {
             values[k] = h2 * Eval(F, i, j);
          }
-#ifdef HYPRE_FORTRAN
-      HYPRE_SStructVectorSetBoxValues(&b, &part, &ilower[0], &iupper[0], &var, &values[0]);
+#ifdef NALU_HYPRE_FORTRAN
+      NALU_HYPRE_SStructVectorSetBoxValues(&b, &part, &ilower[0], &iupper[0], &var, &values[0]);
 #else
-      HYPRE_SStructVectorSetBoxValues(b, part, ilower, iupper, var, values);
+      NALU_HYPRE_SStructVectorSetBoxValues(b, part, ilower, iupper, var, values);
 #endif
 
       /* Set x = 0 */
@@ -627,13 +627,13 @@ HYPRE_Int main (HYPRE_Int argc, char *argv[])
       {
          values[i] = 0.0;
       }
-#ifdef HYPRE_FORTRAN
-      HYPRE_SStructVectorSetBoxValues(&x, &part, &ilower[0], &iupper[0], &var, &values[0]);
+#ifdef NALU_HYPRE_FORTRAN
+      NALU_HYPRE_SStructVectorSetBoxValues(&x, &part, &ilower[0], &iupper[0], &var, &values[0]);
 #else
-      HYPRE_SStructVectorSetBoxValues(x, part, ilower, iupper, var, values);
+      NALU_HYPRE_SStructVectorSetBoxValues(x, part, ilower, iupper, var, values);
 #endif
 
-      hypre_TFree(values, HYPRE_MEMORY_HOST);
+      hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
 
       /* Assembling is postponed since the vectors will be further modified */
    }
@@ -641,49 +641,49 @@ HYPRE_Int main (HYPRE_Int argc, char *argv[])
    /* 4. Set up a SStruct Matrix */
    {
       /* We have one part and one variable. */
-      HYPRE_Int part = 0;
-      HYPRE_Int var = 0;
+      NALU_HYPRE_Int part = 0;
+      NALU_HYPRE_Int var = 0;
 
       /* Create an empty matrix object */
-#ifdef HYPRE_FORTRAN
-      HYPRE_SStructMatrixCreate(&temp_COMM, &graph, &A);
+#ifdef NALU_HYPRE_FORTRAN
+      NALU_HYPRE_SStructMatrixCreate(&temp_COMM, &graph, &A);
 #else
-      HYPRE_SStructMatrixCreate(hypre_MPI_COMM_WORLD, graph, &A);
+      NALU_HYPRE_SStructMatrixCreate(hypre_MPI_COMM_WORLD, graph, &A);
 #endif
 
       /* Use symmetric storage? The function below is for symmetric stencil entries
-         (use HYPRE_SStructMatrixSetNSSymmetric for non-stencil entries) */
-#ifdef HYPRE_FORTRAN
-      HYPRE_SStructMatrixSetSymmetric(&A, &part, &var, &var, &sym);
+         (use NALU_HYPRE_SStructMatrixSetNSSymmetric for non-stencil entries) */
+#ifdef NALU_HYPRE_FORTRAN
+      NALU_HYPRE_SStructMatrixSetSymmetric(&A, &part, &var, &var, &sym);
 #else
-      HYPRE_SStructMatrixSetSymmetric(A, part, var, var, sym);
+      NALU_HYPRE_SStructMatrixSetSymmetric(A, part, var, var, sym);
 #endif
 
       /* As with the vectors,  set the object type for the vectors
          to be the struct type */
-      object_type = HYPRE_STRUCT;
-#ifdef HYPRE_FORTRAN
-      HYPRE_SStructMatrixSetObjectType(&A, &object_type);
+      object_type = NALU_HYPRE_STRUCT;
+#ifdef NALU_HYPRE_FORTRAN
+      NALU_HYPRE_SStructMatrixSetObjectType(&A, &object_type);
 #else
-      HYPRE_SStructMatrixSetObjectType(A, object_type);
+      NALU_HYPRE_SStructMatrixSetObjectType(A, object_type);
 #endif
 
       /* Indicate that the matrix coefficients are ready to be set */
-#ifdef HYPRE_FORTRAN
-      HYPRE_SStructMatrixInitialize(&A);
+#ifdef NALU_HYPRE_FORTRAN
+      NALU_HYPRE_SStructMatrixInitialize(&A);
 #else
-      HYPRE_SStructMatrixInitialize(A);
+      NALU_HYPRE_SStructMatrixInitialize(A);
 #endif
 
       /* Set the stencil values in the interior. Here we set the values
          at every node. We will modify the boundary nodes later. */
       if (sym == 0)
       {
-         HYPRE_Int stencil_indices[5] = {0, 1, 2, 3, 4}; /* labels correspond
+         NALU_HYPRE_Int stencil_indices[5] = {0, 1, 2, 3, 4}; /* labels correspond
                                                       to the offsets */
-         HYPRE_Real *values;
+         NALU_HYPRE_Real *values;
 
-         values = hypre_CTAlloc(HYPRE_Real, 5 * (n * n), HYPRE_MEMORY_HOST);
+         values = hypre_CTAlloc(NALU_HYPRE_Real, 5 * (n * n), NALU_HYPRE_MEMORY_HOST);
 
          /* The order is left-to-right, bottom-to-top */
          for (k = 0, j = 0; j < n; j++)
@@ -704,24 +704,24 @@ HYPRE_Int main (HYPRE_Int argc, char *argv[])
                            - Eval(B2, i, j - 0.5) + Eval(B2, i, j + 0.5);
             }
 
-#ifdef HYPRE_FORTRAN
-         HYPRE_SStructMatrixSetBoxValues(&A, &part, &ilower[0], &iupper[0],
+#ifdef NALU_HYPRE_FORTRAN
+         NALU_HYPRE_SStructMatrixSetBoxValues(&A, &part, &ilower[0], &iupper[0],
                                          &var, &five,
                                          &stencil_indices[0], &values[0]);
 #else
-         HYPRE_SStructMatrixSetBoxValues(A, part, ilower, iupper,
+         NALU_HYPRE_SStructMatrixSetBoxValues(A, part, ilower, iupper,
                                          var, 5,
                                          stencil_indices, values);
 #endif
 
-         hypre_TFree(values, HYPRE_MEMORY_HOST);
+         hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
       }
       else /* Symmetric storage */
       {
-         HYPRE_Int stencil_indices[3] = {0, 1, 2};
-         HYPRE_Real *values;
+         NALU_HYPRE_Int stencil_indices[3] = {0, 1, 2};
+         NALU_HYPRE_Real *values;
 
-         values = hypre_CTAlloc(HYPRE_Real, 3 * (n * n), HYPRE_MEMORY_HOST);
+         values = hypre_CTAlloc(NALU_HYPRE_Real, 3 * (n * n), NALU_HYPRE_MEMORY_HOST);
 
          /* The order is left-to-right, bottom-to-top */
          for (k = 0, j = 0; j < n; j++)
@@ -734,17 +734,17 @@ HYPRE_Int main (HYPRE_Int argc, char *argv[])
                            + Eval(K, i - 0.5, j) + Eval(K, i, j - 0.5);
             }
 
-#ifdef HYPRE_FORTRAN
-         HYPRE_SStructMatrixSetBoxValues(&A, &part, &ilower[0], &iupper[0],
+#ifdef NALU_HYPRE_FORTRAN
+         NALU_HYPRE_SStructMatrixSetBoxValues(&A, &part, &ilower[0], &iupper[0],
                                          &var, &three,
                                          &stencil_indices[0], &values[0]);
 #else
-         HYPRE_SStructMatrixSetBoxValues(A, part, ilower, iupper,
+         NALU_HYPRE_SStructMatrixSetBoxValues(A, part, ilower, iupper,
                                          var, 3,
                                          stencil_indices, values);
 #endif
 
-         hypre_TFree(values, HYPRE_MEMORY_HOST);
+         hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
       }
    }
 
@@ -752,17 +752,17 @@ HYPRE_Int main (HYPRE_Int argc, char *argv[])
          reaching ouside of the domain boundary. We must modify the matrix
          stencil and the corresponding rhs entries. */
    {
-      HYPRE_Int bc_ilower[2];
-      HYPRE_Int bc_iupper[2];
+      NALU_HYPRE_Int bc_ilower[2];
+      NALU_HYPRE_Int bc_iupper[2];
 
-      HYPRE_Int stencil_indices[5] = {0, 1, 2, 3, 4};
-      HYPRE_Real *values, *bvalues;
+      NALU_HYPRE_Int stencil_indices[5] = {0, 1, 2, 3, 4};
+      NALU_HYPRE_Real *values, *bvalues;
 
-      HYPRE_Int nentries;
+      NALU_HYPRE_Int nentries;
 
       /* We have one part and one variable. */
-      HYPRE_Int part = 0;
-      HYPRE_Int var = 0;
+      NALU_HYPRE_Int part = 0;
+      NALU_HYPRE_Int var = 0;
 
       if (sym == 0)
       {
@@ -773,8 +773,8 @@ HYPRE_Int main (HYPRE_Int argc, char *argv[])
          nentries = 3;
       }
 
-      values  = hypre_CTAlloc(HYPRE_Real, nentries * n, HYPRE_MEMORY_HOST);
-      bvalues = hypre_CTAlloc(HYPRE_Real, n, HYPRE_MEMORY_HOST);
+      values  = hypre_CTAlloc(NALU_HYPRE_Real, nentries * n, NALU_HYPRE_MEMORY_HOST);
+      bvalues = hypre_CTAlloc(NALU_HYPRE_Real, n, NALU_HYPRE_MEMORY_HOST);
 
       /* The stencil at the boundary nodes is 1-0-0-0-0. Because
          we have I x_b = u_0; */
@@ -797,12 +797,12 @@ HYPRE_Int main (HYPRE_Int argc, char *argv[])
          bc_iupper[1] = bc_ilower[1];
 
          /* Modify the matrix */
-#ifdef HYPRE_FORTRAN
-         HYPRE_SStructMatrixSetBoxValues(&A, &part, &bc_ilower[0], &bc_iupper[0],
+#ifdef NALU_HYPRE_FORTRAN
+         NALU_HYPRE_SStructMatrixSetBoxValues(&A, &part, &bc_ilower[0], &bc_iupper[0],
                                          &var, &nentries,
                                          &stencil_indices[0], &values[0]);
 #else
-         HYPRE_SStructMatrixSetBoxValues(A, part, bc_ilower, bc_iupper,
+         NALU_HYPRE_SStructMatrixSetBoxValues(A, part, bc_ilower, bc_iupper,
                                          var, nentries,
                                          stencil_indices, values);
 #endif
@@ -813,11 +813,11 @@ HYPRE_Int main (HYPRE_Int argc, char *argv[])
             bvalues[i] = bcEval(U0, i, 0);
          }
 
-#ifdef HYPRE_FORTRAN
-         HYPRE_SStructVectorSetBoxValues(&b, &part, &bc_ilower[0],
+#ifdef NALU_HYPRE_FORTRAN
+         NALU_HYPRE_SStructVectorSetBoxValues(&b, &part, &bc_ilower[0],
                                          &bc_iupper[0], &var, &bvalues[0]);
 #else
-         HYPRE_SStructVectorSetBoxValues(b, part, bc_ilower,
+         NALU_HYPRE_SStructVectorSetBoxValues(b, part, bc_ilower,
                                          bc_iupper, var, bvalues);
 #endif
       }
@@ -832,12 +832,12 @@ HYPRE_Int main (HYPRE_Int argc, char *argv[])
          bc_iupper[1] = bc_ilower[1];
 
          /* Modify the matrix */
-#ifdef HYPRE_FORTRAN
-         HYPRE_SStructMatrixSetBoxValues(&A, &part, &bc_ilower[0], &bc_iupper[0],
+#ifdef NALU_HYPRE_FORTRAN
+         NALU_HYPRE_SStructMatrixSetBoxValues(&A, &part, &bc_ilower[0], &bc_iupper[0],
                                          &var, &nentries,
                                          &stencil_indices[0], &values[0]);
 #else
-         HYPRE_SStructMatrixSetBoxValues(A, part, bc_ilower, bc_iupper,
+         NALU_HYPRE_SStructMatrixSetBoxValues(A, part, bc_ilower, bc_iupper,
                                          var, nentries,
                                          stencil_indices, values);
 #endif
@@ -848,11 +848,11 @@ HYPRE_Int main (HYPRE_Int argc, char *argv[])
             bvalues[i] = bcEval(U0, i, 0);
          }
 
-#ifdef HYPRE_FORTRAN
-         HYPRE_SStructVectorSetBoxValues(&b, &part, &bc_ilower[0],
+#ifdef NALU_HYPRE_FORTRAN
+         NALU_HYPRE_SStructVectorSetBoxValues(&b, &part, &bc_ilower[0],
                                          &bc_iupper[0], &var, &bvalues[0]);
 #else
-         HYPRE_SStructVectorSetBoxValues(b, part, bc_ilower, bc_iupper, var, bvalues);
+         NALU_HYPRE_SStructVectorSetBoxValues(b, part, bc_ilower, bc_iupper, var, bvalues);
 #endif
       }
 
@@ -866,12 +866,12 @@ HYPRE_Int main (HYPRE_Int argc, char *argv[])
          bc_iupper[1] = bc_ilower[1] + n - 1;
 
          /* Modify the matrix */
-#ifdef HYPRE_FORTRAN
-         HYPRE_SStructMatrixSetBoxValues(&A, &part, &bc_ilower[0], &bc_iupper[0],
+#ifdef NALU_HYPRE_FORTRAN
+         NALU_HYPRE_SStructMatrixSetBoxValues(&A, &part, &bc_ilower[0], &bc_iupper[0],
                                          &var, &nentries,
                                          &stencil_indices[0], &values[0]);
 #else
-         HYPRE_SStructMatrixSetBoxValues(A, part, bc_ilower, bc_iupper,
+         NALU_HYPRE_SStructMatrixSetBoxValues(A, part, bc_ilower, bc_iupper,
                                          var, nentries,
                                          stencil_indices, values);
 #endif
@@ -882,11 +882,11 @@ HYPRE_Int main (HYPRE_Int argc, char *argv[])
             bvalues[j] = bcEval(U0, 0, j);
          }
 
-#ifdef HYPRE_FORTRAN
-         HYPRE_SStructVectorSetBoxValues(&b, &part, &bc_ilower[0],
+#ifdef NALU_HYPRE_FORTRAN
+         NALU_HYPRE_SStructVectorSetBoxValues(&b, &part, &bc_ilower[0],
                                          &bc_iupper[0], &var, &bvalues[0]);
 #else
-         HYPRE_SStructVectorSetBoxValues(b, part, bc_ilower, bc_iupper,
+         NALU_HYPRE_SStructVectorSetBoxValues(b, part, bc_ilower, bc_iupper,
                                          var, bvalues);
 #endif
       }
@@ -901,12 +901,12 @@ HYPRE_Int main (HYPRE_Int argc, char *argv[])
          bc_iupper[1] = bc_ilower[1] + n - 1;
 
          /* Modify the matrix */
-#ifdef HYPRE_FORTRAN
-         HYPRE_SStructMatrixSetBoxValues(&A, &part, &bc_ilower[0], &bc_iupper[0],
+#ifdef NALU_HYPRE_FORTRAN
+         NALU_HYPRE_SStructMatrixSetBoxValues(&A, &part, &bc_ilower[0], &bc_iupper[0],
                                          &var, &nentries,
                                          &stencil_indices[0], &values[0]);
 #else
-         HYPRE_SStructMatrixSetBoxValues(A, part, bc_ilower, bc_iupper,
+         NALU_HYPRE_SStructMatrixSetBoxValues(A, part, bc_ilower, bc_iupper,
                                          var, nentries,
                                          stencil_indices, values);
 #endif
@@ -917,11 +917,11 @@ HYPRE_Int main (HYPRE_Int argc, char *argv[])
             bvalues[j] = bcEval(U0, 0, j);
          }
 
-#ifdef HYPRE_FORTRAN
-         HYPRE_SStructVectorSetBoxValues(&b, &part, &bc_ilower[0], &bc_iupper[0],
+#ifdef NALU_HYPRE_FORTRAN
+         NALU_HYPRE_SStructVectorSetBoxValues(&b, &part, &bc_ilower[0], &bc_iupper[0],
                                          &var, &bvalues[0]);
 #else
-         HYPRE_SStructVectorSetBoxValues(b, part, bc_ilower, bc_iupper,
+         NALU_HYPRE_SStructVectorSetBoxValues(b, part, bc_ilower, bc_iupper,
                                          var, bvalues);
 #endif
       }
@@ -953,12 +953,12 @@ HYPRE_Int main (HYPRE_Int argc, char *argv[])
          }
 
          if (sym == 0)
-#ifdef HYPRE_FORTRAN
-            HYPRE_SStructMatrixSetBoxValues(&A, &part, &bc_ilower[0], &bc_iupper[0],
+#ifdef NALU_HYPRE_FORTRAN
+            NALU_HYPRE_SStructMatrixSetBoxValues(&A, &part, &bc_ilower[0], &bc_iupper[0],
                                             &var, &one,
                                             &stencil_indices[0], &bvalues[0]);
 #else
-            HYPRE_SStructMatrixSetBoxValues(A, part, bc_ilower, bc_iupper,
+            NALU_HYPRE_SStructMatrixSetBoxValues(A, part, bc_ilower, bc_iupper,
                                             var, 1,
                                             stencil_indices, bvalues);
 #endif
@@ -981,11 +981,11 @@ HYPRE_Int main (HYPRE_Int argc, char *argv[])
 
          /* Note the use of AddToBoxValues (because we have already set values
             at these nodes) */
-#ifdef HYPRE_FORTRAN
-         HYPRE_SStructVectorAddToBoxValues(&b, &part, &bc_ilower[0], &bc_iupper[0],
+#ifdef NALU_HYPRE_FORTRAN
+         NALU_HYPRE_SStructVectorAddToBoxValues(&b, &part, &bc_ilower[0], &bc_iupper[0],
                                            &var, &bvalues[0]);
 #else
-         HYPRE_SStructVectorAddToBoxValues(b, part, bc_ilower, bc_iupper,
+         NALU_HYPRE_SStructVectorAddToBoxValues(b, part, bc_ilower, bc_iupper,
                                            var, bvalues);
 #endif
       }
@@ -1008,12 +1008,12 @@ HYPRE_Int main (HYPRE_Int argc, char *argv[])
          }
 
          if (sym == 0)
-#ifdef HYPRE_FORTRAN
-            HYPRE_SStructMatrixSetBoxValues(&A, &part, &bc_ilower[0], &bc_iupper[0],
+#ifdef NALU_HYPRE_FORTRAN
+            NALU_HYPRE_SStructMatrixSetBoxValues(&A, &part, &bc_ilower[0], &bc_iupper[0],
                                             &var, &one,
                                             &stencil_indices[0], &bvalues[0]);
 #else
-            HYPRE_SStructMatrixSetBoxValues(A, part, bc_ilower, bc_iupper,
+            NALU_HYPRE_SStructMatrixSetBoxValues(A, part, bc_ilower, bc_iupper,
                                             var, 1,
                                             stencil_indices, bvalues);
 #endif
@@ -1034,11 +1034,11 @@ HYPRE_Int main (HYPRE_Int argc, char *argv[])
             bvalues[n - 1] = 0.0;
          }
 
-#ifdef HYPRE_FORTRAN
-         HYPRE_SStructVectorAddToBoxValues(&b, &part, &bc_ilower[0], &bc_iupper[0],
+#ifdef NALU_HYPRE_FORTRAN
+         NALU_HYPRE_SStructVectorAddToBoxValues(&b, &part, &bc_ilower[0], &bc_iupper[0],
                                            &var, &bvalues[0]);
 #else
-         HYPRE_SStructVectorAddToBoxValues(b, part, bc_ilower, bc_iupper, var, bvalues);
+         NALU_HYPRE_SStructVectorAddToBoxValues(b, part, bc_ilower, bc_iupper, var, bvalues);
 #endif
       }
 
@@ -1066,12 +1066,12 @@ HYPRE_Int main (HYPRE_Int argc, char *argv[])
             bvalues[i] = 0.0;
          }
 
-#ifdef HYPRE_FORTRAN
-         HYPRE_SStructMatrixSetBoxValues(&A, &part, &bc_ilower[0], &bc_iupper[0],
+#ifdef NALU_HYPRE_FORTRAN
+         NALU_HYPRE_SStructMatrixSetBoxValues(&A, &part, &bc_ilower[0], &bc_iupper[0],
                                          &var, &one,
                                          &stencil_indices[0], &bvalues[0]);
 #else
-         HYPRE_SStructMatrixSetBoxValues(A, part, bc_ilower, bc_iupper, var, 1,
+         NALU_HYPRE_SStructMatrixSetBoxValues(A, part, bc_ilower, bc_iupper, var, 1,
                                          stencil_indices, bvalues);
 #endif
 
@@ -1091,11 +1091,11 @@ HYPRE_Int main (HYPRE_Int argc, char *argv[])
             bvalues[n - 1] = 0.0;
          }
 
-#ifdef HYPRE_FORTRAN
-         HYPRE_SStructVectorAddToBoxValues(&b, &part, &bc_ilower[0], &bc_iupper[0],
+#ifdef NALU_HYPRE_FORTRAN
+         NALU_HYPRE_SStructVectorAddToBoxValues(&b, &part, &bc_ilower[0], &bc_iupper[0],
                                            &var, &bvalues[0]);
 #else
-         HYPRE_SStructVectorAddToBoxValues(b, part, bc_ilower, bc_iupper,
+         NALU_HYPRE_SStructVectorAddToBoxValues(b, part, bc_ilower, bc_iupper,
                                            var, bvalues);
 #endif
       }
@@ -1124,12 +1124,12 @@ HYPRE_Int main (HYPRE_Int argc, char *argv[])
             bvalues[j] = 0.0;
          }
 
-#ifdef HYPRE_FORTRAN
-         HYPRE_SStructMatrixSetBoxValues(&A, &part, &bc_ilower[0], &bc_iupper[0],
+#ifdef NALU_HYPRE_FORTRAN
+         NALU_HYPRE_SStructMatrixSetBoxValues(&A, &part, &bc_ilower[0], &bc_iupper[0],
                                          &var, &one,
                                          &stencil_indices[0], &bvalues[0]);
 #else
-         HYPRE_SStructMatrixSetBoxValues(A, part, bc_ilower, bc_iupper,
+         NALU_HYPRE_SStructMatrixSetBoxValues(A, part, bc_ilower, bc_iupper,
                                          var, 1,
                                          stencil_indices, bvalues);
 #endif
@@ -1150,52 +1150,52 @@ HYPRE_Int main (HYPRE_Int argc, char *argv[])
             bvalues[n - 1] = 0.0;
          }
 
-#ifdef HYPRE_FORTRAN
-         HYPRE_SStructVectorAddToBoxValues(&b, &part, &bc_ilower[0], &bc_iupper[0],
+#ifdef NALU_HYPRE_FORTRAN
+         NALU_HYPRE_SStructVectorAddToBoxValues(&b, &part, &bc_ilower[0], &bc_iupper[0],
                                            &var, &bvalues[0]);
 #else
-         HYPRE_SStructVectorAddToBoxValues(b, part, bc_ilower, bc_iupper, var, bvalues);
+         NALU_HYPRE_SStructVectorAddToBoxValues(b, part, bc_ilower, bc_iupper, var, bvalues);
 #endif
       }
 
-      hypre_TFree(values, HYPRE_MEMORY_HOST);
-      hypre_TFree(bvalues, HYPRE_MEMORY_HOST);
+      hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(bvalues, NALU_HYPRE_MEMORY_HOST);
    }
 
    /* Finalize the vector and matrix assembly */
-#ifdef HYPRE_FORTRAN
-   HYPRE_SStructMatrixAssemble(&A);
-   HYPRE_SStructVectorAssemble(&b);
-   HYPRE_SStructVectorAssemble(&x);
+#ifdef NALU_HYPRE_FORTRAN
+   NALU_HYPRE_SStructMatrixAssemble(&A);
+   NALU_HYPRE_SStructVectorAssemble(&b);
+   NALU_HYPRE_SStructVectorAssemble(&x);
 #else
-   HYPRE_SStructMatrixAssemble(A);
-   HYPRE_SStructVectorAssemble(b);
-   HYPRE_SStructVectorAssemble(x);
+   NALU_HYPRE_SStructMatrixAssemble(A);
+   NALU_HYPRE_SStructVectorAssemble(b);
+   NALU_HYPRE_SStructVectorAssemble(x);
 #endif
 
    /* 6. Set up and use a solver */
    {
-#ifdef HYPRE_FORTRAN
+#ifdef NALU_HYPRE_FORTRAN
       hypre_F90_Obj sA;
       hypre_F90_Obj sb;
       hypre_F90_Obj sx;
 #else
-      HYPRE_StructMatrix    sA;
-      HYPRE_StructVector    sb;
-      HYPRE_StructVector    sx;
+      NALU_HYPRE_StructMatrix    sA;
+      NALU_HYPRE_StructVector    sb;
+      NALU_HYPRE_StructVector    sx;
 #endif
 
       /* Because we are using a struct solver, we need to get the
          object of the matrix and vectors to pass in to the struct solvers */
 
-#ifdef HYPRE_FORTRAN
-      HYPRE_SStructMatrixGetObject(&A, &sA);
-      HYPRE_SStructVectorGetObject(&b, &sb);
-      HYPRE_SStructVectorGetObject(&x, &sx);
+#ifdef NALU_HYPRE_FORTRAN
+      NALU_HYPRE_SStructMatrixGetObject(&A, &sA);
+      NALU_HYPRE_SStructVectorGetObject(&b, &sb);
+      NALU_HYPRE_SStructVectorGetObject(&x, &sx);
 #else
-      HYPRE_SStructMatrixGetObject(A, (void **) &sA);
-      HYPRE_SStructVectorGetObject(b, (void **) &sb);
-      HYPRE_SStructVectorGetObject(x, (void **) &sx);
+      NALU_HYPRE_SStructMatrixGetObject(A, (void **) &sA);
+      NALU_HYPRE_SStructVectorGetObject(b, (void **) &sb);
+      NALU_HYPRE_SStructVectorGetObject(x, (void **) &sx);
 #endif
 
       if (solver_id == 0) /* SMG */
@@ -1205,28 +1205,28 @@ HYPRE_Int main (HYPRE_Int argc, char *argv[])
          hypre_BeginTiming(time_index);
 
          /* Options and setup */
-#ifdef HYPRE_FORTRAN
-         HYPRE_StructSMGCreate(&temp_COMM, &solver);
-         HYPRE_StructSMGSetMemoryUse(&solver, &zero);
-         HYPRE_StructSMGSetMaxIter(&solver, &fifty);
-         HYPRE_StructSMGSetTol(&solver, &tol);
-         HYPRE_StructSMGSetRelChange(&solver, &zero);
-         HYPRE_StructSMGSetNumPreRelax(&solver, &n_pre);
-         HYPRE_StructSMGSetNumPostRelax(&solver, &n_post);
-         HYPRE_StructSMGSetPrintLevel(&solver, &one);
-         HYPRE_StructSMGSetLogging(&solver, &one);
-         HYPRE_StructSMGSetup(&solver, &sA, &sb, &sx);
+#ifdef NALU_HYPRE_FORTRAN
+         NALU_HYPRE_StructSMGCreate(&temp_COMM, &solver);
+         NALU_HYPRE_StructSMGSetMemoryUse(&solver, &zero);
+         NALU_HYPRE_StructSMGSetMaxIter(&solver, &fifty);
+         NALU_HYPRE_StructSMGSetTol(&solver, &tol);
+         NALU_HYPRE_StructSMGSetRelChange(&solver, &zero);
+         NALU_HYPRE_StructSMGSetNumPreRelax(&solver, &n_pre);
+         NALU_HYPRE_StructSMGSetNumPostRelax(&solver, &n_post);
+         NALU_HYPRE_StructSMGSetPrintLevel(&solver, &one);
+         NALU_HYPRE_StructSMGSetLogging(&solver, &one);
+         NALU_HYPRE_StructSMGSetup(&solver, &sA, &sb, &sx);
 #else
-         HYPRE_StructSMGCreate(hypre_MPI_COMM_WORLD, &solver);
-         HYPRE_StructSMGSetMemoryUse(solver, 0);
-         HYPRE_StructSMGSetMaxIter(solver, 50);
-         HYPRE_StructSMGSetTol(solver, 1.0e-06);
-         HYPRE_StructSMGSetRelChange(solver, 0);
-         HYPRE_StructSMGSetNumPreRelax(solver, n_pre);
-         HYPRE_StructSMGSetNumPostRelax(solver, n_post);
-         HYPRE_StructSMGSetPrintLevel(solver, 1);
-         HYPRE_StructSMGSetLogging(solver, 1);
-         HYPRE_StructSMGSetup(solver, sA, sb, sx);
+         NALU_HYPRE_StructSMGCreate(hypre_MPI_COMM_WORLD, &solver);
+         NALU_HYPRE_StructSMGSetMemoryUse(solver, 0);
+         NALU_HYPRE_StructSMGSetMaxIter(solver, 50);
+         NALU_HYPRE_StructSMGSetTol(solver, 1.0e-06);
+         NALU_HYPRE_StructSMGSetRelChange(solver, 0);
+         NALU_HYPRE_StructSMGSetNumPreRelax(solver, n_pre);
+         NALU_HYPRE_StructSMGSetNumPostRelax(solver, n_post);
+         NALU_HYPRE_StructSMGSetPrintLevel(solver, 1);
+         NALU_HYPRE_StructSMGSetLogging(solver, 1);
+         NALU_HYPRE_StructSMGSetup(solver, sA, sb, sx);
 #endif
 
          /* Finalize current timing */
@@ -1240,10 +1240,10 @@ HYPRE_Int main (HYPRE_Int argc, char *argv[])
          hypre_BeginTiming(time_index);
 
          /* Solve */
-#ifdef HYPRE_FORTRAN
-         HYPRE_StructSMGSolve(&solver, &sA, &sb, &sx);
+#ifdef NALU_HYPRE_FORTRAN
+         NALU_HYPRE_StructSMGSolve(&solver, &sA, &sb, &sx);
 #else
-         HYPRE_StructSMGSolve(solver, sA, sb, sx);
+         NALU_HYPRE_StructSMGSolve(solver, sA, sb, sx);
 #endif
          hypre_EndTiming(time_index);
          /* Finalize current timing */
@@ -1253,14 +1253,14 @@ HYPRE_Int main (HYPRE_Int argc, char *argv[])
          hypre_ClearTiming();
 
          /* Get info and release memory */
-#ifdef HYPRE_FORTRAN
-         HYPRE_StructSMGGetNumIterations(&solver, &num_iterations);
-         HYPRE_StructSMGGetFinalRelativeResidualNorm(&solver, &final_res_norm);
-         HYPRE_StructSMGDestroy(&solver);
+#ifdef NALU_HYPRE_FORTRAN
+         NALU_HYPRE_StructSMGGetNumIterations(&solver, &num_iterations);
+         NALU_HYPRE_StructSMGGetFinalRelativeResidualNorm(&solver, &final_res_norm);
+         NALU_HYPRE_StructSMGDestroy(&solver);
 #else
-         HYPRE_StructSMGGetNumIterations(solver, &num_iterations);
-         HYPRE_StructSMGGetFinalRelativeResidualNorm(solver, &final_res_norm);
-         HYPRE_StructSMGDestroy(solver);
+         NALU_HYPRE_StructSMGGetNumIterations(solver, &num_iterations);
+         NALU_HYPRE_StructSMGGetFinalRelativeResidualNorm(solver, &final_res_norm);
+         NALU_HYPRE_StructSMGDestroy(solver);
 #endif
       }
 
@@ -1271,32 +1271,32 @@ HYPRE_Int main (HYPRE_Int argc, char *argv[])
          hypre_BeginTiming(time_index);
 
          /* Options and setup */
-#ifdef HYPRE_FORTRAN
-         HYPRE_StructPFMGCreate(&temp_COMM, &solver);
-         HYPRE_StructPFMGSetMaxIter(&solver, &fifty);
-         HYPRE_StructPFMGSetTol(&solver, &tol);
-         HYPRE_StructPFMGSetRelChange(&solver, &zero);
-         HYPRE_StructPFMGSetRAPType(&solver, &rap);
-         HYPRE_StructPFMGSetRelaxType(&solver, &relax);
-         HYPRE_StructPFMGSetNumPreRelax(&solver, &n_pre);
-         HYPRE_StructPFMGSetNumPostRelax(&solver, &n_post);
-         HYPRE_StructPFMGSetSkipRelax(&solver, &skip);
-         HYPRE_StructPFMGSetPrintLevel(&solver, &one);
-         HYPRE_StructPFMGSetLogging(&solver, &one);
-         HYPRE_StructPFMGSetup(&solver, &sA, &sb, &sx);
+#ifdef NALU_HYPRE_FORTRAN
+         NALU_HYPRE_StructPFMGCreate(&temp_COMM, &solver);
+         NALU_HYPRE_StructPFMGSetMaxIter(&solver, &fifty);
+         NALU_HYPRE_StructPFMGSetTol(&solver, &tol);
+         NALU_HYPRE_StructPFMGSetRelChange(&solver, &zero);
+         NALU_HYPRE_StructPFMGSetRAPType(&solver, &rap);
+         NALU_HYPRE_StructPFMGSetRelaxType(&solver, &relax);
+         NALU_HYPRE_StructPFMGSetNumPreRelax(&solver, &n_pre);
+         NALU_HYPRE_StructPFMGSetNumPostRelax(&solver, &n_post);
+         NALU_HYPRE_StructPFMGSetSkipRelax(&solver, &skip);
+         NALU_HYPRE_StructPFMGSetPrintLevel(&solver, &one);
+         NALU_HYPRE_StructPFMGSetLogging(&solver, &one);
+         NALU_HYPRE_StructPFMGSetup(&solver, &sA, &sb, &sx);
 #else
-         HYPRE_StructPFMGCreate(hypre_MPI_COMM_WORLD, &solver);
-         HYPRE_StructPFMGSetMaxIter(solver, 50);
-         HYPRE_StructPFMGSetTol(solver, 1.0e-06);
-         HYPRE_StructPFMGSetRelChange(solver, 0);
-         HYPRE_StructPFMGSetRAPType(solver, rap);
-         HYPRE_StructPFMGSetRelaxType(solver, relax);
-         HYPRE_StructPFMGSetNumPreRelax(solver, n_pre);
-         HYPRE_StructPFMGSetNumPostRelax(solver, n_post);
-         HYPRE_StructPFMGSetSkipRelax(solver, skip);
-         HYPRE_StructPFMGSetPrintLevel(solver, 1);
-         HYPRE_StructPFMGSetLogging(solver, 1);
-         HYPRE_StructPFMGSetup(solver, sA, sb, sx);
+         NALU_HYPRE_StructPFMGCreate(hypre_MPI_COMM_WORLD, &solver);
+         NALU_HYPRE_StructPFMGSetMaxIter(solver, 50);
+         NALU_HYPRE_StructPFMGSetTol(solver, 1.0e-06);
+         NALU_HYPRE_StructPFMGSetRelChange(solver, 0);
+         NALU_HYPRE_StructPFMGSetRAPType(solver, rap);
+         NALU_HYPRE_StructPFMGSetRelaxType(solver, relax);
+         NALU_HYPRE_StructPFMGSetNumPreRelax(solver, n_pre);
+         NALU_HYPRE_StructPFMGSetNumPostRelax(solver, n_post);
+         NALU_HYPRE_StructPFMGSetSkipRelax(solver, skip);
+         NALU_HYPRE_StructPFMGSetPrintLevel(solver, 1);
+         NALU_HYPRE_StructPFMGSetLogging(solver, 1);
+         NALU_HYPRE_StructPFMGSetup(solver, sA, sb, sx);
 #endif
 
          /* Finalize current timing */
@@ -1310,10 +1310,10 @@ HYPRE_Int main (HYPRE_Int argc, char *argv[])
          hypre_BeginTiming(time_index);
 
          /* Solve */
-#ifdef HYPRE_FORTRAN
-         HYPRE_StructPFMGSolve(&solver, &sA, &sb, &sx);
+#ifdef NALU_HYPRE_FORTRAN
+         NALU_HYPRE_StructPFMGSolve(&solver, &sA, &sb, &sx);
 #else
-         HYPRE_StructPFMGSolve(solver, sA, sb, sx);
+         NALU_HYPRE_StructPFMGSolve(solver, sA, sb, sx);
 #endif
 
          /* Finalize current timing */
@@ -1323,14 +1323,14 @@ HYPRE_Int main (HYPRE_Int argc, char *argv[])
          hypre_ClearTiming();
 
          /* Get info and release memory */
-#ifdef HYPRE_FORTRAN
-         HYPRE_StructPFMGGetNumIterations(&solver, &num_iterations);
-         HYPRE_StructPFMGGetFinalRelativeResidualNorm(&solver, &final_res_norm);
-         HYPRE_StructPFMGDestroy(&solver);
+#ifdef NALU_HYPRE_FORTRAN
+         NALU_HYPRE_StructPFMGGetNumIterations(&solver, &num_iterations);
+         NALU_HYPRE_StructPFMGGetFinalRelativeResidualNorm(&solver, &final_res_norm);
+         NALU_HYPRE_StructPFMGDestroy(&solver);
 #else
-         HYPRE_StructPFMGGetNumIterations(solver, &num_iterations);
-         HYPRE_StructPFMGGetFinalRelativeResidualNorm(solver, &final_res_norm);
-         HYPRE_StructPFMGDestroy(solver);
+         NALU_HYPRE_StructPFMGGetNumIterations(solver, &num_iterations);
+         NALU_HYPRE_StructPFMGGetFinalRelativeResidualNorm(solver, &final_res_norm);
+         NALU_HYPRE_StructPFMGDestroy(solver);
 #endif
       }
 
@@ -1340,50 +1340,50 @@ HYPRE_Int main (HYPRE_Int argc, char *argv[])
          time_index = hypre_InitializeTiming("PCG Setup");
          hypre_BeginTiming(time_index);
 
-#ifdef HYPRE_FORTRAN
-         HYPRE_StructPCGCreate(&temp_COMM, &solver);
-         HYPRE_StructPCGSetMaxIter(&solver, &twohundred );
-         HYPRE_StructPCGSetTol(&solver, &tol );
-         HYPRE_StructPCGSetTwoNorm(&solver, &one );
-         HYPRE_StructPCGSetRelChange(&solver, &zero );
-         HYPRE_StructPCGSetPrintLevel(&solver, &two );
+#ifdef NALU_HYPRE_FORTRAN
+         NALU_HYPRE_StructPCGCreate(&temp_COMM, &solver);
+         NALU_HYPRE_StructPCGSetMaxIter(&solver, &twohundred );
+         NALU_HYPRE_StructPCGSetTol(&solver, &tol );
+         NALU_HYPRE_StructPCGSetTwoNorm(&solver, &one );
+         NALU_HYPRE_StructPCGSetRelChange(&solver, &zero );
+         NALU_HYPRE_StructPCGSetPrintLevel(&solver, &two );
 #else
-         HYPRE_StructPCGCreate(hypre_MPI_COMM_WORLD, &solver);
-         HYPRE_StructPCGSetMaxIter(solver, 200 );
-         HYPRE_StructPCGSetTol(solver, 1.0e-06 );
-         HYPRE_StructPCGSetTwoNorm(solver, 1 );
-         HYPRE_StructPCGSetRelChange(solver, 0 );
-         HYPRE_StructPCGSetPrintLevel(solver, 2 );
+         NALU_HYPRE_StructPCGCreate(hypre_MPI_COMM_WORLD, &solver);
+         NALU_HYPRE_StructPCGSetMaxIter(solver, 200 );
+         NALU_HYPRE_StructPCGSetTol(solver, 1.0e-06 );
+         NALU_HYPRE_StructPCGSetTwoNorm(solver, 1 );
+         NALU_HYPRE_StructPCGSetRelChange(solver, 0 );
+         NALU_HYPRE_StructPCGSetPrintLevel(solver, 2 );
 #endif
 
          if (solver_id == 10)
          {
             /* use symmetric SMG as preconditioner */
-#ifdef HYPRE_FORTRAN
-            HYPRE_StructSMGCreate(&temp_COMM, &precond);
-            HYPRE_StructSMGSetMemoryUse(&precond, &zero);
-            HYPRE_StructSMGSetMaxIter(&precond, &one);
-            HYPRE_StructSMGSetTol(&precond, &zerodot);
-            HYPRE_StructSMGSetZeroGuess(&precond);
-            HYPRE_StructSMGSetNumPreRelax(&precond, &n_pre);
-            HYPRE_StructSMGSetNumPostRelax(&precond, &n_post);
-            HYPRE_StructSMGSetPrintLevel(&precond, &zero);
-            HYPRE_StructSMGSetLogging(&precond, &zero);
+#ifdef NALU_HYPRE_FORTRAN
+            NALU_HYPRE_StructSMGCreate(&temp_COMM, &precond);
+            NALU_HYPRE_StructSMGSetMemoryUse(&precond, &zero);
+            NALU_HYPRE_StructSMGSetMaxIter(&precond, &one);
+            NALU_HYPRE_StructSMGSetTol(&precond, &zerodot);
+            NALU_HYPRE_StructSMGSetZeroGuess(&precond);
+            NALU_HYPRE_StructSMGSetNumPreRelax(&precond, &n_pre);
+            NALU_HYPRE_StructSMGSetNumPostRelax(&precond, &n_post);
+            NALU_HYPRE_StructSMGSetPrintLevel(&precond, &zero);
+            NALU_HYPRE_StructSMGSetLogging(&precond, &zero);
             precond_id = 0;
-            HYPRE_StructPCGSetPrecond(&solver, &precond_id, &precond);
+            NALU_HYPRE_StructPCGSetPrecond(&solver, &precond_id, &precond);
 #else
-            HYPRE_StructSMGCreate(hypre_MPI_COMM_WORLD, &precond);
-            HYPRE_StructSMGSetMemoryUse(precond, 0);
-            HYPRE_StructSMGSetMaxIter(precond, 1);
-            HYPRE_StructSMGSetTol(precond, 0.0);
-            HYPRE_StructSMGSetZeroGuess(precond);
-            HYPRE_StructSMGSetNumPreRelax(precond, n_pre);
-            HYPRE_StructSMGSetNumPostRelax(precond, n_post);
-            HYPRE_StructSMGSetPrintLevel(precond, 0);
-            HYPRE_StructSMGSetLogging(precond, 0);
-            HYPRE_StructPCGSetPrecond(solver,
-                                      HYPRE_StructSMGSolve,
-                                      HYPRE_StructSMGSetup,
+            NALU_HYPRE_StructSMGCreate(hypre_MPI_COMM_WORLD, &precond);
+            NALU_HYPRE_StructSMGSetMemoryUse(precond, 0);
+            NALU_HYPRE_StructSMGSetMaxIter(precond, 1);
+            NALU_HYPRE_StructSMGSetTol(precond, 0.0);
+            NALU_HYPRE_StructSMGSetZeroGuess(precond);
+            NALU_HYPRE_StructSMGSetNumPreRelax(precond, n_pre);
+            NALU_HYPRE_StructSMGSetNumPostRelax(precond, n_post);
+            NALU_HYPRE_StructSMGSetPrintLevel(precond, 0);
+            NALU_HYPRE_StructSMGSetLogging(precond, 0);
+            NALU_HYPRE_StructPCGSetPrecond(solver,
+                                      NALU_HYPRE_StructSMGSolve,
+                                      NALU_HYPRE_StructSMGSetup,
                                       precond);
 #endif
          }
@@ -1391,35 +1391,35 @@ HYPRE_Int main (HYPRE_Int argc, char *argv[])
          else if (solver_id == 11)
          {
             /* use symmetric PFMG as preconditioner */
-#ifdef HYPRE_FORTRAN
-            HYPRE_StructPFMGCreate(&temp_COMM, &precond);
-            HYPRE_StructPFMGSetMaxIter(&precond, &one);
-            HYPRE_StructPFMGSetTol(&precond, &zerodot);
-            HYPRE_StructPFMGSetZeroGuess(&precond);
-            HYPRE_StructPFMGSetRAPType(&precond, &rap);
-            HYPRE_StructPFMGSetRelaxType(&precond, &relax);
-            HYPRE_StructPFMGSetNumPreRelax(&precond, &n_pre);
-            HYPRE_StructPFMGSetNumPostRelax(&precond, &n_post);
-            HYPRE_StructPFMGSetSkipRelax(&precond, &skip);
-            HYPRE_StructPFMGSetPrintLevel(&precond, &zero);
-            HYPRE_StructPFMGSetLogging(&precond, &zero);
+#ifdef NALU_HYPRE_FORTRAN
+            NALU_HYPRE_StructPFMGCreate(&temp_COMM, &precond);
+            NALU_HYPRE_StructPFMGSetMaxIter(&precond, &one);
+            NALU_HYPRE_StructPFMGSetTol(&precond, &zerodot);
+            NALU_HYPRE_StructPFMGSetZeroGuess(&precond);
+            NALU_HYPRE_StructPFMGSetRAPType(&precond, &rap);
+            NALU_HYPRE_StructPFMGSetRelaxType(&precond, &relax);
+            NALU_HYPRE_StructPFMGSetNumPreRelax(&precond, &n_pre);
+            NALU_HYPRE_StructPFMGSetNumPostRelax(&precond, &n_post);
+            NALU_HYPRE_StructPFMGSetSkipRelax(&precond, &skip);
+            NALU_HYPRE_StructPFMGSetPrintLevel(&precond, &zero);
+            NALU_HYPRE_StructPFMGSetLogging(&precond, &zero);
             precond_id = 1;
-            HYPRE_StructPCGSetPrecond(&solver, &precond_id, &precond);
+            NALU_HYPRE_StructPCGSetPrecond(&solver, &precond_id, &precond);
 #else
-            HYPRE_StructPFMGCreate(hypre_MPI_COMM_WORLD, &precond);
-            HYPRE_StructPFMGSetMaxIter(precond, 1);
-            HYPRE_StructPFMGSetTol(precond, 0.0);
-            HYPRE_StructPFMGSetZeroGuess(precond);
-            HYPRE_StructPFMGSetRAPType(precond, rap);
-            HYPRE_StructPFMGSetRelaxType(precond, relax);
-            HYPRE_StructPFMGSetNumPreRelax(precond, n_pre);
-            HYPRE_StructPFMGSetNumPostRelax(precond, n_post);
-            HYPRE_StructPFMGSetSkipRelax(precond, skip);
-            HYPRE_StructPFMGSetPrintLevel(precond, 0);
-            HYPRE_StructPFMGSetLogging(precond, 0);
-            HYPRE_StructPCGSetPrecond(solver,
-                                      HYPRE_StructPFMGSolve,
-                                      HYPRE_StructPFMGSetup,
+            NALU_HYPRE_StructPFMGCreate(hypre_MPI_COMM_WORLD, &precond);
+            NALU_HYPRE_StructPFMGSetMaxIter(precond, 1);
+            NALU_HYPRE_StructPFMGSetTol(precond, 0.0);
+            NALU_HYPRE_StructPFMGSetZeroGuess(precond);
+            NALU_HYPRE_StructPFMGSetRAPType(precond, rap);
+            NALU_HYPRE_StructPFMGSetRelaxType(precond, relax);
+            NALU_HYPRE_StructPFMGSetNumPreRelax(precond, n_pre);
+            NALU_HYPRE_StructPFMGSetNumPostRelax(precond, n_post);
+            NALU_HYPRE_StructPFMGSetSkipRelax(precond, skip);
+            NALU_HYPRE_StructPFMGSetPrintLevel(precond, 0);
+            NALU_HYPRE_StructPFMGSetLogging(precond, 0);
+            NALU_HYPRE_StructPCGSetPrecond(solver,
+                                      NALU_HYPRE_StructPFMGSolve,
+                                      NALU_HYPRE_StructPFMGSetup,
                                       precond);
 #endif
          }
@@ -1427,21 +1427,21 @@ HYPRE_Int main (HYPRE_Int argc, char *argv[])
          else if (solver_id == 17)
          {
             /* use two-step Jacobi as preconditioner */
-#ifdef HYPRE_FORTRAN
-            HYPRE_StructJacobiCreate(&temp_COMM, &precond);
-            HYPRE_StructJacobiSetMaxIter(&precond, &two);
-            HYPRE_StructJacobiSetTol(&precond, &zerodot);
-            HYPRE_StructJacobiSetZeroGuess(&precond);
+#ifdef NALU_HYPRE_FORTRAN
+            NALU_HYPRE_StructJacobiCreate(&temp_COMM, &precond);
+            NALU_HYPRE_StructJacobiSetMaxIter(&precond, &two);
+            NALU_HYPRE_StructJacobiSetTol(&precond, &zerodot);
+            NALU_HYPRE_StructJacobiSetZeroGuess(&precond);
             precond_id = 7;
-            HYPRE_StructPCGSetPrecond(&solver, &precond_id, &precond);
+            NALU_HYPRE_StructPCGSetPrecond(&solver, &precond_id, &precond);
 #else
-            HYPRE_StructJacobiCreate(hypre_MPI_COMM_WORLD, &precond);
-            HYPRE_StructJacobiSetMaxIter(precond, 2);
-            HYPRE_StructJacobiSetTol(precond, 0.0);
-            HYPRE_StructJacobiSetZeroGuess(precond);
-            HYPRE_StructPCGSetPrecond( solver,
-                                       HYPRE_StructJacobiSolve,
-                                       HYPRE_StructJacobiSetup,
+            NALU_HYPRE_StructJacobiCreate(hypre_MPI_COMM_WORLD, &precond);
+            NALU_HYPRE_StructJacobiSetMaxIter(precond, 2);
+            NALU_HYPRE_StructJacobiSetTol(precond, 0.0);
+            NALU_HYPRE_StructJacobiSetZeroGuess(precond);
+            NALU_HYPRE_StructPCGSetPrecond( solver,
+                                       NALU_HYPRE_StructJacobiSolve,
+                                       NALU_HYPRE_StructJacobiSetup,
                                        precond);
 #endif
          }
@@ -1449,23 +1449,23 @@ HYPRE_Int main (HYPRE_Int argc, char *argv[])
          else if (solver_id == 18)
          {
             /* use diagonal scaling as preconditioner */
-#ifdef HYPRE_FORTRAN
+#ifdef NALU_HYPRE_FORTRAN
             precond_id = 8;
-            HYPRE_StructPCGSetPrecond(&solver, &precond_id, &precond);
+            NALU_HYPRE_StructPCGSetPrecond(&solver, &precond_id, &precond);
 #else
             precond = NULL;
-            HYPRE_StructPCGSetPrecond(solver,
-                                      HYPRE_StructDiagScale,
-                                      HYPRE_StructDiagScaleSetup,
+            NALU_HYPRE_StructPCGSetPrecond(solver,
+                                      NALU_HYPRE_StructDiagScale,
+                                      NALU_HYPRE_StructDiagScaleSetup,
                                       precond);
 #endif
          }
 
          /* PCG Setup */
-#ifdef HYPRE_FORTRAN
-         HYPRE_StructPCGSetup(&solver, &sA, &sb, &sx );
+#ifdef NALU_HYPRE_FORTRAN
+         NALU_HYPRE_StructPCGSetup(&solver, &sA, &sb, &sx );
 #else
-         HYPRE_StructPCGSetup(solver, sA, sb, sx );
+         NALU_HYPRE_StructPCGSetup(solver, sA, sb, sx );
 #endif
 
          hypre_EndTiming(time_index);
@@ -1477,10 +1477,10 @@ HYPRE_Int main (HYPRE_Int argc, char *argv[])
          hypre_BeginTiming(time_index);
 
          /* PCG Solve */
-#ifdef HYPRE_FORTRAN
-         HYPRE_StructPCGSolve(&solver, &sA, &sb, &sx );
+#ifdef NALU_HYPRE_FORTRAN
+         NALU_HYPRE_StructPCGSolve(&solver, &sA, &sb, &sx );
 #else
-         HYPRE_StructPCGSolve(solver, sA, sb, sx);
+         NALU_HYPRE_StructPCGSolve(solver, sA, sb, sx);
 #endif
 
          hypre_EndTiming(time_index);
@@ -1489,38 +1489,38 @@ HYPRE_Int main (HYPRE_Int argc, char *argv[])
          hypre_ClearTiming();
 
          /* Get info and release memory */
-#ifdef HYPRE_FORTRAN
-         HYPRE_StructPCGGetNumIterations(&solver, &num_iterations );
-         HYPRE_StructPCGGetFinalRelativeResidualNorm(&solver, &final_res_norm );
-         HYPRE_StructPCGDestroy(&solver);
+#ifdef NALU_HYPRE_FORTRAN
+         NALU_HYPRE_StructPCGGetNumIterations(&solver, &num_iterations );
+         NALU_HYPRE_StructPCGGetFinalRelativeResidualNorm(&solver, &final_res_norm );
+         NALU_HYPRE_StructPCGDestroy(&solver);
 #else
-         HYPRE_StructPCGGetNumIterations( solver, &num_iterations );
-         HYPRE_StructPCGGetFinalRelativeResidualNorm( solver, &final_res_norm );
-         HYPRE_StructPCGDestroy(solver);
+         NALU_HYPRE_StructPCGGetNumIterations( solver, &num_iterations );
+         NALU_HYPRE_StructPCGGetFinalRelativeResidualNorm( solver, &final_res_norm );
+         NALU_HYPRE_StructPCGDestroy(solver);
 #endif
 
          if (solver_id == 10)
          {
-#ifdef HYPRE_FORTRAN
-            HYPRE_StructSMGDestroy(&precond);
+#ifdef NALU_HYPRE_FORTRAN
+            NALU_HYPRE_StructSMGDestroy(&precond);
 #else
-            HYPRE_StructSMGDestroy(precond);
+            NALU_HYPRE_StructSMGDestroy(precond);
 #endif
          }
          else if (solver_id == 11 )
          {
-#ifdef HYPRE_FORTRAN
-            HYPRE_StructPFMGDestroy(&precond);
+#ifdef NALU_HYPRE_FORTRAN
+            NALU_HYPRE_StructPFMGDestroy(&precond);
 #else
-            HYPRE_StructPFMGDestroy(precond);
+            NALU_HYPRE_StructPFMGDestroy(precond);
 #endif
          }
          else if (solver_id == 17)
          {
-#ifdef HYPRE_FORTRAN
-            HYPRE_StructJacobiDestroy(&precond);
+#ifdef NALU_HYPRE_FORTRAN
+            NALU_HYPRE_StructJacobiDestroy(&precond);
 #else
-            HYPRE_StructJacobiDestroy(precond);
+            NALU_HYPRE_StructJacobiDestroy(precond);
 #endif
          }
       }
@@ -1531,62 +1531,62 @@ HYPRE_Int main (HYPRE_Int argc, char *argv[])
          time_index = hypre_InitializeTiming("GMRES Setup");
          hypre_BeginTiming(time_index);
 
-#ifdef HYPRE_FORTRAN
-         HYPRE_StructGMRESCreate(&temp_COMM, &solver);
+#ifdef NALU_HYPRE_FORTRAN
+         NALU_HYPRE_StructGMRESCreate(&temp_COMM, &solver);
 #else
-         HYPRE_StructGMRESCreate(hypre_MPI_COMM_WORLD, &solver);
+         NALU_HYPRE_StructGMRESCreate(hypre_MPI_COMM_WORLD, &solver);
 #endif
 
          /* Note that GMRES can be used with all the interfaces - not
             just the struct.  So here we demonstrate the
             more generic GMRES interface functions. Since we have chosen
             a struct solver then we must type cast to the more generic
-            HYPRE_Solver when setting options with these generic functions.
+            NALU_HYPRE_Solver when setting options with these generic functions.
             Note that one could declare the solver to be
-            type HYPRE_Solver, and then the casting would not be necessary.*/
+            type NALU_HYPRE_Solver, and then the casting would not be necessary.*/
 
          /*  Using struct GMRES routines to test FORTRAN Interface --3/3/2006  */
 
-#ifdef HYPRE_FORTRAN
-         HYPRE_StructGMRESSetMaxIter(&solver, &fivehundred );
-         HYPRE_StructGMRESSetTol(&solver, &tol );
-         HYPRE_StructGMRESSetPrintLevel(&solver, &two );
-         HYPRE_StructGMRESSetLogging(&solver, &one );
+#ifdef NALU_HYPRE_FORTRAN
+         NALU_HYPRE_StructGMRESSetMaxIter(&solver, &fivehundred );
+         NALU_HYPRE_StructGMRESSetTol(&solver, &tol );
+         NALU_HYPRE_StructGMRESSetPrintLevel(&solver, &two );
+         NALU_HYPRE_StructGMRESSetLogging(&solver, &one );
 #else
-         HYPRE_StructGMRESSetMaxIter(solver, 500 );
-         HYPRE_StructGMRESSetTol(solver, 1.0e-6 );
-         HYPRE_StructGMRESSetPrintLevel(solver, 2 );
-         HYPRE_StructGMRESSetLogging(solver, 1 );
+         NALU_HYPRE_StructGMRESSetMaxIter(solver, 500 );
+         NALU_HYPRE_StructGMRESSetTol(solver, 1.0e-6 );
+         NALU_HYPRE_StructGMRESSetPrintLevel(solver, 2 );
+         NALU_HYPRE_StructGMRESSetLogging(solver, 1 );
 #endif
 
          if (solver_id == 30)
          {
             /* use symmetric SMG as preconditioner */
-#ifdef HYPRE_FORTRAN
-            HYPRE_StructSMGCreate(&temp_COMM, &precond);
-            HYPRE_StructSMGSetMemoryUse(&precond, &zero);
-            HYPRE_StructSMGSetMaxIter(&precond, &one);
-            HYPRE_StructSMGSetTol(&precond, &zerodot);
-            HYPRE_StructSMGSetZeroGuess(&precond);
-            HYPRE_StructSMGSetNumPreRelax(&precond, &n_pre);
-            HYPRE_StructSMGSetNumPostRelax(&precond, &n_post);
-            HYPRE_StructSMGSetPrintLevel(&precond, &zero);
-            HYPRE_StructSMGSetLogging(&precond, &zero);
+#ifdef NALU_HYPRE_FORTRAN
+            NALU_HYPRE_StructSMGCreate(&temp_COMM, &precond);
+            NALU_HYPRE_StructSMGSetMemoryUse(&precond, &zero);
+            NALU_HYPRE_StructSMGSetMaxIter(&precond, &one);
+            NALU_HYPRE_StructSMGSetTol(&precond, &zerodot);
+            NALU_HYPRE_StructSMGSetZeroGuess(&precond);
+            NALU_HYPRE_StructSMGSetNumPreRelax(&precond, &n_pre);
+            NALU_HYPRE_StructSMGSetNumPostRelax(&precond, &n_post);
+            NALU_HYPRE_StructSMGSetPrintLevel(&precond, &zero);
+            NALU_HYPRE_StructSMGSetLogging(&precond, &zero);
             precond_id = 0;
-            HYPRE_StructGMRESSetPrecond(&solver, &precond_id, &precond);
+            NALU_HYPRE_StructGMRESSetPrecond(&solver, &precond_id, &precond);
 #else
-            HYPRE_StructSMGCreate(hypre_MPI_COMM_WORLD, &precond);
-            HYPRE_StructSMGSetMemoryUse(precond, 0);
-            HYPRE_StructSMGSetMaxIter(precond, 1);
-            HYPRE_StructSMGSetTol(precond, 0.0);
-            HYPRE_StructSMGSetZeroGuess(precond);
-            HYPRE_StructSMGSetNumPreRelax(precond, n_pre);
-            HYPRE_StructSMGSetNumPostRelax(precond, n_post);
-            HYPRE_StructSMGSetPrintLevel(precond, 0);
-            HYPRE_StructSMGSetLogging(precond, 0);
-            HYPRE_StructGMRESSetPrecond(solver,
-                                        HYPRE_StructSMGSolve,
-                                        HYPRE_StructSMGSetup,
+            NALU_HYPRE_StructSMGCreate(hypre_MPI_COMM_WORLD, &precond);
+            NALU_HYPRE_StructSMGSetMemoryUse(precond, 0);
+            NALU_HYPRE_StructSMGSetMaxIter(precond, 1);
+            NALU_HYPRE_StructSMGSetTol(precond, 0.0);
+            NALU_HYPRE_StructSMGSetZeroGuess(precond);
+            NALU_HYPRE_StructSMGSetNumPreRelax(precond, n_pre);
+            NALU_HYPRE_StructSMGSetNumPostRelax(precond, n_post);
+            NALU_HYPRE_StructSMGSetPrintLevel(precond, 0);
+            NALU_HYPRE_StructSMGSetLogging(precond, 0);
+            NALU_HYPRE_StructGMRESSetPrecond(solver,
+                                        NALU_HYPRE_StructSMGSolve,
+                                        NALU_HYPRE_StructSMGSetup,
                                         precond);
 #endif
          }
@@ -1594,35 +1594,35 @@ HYPRE_Int main (HYPRE_Int argc, char *argv[])
          else if (solver_id == 31)
          {
             /* use symmetric PFMG as preconditioner */
-#ifdef HYPRE_FORTRAN
-            HYPRE_StructPFMGCreate(&temp_COMM, &precond);
-            HYPRE_StructPFMGSetMaxIter(&precond, &one);
-            HYPRE_StructPFMGSetTol(&precond, &zerodot);
-            HYPRE_StructPFMGSetZeroGuess(&precond);
-            HYPRE_StructPFMGSetRAPType(&precond, &rap);
-            HYPRE_StructPFMGSetRelaxType(&precond, &relax);
-            HYPRE_StructPFMGSetNumPreRelax(&precond, &n_pre);
-            HYPRE_StructPFMGSetNumPostRelax(&precond, &n_post);
-            HYPRE_StructPFMGSetSkipRelax(&precond, &skip);
-            HYPRE_StructPFMGSetPrintLevel(&precond, &zero);
-            HYPRE_StructPFMGSetLogging(&precond, &zero);
+#ifdef NALU_HYPRE_FORTRAN
+            NALU_HYPRE_StructPFMGCreate(&temp_COMM, &precond);
+            NALU_HYPRE_StructPFMGSetMaxIter(&precond, &one);
+            NALU_HYPRE_StructPFMGSetTol(&precond, &zerodot);
+            NALU_HYPRE_StructPFMGSetZeroGuess(&precond);
+            NALU_HYPRE_StructPFMGSetRAPType(&precond, &rap);
+            NALU_HYPRE_StructPFMGSetRelaxType(&precond, &relax);
+            NALU_HYPRE_StructPFMGSetNumPreRelax(&precond, &n_pre);
+            NALU_HYPRE_StructPFMGSetNumPostRelax(&precond, &n_post);
+            NALU_HYPRE_StructPFMGSetSkipRelax(&precond, &skip);
+            NALU_HYPRE_StructPFMGSetPrintLevel(&precond, &zero);
+            NALU_HYPRE_StructPFMGSetLogging(&precond, &zero);
             precond_id = 1;
-            HYPRE_StructGMRESSetPrecond(&solver, &precond_id, &precond);
+            NALU_HYPRE_StructGMRESSetPrecond(&solver, &precond_id, &precond);
 #else
-            HYPRE_StructPFMGCreate(hypre_MPI_COMM_WORLD, &precond);
-            HYPRE_StructPFMGSetMaxIter(precond, 1);
-            HYPRE_StructPFMGSetTol(precond, 0.0);
-            HYPRE_StructPFMGSetZeroGuess(precond);
-            HYPRE_StructPFMGSetRAPType(precond, rap);
-            HYPRE_StructPFMGSetRelaxType(precond, relax);
-            HYPRE_StructPFMGSetNumPreRelax(precond, n_pre);
-            HYPRE_StructPFMGSetNumPostRelax(precond, n_post);
-            HYPRE_StructPFMGSetSkipRelax(precond, skip);
-            HYPRE_StructPFMGSetPrintLevel(precond, 0);
-            HYPRE_StructPFMGSetLogging(precond, 0);
-            HYPRE_StructGMRESSetPrecond( solver,
-                                         HYPRE_StructPFMGSolve,
-                                         HYPRE_StructPFMGSetup,
+            NALU_HYPRE_StructPFMGCreate(hypre_MPI_COMM_WORLD, &precond);
+            NALU_HYPRE_StructPFMGSetMaxIter(precond, 1);
+            NALU_HYPRE_StructPFMGSetTol(precond, 0.0);
+            NALU_HYPRE_StructPFMGSetZeroGuess(precond);
+            NALU_HYPRE_StructPFMGSetRAPType(precond, rap);
+            NALU_HYPRE_StructPFMGSetRelaxType(precond, relax);
+            NALU_HYPRE_StructPFMGSetNumPreRelax(precond, n_pre);
+            NALU_HYPRE_StructPFMGSetNumPostRelax(precond, n_post);
+            NALU_HYPRE_StructPFMGSetSkipRelax(precond, skip);
+            NALU_HYPRE_StructPFMGSetPrintLevel(precond, 0);
+            NALU_HYPRE_StructPFMGSetLogging(precond, 0);
+            NALU_HYPRE_StructGMRESSetPrecond( solver,
+                                         NALU_HYPRE_StructPFMGSolve,
+                                         NALU_HYPRE_StructPFMGSetup,
                                          precond);
 #endif
          }
@@ -1630,21 +1630,21 @@ HYPRE_Int main (HYPRE_Int argc, char *argv[])
          else if (solver_id == 37)
          {
             /* use two-step Jacobi as preconditioner */
-#ifdef HYPRE_FORTRAN
-            HYPRE_StructJacobiCreate(&temp_COMM, &precond);
-            HYPRE_StructJacobiSetMaxIter(&precond, &two);
-            HYPRE_StructJacobiSetTol(&precond, &zerodot);
-            HYPRE_StructJacobiSetZeroGuess(&precond);
+#ifdef NALU_HYPRE_FORTRAN
+            NALU_HYPRE_StructJacobiCreate(&temp_COMM, &precond);
+            NALU_HYPRE_StructJacobiSetMaxIter(&precond, &two);
+            NALU_HYPRE_StructJacobiSetTol(&precond, &zerodot);
+            NALU_HYPRE_StructJacobiSetZeroGuess(&precond);
             precond_id = 7;
-            HYPRE_StructGMRESSetPrecond(&solver, &precond_id, &precond);
+            NALU_HYPRE_StructGMRESSetPrecond(&solver, &precond_id, &precond);
 #else
-            HYPRE_StructJacobiCreate(hypre_MPI_COMM_WORLD, &precond);
-            HYPRE_StructJacobiSetMaxIter(precond, 2);
-            HYPRE_StructJacobiSetTol(precond, 0.0);
-            HYPRE_StructJacobiSetZeroGuess(precond);
-            HYPRE_StructGMRESSetPrecond( solver,
-                                         HYPRE_StructJacobiSolve,
-                                         HYPRE_StructJacobiSetup,
+            NALU_HYPRE_StructJacobiCreate(hypre_MPI_COMM_WORLD, &precond);
+            NALU_HYPRE_StructJacobiSetMaxIter(precond, 2);
+            NALU_HYPRE_StructJacobiSetTol(precond, 0.0);
+            NALU_HYPRE_StructJacobiSetZeroGuess(precond);
+            NALU_HYPRE_StructGMRESSetPrecond( solver,
+                                         NALU_HYPRE_StructJacobiSolve,
+                                         NALU_HYPRE_StructJacobiSetup,
                                          precond);
 #endif
          }
@@ -1652,23 +1652,23 @@ HYPRE_Int main (HYPRE_Int argc, char *argv[])
          else if (solver_id == 38)
          {
             /* use diagonal scaling as preconditioner */
-#ifdef HYPRE_FORTRAN
+#ifdef NALU_HYPRE_FORTRAN
             precond_id = 8;
-            HYPRE_StructGMRESSetPrecond(&solver, &precond_id, &precond);
+            NALU_HYPRE_StructGMRESSetPrecond(&solver, &precond_id, &precond);
 #else
             precond = NULL;
-            HYPRE_StructGMRESSetPrecond( solver,
-                                         HYPRE_StructDiagScale,
-                                         HYPRE_StructDiagScaleSetup,
+            NALU_HYPRE_StructGMRESSetPrecond( solver,
+                                         NALU_HYPRE_StructDiagScale,
+                                         NALU_HYPRE_StructDiagScaleSetup,
                                          precond);
 #endif
          }
 
          /* GMRES Setup */
-#ifdef HYPRE_FORTRAN
-         HYPRE_StructGMRESSetup(&solver, &sA, &sb, &sx );
+#ifdef NALU_HYPRE_FORTRAN
+         NALU_HYPRE_StructGMRESSetup(&solver, &sA, &sb, &sx );
 #else
-         HYPRE_StructGMRESSetup(solver, sA, sb, sx );
+         NALU_HYPRE_StructGMRESSetup(solver, sA, sb, sx );
 #endif
 
          hypre_EndTiming(time_index);
@@ -1680,10 +1680,10 @@ HYPRE_Int main (HYPRE_Int argc, char *argv[])
          hypre_BeginTiming(time_index);
 
          /* GMRES Solve */
-#ifdef HYPRE_FORTRAN
-         HYPRE_StructGMRESSolve(&solver, &sA, &sb, &sx );
+#ifdef NALU_HYPRE_FORTRAN
+         NALU_HYPRE_StructGMRESSolve(&solver, &sA, &sb, &sx );
 #else
-         HYPRE_StructGMRESSolve(solver, sA, sb, sx);
+         NALU_HYPRE_StructGMRESSolve(solver, sA, sb, sx);
 #endif
 
          hypre_EndTiming(time_index);
@@ -1692,38 +1692,38 @@ HYPRE_Int main (HYPRE_Int argc, char *argv[])
          hypre_ClearTiming();
 
          /* Get info and release memory */
-#ifdef HYPRE_FORTRAN
-         HYPRE_StructGMRESGetNumIterations(&solver, &num_iterations);
-         HYPRE_StructGMRESGetFinalRelativeResidualNorm(&solver, &final_res_norm);
-         HYPRE_StructGMRESDestroy(&solver);
+#ifdef NALU_HYPRE_FORTRAN
+         NALU_HYPRE_StructGMRESGetNumIterations(&solver, &num_iterations);
+         NALU_HYPRE_StructGMRESGetFinalRelativeResidualNorm(&solver, &final_res_norm);
+         NALU_HYPRE_StructGMRESDestroy(&solver);
 #else
-         HYPRE_StructGMRESGetNumIterations(solver, &num_iterations);
-         HYPRE_StructGMRESGetFinalRelativeResidualNorm(solver, &final_res_norm);
-         HYPRE_StructGMRESDestroy(solver);
+         NALU_HYPRE_StructGMRESGetNumIterations(solver, &num_iterations);
+         NALU_HYPRE_StructGMRESGetFinalRelativeResidualNorm(solver, &final_res_norm);
+         NALU_HYPRE_StructGMRESDestroy(solver);
 #endif
 
          if (solver_id == 30)
          {
-#ifdef HYPRE_FORTRAN
-            HYPRE_StructSMGDestroy(&precond);
+#ifdef NALU_HYPRE_FORTRAN
+            NALU_HYPRE_StructSMGDestroy(&precond);
 #else
-            HYPRE_StructSMGDestroy(precond);
+            NALU_HYPRE_StructSMGDestroy(precond);
 #endif
          }
          else if (solver_id == 31)
          {
-#ifdef HYPRE_FORTRAN
-            HYPRE_StructPFMGDestroy(&precond);
+#ifdef NALU_HYPRE_FORTRAN
+            NALU_HYPRE_StructPFMGDestroy(&precond);
 #else
-            HYPRE_StructPFMGDestroy(precond);
+            NALU_HYPRE_StructPFMGDestroy(precond);
 #endif
          }
          else if (solver_id == 37)
          {
-#ifdef HYPRE_FORTRAN
-            HYPRE_StructJacobiDestroy(&precond);
+#ifdef NALU_HYPRE_FORTRAN
+            NALU_HYPRE_StructJacobiDestroy(&precond);
 #else
-            HYPRE_StructJacobiDestroy(precond);
+            NALU_HYPRE_StructJacobiDestroy(precond);
 #endif
          }
       }
@@ -1732,10 +1732,10 @@ HYPRE_Int main (HYPRE_Int argc, char *argv[])
 
    /* Print the solution and other info */
    if (print_solution)
-#ifdef HYPRE_FORTRAN
-      HYPRE_SStructVectorPrint("sstruct.out.x", &x, &zero);
+#ifdef NALU_HYPRE_FORTRAN
+      NALU_HYPRE_SStructVectorPrint("sstruct.out.x", &x, &zero);
 #else
-      HYPRE_SStructVectorPrint("sstruct.out.x", x, 0);
+      NALU_HYPRE_SStructVectorPrint("sstruct.out.x", x, 0);
 #endif
 
    if (myid == 0)
@@ -1747,20 +1747,20 @@ HYPRE_Int main (HYPRE_Int argc, char *argv[])
    }
 
    /* Free memory */
-#ifdef HYPRE_FORTRAN
-   HYPRE_SStructGridDestroy(&grid);
-   HYPRE_SStructStencilDestroy(&stencil);
-   HYPRE_SStructGraphDestroy(&graph);
-   HYPRE_SStructMatrixDestroy(&A);
-   HYPRE_SStructVectorDestroy(&b);
-   HYPRE_SStructVectorDestroy(&x);
+#ifdef NALU_HYPRE_FORTRAN
+   NALU_HYPRE_SStructGridDestroy(&grid);
+   NALU_HYPRE_SStructStencilDestroy(&stencil);
+   NALU_HYPRE_SStructGraphDestroy(&graph);
+   NALU_HYPRE_SStructMatrixDestroy(&A);
+   NALU_HYPRE_SStructVectorDestroy(&b);
+   NALU_HYPRE_SStructVectorDestroy(&x);
 #else
-   HYPRE_SStructGridDestroy(grid);
-   HYPRE_SStructStencilDestroy(stencil);
-   HYPRE_SStructGraphDestroy(graph);
-   HYPRE_SStructMatrixDestroy(A);
-   HYPRE_SStructVectorDestroy(b);
-   HYPRE_SStructVectorDestroy(x);
+   NALU_HYPRE_SStructGridDestroy(grid);
+   NALU_HYPRE_SStructStencilDestroy(stencil);
+   NALU_HYPRE_SStructGraphDestroy(graph);
+   NALU_HYPRE_SStructMatrixDestroy(A);
+   NALU_HYPRE_SStructVectorDestroy(b);
+   NALU_HYPRE_SStructVectorDestroy(x);
 #endif
 
    /* Finalize MPI */

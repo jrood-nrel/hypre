@@ -7,7 +7,7 @@
 
 /******************************************************************************
  *
- * HYPRE_ParCSRint Fortran interface
+ * NALU_HYPRE_ParCSRint Fortran interface
  *
  *****************************************************************************/
 
@@ -18,23 +18,23 @@
 extern "C" {
 #endif
 
-HYPRE_Int hypre_ParVectorSize( void *x );
-HYPRE_Int aux_maskCount( HYPRE_Int n, hypre_F90_Int *mask );
-void aux_indexFromMask( HYPRE_Int n, hypre_F90_Int *mask, hypre_F90_Int *index );
+NALU_HYPRE_Int hypre_ParVectorSize( void *x );
+NALU_HYPRE_Int aux_maskCount( NALU_HYPRE_Int n, hypre_F90_Int *mask );
+void aux_indexFromMask( NALU_HYPRE_Int n, hypre_F90_Int *mask, hypre_F90_Int *index );
 
 /*--------------------------------------------------------------------------
  * hypre_ParSetRandomValues
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_parsetrandomvalues, HYPRE_PARSETRANDOMVALUES)
+hypre_F90_IFACE(hypre_parsetrandomvalues, NALU_HYPRE_PARSETRANDOMVALUES)
 (hypre_F90_Obj *v,
  hypre_F90_Int *seed,
  hypre_F90_Int *ierr)
 {
    *ierr = (hypre_F90_Int)
-           ( HYPRE_ParVectorSetRandomValues(
-                hypre_F90_PassObj (HYPRE_ParVector, v),
+           ( NALU_HYPRE_ParVectorSetRandomValues(
+                hypre_F90_PassObj (NALU_HYPRE_ParVector, v),
                 hypre_F90_PassInt (seed)));
 }
 
@@ -43,7 +43,7 @@ hypre_F90_IFACE(hypre_parsetrandomvalues, HYPRE_PARSETRANDOMVALUES)
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_parprintvector, HYPRE_PARPRINTVECTOR)
+hypre_F90_IFACE(hypre_parprintvector, NALU_HYPRE_PARPRINTVECTOR)
 (hypre_F90_Obj *v,
  char *file,
  hypre_F90_Int *ierr)
@@ -59,7 +59,7 @@ hypre_F90_IFACE(hypre_parprintvector, HYPRE_PARPRINTVECTOR)
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_parreadvector, HYPRE_PARREADVECTOR)
+hypre_F90_IFACE(hypre_parreadvector, NALU_HYPRE_PARREADVECTOR)
 (hypre_F90_Comm *comm,
  char *file,
  hypre_F90_Int *ierr)
@@ -76,7 +76,7 @@ hypre_F90_IFACE(hypre_parreadvector, HYPRE_PARREADVECTOR)
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_parvectorsize, HYPRE_PARVECTORSIZE)
+hypre_F90_IFACE(hypre_parvectorsize, NALU_HYPRE_PARVECTORSIZE)
 (hypre_F90_Obj *x,
  hypre_F90_Int *ierr)
 {
@@ -86,27 +86,27 @@ hypre_F90_IFACE(hypre_parvectorsize, HYPRE_PARVECTORSIZE)
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRMultiVectorPrint
+ * NALU_HYPRE_ParCSRMultiVectorPrint
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_parcsrmultivectorprint, HYPRE_PARCSRMULTIVECTORPRINT)
+hypre_F90_IFACE(hypre_parcsrmultivectorprint, NALU_HYPRE_PARCSRMULTIVECTORPRINT)
 (hypre_F90_Obj *x,
  char *file,
  hypre_F90_Int *ierr)
 {
    *ierr = (hypre_F90_Int)
-           ( HYPRE_ParCSRMultiVectorPrint(
+           ( NALU_HYPRE_ParCSRMultiVectorPrint(
                 (void *)       x,
                 (char *) file));
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRMultiVectorRead
+ * NALU_HYPRE_ParCSRMultiVectorRead
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_parcsrmultivectorread, HYPRE_PARCSRMULTIVECTORREAD)
+hypre_F90_IFACE(hypre_parcsrmultivectorread, NALU_HYPRE_PARCSRMULTIVECTORREAD)
 (hypre_F90_Comm *comm,
  hypre_F90_Obj *ii,
  char *file,
@@ -114,52 +114,52 @@ hypre_F90_IFACE(hypre_parcsrmultivectorread, HYPRE_PARCSRMULTIVECTORREAD)
 {
    *ierr = 0;
 
-   HYPRE_ParCSRMultiVectorRead(
+   NALU_HYPRE_ParCSRMultiVectorRead(
       hypre_F90_PassComm (comm),
       (void *)       ii,
       (char *) file );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_TempParCSRSetupInterpreter
+ * NALU_HYPRE_TempParCSRSetupInterpreter
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_tempparcsrsetupinterprete, HYPRE_TEMPPARCSRSETUPINTERPRETE)
+hypre_F90_IFACE(hypre_tempparcsrsetupinterprete, NALU_HYPRE_TEMPPARCSRSETUPINTERPRETE)
 (hypre_F90_Obj *i,
  hypre_F90_Int *ierr)
 {
    *ierr = (hypre_F90_Int)
-           ( HYPRE_TempParCSRSetupInterpreter(
+           ( NALU_HYPRE_TempParCSRSetupInterpreter(
                 (mv_InterfaceInterpreter *) i ));
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_TempParCSRSetupInterpreter
+ * NALU_HYPRE_TempParCSRSetupInterpreter
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_parcsrsetupinterpreter, HYPRE_PARCSRSETUPINTERPRETER)
+hypre_F90_IFACE(hypre_parcsrsetupinterpreter, NALU_HYPRE_PARCSRSETUPINTERPRETER)
 (hypre_F90_Obj *i,
  hypre_F90_Int *ierr)
 {
    *ierr = (hypre_F90_Int)
-           ( HYPRE_ParCSRSetupInterpreter(
+           ( NALU_HYPRE_ParCSRSetupInterpreter(
                 (mv_InterfaceInterpreter *) i ));
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRSetupMatvec
+ * NALU_HYPRE_ParCSRSetupMatvec
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_parcsrsetupmatvec, HYPRE_PARCSRSETUPMATVEC)
+hypre_F90_IFACE(hypre_parcsrsetupmatvec, NALU_HYPRE_PARCSRSETUPMATVEC)
 (hypre_F90_Obj *mv,
  hypre_F90_Int *ierr)
 {
    *ierr = (hypre_F90_Int)
-           ( HYPRE_ParCSRSetupMatvec(
-                hypre_F90_PassObjRef (HYPRE_MatvecFunctions, mv)));
+           ( NALU_HYPRE_ParCSRSetupMatvec(
+                hypre_F90_PassObjRef (NALU_HYPRE_MatvecFunctions, mv)));
 }
 #ifdef __cplusplus
 }

@@ -20,16 +20,16 @@
 #include "fortran_matrix.h"
 #include "multivector.h"
 
-static HYPRE_Int
+static NALU_HYPRE_Int
 lobpcg_chol( utilities_FortranMatrix* a,
-             HYPRE_Int (*dpotrf) (const char *uplo, HYPRE_Int *n, HYPRE_Real *a, HYPRE_Int *lda,
-                                  HYPRE_Int *info) )
+             NALU_HYPRE_Int (*dpotrf) (const char *uplo, NALU_HYPRE_Int *n, NALU_HYPRE_Real *a, NALU_HYPRE_Int *lda,
+                                  NALU_HYPRE_Int *info) )
 {
 
-   HYPRE_Int lda, n;
-   HYPRE_Real* aval;
+   NALU_HYPRE_Int lda, n;
+   NALU_HYPRE_Real* aval;
    char uplo;
-   HYPRE_Int ierr;
+   NALU_HYPRE_Int ierr;
 
    lda = utilities_FortranMatrixGlobalHeight( a );
    n = utilities_FortranMatrixHeight( a );
@@ -41,23 +41,23 @@ lobpcg_chol( utilities_FortranMatrix* a,
    return ierr;
 }
 
-static HYPRE_Int
+static NALU_HYPRE_Int
 lobpcg_solveGEVP(
    utilities_FortranMatrix* mtxA,
    utilities_FortranMatrix* mtxB,
    utilities_FortranMatrix* eigVal,
-   HYPRE_Int   (*dsygv) (HYPRE_Int *itype, char *jobz, char *uplo, HYPRE_Int *
-                         n, HYPRE_Real *a, HYPRE_Int *lda, HYPRE_Real *b, HYPRE_Int *ldb,
-                         HYPRE_Real *w, HYPRE_Real *work, HYPRE_Int *lwork, HYPRE_Int *info)
+   NALU_HYPRE_Int   (*dsygv) (NALU_HYPRE_Int *itype, char *jobz, char *uplo, NALU_HYPRE_Int *
+                         n, NALU_HYPRE_Real *a, NALU_HYPRE_Int *lda, NALU_HYPRE_Real *b, NALU_HYPRE_Int *ldb,
+                         NALU_HYPRE_Real *w, NALU_HYPRE_Real *work, NALU_HYPRE_Int *lwork, NALU_HYPRE_Int *info)
 )
 {
 
-   HYPRE_Int n, lda, ldb, itype, lwork, info;
+   NALU_HYPRE_Int n, lda, ldb, itype, lwork, info;
    char jobz, uplo;
-   HYPRE_Real* work;
-   HYPRE_Real* a;
-   HYPRE_Real* b;
-   HYPRE_Real* lmd;
+   NALU_HYPRE_Real* work;
+   NALU_HYPRE_Real* a;
+   NALU_HYPRE_Real* b;
+   NALU_HYPRE_Real* lmd;
 
    itype = 1;
    jobz = 'V';
@@ -72,13 +72,13 @@ lobpcg_solveGEVP(
    ldb = utilities_FortranMatrixGlobalHeight( mtxB );
    lwork = 10 * n;
 
-   work = hypre_CTAlloc(HYPRE_Real,  lwork, HYPRE_MEMORY_HOST);
+   work = hypre_CTAlloc(NALU_HYPRE_Real,  lwork, NALU_HYPRE_MEMORY_HOST);
 
    (*dsygv)( &itype, &jobz, &uplo, &n,
              a, &lda, b, &ldb,
              lmd, &work[0], &lwork, &info );
 
-   hypre_TFree( work, HYPRE_MEMORY_HOST);
+   hypre_TFree( work, NALU_HYPRE_MEMORY_HOST);
    return info;
 
 }
@@ -113,19 +113,19 @@ lobpcg_MultiVectorByMatrix(
                            y );
 }
 
-static HYPRE_Int
+static NALU_HYPRE_Int
 lobpcg_MultiVectorImplicitQR(
    mv_MultiVectorPtr x, mv_MultiVectorPtr y,
    utilities_FortranMatrix* r,
    mv_MultiVectorPtr z,
-   HYPRE_Int (*dpotrf) (const char *uplo, HYPRE_Int *n, HYPRE_Real *a, HYPRE_Int *lda, HYPRE_Int *info)
+   NALU_HYPRE_Int (*dpotrf) (const char *uplo, NALU_HYPRE_Int *n, NALU_HYPRE_Real *a, NALU_HYPRE_Int *lda, NALU_HYPRE_Int *info)
 
 )
 {
 
    /* B-orthonormalizes x using y = B x */
 
-   HYPRE_Int ierr;
+   NALU_HYPRE_Int ierr;
 
    lobpcg_MultiVectorByMultiVector( x, y, r );
 
@@ -146,10 +146,10 @@ lobpcg_MultiVectorImplicitQR(
 }
 
 static void
-lobpcg_sqrtVector( HYPRE_Int n, HYPRE_Int* mask, HYPRE_Real* v )
+lobpcg_sqrtVector( NALU_HYPRE_Int n, NALU_HYPRE_Int* mask, NALU_HYPRE_Real* v )
 {
 
-   HYPRE_Int i;
+   NALU_HYPRE_Int i;
 
    for ( i = 0; i < n; i++ )
       if ( mask == NULL || mask[i] )
@@ -158,18 +158,18 @@ lobpcg_sqrtVector( HYPRE_Int n, HYPRE_Int* mask, HYPRE_Real* v )
       }
 }
 
-static HYPRE_Int
+static NALU_HYPRE_Int
 lobpcg_checkResiduals(
    utilities_FortranMatrix* resNorms,
    utilities_FortranMatrix* lambda,
    lobpcg_Tolerance tol,
-   HYPRE_Int* activeMask
+   NALU_HYPRE_Int* activeMask
 )
 {
-   HYPRE_Int i, n;
-   HYPRE_Int notConverged;
-   HYPRE_Real atol;
-   HYPRE_Real rtol;
+   NALU_HYPRE_Int i, n;
+   NALU_HYPRE_Int notConverged;
+   NALU_HYPRE_Real atol;
+   NALU_HYPRE_Real rtol;
 
    n = utilities_FortranMatrixHeight( resNorms );
 
@@ -181,7 +181,7 @@ lobpcg_checkResiduals(
    {
       if ( utilities_FortranMatrixValue( resNorms, i + 1, 1 ) >
            utilities_FortranMatrixValue( lambda, i + 1, 1 )*rtol + atol
-           + HYPRE_REAL_EPSILON )
+           + NALU_HYPRE_REAL_EPSILON )
       {
          activeMask[i] = 1;
          notConverged++;
@@ -195,7 +195,7 @@ lobpcg_checkResiduals(
 }
 
 static void
-lobpcg_errorMessage( HYPRE_Int verbosityLevel, const char* message )
+lobpcg_errorMessage( NALU_HYPRE_Int verbosityLevel, const char* message )
 {
    if ( verbosityLevel )
    {
@@ -204,7 +204,7 @@ lobpcg_errorMessage( HYPRE_Int verbosityLevel, const char* message )
    }
 }
 
-HYPRE_Int
+NALU_HYPRE_Int
 lobpcg_solve( mv_MultiVectorPtr blockVectorX,
               void* operatorAData,
               void (*operatorA)( void*, void*, void* ),
@@ -215,65 +215,65 @@ lobpcg_solve( mv_MultiVectorPtr blockVectorX,
               mv_MultiVectorPtr blockVectorY,
               lobpcg_BLASLAPACKFunctions blap_fn,
               lobpcg_Tolerance tolerance,
-              HYPRE_Int maxIterations,
-              HYPRE_Int verbosityLevel,
-              HYPRE_Int* iterationNumber,
+              NALU_HYPRE_Int maxIterations,
+              NALU_HYPRE_Int verbosityLevel,
+              NALU_HYPRE_Int* iterationNumber,
 
               /* eigenvalues; "lambda_values" should point to array  containing <blocksize> doubles where <blocksi
               ze> is the width of multivector "blockVectorX" */
-              HYPRE_Real * lambda_values,
+              NALU_HYPRE_Real * lambda_values,
 
               /* eigenvalues history; a pointer to the entries of the  <blocksize>-by-(<maxIterations>+1) matrix s
               tored
               in  fortran-style. (i.e. column-wise) The matrix may be  a submatrix of a larger matrix, see next
               argument; If you don't need eigenvalues history, provide NULL in this entry */
-              HYPRE_Real * lambdaHistory_values,
+              NALU_HYPRE_Real * lambdaHistory_values,
 
               /* global height of the matrix (stored in fotran-style)  specified by previous argument */
-              HYPRE_Int lambdaHistory_gh,
+              NALU_HYPRE_Int lambdaHistory_gh,
 
               /* residual norms; argument should point to array of <blocksize> doubles */
-              HYPRE_Real * residualNorms_values,
+              NALU_HYPRE_Real * residualNorms_values,
 
               /* residual norms history; a pointer to the entries of the  <blocksize>-by-(<maxIterations>+1) matri
               x
               stored in  fortran-style. (i.e. column-wise) The matrix may be  a submatrix of a larger matrix, see
               next
               argument If you don't need residual norms history, provide NULL in this entry */
-              HYPRE_Real * residualNormsHistory_values,
+              NALU_HYPRE_Real * residualNormsHistory_values,
 
               /* global height of the matrix (stored in fotran-style)  specified by previous argument */
-              HYPRE_Int residualNormsHistory_gh
+              NALU_HYPRE_Int residualNormsHistory_gh
 
             )
 {
 
-   HYPRE_Int          sizeX; /* number of eigenvectors */
-   HYPRE_Int          sizeY; /* number of constraints */
-   HYPRE_Int          sizeR; /* number of residuals used */
-   HYPRE_Int          sizeP; /* number of conj. directions used */
-   HYPRE_Int          sizeA; /* size of the Gram matrix for A */
-   HYPRE_Int          sizeX3; /* 3*sizeX */
+   NALU_HYPRE_Int          sizeX; /* number of eigenvectors */
+   NALU_HYPRE_Int          sizeY; /* number of constraints */
+   NALU_HYPRE_Int          sizeR; /* number of residuals used */
+   NALU_HYPRE_Int          sizeP; /* number of conj. directions used */
+   NALU_HYPRE_Int          sizeA; /* size of the Gram matrix for A */
+   NALU_HYPRE_Int          sizeX3; /* 3*sizeX */
 
-   HYPRE_Int          firstR; /* first line of the Gram block
+   NALU_HYPRE_Int          firstR; /* first line of the Gram block
                   corresponding to residuals */
-   HYPRE_Int          lastR; /* last line of this block */
-   HYPRE_Int          firstP; /* same for conjugate directions */
-   HYPRE_Int          lastP;
+   NALU_HYPRE_Int          lastR; /* last line of this block */
+   NALU_HYPRE_Int          firstP; /* same for conjugate directions */
+   NALU_HYPRE_Int          lastP;
 
-   HYPRE_Int          noTFlag; /* nonzero: no preconditioner */
-   HYPRE_Int          noBFlag; /* nonzero: no operator B */
-   HYPRE_Int          noYFlag; /* nonzero: no constaints */
+   NALU_HYPRE_Int          noTFlag; /* nonzero: no preconditioner */
+   NALU_HYPRE_Int          noBFlag; /* nonzero: no operator B */
+   NALU_HYPRE_Int          noYFlag; /* nonzero: no constaints */
 
-   HYPRE_Int          exitFlag; /* 1: problem size is too small,
+   NALU_HYPRE_Int          exitFlag; /* 1: problem size is too small,
                     2: block size < 1,
                     3: linearly dependent constraints,
                     -1: requested accuracy not
                     achieved */
 
-   HYPRE_Int*            activeMask; /* soft locking mask */
+   NALU_HYPRE_Int*            activeMask; /* soft locking mask */
 
-   HYPRE_Int          i; /* short loop counter */
+   NALU_HYPRE_Int          i; /* short loop counter */
 
 #if 0
    hypre_longint            n; /* dimension 1 of X */
@@ -526,7 +526,7 @@ lobpcg_solve( mv_MultiVectorPtr blockVectorX,
    historyColumn = utilities_FortranMatrixCreate();
 
    /* initializing soft locking mask */
-   activeMask = hypre_CTAlloc(HYPRE_Int,  sizeX, HYPRE_MEMORY_HOST);
+   activeMask = hypre_CTAlloc(NALU_HYPRE_Int,  sizeX, NALU_HYPRE_MEMORY_HOST);
    hypre_assert( activeMask != NULL );
    for ( i = 0; i < sizeX; i++ )
    {
@@ -1077,7 +1077,7 @@ lobpcg_solve( mv_MultiVectorPtr blockVectorX,
    utilities_FortranMatrixDestroy( residualNorms );
    utilities_FortranMatrixDestroy( residualNormsHistory );
 
-   hypre_TFree( activeMask, HYPRE_MEMORY_HOST);
+   hypre_TFree( activeMask, NALU_HYPRE_MEMORY_HOST);
 
    return exitFlag;
 }

@@ -7,312 +7,312 @@
 
 /******************************************************************************
  *
- * HYPRE_GMRES interface
+ * NALU_HYPRE_GMRES interface
  *
  *****************************************************************************/
 #include "krylov.h"
 
 /*--------------------------------------------------------------------------
- * HYPRE_GMRESDestroy
+ * NALU_HYPRE_GMRESDestroy
  *--------------------------------------------------------------------------*/
 /* to do, not trivial */
 /*
-HYPRE_Int
-HYPRE_ParCSRGMRESDestroy( HYPRE_Solver solver )
+NALU_HYPRE_Int
+NALU_HYPRE_ParCSRGMRESDestroy( NALU_HYPRE_Solver solver )
 {
    return( hypre_GMRESDestroy( (void *) solver ) );
 }
 */
 
 /*--------------------------------------------------------------------------
- * HYPRE_GMRESSetup
+ * NALU_HYPRE_GMRESSetup
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_GMRESSetup( HYPRE_Solver solver,
-                  HYPRE_Matrix A,
-                  HYPRE_Vector b,
-                  HYPRE_Vector x      )
+NALU_HYPRE_Int
+NALU_HYPRE_GMRESSetup( NALU_HYPRE_Solver solver,
+                  NALU_HYPRE_Matrix A,
+                  NALU_HYPRE_Vector b,
+                  NALU_HYPRE_Vector x      )
 {
    return ( hypre_GMRESSetup( solver, A, b, x ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_GMRESSolve
+ * NALU_HYPRE_GMRESSolve
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_GMRESSolve( HYPRE_Solver solver,
-                  HYPRE_Matrix A,
-                  HYPRE_Vector b,
-                  HYPRE_Vector x      )
+NALU_HYPRE_Int
+NALU_HYPRE_GMRESSolve( NALU_HYPRE_Solver solver,
+                  NALU_HYPRE_Matrix A,
+                  NALU_HYPRE_Vector b,
+                  NALU_HYPRE_Vector x      )
 {
    return ( hypre_GMRESSolve( solver, A, b, x ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_GMRESSetKDim, HYPRE_GMRESGetKDim
+ * NALU_HYPRE_GMRESSetKDim, NALU_HYPRE_GMRESGetKDim
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_GMRESSetKDim( HYPRE_Solver solver,
-                    HYPRE_Int             k_dim    )
+NALU_HYPRE_Int
+NALU_HYPRE_GMRESSetKDim( NALU_HYPRE_Solver solver,
+                    NALU_HYPRE_Int             k_dim    )
 {
    return ( hypre_GMRESSetKDim( (void *) solver, k_dim ) );
 }
 
-HYPRE_Int
-HYPRE_GMRESGetKDim( HYPRE_Solver solver,
-                    HYPRE_Int           * k_dim    )
+NALU_HYPRE_Int
+NALU_HYPRE_GMRESGetKDim( NALU_HYPRE_Solver solver,
+                    NALU_HYPRE_Int           * k_dim    )
 {
    return ( hypre_GMRESGetKDim( (void *) solver, k_dim ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_GMRESSetTol, HYPRE_GMRESGetTol
+ * NALU_HYPRE_GMRESSetTol, NALU_HYPRE_GMRESGetTol
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_GMRESSetTol( HYPRE_Solver solver,
-                   HYPRE_Real         tol    )
+NALU_HYPRE_Int
+NALU_HYPRE_GMRESSetTol( NALU_HYPRE_Solver solver,
+                   NALU_HYPRE_Real         tol    )
 {
    return ( hypre_GMRESSetTol( (void *) solver, tol ) );
 }
 
-HYPRE_Int
-HYPRE_GMRESGetTol( HYPRE_Solver solver,
-                   HYPRE_Real       * tol    )
+NALU_HYPRE_Int
+NALU_HYPRE_GMRESGetTol( NALU_HYPRE_Solver solver,
+                   NALU_HYPRE_Real       * tol    )
 {
    return ( hypre_GMRESGetTol( (void *) solver, tol ) );
 }
 /*--------------------------------------------------------------------------
- * HYPRE_GMRESSetAbsoluteTol, HYPRE_GMRESGetAbsoluteTol
+ * NALU_HYPRE_GMRESSetAbsoluteTol, NALU_HYPRE_GMRESGetAbsoluteTol
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_GMRESSetAbsoluteTol( HYPRE_Solver solver,
-                           HYPRE_Real         a_tol    )
+NALU_HYPRE_Int
+NALU_HYPRE_GMRESSetAbsoluteTol( NALU_HYPRE_Solver solver,
+                           NALU_HYPRE_Real         a_tol    )
 {
    return ( hypre_GMRESSetAbsoluteTol( (void *) solver, a_tol ) );
 }
 
-HYPRE_Int
-HYPRE_GMRESGetAbsoluteTol( HYPRE_Solver solver,
-                           HYPRE_Real       * a_tol    )
+NALU_HYPRE_Int
+NALU_HYPRE_GMRESGetAbsoluteTol( NALU_HYPRE_Solver solver,
+                           NALU_HYPRE_Real       * a_tol    )
 {
    return ( hypre_GMRESGetAbsoluteTol( (void *) solver, a_tol ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_GMRESSetConvergenceFactorTol, HYPRE_GMRESGetConvergenceFactorTol
+ * NALU_HYPRE_GMRESSetConvergenceFactorTol, NALU_HYPRE_GMRESGetConvergenceFactorTol
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_GMRESSetConvergenceFactorTol( HYPRE_Solver solver,
-                                    HYPRE_Real         cf_tol    )
+NALU_HYPRE_Int
+NALU_HYPRE_GMRESSetConvergenceFactorTol( NALU_HYPRE_Solver solver,
+                                    NALU_HYPRE_Real         cf_tol    )
 {
    return ( hypre_GMRESSetConvergenceFactorTol( (void *) solver, cf_tol ) );
 }
 
-HYPRE_Int
-HYPRE_GMRESGetConvergenceFactorTol( HYPRE_Solver solver,
-                                    HYPRE_Real       * cf_tol    )
+NALU_HYPRE_Int
+NALU_HYPRE_GMRESGetConvergenceFactorTol( NALU_HYPRE_Solver solver,
+                                    NALU_HYPRE_Real       * cf_tol    )
 {
    return ( hypre_GMRESGetConvergenceFactorTol( (void *) solver, cf_tol ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_GMRESSetMinIter, HYPRE_GMRESGetMinIter
+ * NALU_HYPRE_GMRESSetMinIter, NALU_HYPRE_GMRESGetMinIter
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_GMRESSetMinIter( HYPRE_Solver solver,
-                       HYPRE_Int          min_iter )
+NALU_HYPRE_Int
+NALU_HYPRE_GMRESSetMinIter( NALU_HYPRE_Solver solver,
+                       NALU_HYPRE_Int          min_iter )
 {
    return ( hypre_GMRESSetMinIter( (void *) solver, min_iter ) );
 }
 
-HYPRE_Int
-HYPRE_GMRESGetMinIter( HYPRE_Solver solver,
-                       HYPRE_Int        * min_iter )
+NALU_HYPRE_Int
+NALU_HYPRE_GMRESGetMinIter( NALU_HYPRE_Solver solver,
+                       NALU_HYPRE_Int        * min_iter )
 {
    return ( hypre_GMRESGetMinIter( (void *) solver, min_iter ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_GMRESSetMaxIter, HYPRE_GMRESGetMaxIter
+ * NALU_HYPRE_GMRESSetMaxIter, NALU_HYPRE_GMRESGetMaxIter
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_GMRESSetMaxIter( HYPRE_Solver solver,
-                       HYPRE_Int          max_iter )
+NALU_HYPRE_Int
+NALU_HYPRE_GMRESSetMaxIter( NALU_HYPRE_Solver solver,
+                       NALU_HYPRE_Int          max_iter )
 {
    return ( hypre_GMRESSetMaxIter( (void *) solver, max_iter ) );
 }
 
-HYPRE_Int
-HYPRE_GMRESGetMaxIter( HYPRE_Solver solver,
-                       HYPRE_Int        * max_iter )
+NALU_HYPRE_Int
+NALU_HYPRE_GMRESGetMaxIter( NALU_HYPRE_Solver solver,
+                       NALU_HYPRE_Int        * max_iter )
 {
    return ( hypre_GMRESGetMaxIter( (void *) solver, max_iter ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_GMRESSetStopCrit, HYPRE_GMRESGetStopCrit - OBSOLETE
+ * NALU_HYPRE_GMRESSetStopCrit, NALU_HYPRE_GMRESGetStopCrit - OBSOLETE
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_GMRESSetStopCrit( HYPRE_Solver solver,
-                        HYPRE_Int          stop_crit )
+NALU_HYPRE_Int
+NALU_HYPRE_GMRESSetStopCrit( NALU_HYPRE_Solver solver,
+                        NALU_HYPRE_Int          stop_crit )
 {
    return ( hypre_GMRESSetStopCrit( (void *) solver, stop_crit ) );
 }
 
-HYPRE_Int
-HYPRE_GMRESGetStopCrit( HYPRE_Solver solver,
-                        HYPRE_Int        * stop_crit )
+NALU_HYPRE_Int
+NALU_HYPRE_GMRESGetStopCrit( NALU_HYPRE_Solver solver,
+                        NALU_HYPRE_Int        * stop_crit )
 {
    return ( hypre_GMRESGetStopCrit( (void *) solver, stop_crit ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_GMRESSetRelChange, HYPRE_GMRESGetRelChange
+ * NALU_HYPRE_GMRESSetRelChange, NALU_HYPRE_GMRESGetRelChange
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_GMRESSetRelChange( HYPRE_Solver solver,
-                         HYPRE_Int                rel_change )
+NALU_HYPRE_Int
+NALU_HYPRE_GMRESSetRelChange( NALU_HYPRE_Solver solver,
+                         NALU_HYPRE_Int                rel_change )
 {
    return ( hypre_GMRESSetRelChange( (void *) solver, rel_change ) );
 }
 
-HYPRE_Int
-HYPRE_GMRESGetRelChange( HYPRE_Solver solver,
-                         HYPRE_Int              * rel_change )
+NALU_HYPRE_Int
+NALU_HYPRE_GMRESGetRelChange( NALU_HYPRE_Solver solver,
+                         NALU_HYPRE_Int              * rel_change )
 {
    return ( hypre_GMRESGetRelChange( (void *) solver, rel_change ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_GMRESSetSkipRealResidualCheck, HYPRE_GMRESGetSkipRealResidualCheck
+ * NALU_HYPRE_GMRESSetSkipRealResidualCheck, NALU_HYPRE_GMRESGetSkipRealResidualCheck
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_GMRESSetSkipRealResidualCheck( HYPRE_Solver solver,
-                                     HYPRE_Int skip_real_r_check )
+NALU_HYPRE_Int
+NALU_HYPRE_GMRESSetSkipRealResidualCheck( NALU_HYPRE_Solver solver,
+                                     NALU_HYPRE_Int skip_real_r_check )
 {
    return ( hypre_GMRESSetSkipRealResidualCheck( (void *) solver, skip_real_r_check ) );
 }
 
-HYPRE_Int
-HYPRE_GMRESGetSkipRealResidualCheck( HYPRE_Solver solver,
-                                     HYPRE_Int *skip_real_r_check )
+NALU_HYPRE_Int
+NALU_HYPRE_GMRESGetSkipRealResidualCheck( NALU_HYPRE_Solver solver,
+                                     NALU_HYPRE_Int *skip_real_r_check )
 {
    return ( hypre_GMRESGetSkipRealResidualCheck( (void *) solver, skip_real_r_check ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_GMRESSetPrecond
+ * NALU_HYPRE_GMRESSetPrecond
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_GMRESSetPrecond( HYPRE_Solver          solver,
-                       HYPRE_PtrToSolverFcn  precond,
-                       HYPRE_PtrToSolverFcn  precond_setup,
-                       HYPRE_Solver          precond_solver )
+NALU_HYPRE_Int
+NALU_HYPRE_GMRESSetPrecond( NALU_HYPRE_Solver          solver,
+                       NALU_HYPRE_PtrToSolverFcn  precond,
+                       NALU_HYPRE_PtrToSolverFcn  precond_setup,
+                       NALU_HYPRE_Solver          precond_solver )
 {
    return ( hypre_GMRESSetPrecond( (void *) solver,
-                                   (HYPRE_Int (*)(void*, void*, void*, void*))precond,
-                                   (HYPRE_Int (*)(void*, void*, void*, void*))precond_setup,
+                                   (NALU_HYPRE_Int (*)(void*, void*, void*, void*))precond,
+                                   (NALU_HYPRE_Int (*)(void*, void*, void*, void*))precond_setup,
                                    (void *) precond_solver ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_GMRESGetPrecond
+ * NALU_HYPRE_GMRESGetPrecond
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_GMRESGetPrecond( HYPRE_Solver  solver,
-                       HYPRE_Solver *precond_data_ptr )
+NALU_HYPRE_Int
+NALU_HYPRE_GMRESGetPrecond( NALU_HYPRE_Solver  solver,
+                       NALU_HYPRE_Solver *precond_data_ptr )
 {
    return ( hypre_GMRESGetPrecond( (void *)     solver,
-                                   (HYPRE_Solver *) precond_data_ptr ) );
+                                   (NALU_HYPRE_Solver *) precond_data_ptr ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_GMRESSetPrintLevel, HYPRE_GMRESGetPrintLevel
+ * NALU_HYPRE_GMRESSetPrintLevel, NALU_HYPRE_GMRESGetPrintLevel
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_GMRESSetPrintLevel( HYPRE_Solver solver,
-                          HYPRE_Int          level )
+NALU_HYPRE_Int
+NALU_HYPRE_GMRESSetPrintLevel( NALU_HYPRE_Solver solver,
+                          NALU_HYPRE_Int          level )
 {
    return ( hypre_GMRESSetPrintLevel( (void *) solver, level ) );
 }
 
-HYPRE_Int
-HYPRE_GMRESGetPrintLevel( HYPRE_Solver solver,
-                          HYPRE_Int        * level )
+NALU_HYPRE_Int
+NALU_HYPRE_GMRESGetPrintLevel( NALU_HYPRE_Solver solver,
+                          NALU_HYPRE_Int        * level )
 {
    return ( hypre_GMRESGetPrintLevel( (void *) solver, level ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_GMRESSetLogging, HYPRE_GMRESGetLogging
+ * NALU_HYPRE_GMRESSetLogging, NALU_HYPRE_GMRESGetLogging
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_GMRESSetLogging( HYPRE_Solver solver,
-                       HYPRE_Int          level )
+NALU_HYPRE_Int
+NALU_HYPRE_GMRESSetLogging( NALU_HYPRE_Solver solver,
+                       NALU_HYPRE_Int          level )
 {
    return ( hypre_GMRESSetLogging( (void *) solver, level ) );
 }
 
-HYPRE_Int
-HYPRE_GMRESGetLogging( HYPRE_Solver solver,
-                       HYPRE_Int        * level )
+NALU_HYPRE_Int
+NALU_HYPRE_GMRESGetLogging( NALU_HYPRE_Solver solver,
+                       NALU_HYPRE_Int        * level )
 {
    return ( hypre_GMRESGetLogging( (void *) solver, level ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_GMRESGetNumIterations
+ * NALU_HYPRE_GMRESGetNumIterations
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_GMRESGetNumIterations( HYPRE_Solver  solver,
-                             HYPRE_Int                *num_iterations )
+NALU_HYPRE_Int
+NALU_HYPRE_GMRESGetNumIterations( NALU_HYPRE_Solver  solver,
+                             NALU_HYPRE_Int                *num_iterations )
 {
    return ( hypre_GMRESGetNumIterations( (void *) solver, num_iterations ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_GMRESGetConverged
+ * NALU_HYPRE_GMRESGetConverged
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_GMRESGetConverged( HYPRE_Solver  solver,
-                         HYPRE_Int                *converged )
+NALU_HYPRE_Int
+NALU_HYPRE_GMRESGetConverged( NALU_HYPRE_Solver  solver,
+                         NALU_HYPRE_Int                *converged )
 {
    return ( hypre_GMRESGetConverged( (void *) solver, converged ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_GMRESGetFinalRelativeResidualNorm
+ * NALU_HYPRE_GMRESGetFinalRelativeResidualNorm
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_GMRESGetFinalRelativeResidualNorm( HYPRE_Solver  solver,
-                                         HYPRE_Real         *norm   )
+NALU_HYPRE_Int
+NALU_HYPRE_GMRESGetFinalRelativeResidualNorm( NALU_HYPRE_Solver  solver,
+                                         NALU_HYPRE_Real         *norm   )
 {
    return ( hypre_GMRESGetFinalRelativeResidualNorm( (void *) solver, norm ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_GMRESGetResidual
+ * NALU_HYPRE_GMRESGetResidual
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int HYPRE_GMRESGetResidual( HYPRE_Solver solver, void *residual )
+NALU_HYPRE_Int NALU_HYPRE_GMRESGetResidual( NALU_HYPRE_Solver solver, void *residual )
 {
    /* returns a pointer to the residual vector */
    return hypre_GMRESGetResidual( (void *) solver, (void **) residual );

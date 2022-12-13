@@ -9,12 +9,12 @@
 #include <stdio.h>
 #include "_hypre_utilities.h"
 
-#ifdef HYPRE_USING_OPENMP
+#ifdef NALU_HYPRE_USING_OPENMP
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_NumThreads( )
 {
-   HYPRE_Int num_threads;
+   NALU_HYPRE_Int num_threads;
 
    num_threads = omp_get_max_threads();
 
@@ -23,10 +23,10 @@ hypre_NumThreads( )
 
 /* This next function must be called from within a parallel region! */
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_NumActiveThreads( )
 {
-   HYPRE_Int num_threads;
+   NALU_HYPRE_Int num_threads;
 
    num_threads = omp_get_num_threads();
 
@@ -35,10 +35,10 @@ hypre_NumActiveThreads( )
 
 /* This next function must be called from within a parallel region! */
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_GetThreadNum( )
 {
-   HYPRE_Int my_thread_num;
+   NALU_HYPRE_Int my_thread_num;
 
    my_thread_num = omp_get_thread_num();
 
@@ -46,7 +46,7 @@ hypre_GetThreadNum( )
 }
 
 void
-hypre_SetNumThreads(HYPRE_Int nt)
+hypre_SetNumThreads(NALU_HYPRE_Int nt)
 {
    omp_set_num_threads(nt);
 }
@@ -56,12 +56,12 @@ hypre_SetNumThreads(HYPRE_Int nt)
 /* This next function must be called from within a parallel region! */
 
 void
-hypre_GetSimpleThreadPartition( HYPRE_Int *begin, HYPRE_Int *end, HYPRE_Int n )
+hypre_GetSimpleThreadPartition( NALU_HYPRE_Int *begin, NALU_HYPRE_Int *end, NALU_HYPRE_Int n )
 {
-   HYPRE_Int num_threads = hypre_NumActiveThreads();
-   HYPRE_Int my_thread_num = hypre_GetThreadNum();
+   NALU_HYPRE_Int num_threads = hypre_NumActiveThreads();
+   NALU_HYPRE_Int my_thread_num = hypre_GetThreadNum();
 
-   HYPRE_Int n_per_thread = (n + num_threads - 1) / num_threads;
+   NALU_HYPRE_Int n_per_thread = (n + num_threads - 1) / num_threads;
 
    *begin = hypre_min(n_per_thread * my_thread_num, n);
    *end = hypre_min(*begin + n_per_thread, n);

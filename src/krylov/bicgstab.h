@@ -47,43 +47,43 @@
  **/
 
 /* functions in pcg_struct.c which aren't used here:
-char *hypre_ParKrylovCAlloc( HYPRE_Int count , HYPRE_Int elt_size );
-HYPRE_Int hypre_ParKrylovFree( char *ptr );
-void *hypre_ParKrylovCreateVectorArray( HYPRE_Int n , void *vvector );
-HYPRE_Int hypre_ParKrylovMatvecT( void *matvec_data , HYPRE_Real alpha , void *A , void *x , HYPRE_Real beta , void *y );
+char *hypre_ParKrylovCAlloc( NALU_HYPRE_Int count , NALU_HYPRE_Int elt_size );
+NALU_HYPRE_Int hypre_ParKrylovFree( char *ptr );
+void *hypre_ParKrylovCreateVectorArray( NALU_HYPRE_Int n , void *vvector );
+NALU_HYPRE_Int hypre_ParKrylovMatvecT( void *matvec_data , NALU_HYPRE_Real alpha , void *A , void *x , NALU_HYPRE_Real beta , void *y );
 */
 /* functions in pcg_struct.c which are used here:
   void *hypre_ParKrylovCreateVector( void *vvector );
-  HYPRE_Int hypre_ParKrylovDestroyVector( void *vvector );
+  NALU_HYPRE_Int hypre_ParKrylovDestroyVector( void *vvector );
   void *hypre_ParKrylovMatvecCreate( void *A , void *x );
-  HYPRE_Int hypre_ParKrylovMatvec( void *matvec_data , HYPRE_Real alpha , void *A , void *x , HYPRE_Real beta , void *y );
-  HYPRE_Int hypre_ParKrylovMatvecDestroy( void *matvec_data );
-  HYPRE_Real hypre_ParKrylovInnerProd( void *x , void *y );
-  HYPRE_Int hypre_ParKrylovCopyVector( void *x , void *y );
-  HYPRE_Int hypre_ParKrylovClearVector( void *x );
-  HYPRE_Int hypre_ParKrylovScaleVector( HYPRE_Real alpha , void *x );
-  HYPRE_Int hypre_ParKrylovAxpy( HYPRE_Real alpha , void *x , void *y );
-  HYPRE_Int hypre_ParKrylovCommInfo( void *A , HYPRE_Int *my_id , HYPRE_Int *num_procs );
-  HYPRE_Int hypre_ParKrylovIdentitySetup( void *vdata , void *A , void *b , void *x );
-  HYPRE_Int hypre_ParKrylovIdentity( void *vdata , void *A , void *b , void *x );
+  NALU_HYPRE_Int hypre_ParKrylovMatvec( void *matvec_data , NALU_HYPRE_Real alpha , void *A , void *x , NALU_HYPRE_Real beta , void *y );
+  NALU_HYPRE_Int hypre_ParKrylovMatvecDestroy( void *matvec_data );
+  NALU_HYPRE_Real hypre_ParKrylovInnerProd( void *x , void *y );
+  NALU_HYPRE_Int hypre_ParKrylovCopyVector( void *x , void *y );
+  NALU_HYPRE_Int hypre_ParKrylovClearVector( void *x );
+  NALU_HYPRE_Int hypre_ParKrylovScaleVector( NALU_HYPRE_Real alpha , void *x );
+  NALU_HYPRE_Int hypre_ParKrylovAxpy( NALU_HYPRE_Real alpha , void *x , void *y );
+  NALU_HYPRE_Int hypre_ParKrylovCommInfo( void *A , NALU_HYPRE_Int *my_id , NALU_HYPRE_Int *num_procs );
+  NALU_HYPRE_Int hypre_ParKrylovIdentitySetup( void *vdata , void *A , void *b , void *x );
+  NALU_HYPRE_Int hypre_ParKrylovIdentity( void *vdata , void *A , void *b , void *x );
 */
 
 typedef struct
 {
    void *     (*CreateVector)  ( void *vvector );
-   HYPRE_Int  (*DestroyVector) ( void *vvector );
+   NALU_HYPRE_Int  (*DestroyVector) ( void *vvector );
    void *     (*MatvecCreate)  ( void *A, void *x );
-   HYPRE_Int  (*Matvec)        ( void *matvec_data, HYPRE_Complex alpha, void *A,
-                                 void *x, HYPRE_Complex beta, void *y );
-   HYPRE_Int  (*MatvecDestroy) ( void *matvec_data );
-   HYPRE_Real (*InnerProd)     ( void *x, void *y );
-   HYPRE_Int  (*CopyVector)    ( void *x, void *y );
-   HYPRE_Int  (*ClearVector)   ( void *x );
-   HYPRE_Int  (*ScaleVector)   ( HYPRE_Complex alpha, void *x );
-   HYPRE_Int  (*Axpy)          ( HYPRE_Complex alpha, void *x, void *y );
-   HYPRE_Int  (*CommInfo)      ( void *A, HYPRE_Int *my_id, HYPRE_Int *num_procs );
-   HYPRE_Int  (*precond_setup) (void *vdata, void *A, void *b, void *x);
-   HYPRE_Int  (*precond)       (void *vdata, void *A, void *b, void *x);
+   NALU_HYPRE_Int  (*Matvec)        ( void *matvec_data, NALU_HYPRE_Complex alpha, void *A,
+                                 void *x, NALU_HYPRE_Complex beta, void *y );
+   NALU_HYPRE_Int  (*MatvecDestroy) ( void *matvec_data );
+   NALU_HYPRE_Real (*InnerProd)     ( void *x, void *y );
+   NALU_HYPRE_Int  (*CopyVector)    ( void *x, void *y );
+   NALU_HYPRE_Int  (*ClearVector)   ( void *x );
+   NALU_HYPRE_Int  (*ScaleVector)   ( NALU_HYPRE_Complex alpha, void *x );
+   NALU_HYPRE_Int  (*Axpy)          ( NALU_HYPRE_Complex alpha, void *x, void *y );
+   NALU_HYPRE_Int  (*CommInfo)      ( void *A, NALU_HYPRE_Int *my_id, NALU_HYPRE_Int *num_procs );
+   NALU_HYPRE_Int  (*precond_setup) (void *vdata, void *A, void *b, void *x);
+   NALU_HYPRE_Int  (*precond)       (void *vdata, void *A, void *b, void *x);
 
 } hypre_BiCGSTABFunctions;
 
@@ -93,15 +93,15 @@ typedef struct
 
 typedef struct
 {
-   HYPRE_Int      min_iter;
-   HYPRE_Int      max_iter;
-   HYPRE_Int      stop_crit;
-   HYPRE_Int      converged;
-   HYPRE_Int      hybrid;
-   HYPRE_Real   tol;
-   HYPRE_Real   cf_tol;
-   HYPRE_Real   rel_residual_norm;
-   HYPRE_Real   a_tol;
+   NALU_HYPRE_Int      min_iter;
+   NALU_HYPRE_Int      max_iter;
+   NALU_HYPRE_Int      stop_crit;
+   NALU_HYPRE_Int      converged;
+   NALU_HYPRE_Int      hybrid;
+   NALU_HYPRE_Real   tol;
+   NALU_HYPRE_Real   cf_tol;
+   NALU_HYPRE_Real   rel_residual_norm;
+   NALU_HYPRE_Real   a_tol;
 
 
    void  *A;
@@ -118,12 +118,12 @@ typedef struct
    hypre_BiCGSTABFunctions * functions;
 
    /* log info (always logged) */
-   HYPRE_Int      num_iterations;
+   NALU_HYPRE_Int      num_iterations;
 
    /* additional log info (logged when `logging' > 0) */
-   HYPRE_Int      logging;
-   HYPRE_Int      print_level;
-   HYPRE_Real  *norms;
+   NALU_HYPRE_Int      logging;
+   NALU_HYPRE_Int      print_level;
+   NALU_HYPRE_Real  *norms;
    char    *log_file_name;
 
 } hypre_BiCGSTABData;
@@ -148,20 +148,20 @@ extern "C" {
 hypre_BiCGSTABFunctions *
 hypre_BiCGSTABFunctionsCreate(
    void *     (*CreateVector)  ( void *vvector ),
-   HYPRE_Int  (*DestroyVector) ( void *vvector ),
+   NALU_HYPRE_Int  (*DestroyVector) ( void *vvector ),
    void *     (*MatvecCreate)  ( void *A, void *x ),
-   HYPRE_Int  (*Matvec)        ( void *matvec_data, HYPRE_Complex alpha, void *A,
-                                 void *x, HYPRE_Complex beta, void *y ),
-   HYPRE_Int  (*MatvecDestroy) ( void *matvec_data ),
-   HYPRE_Real (*InnerProd)     ( void *x, void *y ),
-   HYPRE_Int  (*CopyVector)    ( void *x, void *y ),
-   HYPRE_Int  (*ClearVector)   ( void *x ),
-   HYPRE_Int  (*ScaleVector)   ( HYPRE_Complex alpha, void *x ),
-   HYPRE_Int  (*Axpy)          ( HYPRE_Complex alpha, void *x, void *y ),
-   HYPRE_Int  (*CommInfo)      ( void *A, HYPRE_Int *my_id,
-                                 HYPRE_Int *num_procs ),
-   HYPRE_Int  (*PrecondSetup)  (void *vdata, void *A, void *b, void *x ),
-   HYPRE_Int  (*Precond)       ( void *vdata, void *A, void *b, void *x )
+   NALU_HYPRE_Int  (*Matvec)        ( void *matvec_data, NALU_HYPRE_Complex alpha, void *A,
+                                 void *x, NALU_HYPRE_Complex beta, void *y ),
+   NALU_HYPRE_Int  (*MatvecDestroy) ( void *matvec_data ),
+   NALU_HYPRE_Real (*InnerProd)     ( void *x, void *y ),
+   NALU_HYPRE_Int  (*CopyVector)    ( void *x, void *y ),
+   NALU_HYPRE_Int  (*ClearVector)   ( void *x ),
+   NALU_HYPRE_Int  (*ScaleVector)   ( NALU_HYPRE_Complex alpha, void *x ),
+   NALU_HYPRE_Int  (*Axpy)          ( NALU_HYPRE_Complex alpha, void *x, void *y ),
+   NALU_HYPRE_Int  (*CommInfo)      ( void *A, NALU_HYPRE_Int *my_id,
+                                 NALU_HYPRE_Int *num_procs ),
+   NALU_HYPRE_Int  (*PrecondSetup)  (void *vdata, void *A, void *b, void *x ),
+   NALU_HYPRE_Int  (*Precond)       ( void *vdata, void *A, void *b, void *x )
 );
 
 /**

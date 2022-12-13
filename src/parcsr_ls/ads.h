@@ -21,24 +21,24 @@ typedef struct
    /* Coarse grid matrix on the range of C^T */
    hypre_ParCSRMatrix *A_C;
    /* AMS solver for A_C */
-   HYPRE_Solver B_C;
+   NALU_HYPRE_Solver B_C;
 
    /* Raviart-Thomas nodal interpolation matrix (vertex^3-to-face) */
    hypre_ParCSRMatrix *Pi;
    /* Coarse grid matrix on the range of Pi^T */
    hypre_ParCSRMatrix *A_Pi;
    /* AMG solver for A_Pi */
-   HYPRE_Solver B_Pi;
+   NALU_HYPRE_Solver B_Pi;
 
    /* Components of the face interpolation matrix (vertex-to-face each) */
    hypre_ParCSRMatrix *Pix, *Piy, *Piz;
    /* Coarse grid matrices on the ranges of Pi{x,y,z}^T */
    hypre_ParCSRMatrix *A_Pix, *A_Piy, *A_Piz;
    /* AMG solvers for A_Pi{x,y,z} */
-   HYPRE_Solver B_Pix, B_Piy, B_Piz;
+   NALU_HYPRE_Solver B_Pix, B_Piy, B_Piz;
 
    /* Does the solver own the RT/ND interpolations matrices? */
-   HYPRE_Int owns_Pi;
+   NALU_HYPRE_Int owns_Pi;
    /* The (high-order) edge interpolation matrix and its components */
    hypre_ParCSRMatrix *ND_Pi, *ND_Pix, *ND_Piy, *ND_Piz;
 
@@ -48,45 +48,45 @@ typedef struct
    hypre_ParVector *x, *y, *z;
 
    /* Solver options */
-   HYPRE_Int maxit;
-   HYPRE_Real tol;
-   HYPRE_Int cycle_type;
-   HYPRE_Int print_level;
+   NALU_HYPRE_Int maxit;
+   NALU_HYPRE_Real tol;
+   NALU_HYPRE_Int cycle_type;
+   NALU_HYPRE_Int print_level;
 
    /* Smoothing options for A */
-   HYPRE_Int A_relax_type;
-   HYPRE_Int A_relax_times;
+   NALU_HYPRE_Int A_relax_type;
+   NALU_HYPRE_Int A_relax_times;
    hypre_Vector *A_l1_norms;
-   HYPRE_Real A_relax_weight;
-   HYPRE_Real A_omega;
-   HYPRE_Real A_max_eig_est;
-   HYPRE_Real A_min_eig_est;
-   HYPRE_Int A_cheby_order;
-   HYPRE_Real  A_cheby_fraction;
+   NALU_HYPRE_Real A_relax_weight;
+   NALU_HYPRE_Real A_omega;
+   NALU_HYPRE_Real A_max_eig_est;
+   NALU_HYPRE_Real A_min_eig_est;
+   NALU_HYPRE_Int A_cheby_order;
+   NALU_HYPRE_Real  A_cheby_fraction;
 
    /* AMS options for B_C */
-   HYPRE_Int B_C_cycle_type;
-   HYPRE_Int B_C_coarsen_type;
-   HYPRE_Int B_C_agg_levels;
-   HYPRE_Int B_C_relax_type;
-   HYPRE_Real B_C_theta;
-   HYPRE_Int B_C_interp_type;
-   HYPRE_Int B_C_Pmax;
+   NALU_HYPRE_Int B_C_cycle_type;
+   NALU_HYPRE_Int B_C_coarsen_type;
+   NALU_HYPRE_Int B_C_agg_levels;
+   NALU_HYPRE_Int B_C_relax_type;
+   NALU_HYPRE_Real B_C_theta;
+   NALU_HYPRE_Int B_C_interp_type;
+   NALU_HYPRE_Int B_C_Pmax;
 
    /* AMG options for B_Pi */
-   HYPRE_Int B_Pi_coarsen_type;
-   HYPRE_Int B_Pi_agg_levels;
-   HYPRE_Int B_Pi_relax_type;
-   HYPRE_Real B_Pi_theta;
-   HYPRE_Int B_Pi_interp_type;
-   HYPRE_Int B_Pi_Pmax;
+   NALU_HYPRE_Int B_Pi_coarsen_type;
+   NALU_HYPRE_Int B_Pi_agg_levels;
+   NALU_HYPRE_Int B_Pi_relax_type;
+   NALU_HYPRE_Real B_Pi_theta;
+   NALU_HYPRE_Int B_Pi_interp_type;
+   NALU_HYPRE_Int B_Pi_Pmax;
 
    /* Temporary vectors */
    hypre_ParVector *r0, *g0, *r1, *g1, *r2, *g2, *zz;
 
    /* Output log info */
-   HYPRE_Int num_iterations;
-   HYPRE_Real rel_resid_norm;
+   NALU_HYPRE_Int num_iterations;
+   NALU_HYPRE_Real rel_resid_norm;
 
 } hypre_ADSData;
 

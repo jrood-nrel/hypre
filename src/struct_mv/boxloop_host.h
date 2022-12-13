@@ -15,23 +15,23 @@
  * BoxLoop macros:
  *--------------------------------------------------------------------------*/
 
-#ifndef HYPRE_BOXLOOP_HOST_HEADER
-#define HYPRE_BOXLOOP_HOST_HEADER
+#ifndef NALU_HYPRE_BOXLOOP_HOST_HEADER
+#define NALU_HYPRE_BOXLOOP_HOST_HEADER
 
-#if defined(HYPRE_USING_OPENMP)
-#define HYPRE_BOX_REDUCTION
-#define HYPRE_OMP_CLAUSE
+#if defined(NALU_HYPRE_USING_OPENMP)
+#define NALU_HYPRE_BOX_REDUCTION
+#define NALU_HYPRE_OMP_CLAUSE
 #if defined(WIN32) && defined(_MSC_VER)
-#define Pragma(x) __pragma(HYPRE_XSTR(x))
+#define Pragma(x) __pragma(NALU_HYPRE_XSTR(x))
 #else
-#define Pragma(x) _Pragma(HYPRE_XSTR(x))
+#define Pragma(x) _Pragma(NALU_HYPRE_XSTR(x))
 #endif
-#define OMP0 Pragma(omp parallel for HYPRE_OMP_CLAUSE HYPRE_BOX_REDUCTION HYPRE_SMP_SCHEDULE)
-#define OMP1 Pragma(omp parallel for private(HYPRE_BOX_PRIVATE) HYPRE_OMP_CLAUSE HYPRE_BOX_REDUCTION HYPRE_SMP_SCHEDULE)
-#else /* #if defined(HYPRE_USING_OPENMP) */
+#define OMP0 Pragma(omp parallel for NALU_HYPRE_OMP_CLAUSE NALU_HYPRE_BOX_REDUCTION NALU_HYPRE_SMP_SCHEDULE)
+#define OMP1 Pragma(omp parallel for private(NALU_HYPRE_BOX_PRIVATE) NALU_HYPRE_OMP_CLAUSE NALU_HYPRE_BOX_REDUCTION NALU_HYPRE_SMP_SCHEDULE)
+#else /* #if defined(NALU_HYPRE_USING_OPENMP) */
 #define OMP0
 #define OMP1
-#endif /* #if defined(HYPRE_USING_OPENMP) */
+#endif /* #if defined(NALU_HYPRE_USING_OPENMP) */
 
 #define zypre_BoxLoop0Begin(ndim, loop_size)                                  \
 {                                                                             \
@@ -57,7 +57,7 @@
 #define zypre_BoxLoop1Begin(ndim, loop_size,                                  \
                             dbox1, start1, stride1, i1)                       \
 {                                                                             \
-   HYPRE_Int i1;                                                              \
+   NALU_HYPRE_Int i1;                                                              \
    zypre_BoxLoopDeclare();                                                    \
    zypre_BoxLoopDeclareK(1);                                                  \
    zypre_BoxLoopInit(ndim, loop_size);                                        \
@@ -65,7 +65,7 @@
    OMP1                                                                       \
    for (hypre__block = 0; hypre__block < hypre__num_blocks; hypre__block++)   \
    {                                                                          \
-      HYPRE_Int i1;                                                           \
+      NALU_HYPRE_Int i1;                                                           \
       zypre_BoxLoopSet();                                                     \
       zypre_BoxLoopSetK(1, i1);                                               \
       for (hypre__J = 0; hypre__J < hypre__JN; hypre__J++)                    \
@@ -88,7 +88,7 @@
                             dbox1, start1, stride1, i1,                       \
                             dbox2, start2, stride2, i2)                       \
 {                                                                             \
-   HYPRE_Int i1, i2;                                                          \
+   NALU_HYPRE_Int i1, i2;                                                          \
    zypre_BoxLoopDeclare();                                                    \
    zypre_BoxLoopDeclareK(1);                                                  \
    zypre_BoxLoopDeclareK(2);                                                  \
@@ -98,7 +98,7 @@
    OMP1                                                                       \
    for (hypre__block = 0; hypre__block < hypre__num_blocks; hypre__block++)   \
    {                                                                          \
-      HYPRE_Int i1, i2;                                                       \
+      NALU_HYPRE_Int i1, i2;                                                       \
       zypre_BoxLoopSet();                                                     \
       zypre_BoxLoopSetK(1, i1);                                               \
       zypre_BoxLoopSetK(2, i2);                                               \
@@ -125,7 +125,7 @@
                             dbox2, start2, stride2, i2,                       \
                             dbox3, start3, stride3, i3)                       \
 {                                                                             \
-   HYPRE_Int i1, i2, i3;                                                      \
+   NALU_HYPRE_Int i1, i2, i3;                                                      \
    zypre_BoxLoopDeclare();                                                    \
    zypre_BoxLoopDeclareK(1);                                                  \
    zypre_BoxLoopDeclareK(2);                                                  \
@@ -137,7 +137,7 @@
    OMP1                                                                       \
    for (hypre__block = 0; hypre__block < hypre__num_blocks; hypre__block++)   \
    {                                                                          \
-      HYPRE_Int i1, i2, i3;                                                   \
+      NALU_HYPRE_Int i1, i2, i3;                                                   \
       zypre_BoxLoopSet();                                                     \
       zypre_BoxLoopSetK(1, i1);                                               \
       zypre_BoxLoopSetK(2, i2);                                               \
@@ -167,7 +167,7 @@
                             dbox3, start3, stride3, i3,                       \
                             dbox4, start4, stride4, i4)                       \
 {                                                                             \
-   HYPRE_Int i1, i2, i3, i4;                                                  \
+   NALU_HYPRE_Int i1, i2, i3, i4;                                                  \
    zypre_BoxLoopDeclare();                                                    \
    zypre_BoxLoopDeclareK(1);                                                  \
    zypre_BoxLoopDeclareK(2);                                                  \
@@ -181,7 +181,7 @@
    OMP1                                                                       \
    for (hypre__block = 0; hypre__block < hypre__num_blocks; hypre__block++)   \
    {                                                                          \
-      HYPRE_Int i1, i2, i3, i4;                                               \
+      NALU_HYPRE_Int i1, i2, i3, i4;                                               \
       zypre_BoxLoopSet();                                                     \
       zypre_BoxLoopSetK(1, i1);                                               \
       zypre_BoxLoopSetK(2, i2);                                               \
@@ -218,7 +218,7 @@
    OMP1                                                                       \
    for (hypre__block = 0; hypre__block < hypre__num_blocks; hypre__block++)   \
    {                                                                          \
-      HYPRE_Int i1;                                                           \
+      NALU_HYPRE_Int i1;                                                           \
       zypre_BoxLoopSet();                                                     \
       zypre_BoxLoopSetK(1, i1);                                               \
       for (hypre__J = 0; hypre__J < hypre__JN; hypre__J++)                    \
@@ -239,7 +239,7 @@
    OMP1                                                                       \
    for (hypre__block = 0; hypre__block < hypre__num_blocks; hypre__block++)   \
    {                                                                          \
-      HYPRE_Int i1, i2;                                                       \
+      NALU_HYPRE_Int i1, i2;                                                       \
       zypre_BoxLoopSet();                                                     \
       zypre_BoxLoopSetK(1, i1);                                               \
       zypre_BoxLoopSetK(2, i2);                                               \
@@ -251,7 +251,7 @@
 
 #define zypre_LoopBegin(size, idx)                                            \
 {                                                                             \
-   HYPRE_Int idx;                                                             \
+   NALU_HYPRE_Int idx;                                                             \
    OMP0                                                                       \
    for (idx = 0; idx < size; idx ++)                                          \
    {
@@ -289,7 +289,7 @@
 #define hypre_SerialBoxLoop1Begin(ndim, loop_size,                            \
                                   dbox1, start1, stride1, i1)                 \
 {                                                                             \
-   HYPRE_Int i1;                                                              \
+   NALU_HYPRE_Int i1;                                                              \
    zypre_BoxLoopDeclare();                                                    \
    zypre_BoxLoopDeclareK(1);                                                  \
    zypre_BoxLoopInit(ndim, loop_size);                                        \
@@ -310,7 +310,7 @@
                                   dbox1, start1, stride1, i1,                 \
                                   dbox2, start2, stride2, i2)                 \
 {                                                                             \
-   HYPRE_Int i1,i2;                                                           \
+   NALU_HYPRE_Int i1,i2;                                                           \
    zypre_BoxLoopDeclare();                                                    \
    zypre_BoxLoopDeclareK(1);                                                  \
    zypre_BoxLoopDeclareK(2);                                                  \
@@ -368,7 +368,7 @@
 #define hypre_BoxLoop2ReductionEndHost     zypre_BoxLoop2ReductionEnd
 
 //TODO TEMP FIX
-#if !defined(HYPRE_USING_RAJA) && !defined(HYPRE_USING_KOKKOS) && !defined(HYPRE_USING_CUDA) && !defined(HYPRE_USING_HIP) && !defined(HYPRE_USING_DEVICE_OPENMP) && !defined(HYPRE_USING_SYCL)
+#if !defined(NALU_HYPRE_USING_RAJA) && !defined(NALU_HYPRE_USING_KOKKOS) && !defined(NALU_HYPRE_USING_CUDA) && !defined(NALU_HYPRE_USING_HIP) && !defined(NALU_HYPRE_USING_DEVICE_OPENMP) && !defined(NALU_HYPRE_USING_SYCL)
 #define hypre_BoxLoopGetIndex          hypre_BoxLoopGetIndexHost
 #define hypre_BoxLoopBlock()           0
 #define hypre_BoxLoop0Begin            hypre_BoxLoop0BeginHost
@@ -391,5 +391,5 @@
 #define hypre_BoxLoop2ReductionEnd     hypre_BoxLoop2ReductionEndHost
 #endif
 
-#endif /* #ifndef HYPRE_BOXLOOP_HOST_HEADER */
+#endif /* #ifndef NALU_HYPRE_BOXLOOP_HOST_HEADER */
 

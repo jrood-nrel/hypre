@@ -5,17 +5,17 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-/* HYPRE_DistributedMatrixPilutSolver.c */
-HYPRE_Int HYPRE_NewDistributedMatrixPilutSolver (MPI_Comm comm , HYPRE_DistributedMatrix matrix, HYPRE_DistributedMatrixPilutSolver *solver );
-HYPRE_Int HYPRE_FreeDistributedMatrixPilutSolver (HYPRE_DistributedMatrixPilutSolver in_ptr );
-HYPRE_Int HYPRE_DistributedMatrixPilutSolverInitialize (HYPRE_DistributedMatrixPilutSolver solver );
-HYPRE_Int HYPRE_DistributedMatrixPilutSolverSetMatrix (HYPRE_DistributedMatrixPilutSolver in_ptr , HYPRE_DistributedMatrix matrix );
-HYPRE_DistributedMatrix HYPRE_DistributedMatrixPilutSolverGetMatrix (HYPRE_DistributedMatrixPilutSolver in_ptr );
-HYPRE_Int HYPRE_DistributedMatrixPilutSolverSetNumLocalRow (HYPRE_DistributedMatrixPilutSolver in_ptr , HYPRE_Int FirstLocalRow );
-HYPRE_Int HYPRE_DistributedMatrixPilutSolverSetFactorRowSize (HYPRE_DistributedMatrixPilutSolver in_ptr , HYPRE_Int size );
-HYPRE_Int HYPRE_DistributedMatrixPilutSolverSetDropTolerance (HYPRE_DistributedMatrixPilutSolver in_ptr , HYPRE_Real tolerance );
-HYPRE_Int HYPRE_DistributedMatrixPilutSolverSetMaxIts (HYPRE_DistributedMatrixPilutSolver in_ptr , HYPRE_Int its );
-HYPRE_Int HYPRE_DistributedMatrixPilutSolverSetup (HYPRE_DistributedMatrixPilutSolver in_ptr );
-HYPRE_Int HYPRE_DistributedMatrixPilutSolverSolve (HYPRE_DistributedMatrixPilutSolver in_ptr , HYPRE_Real *x , HYPRE_Real *b );
-HYPRE_Int HYPRE_DistributedMatrixPilutSolverSetLogging( HYPRE_DistributedMatrixPilutSolver in_ptr, HYPRE_Int logging );
+/* NALU_HYPRE_DistributedMatrixPilutSolver.c */
+NALU_HYPRE_Int NALU_HYPRE_NewDistributedMatrixPilutSolver (MPI_Comm comm , NALU_HYPRE_DistributedMatrix matrix, NALU_HYPRE_DistributedMatrixPilutSolver *solver );
+NALU_HYPRE_Int NALU_HYPRE_FreeDistributedMatrixPilutSolver (NALU_HYPRE_DistributedMatrixPilutSolver in_ptr );
+NALU_HYPRE_Int NALU_HYPRE_DistributedMatrixPilutSolverInitialize (NALU_HYPRE_DistributedMatrixPilutSolver solver );
+NALU_HYPRE_Int NALU_HYPRE_DistributedMatrixPilutSolverSetMatrix (NALU_HYPRE_DistributedMatrixPilutSolver in_ptr , NALU_HYPRE_DistributedMatrix matrix );
+NALU_HYPRE_DistributedMatrix NALU_HYPRE_DistributedMatrixPilutSolverGetMatrix (NALU_HYPRE_DistributedMatrixPilutSolver in_ptr );
+NALU_HYPRE_Int NALU_HYPRE_DistributedMatrixPilutSolverSetNumLocalRow (NALU_HYPRE_DistributedMatrixPilutSolver in_ptr , NALU_HYPRE_Int FirstLocalRow );
+NALU_HYPRE_Int NALU_HYPRE_DistributedMatrixPilutSolverSetFactorRowSize (NALU_HYPRE_DistributedMatrixPilutSolver in_ptr , NALU_HYPRE_Int size );
+NALU_HYPRE_Int NALU_HYPRE_DistributedMatrixPilutSolverSetDropTolerance (NALU_HYPRE_DistributedMatrixPilutSolver in_ptr , NALU_HYPRE_Real tolerance );
+NALU_HYPRE_Int NALU_HYPRE_DistributedMatrixPilutSolverSetMaxIts (NALU_HYPRE_DistributedMatrixPilutSolver in_ptr , NALU_HYPRE_Int its );
+NALU_HYPRE_Int NALU_HYPRE_DistributedMatrixPilutSolverSetup (NALU_HYPRE_DistributedMatrixPilutSolver in_ptr );
+NALU_HYPRE_Int NALU_HYPRE_DistributedMatrixPilutSolverSolve (NALU_HYPRE_DistributedMatrixPilutSolver in_ptr , NALU_HYPRE_Real *x , NALU_HYPRE_Real *b );
+NALU_HYPRE_Int NALU_HYPRE_DistributedMatrixPilutSolverSetLogging( NALU_HYPRE_DistributedMatrixPilutSolver in_ptr, NALU_HYPRE_Int logging );
 

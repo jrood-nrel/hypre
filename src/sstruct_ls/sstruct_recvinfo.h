@@ -14,10 +14,10 @@
 
 typedef struct
 {
-   HYPRE_Int             size;
+   NALU_HYPRE_Int             size;
 
    hypre_BoxArrayArray  *recv_boxes;
-   HYPRE_Int           **recv_procs;
+   NALU_HYPRE_Int           **recv_procs;
 
 } hypre_SStructRecvInfoData;
 

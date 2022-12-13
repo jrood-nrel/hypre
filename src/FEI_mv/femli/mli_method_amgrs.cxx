@@ -15,7 +15,7 @@
 #endif
 #endif
 
-/* #define MLI_USE_HYPRE_MATMATMULT */
+/* #define MLI_USE_NALU_HYPRE_MATMATMULT */
 
 #include <string.h>
 #include "HYPRE.h"
@@ -245,10 +245,10 @@ int MLI_Method_AMGRS::setup( MLI *mli )
    MLI_Solver      *smootherPtr, *csolverPtr;
    MPI_Comm        comm;
    MLI_Function    *funcPtr;
-   HYPRE_IJMatrix  IJRmat;
+   NALU_HYPRE_IJMatrix  IJRmat;
    hypre_ParCSRMatrix *hypreA, *hypreS, *hypreAT, *hypreST, *hypreP, *hypreR;
    hypre_ParCSRMatrix *hypreRT, *hypreS2=NULL;
-#ifdef MLI_USE_HYPRE_MATMATMULT
+#ifdef MLI_USE_NALU_HYPRE_MATMATMULT
    hypre_ParCSRMatrix *hypreAP, *hypreCA;
 #endif
 
@@ -386,7 +386,7 @@ int MLI_Method_AMGRS::setup( MLI *mli )
 
       /* ------construct processor maps for the coarse grid------------- */
 
-      coarsePartition = (int *) hypre_CTAlloc(int, nprocs+1, HYPRE_MEMORY_HOST);
+      coarsePartition = (int *) hypre_CTAlloc(int, nprocs+1, NALU_HYPRE_MEMORY_HOST);
       coarsePartition[0] = 0;
       MPI_Allgather(&coarseNRows, 1, MPI_INT, &(coarsePartition[1]),
 		    1, MPI_INT, comm);
@@ -424,8 +424,8 @@ int MLI_Method_AMGRS::setup( MLI *mli )
             delete mli_ATmat;
             hypre_ParCSRMatrixDestroy(hypreST);
          }
-         hypre_TFree( coarsePartition , HYPRE_MEMORY_HOST);
-         if ( CFMarkers != NULL ) hypre_TFree( CFMarkers , HYPRE_MEMORY_HOST);
+         hypre_TFree( coarsePartition , NALU_HYPRE_MEMORY_HOST);
+         if ( CFMarkers != NULL ) hypre_TFree( CFMarkers , NALU_HYPRE_MEMORY_HOST);
          if ( hypreS  != NULL ) hypre_ParCSRMatrixDestroy(hypreS);
          if ( hypreS2 != NULL ) hypre_ParCSRMatrixDestroy(hypreS2);
          if ( coarsenScheme_ == MLI_METHOD_AMGRS_CR )
@@ -472,7 +472,7 @@ int MLI_Method_AMGRS::setup( MLI *mli )
                      truncFactor_, mxelmtsP_, mapStoA, &hypreP);
          funcPtr = new MLI_Function();
          MLI_Utils_HypreParCSRMatrixGetDestroyFunc(funcPtr);
-         sprintf(paramString, "HYPRE_ParCSR" );
+         sprintf(paramString, "NALU_HYPRE_ParCSR" );
          mli_Pmat = new MLI_Matrix( (void *) hypreP, paramString, funcPtr );
          mli->setProlongation(level+1, mli_Pmat);
          delete funcPtr;
@@ -495,14 +495,14 @@ int MLI_Method_AMGRS::setup( MLI *mli )
          startCol   = reduceArray2[mypid];
          localNCols = reduceArray2[mypid+1] - startCol;
          globalCoarseNRows = reduceArray2[nprocs];
-         ierr = HYPRE_IJMatrixCreate(comm, startCol, startCol+localNCols-1,
+         ierr = NALU_HYPRE_IJMatrixCreate(comm, startCol, startCol+localNCols-1,
                         startRow,startRow+localNRows-1,&IJRmat);
-         ierr = HYPRE_IJMatrixSetObjectType(IJRmat, HYPRE_PARCSR);
+         ierr = NALU_HYPRE_IJMatrixSetObjectType(IJRmat, NALU_HYPRE_PARCSR);
          hypre_assert(!ierr);
          rowLengs = new int[localNCols];
          for ( k = 0; k < localNCols; k++ ) rowLengs[k] = 1;
-         ierr = HYPRE_IJMatrixSetRowSizes(IJRmat, rowLengs);
-         ierr = HYPRE_IJMatrixInitialize(IJRmat);
+         ierr = NALU_HYPRE_IJMatrixSetRowSizes(IJRmat, rowLengs);
+         ierr = NALU_HYPRE_IJMatrixInitialize(IJRmat);
          hypre_assert(!ierr);
          delete [] rowLengs;
          delete [] reduceArray1;
@@ -513,17 +513,17 @@ int MLI_Method_AMGRS::setup( MLI *mli )
             while ( CFMarkers[k] != 1 ) k++;
             rowNum = startCol + irow;
             colInd = k + startRow;
-            HYPRE_IJMatrixSetValues(IJRmat, 1, &one, (const int *) &rowNum,
+            NALU_HYPRE_IJMatrixSetValues(IJRmat, 1, &one, (const int *) &rowNum,
                     (const int *) &colInd, (const double *) &colVal);
             k++;
          }
-         ierr = HYPRE_IJMatrixAssemble(IJRmat);
+         ierr = NALU_HYPRE_IJMatrixAssemble(IJRmat);
          hypre_assert( !ierr );
-         HYPRE_IJMatrixGetObject(IJRmat, (void **) &hypreR);
+         NALU_HYPRE_IJMatrixGetObject(IJRmat, (void **) &hypreR);
          hypre_MatvecCommPkgCreate((hypre_ParCSRMatrix *) hypreR);
          funcPtr = new MLI_Function();
          MLI_Utils_HypreParCSRMatrixGetDestroyFunc(funcPtr);
-         sprintf(paramString, "HYPRE_ParCSR" );
+         sprintf(paramString, "NALU_HYPRE_ParCSR" );
          mli_Rmat = new MLI_Matrix( (void *) hypreR, paramString, funcPtr );
          mli->setRestriction(level, mli_Rmat);
          delete funcPtr;
@@ -538,7 +538,7 @@ int MLI_Method_AMGRS::setup( MLI *mli )
          hypre_ParCSRMatrixTranspose( hypreRT, &hypreR, one );
          funcPtr = new MLI_Function();
          MLI_Utils_HypreParCSRMatrixGetDestroyFunc(funcPtr);
-         sprintf(paramString, "HYPRE_ParCSR" );
+         sprintf(paramString, "NALU_HYPRE_ParCSR" );
          mli_Rmat = new MLI_Matrix( (void *) hypreR, paramString, funcPtr );
          mli->setRestriction(level, mli_Rmat);
          delete funcPtr;
@@ -548,12 +548,12 @@ int MLI_Method_AMGRS::setup( MLI *mli )
       }
       else
       {
-         sprintf(paramString, "HYPRE_ParCSRT");
+         sprintf(paramString, "NALU_HYPRE_ParCSRT");
          mli_Rmat = new MLI_Matrix(mli_Pmat->getMatrix(), paramString, NULL);
          mli->setRestriction(level, mli_Rmat);
       }
-      if ( CFMarkers != NULL ) hypre_TFree( CFMarkers , HYPRE_MEMORY_HOST);
-      //if ( coarsePartition != NULL ) hypre_TFree( coarsePartition , HYPRE_MEMORY_HOST);
+      if ( CFMarkers != NULL ) hypre_TFree( CFMarkers , NALU_HYPRE_MEMORY_HOST);
+      //if ( coarsePartition != NULL ) hypre_TFree( coarsePartition , NALU_HYPRE_MEMORY_HOST);
 
       startTime = MLI_Utils_WTime();
 
@@ -568,7 +568,7 @@ int MLI_Method_AMGRS::setup( MLI *mli )
          //hypreCA = hypre_ParMatmul(hypreR, hypreAP);
          //funcPtr = new MLI_Function();
          //MLI_Utils_HypreParCSRMatrixGetDestroyFunc(funcPtr);
-         //sprintf(paramString, "HYPRE_ParCSR" );
+         //sprintf(paramString, "NALU_HYPRE_ParCSR" );
          //mli_cAmat = new MLI_Matrix((void *) hypreCA, paramString, funcPtr);
          //delete funcPtr;
          //hypre_ParCSRMatrixDestroy( hypreR );
@@ -577,7 +577,7 @@ int MLI_Method_AMGRS::setup( MLI *mli )
       }
       else
       {
-#ifdef MLI_USE_HYPRE_MATMATMULT
+#ifdef MLI_USE_NALU_HYPRE_MATMATMULT
          hypreP  = (hypre_ParCSRMatrix *) mli_Pmat->getMatrix();
          hypreR  = (hypre_ParCSRMatrix *) mli_Rmat->getMatrix();
          hypreAP = hypre_ParMatmul( hypreA, hypreP );
@@ -585,7 +585,7 @@ int MLI_Method_AMGRS::setup( MLI *mli )
          hypre_ParCSRMatrixDestroy( hypreAP );
          funcPtr = new MLI_Function();
          MLI_Utils_HypreParCSRMatrixGetDestroyFunc(funcPtr);
-         sprintf(paramString, "HYPRE_ParCSR" );
+         sprintf(paramString, "NALU_HYPRE_ParCSR" );
          mli_cAmat = new MLI_Matrix((void *) hypreCA, paramString, funcPtr);
          delete funcPtr;
 #else
@@ -956,11 +956,11 @@ MLI_Matrix *MLI_Method_AMGRS::performCR(MLI_Matrix *mli_Amat, int *indepSet,
    double *XaccData, *XData, *ADiagD;
    double aratio, ratio1, *ADiagA, targetMu=MU;
    char   paramString[200], *targv[2];
-   HYPRE_IJMatrix     IJPFF, IJPFC;
+   NALU_HYPRE_IJMatrix     IJPFF, IJPFC;
    hypre_ParCSRMatrix *hypreA, *hypreAff, *hyprePFC;
    hypre_ParCSRMatrix *hypreAfc, *hyprePFF, *hyprePFFT, *hypreAPFC;
    hypre_CSRMatrix    *ADiag, *SDiag;
-   HYPRE_IJVector     IJB, IJX, IJXacc;
+   NALU_HYPRE_IJVector     IJB, IJX, IJXacc;
    hypre_ParVector    *hypreB, *hypreX, *hypreXacc;
    MLI_Matrix *mli_PFFMat, *mli_AffMat, *mli_AfcMat;
 #ifdef HAVE_TRANS
@@ -1127,22 +1127,22 @@ MLI_Matrix *MLI_Method_AMGRS::performCR(MLI_Matrix *mli_Amat, int *indepSet,
       /* get Aff and Afc matrices (create permute matrices)  */
       /* --------------------------------------------------- */
 
-      ierr = HYPRE_IJMatrixCreate(comm,startRow,startRow+localNRows-1,
+      ierr = NALU_HYPRE_IJMatrixCreate(comm,startRow,startRow+localNRows-1,
                            FStartRow,FStartRow+FNRows-1,&IJPFF);
-      ierr = HYPRE_IJMatrixSetObjectType(IJPFF, HYPRE_PARCSR);
+      ierr = NALU_HYPRE_IJMatrixSetObjectType(IJPFF, NALU_HYPRE_PARCSR);
       hypre_assert(!ierr);
       rowLengs = new int[localNRows];
       for (irow = 0; irow < localNRows; irow++) rowLengs[irow] = 1;
-      ierr = HYPRE_IJMatrixSetRowSizes(IJPFF, rowLengs);
-      ierr = HYPRE_IJMatrixInitialize(IJPFF);
+      ierr = NALU_HYPRE_IJMatrixSetRowSizes(IJPFF, rowLengs);
+      ierr = NALU_HYPRE_IJMatrixInitialize(IJPFF);
       hypre_assert(!ierr);
 
-      ierr = HYPRE_IJMatrixCreate(comm,startRow,startRow+localNRows-1,
+      ierr = NALU_HYPRE_IJMatrixCreate(comm,startRow,startRow+localNRows-1,
                    CStartRow,CStartRow+CNRows-1, &IJPFC);
-      ierr = HYPRE_IJMatrixSetObjectType(IJPFC, HYPRE_PARCSR);
+      ierr = NALU_HYPRE_IJMatrixSetObjectType(IJPFC, NALU_HYPRE_PARCSR);
       hypre_assert(!ierr);
-      ierr = HYPRE_IJMatrixSetRowSizes(IJPFC, rowLengs);
-      ierr = HYPRE_IJMatrixInitialize(IJPFC);
+      ierr = NALU_HYPRE_IJMatrixSetRowSizes(IJPFC, rowLengs);
+      ierr = NALU_HYPRE_IJMatrixInitialize(IJPFC);
       hypre_assert(!ierr);
       delete [] rowLengs;
 
@@ -1158,28 +1158,28 @@ MLI_Matrix *MLI_Method_AMGRS::performCR(MLI_Matrix *mli_Amat, int *indepSet,
          if (indepSet[irow] == 0)
          {
             colIndex = FStartRow + rowCount;
-            HYPRE_IJMatrixSetValues(IJPFF,1,&one,(const int *) &rowIndex,
+            NALU_HYPRE_IJMatrixSetValues(IJPFF,1,&one,(const int *) &rowIndex,
                     (const int *) &colIndex, (const double *) &colValue);
             rowCount++;
          }
          else
          {
             colIndex = CStartRow + rowCount2;
-            HYPRE_IJMatrixSetValues(IJPFC,1,&one,(const int *) &rowIndex,
+            NALU_HYPRE_IJMatrixSetValues(IJPFC,1,&one,(const int *) &rowIndex,
                     (const int *) &colIndex, (const double *) &colValue);
             rowCount2++;
          }
       }
-      ierr = HYPRE_IJMatrixAssemble(IJPFF);
+      ierr = NALU_HYPRE_IJMatrixAssemble(IJPFF);
       hypre_assert( !ierr );
-      HYPRE_IJMatrixGetObject(IJPFF, (void **) &hyprePFF);
+      NALU_HYPRE_IJMatrixGetObject(IJPFF, (void **) &hyprePFF);
       //hypre_MatvecCommPkgCreate((hypre_ParCSRMatrix *) hyprePFF);
-      sprintf(paramString, "HYPRE_ParCSR" );
+      sprintf(paramString, "NALU_HYPRE_ParCSR" );
       mli_PFFMat = new MLI_Matrix((void *)hyprePFF,paramString,NULL);
 
-      ierr = HYPRE_IJMatrixAssemble(IJPFC);
+      ierr = NALU_HYPRE_IJMatrixAssemble(IJPFC);
       hypre_assert( !ierr );
-      HYPRE_IJMatrixGetObject(IJPFC, (void **) &hyprePFC);
+      NALU_HYPRE_IJMatrixGetObject(IJPFC, (void **) &hyprePFC);
       //hypre_MatvecCommPkgCreate((hypre_ParCSRMatrix *) hyprePFC);
       hypreAPFC = hypre_ParMatmul(hypreA, hyprePFC);
       hypre_ParCSRMatrixTranspose(hyprePFF, &hyprePFFT, 1);
@@ -1187,7 +1187,7 @@ MLI_Matrix *MLI_Method_AMGRS::performCR(MLI_Matrix *mli_Amat, int *indepSet,
 
       funcPtr = new MLI_Function();
       MLI_Utils_HypreParCSRMatrixGetDestroyFunc(funcPtr);
-      sprintf(paramString, "HYPRE_ParCSR" );
+      sprintf(paramString, "NALU_HYPRE_ParCSR" );
       mli_AfcMat = new MLI_Matrix((void *)hypreAfc,paramString,funcPtr);
       delete funcPtr;
 
@@ -1197,28 +1197,28 @@ MLI_Matrix *MLI_Method_AMGRS::performCR(MLI_Matrix *mli_Amat, int *indepSet,
       //if (aratio > targetMu || iT == numTrials-1) break;
       //if (((double)FNRows/(double)localNRows) > 0.75) break;
 
-      HYPRE_IJVectorCreate(comm,FStartRow, FStartRow+FNRows-1,&IJX);
-      HYPRE_IJVectorSetObjectType(IJX, HYPRE_PARCSR);
-      HYPRE_IJVectorInitialize(IJX);
-      HYPRE_IJVectorAssemble(IJX);
-      HYPRE_IJVectorGetObject(IJX, (void **) &hypreX);
-      sprintf(paramString, "HYPRE_ParVector" );
+      NALU_HYPRE_IJVectorCreate(comm,FStartRow, FStartRow+FNRows-1,&IJX);
+      NALU_HYPRE_IJVectorSetObjectType(IJX, NALU_HYPRE_PARCSR);
+      NALU_HYPRE_IJVectorInitialize(IJX);
+      NALU_HYPRE_IJVectorAssemble(IJX);
+      NALU_HYPRE_IJVectorGetObject(IJX, (void **) &hypreX);
+      sprintf(paramString, "NALU_HYPRE_ParVector" );
       mli_Xvec = new MLI_Vector((void *)hypreX,paramString,NULL);
 
-      HYPRE_IJVectorCreate(comm,FStartRow, FStartRow+FNRows-1,&IJXacc);
-      HYPRE_IJVectorSetObjectType(IJXacc, HYPRE_PARCSR);
-      HYPRE_IJVectorInitialize(IJXacc);
-      HYPRE_IJVectorAssemble(IJXacc);
-      HYPRE_IJVectorGetObject(IJXacc, (void **) &hypreXacc);
+      NALU_HYPRE_IJVectorCreate(comm,FStartRow, FStartRow+FNRows-1,&IJXacc);
+      NALU_HYPRE_IJVectorSetObjectType(IJXacc, NALU_HYPRE_PARCSR);
+      NALU_HYPRE_IJVectorInitialize(IJXacc);
+      NALU_HYPRE_IJVectorAssemble(IJXacc);
+      NALU_HYPRE_IJVectorGetObject(IJXacc, (void **) &hypreXacc);
       hypre_ParVectorSetConstantValues(hypreXacc, 0.0);
 
-      HYPRE_IJVectorCreate(comm,FStartRow, FStartRow+FNRows-1,&IJB);
-      HYPRE_IJVectorSetObjectType(IJB, HYPRE_PARCSR);
-      HYPRE_IJVectorInitialize(IJB);
-      HYPRE_IJVectorAssemble(IJB);
-      HYPRE_IJVectorGetObject(IJB, (void **) &hypreB);
+      NALU_HYPRE_IJVectorCreate(comm,FStartRow, FStartRow+FNRows-1,&IJB);
+      NALU_HYPRE_IJVectorSetObjectType(IJB, NALU_HYPRE_PARCSR);
+      NALU_HYPRE_IJVectorInitialize(IJB);
+      NALU_HYPRE_IJVectorAssemble(IJB);
+      NALU_HYPRE_IJVectorGetObject(IJB, (void **) &hypreB);
       hypre_ParVectorSetConstantValues(hypreB, 0.0);
-      sprintf(paramString, "HYPRE_ParVector" );
+      sprintf(paramString, "NALU_HYPRE_ParVector" );
       mli_Bvec = new MLI_Vector((void *)hypreB,paramString,NULL);
 
       /* --------------------------------------------------- */
@@ -1258,7 +1258,7 @@ MLI_Matrix *MLI_Method_AMGRS::performCR(MLI_Matrix *mli_Amat, int *indepSet,
       for (iV = 0; iV < numVectors; iV++)
       {
          ranSeed = 9001 * 7901 * iV *iV * iV * iV + iV * iV * iV + 101;
-         HYPRE_ParVectorSetRandomValues((HYPRE_ParVector) hypreX,ranSeed);
+         NALU_HYPRE_ParVectorSetRandomValues((NALU_HYPRE_ParVector) hypreX,ranSeed);
          for (irow = 0; irow < FNRows; irow++)
             XData[irow] = 0.5 * XData[irow] + 0.5;
          hypre_ParVectorAxpy(dOne, hypreX, hypreXacc);
@@ -1394,17 +1394,17 @@ MLI_Matrix *MLI_Method_AMGRS::performCR(MLI_Matrix *mli_Amat, int *indepSet,
       /* clean up                                            */
       /* --------------------------------------------------- */
 
-      HYPRE_IJMatrixDestroy(IJPFF);
+      NALU_HYPRE_IJMatrixDestroy(IJPFF);
       hypre_ParCSRMatrixDestroy(hyprePFFT);
       hypre_ParCSRMatrixDestroy(hypreAPFC);
       delete mli_PFFMat;
 #ifdef HAVE_TRANS
       delete mli_AffTMat;
 #endif
-      HYPRE_IJMatrixDestroy(IJPFC);
-      HYPRE_IJVectorDestroy(IJX);
-      HYPRE_IJVectorDestroy(IJB);
-      HYPRE_IJVectorDestroy(IJXacc);
+      NALU_HYPRE_IJMatrixDestroy(IJPFC);
+      NALU_HYPRE_IJVectorDestroy(IJX);
+      NALU_HYPRE_IJVectorDestroy(IJB);
+      NALU_HYPRE_IJVectorDestroy(IJXacc);
       delete mli_Bvec;
       delete mli_Xvec;
       //if (localNRows != FNRows && aratio < targetMu) break;
@@ -1446,7 +1446,7 @@ MLI_Matrix *MLI_Method_AMGRS::createPmat(int *indepSet, MLI_Matrix *mli_Amat,
    double *ADiagA, *colVal, colValue, *newColVal, *DDiagA;
    double *tPDiagA, *ADDiagA, *AD2DiagA, omega=2.0/3.0, dtemp;
    char   paramString[100];
-   HYPRE_IJMatrix     IJInvD, IJP;
+   NALU_HYPRE_IJMatrix     IJInvD, IJP;
    hypre_ParCSRMatrix *hypreA, *hypreAff, *hypreInvD, *hypreP=NULL, *hypreAD;
    hypre_ParCSRMatrix *hypreAD2, *hypreAfc, *hypreTmp;
    hypre_CSRMatrix    *ADiag, *DDiag, *tPDiag, *ADDiag, *AD2Diag;
@@ -1472,14 +1472,14 @@ MLI_Matrix *MLI_Method_AMGRS::createPmat(int *indepSet, MLI_Matrix *mli_Amat,
    /* create the diagonal matrix of A                        */
    /* ------------------------------------------------------ */
 
-   ierr = HYPRE_IJMatrixCreate(comm,AffStartRow,AffStartRow+AffNRows-1,
+   ierr = NALU_HYPRE_IJMatrixCreate(comm,AffStartRow,AffStartRow+AffNRows-1,
                            AffStartRow,AffStartRow+AffNRows-1,&IJInvD);
-   ierr = HYPRE_IJMatrixSetObjectType(IJInvD, HYPRE_PARCSR);
+   ierr = NALU_HYPRE_IJMatrixSetObjectType(IJInvD, NALU_HYPRE_PARCSR);
    hypre_assert(!ierr);
    rowLengs = new int[AffNRows];
    for (irow = 0; irow < AffNRows; irow++) rowLengs[irow] = 1;
-   ierr = HYPRE_IJMatrixSetRowSizes(IJInvD, rowLengs);
-   ierr = HYPRE_IJMatrixInitialize(IJInvD);
+   ierr = NALU_HYPRE_IJMatrixSetRowSizes(IJInvD, rowLengs);
+   ierr = NALU_HYPRE_IJMatrixInitialize(IJInvD);
    hypre_assert(!ierr);
    delete [] rowLengs;
 
@@ -1493,7 +1493,7 @@ MLI_Matrix *MLI_Method_AMGRS::createPmat(int *indepSet, MLI_Matrix *mli_Amat,
       rowIndex = startRow + irow;
       if (indepSet[irow] == 0)
       {
-         HYPRE_ParCSRMatrixGetRow((HYPRE_ParCSRMatrix) hypreA, rowIndex,
+         NALU_HYPRE_ParCSRMatrixGetRow((NALU_HYPRE_ParCSRMatrix) hypreA, rowIndex,
                                   &rowSize, &colInd, &colVal);
          colValue = 1.0;
          for (jcol = 0; jcol < rowSize; jcol++)
@@ -1522,10 +1522,10 @@ MLI_Matrix *MLI_Method_AMGRS::createPmat(int *indepSet, MLI_Matrix *mli_Amat,
          }
          colValue = 1.0 / colValue;
          colIndex = AffStartRow + rowCount;
-         HYPRE_IJMatrixSetValues(IJInvD,1,&one,(const int *) &colIndex,
+         NALU_HYPRE_IJMatrixSetValues(IJInvD,1,&one,(const int *) &colIndex,
                     (const int *) &colIndex, (const double *) &colValue);
          rowCount++;
-         HYPRE_ParCSRMatrixRestoreRow((HYPRE_ParCSRMatrix) hypreA, rowIndex,
+         NALU_HYPRE_ParCSRMatrixRestoreRow((NALU_HYPRE_ParCSRMatrix) hypreA, rowIndex,
                                       &rowSize, &colInd, &colVal);
       }
    }
@@ -1534,11 +1534,11 @@ MLI_Matrix *MLI_Method_AMGRS::createPmat(int *indepSet, MLI_Matrix *mli_Amat,
    /* finally assemble the diagonal matrix of A              */
    /* ------------------------------------------------------ */
 
-   ierr = HYPRE_IJMatrixAssemble(IJInvD);
+   ierr = NALU_HYPRE_IJMatrixAssemble(IJInvD);
    hypre_assert( !ierr );
-   HYPRE_IJMatrixGetObject(IJInvD, (void **) &hypreInvD);
-   ierr += HYPRE_IJMatrixSetObjectType(IJInvD, -1);
-   ierr += HYPRE_IJMatrixDestroy(IJInvD);
+   NALU_HYPRE_IJMatrixGetObject(IJInvD, (void **) &hypreInvD);
+   ierr += NALU_HYPRE_IJMatrixSetObjectType(IJInvD, -1);
+   ierr += NALU_HYPRE_IJMatrixDestroy(IJInvD);
    hypre_assert( !ierr );
 
    /* ------------------------------------------------------ */
@@ -1577,9 +1577,9 @@ MLI_Matrix *MLI_Method_AMGRS::createPmat(int *indepSet, MLI_Matrix *mli_Amat,
          }
       }
 #else
-      ierr = HYPRE_IJMatrixCreate(comm,AffStartRow,AffStartRow+AffNRows-1,
+      ierr = NALU_HYPRE_IJMatrixCreate(comm,AffStartRow,AffStartRow+AffNRows-1,
                            AffStartRow,AffStartRow+AffNRows-1,&IJP);
-      ierr = HYPRE_IJMatrixSetObjectType(IJP, HYPRE_PARCSR);
+      ierr = NALU_HYPRE_IJMatrixSetObjectType(IJP, NALU_HYPRE_PARCSR);
       hypre_assert(!ierr);
       rowLengs = new int[AffNRows];
       maxRowLeng = 0;
@@ -1598,8 +1598,8 @@ MLI_Matrix *MLI_Method_AMGRS::createPmat(int *indepSet, MLI_Matrix *mli_Amat,
          rowLengs[irow] = newRowSize;
          if (newRowSize > maxRowLeng) maxRowLeng = newRowSize;
       }
-      ierr = HYPRE_IJMatrixSetRowSizes(IJP, rowLengs);
-      ierr = HYPRE_IJMatrixInitialize(IJP);
+      ierr = NALU_HYPRE_IJMatrixSetRowSizes(IJP, rowLengs);
+      ierr = NALU_HYPRE_IJMatrixInitialize(IJP);
       hypre_assert(!ierr);
       delete [] rowLengs;
       newColInd = new int[maxRowLeng];
@@ -1630,18 +1630,18 @@ MLI_Matrix *MLI_Method_AMGRS::createPmat(int *indepSet, MLI_Matrix *mli_Amat,
             newColVal[jcol] /= (-newColVal[0]);
          newColVal[0] = 2.0 - newColVal[0];
          rowIndex = AffStartRow + irow;
-         ierr = HYPRE_IJMatrixSetValues(IJP, 1, &newRowSize,
+         ierr = NALU_HYPRE_IJMatrixSetValues(IJP, 1, &newRowSize,
                    (const int *) &rowIndex, (const int *) newColInd,
                    (const double *) newColVal);
          hypre_assert(!ierr);
       }
       delete [] newColInd;
       delete [] newColVal;
-      ierr = HYPRE_IJMatrixAssemble(IJP);
+      ierr = NALU_HYPRE_IJMatrixAssemble(IJP);
       hypre_assert( !ierr );
-      HYPRE_IJMatrixGetObject(IJP, (void **) &hypreAD);
+      NALU_HYPRE_IJMatrixGetObject(IJP, (void **) &hypreAD);
       hypreP = hypre_ParMatmul(hypreAD, hypreInvD);
-      ierr += HYPRE_IJMatrixDestroy(IJP);
+      ierr += NALU_HYPRE_IJMatrixDestroy(IJP);
 #endif
    }
    else if (PDegree == 2)
@@ -1660,9 +1660,9 @@ MLI_Matrix *MLI_Method_AMGRS::createPmat(int *indepSet, MLI_Matrix *mli_Amat,
       DDiagA   = hypre_CSRMatrixData(DDiag);
       newColInd = new int[2*AffNRows];
       newColVal = new double[2*AffNRows];
-      ierr = HYPRE_IJMatrixCreate(comm,AffStartRow,AffStartRow+AffNRows-1,
+      ierr = NALU_HYPRE_IJMatrixCreate(comm,AffStartRow,AffStartRow+AffNRows-1,
                            AffStartRow,AffStartRow+AffNRows-1,&IJP);
-      ierr = HYPRE_IJMatrixSetObjectType(IJP, HYPRE_PARCSR);
+      ierr = NALU_HYPRE_IJMatrixSetObjectType(IJP, NALU_HYPRE_PARCSR);
       hypre_assert(!ierr);
       rowLengs = new int[AffNRows];
       maxRowLeng = 0;
@@ -1687,8 +1687,8 @@ MLI_Matrix *MLI_Method_AMGRS::createPmat(int *indepSet, MLI_Matrix *mli_Amat,
          newRowSize = ncount + 1;
          rowLengs[irow] = newRowSize;
       }
-      ierr = HYPRE_IJMatrixSetRowSizes(IJP, rowLengs);
-      ierr = HYPRE_IJMatrixInitialize(IJP);
+      ierr = NALU_HYPRE_IJMatrixSetRowSizes(IJP, rowLengs);
+      ierr = NALU_HYPRE_IJMatrixInitialize(IJP);
       hypre_assert(!ierr);
       delete [] rowLengs;
       nnz = 0;
@@ -1726,7 +1726,7 @@ MLI_Matrix *MLI_Method_AMGRS::createPmat(int *indepSet, MLI_Matrix *mli_Amat,
          for ( jcol = 0; jcol < newRowSize; jcol++ )
             newColVal[jcol] = - (DDiagA[irow] * newColVal[jcol]);
 
-         ierr = HYPRE_IJMatrixSetValues(IJP, 1, &newRowSize,
+         ierr = NALU_HYPRE_IJMatrixSetValues(IJP, 1, &newRowSize,
                    (const int *) &rowIndex, (const int *) newColInd,
                    (const double *) newColVal);
          nnz += newRowSize;
@@ -1734,11 +1734,11 @@ MLI_Matrix *MLI_Method_AMGRS::createPmat(int *indepSet, MLI_Matrix *mli_Amat,
       }
       delete [] newColInd;
       delete [] newColVal;
-      ierr = HYPRE_IJMatrixAssemble(IJP);
+      ierr = NALU_HYPRE_IJMatrixAssemble(IJP);
       hypre_assert( !ierr );
-      HYPRE_IJMatrixGetObject(IJP, (void **) &hypreP);
-      ierr += HYPRE_IJMatrixSetObjectType(IJP, -1);
-      ierr += HYPRE_IJMatrixDestroy(IJP);
+      NALU_HYPRE_IJMatrixGetObject(IJP, (void **) &hypreP);
+      ierr += NALU_HYPRE_IJMatrixSetObjectType(IJP, -1);
+      ierr += NALU_HYPRE_IJMatrixDestroy(IJP);
       hypre_assert(!ierr);
       hypre_ParCSRMatrixDestroy(hypreAD);
       hypre_ParCSRMatrixDestroy(hypreAD2);
@@ -1759,9 +1759,9 @@ MLI_Matrix *MLI_Method_AMGRS::createPmat(int *indepSet, MLI_Matrix *mli_Amat,
    tPDiagA  = hypre_CSRMatrixData(tPDiag);
    AccStartRow = startRow - AffStartRow;
    AccNRows = localNRows - AffNRows;
-   ierr = HYPRE_IJMatrixCreate(comm,startRow,startRow+localNRows-1,
+   ierr = NALU_HYPRE_IJMatrixCreate(comm,startRow,startRow+localNRows-1,
                         AccStartRow,AccStartRow+AccNRows-1,&IJP);
-   ierr = HYPRE_IJMatrixSetObjectType(IJP, HYPRE_PARCSR);
+   ierr = NALU_HYPRE_IJMatrixSetObjectType(IJP, NALU_HYPRE_PARCSR);
    hypre_assert(!ierr);
    rowLengs = new int[localNRows];
    maxRowLeng = 0;
@@ -1776,8 +1776,8 @@ MLI_Matrix *MLI_Method_AMGRS::createPmat(int *indepSet, MLI_Matrix *mli_Amat,
       }
       if (rowLengs[irow] > maxRowLeng) maxRowLeng = rowLengs[irow];
    }
-   ierr = HYPRE_IJMatrixSetRowSizes(IJP, rowLengs);
-   ierr = HYPRE_IJMatrixInitialize(IJP);
+   ierr = NALU_HYPRE_IJMatrixSetRowSizes(IJP, rowLengs);
+   ierr = NALU_HYPRE_IJMatrixInitialize(IJP);
    hypre_assert(!ierr);
    delete [] rowLengs;
    fCount = 0;
@@ -1829,26 +1829,26 @@ MLI_Matrix *MLI_Method_AMGRS::createPmat(int *indepSet, MLI_Matrix *mli_Amat,
       dtemp = 1.0 / dtemp;
       for (jcol = 0; jcol < newRowSize; jcol++)
          newColVal[jcol] *= dtemp;
-      ierr = HYPRE_IJMatrixSetValues(IJP, 1, &newRowSize,
+      ierr = NALU_HYPRE_IJMatrixSetValues(IJP, 1, &newRowSize,
                    (const int *) &rowIndex, (const int *) newColInd,
                    (const double *) newColVal);
       hypre_assert(!ierr);
    }
    delete [] newColInd;
    delete [] newColVal;
-   ierr = HYPRE_IJMatrixAssemble(IJP);
+   ierr = NALU_HYPRE_IJMatrixAssemble(IJP);
    hypre_assert( !ierr );
    hypre_ParCSRMatrixDestroy(hypreP);
-   HYPRE_IJMatrixGetObject(IJP, (void **) &hypreP);
-   ierr += HYPRE_IJMatrixSetObjectType(IJP, -1);
-   ierr += HYPRE_IJMatrixDestroy(IJP);
+   NALU_HYPRE_IJMatrixGetObject(IJP, (void **) &hypreP);
+   ierr += NALU_HYPRE_IJMatrixSetObjectType(IJP, -1);
+   ierr += NALU_HYPRE_IJMatrixDestroy(IJP);
    hypre_assert(!ierr);
 
    /* ------------------------------------------------------ */
    /* package the P matrix                                   */
    /* ------------------------------------------------------ */
 
-   sprintf(paramString, "HYPRE_ParCSR");
+   sprintf(paramString, "NALU_HYPRE_ParCSR");
    funcPtr = new MLI_Function();
    MLI_Utils_HypreParCSRMatrixGetDestroyFunc(funcPtr);
    mli_Pmat = new MLI_Matrix((void*) hypreP, paramString, funcPtr);

@@ -17,15 +17,15 @@
  * hypre_SStructPInnerProd
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SStructPInnerProd( hypre_SStructPVector *px,
                          hypre_SStructPVector *py,
-                         HYPRE_Real           *presult_ptr )
+                         NALU_HYPRE_Real           *presult_ptr )
 {
-   HYPRE_Int    nvars = hypre_SStructPVectorNVars(px);
-   HYPRE_Real   presult;
-   HYPRE_Real   sresult;
-   HYPRE_Int    var;
+   NALU_HYPRE_Int    nvars = hypre_SStructPVectorNVars(px);
+   NALU_HYPRE_Real   presult;
+   NALU_HYPRE_Real   sresult;
+   NALU_HYPRE_Int    var;
 
    presult = 0.0;
    for (var = 0; var < nvars; var++)
@@ -44,18 +44,18 @@ hypre_SStructPInnerProd( hypre_SStructPVector *px,
  * hypre_SStructInnerProd
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SStructInnerProd( hypre_SStructVector *x,
                         hypre_SStructVector *y,
-                        HYPRE_Real          *result_ptr )
+                        NALU_HYPRE_Real          *result_ptr )
 {
-   HYPRE_Int    nparts = hypre_SStructVectorNParts(x);
-   HYPRE_Real   result;
-   HYPRE_Real   presult;
-   HYPRE_Int    part;
+   NALU_HYPRE_Int    nparts = hypre_SStructVectorNParts(x);
+   NALU_HYPRE_Real   result;
+   NALU_HYPRE_Real   presult;
+   NALU_HYPRE_Int    part;
 
-   HYPRE_Int    x_object_type = hypre_SStructVectorObjectType(x);
-   HYPRE_Int    y_object_type = hypre_SStructVectorObjectType(y);
+   NALU_HYPRE_Int    x_object_type = hypre_SStructVectorObjectType(x);
+   NALU_HYPRE_Int    y_object_type = hypre_SStructVectorObjectType(y);
 
    if (x_object_type != y_object_type)
    {
@@ -66,7 +66,7 @@ hypre_SStructInnerProd( hypre_SStructVector *x,
 
    result = 0.0;
 
-   if ( (x_object_type == HYPRE_SSTRUCT) || (x_object_type == HYPRE_STRUCT) )
+   if ( (x_object_type == NALU_HYPRE_SSTRUCT) || (x_object_type == NALU_HYPRE_STRUCT) )
    {
       for (part = 0; part < nparts; part++)
       {
@@ -76,7 +76,7 @@ hypre_SStructInnerProd( hypre_SStructVector *x,
       }
    }
 
-   else if (x_object_type == HYPRE_PARCSR)
+   else if (x_object_type == NALU_HYPRE_PARCSR)
    {
       hypre_ParVector  *x_par;
       hypre_ParVector  *y_par;

@@ -13,7 +13,7 @@
  *
  *****************************************************************************/
 
-#ifdef HYPRE_MEMORY_DMALLOC
+#ifdef NALU_HYPRE_MEMORY_DMALLOC
 
 #include "memory.h"
 #include <dmalloc.h>
@@ -24,14 +24,14 @@ char dmalloc_logpath_memory[256];
  * hypre_InitMemoryDebugDML
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_InitMemoryDebugDML( HYPRE_Int id  )
+NALU_HYPRE_Int
+hypre_InitMemoryDebugDML( NALU_HYPRE_Int id  )
 {
-   HYPRE_Int  *iptr;
+   NALU_HYPRE_Int  *iptr;
 
    /* do this to get the Debug Malloc Library started/initialized */
-   iptr = hypre_TAlloc(HYPRE_Int,  1, HYPRE_MEMORY_HOST);
-   hypre_TFree(iptr, HYPRE_MEMORY_HOST);
+   iptr = hypre_TAlloc(NALU_HYPRE_Int,  1, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(iptr, NALU_HYPRE_MEMORY_HOST);
 
    dmalloc_logpath = dmalloc_logpath_memory;
    hypre_sprintf(dmalloc_logpath, "dmalloc.log.%04d", id);
@@ -43,7 +43,7 @@ hypre_InitMemoryDebugDML( HYPRE_Int id  )
  * hypre_FinalizeMemoryDebugDML
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_FinalizeMemoryDebugDML( )
 {
    dmalloc_verify(NULL);
@@ -56,9 +56,9 @@ hypre_FinalizeMemoryDebugDML( )
  *--------------------------------------------------------------------------*/
 
 char *
-hypre_MAllocDML( HYPRE_Int   size,
+hypre_MAllocDML( NALU_HYPRE_Int   size,
                  char *file,
-                 HYPRE_Int   line )
+                 NALU_HYPRE_Int   line )
 {
    char *ptr;
 
@@ -79,13 +79,13 @@ hypre_MAllocDML( HYPRE_Int   size,
  *--------------------------------------------------------------------------*/
 
 char *
-hypre_CAllocDML( HYPRE_Int   count,
-                 HYPRE_Int   elt_size,
+hypre_CAllocDML( NALU_HYPRE_Int   count,
+                 NALU_HYPRE_Int   elt_size,
                  char *file,
-                 HYPRE_Int   line    )
+                 NALU_HYPRE_Int   line    )
 {
    char *ptr;
-   HYPRE_Int   size = count * elt_size;
+   NALU_HYPRE_Int   size = count * elt_size;
 
    if (size > 0)
    {
@@ -105,9 +105,9 @@ hypre_CAllocDML( HYPRE_Int   count,
 
 char *
 hypre_ReAllocDML( char *ptr,
-                  HYPRE_Int   size,
+                  NALU_HYPRE_Int   size,
                   char *file,
-                  HYPRE_Int   line )
+                  NALU_HYPRE_Int   line )
 {
    ptr = _realloc_leap(file, line, ptr, size);
 
@@ -121,7 +121,7 @@ hypre_ReAllocDML( char *ptr,
 void
 hypre_FreeDML( char *ptr,
                char *file,
-               HYPRE_Int   line )
+               NALU_HYPRE_Int   line )
 {
    if (ptr)
    {

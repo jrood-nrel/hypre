@@ -22,8 +22,8 @@ can be used with the preconditioners SMG and PFMG (default).  It is called
 ParCSRHybrid, if used through the ``IJ`` interface and is used here with
 BoomerAMG.  The user can determine the average convergence speed by setting a
 convergence tolerance :math:`0 \leq \theta < 1` via the routine
-``HYPRE_StructHybridSetConvergenceTol`` or
-``HYPRE_ParCSRHybridSetConvergenceTol``.  The default setting is 0.9.
+``NALU_HYPRE_StructHybridSetConvergenceTol`` or
+``NALU_HYPRE_ParCSRHybridSetConvergenceTol``.  The default setting is 0.9.
 
 The average convergence factor :math:`\rho_i = \left({{\| r_i \|} \over {\| r_0
 \|}}\right)^{1/i}` is monitored within the chosen Krylov solver, where

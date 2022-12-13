@@ -17,8 +17,8 @@ cat > $INTERNAL_HEADER <<@
 #ifndef hypre_PARCSR_MV_HEADER
 #define hypre_PARCSR_MV_HEADER
 
-#include <HYPRE_config.h>
-#include "HYPRE_parcsr_mv.h"
+#include <NALU_HYPRE_config.h>
+#include "NALU_HYPRE_parcsr_mv.h"
 #include "_hypre_utilities.h"
 #include "seq_mv.h"
 

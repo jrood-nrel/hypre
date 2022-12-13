@@ -18,44 +18,44 @@
 
 #include "_hypre_utilities.h"
 #include "HYPRE.h"
-#include "HYPRE_parcsr_mv.h"
+#include "NALU_HYPRE_parcsr_mv.h"
 
-#include "HYPRE_IJ_mv.h"
-#include "HYPRE_parcsr_ls.h"
-#include "HYPRE_LinSysCore.h"
+#include "NALU_HYPRE_IJ_mv.h"
+#include "NALU_HYPRE_parcsr_ls.h"
+#include "NALU_HYPRE_LinSysCore.h"
 
-HYPRE_Int BuildParLaplacian27pt (HYPRE_Int argc, char *argv [], HYPRE_Int arg_index,
-                                 HYPRE_ParCSRMatrix *A_ptr );
+NALU_HYPRE_Int BuildParLaplacian27pt (NALU_HYPRE_Int argc, char *argv [], NALU_HYPRE_Int arg_index,
+                                 NALU_HYPRE_ParCSRMatrix *A_ptr );
 
 #define SECOND_TIME 0
 
-HYPRE_Int main( HYPRE_Int   argc, char *argv[] )
+NALU_HYPRE_Int main( NALU_HYPRE_Int   argc, char *argv[] )
 {
-   HYPRE_Int                 arg_index;
-   HYPRE_Int                 print_usage;
-   HYPRE_Int                 build_matrix_arg_index;
-   HYPRE_Int                 solver_id;
-   HYPRE_Int                 ierr, i, j;
-   HYPRE_Int                 num_iterations;
+   NALU_HYPRE_Int                 arg_index;
+   NALU_HYPRE_Int                 print_usage;
+   NALU_HYPRE_Int                 build_matrix_arg_index;
+   NALU_HYPRE_Int                 solver_id;
+   NALU_HYPRE_Int                 ierr, i, j;
+   NALU_HYPRE_Int                 num_iterations;
 
-   HYPRE_ParCSRMatrix  parcsr_A;
-   HYPRE_Int                 num_procs, myid;
-   HYPRE_Int                 local_row;
-   HYPRE_Int             time_index;
+   NALU_HYPRE_ParCSRMatrix  parcsr_A;
+   NALU_HYPRE_Int                 num_procs, myid;
+   NALU_HYPRE_Int                 local_row;
+   NALU_HYPRE_Int             time_index;
    MPI_Comm            comm;
-   HYPRE_Int                 M, N;
-   HYPRE_Int                 first_local_row, last_local_row;
-   HYPRE_Int                 first_local_col, last_local_col;
-   HYPRE_Int                 size, *col_ind;
-   HYPRE_Real          *values;
+   NALU_HYPRE_Int                 M, N;
+   NALU_HYPRE_Int                 first_local_row, last_local_row;
+   NALU_HYPRE_Int                 first_local_col, last_local_col;
+   NALU_HYPRE_Int                 size, *col_ind;
+   NALU_HYPRE_Real          *values;
 
    /* parameters for BoomerAMG */
-   HYPRE_Real          strong_threshold;
-   HYPRE_Int                 num_grid_sweeps;
-   HYPRE_Real          relax_weight;
+   NALU_HYPRE_Real          strong_threshold;
+   NALU_HYPRE_Int                 num_grid_sweeps;
+   NALU_HYPRE_Real          relax_weight;
 
    /* parameters for GMRES */
-   HYPRE_Int                  k_dim;
+   NALU_HYPRE_Int                  k_dim;
 
    char *paramString = new char[100];
 
@@ -153,61 +153,61 @@ HYPRE_Int main( HYPRE_Int   argc, char *argv[] )
     * Copy the parcsr matrix into the LSI through interface calls
     *-----------------------------------------------------------*/
 
-   ierr = HYPRE_ParCSRMatrixGetComm( parcsr_A, &comm );
-   ierr += HYPRE_ParCSRMatrixGetDims( parcsr_A, &M, &N );
-   ierr = HYPRE_ParCSRMatrixGetLocalRange( parcsr_A,
+   ierr = NALU_HYPRE_ParCSRMatrixGetComm( parcsr_A, &comm );
+   ierr += NALU_HYPRE_ParCSRMatrixGetDims( parcsr_A, &M, &N );
+   ierr = NALU_HYPRE_ParCSRMatrixGetLocalRange( parcsr_A,
                                            &first_local_row, &last_local_row,
                                            &first_local_col, &last_local_col );
 
-   HYPRE_LinSysCore H(hypre_MPI_COMM_WORLD);
-   HYPRE_Int numLocalEqns = last_local_row - first_local_row + 1;
+   NALU_HYPRE_LinSysCore H(hypre_MPI_COMM_WORLD);
+   NALU_HYPRE_Int numLocalEqns = last_local_row - first_local_row + 1;
    H.createMatricesAndVectors(M, first_local_row + 1, numLocalEqns);
 
-   HYPRE_Int index;
-   HYPRE_Int *rowLengths = new HYPRE_Int[numLocalEqns];
-   HYPRE_Int **colIndices = new HYPRE_Int*[numLocalEqns];
+   NALU_HYPRE_Int index;
+   NALU_HYPRE_Int *rowLengths = new NALU_HYPRE_Int[numLocalEqns];
+   NALU_HYPRE_Int **colIndices = new NALU_HYPRE_Int*[numLocalEqns];
 
    local_row = 0;
    for (i = first_local_row; i <= last_local_row; i++)
    {
-      ierr += HYPRE_ParCSRMatrixGetRow(parcsr_A, i, &size, &col_ind, &values );
+      ierr += NALU_HYPRE_ParCSRMatrixGetRow(parcsr_A, i, &size, &col_ind, &values );
       rowLengths[local_row] = size;
-      colIndices[local_row] = new HYPRE_Int[size];
+      colIndices[local_row] = new NALU_HYPRE_Int[size];
       for (j = 0; j < size; j++) { colIndices[local_row][j] = col_ind[j] + 1; }
       local_row++;
-      HYPRE_ParCSRMatrixRestoreRow(parcsr_A, i, &size, &col_ind, &values);
+      NALU_HYPRE_ParCSRMatrixRestoreRow(parcsr_A, i, &size, &col_ind, &values);
    }
    H.allocateMatrix(colIndices, rowLengths);
    delete [] rowLengths;
    for (i = 0; i < numLocalEqns; i++) { delete [] colIndices[i]; }
    delete [] colIndices;
 
-   HYPRE_Int *newColInd;
+   NALU_HYPRE_Int *newColInd;
 
    for (i = first_local_row; i <= last_local_row; i++)
    {
-      ierr += HYPRE_ParCSRMatrixGetRow(parcsr_A, i, &size, &col_ind, &values );
-      newColInd = new HYPRE_Int[size];
+      ierr += NALU_HYPRE_ParCSRMatrixGetRow(parcsr_A, i, &size, &col_ind, &values );
+      newColInd = new NALU_HYPRE_Int[size];
       for (j = 0; j < size; j++) { newColInd[j] = col_ind[j] + 1; }
-      H.sumIntoSystemMatrix(i + 1, size, (const HYPRE_Real*)values,
-                            (const HYPRE_Int*)newColInd);
+      H.sumIntoSystemMatrix(i + 1, size, (const NALU_HYPRE_Real*)values,
+                            (const NALU_HYPRE_Int*)newColInd);
       delete [] newColInd;
-      ierr += HYPRE_ParCSRMatrixRestoreRow(parcsr_A, i, &size, &col_ind, &values);
+      ierr += NALU_HYPRE_ParCSRMatrixRestoreRow(parcsr_A, i, &size, &col_ind, &values);
    }
    H.matrixLoadComplete();
-   HYPRE_ParCSRMatrixDestroy(parcsr_A);
+   NALU_HYPRE_ParCSRMatrixDestroy(parcsr_A);
 
    /*-----------------------------------------------------------
     * Set up the RHS and initial guess
     *-----------------------------------------------------------*/
 
-   HYPRE_Real ddata = 1.0;
-   HYPRE_Int  status;
+   NALU_HYPRE_Real ddata = 1.0;
+   NALU_HYPRE_Int  status;
 
    for (i = first_local_row; i <= last_local_row; i++)
    {
       index = i + 1;
-      H.sumIntoRHSVector(1, (const HYPRE_Real*) &ddata, (const HYPRE_Int*) &index);
+      H.sumIntoRHSVector(1, (const NALU_HYPRE_Real*) &ddata, (const NALU_HYPRE_Int*) &index);
    }
 
    hypre_EndTiming(time_index);
@@ -381,20 +381,20 @@ HYPRE_Int main( HYPRE_Int   argc, char *argv[] )
  * Parameters given in command line.
  *----------------------------------------------------------------------*/
 
-HYPRE_Int
-BuildParLaplacian27pt( HYPRE_Int                  argc,
+NALU_HYPRE_Int
+BuildParLaplacian27pt( NALU_HYPRE_Int                  argc,
                        char                *argv[],
-                       HYPRE_Int                  arg_index,
-                       HYPRE_ParCSRMatrix  *A_ptr     )
+                       NALU_HYPRE_Int                  arg_index,
+                       NALU_HYPRE_ParCSRMatrix  *A_ptr     )
 {
-   HYPRE_Int                 nx, ny, nz;
-   HYPRE_Int                 P, Q, R;
+   NALU_HYPRE_Int                 nx, ny, nz;
+   NALU_HYPRE_Int                 P, Q, R;
 
-   HYPRE_ParCSRMatrix  A;
+   NALU_HYPRE_ParCSRMatrix  A;
 
-   HYPRE_Int                 num_procs, myid;
-   HYPRE_Int                 p, q, r;
-   HYPRE_Real         *values;
+   NALU_HYPRE_Int                 num_procs, myid;
+   NALU_HYPRE_Int                 p, q, r;
+   NALU_HYPRE_Real         *values;
 
    /*-----------------------------------------------------------
     * Initialize some stuff
@@ -449,7 +449,7 @@ BuildParLaplacian27pt( HYPRE_Int                  argc,
     * Generate the matrix
     *-----------------------------------------------------------*/
 
-   values = hypre_CTAlloc(HYPRE_Real,  2, HYPRE_MEMORY_HOST);
+   values = hypre_CTAlloc(NALU_HYPRE_Real,  2, NALU_HYPRE_MEMORY_HOST);
 
    values[0] = 26.0;
    if (nx == 1 || ny == 1 || nz == 1)
@@ -462,10 +462,10 @@ BuildParLaplacian27pt( HYPRE_Int                  argc,
    }
    values[1] = -1.0;
 
-   A = (HYPRE_ParCSRMatrix) GenerateLaplacian27pt(hypre_MPI_COMM_WORLD,
+   A = (NALU_HYPRE_ParCSRMatrix) GenerateLaplacian27pt(hypre_MPI_COMM_WORLD,
                                                   nx, ny, nz, P, Q, R, p, q, r, values);
 
-   hypre_TFree(values, HYPRE_MEMORY_HOST);
+   hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
 
    *A_ptr = A;
 

@@ -5,8 +5,8 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#ifndef HYPRE_PAR_CSR_PMVCOMM_HEADER
-#define HYPRE_PAR_CSR_PMVCOMM_HEADER
+#ifndef NALU_HYPRE_PAR_CSR_PMVCOMM_HEADER
+#define NALU_HYPRE_PAR_CSR_PMVCOMM_HEADER
 
 #include "_hypre_parcsr_mv.h"
 
@@ -23,7 +23,7 @@ typedef struct
    hypre_ParCSRCommPkg  *comm_pkg;
    void          *send_data;
    void          *recv_data;
-   HYPRE_Int                  num_requests;
+   NALU_HYPRE_Int                  num_requests;
    hypre_MPI_Request          *requests;
 
 } hypre_ParCSRCommMultiHandle;
@@ -40,18 +40,18 @@ typedef struct
 #define hypre_ParCSRCommMultiHandleRequest(comm_handle, i)  (comm_handle -> requests[i])
 
 hypre_ParCSRCommMultiHandle *
-hypre_ParCSRCommMultiHandleCreate ( HYPRE_Int             job,
+hypre_ParCSRCommMultiHandleCreate ( NALU_HYPRE_Int             job,
                                     hypre_ParCSRCommPkg   *comm_pkg,
                                     void                  *send_data,
                                     void                  *recv_data,
-                                    HYPRE_Int                   nvecs       );
+                                    NALU_HYPRE_Int                   nvecs       );
 
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_ParCSRCommMultiHandleDestroy(hypre_ParCSRCommMultiHandle *comm_handle);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* HYPRE_PAR_CSR_MULTICOMMUNICATION_HEADER */
+#endif /* NALU_HYPRE_PAR_CSR_MULTICOMMUNICATION_HEADER */

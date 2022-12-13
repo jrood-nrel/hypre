@@ -5,4 +5,4 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "HYPRE_distributed_matrix_mv.h"
+#include "NALU_HYPRE_distributed_matrix_mv.h"

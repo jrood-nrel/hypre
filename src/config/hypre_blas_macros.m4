@@ -3,7 +3,7 @@ dnl HYPRE Project Developers. See the top-level COPYRIGHT file for details.
 dnl
 dnl SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-dnl @synopsis AC_HYPRE_FIND_BLAS([ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
+dnl @synopsis AC_NALU_HYPRE_FIND_BLAS([ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
 dnl
 dnl This macro looks for a library that implements the BLAS
 dnl linear-algebra interface (see http://www.netlib.org/blas/).
@@ -34,7 +34,7 @@ dnl
 dnl @version $Id$
 dnl @author Steven G. Johnson <stevenj@alum.mit.edu>
 
-AC_DEFUN([AC_HYPRE_FIND_BLAS],
+AC_DEFUN([AC_NALU_HYPRE_FIND_BLAS],
 [
   AC_REQUIRE([AC_FC_LIBRARY_LDFLAGS])
 
@@ -101,11 +101,11 @@ AC_DEFUN([AC_HYPRE_FIND_BLAS],
 #   Set variables if ATLAS or DXML libraries are used 
 #***************************************************************
   if test "$BLASLIBS" = "dxml"; then
-     AC_DEFINE(HYPRE_USING_DXML, 1, [Using dxml for Blas])
+     AC_DEFINE(NALU_HYPRE_USING_DXML, 1, [Using dxml for Blas])
   fi
 
   if test "$BLASLIBS" = "essl"; then
-     AC_DEFINE(HYPRE_USING_ESSL, 1, [Using essl for Blas])
+     AC_DEFINE(NALU_HYPRE_USING_ESSL, 1, [Using essl for Blas])
   fi
 
 #***************************************************************
@@ -125,9 +125,9 @@ AC_DEFUN([AC_HYPRE_FIND_BLAS],
   LIBS="$hypre_save_LIBS"
   LDFLAGS="$hypre_save_LDFLGS"
 
-])dnl AC_HYPRE_FIND_BLAS
+])dnl AC_NALU_HYPRE_FIND_BLAS
 
-dnl @synopsis AC_HYPRE_CHECK_USER_BLASLIBS
+dnl @synopsis AC_NALU_HYPRE_CHECK_USER_BLASLIBS
 dnl
 dnl This macro checks that the user-provided blas library is 
 dnl linkable. Configure fails with an error message if this 
@@ -149,7 +149,7 @@ dnl the BLAS library.
 dnl
 dnl @author Daniel Osei-Kuffuor  <oseikuffuor1@llnl.gov>
 
-AC_DEFUN([AC_HYPRE_CHECK_USER_BLASLIBS],
+AC_DEFUN([AC_NALU_HYPRE_CHECK_USER_BLASLIBS],
 [
   AC_REQUIRE([AC_FC_LIBRARY_LDFLAGS])
 dnl **************************************************************
@@ -281,7 +281,7 @@ dnl **************************************************************
     fi
 
 dnl **************************************************************
-dnl set HYPRE_FMANGLE_BLAS flag if not set
+dnl set NALU_HYPRE_FMANGLE_BLAS flag if not set
 dnl **************************************************************
     if test "$hypre_blas_link_ok" = "yes" -a "$hypre_fmangle_blas" = "0"
     then
@@ -297,7 +297,7 @@ dnl **************************************************************
        else
           hypre_fmangle_blas=4
        fi
-       AC_DEFINE_UNQUOTED(HYPRE_FMANGLE_BLAS, [$hypre_fmangle_blas], [Define as in HYPRE_FMANGLE to set the BLAS name mangling scheme])
+       AC_DEFINE_UNQUOTED(NALU_HYPRE_FMANGLE_BLAS, [$hypre_fmangle_blas], [Define as in NALU_HYPRE_FMANGLE to set the BLAS name mangling scheme])
     fi 
 dnl **************************************************************
 dnl Restore LIBS and LDFLAGS
@@ -306,5 +306,5 @@ dnl **************************************************************
     LDFLAGS="$hypre_saved_LDFLAGS" 
 dnl  fi
 ])
-dnl Done with macro AC_HYPRE_CHECK_USER_BLASLIBS
+dnl Done with macro AC_NALU_HYPRE_CHECK_USER_BLASLIBS
   

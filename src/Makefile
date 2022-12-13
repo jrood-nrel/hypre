@@ -9,21 +9,21 @@ default: all
 include config/Makefile.config
 
 # These are the directories for internal blas, lapack and general utilities
-HYPRE_BASIC_DIRS =\
+NALU_HYPRE_BASIC_DIRS =\
  blas\
  lapack\
  utilities
 
 #These are the directories for multivector
-HYPRE_MULTIVEC_DIRS =\
+NALU_HYPRE_MULTIVEC_DIRS =\
  multivector
 
 # These are the directories for the generic Krylov solvers
-HYPRE_KRYLOV_DIRS =\
+NALU_HYPRE_KRYLOV_DIRS =\
  krylov
 
 #These are the directories for the IJ interface
-HYPRE_IJ_DIRS =\
+NALU_HYPRE_IJ_DIRS =\
  seq_mv\
  parcsr_mv\
  parcsr_block_mv\
@@ -33,49 +33,49 @@ HYPRE_IJ_DIRS =\
  parcsr_ls
 
 #These are the directories for the structured interface
-HYPRE_STRUCT_DIRS =\
+NALU_HYPRE_STRUCT_DIRS =\
  struct_mv\
  struct_ls
 
 #These are the directories for the semi-structured interface
-HYPRE_SSTRUCT_DIRS =\
+NALU_HYPRE_SSTRUCT_DIRS =\
  sstruct_mv\
  sstruct_ls
 
 #These are the directories for the distributed_ls codes
-HYPRE_DISTRIBUTED_LS_DIRS = ${HYPRE_DISTRIBUTED_LS_DIR}
+NALU_HYPRE_DISTRIBUTED_LS_DIRS = ${NALU_HYPRE_DISTRIBUTED_LS_DIR}
 
 #These are the directories for the FEI
-HYPRE_FEI_DIRS = ${HYPRE_FEI_SRC_DIR}
+NALU_HYPRE_FEI_DIRS = ${NALU_HYPRE_FEI_SRC_DIR}
 
 #This is the lib directory
-HYPRE_LIBS_DIRS = lib
+NALU_HYPRE_LIBS_DIRS = lib
 
 #This is the documentation directory
-HYPRE_DOCS_DIRS = docs
+NALU_HYPRE_DOCS_DIRS = docs
 
 #This is the test-driver directory
-HYPRE_TEST_DIRS = test
+NALU_HYPRE_TEST_DIRS = test
 
 #This is the examples directory
-HYPRE_EXAMPLE_DIRS = examples
+NALU_HYPRE_EXAMPLE_DIRS = examples
 
 # These are directories that are officially in HYPRE
-HYPRE_DIRS =\
- ${HYPRE_BASIC_DIRS}\
- ${HYPRE_MULTIVEC_DIRS}\
- ${HYPRE_KRYLOV_DIRS}\
- ${HYPRE_IJ_DIRS}\
- ${HYPRE_STRUCT_DIRS}\
- ${HYPRE_SSTRUCT_DIRS}\
- ${HYPRE_DISTRIBUTED_LS_DIRS}\
- ${HYPRE_FEI_DIRS}\
- ${HYPRE_LIBS_DIRS}
+NALU_HYPRE_DIRS =\
+ ${NALU_HYPRE_BASIC_DIRS}\
+ ${NALU_HYPRE_MULTIVEC_DIRS}\
+ ${NALU_HYPRE_KRYLOV_DIRS}\
+ ${NALU_HYPRE_IJ_DIRS}\
+ ${NALU_HYPRE_STRUCT_DIRS}\
+ ${NALU_HYPRE_SSTRUCT_DIRS}\
+ ${NALU_HYPRE_DISTRIBUTED_LS_DIRS}\
+ ${NALU_HYPRE_FEI_DIRS}\
+ ${NALU_HYPRE_LIBS_DIRS}
 
 # These are directories that are not yet officially in HYPRE
-HYPRE_EXTRA_DIRS =\
- ${HYPRE_DOCS_DIRS}\
- ${HYPRE_TEST_DIRS}\
+NALU_HYPRE_EXTRA_DIRS =\
+ ${NALU_HYPRE_DOCS_DIRS}\
+ ${NALU_HYPRE_TEST_DIRS}\
  seq_ls/pamg
 
 #################################################################
@@ -84,12 +84,12 @@ HYPRE_EXTRA_DIRS =\
 
 all:
 	@ \
-	mkdir -p ${HYPRE_BUILD_DIR}/include; \
-	mkdir -p ${HYPRE_BUILD_DIR}/lib; \
-	cp -fR HYPRE_config.h ${HYPRE_BUILD_DIR}/include/.; \
-	cp -fR $(srcdir)/HYPRE.h ${HYPRE_BUILD_DIR}/include/.; \
-	cp -fR $(srcdir)/HYPREf.h ${HYPRE_BUILD_DIR}/include/.; \
-	for i in ${HYPRE_DIRS}; \
+	mkdir -p ${NALU_HYPRE_BUILD_DIR}/include; \
+	mkdir -p ${NALU_HYPRE_BUILD_DIR}/lib; \
+	cp -fR NALU_HYPRE_config.h ${NALU_HYPRE_BUILD_DIR}/include/.; \
+	cp -fR $(srcdir)/HYPRE.h ${NALU_HYPRE_BUILD_DIR}/include/.; \
+	cp -fR $(srcdir)/HYPREf.h ${NALU_HYPRE_BUILD_DIR}/include/.; \
+	for i in ${NALU_HYPRE_DIRS}; \
 	do \
 	  echo "Making $$i ..."; \
 	  (cd $$i && $(MAKE) $@) || exit 1; \
@@ -184,31 +184,31 @@ checkpar:
 install: all
 	@ \
 	echo "Installing hypre ..."; \
-	${HYPRE_SRC_TOP_DIR}/config/mkinstalldirs ${HYPRE_LIB_INSTALL} ${HYPRE_INC_INSTALL}; \
-	HYPRE_PWD=`pwd`; \
-	cd ${HYPRE_BUILD_DIR}/lib; HYPRE_FROMDIR=`pwd`; \
-	cd $$HYPRE_PWD; \
-	cd ${HYPRE_LIB_INSTALL};   HYPRE_TODIR=`pwd`; \
-	if [ "$$HYPRE_FROMDIR" != "$$HYPRE_TODIR" ]; \
+	${NALU_HYPRE_SRC_TOP_DIR}/config/mkinstalldirs ${NALU_HYPRE_LIB_INSTALL} ${NALU_HYPRE_INC_INSTALL}; \
+	NALU_HYPRE_PWD=`pwd`; \
+	cd ${NALU_HYPRE_BUILD_DIR}/lib; NALU_HYPRE_FROMDIR=`pwd`; \
+	cd $$NALU_HYPRE_PWD; \
+	cd ${NALU_HYPRE_LIB_INSTALL};   NALU_HYPRE_TODIR=`pwd`; \
+	if [ "$$NALU_HYPRE_FROMDIR" != "$$NALU_HYPRE_TODIR" ]; \
 	then \
-	  cp -fR $$HYPRE_FROMDIR/* $$HYPRE_TODIR; \
+	  cp -fR $$NALU_HYPRE_FROMDIR/* $$NALU_HYPRE_TODIR; \
 	fi; \
-	cd ${HYPRE_BUILD_DIR}/include; HYPRE_FROMDIR=`pwd`; \
-	cd $$HYPRE_PWD; \
-	cd ${HYPRE_INC_INSTALL};       HYPRE_TODIR=`pwd`; \
-	if [ "$$HYPRE_FROMDIR" != "$$HYPRE_TODIR" ]; \
+	cd ${NALU_HYPRE_BUILD_DIR}/include; NALU_HYPRE_FROMDIR=`pwd`; \
+	cd $$NALU_HYPRE_PWD; \
+	cd ${NALU_HYPRE_INC_INSTALL};       NALU_HYPRE_TODIR=`pwd`; \
+	if [ "$$NALU_HYPRE_FROMDIR" != "$$NALU_HYPRE_TODIR" ]; \
 	then \
-	  cp -fR $$HYPRE_FROMDIR/* $$HYPRE_TODIR; \
+	  cp -fR $$NALU_HYPRE_FROMDIR/* $$NALU_HYPRE_TODIR; \
 	fi; \
-	cd $$HYPRE_PWD; \
-	chmod -R a+rX,u+w,go-w ${HYPRE_LIB_INSTALL}; \
-	chmod -R a+rX,u+w,go-w ${HYPRE_INC_INSTALL}; \
+	cd $$NALU_HYPRE_PWD; \
+	chmod -R a+rX,u+w,go-w ${NALU_HYPRE_LIB_INSTALL}; \
+	chmod -R a+rX,u+w,go-w ${NALU_HYPRE_INC_INSTALL}; \
 	echo
 
 clean:
 	@ \
 	rm -Rf hypre; \
-	for i in ${HYPRE_DIRS} ${HYPRE_EXTRA_DIRS} ${HYPRE_EXAMPLE_DIRS}; \
+	for i in ${NALU_HYPRE_DIRS} ${NALU_HYPRE_EXTRA_DIRS} ${NALU_HYPRE_EXAMPLE_DIRS}; \
 	do \
 	  if [ -f $$i/Makefile ]; \
 	  then \
@@ -221,7 +221,7 @@ clean:
 distclean:
 	@ \
 	rm -Rf hypre; \
-	for i in ${HYPRE_DIRS} ${HYPRE_EXTRA_DIRS} ${HYPRE_EXAMPLE_DIRS} examples/docs; \
+	for i in ${NALU_HYPRE_DIRS} ${NALU_HYPRE_EXTRA_DIRS} ${NALU_HYPRE_EXAMPLE_DIRS} examples/docs; \
 	do \
 	  if [ -d $$i ]; \
 	  then \
@@ -235,7 +235,7 @@ distclean:
 	rm -rf ./autom4te.cache
 	rm -rf ./config.log
 	rm -rf ./config.status
-	rm -rf ./HYPRE_config.h
+	rm -rf ./NALU_HYPRE_config.h
 
 tags:
 	find . -name "*.c" -o -name "*.C" -o -name "*.h" -o \

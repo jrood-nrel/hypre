@@ -21,12 +21,12 @@
  *   Note: An "empty" projection is represented by a box with volume 0.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_ProjectBox( hypre_Box    *box,
                   hypre_Index   index,
                   hypre_Index   stride )
 {
-   HYPRE_Int  i, s, d, hl, hu, kl, ku, ndim = hypre_BoxNDim(box);
+   NALU_HYPRE_Int  i, s, d, hl, hu, kl, ku, ndim = hypre_BoxNDim(box);
 
    /*------------------------------------------------------
     * project in all ndim dimensions
@@ -43,20 +43,20 @@ hypre_ProjectBox( hypre_Box    *box,
 
       if ( hl <= 0 )
       {
-         kl = (HYPRE_Int) (hl / s);
+         kl = (NALU_HYPRE_Int) (hl / s);
       }
       else
       {
-         kl = (HYPRE_Int) ((hl + (s - 1)) / s);
+         kl = (NALU_HYPRE_Int) ((hl + (s - 1)) / s);
       }
 
       if ( hu >= 0 )
       {
-         ku = (HYPRE_Int) (hu / s);
+         ku = (NALU_HYPRE_Int) (hu / s);
       }
       else
       {
-         ku = (HYPRE_Int) ((hu - (s - 1)) / s);
+         ku = (NALU_HYPRE_Int) ((hu - (s - 1)) / s);
       }
 
       hypre_BoxIMinD(box, d) = i + kl * s;
@@ -74,13 +74,13 @@ hypre_ProjectBox( hypre_Box    *box,
  *   So, it is possible to have boxes with volume 0.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_ProjectBoxArray( hypre_BoxArray  *box_array,
                        hypre_Index      index,
                        hypre_Index      stride    )
 {
    hypre_Box  *box;
-   HYPRE_Int   i;
+   NALU_HYPRE_Int   i;
 
    hypre_ForBoxI(i, box_array)
    {
@@ -98,14 +98,14 @@ hypre_ProjectBoxArray( hypre_BoxArray  *box_array,
  *   So, it is possible to have boxes with volume 0.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_ProjectBoxArrayArray( hypre_BoxArrayArray  *box_array_array,
                             hypre_Index           index,
                             hypre_Index           stride          )
 {
    hypre_BoxArray  *box_array;
    hypre_Box       *box;
-   HYPRE_Int        i, j;
+   NALU_HYPRE_Int        i, j;
 
    hypre_ForBoxArrayI(i, box_array_array)
    {

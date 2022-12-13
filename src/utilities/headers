@@ -17,9 +17,9 @@ cat > $INTERNAL_HEADER <<@
 #ifndef hypre_UTILITIES_HEADER
 #define hypre_UTILITIES_HEADER
 
-#include "HYPRE_utilities.h"
+#include "NALU_HYPRE_utilities.h"
 
-#ifdef HYPRE_USING_OPENMP
+#ifdef NALU_HYPRE_USING_OPENMP
 #include <omp.h>
 #endif
 

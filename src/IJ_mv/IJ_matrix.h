@@ -22,23 +22,23 @@ typedef struct hypre_IJMatrix_struct
 {
    MPI_Comm      comm;
 
-   HYPRE_BigInt  row_partitioning[2]; /* distribution of rows across processors */
-   HYPRE_BigInt  col_partitioning[2]; /* distribution of columns */
+   NALU_HYPRE_BigInt  row_partitioning[2]; /* distribution of rows across processors */
+   NALU_HYPRE_BigInt  col_partitioning[2]; /* distribution of columns */
 
-   HYPRE_Int     object_type;         /* Indicates the type of "object" */
+   NALU_HYPRE_Int     object_type;         /* Indicates the type of "object" */
    void         *object;              /* Structure for storing local portion */
    void         *translator;          /* optional storage_type specific structure
                                          for holding additional local info */
    void         *assumed_part;        /* IJMatrix assumed partition */
-   HYPRE_Int     assemble_flag;       /* indicates whether matrix has been
+   NALU_HYPRE_Int     assemble_flag;       /* indicates whether matrix has been
                                          assembled */
 
-   HYPRE_BigInt  global_first_row;    /* these four data items are necessary */
-   HYPRE_BigInt  global_first_col;    /* to be able to avoid using the global */
-   HYPRE_BigInt  global_num_rows;     /* global partition */
-   HYPRE_BigInt  global_num_cols;
-   HYPRE_Int     omp_flag;
-   HYPRE_Int     print_level;
+   NALU_HYPRE_BigInt  global_first_row;    /* these four data items are necessary */
+   NALU_HYPRE_BigInt  global_first_col;    /* to be able to avoid using the global */
+   NALU_HYPRE_BigInt  global_num_rows;     /* global partition */
+   NALU_HYPRE_BigInt  global_num_cols;
+   NALU_HYPRE_Int     omp_flag;
+   NALU_HYPRE_Int     print_level;
 
 } hypre_IJMatrix;
 
@@ -64,15 +64,15 @@ typedef struct hypre_IJMatrix_struct
 #define hypre_IJMatrixOMPFlag(matrix)          ((matrix) -> omp_flag)
 #define hypre_IJMatrixPrintLevel(matrix)       ((matrix) -> print_level)
 
-static inline HYPRE_MemoryLocation
+static inline NALU_HYPRE_MemoryLocation
 hypre_IJMatrixMemoryLocation(hypre_IJMatrix *matrix)
 {
-   if ( hypre_IJMatrixObject(matrix) && hypre_IJMatrixObjectType(matrix) == HYPRE_PARCSR)
+   if ( hypre_IJMatrixObject(matrix) && hypre_IJMatrixObjectType(matrix) == NALU_HYPRE_PARCSR)
    {
       return hypre_ParCSRMatrixMemoryLocation( (hypre_ParCSRMatrix *) hypre_IJMatrixObject(matrix) );
    }
 
-   return HYPRE_MEMORY_UNDEFINED;
+   return NALU_HYPRE_MEMORY_UNDEFINED;
 }
 
 /*--------------------------------------------------------------------------
@@ -81,14 +81,14 @@ hypre_IJMatrixMemoryLocation(hypre_IJMatrix *matrix)
 
 #ifdef PETSC_AVAILABLE
 /* IJMatrix_petsc.c */
-HYPRE_Int
-hypre_GetIJMatrixParCSRMatrix( HYPRE_IJMatrix IJmatrix, Mat *reference )
+NALU_HYPRE_Int
+hypre_GetIJMatrixParCSRMatrix( NALU_HYPRE_IJMatrix IJmatrix, Mat *reference )
 #endif
 
 #ifdef ISIS_AVAILABLE
 /* IJMatrix_isis.c */
-HYPRE_Int
-hypre_GetIJMatrixISISMatrix( HYPRE_IJMatrix IJmatrix, RowMatrix *reference )
+NALU_HYPRE_Int
+hypre_GetIJMatrixISISMatrix( NALU_HYPRE_IJMatrix IJmatrix, RowMatrix *reference )
 #endif
 
 #endif /* #ifndef hypre_IJ_MATRIX_HEADER */

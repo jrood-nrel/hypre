@@ -11,36 +11,36 @@
  *
  *****************************************************************************/
 
-#ifndef HYPRE_HANDLE_H
-#define HYPRE_HANDLE_H
+#ifndef NALU_HYPRE_HANDLE_H
+#define NALU_HYPRE_HANDLE_H
 
 struct hypre_DeviceData;
 typedef struct hypre_DeviceData hypre_DeviceData;
 
 typedef struct
 {
-   HYPRE_Int              hypre_error;
-   HYPRE_MemoryLocation   memory_location;
-   HYPRE_ExecutionPolicy  default_exec_policy;
-#if defined(HYPRE_USING_GPU)
+   NALU_HYPRE_Int              hypre_error;
+   NALU_HYPRE_MemoryLocation   memory_location;
+   NALU_HYPRE_ExecutionPolicy  default_exec_policy;
+#if defined(NALU_HYPRE_USING_GPU)
    hypre_DeviceData      *device_data;
    /* device G-S options */
-   HYPRE_Int              device_gs_method;
+   NALU_HYPRE_Int              device_gs_method;
 #endif
-#if defined(HYPRE_USING_UMPIRE)
-   char                   umpire_device_pool_name[HYPRE_UMPIRE_POOL_NAME_MAX_LEN];
-   char                   umpire_um_pool_name[HYPRE_UMPIRE_POOL_NAME_MAX_LEN];
-   char                   umpire_host_pool_name[HYPRE_UMPIRE_POOL_NAME_MAX_LEN];
-   char                   umpire_pinned_pool_name[HYPRE_UMPIRE_POOL_NAME_MAX_LEN];
+#if defined(NALU_HYPRE_USING_UMPIRE)
+   char                   umpire_device_pool_name[NALU_HYPRE_UMPIRE_POOL_NAME_MAX_LEN];
+   char                   umpire_um_pool_name[NALU_HYPRE_UMPIRE_POOL_NAME_MAX_LEN];
+   char                   umpire_host_pool_name[NALU_HYPRE_UMPIRE_POOL_NAME_MAX_LEN];
+   char                   umpire_pinned_pool_name[NALU_HYPRE_UMPIRE_POOL_NAME_MAX_LEN];
    size_t                 umpire_device_pool_size;
    size_t                 umpire_um_pool_size;
    size_t                 umpire_host_pool_size;
    size_t                 umpire_pinned_pool_size;
    size_t                 umpire_block_size;
-   HYPRE_Int              own_umpire_device_pool;
-   HYPRE_Int              own_umpire_um_pool;
-   HYPRE_Int              own_umpire_host_pool;
-   HYPRE_Int              own_umpire_pinned_pool;
+   NALU_HYPRE_Int              own_umpire_device_pool;
+   NALU_HYPRE_Int              own_umpire_um_pool;
+   NALU_HYPRE_Int              own_umpire_host_pool;
+   NALU_HYPRE_Int              own_umpire_pinned_pool;
    umpire_resourcemanager umpire_rm;
 #endif
    /* user malloc/free function pointers */

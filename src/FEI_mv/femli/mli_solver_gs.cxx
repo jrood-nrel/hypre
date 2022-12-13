@@ -132,13 +132,13 @@ int MLI_Solver_GS::solve(MLI_Vector *fIn, MLI_Vector *uIn)
 
       if (nthreads > 1)
       {
-#ifdef HYPRE_USING_OPENMP
-#pragma omp parallel for private(i) HYPRE_SMP_SCHEDULE
+#ifdef NALU_HYPRE_USING_OPENMP
+#pragma omp parallel for private(i) NALU_HYPRE_SMP_SCHEDULE
 #endif
          for (i = 0; i < localNRows; i++) tmpData[i] = uData[i];
 
-#ifdef HYPRE_USING_OPENMP
-#pragma omp parallel for private(i,ii,j,jj,ns,ne,res,rest,size) HYPRE_SMP_SCHEDULE
+#ifdef NALU_HYPRE_USING_OPENMP
+#pragma omp parallel for private(i,ii,j,jj,ns,ne,res,rest,size) NALU_HYPRE_SMP_SCHEDULE
 #endif
          for (j = 0; j < nthreads; j++)
          {

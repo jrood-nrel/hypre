@@ -14,21 +14,21 @@
  *--------------------------------------------------------------------------*/
 
 hypre_ParCSRCommHandle *
-hypre_ParCSRBlockCommHandleCreate(HYPRE_Int job,
-                                  HYPRE_Int bnnz,
+hypre_ParCSRBlockCommHandleCreate(NALU_HYPRE_Int job,
+                                  NALU_HYPRE_Int bnnz,
                                   hypre_ParCSRCommPkg *comm_pkg,
                                   void *send_data,
                                   void *recv_data )
 {
-   HYPRE_Int      num_sends = hypre_ParCSRCommPkgNumSends(comm_pkg);
-   HYPRE_Int      num_recvs = hypre_ParCSRCommPkgNumRecvs(comm_pkg);
+   NALU_HYPRE_Int      num_sends = hypre_ParCSRCommPkgNumSends(comm_pkg);
+   NALU_HYPRE_Int      num_recvs = hypre_ParCSRCommPkgNumRecvs(comm_pkg);
    MPI_Comm comm      = hypre_ParCSRCommPkgComm(comm_pkg);
    hypre_ParCSRCommHandle *comm_handle;
-   HYPRE_Int         num_requests;
+   NALU_HYPRE_Int         num_requests;
    hypre_MPI_Request *requests;
-   HYPRE_Int    i, j, my_id, num_procs, ip, vec_start, vec_len;
-   HYPRE_Complex *d_send_data = (HYPRE_Complex *) send_data;
-   HYPRE_Complex *d_recv_data = (HYPRE_Complex *) recv_data;
+   NALU_HYPRE_Int    i, j, my_id, num_procs, ip, vec_start, vec_len;
+   NALU_HYPRE_Complex *d_send_data = (NALU_HYPRE_Complex *) send_data;
+   NALU_HYPRE_Complex *d_recv_data = (NALU_HYPRE_Complex *) recv_data;
 
    /*---------------------------------------------------------------------------
     * job = 1 : is used to initialize communication exchange for the parts
@@ -42,7 +42,7 @@ hypre_ParCSRBlockCommHandleCreate(HYPRE_Int job,
     *------------------------------------------------------------------------*/
 
    num_requests = num_sends + num_recvs;
-   requests = hypre_CTAlloc(hypre_MPI_Request,  num_requests, HYPRE_MEMORY_HOST);
+   requests = hypre_CTAlloc(hypre_MPI_Request,  num_requests, NALU_HYPRE_MEMORY_HOST);
 
    hypre_MPI_Comm_size(comm, &num_procs);
    hypre_MPI_Comm_rank(comm, &my_id);
@@ -60,7 +60,7 @@ hypre_ParCSRBlockCommHandleCreate(HYPRE_Int job,
             vec_len =
                (hypre_ParCSRCommPkgRecvVecStart(comm_pkg, i + 1) - vec_start) * bnnz;
             hypre_MPI_Irecv(&d_recv_data[vec_start * bnnz], vec_len,
-                            HYPRE_MPI_COMPLEX, ip, 0, comm, &requests[j++]);
+                            NALU_HYPRE_MPI_COMPLEX, ip, 0, comm, &requests[j++]);
          }
          for (i = 0; i < num_sends; i++)
          {
@@ -69,7 +69,7 @@ hypre_ParCSRBlockCommHandleCreate(HYPRE_Int job,
                (hypre_ParCSRCommPkgSendMapStart(comm_pkg, i + 1) - vec_start) * bnnz;
             ip = hypre_ParCSRCommPkgSendProc(comm_pkg, i);
             hypre_MPI_Isend(&d_send_data[vec_start * bnnz], vec_len,
-                            HYPRE_MPI_COMPLEX, ip, 0, comm, &requests[j++]);
+                            NALU_HYPRE_MPI_COMPLEX, ip, 0, comm, &requests[j++]);
          }
          break;
       }
@@ -83,7 +83,7 @@ hypre_ParCSRBlockCommHandleCreate(HYPRE_Int job,
                (hypre_ParCSRCommPkgSendMapStart(comm_pkg, i + 1) - vec_start) * bnnz;
             ip = hypre_ParCSRCommPkgSendProc(comm_pkg, i);
             hypre_MPI_Irecv(&d_recv_data[vec_start * bnnz], vec_len,
-                            HYPRE_MPI_COMPLEX, ip, 0, comm, &requests[j++]);
+                            NALU_HYPRE_MPI_COMPLEX, ip, 0, comm, &requests[j++]);
          }
          for (i = 0; i < num_recvs; i++)
          {
@@ -92,7 +92,7 @@ hypre_ParCSRBlockCommHandleCreate(HYPRE_Int job,
             vec_len =
                (hypre_ParCSRCommPkgRecvVecStart(comm_pkg, i + 1) - vec_start) * bnnz;
             hypre_MPI_Isend(&d_send_data[vec_start * bnnz], vec_len,
-                            HYPRE_MPI_COMPLEX, ip, 0, comm, &requests[j++]);
+                            NALU_HYPRE_MPI_COMPLEX, ip, 0, comm, &requests[j++]);
          }
          break;
       }
@@ -102,7 +102,7 @@ hypre_ParCSRBlockCommHandleCreate(HYPRE_Int job,
     * set up comm_handle and return
     *--------------------------------------------------------------------*/
 
-   comm_handle = hypre_CTAlloc(hypre_ParCSRCommHandle,  1, HYPRE_MEMORY_HOST);
+   comm_handle = hypre_CTAlloc(hypre_ParCSRCommHandle,  1, NALU_HYPRE_MEMORY_HOST);
 
    hypre_ParCSRCommHandleCommPkg(comm_handle)     = comm_pkg;
    hypre_ParCSRCommHandleSendData(comm_handle)    = send_data;
@@ -116,7 +116,7 @@ hypre_ParCSRBlockCommHandleCreate(HYPRE_Int job,
   hypre_ParCSRBlockCommHandleDestroy
   *--------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_ParCSRBlockCommHandleDestroy(hypre_ParCSRCommHandle *comm_handle)
 {
    hypre_MPI_Status          *status0;
@@ -126,14 +126,14 @@ hypre_ParCSRBlockCommHandleDestroy(hypre_ParCSRCommHandle *comm_handle)
    if (hypre_ParCSRCommHandleNumRequests(comm_handle))
    {
       status0 = hypre_CTAlloc(hypre_MPI_Status,
-                              hypre_ParCSRCommHandleNumRequests(comm_handle), HYPRE_MEMORY_HOST);
+                              hypre_ParCSRCommHandleNumRequests(comm_handle), NALU_HYPRE_MEMORY_HOST);
       hypre_MPI_Waitall(hypre_ParCSRCommHandleNumRequests(comm_handle),
                         hypre_ParCSRCommHandleRequests(comm_handle), status0);
-      hypre_TFree(status0, HYPRE_MEMORY_HOST);
+      hypre_TFree(status0, NALU_HYPRE_MEMORY_HOST);
    }
 
-   hypre_TFree(hypre_ParCSRCommHandleRequests(comm_handle), HYPRE_MEMORY_HOST);
-   hypre_TFree(comm_handle, HYPRE_MEMORY_HOST);
+   hypre_TFree(hypre_ParCSRCommHandleRequests(comm_handle), NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(comm_handle, NALU_HYPRE_MEMORY_HOST);
 
    return hypre_error_flag;
 }
@@ -146,12 +146,12 @@ hypre_ParCSRBlockCommHandleDestroy(hypre_ParCSRCommHandle *comm_handle)
  * this is the assumed partition.
  *--------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_ParCSRBlockMatrixCreateAssumedPartition( hypre_ParCSRBlockMatrix *matrix)
 {
-   HYPRE_BigInt global_num_cols;
-   HYPRE_Int myid;
-   HYPRE_BigInt  col_start = 0, col_end = 0;
+   NALU_HYPRE_BigInt global_num_cols;
+   NALU_HYPRE_Int myid;
+   NALU_HYPRE_BigInt  col_start = 0, col_end = 0;
 
    MPI_Comm   comm;
 
@@ -167,7 +167,7 @@ hypre_ParCSRBlockMatrixCreateAssumedPartition( hypre_ParCSRBlockMatrix *matrix)
    hypre_MPI_Comm_rank(comm, &myid );
 
    /* allocate space */
-   apart = hypre_CTAlloc(hypre_IJAssumedPart,  1, HYPRE_MEMORY_HOST);
+   apart = hypre_CTAlloc(hypre_IJAssumedPart,  1, NALU_HYPRE_MEMORY_HOST);
 
    /* get my assumed partitioning  - we want partitioning of the vector that the
       matrix multiplies - so we use the col start and end */
@@ -178,9 +178,9 @@ hypre_ParCSRBlockMatrixCreateAssumedPartition( hypre_ParCSRBlockMatrix *matrix)
    apart->length = 0;
    /*room for 10 owners of the assumed partition*/
    apart->storage_length = 10; /*need to be >=1 */
-   apart->proc_list = hypre_TAlloc(HYPRE_Int,  apart->storage_length, HYPRE_MEMORY_HOST);
-   apart->row_start_list =   hypre_TAlloc(HYPRE_BigInt,  apart->storage_length, HYPRE_MEMORY_HOST);
-   apart->row_end_list =   hypre_TAlloc(HYPRE_BigInt,  apart->storage_length, HYPRE_MEMORY_HOST);
+   apart->proc_list = hypre_TAlloc(NALU_HYPRE_Int,  apart->storage_length, NALU_HYPRE_MEMORY_HOST);
+   apart->row_start_list =   hypre_TAlloc(NALU_HYPRE_BigInt,  apart->storage_length, NALU_HYPRE_MEMORY_HOST);
+   apart->row_end_list =   hypre_TAlloc(NALU_HYPRE_BigInt,  apart->storage_length, NALU_HYPRE_MEMORY_HOST);
 
    /* now we want to reconcile our actual partition with the assumed partition */
    hypre_LocateAssumedPartition(comm, col_start, col_end,
@@ -197,7 +197,7 @@ hypre_ParCSRBlockMatrixCreateAssumedPartition( hypre_ParCSRBlockMatrix *matrix)
 /*--------------------------------------------------------------------
  * hypre_ParCSRMatrixDestroyAssumedPartition
  *--------------------------------------------------------------------*/
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_ParCSRBlockMatrixDestroyAssumedPartition( hypre_ParCSRBlockMatrix *matrix )
 {
 
@@ -207,13 +207,13 @@ hypre_ParCSRBlockMatrixDestroyAssumedPartition( hypre_ParCSRBlockMatrix *matrix 
 
    if (apart->storage_length > 0)
    {
-      hypre_TFree(apart->proc_list, HYPRE_MEMORY_HOST);
-      hypre_TFree(apart->row_start_list, HYPRE_MEMORY_HOST);
-      hypre_TFree(apart->row_end_list, HYPRE_MEMORY_HOST);
-      hypre_TFree(apart->sort_index, HYPRE_MEMORY_HOST);
+      hypre_TFree(apart->proc_list, NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(apart->row_start_list, NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(apart->row_end_list, NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(apart->sort_index, NALU_HYPRE_MEMORY_HOST);
    }
 
-   hypre_TFree(apart, HYPRE_MEMORY_HOST);
+   hypre_TFree(apart, NALU_HYPRE_MEMORY_HOST);
 
    return (0);
 }

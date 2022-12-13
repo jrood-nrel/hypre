@@ -4,9 +4,9 @@
 #ifndef hypre_IJ_HEADER
 #define hypre_IJ_HEADER
 
-#include <HYPRE_config.h>
+#include <NALU_HYPRE_config.h>
 #include "_hypre_parcsr_mv.h"
-#include "HYPRE_IJ_mv.h"
+#include "NALU_HYPRE_IJ_mv.h"
 #include "HYPRE.h"
 
 #ifdef __cplusplus
@@ -37,60 +37,60 @@ extern "C" {
 
 typedef struct
 {
-   HYPRE_Int            local_num_rows;    /* defines number of rows on this processor */
-   HYPRE_Int            local_num_rownnz;  /* defines number of nonzero rows on this processor */
-   HYPRE_Int            local_num_cols;    /* defines number of cols of diag */
+   NALU_HYPRE_Int            local_num_rows;    /* defines number of rows on this processor */
+   NALU_HYPRE_Int            local_num_rownnz;  /* defines number of nonzero rows on this processor */
+   NALU_HYPRE_Int            local_num_cols;    /* defines number of cols of diag */
 
-   HYPRE_Int            need_aux;                /* if need_aux = 1, aux_j, aux_data are used to
+   NALU_HYPRE_Int            need_aux;                /* if need_aux = 1, aux_j, aux_data are used to
                                                     generate the parcsr matrix (default),
                                                     for need_aux = 0, data is put directly into
                                                     parcsr structure (requires the knowledge of
                                                     offd_i and diag_i ) */
 
-   HYPRE_Int           *rownnz;                  /* row_nnz[i] contains the i-th nonzero row id */
-   HYPRE_Int           *row_length;              /* row_length[i] contains number of stored
+   NALU_HYPRE_Int           *rownnz;                  /* row_nnz[i] contains the i-th nonzero row id */
+   NALU_HYPRE_Int           *row_length;              /* row_length[i] contains number of stored
                                                     elements in i-th row */
-   HYPRE_Int           *row_space;               /* row_space[i] contains space allocated to
+   NALU_HYPRE_Int           *row_space;               /* row_space[i] contains space allocated to
                                                     i-th row */
 
-   HYPRE_Int           *diag_sizes;              /* user input row lengths of diag */
-   HYPRE_Int           *offd_sizes;              /* user input row lengths of diag */
+   NALU_HYPRE_Int           *diag_sizes;              /* user input row lengths of diag */
+   NALU_HYPRE_Int           *offd_sizes;              /* user input row lengths of diag */
 
-   HYPRE_BigInt       **aux_j;                   /* contains collected column indices */
-   HYPRE_Complex      **aux_data;                /* contains collected data */
+   NALU_HYPRE_BigInt       **aux_j;                   /* contains collected column indices */
+   NALU_HYPRE_Complex      **aux_data;                /* contains collected data */
 
-   HYPRE_Int           *indx_diag;               /* indx_diag[i] points to first empty space of portion
+   NALU_HYPRE_Int           *indx_diag;               /* indx_diag[i] points to first empty space of portion
                                                     in diag_j , diag_data assigned to row i */
-   HYPRE_Int           *indx_offd;               /* indx_offd[i] points to first empty space of portion
+   NALU_HYPRE_Int           *indx_offd;               /* indx_offd[i] points to first empty space of portion
                                                     in offd_j , offd_data assigned to row i */
 
-   HYPRE_Int            max_off_proc_elmts;      /* length of off processor stash set for
+   NALU_HYPRE_Int            max_off_proc_elmts;      /* length of off processor stash set for
                                                     SetValues and AddTOValues */
-   HYPRE_Int            current_off_proc_elmts;  /* current no. of elements stored in stash */
-   HYPRE_Int            off_proc_i_indx;         /* pointer to first empty space in
+   NALU_HYPRE_Int            current_off_proc_elmts;  /* current no. of elements stored in stash */
+   NALU_HYPRE_Int            off_proc_i_indx;         /* pointer to first empty space in
                                                     set_off_proc_i_set */
-   HYPRE_BigInt        *off_proc_i;              /* length 2*num_off_procs_elmts, contains info pairs
+   NALU_HYPRE_BigInt        *off_proc_i;              /* length 2*num_off_procs_elmts, contains info pairs
                                                     (code, no. of elmts) where code contains global
                                                     row no. if  SetValues, and (-global row no. -1)
                                                     if  AddToValues */
-   HYPRE_BigInt        *off_proc_j;              /* contains column indices
+   NALU_HYPRE_BigInt        *off_proc_j;              /* contains column indices
                                                   * ( global col id.)    if SetValues,
                                                   * (-global col id. -1) if AddToValues */
-   HYPRE_Complex       *off_proc_data;           /* contains corresponding data */
+   NALU_HYPRE_Complex       *off_proc_data;           /* contains corresponding data */
 
-   HYPRE_MemoryLocation memory_location;
+   NALU_HYPRE_MemoryLocation memory_location;
 
-#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP) || defined(HYPRE_USING_SYCL)
-   HYPRE_Int            max_stack_elmts;
-   HYPRE_Int            current_stack_elmts;
-   HYPRE_BigInt        *stack_i;
-   HYPRE_BigInt        *stack_j;
-   HYPRE_Complex       *stack_data;
+#if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP) || defined(NALU_HYPRE_USING_SYCL)
+   NALU_HYPRE_Int            max_stack_elmts;
+   NALU_HYPRE_Int            current_stack_elmts;
+   NALU_HYPRE_BigInt        *stack_i;
+   NALU_HYPRE_BigInt        *stack_j;
+   NALU_HYPRE_Complex       *stack_data;
    char                *stack_sora;              /* Set (1) or Add (0) */
-   HYPRE_Int            usr_on_proc_elmts;       /* user given num elmt on-proc */
-   HYPRE_Int            usr_off_proc_elmts;      /* user given num elmt off-proc */
-   HYPRE_Real           init_alloc_factor;
-   HYPRE_Real           grow_factor;
+   NALU_HYPRE_Int            usr_on_proc_elmts;       /* user given num elmt on-proc */
+   NALU_HYPRE_Int            usr_off_proc_elmts;      /* user given num elmt off-proc */
+   NALU_HYPRE_Real           init_alloc_factor;
+   NALU_HYPRE_Real           grow_factor;
 #endif
 } hypre_AuxParCSRMatrix;
 
@@ -124,7 +124,7 @@ typedef struct
 
 #define hypre_AuxParCSRMatrixMemoryLocation(matrix)       ((matrix) -> memory_location)
 
-#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP) || defined(HYPRE_USING_SYCL)
+#if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP) || defined(NALU_HYPRE_USING_SYCL)
 #define hypre_AuxParCSRMatrixMaxStackElmts(matrix)        ((matrix) -> max_stack_elmts)
 #define hypre_AuxParCSRMatrixCurrentStackElmts(matrix)    ((matrix) -> current_stack_elmts)
 #define hypre_AuxParCSRMatrixStackI(matrix)               ((matrix) -> stack_i)
@@ -162,24 +162,24 @@ typedef struct
 
 typedef struct
 {
-   HYPRE_Int            max_off_proc_elmts;      /* length of off processor stash for
+   NALU_HYPRE_Int            max_off_proc_elmts;      /* length of off processor stash for
                                                     SetValues and AddToValues*/
-   HYPRE_Int            current_off_proc_elmts;  /* current no. of elements stored in stash */
-   HYPRE_BigInt        *off_proc_i;              /* contains column indices */
-   HYPRE_Complex       *off_proc_data;           /* contains corresponding data */
+   NALU_HYPRE_Int            current_off_proc_elmts;  /* current no. of elements stored in stash */
+   NALU_HYPRE_BigInt        *off_proc_i;              /* contains column indices */
+   NALU_HYPRE_Complex       *off_proc_data;           /* contains corresponding data */
 
-   HYPRE_MemoryLocation memory_location;
+   NALU_HYPRE_MemoryLocation memory_location;
 
-#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP) || defined(HYPRE_USING_SYCL)
-   HYPRE_Int            max_stack_elmts;      /* length of stash for SetValues and AddToValues*/
-   HYPRE_Int            current_stack_elmts;  /* current no. of elements stored in stash */
-   HYPRE_BigInt        *stack_i;              /* contains row indices */
-   HYPRE_BigInt        *stack_voff;           /* contains vector offsets for multivectors */
-   HYPRE_Complex       *stack_data;           /* contains corresponding data */
+#if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP) || defined(NALU_HYPRE_USING_SYCL)
+   NALU_HYPRE_Int            max_stack_elmts;      /* length of stash for SetValues and AddToValues*/
+   NALU_HYPRE_Int            current_stack_elmts;  /* current no. of elements stored in stash */
+   NALU_HYPRE_BigInt        *stack_i;              /* contains row indices */
+   NALU_HYPRE_BigInt        *stack_voff;           /* contains vector offsets for multivectors */
+   NALU_HYPRE_Complex       *stack_data;           /* contains corresponding data */
    char                *stack_sora;
-   HYPRE_Int            usr_off_proc_elmts;   /* the num of off-proc elements usr guided */
-   HYPRE_Real           init_alloc_factor;
-   HYPRE_Real           grow_factor;
+   NALU_HYPRE_Int            usr_off_proc_elmts;   /* the num of off-proc elements usr guided */
+   NALU_HYPRE_Real           init_alloc_factor;
+   NALU_HYPRE_Real           grow_factor;
 #endif
 } hypre_AuxParVector;
 
@@ -194,7 +194,7 @@ typedef struct
 
 #define hypre_AuxParVectorMemoryLocation(vector)       ((vector) -> memory_location)
 
-#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP) || defined(HYPRE_USING_SYCL)
+#if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP) || defined(NALU_HYPRE_USING_SYCL)
 #define hypre_AuxParVectorMaxStackElmts(vector)        ((vector) -> max_stack_elmts)
 #define hypre_AuxParVectorCurrentStackElmts(vector)    ((vector) -> current_stack_elmts)
 #define hypre_AuxParVectorStackI(vector)               ((vector) -> stack_i)
@@ -231,23 +231,23 @@ typedef struct hypre_IJMatrix_struct
 {
    MPI_Comm      comm;
 
-   HYPRE_BigInt  row_partitioning[2]; /* distribution of rows across processors */
-   HYPRE_BigInt  col_partitioning[2]; /* distribution of columns */
+   NALU_HYPRE_BigInt  row_partitioning[2]; /* distribution of rows across processors */
+   NALU_HYPRE_BigInt  col_partitioning[2]; /* distribution of columns */
 
-   HYPRE_Int     object_type;         /* Indicates the type of "object" */
+   NALU_HYPRE_Int     object_type;         /* Indicates the type of "object" */
    void         *object;              /* Structure for storing local portion */
    void         *translator;          /* optional storage_type specific structure
                                          for holding additional local info */
    void         *assumed_part;        /* IJMatrix assumed partition */
-   HYPRE_Int     assemble_flag;       /* indicates whether matrix has been
+   NALU_HYPRE_Int     assemble_flag;       /* indicates whether matrix has been
                                          assembled */
 
-   HYPRE_BigInt  global_first_row;    /* these four data items are necessary */
-   HYPRE_BigInt  global_first_col;    /* to be able to avoid using the global */
-   HYPRE_BigInt  global_num_rows;     /* global partition */
-   HYPRE_BigInt  global_num_cols;
-   HYPRE_Int     omp_flag;
-   HYPRE_Int     print_level;
+   NALU_HYPRE_BigInt  global_first_row;    /* these four data items are necessary */
+   NALU_HYPRE_BigInt  global_first_col;    /* to be able to avoid using the global */
+   NALU_HYPRE_BigInt  global_num_rows;     /* global partition */
+   NALU_HYPRE_BigInt  global_num_cols;
+   NALU_HYPRE_Int     omp_flag;
+   NALU_HYPRE_Int     print_level;
 
 } hypre_IJMatrix;
 
@@ -273,15 +273,15 @@ typedef struct hypre_IJMatrix_struct
 #define hypre_IJMatrixOMPFlag(matrix)          ((matrix) -> omp_flag)
 #define hypre_IJMatrixPrintLevel(matrix)       ((matrix) -> print_level)
 
-static inline HYPRE_MemoryLocation
+static inline NALU_HYPRE_MemoryLocation
 hypre_IJMatrixMemoryLocation(hypre_IJMatrix *matrix)
 {
-   if ( hypre_IJMatrixObject(matrix) && hypre_IJMatrixObjectType(matrix) == HYPRE_PARCSR)
+   if ( hypre_IJMatrixObject(matrix) && hypre_IJMatrixObjectType(matrix) == NALU_HYPRE_PARCSR)
    {
       return hypre_ParCSRMatrixMemoryLocation( (hypre_ParCSRMatrix *) hypre_IJMatrixObject(matrix) );
    }
 
-   return HYPRE_MEMORY_UNDEFINED;
+   return NALU_HYPRE_MEMORY_UNDEFINED;
 }
 
 /*--------------------------------------------------------------------------
@@ -290,14 +290,14 @@ hypre_IJMatrixMemoryLocation(hypre_IJMatrix *matrix)
 
 #ifdef PETSC_AVAILABLE
 /* IJMatrix_petsc.c */
-HYPRE_Int
-hypre_GetIJMatrixParCSRMatrix( HYPRE_IJMatrix IJmatrix, Mat *reference )
+NALU_HYPRE_Int
+hypre_GetIJMatrixParCSRMatrix( NALU_HYPRE_IJMatrix IJmatrix, Mat *reference )
 #endif
 
 #ifdef ISIS_AVAILABLE
 /* IJMatrix_isis.c */
-HYPRE_Int
-hypre_GetIJMatrixISISMatrix( HYPRE_IJMatrix IJmatrix, RowMatrix *reference )
+NALU_HYPRE_Int
+hypre_GetIJMatrixISISMatrix( NALU_HYPRE_IJMatrix IJmatrix, RowMatrix *reference )
 #endif
 
 #endif /* #ifndef hypre_IJ_MATRIX_HEADER */
@@ -324,16 +324,16 @@ hypre_GetIJMatrixISISMatrix( HYPRE_IJMatrix IJmatrix, RowMatrix *reference )
 typedef struct hypre_IJVector_struct
 {
    MPI_Comm      comm;
-   HYPRE_BigInt  partitioning[2];   /* Indicates partitioning over tasks */
-   HYPRE_Int     num_components;    /* Number of components of a multivector */
-   HYPRE_Int     object_type;       /* Indicates the type of "local storage" */
+   NALU_HYPRE_BigInt  partitioning[2];   /* Indicates partitioning over tasks */
+   NALU_HYPRE_Int     num_components;    /* Number of components of a multivector */
+   NALU_HYPRE_Int     object_type;       /* Indicates the type of "local storage" */
    void         *object;            /* Structure for storing local portion */
    void         *translator;        /* Structure for storing off processor
                                        information */
    void         *assumed_part;      /* IJ Vector assumed partition */
-   HYPRE_BigInt  global_first_row;  /* these for data items are necessary */
-   HYPRE_BigInt  global_num_rows;   /* to be able to avoid using the global partition */
-   HYPRE_Int     print_level;
+   NALU_HYPRE_BigInt  global_first_row;  /* these for data items are necessary */
+   NALU_HYPRE_BigInt  global_num_rows;   /* to be able to avoid using the global partition */
+   NALU_HYPRE_Int     print_level;
 } hypre_IJVector;
 
 /*--------------------------------------------------------------------------
@@ -351,15 +351,15 @@ typedef struct hypre_IJVector_struct
 #define hypre_IJVectorGlobalNumRows(vector)   ((vector) -> global_num_rows)
 #define hypre_IJVectorPrintLevel(vector)      ((vector) -> print_level)
 
-static inline HYPRE_MemoryLocation
+static inline NALU_HYPRE_MemoryLocation
 hypre_IJVectorMemoryLocation(hypre_IJVector *vector)
 {
-   if ( hypre_IJVectorObject(vector) && hypre_IJVectorObjectType(vector) == HYPRE_PARCSR)
+   if ( hypre_IJVectorObject(vector) && hypre_IJVectorObjectType(vector) == NALU_HYPRE_PARCSR)
    {
       return hypre_ParVectorMemoryLocation( (hypre_ParVector *) hypre_IJVectorObject(vector) );
    }
 
-   return HYPRE_MEMORY_UNDEFINED;
+   return NALU_HYPRE_MEMORY_UNDEFINED;
 }
 
 /*--------------------------------------------------------------------------
@@ -376,223 +376,223 @@ hypre_IJVectorMemoryLocation(hypre_IJVector *vector)
  ******************************************************************************/
 
 /* aux_parcsr_matrix.c */
-HYPRE_Int hypre_AuxParCSRMatrixCreate ( hypre_AuxParCSRMatrix **aux_matrix,
-                                        HYPRE_Int local_num_rows, HYPRE_Int local_num_cols, HYPRE_Int *sizes );
-HYPRE_Int hypre_AuxParCSRMatrixDestroy ( hypre_AuxParCSRMatrix *matrix );
-HYPRE_Int hypre_AuxParCSRMatrixSetRownnz ( hypre_AuxParCSRMatrix *matrix );
-HYPRE_Int hypre_AuxParCSRMatrixInitialize ( hypre_AuxParCSRMatrix *matrix );
-HYPRE_Int hypre_AuxParCSRMatrixInitialize_v2( hypre_AuxParCSRMatrix *matrix,
-                                              HYPRE_MemoryLocation memory_location );
+NALU_HYPRE_Int hypre_AuxParCSRMatrixCreate ( hypre_AuxParCSRMatrix **aux_matrix,
+                                        NALU_HYPRE_Int local_num_rows, NALU_HYPRE_Int local_num_cols, NALU_HYPRE_Int *sizes );
+NALU_HYPRE_Int hypre_AuxParCSRMatrixDestroy ( hypre_AuxParCSRMatrix *matrix );
+NALU_HYPRE_Int hypre_AuxParCSRMatrixSetRownnz ( hypre_AuxParCSRMatrix *matrix );
+NALU_HYPRE_Int hypre_AuxParCSRMatrixInitialize ( hypre_AuxParCSRMatrix *matrix );
+NALU_HYPRE_Int hypre_AuxParCSRMatrixInitialize_v2( hypre_AuxParCSRMatrix *matrix,
+                                              NALU_HYPRE_MemoryLocation memory_location );
 
 /* aux_par_vector.c */
-HYPRE_Int hypre_AuxParVectorCreate ( hypre_AuxParVector **aux_vector );
-HYPRE_Int hypre_AuxParVectorDestroy ( hypre_AuxParVector *vector );
-HYPRE_Int hypre_AuxParVectorInitialize ( hypre_AuxParVector *vector );
-HYPRE_Int hypre_AuxParVectorInitialize_v2( hypre_AuxParVector *vector,
-                                           HYPRE_MemoryLocation memory_location );
+NALU_HYPRE_Int hypre_AuxParVectorCreate ( hypre_AuxParVector **aux_vector );
+NALU_HYPRE_Int hypre_AuxParVectorDestroy ( hypre_AuxParVector *vector );
+NALU_HYPRE_Int hypre_AuxParVectorInitialize ( hypre_AuxParVector *vector );
+NALU_HYPRE_Int hypre_AuxParVectorInitialize_v2( hypre_AuxParVector *vector,
+                                           NALU_HYPRE_MemoryLocation memory_location );
 
 /* IJ_assumed_part.c */
-HYPRE_Int hypre_IJMatrixCreateAssumedPartition ( hypre_IJMatrix *matrix );
-HYPRE_Int hypre_IJVectorCreateAssumedPartition ( hypre_IJVector *vector );
+NALU_HYPRE_Int hypre_IJMatrixCreateAssumedPartition ( hypre_IJMatrix *matrix );
+NALU_HYPRE_Int hypre_IJVectorCreateAssumedPartition ( hypre_IJVector *vector );
 
 /* IJMatrix.c */
-HYPRE_Int hypre_IJMatrixGetRowPartitioning ( HYPRE_IJMatrix matrix,
-                                             HYPRE_BigInt **row_partitioning );
-HYPRE_Int hypre_IJMatrixGetColPartitioning ( HYPRE_IJMatrix matrix,
-                                             HYPRE_BigInt **col_partitioning );
-HYPRE_Int hypre_IJMatrixSetObject ( HYPRE_IJMatrix matrix, void *object );
-HYPRE_Int hypre_IJMatrixRead( const char *filename, MPI_Comm comm, HYPRE_Int type,
-                              HYPRE_IJMatrix *matrix_ptr, HYPRE_Int is_mm );
+NALU_HYPRE_Int hypre_IJMatrixGetRowPartitioning ( NALU_HYPRE_IJMatrix matrix,
+                                             NALU_HYPRE_BigInt **row_partitioning );
+NALU_HYPRE_Int hypre_IJMatrixGetColPartitioning ( NALU_HYPRE_IJMatrix matrix,
+                                             NALU_HYPRE_BigInt **col_partitioning );
+NALU_HYPRE_Int hypre_IJMatrixSetObject ( NALU_HYPRE_IJMatrix matrix, void *object );
+NALU_HYPRE_Int hypre_IJMatrixRead( const char *filename, MPI_Comm comm, NALU_HYPRE_Int type,
+                              NALU_HYPRE_IJMatrix *matrix_ptr, NALU_HYPRE_Int is_mm );
 
 /* IJMatrix_isis.c */
-HYPRE_Int hypre_IJMatrixSetLocalSizeISIS ( hypre_IJMatrix *matrix, HYPRE_Int local_m,
-                                           HYPRE_Int local_n );
-HYPRE_Int hypre_IJMatrixCreateISIS ( hypre_IJMatrix *matrix );
-HYPRE_Int hypre_IJMatrixSetRowSizesISIS ( hypre_IJMatrix *matrix, HYPRE_Int *sizes );
-HYPRE_Int hypre_IJMatrixSetDiagRowSizesISIS ( hypre_IJMatrix *matrix, HYPRE_Int *sizes );
-HYPRE_Int hypre_IJMatrixSetOffDiagRowSizesISIS ( hypre_IJMatrix *matrix, HYPRE_Int *sizes );
-HYPRE_Int hypre_IJMatrixInitializeISIS ( hypre_IJMatrix *matrix );
-HYPRE_Int hypre_IJMatrixInsertBlockISIS ( hypre_IJMatrix *matrix, HYPRE_Int m, HYPRE_Int n,
-                                          HYPRE_Int *rows, HYPRE_Int *cols, HYPRE_Complex *coeffs );
-HYPRE_Int hypre_IJMatrixAddToBlockISIS ( hypre_IJMatrix *matrix, HYPRE_Int m, HYPRE_Int n,
-                                         HYPRE_BigInt *rows, HYPRE_BigInt *cols, HYPRE_Complex *coeffs );
-HYPRE_Int hypre_IJMatrixInsertRowISIS ( hypre_IJMatrix *matrix, HYPRE_Int n, HYPRE_BigInt row,
-                                        HYPRE_BigInt *indices, HYPRE_Complex *coeffs );
-HYPRE_Int hypre_IJMatrixAddToRowISIS ( hypre_IJMatrix *matrix, HYPRE_Int n, HYPRE_BigInt row,
-                                       HYPRE_BigInt *indices, HYPRE_Complex *coeffs );
-HYPRE_Int hypre_IJMatrixAssembleISIS ( hypre_IJMatrix *matrix );
-HYPRE_Int hypre_IJMatrixDistributeISIS ( hypre_IJMatrix *matrix, HYPRE_BigInt *row_starts,
-                                         HYPRE_BigInt *col_starts );
-HYPRE_Int hypre_IJMatrixApplyISIS ( hypre_IJMatrix *matrix, hypre_ParVector *x,
+NALU_HYPRE_Int hypre_IJMatrixSetLocalSizeISIS ( hypre_IJMatrix *matrix, NALU_HYPRE_Int local_m,
+                                           NALU_HYPRE_Int local_n );
+NALU_HYPRE_Int hypre_IJMatrixCreateISIS ( hypre_IJMatrix *matrix );
+NALU_HYPRE_Int hypre_IJMatrixSetRowSizesISIS ( hypre_IJMatrix *matrix, NALU_HYPRE_Int *sizes );
+NALU_HYPRE_Int hypre_IJMatrixSetDiagRowSizesISIS ( hypre_IJMatrix *matrix, NALU_HYPRE_Int *sizes );
+NALU_HYPRE_Int hypre_IJMatrixSetOffDiagRowSizesISIS ( hypre_IJMatrix *matrix, NALU_HYPRE_Int *sizes );
+NALU_HYPRE_Int hypre_IJMatrixInitializeISIS ( hypre_IJMatrix *matrix );
+NALU_HYPRE_Int hypre_IJMatrixInsertBlockISIS ( hypre_IJMatrix *matrix, NALU_HYPRE_Int m, NALU_HYPRE_Int n,
+                                          NALU_HYPRE_Int *rows, NALU_HYPRE_Int *cols, NALU_HYPRE_Complex *coeffs );
+NALU_HYPRE_Int hypre_IJMatrixAddToBlockISIS ( hypre_IJMatrix *matrix, NALU_HYPRE_Int m, NALU_HYPRE_Int n,
+                                         NALU_HYPRE_BigInt *rows, NALU_HYPRE_BigInt *cols, NALU_HYPRE_Complex *coeffs );
+NALU_HYPRE_Int hypre_IJMatrixInsertRowISIS ( hypre_IJMatrix *matrix, NALU_HYPRE_Int n, NALU_HYPRE_BigInt row,
+                                        NALU_HYPRE_BigInt *indices, NALU_HYPRE_Complex *coeffs );
+NALU_HYPRE_Int hypre_IJMatrixAddToRowISIS ( hypre_IJMatrix *matrix, NALU_HYPRE_Int n, NALU_HYPRE_BigInt row,
+                                       NALU_HYPRE_BigInt *indices, NALU_HYPRE_Complex *coeffs );
+NALU_HYPRE_Int hypre_IJMatrixAssembleISIS ( hypre_IJMatrix *matrix );
+NALU_HYPRE_Int hypre_IJMatrixDistributeISIS ( hypre_IJMatrix *matrix, NALU_HYPRE_BigInt *row_starts,
+                                         NALU_HYPRE_BigInt *col_starts );
+NALU_HYPRE_Int hypre_IJMatrixApplyISIS ( hypre_IJMatrix *matrix, hypre_ParVector *x,
                                     hypre_ParVector *b );
-HYPRE_Int hypre_IJMatrixDestroyISIS ( hypre_IJMatrix *matrix );
-HYPRE_Int hypre_IJMatrixSetTotalSizeISIS ( hypre_IJMatrix *matrix, HYPRE_Int size );
+NALU_HYPRE_Int hypre_IJMatrixDestroyISIS ( hypre_IJMatrix *matrix );
+NALU_HYPRE_Int hypre_IJMatrixSetTotalSizeISIS ( hypre_IJMatrix *matrix, NALU_HYPRE_Int size );
 
 /* IJMatrix_parcsr.c */
-HYPRE_Int hypre_IJMatrixCreateParCSR ( hypre_IJMatrix *matrix );
-HYPRE_Int hypre_IJMatrixSetRowSizesParCSR ( hypre_IJMatrix *matrix, const HYPRE_Int *sizes );
-HYPRE_Int hypre_IJMatrixSetDiagOffdSizesParCSR ( hypre_IJMatrix *matrix,
-                                                 const HYPRE_Int *diag_sizes, const HYPRE_Int *offdiag_sizes );
-HYPRE_Int hypre_IJMatrixSetMaxOffProcElmtsParCSR ( hypre_IJMatrix *matrix,
-                                                   HYPRE_Int max_off_proc_elmts );
-HYPRE_Int hypre_IJMatrixInitializeParCSR ( hypre_IJMatrix *matrix );
-HYPRE_Int hypre_IJMatrixGetRowCountsParCSR ( hypre_IJMatrix *matrix, HYPRE_Int nrows,
-                                             HYPRE_BigInt *rows, HYPRE_Int *ncols );
-HYPRE_Int hypre_IJMatrixGetValuesParCSR ( hypre_IJMatrix *matrix, HYPRE_Int nrows, HYPRE_Int *ncols,
-                                          HYPRE_BigInt *rows, HYPRE_BigInt *cols, HYPRE_Complex *values );
-HYPRE_Int hypre_IJMatrixSetValuesParCSR ( hypre_IJMatrix *matrix, HYPRE_Int nrows, HYPRE_Int *ncols,
-                                          const HYPRE_BigInt *rows, const HYPRE_Int *row_indexes, const HYPRE_BigInt *cols,
-                                          const HYPRE_Complex *values );
-HYPRE_Int hypre_IJMatrixSetAddValuesParCSRDevice ( hypre_IJMatrix *matrix, HYPRE_Int nrows,
-                                                   HYPRE_Int *ncols, const HYPRE_BigInt *rows, const HYPRE_Int *row_indexes, const HYPRE_BigInt *cols,
-                                                   const HYPRE_Complex *values, const char *action );
-HYPRE_Int hypre_IJMatrixSetConstantValuesParCSR ( hypre_IJMatrix *matrix, HYPRE_Complex value );
-HYPRE_Int hypre_IJMatrixAddToValuesParCSR ( hypre_IJMatrix *matrix, HYPRE_Int nrows,
-                                            HYPRE_Int *ncols, const HYPRE_BigInt *rows, const HYPRE_Int *row_indexes, const HYPRE_BigInt *cols,
-                                            const HYPRE_Complex *values );
-HYPRE_Int hypre_IJMatrixDestroyParCSR ( hypre_IJMatrix *matrix );
-HYPRE_Int hypre_IJMatrixTransposeParCSR ( hypre_IJMatrix  *matrix_A, hypre_IJMatrix *matrix_AT );
-HYPRE_Int hypre_IJMatrixNormParCSR ( hypre_IJMatrix *matrix, HYPRE_Real *norm );
-HYPRE_Int hypre_IJMatrixAddParCSR ( HYPRE_Complex alpha, hypre_IJMatrix *matrix_A,
-                                    HYPRE_Complex beta, hypre_IJMatrix *matrix_B, hypre_IJMatrix *matrix_C );
-HYPRE_Int hypre_IJMatrixAssembleOffProcValsParCSR ( hypre_IJMatrix *matrix,
-                                                    HYPRE_Int off_proc_i_indx, HYPRE_Int max_off_proc_elmts, HYPRE_Int current_num_elmts,
-                                                    HYPRE_MemoryLocation memory_location, HYPRE_BigInt *off_proc_i, HYPRE_BigInt *off_proc_j,
-                                                    HYPRE_Complex *off_proc_data );
-HYPRE_Int hypre_FillResponseIJOffProcVals ( void *p_recv_contact_buf, HYPRE_Int contact_size,
-                                            HYPRE_Int contact_proc, void *ro, MPI_Comm comm, void **p_send_response_buf,
-                                            HYPRE_Int *response_message_size );
-HYPRE_Int hypre_FindProc ( HYPRE_BigInt *list, HYPRE_BigInt value, HYPRE_Int list_length );
-HYPRE_Int hypre_IJMatrixAssembleParCSR ( hypre_IJMatrix *matrix );
-HYPRE_Int hypre_IJMatrixSetValuesOMPParCSR ( hypre_IJMatrix *matrix, HYPRE_Int nrows,
-                                             HYPRE_Int *ncols, const HYPRE_BigInt *rows, const HYPRE_Int *row_indexes, const HYPRE_BigInt *cols,
-                                             const HYPRE_Complex *values );
-HYPRE_Int hypre_IJMatrixAddToValuesOMPParCSR ( hypre_IJMatrix *matrix, HYPRE_Int nrows,
-                                               HYPRE_Int *ncols, const HYPRE_BigInt *rows, const HYPRE_Int *row_indexes, const HYPRE_BigInt *cols,
-                                               const HYPRE_Complex *values );
-HYPRE_Int hypre_IJMatrixAssembleParCSRDevice(hypre_IJMatrix *matrix);
-HYPRE_Int hypre_IJMatrixInitializeParCSR_v2(hypre_IJMatrix *matrix,
-                                            HYPRE_MemoryLocation memory_location);
-HYPRE_Int hypre_IJMatrixSetConstantValuesParCSRDevice( hypre_IJMatrix *matrix,
-                                                       HYPRE_Complex value );
+NALU_HYPRE_Int hypre_IJMatrixCreateParCSR ( hypre_IJMatrix *matrix );
+NALU_HYPRE_Int hypre_IJMatrixSetRowSizesParCSR ( hypre_IJMatrix *matrix, const NALU_HYPRE_Int *sizes );
+NALU_HYPRE_Int hypre_IJMatrixSetDiagOffdSizesParCSR ( hypre_IJMatrix *matrix,
+                                                 const NALU_HYPRE_Int *diag_sizes, const NALU_HYPRE_Int *offdiag_sizes );
+NALU_HYPRE_Int hypre_IJMatrixSetMaxOffProcElmtsParCSR ( hypre_IJMatrix *matrix,
+                                                   NALU_HYPRE_Int max_off_proc_elmts );
+NALU_HYPRE_Int hypre_IJMatrixInitializeParCSR ( hypre_IJMatrix *matrix );
+NALU_HYPRE_Int hypre_IJMatrixGetRowCountsParCSR ( hypre_IJMatrix *matrix, NALU_HYPRE_Int nrows,
+                                             NALU_HYPRE_BigInt *rows, NALU_HYPRE_Int *ncols );
+NALU_HYPRE_Int hypre_IJMatrixGetValuesParCSR ( hypre_IJMatrix *matrix, NALU_HYPRE_Int nrows, NALU_HYPRE_Int *ncols,
+                                          NALU_HYPRE_BigInt *rows, NALU_HYPRE_BigInt *cols, NALU_HYPRE_Complex *values );
+NALU_HYPRE_Int hypre_IJMatrixSetValuesParCSR ( hypre_IJMatrix *matrix, NALU_HYPRE_Int nrows, NALU_HYPRE_Int *ncols,
+                                          const NALU_HYPRE_BigInt *rows, const NALU_HYPRE_Int *row_indexes, const NALU_HYPRE_BigInt *cols,
+                                          const NALU_HYPRE_Complex *values );
+NALU_HYPRE_Int hypre_IJMatrixSetAddValuesParCSRDevice ( hypre_IJMatrix *matrix, NALU_HYPRE_Int nrows,
+                                                   NALU_HYPRE_Int *ncols, const NALU_HYPRE_BigInt *rows, const NALU_HYPRE_Int *row_indexes, const NALU_HYPRE_BigInt *cols,
+                                                   const NALU_HYPRE_Complex *values, const char *action );
+NALU_HYPRE_Int hypre_IJMatrixSetConstantValuesParCSR ( hypre_IJMatrix *matrix, NALU_HYPRE_Complex value );
+NALU_HYPRE_Int hypre_IJMatrixAddToValuesParCSR ( hypre_IJMatrix *matrix, NALU_HYPRE_Int nrows,
+                                            NALU_HYPRE_Int *ncols, const NALU_HYPRE_BigInt *rows, const NALU_HYPRE_Int *row_indexes, const NALU_HYPRE_BigInt *cols,
+                                            const NALU_HYPRE_Complex *values );
+NALU_HYPRE_Int hypre_IJMatrixDestroyParCSR ( hypre_IJMatrix *matrix );
+NALU_HYPRE_Int hypre_IJMatrixTransposeParCSR ( hypre_IJMatrix  *matrix_A, hypre_IJMatrix *matrix_AT );
+NALU_HYPRE_Int hypre_IJMatrixNormParCSR ( hypre_IJMatrix *matrix, NALU_HYPRE_Real *norm );
+NALU_HYPRE_Int hypre_IJMatrixAddParCSR ( NALU_HYPRE_Complex alpha, hypre_IJMatrix *matrix_A,
+                                    NALU_HYPRE_Complex beta, hypre_IJMatrix *matrix_B, hypre_IJMatrix *matrix_C );
+NALU_HYPRE_Int hypre_IJMatrixAssembleOffProcValsParCSR ( hypre_IJMatrix *matrix,
+                                                    NALU_HYPRE_Int off_proc_i_indx, NALU_HYPRE_Int max_off_proc_elmts, NALU_HYPRE_Int current_num_elmts,
+                                                    NALU_HYPRE_MemoryLocation memory_location, NALU_HYPRE_BigInt *off_proc_i, NALU_HYPRE_BigInt *off_proc_j,
+                                                    NALU_HYPRE_Complex *off_proc_data );
+NALU_HYPRE_Int hypre_FillResponseIJOffProcVals ( void *p_recv_contact_buf, NALU_HYPRE_Int contact_size,
+                                            NALU_HYPRE_Int contact_proc, void *ro, MPI_Comm comm, void **p_send_response_buf,
+                                            NALU_HYPRE_Int *response_message_size );
+NALU_HYPRE_Int hypre_FindProc ( NALU_HYPRE_BigInt *list, NALU_HYPRE_BigInt value, NALU_HYPRE_Int list_length );
+NALU_HYPRE_Int hypre_IJMatrixAssembleParCSR ( hypre_IJMatrix *matrix );
+NALU_HYPRE_Int hypre_IJMatrixSetValuesOMPParCSR ( hypre_IJMatrix *matrix, NALU_HYPRE_Int nrows,
+                                             NALU_HYPRE_Int *ncols, const NALU_HYPRE_BigInt *rows, const NALU_HYPRE_Int *row_indexes, const NALU_HYPRE_BigInt *cols,
+                                             const NALU_HYPRE_Complex *values );
+NALU_HYPRE_Int hypre_IJMatrixAddToValuesOMPParCSR ( hypre_IJMatrix *matrix, NALU_HYPRE_Int nrows,
+                                               NALU_HYPRE_Int *ncols, const NALU_HYPRE_BigInt *rows, const NALU_HYPRE_Int *row_indexes, const NALU_HYPRE_BigInt *cols,
+                                               const NALU_HYPRE_Complex *values );
+NALU_HYPRE_Int hypre_IJMatrixAssembleParCSRDevice(hypre_IJMatrix *matrix);
+NALU_HYPRE_Int hypre_IJMatrixInitializeParCSR_v2(hypre_IJMatrix *matrix,
+                                            NALU_HYPRE_MemoryLocation memory_location);
+NALU_HYPRE_Int hypre_IJMatrixSetConstantValuesParCSRDevice( hypre_IJMatrix *matrix,
+                                                       NALU_HYPRE_Complex value );
 
 /* IJMatrix_petsc.c */
-HYPRE_Int hypre_IJMatrixSetLocalSizePETSc ( hypre_IJMatrix *matrix, HYPRE_Int local_m,
-                                            HYPRE_Int local_n );
-HYPRE_Int hypre_IJMatrixCreatePETSc ( hypre_IJMatrix *matrix );
-HYPRE_Int hypre_IJMatrixSetRowSizesPETSc ( hypre_IJMatrix *matrix, HYPRE_Int *sizes );
-HYPRE_Int hypre_IJMatrixSetDiagRowSizesPETSc ( hypre_IJMatrix *matrix, HYPRE_Int *sizes );
-HYPRE_Int hypre_IJMatrixSetOffDiagRowSizesPETSc ( hypre_IJMatrix *matrix, HYPRE_Int *sizes );
-HYPRE_Int hypre_IJMatrixInitializePETSc ( hypre_IJMatrix *matrix );
-HYPRE_Int hypre_IJMatrixInsertBlockPETSc ( hypre_IJMatrix *matrix, HYPRE_Int m, HYPRE_Int n,
-                                           HYPRE_BigInt *rows, HYPRE_BigInt *cols, HYPRE_Complex *coeffs );
-HYPRE_Int hypre_IJMatrixAddToBlockPETSc ( hypre_IJMatrix *matrix, HYPRE_Int m, HYPRE_Int n,
-                                          HYPRE_Int *rows, HYPRE_Int *cols, HYPRE_Complex *coeffs );
-HYPRE_Int hypre_IJMatrixInsertRowPETSc ( hypre_IJMatrix *matrix, HYPRE_Int n, HYPRE_BigInt row,
-                                         HYPRE_BigInt *indices, HYPRE_Complex *coeffs );
-HYPRE_Int hypre_IJMatrixAddToRowPETSc ( hypre_IJMatrix *matrix, HYPRE_Int n, HYPRE_BigInt row,
-                                        HYPRE_BigInt *indices, HYPRE_Complex *coeffs );
-HYPRE_Int hypre_IJMatrixAssemblePETSc ( hypre_IJMatrix *matrix );
-HYPRE_Int hypre_IJMatrixDistributePETSc ( hypre_IJMatrix *matrix, HYPRE_BigInt *row_starts,
-                                          HYPRE_BigInt *col_starts );
-HYPRE_Int hypre_IJMatrixApplyPETSc ( hypre_IJMatrix *matrix, hypre_ParVector *x,
+NALU_HYPRE_Int hypre_IJMatrixSetLocalSizePETSc ( hypre_IJMatrix *matrix, NALU_HYPRE_Int local_m,
+                                            NALU_HYPRE_Int local_n );
+NALU_HYPRE_Int hypre_IJMatrixCreatePETSc ( hypre_IJMatrix *matrix );
+NALU_HYPRE_Int hypre_IJMatrixSetRowSizesPETSc ( hypre_IJMatrix *matrix, NALU_HYPRE_Int *sizes );
+NALU_HYPRE_Int hypre_IJMatrixSetDiagRowSizesPETSc ( hypre_IJMatrix *matrix, NALU_HYPRE_Int *sizes );
+NALU_HYPRE_Int hypre_IJMatrixSetOffDiagRowSizesPETSc ( hypre_IJMatrix *matrix, NALU_HYPRE_Int *sizes );
+NALU_HYPRE_Int hypre_IJMatrixInitializePETSc ( hypre_IJMatrix *matrix );
+NALU_HYPRE_Int hypre_IJMatrixInsertBlockPETSc ( hypre_IJMatrix *matrix, NALU_HYPRE_Int m, NALU_HYPRE_Int n,
+                                           NALU_HYPRE_BigInt *rows, NALU_HYPRE_BigInt *cols, NALU_HYPRE_Complex *coeffs );
+NALU_HYPRE_Int hypre_IJMatrixAddToBlockPETSc ( hypre_IJMatrix *matrix, NALU_HYPRE_Int m, NALU_HYPRE_Int n,
+                                          NALU_HYPRE_Int *rows, NALU_HYPRE_Int *cols, NALU_HYPRE_Complex *coeffs );
+NALU_HYPRE_Int hypre_IJMatrixInsertRowPETSc ( hypre_IJMatrix *matrix, NALU_HYPRE_Int n, NALU_HYPRE_BigInt row,
+                                         NALU_HYPRE_BigInt *indices, NALU_HYPRE_Complex *coeffs );
+NALU_HYPRE_Int hypre_IJMatrixAddToRowPETSc ( hypre_IJMatrix *matrix, NALU_HYPRE_Int n, NALU_HYPRE_BigInt row,
+                                        NALU_HYPRE_BigInt *indices, NALU_HYPRE_Complex *coeffs );
+NALU_HYPRE_Int hypre_IJMatrixAssemblePETSc ( hypre_IJMatrix *matrix );
+NALU_HYPRE_Int hypre_IJMatrixDistributePETSc ( hypre_IJMatrix *matrix, NALU_HYPRE_BigInt *row_starts,
+                                          NALU_HYPRE_BigInt *col_starts );
+NALU_HYPRE_Int hypre_IJMatrixApplyPETSc ( hypre_IJMatrix *matrix, hypre_ParVector *x,
                                      hypre_ParVector *b );
-HYPRE_Int hypre_IJMatrixDestroyPETSc ( hypre_IJMatrix *matrix );
-HYPRE_Int hypre_IJMatrixSetTotalSizePETSc ( hypre_IJMatrix *matrix, HYPRE_Int size );
+NALU_HYPRE_Int hypre_IJMatrixDestroyPETSc ( hypre_IJMatrix *matrix );
+NALU_HYPRE_Int hypre_IJMatrixSetTotalSizePETSc ( hypre_IJMatrix *matrix, NALU_HYPRE_Int size );
 
 /* IJVector.c */
-HYPRE_Int hypre_IJVectorDistribute ( HYPRE_IJVector vector, const HYPRE_Int *vec_starts );
-HYPRE_Int hypre_IJVectorZeroValues ( HYPRE_IJVector vector );
+NALU_HYPRE_Int hypre_IJVectorDistribute ( NALU_HYPRE_IJVector vector, const NALU_HYPRE_Int *vec_starts );
+NALU_HYPRE_Int hypre_IJVectorZeroValues ( NALU_HYPRE_IJVector vector );
 
 /* IJVector_parcsr.c */
-HYPRE_Int hypre_IJVectorCreatePar ( hypre_IJVector *vector, HYPRE_BigInt *IJpartitioning );
-HYPRE_Int hypre_IJVectorDestroyPar ( hypre_IJVector *vector );
-HYPRE_Int hypre_IJVectorInitializePar ( hypre_IJVector *vector );
-HYPRE_Int hypre_IJVectorInitializePar_v2(hypre_IJVector *vector,
-                                         HYPRE_MemoryLocation memory_location);
-HYPRE_Int hypre_IJVectorSetMaxOffProcElmtsPar ( hypre_IJVector *vector,
-                                                HYPRE_Int max_off_proc_elmts );
-HYPRE_Int hypre_IJVectorDistributePar ( hypre_IJVector *vector, const HYPRE_Int *vec_starts );
-HYPRE_Int hypre_IJVectorZeroValuesPar ( hypre_IJVector *vector );
-HYPRE_Int hypre_IJVectorSetComponentPar ( hypre_IJVector *vector, HYPRE_Int component);
-HYPRE_Int hypre_IJVectorSetValuesPar ( hypre_IJVector *vector, HYPRE_Int num_values,
-                                       const HYPRE_BigInt *indices, const HYPRE_Complex *values );
-HYPRE_Int hypre_IJVectorAddToValuesPar ( hypre_IJVector *vector, HYPRE_Int num_values,
-                                         const HYPRE_BigInt *indices, const HYPRE_Complex *values );
-HYPRE_Int hypre_IJVectorAssemblePar ( hypre_IJVector *vector );
-HYPRE_Int hypre_IJVectorGetValuesPar ( hypre_IJVector *vector, HYPRE_Int num_values,
-                                       const HYPRE_BigInt *indices, HYPRE_Complex *values );
-HYPRE_Int hypre_IJVectorAssembleOffProcValsPar ( hypre_IJVector *vector,
-                                                 HYPRE_Int max_off_proc_elmts, HYPRE_Int current_num_elmts, HYPRE_MemoryLocation memory_location,
-                                                 HYPRE_BigInt *off_proc_i, HYPRE_Complex *off_proc_data );
-HYPRE_Int hypre_IJVectorSetAddValuesParDevice(hypre_IJVector *vector, HYPRE_Int num_values,
-                                              const HYPRE_BigInt *indices, const HYPRE_Complex *values, const char *action);
-HYPRE_Int hypre_IJVectorAssembleParDevice(hypre_IJVector *vector);
+NALU_HYPRE_Int hypre_IJVectorCreatePar ( hypre_IJVector *vector, NALU_HYPRE_BigInt *IJpartitioning );
+NALU_HYPRE_Int hypre_IJVectorDestroyPar ( hypre_IJVector *vector );
+NALU_HYPRE_Int hypre_IJVectorInitializePar ( hypre_IJVector *vector );
+NALU_HYPRE_Int hypre_IJVectorInitializePar_v2(hypre_IJVector *vector,
+                                         NALU_HYPRE_MemoryLocation memory_location);
+NALU_HYPRE_Int hypre_IJVectorSetMaxOffProcElmtsPar ( hypre_IJVector *vector,
+                                                NALU_HYPRE_Int max_off_proc_elmts );
+NALU_HYPRE_Int hypre_IJVectorDistributePar ( hypre_IJVector *vector, const NALU_HYPRE_Int *vec_starts );
+NALU_HYPRE_Int hypre_IJVectorZeroValuesPar ( hypre_IJVector *vector );
+NALU_HYPRE_Int hypre_IJVectorSetComponentPar ( hypre_IJVector *vector, NALU_HYPRE_Int component);
+NALU_HYPRE_Int hypre_IJVectorSetValuesPar ( hypre_IJVector *vector, NALU_HYPRE_Int num_values,
+                                       const NALU_HYPRE_BigInt *indices, const NALU_HYPRE_Complex *values );
+NALU_HYPRE_Int hypre_IJVectorAddToValuesPar ( hypre_IJVector *vector, NALU_HYPRE_Int num_values,
+                                         const NALU_HYPRE_BigInt *indices, const NALU_HYPRE_Complex *values );
+NALU_HYPRE_Int hypre_IJVectorAssemblePar ( hypre_IJVector *vector );
+NALU_HYPRE_Int hypre_IJVectorGetValuesPar ( hypre_IJVector *vector, NALU_HYPRE_Int num_values,
+                                       const NALU_HYPRE_BigInt *indices, NALU_HYPRE_Complex *values );
+NALU_HYPRE_Int hypre_IJVectorAssembleOffProcValsPar ( hypre_IJVector *vector,
+                                                 NALU_HYPRE_Int max_off_proc_elmts, NALU_HYPRE_Int current_num_elmts, NALU_HYPRE_MemoryLocation memory_location,
+                                                 NALU_HYPRE_BigInt *off_proc_i, NALU_HYPRE_Complex *off_proc_data );
+NALU_HYPRE_Int hypre_IJVectorSetAddValuesParDevice(hypre_IJVector *vector, NALU_HYPRE_Int num_values,
+                                              const NALU_HYPRE_BigInt *indices, const NALU_HYPRE_Complex *values, const char *action);
+NALU_HYPRE_Int hypre_IJVectorAssembleParDevice(hypre_IJVector *vector);
 
-HYPRE_Int hypre_IJVectorUpdateValuesDevice( hypre_IJVector *vector, HYPRE_Int num_values,
-                                            const HYPRE_BigInt *indices, const HYPRE_Complex *values, HYPRE_Int action);
+NALU_HYPRE_Int hypre_IJVectorUpdateValuesDevice( hypre_IJVector *vector, NALU_HYPRE_Int num_values,
+                                            const NALU_HYPRE_BigInt *indices, const NALU_HYPRE_Complex *values, NALU_HYPRE_Int action);
 
-/* HYPRE_IJMatrix.c */
-HYPRE_Int HYPRE_IJMatrixCreate ( MPI_Comm comm, HYPRE_BigInt ilower, HYPRE_BigInt iupper,
-                                 HYPRE_BigInt jlower, HYPRE_BigInt jupper, HYPRE_IJMatrix *matrix );
-HYPRE_Int HYPRE_IJMatrixDestroy ( HYPRE_IJMatrix matrix );
-HYPRE_Int HYPRE_IJMatrixInitialize ( HYPRE_IJMatrix matrix );
-HYPRE_Int HYPRE_IJMatrixSetPrintLevel ( HYPRE_IJMatrix matrix, HYPRE_Int print_level );
-HYPRE_Int HYPRE_IJMatrixSetValues ( HYPRE_IJMatrix matrix, HYPRE_Int nrows, HYPRE_Int *ncols,
-                                    const HYPRE_BigInt *rows, const HYPRE_BigInt *cols, const HYPRE_Complex *values );
-HYPRE_Int HYPRE_IJMatrixSetConstantValues ( HYPRE_IJMatrix matrix, HYPRE_Complex value );
-HYPRE_Int HYPRE_IJMatrixAddToValues ( HYPRE_IJMatrix matrix, HYPRE_Int nrows, HYPRE_Int *ncols,
-                                      const HYPRE_BigInt *rows, const HYPRE_BigInt *cols, const HYPRE_Complex *values );
-HYPRE_Int HYPRE_IJMatrixAssemble ( HYPRE_IJMatrix matrix );
-HYPRE_Int HYPRE_IJMatrixGetRowCounts ( HYPRE_IJMatrix matrix, HYPRE_Int nrows, HYPRE_BigInt *rows,
-                                       HYPRE_Int *ncols );
-HYPRE_Int HYPRE_IJMatrixGetValues ( HYPRE_IJMatrix matrix, HYPRE_Int nrows, HYPRE_Int *ncols,
-                                    HYPRE_BigInt *rows, HYPRE_BigInt *cols, HYPRE_Complex *values );
-HYPRE_Int HYPRE_IJMatrixSetObjectType ( HYPRE_IJMatrix matrix, HYPRE_Int type );
-HYPRE_Int HYPRE_IJMatrixGetObjectType ( HYPRE_IJMatrix matrix, HYPRE_Int *type );
-HYPRE_Int HYPRE_IJMatrixGetLocalRange ( HYPRE_IJMatrix matrix, HYPRE_BigInt *ilower,
-                                        HYPRE_BigInt *iupper, HYPRE_BigInt *jlower, HYPRE_BigInt *jupper );
-HYPRE_Int HYPRE_IJMatrixGetObject ( HYPRE_IJMatrix matrix, void **object );
-HYPRE_Int HYPRE_IJMatrixSetRowSizes ( HYPRE_IJMatrix matrix, const HYPRE_Int *sizes );
-HYPRE_Int HYPRE_IJMatrixSetDiagOffdSizes ( HYPRE_IJMatrix matrix, const HYPRE_Int *diag_sizes,
-                                           const HYPRE_Int *offdiag_sizes );
-HYPRE_Int HYPRE_IJMatrixSetMaxOffProcElmts ( HYPRE_IJMatrix matrix, HYPRE_Int max_off_proc_elmts );
-HYPRE_Int HYPRE_IJMatrixRead ( const char *filename, MPI_Comm comm, HYPRE_Int type,
-                               HYPRE_IJMatrix *matrix_ptr );
-HYPRE_Int HYPRE_IJMatrixReadMM( const char *filename, MPI_Comm comm, HYPRE_Int type,
-                                HYPRE_IJMatrix *matrix_ptr );
-HYPRE_Int HYPRE_IJMatrixPrint ( HYPRE_IJMatrix matrix, const char *filename );
-HYPRE_Int HYPRE_IJMatrixSetOMPFlag ( HYPRE_IJMatrix matrix, HYPRE_Int omp_flag );
-HYPRE_Int HYPRE_IJMatrixTranspose ( HYPRE_IJMatrix  matrix_A, HYPRE_IJMatrix *matrix_AT );
-HYPRE_Int HYPRE_IJMatrixNorm ( HYPRE_IJMatrix matrix, HYPRE_Real *norm );
-HYPRE_Int HYPRE_IJMatrixAdd ( HYPRE_Complex alpha, HYPRE_IJMatrix matrix_A, HYPRE_Complex beta,
-                              HYPRE_IJMatrix matrix_B, HYPRE_IJMatrix *matrix_C );
+/* NALU_HYPRE_IJMatrix.c */
+NALU_HYPRE_Int NALU_HYPRE_IJMatrixCreate ( MPI_Comm comm, NALU_HYPRE_BigInt ilower, NALU_HYPRE_BigInt iupper,
+                                 NALU_HYPRE_BigInt jlower, NALU_HYPRE_BigInt jupper, NALU_HYPRE_IJMatrix *matrix );
+NALU_HYPRE_Int NALU_HYPRE_IJMatrixDestroy ( NALU_HYPRE_IJMatrix matrix );
+NALU_HYPRE_Int NALU_HYPRE_IJMatrixInitialize ( NALU_HYPRE_IJMatrix matrix );
+NALU_HYPRE_Int NALU_HYPRE_IJMatrixSetPrintLevel ( NALU_HYPRE_IJMatrix matrix, NALU_HYPRE_Int print_level );
+NALU_HYPRE_Int NALU_HYPRE_IJMatrixSetValues ( NALU_HYPRE_IJMatrix matrix, NALU_HYPRE_Int nrows, NALU_HYPRE_Int *ncols,
+                                    const NALU_HYPRE_BigInt *rows, const NALU_HYPRE_BigInt *cols, const NALU_HYPRE_Complex *values );
+NALU_HYPRE_Int NALU_HYPRE_IJMatrixSetConstantValues ( NALU_HYPRE_IJMatrix matrix, NALU_HYPRE_Complex value );
+NALU_HYPRE_Int NALU_HYPRE_IJMatrixAddToValues ( NALU_HYPRE_IJMatrix matrix, NALU_HYPRE_Int nrows, NALU_HYPRE_Int *ncols,
+                                      const NALU_HYPRE_BigInt *rows, const NALU_HYPRE_BigInt *cols, const NALU_HYPRE_Complex *values );
+NALU_HYPRE_Int NALU_HYPRE_IJMatrixAssemble ( NALU_HYPRE_IJMatrix matrix );
+NALU_HYPRE_Int NALU_HYPRE_IJMatrixGetRowCounts ( NALU_HYPRE_IJMatrix matrix, NALU_HYPRE_Int nrows, NALU_HYPRE_BigInt *rows,
+                                       NALU_HYPRE_Int *ncols );
+NALU_HYPRE_Int NALU_HYPRE_IJMatrixGetValues ( NALU_HYPRE_IJMatrix matrix, NALU_HYPRE_Int nrows, NALU_HYPRE_Int *ncols,
+                                    NALU_HYPRE_BigInt *rows, NALU_HYPRE_BigInt *cols, NALU_HYPRE_Complex *values );
+NALU_HYPRE_Int NALU_HYPRE_IJMatrixSetObjectType ( NALU_HYPRE_IJMatrix matrix, NALU_HYPRE_Int type );
+NALU_HYPRE_Int NALU_HYPRE_IJMatrixGetObjectType ( NALU_HYPRE_IJMatrix matrix, NALU_HYPRE_Int *type );
+NALU_HYPRE_Int NALU_HYPRE_IJMatrixGetLocalRange ( NALU_HYPRE_IJMatrix matrix, NALU_HYPRE_BigInt *ilower,
+                                        NALU_HYPRE_BigInt *iupper, NALU_HYPRE_BigInt *jlower, NALU_HYPRE_BigInt *jupper );
+NALU_HYPRE_Int NALU_HYPRE_IJMatrixGetObject ( NALU_HYPRE_IJMatrix matrix, void **object );
+NALU_HYPRE_Int NALU_HYPRE_IJMatrixSetRowSizes ( NALU_HYPRE_IJMatrix matrix, const NALU_HYPRE_Int *sizes );
+NALU_HYPRE_Int NALU_HYPRE_IJMatrixSetDiagOffdSizes ( NALU_HYPRE_IJMatrix matrix, const NALU_HYPRE_Int *diag_sizes,
+                                           const NALU_HYPRE_Int *offdiag_sizes );
+NALU_HYPRE_Int NALU_HYPRE_IJMatrixSetMaxOffProcElmts ( NALU_HYPRE_IJMatrix matrix, NALU_HYPRE_Int max_off_proc_elmts );
+NALU_HYPRE_Int NALU_HYPRE_IJMatrixRead ( const char *filename, MPI_Comm comm, NALU_HYPRE_Int type,
+                               NALU_HYPRE_IJMatrix *matrix_ptr );
+NALU_HYPRE_Int NALU_HYPRE_IJMatrixReadMM( const char *filename, MPI_Comm comm, NALU_HYPRE_Int type,
+                                NALU_HYPRE_IJMatrix *matrix_ptr );
+NALU_HYPRE_Int NALU_HYPRE_IJMatrixPrint ( NALU_HYPRE_IJMatrix matrix, const char *filename );
+NALU_HYPRE_Int NALU_HYPRE_IJMatrixSetOMPFlag ( NALU_HYPRE_IJMatrix matrix, NALU_HYPRE_Int omp_flag );
+NALU_HYPRE_Int NALU_HYPRE_IJMatrixTranspose ( NALU_HYPRE_IJMatrix  matrix_A, NALU_HYPRE_IJMatrix *matrix_AT );
+NALU_HYPRE_Int NALU_HYPRE_IJMatrixNorm ( NALU_HYPRE_IJMatrix matrix, NALU_HYPRE_Real *norm );
+NALU_HYPRE_Int NALU_HYPRE_IJMatrixAdd ( NALU_HYPRE_Complex alpha, NALU_HYPRE_IJMatrix matrix_A, NALU_HYPRE_Complex beta,
+                              NALU_HYPRE_IJMatrix matrix_B, NALU_HYPRE_IJMatrix *matrix_C );
 
-/* HYPRE_IJVector.c */
-HYPRE_Int HYPRE_IJVectorCreate ( MPI_Comm comm, HYPRE_BigInt jlower, HYPRE_BigInt jupper,
-                                 HYPRE_IJVector *vector );
-HYPRE_Int HYPRE_IJVectorSetNumComponents ( HYPRE_IJVector vector, HYPRE_Int num_components );
-HYPRE_Int HYPRE_IJVectorSetComponent ( HYPRE_IJVector vector, HYPRE_Int component );
-HYPRE_Int HYPRE_IJVectorDestroy ( HYPRE_IJVector vector );
-HYPRE_Int HYPRE_IJVectorInitialize ( HYPRE_IJVector vector );
-HYPRE_Int HYPRE_IJVectorSetPrintLevel ( HYPRE_IJVector vector, HYPRE_Int print_level );
-HYPRE_Int HYPRE_IJVectorSetValues ( HYPRE_IJVector vector, HYPRE_Int nvalues,
-                                    const HYPRE_BigInt *indices, const HYPRE_Complex *values );
-HYPRE_Int HYPRE_IJVectorAddToValues ( HYPRE_IJVector vector, HYPRE_Int nvalues,
-                                      const HYPRE_BigInt *indices, const HYPRE_Complex *values );
-HYPRE_Int HYPRE_IJVectorAssemble ( HYPRE_IJVector vector );
-HYPRE_Int HYPRE_IJVectorGetValues ( HYPRE_IJVector vector, HYPRE_Int nvalues,
-                                    const HYPRE_BigInt *indices, HYPRE_Complex *values );
-HYPRE_Int HYPRE_IJVectorSetMaxOffProcElmts ( HYPRE_IJVector vector, HYPRE_Int max_off_proc_elmts );
-HYPRE_Int HYPRE_IJVectorSetObjectType ( HYPRE_IJVector vector, HYPRE_Int type );
-HYPRE_Int HYPRE_IJVectorGetObjectType ( HYPRE_IJVector vector, HYPRE_Int *type );
-HYPRE_Int HYPRE_IJVectorGetLocalRange ( HYPRE_IJVector vector, HYPRE_BigInt *jlower,
-                                        HYPRE_BigInt *jupper );
-HYPRE_Int HYPRE_IJVectorGetObject ( HYPRE_IJVector vector, void **object );
-HYPRE_Int HYPRE_IJVectorRead ( const char *filename, MPI_Comm comm, HYPRE_Int type,
-                               HYPRE_IJVector *vector_ptr );
-HYPRE_Int HYPRE_IJVectorPrint ( HYPRE_IJVector vector, const char *filename );
-HYPRE_Int HYPRE_IJVectorInnerProd ( HYPRE_IJVector x, HYPRE_IJVector y, HYPRE_Real *prod );
+/* NALU_HYPRE_IJVector.c */
+NALU_HYPRE_Int NALU_HYPRE_IJVectorCreate ( MPI_Comm comm, NALU_HYPRE_BigInt jlower, NALU_HYPRE_BigInt jupper,
+                                 NALU_HYPRE_IJVector *vector );
+NALU_HYPRE_Int NALU_HYPRE_IJVectorSetNumComponents ( NALU_HYPRE_IJVector vector, NALU_HYPRE_Int num_components );
+NALU_HYPRE_Int NALU_HYPRE_IJVectorSetComponent ( NALU_HYPRE_IJVector vector, NALU_HYPRE_Int component );
+NALU_HYPRE_Int NALU_HYPRE_IJVectorDestroy ( NALU_HYPRE_IJVector vector );
+NALU_HYPRE_Int NALU_HYPRE_IJVectorInitialize ( NALU_HYPRE_IJVector vector );
+NALU_HYPRE_Int NALU_HYPRE_IJVectorSetPrintLevel ( NALU_HYPRE_IJVector vector, NALU_HYPRE_Int print_level );
+NALU_HYPRE_Int NALU_HYPRE_IJVectorSetValues ( NALU_HYPRE_IJVector vector, NALU_HYPRE_Int nvalues,
+                                    const NALU_HYPRE_BigInt *indices, const NALU_HYPRE_Complex *values );
+NALU_HYPRE_Int NALU_HYPRE_IJVectorAddToValues ( NALU_HYPRE_IJVector vector, NALU_HYPRE_Int nvalues,
+                                      const NALU_HYPRE_BigInt *indices, const NALU_HYPRE_Complex *values );
+NALU_HYPRE_Int NALU_HYPRE_IJVectorAssemble ( NALU_HYPRE_IJVector vector );
+NALU_HYPRE_Int NALU_HYPRE_IJVectorGetValues ( NALU_HYPRE_IJVector vector, NALU_HYPRE_Int nvalues,
+                                    const NALU_HYPRE_BigInt *indices, NALU_HYPRE_Complex *values );
+NALU_HYPRE_Int NALU_HYPRE_IJVectorSetMaxOffProcElmts ( NALU_HYPRE_IJVector vector, NALU_HYPRE_Int max_off_proc_elmts );
+NALU_HYPRE_Int NALU_HYPRE_IJVectorSetObjectType ( NALU_HYPRE_IJVector vector, NALU_HYPRE_Int type );
+NALU_HYPRE_Int NALU_HYPRE_IJVectorGetObjectType ( NALU_HYPRE_IJVector vector, NALU_HYPRE_Int *type );
+NALU_HYPRE_Int NALU_HYPRE_IJVectorGetLocalRange ( NALU_HYPRE_IJVector vector, NALU_HYPRE_BigInt *jlower,
+                                        NALU_HYPRE_BigInt *jupper );
+NALU_HYPRE_Int NALU_HYPRE_IJVectorGetObject ( NALU_HYPRE_IJVector vector, void **object );
+NALU_HYPRE_Int NALU_HYPRE_IJVectorRead ( const char *filename, MPI_Comm comm, NALU_HYPRE_Int type,
+                               NALU_HYPRE_IJVector *vector_ptr );
+NALU_HYPRE_Int NALU_HYPRE_IJVectorPrint ( NALU_HYPRE_IJVector vector, const char *filename );
+NALU_HYPRE_Int NALU_HYPRE_IJVectorInnerProd ( NALU_HYPRE_IJVector x, NALU_HYPRE_IJVector y, NALU_HYPRE_Real *prod );
 
 #ifdef __cplusplus
 }

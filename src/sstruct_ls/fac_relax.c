@@ -15,13 +15,13 @@
 
 #define DEBUG 0
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_FacLocalRelax(void                 *relax_vdata,
                     hypre_SStructPMatrix *A,
                     hypre_SStructPVector *x,
                     hypre_SStructPVector *b,
-                    HYPRE_Int             num_relax,
-                    HYPRE_Int            *zero_guess)
+                    NALU_HYPRE_Int             num_relax,
+                    NALU_HYPRE_Int            *zero_guess)
 {
    hypre_SysPFMGRelaxSetPreRelax(relax_vdata);
    hypre_SysPFMGRelaxSetMaxIter(relax_vdata, num_relax);

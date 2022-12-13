@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 set(HDRS
-  HYPRE_seq_mv.h
+  NALU_HYPRE_seq_mv.h
   seq_mv.h
 )
 
@@ -13,10 +13,10 @@ set(SRCS
   csr_matrix.c
   csr_matvec.c
   genpart.c
-  HYPRE_csr_matrix.c
-  HYPRE_mapped_matrix.c
-  HYPRE_multiblock_matrix.c
-  HYPRE_vector.c
+  NALU_HYPRE_csr_matrix.c
+  NALU_HYPRE_mapped_matrix.c
+  NALU_HYPRE_multiblock_matrix.c
+  NALU_HYPRE_vector.c
   mapped_matrix.c
   multiblock_matrix.c
   vector_batched.c
@@ -66,7 +66,7 @@ foreach(number RANGE 1 10)
   # Check if file exists, then don't recreate
   set(fn "csr_spgemm_device_numer${number}.c")
   if (NOT EXISTS ${fn})
-    file(WRITE ${fn} "#define HYPRE_SPGEMM_BIN ${number}")
+    file(WRITE ${fn} "#define NALU_HYPRE_SPGEMM_BIN ${number}")
     file(APPEND ${fn} "${CONTENTS}")
   endif (NOT EXISTS ${fn})
 endforeach(number RANGE 1 10)
@@ -76,7 +76,7 @@ file(READ "csr_spgemm_device_symbl.in" CONTENTS)
 foreach(number RANGE 1 10)
   set(fn "csr_spgemm_device_symbl${number}.c")
   if (NOT EXISTS ${fn})
-    file(WRITE ${fn} "#define HYPRE_SPGEMM_BIN ${number}")
+    file(WRITE ${fn} "#define NALU_HYPRE_SPGEMM_BIN ${number}")
     file(APPEND ${fn} "${CONTENTS}")
   endif (NOT EXISTS ${fn})
 endforeach(number RANGE 1 10)
@@ -86,7 +86,7 @@ target_sources(${PROJECT_NAME}
           ${HDRS}
 )
 
-if (HYPRE_USING_CUDA OR HYPRE_USING_SYCL)
+if (NALU_HYPRE_USING_CUDA OR NALU_HYPRE_USING_SYCL)
   set(GPU_SRCS
     csr_matop_device.c
     csr_matrix_cuda_utils.c
@@ -127,8 +127,8 @@ if (HYPRE_USING_CUDA OR HYPRE_USING_SYCL)
     vector_device.c
   )
   convert_filenames_to_full_paths(GPU_SRCS)
-  set(HYPRE_GPU_SOURCES ${HYPRE_GPU_SOURCES} ${GPU_SRCS} PARENT_SCOPE)
+  set(NALU_HYPRE_GPU_SOURCES ${NALU_HYPRE_GPU_SOURCES} ${GPU_SRCS} PARENT_SCOPE)
 endif ()
 
 convert_filenames_to_full_paths(HDRS)
-set(HYPRE_HEADERS ${HYPRE_HEADERS} ${HDRS} PARENT_SCOPE)
+set(NALU_HYPRE_HEADERS ${NALU_HYPRE_HEADERS} ${HDRS} PARENT_SCOPE)

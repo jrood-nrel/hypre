@@ -9,11 +9,11 @@
 #define hypre_FEI__
 
 #include "HYPRE.h"
-#include "IJ_mv/HYPRE_IJ_mv.h"
-#include "parcsr_mv/HYPRE_parcsr_mv.h"
+#include "IJ_mv/NALU_HYPRE_IJ_mv.h"
+#include "parcsr_mv/NALU_HYPRE_parcsr_mv.h"
 #include "parcsr_mv/_hypre_parcsr_mv.h"
 #include "parcsr_ls/_hypre_parcsr_ls.h"
-#include "parcsr_ls/HYPRE_parcsr_ls.h"
+#include "parcsr_ls/NALU_HYPRE_parcsr_ls.h"
 
 #ifdef __cplusplus
 extern "C"
@@ -60,7 +60,7 @@ int hypre_FGMRESSetMaxIter( void *fgmres_vdata, int max_iter );
 int hypre_FGMRESSetStopCrit( void *fgmres_vdata, double stop_crit );
 int hypre_FGMRESSetPrecond( void *fgmres_vdata, int (*precond)(void*,void*,void*,void*),
 								int  (*precond_setup)(void*,void*,void*,void*), void  *precond_data );
-int hypre_FGMRESGetPrecond(void *fgmres_vdata, HYPRE_Solver *precond_data_ptr);
+int hypre_FGMRESGetPrecond(void *fgmres_vdata, NALU_HYPRE_Solver *precond_data_ptr);
 int hypre_FGMRESSetLogging( void *fgmres_vdata, int logging );	
 int hypre_FGMRESGetNumIterations( void *fgmres_vdata, int *num_iterations );
 int hypre_FGMRESGetFinalRelativeResidualNorm(void *fgmres_vdata,

@@ -118,20 +118,20 @@ following routines, where ``A`` is the matrix, ``b`` the right hand side and
 .. code-block:: c
 
    /* Create Solver */
-   int HYPRE_SOLVERCreate(MPI_COMM_WORLD, &solver);
+   int NALU_HYPRE_SOLVERCreate(MPI_COMM_WORLD, &solver);
 
    /* Set certain parameters if desired */
-   HYPRE_SOLVERSetTol(solver, 1.e-8);
+   NALU_HYPRE_SOLVERSetTol(solver, 1.e-8);
    ...
 
    /* Set up Solver */
-   HYPRE_SOLVERSetup(solver, A, b, x);
+   NALU_HYPRE_SOLVERSetup(solver, A, b, x);
 
    /* Solve the system */
-   HYPRE_SOLVERSolve(solver, A, b, x);
+   NALU_HYPRE_SOLVERSolve(solver, A, b, x);
 
    /* Destroy the solver */
-   HYPRE_SOLVERDestroy(solver);
+   NALU_HYPRE_SOLVERDestroy(solver);
 
 In the following sections, we will give brief descriptions of the available
 hypre solvers with some suggestions on how to choose the parameters as well as

@@ -33,19 +33,19 @@
  * in 'boundary' will be overwritten.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_BoxBoundaryIntersect( hypre_Box *box,
                             hypre_StructGrid *grid,
-                            HYPRE_Int d,
-                            HYPRE_Int dir,
+                            NALU_HYPRE_Int d,
+                            NALU_HYPRE_Int dir,
                             hypre_BoxArray *boundary )
 {
-   HYPRE_Int           ndim = hypre_BoxNDim(box);
+   NALU_HYPRE_Int           ndim = hypre_BoxNDim(box);
    hypre_BoxManager   *boxman;
    hypre_BoxManEntry **entries;
    hypre_BoxArray     *int_boxes, *tmp_boxes;
    hypre_Box          *bbox, *ibox;
-   HYPRE_Int           nentries, i;
+   NALU_HYPRE_Int           nentries, i;
 
    /* set bbox to the box surface of interest */
    hypre_BoxArraySetSize(boundary, 1);
@@ -84,7 +84,7 @@ hypre_BoxBoundaryIntersect( hypre_Box *box,
 
    hypre_BoxArrayDestroy(int_boxes);
    hypre_BoxArrayDestroy(tmp_boxes);
-   hypre_TFree(entries, HYPRE_MEMORY_HOST);
+   hypre_TFree(entries, NALU_HYPRE_MEMORY_HOST);
 
    return hypre_error_flag;
 }
@@ -95,14 +95,14 @@ hypre_BoxBoundaryIntersect( hypre_Box *box,
  * this box array will get overwritten.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_BoxBoundaryG( hypre_Box *box,
                     hypre_StructGrid *g,
                     hypre_BoxArray *boundary )
 {
-   HYPRE_Int       ndim = hypre_BoxNDim(box);
+   NALU_HYPRE_Int       ndim = hypre_BoxNDim(box);
    hypre_BoxArray *boundary_d;
-   HYPRE_Int       d;
+   NALU_HYPRE_Int       d;
 
    boundary_d = hypre_BoxArrayCreate(0, ndim);
    for (d = 0; d < ndim; d++)
@@ -124,12 +124,12 @@ hypre_BoxBoundaryG( hypre_Box *box,
  * direction).  Any input contents of these box arrays will get overwritten.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_BoxBoundaryDG( hypre_Box *box,
                      hypre_StructGrid *g,
                      hypre_BoxArray *boundarym,
                      hypre_BoxArray *boundaryp,
-                     HYPRE_Int d )
+                     NALU_HYPRE_Int d )
 {
    hypre_BoxBoundaryIntersect(box, g, d, -1, boundarym);
    hypre_BoxBoundaryIntersect(box, g, d,  1, boundaryp);
@@ -146,7 +146,7 @@ hypre_BoxBoundaryDG( hypre_Box *box,
  * in 'boundary' will be overwritten.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_GeneralBoxBoundaryIntersect( hypre_Box *box,
                                    hypre_StructGrid *grid,
                                    hypre_Index stencil_element,
@@ -156,12 +156,12 @@ hypre_GeneralBoxBoundaryIntersect( hypre_Box *box,
    hypre_BoxManEntry **entries;
    hypre_BoxArray     *int_boxes, *tmp_boxes;
    hypre_Box          *bbox, *ibox;
-   HYPRE_Int           nentries, i, j;
-   HYPRE_Int          *dd;
-   HYPRE_Int           ndim;
+   NALU_HYPRE_Int           nentries, i, j;
+   NALU_HYPRE_Int          *dd;
+   NALU_HYPRE_Int           ndim;
 
    ndim = hypre_StructGridNDim(grid);
-   dd = hypre_CTAlloc(HYPRE_Int,  ndim, HYPRE_MEMORY_HOST);
+   dd = hypre_CTAlloc(NALU_HYPRE_Int,  ndim, NALU_HYPRE_MEMORY_HOST);
 
    for (i = 0; i < ndim; i++)
    {
@@ -207,8 +207,8 @@ hypre_GeneralBoxBoundaryIntersect( hypre_Box *box,
 
    hypre_BoxArrayDestroy(int_boxes);
    hypre_BoxArrayDestroy(tmp_boxes);
-   hypre_TFree(entries, HYPRE_MEMORY_HOST);
-   hypre_TFree(dd, HYPRE_MEMORY_HOST);
+   hypre_TFree(entries, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(dd, NALU_HYPRE_MEMORY_HOST);
 
    return hypre_error_flag;
 }

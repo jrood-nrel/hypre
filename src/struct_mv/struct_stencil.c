@@ -18,13 +18,13 @@
  *--------------------------------------------------------------------------*/
 
 hypre_StructStencil *
-hypre_StructStencilCreate( HYPRE_Int     dim,
-                           HYPRE_Int     size,
+hypre_StructStencilCreate( NALU_HYPRE_Int     dim,
+                           NALU_HYPRE_Int     size,
                            hypre_Index  *shape )
 {
    hypre_StructStencil   *stencil;
 
-   stencil = hypre_TAlloc(hypre_StructStencil, 1, HYPRE_MEMORY_HOST);
+   stencil = hypre_TAlloc(hypre_StructStencil, 1, NALU_HYPRE_MEMORY_HOST);
 
    hypre_StructStencilShape(stencil)    = shape;
    hypre_StructStencilSize(stencil)     = size;
@@ -50,7 +50,7 @@ hypre_StructStencilRef( hypre_StructStencil *stencil )
  * hypre_StructStencilDestroy
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_StructStencilDestroy( hypre_StructStencil *stencil )
 {
    if (stencil)
@@ -58,8 +58,8 @@ hypre_StructStencilDestroy( hypre_StructStencil *stencil )
       hypre_StructStencilRefCount(stencil) --;
       if (hypre_StructStencilRefCount(stencil) == 0)
       {
-         hypre_TFree(hypre_StructStencilShape(stencil), HYPRE_MEMORY_HOST);
-         hypre_TFree(stencil, HYPRE_MEMORY_HOST);
+         hypre_TFree(hypre_StructStencilShape(stencil), NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(stencil, NALU_HYPRE_MEMORY_HOST);
       }
    }
 
@@ -72,13 +72,13 @@ hypre_StructStencilDestroy( hypre_StructStencil *stencil )
  *    If the element is not found, a -1 is returned.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_StructStencilElementRank( hypre_StructStencil *stencil,
                                 hypre_Index          stencil_element )
 {
    hypre_Index  *stencil_shape;
-   HYPRE_Int     rank;
-   HYPRE_Int     i, ndim;
+   NALU_HYPRE_Int     rank;
+   NALU_HYPRE_Int     i, ndim;
 
    rank = -1;
    ndim = hypre_StructStencilNDim(stencil);
@@ -105,28 +105,28 @@ hypre_StructStencilElementRank( hypre_StructStencil *stencil,
  *    transpose element of an element that is not a "symmetric element".
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_StructStencilSymmetrize( hypre_StructStencil  *stencil,
                                hypre_StructStencil **symm_stencil_ptr,
-                               HYPRE_Int           **symm_elements_ptr )
+                               NALU_HYPRE_Int           **symm_elements_ptr )
 {
    hypre_Index          *stencil_shape = hypre_StructStencilShape(stencil);
-   HYPRE_Int             stencil_size  = hypre_StructStencilSize(stencil);
+   NALU_HYPRE_Int             stencil_size  = hypre_StructStencilSize(stencil);
 
    hypre_StructStencil  *symm_stencil;
    hypre_Index          *symm_stencil_shape;
-   HYPRE_Int             symm_stencil_size;
-   HYPRE_Int            *symm_elements;
+   NALU_HYPRE_Int             symm_stencil_size;
+   NALU_HYPRE_Int            *symm_elements;
 
-   HYPRE_Int             no_symmetric_stencil_element, symmetric;
-   HYPRE_Int             i, j, d, ndim;
+   NALU_HYPRE_Int             no_symmetric_stencil_element, symmetric;
+   NALU_HYPRE_Int             i, j, d, ndim;
 
    /*------------------------------------------------------
     * Copy stencil elements into `symm_stencil_shape'
     *------------------------------------------------------*/
 
    ndim = hypre_StructStencilNDim(stencil);
-   symm_stencil_shape = hypre_CTAlloc(hypre_Index,  2 * stencil_size, HYPRE_MEMORY_HOST);
+   symm_stencil_shape = hypre_CTAlloc(hypre_Index,  2 * stencil_size, NALU_HYPRE_MEMORY_HOST);
    for (i = 0; i < stencil_size; i++)
    {
       hypre_CopyIndex(stencil_shape[i], symm_stencil_shape[i]);
@@ -136,7 +136,7 @@ hypre_StructStencilSymmetrize( hypre_StructStencil  *stencil,
     * Create symmetric stencil elements and `symm_elements'
     *------------------------------------------------------*/
 
-   symm_elements = hypre_CTAlloc(HYPRE_Int,  2 * stencil_size, HYPRE_MEMORY_HOST);
+   symm_elements = hypre_CTAlloc(NALU_HYPRE_Int,  2 * stencil_size, NALU_HYPRE_MEMORY_HOST);
    for (i = 0; i < 2 * stencil_size; i++)
    {
       symm_elements[i] = -1;

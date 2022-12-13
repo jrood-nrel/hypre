@@ -22,17 +22,17 @@ gradient.
 
 .. code-block:: c
    
-   HYPRE_LSI_MLICreate(MPI_COMM_WORLD, &pcg_precond);
+   NALU_HYPRE_LSI_MLICreate(MPI_COMM_WORLD, &pcg_precond);
    
-   HYPRE_LSI_MLISetParams(pcg_precond, "MLI strengthThreshold 0.08");
+   NALU_HYPRE_LSI_MLISetParams(pcg_precond, "MLI strengthThreshold 0.08");
    ...
    
-   HYPRE_PCGSetPrecond(pcg_solver,
-                       (HYPRE_PtrToSolverFcn) HYPRE_LSI_MLISolve,
-                       (HYPRE_PtrToSolverFcn) HYPRE_LSI_MLISetup,
+   NALU_HYPRE_PCGSetPrecond(pcg_solver,
+                       (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_LSI_MLISolve,
+                       (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_LSI_MLISetup,
                        pcg_precond);
 
-Note that parameters are set via ``HYPRE_LSI_MLISetParams``. A list of valid
+Note that parameters are set via ``NALU_HYPRE_LSI_MLISetParams``. A list of valid
 parameters that can be set using this routine can be found in the FEI section of
 the reference manual.
 

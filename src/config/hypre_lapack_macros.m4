@@ -3,7 +3,7 @@ dnl HYPRE Project Developers. See the top-level COPYRIGHT file for details.
 dnl
 dnl SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-dnl @synopsis AC_HYPRE_FIND_LAPACK([ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
+dnl @synopsis AC_NALU_HYPRE_FIND_LAPACK([ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
 dnl
 dnl This macro looks for a library that implements the LAPACK
 dnl linear-algebra interface (see http://www.netlib.org/lapack/).
@@ -14,7 +14,7 @@ dnl To link with LAPACK, you should link with:
 dnl
 dnl     $LAPACKLIBS $BLASLIBS $LIBS $FCLIBS
 dnl
-dnl in that order.  BLASLIBS is either the output variable of the HYPRE_FIND_BLAS
+dnl in that order.  BLASLIBS is either the output variable of the NALU_HYPRE_FIND_BLAS
 dnl macro (which is called by configure before this macro) or the user-defined 
 dnl blas library.  FCLIBS is the output variable of the AC_FC_LIBRARY_LDFLAGS 
 dnl macro, which is sometimes necessary in order to link with Fortran libraries. 
@@ -32,7 +32,7 @@ dnl
 dnl @version $Id$
 dnl @author Steven G. Johnson <stevenj@alum.mit.edu>
 
-AC_DEFUN([AC_HYPRE_FIND_LAPACK], 
+AC_DEFUN([AC_NALU_HYPRE_FIND_LAPACK], 
 [
   AC_REQUIRE([AC_FC_LIBRARY_LDFLAGS])
 
@@ -112,9 +112,9 @@ AC_DEFUN([AC_HYPRE_FIND_LAPACK],
   LIBS="$hypre_save_LIBS"
   LDFLAGS="$hypre_save_LDFLGS"
 
-])dnl AC_HYPRE_FIND_LAPACK
+])dnl AC_NALU_HYPRE_FIND_LAPACK
 
-dnl @synopsis AC_HYPRE_CHECK_USER_LAPACKLIBS
+dnl @synopsis AC_NALU_HYPRE_CHECK_USER_LAPACKLIBS
 dnl
 dnl This macro checks that the user-provided blas library is 
 dnl linkable. Configure fails with an error message if this 
@@ -136,7 +136,7 @@ dnl the BLAS library.
 dnl
 dnl @author Daniel Osei-Kuffuor  <oseikuffuor1@llnl.gov>
 
-AC_DEFUN([AC_HYPRE_CHECK_USER_LAPACKLIBS],
+AC_DEFUN([AC_NALU_HYPRE_CHECK_USER_LAPACKLIBS],
 [
   AC_REQUIRE([AC_FC_LIBRARY_LDFLAGS])
 dnl **************************************************************
@@ -256,7 +256,7 @@ dnl **************************************************************
     fi
 
 dnl **************************************************************
-dnl set HYPRE_FMANGLE_LAPACK flag if not set
+dnl set NALU_HYPRE_FMANGLE_LAPACK flag if not set
 dnl **************************************************************
     if test "$hypre_lapack_link_ok" = "yes" -a "$hypre_fmangle_lapack" = "0"
     then
@@ -272,7 +272,7 @@ dnl **************************************************************
        else
           hypre_fmangle_lapack=4
        fi
-       AC_DEFINE_UNQUOTED(HYPRE_FMANGLE_LAPACK, [$hypre_fmangle_lapack], [Define as in HYPRE_FMANGLE to set the LAPACK name mangling scheme])
+       AC_DEFINE_UNQUOTED(NALU_HYPRE_FMANGLE_LAPACK, [$hypre_fmangle_lapack], [Define as in NALU_HYPRE_FMANGLE to set the LAPACK name mangling scheme])
     fi                    
 
 dnl **************************************************************
@@ -282,4 +282,4 @@ dnl **************************************************************
     LDFLAGS="$hypre_saved_LDFLAGS" 
 dnl  fi
 ])
-dnl Done with macro AC_HYPRE_CHECK_USER_LAPACKLIBS
+dnl Done with macro AC_NALU_HYPRE_CHECK_USER_LAPACKLIBS

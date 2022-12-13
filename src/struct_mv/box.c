@@ -21,13 +21,13 @@
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SetIndex( hypre_Index  index,
-                HYPRE_Int    val )
+                NALU_HYPRE_Int    val )
 {
-   HYPRE_Int d;
+   NALU_HYPRE_Int d;
 
-   for (d = 0; d < HYPRE_MAXDIM; d++)
+   for (d = 0; d < NALU_HYPRE_MAXDIM; d++)
    {
       hypre_IndexD(index, d) = val;
    }
@@ -38,13 +38,13 @@ hypre_SetIndex( hypre_Index  index,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_CopyIndex( hypre_Index  in_index,
                  hypre_Index  out_index )
 {
-   HYPRE_Int d;
+   NALU_HYPRE_Int d;
 
-   for (d = 0; d < HYPRE_MAXDIM; d++)
+   for (d = 0; d < NALU_HYPRE_MAXDIM; d++)
    {
       hypre_IndexD(out_index, d) = hypre_IndexD(in_index, d);
    }
@@ -55,17 +55,17 @@ hypre_CopyIndex( hypre_Index  in_index,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_CopyToCleanIndex( hypre_Index  in_index,
-                        HYPRE_Int    ndim,
+                        NALU_HYPRE_Int    ndim,
                         hypre_Index  out_index )
 {
-   HYPRE_Int d;
+   NALU_HYPRE_Int d;
    for (d = 0; d < ndim; d++)
    {
       hypre_IndexD(out_index, d) = hypre_IndexD(in_index, d);
    }
-   for (d = ndim; d < HYPRE_MAXDIM; d++)
+   for (d = ndim; d < NALU_HYPRE_MAXDIM; d++)
    {
       hypre_IndexD(out_index, d) = 0;
    }
@@ -76,12 +76,12 @@ hypre_CopyToCleanIndex( hypre_Index  in_index,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_IndexEqual( hypre_Index  index,
-                  HYPRE_Int    val,
-                  HYPRE_Int    ndim )
+                  NALU_HYPRE_Int    val,
+                  NALU_HYPRE_Int    ndim )
 {
-   HYPRE_Int d, equal;
+   NALU_HYPRE_Int d, equal;
 
    equal = 1;
    for (d = 0; d < ndim; d++)
@@ -99,11 +99,11 @@ hypre_IndexEqual( hypre_Index  index,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_IndexMin( hypre_Index  index,
-                HYPRE_Int    ndim )
+                NALU_HYPRE_Int    ndim )
 {
-   HYPRE_Int d, min;
+   NALU_HYPRE_Int d, min;
 
    min = hypre_IndexD(index, 0);
    for (d = 1; d < ndim; d++)
@@ -120,11 +120,11 @@ hypre_IndexMin( hypre_Index  index,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_IndexMax( hypre_Index  index,
-                HYPRE_Int    ndim )
+                NALU_HYPRE_Int    ndim )
 {
-   HYPRE_Int d, max;
+   NALU_HYPRE_Int d, max;
 
    max = hypre_IndexD(index, 0);
    for (d = 1; d < ndim; d++)
@@ -141,13 +141,13 @@ hypre_IndexMax( hypre_Index  index,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_AddIndexes( hypre_Index  index1,
                   hypre_Index  index2,
-                  HYPRE_Int    ndim,
+                  NALU_HYPRE_Int    ndim,
                   hypre_Index  result )
 {
-   HYPRE_Int d;
+   NALU_HYPRE_Int d;
 
    for (d = 0; d < ndim; d++)
    {
@@ -160,13 +160,13 @@ hypre_AddIndexes( hypre_Index  index1,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SubtractIndexes( hypre_Index  index1,
                        hypre_Index  index2,
-                       HYPRE_Int    ndim,
+                       NALU_HYPRE_Int    ndim,
                        hypre_Index  result )
 {
-   HYPRE_Int d;
+   NALU_HYPRE_Int d;
 
    for (d = 0; d < ndim; d++)
    {
@@ -179,12 +179,12 @@ hypre_SubtractIndexes( hypre_Index  index1,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_IndexesEqual( hypre_Index  index1,
                     hypre_Index  index2,
-                    HYPRE_Int    ndim )
+                    NALU_HYPRE_Int    ndim )
 {
-   HYPRE_Int d, equal;
+   NALU_HYPRE_Int d, equal;
 
    equal = 1;
    for (d = 0; d < ndim; d++)
@@ -202,12 +202,12 @@ hypre_IndexesEqual( hypre_Index  index1,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_IndexPrint( FILE        *file,
-                  HYPRE_Int    ndim,
+                  NALU_HYPRE_Int    ndim,
                   hypre_Index  index )
 {
-   HYPRE_Int d;
+   NALU_HYPRE_Int d;
 
    hypre_fprintf(file, "[%d", hypre_IndexD(index, 0));
    for (d = 1; d < ndim; d++)
@@ -222,12 +222,12 @@ hypre_IndexPrint( FILE        *file,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_IndexRead( FILE        *file,
-                 HYPRE_Int    ndim,
+                 NALU_HYPRE_Int    ndim,
                  hypre_Index  index )
 {
-   HYPRE_Int d;
+   NALU_HYPRE_Int d;
 
    hypre_fscanf(file, "[%d", &hypre_IndexD(index, 0));
    for (d = 1; d < ndim; d++)
@@ -236,7 +236,7 @@ hypre_IndexRead( FILE        *file,
    }
    hypre_fscanf(file, "]");
 
-   for (d = ndim; d < HYPRE_MAXDIM; d++)
+   for (d = ndim; d < NALU_HYPRE_MAXDIM; d++)
    {
       hypre_IndexD(index, d) = 0;
    }
@@ -252,11 +252,11 @@ hypre_IndexRead( FILE        *file,
  *--------------------------------------------------------------------------*/
 
 hypre_Box *
-hypre_BoxCreate( HYPRE_Int  ndim )
+hypre_BoxCreate( NALU_HYPRE_Int  ndim )
 {
    hypre_Box *box;
 
-   box = hypre_CTAlloc(hypre_Box,  1, HYPRE_MEMORY_HOST);
+   box = hypre_CTAlloc(hypre_Box,  1, NALU_HYPRE_MEMORY_HOST);
    hypre_BoxNDim(box) = ndim;
 
    return box;
@@ -265,12 +265,12 @@ hypre_BoxCreate( HYPRE_Int  ndim )
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_BoxDestroy( hypre_Box *box )
 {
    if (box)
    {
-      hypre_TFree(box, HYPRE_MEMORY_HOST);
+      hypre_TFree(box, NALU_HYPRE_MEMORY_HOST);
    }
 
    return hypre_error_flag;
@@ -280,9 +280,9 @@ hypre_BoxDestroy( hypre_Box *box )
  * This is used to initialize ndim when the box has static storage
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_BoxInit( hypre_Box *box,
-               HYPRE_Int  ndim )
+               NALU_HYPRE_Int  ndim )
 {
    hypre_BoxNDim(box) = ndim;
 
@@ -292,7 +292,7 @@ hypre_BoxInit( hypre_Box *box,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_BoxSetExtents( hypre_Box  *box,
                      hypre_Index imin,
                      hypre_Index imax )
@@ -306,7 +306,7 @@ hypre_BoxSetExtents( hypre_Box  *box,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_CopyBox( hypre_Box  *box1,
                hypre_Box  *box2 )
 {
@@ -335,10 +335,10 @@ hypre_BoxDuplicate( hypre_Box *box )
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_BoxVolume( hypre_Box *box )
 {
-   HYPRE_Int volume, d, ndim = hypre_BoxNDim(box);
+   NALU_HYPRE_Int volume, d, ndim = hypre_BoxNDim(box);
 
    volume = 1;
    for (d = 0; d < ndim; d++)
@@ -353,11 +353,11 @@ hypre_BoxVolume( hypre_Box *box )
  * To prevent overflow when needed
  *--------------------------------------------------------------------------*/
 
-HYPRE_Real
+NALU_HYPRE_Real
 hypre_doubleBoxVolume( hypre_Box *box )
 {
-   HYPRE_Real    volume;
-   HYPRE_Int d, ndim = hypre_BoxNDim(box);
+   NALU_HYPRE_Real    volume;
+   NALU_HYPRE_Int d, ndim = hypre_BoxNDim(box);
 
    volume = 1.0;
    for (d = 0; d < ndim; d++)
@@ -371,11 +371,11 @@ hypre_doubleBoxVolume( hypre_Box *box )
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_IndexInBox( hypre_Index   index,
                   hypre_Box    *box )
 {
-   HYPRE_Int d, inbox, ndim = hypre_BoxNDim(box);
+   NALU_HYPRE_Int d, inbox, ndim = hypre_BoxNDim(box);
 
    inbox = 1;
    for (d = 0; d < ndim; d++)
@@ -393,11 +393,11 @@ hypre_IndexInBox( hypre_Index   index,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_BoxGetSize( hypre_Box   *box,
                   hypre_Index  size )
 {
-   HYPRE_Int d, ndim = hypre_BoxNDim(box);
+   NALU_HYPRE_Int d, ndim = hypre_BoxNDim(box);
 
    for (d = 0; d < ndim; d++)
    {
@@ -410,12 +410,12 @@ hypre_BoxGetSize( hypre_Box   *box,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_BoxGetStrideSize( hypre_Box   *box,
                         hypre_Index  stride,
                         hypre_Index  size   )
 {
-   HYPRE_Int  d, s, ndim = hypre_BoxNDim(box);
+   NALU_HYPRE_Int  d, s, ndim = hypre_BoxNDim(box);
 
    for (d = 0; d < ndim; d++)
    {
@@ -433,12 +433,12 @@ hypre_BoxGetStrideSize( hypre_Box   *box,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_BoxGetStrideVolume( hypre_Box   *box,
                           hypre_Index  stride,
-                          HYPRE_Int   *volume_ptr )
+                          NALU_HYPRE_Int   *volume_ptr )
 {
-   HYPRE_Int  volume, d, s, ndim = hypre_BoxNDim(box);
+   NALU_HYPRE_Int  volume, d, s, ndim = hypre_BoxNDim(box);
 
    volume = 1;
    for (d = 0; d < ndim; d++)
@@ -461,11 +461,11 @@ hypre_BoxGetStrideVolume( hypre_Box   *box,
  * dimension 0 first, then dimension 1, etc.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_BoxIndexRank( hypre_Box   *box,
                     hypre_Index  index )
 {
-   HYPRE_Int  rank, size, d, ndim = hypre_BoxNDim(box);
+   NALU_HYPRE_Int  rank, size, d, ndim = hypre_BoxNDim(box);
 
    rank = 0;
    size = 1;
@@ -483,12 +483,12 @@ hypre_BoxIndexRank( hypre_Box   *box,
  * is dimension 0 first, then dimension 1, etc.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_BoxRankIndex( hypre_Box   *box,
-                    HYPRE_Int    rank,
+                    NALU_HYPRE_Int    rank,
                     hypre_Index  index )
 {
-   HYPRE_Int  d, r, s, ndim = hypre_BoxNDim(box);
+   NALU_HYPRE_Int  d, r, s, ndim = hypre_BoxNDim(box);
 
    r = rank;
    s = hypre_BoxVolume(box);
@@ -508,11 +508,11 @@ hypre_BoxRankIndex( hypre_Box   *box,
  * ordering is dimension 0 first, then dimension 1, etc.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_BoxOffsetDistance( hypre_Box   *box,
                          hypre_Index  index )
 {
-   HYPRE_Int  dist, size, d, ndim = hypre_BoxNDim(box);
+   NALU_HYPRE_Int  dist, size, d, ndim = hypre_BoxNDim(box);
 
    dist = 0;
    size = 1;
@@ -529,11 +529,11 @@ hypre_BoxOffsetDistance( hypre_Box   *box,
  * Shift a box by a positive shift
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_BoxShiftPos( hypre_Box   *box,
                    hypre_Index  shift )
 {
-   HYPRE_Int  d, ndim = hypre_BoxNDim(box);
+   NALU_HYPRE_Int  d, ndim = hypre_BoxNDim(box);
 
    for (d = 0; d < ndim; d++)
    {
@@ -548,11 +548,11 @@ hypre_BoxShiftPos( hypre_Box   *box,
  * Shift a box by a negative shift
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_BoxShiftNeg( hypre_Box   *box,
                    hypre_Index  shift )
 {
-   HYPRE_Int  d, ndim = hypre_BoxNDim(box);
+   NALU_HYPRE_Int  d, ndim = hypre_BoxNDim(box);
 
    for (d = 0; d < ndim; d++)
    {
@@ -567,14 +567,14 @@ hypre_BoxShiftNeg( hypre_Box   *box,
  * Grow a box outward in each dimension as specified by index
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_BoxGrowByIndex( hypre_Box   *box,
                       hypre_Index  index )
 {
    hypre_IndexRef  imin = hypre_BoxIMin(box);
    hypre_IndexRef  imax = hypre_BoxIMax(box);
-   HYPRE_Int       ndim = hypre_BoxNDim(box);
-   HYPRE_Int       d, i;
+   NALU_HYPRE_Int       ndim = hypre_BoxNDim(box);
+   NALU_HYPRE_Int       d, i;
 
    for (d = 0; d < ndim; d++)
    {
@@ -590,14 +590,14 @@ hypre_BoxGrowByIndex( hypre_Box   *box,
  * Grow a box outward by val in each dimension
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_BoxGrowByValue( hypre_Box  *box,
-                      HYPRE_Int   val )
+                      NALU_HYPRE_Int   val )
 {
-   HYPRE_Int  *imin = hypre_BoxIMin(box);
-   HYPRE_Int  *imax = hypre_BoxIMax(box);
-   HYPRE_Int   ndim = hypre_BoxNDim(box);
-   HYPRE_Int  d;
+   NALU_HYPRE_Int  *imin = hypre_BoxIMin(box);
+   NALU_HYPRE_Int  *imax = hypre_BoxIMax(box);
+   NALU_HYPRE_Int   ndim = hypre_BoxNDim(box);
+   NALU_HYPRE_Int  d;
 
    for (d = 0; d < ndim; d++)
    {
@@ -612,14 +612,14 @@ hypre_BoxGrowByValue( hypre_Box  *box,
  * Grow a box as specified by array
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_BoxGrowByArray( hypre_Box  *box,
-                      HYPRE_Int  *array )
+                      NALU_HYPRE_Int  *array )
 {
-   HYPRE_Int  *imin = hypre_BoxIMin(box);
-   HYPRE_Int  *imax = hypre_BoxIMax(box);
-   HYPRE_Int   ndim = hypre_BoxNDim(box);
-   HYPRE_Int   d;
+   NALU_HYPRE_Int  *imin = hypre_BoxIMin(box);
+   NALU_HYPRE_Int  *imax = hypre_BoxIMax(box);
+   NALU_HYPRE_Int   ndim = hypre_BoxNDim(box);
+   NALU_HYPRE_Int   d;
 
    for (d = 0; d < ndim; d++)
    {
@@ -634,12 +634,12 @@ hypre_BoxGrowByArray( hypre_Box  *box,
  * Print a box to file
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_BoxPrint( FILE      *file,
                 hypre_Box *box )
 {
-   HYPRE_Int   ndim = hypre_BoxNDim(box);
-   HYPRE_Int   d;
+   NALU_HYPRE_Int   ndim = hypre_BoxNDim(box);
+   NALU_HYPRE_Int   d;
 
    hypre_fprintf(file, "(%d", hypre_BoxIMinD(box, 0));
    for (d = 1; d < ndim; d++)
@@ -660,13 +660,13 @@ hypre_BoxPrint( FILE      *file,
  * Read a box from file
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_BoxRead( FILE       *file,
-               HYPRE_Int   ndim,
+               NALU_HYPRE_Int   ndim,
                hypre_Box **box_ptr )
 {
    hypre_Box  *box;
-   HYPRE_Int   d;
+   NALU_HYPRE_Int   d;
 
    /* Don't create a new box if the output box already exists */
    if (*box_ptr)
@@ -704,16 +704,16 @@ hypre_BoxRead( FILE       *file,
  *--------------------------------------------------------------------------*/
 
 hypre_BoxArray *
-hypre_BoxArrayCreate( HYPRE_Int size,
-                      HYPRE_Int ndim )
+hypre_BoxArrayCreate( NALU_HYPRE_Int size,
+                      NALU_HYPRE_Int ndim )
 {
-   HYPRE_Int       i;
+   NALU_HYPRE_Int       i;
    hypre_Box      *box;
    hypre_BoxArray *box_array;
 
-   box_array = hypre_TAlloc(hypre_BoxArray,  1, HYPRE_MEMORY_HOST);
+   box_array = hypre_TAlloc(hypre_BoxArray,  1, NALU_HYPRE_MEMORY_HOST);
 
-   hypre_BoxArrayBoxes(box_array)     = hypre_CTAlloc(hypre_Box,  size, HYPRE_MEMORY_HOST);
+   hypre_BoxArrayBoxes(box_array)     = hypre_CTAlloc(hypre_Box,  size, NALU_HYPRE_MEMORY_HOST);
    hypre_BoxArraySize(box_array)      = size;
    hypre_BoxArrayAllocSize(box_array) = size;
    hypre_BoxArrayNDim(box_array)      = ndim;
@@ -729,13 +729,13 @@ hypre_BoxArrayCreate( HYPRE_Int size,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_BoxArrayDestroy( hypre_BoxArray *box_array )
 {
    if (box_array)
    {
-      hypre_TFree(hypre_BoxArrayBoxes(box_array), HYPRE_MEMORY_HOST);
-      hypre_TFree(box_array, HYPRE_MEMORY_HOST);
+      hypre_TFree(hypre_BoxArrayBoxes(box_array), NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(box_array, NALU_HYPRE_MEMORY_HOST);
    }
 
    return hypre_error_flag;
@@ -744,23 +744,23 @@ hypre_BoxArrayDestroy( hypre_BoxArray *box_array )
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_BoxArraySetSize( hypre_BoxArray  *box_array,
-                       HYPRE_Int        size      )
+                       NALU_HYPRE_Int        size      )
 {
-   HYPRE_Int  alloc_size;
+   NALU_HYPRE_Int  alloc_size;
 
    alloc_size = hypre_BoxArrayAllocSize(box_array);
 
    if (size > alloc_size)
    {
-      HYPRE_Int  i, old_alloc_size, ndim = hypre_BoxArrayNDim(box_array);
+      NALU_HYPRE_Int  i, old_alloc_size, ndim = hypre_BoxArrayNDim(box_array);
       hypre_Box *box;
 
       old_alloc_size = alloc_size;
       alloc_size = size + hypre_BoxArrayExcess;
       hypre_BoxArrayBoxes(box_array) =
-         hypre_TReAlloc(hypre_BoxArrayBoxes(box_array),  hypre_Box,  alloc_size, HYPRE_MEMORY_HOST);
+         hypre_TReAlloc(hypre_BoxArrayBoxes(box_array),  hypre_Box,  alloc_size, NALU_HYPRE_MEMORY_HOST);
       hypre_BoxArrayAllocSize(box_array) = alloc_size;
 
       for (i = old_alloc_size; i < alloc_size; i++)
@@ -784,7 +784,7 @@ hypre_BoxArrayDuplicate( hypre_BoxArray *box_array )
 {
    hypre_BoxArray  *new_box_array;
 
-   HYPRE_Int        i;
+   NALU_HYPRE_Int        i;
 
    new_box_array = hypre_BoxArrayCreate(
                       hypre_BoxArraySize(box_array), hypre_BoxArrayNDim(box_array));
@@ -802,11 +802,11 @@ hypre_BoxArrayDuplicate( hypre_BoxArray *box_array )
  * The box_array may be empty.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_AppendBox( hypre_Box      *box,
                  hypre_BoxArray *box_array )
 {
-   HYPRE_Int  size;
+   NALU_HYPRE_Int  size;
 
    size = hypre_BoxArraySize(box_array);
    hypre_BoxArraySetSize(box_array, (size + 1));
@@ -819,11 +819,11 @@ hypre_AppendBox( hypre_Box      *box,
  * Delete box from box_array.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_DeleteBox( hypre_BoxArray *box_array,
-                 HYPRE_Int       index     )
+                 NALU_HYPRE_Int       index     )
 {
-   HYPRE_Int  i;
+   NALU_HYPRE_Int  i;
 
    for (i = index; i < hypre_BoxArraySize(box_array) - 1; i++)
    {
@@ -841,12 +841,12 @@ hypre_DeleteBox( hypre_BoxArray *box_array,
  * Assumes indices are in ascending order. (AB 11/04)
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_DeleteMultipleBoxes( hypre_BoxArray *box_array,
-                           HYPRE_Int*  indices,
-                           HYPRE_Int num )
+                           NALU_HYPRE_Int*  indices,
+                           NALU_HYPRE_Int num )
 {
-   HYPRE_Int  i, j, start, array_size;
+   NALU_HYPRE_Int  i, j, start, array_size;
 
    if (num < 1)
    {
@@ -885,12 +885,12 @@ hypre_DeleteMultipleBoxes( hypre_BoxArray *box_array,
  * The box_array_1 may be empty.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_AppendBoxArray( hypre_BoxArray *box_array_0,
                       hypre_BoxArray *box_array_1 )
 {
-   HYPRE_Int  size, size_0;
-   HYPRE_Int  i;
+   NALU_HYPRE_Int  size, size_0;
+   NALU_HYPRE_Int  i;
 
    size   = hypre_BoxArraySize(box_array_1);
    size_0 = hypre_BoxArraySize(box_array_0);
@@ -914,16 +914,16 @@ hypre_AppendBoxArray( hypre_BoxArray *box_array_0,
  *--------------------------------------------------------------------------*/
 
 hypre_BoxArrayArray *
-hypre_BoxArrayArrayCreate( HYPRE_Int size,
-                           HYPRE_Int ndim )
+hypre_BoxArrayArrayCreate( NALU_HYPRE_Int size,
+                           NALU_HYPRE_Int ndim )
 {
    hypre_BoxArrayArray  *box_array_array;
-   HYPRE_Int             i;
+   NALU_HYPRE_Int             i;
 
-   box_array_array = hypre_CTAlloc(hypre_BoxArrayArray,  1, HYPRE_MEMORY_HOST);
+   box_array_array = hypre_CTAlloc(hypre_BoxArrayArray,  1, NALU_HYPRE_MEMORY_HOST);
 
    hypre_BoxArrayArrayBoxArrays(box_array_array) =
-      hypre_CTAlloc(hypre_BoxArray *,  size, HYPRE_MEMORY_HOST);
+      hypre_CTAlloc(hypre_BoxArray *,  size, NALU_HYPRE_MEMORY_HOST);
 
    for (i = 0; i < size; i++)
    {
@@ -939,10 +939,10 @@ hypre_BoxArrayArrayCreate( HYPRE_Int size,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_BoxArrayArrayDestroy( hypre_BoxArrayArray *box_array_array )
 {
-   HYPRE_Int  i;
+   NALU_HYPRE_Int  i;
 
    if (box_array_array)
    {
@@ -950,8 +950,8 @@ hypre_BoxArrayArrayDestroy( hypre_BoxArrayArray *box_array_array )
       hypre_BoxArrayDestroy(
          hypre_BoxArrayArrayBoxArray(box_array_array, i));
 
-      hypre_TFree(hypre_BoxArrayArrayBoxArrays(box_array_array), HYPRE_MEMORY_HOST);
-      hypre_TFree(box_array_array, HYPRE_MEMORY_HOST);
+      hypre_TFree(hypre_BoxArrayArrayBoxArrays(box_array_array), NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(box_array_array, NALU_HYPRE_MEMORY_HOST);
    }
 
    return hypre_error_flag;
@@ -966,10 +966,10 @@ hypre_BoxArrayArrayDuplicate( hypre_BoxArrayArray *box_array_array )
 {
    hypre_BoxArrayArray  *new_box_array_array;
    hypre_BoxArray      **new_box_arrays;
-   HYPRE_Int             new_size;
+   NALU_HYPRE_Int             new_size;
 
    hypre_BoxArray      **box_arrays;
-   HYPRE_Int             i;
+   NALU_HYPRE_Int             i;
 
    new_size = hypre_BoxArrayArraySize(box_array_array);
    new_box_array_array = hypre_BoxArrayArrayCreate(

@@ -6,7 +6,7 @@
  ******************************************************************************/
 
 /**************************************************************************
-  Module:  FEI_HYPRE_Impl.cpp
+  Module:  FEI_NALU_HYPRE_Impl.cpp
   Purpose: custom (local) implementation of the FEI/LSC
  **************************************************************************/
 
@@ -19,7 +19,7 @@
  MPI definitions
  -------------------------------------------------------------------------*/
 
-#include "FEI_HYPRE_include.h"
+#include "FEI_NALU_HYPRE_include.h"
 #include "_hypre_utilities.h"
 #include "HYPRE.h"
 
@@ -27,7 +27,7 @@
  local defines and external functions
  -------------------------------------------------------------------------*/
 
-#include "FEI_HYPRE_Impl.h"
+#include "FEI_NALU_HYPRE_Impl.h"
 
 #ifdef HAVE_SUPERLU_20
 #include "dsp_defs.h"
@@ -40,7 +40,7 @@
 
 extern "C"
 {
-  int HYPRE_LSI_Search(int *, int, int);
+  int NALU_HYPRE_LSI_Search(int *, int, int);
 }
 
 #define habs(x) ((x > 0) ? x : -(x))
@@ -55,7 +55,7 @@ extern "C"
 /**************************************************************************
  Constructor
  -------------------------------------------------------------------------*/
-FEI_HYPRE_Elem_Block::FEI_HYPRE_Elem_Block( int blockID )
+FEI_NALU_HYPRE_Elem_Block::FEI_NALU_HYPRE_Elem_Block( int blockID )
 {
    blockID_           = blockID;
    currElem_          = 0;
@@ -76,7 +76,7 @@ FEI_HYPRE_Elem_Block::FEI_HYPRE_Elem_Block( int blockID )
 /**************************************************************************
  destructor
  -------------------------------------------------------------------------*/
-FEI_HYPRE_Elem_Block::~FEI_HYPRE_Elem_Block()
+FEI_NALU_HYPRE_Elem_Block::~FEI_NALU_HYPRE_Elem_Block()
 {
    int iE;
 
@@ -118,7 +118,7 @@ FEI_HYPRE_Elem_Block::~FEI_HYPRE_Elem_Block()
 /**************************************************************************
  initialization
  -------------------------------------------------------------------------*/
-int FEI_HYPRE_Elem_Block::initialize(int numElements, int numNodesPerElement,
+int FEI_NALU_HYPRE_Elem_Block::initialize(int numElements, int numNodesPerElement,
                                    int dofPerNode)
 {
    int iE;
@@ -171,7 +171,7 @@ int FEI_HYPRE_Elem_Block::initialize(int numElements, int numNodesPerElement,
 /**************************************************************************
  reset the system for reloading (no reinitialization needed)
  -------------------------------------------------------------------------*/
-int FEI_HYPRE_Elem_Block::reset()
+int FEI_NALU_HYPRE_Elem_Block::reset()
 {
    if ( elemNodeLists_ != NULL )
    {
@@ -207,7 +207,7 @@ int FEI_HYPRE_Elem_Block::reset()
 /**************************************************************************
  reset the element load vectors
  -------------------------------------------------------------------------*/
-int FEI_HYPRE_Elem_Block::resetRHSVectors(double s)
+int FEI_NALU_HYPRE_Elem_Block::resetRHSVectors(double s)
 {
    int iE, iD, matDim=nodesPerElem_*nodeDOF_;
 
@@ -223,7 +223,7 @@ int FEI_HYPRE_Elem_Block::resetRHSVectors(double s)
 /**************************************************************************
  reset the element solution vectors
  -------------------------------------------------------------------------*/
-int FEI_HYPRE_Elem_Block::resetSolnVectors(double s)
+int FEI_NALU_HYPRE_Elem_Block::resetSolnVectors(double s)
 {
    int iE, iD, matDim=nodesPerElem_*nodeDOF_;
 
@@ -239,12 +239,12 @@ int FEI_HYPRE_Elem_Block::resetSolnVectors(double s)
 /**************************************************************************
  load individual element information
  -------------------------------------------------------------------------*/
-int FEI_HYPRE_Elem_Block::loadElemInfo(int elemID, int *elemConn,
+int FEI_NALU_HYPRE_Elem_Block::loadElemInfo(int elemID, int *elemConn,
                                      double **elemStiff, double *elemLoad)
 {
    if ( currElem_ >= numElems_ )
    {
-      printf("FEI_HYPRE_Elem_Block::loadElemInfo ERROR : too many elements.\n");
+      printf("FEI_NALU_HYPRE_Elem_Block::loadElemInfo ERROR : too many elements.\n");
       exit(1);
    }
 #if 0
@@ -277,12 +277,12 @@ int FEI_HYPRE_Elem_Block::loadElemInfo(int elemID, int *elemConn,
 /**************************************************************************
  load individual element matrix only
  -------------------------------------------------------------------------*/
-int FEI_HYPRE_Elem_Block::loadElemMatrix(int elemID, int *elemConn,
+int FEI_NALU_HYPRE_Elem_Block::loadElemMatrix(int elemID, int *elemConn,
                                        double **elemStiff)
 {
    if ( currElem_ >= numElems_ )
    {
-      printf("FEI_HYPRE_Elem_Block::loadElemMatrix ERROR:too many elements.\n");
+      printf("FEI_NALU_HYPRE_Elem_Block::loadElemMatrix ERROR:too many elements.\n");
       exit(1);
    }
 #if 0
@@ -312,7 +312,7 @@ int FEI_HYPRE_Elem_Block::loadElemMatrix(int elemID, int *elemConn,
 /**************************************************************************
  load individual load information
  -------------------------------------------------------------------------*/
-int FEI_HYPRE_Elem_Block::loadElemRHS(int elemID, double *elemLoad)
+int FEI_NALU_HYPRE_Elem_Block::loadElemRHS(int elemID, double *elemLoad)
 {
    int iD, iE, matDim=nodesPerElem_*nodeDOF_;
 
@@ -325,9 +325,9 @@ int FEI_HYPRE_Elem_Block::loadElemRHS(int elemID, double *elemLoad)
          sortedIDAux_ = new int[numElems_];
          for ( iE = 0; iE < numElems_; iE++ ) sortedIDs_[iE] = elemIDs_[iE];
          for ( iE = 0; iE < numElems_; iE++ ) sortedIDAux_[iE] = iE;
-         FEI_HYPRE_Impl::IntSort2(sortedIDs_, sortedIDAux_, 0, numElems_-1);
+         FEI_NALU_HYPRE_Impl::IntSort2(sortedIDs_, sortedIDAux_, 0, numElems_-1);
       }
-      currElem_ = HYPRE_LSI_Search(sortedIDs_, elemID, numElems_);
+      currElem_ = NALU_HYPRE_LSI_Search(sortedIDs_, elemID, numElems_);
    }
    if ( rhsVectors_ == NULL )
    {
@@ -345,7 +345,7 @@ int FEI_HYPRE_Elem_Block::loadElemRHS(int elemID, double *elemLoad)
 /**************************************************************************
  check to see if all element information has been loaded
  -------------------------------------------------------------------------*/
-int FEI_HYPRE_Elem_Block::checkLoadComplete()
+int FEI_NALU_HYPRE_Elem_Block::checkLoadComplete()
 {
    if ( currElem_ != numElems_ ) return 1;
    else
@@ -359,14 +359,14 @@ int FEI_HYPRE_Elem_Block::checkLoadComplete()
 }
 
 /**************************************************************************
- FEI_HYPRE_Impl is the core linear system interface.  Each
+ FEI_NALU_HYPRE_Impl is the core linear system interface.  Each
  instantiation supports multiple elememt blocks.
  **************************************************************************/
 
 /**************************************************************************
  Constructor
  -------------------------------------------------------------------------*/
-FEI_HYPRE_Impl::FEI_HYPRE_Impl( MPI_Comm comm )
+FEI_NALU_HYPRE_Impl::FEI_NALU_HYPRE_Impl( MPI_Comm comm )
 {
    mpiComm_     = comm;
    MPI_Comm_rank( comm, &mypid_ );
@@ -455,9 +455,9 @@ FEI_HYPRE_Impl::FEI_HYPRE_Impl( MPI_Comm comm )
 /**************************************************************************
  destructor
  -------------------------------------------------------------------------*/
-FEI_HYPRE_Impl::~FEI_HYPRE_Impl()
+FEI_NALU_HYPRE_Impl::~FEI_NALU_HYPRE_Impl()
 {
-   if ( outputLevel_ > 0 ) printf("%4d : FEI_HYPRE_Impl destructor\n", mypid_);
+   if ( outputLevel_ > 0 ) printf("%4d : FEI_NALU_HYPRE_Impl destructor\n", mypid_);
    for ( int iB = 0; iB < numBlocks_; iB++ )
       if ( elemBlocks_[iB] != NULL ) delete elemBlocks_[iB];
    if ( nodeGlobalIDs_       != NULL ) delete [] nodeGlobalIDs_;
@@ -507,7 +507,7 @@ FEI_HYPRE_Impl::~FEI_HYPRE_Impl()
 /**************************************************************************
  parameters function
  -------------------------------------------------------------------------*/
-int FEI_HYPRE_Impl::parameters(int numParams, char **paramString)
+int FEI_NALU_HYPRE_Impl::parameters(int numParams, char **paramString)
 {
    int  i, olevel;
    char param[256], param1[256];
@@ -567,7 +567,7 @@ int FEI_HYPRE_Impl::parameters(int numParams, char **paramString)
             if ( nprocs == 1 ) solverID_ = 4;
             else
             {
-               printf("FEI_HYPRE_Impl WARNING : SuperLU not supported on ");
+               printf("FEI_NALU_HYPRE_Impl WARNING : SuperLU not supported on ");
                printf("more than 1 proc.  Use GMRES instead.\n");
                solverID_ = 1;
             }
@@ -579,7 +579,7 @@ int FEI_HYPRE_Impl::parameters(int numParams, char **paramString)
       {
          sscanf(paramString[i],"%s %s", param1, param);
          if ( (! ! strcmp(param, "diag")) && (! ! strcmp(param, "diagonal")) )
-            printf("FEI_HYPRE_Impl::parameters - invalid preconditioner.\n");
+            printf("FEI_NALU_HYPRE_Impl::parameters - invalid preconditioner.\n");
       }
    }
    return 0;
@@ -588,12 +588,12 @@ int FEI_HYPRE_Impl::parameters(int numParams, char **paramString)
 /**************************************************************************
  initialize nodal degree of freedom
  -------------------------------------------------------------------------*/
-int FEI_HYPRE_Impl::initFields(int numFields, int *fieldSizes, int *fieldIDs)
+int FEI_NALU_HYPRE_Impl::initFields(int numFields, int *fieldSizes, int *fieldIDs)
 {
    (void) fieldIDs;
    if ( numFields != 1 )
    {
-      printf("%4d : FEI_HYPRE_Impl::initFields WARNING -  numFields != 1.",
+      printf("%4d : FEI_NALU_HYPRE_Impl::initFields WARNING -  numFields != 1.",
              mypid_);
       printf(" Take field 0.\n");
       nodeDOF_ = fieldSizes[0];
@@ -606,7 +606,7 @@ int FEI_HYPRE_Impl::initFields(int numFields, int *fieldSizes, int *fieldIDs)
 /**************************************************************************
  set element and node information
  -------------------------------------------------------------------------*/
-int FEI_HYPRE_Impl::initElemBlock(int elemBlockID, int numElements,
+int FEI_NALU_HYPRE_Impl::initElemBlock(int elemBlockID, int numElements,
                       int numNodesPerElement, int *numFieldsPerNode,
                       int **nodalFieldIDs, int numElemDOFFieldsPerElement,
                       int *elemDOFFieldIDs, int interleaveStrategy)
@@ -618,7 +618,7 @@ int FEI_HYPRE_Impl::initElemBlock(int elemBlockID, int numElements,
    (void) interleaveStrategy;
    if ( outputLevel_ >= 2 )
    {
-      printf("%4d : FEI_HYPRE_Impl::initElemBlock begins... \n", mypid_);
+      printf("%4d : FEI_NALU_HYPRE_Impl::initElemBlock begins... \n", mypid_);
       printf("               elemBlockID  = %d \n", elemBlockID);
       printf("               numElements  = %d \n", numElements);
       printf("               nodesPerElem = %d \n", numNodesPerElement);
@@ -635,8 +635,8 @@ int FEI_HYPRE_Impl::initElemBlock(int elemBlockID, int numElements,
    }
    if ( numBlocks_ == 0 )
    {
-      elemBlocks_    = new FEI_HYPRE_Elem_Block*[1];
-      elemBlocks_[0] = new FEI_HYPRE_Elem_Block(elemBlockID);
+      elemBlocks_    = new FEI_NALU_HYPRE_Elem_Block*[1];
+      elemBlocks_[0] = new FEI_NALU_HYPRE_Elem_Block(elemBlockID);
       numBlocks_     = 1;
    }
    else
@@ -645,37 +645,37 @@ int FEI_HYPRE_Impl::initElemBlock(int elemBlockID, int numElements,
       {
          if ( elemBlocks_[iB]->getElemBlockID() == elemBlockID )
          {
-            printf("%4d : FEI_HYPRE_Impl::initElemBlock ERROR - ",mypid_);
+            printf("%4d : FEI_NALU_HYPRE_Impl::initElemBlock ERROR - ",mypid_);
             printf("repeated blockID\n");
             exit(1);
          }
       }
-      FEI_HYPRE_Elem_Block **tempBlocks = elemBlocks_;
+      FEI_NALU_HYPRE_Elem_Block **tempBlocks = elemBlocks_;
       numBlocks_++;
-      elemBlocks_ = new FEI_HYPRE_Elem_Block*[numBlocks_];
+      elemBlocks_ = new FEI_NALU_HYPRE_Elem_Block*[numBlocks_];
       for ( int iB2 = 0; iB2 < numBlocks_-1; iB2++ )
          elemBlocks_[iB2] = tempBlocks[iB2];
-      elemBlocks_[numBlocks_-1] = new FEI_HYPRE_Elem_Block(elemBlockID);
+      elemBlocks_[numBlocks_-1] = new FEI_NALU_HYPRE_Elem_Block(elemBlockID);
    }
    elemBlocks_[numBlocks_-1]->initialize(numElements, numNodesPerElement,
                                          nodeDOF_);
    FLAG_LoadComplete_= 0;
    if ( outputLevel_ >= 2 )
-      printf("%4d : FEI_HYPRE_Impl::initElemBlock ends.\n", mypid_);
+      printf("%4d : FEI_NALU_HYPRE_Impl::initElemBlock ends.\n", mypid_);
    return 0;
 }
 
 /**************************************************************************
  initialize shared node information
  -------------------------------------------------------------------------*/
-int FEI_HYPRE_Impl::initSharedNodes(int nShared, int *sharedIDs,
+int FEI_NALU_HYPRE_Impl::initSharedNodes(int nShared, int *sharedIDs,
                                  int *sharedNProcs, int **sharedProcs)
 {
    int iN, iP, newNumShared, *oldSharedIDs, *oldSharedNProcs;
    int **oldSharedProcs;
 
    if ( outputLevel_ >= 2 )
-      printf("%4d : FEI_HYPRE_Impl::initSharedNodes begins... \n", mypid_);
+      printf("%4d : FEI_NALU_HYPRE_Impl::initSharedNodes begins... \n", mypid_);
    TimerLoadStart_ = MPI_Wtime();
    if ( numSharedNodes_ > 0 )
    {
@@ -726,18 +726,18 @@ int FEI_HYPRE_Impl::initSharedNodes(int nShared, int *sharedIDs,
    }
    TimerLoad_ += MPI_Wtime() - TimerLoadStart_;
    if ( outputLevel_ >= 2 )
-      printf("%4d : FEI_HYPRE_Impl::initSharedNodes ends. \n", mypid_);
+      printf("%4d : FEI_NALU_HYPRE_Impl::initSharedNodes ends. \n", mypid_);
    return 0;
 }
 
 /**************************************************************************
  reset the system
  -------------------------------------------------------------------------*/
-int FEI_HYPRE_Impl::resetSystem(double s)
+int FEI_NALU_HYPRE_Impl::resetSystem(double s)
 {
    (void) s;
    if ( outputLevel_ >= 2 )
-      printf("%4d : FEI_HYPRE_Impl::resetSystem begins...\n", mypid_);
+      printf("%4d : FEI_NALU_HYPRE_Impl::resetSystem begins...\n", mypid_);
    for ( int iB = 0; iB < numBlocks_; iB++ ) elemBlocks_[iB]->reset();
    numLocalNodes_ = 0;
    numExtNodes_   = 0;
@@ -812,18 +812,18 @@ int FEI_HYPRE_Impl::resetSystem(double s)
    TimerSolveStart_     = 0.0;
    FLAG_LoadComplete_   = 0;
    if ( outputLevel_ >= 2 )
-      printf("%4d : FEI_HYPRE_Impl::resetSystem ends.\n", mypid_);
+      printf("%4d : FEI_NALU_HYPRE_Impl::resetSystem ends.\n", mypid_);
    return 0;
 }
 
 /**************************************************************************
  reset the matrix
  -------------------------------------------------------------------------*/
-int FEI_HYPRE_Impl::resetMatrix(double s)
+int FEI_NALU_HYPRE_Impl::resetMatrix(double s)
 {
    (void) s;
    if ( outputLevel_ >= 2 )
-      printf("%4d : FEI_HYPRE_Impl::resetMatrix begins...\n", mypid_);
+      printf("%4d : FEI_NALU_HYPRE_Impl::resetMatrix begins...\n", mypid_);
    for ( int iB = 0; iB < numBlocks_; iB++ ) elemBlocks_[iB]->reset();
    numLocalNodes_ = 0;
    numExtNodes_   = 0;
@@ -896,44 +896,44 @@ int FEI_HYPRE_Impl::resetMatrix(double s)
    TimerSolveStart_     = 0.0;
    FLAG_LoadComplete_   = 0;
    if ( outputLevel_ >= 2 )
-      printf("%4d : FEI_HYPRE_Impl::resetMatrix ends.\n", mypid_);
+      printf("%4d : FEI_NALU_HYPRE_Impl::resetMatrix ends.\n", mypid_);
    return 0;
 }
 
 /**************************************************************************
  reset the rhs vector
  -------------------------------------------------------------------------*/
-int FEI_HYPRE_Impl::resetRHSVector(double s)
+int FEI_NALU_HYPRE_Impl::resetRHSVector(double s)
 {
    (void) s;
    if ( outputLevel_ >= 2 )
-      printf("%4d : FEI_HYPRE_Impl::resetRHSVector begins...\n", mypid_);
+      printf("%4d : FEI_NALU_HYPRE_Impl::resetRHSVector begins...\n", mypid_);
    for ( int iB = 0; iB < numBlocks_; iB++ )
       elemBlocks_[iB]->resetRHSVectors(s);
    if ( outputLevel_ >= 2 )
-      printf("%4d : FEI_HYPRE_Impl::resetRHSVector ends.\n", mypid_);
+      printf("%4d : FEI_NALU_HYPRE_Impl::resetRHSVector ends.\n", mypid_);
    return 0;
 }
 
 /**************************************************************************
  reset the solution vector
  -------------------------------------------------------------------------*/
-int FEI_HYPRE_Impl::resetInitialGuess(double s)
+int FEI_NALU_HYPRE_Impl::resetInitialGuess(double s)
 {
    (void) s;
    if ( outputLevel_ >= 2 )
-      printf("%4d : FEI_HYPRE_Impl::resetInitialGuess begins...\n", mypid_);
+      printf("%4d : FEI_NALU_HYPRE_Impl::resetInitialGuess begins...\n", mypid_);
    for ( int iB = 0; iB < numBlocks_; iB++ )
       elemBlocks_[iB]->resetSolnVectors(s);
    if ( outputLevel_ >= 2 )
-      printf("%4d : FEI_HYPRE_Impl::resetInitialGuess ends (%e).\n", mypid_, s);
+      printf("%4d : FEI_NALU_HYPRE_Impl::resetInitialGuess ends (%e).\n", mypid_, s);
    return 0;
 }
 
 /**************************************************************************
  load node boundary conditions
  -------------------------------------------------------------------------*/
-int FEI_HYPRE_Impl::loadNodeBCs(int numNodes, int *nodeIDs, int fieldID,
+int FEI_NALU_HYPRE_Impl::loadNodeBCs(int numNodes, int *nodeIDs, int fieldID,
                              double **alpha, double **beta, double **gamma1)
 {
    int   iN, iD, oldNumBCNodes, *oldBCNodeIDs;
@@ -941,7 +941,7 @@ int FEI_HYPRE_Impl::loadNodeBCs(int numNodes, int *nodeIDs, int fieldID,
 
    (void) fieldID;
    if ( outputLevel_ >= 2 )
-      printf("%4d : FEI_HYPRE_Impl::loadNodeBCs begins...(%d)\n",mypid_,numNodes);
+      printf("%4d : FEI_NALU_HYPRE_Impl::loadNodeBCs begins...(%d)\n",mypid_,numNodes);
    TimerLoadStart_ = MPI_Wtime();
    if ( numNodes > 0 )
    {
@@ -1006,14 +1006,14 @@ int FEI_HYPRE_Impl::loadNodeBCs(int numNodes, int *nodeIDs, int fieldID,
    }
    TimerLoad_ += MPI_Wtime() - TimerLoadStart_;
    if ( outputLevel_ >= 2 )
-      printf("%4d : FEI_HYPRE_Impl::loadNodeBCs ends.\n", mypid_);
+      printf("%4d : FEI_NALU_HYPRE_Impl::loadNodeBCs ends.\n", mypid_);
    return 0;
 }
 
 /**************************************************************************
  load element connectivities, stiffness matrices, and element load
  -------------------------------------------------------------------------*/
-int FEI_HYPRE_Impl::sumInElem(int elemBlockID, int elemID, int *elemConn,
+int FEI_NALU_HYPRE_Impl::sumInElem(int elemBlockID, int elemID, int *elemConn,
                            double **elemStiff, double *elemLoad,
                            int elemFormat)
 {
@@ -1028,14 +1028,14 @@ int FEI_HYPRE_Impl::sumInElem(int elemBlockID, int elemID, int *elemConn,
 #ifdef HAVE_DEBUG
    if ( iB == numBlocks_ )
    {
-      printf("%4d : FEI_HYPRE_Impl::sumInElem ERROR - ", mypid_);
+      printf("%4d : FEI_NALU_HYPRE_Impl::sumInElem ERROR - ", mypid_);
       printf("blockID invalid (%d).\n", iB);
       exit(1);
    }
 #endif
 #ifdef HAVE_DEBUG
    if ( outputLevel_ > 0 && elemBlocks_[iB]->getCurrentElem()==0 )
-      printf("%4d : FEI_HYPRE_Impl::sumInElem begins... \n", mypid_);
+      printf("%4d : FEI_NALU_HYPRE_Impl::sumInElem begins... \n", mypid_);
 #endif
    if ( elemBlocks_[iB]->getCurrentElem()==0 ) TimerLoadStart_ = MPI_Wtime();
    elemBlocks_[iB]->loadElemInfo(elemID, elemConn, elemStiff, elemLoad);
@@ -1044,7 +1044,7 @@ int FEI_HYPRE_Impl::sumInElem(int elemBlockID, int elemID, int *elemConn,
 #ifdef HAVE_DEBUG
    if ( outputLevel_ > 0 &&
         elemBlocks_[iB]->getCurrentElem()==elemBlocks_[iB]->getNumElems() )
-      printf("%4d : FEI_HYPRE_Impl::sumInElem ends. \n", mypid_);
+      printf("%4d : FEI_NALU_HYPRE_Impl::sumInElem ends. \n", mypid_);
 #endif
    return 0;
 }
@@ -1052,7 +1052,7 @@ int FEI_HYPRE_Impl::sumInElem(int elemBlockID, int elemID, int *elemConn,
 /**************************************************************************
  load element connectivities and stiffness matrices
  -------------------------------------------------------------------------*/
-int FEI_HYPRE_Impl::sumInElemMatrix(int elemBlockID, int elemID, int *elemConn,
+int FEI_NALU_HYPRE_Impl::sumInElemMatrix(int elemBlockID, int elemID, int *elemConn,
                            double **elemStiff, int elemFormat)
 {
    int iB=0;
@@ -1066,14 +1066,14 @@ int FEI_HYPRE_Impl::sumInElemMatrix(int elemBlockID, int elemID, int *elemConn,
 #ifdef HAVE_DEBUG
    if ( iB == numBlocks_ )
    {
-      printf("%4d : FEI_HYPRE_Impl::sumInElemMatrix ERROR - ", mypid_);
+      printf("%4d : FEI_NALU_HYPRE_Impl::sumInElemMatrix ERROR - ", mypid_);
       printf("blockID invalid (%d).\n", iB);
       exit(1);
    }
 #endif
 #ifdef HAVE_DEBUG
    if ( outputLevel_ > 0 && elemBlocks_[iB]->getCurrentElem()==0 )
-      printf("%4d : FEI_HYPRE_Impl::sumInElemMatrix begins... \n", mypid_);
+      printf("%4d : FEI_NALU_HYPRE_Impl::sumInElemMatrix begins... \n", mypid_);
 #endif
    if ( elemBlocks_[iB]->getCurrentElem()==0 ) TimerLoadStart_ = MPI_Wtime();
    elemBlocks_[iB]->loadElemMatrix(elemID, elemConn, elemStiff);
@@ -1082,7 +1082,7 @@ int FEI_HYPRE_Impl::sumInElemMatrix(int elemBlockID, int elemID, int *elemConn,
 #ifdef HAVE_DEBUG
    if ( outputLevel_ > 0 &&
         elemBlocks_[iB]->getCurrentElem()==elemBlocks_[iB]->getNumElems() )
-      printf("%4d : FEI_HYPRE_Impl::sumInElemMatrix ends. \n", mypid_);
+      printf("%4d : FEI_NALU_HYPRE_Impl::sumInElemMatrix ends. \n", mypid_);
 #endif
    return 0;
 }
@@ -1090,7 +1090,7 @@ int FEI_HYPRE_Impl::sumInElemMatrix(int elemBlockID, int elemID, int *elemConn,
 /**************************************************************************
  load element load
  -------------------------------------------------------------------------*/
-int FEI_HYPRE_Impl::sumInElemRHS(int elemBlockID, int elemID, int *elemConn,
+int FEI_NALU_HYPRE_Impl::sumInElemRHS(int elemBlockID, int elemID, int *elemConn,
                               double *elemLoad)
 {
    int iB=0;
@@ -1104,7 +1104,7 @@ int FEI_HYPRE_Impl::sumInElemRHS(int elemBlockID, int elemID, int *elemConn,
 #ifdef HAVE_DEBUG
    if ( iB == numBlocks_ )
    {
-      printf("%4d : FEI_HYPRE_Impl::sumInElemRHS ERROR - ", mypid_);
+      printf("%4d : FEI_NALU_HYPRE_Impl::sumInElemRHS ERROR - ", mypid_);
       printf("blockID invalid (%d).\n", iB);
       exit(1);
    }
@@ -1116,7 +1116,7 @@ int FEI_HYPRE_Impl::sumInElemRHS(int elemBlockID, int elemID, int *elemConn,
 /**************************************************************************
  assemble matrix information
  -------------------------------------------------------------------------*/
-int FEI_HYPRE_Impl::loadComplete()
+int FEI_NALU_HYPRE_Impl::loadComplete()
 {
    int   nprocs, iB, iP, iN, iN2, iE, ierr, index, index2, nodeRegister;
    int   totalNNodes, nElems, elemNNodes, **elemNodeList, nodeNumber;
@@ -1133,7 +1133,7 @@ int FEI_HYPRE_Impl::loadComplete()
     * ----------------------------------------------------------------*/
 
    if ( outputLevel_ >= 2 )
-      printf("%4d : FEI_HYPRE_Impl::loadComplete begins.... \n", mypid_);
+      printf("%4d : FEI_NALU_HYPRE_Impl::loadComplete begins.... \n", mypid_);
    TimerLoadStart_ = MPI_Wtime();
    MPI_Comm_size( mpiComm_, &nprocs );
 
@@ -1255,7 +1255,7 @@ int FEI_HYPRE_Impl::loadComplete()
          if ( sharedNodeProcs_[iN][iP] < minProc )
             minProc = sharedNodeProcs_[iN][iP];
       if ( minProc >=  mypid_ ) continue;
-      index = HYPRE_LSI_Search(nodeIDs,sharedNodeIDs_[iN],totalNNodes);
+      index = NALU_HYPRE_LSI_Search(nodeIDs,sharedNodeIDs_[iN],totalNNodes);
       if ( nodeIDAux[index] >= 0 )
       {
          for ( iN2 = index-1; iN2 >= 0; iN2-- )
@@ -1289,9 +1289,9 @@ int FEI_HYPRE_Impl::loadComplete()
    if ( totalNNodes > 0 && nodeIDAux[0] >= 0 ) numLocalNodes_++;
    if ( outputLevel_ >= 2 )
    {
-      printf("%4d : FEI_HYPRE_Impl::loadComplete - nLocalNodes = %d\n",
+      printf("%4d : FEI_NALU_HYPRE_Impl::loadComplete - nLocalNodes = %d\n",
              mypid_, numLocalNodes_);
-      printf("%4d : FEI_HYPRE_Impl::loadComplete - numExtNodes = %d\n",
+      printf("%4d : FEI_NALU_HYPRE_Impl::loadComplete - numExtNodes = %d\n",
              mypid_, localNNodes-numLocalNodes_);
    }
 
@@ -1388,7 +1388,7 @@ int FEI_HYPRE_Impl::loadComplete()
    localNNodes = numLocalNodes_;
    for ( iN = 0; iN < numSharedNodes_; iN++ )
    {
-      index = HYPRE_LSI_Search(&(nodeGlobalIDs_[numLocalNodes_]),
+      index = NALU_HYPRE_LSI_Search(&(nodeGlobalIDs_[numLocalNodes_]),
                            sharedNodeIDs_[iN], numExtNodes_);
       if ( index >= 0 )
       {
@@ -1425,9 +1425,9 @@ int FEI_HYPRE_Impl::loadComplete()
       {
          if ( sndrcvReg[iN] == 1 )
          {
-            index = HYPRE_LSI_Search(&(nodeGlobalIDs_[numLocalNodes_]),
+            index = NALU_HYPRE_LSI_Search(&(nodeGlobalIDs_[numLocalNodes_]),
                                  sharedNodeIDs_[iN], numExtNodes_);
-            index = HYPRE_LSI_Search(recvProcs,ownerProcs[index],nRecv);
+            index = NALU_HYPRE_LSI_Search(recvProcs,ownerProcs[index],nRecv);
             recvLengs[index]++;
          }
       }
@@ -1475,7 +1475,7 @@ int FEI_HYPRE_Impl::loadComplete()
                if ( sharedNodeProcs_[iN][iP] != mypid_ )
                {
                   index = sharedNodeProcs_[iN][iP];
-                  index = HYPRE_LSI_Search(sendProcs,index,nSend);
+                  index = NALU_HYPRE_LSI_Search(sendProcs,index,nSend);
                   sendLengs[index]++;
                }
             }
@@ -1495,9 +1495,9 @@ int FEI_HYPRE_Impl::loadComplete()
             {
                if ( sharedNodeProcs_[iN][iP] != mypid_ )
                {
-                  index  = HYPRE_LSI_Search(sendProcs,
+                  index  = NALU_HYPRE_LSI_Search(sendProcs,
                                         sharedNodeProcs_[iN][iP], nSend);
-                  index2 = HYPRE_LSI_Search(nodeGlobalIDs_,
+                  index2 = NALU_HYPRE_LSI_Search(nodeGlobalIDs_,
                                         sharedNodeIDs_[iN], numLocalNodes_);
                   sendBuf[index][sendLengs[index]++] = nodeOffset + index2;
                }
@@ -1531,7 +1531,7 @@ int FEI_HYPRE_Impl::loadComplete()
    for ( iP = 0; iP < nRecv; iP++ ) recvLengs[iP] = 0;
    for ( iN = 0; iN < numExtNodes_; iN++ )
    {
-      index  = HYPRE_LSI_Search(recvProcs, ownerProcs[iN], nRecv);
+      index  = NALU_HYPRE_LSI_Search(recvProcs, ownerProcs[iN], nRecv);
       iN2 = recvBuf[index][recvLengs[index]];
       nodeExtNewGlobalIDs_[iN] = iN2;
       recvBuf[index][recvLengs[index]++] = iN + numLocalNodes_;
@@ -1572,14 +1572,14 @@ int FEI_HYPRE_Impl::loadComplete()
    if ( FLAG_PrintMatrix_ > 0 ) printLinearSystem();
    FLAG_LoadComplete_ = 1;
    if ( outputLevel_ >= 2 )
-      printf("%4d : FEI_HYPRE_Impl::loadComplete ends. \n", mypid_);
+      printf("%4d : FEI_NALU_HYPRE_Impl::loadComplete ends. \n", mypid_);
    return 0;
 }
 
 /**************************************************************************
  solve the linear system
  -------------------------------------------------------------------------*/
-int FEI_HYPRE_Impl::solve(int *status)
+int FEI_NALU_HYPRE_Impl::solve(int *status)
 {
    int    nprocs;
    double dArray[2], dArray2[2];
@@ -1657,7 +1657,7 @@ int FEI_HYPRE_Impl::solve(int *status)
 /**************************************************************************
  form residual norm
  -------------------------------------------------------------------------*/
-int FEI_HYPRE_Impl::residualNorm(int whichNorm, int numFields, int* fieldIDs,
+int FEI_NALU_HYPRE_Impl::residualNorm(int whichNorm, int numFields, int* fieldIDs,
                               double* norms)
 {
    int    localNRows, extNRows, totalNRows, irow;
@@ -1712,7 +1712,7 @@ int FEI_HYPRE_Impl::residualNorm(int whichNorm, int numFields, int* fieldIDs,
 /**************************************************************************
  get number of distinct node in a given block
  -------------------------------------------------------------------------*/
-int FEI_HYPRE_Impl::getNumBlockActNodes(int blockID, int *numNodes)
+int FEI_NALU_HYPRE_Impl::getNumBlockActNodes(int blockID, int *numNodes)
 {
    int localNNodes, iB, iE, iN, totalNNodes, nElems;
    int elemNNodes, **elemNodeLists, *nodeIDs;
@@ -1722,9 +1722,9 @@ int FEI_HYPRE_Impl::getNumBlockActNodes(int blockID, int *numNodes)
       (*numNodes) = numLocalNodes_ + numExtNodes_;
       if ( outputLevel_ >= 2 )
       {
-         printf("%4d : FEI_HYPRE_Impl::getNumBlockActNodes blockID = %d.\n",
+         printf("%4d : FEI_NALU_HYPRE_Impl::getNumBlockActNodes blockID = %d.\n",
                 mypid_, blockID);
-         printf("%4d : FEI_HYPRE_Impl::getNumBlockActNodes numNodes = %d\n",
+         printf("%4d : FEI_NALU_HYPRE_Impl::getNumBlockActNodes numNodes = %d\n",
                 mypid_, (*numNodes));
       }
       return 0;
@@ -1735,7 +1735,7 @@ int FEI_HYPRE_Impl::getNumBlockActNodes(int blockID, int *numNodes)
          if ( elemBlocks_[iB]->getElemBlockID() == blockID ) break;
       if ( iB >= numBlocks_ )
       {
-         printf("%4d : FEI_HYPRE_Impl::getNumBlockActNodes ERROR -",mypid_);
+         printf("%4d : FEI_NALU_HYPRE_Impl::getNumBlockActNodes ERROR -",mypid_);
          printf(" invalid blockID\n");
          exit(1);
       }
@@ -1756,9 +1756,9 @@ int FEI_HYPRE_Impl::getNumBlockActNodes(int blockID, int *numNodes)
 
       if ( outputLevel_ >= 2 )
       {
-         printf("%4d : FEI_HYPRE_Impl::getNumBlockActNodes blockID = %d.\n",
+         printf("%4d : FEI_NALU_HYPRE_Impl::getNumBlockActNodes blockID = %d.\n",
                 mypid_, blockID);
-         printf("%4d : FEI_HYPRE_Impl::getNumBlockActNodes numNodes = %d\n",
+         printf("%4d : FEI_NALU_HYPRE_Impl::getNumBlockActNodes numNodes = %d\n",
                 mypid_, (*numNodes));
       }
    }
@@ -1768,7 +1768,7 @@ int FEI_HYPRE_Impl::getNumBlockActNodes(int blockID, int *numNodes)
 /**************************************************************************
  get number of distinct equations in a given block
  -------------------------------------------------------------------------*/
-int FEI_HYPRE_Impl::getNumBlockActEqns(int blockID, int *numEqns)
+int FEI_NALU_HYPRE_Impl::getNumBlockActEqns(int blockID, int *numEqns)
 {
    int numNodes;
 
@@ -1776,9 +1776,9 @@ int FEI_HYPRE_Impl::getNumBlockActEqns(int blockID, int *numEqns)
    (*numEqns) = numNodes * nodeDOF_;
    if ( outputLevel_ >= 2 )
    {
-      printf("%4d : FEI_HYPRE_Impl::getNumBlockActEqns blockID = %d\n",
+      printf("%4d : FEI_NALU_HYPRE_Impl::getNumBlockActEqns blockID = %d\n",
              mypid_, blockID);
-      printf("%4d : FEI_HYPRE_Impl::getNumBlockActEqns numEqns = %d\n",
+      printf("%4d : FEI_NALU_HYPRE_Impl::getNumBlockActEqns numEqns = %d\n",
              mypid_, (*numEqns));
    }
    return 0;
@@ -1787,16 +1787,16 @@ int FEI_HYPRE_Impl::getNumBlockActEqns(int blockID, int *numEqns)
 /**************************************************************************
  get a node list in a given block
  -------------------------------------------------------------------------*/
-int FEI_HYPRE_Impl::getBlockNodeIDList(int blockID,int numNodes,int *nodeList)
+int FEI_NALU_HYPRE_Impl::getBlockNodeIDList(int blockID,int numNodes,int *nodeList)
 {
    int localNNodes, iB, iE, iN, totalNNodes, nElems;
    int elemNNodes, **elemNodeLists, *nodeIDs;
 
    if ( outputLevel_ >= 2 )
    {
-      printf("%4d : FEI_HYPRE_Impl::getBlockNodeIDList blockID  = %d\n",
+      printf("%4d : FEI_NALU_HYPRE_Impl::getBlockNodeIDList blockID  = %d\n",
              mypid_, blockID);
-      printf("%4d : FEI_HYPRE_Impl::getBlockNodeIDList numNodes = %d\n",
+      printf("%4d : FEI_NALU_HYPRE_Impl::getBlockNodeIDList numNodes = %d\n",
              mypid_, numNodes);
    }
    if ( numBlocks_ == 1 )
@@ -1804,7 +1804,7 @@ int FEI_HYPRE_Impl::getBlockNodeIDList(int blockID,int numNodes,int *nodeList)
       localNNodes = numLocalNodes_ + numExtNodes_;
       if ( localNNodes != numNodes )
       {
-         printf("%4d : FEI_HYPRE_Impl::getBlockNodeIDList ERROR - nNodes",mypid_);
+         printf("%4d : FEI_NALU_HYPRE_Impl::getBlockNodeIDList ERROR - nNodes",mypid_);
          printf(" mismatch.\n");
          exit(1);
       }
@@ -1818,7 +1818,7 @@ int FEI_HYPRE_Impl::getBlockNodeIDList(int blockID,int numNodes,int *nodeList)
          if ( elemBlocks_[iB]->getElemBlockID() == blockID ) break;
       if ( iB >= numBlocks_ )
       {
-         printf("%4d : FEI_HYPRE_Impl::getBlockNodeIDList ERROR -",mypid_);
+         printf("%4d : FEI_NALU_HYPRE_Impl::getBlockNodeIDList ERROR -",mypid_);
          printf(" invalid blockID.\n");
          exit(1);
       }
@@ -1836,7 +1836,7 @@ int FEI_HYPRE_Impl::getBlockNodeIDList(int blockID,int numNodes,int *nodeList)
          if ( nodeIDs[iN] == 1 ) nodeList[localNNodes++] = nodeGlobalIDs_[iN];
       if ( localNNodes != numNodes )
       {
-         printf("%4d : FEI_HYPRE_Impl::getBlockNodeIDList ERROR -",mypid_);
+         printf("%4d : FEI_NALU_HYPRE_Impl::getBlockNodeIDList ERROR -",mypid_);
          printf(" nNodes mismatch (%d,%d).\n", localNNodes, numNodes);
          exit(1);
       }
@@ -1848,7 +1848,7 @@ int FEI_HYPRE_Impl::getBlockNodeIDList(int blockID,int numNodes,int *nodeList)
 /**************************************************************************
  get solution
  -------------------------------------------------------------------------*/
-int FEI_HYPRE_Impl::getBlockNodeSolution(int blockID,int numNodes,
+int FEI_NALU_HYPRE_Impl::getBlockNodeSolution(int blockID,int numNodes,
                          int *nodeList, int *nodeOffsets, double *solnValues)
 {
    int    iB, iE, iN, iD, totalNNodes, *nodeIDs;
@@ -1858,9 +1858,9 @@ int FEI_HYPRE_Impl::getBlockNodeSolution(int blockID,int numNodes,
    (void) nodeList;
    if ( outputLevel_ >= 2 )
    {
-      printf("%4d : FEI_HYPRE_Impl::getBlockNodeSolution blockID  = %d\n",
+      printf("%4d : FEI_NALU_HYPRE_Impl::getBlockNodeSolution blockID  = %d\n",
              mypid_, blockID);
-      printf("%4d : FEI_HYPRE_Impl::getBlockNodeSolution numNodes = %d\n",
+      printf("%4d : FEI_NALU_HYPRE_Impl::getBlockNodeSolution numNodes = %d\n",
              mypid_, numNodes);
    }
    if ( numBlocks_ == 1 )
@@ -1878,7 +1878,7 @@ int FEI_HYPRE_Impl::getBlockNodeSolution(int blockID,int numNodes,
          if ( elemBlocks_[iB]->getElemBlockID() == blockID ) break;
       if ( iB >= numBlocks_ )
       {
-         printf("%4d : FEI_HYPRE_Impl::getBlockNodeSolution ERROR -",mypid_);
+         printf("%4d : FEI_NALU_HYPRE_Impl::getBlockNodeSolution ERROR -",mypid_);
          printf(" invalid blockID.\n");
          exit(1);
       }
@@ -1921,7 +1921,7 @@ int FEI_HYPRE_Impl::getBlockNodeSolution(int blockID,int numNodes,
 /**************************************************************************
  build global stiffness matrix
  -------------------------------------------------------------------------*/
-void FEI_HYPRE_Impl::buildGlobalMatrixVector()
+void FEI_NALU_HYPRE_Impl::buildGlobalMatrixVector()
 {
    int    matDim, *diagCounts=NULL, nElems, elemNNodes, **elemNodeLists=NULL;
    int    iB, iD, iE, iN, offset, iD2, iD3, iN2, *elemNodeList=NULL, diagNNZ;
@@ -1933,7 +1933,7 @@ void FEI_HYPRE_Impl::buildGlobalMatrixVector()
    double alpha, beta, gamma1;
 
    if ( outputLevel_ >= 2 )
-      printf("%4d : FEI_HYPRE_Impl::buildGlobalMatrixVector begins..\n",mypid_);
+      printf("%4d : FEI_NALU_HYPRE_Impl::buildGlobalMatrixVector begins..\n",mypid_);
 
    /* -----------------------------------------------------------------
     * assemble the right hand side vector
@@ -2128,7 +2128,7 @@ void FEI_HYPRE_Impl::buildGlobalMatrixVector()
     * -----------------------------------------------------------------*/
 
    if ( outputLevel_ >= 2 )
-      printf("%4d : FEI_HYPRE_Impl::buildGlobalMatrixVector mid phase\n",mypid_);
+      printf("%4d : FEI_NALU_HYPRE_Impl::buildGlobalMatrixVector mid phase\n",mypid_);
    offset = 0;
    for ( iD = 0; iD < matDim; iD++ )
    {
@@ -2202,7 +2202,7 @@ void FEI_HYPRE_Impl::buildGlobalMatrixVector()
    for ( iN = 0; iN < numBCNodes_; iN++ )
    {
       nodeID = BCNodeIDs_[iN];
-      index = HYPRE_LSI_Search(nodeGlobalIDs_, nodeID, numLocalNodes_);
+      index = NALU_HYPRE_LSI_Search(nodeGlobalIDs_, nodeID, numLocalNodes_);
       if ( index >= 0 )
       {
          for ( iD = index*nodeDOF_; iD < (index+1)*nodeDOF_; iD++ )
@@ -2280,7 +2280,7 @@ void FEI_HYPRE_Impl::buildGlobalMatrixVector()
       }
       else
       {
-         index = HYPRE_LSI_Search(&nodeGlobalIDs_[numLocalNodes_], nodeID,
+         index = NALU_HYPRE_LSI_Search(&nodeGlobalIDs_[numLocalNodes_], nodeID,
                                   numExtNodes_);
          if ( index < 0 )
          {
@@ -2460,13 +2460,13 @@ void FEI_HYPRE_Impl::buildGlobalMatrixVector()
       delete [] ToffdAA;
    }
    if ( outputLevel_ >= 2 )
-      printf("%4d : FEI_HYPRE_Impl::buildGlobalMatrixVector ends. \n",mypid_);
+      printf("%4d : FEI_NALU_HYPRE_Impl::buildGlobalMatrixVector ends. \n",mypid_);
 }
 
 /**************************************************************************
  solve linear system using conjugate gradient
  -------------------------------------------------------------------------*/
-int FEI_HYPRE_Impl::solveUsingCG()
+int FEI_NALU_HYPRE_Impl::solveUsingCG()
 {
    int    irow, iter, converged=0, localNRows, extNRows, totalNRows;
    int    numTrials, innerIteration;
@@ -2507,7 +2507,7 @@ int FEI_HYPRE_Impl::solveUsingCG()
    rnorm0 = sqrt(dArray2[1]);
    rnorm  = sqrt(dArray2[0]);
    if ( outputLevel_ >= 2 && mypid_ == 0 )
-      printf("\tFEI_HYPRE_Impl initial rnorm = %e (%e)\n",rnorm,rnorm0);
+      printf("\tFEI_NALU_HYPRE_Impl initial rnorm = %e (%e)\n",rnorm,rnorm0);
    if ( rnorm0 == 0.0 )
    {
       delete [] rVec;
@@ -2593,7 +2593,7 @@ int FEI_HYPRE_Impl::solveUsingCG()
          rho = dArray2[1];
          rnorm = sqrt( dArray2[0] );
          if ( outputLevel_ >= 2 && iter % 1 == 0 && mypid_ == 0 )
-            printf("\tFEI_HYPRE_Impl : iteration %d - rnorm = %e (%e)\n",
+            printf("\tFEI_NALU_HYPRE_Impl : iteration %d - rnorm = %e (%e)\n",
                    iter, rnorm, eps1);
       }
       matvec( solnVector_, rVec );
@@ -2606,7 +2606,7 @@ int FEI_HYPRE_Impl::solveUsingCG()
       MPI_Allreduce(dArray, dArray2, 1, MPI_DOUBLE, MPI_SUM, mpiComm_);
       rnorm = sqrt( dArray2[0] );
       if ( outputLevel_ >= 2 && mypid_ == 0 )
-         printf("\tFEI_HYPRE_Impl actual rnorm = %e \n",rnorm);
+         printf("\tFEI_NALU_HYPRE_Impl actual rnorm = %e \n",rnorm);
       if ( (rnorm < eps1 || rnorm < 1.0e-16) ||
             iter >= krylovMaxIterations_ ) converged = 1;
       numTrials++;
@@ -2631,7 +2631,7 @@ int FEI_HYPRE_Impl::solveUsingCG()
 /**************************************************************************
  solve linear system using GMRES
  -------------------------------------------------------------------------*/
-int FEI_HYPRE_Impl::solveUsingGMRES()
+int FEI_NALU_HYPRE_Impl::solveUsingGMRES()
 {
    int    irow, iter, converged=0, localNRows, extNRows, totalNRows;
    int    innerIterations, iV, iV2, kStep, kp1, jV;
@@ -2677,7 +2677,7 @@ int FEI_HYPRE_Impl::solveUsingGMRES()
    rnorm0 = sqrt(dArray2[0]);
    rnorm  = sqrt(dArray2[1]);
    if ( outputLevel_ >= 2 && mypid_ == 0 )
-      printf("\tFEI_HYPRE_Impl initial rnorm = %e (%e)\n",
+      printf("\tFEI_NALU_HYPRE_Impl initial rnorm = %e (%e)\n",
              rnorm, rnorm0);
    if ( rnorm0 < 1.0e-20 )
    {
@@ -2797,7 +2797,7 @@ int FEI_HYPRE_Impl::solveUsingGMRES()
                             S[kStep] * HH[kp1][kStep];
          rnorm = habs(RS[kp1]);
          if ( outputLevel_ >= 2 && mypid_ == 0 )
-            printf("\tFEI_HYPRE_Impl : iteration %d - rnorm = %e\n",
+            printf("\tFEI_NALU_HYPRE_Impl : iteration %d - rnorm = %e\n",
                    iter, rnorm);
       }
       RS[kStep] = RS[kStep] / HH[kStep][kStep];
@@ -2838,7 +2838,7 @@ int FEI_HYPRE_Impl::solveUsingGMRES()
    }
    if ( rnorm < eps1 ) converged = 1;
    if ( outputLevel_ >= 2 && mypid_ == 0 )
-      printf("\tFEI_HYPRE_Impl : final rnorm = %e\n", rnorm);
+      printf("\tFEI_NALU_HYPRE_Impl : final rnorm = %e\n", rnorm);
 
    disassembleSolnVector();
 
@@ -2864,7 +2864,7 @@ int FEI_HYPRE_Impl::solveUsingGMRES()
 /**************************************************************************
  solve linear system using CGS
  -------------------------------------------------------------------------*/
-int FEI_HYPRE_Impl::solveUsingCGS()
+int FEI_NALU_HYPRE_Impl::solveUsingCGS()
 {
    int    irow, iter, converged=0, localNRows, extNRows, totalNRows;
    int    numTrials, innerIteration;
@@ -2906,7 +2906,7 @@ int FEI_HYPRE_Impl::solveUsingCGS()
    rnorm0 = sqrt(dArray2[1]);
    rnorm  = sqrt(dArray2[0]);
    if ( outputLevel_ >= 1 && mypid_ == 0 )
-      printf("\tFEI_HYPRE_Impl initial rnorm = %e (%e)\n",rnorm,rnorm0);
+      printf("\tFEI_NALU_HYPRE_Impl initial rnorm = %e (%e)\n",rnorm,rnorm0);
    if ( rnorm0 == 0.0 )
    {
       delete [] rVec;
@@ -3007,7 +3007,7 @@ int FEI_HYPRE_Impl::solveUsingCGS()
          beta = rho2 / rho1;
          rnorm = sqrt(dArray2[1]);
          if ( outputLevel_ >= 1 && iter % 1 == 0 && mypid_ == 0 )
-            printf("\tFEI_HYPRE_Impl : iteration %d - rnorm = %e (%e)\n",
+            printf("\tFEI_NALU_HYPRE_Impl : iteration %d - rnorm = %e (%e)\n",
                    iter, rnorm, eps1);
       }
       matvec( solnVector_, rVec );
@@ -3019,7 +3019,7 @@ int FEI_HYPRE_Impl::solveUsingCGS()
       MPI_Allreduce(&rnorm, dArray, 1, MPI_DOUBLE, MPI_SUM, mpiComm_);
       rnorm = sqrt( dArray[0] );
       if ( outputLevel_ >= 2 && mypid_ == 0 )
-         printf("\tFEI_HYPRE_Impl actual rnorm = %e \n",rnorm);
+         printf("\tFEI_NALU_HYPRE_Impl actual rnorm = %e \n",rnorm);
       if ( rnorm < eps1 || iter >= krylovMaxIterations_ ) break;
       numTrials++;
    }
@@ -3046,7 +3046,7 @@ int FEI_HYPRE_Impl::solveUsingCGS()
 /**************************************************************************
  solve linear system using Bicgstab
  -------------------------------------------------------------------------*/
-int FEI_HYPRE_Impl::solveUsingBicgstab()
+int FEI_NALU_HYPRE_Impl::solveUsingBicgstab()
 {
    int    irow, iter, converged=0, localNRows, extNRows, totalNRows;
    int    iM, jM, numTrials, innerIteration, blen=2, vecByteSize;
@@ -3090,7 +3090,7 @@ int FEI_HYPRE_Impl::solveUsingBicgstab()
    rnorm0 = sqrt(dArray2[1]);
    rnorm  = sqrt(dArray2[0]);
    if ( outputLevel_ >= 1 && mypid_ == 0 )
-      printf("\tFEI_HYPRE_Impl initial rnorm = %e (%e)\n",rnorm,rnorm0);
+      printf("\tFEI_NALU_HYPRE_Impl initial rnorm = %e (%e)\n",rnorm,rnorm0);
    if ( rnorm0 == 0.0 )
    {
       delete [] rVec;
@@ -3268,7 +3268,7 @@ int FEI_HYPRE_Impl::solveUsingBicgstab()
          MPI_Allreduce(&dtemp, &rnorm, 1, MPI_DOUBLE, MPI_SUM, mpiComm_);
          rnorm = sqrt( rnorm );
          if ( outputLevel_ >= 1 && iter % 1 == 0 && mypid_ == 0 )
-            printf("\tFEI_HYPRE_Impl : iteration %d - rnorm = %e (%e)\n",
+            printf("\tFEI_NALU_HYPRE_Impl : iteration %d - rnorm = %e (%e)\n",
                    iter, rnorm, eps1);
       }
 
@@ -3286,7 +3286,7 @@ int FEI_HYPRE_Impl::solveUsingBicgstab()
       MPI_Allreduce(&rnorm, dArray, 1, MPI_DOUBLE, MPI_SUM, mpiComm_);
       rnorm = sqrt( dArray[0] );
       if ( outputLevel_ >= 2 && mypid_ == 0 )
-         printf("\tFEI_HYPRE_Impl actual rnorm = %e \n",rnorm);
+         printf("\tFEI_NALU_HYPRE_Impl actual rnorm = %e \n",rnorm);
       if ( rnorm < eps1 || iter >= krylovMaxIterations_ ) break;
       numTrials++;
    }
@@ -3330,7 +3330,7 @@ int FEI_HYPRE_Impl::solveUsingBicgstab()
 /**************************************************************************
  solve linear system using SuperLU
  -------------------------------------------------------------------------*/
-int FEI_HYPRE_Impl::solveUsingSuperLU()
+int FEI_NALU_HYPRE_Impl::solveUsingSuperLU()
 {
 #ifdef HAVE_SUPERLU
    int    localNRows, localNnz, *countArray, irow, jcol, *cscIA, *cscJA;
@@ -3358,9 +3358,9 @@ int FEI_HYPRE_Impl::solveUsingSuperLU()
       for ( jcol = diagIA_[irow]; jcol < diagIA_[irow+1]; jcol++ )
          countArray[diagJA_[jcol]]++;
    localNnz = diagIA_[localNRows];
-   cscJA = hypre_TAlloc(int,  (localNRows+1) , HYPRE_MEMORY_HOST);
-   cscIA = hypre_TAlloc(int,  localNnz , HYPRE_MEMORY_HOST);
-   cscAA = hypre_TAlloc(double,  localNnz , HYPRE_MEMORY_HOST);
+   cscJA = hypre_TAlloc(int,  (localNRows+1) , NALU_HYPRE_MEMORY_HOST);
+   cscIA = hypre_TAlloc(int,  localNnz , NALU_HYPRE_MEMORY_HOST);
+   cscAA = hypre_TAlloc(double,  localNnz , NALU_HYPRE_MEMORY_HOST);
    cscJA[0] = 0;
    localNnz = 0;
    for ( jcol = 1; jcol <= localNRows; jcol++ )
@@ -3448,7 +3448,7 @@ int FEI_HYPRE_Impl::solveUsingSuperLU()
       rnorm += rVec[irow] * rVec[irow];
    rnorm = sqrt( rnorm );
    if ( outputLevel_ >= 2 && mypid_ == 0 )
-      printf("\tFEI_HYPRE_Impl rnorm = %e \n",rnorm);
+      printf("\tFEI_NALU_HYPRE_Impl rnorm = %e \n",rnorm);
 
    disassembleSolnVector();
    krylovIterations_   = 1;
@@ -3477,7 +3477,7 @@ int FEI_HYPRE_Impl::solveUsingSuperLU()
 /**************************************************************************
  matrix vector multiply
  -------------------------------------------------------------------------*/
-void FEI_HYPRE_Impl::matvec(double *xvec, double *yvec)
+void FEI_NALU_HYPRE_Impl::matvec(double *xvec, double *yvec)
 {
    /* -----------------------------------------------------------------
     * exchange vector information between processors
@@ -3529,7 +3529,7 @@ void FEI_HYPRE_Impl::matvec(double *xvec, double *yvec)
 /**************************************************************************
  form right hand side vector from element load vectors
  -------------------------------------------------------------------------*/
-void FEI_HYPRE_Impl::assembleRHSVector()
+void FEI_NALU_HYPRE_Impl::assembleRHSVector()
 {
    int    iB, iE, iN, iD, **elemNodeLists, numElems, elemNumNodes;
    int    eqnIndex1, eqnIndex2, matDim;
@@ -3564,7 +3564,7 @@ void FEI_HYPRE_Impl::assembleRHSVector()
 /**************************************************************************
  form solution vector
  -------------------------------------------------------------------------*/
-void FEI_HYPRE_Impl::assembleSolnVector()
+void FEI_NALU_HYPRE_Impl::assembleSolnVector()
 {
    int    iB, iE, iN, iD, **elemNodeLists, numElems, elemNumNodes;
    int    eqnIndex1, eqnIndex2, matDim;
@@ -3597,7 +3597,7 @@ void FEI_HYPRE_Impl::assembleSolnVector()
 /**************************************************************************
  distribute solution vector to element solution vectors
  -------------------------------------------------------------------------*/
-void FEI_HYPRE_Impl::disassembleSolnVector()
+void FEI_NALU_HYPRE_Impl::disassembleSolnVector()
 {
    int    iB, iE, iN, iD, **elemNodeLists, numElems, elemNumNodes;
    int    eqnIndex1, eqnIndex2;
@@ -3625,7 +3625,7 @@ void FEI_HYPRE_Impl::disassembleSolnVector()
 /**************************************************************************
  sort an integer array
  -------------------------------------------------------------------------*/
-void FEI_HYPRE_Impl::IntSort(int *ilist, int left, int right)
+void FEI_NALU_HYPRE_Impl::IntSort(int *ilist, int left, int right)
 {
    int i, last, mid, itemp;
 
@@ -3655,7 +3655,7 @@ void FEI_HYPRE_Impl::IntSort(int *ilist, int left, int right)
 /**************************************************************************
  sort an integer array and an auxiliary array
  -------------------------------------------------------------------------*/
-void FEI_HYPRE_Impl::IntSort2(int *ilist, int *ilist2, int left, int right)
+void FEI_NALU_HYPRE_Impl::IntSort2(int *ilist, int *ilist2, int left, int right)
 {
    int i, last, mid, itemp;
 
@@ -3694,7 +3694,7 @@ void FEI_HYPRE_Impl::IntSort2(int *ilist, int *ilist2, int left, int right)
 /**************************************************************************
  sort an integer array with an auxiliary double array
  -------------------------------------------------------------------------*/
-void FEI_HYPRE_Impl::IntSort2a(int *ilist,double *dlist,int left,int right)
+void FEI_NALU_HYPRE_Impl::IntSort2a(int *ilist,double *dlist,int left,int right)
 {
    int    mid, i, itemp, last, end2, isort, *ilist2, *ilist3;
    double dtemp, *dlist2, *dlist3;
@@ -3742,7 +3742,7 @@ void FEI_HYPRE_Impl::IntSort2a(int *ilist,double *dlist,int left,int right)
 /**************************************************************************
  exchange extended vectors between processors
  -------------------------------------------------------------------------*/
-void FEI_HYPRE_Impl::PVectorInterChange( double *dvec )
+void FEI_NALU_HYPRE_Impl::PVectorInterChange( double *dvec )
 {
    int         iD, iD2, iP, ind1, ind2;
    double      **dRecvBufs, **dSendBufs;
@@ -3802,7 +3802,7 @@ void FEI_HYPRE_Impl::PVectorInterChange( double *dvec )
 /**************************************************************************
  compress overlapped vector
  -------------------------------------------------------------------------*/
-void FEI_HYPRE_Impl::PVectorReverseChange( double *dvec )
+void FEI_NALU_HYPRE_Impl::PVectorReverseChange( double *dvec )
 {
    int         iD, iD2, iP, ind1, ind2;
    double      **dRecvBufs, **dSendBufs;
@@ -3862,7 +3862,7 @@ void FEI_HYPRE_Impl::PVectorReverseChange( double *dvec )
 /**************************************************************************
  print matrix and right hand side vector to a file
  -------------------------------------------------------------------------*/
-void FEI_HYPRE_Impl::printLinearSystem()
+void FEI_NALU_HYPRE_Impl::printLinearSystem()
 {
    int  iD, iD2, offset, iBegin, iEnd, totalNNZ;
    char filename[20];

@@ -32,19 +32,19 @@ extern void closeFile_dh(FILE *fpIN);
 bool isSmallEndian();
 
 /* seq only ?? */
-extern void io_dh_print_ebin_mat_private(HYPRE_Int m, HYPRE_Int beg_row,
-                                HYPRE_Int *rp, HYPRE_Int *cval, HYPRE_Real *aval, 
-                           HYPRE_Int *n2o, HYPRE_Int *o2n, Hash_i_dh hash, char *filename);
+extern void io_dh_print_ebin_mat_private(NALU_HYPRE_Int m, NALU_HYPRE_Int beg_row,
+                                NALU_HYPRE_Int *rp, NALU_HYPRE_Int *cval, NALU_HYPRE_Real *aval, 
+                           NALU_HYPRE_Int *n2o, NALU_HYPRE_Int *o2n, Hash_i_dh hash, char *filename);
 
 /* seq only ?? */
-extern void io_dh_read_ebin_mat_private(HYPRE_Int *m, HYPRE_Int **rp, HYPRE_Int **cval,
-                                     HYPRE_Real **aval, char *filename);
+extern void io_dh_read_ebin_mat_private(NALU_HYPRE_Int *m, NALU_HYPRE_Int **rp, NALU_HYPRE_Int **cval,
+                                     NALU_HYPRE_Real **aval, char *filename);
 
 /* seq only */
-extern void io_dh_print_ebin_vec_private(HYPRE_Int n, HYPRE_Int beg_row, HYPRE_Real *vals,
-                           HYPRE_Int *n2o, HYPRE_Int *o2n, Hash_i_dh hash, char *filename);
+extern void io_dh_print_ebin_vec_private(NALU_HYPRE_Int n, NALU_HYPRE_Int beg_row, NALU_HYPRE_Real *vals,
+                           NALU_HYPRE_Int *n2o, NALU_HYPRE_Int *o2n, Hash_i_dh hash, char *filename);
 /* seq only */
-extern void io_dh_read_ebin_vec_private(HYPRE_Int *n, HYPRE_Real **vals, char *filename);
+extern void io_dh_read_ebin_vec_private(NALU_HYPRE_Int *n, NALU_HYPRE_Real **vals, char *filename);
 
 
 #endif

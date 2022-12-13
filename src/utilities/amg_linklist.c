@@ -26,7 +26,7 @@
  **************************************************************/
 void hypre_dispose_elt ( hypre_LinkList element_ptr )
 {
-   hypre_TFree(element_ptr, HYPRE_MEMORY_HOST);
+   hypre_TFree(element_ptr, NALU_HYPRE_MEMORY_HOST);
 }
 
 
@@ -39,10 +39,10 @@ void hypre_dispose_elt ( hypre_LinkList element_ptr )
 void
 hypre_remove_point(hypre_LinkList   *LoL_head_ptr,
                    hypre_LinkList         *LoL_tail_ptr,
-                   HYPRE_Int               measure,
-                   HYPRE_Int               index,
-                   HYPRE_Int              *lists,
-                   HYPRE_Int              *where)
+                   NALU_HYPRE_Int               measure,
+                   NALU_HYPRE_Int               index,
+                   NALU_HYPRE_Int              *lists,
+                   NALU_HYPRE_Int              *where)
 
 {
    hypre_LinkList  LoL_head = *LoL_head_ptr;
@@ -125,7 +125,7 @@ hypre_remove_point(hypre_LinkList   *LoL_head_ptr,
    }
    while (list_ptr != NULL);
 
-   hypre_error_w_msg(HYPRE_ERROR_GENERIC, "No such list!\n");
+   hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "No such list!\n");
 
    return ;
 }
@@ -135,16 +135,16 @@ hypre_remove_point(hypre_LinkList   *LoL_head_ptr,
  * hypre_create_elt() : Create an element using Item for its data field
  *
  *****************************************************************/
-hypre_LinkList hypre_create_elt( HYPRE_Int Item )
+hypre_LinkList hypre_create_elt( NALU_HYPRE_Int Item )
 {
    hypre_LinkList   new_elt_ptr;
 
    /* Allocate memory space for the new node.
     * return with error if no space available
     */
-   if ( (new_elt_ptr = hypre_TAlloc(hypre_ListElement, 1, HYPRE_MEMORY_HOST)) == NULL)
+   if ( (new_elt_ptr = hypre_TAlloc(hypre_ListElement, 1, NALU_HYPRE_MEMORY_HOST)) == NULL)
    {
-      hypre_error_w_msg(HYPRE_ERROR_GENERIC, "\n create_elt: malloc failed \n\n");
+      hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "\n create_elt: malloc failed \n\n");
    }
    else
       /* new_elt_ptr = hypre_CTAlloc(hypre_LinkList, 1); */
@@ -167,10 +167,10 @@ hypre_LinkList hypre_create_elt( HYPRE_Int Item )
 void
 hypre_enter_on_lists(hypre_LinkList   *LoL_head_ptr,
                      hypre_LinkList   *LoL_tail_ptr,
-                     HYPRE_Int         measure,
-                     HYPRE_Int         index,
-                     HYPRE_Int        *lists,
-                     HYPRE_Int        *where)
+                     NALU_HYPRE_Int         measure,
+                     NALU_HYPRE_Int         index,
+                     NALU_HYPRE_Int        *lists,
+                     NALU_HYPRE_Int        *where)
 {
    hypre_LinkList   LoL_head = *LoL_head_ptr;
    hypre_LinkList   LoL_tail = *LoL_tail_ptr;
@@ -178,7 +178,7 @@ hypre_enter_on_lists(hypre_LinkList   *LoL_head_ptr,
    hypre_LinkList   list_ptr;
    hypre_LinkList   new_ptr;
 
-   HYPRE_Int         old_tail;
+   NALU_HYPRE_Int         old_tail;
 
    list_ptr =  LoL_head;
 

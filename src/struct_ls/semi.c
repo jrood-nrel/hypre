@@ -33,11 +33,11 @@
  *
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_StructInterpAssemble( hypre_StructMatrix  *A,
                             hypre_StructMatrix  *P,
-                            HYPRE_Int            P_stored_as_transpose,
-                            HYPRE_Int            cdir,
+                            NALU_HYPRE_Int            P_stored_as_transpose,
+                            NALU_HYPRE_Int            cdir,
                             hypre_Index          index,
                             hypre_Index          stride )
 {
@@ -51,8 +51,8 @@ hypre_StructInterpAssemble( hypre_StructMatrix  *A,
    hypre_CommPkg        *comm_pkg;
    hypre_CommHandle     *comm_handle;
 
-   HYPRE_Int             num_ghost[] = {0, 0, 0, 0, 0, 0};
-   HYPRE_Int             i, j, s, dim;
+   NALU_HYPRE_Int             num_ghost[] = {0, 0, 0, 0, 0, 0};
+   NALU_HYPRE_Int             i, j, s, dim;
 
    if (hypre_StructMatrixConstantCoefficient(P) != 0)
    {

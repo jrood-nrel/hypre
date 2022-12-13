@@ -20,33 +20,33 @@
 
 typedef struct
 {
-   HYPRE_Int     part;
+   NALU_HYPRE_Int     part;
    hypre_Index   index;
-   HYPRE_Int     var;
-   HYPRE_Int     to_part;
+   NALU_HYPRE_Int     var;
+   NALU_HYPRE_Int     to_part;
    hypre_Index   to_index;
-   HYPRE_Int     to_var;
+   NALU_HYPRE_Int     to_var;
 
 } hypre_SStructGraphEntry;
 
 typedef struct
 {
-   HYPRE_Int     to_part;
+   NALU_HYPRE_Int     to_part;
    hypre_Index   to_index;
-   HYPRE_Int     to_var;
-   HYPRE_Int     to_boxnum;      /* local box number */
-   HYPRE_Int     to_proc;
-   HYPRE_Int     to_rank;
+   NALU_HYPRE_Int     to_var;
+   NALU_HYPRE_Int     to_boxnum;      /* local box number */
+   NALU_HYPRE_Int     to_proc;
+   NALU_HYPRE_Int     to_rank;
 
 } hypre_SStructUEntry;
 
 typedef struct
 {
-   HYPRE_Int            part;
+   NALU_HYPRE_Int            part;
    hypre_Index          index;
-   HYPRE_Int            var;
-   HYPRE_Int            rank;
-   HYPRE_Int            nUentries;
+   NALU_HYPRE_Int            var;
+   NALU_HYPRE_Int            rank;
+   NALU_HYPRE_Int            nUentries;
    hypre_SStructUEntry *Uentries;
 
 } hypre_SStructUVEntry;
@@ -54,36 +54,36 @@ typedef struct
 typedef struct hypre_SStructGraph_struct
 {
    MPI_Comm                comm;
-   HYPRE_Int               ndim;
+   NALU_HYPRE_Int               ndim;
    hypre_SStructGrid      *grid;
    hypre_SStructGrid      *domain_grid; /* same as grid by default */
-   HYPRE_Int               nparts;
+   NALU_HYPRE_Int               nparts;
    hypre_SStructPGrid    **pgrids;
    hypre_SStructStencil ***stencils; /* each (part, var) has a stencil */
 
    /* info for fem-based user input */
-   HYPRE_Int              *fem_nsparse;
-   HYPRE_Int             **fem_sparse_i;
-   HYPRE_Int             **fem_sparse_j;
-   HYPRE_Int             **fem_entries;
+   NALU_HYPRE_Int              *fem_nsparse;
+   NALU_HYPRE_Int             **fem_sparse_i;
+   NALU_HYPRE_Int             **fem_sparse_j;
+   NALU_HYPRE_Int             **fem_entries;
 
    /* U-graph info: Entries are referenced via a local rank that comes from an
     * ordering of the local grid boxes with ghost zones added. */
-   HYPRE_Int               nUventries; /* number of Uventries */
-   HYPRE_Int              *iUventries; /* rank indexes into Uventries */
+   NALU_HYPRE_Int               nUventries; /* number of Uventries */
+   NALU_HYPRE_Int              *iUventries; /* rank indexes into Uventries */
    hypre_SStructUVEntry  **Uventries;
-   HYPRE_Int               Uvesize;    /* size of Uventries array */
-   HYPRE_Int               Uemaxsize;  /* max size of Uentries */
-   HYPRE_BigInt          **Uveoffsets; /* offsets for computing rank indexes */
+   NALU_HYPRE_Int               Uvesize;    /* size of Uventries array */
+   NALU_HYPRE_Int               Uemaxsize;  /* max size of Uentries */
+   NALU_HYPRE_BigInt          **Uveoffsets; /* offsets for computing rank indexes */
 
-   HYPRE_Int               ref_count;
+   NALU_HYPRE_Int               ref_count;
 
-   HYPRE_Int               type;    /* GEC0203 */
+   NALU_HYPRE_Int               type;    /* GEC0203 */
 
    /* These are created in GraphAddEntries() then deleted in GraphAssemble() */
    hypre_SStructGraphEntry **graph_entries;
-   HYPRE_Int               n_graph_entries; /* number graph entries */
-   HYPRE_Int               a_graph_entries; /* alloced graph entries */
+   NALU_HYPRE_Int               n_graph_entries; /* number graph entries */
+   NALU_HYPRE_Int               a_graph_entries; /* alloced graph entries */
 
 } hypre_SStructGraph;
 

@@ -7,7 +7,7 @@
 
 /*****************************************************************************
  *
- * HYPRE_par_laplace Fortran interface
+ * NALU_HYPRE_par_laplace Fortran interface
  *
  *****************************************************************************/
 
@@ -23,7 +23,7 @@ extern "C" {
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_generatelaplacian, HYPRE_GENERATELAPLACIAN)
+hypre_F90_IFACE(hypre_generatelaplacian, NALU_HYPRE_GENERATELAPLACIAN)
 ( hypre_F90_Comm *comm,
   hypre_F90_Int *nx,
   hypre_F90_Int *ny,

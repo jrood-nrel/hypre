@@ -21,14 +21,14 @@
 
 typedef struct
 {
-    HYPRE_Int     offset;      /* number of on-processor entries */
-    HYPRE_Real *local_diags; /* on-processor entries */
-    HYPRE_Real *ext_diags;   /* off-processor entries */
+    NALU_HYPRE_Int     offset;      /* number of on-processor entries */
+    NALU_HYPRE_Real *local_diags; /* on-processor entries */
+    NALU_HYPRE_Real *ext_diags;   /* off-processor entries */
 }
 DiagScale;
 
 DiagScale *DiagScaleCreate(Matrix *A, Numbering *numb);
 void DiagScaleDestroy(DiagScale *p);
-HYPRE_Real DiagScaleGet(DiagScale *p, HYPRE_Int index);
+NALU_HYPRE_Real DiagScaleGet(DiagScale *p, NALU_HYPRE_Int index);
 
 #endif /* _DIAGSCALE_H */

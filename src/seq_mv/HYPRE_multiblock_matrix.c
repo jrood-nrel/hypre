@@ -7,60 +7,60 @@
 
 /******************************************************************************
  *
- * HYPRE_MultiblockMatrix interface
+ * NALU_HYPRE_MultiblockMatrix interface
  *
  *****************************************************************************/
 
 #include "seq_mv.h"
 
 /*--------------------------------------------------------------------------
- * HYPRE_MultiblockMatrixCreate
+ * NALU_HYPRE_MultiblockMatrixCreate
  *--------------------------------------------------------------------------*/
 
-HYPRE_MultiblockMatrix
-HYPRE_MultiblockMatrixCreate( )
+NALU_HYPRE_MultiblockMatrix
+NALU_HYPRE_MultiblockMatrixCreate( )
 {
-   return ( (HYPRE_MultiblockMatrix)
+   return ( (NALU_HYPRE_MultiblockMatrix)
             hypre_MultiblockMatrixCreate(  ));
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_MultiblockMatrixDestroy
+ * NALU_HYPRE_MultiblockMatrixDestroy
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_MultiblockMatrixDestroy( HYPRE_MultiblockMatrix matrix )
+NALU_HYPRE_Int
+NALU_HYPRE_MultiblockMatrixDestroy( NALU_HYPRE_MultiblockMatrix matrix )
 {
    return ( hypre_MultiblockMatrixDestroy( (hypre_MultiblockMatrix *) matrix ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_MultiblockMatrixLimitedDestroy
+ * NALU_HYPRE_MultiblockMatrixLimitedDestroy
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_MultiblockMatrixLimitedDestroy( HYPRE_MultiblockMatrix matrix )
+NALU_HYPRE_Int
+NALU_HYPRE_MultiblockMatrixLimitedDestroy( NALU_HYPRE_MultiblockMatrix matrix )
 {
    return ( hypre_MultiblockMatrixLimitedDestroy( (hypre_MultiblockMatrix *) matrix ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_MultiblockMatrixInitialize
+ * NALU_HYPRE_MultiblockMatrixInitialize
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_MultiblockMatrixInitialize( HYPRE_MultiblockMatrix matrix )
+NALU_HYPRE_Int
+NALU_HYPRE_MultiblockMatrixInitialize( NALU_HYPRE_MultiblockMatrix matrix )
 {
    return ( hypre_MultiblockMatrixInitialize( (hypre_MultiblockMatrix *) matrix ) );
 }
 
 
 /*--------------------------------------------------------------------------
- * HYPRE_MultiblockMatrixAssemble
+ * NALU_HYPRE_MultiblockMatrixAssemble
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_MultiblockMatrixAssemble( HYPRE_MultiblockMatrix matrix )
+NALU_HYPRE_Int
+NALU_HYPRE_MultiblockMatrixAssemble( NALU_HYPRE_MultiblockMatrix matrix )
 {
    return ( hypre_MultiblockMatrixAssemble( (hypre_MultiblockMatrix *) matrix ) );
 }
@@ -68,11 +68,11 @@ HYPRE_MultiblockMatrixAssemble( HYPRE_MultiblockMatrix matrix )
 
 
 /*--------------------------------------------------------------------------
- * HYPRE_MultiblockMatrixPrint
+ * NALU_HYPRE_MultiblockMatrixPrint
  *--------------------------------------------------------------------------*/
 
 void
-HYPRE_MultiblockMatrixPrint( HYPRE_MultiblockMatrix matrix )
+NALU_HYPRE_MultiblockMatrixPrint( NALU_HYPRE_MultiblockMatrix matrix )
 {
    hypre_MultiblockMatrixPrint( (hypre_MultiblockMatrix *) matrix );
 }
@@ -83,24 +83,24 @@ HYPRE_MultiblockMatrixPrint( HYPRE_MultiblockMatrix matrix )
  ***************************************************************************/
 
 /*--------------------------------------------------------------------------
- * HYPRE_MultiblockMatrixSetNumSubmatrices
+ * NALU_HYPRE_MultiblockMatrixSetNumSubmatrices
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_MultiblockMatrixSetNumSubmatrices( HYPRE_MultiblockMatrix matrix, HYPRE_Int n )
+NALU_HYPRE_Int
+NALU_HYPRE_MultiblockMatrixSetNumSubmatrices( NALU_HYPRE_MultiblockMatrix matrix, NALU_HYPRE_Int n )
 {
    return ( hypre_MultiblockMatrixSetNumSubmatrices(
                (hypre_MultiblockMatrix *) matrix, n ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_MultiblockMatrixSetSubmatrixType
+ * NALU_HYPRE_MultiblockMatrixSetSubmatrixType
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_MultiblockMatrixSetSubmatrixType( HYPRE_MultiblockMatrix matrix,
-                                        HYPRE_Int j,
-                                        HYPRE_Int type )
+NALU_HYPRE_Int
+NALU_HYPRE_MultiblockMatrixSetSubmatrixType( NALU_HYPRE_MultiblockMatrix matrix,
+                                        NALU_HYPRE_Int j,
+                                        NALU_HYPRE_Int type )
 {
    return ( hypre_MultiblockMatrixSetSubmatrixType(
                (hypre_MultiblockMatrix *) matrix, j, type ) );

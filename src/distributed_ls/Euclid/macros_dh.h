@@ -29,7 +29,7 @@
 #endif
 
 /* used in Mat_SEQ_PrintTriples, so matlab won't discard zeros (yuck!) */
-#ifdef HYPRE_SINGLE
+#ifdef NALU_HYPRE_SINGLE
 #define _MATLAB_ZERO_  1e-30
 #else // default
 #define _MATLAB_ZERO_  1e-100
@@ -56,7 +56,7 @@
 #define CHECK_MPI_V_ERROR(errCode)  \
       { \
         if (errCode) { \
-          HYPRE_Int len; \
+          NALU_HYPRE_Int len; \
           hypre_MPI_Error_string(errCode, msgBuf_dh, &len); \
           setError_dh(msgBuf_dh, __FUNC__, __FILE__, __LINE__); \
           return; \
@@ -66,7 +66,7 @@
 #define CHECK_MPI_ERROR(errCode)  \
       { \
         if (errCode) { \
-          HYPRE_Int len; \
+          NALU_HYPRE_Int len; \
           hypre_MPI_Error_string(errCode, msgBuf_dh, &len); \
           setError_dh(msgBuf_dh, __FUNC__, __FILE__, __LINE__); \
           return(errCode); \

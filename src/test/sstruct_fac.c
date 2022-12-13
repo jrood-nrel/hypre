@@ -10,8 +10,8 @@
 #include <math.h>
 
 #include "_hypre_utilities.h"
-#include "HYPRE_sstruct_ls.h"
-#include "HYPRE_krylov.h"
+#include "NALU_HYPRE_sstruct_ls.h"
+#include "NALU_HYPRE_krylov.h"
 #include "_hypre_sstruct_mv.h"
 #include "_hypre_sstruct_ls.h"
 
@@ -27,90 +27,90 @@
 
 char infile_default[50] = "sstruct_default.in";
 
-typedef HYPRE_Int Index[HYPRE_MAXDIM];
-typedef HYPRE_Int ProblemIndex[9];  /* last 3 digits are shifts */
+typedef NALU_HYPRE_Int Index[NALU_HYPRE_MAXDIM];
+typedef NALU_HYPRE_Int ProblemIndex[9];  /* last 3 digits are shifts */
 
 typedef struct
 {
    /* for GridSetExtents */
-   HYPRE_Int                    nboxes;
+   NALU_HYPRE_Int                    nboxes;
    ProblemIndex          *ilowers;
    ProblemIndex          *iuppers;
-   HYPRE_Int                   *boxsizes;
-   HYPRE_Int                    max_boxsize;
+   NALU_HYPRE_Int                   *boxsizes;
+   NALU_HYPRE_Int                    max_boxsize;
 
    /* for GridSetVariables */
-   HYPRE_Int                    nvars;
-   HYPRE_SStructVariable *vartypes;
+   NALU_HYPRE_Int                    nvars;
+   NALU_HYPRE_SStructVariable *vartypes;
 
    /* for GridAddVariables */
-   HYPRE_Int                    add_nvars;
+   NALU_HYPRE_Int                    add_nvars;
    ProblemIndex          *add_indexes;
-   HYPRE_SStructVariable *add_vartypes;
+   NALU_HYPRE_SStructVariable *add_vartypes;
 
    /* for GridSetNeighborBox */
-   HYPRE_Int                    glue_nboxes;
+   NALU_HYPRE_Int                    glue_nboxes;
    ProblemIndex          *glue_ilowers;
    ProblemIndex          *glue_iuppers;
-   HYPRE_Int                   *glue_nbor_parts;
+   NALU_HYPRE_Int                   *glue_nbor_parts;
    ProblemIndex          *glue_nbor_ilowers;
    ProblemIndex          *glue_nbor_iuppers;
    Index                 *glue_index_maps;
 
    /* for GraphSetStencil */
-   HYPRE_Int                   *stencil_num;
+   NALU_HYPRE_Int                   *stencil_num;
 
-   HYPRE_Int                    matrix_nentries;
+   NALU_HYPRE_Int                    matrix_nentries;
    ProblemIndex          *matrix_ilowers;
    ProblemIndex          *matrix_iuppers;
    Index                 *matrix_strides;
-   HYPRE_Int                   *matrix_vars;
-   HYPRE_Int                   *matrix_entries;
-   HYPRE_Real            *matrix_values;
+   NALU_HYPRE_Int                   *matrix_vars;
+   NALU_HYPRE_Int                   *matrix_entries;
+   NALU_HYPRE_Real            *matrix_values;
 
    Index                  periodic;
 
    /* for GraphAddEntries */
-   HYPRE_Int                    graph_nentries;
+   NALU_HYPRE_Int                    graph_nentries;
    ProblemIndex          *graph_ilowers;
    ProblemIndex          *graph_iuppers;
    Index                 *graph_strides;
-   HYPRE_Int                   *graph_vars;
-   HYPRE_Int                   *graph_to_parts;
+   NALU_HYPRE_Int                   *graph_vars;
+   NALU_HYPRE_Int                   *graph_to_parts;
    ProblemIndex          *graph_to_ilowers;
    ProblemIndex          *graph_to_iuppers;
    Index                 *graph_to_strides;
-   HYPRE_Int                   *graph_to_vars;
+   NALU_HYPRE_Int                   *graph_to_vars;
    Index                 *graph_index_maps;
    Index                 *graph_index_signs;
-   HYPRE_Int                   *graph_entries;
-   HYPRE_Real            *graph_values;
-   HYPRE_Int                   *graph_boxsizes;
+   NALU_HYPRE_Int                   *graph_entries;
+   NALU_HYPRE_Real            *graph_values;
+   NALU_HYPRE_Int                   *graph_boxsizes;
 
-   HYPRE_Real           **graph_fine_to_coarse_data;
-   HYPRE_Real           **graph_coarse_to_fine_data;
+   NALU_HYPRE_Real           **graph_fine_to_coarse_data;
+   NALU_HYPRE_Real           **graph_coarse_to_fine_data;
 
    /* for amr structure */
-   HYPRE_Int                    fac_plevel;
+   NALU_HYPRE_Int                    fac_plevel;
    Index                  fac_prefinement;
 
 } ProblemPartData;
 
 typedef struct
 {
-   HYPRE_Int              ndim;
-   HYPRE_Int              nparts;
+   NALU_HYPRE_Int              ndim;
+   NALU_HYPRE_Int              nparts;
    ProblemPartData *pdata;
-   HYPRE_Int              max_boxsize;
+   NALU_HYPRE_Int              max_boxsize;
 
-   HYPRE_Int              nstencils;
-   HYPRE_Int             *stencil_sizes;
+   NALU_HYPRE_Int              nstencils;
+   NALU_HYPRE_Int             *stencil_sizes;
    Index          **stencil_offsets;
-   HYPRE_Int            **stencil_vars;
-   HYPRE_Real     **stencil_values;
+   NALU_HYPRE_Int            **stencil_vars;
+   NALU_HYPRE_Real     **stencil_values;
 
-   HYPRE_Int              npools;
-   HYPRE_Int             *pools;   /* array of size nparts */
+   NALU_HYPRE_Int              npools;
+   NALU_HYPRE_Int             *pools;   /* array of size nparts */
 
 } ProblemData;
 
@@ -118,14 +118,14 @@ typedef struct
  * Compute new box based on variable type
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 GetVariableBox( Index  cell_ilower,
                 Index  cell_iupper,
-                HYPRE_Int    vartype,
+                NALU_HYPRE_Int    vartype,
                 Index  var_ilower,
                 Index  var_iupper )
 {
-   HYPRE_Int ierr = 0;
+   NALU_HYPRE_Int ierr = 0;
 
    var_ilower[0] = cell_ilower[0];
    var_ilower[1] = cell_ilower[1];
@@ -136,31 +136,31 @@ GetVariableBox( Index  cell_ilower,
 
    switch (vartype)
    {
-      case HYPRE_SSTRUCT_VARIABLE_CELL:
+      case NALU_HYPRE_SSTRUCT_VARIABLE_CELL:
          var_ilower[0] -= 0; var_ilower[1] -= 0; var_ilower[2] -= 0;
          break;
-      case HYPRE_SSTRUCT_VARIABLE_NODE:
+      case NALU_HYPRE_SSTRUCT_VARIABLE_NODE:
          var_ilower[0] -= 1; var_ilower[1] -= 1; var_ilower[2] -= 1;
          break;
-      case HYPRE_SSTRUCT_VARIABLE_XFACE:
+      case NALU_HYPRE_SSTRUCT_VARIABLE_XFACE:
          var_ilower[0] -= 1; var_ilower[1] -= 0; var_ilower[2] -= 0;
          break;
-      case HYPRE_SSTRUCT_VARIABLE_YFACE:
+      case NALU_HYPRE_SSTRUCT_VARIABLE_YFACE:
          var_ilower[0] -= 0; var_ilower[1] -= 1; var_ilower[2] -= 0;
          break;
-      case HYPRE_SSTRUCT_VARIABLE_ZFACE:
+      case NALU_HYPRE_SSTRUCT_VARIABLE_ZFACE:
          var_ilower[0] -= 0; var_ilower[1] -= 0; var_ilower[2] -= 1;
          break;
-      case HYPRE_SSTRUCT_VARIABLE_XEDGE:
+      case NALU_HYPRE_SSTRUCT_VARIABLE_XEDGE:
          var_ilower[0] -= 0; var_ilower[1] -= 1; var_ilower[2] -= 1;
          break;
-      case HYPRE_SSTRUCT_VARIABLE_YEDGE:
+      case NALU_HYPRE_SSTRUCT_VARIABLE_YEDGE:
          var_ilower[0] -= 1; var_ilower[1] -= 0; var_ilower[2] -= 1;
          break;
-      case HYPRE_SSTRUCT_VARIABLE_ZEDGE:
+      case NALU_HYPRE_SSTRUCT_VARIABLE_ZEDGE:
          var_ilower[0] -= 1; var_ilower[1] -= 1; var_ilower[2] -= 0;
          break;
-      case HYPRE_SSTRUCT_VARIABLE_UNDEFINED:
+      case NALU_HYPRE_SSTRUCT_VARIABLE_UNDEFINED:
          break;
    }
 
@@ -171,13 +171,13 @@ GetVariableBox( Index  cell_ilower,
  * Read routines
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 SScanIntArray( char  *sdata_ptr,
                char **sdata_ptr_ptr,
-               HYPRE_Int    size,
-               HYPRE_Int   *array )
+               NALU_HYPRE_Int    size,
+               NALU_HYPRE_Int   *array )
 {
-   HYPRE_Int i;
+   NALU_HYPRE_Int i;
 
    sdata_ptr += strspn(sdata_ptr, " \t\n[");
    for (i = 0; i < size; i++)
@@ -190,13 +190,13 @@ SScanIntArray( char  *sdata_ptr,
    return 0;
 }
 
-HYPRE_Int
+NALU_HYPRE_Int
 SScanProblemIndex( char          *sdata_ptr,
                    char         **sdata_ptr_ptr,
-                   HYPRE_Int            ndim,
+                   NALU_HYPRE_Int            ndim,
                    ProblemIndex   index )
 {
-   HYPRE_Int  i;
+   NALU_HYPRE_Int  i;
    char sign[3];
 
    /* initialize index array */
@@ -262,27 +262,27 @@ SScanProblemIndex( char          *sdata_ptr,
    return 0;
 }
 
-HYPRE_Int
+NALU_HYPRE_Int
 ReadData( char         *filename,
           ProblemData  *data_ptr )
 {
    ProblemData        data;
    ProblemPartData    pdata;
 
-   HYPRE_Int                myid;
+   NALU_HYPRE_Int                myid;
    FILE              *file;
 
    char              *sdata = NULL;
    char              *sdata_line;
    char              *sdata_ptr;
-   HYPRE_Int                sdata_size;
-   HYPRE_Int                size;
-   HYPRE_Int                memchunk = 10000;
-   HYPRE_Int                maxline  = 250;
+   NALU_HYPRE_Int                sdata_size;
+   NALU_HYPRE_Int                size;
+   NALU_HYPRE_Int                memchunk = 10000;
+   NALU_HYPRE_Int                maxline  = 250;
 
    char               key[250];
 
-   HYPRE_Int                part, var, entry, s, i;
+   NALU_HYPRE_Int                part, var, entry, s, i;
 
    /*-----------------------------------------------------------
     * Read data file from process 0, then broadcast
@@ -300,7 +300,7 @@ ReadData( char         *filename,
 
       /* allocate initial space, and read first input line */
       sdata_size = 0;
-      sdata = hypre_TAlloc(char,  memchunk, HYPRE_MEMORY_HOST);
+      sdata = hypre_TAlloc(char,  memchunk, NALU_HYPRE_MEMORY_HOST);
       sdata_line = fgets(sdata, maxline, file);
 
       s = memchunk;
@@ -311,7 +311,7 @@ ReadData( char         *filename,
          /* allocate more space, if necessary */
          if ((sdata_size + maxline) > s)
          {
-            sdata = hypre_TReAlloc(sdata,  char,  (sdata_size + memchunk), HYPRE_MEMORY_HOST);
+            sdata = hypre_TReAlloc(sdata,  char,  (sdata_size + memchunk), NALU_HYPRE_MEMORY_HOST);
             s = sdata_size + memchunk;
          }
 
@@ -321,10 +321,10 @@ ReadData( char         *filename,
    }
 
    /* broadcast the data size */
-   hypre_MPI_Bcast(&sdata_size, 1, HYPRE_MPI_INT, 0, hypre_MPI_COMM_WORLD);
+   hypre_MPI_Bcast(&sdata_size, 1, NALU_HYPRE_MPI_INT, 0, hypre_MPI_COMM_WORLD);
 
    /* broadcast the data */
-   sdata = hypre_TReAlloc(sdata,  char,  sdata_size, HYPRE_MEMORY_HOST);
+   sdata = hypre_TReAlloc(sdata,  char,  sdata_size, NALU_HYPRE_MEMORY_HOST);
    hypre_MPI_Bcast(sdata, sdata_size, hypre_MPI_CHAR, 0, hypre_MPI_COMM_WORLD);
 
    /*-----------------------------------------------------------
@@ -344,7 +344,7 @@ ReadData( char         *filename,
          {
             data.ndim = strtol(sdata_ptr, &sdata_ptr, 10);
             data.nparts = strtol(sdata_ptr, &sdata_ptr, 10);
-            data.pdata = hypre_CTAlloc(ProblemPartData,  data.nparts, HYPRE_MEMORY_HOST);
+            data.pdata = hypre_CTAlloc(ProblemPartData,  data.nparts, NALU_HYPRE_MEMORY_HOST);
          }
          else if ( strcmp(key, "GridSetExtents:") == 0 )
          {
@@ -354,11 +354,11 @@ ReadData( char         *filename,
             {
                size = pdata.nboxes + 10;
                pdata.ilowers =
-                  hypre_TReAlloc(pdata.ilowers,  ProblemIndex,  size, HYPRE_MEMORY_HOST);
+                  hypre_TReAlloc(pdata.ilowers,  ProblemIndex,  size, NALU_HYPRE_MEMORY_HOST);
                pdata.iuppers =
-                  hypre_TReAlloc(pdata.iuppers,  ProblemIndex,  size, HYPRE_MEMORY_HOST);
+                  hypre_TReAlloc(pdata.iuppers,  ProblemIndex,  size, NALU_HYPRE_MEMORY_HOST);
                pdata.boxsizes =
-                  hypre_TReAlloc(pdata.boxsizes,  HYPRE_Int,  size, HYPRE_MEMORY_HOST);
+                  hypre_TReAlloc(pdata.boxsizes,  NALU_HYPRE_Int,  size, NALU_HYPRE_MEMORY_HOST);
             }
             SScanProblemIndex(sdata_ptr, &sdata_ptr, data.ndim,
                               pdata.ilowers[pdata.nboxes]);
@@ -391,7 +391,7 @@ ReadData( char         *filename,
             part = strtol(sdata_ptr, &sdata_ptr, 10);
             pdata = data.pdata[part];
             pdata.nvars = strtol(sdata_ptr, &sdata_ptr, 10);
-            pdata.vartypes = hypre_CTAlloc(HYPRE_SStructVariable,  pdata.nvars, HYPRE_MEMORY_HOST);
+            pdata.vartypes = hypre_CTAlloc(NALU_HYPRE_SStructVariable,  pdata.nvars, NALU_HYPRE_MEMORY_HOST);
             SScanIntArray(sdata_ptr, &sdata_ptr,
                           pdata.nvars, pdata.vartypes);
             data.pdata[part] = pdata;
@@ -410,17 +410,17 @@ ReadData( char         *filename,
             {
                size = pdata.glue_nboxes + 10;
                pdata.glue_ilowers =
-                  hypre_TReAlloc(pdata.glue_ilowers,  ProblemIndex,  size, HYPRE_MEMORY_HOST);
+                  hypre_TReAlloc(pdata.glue_ilowers,  ProblemIndex,  size, NALU_HYPRE_MEMORY_HOST);
                pdata.glue_iuppers =
-                  hypre_TReAlloc(pdata.glue_iuppers,  ProblemIndex,  size, HYPRE_MEMORY_HOST);
+                  hypre_TReAlloc(pdata.glue_iuppers,  ProblemIndex,  size, NALU_HYPRE_MEMORY_HOST);
                pdata.glue_nbor_parts =
-                  hypre_TReAlloc(pdata.glue_nbor_parts,  HYPRE_Int,  size, HYPRE_MEMORY_HOST);
+                  hypre_TReAlloc(pdata.glue_nbor_parts,  NALU_HYPRE_Int,  size, NALU_HYPRE_MEMORY_HOST);
                pdata.glue_nbor_ilowers =
-                  hypre_TReAlloc(pdata.glue_nbor_ilowers,  ProblemIndex,  size, HYPRE_MEMORY_HOST);
+                  hypre_TReAlloc(pdata.glue_nbor_ilowers,  ProblemIndex,  size, NALU_HYPRE_MEMORY_HOST);
                pdata.glue_nbor_iuppers =
-                  hypre_TReAlloc(pdata.glue_nbor_iuppers,  ProblemIndex,  size, HYPRE_MEMORY_HOST);
+                  hypre_TReAlloc(pdata.glue_nbor_iuppers,  ProblemIndex,  size, NALU_HYPRE_MEMORY_HOST);
                pdata.glue_index_maps =
-                  hypre_TReAlloc(pdata.glue_index_maps,  Index,  size, HYPRE_MEMORY_HOST);
+                  hypre_TReAlloc(pdata.glue_index_maps,  Index,  size, NALU_HYPRE_MEMORY_HOST);
             }
             SScanProblemIndex(sdata_ptr, &sdata_ptr, data.ndim,
                               pdata.glue_ilowers[pdata.glue_nboxes]);
@@ -447,20 +447,20 @@ ReadData( char         *filename,
          else if ( strcmp(key, "StencilCreate:") == 0 )
          {
             data.nstencils = strtol(sdata_ptr, &sdata_ptr, 10);
-            data.stencil_sizes   = hypre_CTAlloc(HYPRE_Int,  data.nstencils, HYPRE_MEMORY_HOST);
-            data.stencil_offsets = hypre_CTAlloc(Index *,  data.nstencils, HYPRE_MEMORY_HOST);
-            data.stencil_vars    = hypre_CTAlloc(HYPRE_Int *,  data.nstencils, HYPRE_MEMORY_HOST);
-            data.stencil_values  = hypre_CTAlloc(HYPRE_Real *,  data.nstencils, HYPRE_MEMORY_HOST);
+            data.stencil_sizes   = hypre_CTAlloc(NALU_HYPRE_Int,  data.nstencils, NALU_HYPRE_MEMORY_HOST);
+            data.stencil_offsets = hypre_CTAlloc(Index *,  data.nstencils, NALU_HYPRE_MEMORY_HOST);
+            data.stencil_vars    = hypre_CTAlloc(NALU_HYPRE_Int *,  data.nstencils, NALU_HYPRE_MEMORY_HOST);
+            data.stencil_values  = hypre_CTAlloc(NALU_HYPRE_Real *,  data.nstencils, NALU_HYPRE_MEMORY_HOST);
             SScanIntArray(sdata_ptr, &sdata_ptr,
                           data.nstencils, data.stencil_sizes);
             for (s = 0; s < data.nstencils; s++)
             {
                data.stencil_offsets[s] =
-                  hypre_CTAlloc(Index,  data.stencil_sizes[s], HYPRE_MEMORY_HOST);
+                  hypre_CTAlloc(Index,  data.stencil_sizes[s], NALU_HYPRE_MEMORY_HOST);
                data.stencil_vars[s] =
-                  hypre_CTAlloc(HYPRE_Int,  data.stencil_sizes[s], HYPRE_MEMORY_HOST);
+                  hypre_CTAlloc(NALU_HYPRE_Int,  data.stencil_sizes[s], NALU_HYPRE_MEMORY_HOST);
                data.stencil_values[s] =
-                  hypre_CTAlloc(HYPRE_Real,  data.stencil_sizes[s], HYPRE_MEMORY_HOST);
+                  hypre_CTAlloc(NALU_HYPRE_Real,  data.stencil_sizes[s], NALU_HYPRE_MEMORY_HOST);
             }
          }
          else if ( strcmp(key, "StencilSetEntry:") == 0 )
@@ -480,7 +480,7 @@ ReadData( char         *filename,
             pdata = data.pdata[part];
             if (pdata.stencil_num == NULL)
             {
-               pdata.stencil_num = hypre_CTAlloc(HYPRE_Int,  pdata.nvars, HYPRE_MEMORY_HOST);
+               pdata.stencil_num = hypre_CTAlloc(NALU_HYPRE_Int,  pdata.nvars, NALU_HYPRE_MEMORY_HOST);
             }
             pdata.stencil_num[var] = s;
             data.pdata[part] = pdata;
@@ -493,33 +493,33 @@ ReadData( char         *filename,
             {
                size = pdata.graph_nentries + 10;
                pdata.graph_ilowers =
-                  hypre_TReAlloc(pdata.graph_ilowers,  ProblemIndex,  size, HYPRE_MEMORY_HOST);
+                  hypre_TReAlloc(pdata.graph_ilowers,  ProblemIndex,  size, NALU_HYPRE_MEMORY_HOST);
                pdata.graph_iuppers =
-                  hypre_TReAlloc(pdata.graph_iuppers,  ProblemIndex,  size, HYPRE_MEMORY_HOST);
+                  hypre_TReAlloc(pdata.graph_iuppers,  ProblemIndex,  size, NALU_HYPRE_MEMORY_HOST);
                pdata.graph_strides =
-                  hypre_TReAlloc(pdata.graph_strides,  Index,  size, HYPRE_MEMORY_HOST);
+                  hypre_TReAlloc(pdata.graph_strides,  Index,  size, NALU_HYPRE_MEMORY_HOST);
                pdata.graph_vars =
-                  hypre_TReAlloc(pdata.graph_vars,  HYPRE_Int,  size, HYPRE_MEMORY_HOST);
+                  hypre_TReAlloc(pdata.graph_vars,  NALU_HYPRE_Int,  size, NALU_HYPRE_MEMORY_HOST);
                pdata.graph_to_parts =
-                  hypre_TReAlloc(pdata.graph_to_parts,  HYPRE_Int,  size, HYPRE_MEMORY_HOST);
+                  hypre_TReAlloc(pdata.graph_to_parts,  NALU_HYPRE_Int,  size, NALU_HYPRE_MEMORY_HOST);
                pdata.graph_to_ilowers =
-                  hypre_TReAlloc(pdata.graph_to_ilowers,  ProblemIndex,  size, HYPRE_MEMORY_HOST);
+                  hypre_TReAlloc(pdata.graph_to_ilowers,  ProblemIndex,  size, NALU_HYPRE_MEMORY_HOST);
                pdata.graph_to_iuppers =
-                  hypre_TReAlloc(pdata.graph_to_iuppers,  ProblemIndex,  size, HYPRE_MEMORY_HOST);
+                  hypre_TReAlloc(pdata.graph_to_iuppers,  ProblemIndex,  size, NALU_HYPRE_MEMORY_HOST);
                pdata.graph_to_strides =
-                  hypre_TReAlloc(pdata.graph_to_strides,  Index,  size, HYPRE_MEMORY_HOST);
+                  hypre_TReAlloc(pdata.graph_to_strides,  Index,  size, NALU_HYPRE_MEMORY_HOST);
                pdata.graph_to_vars =
-                  hypre_TReAlloc(pdata.graph_to_vars,  HYPRE_Int,  size, HYPRE_MEMORY_HOST);
+                  hypre_TReAlloc(pdata.graph_to_vars,  NALU_HYPRE_Int,  size, NALU_HYPRE_MEMORY_HOST);
                pdata.graph_index_maps =
-                  hypre_TReAlloc(pdata.graph_index_maps,  Index,  size, HYPRE_MEMORY_HOST);
+                  hypre_TReAlloc(pdata.graph_index_maps,  Index,  size, NALU_HYPRE_MEMORY_HOST);
                pdata.graph_index_signs =
-                  hypre_TReAlloc(pdata.graph_index_signs,  Index,  size, HYPRE_MEMORY_HOST);
+                  hypre_TReAlloc(pdata.graph_index_signs,  Index,  size, NALU_HYPRE_MEMORY_HOST);
                pdata.graph_entries =
-                  hypre_TReAlloc(pdata.graph_entries,  HYPRE_Int,  size, HYPRE_MEMORY_HOST);
+                  hypre_TReAlloc(pdata.graph_entries,  NALU_HYPRE_Int,  size, NALU_HYPRE_MEMORY_HOST);
                pdata.graph_values =
-                  hypre_TReAlloc(pdata.graph_values,  HYPRE_Real,  size, HYPRE_MEMORY_HOST);
+                  hypre_TReAlloc(pdata.graph_values,  NALU_HYPRE_Real,  size, NALU_HYPRE_MEMORY_HOST);
                pdata.graph_boxsizes =
-                  hypre_TReAlloc(pdata.graph_boxsizes,  HYPRE_Int,  size, HYPRE_MEMORY_HOST);
+                  hypre_TReAlloc(pdata.graph_boxsizes,  NALU_HYPRE_Int,  size, NALU_HYPRE_MEMORY_HOST);
             }
             SScanProblemIndex(sdata_ptr, &sdata_ptr, data.ndim,
                               pdata.graph_ilowers[pdata.graph_nentries]);
@@ -584,17 +584,17 @@ ReadData( char         *filename,
             {
                size = pdata.matrix_nentries + 10;
                pdata.matrix_ilowers =
-                  hypre_TReAlloc(pdata.matrix_ilowers,  ProblemIndex,  size, HYPRE_MEMORY_HOST);
+                  hypre_TReAlloc(pdata.matrix_ilowers,  ProblemIndex,  size, NALU_HYPRE_MEMORY_HOST);
                pdata.matrix_iuppers =
-                  hypre_TReAlloc(pdata.matrix_iuppers,  ProblemIndex,  size, HYPRE_MEMORY_HOST);
+                  hypre_TReAlloc(pdata.matrix_iuppers,  ProblemIndex,  size, NALU_HYPRE_MEMORY_HOST);
                pdata.matrix_strides =
-                  hypre_TReAlloc(pdata.matrix_strides,  Index,  size, HYPRE_MEMORY_HOST);
+                  hypre_TReAlloc(pdata.matrix_strides,  Index,  size, NALU_HYPRE_MEMORY_HOST);
                pdata.matrix_vars =
-                  hypre_TReAlloc(pdata.matrix_vars,  HYPRE_Int,  size, HYPRE_MEMORY_HOST);
+                  hypre_TReAlloc(pdata.matrix_vars,  NALU_HYPRE_Int,  size, NALU_HYPRE_MEMORY_HOST);
                pdata.matrix_entries =
-                  hypre_TReAlloc(pdata.matrix_entries,  HYPRE_Int,  size, HYPRE_MEMORY_HOST);
+                  hypre_TReAlloc(pdata.matrix_entries,  NALU_HYPRE_Int,  size, NALU_HYPRE_MEMORY_HOST);
                pdata.matrix_values =
-                  hypre_TReAlloc(pdata.matrix_values,  HYPRE_Real,  size, HYPRE_MEMORY_HOST);
+                  hypre_TReAlloc(pdata.matrix_values,  NALU_HYPRE_Real,  size, NALU_HYPRE_MEMORY_HOST);
             }
             SScanProblemIndex(sdata_ptr, &sdata_ptr, data.ndim,
                               pdata.matrix_ilowers[pdata.matrix_nentries]);
@@ -628,7 +628,7 @@ ReadData( char         *filename,
          else if ( strcmp(key, "ProcessPoolCreate:") == 0 )
          {
             data.npools = strtol(sdata_ptr, &sdata_ptr, 10);
-            data.pools = hypre_CTAlloc(HYPRE_Int,  data.nparts, HYPRE_MEMORY_HOST);
+            data.pools = hypre_CTAlloc(NALU_HYPRE_Int,  data.nparts, NALU_HYPRE_MEMORY_HOST);
          }
          else if ( strcmp(key, "ProcessPoolSetPart:") == 0 )
          {
@@ -648,13 +648,13 @@ ReadData( char         *filename,
          hypre_max(data.max_boxsize, data.pdata[part].max_boxsize);
    }
 
-   hypre_TFree(sdata, HYPRE_MEMORY_HOST);
+   hypre_TFree(sdata, NALU_HYPRE_MEMORY_HOST);
 
    *data_ptr = data;
    return 0;
 }
 
-HYPRE_Int
+NALU_HYPRE_Int
 MapProblemIndex( ProblemIndex index,
                  Index        m )
 {
@@ -675,7 +675,7 @@ MapProblemIndex( ProblemIndex index,
 }
 
 
-HYPRE_Int
+NALU_HYPRE_Int
 IntersectBoxes( ProblemIndex ilower1,
                 ProblemIndex iupper1,
                 ProblemIndex ilower2,
@@ -683,7 +683,7 @@ IntersectBoxes( ProblemIndex ilower1,
                 ProblemIndex int_ilower,
                 ProblemIndex int_iupper )
 {
-   HYPRE_Int d, size;
+   NALU_HYPRE_Int d, size;
 
    size = 1;
    for (d = 0; d < 3; d++)
@@ -696,26 +696,26 @@ IntersectBoxes( ProblemIndex ilower1,
    return size;
 }
 
-HYPRE_Int
+NALU_HYPRE_Int
 DistributeData( ProblemData   global_data,
                 Index        *refine,
                 Index        *distribute,
                 Index        *block,
-                HYPRE_Int           num_procs,
-                HYPRE_Int           myid,
+                NALU_HYPRE_Int           num_procs,
+                NALU_HYPRE_Int           myid,
                 ProblemData  *data_ptr )
 {
    ProblemData      data = global_data;
    ProblemPartData  pdata;
-   HYPRE_Int             *pool_procs;
-   HYPRE_Int              np, pid;
-   HYPRE_Int              pool, part, box, entry, p, q, r, i, d, dmap, sign, size;
-   HYPRE_Int              mod_lower, mod_upper;
+   NALU_HYPRE_Int             *pool_procs;
+   NALU_HYPRE_Int              np, pid;
+   NALU_HYPRE_Int              pool, part, box, entry, p, q, r, i, d, dmap, sign, size;
+   NALU_HYPRE_Int              mod_lower, mod_upper;
    Index            m, mmap, n, mod_graph;
    ProblemIndex     ilower, iupper, int_ilower, int_iupper;
 
    /* determine first process number in each pool */
-   pool_procs = hypre_CTAlloc(HYPRE_Int,  (data.npools + 1), HYPRE_MEMORY_HOST);
+   pool_procs = hypre_CTAlloc(NALU_HYPRE_Int,  (data.npools + 1), NALU_HYPRE_MEMORY_HOST);
    for (part = 0; part < data.nparts; part++)
    {
       pool = data.pools[part] + 1;
@@ -974,11 +974,11 @@ DistributeData( ProblemData   global_data,
          if ( (m[0] * m[1] * m[2]) > 1)
          {
             pdata.ilowers = hypre_TReAlloc(pdata.ilowers,  ProblemIndex,
-                                           m[0] * m[1] * m[2] * pdata.nboxes, HYPRE_MEMORY_HOST);
+                                           m[0] * m[1] * m[2] * pdata.nboxes, NALU_HYPRE_MEMORY_HOST);
             pdata.iuppers = hypre_TReAlloc(pdata.iuppers,  ProblemIndex,
-                                           m[0] * m[1] * m[2] * pdata.nboxes, HYPRE_MEMORY_HOST);
-            pdata.boxsizes = hypre_TReAlloc(pdata.boxsizes,  HYPRE_Int,
-                                            m[0] * m[1] * m[2] * pdata.nboxes, HYPRE_MEMORY_HOST);
+                                           m[0] * m[1] * m[2] * pdata.nboxes, NALU_HYPRE_MEMORY_HOST);
+            pdata.boxsizes = hypre_TReAlloc(pdata.boxsizes,  NALU_HYPRE_Int,
+                                            m[0] * m[1] * m[2] * pdata.nboxes, NALU_HYPRE_MEMORY_HOST);
             for (box = 0; box < pdata.nboxes; box++)
             {
                n[0] = pdata.iuppers[box][0] - pdata.ilowers[box][0] + 1;
@@ -1079,47 +1079,47 @@ DistributeData( ProblemData   global_data,
 
       if (pdata.nboxes == 0)
       {
-         hypre_TFree(pdata.ilowers, HYPRE_MEMORY_HOST);
-         hypre_TFree(pdata.iuppers, HYPRE_MEMORY_HOST);
-         hypre_TFree(pdata.boxsizes, HYPRE_MEMORY_HOST);
+         hypre_TFree(pdata.ilowers, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(pdata.iuppers, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(pdata.boxsizes, NALU_HYPRE_MEMORY_HOST);
          pdata.max_boxsize = 0;
       }
 
       if (pdata.matrix_nentries == 0)
       {
-         hypre_TFree(pdata.matrix_ilowers, HYPRE_MEMORY_HOST);
-         hypre_TFree(pdata.matrix_iuppers, HYPRE_MEMORY_HOST);
-         hypre_TFree(pdata.matrix_strides, HYPRE_MEMORY_HOST);
-         hypre_TFree(pdata.matrix_vars, HYPRE_MEMORY_HOST);
-         hypre_TFree(pdata.matrix_entries, HYPRE_MEMORY_HOST);
-         hypre_TFree(pdata.matrix_values, HYPRE_MEMORY_HOST);
+         hypre_TFree(pdata.matrix_ilowers, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(pdata.matrix_iuppers, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(pdata.matrix_strides, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(pdata.matrix_vars, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(pdata.matrix_entries, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(pdata.matrix_values, NALU_HYPRE_MEMORY_HOST);
       }
       if (pdata.glue_nboxes == 0)
       {
-         hypre_TFree(pdata.glue_ilowers, HYPRE_MEMORY_HOST);
-         hypre_TFree(pdata.glue_iuppers, HYPRE_MEMORY_HOST);
-         hypre_TFree(pdata.glue_nbor_parts, HYPRE_MEMORY_HOST);
-         hypre_TFree(pdata.glue_nbor_ilowers, HYPRE_MEMORY_HOST);
-         hypre_TFree(pdata.glue_nbor_iuppers, HYPRE_MEMORY_HOST);
-         hypre_TFree(pdata.glue_index_maps, HYPRE_MEMORY_HOST);
+         hypre_TFree(pdata.glue_ilowers, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(pdata.glue_iuppers, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(pdata.glue_nbor_parts, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(pdata.glue_nbor_ilowers, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(pdata.glue_nbor_iuppers, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(pdata.glue_index_maps, NALU_HYPRE_MEMORY_HOST);
       }
 
       if (pdata.graph_nentries == 0)
       {
-         hypre_TFree(pdata.graph_ilowers, HYPRE_MEMORY_HOST);
-         hypre_TFree(pdata.graph_iuppers, HYPRE_MEMORY_HOST);
-         hypre_TFree(pdata.graph_strides, HYPRE_MEMORY_HOST);
-         hypre_TFree(pdata.graph_vars, HYPRE_MEMORY_HOST);
-         hypre_TFree(pdata.graph_to_parts, HYPRE_MEMORY_HOST);
-         hypre_TFree(pdata.graph_to_ilowers, HYPRE_MEMORY_HOST);
-         hypre_TFree(pdata.graph_to_iuppers, HYPRE_MEMORY_HOST);
-         hypre_TFree(pdata.graph_to_strides, HYPRE_MEMORY_HOST);
-         hypre_TFree(pdata.graph_to_vars, HYPRE_MEMORY_HOST);
-         hypre_TFree(pdata.graph_index_maps, HYPRE_MEMORY_HOST);
-         hypre_TFree(pdata.graph_index_signs, HYPRE_MEMORY_HOST);
-         hypre_TFree(pdata.graph_entries, HYPRE_MEMORY_HOST);
-         hypre_TFree(pdata.graph_values, HYPRE_MEMORY_HOST);
-         hypre_TFree(pdata.graph_boxsizes, HYPRE_MEMORY_HOST);
+         hypre_TFree(pdata.graph_ilowers, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(pdata.graph_iuppers, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(pdata.graph_strides, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(pdata.graph_vars, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(pdata.graph_to_parts, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(pdata.graph_to_ilowers, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(pdata.graph_to_iuppers, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(pdata.graph_to_strides, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(pdata.graph_to_vars, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(pdata.graph_index_maps, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(pdata.graph_index_signs, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(pdata.graph_entries, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(pdata.graph_values, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(pdata.graph_boxsizes, NALU_HYPRE_MEMORY_HOST);
       }
 
 
@@ -1133,7 +1133,7 @@ DistributeData( ProblemData   global_data,
          hypre_max(data.max_boxsize, data.pdata[part].max_boxsize);
    }
 
-   hypre_TFree(pool_procs, HYPRE_MEMORY_HOST);
+   hypre_TFree(pool_procs, NALU_HYPRE_MEMORY_HOST);
 
    *data_ptr = data;
    return 0;
@@ -1143,11 +1143,11 @@ DistributeData( ProblemData   global_data,
  * Destroy data
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 DestroyData( ProblemData   data )
 {
    ProblemPartData  pdata;
-   HYPRE_Int              part, s;
+   NALU_HYPRE_Int              part, s;
 
    for (part = 0; part < data.nparts; part++)
    {
@@ -1155,80 +1155,80 @@ DestroyData( ProblemData   data )
 
       if (pdata.nboxes > 0)
       {
-         hypre_TFree(pdata.ilowers, HYPRE_MEMORY_HOST);
-         hypre_TFree(pdata.iuppers, HYPRE_MEMORY_HOST);
-         hypre_TFree(pdata.boxsizes, HYPRE_MEMORY_HOST);
+         hypre_TFree(pdata.ilowers, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(pdata.iuppers, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(pdata.boxsizes, NALU_HYPRE_MEMORY_HOST);
       }
 
       if (pdata.nvars > 0)
       {
-         hypre_TFree(pdata.vartypes, HYPRE_MEMORY_HOST);
+         hypre_TFree(pdata.vartypes, NALU_HYPRE_MEMORY_HOST);
       }
 
       if (pdata.add_nvars > 0)
       {
-         hypre_TFree(pdata.add_indexes, HYPRE_MEMORY_HOST);
-         hypre_TFree(pdata.add_vartypes, HYPRE_MEMORY_HOST);
+         hypre_TFree(pdata.add_indexes, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(pdata.add_vartypes, NALU_HYPRE_MEMORY_HOST);
       }
 
       if (pdata.glue_nboxes > 0)
       {
-         hypre_TFree(pdata.glue_ilowers, HYPRE_MEMORY_HOST);
-         hypre_TFree(pdata.glue_iuppers, HYPRE_MEMORY_HOST);
-         hypre_TFree(pdata.glue_nbor_parts, HYPRE_MEMORY_HOST);
-         hypre_TFree(pdata.glue_nbor_ilowers, HYPRE_MEMORY_HOST);
-         hypre_TFree(pdata.glue_nbor_iuppers, HYPRE_MEMORY_HOST);
-         hypre_TFree(pdata.glue_index_maps, HYPRE_MEMORY_HOST);
+         hypre_TFree(pdata.glue_ilowers, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(pdata.glue_iuppers, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(pdata.glue_nbor_parts, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(pdata.glue_nbor_ilowers, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(pdata.glue_nbor_iuppers, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(pdata.glue_index_maps, NALU_HYPRE_MEMORY_HOST);
       }
 
       if (pdata.nvars > 0)
       {
-         hypre_TFree(pdata.stencil_num, HYPRE_MEMORY_HOST);
+         hypre_TFree(pdata.stencil_num, NALU_HYPRE_MEMORY_HOST);
       }
 
       if (pdata.graph_nentries > 0)
       {
-         hypre_TFree(pdata.graph_ilowers, HYPRE_MEMORY_HOST);
-         hypre_TFree(pdata.graph_iuppers, HYPRE_MEMORY_HOST);
-         hypre_TFree(pdata.graph_strides, HYPRE_MEMORY_HOST);
-         hypre_TFree(pdata.graph_vars, HYPRE_MEMORY_HOST);
-         hypre_TFree(pdata.graph_to_parts, HYPRE_MEMORY_HOST);
-         hypre_TFree(pdata.graph_to_ilowers, HYPRE_MEMORY_HOST);
-         hypre_TFree(pdata.graph_to_iuppers, HYPRE_MEMORY_HOST);
-         hypre_TFree(pdata.graph_to_strides, HYPRE_MEMORY_HOST);
-         hypre_TFree(pdata.graph_to_vars, HYPRE_MEMORY_HOST);
-         hypre_TFree(pdata.graph_index_maps, HYPRE_MEMORY_HOST);
-         hypre_TFree(pdata.graph_index_signs, HYPRE_MEMORY_HOST);
-         hypre_TFree(pdata.graph_entries, HYPRE_MEMORY_HOST);
-         hypre_TFree(pdata.graph_values, HYPRE_MEMORY_HOST);
-         hypre_TFree(pdata.graph_boxsizes, HYPRE_MEMORY_HOST);
+         hypre_TFree(pdata.graph_ilowers, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(pdata.graph_iuppers, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(pdata.graph_strides, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(pdata.graph_vars, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(pdata.graph_to_parts, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(pdata.graph_to_ilowers, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(pdata.graph_to_iuppers, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(pdata.graph_to_strides, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(pdata.graph_to_vars, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(pdata.graph_index_maps, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(pdata.graph_index_signs, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(pdata.graph_entries, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(pdata.graph_values, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(pdata.graph_boxsizes, NALU_HYPRE_MEMORY_HOST);
       }
 
       if (pdata.matrix_nentries > 0)
       {
-         hypre_TFree(pdata.matrix_ilowers, HYPRE_MEMORY_HOST);
-         hypre_TFree(pdata.matrix_iuppers, HYPRE_MEMORY_HOST);
-         hypre_TFree(pdata.matrix_strides, HYPRE_MEMORY_HOST);
-         hypre_TFree(pdata.matrix_vars, HYPRE_MEMORY_HOST);
-         hypre_TFree(pdata.matrix_entries, HYPRE_MEMORY_HOST);
-         hypre_TFree(pdata.matrix_values, HYPRE_MEMORY_HOST);
+         hypre_TFree(pdata.matrix_ilowers, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(pdata.matrix_iuppers, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(pdata.matrix_strides, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(pdata.matrix_vars, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(pdata.matrix_entries, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(pdata.matrix_values, NALU_HYPRE_MEMORY_HOST);
       }
 
    }
-   hypre_TFree(data.pdata, HYPRE_MEMORY_HOST);
+   hypre_TFree(data.pdata, NALU_HYPRE_MEMORY_HOST);
 
    for (s = 0; s < data.nstencils; s++)
    {
-      hypre_TFree(data.stencil_offsets[s], HYPRE_MEMORY_HOST);
-      hypre_TFree(data.stencil_vars[s], HYPRE_MEMORY_HOST);
-      hypre_TFree(data.stencil_values[s], HYPRE_MEMORY_HOST);
+      hypre_TFree(data.stencil_offsets[s], NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(data.stencil_vars[s], NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(data.stencil_values[s], NALU_HYPRE_MEMORY_HOST);
    }
-   hypre_TFree(data.stencil_sizes, HYPRE_MEMORY_HOST);
-   hypre_TFree(data.stencil_offsets, HYPRE_MEMORY_HOST);
-   hypre_TFree(data.stencil_vars, HYPRE_MEMORY_HOST);
-   hypre_TFree(data.stencil_values, HYPRE_MEMORY_HOST);
+   hypre_TFree(data.stencil_sizes, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(data.stencil_offsets, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(data.stencil_vars, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(data.stencil_values, NALU_HYPRE_MEMORY_HOST);
 
-   hypre_TFree(data.pools, HYPRE_MEMORY_HOST);
+   hypre_TFree(data.pools, NALU_HYPRE_MEMORY_HOST);
 
    return 0;
 }
@@ -1245,46 +1245,46 @@ main( hypre_int argc,
    ProblemData           global_data;
    ProblemData           data;
    ProblemPartData       pdata;
-   HYPRE_Int                   nparts;
-   HYPRE_Int                  *parts;
+   NALU_HYPRE_Int                   nparts;
+   NALU_HYPRE_Int                  *parts;
    Index                *refine;
    Index                *distribute;
    Index                *block;
-   HYPRE_Int                   solver_id;
-   HYPRE_Int                   print_system;
+   NALU_HYPRE_Int                   solver_id;
+   NALU_HYPRE_Int                   print_system;
 
-   HYPRE_SStructGrid     grid;
-   HYPRE_SStructStencil *stencils;
-   HYPRE_SStructGraph    graph;
-   HYPRE_SStructMatrix   A, A_amg;
-   HYPRE_StructMatrix    sA;
-   HYPRE_SStructVector   b, b_amg;
-   HYPRE_SStructVector   x, x_amg;
-   HYPRE_StructVector    sx;
-   HYPRE_SStructSolver   solver;
+   NALU_HYPRE_SStructGrid     grid;
+   NALU_HYPRE_SStructStencil *stencils;
+   NALU_HYPRE_SStructGraph    graph;
+   NALU_HYPRE_SStructMatrix   A, A_amg;
+   NALU_HYPRE_StructMatrix    sA;
+   NALU_HYPRE_SStructVector   b, b_amg;
+   NALU_HYPRE_SStructVector   x, x_amg;
+   NALU_HYPRE_StructVector    sx;
+   NALU_HYPRE_SStructSolver   solver;
 
-   HYPRE_ParCSRMatrix    par_A;
-   HYPRE_ParVector       par_b;
-   HYPRE_ParVector       par_x;
-   HYPRE_Solver          par_solver;
-   HYPRE_Solver          par_precond;
+   NALU_HYPRE_ParCSRMatrix    par_A;
+   NALU_HYPRE_ParVector       par_b;
+   NALU_HYPRE_ParVector       par_x;
+   NALU_HYPRE_Solver          par_solver;
+   NALU_HYPRE_Solver          par_precond;
 
    Index                 ilower, iupper;
    Index                 index, to_index;
-   HYPRE_Real           *values, *box_values;
+   NALU_HYPRE_Real           *values, *box_values;
 
-   HYPRE_Int                  *plevels;
+   NALU_HYPRE_Int                  *plevels;
    Index                *prefinements;
 
-   HYPRE_Int                   num_iterations;
-   HYPRE_Real            final_res_norm;
+   NALU_HYPRE_Int                   num_iterations;
+   NALU_HYPRE_Real            final_res_norm;
 
-   HYPRE_Int                   num_procs, myid;
-   HYPRE_Int                   time_index;
+   NALU_HYPRE_Int                   num_procs, myid;
+   NALU_HYPRE_Int                   time_index;
 
-   HYPRE_Int                   n_pre, n_post;
+   NALU_HYPRE_Int                   n_pre, n_post;
 
-   HYPRE_Int                   arg_index, part, box, var, entry, s, i, j, k;
+   NALU_HYPRE_Int                   arg_index, part, box, var, entry, s, i, j, k;
 
 
    /*-----------------------------------------------------------
@@ -1299,14 +1299,14 @@ main( hypre_int argc,
 
    /*-----------------------------------------------------------------
     * GPU Device binding
-    * Must be done before HYPRE_Init() and should not be changed after
+    * Must be done before NALU_HYPRE_Init() and should not be changed after
     *-----------------------------------------------------------------*/
    hypre_bind_device(myid, num_procs, hypre_MPI_COMM_WORLD);
 
    /*-----------------------------------------------------------
     * Initialize : must be the first HYPRE function to call
     *-----------------------------------------------------------*/
-   HYPRE_Init();
+   NALU_HYPRE_Init();
 
    /*-----------------------------------------------------------
     * Read input file
@@ -1334,10 +1334,10 @@ main( hypre_int argc,
 
    nparts = global_data.nparts;
 
-   parts      = hypre_TAlloc(HYPRE_Int,  nparts, HYPRE_MEMORY_HOST);
-   refine     = hypre_TAlloc(Index,  nparts, HYPRE_MEMORY_HOST);
-   distribute = hypre_TAlloc(Index,  nparts, HYPRE_MEMORY_HOST);
-   block      = hypre_TAlloc(Index,  nparts, HYPRE_MEMORY_HOST);
+   parts      = hypre_TAlloc(NALU_HYPRE_Int,  nparts, NALU_HYPRE_MEMORY_HOST);
+   refine     = hypre_TAlloc(Index,  nparts, NALU_HYPRE_MEMORY_HOST);
+   distribute = hypre_TAlloc(Index,  nparts, NALU_HYPRE_MEMORY_HOST);
+   block      = hypre_TAlloc(Index,  nparts, NALU_HYPRE_MEMORY_HOST);
    for (part = 0; part < nparts; part++)
    {
       parts[part] = part;
@@ -1451,17 +1451,17 @@ main( hypre_int argc,
    time_index = hypre_InitializeTiming("SStruct Interface");
    hypre_BeginTiming(time_index);
 
-   HYPRE_SStructGridCreate(hypre_MPI_COMM_WORLD, data.ndim, data.nparts, &grid);
+   NALU_HYPRE_SStructGridCreate(hypre_MPI_COMM_WORLD, data.ndim, data.nparts, &grid);
    for (part = 0; part < data.nparts; part++)
    {
       pdata = data.pdata[part];
       for (box = 0; box < pdata.nboxes; box++)
       {
-         HYPRE_SStructGridSetExtents(grid, part,
+         NALU_HYPRE_SStructGridSetExtents(grid, part,
                                      pdata.ilowers[box], pdata.iuppers[box]);
       }
 
-      HYPRE_SStructGridSetVariables(grid, part, pdata.nvars, pdata.vartypes);
+      NALU_HYPRE_SStructGridSetVariables(grid, part, pdata.nvars, pdata.vartypes);
 
       /* GridAddVariabes */
 
@@ -1470,7 +1470,7 @@ main( hypre_int argc,
       {
          hypre_printf("Error: No longer supporting SetNeighborBox\n");
 #if 0
-         HYPRE_SStructGridSetNeighborBox(grid, part,
+         NALU_HYPRE_SStructGridSetNeighborBox(grid, part,
                                          pdata.glue_ilowers[box],
                                          pdata.glue_iuppers[box],
                                          pdata.glue_nbor_parts[box],
@@ -1480,22 +1480,22 @@ main( hypre_int argc,
 #endif
       }
 
-      HYPRE_SStructGridSetPeriodic(grid, part, pdata.periodic);
+      NALU_HYPRE_SStructGridSetPeriodic(grid, part, pdata.periodic);
    }
-   HYPRE_SStructGridAssemble(grid);
+   NALU_HYPRE_SStructGridAssemble(grid);
 
    /*-----------------------------------------------------------
     * Set up the stencils
     *-----------------------------------------------------------*/
 
-   stencils = hypre_CTAlloc(HYPRE_SStructStencil,  data.nstencils, HYPRE_MEMORY_HOST);
+   stencils = hypre_CTAlloc(NALU_HYPRE_SStructStencil,  data.nstencils, NALU_HYPRE_MEMORY_HOST);
    for (s = 0; s < data.nstencils; s++)
    {
-      HYPRE_SStructStencilCreate(data.ndim, data.stencil_sizes[s],
+      NALU_HYPRE_SStructStencilCreate(data.ndim, data.stencil_sizes[s],
                                  &stencils[s]);
       for (i = 0; i < data.stencil_sizes[s]; i++)
       {
-         HYPRE_SStructStencilSetEntry(stencils[s], i,
+         NALU_HYPRE_SStructStencilSetEntry(stencils[s], i,
                                       data.stencil_offsets[s][i],
                                       data.stencil_vars[s][i]);
       }
@@ -1504,8 +1504,8 @@ main( hypre_int argc,
    /*-----------------------------------------------------------
     * Set up the amr structure
     *-----------------------------------------------------------*/
-   plevels     = hypre_TAlloc(HYPRE_Int,  data.nparts, HYPRE_MEMORY_HOST);
-   prefinements = hypre_TAlloc(Index,  data.nparts, HYPRE_MEMORY_HOST);
+   plevels     = hypre_TAlloc(NALU_HYPRE_Int,  data.nparts, NALU_HYPRE_MEMORY_HOST);
+   prefinements = hypre_TAlloc(Index,  data.nparts, NALU_HYPRE_MEMORY_HOST);
    for (part = 0; part < data.nparts; part++)
    {
       pdata = data.pdata[part];
@@ -1522,11 +1522,11 @@ main( hypre_int argc,
     * Set up the graph
     *-----------------------------------------------------------*/
 
-   HYPRE_SStructGraphCreate(hypre_MPI_COMM_WORLD, grid, &graph);
+   NALU_HYPRE_SStructGraphCreate(hypre_MPI_COMM_WORLD, grid, &graph);
    if ( ((solver_id >= 20) && (solver_id <= 30)) ||
         ((solver_id >= 40) && (solver_id < 60)) )
    {
-      HYPRE_SStructGraphSetObjectType(graph, HYPRE_PARCSR);
+      NALU_HYPRE_SStructGraphSetObjectType(graph, NALU_HYPRE_PARCSR);
    }
 
    for (part = 0; part < data.nparts; part++)
@@ -1536,7 +1536,7 @@ main( hypre_int argc,
       /* set stencils */
       for (var = 0; var < pdata.nvars; var++)
       {
-         HYPRE_SStructGraphSetStencil(graph, part, var,
+         NALU_HYPRE_SStructGraphSetStencil(graph, part, var,
                                       stencils[pdata.stencil_num[var]]);
       }
 
@@ -1564,7 +1564,7 @@ main( hypre_int argc,
                      to_index[j] = pdata.graph_to_ilowers[entry][j] +
                                    k * pdata.graph_to_strides[entry][j];
                   }
-                  HYPRE_SStructGraphAddEntries(graph, part, index,
+                  NALU_HYPRE_SStructGraphAddEntries(graph, part, index,
                                                pdata.graph_vars[entry],
                                                pdata.graph_to_parts[entry],
                                                to_index,
@@ -1575,23 +1575,23 @@ main( hypre_int argc,
       }
    }
 
-   HYPRE_SStructGraphAssemble(graph);
+   NALU_HYPRE_SStructGraphAssemble(graph);
 
    /*-----------------------------------------------------------
     * Set up the matrix
     *-----------------------------------------------------------*/
 
-   values = hypre_TAlloc(HYPRE_Real,  data.max_boxsize, HYPRE_MEMORY_HOST);
+   values = hypre_TAlloc(NALU_HYPRE_Real,  data.max_boxsize, NALU_HYPRE_MEMORY_HOST);
 
-   HYPRE_SStructMatrixCreate(hypre_MPI_COMM_WORLD, graph, &A);
-   HYPRE_SStructMatrixInitialize(A);
+   NALU_HYPRE_SStructMatrixCreate(hypre_MPI_COMM_WORLD, graph, &A);
+   NALU_HYPRE_SStructMatrixInitialize(A);
 
    if ( ((solver_id >= 20) && (solver_id <= 30)) ||
         ((solver_id >= 40) && (solver_id < 60)) )
    {
-      HYPRE_SStructMatrixCreate(hypre_MPI_COMM_WORLD, graph, &A_amg);
-      HYPRE_SStructMatrixSetObjectType(A_amg, HYPRE_PARCSR);
-      HYPRE_SStructMatrixInitialize(A_amg);
+      NALU_HYPRE_SStructMatrixCreate(hypre_MPI_COMM_WORLD, graph, &A_amg);
+      NALU_HYPRE_SStructMatrixSetObjectType(A_amg, NALU_HYPRE_PARCSR);
+      NALU_HYPRE_SStructMatrixInitialize(A_amg);
    }
 
 
@@ -1613,7 +1613,7 @@ main( hypre_int argc,
             {
                GetVariableBox(pdata.ilowers[box], pdata.iuppers[box],
                               pdata.vartypes[var], ilower, iupper);
-               HYPRE_SStructMatrixSetBoxValues(A, part, ilower, iupper,
+               NALU_HYPRE_SStructMatrixSetBoxValues(A, part, ilower, iupper,
                                                var, 1, &i, values);
             }
          }
@@ -1634,7 +1634,7 @@ main( hypre_int argc,
                     index[0] <= pdata.graph_iuppers[entry][0];
                     index[0] += pdata.graph_strides[entry][0])
                {
-                  HYPRE_SStructMatrixSetValues(A, part, index,
+                  NALU_HYPRE_SStructMatrixSetValues(A, part, index,
                                                pdata.graph_vars[entry],
                                                1, &pdata.graph_entries[entry],
                                                &pdata.graph_values[entry]);
@@ -1660,7 +1660,7 @@ main( hypre_int argc,
                        index[0] <= pdata.graph_iuppers[entry][0];
                        index[0] += pdata.graph_strides[entry][0])
                   {
-                     HYPRE_SStructMatrixSetValues(A_amg, part, index,
+                     NALU_HYPRE_SStructMatrixSetValues(A_amg, part, index,
                                                   pdata.graph_vars[entry],
                                                   1, &pdata.graph_entries[entry],
                                                   &pdata.graph_values[entry]);
@@ -1690,7 +1690,7 @@ main( hypre_int argc,
                     index[0] <= pdata.matrix_iuppers[entry][0];
                     index[0] += pdata.matrix_strides[entry][0])
                {
-                  HYPRE_SStructMatrixSetValues(A, part, index,
+                  NALU_HYPRE_SStructMatrixSetValues(A, part, index,
                                                pdata.matrix_vars[entry],
                                                1, &pdata.matrix_entries[entry],
                                                &pdata.matrix_values[entry]);
@@ -1713,14 +1713,14 @@ main( hypre_int argc,
                           part);
        hypre_ZeroAMRMatrixData(A, part-1, prefinements[part]); */
 
-      HYPRE_SStructFACZeroCFSten(A, grid, part, prefinements[part]);
-      HYPRE_SStructFACZeroFCSten(A,
+      NALU_HYPRE_SStructFACZeroCFSten(A, grid, part, prefinements[part]);
+      NALU_HYPRE_SStructFACZeroFCSten(A,
                                  grid,
                                  part);
-      HYPRE_SStructFACZeroAMRMatrixData(A, part - 1, prefinements[part]);
+      NALU_HYPRE_SStructFACZeroAMRMatrixData(A, part - 1, prefinements[part]);
    }
 
-   HYPRE_SStructMatrixAssemble(A);
+   NALU_HYPRE_SStructMatrixAssemble(A);
 
    if ( ((solver_id >= 20) && (solver_id <= 30)) ||
         ((solver_id >= 40) && (solver_id < 60)) )
@@ -1738,36 +1738,36 @@ main( hypre_int argc,
             {
                for (box = 0; box < pdata.nboxes; box++)
                {
-                  box_values = hypre_TAlloc(HYPRE_Real,  data.max_boxsize, HYPRE_MEMORY_HOST);
+                  box_values = hypre_TAlloc(NALU_HYPRE_Real,  data.max_boxsize, NALU_HYPRE_MEMORY_HOST);
                   GetVariableBox(pdata.ilowers[box], pdata.iuppers[box],
                                  pdata.vartypes[var], ilower, iupper);
-                  HYPRE_StructMatrixGetBoxValues(sA, ilower, iupper, 1,
+                  NALU_HYPRE_StructMatrixGetBoxValues(sA, ilower, iupper, 1,
                                                  &i, box_values);
 
-                  HYPRE_SStructMatrixSetBoxValues(A_amg, part, ilower, iupper,
+                  NALU_HYPRE_SStructMatrixSetBoxValues(A_amg, part, ilower, iupper,
                                                   var, 1, &i, box_values);
-                  hypre_TFree(box_values, HYPRE_MEMORY_HOST);
+                  hypre_TFree(box_values, NALU_HYPRE_MEMORY_HOST);
                }
             }
          }
       }
 
-      HYPRE_SStructMatrixAssemble(A_amg);
-      HYPRE_SStructMatrixGetObject(A_amg, (void **) &par_A);
+      NALU_HYPRE_SStructMatrixAssemble(A_amg);
+      NALU_HYPRE_SStructMatrixGetObject(A_amg, (void **) &par_A);
    }
    /*-----------------------------------------------------------
     * Set up the linear system
     *-----------------------------------------------------------*/
 
-   HYPRE_SStructVectorCreate(hypre_MPI_COMM_WORLD, grid, &b);
-   HYPRE_SStructVectorInitialize(b);
+   NALU_HYPRE_SStructVectorCreate(hypre_MPI_COMM_WORLD, grid, &b);
+   NALU_HYPRE_SStructVectorInitialize(b);
 
    if ( ((solver_id >= 20) && (solver_id <= 30)) ||
         ((solver_id >= 40) && (solver_id < 60)) )
    {
-      HYPRE_SStructVectorCreate(hypre_MPI_COMM_WORLD, grid, &b_amg);
-      HYPRE_SStructVectorSetObjectType(b_amg, HYPRE_PARCSR);
-      HYPRE_SStructVectorInitialize(b_amg);
+      NALU_HYPRE_SStructVectorCreate(hypre_MPI_COMM_WORLD, grid, &b_amg);
+      NALU_HYPRE_SStructVectorSetObjectType(b_amg, NALU_HYPRE_PARCSR);
+      NALU_HYPRE_SStructVectorInitialize(b_amg);
    }
 
    for (j = 0; j < data.max_boxsize; j++)
@@ -1784,15 +1784,15 @@ main( hypre_int argc,
 
             GetVariableBox(pdata.ilowers[box], pdata.iuppers[box], var,
                            ilower, iupper);
-            HYPRE_SStructVectorSetBoxValues(b, part, ilower, iupper,
+            NALU_HYPRE_SStructVectorSetBoxValues(b, part, ilower, iupper,
                                             var, values);
          }
       }
    }
    /*hypre_ZeroAMRVectorData(b, plevels, prefinements);*/
-   HYPRE_SStructFACZeroAMRVectorData(b, plevels, prefinements);
+   NALU_HYPRE_SStructFACZeroAMRVectorData(b, plevels, prefinements);
 
-   HYPRE_SStructVectorAssemble(b);
+   NALU_HYPRE_SStructVectorAssemble(b);
 
    if ( ((solver_id >= 20) && (solver_id <= 30)) ||
         ((solver_id >= 40) && (solver_id < 60)) )
@@ -1806,31 +1806,31 @@ main( hypre_int argc,
                                              var);
             for (box = 0; box < pdata.nboxes; box++)
             {
-               box_values = hypre_TAlloc(HYPRE_Real,  data.max_boxsize, HYPRE_MEMORY_HOST);
+               box_values = hypre_TAlloc(NALU_HYPRE_Real,  data.max_boxsize, NALU_HYPRE_MEMORY_HOST);
                GetVariableBox(pdata.ilowers[box], pdata.iuppers[box], var,
                               ilower, iupper);
-               HYPRE_StructVectorGetBoxValues(sx, ilower, iupper, box_values);
-               HYPRE_SStructVectorSetBoxValues(b_amg, part, ilower, iupper,
+               NALU_HYPRE_StructVectorGetBoxValues(sx, ilower, iupper, box_values);
+               NALU_HYPRE_SStructVectorSetBoxValues(b_amg, part, ilower, iupper,
                                                var, values);
-               hypre_TFree(box_values, HYPRE_MEMORY_HOST);
+               hypre_TFree(box_values, NALU_HYPRE_MEMORY_HOST);
             }
          }
       }
 
-      HYPRE_SStructVectorAssemble(b_amg);
-      HYPRE_SStructVectorGetObject(b_amg, (void **) &par_b);
+      NALU_HYPRE_SStructVectorAssemble(b_amg);
+      NALU_HYPRE_SStructVectorGetObject(b_amg, (void **) &par_b);
    }
 
 
-   HYPRE_SStructVectorCreate(hypre_MPI_COMM_WORLD, grid, &x);
-   HYPRE_SStructVectorInitialize(x);
+   NALU_HYPRE_SStructVectorCreate(hypre_MPI_COMM_WORLD, grid, &x);
+   NALU_HYPRE_SStructVectorInitialize(x);
 
    if ( ((solver_id >= 20) && (solver_id <= 30)) ||
         ((solver_id >= 40) && (solver_id < 60)) )
    {
-      HYPRE_SStructVectorCreate(hypre_MPI_COMM_WORLD, grid, &x_amg);
-      HYPRE_SStructVectorSetObjectType(x_amg, HYPRE_PARCSR);
-      HYPRE_SStructVectorInitialize(x_amg);
+      NALU_HYPRE_SStructVectorCreate(hypre_MPI_COMM_WORLD, grid, &x_amg);
+      NALU_HYPRE_SStructVectorSetObjectType(x_amg, NALU_HYPRE_PARCSR);
+      NALU_HYPRE_SStructVectorInitialize(x_amg);
    }
 
    for (j = 0; j < data.max_boxsize; j++)
@@ -1847,14 +1847,14 @@ main( hypre_int argc,
          {
             GetVariableBox(pdata.ilowers[box], pdata.iuppers[box], var,
                            ilower, iupper);
-            HYPRE_SStructVectorSetBoxValues(x, part, ilower, iupper,
+            NALU_HYPRE_SStructVectorSetBoxValues(x, part, ilower, iupper,
                                             var, values);
          }
       }
    }
    /*hypre_ZeroAMRVectorData(x, plevels, prefinements);*/
-   HYPRE_SStructFACZeroAMRVectorData(x, plevels, prefinements);
-   HYPRE_SStructVectorAssemble(x);
+   NALU_HYPRE_SStructFACZeroAMRVectorData(x, plevels, prefinements);
+   NALU_HYPRE_SStructVectorAssemble(x);
 
 
    if ( ((solver_id >= 20) && (solver_id <= 30)) ||
@@ -1869,19 +1869,19 @@ main( hypre_int argc,
                                              var);
             for (box = 0; box < pdata.nboxes; box++)
             {
-               box_values = hypre_TAlloc(HYPRE_Real,  data.max_boxsize, HYPRE_MEMORY_HOST);
+               box_values = hypre_TAlloc(NALU_HYPRE_Real,  data.max_boxsize, NALU_HYPRE_MEMORY_HOST);
                GetVariableBox(pdata.ilowers[box], pdata.iuppers[box], var,
                               ilower, iupper);
-               HYPRE_StructVectorGetBoxValues(sx, ilower, iupper, box_values);
-               HYPRE_SStructVectorSetBoxValues(x_amg, part, ilower, iupper,
+               NALU_HYPRE_StructVectorGetBoxValues(sx, ilower, iupper, box_values);
+               NALU_HYPRE_SStructVectorSetBoxValues(x_amg, part, ilower, iupper,
                                                var, values);
-               hypre_TFree(box_values, HYPRE_MEMORY_HOST);
+               hypre_TFree(box_values, NALU_HYPRE_MEMORY_HOST);
             }
          }
       }
 
-      HYPRE_SStructVectorAssemble(x_amg);
-      HYPRE_SStructVectorGetObject(x_amg, (void **) &par_x);
+      NALU_HYPRE_SStructVectorAssemble(x_amg);
+      NALU_HYPRE_SStructVectorGetObject(x_amg, (void **) &par_x);
    }
 
 
@@ -1901,19 +1901,19 @@ main( hypre_int argc,
 
       /* result is 1's on the interior of the grid */
       hypre_SStructMatvec(1.0, A, b, 0.0, x);
-      HYPRE_SStructVectorPrint("sstruct.out.matvec", x, 0);
+      NALU_HYPRE_SStructVectorPrint("sstruct.out.matvec", x, 0);
 
       /* result is all 1's */
       hypre_SStructCopy(b, x);
-      HYPRE_SStructVectorPrint("sstruct.out.copy", x, 0);
+      NALU_HYPRE_SStructVectorPrint("sstruct.out.copy", x, 0);
 
       /* result is all 2's */
       hypre_SStructScale(2.0, x);
-      HYPRE_SStructVectorPrint("sstruct.out.scale", x, 0);
+      NALU_HYPRE_SStructVectorPrint("sstruct.out.scale", x, 0);
 
       /* result is all 0's */
       hypre_SStructAxpy(-2.0, b, x);
-      HYPRE_SStructVectorPrint("sstruct.out.axpy", x, 0);
+      NALU_HYPRE_SStructVectorPrint("sstruct.out.axpy", x, 0);
 
       /* result is 1's with 0's on some boundaries */
       hypre_SStructCopy(b, x);
@@ -1928,7 +1928,7 @@ main( hypre_int argc,
             {
                GetVariableBox(pdata.ilowers[box], pdata.iuppers[box], var,
                               ilower, iupper);
-               HYPRE_SStructVectorGetBoxValues(x, part, ilower, iupper,
+               NALU_HYPRE_SStructVectorGetBoxValues(x, part, ilower, iupper,
                                                var, values);
                hypre_fprintf(file, "\nPart %d, var %d, box %d:\n", part, var, box);
                for (i = 0; i < pdata.boxsizes[box]; i++)
@@ -1941,7 +1941,7 @@ main( hypre_int argc,
       fclose(file);
 
       /* result is all 1's */
-      HYPRE_SStructVectorGather(x);
+      NALU_HYPRE_SStructVectorGather(x);
       hypre_sprintf(filename, "sstruct.out.gatherpost.%05d", myid);
       file = fopen(filename, "w");
       for (part = 0; part < data.nparts; part++)
@@ -1953,7 +1953,7 @@ main( hypre_int argc,
             {
                GetVariableBox(pdata.ilowers[box], pdata.iuppers[box], var,
                               ilower, iupper);
-               HYPRE_SStructVectorGetBoxValues(x, part, ilower, iupper,
+               NALU_HYPRE_SStructVectorGetBoxValues(x, part, ilower, iupper,
                                                var, values);
                hypre_fprintf(file, "\nPart %d, var %d, box %d:\n", part, var, box);
                for (i = 0; i < pdata.boxsizes[box]; i++)
@@ -1969,15 +1969,15 @@ main( hypre_int argc,
    }
 #endif
 
-   hypre_TFree(values, HYPRE_MEMORY_HOST);
+   hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
 
    /*-----------------------------------------------------------
     * Print out the system and initial guess
     *-----------------------------------------------------------*/
    if (print_system)
    {
-      HYPRE_SStructVectorPrint("sstruct.out.b",  b, 0);
-      HYPRE_SStructVectorPrint("sstruct.out.x0", x, 0);
+      NALU_HYPRE_SStructVectorPrint("sstruct.out.b",  b, 0);
+      NALU_HYPRE_SStructVectorPrint("sstruct.out.x0", x, 0);
    }
 
    /*-----------------------------------------------------------
@@ -1994,26 +1994,26 @@ main( hypre_int argc,
       time_index = hypre_InitializeTiming("FAC Setup");
       hypre_BeginTiming(time_index);
 
-      HYPRE_SStructFACCreate(hypre_MPI_COMM_WORLD, &solver);
-      HYPRE_SStructFACSetMaxLevels(solver, data.nparts);
-      HYPRE_SStructFACSetMaxIter(solver, 20);
-      HYPRE_SStructFACSetTol(solver, 1.0e-06);
-      HYPRE_SStructFACSetPLevels(solver, data.nparts, plevels);
-      HYPRE_SStructFACSetPRefinements(solver, data.nparts, prefinements);
-      HYPRE_SStructFACSetRelChange(solver, 0);
+      NALU_HYPRE_SStructFACCreate(hypre_MPI_COMM_WORLD, &solver);
+      NALU_HYPRE_SStructFACSetMaxLevels(solver, data.nparts);
+      NALU_HYPRE_SStructFACSetMaxIter(solver, 20);
+      NALU_HYPRE_SStructFACSetTol(solver, 1.0e-06);
+      NALU_HYPRE_SStructFACSetPLevels(solver, data.nparts, plevels);
+      NALU_HYPRE_SStructFACSetPRefinements(solver, data.nparts, prefinements);
+      NALU_HYPRE_SStructFACSetRelChange(solver, 0);
       if (solver_id > 90)
       {
-         HYPRE_SStructFACSetRelaxType(solver, 2);
+         NALU_HYPRE_SStructFACSetRelaxType(solver, 2);
       }
       else
       {
-         HYPRE_SStructFACSetRelaxType(solver, 1);
+         NALU_HYPRE_SStructFACSetRelaxType(solver, 1);
       }
-      HYPRE_SStructFACSetNumPreRelax(solver, n_pre);
-      HYPRE_SStructFACSetNumPostRelax(solver, n_post);
-      HYPRE_SStructFACSetCoarseSolverType(solver, 2);
-      HYPRE_SStructFACSetLogging(solver, 1);
-      HYPRE_SStructFACSetup2(solver, A, b, x);
+      NALU_HYPRE_SStructFACSetNumPreRelax(solver, n_pre);
+      NALU_HYPRE_SStructFACSetNumPostRelax(solver, n_post);
+      NALU_HYPRE_SStructFACSetCoarseSolverType(solver, 2);
+      NALU_HYPRE_SStructFACSetLogging(solver, 1);
+      NALU_HYPRE_SStructFACSetup2(solver, A, b, x);
 
       hypre_EndTiming(time_index);
       hypre_PrintTiming("Setup phase times", hypre_MPI_COMM_WORLD);
@@ -2025,11 +2025,11 @@ main( hypre_int argc,
 
       if (solver_id > 90)
       {
-         HYPRE_SStructFACSolve3(solver, A, b, x);
+         NALU_HYPRE_SStructFACSolve3(solver, A, b, x);
       }
       else
       {
-         HYPRE_SStructFACSolve3(solver, A, b, x);
+         NALU_HYPRE_SStructFACSolve3(solver, A, b, x);
       }
 
       hypre_EndTiming(time_index);
@@ -2037,10 +2037,10 @@ main( hypre_int argc,
       hypre_FinalizeTiming(time_index);
       hypre_ClearTiming();
 
-      HYPRE_SStructFACGetNumIterations(solver, &num_iterations);
-      HYPRE_SStructFACGetFinalRelativeResidualNorm(
+      NALU_HYPRE_SStructFACGetNumIterations(solver, &num_iterations);
+      NALU_HYPRE_SStructFACGetFinalRelativeResidualNorm(
          solver, &final_res_norm);
-      HYPRE_SStructFACDestroy2(solver);
+      NALU_HYPRE_SStructFACDestroy2(solver);
    }
 
 
@@ -2053,31 +2053,31 @@ main( hypre_int argc,
       time_index = hypre_InitializeTiming("PCG Setup");
       hypre_BeginTiming(time_index);
 
-      HYPRE_ParCSRPCGCreate(hypre_MPI_COMM_WORLD, &par_solver);
-      HYPRE_PCGSetMaxIter( par_solver, 200 );
-      HYPRE_PCGSetTol( par_solver, 1.0e-06 );
-      HYPRE_PCGSetTwoNorm( par_solver, 1 );
-      HYPRE_PCGSetRelChange( par_solver, 0 );
-      HYPRE_PCGSetPrintLevel( par_solver, 1 );
+      NALU_HYPRE_ParCSRPCGCreate(hypre_MPI_COMM_WORLD, &par_solver);
+      NALU_HYPRE_PCGSetMaxIter( par_solver, 200 );
+      NALU_HYPRE_PCGSetTol( par_solver, 1.0e-06 );
+      NALU_HYPRE_PCGSetTwoNorm( par_solver, 1 );
+      NALU_HYPRE_PCGSetRelChange( par_solver, 0 );
+      NALU_HYPRE_PCGSetPrintLevel( par_solver, 1 );
 
       if (solver_id == 20)
       {
          /* use BoomerAMG as preconditioner */
-         HYPRE_BoomerAMGCreate(&par_precond);
-         HYPRE_BoomerAMGSetCoarsenType(par_precond, 6);
-         HYPRE_BoomerAMGSetStrongThreshold(par_precond, 0.5);
-         HYPRE_BoomerAMGSetTol(par_precond, 1.0e-06);
-         HYPRE_BoomerAMGSetPrintLevel(par_precond, 1);
-         HYPRE_BoomerAMGSetPrintFileName(par_precond, "sstruct.out.log");
-         /*HYPRE_BoomerAMGSetLogging(par_precond, 1, "sstruct.out.log");*/
-         HYPRE_BoomerAMGSetMaxIter(par_precond, 1);
-         HYPRE_PCGSetPrecond( par_solver,
-                              (HYPRE_PtrToSolverFcn) HYPRE_BoomerAMGSolve,
-                              (HYPRE_PtrToSolverFcn) HYPRE_BoomerAMGSetup,
+         NALU_HYPRE_BoomerAMGCreate(&par_precond);
+         NALU_HYPRE_BoomerAMGSetCoarsenType(par_precond, 6);
+         NALU_HYPRE_BoomerAMGSetStrongThreshold(par_precond, 0.5);
+         NALU_HYPRE_BoomerAMGSetTol(par_precond, 1.0e-06);
+         NALU_HYPRE_BoomerAMGSetPrintLevel(par_precond, 1);
+         NALU_HYPRE_BoomerAMGSetPrintFileName(par_precond, "sstruct.out.log");
+         /*NALU_HYPRE_BoomerAMGSetLogging(par_precond, 1, "sstruct.out.log");*/
+         NALU_HYPRE_BoomerAMGSetMaxIter(par_precond, 1);
+         NALU_HYPRE_PCGSetPrecond( par_solver,
+                              (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_BoomerAMGSolve,
+                              (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_BoomerAMGSetup,
                               par_precond );
       }
-      HYPRE_PCGSetup( par_solver, (HYPRE_Matrix) par_A,
-                      (HYPRE_Vector) par_b, (HYPRE_Vector) par_x );
+      NALU_HYPRE_PCGSetup( par_solver, (NALU_HYPRE_Matrix) par_A,
+                      (NALU_HYPRE_Vector) par_b, (NALU_HYPRE_Vector) par_x );
 
       hypre_EndTiming(time_index);
       hypre_PrintTiming("Setup phase times", hypre_MPI_COMM_WORLD);
@@ -2087,21 +2087,21 @@ main( hypre_int argc,
       time_index = hypre_InitializeTiming("PCG Solve");
       hypre_BeginTiming(time_index);
 
-      HYPRE_PCGSolve( par_solver, (HYPRE_Matrix) par_A,
-                      (HYPRE_Vector) par_b, (HYPRE_Vector) par_x );
+      NALU_HYPRE_PCGSolve( par_solver, (NALU_HYPRE_Matrix) par_A,
+                      (NALU_HYPRE_Vector) par_b, (NALU_HYPRE_Vector) par_x );
 
       hypre_EndTiming(time_index);
       hypre_PrintTiming("Solve phase times", hypre_MPI_COMM_WORLD);
       hypre_FinalizeTiming(time_index);
       hypre_ClearTiming();
 
-      HYPRE_PCGGetNumIterations( par_solver, &num_iterations );
-      HYPRE_PCGGetFinalRelativeResidualNorm( par_solver, &final_res_norm );
-      HYPRE_ParCSRPCGDestroy(par_solver);
+      NALU_HYPRE_PCGGetNumIterations( par_solver, &num_iterations );
+      NALU_HYPRE_PCGGetFinalRelativeResidualNorm( par_solver, &final_res_norm );
+      NALU_HYPRE_ParCSRPCGDestroy(par_solver);
 
       if (solver_id == 20)
       {
-         HYPRE_BoomerAMGDestroy(par_precond);
+         NALU_HYPRE_BoomerAMGDestroy(par_precond);
       }
    }
 
@@ -2113,31 +2113,31 @@ main( hypre_int argc,
       time_index = hypre_InitializeTiming("GMRES Setup");
       hypre_BeginTiming(time_index);
 
-      HYPRE_ParCSRGMRESCreate(hypre_MPI_COMM_WORLD, &par_solver);
-      HYPRE_GMRESSetKDim(par_solver, 5);
-      HYPRE_GMRESSetMaxIter(par_solver, 200);
-      HYPRE_GMRESSetTol(par_solver, 1.0e-06);
-      HYPRE_GMRESSetLogging(par_solver, 1);
+      NALU_HYPRE_ParCSRGMRESCreate(hypre_MPI_COMM_WORLD, &par_solver);
+      NALU_HYPRE_GMRESSetKDim(par_solver, 5);
+      NALU_HYPRE_GMRESSetMaxIter(par_solver, 200);
+      NALU_HYPRE_GMRESSetTol(par_solver, 1.0e-06);
+      NALU_HYPRE_GMRESSetLogging(par_solver, 1);
 
       if (solver_id == 40)
       {
          /* use BoomerAMG as preconditioner */
-         HYPRE_BoomerAMGCreate(&par_precond);
-         HYPRE_BoomerAMGSetCoarsenType(par_precond, 6);
-         HYPRE_BoomerAMGSetStrongThreshold(par_precond, 0.);
-         HYPRE_BoomerAMGSetTruncFactor(par_precond, 0.3);
-         HYPRE_BoomerAMGSetTol(par_precond, 1.0e-06);
-         HYPRE_BoomerAMGSetPrintLevel(par_precond, 1);
-         HYPRE_BoomerAMGSetPrintFileName(par_precond, "sstruct.out.log");
-         HYPRE_BoomerAMGSetMaxIter(par_precond, 1);
-         HYPRE_GMRESSetPrecond( par_solver,
-                                (HYPRE_PtrToSolverFcn) HYPRE_BoomerAMGSolve,
-                                (HYPRE_PtrToSolverFcn) HYPRE_BoomerAMGSetup,
+         NALU_HYPRE_BoomerAMGCreate(&par_precond);
+         NALU_HYPRE_BoomerAMGSetCoarsenType(par_precond, 6);
+         NALU_HYPRE_BoomerAMGSetStrongThreshold(par_precond, 0.);
+         NALU_HYPRE_BoomerAMGSetTruncFactor(par_precond, 0.3);
+         NALU_HYPRE_BoomerAMGSetTol(par_precond, 1.0e-06);
+         NALU_HYPRE_BoomerAMGSetPrintLevel(par_precond, 1);
+         NALU_HYPRE_BoomerAMGSetPrintFileName(par_precond, "sstruct.out.log");
+         NALU_HYPRE_BoomerAMGSetMaxIter(par_precond, 1);
+         NALU_HYPRE_GMRESSetPrecond( par_solver,
+                                (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_BoomerAMGSolve,
+                                (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_BoomerAMGSetup,
                                 par_precond);
       }
 
-      HYPRE_GMRESSetup( par_solver, (HYPRE_Matrix) par_A,
-                        (HYPRE_Vector) par_b, (HYPRE_Vector) par_x);
+      NALU_HYPRE_GMRESSetup( par_solver, (NALU_HYPRE_Matrix) par_A,
+                        (NALU_HYPRE_Vector) par_b, (NALU_HYPRE_Vector) par_x);
 
       hypre_EndTiming(time_index);
       hypre_PrintTiming("Setup phase times", hypre_MPI_COMM_WORLD);
@@ -2147,22 +2147,22 @@ main( hypre_int argc,
       time_index = hypre_InitializeTiming("GMRES Solve");
       hypre_BeginTiming(time_index);
 
-      HYPRE_GMRESSolve( par_solver, (HYPRE_Matrix) par_A,
-                        (HYPRE_Vector) par_b, (HYPRE_Vector) par_x);
+      NALU_HYPRE_GMRESSolve( par_solver, (NALU_HYPRE_Matrix) par_A,
+                        (NALU_HYPRE_Vector) par_b, (NALU_HYPRE_Vector) par_x);
 
       hypre_EndTiming(time_index);
       hypre_PrintTiming("Solve phase times", hypre_MPI_COMM_WORLD);
       hypre_FinalizeTiming(time_index);
       hypre_ClearTiming();
 
-      HYPRE_GMRESGetNumIterations( par_solver, &num_iterations);
-      HYPRE_GMRESGetFinalRelativeResidualNorm( par_solver,
+      NALU_HYPRE_GMRESGetNumIterations( par_solver, &num_iterations);
+      NALU_HYPRE_GMRESGetFinalRelativeResidualNorm( par_solver,
                                                &final_res_norm);
-      HYPRE_ParCSRGMRESDestroy(par_solver);
+      NALU_HYPRE_ParCSRGMRESDestroy(par_solver);
 
       if (solver_id == 40)
       {
-         HYPRE_BoomerAMGDestroy(par_precond);
+         NALU_HYPRE_BoomerAMGDestroy(par_precond);
       }
    }
 
@@ -2171,16 +2171,16 @@ main( hypre_int argc,
       time_index = hypre_InitializeTiming("AMG Setup");
       hypre_BeginTiming(time_index);
 
-      HYPRE_BoomerAMGCreate(&par_solver);
-      HYPRE_BoomerAMGSetCoarsenType(par_solver, 6);
-      HYPRE_BoomerAMGSetStrongThreshold(par_solver, 0.);
-      HYPRE_BoomerAMGSetTruncFactor(par_solver, 0.3);
-      /*HYPRE_BoomerAMGSetMaxLevels(par_solver, 4);*/
-      HYPRE_BoomerAMGSetTol(par_solver, 1.0e-06);
-      HYPRE_BoomerAMGSetPrintLevel(par_solver, 1);
-      HYPRE_BoomerAMGSetPrintFileName(par_solver, "sstruct.out.log");
-      HYPRE_BoomerAMGSetMaxIter(par_solver, 200);
-      HYPRE_BoomerAMGSetup(par_solver, par_A, par_b, par_x);
+      NALU_HYPRE_BoomerAMGCreate(&par_solver);
+      NALU_HYPRE_BoomerAMGSetCoarsenType(par_solver, 6);
+      NALU_HYPRE_BoomerAMGSetStrongThreshold(par_solver, 0.);
+      NALU_HYPRE_BoomerAMGSetTruncFactor(par_solver, 0.3);
+      /*NALU_HYPRE_BoomerAMGSetMaxLevels(par_solver, 4);*/
+      NALU_HYPRE_BoomerAMGSetTol(par_solver, 1.0e-06);
+      NALU_HYPRE_BoomerAMGSetPrintLevel(par_solver, 1);
+      NALU_HYPRE_BoomerAMGSetPrintFileName(par_solver, "sstruct.out.log");
+      NALU_HYPRE_BoomerAMGSetMaxIter(par_solver, 200);
+      NALU_HYPRE_BoomerAMGSetup(par_solver, par_A, par_b, par_x);
 
       hypre_EndTiming(time_index);
       hypre_PrintTiming("Setup phase times", hypre_MPI_COMM_WORLD);
@@ -2190,25 +2190,25 @@ main( hypre_int argc,
       time_index = hypre_InitializeTiming("BoomerAMG Solve");
       hypre_BeginTiming(time_index);
 
-      HYPRE_BoomerAMGSolve(par_solver, par_A, par_b, par_x);
+      NALU_HYPRE_BoomerAMGSolve(par_solver, par_A, par_b, par_x);
 
       hypre_EndTiming(time_index);
       hypre_PrintTiming("Solve phase times", hypre_MPI_COMM_WORLD);
       hypre_FinalizeTiming(time_index);
       hypre_ClearTiming();
 
-      HYPRE_BoomerAMGGetNumIterations(par_solver, &num_iterations);
-      HYPRE_BoomerAMGGetFinalRelativeResidualNorm(par_solver,
+      NALU_HYPRE_BoomerAMGGetNumIterations(par_solver, &num_iterations);
+      NALU_HYPRE_BoomerAMGGetFinalRelativeResidualNorm(par_solver,
                                                   &final_res_norm);
 
-      HYPRE_BoomerAMGDestroy(par_solver);
+      NALU_HYPRE_BoomerAMGDestroy(par_solver);
    }
 
    /*-----------------------------------------------------------
     * Gather the solution vector
     *-----------------------------------------------------------*/
 
-   HYPRE_SStructVectorGather(x);
+   NALU_HYPRE_SStructVectorGather(x);
 
    /*-----------------------------------------------------------
     * Print the solution and other info
@@ -2226,39 +2226,39 @@ main( hypre_int argc,
     * Finalize things
     *-----------------------------------------------------------*/
 
-   HYPRE_SStructGridDestroy(grid);
+   NALU_HYPRE_SStructGridDestroy(grid);
    for (s = 0; s < data.nstencils; s++)
    {
-      HYPRE_SStructStencilDestroy(stencils[s]);
+      NALU_HYPRE_SStructStencilDestroy(stencils[s]);
    }
-   hypre_TFree(stencils, HYPRE_MEMORY_HOST);
+   hypre_TFree(stencils, NALU_HYPRE_MEMORY_HOST);
 
-   HYPRE_SStructGraphDestroy(graph);
+   NALU_HYPRE_SStructGraphDestroy(graph);
 
    if ( ((solver_id >= 20) && (solver_id <= 30)) ||
         ((solver_id >= 40) && (solver_id < 60)) )
    {
-      HYPRE_SStructMatrixDestroy(A_amg);
-      HYPRE_SStructVectorDestroy(b_amg);
-      HYPRE_SStructVectorDestroy(x_amg);
+      NALU_HYPRE_SStructMatrixDestroy(A_amg);
+      NALU_HYPRE_SStructVectorDestroy(b_amg);
+      NALU_HYPRE_SStructVectorDestroy(x_amg);
    }
 
-   HYPRE_SStructMatrixDestroy(A);
-   HYPRE_SStructVectorDestroy(b);
-   HYPRE_SStructVectorDestroy(x);
+   NALU_HYPRE_SStructMatrixDestroy(A);
+   NALU_HYPRE_SStructVectorDestroy(b);
+   NALU_HYPRE_SStructVectorDestroy(x);
 
 
-   hypre_TFree(plevels, HYPRE_MEMORY_HOST);
-   hypre_TFree(prefinements, HYPRE_MEMORY_HOST);
+   hypre_TFree(plevels, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(prefinements, NALU_HYPRE_MEMORY_HOST);
 
    DestroyData(data);
 
-   hypre_TFree(parts, HYPRE_MEMORY_HOST);
-   hypre_TFree(refine, HYPRE_MEMORY_HOST);
-   hypre_TFree(distribute, HYPRE_MEMORY_HOST);
-   hypre_TFree(block, HYPRE_MEMORY_HOST);
+   hypre_TFree(parts, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(refine, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(distribute, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(block, NALU_HYPRE_MEMORY_HOST);
 
-   HYPRE_Finalize();
+   NALU_HYPRE_Finalize();
 
    /* Finalize MPI */
    hypre_MPI_Finalize();

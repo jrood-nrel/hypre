@@ -11,8 +11,8 @@
  *
  *****************************************************************************/
 
-#define HYPRE_TIMING
-#define HYPRE_TIMING_GLOBALS
+#define NALU_HYPRE_TIMING
+#define NALU_HYPRE_TIMING_GLOBALS
 #include "_hypre_utilities.h"
 #include "timing.h"
 
@@ -34,20 +34,20 @@ hypre_TimingCPUCount += time_getCPUSeconds()
  * hypre_InitializeTiming
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_InitializeTiming( const char *name )
 {
-   HYPRE_Int      time_index;
+   NALU_HYPRE_Int      time_index;
 
-   HYPRE_Real  *old_wall_time;
-   HYPRE_Real  *old_cpu_time;
-   HYPRE_Real  *old_flops;
+   NALU_HYPRE_Real  *old_wall_time;
+   NALU_HYPRE_Real  *old_cpu_time;
+   NALU_HYPRE_Real  *old_flops;
    char   **old_name;
-   HYPRE_Int     *old_state;
-   HYPRE_Int     *old_num_regs;
+   NALU_HYPRE_Int     *old_state;
+   NALU_HYPRE_Int     *old_num_regs;
 
-   HYPRE_Int      new_name;
-   HYPRE_Int      i;
+   NALU_HYPRE_Int      new_name;
+   NALU_HYPRE_Int      i;
 
    /*-------------------------------------------------------
     * Allocate global TimingType structure if needed
@@ -55,7 +55,7 @@ hypre_InitializeTiming( const char *name )
 
    if (hypre_global_timing == NULL)
    {
-      hypre_global_timing = hypre_CTAlloc(hypre_TimingType,  1, HYPRE_MEMORY_HOST);
+      hypre_global_timing = hypre_CTAlloc(hypre_TimingType,  1, NALU_HYPRE_MEMORY_HOST);
    }
 
    /*-------------------------------------------------------
@@ -105,17 +105,17 @@ hypre_InitializeTiming( const char *name )
          old_num_regs  = (hypre_global_timing_ref(threadid, num_regs));
 
          (hypre_global_timing_ref(threadid, wall_time)) =
-            hypre_CTAlloc(HYPRE_Real,  (time_index + 1), HYPRE_MEMORY_HOST);
+            hypre_CTAlloc(NALU_HYPRE_Real,  (time_index + 1), NALU_HYPRE_MEMORY_HOST);
          (hypre_global_timing_ref(threadid, cpu_time))  =
-            hypre_CTAlloc(HYPRE_Real,  (time_index + 1), HYPRE_MEMORY_HOST);
+            hypre_CTAlloc(NALU_HYPRE_Real,  (time_index + 1), NALU_HYPRE_MEMORY_HOST);
          (hypre_global_timing_ref(threadid, flops))     =
-            hypre_CTAlloc(HYPRE_Real,  (time_index + 1), HYPRE_MEMORY_HOST);
+            hypre_CTAlloc(NALU_HYPRE_Real,  (time_index + 1), NALU_HYPRE_MEMORY_HOST);
          (hypre_global_timing_ref(threadid, name))      =
-            hypre_CTAlloc(char *,  (time_index + 1), HYPRE_MEMORY_HOST);
+            hypre_CTAlloc(char *,  (time_index + 1), NALU_HYPRE_MEMORY_HOST);
          (hypre_global_timing_ref(threadid, state))     =
-            hypre_CTAlloc(HYPRE_Int,     (time_index + 1), HYPRE_MEMORY_HOST);
+            hypre_CTAlloc(NALU_HYPRE_Int,     (time_index + 1), NALU_HYPRE_MEMORY_HOST);
          (hypre_global_timing_ref(threadid, num_regs))  =
-            hypre_CTAlloc(HYPRE_Int,     (time_index + 1), HYPRE_MEMORY_HOST);
+            hypre_CTAlloc(NALU_HYPRE_Int,     (time_index + 1), NALU_HYPRE_MEMORY_HOST);
          (hypre_global_timing_ref(threadid, size)) ++;
 
          for (i = 0; i < time_index; i++)
@@ -128,15 +128,15 @@ hypre_InitializeTiming( const char *name )
             hypre_TimingNumRegs(i)  = old_num_regs[i];
          }
 
-         hypre_TFree(old_wall_time, HYPRE_MEMORY_HOST);
-         hypre_TFree(old_cpu_time, HYPRE_MEMORY_HOST);
-         hypre_TFree(old_flops, HYPRE_MEMORY_HOST);
-         hypre_TFree(old_name, HYPRE_MEMORY_HOST);
-         hypre_TFree(old_state, HYPRE_MEMORY_HOST);
-         hypre_TFree(old_num_regs, HYPRE_MEMORY_HOST);
+         hypre_TFree(old_wall_time, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(old_cpu_time, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(old_flops, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(old_name, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(old_state, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(old_num_regs, NALU_HYPRE_MEMORY_HOST);
       }
 
-      hypre_TimingName(time_index) = hypre_CTAlloc(char,  80, HYPRE_MEMORY_HOST);
+      hypre_TimingName(time_index) = hypre_CTAlloc(char,  80, NALU_HYPRE_MEMORY_HOST);
       strncpy(hypre_TimingName(time_index), name, 79);
       hypre_TimingState(time_index)   = 0;
       hypre_TimingNumRegs(time_index) = 1;
@@ -150,11 +150,11 @@ hypre_InitializeTiming( const char *name )
  * hypre_FinalizeTiming
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_FinalizeTiming( HYPRE_Int time_index )
+NALU_HYPRE_Int
+hypre_FinalizeTiming( NALU_HYPRE_Int time_index )
 {
-   HYPRE_Int  ierr = 0;
-   HYPRE_Int  i;
+   NALU_HYPRE_Int  ierr = 0;
+   NALU_HYPRE_Int  i;
 
    if (hypre_global_timing == NULL)
    {
@@ -170,7 +170,7 @@ hypre_FinalizeTiming( HYPRE_Int time_index )
 
       if (hypre_TimingNumRegs(time_index) == 0)
       {
-         hypre_TFree(hypre_TimingName(time_index), HYPRE_MEMORY_HOST);
+         hypre_TFree(hypre_TimingName(time_index), NALU_HYPRE_MEMORY_HOST);
          (hypre_global_timing_ref(threadid, num_names)) --;
       }
    }
@@ -179,32 +179,32 @@ hypre_FinalizeTiming( HYPRE_Int time_index )
    {
       for (i = 0; i < (hypre_global_timing -> size); i++)
       {
-         hypre_TFree(hypre_global_timing_ref(i,  wall_time), HYPRE_MEMORY_HOST);
-         hypre_TFree(hypre_global_timing_ref(i,  cpu_time), HYPRE_MEMORY_HOST);
-         hypre_TFree(hypre_global_timing_ref(i,  flops), HYPRE_MEMORY_HOST);
-         hypre_TFree(hypre_global_timing_ref(i,  name), HYPRE_MEMORY_HOST);
-         hypre_TFree(hypre_global_timing_ref(i,  state), HYPRE_MEMORY_HOST);
-         hypre_TFree(hypre_global_timing_ref(i,  num_regs), HYPRE_MEMORY_HOST);
+         hypre_TFree(hypre_global_timing_ref(i,  wall_time), NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(hypre_global_timing_ref(i,  cpu_time), NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(hypre_global_timing_ref(i,  flops), NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(hypre_global_timing_ref(i,  name), NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(hypre_global_timing_ref(i,  state), NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(hypre_global_timing_ref(i,  num_regs), NALU_HYPRE_MEMORY_HOST);
       }
 
-      hypre_TFree(hypre_global_timing, HYPRE_MEMORY_HOST);
+      hypre_TFree(hypre_global_timing, NALU_HYPRE_MEMORY_HOST);
       hypre_global_timing = NULL;
    }
 
    return ierr;
 }
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_FinalizeAllTimings()
 {
-   HYPRE_Int time_index, ierr = 0;
+   NALU_HYPRE_Int time_index, ierr = 0;
 
    if (hypre_global_timing == NULL)
    {
       return ierr;
    }
 
-   HYPRE_Int size = hypre_global_timing_ref(threadid, size);
+   NALU_HYPRE_Int size = hypre_global_timing_ref(threadid, size);
 
    for (time_index = 0; time_index < size; time_index++)
    {
@@ -218,17 +218,17 @@ hypre_FinalizeAllTimings()
  * hypre_IncFLOPCount
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_IncFLOPCount( HYPRE_BigInt inc )
+NALU_HYPRE_Int
+hypre_IncFLOPCount( NALU_HYPRE_BigInt inc )
 {
-   HYPRE_Int  ierr = 0;
+   NALU_HYPRE_Int  ierr = 0;
 
    if (hypre_global_timing == NULL)
    {
       return ierr;
    }
 
-   hypre_TimingFLOPCount += (HYPRE_Real) (inc);
+   hypre_TimingFLOPCount += (NALU_HYPRE_Real) (inc);
 
    return ierr;
 }
@@ -237,10 +237,10 @@ hypre_IncFLOPCount( HYPRE_BigInt inc )
  * hypre_BeginTiming
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_BeginTiming( HYPRE_Int time_index )
+NALU_HYPRE_Int
+hypre_BeginTiming( NALU_HYPRE_Int time_index )
 {
-   HYPRE_Int  ierr = 0;
+   NALU_HYPRE_Int  ierr = 0;
 
    if (hypre_global_timing == NULL)
    {
@@ -265,10 +265,10 @@ hypre_BeginTiming( HYPRE_Int time_index )
  * hypre_EndTiming
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_EndTiming( HYPRE_Int time_index )
+NALU_HYPRE_Int
+hypre_EndTiming( NALU_HYPRE_Int time_index )
 {
-   HYPRE_Int  ierr = 0;
+   NALU_HYPRE_Int  ierr = 0;
 
    if (hypre_global_timing == NULL)
    {
@@ -278,9 +278,9 @@ hypre_EndTiming( HYPRE_Int time_index )
    hypre_TimingState(time_index) --;
    if (hypre_TimingState(time_index) == 0)
    {
-#if defined(HYPRE_USING_GPU)
+#if defined(NALU_HYPRE_USING_GPU)
       hypre_Handle *hypre_handle_ = hypre_handle();
-      if (hypre_HandleDefaultExecPolicy(hypre_handle_) == HYPRE_EXEC_DEVICE)
+      if (hypre_HandleDefaultExecPolicy(hypre_handle_) == NALU_HYPRE_EXEC_DEVICE)
       {
          hypre_SyncCudaDevice(hypre_handle_);
       }
@@ -299,11 +299,11 @@ hypre_EndTiming( HYPRE_Int time_index )
  * hypre_ClearTiming
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_ClearTiming( )
 {
-   HYPRE_Int  ierr = 0;
-   HYPRE_Int  i;
+   NALU_HYPRE_Int  ierr = 0;
+   NALU_HYPRE_Int  i;
 
    if (hypre_global_timing == NULL)
    {
@@ -324,21 +324,21 @@ hypre_ClearTiming( )
  * hypre_PrintTiming
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_PrintTiming( const char     *heading,
                    MPI_Comm        comm  )
 {
-   HYPRE_Int  ierr = 0;
+   NALU_HYPRE_Int  ierr = 0;
 
-   HYPRE_Real  local_wall_time;
-   HYPRE_Real  local_cpu_time;
-   HYPRE_Real  wall_time;
-   HYPRE_Real  cpu_time;
-   HYPRE_Real  wall_mflops;
-   HYPRE_Real  cpu_mflops;
+   NALU_HYPRE_Real  local_wall_time;
+   NALU_HYPRE_Real  local_cpu_time;
+   NALU_HYPRE_Real  wall_time;
+   NALU_HYPRE_Real  cpu_time;
+   NALU_HYPRE_Real  wall_mflops;
+   NALU_HYPRE_Real  cpu_mflops;
 
-   HYPRE_Int     i;
-   HYPRE_Int     myrank;
+   NALU_HYPRE_Int     i;
+   NALU_HYPRE_Int     myrank;
 
    if (hypre_global_timing == NULL)
    {
@@ -404,18 +404,18 @@ hypre_PrintTiming( const char     *heading,
  * hypre_GetTiming
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_GetTiming( const char     *heading,
-                 HYPRE_Real     *wall_time_ptr,
+                 NALU_HYPRE_Real     *wall_time_ptr,
                  MPI_Comm        comm  )
 {
-   HYPRE_Int  ierr = 0;
+   NALU_HYPRE_Int  ierr = 0;
 
-   HYPRE_Real  local_wall_time;
-   HYPRE_Real  wall_time;
+   NALU_HYPRE_Real  local_wall_time;
+   NALU_HYPRE_Real  wall_time;
 
-   HYPRE_Int     i;
-   HYPRE_Int     myrank;
+   NALU_HYPRE_Int     i;
+   NALU_HYPRE_Int     myrank;
 
    if (hypre_global_timing == NULL)
    {

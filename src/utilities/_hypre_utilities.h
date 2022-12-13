@@ -4,9 +4,9 @@
 #ifndef hypre_UTILITIES_HEADER
 #define hypre_UTILITIES_HEADER
 
-#include "HYPRE_utilities.h"
+#include "NALU_HYPRE_utilities.h"
 
-#ifdef HYPRE_USING_OPENMP
+#ifdef NALU_HYPRE_USING_OPENMP
 #include <omp.h>
 #endif
 
@@ -56,7 +56,7 @@ typedef double                 hypre_double;
 #endif
 
 #ifndef hypre_round
-#define hypre_round(x)  ( ((x) < 0.0) ? ((HYPRE_Int)(x - 0.5)) : ((HYPRE_Int)(x + 0.5)) )
+#define hypre_round(x)  ( ((x) < 0.0) ? ((NALU_HYPRE_Int)(x - 0.5)) : ((NALU_HYPRE_Int)(x + 0.5)) )
 #endif
 
 #ifndef hypre_pow2
@@ -78,15 +78,15 @@ typedef double                 hypre_double;
 #include <stdio.h>
 
 /* printf.c */
-// #ifdef HYPRE_BIGINT
-HYPRE_Int hypre_ndigits( HYPRE_BigInt number );
-HYPRE_Int hypre_printf( const char *format, ... );
-HYPRE_Int hypre_fprintf( FILE *stream, const char *format, ... );
-HYPRE_Int hypre_sprintf( char *s, const char *format, ... );
-HYPRE_Int hypre_scanf( const char *format, ... );
-HYPRE_Int hypre_fscanf( FILE *stream, const char *format, ... );
-HYPRE_Int hypre_sscanf( char *s, const char *format, ... );
-HYPRE_Int hypre_ParPrintf(MPI_Comm comm, const char *format, ...);
+// #ifdef NALU_HYPRE_BIGINT
+NALU_HYPRE_Int hypre_ndigits( NALU_HYPRE_BigInt number );
+NALU_HYPRE_Int hypre_printf( const char *format, ... );
+NALU_HYPRE_Int hypre_fprintf( FILE *stream, const char *format, ... );
+NALU_HYPRE_Int hypre_sprintf( char *s, const char *format, ... );
+NALU_HYPRE_Int hypre_scanf( const char *format, ... );
+NALU_HYPRE_Int hypre_fscanf( FILE *stream, const char *format, ... );
+NALU_HYPRE_Int hypre_sscanf( char *s, const char *format, ... );
+NALU_HYPRE_Int hypre_ParPrintf(MPI_Comm comm, const char *format, ...);
 // #else
 // #define hypre_printf  printf
 // #define hypre_fprintf fprintf
@@ -113,32 +113,32 @@ HYPRE_Int hypre_ParPrintf(MPI_Comm comm, const char *format, ...);
  * Global variable used in hypre error checking
  *--------------------------------------------------------------------------*/
 
-extern HYPRE_Int hypre__global_error;
+extern NALU_HYPRE_Int hypre__global_error;
 #define hypre_error_flag  hypre__global_error
 
 /*--------------------------------------------------------------------------
  * HYPRE error macros
  *--------------------------------------------------------------------------*/
 
-void hypre_error_handler(const char *filename, HYPRE_Int line, HYPRE_Int ierr, const char *msg);
+void hypre_error_handler(const char *filename, NALU_HYPRE_Int line, NALU_HYPRE_Int ierr, const char *msg);
 
 #define hypre_error(IERR)  hypre_error_handler(__FILE__, __LINE__, IERR, NULL)
 #define hypre_error_w_msg(IERR, msg)  hypre_error_handler(__FILE__, __LINE__, IERR, msg)
-#define hypre_error_in_arg(IARG)  hypre_error(HYPRE_ERROR_ARG | IARG<<3)
+#define hypre_error_in_arg(IARG)  hypre_error(NALU_HYPRE_ERROR_ARG | IARG<<3)
 
-#if defined(HYPRE_DEBUG)
+#if defined(NALU_HYPRE_DEBUG)
 /* host assert */
 #define hypre_assert(EX) do { if (!(EX)) { fprintf(stderr, "[%s, %d] hypre_assert failed: %s\n", __FILE__, __LINE__, #EX); hypre_error(1); assert(0); } } while (0)
 /* device assert */
-#if defined(HYPRE_USING_CUDA)
+#if defined(NALU_HYPRE_USING_CUDA)
 #define hypre_device_assert(EX) assert(EX)
-#elif defined(HYPRE_USING_HIP)
+#elif defined(NALU_HYPRE_USING_HIP)
 /* FIXME: Currently, asserts in device kernels in HIP do not behave well */
 #define hypre_device_assert(EX) do { if (0) { static_cast<void> (EX); } } while (0)
-#elif defined(HYPRE_USING_SYCL)
+#elif defined(NALU_HYPRE_USING_SYCL)
 #define hypre_device_assert(EX) assert(EX)
 #endif
-#else /* #ifdef HYPRE_DEBUG */
+#else /* #ifdef NALU_HYPRE_DEBUG */
 /* this is to silence compiler's unused variable warnings */
 #ifdef __cplusplus
 #define hypre_assert(EX) do { if (0) { static_cast<void> (EX); } } while (0)
@@ -170,7 +170,7 @@ void hypre_error_handler(const char *filename, HYPRE_Int line, HYPRE_Int ierr, c
 extern "C" {
 #endif
 
-#ifdef HYPRE_SEQUENTIAL
+#ifdef NALU_HYPRE_SEQUENTIAL
 
 /******************************************************************************
  * MPI stubs to generate serial codes without mpi
@@ -180,7 +180,7 @@ extern "C" {
  * Change all MPI names to hypre_MPI names to avoid link conflicts.
  *
  * NOTE: MPI_Comm is the only MPI symbol in the HYPRE user interface,
- * and is defined in `HYPRE_utilities.h'.
+ * and is defined in `NALU_HYPRE_utilities.h'.
  *--------------------------------------------------------------------------*/
 
 #define MPI_Comm            hypre_MPI_Comm
@@ -287,21 +287,21 @@ extern "C" {
  *--------------------------------------------------------------------------*/
 
 /* These types have associated creation and destruction routines */
-typedef HYPRE_Int hypre_MPI_Comm;
-typedef HYPRE_Int hypre_MPI_Group;
-typedef HYPRE_Int hypre_MPI_Request;
-typedef HYPRE_Int hypre_MPI_Datatype;
+typedef NALU_HYPRE_Int hypre_MPI_Comm;
+typedef NALU_HYPRE_Int hypre_MPI_Group;
+typedef NALU_HYPRE_Int hypre_MPI_Request;
+typedef NALU_HYPRE_Int hypre_MPI_Datatype;
 typedef void (hypre_MPI_User_function) ();
 
 typedef struct
 {
-   HYPRE_Int hypre_MPI_SOURCE;
-   HYPRE_Int hypre_MPI_TAG;
+   NALU_HYPRE_Int hypre_MPI_SOURCE;
+   NALU_HYPRE_Int hypre_MPI_TAG;
 } hypre_MPI_Status;
 
-typedef HYPRE_Int  hypre_MPI_Op;
-typedef HYPRE_Int  hypre_MPI_Aint;
-typedef HYPRE_Int  hypre_MPI_Info;
+typedef NALU_HYPRE_Int  hypre_MPI_Op;
+typedef NALU_HYPRE_Int  hypre_MPI_Aint;
+typedef NALU_HYPRE_Int  hypre_MPI_Info;
 
 #define  hypre_MPI_COMM_SELF   1
 #define  hypre_MPI_COMM_WORLD  0
@@ -339,7 +339,7 @@ typedef HYPRE_Int  hypre_MPI_Info;
 #else
 
 /******************************************************************************
- * MPI stubs to do casting of HYPRE_Int and hypre_int correctly
+ * MPI stubs to do casting of NALU_HYPRE_Int and hypre_int correctly
  *****************************************************************************/
 
 typedef MPI_Comm     hypre_MPI_Comm;
@@ -361,15 +361,15 @@ typedef MPI_User_function    hypre_MPI_User_function;
 #define  hypre_MPI_FLOAT   MPI_FLOAT
 #define  hypre_MPI_DOUBLE  MPI_DOUBLE
 #define  hypre_MPI_LONG_DOUBLE  MPI_LONG_DOUBLE
-/* HYPRE_MPI_INT is defined in HYPRE_utilities.h */
-#define  hypre_MPI_INT     HYPRE_MPI_INT
+/* NALU_HYPRE_MPI_INT is defined in NALU_HYPRE_utilities.h */
+#define  hypre_MPI_INT     NALU_HYPRE_MPI_INT
 #define  hypre_MPI_CHAR    MPI_CHAR
 #define  hypre_MPI_LONG    MPI_LONG
 #define  hypre_MPI_BYTE    MPI_BYTE
-/* HYPRE_MPI_REAL is defined in HYPRE_utilities.h */
-#define  hypre_MPI_REAL    HYPRE_MPI_REAL
-/* HYPRE_MPI_COMPLEX is defined in HYPRE_utilities.h */
-#define  hypre_MPI_COMPLEX HYPRE_MPI_COMPLEX
+/* NALU_HYPRE_MPI_REAL is defined in NALU_HYPRE_utilities.h */
+#define  hypre_MPI_REAL    NALU_HYPRE_MPI_REAL
+/* NALU_HYPRE_MPI_COMPLEX is defined in NALU_HYPRE_utilities.h */
+#define  hypre_MPI_COMPLEX NALU_HYPRE_MPI_COMPLEX
 
 #define  hypre_MPI_SUM MPI_SUM
 #define  hypre_MPI_MIN MPI_MIN
@@ -398,102 +398,102 @@ typedef MPI_User_function    hypre_MPI_User_function;
  *--------------------------------------------------------------------------*/
 
 /* mpistubs.c */
-HYPRE_Int hypre_MPI_Init( hypre_int *argc, char ***argv );
-HYPRE_Int hypre_MPI_Finalize( void );
-HYPRE_Int hypre_MPI_Abort( hypre_MPI_Comm comm, HYPRE_Int errorcode );
-HYPRE_Real hypre_MPI_Wtime( void );
-HYPRE_Real hypre_MPI_Wtick( void );
-HYPRE_Int hypre_MPI_Barrier( hypre_MPI_Comm comm );
-HYPRE_Int hypre_MPI_Comm_create( hypre_MPI_Comm comm, hypre_MPI_Group group,
+NALU_HYPRE_Int hypre_MPI_Init( hypre_int *argc, char ***argv );
+NALU_HYPRE_Int hypre_MPI_Finalize( void );
+NALU_HYPRE_Int hypre_MPI_Abort( hypre_MPI_Comm comm, NALU_HYPRE_Int errorcode );
+NALU_HYPRE_Real hypre_MPI_Wtime( void );
+NALU_HYPRE_Real hypre_MPI_Wtick( void );
+NALU_HYPRE_Int hypre_MPI_Barrier( hypre_MPI_Comm comm );
+NALU_HYPRE_Int hypre_MPI_Comm_create( hypre_MPI_Comm comm, hypre_MPI_Group group,
                                  hypre_MPI_Comm *newcomm );
-HYPRE_Int hypre_MPI_Comm_dup( hypre_MPI_Comm comm, hypre_MPI_Comm *newcomm );
+NALU_HYPRE_Int hypre_MPI_Comm_dup( hypre_MPI_Comm comm, hypre_MPI_Comm *newcomm );
 hypre_MPI_Comm hypre_MPI_Comm_f2c( hypre_int comm );
-HYPRE_Int hypre_MPI_Comm_size( hypre_MPI_Comm comm, HYPRE_Int *size );
-HYPRE_Int hypre_MPI_Comm_rank( hypre_MPI_Comm comm, HYPRE_Int *rank );
-HYPRE_Int hypre_MPI_Comm_free( hypre_MPI_Comm *comm );
-HYPRE_Int hypre_MPI_Comm_group( hypre_MPI_Comm comm, hypre_MPI_Group *group );
-HYPRE_Int hypre_MPI_Comm_split( hypre_MPI_Comm comm, HYPRE_Int n, HYPRE_Int m,
+NALU_HYPRE_Int hypre_MPI_Comm_size( hypre_MPI_Comm comm, NALU_HYPRE_Int *size );
+NALU_HYPRE_Int hypre_MPI_Comm_rank( hypre_MPI_Comm comm, NALU_HYPRE_Int *rank );
+NALU_HYPRE_Int hypre_MPI_Comm_free( hypre_MPI_Comm *comm );
+NALU_HYPRE_Int hypre_MPI_Comm_group( hypre_MPI_Comm comm, hypre_MPI_Group *group );
+NALU_HYPRE_Int hypre_MPI_Comm_split( hypre_MPI_Comm comm, NALU_HYPRE_Int n, NALU_HYPRE_Int m,
                                 hypre_MPI_Comm * comms );
-HYPRE_Int hypre_MPI_Group_incl( hypre_MPI_Group group, HYPRE_Int n, HYPRE_Int *ranks,
+NALU_HYPRE_Int hypre_MPI_Group_incl( hypre_MPI_Group group, NALU_HYPRE_Int n, NALU_HYPRE_Int *ranks,
                                 hypre_MPI_Group *newgroup );
-HYPRE_Int hypre_MPI_Group_free( hypre_MPI_Group *group );
-HYPRE_Int hypre_MPI_Address( void *location, hypre_MPI_Aint *address );
-HYPRE_Int hypre_MPI_Get_count( hypre_MPI_Status *status, hypre_MPI_Datatype datatype,
-                               HYPRE_Int *count );
-HYPRE_Int hypre_MPI_Alltoall( void *sendbuf, HYPRE_Int sendcount, hypre_MPI_Datatype sendtype,
-                              void *recvbuf, HYPRE_Int recvcount, hypre_MPI_Datatype recvtype, hypre_MPI_Comm comm );
-HYPRE_Int hypre_MPI_Allgather( void *sendbuf, HYPRE_Int sendcount, hypre_MPI_Datatype sendtype,
-                               void *recvbuf, HYPRE_Int recvcount, hypre_MPI_Datatype recvtype, hypre_MPI_Comm comm );
-HYPRE_Int hypre_MPI_Allgatherv( void *sendbuf, HYPRE_Int sendcount, hypre_MPI_Datatype sendtype,
-                                void *recvbuf, HYPRE_Int *recvcounts, HYPRE_Int *displs, hypre_MPI_Datatype recvtype,
+NALU_HYPRE_Int hypre_MPI_Group_free( hypre_MPI_Group *group );
+NALU_HYPRE_Int hypre_MPI_Address( void *location, hypre_MPI_Aint *address );
+NALU_HYPRE_Int hypre_MPI_Get_count( hypre_MPI_Status *status, hypre_MPI_Datatype datatype,
+                               NALU_HYPRE_Int *count );
+NALU_HYPRE_Int hypre_MPI_Alltoall( void *sendbuf, NALU_HYPRE_Int sendcount, hypre_MPI_Datatype sendtype,
+                              void *recvbuf, NALU_HYPRE_Int recvcount, hypre_MPI_Datatype recvtype, hypre_MPI_Comm comm );
+NALU_HYPRE_Int hypre_MPI_Allgather( void *sendbuf, NALU_HYPRE_Int sendcount, hypre_MPI_Datatype sendtype,
+                               void *recvbuf, NALU_HYPRE_Int recvcount, hypre_MPI_Datatype recvtype, hypre_MPI_Comm comm );
+NALU_HYPRE_Int hypre_MPI_Allgatherv( void *sendbuf, NALU_HYPRE_Int sendcount, hypre_MPI_Datatype sendtype,
+                                void *recvbuf, NALU_HYPRE_Int *recvcounts, NALU_HYPRE_Int *displs, hypre_MPI_Datatype recvtype,
                                 hypre_MPI_Comm comm );
-HYPRE_Int hypre_MPI_Gather( void *sendbuf, HYPRE_Int sendcount, hypre_MPI_Datatype sendtype,
-                            void *recvbuf, HYPRE_Int recvcount, hypre_MPI_Datatype recvtype, HYPRE_Int root,
+NALU_HYPRE_Int hypre_MPI_Gather( void *sendbuf, NALU_HYPRE_Int sendcount, hypre_MPI_Datatype sendtype,
+                            void *recvbuf, NALU_HYPRE_Int recvcount, hypre_MPI_Datatype recvtype, NALU_HYPRE_Int root,
                             hypre_MPI_Comm comm );
-HYPRE_Int hypre_MPI_Gatherv( void *sendbuf, HYPRE_Int sendcount, hypre_MPI_Datatype sendtype,
-                             void *recvbuf, HYPRE_Int *recvcounts, HYPRE_Int *displs, hypre_MPI_Datatype recvtype,
-                             HYPRE_Int root, hypre_MPI_Comm comm );
-HYPRE_Int hypre_MPI_Scatter( void *sendbuf, HYPRE_Int sendcount, hypre_MPI_Datatype sendtype,
-                             void *recvbuf, HYPRE_Int recvcount, hypre_MPI_Datatype recvtype, HYPRE_Int root,
+NALU_HYPRE_Int hypre_MPI_Gatherv( void *sendbuf, NALU_HYPRE_Int sendcount, hypre_MPI_Datatype sendtype,
+                             void *recvbuf, NALU_HYPRE_Int *recvcounts, NALU_HYPRE_Int *displs, hypre_MPI_Datatype recvtype,
+                             NALU_HYPRE_Int root, hypre_MPI_Comm comm );
+NALU_HYPRE_Int hypre_MPI_Scatter( void *sendbuf, NALU_HYPRE_Int sendcount, hypre_MPI_Datatype sendtype,
+                             void *recvbuf, NALU_HYPRE_Int recvcount, hypre_MPI_Datatype recvtype, NALU_HYPRE_Int root,
                              hypre_MPI_Comm comm );
-HYPRE_Int hypre_MPI_Scatterv( void *sendbuf, HYPRE_Int *sendcounts, HYPRE_Int *displs,
-                              hypre_MPI_Datatype sendtype, void *recvbuf, HYPRE_Int recvcount, hypre_MPI_Datatype recvtype,
-                              HYPRE_Int root, hypre_MPI_Comm comm );
-HYPRE_Int hypre_MPI_Bcast( void *buffer, HYPRE_Int count, hypre_MPI_Datatype datatype,
-                           HYPRE_Int root, hypre_MPI_Comm comm );
-HYPRE_Int hypre_MPI_Send( void *buf, HYPRE_Int count, hypre_MPI_Datatype datatype, HYPRE_Int dest,
-                          HYPRE_Int tag, hypre_MPI_Comm comm );
-HYPRE_Int hypre_MPI_Recv( void *buf, HYPRE_Int count, hypre_MPI_Datatype datatype, HYPRE_Int source,
-                          HYPRE_Int tag, hypre_MPI_Comm comm, hypre_MPI_Status *status );
-HYPRE_Int hypre_MPI_Isend( void *buf, HYPRE_Int count, hypre_MPI_Datatype datatype, HYPRE_Int dest,
-                           HYPRE_Int tag, hypre_MPI_Comm comm, hypre_MPI_Request *request );
-HYPRE_Int hypre_MPI_Irecv( void *buf, HYPRE_Int count, hypre_MPI_Datatype datatype,
-                           HYPRE_Int source, HYPRE_Int tag, hypre_MPI_Comm comm, hypre_MPI_Request *request );
-HYPRE_Int hypre_MPI_Send_init( void *buf, HYPRE_Int count, hypre_MPI_Datatype datatype,
-                               HYPRE_Int dest, HYPRE_Int tag, hypre_MPI_Comm comm, hypre_MPI_Request *request );
-HYPRE_Int hypre_MPI_Recv_init( void *buf, HYPRE_Int count, hypre_MPI_Datatype datatype,
-                               HYPRE_Int dest, HYPRE_Int tag, hypre_MPI_Comm comm, hypre_MPI_Request *request );
-HYPRE_Int hypre_MPI_Irsend( void *buf, HYPRE_Int count, hypre_MPI_Datatype datatype, HYPRE_Int dest,
-                            HYPRE_Int tag, hypre_MPI_Comm comm, hypre_MPI_Request *request );
-HYPRE_Int hypre_MPI_Startall( HYPRE_Int count, hypre_MPI_Request *array_of_requests );
-HYPRE_Int hypre_MPI_Probe( HYPRE_Int source, HYPRE_Int tag, hypre_MPI_Comm comm,
+NALU_HYPRE_Int hypre_MPI_Scatterv( void *sendbuf, NALU_HYPRE_Int *sendcounts, NALU_HYPRE_Int *displs,
+                              hypre_MPI_Datatype sendtype, void *recvbuf, NALU_HYPRE_Int recvcount, hypre_MPI_Datatype recvtype,
+                              NALU_HYPRE_Int root, hypre_MPI_Comm comm );
+NALU_HYPRE_Int hypre_MPI_Bcast( void *buffer, NALU_HYPRE_Int count, hypre_MPI_Datatype datatype,
+                           NALU_HYPRE_Int root, hypre_MPI_Comm comm );
+NALU_HYPRE_Int hypre_MPI_Send( void *buf, NALU_HYPRE_Int count, hypre_MPI_Datatype datatype, NALU_HYPRE_Int dest,
+                          NALU_HYPRE_Int tag, hypre_MPI_Comm comm );
+NALU_HYPRE_Int hypre_MPI_Recv( void *buf, NALU_HYPRE_Int count, hypre_MPI_Datatype datatype, NALU_HYPRE_Int source,
+                          NALU_HYPRE_Int tag, hypre_MPI_Comm comm, hypre_MPI_Status *status );
+NALU_HYPRE_Int hypre_MPI_Isend( void *buf, NALU_HYPRE_Int count, hypre_MPI_Datatype datatype, NALU_HYPRE_Int dest,
+                           NALU_HYPRE_Int tag, hypre_MPI_Comm comm, hypre_MPI_Request *request );
+NALU_HYPRE_Int hypre_MPI_Irecv( void *buf, NALU_HYPRE_Int count, hypre_MPI_Datatype datatype,
+                           NALU_HYPRE_Int source, NALU_HYPRE_Int tag, hypre_MPI_Comm comm, hypre_MPI_Request *request );
+NALU_HYPRE_Int hypre_MPI_Send_init( void *buf, NALU_HYPRE_Int count, hypre_MPI_Datatype datatype,
+                               NALU_HYPRE_Int dest, NALU_HYPRE_Int tag, hypre_MPI_Comm comm, hypre_MPI_Request *request );
+NALU_HYPRE_Int hypre_MPI_Recv_init( void *buf, NALU_HYPRE_Int count, hypre_MPI_Datatype datatype,
+                               NALU_HYPRE_Int dest, NALU_HYPRE_Int tag, hypre_MPI_Comm comm, hypre_MPI_Request *request );
+NALU_HYPRE_Int hypre_MPI_Irsend( void *buf, NALU_HYPRE_Int count, hypre_MPI_Datatype datatype, NALU_HYPRE_Int dest,
+                            NALU_HYPRE_Int tag, hypre_MPI_Comm comm, hypre_MPI_Request *request );
+NALU_HYPRE_Int hypre_MPI_Startall( NALU_HYPRE_Int count, hypre_MPI_Request *array_of_requests );
+NALU_HYPRE_Int hypre_MPI_Probe( NALU_HYPRE_Int source, NALU_HYPRE_Int tag, hypre_MPI_Comm comm,
                            hypre_MPI_Status *status );
-HYPRE_Int hypre_MPI_Iprobe( HYPRE_Int source, HYPRE_Int tag, hypre_MPI_Comm comm, HYPRE_Int *flag,
+NALU_HYPRE_Int hypre_MPI_Iprobe( NALU_HYPRE_Int source, NALU_HYPRE_Int tag, hypre_MPI_Comm comm, NALU_HYPRE_Int *flag,
                             hypre_MPI_Status *status );
-HYPRE_Int hypre_MPI_Test( hypre_MPI_Request *request, HYPRE_Int *flag, hypre_MPI_Status *status );
-HYPRE_Int hypre_MPI_Testall( HYPRE_Int count, hypre_MPI_Request *array_of_requests, HYPRE_Int *flag,
+NALU_HYPRE_Int hypre_MPI_Test( hypre_MPI_Request *request, NALU_HYPRE_Int *flag, hypre_MPI_Status *status );
+NALU_HYPRE_Int hypre_MPI_Testall( NALU_HYPRE_Int count, hypre_MPI_Request *array_of_requests, NALU_HYPRE_Int *flag,
                              hypre_MPI_Status *array_of_statuses );
-HYPRE_Int hypre_MPI_Wait( hypre_MPI_Request *request, hypre_MPI_Status *status );
-HYPRE_Int hypre_MPI_Waitall( HYPRE_Int count, hypre_MPI_Request *array_of_requests,
+NALU_HYPRE_Int hypre_MPI_Wait( hypre_MPI_Request *request, hypre_MPI_Status *status );
+NALU_HYPRE_Int hypre_MPI_Waitall( NALU_HYPRE_Int count, hypre_MPI_Request *array_of_requests,
                              hypre_MPI_Status *array_of_statuses );
-HYPRE_Int hypre_MPI_Waitany( HYPRE_Int count, hypre_MPI_Request *array_of_requests,
-                             HYPRE_Int *index, hypre_MPI_Status *status );
-HYPRE_Int hypre_MPI_Allreduce( void *sendbuf, void *recvbuf, HYPRE_Int count,
+NALU_HYPRE_Int hypre_MPI_Waitany( NALU_HYPRE_Int count, hypre_MPI_Request *array_of_requests,
+                             NALU_HYPRE_Int *index, hypre_MPI_Status *status );
+NALU_HYPRE_Int hypre_MPI_Allreduce( void *sendbuf, void *recvbuf, NALU_HYPRE_Int count,
                                hypre_MPI_Datatype datatype, hypre_MPI_Op op, hypre_MPI_Comm comm );
-HYPRE_Int hypre_MPI_Reduce( void *sendbuf, void *recvbuf, HYPRE_Int count,
-                            hypre_MPI_Datatype datatype, hypre_MPI_Op op, HYPRE_Int root, hypre_MPI_Comm comm );
-HYPRE_Int hypre_MPI_Scan( void *sendbuf, void *recvbuf, HYPRE_Int count,
+NALU_HYPRE_Int hypre_MPI_Reduce( void *sendbuf, void *recvbuf, NALU_HYPRE_Int count,
+                            hypre_MPI_Datatype datatype, hypre_MPI_Op op, NALU_HYPRE_Int root, hypre_MPI_Comm comm );
+NALU_HYPRE_Int hypre_MPI_Scan( void *sendbuf, void *recvbuf, NALU_HYPRE_Int count,
                           hypre_MPI_Datatype datatype, hypre_MPI_Op op, hypre_MPI_Comm comm );
-HYPRE_Int hypre_MPI_Request_free( hypre_MPI_Request *request );
-HYPRE_Int hypre_MPI_Type_contiguous( HYPRE_Int count, hypre_MPI_Datatype oldtype,
+NALU_HYPRE_Int hypre_MPI_Request_free( hypre_MPI_Request *request );
+NALU_HYPRE_Int hypre_MPI_Type_contiguous( NALU_HYPRE_Int count, hypre_MPI_Datatype oldtype,
                                      hypre_MPI_Datatype *newtype );
-HYPRE_Int hypre_MPI_Type_vector( HYPRE_Int count, HYPRE_Int blocklength, HYPRE_Int stride,
+NALU_HYPRE_Int hypre_MPI_Type_vector( NALU_HYPRE_Int count, NALU_HYPRE_Int blocklength, NALU_HYPRE_Int stride,
                                  hypre_MPI_Datatype oldtype, hypre_MPI_Datatype *newtype );
-HYPRE_Int hypre_MPI_Type_hvector( HYPRE_Int count, HYPRE_Int blocklength, hypre_MPI_Aint stride,
+NALU_HYPRE_Int hypre_MPI_Type_hvector( NALU_HYPRE_Int count, NALU_HYPRE_Int blocklength, hypre_MPI_Aint stride,
                                   hypre_MPI_Datatype oldtype, hypre_MPI_Datatype *newtype );
-HYPRE_Int hypre_MPI_Type_struct( HYPRE_Int count, HYPRE_Int *array_of_blocklengths,
+NALU_HYPRE_Int hypre_MPI_Type_struct( NALU_HYPRE_Int count, NALU_HYPRE_Int *array_of_blocklengths,
                                  hypre_MPI_Aint *array_of_displacements, hypre_MPI_Datatype *array_of_types,
                                  hypre_MPI_Datatype *newtype );
-HYPRE_Int hypre_MPI_Type_commit( hypre_MPI_Datatype *datatype );
-HYPRE_Int hypre_MPI_Type_free( hypre_MPI_Datatype *datatype );
-HYPRE_Int hypre_MPI_Op_free( hypre_MPI_Op *op );
-HYPRE_Int hypre_MPI_Op_create( hypre_MPI_User_function *function, hypre_int commute,
+NALU_HYPRE_Int hypre_MPI_Type_commit( hypre_MPI_Datatype *datatype );
+NALU_HYPRE_Int hypre_MPI_Type_free( hypre_MPI_Datatype *datatype );
+NALU_HYPRE_Int hypre_MPI_Op_free( hypre_MPI_Op *op );
+NALU_HYPRE_Int hypre_MPI_Op_create( hypre_MPI_User_function *function, hypre_int commute,
                                hypre_MPI_Op *op );
-#if defined(HYPRE_USING_GPU)
-HYPRE_Int hypre_MPI_Comm_split_type(hypre_MPI_Comm comm, HYPRE_Int split_type, HYPRE_Int key,
+#if defined(NALU_HYPRE_USING_GPU)
+NALU_HYPRE_Int hypre_MPI_Comm_split_type(hypre_MPI_Comm comm, NALU_HYPRE_Int split_type, NALU_HYPRE_Int key,
                                     hypre_MPI_Info info, hypre_MPI_Comm *newcomm);
-HYPRE_Int hypre_MPI_Info_create(hypre_MPI_Info *info);
-HYPRE_Int hypre_MPI_Info_free( hypre_MPI_Info *info );
+NALU_HYPRE_Int hypre_MPI_Info_create(hypre_MPI_Info *info);
+NALU_HYPRE_Int hypre_MPI_Info_free( hypre_MPI_Info *info );
 #endif
 
 #ifdef __cplusplus
@@ -508,11 +508,11 @@ HYPRE_Int hypre_MPI_Info_free( hypre_MPI_Info *info );
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#ifndef HYPRE_SMP_HEADER
-#define HYPRE_SMP_HEADER
+#ifndef NALU_HYPRE_SMP_HEADER
+#define NALU_HYPRE_SMP_HEADER
 #endif
 
-#define HYPRE_SMP_SCHEDULE schedule(static)
+#define NALU_HYPRE_SMP_SCHEDULE schedule(static)
 
 /******************************************************************************
  * Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
@@ -587,11 +587,11 @@ HYPRE_Int hypre_MPI_Info_free( hypre_MPI_Info *info );
 #include <stdio.h>
 #include <stdlib.h>
 
-#if defined(HYPRE_USING_UNIFIED_MEMORY) && defined(HYPRE_USING_DEVICE_OPENMP)
+#if defined(NALU_HYPRE_USING_UNIFIED_MEMORY) && defined(NALU_HYPRE_USING_DEVICE_OPENMP)
 //#pragma omp requires unified_shared_memory
 #endif
 
-#if defined(HYPRE_USING_UMPIRE)
+#if defined(NALU_HYPRE_USING_UMPIRE)
 #include "umpire/config.hpp"
 #if UMPIRE_VERSION_MAJOR >= 2022
 #include "umpire/interface/c_fortran/umpire.h"
@@ -600,7 +600,7 @@ HYPRE_Int hypre_MPI_Info_free( hypre_MPI_Info *info );
 #include "umpire/interface/umpire.h"
 #define hypre_umpire_resourcemanager_make_allocator_pool umpire_resourcemanager_make_allocator_pool
 #endif
-#define HYPRE_UMPIRE_POOL_NAME_MAX_LEN 1024
+#define NALU_HYPRE_UMPIRE_POOL_NAME_MAX_LEN 1024
 #endif
 
 /* stringification:
@@ -608,8 +608,8 @@ HYPRE_Int hypre_MPI_Info_free( hypre_MPI_Info *info );
  * The three dots as last argument of the macro tells compiler that this is a variadic macro.
  * I.e. this is a macro that receives variable number of arguments.
  */
-#define HYPRE_STR(...) #__VA_ARGS__
-#define HYPRE_XSTR(...) HYPRE_STR(__VA_ARGS__)
+#define NALU_HYPRE_STR(...) #__VA_ARGS__
+#define NALU_HYPRE_XSTR(...) NALU_HYPRE_STR(__VA_ARGS__)
 
 #ifdef __cplusplus
 extern "C" {
@@ -630,20 +630,20 @@ typedef enum _hypre_MemoryLocation
  *   return actual location based on the selected memory model
  *-------------------------------------------------------*/
 static inline hypre_MemoryLocation
-hypre_GetActualMemLocation(HYPRE_MemoryLocation location)
+hypre_GetActualMemLocation(NALU_HYPRE_MemoryLocation location)
 {
-   if (location == HYPRE_MEMORY_HOST)
+   if (location == NALU_HYPRE_MEMORY_HOST)
    {
       return hypre_MEMORY_HOST;
    }
 
-   if (location == HYPRE_MEMORY_DEVICE)
+   if (location == NALU_HYPRE_MEMORY_DEVICE)
    {
-#if defined(HYPRE_USING_HOST_MEMORY)
+#if defined(NALU_HYPRE_USING_HOST_MEMORY)
       return hypre_MEMORY_HOST;
-#elif defined(HYPRE_USING_DEVICE_MEMORY)
+#elif defined(NALU_HYPRE_USING_DEVICE_MEMORY)
       return hypre_MEMORY_DEVICE;
-#elif defined(HYPRE_USING_UNIFIED_MEMORY)
+#elif defined(NALU_HYPRE_USING_UNIFIED_MEMORY)
       return hypre_MEMORY_UNIFIED;
 #else
 #error Wrong HYPRE memory setting.
@@ -654,7 +654,7 @@ hypre_GetActualMemLocation(HYPRE_MemoryLocation location)
 }
 
 
-#if !defined(HYPRE_USING_MEMORY_TRACKER)
+#if !defined(NALU_HYPRE_USING_MEMORY_TRACKER)
 
 #define hypre_TAlloc(type, count, location) \
 ( (type *) hypre_MAlloc((size_t)(sizeof(type) * (count)), location) )
@@ -680,7 +680,7 @@ hypre_GetActualMemLocation(HYPRE_MemoryLocation location)
 #define _hypre_TFree(ptr, location) \
 ( _hypre_Free((void *)ptr, location), ptr = NULL )
 
-#endif /* #if !defined(HYPRE_USING_MEMORY_TRACKER) */
+#endif /* #if !defined(NALU_HYPRE_USING_MEMORY_TRACKER) */
 
 
 /*--------------------------------------------------------------------------
@@ -688,45 +688,45 @@ hypre_GetActualMemLocation(HYPRE_MemoryLocation location)
  *--------------------------------------------------------------------------*/
 
 /* memory.c */
-HYPRE_Int hypre_GetMemoryLocationName(hypre_MemoryLocation memory_location,
+NALU_HYPRE_Int hypre_GetMemoryLocationName(hypre_MemoryLocation memory_location,
                                       char *memory_location_name);
-void * hypre_Memset(void *ptr, HYPRE_Int value, size_t num, HYPRE_MemoryLocation location);
-void   hypre_MemPrefetch(void *ptr, size_t size, HYPRE_MemoryLocation location);
-void * hypre_MAlloc(size_t size, HYPRE_MemoryLocation location);
-void * hypre_CAlloc( size_t count, size_t elt_size, HYPRE_MemoryLocation location);
-void   hypre_Free(void *ptr, HYPRE_MemoryLocation location);
-void   hypre_Memcpy(void *dst, void *src, size_t size, HYPRE_MemoryLocation loc_dst,
-                    HYPRE_MemoryLocation loc_src);
-void * hypre_ReAlloc(void *ptr, size_t size, HYPRE_MemoryLocation location);
-void * hypre_ReAlloc_v2(void *ptr, size_t old_size, size_t new_size, HYPRE_MemoryLocation location);
+void * hypre_Memset(void *ptr, NALU_HYPRE_Int value, size_t num, NALU_HYPRE_MemoryLocation location);
+void   hypre_MemPrefetch(void *ptr, size_t size, NALU_HYPRE_MemoryLocation location);
+void * hypre_MAlloc(size_t size, NALU_HYPRE_MemoryLocation location);
+void * hypre_CAlloc( size_t count, size_t elt_size, NALU_HYPRE_MemoryLocation location);
+void   hypre_Free(void *ptr, NALU_HYPRE_MemoryLocation location);
+void   hypre_Memcpy(void *dst, void *src, size_t size, NALU_HYPRE_MemoryLocation loc_dst,
+                    NALU_HYPRE_MemoryLocation loc_src);
+void * hypre_ReAlloc(void *ptr, size_t size, NALU_HYPRE_MemoryLocation location);
+void * hypre_ReAlloc_v2(void *ptr, size_t old_size, size_t new_size, NALU_HYPRE_MemoryLocation location);
 
 void * _hypre_MAlloc(size_t size, hypre_MemoryLocation location);
 void   _hypre_Free(void *ptr, hypre_MemoryLocation location);
 
-HYPRE_ExecutionPolicy hypre_GetExecPolicy1(HYPRE_MemoryLocation location);
-HYPRE_ExecutionPolicy hypre_GetExecPolicy2(HYPRE_MemoryLocation location1,
-                                           HYPRE_MemoryLocation location2);
+NALU_HYPRE_ExecutionPolicy hypre_GetExecPolicy1(NALU_HYPRE_MemoryLocation location);
+NALU_HYPRE_ExecutionPolicy hypre_GetExecPolicy2(NALU_HYPRE_MemoryLocation location1,
+                                           NALU_HYPRE_MemoryLocation location2);
 
-HYPRE_Int hypre_GetPointerLocation(const void *ptr, hypre_MemoryLocation *memory_location);
-HYPRE_Int hypre_SetCubMemPoolSize( hypre_uint bin_growth, hypre_uint min_bin, hypre_uint max_bin,
+NALU_HYPRE_Int hypre_GetPointerLocation(const void *ptr, hypre_MemoryLocation *memory_location);
+NALU_HYPRE_Int hypre_SetCubMemPoolSize( hypre_uint bin_growth, hypre_uint min_bin, hypre_uint max_bin,
                                    size_t max_cached_bytes );
-HYPRE_Int hypre_umpire_host_pooled_allocate(void **ptr, size_t nbytes);
-HYPRE_Int hypre_umpire_host_pooled_free(void *ptr);
+NALU_HYPRE_Int hypre_umpire_host_pooled_allocate(void **ptr, size_t nbytes);
+NALU_HYPRE_Int hypre_umpire_host_pooled_free(void *ptr);
 void *hypre_umpire_host_pooled_realloc(void *ptr, size_t size);
-HYPRE_Int hypre_umpire_device_pooled_allocate(void **ptr, size_t nbytes);
-HYPRE_Int hypre_umpire_device_pooled_free(void *ptr);
-HYPRE_Int hypre_umpire_um_pooled_allocate(void **ptr, size_t nbytes);
-HYPRE_Int hypre_umpire_um_pooled_free(void *ptr);
-HYPRE_Int hypre_umpire_pinned_pooled_allocate(void **ptr, size_t nbytes);
-HYPRE_Int hypre_umpire_pinned_pooled_free(void *ptr);
+NALU_HYPRE_Int hypre_umpire_device_pooled_allocate(void **ptr, size_t nbytes);
+NALU_HYPRE_Int hypre_umpire_device_pooled_free(void *ptr);
+NALU_HYPRE_Int hypre_umpire_um_pooled_allocate(void **ptr, size_t nbytes);
+NALU_HYPRE_Int hypre_umpire_um_pooled_free(void *ptr);
+NALU_HYPRE_Int hypre_umpire_pinned_pooled_allocate(void **ptr, size_t nbytes);
+NALU_HYPRE_Int hypre_umpire_pinned_pooled_free(void *ptr);
 
 /* memory_dmalloc.c */
-HYPRE_Int hypre_InitMemoryDebugDML( HYPRE_Int id );
-HYPRE_Int hypre_FinalizeMemoryDebugDML( void );
-char *hypre_MAllocDML( HYPRE_Int size, char *file, HYPRE_Int line );
-char *hypre_CAllocDML( HYPRE_Int count, HYPRE_Int elt_size, char *file, HYPRE_Int line );
-char *hypre_ReAllocDML( char *ptr, HYPRE_Int size, char *file, HYPRE_Int line );
-void hypre_FreeDML( char *ptr, char *file, HYPRE_Int line );
+NALU_HYPRE_Int hypre_InitMemoryDebugDML( NALU_HYPRE_Int id );
+NALU_HYPRE_Int hypre_FinalizeMemoryDebugDML( void );
+char *hypre_MAllocDML( NALU_HYPRE_Int size, char *file, NALU_HYPRE_Int line );
+char *hypre_CAllocDML( NALU_HYPRE_Int count, NALU_HYPRE_Int elt_size, char *file, NALU_HYPRE_Int line );
+char *hypre_ReAllocDML( char *ptr, NALU_HYPRE_Int size, char *file, NALU_HYPRE_Int line );
+void hypre_FreeDML( char *ptr, char *file, NALU_HYPRE_Int line );
 
 /* GPU malloc prototype */
 typedef void (*GPUMallocFunc)(void **, size_t);
@@ -748,20 +748,20 @@ typedef void (*GPUMfreeFunc)(void *);
 #ifndef hypre_MEMORY_TRACKER_HEADER
 #define hypre_MEMORY_TRACKER_HEADER
 
-#if defined(HYPRE_USING_MEMORY_TRACKER)
+#if defined(NALU_HYPRE_USING_MEMORY_TRACKER)
 
 extern size_t hypre_total_bytes[hypre_MEMORY_UNIFIED + 1];
 extern size_t hypre_peak_bytes[hypre_MEMORY_UNIFIED + 1];
 extern size_t hypre_current_bytes[hypre_MEMORY_UNIFIED + 1];
-extern HYPRE_Int hypre_memory_tracker_print;
-extern char hypre_memory_tracker_filename[HYPRE_MAX_FILE_NAME_LEN];
+extern NALU_HYPRE_Int hypre_memory_tracker_print;
+extern char hypre_memory_tracker_filename[NALU_HYPRE_MAX_FILE_NAME_LEN];
 
 typedef enum _hypre_MemoryTrackerEvent
 {
-   HYPRE_MEMORY_EVENT_ALLOC = 0,
-   HYPRE_MEMORY_EVENT_FREE,
-   HYPRE_MEMORY_EVENT_COPY,
-   HYPRE_MEMORY_NUM_EVENTS,
+   NALU_HYPRE_MEMORY_EVENT_ALLOC = 0,
+   NALU_HYPRE_MEMORY_EVENT_FREE,
+   NALU_HYPRE_MEMORY_EVENT_COPY,
+   NALU_HYPRE_MEMORY_NUM_EVENTS,
 } hypre_MemoryTrackerEvent;
 
 typedef enum _hypre_MemcpyType
@@ -783,9 +783,9 @@ typedef struct
    size_t                nbytes;
    hypre_MemoryLocation  memory_location;
    hypre_MemoryLocation  memory_location2;
-   char                  filename[HYPRE_MAX_FILE_NAME_LEN];
+   char                  filename[NALU_HYPRE_MAX_FILE_NAME_LEN];
    char                  function[256];
-   HYPRE_Int             line;
+   NALU_HYPRE_Int             line;
    size_t                pair;
 } hypre_MemoryTrackerEntry;
 
@@ -806,7 +806,7 @@ typedef struct
 typedef struct
 {
    size_t                   curr_time_step;
-   hypre_MemoryTrackerQueue queue[HYPRE_MEMORY_NUM_EVENTS];
+   hypre_MemoryTrackerQueue queue[NALU_HYPRE_MEMORY_NUM_EVENTS];
 } hypre_MemoryTracker;
 
 #define hypre_TAlloc(type, count, location)                                                         \
@@ -909,7 +909,7 @@ typedef struct
 }                                                                                                   \
 )
 
-#endif /* #if defined(HYPRE_USING_MEMORY_TRACKER) */
+#endif /* #if defined(NALU_HYPRE_USING_MEMORY_TRACKER) */
 #endif /* #ifndef hypre_MEMORY_TRACKER_HEADER */
 
 /******************************************************************************
@@ -919,17 +919,17 @@ typedef struct
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#ifndef HYPRE_OMP_DEVICE_H
-#define HYPRE_OMP_DEVICE_H
+#ifndef NALU_HYPRE_OMP_DEVICE_H
+#define NALU_HYPRE_OMP_DEVICE_H
 
-#if defined(HYPRE_USING_DEVICE_OPENMP)
+#if defined(NALU_HYPRE_USING_DEVICE_OPENMP)
 
 #include "omp.h"
 
 /* OpenMP 4.5 device memory management */
-extern HYPRE_Int hypre__global_offload;
-extern HYPRE_Int hypre__offload_device_num;
-extern HYPRE_Int hypre__offload_host_num;
+extern NALU_HYPRE_Int hypre__global_offload;
+extern NALU_HYPRE_Int hypre__offload_device_num;
+extern NALU_HYPRE_Int hypre__offload_host_num;
 
 /* stats */
 extern size_t hypre__target_allc_count;
@@ -946,10 +946,10 @@ extern size_t hypre__target_dtoh_bytes;
  * if we ``exit'' or ''update'' an address, it should exist in device [o.w ERROR]
  * hypre__offload_flag: 0 == OK; 1 == WRONG
  */
-#ifdef HYPRE_DEVICE_OPENMP_CHECK
-#define HYPRE_OFFLOAD_FLAG(devnum, hptr, type) HYPRE_Int hypre__offload_flag = (type[1] == 'n') == omp_target_is_present(hptr, devnum);
+#ifdef NALU_HYPRE_DEVICE_OPENMP_CHECK
+#define NALU_HYPRE_OFFLOAD_FLAG(devnum, hptr, type) NALU_HYPRE_Int hypre__offload_flag = (type[1] == 'n') == omp_target_is_present(hptr, devnum);
 #else
-#define HYPRE_OFFLOAD_FLAG(...) HYPRE_Int hypre__offload_flag = 0; /* non-debug mode, always OK */
+#define NALU_HYPRE_OFFLOAD_FLAG(...) NALU_HYPRE_Int hypre__offload_flag = 0; /* non-debug mode, always OK */
 #endif
 
 /* OMP 4.5 offloading macro */
@@ -969,7 +969,7 @@ extern size_t hypre__target_dtoh_bytes;
       /* offloading offset and size (in datatype) */ \
       size_t hypre__offload_offset = offset, hypre__offload_size = count; \
       /* in the CHECK mode, we test if this offload has effect */ \
-      HYPRE_OFFLOAD_FLAG(devnum, hypre__offload_hptr, type1) \
+      NALU_HYPRE_OFFLOAD_FLAG(devnum, hypre__offload_hptr, type1) \
       if (hypre__offload_flag) { \
          printf("[!NO Effect! %s %d] device %d target: %6s %6s, data %p, [%ld:%ld]\n", __FILE__, __LINE__, devnum, type1, type2, (void *)hypre__offload_hptr, hypre__offload_offset, hypre__offload_size); exit(0); \
       } else { \
@@ -981,34 +981,34 @@ extern size_t hypre__target_dtoh_bytes;
             hypre__target_allc_bytes += offload_bytes; \
             hypre__target_htod_count ++; \
             hypre__target_htod_bytes += offload_bytes; \
-            _Pragma (HYPRE_XSTR(omp target enter data map(to:hypre__offload_hptr[hypre__offload_offset:hypre__offload_size]))) \
+            _Pragma (NALU_HYPRE_XSTR(omp target enter data map(to:hypre__offload_hptr[hypre__offload_offset:hypre__offload_size]))) \
          } else if (type1[1] == 'n' && type2[0] == 'a') { \
             /* enter alloc */ \
             hypre__target_allc_count ++; \
             hypre__target_allc_bytes += offload_bytes; \
-            _Pragma (HYPRE_XSTR(omp target enter data map(alloc:hypre__offload_hptr[hypre__offload_offset:hypre__offload_size]))) \
+            _Pragma (NALU_HYPRE_XSTR(omp target enter data map(alloc:hypre__offload_hptr[hypre__offload_offset:hypre__offload_size]))) \
          } else if (type1[1] == 'x' && type2[0] == 'd') { \
             /* exit delete */\
             hypre__target_free_count ++; \
             hypre__target_free_bytes += offload_bytes; \
-            _Pragma (HYPRE_XSTR(omp target exit data map(delete:hypre__offload_hptr[hypre__offload_offset:hypre__offload_size]))) \
+            _Pragma (NALU_HYPRE_XSTR(omp target exit data map(delete:hypre__offload_hptr[hypre__offload_offset:hypre__offload_size]))) \
          } else if (type1[1] == 'x' && type2[0] == 'f') {\
             /* exit from */ \
             hypre__target_free_count ++; \
             hypre__target_free_bytes += offload_bytes; \
             hypre__target_dtoh_count ++; \
             hypre__target_dtoh_bytes += offload_bytes; \
-            _Pragma (HYPRE_XSTR(omp target exit data map(from:hypre__offload_hptr[hypre__offload_offset:hypre__offload_size]))) \
+            _Pragma (NALU_HYPRE_XSTR(omp target exit data map(from:hypre__offload_hptr[hypre__offload_offset:hypre__offload_size]))) \
          } else if (type1[1] == 'p' && type2[0] == 't') { \
             /* update to */ \
             hypre__target_htod_count ++; \
             hypre__target_htod_bytes += offload_bytes; \
-            _Pragma (HYPRE_XSTR(omp target update to(hypre__offload_hptr[hypre__offload_offset:hypre__offload_size]))) \
+            _Pragma (NALU_HYPRE_XSTR(omp target update to(hypre__offload_hptr[hypre__offload_offset:hypre__offload_size]))) \
          } else if (type1[1] == 'p' && type2[0] == 'f') {\
             /* update from */ \
             hypre__target_dtoh_count ++; \
             hypre__target_dtoh_bytes += offload_bytes; \
-            _Pragma (HYPRE_XSTR(omp target update from(hypre__offload_hptr[hypre__offload_offset:hypre__offload_size]))) \
+            _Pragma (NALU_HYPRE_XSTR(omp target update from(hypre__offload_hptr[hypre__offload_offset:hypre__offload_size]))) \
          } else {\
             printf("error: unrecognized offloading type combination!\n"); exit(-1); \
          } \
@@ -1016,15 +1016,15 @@ extern size_t hypre__target_dtoh_bytes;
    } \
 }
 
-HYPRE_Int HYPRE_OMPOffload(HYPRE_Int device, void *ptr, size_t num, const char *type1,
+NALU_HYPRE_Int NALU_HYPRE_OMPOffload(NALU_HYPRE_Int device, void *ptr, size_t num, const char *type1,
                            const char *type2);
-HYPRE_Int HYPRE_OMPPtrIsMapped(void *p, HYPRE_Int device_num);
-HYPRE_Int HYPRE_OMPOffloadOn();
-HYPRE_Int HYPRE_OMPOffloadOff();
-HYPRE_Int HYPRE_OMPOffloadStatPrint();
+NALU_HYPRE_Int NALU_HYPRE_OMPPtrIsMapped(void *p, NALU_HYPRE_Int device_num);
+NALU_HYPRE_Int NALU_HYPRE_OMPOffloadOn();
+NALU_HYPRE_Int NALU_HYPRE_OMPOffloadOff();
+NALU_HYPRE_Int NALU_HYPRE_OMPOffloadStatPrint();
 
-#endif /* HYPRE_USING_DEVICE_OPENMP */
-#endif /* HYPRE_OMP_DEVICE_H */
+#endif /* NALU_HYPRE_USING_DEVICE_OPENMP */
+#endif /* NALU_HYPRE_OMP_DEVICE_H */
 
 /******************************************************************************
  * Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
@@ -1036,12 +1036,12 @@ HYPRE_Int HYPRE_OMPOffloadStatPrint();
 #ifndef hypre_THREADING_HEADER
 #define hypre_THREADING_HEADER
 
-#ifdef HYPRE_USING_OPENMP
+#ifdef NALU_HYPRE_USING_OPENMP
 
-HYPRE_Int hypre_NumThreads( void );
-HYPRE_Int hypre_NumActiveThreads( void );
-HYPRE_Int hypre_GetThreadNum( void );
-void      hypre_SetNumThreads(HYPRE_Int nt);
+NALU_HYPRE_Int hypre_NumThreads( void );
+NALU_HYPRE_Int hypre_NumActiveThreads( void );
+NALU_HYPRE_Int hypre_GetThreadNum( void );
+void      hypre_SetNumThreads(NALU_HYPRE_Int nt);
 
 #else
 
@@ -1052,7 +1052,7 @@ void      hypre_SetNumThreads(HYPRE_Int nt);
 
 #endif
 
-void hypre_GetSimpleThreadPartition( HYPRE_Int *begin, HYPRE_Int *end, HYPRE_Int n );
+void hypre_GetSimpleThreadPartition( NALU_HYPRE_Int *begin, NALU_HYPRE_Int *end, NALU_HYPRE_Int n );
 
 #endif
 
@@ -1069,8 +1069,8 @@ void hypre_GetSimpleThreadPartition( HYPRE_Int *begin, HYPRE_Int *end, HYPRE_Int
  *
  *****************************************************************************/
 
-#ifndef HYPRE_TIMING_HEADER
-#define HYPRE_TIMING_HEADER
+#ifndef NALU_HYPRE_TIMING_HEADER
+#define NALU_HYPRE_TIMING_HEADER
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -1085,16 +1085,16 @@ extern "C" {
  *--------------------------------------------------------------------------*/
 
 /* timer.c */
-HYPRE_Real time_getWallclockSeconds( void );
-HYPRE_Real time_getCPUSeconds( void );
-HYPRE_Real time_get_wallclock_seconds_( void );
-HYPRE_Real time_get_cpu_seconds_( void );
+NALU_HYPRE_Real time_getWallclockSeconds( void );
+NALU_HYPRE_Real time_getCPUSeconds( void );
+NALU_HYPRE_Real time_get_wallclock_seconds_( void );
+NALU_HYPRE_Real time_get_cpu_seconds_( void );
 
 /*--------------------------------------------------------------------------
  * With timing off
  *--------------------------------------------------------------------------*/
 
-#ifndef HYPRE_TIMING
+#ifndef NALU_HYPRE_TIMING
 
 #define hypre_InitializeTiming(name) 0
 #define hypre_FinalizeTiming(index)
@@ -1117,23 +1117,23 @@ HYPRE_Real time_get_cpu_seconds_( void );
 
 typedef struct
 {
-   HYPRE_Real  *wall_time;
-   HYPRE_Real  *cpu_time;
-   HYPRE_Real  *flops;
+   NALU_HYPRE_Real  *wall_time;
+   NALU_HYPRE_Real  *cpu_time;
+   NALU_HYPRE_Real  *flops;
    char   **name;
-   HYPRE_Int     *state;     /* boolean flag to allow for recursive timing */
-   HYPRE_Int     *num_regs;  /* count of how many times a name is registered */
+   NALU_HYPRE_Int     *state;     /* boolean flag to allow for recursive timing */
+   NALU_HYPRE_Int     *num_regs;  /* count of how many times a name is registered */
 
-   HYPRE_Int      num_names;
-   HYPRE_Int      size;
+   NALU_HYPRE_Int      num_names;
+   NALU_HYPRE_Int      size;
 
-   HYPRE_Real   wall_count;
-   HYPRE_Real   CPU_count;
-   HYPRE_Real   FLOP_count;
+   NALU_HYPRE_Real   wall_count;
+   NALU_HYPRE_Real   CPU_count;
+   NALU_HYPRE_Real   FLOP_count;
 
 } hypre_TimingType;
 
-#ifdef HYPRE_TIMING_GLOBALS
+#ifdef NALU_HYPRE_TIMING_GLOBALS
 hypre_TimingType *hypre_global_timing = NULL;
 #else
 extern hypre_TimingType *hypre_global_timing;
@@ -1158,15 +1158,15 @@ extern hypre_TimingType *hypre_global_timing;
  *-------------------------------------------------------*/
 
 /* timing.c */
-HYPRE_Int hypre_InitializeTiming( const char *name );
-HYPRE_Int hypre_FinalizeTiming( HYPRE_Int time_index );
-HYPRE_Int hypre_FinalizeAllTimings();
-HYPRE_Int hypre_IncFLOPCount( HYPRE_BigInt inc );
-HYPRE_Int hypre_BeginTiming( HYPRE_Int time_index );
-HYPRE_Int hypre_EndTiming( HYPRE_Int time_index );
-HYPRE_Int hypre_ClearTiming( void );
-HYPRE_Int hypre_PrintTiming( const char *heading, MPI_Comm comm );
-HYPRE_Int hypre_GetTiming( const char *heading, HYPRE_Real *wall_time_ptr, MPI_Comm comm );
+NALU_HYPRE_Int hypre_InitializeTiming( const char *name );
+NALU_HYPRE_Int hypre_FinalizeTiming( NALU_HYPRE_Int time_index );
+NALU_HYPRE_Int hypre_FinalizeAllTimings();
+NALU_HYPRE_Int hypre_IncFLOPCount( NALU_HYPRE_BigInt inc );
+NALU_HYPRE_Int hypre_BeginTiming( NALU_HYPRE_Int time_index );
+NALU_HYPRE_Int hypre_EndTiming( NALU_HYPRE_Int time_index );
+NALU_HYPRE_Int hypre_ClearTiming( void );
+NALU_HYPRE_Int hypre_PrintTiming( const char *heading, MPI_Comm comm );
+NALU_HYPRE_Int hypre_GetTiming( const char *heading, NALU_HYPRE_Real *wall_time_ptr, MPI_Comm comm );
 
 #endif
 
@@ -1189,8 +1189,8 @@ HYPRE_Int hypre_GetTiming( const char *heading, HYPRE_Real *wall_time_ptr, MPI_C
  *
  *****************************************************************************/
 
-#ifndef HYPRE_LINKLIST_HEADER
-#define HYPRE_LINKLIST_HEADER
+#ifndef NALU_HYPRE_LINKLIST_HEADER
+#define NALU_HYPRE_LINKLIST_HEADER
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -1202,11 +1202,11 @@ extern "C" {
 
 struct double_linked_list
 {
-   HYPRE_Int                  data;
+   NALU_HYPRE_Int                  data;
    struct double_linked_list *next_elt;
    struct double_linked_list *prev_elt;
-   HYPRE_Int                  head;
-   HYPRE_Int                  tail;
+   NALU_HYPRE_Int                  head;
+   NALU_HYPRE_Int                  tail;
 };
 
 typedef struct double_linked_list hypre_ListElement;
@@ -1235,9 +1235,9 @@ typedef hypre_ListElement *hypre_LinkList;
 
 typedef struct
 {
-   HYPRE_Int                   parent_id;
-   HYPRE_Int                   num_child;
-   HYPRE_Int                  *child_id;
+   NALU_HYPRE_Int                   parent_id;
+   NALU_HYPRE_Int                   num_child;
+   NALU_HYPRE_Int                  *child_id;
 } hypre_BinaryTree;
 
 /* In the fill_response() function the user needs to set the recv__buf
@@ -1250,23 +1250,23 @@ typedef struct
 
 typedef struct
 {
-   HYPRE_Int    (*fill_response)(void* recv_buf, HYPRE_Int contact_size,
-                                 HYPRE_Int contact_proc, void* response_obj,
+   NALU_HYPRE_Int    (*fill_response)(void* recv_buf, NALU_HYPRE_Int contact_size,
+                                 NALU_HYPRE_Int contact_proc, void* response_obj,
                                  MPI_Comm comm, void** response_buf,
-                                 HYPRE_Int* response_message_size);
-   HYPRE_Int     send_response_overhead; /*set by exchange data */
-   HYPRE_Int     send_response_storage;  /*storage allocated for send_response_buf*/
+                                 NALU_HYPRE_Int* response_message_size);
+   NALU_HYPRE_Int     send_response_overhead; /*set by exchange data */
+   NALU_HYPRE_Int     send_response_storage;  /*storage allocated for send_response_buf*/
    void    *data1;                 /*data fields user may want to access in fill_response */
    void    *data2;
 
 } hypre_DataExchangeResponse;
 
-HYPRE_Int hypre_CreateBinaryTree(HYPRE_Int, HYPRE_Int, hypre_BinaryTree*);
-HYPRE_Int hypre_DestroyBinaryTree(hypre_BinaryTree*);
-HYPRE_Int hypre_DataExchangeList(HYPRE_Int num_contacts, HYPRE_Int *contact_proc_list,
-                                 void *contact_send_buf, HYPRE_Int *contact_send_buf_starts, HYPRE_Int contact_obj_size,
-                                 HYPRE_Int response_obj_size, hypre_DataExchangeResponse *response_obj, HYPRE_Int max_response_size,
-                                 HYPRE_Int rnum, MPI_Comm comm, void **p_response_recv_buf, HYPRE_Int **p_response_recv_buf_starts);
+NALU_HYPRE_Int hypre_CreateBinaryTree(NALU_HYPRE_Int, NALU_HYPRE_Int, hypre_BinaryTree*);
+NALU_HYPRE_Int hypre_DestroyBinaryTree(hypre_BinaryTree*);
+NALU_HYPRE_Int hypre_DataExchangeList(NALU_HYPRE_Int num_contacts, NALU_HYPRE_Int *contact_proc_list,
+                                 void *contact_send_buf, NALU_HYPRE_Int *contact_send_buf_starts, NALU_HYPRE_Int contact_obj_size,
+                                 NALU_HYPRE_Int response_obj_size, hypre_DataExchangeResponse *response_obj, NALU_HYPRE_Int max_response_size,
+                                 NALU_HYPRE_Int rnum, MPI_Comm comm, void **p_response_recv_buf, NALU_HYPRE_Int **p_response_recv_buf_starts);
 
 #endif /* end of header */
 
@@ -1286,9 +1286,9 @@ HYPRE_Int hypre_DataExchangeList(HYPRE_Int num_contacts, HYPRE_Int *contact_proc
 #ifndef CALIPER_INSTRUMENTATION_HEADER
 #define CALIPER_INSTRUMENTATION_HEADER
 
-#include "HYPRE_config.h"
+#include "NALU_HYPRE_config.h"
 
-#ifdef HYPRE_USING_CALIPER
+#ifdef NALU_HYPRE_USING_CALIPER
 
 #ifdef __cplusplus
 extern "C++"
@@ -1304,28 +1304,28 @@ extern "C++"
 static char hypre__levelname[16];
 static char hypre__markname[1024];
 
-#define HYPRE_ANNOTATE_FUNC_BEGIN          CALI_MARK_FUNCTION_BEGIN
-#define HYPRE_ANNOTATE_FUNC_END            CALI_MARK_FUNCTION_END
-#define HYPRE_ANNOTATE_LOOP_BEGIN(id, str) CALI_MARK_LOOP_BEGIN(id, str)
-#define HYPRE_ANNOTATE_LOOP_END(id)        CALI_MARK_LOOP_END(id)
-#define HYPRE_ANNOTATE_ITER_BEGIN(id, it)  CALI_MARK_ITERATION_BEGIN(id, it)
-#define HYPRE_ANNOTATE_ITER_END(id)        CALI_MARK_ITERATION_END(id)
-#define HYPRE_ANNOTATE_REGION_BEGIN(...)\
+#define NALU_HYPRE_ANNOTATE_FUNC_BEGIN          CALI_MARK_FUNCTION_BEGIN
+#define NALU_HYPRE_ANNOTATE_FUNC_END            CALI_MARK_FUNCTION_END
+#define NALU_HYPRE_ANNOTATE_LOOP_BEGIN(id, str) CALI_MARK_LOOP_BEGIN(id, str)
+#define NALU_HYPRE_ANNOTATE_LOOP_END(id)        CALI_MARK_LOOP_END(id)
+#define NALU_HYPRE_ANNOTATE_ITER_BEGIN(id, it)  CALI_MARK_ITERATION_BEGIN(id, it)
+#define NALU_HYPRE_ANNOTATE_ITER_END(id)        CALI_MARK_ITERATION_END(id)
+#define NALU_HYPRE_ANNOTATE_REGION_BEGIN(...)\
 {\
    hypre_sprintf(hypre__markname, __VA_ARGS__);\
    CALI_MARK_BEGIN(hypre__markname);\
 }
-#define HYPRE_ANNOTATE_REGION_END(...)\
+#define NALU_HYPRE_ANNOTATE_REGION_END(...)\
 {\
    hypre_sprintf(hypre__markname, __VA_ARGS__);\
    CALI_MARK_END(hypre__markname);\
 }
-#define HYPRE_ANNOTATE_MGLEVEL_BEGIN(lvl)\
+#define NALU_HYPRE_ANNOTATE_MGLEVEL_BEGIN(lvl)\
 {\
    hypre_sprintf(hypre__levelname, "MG level %d", lvl);\
    CALI_MARK_BEGIN(hypre__levelname);\
 }
-#define HYPRE_ANNOTATE_MGLEVEL_END(lvl)\
+#define NALU_HYPRE_ANNOTATE_MGLEVEL_END(lvl)\
 {\
    hypre_sprintf(hypre__levelname, "MG level %d", lvl);\
    CALI_MARK_END(hypre__levelname);\
@@ -1333,17 +1333,17 @@ static char hypre__markname[1024];
 
 #else
 
-#define HYPRE_ANNOTATE_FUNC_BEGIN
-#define HYPRE_ANNOTATE_FUNC_END
-#define HYPRE_ANNOTATE_LOOP_BEGIN(id, str)
-#define HYPRE_ANNOTATE_LOOP_END(id)
-#define HYPRE_ANNOTATE_ITER_BEGIN(id, it)
-#define HYPRE_ANNOTATE_ITER_END(id)
-#define HYPRE_ANNOTATE_REGION_BEGIN(...)
-#define HYPRE_ANNOTATE_REGION_END(...)
-#define HYPRE_ANNOTATE_MAX_MGLEVEL(lvl)
-#define HYPRE_ANNOTATE_MGLEVEL_BEGIN(lvl)
-#define HYPRE_ANNOTATE_MGLEVEL_END(lvl)
+#define NALU_HYPRE_ANNOTATE_FUNC_BEGIN
+#define NALU_HYPRE_ANNOTATE_FUNC_END
+#define NALU_HYPRE_ANNOTATE_LOOP_BEGIN(id, str)
+#define NALU_HYPRE_ANNOTATE_LOOP_END(id)
+#define NALU_HYPRE_ANNOTATE_ITER_BEGIN(id, it)
+#define NALU_HYPRE_ANNOTATE_ITER_END(id)
+#define NALU_HYPRE_ANNOTATE_REGION_BEGIN(...)
+#define NALU_HYPRE_ANNOTATE_REGION_END(...)
+#define NALU_HYPRE_ANNOTATE_MAX_MGLEVEL(lvl)
+#define NALU_HYPRE_ANNOTATE_MGLEVEL_BEGIN(lvl)
+#define NALU_HYPRE_ANNOTATE_MGLEVEL_END(lvl)
 
 #endif
 
@@ -1361,36 +1361,36 @@ static char hypre__markname[1024];
  *
  *****************************************************************************/
 
-#ifndef HYPRE_HANDLE_H
-#define HYPRE_HANDLE_H
+#ifndef NALU_HYPRE_HANDLE_H
+#define NALU_HYPRE_HANDLE_H
 
 struct hypre_DeviceData;
 typedef struct hypre_DeviceData hypre_DeviceData;
 
 typedef struct
 {
-   HYPRE_Int              hypre_error;
-   HYPRE_MemoryLocation   memory_location;
-   HYPRE_ExecutionPolicy  default_exec_policy;
-#if defined(HYPRE_USING_GPU)
+   NALU_HYPRE_Int              hypre_error;
+   NALU_HYPRE_MemoryLocation   memory_location;
+   NALU_HYPRE_ExecutionPolicy  default_exec_policy;
+#if defined(NALU_HYPRE_USING_GPU)
    hypre_DeviceData      *device_data;
    /* device G-S options */
-   HYPRE_Int              device_gs_method;
+   NALU_HYPRE_Int              device_gs_method;
 #endif
-#if defined(HYPRE_USING_UMPIRE)
-   char                   umpire_device_pool_name[HYPRE_UMPIRE_POOL_NAME_MAX_LEN];
-   char                   umpire_um_pool_name[HYPRE_UMPIRE_POOL_NAME_MAX_LEN];
-   char                   umpire_host_pool_name[HYPRE_UMPIRE_POOL_NAME_MAX_LEN];
-   char                   umpire_pinned_pool_name[HYPRE_UMPIRE_POOL_NAME_MAX_LEN];
+#if defined(NALU_HYPRE_USING_UMPIRE)
+   char                   umpire_device_pool_name[NALU_HYPRE_UMPIRE_POOL_NAME_MAX_LEN];
+   char                   umpire_um_pool_name[NALU_HYPRE_UMPIRE_POOL_NAME_MAX_LEN];
+   char                   umpire_host_pool_name[NALU_HYPRE_UMPIRE_POOL_NAME_MAX_LEN];
+   char                   umpire_pinned_pool_name[NALU_HYPRE_UMPIRE_POOL_NAME_MAX_LEN];
    size_t                 umpire_device_pool_size;
    size_t                 umpire_um_pool_size;
    size_t                 umpire_host_pool_size;
    size_t                 umpire_pinned_pool_size;
    size_t                 umpire_block_size;
-   HYPRE_Int              own_umpire_device_pool;
-   HYPRE_Int              own_umpire_um_pool;
-   HYPRE_Int              own_umpire_host_pool;
-   HYPRE_Int              own_umpire_pinned_pool;
+   NALU_HYPRE_Int              own_umpire_device_pool;
+   NALU_HYPRE_Int              own_umpire_um_pool;
+   NALU_HYPRE_Int              own_umpire_host_pool;
+   NALU_HYPRE_Int              own_umpire_pinned_pool;
    umpire_resourcemanager umpire_rm;
 #endif
    /* user malloc/free function pointers */
@@ -1463,14 +1463,14 @@ typedef struct
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#ifndef HYPRE_GSELIM_H
-#define HYPRE_GSELIM_H
+#ifndef NALU_HYPRE_GSELIM_H
+#define NALU_HYPRE_GSELIM_H
 
 #define hypre_gselim(A,x,n,error)                      \
 {                                                      \
-   HYPRE_Int    j,k,m;                                 \
-   HYPRE_Real factor;                                  \
-   HYPRE_Real divA;                                    \
+   NALU_HYPRE_Int    j,k,m;                                 \
+   NALU_HYPRE_Real factor;                                  \
+   NALU_HYPRE_Real divA;                                    \
    error = 0;                                          \
    if (n == 1)  /* A is 1x1 */                         \
    {                                                   \
@@ -1523,7 +1523,7 @@ typedef struct
    }                                                   \
 }
 
-#endif /* #ifndef HYPRE_GSELIM_H */
+#endif /* #ifndef NALU_HYPRE_GSELIM_H */
 
 /******************************************************************************
  * Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
@@ -1548,11 +1548,11 @@ typedef struct
 typedef struct
 {
    /* pointer to data and size of data */
-   HYPRE_Int            *data;
-   HYPRE_Int             size;
+   NALU_HYPRE_Int            *data;
+   NALU_HYPRE_Int             size;
 
    /* memory location of array data */
-   HYPRE_MemoryLocation  memory_location;
+   NALU_HYPRE_MemoryLocation  memory_location;
 } hypre_IntArray;
 
 /*--------------------------------------------------------------------------
@@ -1574,29 +1574,29 @@ typedef struct
 /* amg_linklist.c */
 void hypre_dispose_elt ( hypre_LinkList element_ptr );
 void hypre_remove_point ( hypre_LinkList *LoL_head_ptr, hypre_LinkList *LoL_tail_ptr,
-                          HYPRE_Int measure, HYPRE_Int index, HYPRE_Int *lists, HYPRE_Int *where );
-hypre_LinkList hypre_create_elt ( HYPRE_Int Item );
+                          NALU_HYPRE_Int measure, NALU_HYPRE_Int index, NALU_HYPRE_Int *lists, NALU_HYPRE_Int *where );
+hypre_LinkList hypre_create_elt ( NALU_HYPRE_Int Item );
 void hypre_enter_on_lists ( hypre_LinkList *LoL_head_ptr, hypre_LinkList *LoL_tail_ptr,
-                            HYPRE_Int measure, HYPRE_Int index, HYPRE_Int *lists, HYPRE_Int *where );
+                            NALU_HYPRE_Int measure, NALU_HYPRE_Int index, NALU_HYPRE_Int *lists, NALU_HYPRE_Int *where );
 
 /* binsearch.c */
-HYPRE_Int hypre_BinarySearch ( HYPRE_Int *list, HYPRE_Int value, HYPRE_Int list_length );
-HYPRE_Int hypre_BigBinarySearch ( HYPRE_BigInt *list, HYPRE_BigInt value, HYPRE_Int list_length );
-HYPRE_Int hypre_BinarySearch2 ( HYPRE_Int *list, HYPRE_Int value, HYPRE_Int low, HYPRE_Int high,
-                                HYPRE_Int *spot );
-HYPRE_Int *hypre_LowerBound( HYPRE_Int *first, HYPRE_Int *last, HYPRE_Int value );
-HYPRE_BigInt *hypre_BigLowerBound( HYPRE_BigInt *first, HYPRE_BigInt *last, HYPRE_BigInt value );
+NALU_HYPRE_Int hypre_BinarySearch ( NALU_HYPRE_Int *list, NALU_HYPRE_Int value, NALU_HYPRE_Int list_length );
+NALU_HYPRE_Int hypre_BigBinarySearch ( NALU_HYPRE_BigInt *list, NALU_HYPRE_BigInt value, NALU_HYPRE_Int list_length );
+NALU_HYPRE_Int hypre_BinarySearch2 ( NALU_HYPRE_Int *list, NALU_HYPRE_Int value, NALU_HYPRE_Int low, NALU_HYPRE_Int high,
+                                NALU_HYPRE_Int *spot );
+NALU_HYPRE_Int *hypre_LowerBound( NALU_HYPRE_Int *first, NALU_HYPRE_Int *last, NALU_HYPRE_Int value );
+NALU_HYPRE_BigInt *hypre_BigLowerBound( NALU_HYPRE_BigInt *first, NALU_HYPRE_BigInt *last, NALU_HYPRE_BigInt value );
 
 /* log.c */
-HYPRE_Int hypre_Log2( HYPRE_Int p );
+NALU_HYPRE_Int hypre_Log2( NALU_HYPRE_Int p );
 
 /* complex.c */
-#ifdef HYPRE_COMPLEX
-HYPRE_Complex hypre_conj( HYPRE_Complex value );
-HYPRE_Real    hypre_cabs( HYPRE_Complex value );
-HYPRE_Real    hypre_creal( HYPRE_Complex value );
-HYPRE_Real    hypre_cimag( HYPRE_Complex value );
-HYPRE_Complex hypre_csqrt( HYPRE_Complex value );
+#ifdef NALU_HYPRE_COMPLEX
+NALU_HYPRE_Complex hypre_conj( NALU_HYPRE_Complex value );
+NALU_HYPRE_Real    hypre_cabs( NALU_HYPRE_Complex value );
+NALU_HYPRE_Real    hypre_creal( NALU_HYPRE_Complex value );
+NALU_HYPRE_Real    hypre_cimag( NALU_HYPRE_Complex value );
+NALU_HYPRE_Complex hypre_csqrt( NALU_HYPRE_Complex value );
 #else
 #define hypre_conj(value)  value
 #define hypre_cabs(value)  fabs(value)
@@ -1608,64 +1608,64 @@ HYPRE_Complex hypre_csqrt( HYPRE_Complex value );
 /* general.c */
 hypre_Handle* hypre_handle();
 hypre_Handle* hypre_HandleCreate();
-HYPRE_Int hypre_HandleDestroy(hypre_Handle *hypre_handle_);
-HYPRE_Int hypre_SetDevice(hypre_int device_id, hypre_Handle *hypre_handle_);
-HYPRE_Int hypre_GetDevice(hypre_int *device_id);
-HYPRE_Int hypre_GetDeviceCount(hypre_int *device_count);
-HYPRE_Int hypre_GetDeviceLastError();
-HYPRE_Int hypre_UmpireInit(hypre_Handle *hypre_handle_);
-HYPRE_Int hypre_UmpireFinalize(hypre_Handle *hypre_handle_);
+NALU_HYPRE_Int hypre_HandleDestroy(hypre_Handle *hypre_handle_);
+NALU_HYPRE_Int hypre_SetDevice(hypre_int device_id, hypre_Handle *hypre_handle_);
+NALU_HYPRE_Int hypre_GetDevice(hypre_int *device_id);
+NALU_HYPRE_Int hypre_GetDeviceCount(hypre_int *device_count);
+NALU_HYPRE_Int hypre_GetDeviceLastError();
+NALU_HYPRE_Int hypre_UmpireInit(hypre_Handle *hypre_handle_);
+NALU_HYPRE_Int hypre_UmpireFinalize(hypre_Handle *hypre_handle_);
 
 /* qsort.c */
-void hypre_swap ( HYPRE_Int *v, HYPRE_Int i, HYPRE_Int j );
-void hypre_swap_c ( HYPRE_Complex *v, HYPRE_Int i, HYPRE_Int j );
-void hypre_swap2 ( HYPRE_Int *v, HYPRE_Real *w, HYPRE_Int i, HYPRE_Int j );
-void hypre_BigSwap2 ( HYPRE_BigInt *v, HYPRE_Real *w, HYPRE_Int i, HYPRE_Int j );
-void hypre_swap2i ( HYPRE_Int *v, HYPRE_Int *w, HYPRE_Int i, HYPRE_Int j );
-void hypre_BigSwap2i ( HYPRE_BigInt *v, HYPRE_Int *w, HYPRE_Int i, HYPRE_Int j );
-void hypre_swap3i ( HYPRE_Int *v, HYPRE_Int *w, HYPRE_Int *z, HYPRE_Int i, HYPRE_Int j );
-void hypre_swap3_d ( HYPRE_Real *v, HYPRE_Int *w, HYPRE_Int *z, HYPRE_Int i, HYPRE_Int j );
-void hypre_swap3_d_perm(HYPRE_Int  *v, HYPRE_Real  *w, HYPRE_Int  *z, HYPRE_Int  i, HYPRE_Int  j );
-void hypre_BigSwap4_d ( HYPRE_Real *v, HYPRE_BigInt *w, HYPRE_Int *z, HYPRE_Int *y, HYPRE_Int i,
-                        HYPRE_Int j );
-void hypre_swap_d ( HYPRE_Real *v, HYPRE_Int i, HYPRE_Int j );
-void hypre_qsort0 ( HYPRE_Int *v, HYPRE_Int left, HYPRE_Int right );
-void hypre_qsort1 ( HYPRE_Int *v, HYPRE_Real *w, HYPRE_Int left, HYPRE_Int right );
-void hypre_BigQsort1 ( HYPRE_BigInt *v, HYPRE_Real *w, HYPRE_Int left, HYPRE_Int right );
-void hypre_qsort2i ( HYPRE_Int *v, HYPRE_Int *w, HYPRE_Int left, HYPRE_Int right );
-void hypre_BigQsort2i( HYPRE_BigInt *v, HYPRE_Int *w, HYPRE_Int  left, HYPRE_Int  right );
-void hypre_qsort2 ( HYPRE_Int *v, HYPRE_Real *w, HYPRE_Int left, HYPRE_Int right );
-void hypre_qsort2_abs ( HYPRE_Int *v, HYPRE_Real *w, HYPRE_Int left, HYPRE_Int right );
-void hypre_qsort3i ( HYPRE_Int *v, HYPRE_Int *w, HYPRE_Int *z, HYPRE_Int left, HYPRE_Int right );
-void hypre_qsort3ir ( HYPRE_Int *v, HYPRE_Real *w, HYPRE_Int *z, HYPRE_Int left, HYPRE_Int right );
-void hypre_qsort3( HYPRE_Real *v, HYPRE_Int *w, HYPRE_Int *z, HYPRE_Int  left, HYPRE_Int  right );
-void hypre_qsort3_abs ( HYPRE_Real *v, HYPRE_Int *w, HYPRE_Int *z, HYPRE_Int left,
-                        HYPRE_Int right );
-void hypre_BigQsort4_abs ( HYPRE_Real *v, HYPRE_BigInt *w, HYPRE_Int *z, HYPRE_Int *y,
-                           HYPRE_Int left, HYPRE_Int right );
-void hypre_qsort_abs ( HYPRE_Real *w, HYPRE_Int left, HYPRE_Int right );
-void hypre_BigSwapbi(HYPRE_BigInt  *v, HYPRE_Int  *w, HYPRE_Int  i, HYPRE_Int  j );
-void hypre_BigQsortbi( HYPRE_BigInt *v, HYPRE_Int *w, HYPRE_Int  left, HYPRE_Int  right );
-void hypre_BigSwapLoc(HYPRE_BigInt  *v, HYPRE_Int  *w, HYPRE_Int  i, HYPRE_Int  j );
-void hypre_BigQsortbLoc( HYPRE_BigInt *v, HYPRE_Int *w, HYPRE_Int  left, HYPRE_Int  right );
-void hypre_BigSwapb2i(HYPRE_BigInt  *v, HYPRE_Int  *w, HYPRE_Int  *z, HYPRE_Int  i, HYPRE_Int  j );
-void hypre_BigQsortb2i( HYPRE_BigInt *v, HYPRE_Int *w, HYPRE_Int *z, HYPRE_Int  left,
-                        HYPRE_Int  right );
-void hypre_BigSwap( HYPRE_BigInt *v, HYPRE_Int  i, HYPRE_Int  j );
-void hypre_BigQsort0( HYPRE_BigInt *v, HYPRE_Int  left, HYPRE_Int  right );
-void hypre_topo_sort(const HYPRE_Int *row_ptr, const HYPRE_Int *col_inds, const HYPRE_Complex *data,
-                     HYPRE_Int *ordering, HYPRE_Int n);
-void hypre_dense_topo_sort(const HYPRE_Complex *L, HYPRE_Int *ordering, HYPRE_Int n,
-                           HYPRE_Int is_col_major);
+void hypre_swap ( NALU_HYPRE_Int *v, NALU_HYPRE_Int i, NALU_HYPRE_Int j );
+void hypre_swap_c ( NALU_HYPRE_Complex *v, NALU_HYPRE_Int i, NALU_HYPRE_Int j );
+void hypre_swap2 ( NALU_HYPRE_Int *v, NALU_HYPRE_Real *w, NALU_HYPRE_Int i, NALU_HYPRE_Int j );
+void hypre_BigSwap2 ( NALU_HYPRE_BigInt *v, NALU_HYPRE_Real *w, NALU_HYPRE_Int i, NALU_HYPRE_Int j );
+void hypre_swap2i ( NALU_HYPRE_Int *v, NALU_HYPRE_Int *w, NALU_HYPRE_Int i, NALU_HYPRE_Int j );
+void hypre_BigSwap2i ( NALU_HYPRE_BigInt *v, NALU_HYPRE_Int *w, NALU_HYPRE_Int i, NALU_HYPRE_Int j );
+void hypre_swap3i ( NALU_HYPRE_Int *v, NALU_HYPRE_Int *w, NALU_HYPRE_Int *z, NALU_HYPRE_Int i, NALU_HYPRE_Int j );
+void hypre_swap3_d ( NALU_HYPRE_Real *v, NALU_HYPRE_Int *w, NALU_HYPRE_Int *z, NALU_HYPRE_Int i, NALU_HYPRE_Int j );
+void hypre_swap3_d_perm(NALU_HYPRE_Int  *v, NALU_HYPRE_Real  *w, NALU_HYPRE_Int  *z, NALU_HYPRE_Int  i, NALU_HYPRE_Int  j );
+void hypre_BigSwap4_d ( NALU_HYPRE_Real *v, NALU_HYPRE_BigInt *w, NALU_HYPRE_Int *z, NALU_HYPRE_Int *y, NALU_HYPRE_Int i,
+                        NALU_HYPRE_Int j );
+void hypre_swap_d ( NALU_HYPRE_Real *v, NALU_HYPRE_Int i, NALU_HYPRE_Int j );
+void hypre_qsort0 ( NALU_HYPRE_Int *v, NALU_HYPRE_Int left, NALU_HYPRE_Int right );
+void hypre_qsort1 ( NALU_HYPRE_Int *v, NALU_HYPRE_Real *w, NALU_HYPRE_Int left, NALU_HYPRE_Int right );
+void hypre_BigQsort1 ( NALU_HYPRE_BigInt *v, NALU_HYPRE_Real *w, NALU_HYPRE_Int left, NALU_HYPRE_Int right );
+void hypre_qsort2i ( NALU_HYPRE_Int *v, NALU_HYPRE_Int *w, NALU_HYPRE_Int left, NALU_HYPRE_Int right );
+void hypre_BigQsort2i( NALU_HYPRE_BigInt *v, NALU_HYPRE_Int *w, NALU_HYPRE_Int  left, NALU_HYPRE_Int  right );
+void hypre_qsort2 ( NALU_HYPRE_Int *v, NALU_HYPRE_Real *w, NALU_HYPRE_Int left, NALU_HYPRE_Int right );
+void hypre_qsort2_abs ( NALU_HYPRE_Int *v, NALU_HYPRE_Real *w, NALU_HYPRE_Int left, NALU_HYPRE_Int right );
+void hypre_qsort3i ( NALU_HYPRE_Int *v, NALU_HYPRE_Int *w, NALU_HYPRE_Int *z, NALU_HYPRE_Int left, NALU_HYPRE_Int right );
+void hypre_qsort3ir ( NALU_HYPRE_Int *v, NALU_HYPRE_Real *w, NALU_HYPRE_Int *z, NALU_HYPRE_Int left, NALU_HYPRE_Int right );
+void hypre_qsort3( NALU_HYPRE_Real *v, NALU_HYPRE_Int *w, NALU_HYPRE_Int *z, NALU_HYPRE_Int  left, NALU_HYPRE_Int  right );
+void hypre_qsort3_abs ( NALU_HYPRE_Real *v, NALU_HYPRE_Int *w, NALU_HYPRE_Int *z, NALU_HYPRE_Int left,
+                        NALU_HYPRE_Int right );
+void hypre_BigQsort4_abs ( NALU_HYPRE_Real *v, NALU_HYPRE_BigInt *w, NALU_HYPRE_Int *z, NALU_HYPRE_Int *y,
+                           NALU_HYPRE_Int left, NALU_HYPRE_Int right );
+void hypre_qsort_abs ( NALU_HYPRE_Real *w, NALU_HYPRE_Int left, NALU_HYPRE_Int right );
+void hypre_BigSwapbi(NALU_HYPRE_BigInt  *v, NALU_HYPRE_Int  *w, NALU_HYPRE_Int  i, NALU_HYPRE_Int  j );
+void hypre_BigQsortbi( NALU_HYPRE_BigInt *v, NALU_HYPRE_Int *w, NALU_HYPRE_Int  left, NALU_HYPRE_Int  right );
+void hypre_BigSwapLoc(NALU_HYPRE_BigInt  *v, NALU_HYPRE_Int  *w, NALU_HYPRE_Int  i, NALU_HYPRE_Int  j );
+void hypre_BigQsortbLoc( NALU_HYPRE_BigInt *v, NALU_HYPRE_Int *w, NALU_HYPRE_Int  left, NALU_HYPRE_Int  right );
+void hypre_BigSwapb2i(NALU_HYPRE_BigInt  *v, NALU_HYPRE_Int  *w, NALU_HYPRE_Int  *z, NALU_HYPRE_Int  i, NALU_HYPRE_Int  j );
+void hypre_BigQsortb2i( NALU_HYPRE_BigInt *v, NALU_HYPRE_Int *w, NALU_HYPRE_Int *z, NALU_HYPRE_Int  left,
+                        NALU_HYPRE_Int  right );
+void hypre_BigSwap( NALU_HYPRE_BigInt *v, NALU_HYPRE_Int  i, NALU_HYPRE_Int  j );
+void hypre_BigQsort0( NALU_HYPRE_BigInt *v, NALU_HYPRE_Int  left, NALU_HYPRE_Int  right );
+void hypre_topo_sort(const NALU_HYPRE_Int *row_ptr, const NALU_HYPRE_Int *col_inds, const NALU_HYPRE_Complex *data,
+                     NALU_HYPRE_Int *ordering, NALU_HYPRE_Int n);
+void hypre_dense_topo_sort(const NALU_HYPRE_Complex *L, NALU_HYPRE_Int *ordering, NALU_HYPRE_Int n,
+                           NALU_HYPRE_Int is_col_major);
 
 /* qsplit.c */
-HYPRE_Int hypre_DoubleQuickSplit ( HYPRE_Real *values, HYPRE_Int *indices, HYPRE_Int list_length,
-                                   HYPRE_Int NumberKept );
+NALU_HYPRE_Int hypre_DoubleQuickSplit ( NALU_HYPRE_Real *values, NALU_HYPRE_Int *indices, NALU_HYPRE_Int list_length,
+                                   NALU_HYPRE_Int NumberKept );
 
 /* random.c */
-/* HYPRE_CUDA_GLOBAL */ void hypre_SeedRand ( HYPRE_Int seed );
-/* HYPRE_CUDA_GLOBAL */ HYPRE_Int hypre_RandI ( void );
-/* HYPRE_CUDA_GLOBAL */ HYPRE_Real hypre_Rand ( void );
+/* NALU_HYPRE_CUDA_GLOBAL */ void hypre_SeedRand ( NALU_HYPRE_Int seed );
+/* NALU_HYPRE_CUDA_GLOBAL */ NALU_HYPRE_Int hypre_RandI ( void );
+/* NALU_HYPRE_CUDA_GLOBAL */ NALU_HYPRE_Real hypre_Rand ( void );
 
 /* prefix_sum.c */
 /**
@@ -1679,7 +1679,7 @@ HYPRE_Int hypre_DoubleQuickSplit ( HYPRE_Real *values, HYPRE_Int *indices, HYPRE
  *                  workspace[tid] will contain result for tid
  *                  workspace[nthreads] will contain sum
  */
-void hypre_prefix_sum(HYPRE_Int *in_out, HYPRE_Int *sum, HYPRE_Int *workspace);
+void hypre_prefix_sum(NALU_HYPRE_Int *in_out, NALU_HYPRE_Int *sum, NALU_HYPRE_Int *workspace);
 /**
  * This version does prefix sum in pair.
  * Useful when we prefix sum of diag and offd in tandem.
@@ -1688,14 +1688,14 @@ void hypre_prefix_sum(HYPRE_Int *in_out, HYPRE_Int *sum, HYPRE_Int *workspace);
  *                  workspace[2*tid] and workspace[2*tid+1] will contain results for tid
  *                  workspace[3*nthreads] and workspace[3*nthreads + 1] will contain sums
  */
-void hypre_prefix_sum_pair(HYPRE_Int *in_out1, HYPRE_Int *sum1, HYPRE_Int *in_out2, HYPRE_Int *sum2,
-                           HYPRE_Int *workspace);
+void hypre_prefix_sum_pair(NALU_HYPRE_Int *in_out1, NALU_HYPRE_Int *sum1, NALU_HYPRE_Int *in_out2, NALU_HYPRE_Int *sum2,
+                           NALU_HYPRE_Int *workspace);
 /**
  * @param workspace at least with length 3*(nthreads+1)
  *                  workspace[3*tid:3*tid+3) will contain results for tid
  */
-void hypre_prefix_sum_triple(HYPRE_Int *in_out1, HYPRE_Int *sum1, HYPRE_Int *in_out2,
-                             HYPRE_Int *sum2, HYPRE_Int *in_out3, HYPRE_Int *sum3, HYPRE_Int *workspace);
+void hypre_prefix_sum_triple(NALU_HYPRE_Int *in_out1, NALU_HYPRE_Int *sum1, NALU_HYPRE_Int *in_out2,
+                             NALU_HYPRE_Int *sum2, NALU_HYPRE_Int *in_out3, NALU_HYPRE_Int *sum3, NALU_HYPRE_Int *workspace);
 
 /**
  * n prefix-sums together.
@@ -1704,37 +1704,37 @@ void hypre_prefix_sum_triple(HYPRE_Int *in_out1, HYPRE_Int *sum1, HYPRE_Int *in_
  *
  * @param workspace at least with length n*(nthreads+1)
  */
-void hypre_prefix_sum_multiple(HYPRE_Int *in_out, HYPRE_Int *sum, HYPRE_Int n,
-                               HYPRE_Int *workspace);
+void hypre_prefix_sum_multiple(NALU_HYPRE_Int *in_out, NALU_HYPRE_Int *sum, NALU_HYPRE_Int n,
+                               NALU_HYPRE_Int *workspace);
 
 /* hopscotch_hash.c */
 
-#ifdef HYPRE_USING_OPENMP
+#ifdef NALU_HYPRE_USING_OPENMP
 
 /* Check if atomic operations are available to use concurrent hopscotch hash table */
 #if defined(__GNUC__) && defined(__GNUC_MINOR__) && defined(__GNUC_PATCHLEVEL__) && (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__) > 40100
-#define HYPRE_USING_ATOMIC
+#define NALU_HYPRE_USING_ATOMIC
 //#elif defined _MSC_VER // JSP: haven't tested, so comment out for now
-//#define HYPRE_USING_ATOMIC
+//#define NALU_HYPRE_USING_ATOMIC
 //#elif defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L && !defined(__STDC_NO_ATOMICS__)
 // JSP: not many compilers have implemented this, so comment out for now
-//#define HYPRE_USING_ATOMIC
+//#define NALU_HYPRE_USING_ATOMIC
 //#include <stdatomic.h>
 #endif
 
-#endif // HYPRE_USING_OPENMP
+#endif // NALU_HYPRE_USING_OPENMP
 
-#ifdef HYPRE_HOPSCOTCH
-#ifdef HYPRE_USING_ATOMIC
+#ifdef NALU_HYPRE_HOPSCOTCH
+#ifdef NALU_HYPRE_USING_ATOMIC
 // concurrent hopscotch hashing is possible only with atomic supports
-#define HYPRE_CONCURRENT_HOPSCOTCH
+#define NALU_HYPRE_CONCURRENT_HOPSCOTCH
 #endif
 #endif
 
-#ifdef HYPRE_CONCURRENT_HOPSCOTCH
+#ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
 typedef struct
 {
-   HYPRE_Int volatile timestamp;
+   NALU_HYPRE_Int volatile timestamp;
    omp_lock_t         lock;
 } hypre_HopscotchSegment;
 #endif
@@ -1751,42 +1751,42 @@ typedef struct
  */
 typedef struct
 {
-   HYPRE_Int  volatile              segmentMask;
-   HYPRE_Int  volatile              bucketMask;
-#ifdef HYPRE_CONCURRENT_HOPSCOTCH
+   NALU_HYPRE_Int  volatile              segmentMask;
+   NALU_HYPRE_Int  volatile              bucketMask;
+#ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
    hypre_HopscotchSegment* volatile segments;
 #endif
-   HYPRE_Int *volatile              key;
+   NALU_HYPRE_Int *volatile              key;
    hypre_uint *volatile             hopInfo;
-   HYPRE_Int *volatile              hash;
+   NALU_HYPRE_Int *volatile              hash;
 } hypre_UnorderedIntSet;
 
 typedef struct
 {
-   HYPRE_Int volatile            segmentMask;
-   HYPRE_Int volatile            bucketMask;
-#ifdef HYPRE_CONCURRENT_HOPSCOTCH
+   NALU_HYPRE_Int volatile            segmentMask;
+   NALU_HYPRE_Int volatile            bucketMask;
+#ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
    hypre_HopscotchSegment* volatile segments;
 #endif
-   HYPRE_BigInt *volatile           key;
+   NALU_HYPRE_BigInt *volatile           key;
    hypre_uint *volatile             hopInfo;
-   HYPRE_BigInt *volatile           hash;
+   NALU_HYPRE_BigInt *volatile           hash;
 } hypre_UnorderedBigIntSet;
 
 typedef struct
 {
    hypre_uint volatile hopInfo;
-   HYPRE_Int  volatile hash;
-   HYPRE_Int  volatile key;
-   HYPRE_Int  volatile data;
+   NALU_HYPRE_Int  volatile hash;
+   NALU_HYPRE_Int  volatile key;
+   NALU_HYPRE_Int  volatile data;
 } hypre_HopscotchBucket;
 
 typedef struct
 {
    hypre_uint volatile hopInfo;
-   HYPRE_BigInt  volatile hash;
-   HYPRE_BigInt  volatile key;
-   HYPRE_Int  volatile data;
+   NALU_HYPRE_BigInt  volatile hash;
+   NALU_HYPRE_BigInt  volatile key;
+   NALU_HYPRE_Int  volatile data;
 } hypre_BigHopscotchBucket;
 
 /**
@@ -1797,9 +1797,9 @@ typedef struct
  */
 typedef struct
 {
-   HYPRE_Int  volatile              segmentMask;
-   HYPRE_Int  volatile              bucketMask;
-#ifdef HYPRE_CONCURRENT_HOPSCOTCH
+   NALU_HYPRE_Int  volatile              segmentMask;
+   NALU_HYPRE_Int  volatile              bucketMask;
+#ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
    hypre_HopscotchSegment* volatile segments;
 #endif
    hypre_HopscotchBucket* volatile table;
@@ -1807,9 +1807,9 @@ typedef struct
 
 typedef struct
 {
-   HYPRE_Int  volatile segmentMask;
-   HYPRE_Int  volatile bucketMask;
-#ifdef HYPRE_CONCURRENT_HOPSCOTCH
+   NALU_HYPRE_Int  volatile segmentMask;
+   NALU_HYPRE_Int  volatile bucketMask;
+#ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
    hypre_HopscotchSegment* volatile segments;
 #endif
    hypre_BigHopscotchBucket* volatile table;
@@ -1821,151 +1821,151 @@ typedef struct
  * 1) Merge sort can take advantage of eliminating duplicates.
  * 2) Merge sort is more efficiently parallelizable than qsort
  */
-HYPRE_Int hypre_IntArrayMergeOrdered( hypre_IntArray *array1, hypre_IntArray *array2,
+NALU_HYPRE_Int hypre_IntArrayMergeOrdered( hypre_IntArray *array1, hypre_IntArray *array2,
                                       hypre_IntArray *array3 );
-void hypre_union2(HYPRE_Int n1, HYPRE_BigInt *arr1, HYPRE_Int n2, HYPRE_BigInt *arr2, HYPRE_Int *n3,
-                  HYPRE_BigInt *arr3, HYPRE_Int *map1, HYPRE_Int *map2);
-void hypre_merge_sort(HYPRE_Int *in, HYPRE_Int *temp, HYPRE_Int len, HYPRE_Int **sorted);
-void hypre_big_merge_sort(HYPRE_BigInt *in, HYPRE_BigInt *temp, HYPRE_Int len,
-                          HYPRE_BigInt **sorted);
-void hypre_sort_and_create_inverse_map(HYPRE_Int *in, HYPRE_Int len, HYPRE_Int **out,
+void hypre_union2(NALU_HYPRE_Int n1, NALU_HYPRE_BigInt *arr1, NALU_HYPRE_Int n2, NALU_HYPRE_BigInt *arr2, NALU_HYPRE_Int *n3,
+                  NALU_HYPRE_BigInt *arr3, NALU_HYPRE_Int *map1, NALU_HYPRE_Int *map2);
+void hypre_merge_sort(NALU_HYPRE_Int *in, NALU_HYPRE_Int *temp, NALU_HYPRE_Int len, NALU_HYPRE_Int **sorted);
+void hypre_big_merge_sort(NALU_HYPRE_BigInt *in, NALU_HYPRE_BigInt *temp, NALU_HYPRE_Int len,
+                          NALU_HYPRE_BigInt **sorted);
+void hypre_sort_and_create_inverse_map(NALU_HYPRE_Int *in, NALU_HYPRE_Int len, NALU_HYPRE_Int **out,
                                        hypre_UnorderedIntMap *inverse_map);
-void hypre_big_sort_and_create_inverse_map(HYPRE_BigInt *in, HYPRE_Int len, HYPRE_BigInt **out,
+void hypre_big_sort_and_create_inverse_map(NALU_HYPRE_BigInt *in, NALU_HYPRE_Int len, NALU_HYPRE_BigInt **out,
                                            hypre_UnorderedBigIntMap *inverse_map);
 
 /* device_utils.c */
-#if defined(HYPRE_USING_GPU)
-HYPRE_Int hypre_SyncComputeStream(hypre_Handle *hypre_handle);
-HYPRE_Int hypre_SyncCudaDevice(hypre_Handle *hypre_handle);
-HYPRE_Int hypre_ResetCudaDevice(hypre_Handle *hypre_handle);
-HYPRE_Int hypreDevice_DiagScaleVector(HYPRE_Int num_vectors, HYPRE_Int num_rows,
-                                      HYPRE_Int *A_i, HYPRE_Complex *A_data,
-                                      HYPRE_Complex *x, HYPRE_Complex beta,
-                                      HYPRE_Complex *y);
-HYPRE_Int hypreDevice_DiagScaleVector2(HYPRE_Int num_vectors, HYPRE_Int num_rows,
-                                       HYPRE_Complex *diag, HYPRE_Complex *x,
-                                       HYPRE_Complex beta, HYPRE_Complex *y,
-                                       HYPRE_Complex *z, HYPRE_Int computeY);
-HYPRE_Int hypreDevice_IVAXPY(HYPRE_Int n, HYPRE_Complex *a, HYPRE_Complex *x, HYPRE_Complex *y);
-HYPRE_Int hypreDevice_IVAXPYMarked(HYPRE_Int n, HYPRE_Complex *a, HYPRE_Complex *x,
-                                   HYPRE_Complex *y, HYPRE_Int *marker, HYPRE_Int marker_val);
-HYPRE_Int hypreDevice_IVAMXPMY(HYPRE_Int m, HYPRE_Int n, HYPRE_Complex *a,
-                               HYPRE_Complex *x, HYPRE_Complex *y);
-HYPRE_Int hypreDevice_IntFilln(HYPRE_Int *d_x, size_t n, HYPRE_Int v);
-HYPRE_Int hypreDevice_BigIntFilln(HYPRE_BigInt *d_x, size_t n, HYPRE_BigInt v);
-HYPRE_Int hypreDevice_ComplexFilln(HYPRE_Complex *d_x, size_t n, HYPRE_Complex v);
-HYPRE_Int hypreDevice_CharFilln(char *d_x, size_t n, char v);
-HYPRE_Int hypreDevice_IntStridedCopy ( HYPRE_Int size, HYPRE_Int stride,
-                                       HYPRE_Int *in, HYPRE_Int *out );
-HYPRE_Int hypreDevice_IntScalen(HYPRE_Int *d_x, size_t n, HYPRE_Int *d_y, HYPRE_Int v);
-HYPRE_Int hypreDevice_ComplexScalen(HYPRE_Complex *d_x, size_t n, HYPRE_Complex *d_y,
-                                    HYPRE_Complex v);
-HYPRE_Int hypreDevice_ComplexAxpyn(HYPRE_Complex *d_x, size_t n, HYPRE_Complex *d_y,
-                                   HYPRE_Complex *d_z, HYPRE_Complex a);
-HYPRE_Int hypreDevice_IntAxpyn(HYPRE_Int *d_x, size_t n, HYPRE_Int *d_y, HYPRE_Int *d_z,
-                               HYPRE_Int a);
-HYPRE_Int hypreDevice_BigIntAxpyn(HYPRE_BigInt *d_x, size_t n, HYPRE_BigInt *d_y,
-                                  HYPRE_BigInt *d_z, HYPRE_BigInt a);
-HYPRE_Int* hypreDevice_CsrRowPtrsToIndices(HYPRE_Int nrows, HYPRE_Int nnz, HYPRE_Int *d_row_ptr);
-HYPRE_Int hypreDevice_CsrRowPtrsToIndices_v2(HYPRE_Int nrows, HYPRE_Int nnz, HYPRE_Int *d_row_ptr,
-                                             HYPRE_Int *d_row_ind);
-HYPRE_Int* hypreDevice_CsrRowIndicesToPtrs(HYPRE_Int nrows, HYPRE_Int nnz, HYPRE_Int *d_row_ind);
-HYPRE_Int hypreDevice_CsrRowIndicesToPtrs_v2(HYPRE_Int nrows, HYPRE_Int nnz, HYPRE_Int *d_row_ind,
-                                             HYPRE_Int *d_row_ptr);
-HYPRE_Int hypreDevice_GetRowNnz(HYPRE_Int nrows, HYPRE_Int *d_row_indices, HYPRE_Int *d_diag_ia,
-                                HYPRE_Int *d_offd_ia, HYPRE_Int *d_rownnz);
+#if defined(NALU_HYPRE_USING_GPU)
+NALU_HYPRE_Int hypre_SyncComputeStream(hypre_Handle *hypre_handle);
+NALU_HYPRE_Int hypre_SyncCudaDevice(hypre_Handle *hypre_handle);
+NALU_HYPRE_Int hypre_ResetCudaDevice(hypre_Handle *hypre_handle);
+NALU_HYPRE_Int hypreDevice_DiagScaleVector(NALU_HYPRE_Int num_vectors, NALU_HYPRE_Int num_rows,
+                                      NALU_HYPRE_Int *A_i, NALU_HYPRE_Complex *A_data,
+                                      NALU_HYPRE_Complex *x, NALU_HYPRE_Complex beta,
+                                      NALU_HYPRE_Complex *y);
+NALU_HYPRE_Int hypreDevice_DiagScaleVector2(NALU_HYPRE_Int num_vectors, NALU_HYPRE_Int num_rows,
+                                       NALU_HYPRE_Complex *diag, NALU_HYPRE_Complex *x,
+                                       NALU_HYPRE_Complex beta, NALU_HYPRE_Complex *y,
+                                       NALU_HYPRE_Complex *z, NALU_HYPRE_Int computeY);
+NALU_HYPRE_Int hypreDevice_IVAXPY(NALU_HYPRE_Int n, NALU_HYPRE_Complex *a, NALU_HYPRE_Complex *x, NALU_HYPRE_Complex *y);
+NALU_HYPRE_Int hypreDevice_IVAXPYMarked(NALU_HYPRE_Int n, NALU_HYPRE_Complex *a, NALU_HYPRE_Complex *x,
+                                   NALU_HYPRE_Complex *y, NALU_HYPRE_Int *marker, NALU_HYPRE_Int marker_val);
+NALU_HYPRE_Int hypreDevice_IVAMXPMY(NALU_HYPRE_Int m, NALU_HYPRE_Int n, NALU_HYPRE_Complex *a,
+                               NALU_HYPRE_Complex *x, NALU_HYPRE_Complex *y);
+NALU_HYPRE_Int hypreDevice_IntFilln(NALU_HYPRE_Int *d_x, size_t n, NALU_HYPRE_Int v);
+NALU_HYPRE_Int hypreDevice_BigIntFilln(NALU_HYPRE_BigInt *d_x, size_t n, NALU_HYPRE_BigInt v);
+NALU_HYPRE_Int hypreDevice_ComplexFilln(NALU_HYPRE_Complex *d_x, size_t n, NALU_HYPRE_Complex v);
+NALU_HYPRE_Int hypreDevice_CharFilln(char *d_x, size_t n, char v);
+NALU_HYPRE_Int hypreDevice_IntStridedCopy ( NALU_HYPRE_Int size, NALU_HYPRE_Int stride,
+                                       NALU_HYPRE_Int *in, NALU_HYPRE_Int *out );
+NALU_HYPRE_Int hypreDevice_IntScalen(NALU_HYPRE_Int *d_x, size_t n, NALU_HYPRE_Int *d_y, NALU_HYPRE_Int v);
+NALU_HYPRE_Int hypreDevice_ComplexScalen(NALU_HYPRE_Complex *d_x, size_t n, NALU_HYPRE_Complex *d_y,
+                                    NALU_HYPRE_Complex v);
+NALU_HYPRE_Int hypreDevice_ComplexAxpyn(NALU_HYPRE_Complex *d_x, size_t n, NALU_HYPRE_Complex *d_y,
+                                   NALU_HYPRE_Complex *d_z, NALU_HYPRE_Complex a);
+NALU_HYPRE_Int hypreDevice_IntAxpyn(NALU_HYPRE_Int *d_x, size_t n, NALU_HYPRE_Int *d_y, NALU_HYPRE_Int *d_z,
+                               NALU_HYPRE_Int a);
+NALU_HYPRE_Int hypreDevice_BigIntAxpyn(NALU_HYPRE_BigInt *d_x, size_t n, NALU_HYPRE_BigInt *d_y,
+                                  NALU_HYPRE_BigInt *d_z, NALU_HYPRE_BigInt a);
+NALU_HYPRE_Int* hypreDevice_CsrRowPtrsToIndices(NALU_HYPRE_Int nrows, NALU_HYPRE_Int nnz, NALU_HYPRE_Int *d_row_ptr);
+NALU_HYPRE_Int hypreDevice_CsrRowPtrsToIndices_v2(NALU_HYPRE_Int nrows, NALU_HYPRE_Int nnz, NALU_HYPRE_Int *d_row_ptr,
+                                             NALU_HYPRE_Int *d_row_ind);
+NALU_HYPRE_Int* hypreDevice_CsrRowIndicesToPtrs(NALU_HYPRE_Int nrows, NALU_HYPRE_Int nnz, NALU_HYPRE_Int *d_row_ind);
+NALU_HYPRE_Int hypreDevice_CsrRowIndicesToPtrs_v2(NALU_HYPRE_Int nrows, NALU_HYPRE_Int nnz, NALU_HYPRE_Int *d_row_ind,
+                                             NALU_HYPRE_Int *d_row_ptr);
+NALU_HYPRE_Int hypreDevice_GetRowNnz(NALU_HYPRE_Int nrows, NALU_HYPRE_Int *d_row_indices, NALU_HYPRE_Int *d_diag_ia,
+                                NALU_HYPRE_Int *d_offd_ia, NALU_HYPRE_Int *d_rownnz);
 
-HYPRE_Int hypreDevice_CopyParCSRRows(HYPRE_Int nrows, HYPRE_Int *d_row_indices, HYPRE_Int job,
-                                     HYPRE_Int has_offd, HYPRE_BigInt first_col,
-                                     HYPRE_BigInt *d_col_map_offd_A, HYPRE_Int *d_diag_i,
-                                     HYPRE_Int *d_diag_j, HYPRE_Complex *d_diag_a,
-                                     HYPRE_Int *d_offd_i, HYPRE_Int *d_offd_j,
-                                     HYPRE_Complex *d_offd_a, HYPRE_Int *d_ib,
-                                     HYPRE_BigInt *d_jb, HYPRE_Complex *d_ab);
+NALU_HYPRE_Int hypreDevice_CopyParCSRRows(NALU_HYPRE_Int nrows, NALU_HYPRE_Int *d_row_indices, NALU_HYPRE_Int job,
+                                     NALU_HYPRE_Int has_offd, NALU_HYPRE_BigInt first_col,
+                                     NALU_HYPRE_BigInt *d_col_map_offd_A, NALU_HYPRE_Int *d_diag_i,
+                                     NALU_HYPRE_Int *d_diag_j, NALU_HYPRE_Complex *d_diag_a,
+                                     NALU_HYPRE_Int *d_offd_i, NALU_HYPRE_Int *d_offd_j,
+                                     NALU_HYPRE_Complex *d_offd_a, NALU_HYPRE_Int *d_ib,
+                                     NALU_HYPRE_BigInt *d_jb, NALU_HYPRE_Complex *d_ab);
 
-HYPRE_Int hypreDevice_IntegerReduceSum(HYPRE_Int m, HYPRE_Int *d_i);
+NALU_HYPRE_Int hypreDevice_IntegerReduceSum(NALU_HYPRE_Int m, NALU_HYPRE_Int *d_i);
 
-HYPRE_Complex hypreDevice_ComplexReduceSum(HYPRE_Int m, HYPRE_Complex *d_x);
+NALU_HYPRE_Complex hypreDevice_ComplexReduceSum(NALU_HYPRE_Int m, NALU_HYPRE_Complex *d_x);
 
-HYPRE_Int hypreDevice_IntegerInclusiveScan(HYPRE_Int n, HYPRE_Int *d_i);
+NALU_HYPRE_Int hypreDevice_IntegerInclusiveScan(NALU_HYPRE_Int n, NALU_HYPRE_Int *d_i);
 
-HYPRE_Int hypreDevice_IntegerExclusiveScan(HYPRE_Int n, HYPRE_Int *d_i);
+NALU_HYPRE_Int hypreDevice_IntegerExclusiveScan(NALU_HYPRE_Int n, NALU_HYPRE_Int *d_i);
 
-HYPRE_Int hypre_CudaCompileFlagCheck();
+NALU_HYPRE_Int hypre_CudaCompileFlagCheck();
 
-HYPRE_Int hypreDevice_zeqxmydd(HYPRE_Int n, HYPRE_Complex *x, HYPRE_Complex alpha, HYPRE_Complex *y,
-                               HYPRE_Complex *z, HYPRE_Complex *d);
+NALU_HYPRE_Int hypreDevice_zeqxmydd(NALU_HYPRE_Int n, NALU_HYPRE_Complex *x, NALU_HYPRE_Complex alpha, NALU_HYPRE_Complex *y,
+                               NALU_HYPRE_Complex *z, NALU_HYPRE_Complex *d);
 
 #endif
 
-HYPRE_Int hypre_CurandUniform( HYPRE_Int n, HYPRE_Real *urand, HYPRE_Int set_seed,
-                               hypre_ulonglongint seed, HYPRE_Int set_offset, hypre_ulonglongint offset);
-HYPRE_Int hypre_CurandUniformSingle( HYPRE_Int n, float *urand, HYPRE_Int set_seed,
-                                     hypre_ulonglongint seed, HYPRE_Int set_offset, hypre_ulonglongint offset);
+NALU_HYPRE_Int hypre_CurandUniform( NALU_HYPRE_Int n, NALU_HYPRE_Real *urand, NALU_HYPRE_Int set_seed,
+                               hypre_ulonglongint seed, NALU_HYPRE_Int set_offset, hypre_ulonglongint offset);
+NALU_HYPRE_Int hypre_CurandUniformSingle( NALU_HYPRE_Int n, float *urand, NALU_HYPRE_Int set_seed,
+                                     hypre_ulonglongint seed, NALU_HYPRE_Int set_offset, hypre_ulonglongint offset);
 
-HYPRE_Int hypre_ResetDeviceRandGenerator( hypre_ulonglongint seed, hypre_ulonglongint offset );
+NALU_HYPRE_Int hypre_ResetDeviceRandGenerator( hypre_ulonglongint seed, hypre_ulonglongint offset );
 
-HYPRE_Int hypre_bind_device(HYPRE_Int myid, HYPRE_Int nproc, MPI_Comm comm);
+NALU_HYPRE_Int hypre_bind_device(NALU_HYPRE_Int myid, NALU_HYPRE_Int nproc, MPI_Comm comm);
 
 /* nvtx.c */
-void hypre_GpuProfilingPushRangeColor(const char *name, HYPRE_Int cid);
+void hypre_GpuProfilingPushRangeColor(const char *name, NALU_HYPRE_Int cid);
 void hypre_GpuProfilingPushRange(const char *name);
 void hypre_GpuProfilingPopRange();
 
 /* utilities.c */
-HYPRE_Int hypre_multmod(HYPRE_Int a, HYPRE_Int b, HYPRE_Int mod);
-void hypre_partition1D(HYPRE_Int n, HYPRE_Int p, HYPRE_Int j, HYPRE_Int *s, HYPRE_Int *e);
+NALU_HYPRE_Int hypre_multmod(NALU_HYPRE_Int a, NALU_HYPRE_Int b, NALU_HYPRE_Int mod);
+void hypre_partition1D(NALU_HYPRE_Int n, NALU_HYPRE_Int p, NALU_HYPRE_Int j, NALU_HYPRE_Int *s, NALU_HYPRE_Int *e);
 char *hypre_strcpy(char *destination, const char *source);
 
-HYPRE_Int hypre_SetSyncCudaCompute(HYPRE_Int action);
-HYPRE_Int hypre_RestoreSyncCudaCompute();
-HYPRE_Int hypre_GetSyncCudaCompute(HYPRE_Int *cuda_compute_stream_sync_ptr);
-HYPRE_Int hypre_SyncComputeStream(hypre_Handle *hypre_handle);
-HYPRE_Int hypre_ForceSyncComputeStream(hypre_Handle *hypre_handle);
+NALU_HYPRE_Int hypre_SetSyncCudaCompute(NALU_HYPRE_Int action);
+NALU_HYPRE_Int hypre_RestoreSyncCudaCompute();
+NALU_HYPRE_Int hypre_GetSyncCudaCompute(NALU_HYPRE_Int *cuda_compute_stream_sync_ptr);
+NALU_HYPRE_Int hypre_SyncComputeStream(hypre_Handle *hypre_handle);
+NALU_HYPRE_Int hypre_ForceSyncComputeStream(hypre_Handle *hypre_handle);
 
 /* handle.c */
-HYPRE_Int hypre_SetSpTransUseVendor( HYPRE_Int use_vendor );
-HYPRE_Int hypre_SetSpMVUseVendor( HYPRE_Int use_vendor );
-HYPRE_Int hypre_SetSpGemmUseVendor( HYPRE_Int use_vendor );
-HYPRE_Int hypre_SetSpGemmAlgorithm( HYPRE_Int value );
-HYPRE_Int hypre_SetSpGemmBinned( HYPRE_Int value );
-HYPRE_Int hypre_SetSpGemmRownnzEstimateMethod( HYPRE_Int value );
-HYPRE_Int hypre_SetSpGemmRownnzEstimateNSamples( HYPRE_Int value );
-HYPRE_Int hypre_SetSpGemmRownnzEstimateMultFactor( HYPRE_Real value );
-HYPRE_Int hypre_SetSpGemmHashType( char value );
-HYPRE_Int hypre_SetUseGpuRand( HYPRE_Int use_gpurand );
-HYPRE_Int hypre_SetGaussSeidelMethod( HYPRE_Int gs_method );
-HYPRE_Int hypre_SetUserDeviceMalloc(GPUMallocFunc func);
-HYPRE_Int hypre_SetUserDeviceMfree(GPUMfreeFunc func);
+NALU_HYPRE_Int hypre_SetSpTransUseVendor( NALU_HYPRE_Int use_vendor );
+NALU_HYPRE_Int hypre_SetSpMVUseVendor( NALU_HYPRE_Int use_vendor );
+NALU_HYPRE_Int hypre_SetSpGemmUseVendor( NALU_HYPRE_Int use_vendor );
+NALU_HYPRE_Int hypre_SetSpGemmAlgorithm( NALU_HYPRE_Int value );
+NALU_HYPRE_Int hypre_SetSpGemmBinned( NALU_HYPRE_Int value );
+NALU_HYPRE_Int hypre_SetSpGemmRownnzEstimateMethod( NALU_HYPRE_Int value );
+NALU_HYPRE_Int hypre_SetSpGemmRownnzEstimateNSamples( NALU_HYPRE_Int value );
+NALU_HYPRE_Int hypre_SetSpGemmRownnzEstimateMultFactor( NALU_HYPRE_Real value );
+NALU_HYPRE_Int hypre_SetSpGemmHashType( char value );
+NALU_HYPRE_Int hypre_SetUseGpuRand( NALU_HYPRE_Int use_gpurand );
+NALU_HYPRE_Int hypre_SetGaussSeidelMethod( NALU_HYPRE_Int gs_method );
+NALU_HYPRE_Int hypre_SetUserDeviceMalloc(GPUMallocFunc func);
+NALU_HYPRE_Int hypre_SetUserDeviceMfree(GPUMfreeFunc func);
 
 /* int_array.c */
-hypre_IntArray* hypre_IntArrayCreate( HYPRE_Int size );
-HYPRE_Int hypre_IntArrayDestroy( hypre_IntArray *array );
-HYPRE_Int hypre_IntArrayInitialize_v2( hypre_IntArray *array,
-                                       HYPRE_MemoryLocation memory_location );
-HYPRE_Int hypre_IntArrayInitialize( hypre_IntArray *array );
-HYPRE_Int hypre_IntArrayCopy( hypre_IntArray *x, hypre_IntArray *y );
+hypre_IntArray* hypre_IntArrayCreate( NALU_HYPRE_Int size );
+NALU_HYPRE_Int hypre_IntArrayDestroy( hypre_IntArray *array );
+NALU_HYPRE_Int hypre_IntArrayInitialize_v2( hypre_IntArray *array,
+                                       NALU_HYPRE_MemoryLocation memory_location );
+NALU_HYPRE_Int hypre_IntArrayInitialize( hypre_IntArray *array );
+NALU_HYPRE_Int hypre_IntArrayCopy( hypre_IntArray *x, hypre_IntArray *y );
 hypre_IntArray* hypre_IntArrayCloneDeep_v2( hypre_IntArray *x,
-                                            HYPRE_MemoryLocation memory_location );
+                                            NALU_HYPRE_MemoryLocation memory_location );
 hypre_IntArray* hypre_IntArrayCloneDeep( hypre_IntArray *x );
-HYPRE_Int hypre_IntArraySetConstantValues( hypre_IntArray *v, HYPRE_Int value );
+NALU_HYPRE_Int hypre_IntArraySetConstantValues( hypre_IntArray *v, NALU_HYPRE_Int value );
 
 /* memory_tracker.c */
-#ifdef HYPRE_USING_MEMORY_TRACKER
+#ifdef NALU_HYPRE_USING_MEMORY_TRACKER
 hypre_MemoryTracker* hypre_memory_tracker();
 hypre_MemoryTracker * hypre_MemoryTrackerCreate();
 void hypre_MemoryTrackerDestroy(hypre_MemoryTracker *tracker);
 void hypre_MemoryTrackerInsert1(const char *action, void *ptr, size_t nbytes,
                                 hypre_MemoryLocation memory_location, const char *filename,
-                                const char *function, HYPRE_Int line);
+                                const char *function, NALU_HYPRE_Int line);
 void hypre_MemoryTrackerInsert2(const char *action, void *ptr, void *ptr2, size_t nbytes,
                                 hypre_MemoryLocation memory_location, hypre_MemoryLocation memory_location2,
                                 const char *filename,
-                                const char *function, HYPRE_Int line);
-HYPRE_Int hypre_PrintMemoryTracker( size_t *totl_bytes_o, size_t *peak_bytes_o,
-                                    size_t *curr_bytes_o, HYPRE_Int do_print, const char *fname );
-HYPRE_Int hypre_MemoryTrackerSetPrint(HYPRE_Int do_print);
-HYPRE_Int hypre_MemoryTrackerSetFileName(const char *file_name);
+                                const char *function, NALU_HYPRE_Int line);
+NALU_HYPRE_Int hypre_PrintMemoryTracker( size_t *totl_bytes_o, size_t *peak_bytes_o,
+                                    size_t *curr_bytes_o, NALU_HYPRE_Int do_print, const char *fname );
+NALU_HYPRE_Int hypre_MemoryTrackerSetPrint(NALU_HYPRE_Int do_print);
+NALU_HYPRE_Int hypre_MemoryTrackerSetFileName(const char *file_name);
 #endif
 
 /******************************************************************************
@@ -2019,7 +2019,7 @@ HYPRE_Int hypre_MemoryTrackerSetFileName(const char *file_name);
 #include <limits.h>
 //#include <math.h>
 
-#ifdef HYPRE_USING_OPENMP
+#ifdef NALU_HYPRE_USING_OPENMP
 #include <omp.h>
 #endif
 
@@ -2039,9 +2039,9 @@ extern "C" {
  * them with C++ instead of C (VS does not support C99 'inline').
  ******************************************************************************/
 
-#ifdef HYPRE_USING_ATOMIC
-static inline HYPRE_Int
-hypre_compare_and_swap( HYPRE_Int *ptr, HYPRE_Int oldval, HYPRE_Int newval )
+#ifdef NALU_HYPRE_USING_ATOMIC
+static inline NALU_HYPRE_Int
+hypre_compare_and_swap( NALU_HYPRE_Int *ptr, NALU_HYPRE_Int oldval, NALU_HYPRE_Int newval )
 {
 #if defined(__GNUC__) && defined(__GNUC_MINOR__) && defined(__GNUC_PATCHLEVEL__) && (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__) > 40100
    return __sync_val_compare_and_swap(ptr, oldval, newval);
@@ -2049,14 +2049,14 @@ hypre_compare_and_swap( HYPRE_Int *ptr, HYPRE_Int oldval, HYPRE_Int newval )
    //return _InterlockedCompareExchange((long *)ptr, newval, oldval);
    //#elif defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L && !defined(__STDC_NO_ATOMICS__)
    // JSP: not many compilers have implemented this, so comment out for now
-   //_Atomic HYPRE_Int *atomic_ptr = ptr;
+   //_Atomic NALU_HYPRE_Int *atomic_ptr = ptr;
    //atomic_compare_exchange_strong(atomic_ptr, &oldval, newval);
    //return oldval;
 #endif
 }
 
-static inline HYPRE_Int
-hypre_fetch_and_add( HYPRE_Int *ptr, HYPRE_Int value )
+static inline NALU_HYPRE_Int
+hypre_fetch_and_add( NALU_HYPRE_Int *ptr, NALU_HYPRE_Int value )
 {
 #if defined(__GNUC__) && defined(__GNUC_MINOR__) && defined(__GNUC_PATCHLEVEL__) && (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__) > 40100
    return __sync_fetch_and_add(ptr, value);
@@ -2064,13 +2064,13 @@ hypre_fetch_and_add( HYPRE_Int *ptr, HYPRE_Int value )
    //return _InterlockedExchangeAdd((long *)ptr, value);
    //#elif defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L && !defined(__STDC_NO_ATOMICS__)
    // JSP: not many compilers have implemented this, so comment out for now
-   //_Atomic HYPRE_Int *atomic_ptr = ptr;
+   //_Atomic NALU_HYPRE_Int *atomic_ptr = ptr;
    //return atomic_fetch_add(atomic_ptr, value);
 #endif
 }
-#else // !HYPRE_USING_ATOMIC
-static inline HYPRE_Int
-hypre_compare_and_swap( HYPRE_Int *ptr, HYPRE_Int oldval, HYPRE_Int newval )
+#else // !NALU_HYPRE_USING_ATOMIC
+static inline NALU_HYPRE_Int
+hypre_compare_and_swap( NALU_HYPRE_Int *ptr, NALU_HYPRE_Int oldval, NALU_HYPRE_Int newval )
 {
    if (*ptr == oldval)
    {
@@ -2080,29 +2080,29 @@ hypre_compare_and_swap( HYPRE_Int *ptr, HYPRE_Int oldval, HYPRE_Int newval )
    else { return *ptr; }
 }
 
-static inline HYPRE_Int
-hypre_fetch_and_add( HYPRE_Int *ptr, HYPRE_Int value )
+static inline NALU_HYPRE_Int
+hypre_fetch_and_add( NALU_HYPRE_Int *ptr, NALU_HYPRE_Int value )
 {
-   HYPRE_Int oldval = *ptr;
+   NALU_HYPRE_Int oldval = *ptr;
    *ptr += value;
    return oldval;
 }
-#endif // !HYPRE_USING_ATOMIC
+#endif // !NALU_HYPRE_USING_ATOMIC
 
 /******************************************************************************/
 
 // Constants ................................................................
-#define HYPRE_HOPSCOTCH_HASH_HOP_RANGE    (32)
-#define HYPRE_HOPSCOTCH_HASH_INSERT_RANGE (4*1024)
+#define NALU_HYPRE_HOPSCOTCH_HASH_HOP_RANGE    (32)
+#define NALU_HYPRE_HOPSCOTCH_HASH_INSERT_RANGE (4*1024)
 
-#define HYPRE_HOPSCOTCH_HASH_EMPTY (0)
-#define HYPRE_HOPSCOTCH_HASH_BUSY  (1)
+#define NALU_HYPRE_HOPSCOTCH_HASH_EMPTY (0)
+#define NALU_HYPRE_HOPSCOTCH_HASH_BUSY  (1)
 
 // Small Utilities ..........................................................
-static inline HYPRE_Int
+static inline NALU_HYPRE_Int
 first_lsb_bit_indx( hypre_uint x )
 {
-   HYPRE_Int pos;
+   NALU_HYPRE_Int pos;
 #if defined(_MSC_VER) || defined(__MINGW64__)
    if (x == 0)
    {
@@ -2160,45 +2160,45 @@ first_lsb_bit_indx( hypre_uint x )
 /***************************************
 *  Constants
 ***************************************/
-#define HYPRE_XXH_PRIME32_1   2654435761U
-#define HYPRE_XXH_PRIME32_2   2246822519U
-#define HYPRE_XXH_PRIME32_3   3266489917U
-#define HYPRE_XXH_PRIME32_4    668265263U
-#define HYPRE_XXH_PRIME32_5    374761393U
+#define NALU_HYPRE_XXH_PRIME32_1   2654435761U
+#define NALU_HYPRE_XXH_PRIME32_2   2246822519U
+#define NALU_HYPRE_XXH_PRIME32_3   3266489917U
+#define NALU_HYPRE_XXH_PRIME32_4    668265263U
+#define NALU_HYPRE_XXH_PRIME32_5    374761393U
 
-#define HYPRE_XXH_PRIME64_1 11400714785074694791ULL
-#define HYPRE_XXH_PRIME64_2 14029467366897019727ULL
-#define HYPRE_XXH_PRIME64_3  1609587929392839161ULL
-#define HYPRE_XXH_PRIME64_4  9650029242287828579ULL
-#define HYPRE_XXH_PRIME64_5  2870177450012600261ULL
+#define NALU_HYPRE_XXH_PRIME64_1 11400714785074694791ULL
+#define NALU_HYPRE_XXH_PRIME64_2 14029467366897019727ULL
+#define NALU_HYPRE_XXH_PRIME64_3  1609587929392839161ULL
+#define NALU_HYPRE_XXH_PRIME64_4  9650029242287828579ULL
+#define NALU_HYPRE_XXH_PRIME64_5  2870177450012600261ULL
 
-#define HYPRE_XXH_rotl32(x,r) ((x << r) | (x >> (32 - r)))
-#define HYPRE_XXH_rotl64(x,r) ((x << r) | (x >> (64 - r)))
+#define NALU_HYPRE_XXH_rotl32(x,r) ((x << r) | (x >> (32 - r)))
+#define NALU_HYPRE_XXH_rotl64(x,r) ((x << r) | (x >> (64 - r)))
 
-#if defined(HYPRE_MIXEDINT) || defined(HYPRE_BIGINT)
-static inline HYPRE_BigInt
-hypre_BigHash( HYPRE_BigInt input )
+#if defined(NALU_HYPRE_MIXEDINT) || defined(NALU_HYPRE_BIGINT)
+static inline NALU_HYPRE_BigInt
+hypre_BigHash( NALU_HYPRE_BigInt input )
 {
-   hypre_ulongint h64 = HYPRE_XXH_PRIME64_5 + sizeof(input);
+   hypre_ulongint h64 = NALU_HYPRE_XXH_PRIME64_5 + sizeof(input);
 
    hypre_ulongint k1 = input;
-   k1 *= HYPRE_XXH_PRIME64_2;
-   k1 = HYPRE_XXH_rotl64(k1, 31);
-   k1 *= HYPRE_XXH_PRIME64_1;
+   k1 *= NALU_HYPRE_XXH_PRIME64_2;
+   k1 = NALU_HYPRE_XXH_rotl64(k1, 31);
+   k1 *= NALU_HYPRE_XXH_PRIME64_1;
    h64 ^= k1;
-   h64 = HYPRE_XXH_rotl64(h64, 27) * HYPRE_XXH_PRIME64_1 + HYPRE_XXH_PRIME64_4;
+   h64 = NALU_HYPRE_XXH_rotl64(h64, 27) * NALU_HYPRE_XXH_PRIME64_1 + NALU_HYPRE_XXH_PRIME64_4;
 
    h64 ^= h64 >> 33;
-   h64 *= HYPRE_XXH_PRIME64_2;
+   h64 *= NALU_HYPRE_XXH_PRIME64_2;
    h64 ^= h64 >> 29;
-   h64 *= HYPRE_XXH_PRIME64_3;
+   h64 *= NALU_HYPRE_XXH_PRIME64_3;
    h64 ^= h64 >> 32;
 
 #ifndef NDEBUG
-   if (HYPRE_HOPSCOTCH_HASH_EMPTY == h64)
+   if (NALU_HYPRE_HOPSCOTCH_HASH_EMPTY == h64)
    {
-      hypre_printf("hash(%lld) = %d\n", h64, HYPRE_HOPSCOTCH_HASH_EMPTY);
-      hypre_assert(HYPRE_HOPSCOTCH_HASH_EMPTY != h64);
+      hypre_printf("hash(%lld) = %d\n", h64, NALU_HYPRE_HOPSCOTCH_HASH_EMPTY);
+      hypre_assert(NALU_HYPRE_HOPSCOTCH_HASH_EMPTY != h64);
    }
 #endif
 
@@ -2206,53 +2206,53 @@ hypre_BigHash( HYPRE_BigInt input )
 }
 
 #else
-static inline HYPRE_Int
-hypre_BigHash(HYPRE_Int input)
+static inline NALU_HYPRE_Int
+hypre_BigHash(NALU_HYPRE_Int input)
 {
-   hypre_uint h32 = HYPRE_XXH_PRIME32_5 + sizeof(input);
+   hypre_uint h32 = NALU_HYPRE_XXH_PRIME32_5 + sizeof(input);
 
    // 1665863975 is added to input so that
-   // only -1073741824 gives HYPRE_HOPSCOTCH_HASH_EMPTY.
+   // only -1073741824 gives NALU_HYPRE_HOPSCOTCH_HASH_EMPTY.
    // Hence, we're fine as long as key is non-negative.
-   h32 += (input + 1665863975) * HYPRE_XXH_PRIME32_3;
-   h32 = HYPRE_XXH_rotl32(h32, 17) * HYPRE_XXH_PRIME32_4;
+   h32 += (input + 1665863975) * NALU_HYPRE_XXH_PRIME32_3;
+   h32 = NALU_HYPRE_XXH_rotl32(h32, 17) * NALU_HYPRE_XXH_PRIME32_4;
 
    h32 ^= h32 >> 15;
-   h32 *= HYPRE_XXH_PRIME32_2;
+   h32 *= NALU_HYPRE_XXH_PRIME32_2;
    h32 ^= h32 >> 13;
-   h32 *= HYPRE_XXH_PRIME32_3;
+   h32 *= NALU_HYPRE_XXH_PRIME32_3;
    h32 ^= h32 >> 16;
 
-   //hypre_assert(HYPRE_HOPSCOTCH_HASH_EMPTY != h32);
+   //hypre_assert(NALU_HYPRE_HOPSCOTCH_HASH_EMPTY != h32);
 
    return h32;
 }
 #endif
 
-#ifdef HYPRE_BIGINT
-static inline HYPRE_Int
-hypre_Hash(HYPRE_Int input)
+#ifdef NALU_HYPRE_BIGINT
+static inline NALU_HYPRE_Int
+hypre_Hash(NALU_HYPRE_Int input)
 {
-   hypre_ulongint h64 = HYPRE_XXH_PRIME64_5 + sizeof(input);
+   hypre_ulongint h64 = NALU_HYPRE_XXH_PRIME64_5 + sizeof(input);
 
    hypre_ulongint k1 = input;
-   k1 *= HYPRE_XXH_PRIME64_2;
-   k1 = HYPRE_XXH_rotl64(k1, 31);
-   k1 *= HYPRE_XXH_PRIME64_1;
+   k1 *= NALU_HYPRE_XXH_PRIME64_2;
+   k1 = NALU_HYPRE_XXH_rotl64(k1, 31);
+   k1 *= NALU_HYPRE_XXH_PRIME64_1;
    h64 ^= k1;
-   h64 = HYPRE_XXH_rotl64(h64, 27) * HYPRE_XXH_PRIME64_1 + HYPRE_XXH_PRIME64_4;
+   h64 = NALU_HYPRE_XXH_rotl64(h64, 27) * NALU_HYPRE_XXH_PRIME64_1 + NALU_HYPRE_XXH_PRIME64_4;
 
    h64 ^= h64 >> 33;
-   h64 *= HYPRE_XXH_PRIME64_2;
+   h64 *= NALU_HYPRE_XXH_PRIME64_2;
    h64 ^= h64 >> 29;
-   h64 *= HYPRE_XXH_PRIME64_3;
+   h64 *= NALU_HYPRE_XXH_PRIME64_3;
    h64 ^= h64 >> 32;
 
 #ifndef NDEBUG
-   if (HYPRE_HOPSCOTCH_HASH_EMPTY == h64)
+   if (NALU_HYPRE_HOPSCOTCH_HASH_EMPTY == h64)
    {
-      hypre_printf("hash(%lld) = %d\n", h64, HYPRE_HOPSCOTCH_HASH_EMPTY);
-      hypre_assert(HYPRE_HOPSCOTCH_HASH_EMPTY != h64);
+      hypre_printf("hash(%lld) = %d\n", h64, NALU_HYPRE_HOPSCOTCH_HASH_EMPTY);
+      hypre_assert(NALU_HYPRE_HOPSCOTCH_HASH_EMPTY != h64);
    }
 #endif
 
@@ -2260,24 +2260,24 @@ hypre_Hash(HYPRE_Int input)
 }
 
 #else
-static inline HYPRE_Int
-hypre_Hash(HYPRE_Int input)
+static inline NALU_HYPRE_Int
+hypre_Hash(NALU_HYPRE_Int input)
 {
-   hypre_uint h32 = HYPRE_XXH_PRIME32_5 + sizeof(input);
+   hypre_uint h32 = NALU_HYPRE_XXH_PRIME32_5 + sizeof(input);
 
    // 1665863975 is added to input so that
-   // only -1073741824 gives HYPRE_HOPSCOTCH_HASH_EMPTY.
+   // only -1073741824 gives NALU_HYPRE_HOPSCOTCH_HASH_EMPTY.
    // Hence, we're fine as long as key is non-negative.
-   h32 += (input + 1665863975) * HYPRE_XXH_PRIME32_3;
-   h32 = HYPRE_XXH_rotl32(h32, 17) * HYPRE_XXH_PRIME32_4;
+   h32 += (input + 1665863975) * NALU_HYPRE_XXH_PRIME32_3;
+   h32 = NALU_HYPRE_XXH_rotl32(h32, 17) * NALU_HYPRE_XXH_PRIME32_4;
 
    h32 ^= h32 >> 15;
-   h32 *= HYPRE_XXH_PRIME32_2;
+   h32 *= NALU_HYPRE_XXH_PRIME32_2;
    h32 ^= h32 >> 13;
-   h32 *= HYPRE_XXH_PRIME32_3;
+   h32 *= NALU_HYPRE_XXH_PRIME32_3;
    h32 ^= h32 >> 16;
 
-   //hypre_assert(HYPRE_HOPSCOTCH_HASH_EMPTY != h32);
+   //hypre_assert(NALU_HYPRE_HOPSCOTCH_HASH_EMPTY != h32);
 
    return h32;
 }
@@ -2285,20 +2285,20 @@ hypre_Hash(HYPRE_Int input)
 
 static inline void
 hypre_UnorderedIntSetFindCloserFreeBucket( hypre_UnorderedIntSet *s,
-#ifdef HYPRE_CONCURRENT_HOPSCOTCH
+#ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
                                            hypre_HopscotchSegment *start_seg,
 #endif
-                                           HYPRE_Int *free_bucket,
-                                           HYPRE_Int *free_dist )
+                                           NALU_HYPRE_Int *free_bucket,
+                                           NALU_HYPRE_Int *free_dist )
 {
-   HYPRE_Int move_bucket = *free_bucket - (HYPRE_HOPSCOTCH_HASH_HOP_RANGE - 1);
-   HYPRE_Int move_free_dist;
-   for (move_free_dist = HYPRE_HOPSCOTCH_HASH_HOP_RANGE - 1; move_free_dist > 0; --move_free_dist)
+   NALU_HYPRE_Int move_bucket = *free_bucket - (NALU_HYPRE_HOPSCOTCH_HASH_HOP_RANGE - 1);
+   NALU_HYPRE_Int move_free_dist;
+   for (move_free_dist = NALU_HYPRE_HOPSCOTCH_HASH_HOP_RANGE - 1; move_free_dist > 0; --move_free_dist)
    {
       hypre_uint start_hop_info = s->hopInfo[move_bucket];
-      HYPRE_Int move_new_free_dist = -1;
+      NALU_HYPRE_Int move_new_free_dist = -1;
       hypre_uint mask = 1;
-      HYPRE_Int i;
+      NALU_HYPRE_Int i;
       for (i = 0; i < move_free_dist; ++i, mask <<= 1)
       {
          if (mask & start_hop_info)
@@ -2309,7 +2309,7 @@ hypre_UnorderedIntSetFindCloserFreeBucket( hypre_UnorderedIntSet *s,
       }
       if (-1 != move_new_free_dist)
       {
-#ifdef HYPRE_CONCURRENT_HOPSCOTCH
+#ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
          hypre_HopscotchSegment*  move_segment = &(s->segments[move_bucket & s->segmentMask]);
 
          if (start_seg != move_segment)
@@ -2321,11 +2321,11 @@ hypre_UnorderedIntSetFindCloserFreeBucket( hypre_UnorderedIntSet *s,
          if (start_hop_info == s->hopInfo[move_bucket])
          {
             // new_free_bucket -> free_bucket and empty new_free_bucket
-            HYPRE_Int new_free_bucket = move_bucket + move_new_free_dist;
+            NALU_HYPRE_Int new_free_bucket = move_bucket + move_new_free_dist;
             s->key[*free_bucket]  = s->key[new_free_bucket];
             s->hash[*free_bucket] = s->hash[new_free_bucket];
 
-#ifdef HYPRE_CONCURRENT_HOPSCOTCH
+#ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
             ++move_segment->timestamp;
             #pragma omp flush
 #endif
@@ -2336,7 +2336,7 @@ hypre_UnorderedIntSetFindCloserFreeBucket( hypre_UnorderedIntSet *s,
             *free_bucket = new_free_bucket;
             *free_dist -= move_free_dist - move_new_free_dist;
 
-#ifdef HYPRE_CONCURRENT_HOPSCOTCH
+#ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
             if (start_seg != move_segment)
             {
                omp_unset_lock(&move_segment->lock);
@@ -2345,7 +2345,7 @@ hypre_UnorderedIntSetFindCloserFreeBucket( hypre_UnorderedIntSet *s,
 
             return;
          }
-#ifdef HYPRE_CONCURRENT_HOPSCOTCH
+#ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
          if (start_seg != move_segment)
          {
             omp_unset_lock(&move_segment->lock);
@@ -2360,20 +2360,20 @@ hypre_UnorderedIntSetFindCloserFreeBucket( hypre_UnorderedIntSet *s,
 
 static inline void
 hypre_UnorderedBigIntSetFindCloserFreeBucket( hypre_UnorderedBigIntSet *s,
-#ifdef HYPRE_CONCURRENT_HOPSCOTCH
+#ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
                                               hypre_HopscotchSegment   *start_seg,
 #endif
-                                              HYPRE_Int *free_bucket,
-                                              HYPRE_Int *free_dist )
+                                              NALU_HYPRE_Int *free_bucket,
+                                              NALU_HYPRE_Int *free_dist )
 {
-   HYPRE_Int move_bucket = *free_bucket - (HYPRE_HOPSCOTCH_HASH_HOP_RANGE - 1);
-   HYPRE_Int move_free_dist;
-   for (move_free_dist = HYPRE_HOPSCOTCH_HASH_HOP_RANGE - 1; move_free_dist > 0; --move_free_dist)
+   NALU_HYPRE_Int move_bucket = *free_bucket - (NALU_HYPRE_HOPSCOTCH_HASH_HOP_RANGE - 1);
+   NALU_HYPRE_Int move_free_dist;
+   for (move_free_dist = NALU_HYPRE_HOPSCOTCH_HASH_HOP_RANGE - 1; move_free_dist > 0; --move_free_dist)
    {
       hypre_uint start_hop_info = s->hopInfo[move_bucket];
-      HYPRE_Int move_new_free_dist = -1;
+      NALU_HYPRE_Int move_new_free_dist = -1;
       hypre_uint mask = 1;
-      HYPRE_Int i;
+      NALU_HYPRE_Int i;
       for (i = 0; i < move_free_dist; ++i, mask <<= 1)
       {
          if (mask & start_hop_info)
@@ -2384,7 +2384,7 @@ hypre_UnorderedBigIntSetFindCloserFreeBucket( hypre_UnorderedBigIntSet *s,
       }
       if (-1 != move_new_free_dist)
       {
-#ifdef HYPRE_CONCURRENT_HOPSCOTCH
+#ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
          hypre_HopscotchSegment*  move_segment = &(s->segments[move_bucket & s->segmentMask]);
 
          if (start_seg != move_segment)
@@ -2396,11 +2396,11 @@ hypre_UnorderedBigIntSetFindCloserFreeBucket( hypre_UnorderedBigIntSet *s,
          if (start_hop_info == s->hopInfo[move_bucket])
          {
             // new_free_bucket -> free_bucket and empty new_free_bucket
-            HYPRE_Int new_free_bucket = move_bucket + move_new_free_dist;
+            NALU_HYPRE_Int new_free_bucket = move_bucket + move_new_free_dist;
             s->key[*free_bucket]  = s->key[new_free_bucket];
             s->hash[*free_bucket] = s->hash[new_free_bucket];
 
-#ifdef HYPRE_CONCURRENT_HOPSCOTCH
+#ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
             ++move_segment->timestamp;
             #pragma omp flush
 #endif
@@ -2411,7 +2411,7 @@ hypre_UnorderedBigIntSetFindCloserFreeBucket( hypre_UnorderedBigIntSet *s,
             *free_bucket = new_free_bucket;
             *free_dist -= move_free_dist - move_new_free_dist;
 
-#ifdef HYPRE_CONCURRENT_HOPSCOTCH
+#ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
             if (start_seg != move_segment)
             {
                omp_unset_lock(&move_segment->lock);
@@ -2420,7 +2420,7 @@ hypre_UnorderedBigIntSetFindCloserFreeBucket( hypre_UnorderedBigIntSet *s,
 
             return;
          }
-#ifdef HYPRE_CONCURRENT_HOPSCOTCH
+#ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
          if (start_seg != move_segment)
          {
             omp_unset_lock(&move_segment->lock);
@@ -2435,20 +2435,20 @@ hypre_UnorderedBigIntSetFindCloserFreeBucket( hypre_UnorderedBigIntSet *s,
 
 static inline void
 hypre_UnorderedIntMapFindCloserFreeBucket( hypre_UnorderedIntMap  *m,
-#ifdef HYPRE_CONCURRENT_HOPSCOTCH
+#ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
                                            hypre_HopscotchSegment *start_seg,
 #endif
                                            hypre_HopscotchBucket **free_bucket,
-                                           HYPRE_Int *free_dist)
+                                           NALU_HYPRE_Int *free_dist)
 {
-   hypre_HopscotchBucket* move_bucket = *free_bucket - (HYPRE_HOPSCOTCH_HASH_HOP_RANGE - 1);
-   HYPRE_Int move_free_dist;
-   for (move_free_dist = HYPRE_HOPSCOTCH_HASH_HOP_RANGE - 1; move_free_dist > 0; --move_free_dist)
+   hypre_HopscotchBucket* move_bucket = *free_bucket - (NALU_HYPRE_HOPSCOTCH_HASH_HOP_RANGE - 1);
+   NALU_HYPRE_Int move_free_dist;
+   for (move_free_dist = NALU_HYPRE_HOPSCOTCH_HASH_HOP_RANGE - 1; move_free_dist > 0; --move_free_dist)
    {
       hypre_uint start_hop_info = move_bucket->hopInfo;
-      HYPRE_Int move_new_free_dist = -1;
+      NALU_HYPRE_Int move_new_free_dist = -1;
       hypre_uint mask = 1;
-      HYPRE_Int i;
+      NALU_HYPRE_Int i;
       for (i = 0; i < move_free_dist; ++i, mask <<= 1)
       {
          if (mask & start_hop_info)
@@ -2459,7 +2459,7 @@ hypre_UnorderedIntMapFindCloserFreeBucket( hypre_UnorderedIntMap  *m,
       }
       if (-1 != move_new_free_dist)
       {
-#ifdef HYPRE_CONCURRENT_HOPSCOTCH
+#ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
          hypre_HopscotchSegment* move_segment = &(m->segments[(move_bucket - m->table) & m->segmentMask]);
 
          if (start_seg != move_segment)
@@ -2476,7 +2476,7 @@ hypre_UnorderedIntMapFindCloserFreeBucket( hypre_UnorderedIntMap  *m,
             (*free_bucket)->key  = new_free_bucket->key;
             (*free_bucket)->hash = new_free_bucket->hash;
 
-#ifdef HYPRE_CONCURRENT_HOPSCOTCH
+#ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
             ++move_segment->timestamp;
 
             #pragma omp flush
@@ -2488,7 +2488,7 @@ hypre_UnorderedIntMapFindCloserFreeBucket( hypre_UnorderedIntMap  *m,
             *free_bucket = new_free_bucket;
             *free_dist -= move_free_dist - move_new_free_dist;
 
-#ifdef HYPRE_CONCURRENT_HOPSCOTCH
+#ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
             if (start_seg != move_segment)
             {
                omp_unset_lock(&move_segment->lock);
@@ -2496,7 +2496,7 @@ hypre_UnorderedIntMapFindCloserFreeBucket( hypre_UnorderedIntMap  *m,
 #endif
             return;
          }
-#ifdef HYPRE_CONCURRENT_HOPSCOTCH
+#ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
          if (start_seg != move_segment)
          {
             omp_unset_lock(&move_segment->lock);
@@ -2511,20 +2511,20 @@ hypre_UnorderedIntMapFindCloserFreeBucket( hypre_UnorderedIntMap  *m,
 
 static inline void
 hypre_UnorderedBigIntMapFindCloserFreeBucket( hypre_UnorderedBigIntMap   *m,
-#ifdef HYPRE_CONCURRENT_HOPSCOTCH
+#ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
                                               hypre_HopscotchSegment     *start_seg,
 #endif
                                               hypre_BigHopscotchBucket **free_bucket,
-                                              HYPRE_Int *free_dist)
+                                              NALU_HYPRE_Int *free_dist)
 {
-   hypre_BigHopscotchBucket* move_bucket = *free_bucket - (HYPRE_HOPSCOTCH_HASH_HOP_RANGE - 1);
-   HYPRE_Int move_free_dist;
-   for (move_free_dist = HYPRE_HOPSCOTCH_HASH_HOP_RANGE - 1; move_free_dist > 0; --move_free_dist)
+   hypre_BigHopscotchBucket* move_bucket = *free_bucket - (NALU_HYPRE_HOPSCOTCH_HASH_HOP_RANGE - 1);
+   NALU_HYPRE_Int move_free_dist;
+   for (move_free_dist = NALU_HYPRE_HOPSCOTCH_HASH_HOP_RANGE - 1; move_free_dist > 0; --move_free_dist)
    {
       hypre_uint start_hop_info = move_bucket->hopInfo;
-      HYPRE_Int move_new_free_dist = -1;
+      NALU_HYPRE_Int move_new_free_dist = -1;
       hypre_uint mask = 1;
-      HYPRE_Int i;
+      NALU_HYPRE_Int i;
       for (i = 0; i < move_free_dist; ++i, mask <<= 1)
       {
          if (mask & start_hop_info)
@@ -2535,7 +2535,7 @@ hypre_UnorderedBigIntMapFindCloserFreeBucket( hypre_UnorderedBigIntMap   *m,
       }
       if (-1 != move_new_free_dist)
       {
-#ifdef HYPRE_CONCURRENT_HOPSCOTCH
+#ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
          hypre_HopscotchSegment* move_segment = &(m->segments[(move_bucket - m->table) & m->segmentMask]);
 
          if (start_seg != move_segment)
@@ -2552,7 +2552,7 @@ hypre_UnorderedBigIntMapFindCloserFreeBucket( hypre_UnorderedBigIntMap   *m,
             (*free_bucket)->key  = new_free_bucket->key;
             (*free_bucket)->hash = new_free_bucket->hash;
 
-#ifdef HYPRE_CONCURRENT_HOPSCOTCH
+#ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
             ++move_segment->timestamp;
 
             #pragma omp flush
@@ -2564,7 +2564,7 @@ hypre_UnorderedBigIntMapFindCloserFreeBucket( hypre_UnorderedBigIntMap   *m,
             *free_bucket = new_free_bucket;
             *free_dist -= move_free_dist - move_new_free_dist;
 
-#ifdef HYPRE_CONCURRENT_HOPSCOTCH
+#ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
             if (start_seg != move_segment)
             {
                omp_unset_lock(&move_segment->lock);
@@ -2572,7 +2572,7 @@ hypre_UnorderedBigIntMapFindCloserFreeBucket( hypre_UnorderedBigIntMap   *m,
 #endif
             return;
          }
-#ifdef HYPRE_CONCURRENT_HOPSCOTCH
+#ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
          if (start_seg != move_segment)
          {
             omp_unset_lock(&move_segment->lock);
@@ -2586,17 +2586,17 @@ hypre_UnorderedBigIntMapFindCloserFreeBucket( hypre_UnorderedBigIntMap   *m,
 }
 
 void hypre_UnorderedIntSetCreate( hypre_UnorderedIntSet *s,
-                                  HYPRE_Int inCapacity,
-                                  HYPRE_Int concurrencyLevel);
+                                  NALU_HYPRE_Int inCapacity,
+                                  NALU_HYPRE_Int concurrencyLevel);
 void hypre_UnorderedBigIntSetCreate( hypre_UnorderedBigIntSet *s,
-                                     HYPRE_Int inCapacity,
-                                     HYPRE_Int concurrencyLevel);
+                                     NALU_HYPRE_Int inCapacity,
+                                     NALU_HYPRE_Int concurrencyLevel);
 void hypre_UnorderedIntMapCreate( hypre_UnorderedIntMap *m,
-                                  HYPRE_Int inCapacity,
-                                  HYPRE_Int concurrencyLevel);
+                                  NALU_HYPRE_Int inCapacity,
+                                  NALU_HYPRE_Int concurrencyLevel);
 void hypre_UnorderedBigIntMapCreate( hypre_UnorderedBigIntMap *m,
-                                     HYPRE_Int inCapacity,
-                                     HYPRE_Int concurrencyLevel);
+                                     NALU_HYPRE_Int inCapacity,
+                                     NALU_HYPRE_Int concurrencyLevel);
 
 void hypre_UnorderedIntSetDestroy( hypre_UnorderedIntSet *s );
 void hypre_UnorderedBigIntSetDestroy( hypre_UnorderedBigIntSet *s );
@@ -2604,22 +2604,22 @@ void hypre_UnorderedIntMapDestroy( hypre_UnorderedIntMap *m );
 void hypre_UnorderedBigIntMapDestroy( hypre_UnorderedBigIntMap *m );
 
 // Query Operations .........................................................
-static inline HYPRE_Int
+static inline NALU_HYPRE_Int
 hypre_UnorderedIntSetContains( hypre_UnorderedIntSet *s,
-                               HYPRE_Int              key )
+                               NALU_HYPRE_Int              key )
 {
    //CALCULATE HASH ..........................
-#ifdef HYPRE_BIGINT
-   HYPRE_Int hash = hypre_BigHash(key);
+#ifdef NALU_HYPRE_BIGINT
+   NALU_HYPRE_Int hash = hypre_BigHash(key);
 #else
-   HYPRE_Int hash = hypre_Hash(key);
+   NALU_HYPRE_Int hash = hypre_Hash(key);
 #endif
 
    //CHECK IF ALREADY CONTAIN ................
-#ifdef HYPRE_CONCURRENT_HOPSCOTCH
+#ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
    hypre_HopscotchSegment *segment = &s->segments[hash & s->segmentMask];
 #endif
-   HYPRE_Int bucket = hash & s->bucketMask;
+   NALU_HYPRE_Int bucket = hash & s->bucketMask;
    hypre_uint hopInfo = s->hopInfo[bucket];
 
    if (0 == hopInfo)
@@ -2635,13 +2635,13 @@ hypre_UnorderedIntSetContains( hypre_UnorderedIntSet *s,
       else { return 0; }
    }
 
-#ifdef HYPRE_CONCURRENT_HOPSCOTCH
-   HYPRE_Int startTimestamp = segment->timestamp;
+#ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
+   NALU_HYPRE_Int startTimestamp = segment->timestamp;
 #endif
    while (0 != hopInfo)
    {
-      HYPRE_Int i = first_lsb_bit_indx(hopInfo);
-      HYPRE_Int currElm = bucket + i;
+      NALU_HYPRE_Int i = first_lsb_bit_indx(hopInfo);
+      NALU_HYPRE_Int currElm = bucket + i;
 
       if (hash == s->hash[currElm] && key == s->key[currElm])
       {
@@ -2650,15 +2650,15 @@ hypre_UnorderedIntSetContains( hypre_UnorderedIntSet *s,
       hopInfo &= ~(1U << i);
    }
 
-#ifdef HYPRE_CONCURRENT_HOPSCOTCH
+#ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
    if (segment->timestamp == startTimestamp)
    {
       return 0;
    }
 #endif
 
-   HYPRE_Int i;
-   for (i = 0; i < HYPRE_HOPSCOTCH_HASH_HOP_RANGE; ++i)
+   NALU_HYPRE_Int i;
+   for (i = 0; i < NALU_HYPRE_HOPSCOTCH_HASH_HOP_RANGE; ++i)
    {
       if (hash == s->hash[bucket + i] && key == s->key[bucket + i])
       {
@@ -2668,22 +2668,22 @@ hypre_UnorderedIntSetContains( hypre_UnorderedIntSet *s,
    return 0;
 }
 
-static inline HYPRE_Int
+static inline NALU_HYPRE_Int
 hypre_UnorderedBigIntSetContains( hypre_UnorderedBigIntSet *s,
-                                  HYPRE_BigInt key )
+                                  NALU_HYPRE_BigInt key )
 {
    //CALCULATE HASH ..........................
-#if defined(HYPRE_BIGINT) || defined(HYPRE_MIXEDINT)
-   HYPRE_BigInt hash = hypre_BigHash(key);
+#if defined(NALU_HYPRE_BIGINT) || defined(NALU_HYPRE_MIXEDINT)
+   NALU_HYPRE_BigInt hash = hypre_BigHash(key);
 #else
-   HYPRE_BigInt hash = hypre_Hash(key);
+   NALU_HYPRE_BigInt hash = hypre_Hash(key);
 #endif
 
    //CHECK IF ALREADY CONTAIN ................
-#ifdef HYPRE_CONCURRENT_HOPSCOTCH
-   hypre_HopscotchSegment *segment = &s->segments[(HYPRE_Int)(hash & s->segmentMask)];
+#ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
+   hypre_HopscotchSegment *segment = &s->segments[(NALU_HYPRE_Int)(hash & s->segmentMask)];
 #endif
-   HYPRE_Int bucket = (HYPRE_Int)(hash & s->bucketMask);
+   NALU_HYPRE_Int bucket = (NALU_HYPRE_Int)(hash & s->bucketMask);
    hypre_uint hopInfo = s->hopInfo[bucket];
 
    if (0 == hopInfo)
@@ -2699,13 +2699,13 @@ hypre_UnorderedBigIntSetContains( hypre_UnorderedBigIntSet *s,
       else { return 0; }
    }
 
-#ifdef HYPRE_CONCURRENT_HOPSCOTCH
-   HYPRE_Int startTimestamp = segment->timestamp;
+#ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
+   NALU_HYPRE_Int startTimestamp = segment->timestamp;
 #endif
    while (0 != hopInfo)
    {
-      HYPRE_Int i = first_lsb_bit_indx(hopInfo);
-      HYPRE_Int currElm = bucket + i;
+      NALU_HYPRE_Int i = first_lsb_bit_indx(hopInfo);
+      NALU_HYPRE_Int currElm = bucket + i;
 
       if (hash == s->hash[currElm] && key == s->key[currElm])
       {
@@ -2714,15 +2714,15 @@ hypre_UnorderedBigIntSetContains( hypre_UnorderedBigIntSet *s,
       hopInfo &= ~(1U << i);
    }
 
-#ifdef HYPRE_CONCURRENT_HOPSCOTCH
+#ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
    if (segment->timestamp == startTimestamp)
    {
       return 0;
    }
 #endif
 
-   HYPRE_Int i;
-   for (i = 0; i < HYPRE_HOPSCOTCH_HASH_HOP_RANGE; ++i)
+   NALU_HYPRE_Int i;
+   for (i = 0; i < NALU_HYPRE_HOPSCOTCH_HASH_HOP_RANGE; ++i)
    {
       if (hash == s->hash[bucket + i] && key == s->key[bucket + i])
       {
@@ -2735,19 +2735,19 @@ hypre_UnorderedBigIntSetContains( hypre_UnorderedBigIntSet *s,
 /**
  * @ret -1 if key doesn't exist
  */
-static inline HYPRE_Int
+static inline NALU_HYPRE_Int
 hypre_UnorderedIntMapGet( hypre_UnorderedIntMap *m,
-                          HYPRE_Int key )
+                          NALU_HYPRE_Int key )
 {
    //CALCULATE HASH ..........................
-#ifdef HYPRE_BIGINT
-   HYPRE_Int hash = hypre_BigHash(key);
+#ifdef NALU_HYPRE_BIGINT
+   NALU_HYPRE_Int hash = hypre_BigHash(key);
 #else
-   HYPRE_Int hash = hypre_Hash(key);
+   NALU_HYPRE_Int hash = hypre_Hash(key);
 #endif
 
    //CHECK IF ALREADY CONTAIN ................
-#ifdef HYPRE_CONCURRENT_HOPSCOTCH
+#ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
    hypre_HopscotchSegment *segment = &m->segments[hash & m->segmentMask];
 #endif
    hypre_HopscotchBucket *elmAry = &(m->table[hash & m->bucketMask]);
@@ -2765,12 +2765,12 @@ hypre_UnorderedIntMapGet( hypre_UnorderedIntMap *m,
       else { return -1; }
    }
 
-#ifdef HYPRE_CONCURRENT_HOPSCOTCH
-   HYPRE_Int startTimestamp = segment->timestamp;
+#ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
+   NALU_HYPRE_Int startTimestamp = segment->timestamp;
 #endif
    while (0 != hopInfo)
    {
-      HYPRE_Int i = first_lsb_bit_indx(hopInfo);
+      NALU_HYPRE_Int i = first_lsb_bit_indx(hopInfo);
       hypre_HopscotchBucket* currElm = elmAry + i;
       if (hash == currElm->hash && key == currElm->key)
       {
@@ -2779,7 +2779,7 @@ hypre_UnorderedIntMapGet( hypre_UnorderedIntMap *m,
       hopInfo &= ~(1U << i);
    }
 
-#ifdef HYPRE_CONCURRENT_HOPSCOTCH
+#ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
    if (segment->timestamp == startTimestamp)
    {
       return -1;
@@ -2787,8 +2787,8 @@ hypre_UnorderedIntMapGet( hypre_UnorderedIntMap *m,
 #endif
 
    hypre_HopscotchBucket *currBucket = &(m->table[hash & m->bucketMask]);
-   HYPRE_Int i;
-   for (i = 0; i < HYPRE_HOPSCOTCH_HASH_HOP_RANGE; ++i, ++currBucket)
+   NALU_HYPRE_Int i;
+   for (i = 0; i < NALU_HYPRE_HOPSCOTCH_HASH_HOP_RANGE; ++i, ++currBucket)
    {
       if (hash == currBucket->hash && key == currBucket->key)
       {
@@ -2799,21 +2799,21 @@ hypre_UnorderedIntMapGet( hypre_UnorderedIntMap *m,
 }
 
 static inline
-HYPRE_Int hypre_UnorderedBigIntMapGet( hypre_UnorderedBigIntMap *m,
-                                       HYPRE_BigInt key )
+NALU_HYPRE_Int hypre_UnorderedBigIntMapGet( hypre_UnorderedBigIntMap *m,
+                                       NALU_HYPRE_BigInt key )
 {
    //CALCULATE HASH ..........................
-#if defined(HYPRE_BIGINT) || defined(HYPRE_MIXEDINT)
-   HYPRE_BigInt hash = hypre_BigHash(key);
+#if defined(NALU_HYPRE_BIGINT) || defined(NALU_HYPRE_MIXEDINT)
+   NALU_HYPRE_BigInt hash = hypre_BigHash(key);
 #else
-   HYPRE_BigInt hash = hypre_Hash(key);
+   NALU_HYPRE_BigInt hash = hypre_Hash(key);
 #endif
 
    //CHECK IF ALREADY CONTAIN ................
-#ifdef HYPRE_CONCURRENT_HOPSCOTCH
-   hypre_HopscotchSegment *segment = &m->segments[(HYPRE_Int)(hash & m->segmentMask)];
+#ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
+   hypre_HopscotchSegment *segment = &m->segments[(NALU_HYPRE_Int)(hash & m->segmentMask)];
 #endif
-   hypre_BigHopscotchBucket *elmAry = &(m->table[(HYPRE_Int)(hash & m->bucketMask)]);
+   hypre_BigHopscotchBucket *elmAry = &(m->table[(NALU_HYPRE_Int)(hash & m->bucketMask)]);
    hypre_uint hopInfo = elmAry->hopInfo;
    if (0 == hopInfo)
    {
@@ -2828,12 +2828,12 @@ HYPRE_Int hypre_UnorderedBigIntMapGet( hypre_UnorderedBigIntMap *m,
       else { return -1; }
    }
 
-#ifdef HYPRE_CONCURRENT_HOPSCOTCH
-   HYPRE_Int startTimestamp = segment->timestamp;
+#ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
+   NALU_HYPRE_Int startTimestamp = segment->timestamp;
 #endif
    while (0 != hopInfo)
    {
-      HYPRE_Int i = first_lsb_bit_indx(hopInfo);
+      NALU_HYPRE_Int i = first_lsb_bit_indx(hopInfo);
       hypre_BigHopscotchBucket* currElm = elmAry + i;
       if (hash == currElm->hash && key == currElm->key)
       {
@@ -2842,7 +2842,7 @@ HYPRE_Int hypre_UnorderedBigIntMapGet( hypre_UnorderedBigIntMap *m,
       hopInfo &= ~(1U << i);
    }
 
-#ifdef HYPRE_CONCURRENT_HOPSCOTCH
+#ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
    if (segment->timestamp == startTimestamp)
    {
       return -1;
@@ -2850,8 +2850,8 @@ HYPRE_Int hypre_UnorderedBigIntMapGet( hypre_UnorderedBigIntMap *m,
 #endif
 
    hypre_BigHopscotchBucket *currBucket = &(m->table[hash & m->bucketMask]);
-   HYPRE_Int i;
-   for (i = 0; i < HYPRE_HOPSCOTCH_HASH_HOP_RANGE; ++i, ++currBucket)
+   NALU_HYPRE_Int i;
+   for (i = 0; i < NALU_HYPRE_HOPSCOTCH_HASH_HOP_RANGE; ++i, ++currBucket)
    {
       if (hash == currBucket->hash && key == currBucket->key)
       {
@@ -2863,14 +2863,14 @@ HYPRE_Int hypre_UnorderedBigIntMapGet( hypre_UnorderedBigIntMap *m,
 
 //status Operations .........................................................
 static inline
-HYPRE_Int hypre_UnorderedIntSetSize( hypre_UnorderedIntSet *s )
+NALU_HYPRE_Int hypre_UnorderedIntSetSize( hypre_UnorderedIntSet *s )
 {
-   HYPRE_Int counter = 0;
-   HYPRE_Int n = s->bucketMask + HYPRE_HOPSCOTCH_HASH_INSERT_RANGE;
-   HYPRE_Int i;
+   NALU_HYPRE_Int counter = 0;
+   NALU_HYPRE_Int n = s->bucketMask + NALU_HYPRE_HOPSCOTCH_HASH_INSERT_RANGE;
+   NALU_HYPRE_Int i;
    for (i = 0; i < n; ++i)
    {
-      if (HYPRE_HOPSCOTCH_HASH_EMPTY != s->hash[i])
+      if (NALU_HYPRE_HOPSCOTCH_HASH_EMPTY != s->hash[i])
       {
          ++counter;
       }
@@ -2879,14 +2879,14 @@ HYPRE_Int hypre_UnorderedIntSetSize( hypre_UnorderedIntSet *s )
 }
 
 static inline
-HYPRE_Int hypre_UnorderedBigIntSetSize( hypre_UnorderedBigIntSet *s )
+NALU_HYPRE_Int hypre_UnorderedBigIntSetSize( hypre_UnorderedBigIntSet *s )
 {
-   HYPRE_Int counter = 0;
-   HYPRE_BigInt n = s->bucketMask + HYPRE_HOPSCOTCH_HASH_INSERT_RANGE;
-   HYPRE_Int i;
+   NALU_HYPRE_Int counter = 0;
+   NALU_HYPRE_BigInt n = s->bucketMask + NALU_HYPRE_HOPSCOTCH_HASH_INSERT_RANGE;
+   NALU_HYPRE_Int i;
    for (i = 0; i < n; ++i)
    {
-      if (HYPRE_HOPSCOTCH_HASH_EMPTY != s->hash[i])
+      if (NALU_HYPRE_HOPSCOTCH_HASH_EMPTY != s->hash[i])
       {
          ++counter;
       }
@@ -2894,15 +2894,15 @@ HYPRE_Int hypre_UnorderedBigIntSetSize( hypre_UnorderedBigIntSet *s )
    return counter;
 }
 
-static inline HYPRE_Int
+static inline NALU_HYPRE_Int
 hypre_UnorderedIntMapSize( hypre_UnorderedIntMap *m )
 {
-   HYPRE_Int counter = 0;
-   HYPRE_Int n = m->bucketMask + HYPRE_HOPSCOTCH_HASH_INSERT_RANGE;
-   HYPRE_Int i;
+   NALU_HYPRE_Int counter = 0;
+   NALU_HYPRE_Int n = m->bucketMask + NALU_HYPRE_HOPSCOTCH_HASH_INSERT_RANGE;
+   NALU_HYPRE_Int i;
    for (i = 0; i < n; ++i)
    {
-      if ( HYPRE_HOPSCOTCH_HASH_EMPTY != m->table[i].hash )
+      if ( NALU_HYPRE_HOPSCOTCH_HASH_EMPTY != m->table[i].hash )
       {
          ++counter;
       }
@@ -2910,15 +2910,15 @@ hypre_UnorderedIntMapSize( hypre_UnorderedIntMap *m )
    return counter;
 }
 
-static inline HYPRE_Int
+static inline NALU_HYPRE_Int
 hypre_UnorderedBigIntMapSize( hypre_UnorderedBigIntMap *m )
 {
-   HYPRE_Int counter = 0;
-   HYPRE_Int n = m->bucketMask + HYPRE_HOPSCOTCH_HASH_INSERT_RANGE;
-   HYPRE_Int i;
+   NALU_HYPRE_Int counter = 0;
+   NALU_HYPRE_Int n = m->bucketMask + NALU_HYPRE_HOPSCOTCH_HASH_INSERT_RANGE;
+   NALU_HYPRE_Int i;
    for (i = 0; i < n; ++i)
    {
-      if ( HYPRE_HOPSCOTCH_HASH_EMPTY != m->table[i].hash )
+      if ( NALU_HYPRE_HOPSCOTCH_HASH_EMPTY != m->table[i].hash )
       {
          ++counter;
       }
@@ -2926,38 +2926,38 @@ hypre_UnorderedBigIntMapSize( hypre_UnorderedBigIntMap *m )
    return counter;
 }
 
-HYPRE_Int *hypre_UnorderedIntSetCopyToArray( hypre_UnorderedIntSet *s, HYPRE_Int *len );
-HYPRE_BigInt *hypre_UnorderedBigIntSetCopyToArray( hypre_UnorderedBigIntSet *s, HYPRE_Int *len );
+NALU_HYPRE_Int *hypre_UnorderedIntSetCopyToArray( hypre_UnorderedIntSet *s, NALU_HYPRE_Int *len );
+NALU_HYPRE_BigInt *hypre_UnorderedBigIntSetCopyToArray( hypre_UnorderedBigIntSet *s, NALU_HYPRE_Int *len );
 
 //modification Operations ...................................................
 static inline void
 hypre_UnorderedIntSetPut( hypre_UnorderedIntSet *s,
-                          HYPRE_Int key )
+                          NALU_HYPRE_Int key )
 {
    //CALCULATE HASH ..........................
-#ifdef HYPRE_BIGINT
-   HYPRE_Int hash = hypre_BigHash(key);
+#ifdef NALU_HYPRE_BIGINT
+   NALU_HYPRE_Int hash = hypre_BigHash(key);
 #else
-   HYPRE_Int hash = hypre_Hash(key);
+   NALU_HYPRE_Int hash = hypre_Hash(key);
 #endif
 
    //LOCK KEY HASH ENTERY ....................
-#ifdef HYPRE_CONCURRENT_HOPSCOTCH
+#ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
    hypre_HopscotchSegment  *segment = &s->segments[hash & s->segmentMask];
    omp_set_lock(&segment->lock);
 #endif
-   HYPRE_Int bucket = hash & s->bucketMask;
+   NALU_HYPRE_Int bucket = hash & s->bucketMask;
 
    //CHECK IF ALREADY CONTAIN ................
    hypre_uint hopInfo = s->hopInfo[bucket];
    while (0 != hopInfo)
    {
-      HYPRE_Int i = first_lsb_bit_indx(hopInfo);
-      HYPRE_Int currElm = bucket + i;
+      NALU_HYPRE_Int i = first_lsb_bit_indx(hopInfo);
+      NALU_HYPRE_Int currElm = bucket + i;
 
       if (hash == s->hash[currElm] && key == s->key[currElm])
       {
-#ifdef HYPRE_CONCURRENT_HOPSCOTCH
+#ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
          omp_unset_lock(&segment->lock);
 #endif
          return;
@@ -2966,38 +2966,38 @@ hypre_UnorderedIntSetPut( hypre_UnorderedIntSet *s,
    }
 
    //LOOK FOR FREE BUCKET ....................
-   HYPRE_Int free_bucket = bucket;
-   HYPRE_Int free_dist = 0;
-   for ( ; free_dist < HYPRE_HOPSCOTCH_HASH_INSERT_RANGE; ++free_dist, ++free_bucket)
+   NALU_HYPRE_Int free_bucket = bucket;
+   NALU_HYPRE_Int free_dist = 0;
+   for ( ; free_dist < NALU_HYPRE_HOPSCOTCH_HASH_INSERT_RANGE; ++free_dist, ++free_bucket)
    {
-      if ( (HYPRE_HOPSCOTCH_HASH_EMPTY == s->hash[free_bucket]) &&
-           (HYPRE_HOPSCOTCH_HASH_EMPTY ==
-            hypre_compare_and_swap((HYPRE_Int *)&s->hash[free_bucket],
-                                   (HYPRE_Int)HYPRE_HOPSCOTCH_HASH_EMPTY,
-                                   (HYPRE_Int)HYPRE_HOPSCOTCH_HASH_BUSY)) )
+      if ( (NALU_HYPRE_HOPSCOTCH_HASH_EMPTY == s->hash[free_bucket]) &&
+           (NALU_HYPRE_HOPSCOTCH_HASH_EMPTY ==
+            hypre_compare_and_swap((NALU_HYPRE_Int *)&s->hash[free_bucket],
+                                   (NALU_HYPRE_Int)NALU_HYPRE_HOPSCOTCH_HASH_EMPTY,
+                                   (NALU_HYPRE_Int)NALU_HYPRE_HOPSCOTCH_HASH_BUSY)) )
       {
          break;
       }
    }
 
    //PLACE THE NEW KEY .......................
-   if (free_dist < HYPRE_HOPSCOTCH_HASH_INSERT_RANGE)
+   if (free_dist < NALU_HYPRE_HOPSCOTCH_HASH_INSERT_RANGE)
    {
       do
       {
-         if (free_dist < HYPRE_HOPSCOTCH_HASH_HOP_RANGE)
+         if (free_dist < NALU_HYPRE_HOPSCOTCH_HASH_HOP_RANGE)
          {
             s->key[free_bucket]  = key;
             s->hash[free_bucket] = hash;
             s->hopInfo[bucket]  |= 1U << free_dist;
 
-#ifdef HYPRE_CONCURRENT_HOPSCOTCH
+#ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
             omp_unset_lock(&segment->lock);
 #endif
             return;
          }
          hypre_UnorderedIntSetFindCloserFreeBucket(s,
-#ifdef HYPRE_CONCURRENT_HOPSCOTCH
+#ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
                                                    segment,
 #endif
                                                    &free_bucket, &free_dist);
@@ -3006,7 +3006,7 @@ hypre_UnorderedIntSetPut( hypre_UnorderedIntSet *s,
    }
 
    //NEED TO RESIZE ..........................
-   hypre_error_w_msg(HYPRE_ERROR_GENERIC, "ERROR - RESIZE is not implemented\n");
+   hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "ERROR - RESIZE is not implemented\n");
    /*fprintf(stderr, "ERROR - RESIZE is not implemented\n");*/
    exit(1);
    return;
@@ -3014,32 +3014,32 @@ hypre_UnorderedIntSetPut( hypre_UnorderedIntSet *s,
 
 static inline void
 hypre_UnorderedBigIntSetPut( hypre_UnorderedBigIntSet *s,
-                             HYPRE_BigInt key )
+                             NALU_HYPRE_BigInt key )
 {
    //CALCULATE HASH ..........................
-#if defined(HYPRE_BIGINT) || defined(HYPRE_MIXEDINT)
-   HYPRE_BigInt hash = hypre_BigHash(key);
+#if defined(NALU_HYPRE_BIGINT) || defined(NALU_HYPRE_MIXEDINT)
+   NALU_HYPRE_BigInt hash = hypre_BigHash(key);
 #else
-   HYPRE_BigInt hash = hypre_Hash(key);
+   NALU_HYPRE_BigInt hash = hypre_Hash(key);
 #endif
 
    //LOCK KEY HASH ENTERY ....................
-#ifdef HYPRE_CONCURRENT_HOPSCOTCH
+#ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
    hypre_HopscotchSegment  *segment = &s->segments[hash & s->segmentMask];
    omp_set_lock(&segment->lock);
 #endif
-   HYPRE_Int bucket = (HYPRE_Int)(hash & s->bucketMask);
+   NALU_HYPRE_Int bucket = (NALU_HYPRE_Int)(hash & s->bucketMask);
 
    //CHECK IF ALREADY CONTAIN ................
    hypre_uint hopInfo = s->hopInfo[bucket];
    while (0 != hopInfo)
    {
-      HYPRE_Int i = first_lsb_bit_indx(hopInfo);
-      HYPRE_Int currElm = bucket + i;
+      NALU_HYPRE_Int i = first_lsb_bit_indx(hopInfo);
+      NALU_HYPRE_Int currElm = bucket + i;
 
       if (hash == s->hash[currElm] && key == s->key[currElm])
       {
-#ifdef HYPRE_CONCURRENT_HOPSCOTCH
+#ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
          omp_unset_lock(&segment->lock);
 #endif
          return;
@@ -3048,38 +3048,38 @@ hypre_UnorderedBigIntSetPut( hypre_UnorderedBigIntSet *s,
    }
 
    //LOOK FOR FREE BUCKET ....................
-   HYPRE_Int free_bucket = bucket;
-   HYPRE_Int free_dist = 0;
-   for ( ; free_dist < HYPRE_HOPSCOTCH_HASH_INSERT_RANGE; ++free_dist, ++free_bucket)
+   NALU_HYPRE_Int free_bucket = bucket;
+   NALU_HYPRE_Int free_dist = 0;
+   for ( ; free_dist < NALU_HYPRE_HOPSCOTCH_HASH_INSERT_RANGE; ++free_dist, ++free_bucket)
    {
-      if ( (HYPRE_HOPSCOTCH_HASH_EMPTY == s->hash[free_bucket]) &&
-           (HYPRE_HOPSCOTCH_HASH_EMPTY ==
-            hypre_compare_and_swap((HYPRE_Int *)&s->hash[free_bucket],
-                                   (HYPRE_Int)HYPRE_HOPSCOTCH_HASH_EMPTY,
-                                   (HYPRE_Int)HYPRE_HOPSCOTCH_HASH_BUSY)) )
+      if ( (NALU_HYPRE_HOPSCOTCH_HASH_EMPTY == s->hash[free_bucket]) &&
+           (NALU_HYPRE_HOPSCOTCH_HASH_EMPTY ==
+            hypre_compare_and_swap((NALU_HYPRE_Int *)&s->hash[free_bucket],
+                                   (NALU_HYPRE_Int)NALU_HYPRE_HOPSCOTCH_HASH_EMPTY,
+                                   (NALU_HYPRE_Int)NALU_HYPRE_HOPSCOTCH_HASH_BUSY)) )
       {
          break;
       }
    }
 
    //PLACE THE NEW KEY .......................
-   if (free_dist < HYPRE_HOPSCOTCH_HASH_INSERT_RANGE)
+   if (free_dist < NALU_HYPRE_HOPSCOTCH_HASH_INSERT_RANGE)
    {
       do
       {
-         if (free_dist < HYPRE_HOPSCOTCH_HASH_HOP_RANGE)
+         if (free_dist < NALU_HYPRE_HOPSCOTCH_HASH_HOP_RANGE)
          {
             s->key[free_bucket]  = key;
             s->hash[free_bucket] = hash;
             s->hopInfo[bucket]  |= 1U << free_dist;
 
-#ifdef HYPRE_CONCURRENT_HOPSCOTCH
+#ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
             omp_unset_lock(&segment->lock);
 #endif
             return;
          }
          hypre_UnorderedBigIntSetFindCloserFreeBucket(s,
-#ifdef HYPRE_CONCURRENT_HOPSCOTCH
+#ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
                                                       segment,
 #endif
                                                       &free_bucket, &free_dist);
@@ -3088,25 +3088,25 @@ hypre_UnorderedBigIntSetPut( hypre_UnorderedBigIntSet *s,
    }
 
    //NEED TO RESIZE ..........................
-   hypre_error_w_msg(HYPRE_ERROR_GENERIC, "ERROR - RESIZE is not implemented\n");
+   hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "ERROR - RESIZE is not implemented\n");
    /*fprintf(stderr, "ERROR - RESIZE is not implemented\n");*/
    exit(1);
    return;
 }
 
-static inline HYPRE_Int
+static inline NALU_HYPRE_Int
 hypre_UnorderedIntMapPutIfAbsent( hypre_UnorderedIntMap *m,
-                                  HYPRE_Int key, HYPRE_Int data )
+                                  NALU_HYPRE_Int key, NALU_HYPRE_Int data )
 {
    //CALCULATE HASH ..........................
-#ifdef HYPRE_BIGINT
-   HYPRE_Int hash = hypre_BigHash(key);
+#ifdef NALU_HYPRE_BIGINT
+   NALU_HYPRE_Int hash = hypre_BigHash(key);
 #else
-   HYPRE_Int hash = hypre_Hash(key);
+   NALU_HYPRE_Int hash = hypre_Hash(key);
 #endif
 
    //LOCK KEY HASH ENTERY ....................
-#ifdef HYPRE_CONCURRENT_HOPSCOTCH
+#ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
    hypre_HopscotchSegment *segment = &m->segments[hash & m->segmentMask];
    omp_set_lock(&segment->lock);
 #endif
@@ -3116,12 +3116,12 @@ hypre_UnorderedIntMapPutIfAbsent( hypre_UnorderedIntMap *m,
    hypre_uint hopInfo = startBucket->hopInfo;
    while (0 != hopInfo)
    {
-      HYPRE_Int i = first_lsb_bit_indx(hopInfo);
+      NALU_HYPRE_Int i = first_lsb_bit_indx(hopInfo);
       hypre_HopscotchBucket* currElm = startBucket + i;
       if (hash == currElm->hash && key == currElm->key)
       {
-         HYPRE_Int rc = currElm->data;
-#ifdef HYPRE_CONCURRENT_HOPSCOTCH
+         NALU_HYPRE_Int rc = currElm->data;
+#ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
          omp_unset_lock(&segment->lock);
 #endif
          return rc;
@@ -3131,37 +3131,37 @@ hypre_UnorderedIntMapPutIfAbsent( hypre_UnorderedIntMap *m,
 
    //LOOK FOR FREE BUCKET ....................
    hypre_HopscotchBucket* free_bucket = startBucket;
-   HYPRE_Int free_dist = 0;
-   for ( ; free_dist < HYPRE_HOPSCOTCH_HASH_INSERT_RANGE; ++free_dist, ++free_bucket)
+   NALU_HYPRE_Int free_dist = 0;
+   for ( ; free_dist < NALU_HYPRE_HOPSCOTCH_HASH_INSERT_RANGE; ++free_dist, ++free_bucket)
    {
-      if ( (HYPRE_HOPSCOTCH_HASH_EMPTY == free_bucket->hash) &&
-           (HYPRE_HOPSCOTCH_HASH_EMPTY ==
-            hypre_compare_and_swap((HYPRE_Int *)&free_bucket->hash,
-                                   (HYPRE_Int)HYPRE_HOPSCOTCH_HASH_EMPTY,
-                                   (HYPRE_Int)HYPRE_HOPSCOTCH_HASH_BUSY)) )
+      if ( (NALU_HYPRE_HOPSCOTCH_HASH_EMPTY == free_bucket->hash) &&
+           (NALU_HYPRE_HOPSCOTCH_HASH_EMPTY ==
+            hypre_compare_and_swap((NALU_HYPRE_Int *)&free_bucket->hash,
+                                   (NALU_HYPRE_Int)NALU_HYPRE_HOPSCOTCH_HASH_EMPTY,
+                                   (NALU_HYPRE_Int)NALU_HYPRE_HOPSCOTCH_HASH_BUSY)) )
       {
          break;
       }
    }
 
    //PLACE THE NEW KEY .......................
-   if (free_dist < HYPRE_HOPSCOTCH_HASH_INSERT_RANGE)
+   if (free_dist < NALU_HYPRE_HOPSCOTCH_HASH_INSERT_RANGE)
    {
       do
       {
-         if (free_dist < HYPRE_HOPSCOTCH_HASH_HOP_RANGE)
+         if (free_dist < NALU_HYPRE_HOPSCOTCH_HASH_HOP_RANGE)
          {
             free_bucket->data     = data;
             free_bucket->key      = key;
             free_bucket->hash     = hash;
             startBucket->hopInfo |= 1U << free_dist;
-#ifdef HYPRE_CONCURRENT_HOPSCOTCH
+#ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
             omp_unset_lock(&segment->lock);
 #endif
-            return HYPRE_HOPSCOTCH_HASH_EMPTY;
+            return NALU_HYPRE_HOPSCOTCH_HASH_EMPTY;
          }
          hypre_UnorderedIntMapFindCloserFreeBucket(m,
-#ifdef HYPRE_CONCURRENT_HOPSCOTCH
+#ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
                                                    segment,
 #endif
                                                    &free_bucket, &free_dist);
@@ -3170,25 +3170,25 @@ hypre_UnorderedIntMapPutIfAbsent( hypre_UnorderedIntMap *m,
    }
 
    //NEED TO RESIZE ..........................
-   hypre_error_w_msg(HYPRE_ERROR_GENERIC, "ERROR - RESIZE is not implemented\n");
+   hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "ERROR - RESIZE is not implemented\n");
    /*fprintf(stderr, "ERROR - RESIZE is not implemented\n");*/
    exit(1);
-   return HYPRE_HOPSCOTCH_HASH_EMPTY;
+   return NALU_HYPRE_HOPSCOTCH_HASH_EMPTY;
 }
 
-static inline HYPRE_Int
+static inline NALU_HYPRE_Int
 hypre_UnorderedBigIntMapPutIfAbsent( hypre_UnorderedBigIntMap *m,
-                                     HYPRE_BigInt key, HYPRE_Int data)
+                                     NALU_HYPRE_BigInt key, NALU_HYPRE_Int data)
 {
    //CALCULATE HASH ..........................
-#if defined(HYPRE_BIGINT) || defined(HYPRE_MIXEDINT)
-   HYPRE_BigInt hash = hypre_BigHash(key);
+#if defined(NALU_HYPRE_BIGINT) || defined(NALU_HYPRE_MIXEDINT)
+   NALU_HYPRE_BigInt hash = hypre_BigHash(key);
 #else
-   HYPRE_BigInt hash = hypre_Hash(key);
+   NALU_HYPRE_BigInt hash = hypre_Hash(key);
 #endif
 
    //LOCK KEY HASH ENTERY ....................
-#ifdef HYPRE_CONCURRENT_HOPSCOTCH
+#ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
    hypre_HopscotchSegment *segment = &m->segments[hash & m->segmentMask];
    omp_set_lock(&segment->lock);
 #endif
@@ -3198,12 +3198,12 @@ hypre_UnorderedBigIntMapPutIfAbsent( hypre_UnorderedBigIntMap *m,
    hypre_uint hopInfo = startBucket->hopInfo;
    while (0 != hopInfo)
    {
-      HYPRE_Int i = first_lsb_bit_indx(hopInfo);
+      NALU_HYPRE_Int i = first_lsb_bit_indx(hopInfo);
       hypre_BigHopscotchBucket* currElm = startBucket + i;
       if (hash == currElm->hash && key == currElm->key)
       {
-         HYPRE_Int rc = currElm->data;
-#ifdef HYPRE_CONCURRENT_HOPSCOTCH
+         NALU_HYPRE_Int rc = currElm->data;
+#ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
          omp_unset_lock(&segment->lock);
 #endif
          return rc;
@@ -3213,37 +3213,37 @@ hypre_UnorderedBigIntMapPutIfAbsent( hypre_UnorderedBigIntMap *m,
 
    //LOOK FOR FREE BUCKET ....................
    hypre_BigHopscotchBucket* free_bucket = startBucket;
-   HYPRE_Int free_dist = 0;
-   for ( ; free_dist < HYPRE_HOPSCOTCH_HASH_INSERT_RANGE; ++free_dist, ++free_bucket)
+   NALU_HYPRE_Int free_dist = 0;
+   for ( ; free_dist < NALU_HYPRE_HOPSCOTCH_HASH_INSERT_RANGE; ++free_dist, ++free_bucket)
    {
-      if ( (HYPRE_HOPSCOTCH_HASH_EMPTY == free_bucket->hash) &&
-           (HYPRE_HOPSCOTCH_HASH_EMPTY ==
-            hypre_compare_and_swap((HYPRE_Int *)&free_bucket->hash,
-                                   (HYPRE_Int)HYPRE_HOPSCOTCH_HASH_EMPTY,
-                                   (HYPRE_Int)HYPRE_HOPSCOTCH_HASH_BUSY)) )
+      if ( (NALU_HYPRE_HOPSCOTCH_HASH_EMPTY == free_bucket->hash) &&
+           (NALU_HYPRE_HOPSCOTCH_HASH_EMPTY ==
+            hypre_compare_and_swap((NALU_HYPRE_Int *)&free_bucket->hash,
+                                   (NALU_HYPRE_Int)NALU_HYPRE_HOPSCOTCH_HASH_EMPTY,
+                                   (NALU_HYPRE_Int)NALU_HYPRE_HOPSCOTCH_HASH_BUSY)) )
       {
          break;
       }
    }
 
    //PLACE THE NEW KEY .......................
-   if (free_dist < HYPRE_HOPSCOTCH_HASH_INSERT_RANGE)
+   if (free_dist < NALU_HYPRE_HOPSCOTCH_HASH_INSERT_RANGE)
    {
       do
       {
-         if (free_dist < HYPRE_HOPSCOTCH_HASH_HOP_RANGE)
+         if (free_dist < NALU_HYPRE_HOPSCOTCH_HASH_HOP_RANGE)
          {
             free_bucket->data     = data;
             free_bucket->key      = key;
             free_bucket->hash     = hash;
             startBucket->hopInfo |= 1U << free_dist;
-#ifdef HYPRE_CONCURRENT_HOPSCOTCH
+#ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
             omp_unset_lock(&segment->lock);
 #endif
-            return HYPRE_HOPSCOTCH_HASH_EMPTY;
+            return NALU_HYPRE_HOPSCOTCH_HASH_EMPTY;
          }
          hypre_UnorderedBigIntMapFindCloserFreeBucket(m,
-#ifdef HYPRE_CONCURRENT_HOPSCOTCH
+#ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
                                                       segment,
 #endif
                                                       &free_bucket, &free_dist);
@@ -3252,10 +3252,10 @@ hypre_UnorderedBigIntMapPutIfAbsent( hypre_UnorderedBigIntMap *m,
    }
 
    //NEED TO RESIZE ..........................
-   hypre_error_w_msg(HYPRE_ERROR_GENERIC, "ERROR - RESIZE is not implemented\n");
+   hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "ERROR - RESIZE is not implemented\n");
    /*fprintf(stderr, "ERROR - RESIZE is not implemented\n");*/
    exit(1);
-   return HYPRE_HOPSCOTCH_HASH_EMPTY;
+   return NALU_HYPRE_HOPSCOTCH_HASH_EMPTY;
 }
 
 #ifdef __cplusplus
@@ -3287,9 +3287,9 @@ hypre_UnorderedBigIntMapPutIfAbsent( hypre_UnorderedBigIntMap *m,
 
 typedef char MM_typecode[4];
 
-HYPRE_Int hypre_mm_is_valid(MM_typecode matcode); /* too complex for a macro */
-HYPRE_Int hypre_mm_read_banner(FILE *f, MM_typecode *matcode);
-HYPRE_Int hypre_mm_read_mtx_crd_size(FILE *f, HYPRE_Int *M, HYPRE_Int *N, HYPRE_Int *nz);
+NALU_HYPRE_Int hypre_mm_is_valid(MM_typecode matcode); /* too complex for a macro */
+NALU_HYPRE_Int hypre_mm_read_banner(FILE *f, MM_typecode *matcode);
+NALU_HYPRE_Int hypre_mm_read_mtx_crd_size(FILE *f, NALU_HYPRE_Int *M, NALU_HYPRE_Int *N, NALU_HYPRE_Int *nz);
 
 /********************* MM_typecode query fucntions ***************************/
 

@@ -15,42 +15,42 @@ the commpkg is not different for a block matrix.) */
 
 
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_GetCommPkgBlockRTFromCommPkgBlockA( hypre_ParCSRBlockMatrix *RT,
                                           hypre_ParCSRBlockMatrix *A,
-                                          HYPRE_Int *tmp_map_offd,
-                                          HYPRE_BigInt *fine_to_coarse_offd)
+                                          NALU_HYPRE_Int *tmp_map_offd,
+                                          NALU_HYPRE_BigInt *fine_to_coarse_offd)
 {
    MPI_Comm comm = hypre_ParCSRBlockMatrixComm(RT);
    hypre_ParCSRCommPkg *comm_pkg_A = hypre_ParCSRBlockMatrixCommPkg(A);
-   HYPRE_Int num_recvs_A = hypre_ParCSRCommPkgNumRecvs(comm_pkg_A);
-   HYPRE_Int *recv_procs_A = hypre_ParCSRCommPkgRecvProcs(comm_pkg_A);
-   HYPRE_Int *recv_vec_starts_A = hypre_ParCSRCommPkgRecvVecStarts(comm_pkg_A);
-   HYPRE_Int num_sends_A = hypre_ParCSRCommPkgNumSends(comm_pkg_A);
-   HYPRE_Int *send_procs_A = hypre_ParCSRCommPkgSendProcs(comm_pkg_A);
+   NALU_HYPRE_Int num_recvs_A = hypre_ParCSRCommPkgNumRecvs(comm_pkg_A);
+   NALU_HYPRE_Int *recv_procs_A = hypre_ParCSRCommPkgRecvProcs(comm_pkg_A);
+   NALU_HYPRE_Int *recv_vec_starts_A = hypre_ParCSRCommPkgRecvVecStarts(comm_pkg_A);
+   NALU_HYPRE_Int num_sends_A = hypre_ParCSRCommPkgNumSends(comm_pkg_A);
+   NALU_HYPRE_Int *send_procs_A = hypre_ParCSRCommPkgSendProcs(comm_pkg_A);
 
    hypre_ParCSRCommPkg *comm_pkg = NULL;
-   HYPRE_Int num_recvs_RT;
-   HYPRE_Int *recv_procs_RT;
-   HYPRE_Int *recv_vec_starts_RT;
-   HYPRE_Int num_sends_RT;
-   HYPRE_Int *send_procs_RT;
-   HYPRE_Int *send_map_starts_RT;
-   HYPRE_Int *send_map_elmts_RT;
-   HYPRE_BigInt *send_big_elmts = NULL;
+   NALU_HYPRE_Int num_recvs_RT;
+   NALU_HYPRE_Int *recv_procs_RT;
+   NALU_HYPRE_Int *recv_vec_starts_RT;
+   NALU_HYPRE_Int num_sends_RT;
+   NALU_HYPRE_Int *send_procs_RT;
+   NALU_HYPRE_Int *send_map_starts_RT;
+   NALU_HYPRE_Int *send_map_elmts_RT;
+   NALU_HYPRE_BigInt *send_big_elmts = NULL;
 
-   HYPRE_BigInt *col_map_offd_RT = hypre_ParCSRBlockMatrixColMapOffd(RT);
-   HYPRE_Int num_cols_offd_RT = hypre_CSRBlockMatrixNumCols( hypre_ParCSRMatrixOffd(RT));
-   HYPRE_BigInt first_col_diag = hypre_ParCSRBlockMatrixFirstColDiag(RT);
+   NALU_HYPRE_BigInt *col_map_offd_RT = hypre_ParCSRBlockMatrixColMapOffd(RT);
+   NALU_HYPRE_Int num_cols_offd_RT = hypre_CSRBlockMatrixNumCols( hypre_ParCSRMatrixOffd(RT));
+   NALU_HYPRE_BigInt first_col_diag = hypre_ParCSRBlockMatrixFirstColDiag(RT);
 
-   HYPRE_Int i, j;
-   HYPRE_Int vec_len, vec_start;
-   HYPRE_Int num_procs, my_id;
-   HYPRE_Int num_requests;
-   HYPRE_Int offd_col, proc_num;
+   NALU_HYPRE_Int i, j;
+   NALU_HYPRE_Int vec_len, vec_start;
+   NALU_HYPRE_Int num_procs, my_id;
+   NALU_HYPRE_Int num_requests;
+   NALU_HYPRE_Int offd_col, proc_num;
 
-   HYPRE_Int *proc_mark;
-   HYPRE_Int *change_array;
+   NALU_HYPRE_Int *proc_mark;
+   NALU_HYPRE_Int *change_array;
 
    hypre_MPI_Request *requests;
    hypre_MPI_Status *status;
@@ -62,7 +62,7 @@ hypre_GetCommPkgBlockRTFromCommPkgBlockA( hypre_ParCSRBlockMatrix *RT,
     * determine num_recvs, recv_procs and recv_vec_starts for RT
     *--------------------------------------------------------------------------*/
 
-   proc_mark = hypre_CTAlloc(HYPRE_Int,  num_recvs_A, HYPRE_MEMORY_HOST);
+   proc_mark = hypre_CTAlloc(NALU_HYPRE_Int,  num_recvs_A, NALU_HYPRE_MEMORY_HOST);
 
    for (i = 0; i < num_recvs_A; i++)
    {
@@ -95,8 +95,8 @@ hypre_GetCommPkgBlockRTFromCommPkgBlockA( hypre_ParCSRBlockMatrix *RT,
       col_map_offd_RT[i] = fine_to_coarse_offd[tmp_map_offd[i]];
    }
 
-   recv_procs_RT = hypre_CTAlloc(HYPRE_Int, num_recvs_RT, HYPRE_MEMORY_HOST);
-   recv_vec_starts_RT = hypre_CTAlloc(HYPRE_Int,  num_recvs_RT + 1, HYPRE_MEMORY_HOST);
+   recv_procs_RT = hypre_CTAlloc(NALU_HYPRE_Int, num_recvs_RT, NALU_HYPRE_MEMORY_HOST);
+   recv_vec_starts_RT = hypre_CTAlloc(NALU_HYPRE_Int,  num_recvs_RT + 1, NALU_HYPRE_MEMORY_HOST);
 
    j = 0;
    recv_vec_starts_RT[0] = 0;
@@ -113,23 +113,23 @@ hypre_GetCommPkgBlockRTFromCommPkgBlockA( hypre_ParCSRBlockMatrix *RT,
     *--------------------------------------------------------------------------*/
 
    num_requests = num_recvs_A + num_sends_A;
-   requests = hypre_CTAlloc(hypre_MPI_Request,  num_requests, HYPRE_MEMORY_HOST);
-   status = hypre_CTAlloc(hypre_MPI_Status,  num_requests, HYPRE_MEMORY_HOST);
+   requests = hypre_CTAlloc(hypre_MPI_Request,  num_requests, NALU_HYPRE_MEMORY_HOST);
+   status = hypre_CTAlloc(hypre_MPI_Status,  num_requests, NALU_HYPRE_MEMORY_HOST);
 
-   change_array = hypre_CTAlloc(HYPRE_Int,  num_sends_A, HYPRE_MEMORY_HOST);
+   change_array = hypre_CTAlloc(NALU_HYPRE_Int,  num_sends_A, NALU_HYPRE_MEMORY_HOST);
 
    j = 0;
    for (i = 0; i < num_sends_A; i++)
-      hypre_MPI_Irecv(&change_array[i], 1, HYPRE_MPI_INT, send_procs_A[i], 0, comm,
+      hypre_MPI_Irecv(&change_array[i], 1, NALU_HYPRE_MPI_INT, send_procs_A[i], 0, comm,
                       &requests[j++]);
 
    for (i = 0; i < num_recvs_A; i++)
-      hypre_MPI_Isend(&proc_mark[i], 1, HYPRE_MPI_INT, recv_procs_A[i], 0, comm,
+      hypre_MPI_Isend(&proc_mark[i], 1, NALU_HYPRE_MPI_INT, recv_procs_A[i], 0, comm,
                       &requests[j++]);
 
    hypre_MPI_Waitall(num_requests, requests, status);
 
-   hypre_TFree(proc_mark, HYPRE_MEMORY_HOST);
+   hypre_TFree(proc_mark, NALU_HYPRE_MEMORY_HOST);
 
    /*--------------------------------------------------------------------------
     * if change_array[i] is 0 , omit send_procs_A[i] in send_procs_RT
@@ -142,8 +142,8 @@ hypre_GetCommPkgBlockRTFromCommPkgBlockA( hypre_ParCSRBlockMatrix *RT,
          num_sends_RT++;
       }
 
-   send_procs_RT = hypre_CTAlloc(HYPRE_Int,  num_sends_RT, HYPRE_MEMORY_HOST);
-   send_map_starts_RT = hypre_CTAlloc(HYPRE_Int,  num_sends_RT + 1, HYPRE_MEMORY_HOST);
+   send_procs_RT = hypre_CTAlloc(NALU_HYPRE_Int,  num_sends_RT, NALU_HYPRE_MEMORY_HOST);
+   send_map_starts_RT = hypre_CTAlloc(NALU_HYPRE_Int,  num_sends_RT + 1, NALU_HYPRE_MEMORY_HOST);
 
    j = 0;
    send_map_starts_RT[0] = 0;
@@ -159,15 +159,15 @@ hypre_GetCommPkgBlockRTFromCommPkgBlockA( hypre_ParCSRBlockMatrix *RT,
     * generate send_map_elmts
     *--------------------------------------------------------------------------*/
 
-   send_big_elmts = hypre_CTAlloc(HYPRE_BigInt, send_map_starts_RT[num_sends_RT], HYPRE_MEMORY_HOST);
-   send_map_elmts_RT = hypre_CTAlloc(HYPRE_Int, send_map_starts_RT[num_sends_RT], HYPRE_MEMORY_HOST);
+   send_big_elmts = hypre_CTAlloc(NALU_HYPRE_BigInt, send_map_starts_RT[num_sends_RT], NALU_HYPRE_MEMORY_HOST);
+   send_map_elmts_RT = hypre_CTAlloc(NALU_HYPRE_Int, send_map_starts_RT[num_sends_RT], NALU_HYPRE_MEMORY_HOST);
 
    j = 0;
    for (i = 0; i < num_sends_RT; i++)
    {
       vec_start = send_map_starts_RT[i];
       vec_len = send_map_starts_RT[i + 1] - vec_start;
-      hypre_MPI_Irecv(&send_big_elmts[vec_start], vec_len, HYPRE_MPI_BIG_INT,
+      hypre_MPI_Irecv(&send_big_elmts[vec_start], vec_len, NALU_HYPRE_MPI_BIG_INT,
                       send_procs_RT[i], 0, comm, &requests[j++]);
    }
 
@@ -175,7 +175,7 @@ hypre_GetCommPkgBlockRTFromCommPkgBlockA( hypre_ParCSRBlockMatrix *RT,
    {
       vec_start = recv_vec_starts_RT[i];
       vec_len = recv_vec_starts_RT[i + 1] - vec_start;
-      hypre_MPI_Isend(&col_map_offd_RT[vec_start], vec_len, HYPRE_MPI_BIG_INT,
+      hypre_MPI_Isend(&col_map_offd_RT[vec_start], vec_len, NALU_HYPRE_MPI_BIG_INT,
                       recv_procs_RT[i], 0, comm, &requests[j++]);
    }
 
@@ -183,7 +183,7 @@ hypre_GetCommPkgBlockRTFromCommPkgBlockA( hypre_ParCSRBlockMatrix *RT,
 
    for (i = 0; i < send_map_starts_RT[num_sends_RT]; i++)
    {
-      send_map_elmts_RT[i] = (HYPRE_Int)(send_big_elmts[i] - first_col_diag);
+      send_map_elmts_RT[i] = (NALU_HYPRE_Int)(send_big_elmts[i] - first_col_diag);
    }
 
    /* Create communication package */
@@ -200,10 +200,10 @@ hypre_GetCommPkgBlockRTFromCommPkgBlockA( hypre_ParCSRBlockMatrix *RT,
    hypre_ParCSRBlockMatrixCommPkg(RT) = comm_pkg;
 
    /* Free memory */
-   hypre_TFree(status, HYPRE_MEMORY_HOST);
-   hypre_TFree(requests, HYPRE_MEMORY_HOST);
-   hypre_TFree(send_big_elmts, HYPRE_MEMORY_HOST);
-   hypre_TFree(change_array, HYPRE_MEMORY_HOST);
+   hypre_TFree(status, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(requests, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(send_big_elmts, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(change_array, NALU_HYPRE_MEMORY_HOST);
 
    return hypre_error_flag;
 }

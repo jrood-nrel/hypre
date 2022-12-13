@@ -42,7 +42,7 @@
  *
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SMGSolve( void               *smg_vdata,
                 hypre_StructMatrix *A,
                 hypre_StructVector *b,
@@ -51,13 +51,13 @@ hypre_SMGSolve( void               *smg_vdata,
 
    hypre_SMGData        *smg_data = (hypre_SMGData        *)smg_vdata;
 
-   HYPRE_Real            tol             = (smg_data -> tol);
-   HYPRE_Int             max_iter        = (smg_data -> max_iter);
-   HYPRE_Int             rel_change      = (smg_data -> rel_change);
-   HYPRE_Int             zero_guess      = (smg_data -> zero_guess);
-   HYPRE_Int             num_levels      = (smg_data -> num_levels);
-   HYPRE_Int             num_pre_relax   = (smg_data -> num_pre_relax);
-   HYPRE_Int             num_post_relax  = (smg_data -> num_post_relax);
+   NALU_HYPRE_Real            tol             = (smg_data -> tol);
+   NALU_HYPRE_Int             max_iter        = (smg_data -> max_iter);
+   NALU_HYPRE_Int             rel_change      = (smg_data -> rel_change);
+   NALU_HYPRE_Int             zero_guess      = (smg_data -> zero_guess);
+   NALU_HYPRE_Int             num_levels      = (smg_data -> num_levels);
+   NALU_HYPRE_Int             num_pre_relax   = (smg_data -> num_pre_relax);
+   NALU_HYPRE_Int             num_post_relax  = (smg_data -> num_post_relax);
    hypre_IndexRef        base_index      = (smg_data -> base_index);
    hypre_IndexRef        base_stride     = (smg_data -> base_stride);
    hypre_StructMatrix  **A_l             = (smg_data -> A_l);
@@ -71,14 +71,14 @@ hypre_SMGSolve( void               *smg_vdata,
    void                **residual_data_l = (smg_data -> residual_data_l);
    void                **restrict_data_l = (smg_data -> restrict_data_l);
    void                **interp_data_l   = (smg_data -> interp_data_l);
-   HYPRE_Int             logging         = (smg_data -> logging);
-   HYPRE_Real           *norms           = (smg_data -> norms);
-   HYPRE_Real           *rel_norms       = (smg_data -> rel_norms);
+   NALU_HYPRE_Int             logging         = (smg_data -> logging);
+   NALU_HYPRE_Real           *norms           = (smg_data -> norms);
+   NALU_HYPRE_Real           *rel_norms       = (smg_data -> rel_norms);
 
-   HYPRE_Real            b_dot_b = 0, r_dot_r, eps = 0;
-   HYPRE_Real            e_dot_e = 0, x_dot_x = 1;
+   NALU_HYPRE_Real            b_dot_b = 0, r_dot_r, eps = 0;
+   NALU_HYPRE_Real            e_dot_e = 0, x_dot_x = 1;
 
-   HYPRE_Int             i, l;
+   NALU_HYPRE_Int             i, l;
 
 #if DEBUG
    char                  filename[255];
@@ -88,7 +88,7 @@ hypre_SMGSolve( void               *smg_vdata,
     * Initialize some things and deal with special cases
     *-----------------------------------------------------*/
 
-   HYPRE_ANNOTATE_FUNC_BEGIN;
+   NALU_HYPRE_ANNOTATE_FUNC_BEGIN;
    hypre_BeginTiming(smg_data -> time_index);
 
    hypre_StructMatrixDestroy(A_l[0]);
@@ -110,7 +110,7 @@ hypre_SMGSolve( void               *smg_vdata,
       }
 
       hypre_EndTiming(smg_data -> time_index);
-      HYPRE_ANNOTATE_FUNC_END;
+      NALU_HYPRE_ANNOTATE_FUNC_END;
 
       return hypre_error_flag;
    }
@@ -133,7 +133,7 @@ hypre_SMGSolve( void               *smg_vdata,
          }
 
          hypre_EndTiming(smg_data -> time_index);
-         HYPRE_ANNOTATE_FUNC_END;
+         NALU_HYPRE_ANNOTATE_FUNC_END;
 
          return hypre_error_flag;
       }
@@ -324,7 +324,7 @@ hypre_SMGSolve( void               *smg_vdata,
    }
 
    hypre_EndTiming(smg_data -> time_index);
-   HYPRE_ANNOTATE_FUNC_END;
+   NALU_HYPRE_ANNOTATE_FUNC_END;
 
    return hypre_error_flag;
 }

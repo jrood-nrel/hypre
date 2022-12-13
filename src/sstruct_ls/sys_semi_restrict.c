@@ -12,19 +12,19 @@
 
 typedef struct
 {
-   HYPRE_Int           nvars;
+   NALU_HYPRE_Int           nvars;
    void              **srestrict_data;
 } hypre_SysSemiRestrictData;
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SysSemiRestrictCreate( void **sys_restrict_vdata_ptr)
 {
    hypre_SysSemiRestrictData *sys_restrict_data;
 
-   sys_restrict_data = hypre_CTAlloc(hypre_SysSemiRestrictData,  1, HYPRE_MEMORY_HOST);
+   sys_restrict_data = hypre_CTAlloc(hypre_SysSemiRestrictData,  1, NALU_HYPRE_MEMORY_HOST);
    *sys_restrict_vdata_ptr = (void *) sys_restrict_data;
 
    return hypre_error_flag;
@@ -33,10 +33,10 @@ hypre_SysSemiRestrictCreate( void **sys_restrict_vdata_ptr)
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SysSemiRestrictSetup( void                 *sys_restrict_vdata,
                             hypre_SStructPMatrix *R,
-                            HYPRE_Int             R_stored_as_transpose,
+                            NALU_HYPRE_Int             R_stored_as_transpose,
                             hypre_SStructPVector *r,
                             hypre_SStructPVector *rc,
                             hypre_Index           cindex,
@@ -46,16 +46,16 @@ hypre_SysSemiRestrictSetup( void                 *sys_restrict_vdata,
    hypre_SysSemiRestrictData  *sys_restrict_data = (hypre_SysSemiRestrictData  *)sys_restrict_vdata;
    void                      **srestrict_data;
 
-   HYPRE_Int                   nvars;
+   NALU_HYPRE_Int                   nvars;
 
    hypre_StructMatrix         *R_s;
    hypre_StructVector         *rc_s;
    hypre_StructVector         *r_s;
 
-   HYPRE_Int                   vi;
+   NALU_HYPRE_Int                   vi;
 
    nvars = hypre_SStructPMatrixNVars(R);
-   srestrict_data = hypre_CTAlloc(void *,  nvars, HYPRE_MEMORY_HOST);
+   srestrict_data = hypre_CTAlloc(void *,  nvars, NALU_HYPRE_MEMORY_HOST);
 
    for (vi = 0; vi < nvars; vi++)
    {
@@ -76,7 +76,7 @@ hypre_SysSemiRestrictSetup( void                 *sys_restrict_vdata,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SysSemiRestrict( void                 *sys_restrict_vdata,
                        hypre_SStructPMatrix *R,
                        hypre_SStructPVector *r,
@@ -85,14 +85,14 @@ hypre_SysSemiRestrict( void                 *sys_restrict_vdata,
    hypre_SysSemiRestrictData  *sys_restrict_data = (hypre_SysSemiRestrictData  *)sys_restrict_vdata;
    void                      **srestrict_data
       = (sys_restrict_data -> srestrict_data);
-   HYPRE_Int                   nvars = (sys_restrict_data -> nvars);
+   NALU_HYPRE_Int                   nvars = (sys_restrict_data -> nvars);
 
    void                       *sdata;
    hypre_StructMatrix         *R_s;
    hypre_StructVector         *rc_s;
    hypre_StructVector         *r_s;
 
-   HYPRE_Int                   vi;
+   NALU_HYPRE_Int                   vi;
 
    for (vi = 0; vi < nvars; vi++)
    {
@@ -109,14 +109,14 @@ hypre_SysSemiRestrict( void                 *sys_restrict_vdata,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SysSemiRestrictDestroy( void *sys_restrict_vdata )
 {
    hypre_SysSemiRestrictData *sys_restrict_data = (hypre_SysSemiRestrictData  *)sys_restrict_vdata;
 
-   HYPRE_Int               nvars;
+   NALU_HYPRE_Int               nvars;
    void                  **srestrict_data;
-   HYPRE_Int               vi;
+   NALU_HYPRE_Int               vi;
 
    if (sys_restrict_data)
    {
@@ -129,8 +129,8 @@ hypre_SysSemiRestrictDestroy( void *sys_restrict_vdata )
             hypre_SemiRestrictDestroy(srestrict_data[vi]);
          }
       }
-      hypre_TFree(srestrict_data, HYPRE_MEMORY_HOST);
-      hypre_TFree(sys_restrict_data, HYPRE_MEMORY_HOST);
+      hypre_TFree(srestrict_data, NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(sys_restrict_data, NALU_HYPRE_MEMORY_HOST);
    }
 
    return hypre_error_flag;

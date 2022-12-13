@@ -16,7 +16,7 @@
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SStructGraphRef( hypre_SStructGraph  *graph,
                        hypre_SStructGraph **graph_ref )
 {
@@ -34,20 +34,20 @@ hypre_SStructGraphRef( hypre_SStructGraph  *graph,
  * RDF: Consider using another "local" BoxManager to optimize.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SStructGraphGetUVEntryRank( hypre_SStructGraph    *graph,
-                                  HYPRE_Int              part,
-                                  HYPRE_Int              var,
+                                  NALU_HYPRE_Int              part,
+                                  NALU_HYPRE_Int              var,
                                   hypre_Index            index,
-                                  HYPRE_BigInt          *rank )
+                                  NALU_HYPRE_BigInt          *rank )
 {
-   HYPRE_Int              ndim  = hypre_SStructGraphNDim(graph);
+   NALU_HYPRE_Int              ndim  = hypre_SStructGraphNDim(graph);
    hypre_SStructGrid     *grid  = hypre_SStructGraphGrid(graph);
    hypre_SStructPGrid    *pgrid = hypre_SStructGridPGrid(grid, part);
    hypre_StructGrid      *sgrid = hypre_SStructPGridSGrid(pgrid, var);
    hypre_BoxArray        *boxes = hypre_StructGridBoxes(sgrid);
    hypre_Box             *box;
-   HYPRE_Int              i, d, vol, found;
+   NALU_HYPRE_Int              i, d, vol, found;
 
 
    *rank = hypre_SStructGraphUVEOffset(graph, part, var);
@@ -73,7 +73,7 @@ hypre_SStructGraphGetUVEntryRank( hypre_SStructGraph    *graph,
             vol = vol * (hypre_BoxSizeD(box, d) + 2) +
                   (hypre_IndexD(index, d) - hypre_BoxIMinD(box, d) + 1);
          }
-         *rank += (HYPRE_BigInt)vol;
+         *rank += (NALU_HYPRE_BigInt)vol;
          return hypre_error_flag;
       }
       else
@@ -83,7 +83,7 @@ hypre_SStructGraphGetUVEntryRank( hypre_SStructGraph    *graph,
          {
             vol *= (hypre_BoxSizeD(box, d) + 2);
          }
-         *rank += (HYPRE_BigInt)vol;
+         *rank += (NALU_HYPRE_BigInt)vol;
       }
    }
 
@@ -102,21 +102,21 @@ hypre_SStructGraphGetUVEntryRank( hypre_SStructGraph    *graph,
  * 9/09 AB - modified to use the box manager
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SStructGraphFindBoxEndpt(hypre_SStructGraph    *graph,
-                               HYPRE_Int              part,
-                               HYPRE_Int              var,
-                               HYPRE_Int              proc,
-                               HYPRE_Int              endpt,
-                               HYPRE_Int              boxi)
+                               NALU_HYPRE_Int              part,
+                               NALU_HYPRE_Int              var,
+                               NALU_HYPRE_Int              proc,
+                               NALU_HYPRE_Int              endpt,
+                               NALU_HYPRE_Int              boxi)
 {
    hypre_SStructGrid     *grid      = hypre_SStructGraphGrid(graph);
-   HYPRE_Int              type      = hypre_SStructGraphObjectType(graph);
+   NALU_HYPRE_Int              type      = hypre_SStructGraphObjectType(graph);
    hypre_BoxManager      *boxman;
    hypre_BoxManEntry     *boxman_entry;
    hypre_StructGrid      *sgrid;
    hypre_Box             *box;
-   HYPRE_BigInt           rank;
+   NALU_HYPRE_BigInt           rank;
 
    /* Should we be checking the neighbor box manager also ?*/
 
@@ -139,11 +139,11 @@ hypre_SStructGraphFindBoxEndpt(hypre_SStructGraph    *graph,
          boxman_entry, hypre_BoxIMax(box), &rank, type);
    }
 
-   if (type == HYPRE_SSTRUCT || type ==  HYPRE_STRUCT)
+   if (type == NALU_HYPRE_SSTRUCT || type ==  NALU_HYPRE_STRUCT)
    {
       rank -= hypre_SStructGridGhstartRank(grid);
    }
-   if (type == HYPRE_PARCSR)
+   if (type == NALU_HYPRE_PARCSR)
    {
       rank -= hypre_SStructGridStartRank(grid);
    }
@@ -158,18 +158,18 @@ hypre_SStructGraphFindBoxEndpt(hypre_SStructGraph    *graph,
  *      endpt= 1   end of boxes
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SStructGraphFindSGridEndpts(hypre_SStructGraph    *graph,
-                                  HYPRE_Int              part,
-                                  HYPRE_Int              var,
-                                  HYPRE_Int              proc,
-                                  HYPRE_Int              endpt,
-                                  HYPRE_Int             *endpts)
+                                  NALU_HYPRE_Int              part,
+                                  NALU_HYPRE_Int              var,
+                                  NALU_HYPRE_Int              proc,
+                                  NALU_HYPRE_Int              endpt,
+                                  NALU_HYPRE_Int             *endpts)
 {
    hypre_SStructGrid     *grid      = hypre_SStructGraphGrid(graph);
    hypre_StructGrid      *sgrid;
    hypre_BoxArray        *boxes;
-   HYPRE_Int              i;
+   NALU_HYPRE_Int              i;
 
    sgrid = hypre_SStructPGridSGrid(hypre_SStructGridPGrid(grid, part), var);
    boxes = hypre_StructGridBoxes(sgrid);

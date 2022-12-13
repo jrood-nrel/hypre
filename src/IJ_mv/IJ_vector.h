@@ -21,16 +21,16 @@
 typedef struct hypre_IJVector_struct
 {
    MPI_Comm      comm;
-   HYPRE_BigInt  partitioning[2];   /* Indicates partitioning over tasks */
-   HYPRE_Int     num_components;    /* Number of components of a multivector */
-   HYPRE_Int     object_type;       /* Indicates the type of "local storage" */
+   NALU_HYPRE_BigInt  partitioning[2];   /* Indicates partitioning over tasks */
+   NALU_HYPRE_Int     num_components;    /* Number of components of a multivector */
+   NALU_HYPRE_Int     object_type;       /* Indicates the type of "local storage" */
    void         *object;            /* Structure for storing local portion */
    void         *translator;        /* Structure for storing off processor
                                        information */
    void         *assumed_part;      /* IJ Vector assumed partition */
-   HYPRE_BigInt  global_first_row;  /* these for data items are necessary */
-   HYPRE_BigInt  global_num_rows;   /* to be able to avoid using the global partition */
-   HYPRE_Int     print_level;
+   NALU_HYPRE_BigInt  global_first_row;  /* these for data items are necessary */
+   NALU_HYPRE_BigInt  global_num_rows;   /* to be able to avoid using the global partition */
+   NALU_HYPRE_Int     print_level;
 } hypre_IJVector;
 
 /*--------------------------------------------------------------------------
@@ -48,15 +48,15 @@ typedef struct hypre_IJVector_struct
 #define hypre_IJVectorGlobalNumRows(vector)   ((vector) -> global_num_rows)
 #define hypre_IJVectorPrintLevel(vector)      ((vector) -> print_level)
 
-static inline HYPRE_MemoryLocation
+static inline NALU_HYPRE_MemoryLocation
 hypre_IJVectorMemoryLocation(hypre_IJVector *vector)
 {
-   if ( hypre_IJVectorObject(vector) && hypre_IJVectorObjectType(vector) == HYPRE_PARCSR)
+   if ( hypre_IJVectorObject(vector) && hypre_IJVectorObjectType(vector) == NALU_HYPRE_PARCSR)
    {
       return hypre_ParVectorMemoryLocation( (hypre_ParVector *) hypre_IJVectorObject(vector) );
    }
 
-   return HYPRE_MEMORY_UNDEFINED;
+   return NALU_HYPRE_MEMORY_UNDEFINED;
 }
 
 /*--------------------------------------------------------------------------

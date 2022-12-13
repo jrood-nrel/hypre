@@ -21,7 +21,7 @@
  *
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_FacZeroCData( void                 *fac_vdata,
                     hypre_SStructMatrix  *A )
 {
@@ -36,33 +36,33 @@ hypre_FacZeroCData( void                 *fac_vdata,
 
    hypre_BoxManager      *fboxman;
    hypre_BoxManEntry    **boxman_entries;
-   HYPRE_Int              nboxman_entries;
+   NALU_HYPRE_Int              nboxman_entries;
 
    hypre_Box              scaled_box;
    hypre_Box              intersect_box;
 
    hypre_SStructPMatrix  *level_pmatrix;
    hypre_StructStencil   *stencils;
-   HYPRE_Int              stencil_size;
+   NALU_HYPRE_Int              stencil_size;
 
    hypre_Index           *refine_factors;
    hypre_Index            temp_index;
    hypre_Index            ilower, iupper;
 
-   HYPRE_Int              max_level     =  fac_data -> max_levels;
-   HYPRE_Int             *level_to_part =  fac_data -> level_to_part;
+   NALU_HYPRE_Int              max_level     =  fac_data -> max_levels;
+   NALU_HYPRE_Int             *level_to_part =  fac_data -> level_to_part;
 
-   HYPRE_Int              ndim          =  hypre_SStructMatrixNDim(A);
-   HYPRE_Int              part_crse     =  0;
-   HYPRE_Int              part_fine     =  1;
-   HYPRE_Int              level;
-   HYPRE_Int              nvars, var;
+   NALU_HYPRE_Int              ndim          =  hypre_SStructMatrixNDim(A);
+   NALU_HYPRE_Int              part_crse     =  0;
+   NALU_HYPRE_Int              part_fine     =  1;
+   NALU_HYPRE_Int              level;
+   NALU_HYPRE_Int              nvars, var;
 
-   HYPRE_Int              ci, i, j, rem, intersect_size;
+   NALU_HYPRE_Int              ci, i, j, rem, intersect_size;
 
-   HYPRE_Real            *values;
+   NALU_HYPRE_Real            *values;
 
-   HYPRE_Int              ierr = 0;
+   NALU_HYPRE_Int              ierr = 0;
 
    hypre_BoxInit(&scaled_box, ndim);
    hypre_BoxInit(&intersect_box, ndim);
@@ -135,29 +135,29 @@ hypre_FacZeroCData( void                 *fac_vdata,
                   /*------------------------------------------------------------
                    * Coarse underlying box found. Now zero off.
                    *------------------------------------------------------------*/
-                  values = hypre_CTAlloc(HYPRE_Real,  intersect_size, HYPRE_MEMORY_HOST);
+                  values = hypre_CTAlloc(NALU_HYPRE_Real,  intersect_size, NALU_HYPRE_MEMORY_HOST);
 
                   for (j = 0; j < stencil_size; j++)
                   {
-                     HYPRE_SStructMatrixSetBoxValues(fac_data -> A_level[level],
+                     NALU_HYPRE_SStructMatrixSetBoxValues(fac_data -> A_level[level],
                                                      part_crse,
                                                      hypre_BoxIMin(&intersect_box),
                                                      hypre_BoxIMax(&intersect_box),
                                                      var, 1, &j, values);
 
-                     HYPRE_SStructMatrixSetBoxValues(A,
+                     NALU_HYPRE_SStructMatrixSetBoxValues(A,
                                                      level_to_part[level - 1],
                                                      hypre_BoxIMin(&intersect_box),
                                                      hypre_BoxIMax(&intersect_box),
                                                      var, 1, &j, values);
                   }
 
-                  hypre_TFree(values, HYPRE_MEMORY_HOST);
+                  hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
 
                }  /* if (intersect_size > 0) */
             }     /* for (i= 0; i< nboxman_entries; i++) */
 
-            hypre_TFree(boxman_entries, HYPRE_MEMORY_HOST);
+            hypre_TFree(boxman_entries, NALU_HYPRE_MEMORY_HOST);
 
          }   /* hypre_ForBoxI(ci, cgrid_boxes) */
       }      /* for (var= 0; var< nvars; var++) */

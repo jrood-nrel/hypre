@@ -27,7 +27,7 @@ class MLI_Solver_HSchwarz : public MLI_Solver
    int          blkSize_;
    double       relaxWeight_;
    MLI_Vector   *mliVec_;
-   HYPRE_Solver smoother_;
+   NALU_HYPRE_Solver smoother_;
 
 public :
 

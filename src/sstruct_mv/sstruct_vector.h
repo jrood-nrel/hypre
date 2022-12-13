@@ -23,47 +23,47 @@ typedef struct
    MPI_Comm                comm;
    hypre_SStructPGrid     *pgrid;
 
-   HYPRE_Int               nvars;
+   NALU_HYPRE_Int               nvars;
    hypre_StructVector    **svectors;     /* nvar array of svectors */
    hypre_CommPkg         **comm_pkgs;    /* nvar array of comm pkgs */
 
-   HYPRE_Int               accumulated;  /* AddTo values accumulated? */
+   NALU_HYPRE_Int               accumulated;  /* AddTo values accumulated? */
 
-   HYPRE_Int               ref_count;
+   NALU_HYPRE_Int               ref_count;
 
-   HYPRE_Int              *dataindices;  /* GEC1002 array for starting index of the
+   NALU_HYPRE_Int              *dataindices;  /* GEC1002 array for starting index of the
                                             svector. pdataindices[varx] */
-   HYPRE_Int               datasize;     /* Size of the pvector = sums size of svectors */
+   NALU_HYPRE_Int               datasize;     /* Size of the pvector = sums size of svectors */
 
 } hypre_SStructPVector;
 
 typedef struct hypre_SStructVector_struct
 {
    MPI_Comm                comm;
-   HYPRE_Int               ndim;
+   NALU_HYPRE_Int               ndim;
    hypre_SStructGrid      *grid;
-   HYPRE_Int               object_type;
+   NALU_HYPRE_Int               object_type;
 
    /* s-vector info */
-   HYPRE_Int               nparts;
+   NALU_HYPRE_Int               nparts;
    hypre_SStructPVector  **pvectors;
    hypre_CommPkg        ***comm_pkgs;    /* nvar array of comm pkgs */
 
    /* u-vector info */
-   HYPRE_IJVector          ijvector;
+   NALU_HYPRE_IJVector          ijvector;
    hypre_ParVector        *parvector;
 
    /* inter-part communication info */
-   HYPRE_Int               nbor_ncomms;  /* num comm_pkgs with neighbor parts */
+   NALU_HYPRE_Int               nbor_ncomms;  /* num comm_pkgs with neighbor parts */
 
    /* GEC10020902 pointer to big chunk of memory and auxiliary information */
-   HYPRE_Complex          *data;        /* GEC1002 pointer to chunk data */
-   HYPRE_Int              *dataindices; /* GEC1002 dataindices[partx] is the starting index
+   NALU_HYPRE_Complex          *data;        /* GEC1002 pointer to chunk data */
+   NALU_HYPRE_Int              *dataindices; /* GEC1002 dataindices[partx] is the starting index
                                            of vector data for the part=partx */
-   HYPRE_Int               datasize;    /* GEC1002 size of all data = ghlocalsize */
+   NALU_HYPRE_Int               datasize;    /* GEC1002 size of all data = ghlocalsize */
 
-   HYPRE_Int               global_size;  /* Total number coefficients */
-   HYPRE_Int               ref_count;
+   NALU_HYPRE_Int               global_size;  /* Total number coefficients */
+   NALU_HYPRE_Int               ref_count;
 
 } hypre_SStructVector;
 

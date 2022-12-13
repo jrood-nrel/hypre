@@ -15,10 +15,10 @@
  * BoxLoop macros:
  *--------------------------------------------------------------------------*/
 
-#ifndef HYPRE_BOXLOOP_KOKKOS_HEADER
-#define HYPRE_BOXLOOP_KOKKOS_HEADER
+#ifndef NALU_HYPRE_BOXLOOP_KOKKOS_HEADER
+#define NALU_HYPRE_BOXLOOP_KOKKOS_HEADER
 
-#if defined(HYPRE_USING_KOKKOS)
+#if defined(NALU_HYPRE_USING_KOKKOS)
 
 #ifdef __cplusplus
 extern "C++"
@@ -38,10 +38,10 @@ extern "C++"
 
 typedef struct hypre_Boxloop_struct
 {
-   HYPRE_Int lsize0, lsize1, lsize2;
-   HYPRE_Int strides0, strides1, strides2;
-   HYPRE_Int bstart0, bstart1, bstart2;
-   HYPRE_Int bsize0, bsize1, bsize2;
+   NALU_HYPRE_Int lsize0, lsize1, lsize2;
+   NALU_HYPRE_Int strides0, strides1, strides2;
+   NALU_HYPRE_Int bstart0, bstart1, bstart2;
+   NALU_HYPRE_Int bsize0, bsize1, bsize2;
 } hypre_Boxloop;
 
 
@@ -57,14 +57,14 @@ typedef struct hypre_Boxloop_struct
 
 
 #define hypre_newBoxLoopInit(ndim,loop_size)                                \
-   HYPRE_Int hypre__tot = 1;                                                \
-   for (HYPRE_Int d = 0;d < ndim;d ++)                                      \
+   NALU_HYPRE_Int hypre__tot = 1;                                                \
+   for (NALU_HYPRE_Int d = 0;d < ndim;d ++)                                      \
       hypre__tot *= loop_size[d];
 
 
 #define hypre_BoxLoopIncK(k,box,hypre__i)                                                \
-   HYPRE_Int hypre_boxD##k = 1;                                                          \
-   HYPRE_Int hypre__i = 0;                                                               \
+   NALU_HYPRE_Int hypre_boxD##k = 1;                                                          \
+   NALU_HYPRE_Int hypre__i = 0;                                                               \
    hypre__i += (hypre_IndexD(local_idx, 0)*box.strides0 + box.bstart0) * hypre_boxD##k;  \
    hypre_boxD##k *= hypre_max(0, box.bsize0 + 1);                                        \
    hypre__i += (hypre_IndexD(local_idx, 1)*box.strides1 + box.bstart1) * hypre_boxD##k;  \
@@ -74,7 +74,7 @@ typedef struct hypre_Boxloop_struct
 
 #define hypre_newBoxLoopDeclare(box)                                        \
   hypre_Index local_idx;                                                    \
-  HYPRE_Int idx_local = idx;                                                \
+  NALU_HYPRE_Int idx_local = idx;                                                \
   hypre_IndexD(local_idx, 0)  = idx_local % box.lsize0;                     \
   idx_local = idx_local / box.lsize0;                                       \
   hypre_IndexD(local_idx, 1)  = idx_local % box.lsize1;                     \
@@ -119,7 +119,7 @@ typedef struct hypre_Boxloop_struct
 #define hypre_newBoxLoop0Begin(ndim, loop_size)                         \
 {                                                                       \
    hypre_newBoxLoopInit(ndim,loop_size);                                \
-   Kokkos::parallel_for (hypre__tot, KOKKOS_LAMBDA (HYPRE_Int idx)      \
+   Kokkos::parallel_for (hypre__tot, KOKKOS_LAMBDA (NALU_HYPRE_Int idx)      \
    {
 
 
@@ -134,7 +134,7 @@ typedef struct hypre_Boxloop_struct
 {                                                                       \
    hypre_newBoxLoopInit(ndim,loop_size)                                 \
    hypre_BoxLoopDataDeclareK(1,ndim,loop_size,dbox1,start1,stride1);    \
-   Kokkos::parallel_for (hypre__tot, KOKKOS_LAMBDA (HYPRE_Int idx)      \
+   Kokkos::parallel_for (hypre__tot, KOKKOS_LAMBDA (NALU_HYPRE_Int idx)      \
    {                                                                    \
       hypre_newBoxLoopDeclare(databox1);                                \
       hypre_BoxLoopIncK(1,databox1,i1);
@@ -153,7 +153,7 @@ typedef struct hypre_Boxloop_struct
    hypre_newBoxLoopInit(ndim,loop_size);                                \
    hypre_BoxLoopDataDeclareK(1,ndim,loop_size,dbox1,start1,stride1);    \
    hypre_BoxLoopDataDeclareK(2,ndim,loop_size,dbox2,start2,stride2);    \
-   Kokkos::parallel_for (hypre__tot, KOKKOS_LAMBDA (HYPRE_Int idx)      \
+   Kokkos::parallel_for (hypre__tot, KOKKOS_LAMBDA (NALU_HYPRE_Int idx)      \
    {                                                                    \
       hypre_newBoxLoopDeclare(databox1)                                 \
       hypre_BoxLoopIncK(1,databox1,i1);                                 \
@@ -174,7 +174,7 @@ typedef struct hypre_Boxloop_struct
    hypre_BoxLoopDataDeclareK(1,ndim,loop_size,dbox1,start1,stride1);    \
    hypre_BoxLoopDataDeclareK(2,ndim,loop_size,dbox2,start2,stride2);    \
    hypre_BoxLoopDataDeclareK(3,ndim,loop_size,dbox3,start3,stride3);    \
-   Kokkos::parallel_for (hypre__tot, KOKKOS_LAMBDA (HYPRE_Int idx)      \
+   Kokkos::parallel_for (hypre__tot, KOKKOS_LAMBDA (NALU_HYPRE_Int idx)      \
    {                                                                    \
       hypre_newBoxLoopDeclare(databox1);                                \
       hypre_BoxLoopIncK(1,databox1,i1);                                 \
@@ -197,7 +197,7 @@ typedef struct hypre_Boxloop_struct
    hypre_BoxLoopDataDeclareK(2,ndim,loop_size,dbox2,start2,stride2);    \
    hypre_BoxLoopDataDeclareK(3,ndim,loop_size,dbox3,start3,stride3);    \
    hypre_BoxLoopDataDeclareK(4,ndim,loop_size,dbox4,start4,stride4);    \
-   Kokkos::parallel_for (hypre__tot, KOKKOS_LAMBDA (HYPRE_Int idx)      \
+   Kokkos::parallel_for (hypre__tot, KOKKOS_LAMBDA (NALU_HYPRE_Int idx)      \
    {                                                                    \
       hypre_newBoxLoopDeclare(databox1);                                \
       hypre_BoxLoopIncK(1,databox1,i1);                                 \
@@ -253,7 +253,7 @@ typedef struct hypre_Boxloop_struct
    hypre_newBoxLoopInit(ndim,loop_size);                                \
    hypre_BasicBoxLoopDataDeclareK(1,ndim,loop_size,stride1);            \
    hypre_BasicBoxLoopDataDeclareK(2,ndim,loop_size,stride2);            \
-   Kokkos::parallel_for (hypre__tot, KOKKOS_LAMBDA (HYPRE_Int idx)      \
+   Kokkos::parallel_for (hypre__tot, KOKKOS_LAMBDA (NALU_HYPRE_Int idx)      \
    {                                                                    \
       hypre_newBoxLoopDeclare(databox1);                                \
       hypre_BoxLoopIncK(1,databox1,i1);                                 \
@@ -261,52 +261,52 @@ typedef struct hypre_Boxloop_struct
 
 #define hypre_BoxLoop1ReductionBegin(ndim, loop_size,                   \
                                      dbox1, start1, stride1, i1,        \
-                                     HYPRE_BOX_REDUCTION)               \
+                                     NALU_HYPRE_BOX_REDUCTION)               \
  {                                                                      \
-     HYPRE_Real __hypre_sum_tmp = HYPRE_BOX_REDUCTION;                  \
-     HYPRE_BOX_REDUCTION = 0.0;                                         \
+     NALU_HYPRE_Real __hypre_sum_tmp = NALU_HYPRE_BOX_REDUCTION;                  \
+     NALU_HYPRE_BOX_REDUCTION = 0.0;                                         \
      hypre_newBoxLoopInit(ndim,loop_size);                              \
      hypre_BoxLoopDataDeclareK(1,ndim,loop_size,dbox1,start1,stride1);  \
-     Kokkos::parallel_reduce (hypre__tot, KOKKOS_LAMBDA (HYPRE_Int idx, \
-                              HYPRE_Real &HYPRE_BOX_REDUCTION)          \
+     Kokkos::parallel_reduce (hypre__tot, KOKKOS_LAMBDA (NALU_HYPRE_Int idx, \
+                              NALU_HYPRE_Real &NALU_HYPRE_BOX_REDUCTION)          \
      {                                                                  \
         hypre_newBoxLoopDeclare(databox1);                              \
         hypre_BoxLoopIncK(1,databox1,i1);                               \
 
 
 
-#define hypre_BoxLoop1ReductionEnd(i1, HYPRE_BOX_REDUCTION)            \
-     }, HYPRE_BOX_REDUCTION);                                           \
+#define hypre_BoxLoop1ReductionEnd(i1, NALU_HYPRE_BOX_REDUCTION)            \
+     }, NALU_HYPRE_BOX_REDUCTION);                                           \
      hypre_fence();                                                     \
-     HYPRE_BOX_REDUCTION += __hypre_sum_tmp;                            \
+     NALU_HYPRE_BOX_REDUCTION += __hypre_sum_tmp;                            \
  }
 
 #define hypre_BoxLoop2ReductionBegin(ndim, loop_size,                  \
                                       dbox1, start1, stride1, i1,       \
                                       dbox2, start2, stride2, i2,       \
-                                      HYPRE_BOX_REDUCTION)              \
+                                      NALU_HYPRE_BOX_REDUCTION)              \
  {                                                                      \
-     HYPRE_Real __hypre_sum_tmp = HYPRE_BOX_REDUCTION;                  \
-     HYPRE_BOX_REDUCTION = 0.0;                                         \
+     NALU_HYPRE_Real __hypre_sum_tmp = NALU_HYPRE_BOX_REDUCTION;                  \
+     NALU_HYPRE_BOX_REDUCTION = 0.0;                                         \
      hypre_newBoxLoopInit(ndim,loop_size);                              \
      hypre_BoxLoopDataDeclareK(1,ndim,loop_size,dbox1,start1,stride1);  \
      hypre_BoxLoopDataDeclareK(2,ndim,loop_size,dbox2,start2,stride2);  \
-     Kokkos::parallel_reduce (hypre__tot, KOKKOS_LAMBDA (HYPRE_Int idx, \
-                              HYPRE_Real &HYPRE_BOX_REDUCTION)          \
+     Kokkos::parallel_reduce (hypre__tot, KOKKOS_LAMBDA (NALU_HYPRE_Int idx, \
+                              NALU_HYPRE_Real &NALU_HYPRE_BOX_REDUCTION)          \
      {                                                                  \
          hypre_newBoxLoopDeclare(databox1);                             \
          hypre_BoxLoopIncK(1,databox1,i1);                              \
          hypre_BoxLoopIncK(2,databox2,i2);                              \
 
-#define hypre_BoxLoop2ReductionEnd(i1, i2, HYPRE_BOX_REDUCTION)        \
-     }, HYPRE_BOX_REDUCTION);                                           \
+#define hypre_BoxLoop2ReductionEnd(i1, i2, NALU_HYPRE_BOX_REDUCTION)        \
+     }, NALU_HYPRE_BOX_REDUCTION);                                           \
      hypre_fence();                                                     \
-     HYPRE_BOX_REDUCTION += __hypre_sum_tmp;                            \
+     NALU_HYPRE_BOX_REDUCTION += __hypre_sum_tmp;                            \
  }
 
 #define hypre_LoopBegin(size,idx)                                       \
 {                                                                       \
-   Kokkos::parallel_for(size, KOKKOS_LAMBDA (HYPRE_Int idx)             \
+   Kokkos::parallel_for(size, KOKKOS_LAMBDA (NALU_HYPRE_Int idx)             \
    {
 
 #define hypre_LoopEnd()                                                 \
@@ -319,11 +319,11 @@ extern "C++"
 {
 struct ColumnSums
 {
-  typedef HYPRE_Real value_type[];
-  typedef View<HYPRE_Real**>::size_type size_type;
+  typedef NALU_HYPRE_Real value_type[];
+  typedef View<NALU_HYPRE_Real**>::size_type size_type;
   size_type value_count;
-  View<HYPRE_Real**> X_;
-  ColumnSums(const View<HYPRE_Real**>& X):value_count(X.dimension_1()),X_(X){}
+  View<NALU_HYPRE_Real**> X_;
+  ColumnSums(const View<NALU_HYPRE_Real**>& X):value_count(X.dimension_1()),X_(X){}
   KOKKOS_INLINE_FUNCTION void
   operator()(const size_type i,value_type sum) const
   {
@@ -377,5 +377,5 @@ struct ColumnSums
 
 #endif
 
-#endif /* #ifndef HYPRE_BOXLOOP_KOKKOS_HEADER */
+#endif /* #ifndef NALU_HYPRE_BOXLOOP_KOKKOS_HEADER */
 

@@ -41,22 +41,22 @@
   @see */
 /*--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_BoomerAMGCoarseParmsHost(MPI_Comm         comm,
-                               HYPRE_Int        local_num_variables,
-                               HYPRE_Int        num_functions,
+                               NALU_HYPRE_Int        local_num_variables,
+                               NALU_HYPRE_Int        num_functions,
                                hypre_IntArray  *dof_func,
                                hypre_IntArray  *CF_marker,
                                hypre_IntArray **coarse_dof_func_ptr,
-                               HYPRE_BigInt    *coarse_pnts_global)
+                               NALU_HYPRE_BigInt    *coarse_pnts_global)
 {
-#ifdef HYPRE_PROFILE
-   hypre_profile_times[HYPRE_TIMER_ID_COARSE_PARAMS] -= hypre_MPI_Wtime();
+#ifdef NALU_HYPRE_PROFILE
+   hypre_profile_times[NALU_HYPRE_TIMER_ID_COARSE_PARAMS] -= hypre_MPI_Wtime();
 #endif
 
-   HYPRE_Int     i;
-   HYPRE_BigInt  local_coarse_size = 0;
-   HYPRE_Int    *coarse_dof_func;
+   NALU_HYPRE_Int     i;
+   NALU_HYPRE_BigInt  local_coarse_size = 0;
+   NALU_HYPRE_Int    *coarse_dof_func;
 
    /*--------------------------------------------------------------
     *----------------------------------------------------------------*/
@@ -86,8 +86,8 @@ hypre_BoomerAMGCoarseParmsHost(MPI_Comm         comm,
    }
 
    {
-      HYPRE_BigInt scan_recv;
-      hypre_MPI_Scan(&local_coarse_size, &scan_recv, 1, HYPRE_MPI_BIG_INT, hypre_MPI_SUM, comm);
+      NALU_HYPRE_BigInt scan_recv;
+      hypre_MPI_Scan(&local_coarse_size, &scan_recv, 1, NALU_HYPRE_MPI_BIG_INT, hypre_MPI_SUM, comm);
 
       /* first point in my range */
       coarse_pnts_global[0] = scan_recv - local_coarse_size;
@@ -96,33 +96,33 @@ hypre_BoomerAMGCoarseParmsHost(MPI_Comm         comm,
       coarse_pnts_global[1] = scan_recv;
    }
 
-#ifdef HYPRE_PROFILE
-   hypre_profile_times[HYPRE_TIMER_ID_COARSE_PARAMS] += hypre_MPI_Wtime();
+#ifdef NALU_HYPRE_PROFILE
+   hypre_profile_times[NALU_HYPRE_TIMER_ID_COARSE_PARAMS] += hypre_MPI_Wtime();
 #endif
 
    return hypre_error_flag;
 }
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_BoomerAMGCoarseParms(MPI_Comm         comm,
-                           HYPRE_Int        local_num_variables,
-                           HYPRE_Int        num_functions,
+                           NALU_HYPRE_Int        local_num_variables,
+                           NALU_HYPRE_Int        num_functions,
                            hypre_IntArray  *dof_func,
                            hypre_IntArray  *CF_marker,
                            hypre_IntArray **coarse_dof_func_ptr,
-                           HYPRE_BigInt    *coarse_pnts_global)
+                           NALU_HYPRE_BigInt    *coarse_pnts_global)
 {
-   HYPRE_Int ierr = 0;
+   NALU_HYPRE_Int ierr = 0;
 
-#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP) || defined(HYPRE_USING_SYCL)
-   HYPRE_ExecutionPolicy exec = hypre_GetExecPolicy1(hypre_IntArrayMemoryLocation(CF_marker));
+#if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP) || defined(NALU_HYPRE_USING_SYCL)
+   NALU_HYPRE_ExecutionPolicy exec = hypre_GetExecPolicy1(hypre_IntArrayMemoryLocation(CF_marker));
    if (num_functions > 1)
    {
       exec = hypre_GetExecPolicy2(hypre_IntArrayMemoryLocation(CF_marker),
                                   hypre_IntArrayMemoryLocation(dof_func));
    }
 
-   if (exec == HYPRE_EXEC_DEVICE)
+   if (exec == NALU_HYPRE_EXEC_DEVICE)
    {
       ierr = hypre_BoomerAMGCoarseParmsDevice(comm, local_num_variables, num_functions, dof_func,
                                               CF_marker, coarse_dof_func_ptr, coarse_pnts_global);

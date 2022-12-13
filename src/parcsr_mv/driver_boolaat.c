@@ -11,15 +11,15 @@
  * Test driver for unstructured Boolean matrix interface , A * A^T
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-main( HYPRE_Int   argc,
+NALU_HYPRE_Int
+main( NALU_HYPRE_Int   argc,
       char *argv[] )
 {
    hypre_ParCSRBooleanMatrix     *A;
    hypre_ParCSRBooleanMatrix     *C;
    hypre_CSRBooleanMatrix *As;
-   HYPRE_BigInt *row_starts, *col_starts;
-   HYPRE_Int num_procs, my_id;
+   NALU_HYPRE_BigInt *row_starts, *col_starts;
+   NALU_HYPRE_Int num_procs, my_id;
 
    /* Initialize MPI */
    hypre_MPI_Init(&argc, &argv);

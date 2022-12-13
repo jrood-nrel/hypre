@@ -10,21 +10,21 @@
 /* #include "Parser_dh.h" */
 /* #include "Mem_dh.h" */
 
-static void Hash_dhInit_private(Hash_dh h, HYPRE_Int s);
+static void Hash_dhInit_private(Hash_dh h, NALU_HYPRE_Int s);
 
 #define CUR_MARK_INIT  -1
 
 
 struct _hash_node_private {
-  HYPRE_Int      key;
-  HYPRE_Int      mark;
+  NALU_HYPRE_Int      key;
+  NALU_HYPRE_Int      mark;
   HashData data;
 };
 
 
 #undef __FUNC__
 #define __FUNC__ "Hash_dhCreate"
-void Hash_dhCreate(Hash_dh *h, HYPRE_Int size)
+void Hash_dhCreate(Hash_dh *h, NALU_HYPRE_Int size)
 {
   START_FUNC_DH
   struct _hash_dh* tmp = (struct _hash_dh*)MALLOC_DH(
@@ -61,11 +61,11 @@ void Hash_dhReset(Hash_dh h)
 
 #undef __FUNC__
 #define __FUNC__ "Hash_dhInit_private"
-void Hash_dhInit_private(Hash_dh h, HYPRE_Int s)
+void Hash_dhInit_private(Hash_dh h, NALU_HYPRE_Int s)
 {
   START_FUNC_DH
-  HYPRE_Int i;
-  HYPRE_Int size = 16;
+  NALU_HYPRE_Int i;
+  NALU_HYPRE_Int size = 16;
   HashRecord *data;
 
   /* want table size to be a power of 2: */
@@ -90,19 +90,19 @@ void Hash_dhInit_private(Hash_dh h, HYPRE_Int s)
 
 #undef __FUNC__
 #define __FUNC__ "Hash_dhLookup"
-HashData * Hash_dhLookup(Hash_dh h, HYPRE_Int key)
+HashData * Hash_dhLookup(Hash_dh h, NALU_HYPRE_Int key)
 {
   START_FUNC_DH
-  HYPRE_Int i, start;
-  HYPRE_Int curMark = h->curMark;
-  HYPRE_Int size = h->size;
+  NALU_HYPRE_Int i, start;
+  NALU_HYPRE_Int curMark = h->curMark;
+  NALU_HYPRE_Int size = h->size;
   HashData *retval = NULL;
   HashRecord *data = h->data;
 
   HASH_1(key, size, &start)
 
   for (i=0; i<size; ++i) {
-    HYPRE_Int tmp, idx;
+    NALU_HYPRE_Int tmp, idx;
     HASH_2(key, size, &tmp)
     /* idx = (start + i*tmp) % size; */
     idx = (start + hypre_multmod(i, tmp, size)) % size;
@@ -125,11 +125,11 @@ HashData * Hash_dhLookup(Hash_dh h, HYPRE_Int key)
 */
 #undef __FUNC__
 #define __FUNC__ "Hash_dhInsert"
-void Hash_dhInsert(Hash_dh h, HYPRE_Int key, HashData *dataIN)
+void Hash_dhInsert(Hash_dh h, NALU_HYPRE_Int key, HashData *dataIN)
 {
   START_FUNC_DH
-  HYPRE_Int i, start, size = h->size;
-  HYPRE_Int curMark = h->curMark;
+  NALU_HYPRE_Int i, start, size = h->size;
+  NALU_HYPRE_Int curMark = h->curMark;
   HashRecord *data;
 
   data = h->data;
@@ -143,7 +143,7 @@ void Hash_dhInsert(Hash_dh h, HYPRE_Int key, HashData *dataIN)
   HASH_1(key, size, &start)
 
   for (i=0; i<size; ++i) {
-    HYPRE_Int tmp, idx;
+    NALU_HYPRE_Int tmp, idx;
     HASH_2(key, size, &tmp)
 
     /* idx = (start + i*tmp) % size; */
@@ -151,7 +151,7 @@ void Hash_dhInsert(Hash_dh h, HYPRE_Int key, HashData *dataIN)
     if (data[idx].mark < curMark) {
       data[idx].key = key;
       data[idx].mark = curMark;
-      hypre_TMemcpy(&(data[idx].data),  dataIN, HashData, 1, HYPRE_MEMORY_HOST, HYPRE_MEMORY_HOST);
+      hypre_TMemcpy(&(data[idx].data),  dataIN, HashData, 1, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_HOST);
       break;
     }
   }
@@ -163,8 +163,8 @@ void Hash_dhInsert(Hash_dh h, HYPRE_Int key, HashData *dataIN)
 void Hash_dhPrint(Hash_dh h, FILE *fp)
 {
   START_FUNC_DH
-  HYPRE_Int i, size = h->size;
-  HYPRE_Int curMark = h->curMark;
+  NALU_HYPRE_Int i, size = h->size;
+  NALU_HYPRE_Int curMark = h->curMark;
   HashRecord *data = h->data;
 
 

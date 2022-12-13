@@ -9,7 +9,7 @@
 #include "par_fsai.h"
 
 /******************************************************************************
- * HYPRE_FSAICreate
+ * NALU_HYPRE_FSAICreate
  ******************************************************************************/
 
 void *
@@ -18,28 +18,28 @@ hypre_FSAICreate()
    hypre_ParFSAIData    *fsai_data;
 
    /* setup params */
-   HYPRE_Int            algo_type;
-   HYPRE_Int            max_steps;
-   HYPRE_Int            max_step_size;
-   HYPRE_Real           kap_tolerance;
+   NALU_HYPRE_Int            algo_type;
+   NALU_HYPRE_Int            max_steps;
+   NALU_HYPRE_Int            max_step_size;
+   NALU_HYPRE_Real           kap_tolerance;
 
    /* solver params */
-   HYPRE_Int            eig_max_iters;
-   HYPRE_Int            max_iterations;
-   HYPRE_Int            num_iterations;
-   HYPRE_Real           tolerance;
-   HYPRE_Real           omega;
+   NALU_HYPRE_Int            eig_max_iters;
+   NALU_HYPRE_Int            max_iterations;
+   NALU_HYPRE_Int            num_iterations;
+   NALU_HYPRE_Real           tolerance;
+   NALU_HYPRE_Real           omega;
 
    /* log info */
-   HYPRE_Int            logging;
+   NALU_HYPRE_Int            logging;
 
    /* output params */
-   HYPRE_Int            print_level;
+   NALU_HYPRE_Int            print_level;
 
    /*-----------------------------------------------------------------------
     * Setup default values for parameters
     *-----------------------------------------------------------------------*/
-   fsai_data = hypre_CTAlloc(hypre_ParFSAIData, 1, HYPRE_MEMORY_HOST);
+   fsai_data = hypre_CTAlloc(hypre_ParFSAIData, 1, NALU_HYPRE_MEMORY_HOST);
 
    /* setup params */
    algo_type = hypre_NumThreads() > 4 ? 2 : 1;
@@ -60,7 +60,7 @@ hypre_FSAICreate()
    /* output params */
    print_level = 0;
 
-   HYPRE_ANNOTATE_FUNC_BEGIN;
+   NALU_HYPRE_ANNOTATE_FUNC_BEGIN;
 
    /*-----------------------------------------------------------------------
     * Create the hypre_ParFSAIData structure and return
@@ -87,21 +87,21 @@ hypre_FSAICreate()
 
    hypre_FSAISetPrintLevel(fsai_data, print_level);
 
-   HYPRE_ANNOTATE_FUNC_END;
+   NALU_HYPRE_ANNOTATE_FUNC_END;
 
    return (void *) fsai_data;
 }
 
 /******************************************************************************
- * HYPRE_FSAIDestroy
+ * NALU_HYPRE_FSAIDestroy
  ******************************************************************************/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_FSAIDestroy( void *data )
 {
    hypre_ParFSAIData *fsai_data = (hypre_ParFSAIData*)data;
 
-   HYPRE_ANNOTATE_FUNC_BEGIN;
+   NALU_HYPRE_ANNOTATE_FUNC_BEGIN;
 
    if (fsai_data)
    {
@@ -118,10 +118,10 @@ hypre_FSAIDestroy( void *data )
       hypre_ParVectorDestroy(hypre_ParFSAIDataRWork(fsai_data));
       hypre_ParVectorDestroy(hypre_ParFSAIDataZWork(fsai_data));
 
-      hypre_TFree(fsai_data, HYPRE_MEMORY_HOST);
+      hypre_TFree(fsai_data, NALU_HYPRE_MEMORY_HOST);
    }
 
-   HYPRE_ANNOTATE_FUNC_END;
+   NALU_HYPRE_ANNOTATE_FUNC_END;
 
    return hypre_error_flag;
 }
@@ -130,9 +130,9 @@ hypre_FSAIDestroy( void *data )
  * Routines to SET the setup phase parameters
  ******************************************************************************/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_FSAISetAlgoType( void      *data,
-                       HYPRE_Int  algo_type )
+                       NALU_HYPRE_Int  algo_type )
 {
    hypre_ParFSAIData  *fsai_data = (hypre_ParFSAIData*) data;
 
@@ -153,9 +153,9 @@ hypre_FSAISetAlgoType( void      *data,
    return hypre_error_flag;
 }
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_FSAISetMaxSteps( void      *data,
-                       HYPRE_Int  max_steps )
+                       NALU_HYPRE_Int  max_steps )
 {
    hypre_ParFSAIData  *fsai_data = (hypre_ParFSAIData*) data;
 
@@ -176,9 +176,9 @@ hypre_FSAISetMaxSteps( void      *data,
    return hypre_error_flag;
 }
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_FSAISetMaxStepSize( void      *data,
-                          HYPRE_Int  max_step_size )
+                          NALU_HYPRE_Int  max_step_size )
 {
    hypre_ParFSAIData  *fsai_data = (hypre_ParFSAIData*) data;
 
@@ -199,9 +199,9 @@ hypre_FSAISetMaxStepSize( void      *data,
    return hypre_error_flag;
 }
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_FSAISetKapTolerance( void       *data,
-                           HYPRE_Real  kap_tolerance )
+                           NALU_HYPRE_Real  kap_tolerance )
 {
    hypre_ParFSAIData  *fsai_data = (hypre_ParFSAIData*) data;
 
@@ -222,9 +222,9 @@ hypre_FSAISetKapTolerance( void       *data,
    return hypre_error_flag;
 }
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_FSAISetMaxIterations( void      *data,
-                            HYPRE_Int  max_iterations )
+                            NALU_HYPRE_Int  max_iterations )
 {
    hypre_ParFSAIData  *fsai_data = (hypre_ParFSAIData*) data;
 
@@ -245,9 +245,9 @@ hypre_FSAISetMaxIterations( void      *data,
    return hypre_error_flag;
 }
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_FSAISetEigMaxIters( void      *data,
-                          HYPRE_Int  eig_max_iters )
+                          NALU_HYPRE_Int  eig_max_iters )
 {
    hypre_ParFSAIData  *fsai_data = (hypre_ParFSAIData*) data;
 
@@ -268,9 +268,9 @@ hypre_FSAISetEigMaxIters( void      *data,
    return hypre_error_flag;
 }
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_FSAISetZeroGuess( void     *data,
-                        HYPRE_Int zero_guess )
+                        NALU_HYPRE_Int zero_guess )
 {
    hypre_ParFSAIData  *fsai_data = (hypre_ParFSAIData*) data;
 
@@ -292,9 +292,9 @@ hypre_FSAISetZeroGuess( void     *data,
    return hypre_error_flag;
 }
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_FSAISetTolerance( void       *data,
-                        HYPRE_Real  tolerance )
+                        NALU_HYPRE_Real  tolerance )
 {
    hypre_ParFSAIData  *fsai_data = (hypre_ParFSAIData*) data;
 
@@ -315,9 +315,9 @@ hypre_FSAISetTolerance( void       *data,
    return hypre_error_flag;
 }
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_FSAISetOmega( void       *data,
-                    HYPRE_Real  omega )
+                    NALU_HYPRE_Real  omega )
 {
    hypre_ParFSAIData  *fsai_data = (hypre_ParFSAIData*) data;
 
@@ -329,7 +329,7 @@ hypre_FSAISetOmega( void       *data,
 
    if (omega < 0)
    {
-      hypre_error_w_msg(HYPRE_ERROR_GENERIC, "Negative omega not allowed!");
+      hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "Negative omega not allowed!");
       return hypre_error_flag;
    }
 
@@ -338,9 +338,9 @@ hypre_FSAISetOmega( void       *data,
    return hypre_error_flag;
 }
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_FSAISetLogging( void      *data,
-                      HYPRE_Int  logging )
+                      NALU_HYPRE_Int  logging )
 {
    /*   This function should be called before Setup.  Logging changes
     *    may require allocation or freeing of arrays, which is presently
@@ -367,9 +367,9 @@ hypre_FSAISetLogging( void      *data,
    return hypre_error_flag;
 }
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_FSAISetNumIterations( void      *data,
-                            HYPRE_Int  num_iterations )
+                            NALU_HYPRE_Int  num_iterations )
 {
    hypre_ParFSAIData  *fsai_data = (hypre_ParFSAIData*) data;
 
@@ -390,9 +390,9 @@ hypre_FSAISetNumIterations( void      *data,
    return hypre_error_flag;
 }
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_FSAISetPrintLevel( void      *data,
-                         HYPRE_Int  print_level )
+                         NALU_HYPRE_Int  print_level )
 {
    hypre_ParFSAIData  *fsai_data = (hypre_ParFSAIData*) data;
 
@@ -417,9 +417,9 @@ hypre_FSAISetPrintLevel( void      *data,
  * Routines to GET the setup phase parameters
  ******************************************************************************/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_FSAIGetAlgoType( void      *data,
-                       HYPRE_Int *algo_type )
+                       NALU_HYPRE_Int *algo_type )
 {
    hypre_ParFSAIData  *fsai_data = (hypre_ParFSAIData*) data;
 
@@ -434,9 +434,9 @@ hypre_FSAIGetAlgoType( void      *data,
    return hypre_error_flag;
 }
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_FSAIGetMaxSteps( void      *data,
-                       HYPRE_Int *algo_type )
+                       NALU_HYPRE_Int *algo_type )
 {
    hypre_ParFSAIData  *fsai_data = (hypre_ParFSAIData*) data;
 
@@ -451,9 +451,9 @@ hypre_FSAIGetMaxSteps( void      *data,
    return hypre_error_flag;
 }
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_FSAIGetMaxStepSize( void      *data,
-                          HYPRE_Int *max_step_size )
+                          NALU_HYPRE_Int *max_step_size )
 {
    hypre_ParFSAIData  *fsai_data = (hypre_ParFSAIData*) data;
 
@@ -468,9 +468,9 @@ hypre_FSAIGetMaxStepSize( void      *data,
    return hypre_error_flag;
 }
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_FSAIGetKapTolerance( void       *data,
-                           HYPRE_Real *kap_tolerance )
+                           NALU_HYPRE_Real *kap_tolerance )
 {
    hypre_ParFSAIData  *fsai_data = (hypre_ParFSAIData*) data;
 
@@ -485,9 +485,9 @@ hypre_FSAIGetKapTolerance( void       *data,
    return hypre_error_flag;
 }
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_FSAIGetMaxIterations( void      *data,
-                            HYPRE_Int *max_iterations )
+                            NALU_HYPRE_Int *max_iterations )
 {
    hypre_ParFSAIData  *fsai_data = (hypre_ParFSAIData*) data;
 
@@ -502,9 +502,9 @@ hypre_FSAIGetMaxIterations( void      *data,
    return hypre_error_flag;
 }
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_FSAIGetEigMaxIters( void      *data,
-                          HYPRE_Int *eig_max_iters )
+                          NALU_HYPRE_Int *eig_max_iters )
 {
    hypre_ParFSAIData  *fsai_data = (hypre_ParFSAIData*) data;
 
@@ -519,9 +519,9 @@ hypre_FSAIGetEigMaxIters( void      *data,
    return hypre_error_flag;
 }
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_FSAIGetZeroGuess( void      *data,
-                        HYPRE_Int *zero_guess )
+                        NALU_HYPRE_Int *zero_guess )
 {
    hypre_ParFSAIData  *fsai_data = (hypre_ParFSAIData*) data;
 
@@ -536,9 +536,9 @@ hypre_FSAIGetZeroGuess( void      *data,
    return hypre_error_flag;
 }
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_FSAIGetTolerance( void       *data,
-                        HYPRE_Real *tolerance )
+                        NALU_HYPRE_Real *tolerance )
 {
    hypre_ParFSAIData  *fsai_data = (hypre_ParFSAIData*) data;
 
@@ -553,9 +553,9 @@ hypre_FSAIGetTolerance( void       *data,
    return hypre_error_flag;
 }
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_FSAIGetOmega( void       *data,
-                    HYPRE_Real *omega )
+                    NALU_HYPRE_Real *omega )
 {
    hypre_ParFSAIData  *fsai_data = (hypre_ParFSAIData*) data;
 
@@ -570,9 +570,9 @@ hypre_FSAIGetOmega( void       *data,
    return hypre_error_flag;
 }
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_FSAIGetLogging( void      *data,
-                      HYPRE_Int *logging )
+                      NALU_HYPRE_Int *logging )
 {
    hypre_ParFSAIData  *fsai_data = (hypre_ParFSAIData*) data;
 
@@ -587,9 +587,9 @@ hypre_FSAIGetLogging( void      *data,
    return hypre_error_flag;
 }
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_FSAIGetNumIterations( void      *data,
-                            HYPRE_Int *num_iterations )
+                            NALU_HYPRE_Int *num_iterations )
 {
    hypre_ParFSAIData  *fsai_data = (hypre_ParFSAIData*) data;
 
@@ -604,9 +604,9 @@ hypre_FSAIGetNumIterations( void      *data,
    return hypre_error_flag;
 }
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_FSAIGetPrintLevel( void      *data,
-                         HYPRE_Int *print_level )
+                         NALU_HYPRE_Int *print_level )
 {
    hypre_ParFSAIData  *fsai_data = (hypre_ParFSAIData*) data;
 

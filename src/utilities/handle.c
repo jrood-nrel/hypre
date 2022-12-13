@@ -7,7 +7,7 @@
 
 /******************************************************************************
  *
- * HYPRE_handle utility functions
+ * NALU_HYPRE_handle utility functions
  *
  *****************************************************************************/
 
@@ -15,39 +15,39 @@
 #include "_hypre_utilities.hpp"
 
 /* GPU SpTrans */
-HYPRE_Int
-hypre_SetSpTransUseVendor( HYPRE_Int use_vendor )
+NALU_HYPRE_Int
+hypre_SetSpTransUseVendor( NALU_HYPRE_Int use_vendor )
 {
-#if defined(HYPRE_USING_GPU)
+#if defined(NALU_HYPRE_USING_GPU)
    hypre_HandleSpTransUseVendor(hypre_handle()) = use_vendor;
 #endif
    return hypre_error_flag;
 }
 
 /* GPU SpMV */
-HYPRE_Int
-hypre_SetSpMVUseVendor( HYPRE_Int use_vendor )
+NALU_HYPRE_Int
+hypre_SetSpMVUseVendor( NALU_HYPRE_Int use_vendor )
 {
-#if defined(HYPRE_USING_GPU)
+#if defined(NALU_HYPRE_USING_GPU)
    hypre_HandleSpMVUseVendor(hypre_handle()) = use_vendor;
 #endif
    return hypre_error_flag;
 }
 
 /* GPU SpGemm */
-HYPRE_Int
-hypre_SetSpGemmUseVendor( HYPRE_Int use_vendor )
+NALU_HYPRE_Int
+hypre_SetSpGemmUseVendor( NALU_HYPRE_Int use_vendor )
 {
-#if defined(HYPRE_USING_GPU)
+#if defined(NALU_HYPRE_USING_GPU)
    hypre_HandleSpgemmUseVendor(hypre_handle()) = use_vendor;
 #endif
    return hypre_error_flag;
 }
 
-HYPRE_Int
-hypre_SetSpGemmAlgorithm( HYPRE_Int value )
+NALU_HYPRE_Int
+hypre_SetSpGemmAlgorithm( NALU_HYPRE_Int value )
 {
-#if defined(HYPRE_USING_GPU)
+#if defined(NALU_HYPRE_USING_GPU)
    if (value >= 1 && value <= 3)
    {
       hypre_HandleSpgemmAlgorithm(hypre_handle()) = value;
@@ -60,19 +60,19 @@ hypre_SetSpGemmAlgorithm( HYPRE_Int value )
    return hypre_error_flag;
 }
 
-HYPRE_Int
-hypre_SetSpGemmBinned( HYPRE_Int value )
+NALU_HYPRE_Int
+hypre_SetSpGemmBinned( NALU_HYPRE_Int value )
 {
-#if defined(HYPRE_USING_GPU)
+#if defined(NALU_HYPRE_USING_GPU)
    hypre_HandleSpgemmBinned(hypre_handle()) = value;
 #endif
    return hypre_error_flag;
 }
 
-HYPRE_Int
-hypre_SetSpGemmRownnzEstimateMethod( HYPRE_Int value )
+NALU_HYPRE_Int
+hypre_SetSpGemmRownnzEstimateMethod( NALU_HYPRE_Int value )
 {
-#if defined(HYPRE_USING_GPU)
+#if defined(NALU_HYPRE_USING_GPU)
    if (value >= 1 && value <= 3)
    {
       hypre_HandleSpgemmRownnzEstimateMethod(hypre_handle()) = value;
@@ -85,19 +85,19 @@ hypre_SetSpGemmRownnzEstimateMethod( HYPRE_Int value )
    return hypre_error_flag;
 }
 
-HYPRE_Int
-hypre_SetSpGemmRownnzEstimateNSamples( HYPRE_Int value )
+NALU_HYPRE_Int
+hypre_SetSpGemmRownnzEstimateNSamples( NALU_HYPRE_Int value )
 {
-#if defined(HYPRE_USING_GPU)
+#if defined(NALU_HYPRE_USING_GPU)
    hypre_HandleSpgemmRownnzEstimateNsamples(hypre_handle()) = value;
 #endif
    return hypre_error_flag;
 }
 
-HYPRE_Int
-hypre_SetSpGemmRownnzEstimateMultFactor( HYPRE_Real value )
+NALU_HYPRE_Int
+hypre_SetSpGemmRownnzEstimateMultFactor( NALU_HYPRE_Real value )
 {
-#if defined(HYPRE_USING_GPU)
+#if defined(NALU_HYPRE_USING_GPU)
    if (value > 0.0)
    {
       hypre_HandleSpgemmRownnzEstimateMultFactor(hypre_handle()) = value;
@@ -111,37 +111,37 @@ hypre_SetSpGemmRownnzEstimateMultFactor( HYPRE_Real value )
 }
 
 /* GPU Rand */
-HYPRE_Int
-hypre_SetUseGpuRand( HYPRE_Int use_gpurand )
+NALU_HYPRE_Int
+hypre_SetUseGpuRand( NALU_HYPRE_Int use_gpurand )
 {
-#if defined(HYPRE_USING_GPU)
+#if defined(NALU_HYPRE_USING_GPU)
    hypre_HandleUseGpuRand(hypre_handle()) = use_gpurand;
 #endif
    return hypre_error_flag;
 }
 
-HYPRE_Int
-hypre_SetGaussSeidelMethod( HYPRE_Int gs_method )
+NALU_HYPRE_Int
+hypre_SetGaussSeidelMethod( NALU_HYPRE_Int gs_method )
 {
-#if defined(HYPRE_USING_GPU)
+#if defined(NALU_HYPRE_USING_GPU)
    hypre_HandleDeviceGSMethod(hypre_handle()) = gs_method;
 #endif
    return hypre_error_flag;
 }
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SetUserDeviceMalloc(GPUMallocFunc func)
 {
-#if defined(HYPRE_USING_GPU)
+#if defined(NALU_HYPRE_USING_GPU)
    hypre_HandleUserDeviceMalloc(hypre_handle()) = func;
 #endif
    return hypre_error_flag;
 }
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SetUserDeviceMfree(GPUMfreeFunc func)
 {
-#if defined(HYPRE_USING_GPU)
+#if defined(NALU_HYPRE_USING_GPU)
    hypre_HandleUserDeviceMfree(hypre_handle()) = func;
 #endif
    return hypre_error_flag;

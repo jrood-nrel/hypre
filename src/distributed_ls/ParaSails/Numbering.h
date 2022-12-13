@@ -21,22 +21,22 @@
 
 struct numbering
 {
-    HYPRE_Int   size;    /* max number of indices that can be stored */
-    HYPRE_Int   beg_row;
-    HYPRE_Int   end_row;
-    HYPRE_Int   num_loc; /* number of local indices */
-    HYPRE_Int   num_ind; /* number of indices */
+    NALU_HYPRE_Int   size;    /* max number of indices that can be stored */
+    NALU_HYPRE_Int   beg_row;
+    NALU_HYPRE_Int   end_row;
+    NALU_HYPRE_Int   num_loc; /* number of local indices */
+    NALU_HYPRE_Int   num_ind; /* number of indices */
 
-    HYPRE_Int  *local_to_global;
+    NALU_HYPRE_Int  *local_to_global;
     Hash *hash;
 };
 
 typedef struct numbering Numbering;
 
-Numbering *NumberingCreate(Matrix *m, HYPRE_Int size);
+Numbering *NumberingCreate(Matrix *m, NALU_HYPRE_Int size);
 Numbering *NumberingCreateCopy(Numbering *orig);
 void NumberingDestroy(Numbering *numb);
-void NumberingLocalToGlobal(Numbering *numb, HYPRE_Int len, HYPRE_Int *local, HYPRE_Int *global);
-void NumberingGlobalToLocal(Numbering *numb, HYPRE_Int len, HYPRE_Int *global, HYPRE_Int *local);
+void NumberingLocalToGlobal(Numbering *numb, NALU_HYPRE_Int len, NALU_HYPRE_Int *local, NALU_HYPRE_Int *global);
+void NumberingGlobalToLocal(Numbering *numb, NALU_HYPRE_Int len, NALU_HYPRE_Int *global, NALU_HYPRE_Int *local);
 
 #endif /* _NUMBERING_H */

@@ -51,7 +51,7 @@ find . -type f -print | egrep '[.]*[.](c|cc|cpp|cxx|C|h|hpp|hxx|H)$' |
   egrep -v '/distributed' |
   egrep -v '/hypre/include' |
   egrep -v '/HYPREf[.]h' |
-  egrep -v '/utilities/HYPRE_error_f[.]h' |
+  egrep -v '/utilities/NALU_HYPRE_error_f[.]h' |
   egrep -v '/utilities/cub_allocator[.]h' |
   egrep -v '/_hypre_.*[.]h' > $scriptname.files
 

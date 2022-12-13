@@ -19,33 +19,33 @@
 
 typedef struct
 {
-    HYPRE_Int  pe;
-    HYPRE_Int  beg_row;
-    HYPRE_Int  end_row;
-    HYPRE_Int *buffer;
+    NALU_HYPRE_Int  pe;
+    NALU_HYPRE_Int  beg_row;
+    NALU_HYPRE_Int  end_row;
+    NALU_HYPRE_Int *buffer;
 }
 DonorData;
 
 typedef struct
 {
-    HYPRE_Int     pe;
+    NALU_HYPRE_Int     pe;
     Matrix *mat;
-    HYPRE_Real *buffer;
+    NALU_HYPRE_Real *buffer;
 }
 RecipData;
 
 typedef struct
 {
-    HYPRE_Int         num_given;
-    HYPRE_Int         num_taken;
+    NALU_HYPRE_Int         num_given;
+    NALU_HYPRE_Int         num_taken;
     DonorData  *donor_data;
     RecipData  *recip_data;
-    HYPRE_Int         beg_row;    /* local beginning row, after all donated rows */
+    NALU_HYPRE_Int         beg_row;    /* local beginning row, after all donated rows */
 }
 LoadBal;
 
 LoadBal *LoadBalDonate(MPI_Comm comm, Matrix *mat, Numbering *numb,
-  HYPRE_Real local_cost, HYPRE_Real beta);
+  NALU_HYPRE_Real local_cost, NALU_HYPRE_Real beta);
 void LoadBalReturn(LoadBal *p, MPI_Comm comm, Matrix *mat);
 
 #endif /* _LOADBAL_H */

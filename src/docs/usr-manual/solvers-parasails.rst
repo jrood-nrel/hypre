@@ -33,7 +33,7 @@ integer ``nlevels`` parameters, :math:`0 \le` ``thresh`` :math:`\le 1`, :math:`0
 lead to more accurate, but more expensive preconditioners.  More accurate
 preconditioners are also more expensive per iteration.  The default values are
 ``thresh`` :math:`= 0.1` and ``nlevels`` :math:`= 1`.  The parameters are set
-using ``HYPRE_ParaSailsSetParams``.
+using ``NALU_HYPRE_ParaSailsSetParams``.
 
 Mathematically, given a symmetric matrix :math:`A`, the pattern of the
 approximate inverse is the pattern of :math:`\tilde{A}^m` where
@@ -54,7 +54,7 @@ ParaSail's Create function differs from the synopsis in the following way:
 
 .. code-block:: c
    
-   int HYPRE_ParaSailsCreate(MPI_Comm comm, HYPRE_Solver *solver, int symmetry);
+   int NALU_HYPRE_ParaSailsCreate(MPI_Comm comm, NALU_HYPRE_Solver *solver, int symmetry);
 
 where ``comm`` is the MPI communicator.
 
@@ -76,7 +76,7 @@ Parameters for setting up the preconditioner are specified using
 
 .. code-block:: c
    
-   int HYPRE_ParaSailsSetParams(HYPRE_Solver solver, double thresh,
+   int NALU_HYPRE_ParaSailsSetParams(NALU_HYPRE_Solver solver, double thresh,
                                 int nlevel, double filter);
 
 The parameters are used to specify the sparsity pattern and filtering value (see

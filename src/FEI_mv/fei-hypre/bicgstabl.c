@@ -13,11 +13,11 @@
 
 #include "utilities/_hypre_utilities.h"
 #include "HYPRE.h"
-#include "IJ_mv/HYPRE_IJ_mv.h"
-#include "parcsr_mv/HYPRE_parcsr_mv.h"
+#include "IJ_mv/NALU_HYPRE_IJ_mv.h"
+#include "parcsr_mv/NALU_HYPRE_parcsr_mv.h"
 #include "parcsr_mv/_hypre_parcsr_mv.h"
 #include "parcsr_ls/_hypre_parcsr_ls.h"
-#include "parcsr_ls/HYPRE_parcsr_ls.h"
+#include "parcsr_ls/NALU_HYPRE_parcsr_ls.h"
 
 #include "_hypre_FEI.h"
 /*--------------------------------------------------------------------------
@@ -72,7 +72,7 @@ void * hypre_BiCGSTABLCreate( )
 {
    hypre_BiCGSTABLData *bicgstab_data;
  
-   bicgstab_data = hypre_CTAlloc(hypre_BiCGSTABLData,  1, HYPRE_MEMORY_HOST);
+   bicgstab_data = hypre_CTAlloc(hypre_BiCGSTABLData,  1, NALU_HYPRE_MEMORY_HOST);
  
    /* set defaults */
    (bicgstab_data -> tol)            = 1.0e-06;
@@ -116,7 +116,7 @@ int hypre_BiCGSTABLDestroy( void *bicgstab_vdata )
    {
       if ((bicgstab_data -> logging) > 0)
       {
-         hypre_TFree(bicgstab_data -> norms, HYPRE_MEMORY_HOST);
+         hypre_TFree(bicgstab_data -> norms, NALU_HYPRE_MEMORY_HOST);
       }
  
       hypre_ParKrylovMatvecDestroy(bicgstab_data -> matvec_data);
@@ -136,7 +136,7 @@ int hypre_BiCGSTABLDestroy( void *bicgstab_vdata )
       hypre_ParKrylovDestroyVector(bicgstab_data -> xt);
       hypre_ParKrylovDestroyVector(bicgstab_data -> t2);
  
-      hypre_TFree(bicgstab_data, HYPRE_MEMORY_HOST);
+      hypre_TFree(bicgstab_data, NALU_HYPRE_MEMORY_HOST);
    }
  
    return(ierr);
@@ -203,7 +203,7 @@ int hypre_BiCGSTABLSetup( void *bicgstab_vdata, void *A, void *b, void *x       
    if ((bicgstab_data -> logging) > 0)
    {
       if ((bicgstab_data -> norms) == NULL)
-         (bicgstab_data -> norms) = hypre_CTAlloc(double,  max_iter + 1, HYPRE_MEMORY_HOST);
+         (bicgstab_data -> norms) = hypre_CTAlloc(double,  max_iter + 1, NALU_HYPRE_MEMORY_HOST);
       if ((bicgstab_data -> log_file_name) == NULL)
 		  (bicgstab_data -> log_file_name) = (char*) "bicgstab.out.log";
    }
@@ -564,11 +564,11 @@ int hypre_BiCGSTABLGetFinalRelativeResidualNorm( void   *bicgstab_vdata,
 
 #include "utilities/_hypre_utilities.h"
 #include "HYPRE.h"
-#include "IJ_mv/HYPRE_IJ_mv.h"
-#include "parcsr_mv/HYPRE_parcsr_mv.h"
+#include "IJ_mv/NALU_HYPRE_IJ_mv.h"
+#include "parcsr_mv/NALU_HYPRE_parcsr_mv.h"
 #include "parcsr_mv/parcsr_mv.h"
 #include "parcsr_ls/parcsr_ls.h"
-#include "parcsr_ls/HYPRE_parcsr_ls.h"
+#include "parcsr_ls/NALU_HYPRE_parcsr_ls.h"
 #include "headers.h"
 
 /*--------------------------------------------------------------------------
@@ -621,7 +621,7 @@ void * hypre_BiCGSTABLCreate( )
 {
    hypre_BiCGSTABLData *bicgstab_data;
  
-   bicgstab_data = hypre_CTAlloc(hypre_BiCGSTABLData,  1, HYPRE_MEMORY_HOST);
+   bicgstab_data = hypre_CTAlloc(hypre_BiCGSTABLData,  1, NALU_HYPRE_MEMORY_HOST);
  
    /* set defaults */
    (bicgstab_data -> tol)            = 1.0e-06;
@@ -664,7 +664,7 @@ int hypre_BiCGSTABLDestroy( void *bicgstab_vdata )
    {
       if ((bicgstab_data -> logging) > 0)
       {
-         hypre_TFree(bicgstab_data -> norms, HYPRE_MEMORY_HOST);
+         hypre_TFree(bicgstab_data -> norms, NALU_HYPRE_MEMORY_HOST);
       }
  
       hypre_ParKrylovMatvecDestroy(bicgstab_data -> matvec_data);
@@ -682,7 +682,7 @@ int hypre_BiCGSTABLDestroy( void *bicgstab_vdata )
       hypre_ParKrylovDestroyVector(bicgstab_data -> xh);
       hypre_ParKrylovDestroyVector(bicgstab_data -> t);
  
-      hypre_TFree(bicgstab_data, HYPRE_MEMORY_HOST);
+      hypre_TFree(bicgstab_data, NALU_HYPRE_MEMORY_HOST);
    }
  
    return(ierr);
@@ -745,7 +745,7 @@ int hypre_BiCGSTABLSetup( void *bicgstab_vdata, void *A, void *b, void *x       
    if ((bicgstab_data -> logging) > 0)
    {
       if ((bicgstab_data -> norms) == NULL)
-         (bicgstab_data -> norms) = hypre_CTAlloc(double,  max_iter + 1, HYPRE_MEMORY_HOST);
+         (bicgstab_data -> norms) = hypre_CTAlloc(double,  max_iter + 1, NALU_HYPRE_MEMORY_HOST);
       if ((bicgstab_data -> log_file_name) == NULL)
 		  (bicgstab_data -> log_file_name) = (char*)"bicgstab.out.log";
    }

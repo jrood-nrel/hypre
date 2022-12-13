@@ -14,8 +14,8 @@
 #ifndef hypre_BOX_HEADER
 #define hypre_BOX_HEADER
 
-#ifndef HYPRE_MAXDIM
-#define HYPRE_MAXDIM 3
+#ifndef NALU_HYPRE_MAXDIM
+#define NALU_HYPRE_MAXDIM 3
 #endif
 
 /*--------------------------------------------------------------------------
@@ -29,8 +29,8 @@
  *   replication.
  *--------------------------------------------------------------------------*/
 
-typedef HYPRE_Int  hypre_Index[HYPRE_MAXDIM];
-typedef HYPRE_Int *hypre_IndexRef;
+typedef NALU_HYPRE_Int  hypre_Index[NALU_HYPRE_MAXDIM];
+typedef NALU_HYPRE_Int *hypre_IndexRef;
 
 /*--------------------------------------------------------------------------
  * hypre_Box:
@@ -40,7 +40,7 @@ typedef struct hypre_Box_struct
 {
    hypre_Index imin;           /* min bounding indices */
    hypre_Index imax;           /* max bounding indices */
-   HYPRE_Int   ndim;           /* number of dimensions */
+   NALU_HYPRE_Int   ndim;           /* number of dimensions */
 
 } hypre_Box;
 
@@ -53,9 +53,9 @@ typedef struct hypre_Box_struct
 typedef struct hypre_BoxArray_struct
 {
    hypre_Box  *boxes;         /* Array of boxes */
-   HYPRE_Int   size;          /* Size of box array */
-   HYPRE_Int   alloc_size;    /* Size of currently alloced space */
-   HYPRE_Int   ndim;          /* number of dimensions */
+   NALU_HYPRE_Int   size;          /* Size of box array */
+   NALU_HYPRE_Int   alloc_size;    /* Size of currently alloced space */
+   NALU_HYPRE_Int   ndim;          /* number of dimensions */
 
 } hypre_BoxArray;
 
@@ -70,8 +70,8 @@ typedef struct hypre_BoxArray_struct
 typedef struct hypre_BoxArrayArray_struct
 {
    hypre_BoxArray  **box_arrays;    /* Array of pointers to box arrays */
-   HYPRE_Int         size;          /* Size of box array array */
-   HYPRE_Int         ndim;          /* number of dimensions */
+   NALU_HYPRE_Int         size;          /* Size of box array array */
+   NALU_HYPRE_Int         ndim;          /* number of dimensions */
 
 } hypre_BoxArrayArray;
 
@@ -162,18 +162,18 @@ for (i = 0; i < hypre_BoxArraySize(box_array); i++)
 for (i = 0; i < hypre_BoxArrayArraySize(box_array_array); i++)
 
 #define ZYPRE_BOX_PRIVATE hypre__IN,hypre__JN,hypre__I,hypre__J,hypre__d,hypre__i
-#define HYPRE_BOX_PRIVATE ZYPRE_BOX_PRIVATE
+#define NALU_HYPRE_BOX_PRIVATE ZYPRE_BOX_PRIVATE
 
 #define zypre_BoxLoopDeclare() \
-HYPRE_Int  hypre__tot, hypre__div, hypre__mod;\
-HYPRE_Int  hypre__block, hypre__num_blocks;\
-HYPRE_Int  hypre__d, hypre__ndim;\
-HYPRE_Int  hypre__I, hypre__J, hypre__IN, hypre__JN;\
-HYPRE_Int  hypre__i[HYPRE_MAXDIM+1], hypre__n[HYPRE_MAXDIM+1]
+NALU_HYPRE_Int  hypre__tot, hypre__div, hypre__mod;\
+NALU_HYPRE_Int  hypre__block, hypre__num_blocks;\
+NALU_HYPRE_Int  hypre__d, hypre__ndim;\
+NALU_HYPRE_Int  hypre__I, hypre__J, hypre__IN, hypre__JN;\
+NALU_HYPRE_Int  hypre__i[NALU_HYPRE_MAXDIM+1], hypre__n[NALU_HYPRE_MAXDIM+1]
 
 #define zypre_BoxLoopDeclareK(k) \
-HYPRE_Int  hypre__ikstart##k, hypre__i0inc##k;\
-HYPRE_Int  hypre__sk##k[HYPRE_MAXDIM], hypre__ikinc##k[HYPRE_MAXDIM+1]
+NALU_HYPRE_Int  hypre__ikstart##k, hypre__i0inc##k;\
+NALU_HYPRE_Int  hypre__sk##k[NALU_HYPRE_MAXDIM], hypre__ikinc##k[NALU_HYPRE_MAXDIM+1]
 
 #define zypre_BoxLoopInit(ndim, loop_size) \
 hypre__ndim = ndim;\
@@ -295,8 +295,8 @@ dbox1, start1, stride1, i1,
        dbox2, start2, stride2, i2)
 {
    /* init hypre__i1start */
-   HYPRE_Int  hypre__i1start = hypre_BoxIndexRank(dbox1, start1);
-   HYPRE_Int  hypre__i2start = hypre_BoxIndexRank(dbox2, start2);
+   NALU_HYPRE_Int  hypre__i1start = hypre_BoxIndexRank(dbox1, start1);
+   NALU_HYPRE_Int  hypre__i2start = hypre_BoxIndexRank(dbox2, start2);
    /* declare and set hypre__s1 */
    hypre_BoxLoopDeclareS(dbox1, stride1, hypre__sx1, hypre__sy1, hypre__sz1);
    hypre_BoxLoopDeclareS(dbox2, stride2, hypre__sx2, hypre__sy2, hypre__sz2);

@@ -11,23 +11,23 @@
  * Test driver for PAR multivectors (under construction)
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-main( HYPRE_Int   argc,
+NALU_HYPRE_Int
+main( NALU_HYPRE_Int   argc,
       char *argv[] )
 {
    hypre_ParVector   *vector1;
    hypre_ParVector   *vector2;
    hypre_ParVector   *tmp_vector;
 
-   HYPRE_Int          num_procs, my_id;
-   HYPRE_BigInt         global_size = 20;
-   HYPRE_Int            local_size;
-   HYPRE_BigInt         first_index;
-   HYPRE_Int          num_vectors, vecstride, idxstride;
-   HYPRE_Int            i, j;
-   HYPRE_BigInt         *partitioning;
-   HYPRE_Real           prod;
-   HYPRE_Complex        *data, *data2;
+   NALU_HYPRE_Int          num_procs, my_id;
+   NALU_HYPRE_BigInt         global_size = 20;
+   NALU_HYPRE_Int            local_size;
+   NALU_HYPRE_BigInt         first_index;
+   NALU_HYPRE_Int          num_vectors, vecstride, idxstride;
+   NALU_HYPRE_Int            i, j;
+   NALU_HYPRE_BigInt         *partitioning;
+   NALU_HYPRE_Real           prod;
+   NALU_HYPRE_Complex        *data, *data2;
    hypre_Vector *vector;
    hypre_Vector *local_vector;
    hypre_Vector *local_vector2;
@@ -59,7 +59,7 @@ main( HYPRE_Int   argc,
    for (j = 0; j < num_vectors; ++j )
       for (i = 0; i < local_size; i++)
       {
-         data[ j * vecstride + i * idxstride ] = (HYPRE_Int)first_index + i + 100 * j;
+         data[ j * vecstride + i * idxstride ] = (NALU_HYPRE_Int)first_index + i + 100 * j;
       }
 
    hypre_ParVectorPrint(vector1, "Vector");
@@ -75,13 +75,13 @@ main( HYPRE_Int   argc,
          data2[ j * vecstride + i * idxstride ] = i + 100 * j;
       }
 
-   /*   partitioning = hypre_CTAlloc(HYPRE_Int,4);
+   /*   partitioning = hypre_CTAlloc(NALU_HYPRE_Int,4);
       partitioning[0] = 0;
       partitioning[1] = 10;
       partitioning[2] = 10;
       partitioning[3] = 20;
    */
-   partitioning = hypre_CTAlloc(HYPRE_BigInt, 1 + num_procs, HYPRE_MEMORY_HOST);
+   partitioning = hypre_CTAlloc(NALU_HYPRE_BigInt, 1 + num_procs, NALU_HYPRE_MEMORY_HOST);
    hypre_GeneratePartitioning( global_size, num_procs, &partitioning );
 
    vector2 = hypre_VectorToParVector(hypre_MPI_COMM_WORLD, local_vector2, partitioning);

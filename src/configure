@@ -633,46 +633,46 @@ SUPERLU_LIBS
 SUPERLU_INCLUDE
 CALIPER_LIBS
 CALIPER_INCLUDE
-HYPRE_SYCL_LIBS
-HYPRE_SYCL_INCL
-HYPRE_HIP_LIBS
-HYPRE_HIP_INCL
-HYPRE_CUDA_LIBS
-HYPRE_CUDA_INCLUDE
-HYPRE_CUDA_PATH
-HYPRE_CUDA_GENCODE
-HYPRE_UMPIRE_LIB
-HYPRE_UMPIRE_INCLUDE
-HYPRE_UMPIRE_LIB_DIR
-HYPRE_KOKKOS_LIB
-HYPRE_KOKKOS_INCLUDE
-HYPRE_KOKKOS_LIB_DIR
-HYPRE_KOKKOS_SRC_DIR
-HYPRE_RAJA_LIB
-HYPRE_RAJA_INCLUDE
-HYPRE_RAJA_LIB_DIR
+NALU_HYPRE_SYCL_LIBS
+NALU_HYPRE_SYCL_INCL
+NALU_HYPRE_HIP_LIBS
+NALU_HYPRE_HIP_INCL
+NALU_HYPRE_CUDA_LIBS
+NALU_HYPRE_CUDA_INCLUDE
+NALU_HYPRE_CUDA_PATH
+NALU_HYPRE_CUDA_GENCODE
+NALU_HYPRE_UMPIRE_LIB
+NALU_HYPRE_UMPIRE_INCLUDE
+NALU_HYPRE_UMPIRE_LIB_DIR
+NALU_HYPRE_KOKKOS_LIB
+NALU_HYPRE_KOKKOS_INCLUDE
+NALU_HYPRE_KOKKOS_LIB_DIR
+NALU_HYPRE_KOKKOS_SRC_DIR
+NALU_HYPRE_RAJA_LIB
+NALU_HYPRE_RAJA_INCLUDE
+NALU_HYPRE_RAJA_LIB_DIR
 LAPACKLIBS
 LAPACKLIBDIRS
 BLASLIBS
 BLASLIBDIRS
-HYPRE_FEI_FEMLI_FILES
-HYPRE_FEI_HYPRE_FILES
-HYPRE_FEI_SUBDIRS
-HYPRE_FEI_BASE_DIR
-HYPRE_FEI_SRC_DIR
-HYPRE_NAP_INCLUDE
-HYPRE_PILUT_FILES
-HYPRE_PARASAILS_FILES
-HYPRE_EUCLID_FILES
-HYPRE_DISTRIBUTED_LS_DIR
+NALU_HYPRE_FEI_FEMLI_FILES
+NALU_HYPRE_FEI_NALU_HYPRE_FILES
+NALU_HYPRE_FEI_SUBDIRS
+NALU_HYPRE_FEI_BASE_DIR
+NALU_HYPRE_FEI_SRC_DIR
+NALU_HYPRE_NAP_INCLUDE
+NALU_HYPRE_PILUT_FILES
+NALU_HYPRE_PARASAILS_FILES
+NALU_HYPRE_EUCLID_FILES
+NALU_HYPRE_DISTRIBUTED_LS_DIR
 MPIFLAGS
 MPILIBDIRS
 MPIINCLUDE
-HYPRE_LIBSUFFIX
+NALU_HYPRE_LIBSUFFIX
 FLIBS
-HYPRE_INCINSTALL
-HYPRE_LIBINSTALL
-HYPRE_INSTALLDIR
+NALU_HYPRE_INCINSTALL
+NALU_HYPRE_LIBINSTALL
+NALU_HYPRE_INSTALLDIR
 BUILD_JAVA
 PYTHON
 BUILD_PYTHON
@@ -688,8 +688,8 @@ LINK_CC
 LINK_FC
 FFLAGS
 HOSTNAME
-HYPRE_ARCH
-HYPRE_ROCM_PREFIX
+NALU_HYPRE_ARCH
+NALU_HYPRE_ROCM_PREFIX
 EGREP
 GREP
 CPP
@@ -712,7 +712,7 @@ CXX
 CC
 CUFLAGS
 CUCC
-HYPRE_CUDA_SM
+NALU_HYPRE_CUDA_SM
 CUDA_HOME
 host_os
 host_vendor
@@ -722,13 +722,13 @@ build_os
 build_vendor
 build_cpu
 build
-HYPRE_SRCDIR
-HYPRE_BUGS
-HYPRE_TIME
-HYPRE_DATE
-HYPRE_NUMBER
-HYPRE_VERSION
-HYPRE_NAME
+NALU_HYPRE_SRCDIR
+NALU_HYPRE_BUGS
+NALU_HYPRE_TIME
+NALU_HYPRE_DATE
+NALU_HYPRE_NUMBER
+NALU_HYPRE_VERSION
+NALU_HYPRE_NAME
 target_alias
 host_alias
 build_alias
@@ -874,7 +874,7 @@ with_lapack
 host_alias
 target_alias
 CUDA_HOME
-HYPRE_CUDA_SM
+NALU_HYPRE_CUDA_SM
 CUCC
 CUFLAGS
 CC
@@ -1503,11 +1503,11 @@ Optional Features:
   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
   --enable-debug          Set compiler flags for debugging.
   --enable-shared         Build shared libraries (default is NO).
-  --enable-mixedint       Use long long int for HYPRE_BigInt and int for
-                          HYPRE_Int (default is int for both). Note: This
+  --enable-mixedint       Use long long int for NALU_HYPRE_BigInt and int for
+                          NALU_HYPRE_Int (default is int for both). Note: This
                           option disables Euclid, ParaSails, pilut and CGC
                           coarsening.
-  --enable-bigint         Use long long int for HYPRE_Int (default is NO).
+  --enable-bigint         Use long long int for NALU_HYPRE_Int (default is NO).
   --enable-single         Use single precision values (default is NO).
   --enable-longdouble     Use long double precision values (default is NO).
   --enable-complex        Use complex values (default is NO).
@@ -1752,7 +1752,7 @@ Optional Packages:
 
 Some influential environment variables:
   CUDA_HOME   CUDA home directory
-  HYPRE_CUDA_SM
+  NALU_HYPRE_CUDA_SM
               CUDA architecture
   CUCC        CUDA compiler command
   CUFLAGS     CUDA compiler flags
@@ -2635,7 +2635,7 @@ ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $
 ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
-ac_config_headers="$ac_config_headers HYPRE_config.h:config/HYPRE_config.h.in"
+ac_config_headers="$ac_config_headers NALU_HYPRE_config.h:config/NALU_HYPRE_config.h.in"
 
 
 
@@ -2672,42 +2672,42 @@ ac_configure="$SHELL $ac_aux_dir/configure"  # Please don't use this var.
 
 
 
-HYPRE_NAME="hypre"
-HYPRE_VERSION="2.26.0"
-HYPRE_NUMBER=22600
-HYPRE_DATE="2022/10/14"
-HYPRE_TIME="00:00:00"
-HYPRE_BUGS="https://github.com/hypre-space/hypre/issues"
-HYPRE_SRCDIR="`pwd`"
+NALU_HYPRE_NAME="hypre"
+NALU_HYPRE_VERSION="2.26.0"
+NALU_HYPRE_NUMBER=22600
+NALU_HYPRE_DATE="2022/10/14"
+NALU_HYPRE_TIME="00:00:00"
+NALU_HYPRE_BUGS="https://github.com/hypre-space/hypre/issues"
+NALU_HYPRE_SRCDIR="`pwd`"
 
 
 cat >>confdefs.h <<_ACEOF
-#define HYPRE_RELEASE_NAME "$HYPRE_NAME"
+#define NALU_HYPRE_RELEASE_NAME "$NALU_HYPRE_NAME"
 _ACEOF
 
 
 cat >>confdefs.h <<_ACEOF
-#define HYPRE_RELEASE_VERSION "$HYPRE_VERSION"
+#define NALU_HYPRE_RELEASE_VERSION "$NALU_HYPRE_VERSION"
 _ACEOF
 
 
 cat >>confdefs.h <<_ACEOF
-#define HYPRE_RELEASE_NUMBER $HYPRE_NUMBER
+#define NALU_HYPRE_RELEASE_NUMBER $NALU_HYPRE_NUMBER
 _ACEOF
 
 
 cat >>confdefs.h <<_ACEOF
-#define HYPRE_RELEASE_DATE "$HYPRE_DATE"
+#define NALU_HYPRE_RELEASE_DATE "$NALU_HYPRE_DATE"
 _ACEOF
 
 
 cat >>confdefs.h <<_ACEOF
-#define HYPRE_RELEASE_TIME "$HYPRE_TIME"
+#define NALU_HYPRE_RELEASE_TIME "$NALU_HYPRE_TIME"
 _ACEOF
 
 
 cat >>confdefs.h <<_ACEOF
-#define HYPRE_RELEASE_BUGS "$HYPRE_BUGS"
+#define NALU_HYPRE_RELEASE_BUGS "$NALU_HYPRE_BUGS"
 _ACEOF
 
 
@@ -2720,33 +2720,33 @@ _ACEOF
 
 
 
-if test -d "$HYPRE_SRCDIR/../.git"; then :
+if test -d "$NALU_HYPRE_SRCDIR/../.git"; then :
 
-  develop_string=$(git -C $HYPRE_SRCDIR describe --match 'v*' --long --abbrev=9)
-  develop_lastag=$(git -C $HYPRE_SRCDIR describe --match 'v*' --abbrev=0)
-  develop_number=$(git -C $HYPRE_SRCDIR rev-list --count $develop_lastag..HEAD)
-  develop_branch=$(git -C $HYPRE_SRCDIR rev-parse --abbrev-ref HEAD)
+  develop_string=$(git -C $NALU_HYPRE_SRCDIR describe --match 'v*' --long --abbrev=9)
+  develop_lastag=$(git -C $NALU_HYPRE_SRCDIR describe --match 'v*' --abbrev=0)
+  develop_number=$(git -C $NALU_HYPRE_SRCDIR rev-list --count $develop_lastag..HEAD)
+  develop_branch=$(git -C $NALU_HYPRE_SRCDIR rev-parse --abbrev-ref HEAD)
   if test -n "$develop_string"; then :
 
 
 cat >>confdefs.h <<_ACEOF
-#define HYPRE_DEVELOP_STRING "$develop_string"
+#define NALU_HYPRE_DEVELOP_STRING "$develop_string"
 _ACEOF
 
 
 cat >>confdefs.h <<_ACEOF
-#define HYPRE_DEVELOP_NUMBER $develop_number
+#define NALU_HYPRE_DEVELOP_NUMBER $develop_number
 _ACEOF
 
 
 cat >>confdefs.h <<_ACEOF
-#define HYPRE_BRANCH_NAME "$develop_branch"
+#define NALU_HYPRE_BRANCH_NAME "$develop_branch"
 _ACEOF
 
     if test "x$develop_branch" = "xmaster"; then :
 
 cat >>confdefs.h <<_ACEOF
-#define HYPRE_DEVELOP_BRANCH "$develop_branch"
+#define NALU_HYPRE_DEVELOP_BRANCH "$develop_branch"
 _ACEOF
 
 else
@@ -2979,7 +2979,7 @@ fi
 if test "$hypre_using_mixedint" = "yes"
 then
 
-$as_echo "#define HYPRE_MIXEDINT 1" >>confdefs.h
+$as_echo "#define NALU_HYPRE_MIXEDINT 1" >>confdefs.h
 
 fi
 
@@ -2999,7 +2999,7 @@ fi
 if test "$hypre_using_bigint" = "yes"
 then
 
-$as_echo "#define HYPRE_BIGINT 1" >>confdefs.h
+$as_echo "#define NALU_HYPRE_BIGINT 1" >>confdefs.h
 
 fi
 
@@ -3019,7 +3019,7 @@ fi
 if test "$hypre_using_single" = "yes"
 then
 
-$as_echo "#define HYPRE_SINGLE 1" >>confdefs.h
+$as_echo "#define NALU_HYPRE_SINGLE 1" >>confdefs.h
 
 fi
 
@@ -3039,7 +3039,7 @@ fi
 if test "$hypre_using_longdouble" = "yes"
 then
 
-$as_echo "#define HYPRE_LONG_DOUBLE 1" >>confdefs.h
+$as_echo "#define NALU_HYPRE_LONG_DOUBLE 1" >>confdefs.h
 
 fi
 
@@ -3059,7 +3059,7 @@ fi
 if test "$hypre_using_complex" = "yes"
 then
 
-$as_echo "#define HYPRE_COMPLEX 1" >>confdefs.h
+$as_echo "#define NALU_HYPRE_COMPLEX 1" >>confdefs.h
 
 fi
 
@@ -3073,7 +3073,7 @@ fi
 
 
 cat >>confdefs.h <<_ACEOF
-#define HYPRE_MAXDIM $hypre_maxdim
+#define NALU_HYPRE_MAXDIM $hypre_maxdim
 _ACEOF
 
 
@@ -3092,7 +3092,7 @@ fi
 if test "$hypre_using_persistent" = "yes"
 then
 
-$as_echo "#define HYPRE_USING_PERSISTENT_COMM 1" >>confdefs.h
+$as_echo "#define NALU_HYPRE_USING_PERSISTENT_COMM 1" >>confdefs.h
 
 fi
 
@@ -3111,7 +3111,7 @@ fi
 if test "$hypre_using_hopscotch" = "yes"
 then
 
-$as_echo "#define HYPRE_HOPSCOTCH 1" >>confdefs.h
+$as_echo "#define NALU_HYPRE_HOPSCOTCH 1" >>confdefs.h
 
 fi
 
@@ -3699,7 +3699,7 @@ test -n "$FC" || FC=""""
  fi
 
 
-$as_echo "#define HYPRE_SEQUENTIAL 1" >>confdefs.h
+$as_echo "#define NALU_HYPRE_SEQUENTIAL 1" >>confdefs.h
 
  ;;
  esac
@@ -3775,7 +3775,7 @@ fi
 # Check whether --with-node-aware-mpi-include was given.
 if test "${with_node_aware_mpi_include+set}" = set; then :
   withval=$with_node_aware_mpi_include; for nap_dir in $withval; do
-    HYPRE_NAP_INCLUDE="$HYPRE_NAP_INCLUDE -I$nap_dir"
+    NALU_HYPRE_NAP_INCLUDE="$NALU_HYPRE_NAP_INCLUDE -I$nap_dir"
  done;
  hypre_using_node_aware_mpi=yes
 
@@ -3903,7 +3903,7 @@ fi
 
 
 cat >>confdefs.h <<_ACEOF
-#define HYPRE_FMANGLE $hypre_fmangle
+#define NALU_HYPRE_FMANGLE $hypre_fmangle
 _ACEOF
 
 
@@ -3928,7 +3928,7 @@ fi
 
 
 cat >>confdefs.h <<_ACEOF
-#define HYPRE_FMANGLE_BLAS $hypre_fmangle_blas
+#define NALU_HYPRE_FMANGLE_BLAS $hypre_fmangle_blas
 _ACEOF
 
 
@@ -3953,7 +3953,7 @@ fi
 
 
 cat >>confdefs.h <<_ACEOF
-#define HYPRE_FMANGLE_LAPACK $hypre_fmangle_lapack
+#define NALU_HYPRE_FMANGLE_LAPACK $hypre_fmangle_lapack
 _ACEOF
 
 
@@ -3963,7 +3963,7 @@ if test "${with_print_errors+set}" = set; then :
   withval=$with_print_errors; if test "$withval" = "yes"
  then
 
-$as_echo "#define HYPRE_PRINT_ERRORS 1" >>confdefs.h
+$as_echo "#define NALU_HYPRE_PRINT_ERRORS 1" >>confdefs.h
 
  fi
 
@@ -3976,7 +3976,7 @@ if test "${with_timing+set}" = set; then :
   withval=$with_timing; if test "$withval" = "yes"
  then
 
-$as_echo "#define HYPRE_TIMING 1" >>confdefs.h
+$as_echo "#define NALU_HYPRE_TIMING 1" >>confdefs.h
 
  fi
 
@@ -4061,7 +4061,7 @@ fi
 
 if test "x$with_dsuperlu" = "xyes"; then :
 
-$as_echo "#define HYPRE_USING_DSUPERLU 1" >>confdefs.h
+$as_echo "#define NALU_HYPRE_USING_DSUPERLU 1" >>confdefs.h
 
 fi
 
@@ -4089,7 +4089,7 @@ fi
 
 # Check whether --with-fei-inc-dir was given.
 if test "${with_fei_inc_dir+set}" = set; then :
-  withval=$with_fei_inc_dir; HYPRE_FEI_BASE_DIR="$withval";
+  withval=$with_fei_inc_dir; NALU_HYPRE_FEI_BASE_DIR="$withval";
  hypre_using_fei=yes
 
 fi
@@ -4180,9 +4180,9 @@ if test "${with_gpu_arch+set}" = set; then :
   withval=$with_gpu_arch;
  if test "x${withval}" != "x"
  then
-    if test "x${HYPRE_CUDA_SM}" = "x"
+    if test "x${NALU_HYPRE_CUDA_SM}" = "x"
     then
-       HYPRE_CUDA_SM="${withval}"
+       NALU_HYPRE_CUDA_SM="${withval}"
     fi
  fi
 
@@ -4197,9 +4197,9 @@ if test "${with_sycl_target+set}" = set; then :
   withval=$with_sycl_target;
  if test "x${withval}" != "x"
  then
-    if test "x${HYPRE_SYCL_TARGET}" = "x"
+    if test "x${NALU_HYPRE_SYCL_TARGET}" = "x"
     then
-       HYPRE_SYCL_TARGET="${withval}"
+       NALU_HYPRE_SYCL_TARGET="${withval}"
     fi
  fi
 
@@ -4213,9 +4213,9 @@ if test "${with_sycl_target_backend+set}" = set; then :
   withval=$with_sycl_target_backend;
  if test "x${withval}" != "x"
  then
-    if test "x${HYPRE_SYCL_TARGET_BACKEND}" = "x"
+    if test "x${NALU_HYPRE_SYCL_TARGET_BACKEND}" = "x"
     then
-       HYPRE_SYCL_TARGET_BACKEND="${withval}"
+       NALU_HYPRE_SYCL_TARGET_BACKEND="${withval}"
     fi
  fi
 
@@ -4242,7 +4242,7 @@ fi
 # Check whether --with-raja-include was given.
 if test "${with_raja_include+set}" = set; then :
   withval=$with_raja_include; for raja_dir in $withval; do
-    HYPRE_RAJA_INCLUDE="-I$raja_dir $HYPRE_RAJA_INCLUDE"
+    NALU_HYPRE_RAJA_INCLUDE="-I$raja_dir $NALU_HYPRE_RAJA_INCLUDE"
  done;
  hypre_user_chose_raja=yes
 
@@ -4253,7 +4253,7 @@ fi
 # Check whether --with-raja-lib was given.
 if test "${with_raja_lib+set}" = set; then :
   withval=$with_raja_lib; for raja_lib in $withval; do
-       HYPRE_RAJA_LIB="$raja_lib $HYPRE_RAJA_LIB"
+       NALU_HYPRE_RAJA_LIB="$raja_lib $NALU_HYPRE_RAJA_LIB"
  done;
 hypre_user_chose_raja=yes
 
@@ -4264,7 +4264,7 @@ fi
 # Check whether --with-raja-libs was given.
 if test "${with_raja_libs+set}" = set; then :
   withval=$with_raja_libs; for raja_lib in $withval; do
-    HYPRE_RAJA_LIB="-l$raja_lib $HYPRE_RAJA_LIB"
+    NALU_HYPRE_RAJA_LIB="-l$raja_lib $NALU_HYPRE_RAJA_LIB"
  done;
 hypre_user_chose_raja=yes
 
@@ -4275,7 +4275,7 @@ fi
 # Check whether --with-raja-lib-dirs was given.
 if test "${with_raja_lib_dirs+set}" = set; then :
   withval=$with_raja_lib_dirs; for raja_lib_dir in $withval; do
-    HYPRE_RAJA_LIB_DIR="-L$raja_lib_dir $HYPRE_RAJA_LIB_DIR"
+    NALU_HYPRE_RAJA_LIB_DIR="-L$raja_lib_dir $NALU_HYPRE_RAJA_LIB_DIR"
  done;
  hypre_user_chose_raja=yes
 
@@ -4301,7 +4301,7 @@ fi
 # Check whether --with-kokkos-include was given.
 if test "${with_kokkos_include+set}" = set; then :
   withval=$with_kokkos_include; for kokkos_dir in $withval; do
-HYPRE_KOKKOS_INCLUDE="-I$kokkos_dir $HYPRE_KOKKOS_INCLUDE"
+NALU_HYPRE_KOKKOS_INCLUDE="-I$kokkos_dir $NALU_HYPRE_KOKKOS_INCLUDE"
 done;
 hypre_user_chose_kokkos=yes
 
@@ -4312,7 +4312,7 @@ fi
 # Check whether --with-kokkos-lib was given.
 if test "${with_kokkos_lib+set}" = set; then :
   withval=$with_kokkos_lib; for kokkos_lib in $withval; do
-       HYPRE_KOKKOS_LIB="$kokkos_lib $HYPRE_KOKKOS_LIB"
+       NALU_HYPRE_KOKKOS_LIB="$kokkos_lib $NALU_HYPRE_KOKKOS_LIB"
  done;
 hypre_user_chose_kokkos=yes
 
@@ -4323,7 +4323,7 @@ fi
 # Check whether --with-kokkos-libs was given.
 if test "${with_kokkos_libs+set}" = set; then :
   withval=$with_kokkos_libs; for kokkos_lib in $withval; do
-    HYPRE_KOKKOS_LIB="-l$kokkos_lib $HYPRE_KOKKOS_LIB"
+    NALU_HYPRE_KOKKOS_LIB="-l$kokkos_lib $NALU_HYPRE_KOKKOS_LIB"
  done;
 hypre_user_chose_kokkos=yes
 
@@ -4334,7 +4334,7 @@ fi
 # Check whether --with-kokkos-lib-dirs was given.
 if test "${with_kokkos_lib_dirs+set}" = set; then :
   withval=$with_kokkos_lib_dirs; for kokkos_lib_dir in $withval; do
-    HYPRE_KOKKOS_LIB_DIR="-L$kokkos_lib_dir $HYPRE_KOKKOS_LIB_DIR"
+    NALU_HYPRE_KOKKOS_LIB_DIR="-L$kokkos_lib_dir $NALU_HYPRE_KOKKOS_LIB_DIR"
  done;
 hypre_user_chose_kokkos=yes
 
@@ -4414,7 +4414,7 @@ fi
 # Check whether --with-umpire-include was given.
 if test "${with_umpire_include+set}" = set; then :
   withval=$with_umpire_include; for umpire_dir in $withval; do
-HYPRE_UMPIRE_INCLUDE="-I$umpire_dir $HYPRE_UMPIRE_INCLUDE"
+NALU_HYPRE_UMPIRE_INCLUDE="-I$umpire_dir $NALU_HYPRE_UMPIRE_INCLUDE"
 done;
 
 
@@ -4425,7 +4425,7 @@ fi
 # Check whether --with-umpire-lib was given.
 if test "${with_umpire_lib+set}" = set; then :
   withval=$with_umpire_lib; for umpire_lib in $withval; do
-       HYPRE_UMPIRE_LIB="$umpire_lib $HYPRE_UMPIRE_LIB"
+       NALU_HYPRE_UMPIRE_LIB="$umpire_lib $NALU_HYPRE_UMPIRE_LIB"
  done;
 
 
@@ -4436,7 +4436,7 @@ fi
 # Check whether --with-umpire-libs was given.
 if test "${with_umpire_libs+set}" = set; then :
   withval=$with_umpire_libs; for umpire_lib in $withval; do
-    HYPRE_UMPIRE_LIB="-l$umpire_lib $HYPRE_UMPIRE_LIB"
+    NALU_HYPRE_UMPIRE_LIB="-l$umpire_lib $NALU_HYPRE_UMPIRE_LIB"
  done;
 
 
@@ -4447,7 +4447,7 @@ fi
 # Check whether --with-umpire-lib-dirs was given.
 if test "${with_umpire_lib_dirs+set}" = set; then :
   withval=$with_umpire_lib_dirs; for umpire_lib_dir in $withval; do
-    HYPRE_UMPIRE_LIB_DIR="-L$umpire_lib_dir $HYPRE_UMPIRE_LIB_DIR"
+    NALU_HYPRE_UMPIRE_LIB_DIR="-L$umpire_lib_dir $NALU_HYPRE_UMPIRE_LIB_DIR"
  done;
 
 
@@ -4469,7 +4469,7 @@ fi
 
 if test "x$with_caliper" = "xyes"; then :
 
-$as_echo "#define HYPRE_USING_CALIPER 1" >>confdefs.h
+$as_echo "#define NALU_HYPRE_USING_CALIPER 1" >>confdefs.h
 
 fi
 
@@ -5309,7 +5309,7 @@ fi
 done
 test -n "$CUCC" || CUCC=""""
 
-      CUCC="\${HYPRE_CUDA_PATH}/bin/${CUCC} -ccbin=\${CXX}"
+      CUCC="\${NALU_HYPRE_CUDA_PATH}/bin/${CUCC} -ccbin=\${CXX}"
    fi
 
    if test "$hypre_using_hip" = "yes"
@@ -7487,7 +7487,7 @@ fi
 if test "$hypre_using_mpi" = "no"
 then
 
-$as_echo "#define HYPRE_SEQUENTIAL 1" >>confdefs.h
+$as_echo "#define NALU_HYPRE_SEQUENTIAL 1" >>confdefs.h
 
 else
 
@@ -7642,7 +7642,7 @@ if test x = x"$MPILIBS"; then
   :
 else
 
-$as_echo "#define HYPRE_HAVE_MPI 1" >>confdefs.h
+$as_echo "#define NALU_HYPRE_HAVE_MPI 1" >>confdefs.h
 
   LIBS="$LIBS $MPILIBS"
   :
@@ -7954,7 +7954,7 @@ $as_echo "$hypre_cv_func_MPI_Comm_f2c_macro" >&6; }
    if test $ac_cv_func_MPI_Comm_f2c = yes \
       || test $hypre_cv_func_MPI_Comm_f2c_macro = yes; then
 
-$as_echo "#define HYPRE_HAVE_MPI_COMM_F2C 1" >>confdefs.h
+$as_echo "#define NALU_HYPRE_HAVE_MPI_COMM_F2C 1" >>confdefs.h
 
    fi
 fi
@@ -7962,21 +7962,21 @@ fi
 if test "$hypre_using_node_aware_mpi" = "yes"
 then
 
-$as_echo "#define HYPRE_USING_NODE_AWARE_MPI 1" >>confdefs.h
+$as_echo "#define NALU_HYPRE_USING_NODE_AWARE_MPI 1" >>confdefs.h
 
 fi
 
 if test "$hypre_using_memory_tracker" = "yes"
 then
 
-$as_echo "#define HYPRE_USING_MEMORY_TRACKER 1" >>confdefs.h
+$as_echo "#define NALU_HYPRE_USING_MEMORY_TRACKER 1" >>confdefs.h
 
 fi
 
 if test "$hypre_test_using_host" = "yes"
 then
 
-$as_echo "#define HYPRE_TEST_USING_HOST 1" >>confdefs.h
+$as_echo "#define NALU_HYPRE_TEST_USING_HOST 1" >>confdefs.h
 
 fi
 
@@ -7986,14 +7986,14 @@ then
       if test $blas_lib = "-ldxml"
       then
 
-$as_echo "#define HYPRE_USING_DXML 1" >>confdefs.h
+$as_echo "#define NALU_HYPRE_USING_DXML 1" >>confdefs.h
 
       fi
 
       if test $blas_lib = "-lessl"
       then
 
-$as_echo "#define HYPRE_USING_ESSL 1" >>confdefs.h
+$as_echo "#define NALU_HYPRE_USING_ESSL 1" >>confdefs.h
 
       fi
    done
@@ -8142,13 +8142,13 @@ fi
 #***************************************************************
   if test "$BLASLIBS" = "dxml"; then
 
-$as_echo "#define HYPRE_USING_DXML 1" >>confdefs.h
+$as_echo "#define NALU_HYPRE_USING_DXML 1" >>confdefs.h
 
   fi
 
   if test "$BLASLIBS" = "essl"; then
 
-$as_echo "#define HYPRE_USING_ESSL 1" >>confdefs.h
+$as_echo "#define NALU_HYPRE_USING_ESSL 1" >>confdefs.h
 
   fi
 
@@ -8190,7 +8190,7 @@ $as_echo "$as_me: WARNING: ***************************************" >&2;}
       BLASLIBDIRS=""
       BLASLIBS=""
 
-$as_echo "#define HYPRE_USING_HYPRE_BLAS 1" >>confdefs.h
+$as_echo "#define NALU_HYPRE_USING_NALU_HYPRE_BLAS 1" >>confdefs.h
 
    fi
 fi
@@ -8201,7 +8201,7 @@ then
       if test $lapack_lib = "-lessl"
       then
 
-$as_echo "#define HYPRE_USING_ESSL 1" >>confdefs.h
+$as_echo "#define NALU_HYPRE_USING_ESSL 1" >>confdefs.h
 
       fi
    done
@@ -8383,23 +8383,23 @@ $as_echo "$as_me: WARNING: ***************************************" >&2;}
       LAPACKLIBDIRS=""
       LAPACKLIBS=""
 
-$as_echo "#define HYPRE_USING_HYPRE_LAPACK 1" >>confdefs.h
+$as_echo "#define NALU_HYPRE_USING_NALU_HYPRE_LAPACK 1" >>confdefs.h
 
    fi
 fi
 
 if test "$hypre_using_fei" = "yes"
 then
-   HYPRE_FEI_SRC_DIR="$HYPRE_SRCDIR/FEI_mv"
-   HYPRE_FEI_SUBDIRS="fei-hypre"
-   HYPRE_FEI_HYPRE_FILES="$HYPRE_SRCDIR/FEI_mv/fei-hypre/*.o"
-   HYPRE_FEI_FEMLI_FILES=
+   NALU_HYPRE_FEI_SRC_DIR="$NALU_HYPRE_SRCDIR/FEI_mv"
+   NALU_HYPRE_FEI_SUBDIRS="fei-hypre"
+   NALU_HYPRE_FEI_NALU_HYPRE_FILES="$NALU_HYPRE_SRCDIR/FEI_mv/fei-hypre/*.o"
+   NALU_HYPRE_FEI_FEMLI_FILES=
    if test "$hypre_using_mli" = "yes"
    then
       if test "$hypre_using_superlu" = "yes"
       then
-         HYPRE_FEI_SUBDIRS="femli $HYPRE_FEI_SUBDIRS"
-         HYPRE_FEI_FEMLI_FILES="$HYPRE_SRCDIR/FEI_mv/femli/*.o"
+         NALU_HYPRE_FEI_SUBDIRS="femli $NALU_HYPRE_FEI_SUBDIRS"
+         NALU_HYPRE_FEI_FEMLI_FILES="$NALU_HYPRE_SRCDIR/FEI_mv/femli/*.o"
 
 $as_echo "#define HAVE_MLI 1" >>confdefs.h
 
@@ -8454,23 +8454,23 @@ if test "x$ac_cv_lib_stdcpp___gxx_personality_v0" = xyes; then :
 fi
 
 else
-   HYPRE_FEI_SRC_DIR=
-   HYPRE_FEI_BASE_DIR=
-   HYPRE_FEI_HYPRE_FILES=
-   HYPRE_FEI_FEMLI_FILES=
+   NALU_HYPRE_FEI_SRC_DIR=
+   NALU_HYPRE_FEI_BASE_DIR=
+   NALU_HYPRE_FEI_NALU_HYPRE_FILES=
+   NALU_HYPRE_FEI_FEMLI_FILES=
 fi
 
 if test "$hypre_using_distributed_ls" = "yes"
 then
-   HYPRE_DISTRIBUTED_LS_DIR="$HYPRE_SRCDIR/distributed_ls"
-   HYPRE_EUCLID_FILES="$HYPRE_SRCDIR/distributed_ls/Euclid/*.o"
-   HYPRE_PARASAILS_FILES="$HYPRE_SRCDIR/distributed_ls/ParaSails/*.o"
-   HYPRE_PILUT_FILES="$HYPRE_SRCDIR/distributed_ls/pilut/*.o"
+   NALU_HYPRE_DISTRIBUTED_LS_DIR="$NALU_HYPRE_SRCDIR/distributed_ls"
+   NALU_HYPRE_EUCLID_FILES="$NALU_HYPRE_SRCDIR/distributed_ls/Euclid/*.o"
+   NALU_HYPRE_PARASAILS_FILES="$NALU_HYPRE_SRCDIR/distributed_ls/ParaSails/*.o"
+   NALU_HYPRE_PILUT_FILES="$NALU_HYPRE_SRCDIR/distributed_ls/pilut/*.o"
 else
-   HYPRE_DISTRIBUTED_LS_DIR=
-   HYPRE_EUCLID_FILES=
-   HYPRE_PARASAILS_FILES=
-   HYPRE_PILUT_FILES=
+   NALU_HYPRE_DISTRIBUTED_LS_DIR=
+   NALU_HYPRE_EUCLID_FILES=
+   NALU_HYPRE_PARASAILS_FILES=
+   NALU_HYPRE_PILUT_FILES=
 fi
 
 if test "$hypre_using_debug" = "yes"
@@ -8588,7 +8588,7 @@ then
    esac
 fi
 
-$as_echo "#define HYPRE_DEBUG 1" >>confdefs.h
+$as_echo "#define NALU_HYPRE_DEBUG 1" >>confdefs.h
 
 else
 
@@ -8720,7 +8720,7 @@ LINK_FC='${FC}'
 LINK_CC='${CC}'
 LINK_CXX='${CXX}'
 
-HYPRE_LIBSUFFIX=".a"
+NALU_HYPRE_LIBSUFFIX=".a"
 
 BUILD_PYTHON=0
 PYTHON=""
@@ -8847,7 +8847,7 @@ fi
 
 if test "$hypre_using_shared" = "yes"
 then
-   HYPRE_LIBSUFFIX=".so"
+   NALU_HYPRE_LIBSUFFIX=".so"
    SHARED_SET_SONAME="-Wl,-soname,"
    SHARED_OPTIONS="-Wl,-z,defs"
 
@@ -8860,7 +8860,7 @@ then
                           LINK_CC='${CC} -brtl'
                           LINK_CXX='${CXX} -brtl' ;;
       DARWIN* | darwin* | Darwin*) SHARED_BUILD_FLAG="-dynamiclib -undefined dynamic_lookup"
-                                   HYPRE_LIBSUFFIX=".dylib"
+                                   NALU_HYPRE_LIBSUFFIX=".dylib"
                                    SHARED_SET_SONAME="-install_name @rpath/"
                                    SHARED_OPTIONS="-undefined error" ;;
                        *) SHARED_BUILD_FLAG="-shared" ;;
@@ -9073,7 +9073,7 @@ if eval test \"x\$"$as_ac_Header"\" = x"yes"; then :
   cat >>confdefs.h <<_ACEOF
 #define `$as_echo "HAVE_$ac_header" | $as_tr_cpp` 1
 _ACEOF
- hypre_found_cuda=yes; HYPRE_CUDA_PATH=${CUDA_HOME}
+ hypre_found_cuda=yes; NALU_HYPRE_CUDA_PATH=${CUDA_HOME}
 fi
 
 done
@@ -9089,7 +9089,7 @@ if eval test \"x\$"$as_ac_Header"\" = x"yes"; then :
   cat >>confdefs.h <<_ACEOF
 #define `$as_echo "HAVE_$ac_header" | $as_tr_cpp` 1
 _ACEOF
- hypre_found_cuda=yes; HYPRE_CUDA_PATH=${CUDA_PATH}
+ hypre_found_cuda=yes; NALU_HYPRE_CUDA_PATH=${CUDA_PATH}
 fi
 
 done
@@ -9105,13 +9105,13 @@ fi
 
 if  test x"$hypre_using_hip" == x"yes" ; then :
    if  test -n "$ROCM_PATH"; then :
-   HYPRE_ROCM_PREFIX=$ROCM_PATH
+   NALU_HYPRE_ROCM_PREFIX=$ROCM_PATH
 else
-   HYPRE_ROCM_PREFIX=/opt/rocm
+   NALU_HYPRE_ROCM_PREFIX=/opt/rocm
 fi
 
 
-        for ac_header in "${HYPRE_ROCM_PREFIX}/include/hip/hip_common.h"
+        for ac_header in "${NALU_HYPRE_ROCM_PREFIX}/include/hip/hip_common.h"
 do :
   as_ac_Header=`$as_echo "ac_cv_header_$ac_header" | $as_tr_sh`
 ac_fn_c_check_header_mongrel "$LINENO" "$ac_header" "$as_ac_Header" "$ac_includes_default"
@@ -9121,7 +9121,7 @@ if eval test \"x\$"$as_ac_Header"\" = x"yes"; then :
 _ACEOF
  hypre_found_hip=yes
 else
-  as_fn_error $? "unable to find ${HYPRE_ROCM_PREFIX}/include/hip/hip_common.h ... Ensure ROCm is installed and set ROCM_PATH environment variable to ROCm installation path." "$LINENO" 5
+  as_fn_error $? "unable to find ${NALU_HYPRE_ROCM_PREFIX}/include/hip/hip_common.h ... Ensure ROCm is installed and set ROCM_PATH environment variable to ROCm installation path." "$LINENO" 5
 fi
 
 done
@@ -9131,7 +9131,7 @@ fi
 if test "x$hypre_using_raja" = "xyes"
 then
 
-$as_echo "#define HYPRE_USING_RAJA 1" >>confdefs.h
+$as_echo "#define NALU_HYPRE_USING_RAJA 1" >>confdefs.h
 
 
    if test "$hypre_user_chose_cxxflags" = "no"
@@ -9153,7 +9153,7 @@ fi
 if test "x$hypre_using_kokkos" = "xyes"
 then
 
-$as_echo "#define HYPRE_USING_KOKKOS 1" >>confdefs.h
+$as_echo "#define NALU_HYPRE_USING_KOKKOS 1" >>confdefs.h
 
 
    if test "$hypre_user_chose_cxxflags" = "no"
@@ -9178,7 +9178,7 @@ if test "x$hypre_using_umpire_host" = "xyes"
 then
    hypre_using_umpire=yes
 
-$as_echo "#define HYPRE_USING_UMPIRE_HOST 1" >>confdefs.h
+$as_echo "#define NALU_HYPRE_USING_UMPIRE_HOST 1" >>confdefs.h
 
 fi
 
@@ -9186,7 +9186,7 @@ if test "x$hypre_using_umpire_device" = "xyes"
 then
    hypre_using_umpire=yes
 
-$as_echo "#define HYPRE_USING_UMPIRE_DEVICE 1" >>confdefs.h
+$as_echo "#define NALU_HYPRE_USING_UMPIRE_DEVICE 1" >>confdefs.h
 
 fi
 
@@ -9194,7 +9194,7 @@ if test "x$hypre_using_umpire_um" = "xyes"
 then
    hypre_using_umpire=yes
 
-$as_echo "#define HYPRE_USING_UMPIRE_UM 1" >>confdefs.h
+$as_echo "#define NALU_HYPRE_USING_UMPIRE_UM 1" >>confdefs.h
 
 fi
 
@@ -9202,38 +9202,38 @@ if test "x$hypre_using_umpire_pinned" = "xyes"
 then
    hypre_using_umpire=yes
 
-$as_echo "#define HYPRE_USING_UMPIRE_PINNED 1" >>confdefs.h
+$as_echo "#define NALU_HYPRE_USING_UMPIRE_PINNED 1" >>confdefs.h
 
 fi
 
 if test "x$hypre_using_umpire" = "xyes"
 then
 
-$as_echo "#define HYPRE_USING_UMPIRE 1" >>confdefs.h
+$as_echo "#define NALU_HYPRE_USING_UMPIRE 1" >>confdefs.h
 
 fi
 
 if test "$hypre_using_cuda" = "yes"
 then
 
-$as_echo "#define HYPRE_USING_GPU 1" >>confdefs.h
+$as_echo "#define NALU_HYPRE_USING_GPU 1" >>confdefs.h
 
 
 
-$as_echo "#define HYPRE_USING_CUDA 1" >>confdefs.h
+$as_echo "#define NALU_HYPRE_USING_CUDA 1" >>confdefs.h
 
 
 
    LINK_CC=${LINK_CXX}
 
-      if test "x$HYPRE_CUDA_SM" = "x"
+      if test "x$NALU_HYPRE_CUDA_SM" = "x"
    then
-      HYPRE_CUDA_SM=70
+      NALU_HYPRE_CUDA_SM=70
    fi
 
-   HYPRE_CUDA_GENCODE=""
-   for sm in ${HYPRE_CUDA_SM}; do
-      HYPRE_CUDA_GENCODE="${HYPRE_CUDA_GENCODE}-gencode arch=compute_${sm},code=sm_${sm} "
+   NALU_HYPRE_CUDA_GENCODE=""
+   for sm in ${NALU_HYPRE_CUDA_SM}; do
+      NALU_HYPRE_CUDA_GENCODE="${NALU_HYPRE_CUDA_GENCODE}-gencode arch=compute_${sm},code=sm_${sm} "
    done
 
    if test "$hypre_user_chose_cuflags" = "no"
@@ -9251,67 +9251,67 @@ $as_echo "#define HYPRE_USING_CUDA 1" >>confdefs.h
    fi
 
 
-         HYPRE_CUDA_INCLUDE='-I${HYPRE_CUDA_PATH}/include'
-   HYPRE_CUDA_LIBS='-L${HYPRE_CUDA_PATH}/lib64 -lcudart'
+         NALU_HYPRE_CUDA_INCLUDE='-I${NALU_HYPRE_CUDA_PATH}/include'
+   NALU_HYPRE_CUDA_LIBS='-L${NALU_HYPRE_CUDA_PATH}/lib64 -lcudart'
 
    if test "$hypre_using_gpu_profiling" = "yes"
    then
 
-$as_echo "#define HYPRE_USING_NVTX 1" >>confdefs.h
+$as_echo "#define NALU_HYPRE_USING_NVTX 1" >>confdefs.h
 
-      HYPRE_CUDA_LIBS+=" -lnvToolsExt"
+      NALU_HYPRE_CUDA_LIBS+=" -lnvToolsExt"
    fi
 
    if test "$hypre_using_cusparse" = "yes"
    then
 
-$as_echo "#define HYPRE_USING_CUSPARSE 1" >>confdefs.h
+$as_echo "#define NALU_HYPRE_USING_CUSPARSE 1" >>confdefs.h
 
-      HYPRE_CUDA_LIBS+=" -lcusparse"
+      NALU_HYPRE_CUDA_LIBS+=" -lcusparse"
    fi
 
    if test "$hypre_using_cublas" = "yes"
    then
 
-$as_echo "#define HYPRE_USING_CUBLAS 1" >>confdefs.h
+$as_echo "#define NALU_HYPRE_USING_CUBLAS 1" >>confdefs.h
 
-      HYPRE_CUDA_LIBS+=" -lcublas"
+      NALU_HYPRE_CUDA_LIBS+=" -lcublas"
    fi
 
    if test "$hypre_using_curand" = "yes"
    then
 
-$as_echo "#define HYPRE_USING_CURAND 1" >>confdefs.h
+$as_echo "#define NALU_HYPRE_USING_CURAND 1" >>confdefs.h
 
-      HYPRE_CUDA_LIBS+=" -lcurand"
+      NALU_HYPRE_CUDA_LIBS+=" -lcurand"
    fi
 
    if test "$hypre_using_cusolver" = "yes"
    then
 
-$as_echo "#define HYPRE_USING_CUSOLVER 1" >>confdefs.h
+$as_echo "#define NALU_HYPRE_USING_CUSOLVER 1" >>confdefs.h
 
-      HYPRE_CUDA_LIBS+=" -lcusolver"
+      NALU_HYPRE_CUDA_LIBS+=" -lcusolver"
    fi
 
    if test "$hypre_using_device_pool" = "yes"
    then
 
-$as_echo "#define HYPRE_USING_DEVICE_POOL 1" >>confdefs.h
+$as_echo "#define NALU_HYPRE_USING_DEVICE_POOL 1" >>confdefs.h
 
    fi
 
    if test "$hypre_using_device_malloc_async" = "yes"
    then
 
-$as_echo "#define HYPRE_USING_DEVICE_MALLOC_ASYNC 1" >>confdefs.h
+$as_echo "#define NALU_HYPRE_USING_DEVICE_MALLOC_ASYNC 1" >>confdefs.h
 
    fi
 
    if test "x$hypre_using_cuda_streams" = "xyes"
    then
 
-$as_echo "#define HYPRE_USING_CUDA_STREAMS 1" >>confdefs.h
+$as_echo "#define NALU_HYPRE_USING_CUDA_STREAMS 1" >>confdefs.h
 
    fi
 fi
@@ -9319,23 +9319,23 @@ fi
 if test x"$hypre_using_hip" == x"yes"; then :
 
 
-$as_echo "#define HYPRE_USING_GPU 1" >>confdefs.h
+$as_echo "#define NALU_HYPRE_USING_GPU 1" >>confdefs.h
 
 
-$as_echo "#define HYPRE_USING_HIP 1" >>confdefs.h
+$as_echo "#define NALU_HYPRE_USING_HIP 1" >>confdefs.h
 
 
 
                                 LINK_CC=${LINK_CXX}
 
 
-        if test "x${HYPRE_CUDA_SM}" != "x"
+        if test "x${NALU_HYPRE_CUDA_SM}" != "x"
         then
-           HYPRE_CUDA_GENCODE="--amdgpu-target="
-           for sm in ${HYPRE_CUDA_SM}; do
-              HYPRE_CUDA_GENCODE="${HYPRE_CUDA_GENCODE}${sm},"
+           NALU_HYPRE_CUDA_GENCODE="--amdgpu-target="
+           for sm in ${NALU_HYPRE_CUDA_SM}; do
+              NALU_HYPRE_CUDA_GENCODE="${NALU_HYPRE_CUDA_GENCODE}${sm},"
            done
-           HYPRE_CUDA_GENCODE="`echo ${HYPRE_CUDA_GENCODE}|sed 's/,$//'`"
+           NALU_HYPRE_CUDA_GENCODE="`echo ${NALU_HYPRE_CUDA_GENCODE}|sed 's/,$//'`"
         fi
 
                                         HIPCXXFLAGS="-x hip -std=c++14 ${HIPCXXFLAGS}"
@@ -9357,44 +9357,44 @@ fi
            CUFLAGS="${HIPCPPFLAGS} ${HIPCXXFLAGS}"
         fi
 
-                                HYPRE_HIP_INCL="-I${HYPRE_ROCM_PREFIX}/include"
+                                NALU_HYPRE_HIP_INCL="-I${NALU_HYPRE_ROCM_PREFIX}/include"
 
-                HYPRE_HIP_LIBS="-L${HYPRE_ROCM_PREFIX}/lib -lamdhip64"
+                NALU_HYPRE_HIP_LIBS="-L${NALU_HYPRE_ROCM_PREFIX}/lib -lamdhip64"
 
                 if test x"$hypre_using_rocsparse" == x"yes"; then :
 
-$as_echo "#define HYPRE_USING_ROCSPARSE 1" >>confdefs.h
+$as_echo "#define NALU_HYPRE_USING_ROCSPARSE 1" >>confdefs.h
 
-               HYPRE_HIP_LIBS="${HYPRE_HIP_LIBS} -lrocsparse"
+               NALU_HYPRE_HIP_LIBS="${NALU_HYPRE_HIP_LIBS} -lrocsparse"
 
 fi
 
                                 if test x"$hypre_using_rocblas" == x"yes"; then :
 
-$as_echo "#define HYPRE_USING_ROCBLAS 1" >>confdefs.h
+$as_echo "#define NALU_HYPRE_USING_ROCBLAS 1" >>confdefs.h
 
 
 fi
 
                 if test x"$hypre_using_rocrand" == x"yes"; then :
 
-$as_echo "#define HYPRE_USING_ROCRAND 1" >>confdefs.h
+$as_echo "#define NALU_HYPRE_USING_ROCRAND 1" >>confdefs.h
 
-               HYPRE_HIP_LIBS="${HYPRE_HIP_LIBS} -lrocrand"
+               NALU_HYPRE_HIP_LIBS="${NALU_HYPRE_HIP_LIBS} -lrocrand"
 
 fi
 
                 if test x"$hypre_using_gpu_profiling" == x"yes"; then :
 
-$as_echo "#define HYPRE_USING_ROCTX 1" >>confdefs.h
+$as_echo "#define NALU_HYPRE_USING_ROCTX 1" >>confdefs.h
 
-               HYPRE_HIP_LIBS="${HYPRE_HIP_LIBS} -lroctx64"
+               NALU_HYPRE_HIP_LIBS="${NALU_HYPRE_HIP_LIBS} -lroctx64"
 
 fi
 
         if test x"$hypre_using_cuda_streams" == x"yes"; then :
 
-$as_echo "#define HYPRE_USING_CUDA_STREAMS 1" >>confdefs.h
+$as_echo "#define NALU_HYPRE_USING_CUDA_STREAMS 1" >>confdefs.h
 
 
 fi
@@ -9405,10 +9405,10 @@ fi
 if test x"$hypre_using_sycl" == x"yes"; then :
 
 
-$as_echo "#define HYPRE_USING_GPU 1" >>confdefs.h
+$as_echo "#define NALU_HYPRE_USING_GPU 1" >>confdefs.h
 
 
-$as_echo "#define HYPRE_USING_SYCL 1" >>confdefs.h
+$as_echo "#define NALU_HYPRE_USING_SYCL 1" >>confdefs.h
 
 
                 LINK_CC=${CUCC}
@@ -9423,13 +9423,13 @@ $as_echo "#define HYPRE_USING_SYCL 1" >>confdefs.h
         fi
         LDFLAGS+=" -fsycl -fsycl-device-code-split=per_kernel -Wl,--no-relax"
 
-                if test "x${HYPRE_SYCL_TARGET}" != "x"
+                if test "x${NALU_HYPRE_SYCL_TARGET}" != "x"
         then
-           LDFLAGS+=" -fsycl-targets=${HYPRE_SYCL_TARGET}"
+           LDFLAGS+=" -fsycl-targets=${NALU_HYPRE_SYCL_TARGET}"
         fi
-        if test "x${HYPRE_SYCL_TARGET_BACKEND}" != "x"
+        if test "x${NALU_HYPRE_SYCL_TARGET_BACKEND}" != "x"
         then
-           LDFLAGS+=" -Xsycl-target-backend ${HYPRE_SYCL_TARGET_BACKEND}"
+           LDFLAGS+=" -Xsycl-target-backend ${NALU_HYPRE_SYCL_TARGET_BACKEND}"
         fi
 
                 if test "$hypre_user_chose_cuflags" = "no"
@@ -9453,31 +9453,31 @@ fi
 
 done
 
-               HYPRE_SYCL_LIBS="${HYPRE_SYCL_LIBS} ${MKLROOT}/lib/intel64/libmkl_sycl.a -Wl,-export-dynamic -Wl,--start-group ${MKLROOT}/lib/intel64/libmkl_intel_ilp64.a ${MKLROOT}/lib/intel64/libmkl_sequential.a ${MKLROOT}/lib/intel64/libmkl_core.a -Wl,--end-group -lsycl -lOpenCL -lpthread -lm -ldl"
-               HYPRE_SYCL_INCL="${HYPRE_SYCL_INCL} -I${DPLROOT}/include -DMKL_ILP64 -I${MKLROOT}/include"
+               NALU_HYPRE_SYCL_LIBS="${NALU_HYPRE_SYCL_LIBS} ${MKLROOT}/lib/intel64/libmkl_sycl.a -Wl,-export-dynamic -Wl,--start-group ${MKLROOT}/lib/intel64/libmkl_intel_ilp64.a ${MKLROOT}/lib/intel64/libmkl_sequential.a ${MKLROOT}/lib/intel64/libmkl_core.a -Wl,--end-group -lsycl -lOpenCL -lpthread -lm -ldl"
+               NALU_HYPRE_SYCL_INCL="${NALU_HYPRE_SYCL_INCL} -I${DPLROOT}/include -DMKL_ILP64 -I${MKLROOT}/include"
 
 fi
 
         if test x"$hypre_using_onemklsparse" == x"yes"; then :
 
-$as_echo "#define HYPRE_USING_ONEMKLSPARSE 1" >>confdefs.h
+$as_echo "#define NALU_HYPRE_USING_ONEMKLSPARSE 1" >>confdefs.h
 
 fi
 
         if test x"$hypre_using_onemklblas" == x"yes"; then :
 
-$as_echo "#define HYPRE_USING_ONEMKLBLAS 1" >>confdefs.h
+$as_echo "#define NALU_HYPRE_USING_ONEMKLBLAS 1" >>confdefs.h
 
 fi
 
         if test x"$hypre_using_onemklrand" == x"yes"; then :
 
-$as_echo "#define HYPRE_USING_ONEMKLRAND 1" >>confdefs.h
+$as_echo "#define NALU_HYPRE_USING_ONEMKLRAND 1" >>confdefs.h
 
 fi
 
 
-$as_echo "#define HYPRE_USING_CUDA_STREAMS 1" >>confdefs.h
+$as_echo "#define NALU_HYPRE_USING_CUDA_STREAMS 1" >>confdefs.h
 
 
 
@@ -9542,22 +9542,22 @@ fi
 if test "$hypre_using_openmp" = "yes"
 then
 
-$as_echo "#define HYPRE_USING_OPENMP 1" >>confdefs.h
+$as_echo "#define NALU_HYPRE_USING_OPENMP 1" >>confdefs.h
 
 fi
 
 if test "$hypre_using_device_openmp" = "yes"
 then
 
-$as_echo "#define HYPRE_USING_DEVICE_OPENMP 1" >>confdefs.h
+$as_echo "#define NALU_HYPRE_USING_DEVICE_OPENMP 1" >>confdefs.h
 
 
 
-$as_echo "#define HYPRE_USING_GPU 1" >>confdefs.h
+$as_echo "#define NALU_HYPRE_USING_GPU 1" >>confdefs.h
 
 
 
-$as_echo "#define HYPRE_DEVICE_OPENMP_ALLOC 1" >>confdefs.h
+$as_echo "#define NALU_HYPRE_DEVICE_OPENMP_ALLOC 1" >>confdefs.h
 
 
 
@@ -9583,7 +9583,7 @@ $as_echo "#define HYPRE_DEVICE_OPENMP_ALLOC 1" >>confdefs.h
    if test "$hypre_using_debug" = "yes"
    then
 
-$as_echo "#define HYPRE_DEVICE_OPENMP_CHECK 1" >>confdefs.h
+$as_echo "#define NALU_HYPRE_DEVICE_OPENMP_CHECK 1" >>confdefs.h
 
    fi
 
@@ -9594,17 +9594,17 @@ $as_echo "#define HYPRE_DEVICE_OPENMP_CHECK 1" >>confdefs.h
 if test "x$hypre_using_um" = "xyes"
 then
 
-$as_echo "#define HYPRE_USING_UNIFIED_MEMORY 1" >>confdefs.h
+$as_echo "#define NALU_HYPRE_USING_UNIFIED_MEMORY 1" >>confdefs.h
 
 else
    if test "x$hypre_using_cuda" = "xyes" || test "x$hypre_using_device_openmp" = "xyes" || test "x$hypre_using_hip" = "xyes" || test "x$hypre_using_sycl" = "xyes"
    then
 
-$as_echo "#define HYPRE_USING_DEVICE_MEMORY 1" >>confdefs.h
+$as_echo "#define NALU_HYPRE_USING_DEVICE_MEMORY 1" >>confdefs.h
 
    else
 
-$as_echo "#define HYPRE_USING_HOST_MEMORY 1" >>confdefs.h
+$as_echo "#define NALU_HYPRE_USING_HOST_MEMORY 1" >>confdefs.h
 
    fi
 fi
@@ -9612,15 +9612,15 @@ fi
 if test "$hypre_gpu_mpi" = "yes"
 then
 
-$as_echo "#define HYPRE_WITH_GPU_AWARE_MPI 1" >>confdefs.h
+$as_echo "#define NALU_HYPRE_WITH_GPU_AWARE_MPI 1" >>confdefs.h
 
 fi
 
 CUFLAGS="${CUFLAGS} ${EXTRA_CUFLAGS}"
 
-HYPRE_INSTALLDIR="${prefix}"
-HYPRE_LIBINSTALL="${libdir}"
-HYPRE_INCINSTALL="${includedir}"
+NALU_HYPRE_INSTALLDIR="${prefix}"
+NALU_HYPRE_LIBINSTALL="${libdir}"
+NALU_HYPRE_INCINSTALL="${includedir}"
 
 
    if test $host_alias = $build_alias
@@ -9658,57 +9658,57 @@ $as_echo_n "checking the architecture... " >&6; }
                            if test -z "$hypre_tarch_dir"; then
             { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: cannot find tarch" >&5
 $as_echo "$as_me: WARNING: cannot find tarch" >&2;}
-            HYPRE_ARCH=$HOSTTYPE
+            NALU_HYPRE_ARCH=$HOSTTYPE
          else
-            HYPRE_ARCH="`$hypre_tarch`"
+            NALU_HYPRE_ARCH="`$hypre_tarch`"
 
-            if test -z "$HYPRE_ARCH" || test "$HYPRE_ARCH" = "unknown"; then
-               HYPRE_ARCH=$HOSTTYPE
+            if test -z "$NALU_HYPRE_ARCH" || test "$NALU_HYPRE_ARCH" = "unknown"; then
+               NALU_HYPRE_ARCH=$HOSTTYPE
             fi
          fi
 
-                  if test -z "$HYPRE_ARCH"; then
-            HYPRE_ARCH=unknown
+                  if test -z "$NALU_HYPRE_ARCH"; then
+            NALU_HYPRE_ARCH=unknown
             { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: architecture is unknown" >&5
 $as_echo "$as_me: WARNING: architecture is unknown" >&2;}
          else
-            { $as_echo "$as_me:${as_lineno-$LINENO}: result: $HYPRE_ARCH" >&5
-$as_echo "$HYPRE_ARCH" >&6; }
+            { $as_echo "$as_me:${as_lineno-$LINENO}: result: $NALU_HYPRE_ARCH" >&5
+$as_echo "$NALU_HYPRE_ARCH" >&6; }
          fi
       else
-         HYPRE_ARCH=$ARCH
-         { $as_echo "$as_me:${as_lineno-$LINENO}: result: $HYPRE_ARCH" >&5
-$as_echo "$HYPRE_ARCH" >&6; }
+         NALU_HYPRE_ARCH=$ARCH
+         { $as_echo "$as_me:${as_lineno-$LINENO}: result: $NALU_HYPRE_ARCH" >&5
+$as_echo "$NALU_HYPRE_ARCH" >&6; }
       fi
 
    else
-      HYPRE_ARCH=$host_alias
+      NALU_HYPRE_ARCH=$host_alias
       HOSTNAME=unknown
    fi
-   case $HYPRE_ARCH in
+   case $NALU_HYPRE_ARCH in
       alpha)
 
-$as_echo "#define HYPRE_ALPHA 1" >>confdefs.h
+$as_echo "#define NALU_HYPRE_ALPHA 1" >>confdefs.h
 
          ;;
       sun* | solaris*)
 
-$as_echo "#define HYPRE_SOLARIS 1" >>confdefs.h
+$as_echo "#define NALU_HYPRE_SOLARIS 1" >>confdefs.h
 
          ;;
       hp* | HP*)
 
-$as_echo "#define HYPRE_HPPA 1" >>confdefs.h
+$as_echo "#define NALU_HYPRE_HPPA 1" >>confdefs.h
 
          ;;
       rs6000 | RS6000 | *bgl* | *BGL* | ppc64*)
 
-$as_echo "#define HYPRE_RS6000 1" >>confdefs.h
+$as_echo "#define NALU_HYPRE_RS6000 1" >>confdefs.h
 
          ;;
       IRIX64)
 
-$as_echo "#define HYPRE_IRIX64 1" >>confdefs.h
+$as_echo "#define NALU_HYPRE_IRIX64 1" >>confdefs.h
 
          ;;
       Linux | linux | LINUX)
@@ -9718,18 +9718,18 @@ $as_echo "#define HYPRE_IRIX64 1" >>confdefs.h
             case $systemtype in
                chaos*)
 
-$as_echo "#define HYPRE_LINUX_CHAOS 1" >>confdefs.h
+$as_echo "#define NALU_HYPRE_LINUX_CHAOS 1" >>confdefs.h
 
                   ;;
                *)
 
-$as_echo "#define HYPRE_LINUX 1" >>confdefs.h
+$as_echo "#define NALU_HYPRE_LINUX 1" >>confdefs.h
 
                   ;;
             esac
          else
 
-$as_echo "#define HYPRE_LINUX 1" >>confdefs.h
+$as_echo "#define NALU_HYPRE_LINUX 1" >>confdefs.h
 
          fi
          ;;
@@ -10530,7 +10530,7 @@ cat >>$CONFIG_STATUS <<\_ACEOF || ac_write_fail=1
 for ac_config_target in $ac_config_targets
 do
   case $ac_config_target in
-    "HYPRE_config.h") CONFIG_HEADERS="$CONFIG_HEADERS HYPRE_config.h:config/HYPRE_config.h.in" ;;
+    "NALU_HYPRE_config.h") CONFIG_HEADERS="$CONFIG_HEADERS NALU_HYPRE_config.h:config/NALU_HYPRE_config.h.in" ;;
     "config/Makefile.config") CONFIG_FILES="$CONFIG_FILES config/Makefile.config" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
@@ -11114,7 +11114,7 @@ $as_echo "$as_me: WARNING: unrecognized options: $ac_unrecognized_opts" >&2;}
 fi
 
 
-mv HYPRE_config.h HYPRE_config.h.tmp
-sed 's/FC_FUNC/HYPRE_FC_FUNC/g' < HYPRE_config.h.tmp > HYPRE_config.h
-rm -f HYPRE_config.h.tmp
+mv NALU_HYPRE_config.h NALU_HYPRE_config.h.tmp
+sed 's/FC_FUNC/NALU_HYPRE_FC_FUNC/g' < NALU_HYPRE_config.h.tmp > NALU_HYPRE_config.h
+rm -f NALU_HYPRE_config.h.tmp
 

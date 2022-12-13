@@ -29,13 +29,13 @@ hypre_PFMGCreateRAPOp( hypre_StructMatrix *R,
                        hypre_StructMatrix *A,
                        hypre_StructMatrix *P,
                        hypre_StructGrid   *coarse_grid,
-                       HYPRE_Int           cdir,
-                       HYPRE_Int           rap_type    )
+                       NALU_HYPRE_Int           cdir,
+                       NALU_HYPRE_Int           rap_type    )
 {
    hypre_StructMatrix    *RAP = NULL;
    hypre_StructStencil   *stencil;
-   HYPRE_Int              P_stored_as_transpose = 0;
-   HYPRE_Int              constant_coefficient;
+   NALU_HYPRE_Int              P_stored_as_transpose = 0;
+   NALU_HYPRE_Int              constant_coefficient;
 
    stencil = hypre_StructMatrixStencil(A);
 
@@ -104,32 +104,32 @@ hypre_PFMGCreateRAPOp( hypre_StructMatrix *R,
  *      rap_type = 2   General purpose Galerkin code.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_PFMGSetupRAPOp( hypre_StructMatrix *R,
                       hypre_StructMatrix *A,
                       hypre_StructMatrix *P,
-                      HYPRE_Int           cdir,
+                      NALU_HYPRE_Int           cdir,
                       hypre_Index         cindex,
                       hypre_Index         cstride,
-                      HYPRE_Int           rap_type,
+                      NALU_HYPRE_Int           rap_type,
                       hypre_StructMatrix *Ac      )
 {
-   HYPRE_Int              P_stored_as_transpose = 0;
+   NALU_HYPRE_Int              P_stored_as_transpose = 0;
    hypre_StructStencil   *stencil;
 
    hypre_StructMatrix    *Ac_tmp;
 
-#if 0 //defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP)
-   HYPRE_MemoryLocation data_location_A = hypre_StructGridDataLocation(hypre_StructMatrixGrid(A));
-   HYPRE_MemoryLocation data_location_Ac = hypre_StructGridDataLocation(hypre_StructMatrixGrid(Ac));
-   HYPRE_Int constant_coefficient = hypre_StructMatrixConstantCoefficient(Ac);
+#if 0 //defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
+   NALU_HYPRE_MemoryLocation data_location_A = hypre_StructGridDataLocation(hypre_StructMatrixGrid(A));
+   NALU_HYPRE_MemoryLocation data_location_Ac = hypre_StructGridDataLocation(hypre_StructMatrixGrid(Ac));
+   NALU_HYPRE_Int constant_coefficient = hypre_StructMatrixConstantCoefficient(Ac);
    if ( data_location_A != data_location_Ac )
    {
       Ac_tmp = hypre_PFMGCreateRAPOp(R, A, P, hypre_StructMatrixGrid(Ac), cdir, rap_type);
       hypre_StructMatrixSymmetric(Ac_tmp) = hypre_StructMatrixSymmetric(Ac);
       hypre_StructMatrixConstantCoefficient(Ac_tmp) = hypre_StructMatrixConstantCoefficient(Ac);
       hypre_StructGridDataLocation(hypre_StructMatrixGrid(Ac)) = data_location_A;
-      HYPRE_StructMatrixInitialize(Ac_tmp);
+      NALU_HYPRE_StructMatrixInitialize(Ac_tmp);
    }
    else
    {
@@ -201,36 +201,36 @@ hypre_PFMGSetupRAPOp( hypre_StructMatrix *R,
 
    hypre_StructMatrixAssemble(Ac_tmp);
 
-#if 0 //defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP)
+#if 0 //defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
    if ( data_location_A != data_location_Ac )
    {
       if (constant_coefficient == 0)
       {
-         hypre_TMemcpy(hypre_StructMatrixDataConst(Ac), hypre_StructMatrixData(Ac_tmp), HYPRE_Complex,
-                       hypre_StructMatrixDataSize(Ac_tmp), HYPRE_MEMORY_HOST, HYPRE_MEMORY_DEVICE);
+         hypre_TMemcpy(hypre_StructMatrixDataConst(Ac), hypre_StructMatrixData(Ac_tmp), NALU_HYPRE_Complex,
+                       hypre_StructMatrixDataSize(Ac_tmp), NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_DEVICE);
       }
       else if (constant_coefficient == 1)
       {
-         hypre_TMemcpy(hypre_StructMatrixDataConst(Ac), hypre_StructMatrixDataConst(Ac_tmp), HYPRE_Complex,
-                       hypre_StructMatrixDataConstSize(Ac_tmp), HYPRE_MEMORY_HOST, HYPRE_MEMORY_HOST);
+         hypre_TMemcpy(hypre_StructMatrixDataConst(Ac), hypre_StructMatrixDataConst(Ac_tmp), NALU_HYPRE_Complex,
+                       hypre_StructMatrixDataConstSize(Ac_tmp), NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_HOST);
       }
       else if (constant_coefficient == 2)
       {
-         hypre_TMemcpy(hypre_StructMatrixDataConst(Ac), hypre_StructMatrixDataConst(Ac_tmp), HYPRE_Complex,
-                       hypre_StructMatrixDataConstSize(Ac_tmp), HYPRE_MEMORY_HOST, HYPRE_MEMORY_HOST);
+         hypre_TMemcpy(hypre_StructMatrixDataConst(Ac), hypre_StructMatrixDataConst(Ac_tmp), NALU_HYPRE_Complex,
+                       hypre_StructMatrixDataConstSize(Ac_tmp), NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_HOST);
          hypre_StructStencil *stencil_c       = hypre_StructMatrixStencil(Ac);
-         HYPRE_Int stencil_size  = hypre_StructStencilSize(stencil_c);
-         HYPRE_Complex       *Acdiag = hypre_StructMatrixDataConst(Ac) + stencil_size;
-         hypre_TMemcpy(Acdiag, hypre_StructMatrixData(Ac_tmp), HYPRE_Complex,
-                       hypre_StructMatrixDataSize(Ac_tmp), HYPRE_MEMORY_HOST, HYPRE_MEMORY_DEVICE);
+         NALU_HYPRE_Int stencil_size  = hypre_StructStencilSize(stencil_c);
+         NALU_HYPRE_Complex       *Acdiag = hypre_StructMatrixDataConst(Ac) + stencil_size;
+         hypre_TMemcpy(Acdiag, hypre_StructMatrixData(Ac_tmp), NALU_HYPRE_Complex,
+                       hypre_StructMatrixDataSize(Ac_tmp), NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_DEVICE);
       }
 
-      hypre_HandleStructExecPolicy(hypre_handle()) = data_location_Ac == HYPRE_MEMORY_DEVICE ?
-                                                     HYPRE_EXEC_DEVICE : HYPRE_EXEC_HOST;
+      hypre_HandleStructExecPolicy(hypre_handle()) = data_location_Ac == NALU_HYPRE_MEMORY_DEVICE ?
+                                                     NALU_HYPRE_EXEC_DEVICE : NALU_HYPRE_EXEC_HOST;
       hypre_StructGridDataLocation(hypre_StructMatrixGrid(Ac)) = data_location_Ac;
       hypre_StructMatrixAssemble(Ac);
-      hypre_HandleStructExecPolicy(hypre_handle()) = data_location_A == HYPRE_MEMORY_DEVICE ?
-                                                     HYPRE_EXEC_DEVICE : HYPRE_EXEC_HOST;
+      hypre_HandleStructExecPolicy(hypre_handle()) = data_location_A == NALU_HYPRE_MEMORY_DEVICE ?
+                                                     NALU_HYPRE_EXEC_DEVICE : NALU_HYPRE_EXEC_HOST;
       hypre_StructMatrixDestroy(Ac_tmp);
    }
 #endif

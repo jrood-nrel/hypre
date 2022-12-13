@@ -17,26 +17,26 @@
 
 typedef struct hypre_CommInfo_struct
 {
-   HYPRE_Int              ndim;
+   NALU_HYPRE_Int              ndim;
    hypre_BoxArrayArray   *send_boxes;
    hypre_Index            send_stride;
-   HYPRE_Int            **send_processes;
-   HYPRE_Int            **send_rboxnums;
+   NALU_HYPRE_Int            **send_processes;
+   NALU_HYPRE_Int            **send_rboxnums;
    hypre_BoxArrayArray   *send_rboxes;  /* send_boxes, some with periodic shift */
 
    hypre_BoxArrayArray   *recv_boxes;
    hypre_Index            recv_stride;
-   HYPRE_Int            **recv_processes;
-   HYPRE_Int            **recv_rboxnums;
+   NALU_HYPRE_Int            **recv_processes;
+   NALU_HYPRE_Int            **recv_rboxnums;
    hypre_BoxArrayArray   *recv_rboxes;  /* recv_boxes, some with periodic shift */
 
-   HYPRE_Int              num_transforms;  /* may be 0    = identity transform */
+   NALU_HYPRE_Int              num_transforms;  /* may be 0    = identity transform */
    hypre_Index           *coords;          /* may be NULL = identity transform */
    hypre_Index           *dirs;            /* may be NULL = identity transform */
-   HYPRE_Int            **send_transforms; /* may be NULL = identity transform */
-   HYPRE_Int            **recv_transforms; /* may be NULL = identity transform */
+   NALU_HYPRE_Int            **send_transforms; /* may be NULL = identity transform */
+   NALU_HYPRE_Int            **recv_transforms; /* may be NULL = identity transform */
 
-   HYPRE_Int              boxes_match;  /* true (>0) if each send box has a
+   NALU_HYPRE_Int              boxes_match;  /* true (>0) if each send box has a
                                          * matching box on the recv processor */
 
 } hypre_CommInfo;
@@ -47,11 +47,11 @@ typedef struct hypre_CommInfo_struct
 
 typedef struct hypre_CommEntryType_struct
 {
-   HYPRE_Int  offset;                       /* offset for the data */
-   HYPRE_Int  dim;                          /* dimension of the communication */
-   HYPRE_Int  length_array[HYPRE_MAXDIM];   /* last dim has length num_values */
-   HYPRE_Int  stride_array[HYPRE_MAXDIM + 1];
-   HYPRE_Int *order;                        /* order of last dim values */
+   NALU_HYPRE_Int  offset;                       /* offset for the data */
+   NALU_HYPRE_Int  dim;                          /* dimension of the communication */
+   NALU_HYPRE_Int  length_array[NALU_HYPRE_MAXDIM];   /* last dim has length num_values */
+   NALU_HYPRE_Int  stride_array[NALU_HYPRE_MAXDIM + 1];
+   NALU_HYPRE_Int *order;                        /* order of last dim values */
 
 } hypre_CommEntryType;
 
@@ -61,13 +61,13 @@ typedef struct hypre_CommEntryType_struct
 
 typedef struct hypre_CommType_struct
 {
-   HYPRE_Int             proc;
-   HYPRE_Int             bufsize;     /* message buffer size (in doubles) */
-   HYPRE_Int             num_entries;
+   NALU_HYPRE_Int             proc;
+   NALU_HYPRE_Int             bufsize;     /* message buffer size (in doubles) */
+   NALU_HYPRE_Int             num_entries;
    hypre_CommEntryType  *entries;
 
    /* this is only needed until first send buffer prefix is packed */
-   HYPRE_Int            *rem_boxnums; /* entry remote box numbers */
+   NALU_HYPRE_Int            *rem_boxnums; /* entry remote box numbers */
    hypre_Box            *rem_boxes;   /* entry remote boxes */
 
 } hypre_CommType;
@@ -82,24 +82,24 @@ typedef struct hypre_CommPkg_struct
    MPI_Comm             comm;
 
    /* is this the first communication? */
-   HYPRE_Int            first_comm;
+   NALU_HYPRE_Int            first_comm;
 
-   HYPRE_Int            ndim;
-   HYPRE_Int            num_values;
+   NALU_HYPRE_Int            ndim;
+   NALU_HYPRE_Int            num_values;
    hypre_Index          send_stride;
    hypre_Index          recv_stride;
 
    /* total send buffer size (in doubles) */
-   HYPRE_Int            send_bufsize;
+   NALU_HYPRE_Int            send_bufsize;
    /* total recv buffer size (in doubles) */
-   HYPRE_Int            recv_bufsize;
+   NALU_HYPRE_Int            recv_bufsize;
    /* total send buffer size (in doubles) at the first comm. */
-   HYPRE_Int            send_bufsize_first_comm;
+   NALU_HYPRE_Int            send_bufsize_first_comm;
    /* total recv buffer size (in doubles) at the first comm. */
-   HYPRE_Int            recv_bufsize_first_comm;
+   NALU_HYPRE_Int            recv_bufsize_first_comm;
 
-   HYPRE_Int            num_sends;
-   HYPRE_Int            num_recvs;
+   NALU_HYPRE_Int            num_sends;
+   NALU_HYPRE_Int            num_recvs;
    hypre_CommType      *send_types;
    hypre_CommType      *recv_types;
 
@@ -108,21 +108,21 @@ typedef struct hypre_CommPkg_struct
 
    /* these pointers are just to help free up memory for send/from types */
    hypre_CommEntryType *entries;
-   HYPRE_Int           *rem_boxnums;
+   NALU_HYPRE_Int           *rem_boxnums;
    hypre_Box           *rem_boxes;
 
-   HYPRE_Int            num_orders;
+   NALU_HYPRE_Int            num_orders;
    /* num_orders x num_values */
-   HYPRE_Int          **orders;
+   NALU_HYPRE_Int          **orders;
 
    /* offsets into recv data (by box) */
-   HYPRE_Int           *recv_data_offsets;
+   NALU_HYPRE_Int           *recv_data_offsets;
    /* recv data dimensions (by box) */
    hypre_BoxArray      *recv_data_space;
 
    hypre_Index          identity_coord;
    hypre_Index          identity_dir;
-   HYPRE_Int           *identity_order;
+   NALU_HYPRE_Int           *identity_order;
 } hypre_CommPkg;
 
 /*--------------------------------------------------------------------------
@@ -132,21 +132,21 @@ typedef struct hypre_CommPkg_struct
 typedef struct hypre_CommHandle_struct
 {
    hypre_CommPkg     *comm_pkg;
-   HYPRE_Complex     *send_data;
-   HYPRE_Complex     *recv_data;
+   NALU_HYPRE_Complex     *send_data;
+   NALU_HYPRE_Complex     *recv_data;
 
-   HYPRE_Int          num_requests;
+   NALU_HYPRE_Int          num_requests;
    hypre_MPI_Request *requests;
    hypre_MPI_Status  *status;
 
-   HYPRE_Complex    **send_buffers;
-   HYPRE_Complex    **recv_buffers;
+   NALU_HYPRE_Complex    **send_buffers;
+   NALU_HYPRE_Complex    **recv_buffers;
 
-   HYPRE_Complex    **send_buffers_mpi;
-   HYPRE_Complex    **recv_buffers_mpi;
+   NALU_HYPRE_Complex    **send_buffers_mpi;
+   NALU_HYPRE_Complex    **recv_buffers_mpi;
 
    /* set = 0, add = 1 */
-   HYPRE_Int          action;
+   NALU_HYPRE_Int          action;
 
 } hypre_CommHandle;
 

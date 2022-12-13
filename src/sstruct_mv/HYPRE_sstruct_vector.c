@@ -7,7 +7,7 @@
 
 /******************************************************************************
  *
- * HYPRE_SStructVector interface
+ * NALU_HYPRE_SStructVector interface
  *
  *****************************************************************************/
 
@@ -16,27 +16,27 @@
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructVectorCreate( MPI_Comm              comm,
-                           HYPRE_SStructGrid     grid,
-                           HYPRE_SStructVector  *vector_ptr )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructVectorCreate( MPI_Comm              comm,
+                           NALU_HYPRE_SStructGrid     grid,
+                           NALU_HYPRE_SStructVector  *vector_ptr )
 {
    hypre_SStructVector   *vector;
-   HYPRE_Int              nparts;
+   NALU_HYPRE_Int              nparts;
    hypre_SStructPVector **pvectors;
    MPI_Comm               pcomm;
    hypre_SStructPGrid    *pgrid;
-   HYPRE_Int              part;
+   NALU_HYPRE_Int              part;
 
-   vector = hypre_TAlloc(hypre_SStructVector, 1, HYPRE_MEMORY_HOST);
+   vector = hypre_TAlloc(hypre_SStructVector, 1, NALU_HYPRE_MEMORY_HOST);
 
    hypre_SStructVectorComm(vector) = comm;
    hypre_SStructVectorNDim(vector) = hypre_SStructGridNDim(grid);
    hypre_SStructGridRef(grid, &hypre_SStructVectorGrid(vector));
-   hypre_SStructVectorObjectType(vector) = HYPRE_SSTRUCT;
+   hypre_SStructVectorObjectType(vector) = NALU_HYPRE_SSTRUCT;
    nparts = hypre_SStructGridNParts(grid);
    hypre_SStructVectorNParts(vector) = nparts;
-   pvectors = hypre_TAlloc(hypre_SStructPVector *, nparts, HYPRE_MEMORY_HOST);
+   pvectors = hypre_TAlloc(hypre_SStructPVector *, nparts, NALU_HYPRE_MEMORY_HOST);
    for (part = 0; part < nparts; part++)
    {
       pgrid = hypre_SStructGridPGrid(grid, part);
@@ -54,7 +54,7 @@ HYPRE_SStructVectorCreate( MPI_Comm              comm,
    /* GEC1002 moving the creation of the ijvector the the initialize part
     *   ilower = hypre_SStructGridStartRank(grid);
     *   iupper = ilower + hypre_SStructGridLocalSize(grid) - 1;
-    *  HYPRE_IJVectorCreate(comm, ilowergh, iuppergh,
+    *  NALU_HYPRE_IJVectorCreate(comm, ilowergh, iuppergh,
     *                  &hypre_SStructVectorIJVector(vector)); */
 
    hypre_SStructVectorIJVector(vector)   = NULL;
@@ -62,7 +62,7 @@ HYPRE_SStructVectorCreate( MPI_Comm              comm,
    hypre_SStructVectorGlobalSize(vector) = 0;
    hypre_SStructVectorRefCount(vector)   = 1;
    hypre_SStructVectorDataSize(vector)   = 0;
-   hypre_SStructVectorObjectType(vector) = HYPRE_SSTRUCT;
+   hypre_SStructVectorObjectType(vector) = NALU_HYPRE_SSTRUCT;
 
    *vector_ptr = vector;
 
@@ -72,14 +72,14 @@ HYPRE_SStructVectorCreate( MPI_Comm              comm,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructVectorDestroy( HYPRE_SStructVector vector )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructVectorDestroy( NALU_HYPRE_SStructVector vector )
 {
-   HYPRE_Int              nparts;
+   NALU_HYPRE_Int              nparts;
    hypre_SStructPVector **pvectors;
-   HYPRE_Int              part;
-   HYPRE_Int              vector_type;
-   HYPRE_MemoryLocation   memory_location = hypre_SStructVectorMemoryLocation(vector);
+   NALU_HYPRE_Int              part;
+   NALU_HYPRE_Int              vector_type;
+   NALU_HYPRE_MemoryLocation   memory_location = hypre_SStructVectorMemoryLocation(vector);
 
    /* GEC1002 destroying data indices and data in vector  */
 
@@ -89,30 +89,30 @@ HYPRE_SStructVectorDestroy( HYPRE_SStructVector vector )
       hypre_SStructVectorRefCount(vector) --;
       if (hypre_SStructVectorRefCount(vector) == 0)
       {
-         HYPRE_SStructGridDestroy(hypre_SStructVectorGrid(vector));
+         NALU_HYPRE_SStructGridDestroy(hypre_SStructVectorGrid(vector));
          nparts   = hypre_SStructVectorNParts(vector);
          pvectors = hypre_SStructVectorPVectors(vector);
          for (part = 0; part < nparts; part++)
          {
             hypre_SStructPVectorDestroy(pvectors[part]);
          }
-         hypre_TFree(pvectors, HYPRE_MEMORY_HOST);
-         HYPRE_IJVectorDestroy(hypre_SStructVectorIJVector(vector));
+         hypre_TFree(pvectors, NALU_HYPRE_MEMORY_HOST);
+         NALU_HYPRE_IJVectorDestroy(hypre_SStructVectorIJVector(vector));
 
          /* GEC1002 the ijdestroy takes care of the data when the
-          * vector is type HYPRE_SSTRUCT. This is a result that the
+          * vector is type NALU_HYPRE_SSTRUCT. This is a result that the
           * ijvector does not use the owndata flag in the data structure
           * unlike the struct vector                               */
 
          /* GEC if data has been allocated then free the pointer */
-         hypre_TFree(hypre_SStructVectorDataIndices(vector), HYPRE_MEMORY_HOST);
+         hypre_TFree(hypre_SStructVectorDataIndices(vector), NALU_HYPRE_MEMORY_HOST);
 
-         if (hypre_SStructVectorData(vector) && (vector_type == HYPRE_PARCSR))
+         if (hypre_SStructVectorData(vector) && (vector_type == NALU_HYPRE_PARCSR))
          {
             hypre_TFree(hypre_SStructVectorData(vector), memory_location);
          }
 
-         hypre_TFree(vector, HYPRE_MEMORY_HOST);
+         hypre_TFree(vector, NALU_HYPRE_MEMORY_HOST);
       }
    }
 
@@ -126,30 +126,30 @@ HYPRE_SStructVectorDestroy( HYPRE_SStructVector vector )
  * end of each part, we might need to modify initialize shell vector
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructVectorInitialize( HYPRE_SStructVector vector )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructVectorInitialize( NALU_HYPRE_SStructVector vector )
 {
-   HYPRE_Int               datasize;
-   HYPRE_Int               nvars ;
-   HYPRE_Int               nparts = hypre_SStructVectorNParts(vector) ;
-   HYPRE_Int               var, part  ;
-   HYPRE_Complex          *data ;
-   HYPRE_Complex          *pdata ;
-   HYPRE_Complex          *sdata  ;
+   NALU_HYPRE_Int               datasize;
+   NALU_HYPRE_Int               nvars ;
+   NALU_HYPRE_Int               nparts = hypre_SStructVectorNParts(vector) ;
+   NALU_HYPRE_Int               var, part  ;
+   NALU_HYPRE_Complex          *data ;
+   NALU_HYPRE_Complex          *pdata ;
+   NALU_HYPRE_Complex          *sdata  ;
    hypre_SStructPVector   *pvector;
    hypre_StructVector     *svector;
-   HYPRE_Int              *dataindices;
-   HYPRE_Int              *pdataindices;
-   HYPRE_Int               vector_type = hypre_SStructVectorObjectType(vector);
+   NALU_HYPRE_Int              *dataindices;
+   NALU_HYPRE_Int              *pdataindices;
+   NALU_HYPRE_Int               vector_type = hypre_SStructVectorObjectType(vector);
    hypre_SStructGrid      *grid =  hypre_SStructVectorGrid(vector);
    MPI_Comm                comm = hypre_SStructVectorComm(vector);
-   HYPRE_IJVector          ijvector;
+   NALU_HYPRE_IJVector          ijvector;
    hypre_SStructPGrid     *pgrid;
-   HYPRE_SStructVariable  *vartypes;
-   HYPRE_MemoryLocation    memory_location = hypre_HandleMemoryLocation(hypre_handle());
+   NALU_HYPRE_SStructVariable  *vartypes;
+   NALU_HYPRE_MemoryLocation    memory_location = hypre_HandleMemoryLocation(hypre_handle());
 
    /* GEC0902 addition of variables for ilower and iupper   */
-   HYPRE_Int               ilower, iupper;
+   NALU_HYPRE_Int               ilower, iupper;
    hypre_ParVector        *par_vector;
    hypre_Vector           *parlocal_vector;
 
@@ -160,7 +160,7 @@ HYPRE_SStructVectorInitialize( HYPRE_SStructVector vector )
 
    datasize = hypre_SStructVectorDataSize(vector);
 
-   data = hypre_CTAlloc(HYPRE_Complex, datasize, memory_location);
+   data = hypre_CTAlloc(NALU_HYPRE_Complex, datasize, memory_location);
 
    dataindices = hypre_SStructVectorDataIndices(vector);
 
@@ -198,19 +198,19 @@ HYPRE_SStructVectorInitialize( HYPRE_SStructVector vector )
    /* GEC1002 this is now the creation of the ijmatrix and the initialization
     * by checking the type of the vector */
 
-   if (vector_type == HYPRE_PARCSR )
+   if (vector_type == NALU_HYPRE_PARCSR )
    {
       ilower = hypre_SStructGridStartRank(grid);
       iupper = ilower + hypre_SStructGridLocalSize(grid) - 1;
    }
 
-   if (vector_type == HYPRE_SSTRUCT || vector_type == HYPRE_STRUCT)
+   if (vector_type == NALU_HYPRE_SSTRUCT || vector_type == NALU_HYPRE_STRUCT)
    {
       ilower = hypre_SStructGridGhstartRank(grid);
       iupper = ilower + hypre_SStructGridGhlocalSize(grid) - 1;
    }
 
-   HYPRE_IJVectorCreate(comm, ilower, iupper,
+   NALU_HYPRE_IJVectorCreate(comm, ilower, iupper,
                         &hypre_SStructVectorIJVector(vector));
 
    /* GEC1002, once the partitioning is done, it is time for the actual
@@ -221,21 +221,21 @@ HYPRE_SStructVectorInitialize( HYPRE_SStructVector vector )
 
    ijvector = hypre_SStructVectorIJVector(vector);
 
-   HYPRE_IJVectorSetObjectType(ijvector, HYPRE_PARCSR);
+   NALU_HYPRE_IJVectorSetObjectType(ijvector, NALU_HYPRE_PARCSR);
 
-   HYPRE_IJVectorInitialize(ijvector);
+   NALU_HYPRE_IJVectorInitialize(ijvector);
 
 
-   /* GEC1002 for HYPRE_SSTRUCT type of vector, we do not need data allocated
+   /* GEC1002 for NALU_HYPRE_SSTRUCT type of vector, we do not need data allocated
     * inside the parvector piece of the structure. We make that pointer within
     * the localvector to point to the outside "data". Before redirecting the
-    * local pointer to point to the true data chunk for HYPRE_SSTRUCT: we
+    * local pointer to point to the true data chunk for NALU_HYPRE_SSTRUCT: we
     * destroy and assign.  We now have two entries of the data structure
-    * pointing to the same chunk if we have a HYPRE_SSTRUCT vector We do not
+    * pointing to the same chunk if we have a NALU_HYPRE_SSTRUCT vector We do not
     * need the IJVectorInitializePar, we have to undoit for the SStruct case in
     * a sense it is a desinitializepar */
 
-   if (vector_type == HYPRE_SSTRUCT || vector_type == HYPRE_STRUCT)
+   if (vector_type == NALU_HYPRE_SSTRUCT || vector_type == NALU_HYPRE_STRUCT)
    {
       par_vector = (hypre_ParVector *) hypre_IJVectorObject(ijvector);
       parlocal_vector = hypre_ParVectorLocalVector(par_vector);
@@ -249,14 +249,14 @@ HYPRE_SStructVectorInitialize( HYPRE_SStructVector vector )
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructVectorSetValues( HYPRE_SStructVector  vector,
-                              HYPRE_Int            part,
-                              HYPRE_Int           *index,
-                              HYPRE_Int            var,
-                              HYPRE_Complex       *value )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructVectorSetValues( NALU_HYPRE_SStructVector  vector,
+                              NALU_HYPRE_Int            part,
+                              NALU_HYPRE_Int           *index,
+                              NALU_HYPRE_Int            var,
+                              NALU_HYPRE_Complex       *value )
 {
-   HYPRE_Int             ndim    = hypre_SStructVectorNDim(vector);
+   NALU_HYPRE_Int             ndim    = hypre_SStructVectorNDim(vector);
    hypre_SStructPVector *pvector = hypre_SStructVectorPVector(vector, part);
    hypre_Index           cindex;
 
@@ -277,14 +277,14 @@ HYPRE_SStructVectorSetValues( HYPRE_SStructVector  vector,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructVectorAddToValues( HYPRE_SStructVector  vector,
-                                HYPRE_Int            part,
-                                HYPRE_Int           *index,
-                                HYPRE_Int            var,
-                                HYPRE_Complex       *value )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructVectorAddToValues( NALU_HYPRE_SStructVector  vector,
+                                NALU_HYPRE_Int            part,
+                                NALU_HYPRE_Int           *index,
+                                NALU_HYPRE_Int            var,
+                                NALU_HYPRE_Complex       *value )
 {
-   HYPRE_Int             ndim    = hypre_SStructVectorNDim(vector);
+   NALU_HYPRE_Int             ndim    = hypre_SStructVectorNDim(vector);
    hypre_SStructPVector *pvector = hypre_SStructVectorPVector(vector, part);
    hypre_Index           cindex;
 
@@ -307,18 +307,18 @@ HYPRE_SStructVectorAddToValues( HYPRE_SStructVector  vector,
 
 /* ONLY3D */
 
-HYPRE_Int
-HYPRE_SStructVectorAddFEMValues( HYPRE_SStructVector  vector,
-                                 HYPRE_Int            part,
-                                 HYPRE_Int           *index,
-                                 HYPRE_Complex       *values )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructVectorAddFEMValues( NALU_HYPRE_SStructVector  vector,
+                                 NALU_HYPRE_Int            part,
+                                 NALU_HYPRE_Int           *index,
+                                 NALU_HYPRE_Complex       *values )
 {
-   HYPRE_Int           ndim         = hypre_SStructVectorNDim(vector);
+   NALU_HYPRE_Int           ndim         = hypre_SStructVectorNDim(vector);
    hypre_SStructGrid  *grid         = hypre_SStructVectorGrid(vector);
-   HYPRE_Int           fem_nvars    = hypre_SStructGridFEMPNVars(grid, part);
-   HYPRE_Int          *fem_vars     = hypre_SStructGridFEMPVars(grid, part);
+   NALU_HYPRE_Int           fem_nvars    = hypre_SStructGridFEMPNVars(grid, part);
+   NALU_HYPRE_Int          *fem_vars     = hypre_SStructGridFEMPVars(grid, part);
    hypre_Index        *fem_offsets  = hypre_SStructGridFEMPOffsets(grid, part);
-   HYPRE_Int           i, d, vindex[3];
+   NALU_HYPRE_Int           i, d, vindex[3];
 
    for (i = 0; i < fem_nvars; i++)
    {
@@ -327,7 +327,7 @@ HYPRE_SStructVectorAddFEMValues( HYPRE_SStructVector  vector,
          /* note: these offsets are different from what the user passes in */
          vindex[d] = index[d] + hypre_IndexD(fem_offsets[i], d);
       }
-      HYPRE_SStructVectorAddToValues(
+      NALU_HYPRE_SStructVectorAddToValues(
          vector, part, vindex, fem_vars[i], &values[i]);
    }
 
@@ -337,14 +337,14 @@ HYPRE_SStructVectorAddFEMValues( HYPRE_SStructVector  vector,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructVectorGetValues( HYPRE_SStructVector  vector,
-                              HYPRE_Int            part,
-                              HYPRE_Int           *index,
-                              HYPRE_Int            var,
-                              HYPRE_Complex       *value )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructVectorGetValues( NALU_HYPRE_SStructVector  vector,
+                              NALU_HYPRE_Int            part,
+                              NALU_HYPRE_Int           *index,
+                              NALU_HYPRE_Int            var,
+                              NALU_HYPRE_Complex       *value )
 {
-   HYPRE_Int             ndim    = hypre_SStructVectorNDim(vector);
+   NALU_HYPRE_Int             ndim    = hypre_SStructVectorNDim(vector);
    hypre_SStructPVector *pvector = hypre_SStructVectorPVector(vector, part);
    hypre_Index           cindex;
 
@@ -367,19 +367,19 @@ HYPRE_SStructVectorGetValues( HYPRE_SStructVector  vector,
 
 /* ONLY3D */
 
-HYPRE_Int
-HYPRE_SStructVectorGetFEMValues( HYPRE_SStructVector  vector,
-                                 HYPRE_Int            part,
-                                 HYPRE_Int           *index,
-                                 HYPRE_Complex       *values )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructVectorGetFEMValues( NALU_HYPRE_SStructVector  vector,
+                                 NALU_HYPRE_Int            part,
+                                 NALU_HYPRE_Int           *index,
+                                 NALU_HYPRE_Complex       *values )
 {
-   HYPRE_Int             ndim         = hypre_SStructVectorNDim(vector);
+   NALU_HYPRE_Int             ndim         = hypre_SStructVectorNDim(vector);
    hypre_SStructGrid    *grid         = hypre_SStructVectorGrid(vector);
    hypre_SStructPVector *pvector      = hypre_SStructVectorPVector(vector, part);
-   HYPRE_Int             fem_nvars    = hypre_SStructGridFEMPNVars(grid, part);
-   HYPRE_Int            *fem_vars     = hypre_SStructGridFEMPVars(grid, part);
+   NALU_HYPRE_Int             fem_nvars    = hypre_SStructGridFEMPNVars(grid, part);
+   NALU_HYPRE_Int            *fem_vars     = hypre_SStructGridFEMPVars(grid, part);
    hypre_Index          *fem_offsets  = hypre_SStructGridFEMPOffsets(grid, part);
-   HYPRE_Int             i, d, vindex[3];
+   NALU_HYPRE_Int             i, d, vindex[3];
 
    hypre_SetIndex(vindex, 0);
    for (i = 0; i < fem_nvars; i++)
@@ -398,15 +398,15 @@ HYPRE_SStructVectorGetFEMValues( HYPRE_SStructVector  vector,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructVectorSetBoxValues( HYPRE_SStructVector  vector,
-                                 HYPRE_Int            part,
-                                 HYPRE_Int           *ilower,
-                                 HYPRE_Int           *iupper,
-                                 HYPRE_Int            var,
-                                 HYPRE_Complex       *values )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructVectorSetBoxValues( NALU_HYPRE_SStructVector  vector,
+                                 NALU_HYPRE_Int            part,
+                                 NALU_HYPRE_Int           *ilower,
+                                 NALU_HYPRE_Int           *iupper,
+                                 NALU_HYPRE_Int            var,
+                                 NALU_HYPRE_Complex       *values )
 {
-   HYPRE_SStructVectorSetBoxValues2(vector, part, ilower, iupper, var,
+   NALU_HYPRE_SStructVectorSetBoxValues2(vector, part, ilower, iupper, var,
                                     ilower, iupper, values);
 
    return hypre_error_flag;
@@ -415,15 +415,15 @@ HYPRE_SStructVectorSetBoxValues( HYPRE_SStructVector  vector,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructVectorAddToBoxValues( HYPRE_SStructVector  vector,
-                                   HYPRE_Int            part,
-                                   HYPRE_Int           *ilower,
-                                   HYPRE_Int           *iupper,
-                                   HYPRE_Int            var,
-                                   HYPRE_Complex       *values )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructVectorAddToBoxValues( NALU_HYPRE_SStructVector  vector,
+                                   NALU_HYPRE_Int            part,
+                                   NALU_HYPRE_Int           *ilower,
+                                   NALU_HYPRE_Int           *iupper,
+                                   NALU_HYPRE_Int            var,
+                                   NALU_HYPRE_Complex       *values )
 {
-   HYPRE_SStructVectorAddToBoxValues2(vector, part, ilower, iupper, var,
+   NALU_HYPRE_SStructVectorAddToBoxValues2(vector, part, ilower, iupper, var,
                                       ilower, iupper, values);
 
    return hypre_error_flag;
@@ -432,15 +432,15 @@ HYPRE_SStructVectorAddToBoxValues( HYPRE_SStructVector  vector,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructVectorGetBoxValues(HYPRE_SStructVector  vector,
-                                HYPRE_Int            part,
-                                HYPRE_Int           *ilower,
-                                HYPRE_Int           *iupper,
-                                HYPRE_Int            var,
-                                HYPRE_Complex       *values )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructVectorGetBoxValues(NALU_HYPRE_SStructVector  vector,
+                                NALU_HYPRE_Int            part,
+                                NALU_HYPRE_Int           *ilower,
+                                NALU_HYPRE_Int           *iupper,
+                                NALU_HYPRE_Int            var,
+                                NALU_HYPRE_Complex       *values )
 {
-   HYPRE_SStructVectorGetBoxValues2(vector, part, ilower, iupper, var,
+   NALU_HYPRE_SStructVectorGetBoxValues2(vector, part, ilower, iupper, var,
                                     ilower, iupper, values);
 
    return hypre_error_flag;
@@ -449,19 +449,19 @@ HYPRE_SStructVectorGetBoxValues(HYPRE_SStructVector  vector,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructVectorSetBoxValues2( HYPRE_SStructVector  vector,
-                                  HYPRE_Int            part,
-                                  HYPRE_Int           *ilower,
-                                  HYPRE_Int           *iupper,
-                                  HYPRE_Int            var,
-                                  HYPRE_Int           *vilower,
-                                  HYPRE_Int           *viupper,
-                                  HYPRE_Complex       *values )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructVectorSetBoxValues2( NALU_HYPRE_SStructVector  vector,
+                                  NALU_HYPRE_Int            part,
+                                  NALU_HYPRE_Int           *ilower,
+                                  NALU_HYPRE_Int           *iupper,
+                                  NALU_HYPRE_Int            var,
+                                  NALU_HYPRE_Int           *vilower,
+                                  NALU_HYPRE_Int           *viupper,
+                                  NALU_HYPRE_Complex       *values )
 {
    hypre_SStructPVector *pvector = hypre_SStructVectorPVector(vector, part);
    hypre_Box            *set_box, *value_box;
-   HYPRE_Int             d, ndim = hypre_SStructVectorNDim(vector);
+   NALU_HYPRE_Int             d, ndim = hypre_SStructVectorNDim(vector);
 
    /* This creates boxes with zeroed-out extents */
    set_box = hypre_BoxCreate(ndim);
@@ -486,19 +486,19 @@ HYPRE_SStructVectorSetBoxValues2( HYPRE_SStructVector  vector,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructVectorAddToBoxValues2( HYPRE_SStructVector  vector,
-                                    HYPRE_Int            part,
-                                    HYPRE_Int           *ilower,
-                                    HYPRE_Int           *iupper,
-                                    HYPRE_Int            var,
-                                    HYPRE_Int           *vilower,
-                                    HYPRE_Int           *viupper,
-                                    HYPRE_Complex       *values )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructVectorAddToBoxValues2( NALU_HYPRE_SStructVector  vector,
+                                    NALU_HYPRE_Int            part,
+                                    NALU_HYPRE_Int           *ilower,
+                                    NALU_HYPRE_Int           *iupper,
+                                    NALU_HYPRE_Int            var,
+                                    NALU_HYPRE_Int           *vilower,
+                                    NALU_HYPRE_Int           *viupper,
+                                    NALU_HYPRE_Complex       *values )
 {
    hypre_SStructPVector *pvector = hypre_SStructVectorPVector(vector, part);
    hypre_Box            *set_box, *value_box;
-   HYPRE_Int             d, ndim = hypre_SStructVectorNDim(vector);
+   NALU_HYPRE_Int             d, ndim = hypre_SStructVectorNDim(vector);
 
    /* This creates boxes with zeroed-out extents */
    set_box = hypre_BoxCreate(ndim);
@@ -523,19 +523,19 @@ HYPRE_SStructVectorAddToBoxValues2( HYPRE_SStructVector  vector,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructVectorGetBoxValues2(HYPRE_SStructVector  vector,
-                                 HYPRE_Int            part,
-                                 HYPRE_Int           *ilower,
-                                 HYPRE_Int           *iupper,
-                                 HYPRE_Int            var,
-                                 HYPRE_Int           *vilower,
-                                 HYPRE_Int           *viupper,
-                                 HYPRE_Complex       *values )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructVectorGetBoxValues2(NALU_HYPRE_SStructVector  vector,
+                                 NALU_HYPRE_Int            part,
+                                 NALU_HYPRE_Int           *ilower,
+                                 NALU_HYPRE_Int           *iupper,
+                                 NALU_HYPRE_Int            var,
+                                 NALU_HYPRE_Int           *vilower,
+                                 NALU_HYPRE_Int           *viupper,
+                                 NALU_HYPRE_Complex       *values )
 {
    hypre_SStructPVector *pvector = hypre_SStructVectorPVector(vector, part);
    hypre_Box            *set_box, *value_box;
-   HYPRE_Int             d, ndim = hypre_SStructVectorNDim(vector);
+   NALU_HYPRE_Int             d, ndim = hypre_SStructVectorNDim(vector);
 
    /* This creates boxes with zeroed-out extents */
    set_box = hypre_BoxCreate(ndim);
@@ -560,23 +560,23 @@ HYPRE_SStructVectorGetBoxValues2(HYPRE_SStructVector  vector,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructVectorAssemble( HYPRE_SStructVector vector )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructVectorAssemble( NALU_HYPRE_SStructVector vector )
 {
    hypre_SStructGrid      *grid            = hypre_SStructVectorGrid(vector);
-   HYPRE_Int               nparts          = hypre_SStructVectorNParts(vector);
-   HYPRE_IJVector          ijvector        = hypre_SStructVectorIJVector(vector);
+   NALU_HYPRE_Int               nparts          = hypre_SStructVectorNParts(vector);
+   NALU_HYPRE_IJVector          ijvector        = hypre_SStructVectorIJVector(vector);
    hypre_SStructCommInfo **vnbor_comm_info = hypre_SStructGridVNborCommInfo(grid);
-   HYPRE_Int               vnbor_ncomms    = hypre_SStructGridVNborNComms(grid);
-   HYPRE_Int               part;
+   NALU_HYPRE_Int               vnbor_ncomms    = hypre_SStructGridVNborNComms(grid);
+   NALU_HYPRE_Int               part;
 
    hypre_CommInfo         *comm_info;
-   HYPRE_Int               send_part,    recv_part;
-   HYPRE_Int               send_var,     recv_var;
+   NALU_HYPRE_Int               send_part,    recv_part;
+   NALU_HYPRE_Int               send_var,     recv_var;
    hypre_StructVector     *send_vector, *recv_vector;
    hypre_CommPkg          *comm_pkg;
    hypre_CommHandle       *comm_handle;
-   HYPRE_Int               ci;
+   NALU_HYPRE_Int               ci;
 
    /*------------------------------------------------------
     * Communicate and accumulate within parts
@@ -629,9 +629,9 @@ HYPRE_SStructVectorAssemble( HYPRE_SStructVector vector )
    }
 
    /* u-vector */
-   HYPRE_IJVectorAssemble(ijvector);
+   NALU_HYPRE_IJVectorAssemble(ijvector);
 
-   HYPRE_IJVectorGetObject(ijvector,
+   NALU_HYPRE_IJVectorGetObject(ijvector,
                            (void **) &hypre_SStructVectorParVector(vector));
 
    /*------------------------------------------------------
@@ -639,7 +639,7 @@ HYPRE_SStructVectorAssemble( HYPRE_SStructVector vector )
 
    /* if the object type is parcsr, then convert the sstruct vector which has ghost
       layers to a parcsr vector without ghostlayers. */
-   if (hypre_SStructVectorObjectType(vector) == HYPRE_PARCSR)
+   if (hypre_SStructVectorObjectType(vector) == NALU_HYPRE_PARCSR)
    {
       hypre_SStructVectorParConvert(vector,
                                     &hypre_SStructVectorParVector(vector));
@@ -655,26 +655,26 @@ HYPRE_SStructVectorAssemble( HYPRE_SStructVector vector )
  * would be empty and there would be no ghost zones to fill in Gather.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructVectorGather( HYPRE_SStructVector vector )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructVectorGather( NALU_HYPRE_SStructVector vector )
 {
    hypre_SStructGrid      *grid            = hypre_SStructVectorGrid(vector);
-   HYPRE_Int               nparts          = hypre_SStructVectorNParts(vector);
+   NALU_HYPRE_Int               nparts          = hypre_SStructVectorNParts(vector);
    hypre_SStructCommInfo **vnbor_comm_info = hypre_SStructGridVNborCommInfo(grid);
-   HYPRE_Int               vnbor_ncomms    = hypre_SStructGridVNborNComms(grid);
-   HYPRE_Int               part;
+   NALU_HYPRE_Int               vnbor_ncomms    = hypre_SStructGridVNborNComms(grid);
+   NALU_HYPRE_Int               part;
 
    hypre_CommInfo         *comm_info;
-   HYPRE_Int               send_part,    recv_part;
-   HYPRE_Int               send_var,     recv_var;
+   NALU_HYPRE_Int               send_part,    recv_part;
+   NALU_HYPRE_Int               send_var,     recv_var;
    hypre_StructVector     *send_vector, *recv_vector;
    hypre_CommPkg          *comm_pkg;
    hypre_CommHandle       *comm_handle;
-   HYPRE_Int               ci;
+   NALU_HYPRE_Int               ci;
 
    /* GEC1102 we change the name of the restore-->parrestore  */
 
-   if (hypre_SStructVectorObjectType(vector) == HYPRE_PARCSR)
+   if (hypre_SStructVectorObjectType(vector) == NALU_HYPRE_PARCSR)
    {
       hypre_SStructVectorParRestore(vector, hypre_SStructVectorParVector(vector));
    }
@@ -722,13 +722,13 @@ HYPRE_SStructVectorGather( HYPRE_SStructVector vector )
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructVectorSetConstantValues( HYPRE_SStructVector vector,
-                                      HYPRE_Complex       value )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructVectorSetConstantValues( NALU_HYPRE_SStructVector vector,
+                                      NALU_HYPRE_Complex       value )
 {
    hypre_SStructPVector *pvector;
-   HYPRE_Int part;
-   HYPRE_Int nparts   = hypre_SStructVectorNParts(vector);
+   NALU_HYPRE_Int part;
+   NALU_HYPRE_Int nparts   = hypre_SStructVectorNParts(vector);
 
    for ( part = 0; part < nparts; part++ )
    {
@@ -742,11 +742,11 @@ HYPRE_SStructVectorSetConstantValues( HYPRE_SStructVector vector,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructVectorSetObjectType( HYPRE_SStructVector  vector,
-                                  HYPRE_Int            type )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructVectorSetObjectType( NALU_HYPRE_SStructVector  vector,
+                                  NALU_HYPRE_Int            type )
 {
-   /* this implements only HYPRE_PARCSR, which is always available */
+   /* this implements only NALU_HYPRE_PARCSR, which is always available */
    hypre_SStructVectorObjectType(vector) = type;
 
    return hypre_error_flag;
@@ -755,24 +755,24 @@ HYPRE_SStructVectorSetObjectType( HYPRE_SStructVector  vector,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructVectorGetObject( HYPRE_SStructVector   vector,
+NALU_HYPRE_Int
+NALU_HYPRE_SStructVectorGetObject( NALU_HYPRE_SStructVector   vector,
                               void                **object )
 {
-   HYPRE_Int             type = hypre_SStructVectorObjectType(vector);
+   NALU_HYPRE_Int             type = hypre_SStructVectorObjectType(vector);
    hypre_SStructPVector *pvector;
    hypre_StructVector   *svector;
-   HYPRE_Int             part, var;
+   NALU_HYPRE_Int             part, var;
 
-   if (type == HYPRE_SSTRUCT)
+   if (type == NALU_HYPRE_SSTRUCT)
    {
       *object = vector;
    }
-   else if (type == HYPRE_PARCSR)
+   else if (type == NALU_HYPRE_PARCSR)
    {
       *object = hypre_SStructVectorParVector(vector);
    }
-   else if (type == HYPRE_STRUCT)
+   else if (type == NALU_HYPRE_STRUCT)
    {
       /* only one part & one variable */
       part = 0;
@@ -786,20 +786,20 @@ HYPRE_SStructVectorGetObject( HYPRE_SStructVector   vector,
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_SStructVectorPrint
+ * NALU_HYPRE_SStructVectorPrint
  *
  * This function prints a SStructVector to file. For the assumptions used
- * here, see HYPRE_SStructMatrixPrint.
+ * here, see NALU_HYPRE_SStructMatrixPrint.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructVectorPrint( const char          *filename,
-                          HYPRE_SStructVector  vector,
-                          HYPRE_Int            all )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructVectorPrint( const char          *filename,
+                          NALU_HYPRE_SStructVector  vector,
+                          NALU_HYPRE_Int            all )
 {
    /* Vector variables */
    MPI_Comm              comm = hypre_SStructVectorComm(vector);
-   HYPRE_Int             nparts = hypre_SStructVectorNParts(vector);
+   NALU_HYPRE_Int             nparts = hypre_SStructVectorNParts(vector);
    hypre_SStructGrid    *grid = hypre_SStructVectorGrid(vector);
 
    /* Local variables */
@@ -807,8 +807,8 @@ HYPRE_SStructVectorPrint( const char          *filename,
    hypre_StructVector   *svector;
 
    FILE                 *file;
-   HYPRE_Int             myid;
-   HYPRE_Int             part, var, nvars;
+   NALU_HYPRE_Int             myid;
+   NALU_HYPRE_Int             part, var, nvars;
    char                  new_filename[255];
 
    /* Print auxiliary data */
@@ -845,27 +845,27 @@ HYPRE_SStructVectorPrint( const char          *filename,
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_SStructVectorRead
+ * NALU_HYPRE_SStructVectorRead
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructVectorRead( MPI_Comm             comm,
+NALU_HYPRE_Int
+NALU_HYPRE_SStructVectorRead( MPI_Comm             comm,
                          const char          *filename,
-                         HYPRE_SStructVector *vector_ptr )
+                         NALU_HYPRE_SStructVector *vector_ptr )
 {
    /* Vector variables */
-   HYPRE_SStructVector    vector;
+   NALU_HYPRE_SStructVector    vector;
    hypre_SStructPVector  *pvector;
    hypre_StructVector    *svector;
    hypre_SStructGrid     *grid;
-   HYPRE_Int              nparts;
-   HYPRE_Int              nvars;
+   NALU_HYPRE_Int              nparts;
+   NALU_HYPRE_Int              nvars;
 
    /* Local variables */
    FILE                  *file;
    char                   new_filename[255];
-   HYPRE_Int              p, v, part, var;
-   HYPRE_Int              myid;
+   NALU_HYPRE_Int              p, v, part, var;
+   NALU_HYPRE_Int              myid;
 
    /* Read auxiliary data */
    hypre_MPI_Comm_rank(comm, &myid);
@@ -882,8 +882,8 @@ HYPRE_SStructVectorRead( MPI_Comm             comm,
    hypre_SStructGridRead(comm, file, &grid);
 
    /* Create and initialize vector */
-   HYPRE_SStructVectorCreate(comm, grid, &vector);
-   HYPRE_SStructVectorInitialize(vector);
+   NALU_HYPRE_SStructVectorCreate(comm, grid, &vector);
+   NALU_HYPRE_SStructVectorInitialize(vector);
 
    /* Read values from file */
    nparts = hypre_SStructVectorNParts(vector);
@@ -905,10 +905,10 @@ HYPRE_SStructVectorRead( MPI_Comm             comm,
    fclose(file);
 
    /* Assemble vector */
-   HYPRE_SStructVectorAssemble(vector);
+   NALU_HYPRE_SStructVectorAssemble(vector);
 
    /* Decrease ref counters */
-   HYPRE_SStructGridDestroy(grid);
+   NALU_HYPRE_SStructGridDestroy(grid);
 
    *vector_ptr = vector;
 
@@ -919,9 +919,9 @@ HYPRE_SStructVectorRead( MPI_Comm             comm,
  * copy x to y, y should already exist and be the same size
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructVectorCopy( HYPRE_SStructVector x,
-                         HYPRE_SStructVector y )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructVectorCopy( NALU_HYPRE_SStructVector x,
+                         NALU_HYPRE_SStructVector y )
 {
    hypre_SStructCopy(x, y);
 
@@ -932,9 +932,9 @@ HYPRE_SStructVectorCopy( HYPRE_SStructVector x,
  * y = a*y, for vector y and scalar a
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructVectorScale( HYPRE_Complex       alpha,
-                          HYPRE_SStructVector y )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructVectorScale( NALU_HYPRE_Complex       alpha,
+                          NALU_HYPRE_SStructVector y )
 {
    hypre_SStructScale( alpha, (hypre_SStructVector *)y );
 
@@ -945,10 +945,10 @@ HYPRE_SStructVectorScale( HYPRE_Complex       alpha,
  * inner or dot product, result = < x, y >
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructInnerProd( HYPRE_SStructVector x,
-                        HYPRE_SStructVector y,
-                        HYPRE_Real         *result )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructInnerProd( NALU_HYPRE_SStructVector x,
+                        NALU_HYPRE_SStructVector y,
+                        NALU_HYPRE_Real         *result )
 {
    hypre_SStructInnerProd(x, y, result);
 
@@ -959,10 +959,10 @@ HYPRE_SStructInnerProd( HYPRE_SStructVector x,
  * y = y + alpha*x for vectors y, x and scalar alpha
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructAxpy( HYPRE_Complex       alpha,
-                   HYPRE_SStructVector x,
-                   HYPRE_SStructVector y )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructAxpy( NALU_HYPRE_Complex       alpha,
+                   NALU_HYPRE_SStructVector x,
+                   NALU_HYPRE_SStructVector y )
 {
    hypre_SStructAxpy(alpha, x, y);
 

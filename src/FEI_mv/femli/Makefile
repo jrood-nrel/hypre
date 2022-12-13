@@ -121,17 +121,17 @@ OBJSC = ${FILES:.c=.o}
 OBJSCXX = ${OBJSC:.cxx=.o}
 OBJS = ${OBJSCXX:.f=.o}
 
-SONAME = libHYPRE_mli-${HYPRE_RELEASE_VERSION}${HYPRE_LIB_SUFFIX}
+SONAME = libNALU_HYPRE_mli-${NALU_HYPRE_RELEASE_VERSION}${NALU_HYPRE_LIB_SUFFIX}
 
 ##################################################################
 # Targets
 ##################################################################
 
-all: libHYPRE_mli${HYPRE_LIB_SUFFIX}
-#	cp -fR libHYPRE* $(HYPRE_BUILD_DIR)/lib
+all: libNALU_HYPRE_mli${NALU_HYPRE_LIB_SUFFIX}
+#	cp -fR libHYPRE* $(NALU_HYPRE_BUILD_DIR)/lib
 
-install: libHYPRE_mli${HYPRE_LIB_SUFFIX}
-#	cp -fR libHYPRE* $(HYPRE_LIB_INSTALL)
+install: libNALU_HYPRE_mli${NALU_HYPRE_LIB_SUFFIX}
+#	cp -fR libHYPRE* $(NALU_HYPRE_LIB_INSTALL)
 	@echo  " "
 
 clean:
@@ -144,12 +144,12 @@ distclean: clean
 # Rules
 ##################################################################
 
-libHYPRE_mli.a: ${OBJS}
+libNALU_HYPRE_mli.a: ${OBJS}
 	@echo  "Building $@ ... "
 	${AR} $@ ${OBJS}
 	${RANLIB} $@
 
-libHYPRE_mli.so libHYPRE_mli.dylib: ${OBJS}
+libNALU_HYPRE_mli.so libNALU_HYPRE_mli.dylib: ${OBJS}
 	@echo  "Building $@ ... "
 	${BUILD_CC_SHARED} -o ${SONAME} ${OBJS} ${SHARED_SET_SONAME}${SONAME}
 	ln -s -f ${SONAME} $@

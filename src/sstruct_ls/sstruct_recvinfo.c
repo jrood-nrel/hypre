@@ -21,24 +21,24 @@ hypre_SStructRecvInfo( hypre_StructGrid      *cgrid,
    hypre_SStructRecvInfoData *recvinfo_data;
 
    MPI_Comm                   comm = hypre_StructGridComm(cgrid);
-   HYPRE_Int                  ndim = hypre_StructGridNDim(cgrid);
+   NALU_HYPRE_Int                  ndim = hypre_StructGridNDim(cgrid);
 
    hypre_BoxArray            *grid_boxes;
    hypre_Box                 *grid_box, fbox;
    hypre_Box                 *intersect_box, boxman_entry_box;
 
    hypre_BoxManEntry        **boxman_entries;
-   HYPRE_Int                  nboxman_entries;
+   NALU_HYPRE_Int                  nboxman_entries;
 
    hypre_BoxArrayArray       *recv_boxes;
-   HYPRE_Int                **recv_processes;
+   NALU_HYPRE_Int                **recv_processes;
 
    hypre_Index                ilower, iupper, index1, index2;
 
-   HYPRE_Int                  myproc, proc;
+   NALU_HYPRE_Int                  myproc, proc;
 
-   HYPRE_Int                  cnt;
-   HYPRE_Int                  i, j;
+   NALU_HYPRE_Int                  cnt;
+   NALU_HYPRE_Int                  i, j;
 
    hypre_BoxInit(&fbox, ndim);
    hypre_BoxInit(&boxman_entry_box, ndim);
@@ -48,7 +48,7 @@ hypre_SStructRecvInfo( hypre_StructGrid      *cgrid,
 
    hypre_MPI_Comm_rank(comm, &myproc);
 
-   recvinfo_data = hypre_CTAlloc(hypre_SStructRecvInfoData,  1, HYPRE_MEMORY_HOST);
+   recvinfo_data = hypre_CTAlloc(hypre_SStructRecvInfoData,  1, NALU_HYPRE_MEMORY_HOST);
 
    /*------------------------------------------------------------------------
     * Create the structured recvbox patterns.
@@ -63,7 +63,7 @@ hypre_SStructRecvInfo( hypre_StructGrid      *cgrid,
    grid_boxes   = hypre_StructGridBoxes(cgrid);
 
    recv_boxes = hypre_BoxArrayArrayCreate(hypre_BoxArraySize(grid_boxes), ndim);
-   recv_processes = hypre_CTAlloc(HYPRE_Int *,  hypre_BoxArraySize(grid_boxes), HYPRE_MEMORY_HOST);
+   recv_processes = hypre_CTAlloc(NALU_HYPRE_Int *,  hypre_BoxArraySize(grid_boxes), NALU_HYPRE_MEMORY_HOST);
 
    hypre_ForBoxI(i, grid_boxes)
    {
@@ -86,7 +86,7 @@ hypre_SStructRecvInfo( hypre_StructGrid      *cgrid,
             cnt++;
          }
       }
-      recv_processes[i]     = hypre_CTAlloc(HYPRE_Int,  cnt, HYPRE_MEMORY_HOST);
+      recv_processes[i]     = hypre_CTAlloc(NALU_HYPRE_Int,  cnt, NALU_HYPRE_MEMORY_HOST);
 
       cnt = 0;
       for (j = 0; j < nboxman_entries; j++)
@@ -110,7 +110,7 @@ hypre_SStructRecvInfo( hypre_StructGrid      *cgrid,
             cnt++;
          }
       }
-      hypre_TFree(boxman_entries, HYPRE_MEMORY_HOST);
+      hypre_TFree(boxman_entries, NALU_HYPRE_MEMORY_HOST);
    }  /* hypre_ForBoxI(i, grid_boxes) */
 
    hypre_BoxDestroy(intersect_box);
@@ -125,11 +125,11 @@ hypre_SStructRecvInfo( hypre_StructGrid      *cgrid,
 /*--------------------------------------------------------------------------
  * hypre_SStructRecvInfoDataDestroy
  *--------------------------------------------------------------------------*/
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SStructRecvInfoDataDestroy(hypre_SStructRecvInfoData *recvinfo_data)
 {
-   HYPRE_Int ierr = 0;
-   HYPRE_Int i;
+   NALU_HYPRE_Int ierr = 0;
+   NALU_HYPRE_Int i;
 
    if (recvinfo_data)
    {
@@ -142,14 +142,14 @@ hypre_SStructRecvInfoDataDestroy(hypre_SStructRecvInfoData *recvinfo_data)
       {
          if (recvinfo_data -> recv_procs[i])
          {
-            hypre_TFree(recvinfo_data -> recv_procs[i], HYPRE_MEMORY_HOST);
+            hypre_TFree(recvinfo_data -> recv_procs[i], NALU_HYPRE_MEMORY_HOST);
          }
 
       }
-      hypre_TFree(recvinfo_data -> recv_procs, HYPRE_MEMORY_HOST);
+      hypre_TFree(recvinfo_data -> recv_procs, NALU_HYPRE_MEMORY_HOST);
    }
 
-   hypre_TFree(recvinfo_data, HYPRE_MEMORY_HOST);
+   hypre_TFree(recvinfo_data, NALU_HYPRE_MEMORY_HOST);
 
    return ierr;
 }

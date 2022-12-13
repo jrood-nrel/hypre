@@ -22,11 +22,11 @@
  *--------------------------------------------------------------------------*/
 
 hypre_Multivector *
-hypre_SeqMultivectorCreate( HYPRE_Int size, HYPRE_Int num_vectors  )
+hypre_SeqMultivectorCreate( NALU_HYPRE_Int size, NALU_HYPRE_Int num_vectors  )
 {
    hypre_Multivector *mvector;
 
-   mvector = hypre_TAlloc(hypre_Multivector, 1, HYPRE_MEMORY_HOST);
+   mvector = hypre_TAlloc(hypre_Multivector, 1, NALU_HYPRE_MEMORY_HOST);
 
    hypre_MultivectorNumVectors(mvector) = num_vectors;
    hypre_MultivectorSize(mvector) = size;
@@ -44,22 +44,22 @@ hypre_SeqMultivectorCreate( HYPRE_Int size, HYPRE_Int num_vectors  )
  * hypre_SeqMultivectorInitialize
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SeqMultivectorInitialize( hypre_Multivector *mvector )
 {
-   HYPRE_Int    ierr = 0, i, size, num_vectors;
+   NALU_HYPRE_Int    ierr = 0, i, size, num_vectors;
 
    size        = hypre_MultivectorSize(mvector);
    num_vectors = hypre_MultivectorNumVectors(mvector);
 
    if (NULL == hypre_MultivectorData(mvector))
       hypre_MultivectorData(mvector) =
-         hypre_TAlloc(HYPRE_Complex, size * num_vectors, HYPRE_MEMORY_HOST);
+         hypre_TAlloc(NALU_HYPRE_Complex, size * num_vectors, NALU_HYPRE_MEMORY_HOST);
 
    /* now we create a "mask" of "active" vectors; initially all active */
    if (NULL == mvector->active_indices)
    {
-      mvector->active_indices hypre_CTAlloc(HYPRE_Int, num_vectors, HYPRE_MEMORY_HOST);
+      mvector->active_indices hypre_CTAlloc(NALU_HYPRE_Int, num_vectors, NALU_HYPRE_MEMORY_HOST);
 
       for (i = 0; i < num_vectors; i++) { mvector->active_indices[i] = i; }
       mvector->num_active_vectors = num_vectors;
@@ -71,10 +71,10 @@ hypre_SeqMultivectorInitialize( hypre_Multivector *mvector )
  * hypre_SeqMultivectorSetDataOwner
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_SeqMultivectorSetDataOwner(hypre_Multivector *mvector, HYPRE_Int owns_data)
+NALU_HYPRE_Int
+hypre_SeqMultivectorSetDataOwner(hypre_Multivector *mvector, NALU_HYPRE_Int owns_data)
 {
-   HYPRE_Int    ierr = 0;
+   NALU_HYPRE_Int    ierr = 0;
 
    hypre_MultivectorOwnsData(mvector) = owns_data;
 
@@ -86,24 +86,24 @@ hypre_SeqMultivectorSetDataOwner(hypre_Multivector *mvector, HYPRE_Int owns_data
  * hypre_SeqMultivectorDestroy
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SeqMultivectorDestroy(hypre_Multivector *mvector)
 {
-   HYPRE_Int    ierr = 0;
+   NALU_HYPRE_Int    ierr = 0;
 
    if (NULL != mvector)
    {
       if (hypre_MultivectorOwnsData(mvector) && NULL != hypre_MultivectorData(mvector))
       {
-         hypre_TFree( hypre_MultivectorData(mvector), HYPRE_MEMORY_HOST);
+         hypre_TFree( hypre_MultivectorData(mvector), NALU_HYPRE_MEMORY_HOST);
       }
 
       if (NULL != mvector->active_indices)
       {
-         hypre_TFree(mvector->active_indices, HYPRE_MEMORY_HOST);
+         hypre_TFree(mvector->active_indices, NALU_HYPRE_MEMORY_HOST);
       }
 
-      hypre_TFree(mvector, HYPRE_MEMORY_HOST);
+      hypre_TFree(mvector, NALU_HYPRE_MEMORY_HOST);
    }
    return ierr;
 }
@@ -114,13 +114,13 @@ hypre_SeqMultivectorDestroy(hypre_Multivector *mvector)
     the one used in the structure "hypre_Multivector")
  *-------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_SeqMultivectorSetMask(hypre_Multivector *mvector, HYPRE_Int * mask)
+NALU_HYPRE_Int
+hypre_SeqMultivectorSetMask(hypre_Multivector *mvector, NALU_HYPRE_Int * mask)
 {
-   HYPRE_Int  i, num_vectors = mvector->num_vectors;
+   NALU_HYPRE_Int  i, num_vectors = mvector->num_vectors;
 
-   if (mvector->active_indices != NULL) { hypre_TFree(mvector->active_indices, HYPRE_MEMORY_HOST); }
-   mvector->active_indices hypre_CTAlloc(HYPRE_Int, num_vectors, HYPRE_MEMORY_HOST);
+   if (mvector->active_indices != NULL) { hypre_TFree(mvector->active_indices, NALU_HYPRE_MEMORY_HOST); }
+   mvector->active_indices hypre_CTAlloc(NALU_HYPRE_Int, num_vectors, NALU_HYPRE_MEMORY_HOST);
 
    mvector->num_active_vectors = 0;
 
@@ -145,17 +145,17 @@ hypre_SeqMultivectorSetMask(hypre_Multivector *mvector, HYPRE_Int * mask)
  * hypre_SeqMultivectorSetConstantValues
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_SeqMultivectorSetConstantValues(hypre_Multivector *v, HYPRE_Complex value)
+NALU_HYPRE_Int
+hypre_SeqMultivectorSetConstantValues(hypre_Multivector *v, NALU_HYPRE_Complex value)
 {
-   HYPRE_Int    i, j, start_offset, end_offset;
-   HYPRE_Int    size        = hypre_MultivectorSize(v);
-   HYPRE_Complex *vector_data = hypre_MultivectorData(v);
+   NALU_HYPRE_Int    i, j, start_offset, end_offset;
+   NALU_HYPRE_Int    size        = hypre_MultivectorSize(v);
+   NALU_HYPRE_Complex *vector_data = hypre_MultivectorData(v);
 
    if (v->num_active_vectors == v->num_vectors)
    {
-#ifdef HYPRE_USING_OPENMP
-      #pragma omp parallel for private(j) HYPRE_SMP_SCHEDULE
+#ifdef NALU_HYPRE_USING_OPENMP
+      #pragma omp parallel for private(j) NALU_HYPRE_SMP_SCHEDULE
 #endif
       for (j = 0; j < v->num_vectors * size; j++) { vector_data[j] = value; }
    }
@@ -166,8 +166,8 @@ hypre_SeqMultivectorSetConstantValues(hypre_Multivector *v, HYPRE_Complex value)
          start_offset = v->active_indices[i] * size;
          end_offset = start_offset + size;
 
-#ifdef HYPRE_USING_OPENMP
-         #pragma omp parallel for private(j) HYPRE_SMP_SCHEDULE
+#ifdef NALU_HYPRE_USING_OPENMP
+         #pragma omp parallel for private(j) NALU_HYPRE_SMP_SCHEDULE
 #endif
          for (j = start_offset; j < end_offset; j++) { vector_data[j] = value; }
       }
@@ -181,12 +181,12 @@ hypre_SeqMultivectorSetConstantValues(hypre_Multivector *v, HYPRE_Complex value)
  *     returns vector of values randomly distributed between -1.0 and +1.0
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_SeqMultivectorSetRandomValues(hypre_Multivector *v, HYPRE_Int seed)
+NALU_HYPRE_Int
+hypre_SeqMultivectorSetRandomValues(hypre_Multivector *v, NALU_HYPRE_Int seed)
 {
-   HYPRE_Int    i, j, start_offset, end_offset;
-   HYPRE_Int    size        = hypre_MultivectorSize(v);
-   HYPRE_Complex *vector_data = hypre_MultivectorData(v);
+   NALU_HYPRE_Int    i, j, start_offset, end_offset;
+   NALU_HYPRE_Int    size        = hypre_MultivectorSize(v);
+   NALU_HYPRE_Complex *vector_data = hypre_MultivectorData(v);
 
    hypre_SeedRand(seed);
 
@@ -221,11 +221,11 @@ hypre_SeqMultivectorSetRandomValues(hypre_Multivector *v, HYPRE_Int seed)
  * y should have already been initialized at the same size as x
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SeqMultivectorCopy(hypre_Multivector *x, hypre_Multivector *y)
 {
-   HYPRE_Int    i, size, num_bytes, num_active_vectors, *x_active_ind, * y_active_ind;
-   HYPRE_Complex *x_data, *y_data, *dest, * src;
+   NALU_HYPRE_Int    i, size, num_bytes, num_active_vectors, *x_active_ind, * y_active_ind;
+   NALU_HYPRE_Complex *x_data, *y_data, *dest, * src;
 
    hypre_assert (x->size == y->size && x->num_active_vectors == y->num_active_vectors);
 
@@ -240,7 +240,7 @@ hypre_SeqMultivectorCopy(hypre_Multivector *x, hypre_Multivector *y)
        y->num_active_vectors == y->num_vectors)
    {
       num_bytes = x->num_vectors * size;
-      hypre_TMemcpy(y_data,  x_data, HYPRE_Complex, num_bytes, HYPRE_MEMORY_HOST, HYPRE_MEMORY_HOST);
+      hypre_TMemcpy(y_data,  x_data, NALU_HYPRE_Complex, num_bytes, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_HOST);
    }
    else
    {
@@ -249,21 +249,21 @@ hypre_SeqMultivectorCopy(hypre_Multivector *x, hypre_Multivector *y)
       {
          src = x_data + size * x_active_ind[i];
          dest = y_data + size * y_active_ind[i];
-         hypre_TMemcpy(dest, src, HYPRE_Complex, num_bytes, HYPRE_MEMORY_HOST, HYPRE_MEMORY_HOST);
+         hypre_TMemcpy(dest, src, NALU_HYPRE_Complex, num_bytes, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_HOST);
       }
    }
    return 0;
 }
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SeqMultivectorCopyWithoutMask(hypre_Multivector *x,
                                     hypre_Multivector *y)
 {
-   HYPRE_Int byte_count;
+   NALU_HYPRE_Int byte_count;
 
    hypre_assert (x->size == y->size && x->num_vectors == y->num_vectors);
    byte_count = x->size * x->num_vectors;
-   hypre_TMemcpy(y->data, x->data, HYPRE_Complex, byte_count, HYPRE_MEMORY_HOST, HYPRE_MEMORY_HOST);
+   hypre_TMemcpy(y->data, x->data, NALU_HYPRE_Complex, byte_count, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_HOST);
    return 0;
 }
 
@@ -271,12 +271,12 @@ hypre_SeqMultivectorCopyWithoutMask(hypre_Multivector *x,
  * hypre_SeqMultivectorAxpy
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_SeqMultivectorAxpy(HYPRE_Complex alpha, hypre_Multivector *x,
+NALU_HYPRE_Int
+hypre_SeqMultivectorAxpy(NALU_HYPRE_Complex alpha, hypre_Multivector *x,
                          hypre_Multivector *y)
 {
-   HYPRE_Int    i, j, size, num_active_vectors, *x_active_ind, *y_active_ind;
-   HYPRE_Complex *x_data, *y_data, *src, *dest;
+   NALU_HYPRE_Int    i, j, size, num_active_vectors, *x_active_ind, *y_active_ind;
+   NALU_HYPRE_Complex *x_data, *y_data, *src, *dest;
 
    hypre_assert (x->size == y->size && x->num_active_vectors == y->num_active_vectors);
 
@@ -299,8 +299,8 @@ hypre_SeqMultivectorAxpy(HYPRE_Complex alpha, hypre_Multivector *x,
          src = x_data + x_active_ind[i] * size;
          dest = y_data + y_active_ind[i] * size;
 
-#ifdef HYPRE_USING_OPENMP
-         #pragma omp parallel for private(j) HYPRE_SMP_SCHEDULE
+#ifdef NALU_HYPRE_USING_OPENMP
+         #pragma omp parallel for private(j) NALU_HYPRE_SMP_SCHEDULE
 #endif
 
          for (j = 0; j < size; j++) { dest[j] += alpha * src[j]; }
@@ -313,19 +313,19 @@ hypre_SeqMultivectorAxpy(HYPRE_Complex alpha, hypre_Multivector *x,
  * hypre_SeqMultivectorByDiag: " y(<y_mask>) = alpha(<mask>) .* x(<x_mask>) "
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_SeqMultivectorByDiag(hypre_Multivector *x, HYPRE_Int *mask, HYPRE_Int n,
-                           HYPRE_Complex *alpha, hypre_Multivector *y)
+NALU_HYPRE_Int
+hypre_SeqMultivectorByDiag(hypre_Multivector *x, NALU_HYPRE_Int *mask, NALU_HYPRE_Int n,
+                           NALU_HYPRE_Complex *alpha, hypre_Multivector *y)
 {
-   HYPRE_Int    i, j, size, num_active_vectors, *x_active_ind, *y_active_ind;
-   HYPRE_Int    *al_active_ind, num_active_als;
-   HYPRE_Complex *x_data, *y_data, *dest, *src, current_alpha;
+   NALU_HYPRE_Int    i, j, size, num_active_vectors, *x_active_ind, *y_active_ind;
+   NALU_HYPRE_Int    *al_active_ind, num_active_als;
+   NALU_HYPRE_Complex *x_data, *y_data, *dest, *src, current_alpha;
 
    hypre_assert (x->size == y->size && x->num_active_vectors == y->num_active_vectors);
 
    /* build list of active indices in alpha */
 
-   al_active_ind = hypre_TAlloc(HYPRE_Int, n, HYPRE_MEMORY_HOST);
+   al_active_ind = hypre_TAlloc(NALU_HYPRE_Int, n, NALU_HYPRE_MEMORY_HOST);
    num_active_als = 0;
 
    if (mask != NULL)
@@ -357,8 +357,8 @@ hypre_SeqMultivectorByDiag(hypre_Multivector *x, HYPRE_Int *mask, HYPRE_Int n,
       dest = y_data + y_active_ind[i] * size;
       current_alpha = alpha[ al_active_ind[i] ];
 
-#ifdef HYPRE_USING_OPENMP
-      #pragma omp parallel for private(j) HYPRE_SMP_SCHEDULE
+#ifdef NALU_HYPRE_USING_OPENMP
+      #pragma omp parallel for private(j) NALU_HYPRE_SMP_SCHEDULE
 #endif
 
       for (j = 0; j < size; j++)
@@ -367,7 +367,7 @@ hypre_SeqMultivectorByDiag(hypre_Multivector *x, HYPRE_Int *mask, HYPRE_Int n,
       }
    }
 
-   hypre_TFree(al_active_ind, HYPRE_MEMORY_HOST);
+   hypre_TFree(al_active_ind, NALU_HYPRE_MEMORY_HOST);
    return 0;
 }
 
@@ -375,13 +375,13 @@ hypre_SeqMultivectorByDiag(hypre_Multivector *x, HYPRE_Int *mask, HYPRE_Int n,
  * hypre_SeqMultivectorInnerProd
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int hypre_SeqMultivectorInnerProd(hypre_Multivector *x, hypre_Multivector *y,
-                                        HYPRE_Real *results )
+NALU_HYPRE_Int hypre_SeqMultivectorInnerProd(hypre_Multivector *x, hypre_Multivector *y,
+                                        NALU_HYPRE_Real *results )
 {
-   HYPRE_Int      i, j, k, size, *x_active_ind, *y_active_ind;
-   HYPRE_Int      x_num_active_vectors, y_num_active_vectors;
-   HYPRE_Complex *x_data, *y_data, *y_ptr, *x_ptr;
-   HYPRE_Real     current_product;
+   NALU_HYPRE_Int      i, j, k, size, *x_active_ind, *y_active_ind;
+   NALU_HYPRE_Int      x_num_active_vectors, y_num_active_vectors;
+   NALU_HYPRE_Complex *x_data, *y_data, *y_ptr, *x_ptr;
+   NALU_HYPRE_Real     current_product;
 
    hypre_assert (x->size == y->size);
 
@@ -406,8 +406,8 @@ HYPRE_Int hypre_SeqMultivectorInnerProd(hypre_Multivector *x, hypre_Multivector 
          x_ptr = x_data + x_active_ind[i] * size;
          current_product = 0.0;
 
-#ifdef HYPRE_USING_OPENMP
-         #pragma omp parallel for private(k) reduction(+:current_product) HYPRE_SMP_SCHEDULE
+#ifdef NALU_HYPRE_USING_OPENMP
+         #pragma omp parallel for private(k) reduction(+:current_product) NALU_HYPRE_SMP_SCHEDULE
 #endif
 
          for (k = 0; k < size; k++)
@@ -428,12 +428,12 @@ HYPRE_Int hypre_SeqMultivectorInnerProd(hypre_Multivector *x, hypre_Multivector 
  * hypre_SeqMultivectorInnerProdDiag
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int hypre_SeqMultivectorInnerProdDiag(hypre_Multivector *x,
-                                            hypre_Multivector *y, HYPRE_Real *diagResults)
+NALU_HYPRE_Int hypre_SeqMultivectorInnerProdDiag(hypre_Multivector *x,
+                                            hypre_Multivector *y, NALU_HYPRE_Real *diagResults)
 {
-   HYPRE_Complex *x_data, *y_data, *y_ptr, *x_ptr;
-   HYPRE_Real     current_product;
-   HYPRE_Int      i, k, size, num_active_vectors, *x_active_ind, *y_active_ind;
+   NALU_HYPRE_Complex *x_data, *y_data, *y_ptr, *x_ptr;
+   NALU_HYPRE_Real     current_product;
+   NALU_HYPRE_Int      i, k, size, num_active_vectors, *x_active_ind, *y_active_ind;
 
    hypre_assert(x->size == y->size && x->num_active_vectors == y->num_active_vectors);
 
@@ -450,8 +450,8 @@ HYPRE_Int hypre_SeqMultivectorInnerProdDiag(hypre_Multivector *x,
       y_ptr = y_data + y_active_ind[i] * size;
       current_product = 0.0;
 
-#ifdef HYPRE_USING_OPENMP
-      #pragma omp parallel for private(k) reduction(+:current_product) HYPRE_SMP_SCHEDULE
+#ifdef NALU_HYPRE_USING_OPENMP
+      #pragma omp parallel for private(k) reduction(+:current_product) NALU_HYPRE_SMP_SCHEDULE
 #endif
 
       for (k = 0; k < size; k++)
@@ -464,12 +464,12 @@ HYPRE_Int hypre_SeqMultivectorInnerProdDiag(hypre_Multivector *x,
    return 0;
 }
 
-HYPRE_Int
-hypre_SeqMultivectorByMatrix(hypre_Multivector *x, HYPRE_Int rGHeight, HYPRE_Int rHeight,
-                             HYPRE_Int rWidth, HYPRE_Complex* rVal, hypre_Multivector *y)
+NALU_HYPRE_Int
+hypre_SeqMultivectorByMatrix(hypre_Multivector *x, NALU_HYPRE_Int rGHeight, NALU_HYPRE_Int rHeight,
+                             NALU_HYPRE_Int rWidth, NALU_HYPRE_Complex* rVal, hypre_Multivector *y)
 {
-   HYPRE_Int    i, j, k, size, gap, *x_active_ind, *y_active_ind;
-   HYPRE_Complex *x_data, *y_data, *x_ptr, *y_ptr, current_coef;
+   NALU_HYPRE_Int    i, j, k, size, gap, *x_active_ind, *y_active_ind;
+   NALU_HYPRE_Complex *x_data, *y_data, *x_ptr, *y_ptr, current_coef;
 
    hypre_assert(rHeight > 0);
    hypre_assert (rHeight == x->num_active_vectors && rWidth == y->num_active_vectors);
@@ -489,8 +489,8 @@ hypre_SeqMultivectorByMatrix(hypre_Multivector *x, HYPRE_Int rGHeight, HYPRE_Int
       x_ptr = x_data + x_active_ind[0] * size;
       current_coef = *rVal++;
 
-#ifdef HYPRE_USING_OPENMP
-      #pragma omp parallel for private(k) HYPRE_SMP_SCHEDULE
+#ifdef NALU_HYPRE_USING_OPENMP
+      #pragma omp parallel for private(k) NALU_HYPRE_SMP_SCHEDULE
 #endif
       for (k = 0; k < size; k++)
       {
@@ -503,8 +503,8 @@ hypre_SeqMultivectorByMatrix(hypre_Multivector *x, HYPRE_Int rGHeight, HYPRE_Int
          x_ptr = x_data + x_active_ind[i] * size;
          current_coef = *rVal++;
 
-#ifdef HYPRE_USING_OPENMP
-         #pragma omp parallel for private(k) HYPRE_SMP_SCHEDULE
+#ifdef NALU_HYPRE_USING_OPENMP
+         #pragma omp parallel for private(k) NALU_HYPRE_SMP_SCHEDULE
 #endif
          for (k = 0; k < size; k++)
          {
@@ -518,12 +518,12 @@ hypre_SeqMultivectorByMatrix(hypre_Multivector *x, HYPRE_Int rGHeight, HYPRE_Int
    return 0;
 }
 
-HYPRE_Int
-hypre_SeqMultivectorXapy (hypre_Multivector *x, HYPRE_Int rGHeight, HYPRE_Int rHeight,
-                          HYPRE_Int rWidth, HYPRE_Complex* rVal, hypre_Multivector *y)
+NALU_HYPRE_Int
+hypre_SeqMultivectorXapy (hypre_Multivector *x, NALU_HYPRE_Int rGHeight, NALU_HYPRE_Int rHeight,
+                          NALU_HYPRE_Int rWidth, NALU_HYPRE_Complex* rVal, hypre_Multivector *y)
 {
-   HYPRE_Complex *x_data, *y_data, *x_ptr, *y_ptr, current_coef;
-   HYPRE_Int    i, j, k, size, gap, *x_active_ind, *y_active_ind;
+   NALU_HYPRE_Complex *x_data, *y_data, *x_ptr, *y_ptr, current_coef;
+   NALU_HYPRE_Int    i, j, k, size, gap, *x_active_ind, *y_active_ind;
 
    hypre_assert (rHeight == x->num_active_vectors && rWidth == y->num_active_vectors);
 
@@ -543,8 +543,8 @@ hypre_SeqMultivectorXapy (hypre_Multivector *x, HYPRE_Int rGHeight, HYPRE_Int rH
          x_ptr = x_data + x_active_ind[i] * size;
          current_coef = *rVal++;
 
-#ifdef HYPRE_USING_OPENMP
-         #pragma omp parallel for private(k) HYPRE_SMP_SCHEDULE
+#ifdef NALU_HYPRE_USING_OPENMP
+         #pragma omp parallel for private(k) NALU_HYPRE_SMP_SCHEDULE
 #endif
          for (k = 0; k < size; k++)
          {

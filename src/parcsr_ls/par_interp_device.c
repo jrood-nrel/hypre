@@ -9,54 +9,54 @@
 #include "_hypre_parcsr_ls.h"
 #include "_hypre_utilities.hpp"
 
-#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP) || defined(HYPRE_USING_SYCL)
+#if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP) || defined(NALU_HYPRE_USING_SYCL)
 
-__global__ void hypre_BoomerAMGBuildDirInterp_getnnz( hypre_DeviceItem &item, HYPRE_Int nr_of_rows,
-                                                      HYPRE_Int *S_diag_i,
-                                                      HYPRE_Int *S_diag_j, HYPRE_Int *S_offd_i, HYPRE_Int *S_offd_j, HYPRE_Int *CF_marker,
-                                                      HYPRE_Int *CF_marker_offd, HYPRE_Int num_functions, HYPRE_Int *dof_func, HYPRE_Int *dof_func_offd,
-                                                      HYPRE_Int *P_diag_i, HYPRE_Int *P_offd_i);
+__global__ void hypre_BoomerAMGBuildDirInterp_getnnz( hypre_DeviceItem &item, NALU_HYPRE_Int nr_of_rows,
+                                                      NALU_HYPRE_Int *S_diag_i,
+                                                      NALU_HYPRE_Int *S_diag_j, NALU_HYPRE_Int *S_offd_i, NALU_HYPRE_Int *S_offd_j, NALU_HYPRE_Int *CF_marker,
+                                                      NALU_HYPRE_Int *CF_marker_offd, NALU_HYPRE_Int num_functions, NALU_HYPRE_Int *dof_func, NALU_HYPRE_Int *dof_func_offd,
+                                                      NALU_HYPRE_Int *P_diag_i, NALU_HYPRE_Int *P_offd_i);
 
-__global__ void hypre_BoomerAMGBuildDirInterp_getcoef( hypre_DeviceItem &item, HYPRE_Int nr_of_rows,
-                                                       HYPRE_Int *A_diag_i,
-                                                       HYPRE_Int *A_diag_j, HYPRE_Real *A_diag_data, HYPRE_Int *A_offd_i, HYPRE_Int *A_offd_j,
-                                                       HYPRE_Real *A_offd_data, HYPRE_Int *Soc_diag_j, HYPRE_Int *Soc_offd_j, HYPRE_Int *CF_marker,
-                                                       HYPRE_Int *CF_marker_offd, HYPRE_Int num_functions, HYPRE_Int *dof_func, HYPRE_Int *dof_func_offd,
-                                                       HYPRE_Int *P_diag_i, HYPRE_Int *P_diag_j, HYPRE_Real *P_diag_data, HYPRE_Int *P_offd_i,
-                                                       HYPRE_Int *P_offd_j, HYPRE_Real *P_offd_data, HYPRE_Int *fine_to_coarse );
+__global__ void hypre_BoomerAMGBuildDirInterp_getcoef( hypre_DeviceItem &item, NALU_HYPRE_Int nr_of_rows,
+                                                       NALU_HYPRE_Int *A_diag_i,
+                                                       NALU_HYPRE_Int *A_diag_j, NALU_HYPRE_Real *A_diag_data, NALU_HYPRE_Int *A_offd_i, NALU_HYPRE_Int *A_offd_j,
+                                                       NALU_HYPRE_Real *A_offd_data, NALU_HYPRE_Int *Soc_diag_j, NALU_HYPRE_Int *Soc_offd_j, NALU_HYPRE_Int *CF_marker,
+                                                       NALU_HYPRE_Int *CF_marker_offd, NALU_HYPRE_Int num_functions, NALU_HYPRE_Int *dof_func, NALU_HYPRE_Int *dof_func_offd,
+                                                       NALU_HYPRE_Int *P_diag_i, NALU_HYPRE_Int *P_diag_j, NALU_HYPRE_Real *P_diag_data, NALU_HYPRE_Int *P_offd_i,
+                                                       NALU_HYPRE_Int *P_offd_j, NALU_HYPRE_Real *P_offd_data, NALU_HYPRE_Int *fine_to_coarse );
 
 __global__ void hypre_BoomerAMGBuildDirInterp_getcoef_v2( hypre_DeviceItem &item,
-                                                          HYPRE_Int nr_of_rows,
-                                                          HYPRE_Int *A_diag_i,
-                                                          HYPRE_Int *A_diag_j, HYPRE_Real *A_diag_data, HYPRE_Int *A_offd_i, HYPRE_Int *A_offd_j,
-                                                          HYPRE_Real *A_offd_data, HYPRE_Int *Soc_diag_j, HYPRE_Int *Soc_offd_j, HYPRE_Int *CF_marker,
-                                                          HYPRE_Int *CF_marker_offd, HYPRE_Int num_functions, HYPRE_Int *dof_func, HYPRE_Int *dof_func_offd,
-                                                          HYPRE_Int *P_diag_i, HYPRE_Int *P_diag_j, HYPRE_Real *P_diag_data, HYPRE_Int *P_offd_i,
-                                                          HYPRE_Int *P_offd_j, HYPRE_Real *P_offd_data, HYPRE_Int *fine_to_coarse );
+                                                          NALU_HYPRE_Int nr_of_rows,
+                                                          NALU_HYPRE_Int *A_diag_i,
+                                                          NALU_HYPRE_Int *A_diag_j, NALU_HYPRE_Real *A_diag_data, NALU_HYPRE_Int *A_offd_i, NALU_HYPRE_Int *A_offd_j,
+                                                          NALU_HYPRE_Real *A_offd_data, NALU_HYPRE_Int *Soc_diag_j, NALU_HYPRE_Int *Soc_offd_j, NALU_HYPRE_Int *CF_marker,
+                                                          NALU_HYPRE_Int *CF_marker_offd, NALU_HYPRE_Int num_functions, NALU_HYPRE_Int *dof_func, NALU_HYPRE_Int *dof_func_offd,
+                                                          NALU_HYPRE_Int *P_diag_i, NALU_HYPRE_Int *P_diag_j, NALU_HYPRE_Real *P_diag_data, NALU_HYPRE_Int *P_offd_i,
+                                                          NALU_HYPRE_Int *P_offd_j, NALU_HYPRE_Real *P_offd_data, NALU_HYPRE_Int *fine_to_coarse );
 
 __global__ void
-hypre_BoomerAMGBuildInterpOnePnt_getnnz( hypre_DeviceItem &item, HYPRE_Int nr_of_rows,
-                                         HYPRE_Int *A_diag_i,
-                                         HYPRE_Int *A_strong_diag_j, HYPRE_Complex *A_diag_a, HYPRE_Int *A_offd_i,
-                                         HYPRE_Int *A_strong_offd_j, HYPRE_Complex *A_offd_a, HYPRE_Int *CF_marker,
-                                         HYPRE_Int *CF_marker_offd, HYPRE_Int *diag_compress_marker, HYPRE_Int *offd_compress_marker,
-                                         HYPRE_Int *P_diag_i, HYPRE_Int *P_diag_j, HYPRE_Int *P_offd_i, HYPRE_Int *P_offd_j);
+hypre_BoomerAMGBuildInterpOnePnt_getnnz( hypre_DeviceItem &item, NALU_HYPRE_Int nr_of_rows,
+                                         NALU_HYPRE_Int *A_diag_i,
+                                         NALU_HYPRE_Int *A_strong_diag_j, NALU_HYPRE_Complex *A_diag_a, NALU_HYPRE_Int *A_offd_i,
+                                         NALU_HYPRE_Int *A_strong_offd_j, NALU_HYPRE_Complex *A_offd_a, NALU_HYPRE_Int *CF_marker,
+                                         NALU_HYPRE_Int *CF_marker_offd, NALU_HYPRE_Int *diag_compress_marker, NALU_HYPRE_Int *offd_compress_marker,
+                                         NALU_HYPRE_Int *P_diag_i, NALU_HYPRE_Int *P_diag_j, NALU_HYPRE_Int *P_offd_i, NALU_HYPRE_Int *P_offd_j);
 
 /*---------------------------------------------------------------------------
  * hypre_BoomerAMGBuildDirInterp
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_BoomerAMGBuildDirInterpDevice( hypre_ParCSRMatrix   *A,
-                                     HYPRE_Int            *CF_marker,
+                                     NALU_HYPRE_Int            *CF_marker,
                                      hypre_ParCSRMatrix   *S,
-                                     HYPRE_BigInt         *num_cpts_global,
-                                     HYPRE_Int             num_functions,
-                                     HYPRE_Int            *dof_func,
-                                     HYPRE_Int             debug_flag,
-                                     HYPRE_Real            trunc_factor,
-                                     HYPRE_Int             max_elmts,
-                                     HYPRE_Int             interp_type,
+                                     NALU_HYPRE_BigInt         *num_cpts_global,
+                                     NALU_HYPRE_Int             num_functions,
+                                     NALU_HYPRE_Int            *dof_func,
+                                     NALU_HYPRE_Int             debug_flag,
+                                     NALU_HYPRE_Real            trunc_factor,
+                                     NALU_HYPRE_Int             max_elmts,
+                                     NALU_HYPRE_Int             interp_type,
                                      hypre_ParCSRMatrix  **P_ptr)
 {
    MPI_Comm                comm     = hypre_ParCSRMatrixComm(A);
@@ -64,61 +64,61 @@ hypre_BoomerAMGBuildDirInterpDevice( hypre_ParCSRMatrix   *A,
    hypre_ParCSRCommHandle *comm_handle;
 
    hypre_CSRMatrix *A_diag      = hypre_ParCSRMatrixDiag(A);
-   HYPRE_Real      *A_diag_data = hypre_CSRMatrixData(A_diag);
-   HYPRE_Int       *A_diag_i    = hypre_CSRMatrixI(A_diag);
-   HYPRE_Int       *A_diag_j    = hypre_CSRMatrixJ(A_diag);
+   NALU_HYPRE_Real      *A_diag_data = hypre_CSRMatrixData(A_diag);
+   NALU_HYPRE_Int       *A_diag_i    = hypre_CSRMatrixI(A_diag);
+   NALU_HYPRE_Int       *A_diag_j    = hypre_CSRMatrixJ(A_diag);
 
    hypre_CSRMatrix *A_offd      = hypre_ParCSRMatrixOffd(A);
-   HYPRE_Real      *A_offd_data = hypre_CSRMatrixData(A_offd);
-   HYPRE_Int       *A_offd_i    = hypre_CSRMatrixI(A_offd);
-   HYPRE_Int       *A_offd_j    = hypre_CSRMatrixJ(A_offd);
-   HYPRE_Int        num_cols_A_offd = hypre_CSRMatrixNumCols(A_offd);
-   //   HYPRE_BigInt   *col_map_offd_A = hypre_ParCSRMatrixColMapOffd(A);
+   NALU_HYPRE_Real      *A_offd_data = hypre_CSRMatrixData(A_offd);
+   NALU_HYPRE_Int       *A_offd_i    = hypre_CSRMatrixI(A_offd);
+   NALU_HYPRE_Int       *A_offd_j    = hypre_CSRMatrixJ(A_offd);
+   NALU_HYPRE_Int        num_cols_A_offd = hypre_CSRMatrixNumCols(A_offd);
+   //   NALU_HYPRE_BigInt   *col_map_offd_A = hypre_ParCSRMatrixColMapOffd(A);
 
-   HYPRE_Int        n_fine = hypre_CSRMatrixNumRows(A_diag);
+   NALU_HYPRE_Int        n_fine = hypre_CSRMatrixNumRows(A_diag);
 
    hypre_BoomerAMGMakeSocFromSDevice(A, S);
 
    hypre_CSRMatrix *S_diag   = hypre_ParCSRMatrixDiag(S);
-   HYPRE_Int       *S_diag_i = hypre_CSRMatrixI(S_diag);
-   HYPRE_Int       *S_diag_j = hypre_CSRMatrixJ(S_diag);
+   NALU_HYPRE_Int       *S_diag_i = hypre_CSRMatrixI(S_diag);
+   NALU_HYPRE_Int       *S_diag_j = hypre_CSRMatrixJ(S_diag);
 
    hypre_CSRMatrix *S_offd   = hypre_ParCSRMatrixOffd(S);
-   HYPRE_Int       *S_offd_i = hypre_CSRMatrixI(S_offd);
-   HYPRE_Int       *S_offd_j = hypre_CSRMatrixJ(S_offd);
+   NALU_HYPRE_Int       *S_offd_i = hypre_CSRMatrixI(S_offd);
+   NALU_HYPRE_Int       *S_offd_j = hypre_CSRMatrixJ(S_offd);
 
-   HYPRE_Int *Soc_diag_j = hypre_ParCSRMatrixSocDiagJ(S);
-   HYPRE_Int *Soc_offd_j = hypre_ParCSRMatrixSocOffdJ(S);
+   NALU_HYPRE_Int *Soc_diag_j = hypre_ParCSRMatrixSocDiagJ(S);
+   NALU_HYPRE_Int *Soc_offd_j = hypre_ParCSRMatrixSocOffdJ(S);
 
    hypre_ParCSRMatrix *P;
-   HYPRE_Int          *tmp_map_offd_h = NULL;
+   NALU_HYPRE_Int          *tmp_map_offd_h = NULL;
 
-   HYPRE_Int       *CF_marker_offd = NULL;
-   HYPRE_Int       *dof_func_offd = NULL;
+   NALU_HYPRE_Int       *CF_marker_offd = NULL;
+   NALU_HYPRE_Int       *dof_func_offd = NULL;
 
    hypre_CSRMatrix *P_diag;
    hypre_CSRMatrix *P_offd;
-   HYPRE_Real      *P_diag_data;
-   HYPRE_Int       *P_diag_i;
-   HYPRE_Int       *P_diag_j;
-   HYPRE_Real      *P_offd_data;
-   HYPRE_Int       *P_offd_i;
-   HYPRE_Int       *P_offd_j;
-   HYPRE_Int        P_diag_size, P_offd_size;
+   NALU_HYPRE_Real      *P_diag_data;
+   NALU_HYPRE_Int       *P_diag_i;
+   NALU_HYPRE_Int       *P_diag_j;
+   NALU_HYPRE_Real      *P_offd_data;
+   NALU_HYPRE_Int       *P_offd_i;
+   NALU_HYPRE_Int       *P_offd_j;
+   NALU_HYPRE_Int        P_diag_size, P_offd_size;
 
-   HYPRE_Int       *fine_to_coarse_d;
-   HYPRE_Int       *fine_to_coarse_h;
-   HYPRE_BigInt     total_global_cpts;
-   HYPRE_Int        num_cols_P_offd = 0;
+   NALU_HYPRE_Int       *fine_to_coarse_d;
+   NALU_HYPRE_Int       *fine_to_coarse_h;
+   NALU_HYPRE_BigInt     total_global_cpts;
+   NALU_HYPRE_Int        num_cols_P_offd = 0;
 
-   HYPRE_Int        my_id;
-   HYPRE_Int        num_procs;
-   HYPRE_Int        num_sends;
-   HYPRE_Int       *int_buf_data;
+   NALU_HYPRE_Int        my_id;
+   NALU_HYPRE_Int        num_procs;
+   NALU_HYPRE_Int        num_sends;
+   NALU_HYPRE_Int       *int_buf_data;
 
-   HYPRE_Real       wall_time;  /* for debugging instrumentation  */
+   NALU_HYPRE_Real       wall_time;  /* for debugging instrumentation  */
 
-   HYPRE_MemoryLocation memory_location = hypre_ParCSRMatrixMemoryLocation(A);
+   NALU_HYPRE_MemoryLocation memory_location = hypre_ParCSRMatrixMemoryLocation(A);
 
    hypre_MPI_Comm_size(comm, &num_procs);
    hypre_MPI_Comm_rank(comm, &my_id);
@@ -127,7 +127,7 @@ hypre_BoomerAMGBuildDirInterpDevice( hypre_ParCSRMatrix   *A,
    {
       total_global_cpts = num_cpts_global[1];
    }
-   hypre_MPI_Bcast( &total_global_cpts, 1, HYPRE_MPI_BIG_INT, num_procs - 1, comm);
+   hypre_MPI_Bcast( &total_global_cpts, 1, NALU_HYPRE_MPI_BIG_INT, num_procs - 1, comm);
 
    if (!comm_pkg)
    {
@@ -142,21 +142,21 @@ hypre_BoomerAMGBuildDirInterpDevice( hypre_ParCSRMatrix   *A,
    /* 1. Communicate CF_marker to/from other processors */
    if (num_cols_A_offd)
    {
-      CF_marker_offd = hypre_TAlloc(HYPRE_Int, num_cols_A_offd, HYPRE_MEMORY_DEVICE);
+      CF_marker_offd = hypre_TAlloc(NALU_HYPRE_Int, num_cols_A_offd, NALU_HYPRE_MEMORY_DEVICE);
    }
 
    num_sends = hypre_ParCSRCommPkgNumSends(comm_pkg);
-   int_buf_data = hypre_TAlloc(HYPRE_Int, hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends),
-                               HYPRE_MEMORY_DEVICE);
+   int_buf_data = hypre_TAlloc(NALU_HYPRE_Int, hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends),
+                               NALU_HYPRE_MEMORY_DEVICE);
    hypre_ParCSRCommPkgCopySendMapElmtsToDevice(comm_pkg);
-#if defined(HYPRE_USING_SYCL)
+#if defined(NALU_HYPRE_USING_SYCL)
    hypreSycl_gather( hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg),
                      hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg) + hypre_ParCSRCommPkgSendMapStart(comm_pkg,
                                                                                                        num_sends),
                      CF_marker,
                      int_buf_data );
 #else
-   HYPRE_THRUST_CALL( gather,
+   NALU_HYPRE_THRUST_CALL( gather,
                       hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg),
                       hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg) + hypre_ParCSRCommPkgSendMapStart(comm_pkg,
                             num_sends),
@@ -164,13 +164,13 @@ hypre_BoomerAMGBuildDirInterpDevice( hypre_ParCSRMatrix   *A,
                       int_buf_data );
 #endif
 
-#if defined(HYPRE_WITH_GPU_AWARE_MPI) && THRUST_CALL_BLOCKING == 0
+#if defined(NALU_HYPRE_WITH_GPU_AWARE_MPI) && THRUST_CALL_BLOCKING == 0
    /* RL: make sure int_buf_data is ready before issuing GPU-GPU MPI */
    hypre_ForceSyncComputeStream(hypre_handle());
 #endif
 
-   comm_handle = hypre_ParCSRCommHandleCreate_v2(11, comm_pkg, HYPRE_MEMORY_DEVICE, int_buf_data,
-                                                 HYPRE_MEMORY_DEVICE, CF_marker_offd);
+   comm_handle = hypre_ParCSRCommHandleCreate_v2(11, comm_pkg, NALU_HYPRE_MEMORY_DEVICE, int_buf_data,
+                                                 NALU_HYPRE_MEMORY_DEVICE, CF_marker_offd);
    hypre_ParCSRCommHandleDestroy(comm_handle);
 
    if (num_functions > 1)
@@ -178,17 +178,17 @@ hypre_BoomerAMGBuildDirInterpDevice( hypre_ParCSRMatrix   *A,
       /* 2. Communicate dof_func to/from other processors */
       if (num_cols_A_offd > 0)
       {
-         dof_func_offd = hypre_TAlloc(HYPRE_Int, num_cols_A_offd, HYPRE_MEMORY_DEVICE);
+         dof_func_offd = hypre_TAlloc(NALU_HYPRE_Int, num_cols_A_offd, NALU_HYPRE_MEMORY_DEVICE);
       }
 
-#if defined(HYPRE_USING_SYCL)
+#if defined(NALU_HYPRE_USING_SYCL)
       hypreSycl_gather( hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg),
                         hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg) + hypre_ParCSRCommPkgSendMapStart(comm_pkg,
                                                                                                           num_sends),
                         dof_func,
                         int_buf_data );
 #else
-      HYPRE_THRUST_CALL( gather,
+      NALU_HYPRE_THRUST_CALL( gather,
                          hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg),
                          hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg) + hypre_ParCSRCommPkgSendMapStart(comm_pkg,
                                num_sends),
@@ -196,13 +196,13 @@ hypre_BoomerAMGBuildDirInterpDevice( hypre_ParCSRMatrix   *A,
                          int_buf_data );
 #endif
 
-#if defined(HYPRE_WITH_GPU_AWARE_MPI) && THRUST_CALL_BLOCKING == 0
+#if defined(NALU_HYPRE_WITH_GPU_AWARE_MPI) && THRUST_CALL_BLOCKING == 0
       /* RL: make sure int_buf_data is ready before issuing GPU-GPU MPI */
       hypre_ForceSyncComputeStream(hypre_handle());
 #endif
 
-      comm_handle = hypre_ParCSRCommHandleCreate_v2(11, comm_pkg, HYPRE_MEMORY_DEVICE, int_buf_data,
-                                                    HYPRE_MEMORY_DEVICE, dof_func_offd);
+      comm_handle = hypre_ParCSRCommHandleCreate_v2(11, comm_pkg, NALU_HYPRE_MEMORY_DEVICE, int_buf_data,
+                                                    NALU_HYPRE_MEMORY_DEVICE, dof_func_offd);
       hypre_ParCSRCommHandleDestroy(comm_handle);
    }
 
@@ -216,55 +216,55 @@ hypre_BoomerAMGBuildDirInterpDevice( hypre_ParCSRMatrix   *A,
    /* 3. Figure out the size of the interpolation matrix, P, i.e., compute P_diag_i and P_offd_i */
    /*    Also, compute fine_to_coarse array: When i is a coarse point, fine_to_coarse[i] will hold a  */
    /*    corresponding coarse point index in the range 0..n_coarse-1 */
-   P_diag_i = hypre_TAlloc(HYPRE_Int, n_fine + 1, memory_location);
-   P_offd_i = hypre_TAlloc(HYPRE_Int, n_fine + 1, memory_location);
+   P_diag_i = hypre_TAlloc(NALU_HYPRE_Int, n_fine + 1, memory_location);
+   P_offd_i = hypre_TAlloc(NALU_HYPRE_Int, n_fine + 1, memory_location);
 
    dim3 bDim = hypre_GetDefaultDeviceBlockDimension();
    dim3 gDim = hypre_GetDefaultDeviceGridDimension(n_fine, "warp", bDim);
 
-   HYPRE_GPU_LAUNCH( hypre_BoomerAMGBuildDirInterp_getnnz, gDim, bDim,
+   NALU_HYPRE_GPU_LAUNCH( hypre_BoomerAMGBuildDirInterp_getnnz, gDim, bDim,
                      n_fine, S_diag_i, S_diag_j, S_offd_i, S_offd_j,
                      CF_marker, CF_marker_offd, num_functions,
                      dof_func, dof_func_offd, P_diag_i, P_offd_i);
 
    /* The scans will transform P_diag_i and P_offd_i to the CSR I-vectors */
-   hypre_Memset(P_diag_i + n_fine, 0, sizeof(HYPRE_Int), HYPRE_MEMORY_DEVICE);
-   hypre_Memset(P_offd_i + n_fine, 0, sizeof(HYPRE_Int), HYPRE_MEMORY_DEVICE);
+   hypre_Memset(P_diag_i + n_fine, 0, sizeof(NALU_HYPRE_Int), NALU_HYPRE_MEMORY_DEVICE);
+   hypre_Memset(P_offd_i + n_fine, 0, sizeof(NALU_HYPRE_Int), NALU_HYPRE_MEMORY_DEVICE);
 
    hypreDevice_IntegerExclusiveScan(n_fine + 1, P_diag_i);
    hypreDevice_IntegerExclusiveScan(n_fine + 1, P_offd_i);
 
-   fine_to_coarse_d = hypre_TAlloc(HYPRE_Int, n_fine, HYPRE_MEMORY_DEVICE);
+   fine_to_coarse_d = hypre_TAlloc(NALU_HYPRE_Int, n_fine, NALU_HYPRE_MEMORY_DEVICE);
    /* The scan will make fine_to_coarse[i] for i a coarse point hold a
     * coarse point index in the range from 0 to n_coarse-1 */
-#if defined(HYPRE_USING_SYCL)
-   HYPRE_ONEDPL_CALL( std::exclusive_scan,
-                      oneapi::dpl::make_transform_iterator(CF_marker,          is_nonnegative<HYPRE_Int>()),
-                      oneapi::dpl::make_transform_iterator(CF_marker + n_fine, is_nonnegative<HYPRE_Int>()),
+#if defined(NALU_HYPRE_USING_SYCL)
+   NALU_HYPRE_ONEDPL_CALL( std::exclusive_scan,
+                      oneapi::dpl::make_transform_iterator(CF_marker,          is_nonnegative<NALU_HYPRE_Int>()),
+                      oneapi::dpl::make_transform_iterator(CF_marker + n_fine, is_nonnegative<NALU_HYPRE_Int>()),
                       fine_to_coarse_d,
-                      HYPRE_Int(0) ); /* *MUST* pass init value since input and output types diff. */
+                      NALU_HYPRE_Int(0) ); /* *MUST* pass init value since input and output types diff. */
 #else
-   HYPRE_THRUST_CALL( exclusive_scan,
-                      thrust::make_transform_iterator(CF_marker,          is_nonnegative<HYPRE_Int>()),
-                      thrust::make_transform_iterator(CF_marker + n_fine, is_nonnegative<HYPRE_Int>()),
+   NALU_HYPRE_THRUST_CALL( exclusive_scan,
+                      thrust::make_transform_iterator(CF_marker,          is_nonnegative<NALU_HYPRE_Int>()),
+                      thrust::make_transform_iterator(CF_marker + n_fine, is_nonnegative<NALU_HYPRE_Int>()),
                       fine_to_coarse_d,
-                      HYPRE_Int(0) ); /* *MUST* pass init value since input and output types diff. */
+                      NALU_HYPRE_Int(0) ); /* *MUST* pass init value since input and output types diff. */
 #endif
 
    /* 4. Compute the CSR arrays P_diag_j, P_diag_data, P_offd_j, and P_offd_data */
    /*    P_diag_i and P_offd_i are now known, first allocate the remaining CSR arrays of P */
-   hypre_TMemcpy(&P_diag_size, &P_diag_i[n_fine], HYPRE_Int, 1, HYPRE_MEMORY_HOST, memory_location);
-   hypre_TMemcpy(&P_offd_size, &P_offd_i[n_fine], HYPRE_Int, 1, HYPRE_MEMORY_HOST, memory_location);
+   hypre_TMemcpy(&P_diag_size, &P_diag_i[n_fine], NALU_HYPRE_Int, 1, NALU_HYPRE_MEMORY_HOST, memory_location);
+   hypre_TMemcpy(&P_offd_size, &P_offd_i[n_fine], NALU_HYPRE_Int, 1, NALU_HYPRE_MEMORY_HOST, memory_location);
 
-   P_diag_j    = hypre_TAlloc(HYPRE_Int,  P_diag_size, memory_location);
-   P_diag_data = hypre_TAlloc(HYPRE_Real, P_diag_size, memory_location);
+   P_diag_j    = hypre_TAlloc(NALU_HYPRE_Int,  P_diag_size, memory_location);
+   P_diag_data = hypre_TAlloc(NALU_HYPRE_Real, P_diag_size, memory_location);
 
-   P_offd_j    = hypre_TAlloc(HYPRE_Int,  P_offd_size, memory_location);
-   P_offd_data = hypre_TAlloc(HYPRE_Real, P_offd_size, memory_location);
+   P_offd_j    = hypre_TAlloc(NALU_HYPRE_Int,  P_offd_size, memory_location);
+   P_offd_data = hypre_TAlloc(NALU_HYPRE_Real, P_offd_size, memory_location);
 
    if (interp_type == 3)
    {
-      HYPRE_GPU_LAUNCH( hypre_BoomerAMGBuildDirInterp_getcoef, gDim, bDim,
+      NALU_HYPRE_GPU_LAUNCH( hypre_BoomerAMGBuildDirInterp_getcoef, gDim, bDim,
                         n_fine, A_diag_i, A_diag_j, A_diag_data,
                         A_offd_i, A_offd_j, A_offd_data,
                         Soc_diag_j,
@@ -277,7 +277,7 @@ hypre_BoomerAMGBuildDirInterpDevice( hypre_ParCSRMatrix   *A,
    }
    else
    {
-      HYPRE_GPU_LAUNCH( hypre_BoomerAMGBuildDirInterp_getcoef_v2, gDim, bDim,
+      NALU_HYPRE_GPU_LAUNCH( hypre_BoomerAMGBuildDirInterp_getcoef_v2, gDim, bDim,
                         n_fine, A_diag_i, A_diag_j, A_diag_data,
                         A_offd_i, A_offd_j, A_offd_data,
                         Soc_diag_j,
@@ -291,14 +291,14 @@ hypre_BoomerAMGBuildDirInterpDevice( hypre_ParCSRMatrix   *A,
 
    /* !!!! Free them here */
    /*
-   hypre_TFree(hypre_ParCSRMatrixSocDiagJ(S), HYPRE_MEMORY_DEVICE);
-   hypre_TFree(hypre_ParCSRMatrixSocOffdJ(S), HYPRE_MEMORY_DEVICE);
+   hypre_TFree(hypre_ParCSRMatrixSocDiagJ(S), NALU_HYPRE_MEMORY_DEVICE);
+   hypre_TFree(hypre_ParCSRMatrixSocOffdJ(S), NALU_HYPRE_MEMORY_DEVICE);
    */
 
-#if defined(HYPRE_USING_SYCL)
-   HYPRE_ONEDPL_CALL(std::replace, CF_marker, CF_marker + n_fine, -3, -1);
+#if defined(NALU_HYPRE_USING_SYCL)
+   NALU_HYPRE_ONEDPL_CALL(std::replace, CF_marker, CF_marker + n_fine, -3, -1);
 #else
-   HYPRE_THRUST_CALL(replace, CF_marker, CF_marker + n_fine, -3, -1);
+   NALU_HYPRE_THRUST_CALL(replace, CF_marker, CF_marker + n_fine, -3, -1);
 #endif
 
    /* 5. Construct the result as a ParCSRMatrix. At this point, P's column indices */
@@ -336,7 +336,7 @@ hypre_BoomerAMGBuildDirInterpDevice( hypre_ParCSRMatrix   *A,
       P_offd_i    = hypre_CSRMatrixI(P_offd);
       P_offd_j    = hypre_CSRMatrixJ(P_offd);
       P_offd_size = hypre_CSRMatrixNumNonzeros(P_offd);
-      /* hypre_TMemcpy(&P_offd_size, &P_offd_i[n_fine], HYPRE_Int, 1, HYPRE_MEMORY_HOST, memory_location); */
+      /* hypre_TMemcpy(&P_offd_size, &P_offd_i[n_fine], NALU_HYPRE_Int, 1, NALU_HYPRE_MEMORY_HOST, memory_location); */
    }
 
    /* 7. Translate P_offd's column indices from the values inherited from A_offd to a 0,1,2,3,... enumeration, */
@@ -349,18 +349,18 @@ hypre_BoomerAMGBuildDirInterpDevice( hypre_ParCSRMatrix   *A,
          P_marker=[0,1,0,0,1,0,0], */
 
       /* First,  set P_marker[i] to 1 if A's column i is also present in P, otherwise P_marker[i] is 0 */
-      HYPRE_Int *P_marker = hypre_TAlloc(HYPRE_Int, num_cols_A_offd, HYPRE_MEMORY_DEVICE);
-      HYPRE_Int *P_colids = hypre_TAlloc(HYPRE_Int, hypre_max(P_offd_size, num_cols_A_offd),
-                                         HYPRE_MEMORY_DEVICE);
+      NALU_HYPRE_Int *P_marker = hypre_TAlloc(NALU_HYPRE_Int, num_cols_A_offd, NALU_HYPRE_MEMORY_DEVICE);
+      NALU_HYPRE_Int *P_colids = hypre_TAlloc(NALU_HYPRE_Int, hypre_max(P_offd_size, num_cols_A_offd),
+                                         NALU_HYPRE_MEMORY_DEVICE);
 
-      hypre_TMemcpy(P_colids, P_offd_j, HYPRE_Int, P_offd_size, HYPRE_MEMORY_DEVICE, memory_location);
+      hypre_TMemcpy(P_colids, P_offd_j, NALU_HYPRE_Int, P_offd_size, NALU_HYPRE_MEMORY_DEVICE, memory_location);
       /* sort and unique */
-#if defined(HYPRE_USING_SYCL)
-      HYPRE_ONEDPL_CALL(std::sort, P_colids, P_colids + P_offd_size);
-      HYPRE_Int *new_end = HYPRE_ONEDPL_CALL(std::unique, P_colids, P_colids + P_offd_size);
+#if defined(NALU_HYPRE_USING_SYCL)
+      NALU_HYPRE_ONEDPL_CALL(std::sort, P_colids, P_colids + P_offd_size);
+      NALU_HYPRE_Int *new_end = NALU_HYPRE_ONEDPL_CALL(std::unique, P_colids, P_colids + P_offd_size);
 #else
-      HYPRE_THRUST_CALL(sort, P_colids, P_colids + P_offd_size);
-      HYPRE_Int *new_end = HYPRE_THRUST_CALL(unique, P_colids, P_colids + P_offd_size);
+      NALU_HYPRE_THRUST_CALL(sort, P_colids, P_colids + P_offd_size);
+      NALU_HYPRE_Int *new_end = NALU_HYPRE_THRUST_CALL(unique, P_colids, P_colids + P_offd_size);
 #endif
 
       num_cols_P_offd = new_end - P_colids;
@@ -372,46 +372,46 @@ hypre_BoomerAMGBuildDirInterpDevice( hypre_ParCSRMatrix   *A,
       /* an enumeration of P's columns 0,1,... at the corresponding locations in P_marker. */
       /* P_marker[num_cols_A_offd] will contain num_cols_P_offd, so sum reduction above could  */
       /* have been replaced by reading the last element of P_marker. */
-#if defined(HYPRE_USING_SYCL)
-      HYPRE_ONEDPL_CALL(std::exclusive_scan, P_marker, P_marker + num_cols_A_offd, P_colids, 0);
+#if defined(NALU_HYPRE_USING_SYCL)
+      NALU_HYPRE_ONEDPL_CALL(std::exclusive_scan, P_marker, P_marker + num_cols_A_offd, P_colids, 0);
 #else
-      HYPRE_THRUST_CALL(exclusive_scan, P_marker, P_marker + num_cols_A_offd, P_colids);
+      NALU_HYPRE_THRUST_CALL(exclusive_scan, P_marker, P_marker + num_cols_A_offd, P_colids);
 #endif
       /* Example: P_marker becomes [0,0,1,1,1,2] so that P_marker[1]=0, P_marker[4]=1  */
 
       /* Do the re-enumeration, P_offd_j are mapped, using P_marker as map  */
-#if defined(HYPRE_USING_SYCL)
+#if defined(NALU_HYPRE_USING_SYCL)
       hypreSycl_gather(P_offd_j, P_offd_j + P_offd_size, P_colids, P_offd_j);
 #else
-      HYPRE_THRUST_CALL(gather, P_offd_j, P_offd_j + P_offd_size, P_colids, P_offd_j);
+      NALU_HYPRE_THRUST_CALL(gather, P_offd_j, P_offd_j + P_offd_size, P_colids, P_offd_j);
 #endif
 
       /* Create and define array tmp_map_offd. This array is the inverse of the P_marker mapping, */
       /* Example: num_cols_P_offd=2, tmp_map_offd[0] = 1, tmp_map_offd[1]=4  */
       /* P_colids is large enough to hold */
-#if defined(HYPRE_USING_SYCL)
-      oneapi::dpl::counting_iterator<HYPRE_Int> count(0);
+#if defined(NALU_HYPRE_USING_SYCL)
+      oneapi::dpl::counting_iterator<NALU_HYPRE_Int> count(0);
       new_end = hypreSycl_copy_if( count,
                                    count + num_cols_A_offd,
                                    P_marker,
                                    P_colids,
       [] (const auto & x) { return x; } );
 #else
-      new_end = HYPRE_THRUST_CALL(copy_if,
+      new_end = NALU_HYPRE_THRUST_CALL(copy_if,
                                   thrust::make_counting_iterator(0),
                                   thrust::make_counting_iterator(num_cols_A_offd),
                                   P_marker,
                                   P_colids,
-                                  thrust::identity<HYPRE_Int>());
+                                  thrust::identity<NALU_HYPRE_Int>());
 #endif
       hypre_assert(new_end - P_colids == num_cols_P_offd);
 
-      tmp_map_offd_h = hypre_TAlloc(HYPRE_Int, num_cols_P_offd, HYPRE_MEMORY_HOST);
-      hypre_TMemcpy(tmp_map_offd_h, P_colids, HYPRE_Int, num_cols_P_offd, HYPRE_MEMORY_HOST,
-                    HYPRE_MEMORY_DEVICE);
+      tmp_map_offd_h = hypre_TAlloc(NALU_HYPRE_Int, num_cols_P_offd, NALU_HYPRE_MEMORY_HOST);
+      hypre_TMemcpy(tmp_map_offd_h, P_colids, NALU_HYPRE_Int, num_cols_P_offd, NALU_HYPRE_MEMORY_HOST,
+                    NALU_HYPRE_MEMORY_DEVICE);
 
-      hypre_TFree(P_colids, HYPRE_MEMORY_DEVICE);
-      hypre_TFree(P_marker, HYPRE_MEMORY_DEVICE);
+      hypre_TFree(P_colids, NALU_HYPRE_MEMORY_DEVICE);
+      hypre_TFree(P_marker, NALU_HYPRE_MEMORY_DEVICE);
    }
 
    /* 8. P_offd_j now has a 0,1,2,3... local column index enumeration. */
@@ -419,23 +419,23 @@ hypre_BoomerAMGBuildDirInterpDevice( hypre_ParCSRMatrix   *A,
    /*    Below routine is in parcsr_ls/par_rap_communication.c. It sets col_map_offd in P, */
    /*    comm_pkg in P, and perhaps more members of P ??? */
 
-   fine_to_coarse_h = hypre_TAlloc(HYPRE_Int, n_fine, HYPRE_MEMORY_HOST);
-   hypre_TMemcpy(fine_to_coarse_h, fine_to_coarse_d, HYPRE_Int, n_fine, HYPRE_MEMORY_HOST,
-                 HYPRE_MEMORY_DEVICE);
+   fine_to_coarse_h = hypre_TAlloc(NALU_HYPRE_Int, n_fine, NALU_HYPRE_MEMORY_HOST);
+   hypre_TMemcpy(fine_to_coarse_h, fine_to_coarse_d, NALU_HYPRE_Int, n_fine, NALU_HYPRE_MEMORY_HOST,
+                 NALU_HYPRE_MEMORY_DEVICE);
 
-   hypre_ParCSRMatrixColMapOffd(P) = hypre_CTAlloc(HYPRE_BigInt, num_cols_P_offd, HYPRE_MEMORY_HOST);
+   hypre_ParCSRMatrixColMapOffd(P) = hypre_CTAlloc(NALU_HYPRE_BigInt, num_cols_P_offd, NALU_HYPRE_MEMORY_HOST);
    hypre_CSRMatrixNumCols(P_offd)  = num_cols_P_offd;
 
    hypre_GetCommPkgRTFromCommPkgA(P, A, fine_to_coarse_h, tmp_map_offd_h);
 
    *P_ptr = P;
 
-   hypre_TFree(CF_marker_offd,   HYPRE_MEMORY_DEVICE);
-   hypre_TFree(dof_func_offd,    HYPRE_MEMORY_DEVICE);
-   hypre_TFree(int_buf_data,     HYPRE_MEMORY_DEVICE);
-   hypre_TFree(fine_to_coarse_d, HYPRE_MEMORY_DEVICE);
-   hypre_TFree(fine_to_coarse_h, HYPRE_MEMORY_HOST);
-   hypre_TFree(tmp_map_offd_h,   HYPRE_MEMORY_HOST);
+   hypre_TFree(CF_marker_offd,   NALU_HYPRE_MEMORY_DEVICE);
+   hypre_TFree(dof_func_offd,    NALU_HYPRE_MEMORY_DEVICE);
+   hypre_TFree(int_buf_data,     NALU_HYPRE_MEMORY_DEVICE);
+   hypre_TFree(fine_to_coarse_d, NALU_HYPRE_MEMORY_DEVICE);
+   hypre_TFree(fine_to_coarse_h, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(tmp_map_offd_h,   NALU_HYPRE_MEMORY_HOST);
 
    return hypre_error_flag;
 }
@@ -444,18 +444,18 @@ hypre_BoomerAMGBuildDirInterpDevice( hypre_ParCSRMatrix   *A,
 /*-----------------------------------------------------------------------*/
 __global__ void
 hypre_BoomerAMGBuildDirInterp_getnnz( hypre_DeviceItem &item,
-                                      HYPRE_Int  nr_of_rows,
-                                      HYPRE_Int *S_diag_i,
-                                      HYPRE_Int *S_diag_j,
-                                      HYPRE_Int *S_offd_i,
-                                      HYPRE_Int *S_offd_j,
-                                      HYPRE_Int *CF_marker,
-                                      HYPRE_Int *CF_marker_offd,
-                                      HYPRE_Int  num_functions,
-                                      HYPRE_Int *dof_func,
-                                      HYPRE_Int *dof_func_offd,
-                                      HYPRE_Int *P_diag_i,
-                                      HYPRE_Int *P_offd_i)
+                                      NALU_HYPRE_Int  nr_of_rows,
+                                      NALU_HYPRE_Int *S_diag_i,
+                                      NALU_HYPRE_Int *S_diag_j,
+                                      NALU_HYPRE_Int *S_offd_i,
+                                      NALU_HYPRE_Int *S_offd_j,
+                                      NALU_HYPRE_Int *CF_marker,
+                                      NALU_HYPRE_Int *CF_marker_offd,
+                                      NALU_HYPRE_Int  num_functions,
+                                      NALU_HYPRE_Int *dof_func,
+                                      NALU_HYPRE_Int *dof_func_offd,
+                                      NALU_HYPRE_Int *P_diag_i,
+                                      NALU_HYPRE_Int *P_offd_i)
 {
    /*-----------------------------------------------------------------------*/
    /* Determine size of interpolation matrix, P
@@ -481,22 +481,22 @@ hypre_BoomerAMGBuildDirInterp_getnnz( hypre_DeviceItem &item,
     */
    /*-----------------------------------------------------------------------*/
 
-   HYPRE_Int i = hypre_gpu_get_grid_warp_id<1, 1>(item);
+   NALU_HYPRE_Int i = hypre_gpu_get_grid_warp_id<1, 1>(item);
 
    if (i >= nr_of_rows)
    {
       return;
    }
 
-   HYPRE_Int p = 0, q = 0, dof_func_i = 0;
-   HYPRE_Int jPd = 0, jPo = 0;
-   HYPRE_Int lane = hypre_gpu_get_lane_id<1>(item);
+   NALU_HYPRE_Int p = 0, q = 0, dof_func_i = 0;
+   NALU_HYPRE_Int jPd = 0, jPo = 0;
+   NALU_HYPRE_Int lane = hypre_gpu_get_lane_id<1>(item);
 
    if (lane == 0)
    {
       p = read_only_load(CF_marker + i);
    }
-   p = warp_shuffle_sync(item, HYPRE_WARP_FULL_MASK, p, 0);
+   p = warp_shuffle_sync(item, NALU_HYPRE_WARP_FULL_MASK, p, 0);
 
    /*--------------------------------------------------------------------
     *  If i is a C-point, interpolation is the identity.
@@ -521,7 +521,7 @@ hypre_BoomerAMGBuildDirInterp_getnnz( hypre_DeviceItem &item,
       {
          dof_func_i = read_only_load(&dof_func[i]);
       }
-      dof_func_i = warp_shuffle_sync(item, HYPRE_WARP_FULL_MASK, dof_func_i, 0);
+      dof_func_i = warp_shuffle_sync(item, NALU_HYPRE_WARP_FULL_MASK, dof_func_i, 0);
    }
 
    /* diag part */
@@ -529,14 +529,14 @@ hypre_BoomerAMGBuildDirInterp_getnnz( hypre_DeviceItem &item,
    {
       p = read_only_load(S_diag_i + i + lane);
    }
-   q = warp_shuffle_sync(item, HYPRE_WARP_FULL_MASK, p, 1);
-   p = warp_shuffle_sync(item, HYPRE_WARP_FULL_MASK, p, 0);
+   q = warp_shuffle_sync(item, NALU_HYPRE_WARP_FULL_MASK, p, 1);
+   p = warp_shuffle_sync(item, NALU_HYPRE_WARP_FULL_MASK, p, 0);
 
-   for (HYPRE_Int j = p + lane; warp_any_sync(item, HYPRE_WARP_FULL_MASK, j < q); j += HYPRE_WARP_SIZE)
+   for (NALU_HYPRE_Int j = p + lane; warp_any_sync(item, NALU_HYPRE_WARP_FULL_MASK, j < q); j += NALU_HYPRE_WARP_SIZE)
    {
       if (j < q)
       {
-         const HYPRE_Int col = read_only_load(&S_diag_j[j]);
+         const NALU_HYPRE_Int col = read_only_load(&S_diag_j[j]);
          if ( read_only_load(&CF_marker[col]) > 0 && (num_functions == 1 ||
                                                       read_only_load(&dof_func[col]) == dof_func_i) )
          {
@@ -551,15 +551,15 @@ hypre_BoomerAMGBuildDirInterp_getnnz( hypre_DeviceItem &item,
    {
       p = read_only_load(S_offd_i + i + lane);
    }
-   q = warp_shuffle_sync(item, HYPRE_WARP_FULL_MASK, p, 1);
-   p = warp_shuffle_sync(item, HYPRE_WARP_FULL_MASK, p, 0);
+   q = warp_shuffle_sync(item, NALU_HYPRE_WARP_FULL_MASK, p, 1);
+   p = warp_shuffle_sync(item, NALU_HYPRE_WARP_FULL_MASK, p, 0);
 
-   for (HYPRE_Int j = p + lane; warp_any_sync(item, HYPRE_WARP_FULL_MASK, j < q); j += HYPRE_WARP_SIZE)
+   for (NALU_HYPRE_Int j = p + lane; warp_any_sync(item, NALU_HYPRE_WARP_FULL_MASK, j < q); j += NALU_HYPRE_WARP_SIZE)
    {
       if (j < q)
       {
-         const HYPRE_Int tmp = read_only_load(&S_offd_j[j]);
-         const HYPRE_Int col = tmp;
+         const NALU_HYPRE_Int tmp = read_only_load(&S_offd_j[j]);
+         const NALU_HYPRE_Int col = tmp;
          if ( read_only_load(&CF_marker_offd[col]) > 0 && (num_functions == 1 ||
                                                            read_only_load(&dof_func_offd[col]) == dof_func_i) )
          {
@@ -580,27 +580,27 @@ hypre_BoomerAMGBuildDirInterp_getnnz( hypre_DeviceItem &item,
  *-----------------------------------------------------------------------*/
 __global__ void
 hypre_BoomerAMGBuildDirInterp_getcoef( hypre_DeviceItem &item,
-                                       HYPRE_Int   nr_of_rows,
-                                       HYPRE_Int  *A_diag_i,
-                                       HYPRE_Int  *A_diag_j,
-                                       HYPRE_Real *A_diag_data,
-                                       HYPRE_Int  *A_offd_i,
-                                       HYPRE_Int  *A_offd_j,
-                                       HYPRE_Real *A_offd_data,
-                                       HYPRE_Int  *Soc_diag_j,
-                                       HYPRE_Int  *Soc_offd_j,
-                                       HYPRE_Int  *CF_marker,
-                                       HYPRE_Int  *CF_marker_offd,
-                                       HYPRE_Int   num_functions,
-                                       HYPRE_Int  *dof_func,
-                                       HYPRE_Int  *dof_func_offd,
-                                       HYPRE_Int  *P_diag_i,
-                                       HYPRE_Int  *P_diag_j,
-                                       HYPRE_Real *P_diag_data,
-                                       HYPRE_Int  *P_offd_i,
-                                       HYPRE_Int  *P_offd_j,
-                                       HYPRE_Real *P_offd_data,
-                                       HYPRE_Int  *fine_to_coarse )
+                                       NALU_HYPRE_Int   nr_of_rows,
+                                       NALU_HYPRE_Int  *A_diag_i,
+                                       NALU_HYPRE_Int  *A_diag_j,
+                                       NALU_HYPRE_Real *A_diag_data,
+                                       NALU_HYPRE_Int  *A_offd_i,
+                                       NALU_HYPRE_Int  *A_offd_j,
+                                       NALU_HYPRE_Real *A_offd_data,
+                                       NALU_HYPRE_Int  *Soc_diag_j,
+                                       NALU_HYPRE_Int  *Soc_offd_j,
+                                       NALU_HYPRE_Int  *CF_marker,
+                                       NALU_HYPRE_Int  *CF_marker_offd,
+                                       NALU_HYPRE_Int   num_functions,
+                                       NALU_HYPRE_Int  *dof_func,
+                                       NALU_HYPRE_Int  *dof_func_offd,
+                                       NALU_HYPRE_Int  *P_diag_i,
+                                       NALU_HYPRE_Int  *P_diag_j,
+                                       NALU_HYPRE_Real *P_diag_data,
+                                       NALU_HYPRE_Int  *P_offd_i,
+                                       NALU_HYPRE_Int  *P_offd_j,
+                                       NALU_HYPRE_Real *P_offd_data,
+                                       NALU_HYPRE_Int  *fine_to_coarse )
 {
    /*-----------------------------------------------------------------------*/
    /* Compute interpolation matrix, P
@@ -624,22 +624,22 @@ hypre_BoomerAMGBuildDirInterp_getcoef( hypre_DeviceItem &item,
    */
    /*-----------------------------------------------------------------------*/
 
-   HYPRE_Int i = hypre_gpu_get_grid_warp_id<1, 1>(item);
+   NALU_HYPRE_Int i = hypre_gpu_get_grid_warp_id<1, 1>(item);
 
    if (i >= nr_of_rows)
    {
       return;
    }
 
-   HYPRE_Int lane = hypre_gpu_get_lane_id<1>(item);
+   NALU_HYPRE_Int lane = hypre_gpu_get_lane_id<1>(item);
 
-   HYPRE_Int k = 0, dof_func_i = 0;
+   NALU_HYPRE_Int k = 0, dof_func_i = 0;
 
    if (lane == 0)
    {
       k = read_only_load(CF_marker + i);
    }
-   k = warp_shuffle_sync(item, HYPRE_WARP_FULL_MASK, k, 0);
+   k = warp_shuffle_sync(item, NALU_HYPRE_WARP_FULL_MASK, k, 0);
 
    /*--------------------------------------------------------------------
     *  If i is a C-point, interpolation is the identity.
@@ -648,7 +648,7 @@ hypre_BoomerAMGBuildDirInterp_getcoef( hypre_DeviceItem &item,
    {
       if (lane == 0)
       {
-         const HYPRE_Int ind = read_only_load(&P_diag_i[i]);
+         const NALU_HYPRE_Int ind = read_only_load(&P_diag_i[i]);
          P_diag_j[ind]       = read_only_load(&fine_to_coarse[i]);
          P_diag_data[ind]    = 1.0;
       }
@@ -665,30 +665,30 @@ hypre_BoomerAMGBuildDirInterp_getcoef( hypre_DeviceItem &item,
       {
          dof_func_i = read_only_load(&dof_func[i]);
       }
-      dof_func_i = warp_shuffle_sync(item, HYPRE_WARP_FULL_MASK, dof_func_i, 0);
+      dof_func_i = warp_shuffle_sync(item, NALU_HYPRE_WARP_FULL_MASK, dof_func_i, 0);
    }
 
-   HYPRE_Real diagonal = 0.0, sum_N_pos = 0.0, sum_N_neg = 0.0, sum_P_pos = 0.0, sum_P_neg = 0.0;
+   NALU_HYPRE_Real diagonal = 0.0, sum_N_pos = 0.0, sum_N_neg = 0.0, sum_P_pos = 0.0, sum_P_neg = 0.0;
 
    /* diag part */
-   HYPRE_Int p_diag_A = 0, q_diag_A, p_diag_P = 0, q_diag_P;
+   NALU_HYPRE_Int p_diag_A = 0, q_diag_A, p_diag_P = 0, q_diag_P;
    if (lane < 2)
    {
       p_diag_A = read_only_load(A_diag_i + i + lane);
       p_diag_P = read_only_load(P_diag_i + i + lane);
    }
-   q_diag_A = warp_shuffle_sync(item, HYPRE_WARP_FULL_MASK, p_diag_A, 1);
-   p_diag_A = warp_shuffle_sync(item, HYPRE_WARP_FULL_MASK, p_diag_A, 0);
-   q_diag_P = warp_shuffle_sync(item, HYPRE_WARP_FULL_MASK, p_diag_P, 1);
-   p_diag_P = warp_shuffle_sync(item, HYPRE_WARP_FULL_MASK, p_diag_P, 0);
+   q_diag_A = warp_shuffle_sync(item, NALU_HYPRE_WARP_FULL_MASK, p_diag_A, 1);
+   p_diag_A = warp_shuffle_sync(item, NALU_HYPRE_WARP_FULL_MASK, p_diag_A, 0);
+   q_diag_P = warp_shuffle_sync(item, NALU_HYPRE_WARP_FULL_MASK, p_diag_P, 1);
+   p_diag_P = warp_shuffle_sync(item, NALU_HYPRE_WARP_FULL_MASK, p_diag_P, 0);
 
    k = p_diag_P;
-   for (HYPRE_Int j = p_diag_A + lane; warp_any_sync(item, HYPRE_WARP_FULL_MASK, j < q_diag_A);
-        j += HYPRE_WARP_SIZE)
+   for (NALU_HYPRE_Int j = p_diag_A + lane; warp_any_sync(item, NALU_HYPRE_WARP_FULL_MASK, j < q_diag_A);
+        j += NALU_HYPRE_WARP_SIZE)
    {
-      HYPRE_Int col, sum, pos;
-      HYPRE_Int is_SC = 0; /* if is a Strong-C */
-      HYPRE_Complex val;
+      NALU_HYPRE_Int col, sum, pos;
+      NALU_HYPRE_Int is_SC = 0; /* if is a Strong-C */
+      NALU_HYPRE_Complex val;
 
       if (j < q_diag_A)
       {
@@ -740,24 +740,24 @@ hypre_BoomerAMGBuildDirInterp_getcoef( hypre_DeviceItem &item,
    hypre_device_assert(k == q_diag_P);
 
    /* offd part */
-   HYPRE_Int p_offd_A = 0, q_offd_A, p_offd_P = 0, q_offd_P;
+   NALU_HYPRE_Int p_offd_A = 0, q_offd_A, p_offd_P = 0, q_offd_P;
    if (lane < 2)
    {
       p_offd_A = read_only_load(A_offd_i + i + lane);
       p_offd_P = read_only_load(P_offd_i + i + lane);
    }
-   q_offd_A = warp_shuffle_sync(item, HYPRE_WARP_FULL_MASK, p_offd_A, 1);
-   p_offd_A = warp_shuffle_sync(item, HYPRE_WARP_FULL_MASK, p_offd_A, 0);
-   q_offd_P = warp_shuffle_sync(item, HYPRE_WARP_FULL_MASK, p_offd_P, 1);
-   p_offd_P = warp_shuffle_sync(item, HYPRE_WARP_FULL_MASK, p_offd_P, 0);
+   q_offd_A = warp_shuffle_sync(item, NALU_HYPRE_WARP_FULL_MASK, p_offd_A, 1);
+   p_offd_A = warp_shuffle_sync(item, NALU_HYPRE_WARP_FULL_MASK, p_offd_A, 0);
+   q_offd_P = warp_shuffle_sync(item, NALU_HYPRE_WARP_FULL_MASK, p_offd_P, 1);
+   p_offd_P = warp_shuffle_sync(item, NALU_HYPRE_WARP_FULL_MASK, p_offd_P, 0);
 
    k = p_offd_P;
-   for (HYPRE_Int j = p_offd_A + lane; warp_any_sync(item, HYPRE_WARP_FULL_MASK, j < q_offd_A);
-        j += HYPRE_WARP_SIZE)
+   for (NALU_HYPRE_Int j = p_offd_A + lane; warp_any_sync(item, NALU_HYPRE_WARP_FULL_MASK, j < q_offd_A);
+        j += NALU_HYPRE_WARP_SIZE)
    {
-      HYPRE_Int col, sum, pos;
-      HYPRE_Int is_SC = 0; /* if is a Strong-C */
-      HYPRE_Complex val;
+      NALU_HYPRE_Int col, sum, pos;
+      NALU_HYPRE_Int is_SC = 0; /* if is a Strong-C */
+      NALU_HYPRE_Complex val;
 
       if (j < q_offd_A)
       {
@@ -810,7 +810,7 @@ hypre_BoomerAMGBuildDirInterp_getcoef( hypre_DeviceItem &item,
    sum_P_pos = warp_allreduce_sum(item, sum_P_pos);
    sum_P_neg = warp_allreduce_sum(item, sum_P_neg);
 
-   HYPRE_Complex alfa = 1.0, beta = 1.0;
+   NALU_HYPRE_Complex alfa = 1.0, beta = 1.0;
 
    if (sum_P_neg)
    {
@@ -822,8 +822,8 @@ hypre_BoomerAMGBuildDirInterp_getcoef( hypre_DeviceItem &item,
       beta = sum_N_pos / (sum_P_pos * diagonal);
    }
 
-   for (HYPRE_Int j = p_diag_P + lane; warp_any_sync(item, HYPRE_WARP_FULL_MASK, j < q_diag_P);
-        j += HYPRE_WARP_SIZE)
+   for (NALU_HYPRE_Int j = p_diag_P + lane; warp_any_sync(item, NALU_HYPRE_WARP_FULL_MASK, j < q_diag_P);
+        j += NALU_HYPRE_WARP_SIZE)
    {
       /* if (P_diag_data[j] > 0.0)
             P_diag_data[j] *= -beta;
@@ -835,8 +835,8 @@ hypre_BoomerAMGBuildDirInterp_getcoef( hypre_DeviceItem &item,
       }
    }
 
-   for (HYPRE_Int j = p_offd_P + lane; warp_any_sync(item, HYPRE_WARP_FULL_MASK, j < q_offd_P);
-        j += HYPRE_WARP_SIZE)
+   for (NALU_HYPRE_Int j = p_offd_P + lane; warp_any_sync(item, NALU_HYPRE_WARP_FULL_MASK, j < q_offd_P);
+        j += NALU_HYPRE_WARP_SIZE)
    {
       /* if (P_offd_data[indp]> 0)
             P_offd_data[indp] *= -beta;
@@ -853,27 +853,27 @@ hypre_BoomerAMGBuildDirInterp_getcoef( hypre_DeviceItem &item,
  *-----------------------------------------------------------------------*/
 __global__ void
 hypre_BoomerAMGBuildDirInterp_getcoef_v2( hypre_DeviceItem &item,
-                                          HYPRE_Int   nr_of_rows,
-                                          HYPRE_Int  *A_diag_i,
-                                          HYPRE_Int  *A_diag_j,
-                                          HYPRE_Real *A_diag_data,
-                                          HYPRE_Int  *A_offd_i,
-                                          HYPRE_Int  *A_offd_j,
-                                          HYPRE_Real *A_offd_data,
-                                          HYPRE_Int  *Soc_diag_j,
-                                          HYPRE_Int  *Soc_offd_j,
-                                          HYPRE_Int  *CF_marker,
-                                          HYPRE_Int  *CF_marker_offd,
-                                          HYPRE_Int   num_functions,
-                                          HYPRE_Int  *dof_func,
-                                          HYPRE_Int  *dof_func_offd,
-                                          HYPRE_Int  *P_diag_i,
-                                          HYPRE_Int  *P_diag_j,
-                                          HYPRE_Real *P_diag_data,
-                                          HYPRE_Int  *P_offd_i,
-                                          HYPRE_Int  *P_offd_j,
-                                          HYPRE_Real *P_offd_data,
-                                          HYPRE_Int  *fine_to_coarse )
+                                          NALU_HYPRE_Int   nr_of_rows,
+                                          NALU_HYPRE_Int  *A_diag_i,
+                                          NALU_HYPRE_Int  *A_diag_j,
+                                          NALU_HYPRE_Real *A_diag_data,
+                                          NALU_HYPRE_Int  *A_offd_i,
+                                          NALU_HYPRE_Int  *A_offd_j,
+                                          NALU_HYPRE_Real *A_offd_data,
+                                          NALU_HYPRE_Int  *Soc_diag_j,
+                                          NALU_HYPRE_Int  *Soc_offd_j,
+                                          NALU_HYPRE_Int  *CF_marker,
+                                          NALU_HYPRE_Int  *CF_marker_offd,
+                                          NALU_HYPRE_Int   num_functions,
+                                          NALU_HYPRE_Int  *dof_func,
+                                          NALU_HYPRE_Int  *dof_func_offd,
+                                          NALU_HYPRE_Int  *P_diag_i,
+                                          NALU_HYPRE_Int  *P_diag_j,
+                                          NALU_HYPRE_Real *P_diag_data,
+                                          NALU_HYPRE_Int  *P_offd_i,
+                                          NALU_HYPRE_Int  *P_offd_j,
+                                          NALU_HYPRE_Real *P_offd_data,
+                                          NALU_HYPRE_Int  *fine_to_coarse )
 {
    /*-----------------------------------------------------------------------*/
    /* Compute interpolation matrix, P
@@ -897,22 +897,22 @@ hypre_BoomerAMGBuildDirInterp_getcoef_v2( hypre_DeviceItem &item,
    */
    /*-----------------------------------------------------------------------*/
 
-   HYPRE_Int i = hypre_gpu_get_grid_warp_id<1, 1>(item);
+   NALU_HYPRE_Int i = hypre_gpu_get_grid_warp_id<1, 1>(item);
 
    if (i >= nr_of_rows)
    {
       return;
    }
 
-   HYPRE_Int lane = hypre_gpu_get_lane_id<1>(item);
+   NALU_HYPRE_Int lane = hypre_gpu_get_lane_id<1>(item);
 
-   HYPRE_Int k = 0, dof_func_i = 0;
+   NALU_HYPRE_Int k = 0, dof_func_i = 0;
 
    if (lane == 0)
    {
       k = read_only_load(CF_marker + i);
    }
-   k = warp_shuffle_sync(item, HYPRE_WARP_FULL_MASK, k, 0);
+   k = warp_shuffle_sync(item, NALU_HYPRE_WARP_FULL_MASK, k, 0);
 
    /*--------------------------------------------------------------------
     *  If i is a C-point, interpolation is the identity.
@@ -921,7 +921,7 @@ hypre_BoomerAMGBuildDirInterp_getcoef_v2( hypre_DeviceItem &item,
    {
       if (lane == 0)
       {
-         const HYPRE_Int ind = read_only_load(&P_diag_i[i]);
+         const NALU_HYPRE_Int ind = read_only_load(&P_diag_i[i]);
          P_diag_j[ind]       = read_only_load(&fine_to_coarse[i]);
          P_diag_data[ind]    = 1.0;
       }
@@ -938,30 +938,30 @@ hypre_BoomerAMGBuildDirInterp_getcoef_v2( hypre_DeviceItem &item,
       {
          dof_func_i = read_only_load(&dof_func[i]);
       }
-      dof_func_i = warp_shuffle_sync(item, HYPRE_WARP_FULL_MASK, dof_func_i, 0);
+      dof_func_i = warp_shuffle_sync(item, NALU_HYPRE_WARP_FULL_MASK, dof_func_i, 0);
    }
 
-   HYPRE_Real diagonal = 0.0, sum_F = 0.0;
+   NALU_HYPRE_Real diagonal = 0.0, sum_F = 0.0;
 
    /* diag part */
-   HYPRE_Int p_diag_A = 0, q_diag_A, p_diag_P = 0, q_diag_P;
+   NALU_HYPRE_Int p_diag_A = 0, q_diag_A, p_diag_P = 0, q_diag_P;
    if (lane < 2)
    {
       p_diag_A = read_only_load(A_diag_i + i + lane);
       p_diag_P = read_only_load(P_diag_i + i + lane);
    }
-   q_diag_A = warp_shuffle_sync(item, HYPRE_WARP_FULL_MASK, p_diag_A, 1);
-   p_diag_A = warp_shuffle_sync(item, HYPRE_WARP_FULL_MASK, p_diag_A, 0);
-   q_diag_P = warp_shuffle_sync(item, HYPRE_WARP_FULL_MASK, p_diag_P, 1);
-   p_diag_P = warp_shuffle_sync(item, HYPRE_WARP_FULL_MASK, p_diag_P, 0);
+   q_diag_A = warp_shuffle_sync(item, NALU_HYPRE_WARP_FULL_MASK, p_diag_A, 1);
+   p_diag_A = warp_shuffle_sync(item, NALU_HYPRE_WARP_FULL_MASK, p_diag_A, 0);
+   q_diag_P = warp_shuffle_sync(item, NALU_HYPRE_WARP_FULL_MASK, p_diag_P, 1);
+   p_diag_P = warp_shuffle_sync(item, NALU_HYPRE_WARP_FULL_MASK, p_diag_P, 0);
 
    k = p_diag_P;
-   for (HYPRE_Int j = p_diag_A + lane; warp_any_sync(item, HYPRE_WARP_FULL_MASK, j < q_diag_A);
-        j += HYPRE_WARP_SIZE)
+   for (NALU_HYPRE_Int j = p_diag_A + lane; warp_any_sync(item, NALU_HYPRE_WARP_FULL_MASK, j < q_diag_A);
+        j += NALU_HYPRE_WARP_SIZE)
    {
-      HYPRE_Int col, sum, pos;
-      HYPRE_Int is_SC = 0; /* if is a Strong-C */
-      HYPRE_Complex val;
+      NALU_HYPRE_Int col, sum, pos;
+      NALU_HYPRE_Int is_SC = 0; /* if is a Strong-C */
+      NALU_HYPRE_Complex val;
 
       if (j < q_diag_A)
       {
@@ -1005,24 +1005,24 @@ hypre_BoomerAMGBuildDirInterp_getcoef_v2( hypre_DeviceItem &item,
    hypre_device_assert(k == q_diag_P);
 
    /* offd part */
-   HYPRE_Int p_offd_A = 0, q_offd_A, p_offd_P = 0, q_offd_P;
+   NALU_HYPRE_Int p_offd_A = 0, q_offd_A, p_offd_P = 0, q_offd_P;
    if (lane < 2)
    {
       p_offd_A = read_only_load(A_offd_i + i + lane);
       p_offd_P = read_only_load(P_offd_i + i + lane);
    }
-   q_offd_A = warp_shuffle_sync(item, HYPRE_WARP_FULL_MASK, p_offd_A, 1);
-   p_offd_A = warp_shuffle_sync(item, HYPRE_WARP_FULL_MASK, p_offd_A, 0);
-   q_offd_P = warp_shuffle_sync(item, HYPRE_WARP_FULL_MASK, p_offd_P, 1);
-   p_offd_P = warp_shuffle_sync(item, HYPRE_WARP_FULL_MASK, p_offd_P, 0);
+   q_offd_A = warp_shuffle_sync(item, NALU_HYPRE_WARP_FULL_MASK, p_offd_A, 1);
+   p_offd_A = warp_shuffle_sync(item, NALU_HYPRE_WARP_FULL_MASK, p_offd_A, 0);
+   q_offd_P = warp_shuffle_sync(item, NALU_HYPRE_WARP_FULL_MASK, p_offd_P, 1);
+   p_offd_P = warp_shuffle_sync(item, NALU_HYPRE_WARP_FULL_MASK, p_offd_P, 0);
 
    k = p_offd_P;
-   for (HYPRE_Int j = p_offd_A + lane; warp_any_sync(item, HYPRE_WARP_FULL_MASK, j < q_offd_A);
-        j += HYPRE_WARP_SIZE)
+   for (NALU_HYPRE_Int j = p_offd_A + lane; warp_any_sync(item, NALU_HYPRE_WARP_FULL_MASK, j < q_offd_A);
+        j += NALU_HYPRE_WARP_SIZE)
    {
-      HYPRE_Int col, sum, pos;
-      HYPRE_Int is_SC = 0; /* if is a Strong-C */
-      HYPRE_Complex val;
+      NALU_HYPRE_Int col, sum, pos;
+      NALU_HYPRE_Int is_SC = 0; /* if is a Strong-C */
+      NALU_HYPRE_Complex val;
 
       if (j < q_offd_A)
       {
@@ -1064,10 +1064,10 @@ hypre_BoomerAMGBuildDirInterp_getcoef_v2( hypre_DeviceItem &item,
    diagonal  = warp_allreduce_sum(item, diagonal);
    sum_F     = warp_allreduce_sum(item, sum_F);
 
-   HYPRE_Complex beta = sum_F / (q_diag_P - p_diag_P + q_offd_P - p_offd_P);
+   NALU_HYPRE_Complex beta = sum_F / (q_diag_P - p_diag_P + q_offd_P - p_offd_P);
 
-   for (HYPRE_Int j = p_diag_P + lane; warp_any_sync(item, HYPRE_WARP_FULL_MASK, j < q_diag_P);
-        j += HYPRE_WARP_SIZE)
+   for (NALU_HYPRE_Int j = p_diag_P + lane; warp_any_sync(item, NALU_HYPRE_WARP_FULL_MASK, j < q_diag_P);
+        j += NALU_HYPRE_WARP_SIZE)
    {
       /* if (P_diag_data[j] > 0.0)
             P_diag_data[j] *= -beta;
@@ -1079,8 +1079,8 @@ hypre_BoomerAMGBuildDirInterp_getcoef_v2( hypre_DeviceItem &item,
       }
    }
 
-   for (HYPRE_Int j = p_offd_P + lane; warp_any_sync(item, HYPRE_WARP_FULL_MASK, j < q_offd_P);
-        j += HYPRE_WARP_SIZE)
+   for (NALU_HYPRE_Int j = p_offd_P + lane; warp_any_sync(item, NALU_HYPRE_WARP_FULL_MASK, j < q_offd_P);
+        j += NALU_HYPRE_WARP_SIZE)
    {
       /* if (P_offd_data[indp]> 0)
             P_offd_data[indp] *= -beta;
@@ -1093,14 +1093,14 @@ hypre_BoomerAMGBuildDirInterp_getcoef_v2( hypre_DeviceItem &item,
    }
 }
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_BoomerAMGBuildInterpOnePntDevice( hypre_ParCSRMatrix  *A,
-                                        HYPRE_Int           *CF_marker,
+                                        NALU_HYPRE_Int           *CF_marker,
                                         hypre_ParCSRMatrix  *S,
-                                        HYPRE_BigInt        *num_cpts_global,
-                                        HYPRE_Int            num_functions,
-                                        HYPRE_Int           *dof_func,
-                                        HYPRE_Int            debug_flag,
+                                        NALU_HYPRE_BigInt        *num_cpts_global,
+                                        NALU_HYPRE_Int            num_functions,
+                                        NALU_HYPRE_Int           *dof_func,
+                                        NALU_HYPRE_Int            debug_flag,
                                         hypre_ParCSRMatrix **P_ptr)
 {
    MPI_Comm                 comm     = hypre_ParCSRMatrixComm(A);
@@ -1108,16 +1108,16 @@ hypre_BoomerAMGBuildInterpOnePntDevice( hypre_ParCSRMatrix  *A,
    hypre_ParCSRCommHandle  *comm_handle;
 
    hypre_CSRMatrix         *A_diag          = hypre_ParCSRMatrixDiag(A);
-   HYPRE_Int               *A_diag_i        = hypre_CSRMatrixI(A_diag);
-   HYPRE_Int               *A_strong_diag_j = hypre_ParCSRMatrixSocDiagJ(S);
-   HYPRE_Complex           *A_diag_a        = hypre_CSRMatrixData(A_diag);
+   NALU_HYPRE_Int               *A_diag_i        = hypre_CSRMatrixI(A_diag);
+   NALU_HYPRE_Int               *A_strong_diag_j = hypre_ParCSRMatrixSocDiagJ(S);
+   NALU_HYPRE_Complex           *A_diag_a        = hypre_CSRMatrixData(A_diag);
 
    hypre_CSRMatrix         *A_offd          = hypre_ParCSRMatrixOffd(A);
-   HYPRE_Int               *A_offd_i        = hypre_CSRMatrixI(A_offd);
-   HYPRE_Int               *A_strong_offd_j = hypre_ParCSRMatrixSocOffdJ(S);
-   HYPRE_Complex           *A_offd_a        = hypre_CSRMatrixData(A_offd);
+   NALU_HYPRE_Int               *A_offd_i        = hypre_CSRMatrixI(A_offd);
+   NALU_HYPRE_Int               *A_strong_offd_j = hypre_ParCSRMatrixSocOffdJ(S);
+   NALU_HYPRE_Complex           *A_offd_a        = hypre_CSRMatrixData(A_offd);
 
-   HYPRE_Int                num_cols_A_offd = hypre_CSRMatrixNumCols(A_offd);
+   NALU_HYPRE_Int                num_cols_A_offd = hypre_CSRMatrixNumCols(A_offd);
 
    /* Interpolation matrix P */
    hypre_ParCSRMatrix      *P;
@@ -1125,60 +1125,60 @@ hypre_BoomerAMGBuildInterpOnePntDevice( hypre_ParCSRMatrix  *A,
    hypre_CSRMatrix    *P_diag;
    hypre_CSRMatrix    *P_offd;
    /* arrays */
-   HYPRE_Real         *P_diag_data;
-   HYPRE_Int          *P_diag_i;
-   HYPRE_Int          *P_diag_j;
-   HYPRE_Int          *P_diag_j_temp;
-   HYPRE_Int          *P_diag_j_temp_compressed;
-   HYPRE_Real         *P_offd_data;
-   HYPRE_Int          *P_offd_i;
-   HYPRE_Int          *P_offd_j;
-   HYPRE_Int          *P_offd_j_temp;
-   HYPRE_Int          *P_offd_j_temp_compressed;
-   HYPRE_Int           num_cols_P_offd;
-   HYPRE_BigInt       *col_map_offd_P = NULL;
-   HYPRE_BigInt       *col_map_offd_P_device = NULL;
+   NALU_HYPRE_Real         *P_diag_data;
+   NALU_HYPRE_Int          *P_diag_i;
+   NALU_HYPRE_Int          *P_diag_j;
+   NALU_HYPRE_Int          *P_diag_j_temp;
+   NALU_HYPRE_Int          *P_diag_j_temp_compressed;
+   NALU_HYPRE_Real         *P_offd_data;
+   NALU_HYPRE_Int          *P_offd_i;
+   NALU_HYPRE_Int          *P_offd_j;
+   NALU_HYPRE_Int          *P_offd_j_temp;
+   NALU_HYPRE_Int          *P_offd_j_temp_compressed;
+   NALU_HYPRE_Int           num_cols_P_offd;
+   NALU_HYPRE_BigInt       *col_map_offd_P = NULL;
+   NALU_HYPRE_BigInt       *col_map_offd_P_device = NULL;
    /* CF marker off-diag part */
-   HYPRE_Int          *CF_marker_offd = NULL;
+   NALU_HYPRE_Int          *CF_marker_offd = NULL;
    /* nnz */
-   HYPRE_Int           nnz_diag, nnz_offd;
+   NALU_HYPRE_Int           nnz_diag, nnz_offd;
    /* local size */
-   HYPRE_Int           n_fine = hypre_CSRMatrixNumRows(A_diag);
+   NALU_HYPRE_Int           n_fine = hypre_CSRMatrixNumRows(A_diag);
    /* fine to coarse mapping: diag part and offd part */
-   HYPRE_Int          *fine_to_coarse;
-   HYPRE_BigInt       *fine_to_coarse_offd = NULL;
-   HYPRE_BigInt        total_global_cpts, my_first_cpt;
-   HYPRE_Int           my_id, num_procs;
-   HYPRE_Int           num_sends;
-   HYPRE_Int          *int_buf_data = NULL;
-   HYPRE_BigInt       *big_int_buf_data = NULL;
-   //HYPRE_Int col_start = hypre_ParCSRMatrixFirstRowIndex(A);
-   //HYPRE_Int col_end   = col_start + n_fine;
+   NALU_HYPRE_Int          *fine_to_coarse;
+   NALU_HYPRE_BigInt       *fine_to_coarse_offd = NULL;
+   NALU_HYPRE_BigInt        total_global_cpts, my_first_cpt;
+   NALU_HYPRE_Int           my_id, num_procs;
+   NALU_HYPRE_Int           num_sends;
+   NALU_HYPRE_Int          *int_buf_data = NULL;
+   NALU_HYPRE_BigInt       *big_int_buf_data = NULL;
+   //NALU_HYPRE_Int col_start = hypre_ParCSRMatrixFirstRowIndex(A);
+   //NALU_HYPRE_Int col_end   = col_start + n_fine;
    /* arrays for compressing P_diag and P_offd col indices and data */
-   HYPRE_Int          *diag_compress_marker;
-   HYPRE_Int          *offd_compress_marker;
+   NALU_HYPRE_Int          *diag_compress_marker;
+   NALU_HYPRE_Int          *offd_compress_marker;
 
    hypre_MPI_Comm_size(comm, &num_procs);
    hypre_MPI_Comm_rank(comm, &my_id);
 
    my_first_cpt = num_cpts_global[0];
    if (my_id == (num_procs - 1)) { total_global_cpts = num_cpts_global[1]; }
-   hypre_MPI_Bcast(&total_global_cpts, 1, HYPRE_MPI_BIG_INT, num_procs - 1, comm);
+   hypre_MPI_Bcast(&total_global_cpts, 1, NALU_HYPRE_MPI_BIG_INT, num_procs - 1, comm);
 
    /* fine to coarse mapping */
-   fine_to_coarse = hypre_TAlloc(HYPRE_Int, n_fine, HYPRE_MEMORY_DEVICE);
-#if defined(HYPRE_USING_SYCL)
-   HYPRE_ONEDPL_CALL( std::exclusive_scan,
-                      oneapi::dpl::make_transform_iterator(CF_marker,          is_nonnegative<HYPRE_Int>()),
-                      oneapi::dpl::make_transform_iterator(CF_marker + n_fine, is_nonnegative<HYPRE_Int>()),
+   fine_to_coarse = hypre_TAlloc(NALU_HYPRE_Int, n_fine, NALU_HYPRE_MEMORY_DEVICE);
+#if defined(NALU_HYPRE_USING_SYCL)
+   NALU_HYPRE_ONEDPL_CALL( std::exclusive_scan,
+                      oneapi::dpl::make_transform_iterator(CF_marker,          is_nonnegative<NALU_HYPRE_Int>()),
+                      oneapi::dpl::make_transform_iterator(CF_marker + n_fine, is_nonnegative<NALU_HYPRE_Int>()),
                       fine_to_coarse,
-                      HYPRE_Int(0) ); /* *MUST* pass init value since input and output types diff. */
+                      NALU_HYPRE_Int(0) ); /* *MUST* pass init value since input and output types diff. */
 #else
-   HYPRE_THRUST_CALL( exclusive_scan,
-                      thrust::make_transform_iterator(CF_marker,          is_nonnegative<HYPRE_Int>()),
-                      thrust::make_transform_iterator(CF_marker + n_fine, is_nonnegative<HYPRE_Int>()),
+   NALU_HYPRE_THRUST_CALL( exclusive_scan,
+                      thrust::make_transform_iterator(CF_marker,          is_nonnegative<NALU_HYPRE_Int>()),
+                      thrust::make_transform_iterator(CF_marker + n_fine, is_nonnegative<NALU_HYPRE_Int>()),
                       fine_to_coarse,
-                      HYPRE_Int(0) ); /* *MUST* pass init value since input and output types diff. */
+                      NALU_HYPRE_Int(0) ); /* *MUST* pass init value since input and output types diff. */
 #endif
 
    /*-------------------------------------------------------------------
@@ -1186,7 +1186,7 @@ hypre_BoomerAMGBuildInterpOnePntDevice( hypre_ParCSRMatrix  *A,
     *-------------------------------------------------------------------*/
    if (num_cols_A_offd)
    {
-      CF_marker_offd = hypre_CTAlloc(HYPRE_Int, num_cols_A_offd, HYPRE_MEMORY_DEVICE);
+      CF_marker_offd = hypre_CTAlloc(NALU_HYPRE_Int, num_cols_A_offd, NALU_HYPRE_MEMORY_DEVICE);
    }
    /* if CommPkg of A is not present, create it */
    if (!comm_pkg)
@@ -1198,18 +1198,18 @@ hypre_BoomerAMGBuildInterpOnePntDevice( hypre_ParCSRMatrix  *A,
    num_sends = hypre_ParCSRCommPkgNumSends(comm_pkg);
    /* send buffer, of size send_map_starts[num_sends]),
     * i.e., number of entries to send */
-   int_buf_data = hypre_CTAlloc(HYPRE_Int, hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends),
-                                HYPRE_MEMORY_DEVICE);
+   int_buf_data = hypre_CTAlloc(NALU_HYPRE_Int, hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends),
+                                NALU_HYPRE_MEMORY_DEVICE);
 
    /* copy CF markers of elements to send to buffer */
-#if defined(HYPRE_USING_SYCL)
+#if defined(NALU_HYPRE_USING_SYCL)
    hypreSycl_gather( hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg),
                      hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg) +
                      hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends),
                      CF_marker,
                      int_buf_data );
 #else
-   HYPRE_THRUST_CALL( gather,
+   NALU_HYPRE_THRUST_CALL( gather,
                       hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg),
                       hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg) +
                       hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends),
@@ -1217,37 +1217,37 @@ hypre_BoomerAMGBuildInterpOnePntDevice( hypre_ParCSRMatrix  *A,
                       int_buf_data );
 #endif
 
-#if defined(HYPRE_WITH_GPU_AWARE_MPI) && THRUST_CALL_BLOCKING == 0
+#if defined(NALU_HYPRE_WITH_GPU_AWARE_MPI) && THRUST_CALL_BLOCKING == 0
    /* RL: make sure int_buf_data is ready before issuing GPU-GPU MPI */
    hypre_ForceSyncComputeStream(hypre_handle());
 #endif
 
    /* create a handle to start communication. 11: for integer */
-   comm_handle = hypre_ParCSRCommHandleCreate_v2(11, comm_pkg, HYPRE_MEMORY_DEVICE, int_buf_data,
-                                                 HYPRE_MEMORY_DEVICE, CF_marker_offd);
+   comm_handle = hypre_ParCSRCommHandleCreate_v2(11, comm_pkg, NALU_HYPRE_MEMORY_DEVICE, int_buf_data,
+                                                 NALU_HYPRE_MEMORY_DEVICE, CF_marker_offd);
    /* destroy the handle to finish communication */
    hypre_ParCSRCommHandleDestroy(comm_handle);
-   hypre_TFree(int_buf_data, HYPRE_MEMORY_DEVICE);
+   hypre_TFree(int_buf_data, NALU_HYPRE_MEMORY_DEVICE);
 
    /*-----------------------------------------------------------------------
     *  First Pass: Determine size of P and fill in fine_to_coarse mapping,
     *  and find the most strongly influencing C-pt for each F-pt
     *-----------------------------------------------------------------------*/
 
-   P_diag_i = hypre_CTAlloc(HYPRE_Int, n_fine + 1, HYPRE_MEMORY_DEVICE);
-   P_offd_i = hypre_CTAlloc(HYPRE_Int, n_fine + 1, HYPRE_MEMORY_DEVICE);
+   P_diag_i = hypre_CTAlloc(NALU_HYPRE_Int, n_fine + 1, NALU_HYPRE_MEMORY_DEVICE);
+   P_offd_i = hypre_CTAlloc(NALU_HYPRE_Int, n_fine + 1, NALU_HYPRE_MEMORY_DEVICE);
 
-   diag_compress_marker = hypre_CTAlloc(HYPRE_Int, n_fine, HYPRE_MEMORY_DEVICE);
-   offd_compress_marker = hypre_CTAlloc(HYPRE_Int, n_fine, HYPRE_MEMORY_DEVICE);
+   diag_compress_marker = hypre_CTAlloc(NALU_HYPRE_Int, n_fine, NALU_HYPRE_MEMORY_DEVICE);
+   offd_compress_marker = hypre_CTAlloc(NALU_HYPRE_Int, n_fine, NALU_HYPRE_MEMORY_DEVICE);
 
    /* Overallocate here and compress later */
-   P_diag_j_temp = hypre_CTAlloc(HYPRE_Int, n_fine, HYPRE_MEMORY_DEVICE);
-   P_offd_j_temp = hypre_CTAlloc(HYPRE_Int, n_fine, HYPRE_MEMORY_DEVICE);
+   P_diag_j_temp = hypre_CTAlloc(NALU_HYPRE_Int, n_fine, NALU_HYPRE_MEMORY_DEVICE);
+   P_offd_j_temp = hypre_CTAlloc(NALU_HYPRE_Int, n_fine, NALU_HYPRE_MEMORY_DEVICE);
 
    dim3 bDim = hypre_GetDefaultDeviceBlockDimension();
    dim3 gDim = hypre_GetDefaultDeviceGridDimension(n_fine, "warp", bDim);
 
-   HYPRE_GPU_LAUNCH( hypre_BoomerAMGBuildInterpOnePnt_getnnz, gDim, bDim,
+   NALU_HYPRE_GPU_LAUNCH( hypre_BoomerAMGBuildInterpOnePnt_getnnz, gDim, bDim,
                      n_fine, A_diag_i, A_strong_diag_j, A_diag_a, A_offd_i, A_strong_offd_j,
                      A_offd_a, CF_marker, CF_marker_offd, diag_compress_marker,
                      offd_compress_marker, P_diag_i, P_diag_j_temp, P_offd_i, P_offd_j_temp);
@@ -1255,44 +1255,44 @@ hypre_BoomerAMGBuildInterpOnePntDevice( hypre_ParCSRMatrix  *A,
    /*-----------------------------------------------------------------------
     *  Send and receive fine_to_coarse info.
     *-----------------------------------------------------------------------*/
-   fine_to_coarse_offd = hypre_CTAlloc(HYPRE_BigInt, num_cols_A_offd, HYPRE_MEMORY_DEVICE);
-   big_int_buf_data = hypre_CTAlloc(HYPRE_BigInt, hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends),
-                                    HYPRE_MEMORY_DEVICE);
-#if defined(HYPRE_USING_SYCL)
+   fine_to_coarse_offd = hypre_CTAlloc(NALU_HYPRE_BigInt, num_cols_A_offd, NALU_HYPRE_MEMORY_DEVICE);
+   big_int_buf_data = hypre_CTAlloc(NALU_HYPRE_BigInt, hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends),
+                                    NALU_HYPRE_MEMORY_DEVICE);
+#if defined(NALU_HYPRE_USING_SYCL)
    hypreSycl_gather( hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg),
                      hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg) +
                      hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends),
                      fine_to_coarse,
                      big_int_buf_data );
-   HYPRE_ONEDPL_CALL( std::transform,
+   NALU_HYPRE_ONEDPL_CALL( std::transform,
                       big_int_buf_data,
                       big_int_buf_data + hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends),
                       big_int_buf_data,
    [my_first_cpt = my_first_cpt] (const auto & x) { return x + my_first_cpt; } );
 #else
-   HYPRE_THRUST_CALL( gather,
+   NALU_HYPRE_THRUST_CALL( gather,
                       hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg),
                       hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg) +
                       hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends),
                       fine_to_coarse,
                       big_int_buf_data );
-   HYPRE_THRUST_CALL( transform,
+   NALU_HYPRE_THRUST_CALL( transform,
                       big_int_buf_data,
                       big_int_buf_data + hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends),
                       thrust::make_constant_iterator(my_first_cpt),
                       big_int_buf_data,
-                      thrust::plus<HYPRE_BigInt>() );
+                      thrust::plus<NALU_HYPRE_BigInt>() );
 #endif
 
-#if defined(HYPRE_WITH_GPU_AWARE_MPI) && THRUST_CALL_BLOCKING == 0
+#if defined(NALU_HYPRE_WITH_GPU_AWARE_MPI) && THRUST_CALL_BLOCKING == 0
    /* RL: make sure big_int_buf_data is ready before issuing GPU-GPU MPI */
    hypre_ForceSyncComputeStream(hypre_handle());
 #endif
 
-   comm_handle = hypre_ParCSRCommHandleCreate_v2(21, comm_pkg, HYPRE_MEMORY_DEVICE, big_int_buf_data,
-                                                 HYPRE_MEMORY_DEVICE, fine_to_coarse_offd);
+   comm_handle = hypre_ParCSRCommHandleCreate_v2(21, comm_pkg, NALU_HYPRE_MEMORY_DEVICE, big_int_buf_data,
+                                                 NALU_HYPRE_MEMORY_DEVICE, fine_to_coarse_offd);
    hypre_ParCSRCommHandleDestroy(comm_handle);
-   hypre_TFree(big_int_buf_data, HYPRE_MEMORY_DEVICE);
+   hypre_TFree(big_int_buf_data, NALU_HYPRE_MEMORY_DEVICE);
 
    /*-----------------------------------------------------------------------
     *  Fill values and finish setting up P.
@@ -1303,35 +1303,35 @@ hypre_BoomerAMGBuildInterpOnePntDevice( hypre_ParCSRMatrix  *A,
    hypreDevice_IntegerExclusiveScan(n_fine + 1, P_offd_i);
 
    /* get the number of nonzeros and allocate column index and data arrays */
-   hypre_TMemcpy(&nnz_diag, &P_diag_i[n_fine], HYPRE_Int, 1, HYPRE_MEMORY_HOST, HYPRE_MEMORY_DEVICE);
-   hypre_TMemcpy(&nnz_offd, &P_offd_i[n_fine], HYPRE_Int, 1, HYPRE_MEMORY_HOST, HYPRE_MEMORY_DEVICE);
+   hypre_TMemcpy(&nnz_diag, &P_diag_i[n_fine], NALU_HYPRE_Int, 1, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_DEVICE);
+   hypre_TMemcpy(&nnz_offd, &P_offd_i[n_fine], NALU_HYPRE_Int, 1, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_DEVICE);
 
-   P_diag_j    = hypre_TAlloc(HYPRE_Int,  nnz_diag, HYPRE_MEMORY_DEVICE);
-   P_diag_data = hypre_TAlloc(HYPRE_Real, nnz_diag, HYPRE_MEMORY_DEVICE);
+   P_diag_j    = hypre_TAlloc(NALU_HYPRE_Int,  nnz_diag, NALU_HYPRE_MEMORY_DEVICE);
+   P_diag_data = hypre_TAlloc(NALU_HYPRE_Real, nnz_diag, NALU_HYPRE_MEMORY_DEVICE);
 
 
-   P_offd_j    = hypre_TAlloc(HYPRE_Int,  nnz_offd, HYPRE_MEMORY_DEVICE);
-   P_offd_data = hypre_TAlloc(HYPRE_Real, nnz_offd, HYPRE_MEMORY_DEVICE);
+   P_offd_j    = hypre_TAlloc(NALU_HYPRE_Int,  nnz_offd, NALU_HYPRE_MEMORY_DEVICE);
+   P_offd_data = hypre_TAlloc(NALU_HYPRE_Real, nnz_offd, NALU_HYPRE_MEMORY_DEVICE);
 
    /* set data values to 1.0 */
    hypreDevice_ComplexFilln( P_diag_data, nnz_diag, 1.0 );
    hypreDevice_ComplexFilln( P_offd_data, nnz_offd, 1.0 );
 
    /* compress temporary column indices */
-   P_diag_j_temp_compressed = hypre_TAlloc(HYPRE_Int, nnz_diag, HYPRE_MEMORY_DEVICE);
-   P_offd_j_temp_compressed = hypre_TAlloc(HYPRE_Int, nnz_offd, HYPRE_MEMORY_DEVICE);
+   P_diag_j_temp_compressed = hypre_TAlloc(NALU_HYPRE_Int, nnz_diag, NALU_HYPRE_MEMORY_DEVICE);
+   P_offd_j_temp_compressed = hypre_TAlloc(NALU_HYPRE_Int, nnz_offd, NALU_HYPRE_MEMORY_DEVICE);
 
-#if defined(HYPRE_USING_SYCL)
+#if defined(NALU_HYPRE_USING_SYCL)
    hypreSycl_copy_if( P_diag_j_temp,
                       P_diag_j_temp + n_fine,
                       diag_compress_marker,
                       P_diag_j_temp_compressed,
-                      equal<HYPRE_Int>(1) );
+                      equal<NALU_HYPRE_Int>(1) );
    hypreSycl_copy_if( P_offd_j_temp,
                       P_offd_j_temp + n_fine,
                       offd_compress_marker,
                       P_offd_j_temp_compressed,
-                      equal<HYPRE_Int>(1) );
+                      equal<NALU_HYPRE_Int>(1) );
 
    /* map the diag column indices */
    hypreSycl_gather( P_diag_j_temp_compressed,
@@ -1339,77 +1339,77 @@ hypre_BoomerAMGBuildInterpOnePntDevice( hypre_ParCSRMatrix  *A,
                      fine_to_coarse,
                      P_diag_j );
 #else
-   HYPRE_THRUST_CALL( copy_if,
+   NALU_HYPRE_THRUST_CALL( copy_if,
                       P_diag_j_temp,
                       P_diag_j_temp + n_fine,
                       diag_compress_marker,
                       P_diag_j_temp_compressed,
-                      equal<HYPRE_Int>(1) );
-   HYPRE_THRUST_CALL( copy_if,
+                      equal<NALU_HYPRE_Int>(1) );
+   NALU_HYPRE_THRUST_CALL( copy_if,
                       P_offd_j_temp,
                       P_offd_j_temp + n_fine,
                       offd_compress_marker,
                       P_offd_j_temp_compressed,
-                      equal<HYPRE_Int>(1) );
+                      equal<NALU_HYPRE_Int>(1) );
 
    /* map the diag column indices */
-   HYPRE_THRUST_CALL( gather,
+   NALU_HYPRE_THRUST_CALL( gather,
                       P_diag_j_temp_compressed,
                       P_diag_j_temp_compressed + nnz_diag,
                       fine_to_coarse,
                       P_diag_j );
 #endif
 
-   hypre_TFree(P_diag_j_temp_compressed, HYPRE_MEMORY_DEVICE);
+   hypre_TFree(P_diag_j_temp_compressed, NALU_HYPRE_MEMORY_DEVICE);
 
    /* mark the offd indices for P as a subset of offd indices of A */
-   HYPRE_Int *mark_P_offd_idx = hypre_CTAlloc(HYPRE_Int, num_cols_A_offd, HYPRE_MEMORY_DEVICE);
+   NALU_HYPRE_Int *mark_P_offd_idx = hypre_CTAlloc(NALU_HYPRE_Int, num_cols_A_offd, NALU_HYPRE_MEMORY_DEVICE);
    // note that scatter is usually not safe if the same index appears more than once in the map,
    // but here we are just scattering constant values, so this is safe
-#if defined(HYPRE_USING_SYCL)
+#if defined(NALU_HYPRE_USING_SYCL)
    auto perm_iter = oneapi::dpl::make_permutation_iterator(mark_P_offd_idx, P_offd_j_temp_compressed);
-   HYPRE_ONEDPL_CALL( std::transform,
+   NALU_HYPRE_ONEDPL_CALL( std::transform,
                       perm_iter,
                       perm_iter + nnz_offd,
                       perm_iter,
    [] (const auto & x) { return 1; } );
-   num_cols_P_offd = HYPRE_ONEDPL_CALL(std::reduce, mark_P_offd_idx,
+   num_cols_P_offd = NALU_HYPRE_ONEDPL_CALL(std::reduce, mark_P_offd_idx,
                                        mark_P_offd_idx + num_cols_A_offd);
 #else
-   HYPRE_THRUST_CALL( scatter,
+   NALU_HYPRE_THRUST_CALL( scatter,
                       thrust::make_constant_iterator(1),
                       thrust::make_constant_iterator(1) + nnz_offd,
                       P_offd_j_temp_compressed,
                       mark_P_offd_idx );
-   num_cols_P_offd = HYPRE_THRUST_CALL(reduce, mark_P_offd_idx, mark_P_offd_idx + num_cols_A_offd);
+   num_cols_P_offd = NALU_HYPRE_THRUST_CALL(reduce, mark_P_offd_idx, mark_P_offd_idx + num_cols_A_offd);
 #endif
 
    /* get a mapping from P offd indices to A offd indices */
    /* offd_map_P_to_A[ P offd idx ] = A offd idx */
-   HYPRE_Int *offd_map_P_to_A = hypre_CTAlloc(HYPRE_Int, num_cols_P_offd, HYPRE_MEMORY_DEVICE);
-#if defined(HYPRE_USING_SYCL)
-   oneapi::dpl::counting_iterator<HYPRE_Int> count(0);
+   NALU_HYPRE_Int *offd_map_P_to_A = hypre_CTAlloc(NALU_HYPRE_Int, num_cols_P_offd, NALU_HYPRE_MEMORY_DEVICE);
+#if defined(NALU_HYPRE_USING_SYCL)
+   oneapi::dpl::counting_iterator<NALU_HYPRE_Int> count(0);
    hypreSycl_copy_if( count,
                       count + num_cols_A_offd,
                       mark_P_offd_idx,
                       offd_map_P_to_A,
-                      equal<HYPRE_Int>(1) );
+                      equal<NALU_HYPRE_Int>(1) );
 #else
-   HYPRE_THRUST_CALL( copy_if,
+   NALU_HYPRE_THRUST_CALL( copy_if,
                       thrust::make_counting_iterator(0),
                       thrust::make_counting_iterator(num_cols_A_offd),
                       mark_P_offd_idx,
                       offd_map_P_to_A,
-                      equal<HYPRE_Int>(1) );
+                      equal<NALU_HYPRE_Int>(1) );
 #endif
-   hypre_TFree(mark_P_offd_idx, HYPRE_MEMORY_DEVICE);
+   hypre_TFree(mark_P_offd_idx, NALU_HYPRE_MEMORY_DEVICE);
 
    /* also get an inverse mapping from A offd indices to P offd indices */
    /* offd_map_A_to_P[ A offd idx ] = -1 if not a P idx, else P offd idx */
-   HYPRE_Int *offd_map_A_to_P = hypre_TAlloc(HYPRE_Int, num_cols_A_offd, HYPRE_MEMORY_DEVICE);
+   NALU_HYPRE_Int *offd_map_A_to_P = hypre_TAlloc(NALU_HYPRE_Int, num_cols_A_offd, NALU_HYPRE_MEMORY_DEVICE);
    hypreDevice_IntFilln( offd_map_A_to_P, num_cols_A_offd, -1 );
 
-#if defined(HYPRE_USING_SYCL)
+#if defined(NALU_HYPRE_USING_SYCL)
    hypreSycl_scatter( count,
                       count + num_cols_P_offd,
                       offd_map_P_to_A,
@@ -1421,41 +1421,41 @@ hypre_BoomerAMGBuildInterpOnePntDevice( hypre_ParCSRMatrix  *A,
                      offd_map_A_to_P,
                      P_offd_j );
 #else
-   HYPRE_THRUST_CALL( scatter,
+   NALU_HYPRE_THRUST_CALL( scatter,
                       thrust::make_counting_iterator(0),
                       thrust::make_counting_iterator(num_cols_P_offd),
                       offd_map_P_to_A,
                       offd_map_A_to_P );
 
    /* use inverse mapping above to map P_offd_j */
-   HYPRE_THRUST_CALL( gather,
+   NALU_HYPRE_THRUST_CALL( gather,
                       P_offd_j_temp_compressed,
                       P_offd_j_temp_compressed + nnz_offd,
                       offd_map_A_to_P,
                       P_offd_j );
 #endif
-   hypre_TFree(P_offd_j_temp_compressed, HYPRE_MEMORY_DEVICE);
-   hypre_TFree(offd_map_A_to_P, HYPRE_MEMORY_DEVICE);
+   hypre_TFree(P_offd_j_temp_compressed, NALU_HYPRE_MEMORY_DEVICE);
+   hypre_TFree(offd_map_A_to_P, NALU_HYPRE_MEMORY_DEVICE);
 
    /* setup col_map_offd for P */
-   col_map_offd_P_device = hypre_CTAlloc(HYPRE_BigInt, num_cols_P_offd, HYPRE_MEMORY_DEVICE);
-   col_map_offd_P = hypre_CTAlloc(HYPRE_BigInt, num_cols_P_offd, HYPRE_MEMORY_HOST);
-#if defined(HYPRE_USING_SYCL)
+   col_map_offd_P_device = hypre_CTAlloc(NALU_HYPRE_BigInt, num_cols_P_offd, NALU_HYPRE_MEMORY_DEVICE);
+   col_map_offd_P = hypre_CTAlloc(NALU_HYPRE_BigInt, num_cols_P_offd, NALU_HYPRE_MEMORY_HOST);
+#if defined(NALU_HYPRE_USING_SYCL)
    hypreSycl_gather( offd_map_P_to_A,
                      offd_map_P_to_A + num_cols_P_offd,
                      fine_to_coarse_offd,
                      col_map_offd_P_device);
 #else
-   HYPRE_THRUST_CALL( gather,
+   NALU_HYPRE_THRUST_CALL( gather,
                       offd_map_P_to_A,
                       offd_map_P_to_A + num_cols_P_offd,
                       fine_to_coarse_offd,
                       col_map_offd_P_device);
 #endif
-   hypre_TMemcpy(col_map_offd_P, col_map_offd_P_device, HYPRE_BigInt, num_cols_P_offd,
-                 HYPRE_MEMORY_HOST, HYPRE_MEMORY_DEVICE);
-   hypre_TFree(offd_map_P_to_A, HYPRE_MEMORY_DEVICE);
-   hypre_TFree(col_map_offd_P_device, HYPRE_MEMORY_DEVICE);
+   hypre_TMemcpy(col_map_offd_P, col_map_offd_P_device, NALU_HYPRE_BigInt, num_cols_P_offd,
+                 NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_DEVICE);
+   hypre_TFree(offd_map_P_to_A, NALU_HYPRE_MEMORY_DEVICE);
+   hypre_TFree(col_map_offd_P_device, NALU_HYPRE_MEMORY_DEVICE);
 
    /* Now, we should have everything of Parcsr matrix P */
    P = hypre_ParCSRMatrixCreate(comm,
@@ -1485,13 +1485,13 @@ hypre_BoomerAMGBuildInterpOnePntDevice( hypre_ParCSRMatrix  *A,
    *P_ptr = P;
 
    /* free workspace */
-   hypre_TFree(CF_marker_offd, HYPRE_MEMORY_DEVICE);
-   hypre_TFree(fine_to_coarse, HYPRE_MEMORY_DEVICE);
-   hypre_TFree(fine_to_coarse_offd, HYPRE_MEMORY_DEVICE);
-   hypre_TFree(diag_compress_marker, HYPRE_MEMORY_DEVICE);
-   hypre_TFree(offd_compress_marker, HYPRE_MEMORY_DEVICE);
-   hypre_TFree(P_diag_j_temp, HYPRE_MEMORY_DEVICE);
-   hypre_TFree(P_offd_j_temp, HYPRE_MEMORY_DEVICE);
+   hypre_TFree(CF_marker_offd, NALU_HYPRE_MEMORY_DEVICE);
+   hypre_TFree(fine_to_coarse, NALU_HYPRE_MEMORY_DEVICE);
+   hypre_TFree(fine_to_coarse_offd, NALU_HYPRE_MEMORY_DEVICE);
+   hypre_TFree(diag_compress_marker, NALU_HYPRE_MEMORY_DEVICE);
+   hypre_TFree(offd_compress_marker, NALU_HYPRE_MEMORY_DEVICE);
+   hypre_TFree(P_diag_j_temp, NALU_HYPRE_MEMORY_DEVICE);
+   hypre_TFree(P_offd_j_temp, NALU_HYPRE_MEMORY_DEVICE);
 
    return hypre_error_flag;
 }
@@ -1499,21 +1499,21 @@ hypre_BoomerAMGBuildInterpOnePntDevice( hypre_ParCSRMatrix  *A,
 /*-----------------------------------------------------------------------*/
 __global__ void
 hypre_BoomerAMGBuildInterpOnePnt_getnnz( hypre_DeviceItem    &item,
-                                         HYPRE_Int      nr_of_rows,
-                                         HYPRE_Int     *A_diag_i,
-                                         HYPRE_Int     *A_strong_diag_j,
-                                         HYPRE_Complex *A_diag_a,
-                                         HYPRE_Int     *A_offd_i,
-                                         HYPRE_Int     *A_strong_offd_j,
-                                         HYPRE_Complex *A_offd_a,
-                                         HYPRE_Int     *CF_marker,
-                                         HYPRE_Int     *CF_marker_offd,
-                                         HYPRE_Int     *diag_compress_marker,
-                                         HYPRE_Int     *offd_compress_marker,
-                                         HYPRE_Int     *P_diag_i,
-                                         HYPRE_Int     *P_diag_j,
-                                         HYPRE_Int     *P_offd_i,
-                                         HYPRE_Int     *P_offd_j)
+                                         NALU_HYPRE_Int      nr_of_rows,
+                                         NALU_HYPRE_Int     *A_diag_i,
+                                         NALU_HYPRE_Int     *A_strong_diag_j,
+                                         NALU_HYPRE_Complex *A_diag_a,
+                                         NALU_HYPRE_Int     *A_offd_i,
+                                         NALU_HYPRE_Int     *A_strong_offd_j,
+                                         NALU_HYPRE_Complex *A_offd_a,
+                                         NALU_HYPRE_Int     *CF_marker,
+                                         NALU_HYPRE_Int     *CF_marker_offd,
+                                         NALU_HYPRE_Int     *diag_compress_marker,
+                                         NALU_HYPRE_Int     *offd_compress_marker,
+                                         NALU_HYPRE_Int     *P_diag_i,
+                                         NALU_HYPRE_Int     *P_diag_j,
+                                         NALU_HYPRE_Int     *P_offd_i,
+                                         NALU_HYPRE_Int     *P_offd_j)
 {
    /*-----------------------------------------------------------------------*/
    /* Determine size of interpolation matrix, P
@@ -1539,24 +1539,24 @@ hypre_BoomerAMGBuildInterpOnePnt_getnnz( hypre_DeviceItem    &item,
     */
    /*-----------------------------------------------------------------------*/
 
-   HYPRE_Int i = hypre_gpu_get_grid_warp_id<1, 1>(item);
+   NALU_HYPRE_Int i = hypre_gpu_get_grid_warp_id<1, 1>(item);
 
    if (i >= nr_of_rows)
    {
       return;
    }
 
-   HYPRE_Int p = 0, q;
-   HYPRE_Int max_j_diag = -1, max_j_offd = -1;
-   HYPRE_Int lane = hypre_gpu_get_lane_id<1>(item);
-   HYPRE_Real max_diag = -1.0, max_offd = -1.0;
-   HYPRE_Real warp_max_diag = -1.0, warp_max_offd = -1.0;
+   NALU_HYPRE_Int p = 0, q;
+   NALU_HYPRE_Int max_j_diag = -1, max_j_offd = -1;
+   NALU_HYPRE_Int lane = hypre_gpu_get_lane_id<1>(item);
+   NALU_HYPRE_Real max_diag = -1.0, max_offd = -1.0;
+   NALU_HYPRE_Real warp_max_diag = -1.0, warp_max_offd = -1.0;
 
    if (lane == 0)
    {
       p = read_only_load(CF_marker + i);
    }
-   p = warp_shuffle_sync(item, HYPRE_WARP_FULL_MASK, p, 0);
+   p = warp_shuffle_sync(item, NALU_HYPRE_WARP_FULL_MASK, p, 0);
 
    /*--------------------------------------------------------------------
     *  If i is a C-point, interpolation is the identity.
@@ -1582,16 +1582,16 @@ hypre_BoomerAMGBuildInterpOnePnt_getnnz( hypre_DeviceItem    &item,
    {
       p = read_only_load(A_diag_i + i + lane);
    }
-   q = warp_shuffle_sync(item, HYPRE_WARP_FULL_MASK, p, 1);
-   p = warp_shuffle_sync(item, HYPRE_WARP_FULL_MASK, p, 0);
+   q = warp_shuffle_sync(item, NALU_HYPRE_WARP_FULL_MASK, p, 1);
+   p = warp_shuffle_sync(item, NALU_HYPRE_WARP_FULL_MASK, p, 0);
 
-   for (HYPRE_Int j = p + lane; j < q; j += HYPRE_WARP_SIZE)
+   for (NALU_HYPRE_Int j = p + lane; j < q; j += NALU_HYPRE_WARP_SIZE)
    {
       /* column indices are negative for weak connections */
-      const HYPRE_Int col = read_only_load(&A_strong_diag_j[j]);
+      const NALU_HYPRE_Int col = read_only_load(&A_strong_diag_j[j]);
       if (col >= 0)
       {
-         const HYPRE_Complex val = fabs( read_only_load(&A_diag_a[j]) );
+         const NALU_HYPRE_Complex val = fabs( read_only_load(&A_diag_a[j]) );
          if ( read_only_load(&CF_marker[col]) > 0 && val > max_diag )
          {
             max_diag = val;
@@ -1606,16 +1606,16 @@ hypre_BoomerAMGBuildInterpOnePnt_getnnz( hypre_DeviceItem    &item,
    {
       p = read_only_load(A_offd_i + i + lane);
    }
-   q = warp_shuffle_sync(item, HYPRE_WARP_FULL_MASK, p, 1);
-   p = warp_shuffle_sync(item, HYPRE_WARP_FULL_MASK, p, 0);
+   q = warp_shuffle_sync(item, NALU_HYPRE_WARP_FULL_MASK, p, 1);
+   p = warp_shuffle_sync(item, NALU_HYPRE_WARP_FULL_MASK, p, 0);
 
-   for (HYPRE_Int j = p + lane; j < q; j += HYPRE_WARP_SIZE)
+   for (NALU_HYPRE_Int j = p + lane; j < q; j += NALU_HYPRE_WARP_SIZE)
    {
-      const HYPRE_Int col = read_only_load(&A_strong_offd_j[j]);
+      const NALU_HYPRE_Int col = read_only_load(&A_strong_offd_j[j]);
       /* column indices are negative for weak connections */
       if (col >= 0)
       {
-         const HYPRE_Complex val = fabs( read_only_load(&A_offd_a[j]) );
+         const NALU_HYPRE_Complex val = fabs( read_only_load(&A_offd_a[j]) );
          if ( read_only_load(&CF_marker_offd[col]) > 0 && val > max_offd )
          {
             max_offd = val;
@@ -1669,4 +1669,4 @@ hypre_BoomerAMGBuildInterpOnePnt_getnnz( hypre_DeviceItem    &item,
    }
 }
 
-#endif // defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP) || defined(HYPRE_USING_SYCL)
+#endif // defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP) || defined(NALU_HYPRE_USING_SYCL)

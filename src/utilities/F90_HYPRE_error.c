@@ -13,43 +13,43 @@ extern "C" {
 #endif
 
 void
-hypre_F90_IFACE(hypre_geterror, HYPRE_GETERROR)
+hypre_F90_IFACE(hypre_geterror, NALU_HYPRE_GETERROR)
 (hypre_F90_Int *result)
 {
-   *result = (hypre_F90_Int) HYPRE_GetError();
+   *result = (hypre_F90_Int) NALU_HYPRE_GetError();
 }
 
 void
-hypre_F90_IFACE(hypre_checkerror, HYPRE_CHECKERROR)
+hypre_F90_IFACE(hypre_checkerror, NALU_HYPRE_CHECKERROR)
 (hypre_F90_Int *ierr,
  hypre_F90_Int *hypre_error_code,
  hypre_F90_Int *result)
 {
-   *result = (hypre_F90_Int) HYPRE_CheckError(
+   *result = (hypre_F90_Int) NALU_HYPRE_CheckError(
                 hypre_F90_PassInt(ierr),
                 hypre_F90_PassInt(hypre_error_code));
 }
 
 void
-hypre_F90_IFACE(hypre_geterrorarg, HYPRE_GETERRORARG)
+hypre_F90_IFACE(hypre_geterrorarg, NALU_HYPRE_GETERRORARG)
 (hypre_F90_Int *result)
 {
-   *result = (hypre_F90_Int) HYPRE_GetErrorArg();
+   *result = (hypre_F90_Int) NALU_HYPRE_GetErrorArg();
 }
 
 void
-hypre_F90_IFACE(hypre_clearallerrors, HYPRE_CLEARALLERRORS)
+hypre_F90_IFACE(hypre_clearallerrors, NALU_HYPRE_CLEARALLERRORS)
 (hypre_F90_Int *result)
 {
-   *result = HYPRE_ClearAllErrors();
+   *result = NALU_HYPRE_ClearAllErrors();
 }
 
 void
-hypre_F90_IFACE(hypre_clearerror, HYPRE_CLEARERROR)
+hypre_F90_IFACE(hypre_clearerror, NALU_HYPRE_CLEARERROR)
 (hypre_F90_Int *hypre_error_code,
  hypre_F90_Int *result)
 {
-   *result = (hypre_F90_Int) HYPRE_ClearError(
+   *result = (hypre_F90_Int) NALU_HYPRE_ClearError(
                 hypre_F90_PassInt(hypre_error_code));
 }
 

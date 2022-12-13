@@ -15,10 +15,10 @@
 #include <stdio.h>
 
 #if 1 /* HYPRE */
-#include "HYPRE_config.h"
+#include "NALU_HYPRE_config.h"
 #include "_hypre_utilities.h"
 #include "fortran.h"
-#ifdef HYPRE_USING_ESSL
+#ifdef NALU_HYPRE_USING_ESSL
 #define ESSL
 #endif
 #else /* not HYPRE */

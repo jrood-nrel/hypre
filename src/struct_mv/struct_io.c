@@ -19,26 +19,26 @@
  * Note: data array is expected to live on the host memory.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_PrintBoxArrayData( FILE            *file,
                          hypre_BoxArray  *box_array,
                          hypre_BoxArray  *data_space,
-                         HYPRE_Int        num_values,
-                         HYPRE_Int        dim,
-                         HYPRE_Complex   *data       )
+                         NALU_HYPRE_Int        num_values,
+                         NALU_HYPRE_Int        dim,
+                         NALU_HYPRE_Complex   *data       )
 {
    hypre_Box       *box;
    hypre_Box       *data_box;
 
-   HYPRE_Int        data_box_volume;
+   NALU_HYPRE_Int        data_box_volume;
 
    hypre_Index      loop_size;
    hypre_IndexRef   start;
    hypre_Index      stride;
    hypre_Index      index;
 
-   HYPRE_Int        i, j, d;
-   HYPRE_Complex    value;
+   NALU_HYPRE_Int        i, j, d;
+   NALU_HYPRE_Complex    value;
 
    /* Print data from the host */
    hypre_SetIndex(stride, 1);
@@ -67,7 +67,7 @@ hypre_PrintBoxArrayData( FILE            *file,
                              hypre_IndexD(start, d) + hypre_IndexD(index, d));
             }
             value = data[datai + j * data_box_volume];
-#ifdef HYPRE_COMPLEX
+#ifdef NALU_HYPRE_COMPLEX
             hypre_fprintf(file, "; %d) %.14e , %.14e\n",
                           j, hypre_creal(value), hypre_cimag(value));
 #else
@@ -93,29 +93,29 @@ hypre_PrintBoxArrayData( FILE            *file,
  * Note: data array is expected to live on the host memory.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_PrintCCVDBoxArrayData( FILE            *file,
                              hypre_BoxArray  *box_array,
                              hypre_BoxArray  *data_space,
-                             HYPRE_Int        num_values,
-                             HYPRE_Int        center_rank,
-                             HYPRE_Int        stencil_size,
-                             HYPRE_Int       *symm_elements,
-                             HYPRE_Int        dim,
-                             HYPRE_Complex   *data       )
+                             NALU_HYPRE_Int        num_values,
+                             NALU_HYPRE_Int        center_rank,
+                             NALU_HYPRE_Int        stencil_size,
+                             NALU_HYPRE_Int       *symm_elements,
+                             NALU_HYPRE_Int        dim,
+                             NALU_HYPRE_Complex   *data       )
 {
    hypre_Box       *box;
    hypre_Box       *data_box;
 
-   HYPRE_Int        data_box_volume;
+   NALU_HYPRE_Int        data_box_volume;
 
    hypre_Index      loop_size;
    hypre_IndexRef   start;
    hypre_Index      stride;
    hypre_Index      index;
 
-   HYPRE_Int        i, j, d;
-   HYPRE_Complex    value;
+   NALU_HYPRE_Int        i, j, d;
+   NALU_HYPRE_Complex    value;
 
    /*----------------------------------------
     * Print data
@@ -128,7 +128,7 @@ hypre_PrintCCVDBoxArrayData( FILE            *file,
    {
       if (symm_elements[j] < 0 && j != center_rank)
       {
-#ifdef HYPRE_COMPLEX
+#ifdef NALU_HYPRE_COMPLEX
          hypre_fprintf( file, "*: (*, *, *; %d) %.14e , %.14e\n",
                         j, hypre_creal(data[0]), hypre_cimag(data[0]));
 #else
@@ -163,7 +163,7 @@ hypre_PrintCCVDBoxArrayData( FILE            *file,
                           hypre_IndexD(start, d) + hypre_IndexD(index, d));
          }
          value = data[datai];
-#ifdef HYPRE_COMPLEX
+#ifdef NALU_HYPRE_COMPLEX
          hypre_fprintf(file, "; %d) %.14e , %.14e\n",
                        center_rank, hypre_creal(value), hypre_cimag(value));
 #else
@@ -185,17 +185,17 @@ hypre_PrintCCVDBoxArrayData( FILE            *file,
  * Note: data array is expected to live on the host memory.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_PrintCCBoxArrayData( FILE            *file,
                            hypre_BoxArray  *box_array,
                            hypre_BoxArray  *data_space,
-                           HYPRE_Int        num_values,
-                           HYPRE_Complex   *data       )
+                           NALU_HYPRE_Int        num_values,
+                           NALU_HYPRE_Complex   *data       )
 {
-   HYPRE_Int        datai;
+   NALU_HYPRE_Int        datai;
 
-   HYPRE_Int        i, j;
-   HYPRE_Complex    value;
+   NALU_HYPRE_Int        i, j;
+   NALU_HYPRE_Complex    value;
 
    /*----------------------------------------
     * Print data
@@ -208,7 +208,7 @@ hypre_PrintCCBoxArrayData( FILE            *file,
       for (j = 0; j < num_values; j++)
       {
          value = data[datai + j];
-#ifdef HYPRE_COMPLEX
+#ifdef NALU_HYPRE_COMPLEX
          hypre_fprintf(file, "*: (*, *, *; %d) %.14e , %.14e\n",
                        j, hypre_creal(value), hypre_cimag(value));
 #else
@@ -228,24 +228,24 @@ hypre_PrintCCBoxArrayData( FILE            *file,
  * Note: data array is expected to live on the host memory.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_ReadBoxArrayData( FILE            *file,
                         hypre_BoxArray  *box_array,
                         hypre_BoxArray  *data_space,
-                        HYPRE_Int        num_values,
-                        HYPRE_Int        dim,
-                        HYPRE_Complex   *data       )
+                        NALU_HYPRE_Int        num_values,
+                        NALU_HYPRE_Int        dim,
+                        NALU_HYPRE_Complex   *data       )
 {
    hypre_Box       *box;
    hypre_Box       *data_box;
 
-   HYPRE_Int        data_box_volume;
+   NALU_HYPRE_Int        data_box_volume;
 
    hypre_Index      loop_size;
    hypre_IndexRef   start;
    hypre_Index      stride;
 
-   HYPRE_Int        i, j, d, idummy;
+   NALU_HYPRE_Int        i, j, d, idummy;
 
    /* Read data on the host */
    hypre_SetIndex(stride, 1);
@@ -288,26 +288,26 @@ hypre_ReadBoxArrayData( FILE            *file,
  * Note: data array is expected to live on the host memory.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_ReadBoxArrayData_CC( FILE            *file,
                            hypre_BoxArray  *box_array,
                            hypre_BoxArray  *data_space,
-                           HYPRE_Int        stencil_size,
-                           HYPRE_Int        real_stencil_size,
-                           HYPRE_Int        constant_coefficient,
-                           HYPRE_Int        dim,
-                           HYPRE_Complex   *data       )
+                           NALU_HYPRE_Int        stencil_size,
+                           NALU_HYPRE_Int        real_stencil_size,
+                           NALU_HYPRE_Int        constant_coefficient,
+                           NALU_HYPRE_Int        dim,
+                           NALU_HYPRE_Complex   *data       )
 {
    hypre_Box       *box;
    hypre_Box       *data_box;
 
-   HYPRE_Int        data_box_volume, constant_stencil_size;
+   NALU_HYPRE_Int        data_box_volume, constant_stencil_size;
 
    hypre_Index      loop_size;
    hypre_IndexRef   start;
    hypre_Index      stride;
 
-   HYPRE_Int        i, j, d, idummy;
+   NALU_HYPRE_Int        i, j, d, idummy;
 
    /*----------------------------------------
     * Read data

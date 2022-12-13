@@ -18,14 +18,14 @@ cat > $INTERNAL_HEADER <<@
 #define hypre_STRUCT_LS_HEADER
 
 #include "_hypre_utilities.h"
-#include "HYPRE_struct_ls.h"
+#include "NALU_HYPRE_struct_ls.h"
 #include "_hypre_struct_mv.h"
 #include "krylov.h"
 
 #include "temp_multivector.h"
- /* ... needed to make sense of functions in HYPRE_parcsr_int.c */
-#include "HYPRE_MatvecFunctions.h"
- /* ... needed to make sense of functions in HYPRE_parcsr_int.c */
+ /* ... needed to make sense of functions in NALU_HYPRE_parcsr_int.c */
+#include "NALU_HYPRE_MatvecFunctions.h"
+ /* ... needed to make sense of functions in NALU_HYPRE_parcsr_int.c */
 
 #ifdef __cplusplus
 extern "C" {

@@ -60,15 +60,15 @@ misc. notes/considerations/open questions:
  * Some specialized sorting routines used only in this file
  *****************************************************************************/
 
-/* sort on HYPRE_Int i, move entry pointers ent */
+/* sort on NALU_HYPRE_Int i, move entry pointers ent */
 
 void
-hypre_entryswap2( HYPRE_Int  *v,
+hypre_entryswap2( NALU_HYPRE_Int  *v,
                   hypre_BoxManEntry ** ent,
-                  HYPRE_Int  i,
-                  HYPRE_Int  j )
+                  NALU_HYPRE_Int  i,
+                  NALU_HYPRE_Int  j )
 {
-   HYPRE_Int temp;
+   NALU_HYPRE_Int temp;
 
    hypre_BoxManEntry *temp_e;
 
@@ -82,12 +82,12 @@ hypre_entryswap2( HYPRE_Int  *v,
 }
 
 void
-hypre_entryqsort2( HYPRE_Int *v,
+hypre_entryqsort2( NALU_HYPRE_Int *v,
                    hypre_BoxManEntry ** ent,
-                   HYPRE_Int  left,
-                   HYPRE_Int  right )
+                   NALU_HYPRE_Int  left,
+                   NALU_HYPRE_Int  right )
 {
-   HYPRE_Int i, last;
+   NALU_HYPRE_Int i, last;
 
    if (left >= right)
    {
@@ -112,7 +112,7 @@ hypre_entryqsort2( HYPRE_Int *v,
  *--------------------------------------------------------------------------*/
 
 #if 0
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_BoxManEntrySetInfo ( hypre_BoxManEntry *entry,
                            void *info )
 {
@@ -125,11 +125,11 @@ hypre_BoxManEntrySetInfo ( hypre_BoxManEntry *entry,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_BoxManEntryGetInfo (hypre_BoxManEntry *entry,
                           void **info_ptr )
 {
-   HYPRE_Int position = hypre_BoxManEntryPosition(entry);
+   NALU_HYPRE_Int position = hypre_BoxManEntryPosition(entry);
    hypre_BoxManager *boxman;
 
    boxman = (hypre_BoxManager *) hypre_BoxManEntryBoxMan(entry);
@@ -142,16 +142,16 @@ hypre_BoxManEntryGetInfo (hypre_BoxManEntry *entry,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_BoxManEntryGetExtents ( hypre_BoxManEntry *entry,
                               hypre_Index imin,
                               hypre_Index imax )
 {
    hypre_IndexRef  entry_imin = hypre_BoxManEntryIMin(entry);
    hypre_IndexRef  entry_imax = hypre_BoxManEntryIMax(entry);
-   HYPRE_Int       ndim       = hypre_BoxManEntryNDim(entry);
+   NALU_HYPRE_Int       ndim       = hypre_BoxManEntryNDim(entry);
 
-   HYPRE_Int  d;
+   NALU_HYPRE_Int  d;
 
    for (d = 0; d < ndim; d++)
    {
@@ -166,12 +166,12 @@ hypre_BoxManEntryGetExtents ( hypre_BoxManEntry *entry,
  * Warning: This does not copy the position or info!
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_BoxManEntryCopy( hypre_BoxManEntry *fromentry,
                        hypre_BoxManEntry *toentry )
 {
-   HYPRE_Int ndim = hypre_BoxManEntryNDim(fromentry);
-   HYPRE_Int d;
+   NALU_HYPRE_Int ndim = hypre_BoxManEntryNDim(fromentry);
+   NALU_HYPRE_Int d;
 
    hypre_Index imin;
    hypre_Index imax;
@@ -217,9 +217,9 @@ hypre_BoxManEntryCopy( hypre_BoxManEntry *fromentry,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_BoxManSetAllGlobalKnown ( hypre_BoxManager *manager,
-                                HYPRE_Int known )
+                                NALU_HYPRE_Int known )
 {
    hypre_BoxManAllGlobalKnown(manager) = known;
 
@@ -228,9 +228,9 @@ hypre_BoxManSetAllGlobalKnown ( hypre_BoxManager *manager,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_BoxManGetAllGlobalKnown ( hypre_BoxManager *manager,
-                                HYPRE_Int *known )
+                                NALU_HYPRE_Int *known )
 {
    *known = hypre_BoxManAllGlobalKnown(manager);
 
@@ -240,9 +240,9 @@ hypre_BoxManGetAllGlobalKnown ( hypre_BoxManager *manager,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_BoxManSetIsEntriesSort ( hypre_BoxManager *manager,
-                               HYPRE_Int is_sort )
+                               NALU_HYPRE_Int is_sort )
 {
    hypre_BoxManIsEntriesSort(manager) = is_sort;
 
@@ -252,9 +252,9 @@ hypre_BoxManSetIsEntriesSort ( hypre_BoxManager *manager,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_BoxManGetIsEntriesSort ( hypre_BoxManager *manager,
-                               HYPRE_Int *is_sort )
+                               NALU_HYPRE_Int *is_sort )
 {
    *is_sort  =  hypre_BoxManIsEntriesSort(manager);
 
@@ -264,13 +264,13 @@ hypre_BoxManGetIsEntriesSort ( hypre_BoxManager *manager,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_BoxManGetGlobalIsGatherCalled( hypre_BoxManager *manager,
                                      MPI_Comm  comm,
-                                     HYPRE_Int *is_gather )
+                                     NALU_HYPRE_Int *is_gather )
 {
-   HYPRE_Int loc_is_gather;
-   HYPRE_Int nprocs;
+   NALU_HYPRE_Int loc_is_gather;
+   NALU_HYPRE_Int nprocs;
 
    hypre_MPI_Comm_size(comm, &nprocs);
 
@@ -278,7 +278,7 @@ hypre_BoxManGetGlobalIsGatherCalled( hypre_BoxManager *manager,
 
    if (nprocs > 1)
    {
-      hypre_MPI_Allreduce(&loc_is_gather, is_gather, 1, HYPRE_MPI_INT,
+      hypre_MPI_Allreduce(&loc_is_gather, is_gather, 1, NALU_HYPRE_MPI_INT,
                           hypre_MPI_LOR, comm);
    }
    else /* just one proc */
@@ -292,7 +292,7 @@ hypre_BoxManGetGlobalIsGatherCalled( hypre_BoxManager *manager,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_BoxManGetAssumedPartition( hypre_BoxManager *manager,
                                  hypre_StructAssumedPart **assumed_partition )
 {
@@ -304,7 +304,7 @@ hypre_BoxManGetAssumedPartition( hypre_BoxManager *manager,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_BoxManSetAssumedPartition( hypre_BoxManager *manager,
                                  hypre_StructAssumedPart *assumed_partition )
 {
@@ -316,7 +316,7 @@ hypre_BoxManSetAssumedPartition( hypre_BoxManager *manager,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_BoxManSetBoundingBox ( hypre_BoxManager *manager,
                              hypre_Box *bounding_box )
 {
@@ -331,11 +331,11 @@ hypre_BoxManSetBoundingBox ( hypre_BoxManager *manager,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_BoxManSetNumGhost( hypre_BoxManager *manager,
-                         HYPRE_Int  *num_ghost )
+                         NALU_HYPRE_Int  *num_ghost )
 {
-   HYPRE_Int  i, ndim = hypre_BoxManNDim(manager);
+   NALU_HYPRE_Int  i, ndim = hypre_BoxManNDim(manager);
 
    for (i = 0; i < 2 * ndim; i++)
    {
@@ -352,15 +352,15 @@ hypre_BoxManSetNumGhost( hypre_BoxManager *manager,
  * Assemble routime.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_BoxManDeleteMultipleEntriesAndInfo( hypre_BoxManager *manager,
-                                          HYPRE_Int*  indices,
-                                          HYPRE_Int num )
+                                          NALU_HYPRE_Int*  indices,
+                                          NALU_HYPRE_Int num )
 {
-   HYPRE_Int  i, j, start;
-   HYPRE_Int  array_size = hypre_BoxManNEntries(manager);
+   NALU_HYPRE_Int  i, j, start;
+   NALU_HYPRE_Int  array_size = hypre_BoxManNEntries(manager);
 
-   HYPRE_Int  info_size = hypre_BoxManEntryInfoSize(manager);
+   NALU_HYPRE_Int  info_size = hypre_BoxManEntryInfoSize(manager);
 
    void *to_ptr;
    void *from_ptr;
@@ -396,7 +396,7 @@ hypre_BoxManDeleteMultipleEntriesAndInfo( hypre_BoxManager *manager,
             to_ptr = hypre_BoxManInfoObject(manager, i);
             from_ptr = hypre_BoxManInfoObject(manager, i + j);
 
-            hypre_TMemcpy(to_ptr,  from_ptr, char, info_size, HYPRE_MEMORY_HOST, HYPRE_MEMORY_HOST);
+            hypre_TMemcpy(to_ptr,  from_ptr, char, info_size, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_HOST);
          }
       }
 
@@ -423,10 +423,10 @@ hypre_BoxManDeleteMultipleEntriesAndInfo( hypre_BoxManager *manager,
  *
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_BoxManCreate( HYPRE_Int max_nentries,
-                    HYPRE_Int info_size,
-                    HYPRE_Int ndim,
+NALU_HYPRE_Int
+hypre_BoxManCreate( NALU_HYPRE_Int max_nentries,
+                    NALU_HYPRE_Int info_size,
+                    NALU_HYPRE_Int ndim,
                     hypre_Box *bounding_box,
                     MPI_Comm comm,
                     hypre_BoxManager **manager_ptr )
@@ -434,9 +434,9 @@ hypre_BoxManCreate( HYPRE_Int max_nentries,
    hypre_BoxManager   *manager;
    hypre_Box          *bbox;
 
-   HYPRE_Int  i, d;
+   NALU_HYPRE_Int  i, d;
    /* allocate object */
-   manager = hypre_CTAlloc(hypre_BoxManager,  1, HYPRE_MEMORY_HOST);
+   manager = hypre_CTAlloc(hypre_BoxManager,  1, NALU_HYPRE_MEMORY_HOST);
 
    /* initialize */
    hypre_BoxManComm(manager) = comm;
@@ -451,16 +451,16 @@ hypre_BoxManCreate( HYPRE_Int max_nentries,
    }
 
    hypre_BoxManNEntries(manager) = 0;
-   hypre_BoxManEntries(manager)  = hypre_CTAlloc(hypre_BoxManEntry,  max_nentries, HYPRE_MEMORY_HOST);
+   hypre_BoxManEntries(manager)  = hypre_CTAlloc(hypre_BoxManEntry,  max_nentries, NALU_HYPRE_MEMORY_HOST);
 
    hypre_BoxManInfoObjects(manager) = NULL;
-   hypre_BoxManInfoObjects(manager) = hypre_TAlloc(char, max_nentries * info_size, HYPRE_MEMORY_HOST);
+   hypre_BoxManInfoObjects(manager) = hypre_TAlloc(char, max_nentries * info_size, NALU_HYPRE_MEMORY_HOST);
 
    hypre_BoxManIndexTable(manager) = NULL;
 
    hypre_BoxManNumProcsSort(manager)     = 0;
-   hypre_BoxManIdsSort(manager)          = hypre_CTAlloc(HYPRE_Int,  max_nentries, HYPRE_MEMORY_HOST);
-   hypre_BoxManProcsSort(manager)        = hypre_CTAlloc(HYPRE_Int,  max_nentries, HYPRE_MEMORY_HOST);
+   hypre_BoxManIdsSort(manager)          = hypre_CTAlloc(NALU_HYPRE_Int,  max_nentries, NALU_HYPRE_MEMORY_HOST);
+   hypre_BoxManProcsSort(manager)        = hypre_CTAlloc(NALU_HYPRE_Int,  max_nentries, NALU_HYPRE_MEMORY_HOST);
    hypre_BoxManProcsSortOffsets(manager) = NULL;
 
    hypre_BoxManFirstLocal(manager)      = 0;
@@ -478,9 +478,9 @@ hypre_BoxManCreate( HYPRE_Int max_nentries,
 
    hypre_BoxManAssumedPartition(manager) = NULL;
 
-   hypre_BoxManMyIds(manager) = hypre_CTAlloc(HYPRE_Int,  max_nentries, HYPRE_MEMORY_HOST);
+   hypre_BoxManMyIds(manager) = hypre_CTAlloc(NALU_HYPRE_Int,  max_nentries, NALU_HYPRE_MEMORY_HOST);
    hypre_BoxManMyEntries(manager) =
-      hypre_CTAlloc(hypre_BoxManEntry *,  max_nentries, HYPRE_MEMORY_HOST);
+      hypre_CTAlloc(hypre_BoxManEntry *,  max_nentries, NALU_HYPRE_MEMORY_HOST);
 
    bbox =  hypre_BoxCreate(ndim);
    hypre_BoxManBoundingBox(manager) = bbox;
@@ -490,7 +490,7 @@ hypre_BoxManCreate( HYPRE_Int max_nentries,
    hypre_BoxManNextId(manager) = 0;
 
    /* ghost points: we choose a default that will give zero everywhere..*/
-   for (i = 0; i < 2 * HYPRE_MAXDIM; i++)
+   for (i = 0; i < 2 * NALU_HYPRE_MAXDIM; i++)
    {
       hypre_BoxManNumGhost(manager)[i] = 0;
    }
@@ -510,14 +510,14 @@ hypre_BoxManCreate( HYPRE_Int max_nentries,
  * to BoxManAddEntry is made and there is not enough storage available.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_BoxManIncSize ( hypre_BoxManager *manager,
-                      HYPRE_Int inc_size )
+                      NALU_HYPRE_Int inc_size )
 {
-   HYPRE_Int   max_nentries = hypre_BoxManMaxNEntries(manager);
-   HYPRE_Int  *ids          = hypre_BoxManIdsSort(manager);
-   HYPRE_Int  *procs        = hypre_BoxManProcsSort(manager);
-   HYPRE_Int   info_size    = hypre_BoxManEntryInfoSize(manager);
+   NALU_HYPRE_Int   max_nentries = hypre_BoxManMaxNEntries(manager);
+   NALU_HYPRE_Int  *ids          = hypre_BoxManIdsSort(manager);
+   NALU_HYPRE_Int  *procs        = hypre_BoxManProcsSort(manager);
+   NALU_HYPRE_Int   info_size    = hypre_BoxManEntryInfoSize(manager);
 
    void *info         = hypre_BoxManInfoObjects(manager);
 
@@ -526,10 +526,10 @@ hypre_BoxManIncSize ( hypre_BoxManager *manager,
    /* increase size */
    max_nentries += inc_size;
 
-   entries = hypre_TReAlloc(entries,  hypre_BoxManEntry,  max_nentries, HYPRE_MEMORY_HOST);
-   ids = hypre_TReAlloc(ids,  HYPRE_Int,  max_nentries, HYPRE_MEMORY_HOST);
-   procs =  hypre_TReAlloc(procs,  HYPRE_Int,  max_nentries, HYPRE_MEMORY_HOST);
-   info = (void *) hypre_TReAlloc((char *)info, char, max_nentries * info_size, HYPRE_MEMORY_HOST);
+   entries = hypre_TReAlloc(entries,  hypre_BoxManEntry,  max_nentries, NALU_HYPRE_MEMORY_HOST);
+   ids = hypre_TReAlloc(ids,  NALU_HYPRE_Int,  max_nentries, NALU_HYPRE_MEMORY_HOST);
+   procs =  hypre_TReAlloc(procs,  NALU_HYPRE_Int,  max_nentries, NALU_HYPRE_MEMORY_HOST);
+   info = (void *) hypre_TReAlloc((char *)info, char, max_nentries * info_size, NALU_HYPRE_MEMORY_HOST);
 
    /* update manager */
    hypre_BoxManMaxNEntries(manager) = max_nentries;
@@ -540,12 +540,12 @@ hypre_BoxManIncSize ( hypre_BoxManager *manager,
 
    /* my ids temporary structure (destroyed in assemble) */
    {
-      HYPRE_Int *my_ids = hypre_BoxManMyIds(manager);
+      NALU_HYPRE_Int *my_ids = hypre_BoxManMyIds(manager);
       hypre_BoxManEntry  **my_entries = hypre_BoxManMyEntries(manager);
 
-      my_ids = hypre_TReAlloc(my_ids,  HYPRE_Int,  max_nentries, HYPRE_MEMORY_HOST);
+      my_ids = hypre_TReAlloc(my_ids,  NALU_HYPRE_Int,  max_nentries, NALU_HYPRE_MEMORY_HOST);
 
-      my_entries = hypre_TReAlloc(my_entries,  hypre_BoxManEntry *,  max_nentries, HYPRE_MEMORY_HOST);
+      my_entries = hypre_TReAlloc(my_entries,  hypre_BoxManEntry *,  max_nentries, NALU_HYPRE_MEMORY_HOST);
 
       hypre_BoxManMyIds(manager) = my_ids;
       hypre_BoxManMyEntries(manager) = my_entries;
@@ -558,39 +558,39 @@ hypre_BoxManIncSize ( hypre_BoxManager *manager,
  *  De-allocate the box manager structure.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_BoxManDestroy( hypre_BoxManager *manager )
 {
-   HYPRE_Int ndim = hypre_BoxManNDim(manager);
-   HYPRE_Int d;
+   NALU_HYPRE_Int ndim = hypre_BoxManNDim(manager);
+   NALU_HYPRE_Int d;
 
    if (manager)
    {
       for (d = 0; d < ndim; d++)
       {
-         hypre_TFree(hypre_BoxManIndexesD(manager,  d), HYPRE_MEMORY_HOST);
+         hypre_TFree(hypre_BoxManIndexesD(manager,  d), NALU_HYPRE_MEMORY_HOST);
       }
 
-      hypre_TFree(hypre_BoxManEntries(manager), HYPRE_MEMORY_HOST);
+      hypre_TFree(hypre_BoxManEntries(manager), NALU_HYPRE_MEMORY_HOST);
 
-      hypre_TFree(hypre_BoxManInfoObjects(manager), HYPRE_MEMORY_HOST);
+      hypre_TFree(hypre_BoxManInfoObjects(manager), NALU_HYPRE_MEMORY_HOST);
 
-      hypre_TFree(hypre_BoxManIndexTable(manager), HYPRE_MEMORY_HOST);
+      hypre_TFree(hypre_BoxManIndexTable(manager), NALU_HYPRE_MEMORY_HOST);
 
-      hypre_TFree(hypre_BoxManIdsSort(manager), HYPRE_MEMORY_HOST);
-      hypre_TFree(hypre_BoxManProcsSort(manager), HYPRE_MEMORY_HOST);
-      hypre_TFree(hypre_BoxManProcsSortOffsets(manager), HYPRE_MEMORY_HOST);
+      hypre_TFree(hypre_BoxManIdsSort(manager), NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(hypre_BoxManProcsSort(manager), NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(hypre_BoxManProcsSortOffsets(manager), NALU_HYPRE_MEMORY_HOST);
 
       hypre_BoxArrayDestroy(hypre_BoxManGatherRegions(manager));
 
-      hypre_TFree(hypre_BoxManMyIds(manager), HYPRE_MEMORY_HOST);
-      hypre_TFree(hypre_BoxManMyEntries(manager), HYPRE_MEMORY_HOST);
+      hypre_TFree(hypre_BoxManMyIds(manager), NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(hypre_BoxManMyEntries(manager), NALU_HYPRE_MEMORY_HOST);
 
       hypre_StructAssumedPartitionDestroy(hypre_BoxManAssumedPartition(manager));
 
       hypre_BoxDestroy(hypre_BoxManBoundingBox(manager));
 
-      hypre_TFree(manager, HYPRE_MEMORY_HOST);
+      hypre_TFree(manager, NALU_HYPRE_MEMORY_HOST);
    }
 
    return hypre_error_flag;
@@ -618,18 +618,18 @@ hypre_BoxManDestroy( hypre_BoxManager *manager )
  *
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_BoxManAddEntry( hypre_BoxManager *manager,
                       hypre_Index imin,
                       hypre_Index imax,
-                      HYPRE_Int proc_id,
-                      HYPRE_Int box_id,
+                      NALU_HYPRE_Int proc_id,
+                      NALU_HYPRE_Int box_id,
                       void *info )
 {
-   HYPRE_Int           myid;
-   HYPRE_Int           nentries = hypre_BoxManNEntries(manager);
-   HYPRE_Int           info_size = hypre_BoxManEntryInfoSize(manager);
-   HYPRE_Int           ndim = hypre_BoxManNDim(manager);
+   NALU_HYPRE_Int           myid;
+   NALU_HYPRE_Int           nentries = hypre_BoxManNEntries(manager);
+   NALU_HYPRE_Int           info_size = hypre_BoxManEntryInfoSize(manager);
+   NALU_HYPRE_Int           ndim = hypre_BoxManNDim(manager);
 
    hypre_BoxManEntry  *entries  = hypre_BoxManEntries(manager);
    hypre_BoxManEntry  *entry;
@@ -637,11 +637,11 @@ hypre_BoxManAddEntry( hypre_BoxManager *manager,
    hypre_IndexRef      entry_imin;
    hypre_IndexRef      entry_imax;
 
-   HYPRE_Int           d;
-   HYPRE_Int           *num_ghost = hypre_BoxManNumGhost(manager);
-   HYPRE_Int           volume;
+   NALU_HYPRE_Int           d;
+   NALU_HYPRE_Int           *num_ghost = hypre_BoxManNumGhost(manager);
+   NALU_HYPRE_Int           volume;
 
-   HYPRE_Int           id;
+   NALU_HYPRE_Int           id;
 
    hypre_Box           *box;
 
@@ -715,7 +715,7 @@ hypre_BoxManAddEntry( hypre_BoxManager *manager,
 
          /*point in the info array */
          index_ptr =  hypre_BoxManInfoObject(manager, nentries);
-         hypre_TMemcpy(index_ptr,  info, char, info_size, HYPRE_MEMORY_HOST, HYPRE_MEMORY_HOST);
+         hypre_TMemcpy(index_ptr,  info, char, info_size, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_HOST);
       }
 
       /* inherit and inject the numghost from manager into the entry (as
@@ -736,9 +736,9 @@ hypre_BoxManAddEntry( hypre_BoxManager *manager,
 
       if (proc_id == myid)
       {
-         HYPRE_Int *my_ids =   hypre_BoxManMyIds(manager);
+         NALU_HYPRE_Int *my_ids =   hypre_BoxManMyIds(manager);
          hypre_BoxManEntry **my_entries = hypre_BoxManMyEntries(manager);
-         HYPRE_Int num_my_entries = hypre_BoxManNumMyEntries(manager);
+         NALU_HYPRE_Int num_my_entries = hypre_BoxManNumMyEntries(manager);
 
          my_ids[num_my_entries] = id;
          my_entries[num_my_entries] = &entries[nentries];
@@ -772,10 +772,10 @@ hypre_BoxManAddEntry( hypre_BoxManager *manager,
  * search into the proc_id, and then into the box_id.)
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_BoxManGetEntry( hypre_BoxManager *manager,
-                      HYPRE_Int proc,
-                      HYPRE_Int id,
+                      NALU_HYPRE_Int proc,
+                      NALU_HYPRE_Int id,
                       hypre_BoxManEntry **entry_ptr )
 {
    /* find proc_id in procs array.  then find id in ids array, then grab the
@@ -783,16 +783,16 @@ hypre_BoxManGetEntry( hypre_BoxManager *manager,
 
    hypre_BoxManEntry *entry;
 
-   HYPRE_Int  myid;
-   HYPRE_Int  i, offset;
-   HYPRE_Int  start, finish;
-   HYPRE_Int  location;
-   HYPRE_Int  first_local  = hypre_BoxManFirstLocal(manager);
-   HYPRE_Int *procs_sort   = hypre_BoxManProcsSort(manager);
-   HYPRE_Int *ids_sort     = hypre_BoxManIdsSort(manager);
-   HYPRE_Int  nentries     = hypre_BoxManNEntries(manager);
-   HYPRE_Int  num_proc     = hypre_BoxManNumProcsSort(manager);
-   HYPRE_Int *proc_offsets =  hypre_BoxManProcsSortOffsets(manager);
+   NALU_HYPRE_Int  myid;
+   NALU_HYPRE_Int  i, offset;
+   NALU_HYPRE_Int  start, finish;
+   NALU_HYPRE_Int  location;
+   NALU_HYPRE_Int  first_local  = hypre_BoxManFirstLocal(manager);
+   NALU_HYPRE_Int *procs_sort   = hypre_BoxManProcsSort(manager);
+   NALU_HYPRE_Int *ids_sort     = hypre_BoxManIdsSort(manager);
+   NALU_HYPRE_Int  nentries     = hypre_BoxManNEntries(manager);
+   NALU_HYPRE_Int  num_proc     = hypre_BoxManNumProcsSort(manager);
+   NALU_HYPRE_Int *proc_offsets =  hypre_BoxManProcsSortOffsets(manager);
 
    /* can only use after assembling */
    if (!hypre_BoxManIsAssembled(manager))
@@ -875,9 +875,9 @@ hypre_BoxManGetEntry( hypre_BoxManager *manager,
  * copy of the array (so calling code should not free this array!)
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_BoxManGetAllEntries( hypre_BoxManager *manager,
-                           HYPRE_Int *num_entries,
+                           NALU_HYPRE_Int *num_entries,
                            hypre_BoxManEntry **entries)
 {
    /* can only use after assembling */
@@ -904,13 +904,13 @@ hypre_BoxManGetAllEntries( hypre_BoxManager *manager,
  * called.  (may be called quite a bit in some sstruct apps)
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_BoxManGetAllEntriesBoxes( hypre_BoxManager *manager,
                                 hypre_BoxArray *boxes )
 {
    hypre_BoxManEntry entry;
 
-   HYPRE_Int          i, nentries;
+   NALU_HYPRE_Int          i, nentries;
    hypre_Index       ilower, iupper;
 
    hypre_BoxManEntry  *boxman_entries  = hypre_BoxManEntries(manager);
@@ -946,23 +946,23 @@ hypre_BoxManGetAllEntriesBoxes( hypre_BoxManager *manager,
  * Notes: Should have already created the box array;
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_BoxManGetLocalEntriesBoxes( hypre_BoxManager *manager,
                                   hypre_BoxArray *boxes )
 {
    hypre_BoxManEntry entry;
 
-   HYPRE_Int          i;
+   NALU_HYPRE_Int          i;
 
    hypre_Index        ilower, iupper;
 
-   HYPRE_Int  start = hypre_BoxManFirstLocal(manager);
-   HYPRE_Int  finish;
-   HYPRE_Int  num_my_entries = hypre_BoxManNumMyEntries(manager);
+   NALU_HYPRE_Int  start = hypre_BoxManFirstLocal(manager);
+   NALU_HYPRE_Int  finish;
+   NALU_HYPRE_Int  num_my_entries = hypre_BoxManNumMyEntries(manager);
 
    hypre_BoxManEntry  *boxman_entries  = hypre_BoxManEntries(manager);
 
-   HYPRE_Int *offsets = hypre_BoxManProcsSortOffsets(manager);
+   NALU_HYPRE_Int *offsets = hypre_BoxManProcsSortOffsets(manager);
 
    /* can only use after assembling */
    if (!hypre_BoxManIsAssembled(manager))
@@ -978,7 +978,7 @@ hypre_BoxManGetLocalEntriesBoxes( hypre_BoxManager *manager,
 
    if (num_my_entries && ((finish - start) != num_my_entries))
    {
-      hypre_error_w_msg(HYPRE_ERROR_GENERIC, "Something's wrong with box manager!");
+      hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "Something's wrong with box manager!");
    }
 
    for (i = 0; i < num_my_entries; i++)
@@ -997,16 +997,16 @@ hypre_BoxManGetLocalEntriesBoxes( hypre_BoxManager *manager,
  *  Get the boxes and the proc ids. The input procs array should be NULL.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_BoxManGetAllEntriesBoxesProc( hypre_BoxManager *manager,
                                     hypre_BoxArray   *boxes,
-                                    HYPRE_Int       **procs_ptr)
+                                    NALU_HYPRE_Int       **procs_ptr)
 {
    hypre_BoxManEntry  entry;
-   HYPRE_Int          i, nentries;
+   NALU_HYPRE_Int          i, nentries;
    hypre_Index        ilower, iupper;
    hypre_BoxManEntry *boxman_entries  = hypre_BoxManEntries(manager);
-   HYPRE_Int         *procs;
+   NALU_HYPRE_Int         *procs;
 
    /* can only use after assembling */
    if (!hypre_BoxManIsAssembled(manager))
@@ -1018,7 +1018,7 @@ hypre_BoxManGetAllEntriesBoxesProc( hypre_BoxManager *manager,
    /* set array size  */
    nentries = hypre_BoxManNEntries(manager);
    hypre_BoxArraySetSize(boxes, nentries);
-   procs = hypre_TAlloc(HYPRE_Int,  nentries, HYPRE_MEMORY_HOST);
+   procs = hypre_TAlloc(NALU_HYPRE_Int,  nentries, NALU_HYPRE_MEMORY_HOST);
 
    for (i = 0; i < nentries; i++)
    {
@@ -1050,7 +1050,7 @@ hypre_BoxManGetAllEntriesBoxesProc( hypre_BoxManager *manager,
  * is added to gather_regions array.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_BoxManGatherEntries(hypre_BoxManager *manager,
                           hypre_Index imin,
                           hypre_Index imax )
@@ -1126,22 +1126,22 @@ hypre_BoxManGatherEntries(hypre_BoxManager *manager,
  * don't assemble, then add more entries and then assemble again)
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_BoxManAssemble( hypre_BoxManager *manager )
 {
-   HYPRE_Int  ndim = hypre_BoxManNDim(manager);
-   HYPRE_Int  myid, nprocs;
-   HYPRE_Int  is_gather, global_is_gather;
-   HYPRE_Int  nentries;
-   HYPRE_Int *procs_sort, *ids_sort;
-   HYPRE_Int  i, j, k;
+   NALU_HYPRE_Int  ndim = hypre_BoxManNDim(manager);
+   NALU_HYPRE_Int  myid, nprocs;
+   NALU_HYPRE_Int  is_gather, global_is_gather;
+   NALU_HYPRE_Int  nentries;
+   NALU_HYPRE_Int *procs_sort, *ids_sort;
+   NALU_HYPRE_Int  i, j, k;
 
-   HYPRE_Int need_to_sort = 1; /* default it to sort */
-   //HYPRE_Int short_sort = 0; /*do abreviated sort */
+   NALU_HYPRE_Int need_to_sort = 1; /* default it to sort */
+   //NALU_HYPRE_Int short_sort = 0; /*do abreviated sort */
 
-   HYPRE_Int  non_ap_gather = 1; /* default to gather w/out ap*/
+   NALU_HYPRE_Int  non_ap_gather = 1; /* default to gather w/out ap*/
 
-   HYPRE_Int  global_num_boxes = 0;
+   NALU_HYPRE_Int  global_num_boxes = 0;
 
    hypre_BoxManEntry *entries;
 
@@ -1175,7 +1175,7 @@ hypre_BoxManAssemble( hypre_BoxManager *manager )
       if (nprocs > 1)
       {
          is_gather = hypre_BoxManIsGatherCalled(manager);
-         hypre_MPI_Allreduce(&is_gather, &global_is_gather, 1, HYPRE_MPI_INT,
+         hypre_MPI_Allreduce(&is_gather, &global_is_gather, 1, NALU_HYPRE_MPI_INT,
                              hypre_MPI_LOR, comm);
       }
       else /* just one proc */
@@ -1195,8 +1195,8 @@ hypre_BoxManAssemble( hypre_BoxManager *manager )
    if (global_is_gather)
    {
 
-      HYPRE_Int *my_ids         = hypre_BoxManMyIds(manager);
-      HYPRE_Int  num_my_entries = hypre_BoxManNumMyEntries(manager);
+      NALU_HYPRE_Int *my_ids         = hypre_BoxManMyIds(manager);
+      NALU_HYPRE_Int  num_my_entries = hypre_BoxManNumMyEntries(manager);
 
       hypre_BoxManEntry **my_entries = hypre_BoxManMyEntries(manager);
 
@@ -1226,42 +1226,42 @@ hypre_BoxManAssemble( hypre_BoxManager *manager )
 
       if (!non_ap_gather)   /*********** AP CASE! ***********/
       {
-         HYPRE_Int  size;
-         HYPRE_Int *tmp_proc_ids;
-         HYPRE_Int  proc_count, proc_alloc;
-         //HYPRE_Int  max_proc_count;
-         HYPRE_Int *proc_array;
-         HYPRE_Int *ap_proc_ids;
-         HYPRE_Int  count;
+         NALU_HYPRE_Int  size;
+         NALU_HYPRE_Int *tmp_proc_ids;
+         NALU_HYPRE_Int  proc_count, proc_alloc;
+         //NALU_HYPRE_Int  max_proc_count;
+         NALU_HYPRE_Int *proc_array;
+         NALU_HYPRE_Int *ap_proc_ids;
+         NALU_HYPRE_Int  count;
 
-         HYPRE_Int  max_response_size;
-         HYPRE_Int  non_info_size, entry_size_bytes;
-         HYPRE_Int *neighbor_proc_ids = NULL;
-         HYPRE_Int *response_buf_starts;
-         HYPRE_Int *response_buf;
-         HYPRE_Int  response_size, tmp_int;
+         NALU_HYPRE_Int  max_response_size;
+         NALU_HYPRE_Int  non_info_size, entry_size_bytes;
+         NALU_HYPRE_Int *neighbor_proc_ids = NULL;
+         NALU_HYPRE_Int *response_buf_starts;
+         NALU_HYPRE_Int *response_buf;
+         NALU_HYPRE_Int  response_size, tmp_int;
 
-         HYPRE_Int *send_buf = NULL;
-         HYPRE_Int *send_buf_starts = NULL;
-         HYPRE_Int  d, proc, id, last_id;
-         HYPRE_Int *tmp_int_ptr;
-         HYPRE_Int *contact_proc_ids = NULL;
+         NALU_HYPRE_Int *send_buf = NULL;
+         NALU_HYPRE_Int *send_buf_starts = NULL;
+         NALU_HYPRE_Int  d, proc, id, last_id;
+         NALU_HYPRE_Int *tmp_int_ptr;
+         NALU_HYPRE_Int *contact_proc_ids = NULL;
 
-         HYPRE_Int max_regions, max_refinements, ologp;
+         NALU_HYPRE_Int max_regions, max_refinements, ologp;
 
-         HYPRE_Int  *local_boxnums;
+         NALU_HYPRE_Int  *local_boxnums;
 
-         HYPRE_Int statbuf[3];
-         HYPRE_Int send_statbuf[3];
+         NALU_HYPRE_Int statbuf[3];
+         NALU_HYPRE_Int send_statbuf[3];
 
-         HYPRE_Int ndim = hypre_BoxManNDim(manager);
+         NALU_HYPRE_Int ndim = hypre_BoxManNDim(manager);
 
          void *entry_response_buf;
          void *index_ptr;
 
-         HYPRE_Real gamma;
-         HYPRE_Real local_volume, global_volume;
-         HYPRE_Real sendbuf2[2], recvbuf2[2];
+         NALU_HYPRE_Real gamma;
+         NALU_HYPRE_Real local_volume, global_volume;
+         NALU_HYPRE_Real sendbuf2[2], recvbuf2[2];
 
          hypre_BoxArray *gather_regions;
          hypre_BoxArray *local_boxes;
@@ -1285,10 +1285,10 @@ hypre_BoxManAssemble( hypre_BoxManager *manager )
          {
 
             /* create an array of local boxes.  get the global box size/volume
-               (as a HYPRE_Real). */
+               (as a NALU_HYPRE_Real). */
 
             local_boxes = hypre_BoxArrayCreate(num_my_entries, ndim);
-            local_boxnums = hypre_CTAlloc(HYPRE_Int,  num_my_entries, HYPRE_MEMORY_HOST);
+            local_boxnums = hypre_CTAlloc(NALU_HYPRE_Int,  num_my_entries, NALU_HYPRE_MEMORY_HOST);
 
             local_volume = 0.0;
 
@@ -1307,27 +1307,27 @@ hypre_BoxManAssemble( hypre_BoxManager *manager )
                local_boxnums[i] =   hypre_BoxManEntryId(entry_ptr);
 
                /* calculate volume */
-               local_volume += (HYPRE_Real) hypre_BoxVolume(box);
+               local_volume += (NALU_HYPRE_Real) hypre_BoxVolume(box);
 
             }/* end of local boxes */
 
             /* get the number of global entries and the global volume */
 
             sendbuf2[0] = local_volume;
-            sendbuf2[1] = (HYPRE_Real) num_my_entries;
+            sendbuf2[1] = (NALU_HYPRE_Real) num_my_entries;
 
-            hypre_MPI_Allreduce(&sendbuf2, &recvbuf2, 2, HYPRE_MPI_REAL,
+            hypre_MPI_Allreduce(&sendbuf2, &recvbuf2, 2, NALU_HYPRE_MPI_REAL,
                                 hypre_MPI_SUM, comm);
 
             global_volume = recvbuf2[0];
-            global_num_boxes = (HYPRE_Int) recvbuf2[1];
+            global_num_boxes = (NALU_HYPRE_Int) recvbuf2[1];
 
             /* estimates for the assumed partition */
             d = nprocs / 2;
             ologp = 0;
             while ( d > 0)
             {
-               d = d / 2; /* note - d is an HYPRE_Int - so this is floored */
+               d = d / 2; /* note - d is an NALU_HYPRE_Int - so this is floored */
                ologp++;
             }
 
@@ -1344,7 +1344,7 @@ hypre_BoxManAssemble( hypre_BoxManager *manager )
             hypre_BoxManAssumedPartition(manager) = ap;
 
             hypre_BoxArrayDestroy(local_boxes);
-            hypre_TFree(local_boxnums, HYPRE_MEMORY_HOST);
+            hypre_TFree(local_boxnums, NALU_HYPRE_MEMORY_HOST);
          }
          else
          {
@@ -1361,12 +1361,12 @@ hypre_BoxManAssemble( hypre_BoxManager *manager )
             /*allocate space to store info from one box */
             proc_count = 0;
             proc_alloc = hypre_pow2(ndim); /* Just an initial estimate */
-            proc_array = hypre_CTAlloc(HYPRE_Int,  proc_alloc, HYPRE_MEMORY_HOST);
+            proc_array = hypre_CTAlloc(NALU_HYPRE_Int,  proc_alloc, NALU_HYPRE_MEMORY_HOST);
 
             /* probably there will mostly be one proc per box - allocate space
              * for 2 */
             size = 2 * hypre_BoxArraySize(gather_regions);
-            tmp_proc_ids =  hypre_CTAlloc(HYPRE_Int,  size, HYPRE_MEMORY_HOST);
+            tmp_proc_ids =  hypre_CTAlloc(NALU_HYPRE_Int,  size, NALU_HYPRE_MEMORY_HOST);
             count = 0;
 
             /* loop through all boxes */
@@ -1380,7 +1380,7 @@ hypre_BoxManAssemble( hypre_BoxManager *manager )
                {
                   size = size + proc_count
                          + 2 * (hypre_BoxArraySize(gather_regions) - i);
-                  tmp_proc_ids = hypre_TReAlloc(tmp_proc_ids,  HYPRE_Int,  size, HYPRE_MEMORY_HOST);
+                  tmp_proc_ids = hypre_TReAlloc(tmp_proc_ids,  NALU_HYPRE_Int,  size, NALU_HYPRE_MEMORY_HOST);
                }
                for (j = 0; j < proc_count; j++)
                {
@@ -1389,13 +1389,13 @@ hypre_BoxManAssemble( hypre_BoxManager *manager )
                }
             }
 
-            hypre_TFree(proc_array, HYPRE_MEMORY_HOST);
+            hypre_TFree(proc_array, NALU_HYPRE_MEMORY_HOST);
 
             /* now get rid of redundencies in tmp_proc_ids (since a box can lie
                in more than one AP - put in ap_proc_ids*/
             hypre_qsort0(tmp_proc_ids, 0, count - 1);
             proc_count = 0;
-            ap_proc_ids = hypre_CTAlloc(HYPRE_Int,  count, HYPRE_MEMORY_HOST);
+            ap_proc_ids = hypre_CTAlloc(NALU_HYPRE_Int,  count, NALU_HYPRE_MEMORY_HOST);
 
             if (count)
             {
@@ -1410,7 +1410,7 @@ hypre_BoxManAssemble( hypre_BoxManager *manager )
                   proc_count++;
                }
             }
-            hypre_TFree(tmp_proc_ids, HYPRE_MEMORY_HOST);
+            hypre_TFree(tmp_proc_ids, NALU_HYPRE_MEMORY_HOST);
 
             /* 3.  now we have a sorted list with no duplicates in ap_proc_ids */
             /* for each of these processor ids, we need to get infomation about
@@ -1424,7 +1424,7 @@ hypre_BoxManAssemble( hypre_BoxManager *manager )
                hypre_StructAssumedPartMyPartitionNumDistinctProcs(ap);
             send_statbuf[2] = num_my_entries;
 
-            hypre_MPI_Allreduce(send_statbuf, statbuf, 3, HYPRE_MPI_INT,
+            hypre_MPI_Allreduce(send_statbuf, statbuf, 3, NALU_HYPRE_MPI_INT,
                                 hypre_MPI_MAX, comm);
 
             //max_proc_count = statbuf[0];
@@ -1452,7 +1452,7 @@ hypre_BoxManAssemble( hypre_BoxManager *manager )
                non_ap_gather = 1;
 
                /*clean up from above */
-               hypre_TFree(ap_proc_ids, HYPRE_MEMORY_HOST);
+               hypre_TFree(ap_proc_ids, NALU_HYPRE_MEMORY_HOST);
             }
 #endif
 
@@ -1486,7 +1486,7 @@ hypre_BoxManAssemble( hypre_BoxManager *manager )
                response_obj.data2 = NULL;
 
                send_buf = NULL;
-               send_buf_starts = hypre_CTAlloc(HYPRE_Int,  proc_count + 1, HYPRE_MEMORY_HOST);
+               send_buf_starts = hypre_CTAlloc(NALU_HYPRE_Int,  proc_count + 1, NALU_HYPRE_MEMORY_HOST);
                for (i = 0; i < proc_count + 1; i++)
                {
                   send_buf_starts[i] = 0;
@@ -1497,7 +1497,7 @@ hypre_BoxManAssemble( hypre_BoxManager *manager )
                response_buf_starts = NULL;
 
                /*we expect back the proc id for each box owned */
-               size =  sizeof(HYPRE_Int);
+               size =  sizeof(NALU_HYPRE_Int);
 
                /* this parameter needs to be the same on all processors */
                /* max_response_size = (global_num_boxes/nprocs)*2;*/
@@ -1517,9 +1517,9 @@ hypre_BoxManAssemble( hypre_BoxManager *manager )
                neighbor_proc_ids = response_buf;
 
                /*clean up*/
-               hypre_TFree(send_buf_starts, HYPRE_MEMORY_HOST);
-               hypre_TFree(ap_proc_ids, HYPRE_MEMORY_HOST);
-               hypre_TFree(response_buf_starts, HYPRE_MEMORY_HOST);
+               hypre_TFree(send_buf_starts, NALU_HYPRE_MEMORY_HOST);
+               hypre_TFree(ap_proc_ids, NALU_HYPRE_MEMORY_HOST);
+               hypre_TFree(response_buf_starts, NALU_HYPRE_MEMORY_HOST);
 
                /* create a contact list of these processors (eliminate duplicate
                 * procs and also my id ) */
@@ -1528,7 +1528,7 @@ hypre_BoxManAssemble( hypre_BoxManager *manager )
                hypre_qsort0(neighbor_proc_ids, 0, size - 1);
 
                /* new contact list: */
-               contact_proc_ids = hypre_CTAlloc(HYPRE_Int,  size, HYPRE_MEMORY_HOST);
+               contact_proc_ids = hypre_CTAlloc(NALU_HYPRE_Int,  size, NALU_HYPRE_MEMORY_HOST);
                proc_count = 0; /* to determine the number of unique ids) */
 
                last_id = -1;
@@ -1558,9 +1558,9 @@ hypre_BoxManAssemble( hypre_BoxManager *manager )
                {
                   /* so we can eliminate duplicate contacts */
 
-                  HYPRE_Int new_count = 0;
-                  HYPRE_Int proc_spot = 0;
-                  HYPRE_Int known_id, contact_id;
+                  NALU_HYPRE_Int new_count = 0;
+                  NALU_HYPRE_Int proc_spot = 0;
+                  NALU_HYPRE_Int known_id, contact_id;
 
                   /* in this case, we can do the "short sort" because we will
                      not have any duplicate proc ids */
@@ -1611,7 +1611,7 @@ hypre_BoxManAssemble( hypre_BoxManager *manager )
                }
 #endif
 
-               send_buf_starts = hypre_CTAlloc(HYPRE_Int,  proc_count + 1, HYPRE_MEMORY_HOST);
+               send_buf_starts = hypre_CTAlloc(NALU_HYPRE_Int,  proc_count + 1, NALU_HYPRE_MEMORY_HOST);
                for (i = 0; i < proc_count + 1; i++)
                {
                   send_buf_starts[i] = 0;
@@ -1631,16 +1631,16 @@ hypre_BoxManAssemble( hypre_BoxManager *manager )
                response_obj2.data2 = NULL;
 
                /* How big is an entry?
-                    extents - 2*ndim HYPRE_Ints
-                    proc    - 1 HYPRE_Int
-                    id      - 1 HYPRE_Int
+                    extents - 2*ndim NALU_HYPRE_Ints
+                    proc    - 1 NALU_HYPRE_Int
+                    id      - 1 NALU_HYPRE_Int
                     info    - info_size in bytes
 
                   Note: For now, we do not need to send num_ghost, position, or
                   boxman, since this is just generated in addentry. */
 
                non_info_size = 2 * ndim + 2;
-               entry_size_bytes = non_info_size * sizeof(HYPRE_Int)
+               entry_size_bytes = non_info_size * sizeof(NALU_HYPRE_Int)
                                   + hypre_BoxManEntryInfoSize(manager);
 
                /* modification -  use an true max_response_size
@@ -1648,7 +1648,7 @@ hypre_BoxManAssemble( hypre_BoxManager *manager )
                max_response_size = statbuf[2]; /* max of num_my_entries */
 
                hypre_DataExchangeList(proc_count, contact_proc_ids,
-                                      send_buf, send_buf_starts, sizeof(HYPRE_Int),
+                                      send_buf, send_buf_starts, sizeof(NALU_HYPRE_Int),
                                       entry_size_bytes, &response_obj2,
                                       max_response_size, 4,
                                       comm,  &entry_response_buf,
@@ -1663,7 +1663,7 @@ hypre_BoxManAssemble( hypre_BoxManager *manager )
                /* do we need more storage ?*/
                if (nentries + response_size >  hypre_BoxManMaxNEntries(manager))
                {
-                  HYPRE_Int inc_size;
+                  NALU_HYPRE_Int inc_size;
 
                   inc_size = (response_size + nentries
                               - hypre_BoxManMaxNEntries(manager));
@@ -1677,11 +1677,11 @@ hypre_BoxManAssemble( hypre_BoxManager *manager )
                index_ptr = entry_response_buf; /* point into response buf */
                for (i = 0; i < response_size; i++)
                {
-                  size = sizeof(HYPRE_Int);
+                  size = sizeof(NALU_HYPRE_Int);
                   /* imin */
                   for (d = 0; d < ndim; d++)
                   {
-                     hypre_TMemcpy( &tmp_int,  index_ptr, HYPRE_Int, 1, HYPRE_MEMORY_HOST, HYPRE_MEMORY_HOST);
+                     hypre_TMemcpy( &tmp_int,  index_ptr, NALU_HYPRE_Int, 1, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_HOST);
                      index_ptr =  (void *) ((char *) index_ptr + size);
                      hypre_IndexD(imin, d) = tmp_int;
                   }
@@ -1689,18 +1689,18 @@ hypre_BoxManAssemble( hypre_BoxManager *manager )
                   /*imax */
                   for (d = 0; d < ndim; d++)
                   {
-                     hypre_TMemcpy( &tmp_int,  index_ptr, HYPRE_Int, 1, HYPRE_MEMORY_HOST, HYPRE_MEMORY_HOST);
+                     hypre_TMemcpy( &tmp_int,  index_ptr, NALU_HYPRE_Int, 1, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_HOST);
                      index_ptr =  (void *) ((char *) index_ptr + size);
                      hypre_IndexD(imax, d) = tmp_int;
                   }
 
                   /* proc */
-                  tmp_int_ptr = (HYPRE_Int *) index_ptr;
+                  tmp_int_ptr = (NALU_HYPRE_Int *) index_ptr;
                   proc = *tmp_int_ptr;
                   index_ptr =  (void *) ((char *) index_ptr + size);
 
                   /* id */
-                  tmp_int_ptr = (HYPRE_Int *) index_ptr;
+                  tmp_int_ptr = (NALU_HYPRE_Int *) index_ptr;
                   id = *tmp_int_ptr;
                   index_ptr =  (void *) ((char *) index_ptr + size);
 
@@ -1714,11 +1714,11 @@ hypre_BoxManAssemble( hypre_BoxManager *manager )
                }
 
                /* clean up from this section of code*/
-               hypre_TFree(entry_response_buf, HYPRE_MEMORY_HOST);
-               hypre_TFree(response_buf_starts, HYPRE_MEMORY_HOST);
-               hypre_TFree(send_buf_starts, HYPRE_MEMORY_HOST);
-               hypre_TFree(contact_proc_ids, HYPRE_MEMORY_HOST);
-               hypre_TFree(neighbor_proc_ids, HYPRE_MEMORY_HOST); /* response_buf - aliased */
+               hypre_TFree(entry_response_buf, NALU_HYPRE_MEMORY_HOST);
+               hypre_TFree(response_buf_starts, NALU_HYPRE_MEMORY_HOST);
+               hypre_TFree(send_buf_starts, NALU_HYPRE_MEMORY_HOST);
+               hypre_TFree(contact_proc_ids, NALU_HYPRE_MEMORY_HOST);
+               hypre_TFree(neighbor_proc_ids, NALU_HYPRE_MEMORY_HOST); /* response_buf - aliased */
 
             } /* end of nested non_ap_gather -exchange 1*/
 
@@ -1732,15 +1732,15 @@ hypre_BoxManAssemble( hypre_BoxManager *manager )
             entries id = myid (not all of the entries in the table). Then we
             will just re-create the entries array instead of looking for
             duplicates and sorting */
-         HYPRE_Int  entry_size_bytes;
-         HYPRE_Int  send_count, send_count_bytes;
-         HYPRE_Int *displs, *recv_counts;
-         HYPRE_Int  recv_buf_size, recv_buf_size_bytes;
-         HYPRE_Int  d;
-         HYPRE_Int  size, non_info_size, position;
-         HYPRE_Int  proc, id;
-         HYPRE_Int  tmp_int;
-         HYPRE_Int *tmp_int_ptr;
+         NALU_HYPRE_Int  entry_size_bytes;
+         NALU_HYPRE_Int  send_count, send_count_bytes;
+         NALU_HYPRE_Int *displs, *recv_counts;
+         NALU_HYPRE_Int  recv_buf_size, recv_buf_size_bytes;
+         NALU_HYPRE_Int  d;
+         NALU_HYPRE_Int  size, non_info_size, position;
+         NALU_HYPRE_Int  proc, id;
+         NALU_HYPRE_Int  tmp_int;
+         NALU_HYPRE_Int *tmp_int_ptr;
 
          void *send_buf = NULL;
          void *recv_buf = NULL;
@@ -1755,27 +1755,27 @@ hypre_BoxManAssemble( hypre_BoxManager *manager )
          void *info;
 
          /* How big is an entry?
-            extents - 2*ndim HYPRE_Ints
-            proc    - 1 HYPRE_Int
-            id      - 1 HYPRE_Int
+            extents - 2*ndim NALU_HYPRE_Ints
+            proc    - 1 NALU_HYPRE_Int
+            id      - 1 NALU_HYPRE_Int
             info    - info_size in bytes
 
             Note: For now, we do not need to send num_ghost, position, or
             boxman, since this is just generated in addentry. */
 
          non_info_size = 2 * ndim + 2;
-         entry_size_bytes = non_info_size * sizeof(HYPRE_Int)
+         entry_size_bytes = non_info_size * sizeof(NALU_HYPRE_Int)
                             + hypre_BoxManEntryInfoSize(manager);
 
          /* figure out how many entries each proc has - let the group know */
          send_count =  num_my_entries;
          send_count_bytes = send_count * entry_size_bytes;
-         recv_counts = hypre_CTAlloc(HYPRE_Int,  nprocs, HYPRE_MEMORY_HOST);
+         recv_counts = hypre_CTAlloc(NALU_HYPRE_Int,  nprocs, NALU_HYPRE_MEMORY_HOST);
 
-         hypre_MPI_Allgather(&send_count_bytes, 1, HYPRE_MPI_INT,
-                             recv_counts, 1, HYPRE_MPI_INT, comm);
+         hypre_MPI_Allgather(&send_count_bytes, 1, NALU_HYPRE_MPI_INT,
+                             recv_counts, 1, NALU_HYPRE_MPI_INT, comm);
 
-         displs = hypre_CTAlloc(HYPRE_Int,  nprocs, HYPRE_MEMORY_HOST);
+         displs = hypre_CTAlloc(NALU_HYPRE_Int,  nprocs, NALU_HYPRE_MEMORY_HOST);
          displs[0] = 0;
          recv_buf_size_bytes = recv_counts[0];
          for (i = 1; i < nprocs; i++)
@@ -1790,8 +1790,8 @@ hypre_BoxManAssemble( hypre_BoxManager *manager )
 
          /* populate the send buffer with my entries (note: these are
             sorted above by increasing id */
-         send_buf = hypre_TAlloc(char, send_count_bytes, HYPRE_MEMORY_HOST);
-         recv_buf = hypre_TAlloc(char, recv_buf_size_bytes, HYPRE_MEMORY_HOST);
+         send_buf = hypre_TAlloc(char, send_count_bytes, NALU_HYPRE_MEMORY_HOST);
+         recv_buf = hypre_TAlloc(char, recv_buf_size_bytes, NALU_HYPRE_MEMORY_HOST);
 
          index_ptr = send_buf; /* step through send_buf with this pointer */
          /* loop over my entries */
@@ -1799,14 +1799,14 @@ hypre_BoxManAssemble( hypre_BoxManager *manager )
          {
             entry = my_entries[i];
 
-            size = sizeof(HYPRE_Int);
+            size = sizeof(NALU_HYPRE_Int);
 
             /* imin */
             index = hypre_BoxManEntryIMin(entry);
             for (d = 0; d < ndim; d++)
             {
                tmp_int = hypre_IndexD(index, d);
-               hypre_TMemcpy( index_ptr,  &tmp_int, HYPRE_Int, 1, HYPRE_MEMORY_HOST, HYPRE_MEMORY_HOST);
+               hypre_TMemcpy( index_ptr,  &tmp_int, NALU_HYPRE_Int, 1, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_HOST);
                index_ptr =  (void *) ((char *) index_ptr + size);
             }
 
@@ -1815,18 +1815,18 @@ hypre_BoxManAssemble( hypre_BoxManager *manager )
             for (d = 0; d < ndim; d++)
             {
                tmp_int = hypre_IndexD(index, d);
-               hypre_TMemcpy( index_ptr,  &tmp_int, HYPRE_Int, 1, HYPRE_MEMORY_HOST, HYPRE_MEMORY_HOST);
+               hypre_TMemcpy( index_ptr,  &tmp_int, NALU_HYPRE_Int, 1, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_HOST);
                index_ptr =  (void *) ((char *) index_ptr + size);
             }
 
             /* proc */
             tmp_int = hypre_BoxManEntryProc(entry);
-            hypre_TMemcpy( index_ptr,  &tmp_int, HYPRE_Int, 1, HYPRE_MEMORY_HOST, HYPRE_MEMORY_HOST);
+            hypre_TMemcpy( index_ptr,  &tmp_int, NALU_HYPRE_Int, 1, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_HOST);
             index_ptr =  (void *) ((char *) index_ptr + size);
 
             /* id */
             tmp_int = hypre_BoxManEntryId(entry);
-            hypre_TMemcpy( index_ptr,  &tmp_int, HYPRE_Int, 1, HYPRE_MEMORY_HOST, HYPRE_MEMORY_HOST);
+            hypre_TMemcpy( index_ptr,  &tmp_int, NALU_HYPRE_Int, 1, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_HOST);
             index_ptr =  (void *) ((char *) index_ptr + size);
 
             /*info object*/
@@ -1834,7 +1834,7 @@ hypre_BoxManAssemble( hypre_BoxManager *manager )
             position = hypre_BoxManEntryPosition(entry);
             info = hypre_BoxManInfoObject(manager, position);
 
-            hypre_TMemcpy(index_ptr,  info, char, size, HYPRE_MEMORY_HOST, HYPRE_MEMORY_HOST);
+            hypre_TMemcpy(index_ptr,  info, char, size, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_HOST);
             index_ptr =  (void *) ((char *) index_ptr + size);
 
          } /* end of loop over my entries */
@@ -1851,7 +1851,7 @@ hypre_BoxManAssemble( hypre_BoxManager *manager )
 
          if (recv_buf_size > hypre_BoxManMaxNEntries(manager))
          {
-            HYPRE_Int inc_size;
+            NALU_HYPRE_Int inc_size;
 
             inc_size = (recv_buf_size - hypre_BoxManMaxNEntries(manager));
             hypre_BoxManIncSize ( manager, inc_size);
@@ -1871,11 +1871,11 @@ hypre_BoxManAssemble( hypre_BoxManager *manager )
          for (i = 0; i < recv_buf_size; i++)
          {
 
-            size = sizeof(HYPRE_Int);
+            size = sizeof(NALU_HYPRE_Int);
             /* imin */
             for (d = 0; d < ndim; d++)
             {
-               hypre_TMemcpy( &tmp_int,  index_ptr, HYPRE_Int, 1, HYPRE_MEMORY_HOST, HYPRE_MEMORY_HOST);
+               hypre_TMemcpy( &tmp_int,  index_ptr, NALU_HYPRE_Int, 1, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_HOST);
                index_ptr =  (void *) ((char *) index_ptr + size);
                hypre_IndexD(imin, d) = tmp_int;
             }
@@ -1883,18 +1883,18 @@ hypre_BoxManAssemble( hypre_BoxManager *manager )
             /*imax */
             for (d = 0; d < ndim; d++)
             {
-               hypre_TMemcpy( &tmp_int,  index_ptr, HYPRE_Int, 1, HYPRE_MEMORY_HOST, HYPRE_MEMORY_HOST);
+               hypre_TMemcpy( &tmp_int,  index_ptr, NALU_HYPRE_Int, 1, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_HOST);
                index_ptr =  (void *) ((char *) index_ptr + size);
                hypre_IndexD(imax, d) = tmp_int;
             }
 
             /* proc */
-            tmp_int_ptr = (HYPRE_Int *) index_ptr;
+            tmp_int_ptr = (NALU_HYPRE_Int *) index_ptr;
             proc = *tmp_int_ptr;
             index_ptr =  (void *) ((char *) index_ptr + size);
 
             /* id */
-            tmp_int_ptr = (HYPRE_Int *) index_ptr;
+            tmp_int_ptr = (NALU_HYPRE_Int *) index_ptr;
             id = *tmp_int_ptr;
             index_ptr =  (void *) ((char *) index_ptr + size);
 
@@ -1910,10 +1910,10 @@ hypre_BoxManAssemble( hypre_BoxManager *manager )
 
          hypre_BoxManAllGlobalKnown(manager) = 1;
 
-         hypre_TFree(send_buf, HYPRE_MEMORY_HOST);
-         hypre_TFree(recv_buf, HYPRE_MEMORY_HOST);
-         hypre_TFree(recv_counts, HYPRE_MEMORY_HOST);
-         hypre_TFree(displs, HYPRE_MEMORY_HOST);
+         hypre_TFree(send_buf, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(recv_buf, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(recv_counts, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(displs, NALU_HYPRE_MEMORY_HOST);
 
          /* now the entries and procs_sort and ids_sort are already
             sorted */
@@ -1936,8 +1936,8 @@ hypre_BoxManAssemble( hypre_BoxManager *manager )
    /* we don't need special access to my entries anymore - because we will
       create the sort table */
 
-   hypre_TFree(hypre_BoxManMyIds(manager), HYPRE_MEMORY_HOST);
-   hypre_TFree(hypre_BoxManMyEntries(manager), HYPRE_MEMORY_HOST);
+   hypre_TFree(hypre_BoxManMyIds(manager), NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(hypre_BoxManMyEntries(manager), NALU_HYPRE_MEMORY_HOST);
    hypre_BoxManMyIds(manager) = NULL;
    hypre_BoxManMyEntries(manager) = NULL;
 
@@ -1953,14 +1953,14 @@ hypre_BoxManAssemble( hypre_BoxManager *manager )
    /* at the same time sort the procs_sort and ids_sort and then sort the
     * entries*/
    {
-      HYPRE_Int *order_index = NULL;
-      HYPRE_Int *delete_array = NULL;
-      HYPRE_Int  tmp_id, start, index;
-      HYPRE_Int  first_local;
-      HYPRE_Int  num_procs_sort;
-      HYPRE_Int *proc_offsets;
-      HYPRE_Int  myoffset;
-      HYPRE_Int size;
+      NALU_HYPRE_Int *order_index = NULL;
+      NALU_HYPRE_Int *delete_array = NULL;
+      NALU_HYPRE_Int  tmp_id, start, index;
+      NALU_HYPRE_Int  first_local;
+      NALU_HYPRE_Int  num_procs_sort;
+      NALU_HYPRE_Int *proc_offsets;
+      NALU_HYPRE_Int  myoffset;
+      NALU_HYPRE_Int size;
 
       hypre_BoxManEntry  *new_entries;
 
@@ -1996,8 +1996,8 @@ hypre_BoxManAssemble( hypre_BoxManager *manager )
             /*stuff below */
          }
 #endif
-         order_index = hypre_CTAlloc(HYPRE_Int,  nentries, HYPRE_MEMORY_HOST);
-         delete_array =  hypre_CTAlloc(HYPRE_Int,  nentries, HYPRE_MEMORY_HOST);
+         order_index = hypre_CTAlloc(NALU_HYPRE_Int,  nentries, NALU_HYPRE_MEMORY_HOST);
+         delete_array =  hypre_CTAlloc(NALU_HYPRE_Int,  nentries, NALU_HYPRE_MEMORY_HOST);
          index = 0;
 
          for (i = 0; i < nentries; i++)
@@ -2079,17 +2079,17 @@ hypre_BoxManAssemble( hypre_BoxManager *manager )
 
          /*** create new sorted entries and info arrays - delete old one ****/
          {
-            HYPRE_Int position;
-            HYPRE_Int info_size = hypre_BoxManEntryInfoSize(manager);
+            NALU_HYPRE_Int position;
+            NALU_HYPRE_Int info_size = hypre_BoxManEntryInfoSize(manager);
 
             void *index_ptr;
             void *new_info;
             void *info;
 
             size = nentries - index;
-            new_entries =  hypre_CTAlloc(hypre_BoxManEntry,  size, HYPRE_MEMORY_HOST);
+            new_entries =  hypre_CTAlloc(hypre_BoxManEntry,  size, NALU_HYPRE_MEMORY_HOST);
 
-            new_info = hypre_TAlloc(char, size * info_size, HYPRE_MEMORY_HOST);
+            new_info = hypre_TAlloc(char, size * info_size, NALU_HYPRE_MEMORY_HOST);
             index_ptr = new_info;
 
             for (i = 0; i < size; i++)
@@ -2104,12 +2104,12 @@ hypre_BoxManAssemble( hypre_BoxManager *manager )
                position = hypre_BoxManEntryPosition(&entries[order_index[i]]);
                info = hypre_BoxManInfoObject(manager, position);
 
-               hypre_TMemcpy(index_ptr,  info, char,  info_size, HYPRE_MEMORY_HOST, HYPRE_MEMORY_HOST);
+               hypre_TMemcpy(index_ptr,  info, char,  info_size, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_HOST);
                index_ptr =  (void *) ((char *) index_ptr + info_size);
 
             }
-            hypre_TFree(entries, HYPRE_MEMORY_HOST);
-            hypre_TFree(hypre_BoxManInfoObjects(manager), HYPRE_MEMORY_HOST);
+            hypre_TFree(entries, NALU_HYPRE_MEMORY_HOST);
+            hypre_TFree(hypre_BoxManInfoObjects(manager), NALU_HYPRE_MEMORY_HOST);
 
             hypre_BoxManEntries(manager) = new_entries;
             hypre_BoxManMaxNEntries(manager) = size;
@@ -2148,7 +2148,7 @@ hypre_BoxManAssemble( hypre_BoxManager *manager )
 
       /* finally, create proc_offsets (myoffset corresponds to local id
          position) first_local is the position in entries; */
-      proc_offsets = hypre_CTAlloc(HYPRE_Int,  num_procs_sort + 1, HYPRE_MEMORY_HOST);
+      proc_offsets = hypre_CTAlloc(NALU_HYPRE_Int,  num_procs_sort + 1, NALU_HYPRE_MEMORY_HOST);
       proc_offsets[0] = 0;
       if (nentries > 0)
       {
@@ -2181,8 +2181,8 @@ hypre_BoxManAssemble( hypre_BoxManager *manager )
       hypre_BoxManLocalProcOffset(manager) = myoffset;
 
       /* clean up from this section of code */
-      hypre_TFree(delete_array, HYPRE_MEMORY_HOST);
-      hypre_TFree(order_index, HYPRE_MEMORY_HOST);
+      hypre_TFree(delete_array, NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(order_index, NALU_HYPRE_MEMORY_HOST);
 
    }/* end bracket for all or the sorting stuff */
 
@@ -2191,8 +2191,8 @@ hypre_BoxManAssemble( hypre_BoxManager *manager )
          information is known (is a gather has been done) - this could prevent
          future comm costs */
 
-      HYPRE_Int all_known = 0;
-      HYPRE_Int global_all_known;
+      NALU_HYPRE_Int all_known = 0;
+      NALU_HYPRE_Int global_all_known;
 
       nentries = hypre_BoxManNEntries(manager);
 
@@ -2202,7 +2202,7 @@ hypre_BoxManAssemble( hypre_BoxManager *manager )
           * known */
          if (global_num_boxes == nentries) { all_known = 1; }
 
-         hypre_MPI_Allreduce(&all_known, &global_all_known, 1, HYPRE_MPI_INT,
+         hypre_MPI_Allreduce(&all_known, &global_all_known, 1, NALU_HYPRE_MPI_INT,
                              hypre_MPI_LAND, comm);
 
          hypre_BoxManAllGlobalKnown(manager) = global_all_known;
@@ -2214,20 +2214,20 @@ hypre_BoxManAssemble( hypre_BoxManager *manager )
    /* now build the index_table and indexes array */
    /* Note: for now we are using the same scheme as in BoxMap  */
    {
-      HYPRE_Int *indexes[HYPRE_MAXDIM];
-      HYPRE_Int  size[HYPRE_MAXDIM];
-      HYPRE_Int  iminmax[2];
-      HYPRE_Int  index_not_there;
-      HYPRE_Int  d, e, itsize;
-      HYPRE_Int  mystart, myfinish;
-      HYPRE_Int  imin[HYPRE_MAXDIM];
-      HYPRE_Int  imax[HYPRE_MAXDIM];
-      HYPRE_Int  start_loop[HYPRE_MAXDIM];
-      HYPRE_Int  end_loop[HYPRE_MAXDIM];
-      HYPRE_Int  loop, range, loop_num;
-      HYPRE_Int *proc_offsets;
+      NALU_HYPRE_Int *indexes[NALU_HYPRE_MAXDIM];
+      NALU_HYPRE_Int  size[NALU_HYPRE_MAXDIM];
+      NALU_HYPRE_Int  iminmax[2];
+      NALU_HYPRE_Int  index_not_there;
+      NALU_HYPRE_Int  d, e, itsize;
+      NALU_HYPRE_Int  mystart, myfinish;
+      NALU_HYPRE_Int  imin[NALU_HYPRE_MAXDIM];
+      NALU_HYPRE_Int  imax[NALU_HYPRE_MAXDIM];
+      NALU_HYPRE_Int  start_loop[NALU_HYPRE_MAXDIM];
+      NALU_HYPRE_Int  end_loop[NALU_HYPRE_MAXDIM];
+      NALU_HYPRE_Int  loop, range, loop_num;
+      NALU_HYPRE_Int *proc_offsets;
 
-      HYPRE_Int location, spot;
+      NALU_HYPRE_Int location, spot;
 
       hypre_BoxManEntry  **index_table;
       hypre_BoxManEntry   *entry;
@@ -2251,7 +2251,7 @@ hypre_BoxManAssemble( hypre_BoxManager *manager )
       for (d = 0; d < ndim; d++)
       {
          /* room for min and max of each entry in each dim */
-         indexes[d] = hypre_CTAlloc(HYPRE_Int,  2 * nentries, HYPRE_MEMORY_HOST);
+         indexes[d] = hypre_CTAlloc(NALU_HYPRE_Int,  2 * nentries, NALU_HYPRE_MEMORY_HOST);
          size[d] = 0;
       }
       /* loop through each entry and get index */
@@ -2315,7 +2315,7 @@ hypre_BoxManAssemble( hypre_BoxManager *manager )
        *------------------------------------------------------*/
 
       /* allocate space for table */
-      index_table = hypre_CTAlloc(hypre_BoxManEntry *,  itsize, HYPRE_MEMORY_HOST);
+      index_table = hypre_CTAlloc(hypre_BoxManEntry *,  itsize, NALU_HYPRE_MEMORY_HOST);
 
       index_box = hypre_BoxCreate(ndim);
       table_box = hypre_BoxCreate(ndim);
@@ -2399,14 +2399,14 @@ hypre_BoxManAssemble( hypre_BoxManager *manager )
       }/* end of three loops over subsets */
 
       /* done with the index_table! */
-      hypre_TFree( hypre_BoxManIndexTable(manager), HYPRE_MEMORY_HOST); /* in case this is a
+      hypre_TFree( hypre_BoxManIndexTable(manager), NALU_HYPRE_MEMORY_HOST); /* in case this is a
                                                         re-assemble - shouldn't
                                                         be though */
       hypre_BoxManIndexTable(manager) = index_table;
 
       for (d = 0; d < ndim; d++)
       {
-         hypre_TFree(hypre_BoxManIndexesD(manager,  d), HYPRE_MEMORY_HOST);
+         hypre_TFree(hypre_BoxManIndexesD(manager,  d), NALU_HYPRE_MEMORY_HOST);
          hypre_BoxManIndexesD(manager, d) = indexes[d];
          hypre_BoxManSizeD(manager, d) = size[d];
          hypre_BoxManLastIndexD(manager, d) = 0;
@@ -2446,20 +2446,20 @@ hypre_BoxManAssemble( hypre_BoxManager *manager )
  *
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_BoxManIntersect ( hypre_BoxManager *manager,
                         hypre_Index ilower,
                         hypre_Index iupper,
                         hypre_BoxManEntry ***entries_ptr,
-                        HYPRE_Int *nentries_ptr )
+                        NALU_HYPRE_Int *nentries_ptr )
 {
-   HYPRE_Int           ndim = hypre_BoxManNDim(manager);
-   HYPRE_Int           d;
-   HYPRE_Int           find_index_d, current_index_d;
-   HYPRE_Int          *man_indexes_d;
-   HYPRE_Int           man_index_size_d;
-   HYPRE_Int           nentries;
-   HYPRE_Int          *marker, position;
+   NALU_HYPRE_Int           ndim = hypre_BoxManNDim(manager);
+   NALU_HYPRE_Int           d;
+   NALU_HYPRE_Int           find_index_d, current_index_d;
+   NALU_HYPRE_Int          *man_indexes_d;
+   NALU_HYPRE_Int           man_index_size_d;
+   NALU_HYPRE_Int           nentries;
+   NALU_HYPRE_Int          *marker, position;
    hypre_Box          *index_box, *table_box;
    hypre_Index         stride, loop_size;
    hypre_Index         man_ilower, man_iupper;
@@ -2468,9 +2468,9 @@ hypre_BoxManIntersect ( hypre_BoxManager *manager,
    hypre_BoxManEntry  *entry;
 
 #if 0
-   HYPRE_Int   i, cnt;
-   HYPRE_Int  *proc_ids, *ids, *unsort;
-   HYPRE_Int   tmp_id, start;
+   NALU_HYPRE_Int   i, cnt;
+   NALU_HYPRE_Int  *proc_ids, *ids, *unsort;
+   NALU_HYPRE_Int   tmp_id, start;
 #endif
 
    /* can only use after assembling */
@@ -2557,8 +2557,8 @@ hypre_BoxManIntersect ( hypre_BoxManager *manager,
     *-----------------------------------------------------------------*/
 
    nentries = hypre_BoxManMaxNEntries(manager);
-   entries  = hypre_CTAlloc(hypre_BoxManEntry *,  nentries, HYPRE_MEMORY_HOST); /* realloc below */
-   marker   = hypre_CTAlloc(HYPRE_Int,  nentries, HYPRE_MEMORY_HOST);
+   entries  = hypre_CTAlloc(hypre_BoxManEntry *,  nentries, NALU_HYPRE_MEMORY_HOST); /* realloc below */
+   marker   = hypre_CTAlloc(NALU_HYPRE_Int,  nentries, NALU_HYPRE_MEMORY_HOST);
    index_table = hypre_BoxManIndexTable(manager);
 
    nentries = 0;
@@ -2591,7 +2591,7 @@ hypre_BoxManIntersect ( hypre_BoxManager *manager,
    }
    hypre_SerialBoxLoop1End(ii);
 
-   entries  = hypre_TReAlloc(entries,  hypre_BoxManEntry *,  nentries, HYPRE_MEMORY_HOST);
+   entries  = hypre_TReAlloc(entries,  hypre_BoxManEntry *,  nentries, NALU_HYPRE_MEMORY_HOST);
 
    /* Reset the last index in the manager */
    for (d = 0; d < ndim; d++)
@@ -2601,7 +2601,7 @@ hypre_BoxManIntersect ( hypre_BoxManager *manager,
 
    hypre_BoxDestroy(table_box);
    hypre_BoxDestroy(index_box);
-   hypre_TFree(marker, HYPRE_MEMORY_HOST);
+   hypre_TFree(marker, NALU_HYPRE_MEMORY_HOST);
 
    *entries_ptr  = entries;
    *nentries_ptr = nentries;
@@ -2616,23 +2616,23 @@ hypre_BoxManIntersect ( hypre_BoxManager *manager,
  * 1/07 - just returning distinct proc ids.
  *****************************************************************************/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_FillResponseBoxManAssemble1( void *p_recv_contact_buf,
-                                   HYPRE_Int contact_size,
-                                   HYPRE_Int contact_proc,
+                                   NALU_HYPRE_Int contact_size,
+                                   NALU_HYPRE_Int contact_proc,
                                    void *ro, MPI_Comm comm,
                                    void **p_send_response_buf,
-                                   HYPRE_Int *response_message_size )
+                                   NALU_HYPRE_Int *response_message_size )
 {
-   HYPRE_Int    myid, i, index;
-   HYPRE_Int    size, num_boxes, num_objects;
-   HYPRE_Int   *proc_ids;
-   HYPRE_Int   *send_response_buf = (HYPRE_Int *) *p_send_response_buf;
+   NALU_HYPRE_Int    myid, i, index;
+   NALU_HYPRE_Int    size, num_boxes, num_objects;
+   NALU_HYPRE_Int   *proc_ids;
+   NALU_HYPRE_Int   *send_response_buf = (NALU_HYPRE_Int *) *p_send_response_buf;
 
    hypre_DataExchangeResponse  *response_obj = (hypre_DataExchangeResponse  *)ro;
    hypre_StructAssumedPart     *ap = (hypre_StructAssumedPart     *)response_obj->data1;
 
-   HYPRE_Int overhead = response_obj->send_response_overhead;
+   NALU_HYPRE_Int overhead = response_obj->send_response_overhead;
 
    /* initialize stuff */
    hypre_MPI_Comm_rank(comm, &myid );
@@ -2658,8 +2658,8 @@ hypre_FillResponseBoxManAssemble1( void *p_recv_contact_buf,
    {
       response_obj->send_response_storage =  hypre_max(num_objects, 10);
       size =  1 * (response_obj->send_response_storage + overhead);
-      send_response_buf = hypre_TReAlloc( send_response_buf,  HYPRE_Int,
-                                          size, HYPRE_MEMORY_HOST);
+      send_response_buf = hypre_TReAlloc( send_response_buf,  NALU_HYPRE_Int,
+                                          size, NALU_HYPRE_MEMORY_HOST);
       *p_send_response_buf = send_response_buf;
    }
 
@@ -2691,17 +2691,17 @@ hypre_FillResponseBoxManAssemble1( void *p_recv_contact_buf,
  * id = myid).
  *****************************************************************************/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_FillResponseBoxManAssemble2( void *p_recv_contact_buf,
-                                   HYPRE_Int contact_size,
-                                   HYPRE_Int contact_proc,
+                                   NALU_HYPRE_Int contact_size,
+                                   NALU_HYPRE_Int contact_proc,
                                    void *ro, MPI_Comm comm,
                                    void **p_send_response_buf,
-                                   HYPRE_Int *response_message_size )
+                                   NALU_HYPRE_Int *response_message_size )
 {
-   HYPRE_Int          myid, i, d, size, position;
-   HYPRE_Int          proc_id, box_id, tmp_int;
-   HYPRE_Int          entry_size_bytes;
+   NALU_HYPRE_Int          myid, i, d, size, position;
+   NALU_HYPRE_Int          proc_id, box_id, tmp_int;
+   NALU_HYPRE_Int          entry_size_bytes;
    hypre_BoxManEntry *entry;
    hypre_IndexRef     index;
    void              *info, *index_ptr;
@@ -2709,16 +2709,16 @@ hypre_FillResponseBoxManAssemble2( void *p_recv_contact_buf,
    void                       *send_response_buf = (void *) *p_send_response_buf;
    hypre_DataExchangeResponse *response_obj = (hypre_DataExchangeResponse *)ro;
    hypre_BoxManager           *manager = (hypre_BoxManager           *)response_obj->data1;
-   HYPRE_Int                   overhead = response_obj->send_response_overhead;
+   NALU_HYPRE_Int                   overhead = response_obj->send_response_overhead;
 
-   HYPRE_Int           ndim = hypre_BoxManNDim(manager);
+   NALU_HYPRE_Int           ndim = hypre_BoxManNDim(manager);
    hypre_BoxManEntry **my_entries = hypre_BoxManMyEntries(manager) ;
-   HYPRE_Int           num_my_entries = hypre_BoxManNumMyEntries(manager);
+   NALU_HYPRE_Int           num_my_entries = hypre_BoxManNumMyEntries(manager);
 
    /*initialize stuff */
    hypre_MPI_Comm_rank(comm, &myid );
 
-   entry_size_bytes = 8 * sizeof(HYPRE_Int) + hypre_BoxManEntryInfoSize(manager);
+   entry_size_bytes = 8 * sizeof(NALU_HYPRE_Int) + hypre_BoxManEntryInfoSize(manager);
 
    /* num_my_entries is the amount of information to send */
 
@@ -2727,7 +2727,7 @@ hypre_FillResponseBoxManAssemble2( void *p_recv_contact_buf,
    {
       response_obj->send_response_storage =  num_my_entries;
       size =  entry_size_bytes * (response_obj->send_response_storage + overhead);
-      send_response_buf = hypre_TReAlloc( (char*)send_response_buf, char, size, HYPRE_MEMORY_HOST);
+      send_response_buf = hypre_TReAlloc( (char*)send_response_buf, char, size, NALU_HYPRE_MEMORY_HOST);
       *p_send_response_buf = send_response_buf;
    }
 
@@ -2739,13 +2739,13 @@ hypre_FillResponseBoxManAssemble2( void *p_recv_contact_buf,
 
       /*pack response buffer with information */
 
-      size = sizeof(HYPRE_Int);
+      size = sizeof(NALU_HYPRE_Int);
       /* imin */
       index = hypre_BoxManEntryIMin(entry);
       for (d = 0; d < ndim; d++)
       {
          tmp_int = hypre_IndexD(index, d);
-         hypre_TMemcpy( index_ptr,  &tmp_int, HYPRE_Int, 1, HYPRE_MEMORY_HOST, HYPRE_MEMORY_HOST);
+         hypre_TMemcpy( index_ptr,  &tmp_int, NALU_HYPRE_Int, 1, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_HOST);
          index_ptr =  (void *) ((char *) index_ptr + size);
       }
       /* imax */
@@ -2753,17 +2753,17 @@ hypre_FillResponseBoxManAssemble2( void *p_recv_contact_buf,
       for (d = 0; d < ndim; d++)
       {
          tmp_int = hypre_IndexD(index, d);
-         hypre_TMemcpy( index_ptr,  &tmp_int, HYPRE_Int, 1, HYPRE_MEMORY_HOST, HYPRE_MEMORY_HOST);
+         hypre_TMemcpy( index_ptr,  &tmp_int, NALU_HYPRE_Int, 1, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_HOST);
          index_ptr =  (void *) ((char *) index_ptr + size);
       }
       /* proc */
       proc_id =  hypre_BoxManEntryProc(entry);
-      hypre_TMemcpy( index_ptr,  &proc_id, HYPRE_Int, 1, HYPRE_MEMORY_HOST, HYPRE_MEMORY_HOST);
+      hypre_TMemcpy( index_ptr,  &proc_id, NALU_HYPRE_Int, 1, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_HOST);
       index_ptr =  (void *) ((char *) index_ptr + size);
 
       /* id */
       box_id = hypre_BoxManEntryId(entry);
-      hypre_TMemcpy( index_ptr,  &box_id, HYPRE_Int, 1, HYPRE_MEMORY_HOST, HYPRE_MEMORY_HOST);
+      hypre_TMemcpy( index_ptr,  &box_id, NALU_HYPRE_Int, 1, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_HOST);
       index_ptr =  (void *) ((char *) index_ptr + size);
 
       /*info*/
@@ -2771,7 +2771,7 @@ hypre_FillResponseBoxManAssemble2( void *p_recv_contact_buf,
       position = hypre_BoxManEntryPosition(entry);
       info = hypre_BoxManInfoObject(manager, position);
 
-      hypre_TMemcpy(index_ptr,  info, char, size, HYPRE_MEMORY_HOST, HYPRE_MEMORY_HOST);
+      hypre_TMemcpy(index_ptr,  info, char, size, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_HOST);
 
       index_ptr =  (void *) ((char *) index_ptr + size);
 

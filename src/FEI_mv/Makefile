@@ -7,7 +7,7 @@ include ../config/Makefile.config
 
 all: 
 	@ \
-	for i in ${HYPRE_FEI_SUBDIRS}; \
+	for i in ${NALU_HYPRE_FEI_SUBDIRS}; \
 	do \
 	  if [ -d $$i ]; \
 	  then \
@@ -18,7 +18,7 @@ all:
 
 install:
 	@ \
-	for i in ${HYPRE_FEI_SUBDIRS}; \
+	for i in ${NALU_HYPRE_FEI_SUBDIRS}; \
 	do \
 	  if [ -d $$i ]; \
 	  then \
@@ -29,7 +29,7 @@ install:
 
 clean:
 	@ \
-	for i in ${HYPRE_FEI_SUBDIRS}; \
+	for i in ${NALU_HYPRE_FEI_SUBDIRS}; \
 	do \
 	  if [ -d $$i ]; \
 	  then \
@@ -39,7 +39,7 @@ clean:
 
 distclean:
 	@ \
-	for i in ${HYPRE_FEI_SUBDIRS}; \
+	for i in ${NALU_HYPRE_FEI_SUBDIRS}; \
 	do \
 	  if [ -d $$i ]; \
 	  then \

@@ -261,7 +261,7 @@ int MLI_Solver_CG::solve(MLI_Vector *f_in, MLI_Vector *u_in)
       strcpy(paramString, "zeroInitialGuess");
       if (baseMethod_ != MLI_SOLVER_ILU_ID) 
          baseSolver_->setParams( paramString, 0, NULL );
-      strcpy( paramString, "HYPRE_ParVector" );
+      strcpy( paramString, "NALU_HYPRE_ParVector" );
       zVecLocal = new MLI_Vector( (void *) z, paramString, NULL);
       rVecLocal = new MLI_Vector( (void *) r, paramString, NULL);
       if (baseMethod_ == MLI_SOLVER_ILU_ID) iluSolve(rData, zData);
@@ -277,8 +277,8 @@ int MLI_Solver_CG::solve(MLI_Vector *f_in, MLI_Vector *u_in)
       {
          beta = rho / rhom1;
 
-#ifdef HYPRE_USING_OPENMP
-#pragma omp parallel for private(i) HYPRE_SMP_SCHEDULE
+#ifdef NALU_HYPRE_USING_OPENMP
+#pragma omp parallel for private(i) NALU_HYPRE_SMP_SCHEDULE
 #endif
          for ( i = 0; i < localNRows; i++ ) 
             pData[i] = beta * pData[i] + zData[i];
@@ -378,21 +378,21 @@ int MLI_Solver_CG::setParams( char *paramString, int argc, char **argv )
        	 printf("MLI_Solver_CG::setParams ERROR : needs 1 arg.\n");
 	 return 1;
       }
-      HYPRE_IJVector auxVec;
+      NALU_HYPRE_IJVector auxVec;
       PSmat_ = (MLI_Matrix *) argv[0];
       hypre_ParCSRMatrix *hypreAux;
       hypre_ParCSRMatrix *ps = (hypre_ParCSRMatrix *) PSmat_->getMatrix();
       int nCols = hypre_ParCSRMatrixNumCols(ps);
       int start = hypre_ParCSRMatrixFirstColDiag(ps);
       MPI_Comm vComm = hypre_ParCSRMatrixComm(ps);
-      HYPRE_IJVectorCreate(vComm, start, start+nCols-1, &auxVec);
-      HYPRE_IJVectorSetObjectType(auxVec, HYPRE_PARCSR);
-      HYPRE_IJVectorInitialize(auxVec);
-      HYPRE_IJVectorAssemble(auxVec);
-      HYPRE_IJVectorGetObject(auxVec, (void **) &hypreAux);
-      HYPRE_IJVectorSetObjectType(auxVec, -1);
-      HYPRE_IJVectorDestroy(auxVec);
-      strcpy( paramString, "HYPRE_ParVector" );
+      NALU_HYPRE_IJVectorCreate(vComm, start, start+nCols-1, &auxVec);
+      NALU_HYPRE_IJVectorSetObjectType(auxVec, NALU_HYPRE_PARCSR);
+      NALU_HYPRE_IJVectorInitialize(auxVec);
+      NALU_HYPRE_IJVectorAssemble(auxVec);
+      NALU_HYPRE_IJVectorGetObject(auxVec, (void **) &hypreAux);
+      NALU_HYPRE_IJVectorSetObjectType(auxVec, -1);
+      NALU_HYPRE_IJVectorDestroy(auxVec);
+      strcpy( paramString, "NALU_HYPRE_ParVector" );
       MLI_Function *funcPtr = new MLI_Function();
       MLI_Utils_HypreParVectorGetDestroyFunc(funcPtr);
       PSvec_ = new MLI_Vector( (void*) hypreAux, paramString, funcPtr );

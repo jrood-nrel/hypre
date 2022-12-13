@@ -21,7 +21,7 @@
 
 #include "HYPRE.h"
 #include "_hypre_utilities.h"
-#include "HYPRE_IJ_mv.h"
+#include "NALU_HYPRE_IJ_mv.h"
 #include "seq_mv.h"
 #include "_hypre_parcsr_mv.h"
 
@@ -109,7 +109,7 @@ int MLI_Method_AMGSA::setupFEDataBasedNullSpaces( MLI *mli )
    MPI_Comm_rank( comm, &mypid );
    mliAmat = mli->getSystemMatrix( level );
    hypreA  = (hypre_ParCSRMatrix *) mliAmat->getMatrix();
-   HYPRE_ParCSRMatrixGetRowPartitioning((HYPRE_ParCSRMatrix) hypreA, 
+   NALU_HYPRE_ParCSRMatrixGetRowPartitioning((NALU_HYPRE_ParCSRMatrix) hypreA, 
                                         &partition);
    localStartRow = partition[mypid];
    localNRows    = partition[mypid+1] - localStartRow;
@@ -438,7 +438,7 @@ int MLI_Method_AMGSA::setupFEDataBasedAggregates( MLI *mli )
    MPI_Comm_size( comm, &nprocs );
    mliAmat = mli->getSystemMatrix( level );
    hypreA  = (hypre_ParCSRMatrix *) mliAmat->getMatrix();
-   HYPRE_ParCSRMatrixGetRowPartitioning((HYPRE_ParCSRMatrix) hypreA, 
+   NALU_HYPRE_ParCSRMatrixGetRowPartitioning((NALU_HYPRE_ParCSRMatrix) hypreA, 
                                         &partition);
    localNRows = partition[mypid+1] - partition[mypid];
    free( partition );
@@ -508,7 +508,7 @@ int MLI_Method_AMGSA::setupFEDataBasedSuperLUSmoother(MLI *mli, int level)
    MPI_Comm_size( comm, &nprocs );
    mliAmat = mli->getSystemMatrix( level );
    hypreA  = (hypre_ParCSRMatrix *) mliAmat->getMatrix();
-   HYPRE_ParCSRMatrixGetRowPartitioning((HYPRE_ParCSRMatrix) hypreA, 
+   NALU_HYPRE_ParCSRMatrixGetRowPartitioning((NALU_HYPRE_ParCSRMatrix) hypreA, 
                                         &partition);
    localStartRow = partition[mypid];
    localEndRow   = partition[mypid+1] - 1;

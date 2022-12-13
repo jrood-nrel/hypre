@@ -17,9 +17,9 @@ cat > $INTERNAL_HEADER <<@
 #ifndef hypre_IJ_HEADER
 #define hypre_IJ_HEADER
 
-#include <HYPRE_config.h>
+#include <NALU_HYPRE_config.h>
 #include "_hypre_parcsr_mv.h"
-#include "HYPRE_IJ_mv.h"
+#include "NALU_HYPRE_IJ_mv.h"
 #include "HYPRE.h"
 
 #ifdef __cplusplus
@@ -40,7 +40,7 @@ cat protos.h             >> $INTERNAL_HEADER
 
 #../utilities/protos aux_*.c                   >> $INTERNAL_HEADER
 #../utilities/protos IJ*.c                     >> $INTERNAL_HEADER
-#../utilities/protos HYPRE_IJ*.c               >> $INTERNAL_HEADER
+#../utilities/protos NALU_HYPRE_IJ*.c               >> $INTERNAL_HEADER
 
 #===========================================================================
 # Include guards

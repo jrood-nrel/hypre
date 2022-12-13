@@ -13,9 +13,9 @@
  * indices of the refinement patches.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_ZeroAMRVectorData(hypre_SStructVector  *b,
-                        HYPRE_Int            *plevels,
+                        NALU_HYPRE_Int            *plevels,
                         hypre_Index          *rfactors )
 {
    hypre_SStructGrid     *grid =  hypre_SStructVectorGrid(b);
@@ -27,33 +27,33 @@ hypre_ZeroAMRVectorData(hypre_SStructVector  *b,
 
    hypre_BoxManager      *fboxman;
    hypre_BoxManEntry    **boxman_entries;
-   HYPRE_Int              nboxman_entries;
+   NALU_HYPRE_Int              nboxman_entries;
 
    hypre_Box              scaled_box;
    hypre_Box              intersect_box;
 
-   HYPRE_Int              npart =  hypre_SStructVectorNParts(b);
-   HYPRE_Int              ndim =  hypre_SStructVectorNDim(b);
+   NALU_HYPRE_Int              npart =  hypre_SStructVectorNParts(b);
+   NALU_HYPRE_Int              ndim =  hypre_SStructVectorNDim(b);
 
-   HYPRE_Int             *levels;
+   NALU_HYPRE_Int             *levels;
 
    hypre_Index           *refine_factors;
    hypre_Index            temp_index, ilower, iupper;
 
-   HYPRE_Int              level;
-   HYPRE_Int              nvars, var;
+   NALU_HYPRE_Int              level;
+   NALU_HYPRE_Int              nvars, var;
 
-   HYPRE_Int              part, ci, rem, i, j, intersect_size;
+   NALU_HYPRE_Int              part, ci, rem, i, j, intersect_size;
 
-   HYPRE_Real            *values1;
+   NALU_HYPRE_Real            *values1;
 
-   HYPRE_Int              ierr = 0;
+   NALU_HYPRE_Int              ierr = 0;
 
    hypre_BoxInit(&scaled_box, ndim);
    hypre_BoxInit(&intersect_box, ndim);
 
-   levels        = hypre_CTAlloc(HYPRE_Int,  npart, HYPRE_MEMORY_HOST);
-   refine_factors = hypre_CTAlloc(hypre_Index,  npart, HYPRE_MEMORY_HOST);
+   levels        = hypre_CTAlloc(NALU_HYPRE_Int,  npart, NALU_HYPRE_MEMORY_HOST);
+   refine_factors = hypre_CTAlloc(hypre_Index,  npart, NALU_HYPRE_MEMORY_HOST);
    for (part = 0; part < npart; part++)
    {
       levels[plevels[part]] = part;
@@ -129,25 +129,25 @@ hypre_ZeroAMRVectorData(hypre_SStructVector  *b,
                   /*------------------------------------------------------------
                    * Coarse underlying box found. Now zero off.
                    *------------------------------------------------------------*/
-                  values1 = hypre_CTAlloc(HYPRE_Real,  intersect_size, HYPRE_MEMORY_HOST);
+                  values1 = hypre_CTAlloc(NALU_HYPRE_Real,  intersect_size, NALU_HYPRE_MEMORY_HOST);
 
-                  HYPRE_SStructVectorSetBoxValues(b, levels[level - 1],
+                  NALU_HYPRE_SStructVectorSetBoxValues(b, levels[level - 1],
                                                   hypre_BoxIMin(&intersect_box),
                                                   hypre_BoxIMax(&intersect_box),
                                                   var, values1);
-                  hypre_TFree(values1, HYPRE_MEMORY_HOST);
+                  hypre_TFree(values1, NALU_HYPRE_MEMORY_HOST);
 
                }  /* if (intersect_size > 0) */
             }     /* for (i= 0; i< nboxman_entries; i++) */
 
-            hypre_TFree(boxman_entries, HYPRE_MEMORY_HOST);
+            hypre_TFree(boxman_entries, NALU_HYPRE_MEMORY_HOST);
 
          }   /* hypre_ForBoxI(ci, cgrid_boxes) */
       }      /* for (var= 0; var< nvars; var++) */
    }         /* for (level= max_level; level> 0; level--) */
 
-   hypre_TFree(levels, HYPRE_MEMORY_HOST);
-   hypre_TFree(refine_factors, HYPRE_MEMORY_HOST);
+   hypre_TFree(levels, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(refine_factors, NALU_HYPRE_MEMORY_HOST);
 
    return ierr;
 }
@@ -158,14 +158,14 @@ hypre_ZeroAMRVectorData(hypre_SStructVector  *b,
  * indices of the refinement patches between two levels.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_ZeroAMRMatrixData(hypre_SStructMatrix  *A,
-                        HYPRE_Int             part_crse,
+                        NALU_HYPRE_Int             part_crse,
                         hypre_Index           rfactors )
 {
    hypre_SStructGraph    *graph =  hypre_SStructMatrixGraph(A);
    hypre_SStructGrid     *grid =  hypre_SStructGraphGrid(graph);
-   HYPRE_Int              ndim =  hypre_SStructMatrixNDim(A);
+   NALU_HYPRE_Int              ndim =  hypre_SStructMatrixNDim(A);
 
    hypre_SStructPGrid    *p_cgrid;
 
@@ -175,24 +175,24 @@ hypre_ZeroAMRMatrixData(hypre_SStructMatrix  *A,
 
    hypre_BoxManager      *fboxman;
    hypre_BoxManEntry    **boxman_entries;
-   HYPRE_Int              nboxman_entries;
+   NALU_HYPRE_Int              nboxman_entries;
 
    hypre_Box              scaled_box;
    hypre_Box              intersect_box;
 
    hypre_SStructStencil  *stencils;
-   HYPRE_Int              stencil_size;
+   NALU_HYPRE_Int              stencil_size;
 
    hypre_Index           *stencil_shape;
    hypre_Index            temp_index, ilower, iupper;
 
-   HYPRE_Int              nvars, var;
+   NALU_HYPRE_Int              nvars, var;
 
-   HYPRE_Int              ci, i, j, rem, intersect_size, rank;
+   NALU_HYPRE_Int              ci, i, j, rem, intersect_size, rank;
 
-   HYPRE_Real            *values1, *values2;
+   NALU_HYPRE_Real            *values1, *values2;
 
-   HYPRE_Int              ierr = 0;
+   NALU_HYPRE_Int              ierr = 0;
 
    hypre_BoxInit(&scaled_box, ndim);
    hypre_BoxInit(&intersect_box, ndim);
@@ -259,8 +259,8 @@ hypre_ZeroAMRMatrixData(hypre_SStructMatrix  *A,
                /*------------------------------------------------------------
                 * Coarse underlying box found. Now zero off.
                 *------------------------------------------------------------*/
-               values1 = hypre_CTAlloc(HYPRE_Real,  intersect_size, HYPRE_MEMORY_HOST);
-               values2 = hypre_TAlloc(HYPRE_Real,  intersect_size, HYPRE_MEMORY_HOST);
+               values1 = hypre_CTAlloc(NALU_HYPRE_Real,  intersect_size, NALU_HYPRE_MEMORY_HOST);
+               values2 = hypre_TAlloc(NALU_HYPRE_Real,  intersect_size, NALU_HYPRE_MEMORY_HOST);
                for (j = 0; j < intersect_size; j++)
                {
                   values2[j] = 1.0;
@@ -274,7 +274,7 @@ hypre_ZeroAMRMatrixData(hypre_SStructMatrix  *A,
 
                   if (rank)
                   {
-                     HYPRE_SStructMatrixSetBoxValues(A,
+                     NALU_HYPRE_SStructMatrixSetBoxValues(A,
                                                      part_crse,
                                                      hypre_BoxIMin(&intersect_box),
                                                      hypre_BoxIMax(&intersect_box),
@@ -282,20 +282,20 @@ hypre_ZeroAMRMatrixData(hypre_SStructMatrix  *A,
                   }
                   else
                   {
-                     HYPRE_SStructMatrixSetBoxValues(A,
+                     NALU_HYPRE_SStructMatrixSetBoxValues(A,
                                                      part_crse,
                                                      hypre_BoxIMin(&intersect_box),
                                                      hypre_BoxIMax(&intersect_box),
                                                      var, 1, &j, values2);
                   }
                }
-               hypre_TFree(values1, HYPRE_MEMORY_HOST);
-               hypre_TFree(values2, HYPRE_MEMORY_HOST);
+               hypre_TFree(values1, NALU_HYPRE_MEMORY_HOST);
+               hypre_TFree(values2, NALU_HYPRE_MEMORY_HOST);
 
             }   /* if (intersect_size > 0) */
          }      /* for (i= 0; i< nmap_entries; i++) */
 
-         hypre_TFree(boxman_entries, HYPRE_MEMORY_HOST);
+         hypre_TFree(boxman_entries, NALU_HYPRE_MEMORY_HOST);
       }   /* hypre_ForBoxI(ci, cgrid_boxes) */
    }      /* for (var= 0; var< nvars; var++) */
 

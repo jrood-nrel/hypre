@@ -4,11 +4,11 @@
 !     SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 !*****************************************************************************
-! HYPRE_IJMatrix Fortran interface
+! NALU_HYPRE_IJMatrix Fortran interface
 !*****************************************************************************
 
 !--------------------------------------------------------------------------
-! HYPRE_IJMatrixCreate
+! NALU_HYPRE_IJMatrixCreate
 !--------------------------------------------------------------------------
       subroutine fhypre_ijmatrixcreate(fcomm, filower, fiupper,
      1                                 fjlower, fjupper, fmatrix)
@@ -21,7 +21,7 @@
       integer fjlower
       integer fjupper
 
-      call HYPRE_IJMatrixCreate(fcomm, filower, fiupper, fjlower, 
+      call NALU_HYPRE_IJMatrixCreate(fcomm, filower, fiupper, fjlower, 
      1                          fjupper, fmatrix, ierr)
 
       if(ierr .ne. 0) then
@@ -32,14 +32,14 @@
       end
 
 !--------------------------------------------------------------------------
-! HYPRE_IJMatrixDestroy
+! NALU_HYPRE_IJMatrixDestroy
 !--------------------------------------------------------------------------
       subroutine fhypre_ijmatrixdestroy(fmatrix)
       
       integer ierr
       integer*8 fmatrix
 
-      call HYPRE_IJMatrixDestroy(fmatrix, ierr)
+      call NALU_HYPRE_IJMatrixDestroy(fmatrix, ierr)
 
       if(ierr .ne. 0) then
          print *, 'fhypre_ijmatrixdestroy error = ', ierr
@@ -49,14 +49,14 @@
       end
 
 !--------------------------------------------------------------------------
-! HYPRE_IJMatrixInitialize
+! NALU_HYPRE_IJMatrixInitialize
 !--------------------------------------------------------------------------
       subroutine fhypre_ijmatrixinitialize(fmatrix)
       
       integer ierr
       integer*8 fmatrix
 
-      call HYPRE_IJMatrixInitialize(fmatrix, ierr)
+      call NALU_HYPRE_IJMatrixInitialize(fmatrix, ierr)
 
       if(ierr .ne. 0) then
          print *, 'fhypre_ijmatrixinitialize error = ', ierr
@@ -66,14 +66,14 @@
       end
 
 !--------------------------------------------------------------------------
-! HYPRE_IJMatrixAssemble
+! NALU_HYPRE_IJMatrixAssemble
 !--------------------------------------------------------------------------
       subroutine fhypre_ijmatrixassemble(fmatrix)
       
       integer ierr
       integer*8 fmatrix
 
-      call HYPRE_IJMatrixAssemble(fmatrix, ierr)
+      call NALU_HYPRE_IJMatrixAssemble(fmatrix, ierr)
 
       if(ierr .ne. 0) then
          print *, 'fhypre_ijmatrixassemble error = ', ierr
@@ -83,7 +83,7 @@
       end
 
 !--------------------------------------------------------------------------
-! HYPRE_IJMatrixSetRowSizes
+! NALU_HYPRE_IJMatrixSetRowSizes
 !--------------------------------------------------------------------------
       subroutine fhypre_ijmatrixsetrowsizes(fmatrix, fizes)
       
@@ -91,7 +91,7 @@
       integer*8 fmatrix
       integer fsizes
 
-      call HYPRE_IJMatrixSetRowSizes(fmatrix, fsizes, ierr)
+      call NALU_HYPRE_IJMatrixSetRowSizes(fmatrix, fsizes, ierr)
 
       if(ierr .ne. 0) then
          print *, 'fhypre_ijmatrixsetrowsizes error = ', ierr
@@ -101,7 +101,7 @@
       end
 
 !--------------------------------------------------------------------------
-! HYPRE_IJMatrixSetDiagOffdSizes
+! NALU_HYPRE_IJMatrixSetDiagOffdSizes
 !--------------------------------------------------------------------------
       subroutine fhypre_ijmatrixsetdiagoffdsizes(fmatrix, fdiag_sizes,
      1                                           foffd_sizes)
@@ -111,7 +111,7 @@
       integer fdiag_sizes
       integer foffd_sizes
 
-      call HYPRE_IJMatrixSetDiagOffdSizes(fmatrix, fdiag_sizes, 
+      call NALU_HYPRE_IJMatrixSetDiagOffdSizes(fmatrix, fdiag_sizes, 
      1                                    foffd_sizes, ierr)
 
       if(ierr .ne. 0) then
@@ -122,7 +122,7 @@
       end
 
 !--------------------------------------------------------------------------
-! HYPRE_IJMatrixSetValues
+! NALU_HYPRE_IJMatrixSetValues
 !--------------------------------------------------------------------------
       subroutine fhypre_ijmatrixsetvalues(fmatrix, fnrows, fncols, 
      1                                    frows, fcols, fvalues)
@@ -135,7 +135,7 @@
       integer fcols
       double precision fvalues
 
-      call HYPRE_IJMatrixSetValues(fmatrix, fnrows, fncols, frows, 
+      call NALU_HYPRE_IJMatrixSetValues(fmatrix, fnrows, fncols, frows, 
      1                             fcols, fvalues, ierr)
 
       if(ierr .ne. 0) then
@@ -146,7 +146,7 @@
       end
 
 !--------------------------------------------------------------------------
-! HYPRE_IJMatrixAddToValues
+! NALU_HYPRE_IJMatrixAddToValues
 !--------------------------------------------------------------------------
       subroutine fhypre_ijmatrixaddtovalues(fmatrix, fnrows, fncols,
      1                                      frows, fcols, fvalues)
@@ -159,7 +159,7 @@
       integer fcols
       double precision fvalues
 
-      call HYPRE_IJMatrixAddToValues(fmatrix, fnrows, fncols, frows,
+      call NALU_HYPRE_IJMatrixAddToValues(fmatrix, fnrows, fncols, frows,
      1                               fcols, fvalues, ierr)
 
       if(ierr .ne. 0) then
@@ -170,7 +170,7 @@
       end
 
 !--------------------------------------------------------------------------
-! HYPRE_IJMatrixSetObjectType
+! NALU_HYPRE_IJMatrixSetObjectType
 !--------------------------------------------------------------------------
       subroutine fhypre_ijmatrixsetobjecttype(fmatrix, ftype)
       
@@ -178,7 +178,7 @@
       integer*8 fmatrix
       integer ftype
 
-      call HYPRE_IJMatrixSetObjectType(fmatrix, ftype, ierr)
+      call NALU_HYPRE_IJMatrixSetObjectType(fmatrix, ftype, ierr)
 
       if(ierr .ne. 0) then
          print *, 'fhypre_ijmatrixsetobjecttype error = ', ierr
@@ -188,7 +188,7 @@
       end
 
 !--------------------------------------------------------------------------
-! HYPRE_IJMatrixGetObjectType
+! NALU_HYPRE_IJMatrixGetObjectType
 !--------------------------------------------------------------------------
       subroutine fhypre_ijmatrixgetobjecttype(fmatrix, ftype)
       
@@ -196,7 +196,7 @@
       integer*8 fmatrix
       integer ftype
 
-      call HYPRE_IJMatrixGetObjectType(fmatrix, ftype, ierr)
+      call NALU_HYPRE_IJMatrixGetObjectType(fmatrix, ftype, ierr)
 
       if(ierr .ne. 0) then
          print *, 'fhypre_ijmatrixgetobjecttype error = ', ierr
@@ -206,7 +206,7 @@
       end
 
 !--------------------------------------------------------------------------
-! HYPRE_IJMatrixGetObject
+! NALU_HYPRE_IJMatrixGetObject
 !--------------------------------------------------------------------------
       subroutine fhypre_ijmatrixgetobject(fmatrix, fobject)
       
@@ -214,7 +214,7 @@
       integer*8 fmatrix
       integer*8 fobject
 
-      call HYPRE_IJMatrixGetObject(fmatrix, fobject, ierr)
+      call NALU_HYPRE_IJMatrixGetObject(fmatrix, fobject, ierr)
 
       if(ierr .ne. 0) then
          print *, 'fhypre_ijmatrixgetobject error = ', ierr
@@ -224,7 +224,7 @@
       end
 
 !--------------------------------------------------------------------------
-! HYPRE_IJMatrixRead
+! NALU_HYPRE_IJMatrixRead
 !--------------------------------------------------------------------------
       subroutine fhypre_ijmatrixread(ffilename, fcomm, fobject_type,
      1                               fmatrix)
@@ -235,7 +235,7 @@
       integer fobject_type
       character*(*) ffilename
 
-      call HYPRE_IJMatrixRead(ffilename, fcomm, fobject_type, fmatrix,
+      call NALU_HYPRE_IJMatrixRead(ffilename, fcomm, fobject_type, fmatrix,
      1                        ierr)
 
       if(ierr .ne. 0) then
@@ -246,7 +246,7 @@
       end
 
 !--------------------------------------------------------------------------
-! HYPRE_IJMatrixPrint
+! NALU_HYPRE_IJMatrixPrint
 !--------------------------------------------------------------------------
       subroutine fhypre_ijmatrixprint(fmatrix, ffilename)
       
@@ -254,7 +254,7 @@
       integer*8 fmatrix
       character*(*) ffilename
 
-      call HYPRE_IJMatrixPrint(fmatrix, ffilename, ierr)
+      call NALU_HYPRE_IJMatrixPrint(fmatrix, ffilename, ierr)
 
       if(ierr .ne. 0) then
          print *, 'fhypre_ijmatrixprint error = ', ierr
@@ -286,7 +286,7 @@
 
 
 !--------------------------------------------------------------------------
-! HYPRE_IJVectorCreate
+! NALU_HYPRE_IJVectorCreate
 !--------------------------------------------------------------------------
       subroutine fhypre_ijvectorcreate(fcomm, fjlower, fjupper, fvector)
       
@@ -296,7 +296,7 @@
       integer fjlower
       integer fjupper
 
-      call HYPRE_IJVectorCreate(fcomm, fjlower, fjupper, fvector, ierr)
+      call NALU_HYPRE_IJVectorCreate(fcomm, fjlower, fjupper, fvector, ierr)
 
       if(ierr .ne. 0) then
          print *, 'fhypre_ijvectorcreate error = ', ierr
@@ -306,14 +306,14 @@
       end
 
 !--------------------------------------------------------------------------
-! HYPRE_IJVectorDestroy
+! NALU_HYPRE_IJVectorDestroy
 !--------------------------------------------------------------------------
       subroutine fhypre_ijvectordestroy(fvector)
       
       integer ierr
       integer*8 fvector
 
-      call HYPRE_IJVectorDestroy(fvector, ierr)
+      call NALU_HYPRE_IJVectorDestroy(fvector, ierr)
 
       if(ierr .ne. 0) then
          print *, 'fhypre_ijvectordestroy error = ', ierr
@@ -323,14 +323,14 @@
       end
 
 !--------------------------------------------------------------------------
-! HYPRE_IJVectorInitialize
+! NALU_HYPRE_IJVectorInitialize
 !--------------------------------------------------------------------------
       subroutine fhypre_ijvectorinitialize(fvector)
       
       integer ierr
       integer*8 fvector
 
-      call HYPRE_IJVectorInitialize(fvector, ierr)
+      call NALU_HYPRE_IJVectorInitialize(fvector, ierr)
 
       if(ierr .ne. 0) then
          print *, 'fhypre_ijvectorinitialize error = ', ierr
@@ -340,7 +340,7 @@
       end
 
 !--------------------------------------------------------------------------
-! HYPRE_IJVectorSetValues
+! NALU_HYPRE_IJVectorSetValues
 !--------------------------------------------------------------------------
       subroutine fhypre_ijvectorsetvalues(fvector, fnum_values, 
      1                                    findices, fvalues)
@@ -351,7 +351,7 @@
       integer findices
       double precision fvalues
 
-      call HYPRE_IJVectorSetValues(fvector, fnum_values, findices,
+      call NALU_HYPRE_IJVectorSetValues(fvector, fnum_values, findices,
      1                             fvalues, ierr)
 
       if(ierr .ne. 0) then
@@ -362,7 +362,7 @@
       end
 
 !--------------------------------------------------------------------------
-! HYPRE_IJVectorAddToValues
+! NALU_HYPRE_IJVectorAddToValues
 !--------------------------------------------------------------------------
       subroutine fhypre_ijvectoraddtovalues(fvector, fnum_values,
      1                                      findices, fvalues)
@@ -373,7 +373,7 @@
       integer findices
       double precision fvalues
 
-      call HYPRE_IJVectorAddToValues(fvector, fnum_values, findices,
+      call NALU_HYPRE_IJVectorAddToValues(fvector, fnum_values, findices,
      1                               fvalues, ierr)
 
       if(ierr .ne. 0) then
@@ -384,14 +384,14 @@
       end
 
 !--------------------------------------------------------------------------
-! HYPRE_IJVectorAssemble
+! NALU_HYPRE_IJVectorAssemble
 !--------------------------------------------------------------------------
       subroutine fhypre_ijvectorassemble(fvector)
       
       integer ierr
       integer*8 fvector
 
-      call HYPRE_IJVectorAssemble(fvector , ierr)
+      call NALU_HYPRE_IJVectorAssemble(fvector , ierr)
 
       if(ierr .ne. 0) then
          print *, 'fhypre_ijvectorassemble error = ', ierr
@@ -401,7 +401,7 @@
       end
 
 !--------------------------------------------------------------------------
-! HYPRE_IJVectorGetValues
+! NALU_HYPRE_IJVectorGetValues
 !--------------------------------------------------------------------------
       subroutine fhypre_ijvectorgetvalues(fvector, fnum_values, 
      1                                    findices, fvalues)
@@ -412,7 +412,7 @@
       integer findices
       double precision fvalues
 
-      call HYPRE_IJVectorGetValues(fvector, fnum_values, findices,
+      call NALU_HYPRE_IJVectorGetValues(fvector, fnum_values, findices,
      1                             fvalues, ierr)
 
       if(ierr .ne. 0) then
@@ -423,7 +423,7 @@
       end
 
 !--------------------------------------------------------------------------
-! HYPRE_IJVectorSetObjectType
+! NALU_HYPRE_IJVectorSetObjectType
 !--------------------------------------------------------------------------
       subroutine fhypre_ijvectorsetobjecttype(fvector, ftype)
       
@@ -431,7 +431,7 @@
       integer*8 fvector
       integer ftype
 
-      call HYPRE_IJVectorSetObjectType(fvector, ftype, ierr)
+      call NALU_HYPRE_IJVectorSetObjectType(fvector, ftype, ierr)
 
       if(ierr .ne. 0) then
          print *, 'fhypre_ijvectorsetobjecttype error = ', ierr
@@ -441,7 +441,7 @@
       end
 
 !--------------------------------------------------------------------------
-! HYPRE_IJVectorGetObjectType
+! NALU_HYPRE_IJVectorGetObjectType
 !--------------------------------------------------------------------------
       subroutine fhypre_ijvectorgetobjecttype(fvector, ftype)
       
@@ -449,7 +449,7 @@
       integer*8 fvector
       integer ftype
 
-      call HYPRE_IJVectorGetObjectType(fvector, ftype, ierr)
+      call NALU_HYPRE_IJVectorGetObjectType(fvector, ftype, ierr)
 
       if(ierr .ne. 0) then
          print *, 'fhypre_ijvectorgetobjecttype error = ', ierr
@@ -459,7 +459,7 @@
       end
 
 !--------------------------------------------------------------------------
-! HYPRE_IJVectorGetObject
+! NALU_HYPRE_IJVectorGetObject
 !--------------------------------------------------------------------------
       subroutine fhypre_ijvectorgetobject(fvector, fobject)
       
@@ -467,7 +467,7 @@
       integer*8 fvector
       integer*8 fobject
 
-      call HYPRE_IJVectorGetObject(fvector, fobject, ierr)
+      call NALU_HYPRE_IJVectorGetObject(fvector, fobject, ierr)
 
       if(ierr .ne. 0) then
          print *, 'fhypre_ijvectorgetobject error = ', ierr
@@ -477,7 +477,7 @@
       end
 
 !--------------------------------------------------------------------------
-! HYPRE_IJVectorRead
+! NALU_HYPRE_IJVectorRead
 !--------------------------------------------------------------------------
       subroutine fhypre_ijvectorread(ffilename, fcomm, fobject_type,
      1                               fvector)
@@ -488,7 +488,7 @@
       integer fobject_type
       character*(*) ffilename
 
-      call HYPRE_IJVectorRead(ffilename, fcomm, fobject_type, fvector,
+      call NALU_HYPRE_IJVectorRead(ffilename, fcomm, fobject_type, fvector,
      1                        ierr)
 
       if(ierr .ne. 0) then
@@ -499,7 +499,7 @@
       end
 
 !--------------------------------------------------------------------------
-! HYPRE_IJVectorPrint
+! NALU_HYPRE_IJVectorPrint
 !--------------------------------------------------------------------------
       subroutine fhypre_ijvectorprint(fvector, ffilename)
       
@@ -507,7 +507,7 @@
       integer*8 fvector
       character*(*) ffilename
 
-      call HYPRE_IJVectorPrint(fvector, ffilename, ierr)
+      call NALU_HYPRE_IJVectorPrint(fvector, ffilename, ierr)
 
       if(ierr .ne. 0) then
          print *, 'fhypre_ijvectorprint error = ', ierr

@@ -14,13 +14,13 @@
 typedef struct
 {
    hypre_StructMatrix *P;
-   HYPRE_Int           P_stored_as_transpose;
+   NALU_HYPRE_Int           P_stored_as_transpose;
    hypre_ComputePkg   *compute_pkg;
    hypre_Index         cindex;
    hypre_Index         findex;
    hypre_Index         stride;
 
-   HYPRE_Int           time_index;
+   NALU_HYPRE_Int           time_index;
 
 } hypre_SemiInterpData;
 
@@ -32,7 +32,7 @@ hypre_SemiInterpCreate( )
 {
    hypre_SemiInterpData *interp_data;
 
-   interp_data = hypre_CTAlloc(hypre_SemiInterpData,  1, HYPRE_MEMORY_HOST);
+   interp_data = hypre_CTAlloc(hypre_SemiInterpData,  1, NALU_HYPRE_MEMORY_HOST);
    (interp_data -> time_index)  = hypre_InitializeTiming("SemiInterp");
 
    return (void *) interp_data;
@@ -41,10 +41,10 @@ hypre_SemiInterpCreate( )
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SemiInterpSetup( void               *interp_vdata,
                        hypre_StructMatrix *P,
-                       HYPRE_Int           P_stored_as_transpose,
+                       NALU_HYPRE_Int           P_stored_as_transpose,
                        hypre_StructVector *xc,
                        hypre_StructVector *e,
                        hypre_Index         cindex,
@@ -90,7 +90,7 @@ hypre_SemiInterpSetup( void               *interp_vdata,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SemiInterp( void               *interp_vdata,
                   hypre_StructMatrix *P,
                   hypre_StructVector *xc,
@@ -98,17 +98,17 @@ hypre_SemiInterp( void               *interp_vdata,
 {
    hypre_SemiInterpData   *interp_data = (hypre_SemiInterpData   *)interp_vdata;
 
-   HYPRE_Int               P_stored_as_transpose;
+   NALU_HYPRE_Int               P_stored_as_transpose;
    hypre_ComputePkg       *compute_pkg;
    hypre_IndexRef          cindex;
    hypre_IndexRef          findex;
    hypre_IndexRef          stride;
 
    hypre_StructGrid       *fgrid;
-   HYPRE_Int              *fgrid_ids;
+   NALU_HYPRE_Int              *fgrid_ids;
    hypre_StructGrid       *cgrid;
    hypre_BoxArray         *cgrid_boxes;
-   HYPRE_Int              *cgrid_ids;
+   NALU_HYPRE_Int              *cgrid_ids;
 
    hypre_CommHandle       *comm_handle;
 
@@ -120,12 +120,12 @@ hypre_SemiInterp( void               *interp_vdata,
    hypre_Box              *xc_dbox;
    hypre_Box              *e_dbox;
 
-   HYPRE_Int               Pi;
-   HYPRE_Int               constant_coefficient;
+   NALU_HYPRE_Int               Pi;
+   NALU_HYPRE_Int               constant_coefficient;
 
-   HYPRE_Real             *Pp0, *Pp1;
-   HYPRE_Real             *xcp;
-   HYPRE_Real             *ep;
+   NALU_HYPRE_Real             *Pp0, *Pp1;
+   NALU_HYPRE_Real             *xcp;
+   NALU_HYPRE_Real             *ep;
 
    hypre_Index             loop_size;
    hypre_Index             start;
@@ -135,7 +135,7 @@ hypre_SemiInterp( void               *interp_vdata,
    hypre_StructStencil    *stencil;
    hypre_Index            *stencil_shape;
 
-   HYPRE_Int               compute_i, fi, ci, j;
+   NALU_HYPRE_Int               compute_i, fi, ci, j;
    hypre_StructVector     *xc_tmp;
 
    /*-----------------------------------------------------------------------
@@ -171,9 +171,9 @@ hypre_SemiInterp( void               *interp_vdata,
    cgrid_boxes = hypre_StructGridBoxes(cgrid);
    cgrid_ids = hypre_StructGridIDs(cgrid);
 
-#if 0 //defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP)
-   HYPRE_MemoryLocation data_location_f = hypre_StructGridDataLocation(fgrid);
-   HYPRE_MemoryLocation data_location_c = hypre_StructGridDataLocation(cgrid);
+#if 0 //defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
+   NALU_HYPRE_MemoryLocation data_location_f = hypre_StructGridDataLocation(fgrid);
+   NALU_HYPRE_MemoryLocation data_location_c = hypre_StructGridDataLocation(cgrid);
 
    if (data_location_f != data_location_c)
    {
@@ -182,8 +182,8 @@ hypre_SemiInterp( void               *interp_vdata,
       hypre_StructGridDataLocation(cgrid) = data_location_f;
       hypre_StructVectorInitialize(xc_tmp);
       hypre_StructVectorAssemble(xc_tmp);
-      hypre_TMemcpy(hypre_StructVectorData(xc_tmp), hypre_StructVectorData(xc), HYPRE_Complex,
-                    hypre_StructVectorDataSize(xc), HYPRE_MEMORY_DEVICE, HYPRE_MEMORY_HOST);
+      hypre_TMemcpy(hypre_StructVectorData(xc_tmp), hypre_StructVectorData(xc), NALU_HYPRE_Complex,
+                    hypre_StructVectorDataSize(xc), NALU_HYPRE_MEMORY_DEVICE, NALU_HYPRE_MEMORY_HOST);
    }
    else
    {
@@ -256,7 +256,7 @@ hypre_SemiInterp( void               *interp_vdata,
          e_dbox = hypre_BoxArrayBox(hypre_StructVectorDataSpace(e), fi);
 
          //RL:PTROFFSET
-         HYPRE_Int Pp1_offset = 0, ep0_offset, ep1_offset;
+         NALU_HYPRE_Int Pp1_offset = 0, ep0_offset, ep1_offset;
          if (P_stored_as_transpose)
          {
             if ( constant_coefficient )
@@ -292,7 +292,7 @@ hypre_SemiInterp( void               *interp_vdata,
 
             if ( constant_coefficient )
             {
-               HYPRE_Complex Pp0val, Pp1val;
+               NALU_HYPRE_Complex Pp0val, Pp1val;
                Pi = hypre_CCBoxIndexRank( P_dbox, startc );
                Pp0val = Pp0[Pi];
                Pp1val = Pp1[Pi + Pp1_offset];
@@ -323,7 +323,7 @@ hypre_SemiInterp( void               *interp_vdata,
          }
       }
    }
-#if 0 //defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP)
+#if 0 //defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
    if (data_location_f != data_location_c)
    {
       hypre_StructVectorDestroy(xc_tmp);
@@ -343,7 +343,7 @@ hypre_SemiInterp( void               *interp_vdata,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SemiInterpDestroy( void *interp_vdata )
 {
    hypre_SemiInterpData *interp_data = (hypre_SemiInterpData   *)interp_vdata;
@@ -353,7 +353,7 @@ hypre_SemiInterpDestroy( void *interp_vdata )
       hypre_StructMatrixDestroy(interp_data -> P);
       hypre_ComputePkgDestroy(interp_data -> compute_pkg);
       hypre_FinalizeTiming(interp_data -> time_index);
-      hypre_TFree(interp_data, HYPRE_MEMORY_HOST);
+      hypre_TFree(interp_data, NALU_HYPRE_MEMORY_HOST);
    }
 
    return hypre_error_flag;

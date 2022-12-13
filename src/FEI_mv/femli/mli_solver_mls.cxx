@@ -203,8 +203,8 @@ int MLI_Solver_MLS::solve(MLI_Vector *fIn, MLI_Vector *uIn)
 
       /* u = u + coef * Vtemp */
 
-#ifdef HYPRE_USING_OPENMP
-#pragma omp parallel for private(i) HYPRE_SMP_SCHEDULE
+#ifdef NALU_HYPRE_USING_OPENMP
+#pragma omp parallel for private(i) NALU_HYPRE_SMP_SCHEDULE
 #endif
       for (i = 0; i < localNRows; i++) uData[i] += (coef * VtempData[i]);
 
@@ -239,8 +239,8 @@ int MLI_Solver_MLS::solve(MLI_Vector *fIn, MLI_Vector *uIn)
 
       coef = mlsOver_ * mlsOm2_;
 
-#ifdef HYPRE_USING_OPENMP
-#pragma omp parallel for private(i) HYPRE_SMP_SCHEDULE
+#ifdef NALU_HYPRE_USING_OPENMP
+#pragma omp parallel for private(i) NALU_HYPRE_SMP_SCHEDULE
 #endif
       for (i = 0; i < localNRows; i++) uData[i] -= ( coef * VtempData[i] );
 
@@ -251,8 +251,8 @@ int MLI_Solver_MLS::solve(MLI_Vector *fIn, MLI_Vector *uIn)
 
       coef = mlsCf_[0];
 
-#ifdef HYPRE_USING_OPENMP
-#pragma omp parallel for private(i) HYPRE_SMP_SCHEDULE
+#ifdef NALU_HYPRE_USING_OPENMP
+#pragma omp parallel for private(i) NALU_HYPRE_SMP_SCHEDULE
 #endif
       for (i = 0; i < localNRows; i++) YtempData[i] = (coef * VtempData[i]);
 
@@ -264,15 +264,15 @@ int MLI_Solver_MLS::solve(MLI_Vector *fIn, MLI_Vector *uIn)
          hypre_ParVectorCopy(Wtemp,Vtemp); 
          coef = mlsCf_[deg];
 
-#ifdef HYPRE_USING_OPENMP
-#pragma omp parallel for private(i) HYPRE_SMP_SCHEDULE
+#ifdef NALU_HYPRE_USING_OPENMP
+#pragma omp parallel for private(i) NALU_HYPRE_SMP_SCHEDULE
 #endif
          for (i = 0; i < localNRows; i++) 
             YtempData[i] += ( coef * WtempData[i] );
       }
 
-#ifdef HYPRE_USING_OPENMP
-#pragma omp parallel for private(i) HYPRE_SMP_SCHEDULE
+#ifdef NALU_HYPRE_USING_OPENMP
+#pragma omp parallel for private(i) NALU_HYPRE_SMP_SCHEDULE
 #endif
       for (i = 0; i < localNRows; i++) uData[i] += (mlsOver_ * YtempData[i]);
 
@@ -307,8 +307,8 @@ int MLI_Solver_MLS::solve(MLI_Vector *fIn, MLI_Vector *uIn)
 
       coef = mlsOver_ * mlsOm2_;
 
-#ifdef HYPRE_USING_OPENMP
-#pragma omp parallel for private(i) HYPRE_SMP_SCHEDULE
+#ifdef NALU_HYPRE_USING_OPENMP
+#pragma omp parallel for private(i) NALU_HYPRE_SMP_SCHEDULE
 #endif
       for (i = 0; i < localNRows; i++) uData[i] -= ( coef * VtempData[i] );
 

@@ -27,7 +27,7 @@
 **************************************************************************/
 void hypre_PrintLine(const char *str, hypre_PilutSolverGlobals *globals)
 {
-  HYPRE_Int logging = globals ? globals->logging : 0;
+  NALU_HYPRE_Int logging = globals ? globals->logging : 0;
 
   if (logging)
   {
@@ -41,7 +41,7 @@ void hypre_PrintLine(const char *str, hypre_PilutSolverGlobals *globals)
 /*************************************************************************
 * This function exits if i is not in [low, up)
 **************************************************************************/
-void hypre_CheckBounds(HYPRE_Int low, HYPRE_Int i ,HYPRE_Int up, hypre_PilutSolverGlobals *globals)
+void hypre_CheckBounds(NALU_HYPRE_Int low, NALU_HYPRE_Int i ,NALU_HYPRE_Int up, hypre_PilutSolverGlobals *globals)
 {
   if ((i < low)  ||  (i >= up))
     hypre_errexit("PE %d Bad bound: %d <= %d < %d (%s %d)\n",
@@ -49,14 +49,14 @@ void hypre_CheckBounds(HYPRE_Int low, HYPRE_Int i ,HYPRE_Int up, hypre_PilutSolv
 }
 
 /*************************************************************************
-* This function prints a checksum for an HYPRE_Int (HYPRE_Int) array
+* This function prints a checksum for an NALU_HYPRE_Int (NALU_HYPRE_Int) array
 **************************************************************************/
-hypre_longint hypre_IDX_Checksum(const HYPRE_Int *v, HYPRE_Int len, const char *msg, HYPRE_Int tag,
+hypre_longint hypre_IDX_Checksum(const NALU_HYPRE_Int *v, NALU_HYPRE_Int len, const char *msg, NALU_HYPRE_Int tag,
           hypre_PilutSolverGlobals *globals)
 {
-  HYPRE_Int logging = globals ? globals->logging : 0;
-  static HYPRE_Int numChk = 0;
-  HYPRE_Int i;
+  NALU_HYPRE_Int logging = globals ? globals->logging : 0;
+  static NALU_HYPRE_Int numChk = 0;
+  NALU_HYPRE_Int i;
   hypre_ulongint sum = 0;
 
   for (i=0; i<len; i++)
@@ -75,14 +75,14 @@ hypre_longint hypre_IDX_Checksum(const HYPRE_Int *v, HYPRE_Int len, const char *
 }
 
 /*************************************************************************
-* This function prints a checksum for an HYPRE_Int (HYPRE_Int) array
+* This function prints a checksum for an NALU_HYPRE_Int (NALU_HYPRE_Int) array
 **************************************************************************/
-hypre_longint hypre_INT_Checksum(const HYPRE_Int *v, HYPRE_Int len, const char *msg, HYPRE_Int tag,
+hypre_longint hypre_INT_Checksum(const NALU_HYPRE_Int *v, NALU_HYPRE_Int len, const char *msg, NALU_HYPRE_Int tag,
           hypre_PilutSolverGlobals *globals)
 {
-  HYPRE_Int logging = globals ? globals->logging : 0;
-  static HYPRE_Int numChk = 0;
-  HYPRE_Int i;
+  NALU_HYPRE_Int logging = globals ? globals->logging : 0;
+  static NALU_HYPRE_Int numChk = 0;
+  NALU_HYPRE_Int i;
   hypre_ulongint sum = 0;
 
   for (i=0; i<len; i++)
@@ -101,16 +101,16 @@ hypre_longint hypre_INT_Checksum(const HYPRE_Int *v, HYPRE_Int len, const char *
 }
 
 /*************************************************************************
-* This function prints a checksum for a float (HYPRE_Real) array
+* This function prints a checksum for a float (NALU_HYPRE_Real) array
 **************************************************************************/
-hypre_longint hypre_FP_Checksum(const HYPRE_Real *v, HYPRE_Int len, const char *msg, HYPRE_Int tag,
+hypre_longint hypre_FP_Checksum(const NALU_HYPRE_Real *v, NALU_HYPRE_Int len, const char *msg, NALU_HYPRE_Int tag,
           hypre_PilutSolverGlobals *globals)
 {
-  HYPRE_Int logging = globals ? globals->logging : 0;
-  static HYPRE_Int numChk = 0;
-  HYPRE_Int i;
+  NALU_HYPRE_Int logging = globals ? globals->logging : 0;
+  static NALU_HYPRE_Int numChk = 0;
+  NALU_HYPRE_Int i;
   hypre_ulongint sum = 0;
-  HYPRE_Int *vv = (HYPRE_Int*)v;
+  NALU_HYPRE_Int *vv = (NALU_HYPRE_Int*)v;
 
   for (i=0; i<len; i++)
     sum += vv[i] * i;
@@ -133,9 +133,9 @@ hypre_longint hypre_FP_Checksum(const HYPRE_Real *v, HYPRE_Int len, const char *
 hypre_longint hypre_RMat_Checksum(const ReduceMatType *rmat,
           hypre_PilutSolverGlobals *globals)
 {
-  HYPRE_Int logging = globals ? globals->logging : 0;
-  HYPRE_Int i;
-  static HYPRE_Int numChk = 0;
+  NALU_HYPRE_Int logging = globals ? globals->logging : 0;
+  NALU_HYPRE_Int i;
+  static NALU_HYPRE_Int numChk = 0;
 
   /* for safety */
   if ( rmat          == NULL  ||
@@ -184,10 +184,10 @@ hypre_longint hypre_RMat_Checksum(const ReduceMatType *rmat,
 hypre_longint hypre_LDU_Checksum(const FactorMatType *ldu,
           hypre_PilutSolverGlobals *globals)
 {
-  HYPRE_Int logging = globals ? globals->logging : 0;
-  HYPRE_Int i, j;
+  NALU_HYPRE_Int logging = globals ? globals->logging : 0;
+  NALU_HYPRE_Int i, j;
   hypre_ulongint lisum=0, ldsum=0, uisum=0, udsum=0, dsum=0;
-  static HYPRE_Int numChk = 0;
+  static NALU_HYPRE_Int numChk = 0;
 
   if (ldu->lsrowptr == NULL  ||
       ldu->lerowptr == NULL  ||
@@ -237,11 +237,11 @@ hypre_longint hypre_LDU_Checksum(const FactorMatType *ldu,
 /*************************************************************************
 * This function prints a vector on each processor
 **************************************************************************/
-void hypre_PrintVector(HYPRE_Int *v, HYPRE_Int n, char *msg,
+void hypre_PrintVector(NALU_HYPRE_Int *v, NALU_HYPRE_Int n, char *msg,
           hypre_PilutSolverGlobals *globals)
 {
-  HYPRE_Int logging = globals ? globals->logging : 0;
-  HYPRE_Int i, penum;
+  NALU_HYPRE_Int logging = globals ? globals->logging : 0;
+  NALU_HYPRE_Int i, penum;
 
   for (penum=0; penum<npes; penum++) {
     if (mype == penum) {

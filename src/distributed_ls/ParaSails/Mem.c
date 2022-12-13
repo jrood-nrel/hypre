@@ -40,7 +40,7 @@
 
 Mem *MemCreate()
 {
-    Mem *m = hypre_TAlloc(Mem, 1, HYPRE_MEMORY_HOST);
+    Mem *m = hypre_TAlloc(Mem, 1, NALU_HYPRE_MEMORY_HOST);
 
     m->num_blocks  = 0;  /* number of blocks allocated */
     m->bytes_left  = 0;  /* bytes left in current block */
@@ -59,15 +59,15 @@ Mem *MemCreate()
 
 void MemDestroy(Mem *m)
 {
-    HYPRE_Int i;
+    NALU_HYPRE_Int i;
 
     /* Free all blocks of memory */
     for (i=0; i<m->num_blocks; i++)
     {
-        hypre_TFree(m->blocks[i], HYPRE_MEMORY_HOST);
+        hypre_TFree(m->blocks[i], NALU_HYPRE_MEMORY_HOST);
     }
 
-    hypre_TFree(m, HYPRE_MEMORY_HOST);
+    hypre_TFree(m, NALU_HYPRE_MEMORY_HOST);
 }
 
 /*--------------------------------------------------------------------------
@@ -77,9 +77,9 @@ void MemDestroy(Mem *m)
  * 3) memory exhausted.
  *--------------------------------------------------------------------------*/
 
-char *MemAlloc(Mem *m, HYPRE_Int size)
+char *MemAlloc(Mem *m, NALU_HYPRE_Int size)
 {
-   HYPRE_Int req;
+   NALU_HYPRE_Int req;
    char *p;
 
    /* Align on 16-byte boundary */
@@ -98,7 +98,7 @@ char *MemAlloc(Mem *m, HYPRE_Int size)
       /* Size of requested block */
       req = MAX(size, MEM_BLOCKSIZE);
 
-      m->avail = hypre_TAlloc(char, req, HYPRE_MEMORY_HOST);
+      m->avail = hypre_TAlloc(char, req, NALU_HYPRE_MEMORY_HOST);
 
       if (m->avail == NULL)
       {
@@ -137,7 +137,7 @@ void MemStat(Mem *m, FILE *stream, char *msg)
     hypre_fprintf(stream, "bytes_alloc: %ld\n", m->bytes_alloc);
     if (m->bytes_alloc != 0)
         hypre_fprintf(stream, "efficiency : %f\n", m->total_bytes /
-              (HYPRE_Real) m->bytes_alloc);
+              (NALU_HYPRE_Real) m->bytes_alloc);
     hypre_fprintf(stream, "*********************\n");
     fflush(stream);
 }

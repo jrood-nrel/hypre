@@ -11,8 +11,8 @@
  *
  *****************************************************************************/
 
-#ifndef HYPRE_TIMING_HEADER
-#define HYPRE_TIMING_HEADER
+#ifndef NALU_HYPRE_TIMING_HEADER
+#define NALU_HYPRE_TIMING_HEADER
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -27,16 +27,16 @@ extern "C" {
  *--------------------------------------------------------------------------*/
 
 /* timer.c */
-HYPRE_Real time_getWallclockSeconds( void );
-HYPRE_Real time_getCPUSeconds( void );
-HYPRE_Real time_get_wallclock_seconds_( void );
-HYPRE_Real time_get_cpu_seconds_( void );
+NALU_HYPRE_Real time_getWallclockSeconds( void );
+NALU_HYPRE_Real time_getCPUSeconds( void );
+NALU_HYPRE_Real time_get_wallclock_seconds_( void );
+NALU_HYPRE_Real time_get_cpu_seconds_( void );
 
 /*--------------------------------------------------------------------------
  * With timing off
  *--------------------------------------------------------------------------*/
 
-#ifndef HYPRE_TIMING
+#ifndef NALU_HYPRE_TIMING
 
 #define hypre_InitializeTiming(name) 0
 #define hypre_FinalizeTiming(index)
@@ -59,23 +59,23 @@ HYPRE_Real time_get_cpu_seconds_( void );
 
 typedef struct
 {
-   HYPRE_Real  *wall_time;
-   HYPRE_Real  *cpu_time;
-   HYPRE_Real  *flops;
+   NALU_HYPRE_Real  *wall_time;
+   NALU_HYPRE_Real  *cpu_time;
+   NALU_HYPRE_Real  *flops;
    char   **name;
-   HYPRE_Int     *state;     /* boolean flag to allow for recursive timing */
-   HYPRE_Int     *num_regs;  /* count of how many times a name is registered */
+   NALU_HYPRE_Int     *state;     /* boolean flag to allow for recursive timing */
+   NALU_HYPRE_Int     *num_regs;  /* count of how many times a name is registered */
 
-   HYPRE_Int      num_names;
-   HYPRE_Int      size;
+   NALU_HYPRE_Int      num_names;
+   NALU_HYPRE_Int      size;
 
-   HYPRE_Real   wall_count;
-   HYPRE_Real   CPU_count;
-   HYPRE_Real   FLOP_count;
+   NALU_HYPRE_Real   wall_count;
+   NALU_HYPRE_Real   CPU_count;
+   NALU_HYPRE_Real   FLOP_count;
 
 } hypre_TimingType;
 
-#ifdef HYPRE_TIMING_GLOBALS
+#ifdef NALU_HYPRE_TIMING_GLOBALS
 hypre_TimingType *hypre_global_timing = NULL;
 #else
 extern hypre_TimingType *hypre_global_timing;
@@ -100,15 +100,15 @@ extern hypre_TimingType *hypre_global_timing;
  *-------------------------------------------------------*/
 
 /* timing.c */
-HYPRE_Int hypre_InitializeTiming( const char *name );
-HYPRE_Int hypre_FinalizeTiming( HYPRE_Int time_index );
-HYPRE_Int hypre_FinalizeAllTimings();
-HYPRE_Int hypre_IncFLOPCount( HYPRE_BigInt inc );
-HYPRE_Int hypre_BeginTiming( HYPRE_Int time_index );
-HYPRE_Int hypre_EndTiming( HYPRE_Int time_index );
-HYPRE_Int hypre_ClearTiming( void );
-HYPRE_Int hypre_PrintTiming( const char *heading, MPI_Comm comm );
-HYPRE_Int hypre_GetTiming( const char *heading, HYPRE_Real *wall_time_ptr, MPI_Comm comm );
+NALU_HYPRE_Int hypre_InitializeTiming( const char *name );
+NALU_HYPRE_Int hypre_FinalizeTiming( NALU_HYPRE_Int time_index );
+NALU_HYPRE_Int hypre_FinalizeAllTimings();
+NALU_HYPRE_Int hypre_IncFLOPCount( NALU_HYPRE_BigInt inc );
+NALU_HYPRE_Int hypre_BeginTiming( NALU_HYPRE_Int time_index );
+NALU_HYPRE_Int hypre_EndTiming( NALU_HYPRE_Int time_index );
+NALU_HYPRE_Int hypre_ClearTiming( void );
+NALU_HYPRE_Int hypre_PrintTiming( const char *heading, MPI_Comm comm );
+NALU_HYPRE_Int hypre_GetTiming( const char *heading, NALU_HYPRE_Real *wall_time_ptr, MPI_Comm comm );
 
 #endif
 

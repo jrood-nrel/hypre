@@ -106,15 +106,15 @@
   /* The actual calls used by Mem_dh objects to allocate/free memory
    * from the heap.
    */
-#define PRIVATE_MALLOC(size)  ( hypre_TAlloc(char, size, HYPRE_MEMORY_HOST) )
-#define PRIVATE_FREE(ptr)     ( hypre_TFree(ptr, HYPRE_MEMORY_HOST) )
+#define PRIVATE_MALLOC(size)  ( hypre_TAlloc(char, size, NALU_HYPRE_MEMORY_HOST) )
+#define PRIVATE_FREE(ptr)     ( hypre_TFree(ptr, NALU_HYPRE_MEMORY_HOST) )
 
 /*------------------ Memory management end -----------------------------*/
 
 /*
 Developer's note: there must be a XXX_GET_ROW defined, e.g:
 
-  #define HYPRE_GET_ROW
+  #define NALU_HYPRE_GET_ROW
   #define PETSC_GET_ROW
   #define EUCLID_GET_ROW
 

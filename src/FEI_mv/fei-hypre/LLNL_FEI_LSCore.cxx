@@ -27,7 +27,7 @@ LLNL_FEI_LSCore::LLNL_FEI_LSCore(SolverLib_t solverLib)
    switch (solverLib)
    {
       case HYPRE:
-           lsc_ = HYPRE_base_create(MPI_COMM_WORLD );
+           lsc_ = NALU_HYPRE_base_create(MPI_COMM_WORLD );
            if ( lsc_ == NULL ) printf("problem building HYPRE\n");
            break;
       default:

@@ -41,7 +41,7 @@ hypre_StructMatvecCreate( )
 {
    hypre_StructMatvecData *matvec_data;
 
-   matvec_data = hypre_CTAlloc(hypre_StructMatvecData,  1, HYPRE_MEMORY_HOST);
+   matvec_data = hypre_CTAlloc(hypre_StructMatvecData,  1, NALU_HYPRE_MEMORY_HOST);
 
    return (void *) matvec_data;
 }
@@ -50,7 +50,7 @@ hypre_StructMatvecCreate( )
  * hypre_StructMatvecSetup
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_StructMatvecSetup( void               *matvec_vdata,
                          hypre_StructMatrix *A,
                          hypre_StructVector *x            )
@@ -88,12 +88,12 @@ hypre_StructMatvecSetup( void               *matvec_vdata,
  * hypre_StructMatvecCompute
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_StructMatvecCompute( void               *matvec_vdata,
-                           HYPRE_Complex       alpha,
+                           NALU_HYPRE_Complex       alpha,
                            hypre_StructMatrix *A,
                            hypre_StructVector *x,
-                           HYPRE_Complex       beta,
+                           NALU_HYPRE_Complex       beta,
                            hypre_StructVector *y            )
 {
    hypre_StructMatvecData  *matvec_data = (hypre_StructMatvecData  *)matvec_vdata;
@@ -105,8 +105,8 @@ hypre_StructMatvecCompute( void               *matvec_vdata,
    hypre_BoxArrayArray     *compute_box_aa;
    hypre_Box               *y_data_box;
 
-   HYPRE_Complex           *xp;
-   HYPRE_Complex           *yp;
+   NALU_HYPRE_Complex           *xp;
+   NALU_HYPRE_Complex           *yp;
 
    hypre_BoxArray          *boxes;
    hypre_Box               *box;
@@ -114,10 +114,10 @@ hypre_StructMatvecCompute( void               *matvec_vdata,
    hypre_IndexRef           start;
    hypre_IndexRef           stride;
 
-   HYPRE_Int                constant_coefficient;
+   NALU_HYPRE_Int                constant_coefficient;
 
-   HYPRE_Complex            temp;
-   HYPRE_Int                compute_i, i;
+   NALU_HYPRE_Complex            temp;
+   NALU_HYPRE_Int                compute_i, i;
 
    hypre_StructVector      *x_tmp = NULL;
 
@@ -284,7 +284,7 @@ hypre_StructMatvecCompute( void               *matvec_vdata,
  * (all coefficients are variable)
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int hypre_StructMatvecCC0( HYPRE_Complex       alpha,
+NALU_HYPRE_Int hypre_StructMatvecCC0( NALU_HYPRE_Complex       alpha,
                                  hypre_StructMatrix *A,
                                  hypre_StructVector *x,
                                  hypre_StructVector *y,
@@ -292,21 +292,21 @@ HYPRE_Int hypre_StructMatvecCC0( HYPRE_Complex       alpha,
                                  hypre_IndexRef           stride
                                )
 {
-   HYPRE_Int i, j, si;
-   HYPRE_Complex           *Ap0;
-   HYPRE_Complex           *Ap1;
-   HYPRE_Complex           *Ap2;
-   HYPRE_Complex           *Ap3;
-   HYPRE_Complex           *Ap4;
-   HYPRE_Complex           *Ap5;
-   HYPRE_Complex           *Ap6;
-   HYPRE_Int                xoff0;
-   HYPRE_Int                xoff1;
-   HYPRE_Int                xoff2;
-   HYPRE_Int                xoff3;
-   HYPRE_Int                xoff4;
-   HYPRE_Int                xoff5;
-   HYPRE_Int                xoff6;
+   NALU_HYPRE_Int i, j, si;
+   NALU_HYPRE_Complex           *Ap0;
+   NALU_HYPRE_Complex           *Ap1;
+   NALU_HYPRE_Complex           *Ap2;
+   NALU_HYPRE_Complex           *Ap3;
+   NALU_HYPRE_Complex           *Ap4;
+   NALU_HYPRE_Complex           *Ap5;
+   NALU_HYPRE_Complex           *Ap6;
+   NALU_HYPRE_Int                xoff0;
+   NALU_HYPRE_Int                xoff1;
+   NALU_HYPRE_Int                xoff2;
+   NALU_HYPRE_Int                xoff3;
+   NALU_HYPRE_Int                xoff4;
+   NALU_HYPRE_Int                xoff5;
+   NALU_HYPRE_Int                xoff6;
    hypre_BoxArray          *compute_box_a;
    hypre_Box               *compute_box;
 
@@ -314,15 +314,15 @@ HYPRE_Int hypre_StructMatvecCC0( HYPRE_Complex       alpha,
    hypre_Box               *x_data_box;
    hypre_StructStencil     *stencil;
    hypre_Index             *stencil_shape;
-   HYPRE_Int                stencil_size;
+   NALU_HYPRE_Int                stencil_size;
 
    hypre_Box               *y_data_box;
-   HYPRE_Complex           *xp;
-   HYPRE_Complex           *yp;
-   HYPRE_Int                depth;
+   NALU_HYPRE_Complex           *xp;
+   NALU_HYPRE_Complex           *yp;
+   NALU_HYPRE_Int                depth;
    hypre_Index              loop_size;
    hypre_IndexRef           start;
-   HYPRE_Int                ndim;
+   NALU_HYPRE_Int                ndim;
 
    stencil       = hypre_StructMatrixStencil(A);
    stencil_shape = hypre_StructStencilShape(stencil);
@@ -602,7 +602,7 @@ HYPRE_Int hypre_StructMatvecCC0( HYPRE_Complex       alpha,
  * core of struct matvec computation, for the case constant_coefficient==1
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int hypre_StructMatvecCC1( HYPRE_Complex       alpha,
+NALU_HYPRE_Int hypre_StructMatvecCC1( NALU_HYPRE_Complex       alpha,
                                  hypre_StructMatrix *A,
                                  hypre_StructVector *x,
                                  hypre_StructVector *y,
@@ -610,29 +610,29 @@ HYPRE_Int hypre_StructMatvecCC1( HYPRE_Complex       alpha,
                                  hypre_IndexRef           stride
                                )
 {
-   HYPRE_Int i, j, si;
-   HYPRE_Complex           *Ap0;
-   HYPRE_Complex           *Ap1;
-   HYPRE_Complex           *Ap2;
-   HYPRE_Complex           *Ap3;
-   HYPRE_Complex           *Ap4;
-   HYPRE_Complex           *Ap5;
-   HYPRE_Complex           *Ap6;
-   HYPRE_Complex           AAp0;
-   HYPRE_Complex           AAp1;
-   HYPRE_Complex           AAp2;
-   HYPRE_Complex           AAp3;
-   HYPRE_Complex           AAp4;
-   HYPRE_Complex           AAp5;
-   HYPRE_Complex           AAp6;
-   HYPRE_Int                xoff0;
-   HYPRE_Int                xoff1;
-   HYPRE_Int                xoff2;
-   HYPRE_Int                xoff3;
-   HYPRE_Int                xoff4;
-   HYPRE_Int                xoff5;
-   HYPRE_Int                xoff6;
-   HYPRE_Int                Ai;
+   NALU_HYPRE_Int i, j, si;
+   NALU_HYPRE_Complex           *Ap0;
+   NALU_HYPRE_Complex           *Ap1;
+   NALU_HYPRE_Complex           *Ap2;
+   NALU_HYPRE_Complex           *Ap3;
+   NALU_HYPRE_Complex           *Ap4;
+   NALU_HYPRE_Complex           *Ap5;
+   NALU_HYPRE_Complex           *Ap6;
+   NALU_HYPRE_Complex           AAp0;
+   NALU_HYPRE_Complex           AAp1;
+   NALU_HYPRE_Complex           AAp2;
+   NALU_HYPRE_Complex           AAp3;
+   NALU_HYPRE_Complex           AAp4;
+   NALU_HYPRE_Complex           AAp5;
+   NALU_HYPRE_Complex           AAp6;
+   NALU_HYPRE_Int                xoff0;
+   NALU_HYPRE_Int                xoff1;
+   NALU_HYPRE_Int                xoff2;
+   NALU_HYPRE_Int                xoff3;
+   NALU_HYPRE_Int                xoff4;
+   NALU_HYPRE_Int                xoff5;
+   NALU_HYPRE_Int                xoff6;
+   NALU_HYPRE_Int                Ai;
 
    hypre_BoxArray          *compute_box_a;
    hypre_Box               *compute_box;
@@ -640,15 +640,15 @@ HYPRE_Int hypre_StructMatvecCC1( HYPRE_Complex       alpha,
    hypre_Box               *x_data_box;
    hypre_StructStencil     *stencil;
    hypre_Index             *stencil_shape;
-   HYPRE_Int                stencil_size;
+   NALU_HYPRE_Int                stencil_size;
 
    hypre_Box               *y_data_box;
-   HYPRE_Complex           *xp;
-   HYPRE_Complex           *yp;
-   HYPRE_Int                depth;
+   NALU_HYPRE_Complex           *xp;
+   NALU_HYPRE_Complex           *yp;
+   NALU_HYPRE_Int                depth;
    hypre_Index              loop_size;
    hypre_IndexRef           start;
-   HYPRE_Int                ndim;
+   NALU_HYPRE_Int                ndim;
 
    stencil       = hypre_StructMatrixStencil(A);
    stencil_shape = hypre_StructStencilShape(stencil);
@@ -930,7 +930,7 @@ HYPRE_Int hypre_StructMatvecCC1( HYPRE_Complex       alpha,
  * core of struct matvec computation, for the case constant_coefficient==2
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int hypre_StructMatvecCC2( HYPRE_Complex       alpha,
+NALU_HYPRE_Int hypre_StructMatvecCC2( NALU_HYPRE_Complex       alpha,
                                  hypre_StructMatrix *A,
                                  hypre_StructVector *x,
                                  hypre_StructVector *y,
@@ -938,31 +938,31 @@ HYPRE_Int hypre_StructMatvecCC2( HYPRE_Complex       alpha,
                                  hypre_IndexRef           stride
                                )
 {
-   HYPRE_Int i, j, si;
-   HYPRE_Complex           *Ap0;
-   HYPRE_Complex           *Ap1;
-   HYPRE_Complex           *Ap2;
-   HYPRE_Complex           *Ap3;
-   HYPRE_Complex           *Ap4;
-   HYPRE_Complex           *Ap5;
-   HYPRE_Complex           *Ap6;
-   HYPRE_Complex           AAp0;
-   HYPRE_Complex           AAp1;
-   HYPRE_Complex           AAp2;
-   HYPRE_Complex           AAp3;
-   HYPRE_Complex           AAp4;
-   HYPRE_Complex           AAp5;
-   HYPRE_Complex           AAp6;
-   HYPRE_Int                xoff0;
-   HYPRE_Int                xoff1;
-   HYPRE_Int                xoff2;
-   HYPRE_Int                xoff3;
-   HYPRE_Int                xoff4;
-   HYPRE_Int                xoff5;
-   HYPRE_Int                xoff6;
-   HYPRE_Int                si_center, center_rank;
+   NALU_HYPRE_Int i, j, si;
+   NALU_HYPRE_Complex           *Ap0;
+   NALU_HYPRE_Complex           *Ap1;
+   NALU_HYPRE_Complex           *Ap2;
+   NALU_HYPRE_Complex           *Ap3;
+   NALU_HYPRE_Complex           *Ap4;
+   NALU_HYPRE_Complex           *Ap5;
+   NALU_HYPRE_Complex           *Ap6;
+   NALU_HYPRE_Complex           AAp0;
+   NALU_HYPRE_Complex           AAp1;
+   NALU_HYPRE_Complex           AAp2;
+   NALU_HYPRE_Complex           AAp3;
+   NALU_HYPRE_Complex           AAp4;
+   NALU_HYPRE_Complex           AAp5;
+   NALU_HYPRE_Complex           AAp6;
+   NALU_HYPRE_Int                xoff0;
+   NALU_HYPRE_Int                xoff1;
+   NALU_HYPRE_Int                xoff2;
+   NALU_HYPRE_Int                xoff3;
+   NALU_HYPRE_Int                xoff4;
+   NALU_HYPRE_Int                xoff5;
+   NALU_HYPRE_Int                xoff6;
+   NALU_HYPRE_Int                si_center, center_rank;
    hypre_Index              center_index;
-   HYPRE_Int                Ai_CC;
+   NALU_HYPRE_Int                Ai_CC;
    hypre_BoxArray          *compute_box_a;
    hypre_Box               *compute_box;
 
@@ -970,16 +970,16 @@ HYPRE_Int hypre_StructMatvecCC2( HYPRE_Complex       alpha,
    hypre_Box               *x_data_box;
    hypre_StructStencil     *stencil;
    hypre_Index             *stencil_shape;
-   HYPRE_Int                stencil_size;
+   NALU_HYPRE_Int                stencil_size;
 
    hypre_Box               *y_data_box;
-   HYPRE_Complex           *xp;
-   HYPRE_Complex           *yp;
-   HYPRE_Int                depth;
+   NALU_HYPRE_Complex           *xp;
+   NALU_HYPRE_Complex           *yp;
+   NALU_HYPRE_Int                depth;
    hypre_Index              loop_size;
    hypre_IndexRef           start;
-   HYPRE_Int                ndim;
-   HYPRE_Complex            zero[1] = {0};
+   NALU_HYPRE_Int                ndim;
+   NALU_HYPRE_Complex            zero[1] = {0};
 
    stencil       = hypre_StructMatrixStencil(A);
    stencil_shape = hypre_StructStencilShape(stencil);
@@ -1377,7 +1377,7 @@ HYPRE_Int hypre_StructMatvecCC2( HYPRE_Complex       alpha,
  * hypre_StructMatvecDestroy
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_StructMatvecDestroy( void *matvec_vdata )
 {
    hypre_StructMatvecData *matvec_data = (hypre_StructMatvecData *)matvec_vdata;
@@ -1387,7 +1387,7 @@ hypre_StructMatvecDestroy( void *matvec_vdata )
       hypre_StructMatrixDestroy(matvec_data -> A);
       hypre_StructVectorDestroy(matvec_data -> x);
       hypre_ComputePkgDestroy(matvec_data -> compute_pkg );
-      hypre_TFree(matvec_data, HYPRE_MEMORY_HOST);
+      hypre_TFree(matvec_data, NALU_HYPRE_MEMORY_HOST);
    }
 
    return hypre_error_flag;
@@ -1397,11 +1397,11 @@ hypre_StructMatvecDestroy( void *matvec_vdata )
  * hypre_StructMatvec
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_StructMatvec( HYPRE_Complex       alpha,
+NALU_HYPRE_Int
+hypre_StructMatvec( NALU_HYPRE_Complex       alpha,
                     hypre_StructMatrix *A,
                     hypre_StructVector *x,
-                    HYPRE_Complex       beta,
+                    NALU_HYPRE_Complex       beta,
                     hypre_StructVector *y     )
 {
    void *matvec_data;

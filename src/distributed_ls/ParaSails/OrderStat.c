@@ -10,7 +10,7 @@
  * OrderStat - Utility functions for selecting the i-th order statistic,
  * i.e., the i-th smallest element in a list of n elements.  There is one
  * user function in this file:  randomized_select(a, p, r, i), which 
- * selects the i-th order statistic from the HYPRE_Real precision array a[p:r].
+ * selects the i-th order statistic from the NALU_HYPRE_Real precision array a[p:r].
    The contents of the array are altered by the function.
  *
  * Reference: Cormen, Leiserson, Rivest, Introduction to Algorithms, p. 187.
@@ -25,10 +25,10 @@
  * elements in a[q+1:r].
  *--------------------------------------------------------------------------*/
 
-static HYPRE_Int partition(HYPRE_Real *a, HYPRE_Int p, HYPRE_Int r)
+static NALU_HYPRE_Int partition(NALU_HYPRE_Real *a, NALU_HYPRE_Int p, NALU_HYPRE_Int r)
 {
-    HYPRE_Real x, temp;
-    HYPRE_Int i, j;
+    NALU_HYPRE_Real x, temp;
+    NALU_HYPRE_Int i, j;
 
     x = a[p];
     i = p - 1;
@@ -61,10 +61,10 @@ static HYPRE_Int partition(HYPRE_Real *a, HYPRE_Int p, HYPRE_Int r)
  * a random pivot element.
  *--------------------------------------------------------------------------*/
 
-static HYPRE_Int randomized_partition(HYPRE_Real *a, HYPRE_Int p, HYPRE_Int r)
+static NALU_HYPRE_Int randomized_partition(NALU_HYPRE_Real *a, NALU_HYPRE_Int p, NALU_HYPRE_Int r)
 {
-    HYPRE_Real temp;
-    HYPRE_Int i;
+    NALU_HYPRE_Real temp;
+    NALU_HYPRE_Int i;
 
     /* select a random number in [p,r] */
     i = p + (rand() % (r-p+1));
@@ -77,14 +77,14 @@ static HYPRE_Int randomized_partition(HYPRE_Real *a, HYPRE_Int p, HYPRE_Int r)
 }
 
 /*--------------------------------------------------------------------------
- * randomized_select - Return the i-th smallest element of the HYPRE_Real 
+ * randomized_select - Return the i-th smallest element of the NALU_HYPRE_Real 
  * precision array a[p:r].  The contents of the array are altered on return.
  * "i" should range from 1 to r-p+1.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Real randomized_select(HYPRE_Real *a, HYPRE_Int p, HYPRE_Int r, HYPRE_Int i)
+NALU_HYPRE_Real randomized_select(NALU_HYPRE_Real *a, NALU_HYPRE_Int p, NALU_HYPRE_Int r, NALU_HYPRE_Int i)
 {
-    HYPRE_Int q, k;
+    NALU_HYPRE_Int q, k;
 
     if (p == r)
 	return a[p];
@@ -104,9 +104,9 @@ HYPRE_Real randomized_select(HYPRE_Real *a, HYPRE_Int p, HYPRE_Int r, HYPRE_Int 
  * hypre_shell_sort - sorts x[0:n-1] in place, ascending order
  *--------------------------------------------------------------------------*/
 
-void hypre_shell_sort(const HYPRE_Int n, HYPRE_Int x[])
+void hypre_shell_sort(const NALU_HYPRE_Int n, NALU_HYPRE_Int x[])
 {
-    HYPRE_Int m, max, j, k, itemp;
+    NALU_HYPRE_Int m, max, j, k, itemp;
 
     m = n/2;
 

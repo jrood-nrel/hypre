@@ -12,14 +12,14 @@
  *****************************************************************************/
 
 #include "Common.h"
-#include "HYPRE_distributed_matrix_types.h"
-#include "HYPRE_distributed_matrix_protos.h"
+#include "NALU_HYPRE_distributed_matrix_types.h"
+#include "NALU_HYPRE_distributed_matrix_protos.h"
 #include "hypre_ParaSails.h"
 #include "Matrix.h"
 #include "ParaSails.h"
 
 /* these includes required for hypre_ParaSailsIJMatrix */
-#include "../../IJ_mv/HYPRE_IJ_mv.h"
+#include "../../IJ_mv/NALU_HYPRE_IJ_mv.h"
 #include "../../HYPRE.h"
 #include "../../utilities/_hypre_utilities.h"
 
@@ -38,7 +38,7 @@ typedef struct
 #ifdef BALANCE_INFO
 static void balance_info(MPI_Comm comm, Matrix *mat)
 {
-   HYPRE_Int mype, num_local, i, total;
+   NALU_HYPRE_Int mype, num_local, i, total;
 
    hypre_MPI_Comm_rank(comm, &mype);
    num_local = mat->end_row - mat->beg_row + 1;
@@ -56,14 +56,14 @@ static void balance_info(MPI_Comm comm, Matrix *mat)
 
 static void matvec_timing(MPI_Comm comm, Matrix *mat)
 {
-   HYPRE_Real time0, time1;
-   HYPRE_Real trial1, trial2, trial3, trial4, trial5, trial6;
-   HYPRE_Real *temp1, *temp2;
-   HYPRE_Int i, mype;
-   HYPRE_Int n = mat->end_row - mat->beg_row + 1;
+   NALU_HYPRE_Real time0, time1;
+   NALU_HYPRE_Real trial1, trial2, trial3, trial4, trial5, trial6;
+   NALU_HYPRE_Real *temp1, *temp2;
+   NALU_HYPRE_Int i, mype;
+   NALU_HYPRE_Int n = mat->end_row - mat->beg_row + 1;
 
-   temp1 = hypre_CTAlloc(HYPRE_Real, n, HYPRE_MEMORY_HOST);
-   temp2 = hypre_CTAlloc(HYPRE_Real, n, HYPRE_MEMORY_HOST);
+   temp1 = hypre_CTAlloc(NALU_HYPRE_Real, n, NALU_HYPRE_MEMORY_HOST);
+   temp2 = hypre_CTAlloc(NALU_HYPRE_Real, n, NALU_HYPRE_MEMORY_HOST);
 
    /* warm-up */
    hypre_MPI_Barrier(comm);
@@ -135,23 +135,23 @@ static void matvec_timing(MPI_Comm comm, Matrix *mat)
  * data structure of ParaSails
  *--------------------------------------------------------------------------*/
 
-static Matrix *convert_matrix(MPI_Comm comm, HYPRE_DistributedMatrix distmat)
+static Matrix *convert_matrix(MPI_Comm comm, NALU_HYPRE_DistributedMatrix distmat)
 {
-   HYPRE_Int beg_row, end_row, row, dummy;
-   HYPRE_Int len, *ind;
-   HYPRE_Real *val;
+   NALU_HYPRE_Int beg_row, end_row, row, dummy;
+   NALU_HYPRE_Int len, *ind;
+   NALU_HYPRE_Real *val;
    Matrix *mat;
 
-   HYPRE_DistributedMatrixGetLocalRange(distmat, &beg_row, &end_row,
+   NALU_HYPRE_DistributedMatrixGetLocalRange(distmat, &beg_row, &end_row,
                                         &dummy, &dummy);
 
    mat = MatrixCreate(comm, beg_row, end_row);
 
    for (row=beg_row; row<=end_row; row++)
    {
-      HYPRE_DistributedMatrixGetRow(distmat, row, &len, &ind, &val);
+      NALU_HYPRE_DistributedMatrixGetRow(distmat, row, &len, &ind, &val);
       MatrixSetRow(mat, row, len, ind, val);
-      HYPRE_DistributedMatrixRestoreRow(distmat, row, &len, &ind, &val);
+      NALU_HYPRE_DistributedMatrixRestoreRow(distmat, row, &len, &ind, &val);
    }
 
    MatrixComplete(mat);
@@ -168,12 +168,12 @@ static Matrix *convert_matrix(MPI_Comm comm, HYPRE_DistributedMatrix distmat)
  * hypre_ParaSailsCreate - Return a ParaSails preconditioner object "obj"
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int hypre_ParaSailsCreate(MPI_Comm comm, hypre_ParaSails *obj)
+NALU_HYPRE_Int hypre_ParaSailsCreate(MPI_Comm comm, hypre_ParaSails *obj)
 {
    hypre_ParaSails_struct *internal;
 
    internal = (hypre_ParaSails_struct *)
-      hypre_CTAlloc(hypre_ParaSails_struct,  1, HYPRE_MEMORY_HOST);
+      hypre_CTAlloc(hypre_ParaSails_struct,  1, NALU_HYPRE_MEMORY_HOST);
 
    internal->comm = comm;
    internal->ps   = NULL;
@@ -187,13 +187,13 @@ HYPRE_Int hypre_ParaSailsCreate(MPI_Comm comm, hypre_ParaSails *obj)
  * hypre_ParaSailsDestroy - Destroy a ParaSails object "ps".
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int hypre_ParaSailsDestroy(hypre_ParaSails obj)
+NALU_HYPRE_Int hypre_ParaSailsDestroy(hypre_ParaSails obj)
 {
    hypre_ParaSails_struct *internal = (hypre_ParaSails_struct *) obj;
 
    ParaSailsDestroy(internal->ps);
 
-   hypre_TFree(internal, HYPRE_MEMORY_HOST);
+   hypre_TFree(internal, NALU_HYPRE_MEMORY_HOST);
 
    return hypre_error_flag;
 }
@@ -203,14 +203,14 @@ HYPRE_Int hypre_ParaSailsDestroy(hypre_ParaSails obj)
  * pattern and values are set up with the same distributed matrix.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int hypre_ParaSailsSetup(hypre_ParaSails obj,
-                               HYPRE_DistributedMatrix distmat, HYPRE_Int sym, HYPRE_Real thresh, HYPRE_Int nlevels,
-                               HYPRE_Real filter, HYPRE_Real loadbal, HYPRE_Int logging)
+NALU_HYPRE_Int hypre_ParaSailsSetup(hypre_ParaSails obj,
+                               NALU_HYPRE_DistributedMatrix distmat, NALU_HYPRE_Int sym, NALU_HYPRE_Real thresh, NALU_HYPRE_Int nlevels,
+                               NALU_HYPRE_Real filter, NALU_HYPRE_Real loadbal, NALU_HYPRE_Int logging)
 {
-   /* HYPRE_Real cost; */
+   /* NALU_HYPRE_Real cost; */
    Matrix *mat;
    hypre_ParaSails_struct *internal = (hypre_ParaSails_struct *) obj;
-   HYPRE_Int err;
+   NALU_HYPRE_Int err;
 
    mat = convert_matrix(internal->comm, distmat);
 
@@ -235,7 +235,7 @@ HYPRE_Int hypre_ParaSailsSetup(hypre_ParaSails obj,
 
    if (err)
    {
-      hypre_error(HYPRE_ERROR_GENERIC);
+      hypre_error(NALU_HYPRE_ERROR_GENERIC);
    }
    return hypre_error_flag;
 }
@@ -244,11 +244,11 @@ HYPRE_Int hypre_ParaSailsSetup(hypre_ParaSails obj,
  * hypre_ParaSailsSetupPattern - Set up pattern using a distributed matrix.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int hypre_ParaSailsSetupPattern(hypre_ParaSails obj,
-                                      HYPRE_DistributedMatrix distmat, HYPRE_Int sym, HYPRE_Real thresh, HYPRE_Int nlevels,
-                                      HYPRE_Int logging)
+NALU_HYPRE_Int hypre_ParaSailsSetupPattern(hypre_ParaSails obj,
+                                      NALU_HYPRE_DistributedMatrix distmat, NALU_HYPRE_Int sym, NALU_HYPRE_Real thresh, NALU_HYPRE_Int nlevels,
+                                      NALU_HYPRE_Int logging)
 {
-   /* HYPRE_Real cost; */
+   /* NALU_HYPRE_Real cost; */
    Matrix *mat;
    hypre_ParaSails_struct *internal = (hypre_ParaSails_struct *) obj;
 
@@ -273,13 +273,13 @@ HYPRE_Int hypre_ParaSailsSetupPattern(hypre_ParaSails obj,
  * hypre_ParaSailsSetupValues - Set up values using a distributed matrix.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int hypre_ParaSailsSetupValues(hypre_ParaSails obj,
-                                     HYPRE_DistributedMatrix distmat, HYPRE_Real filter, HYPRE_Real loadbal,
-                                     HYPRE_Int logging)
+NALU_HYPRE_Int hypre_ParaSailsSetupValues(hypre_ParaSails obj,
+                                     NALU_HYPRE_DistributedMatrix distmat, NALU_HYPRE_Real filter, NALU_HYPRE_Real loadbal,
+                                     NALU_HYPRE_Int logging)
 {
    Matrix *mat;
    hypre_ParaSails_struct *internal = (hypre_ParaSails_struct *) obj;
-   HYPRE_Int err;
+   NALU_HYPRE_Int err;
 
    mat = convert_matrix(internal->comm, distmat);
 
@@ -295,7 +295,7 @@ HYPRE_Int hypre_ParaSailsSetupValues(hypre_ParaSails obj,
 
    if (err)
    {
-      hypre_error(HYPRE_ERROR_GENERIC);
+      hypre_error(NALU_HYPRE_ERROR_GENERIC);
    }
    return hypre_error_flag;
 }
@@ -305,7 +305,7 @@ HYPRE_Int hypre_ParaSailsSetupValues(hypre_ParaSails obj,
  * "u", and return the result in the array "v".
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int hypre_ParaSailsApply(hypre_ParaSails obj, HYPRE_Real *u, HYPRE_Real *v)
+NALU_HYPRE_Int hypre_ParaSailsApply(hypre_ParaSails obj, NALU_HYPRE_Real *u, NALU_HYPRE_Real *v)
 {
    hypre_ParaSails_struct *internal = (hypre_ParaSails_struct *) obj;
 
@@ -319,7 +319,7 @@ HYPRE_Int hypre_ParaSailsApply(hypre_ParaSails obj, HYPRE_Real *u, HYPRE_Real *v
  * to an array "u", and return the result in the array "v".
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int hypre_ParaSailsApplyTrans(hypre_ParaSails obj, HYPRE_Real *u, HYPRE_Real *v)
+NALU_HYPRE_Int hypre_ParaSailsApplyTrans(hypre_ParaSails obj, NALU_HYPRE_Real *u, NALU_HYPRE_Real *v)
 {
    hypre_ParaSails_struct *internal = (hypre_ParaSails_struct *) obj;
 
@@ -334,26 +334,26 @@ HYPRE_Int hypre_ParaSailsApplyTrans(hypre_ParaSails obj, HYPRE_Real *u, HYPRE_Re
  * matrix that is in ParaSails Matrix format.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_ParaSailsBuildIJMatrix(hypre_ParaSails obj, HYPRE_IJMatrix *pij_A)
+NALU_HYPRE_Int
+hypre_ParaSailsBuildIJMatrix(hypre_ParaSails obj, NALU_HYPRE_IJMatrix *pij_A)
 {
    hypre_ParaSails_struct *internal = (hypre_ParaSails_struct *) obj;
    ParaSails *ps = internal->ps;
    Matrix *mat = internal->ps->M;
 
-   HYPRE_Int *diag_sizes, *offdiag_sizes, local_row, i, j;
-   HYPRE_Int size;
-   HYPRE_Int *col_inds;
-   HYPRE_Real *values;
+   NALU_HYPRE_Int *diag_sizes, *offdiag_sizes, local_row, i, j;
+   NALU_HYPRE_Int size;
+   NALU_HYPRE_Int *col_inds;
+   NALU_HYPRE_Real *values;
 
-   HYPRE_IJMatrixCreate( ps->comm, ps->beg_row, ps->end_row,
+   NALU_HYPRE_IJMatrixCreate( ps->comm, ps->beg_row, ps->end_row,
                          ps->beg_row, ps->end_row,
                          pij_A );
 
-   HYPRE_IJMatrixSetObjectType( *pij_A, HYPRE_PARCSR );
+   NALU_HYPRE_IJMatrixSetObjectType( *pij_A, NALU_HYPRE_PARCSR );
 
-   diag_sizes = hypre_CTAlloc(HYPRE_Int,  ps->end_row - ps->beg_row + 1, HYPRE_MEMORY_HOST);
-   offdiag_sizes = hypre_CTAlloc(HYPRE_Int,  ps->end_row - ps->beg_row + 1, HYPRE_MEMORY_HOST);
+   diag_sizes = hypre_CTAlloc(NALU_HYPRE_Int,  ps->end_row - ps->beg_row + 1, NALU_HYPRE_MEMORY_HOST);
+   offdiag_sizes = hypre_CTAlloc(NALU_HYPRE_Int,  ps->end_row - ps->beg_row + 1, NALU_HYPRE_MEMORY_HOST);
    local_row = 0;
    for (i=ps->beg_row; i<= ps->end_row; i++)
    {
@@ -370,27 +370,27 @@ hypre_ParaSailsBuildIJMatrix(hypre_ParaSails obj, HYPRE_IJMatrix *pij_A)
 
       local_row++;
    }
-   HYPRE_IJMatrixSetDiagOffdSizes( *pij_A, (const HYPRE_Int *) diag_sizes,
-                                   (const HYPRE_Int *) offdiag_sizes );
-   hypre_TFree(diag_sizes, HYPRE_MEMORY_HOST);
-   hypre_TFree(offdiag_sizes, HYPRE_MEMORY_HOST);
+   NALU_HYPRE_IJMatrixSetDiagOffdSizes( *pij_A, (const NALU_HYPRE_Int *) diag_sizes,
+                                   (const NALU_HYPRE_Int *) offdiag_sizes );
+   hypre_TFree(diag_sizes, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(offdiag_sizes, NALU_HYPRE_MEMORY_HOST);
 
-   HYPRE_IJMatrixInitialize( *pij_A );
+   NALU_HYPRE_IJMatrixInitialize( *pij_A );
 
    local_row = 0;
    for (i=ps->beg_row; i<= ps->end_row; i++)
    {
       MatrixGetRow(mat, local_row, &size, &col_inds, &values);
 
-      HYPRE_IJMatrixSetValues( *pij_A, 1, &size, &i, (const HYPRE_Int *) col_inds,
-                               (const HYPRE_Real *) values );
+      NALU_HYPRE_IJMatrixSetValues( *pij_A, 1, &size, &i, (const NALU_HYPRE_Int *) col_inds,
+                               (const NALU_HYPRE_Real *) values );
 
       NumberingGlobalToLocal(ps->numb, size, col_inds, col_inds);
 
       local_row++;
    }
 
-   HYPRE_IJMatrixAssemble( *pij_A );
+   NALU_HYPRE_IJMatrixAssemble( *pij_A );
 
    return hypre_error_flag;
 }

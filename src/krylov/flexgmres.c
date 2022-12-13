@@ -20,29 +20,29 @@
 
 hypre_FlexGMRESFunctions *
 hypre_FlexGMRESFunctionsCreate(
-   void *       (*CAlloc)        ( size_t count, size_t elt_size, HYPRE_MemoryLocation location ),
-   HYPRE_Int    (*Free)          ( void *ptr ),
-   HYPRE_Int    (*CommInfo)      ( void  *A, HYPRE_Int   *my_id,
-                                   HYPRE_Int   *num_procs ),
+   void *       (*CAlloc)        ( size_t count, size_t elt_size, NALU_HYPRE_MemoryLocation location ),
+   NALU_HYPRE_Int    (*Free)          ( void *ptr ),
+   NALU_HYPRE_Int    (*CommInfo)      ( void  *A, NALU_HYPRE_Int   *my_id,
+                                   NALU_HYPRE_Int   *num_procs ),
    void *       (*CreateVector)  ( void *vector ),
-   void *       (*CreateVectorArray)  ( HYPRE_Int size, void *vectors ),
-   HYPRE_Int    (*DestroyVector) ( void *vector ),
+   void *       (*CreateVectorArray)  ( NALU_HYPRE_Int size, void *vectors ),
+   NALU_HYPRE_Int    (*DestroyVector) ( void *vector ),
    void *       (*MatvecCreate)  ( void *A, void *x ),
-   HYPRE_Int    (*Matvec)        ( void *matvec_data, HYPRE_Complex alpha, void *A,
-                                   void *x, HYPRE_Complex beta, void *y ),
-   HYPRE_Int    (*MatvecDestroy) ( void *matvec_data ),
-   HYPRE_Real   (*InnerProd)     ( void *x, void *y ),
-   HYPRE_Int    (*CopyVector)    ( void *x, void *y ),
-   HYPRE_Int    (*ClearVector)   ( void *x ),
-   HYPRE_Int    (*ScaleVector)   ( HYPRE_Complex alpha, void *x ),
-   HYPRE_Int    (*Axpy)          ( HYPRE_Complex alpha, void *x, void *y ),
-   HYPRE_Int    (*PrecondSetup)  ( void *vdata, void *A, void *b, void *x ),
-   HYPRE_Int    (*Precond)       ( void *vdata, void *A, void *b, void *x )
+   NALU_HYPRE_Int    (*Matvec)        ( void *matvec_data, NALU_HYPRE_Complex alpha, void *A,
+                                   void *x, NALU_HYPRE_Complex beta, void *y ),
+   NALU_HYPRE_Int    (*MatvecDestroy) ( void *matvec_data ),
+   NALU_HYPRE_Real   (*InnerProd)     ( void *x, void *y ),
+   NALU_HYPRE_Int    (*CopyVector)    ( void *x, void *y ),
+   NALU_HYPRE_Int    (*ClearVector)   ( void *x ),
+   NALU_HYPRE_Int    (*ScaleVector)   ( NALU_HYPRE_Complex alpha, void *x ),
+   NALU_HYPRE_Int    (*Axpy)          ( NALU_HYPRE_Complex alpha, void *x, void *y ),
+   NALU_HYPRE_Int    (*PrecondSetup)  ( void *vdata, void *A, void *b, void *x ),
+   NALU_HYPRE_Int    (*Precond)       ( void *vdata, void *A, void *b, void *x )
 )
 {
    hypre_FlexGMRESFunctions * fgmres_functions;
    fgmres_functions = (hypre_FlexGMRESFunctions *)
-                      CAlloc( 1, sizeof(hypre_FlexGMRESFunctions), HYPRE_MEMORY_HOST );
+                      CAlloc( 1, sizeof(hypre_FlexGMRESFunctions), NALU_HYPRE_MEMORY_HOST );
 
    fgmres_functions->CAlloc = CAlloc;
    fgmres_functions->Free = Free;
@@ -77,9 +77,9 @@ hypre_FlexGMRESCreate( hypre_FlexGMRESFunctions *fgmres_functions )
 {
    hypre_FlexGMRESData *fgmres_data;
 
-   HYPRE_ANNOTATE_FUNC_BEGIN;
+   NALU_HYPRE_ANNOTATE_FUNC_BEGIN;
 
-   fgmres_data = hypre_CTAllocF(hypre_FlexGMRESData, 1, fgmres_functions, HYPRE_MEMORY_HOST);
+   fgmres_data = hypre_CTAllocF(hypre_FlexGMRESData, 1, fgmres_functions, NALU_HYPRE_MEMORY_HOST);
    fgmres_data->functions = fgmres_functions;
 
    /* set defaults */
@@ -103,7 +103,7 @@ hypre_FlexGMRESCreate( hypre_FlexGMRESFunctions *fgmres_functions )
    (fgmres_data -> norms)          = NULL;
    (fgmres_data -> log_file_name)  = NULL;
 
-   HYPRE_ANNOTATE_FUNC_END;
+   NALU_HYPRE_ANNOTATE_FUNC_END;
 
    return (void *) fgmres_data;
 }
@@ -112,13 +112,13 @@ hypre_FlexGMRESCreate( hypre_FlexGMRESFunctions *fgmres_functions )
  * hypre_FlexGMRESDestroy
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_FlexGMRESDestroy( void *fgmres_vdata )
 {
    hypre_FlexGMRESData *fgmres_data = (hypre_FlexGMRESData *)fgmres_vdata;
-   HYPRE_Int i;
+   NALU_HYPRE_Int i;
 
-   HYPRE_ANNOTATE_FUNC_BEGIN;
+   NALU_HYPRE_ANNOTATE_FUNC_BEGIN;
    if (fgmres_data)
    {
       hypre_FlexGMRESFunctions *fgmres_functions = fgmres_data->functions;
@@ -178,7 +178,7 @@ hypre_FlexGMRESDestroy( void *fgmres_vdata )
       hypre_TFreeF( fgmres_functions, fgmres_functions );
    }
 
-   HYPRE_ANNOTATE_FUNC_END;
+   NALU_HYPRE_ANNOTATE_FUNC_END;
 
    return hypre_error_flag;
 }
@@ -187,7 +187,7 @@ hypre_FlexGMRESDestroy( void *fgmres_vdata )
  * hypre_FlexGMRESGetResidual
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int hypre_FlexGMRESGetResidual( void *fgmres_vdata, void **residual )
+NALU_HYPRE_Int hypre_FlexGMRESGetResidual( void *fgmres_vdata, void **residual )
 {
    hypre_FlexGMRESData  *fgmres_data  = (hypre_FlexGMRESData *)fgmres_vdata;
    *residual = fgmres_data->r;
@@ -199,7 +199,7 @@ HYPRE_Int hypre_FlexGMRESGetResidual( void *fgmres_vdata, void **residual )
  * hypre_FlexGMRESSetup
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_FlexGMRESSetup( void *fgmres_vdata,
                       void *A,
                       void *b,
@@ -208,14 +208,14 @@ hypre_FlexGMRESSetup( void *fgmres_vdata,
    hypre_FlexGMRESData *fgmres_data     = (hypre_FlexGMRESData *)fgmres_vdata;
    hypre_FlexGMRESFunctions *fgmres_functions = fgmres_data->functions;
 
-   HYPRE_Int            k_dim            = (fgmres_data -> k_dim);
-   HYPRE_Int            max_iter         = (fgmres_data -> max_iter);
-   HYPRE_Int          (*precond_setup)(void*, void*, void*, void*) = (fgmres_functions->precond_setup);
+   NALU_HYPRE_Int            k_dim            = (fgmres_data -> k_dim);
+   NALU_HYPRE_Int            max_iter         = (fgmres_data -> max_iter);
+   NALU_HYPRE_Int          (*precond_setup)(void*, void*, void*, void*) = (fgmres_functions->precond_setup);
    void          *precond_data     = (fgmres_data -> precond_data);
 
-   HYPRE_Int            rel_change       = (fgmres_data -> rel_change);
+   NALU_HYPRE_Int            rel_change       = (fgmres_data -> rel_change);
 
-   HYPRE_ANNOTATE_FUNC_BEGIN;
+   NALU_HYPRE_ANNOTATE_FUNC_BEGIN;
 
    (fgmres_data -> A) = A;
 
@@ -265,8 +265,8 @@ hypre_FlexGMRESSetup( void *fgmres_vdata,
    {
       if ((fgmres_data -> norms) == NULL)
       {
-         (fgmres_data -> norms) = hypre_CTAllocF(HYPRE_Real, max_iter + 1, fgmres_functions,
-                                                 HYPRE_MEMORY_HOST);
+         (fgmres_data -> norms) = hypre_CTAllocF(NALU_HYPRE_Real, max_iter + 1, fgmres_functions,
+                                                 NALU_HYPRE_MEMORY_HOST);
       }
    }
    if ( (fgmres_data->print_level) > 0 )
@@ -277,7 +277,7 @@ hypre_FlexGMRESSetup( void *fgmres_vdata,
       }
    }
 
-   HYPRE_ANNOTATE_FUNC_END;
+   NALU_HYPRE_ANNOTATE_FUNC_END;
 
    return hypre_error_flag;
 }
@@ -286,7 +286,7 @@ hypre_FlexGMRESSetup( void *fgmres_vdata,
  * hypre_FlexGMRESSolve
  *-------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_FlexGMRESSolve(void  *fgmres_vdata,
                      void  *A,
                      void  *b,
@@ -294,12 +294,12 @@ hypre_FlexGMRESSolve(void  *fgmres_vdata,
 {
    hypre_FlexGMRESData  *fgmres_data   = (hypre_FlexGMRESData *)fgmres_vdata;
    hypre_FlexGMRESFunctions *fgmres_functions = fgmres_data->functions;
-   HYPRE_Int           k_dim        = (fgmres_data -> k_dim);
-   HYPRE_Int               min_iter     = (fgmres_data -> min_iter);
-   HYPRE_Int           max_iter     = (fgmres_data -> max_iter);
-   HYPRE_Real       r_tol        = (fgmres_data -> tol);
-   HYPRE_Real       cf_tol       = (fgmres_data -> cf_tol);
-   HYPRE_Real        a_tol        = (fgmres_data -> a_tol);
+   NALU_HYPRE_Int           k_dim        = (fgmres_data -> k_dim);
+   NALU_HYPRE_Int               min_iter     = (fgmres_data -> min_iter);
+   NALU_HYPRE_Int           max_iter     = (fgmres_data -> max_iter);
+   NALU_HYPRE_Real       r_tol        = (fgmres_data -> tol);
+   NALU_HYPRE_Real       cf_tol       = (fgmres_data -> cf_tol);
+   NALU_HYPRE_Real        a_tol        = (fgmres_data -> a_tol);
    void             *matvec_data  = (fgmres_data -> matvec_data);
 
    void             *r            = (fgmres_data -> r);
@@ -311,34 +311,34 @@ hypre_FlexGMRESSolve(void  *fgmres_vdata,
    void          **pre_vecs       = (fgmres_data ->pre_vecs);
    /*---*/
 
-   HYPRE_Int              (*precond)(void*, void*, void*, void*)   = (fgmres_functions -> precond);
-   HYPRE_Int               *precond_data = (HYPRE_Int*)(fgmres_data -> precond_data);
+   NALU_HYPRE_Int              (*precond)(void*, void*, void*, void*)   = (fgmres_functions -> precond);
+   NALU_HYPRE_Int               *precond_data = (NALU_HYPRE_Int*)(fgmres_data -> precond_data);
 
-   HYPRE_Int             print_level    = (fgmres_data -> print_level);
-   HYPRE_Int             logging        = (fgmres_data -> logging);
+   NALU_HYPRE_Int             print_level    = (fgmres_data -> print_level);
+   NALU_HYPRE_Int             logging        = (fgmres_data -> logging);
 
-   HYPRE_Real     *norms          = (fgmres_data -> norms);
+   NALU_HYPRE_Real     *norms          = (fgmres_data -> norms);
 
-   HYPRE_Int        break_value = 0;
-   HYPRE_Int         i, j, k;
-   HYPRE_Real *rs, **hh, *c, *s;
-   HYPRE_Int        iter;
-   HYPRE_Int        my_id, num_procs;
-   HYPRE_Real epsilon, gamma, t, r_norm, b_norm, den_norm;
+   NALU_HYPRE_Int        break_value = 0;
+   NALU_HYPRE_Int         i, j, k;
+   NALU_HYPRE_Real *rs, **hh, *c, *s;
+   NALU_HYPRE_Int        iter;
+   NALU_HYPRE_Int        my_id, num_procs;
+   NALU_HYPRE_Real epsilon, gamma, t, r_norm, b_norm, den_norm;
 
-   HYPRE_Real epsmac = 1.e-16;
-   HYPRE_Real ieee_check = 0.;
+   NALU_HYPRE_Real epsmac = 1.e-16;
+   NALU_HYPRE_Real ieee_check = 0.;
 
-   HYPRE_Real cf_ave_0 = 0.0;
-   HYPRE_Real cf_ave_1 = 0.0;
-   HYPRE_Real weight;
-   HYPRE_Real r_norm_0;
+   NALU_HYPRE_Real cf_ave_0 = 0.0;
+   NALU_HYPRE_Real cf_ave_1 = 0.0;
+   NALU_HYPRE_Real weight;
+   NALU_HYPRE_Real r_norm_0;
 
-   HYPRE_Int         (*modify_pc)(void*, HYPRE_Int, HYPRE_Real)   = (fgmres_functions -> modify_pc);
+   NALU_HYPRE_Int         (*modify_pc)(void*, NALU_HYPRE_Int, NALU_HYPRE_Real)   = (fgmres_functions -> modify_pc);
 
    /* We are not checking rel. change for now... */
 
-   HYPRE_ANNOTATE_FUNC_BEGIN;
+   NALU_HYPRE_ANNOTATE_FUNC_BEGIN;
 
    (fgmres_data -> converged) = 0;
    /*-----------------------------------------------------------------------
@@ -357,16 +357,16 @@ hypre_FlexGMRESSolve(void  *fgmres_vdata,
    }
 
    /* initialize work arrays  */
-   rs = hypre_CTAllocF(HYPRE_Real, k_dim + 1, fgmres_functions, HYPRE_MEMORY_HOST);
-   c = hypre_CTAllocF(HYPRE_Real, k_dim, fgmres_functions, HYPRE_MEMORY_HOST);
-   s = hypre_CTAllocF(HYPRE_Real, k_dim, fgmres_functions, HYPRE_MEMORY_HOST);
+   rs = hypre_CTAllocF(NALU_HYPRE_Real, k_dim + 1, fgmres_functions, NALU_HYPRE_MEMORY_HOST);
+   c = hypre_CTAllocF(NALU_HYPRE_Real, k_dim, fgmres_functions, NALU_HYPRE_MEMORY_HOST);
+   s = hypre_CTAllocF(NALU_HYPRE_Real, k_dim, fgmres_functions, NALU_HYPRE_MEMORY_HOST);
 
 
    /* fgmres mod. - need non-modified hessenberg ???? */
-   hh = hypre_CTAllocF(HYPRE_Real*, k_dim + 1, fgmres_functions, HYPRE_MEMORY_HOST);
+   hh = hypre_CTAllocF(NALU_HYPRE_Real*, k_dim + 1, fgmres_functions, NALU_HYPRE_MEMORY_HOST);
    for (i = 0; i < k_dim + 1; i++)
    {
-      hh[i] = hypre_CTAllocF(HYPRE_Real, k_dim, fgmres_functions, HYPRE_MEMORY_HOST);
+      hh[i] = hypre_CTAllocF(NALU_HYPRE_Real, k_dim, fgmres_functions, NALU_HYPRE_MEMORY_HOST);
    }
 
    (*(fgmres_functions->CopyVector))(b, p[0]);
@@ -394,8 +394,8 @@ hypre_FlexGMRESSolve(void  *fgmres_vdata,
          hypre_printf("Returning error flag += 101.  Program not terminated.\n");
          hypre_printf("ERROR detected by Hypre ... END\n\n\n");
       }
-      hypre_error(HYPRE_ERROR_GENERIC);
-      HYPRE_ANNOTATE_FUNC_END;
+      hypre_error(NALU_HYPRE_ERROR_GENERIC);
+      NALU_HYPRE_ANNOTATE_FUNC_END;
 
       return hypre_error_flag;
    }
@@ -421,8 +421,8 @@ hypre_FlexGMRESSolve(void  *fgmres_vdata,
          hypre_printf("Returning error flag += 101.  Program not terminated.\n");
          hypre_printf("ERROR detected by Hypre ... END\n\n\n");
       }
-      hypre_error(HYPRE_ERROR_GENERIC);
-      HYPRE_ANNOTATE_FUNC_END;
+      hypre_error(NALU_HYPRE_ERROR_GENERIC);
+      NALU_HYPRE_ANNOTATE_FUNC_END;
 
       return hypre_error_flag;
    }
@@ -504,7 +504,7 @@ hypre_FlexGMRESSolve(void  *fgmres_vdata,
          }
 
          hypre_TFreeF(hh, fgmres_functions);
-         HYPRE_ANNOTATE_FUNC_END;
+         NALU_HYPRE_ANNOTATE_FUNC_END;
 
          return hypre_error_flag;
       }
@@ -740,7 +740,7 @@ hypre_FlexGMRESSolve(void  *fgmres_vdata,
       (fgmres_data -> rel_residual_norm) = r_norm;
    }
 
-   if (iter >= max_iter && r_norm > epsilon && epsilon > 0) { hypre_error(HYPRE_ERROR_CONV); }
+   if (iter >= max_iter && r_norm > epsilon && epsilon > 0) { hypre_error(NALU_HYPRE_ERROR_CONV); }
 
 
    hypre_TFreeF(c, fgmres_functions);
@@ -753,7 +753,7 @@ hypre_FlexGMRESSolve(void  *fgmres_vdata,
    }
    hypre_TFreeF(hh, fgmres_functions);
 
-   HYPRE_ANNOTATE_FUNC_END;
+   NALU_HYPRE_ANNOTATE_FUNC_END;
 
    return hypre_error_flag;
 }
@@ -762,9 +762,9 @@ hypre_FlexGMRESSolve(void  *fgmres_vdata,
  * hypre_FlexGMRESSetKDim, hypre_FlexGMRESGetKDim
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_FlexGMRESSetKDim( void   *fgmres_vdata,
-                        HYPRE_Int   k_dim )
+                        NALU_HYPRE_Int   k_dim )
 {
    hypre_FlexGMRESData *fgmres_data = (hypre_FlexGMRESData *)fgmres_vdata;
 
@@ -775,9 +775,9 @@ hypre_FlexGMRESSetKDim( void   *fgmres_vdata,
 
 }
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_FlexGMRESGetKDim( void   *fgmres_vdata,
-                        HYPRE_Int * k_dim )
+                        NALU_HYPRE_Int * k_dim )
 {
    hypre_FlexGMRESData *fgmres_data = (hypre_FlexGMRESData *)fgmres_vdata;
 
@@ -792,9 +792,9 @@ hypre_FlexGMRESGetKDim( void   *fgmres_vdata,
  * hypre_FlexGMRESSetTol, hypre_FlexGMRESGetTol
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_FlexGMRESSetTol( void   *fgmres_vdata,
-                       HYPRE_Real  tol       )
+                       NALU_HYPRE_Real  tol       )
 {
    hypre_FlexGMRESData *fgmres_data = (hypre_FlexGMRESData *)fgmres_vdata;
 
@@ -804,9 +804,9 @@ hypre_FlexGMRESSetTol( void   *fgmres_vdata,
    return hypre_error_flag;
 }
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_FlexGMRESGetTol( void   *fgmres_vdata,
-                       HYPRE_Real  * tol      )
+                       NALU_HYPRE_Real  * tol      )
 {
    hypre_FlexGMRESData *fgmres_data = (hypre_FlexGMRESData *)fgmres_vdata;
 
@@ -819,9 +819,9 @@ hypre_FlexGMRESGetTol( void   *fgmres_vdata,
  * hypre_FlexGMRESSetAbsoluteTol, hypre_FlexGMRESGetAbsoluteTol
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_FlexGMRESSetAbsoluteTol( void   *fgmres_vdata,
-                               HYPRE_Real  a_tol       )
+                               NALU_HYPRE_Real  a_tol       )
 {
    hypre_FlexGMRESData *fgmres_data = (hypre_FlexGMRESData *)fgmres_vdata;
 
@@ -831,9 +831,9 @@ hypre_FlexGMRESSetAbsoluteTol( void   *fgmres_vdata,
    return hypre_error_flag;
 }
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_FlexGMRESGetAbsoluteTol( void   *fgmres_vdata,
-                               HYPRE_Real  * a_tol      )
+                               NALU_HYPRE_Real  * a_tol      )
 {
    hypre_FlexGMRESData *fgmres_data = (hypre_FlexGMRESData *)fgmres_vdata;
 
@@ -846,9 +846,9 @@ hypre_FlexGMRESGetAbsoluteTol( void   *fgmres_vdata,
  * hypre_FlexGMRESSetConvergenceFactorTol, hypre_FlexGMRESGetConvergenceFactorTol
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_FlexGMRESSetConvergenceFactorTol( void   *fgmres_vdata,
-                                        HYPRE_Real  cf_tol       )
+                                        NALU_HYPRE_Real  cf_tol       )
 {
    hypre_FlexGMRESData *fgmres_data = (hypre_FlexGMRESData *)fgmres_vdata;
 
@@ -858,9 +858,9 @@ hypre_FlexGMRESSetConvergenceFactorTol( void   *fgmres_vdata,
    return hypre_error_flag;
 }
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_FlexGMRESGetConvergenceFactorTol( void   *fgmres_vdata,
-                                        HYPRE_Real * cf_tol       )
+                                        NALU_HYPRE_Real * cf_tol       )
 {
    hypre_FlexGMRESData *fgmres_data = (hypre_FlexGMRESData *)fgmres_vdata;
 
@@ -874,9 +874,9 @@ hypre_FlexGMRESGetConvergenceFactorTol( void   *fgmres_vdata,
  * hypre_FlexGMRESSetMinIter, hypre_FlexGMRESGetMinIter
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_FlexGMRESSetMinIter( void *fgmres_vdata,
-                           HYPRE_Int   min_iter  )
+                           NALU_HYPRE_Int   min_iter  )
 {
    hypre_FlexGMRESData *fgmres_data = (hypre_FlexGMRESData *)fgmres_vdata;
 
@@ -886,9 +886,9 @@ hypre_FlexGMRESSetMinIter( void *fgmres_vdata,
    return hypre_error_flag;
 }
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_FlexGMRESGetMinIter( void *fgmres_vdata,
-                           HYPRE_Int * min_iter  )
+                           NALU_HYPRE_Int * min_iter  )
 {
    hypre_FlexGMRESData *fgmres_data = (hypre_FlexGMRESData *)fgmres_vdata;
 
@@ -902,9 +902,9 @@ hypre_FlexGMRESGetMinIter( void *fgmres_vdata,
  * hypre_FlexGMRESSetMaxIter, hypre_FlexGMRESGetMaxIter
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_FlexGMRESSetMaxIter( void *fgmres_vdata,
-                           HYPRE_Int   max_iter  )
+                           NALU_HYPRE_Int   max_iter  )
 {
    hypre_FlexGMRESData *fgmres_data = (hypre_FlexGMRESData *)fgmres_vdata;
 
@@ -914,9 +914,9 @@ hypre_FlexGMRESSetMaxIter( void *fgmres_vdata,
    return hypre_error_flag;
 }
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_FlexGMRESGetMaxIter( void *fgmres_vdata,
-                           HYPRE_Int * max_iter  )
+                           NALU_HYPRE_Int * max_iter  )
 {
    hypre_FlexGMRESData *fgmres_data = (hypre_FlexGMRESData *)fgmres_vdata;
 
@@ -931,9 +931,9 @@ hypre_FlexGMRESGetMaxIter( void *fgmres_vdata,
  * hypre_FlexGMRESSetStopCrit, hypre_FlexGMRESGetStopCrit
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_FlexGMRESSetStopCrit( void   *fgmres_vdata,
-                            HYPRE_Int  stop_crit       )
+                            NALU_HYPRE_Int  stop_crit       )
 {
    hypre_FlexGMRESData *fgmres_data = (hypre_FlexGMRESData *)fgmres_vdata;
 
@@ -943,9 +943,9 @@ hypre_FlexGMRESSetStopCrit( void   *fgmres_vdata,
    return hypre_error_flag;
 }
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_FlexGMRESGetStopCrit( void   *fgmres_vdata,
-                            HYPRE_Int * stop_crit       )
+                            NALU_HYPRE_Int * stop_crit       )
 {
    hypre_FlexGMRESData *fgmres_data = (hypre_FlexGMRESData *)fgmres_vdata;
 
@@ -959,10 +959,10 @@ hypre_FlexGMRESGetStopCrit( void   *fgmres_vdata,
  * hypre_FlexGMRESSetPrecond
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_FlexGMRESSetPrecond( void  *fgmres_vdata,
-                           HYPRE_Int  (*precond)(void*, void*, void*, void*),
-                           HYPRE_Int  (*precond_setup)(void*, void*, void*, void*),
+                           NALU_HYPRE_Int  (*precond)(void*, void*, void*, void*),
+                           NALU_HYPRE_Int  (*precond_setup)(void*, void*, void*, void*),
                            void  *precond_data )
 {
    hypre_FlexGMRESData *fgmres_data = (hypre_FlexGMRESData *)fgmres_vdata;
@@ -980,14 +980,14 @@ hypre_FlexGMRESSetPrecond( void  *fgmres_vdata,
  * hypre_FlexGMRESGetPrecond
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_FlexGMRESGetPrecond( void         *fgmres_vdata,
-                           HYPRE_Solver *precond_data_ptr )
+                           NALU_HYPRE_Solver *precond_data_ptr )
 {
    hypre_FlexGMRESData *fgmres_data = (hypre_FlexGMRESData *)fgmres_vdata;
 
 
-   *precond_data_ptr = (HYPRE_Solver)(fgmres_data -> precond_data);
+   *precond_data_ptr = (NALU_HYPRE_Solver)(fgmres_data -> precond_data);
 
    return hypre_error_flag;
 }
@@ -996,9 +996,9 @@ hypre_FlexGMRESGetPrecond( void         *fgmres_vdata,
  * hypre_FlexGMRESSetPrintLevel, hypre_FlexGMRESGetPrintLevel
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_FlexGMRESSetPrintLevel( void *fgmres_vdata,
-                              HYPRE_Int   level)
+                              NALU_HYPRE_Int   level)
 {
    hypre_FlexGMRESData *fgmres_data = (hypre_FlexGMRESData *)fgmres_vdata;
 
@@ -1008,9 +1008,9 @@ hypre_FlexGMRESSetPrintLevel( void *fgmres_vdata,
    return hypre_error_flag;
 }
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_FlexGMRESGetPrintLevel( void *fgmres_vdata,
-                              HYPRE_Int * level)
+                              NALU_HYPRE_Int * level)
 {
    hypre_FlexGMRESData *fgmres_data = (hypre_FlexGMRESData *)fgmres_vdata;
 
@@ -1024,9 +1024,9 @@ hypre_FlexGMRESGetPrintLevel( void *fgmres_vdata,
  * hypre_FlexGMRESSetLogging, hypre_FlexGMRESGetLogging
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_FlexGMRESSetLogging( void *fgmres_vdata,
-                           HYPRE_Int   level)
+                           NALU_HYPRE_Int   level)
 {
    hypre_FlexGMRESData *fgmres_data = (hypre_FlexGMRESData *)fgmres_vdata;
 
@@ -1036,9 +1036,9 @@ hypre_FlexGMRESSetLogging( void *fgmres_vdata,
    return hypre_error_flag;
 }
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_FlexGMRESGetLogging( void *fgmres_vdata,
-                           HYPRE_Int * level)
+                           NALU_HYPRE_Int * level)
 {
    hypre_FlexGMRESData *fgmres_data = (hypre_FlexGMRESData *)fgmres_vdata;
 
@@ -1052,9 +1052,9 @@ hypre_FlexGMRESGetLogging( void *fgmres_vdata,
  * hypre_FlexGMRESGetNumIterations
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_FlexGMRESGetNumIterations( void *fgmres_vdata,
-                                 HYPRE_Int  *num_iterations )
+                                 NALU_HYPRE_Int  *num_iterations )
 {
    hypre_FlexGMRESData *fgmres_data = (hypre_FlexGMRESData *)fgmres_vdata;
 
@@ -1068,9 +1068,9 @@ hypre_FlexGMRESGetNumIterations( void *fgmres_vdata,
  * hypre_FlexGMRESGetConverged
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_FlexGMRESGetConverged( void *fgmres_vdata,
-                             HYPRE_Int  *converged )
+                             NALU_HYPRE_Int  *converged )
 {
    hypre_FlexGMRESData *fgmres_data = (hypre_FlexGMRESData *)fgmres_vdata;
 
@@ -1084,9 +1084,9 @@ hypre_FlexGMRESGetConverged( void *fgmres_vdata,
  * hypre_FlexGMRESGetFinalRelativeResidualNorm
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_FlexGMRESGetFinalRelativeResidualNorm( void   *fgmres_vdata,
-                                             HYPRE_Real *relative_residual_norm )
+                                             NALU_HYPRE_Real *relative_residual_norm )
 {
    hypre_FlexGMRESData *fgmres_data = (hypre_FlexGMRESData *)fgmres_vdata;
 
@@ -1099,8 +1099,8 @@ hypre_FlexGMRESGetFinalRelativeResidualNorm( void   *fgmres_vdata,
  * hypre_FlexGMRESSetModifyPC
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int hypre_FlexGMRESSetModifyPC(void *fgmres_vdata,
-                                     HYPRE_Int (*modify_pc)(void *precond_data, HYPRE_Int iteration, HYPRE_Real rel_residual_norm))
+NALU_HYPRE_Int hypre_FlexGMRESSetModifyPC(void *fgmres_vdata,
+                                     NALU_HYPRE_Int (*modify_pc)(void *precond_data, NALU_HYPRE_Int iteration, NALU_HYPRE_Real rel_residual_norm))
 {
 
    hypre_FlexGMRESData *fgmres_data = (hypre_FlexGMRESData *)fgmres_vdata;
@@ -1116,8 +1116,8 @@ HYPRE_Int hypre_FlexGMRESSetModifyPC(void *fgmres_vdata,
  * hypre_FlexGMRESModifyPCDefault - if the user does not specify a function
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int hypre_FlexGMRESModifyPCDefault(void *precond_data, HYPRE_Int iteration,
-                                         HYPRE_Real rel_residual_norm)
+NALU_HYPRE_Int hypre_FlexGMRESModifyPCDefault(void *precond_data, NALU_HYPRE_Int iteration,
+                                         NALU_HYPRE_Real rel_residual_norm)
 {
 
 

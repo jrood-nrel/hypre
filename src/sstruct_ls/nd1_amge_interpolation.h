@@ -31,13 +31,13 @@
 
   Note: If FACE_iedge == EDGE_iedge the input should describe a 2D problem.
 */
-HYPRE_Int hypre_ND1AMGeInterpolation (hypre_ParCSRMatrix * Aee,
+NALU_HYPRE_Int hypre_ND1AMGeInterpolation (hypre_ParCSRMatrix * Aee,
                                       hypre_ParCSRMatrix * ELEM_iedge,
                                       hypre_ParCSRMatrix * FACE_iedge,
                                       hypre_ParCSRMatrix * EDGE_iedge,
                                       hypre_ParCSRMatrix * ELEM_FACE,
                                       hypre_ParCSRMatrix * ELEM_EDGE,
-                                      HYPRE_Int            num_OffProcRows,
+                                      NALU_HYPRE_Int            num_OffProcRows,
                                       hypre_MaxwellOffProcRow ** OffProcRows,
                                       hypre_IJMatrix     * edge_EDGE);
 
@@ -53,10 +53,10 @@ HYPRE_Int hypre_ND1AMGeInterpolation (hypre_ParCSRMatrix * Aee,
   The columns in A and P use global numbering, while the rows are numbered
   according to the arrays idof and bdof. The only output parameter is Pi.
 */
-HYPRE_Int hypre_HarmonicExtension (hypre_CSRMatrix *A,
+NALU_HYPRE_Int hypre_HarmonicExtension (hypre_CSRMatrix *A,
                                    hypre_CSRMatrix *P,
-                                   HYPRE_Int num_DOF, HYPRE_BigInt *DOF,
-                                   HYPRE_Int num_idof, HYPRE_BigInt *idof,
-                                   HYPRE_Int num_bdof, HYPRE_BigInt *bdof);
+                                   NALU_HYPRE_Int num_DOF, NALU_HYPRE_BigInt *DOF,
+                                   NALU_HYPRE_Int num_idof, NALU_HYPRE_BigInt *idof,
+                                   NALU_HYPRE_Int num_bdof, NALU_HYPRE_BigInt *bdof);
 
 #endif

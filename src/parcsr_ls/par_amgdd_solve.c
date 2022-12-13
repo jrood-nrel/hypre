@@ -7,7 +7,7 @@
 
 #include "_hypre_parcsr_ls.h"
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_BoomerAMGDDSolve( void               *amgdd_vdata,
                         hypre_ParCSRMatrix *A,
                         hypre_ParVector    *f,
@@ -25,27 +25,27 @@ hypre_BoomerAMGDDSolve( void               *amgdd_vdata,
    hypre_ParVector      *Vtemp;
    hypre_ParVector      *Ztemp;
 
-   HYPRE_Int             myid;
-   HYPRE_Int             min_iter;
-   HYPRE_Int             max_iter;
-   HYPRE_Int             converge_type;
-   HYPRE_Int             i, level;
-   HYPRE_Int             num_levels;
-   HYPRE_Int             amgdd_start_level;
-   HYPRE_Int             fac_num_cycles;
-   HYPRE_Int             cycle_count;
-   HYPRE_Int             amg_print_level;
-   HYPRE_Int             amg_logging;
-   HYPRE_Real            tol;
-   HYPRE_Real            resid_nrm;
-   HYPRE_Real            resid_nrm_init;
-   HYPRE_Real            rhs_norm;
-   HYPRE_Real            old_resid;
-   HYPRE_Real            relative_resid;
-   HYPRE_Real            conv_factor;
-   HYPRE_Real            alpha = -1.0;
-   HYPRE_Real            beta = 1.0;
-   HYPRE_Real            ieee_check = 0.0;
+   NALU_HYPRE_Int             myid;
+   NALU_HYPRE_Int             min_iter;
+   NALU_HYPRE_Int             max_iter;
+   NALU_HYPRE_Int             converge_type;
+   NALU_HYPRE_Int             i, level;
+   NALU_HYPRE_Int             num_levels;
+   NALU_HYPRE_Int             amgdd_start_level;
+   NALU_HYPRE_Int             fac_num_cycles;
+   NALU_HYPRE_Int             cycle_count;
+   NALU_HYPRE_Int             amg_print_level;
+   NALU_HYPRE_Int             amg_logging;
+   NALU_HYPRE_Real            tol;
+   NALU_HYPRE_Real            resid_nrm;
+   NALU_HYPRE_Real            resid_nrm_init;
+   NALU_HYPRE_Real            rhs_norm;
+   NALU_HYPRE_Real            old_resid;
+   NALU_HYPRE_Real            relative_resid;
+   NALU_HYPRE_Real            conv_factor;
+   NALU_HYPRE_Real            alpha = -1.0;
+   NALU_HYPRE_Real            beta = 1.0;
+   NALU_HYPRE_Real            ieee_check = 0.0;
 
    hypre_MPI_Comm_rank(hypre_MPI_COMM_WORLD, &myid );
 
@@ -98,7 +98,7 @@ hypre_BoomerAMGDDSolve( void               *amgdd_vdata,
    U_array[0] = u;
    if (A != A_array[0])
    {
-      hypre_error_w_msg(HYPRE_ERROR_GENERIC,
+      hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC,
                         "WARNING: calling hypre_BoomerAMGDDSolve with different matrix than what was used for initial setup. "
                         "Non-owned parts of fine-grid matrix and fine-grid communication patterns may be incorrect.\n");
       hypre_AMGDDCompGridMatrixOwnedDiag(hypre_AMGDDCompGridA(compGrids[0])) = hypre_ParCSRMatrixDiag(A);
@@ -156,7 +156,7 @@ hypre_BoomerAMGDDSolve( void               *amgdd_vdata,
             hypre_printf("User probably placed non-numerics in supplied A, x_0, or b.\n");
             hypre_printf("ERROR detected by Hypre ...  END\n\n\n");
          }
-         hypre_error(HYPRE_ERROR_GENERIC);
+         hypre_error(NALU_HYPRE_ERROR_GENERIC);
 
          return hypre_error_flag;
       }
@@ -344,7 +344,7 @@ hypre_BoomerAMGDDSolve( void               *amgdd_vdata,
          hypre_printf("==============================================");
       }
 
-      hypre_error(HYPRE_ERROR_CONV);
+      hypre_error(NALU_HYPRE_ERROR_CONV);
    }
 
    if (myid == 0 && amg_print_level > 1)
@@ -359,7 +359,7 @@ hypre_BoomerAMGDDSolve( void               *amgdd_vdata,
  * TODO: Don't reallocate requests/sends at each level. Implement
  *       a hypre_AMGDDCommPkgHandle data structure (see hypre_ParCSRCommHandle)
  *--------------------------------------------------------------------------*/
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_BoomerAMGDD_ResidualCommunication( hypre_ParAMGDDData *amgdd_data )
 {
    hypre_ParAMGData      *amg_data = hypre_ParAMGDDDataAMG(amgdd_data);
@@ -372,20 +372,20 @@ hypre_BoomerAMGDD_ResidualCommunication( hypre_ParAMGDDData *amgdd_data )
    hypre_AMGDDCompGrid  **compGrid;
 
    // temporary arrays used for communication during comp grid setup
-   HYPRE_Complex        **send_buffers;
-   HYPRE_Complex        **recv_buffers;
+   NALU_HYPRE_Complex        **send_buffers;
+   NALU_HYPRE_Complex        **recv_buffers;
 
    // MPI stuff
    MPI_Comm               comm;
    hypre_MPI_Request     *requests;
    hypre_MPI_Status      *status;
-   HYPRE_Int              request_counter = 0;
-   HYPRE_Int              num_procs;
-   HYPRE_Int              num_sends, num_recvs;
-   HYPRE_Int              send_buffer_size, recv_buffer_size;
+   NALU_HYPRE_Int              request_counter = 0;
+   NALU_HYPRE_Int              num_procs;
+   NALU_HYPRE_Int              num_sends, num_recvs;
+   NALU_HYPRE_Int              send_buffer_size, recv_buffer_size;
 
-   HYPRE_Int              num_levels, amgdd_start_level;
-   HYPRE_Int              level, i;
+   NALU_HYPRE_Int              num_levels, amgdd_start_level;
+   NALU_HYPRE_Int              level, i;
 
    // Get info from amg
    num_levels        = hypre_ParAMGDataNumLevels(amg_data);
@@ -425,18 +425,18 @@ hypre_BoomerAMGDD_ResidualCommunication( hypre_ParAMGDDData *amgdd_data )
          if ( num_sends || num_recvs ) // If there are any owned nodes on this level
          {
             // allocate space for the buffers, buffer sizes, requests and status, psiComposite_send, psiComposite_recv, send and recv maps
-            recv_buffers = hypre_CTAlloc(HYPRE_Complex *, num_recvs, HYPRE_MEMORY_HOST);
-            send_buffers = hypre_CTAlloc(HYPRE_Complex *, num_sends, HYPRE_MEMORY_HOST);
+            recv_buffers = hypre_CTAlloc(NALU_HYPRE_Complex *, num_recvs, NALU_HYPRE_MEMORY_HOST);
+            send_buffers = hypre_CTAlloc(NALU_HYPRE_Complex *, num_sends, NALU_HYPRE_MEMORY_HOST);
             request_counter = 0;
-            requests = hypre_CTAlloc(hypre_MPI_Request, num_sends + num_recvs, HYPRE_MEMORY_HOST);
-            status = hypre_CTAlloc(hypre_MPI_Status, num_sends + num_recvs, HYPRE_MEMORY_HOST);
+            requests = hypre_CTAlloc(hypre_MPI_Request, num_sends + num_recvs, NALU_HYPRE_MEMORY_HOST);
+            status = hypre_CTAlloc(hypre_MPI_Status, num_sends + num_recvs, NALU_HYPRE_MEMORY_HOST);
 
             // allocate space for the receive buffers and post the receives
             for (i = 0; i < num_recvs; i++)
             {
                recv_buffer_size = hypre_AMGDDCommPkgRecvBufferSize(compGridCommPkg)[level][i];
-               recv_buffers[i] = hypre_CTAlloc(HYPRE_Complex, recv_buffer_size, HYPRE_MEMORY_HOST);
-               hypre_MPI_Irecv(recv_buffers[i], recv_buffer_size, HYPRE_MPI_COMPLEX,
+               recv_buffers[i] = hypre_CTAlloc(NALU_HYPRE_Complex, recv_buffer_size, NALU_HYPRE_MEMORY_HOST);
+               hypre_MPI_Irecv(recv_buffers[i], recv_buffer_size, NALU_HYPRE_MPI_COMPLEX,
                                hypre_AMGDDCommPkgRecvProcs(compGridCommPkg)[level][i], 3, comm, &requests[request_counter++]);
             }
 
@@ -444,20 +444,20 @@ hypre_BoomerAMGDD_ResidualCommunication( hypre_ParAMGDDData *amgdd_data )
             {
                send_buffer_size = hypre_AMGDDCommPkgSendBufferSize(compGridCommPkg)[level][i];
                send_buffers[i] = hypre_BoomerAMGDD_PackResidualBuffer(compGrid, compGridCommPkg, level, i);
-               hypre_MPI_Isend(send_buffers[i], send_buffer_size, HYPRE_MPI_COMPLEX,
+               hypre_MPI_Isend(send_buffers[i], send_buffer_size, NALU_HYPRE_MPI_COMPLEX,
                                hypre_AMGDDCommPkgSendProcs(compGridCommPkg)[level][i], 3, comm, &requests[request_counter++]);
             }
 
             // wait for buffers to be received
             hypre_MPI_Waitall( request_counter, requests, status );
 
-            hypre_TFree(requests, HYPRE_MEMORY_HOST);
-            hypre_TFree(status, HYPRE_MEMORY_HOST);
+            hypre_TFree(requests, NALU_HYPRE_MEMORY_HOST);
+            hypre_TFree(status, NALU_HYPRE_MEMORY_HOST);
             for (i = 0; i < num_sends; i++)
             {
-               hypre_TFree(send_buffers[i], HYPRE_MEMORY_HOST);
+               hypre_TFree(send_buffers[i], NALU_HYPRE_MEMORY_HOST);
             }
-            hypre_TFree(send_buffers, HYPRE_MEMORY_HOST);
+            hypre_TFree(send_buffers, NALU_HYPRE_MEMORY_HOST);
 
             // Unpack recv buffers
             for (i = 0; i < num_recvs; i++)
@@ -468,9 +468,9 @@ hypre_BoomerAMGDD_ResidualCommunication( hypre_ParAMGDDData *amgdd_data )
             // clean up memory for this level
             for (i = 0; i < num_recvs; i++)
             {
-               hypre_TFree(recv_buffers[i], HYPRE_MEMORY_HOST);
+               hypre_TFree(recv_buffers[i], NALU_HYPRE_MEMORY_HOST);
             }
-            hypre_TFree(recv_buffers, HYPRE_MEMORY_HOST);
+            hypre_TFree(recv_buffers, NALU_HYPRE_MEMORY_HOST);
          }
       }
    }
@@ -478,19 +478,19 @@ hypre_BoomerAMGDD_ResidualCommunication( hypre_ParAMGDDData *amgdd_data )
    return hypre_error_flag;
 }
 
-HYPRE_Complex*
+NALU_HYPRE_Complex*
 hypre_BoomerAMGDD_PackResidualBuffer( hypre_AMGDDCompGrid **compGrid,
                                       hypre_AMGDDCommPkg   *compGridCommPkg,
-                                      HYPRE_Int             current_level,
-                                      HYPRE_Int             proc )
+                                      NALU_HYPRE_Int             current_level,
+                                      NALU_HYPRE_Int             proc )
 {
-   HYPRE_Complex  *buffer;
-   HYPRE_Int       level, i;
-   HYPRE_Int       send_elmt;
-   HYPRE_Int       cnt = 0;
+   NALU_HYPRE_Complex  *buffer;
+   NALU_HYPRE_Int       level, i;
+   NALU_HYPRE_Int       send_elmt;
+   NALU_HYPRE_Int       cnt = 0;
 
-   buffer = hypre_CTAlloc(HYPRE_Complex,
-                          hypre_AMGDDCommPkgSendBufferSize(compGridCommPkg)[current_level][proc], HYPRE_MEMORY_HOST);
+   buffer = hypre_CTAlloc(NALU_HYPRE_Complex,
+                          hypre_AMGDDCommPkgSendBufferSize(compGridCommPkg)[current_level][proc], NALU_HYPRE_MEMORY_HOST);
    for (level = current_level; level < hypre_AMGDDCommPkgNumLevels(compGridCommPkg); level++)
    {
       for (i = 0; i < hypre_AMGDDCommPkgNumSendNodes(compGridCommPkg)[current_level][proc][level]; i++)
@@ -513,16 +513,16 @@ hypre_BoomerAMGDD_PackResidualBuffer( hypre_AMGDDCompGrid **compGrid,
    return buffer;
 }
 
-HYPRE_Int
-hypre_BoomerAMGDD_UnpackResidualBuffer( HYPRE_Complex        *buffer,
+NALU_HYPRE_Int
+hypre_BoomerAMGDD_UnpackResidualBuffer( NALU_HYPRE_Complex        *buffer,
                                         hypre_AMGDDCompGrid **compGrid,
                                         hypre_AMGDDCommPkg   *compGridCommPkg,
-                                        HYPRE_Int             current_level,
-                                        HYPRE_Int             proc )
+                                        NALU_HYPRE_Int             current_level,
+                                        NALU_HYPRE_Int             proc )
 {
-   HYPRE_Int  recv_elmt;
-   HYPRE_Int  level, i;
-   HYPRE_Int  cnt = 0;
+   NALU_HYPRE_Int  recv_elmt;
+   NALU_HYPRE_Int  level, i;
+   NALU_HYPRE_Int  cnt = 0;
 
    for (level = current_level; level < hypre_AMGDDCommPkgNumLevels(compGridCommPkg); level++)
    {

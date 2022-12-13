@@ -29,7 +29,7 @@ C_COMPILE_FLAGS =\
  ${CINCLUDES}
 
 HEADERS =\
- HYPRE_parcsr_ls.h\
+ NALU_HYPRE_parcsr_ls.h\
  _hypre_parcsr_ls.h\
  aux_interp.h\
  block_tridiag.h\
@@ -44,47 +44,47 @@ FILES =\
  amg_hybrid.c\
  aux_interp.c\
  F90_hypre_laplace.c\
- F90_HYPRE_parcsr_amg.c\
- F90_HYPRE_parcsr_bicgstab.c\
- F90_HYPRE_parcsr_block.c\
- F90_HYPRE_parcsr_cgnr.c\
- F90_HYPRE_parcsr_Euclid.c\
- F90_HYPRE_parcsr_gmres.c\
- F90_HYPRE_parcsr_cogmres.c\
- F90_HYPRE_parcsr_flexgmres.c\
- F90_HYPRE_parcsr_lgmres.c\
- F90_HYPRE_parcsr_hybrid.c\
- F90_HYPRE_parcsr_int.c\
- F90_HYPRE_parcsr_ParaSails.c\
- F90_HYPRE_parcsr_pcg.c\
- F90_HYPRE_parcsr_pilut.c\
- F90_HYPRE_parcsr_schwarz.c\
- F90_HYPRE_parcsr_mgr.c\
- F90_HYPRE_parcsr_ilu.c\
- F90_HYPRE_ams.c\
+ F90_NALU_HYPRE_parcsr_amg.c\
+ F90_NALU_HYPRE_parcsr_bicgstab.c\
+ F90_NALU_HYPRE_parcsr_block.c\
+ F90_NALU_HYPRE_parcsr_cgnr.c\
+ F90_NALU_HYPRE_parcsr_Euclid.c\
+ F90_NALU_HYPRE_parcsr_gmres.c\
+ F90_NALU_HYPRE_parcsr_cogmres.c\
+ F90_NALU_HYPRE_parcsr_flexgmres.c\
+ F90_NALU_HYPRE_parcsr_lgmres.c\
+ F90_NALU_HYPRE_parcsr_hybrid.c\
+ F90_NALU_HYPRE_parcsr_int.c\
+ F90_NALU_HYPRE_parcsr_ParaSails.c\
+ F90_NALU_HYPRE_parcsr_pcg.c\
+ F90_NALU_HYPRE_parcsr_pilut.c\
+ F90_NALU_HYPRE_parcsr_schwarz.c\
+ F90_NALU_HYPRE_parcsr_mgr.c\
+ F90_NALU_HYPRE_parcsr_ilu.c\
+ F90_NALU_HYPRE_ams.c\
  gen_redcs_mat.c\
- HYPRE_parcsr_amg.c\
- HYPRE_parcsr_amgdd.c\
- HYPRE_parcsr_bicgstab.c\
- HYPRE_parcsr_block.c\
- HYPRE_parcsr_cgnr.c\
- HYPRE_parcsr_Euclid.c\
- HYPRE_parcsr_gmres.c\
- HYPRE_parcsr_cogmres.c\
- HYPRE_parcsr_flexgmres.c\
- HYPRE_parcsr_lgmres.c\
- HYPRE_parcsr_hybrid.c\
- HYPRE_parcsr_int.c\
- HYPRE_parcsr_mgr.c\
- HYPRE_parcsr_ilu.c \
- HYPRE_parcsr_fsai.c \
- HYPRE_parcsr_ParaSails.c\
- HYPRE_parcsr_pcg.c\
- HYPRE_parcsr_pilut.c\
- HYPRE_parcsr_schwarz.c\
- HYPRE_ams.c\
- HYPRE_ads.c\
- HYPRE_ame.c\
+ NALU_HYPRE_parcsr_amg.c\
+ NALU_HYPRE_parcsr_amgdd.c\
+ NALU_HYPRE_parcsr_bicgstab.c\
+ NALU_HYPRE_parcsr_block.c\
+ NALU_HYPRE_parcsr_cgnr.c\
+ NALU_HYPRE_parcsr_Euclid.c\
+ NALU_HYPRE_parcsr_gmres.c\
+ NALU_HYPRE_parcsr_cogmres.c\
+ NALU_HYPRE_parcsr_flexgmres.c\
+ NALU_HYPRE_parcsr_lgmres.c\
+ NALU_HYPRE_parcsr_hybrid.c\
+ NALU_HYPRE_parcsr_int.c\
+ NALU_HYPRE_parcsr_mgr.c\
+ NALU_HYPRE_parcsr_ilu.c \
+ NALU_HYPRE_parcsr_fsai.c \
+ NALU_HYPRE_parcsr_ParaSails.c\
+ NALU_HYPRE_parcsr_pcg.c\
+ NALU_HYPRE_parcsr_pilut.c\
+ NALU_HYPRE_parcsr_schwarz.c\
+ NALU_HYPRE_ams.c\
+ NALU_HYPRE_ads.c\
+ NALU_HYPRE_ame.c\
  par_2s_interp.c\
  par_amg.c\
  par_amgdd.c\
@@ -177,21 +177,21 @@ COBJS = ${FILES:.c=.o}
 CUOBJS = ${CUFILES:.c=.obj}
 OBJS = ${COBJS} ${CUOBJS}
 
-SONAME = libHYPRE_parcsr_ls-${HYPRE_RELEASE_VERSION}${HYPRE_LIB_SUFFIX}
+SONAME = libNALU_HYPRE_parcsr_ls-${NALU_HYPRE_RELEASE_VERSION}${NALU_HYPRE_LIB_SUFFIX}
 
 ##################################################################
 # Targets
 ##################################################################
 
-all: libHYPRE_parcsr_ls${HYPRE_LIB_SUFFIX}
-	cp -fR $(srcdir)/HYPRE_*.h $(HYPRE_BUILD_DIR)/include
-	cp -fR $(srcdir)/_hypre_parcsr_ls.h $(HYPRE_BUILD_DIR)/include
-#	cp -fR libHYPRE* $(HYPRE_BUILD_DIR)/lib
+all: libNALU_HYPRE_parcsr_ls${NALU_HYPRE_LIB_SUFFIX}
+	cp -fR $(srcdir)/NALU_HYPRE_*.h $(NALU_HYPRE_BUILD_DIR)/include
+	cp -fR $(srcdir)/_hypre_parcsr_ls.h $(NALU_HYPRE_BUILD_DIR)/include
+#	cp -fR libHYPRE* $(NALU_HYPRE_BUILD_DIR)/lib
 
-install: libHYPRE_parcsr_ls${HYPRE_LIB_SUFFIX}
-	cp -fR $(srcdir)/HYPRE_*.h $(HYPRE_INC_INSTALL)
-	cp -fR $(srcdir)/_hypre_parcsr_ls.h $(HYPRE_INC_INSTALL)
-#	cp -fR libHYPRE* $(HYPRE_LIB_INSTALL)
+install: libNALU_HYPRE_parcsr_ls${NALU_HYPRE_LIB_SUFFIX}
+	cp -fR $(srcdir)/NALU_HYPRE_*.h $(NALU_HYPRE_INC_INSTALL)
+	cp -fR $(srcdir)/_hypre_parcsr_ls.h $(NALU_HYPRE_INC_INSTALL)
+#	cp -fR libHYPRE* $(NALU_HYPRE_LIB_INSTALL)
 
 clean:
 	rm -f *.o *.obj libHYPRE*
@@ -204,12 +204,12 @@ distclean: clean
 # Rules
 ##################################################################
 
-libHYPRE_parcsr_ls.a: ${OBJS}
+libNALU_HYPRE_parcsr_ls.a: ${OBJS}
 	@echo  "Building $@ ... "
 	${AR} $@ ${OBJS}
 	${RANLIB} $@
 
-libHYPRE_parcsr_ls.so libHYPRE_parcsr_ls.dylib: ${OBJS}
+libNALU_HYPRE_parcsr_ls.so libNALU_HYPRE_parcsr_ls.dylib: ${OBJS}
 	@echo  "Building $@ ... "
 	${BUILD_CC_SHARED} -o ${SONAME} ${OBJS} ${SHARED_SET_SONAME}${SONAME}
 	ln -s -f ${SONAME} $@

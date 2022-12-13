@@ -11,32 +11,32 @@
  *
  *****************************************************************************/
 
-#ifndef HYPRE_DISTRIBUTED_MATRIX_MV_HEADER
-#define HYPRE_DISTRIBUTED_MATRIX_MV_HEADER
+#ifndef NALU_HYPRE_DISTRIBUTED_MATRIX_MV_HEADER
+#define NALU_HYPRE_DISTRIBUTED_MATRIX_MV_HEADER
 
 
-typedef void *HYPRE_DistributedMatrix;
+typedef void *NALU_HYPRE_DistributedMatrix;
 
-/* HYPRE_distributed_matrix.c */
-HYPRE_Int HYPRE_DistributedMatrixCreate (MPI_Comm context, HYPRE_DistributedMatrix *matrix );
-HYPRE_Int HYPRE_DistributedMatrixDestroy (HYPRE_DistributedMatrix matrix );
-HYPRE_Int HYPRE_DistributedMatrixLimitedDestroy (HYPRE_DistributedMatrix matrix );
-HYPRE_Int HYPRE_DistributedMatrixInitialize (HYPRE_DistributedMatrix matrix );
-HYPRE_Int HYPRE_DistributedMatrixAssemble (HYPRE_DistributedMatrix matrix );
-HYPRE_Int HYPRE_DistributedMatrixSetLocalStorageType (HYPRE_DistributedMatrix matrix , HYPRE_Int type );
-HYPRE_Int HYPRE_DistributedMatrixGetLocalStorageType (HYPRE_DistributedMatrix matrix );
-HYPRE_Int HYPRE_DistributedMatrixSetLocalStorage (HYPRE_DistributedMatrix matrix , void *LocalStorage );
-void *HYPRE_DistributedMatrixGetLocalStorage (HYPRE_DistributedMatrix matrix );
-HYPRE_Int HYPRE_DistributedMatrixSetTranslator (HYPRE_DistributedMatrix matrix , void *Translator );
-void *HYPRE_DistributedMatrixGetTranslator (HYPRE_DistributedMatrix matrix );
-HYPRE_Int HYPRE_DistributedMatrixSetAuxiliaryData (HYPRE_DistributedMatrix matrix , void *AuxiliaryData );
-void *HYPRE_DistributedMatrixGetAuxiliaryData (HYPRE_DistributedMatrix matrix );
-MPI_Comm HYPRE_DistributedMatrixGetContext (HYPRE_DistributedMatrix matrix );
-HYPRE_Int HYPRE_DistributedMatrixGetDims (HYPRE_DistributedMatrix matrix , HYPRE_BigInt *M , HYPRE_BigInt *N );
-HYPRE_Int HYPRE_DistributedMatrixSetDims (HYPRE_DistributedMatrix matrix , HYPRE_BigInt M , HYPRE_BigInt N );
-HYPRE_Int HYPRE_DistributedMatrixPrint (HYPRE_DistributedMatrix matrix );
-HYPRE_Int HYPRE_DistributedMatrixGetLocalRange (HYPRE_DistributedMatrix matrix , HYPRE_BigInt *row_start , HYPRE_BigInt *row_end, HYPRE_BigInt *col_start, HYPRE_BigInt *col_end );
-HYPRE_Int HYPRE_DistributedMatrixGetRow (HYPRE_DistributedMatrix matrix , HYPRE_BigInt row , HYPRE_Int *size , HYPRE_BigInt **col_ind , HYPRE_Real **values );
-HYPRE_Int HYPRE_DistributedMatrixRestoreRow (HYPRE_DistributedMatrix matrix , HYPRE_BigInt row , HYPRE_Int *size , HYPRE_BigInt **col_ind , HYPRE_Real **values );
+/* NALU_HYPRE_distributed_matrix.c */
+NALU_HYPRE_Int NALU_HYPRE_DistributedMatrixCreate (MPI_Comm context, NALU_HYPRE_DistributedMatrix *matrix );
+NALU_HYPRE_Int NALU_HYPRE_DistributedMatrixDestroy (NALU_HYPRE_DistributedMatrix matrix );
+NALU_HYPRE_Int NALU_HYPRE_DistributedMatrixLimitedDestroy (NALU_HYPRE_DistributedMatrix matrix );
+NALU_HYPRE_Int NALU_HYPRE_DistributedMatrixInitialize (NALU_HYPRE_DistributedMatrix matrix );
+NALU_HYPRE_Int NALU_HYPRE_DistributedMatrixAssemble (NALU_HYPRE_DistributedMatrix matrix );
+NALU_HYPRE_Int NALU_HYPRE_DistributedMatrixSetLocalStorageType (NALU_HYPRE_DistributedMatrix matrix , NALU_HYPRE_Int type );
+NALU_HYPRE_Int NALU_HYPRE_DistributedMatrixGetLocalStorageType (NALU_HYPRE_DistributedMatrix matrix );
+NALU_HYPRE_Int NALU_HYPRE_DistributedMatrixSetLocalStorage (NALU_HYPRE_DistributedMatrix matrix , void *LocalStorage );
+void *NALU_HYPRE_DistributedMatrixGetLocalStorage (NALU_HYPRE_DistributedMatrix matrix );
+NALU_HYPRE_Int NALU_HYPRE_DistributedMatrixSetTranslator (NALU_HYPRE_DistributedMatrix matrix , void *Translator );
+void *NALU_HYPRE_DistributedMatrixGetTranslator (NALU_HYPRE_DistributedMatrix matrix );
+NALU_HYPRE_Int NALU_HYPRE_DistributedMatrixSetAuxiliaryData (NALU_HYPRE_DistributedMatrix matrix , void *AuxiliaryData );
+void *NALU_HYPRE_DistributedMatrixGetAuxiliaryData (NALU_HYPRE_DistributedMatrix matrix );
+MPI_Comm NALU_HYPRE_DistributedMatrixGetContext (NALU_HYPRE_DistributedMatrix matrix );
+NALU_HYPRE_Int NALU_HYPRE_DistributedMatrixGetDims (NALU_HYPRE_DistributedMatrix matrix , NALU_HYPRE_BigInt *M , NALU_HYPRE_BigInt *N );
+NALU_HYPRE_Int NALU_HYPRE_DistributedMatrixSetDims (NALU_HYPRE_DistributedMatrix matrix , NALU_HYPRE_BigInt M , NALU_HYPRE_BigInt N );
+NALU_HYPRE_Int NALU_HYPRE_DistributedMatrixPrint (NALU_HYPRE_DistributedMatrix matrix );
+NALU_HYPRE_Int NALU_HYPRE_DistributedMatrixGetLocalRange (NALU_HYPRE_DistributedMatrix matrix , NALU_HYPRE_BigInt *row_start , NALU_HYPRE_BigInt *row_end, NALU_HYPRE_BigInt *col_start, NALU_HYPRE_BigInt *col_end );
+NALU_HYPRE_Int NALU_HYPRE_DistributedMatrixGetRow (NALU_HYPRE_DistributedMatrix matrix , NALU_HYPRE_BigInt row , NALU_HYPRE_Int *size , NALU_HYPRE_BigInt **col_ind , NALU_HYPRE_Real **values );
+NALU_HYPRE_Int NALU_HYPRE_DistributedMatrixRestoreRow (NALU_HYPRE_DistributedMatrix matrix , NALU_HYPRE_BigInt row , NALU_HYPRE_Int *size , NALU_HYPRE_BigInt **col_ind , NALU_HYPRE_Real **values );
 
 #endif

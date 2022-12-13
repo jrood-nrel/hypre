@@ -18,12 +18,12 @@
  * hypre_AuxParVectorCreate
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_AuxParVectorCreate( hypre_AuxParVector **aux_vector_ptr)
 {
    hypre_AuxParVector  *aux_vector;
 
-   aux_vector = hypre_CTAlloc(hypre_AuxParVector, 1, HYPRE_MEMORY_HOST);
+   aux_vector = hypre_CTAlloc(hypre_AuxParVector, 1, NALU_HYPRE_MEMORY_HOST);
 
    /* set defaults */
    hypre_AuxParVectorMaxOffProcElmts(aux_vector)     = 0;
@@ -32,9 +32,9 @@ hypre_AuxParVectorCreate( hypre_AuxParVector **aux_vector_ptr)
    /* stash for setting or adding off processor values */
    hypre_AuxParVectorOffProcI(aux_vector)            = NULL;
    hypre_AuxParVectorOffProcData(aux_vector)         = NULL;
-   hypre_AuxParVectorMemoryLocation(aux_vector)      = HYPRE_MEMORY_HOST;
+   hypre_AuxParVectorMemoryLocation(aux_vector)      = NALU_HYPRE_MEMORY_HOST;
 
-#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP) || defined(HYPRE_USING_SYCL)
+#if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP) || defined(NALU_HYPRE_USING_SYCL)
    hypre_AuxParVectorMaxStackElmts(aux_vector)       = 0;
    hypre_AuxParVectorCurrentStackElmts(aux_vector)   = 0;
    hypre_AuxParVectorStackI(aux_vector)              = NULL;
@@ -55,16 +55,16 @@ hypre_AuxParVectorCreate( hypre_AuxParVector **aux_vector_ptr)
  * hypre_AuxParVectorDestroy
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_AuxParVectorDestroy( hypre_AuxParVector *aux_vector )
 {
    if (aux_vector)
    {
-      hypre_TFree(hypre_AuxParVectorOffProcI(aux_vector),    HYPRE_MEMORY_HOST);
-      hypre_TFree(hypre_AuxParVectorOffProcData(aux_vector), HYPRE_MEMORY_HOST);
+      hypre_TFree(hypre_AuxParVectorOffProcI(aux_vector),    NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(hypre_AuxParVectorOffProcData(aux_vector), NALU_HYPRE_MEMORY_HOST);
 
-#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP) || defined(HYPRE_USING_SYCL)
-      HYPRE_MemoryLocation  memory_location = hypre_AuxParVectorMemoryLocation(aux_vector);
+#if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP) || defined(NALU_HYPRE_USING_SYCL)
+      NALU_HYPRE_MemoryLocation  memory_location = hypre_AuxParVectorMemoryLocation(aux_vector);
 
       hypre_TFree(hypre_AuxParVectorStackI(aux_vector),    memory_location);
       hypre_TFree(hypre_AuxParVectorStackVoff(aux_vector), memory_location);
@@ -72,7 +72,7 @@ hypre_AuxParVectorDestroy( hypre_AuxParVector *aux_vector )
       hypre_TFree(hypre_AuxParVectorStackSorA(aux_vector), memory_location);
 #endif
 
-      hypre_TFree(aux_vector, HYPRE_MEMORY_HOST);
+      hypre_TFree(aux_vector, NALU_HYPRE_MEMORY_HOST);
    }
 
    return hypre_error_flag;
@@ -82,23 +82,23 @@ hypre_AuxParVectorDestroy( hypre_AuxParVector *aux_vector )
  * hypre_AuxParVectorInitialize_v2
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_AuxParVectorInitialize_v2( hypre_AuxParVector   *aux_vector,
-                                 HYPRE_MemoryLocation  memory_location )
+                                 NALU_HYPRE_MemoryLocation  memory_location )
 {
    hypre_AuxParVectorMemoryLocation(aux_vector) = memory_location;
 
-   if (memory_location == HYPRE_MEMORY_HOST)
+   if (memory_location == NALU_HYPRE_MEMORY_HOST)
    {
       /* CPU assembly */
       /* allocate stash for setting or adding off processor values */
-      HYPRE_Int max_off_proc_elmts = hypre_AuxParVectorMaxOffProcElmts(aux_vector);
+      NALU_HYPRE_Int max_off_proc_elmts = hypre_AuxParVectorMaxOffProcElmts(aux_vector);
       if (max_off_proc_elmts > 0)
       {
-         hypre_AuxParVectorOffProcI(aux_vector)    = hypre_CTAlloc(HYPRE_BigInt,  max_off_proc_elmts,
-                                                                   HYPRE_MEMORY_HOST);
-         hypre_AuxParVectorOffProcData(aux_vector) = hypre_CTAlloc(HYPRE_Complex, max_off_proc_elmts,
-                                                                   HYPRE_MEMORY_HOST);
+         hypre_AuxParVectorOffProcI(aux_vector)    = hypre_CTAlloc(NALU_HYPRE_BigInt,  max_off_proc_elmts,
+                                                                   NALU_HYPRE_MEMORY_HOST);
+         hypre_AuxParVectorOffProcData(aux_vector) = hypre_CTAlloc(NALU_HYPRE_Complex, max_off_proc_elmts,
+                                                                   NALU_HYPRE_MEMORY_HOST);
       }
    }
 

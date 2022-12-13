@@ -7,11 +7,11 @@
 
 typedef struct
 {
-   HYPRE_BigInt row;
+   NALU_HYPRE_BigInt row;
 
-   HYPRE_Int ncols;
-   HYPRE_BigInt      *cols;
-   HYPRE_Real   *data;
+   NALU_HYPRE_Int ncols;
+   NALU_HYPRE_BigInt      *cols;
+   NALU_HYPRE_Real   *data;
 
 } hypre_MaxwellOffProcRow;
 

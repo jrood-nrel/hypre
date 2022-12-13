@@ -18,20 +18,20 @@ typedef struct
    hypre_ParAMGData          *amg_data;
 
    /* AMG-DD parameters and info */
-   HYPRE_Int                 start_level;
-   HYPRE_Int                 fac_num_cycles;
-   HYPRE_Int                 fac_cycle_type;
-   HYPRE_Int                 fac_relax_type;
-   HYPRE_Int                 fac_num_relax;
-   HYPRE_Real                fac_relax_weight;
-   HYPRE_Int                 padding;
-   HYPRE_Int                 num_ghost_layers;
+   NALU_HYPRE_Int                 start_level;
+   NALU_HYPRE_Int                 fac_num_cycles;
+   NALU_HYPRE_Int                 fac_cycle_type;
+   NALU_HYPRE_Int                 fac_relax_type;
+   NALU_HYPRE_Int                 fac_num_relax;
+   NALU_HYPRE_Real                fac_relax_weight;
+   NALU_HYPRE_Int                 padding;
+   NALU_HYPRE_Int                 num_ghost_layers;
    hypre_AMGDDCompGrid     **amgdd_comp_grid;
    hypre_AMGDDCommPkg       *amgdd_comm_pkg;
    hypre_ParVector          *Ztemp;
 
-   HYPRE_Int       (*amgddUserFACRelaxation)( void *amgdd_vdata, HYPRE_Int level,
-                                              HYPRE_Int cycle_param );
+   NALU_HYPRE_Int       (*amgddUserFACRelaxation)( void *amgdd_vdata, NALU_HYPRE_Int level,
+                                              NALU_HYPRE_Int cycle_param );
 } hypre_ParAMGDDData;
 
 /*--------------------------------------------------------------------------

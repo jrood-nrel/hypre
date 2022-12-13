@@ -18,15 +18,15 @@
  * consists of boxes that can be on the boundary.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_Maxwell_PNedelec_Bdy( hypre_StructGrid       *cell_grid,
                             hypre_SStructPGrid     *pgrid,
                             hypre_BoxArrayArray ****bdry_ptr )
 {
 
-   HYPRE_Int ierr = 0;
+   NALU_HYPRE_Int ierr = 0;
 
-   HYPRE_Int              nvars    = hypre_SStructPGridNVars(pgrid);
+   NALU_HYPRE_Int              nvars    = hypre_SStructPGridNVars(pgrid);
 
    hypre_BoxArrayArray   *cellgrid_bdry;
    hypre_BoxArrayArray ***bdry;
@@ -34,14 +34,14 @@ hypre_Maxwell_PNedelec_Bdy( hypre_StructGrid       *cell_grid,
    hypre_BoxArray        *cell_boxes;
    hypre_Box             *box, *bdy_box, *shifted_box;
 
-   HYPRE_Int              ndim     = hypre_SStructPGridNDim(pgrid);
+   NALU_HYPRE_Int              ndim     = hypre_SStructPGridNDim(pgrid);
 
-   HYPRE_SStructVariable *vartypes = hypre_SStructPGridVarTypes(pgrid);
+   NALU_HYPRE_SStructVariable *vartypes = hypre_SStructPGridVarTypes(pgrid);
    hypre_Index            varoffset, ishift, jshift, kshift;
    hypre_Index            lower, upper;
 
-   HYPRE_Int             *flag;
-   HYPRE_Int              i, j, k, t, nboxes, bdy;
+   NALU_HYPRE_Int             *flag;
+   NALU_HYPRE_Int              i, j, k, t, nboxes, bdy;
 
    hypre_SetIndex3(ishift, 1, 0, 0);
    hypre_SetIndex3(jshift, 0, 1, 0);
@@ -50,7 +50,7 @@ hypre_Maxwell_PNedelec_Bdy( hypre_StructGrid       *cell_grid,
    cell_boxes = hypre_StructGridBoxes(cell_grid);
    nboxes    = hypre_BoxArraySize(cell_boxes);
 
-   bdry = hypre_TAlloc(hypre_BoxArrayArray **,  nboxes, HYPRE_MEMORY_HOST);
+   bdry = hypre_TAlloc(hypre_BoxArrayArray **,  nboxes, NALU_HYPRE_MEMORY_HOST);
    shifted_box = hypre_BoxCreate(ndim);
 
    hypre_ForBoxI(j, cell_boxes)
@@ -59,7 +59,7 @@ hypre_Maxwell_PNedelec_Bdy( hypre_StructGrid       *cell_grid,
 
       /* find the cellgrid boundaries of box if there are any. */
       cellgrid_bdry = hypre_BoxArrayArrayCreate(2 * ndim, ndim);
-      flag = hypre_CTAlloc(HYPRE_Int,  2 * ndim, HYPRE_MEMORY_HOST);
+      flag = hypre_CTAlloc(NALU_HYPRE_Int,  2 * ndim, NALU_HYPRE_MEMORY_HOST);
       bdy = 0;
 
       for (i = 0; i < ndim; i++)
@@ -84,7 +84,7 @@ hypre_Maxwell_PNedelec_Bdy( hypre_StructGrid       *cell_grid,
       /* There are boundary boxes. Every variable of pgrid will have some */
       if (bdy)
       {
-         bdry[j] = hypre_TAlloc(hypre_BoxArrayArray *,  nvars + 1, HYPRE_MEMORY_HOST);
+         bdry[j] = hypre_TAlloc(hypre_BoxArrayArray *,  nvars + 1, NALU_HYPRE_MEMORY_HOST);
 
          /* keep the cell-centred boxarrayarray of boundaries */
          bdry[j][0] = hypre_BoxArrayArrayDuplicate(cellgrid_bdry);
@@ -427,7 +427,7 @@ hypre_Maxwell_PNedelec_Bdy( hypre_StructGrid       *cell_grid,
       {
          /* make an empty ptr of boxarrayarrays to avoid memory leaks when
             destroying bdry later. */
-         bdry[j] = hypre_TAlloc(hypre_BoxArrayArray *,  nvars + 1, HYPRE_MEMORY_HOST);
+         bdry[j] = hypre_TAlloc(hypre_BoxArrayArray *,  nvars + 1, NALU_HYPRE_MEMORY_HOST);
          for (i = 0; i < nvars + 1; i++)
          {
             bdry[j][i] = hypre_BoxArrayArrayCreate(0, ndim);
@@ -435,7 +435,7 @@ hypre_Maxwell_PNedelec_Bdy( hypre_StructGrid       *cell_grid,
       }
 
       hypre_BoxArrayArrayDestroy(cellgrid_bdry);
-      hypre_TFree(flag, HYPRE_MEMORY_HOST);
+      hypre_TFree(flag, NALU_HYPRE_MEMORY_HOST);
    }  /* hypre_ForBoxI(j, cell_boxes) */
 
    hypre_BoxDestroy(shifted_box);

@@ -12,41 +12,41 @@ else ()
 endif ()
 
 # The version number.
-set(HYPRE_VERSION 2.26.0)
-set(HYPRE_NUMBER  22600)
-set(HYPRE_DATE    2022/10/14)
-set(HYPRE_TIME    00:00:00)
-set(HYPRE_BUGS    https://github.com/hypre-space/hypre/issues)
-set(HYPRE_SRCDIR  "${PROJECT_SOURCE_DIR}")
+set(NALU_HYPRE_VERSION 2.26.0)
+set(NALU_HYPRE_NUMBER  22600)
+set(NALU_HYPRE_DATE    2022/10/14)
+set(NALU_HYPRE_TIME    00:00:00)
+set(NALU_HYPRE_BUGS    https://github.com/hypre-space/hypre/issues)
+set(NALU_HYPRE_SRCDIR  "${PROJECT_SOURCE_DIR}")
 
 set(PROJECT_NAME HYPRE)
 project(${PROJECT_NAME}
-  VERSION ${HYPRE_VERSION}
+  VERSION ${NALU_HYPRE_VERSION}
   LANGUAGES C)
 
-if (${HYPRE_SOURCE_DIR} STREQUAL ${HYPRE_BINARY_DIR})
+if (${NALU_HYPRE_SOURCE_DIR} STREQUAL ${NALU_HYPRE_BINARY_DIR})
   message(FATAL_ERROR "In-place build not allowed! Please use a separate build directory. See the Users Manual or INSTALL file for details.")
 endif ()
 
-if (EXISTS ${HYPRE_SOURCE_DIR}/../.git)
-  execute_process(COMMAND git -C ${HYPRE_SOURCE_DIR} describe --match v* --long --abbrev=9
+if (EXISTS ${NALU_HYPRE_SOURCE_DIR}/../.git)
+  execute_process(COMMAND git -C ${NALU_HYPRE_SOURCE_DIR} describe --match v* --long --abbrev=9
                   OUTPUT_VARIABLE develop_string
                   OUTPUT_STRIP_TRAILING_WHITESPACE)
-  execute_process(COMMAND git -C ${HYPRE_SOURCE_DIR} describe --match v* --abbrev=0
+  execute_process(COMMAND git -C ${NALU_HYPRE_SOURCE_DIR} describe --match v* --abbrev=0
                   OUTPUT_VARIABLE develop_lastag
                   OUTPUT_STRIP_TRAILING_WHITESPACE)
-  execute_process(COMMAND git -C ${HYPRE_SOURCE_DIR} rev-list --count ${develop_lastag}..HEAD
+  execute_process(COMMAND git -C ${NALU_HYPRE_SOURCE_DIR} rev-list --count ${develop_lastag}..HEAD
                   OUTPUT_VARIABLE develop_number
                   OUTPUT_STRIP_TRAILING_WHITESPACE)
-  execute_process(COMMAND git -C ${HYPRE_SOURCE_DIR} rev-parse --abbrev-ref HEAD
+  execute_process(COMMAND git -C ${NALU_HYPRE_SOURCE_DIR} rev-parse --abbrev-ref HEAD
                   OUTPUT_VARIABLE develop_branch
                   OUTPUT_STRIP_TRAILING_WHITESPACE)
   if (${develop_string} MATCHES ".*")
-    set(HYPRE_DEVELOP_STRING  ${develop_string})
-    set(HYPRE_DEVELOP_NUMBER  ${develop_number})
-    set(HYPRE_BRANCH_NAME     ${develop_branch})
+    set(NALU_HYPRE_DEVELOP_STRING  ${develop_string})
+    set(NALU_HYPRE_DEVELOP_NUMBER  ${develop_number})
+    set(NALU_HYPRE_BRANCH_NAME     ${develop_branch})
     if (develop_branch MATCHES "master")
-      set(HYPRE_DEVELOP_BRANCH  ${develop_branch})
+      set(NALU_HYPRE_DEVELOP_BRANCH  ${develop_branch})
     else ()
       message(STATUS "NOTE: On branch ${develop_branch}, not the main development branch")
     endif ()
@@ -58,78 +58,78 @@ else ()
 endif ()
 
 # Set cmake module path
-set(CMAKE_MODULE_PATH "${HYPRE_SOURCE_DIR}/config/cmake" "${CMAKE_MODULE_PATH}")
-include(HYPRE_CMakeUtilities)
+set(CMAKE_MODULE_PATH "${NALU_HYPRE_SOURCE_DIR}/config/cmake" "${CMAKE_MODULE_PATH}")
+include(NALU_HYPRE_CMakeUtilities)
 
 # Set default installation directory, but provide a means for users to change
-set(HYPRE_INSTALL_PREFIX "${PROJECT_SOURCE_DIR}/hypre" CACHE PATH
+set(NALU_HYPRE_INSTALL_PREFIX "${PROJECT_SOURCE_DIR}/hypre" CACHE PATH
     "Installation directory for HYPRE")
 if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-  set(CMAKE_INSTALL_PREFIX "${HYPRE_INSTALL_PREFIX}" CACHE INTERNAL "" FORCE)
+  set(CMAKE_INSTALL_PREFIX "${NALU_HYPRE_INSTALL_PREFIX}" CACHE INTERNAL "" FORCE)
 endif ()
 
 # Set default compile optimization flag
-set(HYPRE_BUILD_TYPE "Release" CACHE STRING
+set(NALU_HYPRE_BUILD_TYPE "Release" CACHE STRING
     "Optimization flags: set to Debug, Release, RelWithDebInfo, or MinSizeRel")
 
 if (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
-  set(CMAKE_BUILD_TYPE "${HYPRE_BUILD_TYPE}" CACHE INTERNAL "" FORCE)
+  set(CMAKE_BUILD_TYPE "${NALU_HYPRE_BUILD_TYPE}" CACHE INTERNAL "" FORCE)
   # Set the possible values of build type for cmake-gui
   set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS
     "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
 endif ()
 
 # Configuration options
-option(HYPRE_ENABLE_SHARED           "Build a shared library" OFF)
-option(HYPRE_ENABLE_BIGINT           "Use long long int for HYPRE_Int" OFF)
-option(HYPRE_ENABLE_MIXEDINT         "Use long long int for HYPRE_BigInt, int for HYPRE_INT" OFF)
-option(HYPRE_ENABLE_SINGLE           "Use float for HYPRE_Real" OFF)
-option(HYPRE_ENABLE_LONG_DOUBLE      "Use long double for HYPRE_Real" OFF)
-option(HYPRE_ENABLE_COMPLEX          "Use complex values" OFF)
-option(HYPRE_ENABLE_HYPRE_BLAS       "Use internal BLAS library" ON)
-option(HYPRE_ENABLE_HYPRE_LAPACK     "Use internal LAPACK library" ON)
-option(HYPRE_ENABLE_PERSISTENT_COMM  "Use persistent communication" OFF)
-option(HYPRE_ENABLE_FEI              "Use FEI" OFF) # TODO: Add this cmake feature
-option(HYPRE_WITH_MPI                "Compile with MPI" ON)
-option(HYPRE_WITH_GPU_AWARE_MPI      "Compile with device aware GPU support" OFF)
-option(HYPRE_WITH_OPENMP             "Use OpenMP" OFF)
-option(HYPRE_ENABLE_HOPSCOTCH        "Use hopscotch hashing with OpenMP" OFF)
-option(HYPRE_WITH_SUPERLU            "Use TPL SuperLU" OFF)
-option(HYPRE_WITH_DSUPERLU           "Use TPL SuperLU_Dist" OFF)
-option(HYPRE_WITH_CALIPER            "Use Caliper" OFF)
-option(HYPRE_PRINT_ERRORS            "Print HYPRE errors" OFF)
-option(HYPRE_TIMING                  "Use HYPRE timing routines" OFF)
-option(HYPRE_BUILD_EXAMPLES          "Build examples" OFF)
-option(HYPRE_BUILD_TESTS             "Build tests" OFF)
-option(HYPRE_USING_HOST_MEMORY       "Use host memory" ON)
-set(HYPRE_WITH_EXTRA_CFLAGS       "" CACHE STRING "Define extra C compile flags")
-set(HYPRE_WITH_EXTRA_CXXFLAGS     "" CACHE STRING "Define extra CXX compile flags")
+option(NALU_HYPRE_ENABLE_SHARED           "Build a shared library" OFF)
+option(NALU_HYPRE_ENABLE_BIGINT           "Use long long int for NALU_HYPRE_Int" OFF)
+option(NALU_HYPRE_ENABLE_MIXEDINT         "Use long long int for NALU_HYPRE_BigInt, int for NALU_HYPRE_INT" OFF)
+option(NALU_HYPRE_ENABLE_SINGLE           "Use float for NALU_HYPRE_Real" OFF)
+option(NALU_HYPRE_ENABLE_LONG_DOUBLE      "Use long double for NALU_HYPRE_Real" OFF)
+option(NALU_HYPRE_ENABLE_COMPLEX          "Use complex values" OFF)
+option(NALU_HYPRE_ENABLE_NALU_HYPRE_BLAS       "Use internal BLAS library" ON)
+option(NALU_HYPRE_ENABLE_NALU_HYPRE_LAPACK     "Use internal LAPACK library" ON)
+option(NALU_HYPRE_ENABLE_PERSISTENT_COMM  "Use persistent communication" OFF)
+option(NALU_HYPRE_ENABLE_FEI              "Use FEI" OFF) # TODO: Add this cmake feature
+option(NALU_HYPRE_WITH_MPI                "Compile with MPI" ON)
+option(NALU_HYPRE_WITH_GPU_AWARE_MPI      "Compile with device aware GPU support" OFF)
+option(NALU_HYPRE_WITH_OPENMP             "Use OpenMP" OFF)
+option(NALU_HYPRE_ENABLE_HOPSCOTCH        "Use hopscotch hashing with OpenMP" OFF)
+option(NALU_HYPRE_WITH_SUPERLU            "Use TPL SuperLU" OFF)
+option(NALU_HYPRE_WITH_DSUPERLU           "Use TPL SuperLU_Dist" OFF)
+option(NALU_HYPRE_WITH_CALIPER            "Use Caliper" OFF)
+option(NALU_HYPRE_PRINT_ERRORS            "Print HYPRE errors" OFF)
+option(NALU_HYPRE_TIMING                  "Use HYPRE timing routines" OFF)
+option(NALU_HYPRE_BUILD_EXAMPLES          "Build examples" OFF)
+option(NALU_HYPRE_BUILD_TESTS             "Build tests" OFF)
+option(NALU_HYPRE_USING_HOST_MEMORY       "Use host memory" ON)
+set(NALU_HYPRE_WITH_EXTRA_CFLAGS       "" CACHE STRING "Define extra C compile flags")
+set(NALU_HYPRE_WITH_EXTRA_CXXFLAGS     "" CACHE STRING "Define extra CXX compile flags")
 # GPU options
-option(HYPRE_WITH_CUDA               "Use CUDA. Require cuda-8.0 or higher" OFF)
-option(HYPRE_WITH_SYCL               "Use SYCL" OFF)
-option(HYPRE_ENABLE_UNIFIED_MEMORY   "Use unified memory for allocating the memory" OFF)
-option(HYPRE_ENABLE_DEVICE_MALLOC_ASYNC "Use device async malloc" OFF)
+option(NALU_HYPRE_WITH_CUDA               "Use CUDA. Require cuda-8.0 or higher" OFF)
+option(NALU_HYPRE_WITH_SYCL               "Use SYCL" OFF)
+option(NALU_HYPRE_ENABLE_UNIFIED_MEMORY   "Use unified memory for allocating the memory" OFF)
+option(NALU_HYPRE_ENABLE_DEVICE_MALLOC_ASYNC "Use device async malloc" OFF)
 # CUDA options
-option(HYPRE_ENABLE_CUDA_STREAMS     "Use CUDA streams" ON)
-option(HYPRE_ENABLE_CUSPARSE         "Use cuSPARSE" ON)
-option(HYPRE_ENABLE_CUSOLVER         "Use cuSOLVER" OFF)
-option(HYPRE_ENABLE_DEVICE_POOL      "Use device memory pool" OFF)
-option(HYPRE_ENABLE_CUBLAS           "Use cuBLAS" OFF)
-option(HYPRE_ENABLE_CURAND           "Use cuRAND" ON)
-option(HYPRE_ENABLE_GPU_PROFILING    "Use NVTX on CUDA" OFF)
-set(HYPRE_CUDA_SM "70" CACHE STRING  "Target CUDA architecture.")
+option(NALU_HYPRE_ENABLE_CUDA_STREAMS     "Use CUDA streams" ON)
+option(NALU_HYPRE_ENABLE_CUSPARSE         "Use cuSPARSE" ON)
+option(NALU_HYPRE_ENABLE_CUSOLVER         "Use cuSOLVER" OFF)
+option(NALU_HYPRE_ENABLE_DEVICE_POOL      "Use device memory pool" OFF)
+option(NALU_HYPRE_ENABLE_CUBLAS           "Use cuBLAS" OFF)
+option(NALU_HYPRE_ENABLE_CURAND           "Use cuRAND" ON)
+option(NALU_HYPRE_ENABLE_GPU_PROFILING    "Use NVTX on CUDA" OFF)
+set(NALU_HYPRE_CUDA_SM "70" CACHE STRING  "Target CUDA architecture.")
 # oneAPI options
-option(HYPRE_ENABLE_ONEMKLSPARSE     "Use oneMKL sparse" ON)
-option(HYPRE_ENABLE_ONEMKLBLAS       "Use oneMKL blas" ON)
-option(HYPRE_ENABLE_ONEMKLRAND       "Use oneMKL rand" ON)
-set(HYPRE_SYCL_TARGET            ""   CACHE STRING  "Target SYCL architecture, e.g. 'spir64_gen'.")
-set(HYPRE_SYCL_TARGET_BACKEND    ""   CACHE STRING  "Additional SYCL backend options, e.g. '-device 12.1.0,12.4.0'.")
+option(NALU_HYPRE_ENABLE_ONEMKLSPARSE     "Use oneMKL sparse" ON)
+option(NALU_HYPRE_ENABLE_ONEMKLBLAS       "Use oneMKL blas" ON)
+option(NALU_HYPRE_ENABLE_ONEMKLRAND       "Use oneMKL rand" ON)
+set(NALU_HYPRE_SYCL_TARGET            ""   CACHE STRING  "Target SYCL architecture, e.g. 'spir64_gen'.")
+set(NALU_HYPRE_SYCL_TARGET_BACKEND    ""   CACHE STRING  "Additional SYCL backend options, e.g. '-device 12.1.0,12.4.0'.")
 # Umpire resource management options
-option(HYPRE_WITH_UMPIRE             "Use Umpire Allocator for device and unified memory" OFF)
-option(HYPRE_WITH_UMPIRE_HOST        "Use Umpire Allocator for host memory" OFF)
-option(HYPRE_WITH_UMPIRE_DEVICE      "Use Umpire Allocator for device memory" OFF)
-option(HYPRE_WITH_UMPIRE_UM          "Use Umpire Allocator for unified memory" OFF)
-option(HYPRE_WITH_UMPIRE_PINNED      "Use Umpire Allocator for pinned memory" OFF)
+option(NALU_HYPRE_WITH_UMPIRE             "Use Umpire Allocator for device and unified memory" OFF)
+option(NALU_HYPRE_WITH_UMPIRE_HOST        "Use Umpire Allocator for host memory" OFF)
+option(NALU_HYPRE_WITH_UMPIRE_DEVICE      "Use Umpire Allocator for device memory" OFF)
+option(NALU_HYPRE_WITH_UMPIRE_UM          "Use Umpire Allocator for unified memory" OFF)
+option(NALU_HYPRE_WITH_UMPIRE_PINNED      "Use Umpire Allocator for pinned memory" OFF)
 option(TPL_UMPIRE_LIBRARIES          "List of absolute paths to Umpire link libraries [].")
 option(TPL_UMPIRE_INCLUDE_DIRS       "List of absolute paths to Umpire include directories [].")
 
@@ -142,118 +142,118 @@ option(TPL_LAPACK_LIBRARIES          "Optional list of absolute paths to LAPACK 
 option(TPL_FEI_INCLUDE_DIRS          "List of absolute paths to FEI include directories [].")
 
 # Set config name values
-if (HYPRE_ENABLE_SHARED)
-  set(HYPRE_SHARED ON CACHE BOOL "" FORCE)
+if (NALU_HYPRE_ENABLE_SHARED)
+  set(NALU_HYPRE_SHARED ON CACHE BOOL "" FORCE)
 endif ()
 
-if (HYPRE_ENABLE_BIGINT)
-  set(HYPRE_BIGINT ON CACHE BOOL "" FORCE)
+if (NALU_HYPRE_ENABLE_BIGINT)
+  set(NALU_HYPRE_BIGINT ON CACHE BOOL "" FORCE)
 endif ()
 
-if (HYPRE_ENABLE_MIXEDINT)
-  set(HYPRE_MIXEDINT ON CACHE BOOL "" FORCE)
+if (NALU_HYPRE_ENABLE_MIXEDINT)
+  set(NALU_HYPRE_MIXEDINT ON CACHE BOOL "" FORCE)
 endif ()
 
-if (HYPRE_ENABLE_SINGLE)
-  set(HYPRE_SINGLE ON CACHE BOOL "" FORCE)
+if (NALU_HYPRE_ENABLE_SINGLE)
+  set(NALU_HYPRE_SINGLE ON CACHE BOOL "" FORCE)
 endif ()
 
-if (HYPRE_ENABLE_LONG_DOUBLE)
-  set(HYPRE_LONG_DOUBLE ON CACHE BOOL "" FORCE)
+if (NALU_HYPRE_ENABLE_LONG_DOUBLE)
+  set(NALU_HYPRE_LONG_DOUBLE ON CACHE BOOL "" FORCE)
 endif ()
 
-if (HYPRE_ENABLE_COMPLEX)
-  set(HYPRE_COMPLEX ON CACHE BOOL "" FORCE)
+if (NALU_HYPRE_ENABLE_COMPLEX)
+  set(NALU_HYPRE_COMPLEX ON CACHE BOOL "" FORCE)
 endif ()
 
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-  set(HYPRE_DEBUG ON CACHE BOOL "" FORCE)
+  set(NALU_HYPRE_DEBUG ON CACHE BOOL "" FORCE)
 endif ()
 
-if (HYPRE_ENABLE_HYPRE_BLAS)
-  set(HYPRE_USING_HYPRE_BLAS ON CACHE BOOL "" FORCE)
+if (NALU_HYPRE_ENABLE_NALU_HYPRE_BLAS)
+  set(NALU_HYPRE_USING_NALU_HYPRE_BLAS ON CACHE BOOL "" FORCE)
 endif ()
 
-if (HYPRE_ENABLE_HYPRE_LAPACK)
-  set(HYPRE_USING_HYPRE_LAPACK ON CACHE BOOL "" FORCE)
+if (NALU_HYPRE_ENABLE_NALU_HYPRE_LAPACK)
+  set(NALU_HYPRE_USING_NALU_HYPRE_LAPACK ON CACHE BOOL "" FORCE)
 endif ()
 
-if (HYPRE_ENABLE_PERSISTENT_COMM)
-  set(HYPRE_USING_PERSISTENT_COMM ON CACHE BOOL "" FORCE)
+if (NALU_HYPRE_ENABLE_PERSISTENT_COMM)
+  set(NALU_HYPRE_USING_PERSISTENT_COMM ON CACHE BOOL "" FORCE)
 endif ()
 
-if (HYPRE_WITH_MPI)
-  set(HYPRE_HAVE_MPI ON CACHE BOOL "" FORCE)
-  set(HYPRE_SEQUENTIAL OFF CACHE BOOL "" FORCE)
+if (NALU_HYPRE_WITH_MPI)
+  set(NALU_HYPRE_HAVE_MPI ON CACHE BOOL "" FORCE)
+  set(NALU_HYPRE_SEQUENTIAL OFF CACHE BOOL "" FORCE)
 else ()
-  set(HYPRE_SEQUENTIAL ON CACHE BOOL "" FORCE)
+  set(NALU_HYPRE_SEQUENTIAL ON CACHE BOOL "" FORCE)
 endif ()
 
-if (HYPRE_WITH_OPENMP)
-  set(HYPRE_USING_OPENMP ON CACHE BOOL "" FORCE)
+if (NALU_HYPRE_WITH_OPENMP)
+  set(NALU_HYPRE_USING_OPENMP ON CACHE BOOL "" FORCE)
 endif ()
 
-if (HYPRE_ENABLE_HOPSCOTCH)
-  set(HYPRE_HOPSCOTCH ON CACHE BOOL "" FORCE)
+if (NALU_HYPRE_ENABLE_HOPSCOTCH)
+  set(NALU_HYPRE_HOPSCOTCH ON CACHE BOOL "" FORCE)
 endif ()
 
-if (HYPRE_WITH_SUPERLU)
-  set(HYPRE_USING_SUPERLU ON CACHE BOOL "" FORCE)
+if (NALU_HYPRE_WITH_SUPERLU)
+  set(NALU_HYPRE_USING_SUPERLU ON CACHE BOOL "" FORCE)
   add_compile_definitions(HAVE_SUPERLU)
 endif ()
 
-if (HYPRE_WITH_DSUPERLU)
-  set(HYPRE_USING_DSUPERLU ON CACHE BOOL "" FORCE)
-  set(HYPRE_USING_HYPRE_BLAS OFF CACHE BOOL "" FORCE)
-  set(HYPRE_USING_HYPRE_LAPACK OFF CACHE BOOL "" FORCE)
+if (NALU_HYPRE_WITH_DSUPERLU)
+  set(NALU_HYPRE_USING_DSUPERLU ON CACHE BOOL "" FORCE)
+  set(NALU_HYPRE_USING_NALU_HYPRE_BLAS OFF CACHE BOOL "" FORCE)
+  set(NALU_HYPRE_USING_NALU_HYPRE_LAPACK OFF CACHE BOOL "" FORCE)
 endif ()
 
-if (HYPRE_ENABLE_FEI)
-  set(HYPRE_USING_FEI ON CACHE BOOL "" FORCE)
+if (NALU_HYPRE_ENABLE_FEI)
+  set(NALU_HYPRE_USING_FEI ON CACHE BOOL "" FORCE)
   message(WARNING "CMake support for FEI is not complete!")
 endif ()
 
-if (HYPRE_WITH_CALIPER)
-  set(HYPRE_USING_CALIPER ON CACHE BOOL "" FORCE)
+if (NALU_HYPRE_WITH_CALIPER)
+  set(NALU_HYPRE_USING_CALIPER ON CACHE BOOL "" FORCE)
 endif ()
 
-if (HYPRE_SHARED OR HYPRE_BIGINT OR HYPRE_SINGLE OR HYPRE_LONG_DOUBLE)
+if (NALU_HYPRE_SHARED OR NALU_HYPRE_BIGINT OR NALU_HYPRE_SINGLE OR NALU_HYPRE_LONG_DOUBLE)
   # FEI doesn't currently compile with shared
-  set(HYPRE_USING_FEI OFF CACHE BOOL "" FORCE)
+  set(NALU_HYPRE_USING_FEI OFF CACHE BOOL "" FORCE)
 endif ()
 
-if (HYPRE_SEQUENTIAL)
-  set(HYPRE_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+if (NALU_HYPRE_SEQUENTIAL)
+  set(NALU_HYPRE_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 endif ()
 
-if (HYPRE_WITH_UMPIRE)
-  set(HYPRE_USING_UMPIRE ON CACHE BOOL "" FORCE)
-  set(HYPRE_USING_UMPIRE_DEVICE ON CACHE BOOL "" FORCE)
-  set(HYPRE_USING_UMPIRE_UM ON CACHE BOOL "" FORCE)
+if (NALU_HYPRE_WITH_UMPIRE)
+  set(NALU_HYPRE_USING_UMPIRE ON CACHE BOOL "" FORCE)
+  set(NALU_HYPRE_USING_UMPIRE_DEVICE ON CACHE BOOL "" FORCE)
+  set(NALU_HYPRE_USING_UMPIRE_UM ON CACHE BOOL "" FORCE)
 endif ()
 
-if (HYPRE_WITH_UMPIRE_HOST)
-  set(HYPRE_USING_UMPIRE ON CACHE BOOL "" FORCE)
-  set(HYPRE_USING_UMPIRE_HOST ON CACHE BOOL "" FORCE)
+if (NALU_HYPRE_WITH_UMPIRE_HOST)
+  set(NALU_HYPRE_USING_UMPIRE ON CACHE BOOL "" FORCE)
+  set(NALU_HYPRE_USING_UMPIRE_HOST ON CACHE BOOL "" FORCE)
 endif ()
 
-if (HYPRE_WITH_UMPIRE_DEVICE)
-  set(HYPRE_USING_UMPIRE ON CACHE BOOL "" FORCE)
-  set(HYPRE_USING_UMPIRE_DEVICE ON CACHE BOOL "" FORCE)
+if (NALU_HYPRE_WITH_UMPIRE_DEVICE)
+  set(NALU_HYPRE_USING_UMPIRE ON CACHE BOOL "" FORCE)
+  set(NALU_HYPRE_USING_UMPIRE_DEVICE ON CACHE BOOL "" FORCE)
 endif ()
 
-if (HYPRE_WITH_UMPIRE_UM)
-  set(HYPRE_USING_UMPIRE ON CACHE BOOL "" FORCE)
-  set(HYPRE_USING_UMPIRE_UM ON CACHE BOOL "" FORCE)
+if (NALU_HYPRE_WITH_UMPIRE_UM)
+  set(NALU_HYPRE_USING_UMPIRE ON CACHE BOOL "" FORCE)
+  set(NALU_HYPRE_USING_UMPIRE_UM ON CACHE BOOL "" FORCE)
 endif ()
 
-if (HYPRE_WITH_UMPIRE_PINNED)
-  set(HYPRE_USING_UMPIRE ON CACHE BOOL "" FORCE)
-  set(HYPRE_USING_UMPIRE_PINNED ON CACHE BOOL "" FORCE)
+if (NALU_HYPRE_WITH_UMPIRE_PINNED)
+  set(NALU_HYPRE_USING_UMPIRE ON CACHE BOOL "" FORCE)
+  set(NALU_HYPRE_USING_UMPIRE_PINNED ON CACHE BOOL "" FORCE)
 endif ()
 
 # CUDA
-if (HYPRE_WITH_CUDA)
+if (NALU_HYPRE_WITH_CUDA)
   enable_language(CXX)
   message(STATUS "Enabled support for CXX.")
 
@@ -265,10 +265,10 @@ if (HYPRE_WITH_CUDA)
 
   message(STATUS "Using CXX standard: c++${CMAKE_CXX_STANDARD}")
 
-  # Add any extra CXX compiler flags HYPRE_WITH_EXTRA_CXXFLAGS
-  if (NOT HYPRE_WITH_EXTRA_CXXFLAGS STREQUAL "")
-    string(REPLACE " " ";" HYPRE_WITH_EXTRA_CXXFLAGS "${HYPRE_WITH_EXTRA_CXXFLAGS}")
-    add_compile_options("$<$<COMPILE_LANGUAGE:CXX>:${HYPRE_WITH_EXTRA_CXXFLAGS}>")
+  # Add any extra CXX compiler flags NALU_HYPRE_WITH_EXTRA_CXXFLAGS
+  if (NOT NALU_HYPRE_WITH_EXTRA_CXXFLAGS STREQUAL "")
+    string(REPLACE " " ";" NALU_HYPRE_WITH_EXTRA_CXXFLAGS "${NALU_HYPRE_WITH_EXTRA_CXXFLAGS}")
+    add_compile_options("$<$<COMPILE_LANGUAGE:CXX>:${NALU_HYPRE_WITH_EXTRA_CXXFLAGS}>")
   endif ()
 
   # Check if CUDA is available, then enable it
@@ -291,57 +291,57 @@ if (HYPRE_WITH_CUDA)
 
     set(CMAKE_CUDA_STANDARD_REQUIRED ON CACHE BOOL "" FORCE)
 
-    if (HYPRE_ENABLE_DEVICE_MALLOC_ASYNC)
-      set(HYPRE_USING_DEVICE_MALLOC_ASYNC ON CACHE BOOL "" FORCE)
+    if (NALU_HYPRE_ENABLE_DEVICE_MALLOC_ASYNC)
+      set(NALU_HYPRE_USING_DEVICE_MALLOC_ASYNC ON CACHE BOOL "" FORCE)
     endif ()
 
-    set(HYPRE_USING_CUDA ON CACHE BOOL "" FORCE)
-    set(HYPRE_USING_GPU ON CACHE BOOL "" FORCE)
+    set(NALU_HYPRE_USING_CUDA ON CACHE BOOL "" FORCE)
+    set(NALU_HYPRE_USING_GPU ON CACHE BOOL "" FORCE)
 
-    if (HYPRE_ENABLE_UNIFIED_MEMORY)
-      set(HYPRE_USING_UNIFIED_MEMORY ON CACHE BOOL "" FORCE)
+    if (NALU_HYPRE_ENABLE_UNIFIED_MEMORY)
+      set(NALU_HYPRE_USING_UNIFIED_MEMORY ON CACHE BOOL "" FORCE)
     else ()
-      set(HYPRE_USING_DEVICE_MEMORY ON CACHE BOOL "" FORCE)
+      set(NALU_HYPRE_USING_DEVICE_MEMORY ON CACHE BOOL "" FORCE)
     endif ()
 
     # Check if examples are enabled, but not unified memory
-    if (HYPRE_BUILD_EXAMPLES AND NOT HYPRE_ENABLE_UNIFIED_MEMORY)
+    if (NALU_HYPRE_BUILD_EXAMPLES AND NOT NALU_HYPRE_ENABLE_UNIFIED_MEMORY)
       message(WARNING "Running the examples on GPUs requires Unified Memory!
         Examples will not be built!")
-      set(HYPRE_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+      set(NALU_HYPRE_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
     endif ()
 
     if (CMAKE_VERSION VERSION_LESS 3.18.0)
-      add_compile_options("$<$<COMPILE_LANGUAGE:CUDA>:-arch=sm_${HYPRE_CUDA_SM}>")
+      add_compile_options("$<$<COMPILE_LANGUAGE:CUDA>:-arch=sm_${NALU_HYPRE_CUDA_SM}>")
     else ()
-      set(CMAKE_CUDA_ARCHITECTURES "${HYPRE_CUDA_SM}")
+      set(CMAKE_CUDA_ARCHITECTURES "${NALU_HYPRE_CUDA_SM}")
     endif ()
-    message(STATUS "Using CUDA architecture: ${HYPRE_CUDA_SM}")
+    message(STATUS "Using CUDA architecture: ${NALU_HYPRE_CUDA_SM}")
 
     add_compile_options("$<$<COMPILE_LANGUAGE:CUDA>:-expt-extended-lambda>")
 
-    set(HYPRE_USING_HOST_MEMORY OFF CACHE BOOL "" FORCE)
+    set(NALU_HYPRE_USING_HOST_MEMORY OFF CACHE BOOL "" FORCE)
 
-    if (HYPRE_ENABLE_CUDA_STREAMS)
-      set(HYPRE_USING_CUDA_STREAMS ON CACHE BOOL "" FORCE)
-    endif (HYPRE_ENABLE_CUDA_STREAMS)
+    if (NALU_HYPRE_ENABLE_CUDA_STREAMS)
+      set(NALU_HYPRE_USING_CUDA_STREAMS ON CACHE BOOL "" FORCE)
+    endif (NALU_HYPRE_ENABLE_CUDA_STREAMS)
 
-    if (HYPRE_ENABLE_DEVICE_POOL)
-      set(HYPRE_USING_DEVICE_POOL ON CACHE BOOL "" FORCE)
-    endif (HYPRE_ENABLE_DEVICE_POOL)
+    if (NALU_HYPRE_ENABLE_DEVICE_POOL)
+      set(NALU_HYPRE_USING_DEVICE_POOL ON CACHE BOOL "" FORCE)
+    endif (NALU_HYPRE_ENABLE_DEVICE_POOL)
 
     # TODO Eventually should require cmake>=3.17
     # and use cmake's FindCUDAToolkit. Now collect
     # CUDA optional libraries.
-    include(HYPRE_SetupCUDAToolkit)
+    include(NALU_HYPRE_SetupCUDAToolkit)
   else ()
     message(WARNING "No CUDA support!")
-    set(HYPRE_USING_HOST_MEMORY ON CACHE BOOL "" FORCE)
+    set(NALU_HYPRE_USING_HOST_MEMORY ON CACHE BOOL "" FORCE)
   endif (CMAKE_CUDA_COMPILER)
-endif (HYPRE_WITH_CUDA)
+endif (NALU_HYPRE_WITH_CUDA)
 
 # SYCL
-if (HYPRE_WITH_SYCL)
+if (NALU_HYPRE_WITH_SYCL)
   enable_language(CXX)
   message(STATUS "Enabled support for CXX.")
 
@@ -363,26 +363,26 @@ if (HYPRE_WITH_SYCL)
   set(CMAKE_CXX_LINKER_WRAPPER_FLAG " ")
   set(CMAKE_CXX_LINKER_WRAPPER_FLAG_SEP " ")
 
-  # Add any extra CXX compiler flags HYPRE_WITH_EXTRA_CXXFLAGS
-  if (NOT HYPRE_WITH_EXTRA_CXXFLAGS STREQUAL "")
-    string(REPLACE " " ";" HYPRE_WITH_EXTRA_CXXFLAGS "${HYPRE_WITH_EXTRA_CXXFLAGS}")
-    add_compile_options("$<$<COMPILE_LANGUAGE:CXX>:${HYPRE_WITH_EXTRA_CXXFLAGS}>")
+  # Add any extra CXX compiler flags NALU_HYPRE_WITH_EXTRA_CXXFLAGS
+  if (NOT NALU_HYPRE_WITH_EXTRA_CXXFLAGS STREQUAL "")
+    string(REPLACE " " ";" NALU_HYPRE_WITH_EXTRA_CXXFLAGS "${NALU_HYPRE_WITH_EXTRA_CXXFLAGS}")
+    add_compile_options("$<$<COMPILE_LANGUAGE:CXX>:${NALU_HYPRE_WITH_EXTRA_CXXFLAGS}>")
   endif ()
 
-  set(HYPRE_USING_SYCL ON CACHE BOOL "" FORCE)
-  set(HYPRE_USING_GPU ON CACHE BOOL "" FORCE)
+  set(NALU_HYPRE_USING_SYCL ON CACHE BOOL "" FORCE)
+  set(NALU_HYPRE_USING_GPU ON CACHE BOOL "" FORCE)
 
-  if (HYPRE_ENABLE_UNIFIED_MEMORY)
-    set(HYPRE_USING_UNIFIED_MEMORY ON CACHE BOOL "" FORCE)
+  if (NALU_HYPRE_ENABLE_UNIFIED_MEMORY)
+    set(NALU_HYPRE_USING_UNIFIED_MEMORY ON CACHE BOOL "" FORCE)
   else ()
-    set(HYPRE_USING_DEVICE_MEMORY ON CACHE BOOL "" FORCE)
+    set(NALU_HYPRE_USING_DEVICE_MEMORY ON CACHE BOOL "" FORCE)
   endif ()
 
   # Check if examples are enabled, but not unified memory
-  if (HYPRE_BUILD_EXAMPLES AND NOT HYPRE_ENABLE_UNIFIED_MEMORY)
+  if (NALU_HYPRE_BUILD_EXAMPLES AND NOT NALU_HYPRE_ENABLE_UNIFIED_MEMORY)
     message(WARNING "Running the examples on GPUs requires Unified Memory!
       Examples will not be built!")
-    set(HYPRE_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+    set(NALU_HYPRE_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
   endif ()
 
   add_compile_options("$<$<COMPILE_LANGUAGE:CXX>:-fsycl>")
@@ -391,29 +391,29 @@ if (HYPRE_WITH_SYCL)
   add_link_options("-fsycl-device-code-split=per_kernel")
   add_link_options("-Wl,--no-relax")
 
-  if (HYPRE_SYCL_TARGET)
-    add_link_options("SHELL:-fsycl-targets=${HYPRE_SYCL_TARGET}")
+  if (NALU_HYPRE_SYCL_TARGET)
+    add_link_options("SHELL:-fsycl-targets=${NALU_HYPRE_SYCL_TARGET}")
   endif ()
-  if (HYPRE_SYCL_TARGET_BACKEND)
-    add_link_options("SHELL:-Xsycl-target-backend '${HYPRE_SYCL_TARGET_BACKEND}'")
+  if (NALU_HYPRE_SYCL_TARGET_BACKEND)
+    add_link_options("SHELL:-Xsycl-target-backend '${NALU_HYPRE_SYCL_TARGET_BACKEND}'")
   endif ()
 
-  set(HYPRE_USING_HOST_MEMORY OFF CACHE BOOL "" FORCE)
+  set(NALU_HYPRE_USING_HOST_MEMORY OFF CACHE BOOL "" FORCE)
 
-  if (HYPRE_ENABLE_CUDA_STREAMS)
-    set(HYPRE_USING_CUDA_STREAMS ON CACHE BOOL "" FORCE)
-  endif (HYPRE_ENABLE_CUDA_STREAMS)
+  if (NALU_HYPRE_ENABLE_CUDA_STREAMS)
+    set(NALU_HYPRE_USING_CUDA_STREAMS ON CACHE BOOL "" FORCE)
+  endif (NALU_HYPRE_ENABLE_CUDA_STREAMS)
 
-endif (HYPRE_WITH_SYCL)
+endif (NALU_HYPRE_WITH_SYCL)
 
-# Add any extra C compiler flags HYPRE_WITH_EXTRA_CFLAGS
-if (NOT HYPRE_WITH_EXTRA_CFLAGS STREQUAL "")
-  string(REPLACE " " ";" HYPRE_WITH_EXTRA_CFLAGS "${HYPRE_WITH_EXTRA_CFLAGS}")
-  add_compile_options("$<$<COMPILE_LANGUAGE:C>:${HYPRE_WITH_EXTRA_CFLAGS}>")
+# Add any extra C compiler flags NALU_HYPRE_WITH_EXTRA_CFLAGS
+if (NOT NALU_HYPRE_WITH_EXTRA_CFLAGS STREQUAL "")
+  string(REPLACE " " ";" NALU_HYPRE_WITH_EXTRA_CFLAGS "${NALU_HYPRE_WITH_EXTRA_CFLAGS}")
+  add_compile_options("$<$<COMPILE_LANGUAGE:C>:${NALU_HYPRE_WITH_EXTRA_CFLAGS}>")
 endif ()
 
 # Set library build type (must appear before add_library calls)
-if (HYPRE_SHARED)
+if (NALU_HYPRE_SHARED)
   set(BUILD_SHARED_LIBS ON CACHE INTERNAL "" FORCE)
 else ()
   set(BUILD_SHARED_LIBS OFF CACHE INTERNAL "" FORCE)
@@ -423,19 +423,19 @@ endif ()
 add_library(${PROJECT_NAME})
 
 # Headers and sources
-set(HYPRE_HEADERS "")
+set(NALU_HYPRE_HEADERS "")
 
 # Headers and sources: .
-set(HYPRE_MAIN_HEADERS
-  ${CMAKE_CURRENT_BINARY_DIR}/HYPRE_config.h
+set(NALU_HYPRE_MAIN_HEADERS
+  ${CMAKE_CURRENT_BINARY_DIR}/NALU_HYPRE_config.h
   HYPREf.h
   HYPRE.h
   )
 
-set(HYPRE_HEADERS ${HYPRE_HEADERS} ${HYPRE_MAIN_HEADERS})
+set(NALU_HYPRE_HEADERS ${NALU_HYPRE_HEADERS} ${NALU_HYPRE_MAIN_HEADERS})
 
 # Headers and sources: blas
-if (HYPRE_USING_HYPRE_BLAS)
+if (NALU_HYPRE_USING_NALU_HYPRE_BLAS)
   add_subdirectory(blas)
 else ()
   # Use TPL_BLAS_LIBRARIES if set.
@@ -451,7 +451,7 @@ else ()
 endif ()
 
 # Headers and sources: lapack
-if (HYPRE_USING_HYPRE_LAPACK)
+if (NALU_HYPRE_USING_NALU_HYPRE_LAPACK)
   add_subdirectory(lapack)
 else ()
   # Use TPL_LAPACK_LIBRARIES if set.
@@ -466,7 +466,7 @@ else ()
 endif ()
 
 # Find SUPERLU, if requested
-if (HYPRE_USING_SUPERLU)
+if (NALU_HYPRE_USING_SUPERLU)
   if (NOT TPL_SUPERLU_LIBRARIES)
     message(FATAL_ERROR "TPL_SUPERLU_LIBRARIES option should be set for SuperLU support.")
   endif ()
@@ -485,14 +485,14 @@ if (HYPRE_USING_SUPERLU)
   set(SUPERLU_FOUND TRUE)
   target_link_libraries(${PROJECT_NAME} PUBLIC ${TPL_SUPERLU_LIBRARIES} stdc++)
   target_include_directories(${PROJECT_NAME} PUBLIC ${TPL_SUPERLU_INCLUDE_DIRS})
-endif (HYPRE_USING_SUPERLU)
+endif (NALU_HYPRE_USING_SUPERLU)
 
 if (SUPERLU_FOUND)
-  set(HYPRE_USING_SUPERLU TRUE)
+  set(NALU_HYPRE_USING_SUPERLU TRUE)
 endif ()
 
 # Find DSUPERLU, if requested
-if (HYPRE_USING_DSUPERLU)
+if (NALU_HYPRE_USING_DSUPERLU)
   if (NOT TPL_DSUPERLU_LIBRARIES)
     message(FATAL_ERROR "TPL_DSUPERLU_LIBRARIES option should be set for SuperLU_Dist support.")
   endif ()
@@ -511,14 +511,14 @@ if (HYPRE_USING_DSUPERLU)
   set(DSUPERLU_FOUND TRUE)
   target_link_libraries(${PROJECT_NAME} PUBLIC ${TPL_DSUPERLU_LIBRARIES} stdc++)
   target_include_directories(${PROJECT_NAME} PUBLIC ${TPL_DSUPERLU_INCLUDE_DIRS})
-endif (HYPRE_USING_DSUPERLU)
+endif (NALU_HYPRE_USING_DSUPERLU)
 
 if (DSUPERLU_FOUND)
-  set(HYPRE_USING_DSUPERLU TRUE)
+  set(NALU_HYPRE_USING_DSUPERLU TRUE)
 endif ()
 
 # Find FEI, if requested
-if (HYPRE_USING_FEI)
+if (NALU_HYPRE_USING_FEI)
   enable_language(CXX)
 
   if (NOT TPL_FEI_INCLUDE_DIRS)
@@ -535,28 +535,28 @@ if (HYPRE_USING_FEI)
   message(STATUS "Enabled support for using FEI.")
   set(FEI_FOUND TRUE)
   target_include_directories(${PROJECT_NAME} PUBLIC ${TPL_FEI_INCLUDE_DIRS})
-endif(HYPRE_USING_FEI)
+endif(NALU_HYPRE_USING_FEI)
 
-if (HYPRE_USING_CUDA)
+if (NALU_HYPRE_USING_CUDA)
   target_link_libraries(${PROJECT_NAME} PUBLIC "${EXPORT_INTERFACE_CUDA_LIBS}")
-  if (HYPRE_HAVE_MPI)
+  if (NALU_HYPRE_HAVE_MPI)
     target_include_directories(${PROJECT_NAME} PUBLIC
       ${MPI_CXX_INCLUDE_DIRS})
   endif ()
 endif ()
 
-if (HYPRE_USING_SYCL)
+if (NALU_HYPRE_USING_SYCL)
   target_include_directories(${PROJECT_NAME} PUBLIC $ENV{DPLROOT}/include)
-  if (HYPRE_ENABLE_ONEMKLSPARSE)
-    set(HYPRE_USING_ONEMKLSPARSE ON CACHE BOOL "" FORCE)
+  if (NALU_HYPRE_ENABLE_ONEMKLSPARSE)
+    set(NALU_HYPRE_USING_ONEMKLSPARSE ON CACHE BOOL "" FORCE)
   endif()
-  if (HYPRE_ENABLE_ONEMKLBLAS)
-    set(HYPRE_USING_ONEMKLBLAS ON CACHE BOOL "" FORCE)
+  if (NALU_HYPRE_ENABLE_ONEMKLBLAS)
+    set(NALU_HYPRE_USING_ONEMKLBLAS ON CACHE BOOL "" FORCE)
   endif()
-  if (HYPRE_ENABLE_ONEMKLRAND)
-    set(HYPRE_USING_ONEMKLRAND ON CACHE BOOL "" FORCE)
+  if (NALU_HYPRE_ENABLE_ONEMKLRAND)
+    set(NALU_HYPRE_USING_ONEMKLRAND ON CACHE BOOL "" FORCE)
   endif()
-  if (HYPRE_USING_ONEMKLSPARSE OR HYPRE_USING_ONEMKLBLAS OR HYPRE_USING_ONEMKLRAND)
+  if (NALU_HYPRE_USING_ONEMKLSPARSE OR NALU_HYPRE_USING_ONEMKLBLAS OR NALU_HYPRE_USING_ONEMKLRAND)
     set(MKL_LINK static)
     set(MKL_THREADING sequential)
     find_package(MKL CONFIG REQUIRED HINTS "$ENV{MKLROOT}/lib/cmake/mkl")
@@ -566,7 +566,7 @@ if (HYPRE_USING_SYCL)
   endif()
 endif()
 
-if (HYPRE_USING_CALIPER)
+if (NALU_HYPRE_USING_CALIPER)
   if (NOT TPL_CALIPER_LIBRARIES OR NOT TPL_CALIPER_INCLUDE_DIRS)
     message(FATAL_ERROR "Both TPL_CALIPER_LIBRARIES and TPL_CALIPER_INCLUDE_DIRS options must be set for Caliper support.")
   endif ()
@@ -584,7 +584,7 @@ if (HYPRE_USING_CALIPER)
 endif()
 
 # Find Umpire, if requested
-if (HYPRE_USING_UMPIRE)
+if (NALU_HYPRE_USING_UMPIRE)
   if (NOT TPL_UMPIRE_LIBRARIES OR NOT TPL_UMPIRE_INCLUDE_DIRS)
     message(FATAL_ERROR "Both TPL_UMPIRE_LIBRARIES and TPL_UMPIRE_INCLUDE_DIRS options must be set for Umpire support.")
   endif ()
@@ -602,47 +602,47 @@ endif ()
 
 # Configure a header file to pass CMake settings to the source code
 configure_file(
-  "${CMAKE_CURRENT_SOURCE_DIR}/config/HYPRE_config.h.cmake.in"
-  "${CMAKE_CURRENT_BINARY_DIR}/HYPRE_config.h"
+  "${CMAKE_CURRENT_SOURCE_DIR}/config/NALU_HYPRE_config.h.cmake.in"
+  "${CMAKE_CURRENT_BINARY_DIR}/NALU_HYPRE_config.h"
   )
 
 # Headers and sources: remaining subdirectories
-set(HYPRE_DIRS utilities multivector krylov seq_mv parcsr_mv parcsr_block_mv distributed_matrix IJ_mv matrix_matrix distributed_ls parcsr_ls struct_mv struct_ls sstruct_mv sstruct_ls)
-foreach (DIR IN LISTS HYPRE_DIRS)
+set(NALU_HYPRE_DIRS utilities multivector krylov seq_mv parcsr_mv parcsr_block_mv distributed_matrix IJ_mv matrix_matrix distributed_ls parcsr_ls struct_mv struct_ls sstruct_mv sstruct_ls)
+foreach (DIR IN LISTS NALU_HYPRE_DIRS)
   add_subdirectory(${DIR})
   target_include_directories(${PROJECT_NAME} PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/${DIR}>)
 endforeach ()
 
-# BINARY must be first in order to get the correct HYPRE_config.h file
+# BINARY must be first in order to get the correct NALU_HYPRE_config.h file
 target_include_directories(${PROJECT_NAME} PUBLIC
-  $<BUILD_INTERFACE:${HYPRE_BINARY_DIR}>
-  $<BUILD_INTERFACE:${HYPRE_SOURCE_DIR}>
+  $<BUILD_INTERFACE:${NALU_HYPRE_BINARY_DIR}>
+  $<BUILD_INTERFACE:${NALU_HYPRE_SOURCE_DIR}>
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/blas>
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/lapack>
   $<INSTALL_INTERFACE:include>
   )
 
-if (HYPRE_USING_CUDA)
-  set_source_files_properties(${HYPRE_GPU_SOURCES} PROPERTIES LANGUAGE CUDA)
+if (NALU_HYPRE_USING_CUDA)
+  set_source_files_properties(${NALU_HYPRE_GPU_SOURCES} PROPERTIES LANGUAGE CUDA)
 endif ()
 
-if (HYPRE_USING_SYCL)
-  set_source_files_properties(${HYPRE_GPU_SOURCES} PROPERTIES LANGUAGE CXX)
+if (NALU_HYPRE_USING_SYCL)
+  set_source_files_properties(${NALU_HYPRE_GPU_SOURCES} PROPERTIES LANGUAGE CXX)
 endif ()
 
 # Set MPI compile flags
-if (NOT HYPRE_SEQUENTIAL)
+if (NOT NALU_HYPRE_SEQUENTIAL)
   find_program(MPIEXEC_EXECUTABLE NAMES mpiexec mpirun)
   find_package(MPI REQUIRED)
   target_link_libraries(${PROJECT_NAME} PUBLIC MPI::MPI_C)
-endif (NOT HYPRE_SEQUENTIAL)
+endif (NOT NALU_HYPRE_SEQUENTIAL)
 
 # Set OpenMP compile flags
-if (HYPRE_USING_OPENMP)
+if (NALU_HYPRE_USING_OPENMP)
   find_package(OpenMP REQUIRED)
   target_link_libraries(${PROJECT_NAME} PUBLIC OpenMP::OpenMP_C)
-endif (HYPRE_USING_OPENMP)
+endif (NALU_HYPRE_USING_OPENMP)
 
 if (MSVC)
   target_compile_definitions(${PROJECT_NAME} PRIVATE _CRT_SECURE_NO_WARNINGS)
@@ -671,17 +671,17 @@ if (MSVC)
   endif()
 endif ()
 
-if (HYPRE_USING_FEI)
+if (NALU_HYPRE_USING_FEI)
   add_subdirectory(FEI_mv)
 endif ()
 
 # Build the examples directory, if requested
-if (HYPRE_BUILD_EXAMPLES)
+if (NALU_HYPRE_BUILD_EXAMPLES)
   add_subdirectory(examples)
 endif ()
 
 # Build the test directory, if requested
-if (HYPRE_BUILD_TESTS)
+if (NALU_HYPRE_BUILD_TESTS)
   add_subdirectory(test)
 endif ()
 
@@ -692,7 +692,7 @@ install(TARGETS ${PROJECT_NAME}
   ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
   RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
   INCLUDES DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
-install(FILES ${HYPRE_HEADERS} DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
+install(FILES ${NALU_HYPRE_HEADERS} DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
 
 include(CMakePackageConfigHelpers)
 write_basic_package_version_file(

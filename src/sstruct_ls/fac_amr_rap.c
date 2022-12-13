@@ -20,25 +20,25 @@
  * coarse-grid operators are re-distributed so that each processor has its
  * operator on its grid.
  *--------------------------------------------------------------------------*/
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_AMR_RAP( hypre_SStructMatrix  *A,
                hypre_Index          *rfactors,
                hypre_SStructMatrix **fac_A_ptr )
 {
 
    MPI_Comm                     comm         = hypre_SStructMatrixComm(A);
-   HYPRE_Int                    ndim         = hypre_SStructMatrixNDim(A);
-   HYPRE_Int                    nparts       = hypre_SStructMatrixNParts(A);
+   NALU_HYPRE_Int                    ndim         = hypre_SStructMatrixNDim(A);
+   NALU_HYPRE_Int                    nparts       = hypre_SStructMatrixNParts(A);
    hypre_SStructGraph          *graph        = hypre_SStructMatrixGraph(A);
-   HYPRE_IJMatrix               ij_A         = hypre_SStructMatrixIJMatrix(A);
-   HYPRE_Int                    matrix_type  = hypre_SStructMatrixObjectType(A);
+   NALU_HYPRE_IJMatrix               ij_A         = hypre_SStructMatrixIJMatrix(A);
+   NALU_HYPRE_Int                    matrix_type  = hypre_SStructMatrixObjectType(A);
 
    hypre_SStructGrid           *grid         = hypre_SStructGraphGrid(graph);
-   HYPRE_Int                    nUventries   = hypre_SStructGraphNUVEntries(graph);
-   HYPRE_Int                   *iUventries   = hypre_SStructGraphIUVEntries(graph);
+   NALU_HYPRE_Int                    nUventries   = hypre_SStructGraphNUVEntries(graph);
+   NALU_HYPRE_Int                   *iUventries   = hypre_SStructGraphIUVEntries(graph);
    hypre_SStructUVEntry       **Uventries    = hypre_SStructGraphUVEntries(graph);
    hypre_SStructUVEntry        *Uventry;
-   HYPRE_Int                    nUentries;
+   NALU_HYPRE_Int                    nUentries;
 
    hypre_CommPkg               *amrA_comm_pkg;
    hypre_CommHandle            *comm_handle;
@@ -47,7 +47,7 @@ hypre_AMR_RAP( hypre_SStructMatrix  *A,
    hypre_SStructPMatrix        *pmatrix, *fac_pmatrix;
    hypre_StructMatrix          *smatrix, *fac_smatrix;
    hypre_Box                   *smatrix_dbox, *fac_smatrix_dbox;
-   HYPRE_Real                  *smatrix_vals, *fac_smatrix_vals;
+   NALU_HYPRE_Real                  *smatrix_vals, *fac_smatrix_vals;
 
    hypre_SStructGrid           *fac_grid;
    hypre_SStructGraph          *fac_graph;
@@ -66,26 +66,26 @@ hypre_AMR_RAP( hypre_SStructMatrix  *A,
    hypre_SStructSendInfoData   *sendinfo;
    hypre_BoxArrayArray         *own_composite_cboxes, *own_boxes;
    hypre_BoxArray              *own_composite_cbox;
-   HYPRE_Int                  **own_cboxnums;
+   NALU_HYPRE_Int                  **own_cboxnums;
 
    hypre_BoxManager            *fboxman, *cboxman;
    hypre_BoxManEntry           *boxman_entry;
    hypre_Index                  ilower;
 
-   HYPRE_Real                  *values;
-   HYPRE_Int                   *ncols, tot_cols;
-   HYPRE_BigInt                *rows, *cols;
+   NALU_HYPRE_Real                  *values;
+   NALU_HYPRE_Int                   *ncols, tot_cols;
+   NALU_HYPRE_BigInt                *rows, *cols;
 
    hypre_SStructStencil        *stencils;
    hypre_Index                  stencil_shape, loop_size;
-   HYPRE_Int                    stencil_size, *stencil_vars;
+   NALU_HYPRE_Int                    stencil_size, *stencil_vars;
 
    hypre_Index                  index, stride, zero_index;
-   HYPRE_Int                    nvars, var1, var2, part, cbox;
-   HYPRE_Int                    i, j, k, size;
+   NALU_HYPRE_Int                    nvars, var1, var2, part, cbox;
+   NALU_HYPRE_Int                    i, j, k, size;
 
-   HYPRE_Int                    myid;
-   HYPRE_Int                    ierr = 0;
+   NALU_HYPRE_Int                    myid;
+   NALU_HYPRE_Int                    ierr = 0;
 
    hypre_MPI_Comm_rank(comm, &myid);
    hypre_ClearIndex(zero_index);
@@ -94,8 +94,8 @@ hypre_AMR_RAP( hypre_SStructMatrix  *A,
 
    hypre_SStructGraphRef(graph, &fac_graph);
    fac_grid = hypre_SStructGraphGrid(fac_graph);
-   HYPRE_SStructMatrixCreate(comm, fac_graph, &fac_A);
-   HYPRE_SStructMatrixInitialize(fac_A);
+   NALU_HYPRE_SStructMatrixCreate(comm, fac_graph, &fac_A);
+   NALU_HYPRE_SStructMatrixInitialize(fac_A);
 
    /*--------------------------------------------------------------------------
     * Copy all A's unstructured data and structured data that are not processed
@@ -103,8 +103,8 @@ hypre_AMR_RAP( hypre_SStructMatrix  *A,
     * are also the same. Thus, the rows, cols, etc. for the IJ_matrix are
     * the same.
     *--------------------------------------------------------------------------*/
-   ncols = hypre_CTAlloc(HYPRE_Int,  nUventries, HYPRE_MEMORY_HOST);
-   rows = hypre_CTAlloc(HYPRE_BigInt,  nUventries, HYPRE_MEMORY_HOST);
+   ncols = hypre_CTAlloc(NALU_HYPRE_Int,  nUventries, NALU_HYPRE_MEMORY_HOST);
+   rows = hypre_CTAlloc(NALU_HYPRE_BigInt,  nUventries, NALU_HYPRE_MEMORY_HOST);
 
    tot_cols = 0;
    for (i = 0; i < nUventries; i++)
@@ -112,7 +112,7 @@ hypre_AMR_RAP( hypre_SStructMatrix  *A,
       Uventry = Uventries[iUventries[i]];
       tot_cols += hypre_SStructUVEntryNUEntries(Uventry);
    }
-   cols = hypre_CTAlloc(HYPRE_BigInt,  tot_cols, HYPRE_MEMORY_HOST);
+   cols = hypre_CTAlloc(NALU_HYPRE_BigInt,  tot_cols, NALU_HYPRE_MEMORY_HOST);
 
    k    = 0;
    for (i = 0; i < nUventries; i++)
@@ -133,25 +133,25 @@ hypre_AMR_RAP( hypre_SStructMatrix  *A,
       }
    }
 
-   values = hypre_CTAlloc(HYPRE_Real,  tot_cols, HYPRE_MEMORY_HOST);
-   HYPRE_IJMatrixGetValues(ij_A, nUventries, ncols, rows, cols, values);
+   values = hypre_CTAlloc(NALU_HYPRE_Real,  tot_cols, NALU_HYPRE_MEMORY_HOST);
+   NALU_HYPRE_IJMatrixGetValues(ij_A, nUventries, ncols, rows, cols, values);
 
-   HYPRE_IJMatrixSetValues(hypre_SStructMatrixIJMatrix(fac_A), nUventries,
-                           ncols, (const HYPRE_BigInt *) rows, (const HYPRE_BigInt *) cols,
-                           (const HYPRE_Real *) values);
-   hypre_TFree(ncols, HYPRE_MEMORY_HOST);
-   hypre_TFree(rows, HYPRE_MEMORY_HOST);
-   hypre_TFree(cols, HYPRE_MEMORY_HOST);
-   hypre_TFree(values, HYPRE_MEMORY_HOST);
+   NALU_HYPRE_IJMatrixSetValues(hypre_SStructMatrixIJMatrix(fac_A), nUventries,
+                           ncols, (const NALU_HYPRE_BigInt *) rows, (const NALU_HYPRE_BigInt *) cols,
+                           (const NALU_HYPRE_Real *) values);
+   hypre_TFree(ncols, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(rows, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(cols, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
 
-   owninfo = hypre_CTAlloc(hypre_SStructOwnInfoData  **,  nparts, HYPRE_MEMORY_HOST);
+   owninfo = hypre_CTAlloc(hypre_SStructOwnInfoData  **,  nparts, NALU_HYPRE_MEMORY_HOST);
    for (part = (nparts - 1); part > 0; part--)
    {
       f_pgrid = hypre_SStructGridPGrid(fac_grid, part);
       c_pgrid = hypre_SStructGridPGrid(fac_grid, part - 1);
 
       nvars  = hypre_SStructPGridNVars(f_pgrid);
-      owninfo[part] = hypre_CTAlloc(hypre_SStructOwnInfoData   *,  nvars, HYPRE_MEMORY_HOST);
+      owninfo[part] = hypre_CTAlloc(hypre_SStructOwnInfoData   *,  nvars, NALU_HYPRE_MEMORY_HOST);
 
       for (var1 = 0; var1 < nvars; var1++)
       {
@@ -335,7 +335,7 @@ hypre_AMR_RAP( hypre_SStructMatrix  *A,
       hypre_SStructPGridAssemble(temp_pgrid);
 
       /* reference the sstruct_stencil of fac_pmatrix- to be used in temp_pmatrix */
-      temp_sstencils = hypre_CTAlloc(hypre_SStructStencil *,  nvars, HYPRE_MEMORY_HOST);
+      temp_sstencils = hypre_CTAlloc(hypre_SStructStencil *,  nvars, NALU_HYPRE_MEMORY_HOST);
       fac_pmatrix = hypre_SStructMatrixPMatrix(fac_A, part - 1);
       for (i = 0; i < nvars; i++)
       {
@@ -420,7 +420,7 @@ hypre_AMR_RAP( hypre_SStructMatrix  *A,
          hypre_SStructOwnInfoDataDestroy(owninfo[part][var1]);
       }           /* for (var1= 0; var1< nvars; var1++) */
 
-      hypre_TFree(owninfo[part], HYPRE_MEMORY_HOST);
+      hypre_TFree(owninfo[part], NALU_HYPRE_MEMORY_HOST);
 
       /*-----------------------------------------------------------------------
        * Communication of off-process coarse data. A communication pkg is
@@ -474,9 +474,9 @@ hypre_AMR_RAP( hypre_SStructMatrix  *A,
 
    }  /* for (part= 0; part< nparts; part++) */
 
-   hypre_TFree(owninfo, HYPRE_MEMORY_HOST);
+   hypre_TFree(owninfo, NALU_HYPRE_MEMORY_HOST);
 
-   HYPRE_SStructMatrixAssemble(fac_A);
+   NALU_HYPRE_SStructMatrixAssemble(fac_A);
 
    *fac_A_ptr = fac_A;
    return ierr;

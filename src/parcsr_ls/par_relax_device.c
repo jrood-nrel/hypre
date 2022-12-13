@@ -9,25 +9,25 @@
 #include "_hypre_parcsr_ls.h"
 #include "_hypre_utilities.hpp"
 
-#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP)
+#if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
 
 /*--------------------------------------------------------------------------
  * hypre_BoomerAMGRelaxHybridGaussSeidelDevice
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_BoomerAMGRelaxHybridGaussSeidelDevice( hypre_ParCSRMatrix *A,
                                              hypre_ParVector    *f,
-                                             HYPRE_Int          *cf_marker,
-                                             HYPRE_Int           relax_points,
-                                             HYPRE_Real          relax_weight,
-                                             HYPRE_Real          omega,
-                                             HYPRE_Real         *l1_norms,
+                                             NALU_HYPRE_Int          *cf_marker,
+                                             NALU_HYPRE_Int           relax_points,
+                                             NALU_HYPRE_Real          relax_weight,
+                                             NALU_HYPRE_Real          omega,
+                                             NALU_HYPRE_Real         *l1_norms,
                                              hypre_ParVector    *u,
                                              hypre_ParVector    *Vtemp,
                                              hypre_ParVector    *Ztemp,
-                                             HYPRE_Int           GS_order,
-                                             HYPRE_Int           Symm )
+                                             NALU_HYPRE_Int           GS_order,
+                                             NALU_HYPRE_Int           Symm )
 {
    /* Vtemp, Ztemp have the fine-grid size. Create two shell vectors that have the correct size */
    hypre_ParVector *w1 = hypre_ParVectorCloneShallow(f);
@@ -89,34 +89,34 @@ hypre_BoomerAMGRelaxHybridGaussSeidelDevice( hypre_ParCSRMatrix *A,
  * hypre_BoomerAMGRelaxTwoStageGaussSeidelDevice
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_BoomerAMGRelaxTwoStageGaussSeidelDevice ( hypre_ParCSRMatrix *A,
                                                 hypre_ParVector    *f,
-                                                HYPRE_Real          relax_weight,
-                                                HYPRE_Real          omega,
-                                                HYPRE_Real         *A_diag_diag,
+                                                NALU_HYPRE_Real          relax_weight,
+                                                NALU_HYPRE_Real          omega,
+                                                NALU_HYPRE_Real         *A_diag_diag,
                                                 hypre_ParVector    *u,
                                                 hypre_ParVector    *r,
                                                 hypre_ParVector    *z,
-                                                HYPRE_Int           num_inner_iters)
+                                                NALU_HYPRE_Int           num_inner_iters)
 {
    hypre_CSRMatrix *A_diag       = hypre_ParCSRMatrixDiag(A);
-   HYPRE_Int        num_rows     = hypre_CSRMatrixNumRows(A_diag);
+   NALU_HYPRE_Int        num_rows     = hypre_CSRMatrixNumRows(A_diag);
 
    hypre_Vector    *u_local      = hypre_ParVectorLocalVector(u);
    hypre_Vector    *r_local      = hypre_ParVectorLocalVector(r);
    hypre_Vector    *z_local      = hypre_ParVectorLocalVector(z);
 
-   HYPRE_Int        u_vecstride  = hypre_VectorVectorStride(u_local);
-   HYPRE_Int        r_vecstride  = hypre_VectorVectorStride(r_local);
-   HYPRE_Int        z_vecstride  = hypre_VectorVectorStride(z_local);
-   HYPRE_Complex   *u_data       = hypre_VectorData(u_local);
-   HYPRE_Complex   *r_data       = hypre_VectorData(r_local);
-   HYPRE_Complex   *z_data       = hypre_VectorData(z_local);
+   NALU_HYPRE_Int        u_vecstride  = hypre_VectorVectorStride(u_local);
+   NALU_HYPRE_Int        r_vecstride  = hypre_VectorVectorStride(r_local);
+   NALU_HYPRE_Int        z_vecstride  = hypre_VectorVectorStride(z_local);
+   NALU_HYPRE_Complex   *u_data       = hypre_VectorData(u_local);
+   NALU_HYPRE_Complex   *r_data       = hypre_VectorData(r_local);
+   NALU_HYPRE_Complex   *z_data       = hypre_VectorData(z_local);
 
-   HYPRE_Int        num_vectors  = hypre_VectorNumVectors(r_local);
-   HYPRE_Complex    multiplier   = 1.0;
-   HYPRE_Int        i;
+   NALU_HYPRE_Int        num_vectors  = hypre_VectorNumVectors(r_local);
+   NALU_HYPRE_Complex    multiplier   = 1.0;
+   NALU_HYPRE_Int        i;
 
    hypre_GpuProfilingPushRange("BoomerAMGRelaxTwoStageGaussSeidelDevice");
 
@@ -150,4 +150,4 @@ hypre_BoomerAMGRelaxTwoStageGaussSeidelDevice ( hypre_ParCSRMatrix *A,
    return hypre_error_flag;
 }
 
-#endif /* #if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP) */
+#endif /* #if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP) */

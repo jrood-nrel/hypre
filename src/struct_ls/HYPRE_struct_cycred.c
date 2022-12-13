@@ -10,10 +10,10 @@
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_StructCycRedCreate( MPI_Comm comm, HYPRE_StructSolver *solver )
+NALU_HYPRE_Int
+NALU_HYPRE_StructCycRedCreate( MPI_Comm comm, NALU_HYPRE_StructSolver *solver )
 {
-   *solver = ( (HYPRE_StructSolver) hypre_CyclicReductionCreate( comm ) );
+   *solver = ( (NALU_HYPRE_StructSolver) hypre_CyclicReductionCreate( comm ) );
 
    return hypre_error_flag;
 }
@@ -21,8 +21,8 @@ HYPRE_StructCycRedCreate( MPI_Comm comm, HYPRE_StructSolver *solver )
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_StructCycRedDestroy( HYPRE_StructSolver solver )
+NALU_HYPRE_Int
+NALU_HYPRE_StructCycRedDestroy( NALU_HYPRE_StructSolver solver )
 {
    return ( hypre_CyclicReductionDestroy( (void *) solver ) );
 }
@@ -30,11 +30,11 @@ HYPRE_StructCycRedDestroy( HYPRE_StructSolver solver )
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_StructCycRedSetup( HYPRE_StructSolver solver,
-                         HYPRE_StructMatrix A,
-                         HYPRE_StructVector b,
-                         HYPRE_StructVector x      )
+NALU_HYPRE_Int
+NALU_HYPRE_StructCycRedSetup( NALU_HYPRE_StructSolver solver,
+                         NALU_HYPRE_StructMatrix A,
+                         NALU_HYPRE_StructVector b,
+                         NALU_HYPRE_StructVector x      )
 {
    return ( hypre_CyclicReductionSetup( (void *) solver,
                                         (hypre_StructMatrix *) A,
@@ -45,11 +45,11 @@ HYPRE_StructCycRedSetup( HYPRE_StructSolver solver,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_StructCycRedSolve( HYPRE_StructSolver solver,
-                         HYPRE_StructMatrix A,
-                         HYPRE_StructVector b,
-                         HYPRE_StructVector x      )
+NALU_HYPRE_Int
+NALU_HYPRE_StructCycRedSolve( NALU_HYPRE_StructSolver solver,
+                         NALU_HYPRE_StructMatrix A,
+                         NALU_HYPRE_StructVector b,
+                         NALU_HYPRE_StructVector x      )
 {
    return ( hypre_CyclicReduction( (void *) solver,
                                    (hypre_StructMatrix *) A,
@@ -60,9 +60,9 @@ HYPRE_StructCycRedSolve( HYPRE_StructSolver solver,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_StructCycRedSetTDim( HYPRE_StructSolver solver,
-                           HYPRE_Int          tdim )
+NALU_HYPRE_Int
+NALU_HYPRE_StructCycRedSetTDim( NALU_HYPRE_StructSolver solver,
+                           NALU_HYPRE_Int          tdim )
 {
    return ( hypre_CyclicReductionSetCDir( (void *) solver, tdim ) );
 }
@@ -70,16 +70,16 @@ HYPRE_StructCycRedSetTDim( HYPRE_StructSolver solver,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_StructCycRedSetBase( HYPRE_StructSolver solver,
-                           HYPRE_Int          ndim,
-                           HYPRE_Int         *base_index,
-                           HYPRE_Int         *base_stride )
+NALU_HYPRE_Int
+NALU_HYPRE_StructCycRedSetBase( NALU_HYPRE_StructSolver solver,
+                           NALU_HYPRE_Int          ndim,
+                           NALU_HYPRE_Int         *base_index,
+                           NALU_HYPRE_Int         *base_stride )
 {
    hypre_Index  new_base_index;
    hypre_Index  new_base_stride;
 
-   HYPRE_Int    d;
+   NALU_HYPRE_Int    d;
 
    hypre_SetIndex(new_base_index, 0);
    hypre_SetIndex(new_base_stride, 1);

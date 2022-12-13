@@ -14,13 +14,13 @@
       include 'mpif.h'
 
       integer MAXZONS, MAXBLKS, MAXDIM, MAXLEVELS
-      integer HYPRE_PARCSR
+      integer NALU_HYPRE_PARCSR
 
       parameter (MAXZONS=4194304)
       parameter (MAXBLKS=32)
       parameter (MAXDIM=3)
       parameter (MAXLEVELS=25)
-      parameter (HYPRE_PARCSR=5555)
+      parameter (NALU_HYPRE_PARCSR=5555)
 
       integer             num_procs, myid
 
@@ -210,37 +210,37 @@
 !        Standard 7-point laplacian in 3D with grid and anisotropy
 !        determined as user settings.
 
-         call HYPRE_GenerateLaplacian(MPI_COMM_WORLD, nx, ny, nz,
+         call NALU_HYPRE_GenerateLaplacian(MPI_COMM_WORLD, nx, ny, nz,
      &                                Px, Py, Pz, p, q, r, values,
      &                                A_storage, ierr)
 
-         call HYPRE_ParCSRMatrixGetLocalRange(A_storage,
+         call NALU_HYPRE_ParCSRMatrixGetLocalRange(A_storage,
      &             first_local_row, last_local_row,
      &             first_local_col, last_local_col, ierr)
 
-         call HYPRE_IJMatrixCreate(MPI_COMM_WORLD,
+         call NALU_HYPRE_IJMatrixCreate(MPI_COMM_WORLD,
      &             first_local_row, last_local_row,
      &             first_local_col, last_local_col, A, ierr)
 
-         call HYPRE_IJMatrixSetObject(A, A_storage, ierr)
+         call NALU_HYPRE_IJMatrixSetObject(A, A_storage, ierr)
 
          if (ierr .ne. 0) write(6,*) 'Matrix object set failed'
 
-         call HYPRE_IJMatrixSetObjectType(A, HYPRE_PARCSR, ierr)
+         call NALU_HYPRE_IJMatrixSetObjectType(A, NALU_HYPRE_PARCSR, ierr)
 
       else
 
-         call HYPRE_IJMatrixRead(matfile, MPI_COMM_WORLD,
-     &                           HYPRE_PARCSR, A, ierr)
+         call NALU_HYPRE_IJMatrixRead(matfile, MPI_COMM_WORLD,
+     &                           NALU_HYPRE_PARCSR, A, ierr)
 
          if (ierr .ne. 0) write(6,*) 'Matrix read failed'
 
-         call HYPRE_IJMatrixGetObject(A, A_storage, ierr)
+         call NALU_HYPRE_IJMatrixGetObject(A, A_storage, ierr)
 
          if (ierr .ne. 0)
      &      write(6,*) 'Matrix object retrieval failed'
 
-         call HYPRE_ParCSRMatrixGetLocalRange(A_storage,
+         call NALU_HYPRE_ParCSRMatrixGetLocalRange(A_storage,
      &             first_local_row, last_local_row,
      &             first_local_col, last_local_col, ierr)
 
@@ -259,7 +259,7 @@
       matfile(8) = 'A'
       matfile(9) = char(0)
    
-      call HYPRE_IJMatrixPrint(A, matfile, ierr)
+      call NALU_HYPRE_IJMatrixPrint(A, matfile, ierr)
 
       if (ierr .ne. 0) write(6,*) 'Matrix print failed'
   
@@ -267,16 +267,16 @@
 !     "RHS vector" test
 !-----------------------------------------------------------------------
       if (generate_vec .gt. 0) then
-        call HYPRE_IJVectorCreate(MPI_COMM_WORLD, first_local_row,
+        call NALU_HYPRE_IJVectorCreate(MPI_COMM_WORLD, first_local_row,
      &                            last_local_row, b, ierr)
 
         if (ierr .ne. 0) write(6,*) 'RHS vector creation failed'
   
-        call HYPRE_IJVectorSetObjectType(b, HYPRE_PARCSR, ierr)
+        call NALU_HYPRE_IJVectorSetObjectType(b, NALU_HYPRE_PARCSR, ierr)
 
         if (ierr .ne. 0) write(6,*) 'RHS vector object set failed'
   
-        call HYPRE_IJVectorInitialize(b, ierr)
+        call NALU_HYPRE_IJVectorInitialize(b, ierr)
 
         if (ierr .ne. 0) write(6,*) 'RHS vector initialization failed'
   
@@ -285,7 +285,7 @@
           indices(i) = first_local_row - 1 + i
           vals(i) = 0.
         enddo
-        call HYPRE_IJVectorSetValues(b,
+        call NALU_HYPRE_IJVectorSetValues(b,
      &    last_local_row - first_local_row + 1, indices, vals, ierr)
 
         vecfile(1) = 'm'
@@ -298,14 +298,14 @@
         vecfile(8) = 'b'
         vecfile(9) = char(0)
    
-        call HYPRE_IJVectorPrint(b, vecfile, ierr)
+        call NALU_HYPRE_IJVectorPrint(b, vecfile, ierr)
 
         if (ierr .ne. 0) write(6,*) 'RHS vector print failed'
 
       else
 
-        call HYPRE_IJVectorRead(vecfile, MPI_COMM_WORLD,
-     &                          HYPRE_PARCSR, b, ierr)
+        call NALU_HYPRE_IJVectorRead(vecfile, MPI_COMM_WORLD,
+     &                          NALU_HYPRE_PARCSR, b, ierr)
 
         if (ierr .ne. 0) write(6,*) 'RHS vector read failed'
 
@@ -315,7 +315,7 @@
         indices(i) = first_local_row - 1 + i
       enddo
 
-      call HYPRE_IJVectorGetValues(b,
+      call NALU_HYPRE_IJVectorGetValues(b,
      &  last_local_row - first_local_row + 1, indices, bvals, ierr)
   
       if (ierr .ne. 0) write(6,*) 'RHS vector value retrieval failed'
@@ -328,7 +328,7 @@
         vals(i)    = -bvals(i)
       enddo
 
-      call HYPRE_IJVectorAddToValues(b,
+      call NALU_HYPRE_IJVectorAddToValues(b,
      &   1 + (last_local_row - first_local_row)/2, indices, vals, ierr)
 
       if (ierr .ne. 0) write(6,*) 'RHS vector value addition failed'
@@ -337,7 +337,7 @@
         indices(i) = first_local_row - 1 + i
       enddo
 
-      call HYPRE_IJVectorGetValues(b,
+      call NALU_HYPRE_IJVectorGetValues(b,
      &  last_local_row - first_local_row + 1, indices, bvals, ierr)
 
       if (ierr .ne. 0) write(6,*) 'RHS vector value retrieval failed'
@@ -352,16 +352,16 @@
 !-----------------------------------------------------------------------
 !     "Solution vector" test
 !-----------------------------------------------------------------------
-      call HYPRE_IJVectorCreate(MPI_COMM_WORLD, first_local_col,
+      call NALU_HYPRE_IJVectorCreate(MPI_COMM_WORLD, first_local_col,
      &                          last_local_col, x, ierr)
 
       if (ierr .ne. 0) write(6,*) 'Solution vector creation failed'
   
-      call HYPRE_IJVectorSetObjectType(x, HYPRE_PARCSR, ierr)
+      call NALU_HYPRE_IJVectorSetObjectType(x, NALU_HYPRE_PARCSR, ierr)
 
       if (ierr .ne. 0) write(6,*) 'Solution vector object set failed'
   
-      call HYPRE_IJVectorInitialize(x, ierr)
+      call NALU_HYPRE_IJVectorInitialize(x, ierr)
 
       if (ierr .ne. 0) write(6,*) 'Solution vector initialization',
      &                            ' failed'
@@ -371,7 +371,7 @@
           vals(i) = 0.
       enddo
 
-      call HYPRE_IJVectorSetValues(x,
+      call NALU_HYPRE_IJVectorSetValues(x,
      &  last_local_col - first_local_col + 1, indices, vals, ierr)
 
       if (ierr .ne. 0) write(6,*) 'Solution vector value set failed'
@@ -386,7 +386,7 @@
       vecfile(8)  = 'x'
       vecfile(9) = char(0)
    
-      call HYPRE_IJVectorPrint(x, vecfile, ierr)
+      call NALU_HYPRE_IJVectorPrint(x, vecfile, ierr)
 
       if (ierr .ne. 0) write(6,*) 'Solution vector print failed'
   
@@ -395,7 +395,7 @@
       vals(1) = -99.
       vals(2) = -45.
 
-      call HYPRE_IJVectorAddToValues(x, 2, indices, vals, ierr)
+      call NALU_HYPRE_IJVectorAddToValues(x, 2, indices, vals, ierr)
 
       if (ierr .ne. 0) write(6,*) 'Solution vector value addition',
      &                            ' failed'
@@ -404,7 +404,7 @@
         indices(i) = first_local_col - 1 + i
       enddo
 
-      call HYPRE_IJVectorGetValues(x,
+      call NALU_HYPRE_IJVectorGetValues(x,
      &  last_local_col - first_local_col + 1, indices, xvals, ierr)
 
       if (ierr .ne. 0) write(6,*) 'Solution vector value retrieval',
@@ -422,9 +422,9 @@
 !     Finalize things
 !-----------------------------------------------------------------------
 
-      call HYPRE_ParCSRMatrixDestroy(A_storage, ierr)
-      call HYPRE_IJVectorDestroy(b, ierr)
-      call HYPRE_IJVectorDestroy(x, ierr)
+      call NALU_HYPRE_ParCSRMatrixDestroy(A_storage, ierr)
+      call NALU_HYPRE_IJVectorDestroy(b, ierr)
+      call NALU_HYPRE_IJVectorDestroy(x, ierr)
 
 !     Finalize MPI
 

@@ -67,9 +67,9 @@ int MLI_Solver_SuperLU::setup( MLI_Matrix *Amat )
     * -------------------------------------------------------------*/
 
    mliAmat_ = Amat;
-   if ( strcmp( mliAmat_->getName(), "HYPRE_ParCSR" ) )
+   if ( strcmp( mliAmat_->getName(), "NALU_HYPRE_ParCSR" ) )
    {
-      printf("MLI_Solver_SuperLU::setup ERROR - not HYPRE_ParCSR.\n");
+      printf("MLI_Solver_SuperLU::setup ERROR - not NALU_HYPRE_ParCSR.\n");
       exit(1);
    }
    hypreA = (hypre_ParCSRMatrix *) mliAmat_->getMatrix();
@@ -180,9 +180,9 @@ int MLI_Solver_SuperLU::setup( MLI_Matrix *Amat )
             exit(1);
          }
    }
-   gcscJA = hypre_TAlloc(int,  (globalNRows+1) , HYPRE_MEMORY_HOST);
-   gcscIA = hypre_TAlloc(int,  globalNnz , HYPRE_MEMORY_HOST);
-   gcscAA = hypre_TAlloc(double,  globalNnz , HYPRE_MEMORY_HOST);
+   gcscJA = hypre_TAlloc(int,  (globalNRows+1) , NALU_HYPRE_MEMORY_HOST);
+   gcscIA = hypre_TAlloc(int,  globalNnz , NALU_HYPRE_MEMORY_HOST);
+   gcscAA = hypre_TAlloc(double,  globalNnz , NALU_HYPRE_MEMORY_HOST);
    gcscJA[0] = 0;
    nnz = 0;
    for ( icol = 1; icol <= globalNRows; icol++ ) 

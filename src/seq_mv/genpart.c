@@ -14,21 +14,21 @@
 /* for multivectors, length should be the (global) length of a single vector.
  Thus each of the vectors of the multivector will get the same data distribution. */
 
-HYPRE_Int
-hypre_GeneratePartitioning(HYPRE_BigInt length, HYPRE_Int num_procs, HYPRE_BigInt **part_ptr)
+NALU_HYPRE_Int
+hypre_GeneratePartitioning(NALU_HYPRE_BigInt length, NALU_HYPRE_Int num_procs, NALU_HYPRE_BigInt **part_ptr)
 {
-   HYPRE_Int ierr = 0;
-   HYPRE_BigInt *part;
-   HYPRE_Int size, rest;
-   HYPRE_Int i;
+   NALU_HYPRE_Int ierr = 0;
+   NALU_HYPRE_BigInt *part;
+   NALU_HYPRE_Int size, rest;
+   NALU_HYPRE_Int i;
 
-   part = hypre_CTAlloc(HYPRE_BigInt,  num_procs + 1, HYPRE_MEMORY_HOST);
-   size = (HYPRE_Int)(length / (HYPRE_BigInt)num_procs);
-   rest = (HYPRE_Int)(length - (HYPRE_BigInt)(size * num_procs));
+   part = hypre_CTAlloc(NALU_HYPRE_BigInt,  num_procs + 1, NALU_HYPRE_MEMORY_HOST);
+   size = (NALU_HYPRE_Int)(length / (NALU_HYPRE_BigInt)num_procs);
+   rest = (NALU_HYPRE_Int)(length - (NALU_HYPRE_BigInt)(size * num_procs));
    part[0] = 0;
    for (i = 0; i < num_procs; i++)
    {
-      part[i + 1] = part[i] + (HYPRE_BigInt)size;
+      part[i + 1] = part[i] + (NALU_HYPRE_BigInt)size;
       if (i < rest) { part[i + 1]++; }
    }
 
@@ -45,24 +45,24 @@ hypre_GeneratePartitioning(HYPRE_BigInt length, HYPRE_Int num_procs, HYPRE_BigIn
    and has size equal to 2.
 */
 
-HYPRE_Int
-hypre_GenerateLocalPartitioning(HYPRE_BigInt   length,
-                                HYPRE_Int      num_procs,
-                                HYPRE_Int      myid,
-                                HYPRE_BigInt  *part)
+NALU_HYPRE_Int
+hypre_GenerateLocalPartitioning(NALU_HYPRE_BigInt   length,
+                                NALU_HYPRE_Int      num_procs,
+                                NALU_HYPRE_Int      myid,
+                                NALU_HYPRE_BigInt  *part)
 {
-   HYPRE_Int  size, rest;
+   NALU_HYPRE_Int  size, rest;
 
-   size = (HYPRE_Int)(length / (HYPRE_BigInt)num_procs);
-   rest = (HYPRE_Int)(length - (HYPRE_BigInt)(size * num_procs));
+   size = (NALU_HYPRE_Int)(length / (NALU_HYPRE_BigInt)num_procs);
+   rest = (NALU_HYPRE_Int)(length - (NALU_HYPRE_BigInt)(size * num_procs));
 
    /* first row I own */
-   part[0] = (HYPRE_BigInt)(size * myid);
-   part[0] += (HYPRE_BigInt)(hypre_min(myid, rest));
+   part[0] = (NALU_HYPRE_BigInt)(size * myid);
+   part[0] += (NALU_HYPRE_BigInt)(hypre_min(myid, rest));
 
    /* last row I own */
-   part[1] =  (HYPRE_BigInt)(size * (myid + 1));
-   part[1] += (HYPRE_BigInt)(hypre_min(myid + 1, rest));
+   part[1] =  (NALU_HYPRE_BigInt)(size * (myid + 1));
+   part[1] += (NALU_HYPRE_BigInt)(hypre_min(myid + 1, rest));
    part[1] = part[1] - 1;
 
    /* add 1 to last row since this is for "starts" vector */

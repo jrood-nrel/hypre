@@ -11,8 +11,8 @@
  *
  *****************************************************************************/
 
-#ifndef HYPRE_BLAS_H
-#define HYPRE_BLAS_H
+#ifndef NALU_HYPRE_BLAS_H
+#define NALU_HYPRE_BLAS_H
 
 #include "_hypre_utilities.h"
 #include "fortran.h"
@@ -25,7 +25,7 @@ extern "C" {
  * Change all 'hypre_' names based on using HYPRE or external library
  *--------------------------------------------------------------------------*/
 
-#ifndef HYPRE_USING_HYPRE_BLAS
+#ifndef NALU_HYPRE_USING_NALU_HYPRE_BLAS
 
 #define hypre_dasum   hypre_F90_NAME_BLAS(dasum ,DASUM )
 #define hypre_daxpy   hypre_F90_NAME_BLAS(daxpy ,DAXPY )
@@ -56,67 +56,67 @@ extern "C" {
  *--------------------------------------------------------------------------*/
 
 /* dasum.c */
-HYPRE_Real hypre_dasum ( HYPRE_Int *n , HYPRE_Real *dx , HYPRE_Int *incx );
+NALU_HYPRE_Real hypre_dasum ( NALU_HYPRE_Int *n , NALU_HYPRE_Real *dx , NALU_HYPRE_Int *incx );
 
 /* daxpy.c */
-HYPRE_Int hypre_daxpy ( HYPRE_Int *n , HYPRE_Real *da , HYPRE_Real *dx , HYPRE_Int *incx , HYPRE_Real *dy , HYPRE_Int *incy );
+NALU_HYPRE_Int hypre_daxpy ( NALU_HYPRE_Int *n , NALU_HYPRE_Real *da , NALU_HYPRE_Real *dx , NALU_HYPRE_Int *incx , NALU_HYPRE_Real *dy , NALU_HYPRE_Int *incy );
 
 /* dcopy.c */
-HYPRE_Int hypre_dcopy ( HYPRE_Int *n , HYPRE_Real *dx , HYPRE_Int *incx , HYPRE_Real *dy , HYPRE_Int *incy );
+NALU_HYPRE_Int hypre_dcopy ( NALU_HYPRE_Int *n , NALU_HYPRE_Real *dx , NALU_HYPRE_Int *incx , NALU_HYPRE_Real *dy , NALU_HYPRE_Int *incy );
 
 /* ddot.c */
-HYPRE_Real hypre_ddot ( HYPRE_Int *n , HYPRE_Real *dx , HYPRE_Int *incx , HYPRE_Real *dy , HYPRE_Int *incy );
+NALU_HYPRE_Real hypre_ddot ( NALU_HYPRE_Int *n , NALU_HYPRE_Real *dx , NALU_HYPRE_Int *incx , NALU_HYPRE_Real *dy , NALU_HYPRE_Int *incy );
 
 /* dgemm.c */
-HYPRE_Int hypre_dgemm ( const char *transa , const char *transb , HYPRE_Int *m , HYPRE_Int *n , HYPRE_Int *k , HYPRE_Real *alpha , HYPRE_Real *a , HYPRE_Int *lda , HYPRE_Real *b , HYPRE_Int *ldb , HYPRE_Real *beta , HYPRE_Real *c , HYPRE_Int *ldc );
+NALU_HYPRE_Int hypre_dgemm ( const char *transa , const char *transb , NALU_HYPRE_Int *m , NALU_HYPRE_Int *n , NALU_HYPRE_Int *k , NALU_HYPRE_Real *alpha , NALU_HYPRE_Real *a , NALU_HYPRE_Int *lda , NALU_HYPRE_Real *b , NALU_HYPRE_Int *ldb , NALU_HYPRE_Real *beta , NALU_HYPRE_Real *c , NALU_HYPRE_Int *ldc );
 
 /* dgemv.c */
-HYPRE_Int hypre_dgemv ( const char *trans , HYPRE_Int *m , HYPRE_Int *n , HYPRE_Real *alpha , HYPRE_Real *a , HYPRE_Int *lda , HYPRE_Real *x , HYPRE_Int *incx , HYPRE_Real *beta , HYPRE_Real *y , HYPRE_Int *incy );
+NALU_HYPRE_Int hypre_dgemv ( const char *trans , NALU_HYPRE_Int *m , NALU_HYPRE_Int *n , NALU_HYPRE_Real *alpha , NALU_HYPRE_Real *a , NALU_HYPRE_Int *lda , NALU_HYPRE_Real *x , NALU_HYPRE_Int *incx , NALU_HYPRE_Real *beta , NALU_HYPRE_Real *y , NALU_HYPRE_Int *incy );
 
 /* dger.c */
-HYPRE_Int hypre_dger ( HYPRE_Int *m , HYPRE_Int *n , HYPRE_Real *alpha , HYPRE_Real *x , HYPRE_Int *incx , HYPRE_Real *y , HYPRE_Int *incy , HYPRE_Real *a , HYPRE_Int *lda );
+NALU_HYPRE_Int hypre_dger ( NALU_HYPRE_Int *m , NALU_HYPRE_Int *n , NALU_HYPRE_Real *alpha , NALU_HYPRE_Real *x , NALU_HYPRE_Int *incx , NALU_HYPRE_Real *y , NALU_HYPRE_Int *incy , NALU_HYPRE_Real *a , NALU_HYPRE_Int *lda );
 
 /* dnrm2.c */
-HYPRE_Real hypre_dnrm2 ( HYPRE_Int *n , HYPRE_Real *dx , HYPRE_Int *incx );
+NALU_HYPRE_Real hypre_dnrm2 ( NALU_HYPRE_Int *n , NALU_HYPRE_Real *dx , NALU_HYPRE_Int *incx );
 
 /* drot.c */
-HYPRE_Int hypre_drot ( HYPRE_Int *n , HYPRE_Real *dx , HYPRE_Int *incx , HYPRE_Real *dy , HYPRE_Int *incy , HYPRE_Real *c , HYPRE_Real *s );
+NALU_HYPRE_Int hypre_drot ( NALU_HYPRE_Int *n , NALU_HYPRE_Real *dx , NALU_HYPRE_Int *incx , NALU_HYPRE_Real *dy , NALU_HYPRE_Int *incy , NALU_HYPRE_Real *c , NALU_HYPRE_Real *s );
 
 /* dscal.c */
-HYPRE_Int hypre_dscal ( HYPRE_Int *n , HYPRE_Real *da , HYPRE_Real *dx , HYPRE_Int *incx );
+NALU_HYPRE_Int hypre_dscal ( NALU_HYPRE_Int *n , NALU_HYPRE_Real *da , NALU_HYPRE_Real *dx , NALU_HYPRE_Int *incx );
 
 /* dswap.c */
-HYPRE_Int hypre_dswap ( HYPRE_Int *n , HYPRE_Real *dx , HYPRE_Int *incx , HYPRE_Real *dy , HYPRE_Int *incy );
+NALU_HYPRE_Int hypre_dswap ( NALU_HYPRE_Int *n , NALU_HYPRE_Real *dx , NALU_HYPRE_Int *incx , NALU_HYPRE_Real *dy , NALU_HYPRE_Int *incy );
 
 /* dsymm.c */
-HYPRE_Int hypre_dsymm ( const char *side , const char *uplo , HYPRE_Int *m , HYPRE_Int *n , HYPRE_Real *alpha , HYPRE_Real *a , HYPRE_Int *lda , HYPRE_Real *b , HYPRE_Int *ldb , HYPRE_Real *beta , HYPRE_Real *c__ , HYPRE_Int *ldc );
+NALU_HYPRE_Int hypre_dsymm ( const char *side , const char *uplo , NALU_HYPRE_Int *m , NALU_HYPRE_Int *n , NALU_HYPRE_Real *alpha , NALU_HYPRE_Real *a , NALU_HYPRE_Int *lda , NALU_HYPRE_Real *b , NALU_HYPRE_Int *ldb , NALU_HYPRE_Real *beta , NALU_HYPRE_Real *c__ , NALU_HYPRE_Int *ldc );
 
 /* dsymv.c */
-HYPRE_Int hypre_dsymv ( const char *uplo , HYPRE_Int *n , HYPRE_Real *alpha , HYPRE_Real *a , HYPRE_Int *lda , HYPRE_Real *x , HYPRE_Int *incx , HYPRE_Real *beta , HYPRE_Real *y , HYPRE_Int *incy );
+NALU_HYPRE_Int hypre_dsymv ( const char *uplo , NALU_HYPRE_Int *n , NALU_HYPRE_Real *alpha , NALU_HYPRE_Real *a , NALU_HYPRE_Int *lda , NALU_HYPRE_Real *x , NALU_HYPRE_Int *incx , NALU_HYPRE_Real *beta , NALU_HYPRE_Real *y , NALU_HYPRE_Int *incy );
 
 /* dsyr2.c */
-HYPRE_Int hypre_dsyr2 ( const char *uplo , HYPRE_Int *n , HYPRE_Real *alpha , HYPRE_Real *x , HYPRE_Int *incx , HYPRE_Real *y , HYPRE_Int *incy , HYPRE_Real *a , HYPRE_Int *lda );
+NALU_HYPRE_Int hypre_dsyr2 ( const char *uplo , NALU_HYPRE_Int *n , NALU_HYPRE_Real *alpha , NALU_HYPRE_Real *x , NALU_HYPRE_Int *incx , NALU_HYPRE_Real *y , NALU_HYPRE_Int *incy , NALU_HYPRE_Real *a , NALU_HYPRE_Int *lda );
 
 /* dsyr2k.c */
-HYPRE_Int hypre_dsyr2k ( const char *uplo , const char *trans , HYPRE_Int *n , HYPRE_Int *k , HYPRE_Real *alpha , HYPRE_Real *a , HYPRE_Int *lda , HYPRE_Real *b , HYPRE_Int *ldb , HYPRE_Real *beta , HYPRE_Real *c__ , HYPRE_Int *ldc );
+NALU_HYPRE_Int hypre_dsyr2k ( const char *uplo , const char *trans , NALU_HYPRE_Int *n , NALU_HYPRE_Int *k , NALU_HYPRE_Real *alpha , NALU_HYPRE_Real *a , NALU_HYPRE_Int *lda , NALU_HYPRE_Real *b , NALU_HYPRE_Int *ldb , NALU_HYPRE_Real *beta , NALU_HYPRE_Real *c__ , NALU_HYPRE_Int *ldc );
 
 /* dsyrk.c */
-HYPRE_Int hypre_dsyrk ( const char *uplo , const char *trans , HYPRE_Int *n , HYPRE_Int *k , HYPRE_Real *alpha , HYPRE_Real *a , HYPRE_Int *lda , HYPRE_Real *beta , HYPRE_Real *c , HYPRE_Int *ldc );
+NALU_HYPRE_Int hypre_dsyrk ( const char *uplo , const char *trans , NALU_HYPRE_Int *n , NALU_HYPRE_Int *k , NALU_HYPRE_Real *alpha , NALU_HYPRE_Real *a , NALU_HYPRE_Int *lda , NALU_HYPRE_Real *beta , NALU_HYPRE_Real *c , NALU_HYPRE_Int *ldc );
 
 /* dtrmm.c */
-HYPRE_Int hypre_dtrmm ( const char *side , const char *uplo , const char *transa , const char *diag , HYPRE_Int *m , HYPRE_Int *n , HYPRE_Real *alpha , HYPRE_Real *a , HYPRE_Int *lda , HYPRE_Real *b , HYPRE_Int *ldb );
+NALU_HYPRE_Int hypre_dtrmm ( const char *side , const char *uplo , const char *transa , const char *diag , NALU_HYPRE_Int *m , NALU_HYPRE_Int *n , NALU_HYPRE_Real *alpha , NALU_HYPRE_Real *a , NALU_HYPRE_Int *lda , NALU_HYPRE_Real *b , NALU_HYPRE_Int *ldb );
 
 /* dtrmv.c */
-HYPRE_Int hypre_dtrmv ( const char *uplo , const char *trans , const char *diag , HYPRE_Int *n , HYPRE_Real *a , HYPRE_Int *lda , HYPRE_Real *x , HYPRE_Int *incx );
+NALU_HYPRE_Int hypre_dtrmv ( const char *uplo , const char *trans , const char *diag , NALU_HYPRE_Int *n , NALU_HYPRE_Real *a , NALU_HYPRE_Int *lda , NALU_HYPRE_Real *x , NALU_HYPRE_Int *incx );
 
 /* dtrsm.c */
-HYPRE_Int hypre_dtrsm ( const char *side , const char *uplo , const char *transa , const char *diag , HYPRE_Int *m , HYPRE_Int *n , HYPRE_Real *alpha , HYPRE_Real *a , HYPRE_Int *lda , HYPRE_Real *b , HYPRE_Int *ldb );
+NALU_HYPRE_Int hypre_dtrsm ( const char *side , const char *uplo , const char *transa , const char *diag , NALU_HYPRE_Int *m , NALU_HYPRE_Int *n , NALU_HYPRE_Real *alpha , NALU_HYPRE_Real *a , NALU_HYPRE_Int *lda , NALU_HYPRE_Real *b , NALU_HYPRE_Int *ldb );
 
 /* dtrsv.c */
-HYPRE_Int hypre_dtrsv ( const char *uplo , const char *trans , const char *diag , HYPRE_Int *n , HYPRE_Real *a , HYPRE_Int *lda , HYPRE_Real *x , HYPRE_Int *incx );
+NALU_HYPRE_Int hypre_dtrsv ( const char *uplo , const char *trans , const char *diag , NALU_HYPRE_Int *n , NALU_HYPRE_Real *a , NALU_HYPRE_Int *lda , NALU_HYPRE_Real *x , NALU_HYPRE_Int *incx );
 
 /* idamax.c */
-HYPRE_Int hypre_idamax ( HYPRE_Int *n , HYPRE_Real *dx , HYPRE_Int *incx );
+NALU_HYPRE_Int hypre_idamax ( NALU_HYPRE_Int *n , NALU_HYPRE_Real *dx , NALU_HYPRE_Int *incx );
 
 #ifdef __cplusplus
 }

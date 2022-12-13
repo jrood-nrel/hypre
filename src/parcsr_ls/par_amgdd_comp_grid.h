@@ -15,23 +15,23 @@
 typedef struct
 {
    // Info needed for subsequent psi_c residual communication
-   HYPRE_Int           num_levels;     // levels in the amg hierarchy
-   HYPRE_Int          *num_send_procs; // number of send procs to communicate with
-   HYPRE_Int          *num_recv_procs; // number of recv procs to communicate with
+   NALU_HYPRE_Int           num_levels;     // levels in the amg hierarchy
+   NALU_HYPRE_Int          *num_send_procs; // number of send procs to communicate with
+   NALU_HYPRE_Int          *num_recv_procs; // number of recv procs to communicate with
 
-   HYPRE_Int         **send_procs; // list of send procs
-   HYPRE_Int         **recv_procs; // list of recv procs
+   NALU_HYPRE_Int         **send_procs; // list of send procs
+   NALU_HYPRE_Int         **recv_procs; // list of recv procs
 
-   HYPRE_Int         **send_buffer_size; // size of send buffer on each level for each proc
-   HYPRE_Int         **recv_buffer_size; // size of recv buffer on each level for each proc
+   NALU_HYPRE_Int         **send_buffer_size; // size of send buffer on each level for each proc
+   NALU_HYPRE_Int         **recv_buffer_size; // size of recv buffer on each level for each proc
 
-   HYPRE_Int        ***num_send_nodes; // number of nodes to send on each composite level
-   HYPRE_Int        ***num_recv_nodes; // number of nodes to recv on each composite level
+   NALU_HYPRE_Int        ***num_send_nodes; // number of nodes to send on each composite level
+   NALU_HYPRE_Int        ***num_recv_nodes; // number of nodes to recv on each composite level
 
-   HYPRE_Int       ****send_flag; // flags which nodes to send after composite grid is built
-   HYPRE_Int
+   NALU_HYPRE_Int       ****send_flag; // flags which nodes to send after composite grid is built
+   NALU_HYPRE_Int
    ****recv_map; // mapping from recv buffer to appropriate local indices on each comp grid
-   HYPRE_Int       ****recv_red_marker; // marker indicating a redundant recv
+   NALU_HYPRE_Int       ****recv_red_marker; // marker indicating a redundant recv
 
 } hypre_AMGDDCommPkg;
 
@@ -67,8 +67,8 @@ typedef struct
    hypre_CSRMatrix      *real_real;  // Domain: nonowned real. Range: nonowned real.
    hypre_CSRMatrix      *real_ghost; // Domain: nonowned ghost. Range: nonowned real.
 
-   HYPRE_Int             owns_owned_matrices;
-   HYPRE_Int             owns_offd_col_indices;
+   NALU_HYPRE_Int             owns_owned_matrices;
+   NALU_HYPRE_Int             owns_offd_col_indices;
 
 } hypre_AMGDDCompGridMatrix;
 
@@ -94,8 +94,8 @@ typedef struct
    hypre_Vector         *owned_vector;    // Original on-processor points (should be ordered)
    hypre_Vector         *nonowned_vector; // Off-processor points (not ordered)
 
-   HYPRE_Int             num_real;
-   HYPRE_Int             owns_owned_vector;
+   NALU_HYPRE_Int             num_real;
+   NALU_HYPRE_Int             owns_owned_vector;
 
 } hypre_AMGDDCompGridVector;
 
@@ -114,24 +114,24 @@ typedef struct
 
 typedef struct
 {
-   HYPRE_Int             level;
-   HYPRE_MemoryLocation  memory_location;   /* memory location of matrices/vectors */
+   NALU_HYPRE_Int             level;
+   NALU_HYPRE_MemoryLocation  memory_location;   /* memory location of matrices/vectors */
 
-   HYPRE_Int             first_global_index;
-   HYPRE_Int             last_global_index;
-   HYPRE_Int             num_owned_nodes;
-   HYPRE_Int             num_nonowned_nodes;
-   HYPRE_Int             num_nonowned_real_nodes;
-   HYPRE_Int             num_missing_col_indices;
+   NALU_HYPRE_Int             first_global_index;
+   NALU_HYPRE_Int             last_global_index;
+   NALU_HYPRE_Int             num_owned_nodes;
+   NALU_HYPRE_Int             num_nonowned_nodes;
+   NALU_HYPRE_Int             num_nonowned_real_nodes;
+   NALU_HYPRE_Int             num_missing_col_indices;
 
-   HYPRE_Int            *nonowned_global_indices;
-   HYPRE_Int            *nonowned_coarse_indices;
-   HYPRE_Int            *nonowned_real_marker;
-   HYPRE_Int            *nonowned_sort;
-   HYPRE_Int            *nonowned_invsort;
-   HYPRE_Int            *nonowned_diag_missing_col_indices;
+   NALU_HYPRE_Int            *nonowned_global_indices;
+   NALU_HYPRE_Int            *nonowned_coarse_indices;
+   NALU_HYPRE_Int            *nonowned_real_marker;
+   NALU_HYPRE_Int            *nonowned_sort;
+   NALU_HYPRE_Int            *nonowned_invsort;
+   NALU_HYPRE_Int            *nonowned_diag_missing_col_indices;
 
-   HYPRE_Int            *owned_coarse_indices;
+   NALU_HYPRE_Int            *owned_coarse_indices;
 
    hypre_AMGDDCompGridMatrix *A;
    hypre_AMGDDCompGridMatrix *P;
@@ -146,10 +146,10 @@ typedef struct
    hypre_AMGDDCompGridVector     *temp2;
    hypre_AMGDDCompGridVector     *temp3;
 
-   HYPRE_Real       *l1_norms;
-   HYPRE_Int        *cf_marker_array;
-   HYPRE_Int        *owned_relax_ordering;
-   HYPRE_Int        *nonowned_relax_ordering;
+   NALU_HYPRE_Real       *l1_norms;
+   NALU_HYPRE_Int        *cf_marker_array;
+   NALU_HYPRE_Int        *owned_relax_ordering;
+   NALU_HYPRE_Int        *nonowned_relax_ordering;
 
 } hypre_AMGDDCompGrid;
 

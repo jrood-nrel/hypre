@@ -5,17 +5,17 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#ifndef HYPRE_OMP_DEVICE_H
-#define HYPRE_OMP_DEVICE_H
+#ifndef NALU_HYPRE_OMP_DEVICE_H
+#define NALU_HYPRE_OMP_DEVICE_H
 
-#if defined(HYPRE_USING_DEVICE_OPENMP)
+#if defined(NALU_HYPRE_USING_DEVICE_OPENMP)
 
 #include "omp.h"
 
 /* OpenMP 4.5 device memory management */
-extern HYPRE_Int hypre__global_offload;
-extern HYPRE_Int hypre__offload_device_num;
-extern HYPRE_Int hypre__offload_host_num;
+extern NALU_HYPRE_Int hypre__global_offload;
+extern NALU_HYPRE_Int hypre__offload_device_num;
+extern NALU_HYPRE_Int hypre__offload_host_num;
 
 /* stats */
 extern size_t hypre__target_allc_count;
@@ -32,10 +32,10 @@ extern size_t hypre__target_dtoh_bytes;
  * if we ``exit'' or ''update'' an address, it should exist in device [o.w ERROR]
  * hypre__offload_flag: 0 == OK; 1 == WRONG
  */
-#ifdef HYPRE_DEVICE_OPENMP_CHECK
-#define HYPRE_OFFLOAD_FLAG(devnum, hptr, type) HYPRE_Int hypre__offload_flag = (type[1] == 'n') == omp_target_is_present(hptr, devnum);
+#ifdef NALU_HYPRE_DEVICE_OPENMP_CHECK
+#define NALU_HYPRE_OFFLOAD_FLAG(devnum, hptr, type) NALU_HYPRE_Int hypre__offload_flag = (type[1] == 'n') == omp_target_is_present(hptr, devnum);
 #else
-#define HYPRE_OFFLOAD_FLAG(...) HYPRE_Int hypre__offload_flag = 0; /* non-debug mode, always OK */
+#define NALU_HYPRE_OFFLOAD_FLAG(...) NALU_HYPRE_Int hypre__offload_flag = 0; /* non-debug mode, always OK */
 #endif
 
 /* OMP 4.5 offloading macro */
@@ -55,7 +55,7 @@ extern size_t hypre__target_dtoh_bytes;
       /* offloading offset and size (in datatype) */ \
       size_t hypre__offload_offset = offset, hypre__offload_size = count; \
       /* in the CHECK mode, we test if this offload has effect */ \
-      HYPRE_OFFLOAD_FLAG(devnum, hypre__offload_hptr, type1) \
+      NALU_HYPRE_OFFLOAD_FLAG(devnum, hypre__offload_hptr, type1) \
       if (hypre__offload_flag) { \
          printf("[!NO Effect! %s %d] device %d target: %6s %6s, data %p, [%ld:%ld]\n", __FILE__, __LINE__, devnum, type1, type2, (void *)hypre__offload_hptr, hypre__offload_offset, hypre__offload_size); exit(0); \
       } else { \
@@ -67,34 +67,34 @@ extern size_t hypre__target_dtoh_bytes;
             hypre__target_allc_bytes += offload_bytes; \
             hypre__target_htod_count ++; \
             hypre__target_htod_bytes += offload_bytes; \
-            _Pragma (HYPRE_XSTR(omp target enter data map(to:hypre__offload_hptr[hypre__offload_offset:hypre__offload_size]))) \
+            _Pragma (NALU_HYPRE_XSTR(omp target enter data map(to:hypre__offload_hptr[hypre__offload_offset:hypre__offload_size]))) \
          } else if (type1[1] == 'n' && type2[0] == 'a') { \
             /* enter alloc */ \
             hypre__target_allc_count ++; \
             hypre__target_allc_bytes += offload_bytes; \
-            _Pragma (HYPRE_XSTR(omp target enter data map(alloc:hypre__offload_hptr[hypre__offload_offset:hypre__offload_size]))) \
+            _Pragma (NALU_HYPRE_XSTR(omp target enter data map(alloc:hypre__offload_hptr[hypre__offload_offset:hypre__offload_size]))) \
          } else if (type1[1] == 'x' && type2[0] == 'd') { \
             /* exit delete */\
             hypre__target_free_count ++; \
             hypre__target_free_bytes += offload_bytes; \
-            _Pragma (HYPRE_XSTR(omp target exit data map(delete:hypre__offload_hptr[hypre__offload_offset:hypre__offload_size]))) \
+            _Pragma (NALU_HYPRE_XSTR(omp target exit data map(delete:hypre__offload_hptr[hypre__offload_offset:hypre__offload_size]))) \
          } else if (type1[1] == 'x' && type2[0] == 'f') {\
             /* exit from */ \
             hypre__target_free_count ++; \
             hypre__target_free_bytes += offload_bytes; \
             hypre__target_dtoh_count ++; \
             hypre__target_dtoh_bytes += offload_bytes; \
-            _Pragma (HYPRE_XSTR(omp target exit data map(from:hypre__offload_hptr[hypre__offload_offset:hypre__offload_size]))) \
+            _Pragma (NALU_HYPRE_XSTR(omp target exit data map(from:hypre__offload_hptr[hypre__offload_offset:hypre__offload_size]))) \
          } else if (type1[1] == 'p' && type2[0] == 't') { \
             /* update to */ \
             hypre__target_htod_count ++; \
             hypre__target_htod_bytes += offload_bytes; \
-            _Pragma (HYPRE_XSTR(omp target update to(hypre__offload_hptr[hypre__offload_offset:hypre__offload_size]))) \
+            _Pragma (NALU_HYPRE_XSTR(omp target update to(hypre__offload_hptr[hypre__offload_offset:hypre__offload_size]))) \
          } else if (type1[1] == 'p' && type2[0] == 'f') {\
             /* update from */ \
             hypre__target_dtoh_count ++; \
             hypre__target_dtoh_bytes += offload_bytes; \
-            _Pragma (HYPRE_XSTR(omp target update from(hypre__offload_hptr[hypre__offload_offset:hypre__offload_size]))) \
+            _Pragma (NALU_HYPRE_XSTR(omp target update from(hypre__offload_hptr[hypre__offload_offset:hypre__offload_size]))) \
          } else {\
             printf("error: unrecognized offloading type combination!\n"); exit(-1); \
          } \
@@ -102,13 +102,13 @@ extern size_t hypre__target_dtoh_bytes;
    } \
 }
 
-HYPRE_Int HYPRE_OMPOffload(HYPRE_Int device, void *ptr, size_t num, const char *type1,
+NALU_HYPRE_Int NALU_HYPRE_OMPOffload(NALU_HYPRE_Int device, void *ptr, size_t num, const char *type1,
                            const char *type2);
-HYPRE_Int HYPRE_OMPPtrIsMapped(void *p, HYPRE_Int device_num);
-HYPRE_Int HYPRE_OMPOffloadOn();
-HYPRE_Int HYPRE_OMPOffloadOff();
-HYPRE_Int HYPRE_OMPOffloadStatPrint();
+NALU_HYPRE_Int NALU_HYPRE_OMPPtrIsMapped(void *p, NALU_HYPRE_Int device_num);
+NALU_HYPRE_Int NALU_HYPRE_OMPOffloadOn();
+NALU_HYPRE_Int NALU_HYPRE_OMPOffloadOff();
+NALU_HYPRE_Int NALU_HYPRE_OMPOffloadStatPrint();
 
-#endif /* HYPRE_USING_DEVICE_OPENMP */
-#endif /* HYPRE_OMP_DEVICE_H */
+#endif /* NALU_HYPRE_USING_DEVICE_OPENMP */
+#endif /* NALU_HYPRE_OMP_DEVICE_H */
 

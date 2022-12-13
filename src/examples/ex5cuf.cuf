@@ -86,12 +86,12 @@
       call MPI_COMM_SIZE(MPI_COMM_WORLD, num_procs, ierr)
       mpi_comm = MPI_COMM_WORLD
 
-      call HYPRE_Init(ierr)
+      call NALU_HYPRE_Init(ierr)
 
-      call HYPRE_SetMemoryLocation(HYPRE_MEMORY_DEVICE, ierr)
-      call HYPRE_SetExecutionPolicy(HYPRE_EXEC_DEVICE, ierr)
+      call NALU_HYPRE_SetMemoryLocation(NALU_HYPRE_MEMORY_DEVICE, ierr)
+      call NALU_HYPRE_SetExecutionPolicy(NALU_HYPRE_EXEC_DEVICE, ierr)
 
-      call HYPRE_SetSpGemmUseVendor(0, ierr)
+      call NALU_HYPRE_SetSpGemmUseVendor(0, ierr)
 
 !   Default problem parameters
       n = 33
@@ -129,15 +129,15 @@
 !     Create the matrix.
 !     Note that this is a square matrix, so we indicate the row partition
 !     size twice (since number of rows = number of cols)
-      call HYPRE_IJMatrixCreate(mpi_comm, ilower, &
+      call NALU_HYPRE_IJMatrixCreate(mpi_comm, ilower, &
          iupper, ilower, iupper, A, ierr)
 
 
 !     Choose a parallel csr format storage (see the User's Manual)
-      call HYPRE_IJMatrixSetObjectType(A, HYPRE_PARCSR, ierr)
+      call NALU_HYPRE_IJMatrixSetObjectType(A, NALU_HYPRE_PARCSR, ierr)
 
 !     Initialize before setting coefficients
-      call HYPRE_IJMatrixInitialize(A, ierr)
+      call NALU_HYPRE_IJMatrixInitialize(A, ierr)
 
 
 !     Now go through my local rows and set the matrix entries.
@@ -190,28 +190,28 @@
 !        Set the values for row i
          tmpi(1) = nnz-1
          tmpi(2) = i
-         call HYPRE_IJMatrixSetValues( &
+         call NALU_HYPRE_IJMatrixSetValues( &
             A, 1, tmpi(1), tmpi(2), cols, values, ierr)
       enddo
 
 
 !     Assemble after setting the coefficients
-      call HYPRE_IJMatrixAssemble(A, ierr)
+      call NALU_HYPRE_IJMatrixAssemble(A, ierr)
 
 !     Get parcsr matrix object
-      call HYPRE_IJMatrixGetObject(A, parcsr_A, ierr)
+      call NALU_HYPRE_IJMatrixGetObject(A, parcsr_A, ierr)
 
 
 !     Create the rhs and solution
-      call HYPRE_IJVectorCreate(mpi_comm, &
+      call NALU_HYPRE_IJVectorCreate(mpi_comm, &
          ilower, iupper, b, ierr)
-      call HYPRE_IJVectorSetObjectType(b, HYPRE_PARCSR, ierr)
-      call HYPRE_IJVectorInitialize(b, ierr)
+      call NALU_HYPRE_IJVectorSetObjectType(b, NALU_HYPRE_PARCSR, ierr)
+      call NALU_HYPRE_IJVectorInitialize(b, ierr)
 
-      call HYPRE_IJVectorCreate(mpi_comm, &
+      call NALU_HYPRE_IJVectorCreate(mpi_comm, &
          ilower, iupper, x, ierr)
-      call HYPRE_IJVectorSetObjectType(x, HYPRE_PARCSR, ierr)
-      call HYPRE_IJVectorInitialize(x, ierr)
+      call NALU_HYPRE_IJVectorSetObjectType(x, NALU_HYPRE_PARCSR, ierr)
+      call NALU_HYPRE_IJVectorInitialize(x, ierr)
 
 
 !     Set the rhs values to h^2 and the solution to zero
@@ -220,19 +220,19 @@
          x_values(i) = 0.0
          rows(i) = ilower + i -1
       enddo
-      call HYPRE_IJVectorSetValues( &
+      call NALU_HYPRE_IJVectorSetValues( &
          b, local_size, rows, rhs_values, ierr)
-      call HYPRE_IJVectorSetValues( &
+      call NALU_HYPRE_IJVectorSetValues( &
          x, local_size, rows, x_values, ierr)
 
 
-      call HYPRE_IJVectorAssemble(b, ierr)
-      call HYPRE_IJVectorAssemble(x, ierr)
+      call NALU_HYPRE_IJVectorAssemble(b, ierr)
+      call NALU_HYPRE_IJVectorAssemble(x, ierr)
 
 ! get the x and b objects
 
-      call HYPRE_IJVectorGetObject(b, par_b, ierr)
-      call HYPRE_IJVectorGetObject(x, par_x, ierr)
+      call NALU_HYPRE_IJVectorGetObject(b, par_b, ierr)
+      call NALU_HYPRE_IJVectorGetObject(x, par_x, ierr)
 
 
 !     Choose a solver and solve the system
@@ -241,39 +241,39 @@
       if ( solver_id .eq. 0 ) then
 
 !        Create solver
-         call HYPRE_BoomerAMGCreate(solver, ierr)
+         call NALU_HYPRE_BoomerAMGCreate(solver, ierr)
 
 
 !        Set some parameters (See Reference Manual for more parameters)
 
 !        print solve info + parameters
-         call HYPRE_BoomerAMGSetPrintLevel(solver, 3, ierr)
+         call NALU_HYPRE_BoomerAMGSetPrintLevel(solver, 3, ierr)
 !        old defaults, Falgout coarsening, mod. class. interpolation
-         call HYPRE_BoomerAMGSetOldDefault(solver, ierr)
+         call NALU_HYPRE_BoomerAMGSetOldDefault(solver, ierr)
 !        G-S/Jacobi hybrid relaxation
-         call HYPRE_BoomerAMGSetRelaxType(solver, 3, ierr)
+         call NALU_HYPRE_BoomerAMGSetRelaxType(solver, 3, ierr)
 !        C/F relaxation
-         call HYPRE_BoomerAMGSetRelaxOrder(solver, 1, ierr)
+         call NALU_HYPRE_BoomerAMGSetRelaxOrder(solver, 1, ierr)
 !        Sweeeps on each level
-         call HYPRE_BoomerAMGSetNumSweeps(solver, 1, ierr)
+         call NALU_HYPRE_BoomerAMGSetNumSweeps(solver, 1, ierr)
 !         maximum number of levels
-         call HYPRE_BoomerAMGSetMaxLevels(solver, 20, ierr)
+         call NALU_HYPRE_BoomerAMGSetMaxLevels(solver, 20, ierr)
 !        conv. tolerance
-         call HYPRE_BoomerAMGSetTol(solver, 1.0d-7, ierr)
+         call NALU_HYPRE_BoomerAMGSetTol(solver, 1.0d-7, ierr)
 !        Keep local transposes
-         call HYPRE_BoomerAMGSetKeepTransp(solver, 1, ierr)
+         call NALU_HYPRE_BoomerAMGSetKeepTransp(solver, 1, ierr)
 
 !        Now setup and solve!
-         call HYPRE_BoomerAMGSetup( &
+         call NALU_HYPRE_BoomerAMGSetup( &
             solver, parcsr_A, par_b, par_x, ierr)
-         call HYPRE_BoomerAMGSolve( &
+         call NALU_HYPRE_BoomerAMGSolve( &
             solver, parcsr_A, par_b, par_x, ierr)
 
 
 !        Run info - needed logging turned on
-         call HYPRE_BoomerAMGGetNumIterations(solver, num_iterations, &
+         call NALU_HYPRE_BoomerAMGGetNumIterations(solver, num_iterations, &
             ierr)
-         call HYPRE_BoomerAMGGetFinalReltvRes(solver, final_res_norm, &
+         call NALU_HYPRE_BoomerAMGGetFinalReltvRes(solver, final_res_norm, &
             ierr)
 
 
@@ -286,41 +286,41 @@
          endif
 
 !        Destroy solver
-         call HYPRE_BoomerAMGDestroy(solver, ierr)
+         call NALU_HYPRE_BoomerAMGDestroy(solver, ierr)
 
 !     PCG (with DS)
       elseif ( solver_id .eq. 50 ) then
 
 
 !        Create solver
-         call HYPRE_ParCSRPCGCreate(MPI_COMM_WORLD, solver, ierr)
+         call NALU_HYPRE_ParCSRPCGCreate(MPI_COMM_WORLD, solver, ierr)
 
 !        Set some parameters (See Reference Manual for more parameters)
-         call HYPRE_ParCSRPCGSetMaxIter(solver, 1000, ierr)
-         call HYPRE_ParCSRPCGSetTol(solver, 1.0d-7, ierr)
-         call HYPRE_ParCSRPCGSetTwoNorm(solver, 1, ierr)
-         call HYPRE_ParCSRPCGSetPrintLevel(solver, 2, ierr)
-         call HYPRE_ParCSRPCGSetLogging(solver, 1, ierr)
+         call NALU_HYPRE_ParCSRPCGSetMaxIter(solver, 1000, ierr)
+         call NALU_HYPRE_ParCSRPCGSetTol(solver, 1.0d-7, ierr)
+         call NALU_HYPRE_ParCSRPCGSetTwoNorm(solver, 1, ierr)
+         call NALU_HYPRE_ParCSRPCGSetPrintLevel(solver, 2, ierr)
+         call NALU_HYPRE_ParCSRPCGSetLogging(solver, 1, ierr)
 
 !        set ds (diagonal scaling) as the pcg preconditioner
          precond_id = 1
-         call HYPRE_ParCSRPCGSetPrecond(solver, precond_id, &
+         call NALU_HYPRE_ParCSRPCGSetPrecond(solver, precond_id, &
             precond, ierr)
 
 
 
 !        Now setup and solve!
-         call HYPRE_ParCSRPCGSetup(solver, parcsr_A, par_b, &
+         call NALU_HYPRE_ParCSRPCGSetup(solver, parcsr_A, par_b, &
             par_x, ierr)
-         call HYPRE_ParCSRPCGSolve(solver, parcsr_A, par_b, &
+         call NALU_HYPRE_ParCSRPCGSolve(solver, parcsr_A, par_b, &
             par_x, ierr)
 
 
 !        Run info - needed logging turned on
 
-        call HYPRE_ParCSRPCGGetNumIterations(solver, num_iterations, &
+        call NALU_HYPRE_ParCSRPCGGetNumIterations(solver, num_iterations, &
            ierr)
-        call HYPRE_ParCSRPCGGetFinalRelative(solver, final_res_norm, &
+        call NALU_HYPRE_ParCSRPCGGetFinalRelative(solver, final_res_norm, &
            ierr)
 
        if ( myid .eq. 0 ) then
@@ -331,62 +331,62 @@
          endif
 
 !       Destroy solver
-        call HYPRE_ParCSRPCGDestroy(solver, ierr)
+        call NALU_HYPRE_ParCSRPCGDestroy(solver, ierr)
 
 
 !     PCG with AMG preconditioner
       elseif ( solver_id == 1 ) then
 
 !        Create solver
-         call HYPRE_ParCSRPCGCreate(MPI_COMM_WORLD, solver, ierr)
+         call NALU_HYPRE_ParCSRPCGCreate(MPI_COMM_WORLD, solver, ierr)
 
 !        Set some parameters (See Reference Manual for more parameters)
-         call HYPRE_ParCSRPCGSetMaxIter(solver, 1000, ierr)
-         call HYPRE_ParCSRPCGSetTol(solver, 1.0d-7, ierr)
-         call HYPRE_ParCSRPCGSetTwoNorm(solver, 1, ierr)
-         call HYPRE_ParCSRPCGSetPrintLevel(solver, 2, ierr)
-         call HYPRE_ParCSRPCGSetLogging(solver, 1, ierr)
+         call NALU_HYPRE_ParCSRPCGSetMaxIter(solver, 1000, ierr)
+         call NALU_HYPRE_ParCSRPCGSetTol(solver, 1.0d-7, ierr)
+         call NALU_HYPRE_ParCSRPCGSetTwoNorm(solver, 1, ierr)
+         call NALU_HYPRE_ParCSRPCGSetPrintLevel(solver, 2, ierr)
+         call NALU_HYPRE_ParCSRPCGSetLogging(solver, 1, ierr)
 
 !        Now set up the AMG preconditioner and specify any parameters
 
-         call HYPRE_BoomerAMGCreate(precond, ierr)
+         call NALU_HYPRE_BoomerAMGCreate(precond, ierr)
 
 
 !        Set some parameters (See Reference Manual for more parameters)
 
 !        print less solver info since a preconditioner
-         call HYPRE_BoomerAMGSetPrintLevel(precond, 1, ierr);
+         call NALU_HYPRE_BoomerAMGSetPrintLevel(precond, 1, ierr);
 !        Falgout coarsening
-         call HYPRE_BoomerAMGSetCoarsenType(precond, 6, ierr)
+         call NALU_HYPRE_BoomerAMGSetCoarsenType(precond, 6, ierr)
 !        old defaults
-         call HYPRE_BoomerAMGSetOldDefault(precond, ierr)
+         call NALU_HYPRE_BoomerAMGSetOldDefault(precond, ierr)
 !        SYMMETRIC G-S/Jacobi hybrid relaxation
-         call HYPRE_BoomerAMGSetRelaxType(precond, 6, ierr)
+         call NALU_HYPRE_BoomerAMGSetRelaxType(precond, 6, ierr)
 !        Sweeeps on each level
-         call HYPRE_BoomerAMGSetNumSweeps(precond, 1, ierr)
+         call NALU_HYPRE_BoomerAMGSetNumSweeps(precond, 1, ierr)
 !        conv. tolerance
-         call HYPRE_BoomerAMGSetTol(precond, 0.0d0, ierr)
+         call NALU_HYPRE_BoomerAMGSetTol(precond, 0.0d0, ierr)
 !        do only one iteration!
-         call HYPRE_BoomerAMGSetMaxIter(precond, 1, ierr)
+         call NALU_HYPRE_BoomerAMGSetMaxIter(precond, 1, ierr)
 
 !        set amg as the pcg preconditioner
          precond_id = 2
-         call HYPRE_ParCSRPCGSetPrecond(solver, precond_id, &
+         call NALU_HYPRE_ParCSRPCGSetPrecond(solver, precond_id, &
             precond, ierr)
 
 
 !        Now setup and solve!
-         call HYPRE_ParCSRPCGSetup(solver, parcsr_A, par_b, &
+         call NALU_HYPRE_ParCSRPCGSetup(solver, parcsr_A, par_b, &
             par_x, ierr)
-         call HYPRE_ParCSRPCGSolve(solver, parcsr_A, par_b, &
+         call NALU_HYPRE_ParCSRPCGSolve(solver, parcsr_A, par_b, &
             par_x, ierr)
 
 
 !        Run info - needed logging turned on
 
-        call HYPRE_ParCSRPCGGetNumIterations(solver, num_iterations, &
+        call NALU_HYPRE_ParCSRPCGGetNumIterations(solver, num_iterations, &
            ierr)
-        call HYPRE_ParCSRPCGGetFinalRelative(solver, final_res_norm, &
+        call NALU_HYPRE_ParCSRPCGGetFinalRelative(solver, final_res_norm, &
            ierr)
 
        if ( myid .eq. 0 ) then
@@ -398,47 +398,47 @@
 
 !       Destroy precond and solver
 
-        call HYPRE_BoomerAMGDestroy(precond, ierr)
-        call HYPRE_ParCSRPCGDestroy(solver, ierr)
+        call NALU_HYPRE_BoomerAMGDestroy(precond, ierr)
+        call NALU_HYPRE_ParCSRPCGDestroy(solver, ierr)
 
 !     PCG with ParaSails
       elseif ( solver_id .eq. 8 ) then
 
 !        Create solver
-         call HYPRE_ParCSRPCGCreate(MPI_COMM_WORLD, solver, ierr)
+         call NALU_HYPRE_ParCSRPCGCreate(MPI_COMM_WORLD, solver, ierr)
 
 !        Set some parameters (See Reference Manual for more parameters)
-         call HYPRE_ParCSRPCGSetMaxIter(solver, 1000, ierr)
-         call HYPRE_ParCSRPCGSetTol(solver, 1.0d-7, ierr)
-         call HYPRE_ParCSRPCGSetTwoNorm(solver, 1, ierr)
-         call HYPRE_ParCSRPCGSetPrintLevel(solver, 2, ierr)
-         call HYPRE_ParCSRPCGSetLogging(solver, 1, ierr)
+         call NALU_HYPRE_ParCSRPCGSetMaxIter(solver, 1000, ierr)
+         call NALU_HYPRE_ParCSRPCGSetTol(solver, 1.0d-7, ierr)
+         call NALU_HYPRE_ParCSRPCGSetTwoNorm(solver, 1, ierr)
+         call NALU_HYPRE_ParCSRPCGSetPrintLevel(solver, 2, ierr)
+         call NALU_HYPRE_ParCSRPCGSetLogging(solver, 1, ierr)
 
 !        Now set up the Parasails preconditioner and specify any parameters
-         call HYPRE_ParaSailsCreate(MPI_COMM_WORLD, precond,ierr)
-         call HYPRE_ParaSailsSetParams(precond, 0.1d0, 1, ierr)
-         call HYPRE_ParaSailsSetFilter(precond, 0.05d0, ierr)
-         call HYPRE_ParaSailsSetSym(precond, 1, ierr)
-         call HYPRE_ParaSailsSetLogging(precond, 3, ierr)
+         call NALU_HYPRE_ParaSailsCreate(MPI_COMM_WORLD, precond,ierr)
+         call NALU_HYPRE_ParaSailsSetParams(precond, 0.1d0, 1, ierr)
+         call NALU_HYPRE_ParaSailsSetFilter(precond, 0.05d0, ierr)
+         call NALU_HYPRE_ParaSailsSetSym(precond, 1, ierr)
+         call NALU_HYPRE_ParaSailsSetLogging(precond, 3, ierr)
 
 !        set parsails as the pcg preconditioner
          precond_id = 4
-         call HYPRE_ParCSRPCGSetPrecond(solver, precond_id, &
+         call NALU_HYPRE_ParCSRPCGSetPrecond(solver, precond_id, &
             precond, ierr)
 
 
 !        Now setup and solve!
-         call HYPRE_ParCSRPCGSetup(solver, parcsr_A, par_b, &
+         call NALU_HYPRE_ParCSRPCGSetup(solver, parcsr_A, par_b, &
             par_x, ierr)
-         call HYPRE_ParCSRPCGSolve(solver, parcsr_A, par_b, &
+         call NALU_HYPRE_ParCSRPCGSolve(solver, parcsr_A, par_b, &
             par_x, ierr)
 
 
 !        Run info - needed logging turned on
 
-        call HYPRE_ParCSRPCGGetNumIterations(solver, num_iterations, &
+        call NALU_HYPRE_ParCSRPCGGetNumIterations(solver, num_iterations, &
            ierr)
-        call HYPRE_ParCSRPCGGetFinalRelative(solver, final_res_norm, &
+        call NALU_HYPRE_ParCSRPCGGetFinalRelative(solver, final_res_norm, &
            ierr)
 
        if ( myid .eq. 0 ) then
@@ -450,8 +450,8 @@
 
 !       Destroy precond and solver
 
-        call HYPRE_ParaSailsDestroy(precond, ierr)
-        call HYPRE_ParCSRPCGDestroy(solver, ierr)
+        call NALU_HYPRE_ParaSailsDestroy(precond, ierr)
+        call NALU_HYPRE_ParCSRPCGDestroy(solver, ierr)
 
       else
          if ( myid .eq. 0 ) then
@@ -464,16 +464,16 @@
 
 !     Print the solution
       if ( print_solution .ne. 0 ) then
-         call HYPRE_IJVectorPrint(x, "ij.out.x", ierr)
+         call NALU_HYPRE_IJVectorPrint(x, "ij.out.x", ierr)
       endif
 
 !     Clean up
 
-      call HYPRE_IJMatrixDestroy(A, ierr)
-      call HYPRE_IJVectorDestroy(b, ierr)
-      call HYPRE_IJVectorDestroy(x, ierr)
+      call NALU_HYPRE_IJMatrixDestroy(A, ierr)
+      call NALU_HYPRE_IJVectorDestroy(b, ierr)
+      call NALU_HYPRE_IJVectorDestroy(x, ierr)
 
-      call HYPRE_Finalize(ierr)
+      call NALU_HYPRE_Finalize(ierr)
 
 !     Finalize MPI
       call MPI_Finalize(ierr)

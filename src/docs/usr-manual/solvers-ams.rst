@@ -102,12 +102,12 @@ Sample Usage
 AMS can be used either as a solver or as a preconditioner.  Below we list the
 sequence of hypre calls needed to create and use it as a solver.  See example
 code ``ex15.c`` for a complete implementation.  We start with the allocation of
-the ``HYPRE_Solver`` object:
+the ``NALU_HYPRE_Solver`` object:
 
 .. code-block:: c
    
-   HYPRE_Solver solver;
-   HYPRE_AMSCreate(&solver);
+   NALU_HYPRE_Solver solver;
+   NALU_HYPRE_AMSCreate(&solver);
 
 Next, we set a number of solver parameters. Some of them are optional, while
 others are necessary in order to perform the solver setup.
@@ -119,7 +119,7 @@ with the function given below.  We note that a 3D solver will still work for a
 
 .. code-block:: c
    
-   HYPRE_AMSSetDimension(solver, dim);
+   NALU_HYPRE_AMSSetDimension(solver, dim);
 
 The user is required to provide the discrete gradient matrix :math:`G`.  AMS
 expects a matrix defined on the whole mesh with no boundary edges/nodes
@@ -130,7 +130,7 @@ the following function.
 
 .. code-block:: c
    
-   HYPRE_AMSSetDiscreteGradient(solver, G);
+   NALU_HYPRE_AMSSetDiscreteGradient(solver, G);
 
 In addition to :math:`G`, we need one additional piece of information in order
 to construct the solver.  The user has the option to choose either the
@@ -141,13 +141,13 @@ to NULL.  The corresponding function calls read:
 
 .. code-block:: c
    
-   HYPRE_AMSSetCoordinateVectors(solver,x,y,z);
+   NALU_HYPRE_AMSSetCoordinateVectors(solver,x,y,z);
 
 or
 
 .. code-block:: c
    
-   HYPRE_AMSSetEdgeConstantVectors(solver, one_zero_zero, zero_one_zero, zero_zero_one);
+   NALU_HYPRE_AMSSetEdgeConstantVectors(solver, one_zero_zero, zero_one_zero, zero_zero_one);
 
 The vectors ``one_zero_zero``, ``zero_one_zero`` and ``zero_zero_one`` above
 correspond to the constant vector fields :math:`(1,0,0)`, :math:`(0,1,0)` and
@@ -158,7 +158,7 @@ a different cycle type by calling
 
 .. code-block:: c
    
-   HYPRE_AMSSetCycleType(solver, cycle_type); /* default value: 1 */
+   NALU_HYPRE_AMSSetCycleType(solver, cycle_type); /* default value: 1 */
 
 The available cycle types in AMS are:
 
@@ -196,18 +196,18 @@ convergence tolerance and the output level, can be set with
 
 .. code-block:: c
    
-   HYPRE_AMSSetMaxIter(solver, maxit);     /* default value: 20 */
-   HYPRE_AMSSetTol(solver, tol);           /* default value: 1e-6 */
-   HYPRE_AMSSetPrintLevel(solver, print);  /* default value: 1 */
+   NALU_HYPRE_AMSSetMaxIter(solver, maxit);     /* default value: 20 */
+   NALU_HYPRE_AMSSetTol(solver, tol);           /* default value: 1e-6 */
+   NALU_HYPRE_AMSSetPrintLevel(solver, print);  /* default value: 1 */
 
 More advanced parameters, affecting the smoothing and the internal AMG solvers,
 can be set with the following three functions:
 
 .. code-block:: c
    
-   HYPRE_AMSSetSmoothingOptions(solver, 2, 1, 1.0, 1.0);
-   HYPRE_AMSSetAlphaAMGOptions(solver, 10, 1, 3, 0.25, 0, 0);
-   HYPRE_AMSSetBetaAMGOptions(solver, 10, 1, 3, 0.25, 0, 0);
+   NALU_HYPRE_AMSSetSmoothingOptions(solver, 2, 1, 1.0, 1.0);
+   NALU_HYPRE_AMSSetAlphaAMGOptions(solver, 10, 1, 3, 0.25, 0, 0);
+   NALU_HYPRE_AMSSetBetaAMGOptions(solver, 10, 1, 3, 0.25, 0, 0);
 
 For (singular) problems where :math:`\beta = 0` in the whole domain, different
 (in fact simpler) version of the AMS solver is offered.  To allow for this
@@ -215,7 +215,7 @@ simplification, use the following hypre call
 
 .. code-block:: c
    
-   HYPRE_AMSSetBetaPoissonMatrix(solver, NULL);
+   NALU_HYPRE_AMSSetBetaPoissonMatrix(solver, NULL);
 
 If :math:`\beta` is zero only in parts of the domain, the problem is still
 singular, but the AMS solver will try to detect this and construct a
@@ -227,7 +227,7 @@ the function
 
 .. code-block:: c
    
-   HYPRE_AMSSetInteriorNodes(solver, HYPRE_ParVector interior_nodes);
+   NALU_HYPRE_AMSSetInteriorNodes(solver, NALU_HYPRE_ParVector interior_nodes);
 
 A node is interior, if its entry in the ``interior_nodes`` array is :math:`1.0`.
 Based on this array, a restricted discrete gradient operator :math:`G_0` is
@@ -239,8 +239,8 @@ can be done periodically, or manually through the functions
 
 .. code-block:: c
    
-   HYPRE_AMSSetProjectionFrequency(solver, int projection_frequency);
-   HYPRE_AMSProjectOutGradients(solver, HYPRE_ParVector x);
+   NALU_HYPRE_AMSSetProjectionFrequency(solver, int projection_frequency);
+   NALU_HYPRE_AMSProjectOutGradients(solver, NALU_HYPRE_ParVector x);
 
 Two additional matrices are constructed in the setup of the AMS method---one
 corresponding to the coefficient :math:`\alpha` and another corresponding to
@@ -251,7 +251,7 @@ available then one can avoid one matrix construction by calling
 
 .. code-block:: c
    
-   HYPRE_AMSSetBetaPoissonMatrix(solver, Abeta);
+   NALU_HYPRE_AMSSetBetaPoissonMatrix(solver, Abeta);
 
 Similarly, if the Poisson matrix with coefficient :math:`\alpha` is available
 (denoted by ``Aalpha``) the second matrix construction can also be avoided by
@@ -259,7 +259,7 @@ calling
 
 .. code-block:: c
    
-   HYPRE_AMSSetAlphaPoissonMatrix(solver, Aalpha);
+   NALU_HYPRE_AMSSetAlphaPoissonMatrix(solver, Aalpha);
 
 Note the following regarding these functions:
 
@@ -268,7 +268,7 @@ Note the following regarding these functions:
   essential boundary conditions) are penalized.
 * It is assumed that their essential boundary conditions of :math:`{\mathbf A}`,
   ``Abeta`` and ``Aalpha`` are on the same part of the boundary.
-* ``HYPRE_AMSSetAlphaPoissonMatrix`` forces the AMS method to use a simpler, but
+* ``NALU_HYPRE_AMSSetAlphaPoissonMatrix`` forces the AMS method to use a simpler, but
   weaker (in terms of convergence) method.  With this option, the multiplicative
   AMS cycle is not guaranteed to converge with the default parameters. The
   reason for this is the fact the solver is not variationally obtained from the
@@ -283,24 +283,24 @@ are actually not used in the current AMS setup.) The setup call reads,
 
 .. code-block:: c
    
-   HYPRE_AMSSetup(solver, A, b, x);
+   NALU_HYPRE_AMSSetup(solver, A, b, x);
 
 It is important to note the order of the calling sequence. For example, do
-**not** call ``HYPRE_AMSSetup`` before calling ``HYPRE_AMSSetDiscreteGradient``
-and one of the functions ``HYPRE_AMSSetCoordinateVectors`` or
-``HYPRE_AMSSetEdgeConstantVectors``.
+**not** call ``NALU_HYPRE_AMSSetup`` before calling ``NALU_HYPRE_AMSSetDiscreteGradient``
+and one of the functions ``NALU_HYPRE_AMSSetCoordinateVectors`` or
+``NALU_HYPRE_AMSSetEdgeConstantVectors``.
 
 Once the setup has completed, we can solve the linear system by calling
 
 .. code-block:: c
    
-   HYPRE_AMSSolve(solver, A, b, x);
+   NALU_HYPRE_AMSSolve(solver, A, b, x);
 
 Finally, the solver can be destroyed with
 
 .. code-block:: c
    
-   HYPRE_AMSDestroy(&solver);
+   NALU_HYPRE_AMSDestroy(&solver);
 
 More details can be found in the files ``ams.h`` and ``ams.c`` located in the
 ``parcsr_ls`` directory.
@@ -330,7 +330,7 @@ as on the geometry of the mesh elements. The columns of :math:`{\mathbf \Pi}`
 should use a node-based numbering, where the :math:`x`/:math:`y`/:math:`z`
 components of the first node (vertex or high-order degree of freedom) should be
 listed first, followed by the :math:`x`/:math:`y`/:math:`z` components of the
-second node and so on (see the documentation of ``HYPRE_BoomerAMGSetDofFunc``).
+second node and so on (see the documentation of ``NALU_HYPRE_BoomerAMGSetDofFunc``).
 
 Similarly to the Nedelec interpolation, the discrete gradient matrix :math:`G`
 should correspond to the mapping :math:`\varphi \in \mathrm{P}_k^3 /
@@ -343,14 +343,14 @@ With these matrices, the high-order setup procedure is simply
 
 .. code-block:: c
    
-   HYPRE_AMSSetDimension(solver, dim);
-   HYPRE_AMSSetDiscreteGradient(solver, G);
-   HYPRE_AMSSetInterpolations(solver, Pi, NULL, NULL, NULL);
+   NALU_HYPRE_AMSSetDimension(solver, dim);
+   NALU_HYPRE_AMSSetDiscreteGradient(solver, G);
+   NALU_HYPRE_AMSSetInterpolations(solver, Pi, NULL, NULL, NULL);
 
 We remark that the above interface calls can also be used in the lowest-order
 case (or even other types of discretizations such as those based on the second
 family of Nedelec elements), but we recommend calling the previously described
-``HYPRE_AMSSetCoordinateVectors`` instead, since this allows AMS to handle the
+``NALU_HYPRE_AMSSetCoordinateVectors`` instead, since this allows AMS to handle the
 construction and use of :math:`{\mathbf \Pi}` internally.
 
 Specifying the monolithic :math:`{\mathbf \Pi}` limits the AMS cycle type
@@ -359,7 +359,7 @@ options to those less than 10. Alternatively one can separately specify the
 
 .. code-block:: c
    
-   HYPRE_AMSSetInterpolations(solver, NULL, Pix, Piy, Piz);
+   NALU_HYPRE_AMSSetInterpolations(solver, NULL, Pix, Piy, Piz);
 
 which enables the use of AMS cycle types with index greater than 10. By
 definition, :math:`{\mathbf \Pi}^x \varphi = {\mathbf \Pi} (\varphi,0,0)`, and
@@ -371,7 +371,7 @@ Finally, both :math:`{\mathbf \Pi}` and its components can be passed to the solv
 
 .. code-block:: c
    
-   HYPRE_AMSSetInterpolations(solver, Pi, Pix, Piy, Piz);
+   NALU_HYPRE_AMSSetInterpolations(solver, Pi, Pix, Piy, Piz);
 
 which will duplicate some memory, but allows for experimentation with all
 available AMS cycle types.
@@ -411,7 +411,7 @@ non-conforming version of the discrete gradient operator as follows:
 
 Since the linear system is posed on :math:`\mathrm{ND}_k^c`, the user needs to
 provide the conforming discrete gradient matrix :math:`G_c` to AMS, using
-``HYPRE_AMSSetDiscreteGradient``.  This matrix is defined by the requirement
+``NALU_HYPRE_AMSSetDiscreteGradient``.  This matrix is defined by the requirement
 that the above diagram commutes from :math:`\mathrm{Q}_k^{c}` to
 :math:`\mathrm{ND}_k^{nc}`, corresponding to the definition
 

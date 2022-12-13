@@ -14,7 +14,7 @@
 typedef struct
 {
    /* Space dimension (2 or 3) */
-   HYPRE_Int dim;
+   NALU_HYPRE_Int dim;
 
    /* Edge element (ND1) stiffness matrix */
    hypre_ParCSRMatrix *A;
@@ -24,28 +24,28 @@ typedef struct
    /* Coarse grid matrix on the range of G^T */
    hypre_ParCSRMatrix *A_G;
    /* AMG solver for A_G */
-   HYPRE_Solver B_G;
+   NALU_HYPRE_Solver B_G;
    /* Is the mass term coefficient zero? */
-   HYPRE_Int beta_is_zero;
+   NALU_HYPRE_Int beta_is_zero;
 
    /* Nedelec nodal interpolation matrix (vertex^dim-to-edge) */
    hypre_ParCSRMatrix *Pi;
    /* Coarse grid matrix on the range of Pi^T */
    hypre_ParCSRMatrix *A_Pi;
    /* AMG solver for A_Pi */
-   HYPRE_Solver B_Pi;
+   NALU_HYPRE_Solver B_Pi;
 
    /* Components of the Nedelec interpolation matrix (vertex-to-edge each) */
    hypre_ParCSRMatrix *Pix, *Piy, *Piz;
    /* Coarse grid matrices on the ranges of Pi{x,y,z}^T */
    hypre_ParCSRMatrix *A_Pix, *A_Piy, *A_Piz;
    /* AMG solvers for A_Pi{x,y,z} */
-   HYPRE_Solver B_Pix, B_Piy, B_Piz;
+   NALU_HYPRE_Solver B_Pix, B_Piy, B_Piz;
 
    /* Does the solver own the Nedelec interpolations? */
-   HYPRE_Int owns_Pi;
+   NALU_HYPRE_Int owns_Pi;
    /* Does the solver own the coarse grid matrices? */
-   HYPRE_Int owns_A_G, owns_A_Pi;
+   NALU_HYPRE_Int owns_A_G, owns_A_Pi;
 
    /* Coordinates of the vertices (z = 0 if dim == 2) */
    hypre_ParVector *x, *y, *z;
@@ -60,53 +60,53 @@ typedef struct
    /* Coarse grid matrix on the interior nodes */
    hypre_ParCSRMatrix *A_G0;
    /* AMG solver for A_G0 */
-   HYPRE_Solver B_G0;
+   NALU_HYPRE_Solver B_G0;
    /* How frequently to project the r.h.s. onto Ker(G0^T)? */
-   HYPRE_Int projection_frequency;
+   NALU_HYPRE_Int projection_frequency;
    /* Internal counter to use with projection_frequency in PCG */
-   HYPRE_Int solve_counter;
+   NALU_HYPRE_Int solve_counter;
 
    /* Solver options */
-   HYPRE_Int maxit;
-   HYPRE_Real tol;
-   HYPRE_Int cycle_type;
-   HYPRE_Int print_level;
+   NALU_HYPRE_Int maxit;
+   NALU_HYPRE_Real tol;
+   NALU_HYPRE_Int cycle_type;
+   NALU_HYPRE_Int print_level;
 
    /* Smoothing options for A */
-   HYPRE_Int A_relax_type;
-   HYPRE_Int A_relax_times;
+   NALU_HYPRE_Int A_relax_type;
+   NALU_HYPRE_Int A_relax_times;
    hypre_Vector *A_l1_norms;
-   HYPRE_Real A_relax_weight;
-   HYPRE_Real A_omega;
-   HYPRE_Real A_max_eig_est;
-   HYPRE_Real A_min_eig_est;
-   HYPRE_Int A_cheby_order;
-   HYPRE_Real  A_cheby_fraction;
+   NALU_HYPRE_Real A_relax_weight;
+   NALU_HYPRE_Real A_omega;
+   NALU_HYPRE_Real A_max_eig_est;
+   NALU_HYPRE_Real A_min_eig_est;
+   NALU_HYPRE_Int A_cheby_order;
+   NALU_HYPRE_Real  A_cheby_fraction;
 
    /* AMG options for B_G */
-   HYPRE_Int B_G_coarsen_type;
-   HYPRE_Int B_G_agg_levels;
-   HYPRE_Int B_G_relax_type;
-   HYPRE_Int B_G_coarse_relax_type;
-   HYPRE_Real B_G_theta;
-   HYPRE_Int B_G_interp_type;
-   HYPRE_Int B_G_Pmax;
+   NALU_HYPRE_Int B_G_coarsen_type;
+   NALU_HYPRE_Int B_G_agg_levels;
+   NALU_HYPRE_Int B_G_relax_type;
+   NALU_HYPRE_Int B_G_coarse_relax_type;
+   NALU_HYPRE_Real B_G_theta;
+   NALU_HYPRE_Int B_G_interp_type;
+   NALU_HYPRE_Int B_G_Pmax;
 
    /* AMG options for B_Pi */
-   HYPRE_Int B_Pi_coarsen_type;
-   HYPRE_Int B_Pi_agg_levels;
-   HYPRE_Int B_Pi_relax_type;
-   HYPRE_Int B_Pi_coarse_relax_type;
-   HYPRE_Real B_Pi_theta;
-   HYPRE_Int B_Pi_interp_type;
-   HYPRE_Int B_Pi_Pmax;
+   NALU_HYPRE_Int B_Pi_coarsen_type;
+   NALU_HYPRE_Int B_Pi_agg_levels;
+   NALU_HYPRE_Int B_Pi_relax_type;
+   NALU_HYPRE_Int B_Pi_coarse_relax_type;
+   NALU_HYPRE_Real B_Pi_theta;
+   NALU_HYPRE_Int B_Pi_interp_type;
+   NALU_HYPRE_Int B_Pi_Pmax;
 
    /* Temporary vectors */
    hypre_ParVector *r0, *g0, *r1, *g1, *r2, *g2, *zz;
 
    /* Output log info */
-   HYPRE_Int num_iterations;
-   HYPRE_Real rel_resid_norm;
+   NALU_HYPRE_Int num_iterations;
+   NALU_HYPRE_Real rel_resid_norm;
 
 } hypre_AMSData;
 

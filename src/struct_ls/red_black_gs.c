@@ -23,7 +23,7 @@ hypre_RedBlackGSCreate( MPI_Comm  comm )
 {
    hypre_RedBlackGSData *relax_data;
 
-   relax_data = hypre_CTAlloc(hypre_RedBlackGSData,  1, HYPRE_MEMORY_HOST);
+   relax_data = hypre_CTAlloc(hypre_RedBlackGSData,  1, NALU_HYPRE_MEMORY_HOST);
 
    (relax_data -> comm)       = comm;
    (relax_data -> time_index) = hypre_InitializeTiming("RedBlackGS");
@@ -46,7 +46,7 @@ hypre_RedBlackGSCreate( MPI_Comm  comm )
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_RedBlackGSDestroy( void *relax_vdata )
 {
    hypre_RedBlackGSData *relax_data = (hypre_RedBlackGSData *)relax_vdata;
@@ -59,7 +59,7 @@ hypre_RedBlackGSDestroy( void *relax_vdata )
       hypre_ComputePkgDestroy(relax_data -> compute_pkg);
 
       hypre_FinalizeTiming(relax_data -> time_index);
-      hypre_TFree(relax_data, HYPRE_MEMORY_HOST);
+      hypre_TFree(relax_data, NALU_HYPRE_MEMORY_HOST);
    }
 
    return hypre_error_flag;
@@ -68,7 +68,7 @@ hypre_RedBlackGSDestroy( void *relax_vdata )
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_RedBlackGSSetup( void               *relax_vdata,
                        hypre_StructMatrix *A,
                        hypre_StructVector *b,
@@ -76,7 +76,7 @@ hypre_RedBlackGSSetup( void               *relax_vdata,
 {
    hypre_RedBlackGSData  *relax_data = (hypre_RedBlackGSData *)relax_vdata;
 
-   HYPRE_Int              diag_rank;
+   NALU_HYPRE_Int              diag_rank;
    hypre_ComputePkg      *compute_pkg;
 
    hypre_StructGrid      *grid;
@@ -118,7 +118,7 @@ hypre_RedBlackGSSetup( void               *relax_vdata,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_RedBlackGS( void               *relax_vdata,
                   hypre_StructMatrix *A,
                   hypre_StructVector *b,
@@ -126,12 +126,12 @@ hypre_RedBlackGS( void               *relax_vdata,
 {
    hypre_RedBlackGSData  *relax_data = (hypre_RedBlackGSData *)relax_vdata;
 
-   HYPRE_Int              max_iter    = (relax_data -> max_iter);
-   HYPRE_Int              zero_guess  = (relax_data -> zero_guess);
-   HYPRE_Int              rb_start    = (relax_data -> rb_start);
-   HYPRE_Int              diag_rank   = (relax_data -> diag_rank);
+   NALU_HYPRE_Int              max_iter    = (relax_data -> max_iter);
+   NALU_HYPRE_Int              zero_guess  = (relax_data -> zero_guess);
+   NALU_HYPRE_Int              rb_start    = (relax_data -> rb_start);
+   NALU_HYPRE_Int              diag_rank   = (relax_data -> diag_rank);
    hypre_ComputePkg      *compute_pkg = (relax_data -> compute_pkg);
-   HYPRE_Int              ndim = hypre_StructMatrixNDim(A);
+   NALU_HYPRE_Int              ndim = hypre_StructMatrixNDim(A);
 
    hypre_CommHandle      *comm_handle;
 
@@ -143,27 +143,27 @@ hypre_RedBlackGS( void               *relax_vdata,
    hypre_Box             *b_dbox;
    hypre_Box             *x_dbox;
 
-   HYPRE_Int              Astart, Ani, Anj;
-   HYPRE_Int              bstart, bni, bnj;
-   HYPRE_Int              xstart, xni, xnj;
-   HYPRE_Int              xoff0, xoff1, xoff2, xoff3, xoff4, xoff5;
+   NALU_HYPRE_Int              Astart, Ani, Anj;
+   NALU_HYPRE_Int              bstart, bni, bnj;
+   NALU_HYPRE_Int              xstart, xni, xnj;
+   NALU_HYPRE_Int              xoff0, xoff1, xoff2, xoff3, xoff4, xoff5;
 
-   HYPRE_Real            *Ap;
-   HYPRE_Real            *Ap0, *Ap1, *Ap2, *Ap3, *Ap4, *Ap5;
-   HYPRE_Real            *bp;
-   HYPRE_Real            *xp;
+   NALU_HYPRE_Real            *Ap;
+   NALU_HYPRE_Real            *Ap0, *Ap1, *Ap2, *Ap3, *Ap4, *Ap5;
+   NALU_HYPRE_Real            *bp;
+   NALU_HYPRE_Real            *xp;
 
    hypre_IndexRef         start;
    hypre_Index            loop_size;
 
    hypre_StructStencil   *stencil;
    hypre_Index           *stencil_shape;
-   HYPRE_Int              stencil_size;
-   HYPRE_Int              offd[6];
+   NALU_HYPRE_Int              stencil_size;
+   NALU_HYPRE_Int              offd[6];
 
-   HYPRE_Int              iter, rb, redblack, d;
-   HYPRE_Int              compute_i, i, j;
-   HYPRE_Int              ni, nj, nk;
+   NALU_HYPRE_Int              iter, rb, redblack, d;
+   NALU_HYPRE_Int              compute_i, i, j;
+   NALU_HYPRE_Int              ni, nj, nk;
 
    /*----------------------------------------------------------
     * Initialize some things and deal with special cases
@@ -488,9 +488,9 @@ hypre_RedBlackGS( void               *relax_vdata,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_RedBlackGSSetTol( void   *relax_vdata,
-                        HYPRE_Real  tol )
+                        NALU_HYPRE_Real  tol )
 {
    hypre_RedBlackGSData *relax_data = (hypre_RedBlackGSData *)relax_vdata;
 
@@ -502,9 +502,9 @@ hypre_RedBlackGSSetTol( void   *relax_vdata,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_RedBlackGSSetMaxIter( void *relax_vdata,
-                            HYPRE_Int   max_iter )
+                            NALU_HYPRE_Int   max_iter )
 {
    hypre_RedBlackGSData *relax_data = (hypre_RedBlackGSData *)relax_vdata;
 
@@ -516,9 +516,9 @@ hypre_RedBlackGSSetMaxIter( void *relax_vdata,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_RedBlackGSSetZeroGuess( void *relax_vdata,
-                              HYPRE_Int   zero_guess )
+                              NALU_HYPRE_Int   zero_guess )
 {
    hypre_RedBlackGSData *relax_data = (hypre_RedBlackGSData *)relax_vdata;
 
@@ -530,7 +530,7 @@ hypre_RedBlackGSSetZeroGuess( void *relax_vdata,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_RedBlackGSSetStartRed( void *relax_vdata )
 {
    hypre_RedBlackGSData *relax_data = (hypre_RedBlackGSData *)relax_vdata;
@@ -543,7 +543,7 @@ hypre_RedBlackGSSetStartRed( void *relax_vdata )
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_RedBlackGSSetStartBlack( void *relax_vdata )
 {
    hypre_RedBlackGSData *relax_data = (hypre_RedBlackGSData *)relax_vdata;

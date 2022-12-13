@@ -18,16 +18,16 @@
  * hypre_BoomerAMGCycle
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_BoomerAMGCGRelaxWt( void       *amg_vdata,
-                          HYPRE_Int   level,
-                          HYPRE_Int   num_cg_sweeps,
-                          HYPRE_Real *rlx_wt_ptr)
+                          NALU_HYPRE_Int   level,
+                          NALU_HYPRE_Int   num_cg_sweeps,
+                          NALU_HYPRE_Real *rlx_wt_ptr)
 {
    hypre_ParAMGData *amg_data = (hypre_ParAMGData*) amg_vdata;
 
    MPI_Comm comm;
-   HYPRE_Solver *smoother;
+   NALU_HYPRE_Solver *smoother;
    /* Data Structure variables */
 
    /* hypre_ParCSRMatrix **A_array = hypre_ParAMGDataAArray(amg_data); */
@@ -42,59 +42,59 @@ hypre_BoomerAMGCGRelaxWt( void       *amg_vdata,
    hypre_ParVector    *Ztemp;
    hypre_ParVector    *Qtemp = NULL;
 
-   HYPRE_Int    *CF_marker = hypre_IntArrayData(hypre_ParAMGDataCFMarkerArray(amg_data)[level]);
-   HYPRE_Real   *Ptemp_data;
-   HYPRE_Real   *Ztemp_data;
+   NALU_HYPRE_Int    *CF_marker = hypre_IntArrayData(hypre_ParAMGDataCFMarkerArray(amg_data)[level]);
+   NALU_HYPRE_Real   *Ptemp_data;
+   NALU_HYPRE_Real   *Ztemp_data;
 
-   /* HYPRE_Int     **unknown_map_array;
-   HYPRE_Int     **point_map_array;
-   HYPRE_Int     **v_at_point_array; */
+   /* NALU_HYPRE_Int     **unknown_map_array;
+   NALU_HYPRE_Int     **point_map_array;
+   NALU_HYPRE_Int     **v_at_point_array; */
 
 
-   HYPRE_Int      *grid_relax_type;
+   NALU_HYPRE_Int      *grid_relax_type;
 
    /* Local variables  */
-   HYPRE_Int       Solve_err_flag;
-   HYPRE_Int       i, j, jj;
-   HYPRE_Int       num_sweeps;
-   HYPRE_Int       relax_type;
-   HYPRE_Int       local_size;
-   HYPRE_Int       old_size;
-   HYPRE_Int       my_id = 0;
-   HYPRE_Int       smooth_type;
-   HYPRE_Int       smooth_num_levels;
-   HYPRE_Int       smooth_option = 0;
-   HYPRE_Int       needQ = 0;
+   NALU_HYPRE_Int       Solve_err_flag;
+   NALU_HYPRE_Int       i, j, jj;
+   NALU_HYPRE_Int       num_sweeps;
+   NALU_HYPRE_Int       relax_type;
+   NALU_HYPRE_Int       local_size;
+   NALU_HYPRE_Int       old_size;
+   NALU_HYPRE_Int       my_id = 0;
+   NALU_HYPRE_Int       smooth_type;
+   NALU_HYPRE_Int       smooth_num_levels;
+   NALU_HYPRE_Int       smooth_option = 0;
+   NALU_HYPRE_Int       needQ = 0;
 
    hypre_Vector *l1_norms = NULL;
 
-   HYPRE_Real    alpha;
-   HYPRE_Real    beta;
-   HYPRE_Real    gamma = 1.0;
-   HYPRE_Real    gammaold;
+   NALU_HYPRE_Real    alpha;
+   NALU_HYPRE_Real    beta;
+   NALU_HYPRE_Real    gamma = 1.0;
+   NALU_HYPRE_Real    gammaold;
 
-   HYPRE_Real   *tridiag;
-   HYPRE_Real   *trioffd;
-   HYPRE_Real    alphinv, row_sum = 0;
-   HYPRE_Real    max_row_sum = 0;
-   HYPRE_Real    rlx_wt = 0;
-   HYPRE_Real    rlx_wt_old = 0;
-   HYPRE_Real    lambda_max, lambda_max_old;
-   /* HYPRE_Real    lambda_min, lambda_min_old; */
+   NALU_HYPRE_Real   *tridiag;
+   NALU_HYPRE_Real   *trioffd;
+   NALU_HYPRE_Real    alphinv, row_sum = 0;
+   NALU_HYPRE_Real    max_row_sum = 0;
+   NALU_HYPRE_Real    rlx_wt = 0;
+   NALU_HYPRE_Real    rlx_wt_old = 0;
+   NALU_HYPRE_Real    lambda_max, lambda_max_old;
+   /* NALU_HYPRE_Real    lambda_min, lambda_min_old; */
 
 #if 0
-   HYPRE_Real   *D_mat;
-   HYPRE_Real   *S_vec;
+   NALU_HYPRE_Real   *D_mat;
+   NALU_HYPRE_Real   *S_vec;
 #endif
 
-#if !defined(HYPRE_USING_CUDA) && !defined(HYPRE_USING_HIP)
-   HYPRE_Int num_threads = hypre_NumThreads();
+#if !defined(NALU_HYPRE_USING_CUDA) && !defined(NALU_HYPRE_USING_HIP)
+   NALU_HYPRE_Int num_threads = hypre_NumThreads();
 #endif
 
    /* Acquire data and allocate storage */
 
-   tridiag  = hypre_CTAlloc(HYPRE_Real,  num_cg_sweeps + 1, HYPRE_MEMORY_HOST);
-   trioffd  = hypre_CTAlloc(HYPRE_Real,  num_cg_sweeps + 1, HYPRE_MEMORY_HOST);
+   tridiag  = hypre_CTAlloc(NALU_HYPRE_Real,  num_cg_sweeps + 1, NALU_HYPRE_MEMORY_HOST);
+   trioffd  = hypre_CTAlloc(NALU_HYPRE_Real,  num_cg_sweeps + 1, NALU_HYPRE_MEMORY_HOST);
    for (i = 0; i < num_cg_sweeps + 1; i++)
    {
       tridiag[i] = 0;
@@ -123,7 +123,7 @@ hypre_BoomerAMGCGRelaxWt( void       *amg_vdata,
       l1_norms = hypre_ParAMGDataL1Norms(amg_data)[level];
    }
 
-#if !defined(HYPRE_USING_CUDA) && !defined(HYPRE_USING_HIP)
+#if !defined(NALU_HYPRE_USING_CUDA) && !defined(NALU_HYPRE_USING_HIP)
    if (num_threads > 1)
 #endif
    {
@@ -214,34 +214,34 @@ hypre_BoomerAMGCGRelaxWt( void       *amg_vdata,
                                      Ztemp, beta, Vtemp);
             if (smooth_option == 8)
             {
-               HYPRE_ParCSRParaSailsSolve(smoother[level],
-                                          (HYPRE_ParCSRMatrix) A,
-                                          (HYPRE_ParVector) Vtemp,
-                                          (HYPRE_ParVector) Utemp);
+               NALU_HYPRE_ParCSRParaSailsSolve(smoother[level],
+                                          (NALU_HYPRE_ParCSRMatrix) A,
+                                          (NALU_HYPRE_ParVector) Vtemp,
+                                          (NALU_HYPRE_ParVector) Utemp);
             }
             else if (smooth_option == 7)
             {
-               HYPRE_ParCSRPilutSolve(smoother[level],
-                                      (HYPRE_ParCSRMatrix) A,
-                                      (HYPRE_ParVector) Vtemp,
-                                      (HYPRE_ParVector) Utemp);
+               NALU_HYPRE_ParCSRPilutSolve(smoother[level],
+                                      (NALU_HYPRE_ParCSRMatrix) A,
+                                      (NALU_HYPRE_ParVector) Vtemp,
+                                      (NALU_HYPRE_ParVector) Utemp);
                hypre_ParVectorAxpy(1.0, Utemp, Ztemp);
             }
             else if (smooth_option == 9)
             {
-               HYPRE_EuclidSolve(smoother[level],
-                                 (HYPRE_ParCSRMatrix) A,
-                                 (HYPRE_ParVector) Vtemp,
-                                 (HYPRE_ParVector) Utemp);
+               NALU_HYPRE_EuclidSolve(smoother[level],
+                                 (NALU_HYPRE_ParCSRMatrix) A,
+                                 (NALU_HYPRE_ParVector) Vtemp,
+                                 (NALU_HYPRE_ParVector) Utemp);
                hypre_ParVectorAxpy(1.0, Utemp, Ztemp);
             }
          }
          else if (smooth_option == 6)
          {
-            HYPRE_SchwarzSolve(smoother[level],
-                               (HYPRE_ParCSRMatrix) A,
-                               (HYPRE_ParVector) Rtemp,
-                               (HYPRE_ParVector) Ztemp);
+            NALU_HYPRE_SchwarzSolve(smoother[level],
+                               (NALU_HYPRE_ParCSRMatrix) A,
+                               (NALU_HYPRE_ParVector) Rtemp,
+                               (NALU_HYPRE_ParVector) Ztemp);
          }
          else
          {
@@ -261,8 +261,8 @@ hypre_BoomerAMGCGRelaxWt( void       *amg_vdata,
          if (Solve_err_flag != 0)
          {
             hypre_ParVectorDestroy(Ptemp);
-            hypre_TFree(tridiag, HYPRE_MEMORY_HOST);
-            hypre_TFree(trioffd, HYPRE_MEMORY_HOST);
+            hypre_TFree(tridiag, NALU_HYPRE_MEMORY_HOST);
+            hypre_TFree(trioffd, NALU_HYPRE_MEMORY_HOST);
             return (Solve_err_flag);
          }
       }
@@ -351,8 +351,8 @@ hypre_BoomerAMGCGRelaxWt( void       *amg_vdata,
       hypre_ParVectorDestroy(Qtemp);
    }
 
-   hypre_TFree(tridiag, HYPRE_MEMORY_HOST);
-   hypre_TFree(trioffd, HYPRE_MEMORY_HOST);
+   hypre_TFree(tridiag, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(trioffd, NALU_HYPRE_MEMORY_HOST);
 
    if (smooth_option > 6 && smooth_option < 10)
    {
@@ -368,17 +368,17 @@ hypre_BoomerAMGCGRelaxWt( void       *amg_vdata,
  * hypre_Bisection
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_Bisection(HYPRE_Int n, HYPRE_Real *diag, HYPRE_Real *offd,
-                HYPRE_Real y, HYPRE_Real z,
-                HYPRE_Real tol, HYPRE_Int k, HYPRE_Real *ev_ptr)
+NALU_HYPRE_Int
+hypre_Bisection(NALU_HYPRE_Int n, NALU_HYPRE_Real *diag, NALU_HYPRE_Real *offd,
+                NALU_HYPRE_Real y, NALU_HYPRE_Real z,
+                NALU_HYPRE_Real tol, NALU_HYPRE_Int k, NALU_HYPRE_Real *ev_ptr)
 {
-   HYPRE_Real x;
-   HYPRE_Real eigen_value;
-   HYPRE_Int ierr = 0;
-   HYPRE_Int sign_change = 0;
-   HYPRE_Int i;
-   HYPRE_Real p0, p1, p2;
+   NALU_HYPRE_Real x;
+   NALU_HYPRE_Real eigen_value;
+   NALU_HYPRE_Int ierr = 0;
+   NALU_HYPRE_Int sign_change = 0;
+   NALU_HYPRE_Int i;
+   NALU_HYPRE_Real p0, p1, p2;
 
    while (fabs(y - z) > tol * (fabs(y) + fabs(z)))
    {

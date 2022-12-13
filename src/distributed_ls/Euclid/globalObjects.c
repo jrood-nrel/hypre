@@ -26,8 +26,8 @@ TimeLog_dh  tlog_dh = NULL;     /* internal timing  functionality */
 Mem_dh      mem_dh = NULL;      /* memory management */
 FILE        *logFile = NULL;
 char        msgBuf_dh[MSG_BUF_SIZE_DH]; /* for internal use */
-HYPRE_Int         np_dh = 1;     /* number of processors and subdomains */
-HYPRE_Int         myid_dh = 0;   /* rank of this processor (and subdomain) */
+NALU_HYPRE_Int         np_dh = 1;     /* number of processors and subdomains */
+NALU_HYPRE_Int         myid_dh = 0;   /* rank of this processor (and subdomain) */
 MPI_Comm    comm_dh = 0;
 
 
@@ -37,7 +37,7 @@ MPI_Comm    comm_dh = 0;
    * when compiled with the debugging (-g) option.
    */
 
-void openLogfile_dh(HYPRE_Int argc, char *argv[]);
+void openLogfile_dh(NALU_HYPRE_Int argc, char *argv[]);
 void closeLogfile_dh();
 bool logInfoToStderr  = false;
 bool logInfoToFile    = true;
@@ -45,7 +45,7 @@ bool logFuncsToStderr = false;
 bool logFuncsToFile   = false;
 
 bool ignoreMe = true;
-HYPRE_Int  ref_counter = 0;
+NALU_HYPRE_Int  ref_counter = 0;
 
 
 /*-------------------------------------------------------------------------
@@ -57,15 +57,15 @@ HYPRE_Int  ref_counter = 0;
 #define MAX_STACK_SIZE 20
 
 static  char errMsg_private[MAX_STACK_SIZE][MAX_MSG_SIZE];
-static  HYPRE_Int errCount_private = 0;
+static  NALU_HYPRE_Int errCount_private = 0;
 
 static  char calling_stack[MAX_STACK_SIZE][MAX_MSG_SIZE];
-/* static  HYPRE_Int  priority_private[MAX_STACK_SIZE]; */
-static  HYPRE_Int calling_stack_count = 0;
+/* static  NALU_HYPRE_Int  priority_private[MAX_STACK_SIZE]; */
+static  NALU_HYPRE_Int calling_stack_count = 0;
 
 /* static  char errMsg[MAX_MSG_SIZE];    */
 
-void  openLogfile_dh(HYPRE_Int argc, char *argv[])
+void  openLogfile_dh(NALU_HYPRE_Int argc, char *argv[])
 {
   char buf[1024];
 
@@ -79,7 +79,7 @@ void  openLogfile_dh(HYPRE_Int argc, char *argv[])
 
   /* set user supplied logging filename, if one was specified */
   if (argc && argv != NULL) {
-    HYPRE_Int j;
+    NALU_HYPRE_Int j;
     for (j=1; j<argc; ++j) {
       if (strcmp(argv[j],"-logFile") == 0) {
         if (j+1 < argc) {
@@ -112,7 +112,7 @@ void  closeLogfile_dh()
   }
 }
 
-void  setInfo_dh(const char *msg,const char *function,const char *file, HYPRE_Int line)
+void  setInfo_dh(const char *msg,const char *function,const char *file, NALU_HYPRE_Int line)
 {
   if (logInfoToFile && logFile != NULL) {
     hypre_fprintf(logFile, "INFO: %s;\n       function= %s  file=%s  line=%i\n",
@@ -129,7 +129,7 @@ void  setInfo_dh(const char *msg,const char *function,const char *file, HYPRE_In
  *  Error handling stuph follows
  *----------------------------------------------------------------------*/
 
-void dh_StartFunc(const char *function,const char *file, HYPRE_Int line, HYPRE_Int priority)
+void dh_StartFunc(const char *function,const char *file, NALU_HYPRE_Int line, NALU_HYPRE_Int priority)
 {
   if (priority == 1) {
     hypre_sprintf(calling_stack[calling_stack_count],
@@ -147,7 +147,7 @@ void dh_StartFunc(const char *function,const char *file, HYPRE_Int line, HYPRE_I
   }
 }
 
-void dh_EndFunc(const char *function, HYPRE_Int priority)
+void dh_EndFunc(const char *function, NALU_HYPRE_Int priority)
 {
   if (priority == 1) {
     --calling_stack_count;
@@ -163,7 +163,7 @@ void dh_EndFunc(const char *function, HYPRE_Int priority)
 }
 
 
-void  setError_dh(const char *msg,const char *function,const char *file, HYPRE_Int line)
+void  setError_dh(const char *msg,const char *function,const char *file, NALU_HYPRE_Int line)
 {
   errFlag_dh = true;
   if (! strcmp(msg, "")) {
@@ -190,7 +190,7 @@ void  printErrorMsg(FILE *fp)
     hypre_fprintf(fp, "errFlag_dh is not set; nothing to print!\n");
     fflush(fp);
   } else {
-    HYPRE_Int i;
+    NALU_HYPRE_Int i;
     hypre_fprintf(fp, "\n============= error stack trace ====================\n");
     for (i=0; i<errCount_private; ++i) {
       hypre_fprintf(fp, "%s\n", errMsg_private[i]);
@@ -202,7 +202,7 @@ void  printErrorMsg(FILE *fp)
 
 void  printFunctionStack(FILE *fp)
 {
-  HYPRE_Int i;
+  NALU_HYPRE_Int i;
   for (i=0; i<calling_stack_count; ++i) {
     hypre_fprintf(fp, "%s\n", calling_stack[i]);
   }
@@ -217,11 +217,11 @@ void  printFunctionStack(FILE *fp)
 
 #define MAX_ERROR_SPACES   200
 static char spaces[MAX_ERROR_SPACES];
-static HYPRE_Int nesting = 0;
+static NALU_HYPRE_Int nesting = 0;
 static bool initSpaces = true;
 #define INDENT_DH 3
 
-void Error_dhStartFunc(char *function, char *file, HYPRE_Int line)
+void Error_dhStartFunc(char *function, char *file, NALU_HYPRE_Int line)
 {
   if (initSpaces) {
     memset(spaces, ' ', MAX_ERROR_SPACES*sizeof(char));
@@ -271,7 +271,7 @@ bool EuclidIsInitialized()
 
 #undef __FUNC__
 #define __FUNC__ "EuclidInitialize"
-void EuclidInitialize(HYPRE_Int argc, char *argv[], char *help)
+void EuclidInitialize(NALU_HYPRE_Int argc, char *argv[], char *help)
 {
   if (! EuclidIsActive) {
     hypre_MPI_Comm_size(comm_dh, &np_dh);
@@ -361,10 +361,10 @@ void fprintf_dh(FILE *fp,const char *fmt, ...)
 
 #undef __FUNC__
 #define __FUNC__ "echoInvocation_dh"
-void echoInvocation_dh(MPI_Comm comm, char *prefix, HYPRE_Int argc, char *argv[])
+void echoInvocation_dh(MPI_Comm comm, char *prefix, NALU_HYPRE_Int argc, char *argv[])
 {
   START_FUNC_DH
-  HYPRE_Int i, id;
+  NALU_HYPRE_Int i, id;
 
   hypre_MPI_Comm_rank(comm, &id);
 

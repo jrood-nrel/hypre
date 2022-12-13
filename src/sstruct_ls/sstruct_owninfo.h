@@ -17,14 +17,14 @@
 
 typedef struct
 {
-   HYPRE_Int             size;
+   NALU_HYPRE_Int             size;
 
    hypre_BoxArrayArray  *own_boxes;    /* size of fgrid */
-   HYPRE_Int           **own_cboxnums; /* local cbox number- each fbox
+   NALU_HYPRE_Int           **own_cboxnums; /* local cbox number- each fbox
                                           leads to an array of cboxes */
 
    hypre_BoxArrayArray  *own_composite_cboxes;  /* size of cgrid */
-   HYPRE_Int             own_composite_size;
+   NALU_HYPRE_Int             own_composite_size;
 } hypre_SStructOwnInfoData;
 
 

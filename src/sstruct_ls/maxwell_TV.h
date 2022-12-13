@@ -22,22 +22,22 @@ typedef struct
 {
    MPI_Comm                comm;
 
-   HYPRE_Real              tol;
-   HYPRE_Int               max_iter;
-   HYPRE_Int               rel_change;
-   HYPRE_Int               zero_guess;
-   HYPRE_Int               ndim;
+   NALU_HYPRE_Real              tol;
+   NALU_HYPRE_Int               max_iter;
+   NALU_HYPRE_Int               rel_change;
+   NALU_HYPRE_Int               zero_guess;
+   NALU_HYPRE_Int               ndim;
 
-   HYPRE_Int               num_pre_relax;  /* number of pre relaxation sweeps */
-   HYPRE_Int               num_post_relax; /* number of post relaxation sweeps */
+   NALU_HYPRE_Int               num_pre_relax;  /* number of pre relaxation sweeps */
+   NALU_HYPRE_Int               num_post_relax; /* number of post relaxation sweeps */
 
-   HYPRE_Int               constant_coef;
+   NALU_HYPRE_Int               constant_coef;
 
    hypre_Index            *rfactor;
 
    hypre_SStructGrid     **egrid_l;
 
-   HYPRE_IJMatrix          Aen;
+   NALU_HYPRE_IJMatrix          Aen;
    hypre_ParCSRMatrix    **Aen_l;
 
    /* these will be extracted from the amg_data structure. Note that there is no grid
@@ -58,18 +58,18 @@ typedef struct
    hypre_ParVector       **en_l;
    hypre_ParVector       **nVtemp_l;
    hypre_ParVector       **nVtemp2_l;
-   HYPRE_Int             **nCF_marker_l;
-   HYPRE_Real             *nrelax_weight;
-   HYPRE_Real             *nomega;
-   HYPRE_Int               nrelax_type;
-   HYPRE_Int               node_numlevels;
+   NALU_HYPRE_Int             **nCF_marker_l;
+   NALU_HYPRE_Real             *nrelax_weight;
+   NALU_HYPRE_Real             *nomega;
+   NALU_HYPRE_Int               nrelax_type;
+   NALU_HYPRE_Int               node_numlevels;
 
    hypre_ParCSRMatrix     *Tgrad;
    hypre_ParCSRMatrix     *T_transpose;
 
    /* edge data structure. These will have grids. */
-   HYPRE_Int               edge_maxlevels;
-   HYPRE_Int               edge_numlevels;
+   NALU_HYPRE_Int               edge_maxlevels;
+   NALU_HYPRE_Int               edge_numlevels;
    hypre_ParCSRMatrix    **Aee_l;
    hypre_ParVector       **be_l;
    hypre_ParVector       **xe_l;
@@ -77,29 +77,29 @@ typedef struct
    hypre_ParVector       **ee_l;
    hypre_ParVector       **eVtemp_l;
    hypre_ParVector       **eVtemp2_l;
-   HYPRE_Int             **eCF_marker_l;
-   HYPRE_Real             *erelax_weight;
-   HYPRE_Real             *eomega;
-   HYPRE_Int               erelax_type;
+   NALU_HYPRE_Int             **eCF_marker_l;
+   NALU_HYPRE_Real             *erelax_weight;
+   NALU_HYPRE_Real             *eomega;
+   NALU_HYPRE_Int               erelax_type;
 
    /* edge data structure. These will have no grid. */
    hypre_IJMatrix        **Pe_l;
    hypre_IJMatrix        **ReT_l;
-   HYPRE_Int             **BdryRanks_l;
-   HYPRE_Int              *BdryRanksCnts_l;
+   NALU_HYPRE_Int             **BdryRanks_l;
+   NALU_HYPRE_Int              *BdryRanksCnts_l;
 
    /* edge-node data structure. These will have grids. */
-   HYPRE_Int               en_numlevels;
+   NALU_HYPRE_Int               en_numlevels;
 
    /* log info (always logged) */
-   HYPRE_Int               num_iterations;
-   HYPRE_Int               time_index;
+   NALU_HYPRE_Int               num_iterations;
+   NALU_HYPRE_Int               time_index;
 
    /* additional log info (logged when `logging' > 0) */
-   HYPRE_Int               print_level;
-   HYPRE_Int               logging;
-   HYPRE_Real             *norms;
-   HYPRE_Real             *rel_norms;
+   NALU_HYPRE_Int               print_level;
+   NALU_HYPRE_Int               logging;
+   NALU_HYPRE_Real             *norms;
+   NALU_HYPRE_Real             *rel_norms;
 
 } hypre_MaxwellData;
 

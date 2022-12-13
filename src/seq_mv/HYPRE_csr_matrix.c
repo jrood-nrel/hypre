@@ -7,26 +7,26 @@
 
 /******************************************************************************
  *
- * HYPRE_CSRMatrix interface
+ * NALU_HYPRE_CSRMatrix interface
  *
  *****************************************************************************/
 
 #include "seq_mv.h"
 
 /*--------------------------------------------------------------------------
- * HYPRE_CSRMatrixCreate
+ * NALU_HYPRE_CSRMatrixCreate
  *--------------------------------------------------------------------------*/
 
-HYPRE_CSRMatrix
-HYPRE_CSRMatrixCreate( HYPRE_Int  num_rows,
-                       HYPRE_Int  num_cols,
-                       HYPRE_Int *row_sizes )
+NALU_HYPRE_CSRMatrix
+NALU_HYPRE_CSRMatrixCreate( NALU_HYPRE_Int  num_rows,
+                       NALU_HYPRE_Int  num_cols,
+                       NALU_HYPRE_Int *row_sizes )
 {
    hypre_CSRMatrix *matrix;
-   HYPRE_Int             *matrix_i;
-   HYPRE_Int              i;
+   NALU_HYPRE_Int             *matrix_i;
+   NALU_HYPRE_Int              i;
 
-   matrix_i = hypre_CTAlloc(HYPRE_Int,  num_rows + 1, HYPRE_MEMORY_HOST);
+   matrix_i = hypre_CTAlloc(NALU_HYPRE_Int,  num_rows + 1, NALU_HYPRE_MEMORY_HOST);
    matrix_i[0] = 0;
    for (i = 0; i < num_rows; i++)
    {
@@ -36,45 +36,45 @@ HYPRE_CSRMatrixCreate( HYPRE_Int  num_rows,
    matrix = hypre_CSRMatrixCreate(num_rows, num_cols, matrix_i[num_rows]);
    hypre_CSRMatrixI(matrix) = matrix_i;
 
-   return ( (HYPRE_CSRMatrix) matrix );
+   return ( (NALU_HYPRE_CSRMatrix) matrix );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_CSRMatrixDestroy
+ * NALU_HYPRE_CSRMatrixDestroy
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_CSRMatrixDestroy( HYPRE_CSRMatrix matrix )
+NALU_HYPRE_Int
+NALU_HYPRE_CSRMatrixDestroy( NALU_HYPRE_CSRMatrix matrix )
 {
    return ( hypre_CSRMatrixDestroy( (hypre_CSRMatrix *) matrix ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_CSRMatrixInitialize
+ * NALU_HYPRE_CSRMatrixInitialize
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_CSRMatrixInitialize( HYPRE_CSRMatrix matrix )
+NALU_HYPRE_Int
+NALU_HYPRE_CSRMatrixInitialize( NALU_HYPRE_CSRMatrix matrix )
 {
    return ( hypre_CSRMatrixInitialize( (hypre_CSRMatrix *) matrix ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_CSRMatrixRead
+ * NALU_HYPRE_CSRMatrixRead
  *--------------------------------------------------------------------------*/
 
-HYPRE_CSRMatrix
-HYPRE_CSRMatrixRead( char            *file_name )
+NALU_HYPRE_CSRMatrix
+NALU_HYPRE_CSRMatrixRead( char            *file_name )
 {
-   return ( (HYPRE_CSRMatrix) hypre_CSRMatrixRead( file_name ) );
+   return ( (NALU_HYPRE_CSRMatrix) hypre_CSRMatrixRead( file_name ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_CSRMatrixPrint
+ * NALU_HYPRE_CSRMatrixPrint
  *--------------------------------------------------------------------------*/
 
 void
-HYPRE_CSRMatrixPrint( HYPRE_CSRMatrix  matrix,
+NALU_HYPRE_CSRMatrixPrint( NALU_HYPRE_CSRMatrix  matrix,
                       char            *file_name )
 {
    hypre_CSRMatrixPrint( (hypre_CSRMatrix *) matrix,
@@ -82,11 +82,11 @@ HYPRE_CSRMatrixPrint( HYPRE_CSRMatrix  matrix,
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_CSRMatrixGetNumRows
+ * NALU_HYPRE_CSRMatrixGetNumRows
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_CSRMatrixGetNumRows( HYPRE_CSRMatrix matrix, HYPRE_Int *num_rows )
+NALU_HYPRE_Int
+NALU_HYPRE_CSRMatrixGetNumRows( NALU_HYPRE_CSRMatrix matrix, NALU_HYPRE_Int *num_rows )
 {
    hypre_CSRMatrix *csr_matrix = (hypre_CSRMatrix *) matrix;
 

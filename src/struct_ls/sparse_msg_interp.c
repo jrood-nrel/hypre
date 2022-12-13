@@ -21,7 +21,7 @@ typedef struct
    hypre_Index         stride;
    hypre_Index         strideP;
 
-   HYPRE_Int           time_index;
+   NALU_HYPRE_Int           time_index;
 
 } hypre_SparseMSGInterpData;
 
@@ -34,7 +34,7 @@ hypre_SparseMSGInterpCreate( )
 {
    hypre_SparseMSGInterpData *interp_data;
 
-   interp_data = hypre_CTAlloc(hypre_SparseMSGInterpData,  1, HYPRE_MEMORY_HOST);
+   interp_data = hypre_CTAlloc(hypre_SparseMSGInterpData,  1, NALU_HYPRE_MEMORY_HOST);
    (interp_data -> time_index)  = hypre_InitializeTiming("SparseMSGInterp");
 
    return (void *) interp_data;
@@ -44,7 +44,7 @@ hypre_SparseMSGInterpCreate( )
  * hypre_SparseMSGInterpSetup
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SparseMSGInterpSetup( void               *interp_vdata,
                             hypre_StructMatrix *P,
                             hypre_StructVector *xc,
@@ -62,7 +62,7 @@ hypre_SparseMSGInterpSetup( void               *interp_vdata,
    hypre_ComputeInfo      *compute_info;
    hypre_ComputePkg       *compute_pkg;
 
-   HYPRE_Int               ierr = 0;
+   NALU_HYPRE_Int               ierr = 0;
 
    /*----------------------------------------------------------
     * Set up the compute package
@@ -96,13 +96,13 @@ hypre_SparseMSGInterpSetup( void               *interp_vdata,
  * hypre_SparseMSGInterp:
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SparseMSGInterp( void               *interp_vdata,
                        hypre_StructMatrix *P,
                        hypre_StructVector *xc,
                        hypre_StructVector *e            )
 {
-   HYPRE_Int ierr = 0;
+   NALU_HYPRE_Int ierr = 0;
 
    hypre_SparseMSGInterpData   *interp_data = (hypre_SparseMSGInterpData   *)interp_vdata;
 
@@ -113,10 +113,10 @@ hypre_SparseMSGInterp( void               *interp_vdata,
    hypre_IndexRef          strideP;
 
    hypre_StructGrid       *fgrid;
-   HYPRE_Int              *fgrid_ids;
+   NALU_HYPRE_Int              *fgrid_ids;
    hypre_StructGrid       *cgrid;
    hypre_BoxArray         *cgrid_boxes;
-   HYPRE_Int              *cgrid_ids;
+   NALU_HYPRE_Int              *cgrid_ids;
 
    hypre_CommHandle       *comm_handle;
 
@@ -128,9 +128,9 @@ hypre_SparseMSGInterp( void               *interp_vdata,
    hypre_Box              *xc_dbox;
    hypre_Box              *e_dbox;
 
-   HYPRE_Real             *Pp0, *Pp1;
-   HYPRE_Real             *xcp;
-   HYPRE_Real             *ep, *ep0, *ep1;
+   NALU_HYPRE_Real             *Pp0, *Pp1;
+   NALU_HYPRE_Real             *xcp;
+   NALU_HYPRE_Real             *ep, *ep0, *ep1;
 
    hypre_Index             loop_size;
    hypre_Index             start;
@@ -141,7 +141,7 @@ hypre_SparseMSGInterp( void               *interp_vdata,
    hypre_StructStencil    *stencil;
    hypre_Index            *stencil_shape;
 
-   HYPRE_Int               compute_i, fi, ci, j;
+   NALU_HYPRE_Int               compute_i, fi, ci, j;
 
    /*-----------------------------------------------------------------------
     * Initialize some things
@@ -277,10 +277,10 @@ hypre_SparseMSGInterp( void               *interp_vdata,
  * hypre_SparseMSGInterpDestroy
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SparseMSGInterpDestroy( void *interp_vdata )
 {
-   HYPRE_Int ierr = 0;
+   NALU_HYPRE_Int ierr = 0;
 
    hypre_SparseMSGInterpData *interp_data = (hypre_SparseMSGInterpData   *)interp_vdata;
 
@@ -289,7 +289,7 @@ hypre_SparseMSGInterpDestroy( void *interp_vdata )
       hypre_StructMatrixDestroy(interp_data -> P);
       hypre_ComputePkgDestroy(interp_data -> compute_pkg);
       hypre_FinalizeTiming(interp_data -> time_index);
-      hypre_TFree(interp_data, HYPRE_MEMORY_HOST);
+      hypre_TFree(interp_data, NALU_HYPRE_MEMORY_HOST);
    }
 
    return ierr;

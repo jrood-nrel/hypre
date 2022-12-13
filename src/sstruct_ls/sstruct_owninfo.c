@@ -7,7 +7,7 @@
 
 #include "_hypre_sstruct_ls.h"
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SStructIndexScaleF_C( hypre_Index findex,
                             hypre_Index index,
                             hypre_Index stride,
@@ -24,7 +24,7 @@ hypre_SStructIndexScaleF_C( hypre_Index findex,
 }
 
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SStructIndexScaleC_F( hypre_Index cindex,
                             hypre_Index index,
                             hypre_Index stride,
@@ -54,7 +54,7 @@ hypre_SStructOwnInfo( hypre_StructGrid  *fgrid,
    hypre_SStructOwnInfoData *owninfo_data;
 
    MPI_Comm                  comm = hypre_SStructVectorComm(fgrid);
-   HYPRE_Int                 ndim = hypre_StructGridNDim(fgrid);
+   NALU_HYPRE_Int                 ndim = hypre_StructGridNDim(fgrid);
 
    hypre_BoxArray           *grid_boxes;
    hypre_BoxArray           *intersect_boxes;
@@ -64,19 +64,19 @@ hypre_SStructOwnInfo( hypre_StructGrid  *fgrid,
    hypre_Box                 boxman_entry_box;
 
    hypre_BoxManEntry       **boxman_entries;
-   HYPRE_Int                 nboxman_entries;
+   NALU_HYPRE_Int                 nboxman_entries;
 
    hypre_BoxArrayArray      *own_boxes;
-   HYPRE_Int               **own_cboxnums;
+   NALU_HYPRE_Int               **own_cboxnums;
 
    hypre_BoxArrayArray      *own_composite_cboxes;
 
    hypre_Index               ilower, iupper, index;
 
-   HYPRE_Int                 myproc, proc;
+   NALU_HYPRE_Int                 myproc, proc;
 
-   HYPRE_Int                 cnt;
-   HYPRE_Int                 i, j, k, mod;
+   NALU_HYPRE_Int                 cnt;
+   NALU_HYPRE_Int                 i, j, k, mod;
 
    hypre_BoxInit(&scaled_box, ndim);
    hypre_BoxInit(&boxman_entry_box, ndim);
@@ -84,7 +84,7 @@ hypre_SStructOwnInfo( hypre_StructGrid  *fgrid,
    hypre_ClearIndex(index);
    hypre_MPI_Comm_rank(comm, &myproc);
 
-   owninfo_data = hypre_CTAlloc(hypre_SStructOwnInfoData,  1, HYPRE_MEMORY_HOST);
+   owninfo_data = hypre_CTAlloc(hypre_SStructOwnInfoData,  1, NALU_HYPRE_MEMORY_HOST);
 
    /*------------------------------------------------------------------------
     * Create the structured ownbox patterns.
@@ -96,7 +96,7 @@ hypre_SStructOwnInfo( hypre_StructGrid  *fgrid,
    grid_boxes    = hypre_StructGridBoxes(fgrid);
 
    own_boxes   = hypre_BoxArrayArrayCreate(hypre_BoxArraySize(grid_boxes), ndim);
-   own_cboxnums = hypre_CTAlloc(HYPRE_Int *,  hypre_BoxArraySize(grid_boxes), HYPRE_MEMORY_HOST);
+   own_cboxnums = hypre_CTAlloc(NALU_HYPRE_Int *,  hypre_BoxArraySize(grid_boxes), NALU_HYPRE_MEMORY_HOST);
 
    hypre_ForBoxI(i, grid_boxes)
    {
@@ -126,7 +126,7 @@ hypre_SStructOwnInfo( hypre_StructGrid  *fgrid,
             cnt++;
          }
       }
-      own_cboxnums[i] = hypre_CTAlloc(HYPRE_Int,  cnt, HYPRE_MEMORY_HOST);
+      own_cboxnums[i] = hypre_CTAlloc(NALU_HYPRE_Int,  cnt, NALU_HYPRE_MEMORY_HOST);
 
       cnt = 0;
       for (j = 0; j < nboxman_entries; j++)
@@ -146,7 +146,7 @@ hypre_SStructOwnInfo( hypre_StructGrid  *fgrid,
             cnt++;
          }
       }
-      hypre_TFree(boxman_entries, HYPRE_MEMORY_HOST);
+      hypre_TFree(boxman_entries, NALU_HYPRE_MEMORY_HOST);
    }  /* hypre_ForBoxI(i, grid_boxes) */
 
    (owninfo_data -> size)     = hypre_BoxArraySize(grid_boxes);
@@ -211,7 +211,7 @@ hypre_SStructOwnInfo( hypre_StructGrid  *fgrid,
                               intersect_boxes, tmp_boxarray);
       hypre_MinUnionBoxes(hypre_BoxArrayArrayBoxArray(own_composite_cboxes, i));
 
-      hypre_TFree(boxman_entries, HYPRE_MEMORY_HOST);
+      hypre_TFree(boxman_entries, NALU_HYPRE_MEMORY_HOST);
       hypre_BoxArrayDestroy(intersect_boxes);
    }
    hypre_BoxArrayDestroy(tmp_boxarray);
@@ -224,11 +224,11 @@ hypre_SStructOwnInfo( hypre_StructGrid  *fgrid,
 /*--------------------------------------------------------------------------
  * hypre_SStructOwnInfoDataDestroy
  *--------------------------------------------------------------------------*/
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SStructOwnInfoDataDestroy(hypre_SStructOwnInfoData *owninfo_data)
 {
-   HYPRE_Int ierr = 0;
-   HYPRE_Int i;
+   NALU_HYPRE_Int ierr = 0;
+   NALU_HYPRE_Int i;
 
    if (owninfo_data)
    {
@@ -241,10 +241,10 @@ hypre_SStructOwnInfoDataDestroy(hypre_SStructOwnInfoData *owninfo_data)
       {
          if (owninfo_data -> own_cboxnums[i])
          {
-            hypre_TFree(owninfo_data -> own_cboxnums[i], HYPRE_MEMORY_HOST);
+            hypre_TFree(owninfo_data -> own_cboxnums[i], NALU_HYPRE_MEMORY_HOST);
          }
       }
-      hypre_TFree(owninfo_data -> own_cboxnums, HYPRE_MEMORY_HOST);
+      hypre_TFree(owninfo_data -> own_cboxnums, NALU_HYPRE_MEMORY_HOST);
 
       if (owninfo_data -> own_composite_cboxes)
       {
@@ -252,7 +252,7 @@ hypre_SStructOwnInfoDataDestroy(hypre_SStructOwnInfoData *owninfo_data)
       }
    }
 
-   hypre_TFree(owninfo_data, HYPRE_MEMORY_HOST);
+   hypre_TFree(owninfo_data, NALU_HYPRE_MEMORY_HOST);
 
    return ierr;
 }

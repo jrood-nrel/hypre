@@ -16,7 +16,7 @@
 #include <limits.h>
 #include <stdarg.h>
 
-#define REAL_DH HYPRE_Real
+#define REAL_DH NALU_HYPRE_Real
 
 /*-----------------------------------------------------------------------
  * compile-time dependent includes from other libraries.
@@ -25,7 +25,7 @@
  *-----------------------------------------------------------------------*/
 
 #if ( !defined(FAKE_MPI) && defined(USING_MPI) && \
-      !defined(HYPRE_MODE) && !defined(PETSC_MODE) )
+      !defined(NALU_HYPRE_MODE) && !defined(PETSC_MODE) )
 #include <mpi.h>
 #endif
 
@@ -33,7 +33,7 @@
 #include "fake_mpi.h"
 #endif
 
-#if defined(USING_OPENMP) && !defined(HYPRE_MODE)
+#if defined(USING_OPENMP) && !defined(NALU_HYPRE_MODE)
 #include <omp.h>
 #endif
 
@@ -83,13 +83,13 @@ extern Parser_dh   parser_dh;  /* for setting/getting runtime options */
 extern TimeLog_dh  tlog_dh;    /* internal timing  functionality */
 extern Mem_dh      mem_dh;     /* memory management */
 extern FILE        *logFile;
-extern HYPRE_Int         np_dh;     /* number of processors and subdomains */
-extern HYPRE_Int         myid_dh;   /* rank of this processor (and subdomain) */
+extern NALU_HYPRE_Int         np_dh;     /* number of processors and subdomains */
+extern NALU_HYPRE_Int         myid_dh;   /* rank of this processor (and subdomain) */
 extern MPI_Comm    comm_dh;
 
 
 extern bool ignoreMe;    /* used to stop compiler complaints */
-extern HYPRE_Int  ref_counter; /* for internal use only!  Reference counter
+extern NALU_HYPRE_Int  ref_counter; /* for internal use only!  Reference counter
                             to ensure that global objects are not
                             destroyed when Euclid's destructor is called,
                             and more than one instance of Euclid has been
@@ -101,8 +101,8 @@ extern HYPRE_Int  ref_counter; /* for internal use only!  Reference counter
  * macros defined in "macros_dh.h"
  */
 extern bool  errFlag_dh;
-extern void  setInfo_dh(const char *msg, const char *function, const char *file, HYPRE_Int line);
-extern void  setError_dh(const char *msg, const char *function, const char *file, HYPRE_Int line);
+extern void  setInfo_dh(const char *msg, const char *function, const char *file, NALU_HYPRE_Int line);
+extern void  setError_dh(const char *msg, const char *function, const char *file, NALU_HYPRE_Int line);
 extern void  printErrorMsg(FILE *fp);
 
 #ifndef hypre_MPI_MAX_ERROR_STRING
@@ -117,19 +117,19 @@ extern char  msgBuf_dh[MSG_BUF_SIZE_DH];
  * output, and where it gets written to.  Function trace logging is only
  * enabled when compiled with the debugging (-g) option.
  */
-extern void openLogfile_dh(HYPRE_Int argc, char *argv[]);
+extern void openLogfile_dh(NALU_HYPRE_Int argc, char *argv[]);
 extern void closeLogfile_dh();
 extern bool logInfoToStderr;
 extern bool logInfoToFile;
 extern bool logFuncsToStderr;
 extern bool logFuncsToFile;
-extern void Error_dhStartFunc(char *function, char *file, HYPRE_Int line);
+extern void Error_dhStartFunc(char *function, char *file, NALU_HYPRE_Int line);
 extern void Error_dhEndFunc(char *function);
-extern void dh_StartFunc(const char *function, const char *file, HYPRE_Int line, HYPRE_Int priority);
-extern void dh_EndFunc(const char *function, HYPRE_Int priority);
+extern void dh_StartFunc(const char *function, const char *file, NALU_HYPRE_Int line, NALU_HYPRE_Int priority);
+extern void dh_EndFunc(const char *function, NALU_HYPRE_Int priority);
 extern void printFunctionStack(FILE *fp);
 
-extern void EuclidInitialize(HYPRE_Int argc, char *argv[], char *help); /* instantiates global objects */
+extern void EuclidInitialize(NALU_HYPRE_Int argc, char *argv[], char *help); /* instantiates global objects */
 extern void EuclidFinalize();    /* deletes global objects */
 extern bool EuclidIsInitialized();
 extern void printf_dh(const char *fmt, ...);
@@ -138,7 +138,7 @@ extern void fprintf_dh(FILE *fp, const char *fmt, ...);
   /* echo command line invocation to stdout.
      The "prefix" string is for grepping; it may be NULL.
   */
-extern void echoInvocation_dh(MPI_Comm comm, char *prefix, HYPRE_Int argc, char *argv[]);
+extern void echoInvocation_dh(MPI_Comm comm, char *prefix, NALU_HYPRE_Int argc, char *argv[]);
 
 
 #endif

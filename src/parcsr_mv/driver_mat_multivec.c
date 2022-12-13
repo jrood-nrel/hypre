@@ -11,8 +11,8 @@
  * Test driver for unstructured matrix interface: matvec with multivectors
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-main( HYPRE_Int   argc,
+NALU_HYPRE_Int
+main( NALU_HYPRE_Int   argc,
       char *argv[] )
 {
    hypre_CSRMatrix     *matrix;
@@ -26,15 +26,15 @@ main( HYPRE_Int   argc,
    hypre_ParVector     *y;
    hypre_ParVector     *y2;
 
-   HYPRE_Int          vecstride_x, idxstride_x, vecstride_y, idxstride_y;
-   HYPRE_Int          num_procs, my_id;
-   HYPRE_Int            local_size;
-   HYPRE_Int          num_vectors;
-   HYPRE_BigInt         global_num_rows, global_num_cols;
-   HYPRE_BigInt         first_index;
-   HYPRE_Int            i, j, ierr = 0;
-   HYPRE_Complex        *data, *data2;
-   HYPRE_BigInt         *row_starts, *col_starts;
+   NALU_HYPRE_Int          vecstride_x, idxstride_x, vecstride_y, idxstride_y;
+   NALU_HYPRE_Int          num_procs, my_id;
+   NALU_HYPRE_Int            local_size;
+   NALU_HYPRE_Int          num_vectors;
+   NALU_HYPRE_BigInt         global_num_rows, global_num_cols;
+   NALU_HYPRE_BigInt         first_index;
+   NALU_HYPRE_Int            i, j, ierr = 0;
+   NALU_HYPRE_Complex        *data, *data2;
+   NALU_HYPRE_BigInt         *row_starts, *col_starts;
    char         file_name[80];
    /* Initialize MPI */
    hypre_MPI_Init(&argc, &argv);
@@ -86,7 +86,7 @@ main( HYPRE_Int   argc,
    for ( j = 0; j < num_vectors; ++j )
       for (i = 0; i < local_size; i++)
       {
-         data[i * idxstride_x + j * vecstride_x] = (HYPRE_Int)first_index + i + 1 + 100 * j;
+         data[i * idxstride_x + j * vecstride_x] = (NALU_HYPRE_Int)first_index + i + 1 + 100 * j;
       }
 
    x2 = hypre_ParMultiVectorCreate( hypre_MPI_COMM_WORLD, global_num_cols,
@@ -96,7 +96,7 @@ main( HYPRE_Int   argc,
 
    row_starts = hypre_ParCSRMatrixRowStarts(par_matrix);
    first_index = row_starts[my_id];
-   local_size = (HYPRE_Int)(row_starts[my_id + 1] - first_index);
+   local_size = (NALU_HYPRE_Int)(row_starts[my_id + 1] - first_index);
    y = hypre_ParMultiVectorCreate( hypre_MPI_COMM_WORLD, global_num_rows,
                                    row_starts, num_vectors );
    hypre_ParVectorInitialize(y);
@@ -113,7 +113,7 @@ main( HYPRE_Int   argc,
    for ( j = 0; j < num_vectors; ++j )
       for (i = 0; i < local_size; i++)
       {
-         data2[i * idxstride_y + j * vecstride_y] = (HYPRE_Int)first_index + i + 1 + 100 * j;
+         data2[i * idxstride_y + j * vecstride_y] = (NALU_HYPRE_Int)first_index + i + 1 + 100 * j;
       }
 
    hypre_ParVectorSetConstantValues(y, 1.0);

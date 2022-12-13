@@ -4,8 +4,8 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 set(PILUT_HDRS
-  HYPRE_DistributedMatrixPilutSolver_protos.h
-  HYPRE_DistributedMatrixPilutSolver_types.h
+  NALU_HYPRE_DistributedMatrixPilutSolver_protos.h
+  NALU_HYPRE_DistributedMatrixPilutSolver_types.h
 )
 
 set(PILUT_SRCS
@@ -13,7 +13,7 @@ set(PILUT_SRCS
   debug.c
   distributed_qsort.c
   distributed_qsort_si.c
-  HYPRE_DistributedMatrixPilutSolver.c
+  NALU_HYPRE_DistributedMatrixPilutSolver.c
   ilut.c
   parilut.c
   parutil.c

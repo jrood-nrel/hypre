@@ -18,11 +18,11 @@
 #include "ParaSails.h"
 #include "_hypre_blas.h"
 
-static HYPRE_Real InnerProd(HYPRE_Int n, HYPRE_Real *x, HYPRE_Real *y, MPI_Comm comm)
+static NALU_HYPRE_Real InnerProd(NALU_HYPRE_Int n, NALU_HYPRE_Real *x, NALU_HYPRE_Real *y, MPI_Comm comm)
 {
-    HYPRE_Real local_result, result;
+    NALU_HYPRE_Real local_result, result;
 
-    HYPRE_Int one = 1;
+    NALU_HYPRE_Int one = 1;
     local_result = hypre_ddot(&n, x, &one, y, &one);
 
     hypre_MPI_Allreduce(&local_result, &result, 1, hypre_MPI_REAL, hypre_MPI_SUM, comm);
@@ -30,21 +30,21 @@ static HYPRE_Real InnerProd(HYPRE_Int n, HYPRE_Real *x, HYPRE_Real *y, MPI_Comm 
     return result;
 }
 
-static void CopyVector(HYPRE_Int n, HYPRE_Real *x, HYPRE_Real *y)
+static void CopyVector(NALU_HYPRE_Int n, NALU_HYPRE_Real *x, NALU_HYPRE_Real *y)
 {
-    HYPRE_Int one = 1;
+    NALU_HYPRE_Int one = 1;
     hypre_dcopy(&n, x, &one, y, &one);
 }
 
-static void ScaleVector(HYPRE_Int n, HYPRE_Real alpha, HYPRE_Real *x)
+static void ScaleVector(NALU_HYPRE_Int n, NALU_HYPRE_Real alpha, NALU_HYPRE_Real *x)
 {
-    HYPRE_Int one = 1;
+    NALU_HYPRE_Int one = 1;
     hypre_dscal(&n, &alpha, x, &one);
 }
 
-static void Axpy(HYPRE_Int n, HYPRE_Real alpha, HYPRE_Real *x, HYPRE_Real *y)
+static void Axpy(NALU_HYPRE_Int n, NALU_HYPRE_Real alpha, NALU_HYPRE_Real *x, NALU_HYPRE_Real *y)
 {
-    HYPRE_Int one = 1;
+    NALU_HYPRE_Int one = 1;
     hypre_daxpy(&n, &alpha, x, &one, y, &one);
 }
 
@@ -54,51 +54,51 @@ static void Axpy(HYPRE_Int n, HYPRE_Real alpha, HYPRE_Real *x, HYPRE_Real *y)
 #define H(i,j) (H[(j)*m1+(i)])
 
 static void
-GeneratePlaneRotation(HYPRE_Real dx, HYPRE_Real dy, HYPRE_Real *cs, HYPRE_Real *sn)
+GeneratePlaneRotation(NALU_HYPRE_Real dx, NALU_HYPRE_Real dy, NALU_HYPRE_Real *cs, NALU_HYPRE_Real *sn)
 {
   if (dy == 0.0) {
     *cs = 1.0;
     *sn = 0.0;
   } else if (ABS(dy) > ABS(dx)) {
-    HYPRE_Real temp = dx / dy;
+    NALU_HYPRE_Real temp = dx / dy;
     *sn = 1.0 / sqrt( 1.0 + temp*temp );
     *cs = temp * *sn;
   } else {
-    HYPRE_Real temp = dy / dx;
+    NALU_HYPRE_Real temp = dy / dx;
     *cs = 1.0 / sqrt( 1.0 + temp*temp );
     *sn = temp * *cs;
   }
 }
 
-static void ApplyPlaneRotation(HYPRE_Real *dx, HYPRE_Real *dy, HYPRE_Real cs, HYPRE_Real sn)
+static void ApplyPlaneRotation(NALU_HYPRE_Real *dx, NALU_HYPRE_Real *dy, NALU_HYPRE_Real cs, NALU_HYPRE_Real sn)
 {
-  HYPRE_Real temp  =  cs * *dx + sn * *dy;
+  NALU_HYPRE_Real temp  =  cs * *dx + sn * *dy;
   *dy = -sn * *dx + cs * *dy;
   *dx = temp;
 }
 
-void FGMRES_ParaSails(Matrix *mat, ParaSails *ps, HYPRE_Real *b, HYPRE_Real *x,
-  HYPRE_Int dim, HYPRE_Real tol, HYPRE_Int max_iter)
+void FGMRES_ParaSails(Matrix *mat, ParaSails *ps, NALU_HYPRE_Real *b, NALU_HYPRE_Real *x,
+  NALU_HYPRE_Int dim, NALU_HYPRE_Real tol, NALU_HYPRE_Int max_iter)
 {
-    HYPRE_Int mype;
-    HYPRE_Int iter;
-    HYPRE_Real rel_resid;
+    NALU_HYPRE_Int mype;
+    NALU_HYPRE_Int iter;
+    NALU_HYPRE_Real rel_resid;
 
-    HYPRE_Real *H  = hypre_TAlloc(HYPRE_Real, dim*(dim+1) , HYPRE_MEMORY_HOST);
+    NALU_HYPRE_Real *H  = hypre_TAlloc(NALU_HYPRE_Real, dim*(dim+1) , NALU_HYPRE_MEMORY_HOST);
 
     /* local problem size */
-    HYPRE_Int n = mat->end_row - mat->beg_row + 1;
+    NALU_HYPRE_Int n = mat->end_row - mat->beg_row + 1;
 
-    HYPRE_Int m1 = dim+1; /* used inside H macro */
-    HYPRE_Int i, j, k;
-    HYPRE_Real beta, resid0;
+    NALU_HYPRE_Int m1 = dim+1; /* used inside H macro */
+    NALU_HYPRE_Int i, j, k;
+    NALU_HYPRE_Real beta, resid0;
 
-    HYPRE_Real *s  = hypre_TAlloc(HYPRE_Real, (dim+1) , HYPRE_MEMORY_HOST);
-    HYPRE_Real *cs = hypre_TAlloc(HYPRE_Real, dim , HYPRE_MEMORY_HOST);
-    HYPRE_Real *sn = hypre_TAlloc(HYPRE_Real, dim , HYPRE_MEMORY_HOST);
+    NALU_HYPRE_Real *s  = hypre_TAlloc(NALU_HYPRE_Real, (dim+1) , NALU_HYPRE_MEMORY_HOST);
+    NALU_HYPRE_Real *cs = hypre_TAlloc(NALU_HYPRE_Real, dim , NALU_HYPRE_MEMORY_HOST);
+    NALU_HYPRE_Real *sn = hypre_TAlloc(NALU_HYPRE_Real, dim , NALU_HYPRE_MEMORY_HOST);
 
-    HYPRE_Real *V  = hypre_TAlloc(HYPRE_Real, n*(dim+1) , HYPRE_MEMORY_HOST);
-    HYPRE_Real *W  = hypre_TAlloc(HYPRE_Real, n*dim , HYPRE_MEMORY_HOST);
+    NALU_HYPRE_Real *V  = hypre_TAlloc(NALU_HYPRE_Real, n*(dim+1) , NALU_HYPRE_MEMORY_HOST);
+    NALU_HYPRE_Real *W  = hypre_TAlloc(NALU_HYPRE_Real, n*dim , NALU_HYPRE_MEMORY_HOST);
 
     MPI_Comm comm = mat->comm;
     hypre_MPI_Comm_rank(comm, &mype);
@@ -187,11 +187,11 @@ void FGMRES_ParaSails(Matrix *mat, ParaSails *ps, HYPRE_Real *b, HYPRE_Real *x,
     if (mype == 0)
         hypre_printf("Iter (%d): computed rrn    : %e\n", iter, rel_resid);
 
-    hypre_TFree(H, HYPRE_MEMORY_HOST);
-    hypre_TFree(s, HYPRE_MEMORY_HOST);
-    hypre_TFree(cs, HYPRE_MEMORY_HOST);
-    hypre_TFree(sn, HYPRE_MEMORY_HOST);
-    hypre_TFree(V, HYPRE_MEMORY_HOST);
-    hypre_TFree(W, HYPRE_MEMORY_HOST);
+    hypre_TFree(H, NALU_HYPRE_MEMORY_HOST);
+    hypre_TFree(s, NALU_HYPRE_MEMORY_HOST);
+    hypre_TFree(cs, NALU_HYPRE_MEMORY_HOST);
+    hypre_TFree(sn, NALU_HYPRE_MEMORY_HOST);
+    hypre_TFree(V, NALU_HYPRE_MEMORY_HOST);
+    hypre_TFree(W, NALU_HYPRE_MEMORY_HOST);
 }
 

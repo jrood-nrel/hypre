@@ -14,10 +14,10 @@
 /* here we have the sequential setup and solve - called from the
  * parallel one - for the coarser levels */
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_seqAMGSetup( hypre_ParAMGData *amg_data,
-                   HYPRE_Int         p_level,
-                   HYPRE_Int         coarse_threshold)
+                   NALU_HYPRE_Int         p_level,
+                   NALU_HYPRE_Int         coarse_threshold)
 {
 
    /* Par Data Structure variables */
@@ -35,13 +35,13 @@ hypre_seqAMGSetup( hypre_ParAMGData *amg_data,
    hypre_ParCSRMatrix *A;
 
    hypre_IntArray         **dof_func_array;
-   HYPRE_Int                num_procs, my_id;
+   NALU_HYPRE_Int                num_procs, my_id;
 
-   HYPRE_Int                level;
-   HYPRE_Int                redundant;
-   HYPRE_Int                num_functions;
+   NALU_HYPRE_Int                level;
+   NALU_HYPRE_Int                redundant;
+   NALU_HYPRE_Int                num_functions;
 
-   HYPRE_Solver  coarse_solver;
+   NALU_HYPRE_Solver  coarse_solver;
 
    /* misc */
    dof_func_array = hypre_ParAMGDataDofFuncArray(amg_data);
@@ -57,49 +57,49 @@ hypre_seqAMGSetup( hypre_ParAMGData *amg_data,
    /* convert A at this level to sequential */
    A = Par_A_array[level];
 
-   HYPRE_MemoryLocation memory_location = hypre_ParCSRMatrixMemoryLocation(A);
+   NALU_HYPRE_MemoryLocation memory_location = hypre_ParCSRMatrixMemoryLocation(A);
 
    {
-      HYPRE_Real *A_seq_data = NULL;
-      HYPRE_Int *A_seq_i = NULL;
-      HYPRE_Int *A_seq_offd_i = NULL;
-      HYPRE_Int *A_seq_j = NULL;
-      HYPRE_Int *seq_dof_func = NULL;
+      NALU_HYPRE_Real *A_seq_data = NULL;
+      NALU_HYPRE_Int *A_seq_i = NULL;
+      NALU_HYPRE_Int *A_seq_offd_i = NULL;
+      NALU_HYPRE_Int *A_seq_j = NULL;
+      NALU_HYPRE_Int *seq_dof_func = NULL;
 
-      HYPRE_Real *A_tmp_data = NULL;
-      HYPRE_Int *A_tmp_i = NULL;
-      HYPRE_Int *A_tmp_j = NULL;
+      NALU_HYPRE_Real *A_tmp_data = NULL;
+      NALU_HYPRE_Int *A_tmp_i = NULL;
+      NALU_HYPRE_Int *A_tmp_j = NULL;
 
-      HYPRE_Int *info = NULL;
-      HYPRE_Int *displs = NULL;
-      HYPRE_Int *displs2 = NULL;
-      HYPRE_Int i, j, size, num_nonzeros, total_nnz, cnt;
+      NALU_HYPRE_Int *info = NULL;
+      NALU_HYPRE_Int *displs = NULL;
+      NALU_HYPRE_Int *displs2 = NULL;
+      NALU_HYPRE_Int i, j, size, num_nonzeros, total_nnz, cnt;
 
       hypre_CSRMatrix *A_diag = hypre_ParCSRMatrixDiag(A);
       hypre_CSRMatrix *A_offd = hypre_ParCSRMatrixOffd(A);
-      HYPRE_BigInt *col_map_offd = hypre_ParCSRMatrixColMapOffd(A);
-      HYPRE_Int *A_diag_i = hypre_CSRMatrixI(A_diag);
-      HYPRE_Int *A_offd_i = hypre_CSRMatrixI(A_offd);
-      HYPRE_Int *A_diag_j = hypre_CSRMatrixJ(A_diag);
-      HYPRE_Int *A_offd_j = hypre_CSRMatrixJ(A_offd);
-      HYPRE_Real *A_diag_data = hypre_CSRMatrixData(A_diag);
-      HYPRE_Real *A_offd_data = hypre_CSRMatrixData(A_offd);
-      HYPRE_Int num_rows = hypre_CSRMatrixNumRows(A_diag);
-      HYPRE_BigInt first_row_index = hypre_ParCSRMatrixFirstRowIndex(A);
-      HYPRE_Int new_num_procs;
-      HYPRE_BigInt  row_starts[2];
+      NALU_HYPRE_BigInt *col_map_offd = hypre_ParCSRMatrixColMapOffd(A);
+      NALU_HYPRE_Int *A_diag_i = hypre_CSRMatrixI(A_diag);
+      NALU_HYPRE_Int *A_offd_i = hypre_CSRMatrixI(A_offd);
+      NALU_HYPRE_Int *A_diag_j = hypre_CSRMatrixJ(A_diag);
+      NALU_HYPRE_Int *A_offd_j = hypre_CSRMatrixJ(A_offd);
+      NALU_HYPRE_Real *A_diag_data = hypre_CSRMatrixData(A_diag);
+      NALU_HYPRE_Real *A_offd_data = hypre_CSRMatrixData(A_offd);
+      NALU_HYPRE_Int num_rows = hypre_CSRMatrixNumRows(A_diag);
+      NALU_HYPRE_BigInt first_row_index = hypre_ParCSRMatrixFirstRowIndex(A);
+      NALU_HYPRE_Int new_num_procs;
+      NALU_HYPRE_BigInt  row_starts[2];
 
       hypre_GenerateSubComm(comm, num_rows, &new_comm);
 
 
       /*hypre_MPI_Group orig_group, new_group;
-      HYPRE_Int *ranks, new_num_procs, *row_starts;
+      NALU_HYPRE_Int *ranks, new_num_procs, *row_starts;
 
-      info = hypre_CTAlloc(HYPRE_Int,  num_procs, HYPRE_MEMORY_HOST);
+      info = hypre_CTAlloc(NALU_HYPRE_Int,  num_procs, NALU_HYPRE_MEMORY_HOST);
 
-      hypre_MPI_Allgather(&num_rows, 1, HYPRE_MPI_INT, info, 1, HYPRE_MPI_INT, comm);
+      hypre_MPI_Allgather(&num_rows, 1, NALU_HYPRE_MPI_INT, info, 1, NALU_HYPRE_MPI_INT, comm);
 
-      ranks = hypre_CTAlloc(HYPRE_Int,  num_procs, HYPRE_MEMORY_HOST);
+      ranks = hypre_CTAlloc(NALU_HYPRE_Int,  num_procs, NALU_HYPRE_MEMORY_HOST);
 
       new_num_procs = 0;
       for (i=0; i < num_procs; i++)
@@ -120,51 +120,51 @@ hypre_seqAMGSetup( hypre_ParAMGData *amg_data,
          hypre_ParAMGDataParticipate(amg_data) = 1;
          hypre_MPI_Comm_size(new_comm, &new_num_procs);
          hypre_MPI_Comm_rank(new_comm, &my_id);
-         info = hypre_CTAlloc(HYPRE_Int,  new_num_procs, HYPRE_MEMORY_HOST);
+         info = hypre_CTAlloc(NALU_HYPRE_Int,  new_num_procs, NALU_HYPRE_MEMORY_HOST);
 
          if (redundant)
          {
-            hypre_MPI_Allgather(&num_rows, 1, HYPRE_MPI_INT, info, 1, HYPRE_MPI_INT, new_comm);
+            hypre_MPI_Allgather(&num_rows, 1, NALU_HYPRE_MPI_INT, info, 1, NALU_HYPRE_MPI_INT, new_comm);
          }
          else
          {
-            hypre_MPI_Gather(&num_rows, 1, HYPRE_MPI_INT, info, 1, HYPRE_MPI_INT, 0, new_comm);
+            hypre_MPI_Gather(&num_rows, 1, NALU_HYPRE_MPI_INT, info, 1, NALU_HYPRE_MPI_INT, 0, new_comm);
          }
 
          /* alloc space in seq data structure only for participating procs*/
          if (redundant || my_id == 0)
          {
-            HYPRE_BoomerAMGCreate(&coarse_solver);
-            HYPRE_BoomerAMGSetMaxRowSum(coarse_solver,
+            NALU_HYPRE_BoomerAMGCreate(&coarse_solver);
+            NALU_HYPRE_BoomerAMGSetMaxRowSum(coarse_solver,
                                         hypre_ParAMGDataMaxRowSum(amg_data));
-            HYPRE_BoomerAMGSetStrongThreshold(coarse_solver,
+            NALU_HYPRE_BoomerAMGSetStrongThreshold(coarse_solver,
                                               hypre_ParAMGDataStrongThreshold(amg_data));
-            HYPRE_BoomerAMGSetCoarsenType(coarse_solver,
+            NALU_HYPRE_BoomerAMGSetCoarsenType(coarse_solver,
                                           hypre_ParAMGDataCoarsenType(amg_data));
-            HYPRE_BoomerAMGSetInterpType(coarse_solver,
+            NALU_HYPRE_BoomerAMGSetInterpType(coarse_solver,
                                          hypre_ParAMGDataInterpType(amg_data));
-            HYPRE_BoomerAMGSetTruncFactor(coarse_solver,
+            NALU_HYPRE_BoomerAMGSetTruncFactor(coarse_solver,
                                           hypre_ParAMGDataTruncFactor(amg_data));
-            HYPRE_BoomerAMGSetPMaxElmts(coarse_solver,
+            NALU_HYPRE_BoomerAMGSetPMaxElmts(coarse_solver,
                                         hypre_ParAMGDataPMaxElmts(amg_data));
             if (hypre_ParAMGDataUserRelaxType(amg_data) > -1)
-               HYPRE_BoomerAMGSetRelaxType(coarse_solver,
+               NALU_HYPRE_BoomerAMGSetRelaxType(coarse_solver,
                                            hypre_ParAMGDataUserRelaxType(amg_data));
-            HYPRE_BoomerAMGSetRelaxOrder(coarse_solver,
+            NALU_HYPRE_BoomerAMGSetRelaxOrder(coarse_solver,
                                          hypre_ParAMGDataRelaxOrder(amg_data));
-            HYPRE_BoomerAMGSetRelaxWt(coarse_solver,
+            NALU_HYPRE_BoomerAMGSetRelaxWt(coarse_solver,
                                       hypre_ParAMGDataUserRelaxWeight(amg_data));
             if (hypre_ParAMGDataUserNumSweeps(amg_data) > -1)
-               HYPRE_BoomerAMGSetNumSweeps(coarse_solver,
+               NALU_HYPRE_BoomerAMGSetNumSweeps(coarse_solver,
                                            hypre_ParAMGDataUserNumSweeps(amg_data));
-            HYPRE_BoomerAMGSetNumFunctions(coarse_solver,
+            NALU_HYPRE_BoomerAMGSetNumFunctions(coarse_solver,
                                            num_functions);
-            HYPRE_BoomerAMGSetMaxIter(coarse_solver, 1);
-            HYPRE_BoomerAMGSetTol(coarse_solver, 0);
+            NALU_HYPRE_BoomerAMGSetMaxIter(coarse_solver, 1);
+            NALU_HYPRE_BoomerAMGSetTol(coarse_solver, 0);
          }
 
          /* Create CSR Matrix, will be Diag part of new matrix */
-         A_tmp_i = hypre_CTAlloc(HYPRE_Int,  num_rows + 1, HYPRE_MEMORY_HOST);
+         A_tmp_i = hypre_CTAlloc(NALU_HYPRE_Int,  num_rows + 1, NALU_HYPRE_MEMORY_HOST);
 
          A_tmp_i[0] = 0;
          for (i = 1; i < num_rows + 1; i++)
@@ -174,25 +174,25 @@ hypre_seqAMGSetup( hypre_ParAMGData *amg_data,
 
          num_nonzeros = A_offd_i[num_rows] + A_diag_i[num_rows];
 
-         A_tmp_j = hypre_CTAlloc(HYPRE_Int,  num_nonzeros, HYPRE_MEMORY_HOST);
-         A_tmp_data = hypre_CTAlloc(HYPRE_Real,  num_nonzeros, HYPRE_MEMORY_HOST);
+         A_tmp_j = hypre_CTAlloc(NALU_HYPRE_Int,  num_nonzeros, NALU_HYPRE_MEMORY_HOST);
+         A_tmp_data = hypre_CTAlloc(NALU_HYPRE_Real,  num_nonzeros, NALU_HYPRE_MEMORY_HOST);
 
          cnt = 0;
          for (i = 0; i < num_rows; i++)
          {
             for (j = A_diag_i[i]; j < A_diag_i[i + 1]; j++)
             {
-               A_tmp_j[cnt] = A_diag_j[j] + (HYPRE_Int)first_row_index;
+               A_tmp_j[cnt] = A_diag_j[j] + (NALU_HYPRE_Int)first_row_index;
                A_tmp_data[cnt++] = A_diag_data[j];
             }
             for (j = A_offd_i[i]; j < A_offd_i[i + 1]; j++)
             {
-               A_tmp_j[cnt] = (HYPRE_Int)col_map_offd[A_offd_j[j]];
+               A_tmp_j[cnt] = (NALU_HYPRE_Int)col_map_offd[A_offd_j[j]];
                A_tmp_data[cnt++] = A_offd_data[j];
             }
          }
 
-         displs = hypre_CTAlloc(HYPRE_Int,  new_num_procs + 1, HYPRE_MEMORY_HOST);
+         displs = hypre_CTAlloc(NALU_HYPRE_Int,  new_num_procs + 1, NALU_HYPRE_MEMORY_HOST);
          displs[0] = 0;
          for (i = 1; i < new_num_procs + 1; i++)
          {
@@ -202,41 +202,41 @@ hypre_seqAMGSetup( hypre_ParAMGData *amg_data,
 
          if (redundant || my_id == 0)
          {
-            A_seq_i = hypre_CTAlloc(HYPRE_Int,  size + 1, memory_location);
-            A_seq_offd_i = hypre_CTAlloc(HYPRE_Int,  size + 1, memory_location);
-            if (num_functions > 1) { seq_dof_func = hypre_CTAlloc(HYPRE_Int,  size, memory_location); }
+            A_seq_i = hypre_CTAlloc(NALU_HYPRE_Int,  size + 1, memory_location);
+            A_seq_offd_i = hypre_CTAlloc(NALU_HYPRE_Int,  size + 1, memory_location);
+            if (num_functions > 1) { seq_dof_func = hypre_CTAlloc(NALU_HYPRE_Int,  size, memory_location); }
          }
 
          if (redundant)
          {
-            hypre_MPI_Allgatherv ( &A_tmp_i[1], num_rows, HYPRE_MPI_INT, &A_seq_i[1], info,
-                                   displs, HYPRE_MPI_INT, new_comm );
+            hypre_MPI_Allgatherv ( &A_tmp_i[1], num_rows, NALU_HYPRE_MPI_INT, &A_seq_i[1], info,
+                                   displs, NALU_HYPRE_MPI_INT, new_comm );
             if (num_functions > 1)
             {
-               hypre_MPI_Allgatherv ( hypre_IntArrayData(dof_func_array[level]), num_rows, HYPRE_MPI_INT,
-                                      seq_dof_func, info, displs, HYPRE_MPI_INT, new_comm );
-               HYPRE_BoomerAMGSetDofFunc(coarse_solver, seq_dof_func);
+               hypre_MPI_Allgatherv ( hypre_IntArrayData(dof_func_array[level]), num_rows, NALU_HYPRE_MPI_INT,
+                                      seq_dof_func, info, displs, NALU_HYPRE_MPI_INT, new_comm );
+               NALU_HYPRE_BoomerAMGSetDofFunc(coarse_solver, seq_dof_func);
             }
          }
          else
          {
             if (A_seq_i)
-               hypre_MPI_Gatherv ( &A_tmp_i[1], num_rows, HYPRE_MPI_INT, &A_seq_i[1], info,
-                                   displs, HYPRE_MPI_INT, 0, new_comm );
+               hypre_MPI_Gatherv ( &A_tmp_i[1], num_rows, NALU_HYPRE_MPI_INT, &A_seq_i[1], info,
+                                   displs, NALU_HYPRE_MPI_INT, 0, new_comm );
             else
-               hypre_MPI_Gatherv ( &A_tmp_i[1], num_rows, HYPRE_MPI_INT, A_seq_i, info,
-                                   displs, HYPRE_MPI_INT, 0, new_comm );
+               hypre_MPI_Gatherv ( &A_tmp_i[1], num_rows, NALU_HYPRE_MPI_INT, A_seq_i, info,
+                                   displs, NALU_HYPRE_MPI_INT, 0, new_comm );
             if (num_functions > 1)
             {
-               hypre_MPI_Gatherv ( hypre_IntArrayData(dof_func_array[level]), num_rows, HYPRE_MPI_INT,
-                                   seq_dof_func, info, displs, HYPRE_MPI_INT, 0, new_comm );
-               if (my_id == 0) { HYPRE_BoomerAMGSetDofFunc(coarse_solver, seq_dof_func); }
+               hypre_MPI_Gatherv ( hypre_IntArrayData(dof_func_array[level]), num_rows, NALU_HYPRE_MPI_INT,
+                                   seq_dof_func, info, displs, NALU_HYPRE_MPI_INT, 0, new_comm );
+               if (my_id == 0) { NALU_HYPRE_BoomerAMGSetDofFunc(coarse_solver, seq_dof_func); }
             }
          }
 
          if (redundant || my_id == 0)
          {
-            displs2 = hypre_CTAlloc(HYPRE_Int,  new_num_procs + 1, HYPRE_MEMORY_HOST);
+            displs2 = hypre_CTAlloc(NALU_HYPRE_Int,  new_num_procs + 1, NALU_HYPRE_MEMORY_HOST);
 
             A_seq_i[0] = 0;
             displs2[0] = 0;
@@ -260,39 +260,39 @@ hypre_seqAMGSetup( hypre_ParAMGData *amg_data,
             }
 
             total_nnz = displs2[new_num_procs];
-            A_seq_j = hypre_CTAlloc(HYPRE_Int,  total_nnz, memory_location);
-            A_seq_data = hypre_CTAlloc(HYPRE_Real,  total_nnz, memory_location);
+            A_seq_j = hypre_CTAlloc(NALU_HYPRE_Int,  total_nnz, memory_location);
+            A_seq_data = hypre_CTAlloc(NALU_HYPRE_Real,  total_nnz, memory_location);
          }
          if (redundant)
          {
-            hypre_MPI_Allgatherv ( A_tmp_j, num_nonzeros, HYPRE_MPI_INT,
+            hypre_MPI_Allgatherv ( A_tmp_j, num_nonzeros, NALU_HYPRE_MPI_INT,
                                    A_seq_j, info, displs2,
-                                   HYPRE_MPI_INT, new_comm );
+                                   NALU_HYPRE_MPI_INT, new_comm );
 
-            hypre_MPI_Allgatherv ( A_tmp_data, num_nonzeros, HYPRE_MPI_REAL,
+            hypre_MPI_Allgatherv ( A_tmp_data, num_nonzeros, NALU_HYPRE_MPI_REAL,
                                    A_seq_data, info, displs2,
-                                   HYPRE_MPI_REAL, new_comm );
+                                   NALU_HYPRE_MPI_REAL, new_comm );
          }
          else
          {
-            hypre_MPI_Gatherv ( A_tmp_j, num_nonzeros, HYPRE_MPI_INT,
+            hypre_MPI_Gatherv ( A_tmp_j, num_nonzeros, NALU_HYPRE_MPI_INT,
                                 A_seq_j, info, displs2,
-                                HYPRE_MPI_INT, 0, new_comm );
+                                NALU_HYPRE_MPI_INT, 0, new_comm );
 
-            hypre_MPI_Gatherv ( A_tmp_data, num_nonzeros, HYPRE_MPI_REAL,
+            hypre_MPI_Gatherv ( A_tmp_data, num_nonzeros, NALU_HYPRE_MPI_REAL,
                                 A_seq_data, info, displs2,
-                                HYPRE_MPI_REAL, 0, new_comm );
+                                NALU_HYPRE_MPI_REAL, 0, new_comm );
          }
 
-         hypre_TFree(info, HYPRE_MEMORY_HOST);
-         hypre_TFree(displs, HYPRE_MEMORY_HOST);
-         hypre_TFree(A_tmp_i, HYPRE_MEMORY_HOST);
-         hypre_TFree(A_tmp_j, HYPRE_MEMORY_HOST);
-         hypre_TFree(A_tmp_data, HYPRE_MEMORY_HOST);
+         hypre_TFree(info, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(displs, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(A_tmp_i, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(A_tmp_j, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(A_tmp_data, NALU_HYPRE_MEMORY_HOST);
 
          if (redundant || my_id == 0)
          {
-            hypre_TFree(displs2, HYPRE_MEMORY_HOST);
+            hypre_TFree(displs2, NALU_HYPRE_MEMORY_HOST);
 
             row_starts[0] = 0;
             row_starts[1] = size;
@@ -334,9 +334,9 @@ hypre_seqAMGSetup( hypre_ParAMGData *amg_data,
  * hypre_seqAMGCycle
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_seqAMGCycle( hypre_ParAMGData *amg_data,
-                   HYPRE_Int p_level,
+                   NALU_HYPRE_Int p_level,
                    hypre_ParVector  **Par_F_array,
                    hypre_ParVector  **Par_U_array   )
 {
@@ -346,28 +346,28 @@ hypre_seqAMGCycle( hypre_ParAMGData *amg_data,
 
    /* Local variables  */
 
-   HYPRE_Int       Solve_err_flag = 0;
+   NALU_HYPRE_Int       Solve_err_flag = 0;
 
-   HYPRE_Int n;
-   HYPRE_Int i;
+   NALU_HYPRE_Int n;
+   NALU_HYPRE_Int i;
 
    hypre_Vector   *u_local;
-   HYPRE_Real     *u_data;
+   NALU_HYPRE_Real     *u_data;
 
-   HYPRE_Int       first_index;
+   NALU_HYPRE_Int       first_index;
 
    /* Acquire seq data */
    MPI_Comm new_comm = hypre_ParAMGDataNewComm(amg_data);
-   HYPRE_Solver coarse_solver = hypre_ParAMGDataCoarseSolver(amg_data);
+   NALU_HYPRE_Solver coarse_solver = hypre_ParAMGDataCoarseSolver(amg_data);
    hypre_ParCSRMatrix *A_coarse = hypre_ParAMGDataACoarse(amg_data);
    hypre_ParVector *F_coarse = hypre_ParAMGDataFCoarse(amg_data);
    hypre_ParVector *U_coarse = hypre_ParAMGDataUCoarse(amg_data);
-   HYPRE_Int redundant = hypre_ParAMGDataRedundant(amg_data);
+   NALU_HYPRE_Int redundant = hypre_ParAMGDataRedundant(amg_data);
 
    Aux_U = Par_U_array[p_level];
    Aux_F = Par_F_array[p_level];
 
-   first_index = (HYPRE_Int)hypre_ParVectorFirstIndex(Aux_U);
+   first_index = (NALU_HYPRE_Int)hypre_ParVectorFirstIndex(Aux_U);
    u_local = hypre_ParVectorLocalVector(Aux_U);
    u_data  = hypre_VectorData(u_local);
    n =  hypre_VectorSize(u_local);
@@ -376,16 +376,16 @@ hypre_seqAMGCycle( hypre_ParAMGData *amg_data,
    /*if (A_coarse)*/
    if (hypre_ParAMGDataParticipate(amg_data))
    {
-      HYPRE_Real     *f_data;
+      NALU_HYPRE_Real     *f_data;
       hypre_Vector   *f_local;
       hypre_Vector   *tmp_vec;
 
-      HYPRE_Int nf;
-      HYPRE_Int local_info;
-      HYPRE_Real *recv_buf = NULL;
-      HYPRE_Int *displs = NULL;
-      HYPRE_Int *info = NULL;
-      HYPRE_Int new_num_procs, my_id;
+      NALU_HYPRE_Int nf;
+      NALU_HYPRE_Int local_info;
+      NALU_HYPRE_Real *recv_buf = NULL;
+      NALU_HYPRE_Int *displs = NULL;
+      NALU_HYPRE_Int *info = NULL;
+      NALU_HYPRE_Int new_num_procs, my_id;
 
       hypre_MPI_Comm_size(new_comm, &new_num_procs);
       hypre_MPI_Comm_rank(new_comm, &my_id);
@@ -395,20 +395,20 @@ hypre_seqAMGCycle( hypre_ParAMGData *amg_data,
       nf =  hypre_VectorSize(f_local);
 
       /* first f */
-      info = hypre_CTAlloc(HYPRE_Int,  new_num_procs, HYPRE_MEMORY_HOST);
+      info = hypre_CTAlloc(NALU_HYPRE_Int,  new_num_procs, NALU_HYPRE_MEMORY_HOST);
       local_info = nf;
       if (redundant)
       {
-         hypre_MPI_Allgather(&local_info, 1, HYPRE_MPI_INT, info, 1, HYPRE_MPI_INT, new_comm);
+         hypre_MPI_Allgather(&local_info, 1, NALU_HYPRE_MPI_INT, info, 1, NALU_HYPRE_MPI_INT, new_comm);
       }
       else
       {
-         hypre_MPI_Gather(&local_info, 1, HYPRE_MPI_INT, info, 1, HYPRE_MPI_INT, 0, new_comm);
+         hypre_MPI_Gather(&local_info, 1, NALU_HYPRE_MPI_INT, info, 1, NALU_HYPRE_MPI_INT, 0, new_comm);
       }
 
       if (redundant || my_id == 0)
       {
-         displs = hypre_CTAlloc(HYPRE_Int,  new_num_procs + 1, HYPRE_MEMORY_HOST);
+         displs = hypre_CTAlloc(NALU_HYPRE_Int,  new_num_procs + 1, NALU_HYPRE_MEMORY_HOST);
          displs[0] = 0;
          for (i = 1; i < new_num_procs + 1; i++)
          {
@@ -423,13 +423,13 @@ hypre_seqAMGCycle( hypre_ParAMGData *amg_data,
       }
 
       if (redundant)
-         hypre_MPI_Allgatherv ( f_data, nf, HYPRE_MPI_REAL,
+         hypre_MPI_Allgatherv ( f_data, nf, NALU_HYPRE_MPI_REAL,
                                 recv_buf, info, displs,
-                                HYPRE_MPI_REAL, new_comm );
+                                NALU_HYPRE_MPI_REAL, new_comm );
       else
-         hypre_MPI_Gatherv ( f_data, nf, HYPRE_MPI_REAL,
+         hypre_MPI_Gatherv ( f_data, nf, NALU_HYPRE_MPI_REAL,
                              recv_buf, info, displs,
-                             HYPRE_MPI_REAL, 0, new_comm );
+                             NALU_HYPRE_MPI_REAL, 0, new_comm );
 
       if (redundant || my_id == 0)
       {
@@ -440,16 +440,16 @@ hypre_seqAMGCycle( hypre_ParAMGData *amg_data,
       /*then u */
       if (redundant)
       {
-         hypre_MPI_Allgatherv ( u_data, n, HYPRE_MPI_REAL,
+         hypre_MPI_Allgatherv ( u_data, n, NALU_HYPRE_MPI_REAL,
                                 recv_buf, info, displs,
-                                HYPRE_MPI_REAL, new_comm );
-         hypre_TFree(displs, HYPRE_MEMORY_HOST);
-         hypre_TFree(info, HYPRE_MEMORY_HOST);
+                                NALU_HYPRE_MPI_REAL, new_comm );
+         hypre_TFree(displs, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(info, NALU_HYPRE_MEMORY_HOST);
       }
       else
-         hypre_MPI_Gatherv ( u_data, n, HYPRE_MPI_REAL,
+         hypre_MPI_Gatherv ( u_data, n, NALU_HYPRE_MPI_REAL,
                              recv_buf, info, displs,
-                             HYPRE_MPI_REAL, 0, new_comm );
+                             NALU_HYPRE_MPI_REAL, 0, new_comm );
 
       /* clean up */
       if (redundant || my_id == 0)
@@ -460,7 +460,7 @@ hypre_seqAMGCycle( hypre_ParAMGData *amg_data,
       /*copy my part of U to parallel vector */
       if (redundant)
       {
-         HYPRE_Real *local_data;
+         NALU_HYPRE_Real *local_data;
 
          local_data =  hypre_VectorData(hypre_ParVectorLocalVector(U_coarse));
 
@@ -471,21 +471,21 @@ hypre_seqAMGCycle( hypre_ParAMGData *amg_data,
       }
       else
       {
-         HYPRE_Real *local_data = NULL;
+         NALU_HYPRE_Real *local_data = NULL;
 
          if (my_id == 0)
          {
             local_data =  hypre_VectorData(hypre_ParVectorLocalVector(U_coarse));
          }
 
-         hypre_MPI_Scatterv ( local_data, info, displs, HYPRE_MPI_REAL,
-                              u_data, n, HYPRE_MPI_REAL, 0, new_comm );
+         hypre_MPI_Scatterv ( local_data, info, displs, NALU_HYPRE_MPI_REAL,
+                              u_data, n, NALU_HYPRE_MPI_REAL, 0, new_comm );
          /*if (my_id == 0)
             local_data =  hypre_VectorData(hypre_ParVectorLocalVector(F_coarse));
-            hypre_MPI_Scatterv ( local_data, info, displs, HYPRE_MPI_REAL,
-                       f_data, n, HYPRE_MPI_REAL, 0, new_comm );*/
-         if (my_id == 0) { hypre_TFree(displs, HYPRE_MEMORY_HOST); }
-         hypre_TFree(info, HYPRE_MEMORY_HOST);
+            hypre_MPI_Scatterv ( local_data, info, displs, NALU_HYPRE_MPI_REAL,
+                       f_data, n, NALU_HYPRE_MPI_REAL, 0, new_comm );*/
+         if (my_id == 0) { hypre_TFree(displs, NALU_HYPRE_MEMORY_HOST); }
+         hypre_TFree(info, NALU_HYPRE_MEMORY_HOST);
       }
    }
 
@@ -494,13 +494,13 @@ hypre_seqAMGCycle( hypre_ParAMGData *amg_data,
 
 /* generate sub communicator, which contains no idle processors */
 
-HYPRE_Int hypre_GenerateSubComm(MPI_Comm comm, HYPRE_Int participate, MPI_Comm *new_comm_ptr)
+NALU_HYPRE_Int hypre_GenerateSubComm(MPI_Comm comm, NALU_HYPRE_Int participate, MPI_Comm *new_comm_ptr)
 {
    MPI_Comm new_comm;
    hypre_MPI_Group orig_group, new_group;
    hypre_MPI_Op hypre_MPI_MERGE;
-   HYPRE_Int *info, *ranks, new_num_procs, my_info, my_id, num_procs;
-   HYPRE_Int *list_len;
+   NALU_HYPRE_Int *info, *ranks, new_num_procs, my_info, my_id, num_procs;
+   NALU_HYPRE_Int *list_len;
 
    hypre_MPI_Comm_rank(comm, &my_id);
 
@@ -513,7 +513,7 @@ HYPRE_Int hypre_GenerateSubComm(MPI_Comm comm, HYPRE_Int participate, MPI_Comm *
       my_info = 0;
    }
 
-   hypre_MPI_Allreduce(&my_info, &new_num_procs, 1, HYPRE_MPI_INT, hypre_MPI_SUM, comm);
+   hypre_MPI_Allreduce(&my_info, &new_num_procs, 1, NALU_HYPRE_MPI_INT, hypre_MPI_SUM, comm);
 
    if (new_num_procs == 0)
    {
@@ -522,7 +522,7 @@ HYPRE_Int hypre_GenerateSubComm(MPI_Comm comm, HYPRE_Int participate, MPI_Comm *
       return 0;
    }
 
-   ranks = hypre_CTAlloc(HYPRE_Int, new_num_procs + 2, HYPRE_MEMORY_HOST);
+   ranks = hypre_CTAlloc(NALU_HYPRE_Int, new_num_procs + 2, NALU_HYPRE_MEMORY_HOST);
 
    if (new_num_procs == 1)
    {
@@ -530,12 +530,12 @@ HYPRE_Int hypre_GenerateSubComm(MPI_Comm comm, HYPRE_Int participate, MPI_Comm *
       {
          my_info = my_id;
       }
-      hypre_MPI_Allreduce(&my_info, &ranks[2], 1, HYPRE_MPI_INT, hypre_MPI_SUM, comm);
+      hypre_MPI_Allreduce(&my_info, &ranks[2], 1, NALU_HYPRE_MPI_INT, hypre_MPI_SUM, comm);
    }
    else
    {
-      info = hypre_CTAlloc(HYPRE_Int, new_num_procs + 2, HYPRE_MEMORY_HOST);
-      list_len = hypre_CTAlloc(HYPRE_Int, 1, HYPRE_MEMORY_HOST);
+      info = hypre_CTAlloc(NALU_HYPRE_Int, new_num_procs + 2, NALU_HYPRE_MEMORY_HOST);
+      list_len = hypre_CTAlloc(NALU_HYPRE_Int, 1, NALU_HYPRE_MEMORY_HOST);
 
       if (participate)
       {
@@ -552,12 +552,12 @@ HYPRE_Int hypre_GenerateSubComm(MPI_Comm comm, HYPRE_Int participate, MPI_Comm *
 
       hypre_MPI_Op_create((hypre_MPI_User_function *)hypre_merge_lists, 0, &hypre_MPI_MERGE);
 
-      hypre_MPI_Allreduce(info, ranks, list_len[0], HYPRE_MPI_INT, hypre_MPI_MERGE, comm);
+      hypre_MPI_Allreduce(info, ranks, list_len[0], NALU_HYPRE_MPI_INT, hypre_MPI_MERGE, comm);
 
       hypre_MPI_Op_free (&hypre_MPI_MERGE);
 
-      hypre_TFree(list_len, HYPRE_MEMORY_HOST);
-      hypre_TFree(info, HYPRE_MEMORY_HOST);
+      hypre_TFree(list_len, NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(info, NALU_HYPRE_MEMORY_HOST);
    }
 
    hypre_MPI_Comm_size(comm, &num_procs);
@@ -567,7 +567,7 @@ HYPRE_Int hypre_GenerateSubComm(MPI_Comm comm, HYPRE_Int participate, MPI_Comm *
    hypre_MPI_Group_free(&new_group);
    hypre_MPI_Group_free(&orig_group);
 
-   hypre_TFree(ranks, HYPRE_MEMORY_HOST);
+   hypre_TFree(ranks, NALU_HYPRE_MEMORY_HOST);
 
    *new_comm_ptr = new_comm;
 
@@ -575,10 +575,10 @@ HYPRE_Int hypre_GenerateSubComm(MPI_Comm comm, HYPRE_Int participate, MPI_Comm *
 }
 
 
-void hypre_merge_lists (HYPRE_Int *list1, HYPRE_Int* list2, hypre_int *np1,
+void hypre_merge_lists (NALU_HYPRE_Int *list1, NALU_HYPRE_Int* list2, hypre_int *np1,
                         hypre_MPI_Datatype *dptr)
 {
-   HYPRE_Int i, len1, len2, indx1, indx2;
+   NALU_HYPRE_Int i, len1, len2, indx1, indx2;
 
    if (list1[0] == 0)
    {

@@ -18,11 +18,11 @@
  *--------------------------------------------------------------------------*/
 
 hypre_Vector *
-hypre_SeqVectorCreate( HYPRE_Int size )
+hypre_SeqVectorCreate( NALU_HYPRE_Int size )
 {
    hypre_Vector  *vector;
 
-   vector = hypre_CTAlloc(hypre_Vector, 1, HYPRE_MEMORY_HOST);
+   vector = hypre_CTAlloc(hypre_Vector, 1, NALU_HYPRE_MEMORY_HOST);
 
    hypre_VectorData(vector) = NULL;
    hypre_VectorSize(vector) = size;
@@ -43,7 +43,7 @@ hypre_SeqVectorCreate( HYPRE_Int size )
  *--------------------------------------------------------------------------*/
 
 hypre_Vector *
-hypre_SeqMultiVectorCreate( HYPRE_Int size, HYPRE_Int num_vectors )
+hypre_SeqMultiVectorCreate( NALU_HYPRE_Int size, NALU_HYPRE_Int num_vectors )
 {
    hypre_Vector *vector = hypre_SeqVectorCreate(size);
    hypre_VectorNumVectors(vector) = num_vectors;
@@ -55,19 +55,19 @@ hypre_SeqMultiVectorCreate( HYPRE_Int size, HYPRE_Int num_vectors )
  * hypre_SeqVectorDestroy
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SeqVectorDestroy( hypre_Vector *vector )
 {
    if (vector)
    {
-      HYPRE_MemoryLocation memory_location = hypre_VectorMemoryLocation(vector);
+      NALU_HYPRE_MemoryLocation memory_location = hypre_VectorMemoryLocation(vector);
 
       if (hypre_VectorOwnsData(vector))
       {
          hypre_TFree(hypre_VectorData(vector), memory_location);
       }
 
-      hypre_TFree(vector, HYPRE_MEMORY_HOST);
+      hypre_TFree(vector, NALU_HYPRE_MEMORY_HOST);
    }
 
    return hypre_error_flag;
@@ -79,12 +79,12 @@ hypre_SeqVectorDestroy( hypre_Vector *vector )
  * Initialize a vector at a given memory location
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_SeqVectorInitialize_v2( hypre_Vector *vector, HYPRE_MemoryLocation memory_location )
+NALU_HYPRE_Int
+hypre_SeqVectorInitialize_v2( hypre_Vector *vector, NALU_HYPRE_MemoryLocation memory_location )
 {
-   HYPRE_Int  size = hypre_VectorSize(vector);
-   HYPRE_Int  num_vectors = hypre_VectorNumVectors(vector);
-   HYPRE_Int  multivec_storage_method = hypre_VectorMultiVecStorageMethod(vector);
+   NALU_HYPRE_Int  size = hypre_VectorSize(vector);
+   NALU_HYPRE_Int  num_vectors = hypre_VectorNumVectors(vector);
+   NALU_HYPRE_Int  multivec_storage_method = hypre_VectorMultiVecStorageMethod(vector);
 
    hypre_VectorMemoryLocation(vector) = memory_location;
 
@@ -94,7 +94,7 @@ hypre_SeqVectorInitialize_v2( hypre_Vector *vector, HYPRE_MemoryLocation memory_
     * when being used, and freed */
    if (!hypre_VectorData(vector))
    {
-      hypre_VectorData(vector) = hypre_CTAlloc(HYPRE_Complex, num_vectors * size, memory_location);
+      hypre_VectorData(vector) = hypre_CTAlloc(NALU_HYPRE_Complex, num_vectors * size, memory_location);
    }
 
    if (multivec_storage_method == 0)
@@ -109,7 +109,7 @@ hypre_SeqVectorInitialize_v2( hypre_Vector *vector, HYPRE_MemoryLocation memory_
    }
    else
    {
-      hypre_error_w_msg(HYPRE_ERROR_GENERIC, "Invalid multivec storage method!\n");
+      hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "Invalid multivec storage method!\n");
       return hypre_error_flag;
    }
 
@@ -120,7 +120,7 @@ hypre_SeqVectorInitialize_v2( hypre_Vector *vector, HYPRE_MemoryLocation memory_
  * hypre_SeqVectorInitialize
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SeqVectorInitialize( hypre_Vector *vector )
 {
    return hypre_SeqVectorInitialize_v2(vector, hypre_VectorMemoryLocation(vector));
@@ -130,9 +130,9 @@ hypre_SeqVectorInitialize( hypre_Vector *vector )
  * hypre_SeqVectorSetDataOwner
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SeqVectorSetDataOwner( hypre_Vector *vector,
-                             HYPRE_Int     owns_data   )
+                             NALU_HYPRE_Int     owns_data   )
 {
    hypre_VectorOwnsData(vector) = owns_data;
 
@@ -143,11 +143,11 @@ hypre_SeqVectorSetDataOwner( hypre_Vector *vector,
  * hypre_SeqVectorSetSize
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SeqVectorSetSize( hypre_Vector *vector,
-                        HYPRE_Int     size   )
+                        NALU_HYPRE_Int     size   )
 {
-   HYPRE_Int  multivec_storage_method = hypre_VectorMultiVecStorageMethod(vector);
+   NALU_HYPRE_Int  multivec_storage_method = hypre_VectorMultiVecStorageMethod(vector);
 
    hypre_VectorSize(vector) = size;
    if (multivec_storage_method == 0)
@@ -169,10 +169,10 @@ hypre_SeqVectorRead( char *file_name )
 
    FILE    *fp;
 
-   HYPRE_Complex *data;
-   HYPRE_Int      size;
+   NALU_HYPRE_Complex *data;
+   NALU_HYPRE_Int      size;
 
-   HYPRE_Int      j;
+   NALU_HYPRE_Int      j;
 
    /*----------------------------------------------------------
     * Read in the data
@@ -184,7 +184,7 @@ hypre_SeqVectorRead( char *file_name )
 
    vector = hypre_SeqVectorCreate(size);
 
-   hypre_VectorMemoryLocation(vector) = HYPRE_MEMORY_HOST;
+   hypre_VectorMemoryLocation(vector) = NALU_HYPRE_MEMORY_HOST;
 
    hypre_SeqVectorInitialize(vector);
 
@@ -206,17 +206,17 @@ hypre_SeqVectorRead( char *file_name )
  * hypre_SeqVectorPrint
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SeqVectorPrint( hypre_Vector *vector,
                       char         *file_name )
 {
    FILE          *fp;
 
-   HYPRE_Complex *data;
-   HYPRE_Int      size, num_vectors, vecstride, idxstride;
+   NALU_HYPRE_Complex *data;
+   NALU_HYPRE_Int      size, num_vectors, vecstride, idxstride;
 
-   HYPRE_Int      i, j;
-   HYPRE_Complex  value;
+   NALU_HYPRE_Int      i, j;
+   NALU_HYPRE_Complex  value;
 
    num_vectors = hypre_VectorNumVectors(vector);
    vecstride = hypre_VectorVectorStride(vector);
@@ -248,7 +248,7 @@ hypre_SeqVectorPrint( hypre_Vector *vector,
          for (i = 0; i < size; i++)
          {
             value = data[ j * vecstride + i * idxstride ];
-#ifdef HYPRE_COMPLEX
+#ifdef NALU_HYPRE_COMPLEX
             hypre_fprintf(fp, "%.14e , %.14e\n",
                           hypre_creal(value), hypre_cimag(value));
 #else
@@ -261,7 +261,7 @@ hypre_SeqVectorPrint( hypre_Vector *vector,
    {
       for (i = 0; i < size; i++)
       {
-#ifdef HYPRE_COMPLEX
+#ifdef NALU_HYPRE_COMPLEX
          hypre_fprintf(fp, "%.14e , %.14e\n",
                        hypre_creal(data[i]), hypre_cimag(data[i]));
 #else
@@ -279,18 +279,18 @@ hypre_SeqVectorPrint( hypre_Vector *vector,
  * hypre_SeqVectorSetConstantValuesHost
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SeqVectorSetConstantValuesHost( hypre_Vector *v,
-                                      HYPRE_Complex value )
+                                      NALU_HYPRE_Complex value )
 {
-   HYPRE_Complex *vector_data = hypre_VectorData(v);
-   HYPRE_Int      num_vectors = hypre_VectorNumVectors(v);
-   HYPRE_Int      size        = hypre_VectorSize(v);
-   HYPRE_Int      total_size  = size * num_vectors;
-   HYPRE_Int      i;
+   NALU_HYPRE_Complex *vector_data = hypre_VectorData(v);
+   NALU_HYPRE_Int      num_vectors = hypre_VectorNumVectors(v);
+   NALU_HYPRE_Int      size        = hypre_VectorSize(v);
+   NALU_HYPRE_Int      total_size  = size * num_vectors;
+   NALU_HYPRE_Int      i;
 
-#if defined(HYPRE_USING_OPENMP)
-   #pragma omp parallel for private(i) HYPRE_SMP_SCHEDULE
+#if defined(NALU_HYPRE_USING_OPENMP)
+   #pragma omp parallel for private(i) NALU_HYPRE_SMP_SCHEDULE
 #endif
    for (i = 0; i < total_size; i++)
    {
@@ -304,17 +304,17 @@ hypre_SeqVectorSetConstantValuesHost( hypre_Vector *v,
  * hypre_SeqVectorSetConstantValues
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SeqVectorSetConstantValues( hypre_Vector *v,
-                                  HYPRE_Complex value )
+                                  NALU_HYPRE_Complex value )
 {
-#ifdef HYPRE_PROFILE
-   hypre_profile_times[HYPRE_TIMER_ID_BLAS1] -= hypre_MPI_Wtime();
+#ifdef NALU_HYPRE_PROFILE
+   hypre_profile_times[NALU_HYPRE_TIMER_ID_BLAS1] -= hypre_MPI_Wtime();
 #endif
 
-   HYPRE_Int   num_vectors = hypre_VectorNumVectors(v);
-   HYPRE_Int   size        = hypre_VectorSize(v);
-   HYPRE_Int   total_size  = size * num_vectors;
+   NALU_HYPRE_Int   num_vectors = hypre_VectorNumVectors(v);
+   NALU_HYPRE_Int   size        = hypre_VectorSize(v);
+   NALU_HYPRE_Int   total_size  = size * num_vectors;
 
    /* Trivial case */
    if (total_size <= 0)
@@ -322,10 +322,10 @@ hypre_SeqVectorSetConstantValues( hypre_Vector *v,
       return hypre_error_flag;
    }
 
-#if defined(HYPRE_USING_GPU)
-   HYPRE_ExecutionPolicy exec = hypre_GetExecPolicy1(hypre_VectorMemoryLocation(v));
+#if defined(NALU_HYPRE_USING_GPU)
+   NALU_HYPRE_ExecutionPolicy exec = hypre_GetExecPolicy1(hypre_VectorMemoryLocation(v));
 
-   if (exec == HYPRE_EXEC_DEVICE)
+   if (exec == NALU_HYPRE_EXEC_DEVICE)
    {
       hypre_SeqVectorSetConstantValuesDevice(v, value);
    }
@@ -335,8 +335,8 @@ hypre_SeqVectorSetConstantValues( hypre_Vector *v,
       hypre_SeqVectorSetConstantValuesHost(v, value);
    }
 
-#ifdef HYPRE_PROFILE
-   hypre_profile_times[HYPRE_TIMER_ID_BLAS1] += hypre_MPI_Wtime();
+#ifdef NALU_HYPRE_PROFILE
+   hypre_profile_times[NALU_HYPRE_TIMER_ID_BLAS1] += hypre_MPI_Wtime();
 #endif
 
    return hypre_error_flag;
@@ -348,13 +348,13 @@ hypre_SeqVectorSetConstantValues( hypre_Vector *v,
  * returns vector of values randomly distributed between -1.0 and +1.0
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SeqVectorSetRandomValues( hypre_Vector *v,
-                                HYPRE_Int     seed )
+                                NALU_HYPRE_Int     seed )
 {
-   HYPRE_Complex *vector_data = hypre_VectorData(v);
-   HYPRE_Int      size        = hypre_VectorSize(v);
-   HYPRE_Int      i;
+   NALU_HYPRE_Complex *vector_data = hypre_VectorData(v);
+   NALU_HYPRE_Int      size        = hypre_VectorSize(v);
+   NALU_HYPRE_Int      i;
 
    hypre_SeedRand(seed);
    size *= hypre_VectorNumVectors(v);
@@ -369,14 +369,14 @@ hypre_SeqVectorSetRandomValues( hypre_Vector *v,
    }
    else
    {
-      HYPRE_Complex *h_data = hypre_TAlloc(HYPRE_Complex, size, HYPRE_MEMORY_HOST);
+      NALU_HYPRE_Complex *h_data = hypre_TAlloc(NALU_HYPRE_Complex, size, NALU_HYPRE_MEMORY_HOST);
       for (i = 0; i < size; i++)
       {
          h_data[i] = 2.0 * hypre_Rand() - 1.0;
       }
-      hypre_TMemcpy(vector_data, h_data, HYPRE_Complex, size, hypre_VectorMemoryLocation(v),
-                    HYPRE_MEMORY_HOST);
-      hypre_TFree(h_data, HYPRE_MEMORY_HOST);
+      hypre_TMemcpy(vector_data, h_data, NALU_HYPRE_Complex, size, hypre_VectorMemoryLocation(v),
+                    NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(h_data, NALU_HYPRE_MEMORY_HOST);
    }
 
    return hypre_error_flag;
@@ -389,25 +389,25 @@ hypre_SeqVectorSetRandomValues( hypre_Vector *v,
  * copied to y
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SeqVectorCopy( hypre_Vector *x,
                      hypre_Vector *y )
 {
-#ifdef HYPRE_PROFILE
-   hypre_profile_times[HYPRE_TIMER_ID_BLAS1] -= hypre_MPI_Wtime();
+#ifdef NALU_HYPRE_PROFILE
+   hypre_profile_times[NALU_HYPRE_TIMER_ID_BLAS1] -= hypre_MPI_Wtime();
 #endif
 
    size_t size = hypre_min(hypre_VectorSize(x), hypre_VectorSize(y)) * hypre_VectorNumVectors(x);
 
    hypre_TMemcpy( hypre_VectorData(y),
                   hypre_VectorData(x),
-                  HYPRE_Complex,
+                  NALU_HYPRE_Complex,
                   size,
                   hypre_VectorMemoryLocation(y),
                   hypre_VectorMemoryLocation(x) );
 
-#ifdef HYPRE_PROFILE
-   hypre_profile_times[HYPRE_TIMER_ID_BLAS1] += hypre_MPI_Wtime();
+#ifdef NALU_HYPRE_PROFILE
+   hypre_profile_times[NALU_HYPRE_TIMER_ID_BLAS1] += hypre_MPI_Wtime();
 #endif
 
    return hypre_error_flag;
@@ -418,10 +418,10 @@ hypre_SeqVectorCopy( hypre_Vector *x,
  *--------------------------------------------------------------------------*/
 
 hypre_Vector*
-hypre_SeqVectorCloneDeep_v2( hypre_Vector *x, HYPRE_MemoryLocation memory_location )
+hypre_SeqVectorCloneDeep_v2( hypre_Vector *x, NALU_HYPRE_MemoryLocation memory_location )
 {
-   HYPRE_Int      size          = hypre_VectorSize(x);
-   HYPRE_Int      num_vectors   = hypre_VectorNumVectors(x);
+   NALU_HYPRE_Int      size          = hypre_VectorSize(x);
+   NALU_HYPRE_Int      num_vectors   = hypre_VectorNumVectors(x);
 
    hypre_Vector *y = hypre_SeqMultiVectorCreate( size, num_vectors );
 
@@ -456,8 +456,8 @@ hypre_SeqVectorCloneDeep( hypre_Vector *x )
 hypre_Vector *
 hypre_SeqVectorCloneShallow( hypre_Vector *x )
 {
-   HYPRE_Int     size         = hypre_VectorSize(x);
-   HYPRE_Int     num_vectors  = hypre_VectorNumVectors(x);
+   NALU_HYPRE_Int     size         = hypre_VectorSize(x);
+   NALU_HYPRE_Int     num_vectors  = hypre_VectorNumVectors(x);
    hypre_Vector *y            = hypre_SeqMultiVectorCreate(size, num_vectors);
 
    hypre_VectorMultiVecStorageMethod(y) = hypre_VectorMultiVecStorageMethod(x);
@@ -477,18 +477,18 @@ hypre_SeqVectorCloneShallow( hypre_Vector *x )
  * hypre_SeqVectorScaleHost
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_SeqVectorScaleHost( HYPRE_Complex alpha,
+NALU_HYPRE_Int
+hypre_SeqVectorScaleHost( NALU_HYPRE_Complex alpha,
                           hypre_Vector *y )
 {
-   HYPRE_Complex *y_data      = hypre_VectorData(y);
-   HYPRE_Int      num_vectors = hypre_VectorNumVectors(y);
-   HYPRE_Int      size        = hypre_VectorSize(y);
-   HYPRE_Int      total_size  = size * num_vectors;
-   HYPRE_Int      i;
+   NALU_HYPRE_Complex *y_data      = hypre_VectorData(y);
+   NALU_HYPRE_Int      num_vectors = hypre_VectorNumVectors(y);
+   NALU_HYPRE_Int      size        = hypre_VectorSize(y);
+   NALU_HYPRE_Int      total_size  = size * num_vectors;
+   NALU_HYPRE_Int      i;
 
-#if defined(HYPRE_USING_OPENMP)
-   #pragma omp parallel for private(i) HYPRE_SMP_SCHEDULE
+#if defined(NALU_HYPRE_USING_OPENMP)
+   #pragma omp parallel for private(i) NALU_HYPRE_SMP_SCHEDULE
 #endif
    for (i = 0; i < total_size; i++)
    {
@@ -502,12 +502,12 @@ hypre_SeqVectorScaleHost( HYPRE_Complex alpha,
  * hypre_SeqVectorScale
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_SeqVectorScale( HYPRE_Complex alpha,
+NALU_HYPRE_Int
+hypre_SeqVectorScale( NALU_HYPRE_Complex alpha,
                       hypre_Vector *y )
 {
-#ifdef HYPRE_PROFILE
-   hypre_profile_times[HYPRE_TIMER_ID_BLAS1] -= hypre_MPI_Wtime();
+#ifdef NALU_HYPRE_PROFILE
+   hypre_profile_times[NALU_HYPRE_TIMER_ID_BLAS1] -= hypre_MPI_Wtime();
 #endif
 
    /* special cases */
@@ -521,10 +521,10 @@ hypre_SeqVectorScale( HYPRE_Complex alpha,
       return hypre_SeqVectorSetConstantValues(y, 0.0);
    }
 
-#if defined(HYPRE_USING_GPU)
-   HYPRE_ExecutionPolicy exec = hypre_GetExecPolicy1(hypre_VectorMemoryLocation(y));
+#if defined(NALU_HYPRE_USING_GPU)
+   NALU_HYPRE_ExecutionPolicy exec = hypre_GetExecPolicy1(hypre_VectorMemoryLocation(y));
 
-   if (exec == HYPRE_EXEC_DEVICE)
+   if (exec == NALU_HYPRE_EXEC_DEVICE)
    {
       hypre_SeqVectorScaleDevice(alpha, y);
    }
@@ -534,8 +534,8 @@ hypre_SeqVectorScale( HYPRE_Complex alpha,
       hypre_SeqVectorScaleHost(alpha, y);
    }
 
-#ifdef HYPRE_PROFILE
-   hypre_profile_times[HYPRE_TIMER_ID_BLAS1] += hypre_MPI_Wtime();
+#ifdef NALU_HYPRE_PROFILE
+   hypre_profile_times[NALU_HYPRE_TIMER_ID_BLAS1] += hypre_MPI_Wtime();
 #endif
 
    return hypre_error_flag;
@@ -545,20 +545,20 @@ hypre_SeqVectorScale( HYPRE_Complex alpha,
  * hypre_SeqVectorAxpyHost
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_SeqVectorAxpyHost( HYPRE_Complex alpha,
+NALU_HYPRE_Int
+hypre_SeqVectorAxpyHost( NALU_HYPRE_Complex alpha,
                          hypre_Vector *x,
                          hypre_Vector *y )
 {
-   HYPRE_Complex *x_data      = hypre_VectorData(x);
-   HYPRE_Complex *y_data      = hypre_VectorData(y);
-   HYPRE_Int      num_vectors = hypre_VectorNumVectors(x);
-   HYPRE_Int      size        = hypre_VectorSize(x);
-   HYPRE_Int      total_size  = size * num_vectors;
-   HYPRE_Int      i;
+   NALU_HYPRE_Complex *x_data      = hypre_VectorData(x);
+   NALU_HYPRE_Complex *y_data      = hypre_VectorData(y);
+   NALU_HYPRE_Int      num_vectors = hypre_VectorNumVectors(x);
+   NALU_HYPRE_Int      size        = hypre_VectorSize(x);
+   NALU_HYPRE_Int      total_size  = size * num_vectors;
+   NALU_HYPRE_Int      i;
 
-#if defined(HYPRE_USING_OPENMP)
-   #pragma omp parallel for private(i) HYPRE_SMP_SCHEDULE
+#if defined(NALU_HYPRE_USING_OPENMP)
+   #pragma omp parallel for private(i) NALU_HYPRE_SMP_SCHEDULE
 #endif
    for (i = 0; i < total_size; i++)
    {
@@ -572,19 +572,19 @@ hypre_SeqVectorAxpyHost( HYPRE_Complex alpha,
  * hypre_SeqVectorAxpy
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_SeqVectorAxpy( HYPRE_Complex alpha,
+NALU_HYPRE_Int
+hypre_SeqVectorAxpy( NALU_HYPRE_Complex alpha,
                      hypre_Vector *x,
                      hypre_Vector *y )
 {
-#ifdef HYPRE_PROFILE
-   hypre_profile_times[HYPRE_TIMER_ID_BLAS1] -= hypre_MPI_Wtime();
+#ifdef NALU_HYPRE_PROFILE
+   hypre_profile_times[NALU_HYPRE_TIMER_ID_BLAS1] -= hypre_MPI_Wtime();
 #endif
 
-#if defined(HYPRE_USING_GPU)
-   HYPRE_ExecutionPolicy exec = hypre_GetExecPolicy2( hypre_VectorMemoryLocation(x),
+#if defined(NALU_HYPRE_USING_GPU)
+   NALU_HYPRE_ExecutionPolicy exec = hypre_GetExecPolicy2( hypre_VectorMemoryLocation(x),
                                                       hypre_VectorMemoryLocation(y) );
-   if (exec == HYPRE_EXEC_DEVICE)
+   if (exec == NALU_HYPRE_EXEC_DEVICE)
    {
       hypre_SeqVectorAxpyDevice(alpha, x, y);
    }
@@ -594,8 +594,8 @@ hypre_SeqVectorAxpy( HYPRE_Complex alpha,
       hypre_SeqVectorAxpyHost(alpha, x, y);
    }
 
-#ifdef HYPRE_PROFILE
-   hypre_profile_times[HYPRE_TIMER_ID_BLAS1] += hypre_MPI_Wtime();
+#ifdef NALU_HYPRE_PROFILE
+   hypre_profile_times[NALU_HYPRE_TIMER_ID_BLAS1] += hypre_MPI_Wtime();
 #endif
 
    return hypre_error_flag;
@@ -611,22 +611,22 @@ hypre_SeqVectorAxpy( HYPRE_Complex alpha,
  *        2) Add vecstride/idxstride variables
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SeqVectorElmdivpyHost( hypre_Vector *x,
                              hypre_Vector *b,
                              hypre_Vector *y,
-                             HYPRE_Int    *marker,
-                             HYPRE_Int     marker_val )
+                             NALU_HYPRE_Int    *marker,
+                             NALU_HYPRE_Int     marker_val )
 {
-   HYPRE_Complex   *x_data        = hypre_VectorData(x);
-   HYPRE_Complex   *b_data        = hypre_VectorData(b);
-   HYPRE_Complex   *y_data        = hypre_VectorData(y);
-   HYPRE_Int        num_vectors_x = hypre_VectorNumVectors(x);
-   HYPRE_Int        num_vectors_y = hypre_VectorNumVectors(y);
-   HYPRE_Int        num_vectors_b = hypre_VectorNumVectors(b);
-   HYPRE_Int        size          = hypre_VectorSize(b);
-   HYPRE_Int        i, j;
-   HYPRE_Complex    val;
+   NALU_HYPRE_Complex   *x_data        = hypre_VectorData(x);
+   NALU_HYPRE_Complex   *b_data        = hypre_VectorData(b);
+   NALU_HYPRE_Complex   *y_data        = hypre_VectorData(y);
+   NALU_HYPRE_Int        num_vectors_x = hypre_VectorNumVectors(x);
+   NALU_HYPRE_Int        num_vectors_y = hypre_VectorNumVectors(y);
+   NALU_HYPRE_Int        num_vectors_b = hypre_VectorNumVectors(b);
+   NALU_HYPRE_Int        size          = hypre_VectorSize(b);
+   NALU_HYPRE_Int        i, j;
+   NALU_HYPRE_Complex    val;
 
    if (num_vectors_b == 1)
    {
@@ -635,8 +635,8 @@ hypre_SeqVectorElmdivpyHost( hypre_Vector *x,
       {
          if (marker)
          {
-#ifdef HYPRE_USING_OPENMP
-            #pragma omp parallel for private(i) HYPRE_SMP_SCHEDULE
+#ifdef NALU_HYPRE_USING_OPENMP
+            #pragma omp parallel for private(i) NALU_HYPRE_SMP_SCHEDULE
 #endif
             for (i = 0; i < size; i++)
             {
@@ -648,8 +648,8 @@ hypre_SeqVectorElmdivpyHost( hypre_Vector *x,
          }
          else
          {
-#ifdef HYPRE_USING_OPENMP
-            #pragma omp parallel for private(i) HYPRE_SMP_SCHEDULE
+#ifdef NALU_HYPRE_USING_OPENMP
+            #pragma omp parallel for private(i) NALU_HYPRE_SMP_SCHEDULE
 #endif
             for (i = 0; i < size; i++)
             {
@@ -662,8 +662,8 @@ hypre_SeqVectorElmdivpyHost( hypre_Vector *x,
       {
          if (marker)
          {
-#ifdef HYPRE_USING_OPENMP
-            #pragma omp parallel for private(i) HYPRE_SMP_SCHEDULE
+#ifdef NALU_HYPRE_USING_OPENMP
+            #pragma omp parallel for private(i) NALU_HYPRE_SMP_SCHEDULE
 #endif
             for (i = 0; i < size; i++)
             {
@@ -677,8 +677,8 @@ hypre_SeqVectorElmdivpyHost( hypre_Vector *x,
          }
          else
          {
-#ifdef HYPRE_USING_OPENMP
-            #pragma omp parallel for private(i) HYPRE_SMP_SCHEDULE
+#ifdef NALU_HYPRE_USING_OPENMP
+            #pragma omp parallel for private(i) NALU_HYPRE_SMP_SCHEDULE
 #endif
             for (i = 0; i < size; i++)
             {
@@ -693,8 +693,8 @@ hypre_SeqVectorElmdivpyHost( hypre_Vector *x,
       {
          if (marker)
          {
-#ifdef HYPRE_USING_OPENMP
-            #pragma omp parallel for private(i, j) HYPRE_SMP_SCHEDULE
+#ifdef NALU_HYPRE_USING_OPENMP
+            #pragma omp parallel for private(i, j) NALU_HYPRE_SMP_SCHEDULE
 #endif
             for (i = 0; i < size; i++)
             {
@@ -710,8 +710,8 @@ hypre_SeqVectorElmdivpyHost( hypre_Vector *x,
          }
          else
          {
-#ifdef HYPRE_USING_OPENMP
-            #pragma omp parallel for private(i, j) HYPRE_SMP_SCHEDULE
+#ifdef NALU_HYPRE_USING_OPENMP
+            #pragma omp parallel for private(i, j) NALU_HYPRE_SMP_SCHEDULE
 #endif
             for (i = 0; i < size; i++)
             {
@@ -725,12 +725,12 @@ hypre_SeqVectorElmdivpyHost( hypre_Vector *x,
       }
       else
       {
-         hypre_error_w_msg(HYPRE_ERROR_GENERIC, "Unsupported combination of num_vectors!\n");
+         hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "Unsupported combination of num_vectors!\n");
       }
    }
    else
    {
-      hypre_error_w_msg(HYPRE_ERROR_GENERIC, "num_vectors_b != 1 not supported!\n");
+      hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "num_vectors_b != 1 not supported!\n");
    }
 
    return hypre_error_flag;
@@ -742,27 +742,27 @@ hypre_SeqVectorElmdivpyHost( hypre_Vector *x,
  * Computes: y[i] = y[i] + x[i] / b[i] for marker[i] = marker_val
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SeqVectorElmdivpyMarked( hypre_Vector *x,
                                hypre_Vector *b,
                                hypre_Vector *y,
-                               HYPRE_Int    *marker,
-                               HYPRE_Int     marker_val)
+                               NALU_HYPRE_Int    *marker,
+                               NALU_HYPRE_Int     marker_val)
 {
-#ifdef HYPRE_PROFILE
-   hypre_profile_times[HYPRE_TIMER_ID_BLAS1] -= hypre_MPI_Wtime();
+#ifdef NALU_HYPRE_PROFILE
+   hypre_profile_times[NALU_HYPRE_TIMER_ID_BLAS1] -= hypre_MPI_Wtime();
 #endif
 
    /* Sanity checks */
    if (hypre_VectorSize(y) != hypre_VectorSize(b))
    {
-      hypre_error_w_msg(HYPRE_ERROR_GENERIC, "Error: sizes of y and b do not match!\n");
+      hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "Error: sizes of y and b do not match!\n");
       return hypre_error_flag;
    }
 
    if (hypre_VectorSize(x) < hypre_VectorSize(y))
    {
-      hypre_error_w_msg(HYPRE_ERROR_GENERIC, "Error: x_size is smaller than y_size!\n");
+      hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "Error: x_size is smaller than y_size!\n");
       return hypre_error_flag;
    }
 
@@ -771,10 +771,10 @@ hypre_SeqVectorElmdivpyMarked( hypre_Vector *x,
    hypre_assert(hypre_VectorMultiVecStorageMethod(b) == 0);
    hypre_assert(hypre_VectorMultiVecStorageMethod(y) == 0);
 
-#if defined(HYPRE_USING_GPU)
-   HYPRE_ExecutionPolicy exec = hypre_GetExecPolicy2( hypre_VectorMemoryLocation(x),
+#if defined(NALU_HYPRE_USING_GPU)
+   NALU_HYPRE_ExecutionPolicy exec = hypre_GetExecPolicy2( hypre_VectorMemoryLocation(x),
                                                       hypre_VectorMemoryLocation(b) );
-   if (exec == HYPRE_EXEC_DEVICE)
+   if (exec == NALU_HYPRE_EXEC_DEVICE)
    {
       hypre_SeqVectorElmdivpyDevice(x, b, y, marker, marker_val);
    }
@@ -784,8 +784,8 @@ hypre_SeqVectorElmdivpyMarked( hypre_Vector *x,
       hypre_SeqVectorElmdivpyHost(x, b, y, marker, marker_val);
    }
 
-#ifdef HYPRE_PROFILE
-   hypre_profile_times[HYPRE_TIMER_ID_BLAS1] += hypre_MPI_Wtime();
+#ifdef NALU_HYPRE_PROFILE
+   hypre_profile_times[NALU_HYPRE_TIMER_ID_BLAS1] += hypre_MPI_Wtime();
 #endif
 
    return hypre_error_flag;
@@ -801,7 +801,7 @@ hypre_SeqVectorElmdivpyMarked( hypre_Vector *x,
  *    2) x_size can be larger than y_size
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_SeqVectorElmdivpy( hypre_Vector *x,
                          hypre_Vector *b,
                          hypre_Vector *y )
@@ -813,21 +813,21 @@ hypre_SeqVectorElmdivpy( hypre_Vector *x,
  * hypre_SeqVectorInnerProdHost
  *--------------------------------------------------------------------------*/
 
-HYPRE_Real
+NALU_HYPRE_Real
 hypre_SeqVectorInnerProdHost( hypre_Vector *x,
                               hypre_Vector *y )
 {
-   HYPRE_Complex *x_data      = hypre_VectorData(x);
-   HYPRE_Complex *y_data      = hypre_VectorData(y);
-   HYPRE_Int      num_vectors = hypre_VectorNumVectors(x);
-   HYPRE_Int      size        = hypre_VectorSize(x);
-   HYPRE_Int      total_size  = size * num_vectors;
+   NALU_HYPRE_Complex *x_data      = hypre_VectorData(x);
+   NALU_HYPRE_Complex *y_data      = hypre_VectorData(y);
+   NALU_HYPRE_Int      num_vectors = hypre_VectorNumVectors(x);
+   NALU_HYPRE_Int      size        = hypre_VectorSize(x);
+   NALU_HYPRE_Int      total_size  = size * num_vectors;
 
-   HYPRE_Real     result      = 0.0;
-   HYPRE_Int      i;
+   NALU_HYPRE_Real     result      = 0.0;
+   NALU_HYPRE_Int      i;
 
-#if defined(HYPRE_USING_OPENMP)
-   #pragma omp parallel for private(i) reduction(+:result) HYPRE_SMP_SCHEDULE
+#if defined(NALU_HYPRE_USING_OPENMP)
+   #pragma omp parallel for private(i) reduction(+:result) NALU_HYPRE_SMP_SCHEDULE
 #endif
    for (i = 0; i < total_size; i++)
    {
@@ -841,20 +841,20 @@ hypre_SeqVectorInnerProdHost( hypre_Vector *x,
  * hypre_SeqVectorInnerProd
  *--------------------------------------------------------------------------*/
 
-HYPRE_Real
+NALU_HYPRE_Real
 hypre_SeqVectorInnerProd( hypre_Vector *x,
                           hypre_Vector *y )
 {
-#ifdef HYPRE_PROFILE
-   hypre_profile_times[HYPRE_TIMER_ID_BLAS1] -= hypre_MPI_Wtime();
+#ifdef NALU_HYPRE_PROFILE
+   hypre_profile_times[NALU_HYPRE_TIMER_ID_BLAS1] -= hypre_MPI_Wtime();
 #endif
 
-   HYPRE_Real result;
+   NALU_HYPRE_Real result;
 
-#if defined(HYPRE_USING_GPU)
-   HYPRE_ExecutionPolicy exec = hypre_GetExecPolicy2( hypre_VectorMemoryLocation(x),
+#if defined(NALU_HYPRE_USING_GPU)
+   NALU_HYPRE_ExecutionPolicy exec = hypre_GetExecPolicy2( hypre_VectorMemoryLocation(x),
                                                       hypre_VectorMemoryLocation(y) );
-   if (exec == HYPRE_EXEC_DEVICE)
+   if (exec == NALU_HYPRE_EXEC_DEVICE)
    {
       result = hypre_SeqVectorInnerProdDevice(x, y);
    }
@@ -864,8 +864,8 @@ hypre_SeqVectorInnerProd( hypre_Vector *x,
       result = hypre_SeqVectorInnerProdHost(x, y);
    }
 
-#ifdef HYPRE_PROFILE
-   hypre_profile_times[HYPRE_TIMER_ID_BLAS1] += hypre_MPI_Wtime();
+#ifdef NALU_HYPRE_PROFILE
+   hypre_profile_times[NALU_HYPRE_TIMER_ID_BLAS1] += hypre_MPI_Wtime();
 #endif
 
    return result;
@@ -875,19 +875,19 @@ hypre_SeqVectorInnerProd( hypre_Vector *x,
  * hypre_SeqVectorSumEltsHost
  *--------------------------------------------------------------------------*/
 
-HYPRE_Complex
+NALU_HYPRE_Complex
 hypre_SeqVectorSumEltsHost( hypre_Vector *vector )
 {
-   HYPRE_Complex  *data        = hypre_VectorData( vector );
-   HYPRE_Int       num_vectors = hypre_VectorNumVectors(vector);
-   HYPRE_Int       size        = hypre_VectorSize(vector);
-   HYPRE_Int       total_size  = size * num_vectors;
+   NALU_HYPRE_Complex  *data        = hypre_VectorData( vector );
+   NALU_HYPRE_Int       num_vectors = hypre_VectorNumVectors(vector);
+   NALU_HYPRE_Int       size        = hypre_VectorSize(vector);
+   NALU_HYPRE_Int       total_size  = size * num_vectors;
 
-   HYPRE_Complex   sum  = 0;
-   HYPRE_Int       i;
+   NALU_HYPRE_Complex   sum  = 0;
+   NALU_HYPRE_Int       i;
 
-#ifdef HYPRE_USING_OPENMP
-   #pragma omp parallel for private(i) reduction(+:sum) HYPRE_SMP_SCHEDULE
+#ifdef NALU_HYPRE_USING_OPENMP
+   #pragma omp parallel for private(i) reduction(+:sum) NALU_HYPRE_SMP_SCHEDULE
 #endif
    for (i = 0; i < total_size; i++)
    {
@@ -903,19 +903,19 @@ hypre_SeqVectorSumEltsHost( hypre_Vector *vector )
  * Returns the sum of all vector elements.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Complex
+NALU_HYPRE_Complex
 hypre_SeqVectorSumElts( hypre_Vector *v )
 {
-#ifdef HYPRE_PROFILE
-   hypre_profile_times[HYPRE_TIMER_ID_BLAS1] -= hypre_MPI_Wtime();
+#ifdef NALU_HYPRE_PROFILE
+   hypre_profile_times[NALU_HYPRE_TIMER_ID_BLAS1] -= hypre_MPI_Wtime();
 #endif
 
-   HYPRE_Complex sum;
+   NALU_HYPRE_Complex sum;
 
-#if defined(HYPRE_USING_GPU)
-   HYPRE_ExecutionPolicy exec = hypre_GetExecPolicy1(hypre_VectorMemoryLocation(v));
+#if defined(NALU_HYPRE_USING_GPU)
+   NALU_HYPRE_ExecutionPolicy exec = hypre_GetExecPolicy1(hypre_VectorMemoryLocation(v));
 
-   if (exec == HYPRE_EXEC_DEVICE)
+   if (exec == NALU_HYPRE_EXEC_DEVICE)
    {
       sum = hypre_SeqVectorSumEltsDevice(v);
    }
@@ -925,8 +925,8 @@ hypre_SeqVectorSumElts( hypre_Vector *v )
       sum = hypre_SeqVectorSumEltsHost(v);
    }
 
-#ifdef HYPRE_PROFILE
-   hypre_profile_times[HYPRE_TIMER_ID_BLAS1] += hypre_MPI_Wtime();
+#ifdef NALU_HYPRE_PROFILE
+   hypre_profile_times[NALU_HYPRE_TIMER_ID_BLAS1] += hypre_MPI_Wtime();
 #endif
 
    return sum;
@@ -952,52 +952,52 @@ hypre_SeqVectorSumElts( hypre_Vector *v )
 
 #if 0
 /* y[i] = max(alpha*x[i], beta*y[i]) */
-HYPRE_Int
-hypre_SeqVectorMax( HYPRE_Complex alpha,
+NALU_HYPRE_Int
+hypre_SeqVectorMax( NALU_HYPRE_Complex alpha,
                     hypre_Vector *x,
-                    HYPRE_Complex beta,
+                    NALU_HYPRE_Complex beta,
                     hypre_Vector *y     )
 {
-#ifdef HYPRE_PROFILE
-   hypre_profile_times[HYPRE_TIMER_ID_BLAS1] -= hypre_MPI_Wtime();
+#ifdef NALU_HYPRE_PROFILE
+   hypre_profile_times[NALU_HYPRE_TIMER_ID_BLAS1] -= hypre_MPI_Wtime();
 #endif
 
-   HYPRE_Complex *x_data = hypre_VectorData(x);
-   HYPRE_Complex *y_data = hypre_VectorData(y);
-   HYPRE_Int      size   = hypre_VectorSize(x);
+   NALU_HYPRE_Complex *x_data = hypre_VectorData(x);
+   NALU_HYPRE_Complex *y_data = hypre_VectorData(y);
+   NALU_HYPRE_Int      size   = hypre_VectorSize(x);
 
    size *= hypre_VectorNumVectors(x);
 
-   //hypre_SeqVectorPrefetch(x, HYPRE_MEMORY_DEVICE);
-   //hypre_SeqVectorPrefetch(y, HYPRE_MEMORY_DEVICE);
+   //hypre_SeqVectorPrefetch(x, NALU_HYPRE_MEMORY_DEVICE);
+   //hypre_SeqVectorPrefetch(y, NALU_HYPRE_MEMORY_DEVICE);
 
-   thrust::maximum<HYPRE_Complex> mx;
+   thrust::maximum<NALU_HYPRE_Complex> mx;
 
-#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP)
-   HYPRE_THRUST_CALL( transform,
+#if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
+   NALU_HYPRE_THRUST_CALL( transform,
                       thrust::make_transform_iterator(x_data,        alpha * _1),
                       thrust::make_transform_iterator(x_data + size, alpha * _1),
                       thrust::make_transform_iterator(y_data,        beta  * _1),
                       y_data,
                       mx );
 #else
-   HYPRE_Int i;
-#if defined(HYPRE_USING_DEVICE_OPENMP)
+   NALU_HYPRE_Int i;
+#if defined(NALU_HYPRE_USING_DEVICE_OPENMP)
    #pragma omp target teams distribute parallel for private(i) is_device_ptr(y_data, x_data)
-#elif defined(HYPRE_USING_OPENMP)
-   #pragma omp parallel for private(i) HYPRE_SMP_SCHEDULE
+#elif defined(NALU_HYPRE_USING_OPENMP)
+   #pragma omp parallel for private(i) NALU_HYPRE_SMP_SCHEDULE
 #endif
    for (i = 0; i < size; i++)
    {
       y_data[i] += hypre_max(alpha * x_data[i], beta * y_data[i]);
    }
 
-#endif /* defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP) */
+#endif /* defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP) */
 
    hypre_SyncComputeStream(hypre_handle());
 
-#ifdef HYPRE_PROFILE
-   hypre_profile_times[HYPRE_TIMER_ID_BLAS1] += hypre_MPI_Wtime();
+#ifdef NALU_HYPRE_PROFILE
+   hypre_profile_times[NALU_HYPRE_TIMER_ID_BLAS1] += hypre_MPI_Wtime();
 #endif
 
    return hypre_error_flag;

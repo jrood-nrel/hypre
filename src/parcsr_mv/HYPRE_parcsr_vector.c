@@ -7,97 +7,97 @@
 
 /******************************************************************************
  *
- * HYPRE_ParVector interface
+ * NALU_HYPRE_ParVector interface
  *
  *****************************************************************************/
 
 #include "_hypre_parcsr_mv.h"
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParVectorCreate
+ * NALU_HYPRE_ParVectorCreate
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ParVectorCreate( MPI_Comm         comm,
-                       HYPRE_BigInt     global_size,
-                       HYPRE_BigInt    *partitioning,
-                       HYPRE_ParVector *vector )
+NALU_HYPRE_Int
+NALU_HYPRE_ParVectorCreate( MPI_Comm         comm,
+                       NALU_HYPRE_BigInt     global_size,
+                       NALU_HYPRE_BigInt    *partitioning,
+                       NALU_HYPRE_ParVector *vector )
 {
    if (!vector)
    {
       hypre_error_in_arg(4);
       return hypre_error_flag;
    }
-   *vector = (HYPRE_ParVector)
+   *vector = (NALU_HYPRE_ParVector)
              hypre_ParVectorCreate(comm, global_size, partitioning) ;
    return hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParMultiVectorCreate
+ * NALU_HYPRE_ParMultiVectorCreate
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ParMultiVectorCreate( MPI_Comm         comm,
-                            HYPRE_BigInt     global_size,
-                            HYPRE_BigInt    *partitioning,
-                            HYPRE_Int        number_vectors,
-                            HYPRE_ParVector *vector )
+NALU_HYPRE_Int
+NALU_HYPRE_ParMultiVectorCreate( MPI_Comm         comm,
+                            NALU_HYPRE_BigInt     global_size,
+                            NALU_HYPRE_BigInt    *partitioning,
+                            NALU_HYPRE_Int        number_vectors,
+                            NALU_HYPRE_ParVector *vector )
 {
    if (!vector)
    {
       hypre_error_in_arg(5);
       return hypre_error_flag;
    }
-   *vector = (HYPRE_ParVector)
+   *vector = (NALU_HYPRE_ParVector)
              hypre_ParMultiVectorCreate( comm, global_size, partitioning, number_vectors );
    return hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParVectorDestroy
+ * NALU_HYPRE_ParVectorDestroy
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ParVectorDestroy( HYPRE_ParVector vector )
+NALU_HYPRE_Int
+NALU_HYPRE_ParVectorDestroy( NALU_HYPRE_ParVector vector )
 {
    return ( hypre_ParVectorDestroy( (hypre_ParVector *) vector ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParVectorInitialize
+ * NALU_HYPRE_ParVectorInitialize
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ParVectorInitialize( HYPRE_ParVector vector )
+NALU_HYPRE_Int
+NALU_HYPRE_ParVectorInitialize( NALU_HYPRE_ParVector vector )
 {
    return ( hypre_ParVectorInitialize( (hypre_ParVector *) vector ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParVectorRead
+ * NALU_HYPRE_ParVectorRead
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ParVectorRead( MPI_Comm         comm,
+NALU_HYPRE_Int
+NALU_HYPRE_ParVectorRead( MPI_Comm         comm,
                      const char      *file_name,
-                     HYPRE_ParVector *vector)
+                     NALU_HYPRE_ParVector *vector)
 {
    if (!vector)
    {
       hypre_error_in_arg(3);
       return hypre_error_flag;
    }
-   *vector = (HYPRE_ParVector) hypre_ParVectorRead( comm, file_name ) ;
+   *vector = (NALU_HYPRE_ParVector) hypre_ParVectorRead( comm, file_name ) ;
    return hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParVectorPrint
+ * NALU_HYPRE_ParVectorPrint
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ParVectorPrint( HYPRE_ParVector  vector,
+NALU_HYPRE_Int
+NALU_HYPRE_ParVectorPrint( NALU_HYPRE_ParVector  vector,
                       const char      *file_name )
 {
    return ( hypre_ParVectorPrint( (hypre_ParVector *) vector,
@@ -105,82 +105,82 @@ HYPRE_ParVectorPrint( HYPRE_ParVector  vector,
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParVectorSetConstantValues
+ * NALU_HYPRE_ParVectorSetConstantValues
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ParVectorSetConstantValues( HYPRE_ParVector  vector,
-                                  HYPRE_Complex    value )
+NALU_HYPRE_Int
+NALU_HYPRE_ParVectorSetConstantValues( NALU_HYPRE_ParVector  vector,
+                                  NALU_HYPRE_Complex    value )
 {
    return ( hypre_ParVectorSetConstantValues( (hypre_ParVector *) vector,
                                               value ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParVectorSetRandomValues
+ * NALU_HYPRE_ParVectorSetRandomValues
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ParVectorSetRandomValues( HYPRE_ParVector  vector,
-                                HYPRE_Int        seed  )
+NALU_HYPRE_Int
+NALU_HYPRE_ParVectorSetRandomValues( NALU_HYPRE_ParVector  vector,
+                                NALU_HYPRE_Int        seed  )
 {
    return ( hypre_ParVectorSetRandomValues( (hypre_ParVector *) vector,
                                             seed ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParVectorCopy
+ * NALU_HYPRE_ParVectorCopy
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ParVectorCopy( HYPRE_ParVector x,
-                     HYPRE_ParVector y )
+NALU_HYPRE_Int
+NALU_HYPRE_ParVectorCopy( NALU_HYPRE_ParVector x,
+                     NALU_HYPRE_ParVector y )
 {
    return ( hypre_ParVectorCopy( (hypre_ParVector *) x,
                                  (hypre_ParVector *) y ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParVectorCloneShallow
+ * NALU_HYPRE_ParVectorCloneShallow
  *--------------------------------------------------------------------------*/
 
-HYPRE_ParVector
-HYPRE_ParVectorCloneShallow( HYPRE_ParVector x )
+NALU_HYPRE_ParVector
+NALU_HYPRE_ParVectorCloneShallow( NALU_HYPRE_ParVector x )
 {
-   return ( (HYPRE_ParVector)
+   return ( (NALU_HYPRE_ParVector)
             hypre_ParVectorCloneShallow( (hypre_ParVector *) x ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParVectorScale
+ * NALU_HYPRE_ParVectorScale
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ParVectorScale( HYPRE_Complex   value,
-                      HYPRE_ParVector x)
+NALU_HYPRE_Int
+NALU_HYPRE_ParVectorScale( NALU_HYPRE_Complex   value,
+                      NALU_HYPRE_ParVector x)
 {
    return ( hypre_ParVectorScale( value, (hypre_ParVector *) x) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParVectorAxpy
+ * NALU_HYPRE_ParVectorAxpy
  *--------------------------------------------------------------------------*/
-HYPRE_Int
-HYPRE_ParVectorAxpy( HYPRE_Complex   alpha,
-                     HYPRE_ParVector x,
-                     HYPRE_ParVector y )
+NALU_HYPRE_Int
+NALU_HYPRE_ParVectorAxpy( NALU_HYPRE_Complex   alpha,
+                     NALU_HYPRE_ParVector x,
+                     NALU_HYPRE_ParVector y )
 {
    return hypre_ParVectorAxpy( alpha, (hypre_ParVector *)x, (hypre_ParVector *)y );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParVectorInnerProd
+ * NALU_HYPRE_ParVectorInnerProd
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ParVectorInnerProd( HYPRE_ParVector x,
-                          HYPRE_ParVector y,
-                          HYPRE_Real     *prod)
+NALU_HYPRE_Int
+NALU_HYPRE_ParVectorInnerProd( NALU_HYPRE_ParVector x,
+                          NALU_HYPRE_ParVector y,
+                          NALU_HYPRE_Real     *prod)
 {
    if (!x)
    {
@@ -200,34 +200,34 @@ HYPRE_ParVectorInnerProd( HYPRE_ParVector x,
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_VectorToParVector
+ * NALU_HYPRE_VectorToParVector
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_VectorToParVector( MPI_Comm         comm,
-                         HYPRE_Vector     b,
-                         HYPRE_BigInt    *partitioning,
-                         HYPRE_ParVector *vector)
+NALU_HYPRE_Int
+NALU_HYPRE_VectorToParVector( MPI_Comm         comm,
+                         NALU_HYPRE_Vector     b,
+                         NALU_HYPRE_BigInt    *partitioning,
+                         NALU_HYPRE_ParVector *vector)
 {
    if (!vector)
    {
       hypre_error_in_arg(4);
       return hypre_error_flag;
    }
-   *vector = (HYPRE_ParVector)
+   *vector = (NALU_HYPRE_ParVector)
              hypre_VectorToParVector (comm, (hypre_Vector *) b, partitioning);
    return hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParVectorGetValues
+ * NALU_HYPRE_ParVectorGetValues
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ParVectorGetValues( HYPRE_ParVector vector,
-                          HYPRE_Int       num_values,
-                          HYPRE_BigInt   *indices,
-                          HYPRE_Complex  *values)
+NALU_HYPRE_Int
+NALU_HYPRE_ParVectorGetValues( NALU_HYPRE_ParVector vector,
+                          NALU_HYPRE_Int       num_values,
+                          NALU_HYPRE_BigInt   *indices,
+                          NALU_HYPRE_Complex  *values)
 {
    hypre_ParVector *par_vector = (hypre_ParVector *) vector;
 

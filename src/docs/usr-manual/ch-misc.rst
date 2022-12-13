@@ -101,9 +101,9 @@ Some of the commonly used options include:
    --with-print-errors            Print HYPRE errors
    --with-openmp                  Use OpenMP. This may affect which compiler is
                                   chosen.
-   --enable-bigint                Use long long int for HYPRE_Int (default is NO).
-   --enable-mixedint              Use long long int for HYPRE_BigInt and int for
-                                  HYPRE_Int.
+   --enable-bigint                Use long long int for NALU_HYPRE_Int (default is NO).
+   --enable-mixedint              Use long long int for NALU_HYPRE_BigInt and int for
+                                  NALU_HYPRE_Int.
                                   NOTE: This option disables Euclid, ParaSails,
                                         pilut and CGC coarsening.
 
@@ -177,7 +177,7 @@ The related environment variables
 
 .. code-block:: none
 
-   HYPRE_CUDA_SM          (default 70)
+   NALU_HYPRE_CUDA_SM          (default 70)
 
    CUDA_HOME              the CUDA home directory
 
@@ -294,56 +294,56 @@ system is being implemented throughout the library, but currently there are
 still functions that do not support it.  The error flag value is a combination
 of one or a few of the following error codes:
 
-#. ``HYPRE_ERROR_GENERIC`` -- describes a generic error
-#. ``HYPRE_ERROR_MEMORY`` -- hypre was unable to allocate memory
-#. ``HYPRE_ERROR_ARG`` -- error in one of the arguments of a hypre function
-#. ``HYPRE_ERROR_CONV`` -- a hypre solver did not converge as expected
+#. ``NALU_HYPRE_ERROR_GENERIC`` -- describes a generic error
+#. ``NALU_HYPRE_ERROR_MEMORY`` -- hypre was unable to allocate memory
+#. ``NALU_HYPRE_ERROR_ARG`` -- error in one of the arguments of a hypre function
+#. ``NALU_HYPRE_ERROR_CONV`` -- a hypre solver did not converge as expected
 
-One can use the ``HYPRE_CheckError`` function to determine exactly which errors
+One can use the ``NALU_HYPRE_CheckError`` function to determine exactly which errors
 have occurred:
 
 .. code-block:: c
 
    /* call some HYPRE functions */
    int  hypre_ierr;
-   hypre_ierr = HYPRE_Function();
+   hypre_ierr = NALU_HYPRE_Function();
 
    /* check if the previously called hypre functions returned error(s) */
    if (hypre_ierr)
-      /* check if the error with code HYPRE_ERROR_CODE has occurred */
-      if (HYPRE_CheckError(hypre_ierr,HYPRE_ERROR_CODE))
+      /* check if the error with code NALU_HYPRE_ERROR_CODE has occurred */
+      if (NALU_HYPRE_CheckError(hypre_ierr,NALU_HYPRE_ERROR_CODE))
 
 The corresponding FORTRAN code is
 
 .. code-block:: fortran
 
    ! header file with hypre error codes
-   include 'HYPRE_error_f.h'
+   include 'NALU_HYPRE_error_f.h'
 
    ! call some HYPRE functions
    integer  hypre_ierr
-   call HYPRE_Function(hypre_ierr)
+   call NALU_HYPRE_Function(hypre_ierr)
 
    ! check if the previously called hypre functions returned error(s)
    if (hypre_ierr .ne. 0) then
-      ! check if the error with code HYPRE_ERROR_CODE has occurred
-      call HYPRE_CheckError(hypre_ierr, HYPRE_ERROR_CODE, check)
+      ! check if the error with code NALU_HYPRE_ERROR_CODE has occurred
+      call NALU_HYPRE_CheckError(hypre_ierr, NALU_HYPRE_ERROR_CODE, check)
       if (check .ne. 0) then
 
 The global error flag can also be obtained directly, between calls to other
-hypre functions, by calling ``HYPRE_GetError()``.  If an argument error
-(``HYPRE_ERROR_ARG``) has occurred, the argument index (counting from 1) can be
-obtained from ``HYPRE_GetErrorArg()``.  To get a character string with a
+hypre functions, by calling ``NALU_HYPRE_GetError()``.  If an argument error
+(``NALU_HYPRE_ERROR_ARG``) has occurred, the argument index (counting from 1) can be
+obtained from ``NALU_HYPRE_GetErrorArg()``.  To get a character string with a
 description of all errors in a given error flag, use
 
 .. code-block:: c
 
-   HYPRE_DescribeError(int hypre_ierr, char *descr);
+   NALU_HYPRE_DescribeError(int hypre_ierr, char *descr);
 
 The global error flag can be cleared manually by calling
-``HYPRE_ClearAllErrors()``, which will essentially ignore all previous hypre
+``NALU_HYPRE_ClearAllErrors()``, which will essentially ignore all previous hypre
 errors. To only clear a specific error code, the user can call
-``HYPRE_ClearError(HYPRE_ERROR_CODE)``.  Finally, if hypre was configured with
+``NALU_HYPRE_ClearError(NALU_HYPRE_ERROR_CODE)``.  Finally, if hypre was configured with
 ``--with-print-errors``, additional error information will be printed to the
 standard error during execution.
 
@@ -375,7 +375,7 @@ needs to follow the following steps:
    * unpack the archive and go into the ``src`` directory
    * do a ``configure`` with the ``--with-fei-inc-dir`` option set to the FEI
      include directory plus other compile options
-   * compile with ``make install`` to create the ``HYPRE_LSI`` library in
+   * compile with ``make install`` to create the ``NALU_HYPRE_LSI`` library in
      ``hypre/lib``.
 
 #. call the FEI functions in your application code (as shown in Chapters
@@ -387,7 +387,7 @@ needs to follow the following steps:
 #. Modify your ``Makefile``
 
    * include hypre's ``include`` and ``lib`` directories in the search paths.
-   * Link with ``-lfei_base -lHYPRE_LSI``.  Note that the order in which the
+   * Link with ``-lfei_base -lNALU_HYPRE_LSI``.  Note that the order in which the
      libraries are listed may be important.
 
 Building an application executable often requires linking with many different
@@ -432,8 +432,8 @@ table:
    ``int *array``          ``integer array(*)``
    ``double *array``       ``double precision array(*)``
    ``char *string``        ``character string(*)``
-   ``HYPRE_Type object``   ``integer*8 object``
-   ``HYPRE_Type *object``  ``integer*8 object``
+   ``NALU_HYPRE_Type object``   ``integer*8 object``
+   ``NALU_HYPRE_Type *object``  ``integer*8 object``
    ======================  =============================
 
 Array arguments in hypre are always of type ``(int *)`` or ``(double *)``, and
@@ -458,7 +458,7 @@ C prototype:
 
 .. code-block:: c
 
-   int HYPRE_IJMatrixSetValues(HYPRE_IJMatrix  matrix,
+   int NALU_HYPRE_IJMatrixSetValues(NALU_HYPRE_IJMatrix  matrix,
                                int  nrows, int  *ncols,
                                const int *rows, const int  *cols,
                                const double  *values);
@@ -473,4 +473,4 @@ The corresponding Fortran code for calling this routine is as follows:
    double precision  values(MAX_COLS)
    integer           ierr
 
-   call HYPRE_IJMatrixSetValues(matrix, nrows, ncols, rows, cols, values, ierr)
+   call NALU_HYPRE_IJMatrixSetValues(matrix, nrows, ncols, rows, cols, values, ierr)

@@ -17,7 +17,7 @@
 
 #include "HYPRE.h"
 #include "_hypre_utilities.h"
-#include "HYPRE_IJ_mv.h"
+#include "NALU_HYPRE_IJ_mv.h"
 #include "seq_mv.h"
 #include "_hypre_parcsr_mv.h"
 
@@ -91,7 +91,7 @@ int MLI_Method_AMGSA::setupUsingFEData( MLI *mli )
    MPI_Comm_size( comm, &nprocs );
    mliAmat = mli->getSystemMatrix( level );
    hypreA  = (hypre_ParCSRMatrix *) mliAmat->getMatrix();
-   HYPRE_ParCSRMatrixGetRowPartitioning((HYPRE_ParCSRMatrix) hypreA, 
+   NALU_HYPRE_ParCSRMatrixGetRowPartitioning((NALU_HYPRE_ParCSRMatrix) hypreA, 
                                         &partition);
    localStartRow = partition[mypid];
    localNRows    = partition[mypid+1] - localStartRow;
@@ -134,7 +134,7 @@ int MLI_Method_AMGSA::setupUsingFEData( MLI *mli )
 
    funcPtr = new MLI_Function();
    MLI_Utils_HypreParCSRMatrixGetDestroyFunc(funcPtr);
-   sprintf(paramString, "HYPRE_ParCSR" );
+   sprintf(paramString, "NALU_HYPRE_ParCSR" );
    mliEEMat = new MLI_Matrix( (void *) hypreEE, paramString, funcPtr );
    MLI_FEDataAgglomerateElemsLocalOld(mliEEMat, &macroNumbers);
    delete mliENMat;

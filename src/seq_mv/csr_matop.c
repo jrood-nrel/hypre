@@ -32,32 +32,32 @@
  *           adding diagonal matrices.
  *        6) Assumes that the elements of C_i are initialized to zero.
  *--------------------------------------------------------------------------*/
-HYPRE_Int
-hypre_CSRMatrixAddFirstPass( HYPRE_Int              firstrow,
-                             HYPRE_Int              lastrow,
-                             HYPRE_Int             *twspace,
-                             HYPRE_Int             *marker,
-                             HYPRE_Int             *map_A2C,
-                             HYPRE_Int             *map_B2C,
+NALU_HYPRE_Int
+hypre_CSRMatrixAddFirstPass( NALU_HYPRE_Int              firstrow,
+                             NALU_HYPRE_Int              lastrow,
+                             NALU_HYPRE_Int             *twspace,
+                             NALU_HYPRE_Int             *marker,
+                             NALU_HYPRE_Int             *map_A2C,
+                             NALU_HYPRE_Int             *map_B2C,
                              hypre_CSRMatrix       *A,
                              hypre_CSRMatrix       *B,
-                             HYPRE_Int              nrows_C,
-                             HYPRE_Int              nnzrows_C,
-                             HYPRE_Int              ncols_C,
-                             HYPRE_Int             *rownnz_C,
-                             HYPRE_MemoryLocation   memory_location_C,
-                             HYPRE_Int             *C_i,
+                             NALU_HYPRE_Int              nrows_C,
+                             NALU_HYPRE_Int              nnzrows_C,
+                             NALU_HYPRE_Int              ncols_C,
+                             NALU_HYPRE_Int             *rownnz_C,
+                             NALU_HYPRE_MemoryLocation   memory_location_C,
+                             NALU_HYPRE_Int             *C_i,
                              hypre_CSRMatrix      **C_ptr )
 {
-   HYPRE_Int   *A_i = hypre_CSRMatrixI(A);
-   HYPRE_Int   *A_j = hypre_CSRMatrixJ(A);
-   HYPRE_Int   *B_i = hypre_CSRMatrixI(B);
-   HYPRE_Int   *B_j = hypre_CSRMatrixJ(B);
+   NALU_HYPRE_Int   *A_i = hypre_CSRMatrixI(A);
+   NALU_HYPRE_Int   *A_j = hypre_CSRMatrixJ(A);
+   NALU_HYPRE_Int   *B_i = hypre_CSRMatrixI(B);
+   NALU_HYPRE_Int   *B_j = hypre_CSRMatrixJ(B);
 
-   HYPRE_Int    i, ia, ib, ic, iic, ii, i1;
-   HYPRE_Int    jcol, jj;
-   HYPRE_Int    num_threads = hypre_NumActiveThreads();
-   HYPRE_Int    num_nonzeros;
+   NALU_HYPRE_Int    i, ia, ib, ic, iic, ii, i1;
+   NALU_HYPRE_Int    jcol, jj;
+   NALU_HYPRE_Int    num_threads = hypre_NumActiveThreads();
+   NALU_HYPRE_Int    num_nonzeros;
 
    /* Initialize marker array */
    for (i = 0; i < ncols_C; i++)
@@ -118,7 +118,7 @@ hypre_CSRMatrixAddFirstPass( HYPRE_Int              firstrow,
    }
    twspace[ii] = num_nonzeros;
 
-#ifdef HYPRE_USING_OPENMP
+#ifdef NALU_HYPRE_USING_OPENMP
    #pragma omp barrier
 #endif
 
@@ -155,7 +155,7 @@ hypre_CSRMatrixAddFirstPass( HYPRE_Int              firstrow,
    /* Correct C_i - phase 2 */
    if (rownnz_C != NULL)
    {
-#ifdef HYPRE_USING_OPENMP
+#ifdef NALU_HYPRE_USING_OPENMP
       #pragma omp barrier
 #endif
       for (ic = firstrow; ic < (lastrow - 1); ic++)
@@ -185,11 +185,11 @@ hypre_CSRMatrixAddFirstPass( HYPRE_Int              firstrow,
       }
    }
 
-#ifdef HYPRE_USING_OPENMP
+#ifdef NALU_HYPRE_USING_OPENMP
    #pragma omp barrier
 #endif
 
-#ifdef HYPRE_DEBUG
+#ifdef NALU_HYPRE_DEBUG
    if (!ii)
    {
       for (i = 0; i < nrows_C; i++)
@@ -216,37 +216,37 @@ hypre_CSRMatrixAddFirstPass( HYPRE_Int              firstrow,
  *
  * Notes: see notes for hypre_CSRMatrixAddFirstPass
  *--------------------------------------------------------------------------*/
-HYPRE_Int
-hypre_CSRMatrixAddSecondPass( HYPRE_Int          firstrow,
-                              HYPRE_Int          lastrow,
-                              HYPRE_Int         *twspace,
-                              HYPRE_Int         *marker,
-                              HYPRE_Int         *map_A2C,
-                              HYPRE_Int         *map_B2C,
-                              HYPRE_Int         *rownnz_C,
-                              HYPRE_Complex      alpha,
-                              HYPRE_Complex      beta,
+NALU_HYPRE_Int
+hypre_CSRMatrixAddSecondPass( NALU_HYPRE_Int          firstrow,
+                              NALU_HYPRE_Int          lastrow,
+                              NALU_HYPRE_Int         *twspace,
+                              NALU_HYPRE_Int         *marker,
+                              NALU_HYPRE_Int         *map_A2C,
+                              NALU_HYPRE_Int         *map_B2C,
+                              NALU_HYPRE_Int         *rownnz_C,
+                              NALU_HYPRE_Complex      alpha,
+                              NALU_HYPRE_Complex      beta,
                               hypre_CSRMatrix   *A,
                               hypre_CSRMatrix   *B,
                               hypre_CSRMatrix   *C )
 {
-   HYPRE_Int        *A_i      = hypre_CSRMatrixI(A);
-   HYPRE_Int        *A_j      = hypre_CSRMatrixJ(A);
-   HYPRE_Complex    *A_data   = hypre_CSRMatrixData(A);
-   HYPRE_Int         nnzs_A   = hypre_CSRMatrixNumNonzeros(A);
+   NALU_HYPRE_Int        *A_i      = hypre_CSRMatrixI(A);
+   NALU_HYPRE_Int        *A_j      = hypre_CSRMatrixJ(A);
+   NALU_HYPRE_Complex    *A_data   = hypre_CSRMatrixData(A);
+   NALU_HYPRE_Int         nnzs_A   = hypre_CSRMatrixNumNonzeros(A);
 
-   HYPRE_Int        *B_i      = hypre_CSRMatrixI(B);
-   HYPRE_Int        *B_j      = hypre_CSRMatrixJ(B);
-   HYPRE_Complex    *B_data   = hypre_CSRMatrixData(B);
-   HYPRE_Int         nnzs_B   = hypre_CSRMatrixNumNonzeros(B);
+   NALU_HYPRE_Int        *B_i      = hypre_CSRMatrixI(B);
+   NALU_HYPRE_Int        *B_j      = hypre_CSRMatrixJ(B);
+   NALU_HYPRE_Complex    *B_data   = hypre_CSRMatrixData(B);
+   NALU_HYPRE_Int         nnzs_B   = hypre_CSRMatrixNumNonzeros(B);
 
-   HYPRE_Int        *C_i      = hypre_CSRMatrixI(C);
-   HYPRE_Int        *C_j      = hypre_CSRMatrixJ(C);
-   HYPRE_Complex    *C_data   = hypre_CSRMatrixData(C);
-   HYPRE_Int         ncols_C  = hypre_CSRMatrixNumCols(C);
+   NALU_HYPRE_Int        *C_i      = hypre_CSRMatrixI(C);
+   NALU_HYPRE_Int        *C_j      = hypre_CSRMatrixJ(C);
+   NALU_HYPRE_Complex    *C_data   = hypre_CSRMatrixData(C);
+   NALU_HYPRE_Int         ncols_C  = hypre_CSRMatrixNumCols(C);
 
-   HYPRE_Int         ia, ib, ic, iic;
-   HYPRE_Int         jcol, pos;
+   NALU_HYPRE_Int         ia, ib, ic, iic;
+   NALU_HYPRE_Int         jcol, pos;
 
    hypre_assert(( map_A2C &&  map_B2C) ||
                 (!map_A2C && !map_B2C) ||
@@ -344,33 +344,33 @@ hypre_CSRMatrixAddSecondPass( HYPRE_Int          firstrow,
  *--------------------------------------------------------------------------*/
 
 hypre_CSRMatrix*
-hypre_CSRMatrixAddHost ( HYPRE_Complex    alpha,
+hypre_CSRMatrixAddHost ( NALU_HYPRE_Complex    alpha,
                          hypre_CSRMatrix *A,
-                         HYPRE_Complex    beta,
+                         NALU_HYPRE_Complex    beta,
                          hypre_CSRMatrix *B )
 {
    /* CSRMatrix A */
-   HYPRE_Int        *rownnz_A  = hypre_CSRMatrixRownnz(A);
-   HYPRE_Int         nrows_A   = hypre_CSRMatrixNumRows(A);
-   HYPRE_Int         nnzrows_A = hypre_CSRMatrixNumRownnz(A);
-   HYPRE_Int         ncols_A   = hypre_CSRMatrixNumCols(A);
+   NALU_HYPRE_Int        *rownnz_A  = hypre_CSRMatrixRownnz(A);
+   NALU_HYPRE_Int         nrows_A   = hypre_CSRMatrixNumRows(A);
+   NALU_HYPRE_Int         nnzrows_A = hypre_CSRMatrixNumRownnz(A);
+   NALU_HYPRE_Int         ncols_A   = hypre_CSRMatrixNumCols(A);
 
    /* CSRMatrix B */
-   HYPRE_Int        *rownnz_B  = hypre_CSRMatrixRownnz(B);
-   HYPRE_Int         nrows_B   = hypre_CSRMatrixNumRows(B);
-   HYPRE_Int         nnzrows_B = hypre_CSRMatrixNumRownnz(B);
-   HYPRE_Int         ncols_B   = hypre_CSRMatrixNumCols(B);
+   NALU_HYPRE_Int        *rownnz_B  = hypre_CSRMatrixRownnz(B);
+   NALU_HYPRE_Int         nrows_B   = hypre_CSRMatrixNumRows(B);
+   NALU_HYPRE_Int         nnzrows_B = hypre_CSRMatrixNumRownnz(B);
+   NALU_HYPRE_Int         ncols_B   = hypre_CSRMatrixNumCols(B);
 
    /* CSRMatrix C */
    hypre_CSRMatrix  *C;
-   HYPRE_Int        *C_i;
-   HYPRE_Int        *rownnz_C;
-   HYPRE_Int         nnzrows_C;
+   NALU_HYPRE_Int        *C_i;
+   NALU_HYPRE_Int        *rownnz_C;
+   NALU_HYPRE_Int         nnzrows_C;
 
-   HYPRE_Int        *twspace;
+   NALU_HYPRE_Int        *twspace;
 
-   HYPRE_MemoryLocation memory_location_A = hypre_CSRMatrixMemoryLocation(A);
-   HYPRE_MemoryLocation memory_location_B = hypre_CSRMatrixMemoryLocation(B);
+   NALU_HYPRE_MemoryLocation memory_location_A = hypre_CSRMatrixMemoryLocation(A);
+   NALU_HYPRE_MemoryLocation memory_location_B = hypre_CSRMatrixMemoryLocation(B);
 
    /* RL: TODO cannot guarantee, maybe should never assert
    hypre_assert(memory_location_A == memory_location_B);
@@ -380,17 +380,17 @@ hypre_CSRMatrixAddHost ( HYPRE_Complex    alpha,
     * not sure if this is the right thing to do.
     * Also, need something like this in other places
     * TODO */
-   HYPRE_MemoryLocation memory_location_C = hypre_max(memory_location_A, memory_location_B);
+   NALU_HYPRE_MemoryLocation memory_location_C = hypre_max(memory_location_A, memory_location_B);
 
    if (nrows_A != nrows_B || ncols_A != ncols_B)
    {
-      hypre_error_w_msg(HYPRE_ERROR_GENERIC, "Warning! incompatible matrix dimensions!\n");
+      hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "Warning! incompatible matrix dimensions!\n");
       return NULL;
    }
 
    /* Allocate memory */
-   twspace = hypre_TAlloc(HYPRE_Int, hypre_NumThreads(), HYPRE_MEMORY_HOST);
-   C_i = hypre_CTAlloc(HYPRE_Int, nrows_A + 1, memory_location_C);
+   twspace = hypre_TAlloc(NALU_HYPRE_Int, hypre_NumThreads(), NALU_HYPRE_MEMORY_HOST);
+   C_i = hypre_CTAlloc(NALU_HYPRE_Int, nrows_A + 1, memory_location_C);
 
    /* Set nonzero rows data of diag_C */
    nnzrows_C = nrows_A;
@@ -416,16 +416,16 @@ hypre_CSRMatrixAddHost ( HYPRE_Complex    alpha,
       rownnz_C = NULL;
    }
 
-#ifdef HYPRE_USING_OPENMP
+#ifdef NALU_HYPRE_USING_OPENMP
    #pragma omp parallel
 #endif
    {
-      HYPRE_Int   ns, ne;
-      HYPRE_Int  *marker = NULL;
+      NALU_HYPRE_Int   ns, ne;
+      NALU_HYPRE_Int  *marker = NULL;
 
       hypre_partition1D(nnzrows_C, hypre_NumActiveThreads(), hypre_GetThreadNum(), &ns, &ne);
 
-      marker = hypre_CTAlloc(HYPRE_Int, ncols_A, HYPRE_MEMORY_HOST);
+      marker = hypre_CTAlloc(NALU_HYPRE_Int, ncols_A, NALU_HYPRE_MEMORY_HOST);
 
       hypre_CSRMatrixAddFirstPass(ns, ne, twspace, marker, NULL, NULL,
                                   A, B, nrows_A, nnzrows_C, ncols_A, rownnz_C,
@@ -434,28 +434,28 @@ hypre_CSRMatrixAddHost ( HYPRE_Complex    alpha,
       hypre_CSRMatrixAddSecondPass(ns, ne, twspace, marker, NULL, NULL,
                                    rownnz_C, alpha, beta, A, B, C);
 
-      hypre_TFree(marker, HYPRE_MEMORY_HOST);
+      hypre_TFree(marker, NALU_HYPRE_MEMORY_HOST);
    } /* end of parallel region */
 
    /* Free memory */
-   hypre_TFree(twspace, HYPRE_MEMORY_HOST);
+   hypre_TFree(twspace, NALU_HYPRE_MEMORY_HOST);
 
    return C;
 }
 
 hypre_CSRMatrix*
-hypre_CSRMatrixAdd( HYPRE_Complex    alpha,
+hypre_CSRMatrixAdd( NALU_HYPRE_Complex    alpha,
                     hypre_CSRMatrix *A,
-                    HYPRE_Complex    beta,
+                    NALU_HYPRE_Complex    beta,
                     hypre_CSRMatrix *B)
 {
    hypre_CSRMatrix *C = NULL;
 
-#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP)
-   HYPRE_ExecutionPolicy exec = hypre_GetExecPolicy2( hypre_CSRMatrixMemoryLocation(A),
+#if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
+   NALU_HYPRE_ExecutionPolicy exec = hypre_GetExecPolicy2( hypre_CSRMatrixMemoryLocation(A),
                                                       hypre_CSRMatrixMemoryLocation(B) );
 
-   if (exec == HYPRE_EXEC_DEVICE)
+   if (exec == NALU_HYPRE_EXEC_DEVICE)
    {
       C = hypre_CSRMatrixAddDevice(alpha, A, beta, B);
    }
@@ -475,7 +475,7 @@ hypre_CSRMatrixAdd( HYPRE_Complex    alpha,
  * RL: comment it out which was used in ams.c. Should be combined with
  *     above hypre_CSRMatrixAddHost whenever it is needed again
  *
- * Adds two CSR Matrices A and B with column indices stored as HYPRE_BigInt
+ * Adds two CSR Matrices A and B with column indices stored as NALU_HYPRE_BigInt
  * and returns a CSR Matrix C;
  *
  * Note: The routine does not check for 0-elements which might be generated
@@ -487,26 +487,26 @@ hypre_CSRMatrix *
 hypre_CSRMatrixBigAdd( hypre_CSRMatrix *A,
                        hypre_CSRMatrix *B )
 {
-   HYPRE_Complex    *A_data   = hypre_CSRMatrixData(A);
-   HYPRE_Int        *A_i      = hypre_CSRMatrixI(A);
-   HYPRE_BigInt     *A_j      = hypre_CSRMatrixBigJ(A);
-   HYPRE_Int         nrows_A  = hypre_CSRMatrixNumRows(A);
-   HYPRE_Int         ncols_A  = hypre_CSRMatrixNumCols(A);
+   NALU_HYPRE_Complex    *A_data   = hypre_CSRMatrixData(A);
+   NALU_HYPRE_Int        *A_i      = hypre_CSRMatrixI(A);
+   NALU_HYPRE_BigInt     *A_j      = hypre_CSRMatrixBigJ(A);
+   NALU_HYPRE_Int         nrows_A  = hypre_CSRMatrixNumRows(A);
+   NALU_HYPRE_Int         ncols_A  = hypre_CSRMatrixNumCols(A);
 
-   HYPRE_Complex    *B_data   = hypre_CSRMatrixData(B);
-   HYPRE_Int        *B_i      = hypre_CSRMatrixI(B);
-   HYPRE_BigInt     *B_j      = hypre_CSRMatrixBigJ(B);
-   HYPRE_Int         nrows_B  = hypre_CSRMatrixNumRows(B);
-   HYPRE_Int         ncols_B  = hypre_CSRMatrixNumCols(B);
+   NALU_HYPRE_Complex    *B_data   = hypre_CSRMatrixData(B);
+   NALU_HYPRE_Int        *B_i      = hypre_CSRMatrixI(B);
+   NALU_HYPRE_BigInt     *B_j      = hypre_CSRMatrixBigJ(B);
+   NALU_HYPRE_Int         nrows_B  = hypre_CSRMatrixNumRows(B);
+   NALU_HYPRE_Int         ncols_B  = hypre_CSRMatrixNumCols(B);
 
    hypre_CSRMatrix  *C;
-   HYPRE_Complex    *C_data;
-   HYPRE_Int        *C_i;
-   HYPRE_BigInt     *C_j;
-   HYPRE_Int        *twspace;
+   NALU_HYPRE_Complex    *C_data;
+   NALU_HYPRE_Int        *C_i;
+   NALU_HYPRE_BigInt     *C_j;
+   NALU_HYPRE_Int        *twspace;
 
-   HYPRE_MemoryLocation memory_location_A = hypre_CSRMatrixMemoryLocation(A);
-   HYPRE_MemoryLocation memory_location_B = hypre_CSRMatrixMemoryLocation(B);
+   NALU_HYPRE_MemoryLocation memory_location_A = hypre_CSRMatrixMemoryLocation(A);
+   NALU_HYPRE_MemoryLocation memory_location_B = hypre_CSRMatrixMemoryLocation(B);
 
    /* RL: TODO cannot guarantee, maybe should never assert
    hypre_assert(memory_location_A == memory_location_B);
@@ -516,34 +516,34 @@ hypre_CSRMatrixBigAdd( hypre_CSRMatrix *A,
     * not sure if this is the right thing to do.
     * Also, need something like this in other places
     * TODO */
-   HYPRE_MemoryLocation memory_location_C = hypre_max(memory_location_A, memory_location_B);
+   NALU_HYPRE_MemoryLocation memory_location_C = hypre_max(memory_location_A, memory_location_B);
 
    if (nrows_A != nrows_B || ncols_A != ncols_B)
    {
-      hypre_error_w_msg(HYPRE_ERROR_GENERIC, "Warning! incompatible matrix dimensions!\n");
+      hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "Warning! incompatible matrix dimensions!\n");
       return NULL;
    }
 
    /* Allocate memory */
-   twspace = hypre_TAlloc(HYPRE_Int, hypre_NumThreads(), HYPRE_MEMORY_HOST);
-   C_i = hypre_CTAlloc(HYPRE_Int, nrows_A + 1, memory_location_C);
+   twspace = hypre_TAlloc(NALU_HYPRE_Int, hypre_NumThreads(), NALU_HYPRE_MEMORY_HOST);
+   C_i = hypre_CTAlloc(NALU_HYPRE_Int, nrows_A + 1, memory_location_C);
 
-#ifdef HYPRE_USING_OPENMP
+#ifdef NALU_HYPRE_USING_OPENMP
    #pragma omp parallel
 #endif
    {
-      HYPRE_Int     ia, ib, ic, num_nonzeros;
-      HYPRE_Int     ns, ne, pos;
-      HYPRE_BigInt  jcol;
-      HYPRE_Int     ii, num_threads;
-      HYPRE_Int     jj;
-      HYPRE_Int    *marker = NULL;
+      NALU_HYPRE_Int     ia, ib, ic, num_nonzeros;
+      NALU_HYPRE_Int     ns, ne, pos;
+      NALU_HYPRE_BigInt  jcol;
+      NALU_HYPRE_Int     ii, num_threads;
+      NALU_HYPRE_Int     jj;
+      NALU_HYPRE_Int    *marker = NULL;
 
       ii = hypre_GetThreadNum();
       num_threads = hypre_NumActiveThreads();
       hypre_partition1D(nrows_A, num_threads, ii, &ns, &ne);
 
-      marker = hypre_CTAlloc(HYPRE_Int, ncols_A, HYPRE_MEMORY_HOST);
+      marker = hypre_CTAlloc(NALU_HYPRE_Int, ncols_A, NALU_HYPRE_MEMORY_HOST);
       for (ia = 0; ia < ncols_A; ia++)
       {
          marker[ia] = -1;
@@ -574,7 +574,7 @@ hypre_CSRMatrixBigAdd( hypre_CSRMatrix *A,
       }
       twspace[ii] = num_nonzeros;
 
-#ifdef HYPRE_USING_OPENMP
+#ifdef NALU_HYPRE_USING_OPENMP
       #pragma omp barrier
 #endif
 
@@ -641,11 +641,11 @@ hypre_CSRMatrixBigAdd( hypre_CSRMatrix *A,
             }
          }
       }
-      hypre_TFree(marker, HYPRE_MEMORY_HOST);
+      hypre_TFree(marker, NALU_HYPRE_MEMORY_HOST);
    } /* end of parallel region */
 
    /* Free memory */
-   hypre_TFree(twspace, HYPRE_MEMORY_HOST);
+   hypre_TFree(twspace, NALU_HYPRE_MEMORY_HOST);
 
    return C;
 }
@@ -666,35 +666,35 @@ hypre_CSRMatrix*
 hypre_CSRMatrixMultiplyHost( hypre_CSRMatrix *A,
                              hypre_CSRMatrix *B )
 {
-   HYPRE_Complex        *A_data    = hypre_CSRMatrixData(A);
-   HYPRE_Int            *A_i       = hypre_CSRMatrixI(A);
-   HYPRE_Int            *A_j       = hypre_CSRMatrixJ(A);
-   HYPRE_Int            *rownnz_A  = hypre_CSRMatrixRownnz(A);
-   HYPRE_Int             nrows_A   = hypre_CSRMatrixNumRows(A);
-   HYPRE_Int             ncols_A   = hypre_CSRMatrixNumCols(A);
-   HYPRE_Int             nnzrows_A = hypre_CSRMatrixNumRownnz(A);
-   HYPRE_Int             num_nnz_A = hypre_CSRMatrixNumNonzeros(A);
+   NALU_HYPRE_Complex        *A_data    = hypre_CSRMatrixData(A);
+   NALU_HYPRE_Int            *A_i       = hypre_CSRMatrixI(A);
+   NALU_HYPRE_Int            *A_j       = hypre_CSRMatrixJ(A);
+   NALU_HYPRE_Int            *rownnz_A  = hypre_CSRMatrixRownnz(A);
+   NALU_HYPRE_Int             nrows_A   = hypre_CSRMatrixNumRows(A);
+   NALU_HYPRE_Int             ncols_A   = hypre_CSRMatrixNumCols(A);
+   NALU_HYPRE_Int             nnzrows_A = hypre_CSRMatrixNumRownnz(A);
+   NALU_HYPRE_Int             num_nnz_A = hypre_CSRMatrixNumNonzeros(A);
 
-   HYPRE_Complex        *B_data    = hypre_CSRMatrixData(B);
-   HYPRE_Int            *B_i       = hypre_CSRMatrixI(B);
-   HYPRE_Int            *B_j       = hypre_CSRMatrixJ(B);
-   HYPRE_Int             nrows_B   = hypre_CSRMatrixNumRows(B);
-   HYPRE_Int             ncols_B   = hypre_CSRMatrixNumCols(B);
-   HYPRE_Int             num_nnz_B = hypre_CSRMatrixNumNonzeros(B);
+   NALU_HYPRE_Complex        *B_data    = hypre_CSRMatrixData(B);
+   NALU_HYPRE_Int            *B_i       = hypre_CSRMatrixI(B);
+   NALU_HYPRE_Int            *B_j       = hypre_CSRMatrixJ(B);
+   NALU_HYPRE_Int             nrows_B   = hypre_CSRMatrixNumRows(B);
+   NALU_HYPRE_Int             ncols_B   = hypre_CSRMatrixNumCols(B);
+   NALU_HYPRE_Int             num_nnz_B = hypre_CSRMatrixNumNonzeros(B);
 
-   HYPRE_MemoryLocation  memory_location_A = hypre_CSRMatrixMemoryLocation(A);
-   HYPRE_MemoryLocation  memory_location_B = hypre_CSRMatrixMemoryLocation(B);
+   NALU_HYPRE_MemoryLocation  memory_location_A = hypre_CSRMatrixMemoryLocation(A);
+   NALU_HYPRE_MemoryLocation  memory_location_B = hypre_CSRMatrixMemoryLocation(B);
 
    hypre_CSRMatrix      *C;
-   HYPRE_Complex        *C_data;
-   HYPRE_Int            *C_i;
-   HYPRE_Int            *C_j;
+   NALU_HYPRE_Complex        *C_data;
+   NALU_HYPRE_Int            *C_i;
+   NALU_HYPRE_Int            *C_j;
 
-   HYPRE_Int             ia, ib, ic, ja, jb, num_nonzeros;
-   HYPRE_Int             counter;
-   HYPRE_Complex         a_entry, b_entry;
-   HYPRE_Int             allsquare = 0;
-   HYPRE_Int            *twspace;
+   NALU_HYPRE_Int             ia, ib, ic, ja, jb, num_nonzeros;
+   NALU_HYPRE_Int             counter;
+   NALU_HYPRE_Complex         a_entry, b_entry;
+   NALU_HYPRE_Int             allsquare = 0;
+   NALU_HYPRE_Int            *twspace;
 
    /* RL: TODO cannot guarantee, maybe should never assert
    hypre_assert(memory_location_A == memory_location_B);
@@ -704,11 +704,11 @@ hypre_CSRMatrixMultiplyHost( hypre_CSRMatrix *A,
     * not sure if this is the right thing to do.
     * Also, need something like this in other places
     * TODO */
-   HYPRE_MemoryLocation memory_location_C = hypre_max(memory_location_A, memory_location_B);
+   NALU_HYPRE_MemoryLocation memory_location_C = hypre_max(memory_location_A, memory_location_B);
 
    if (ncols_A != nrows_B)
    {
-      hypre_error_w_msg(HYPRE_ERROR_GENERIC, "Warning! incompatible matrix dimensions!\n");
+      hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "Warning! incompatible matrix dimensions!\n");
       return NULL;
    }
 
@@ -727,29 +727,29 @@ hypre_CSRMatrixMultiplyHost( hypre_CSRMatrix *A,
    }
 
    /* Allocate memory */
-   twspace = hypre_TAlloc(HYPRE_Int, hypre_NumThreads(), HYPRE_MEMORY_HOST);
-   C_i = hypre_CTAlloc(HYPRE_Int, nrows_A + 1, memory_location_C);
+   twspace = hypre_TAlloc(NALU_HYPRE_Int, hypre_NumThreads(), NALU_HYPRE_MEMORY_HOST);
+   C_i = hypre_CTAlloc(NALU_HYPRE_Int, nrows_A + 1, memory_location_C);
 
-#ifdef HYPRE_USING_OPENMP
+#ifdef NALU_HYPRE_USING_OPENMP
    #pragma omp parallel private(ia, ib, ic, ja, jb, num_nonzeros, counter, a_entry, b_entry)
 #endif
    {
-      HYPRE_Int  *B_marker = NULL;
-      HYPRE_Int   ns, ne, ii, jj;
-      HYPRE_Int   num_threads;
-      HYPRE_Int   i1, iic;
+      NALU_HYPRE_Int  *B_marker = NULL;
+      NALU_HYPRE_Int   ns, ne, ii, jj;
+      NALU_HYPRE_Int   num_threads;
+      NALU_HYPRE_Int   i1, iic;
 
       ii = hypre_GetThreadNum();
       num_threads = hypre_NumActiveThreads();
       hypre_partition1D(nnzrows_A, num_threads, ii, &ns, &ne);
 
-      B_marker = hypre_CTAlloc(HYPRE_Int, ncols_B, HYPRE_MEMORY_HOST);
+      B_marker = hypre_CTAlloc(NALU_HYPRE_Int, ncols_B, NALU_HYPRE_MEMORY_HOST);
       for (ib = 0; ib < ncols_B; ib++)
       {
          B_marker[ib] = -1;
       }
 
-      HYPRE_ANNOTATE_REGION_BEGIN("%s", "First pass");
+      NALU_HYPRE_ANNOTATE_REGION_BEGIN("%s", "First pass");
 
       /* First pass: compute sizes of C rows. */
       num_nonzeros = 0;
@@ -787,7 +787,7 @@ hypre_CSRMatrixMultiplyHost( hypre_CSRMatrix *A,
       }
       twspace[ii] = num_nonzeros;
 
-#ifdef HYPRE_USING_OPENMP
+#ifdef NALU_HYPRE_USING_OPENMP
       #pragma omp barrier
 #endif
 
@@ -824,7 +824,7 @@ hypre_CSRMatrixMultiplyHost( hypre_CSRMatrix *A,
       /* Correct C_i - phase 2 */
       if (rownnz_A != NULL)
       {
-#ifdef HYPRE_USING_OPENMP
+#ifdef NALU_HYPRE_USING_OPENMP
          #pragma omp barrier
 #endif
          for (ic = ns; ic < (ne - 1); ic++)
@@ -851,14 +851,14 @@ hypre_CSRMatrixMultiplyHost( hypre_CSRMatrix *A,
          }
       }
       /* End of First Pass */
-      HYPRE_ANNOTATE_REGION_END("%s", "First pass");
+      NALU_HYPRE_ANNOTATE_REGION_END("%s", "First pass");
 
-#ifdef HYPRE_USING_OPENMP
+#ifdef NALU_HYPRE_USING_OPENMP
       #pragma omp barrier
 #endif
 
       /* Second pass: Fill in C_data and C_j. */
-      HYPRE_ANNOTATE_REGION_BEGIN("%s", "Second pass");
+      NALU_HYPRE_ANNOTATE_REGION_BEGIN("%s", "Second pass");
       for (ib = 0; ib < ncols_B; ib++)
       {
          B_marker[ib] = -1;
@@ -905,13 +905,13 @@ hypre_CSRMatrixMultiplyHost( hypre_CSRMatrix *A,
             }
          }
       }
-      HYPRE_ANNOTATE_REGION_END("%s", "Second pass");
+      NALU_HYPRE_ANNOTATE_REGION_END("%s", "Second pass");
 
       /* End of Second Pass */
-      hypre_TFree(B_marker, HYPRE_MEMORY_HOST);
+      hypre_TFree(B_marker, NALU_HYPRE_MEMORY_HOST);
    } /*end parallel region */
 
-#ifdef HYPRE_DEBUG
+#ifdef NALU_HYPRE_DEBUG
    for (ic = 0; ic < nrows_A; ic++)
    {
       hypre_assert(C_i[ic] <= C_i[ic + 1]);
@@ -922,7 +922,7 @@ hypre_CSRMatrixMultiplyHost( hypre_CSRMatrix *A,
    hypre_CSRMatrixSetRownnz(C);
 
    /* Free memory */
-   hypre_TFree(twspace, HYPRE_MEMORY_HOST);
+   hypre_TFree(twspace, NALU_HYPRE_MEMORY_HOST);
 
    return C;
 }
@@ -933,11 +933,11 @@ hypre_CSRMatrixMultiply( hypre_CSRMatrix *A,
 {
    hypre_CSRMatrix *C = NULL;
 
-#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP) || defined(HYPRE_USING_SYCL)
-   HYPRE_ExecutionPolicy exec = hypre_GetExecPolicy2( hypre_CSRMatrixMemoryLocation(A),
+#if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP) || defined(NALU_HYPRE_USING_SYCL)
+   NALU_HYPRE_ExecutionPolicy exec = hypre_GetExecPolicy2( hypre_CSRMatrixMemoryLocation(A),
                                                       hypre_CSRMatrixMemoryLocation(B) );
 
-   if (exec == HYPRE_EXEC_DEVICE)
+   if (exec == NALU_HYPRE_EXEC_DEVICE)
    {
       C = hypre_CSRMatrixMultiplyDevice(A, B);
    }
@@ -956,23 +956,23 @@ hypre_CSRMatrixMultiply( hypre_CSRMatrix *A,
 
 hypre_CSRMatrix *
 hypre_CSRMatrixDeleteZeros( hypre_CSRMatrix *A,
-                            HYPRE_Real       tol )
+                            NALU_HYPRE_Real       tol )
 {
-   HYPRE_Complex    *A_data   = hypre_CSRMatrixData(A);
-   HYPRE_Int        *A_i      = hypre_CSRMatrixI(A);
-   HYPRE_Int        *A_j      = hypre_CSRMatrixJ(A);
-   HYPRE_Int         nrows_A  = hypre_CSRMatrixNumRows(A);
-   HYPRE_Int         ncols_A  = hypre_CSRMatrixNumCols(A);
-   HYPRE_Int         num_nonzeros  = hypre_CSRMatrixNumNonzeros(A);
+   NALU_HYPRE_Complex    *A_data   = hypre_CSRMatrixData(A);
+   NALU_HYPRE_Int        *A_i      = hypre_CSRMatrixI(A);
+   NALU_HYPRE_Int        *A_j      = hypre_CSRMatrixJ(A);
+   NALU_HYPRE_Int         nrows_A  = hypre_CSRMatrixNumRows(A);
+   NALU_HYPRE_Int         ncols_A  = hypre_CSRMatrixNumCols(A);
+   NALU_HYPRE_Int         num_nonzeros  = hypre_CSRMatrixNumNonzeros(A);
 
    hypre_CSRMatrix  *B;
-   HYPRE_Complex    *B_data;
-   HYPRE_Int        *B_i;
-   HYPRE_Int        *B_j;
+   NALU_HYPRE_Complex    *B_data;
+   NALU_HYPRE_Int        *B_i;
+   NALU_HYPRE_Int        *B_j;
 
-   HYPRE_Int         zeros;
-   HYPRE_Int         i, j;
-   HYPRE_Int         pos_A, pos_B;
+   NALU_HYPRE_Int         zeros;
+   NALU_HYPRE_Int         i, j;
+   NALU_HYPRE_Int         pos_A, pos_B;
 
    zeros = 0;
    for (i = 0; i < num_nonzeros; i++)
@@ -1030,8 +1030,8 @@ hypre_CSRMatrixDeleteZeros( hypre_CSRMatrix *A,
  * -> ret = idx1*dim2 + idx2
  *        = (idx%dim1)*dim2 + idx/dim1
  */
-static inline HYPRE_Int
-transpose_idx (HYPRE_Int idx, HYPRE_Int dim1, HYPRE_Int dim2)
+static inline NALU_HYPRE_Int
+transpose_idx (NALU_HYPRE_Int idx, NALU_HYPRE_Int dim1, NALU_HYPRE_Int dim2)
 {
    return idx % dim1 * dim2 + idx / dim1;
 }
@@ -1040,36 +1040,36 @@ transpose_idx (HYPRE_Int idx, HYPRE_Int dim1, HYPRE_Int dim2)
  * hypre_CSRMatrixTransposeHost
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_CSRMatrixTransposeHost(hypre_CSRMatrix  *A,
                              hypre_CSRMatrix **AT,
-                             HYPRE_Int         data)
+                             NALU_HYPRE_Int         data)
 
 {
-   HYPRE_Complex        *A_data     = hypre_CSRMatrixData(A);
-   HYPRE_Int            *A_i        = hypre_CSRMatrixI(A);
-   HYPRE_Int            *A_j        = hypre_CSRMatrixJ(A);
-   HYPRE_Int            *rownnz_A   = hypre_CSRMatrixRownnz(A);
-   HYPRE_Int             nnzrows_A  = hypre_CSRMatrixNumRownnz(A);
-   HYPRE_Int             num_rows_A = hypre_CSRMatrixNumRows(A);
-   HYPRE_Int             num_cols_A = hypre_CSRMatrixNumCols(A);
-   HYPRE_Int             num_nnzs_A = hypre_CSRMatrixNumNonzeros(A);
-   HYPRE_MemoryLocation  memory_location = hypre_CSRMatrixMemoryLocation(A);
+   NALU_HYPRE_Complex        *A_data     = hypre_CSRMatrixData(A);
+   NALU_HYPRE_Int            *A_i        = hypre_CSRMatrixI(A);
+   NALU_HYPRE_Int            *A_j        = hypre_CSRMatrixJ(A);
+   NALU_HYPRE_Int            *rownnz_A   = hypre_CSRMatrixRownnz(A);
+   NALU_HYPRE_Int             nnzrows_A  = hypre_CSRMatrixNumRownnz(A);
+   NALU_HYPRE_Int             num_rows_A = hypre_CSRMatrixNumRows(A);
+   NALU_HYPRE_Int             num_cols_A = hypre_CSRMatrixNumCols(A);
+   NALU_HYPRE_Int             num_nnzs_A = hypre_CSRMatrixNumNonzeros(A);
+   NALU_HYPRE_MemoryLocation  memory_location = hypre_CSRMatrixMemoryLocation(A);
 
-   HYPRE_Complex        *AT_data;
-   HYPRE_Int            *AT_j;
-   HYPRE_Int             num_rows_AT;
-   HYPRE_Int             num_cols_AT;
-   HYPRE_Int             num_nnzs_AT;
+   NALU_HYPRE_Complex        *AT_data;
+   NALU_HYPRE_Int            *AT_j;
+   NALU_HYPRE_Int             num_rows_AT;
+   NALU_HYPRE_Int             num_cols_AT;
+   NALU_HYPRE_Int             num_nnzs_AT;
 
-   HYPRE_Int             max_col;
-   HYPRE_Int             i, j;
+   NALU_HYPRE_Int             max_col;
+   NALU_HYPRE_Int             i, j;
 
    /*--------------------------------------------------------------
     * First, ascertain that num_cols and num_nonzeros has been set.
     * If not, set them.
     *--------------------------------------------------------------*/
-   HYPRE_ANNOTATE_FUNC_BEGIN;
+   NALU_HYPRE_ANNOTATE_FUNC_BEGIN;
 
    if (!num_nnzs_A && A_i)
    {
@@ -1104,37 +1104,37 @@ hypre_CSRMatrixTransposeHost(hypre_CSRMatrix  *A,
       // JSP: parallel counting sorting breaks down
       // when A has no columns
       hypre_CSRMatrixInitialize(*AT);
-      HYPRE_ANNOTATE_FUNC_END;
+      NALU_HYPRE_ANNOTATE_FUNC_END;
 
       return hypre_error_flag;
    }
 
-   AT_j = hypre_CTAlloc(HYPRE_Int, num_nnzs_AT, memory_location);
+   AT_j = hypre_CTAlloc(NALU_HYPRE_Int, num_nnzs_AT, memory_location);
    hypre_CSRMatrixJ(*AT) = AT_j;
    if (data)
    {
-      AT_data = hypre_CTAlloc(HYPRE_Complex, num_nnzs_AT, memory_location);
+      AT_data = hypre_CTAlloc(NALU_HYPRE_Complex, num_nnzs_AT, memory_location);
       hypre_CSRMatrixData(*AT) = AT_data;
    }
 
    /*-----------------------------------------------------------------
     * Parallel count sort
     *-----------------------------------------------------------------*/
-   HYPRE_Int *bucket = hypre_CTAlloc(HYPRE_Int, (num_cols_A + 1) * hypre_NumThreads(),
-                                     HYPRE_MEMORY_HOST);
+   NALU_HYPRE_Int *bucket = hypre_CTAlloc(NALU_HYPRE_Int, (num_cols_A + 1) * hypre_NumThreads(),
+                                     NALU_HYPRE_MEMORY_HOST);
 
-#ifdef HYPRE_USING_OPENMP
+#ifdef NALU_HYPRE_USING_OPENMP
    #pragma omp parallel
 #endif
    {
-      HYPRE_Int   ii, num_threads, ns, ne;
-      HYPRE_Int   i, j, j0, j1, ir;
-      HYPRE_Int   idx, offset;
-      HYPRE_Int   transpose_i;
-      HYPRE_Int   transpose_i_minus_1;
-      HYPRE_Int   transpose_i0;
-      HYPRE_Int   transpose_j0;
-      HYPRE_Int   transpose_j1;
+      NALU_HYPRE_Int   ii, num_threads, ns, ne;
+      NALU_HYPRE_Int   i, j, j0, j1, ir;
+      NALU_HYPRE_Int   idx, offset;
+      NALU_HYPRE_Int   transpose_i;
+      NALU_HYPRE_Int   transpose_i_minus_1;
+      NALU_HYPRE_Int   transpose_i0;
+      NALU_HYPRE_Int   transpose_j0;
+      NALU_HYPRE_Int   transpose_j1;
 
       ii = hypre_GetThreadNum();
       num_threads = hypre_NumActiveThreads();
@@ -1142,7 +1142,7 @@ hypre_CSRMatrixTransposeHost(hypre_CSRMatrix  *A,
 
       /*-----------------------------------------------------------------
        * Count the number of entries that will go into each bucket
-       * bucket is used as HYPRE_Int[num_threads][num_colsA] 2D array
+       * bucket is used as NALU_HYPRE_Int[num_threads][num_colsA] 2D array
        *-----------------------------------------------------------------*/
       if (rownnz_A == NULL)
       {
@@ -1165,9 +1165,9 @@ hypre_CSRMatrixTransposeHost(hypre_CSRMatrix  *A,
 
       /*-----------------------------------------------------------------
        * Parallel prefix sum of bucket with length num_colsA * num_threads
-       * accessed as if it is transposed as HYPRE_Int[num_colsA][num_threads]
+       * accessed as if it is transposed as NALU_HYPRE_Int[num_colsA][num_threads]
        *-----------------------------------------------------------------*/
-#ifdef HYPRE_USING_OPENMP
+#ifdef NALU_HYPRE_USING_OPENMP
       #pragma omp barrier
 #endif
 
@@ -1179,7 +1179,7 @@ hypre_CSRMatrixTransposeHost(hypre_CSRMatrix  *A,
          bucket[transpose_i] += bucket[transpose_i_minus_1];
       }
 
-#ifdef HYPRE_USING_OPENMP
+#ifdef NALU_HYPRE_USING_OPENMP
       #pragma omp barrier
       #pragma omp master
 #endif
@@ -1194,7 +1194,7 @@ hypre_CSRMatrixTransposeHost(hypre_CSRMatrix  *A,
             bucket[transpose_j1] += bucket[transpose_j0];
          }
       }
-#ifdef HYPRE_USING_OPENMP
+#ifdef NALU_HYPRE_USING_OPENMP
       #pragma omp barrier
 #endif
 
@@ -1211,7 +1211,7 @@ hypre_CSRMatrixTransposeHost(hypre_CSRMatrix  *A,
          }
       }
 
-#ifdef HYPRE_USING_OPENMP
+#ifdef NALU_HYPRE_USING_OPENMP
       #pragma omp barrier
 #endif
 
@@ -1252,11 +1252,11 @@ hypre_CSRMatrixTransposeHost(hypre_CSRMatrix  *A,
       }
    } /* end parallel region */
 
-   hypre_CSRMatrixI(*AT) = hypre_TAlloc(HYPRE_Int, num_cols_A + 1, memory_location);
-   hypre_TMemcpy(hypre_CSRMatrixI(*AT), bucket, HYPRE_Int, num_cols_A + 1, memory_location,
-                 HYPRE_MEMORY_HOST);
+   hypre_CSRMatrixI(*AT) = hypre_TAlloc(NALU_HYPRE_Int, num_cols_A + 1, memory_location);
+   hypre_TMemcpy(hypre_CSRMatrixI(*AT), bucket, NALU_HYPRE_Int, num_cols_A + 1, memory_location,
+                 NALU_HYPRE_MEMORY_HOST);
    hypre_CSRMatrixI(*AT)[num_cols_A] = num_nnzs_A;
-   hypre_TFree(bucket, HYPRE_MEMORY_HOST);
+   hypre_TFree(bucket, NALU_HYPRE_MEMORY_HOST);
 
    // Set rownnz and num_rownnz
    if (hypre_CSRMatrixNumRownnz(A) < num_rows_A)
@@ -1264,7 +1264,7 @@ hypre_CSRMatrixTransposeHost(hypre_CSRMatrix  *A,
       hypre_CSRMatrixSetRownnz(*AT);
    }
 
-   HYPRE_ANNOTATE_FUNC_END;
+   NALU_HYPRE_ANNOTATE_FUNC_END;
 
    return hypre_error_flag;
 }
@@ -1273,17 +1273,17 @@ hypre_CSRMatrixTransposeHost(hypre_CSRMatrix  *A,
  * hypre_CSRMatrixTranspose
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_CSRMatrixTranspose(hypre_CSRMatrix  *A,
                          hypre_CSRMatrix **AT,
-                         HYPRE_Int         data)
+                         NALU_HYPRE_Int         data)
 {
-   HYPRE_Int ierr = 0;
+   NALU_HYPRE_Int ierr = 0;
 
-#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP) || defined(HYPRE_USING_SYCL)
-   HYPRE_ExecutionPolicy exec = hypre_GetExecPolicy1( hypre_CSRMatrixMemoryLocation(A) );
+#if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP) || defined(NALU_HYPRE_USING_SYCL)
+   NALU_HYPRE_ExecutionPolicy exec = hypre_GetExecPolicy1( hypre_CSRMatrixMemoryLocation(A) );
 
-   if (exec == HYPRE_EXEC_DEVICE)
+   if (exec == NALU_HYPRE_EXEC_DEVICE)
    {
       ierr = hypre_CSRMatrixTransposeDevice(A, AT, data);
    }
@@ -1303,53 +1303,53 @@ hypre_CSRMatrixTranspose(hypre_CSRMatrix  *A,
  *--------------------------------------------------------------------------*/
 
 /* RL: TODO add memory locations */
-HYPRE_Int hypre_CSRMatrixSplit(hypre_CSRMatrix  *Bs_ext,
-                               HYPRE_BigInt      first_col_diag_B,
-                               HYPRE_BigInt      last_col_diag_B,
-                               HYPRE_Int         num_cols_offd_B,
-                               HYPRE_BigInt     *col_map_offd_B,
-                               HYPRE_Int        *num_cols_offd_C_ptr,
-                               HYPRE_BigInt    **col_map_offd_C_ptr,
+NALU_HYPRE_Int hypre_CSRMatrixSplit(hypre_CSRMatrix  *Bs_ext,
+                               NALU_HYPRE_BigInt      first_col_diag_B,
+                               NALU_HYPRE_BigInt      last_col_diag_B,
+                               NALU_HYPRE_Int         num_cols_offd_B,
+                               NALU_HYPRE_BigInt     *col_map_offd_B,
+                               NALU_HYPRE_Int        *num_cols_offd_C_ptr,
+                               NALU_HYPRE_BigInt    **col_map_offd_C_ptr,
                                hypre_CSRMatrix **Bext_diag_ptr,
                                hypre_CSRMatrix **Bext_offd_ptr)
 {
-   HYPRE_Complex   *Bs_ext_data = hypre_CSRMatrixData(Bs_ext);
-   HYPRE_Int       *Bs_ext_i    = hypre_CSRMatrixI(Bs_ext);
-   HYPRE_BigInt    *Bs_ext_j    = hypre_CSRMatrixBigJ(Bs_ext);
-   HYPRE_Int        num_rows_Bext = hypre_CSRMatrixNumRows(Bs_ext);
-   HYPRE_Int        B_ext_diag_size = 0;
-   HYPRE_Int        B_ext_offd_size = 0;
-   HYPRE_Int       *B_ext_diag_i = NULL;
-   HYPRE_Int       *B_ext_diag_j = NULL;
-   HYPRE_Complex   *B_ext_diag_data = NULL;
-   HYPRE_Int       *B_ext_offd_i = NULL;
-   HYPRE_Int       *B_ext_offd_j = NULL;
-   HYPRE_Complex   *B_ext_offd_data = NULL;
-   HYPRE_Int       *my_diag_array;
-   HYPRE_Int       *my_offd_array;
-   HYPRE_BigInt    *temp;
-   HYPRE_Int        max_num_threads;
-   HYPRE_Int        cnt = 0;
+   NALU_HYPRE_Complex   *Bs_ext_data = hypre_CSRMatrixData(Bs_ext);
+   NALU_HYPRE_Int       *Bs_ext_i    = hypre_CSRMatrixI(Bs_ext);
+   NALU_HYPRE_BigInt    *Bs_ext_j    = hypre_CSRMatrixBigJ(Bs_ext);
+   NALU_HYPRE_Int        num_rows_Bext = hypre_CSRMatrixNumRows(Bs_ext);
+   NALU_HYPRE_Int        B_ext_diag_size = 0;
+   NALU_HYPRE_Int        B_ext_offd_size = 0;
+   NALU_HYPRE_Int       *B_ext_diag_i = NULL;
+   NALU_HYPRE_Int       *B_ext_diag_j = NULL;
+   NALU_HYPRE_Complex   *B_ext_diag_data = NULL;
+   NALU_HYPRE_Int       *B_ext_offd_i = NULL;
+   NALU_HYPRE_Int       *B_ext_offd_j = NULL;
+   NALU_HYPRE_Complex   *B_ext_offd_data = NULL;
+   NALU_HYPRE_Int       *my_diag_array;
+   NALU_HYPRE_Int       *my_offd_array;
+   NALU_HYPRE_BigInt    *temp;
+   NALU_HYPRE_Int        max_num_threads;
+   NALU_HYPRE_Int        cnt = 0;
    hypre_CSRMatrix *Bext_diag = NULL;
    hypre_CSRMatrix *Bext_offd = NULL;
-   HYPRE_BigInt    *col_map_offd_C = NULL;
-   HYPRE_Int        num_cols_offd_C = 0;
+   NALU_HYPRE_BigInt    *col_map_offd_C = NULL;
+   NALU_HYPRE_Int        num_cols_offd_C = 0;
 
-   B_ext_diag_i = hypre_CTAlloc(HYPRE_Int, num_rows_Bext + 1, HYPRE_MEMORY_HOST);
-   B_ext_offd_i = hypre_CTAlloc(HYPRE_Int, num_rows_Bext + 1, HYPRE_MEMORY_HOST);
+   B_ext_diag_i = hypre_CTAlloc(NALU_HYPRE_Int, num_rows_Bext + 1, NALU_HYPRE_MEMORY_HOST);
+   B_ext_offd_i = hypre_CTAlloc(NALU_HYPRE_Int, num_rows_Bext + 1, NALU_HYPRE_MEMORY_HOST);
 
    max_num_threads = hypre_NumThreads();
-   my_diag_array = hypre_CTAlloc(HYPRE_Int, max_num_threads, HYPRE_MEMORY_HOST);
-   my_offd_array = hypre_CTAlloc(HYPRE_Int, max_num_threads, HYPRE_MEMORY_HOST);
+   my_diag_array = hypre_CTAlloc(NALU_HYPRE_Int, max_num_threads, NALU_HYPRE_MEMORY_HOST);
+   my_offd_array = hypre_CTAlloc(NALU_HYPRE_Int, max_num_threads, NALU_HYPRE_MEMORY_HOST);
 
-#ifdef HYPRE_USING_OPENMP
+#ifdef NALU_HYPRE_USING_OPENMP
    #pragma omp parallel
 #endif
    {
-      HYPRE_Int ns, ne, ii, num_threads;
-      HYPRE_Int i1, i, j;
-      HYPRE_Int my_offd_size, my_diag_size;
-      HYPRE_Int cnt_offd, cnt_diag;
+      NALU_HYPRE_Int ns, ne, ii, num_threads;
+      NALU_HYPRE_Int i1, i, j;
+      NALU_HYPRE_Int my_offd_size, my_diag_size;
+      NALU_HYPRE_Int cnt_offd, cnt_diag;
 
       ii = hypre_GetThreadNum();
       num_threads = hypre_NumActiveThreads();
@@ -1376,7 +1376,7 @@ HYPRE_Int hypre_CSRMatrixSplit(hypre_CSRMatrix  *Bs_ext,
       my_diag_array[ii] = my_diag_size;
       my_offd_array[ii] = my_offd_size;
 
-#ifdef HYPRE_USING_OPENMP
+#ifdef NALU_HYPRE_USING_OPENMP
       #pragma omp barrier
 #endif
 
@@ -1410,21 +1410,21 @@ HYPRE_Int hypre_CSRMatrixSplit(hypre_CSRMatrix  *Bs_ext,
 
          if (B_ext_diag_size)
          {
-            B_ext_diag_j    = hypre_CTAlloc(HYPRE_Int,     B_ext_diag_size, HYPRE_MEMORY_HOST);
-            B_ext_diag_data = hypre_CTAlloc(HYPRE_Complex, B_ext_diag_size, HYPRE_MEMORY_HOST);
+            B_ext_diag_j    = hypre_CTAlloc(NALU_HYPRE_Int,     B_ext_diag_size, NALU_HYPRE_MEMORY_HOST);
+            B_ext_diag_data = hypre_CTAlloc(NALU_HYPRE_Complex, B_ext_diag_size, NALU_HYPRE_MEMORY_HOST);
          }
          if (B_ext_offd_size)
          {
-            B_ext_offd_j    = hypre_CTAlloc(HYPRE_Int,     B_ext_offd_size, HYPRE_MEMORY_HOST);
-            B_ext_offd_data = hypre_CTAlloc(HYPRE_Complex, B_ext_offd_size, HYPRE_MEMORY_HOST);
+            B_ext_offd_j    = hypre_CTAlloc(NALU_HYPRE_Int,     B_ext_offd_size, NALU_HYPRE_MEMORY_HOST);
+            B_ext_offd_data = hypre_CTAlloc(NALU_HYPRE_Complex, B_ext_offd_size, NALU_HYPRE_MEMORY_HOST);
          }
          if (B_ext_offd_size || num_cols_offd_B)
          {
-            temp = hypre_CTAlloc(HYPRE_BigInt, B_ext_offd_size + num_cols_offd_B, HYPRE_MEMORY_HOST);
+            temp = hypre_CTAlloc(NALU_HYPRE_BigInt, B_ext_offd_size + num_cols_offd_B, NALU_HYPRE_MEMORY_HOST);
          }
       }
 
-#ifdef HYPRE_USING_OPENMP
+#ifdef NALU_HYPRE_USING_OPENMP
       #pragma omp barrier
 #endif
 
@@ -1449,7 +1449,7 @@ HYPRE_Int hypre_CSRMatrixSplit(hypre_CSRMatrix  *Bs_ext,
       }
 
       /* This computes the mappings */
-#ifdef HYPRE_USING_OPENMP
+#ifdef NALU_HYPRE_USING_OPENMP
       #pragma omp barrier
 #endif
 
@@ -1467,7 +1467,7 @@ HYPRE_Int hypre_CSRMatrixSplit(hypre_CSRMatrix  *Bs_ext,
             {
                hypre_BigQsort0(temp, 0, cnt - 1);
                num_cols_offd_C = 1;
-               HYPRE_BigInt value = temp[0];
+               NALU_HYPRE_BigInt value = temp[0];
                for (i = 1; i < cnt; i++)
                {
                   if (temp[i] > value)
@@ -1480,7 +1480,7 @@ HYPRE_Int hypre_CSRMatrixSplit(hypre_CSRMatrix  *Bs_ext,
 
             if (num_cols_offd_C)
             {
-               col_map_offd_C = hypre_CTAlloc(HYPRE_BigInt, num_cols_offd_C, HYPRE_MEMORY_HOST);
+               col_map_offd_C = hypre_CTAlloc(NALU_HYPRE_BigInt, num_cols_offd_C, NALU_HYPRE_MEMORY_HOST);
             }
 
             for (i = 0; i < num_cols_offd_C; i++)
@@ -1488,11 +1488,11 @@ HYPRE_Int hypre_CSRMatrixSplit(hypre_CSRMatrix  *Bs_ext,
                col_map_offd_C[i] = temp[i];
             }
 
-            hypre_TFree(temp, HYPRE_MEMORY_HOST);
+            hypre_TFree(temp, NALU_HYPRE_MEMORY_HOST);
          }
       }
 
-#ifdef HYPRE_USING_OPENMP
+#ifdef NALU_HYPRE_USING_OPENMP
       #pragma omp barrier
 #endif
 
@@ -1505,14 +1505,14 @@ HYPRE_Int hypre_CSRMatrixSplit(hypre_CSRMatrix  *Bs_ext,
       }
    } /* end parallel region */
 
-   hypre_TFree(my_diag_array, HYPRE_MEMORY_HOST);
-   hypre_TFree(my_offd_array, HYPRE_MEMORY_HOST);
+   hypre_TFree(my_diag_array, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(my_offd_array, NALU_HYPRE_MEMORY_HOST);
 
    Bext_diag = hypre_CSRMatrixCreate(num_rows_Bext, last_col_diag_B - first_col_diag_B + 1,
                                      B_ext_diag_size);
-   hypre_CSRMatrixMemoryLocation(Bext_diag) = HYPRE_MEMORY_HOST;
+   hypre_CSRMatrixMemoryLocation(Bext_diag) = NALU_HYPRE_MEMORY_HOST;
    Bext_offd = hypre_CSRMatrixCreate(num_rows_Bext, num_cols_offd_C, B_ext_offd_size);
-   hypre_CSRMatrixMemoryLocation(Bext_offd) = HYPRE_MEMORY_HOST;
+   hypre_CSRMatrixMemoryLocation(Bext_offd) = NALU_HYPRE_MEMORY_HOST;
    hypre_CSRMatrixI(Bext_diag)    = B_ext_diag_i;
    hypre_CSRMatrixJ(Bext_diag)    = B_ext_diag_j;
    hypre_CSRMatrixData(Bext_diag) = B_ext_diag_data;
@@ -1532,18 +1532,18 @@ HYPRE_Int hypre_CSRMatrixSplit(hypre_CSRMatrix  *Bs_ext,
  * hypre_CSRMatrixReorderHost
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_CSRMatrixReorderHost(hypre_CSRMatrix *A)
 {
-   HYPRE_Complex *A_data     = hypre_CSRMatrixData(A);
-   HYPRE_Int     *A_i        = hypre_CSRMatrixI(A);
-   HYPRE_Int     *A_j        = hypre_CSRMatrixJ(A);
-   HYPRE_Int     *rownnz_A   = hypre_CSRMatrixRownnz(A);
-   HYPRE_Int      nnzrows_A  = hypre_CSRMatrixNumRownnz(A);
-   HYPRE_Int      num_rows_A = hypre_CSRMatrixNumRows(A);
-   HYPRE_Int      num_cols_A = hypre_CSRMatrixNumCols(A);
+   NALU_HYPRE_Complex *A_data     = hypre_CSRMatrixData(A);
+   NALU_HYPRE_Int     *A_i        = hypre_CSRMatrixI(A);
+   NALU_HYPRE_Int     *A_j        = hypre_CSRMatrixJ(A);
+   NALU_HYPRE_Int     *rownnz_A   = hypre_CSRMatrixRownnz(A);
+   NALU_HYPRE_Int      nnzrows_A  = hypre_CSRMatrixNumRownnz(A);
+   NALU_HYPRE_Int      num_rows_A = hypre_CSRMatrixNumRows(A);
+   NALU_HYPRE_Int      num_cols_A = hypre_CSRMatrixNumCols(A);
 
-   HYPRE_Int      i, ii, j;
+   NALU_HYPRE_Int      i, ii, j;
 
    /* the matrix should be square */
    if (num_rows_A != num_cols_A)
@@ -1551,8 +1551,8 @@ hypre_CSRMatrixReorderHost(hypre_CSRMatrix *A)
       return -1;
    }
 
-#ifdef HYPRE_USING_OPENMP
-   #pragma omp parallel for private(i, ii, j) HYPRE_SMP_SCHEDULE
+#ifdef NALU_HYPRE_USING_OPENMP
+   #pragma omp parallel for private(i, ii, j) NALU_HYPRE_SMP_SCHEDULE
 #endif
    for (i = 0; i < nnzrows_A; i++)
    {
@@ -1581,15 +1581,15 @@ hypre_CSRMatrixReorderHost(hypre_CSRMatrix *A)
  * first entry in each row is the diagonal one.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_CSRMatrixReorder(hypre_CSRMatrix *A)
 {
-   HYPRE_Int ierr = 0;
+   NALU_HYPRE_Int ierr = 0;
 
-#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP) || defined(HYPRE_USING_SYCL)
-   HYPRE_ExecutionPolicy exec = hypre_GetExecPolicy1( hypre_CSRMatrixMemoryLocation(A) );
+#if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP) || defined(NALU_HYPRE_USING_SYCL)
+   NALU_HYPRE_ExecutionPolicy exec = hypre_GetExecPolicy1( hypre_CSRMatrixMemoryLocation(A) );
 
-   if (exec == HYPRE_EXEC_DEVICE)
+   if (exec == NALU_HYPRE_EXEC_DEVICE)
    {
       ierr = hypre_CSRMatrixMoveDiagFirstDevice(A);
    }
@@ -1613,31 +1613,31 @@ hypre_CSRMatrixReorder(hypre_CSRMatrix *A)
 hypre_CSRMatrix *
 hypre_CSRMatrixAddPartial( hypre_CSRMatrix *A,
                            hypre_CSRMatrix *B,
-                           HYPRE_Int *row_nums)
+                           NALU_HYPRE_Int *row_nums)
 {
-   HYPRE_Complex    *A_data   = hypre_CSRMatrixData(A);
-   HYPRE_Int        *A_i      = hypre_CSRMatrixI(A);
-   HYPRE_Int        *A_j      = hypre_CSRMatrixJ(A);
-   HYPRE_Int         nrows_A  = hypre_CSRMatrixNumRows(A);
-   HYPRE_Int         ncols_A  = hypre_CSRMatrixNumCols(A);
-   HYPRE_Complex    *B_data   = hypre_CSRMatrixData(B);
-   HYPRE_Int        *B_i      = hypre_CSRMatrixI(B);
-   HYPRE_Int        *B_j      = hypre_CSRMatrixJ(B);
-   HYPRE_Int         nrows_B  = hypre_CSRMatrixNumRows(B);
-   HYPRE_Int         ncols_B  = hypre_CSRMatrixNumCols(B);
+   NALU_HYPRE_Complex    *A_data   = hypre_CSRMatrixData(A);
+   NALU_HYPRE_Int        *A_i      = hypre_CSRMatrixI(A);
+   NALU_HYPRE_Int        *A_j      = hypre_CSRMatrixJ(A);
+   NALU_HYPRE_Int         nrows_A  = hypre_CSRMatrixNumRows(A);
+   NALU_HYPRE_Int         ncols_A  = hypre_CSRMatrixNumCols(A);
+   NALU_HYPRE_Complex    *B_data   = hypre_CSRMatrixData(B);
+   NALU_HYPRE_Int        *B_i      = hypre_CSRMatrixI(B);
+   NALU_HYPRE_Int        *B_j      = hypre_CSRMatrixJ(B);
+   NALU_HYPRE_Int         nrows_B  = hypre_CSRMatrixNumRows(B);
+   NALU_HYPRE_Int         ncols_B  = hypre_CSRMatrixNumCols(B);
    hypre_CSRMatrix  *C;
-   HYPRE_Complex    *C_data;
-   HYPRE_Int        *C_i;
-   HYPRE_Int        *C_j;
+   NALU_HYPRE_Complex    *C_data;
+   NALU_HYPRE_Int        *C_i;
+   NALU_HYPRE_Int        *C_j;
 
-   HYPRE_Int         ia, ib, ic, jcol, num_nonzeros;
-   HYPRE_Int         pos, i, i2, j, cnt;
-   HYPRE_Int         *marker;
-   HYPRE_Int         *map;
-   HYPRE_Int         *temp;
+   NALU_HYPRE_Int         ia, ib, ic, jcol, num_nonzeros;
+   NALU_HYPRE_Int         pos, i, i2, j, cnt;
+   NALU_HYPRE_Int         *marker;
+   NALU_HYPRE_Int         *map;
+   NALU_HYPRE_Int         *temp;
 
-   HYPRE_MemoryLocation memory_location_A = hypre_CSRMatrixMemoryLocation(A);
-   HYPRE_MemoryLocation memory_location_B = hypre_CSRMatrixMemoryLocation(B);
+   NALU_HYPRE_MemoryLocation memory_location_A = hypre_CSRMatrixMemoryLocation(A);
+   NALU_HYPRE_MemoryLocation memory_location_B = hypre_CSRMatrixMemoryLocation(B);
 
    /* RL: TODO cannot guarantee, maybe should never assert
    hypre_assert(memory_location_A == memory_location_B);
@@ -1647,16 +1647,16 @@ hypre_CSRMatrixAddPartial( hypre_CSRMatrix *A,
     * not sure if this is the right thing to do.
     * Also, need something like this in other places
     * TODO */
-   HYPRE_MemoryLocation memory_location_C = hypre_max(memory_location_A, memory_location_B);
+   NALU_HYPRE_MemoryLocation memory_location_C = hypre_max(memory_location_A, memory_location_B);
 
    if (ncols_A != ncols_B)
    {
-      hypre_error_w_msg(HYPRE_ERROR_GENERIC, "Warning! incompatible matrix dimensions!\n");
+      hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "Warning! incompatible matrix dimensions!\n");
       return NULL;
    }
 
-   map = hypre_CTAlloc(HYPRE_Int, nrows_B, HYPRE_MEMORY_HOST);
-   temp = hypre_CTAlloc(HYPRE_Int, nrows_B, HYPRE_MEMORY_HOST);
+   map = hypre_CTAlloc(NALU_HYPRE_Int, nrows_B, NALU_HYPRE_MEMORY_HOST);
+   temp = hypre_CTAlloc(NALU_HYPRE_Int, nrows_B, NALU_HYPRE_MEMORY_HOST);
    for (i = 0; i < nrows_B; i++)
    {
       map[i] = i;
@@ -1665,8 +1665,8 @@ hypre_CSRMatrixAddPartial( hypre_CSRMatrix *A,
 
    hypre_qsort2i(temp, map, 0, nrows_B - 1);
 
-   marker = hypre_CTAlloc(HYPRE_Int, ncols_A, HYPRE_MEMORY_HOST);
-   C_i = hypre_CTAlloc(HYPRE_Int, nrows_A + 1, memory_location_C);
+   marker = hypre_CTAlloc(NALU_HYPRE_Int, ncols_A, NALU_HYPRE_MEMORY_HOST);
+   C_i = hypre_CTAlloc(NALU_HYPRE_Int, nrows_A + 1, memory_location_C);
 
    for (ia = 0; ia < ncols_A; ia++)
    {
@@ -1764,9 +1764,9 @@ hypre_CSRMatrixAddPartial( hypre_CSRMatrix *A,
       }
    }
 
-   hypre_TFree(marker, HYPRE_MEMORY_HOST);
-   hypre_TFree(map, HYPRE_MEMORY_HOST);
-   hypre_TFree(temp, HYPRE_MEMORY_HOST);
+   hypre_TFree(marker, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(map, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(temp, NALU_HYPRE_MEMORY_HOST);
 
    return C;
 }
@@ -1776,16 +1776,16 @@ hypre_CSRMatrixAddPartial( hypre_CSRMatrix *A,
  * Returns the sum of all matrix elements.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Complex
+NALU_HYPRE_Complex
 hypre_CSRMatrixSumElts( hypre_CSRMatrix *A )
 {
-   HYPRE_Complex  sum = 0;
-   HYPRE_Complex *data = hypre_CSRMatrixData(A);
-   HYPRE_Int      num_nonzeros = hypre_CSRMatrixNumNonzeros(A);
-   HYPRE_Int      i;
+   NALU_HYPRE_Complex  sum = 0;
+   NALU_HYPRE_Complex *data = hypre_CSRMatrixData(A);
+   NALU_HYPRE_Int      num_nonzeros = hypre_CSRMatrixNumNonzeros(A);
+   NALU_HYPRE_Int      i;
 
-#ifdef HYPRE_USING_OPENMP
-   #pragma omp parallel for private(i) reduction(+:sum) HYPRE_SMP_SCHEDULE
+#ifdef NALU_HYPRE_USING_OPENMP
+   #pragma omp parallel for private(i) reduction(+:sum) NALU_HYPRE_SMP_SCHEDULE
 #endif
    for (i = 0; i < num_nonzeros; i++)
    {
@@ -1799,24 +1799,24 @@ hypre_CSRMatrixSumElts( hypre_CSRMatrix *A )
  * hypre_CSRMatrixFnorm
  *--------------------------------------------------------------------------*/
 
-HYPRE_Real
+NALU_HYPRE_Real
 hypre_CSRMatrixFnorm( hypre_CSRMatrix *A )
 {
-   HYPRE_Int       nrows        = hypre_CSRMatrixNumRows(A);
-   HYPRE_Int       num_nonzeros = hypre_CSRMatrixNumNonzeros(A);
-   HYPRE_Int      *A_i          = hypre_CSRMatrixI(A);
-   HYPRE_Complex  *A_data       = hypre_CSRMatrixData(A);
-   HYPRE_Int       i;
-   HYPRE_Complex   sum = 0;
+   NALU_HYPRE_Int       nrows        = hypre_CSRMatrixNumRows(A);
+   NALU_HYPRE_Int       num_nonzeros = hypre_CSRMatrixNumNonzeros(A);
+   NALU_HYPRE_Int      *A_i          = hypre_CSRMatrixI(A);
+   NALU_HYPRE_Complex  *A_data       = hypre_CSRMatrixData(A);
+   NALU_HYPRE_Int       i;
+   NALU_HYPRE_Complex   sum = 0;
 
    hypre_assert(num_nonzeros == A_i[nrows]);
 
-#ifdef HYPRE_USING_OPENMP
-   #pragma omp parallel for private(i) reduction(+:sum) HYPRE_SMP_SCHEDULE
+#ifdef NALU_HYPRE_USING_OPENMP
+   #pragma omp parallel for private(i) reduction(+:sum) NALU_HYPRE_SMP_SCHEDULE
 #endif
    for (i = 0; i < num_nonzeros; ++i)
    {
-      HYPRE_Complex v = A_data[i];
+      NALU_HYPRE_Complex v = A_data[i];
       sum += v * v;
    }
 
@@ -1833,23 +1833,23 @@ hypre_CSRMatrixFnorm( hypre_CSRMatrix *A )
 
 void
 hypre_CSRMatrixComputeRowSumHost( hypre_CSRMatrix *A,
-                                  HYPRE_Int       *CF_i,
-                                  HYPRE_Int       *CF_j,
-                                  HYPRE_Complex   *row_sum,
-                                  HYPRE_Int        type,
-                                  HYPRE_Complex    scal,
+                                  NALU_HYPRE_Int       *CF_i,
+                                  NALU_HYPRE_Int       *CF_j,
+                                  NALU_HYPRE_Complex   *row_sum,
+                                  NALU_HYPRE_Int        type,
+                                  NALU_HYPRE_Complex    scal,
                                   const char      *set_or_add)
 {
-   HYPRE_Int      nrows  = hypre_CSRMatrixNumRows(A);
-   HYPRE_Complex *A_data = hypre_CSRMatrixData(A);
-   HYPRE_Int     *A_i    = hypre_CSRMatrixI(A);
-   HYPRE_Int     *A_j    = hypre_CSRMatrixJ(A);
+   NALU_HYPRE_Int      nrows  = hypre_CSRMatrixNumRows(A);
+   NALU_HYPRE_Complex *A_data = hypre_CSRMatrixData(A);
+   NALU_HYPRE_Int     *A_i    = hypre_CSRMatrixI(A);
+   NALU_HYPRE_Int     *A_j    = hypre_CSRMatrixJ(A);
 
-   HYPRE_Int i, j;
+   NALU_HYPRE_Int i, j;
 
    for (i = 0; i < nrows; i++)
    {
-      HYPRE_Complex row_sum_i = set_or_add[0] == 's' ? 0.0 : row_sum[i];
+      NALU_HYPRE_Complex row_sum_i = set_or_add[0] == 's' ? 0.0 : row_sum[i];
 
       for (j = A_i[i]; j < A_i[i + 1]; j++)
       {
@@ -1882,19 +1882,19 @@ hypre_CSRMatrixComputeRowSumHost( hypre_CSRMatrix *A,
 
 void
 hypre_CSRMatrixComputeRowSum( hypre_CSRMatrix *A,
-                              HYPRE_Int       *CF_i,
-                              HYPRE_Int       *CF_j,
-                              HYPRE_Complex   *row_sum,
-                              HYPRE_Int        type,
-                              HYPRE_Complex    scal,
+                              NALU_HYPRE_Int       *CF_i,
+                              NALU_HYPRE_Int       *CF_j,
+                              NALU_HYPRE_Complex   *row_sum,
+                              NALU_HYPRE_Int        type,
+                              NALU_HYPRE_Complex    scal,
                               const char      *set_or_add)
 {
    hypre_assert( (CF_i && CF_j) || (!CF_i && !CF_j) );
 
-#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP) || defined(HYPRE_USING_SYCL)
-   HYPRE_ExecutionPolicy exec = hypre_GetExecPolicy1( hypre_CSRMatrixMemoryLocation(A) );
+#if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP) || defined(NALU_HYPRE_USING_SYCL)
+   NALU_HYPRE_ExecutionPolicy exec = hypre_GetExecPolicy1( hypre_CSRMatrixMemoryLocation(A) );
 
-   if (exec == HYPRE_EXEC_DEVICE)
+   if (exec == NALU_HYPRE_EXEC_DEVICE)
    {
       hypre_CSRMatrixComputeRowSumDevice(A, CF_i, CF_j, row_sum, type, scal, set_or_add);
    }
@@ -1916,15 +1916,15 @@ hypre_CSRMatrixComputeRowSum( hypre_CSRMatrix *A,
 
 void
 hypre_CSRMatrixExtractDiagonalHost( hypre_CSRMatrix *A,
-                                    HYPRE_Complex   *d,
-                                    HYPRE_Int        type)
+                                    NALU_HYPRE_Complex   *d,
+                                    NALU_HYPRE_Int        type)
 {
-   HYPRE_Int      nrows  = hypre_CSRMatrixNumRows(A);
-   HYPRE_Complex *A_data = hypre_CSRMatrixData(A);
-   HYPRE_Int     *A_i    = hypre_CSRMatrixI(A);
-   HYPRE_Int     *A_j    = hypre_CSRMatrixJ(A);
-   HYPRE_Int      i, j;
-   HYPRE_Complex  d_i;
+   NALU_HYPRE_Int      nrows  = hypre_CSRMatrixNumRows(A);
+   NALU_HYPRE_Complex *A_data = hypre_CSRMatrixData(A);
+   NALU_HYPRE_Int     *A_i    = hypre_CSRMatrixI(A);
+   NALU_HYPRE_Int     *A_j    = hypre_CSRMatrixJ(A);
+   NALU_HYPRE_Int      i, j;
+   NALU_HYPRE_Complex  d_i;
 
    for (i = 0; i < nrows; i++)
    {
@@ -1971,13 +1971,13 @@ hypre_CSRMatrixExtractDiagonalHost( hypre_CSRMatrix *A,
 
 void
 hypre_CSRMatrixExtractDiagonal( hypre_CSRMatrix *A,
-                                HYPRE_Complex   *d,
-                                HYPRE_Int        type)
+                                NALU_HYPRE_Complex   *d,
+                                NALU_HYPRE_Int        type)
 {
-#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP) || defined(HYPRE_USING_SYCL)
-   HYPRE_ExecutionPolicy exec = hypre_GetExecPolicy1( hypre_CSRMatrixMemoryLocation(A) );
+#if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP) || defined(NALU_HYPRE_USING_SYCL)
+   NALU_HYPRE_ExecutionPolicy exec = hypre_GetExecPolicy1( hypre_CSRMatrixMemoryLocation(A) );
 
-   if (exec == HYPRE_EXEC_DEVICE)
+   if (exec == NALU_HYPRE_EXEC_DEVICE)
    {
       hypre_CSRMatrixExtractDiagonalDevice(A, d, type);
    }
@@ -1990,18 +1990,18 @@ hypre_CSRMatrixExtractDiagonal( hypre_CSRMatrix *A,
 
 /* Scale CSR matrix A = scalar * A
  */
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_CSRMatrixScale( hypre_CSRMatrix *A,
-                      HYPRE_Complex    scalar)
+                      NALU_HYPRE_Complex    scalar)
 {
-   HYPRE_Complex *data = hypre_CSRMatrixData(A);
-   HYPRE_Int      i;
-   HYPRE_Int      k = hypre_CSRMatrixNumNonzeros(A);
+   NALU_HYPRE_Complex *data = hypre_CSRMatrixData(A);
+   NALU_HYPRE_Int      i;
+   NALU_HYPRE_Int      k = hypre_CSRMatrixNumNonzeros(A);
 
-#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP)
-   HYPRE_ExecutionPolicy exec = hypre_GetExecPolicy1( hypre_CSRMatrixMemoryLocation(A) );
+#if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
+   NALU_HYPRE_ExecutionPolicy exec = hypre_GetExecPolicy1( hypre_CSRMatrixMemoryLocation(A) );
 
-   if (exec == HYPRE_EXEC_DEVICE)
+   if (exec == NALU_HYPRE_EXEC_DEVICE)
    {
       hypreDevice_ComplexScalen(data, k, data, scalar);
    }
@@ -2018,42 +2018,42 @@ hypre_CSRMatrixScale( hypre_CSRMatrix *A,
 }
 
 /* diagonal scaling A := diag(ld) * A * diag(rd) */
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_CSRMatrixDiagScale( hypre_CSRMatrix *A,
                           hypre_Vector    *ld,
                           hypre_Vector    *rd)
 {
-   HYPRE_Complex *ldata  = ld ? hypre_VectorData(ld) : NULL;
-   HYPRE_Complex *rdata  = rd ? hypre_VectorData(rd) : NULL;
+   NALU_HYPRE_Complex *ldata  = ld ? hypre_VectorData(ld) : NULL;
+   NALU_HYPRE_Complex *rdata  = rd ? hypre_VectorData(rd) : NULL;
 
    if (!ldata && !rdata)
    {
       return hypre_error_flag;
    }
 
-#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP)
-   HYPRE_ExecutionPolicy exec = hypre_GetExecPolicy2( hypre_CSRMatrixMemoryLocation(A),
+#if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
+   NALU_HYPRE_ExecutionPolicy exec = hypre_GetExecPolicy2( hypre_CSRMatrixMemoryLocation(A),
                                                       hypre_VectorMemoryLocation(ld) );
 
-   if (exec == HYPRE_EXEC_DEVICE)
+   if (exec == NALU_HYPRE_EXEC_DEVICE)
    {
       hypre_CSRMatrixDiagScaleDevice(A, ld, rd);
    }
    else
 #endif
    {
-      HYPRE_Int      nrows  = hypre_CSRMatrixNumRows(A);
-      HYPRE_Complex *A_data = hypre_CSRMatrixData(A);
-      HYPRE_Int     *A_i    = hypre_CSRMatrixI(A);
-      HYPRE_Int     *A_j    = hypre_CSRMatrixJ(A);
-      HYPRE_Int      i, j;
+      NALU_HYPRE_Int      nrows  = hypre_CSRMatrixNumRows(A);
+      NALU_HYPRE_Complex *A_data = hypre_CSRMatrixData(A);
+      NALU_HYPRE_Int     *A_i    = hypre_CSRMatrixI(A);
+      NALU_HYPRE_Int     *A_j    = hypre_CSRMatrixJ(A);
+      NALU_HYPRE_Int      i, j;
 
       for (i = 0; i < nrows; i++)
       {
-         HYPRE_Complex sl = ldata ? ldata[i] : 1.0;
+         NALU_HYPRE_Complex sl = ldata ? ldata[i] : 1.0;
          for (j = A_i[i]; j < A_i[i + 1]; j++)
          {
-            HYPRE_Complex sr = rdata ? rdata[A_j[j]] : 1.0;
+            NALU_HYPRE_Complex sr = rdata ? rdata[A_j[j]] : 1.0;
             A_data[j] = sl * A_data[j] * sr;
          }
       }
@@ -2062,22 +2062,22 @@ hypre_CSRMatrixDiagScale( hypre_CSRMatrix *A,
    return hypre_error_flag;
 }
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_CSRMatrixSetConstantValues( hypre_CSRMatrix *A,
-                                  HYPRE_Complex    value)
+                                  NALU_HYPRE_Complex    value)
 {
-   HYPRE_Int i;
-   HYPRE_Int nnz = hypre_CSRMatrixNumNonzeros(A);
+   NALU_HYPRE_Int i;
+   NALU_HYPRE_Int nnz = hypre_CSRMatrixNumNonzeros(A);
 
    if (!hypre_CSRMatrixData(A))
    {
-      hypre_CSRMatrixData(A) = hypre_TAlloc(HYPRE_Complex, nnz, hypre_CSRMatrixMemoryLocation(A));
+      hypre_CSRMatrixData(A) = hypre_TAlloc(NALU_HYPRE_Complex, nnz, hypre_CSRMatrixMemoryLocation(A));
    }
 
-#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP) || defined(HYPRE_USING_SYCL)
-   HYPRE_ExecutionPolicy exec = hypre_GetExecPolicy1( hypre_CSRMatrixMemoryLocation(A) );
+#if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP) || defined(NALU_HYPRE_USING_SYCL)
+   NALU_HYPRE_ExecutionPolicy exec = hypre_GetExecPolicy1( hypre_CSRMatrixMemoryLocation(A) );
 
-   if (exec == HYPRE_EXEC_DEVICE)
+   if (exec == NALU_HYPRE_EXEC_DEVICE)
    {
       hypreDevice_ComplexFilln(hypre_CSRMatrixData(A), nnz, value);
    }

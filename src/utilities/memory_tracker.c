@@ -14,13 +14,13 @@
 
 #include "_hypre_utilities.h"
 
-#if defined(HYPRE_USING_MEMORY_TRACKER)
+#if defined(NALU_HYPRE_USING_MEMORY_TRACKER)
 
 size_t hypre_total_bytes[hypre_NUM_MEMORY_LOCATION];
 size_t hypre_peak_bytes[hypre_NUM_MEMORY_LOCATION];
 size_t hypre_current_bytes[hypre_NUM_MEMORY_LOCATION];
-HYPRE_Int hypre_memory_tracker_print = 0;
-char hypre_memory_tracker_filename[HYPRE_MAX_FILE_NAME_LEN] = "HypreMemoryTrack.log";
+NALU_HYPRE_Int hypre_memory_tracker_print = 0;
+char hypre_memory_tracker_filename[NALU_HYPRE_MAX_FILE_NAME_LEN] = "HypreMemoryTrack.log";
 
 char *hypre_basename(const char *name)
 {
@@ -39,7 +39,7 @@ hypre_MemcpyType
 hypre_GetMemcpyType(hypre_MemoryLocation dst,
                     hypre_MemoryLocation src)
 {
-   HYPRE_Int d = 0, s = 0;
+   NALU_HYPRE_Int d = 0, s = 0;
 
    if      (dst == hypre_MEMORY_HOST   || dst == hypre_MEMORY_HOST_PINNED) { d = 0; }
    else if (dst == hypre_MEMORY_DEVICE || dst == hypre_MEMORY_UNIFIED)     { d = 1; }
@@ -91,17 +91,17 @@ hypre_MemoryTrackerQueueCompSearch(const void *e1,
 hypre_MemoryTrackerEvent
 hypre_MemoryTrackerGetNext(hypre_MemoryTracker *tracker)
 {
-   hypre_MemoryTrackerEvent i, k = HYPRE_MEMORY_NUM_EVENTS;
+   hypre_MemoryTrackerEvent i, k = NALU_HYPRE_MEMORY_NUM_EVENTS;
    hypre_MemoryTrackerQueue *q = tracker->queue;
 
-   for (i = HYPRE_MEMORY_EVENT_ALLOC; i < HYPRE_MEMORY_NUM_EVENTS; i++)
+   for (i = NALU_HYPRE_MEMORY_EVENT_ALLOC; i < NALU_HYPRE_MEMORY_NUM_EVENTS; i++)
    {
       if (q[i].head >= q[i].actual_size)
       {
          continue;
       }
 
-      if (k == HYPRE_MEMORY_NUM_EVENTS || q[i].data[q[i].head].time_step < q[k].data[q[k].head].time_step)
+      if (k == NALU_HYPRE_MEMORY_NUM_EVENTS || q[i].data[q[i].head].time_step < q[k].data[q[k].head].time_step)
       {
          k = i;
       }
@@ -110,7 +110,7 @@ hypre_MemoryTrackerGetNext(hypre_MemoryTracker *tracker)
    return k;
 }
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_MemoryTrackerSortQueue(hypre_MemoryTrackerQueue *q)
 {
    size_t i = 0;
@@ -165,9 +165,9 @@ hypre_MemoryTrackerDestroy(hypre_MemoryTracker *tracker)
 {
    if (tracker)
    {
-      HYPRE_Int i;
+      NALU_HYPRE_Int i;
 
-      for (i = 0; i < HYPRE_MEMORY_NUM_EVENTS; i++)
+      for (i = 0; i < NALU_HYPRE_MEMORY_NUM_EVENTS; i++)
       {
          free(tracker->queue[i].data);
          free(tracker->queue[i].sorted_data);
@@ -179,18 +179,18 @@ hypre_MemoryTrackerDestroy(hypre_MemoryTracker *tracker)
    }
 }
 
-HYPRE_Int
-hypre_MemoryTrackerSetPrint(HYPRE_Int do_print)
+NALU_HYPRE_Int
+hypre_MemoryTrackerSetPrint(NALU_HYPRE_Int do_print)
 {
    hypre_memory_tracker_print = do_print;
 
    return hypre_error_flag;
 }
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_MemoryTrackerSetFileName(const char *file_name)
 {
-   snprintf(hypre_memory_tracker_filename, HYPRE_MAX_FILE_NAME_LEN, "%s", file_name);
+   snprintf(hypre_memory_tracker_filename, NALU_HYPRE_MAX_FILE_NAME_LEN, "%s", file_name);
 
    return hypre_error_flag;
 }
@@ -202,7 +202,7 @@ hypre_MemoryTrackerInsert1(const char           *action,
                            hypre_MemoryLocation  memory_location,
                            const char           *filename,
                            const char           *function,
-                           HYPRE_Int             line)
+                           NALU_HYPRE_Int             line)
 {
    hypre_MemoryTrackerInsert2(action, ptr, NULL, nbytes, memory_location, hypre_MEMORY_UNDEFINED,
                               filename, function, line);
@@ -217,7 +217,7 @@ hypre_MemoryTrackerInsert2(const char           *action,
                            hypre_MemoryLocation  memory_location2,
                            const char           *filename,
                            const char           *function,
-                           HYPRE_Int             line)
+                           NALU_HYPRE_Int             line)
 {
    if (ptr == NULL)
    {
@@ -233,17 +233,17 @@ hypre_MemoryTrackerInsert2(const char           *action,
    if (strstr(action, "alloc") != NULL)
    {
       /* including malloc, alloc and the malloc in realloc */
-      q = HYPRE_MEMORY_EVENT_ALLOC;
+      q = NALU_HYPRE_MEMORY_EVENT_ALLOC;
    }
    else if (strstr(action, "free") != NULL)
    {
       /* including free and the free in realloc */
-      q = HYPRE_MEMORY_EVENT_FREE;
+      q = NALU_HYPRE_MEMORY_EVENT_FREE;
    }
    else if (strstr(action, "memcpy") != NULL)
    {
       /* including memcpy */
-      q = HYPRE_MEMORY_EVENT_COPY;
+      q = NALU_HYPRE_MEMORY_EVENT_COPY;
    }
    else
    {
@@ -280,7 +280,7 @@ hypre_MemoryTrackerInsert2(const char           *action,
    entry->pair = (size_t) -1;
 
 #if 0
-   HYPRE_Int myid;
+   NALU_HYPRE_Int myid;
    hypre_MPI_Comm_rank(hypre_MPI_COMM_WORLD, &myid);
    if (myid == 0 && entry->time_step == 28111) {assert(0);}
 #endif
@@ -292,14 +292,14 @@ hypre_MemoryTrackerInsert2(const char           *action,
    queue->actual_size ++;
 }
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_PrintMemoryTracker( size_t     *totl_bytes_o,
                           size_t     *peak_bytes_o,
                           size_t     *curr_bytes_o,
-                          HYPRE_Int   do_print,
+                          NALU_HYPRE_Int   do_print,
                           const char *fname )
 {
-   char   filename[HYPRE_MAX_FILE_NAME_LEN + 16];
+   char   filename[NALU_HYPRE_MAX_FILE_NAME_LEN + 16];
    FILE  *file = NULL;
    size_t totl_bytes[hypre_NUM_MEMORY_LOCATION] = {0};
    size_t peak_bytes[hypre_NUM_MEMORY_LOCATION] = {0};
@@ -307,18 +307,18 @@ hypre_PrintMemoryTracker( size_t     *totl_bytes_o,
    size_t copy_bytes[hypre_MEMCPY_NUM_TYPES] = {0};
    size_t j;
    hypre_MemoryTrackerEvent i;
-   //HYPRE_Real t0 = hypre_MPI_Wtime();
+   //NALU_HYPRE_Real t0 = hypre_MPI_Wtime();
 
-   HYPRE_Int leakcheck = 1;
+   NALU_HYPRE_Int leakcheck = 1;
 
    hypre_MemoryTracker *tracker = hypre_memory_tracker();
    hypre_MemoryTrackerQueue *qq = tracker->queue;
-   hypre_MemoryTrackerQueue *qa = &qq[HYPRE_MEMORY_EVENT_ALLOC];
-   hypre_MemoryTrackerQueue *qf = &qq[HYPRE_MEMORY_EVENT_FREE];
+   hypre_MemoryTrackerQueue *qa = &qq[NALU_HYPRE_MEMORY_EVENT_ALLOC];
+   hypre_MemoryTrackerQueue *qf = &qq[NALU_HYPRE_MEMORY_EVENT_FREE];
 
    if (do_print)
    {
-      HYPRE_Int myid;
+      NALU_HYPRE_Int myid;
       hypre_MPI_Comm_rank(hypre_MPI_COMM_WORLD, &myid);
 
       if (fname)
@@ -344,20 +344,20 @@ hypre_PrintMemoryTracker( size_t     *totl_bytes_o,
 
    if (leakcheck)
    {
-      //HYPRE_Real t0 = hypre_MPI_Wtime();
+      //NALU_HYPRE_Real t0 = hypre_MPI_Wtime();
       hypre_MemoryTrackerSortQueue(qf);
-      //HYPRE_Real t1 = hypre_MPI_Wtime() - t0;
+      //NALU_HYPRE_Real t1 = hypre_MPI_Wtime() - t0;
       //printf("Sort Time %.2f\n", t1);
    }
 
    size_t total_num_events = 0;
    size_t total_num_events_2 = 0;
-   for (i = HYPRE_MEMORY_EVENT_ALLOC; i < HYPRE_MEMORY_NUM_EVENTS; i++)
+   for (i = NALU_HYPRE_MEMORY_EVENT_ALLOC; i < NALU_HYPRE_MEMORY_NUM_EVENTS; i++)
    {
       total_num_events_2 += qq[i].actual_size;
    }
 
-   for (i = hypre_MemoryTrackerGetNext(tracker); i < HYPRE_MEMORY_NUM_EVENTS;
+   for (i = hypre_MemoryTrackerGetNext(tracker); i < NALU_HYPRE_MEMORY_NUM_EVENTS;
         i = hypre_MemoryTrackerGetNext(tracker))
    {
       total_num_events ++;
@@ -528,8 +528,8 @@ hypre_PrintMemoryTracker( size_t     *totl_bytes_o,
       curr_bytes_o[hypre_MEMORY_UNIFIED] = curr_bytes[hypre_MEMORY_UNIFIED];
    }
 
-#if defined(HYPRE_DEBUG)
-   for (i = HYPRE_MEMORY_EVENT_ALLOC; i < HYPRE_MEMORY_NUM_EVENTS; i++)
+#if defined(NALU_HYPRE_DEBUG)
+   for (i = NALU_HYPRE_MEMORY_EVENT_ALLOC; i < NALU_HYPRE_MEMORY_NUM_EVENTS; i++)
    {
       hypre_assert(qq[i].head == qq[i].actual_size);
    }
@@ -603,7 +603,7 @@ hypre_PrintMemoryTracker( size_t     *totl_bytes_o,
       }
    }
 
-   //HYPRE_Real t1 = hypre_MPI_Wtime() - t0;
+   //NALU_HYPRE_Real t1 = hypre_MPI_Wtime() - t0;
    //printf("Tracker Print Time %.2f\n", t1);
 
    return hypre_error_flag;

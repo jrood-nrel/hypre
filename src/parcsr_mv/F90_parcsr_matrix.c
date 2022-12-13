@@ -23,7 +23,7 @@ extern "C" {
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_parcsrmatrixglobalnumrows, HYPRE_PARCSRMATRIXGLOBALNUMROWS)
+hypre_F90_IFACE(hypre_parcsrmatrixglobalnumrows, NALU_HYPRE_PARCSRMATRIXGLOBALNUMROWS)
 ( hypre_F90_Obj *matrix,
   hypre_F90_BigInt *num_rows,
   hypre_F90_Int *ierr      )
@@ -40,7 +40,7 @@ hypre_F90_IFACE(hypre_parcsrmatrixglobalnumrows, HYPRE_PARCSRMATRIXGLOBALNUMROWS
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_parcsrmatrixrowstarts, HYPRE_PARCSRMATRIXROWSTARTS)
+hypre_F90_IFACE(hypre_parcsrmatrixrowstarts, NALU_HYPRE_PARCSRMATRIXROWSTARTS)
 ( hypre_F90_Obj *matrix,
   hypre_F90_Obj *row_starts,
   hypre_F90_Int *ierr      )

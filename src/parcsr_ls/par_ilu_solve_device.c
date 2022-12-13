@@ -18,17 +18,17 @@
  * L and U factors are local.
 */
 
-#if defined(HYPRE_USING_CUDA) && defined(HYPRE_USING_CUSPARSE)
+#if defined(NALU_HYPRE_USING_CUDA) && defined(NALU_HYPRE_USING_CUSPARSE)
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_ILUSolveLJacobiIter(hypre_CSRMatrix *A, hypre_Vector *input_local, hypre_Vector *work_local,
-                          hypre_Vector *output_local, HYPRE_Int lower_jacobi_iters)
+                          hypre_Vector *output_local, NALU_HYPRE_Int lower_jacobi_iters)
 {
-   HYPRE_Real              *input_data          = hypre_VectorData(input_local);
-   HYPRE_Real              *work_data           = hypre_VectorData(work_local);
-   HYPRE_Real              *output_data         = hypre_VectorData(output_local);
-   HYPRE_Int               num_rows             = hypre_CSRMatrixNumRows(A);
-   HYPRE_Int kk = 0;
+   NALU_HYPRE_Real              *input_data          = hypre_VectorData(input_local);
+   NALU_HYPRE_Real              *work_data           = hypre_VectorData(work_local);
+   NALU_HYPRE_Real              *output_data         = hypre_VectorData(output_local);
+   NALU_HYPRE_Int               num_rows             = hypre_CSRMatrixNumRows(A);
+   NALU_HYPRE_Int kk = 0;
 
    /* L solve - Forward solve ; u^{k+1} = f - Lu^k*/
    /* Jacobi iteration loop */
@@ -50,16 +50,16 @@ hypre_ILUSolveLJacobiIter(hypre_CSRMatrix *A, hypre_Vector *input_local, hypre_V
 
    return hypre_error_flag;
 }
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_ILUSolveUJacobiIter(hypre_CSRMatrix *A, hypre_Vector *input_local, hypre_Vector *work_local,
-                          hypre_Vector *output_local, hypre_Vector *diag_diag, HYPRE_Int upper_jacobi_iters)
+                          hypre_Vector *output_local, hypre_Vector *diag_diag, NALU_HYPRE_Int upper_jacobi_iters)
 {
-   HYPRE_Real              *output_data         = hypre_VectorData(output_local);
-   HYPRE_Real              *work_data           = hypre_VectorData(work_local);
-   HYPRE_Real              *input_data          = hypre_VectorData(input_local);
-   HYPRE_Real              *diag_diag_data      = hypre_VectorData(diag_diag);
-   HYPRE_Int               num_rows             = hypre_CSRMatrixNumRows(A);
-   HYPRE_Int kk = 0;
+   NALU_HYPRE_Real              *output_data         = hypre_VectorData(output_local);
+   NALU_HYPRE_Real              *work_data           = hypre_VectorData(work_local);
+   NALU_HYPRE_Real              *input_data          = hypre_VectorData(input_local);
+   NALU_HYPRE_Real              *diag_diag_data      = hypre_VectorData(diag_diag);
+   NALU_HYPRE_Int               num_rows             = hypre_CSRMatrixNumRows(A);
+   NALU_HYPRE_Int kk = 0;
 
    /* U solve - Backward solve :  u^{k+1} = f - Uu^k */
    /* Jacobi iteration loop */
@@ -83,10 +83,10 @@ hypre_ILUSolveUJacobiIter(hypre_CSRMatrix *A, hypre_Vector *input_local, hypre_V
 }
 
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_ILUSolveLUJacobiIter(hypre_CSRMatrix *A, hypre_Vector *work1_local,
                            hypre_Vector *work2_local, hypre_Vector *inout_local, hypre_Vector *diag_diag,
-                           HYPRE_Int lower_jacobi_iters, HYPRE_Int upper_jacobi_iters, HYPRE_Int my_id)
+                           NALU_HYPRE_Int lower_jacobi_iters, NALU_HYPRE_Int upper_jacobi_iters, NALU_HYPRE_Int my_id)
 {
    /* apply the iterative solve to L */
    hypre_ILUSolveLJacobiIter(A, inout_local, work1_local, work2_local, lower_jacobi_iters);
@@ -103,12 +103,12 @@ hypre_ILUSolveLUJacobiIter(hypre_CSRMatrix *A, hypre_Vector *work1_local,
  * so apart from the residual calculation (which uses A), the solves with the
  * L and U factors are local.
 */
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_ILUSolveDeviceLUIter(hypre_ParCSRMatrix *A, hypre_CSRMatrix *matLU_d,
-                           hypre_ParVector *f,  hypre_ParVector *u, HYPRE_Int *perm,
-                           HYPRE_Int n, hypre_ParVector *ftemp, hypre_ParVector *utemp,
+                           hypre_ParVector *f,  hypre_ParVector *u, NALU_HYPRE_Int *perm,
+                           NALU_HYPRE_Int n, hypre_ParVector *ftemp, hypre_ParVector *utemp,
                            hypre_Vector *xtemp_local, hypre_Vector **Adiag_diag,
-                           HYPRE_Int lower_jacobi_iters, HYPRE_Int upper_jacobi_iters)
+                           NALU_HYPRE_Int lower_jacobi_iters, NALU_HYPRE_Int upper_jacobi_iters)
 {
    /* Only solve when we have stuffs to be solved */
    if (n == 0)
@@ -117,17 +117,17 @@ hypre_ILUSolveDeviceLUIter(hypre_ParCSRMatrix *A, hypre_CSRMatrix *matLU_d,
    }
 
    MPI_Comm             comm = hypre_ParCSRMatrixComm(A);
-   HYPRE_Int my_id;
+   NALU_HYPRE_Int my_id;
    hypre_MPI_Comm_rank(comm, &my_id);
 
    hypre_Vector            *utemp_local         = hypre_ParVectorLocalVector(utemp);
-   HYPRE_Real              *utemp_data          = hypre_VectorData(utemp_local);
+   NALU_HYPRE_Real              *utemp_data          = hypre_VectorData(utemp_local);
 
    hypre_Vector            *ftemp_local         = hypre_ParVectorLocalVector(ftemp);
-   HYPRE_Real              *ftemp_data          = hypre_VectorData(ftemp_local);
+   NALU_HYPRE_Real              *ftemp_data          = hypre_VectorData(ftemp_local);
 
-   HYPRE_Real              alpha;
-   HYPRE_Real              beta;
+   NALU_HYPRE_Real              alpha;
+   NALU_HYPRE_Real              beta;
 
    /* begin */
    alpha = -1.0;
@@ -153,14 +153,14 @@ hypre_ILUSolveDeviceLUIter(hypre_ParCSRMatrix *A, hypre_CSRMatrix *matLU_d,
    hypre_ParCSRMatrixMatvecOutOfPlace(alpha, A, u, beta, f, ftemp);
 
    /* apply permutation */
-   HYPRE_THRUST_CALL(gather, perm, perm + n, ftemp_data, utemp_data);
+   NALU_HYPRE_THRUST_CALL(gather, perm, perm + n, ftemp_data, utemp_data);
 
    /* apply the iterative solve to L and U */
    hypre_ILUSolveLUJacobiIter(matLU_d, ftemp_local, xtemp_local, utemp_local, *Adiag_diag,
                               lower_jacobi_iters, upper_jacobi_iters, my_id);
 
    /* apply reverse permutation */
-   HYPRE_THRUST_CALL(scatter, utemp_data, utemp_data + n, perm, ftemp_data);
+   NALU_HYPRE_THRUST_CALL(scatter, utemp_data, utemp_data + n, perm, ftemp_data);
 
    /* Update solution */
    hypre_ParVectorAxpy(beta, ftemp, u);

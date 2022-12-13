@@ -18,7 +18,7 @@ LINK_CUF  = ${CUF}
 
 XL_DIR=$(dir $(shell which xlc))..
 
-HYPRE_DIR = ../hypre
+NALU_HYPRE_DIR = ../hypre
 
 ########################################################################
 # CUDA
@@ -28,8 +28,8 @@ ifeq ($(use_cuda), 1)
    CUDA_LIBS = -L${CUDA_HOME}/lib64 -lcudart -lcublas -lcusparse -lcurand -lstdc++ -L$(XL_DIR)/xlC/16.1.1/lib -libmc++
    CUDA_ARCH = -gencode arch=compute_60,code=sm_60 -gencode arch=compute_70,code=sm_70
    NVCC_LDFLAGS = -ccbin=${CXX} ${CUDA_ARCH}
-   COPTS_CUDA = -DHYPRE_EXAMPLE_USING_CUDA
-   FOPTS_CUDA = -DHYPRE_EXAMPLE_USING_CUDA -qsuppress=cmpmsg
+   COPTS_CUDA = -DNALU_HYPRE_EXAMPLE_USING_CUDA
+   FOPTS_CUDA = -DNALU_HYPRE_EXAMPLE_USING_CUDA -qsuppress=cmpmsg
 endif
 
 ifeq ($(use_cuf), 1)
@@ -41,16 +41,16 @@ endif
 ########################################################################
 ifeq ($(use_domp), 1)
    DOMP_LIBS = -L${CUDA_HOME}/lib64 -lcudart -lcublas -lcusparse -lcurand -lstdc++ -L$(XL_DIR)/xlC/16.1.1/lib -libmc++
-   COPTS_DOMP = -DHYPRE_EXAMPLE_USING_DEVICE_OMP
-   FOPTS_DOMP = -qoffload -W@,-v -qsmp=omp -qinfo=omperrtrace -DHYPRE_EXAMPLE_USING_DEVICE_OMP
+   COPTS_DOMP = -DNALU_HYPRE_EXAMPLE_USING_DEVICE_OMP
+   FOPTS_DOMP = -qoffload -W@,-v -qsmp=omp -qinfo=omperrtrace -DNALU_HYPRE_EXAMPLE_USING_DEVICE_OMP
    LOPTS_DOMP = -qoffload -W@,-v -qsmp=omp
 endif
 
 ########################################################################
 # Compiling and linking options
 ########################################################################
-CINCLUDES = -I$(HYPRE_DIR)/include $(CUDA_INCL)
-#CDEFS = -DHYPRE_EXVIS
+CINCLUDES = -I$(NALU_HYPRE_DIR)/include $(CUDA_INCL)
+#CDEFS = -DNALU_HYPRE_EXVIS
 CDEFS =
 COPTS = -g -Wall $(COPTS_CUDA) $(COPTS_DOMP)
 FOPTS = -g $(FOPTS_CUDA) $(FOPTS_DOMP)
@@ -67,10 +67,10 @@ IF90FLAGS =
 F90FLAGS = $(FFLAGS) $(IF90FLAGS)
 
 LINKOPTS = $(LOPTS_CUDA) $(LOPTS_DOMP)
-LIBS = -L$(HYPRE_DIR)/lib -lHYPRE -lm $(CUDA_LIBS) $(DOMP_LIBS)
+LIBS = -L$(NALU_HYPRE_DIR)/lib -lHYPRE -lm $(CUDA_LIBS) $(DOMP_LIBS)
 LFLAGS = $(LINKOPTS) $(LIBS)
 LFLAGS_B =\
- -L${HYPRE_DIR}/lib\
+ -L${NALU_HYPRE_DIR}/lib\
  -lbHYPREClient-C\
  -lbHYPREClient-CX\
  -lbHYPREClient-F\

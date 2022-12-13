@@ -18,16 +18,16 @@
  * hypre_StructAxpy
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_StructAxpy( HYPRE_Complex       alpha,
+NALU_HYPRE_Int
+hypre_StructAxpy( NALU_HYPRE_Complex       alpha,
                   hypre_StructVector *x,
                   hypre_StructVector *y     )
 {
    hypre_Box        *x_data_box;
    hypre_Box        *y_data_box;
 
-   HYPRE_Complex    *xp;
-   HYPRE_Complex    *yp;
+   NALU_HYPRE_Complex    *xp;
+   NALU_HYPRE_Complex    *yp;
 
    hypre_BoxArray   *boxes;
    hypre_Box        *box;
@@ -35,7 +35,7 @@ hypre_StructAxpy( HYPRE_Complex       alpha,
    hypre_IndexRef    start;
    hypre_Index       unit_stride;
 
-   HYPRE_Int         i;
+   NALU_HYPRE_Int         i;
 
    hypre_SetIndex(unit_stride, 1);
 
@@ -54,7 +54,7 @@ hypre_StructAxpy( HYPRE_Complex       alpha,
       hypre_BoxGetSize(box, loop_size);
 
 #if 0
-      HYPRE_BOXLOOP (
+      NALU_HYPRE_BOXLOOP (
          hypre_BoxLoop2Begin, (hypre_StructVectorNDim(x), loop_size,
                                x_data_box, start, unit_stride, xi,
                                y_data_box, start, unit_stride, yi),

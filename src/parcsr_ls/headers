@@ -17,17 +17,17 @@ cat > $INTERNAL_HEADER <<@
 #ifndef hypre_PARCSR_LS_HEADER
 #define hypre_PARCSR_LS_HEADER
 
-#include <HYPRE_config.h>
-#include "HYPRE_parcsr_ls.h"
+#include <NALU_HYPRE_config.h>
+#include "NALU_HYPRE_parcsr_ls.h"
 #include "_hypre_parcsr_mv.h"
 #include "krylov.h"
-#include "HYPRE_lobpcg.h"
+#include "NALU_HYPRE_lobpcg.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-typedef struct { HYPRE_Int prev; HYPRE_Int next; } Link;
+typedef struct { NALU_HYPRE_Int prev; NALU_HYPRE_Int next; } Link;
 
 @
 

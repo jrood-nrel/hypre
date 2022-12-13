@@ -151,31 +151,31 @@ through the interface.
 
 .. code-block:: c
    
-       HYPRE_SStructGrid grid;
+       NALU_HYPRE_SStructGrid grid;
        int ndim = 2, nparts = 5, nvars = 3, part = 3;
        int extents[][2] = {{1,1}, {4,4}};
-       int vartypes[]   = {HYPRE_SSTRUCT_VARIABLE_CELL,
-                           HYPRE_SSTRUCT_VARIABLE_XFACE,
-                           HYPRE_SSTRUCT_VARIABLE_YFACE};
+       int vartypes[]   = {NALU_HYPRE_SSTRUCT_VARIABLE_CELL,
+                           NALU_HYPRE_SSTRUCT_VARIABLE_XFACE,
+                           NALU_HYPRE_SSTRUCT_VARIABLE_YFACE};
        int nb2_n_part      = 2,              nb4_n_part      = 4;
        int nb2_exts[][2]   = {{1,0}, {4,0}}, nb4_exts[][2]   = {{0,1}, {0,4}};
        int nb2_n_exts[][2] = {{1,1}, {1,4}}, nb4_n_exts[][2] = {{4,1}, {4,4}};
        int nb2_map[2]      = {1,0},          nb4_map[2]      = {0,1};
        int nb2_dir[2]      = {1,-1},         nb4_dir[2]      = {1,1};
    
-   1:  HYPRE_SStructGridCreate(MPI_COMM_WORLD, ndim, nparts, &grid);
+   1:  NALU_HYPRE_SStructGridCreate(MPI_COMM_WORLD, ndim, nparts, &grid);
        
        /* Set grid extents and grid variables for part 3 */
-   2:  HYPRE_SStructGridSetExtents(grid, part, extents[0], extents[1]);
-   3:  HYPRE_SStructGridSetVariables(grid, part, nvars, vartypes);
+   2:  NALU_HYPRE_SStructGridSetExtents(grid, part, extents[0], extents[1]);
+   3:  NALU_HYPRE_SStructGridSetVariables(grid, part, nvars, vartypes);
        
        /* Set spatial relationship between parts 3 and 2, then parts 3 and 4 */
-   4:  HYPRE_SStructGridSetNeighborPart(grid, part, nb2_exts[0], nb2_exts[1],
+   4:  NALU_HYPRE_SStructGridSetNeighborPart(grid, part, nb2_exts[0], nb2_exts[1],
           nb2_n_part, nb2_n_exts[0], nb2_n_exts[1], nb2_map, nb2_dir);
-   5:  HYPRE_SStructGridSetNeighborPart(grid, part, nb4_exts[0], nb4_exts[1],
+   5:  NALU_HYPRE_SStructGridSetNeighborPart(grid, part, nb4_exts[0], nb4_exts[1],
           nb4_n_part, nb4_n_exts[0], nb4_n_exts[1], nb4_map, nb4_dir);
        
-   6:  HYPRE_SStructGridAssemble(grid);
+   6:  NALU_HYPRE_SStructGridAssemble(grid);
     
 Code on process 3 for setting up the grid in Figure :ref:`fig-sstruct-example}.`
 
@@ -236,7 +236,7 @@ Figure :ref:`fig-sstruct-example`, i.e. the third stencil in the figure.  To do
 this, the stencil entries are assigned unique labels between 0 and 8 and their
 "offsets" are described relative to the "center" of the stencil.  This process
 is illustrated in Figure :ref:`fig-sstruct-stencil`.  Nine calls are made to the
-routine ``HYPRE_SStructStencilSetEntry()``.  As an example, the call that
+routine ``NALU_HYPRE_SStructStencilSetEntry()``.  As an example, the call that
 describes stencil entry 5 in the figure is given the entry number 5, the offset
 :math:`(-1,0)`, and the identifier for the :math:`x`-face variable (the variable
 to which this entry couples).  Recall from Figure :ref:`fig-gridvars` the
@@ -277,22 +277,22 @@ referencing index :math:`(0,0)` for the stencil's center.  Figure
 
 .. code-block:: c
    
-       HYPRE_SStructGraph graph;
-       HYPRE_SStructStencil c_stencil, x_stencil, y_stencil;
+       NALU_HYPRE_SStructGraph graph;
+       NALU_HYPRE_SStructStencil c_stencil, x_stencil, y_stencil;
        int c_var = 0, x_var = 1, y_var = 2;
        int part;
        
-   1:  HYPRE_SStructGraphCreate(MPI_COMM_WORLD, grid, &graph);
+   1:  NALU_HYPRE_SStructGraphCreate(MPI_COMM_WORLD, grid, &graph);
        
        /* Set the cell-centered, x-face, and y-face stencils for each part */
        for (part = 0; part < 5; part++)
        {
-   2:     HYPRE_SStructGraphSetStencil(graph, part, c_var, c_stencil);
-          HYPRE_SStructGraphSetStencil(graph, part, x_var, x_stencil);
-          HYPRE_SStructGraphSetStencil(graph, part, y_var, y_stencil);
+   2:     NALU_HYPRE_SStructGraphSetStencil(graph, part, c_var, c_stencil);
+          NALU_HYPRE_SStructGraphSetStencil(graph, part, x_var, x_stencil);
+          NALU_HYPRE_SStructGraphSetStencil(graph, part, y_var, y_stencil);
        }
        
-   3:  HYPRE_SStructGraphAssemble(graph);
+   3:  NALU_HYPRE_SStructGraphAssemble(graph);
 
 Code on process 3 for setting up the graph for Figure :ref:`fig-sstruct-example}`.
 
@@ -388,10 +388,10 @@ six processes such that data associated with part :math:`p` lives on process
 
 .. code-block:: c
    
-       HYPRE_SStructGrid grid;
+       NALU_HYPRE_SStructGrid grid;
        int ndim = 2, nparts = 6, nvars = 1, part = 0;
        int ilower[2]    = {1,1}, iupper[2] = {9,9};
-       int vartypes[]   = {HYPRE_SSTRUCT_VARIABLE_NODE};
+       int vartypes[]   = {NALU_HYPRE_SSTRUCT_VARIABLE_NODE};
        int ordering[12] = {0,-1,-1,  0,+1,-1,  0,+1,+1,  0,-1,+1};
    
        int s_part   = 2;
@@ -400,18 +400,18 @@ six processes such that data associated with part :math:`p` lives on process
        int map[2]   = {1,0};
        int dir[2]   = {-1,1};
    
-   1:  HYPRE_SStructGridCreate(MPI_COMM_WORLD, ndim, nparts, &grid);
+   1:  NALU_HYPRE_SStructGridCreate(MPI_COMM_WORLD, ndim, nparts, &grid);
        
        /* Set grid extents, grid variables, and FEM ordering for part 0 */
-   2:  HYPRE_SStructGridSetExtents(grid, part, ilower, iupper);
-   3:  HYPRE_SStructGridSetVariables(grid, part, nvars, vartypes);
-   4:  HYPRE_SStructGridSetFEMOrdering(grid, part, ordering);
+   2:  NALU_HYPRE_SStructGridSetExtents(grid, part, ilower, iupper);
+   3:  NALU_HYPRE_SStructGridSetVariables(grid, part, nvars, vartypes);
+   4:  NALU_HYPRE_SStructGridSetFEMOrdering(grid, part, ordering);
    
        /* Set shared variables for parts 0 and 1 (0 and 2/3/4/5 not shown) */
-   5:  HYPRE_SStructGridSetSharedPart(grid, part, ilo, iup, offset,
+   5:  NALU_HYPRE_SStructGridSetSharedPart(grid, part, ilo, iup, offset,
           s_part, s_ilo, s_iup, s_offset, map, dir);
    
-   6:  HYPRE_SStructGridAssemble(grid);
+   6:  NALU_HYPRE_SStructGridAssemble(grid);
     
 Code on process 0 for setting up the grid in Figure :ref:`fig-sstruct-fem-example`.
 
@@ -455,8 +455,8 @@ section, calls on part 0 would have the following form:
    double m_values[16] = {...};
    double v_values[4]  = {...};
    
-   HYPRE_SStructMatrixAddFEMValues(A, part, index, m_values);
-   HYPRE_SStructVectorAddFEMValues(v, part, index, v_values);
+   NALU_HYPRE_SStructMatrixAddFEMValues(A, part, index, m_values);
+   NALU_HYPRE_SStructVectorAddFEMValues(v, part, index, v_values);
 
 Here, ``m_values`` contains local stiffness matrix values and ``v_values``
 contains local variable values.  The global matrix and vector are assembled
@@ -537,7 +537,7 @@ call is simply the part and index for both the variable whose equation is being
 defined and the variable to which it couples.  After these calls, the non-zero
 pattern of the matrix (and the graph) is complete.  Note that the "west" and
 "south" stencil couplings simply "drop off" the part, and are effectively zeroed
-out (currently, this is only supported for the ``HYPRE_PARCSR`` object type, and
+out (currently, this is only supported for the ``NALU_HYPRE_PARCSR`` object type, and
 these values must be manually zeroed out for other object types; see
 ``MatrixSetObjectType()`` in the reference manual).
 

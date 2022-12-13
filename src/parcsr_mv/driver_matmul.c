@@ -11,8 +11,8 @@
  * Test driver for unstructured matrix interface
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-main( HYPRE_Int   argc,
+NALU_HYPRE_Int
+main( NALU_HYPRE_Int   argc,
       char *argv[] )
 {
    hypre_ParCSRMatrix     *A;
@@ -20,8 +20,8 @@ main( HYPRE_Int   argc,
    hypre_ParCSRMatrix     *C;
    hypre_CSRMatrix *As;
    hypre_CSRMatrix *Bs;
-   HYPRE_BigInt *row_starts, *col_starts;
-   HYPRE_Int num_procs, my_id;
+   NALU_HYPRE_BigInt *row_starts, *col_starts;
+   NALU_HYPRE_Int num_procs, my_id;
 
    /* Initialize MPI */
    hypre_MPI_Init(&argc, &argv);

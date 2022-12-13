@@ -31,40 +31,40 @@
   The code below uses harmonic extension to extend the interpolation
   from one group to the next.
 */
-HYPRE_Int hypre_ND1AMGeInterpolation (hypre_ParCSRMatrix       * Aee,
+NALU_HYPRE_Int hypre_ND1AMGeInterpolation (hypre_ParCSRMatrix       * Aee,
                                       hypre_ParCSRMatrix       * ELEM_idof,
                                       hypre_ParCSRMatrix       * FACE_idof,
                                       hypre_ParCSRMatrix       * EDGE_idof,
                                       hypre_ParCSRMatrix       * ELEM_FACE,
                                       hypre_ParCSRMatrix       * ELEM_EDGE,
-                                      HYPRE_Int                  num_OffProcRows,
+                                      NALU_HYPRE_Int                  num_OffProcRows,
                                       hypre_MaxwellOffProcRow ** OffProcRows,
                                       hypre_IJMatrix           * IJ_dof_DOF)
 {
-   HYPRE_Int ierr = 0;
+   NALU_HYPRE_Int ierr = 0;
 
-   HYPRE_Int  i, j;
-   HYPRE_BigInt  big_k;
-   HYPRE_BigInt *offproc_rnums;
-   HYPRE_Int *swap;
+   NALU_HYPRE_Int  i, j;
+   NALU_HYPRE_BigInt  big_k;
+   NALU_HYPRE_BigInt *offproc_rnums;
+   NALU_HYPRE_Int *swap;
 
    hypre_ParCSRMatrix * dof_DOF = (hypre_ParCSRMatrix *)hypre_IJMatrixObject(IJ_dof_DOF);
    hypre_ParCSRMatrix * ELEM_DOF = ELEM_EDGE;
    hypre_ParCSRMatrix * ELEM_FACEidof;
    hypre_ParCSRMatrix * ELEM_EDGEidof;
    hypre_CSRMatrix *A, *P;
-   HYPRE_Int numELEM = hypre_CSRMatrixNumRows(hypre_ParCSRMatrixDiag(ELEM_EDGE));
+   NALU_HYPRE_Int numELEM = hypre_CSRMatrixNumRows(hypre_ParCSRMatrixDiag(ELEM_EDGE));
 
-   HYPRE_Int getrow_ierr;
-   HYPRE_Int three_dimensional_problem;
+   NALU_HYPRE_Int getrow_ierr;
+   NALU_HYPRE_Int three_dimensional_problem;
 
    MPI_Comm comm = hypre_ParCSRMatrixComm(Aee);
-   HYPRE_Int      myproc;
+   NALU_HYPRE_Int      myproc;
 
    hypre_MPI_Comm_rank(comm, &myproc);
 
 #if 0
-   hypre_IJMatrix * ij_dof_DOF = hypre_CTAlloc(hypre_IJMatrix,  1, HYPRE_MEMORY_HOST);
+   hypre_IJMatrix * ij_dof_DOF = hypre_CTAlloc(hypre_IJMatrix,  1, NALU_HYPRE_MEMORY_HOST);
    /* Convert dof_DOF to IJ matrix, so we can use AddToValues */
    hypre_IJMatrixComm(ij_dof_DOF) = hypre_ParCSRMatrixComm(dof_DOF);
    hypre_IJMatrixRowPartitioning(ij_dof_DOF) =
@@ -78,8 +78,8 @@ HYPRE_Int hypre_ND1AMGeInterpolation (hypre_ParCSRMatrix       * Aee,
    /* sort the offproc rows to get quicker comparison for later */
    if (num_OffProcRows)
    {
-      offproc_rnums = hypre_TAlloc(HYPRE_BigInt, num_OffProcRows, HYPRE_MEMORY_HOST);
-      swap         = hypre_TAlloc(HYPRE_Int, num_OffProcRows, HYPRE_MEMORY_HOST);
+      offproc_rnums = hypre_TAlloc(NALU_HYPRE_BigInt, num_OffProcRows, NALU_HYPRE_MEMORY_HOST);
+      swap         = hypre_TAlloc(NALU_HYPRE_Int, num_OffProcRows, NALU_HYPRE_MEMORY_HOST);
       for (i = 0; i < num_OffProcRows; i++)
       {
          offproc_rnums[i] = (OffProcRows[i] -> row);
@@ -114,20 +114,20 @@ HYPRE_Int hypre_ND1AMGeInterpolation (hypre_ParCSRMatrix       * Aee,
    big_k = hypre_ParCSRMatrixFirstRowIndex(ELEM_EDGE);
    for (i = 0; i < numELEM; i++, big_k++)
    {
-      HYPRE_Int size1, size2;
-      HYPRE_BigInt *col_ind0, *col_ind1, *col_ind2;
+      NALU_HYPRE_Int size1, size2;
+      NALU_HYPRE_BigInt *col_ind0, *col_ind1, *col_ind2;
 
-      HYPRE_BigInt *DOF0, *DOF;
-      HYPRE_Int num_DOF;
-      HYPRE_Int num_idof;
-      HYPRE_BigInt *idof0, *idof, *bdof;
-      HYPRE_Int num_bdof;
+      NALU_HYPRE_BigInt *DOF0, *DOF;
+      NALU_HYPRE_Int num_DOF;
+      NALU_HYPRE_Int num_idof;
+      NALU_HYPRE_BigInt *idof0, *idof, *bdof;
+      NALU_HYPRE_Int num_bdof;
 
-      HYPRE_Real *boolean_data;
+      NALU_HYPRE_Real *boolean_data;
 
       /* Determine the coarse DOFs */
       hypre_ParCSRMatrixGetRow (ELEM_DOF, big_k, &num_DOF, &DOF0, &boolean_data);
-      DOF = hypre_TAlloc(HYPRE_BigInt,  num_DOF, HYPRE_MEMORY_HOST);
+      DOF = hypre_TAlloc(NALU_HYPRE_BigInt,  num_DOF, NALU_HYPRE_MEMORY_HOST);
       for (j = 0; j < num_DOF; j++)
       {
          DOF[j] = DOF0[j];
@@ -138,7 +138,7 @@ HYPRE_Int hypre_ND1AMGeInterpolation (hypre_ParCSRMatrix       * Aee,
 
       /* Find the fine dofs interior for the current coarse element */
       hypre_ParCSRMatrixGetRow (ELEM_idof, big_k, &num_idof, &idof0, &boolean_data);
-      idof = hypre_TAlloc(HYPRE_BigInt,  num_idof, HYPRE_MEMORY_HOST);
+      idof = hypre_TAlloc(NALU_HYPRE_BigInt,  num_idof, NALU_HYPRE_MEMORY_HOST);
       for (j = 0; j < num_idof; j++)
       {
          idof[j] = idof0[j];
@@ -152,7 +152,7 @@ HYPRE_Int hypre_ND1AMGeInterpolation (hypre_ParCSRMatrix       * Aee,
       if (three_dimensional_problem)
       {
          hypre_ParCSRMatrixGetRow (ELEM_FACEidof, big_k, &size1, &col_ind0, &boolean_data);
-         col_ind1 = hypre_TAlloc(HYPRE_BigInt, size1, HYPRE_MEMORY_HOST);
+         col_ind1 = hypre_TAlloc(NALU_HYPRE_BigInt, size1, NALU_HYPRE_MEMORY_HOST);
          for (j = 0; j < size1; j++)
          {
             col_ind1[j] = col_ind0[j];
@@ -165,7 +165,7 @@ HYPRE_Int hypre_ND1AMGeInterpolation (hypre_ParCSRMatrix       * Aee,
       }
 
       hypre_ParCSRMatrixGetRow (ELEM_EDGEidof, big_k, &size2, &col_ind0, &boolean_data);
-      col_ind2 = hypre_TAlloc(HYPRE_BigInt, size2, HYPRE_MEMORY_HOST);
+      col_ind2 = hypre_TAlloc(NALU_HYPRE_BigInt, size2, NALU_HYPRE_MEMORY_HOST);
       for (j = 0; j < size2; j++)
       {
          col_ind2[j] = col_ind0[j];
@@ -174,12 +174,12 @@ HYPRE_Int hypre_ND1AMGeInterpolation (hypre_ParCSRMatrix       * Aee,
 
       /* Merge and sort the boundary dofs according to their global number */
       num_bdof = size1 + size2;
-      bdof = hypre_CTAlloc(HYPRE_BigInt, num_bdof, HYPRE_MEMORY_HOST);
+      bdof = hypre_CTAlloc(NALU_HYPRE_BigInt, num_bdof, NALU_HYPRE_MEMORY_HOST);
       if (three_dimensional_problem)
       {
-         hypre_TMemcpy(bdof, col_ind1, HYPRE_BigInt, size1, HYPRE_MEMORY_HOST, HYPRE_MEMORY_HOST);
+         hypre_TMemcpy(bdof, col_ind1, NALU_HYPRE_BigInt, size1, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_HOST);
       }
-      hypre_TMemcpy(bdof + size1, col_ind2, HYPRE_BigInt, size2, HYPRE_MEMORY_HOST, HYPRE_MEMORY_HOST);
+      hypre_TMemcpy(bdof + size1, col_ind2, NALU_HYPRE_BigInt, size2, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_HOST);
 
       hypre_BigQsort0(bdof, 0, num_bdof - 1);
 
@@ -188,14 +188,14 @@ HYPRE_Int hypre_ND1AMGeInterpolation (hypre_ParCSRMatrix       * Aee,
                                  num_idof * (num_idof + num_bdof));
       hypre_CSRMatrixBigInitialize(A);
       {
-         HYPRE_Int *I = hypre_CSRMatrixI(A);
-         HYPRE_BigInt *J = hypre_CSRMatrixBigJ(A);
-         HYPRE_Real *data = hypre_CSRMatrixData(A);
-         HYPRE_BigInt *tmp_J;
-         HYPRE_Real *tmp_data;
+         NALU_HYPRE_Int *I = hypre_CSRMatrixI(A);
+         NALU_HYPRE_BigInt *J = hypre_CSRMatrixBigJ(A);
+         NALU_HYPRE_Real *data = hypre_CSRMatrixData(A);
+         NALU_HYPRE_BigInt *tmp_J;
+         NALU_HYPRE_Real *tmp_data;
 
-         HYPRE_MemoryLocation memory_location_A = hypre_CSRMatrixMemoryLocation(A);
-         HYPRE_MemoryLocation memory_location_Aee = hypre_ParCSRMatrixMemoryLocation(Aee);
+         NALU_HYPRE_MemoryLocation memory_location_A = hypre_CSRMatrixMemoryLocation(A);
+         NALU_HYPRE_MemoryLocation memory_location_Aee = hypre_ParCSRMatrixMemoryLocation(Aee);
 
          I[0] = 0;
          for (j = 0; j < num_idof; j++)
@@ -205,8 +205,8 @@ HYPRE_Int hypre_ND1AMGeInterpolation (hypre_ParCSRMatrix       * Aee,
             {
                hypre_printf("getrow Aee off proc[%d] = \n", myproc);
             }
-            hypre_TMemcpy(J, tmp_J, HYPRE_BigInt, size1, memory_location_A, memory_location_Aee);
-            hypre_TMemcpy(data, tmp_data, HYPRE_Real, size1, memory_location_A, memory_location_Aee);
+            hypre_TMemcpy(J, tmp_J, NALU_HYPRE_BigInt, size1, memory_location_A, memory_location_Aee);
+            hypre_TMemcpy(data, tmp_data, NALU_HYPRE_Real, size1, memory_location_A, memory_location_Aee);
             J += size1;
             data += size1;
             hypre_ParCSRMatrixRestoreRow (Aee, idof[j], &size1, &tmp_J, &tmp_data);
@@ -220,16 +220,16 @@ HYPRE_Int hypre_ND1AMGeInterpolation (hypre_ParCSRMatrix       * Aee,
       hypre_CSRMatrixBigInitialize(P);
 
       {
-         HYPRE_Int *I = hypre_CSRMatrixI(P);
-         HYPRE_BigInt *J = hypre_CSRMatrixBigJ(P);
-         HYPRE_Real *data = hypre_CSRMatrixData(P);
-         HYPRE_Int     m;
+         NALU_HYPRE_Int *I = hypre_CSRMatrixI(P);
+         NALU_HYPRE_BigInt *J = hypre_CSRMatrixBigJ(P);
+         NALU_HYPRE_Real *data = hypre_CSRMatrixData(P);
+         NALU_HYPRE_Int     m;
 
-         HYPRE_BigInt *tmp_J;
-         HYPRE_Real *tmp_data;
+         NALU_HYPRE_BigInt *tmp_J;
+         NALU_HYPRE_Real *tmp_data;
 
-         HYPRE_MemoryLocation memory_location_P = hypre_CSRMatrixMemoryLocation(P);
-         HYPRE_MemoryLocation memory_location_d = hypre_ParCSRMatrixMemoryLocation(dof_DOF);
+         NALU_HYPRE_MemoryLocation memory_location_P = hypre_CSRMatrixMemoryLocation(P);
+         NALU_HYPRE_MemoryLocation memory_location_d = hypre_ParCSRMatrixMemoryLocation(dof_DOF);
 
          I[0] = 0;
          for (j = 0; j < num_idof; j++)
@@ -237,8 +237,8 @@ HYPRE_Int hypre_ND1AMGeInterpolation (hypre_ParCSRMatrix       * Aee,
             getrow_ierr = hypre_ParCSRMatrixGetRow (dof_DOF, idof[j], &size1, &tmp_J, &tmp_data);
             if (getrow_ierr >= 0)
             {
-               hypre_TMemcpy(J, tmp_J, HYPRE_BigInt, size1, memory_location_P, memory_location_d);
-               hypre_TMemcpy(data, tmp_data, HYPRE_Real, size1, memory_location_P, memory_location_d);
+               hypre_TMemcpy(J, tmp_J, NALU_HYPRE_BigInt, size1, memory_location_P, memory_location_d);
+               hypre_TMemcpy(data, tmp_data, NALU_HYPRE_Real, size1, memory_location_P, memory_location_d);
                J += size1;
                data += size1;
                hypre_ParCSRMatrixRestoreRow (dof_DOF, idof[j], &size1, &tmp_J, &tmp_data);
@@ -263,8 +263,8 @@ HYPRE_Int hypre_ND1AMGeInterpolation (hypre_ParCSRMatrix       * Aee,
                size1 = (OffProcRows[swap[m]] -> ncols);
                tmp_J = (OffProcRows[swap[m]] -> cols);
                tmp_data = (OffProcRows[swap[m]] -> data);
-               hypre_TMemcpy(J, tmp_J, HYPRE_BigInt, size1, memory_location_P, HYPRE_MEMORY_HOST);
-               hypre_TMemcpy(data, tmp_data, HYPRE_Real, size1, memory_location_P, HYPRE_MEMORY_HOST);
+               hypre_TMemcpy(J, tmp_J, NALU_HYPRE_BigInt, size1, memory_location_P, NALU_HYPRE_MEMORY_HOST);
+               hypre_TMemcpy(data, tmp_data, NALU_HYPRE_Real, size1, memory_location_P, NALU_HYPRE_MEMORY_HOST);
                J += size1;
                data += size1;
                I[j + 1] = size1 + I[j];
@@ -276,8 +276,8 @@ HYPRE_Int hypre_ND1AMGeInterpolation (hypre_ParCSRMatrix       * Aee,
             getrow_ierr = hypre_ParCSRMatrixGetRow (dof_DOF, bdof[j - num_idof], &size1, &tmp_J, &tmp_data);
             if (getrow_ierr >= 0)
             {
-               hypre_TMemcpy(J, tmp_J, HYPRE_BigInt, size1, memory_location_P, memory_location_d);
-               hypre_TMemcpy(data, tmp_data, HYPRE_Real, size1, memory_location_P, memory_location_d);
+               hypre_TMemcpy(J, tmp_J, NALU_HYPRE_BigInt, size1, memory_location_P, memory_location_d);
+               hypre_TMemcpy(data, tmp_data, NALU_HYPRE_Real, size1, memory_location_P, memory_location_d);
                J += size1;
                data += size1;
                hypre_ParCSRMatrixRestoreRow (dof_DOF, bdof[j - num_idof], &size1, &tmp_J, &tmp_data);
@@ -303,8 +303,8 @@ HYPRE_Int hypre_ND1AMGeInterpolation (hypre_ParCSRMatrix       * Aee,
                size1 = (OffProcRows[swap[m]] -> ncols);
                tmp_J = (OffProcRows[swap[m]] -> cols);
                tmp_data = (OffProcRows[swap[m]] -> data);
-               hypre_TMemcpy(J, tmp_J, HYPRE_BigInt, size1, memory_location_P, HYPRE_MEMORY_HOST);
-               hypre_TMemcpy(data, tmp_data, HYPRE_Real, size1, memory_location_P, HYPRE_MEMORY_HOST);
+               hypre_TMemcpy(J, tmp_J, NALU_HYPRE_BigInt, size1, memory_location_P, NALU_HYPRE_MEMORY_HOST);
+               hypre_TMemcpy(data, tmp_data, NALU_HYPRE_Real, size1, memory_location_P, NALU_HYPRE_MEMORY_HOST);
                J += size1;
                data += size1;
                I[j + 1] = size1 + I[j];
@@ -318,8 +318,8 @@ HYPRE_Int hypre_ND1AMGeInterpolation (hypre_ParCSRMatrix       * Aee,
 
       /* Insert Pi in dof_DOF */
       {
-         HYPRE_Int * ncols = hypre_CTAlloc(HYPRE_Int, num_idof, HYPRE_MEMORY_HOST);
-         HYPRE_Int * idof_indexes = hypre_CTAlloc(HYPRE_Int, num_idof, HYPRE_MEMORY_HOST);
+         NALU_HYPRE_Int * ncols = hypre_CTAlloc(NALU_HYPRE_Int, num_idof, NALU_HYPRE_MEMORY_HOST);
+         NALU_HYPRE_Int * idof_indexes = hypre_CTAlloc(NALU_HYPRE_Int, num_idof, NALU_HYPRE_MEMORY_HOST);
 
          for (j = 0; j < num_idof; j++)
          {
@@ -332,25 +332,25 @@ HYPRE_Int hypre_ND1AMGeInterpolation (hypre_ParCSRMatrix       * Aee,
                                           hypre_CSRMatrixBigJ(P),
                                           hypre_CSRMatrixData(P));
 
-         hypre_TFree(ncols, HYPRE_MEMORY_HOST);
-         hypre_TFree(idof_indexes, HYPRE_MEMORY_HOST);
+         hypre_TFree(ncols, NALU_HYPRE_MEMORY_HOST);
+         hypre_TFree(idof_indexes, NALU_HYPRE_MEMORY_HOST);
       }
 
-      hypre_TFree(DOF, HYPRE_MEMORY_HOST);
-      hypre_TFree(idof, HYPRE_MEMORY_HOST);
+      hypre_TFree(DOF, NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(idof, NALU_HYPRE_MEMORY_HOST);
       if (three_dimensional_problem)
       {
-         hypre_TFree(col_ind1, HYPRE_MEMORY_HOST);
+         hypre_TFree(col_ind1, NALU_HYPRE_MEMORY_HOST);
       }
-      hypre_TFree(col_ind2, HYPRE_MEMORY_HOST);
-      hypre_TFree(bdof, HYPRE_MEMORY_HOST);
+      hypre_TFree(col_ind2, NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(bdof, NALU_HYPRE_MEMORY_HOST);
 
       hypre_CSRMatrixDestroy(A);
       hypre_CSRMatrixDestroy(P);
    }
 
 #if 0
-   hypre_TFree(ij_dof_DOF, HYPRE_MEMORY_HOST);
+   hypre_TFree(ij_dof_DOF, NALU_HYPRE_MEMORY_HOST);
 #endif
 
    if (three_dimensional_problem)
@@ -361,8 +361,8 @@ HYPRE_Int hypre_ND1AMGeInterpolation (hypre_ParCSRMatrix       * Aee,
 
    if (num_OffProcRows)
    {
-      hypre_TFree(offproc_rnums, HYPRE_MEMORY_HOST);
-      hypre_TFree(swap, HYPRE_MEMORY_HOST);
+      hypre_TFree(offproc_rnums, NALU_HYPRE_MEMORY_HOST);
+      hypre_TFree(swap, NALU_HYPRE_MEMORY_HOST);
    }
 
    return ierr;
@@ -371,27 +371,27 @@ HYPRE_Int hypre_ND1AMGeInterpolation (hypre_ParCSRMatrix       * Aee,
 
 
 
-HYPRE_Int hypre_HarmonicExtension (hypre_CSRMatrix *A,
+NALU_HYPRE_Int hypre_HarmonicExtension (hypre_CSRMatrix *A,
                                    hypre_CSRMatrix *P,
-                                   HYPRE_Int num_DOF, HYPRE_BigInt *DOF,
-                                   HYPRE_Int num_idof, HYPRE_BigInt *idof,
-                                   HYPRE_Int num_bdof, HYPRE_BigInt *bdof)
+                                   NALU_HYPRE_Int num_DOF, NALU_HYPRE_BigInt *DOF,
+                                   NALU_HYPRE_Int num_idof, NALU_HYPRE_BigInt *idof,
+                                   NALU_HYPRE_Int num_bdof, NALU_HYPRE_BigInt *bdof)
 {
-   HYPRE_Int ierr = 0;
+   NALU_HYPRE_Int ierr = 0;
 
-   HYPRE_Int i, j, k, l, m;
-   HYPRE_Real factor;
+   NALU_HYPRE_Int i, j, k, l, m;
+   NALU_HYPRE_Real factor;
 
-   HYPRE_Int *IA = hypre_CSRMatrixI(A);
-   HYPRE_BigInt *JA = hypre_CSRMatrixBigJ(A);
-   HYPRE_Real *dataA = hypre_CSRMatrixData(A);
+   NALU_HYPRE_Int *IA = hypre_CSRMatrixI(A);
+   NALU_HYPRE_BigInt *JA = hypre_CSRMatrixBigJ(A);
+   NALU_HYPRE_Real *dataA = hypre_CSRMatrixData(A);
 
-   HYPRE_Int *IP = hypre_CSRMatrixI(P);
-   HYPRE_BigInt *JP = hypre_CSRMatrixBigJ(P);
-   HYPRE_Real *dataP = hypre_CSRMatrixData(P);
+   NALU_HYPRE_Int *IP = hypre_CSRMatrixI(P);
+   NALU_HYPRE_BigInt *JP = hypre_CSRMatrixBigJ(P);
+   NALU_HYPRE_Real *dataP = hypre_CSRMatrixData(P);
 
-   HYPRE_Real * Aii = hypre_CTAlloc(HYPRE_Real,  num_idof * num_idof, HYPRE_MEMORY_HOST);
-   HYPRE_Real * Pi = hypre_CTAlloc(HYPRE_Real,  num_idof * num_DOF, HYPRE_MEMORY_HOST);
+   NALU_HYPRE_Real * Aii = hypre_CTAlloc(NALU_HYPRE_Real,  num_idof * num_idof, NALU_HYPRE_MEMORY_HOST);
+   NALU_HYPRE_Real * Pi = hypre_CTAlloc(NALU_HYPRE_Real,  num_idof * num_DOF, NALU_HYPRE_MEMORY_HOST);
 
    /* Loop over the rows of A */
    for (i = 0; i < num_idof; i++)
@@ -465,8 +465,8 @@ HYPRE_Int hypre_HarmonicExtension (hypre_CSRMatrix *A,
          dataP[j] = -Pi[i * num_DOF + j];
       }
 
-   hypre_TFree(Aii, HYPRE_MEMORY_HOST);
-   hypre_TFree(Pi, HYPRE_MEMORY_HOST);
+   hypre_TFree(Aii, NALU_HYPRE_MEMORY_HOST);
+   hypre_TFree(Pi, NALU_HYPRE_MEMORY_HOST);
 
    return ierr;
 }

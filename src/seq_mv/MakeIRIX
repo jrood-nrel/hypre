@@ -7,16 +7,16 @@
 .SUFFIXES: .c .f .o
 
 HEADERS =\
- HYPRE_mv.h\
+ NALU_HYPRE_mv.h\
  csr_matrix.h\
  mapped_matrix.h\
  multiblock_matrix.h\
  vector.h
 
 FILES =\
- HYPRE_csr_matrix.c\
- HYPRE_mapped_matrix.c\
- HYPRE_multiblock_matrix.c\
+ NALU_HYPRE_csr_matrix.c\
+ NALU_HYPRE_mapped_matrix.c\
+ NALU_HYPRE_multiblock_matrix.c\
  csr_matrix.c\
  csr_matop.c\
  csr_matvec.c\
@@ -40,7 +40,7 @@ LFLAGS =\
  -L/home/casc/g77/lib\
  -L.\
  -L../utilities\
- -lHYPRE_memory\
+ -lNALU_HYPRE_memory\
  -lf2c\
  -lcegdb\
  -lm
@@ -50,7 +50,7 @@ LFLAGS =\
 # Main rules
 ##################################################################
 
-libHYPRE_mv.a: ${OBJS}
+libNALU_HYPRE_mv.a: ${OBJS}
 	@echo  "Building $@ ... "
 	ar -ru $@ ${OBJS}
 	ranlib $@
@@ -74,7 +74,7 @@ ${OBJS}: ${HEADERS}
 ##################################################################
 
 veryclean: clean
-	@rm -f libHYPRE_mv.a
+	@rm -f libNALU_HYPRE_mv.a
 	@rm -f driver driver_internal
 
 clean:

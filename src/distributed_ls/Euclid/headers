@@ -18,14 +18,14 @@ cat > $INTERNAL_HEADER <<@
 #define hypre_EUCLID_HEADER
 
 #define USING_MPI
-#define HYPRE_GET_ROW
-#define HYPRE_MODE
+#define NALU_HYPRE_GET_ROW
+#define NALU_HYPRE_MODE
 #define OPTIMIZED_DH
 
-#if defined(HYPRE_MODE)
-#include "HYPRE_parcsr_mv.h"
-#include "HYPRE_config.h"
-#include "HYPRE_distributed_matrix_mv.h"
+#if defined(NALU_HYPRE_MODE)
+#include "NALU_HYPRE_parcsr_mv.h"
+#include "NALU_HYPRE_config.h"
+#include "NALU_HYPRE_distributed_matrix_mv.h"
 #include "_hypre_utilities.h"
 
 #elif defined(PETSC_MODE)

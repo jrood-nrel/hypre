@@ -16,22 +16,22 @@
 /*--------------------------------------------------------------------------
  * hypre_BoomerAMGRelax
  *--------------------------------------------------------------------------*/
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_BoomerAMGRelaxIF( hypre_ParCSRMatrix *A,
                         hypre_ParVector    *f,
-                        HYPRE_Int          *cf_marker,
-                        HYPRE_Int           relax_type,
-                        HYPRE_Int           relax_order,
-                        HYPRE_Int           cycle_param,
-                        HYPRE_Real          relax_weight,
-                        HYPRE_Real          omega,
-                        HYPRE_Real         *l1_norms,
+                        NALU_HYPRE_Int          *cf_marker,
+                        NALU_HYPRE_Int           relax_type,
+                        NALU_HYPRE_Int           relax_order,
+                        NALU_HYPRE_Int           cycle_param,
+                        NALU_HYPRE_Real          relax_weight,
+                        NALU_HYPRE_Real          omega,
+                        NALU_HYPRE_Real         *l1_norms,
                         hypre_ParVector    *u,
                         hypre_ParVector    *Vtemp,
                         hypre_ParVector    *Ztemp )
 {
-   HYPRE_Int i, Solve_err_flag = 0;
-   HYPRE_Int relax_points[2];
+   NALU_HYPRE_Int i, Solve_err_flag = 0;
+   NALU_HYPRE_Int relax_points[2];
 
    if (relax_order == 1 && cycle_param < 3)
    {
@@ -67,13 +67,13 @@ hypre_BoomerAMGRelaxIF( hypre_ParCSRMatrix *A,
  * hypre_ParCSRRelax_L1_Jacobi (same as the one in AMS, but this allows CF)
  * u_new = u_old + w D^{-1}(f - A u), where D_ii = ||A(i,:)||_1
  *--------------------------------------------------------------------------*/
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_ParCSRRelax_L1_Jacobi( hypre_ParCSRMatrix *A,
                              hypre_ParVector    *f,
-                             HYPRE_Int          *cf_marker,
-                             HYPRE_Int           relax_points,
-                             HYPRE_Real          relax_weight,
-                             HYPRE_Real         *l1_norms,
+                             NALU_HYPRE_Int          *cf_marker,
+                             NALU_HYPRE_Int           relax_points,
+                             NALU_HYPRE_Real          relax_weight,
+                             NALU_HYPRE_Real         *l1_norms,
                              hypre_ParVector    *u,
                              hypre_ParVector    *Vtemp )
 
@@ -85,17 +85,17 @@ hypre_ParCSRRelax_L1_Jacobi( hypre_ParCSRMatrix *A,
 /*--------------------------------------------------------------------------
  * hypre_BoomerAMGRelax_FCFJacobi
  *--------------------------------------------------------------------------*/
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_BoomerAMGRelax_FCFJacobi( hypre_ParCSRMatrix *A,
                                 hypre_ParVector    *f,
-                                HYPRE_Int          *cf_marker,
-                                HYPRE_Real          relax_weight,
+                                NALU_HYPRE_Int          *cf_marker,
+                                NALU_HYPRE_Real          relax_weight,
                                 hypre_ParVector    *u,
                                 hypre_ParVector    *Vtemp)
 {
-   HYPRE_Int i;
-   HYPRE_Int relax_points[3];
-   HYPRE_Int relax_type = 0;
+   NALU_HYPRE_Int i;
+   NALU_HYPRE_Int relax_points[3];
+   NALU_HYPRE_Int relax_type = 0;
 
    relax_points[0] = -1; /*F */
    relax_points[1] =  1; /*C */

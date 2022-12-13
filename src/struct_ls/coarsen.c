@@ -8,7 +8,7 @@
 #define TIME_DEBUG 0
 
 #if TIME_DEBUG
-static HYPRE_Int s_coarsen_num = 0;
+static NALU_HYPRE_Int s_coarsen_num = 0;
 #endif
 
 
@@ -19,7 +19,7 @@ static HYPRE_Int s_coarsen_num = 0;
 #if DEBUG
 char       filename[255];
 FILE      *file;
-static HYPRE_Int debug_count = 0;
+static NALU_HYPRE_Int debug_count = 0;
 #endif
 
 /*--------------------------------------------------------------------------
@@ -29,7 +29,7 @@ static HYPRE_Int debug_count = 0;
  * do not stand for "F-pt index" and "C-pt index".
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_StructMapFineToCoarse( hypre_Index findex,
                              hypre_Index index,
                              hypre_Index stride,
@@ -52,7 +52,7 @@ hypre_StructMapFineToCoarse( hypre_Index findex,
  * do not stand for "F-pt index" and "C-pt index".
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_StructMapCoarseToFine( hypre_Index cindex,
                              hypre_Index index,
                              hypre_Index stride,
@@ -97,17 +97,17 @@ hypre_StructMapCoarseToFine( hypre_Index cindex,
  *
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
+NALU_HYPRE_Int
 hypre_StructCoarsen( hypre_StructGrid  *fgrid,
                      hypre_Index        index,
                      hypre_Index        stride,
-                     HYPRE_Int          prune,
+                     NALU_HYPRE_Int          prune,
                      hypre_StructGrid **cgrid_ptr )
 {
    hypre_StructGrid *cgrid;
 
    MPI_Comm          comm;
-   HYPRE_Int         ndim;
+   NALU_HYPRE_Int         ndim;
 
    hypre_BoxArray   *my_boxes;
 
@@ -118,15 +118,15 @@ hypre_StructCoarsen( hypre_StructGrid  *fgrid,
    hypre_Box        *new_box;
    hypre_Box        *bounding_box;
 
-   HYPRE_Int         i, j, myid, count;
-   HYPRE_Int         info_size, max_nentries;
-   HYPRE_Int         num_entries;
-   HYPRE_Int        *fids, *cids;
+   NALU_HYPRE_Int         i, j, myid, count;
+   NALU_HYPRE_Int         info_size, max_nentries;
+   NALU_HYPRE_Int         num_entries;
+   NALU_HYPRE_Int        *fids, *cids;
    hypre_Index       new_dist;
    hypre_IndexRef    max_distance;
-   HYPRE_Int         proc, id;
-   HYPRE_Int         coarsen_factor, known;
-   HYPRE_Int         num, last_proc;
+   NALU_HYPRE_Int         proc, id;
+   NALU_HYPRE_Int         coarsen_factor, known;
+   NALU_HYPRE_Int         num, last_proc;
 #if 0
    hypre_StructAssumedPart *fap = NULL, *cap = NULL;
 #endif
@@ -138,7 +138,7 @@ hypre_StructCoarsen( hypre_StructGrid  *fgrid,
    void               *entry_info = NULL;
 
 #if TIME_DEBUG
-   HYPRE_Int tindex;
+   NALU_HYPRE_Int tindex;
    char new_title[80];
    hypre_sprintf(new_title, "Coarsen.%d", s_coarsen_num);
    tindex = hypre_InitializeTiming(new_title);
@@ -165,7 +165,7 @@ hypre_StructCoarsen( hypre_StructGrid  *fgrid,
 
    /* coarsen my boxes and create the coarse grid ids (same as fgrid) */
    my_boxes = hypre_BoxArrayDuplicate(hypre_StructGridBoxes(fgrid));
-   cids = hypre_TAlloc(HYPRE_Int,   hypre_BoxArraySize(my_boxes), HYPRE_MEMORY_HOST);
+   cids = hypre_TAlloc(NALU_HYPRE_Int,   hypre_BoxArraySize(my_boxes), NALU_HYPRE_MEMORY_HOST);
    for (i = 0; i < hypre_BoxArraySize(my_boxes); i++)
    {
       box = hypre_BoxArrayBox(my_boxes, i);

@@ -14,19 +14,19 @@
 
 typedef struct
 {
-   HYPRE_Int      variant;
-   HYPRE_Int      domain_type;
-   HYPRE_Int      overlap;
-   HYPRE_Int      num_functions;
-   HYPRE_Int      use_nonsymm;
-   HYPRE_Real   relax_weight;
+   NALU_HYPRE_Int      variant;
+   NALU_HYPRE_Int      domain_type;
+   NALU_HYPRE_Int      overlap;
+   NALU_HYPRE_Int      num_functions;
+   NALU_HYPRE_Int      use_nonsymm;
+   NALU_HYPRE_Real   relax_weight;
 
    hypre_CSRMatrix *domain_structure;
    hypre_CSRMatrix *A_boundary;
    hypre_ParVector *Vtemp;
-   HYPRE_Real  *scale;
-   HYPRE_Int     *dof_func;
-   HYPRE_Int     *pivots;
+   NALU_HYPRE_Real  *scale;
+   NALU_HYPRE_Int     *dof_func;
+   NALU_HYPRE_Int     *pivots;
 
 
 

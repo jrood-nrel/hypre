@@ -48,7 +48,7 @@ OBJS = ${BLAS_FILES:.c=.o}
 all: ${OBJS}
 
 install: all
-	cp -fR $(srcdir)/_hypre_blas.h $(HYPRE_INC_INSTALL)
+	cp -fR $(srcdir)/_hypre_blas.h $(NALU_HYPRE_INC_INSTALL)
 
 clean:
 	rm -rf *.o

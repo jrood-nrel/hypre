@@ -24,9 +24,9 @@
                    follows:
 
                    1) All integer arguments to HYPRE functions should be
-                      declared of type HYPRE_Int.
+                      declared of type NALU_HYPRE_Int.
 
-                   2) Variables of type HYPRE_Int are 64-bit integers, so
+                   2) Variables of type NALU_HYPRE_Int are 64-bit integers, so
                       they should be printed in the %lld format (not %d).
 
                    To enable the 64-bit integer support, you need to build
@@ -38,8 +38,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-#include "HYPRE_sstruct_mv.h"
-#include "HYPRE_sstruct_ls.h"
+#include "NALU_HYPRE_sstruct_mv.h"
+#include "NALU_HYPRE_sstruct_ls.h"
 #include "HYPRE.h"
 #include "ex.h"
 
@@ -218,18 +218,18 @@ int main (int argc, char *argv[])
    double mytime = 0.0;
    double walltime = 0.0;
 
-   HYPRE_SStructGrid     edge_grid;
-   HYPRE_SStructGraph    A_graph;
-   HYPRE_SStructMatrix   A;
-   HYPRE_SStructVector   b;
-   HYPRE_SStructVector   x;
-   HYPRE_SStructGrid     node_grid;
-   HYPRE_SStructGraph    G_graph;
-   HYPRE_SStructStencil  G_stencil[3];
-   HYPRE_SStructMatrix   G;
-   HYPRE_SStructVector   xcoord, ycoord, zcoord;
+   NALU_HYPRE_SStructGrid     edge_grid;
+   NALU_HYPRE_SStructGraph    A_graph;
+   NALU_HYPRE_SStructMatrix   A;
+   NALU_HYPRE_SStructVector   b;
+   NALU_HYPRE_SStructVector   x;
+   NALU_HYPRE_SStructGrid     node_grid;
+   NALU_HYPRE_SStructGraph    G_graph;
+   NALU_HYPRE_SStructStencil  G_stencil[3];
+   NALU_HYPRE_SStructMatrix   G;
+   NALU_HYPRE_SStructVector   xcoord, ycoord, zcoord;
 
-   HYPRE_Solver          solver, precond;
+   NALU_HYPRE_Solver          solver, precond;
 
    /* Initialize MPI */
    MPI_Init(&argc, &argv);
@@ -237,10 +237,10 @@ int main (int argc, char *argv[])
    MPI_Comm_size(MPI_COMM_WORLD, &num_procs);
 
    /* Initialize HYPRE */
-   HYPRE_Init();
+   NALU_HYPRE_Init();
 
    /* Print GPU info */
-   /* HYPRE_PrintDeviceInfo(); */
+   /* NALU_HYPRE_PrintDeviceInfo(); */
 
    /* Set default parameters */
    n                = 10;
@@ -422,38 +422,38 @@ int main (int argc, char *argv[])
          to make sure that they have the same extents.  For simplicity we use
          only one part to represent the unit cube. */
    {
-      HYPRE_Int ndim = 3;
-      HYPRE_Int nparts = 1;
+      NALU_HYPRE_Int ndim = 3;
+      NALU_HYPRE_Int nparts = 1;
 
       /* Create empty 2D grid objects */
-      HYPRE_SStructGridCreate(MPI_COMM_WORLD, ndim, nparts, &node_grid);
-      HYPRE_SStructGridCreate(MPI_COMM_WORLD, ndim, nparts, &edge_grid);
+      NALU_HYPRE_SStructGridCreate(MPI_COMM_WORLD, ndim, nparts, &node_grid);
+      NALU_HYPRE_SStructGridCreate(MPI_COMM_WORLD, ndim, nparts, &edge_grid);
 
       /* Set the extents of the grid - each processor sets its grid boxes. */
       {
-         HYPRE_Int part = 0;
-         HYPRE_Int ilower[3] = {1 + pi * n, 1 + pj * n, 1 + pk * n};
-         HYPRE_Int iupper[3] = {n + pi * n, n + pj * n, n + pk * n};
+         NALU_HYPRE_Int part = 0;
+         NALU_HYPRE_Int ilower[3] = {1 + pi * n, 1 + pj * n, 1 + pk * n};
+         NALU_HYPRE_Int iupper[3] = {n + pi * n, n + pj * n, n + pk * n};
 
-         HYPRE_SStructGridSetExtents(node_grid, part, ilower, iupper);
-         HYPRE_SStructGridSetExtents(edge_grid, part, ilower, iupper);
+         NALU_HYPRE_SStructGridSetExtents(node_grid, part, ilower, iupper);
+         NALU_HYPRE_SStructGridSetExtents(edge_grid, part, ilower, iupper);
       }
 
       /* Set the variable type and number of variables on each grid. */
       {
-         HYPRE_Int i;
-         HYPRE_Int nnodevars = 1;
-         HYPRE_Int nedgevars = 3;
+         NALU_HYPRE_Int i;
+         NALU_HYPRE_Int nnodevars = 1;
+         NALU_HYPRE_Int nedgevars = 3;
 
-         HYPRE_SStructVariable nodevars[1] = {HYPRE_SSTRUCT_VARIABLE_NODE};
-         HYPRE_SStructVariable edgevars[3] = {HYPRE_SSTRUCT_VARIABLE_XEDGE,
-                                              HYPRE_SSTRUCT_VARIABLE_YEDGE,
-                                              HYPRE_SSTRUCT_VARIABLE_ZEDGE
+         NALU_HYPRE_SStructVariable nodevars[1] = {NALU_HYPRE_SSTRUCT_VARIABLE_NODE};
+         NALU_HYPRE_SStructVariable edgevars[3] = {NALU_HYPRE_SSTRUCT_VARIABLE_XEDGE,
+                                              NALU_HYPRE_SSTRUCT_VARIABLE_YEDGE,
+                                              NALU_HYPRE_SSTRUCT_VARIABLE_ZEDGE
                                              };
          for (i = 0; i < nparts; i++)
          {
-            HYPRE_SStructGridSetVariables(node_grid, i, nnodevars, nodevars);
-            HYPRE_SStructGridSetVariables(edge_grid, i, nedgevars, edgevars);
+            NALU_HYPRE_SStructGridSetVariables(node_grid, i, nnodevars, nodevars);
+            NALU_HYPRE_SStructGridSetVariables(edge_grid, i, nedgevars, edgevars);
          }
       }
 
@@ -463,19 +463,19 @@ int main (int argc, char *argv[])
          illustrations of these calls. */
 
       /* Now the grids are ready to be used */
-      HYPRE_SStructGridAssemble(node_grid);
-      HYPRE_SStructGridAssemble(edge_grid);
+      NALU_HYPRE_SStructGridAssemble(node_grid);
+      NALU_HYPRE_SStructGridAssemble(edge_grid);
    }
 
    /* 2. Create the finite element stiffness matrix A and load vector b. */
    {
-      HYPRE_Int part = 0; /* this problem has only one part */
+      NALU_HYPRE_Int part = 0; /* this problem has only one part */
 
       /* Set the ordering of the variables in the finite element problem.  This
          is done by listing the variable offset directions relative to the
          element's center.  See the Reference Manual for more details. */
       {
-         HYPRE_Int ordering[48] =
+         NALU_HYPRE_Int ordering[48] =
          {
             0,  0, -1, -1,    /* x-edge [0]-[1]                  */
             1, +1,  0, -1,    /* y-edge [1]-[2]                  */
@@ -491,46 +491,46 @@ int main (int argc, char *argv[])
             2, -1, +1,  0     /* z-edge [3]-[7]                  */
          };
 
-         HYPRE_SStructGridSetFEMOrdering(edge_grid, part, ordering);
+         NALU_HYPRE_SStructGridSetFEMOrdering(edge_grid, part, ordering);
       }
 
       /* Set up the Graph - this determines the non-zero structure of the
          matrix. */
       {
-         HYPRE_Int part = 0;
+         NALU_HYPRE_Int part = 0;
 
          /* Create the graph object */
-         HYPRE_SStructGraphCreate(MPI_COMM_WORLD, edge_grid, &A_graph);
+         NALU_HYPRE_SStructGraphCreate(MPI_COMM_WORLD, edge_grid, &A_graph);
 
          /* See MatrixSetObjectType below */
-         HYPRE_SStructGraphSetObjectType(A_graph, HYPRE_PARCSR);
+         NALU_HYPRE_SStructGraphSetObjectType(A_graph, NALU_HYPRE_PARCSR);
 
          /* Indicate that this problem uses finite element stiffness matrices and
             load vectors, instead of stencils. */
-         HYPRE_SStructGraphSetFEM(A_graph, part);
+         NALU_HYPRE_SStructGraphSetFEM(A_graph, part);
 
          /* The edge finite element matrix is full, so there is no need to call the
-            HYPRE_SStructGraphSetFEMSparsity() function. */
+            NALU_HYPRE_SStructGraphSetFEMSparsity() function. */
 
          /* Assemble the graph */
-         HYPRE_SStructGraphAssemble(A_graph);
+         NALU_HYPRE_SStructGraphAssemble(A_graph);
       }
 
       /* Set up the SStruct Matrix and right-hand side vector */
       {
          /* Create the matrix object */
-         HYPRE_SStructMatrixCreate(MPI_COMM_WORLD, A_graph, &A);
+         NALU_HYPRE_SStructMatrixCreate(MPI_COMM_WORLD, A_graph, &A);
          /* Use a ParCSR storage */
-         HYPRE_SStructMatrixSetObjectType(A, HYPRE_PARCSR);
+         NALU_HYPRE_SStructMatrixSetObjectType(A, NALU_HYPRE_PARCSR);
          /* Indicate that the matrix coefficients are ready to be set */
-         HYPRE_SStructMatrixInitialize(A);
+         NALU_HYPRE_SStructMatrixInitialize(A);
 
          /* Create an empty vector object */
-         HYPRE_SStructVectorCreate(MPI_COMM_WORLD, edge_grid, &b);
+         NALU_HYPRE_SStructVectorCreate(MPI_COMM_WORLD, edge_grid, &b);
          /* Use a ParCSR storage */
-         HYPRE_SStructVectorSetObjectType(b, HYPRE_PARCSR);
+         NALU_HYPRE_SStructVectorSetObjectType(b, NALU_HYPRE_PARCSR);
          /* Indicate that the vector coefficients are ready to be set */
-         HYPRE_SStructVectorInitialize(b);
+         NALU_HYPRE_SStructVectorInitialize(b);
       }
 
       /* Set the matrix and vector entries by finite element assembly */
@@ -539,7 +539,7 @@ int main (int argc, char *argv[])
          double S[12][12], F[12];
 
          int i, j, k;
-         HYPRE_Int index[3];
+         NALU_HYPRE_Int index[3];
 
          for (i = 1; i <= n; i++)
             for (j = 1; j <= n; j++)
@@ -639,82 +639,82 @@ int main (int argc, char *argv[])
                   }
 
                   /* Assemble the matrix */
-                  HYPRE_SStructMatrixAddFEMValues(A, part, index, &S[0][0]);
+                  NALU_HYPRE_SStructMatrixAddFEMValues(A, part, index, &S[0][0]);
 
                   /* Assemble the vector */
-                  HYPRE_SStructVectorAddFEMValues(b, part, index, F);
+                  NALU_HYPRE_SStructVectorAddFEMValues(b, part, index, F);
                }
       }
 
       /* Collective calls finalizing the matrix and vector assembly */
-      HYPRE_SStructMatrixAssemble(A);
-      HYPRE_SStructVectorAssemble(b);
+      NALU_HYPRE_SStructMatrixAssemble(A);
+      NALU_HYPRE_SStructVectorAssemble(b);
    }
 
    /* 3. Create the discrete gradient matrix G, which is needed in AMS. */
    {
-      HYPRE_Int part = 0;
-      HYPRE_Int stencil_size = 2;
+      NALU_HYPRE_Int part = 0;
+      NALU_HYPRE_Int stencil_size = 2;
 
       /* Define the discretization stencil relating the edges and nodes of the
          grid. */
       {
-         HYPRE_Int ndim = 3;
-         HYPRE_Int entry;
-         HYPRE_Int var = 0; /* the node variable */
+         NALU_HYPRE_Int ndim = 3;
+         NALU_HYPRE_Int entry;
+         NALU_HYPRE_Int var = 0; /* the node variable */
 
          /* The discrete gradient stencils connect edge to node variables. */
-         HYPRE_Int Gx_offsets[2][3] = {{-1, 0, 0}, {0, 0, 0}}; /* x-edge [7]-[6] */
-         HYPRE_Int Gy_offsets[2][3] = {{0, -1, 0}, {0, 0, 0}}; /* y-edge [5]-[6] */
-         HYPRE_Int Gz_offsets[2][3] = {{0, 0, -1}, {0, 0, 0}}; /* z-edge [2]-[6] */
+         NALU_HYPRE_Int Gx_offsets[2][3] = {{-1, 0, 0}, {0, 0, 0}}; /* x-edge [7]-[6] */
+         NALU_HYPRE_Int Gy_offsets[2][3] = {{0, -1, 0}, {0, 0, 0}}; /* y-edge [5]-[6] */
+         NALU_HYPRE_Int Gz_offsets[2][3] = {{0, 0, -1}, {0, 0, 0}}; /* z-edge [2]-[6] */
 
-         HYPRE_SStructStencilCreate(ndim, stencil_size, &G_stencil[0]);
-         HYPRE_SStructStencilCreate(ndim, stencil_size, &G_stencil[1]);
-         HYPRE_SStructStencilCreate(ndim, stencil_size, &G_stencil[2]);
+         NALU_HYPRE_SStructStencilCreate(ndim, stencil_size, &G_stencil[0]);
+         NALU_HYPRE_SStructStencilCreate(ndim, stencil_size, &G_stencil[1]);
+         NALU_HYPRE_SStructStencilCreate(ndim, stencil_size, &G_stencil[2]);
 
          for (entry = 0; entry < stencil_size; entry++)
          {
-            HYPRE_SStructStencilSetEntry(G_stencil[0], entry, Gx_offsets[entry], var);
-            HYPRE_SStructStencilSetEntry(G_stencil[1], entry, Gy_offsets[entry], var);
-            HYPRE_SStructStencilSetEntry(G_stencil[2], entry, Gz_offsets[entry], var);
+            NALU_HYPRE_SStructStencilSetEntry(G_stencil[0], entry, Gx_offsets[entry], var);
+            NALU_HYPRE_SStructStencilSetEntry(G_stencil[1], entry, Gy_offsets[entry], var);
+            NALU_HYPRE_SStructStencilSetEntry(G_stencil[2], entry, Gz_offsets[entry], var);
          }
       }
 
       /* Set up the Graph - this determines the non-zero structure of the
          matrix. */
       {
-         HYPRE_Int nvars = 3;
-         HYPRE_Int var; /* the edge variables */
+         NALU_HYPRE_Int nvars = 3;
+         NALU_HYPRE_Int var; /* the edge variables */
 
          /* Create the discrete gradient graph object */
-         HYPRE_SStructGraphCreate(MPI_COMM_WORLD, edge_grid, &G_graph);
+         NALU_HYPRE_SStructGraphCreate(MPI_COMM_WORLD, edge_grid, &G_graph);
 
          /* See MatrixSetObjectType below */
-         HYPRE_SStructGraphSetObjectType(G_graph, HYPRE_PARCSR);
+         NALU_HYPRE_SStructGraphSetObjectType(G_graph, NALU_HYPRE_PARCSR);
 
          /* Since the discrete gradient relates edge and nodal variables (it is a
             rectangular matrix), we have to specify the domain (column) grid. */
-         HYPRE_SStructGraphSetDomainGrid(G_graph, node_grid);
+         NALU_HYPRE_SStructGraphSetDomainGrid(G_graph, node_grid);
 
          /* Tell the graph which stencil to use for each edge variable on each
             part (we only have one part). */
          for (var = 0; var < nvars; var++)
          {
-            HYPRE_SStructGraphSetStencil(G_graph, part, var, G_stencil[var]);
+            NALU_HYPRE_SStructGraphSetStencil(G_graph, part, var, G_stencil[var]);
          }
 
          /* Assemble the graph */
-         HYPRE_SStructGraphAssemble(G_graph);
+         NALU_HYPRE_SStructGraphAssemble(G_graph);
       }
 
       /* Set up the SStruct Matrix */
       {
          /* Create the matrix object */
-         HYPRE_SStructMatrixCreate(MPI_COMM_WORLD, G_graph, &G);
+         NALU_HYPRE_SStructMatrixCreate(MPI_COMM_WORLD, G_graph, &G);
          /* Use a ParCSR storage */
-         HYPRE_SStructMatrixSetObjectType(G, HYPRE_PARCSR);
+         NALU_HYPRE_SStructMatrixSetObjectType(G, NALU_HYPRE_PARCSR);
          /* Indicate that the matrix coefficients are ready to be set */
-         HYPRE_SStructMatrixInitialize(G);
+         NALU_HYPRE_SStructMatrixInitialize(G);
       }
 
       /* Set the discrete gradient values, assuming a "natural" orientation of
@@ -723,7 +723,7 @@ int main (int argc, char *argv[])
          int i;
          int nedges = n * (n + 1) * (n + 1);
          double *values;
-         HYPRE_Int stencil_indices[2] = {0, 1}; /* the nodes of each edge */
+         NALU_HYPRE_Int stencil_indices[2] = {0, 1}; /* the nodes of each edge */
 
          values = (double*) calloc(2 * nedges, sizeof(double));
 
@@ -736,28 +736,28 @@ int main (int argc, char *argv[])
 
          /* Set the values in the discrete gradient x-edges */
          {
-            HYPRE_Int var = 0;
-            HYPRE_Int ilower[3] = {1 + pi * n, 0 + pj * n, 0 + pk * n};
-            HYPRE_Int iupper[3] = {n + pi * n, n + pj * n, n + pk * n};
-            HYPRE_SStructMatrixSetBoxValues(G, part, ilower, iupper, var,
+            NALU_HYPRE_Int var = 0;
+            NALU_HYPRE_Int ilower[3] = {1 + pi * n, 0 + pj * n, 0 + pk * n};
+            NALU_HYPRE_Int iupper[3] = {n + pi * n, n + pj * n, n + pk * n};
+            NALU_HYPRE_SStructMatrixSetBoxValues(G, part, ilower, iupper, var,
                                             stencil_size, stencil_indices,
                                             values);
          }
          /* Set the values in the discrete gradient y-edges */
          {
-            HYPRE_Int var = 1;
-            HYPRE_Int ilower[3] = {0 + pi * n, 1 + pj * n, 0 + pk * n};
-            HYPRE_Int iupper[3] = {n + pi * n, n + pj * n, n + pk * n};
-            HYPRE_SStructMatrixSetBoxValues(G, part, ilower, iupper, var,
+            NALU_HYPRE_Int var = 1;
+            NALU_HYPRE_Int ilower[3] = {0 + pi * n, 1 + pj * n, 0 + pk * n};
+            NALU_HYPRE_Int iupper[3] = {n + pi * n, n + pj * n, n + pk * n};
+            NALU_HYPRE_SStructMatrixSetBoxValues(G, part, ilower, iupper, var,
                                             stencil_size, stencil_indices,
                                             values);
          }
          /* Set the values in the discrete gradient z-edges */
          {
-            HYPRE_Int var = 2;
-            HYPRE_Int ilower[3] = {0 + pi * n, 0 + pj * n, 1 + pk * n};
-            HYPRE_Int iupper[3] = {n + pi * n, n + pj * n, n + pk * n};
-            HYPRE_SStructMatrixSetBoxValues(G, part, ilower, iupper, var,
+            NALU_HYPRE_Int var = 2;
+            NALU_HYPRE_Int ilower[3] = {0 + pi * n, 0 + pj * n, 1 + pk * n};
+            NALU_HYPRE_Int iupper[3] = {n + pi * n, n + pj * n, n + pk * n};
+            NALU_HYPRE_SStructMatrixSetBoxValues(G, part, ilower, iupper, var,
                                             stencil_size, stencil_indices,
                                             values);
          }
@@ -766,30 +766,30 @@ int main (int argc, char *argv[])
       }
 
       /* Finalize the matrix assembly */
-      HYPRE_SStructMatrixAssemble(G);
+      NALU_HYPRE_SStructMatrixAssemble(G);
    }
 
    /* 4. Create the vectors of nodal coordinates xcoord, ycoord and zcoord,
          which are needed in AMS. */
    {
       int i, j, k;
-      HYPRE_Int part = 0;
-      HYPRE_Int var = 0; /* the node variable */
-      HYPRE_Int index[3];
+      NALU_HYPRE_Int part = 0;
+      NALU_HYPRE_Int var = 0; /* the node variable */
+      NALU_HYPRE_Int index[3];
       double xval, yval, zval;
 
       /* Create empty vector objects */
-      HYPRE_SStructVectorCreate(MPI_COMM_WORLD, node_grid, &xcoord);
-      HYPRE_SStructVectorCreate(MPI_COMM_WORLD, node_grid, &ycoord);
-      HYPRE_SStructVectorCreate(MPI_COMM_WORLD, node_grid, &zcoord);
+      NALU_HYPRE_SStructVectorCreate(MPI_COMM_WORLD, node_grid, &xcoord);
+      NALU_HYPRE_SStructVectorCreate(MPI_COMM_WORLD, node_grid, &ycoord);
+      NALU_HYPRE_SStructVectorCreate(MPI_COMM_WORLD, node_grid, &zcoord);
       /* Set the object type to ParCSR */
-      HYPRE_SStructVectorSetObjectType(xcoord, HYPRE_PARCSR);
-      HYPRE_SStructVectorSetObjectType(ycoord, HYPRE_PARCSR);
-      HYPRE_SStructVectorSetObjectType(zcoord, HYPRE_PARCSR);
+      NALU_HYPRE_SStructVectorSetObjectType(xcoord, NALU_HYPRE_PARCSR);
+      NALU_HYPRE_SStructVectorSetObjectType(ycoord, NALU_HYPRE_PARCSR);
+      NALU_HYPRE_SStructVectorSetObjectType(zcoord, NALU_HYPRE_PARCSR);
       /* Indicate that the vector coefficients are ready to be set */
-      HYPRE_SStructVectorInitialize(xcoord);
-      HYPRE_SStructVectorInitialize(ycoord);
-      HYPRE_SStructVectorInitialize(zcoord);
+      NALU_HYPRE_SStructVectorInitialize(xcoord);
+      NALU_HYPRE_SStructVectorInitialize(ycoord);
+      NALU_HYPRE_SStructVectorInitialize(zcoord);
 
       /* Compute and set the coordinates of the nodes */
       for (i = 0; i <= n; i++)
@@ -802,58 +802,58 @@ int main (int argc, char *argv[])
                yval = index[1] * h;
                zval = index[2] * h;
 
-               HYPRE_SStructVectorSetValues(xcoord, part, index, var, &xval);
-               HYPRE_SStructVectorSetValues(ycoord, part, index, var, &yval);
-               HYPRE_SStructVectorSetValues(zcoord, part, index, var, &zval);
+               NALU_HYPRE_SStructVectorSetValues(xcoord, part, index, var, &xval);
+               NALU_HYPRE_SStructVectorSetValues(ycoord, part, index, var, &yval);
+               NALU_HYPRE_SStructVectorSetValues(zcoord, part, index, var, &zval);
             }
 
       /* Finalize the vector assembly */
-      HYPRE_SStructVectorAssemble(xcoord);
-      HYPRE_SStructVectorAssemble(ycoord);
-      HYPRE_SStructVectorAssemble(zcoord);
+      NALU_HYPRE_SStructVectorAssemble(xcoord);
+      NALU_HYPRE_SStructVectorAssemble(ycoord);
+      NALU_HYPRE_SStructVectorAssemble(zcoord);
    }
 
    /* 5. Set up a SStruct Vector for the solution vector x */
    {
-      HYPRE_Int part = 0;
+      NALU_HYPRE_Int part = 0;
       int nvalues = n * (n + 1) * (n + 1);
       double *values;
 
       values = (double*) calloc(nvalues, sizeof(double));
 
       /* Create an empty vector object */
-      HYPRE_SStructVectorCreate(MPI_COMM_WORLD, edge_grid, &x);
+      NALU_HYPRE_SStructVectorCreate(MPI_COMM_WORLD, edge_grid, &x);
       /* Set the object type to ParCSR */
-      HYPRE_SStructVectorSetObjectType(x, HYPRE_PARCSR);
+      NALU_HYPRE_SStructVectorSetObjectType(x, NALU_HYPRE_PARCSR);
       /* Indicate that the vector coefficients are ready to be set */
-      HYPRE_SStructVectorInitialize(x);
+      NALU_HYPRE_SStructVectorInitialize(x);
 
       /* Set the values for the initial guess x-edge */
       {
-         HYPRE_Int var = 0;
-         HYPRE_Int ilower[3] = {1 + pi * n, 0 + pj * n, 0 + pk * n};
-         HYPRE_Int iupper[3] = {n + pi * n, n + pj * n, n + pk * n};
-         HYPRE_SStructVectorSetBoxValues(x, part, ilower, iupper, var, values);
+         NALU_HYPRE_Int var = 0;
+         NALU_HYPRE_Int ilower[3] = {1 + pi * n, 0 + pj * n, 0 + pk * n};
+         NALU_HYPRE_Int iupper[3] = {n + pi * n, n + pj * n, n + pk * n};
+         NALU_HYPRE_SStructVectorSetBoxValues(x, part, ilower, iupper, var, values);
       }
       /* Set the values for the initial guess y-edge */
       {
-         HYPRE_Int var = 1;
-         HYPRE_Int ilower[3] = {0 + pi * n, 1 + pj * n, 0 + pk * n};
-         HYPRE_Int iupper[3] = {n + pi * n, n + pj * n, n + pk * n};
-         HYPRE_SStructVectorSetBoxValues(x, part, ilower, iupper, var, values);
+         NALU_HYPRE_Int var = 1;
+         NALU_HYPRE_Int ilower[3] = {0 + pi * n, 1 + pj * n, 0 + pk * n};
+         NALU_HYPRE_Int iupper[3] = {n + pi * n, n + pj * n, n + pk * n};
+         NALU_HYPRE_SStructVectorSetBoxValues(x, part, ilower, iupper, var, values);
       }
       /* Set the values for the initial guess z-edge */
       {
-         HYPRE_Int var = 2;
-         HYPRE_Int ilower[3] = {0 + pi * n, 0 + pj * n, 1 + pk * n};
-         HYPRE_Int iupper[3] = {n + pi * n, n + pj * n, n + pk * n};
-         HYPRE_SStructVectorSetBoxValues(x, part, ilower, iupper, var, values);
+         NALU_HYPRE_Int var = 2;
+         NALU_HYPRE_Int ilower[3] = {0 + pi * n, 0 + pj * n, 1 + pk * n};
+         NALU_HYPRE_Int iupper[3] = {n + pi * n, n + pj * n, n + pk * n};
+         NALU_HYPRE_SStructVectorSetBoxValues(x, part, ilower, iupper, var, values);
       }
 
       free(values);
 
       /* Finalize the vector assembly */
-      HYPRE_SStructVectorAssemble(x);
+      NALU_HYPRE_SStructVectorAssemble(x);
    }
 
    /* Finalize current timing */
@@ -868,30 +868,30 @@ int main (int argc, char *argv[])
          Reference Manual.) */
    {
       double final_res_norm;
-      HYPRE_Int its;
+      NALU_HYPRE_Int its;
 
-      HYPRE_ParCSRMatrix    par_A;
-      HYPRE_ParVector       par_b;
-      HYPRE_ParVector       par_x;
+      NALU_HYPRE_ParCSRMatrix    par_A;
+      NALU_HYPRE_ParVector       par_b;
+      NALU_HYPRE_ParVector       par_x;
 
-      HYPRE_ParCSRMatrix    par_G;
-      HYPRE_ParVector       par_xcoord;
-      HYPRE_ParVector       par_ycoord;
-      HYPRE_ParVector       par_zcoord;
+      NALU_HYPRE_ParCSRMatrix    par_G;
+      NALU_HYPRE_ParVector       par_xcoord;
+      NALU_HYPRE_ParVector       par_ycoord;
+      NALU_HYPRE_ParVector       par_zcoord;
 
       /* Extract the ParCSR objects needed in the solver */
-      HYPRE_SStructMatrixGetObject(A, (void **) &par_A);
-      HYPRE_SStructVectorGetObject(b, (void **) &par_b);
-      HYPRE_SStructVectorGetObject(x, (void **) &par_x);
-      HYPRE_SStructMatrixGetObject(G, (void **) &par_G);
-      HYPRE_SStructVectorGetObject(xcoord, (void **) &par_xcoord);
-      HYPRE_SStructVectorGetObject(ycoord, (void **) &par_ycoord);
-      HYPRE_SStructVectorGetObject(zcoord, (void **) &par_zcoord);
+      NALU_HYPRE_SStructMatrixGetObject(A, (void **) &par_A);
+      NALU_HYPRE_SStructVectorGetObject(b, (void **) &par_b);
+      NALU_HYPRE_SStructVectorGetObject(x, (void **) &par_x);
+      NALU_HYPRE_SStructMatrixGetObject(G, (void **) &par_G);
+      NALU_HYPRE_SStructVectorGetObject(xcoord, (void **) &par_xcoord);
+      NALU_HYPRE_SStructVectorGetObject(ycoord, (void **) &par_ycoord);
+      NALU_HYPRE_SStructVectorGetObject(zcoord, (void **) &par_zcoord);
 
       if (myid == 0)
       {
-         HYPRE_Int numrows, numcols;
-         HYPRE_ParCSRMatrixGetDims(par_A, &numrows, &numcols);
+         NALU_HYPRE_Int numrows, numcols;
+         NALU_HYPRE_ParCSRMatrixGetDims(par_A, &numrows, &numcols);
          printf("Problem size: %lld\n\n", numrows);
       }
 
@@ -899,57 +899,57 @@ int main (int argc, char *argv[])
       mytime -= MPI_Wtime();
 
       /* Create solver */
-      HYPRE_ParCSRPCGCreate(MPI_COMM_WORLD, &solver);
+      NALU_HYPRE_ParCSRPCGCreate(MPI_COMM_WORLD, &solver);
 
       /* Set some parameters (See Reference Manual for more parameters) */
-      HYPRE_PCGSetMaxIter(solver, maxit); /* max iterations */
-      HYPRE_PCGSetTol(solver, tol); /* conv. tolerance */
-      HYPRE_PCGSetTwoNorm(solver, 0); /* use the two norm as the stopping criteria */
-      HYPRE_PCGSetPrintLevel(solver, 2); /* print solve info */
-      HYPRE_PCGSetLogging(solver, 1); /* needed to get run info later */
+      NALU_HYPRE_PCGSetMaxIter(solver, maxit); /* max iterations */
+      NALU_HYPRE_PCGSetTol(solver, tol); /* conv. tolerance */
+      NALU_HYPRE_PCGSetTwoNorm(solver, 0); /* use the two norm as the stopping criteria */
+      NALU_HYPRE_PCGSetPrintLevel(solver, 2); /* print solve info */
+      NALU_HYPRE_PCGSetLogging(solver, 1); /* needed to get run info later */
 
       /* Create AMS preconditioner */
-      HYPRE_AMSCreate(&precond);
+      NALU_HYPRE_AMSCreate(&precond);
 
       /* Set AMS parameters */
-      HYPRE_AMSSetMaxIter(precond, 1);
-      HYPRE_AMSSetTol(precond, 0.0);
-      HYPRE_AMSSetCycleType(precond, cycle_type);
-      HYPRE_AMSSetPrintLevel(precond, 1);
+      NALU_HYPRE_AMSSetMaxIter(precond, 1);
+      NALU_HYPRE_AMSSetTol(precond, 0.0);
+      NALU_HYPRE_AMSSetCycleType(precond, cycle_type);
+      NALU_HYPRE_AMSSetPrintLevel(precond, 1);
 
       /* Set discrete gradient */
-      HYPRE_AMSSetDiscreteGradient(precond, par_G);
+      NALU_HYPRE_AMSSetDiscreteGradient(precond, par_G);
 
       /* Set vertex coordinates */
-      HYPRE_AMSSetCoordinateVectors(precond,
+      NALU_HYPRE_AMSSetCoordinateVectors(precond,
                                     par_xcoord, par_ycoord, par_zcoord);
 
       if (singular_problem)
       {
-         HYPRE_AMSSetBetaPoissonMatrix(precond, NULL);
+         NALU_HYPRE_AMSSetBetaPoissonMatrix(precond, NULL);
       }
 
       /* Smoothing and AMG options */
-      HYPRE_AMSSetSmoothingOptions(precond,
+      NALU_HYPRE_AMSSetSmoothingOptions(precond,
                                    rlx_type, rlx_sweeps,
                                    rlx_weight, rlx_omega);
-      HYPRE_AMSSetAlphaAMGOptions(precond,
+      NALU_HYPRE_AMSSetAlphaAMGOptions(precond,
                                   amg_coarsen_type, amg_agg_levels,
                                   amg_rlx_type, theta, amg_interp_type,
                                   amg_Pmax);
-      HYPRE_AMSSetBetaAMGOptions(precond,
+      NALU_HYPRE_AMSSetBetaAMGOptions(precond,
                                  amg_coarsen_type, amg_agg_levels,
                                  amg_rlx_type, theta, amg_interp_type,
                                  amg_Pmax);
 
       /* Set the PCG preconditioner */
-      HYPRE_PCGSetPrecond(solver,
-                          (HYPRE_PtrToSolverFcn) HYPRE_AMSSolve,
-                          (HYPRE_PtrToSolverFcn) HYPRE_AMSSetup,
+      NALU_HYPRE_PCGSetPrecond(solver,
+                          (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_AMSSolve,
+                          (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_AMSSetup,
                           precond);
 
       /* Call the setup */
-      HYPRE_ParCSRPCGSetup(solver, par_A, par_b, par_x);
+      NALU_HYPRE_ParCSRPCGSetup(solver, par_A, par_b, par_x);
 
       /* Finalize current timing */
       mytime += MPI_Wtime();
@@ -963,7 +963,7 @@ int main (int argc, char *argv[])
       mytime -= MPI_Wtime();
 
       /* Call the solve */
-      HYPRE_ParCSRPCGSolve(solver, par_A, par_b, par_x);
+      NALU_HYPRE_ParCSRPCGSolve(solver, par_A, par_b, par_x);
 
       /* Finalize current timing */
       mytime += MPI_Wtime();
@@ -974,15 +974,15 @@ int main (int argc, char *argv[])
       }
 
       /* Get some info */
-      HYPRE_PCGGetNumIterations(solver, &its);
-      HYPRE_PCGGetFinalRelativeResidualNorm(solver, &final_res_norm);
+      NALU_HYPRE_PCGGetNumIterations(solver, &its);
+      NALU_HYPRE_PCGGetFinalRelativeResidualNorm(solver, &final_res_norm);
 
       /* Clean up */
-      HYPRE_AMSDestroy(precond);
-      HYPRE_ParCSRPCGDestroy(solver);
+      NALU_HYPRE_AMSDestroy(precond);
+      NALU_HYPRE_ParCSRPCGDestroy(solver);
 
       /* Gather the solution vector */
-      HYPRE_SStructVectorGather(x);
+      NALU_HYPRE_SStructVectorGather(x);
 
       if (myid == 0)
       {
@@ -994,23 +994,23 @@ int main (int argc, char *argv[])
    }
 
    /* Free memory */
-   HYPRE_SStructGridDestroy(edge_grid);
-   HYPRE_SStructGraphDestroy(A_graph);
-   HYPRE_SStructMatrixDestroy(A);
-   HYPRE_SStructVectorDestroy(b);
-   HYPRE_SStructVectorDestroy(x);
-   HYPRE_SStructGridDestroy(node_grid);
-   HYPRE_SStructGraphDestroy(G_graph);
-   HYPRE_SStructStencilDestroy(G_stencil[0]);
-   HYPRE_SStructStencilDestroy(G_stencil[1]);
-   HYPRE_SStructStencilDestroy(G_stencil[2]);
-   HYPRE_SStructMatrixDestroy(G);
-   HYPRE_SStructVectorDestroy(xcoord);
-   HYPRE_SStructVectorDestroy(ycoord);
-   HYPRE_SStructVectorDestroy(zcoord);
+   NALU_HYPRE_SStructGridDestroy(edge_grid);
+   NALU_HYPRE_SStructGraphDestroy(A_graph);
+   NALU_HYPRE_SStructMatrixDestroy(A);
+   NALU_HYPRE_SStructVectorDestroy(b);
+   NALU_HYPRE_SStructVectorDestroy(x);
+   NALU_HYPRE_SStructGridDestroy(node_grid);
+   NALU_HYPRE_SStructGraphDestroy(G_graph);
+   NALU_HYPRE_SStructStencilDestroy(G_stencil[0]);
+   NALU_HYPRE_SStructStencilDestroy(G_stencil[1]);
+   NALU_HYPRE_SStructStencilDestroy(G_stencil[2]);
+   NALU_HYPRE_SStructMatrixDestroy(G);
+   NALU_HYPRE_SStructVectorDestroy(xcoord);
+   NALU_HYPRE_SStructVectorDestroy(ycoord);
+   NALU_HYPRE_SStructVectorDestroy(zcoord);
 
    /* Finalize HYPRE */
-   HYPRE_Finalize();
+   NALU_HYPRE_Finalize();
 
    /* Finalize MPI */
    MPI_Finalize();

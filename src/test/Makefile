@@ -39,13 +39,13 @@ LAPACKLIBFLAGS = ${LAPACKLIBDIRS} ${LAPACKLIBS}
 BLASLIBFLAGS = ${BLASLIBDIRS} ${BLASLIBS}
 LIBFLAGS = ${LDFLAGS} ${LIBS}
 
-# WM: currently have to add the absolute path to libHYPRE.a when building sycl code; RL: reorg
+# WM: currently have to add the absolute path to libNALU_HYPRE.a when building sycl code; RL: reorg
 ifeq ($(notdir $(firstword ${LINK_CC})), dpcpp)
-   LIBHYPRE = ${NALU_HYPRE_BUILD_DIR}/lib/libHYPRE.a
+   LIBHYPRE = ${NALU_HYPRE_BUILD_DIR}/lib/libNALU_HYPRE.a
 else ifeq ($(notdir $(firstword ${LINK_CC})), mpiicx)
-   LIBHYPRE = ${NALU_HYPRE_BUILD_DIR}/lib/libHYPRE.a
+   LIBHYPRE = ${NALU_HYPRE_BUILD_DIR}/lib/libNALU_HYPRE.a
 else ifeq ($(notdir $(firstword ${LINK_CC})), mpiicpx)
-   LIBHYPRE = ${NALU_HYPRE_BUILD_DIR}/lib/libHYPRE.a
+   LIBHYPRE = ${NALU_HYPRE_BUILD_DIR}/lib/libNALU_HYPRE.a
 else
    LIBHYPRE = -L${NALU_HYPRE_BUILD_DIR}/lib -lHYPRE
 endif

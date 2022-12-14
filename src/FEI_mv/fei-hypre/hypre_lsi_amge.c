@@ -18,7 +18,7 @@
 #include <math.h>
 
 #include "utilities/_hypre_utilities.h"
-#include "HYPRE.h"
+#include "NALU_HYPRE.h"
 #include "seq_ls/amge/AMGe_matrix_topology.h"
 #include "seq_mv/csr_matrix.h"
 

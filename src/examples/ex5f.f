@@ -37,7 +37,7 @@
       implicit none
 
       include 'mpif.h'
-      include 'HYPREf.h'
+      include 'NALU_HYPREf.h'
 
       integer    MAX_LOCAL_SIZE
       parameter  (MAX_LOCAL_SIZE=123000)

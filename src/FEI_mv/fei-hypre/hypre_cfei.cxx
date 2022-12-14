@@ -8,7 +8,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include "HYPRE.h"
+#include "NALU_HYPRE.h"
 #include "LLNL_FEI_Impl.h"
 #include "utilities/_hypre_utilities.h"
 #include "hypre_cfei.h"

@@ -19,7 +19,7 @@
 // HYPRE includes external to MLI
 // ---------------------------------------------------------------------
 
-#include "HYPRE.h"
+#include "NALU_HYPRE.h"
 #include "_hypre_utilities.h"
 #include "NALU_HYPRE_IJ_mv.h"
 #include "seq_mv.h"

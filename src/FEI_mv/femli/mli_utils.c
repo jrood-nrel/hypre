@@ -17,7 +17,7 @@
 
 #include <stdlib.h>
 #include <math.h>
-#include "HYPRE.h"
+#include "NALU_HYPRE.h"
 #include "mli_utils.h"
 #include "NALU_HYPRE_IJ_mv.h"
 #include "../fei-hypre/NALU_HYPRE_parcsr_fgmres.h"

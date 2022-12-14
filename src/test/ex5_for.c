@@ -28,7 +28,7 @@
 #include <math.h>
 #include "_hypre_utilities.h"
 #include "NALU_HYPRE_krylov.h"
-#include "HYPRE.h"
+#include "NALU_HYPRE.h"
 #include "NALU_HYPRE_parcsr_ls.h"
 
 #ifdef NALU_HYPRE_FORTRAN

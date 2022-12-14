@@ -12,7 +12,7 @@
  *****************************************************************************/
 
 #include "utilities/_hypre_utilities.h"
-#include "HYPRE.h"
+#include "NALU_HYPRE.h"
 #include "IJ_mv/NALU_HYPRE_IJ_mv.h"
 #include "parcsr_mv/NALU_HYPRE_parcsr_mv.h"
 #include "parcsr_mv/_hypre_parcsr_mv.h"
@@ -563,7 +563,7 @@ int hypre_BiCGSTABLGetFinalRelativeResidualNorm( void   *bicgstab_vdata,
  *****************************************************************************/
 
 #include "utilities/_hypre_utilities.h"
-#include "HYPRE.h"
+#include "NALU_HYPRE.h"
 #include "IJ_mv/NALU_HYPRE_IJ_mv.h"
 #include "parcsr_mv/NALU_HYPRE_parcsr_mv.h"
 #include "parcsr_mv/parcsr_mv.h"

@@ -23,7 +23,7 @@
 // local includes
 //---------------------------------------------------------------------------
 
-#include "HYPRE.h"
+#include "NALU_HYPRE.h"
 #include "NALU_HYPRE_SlideReduction.h"
 #include "NALU_HYPRE_LSI_mli.h"
 #include "parcsr_mv/_hypre_parcsr_mv.h"

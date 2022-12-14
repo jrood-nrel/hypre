@@ -7,7 +7,7 @@
 
 #include <string.h>
 #include "_hypre_utilities.h"
-#include "HYPRE.h"
+#include "NALU_HYPRE.h"
 #include "mli_mapper.h"
 #include "mli_utils.h"
 

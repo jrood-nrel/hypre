@@ -16,7 +16,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "mli_solver_seqsuperlu.h"
-#include "HYPRE.h"
+#include "NALU_HYPRE.h"
 #include "_hypre_parcsr_mv.h"
 #include "_hypre_IJ_mv.h"
 

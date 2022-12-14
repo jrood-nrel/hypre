@@ -13,7 +13,7 @@
 
 #include "_hypre_parcsr_block_mv.h"
 
-#include "HYPRE.h"
+#include "NALU_HYPRE.h"
 #include "parcsr_mv/_hypre_parcsr_mv.h"
 #include "seq_mv/seq_mv.h"
 

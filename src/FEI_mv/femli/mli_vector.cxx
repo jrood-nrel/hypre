@@ -10,7 +10,7 @@
 #include <stdlib.h>
 #include <math.h>
 
-#include "HYPRE.h"
+#include "NALU_HYPRE.h"
 #include "mli_vector.h"
 #include "NALU_HYPRE_IJ_mv.h"
 #include "_hypre_parcsr_mv.h"

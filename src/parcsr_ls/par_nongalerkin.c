@@ -6,7 +6,7 @@
  ******************************************************************************/
 
 #include "_hypre_parcsr_ls.h"
-#include "../HYPRE.h"
+#include "../NALU_HYPRE.h"
 #include "_hypre_IJ_mv.h"
 
 /* This file contains the routines for constructing non-Galerkin coarse grid

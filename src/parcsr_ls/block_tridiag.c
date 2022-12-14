@@ -11,7 +11,7 @@
  *
  *****************************************************************************/
 
-#include "HYPRE.h"
+#include "NALU_HYPRE.h"
 #include "utilities/_hypre_utilities.h"
 #include "IJ_mv/_hypre_IJ_mv.h"
 #include "parcsr_mv/_hypre_parcsr_mv.h"

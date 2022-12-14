@@ -18,7 +18,7 @@
 /* #define MLI_USE_NALU_HYPRE_MATMATMULT */
 
 #include <string.h>
-#include "HYPRE.h"
+#include "NALU_HYPRE.h"
 #include "_hypre_parcsr_ls.h"
 #include "mli_utils.h"
 #include "mli_matrix.h"

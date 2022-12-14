@@ -7,7 +7,7 @@
 #include <NALU_HYPRE_config.h>
 #include "_hypre_parcsr_mv.h"
 #include "NALU_HYPRE_IJ_mv.h"
-#include "HYPRE.h"
+#include "NALU_HYPRE.h"
 
 #ifdef __cplusplus
 extern "C" {

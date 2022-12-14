@@ -19,7 +19,7 @@
 
 #include "general.h"
 
-#include "HYPRE.h"
+#include "NALU_HYPRE.h"
 #include "NALU_HYPRE_utilities.h"
 
 /* Prototypes for DistributedMatrix */

@@ -16,7 +16,7 @@
 #include <math.h>
 
 #include "utilities/_hypre_utilities.h"
-#include "HYPRE.h"
+#include "NALU_HYPRE.h"
 #include "parcsr_mv/_hypre_parcsr_mv.h"
 #include "parcsr_ls/NALU_HYPRE_parcsr_ls.h"
 

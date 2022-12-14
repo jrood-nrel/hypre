@@ -17,7 +17,7 @@
 
 #include "NALU_HYPRE_krylov.h"
 #include "_hypre_utilities.h"
-#include "HYPRE.h"
+#include "NALU_HYPRE.h"
 #include "NALU_HYPRE_parcsr_ls.h"
 #include "NALU_HYPRE_struct_ls.h"
 #include "NALU_HYPRE_sstruct_ls.h"

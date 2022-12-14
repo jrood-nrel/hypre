@@ -20,7 +20,7 @@
 
 /* these includes required for hypre_ParaSailsIJMatrix */
 #include "../../IJ_mv/NALU_HYPRE_IJ_mv.h"
-#include "../../HYPRE.h"
+#include "../../NALU_HYPRE.h"
 #include "../../utilities/_hypre_utilities.h"
 
 typedef struct

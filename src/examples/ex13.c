@@ -83,7 +83,7 @@
 #include <math.h>
 #include "NALU_HYPRE_sstruct_mv.h"
 #include "NALU_HYPRE_sstruct_ls.h"
-#include "HYPRE.h"
+#include "NALU_HYPRE.h"
 #include "ex.h"
 
 #ifndef M_PI

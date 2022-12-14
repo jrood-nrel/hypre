@@ -20,7 +20,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-#include "HYPRE.h"
+#include "NALU_HYPRE.h"
 #include "IJ_mv/NALU_HYPRE_IJ_mv.h"
 
 // *************************************************************************

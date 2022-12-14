@@ -67,7 +67,7 @@ AC_COPYRIGHT([Copyright (c) 1998 Lawrence Livermore National Security, LLC and o
 HYPRE Project Developers. See the top-level COPYRIGHT file for details.])
 
 AC_CONFIG_AUX_DIR(config)
-AC_CONFIG_SRCDIR([HYPRE.h])
+AC_CONFIG_SRCDIR([NALU_HYPRE.h])
 dnl m4_pattern_allow([AC_NALU_HYPRE_[A-Z_]+])
 
 dnl * Change default prefix from /usr/local to ./hypre

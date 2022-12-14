@@ -14,7 +14,7 @@
 #include "_hypre_IJ_mv.h"
 #include "_hypre_parcsr_mv.h"
 
-#include "../HYPRE.h"
+#include "../NALU_HYPRE.h"
 
 /******************************************************************************
  *
@@ -2932,7 +2932,7 @@ hypre_IJMatrixAssembleParCSR(hypre_IJMatrix *matrix)
 
 #include "_hypre_IJ_mv.h"
 
-#include "../HYPRE.h"
+#include "../NALU_HYPRE.h"
 
 
 /******************************************************************************

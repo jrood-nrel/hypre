@@ -13,7 +13,7 @@
 
 
 #include "_hypre_parcsr_ls.h"
-#include "../HYPRE.h" /* BM Aug 15, 2006 */
+#include "../NALU_HYPRE.h" /* BM Aug 15, 2006 */
 #include "_hypre_IJ_mv.h"
 
 #define C_PT 1

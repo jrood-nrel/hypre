@@ -18,7 +18,7 @@
 #include <NALU_HYPRE_config.h>
 
 #include "_hypre_utilities.h"
-#include "HYPRE.h"
+#include "NALU_HYPRE.h"
 
 /* Prototypes for DistributedMatrix */
 #include "NALU_HYPRE_distributed_matrix_types.h"

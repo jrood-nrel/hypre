@@ -16,7 +16,7 @@
 #endif
 */
 
-#include "HYPRE.h"
+#include "NALU_HYPRE.h"
 
 #include "NALU_HYPRE_DistributedMatrixPilutSolver_types.h"
 

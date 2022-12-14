@@ -28,7 +28,7 @@
 #include <string.h>
 #include <math.h>
 #include "NALU_HYPRE_krylov.h"
-#include "HYPRE.h"
+#include "NALU_HYPRE.h"
 #include "NALU_HYPRE_parcsr_ls.h"
 #include "ex.h"
 

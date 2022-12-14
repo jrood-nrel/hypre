@@ -25,7 +25,7 @@
 // HYPRE includes
 //---------------------------------------------------------------------------
 
-#include "HYPRE.h"
+#include "NALU_HYPRE.h"
 #include "IJ_mv/NALU_HYPRE_IJ_mv.h"
 #include "parcsr_mv/NALU_HYPRE_parcsr_mv.h"
 #include "parcsr_ls/NALU_HYPRE_parcsr_ls.h"

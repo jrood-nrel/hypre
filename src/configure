@@ -586,7 +586,7 @@ PACKAGE_STRING='hypre 2.26.0'
 PACKAGE_BUGREPORT=''
 PACKAGE_URL=''
 
-ac_unique_file="HYPRE.h"
+ac_unique_file="NALU_HYPRE.h"
 ac_default_prefix=`pwd`/hypre
 # Factoring default headers for most tests.
 ac_includes_default="\

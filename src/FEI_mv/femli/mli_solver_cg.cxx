@@ -7,7 +7,7 @@
 
 #include <stdio.h>
 #include <string.h>
-#include "HYPRE.h"
+#include "NALU_HYPRE.h"
 #include "mli_solver_cg.h"
 #include "mli_solver_jacobi.h"
 #include "mli_solver_bjacobi.h"

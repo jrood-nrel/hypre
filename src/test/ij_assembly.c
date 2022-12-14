@@ -11,7 +11,7 @@
  * It tests the assembly phase of an IJ matrix in both CPU and GPU.
  *--------------------------------------------------------------------------*/
 
-#include "HYPRE.h"
+#include "NALU_HYPRE.h"
 #include "NALU_HYPRE_utilities.h"
 #include "_hypre_IJ_mv.h"
 #include "_hypre_parcsr_mv.h"

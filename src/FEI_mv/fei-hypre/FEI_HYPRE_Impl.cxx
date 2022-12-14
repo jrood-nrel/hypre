@@ -21,7 +21,7 @@
 
 #include "FEI_NALU_HYPRE_include.h"
 #include "_hypre_utilities.h"
-#include "HYPRE.h"
+#include "NALU_HYPRE.h"
 
 /*-------------------------------------------------------------------------
  local defines and external functions

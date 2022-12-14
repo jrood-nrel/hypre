@@ -9,7 +9,7 @@
 #define NALU_HYPRE_SSTRUCT_MV_HEADER
 
 #include "NALU_HYPRE_utilities.h"
-#include "HYPRE.h"
+#include "NALU_HYPRE.h"
 #include "NALU_HYPRE_struct_mv.h"
 #include "NALU_HYPRE_IJ_mv.h"
 

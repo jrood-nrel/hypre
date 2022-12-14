@@ -12,7 +12,7 @@
 #endif
 
 #include <string.h>
-#include "HYPRE.h"
+#include "NALU_HYPRE.h"
 #include "NALU_HYPRE_IJ_mv.h"
 #include "mli_utils.h"
 #include "mli_matrix.h"

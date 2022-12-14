@@ -14,7 +14,7 @@
 #ifndef hypre_FE_MV_HEADER
 #define hypre_FE_MV_HEADER
 
-#include "HYPRE.h"
+#include "NALU_HYPRE.h"
 
 #ifdef __cplusplus
 extern "C" {

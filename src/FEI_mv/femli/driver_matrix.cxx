@@ -10,7 +10,7 @@
  *****************************************************************************/
 
 #include <stdio.h>
-#include "HYPRE.h"
+#include "NALU_HYPRE.h"
 #include "_hypre_utilities.h"
 #include "mli_matrix.h"
 #include "mli_matrix_misc.h"

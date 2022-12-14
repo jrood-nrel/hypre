@@ -11,7 +11,7 @@
 
 #include "NALU_HYPRE_FEI_includes.h"
 
-#include "HYPRE.h"
+#include "NALU_HYPRE.h"
 #include "utilities/_hypre_utilities.h"
 #include "parcsr_mv/_hypre_parcsr_mv.h"
 

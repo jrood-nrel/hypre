@@ -225,7 +225,7 @@ NALU_HYPRE_Int NALU_HYPRE_SetGPUMemoryPoolSize(NALU_HYPRE_Int bin_growth, NALU_H
                                      size_t max_cached_bytes);
 
 /*--------------------------------------------------------------------------
- * HYPRE handle
+ * NALU_HYPRE.handle
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int NALU_HYPRE_SetSpTransUseVendor( NALU_HYPRE_Int use_vendor );

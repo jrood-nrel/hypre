@@ -12,7 +12,7 @@
  *****************************************************************************/
 
 #include "distributed_matrix.h"
-#include "HYPRE.h"
+#include "NALU_HYPRE.h"
 
 /*--------------------------------------------------------------------------
  *     BASIC CONSTRUCTION/DESTRUCTION SEQUENCE

@@ -14,7 +14,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "_hypre_utilities.h"
-#include "HYPRE.h"
+#include "NALU_HYPRE.h"
 #include "LLNL_FEI_LSCore.h"
 
 /**************************************************************************

@@ -13,7 +13,7 @@ set(HDRS
 )
 
 set(SRCS
-  NALU_NALU_HYPRE.handle.c
+  NALU_HYPRE.handle.c
   NALU_HYPRE_version.c
   amg_linklist.c
   binsearch.c
@@ -56,7 +56,7 @@ target_sources(${PROJECT_NAME}
 
 if (NALU_HYPRE_USING_CUDA OR NALU_HYPRE_USING_SYCL)
   set(GPU_SRCS
-    NALU_NALU_HYPRE.handle.c
+    NALU_HYPRE.handle.c
     device_utils.c
     handle.c
     int_array.c

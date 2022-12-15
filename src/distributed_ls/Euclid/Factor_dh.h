@@ -47,10 +47,10 @@ struct _factor_dh {
   bool         solveIsSetup;
   Numbering_dh numbSolve;
 
-  hypre_MPI_Request  recv_reqLo[MAX_MPI_TASKS], recv_reqHi[MAX_MPI_TASKS]; /* used for persistent comms */
-  hypre_MPI_Request  send_reqLo[MAX_MPI_TASKS], send_reqHi[MAX_MPI_TASKS]; /* used for persistent comms */
-  hypre_MPI_Request  requests[MAX_MPI_TASKS];
-  hypre_MPI_Status   status[MAX_MPI_TASKS];  
+  nalu_hypre_MPI_Request  recv_reqLo[MAX_MPI_TASKS], recv_reqHi[MAX_MPI_TASKS]; /* used for persistent comms */
+  nalu_hypre_MPI_Request  send_reqLo[MAX_MPI_TASKS], send_reqHi[MAX_MPI_TASKS]; /* used for persistent comms */
+  nalu_hypre_MPI_Request  requests[MAX_MPI_TASKS];
+  nalu_hypre_MPI_Status   status[MAX_MPI_TASKS];  
 
   bool debug;
 };

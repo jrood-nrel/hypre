@@ -5,12 +5,12 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_utilities.h"
+#include "_nalu_hypre_utilities.h"
 #include <stdarg.h>
 #include <stdio.h>
 
-#define hypre_printf_buffer_len 4096
-char hypre_printf_buffer[hypre_printf_buffer_len];
+#define nalu_hypre_printf_buffer_len 4096
+char nalu_hypre_printf_buffer[nalu_hypre_printf_buffer_len];
 
 // #ifdef NALU_HYPRE_BIGINT
 
@@ -33,13 +33,13 @@ new_format( const char *format,
 
    newformatlen = 2 * strlen(format) + 1; /* worst case is all %d's to %lld's */
 
-   if (newformatlen > hypre_printf_buffer_len)
+   if (newformatlen > nalu_hypre_printf_buffer_len)
    {
-      newformat = hypre_TAlloc(char, newformatlen, NALU_HYPRE_MEMORY_HOST);
+      newformat = nalu_hypre_TAlloc(char, newformatlen, NALU_HYPRE_MEMORY_HOST);
    }
    else
    {
-      newformat = hypre_printf_buffer;
+      newformat = nalu_hypre_printf_buffer;
    }
 
    nfp = newformat;
@@ -117,16 +117,16 @@ new_format( const char *format,
 NALU_HYPRE_Int
 free_format( char *newformat )
 {
-   if (newformat != hypre_printf_buffer)
+   if (newformat != nalu_hypre_printf_buffer)
    {
-      hypre_TFree(newformat, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(newformat, NALU_HYPRE_MEMORY_HOST);
    }
 
    return 0;
 }
 
 NALU_HYPRE_Int
-hypre_ndigits( NALU_HYPRE_BigInt number )
+nalu_hypre_ndigits( NALU_HYPRE_BigInt number )
 {
    NALU_HYPRE_Int     ndigits = 0;
 
@@ -142,7 +142,7 @@ hypre_ndigits( NALU_HYPRE_BigInt number )
 /* printf functions */
 
 NALU_HYPRE_Int
-hypre_printf( const char *format, ...)
+nalu_hypre_printf( const char *format, ...)
 {
    va_list   ap;
    char     *newformat;
@@ -160,7 +160,7 @@ hypre_printf( const char *format, ...)
 }
 
 NALU_HYPRE_Int
-hypre_fprintf( FILE *stream, const char *format, ...)
+nalu_hypre_fprintf( FILE *stream, const char *format, ...)
 {
    va_list   ap;
    char     *newformat;
@@ -176,7 +176,7 @@ hypre_fprintf( FILE *stream, const char *format, ...)
 }
 
 NALU_HYPRE_Int
-hypre_sprintf( char *s, const char *format, ...)
+nalu_hypre_sprintf( char *s, const char *format, ...)
 {
    va_list   ap;
    char     *newformat;
@@ -194,7 +194,7 @@ hypre_sprintf( char *s, const char *format, ...)
 /* scanf functions */
 
 NALU_HYPRE_Int
-hypre_scanf( const char *format, ...)
+nalu_hypre_scanf( const char *format, ...)
 {
    va_list   ap;
    char     *newformat;
@@ -210,7 +210,7 @@ hypre_scanf( const char *format, ...)
 }
 
 NALU_HYPRE_Int
-hypre_fscanf( FILE *stream, const char *format, ...)
+nalu_hypre_fscanf( FILE *stream, const char *format, ...)
 {
    va_list   ap;
    char     *newformat;
@@ -226,7 +226,7 @@ hypre_fscanf( FILE *stream, const char *format, ...)
 }
 
 NALU_HYPRE_Int
-hypre_sscanf( char *s, const char *format, ...)
+nalu_hypre_sscanf( char *s, const char *format, ...)
 {
    va_list   ap;
    char     *newformat;
@@ -242,10 +242,10 @@ hypre_sscanf( char *s, const char *format, ...)
 }
 
 NALU_HYPRE_Int
-hypre_ParPrintf(MPI_Comm comm, const char *format, ...)
+nalu_hypre_ParPrintf(MPI_Comm comm, const char *format, ...)
 {
    NALU_HYPRE_Int my_id;
-   NALU_HYPRE_Int ierr = hypre_MPI_Comm_rank(comm, &my_id);
+   NALU_HYPRE_Int ierr = nalu_hypre_MPI_Comm_rank(comm, &my_id);
 
    if (ierr)
    {
@@ -271,6 +271,6 @@ hypre_ParPrintf(MPI_Comm comm, const char *format, ...)
 // #else
 //
 // /* this is used only to eliminate compiler warnings */
-// NALU_HYPRE_Int hypre_printf_empty;
+// NALU_HYPRE_Int nalu_hypre_printf_empty;
 //
 // #endif

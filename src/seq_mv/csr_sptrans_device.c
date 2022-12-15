@@ -5,9 +5,9 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_onedpl.hpp"
+#include "_nalu_hypre_onedpl.hpp"
 #include "seq_mv.h"
-#include "_hypre_utilities.hpp"
+#include "_nalu_hypre_utilities.hpp"
 
 #if defined(NALU_HYPRE_USING_CUSPARSE)
 
@@ -18,27 +18,27 @@ hypreDevice_CSRSpTransCusparse(NALU_HYPRE_Int   m,        NALU_HYPRE_Int   n,   
                                NALU_HYPRE_Int   want_data)
 {
 #ifdef NALU_HYPRE_PROFILE
-   hypre_profile_times[NALU_HYPRE_TIMER_ID_SPTRANS] -= hypre_MPI_Wtime();
+   nalu_hypre_profile_times[NALU_HYPRE_TIMER_ID_SPTRANS] -= nalu_hypre_MPI_Wtime();
 #endif
 
-   cusparseHandle_t handle = hypre_HandleCusparseHandle(hypre_handle());
+   cusparseHandle_t handle = nalu_hypre_HandleCusparseHandle(nalu_hypre_handle());
    cusparseAction_t action = want_data ? CUSPARSE_ACTION_NUMERIC : CUSPARSE_ACTION_SYMBOLIC;
    NALU_HYPRE_Complex *csc_a;
    if (want_data)
    {
-      csc_a = hypre_TAlloc(NALU_HYPRE_Complex, nnzA,  NALU_HYPRE_MEMORY_DEVICE);
+      csc_a = nalu_hypre_TAlloc(NALU_HYPRE_Complex, nnzA,  NALU_HYPRE_MEMORY_DEVICE);
    }
    else
    {
       csc_a = NULL;
       d_aa = NULL;
    }
-   NALU_HYPRE_Int *csc_j = hypre_TAlloc(NALU_HYPRE_Int, nnzA,  NALU_HYPRE_MEMORY_DEVICE);
-   NALU_HYPRE_Int *csc_i = hypre_TAlloc(NALU_HYPRE_Int, n + 1, NALU_HYPRE_MEMORY_DEVICE);
+   NALU_HYPRE_Int *csc_j = nalu_hypre_TAlloc(NALU_HYPRE_Int, nnzA,  NALU_HYPRE_MEMORY_DEVICE);
+   NALU_HYPRE_Int *csc_i = nalu_hypre_TAlloc(NALU_HYPRE_Int, n + 1, NALU_HYPRE_MEMORY_DEVICE);
 
 #if CUSPARSE_VERSION >= CUSPARSE_NEWAPI_VERSION
    size_t bufferSize = 0;
-   const cudaDataType data_type = hypre_HYPREComplexToCudaDataType();
+   const cudaDataType data_type = nalu_hypre_HYPREComplexToCudaDataType();
 
    NALU_HYPRE_CUSPARSE_CALL( cusparseCsr2cscEx2_bufferSize(handle,
                                                       m, n, nnzA,
@@ -50,7 +50,7 @@ hypreDevice_CSRSpTransCusparse(NALU_HYPRE_Int   m,        NALU_HYPRE_Int   n,   
                                                       CUSPARSE_CSR2CSC_ALG1,
                                                       &bufferSize) );
 
-   char *dBuffer = hypre_TAlloc(char, bufferSize, NALU_HYPRE_MEMORY_DEVICE);
+   char *dBuffer = nalu_hypre_TAlloc(char, bufferSize, NALU_HYPRE_MEMORY_DEVICE);
 
    NALU_HYPRE_CUSPARSE_CALL( cusparseCsr2cscEx2(handle,
                                            m, n, nnzA,
@@ -62,9 +62,9 @@ hypreDevice_CSRSpTransCusparse(NALU_HYPRE_Int   m,        NALU_HYPRE_Int   n,   
                                            CUSPARSE_CSR2CSC_ALG1,
                                            dBuffer) );
 
-   hypre_TFree(dBuffer, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(dBuffer, NALU_HYPRE_MEMORY_DEVICE);
 #else
-   NALU_HYPRE_CUSPARSE_CALL( hypre_cusparse_csr2csc(handle,
+   NALU_HYPRE_CUSPARSE_CALL( nalu_hypre_cusparse_csr2csc(handle,
                                                m, n, nnzA,
                                                d_aa, d_ia, d_ja,
                                                csc_a, csc_j, csc_i,
@@ -77,10 +77,10 @@ hypreDevice_CSRSpTransCusparse(NALU_HYPRE_Int   m,        NALU_HYPRE_Int   n,   
    *d_ac_out = csc_a;
 
 #ifdef NALU_HYPRE_PROFILE
-   hypre_profile_times[NALU_HYPRE_TIMER_ID_SPTRANS] += hypre_MPI_Wtime();
+   nalu_hypre_profile_times[NALU_HYPRE_TIMER_ID_SPTRANS] += nalu_hypre_MPI_Wtime();
 #endif
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 #endif // #if defined(NALU_HYPRE_USING_CUSPARSE)
@@ -94,24 +94,24 @@ hypreDevice_CSRSpTransRocsparse(NALU_HYPRE_Int   m,        NALU_HYPRE_Int   n,  
                                 NALU_HYPRE_Int   want_data)
 {
 #ifdef NALU_HYPRE_PROFILE
-   hypre_profile_times[NALU_HYPRE_TIMER_ID_SPTRANS] -= hypre_MPI_Wtime();
+   nalu_hypre_profile_times[NALU_HYPRE_TIMER_ID_SPTRANS] -= nalu_hypre_MPI_Wtime();
 #endif
 
-   rocsparse_handle handle = hypre_HandleCusparseHandle(hypre_handle());
+   rocsparse_handle handle = nalu_hypre_HandleCusparseHandle(nalu_hypre_handle());
    rocsparse_action action = want_data ? rocsparse_action_numeric : rocsparse_action_symbolic;
 
    NALU_HYPRE_Complex *csc_a;
    if (want_data)
    {
-      csc_a = hypre_TAlloc(NALU_HYPRE_Complex, nnzA,  NALU_HYPRE_MEMORY_DEVICE);
+      csc_a = nalu_hypre_TAlloc(NALU_HYPRE_Complex, nnzA,  NALU_HYPRE_MEMORY_DEVICE);
    }
    else
    {
       csc_a = NULL;
       d_aa = NULL;
    }
-   NALU_HYPRE_Int *csc_j = hypre_TAlloc(NALU_HYPRE_Int, nnzA,  NALU_HYPRE_MEMORY_DEVICE);
-   NALU_HYPRE_Int *csc_i = hypre_TAlloc(NALU_HYPRE_Int, n + 1, NALU_HYPRE_MEMORY_DEVICE);
+   NALU_HYPRE_Int *csc_j = nalu_hypre_TAlloc(NALU_HYPRE_Int, nnzA,  NALU_HYPRE_MEMORY_DEVICE);
+   NALU_HYPRE_Int *csc_i = nalu_hypre_TAlloc(NALU_HYPRE_Int, n + 1, NALU_HYPRE_MEMORY_DEVICE);
 
    size_t buffer_size = 0;
    NALU_HYPRE_ROCSPARSE_CALL( rocsparse_csr2csc_buffer_size(handle,
@@ -121,9 +121,9 @@ hypreDevice_CSRSpTransRocsparse(NALU_HYPRE_Int   m,        NALU_HYPRE_Int   n,  
                                                        &buffer_size) );
 
    void * buffer;
-   buffer = hypre_TAlloc(char, buffer_size, NALU_HYPRE_MEMORY_DEVICE);
+   buffer = nalu_hypre_TAlloc(char, buffer_size, NALU_HYPRE_MEMORY_DEVICE);
 
-   NALU_HYPRE_ROCSPARSE_CALL( hypre_rocsparse_csr2csc(handle,
+   NALU_HYPRE_ROCSPARSE_CALL( nalu_hypre_rocsparse_csr2csc(handle,
                                                  m, n, nnzA,
                                                  d_aa, d_ia, d_ja,
                                                  csc_a, csc_j, csc_i,
@@ -131,18 +131,18 @@ hypreDevice_CSRSpTransRocsparse(NALU_HYPRE_Int   m,        NALU_HYPRE_Int   n,  
                                                  rocsparse_index_base_zero,
                                                  buffer) );
 
-   hypre_TFree(buffer, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(buffer, NALU_HYPRE_MEMORY_DEVICE);
 
    *d_ic_out = csc_i;
    *d_jc_out = csc_j;
    *d_ac_out = csc_a;
 
 #ifdef NALU_HYPRE_PROFILE
-   hypre_SyncCudaDevice(hypre_handle())
-   hypre_profile_times[NALU_HYPRE_TIMER_ID_SPTRANS] += hypre_MPI_Wtime();
+   nalu_hypre_SyncCudaDevice(nalu_hypre_handle())
+   nalu_hypre_profile_times[NALU_HYPRE_TIMER_ID_SPTRANS] += nalu_hypre_MPI_Wtime();
 #endif
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 #endif // #if defined(NALU_HYPRE_USING_ROCSPARSE)
@@ -156,33 +156,33 @@ hypreDevice_CSRSpTrans(NALU_HYPRE_Int   m,        NALU_HYPRE_Int   n,        NAL
                        NALU_HYPRE_Int   want_data)
 {
 #ifdef NALU_HYPRE_PROFILE
-   hypre_profile_times[NALU_HYPRE_TIMER_ID_SPTRANS] -= hypre_MPI_Wtime();
+   nalu_hypre_profile_times[NALU_HYPRE_TIMER_ID_SPTRANS] -= nalu_hypre_MPI_Wtime();
 #endif
 
    NALU_HYPRE_Int *d_jt, *d_it, *d_pm, *d_ic, *d_jc;
    NALU_HYPRE_Complex *d_ac = NULL;
-   NALU_HYPRE_Int *mem_work = hypre_TAlloc(NALU_HYPRE_Int, 3 * nnzA, NALU_HYPRE_MEMORY_DEVICE);
+   NALU_HYPRE_Int *mem_work = nalu_hypre_TAlloc(NALU_HYPRE_Int, 3 * nnzA, NALU_HYPRE_MEMORY_DEVICE);
 
    /* allocate C */
-   d_jc = hypre_TAlloc(NALU_HYPRE_Int, nnzA, NALU_HYPRE_MEMORY_DEVICE);
+   d_jc = nalu_hypre_TAlloc(NALU_HYPRE_Int, nnzA, NALU_HYPRE_MEMORY_DEVICE);
    if (want_data)
    {
-      d_ac = hypre_TAlloc(NALU_HYPRE_Complex, nnzA, NALU_HYPRE_MEMORY_DEVICE);
+      d_ac = nalu_hypre_TAlloc(NALU_HYPRE_Complex, nnzA, NALU_HYPRE_MEMORY_DEVICE);
    }
 
    /* permutation vector */
-   //d_pm = hypre_TAlloc(NALU_HYPRE_Int, nnzA, NALU_HYPRE_MEMORY_DEVICE);
+   //d_pm = nalu_hypre_TAlloc(NALU_HYPRE_Int, nnzA, NALU_HYPRE_MEMORY_DEVICE);
    d_pm = mem_work;
 
    /* expansion: A's row idx */
-   //d_it = hypre_TAlloc(NALU_HYPRE_Int, nnzA, NALU_HYPRE_MEMORY_DEVICE);
+   //d_it = nalu_hypre_TAlloc(NALU_HYPRE_Int, nnzA, NALU_HYPRE_MEMORY_DEVICE);
    d_it = d_pm + nnzA;
    hypreDevice_CsrRowPtrsToIndices_v2(m, nnzA, d_ia, d_it);
 
    /* a copy of col idx of A */
-   //d_jt = hypre_TAlloc(NALU_HYPRE_Int, nnzA, NALU_HYPRE_MEMORY_DEVICE);
+   //d_jt = nalu_hypre_TAlloc(NALU_HYPRE_Int, nnzA, NALU_HYPRE_MEMORY_DEVICE);
    d_jt = d_it + nnzA;
-   hypre_TMemcpy(d_jt, d_ja, NALU_HYPRE_Int, nnzA, NALU_HYPRE_MEMORY_DEVICE, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TMemcpy(d_jt, d_ja, NALU_HYPRE_Int, nnzA, NALU_HYPRE_MEMORY_DEVICE, NALU_HYPRE_MEMORY_DEVICE);
 
    /* sort: by col */
    NALU_HYPRE_THRUST_CALL(sequence, d_pm, d_pm + nnzA);
@@ -198,26 +198,26 @@ hypreDevice_CSRSpTrans(NALU_HYPRE_Int   m,        NALU_HYPRE_Int   n,        NAL
 
 #ifdef NALU_HYPRE_DEBUG
    NALU_HYPRE_Int nnzC;
-   hypre_TMemcpy(&nnzC, &d_ic[n], NALU_HYPRE_Int, 1, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_DEVICE);
-   hypre_assert(nnzC == nnzA);
+   nalu_hypre_TMemcpy(&nnzC, &d_ic[n], NALU_HYPRE_Int, 1, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_assert(nnzC == nnzA);
 #endif
 
    /*
-   hypre_TFree(d_jt, NALU_HYPRE_MEMORY_DEVICE);
-   hypre_TFree(d_it, NALU_HYPRE_MEMORY_DEVICE);
-   hypre_TFree(d_pm, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(d_jt, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(d_it, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(d_pm, NALU_HYPRE_MEMORY_DEVICE);
    */
-   hypre_TFree(mem_work, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(mem_work, NALU_HYPRE_MEMORY_DEVICE);
 
    *d_ic_out = d_ic;
    *d_jc_out = d_jc;
    *d_ac_out = d_ac;
 
 #ifdef NALU_HYPRE_PROFILE
-   hypre_profile_times[NALU_HYPRE_TIMER_ID_SPTRANS] += hypre_MPI_Wtime();
+   nalu_hypre_profile_times[NALU_HYPRE_TIMER_ID_SPTRANS] += nalu_hypre_MPI_Wtime();
 #endif
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 #endif /* NALU_HYPRE_USING_CUDA  || defined(NALU_HYPRE_USING_HIP) */
@@ -230,18 +230,18 @@ hypreDevice_CSRSpTrans(NALU_HYPRE_Int   m,        NALU_HYPRE_Int   n,        NAL
                        NALU_HYPRE_Int   want_data)
 {
 #ifdef NALU_HYPRE_PROFILE
-   hypre_profile_times[NALU_HYPRE_TIMER_ID_SPTRANS] -= hypre_MPI_Wtime();
+   nalu_hypre_profile_times[NALU_HYPRE_TIMER_ID_SPTRANS] -= nalu_hypre_MPI_Wtime();
 #endif
 
    NALU_HYPRE_Int *d_jt, *d_it, *d_pm, *d_ic, *d_jc;
    NALU_HYPRE_Complex *d_ac = NULL;
-   NALU_HYPRE_Int *mem_work = hypre_TAlloc(NALU_HYPRE_Int, 3 * nnzA, NALU_HYPRE_MEMORY_DEVICE);
+   NALU_HYPRE_Int *mem_work = nalu_hypre_TAlloc(NALU_HYPRE_Int, 3 * nnzA, NALU_HYPRE_MEMORY_DEVICE);
 
    /* allocate C */
-   d_jc = hypre_TAlloc(NALU_HYPRE_Int, nnzA, NALU_HYPRE_MEMORY_DEVICE);
+   d_jc = nalu_hypre_TAlloc(NALU_HYPRE_Int, nnzA, NALU_HYPRE_MEMORY_DEVICE);
    if (want_data)
    {
-      d_ac = hypre_TAlloc(NALU_HYPRE_Complex, nnzA, NALU_HYPRE_MEMORY_DEVICE);
+      d_ac = nalu_hypre_TAlloc(NALU_HYPRE_Complex, nnzA, NALU_HYPRE_MEMORY_DEVICE);
    }
 
    /* permutation vector */
@@ -253,7 +253,7 @@ hypreDevice_CSRSpTrans(NALU_HYPRE_Int   m,        NALU_HYPRE_Int   n,        NAL
 
    /* a copy of col idx of A */
    d_jt = d_it + nnzA;
-   hypre_TMemcpy(d_jt, d_ja, NALU_HYPRE_Int, nnzA, NALU_HYPRE_MEMORY_DEVICE, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TMemcpy(d_jt, d_ja, NALU_HYPRE_Int, nnzA, NALU_HYPRE_MEMORY_DEVICE, NALU_HYPRE_MEMORY_DEVICE);
 
    /* sort: by col */
    oneapi::dpl::counting_iterator<NALU_HYPRE_Int> count(0);
@@ -288,20 +288,20 @@ hypreDevice_CSRSpTrans(NALU_HYPRE_Int   m,        NALU_HYPRE_Int   n,        NAL
 
 #ifdef NALU_HYPRE_DEBUG
    NALU_HYPRE_Int nnzC;
-   hypre_TMemcpy(&nnzC, &d_ic[n], NALU_HYPRE_Int, 1, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_DEVICE);
-   hypre_assert(nnzC == nnzA);
+   nalu_hypre_TMemcpy(&nnzC, &d_ic[n], NALU_HYPRE_Int, 1, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_assert(nnzC == nnzA);
 #endif
 
-   hypre_TFree(mem_work, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(mem_work, NALU_HYPRE_MEMORY_DEVICE);
 
    *d_ic_out = d_ic;
    *d_jc_out = d_jc;
    *d_ac_out = d_ac;
 
 #ifdef NALU_HYPRE_PROFILE
-   hypre_profile_times[NALU_HYPRE_TIMER_ID_SPTRANS] += hypre_MPI_Wtime();
+   nalu_hypre_profile_times[NALU_HYPRE_TIMER_ID_SPTRANS] += nalu_hypre_MPI_Wtime();
 #endif
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 #endif // #if defined(NALU_HYPRE_USING_SYCL)

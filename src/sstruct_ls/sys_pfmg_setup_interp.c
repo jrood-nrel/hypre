@@ -5,42 +5,42 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_sstruct_ls.h"
+#include "_nalu_hypre_sstruct_ls.h"
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-hypre_SStructPMatrix *
-hypre_SysPFMGCreateInterpOp( hypre_SStructPMatrix *A,
-                             hypre_SStructPGrid   *cgrid,
+nalu_hypre_SStructPMatrix *
+nalu_hypre_SysPFMGCreateInterpOp( nalu_hypre_SStructPMatrix *A,
+                             nalu_hypre_SStructPGrid   *cgrid,
                              NALU_HYPRE_Int             cdir  )
 {
-   hypre_SStructPMatrix  *P;
+   nalu_hypre_SStructPMatrix  *P;
 
-   hypre_Index           *stencil_shape;
+   nalu_hypre_Index           *stencil_shape;
    NALU_HYPRE_Int              stencil_size;
 
    NALU_HYPRE_Int              ndim;
 
    NALU_HYPRE_Int              nvars;
-   hypre_SStructStencil **P_stencils;
+   nalu_hypre_SStructStencil **P_stencils;
 
    NALU_HYPRE_Int              i, s;
 
    /* set up stencil_shape */
    stencil_size = 2;
-   stencil_shape = hypre_CTAlloc(hypre_Index,  stencil_size, NALU_HYPRE_MEMORY_HOST);
+   stencil_shape = nalu_hypre_CTAlloc(nalu_hypre_Index,  stencil_size, NALU_HYPRE_MEMORY_HOST);
    for (i = 0; i < stencil_size; i++)
    {
-      hypre_SetIndex3(stencil_shape[i], 0, 0, 0);
+      nalu_hypre_SetIndex3(stencil_shape[i], 0, 0, 0);
    }
-   hypre_IndexD(stencil_shape[0], cdir) = -1;
-   hypre_IndexD(stencil_shape[1], cdir) =  1;
+   nalu_hypre_IndexD(stencil_shape[0], cdir) = -1;
+   nalu_hypre_IndexD(stencil_shape[1], cdir) =  1;
 
    /* set up P_stencils */
-   ndim = hypre_StructStencilNDim(hypre_SStructPMatrixSStencil(A, 0, 0));
-   nvars = hypre_SStructPMatrixNVars(A);
-   P_stencils = hypre_CTAlloc(hypre_SStructStencil *,  nvars, NALU_HYPRE_MEMORY_HOST);
+   ndim = nalu_hypre_StructStencilNDim(nalu_hypre_SStructPMatrixSStencil(A, 0, 0));
+   nvars = nalu_hypre_SStructPMatrixNVars(A);
+   P_stencils = nalu_hypre_CTAlloc(nalu_hypre_SStructStencil *,  nvars, NALU_HYPRE_MEMORY_HOST);
    for (s = 0; s < nvars; s++)
    {
       NALU_HYPRE_SStructStencilCreate(ndim, stencil_size, &P_stencils[s]);
@@ -52,10 +52,10 @@ hypre_SysPFMGCreateInterpOp( hypre_SStructPMatrix *A,
    }
 
    /* create interpolation matrix */
-   hypre_SStructPMatrixCreate(hypre_SStructPMatrixComm(A), cgrid,
+   nalu_hypre_SStructPMatrixCreate(nalu_hypre_SStructPMatrixComm(A), cgrid,
                               P_stencils, &P);
 
-   hypre_TFree(stencil_shape, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(stencil_shape, NALU_HYPRE_MEMORY_HOST);
 
    return P;
 }
@@ -64,25 +64,25 @@ hypre_SysPFMGCreateInterpOp( hypre_SStructPMatrix *A,
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_SysPFMGSetupInterpOp( hypre_SStructPMatrix *A,
+nalu_hypre_SysPFMGSetupInterpOp( nalu_hypre_SStructPMatrix *A,
                             NALU_HYPRE_Int             cdir,
-                            hypre_Index           findex,
-                            hypre_Index           stride,
-                            hypre_SStructPMatrix *P      )
+                            nalu_hypre_Index           findex,
+                            nalu_hypre_Index           stride,
+                            nalu_hypre_SStructPMatrix *P      )
 {
    NALU_HYPRE_Int              nvars;
-   hypre_StructMatrix    *A_s;
-   hypre_StructMatrix    *P_s;
+   nalu_hypre_StructMatrix    *A_s;
+   nalu_hypre_StructMatrix    *P_s;
    NALU_HYPRE_Int              vi;
 
-   nvars = hypre_SStructPMatrixNVars(A);
+   nvars = nalu_hypre_SStructPMatrixNVars(A);
 
    for (vi = 0; vi < nvars; vi++)
    {
-      A_s = hypre_SStructPMatrixSMatrix(A, vi, vi);
-      P_s = hypre_SStructPMatrixSMatrix(P, vi, vi);
-      hypre_PFMGSetupInterpOp(A_s, cdir, findex, stride, P_s, 0);
+      A_s = nalu_hypre_SStructPMatrixSMatrix(A, vi, vi);
+      P_s = nalu_hypre_SStructPMatrixSMatrix(P, vi, vi);
+      nalu_hypre_PFMGSetupInterpOp(A_s, cdir, findex, stride, P_s, 0);
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }

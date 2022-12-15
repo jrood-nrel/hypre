@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_sstruct_ls.h"
+#include "_nalu_hypre_sstruct_ls.h"
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
@@ -14,20 +14,20 @@ NALU_HYPRE_Int
 NALU_HYPRE_SStructPCGCreate( MPI_Comm             comm,
                         NALU_HYPRE_SStructSolver *solver )
 {
-   hypre_PCGFunctions * pcg_functions =
-      hypre_PCGFunctionsCreate(
-         hypre_SStructKrylovCAlloc, hypre_SStructKrylovFree, hypre_SStructKrylovCommInfo,
-         hypre_SStructKrylovCreateVector,
-         hypre_SStructKrylovDestroyVector, hypre_SStructKrylovMatvecCreate,
-         hypre_SStructKrylovMatvec, hypre_SStructKrylovMatvecDestroy,
-         hypre_SStructKrylovInnerProd, hypre_SStructKrylovCopyVector,
-         hypre_SStructKrylovClearVector,
-         hypre_SStructKrylovScaleVector, hypre_SStructKrylovAxpy,
-         hypre_SStructKrylovIdentitySetup, hypre_SStructKrylovIdentity );
+   nalu_hypre_PCGFunctions * pcg_functions =
+      nalu_hypre_PCGFunctionsCreate(
+         nalu_hypre_SStructKrylovCAlloc, nalu_hypre_SStructKrylovFree, nalu_hypre_SStructKrylovCommInfo,
+         nalu_hypre_SStructKrylovCreateVector,
+         nalu_hypre_SStructKrylovDestroyVector, nalu_hypre_SStructKrylovMatvecCreate,
+         nalu_hypre_SStructKrylovMatvec, nalu_hypre_SStructKrylovMatvecDestroy,
+         nalu_hypre_SStructKrylovInnerProd, nalu_hypre_SStructKrylovCopyVector,
+         nalu_hypre_SStructKrylovClearVector,
+         nalu_hypre_SStructKrylovScaleVector, nalu_hypre_SStructKrylovAxpy,
+         nalu_hypre_SStructKrylovIdentitySetup, nalu_hypre_SStructKrylovIdentity );
 
-   *solver = ( (NALU_HYPRE_SStructSolver) hypre_PCGCreate( pcg_functions ) );
+   *solver = ( (NALU_HYPRE_SStructSolver) nalu_hypre_PCGCreate( pcg_functions ) );
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
@@ -36,7 +36,7 @@ NALU_HYPRE_SStructPCGCreate( MPI_Comm             comm,
 NALU_HYPRE_Int
 NALU_HYPRE_SStructPCGDestroy( NALU_HYPRE_SStructSolver solver )
 {
-   return ( hypre_PCGDestroy( (void *) solver ) );
+   return ( nalu_hypre_PCGDestroy( (void *) solver ) );
 }
 
 /*--------------------------------------------------------------------------
@@ -209,29 +209,29 @@ NALU_HYPRE_SStructDiagScale( NALU_HYPRE_SStructSolver solver,
                         NALU_HYPRE_SStructVector y,
                         NALU_HYPRE_SStructVector x      )
 {
-   NALU_HYPRE_Int                nparts = hypre_SStructMatrixNParts(A);
+   NALU_HYPRE_Int                nparts = nalu_hypre_SStructMatrixNParts(A);
 
-   hypre_SStructPMatrix    *pA;
-   hypre_SStructPVector    *px;
-   hypre_SStructPVector    *py;
-   hypre_StructMatrix      *sA;
-   hypre_StructVector      *sx;
-   hypre_StructVector      *sy;
+   nalu_hypre_SStructPMatrix    *pA;
+   nalu_hypre_SStructPVector    *px;
+   nalu_hypre_SStructPVector    *py;
+   nalu_hypre_StructMatrix      *sA;
+   nalu_hypre_StructVector      *sx;
+   nalu_hypre_StructVector      *sy;
 
    NALU_HYPRE_Int part, vi;
    NALU_HYPRE_Int nvars;
 
    for (part = 0; part < nparts; part++)
    {
-      pA = hypre_SStructMatrixPMatrix(A, part);
-      px = hypre_SStructVectorPVector(x, part);
-      py = hypre_SStructVectorPVector(y, part);
-      nvars = hypre_SStructPMatrixNVars(pA);
+      pA = nalu_hypre_SStructMatrixPMatrix(A, part);
+      px = nalu_hypre_SStructVectorPVector(x, part);
+      py = nalu_hypre_SStructVectorPVector(y, part);
+      nvars = nalu_hypre_SStructPMatrixNVars(pA);
       for (vi = 0; vi < nvars; vi++)
       {
-         sA = hypre_SStructPMatrixSMatrix(pA, vi, vi);
-         sx = hypre_SStructPVectorSVector(px, vi);
-         sy = hypre_SStructPVectorSVector(py, vi);
+         sA = nalu_hypre_SStructPMatrixSMatrix(pA, vi, vi);
+         sx = nalu_hypre_SStructPVectorSVector(px, vi);
+         sy = nalu_hypre_SStructPVectorSVector(py, vi);
 
          NALU_HYPRE_StructDiagScale( (NALU_HYPRE_StructSolver) solver,
                                 (NALU_HYPRE_StructMatrix) sA,
@@ -240,7 +240,7 @@ NALU_HYPRE_SStructDiagScale( NALU_HYPRE_SStructSolver solver,
       }
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 

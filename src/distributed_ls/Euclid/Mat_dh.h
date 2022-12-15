@@ -53,15 +53,15 @@ struct _mat_dh {
   /* used for MatVecs */
   NALU_HYPRE_Int          num_recv; 
   NALU_HYPRE_Int          num_send;   /* used in destructor */
-  hypre_MPI_Request  *recv_req;
-  hypre_MPI_Request  *send_req; 
+  nalu_hypre_MPI_Request  *recv_req;
+  nalu_hypre_MPI_Request  *send_req; 
   NALU_HYPRE_Real   *recvbuf, *sendbuf;  
   NALU_HYPRE_Int          *sendind;
   NALU_HYPRE_Int          sendlen;               
   NALU_HYPRE_Int          recvlen;               
   bool         matvecIsSetup;
   Numbering_dh numb;
-  hypre_MPI_Status   *status;  
+  nalu_hypre_MPI_Status   *status;  
 
   bool debug;
 };

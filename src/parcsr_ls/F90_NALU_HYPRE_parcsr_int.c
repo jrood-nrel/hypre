@@ -11,77 +11,77 @@
  *
  *****************************************************************************/
 
-#include "_hypre_parcsr_ls.h"
+#include "_nalu_hypre_parcsr_ls.h"
 #include "fortran.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-NALU_HYPRE_Int hypre_ParVectorSize( void *x );
-NALU_HYPRE_Int aux_maskCount( NALU_HYPRE_Int n, hypre_F90_Int *mask );
-void aux_indexFromMask( NALU_HYPRE_Int n, hypre_F90_Int *mask, hypre_F90_Int *index );
+NALU_HYPRE_Int nalu_hypre_ParVectorSize( void *x );
+NALU_HYPRE_Int aux_maskCount( NALU_HYPRE_Int n, nalu_hypre_F90_Int *mask );
+void aux_indexFromMask( NALU_HYPRE_Int n, nalu_hypre_F90_Int *mask, nalu_hypre_F90_Int *index );
 
 /*--------------------------------------------------------------------------
- * hypre_ParSetRandomValues
+ * nalu_hypre_ParSetRandomValues
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_parsetrandomvalues, NALU_HYPRE_PARSETRANDOMVALUES)
-(hypre_F90_Obj *v,
- hypre_F90_Int *seed,
- hypre_F90_Int *ierr)
+nalu_hypre_F90_IFACE(nalu_hypre_parsetrandomvalues, NALU_HYPRE_PARSETRANDOMVALUES)
+(nalu_hypre_F90_Obj *v,
+ nalu_hypre_F90_Int *seed,
+ nalu_hypre_F90_Int *ierr)
 {
-   *ierr = (hypre_F90_Int)
+   *ierr = (nalu_hypre_F90_Int)
            ( NALU_HYPRE_ParVectorSetRandomValues(
-                hypre_F90_PassObj (NALU_HYPRE_ParVector, v),
-                hypre_F90_PassInt (seed)));
+                nalu_hypre_F90_PassObj (NALU_HYPRE_ParVector, v),
+                nalu_hypre_F90_PassInt (seed)));
 }
 
 /*--------------------------------------------------------------------------
- * hypre_ParPrintVector
+ * nalu_hypre_ParPrintVector
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_parprintvector, NALU_HYPRE_PARPRINTVECTOR)
-(hypre_F90_Obj *v,
+nalu_hypre_F90_IFACE(nalu_hypre_parprintvector, NALU_HYPRE_PARPRINTVECTOR)
+(nalu_hypre_F90_Obj *v,
  char *file,
- hypre_F90_Int *ierr)
+ nalu_hypre_F90_Int *ierr)
 {
-   *ierr = (hypre_F90_Int)
-           ( hypre_ParVectorPrint(
-                (hypre_ParVector *) v,
+   *ierr = (nalu_hypre_F90_Int)
+           ( nalu_hypre_ParVectorPrint(
+                (nalu_hypre_ParVector *) v,
                 (char *)            file));
 }
 
 /*--------------------------------------------------------------------------
- * hypre_ParReadVector
+ * nalu_hypre_ParReadVector
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_parreadvector, NALU_HYPRE_PARREADVECTOR)
-(hypre_F90_Comm *comm,
+nalu_hypre_F90_IFACE(nalu_hypre_parreadvector, NALU_HYPRE_PARREADVECTOR)
+(nalu_hypre_F90_Comm *comm,
  char *file,
- hypre_F90_Int *ierr)
+ nalu_hypre_F90_Int *ierr)
 {
    *ierr = 0;
 
-   hypre_ParReadVector(
-      hypre_F90_PassComm (comm),
+   nalu_hypre_ParReadVector(
+      nalu_hypre_F90_PassComm (comm),
       (char *) file );
 }
 
 /*--------------------------------------------------------------------------
- * hypre_ParVectorSize
+ * nalu_hypre_ParVectorSize
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_parvectorsize, NALU_HYPRE_PARVECTORSIZE)
-(hypre_F90_Obj *x,
- hypre_F90_Int *ierr)
+nalu_hypre_F90_IFACE(nalu_hypre_parvectorsize, NALU_HYPRE_PARVECTORSIZE)
+(nalu_hypre_F90_Obj *x,
+ nalu_hypre_F90_Int *ierr)
 {
-   *ierr = (hypre_F90_Int)
-           ( hypre_ParVectorSize(
+   *ierr = (nalu_hypre_F90_Int)
+           ( nalu_hypre_ParVectorSize(
                 (void *) x) );
 }
 
@@ -90,12 +90,12 @@ hypre_F90_IFACE(hypre_parvectorsize, NALU_HYPRE_PARVECTORSIZE)
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_parcsrmultivectorprint, NALU_HYPRE_PARCSRMULTIVECTORPRINT)
-(hypre_F90_Obj *x,
+nalu_hypre_F90_IFACE(nalu_hypre_parcsrmultivectorprint, NALU_HYPRE_PARCSRMULTIVECTORPRINT)
+(nalu_hypre_F90_Obj *x,
  char *file,
- hypre_F90_Int *ierr)
+ nalu_hypre_F90_Int *ierr)
 {
-   *ierr = (hypre_F90_Int)
+   *ierr = (nalu_hypre_F90_Int)
            ( NALU_HYPRE_ParCSRMultiVectorPrint(
                 (void *)       x,
                 (char *) file));
@@ -106,16 +106,16 @@ hypre_F90_IFACE(hypre_parcsrmultivectorprint, NALU_HYPRE_PARCSRMULTIVECTORPRINT)
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_parcsrmultivectorread, NALU_HYPRE_PARCSRMULTIVECTORREAD)
-(hypre_F90_Comm *comm,
- hypre_F90_Obj *ii,
+nalu_hypre_F90_IFACE(nalu_hypre_parcsrmultivectorread, NALU_HYPRE_PARCSRMULTIVECTORREAD)
+(nalu_hypre_F90_Comm *comm,
+ nalu_hypre_F90_Obj *ii,
  char *file,
- hypre_F90_Int *ierr)
+ nalu_hypre_F90_Int *ierr)
 {
    *ierr = 0;
 
    NALU_HYPRE_ParCSRMultiVectorRead(
-      hypre_F90_PassComm (comm),
+      nalu_hypre_F90_PassComm (comm),
       (void *)       ii,
       (char *) file );
 }
@@ -125,11 +125,11 @@ hypre_F90_IFACE(hypre_parcsrmultivectorread, NALU_HYPRE_PARCSRMULTIVECTORREAD)
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_tempparcsrsetupinterprete, NALU_HYPRE_TEMPPARCSRSETUPINTERPRETE)
-(hypre_F90_Obj *i,
- hypre_F90_Int *ierr)
+nalu_hypre_F90_IFACE(nalu_hypre_tempparcsrsetupinterprete, NALU_HYPRE_TEMPPARCSRSETUPINTERPRETE)
+(nalu_hypre_F90_Obj *i,
+ nalu_hypre_F90_Int *ierr)
 {
-   *ierr = (hypre_F90_Int)
+   *ierr = (nalu_hypre_F90_Int)
            ( NALU_HYPRE_TempParCSRSetupInterpreter(
                 (mv_InterfaceInterpreter *) i ));
 }
@@ -139,11 +139,11 @@ hypre_F90_IFACE(hypre_tempparcsrsetupinterprete, NALU_HYPRE_TEMPPARCSRSETUPINTER
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_parcsrsetupinterpreter, NALU_HYPRE_PARCSRSETUPINTERPRETER)
-(hypre_F90_Obj *i,
- hypre_F90_Int *ierr)
+nalu_hypre_F90_IFACE(nalu_hypre_parcsrsetupinterpreter, NALU_HYPRE_PARCSRSETUPINTERPRETER)
+(nalu_hypre_F90_Obj *i,
+ nalu_hypre_F90_Int *ierr)
 {
-   *ierr = (hypre_F90_Int)
+   *ierr = (nalu_hypre_F90_Int)
            ( NALU_HYPRE_ParCSRSetupInterpreter(
                 (mv_InterfaceInterpreter *) i ));
 }
@@ -153,13 +153,13 @@ hypre_F90_IFACE(hypre_parcsrsetupinterpreter, NALU_HYPRE_PARCSRSETUPINTERPRETER)
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_parcsrsetupmatvec, NALU_HYPRE_PARCSRSETUPMATVEC)
-(hypre_F90_Obj *mv,
- hypre_F90_Int *ierr)
+nalu_hypre_F90_IFACE(nalu_hypre_parcsrsetupmatvec, NALU_HYPRE_PARCSRSETUPMATVEC)
+(nalu_hypre_F90_Obj *mv,
+ nalu_hypre_F90_Int *ierr)
 {
-   *ierr = (hypre_F90_Int)
+   *ierr = (nalu_hypre_F90_Int)
            ( NALU_HYPRE_ParCSRSetupMatvec(
-                hypre_F90_PassObjRef (NALU_HYPRE_MatvecFunctions, mv)));
+                nalu_hypre_F90_PassObjRef (NALU_HYPRE_MatvecFunctions, mv)));
 }
 #ifdef __cplusplus
 }

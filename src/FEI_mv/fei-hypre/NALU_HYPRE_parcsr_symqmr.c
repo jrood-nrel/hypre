@@ -10,11 +10,11 @@
 #include <stdio.h>
 #include <math.h>
 
-#include "utilities/_hypre_utilities.h"
+#include "utilities/_nalu_hypre_utilities.h"
 #include "NALU_HYPRE.h"
 #include "IJ_mv/NALU_HYPRE_IJ_mv.h"
 #include "parcsr_mv/NALU_HYPRE_parcsr_mv.h"
-#include "parcsr_mv/_hypre_parcsr_mv.h"
+#include "parcsr_mv/_nalu_hypre_parcsr_mv.h"
 #include "parcsr_ls/NALU_HYPRE_parcsr_ls.h"
 
 #include "NALU_HYPRE_FEI.h"
@@ -24,18 +24,18 @@
  *
  *****************************************************************************/
 
-extern void *hypre_SymQMRCreate();
-extern int  hypre_SymQMRDestroy(void *);
-extern int  hypre_SymQMRSetup(void *, void *, void *, void *);
-extern int  hypre_SymQMRSolve(void *, void *, void *, void *);
-extern int  hypre_SymQMRSetTol(void *, double);
-extern int  hypre_SymQMRSetMaxIter(void *, int);
-extern int  hypre_SymQMRSetStopCrit(void *, double);
-extern int  hypre_SymQMRSetPrecond(void *, int (*precond)(void*,void*,void*,void*),
+extern void *nalu_hypre_SymQMRCreate();
+extern int  nalu_hypre_SymQMRDestroy(void *);
+extern int  nalu_hypre_SymQMRSetup(void *, void *, void *, void *);
+extern int  nalu_hypre_SymQMRSolve(void *, void *, void *, void *);
+extern int  nalu_hypre_SymQMRSetTol(void *, double);
+extern int  nalu_hypre_SymQMRSetMaxIter(void *, int);
+extern int  nalu_hypre_SymQMRSetStopCrit(void *, double);
+extern int  nalu_hypre_SymQMRSetPrecond(void *, int (*precond)(void*,void*,void*,void*),
                                    int (*precond_setup)(void*,void*,void*,void*), void *);
-extern int  hypre_SymQMRSetLogging(void *, int );
-extern int  hypre_SymQMRGetNumIterations(void *, int *);
-extern int  hypre_SymQMRGetFinalRelativeResidualNorm(void *, double *);
+extern int  nalu_hypre_SymQMRSetLogging(void *, int );
+extern int  nalu_hypre_SymQMRGetNumIterations(void *, int *);
+extern int  nalu_hypre_SymQMRGetFinalRelativeResidualNorm(void *, double *);
 
 /*--------------------------------------------------------------------------
  * NALU_HYPRE_ParCSRSymQMRCreate
@@ -43,7 +43,7 @@ extern int  hypre_SymQMRGetFinalRelativeResidualNorm(void *, double *);
 
 int NALU_HYPRE_ParCSRSymQMRCreate( MPI_Comm comm, NALU_HYPRE_Solver *solver )
 {
-   *solver = (NALU_HYPRE_Solver) hypre_SymQMRCreate( );
+   *solver = (NALU_HYPRE_Solver) nalu_hypre_SymQMRCreate( );
 
    return 0;
 }
@@ -54,7 +54,7 @@ int NALU_HYPRE_ParCSRSymQMRCreate( MPI_Comm comm, NALU_HYPRE_Solver *solver )
 
 int NALU_HYPRE_ParCSRSymQMRDestroy( NALU_HYPRE_Solver solver )
 {
-   return( hypre_SymQMRDestroy( (void *) solver ) );
+   return( nalu_hypre_SymQMRDestroy( (void *) solver ) );
 }
 
 /*--------------------------------------------------------------------------
@@ -64,7 +64,7 @@ int NALU_HYPRE_ParCSRSymQMRDestroy( NALU_HYPRE_Solver solver )
 int NALU_HYPRE_ParCSRSymQMRSetup( NALU_HYPRE_Solver solver, NALU_HYPRE_ParCSRMatrix A,
                              NALU_HYPRE_ParVector b, NALU_HYPRE_ParVector x      )
 {
-   return( hypre_SymQMRSetup( (void *) solver, (void *) A, (void *) b,
+   return( nalu_hypre_SymQMRSetup( (void *) solver, (void *) A, (void *) b,
                               (void *) x ) );
 }
 
@@ -75,7 +75,7 @@ int NALU_HYPRE_ParCSRSymQMRSetup( NALU_HYPRE_Solver solver, NALU_HYPRE_ParCSRMat
 int NALU_HYPRE_ParCSRSymQMRSolve( NALU_HYPRE_Solver solver, NALU_HYPRE_ParCSRMatrix A,
                                 NALU_HYPRE_ParVector b, NALU_HYPRE_ParVector x      )
 {
-   return( hypre_SymQMRSolve( (void *) solver, (void *) A,
+   return( nalu_hypre_SymQMRSolve( (void *) solver, (void *) A,
                               (void *) b, (void *) x ) );
 }
 
@@ -85,7 +85,7 @@ int NALU_HYPRE_ParCSRSymQMRSolve( NALU_HYPRE_Solver solver, NALU_HYPRE_ParCSRMat
 
 int NALU_HYPRE_ParCSRSymQMRSetTol( NALU_HYPRE_Solver solver, double tol    )
 {
-   return( hypre_SymQMRSetTol( (void *) solver, tol ) );
+   return( nalu_hypre_SymQMRSetTol( (void *) solver, tol ) );
 }
 
 /*--------------------------------------------------------------------------
@@ -94,7 +94,7 @@ int NALU_HYPRE_ParCSRSymQMRSetTol( NALU_HYPRE_Solver solver, double tol    )
 
 int NALU_HYPRE_ParCSRSymQMRSetMaxIter( NALU_HYPRE_Solver solver, int max_iter )
 {
-   return( hypre_SymQMRSetMaxIter( (void *) solver, max_iter ) );
+   return( nalu_hypre_SymQMRSetMaxIter( (void *) solver, max_iter ) );
 }
 
 /*--------------------------------------------------------------------------
@@ -103,7 +103,7 @@ int NALU_HYPRE_ParCSRSymQMRSetMaxIter( NALU_HYPRE_Solver solver, int max_iter )
 
 int NALU_HYPRE_ParCSRSymQMRSetStopCrit( NALU_HYPRE_Solver solver, int stop_crit )
 {
-   return( hypre_SymQMRSetStopCrit( (void *) solver, stop_crit ) );
+   return( nalu_hypre_SymQMRSetStopCrit( (void *) solver, stop_crit ) );
 }
 
 /*--------------------------------------------------------------------------
@@ -117,7 +117,7 @@ int NALU_HYPRE_ParCSRSymQMRSetPrecond( NALU_HYPRE_Solver  solver,
 			       NALU_HYPRE_ParVector b, NALU_HYPRE_ParVector x),
           void                *precond_data )
 {
-   return( hypre_SymQMRSetPrecond( (void *) solver,
+   return( nalu_hypre_SymQMRSetPrecond( (void *) solver,
 								   (NALU_HYPRE_Int (*)(void*,void*,void*,void*))precond,
 								   (NALU_HYPRE_Int (*)(void*,void*,void*,void*))precond_setup,
 								   precond_data ) );
@@ -129,7 +129,7 @@ int NALU_HYPRE_ParCSRSymQMRSetPrecond( NALU_HYPRE_Solver  solver,
 
 int NALU_HYPRE_ParCSRSymQMRSetLogging( NALU_HYPRE_Solver solver, int logging)
 {
-   return( hypre_SymQMRSetLogging( (void *) solver, logging ) );
+   return( nalu_hypre_SymQMRSetLogging( (void *) solver, logging ) );
 }
 
 /*--------------------------------------------------------------------------
@@ -138,7 +138,7 @@ int NALU_HYPRE_ParCSRSymQMRSetLogging( NALU_HYPRE_Solver solver, int logging)
 
 int NALU_HYPRE_ParCSRSymQMRGetNumIterations(NALU_HYPRE_Solver solver,int *num_iterations)
 {
-   return( hypre_SymQMRGetNumIterations( (void *) solver, num_iterations ) );
+   return( nalu_hypre_SymQMRGetNumIterations( (void *) solver, num_iterations ) );
 }
 
 /*--------------------------------------------------------------------------
@@ -148,6 +148,6 @@ int NALU_HYPRE_ParCSRSymQMRGetNumIterations(NALU_HYPRE_Solver solver,int *num_it
 int NALU_HYPRE_ParCSRSymQMRGetFinalRelativeResidualNorm( NALU_HYPRE_Solver  solver,
                                                        double *norm   )
 {
-   return( hypre_SymQMRGetFinalRelativeResidualNorm( (void *) solver, norm ) );
+   return( nalu_hypre_SymQMRGetFinalRelativeResidualNorm( (void *) solver, norm ) );
 }
 

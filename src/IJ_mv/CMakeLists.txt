@@ -7,7 +7,7 @@ set(HDRS
   aux_parcsr_matrix.h
   aux_par_vector.h
   NALU_HYPRE_IJ_mv.h
-  _hypre_IJ_mv.h
+  _nalu_hypre_IJ_mv.h
   IJ_matrix.h
   IJ_vector.h
 )

@@ -7,12 +7,12 @@
 
 /******************************************************************************
  *
- * Matvec functions for hypre_CSRMatrix class.
+ * Matvec functions for nalu_hypre_CSRMatrix class.
  *
  *****************************************************************************/
 
 #include "seq_mv.h"
-#include "_hypre_utilities.hpp"
+#include "_nalu_hypre_utilities.hpp"
 
 #if defined(NALU_HYPRE_USING_CUDA) ||\
     defined(NALU_HYPRE_USING_HIP)  ||\
@@ -36,7 +36,7 @@
 
 template <NALU_HYPRE_Int F, NALU_HYPRE_Int K, NALU_HYPRE_Int NV, typename T>
 __global__ void
-hypreGPUKernel_CSRMatvecShuffleGT8(hypre_DeviceItem &item,
+hypreGPUKernel_CSRMatvecShuffleGT8(nalu_hypre_DeviceItem &item,
                                    NALU_HYPRE_Int         num_rows,
                                    NALU_HYPRE_Int         num_vectors,
                                    NALU_HYPRE_Int        *row_id,
@@ -151,7 +151,7 @@ hypreGPUKernel_CSRMatvecShuffleGT8(hypre_DeviceItem &item,
 template <NALU_HYPRE_Int F, NALU_HYPRE_Int K, NALU_HYPRE_Int NV, typename T>
 __global__ void
 //__launch_bounds__(512, 1)
-hypreGPUKernel_CSRMatvecShuffle(hypre_DeviceItem &item,
+hypreGPUKernel_CSRMatvecShuffle(nalu_hypre_DeviceItem &item,
                                 NALU_HYPRE_Int         num_rows,
                                 NALU_HYPRE_Int         num_vectors,
                                 NALU_HYPRE_Int        *row_id,
@@ -296,8 +296,8 @@ hypreDevice_CSRMatrixMatvec( NALU_HYPRE_Int  num_vectors,
 {
    if (num_vectors > 64)
    {
-      hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "hypre's SpMV: (num_vectors > 64) not implemented");
-      return hypre_error_flag;
+      nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "hypre's SpMV: (num_vectors > 64) not implemented");
+      return nalu_hypre_error_flag;
    }
 
    const NALU_HYPRE_Int avg_rownnz = (num_nonzeros + num_rows - 1) / num_rows;
@@ -357,11 +357,11 @@ hypreDevice_CSRMatrixMatvec( NALU_HYPRE_Int  num_vectors,
          break;
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_CSRMatrixSpMVDevice
+ * nalu_hypre_CSRMatrixSpMVDevice
  *
  * hypre's internal implementation of sparse matrix/vector multiplication
  * (SpMV) on GPUs.
@@ -381,28 +381,28 @@ hypreDevice_CSRMatrixMatvec( NALU_HYPRE_Int  num_vectors,
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_CSRMatrixSpMVDevice( NALU_HYPRE_Int        trans,
+nalu_hypre_CSRMatrixSpMVDevice( NALU_HYPRE_Int        trans,
                            NALU_HYPRE_Complex    alpha,
-                           hypre_CSRMatrix *B,
-                           hypre_Vector    *x,
+                           nalu_hypre_CSRMatrix *B,
+                           nalu_hypre_Vector    *x,
                            NALU_HYPRE_Complex    beta,
-                           hypre_Vector    *y,
+                           nalu_hypre_Vector    *y,
                            NALU_HYPRE_Int        fill )
 {
    /* Input data variables */
-   NALU_HYPRE_Int        num_rows      = trans ? hypre_CSRMatrixNumCols(B) : hypre_CSRMatrixNumRows(B);
-   NALU_HYPRE_Int        num_nonzeros  = hypre_CSRMatrixNumNonzeros(B);
-   NALU_HYPRE_Int        num_vectors_x = hypre_VectorNumVectors(x);
-   NALU_HYPRE_Int        num_vectors_y = hypre_VectorNumVectors(y);
-   NALU_HYPRE_Complex   *d_x           = hypre_VectorData(x);
-   NALU_HYPRE_Complex   *d_y           = hypre_VectorData(y);
-   NALU_HYPRE_Int        idxstride_x   = hypre_VectorIndexStride(x);
-   NALU_HYPRE_Int        vecstride_x   = hypre_VectorVectorStride(x);
-   NALU_HYPRE_Int        idxstride_y   = hypre_VectorIndexStride(y);
-   NALU_HYPRE_Int        vecstride_y   = hypre_VectorVectorStride(y);
+   NALU_HYPRE_Int        num_rows      = trans ? nalu_hypre_CSRMatrixNumCols(B) : nalu_hypre_CSRMatrixNumRows(B);
+   NALU_HYPRE_Int        num_nonzeros  = nalu_hypre_CSRMatrixNumNonzeros(B);
+   NALU_HYPRE_Int        num_vectors_x = nalu_hypre_VectorNumVectors(x);
+   NALU_HYPRE_Int        num_vectors_y = nalu_hypre_VectorNumVectors(y);
+   NALU_HYPRE_Complex   *d_x           = nalu_hypre_VectorData(x);
+   NALU_HYPRE_Complex   *d_y           = nalu_hypre_VectorData(y);
+   NALU_HYPRE_Int        idxstride_x   = nalu_hypre_VectorIndexStride(x);
+   NALU_HYPRE_Int        vecstride_x   = nalu_hypre_VectorVectorStride(x);
+   NALU_HYPRE_Int        idxstride_y   = nalu_hypre_VectorIndexStride(y);
+   NALU_HYPRE_Int        vecstride_y   = nalu_hypre_VectorVectorStride(y);
 
    /* Matrix A variables */
-   hypre_CSRMatrix *A = NULL;
+   nalu_hypre_CSRMatrix *A = NULL;
    NALU_HYPRE_Int       *d_ia;
    NALU_HYPRE_Int       *d_ja;
    NALU_HYPRE_Complex   *d_a;
@@ -411,22 +411,22 @@ hypre_CSRMatrixSpMVDevice( NALU_HYPRE_Int        trans,
    /* Sanity checks */
    if (num_vectors_x != num_vectors_y)
    {
-      hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "num_vectors_x != num_vectors_y");
-      return hypre_error_flag;
+      nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "num_vectors_x != num_vectors_y");
+      return nalu_hypre_error_flag;
    }
-   hypre_assert(num_rows > 0);
+   nalu_hypre_assert(num_rows > 0);
 
    /* Trivial case when alpha * op(B) * x = 0 */
    if (num_nonzeros <= 0 || alpha == 0.0)
    {
-      hypre_SeqVectorScale(beta, y);
-      return hypre_error_flag;
+      nalu_hypre_SeqVectorScale(beta, y);
+      return nalu_hypre_error_flag;
    }
 
    /* Select op(B) */
    if (trans)
    {
-      hypre_CSRMatrixTransposeDevice(B, &A, hypre_CSRMatrixData(B) != NULL);
+      nalu_hypre_CSRMatrixTransposeDevice(B, &A, nalu_hypre_CSRMatrixData(B) != NULL);
    }
    else
    {
@@ -434,13 +434,13 @@ hypre_CSRMatrixSpMVDevice( NALU_HYPRE_Int        trans,
    }
 
    /* Get matrix A info */
-   d_ia = hypre_CSRMatrixI(A);
-   d_ja = hypre_CSRMatrixJ(A);
-   d_a  = hypre_CSRMatrixData(A);
-   if (hypre_CSRMatrixRownnz(A))
+   d_ia = nalu_hypre_CSRMatrixI(A);
+   d_ja = nalu_hypre_CSRMatrixJ(A);
+   d_a  = nalu_hypre_CSRMatrixData(A);
+   if (nalu_hypre_CSRMatrixRownnz(A))
    {
-      num_rows   = hypre_CSRMatrixNumRownnz(A);
-      d_rownnz_A = hypre_CSRMatrixRownnz(A);
+      num_rows   = nalu_hypre_CSRMatrixNumRownnz(A);
+      d_rownnz_A = nalu_hypre_CSRMatrixRownnz(A);
    }
 
    /* Choose matrix fill mode */
@@ -542,21 +542,21 @@ hypre_CSRMatrixSpMVDevice( NALU_HYPRE_Int        trans,
          break;
 
       default:
-         hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "Fill mode for SpMV unavailable!");
-         return hypre_error_flag;
+         nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "Fill mode for SpMV unavailable!");
+         return nalu_hypre_error_flag;
    }
 
    /* Free memory */
    if (trans)
    {
-      hypre_CSRMatrixDestroy(A);
+      nalu_hypre_CSRMatrixDestroy(A);
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_CSRMatrixIntSpMVDevice
+ * nalu_hypre_CSRMatrixIntSpMVDevice
  *
  * Sparse matrix/vector multiplication with integer data on GPUs
  *
@@ -564,7 +564,7 @@ hypre_CSRMatrixSpMVDevice( NALU_HYPRE_Int        trans,
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_CSRMatrixIntSpMVDevice( NALU_HYPRE_Int  num_rows,
+nalu_hypre_CSRMatrixIntSpMVDevice( NALU_HYPRE_Int  num_rows,
                               NALU_HYPRE_Int  num_nonzeros,
                               NALU_HYPRE_Int  alpha,
                               NALU_HYPRE_Int *d_ia,
@@ -598,6 +598,6 @@ hypre_CSRMatrixIntSpMVDevice( NALU_HYPRE_Int  num_rows,
                                                                  beta,
                                                                  d_y);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 #endif /* #if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP) || defined(NALU_HYPRE_USING_SYCL) */

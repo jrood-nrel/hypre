@@ -11,7 +11,7 @@
  *
  *****************************************************************************/
 
-#include "_hypre_parcsr_ls.h"
+#include "_nalu_hypre_parcsr_ls.h"
 #include "fortran.h"
 
 #ifdef __cplusplus
@@ -23,13 +23,13 @@ extern "C" {
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_amscreate, NALU_HYPRE_AMSCREATE)
-( hypre_F90_Obj *solver,
-  hypre_F90_Int *ierr)
+nalu_hypre_F90_IFACE(nalu_hypre_amscreate, NALU_HYPRE_AMSCREATE)
+( nalu_hypre_F90_Obj *solver,
+  nalu_hypre_F90_Int *ierr)
 {
-   *ierr = (hypre_F90_Int)
+   *ierr = (nalu_hypre_F90_Int)
            ( NALU_HYPRE_AMSCreate(
-                hypre_F90_PassObjRef (NALU_HYPRE_Solver, solver) ) );
+                nalu_hypre_F90_PassObjRef (NALU_HYPRE_Solver, solver) ) );
 }
 
 /*--------------------------------------------------------------------------
@@ -37,13 +37,13 @@ hypre_F90_IFACE(hypre_amscreate, NALU_HYPRE_AMSCREATE)
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_amsdestroy, NALU_HYPRE_AMSDESTROY)
-( hypre_F90_Obj *solver,
-  hypre_F90_Int *ierr)
+nalu_hypre_F90_IFACE(nalu_hypre_amsdestroy, NALU_HYPRE_AMSDESTROY)
+( nalu_hypre_F90_Obj *solver,
+  nalu_hypre_F90_Int *ierr)
 {
-   *ierr = (hypre_F90_Int)
+   *ierr = (nalu_hypre_F90_Int)
            ( NALU_HYPRE_AMSDestroy(
-                hypre_F90_PassObj (NALU_HYPRE_Solver, solver) ) );
+                nalu_hypre_F90_PassObj (NALU_HYPRE_Solver, solver) ) );
 }
 
 /*--------------------------------------------------------------------------
@@ -51,19 +51,19 @@ hypre_F90_IFACE(hypre_amsdestroy, NALU_HYPRE_AMSDESTROY)
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_amssetup, NALU_HYPRE_AMSSETUP)
-( hypre_F90_Obj *solver,
-  hypre_F90_Obj *A,
-  hypre_F90_Obj *b,
-  hypre_F90_Obj *x,
-  hypre_F90_Int *ierr)
+nalu_hypre_F90_IFACE(nalu_hypre_amssetup, NALU_HYPRE_AMSSETUP)
+( nalu_hypre_F90_Obj *solver,
+  nalu_hypre_F90_Obj *A,
+  nalu_hypre_F90_Obj *b,
+  nalu_hypre_F90_Obj *x,
+  nalu_hypre_F90_Int *ierr)
 {
-   *ierr = (hypre_F90_Int)
+   *ierr = (nalu_hypre_F90_Int)
            ( NALU_HYPRE_AMSSetup(
-                hypre_F90_PassObj (NALU_HYPRE_Solver, solver),
-                hypre_F90_PassObj (NALU_HYPRE_ParCSRMatrix, A),
-                hypre_F90_PassObj (NALU_HYPRE_ParVector, b),
-                hypre_F90_PassObj (NALU_HYPRE_ParVector, x) ) );
+                nalu_hypre_F90_PassObj (NALU_HYPRE_Solver, solver),
+                nalu_hypre_F90_PassObj (NALU_HYPRE_ParCSRMatrix, A),
+                nalu_hypre_F90_PassObj (NALU_HYPRE_ParVector, b),
+                nalu_hypre_F90_PassObj (NALU_HYPRE_ParVector, x) ) );
 }
 
 /*--------------------------------------------------------------------------
@@ -71,19 +71,19 @@ hypre_F90_IFACE(hypre_amssetup, NALU_HYPRE_AMSSETUP)
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_amssolve, NALU_HYPRE_AMSSOLVE)
-( hypre_F90_Obj *solver,
-  hypre_F90_Obj *A,
-  hypre_F90_Obj *b,
-  hypre_F90_Obj *x,
-  hypre_F90_Int *ierr)
+nalu_hypre_F90_IFACE(nalu_hypre_amssolve, NALU_HYPRE_AMSSOLVE)
+( nalu_hypre_F90_Obj *solver,
+  nalu_hypre_F90_Obj *A,
+  nalu_hypre_F90_Obj *b,
+  nalu_hypre_F90_Obj *x,
+  nalu_hypre_F90_Int *ierr)
 {
-   *ierr = (hypre_F90_Int)
+   *ierr = (nalu_hypre_F90_Int)
            ( NALU_HYPRE_AMSSolve(
-                hypre_F90_PassObj (NALU_HYPRE_Solver, solver),
-                hypre_F90_PassObj (NALU_HYPRE_ParCSRMatrix, A),
-                hypre_F90_PassObj (NALU_HYPRE_ParVector, b),
-                hypre_F90_PassObj (NALU_HYPRE_ParVector, x) ) );
+                nalu_hypre_F90_PassObj (NALU_HYPRE_Solver, solver),
+                nalu_hypre_F90_PassObj (NALU_HYPRE_ParCSRMatrix, A),
+                nalu_hypre_F90_PassObj (NALU_HYPRE_ParVector, b),
+                nalu_hypre_F90_PassObj (NALU_HYPRE_ParVector, x) ) );
 }
 
 /*--------------------------------------------------------------------------
@@ -91,15 +91,15 @@ hypre_F90_IFACE(hypre_amssolve, NALU_HYPRE_AMSSOLVE)
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_amssetdimension, NALU_HYPRE_AMSSETDIMENSION)
-( hypre_F90_Obj *solver,
-  hypre_F90_Int *dim,
-  hypre_F90_Int *ierr)
+nalu_hypre_F90_IFACE(nalu_hypre_amssetdimension, NALU_HYPRE_AMSSETDIMENSION)
+( nalu_hypre_F90_Obj *solver,
+  nalu_hypre_F90_Int *dim,
+  nalu_hypre_F90_Int *ierr)
 {
-   *ierr = (hypre_F90_Int)
+   *ierr = (nalu_hypre_F90_Int)
            ( NALU_HYPRE_AMSSetDimension(
-                hypre_F90_PassObj (NALU_HYPRE_Solver, solver),
-                hypre_F90_PassInt (dim) ) );
+                nalu_hypre_F90_PassObj (NALU_HYPRE_Solver, solver),
+                nalu_hypre_F90_PassInt (dim) ) );
 }
 
 /*--------------------------------------------------------------------------
@@ -107,15 +107,15 @@ hypre_F90_IFACE(hypre_amssetdimension, NALU_HYPRE_AMSSETDIMENSION)
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_amssetdiscretegradient, NALU_HYPRE_AMSSETDISCRETEGRADIENT)
-( hypre_F90_Obj *solver,
-  hypre_F90_Obj *G,
-  hypre_F90_Int *ierr)
+nalu_hypre_F90_IFACE(nalu_hypre_amssetdiscretegradient, NALU_HYPRE_AMSSETDISCRETEGRADIENT)
+( nalu_hypre_F90_Obj *solver,
+  nalu_hypre_F90_Obj *G,
+  nalu_hypre_F90_Int *ierr)
 {
-   *ierr = (hypre_F90_Int)
+   *ierr = (nalu_hypre_F90_Int)
            ( NALU_HYPRE_AMSSetDiscreteGradient(
-                hypre_F90_PassObj (NALU_HYPRE_Solver, solver),
-                hypre_F90_PassObj (NALU_HYPRE_ParCSRMatrix, G) ) );
+                nalu_hypre_F90_PassObj (NALU_HYPRE_Solver, solver),
+                nalu_hypre_F90_PassObj (NALU_HYPRE_ParCSRMatrix, G) ) );
 }
 
 /*--------------------------------------------------------------------------
@@ -123,19 +123,19 @@ hypre_F90_IFACE(hypre_amssetdiscretegradient, NALU_HYPRE_AMSSETDISCRETEGRADIENT)
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_amssetcoordinatevectors, NALU_HYPRE_AMSSETCOORDINATEVECTORS)
-( hypre_F90_Obj *solver,
-  hypre_F90_Obj *x,
-  hypre_F90_Obj *y,
-  hypre_F90_Obj *z,
-  hypre_F90_Int *ierr)
+nalu_hypre_F90_IFACE(nalu_hypre_amssetcoordinatevectors, NALU_HYPRE_AMSSETCOORDINATEVECTORS)
+( nalu_hypre_F90_Obj *solver,
+  nalu_hypre_F90_Obj *x,
+  nalu_hypre_F90_Obj *y,
+  nalu_hypre_F90_Obj *z,
+  nalu_hypre_F90_Int *ierr)
 {
-   *ierr = (hypre_F90_Int)
+   *ierr = (nalu_hypre_F90_Int)
            ( NALU_HYPRE_AMSSetCoordinateVectors(
-                hypre_F90_PassObj (NALU_HYPRE_Solver, solver),
-                hypre_F90_PassObj (NALU_HYPRE_ParVector, x),
-                hypre_F90_PassObj (NALU_HYPRE_ParVector, y),
-                hypre_F90_PassObj (NALU_HYPRE_ParVector, z) ) );
+                nalu_hypre_F90_PassObj (NALU_HYPRE_Solver, solver),
+                nalu_hypre_F90_PassObj (NALU_HYPRE_ParVector, x),
+                nalu_hypre_F90_PassObj (NALU_HYPRE_ParVector, y),
+                nalu_hypre_F90_PassObj (NALU_HYPRE_ParVector, z) ) );
 }
 
 /*--------------------------------------------------------------------------
@@ -143,19 +143,19 @@ hypre_F90_IFACE(hypre_amssetcoordinatevectors, NALU_HYPRE_AMSSETCOORDINATEVECTOR
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_amssetedgeconstantvectors, NALU_HYPRE_AMSSETEDGECONSTANTVECTORS)
-( hypre_F90_Obj *solver,
-  hypre_F90_Obj *Gx,
-  hypre_F90_Obj *Gy,
-  hypre_F90_Obj *Gz,
-  hypre_F90_Int *ierr)
+nalu_hypre_F90_IFACE(nalu_hypre_amssetedgeconstantvectors, NALU_HYPRE_AMSSETEDGECONSTANTVECTORS)
+( nalu_hypre_F90_Obj *solver,
+  nalu_hypre_F90_Obj *Gx,
+  nalu_hypre_F90_Obj *Gy,
+  nalu_hypre_F90_Obj *Gz,
+  nalu_hypre_F90_Int *ierr)
 {
-   *ierr = (hypre_F90_Int)
+   *ierr = (nalu_hypre_F90_Int)
            ( NALU_HYPRE_AMSSetEdgeConstantVectors(
-                hypre_F90_PassObj (NALU_HYPRE_Solver, solver),
-                hypre_F90_PassObj (NALU_HYPRE_ParVector, Gx),
-                hypre_F90_PassObj (NALU_HYPRE_ParVector, Gy),
-                hypre_F90_PassObj (NALU_HYPRE_ParVector, Gz) ) );
+                nalu_hypre_F90_PassObj (NALU_HYPRE_Solver, solver),
+                nalu_hypre_F90_PassObj (NALU_HYPRE_ParVector, Gx),
+                nalu_hypre_F90_PassObj (NALU_HYPRE_ParVector, Gy),
+                nalu_hypre_F90_PassObj (NALU_HYPRE_ParVector, Gz) ) );
 }
 
 /*--------------------------------------------------------------------------
@@ -163,15 +163,15 @@ hypre_F90_IFACE(hypre_amssetedgeconstantvectors, NALU_HYPRE_AMSSETEDGECONSTANTVE
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_amssetalphapoissonmatrix, NALU_HYPRE_AMSSETALPHAPOISSONMATRIX)
-( hypre_F90_Obj *solver,
-  hypre_F90_Obj *A_alpha,
-  hypre_F90_Int *ierr)
+nalu_hypre_F90_IFACE(nalu_hypre_amssetalphapoissonmatrix, NALU_HYPRE_AMSSETALPHAPOISSONMATRIX)
+( nalu_hypre_F90_Obj *solver,
+  nalu_hypre_F90_Obj *A_alpha,
+  nalu_hypre_F90_Int *ierr)
 {
-   *ierr = (hypre_F90_Int)
+   *ierr = (nalu_hypre_F90_Int)
            ( NALU_HYPRE_AMSSetAlphaPoissonMatrix(
-                hypre_F90_PassObj (NALU_HYPRE_Solver, solver),
-                hypre_F90_PassObj (NALU_HYPRE_ParCSRMatrix, A_alpha) ) );
+                nalu_hypre_F90_PassObj (NALU_HYPRE_Solver, solver),
+                nalu_hypre_F90_PassObj (NALU_HYPRE_ParCSRMatrix, A_alpha) ) );
 }
 
 /*--------------------------------------------------------------------------
@@ -179,15 +179,15 @@ hypre_F90_IFACE(hypre_amssetalphapoissonmatrix, NALU_HYPRE_AMSSETALPHAPOISSONMAT
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_amssetbetapoissonmatrix, NALU_HYPRE_AMSSETBETAPOISSONMATRIX)
-( hypre_F90_Obj *solver,
-  hypre_F90_Obj *A_beta,
-  hypre_F90_Int *ierr)
+nalu_hypre_F90_IFACE(nalu_hypre_amssetbetapoissonmatrix, NALU_HYPRE_AMSSETBETAPOISSONMATRIX)
+( nalu_hypre_F90_Obj *solver,
+  nalu_hypre_F90_Obj *A_beta,
+  nalu_hypre_F90_Int *ierr)
 {
-   *ierr = (hypre_F90_Int)
+   *ierr = (nalu_hypre_F90_Int)
            ( NALU_HYPRE_AMSSetBetaPoissonMatrix(
-                hypre_F90_PassObj (NALU_HYPRE_Solver, solver),
-                hypre_F90_PassObj (NALU_HYPRE_ParCSRMatrix, A_beta) ) );
+                nalu_hypre_F90_PassObj (NALU_HYPRE_Solver, solver),
+                nalu_hypre_F90_PassObj (NALU_HYPRE_ParCSRMatrix, A_beta) ) );
 }
 
 /*--------------------------------------------------------------------------
@@ -195,15 +195,15 @@ hypre_F90_IFACE(hypre_amssetbetapoissonmatrix, NALU_HYPRE_AMSSETBETAPOISSONMATRI
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_amssetmaxiter, NALU_HYPRE_AMSSETMAXITER)
-( hypre_F90_Obj *solver,
-  hypre_F90_Int *maxiter,
-  hypre_F90_Int *ierr)
+nalu_hypre_F90_IFACE(nalu_hypre_amssetmaxiter, NALU_HYPRE_AMSSETMAXITER)
+( nalu_hypre_F90_Obj *solver,
+  nalu_hypre_F90_Int *maxiter,
+  nalu_hypre_F90_Int *ierr)
 {
-   *ierr = (hypre_F90_Int)
+   *ierr = (nalu_hypre_F90_Int)
            ( NALU_HYPRE_AMSSetMaxIter(
-                hypre_F90_PassObj (NALU_HYPRE_Solver, solver),
-                hypre_F90_PassInt (maxiter) ) );
+                nalu_hypre_F90_PassObj (NALU_HYPRE_Solver, solver),
+                nalu_hypre_F90_PassInt (maxiter) ) );
 }
 
 /*--------------------------------------------------------------------------
@@ -211,15 +211,15 @@ hypre_F90_IFACE(hypre_amssetmaxiter, NALU_HYPRE_AMSSETMAXITER)
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_amssettol, NALU_HYPRE_AMSSETTOL)
-( hypre_F90_Obj *solver,
-  hypre_F90_Real *tol,
-  hypre_F90_Int *ierr)
+nalu_hypre_F90_IFACE(nalu_hypre_amssettol, NALU_HYPRE_AMSSETTOL)
+( nalu_hypre_F90_Obj *solver,
+  nalu_hypre_F90_Real *tol,
+  nalu_hypre_F90_Int *ierr)
 {
-   *ierr = (hypre_F90_Int)
+   *ierr = (nalu_hypre_F90_Int)
            ( NALU_HYPRE_AMSSetTol(
-                hypre_F90_PassObj (NALU_HYPRE_Solver, solver),
-                hypre_F90_PassReal (tol) ) );
+                nalu_hypre_F90_PassObj (NALU_HYPRE_Solver, solver),
+                nalu_hypre_F90_PassReal (tol) ) );
 }
 
 /*--------------------------------------------------------------------------
@@ -227,15 +227,15 @@ hypre_F90_IFACE(hypre_amssettol, NALU_HYPRE_AMSSETTOL)
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_amssetcycletype, NALU_HYPRE_AMSSETCYCLETYPE)
-( hypre_F90_Obj *solver,
-  hypre_F90_Int *cycle_type,
-  hypre_F90_Int *ierr)
+nalu_hypre_F90_IFACE(nalu_hypre_amssetcycletype, NALU_HYPRE_AMSSETCYCLETYPE)
+( nalu_hypre_F90_Obj *solver,
+  nalu_hypre_F90_Int *cycle_type,
+  nalu_hypre_F90_Int *ierr)
 {
-   *ierr = (hypre_F90_Int)
+   *ierr = (nalu_hypre_F90_Int)
            ( NALU_HYPRE_AMSSetCycleType(
-                hypre_F90_PassObj (NALU_HYPRE_Solver, solver),
-                hypre_F90_PassInt (cycle_type) ) );
+                nalu_hypre_F90_PassObj (NALU_HYPRE_Solver, solver),
+                nalu_hypre_F90_PassInt (cycle_type) ) );
 }
 
 /*--------------------------------------------------------------------------
@@ -243,15 +243,15 @@ hypre_F90_IFACE(hypre_amssetcycletype, NALU_HYPRE_AMSSETCYCLETYPE)
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_amssetprintlevel, NALU_HYPRE_AMSSETPRINTLEVEL)
-( hypre_F90_Obj *solver,
-  hypre_F90_Int *print_level,
-  hypre_F90_Int *ierr)
+nalu_hypre_F90_IFACE(nalu_hypre_amssetprintlevel, NALU_HYPRE_AMSSETPRINTLEVEL)
+( nalu_hypre_F90_Obj *solver,
+  nalu_hypre_F90_Int *print_level,
+  nalu_hypre_F90_Int *ierr)
 {
-   *ierr = (hypre_F90_Int)
+   *ierr = (nalu_hypre_F90_Int)
            ( NALU_HYPRE_AMSSetPrintLevel(
-                hypre_F90_PassObj (NALU_HYPRE_Solver, solver),
-                hypre_F90_PassInt (print_level) ) );
+                nalu_hypre_F90_PassObj (NALU_HYPRE_Solver, solver),
+                nalu_hypre_F90_PassInt (print_level) ) );
 }
 
 /*--------------------------------------------------------------------------
@@ -259,21 +259,21 @@ hypre_F90_IFACE(hypre_amssetprintlevel, NALU_HYPRE_AMSSETPRINTLEVEL)
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_amssetsmoothingoptions, NALU_HYPRE_AMSSETSMOOTHINGOPTIONS)
-( hypre_F90_Obj *solver,
-  hypre_F90_Int *relax_type,
-  hypre_F90_Int *relax_times,
-  hypre_F90_Real *relax_weight,
-  hypre_F90_Real *omega,
-  hypre_F90_Int *ierr)
+nalu_hypre_F90_IFACE(nalu_hypre_amssetsmoothingoptions, NALU_HYPRE_AMSSETSMOOTHINGOPTIONS)
+( nalu_hypre_F90_Obj *solver,
+  nalu_hypre_F90_Int *relax_type,
+  nalu_hypre_F90_Int *relax_times,
+  nalu_hypre_F90_Real *relax_weight,
+  nalu_hypre_F90_Real *omega,
+  nalu_hypre_F90_Int *ierr)
 {
-   *ierr = (hypre_F90_Int)
+   *ierr = (nalu_hypre_F90_Int)
            ( NALU_HYPRE_AMSSetSmoothingOptions(
-                hypre_F90_PassObj (NALU_HYPRE_Solver, solver),
-                hypre_F90_PassInt (relax_type),
-                hypre_F90_PassInt (relax_times),
-                hypre_F90_PassReal (relax_weight),
-                hypre_F90_PassReal (omega) ) );
+                nalu_hypre_F90_PassObj (NALU_HYPRE_Solver, solver),
+                nalu_hypre_F90_PassInt (relax_type),
+                nalu_hypre_F90_PassInt (relax_times),
+                nalu_hypre_F90_PassReal (relax_weight),
+                nalu_hypre_F90_PassReal (omega) ) );
 }
 
 /*--------------------------------------------------------------------------
@@ -281,26 +281,26 @@ hypre_F90_IFACE(hypre_amssetsmoothingoptions, NALU_HYPRE_AMSSETSMOOTHINGOPTIONS)
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_amssetalphaamgoptions, NALU_HYPRE_AMSSETALPHAAMGOPTIONS)
-( hypre_F90_Obj *solver,
-  hypre_F90_Int *alpha_coarsen_type,
-  hypre_F90_Int *alpha_agg_levels,
-  hypre_F90_Int *alpha_relax_type,
-  hypre_F90_Real *alpha_strength_threshold,
-  hypre_F90_Int *alpha_interp_type,
-  hypre_F90_Int *alpha_Pmax,
-  hypre_F90_Int *ierr)
+nalu_hypre_F90_IFACE(nalu_hypre_amssetalphaamgoptions, NALU_HYPRE_AMSSETALPHAAMGOPTIONS)
+( nalu_hypre_F90_Obj *solver,
+  nalu_hypre_F90_Int *alpha_coarsen_type,
+  nalu_hypre_F90_Int *alpha_agg_levels,
+  nalu_hypre_F90_Int *alpha_relax_type,
+  nalu_hypre_F90_Real *alpha_strength_threshold,
+  nalu_hypre_F90_Int *alpha_interp_type,
+  nalu_hypre_F90_Int *alpha_Pmax,
+  nalu_hypre_F90_Int *ierr)
 
 {
-   *ierr = (hypre_F90_Int)
+   *ierr = (nalu_hypre_F90_Int)
            ( NALU_HYPRE_AMSSetAlphaAMGOptions(
-                hypre_F90_PassObj (NALU_HYPRE_Solver, solver),
-                hypre_F90_PassInt (alpha_coarsen_type),
-                hypre_F90_PassInt (alpha_agg_levels),
-                hypre_F90_PassInt (alpha_relax_type),
-                hypre_F90_PassReal (alpha_strength_threshold),
-                hypre_F90_PassInt (alpha_interp_type),
-                hypre_F90_PassInt (alpha_Pmax) ) );
+                nalu_hypre_F90_PassObj (NALU_HYPRE_Solver, solver),
+                nalu_hypre_F90_PassInt (alpha_coarsen_type),
+                nalu_hypre_F90_PassInt (alpha_agg_levels),
+                nalu_hypre_F90_PassInt (alpha_relax_type),
+                nalu_hypre_F90_PassReal (alpha_strength_threshold),
+                nalu_hypre_F90_PassInt (alpha_interp_type),
+                nalu_hypre_F90_PassInt (alpha_Pmax) ) );
 }
 
 /*--------------------------------------------------------------------------
@@ -308,26 +308,26 @@ hypre_F90_IFACE(hypre_amssetalphaamgoptions, NALU_HYPRE_AMSSETALPHAAMGOPTIONS)
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_amssetbetaamgoptions, NALU_HYPRE_AMSSETBETAAMGOPTIONS)
-( hypre_F90_Obj *solver,
-  hypre_F90_Int *beta_coarsen_type,
-  hypre_F90_Int *beta_agg_levels,
-  hypre_F90_Int *beta_relax_type,
-  hypre_F90_Real *beta_strength_threshold,
-  hypre_F90_Int *beta_interp_type,
-  hypre_F90_Int *beta_Pmax,
-  hypre_F90_Int *ierr)
+nalu_hypre_F90_IFACE(nalu_hypre_amssetbetaamgoptions, NALU_HYPRE_AMSSETBETAAMGOPTIONS)
+( nalu_hypre_F90_Obj *solver,
+  nalu_hypre_F90_Int *beta_coarsen_type,
+  nalu_hypre_F90_Int *beta_agg_levels,
+  nalu_hypre_F90_Int *beta_relax_type,
+  nalu_hypre_F90_Real *beta_strength_threshold,
+  nalu_hypre_F90_Int *beta_interp_type,
+  nalu_hypre_F90_Int *beta_Pmax,
+  nalu_hypre_F90_Int *ierr)
 
 {
-   *ierr = (hypre_F90_Int)
+   *ierr = (nalu_hypre_F90_Int)
            ( NALU_HYPRE_AMSSetBetaAMGOptions(
-                hypre_F90_PassObj (NALU_HYPRE_Solver, solver),
-                hypre_F90_PassInt (beta_coarsen_type),
-                hypre_F90_PassInt (beta_agg_levels),
-                hypre_F90_PassInt (beta_relax_type),
-                hypre_F90_PassReal (beta_strength_threshold),
-                hypre_F90_PassInt (beta_interp_type),
-                hypre_F90_PassInt (beta_Pmax) ) );
+                nalu_hypre_F90_PassObj (NALU_HYPRE_Solver, solver),
+                nalu_hypre_F90_PassInt (beta_coarsen_type),
+                nalu_hypre_F90_PassInt (beta_agg_levels),
+                nalu_hypre_F90_PassInt (beta_relax_type),
+                nalu_hypre_F90_PassReal (beta_strength_threshold),
+                nalu_hypre_F90_PassInt (beta_interp_type),
+                nalu_hypre_F90_PassInt (beta_Pmax) ) );
 }
 
 /*--------------------------------------------------------------------------
@@ -335,15 +335,15 @@ hypre_F90_IFACE(hypre_amssetbetaamgoptions, NALU_HYPRE_AMSSETBETAAMGOPTIONS)
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_amsgetnumiterations, NALU_HYPRE_AMSGETNUMITERATIONS)
-( hypre_F90_Obj *solver,
-  hypre_F90_Int *num_iterations,
-  hypre_F90_Int *ierr)
+nalu_hypre_F90_IFACE(nalu_hypre_amsgetnumiterations, NALU_HYPRE_AMSGETNUMITERATIONS)
+( nalu_hypre_F90_Obj *solver,
+  nalu_hypre_F90_Int *num_iterations,
+  nalu_hypre_F90_Int *ierr)
 {
-   *ierr = (hypre_F90_Int)
+   *ierr = (nalu_hypre_F90_Int)
            ( NALU_HYPRE_AMSGetNumIterations(
-                hypre_F90_PassObj (NALU_HYPRE_Solver, solver),
-                hypre_F90_PassIntRef (num_iterations) ) );
+                nalu_hypre_F90_PassObj (NALU_HYPRE_Solver, solver),
+                nalu_hypre_F90_PassIntRef (num_iterations) ) );
 }
 
 /*--------------------------------------------------------------------------
@@ -351,15 +351,15 @@ hypre_F90_IFACE(hypre_amsgetnumiterations, NALU_HYPRE_AMSGETNUMITERATIONS)
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_amsgetfinalrelativeresidualnorm, NALU_HYPRE_AMSGETFINALRELATIVERESIDUALNORM)
-( hypre_F90_Obj *solver,
-  hypre_F90_Real *rel_resid_norm,
-  hypre_F90_Int *ierr)
+nalu_hypre_F90_IFACE(nalu_hypre_amsgetfinalrelativeresidualnorm, NALU_HYPRE_AMSGETFINALRELATIVERESIDUALNORM)
+( nalu_hypre_F90_Obj *solver,
+  nalu_hypre_F90_Real *rel_resid_norm,
+  nalu_hypre_F90_Int *ierr)
 {
-   *ierr = (hypre_F90_Int)
+   *ierr = (nalu_hypre_F90_Int)
            ( NALU_HYPRE_AMSGetFinalRelativeResidualNorm(
-                hypre_F90_PassObj (NALU_HYPRE_Solver, solver),
-                hypre_F90_PassRealRef (rel_resid_norm) ) );
+                nalu_hypre_F90_PassObj (NALU_HYPRE_Solver, solver),
+                nalu_hypre_F90_PassRealRef (rel_resid_norm) ) );
 }
 
 /*--------------------------------------------------------------------------
@@ -367,21 +367,21 @@ hypre_F90_IFACE(hypre_amsgetfinalrelativeresidualnorm, NALU_HYPRE_AMSGETFINALREL
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_amsconstructdiscretegradient, NALU_HYPRE_AMSCONSTRUCTDISCRETEGRADIENT)
-( hypre_F90_Obj *A,
-  hypre_F90_Obj *x_coord,
-  hypre_F90_BigIntArray *edge_vertex,
-  hypre_F90_Int *edge_orientation,
-  hypre_F90_Obj *G,
-  hypre_F90_Int *ierr)
+nalu_hypre_F90_IFACE(nalu_hypre_amsconstructdiscretegradient, NALU_HYPRE_AMSCONSTRUCTDISCRETEGRADIENT)
+( nalu_hypre_F90_Obj *A,
+  nalu_hypre_F90_Obj *x_coord,
+  nalu_hypre_F90_BigIntArray *edge_vertex,
+  nalu_hypre_F90_Int *edge_orientation,
+  nalu_hypre_F90_Obj *G,
+  nalu_hypre_F90_Int *ierr)
 {
-   *ierr = (hypre_F90_Int)
+   *ierr = (nalu_hypre_F90_Int)
            ( NALU_HYPRE_AMSConstructDiscreteGradient(
-                hypre_F90_PassObj (NALU_HYPRE_ParCSRMatrix, A),
-                hypre_F90_PassObj (NALU_HYPRE_ParVector, x_coord),
-                hypre_F90_PassBigIntArray (edge_vertex),
-                hypre_F90_PassInt (edge_orientation),
-                hypre_F90_PassObjRef (NALU_HYPRE_ParCSRMatrix, G) ) );
+                nalu_hypre_F90_PassObj (NALU_HYPRE_ParCSRMatrix, A),
+                nalu_hypre_F90_PassObj (NALU_HYPRE_ParVector, x_coord),
+                nalu_hypre_F90_PassBigIntArray (edge_vertex),
+                nalu_hypre_F90_PassInt (edge_orientation),
+                nalu_hypre_F90_PassObjRef (NALU_HYPRE_ParCSRMatrix, G) ) );
 }
 
 #ifdef __cplusplus

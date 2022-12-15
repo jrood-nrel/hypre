@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_parcsr_mv.h"
+#include "_nalu_hypre_parcsr_mv.h"
 
 /*--------------------------------------------------------------------------
  * Test driver for unstructured matrix interface
@@ -15,9 +15,9 @@ NALU_HYPRE_Int
 main( NALU_HYPRE_Int   argc,
       char *argv[] )
 {
-   hypre_ParVector   *vector1;
-   hypre_ParVector   *vector2;
-   hypre_ParVector   *tmp_vector;
+   nalu_hypre_ParVector   *vector1;
+   nalu_hypre_ParVector   *vector2;
+   nalu_hypre_ParVector   *tmp_vector;
 
    NALU_HYPRE_Int          num_procs, my_id;
    NALU_HYPRE_BigInt   global_size = 20;
@@ -27,25 +27,25 @@ main( NALU_HYPRE_Int   argc,
    NALU_HYPRE_BigInt   *partitioning;
    NALU_HYPRE_Complex  prod;
    NALU_HYPRE_Complex  *data, *data2;
-   hypre_Vector *vector;
-   hypre_Vector *local_vector;
-   hypre_Vector *local_vector2;
+   nalu_hypre_Vector *vector;
+   nalu_hypre_Vector *local_vector;
+   nalu_hypre_Vector *local_vector2;
 
    /* Initialize MPI */
-   hypre_MPI_Init(&argc, &argv);
+   nalu_hypre_MPI_Init(&argc, &argv);
 
-   hypre_MPI_Comm_size(hypre_MPI_COMM_WORLD, &num_procs );
-   hypre_MPI_Comm_rank(hypre_MPI_COMM_WORLD, &my_id );
+   nalu_hypre_MPI_Comm_size(nalu_hypre_MPI_COMM_WORLD, &num_procs );
+   nalu_hypre_MPI_Comm_rank(nalu_hypre_MPI_COMM_WORLD, &my_id );
 
-   hypre_printf(" my_id: %d num_procs: %d\n", my_id, num_procs);
+   nalu_hypre_printf(" my_id: %d num_procs: %d\n", my_id, num_procs);
 
    partitioning = NULL;
-   vector1 = hypre_ParVectorCreate(hypre_MPI_COMM_WORLD, global_size, partitioning);
-   partitioning = hypre_ParVectorPartitioning(vector1);
-   hypre_ParVectorInitialize(vector1);
-   local_vector = hypre_ParVectorLocalVector(vector1);
-   data = hypre_VectorData(local_vector);
-   local_size = hypre_VectorSize(local_vector);
+   vector1 = nalu_hypre_ParVectorCreate(nalu_hypre_MPI_COMM_WORLD, global_size, partitioning);
+   partitioning = nalu_hypre_ParVectorPartitioning(vector1);
+   nalu_hypre_ParVectorInitialize(vector1);
+   local_vector = nalu_hypre_ParVectorLocalVector(vector1);
+   data = nalu_hypre_VectorData(local_vector);
+   local_size = nalu_hypre_VectorSize(local_vector);
    first_index = partitioning[my_id];
 
    for (i = 0; i < local_size; i++)
@@ -53,76 +53,76 @@ main( NALU_HYPRE_Int   argc,
       data[i] = first_index + i;
    }
    /*
-      hypre_ParVectorPrint(vector1, "Vector");
+      nalu_hypre_ParVectorPrint(vector1, "Vector");
    */
-   local_vector2 = hypre_SeqVectorCreate(global_size);
-   hypre_SeqVectorInitialize(local_vector2);
-   data2 = hypre_VectorData(local_vector2);
+   local_vector2 = nalu_hypre_SeqVectorCreate(global_size);
+   nalu_hypre_SeqVectorInitialize(local_vector2);
+   data2 = nalu_hypre_VectorData(local_vector2);
    for (i = 0; i < global_size; i++)
    {
       data2[i] = i + 1;
    }
 
-   /*   partitioning = hypre_CTAlloc(NALU_HYPRE_Int,4);
+   /*   partitioning = nalu_hypre_CTAlloc(NALU_HYPRE_Int,4);
       partitioning[0] = 0;
       partitioning[1] = 10;
       partitioning[2] = 10;
       partitioning[3] = 20;
    */
-   vector2 = hypre_VectorToParVector(hypre_MPI_COMM_WORLD, local_vector2, partitioning);
+   vector2 = nalu_hypre_VectorToParVector(nalu_hypre_MPI_COMM_WORLD, local_vector2, partitioning);
 
-   hypre_ParVectorPrint(vector2, "Convert");
+   nalu_hypre_ParVectorPrint(vector2, "Convert");
 
-   vector = hypre_ParVectorToVectorAll(vector2);
+   vector = nalu_hypre_ParVectorToVectorAll(vector2);
 
    /*-----------------------------------------------------------
     * Copy the vector into tmp_vector
     *-----------------------------------------------------------*/
 
-   tmp_vector = hypre_ParVectorRead(hypre_MPI_COMM_WORLD, "Convert");
+   tmp_vector = nalu_hypre_ParVectorRead(nalu_hypre_MPI_COMM_WORLD, "Convert");
    /*
-      tmp_vector = hypre_ParVectorCreate(hypre_MPI_COMM_WORLD,global_size,partitioning);
-      hypre_ParVectorInitialize(tmp_vector);
-      hypre_ParVectorCopy(vector1, tmp_vector);
+      tmp_vector = nalu_hypre_ParVectorCreate(nalu_hypre_MPI_COMM_WORLD,global_size,partitioning);
+      nalu_hypre_ParVectorInitialize(tmp_vector);
+      nalu_hypre_ParVectorCopy(vector1, tmp_vector);
 
-      hypre_ParVectorPrint(tmp_vector,"Copy");
+      nalu_hypre_ParVectorPrint(tmp_vector,"Copy");
    */
    /*-----------------------------------------------------------
     * Scale tmp_vector
     *-----------------------------------------------------------*/
 
-   hypre_ParVectorScale(2.0, tmp_vector);
+   nalu_hypre_ParVectorScale(2.0, tmp_vector);
    /*
-      hypre_ParVectorPrint(tmp_vector,"Scale");
+      nalu_hypre_ParVectorPrint(tmp_vector,"Scale");
    */
    /*-----------------------------------------------------------
     * Do an Axpy (2*vector - vector) = vector
     *-----------------------------------------------------------*/
 
-   hypre_ParVectorAxpy(-1.0, vector1, tmp_vector);
+   nalu_hypre_ParVectorAxpy(-1.0, vector1, tmp_vector);
    /*
-      hypre_ParVectorPrint(tmp_vector,"Axpy");
+      nalu_hypre_ParVectorPrint(tmp_vector,"Axpy");
    */
    /*-----------------------------------------------------------
     * Do an inner product vector* tmp_vector
     *-----------------------------------------------------------*/
 
-   prod = hypre_ParVectorInnerProd(vector1, tmp_vector);
+   prod = nalu_hypre_ParVectorInnerProd(vector1, tmp_vector);
 
-   hypre_printf (" prod: %8.2f \n", prod);
+   nalu_hypre_printf (" prod: %8.2f \n", prod);
 
    /*-----------------------------------------------------------
     * Finalize things
     *-----------------------------------------------------------*/
 
-   hypre_ParVectorDestroy(vector1);
-   hypre_ParVectorDestroy(vector2);
-   hypre_ParVectorDestroy(tmp_vector);
-   hypre_SeqVectorDestroy(local_vector2);
-   if (vector) { hypre_SeqVectorDestroy(vector); }
+   nalu_hypre_ParVectorDestroy(vector1);
+   nalu_hypre_ParVectorDestroy(vector2);
+   nalu_hypre_ParVectorDestroy(tmp_vector);
+   nalu_hypre_SeqVectorDestroy(local_vector2);
+   if (vector) { nalu_hypre_SeqVectorDestroy(vector); }
 
    /* Finalize MPI */
-   hypre_MPI_Finalize();
+   nalu_hypre_MPI_Finalize();
 
    return 0;
 }

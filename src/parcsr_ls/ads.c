@@ -5,39 +5,39 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_parcsr_ls.h"
+#include "_nalu_hypre_parcsr_ls.h"
 #include "float.h"
 #include "ams.h"
 #include "ads.h"
-#include "_hypre_utilities.hpp"
+#include "_nalu_hypre_utilities.hpp"
 
 #if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
-__global__ void hypreGPUKernel_AMSComputePi_copy1(hypre_DeviceItem &item, NALU_HYPRE_Int nnz,
+__global__ void hypreGPUKernel_AMSComputePi_copy1(nalu_hypre_DeviceItem &item, NALU_HYPRE_Int nnz,
                                                   NALU_HYPRE_Int dim,
                                                   NALU_HYPRE_Int *j_in,
                                                   NALU_HYPRE_Int *j_out);
-__global__ void hypreGPUKernel_AMSComputePi_copy2(hypre_DeviceItem &item, NALU_HYPRE_Int nrows,
+__global__ void hypreGPUKernel_AMSComputePi_copy2(nalu_hypre_DeviceItem &item, NALU_HYPRE_Int nrows,
                                                   NALU_HYPRE_Int dim,
                                                   NALU_HYPRE_Int *i_in,
                                                   NALU_HYPRE_Real *data_in, NALU_HYPRE_Real *Gx_data, NALU_HYPRE_Real *Gy_data, NALU_HYPRE_Real *Gz_data,
                                                   NALU_HYPRE_Real *data_out);
-__global__ void hypreGPUKernel_AMSComputePixyz_copy(hypre_DeviceItem &item, NALU_HYPRE_Int nrows,
+__global__ void hypreGPUKernel_AMSComputePixyz_copy(nalu_hypre_DeviceItem &item, NALU_HYPRE_Int nrows,
                                                     NALU_HYPRE_Int dim,
                                                     NALU_HYPRE_Int *i_in, NALU_HYPRE_Real *data_in, NALU_HYPRE_Real *Gx_data, NALU_HYPRE_Real *Gy_data, NALU_HYPRE_Real *Gz_data,
                                                     NALU_HYPRE_Real *data_x_out, NALU_HYPRE_Real *data_y_out, NALU_HYPRE_Real *data_z_out );
 #endif
 
 /*--------------------------------------------------------------------------
- * hypre_ADSCreate
+ * nalu_hypre_ADSCreate
  *
  * Allocate the ADS solver structure.
  *--------------------------------------------------------------------------*/
 
-void * hypre_ADSCreate()
+void * nalu_hypre_ADSCreate()
 {
-   hypre_ADSData *ads_data;
+   nalu_hypre_ADSData *ads_data;
 
-   ads_data = hypre_CTAlloc(hypre_ADSData, 1, NALU_HYPRE_MEMORY_HOST);
+   ads_data = nalu_hypre_CTAlloc(nalu_hypre_ADSData, 1, NALU_HYPRE_MEMORY_HOST);
 
    /* Default parameters */
 
@@ -111,25 +111,25 @@ void * hypre_ADSCreate()
 }
 
 /*--------------------------------------------------------------------------
- * hypre_ADSDestroy
+ * nalu_hypre_ADSDestroy
  *
  * Deallocate the ADS solver structure. Note that the input data (given
  * through the Set functions) is not destroyed.
  *--------------------------------------------------------------------------*/
 
-NALU_HYPRE_Int hypre_ADSDestroy(void *solver)
+NALU_HYPRE_Int nalu_hypre_ADSDestroy(void *solver)
 {
-   hypre_ADSData *ads_data = (hypre_ADSData *) solver;
+   nalu_hypre_ADSData *ads_data = (nalu_hypre_ADSData *) solver;
 
    if (!ads_data)
    {
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
 
    if (ads_data -> A_C)
    {
-      hypre_ParCSRMatrixDestroy(ads_data -> A_C);
+      nalu_hypre_ParCSRMatrixDestroy(ads_data -> A_C);
    }
    if (ads_data -> B_C)
    {
@@ -138,11 +138,11 @@ NALU_HYPRE_Int hypre_ADSDestroy(void *solver)
 
    if (ads_data -> owns_Pi && ads_data -> Pi)
    {
-      hypre_ParCSRMatrixDestroy(ads_data -> Pi);
+      nalu_hypre_ParCSRMatrixDestroy(ads_data -> Pi);
    }
    if (ads_data -> A_Pi)
    {
-      hypre_ParCSRMatrixDestroy(ads_data -> A_Pi);
+      nalu_hypre_ParCSRMatrixDestroy(ads_data -> A_Pi);
    }
    if (ads_data -> B_Pi)
    {
@@ -151,11 +151,11 @@ NALU_HYPRE_Int hypre_ADSDestroy(void *solver)
 
    if (ads_data -> owns_Pi && ads_data -> Pix)
    {
-      hypre_ParCSRMatrixDestroy(ads_data -> Pix);
+      nalu_hypre_ParCSRMatrixDestroy(ads_data -> Pix);
    }
    if (ads_data -> A_Pix)
    {
-      hypre_ParCSRMatrixDestroy(ads_data -> A_Pix);
+      nalu_hypre_ParCSRMatrixDestroy(ads_data -> A_Pix);
    }
    if (ads_data -> B_Pix)
    {
@@ -163,11 +163,11 @@ NALU_HYPRE_Int hypre_ADSDestroy(void *solver)
    }
    if (ads_data -> owns_Pi && ads_data -> Piy)
    {
-      hypre_ParCSRMatrixDestroy(ads_data -> Piy);
+      nalu_hypre_ParCSRMatrixDestroy(ads_data -> Piy);
    }
    if (ads_data -> A_Piy)
    {
-      hypre_ParCSRMatrixDestroy(ads_data -> A_Piy);
+      nalu_hypre_ParCSRMatrixDestroy(ads_data -> A_Piy);
    }
    if (ads_data -> B_Piy)
    {
@@ -175,11 +175,11 @@ NALU_HYPRE_Int hypre_ADSDestroy(void *solver)
    }
    if (ads_data -> owns_Pi && ads_data -> Piz)
    {
-      hypre_ParCSRMatrixDestroy(ads_data -> Piz);
+      nalu_hypre_ParCSRMatrixDestroy(ads_data -> Piz);
    }
    if (ads_data -> A_Piz)
    {
-      hypre_ParCSRMatrixDestroy(ads_data -> A_Piz);
+      nalu_hypre_ParCSRMatrixDestroy(ads_data -> A_Piz);
    }
    if (ads_data -> B_Piz)
    {
@@ -188,96 +188,96 @@ NALU_HYPRE_Int hypre_ADSDestroy(void *solver)
 
    if (ads_data -> r0)
    {
-      hypre_ParVectorDestroy(ads_data -> r0);
+      nalu_hypre_ParVectorDestroy(ads_data -> r0);
    }
    if (ads_data -> g0)
    {
-      hypre_ParVectorDestroy(ads_data -> g0);
+      nalu_hypre_ParVectorDestroy(ads_data -> g0);
    }
    if (ads_data -> r1)
    {
-      hypre_ParVectorDestroy(ads_data -> r1);
+      nalu_hypre_ParVectorDestroy(ads_data -> r1);
    }
    if (ads_data -> g1)
    {
-      hypre_ParVectorDestroy(ads_data -> g1);
+      nalu_hypre_ParVectorDestroy(ads_data -> g1);
    }
    if (ads_data -> r2)
    {
-      hypre_ParVectorDestroy(ads_data -> r2);
+      nalu_hypre_ParVectorDestroy(ads_data -> r2);
    }
    if (ads_data -> g2)
    {
-      hypre_ParVectorDestroy(ads_data -> g2);
+      nalu_hypre_ParVectorDestroy(ads_data -> g2);
    }
    if (ads_data -> zz)
    {
-      hypre_ParVectorDestroy(ads_data -> zz);
+      nalu_hypre_ParVectorDestroy(ads_data -> zz);
    }
 
-   hypre_SeqVectorDestroy(ads_data -> A_l1_norms);
+   nalu_hypre_SeqVectorDestroy(ads_data -> A_l1_norms);
 
    /* C, G, x, y and z are not destroyed */
 
    if (ads_data)
    {
-      hypre_TFree(ads_data, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(ads_data, NALU_HYPRE_MEMORY_HOST);
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_ADSSetDiscreteCurl
+ * nalu_hypre_ADSSetDiscreteCurl
  *
  * Set the discrete curl matrix C.
- * This function should be called before hypre_ADSSetup()!
+ * This function should be called before nalu_hypre_ADSSetup()!
  *--------------------------------------------------------------------------*/
 
-NALU_HYPRE_Int hypre_ADSSetDiscreteCurl(void *solver,
-                                   hypre_ParCSRMatrix *C)
+NALU_HYPRE_Int nalu_hypre_ADSSetDiscreteCurl(void *solver,
+                                   nalu_hypre_ParCSRMatrix *C)
 {
-   hypre_ADSData *ads_data = (hypre_ADSData *) solver;
+   nalu_hypre_ADSData *ads_data = (nalu_hypre_ADSData *) solver;
    ads_data -> C = C;
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_ADSSetDiscreteGradient
+ * nalu_hypre_ADSSetDiscreteGradient
  *
  * Set the discrete gradient matrix G.
- * This function should be called before hypre_ADSSetup()!
+ * This function should be called before nalu_hypre_ADSSetup()!
  *--------------------------------------------------------------------------*/
 
-NALU_HYPRE_Int hypre_ADSSetDiscreteGradient(void *solver,
-                                       hypre_ParCSRMatrix *G)
+NALU_HYPRE_Int nalu_hypre_ADSSetDiscreteGradient(void *solver,
+                                       nalu_hypre_ParCSRMatrix *G)
 {
-   hypre_ADSData *ads_data = (hypre_ADSData *) solver;
+   nalu_hypre_ADSData *ads_data = (nalu_hypre_ADSData *) solver;
    ads_data -> G = G;
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_ADSSetCoordinateVectors
+ * nalu_hypre_ADSSetCoordinateVectors
  *
  * Set the x, y and z coordinates of the vertices in the mesh.
- * This function should be called before hypre_ADSSetup()!
+ * This function should be called before nalu_hypre_ADSSetup()!
  *--------------------------------------------------------------------------*/
 
-NALU_HYPRE_Int hypre_ADSSetCoordinateVectors(void *solver,
-                                        hypre_ParVector *x,
-                                        hypre_ParVector *y,
-                                        hypre_ParVector *z)
+NALU_HYPRE_Int nalu_hypre_ADSSetCoordinateVectors(void *solver,
+                                        nalu_hypre_ParVector *x,
+                                        nalu_hypre_ParVector *y,
+                                        nalu_hypre_ParVector *z)
 {
-   hypre_ADSData *ads_data = (hypre_ADSData *) solver;
+   nalu_hypre_ADSData *ads_data = (nalu_hypre_ADSData *) solver;
    ads_data -> x = x;
    ads_data -> y = y;
    ads_data -> z = z;
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_ADSSetInterpolations
+ * nalu_hypre_ADSSetInterpolations
  *
  * Set the (components of) the Raviart-Thomas (RT_Pi) and the Nedelec (ND_Pi)
  * interpolation matrices.
@@ -300,7 +300,7 @@ NALU_HYPRE_Int hypre_ADSSetCoordinateVectors(void *solver,
  * first, followed by the x/y/z components of the second node and so on (see the
  * documentation of NALU_HYPRE_BoomerAMGSetDofFunc).
  *
- * If used, this function should be called before hypre_ADSSetup() and there is
+ * If used, this function should be called before nalu_hypre_ADSSetup() and there is
  * no need to provide the vertex coordinates. Furthermore, only one of the sets
  * {RT_Pi} and {RT_Pix,RT_Piy,RT_Piz} needs to be specified (though it is OK to
  * provide both).  If RT_Pix is NULL, then scalar Pi-based ADS cycles, i.e.
@@ -311,17 +311,17 @@ NALU_HYPRE_Int hypre_ADSSetCoordinateVectors(void *solver,
  * AMS cycle type options for the subspace solve.
  *--------------------------------------------------------------------------*/
 
-NALU_HYPRE_Int hypre_ADSSetInterpolations(void *solver,
-                                     hypre_ParCSRMatrix *RT_Pi,
-                                     hypre_ParCSRMatrix *RT_Pix,
-                                     hypre_ParCSRMatrix *RT_Piy,
-                                     hypre_ParCSRMatrix *RT_Piz,
-                                     hypre_ParCSRMatrix *ND_Pi,
-                                     hypre_ParCSRMatrix *ND_Pix,
-                                     hypre_ParCSRMatrix *ND_Piy,
-                                     hypre_ParCSRMatrix *ND_Piz)
+NALU_HYPRE_Int nalu_hypre_ADSSetInterpolations(void *solver,
+                                     nalu_hypre_ParCSRMatrix *RT_Pi,
+                                     nalu_hypre_ParCSRMatrix *RT_Pix,
+                                     nalu_hypre_ParCSRMatrix *RT_Piy,
+                                     nalu_hypre_ParCSRMatrix *RT_Piz,
+                                     nalu_hypre_ParCSRMatrix *ND_Pi,
+                                     nalu_hypre_ParCSRMatrix *ND_Pix,
+                                     nalu_hypre_ParCSRMatrix *ND_Piy,
+                                     nalu_hypre_ParCSRMatrix *ND_Piz)
 {
-   hypre_ADSData *ads_data = (hypre_ADSData *) solver;
+   nalu_hypre_ADSData *ads_data = (nalu_hypre_ADSData *) solver;
    ads_data -> Pi = RT_Pi;
    ads_data -> Pix = RT_Pix;
    ads_data -> Piy = RT_Piy;
@@ -331,42 +331,42 @@ NALU_HYPRE_Int hypre_ADSSetInterpolations(void *solver,
    ads_data -> ND_Piy = ND_Piy;
    ads_data -> ND_Piz = ND_Piz;
    ads_data -> owns_Pi = 0;
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_ADSSetMaxIter
+ * nalu_hypre_ADSSetMaxIter
  *
  * Set the maximum number of iterations in the auxiliary-space method.
  * The default value is 20. To use the ADS solver as a preconditioner,
  * set maxit to 1, tol to 0.0 and print_level to 0.
  *--------------------------------------------------------------------------*/
 
-NALU_HYPRE_Int hypre_ADSSetMaxIter(void *solver,
+NALU_HYPRE_Int nalu_hypre_ADSSetMaxIter(void *solver,
                               NALU_HYPRE_Int maxit)
 {
-   hypre_ADSData *ads_data = (hypre_ADSData *) solver;
+   nalu_hypre_ADSData *ads_data = (nalu_hypre_ADSData *) solver;
    ads_data -> maxit = maxit;
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_ADSSetTol
+ * nalu_hypre_ADSSetTol
  *
  * Set the convergence tolerance (if the method is used as a solver).
  * The default value is 1e-6.
  *--------------------------------------------------------------------------*/
 
-NALU_HYPRE_Int hypre_ADSSetTol(void *solver,
+NALU_HYPRE_Int nalu_hypre_ADSSetTol(void *solver,
                           NALU_HYPRE_Real tol)
 {
-   hypre_ADSData *ads_data = (hypre_ADSData *) solver;
+   nalu_hypre_ADSData *ads_data = (nalu_hypre_ADSData *) solver;
    ads_data -> tol = tol;
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_ADSSetCycleType
+ * nalu_hypre_ADSSetCycleType
  *
  * Choose which three-level solver to use. Possible values are:
  *
@@ -387,76 +387,76 @@ NALU_HYPRE_Int hypre_ADSSetTol(void *solver,
  * The default value is 1.
  *--------------------------------------------------------------------------*/
 
-NALU_HYPRE_Int hypre_ADSSetCycleType(void *solver,
+NALU_HYPRE_Int nalu_hypre_ADSSetCycleType(void *solver,
                                 NALU_HYPRE_Int cycle_type)
 {
-   hypre_ADSData *ads_data = (hypre_ADSData *) solver;
+   nalu_hypre_ADSData *ads_data = (nalu_hypre_ADSData *) solver;
    ads_data -> cycle_type = cycle_type;
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_ADSSetPrintLevel
+ * nalu_hypre_ADSSetPrintLevel
  *
  * Control how much information is printed during the solution iterations.
  * The defaut values is 1 (print residual norm at each step).
  *--------------------------------------------------------------------------*/
 
-NALU_HYPRE_Int hypre_ADSSetPrintLevel(void *solver,
+NALU_HYPRE_Int nalu_hypre_ADSSetPrintLevel(void *solver,
                                  NALU_HYPRE_Int print_level)
 {
-   hypre_ADSData *ads_data = (hypre_ADSData *) solver;
+   nalu_hypre_ADSData *ads_data = (nalu_hypre_ADSData *) solver;
    ads_data -> print_level = print_level;
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_ADSSetSmoothingOptions
+ * nalu_hypre_ADSSetSmoothingOptions
  *
  * Set relaxation parameters for A. Default values: 2, 1, 1.0, 1.0.
  *--------------------------------------------------------------------------*/
 
-NALU_HYPRE_Int hypre_ADSSetSmoothingOptions(void *solver,
+NALU_HYPRE_Int nalu_hypre_ADSSetSmoothingOptions(void *solver,
                                        NALU_HYPRE_Int A_relax_type,
                                        NALU_HYPRE_Int A_relax_times,
                                        NALU_HYPRE_Real A_relax_weight,
                                        NALU_HYPRE_Real A_omega)
 {
-   hypre_ADSData *ads_data = (hypre_ADSData *) solver;
+   nalu_hypre_ADSData *ads_data = (nalu_hypre_ADSData *) solver;
    ads_data -> A_relax_type = A_relax_type;
    ads_data -> A_relax_times = A_relax_times;
    ads_data -> A_relax_weight = A_relax_weight;
    ads_data -> A_omega = A_omega;
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_ADSSetChebySmoothingOptions
+ * nalu_hypre_ADSSetChebySmoothingOptions
  *
  * Set parameters for Chebyshev relaxation. Default values: 2, 0.3.
  *--------------------------------------------------------------------------*/
 
-NALU_HYPRE_Int hypre_ADSSetChebySmoothingOptions(void *solver,
+NALU_HYPRE_Int nalu_hypre_ADSSetChebySmoothingOptions(void *solver,
                                             NALU_HYPRE_Int A_cheby_order,
                                             NALU_HYPRE_Int A_cheby_fraction)
 {
-   hypre_ADSData *ads_data = (hypre_ADSData *) solver;
+   nalu_hypre_ADSData *ads_data = (nalu_hypre_ADSData *) solver;
    ads_data -> A_cheby_order =  A_cheby_order;
    ads_data -> A_cheby_fraction =  A_cheby_fraction;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_ADSSetAMSOptions
+ * nalu_hypre_ADSSetAMSOptions
  *
  * Set AMS parameters for B_C. Default values: 11, 10, 1, 3, 0.25, 0, 0.
  *
  * Note that B_C_cycle_type should be greater than 10, unless the high-order
- * interface of hypre_ADSSetInterpolations is being used!
+ * interface of nalu_hypre_ADSSetInterpolations is being used!
  *--------------------------------------------------------------------------*/
 
-NALU_HYPRE_Int hypre_ADSSetAMSOptions(void *solver,
+NALU_HYPRE_Int nalu_hypre_ADSSetAMSOptions(void *solver,
                                  NALU_HYPRE_Int B_C_cycle_type,
                                  NALU_HYPRE_Int B_C_coarsen_type,
                                  NALU_HYPRE_Int B_C_agg_levels,
@@ -465,7 +465,7 @@ NALU_HYPRE_Int hypre_ADSSetAMSOptions(void *solver,
                                  NALU_HYPRE_Int B_C_interp_type,
                                  NALU_HYPRE_Int B_C_Pmax)
 {
-   hypre_ADSData *ads_data = (hypre_ADSData *) solver;
+   nalu_hypre_ADSData *ads_data = (nalu_hypre_ADSData *) solver;
    ads_data -> B_C_cycle_type = B_C_cycle_type;
    ads_data -> B_C_coarsen_type = B_C_coarsen_type;
    ads_data -> B_C_agg_levels = B_C_agg_levels;
@@ -474,16 +474,16 @@ NALU_HYPRE_Int hypre_ADSSetAMSOptions(void *solver,
    ads_data -> B_C_interp_type = B_C_interp_type;
    ads_data -> B_C_Pmax = B_C_Pmax;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_ADSSetAMGOptions
+ * nalu_hypre_ADSSetAMGOptions
  *
  * Set AMG parameters for B_Pi. Default values: 10, 1, 3, 0.25, 0, 0.
  *--------------------------------------------------------------------------*/
 
-NALU_HYPRE_Int hypre_ADSSetAMGOptions(void *solver,
+NALU_HYPRE_Int nalu_hypre_ADSSetAMGOptions(void *solver,
                                  NALU_HYPRE_Int B_Pi_coarsen_type,
                                  NALU_HYPRE_Int B_Pi_agg_levels,
                                  NALU_HYPRE_Int B_Pi_relax_type,
@@ -491,18 +491,18 @@ NALU_HYPRE_Int hypre_ADSSetAMGOptions(void *solver,
                                  NALU_HYPRE_Int B_Pi_interp_type,
                                  NALU_HYPRE_Int B_Pi_Pmax)
 {
-   hypre_ADSData *ads_data = (hypre_ADSData *) solver;
+   nalu_hypre_ADSData *ads_data = (nalu_hypre_ADSData *) solver;
    ads_data -> B_Pi_coarsen_type = B_Pi_coarsen_type;
    ads_data -> B_Pi_agg_levels = B_Pi_agg_levels;
    ads_data -> B_Pi_relax_type = B_Pi_relax_type;
    ads_data -> B_Pi_theta = B_Pi_theta;
    ads_data -> B_Pi_interp_type = B_Pi_interp_type;
    ads_data -> B_Pi_Pmax = B_Pi_Pmax;
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_ADSComputePi
+ * nalu_hypre_ADSComputePi
  *
  * Construct the Pi interpolation matrix, which maps the space of vector
  * linear finite elements to the space of face finite elements.
@@ -514,86 +514,86 @@ NALU_HYPRE_Int hypre_ADSSetAMGOptions(void *solver,
  * We assume a constant number of vertices per face (no prisms or pyramids).
  *--------------------------------------------------------------------------*/
 
-NALU_HYPRE_Int hypre_ADSComputePi(hypre_ParCSRMatrix *A,
-                             hypre_ParCSRMatrix *C,
-                             hypre_ParCSRMatrix *G,
-                             hypre_ParVector *x,
-                             hypre_ParVector *y,
-                             hypre_ParVector *z,
-                             hypre_ParCSRMatrix *PiNDx,
-                             hypre_ParCSRMatrix *PiNDy,
-                             hypre_ParCSRMatrix *PiNDz,
-                             hypre_ParCSRMatrix **Pi_ptr)
+NALU_HYPRE_Int nalu_hypre_ADSComputePi(nalu_hypre_ParCSRMatrix *A,
+                             nalu_hypre_ParCSRMatrix *C,
+                             nalu_hypre_ParCSRMatrix *G,
+                             nalu_hypre_ParVector *x,
+                             nalu_hypre_ParVector *y,
+                             nalu_hypre_ParVector *z,
+                             nalu_hypre_ParCSRMatrix *PiNDx,
+                             nalu_hypre_ParCSRMatrix *PiNDy,
+                             nalu_hypre_ParCSRMatrix *PiNDz,
+                             nalu_hypre_ParCSRMatrix **Pi_ptr)
 {
 #if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
-   NALU_HYPRE_ExecutionPolicy exec = hypre_GetExecPolicy1( hypre_ParCSRMatrixMemoryLocation(A) );
+   NALU_HYPRE_ExecutionPolicy exec = nalu_hypre_GetExecPolicy1( nalu_hypre_ParCSRMatrixMemoryLocation(A) );
 #endif
 
-   hypre_ParCSRMatrix *Pi;
+   nalu_hypre_ParCSRMatrix *Pi;
 
    /* Compute the representations of the coordinate vectors, RT100, RT010 and
       RT001, in the Raviart-Thomas space, by observing that the RT coordinates
       of (1,0,0) = -curl (0,z,0) are given by C*PiNDy*z, etc. (We ignore the
       minus sign since it is irrelevant for the coarse-grid correction.) */
-   hypre_ParVector *RT100, *RT010, *RT001;
+   nalu_hypre_ParVector *RT100, *RT010, *RT001;
    {
-      hypre_ParVector *PiNDlin = hypre_ParVectorInRangeOf(PiNDx);
+      nalu_hypre_ParVector *PiNDlin = nalu_hypre_ParVectorInRangeOf(PiNDx);
 
-      RT100 = hypre_ParVectorInRangeOf(C);
-      hypre_ParCSRMatrixMatvec(1.0, PiNDy, z, 0.0, PiNDlin);
-      hypre_ParCSRMatrixMatvec(1.0, C, PiNDlin, 0.0, RT100);
-      RT010 = hypre_ParVectorInRangeOf(C);
-      hypre_ParCSRMatrixMatvec(1.0, PiNDz, x, 0.0, PiNDlin);
-      hypre_ParCSRMatrixMatvec(1.0, C, PiNDlin, 0.0, RT010);
-      RT001 = hypre_ParVectorInRangeOf(C);
-      hypre_ParCSRMatrixMatvec(1.0, PiNDx, y, 0.0, PiNDlin);
-      hypre_ParCSRMatrixMatvec(1.0, C, PiNDlin, 0.0, RT001);
+      RT100 = nalu_hypre_ParVectorInRangeOf(C);
+      nalu_hypre_ParCSRMatrixMatvec(1.0, PiNDy, z, 0.0, PiNDlin);
+      nalu_hypre_ParCSRMatrixMatvec(1.0, C, PiNDlin, 0.0, RT100);
+      RT010 = nalu_hypre_ParVectorInRangeOf(C);
+      nalu_hypre_ParCSRMatrixMatvec(1.0, PiNDz, x, 0.0, PiNDlin);
+      nalu_hypre_ParCSRMatrixMatvec(1.0, C, PiNDlin, 0.0, RT010);
+      RT001 = nalu_hypre_ParVectorInRangeOf(C);
+      nalu_hypre_ParCSRMatrixMatvec(1.0, PiNDx, y, 0.0, PiNDlin);
+      nalu_hypre_ParCSRMatrixMatvec(1.0, C, PiNDlin, 0.0, RT001);
 
-      hypre_ParVectorDestroy(PiNDlin);
+      nalu_hypre_ParVectorDestroy(PiNDlin);
    }
 
    /* Compute Pi = [Pi_x, Pi_y, Pi_z] */
    {
       NALU_HYPRE_Int i, j, d;
 
-      NALU_HYPRE_Real *RT100_data = hypre_VectorData(hypre_ParVectorLocalVector(RT100));
-      NALU_HYPRE_Real *RT010_data = hypre_VectorData(hypre_ParVectorLocalVector(RT010));
-      NALU_HYPRE_Real *RT001_data = hypre_VectorData(hypre_ParVectorLocalVector(RT001));
+      NALU_HYPRE_Real *RT100_data = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(RT100));
+      NALU_HYPRE_Real *RT010_data = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(RT010));
+      NALU_HYPRE_Real *RT001_data = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(RT001));
 
       /* Each component of Pi has the sparsity pattern of the topological
          face-to-vertex matrix. */
-      hypre_ParCSRMatrix *F2V;
+      nalu_hypre_ParCSRMatrix *F2V;
 #if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
       if (exec == NALU_HYPRE_EXEC_DEVICE)
       {
-         F2V = hypre_ParCSRMatMat(C, G);
+         F2V = nalu_hypre_ParCSRMatMat(C, G);
       }
       else
 #endif
       {
-         F2V = hypre_ParMatmul(C, G);
+         F2V = nalu_hypre_ParMatmul(C, G);
       }
 
       /* Create the parallel interpolation matrix */
       {
-         MPI_Comm comm = hypre_ParCSRMatrixComm(F2V);
-         NALU_HYPRE_BigInt global_num_rows = hypre_ParCSRMatrixGlobalNumRows(F2V);
-         NALU_HYPRE_BigInt global_num_cols = 3 * hypre_ParCSRMatrixGlobalNumCols(F2V);
-         NALU_HYPRE_BigInt *row_starts = hypre_ParCSRMatrixRowStarts(F2V);
+         MPI_Comm comm = nalu_hypre_ParCSRMatrixComm(F2V);
+         NALU_HYPRE_BigInt global_num_rows = nalu_hypre_ParCSRMatrixGlobalNumRows(F2V);
+         NALU_HYPRE_BigInt global_num_cols = 3 * nalu_hypre_ParCSRMatrixGlobalNumCols(F2V);
+         NALU_HYPRE_BigInt *row_starts = nalu_hypre_ParCSRMatrixRowStarts(F2V);
          NALU_HYPRE_BigInt *col_starts;
          NALU_HYPRE_Int col_starts_size;
-         NALU_HYPRE_Int num_cols_offd = 3 * hypre_CSRMatrixNumCols(hypre_ParCSRMatrixOffd(F2V));
-         NALU_HYPRE_Int num_nonzeros_diag = 3 * hypre_CSRMatrixNumNonzeros(hypre_ParCSRMatrixDiag(F2V));
-         NALU_HYPRE_Int num_nonzeros_offd = 3 * hypre_CSRMatrixNumNonzeros(hypre_ParCSRMatrixOffd(F2V));
-         NALU_HYPRE_BigInt *col_starts_F2V = hypre_ParCSRMatrixColStarts(F2V);
+         NALU_HYPRE_Int num_cols_offd = 3 * nalu_hypre_CSRMatrixNumCols(nalu_hypre_ParCSRMatrixOffd(F2V));
+         NALU_HYPRE_Int num_nonzeros_diag = 3 * nalu_hypre_CSRMatrixNumNonzeros(nalu_hypre_ParCSRMatrixDiag(F2V));
+         NALU_HYPRE_Int num_nonzeros_offd = 3 * nalu_hypre_CSRMatrixNumNonzeros(nalu_hypre_ParCSRMatrixOffd(F2V));
+         NALU_HYPRE_BigInt *col_starts_F2V = nalu_hypre_ParCSRMatrixColStarts(F2V);
          col_starts_size = 2;
-         col_starts = hypre_TAlloc(NALU_HYPRE_BigInt, col_starts_size, NALU_HYPRE_MEMORY_HOST);
+         col_starts = nalu_hypre_TAlloc(NALU_HYPRE_BigInt, col_starts_size, NALU_HYPRE_MEMORY_HOST);
          for (i = 0; i < col_starts_size; i++)
          {
             col_starts[i] = 3 * col_starts_F2V[i];
          }
 
-         Pi = hypre_ParCSRMatrixCreate(comm,
+         Pi = nalu_hypre_ParCSRMatrixCreate(comm,
                                        global_num_rows,
                                        global_num_cols,
                                        row_starts,
@@ -602,36 +602,36 @@ NALU_HYPRE_Int hypre_ADSComputePi(hypre_ParCSRMatrix *A,
                                        num_nonzeros_diag,
                                        num_nonzeros_offd);
 
-         hypre_ParCSRMatrixOwnsData(Pi) = 1;
-         hypre_ParCSRMatrixInitialize(Pi);
+         nalu_hypre_ParCSRMatrixOwnsData(Pi) = 1;
+         nalu_hypre_ParCSRMatrixInitialize(Pi);
       }
 
       /* Fill-in the diagonal part */
       {
-         hypre_CSRMatrix *F2V_diag = hypre_ParCSRMatrixDiag(F2V);
-         NALU_HYPRE_Int *F2V_diag_I = hypre_CSRMatrixI(F2V_diag);
-         NALU_HYPRE_Int *F2V_diag_J = hypre_CSRMatrixJ(F2V_diag);
+         nalu_hypre_CSRMatrix *F2V_diag = nalu_hypre_ParCSRMatrixDiag(F2V);
+         NALU_HYPRE_Int *F2V_diag_I = nalu_hypre_CSRMatrixI(F2V_diag);
+         NALU_HYPRE_Int *F2V_diag_J = nalu_hypre_CSRMatrixJ(F2V_diag);
 
-         NALU_HYPRE_Int F2V_diag_nrows = hypre_CSRMatrixNumRows(F2V_diag);
-         NALU_HYPRE_Int F2V_diag_nnz = hypre_CSRMatrixNumNonzeros(F2V_diag);
+         NALU_HYPRE_Int F2V_diag_nrows = nalu_hypre_CSRMatrixNumRows(F2V_diag);
+         NALU_HYPRE_Int F2V_diag_nnz = nalu_hypre_CSRMatrixNumNonzeros(F2V_diag);
 
-         hypre_CSRMatrix *Pi_diag = hypre_ParCSRMatrixDiag(Pi);
-         NALU_HYPRE_Int *Pi_diag_I = hypre_CSRMatrixI(Pi_diag);
-         NALU_HYPRE_Int *Pi_diag_J = hypre_CSRMatrixJ(Pi_diag);
-         NALU_HYPRE_Real *Pi_diag_data = hypre_CSRMatrixData(Pi_diag);
+         nalu_hypre_CSRMatrix *Pi_diag = nalu_hypre_ParCSRMatrixDiag(Pi);
+         NALU_HYPRE_Int *Pi_diag_I = nalu_hypre_CSRMatrixI(Pi_diag);
+         NALU_HYPRE_Int *Pi_diag_J = nalu_hypre_CSRMatrixJ(Pi_diag);
+         NALU_HYPRE_Real *Pi_diag_data = nalu_hypre_CSRMatrixData(Pi_diag);
 
 #if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
          if (exec == NALU_HYPRE_EXEC_DEVICE)
          {
             hypreDevice_IntScalen( F2V_diag_I, F2V_diag_nrows + 1, Pi_diag_I, 3);
 
-            dim3 bDim = hypre_GetDefaultDeviceBlockDimension();
-            dim3 gDim = hypre_GetDefaultDeviceGridDimension(F2V_diag_nnz, "thread", bDim);
+            dim3 bDim = nalu_hypre_GetDefaultDeviceBlockDimension();
+            dim3 gDim = nalu_hypre_GetDefaultDeviceGridDimension(F2V_diag_nnz, "thread", bDim);
 
             NALU_HYPRE_GPU_LAUNCH( hypreGPUKernel_AMSComputePi_copy1, gDim, bDim,
                               F2V_diag_nnz, 3, F2V_diag_J, Pi_diag_J );
 
-            gDim = hypre_GetDefaultDeviceGridDimension(F2V_diag_nrows, "warp", bDim);
+            gDim = nalu_hypre_GetDefaultDeviceGridDimension(F2V_diag_nrows, "warp", bDim);
 
             NALU_HYPRE_GPU_LAUNCH( hypreGPUKernel_AMSComputePi_copy2, gDim, bDim,
                               F2V_diag_nrows, 3, F2V_diag_I, NULL, RT100_data, RT010_data, RT001_data,
@@ -663,21 +663,21 @@ NALU_HYPRE_Int hypre_ADSComputePi(hypre_ParCSRMatrix *A,
 
       /* Fill-in the off-diagonal part */
       {
-         hypre_CSRMatrix *F2V_offd = hypre_ParCSRMatrixOffd(F2V);
-         NALU_HYPRE_Int *F2V_offd_I = hypre_CSRMatrixI(F2V_offd);
-         NALU_HYPRE_Int *F2V_offd_J = hypre_CSRMatrixJ(F2V_offd);
+         nalu_hypre_CSRMatrix *F2V_offd = nalu_hypre_ParCSRMatrixOffd(F2V);
+         NALU_HYPRE_Int *F2V_offd_I = nalu_hypre_CSRMatrixI(F2V_offd);
+         NALU_HYPRE_Int *F2V_offd_J = nalu_hypre_CSRMatrixJ(F2V_offd);
 
-         NALU_HYPRE_Int F2V_offd_nrows = hypre_CSRMatrixNumRows(F2V_offd);
-         NALU_HYPRE_Int F2V_offd_ncols = hypre_CSRMatrixNumCols(F2V_offd);
-         NALU_HYPRE_Int F2V_offd_nnz = hypre_CSRMatrixNumNonzeros(F2V_offd);
+         NALU_HYPRE_Int F2V_offd_nrows = nalu_hypre_CSRMatrixNumRows(F2V_offd);
+         NALU_HYPRE_Int F2V_offd_ncols = nalu_hypre_CSRMatrixNumCols(F2V_offd);
+         NALU_HYPRE_Int F2V_offd_nnz = nalu_hypre_CSRMatrixNumNonzeros(F2V_offd);
 
-         hypre_CSRMatrix *Pi_offd = hypre_ParCSRMatrixOffd(Pi);
-         NALU_HYPRE_Int *Pi_offd_I = hypre_CSRMatrixI(Pi_offd);
-         NALU_HYPRE_Int *Pi_offd_J = hypre_CSRMatrixJ(Pi_offd);
-         NALU_HYPRE_Real *Pi_offd_data = hypre_CSRMatrixData(Pi_offd);
+         nalu_hypre_CSRMatrix *Pi_offd = nalu_hypre_ParCSRMatrixOffd(Pi);
+         NALU_HYPRE_Int *Pi_offd_I = nalu_hypre_CSRMatrixI(Pi_offd);
+         NALU_HYPRE_Int *Pi_offd_J = nalu_hypre_CSRMatrixJ(Pi_offd);
+         NALU_HYPRE_Real *Pi_offd_data = nalu_hypre_CSRMatrixData(Pi_offd);
 
-         NALU_HYPRE_BigInt *F2V_cmap = hypre_ParCSRMatrixColMapOffd(F2V);
-         NALU_HYPRE_BigInt *Pi_cmap = hypre_ParCSRMatrixColMapOffd(Pi);
+         NALU_HYPRE_BigInt *F2V_cmap = nalu_hypre_ParCSRMatrixColMapOffd(F2V);
+         NALU_HYPRE_BigInt *Pi_cmap = nalu_hypre_ParCSRMatrixColMapOffd(Pi);
 
 #if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
          if (exec == NALU_HYPRE_EXEC_DEVICE)
@@ -687,13 +687,13 @@ NALU_HYPRE_Int hypre_ADSComputePi(hypre_ParCSRMatrix *A,
                hypreDevice_IntScalen( F2V_offd_I, F2V_offd_nrows + 1, Pi_offd_I, 3 );
             }
 
-            dim3 bDim = hypre_GetDefaultDeviceBlockDimension();
-            dim3 gDim = hypre_GetDefaultDeviceGridDimension(F2V_offd_nnz, "thread", bDim);
+            dim3 bDim = nalu_hypre_GetDefaultDeviceBlockDimension();
+            dim3 gDim = nalu_hypre_GetDefaultDeviceGridDimension(F2V_offd_nnz, "thread", bDim);
 
             NALU_HYPRE_GPU_LAUNCH( hypreGPUKernel_AMSComputePi_copy1, gDim, bDim,
                               F2V_offd_nnz, 3, F2V_offd_J, Pi_offd_J );
 
-            gDim = hypre_GetDefaultDeviceGridDimension(F2V_offd_nrows, "warp", bDim);
+            gDim = nalu_hypre_GetDefaultDeviceGridDimension(F2V_offd_nrows, "warp", bDim);
 
             NALU_HYPRE_GPU_LAUNCH( hypreGPUKernel_AMSComputePi_copy2, gDim, bDim,
                               F2V_offd_nrows, 3, F2V_offd_I, NULL, RT100_data, RT010_data, RT001_data,
@@ -730,20 +730,20 @@ NALU_HYPRE_Int hypre_ADSComputePi(hypre_ParCSRMatrix *A,
             }
       }
 
-      hypre_ParCSRMatrixDestroy(F2V);
+      nalu_hypre_ParCSRMatrixDestroy(F2V);
    }
 
-   hypre_ParVectorDestroy(RT100);
-   hypre_ParVectorDestroy(RT010);
-   hypre_ParVectorDestroy(RT001);
+   nalu_hypre_ParVectorDestroy(RT100);
+   nalu_hypre_ParVectorDestroy(RT010);
+   nalu_hypre_ParVectorDestroy(RT001);
 
    *Pi_ptr = Pi;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_ADSComputePixyz
+ * nalu_hypre_ADSComputePixyz
  *
  * Construct the components Pix, Piy, Piz of the interpolation matrix Pi, which
  * maps the space of vector linear finite elements to the space of face finite
@@ -756,81 +756,81 @@ NALU_HYPRE_Int hypre_ADSComputePi(hypre_ParCSRMatrix *A,
  * We assume a constant number of vertices per face (no prisms or pyramids).
  *--------------------------------------------------------------------------*/
 
-NALU_HYPRE_Int hypre_ADSComputePixyz(hypre_ParCSRMatrix *A,
-                                hypre_ParCSRMatrix *C,
-                                hypre_ParCSRMatrix *G,
-                                hypre_ParVector *x,
-                                hypre_ParVector *y,
-                                hypre_ParVector *z,
-                                hypre_ParCSRMatrix *PiNDx,
-                                hypre_ParCSRMatrix *PiNDy,
-                                hypre_ParCSRMatrix *PiNDz,
-                                hypre_ParCSRMatrix **Pix_ptr,
-                                hypre_ParCSRMatrix **Piy_ptr,
-                                hypre_ParCSRMatrix **Piz_ptr)
+NALU_HYPRE_Int nalu_hypre_ADSComputePixyz(nalu_hypre_ParCSRMatrix *A,
+                                nalu_hypre_ParCSRMatrix *C,
+                                nalu_hypre_ParCSRMatrix *G,
+                                nalu_hypre_ParVector *x,
+                                nalu_hypre_ParVector *y,
+                                nalu_hypre_ParVector *z,
+                                nalu_hypre_ParCSRMatrix *PiNDx,
+                                nalu_hypre_ParCSRMatrix *PiNDy,
+                                nalu_hypre_ParCSRMatrix *PiNDz,
+                                nalu_hypre_ParCSRMatrix **Pix_ptr,
+                                nalu_hypre_ParCSRMatrix **Piy_ptr,
+                                nalu_hypre_ParCSRMatrix **Piz_ptr)
 {
-   hypre_ParCSRMatrix *Pix, *Piy, *Piz;
+   nalu_hypre_ParCSRMatrix *Pix, *Piy, *Piz;
 
 #if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
-   NALU_HYPRE_ExecutionPolicy exec = hypre_GetExecPolicy1( hypre_ParCSRMatrixMemoryLocation(A) );
+   NALU_HYPRE_ExecutionPolicy exec = nalu_hypre_GetExecPolicy1( nalu_hypre_ParCSRMatrixMemoryLocation(A) );
 #endif
 
    /* Compute the representations of the coordinate vectors, RT100, RT010 and
       RT001, in the Raviart-Thomas space, by observing that the RT coordinates
       of (1,0,0) = -curl (0,z,0) are given by C*PiNDy*z, etc. (We ignore the
       minus sign since it is irrelevant for the coarse-grid correction.) */
-   hypre_ParVector *RT100, *RT010, *RT001;
+   nalu_hypre_ParVector *RT100, *RT010, *RT001;
    {
-      hypre_ParVector *PiNDlin = hypre_ParVectorInRangeOf(PiNDx);
+      nalu_hypre_ParVector *PiNDlin = nalu_hypre_ParVectorInRangeOf(PiNDx);
 
-      RT100 = hypre_ParVectorInRangeOf(C);
-      hypre_ParCSRMatrixMatvec(1.0, PiNDy, z, 0.0, PiNDlin);
-      hypre_ParCSRMatrixMatvec(1.0, C, PiNDlin, 0.0, RT100);
-      RT010 = hypre_ParVectorInRangeOf(C);
-      hypre_ParCSRMatrixMatvec(1.0, PiNDz, x, 0.0, PiNDlin);
-      hypre_ParCSRMatrixMatvec(1.0, C, PiNDlin, 0.0, RT010);
-      RT001 = hypre_ParVectorInRangeOf(C);
-      hypre_ParCSRMatrixMatvec(1.0, PiNDx, y, 0.0, PiNDlin);
-      hypre_ParCSRMatrixMatvec(1.0, C, PiNDlin, 0.0, RT001);
+      RT100 = nalu_hypre_ParVectorInRangeOf(C);
+      nalu_hypre_ParCSRMatrixMatvec(1.0, PiNDy, z, 0.0, PiNDlin);
+      nalu_hypre_ParCSRMatrixMatvec(1.0, C, PiNDlin, 0.0, RT100);
+      RT010 = nalu_hypre_ParVectorInRangeOf(C);
+      nalu_hypre_ParCSRMatrixMatvec(1.0, PiNDz, x, 0.0, PiNDlin);
+      nalu_hypre_ParCSRMatrixMatvec(1.0, C, PiNDlin, 0.0, RT010);
+      RT001 = nalu_hypre_ParVectorInRangeOf(C);
+      nalu_hypre_ParCSRMatrixMatvec(1.0, PiNDx, y, 0.0, PiNDlin);
+      nalu_hypre_ParCSRMatrixMatvec(1.0, C, PiNDlin, 0.0, RT001);
 
-      hypre_ParVectorDestroy(PiNDlin);
+      nalu_hypre_ParVectorDestroy(PiNDlin);
    }
 
    /* Compute Pix, Piy, Piz */
    {
       NALU_HYPRE_Int i, j;
 
-      NALU_HYPRE_Real *RT100_data = hypre_VectorData(hypre_ParVectorLocalVector(RT100));
-      NALU_HYPRE_Real *RT010_data = hypre_VectorData(hypre_ParVectorLocalVector(RT010));
-      NALU_HYPRE_Real *RT001_data = hypre_VectorData(hypre_ParVectorLocalVector(RT001));
+      NALU_HYPRE_Real *RT100_data = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(RT100));
+      NALU_HYPRE_Real *RT010_data = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(RT010));
+      NALU_HYPRE_Real *RT001_data = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(RT001));
 
       /* Each component of Pi has the sparsity pattern of the topological
          face-to-vertex matrix. */
-      hypre_ParCSRMatrix *F2V;
+      nalu_hypre_ParCSRMatrix *F2V;
 
 #if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
       if (exec == NALU_HYPRE_EXEC_DEVICE)
       {
-         F2V = hypre_ParCSRMatMat(C, G);
+         F2V = nalu_hypre_ParCSRMatMat(C, G);
       }
       else
 #endif
       {
-         F2V = hypre_ParMatmul(C, G);
+         F2V = nalu_hypre_ParMatmul(C, G);
       }
 
       /* Create the components of the parallel interpolation matrix */
       {
-         MPI_Comm comm = hypre_ParCSRMatrixComm(F2V);
-         NALU_HYPRE_BigInt global_num_rows = hypre_ParCSRMatrixGlobalNumRows(F2V);
-         NALU_HYPRE_BigInt global_num_cols = hypre_ParCSRMatrixGlobalNumCols(F2V);
-         NALU_HYPRE_BigInt *row_starts = hypre_ParCSRMatrixRowStarts(F2V);
-         NALU_HYPRE_BigInt *col_starts = hypre_ParCSRMatrixColStarts(F2V);
-         NALU_HYPRE_Int num_cols_offd = hypre_CSRMatrixNumCols(hypre_ParCSRMatrixOffd(F2V));
-         NALU_HYPRE_Int num_nonzeros_diag = hypre_CSRMatrixNumNonzeros(hypre_ParCSRMatrixDiag(F2V));
-         NALU_HYPRE_Int num_nonzeros_offd = hypre_CSRMatrixNumNonzeros(hypre_ParCSRMatrixOffd(F2V));
+         MPI_Comm comm = nalu_hypre_ParCSRMatrixComm(F2V);
+         NALU_HYPRE_BigInt global_num_rows = nalu_hypre_ParCSRMatrixGlobalNumRows(F2V);
+         NALU_HYPRE_BigInt global_num_cols = nalu_hypre_ParCSRMatrixGlobalNumCols(F2V);
+         NALU_HYPRE_BigInt *row_starts = nalu_hypre_ParCSRMatrixRowStarts(F2V);
+         NALU_HYPRE_BigInt *col_starts = nalu_hypre_ParCSRMatrixColStarts(F2V);
+         NALU_HYPRE_Int num_cols_offd = nalu_hypre_CSRMatrixNumCols(nalu_hypre_ParCSRMatrixOffd(F2V));
+         NALU_HYPRE_Int num_nonzeros_diag = nalu_hypre_CSRMatrixNumNonzeros(nalu_hypre_ParCSRMatrixDiag(F2V));
+         NALU_HYPRE_Int num_nonzeros_offd = nalu_hypre_CSRMatrixNumNonzeros(nalu_hypre_ParCSRMatrixOffd(F2V));
 
-         Pix = hypre_ParCSRMatrixCreate(comm,
+         Pix = nalu_hypre_ParCSRMatrixCreate(comm,
                                         global_num_rows,
                                         global_num_cols,
                                         row_starts,
@@ -838,10 +838,10 @@ NALU_HYPRE_Int hypre_ADSComputePixyz(hypre_ParCSRMatrix *A,
                                         num_cols_offd,
                                         num_nonzeros_diag,
                                         num_nonzeros_offd);
-         hypre_ParCSRMatrixOwnsData(Pix) = 1;
-         hypre_ParCSRMatrixInitialize(Pix);
+         nalu_hypre_ParCSRMatrixOwnsData(Pix) = 1;
+         nalu_hypre_ParCSRMatrixInitialize(Pix);
 
-         Piy = hypre_ParCSRMatrixCreate(comm,
+         Piy = nalu_hypre_ParCSRMatrixCreate(comm,
                                         global_num_rows,
                                         global_num_cols,
                                         row_starts,
@@ -849,10 +849,10 @@ NALU_HYPRE_Int hypre_ADSComputePixyz(hypre_ParCSRMatrix *A,
                                         num_cols_offd,
                                         num_nonzeros_diag,
                                         num_nonzeros_offd);
-         hypre_ParCSRMatrixOwnsData(Piy) = 1;
-         hypre_ParCSRMatrixInitialize(Piy);
+         nalu_hypre_ParCSRMatrixOwnsData(Piy) = 1;
+         nalu_hypre_ParCSRMatrixInitialize(Piy);
 
-         Piz = hypre_ParCSRMatrixCreate(comm,
+         Piz = nalu_hypre_ParCSRMatrixCreate(comm,
                                         global_num_rows,
                                         global_num_cols,
                                         row_starts,
@@ -860,33 +860,33 @@ NALU_HYPRE_Int hypre_ADSComputePixyz(hypre_ParCSRMatrix *A,
                                         num_cols_offd,
                                         num_nonzeros_diag,
                                         num_nonzeros_offd);
-         hypre_ParCSRMatrixOwnsData(Piz) = 1;
-         hypre_ParCSRMatrixInitialize(Piz);
+         nalu_hypre_ParCSRMatrixOwnsData(Piz) = 1;
+         nalu_hypre_ParCSRMatrixInitialize(Piz);
       }
 
       /* Fill-in the diagonal part */
       {
-         hypre_CSRMatrix *F2V_diag = hypre_ParCSRMatrixDiag(F2V);
-         NALU_HYPRE_Int *F2V_diag_I = hypre_CSRMatrixI(F2V_diag);
-         NALU_HYPRE_Int *F2V_diag_J = hypre_CSRMatrixJ(F2V_diag);
+         nalu_hypre_CSRMatrix *F2V_diag = nalu_hypre_ParCSRMatrixDiag(F2V);
+         NALU_HYPRE_Int *F2V_diag_I = nalu_hypre_CSRMatrixI(F2V_diag);
+         NALU_HYPRE_Int *F2V_diag_J = nalu_hypre_CSRMatrixJ(F2V_diag);
 
-         NALU_HYPRE_Int F2V_diag_nrows = hypre_CSRMatrixNumRows(F2V_diag);
-         NALU_HYPRE_Int F2V_diag_nnz = hypre_CSRMatrixNumNonzeros(F2V_diag);
+         NALU_HYPRE_Int F2V_diag_nrows = nalu_hypre_CSRMatrixNumRows(F2V_diag);
+         NALU_HYPRE_Int F2V_diag_nnz = nalu_hypre_CSRMatrixNumNonzeros(F2V_diag);
 
-         hypre_CSRMatrix *Pix_diag = hypre_ParCSRMatrixDiag(Pix);
-         NALU_HYPRE_Int *Pix_diag_I = hypre_CSRMatrixI(Pix_diag);
-         NALU_HYPRE_Int *Pix_diag_J = hypre_CSRMatrixJ(Pix_diag);
-         NALU_HYPRE_Real *Pix_diag_data = hypre_CSRMatrixData(Pix_diag);
+         nalu_hypre_CSRMatrix *Pix_diag = nalu_hypre_ParCSRMatrixDiag(Pix);
+         NALU_HYPRE_Int *Pix_diag_I = nalu_hypre_CSRMatrixI(Pix_diag);
+         NALU_HYPRE_Int *Pix_diag_J = nalu_hypre_CSRMatrixJ(Pix_diag);
+         NALU_HYPRE_Real *Pix_diag_data = nalu_hypre_CSRMatrixData(Pix_diag);
 
-         hypre_CSRMatrix *Piy_diag = hypre_ParCSRMatrixDiag(Piy);
-         NALU_HYPRE_Int *Piy_diag_I = hypre_CSRMatrixI(Piy_diag);
-         NALU_HYPRE_Int *Piy_diag_J = hypre_CSRMatrixJ(Piy_diag);
-         NALU_HYPRE_Real *Piy_diag_data = hypre_CSRMatrixData(Piy_diag);
+         nalu_hypre_CSRMatrix *Piy_diag = nalu_hypre_ParCSRMatrixDiag(Piy);
+         NALU_HYPRE_Int *Piy_diag_I = nalu_hypre_CSRMatrixI(Piy_diag);
+         NALU_HYPRE_Int *Piy_diag_J = nalu_hypre_CSRMatrixJ(Piy_diag);
+         NALU_HYPRE_Real *Piy_diag_data = nalu_hypre_CSRMatrixData(Piy_diag);
 
-         hypre_CSRMatrix *Piz_diag = hypre_ParCSRMatrixDiag(Piz);
-         NALU_HYPRE_Int *Piz_diag_I = hypre_CSRMatrixI(Piz_diag);
-         NALU_HYPRE_Int *Piz_diag_J = hypre_CSRMatrixJ(Piz_diag);
-         NALU_HYPRE_Real *Piz_diag_data = hypre_CSRMatrixData(Piz_diag);
+         nalu_hypre_CSRMatrix *Piz_diag = nalu_hypre_ParCSRMatrixDiag(Piz);
+         NALU_HYPRE_Int *Piz_diag_I = nalu_hypre_CSRMatrixI(Piz_diag);
+         NALU_HYPRE_Int *Piz_diag_J = nalu_hypre_CSRMatrixJ(Piz_diag);
+         NALU_HYPRE_Real *Piz_diag_data = nalu_hypre_CSRMatrixData(Piz_diag);
 
 #if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
          if (exec == NALU_HYPRE_EXEC_DEVICE)
@@ -901,8 +901,8 @@ NALU_HYPRE_Int hypre_ADSComputePixyz(hypre_ParCSRMatrix *A,
                                F2V_diag_nnz,
                                thrust::make_zip_iterator(thrust::make_tuple(Pix_diag_J, Piy_diag_J, Piz_diag_J)) );
 
-            dim3 bDim = hypre_GetDefaultDeviceBlockDimension();
-            dim3 gDim = hypre_GetDefaultDeviceGridDimension(F2V_diag_nrows, "warp", bDim);
+            dim3 bDim = nalu_hypre_GetDefaultDeviceBlockDimension();
+            dim3 gDim = nalu_hypre_GetDefaultDeviceGridDimension(F2V_diag_nrows, "warp", bDim);
 
             NALU_HYPRE_GPU_LAUNCH( hypreGPUKernel_AMSComputePixyz_copy, gDim, bDim,
                               F2V_diag_nrows, 3, F2V_diag_I, NULL, RT100_data, RT010_data, RT001_data,
@@ -937,33 +937,33 @@ NALU_HYPRE_Int hypre_ADSComputePixyz(hypre_ParCSRMatrix *A,
 
       /* Fill-in the off-diagonal part */
       {
-         hypre_CSRMatrix *F2V_offd = hypre_ParCSRMatrixOffd(F2V);
-         NALU_HYPRE_Int *F2V_offd_I = hypre_CSRMatrixI(F2V_offd);
-         NALU_HYPRE_Int *F2V_offd_J = hypre_CSRMatrixJ(F2V_offd);
+         nalu_hypre_CSRMatrix *F2V_offd = nalu_hypre_ParCSRMatrixOffd(F2V);
+         NALU_HYPRE_Int *F2V_offd_I = nalu_hypre_CSRMatrixI(F2V_offd);
+         NALU_HYPRE_Int *F2V_offd_J = nalu_hypre_CSRMatrixJ(F2V_offd);
 
-         NALU_HYPRE_Int F2V_offd_nrows = hypre_CSRMatrixNumRows(F2V_offd);
-         NALU_HYPRE_Int F2V_offd_ncols = hypre_CSRMatrixNumCols(F2V_offd);
-         NALU_HYPRE_Int F2V_offd_nnz = hypre_CSRMatrixNumNonzeros(F2V_offd);
+         NALU_HYPRE_Int F2V_offd_nrows = nalu_hypre_CSRMatrixNumRows(F2V_offd);
+         NALU_HYPRE_Int F2V_offd_ncols = nalu_hypre_CSRMatrixNumCols(F2V_offd);
+         NALU_HYPRE_Int F2V_offd_nnz = nalu_hypre_CSRMatrixNumNonzeros(F2V_offd);
 
-         hypre_CSRMatrix *Pix_offd = hypre_ParCSRMatrixOffd(Pix);
-         NALU_HYPRE_Int *Pix_offd_I = hypre_CSRMatrixI(Pix_offd);
-         NALU_HYPRE_Int *Pix_offd_J = hypre_CSRMatrixJ(Pix_offd);
-         NALU_HYPRE_Real *Pix_offd_data = hypre_CSRMatrixData(Pix_offd);
+         nalu_hypre_CSRMatrix *Pix_offd = nalu_hypre_ParCSRMatrixOffd(Pix);
+         NALU_HYPRE_Int *Pix_offd_I = nalu_hypre_CSRMatrixI(Pix_offd);
+         NALU_HYPRE_Int *Pix_offd_J = nalu_hypre_CSRMatrixJ(Pix_offd);
+         NALU_HYPRE_Real *Pix_offd_data = nalu_hypre_CSRMatrixData(Pix_offd);
 
-         hypre_CSRMatrix *Piy_offd = hypre_ParCSRMatrixOffd(Piy);
-         NALU_HYPRE_Int *Piy_offd_I = hypre_CSRMatrixI(Piy_offd);
-         NALU_HYPRE_Int *Piy_offd_J = hypre_CSRMatrixJ(Piy_offd);
-         NALU_HYPRE_Real *Piy_offd_data = hypre_CSRMatrixData(Piy_offd);
+         nalu_hypre_CSRMatrix *Piy_offd = nalu_hypre_ParCSRMatrixOffd(Piy);
+         NALU_HYPRE_Int *Piy_offd_I = nalu_hypre_CSRMatrixI(Piy_offd);
+         NALU_HYPRE_Int *Piy_offd_J = nalu_hypre_CSRMatrixJ(Piy_offd);
+         NALU_HYPRE_Real *Piy_offd_data = nalu_hypre_CSRMatrixData(Piy_offd);
 
-         hypre_CSRMatrix *Piz_offd = hypre_ParCSRMatrixOffd(Piz);
-         NALU_HYPRE_Int *Piz_offd_I = hypre_CSRMatrixI(Piz_offd);
-         NALU_HYPRE_Int *Piz_offd_J = hypre_CSRMatrixJ(Piz_offd);
-         NALU_HYPRE_Real *Piz_offd_data = hypre_CSRMatrixData(Piz_offd);
+         nalu_hypre_CSRMatrix *Piz_offd = nalu_hypre_ParCSRMatrixOffd(Piz);
+         NALU_HYPRE_Int *Piz_offd_I = nalu_hypre_CSRMatrixI(Piz_offd);
+         NALU_HYPRE_Int *Piz_offd_J = nalu_hypre_CSRMatrixJ(Piz_offd);
+         NALU_HYPRE_Real *Piz_offd_data = nalu_hypre_CSRMatrixData(Piz_offd);
 
-         NALU_HYPRE_BigInt *F2V_cmap = hypre_ParCSRMatrixColMapOffd(F2V);
-         NALU_HYPRE_BigInt *Pix_cmap = hypre_ParCSRMatrixColMapOffd(Pix);
-         NALU_HYPRE_BigInt *Piy_cmap = hypre_ParCSRMatrixColMapOffd(Piy);
-         NALU_HYPRE_BigInt *Piz_cmap = hypre_ParCSRMatrixColMapOffd(Piz);
+         NALU_HYPRE_BigInt *F2V_cmap = nalu_hypre_ParCSRMatrixColMapOffd(F2V);
+         NALU_HYPRE_BigInt *Pix_cmap = nalu_hypre_ParCSRMatrixColMapOffd(Pix);
+         NALU_HYPRE_BigInt *Piy_cmap = nalu_hypre_ParCSRMatrixColMapOffd(Piy);
+         NALU_HYPRE_BigInt *Piz_cmap = nalu_hypre_ParCSRMatrixColMapOffd(Piz);
 
 #if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
          if (exec == NALU_HYPRE_EXEC_DEVICE)
@@ -981,8 +981,8 @@ NALU_HYPRE_Int hypre_ADSComputePixyz(hypre_ParCSRMatrix *A,
                                F2V_offd_nnz,
                                thrust::make_zip_iterator(thrust::make_tuple(Pix_offd_J, Piy_offd_J, Piz_offd_J)) );
 
-            dim3 bDim = hypre_GetDefaultDeviceBlockDimension();
-            dim3 gDim = hypre_GetDefaultDeviceGridDimension(F2V_offd_nrows, "warp", bDim);
+            dim3 bDim = nalu_hypre_GetDefaultDeviceBlockDimension();
+            dim3 gDim = nalu_hypre_GetDefaultDeviceGridDimension(F2V_offd_nrows, "warp", bDim);
 
             NALU_HYPRE_GPU_LAUNCH( hypreGPUKernel_AMSComputePixyz_copy, gDim, bDim,
                               F2V_offd_nrows, 3, F2V_offd_I, NULL, RT100_data, RT010_data, RT001_data,
@@ -1025,70 +1025,70 @@ NALU_HYPRE_Int hypre_ADSComputePixyz(hypre_ParCSRMatrix *A,
 
       if (NALU_HYPRE_AssumedPartitionCheck())
       {
-         hypre_ParCSRMatrixDestroy(F2V);
+         nalu_hypre_ParCSRMatrixDestroy(F2V);
       }
       else
       {
-         hypre_ParCSRBooleanMatrixDestroy((hypre_ParCSRBooleanMatrix*)F2V);
+         nalu_hypre_ParCSRBooleanMatrixDestroy((nalu_hypre_ParCSRBooleanMatrix*)F2V);
       }
    }
 
-   hypre_ParVectorDestroy(RT100);
-   hypre_ParVectorDestroy(RT010);
-   hypre_ParVectorDestroy(RT001);
+   nalu_hypre_ParVectorDestroy(RT100);
+   nalu_hypre_ParVectorDestroy(RT010);
+   nalu_hypre_ParVectorDestroy(RT001);
 
    *Pix_ptr = Pix;
    *Piy_ptr = Piy;
    *Piz_ptr = Piz;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_ADSSetup
+ * nalu_hypre_ADSSetup
  *
  * Construct the ADS solver components.
  *
- * The following functions need to be called before hypre_ADSSetup():
- * - hypre_ADSSetDiscreteCurl()
- * - hypre_ADSSetDiscreteGradient()
- * - hypre_ADSSetCoordinateVectors()
+ * The following functions need to be called before nalu_hypre_ADSSetup():
+ * - nalu_hypre_ADSSetDiscreteCurl()
+ * - nalu_hypre_ADSSetDiscreteGradient()
+ * - nalu_hypre_ADSSetCoordinateVectors()
  *--------------------------------------------------------------------------*/
 
-NALU_HYPRE_Int hypre_ADSSetup(void *solver,
-                         hypre_ParCSRMatrix *A,
-                         hypre_ParVector *b,
-                         hypre_ParVector *x)
+NALU_HYPRE_Int nalu_hypre_ADSSetup(void *solver,
+                         nalu_hypre_ParCSRMatrix *A,
+                         nalu_hypre_ParVector *b,
+                         nalu_hypre_ParVector *x)
 {
 #if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
-   NALU_HYPRE_ExecutionPolicy exec = hypre_GetExecPolicy1( hypre_ParCSRMatrixMemoryLocation(A) );
+   NALU_HYPRE_ExecutionPolicy exec = nalu_hypre_GetExecPolicy1( nalu_hypre_ParCSRMatrixMemoryLocation(A) );
 #endif
 
-   hypre_ADSData *ads_data = (hypre_ADSData *) solver;
-   hypre_AMSData *ams_data;
+   nalu_hypre_ADSData *ads_data = (nalu_hypre_ADSData *) solver;
+   nalu_hypre_AMSData *ams_data;
 
    ads_data -> A = A;
 
    /* Make sure that the first entry in each row is the diagonal one. */
-   /* hypre_CSRMatrixReorder(hypre_ParCSRMatrixDiag(ads_data -> A)); */
+   /* nalu_hypre_CSRMatrixReorder(nalu_hypre_ParCSRMatrixDiag(ads_data -> A)); */
 
    /* Compute the l1 norm of the rows of A */
    if (ads_data -> A_relax_type >= 1 && ads_data -> A_relax_type <= 4)
    {
       NALU_HYPRE_Real *l1_norm_data = NULL;
 
-      hypre_ParCSRComputeL1Norms(ads_data -> A, ads_data -> A_relax_type, NULL, &l1_norm_data);
+      nalu_hypre_ParCSRComputeL1Norms(ads_data -> A, ads_data -> A_relax_type, NULL, &l1_norm_data);
 
-      ads_data -> A_l1_norms = hypre_SeqVectorCreate(hypre_ParCSRMatrixNumRows(ads_data -> A));
-      hypre_VectorData(ads_data -> A_l1_norms) = l1_norm_data;
-      hypre_SeqVectorInitialize_v2(ads_data -> A_l1_norms,
-                                   hypre_ParCSRMatrixMemoryLocation(ads_data -> A));
+      ads_data -> A_l1_norms = nalu_hypre_SeqVectorCreate(nalu_hypre_ParCSRMatrixNumRows(ads_data -> A));
+      nalu_hypre_VectorData(ads_data -> A_l1_norms) = l1_norm_data;
+      nalu_hypre_SeqVectorInitialize_v2(ads_data -> A_l1_norms,
+                                   nalu_hypre_ParCSRMatrixMemoryLocation(ads_data -> A));
    }
 
    /* Chebyshev? */
    if (ads_data -> A_relax_type == 16)
    {
-      hypre_ParCSRMaxEigEstimateCG(ads_data->A, 1, 10,
+      nalu_hypre_ParCSRMaxEigEstimateCG(ads_data->A, 1, 10,
                                    &ads_data->A_max_eig_est,
                                    &ads_data->A_min_eig_est);
    }
@@ -1111,7 +1111,7 @@ NALU_HYPRE_Int hypre_ADSSetup(void *solver,
       {
          if (ads_data -> B_C_cycle_type < 10)
          {
-            hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC,
+            nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC,
                               "Unsupported AMS cycle type in ADS!");
          }
          NALU_HYPRE_AMSSetCoordinateVectors(ads_data -> B_C,
@@ -1124,7 +1124,7 @@ NALU_HYPRE_Int hypre_ADSSetup(void *solver,
          if ((ads_data -> B_C_cycle_type < 10 && ads_data -> ND_Pi == NULL) ||
              (ads_data -> B_C_cycle_type > 10 && ads_data -> ND_Pix == NULL))
          {
-            hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC,
+            nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC,
                               "Unsupported AMS cycle type in ADS!");
          }
          NALU_HYPRE_AMSSetInterpolations(ads_data -> B_C,
@@ -1153,27 +1153,27 @@ NALU_HYPRE_Int hypre_ADSSetup(void *solver,
       /* Construct the coarse space matrix by RAP */
       if (!ads_data -> A_C)
       {
-         if (!hypre_ParCSRMatrixCommPkg(ads_data -> C))
+         if (!nalu_hypre_ParCSRMatrixCommPkg(ads_data -> C))
          {
-            hypre_MatvecCommPkgCreate(ads_data -> C);
+            nalu_hypre_MatvecCommPkgCreate(ads_data -> C);
          }
 
-         if (!hypre_ParCSRMatrixCommPkg(ads_data -> A))
+         if (!nalu_hypre_ParCSRMatrixCommPkg(ads_data -> A))
          {
-            hypre_MatvecCommPkgCreate(ads_data -> A);
+            nalu_hypre_MatvecCommPkgCreate(ads_data -> A);
          }
 
 #if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
          if (exec == NALU_HYPRE_EXEC_DEVICE)
          {
-            ads_data -> A_C = hypre_ParCSRMatrixRAPKT(ads_data -> C,
+            ads_data -> A_C = nalu_hypre_ParCSRMatrixRAPKT(ads_data -> C,
                                                       ads_data -> A,
                                                       ads_data -> C, 1);
          }
          else
 #endif
          {
-            hypre_BoomerAMGBuildCoarseOperator(ads_data -> C,
+            nalu_hypre_BoomerAMGBuildCoarseOperator(ads_data -> C,
                                                ads_data -> A,
                                                ads_data -> C,
                                                &ads_data -> A_C);
@@ -1181,19 +1181,19 @@ NALU_HYPRE_Int hypre_ADSSetup(void *solver,
 
          /* Make sure that A_C has no zero rows (this can happen if beta is zero
             in part of the domain). */
-         hypre_ParCSRMatrixFixZeroRows(ads_data -> A_C);
+         nalu_hypre_ParCSRMatrixFixZeroRows(ads_data -> A_C);
       }
 
       NALU_HYPRE_AMSSetup(ads_data -> B_C, (NALU_HYPRE_ParCSRMatrix)ads_data -> A_C, 0, 0);
    }
 
-   ams_data = (hypre_AMSData *) ads_data -> B_C;
+   ams_data = (nalu_hypre_AMSData *) ads_data -> B_C;
 
    if (ads_data -> Pi == NULL && ads_data -> Pix == NULL)
    {
       if (ads_data -> cycle_type > 10)
          /* Construct Pi{x,y,z} instead of Pi = [Pix,Piy,Piz] */
-         hypre_ADSComputePixyz(ads_data -> A,
+         nalu_hypre_ADSComputePixyz(ads_data -> A,
                                ads_data -> C,
                                ads_data -> G,
                                ads_data -> x,
@@ -1207,7 +1207,7 @@ NALU_HYPRE_Int hypre_ADSSetup(void *solver,
                                &ads_data -> Piz);
       else
          /* Construct the Pi interpolation matrix */
-         hypre_ADSComputePi(ads_data -> A,
+         nalu_hypre_ADSComputePi(ads_data -> A,
                             ads_data -> C,
                             ads_data -> G,
                             ads_data -> x,
@@ -1267,22 +1267,22 @@ NALU_HYPRE_Int hypre_ADSSetup(void *solver,
                                        ads_data -> B_Pi_relax_type, 3);
 
       /* Construct the coarse space matrices by RAP */
-      if (!hypre_ParCSRMatrixCommPkg(ads_data -> Pix))
+      if (!nalu_hypre_ParCSRMatrixCommPkg(ads_data -> Pix))
       {
-         hypre_MatvecCommPkgCreate(ads_data -> Pix);
+         nalu_hypre_MatvecCommPkgCreate(ads_data -> Pix);
       }
 
 #if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
       if (exec == NALU_HYPRE_EXEC_DEVICE)
       {
-         ads_data -> A_Pix = hypre_ParCSRMatrixRAPKT(ads_data -> Pix,
+         ads_data -> A_Pix = nalu_hypre_ParCSRMatrixRAPKT(ads_data -> Pix,
                                                      ads_data -> A,
                                                      ads_data -> Pix, 1);
       }
       else
 #endif
       {
-         hypre_BoomerAMGBuildCoarseOperator(ads_data -> Pix,
+         nalu_hypre_BoomerAMGBuildCoarseOperator(ads_data -> Pix,
                                             ads_data -> A,
                                             ads_data -> Pix,
                                             &ads_data -> A_Pix);
@@ -1292,22 +1292,22 @@ NALU_HYPRE_Int hypre_ADSSetup(void *solver,
                            (NALU_HYPRE_ParCSRMatrix)ads_data -> A_Pix,
                            NULL, NULL);
 
-      if (!hypre_ParCSRMatrixCommPkg(ads_data -> Piy))
+      if (!nalu_hypre_ParCSRMatrixCommPkg(ads_data -> Piy))
       {
-         hypre_MatvecCommPkgCreate(ads_data -> Piy);
+         nalu_hypre_MatvecCommPkgCreate(ads_data -> Piy);
       }
 
 #if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
       if (exec == NALU_HYPRE_EXEC_DEVICE)
       {
-         ads_data -> A_Piy = hypre_ParCSRMatrixRAPKT(ads_data -> Piy,
+         ads_data -> A_Piy = nalu_hypre_ParCSRMatrixRAPKT(ads_data -> Piy,
                                                      ads_data -> A,
                                                      ads_data -> Piy, 1);
       }
       else
 #endif
       {
-         hypre_BoomerAMGBuildCoarseOperator(ads_data -> Piy,
+         nalu_hypre_BoomerAMGBuildCoarseOperator(ads_data -> Piy,
                                             ads_data -> A,
                                             ads_data -> Piy,
                                             &ads_data -> A_Piy);
@@ -1317,22 +1317,22 @@ NALU_HYPRE_Int hypre_ADSSetup(void *solver,
                            (NALU_HYPRE_ParCSRMatrix)ads_data -> A_Piy,
                            NULL, NULL);
 
-      if (!hypre_ParCSRMatrixCommPkg(ads_data -> Piz))
+      if (!nalu_hypre_ParCSRMatrixCommPkg(ads_data -> Piz))
       {
-         hypre_MatvecCommPkgCreate(ads_data -> Piz);
+         nalu_hypre_MatvecCommPkgCreate(ads_data -> Piz);
       }
 
 #if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
       if (exec == NALU_HYPRE_EXEC_DEVICE)
       {
-         ads_data -> A_Piz = hypre_ParCSRMatrixRAPKT(ads_data -> Piz,
+         ads_data -> A_Piz = nalu_hypre_ParCSRMatrixRAPKT(ads_data -> Piz,
                                                      ads_data -> A,
                                                      ads_data -> Piz, 1);
       }
       else
 #endif
       {
-         hypre_BoomerAMGBuildCoarseOperator(ads_data -> Piz,
+         nalu_hypre_BoomerAMGBuildCoarseOperator(ads_data -> Piz,
                                             ads_data -> A,
                                             ads_data -> Piz,
                                             &ads_data -> A_Piz);
@@ -1366,27 +1366,27 @@ NALU_HYPRE_Int hypre_ADSSetup(void *solver,
          is a 3 x 3 block system. */
       if (!ads_data -> A_Pi)
       {
-         if (!hypre_ParCSRMatrixCommPkg(ads_data -> Pi))
+         if (!nalu_hypre_ParCSRMatrixCommPkg(ads_data -> Pi))
          {
-            hypre_MatvecCommPkgCreate(ads_data -> Pi);
+            nalu_hypre_MatvecCommPkgCreate(ads_data -> Pi);
          }
 
-         if (!hypre_ParCSRMatrixCommPkg(ads_data -> A))
+         if (!nalu_hypre_ParCSRMatrixCommPkg(ads_data -> A))
          {
-            hypre_MatvecCommPkgCreate(ads_data -> A);
+            nalu_hypre_MatvecCommPkgCreate(ads_data -> A);
          }
 
 #if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
          if (exec == NALU_HYPRE_EXEC_DEVICE)
          {
-            ads_data -> A_Pi = hypre_ParCSRMatrixRAPKT(ads_data -> Pi,
+            ads_data -> A_Pi = nalu_hypre_ParCSRMatrixRAPKT(ads_data -> Pi,
                                                        ads_data -> A,
                                                        ads_data -> Pi, 1);
          }
          else
 #endif
          {
-            hypre_BoomerAMGBuildCoarseOperator(ads_data -> Pi,
+            nalu_hypre_BoomerAMGBuildCoarseOperator(ads_data -> Pi,
                                                ads_data -> A,
                                                ads_data -> Pi,
                                                &ads_data -> A_Pi);
@@ -1402,51 +1402,51 @@ NALU_HYPRE_Int hypre_ADSSetup(void *solver,
    }
 
    /* Allocate temporary vectors */
-   ads_data -> r0 = hypre_ParVectorInRangeOf(ads_data -> A);
-   ads_data -> g0 = hypre_ParVectorInRangeOf(ads_data -> A);
+   ads_data -> r0 = nalu_hypre_ParVectorInRangeOf(ads_data -> A);
+   ads_data -> g0 = nalu_hypre_ParVectorInRangeOf(ads_data -> A);
    if (ads_data -> A_C)
    {
-      ads_data -> r1 = hypre_ParVectorInRangeOf(ads_data -> A_C);
-      ads_data -> g1 = hypre_ParVectorInRangeOf(ads_data -> A_C);
+      ads_data -> r1 = nalu_hypre_ParVectorInRangeOf(ads_data -> A_C);
+      ads_data -> g1 = nalu_hypre_ParVectorInRangeOf(ads_data -> A_C);
    }
    if (ads_data -> cycle_type > 10)
    {
-      ads_data -> r2 = hypre_ParVectorInDomainOf(ads_data -> Pix);
-      ads_data -> g2 = hypre_ParVectorInDomainOf(ads_data -> Pix);
+      ads_data -> r2 = nalu_hypre_ParVectorInDomainOf(ads_data -> Pix);
+      ads_data -> g2 = nalu_hypre_ParVectorInDomainOf(ads_data -> Pix);
    }
    else
    {
-      ads_data -> r2 = hypre_ParVectorInDomainOf(ads_data -> Pi);
-      ads_data -> g2 = hypre_ParVectorInDomainOf(ads_data -> Pi);
+      ads_data -> r2 = nalu_hypre_ParVectorInDomainOf(ads_data -> Pi);
+      ads_data -> g2 = nalu_hypre_ParVectorInDomainOf(ads_data -> Pi);
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_ADSSolve
+ * nalu_hypre_ADSSolve
  *
  * Solve the system A x = b.
  *--------------------------------------------------------------------------*/
 
-NALU_HYPRE_Int hypre_ADSSolve(void *solver,
-                         hypre_ParCSRMatrix *A,
-                         hypre_ParVector *b,
-                         hypre_ParVector *x)
+NALU_HYPRE_Int nalu_hypre_ADSSolve(void *solver,
+                         nalu_hypre_ParCSRMatrix *A,
+                         nalu_hypre_ParVector *b,
+                         nalu_hypre_ParVector *x)
 {
-   hypre_ADSData *ads_data = (hypre_ADSData *) solver;
+   nalu_hypre_ADSData *ads_data = (nalu_hypre_ADSData *) solver;
 
    NALU_HYPRE_Int i, my_id = -1;
    NALU_HYPRE_Real r0_norm, r_norm, b_norm, relative_resid = 0, old_resid;
 
    char cycle[30];
-   hypre_ParCSRMatrix *Ai[5], *Pi[5];
+   nalu_hypre_ParCSRMatrix *Ai[5], *Pi[5];
    NALU_HYPRE_Solver Bi[5];
    NALU_HYPRE_PtrToSolverFcn HBi[5];
-   hypre_ParVector *ri[5], *gi[5];
+   nalu_hypre_ParVector *ri[5], *gi[5];
    NALU_HYPRE_Int needZ = 0;
 
-   hypre_ParVector *z = ads_data -> zz;
+   nalu_hypre_ParVector *z = ads_data -> zz;
 
    Ai[0] = ads_data -> A_C;    Pi[0] = ads_data -> C;
    Ai[1] = ads_data -> A_Pi;   Pi[1] = ads_data -> Pi;
@@ -1454,11 +1454,11 @@ NALU_HYPRE_Int hypre_ADSSolve(void *solver,
    Ai[3] = ads_data -> A_Piy;  Pi[3] = ads_data -> Piy;
    Ai[4] = ads_data -> A_Piz;  Pi[4] = ads_data -> Piz;
 
-   Bi[0] = ads_data -> B_C;    HBi[0] = (NALU_HYPRE_PtrToSolverFcn) hypre_AMSSolve;
-   Bi[1] = ads_data -> B_Pi;   HBi[1] = (NALU_HYPRE_PtrToSolverFcn) hypre_BoomerAMGBlockSolve;
-   Bi[2] = ads_data -> B_Pix;  HBi[2] = (NALU_HYPRE_PtrToSolverFcn) hypre_BoomerAMGSolve;
-   Bi[3] = ads_data -> B_Piy;  HBi[3] = (NALU_HYPRE_PtrToSolverFcn) hypre_BoomerAMGSolve;
-   Bi[4] = ads_data -> B_Piz;  HBi[4] = (NALU_HYPRE_PtrToSolverFcn) hypre_BoomerAMGSolve;
+   Bi[0] = ads_data -> B_C;    HBi[0] = (NALU_HYPRE_PtrToSolverFcn) nalu_hypre_AMSSolve;
+   Bi[1] = ads_data -> B_Pi;   HBi[1] = (NALU_HYPRE_PtrToSolverFcn) nalu_hypre_BoomerAMGBlockSolve;
+   Bi[2] = ads_data -> B_Pix;  HBi[2] = (NALU_HYPRE_PtrToSolverFcn) nalu_hypre_BoomerAMGSolve;
+   Bi[3] = ads_data -> B_Piy;  HBi[3] = (NALU_HYPRE_PtrToSolverFcn) nalu_hypre_BoomerAMGSolve;
+   Bi[4] = ads_data -> B_Piz;  HBi[4] = (NALU_HYPRE_PtrToSolverFcn) nalu_hypre_BoomerAMGSolve;
 
    ri[0] = ads_data -> r1;     gi[0] = ads_data -> g1;
    ri[1] = ads_data -> r2;     gi[1] = ads_data -> g2;
@@ -1467,7 +1467,7 @@ NALU_HYPRE_Int hypre_ADSSolve(void *solver,
    ri[4] = ads_data -> r2;     gi[4] = ads_data -> g2;
 
 #if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
-   NALU_HYPRE_ExecutionPolicy exec = hypre_GetExecPolicy1( hypre_ParCSRMatrixMemoryLocation(A) );
+   NALU_HYPRE_ExecutionPolicy exec = nalu_hypre_GetExecPolicy1( nalu_hypre_ParCSRMatrixMemoryLocation(A) );
 #endif
 
    /* may need to create an additional temporary vector for relaxation */
@@ -1480,64 +1480,64 @@ NALU_HYPRE_Int hypre_ADSSolve(void *solver,
    else
 #endif
    {
-      needZ = hypre_NumThreads() > 1 || ads_data -> A_relax_type == 16;
+      needZ = nalu_hypre_NumThreads() > 1 || ads_data -> A_relax_type == 16;
    }
 
    if (needZ && !z)
    {
-      z = hypre_ParVectorCreate(hypre_ParCSRMatrixComm(A),
-                                hypre_ParCSRMatrixGlobalNumRows(A),
-                                hypre_ParCSRMatrixRowStarts(A));
-      hypre_ParVectorInitialize(z);
+      z = nalu_hypre_ParVectorCreate(nalu_hypre_ParCSRMatrixComm(A),
+                                nalu_hypre_ParCSRMatrixGlobalNumRows(A),
+                                nalu_hypre_ParCSRMatrixRowStarts(A));
+      nalu_hypre_ParVectorInitialize(z);
       ads_data -> zz = z;
    }
 
    if (ads_data -> print_level > 0)
    {
-      hypre_MPI_Comm_rank(hypre_ParCSRMatrixComm(A), &my_id);
+      nalu_hypre_MPI_Comm_rank(nalu_hypre_ParCSRMatrixComm(A), &my_id);
    }
 
    switch (ads_data -> cycle_type)
    {
       case 1:
       default:
-         hypre_sprintf(cycle, "%s", "01210");
+         nalu_hypre_sprintf(cycle, "%s", "01210");
          break;
       case 2:
-         hypre_sprintf(cycle, "%s", "(0+1+2)");
+         nalu_hypre_sprintf(cycle, "%s", "(0+1+2)");
          break;
       case 3:
-         hypre_sprintf(cycle, "%s", "02120");
+         nalu_hypre_sprintf(cycle, "%s", "02120");
          break;
       case 4:
-         hypre_sprintf(cycle, "%s", "(010+2)");
+         nalu_hypre_sprintf(cycle, "%s", "(010+2)");
          break;
       case 5:
-         hypre_sprintf(cycle, "%s", "0102010");
+         nalu_hypre_sprintf(cycle, "%s", "0102010");
          break;
       case 6:
-         hypre_sprintf(cycle, "%s", "(020+1)");
+         nalu_hypre_sprintf(cycle, "%s", "(020+1)");
          break;
       case 7:
-         hypre_sprintf(cycle, "%s", "0201020");
+         nalu_hypre_sprintf(cycle, "%s", "0201020");
          break;
       case 8:
-         hypre_sprintf(cycle, "%s", "0(+1+2)0");
+         nalu_hypre_sprintf(cycle, "%s", "0(+1+2)0");
          break;
       case 9:
-         hypre_sprintf(cycle, "%s", "01210");
+         nalu_hypre_sprintf(cycle, "%s", "01210");
          break;
       case 11:
-         hypre_sprintf(cycle, "%s", "013454310");
+         nalu_hypre_sprintf(cycle, "%s", "013454310");
          break;
       case 12:
-         hypre_sprintf(cycle, "%s", "(0+1+3+4+5)");
+         nalu_hypre_sprintf(cycle, "%s", "(0+1+3+4+5)");
          break;
       case 13:
-         hypre_sprintf(cycle, "%s", "034515430");
+         nalu_hypre_sprintf(cycle, "%s", "034515430");
          break;
       case 14:
-         hypre_sprintf(cycle, "%s", "01(+3+4+5)10");
+         nalu_hypre_sprintf(cycle, "%s", "01(+3+4+5)10");
          break;
    }
 
@@ -1546,11 +1546,11 @@ NALU_HYPRE_Int hypre_ADSSolve(void *solver,
       /* Compute initial residual norms */
       if (ads_data -> maxit > 1 && i == 0)
       {
-         hypre_ParVectorCopy(b, ads_data -> r0);
-         hypre_ParCSRMatrixMatvec(-1.0, ads_data -> A, x, 1.0, ads_data -> r0);
-         r_norm = sqrt(hypre_ParVectorInnerProd(ads_data -> r0, ads_data -> r0));
+         nalu_hypre_ParVectorCopy(b, ads_data -> r0);
+         nalu_hypre_ParCSRMatrixMatvec(-1.0, ads_data -> A, x, 1.0, ads_data -> r0);
+         r_norm = sqrt(nalu_hypre_ParVectorInnerProd(ads_data -> r0, ads_data -> r0));
          r0_norm = r_norm;
-         b_norm = sqrt(hypre_ParVectorInnerProd(b, b));
+         b_norm = sqrt(nalu_hypre_ParVectorInnerProd(b, b));
          if (b_norm)
          {
             relative_resid = r_norm / b_norm;
@@ -1561,19 +1561,19 @@ NALU_HYPRE_Int hypre_ADSSolve(void *solver,
          }
          if (my_id == 0 && ads_data -> print_level > 0)
          {
-            hypre_printf("                                            relative\n");
-            hypre_printf("               residual        factor       residual\n");
-            hypre_printf("               --------        ------       --------\n");
-            hypre_printf("    Initial    %e                 %e\n",
+            nalu_hypre_printf("                                            relative\n");
+            nalu_hypre_printf("               residual        factor       residual\n");
+            nalu_hypre_printf("               --------        ------       --------\n");
+            nalu_hypre_printf("    Initial    %e                 %e\n",
                          r_norm, relative_resid);
          }
       }
 
       /* Apply the preconditioner */
-      hypre_ParCSRSubspacePrec(ads_data -> A,
+      nalu_hypre_ParCSRSubspacePrec(ads_data -> A,
                                ads_data -> A_relax_type,
                                ads_data -> A_relax_times,
-                               ads_data -> A_l1_norms ? hypre_VectorData(ads_data -> A_l1_norms) : NULL,
+                               ads_data -> A_l1_norms ? nalu_hypre_VectorData(ads_data -> A_l1_norms) : NULL,
                                ads_data -> A_relax_weight,
                                ads_data -> A_omega,
                                ads_data -> A_max_eig_est,
@@ -1591,9 +1591,9 @@ NALU_HYPRE_Int hypre_ADSSolve(void *solver,
       if (ads_data -> maxit > 1)
       {
          old_resid = r_norm;
-         hypre_ParVectorCopy(b, ads_data -> r0);
-         hypre_ParCSRMatrixMatvec(-1.0, ads_data -> A, x, 1.0, ads_data -> r0);
-         r_norm = sqrt(hypre_ParVectorInnerProd(ads_data -> r0, ads_data -> r0));
+         nalu_hypre_ParVectorCopy(b, ads_data -> r0);
+         nalu_hypre_ParCSRMatrixMatvec(-1.0, ads_data -> A, x, 1.0, ads_data -> r0);
+         r_norm = sqrt(nalu_hypre_ParVectorInnerProd(ads_data -> r0, ads_data -> r0));
          if (b_norm)
          {
             relative_resid = r_norm / b_norm;
@@ -1603,7 +1603,7 @@ NALU_HYPRE_Int hypre_ADSSolve(void *solver,
             relative_resid = r_norm;
          }
          if (my_id == 0 && ads_data -> print_level > 0)
-            hypre_printf("    Cycle %2d   %e    %f     %e \n",
+            nalu_hypre_printf("    Cycle %2d   %e    %f     %e \n",
                          i + 1, r_norm, r_norm / old_resid, relative_resid);
       }
 
@@ -1615,7 +1615,7 @@ NALU_HYPRE_Int hypre_ADSSolve(void *solver,
    }
 
    if (my_id == 0 && ads_data -> print_level > 0 && ads_data -> maxit > 1)
-      hypre_printf("\n\n Average Convergence Factor = %f\n\n",
+      nalu_hypre_printf("\n\n Average Convergence Factor = %f\n\n",
                    pow((r_norm / r0_norm), (1.0 / (NALU_HYPRE_Real) i)));
 
    ads_data -> num_iterations = i;
@@ -1623,36 +1623,36 @@ NALU_HYPRE_Int hypre_ADSSolve(void *solver,
 
    if (ads_data -> num_iterations == ads_data -> maxit && ads_data -> tol > 0.0)
    {
-      hypre_error(NALU_HYPRE_ERROR_CONV);
+      nalu_hypre_error(NALU_HYPRE_ERROR_CONV);
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_ADSGetNumIterations
+ * nalu_hypre_ADSGetNumIterations
  *
  * Get the number of ADS iterations.
  *--------------------------------------------------------------------------*/
 
-NALU_HYPRE_Int hypre_ADSGetNumIterations(void *solver,
+NALU_HYPRE_Int nalu_hypre_ADSGetNumIterations(void *solver,
                                     NALU_HYPRE_Int *num_iterations)
 {
-   hypre_ADSData *ads_data = (hypre_ADSData *) solver;
+   nalu_hypre_ADSData *ads_data = (nalu_hypre_ADSData *) solver;
    *num_iterations = ads_data -> num_iterations;
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_ADSGetFinalRelativeResidualNorm
+ * nalu_hypre_ADSGetFinalRelativeResidualNorm
  *
  * Get the final relative residual norm in ADS.
  *--------------------------------------------------------------------------*/
 
-NALU_HYPRE_Int hypre_ADSGetFinalRelativeResidualNorm(void *solver,
+NALU_HYPRE_Int nalu_hypre_ADSGetFinalRelativeResidualNorm(void *solver,
                                                 NALU_HYPRE_Real *rel_resid_norm)
 {
-   hypre_ADSData *ads_data = (hypre_ADSData *) solver;
+   nalu_hypre_ADSData *ads_data = (nalu_hypre_ADSData *) solver;
    *rel_resid_norm = ads_data -> rel_resid_norm;
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }

@@ -9,86 +9,86 @@
  *
  *****************************************************************************/
 
-#include "_hypre_struct_mv.h"
+#include "_nalu_hypre_struct_mv.h"
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_ComputeInfoCreate( hypre_CommInfo       *comm_info,
-                         hypre_BoxArrayArray  *indt_boxes,
-                         hypre_BoxArrayArray  *dept_boxes,
-                         hypre_ComputeInfo   **compute_info_ptr )
+nalu_hypre_ComputeInfoCreate( nalu_hypre_CommInfo       *comm_info,
+                         nalu_hypre_BoxArrayArray  *indt_boxes,
+                         nalu_hypre_BoxArrayArray  *dept_boxes,
+                         nalu_hypre_ComputeInfo   **compute_info_ptr )
 {
-   hypre_ComputeInfo  *compute_info;
+   nalu_hypre_ComputeInfo  *compute_info;
 
-   compute_info = hypre_TAlloc(hypre_ComputeInfo,  1, NALU_HYPRE_MEMORY_HOST);
+   compute_info = nalu_hypre_TAlloc(nalu_hypre_ComputeInfo,  1, NALU_HYPRE_MEMORY_HOST);
 
-   hypre_ComputeInfoCommInfo(compute_info)  = comm_info;
-   hypre_ComputeInfoIndtBoxes(compute_info) = indt_boxes;
-   hypre_ComputeInfoDeptBoxes(compute_info) = dept_boxes;
+   nalu_hypre_ComputeInfoCommInfo(compute_info)  = comm_info;
+   nalu_hypre_ComputeInfoIndtBoxes(compute_info) = indt_boxes;
+   nalu_hypre_ComputeInfoDeptBoxes(compute_info) = dept_boxes;
 
-   hypre_SetIndex(hypre_ComputeInfoStride(compute_info), 1);
+   nalu_hypre_SetIndex(nalu_hypre_ComputeInfoStride(compute_info), 1);
 
    *compute_info_ptr = compute_info;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_ComputeInfoProjectSend( hypre_ComputeInfo  *compute_info,
-                              hypre_Index         index,
-                              hypre_Index         stride )
+nalu_hypre_ComputeInfoProjectSend( nalu_hypre_ComputeInfo  *compute_info,
+                              nalu_hypre_Index         index,
+                              nalu_hypre_Index         stride )
 {
-   hypre_CommInfoProjectSend(hypre_ComputeInfoCommInfo(compute_info),
+   nalu_hypre_CommInfoProjectSend(nalu_hypre_ComputeInfoCommInfo(compute_info),
                              index, stride);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_ComputeInfoProjectRecv( hypre_ComputeInfo  *compute_info,
-                              hypre_Index         index,
-                              hypre_Index         stride )
+nalu_hypre_ComputeInfoProjectRecv( nalu_hypre_ComputeInfo  *compute_info,
+                              nalu_hypre_Index         index,
+                              nalu_hypre_Index         stride )
 {
-   hypre_CommInfoProjectRecv(hypre_ComputeInfoCommInfo(compute_info),
+   nalu_hypre_CommInfoProjectRecv(nalu_hypre_ComputeInfoCommInfo(compute_info),
                              index, stride);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_ComputeInfoProjectComp( hypre_ComputeInfo  *compute_info,
-                              hypre_Index         index,
-                              hypre_Index         stride )
+nalu_hypre_ComputeInfoProjectComp( nalu_hypre_ComputeInfo  *compute_info,
+                              nalu_hypre_Index         index,
+                              nalu_hypre_Index         stride )
 {
-   hypre_ProjectBoxArrayArray(hypre_ComputeInfoIndtBoxes(compute_info),
+   nalu_hypre_ProjectBoxArrayArray(nalu_hypre_ComputeInfoIndtBoxes(compute_info),
                               index, stride);
-   hypre_ProjectBoxArrayArray(hypre_ComputeInfoDeptBoxes(compute_info),
+   nalu_hypre_ProjectBoxArrayArray(nalu_hypre_ComputeInfoDeptBoxes(compute_info),
                               index, stride);
-   hypre_CopyIndex(stride, hypre_ComputeInfoStride(compute_info));
+   nalu_hypre_CopyIndex(stride, nalu_hypre_ComputeInfoStride(compute_info));
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_ComputeInfoDestroy( hypre_ComputeInfo  *compute_info )
+nalu_hypre_ComputeInfoDestroy( nalu_hypre_ComputeInfo  *compute_info )
 {
-   hypre_TFree(compute_info, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(compute_info, NALU_HYPRE_MEMORY_HOST);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
@@ -101,26 +101,26 @@ hypre_ComputeInfoDestroy( hypre_ComputeInfo  *compute_info )
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_CreateComputeInfo( hypre_StructGrid      *grid,
-                         hypre_StructStencil   *stencil,
-                         hypre_ComputeInfo    **compute_info_ptr )
+nalu_hypre_CreateComputeInfo( nalu_hypre_StructGrid      *grid,
+                         nalu_hypre_StructStencil   *stencil,
+                         nalu_hypre_ComputeInfo    **compute_info_ptr )
 {
-   NALU_HYPRE_Int                ndim = hypre_StructGridNDim(grid);
-   hypre_CommInfo          *comm_info;
-   hypre_BoxArrayArray     *indt_boxes;
-   hypre_BoxArrayArray     *dept_boxes;
+   NALU_HYPRE_Int                ndim = nalu_hypre_StructGridNDim(grid);
+   nalu_hypre_CommInfo          *comm_info;
+   nalu_hypre_BoxArrayArray     *indt_boxes;
+   nalu_hypre_BoxArrayArray     *dept_boxes;
 
-   hypre_BoxArray          *boxes;
+   nalu_hypre_BoxArray          *boxes;
 
-   hypre_BoxArray          *cbox_array;
-   hypre_Box               *cbox;
+   nalu_hypre_BoxArray          *cbox_array;
+   nalu_hypre_Box               *cbox;
 
    NALU_HYPRE_Int                i;
 
 #ifdef NALU_HYPRE_OVERLAP_COMM_COMP
-   hypre_Box               *rembox;
-   hypre_Index             *stencil_shape;
-   hypre_Index              lborder, rborder;
+   nalu_hypre_Box               *rembox;
+   nalu_hypre_Index             *stencil_shape;
+   nalu_hypre_Index              lborder, rborder;
    NALU_HYPRE_Int                cbox_array_size;
    NALU_HYPRE_Int                s, d;
 #endif
@@ -129,13 +129,13 @@ hypre_CreateComputeInfo( hypre_StructGrid      *grid,
     * Extract needed grid info
     *------------------------------------------------------*/
 
-   boxes = hypre_StructGridBoxes(grid);
+   boxes = nalu_hypre_StructGridBoxes(grid);
 
    /*------------------------------------------------------
     * Get communication info
     *------------------------------------------------------*/
 
-   hypre_CreateCommInfoFromStencil(grid, stencil, &comm_info);
+   nalu_hypre_CreateCommInfoFromStencil(grid, stencil, &comm_info);
 
 #ifdef NALU_HYPRE_OVERLAP_COMM_COMP
 
@@ -143,21 +143,21 @@ hypre_CreateComputeInfo( hypre_StructGrid      *grid,
     * Compute border info
     *------------------------------------------------------*/
 
-   hypre_SetIndex(lborder, 0);
-   hypre_SetIndex(rborder, 0);
-   stencil_shape = hypre_StructStencilShape(stencil);
-   for (s = 0; s < hypre_StructStencilSize(stencil); s++)
+   nalu_hypre_SetIndex(lborder, 0);
+   nalu_hypre_SetIndex(rborder, 0);
+   stencil_shape = nalu_hypre_StructStencilShape(stencil);
+   for (s = 0; s < nalu_hypre_StructStencilSize(stencil); s++)
    {
       for (d = 0; d < ndim; d++)
       {
-         i = hypre_IndexD(stencil_shape[s], d);
+         i = nalu_hypre_IndexD(stencil_shape[s], d);
          if (i < 0)
          {
-            lborder[d] = hypre_max(lborder[d], -i);
+            lborder[d] = nalu_hypre_max(lborder[d], -i);
          }
          else if (i > 0)
          {
-            rborder[d] = hypre_max(rborder[d], i);
+            rborder[d] = nalu_hypre_max(rborder[d], i);
          }
       }
    }
@@ -166,65 +166,65 @@ hypre_CreateComputeInfo( hypre_StructGrid      *grid,
     * Set up the dependent boxes
     *------------------------------------------------------*/
 
-   dept_boxes = hypre_BoxArrayArrayCreate(hypre_BoxArraySize(boxes), ndim);
+   dept_boxes = nalu_hypre_BoxArrayArrayCreate(nalu_hypre_BoxArraySize(boxes), ndim);
 
-   rembox = hypre_BoxCreate(hypre_StructGridNDim(grid));
-   hypre_ForBoxI(i, boxes)
+   rembox = nalu_hypre_BoxCreate(nalu_hypre_StructGridNDim(grid));
+   nalu_hypre_ForBoxI(i, boxes)
    {
-      cbox_array = hypre_BoxArrayArrayBoxArray(dept_boxes, i);
-      hypre_BoxArraySetSize(cbox_array, 2 * ndim);
+      cbox_array = nalu_hypre_BoxArrayArrayBoxArray(dept_boxes, i);
+      nalu_hypre_BoxArraySetSize(cbox_array, 2 * ndim);
 
-      hypre_CopyBox(hypre_BoxArrayBox(boxes, i), rembox);
+      nalu_hypre_CopyBox(nalu_hypre_BoxArrayBox(boxes, i), rembox);
       cbox_array_size = 0;
       for (d = 0; d < ndim; d++)
       {
-         if ( (hypre_BoxVolume(rembox)) && lborder[d] )
+         if ( (nalu_hypre_BoxVolume(rembox)) && lborder[d] )
          {
-            cbox = hypre_BoxArrayBox(cbox_array, cbox_array_size);
-            hypre_CopyBox(rembox, cbox);
-            hypre_BoxIMaxD(cbox, d) =
-               hypre_BoxIMinD(cbox, d) + lborder[d] - 1;
-            hypre_BoxIMinD(rembox, d) =
-               hypre_BoxIMinD(cbox, d) + lborder[d];
+            cbox = nalu_hypre_BoxArrayBox(cbox_array, cbox_array_size);
+            nalu_hypre_CopyBox(rembox, cbox);
+            nalu_hypre_BoxIMaxD(cbox, d) =
+               nalu_hypre_BoxIMinD(cbox, d) + lborder[d] - 1;
+            nalu_hypre_BoxIMinD(rembox, d) =
+               nalu_hypre_BoxIMinD(cbox, d) + lborder[d];
             cbox_array_size++;
          }
-         if ( (hypre_BoxVolume(rembox)) && rborder[d] )
+         if ( (nalu_hypre_BoxVolume(rembox)) && rborder[d] )
          {
-            cbox = hypre_BoxArrayBox(cbox_array, cbox_array_size);
-            hypre_CopyBox(rembox, cbox);
-            hypre_BoxIMinD(cbox, d) =
-               hypre_BoxIMaxD(cbox, d) - rborder[d] + 1;
-            hypre_BoxIMaxD(rembox, d) =
-               hypre_BoxIMaxD(cbox, d) - rborder[d];
+            cbox = nalu_hypre_BoxArrayBox(cbox_array, cbox_array_size);
+            nalu_hypre_CopyBox(rembox, cbox);
+            nalu_hypre_BoxIMinD(cbox, d) =
+               nalu_hypre_BoxIMaxD(cbox, d) - rborder[d] + 1;
+            nalu_hypre_BoxIMaxD(rembox, d) =
+               nalu_hypre_BoxIMaxD(cbox, d) - rborder[d];
             cbox_array_size++;
          }
       }
-      hypre_BoxArraySetSize(cbox_array, cbox_array_size);
+      nalu_hypre_BoxArraySetSize(cbox_array, cbox_array_size);
    }
-   hypre_BoxDestroy(rembox);
+   nalu_hypre_BoxDestroy(rembox);
 
    /*------------------------------------------------------
     * Set up the independent boxes
     *------------------------------------------------------*/
 
-   indt_boxes = hypre_BoxArrayArrayCreate(hypre_BoxArraySize(boxes), ndim);
+   indt_boxes = nalu_hypre_BoxArrayArrayCreate(nalu_hypre_BoxArraySize(boxes), ndim);
 
-   hypre_ForBoxI(i, boxes)
+   nalu_hypre_ForBoxI(i, boxes)
    {
-      cbox_array = hypre_BoxArrayArrayBoxArray(indt_boxes, i);
-      hypre_BoxArraySetSize(cbox_array, 1);
-      cbox = hypre_BoxArrayBox(cbox_array, 0);
-      hypre_CopyBox(hypre_BoxArrayBox(boxes, i), cbox);
+      cbox_array = nalu_hypre_BoxArrayArrayBoxArray(indt_boxes, i);
+      nalu_hypre_BoxArraySetSize(cbox_array, 1);
+      cbox = nalu_hypre_BoxArrayBox(cbox_array, 0);
+      nalu_hypre_CopyBox(nalu_hypre_BoxArrayBox(boxes, i), cbox);
 
       for (d = 0; d < ndim; d++)
       {
          if ( lborder[d] )
          {
-            hypre_BoxIMinD(cbox, d) += lborder[d];
+            nalu_hypre_BoxIMinD(cbox, d) += lborder[d];
          }
          if ( rborder[d] )
          {
-            hypre_BoxIMaxD(cbox, d) -= rborder[d];
+            nalu_hypre_BoxIMaxD(cbox, d) -= rborder[d];
          }
       }
    }
@@ -235,20 +235,20 @@ hypre_CreateComputeInfo( hypre_StructGrid      *grid,
     * Set up the independent boxes
     *------------------------------------------------------*/
 
-   indt_boxes = hypre_BoxArrayArrayCreate(hypre_BoxArraySize(boxes), ndim);
+   indt_boxes = nalu_hypre_BoxArrayArrayCreate(nalu_hypre_BoxArraySize(boxes), ndim);
 
    /*------------------------------------------------------
     * Set up the dependent boxes
     *------------------------------------------------------*/
 
-   dept_boxes = hypre_BoxArrayArrayCreate(hypre_BoxArraySize(boxes), ndim);
+   dept_boxes = nalu_hypre_BoxArrayArrayCreate(nalu_hypre_BoxArraySize(boxes), ndim);
 
-   hypre_ForBoxI(i, boxes)
+   nalu_hypre_ForBoxI(i, boxes)
    {
-      cbox_array = hypre_BoxArrayArrayBoxArray(dept_boxes, i);
-      hypre_BoxArraySetSize(cbox_array, 1);
-      cbox = hypre_BoxArrayBox(cbox_array, 0);
-      hypre_CopyBox(hypre_BoxArrayBox(boxes, i), cbox);
+      cbox_array = nalu_hypre_BoxArrayArrayBoxArray(dept_boxes, i);
+      nalu_hypre_BoxArraySetSize(cbox_array, 1);
+      cbox = nalu_hypre_BoxArrayBox(cbox_array, 0);
+      nalu_hypre_CopyBox(nalu_hypre_BoxArrayBox(boxes, i), cbox);
    }
 
 #endif
@@ -257,10 +257,10 @@ hypre_CreateComputeInfo( hypre_StructGrid      *grid,
     * Return
     *------------------------------------------------------*/
 
-   hypre_ComputeInfoCreate(comm_info, indt_boxes, dept_boxes,
+   nalu_hypre_ComputeInfoCreate(comm_info, indt_boxes, dept_boxes,
                            compute_info_ptr);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
@@ -271,39 +271,39 @@ hypre_CreateComputeInfo( hypre_StructGrid      *grid,
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_ComputePkgCreate( hypre_ComputeInfo     *compute_info,
-                        hypre_BoxArray        *data_space,
+nalu_hypre_ComputePkgCreate( nalu_hypre_ComputeInfo     *compute_info,
+                        nalu_hypre_BoxArray        *data_space,
                         NALU_HYPRE_Int              num_values,
-                        hypre_StructGrid      *grid,
-                        hypre_ComputePkg     **compute_pkg_ptr )
+                        nalu_hypre_StructGrid      *grid,
+                        nalu_hypre_ComputePkg     **compute_pkg_ptr )
 {
-   hypre_ComputePkg  *compute_pkg;
-   hypre_CommPkg     *comm_pkg;
+   nalu_hypre_ComputePkg  *compute_pkg;
+   nalu_hypre_CommPkg     *comm_pkg;
 
-   compute_pkg = hypre_CTAlloc(hypre_ComputePkg,  1, NALU_HYPRE_MEMORY_HOST);
+   compute_pkg = nalu_hypre_CTAlloc(nalu_hypre_ComputePkg,  1, NALU_HYPRE_MEMORY_HOST);
 
-   hypre_CommPkgCreate(hypre_ComputeInfoCommInfo(compute_info),
+   nalu_hypre_CommPkgCreate(nalu_hypre_ComputeInfoCommInfo(compute_info),
                        data_space, data_space, num_values, NULL, 0,
-                       hypre_StructGridComm(grid), &comm_pkg);
-   hypre_CommInfoDestroy(hypre_ComputeInfoCommInfo(compute_info));
-   hypre_ComputePkgCommPkg(compute_pkg) = comm_pkg;
+                       nalu_hypre_StructGridComm(grid), &comm_pkg);
+   nalu_hypre_CommInfoDestroy(nalu_hypre_ComputeInfoCommInfo(compute_info));
+   nalu_hypre_ComputePkgCommPkg(compute_pkg) = comm_pkg;
 
-   hypre_ComputePkgIndtBoxes(compute_pkg) =
-      hypre_ComputeInfoIndtBoxes(compute_info);
-   hypre_ComputePkgDeptBoxes(compute_pkg) =
-      hypre_ComputeInfoDeptBoxes(compute_info);
-   hypre_CopyIndex(hypre_ComputeInfoStride(compute_info),
-                   hypre_ComputePkgStride(compute_pkg));
+   nalu_hypre_ComputePkgIndtBoxes(compute_pkg) =
+      nalu_hypre_ComputeInfoIndtBoxes(compute_info);
+   nalu_hypre_ComputePkgDeptBoxes(compute_pkg) =
+      nalu_hypre_ComputeInfoDeptBoxes(compute_info);
+   nalu_hypre_CopyIndex(nalu_hypre_ComputeInfoStride(compute_info),
+                   nalu_hypre_ComputePkgStride(compute_pkg));
 
-   hypre_StructGridRef(grid, &hypre_ComputePkgGrid(compute_pkg));
-   hypre_ComputePkgDataSpace(compute_pkg) = data_space;
-   hypre_ComputePkgNumValues(compute_pkg) = num_values;
+   nalu_hypre_StructGridRef(grid, &nalu_hypre_ComputePkgGrid(compute_pkg));
+   nalu_hypre_ComputePkgDataSpace(compute_pkg) = data_space;
+   nalu_hypre_ComputePkgNumValues(compute_pkg) = num_values;
 
-   hypre_ComputeInfoDestroy(compute_info);
+   nalu_hypre_ComputeInfoDestroy(compute_info);
 
    *compute_pkg_ptr = compute_pkg;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
@@ -311,21 +311,21 @@ hypre_ComputePkgCreate( hypre_ComputeInfo     *compute_info,
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_ComputePkgDestroy( hypre_ComputePkg *compute_pkg )
+nalu_hypre_ComputePkgDestroy( nalu_hypre_ComputePkg *compute_pkg )
 {
    if (compute_pkg)
    {
-      hypre_CommPkgDestroy(hypre_ComputePkgCommPkg(compute_pkg));
+      nalu_hypre_CommPkgDestroy(nalu_hypre_ComputePkgCommPkg(compute_pkg));
 
-      hypre_BoxArrayArrayDestroy(hypre_ComputePkgIndtBoxes(compute_pkg));
-      hypre_BoxArrayArrayDestroy(hypre_ComputePkgDeptBoxes(compute_pkg));
+      nalu_hypre_BoxArrayArrayDestroy(nalu_hypre_ComputePkgIndtBoxes(compute_pkg));
+      nalu_hypre_BoxArrayArrayDestroy(nalu_hypre_ComputePkgDeptBoxes(compute_pkg));
 
-      hypre_StructGridDestroy(hypre_ComputePkgGrid(compute_pkg));
+      nalu_hypre_StructGridDestroy(nalu_hypre_ComputePkgGrid(compute_pkg));
 
-      hypre_TFree(compute_pkg, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(compute_pkg, NALU_HYPRE_MEMORY_HOST);
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
@@ -335,15 +335,15 @@ hypre_ComputePkgDestroy( hypre_ComputePkg *compute_pkg )
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_InitializeIndtComputations( hypre_ComputePkg  *compute_pkg,
+nalu_hypre_InitializeIndtComputations( nalu_hypre_ComputePkg  *compute_pkg,
                                   NALU_HYPRE_Complex     *data,
-                                  hypre_CommHandle **comm_handle_ptr )
+                                  nalu_hypre_CommHandle **comm_handle_ptr )
 {
-   hypre_CommPkg *comm_pkg = hypre_ComputePkgCommPkg(compute_pkg);
+   nalu_hypre_CommPkg *comm_pkg = nalu_hypre_ComputePkgCommPkg(compute_pkg);
 
-   hypre_InitializeCommunication(comm_pkg, data, data, 0, 0, comm_handle_ptr);
+   nalu_hypre_InitializeCommunication(comm_pkg, data, data, 0, 0, comm_handle_ptr);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
@@ -352,9 +352,9 @@ hypre_InitializeIndtComputations( hypre_ComputePkg  *compute_pkg,
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_FinalizeIndtComputations( hypre_CommHandle *comm_handle )
+nalu_hypre_FinalizeIndtComputations( nalu_hypre_CommHandle *comm_handle )
 {
-   hypre_FinalizeCommunication(comm_handle );
+   nalu_hypre_FinalizeCommunication(comm_handle );
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }

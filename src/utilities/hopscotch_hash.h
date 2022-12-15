@@ -40,8 +40,8 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef hypre_HOPSCOTCH_HASH_HEADER
-#define hypre_HOPSCOTCH_HASH_HEADER
+#ifndef nalu_hypre_HOPSCOTCH_HASH_HEADER
+#define nalu_hypre_HOPSCOTCH_HASH_HEADER
 
 //#include <strings.h>
 #include <string.h>
@@ -53,7 +53,7 @@
 #include <omp.h>
 #endif
 
-//#include "_hypre_utilities.h"
+//#include "_nalu_hypre_utilities.h"
 
 // Potentially architecture specific features used here:
 // __sync_val_compare_and_swap
@@ -63,7 +63,7 @@ extern "C" {
 #endif
 
 /******************************************************************************
- * This next section of code is here instead of in _hypre_utilities.h to get
+ * This next section of code is here instead of in _nalu_hypre_utilities.h to get
  * around some portability issues with Visual Studio.  By putting it here, we
  * can explicitly include this '.h' file in a few files in hypre and compile
  * them with C++ instead of C (VS does not support C99 'inline').
@@ -71,7 +71,7 @@ extern "C" {
 
 #ifdef NALU_HYPRE_USING_ATOMIC
 static inline NALU_HYPRE_Int
-hypre_compare_and_swap( NALU_HYPRE_Int *ptr, NALU_HYPRE_Int oldval, NALU_HYPRE_Int newval )
+nalu_hypre_compare_and_swap( NALU_HYPRE_Int *ptr, NALU_HYPRE_Int oldval, NALU_HYPRE_Int newval )
 {
 #if defined(__GNUC__) && defined(__GNUC_MINOR__) && defined(__GNUC_PATCHLEVEL__) && (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__) > 40100
    return __sync_val_compare_and_swap(ptr, oldval, newval);
@@ -86,7 +86,7 @@ hypre_compare_and_swap( NALU_HYPRE_Int *ptr, NALU_HYPRE_Int oldval, NALU_HYPRE_I
 }
 
 static inline NALU_HYPRE_Int
-hypre_fetch_and_add( NALU_HYPRE_Int *ptr, NALU_HYPRE_Int value )
+nalu_hypre_fetch_and_add( NALU_HYPRE_Int *ptr, NALU_HYPRE_Int value )
 {
 #if defined(__GNUC__) && defined(__GNUC_MINOR__) && defined(__GNUC_PATCHLEVEL__) && (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__) > 40100
    return __sync_fetch_and_add(ptr, value);
@@ -100,7 +100,7 @@ hypre_fetch_and_add( NALU_HYPRE_Int *ptr, NALU_HYPRE_Int value )
 }
 #else // !NALU_HYPRE_USING_ATOMIC
 static inline NALU_HYPRE_Int
-hypre_compare_and_swap( NALU_HYPRE_Int *ptr, NALU_HYPRE_Int oldval, NALU_HYPRE_Int newval )
+nalu_hypre_compare_and_swap( NALU_HYPRE_Int *ptr, NALU_HYPRE_Int oldval, NALU_HYPRE_Int newval )
 {
    if (*ptr == oldval)
    {
@@ -111,7 +111,7 @@ hypre_compare_and_swap( NALU_HYPRE_Int *ptr, NALU_HYPRE_Int oldval, NALU_HYPRE_I
 }
 
 static inline NALU_HYPRE_Int
-hypre_fetch_and_add( NALU_HYPRE_Int *ptr, NALU_HYPRE_Int value )
+nalu_hypre_fetch_and_add( NALU_HYPRE_Int *ptr, NALU_HYPRE_Int value )
 {
    NALU_HYPRE_Int oldval = *ptr;
    *ptr += value;
@@ -130,7 +130,7 @@ hypre_fetch_and_add( NALU_HYPRE_Int *ptr, NALU_HYPRE_Int value )
 
 // Small Utilities ..........................................................
 static inline NALU_HYPRE_Int
-first_lsb_bit_indx( hypre_uint x )
+first_lsb_bit_indx( nalu_hypre_uint x )
 {
    NALU_HYPRE_Int pos;
 #if defined(_MSC_VER) || defined(__MINGW64__)
@@ -151,7 +151,7 @@ first_lsb_bit_indx( hypre_uint x )
    return (pos - 1);
 }
 /**
- * hypre_Hash is adapted from xxHash with the following license.
+ * nalu_hypre_Hash is adapted from xxHash with the following license.
  */
 /*
    xxHash - Extremely Fast Hash algorithm
@@ -207,11 +207,11 @@ first_lsb_bit_indx( hypre_uint x )
 
 #if defined(NALU_HYPRE_MIXEDINT) || defined(NALU_HYPRE_BIGINT)
 static inline NALU_HYPRE_BigInt
-hypre_BigHash( NALU_HYPRE_BigInt input )
+nalu_hypre_BigHash( NALU_HYPRE_BigInt input )
 {
-   hypre_ulongint h64 = NALU_HYPRE_XXH_PRIME64_5 + sizeof(input);
+   nalu_hypre_ulongint h64 = NALU_HYPRE_XXH_PRIME64_5 + sizeof(input);
 
-   hypre_ulongint k1 = input;
+   nalu_hypre_ulongint k1 = input;
    k1 *= NALU_HYPRE_XXH_PRIME64_2;
    k1 = NALU_HYPRE_XXH_rotl64(k1, 31);
    k1 *= NALU_HYPRE_XXH_PRIME64_1;
@@ -227,8 +227,8 @@ hypre_BigHash( NALU_HYPRE_BigInt input )
 #ifndef NDEBUG
    if (NALU_HYPRE_HOPSCOTCH_HASH_EMPTY == h64)
    {
-      hypre_printf("hash(%lld) = %d\n", h64, NALU_HYPRE_HOPSCOTCH_HASH_EMPTY);
-      hypre_assert(NALU_HYPRE_HOPSCOTCH_HASH_EMPTY != h64);
+      nalu_hypre_printf("hash(%lld) = %d\n", h64, NALU_HYPRE_HOPSCOTCH_HASH_EMPTY);
+      nalu_hypre_assert(NALU_HYPRE_HOPSCOTCH_HASH_EMPTY != h64);
    }
 #endif
 
@@ -237,9 +237,9 @@ hypre_BigHash( NALU_HYPRE_BigInt input )
 
 #else
 static inline NALU_HYPRE_Int
-hypre_BigHash(NALU_HYPRE_Int input)
+nalu_hypre_BigHash(NALU_HYPRE_Int input)
 {
-   hypre_uint h32 = NALU_HYPRE_XXH_PRIME32_5 + sizeof(input);
+   nalu_hypre_uint h32 = NALU_HYPRE_XXH_PRIME32_5 + sizeof(input);
 
    // 1665863975 is added to input so that
    // only -1073741824 gives NALU_HYPRE_HOPSCOTCH_HASH_EMPTY.
@@ -253,7 +253,7 @@ hypre_BigHash(NALU_HYPRE_Int input)
    h32 *= NALU_HYPRE_XXH_PRIME32_3;
    h32 ^= h32 >> 16;
 
-   //hypre_assert(NALU_HYPRE_HOPSCOTCH_HASH_EMPTY != h32);
+   //nalu_hypre_assert(NALU_HYPRE_HOPSCOTCH_HASH_EMPTY != h32);
 
    return h32;
 }
@@ -261,11 +261,11 @@ hypre_BigHash(NALU_HYPRE_Int input)
 
 #ifdef NALU_HYPRE_BIGINT
 static inline NALU_HYPRE_Int
-hypre_Hash(NALU_HYPRE_Int input)
+nalu_hypre_Hash(NALU_HYPRE_Int input)
 {
-   hypre_ulongint h64 = NALU_HYPRE_XXH_PRIME64_5 + sizeof(input);
+   nalu_hypre_ulongint h64 = NALU_HYPRE_XXH_PRIME64_5 + sizeof(input);
 
-   hypre_ulongint k1 = input;
+   nalu_hypre_ulongint k1 = input;
    k1 *= NALU_HYPRE_XXH_PRIME64_2;
    k1 = NALU_HYPRE_XXH_rotl64(k1, 31);
    k1 *= NALU_HYPRE_XXH_PRIME64_1;
@@ -281,8 +281,8 @@ hypre_Hash(NALU_HYPRE_Int input)
 #ifndef NDEBUG
    if (NALU_HYPRE_HOPSCOTCH_HASH_EMPTY == h64)
    {
-      hypre_printf("hash(%lld) = %d\n", h64, NALU_HYPRE_HOPSCOTCH_HASH_EMPTY);
-      hypre_assert(NALU_HYPRE_HOPSCOTCH_HASH_EMPTY != h64);
+      nalu_hypre_printf("hash(%lld) = %d\n", h64, NALU_HYPRE_HOPSCOTCH_HASH_EMPTY);
+      nalu_hypre_assert(NALU_HYPRE_HOPSCOTCH_HASH_EMPTY != h64);
    }
 #endif
 
@@ -291,9 +291,9 @@ hypre_Hash(NALU_HYPRE_Int input)
 
 #else
 static inline NALU_HYPRE_Int
-hypre_Hash(NALU_HYPRE_Int input)
+nalu_hypre_Hash(NALU_HYPRE_Int input)
 {
-   hypre_uint h32 = NALU_HYPRE_XXH_PRIME32_5 + sizeof(input);
+   nalu_hypre_uint h32 = NALU_HYPRE_XXH_PRIME32_5 + sizeof(input);
 
    // 1665863975 is added to input so that
    // only -1073741824 gives NALU_HYPRE_HOPSCOTCH_HASH_EMPTY.
@@ -307,16 +307,16 @@ hypre_Hash(NALU_HYPRE_Int input)
    h32 *= NALU_HYPRE_XXH_PRIME32_3;
    h32 ^= h32 >> 16;
 
-   //hypre_assert(NALU_HYPRE_HOPSCOTCH_HASH_EMPTY != h32);
+   //nalu_hypre_assert(NALU_HYPRE_HOPSCOTCH_HASH_EMPTY != h32);
 
    return h32;
 }
 #endif
 
 static inline void
-hypre_UnorderedIntSetFindCloserFreeBucket( hypre_UnorderedIntSet *s,
+nalu_hypre_UnorderedIntSetFindCloserFreeBucket( nalu_hypre_UnorderedIntSet *s,
 #ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
-                                           hypre_HopscotchSegment *start_seg,
+                                           nalu_hypre_HopscotchSegment *start_seg,
 #endif
                                            NALU_HYPRE_Int *free_bucket,
                                            NALU_HYPRE_Int *free_dist )
@@ -325,9 +325,9 @@ hypre_UnorderedIntSetFindCloserFreeBucket( hypre_UnorderedIntSet *s,
    NALU_HYPRE_Int move_free_dist;
    for (move_free_dist = NALU_HYPRE_HOPSCOTCH_HASH_HOP_RANGE - 1; move_free_dist > 0; --move_free_dist)
    {
-      hypre_uint start_hop_info = s->hopInfo[move_bucket];
+      nalu_hypre_uint start_hop_info = s->hopInfo[move_bucket];
       NALU_HYPRE_Int move_new_free_dist = -1;
-      hypre_uint mask = 1;
+      nalu_hypre_uint mask = 1;
       NALU_HYPRE_Int i;
       for (i = 0; i < move_free_dist; ++i, mask <<= 1)
       {
@@ -340,7 +340,7 @@ hypre_UnorderedIntSetFindCloserFreeBucket( hypre_UnorderedIntSet *s,
       if (-1 != move_new_free_dist)
       {
 #ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
-         hypre_HopscotchSegment*  move_segment = &(s->segments[move_bucket & s->segmentMask]);
+         nalu_hypre_HopscotchSegment*  move_segment = &(s->segments[move_bucket & s->segmentMask]);
 
          if (start_seg != move_segment)
          {
@@ -389,9 +389,9 @@ hypre_UnorderedIntSetFindCloserFreeBucket( hypre_UnorderedIntSet *s,
 }
 
 static inline void
-hypre_UnorderedBigIntSetFindCloserFreeBucket( hypre_UnorderedBigIntSet *s,
+nalu_hypre_UnorderedBigIntSetFindCloserFreeBucket( nalu_hypre_UnorderedBigIntSet *s,
 #ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
-                                              hypre_HopscotchSegment   *start_seg,
+                                              nalu_hypre_HopscotchSegment   *start_seg,
 #endif
                                               NALU_HYPRE_Int *free_bucket,
                                               NALU_HYPRE_Int *free_dist )
@@ -400,9 +400,9 @@ hypre_UnorderedBigIntSetFindCloserFreeBucket( hypre_UnorderedBigIntSet *s,
    NALU_HYPRE_Int move_free_dist;
    for (move_free_dist = NALU_HYPRE_HOPSCOTCH_HASH_HOP_RANGE - 1; move_free_dist > 0; --move_free_dist)
    {
-      hypre_uint start_hop_info = s->hopInfo[move_bucket];
+      nalu_hypre_uint start_hop_info = s->hopInfo[move_bucket];
       NALU_HYPRE_Int move_new_free_dist = -1;
-      hypre_uint mask = 1;
+      nalu_hypre_uint mask = 1;
       NALU_HYPRE_Int i;
       for (i = 0; i < move_free_dist; ++i, mask <<= 1)
       {
@@ -415,7 +415,7 @@ hypre_UnorderedBigIntSetFindCloserFreeBucket( hypre_UnorderedBigIntSet *s,
       if (-1 != move_new_free_dist)
       {
 #ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
-         hypre_HopscotchSegment*  move_segment = &(s->segments[move_bucket & s->segmentMask]);
+         nalu_hypre_HopscotchSegment*  move_segment = &(s->segments[move_bucket & s->segmentMask]);
 
          if (start_seg != move_segment)
          {
@@ -464,20 +464,20 @@ hypre_UnorderedBigIntSetFindCloserFreeBucket( hypre_UnorderedBigIntSet *s,
 }
 
 static inline void
-hypre_UnorderedIntMapFindCloserFreeBucket( hypre_UnorderedIntMap  *m,
+nalu_hypre_UnorderedIntMapFindCloserFreeBucket( nalu_hypre_UnorderedIntMap  *m,
 #ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
-                                           hypre_HopscotchSegment *start_seg,
+                                           nalu_hypre_HopscotchSegment *start_seg,
 #endif
-                                           hypre_HopscotchBucket **free_bucket,
+                                           nalu_hypre_HopscotchBucket **free_bucket,
                                            NALU_HYPRE_Int *free_dist)
 {
-   hypre_HopscotchBucket* move_bucket = *free_bucket - (NALU_HYPRE_HOPSCOTCH_HASH_HOP_RANGE - 1);
+   nalu_hypre_HopscotchBucket* move_bucket = *free_bucket - (NALU_HYPRE_HOPSCOTCH_HASH_HOP_RANGE - 1);
    NALU_HYPRE_Int move_free_dist;
    for (move_free_dist = NALU_HYPRE_HOPSCOTCH_HASH_HOP_RANGE - 1; move_free_dist > 0; --move_free_dist)
    {
-      hypre_uint start_hop_info = move_bucket->hopInfo;
+      nalu_hypre_uint start_hop_info = move_bucket->hopInfo;
       NALU_HYPRE_Int move_new_free_dist = -1;
-      hypre_uint mask = 1;
+      nalu_hypre_uint mask = 1;
       NALU_HYPRE_Int i;
       for (i = 0; i < move_free_dist; ++i, mask <<= 1)
       {
@@ -490,7 +490,7 @@ hypre_UnorderedIntMapFindCloserFreeBucket( hypre_UnorderedIntMap  *m,
       if (-1 != move_new_free_dist)
       {
 #ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
-         hypre_HopscotchSegment* move_segment = &(m->segments[(move_bucket - m->table) & m->segmentMask]);
+         nalu_hypre_HopscotchSegment* move_segment = &(m->segments[(move_bucket - m->table) & m->segmentMask]);
 
          if (start_seg != move_segment)
          {
@@ -501,7 +501,7 @@ hypre_UnorderedIntMapFindCloserFreeBucket( hypre_UnorderedIntMap  *m,
          if (start_hop_info == move_bucket->hopInfo)
          {
             // new_free_bucket -> free_bucket and empty new_free_bucket
-            hypre_HopscotchBucket* new_free_bucket = move_bucket + move_new_free_dist;
+            nalu_hypre_HopscotchBucket* new_free_bucket = move_bucket + move_new_free_dist;
             (*free_bucket)->data = new_free_bucket->data;
             (*free_bucket)->key  = new_free_bucket->key;
             (*free_bucket)->hash = new_free_bucket->hash;
@@ -540,20 +540,20 @@ hypre_UnorderedIntMapFindCloserFreeBucket( hypre_UnorderedIntMap  *m,
 }
 
 static inline void
-hypre_UnorderedBigIntMapFindCloserFreeBucket( hypre_UnorderedBigIntMap   *m,
+nalu_hypre_UnorderedBigIntMapFindCloserFreeBucket( nalu_hypre_UnorderedBigIntMap   *m,
 #ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
-                                              hypre_HopscotchSegment     *start_seg,
+                                              nalu_hypre_HopscotchSegment     *start_seg,
 #endif
-                                              hypre_BigHopscotchBucket **free_bucket,
+                                              nalu_hypre_BigHopscotchBucket **free_bucket,
                                               NALU_HYPRE_Int *free_dist)
 {
-   hypre_BigHopscotchBucket* move_bucket = *free_bucket - (NALU_HYPRE_HOPSCOTCH_HASH_HOP_RANGE - 1);
+   nalu_hypre_BigHopscotchBucket* move_bucket = *free_bucket - (NALU_HYPRE_HOPSCOTCH_HASH_HOP_RANGE - 1);
    NALU_HYPRE_Int move_free_dist;
    for (move_free_dist = NALU_HYPRE_HOPSCOTCH_HASH_HOP_RANGE - 1; move_free_dist > 0; --move_free_dist)
    {
-      hypre_uint start_hop_info = move_bucket->hopInfo;
+      nalu_hypre_uint start_hop_info = move_bucket->hopInfo;
       NALU_HYPRE_Int move_new_free_dist = -1;
-      hypre_uint mask = 1;
+      nalu_hypre_uint mask = 1;
       NALU_HYPRE_Int i;
       for (i = 0; i < move_free_dist; ++i, mask <<= 1)
       {
@@ -566,7 +566,7 @@ hypre_UnorderedBigIntMapFindCloserFreeBucket( hypre_UnorderedBigIntMap   *m,
       if (-1 != move_new_free_dist)
       {
 #ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
-         hypre_HopscotchSegment* move_segment = &(m->segments[(move_bucket - m->table) & m->segmentMask]);
+         nalu_hypre_HopscotchSegment* move_segment = &(m->segments[(move_bucket - m->table) & m->segmentMask]);
 
          if (start_seg != move_segment)
          {
@@ -577,7 +577,7 @@ hypre_UnorderedBigIntMapFindCloserFreeBucket( hypre_UnorderedBigIntMap   *m,
          if (start_hop_info == move_bucket->hopInfo)
          {
             // new_free_bucket -> free_bucket and empty new_free_bucket
-            hypre_BigHopscotchBucket* new_free_bucket = move_bucket + move_new_free_dist;
+            nalu_hypre_BigHopscotchBucket* new_free_bucket = move_bucket + move_new_free_dist;
             (*free_bucket)->data = new_free_bucket->data;
             (*free_bucket)->key  = new_free_bucket->key;
             (*free_bucket)->hash = new_free_bucket->hash;
@@ -615,42 +615,42 @@ hypre_UnorderedBigIntMapFindCloserFreeBucket( hypre_UnorderedBigIntMap   *m,
    *free_dist = 0;
 }
 
-void hypre_UnorderedIntSetCreate( hypre_UnorderedIntSet *s,
+void nalu_hypre_UnorderedIntSetCreate( nalu_hypre_UnorderedIntSet *s,
                                   NALU_HYPRE_Int inCapacity,
                                   NALU_HYPRE_Int concurrencyLevel);
-void hypre_UnorderedBigIntSetCreate( hypre_UnorderedBigIntSet *s,
+void nalu_hypre_UnorderedBigIntSetCreate( nalu_hypre_UnorderedBigIntSet *s,
                                      NALU_HYPRE_Int inCapacity,
                                      NALU_HYPRE_Int concurrencyLevel);
-void hypre_UnorderedIntMapCreate( hypre_UnorderedIntMap *m,
+void nalu_hypre_UnorderedIntMapCreate( nalu_hypre_UnorderedIntMap *m,
                                   NALU_HYPRE_Int inCapacity,
                                   NALU_HYPRE_Int concurrencyLevel);
-void hypre_UnorderedBigIntMapCreate( hypre_UnorderedBigIntMap *m,
+void nalu_hypre_UnorderedBigIntMapCreate( nalu_hypre_UnorderedBigIntMap *m,
                                      NALU_HYPRE_Int inCapacity,
                                      NALU_HYPRE_Int concurrencyLevel);
 
-void hypre_UnorderedIntSetDestroy( hypre_UnorderedIntSet *s );
-void hypre_UnorderedBigIntSetDestroy( hypre_UnorderedBigIntSet *s );
-void hypre_UnorderedIntMapDestroy( hypre_UnorderedIntMap *m );
-void hypre_UnorderedBigIntMapDestroy( hypre_UnorderedBigIntMap *m );
+void nalu_hypre_UnorderedIntSetDestroy( nalu_hypre_UnorderedIntSet *s );
+void nalu_hypre_UnorderedBigIntSetDestroy( nalu_hypre_UnorderedBigIntSet *s );
+void nalu_hypre_UnorderedIntMapDestroy( nalu_hypre_UnorderedIntMap *m );
+void nalu_hypre_UnorderedBigIntMapDestroy( nalu_hypre_UnorderedBigIntMap *m );
 
 // Query Operations .........................................................
 static inline NALU_HYPRE_Int
-hypre_UnorderedIntSetContains( hypre_UnorderedIntSet *s,
+nalu_hypre_UnorderedIntSetContains( nalu_hypre_UnorderedIntSet *s,
                                NALU_HYPRE_Int              key )
 {
    //CALCULATE HASH ..........................
 #ifdef NALU_HYPRE_BIGINT
-   NALU_HYPRE_Int hash = hypre_BigHash(key);
+   NALU_HYPRE_Int hash = nalu_hypre_BigHash(key);
 #else
-   NALU_HYPRE_Int hash = hypre_Hash(key);
+   NALU_HYPRE_Int hash = nalu_hypre_Hash(key);
 #endif
 
    //CHECK IF ALREADY CONTAIN ................
 #ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
-   hypre_HopscotchSegment *segment = &s->segments[hash & s->segmentMask];
+   nalu_hypre_HopscotchSegment *segment = &s->segments[hash & s->segmentMask];
 #endif
    NALU_HYPRE_Int bucket = hash & s->bucketMask;
-   hypre_uint hopInfo = s->hopInfo[bucket];
+   nalu_hypre_uint hopInfo = s->hopInfo[bucket];
 
    if (0 == hopInfo)
    {
@@ -699,22 +699,22 @@ hypre_UnorderedIntSetContains( hypre_UnorderedIntSet *s,
 }
 
 static inline NALU_HYPRE_Int
-hypre_UnorderedBigIntSetContains( hypre_UnorderedBigIntSet *s,
+nalu_hypre_UnorderedBigIntSetContains( nalu_hypre_UnorderedBigIntSet *s,
                                   NALU_HYPRE_BigInt key )
 {
    //CALCULATE HASH ..........................
 #if defined(NALU_HYPRE_BIGINT) || defined(NALU_HYPRE_MIXEDINT)
-   NALU_HYPRE_BigInt hash = hypre_BigHash(key);
+   NALU_HYPRE_BigInt hash = nalu_hypre_BigHash(key);
 #else
-   NALU_HYPRE_BigInt hash = hypre_Hash(key);
+   NALU_HYPRE_BigInt hash = nalu_hypre_Hash(key);
 #endif
 
    //CHECK IF ALREADY CONTAIN ................
 #ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
-   hypre_HopscotchSegment *segment = &s->segments[(NALU_HYPRE_Int)(hash & s->segmentMask)];
+   nalu_hypre_HopscotchSegment *segment = &s->segments[(NALU_HYPRE_Int)(hash & s->segmentMask)];
 #endif
    NALU_HYPRE_Int bucket = (NALU_HYPRE_Int)(hash & s->bucketMask);
-   hypre_uint hopInfo = s->hopInfo[bucket];
+   nalu_hypre_uint hopInfo = s->hopInfo[bucket];
 
    if (0 == hopInfo)
    {
@@ -766,22 +766,22 @@ hypre_UnorderedBigIntSetContains( hypre_UnorderedBigIntSet *s,
  * @ret -1 if key doesn't exist
  */
 static inline NALU_HYPRE_Int
-hypre_UnorderedIntMapGet( hypre_UnorderedIntMap *m,
+nalu_hypre_UnorderedIntMapGet( nalu_hypre_UnorderedIntMap *m,
                           NALU_HYPRE_Int key )
 {
    //CALCULATE HASH ..........................
 #ifdef NALU_HYPRE_BIGINT
-   NALU_HYPRE_Int hash = hypre_BigHash(key);
+   NALU_HYPRE_Int hash = nalu_hypre_BigHash(key);
 #else
-   NALU_HYPRE_Int hash = hypre_Hash(key);
+   NALU_HYPRE_Int hash = nalu_hypre_Hash(key);
 #endif
 
    //CHECK IF ALREADY CONTAIN ................
 #ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
-   hypre_HopscotchSegment *segment = &m->segments[hash & m->segmentMask];
+   nalu_hypre_HopscotchSegment *segment = &m->segments[hash & m->segmentMask];
 #endif
-   hypre_HopscotchBucket *elmAry = &(m->table[hash & m->bucketMask]);
-   hypre_uint hopInfo = elmAry->hopInfo;
+   nalu_hypre_HopscotchBucket *elmAry = &(m->table[hash & m->bucketMask]);
+   nalu_hypre_uint hopInfo = elmAry->hopInfo;
    if (0 == hopInfo)
    {
       return -1;
@@ -801,7 +801,7 @@ hypre_UnorderedIntMapGet( hypre_UnorderedIntMap *m,
    while (0 != hopInfo)
    {
       NALU_HYPRE_Int i = first_lsb_bit_indx(hopInfo);
-      hypre_HopscotchBucket* currElm = elmAry + i;
+      nalu_hypre_HopscotchBucket* currElm = elmAry + i;
       if (hash == currElm->hash && key == currElm->key)
       {
          return currElm->data;
@@ -816,7 +816,7 @@ hypre_UnorderedIntMapGet( hypre_UnorderedIntMap *m,
    }
 #endif
 
-   hypre_HopscotchBucket *currBucket = &(m->table[hash & m->bucketMask]);
+   nalu_hypre_HopscotchBucket *currBucket = &(m->table[hash & m->bucketMask]);
    NALU_HYPRE_Int i;
    for (i = 0; i < NALU_HYPRE_HOPSCOTCH_HASH_HOP_RANGE; ++i, ++currBucket)
    {
@@ -829,22 +829,22 @@ hypre_UnorderedIntMapGet( hypre_UnorderedIntMap *m,
 }
 
 static inline
-NALU_HYPRE_Int hypre_UnorderedBigIntMapGet( hypre_UnorderedBigIntMap *m,
+NALU_HYPRE_Int nalu_hypre_UnorderedBigIntMapGet( nalu_hypre_UnorderedBigIntMap *m,
                                        NALU_HYPRE_BigInt key )
 {
    //CALCULATE HASH ..........................
 #if defined(NALU_HYPRE_BIGINT) || defined(NALU_HYPRE_MIXEDINT)
-   NALU_HYPRE_BigInt hash = hypre_BigHash(key);
+   NALU_HYPRE_BigInt hash = nalu_hypre_BigHash(key);
 #else
-   NALU_HYPRE_BigInt hash = hypre_Hash(key);
+   NALU_HYPRE_BigInt hash = nalu_hypre_Hash(key);
 #endif
 
    //CHECK IF ALREADY CONTAIN ................
 #ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
-   hypre_HopscotchSegment *segment = &m->segments[(NALU_HYPRE_Int)(hash & m->segmentMask)];
+   nalu_hypre_HopscotchSegment *segment = &m->segments[(NALU_HYPRE_Int)(hash & m->segmentMask)];
 #endif
-   hypre_BigHopscotchBucket *elmAry = &(m->table[(NALU_HYPRE_Int)(hash & m->bucketMask)]);
-   hypre_uint hopInfo = elmAry->hopInfo;
+   nalu_hypre_BigHopscotchBucket *elmAry = &(m->table[(NALU_HYPRE_Int)(hash & m->bucketMask)]);
+   nalu_hypre_uint hopInfo = elmAry->hopInfo;
    if (0 == hopInfo)
    {
       return -1;
@@ -864,7 +864,7 @@ NALU_HYPRE_Int hypre_UnorderedBigIntMapGet( hypre_UnorderedBigIntMap *m,
    while (0 != hopInfo)
    {
       NALU_HYPRE_Int i = first_lsb_bit_indx(hopInfo);
-      hypre_BigHopscotchBucket* currElm = elmAry + i;
+      nalu_hypre_BigHopscotchBucket* currElm = elmAry + i;
       if (hash == currElm->hash && key == currElm->key)
       {
          return currElm->data;
@@ -879,7 +879,7 @@ NALU_HYPRE_Int hypre_UnorderedBigIntMapGet( hypre_UnorderedBigIntMap *m,
    }
 #endif
 
-   hypre_BigHopscotchBucket *currBucket = &(m->table[hash & m->bucketMask]);
+   nalu_hypre_BigHopscotchBucket *currBucket = &(m->table[hash & m->bucketMask]);
    NALU_HYPRE_Int i;
    for (i = 0; i < NALU_HYPRE_HOPSCOTCH_HASH_HOP_RANGE; ++i, ++currBucket)
    {
@@ -893,7 +893,7 @@ NALU_HYPRE_Int hypre_UnorderedBigIntMapGet( hypre_UnorderedBigIntMap *m,
 
 //status Operations .........................................................
 static inline
-NALU_HYPRE_Int hypre_UnorderedIntSetSize( hypre_UnorderedIntSet *s )
+NALU_HYPRE_Int nalu_hypre_UnorderedIntSetSize( nalu_hypre_UnorderedIntSet *s )
 {
    NALU_HYPRE_Int counter = 0;
    NALU_HYPRE_Int n = s->bucketMask + NALU_HYPRE_HOPSCOTCH_HASH_INSERT_RANGE;
@@ -909,7 +909,7 @@ NALU_HYPRE_Int hypre_UnorderedIntSetSize( hypre_UnorderedIntSet *s )
 }
 
 static inline
-NALU_HYPRE_Int hypre_UnorderedBigIntSetSize( hypre_UnorderedBigIntSet *s )
+NALU_HYPRE_Int nalu_hypre_UnorderedBigIntSetSize( nalu_hypre_UnorderedBigIntSet *s )
 {
    NALU_HYPRE_Int counter = 0;
    NALU_HYPRE_BigInt n = s->bucketMask + NALU_HYPRE_HOPSCOTCH_HASH_INSERT_RANGE;
@@ -925,7 +925,7 @@ NALU_HYPRE_Int hypre_UnorderedBigIntSetSize( hypre_UnorderedBigIntSet *s )
 }
 
 static inline NALU_HYPRE_Int
-hypre_UnorderedIntMapSize( hypre_UnorderedIntMap *m )
+nalu_hypre_UnorderedIntMapSize( nalu_hypre_UnorderedIntMap *m )
 {
    NALU_HYPRE_Int counter = 0;
    NALU_HYPRE_Int n = m->bucketMask + NALU_HYPRE_HOPSCOTCH_HASH_INSERT_RANGE;
@@ -941,7 +941,7 @@ hypre_UnorderedIntMapSize( hypre_UnorderedIntMap *m )
 }
 
 static inline NALU_HYPRE_Int
-hypre_UnorderedBigIntMapSize( hypre_UnorderedBigIntMap *m )
+nalu_hypre_UnorderedBigIntMapSize( nalu_hypre_UnorderedBigIntMap *m )
 {
    NALU_HYPRE_Int counter = 0;
    NALU_HYPRE_Int n = m->bucketMask + NALU_HYPRE_HOPSCOTCH_HASH_INSERT_RANGE;
@@ -956,30 +956,30 @@ hypre_UnorderedBigIntMapSize( hypre_UnorderedBigIntMap *m )
    return counter;
 }
 
-NALU_HYPRE_Int *hypre_UnorderedIntSetCopyToArray( hypre_UnorderedIntSet *s, NALU_HYPRE_Int *len );
-NALU_HYPRE_BigInt *hypre_UnorderedBigIntSetCopyToArray( hypre_UnorderedBigIntSet *s, NALU_HYPRE_Int *len );
+NALU_HYPRE_Int *nalu_hypre_UnorderedIntSetCopyToArray( nalu_hypre_UnorderedIntSet *s, NALU_HYPRE_Int *len );
+NALU_HYPRE_BigInt *nalu_hypre_UnorderedBigIntSetCopyToArray( nalu_hypre_UnorderedBigIntSet *s, NALU_HYPRE_Int *len );
 
 //modification Operations ...................................................
 static inline void
-hypre_UnorderedIntSetPut( hypre_UnorderedIntSet *s,
+nalu_hypre_UnorderedIntSetPut( nalu_hypre_UnorderedIntSet *s,
                           NALU_HYPRE_Int key )
 {
    //CALCULATE HASH ..........................
 #ifdef NALU_HYPRE_BIGINT
-   NALU_HYPRE_Int hash = hypre_BigHash(key);
+   NALU_HYPRE_Int hash = nalu_hypre_BigHash(key);
 #else
-   NALU_HYPRE_Int hash = hypre_Hash(key);
+   NALU_HYPRE_Int hash = nalu_hypre_Hash(key);
 #endif
 
    //LOCK KEY HASH ENTERY ....................
 #ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
-   hypre_HopscotchSegment  *segment = &s->segments[hash & s->segmentMask];
+   nalu_hypre_HopscotchSegment  *segment = &s->segments[hash & s->segmentMask];
    omp_set_lock(&segment->lock);
 #endif
    NALU_HYPRE_Int bucket = hash & s->bucketMask;
 
    //CHECK IF ALREADY CONTAIN ................
-   hypre_uint hopInfo = s->hopInfo[bucket];
+   nalu_hypre_uint hopInfo = s->hopInfo[bucket];
    while (0 != hopInfo)
    {
       NALU_HYPRE_Int i = first_lsb_bit_indx(hopInfo);
@@ -1002,7 +1002,7 @@ hypre_UnorderedIntSetPut( hypre_UnorderedIntSet *s,
    {
       if ( (NALU_HYPRE_HOPSCOTCH_HASH_EMPTY == s->hash[free_bucket]) &&
            (NALU_HYPRE_HOPSCOTCH_HASH_EMPTY ==
-            hypre_compare_and_swap((NALU_HYPRE_Int *)&s->hash[free_bucket],
+            nalu_hypre_compare_and_swap((NALU_HYPRE_Int *)&s->hash[free_bucket],
                                    (NALU_HYPRE_Int)NALU_HYPRE_HOPSCOTCH_HASH_EMPTY,
                                    (NALU_HYPRE_Int)NALU_HYPRE_HOPSCOTCH_HASH_BUSY)) )
       {
@@ -1026,7 +1026,7 @@ hypre_UnorderedIntSetPut( hypre_UnorderedIntSet *s,
 #endif
             return;
          }
-         hypre_UnorderedIntSetFindCloserFreeBucket(s,
+         nalu_hypre_UnorderedIntSetFindCloserFreeBucket(s,
 #ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
                                                    segment,
 #endif
@@ -1036,32 +1036,32 @@ hypre_UnorderedIntSetPut( hypre_UnorderedIntSet *s,
    }
 
    //NEED TO RESIZE ..........................
-   hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "ERROR - RESIZE is not implemented\n");
+   nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "ERROR - RESIZE is not implemented\n");
    /*fprintf(stderr, "ERROR - RESIZE is not implemented\n");*/
    exit(1);
    return;
 }
 
 static inline void
-hypre_UnorderedBigIntSetPut( hypre_UnorderedBigIntSet *s,
+nalu_hypre_UnorderedBigIntSetPut( nalu_hypre_UnorderedBigIntSet *s,
                              NALU_HYPRE_BigInt key )
 {
    //CALCULATE HASH ..........................
 #if defined(NALU_HYPRE_BIGINT) || defined(NALU_HYPRE_MIXEDINT)
-   NALU_HYPRE_BigInt hash = hypre_BigHash(key);
+   NALU_HYPRE_BigInt hash = nalu_hypre_BigHash(key);
 #else
-   NALU_HYPRE_BigInt hash = hypre_Hash(key);
+   NALU_HYPRE_BigInt hash = nalu_hypre_Hash(key);
 #endif
 
    //LOCK KEY HASH ENTERY ....................
 #ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
-   hypre_HopscotchSegment  *segment = &s->segments[hash & s->segmentMask];
+   nalu_hypre_HopscotchSegment  *segment = &s->segments[hash & s->segmentMask];
    omp_set_lock(&segment->lock);
 #endif
    NALU_HYPRE_Int bucket = (NALU_HYPRE_Int)(hash & s->bucketMask);
 
    //CHECK IF ALREADY CONTAIN ................
-   hypre_uint hopInfo = s->hopInfo[bucket];
+   nalu_hypre_uint hopInfo = s->hopInfo[bucket];
    while (0 != hopInfo)
    {
       NALU_HYPRE_Int i = first_lsb_bit_indx(hopInfo);
@@ -1084,7 +1084,7 @@ hypre_UnorderedBigIntSetPut( hypre_UnorderedBigIntSet *s,
    {
       if ( (NALU_HYPRE_HOPSCOTCH_HASH_EMPTY == s->hash[free_bucket]) &&
            (NALU_HYPRE_HOPSCOTCH_HASH_EMPTY ==
-            hypre_compare_and_swap((NALU_HYPRE_Int *)&s->hash[free_bucket],
+            nalu_hypre_compare_and_swap((NALU_HYPRE_Int *)&s->hash[free_bucket],
                                    (NALU_HYPRE_Int)NALU_HYPRE_HOPSCOTCH_HASH_EMPTY,
                                    (NALU_HYPRE_Int)NALU_HYPRE_HOPSCOTCH_HASH_BUSY)) )
       {
@@ -1108,7 +1108,7 @@ hypre_UnorderedBigIntSetPut( hypre_UnorderedBigIntSet *s,
 #endif
             return;
          }
-         hypre_UnorderedBigIntSetFindCloserFreeBucket(s,
+         nalu_hypre_UnorderedBigIntSetFindCloserFreeBucket(s,
 #ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
                                                       segment,
 #endif
@@ -1118,36 +1118,36 @@ hypre_UnorderedBigIntSetPut( hypre_UnorderedBigIntSet *s,
    }
 
    //NEED TO RESIZE ..........................
-   hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "ERROR - RESIZE is not implemented\n");
+   nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "ERROR - RESIZE is not implemented\n");
    /*fprintf(stderr, "ERROR - RESIZE is not implemented\n");*/
    exit(1);
    return;
 }
 
 static inline NALU_HYPRE_Int
-hypre_UnorderedIntMapPutIfAbsent( hypre_UnorderedIntMap *m,
+nalu_hypre_UnorderedIntMapPutIfAbsent( nalu_hypre_UnorderedIntMap *m,
                                   NALU_HYPRE_Int key, NALU_HYPRE_Int data )
 {
    //CALCULATE HASH ..........................
 #ifdef NALU_HYPRE_BIGINT
-   NALU_HYPRE_Int hash = hypre_BigHash(key);
+   NALU_HYPRE_Int hash = nalu_hypre_BigHash(key);
 #else
-   NALU_HYPRE_Int hash = hypre_Hash(key);
+   NALU_HYPRE_Int hash = nalu_hypre_Hash(key);
 #endif
 
    //LOCK KEY HASH ENTERY ....................
 #ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
-   hypre_HopscotchSegment *segment = &m->segments[hash & m->segmentMask];
+   nalu_hypre_HopscotchSegment *segment = &m->segments[hash & m->segmentMask];
    omp_set_lock(&segment->lock);
 #endif
-   hypre_HopscotchBucket* startBucket = &(m->table[hash & m->bucketMask]);
+   nalu_hypre_HopscotchBucket* startBucket = &(m->table[hash & m->bucketMask]);
 
    //CHECK IF ALREADY CONTAIN ................
-   hypre_uint hopInfo = startBucket->hopInfo;
+   nalu_hypre_uint hopInfo = startBucket->hopInfo;
    while (0 != hopInfo)
    {
       NALU_HYPRE_Int i = first_lsb_bit_indx(hopInfo);
-      hypre_HopscotchBucket* currElm = startBucket + i;
+      nalu_hypre_HopscotchBucket* currElm = startBucket + i;
       if (hash == currElm->hash && key == currElm->key)
       {
          NALU_HYPRE_Int rc = currElm->data;
@@ -1160,13 +1160,13 @@ hypre_UnorderedIntMapPutIfAbsent( hypre_UnorderedIntMap *m,
    }
 
    //LOOK FOR FREE BUCKET ....................
-   hypre_HopscotchBucket* free_bucket = startBucket;
+   nalu_hypre_HopscotchBucket* free_bucket = startBucket;
    NALU_HYPRE_Int free_dist = 0;
    for ( ; free_dist < NALU_HYPRE_HOPSCOTCH_HASH_INSERT_RANGE; ++free_dist, ++free_bucket)
    {
       if ( (NALU_HYPRE_HOPSCOTCH_HASH_EMPTY == free_bucket->hash) &&
            (NALU_HYPRE_HOPSCOTCH_HASH_EMPTY ==
-            hypre_compare_and_swap((NALU_HYPRE_Int *)&free_bucket->hash,
+            nalu_hypre_compare_and_swap((NALU_HYPRE_Int *)&free_bucket->hash,
                                    (NALU_HYPRE_Int)NALU_HYPRE_HOPSCOTCH_HASH_EMPTY,
                                    (NALU_HYPRE_Int)NALU_HYPRE_HOPSCOTCH_HASH_BUSY)) )
       {
@@ -1190,7 +1190,7 @@ hypre_UnorderedIntMapPutIfAbsent( hypre_UnorderedIntMap *m,
 #endif
             return NALU_HYPRE_HOPSCOTCH_HASH_EMPTY;
          }
-         hypre_UnorderedIntMapFindCloserFreeBucket(m,
+         nalu_hypre_UnorderedIntMapFindCloserFreeBucket(m,
 #ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
                                                    segment,
 #endif
@@ -1200,36 +1200,36 @@ hypre_UnorderedIntMapPutIfAbsent( hypre_UnorderedIntMap *m,
    }
 
    //NEED TO RESIZE ..........................
-   hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "ERROR - RESIZE is not implemented\n");
+   nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "ERROR - RESIZE is not implemented\n");
    /*fprintf(stderr, "ERROR - RESIZE is not implemented\n");*/
    exit(1);
    return NALU_HYPRE_HOPSCOTCH_HASH_EMPTY;
 }
 
 static inline NALU_HYPRE_Int
-hypre_UnorderedBigIntMapPutIfAbsent( hypre_UnorderedBigIntMap *m,
+nalu_hypre_UnorderedBigIntMapPutIfAbsent( nalu_hypre_UnorderedBigIntMap *m,
                                      NALU_HYPRE_BigInt key, NALU_HYPRE_Int data)
 {
    //CALCULATE HASH ..........................
 #if defined(NALU_HYPRE_BIGINT) || defined(NALU_HYPRE_MIXEDINT)
-   NALU_HYPRE_BigInt hash = hypre_BigHash(key);
+   NALU_HYPRE_BigInt hash = nalu_hypre_BigHash(key);
 #else
-   NALU_HYPRE_BigInt hash = hypre_Hash(key);
+   NALU_HYPRE_BigInt hash = nalu_hypre_Hash(key);
 #endif
 
    //LOCK KEY HASH ENTERY ....................
 #ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
-   hypre_HopscotchSegment *segment = &m->segments[hash & m->segmentMask];
+   nalu_hypre_HopscotchSegment *segment = &m->segments[hash & m->segmentMask];
    omp_set_lock(&segment->lock);
 #endif
-   hypre_BigHopscotchBucket* startBucket = &(m->table[hash & m->bucketMask]);
+   nalu_hypre_BigHopscotchBucket* startBucket = &(m->table[hash & m->bucketMask]);
 
    //CHECK IF ALREADY CONTAIN ................
-   hypre_uint hopInfo = startBucket->hopInfo;
+   nalu_hypre_uint hopInfo = startBucket->hopInfo;
    while (0 != hopInfo)
    {
       NALU_HYPRE_Int i = first_lsb_bit_indx(hopInfo);
-      hypre_BigHopscotchBucket* currElm = startBucket + i;
+      nalu_hypre_BigHopscotchBucket* currElm = startBucket + i;
       if (hash == currElm->hash && key == currElm->key)
       {
          NALU_HYPRE_Int rc = currElm->data;
@@ -1242,13 +1242,13 @@ hypre_UnorderedBigIntMapPutIfAbsent( hypre_UnorderedBigIntMap *m,
    }
 
    //LOOK FOR FREE BUCKET ....................
-   hypre_BigHopscotchBucket* free_bucket = startBucket;
+   nalu_hypre_BigHopscotchBucket* free_bucket = startBucket;
    NALU_HYPRE_Int free_dist = 0;
    for ( ; free_dist < NALU_HYPRE_HOPSCOTCH_HASH_INSERT_RANGE; ++free_dist, ++free_bucket)
    {
       if ( (NALU_HYPRE_HOPSCOTCH_HASH_EMPTY == free_bucket->hash) &&
            (NALU_HYPRE_HOPSCOTCH_HASH_EMPTY ==
-            hypre_compare_and_swap((NALU_HYPRE_Int *)&free_bucket->hash,
+            nalu_hypre_compare_and_swap((NALU_HYPRE_Int *)&free_bucket->hash,
                                    (NALU_HYPRE_Int)NALU_HYPRE_HOPSCOTCH_HASH_EMPTY,
                                    (NALU_HYPRE_Int)NALU_HYPRE_HOPSCOTCH_HASH_BUSY)) )
       {
@@ -1272,7 +1272,7 @@ hypre_UnorderedBigIntMapPutIfAbsent( hypre_UnorderedBigIntMap *m,
 #endif
             return NALU_HYPRE_HOPSCOTCH_HASH_EMPTY;
          }
-         hypre_UnorderedBigIntMapFindCloserFreeBucket(m,
+         nalu_hypre_UnorderedBigIntMapFindCloserFreeBucket(m,
 #ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
                                                       segment,
 #endif
@@ -1282,7 +1282,7 @@ hypre_UnorderedBigIntMapPutIfAbsent( hypre_UnorderedBigIntMap *m,
    }
 
    //NEED TO RESIZE ..........................
-   hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "ERROR - RESIZE is not implemented\n");
+   nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "ERROR - RESIZE is not implemented\n");
    /*fprintf(stderr, "ERROR - RESIZE is not implemented\n");*/
    exit(1);
    return NALU_HYPRE_HOPSCOTCH_HASH_EMPTY;
@@ -1292,4 +1292,4 @@ hypre_UnorderedBigIntMapPutIfAbsent( hypre_UnorderedBigIntMap *m,
 } // extern "C"
 #endif
 
-#endif // hypre_HOPSCOTCH_HASH_HEADER
+#endif // nalu_hypre_HOPSCOTCH_HASH_HEADER

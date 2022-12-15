@@ -16,9 +16,9 @@
 // system libraries used
 // --------------------------------------------------------------------------
 
-#include "utilities/_hypre_utilities.h"
-#include "IJ_mv/_hypre_IJ_mv.h"
-#include "parcsr_mv/_hypre_parcsr_mv.h"
+#include "utilities/_nalu_hypre_utilities.h"
+#include "IJ_mv/_nalu_hypre_IJ_mv.h"
+#include "parcsr_mv/_nalu_hypre_parcsr_mv.h"
 
 // **************************************************************************
 // class definition

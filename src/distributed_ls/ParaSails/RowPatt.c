@@ -31,14 +31,14 @@ static void resize(RowPatt *p, NALU_HYPRE_Int newlen)
     NALU_HYPRE_Int oldlen, i;
 
 #ifdef PARASAILS_DEBUG
-    hypre_printf("RowPatt resize %d\n", newlen);
+    nalu_hypre_printf("RowPatt resize %d\n", newlen);
 #endif
 
     oldlen = p->maxlen;
     p->maxlen = newlen;
 
-    p->ind  = hypre_TReAlloc(p->ind,NALU_HYPRE_Int,   p->maxlen , NALU_HYPRE_MEMORY_HOST);
-    p->mark = hypre_TReAlloc(p->mark,NALU_HYPRE_Int,  p->maxlen , NALU_HYPRE_MEMORY_HOST);
+    p->ind  = nalu_hypre_TReAlloc(p->ind,NALU_HYPRE_Int,   p->maxlen , NALU_HYPRE_MEMORY_HOST);
+    p->mark = nalu_hypre_TReAlloc(p->mark,NALU_HYPRE_Int,  p->maxlen , NALU_HYPRE_MEMORY_HOST);
 
     /* initialize the new portion of the mark array */
     for (i=oldlen; i<p->maxlen; i++)
@@ -53,13 +53,13 @@ static void resize(RowPatt *p, NALU_HYPRE_Int newlen)
 RowPatt *RowPattCreate(NALU_HYPRE_Int maxlen)
 {
     NALU_HYPRE_Int i;
-    RowPatt *p = hypre_TAlloc(RowPatt, 1, NALU_HYPRE_MEMORY_HOST);
+    RowPatt *p = nalu_hypre_TAlloc(RowPatt, 1, NALU_HYPRE_MEMORY_HOST);
 
     p->maxlen   = maxlen;
     p->len      = 0;
     p->prev_len = 0;
-    p->ind      = hypre_TAlloc(NALU_HYPRE_Int, maxlen , NALU_HYPRE_MEMORY_HOST);
-    p->mark     = hypre_TAlloc(NALU_HYPRE_Int, maxlen , NALU_HYPRE_MEMORY_HOST);
+    p->ind      = nalu_hypre_TAlloc(NALU_HYPRE_Int, maxlen , NALU_HYPRE_MEMORY_HOST);
+    p->mark     = nalu_hypre_TAlloc(NALU_HYPRE_Int, maxlen , NALU_HYPRE_MEMORY_HOST);
     p->buffer   = NULL;
     p->buflen   = 0;
 
@@ -75,10 +75,10 @@ RowPatt *RowPattCreate(NALU_HYPRE_Int maxlen)
 
 void RowPattDestroy(RowPatt *p)
 {
-    hypre_TFree(p->ind,NALU_HYPRE_MEMORY_HOST);
-    hypre_TFree(p->mark,NALU_HYPRE_MEMORY_HOST);
-    hypre_TFree(p->buffer,NALU_HYPRE_MEMORY_HOST);
-    hypre_TFree(p,NALU_HYPRE_MEMORY_HOST);
+    nalu_hypre_TFree(p->ind,NALU_HYPRE_MEMORY_HOST);
+    nalu_hypre_TFree(p->mark,NALU_HYPRE_MEMORY_HOST);
+    nalu_hypre_TFree(p->buffer,NALU_HYPRE_MEMORY_HOST);
+    nalu_hypre_TFree(p,NALU_HYPRE_MEMORY_HOST);
 }
 
 /*--------------------------------------------------------------------------
@@ -111,7 +111,7 @@ void RowPattMerge(RowPatt *p, NALU_HYPRE_Int len, NALU_HYPRE_Int *ind)
 
 	if (p->mark[ind[i]] == -1)
 	{
-	    hypre_assert(p->len < p->maxlen);
+	    nalu_hypre_assert(p->len < p->maxlen);
 
 	    p->mark[ind[i]] = p->len;
             p->ind[p->len] = ind[i];
@@ -140,7 +140,7 @@ void RowPattMergeExt(RowPatt *p, NALU_HYPRE_Int len, NALU_HYPRE_Int *ind, NALU_H
 
 	if (p->mark[ind[i]] == -1)
 	{
-	    hypre_assert(p->len < p->maxlen);
+	    nalu_hypre_assert(p->len < p->maxlen);
 
 	    p->mark[ind[i]] = p->len;
             p->ind[p->len] = ind[i];
@@ -164,12 +164,12 @@ void RowPattGet(RowPatt *p, NALU_HYPRE_Int *lenp, NALU_HYPRE_Int **indp)
 
     if (len > p->buflen)
     {
-	hypre_TFree(p->buffer,NALU_HYPRE_MEMORY_HOST);
+	nalu_hypre_TFree(p->buffer,NALU_HYPRE_MEMORY_HOST);
 	p->buflen = len + 100;
-	p->buffer = hypre_TAlloc(NALU_HYPRE_Int, p->buflen , NALU_HYPRE_MEMORY_HOST);
+	p->buffer = nalu_hypre_TAlloc(NALU_HYPRE_Int, p->buflen , NALU_HYPRE_MEMORY_HOST);
     }
 
-    hypre_TMemcpy(p->buffer,  p->ind, NALU_HYPRE_Int, len, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_HOST);
+    nalu_hypre_TMemcpy(p->buffer,  p->ind, NALU_HYPRE_Int, len, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_HOST);
 
     *lenp = len;
     *indp = p->buffer;
@@ -192,12 +192,12 @@ void RowPattPrevLevel(RowPatt *p, NALU_HYPRE_Int *lenp, NALU_HYPRE_Int **indp)
 
     if (len > p->buflen)
     {
-	hypre_TFree(p->buffer,NALU_HYPRE_MEMORY_HOST);
+	nalu_hypre_TFree(p->buffer,NALU_HYPRE_MEMORY_HOST);
 	p->buflen = len + 100;
-	p->buffer = hypre_TAlloc(NALU_HYPRE_Int, p->buflen , NALU_HYPRE_MEMORY_HOST);
+	p->buffer = nalu_hypre_TAlloc(NALU_HYPRE_Int, p->buflen , NALU_HYPRE_MEMORY_HOST);
     }
 
-    hypre_TMemcpy(p->buffer,  &p->ind[p->prev_len], NALU_HYPRE_Int, len, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_HOST);
+    nalu_hypre_TMemcpy(p->buffer,  &p->ind[p->prev_len], NALU_HYPRE_Int, len, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_HOST);
 
     *lenp = len;
     *indp = p->buffer;

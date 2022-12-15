@@ -38,14 +38,14 @@ NALU_HYPRE_Real time_get_cpu_seconds_( void );
 
 #ifndef NALU_HYPRE_TIMING
 
-#define hypre_InitializeTiming(name) 0
-#define hypre_FinalizeTiming(index)
-#define hypre_IncFLOPCount(inc)
-#define hypre_BeginTiming(i)
-#define hypre_EndTiming(i)
-#define hypre_PrintTiming(heading, comm)
-#define hypre_ClearTiming()
-#define hypre_GetTiming()
+#define nalu_hypre_InitializeTiming(name) 0
+#define nalu_hypre_FinalizeTiming(index)
+#define nalu_hypre_IncFLOPCount(inc)
+#define nalu_hypre_BeginTiming(i)
+#define nalu_hypre_EndTiming(i)
+#define nalu_hypre_PrintTiming(heading, comm)
+#define nalu_hypre_ClearTiming()
+#define nalu_hypre_GetTiming()
 
 /*--------------------------------------------------------------------------
  * With timing on
@@ -73,42 +73,42 @@ typedef struct
    NALU_HYPRE_Real   CPU_count;
    NALU_HYPRE_Real   FLOP_count;
 
-} hypre_TimingType;
+} nalu_hypre_TimingType;
 
 #ifdef NALU_HYPRE_TIMING_GLOBALS
-hypre_TimingType *hypre_global_timing = NULL;
+nalu_hypre_TimingType *nalu_hypre_global_timing = NULL;
 #else
-extern hypre_TimingType *hypre_global_timing;
+extern nalu_hypre_TimingType *nalu_hypre_global_timing;
 #endif
 
 /*-------------------------------------------------------
  * Accessor functions
  *-------------------------------------------------------*/
 
-#define hypre_TimingWallTime(i) (hypre_global_timing -> wall_time[(i)])
-#define hypre_TimingCPUTime(i)  (hypre_global_timing -> cpu_time[(i)])
-#define hypre_TimingFLOPS(i)    (hypre_global_timing -> flops[(i)])
-#define hypre_TimingName(i)     (hypre_global_timing -> name[(i)])
-#define hypre_TimingState(i)    (hypre_global_timing -> state[(i)])
-#define hypre_TimingNumRegs(i)  (hypre_global_timing -> num_regs[(i)])
-#define hypre_TimingWallCount   (hypre_global_timing -> wall_count)
-#define hypre_TimingCPUCount    (hypre_global_timing -> CPU_count)
-#define hypre_TimingFLOPCount   (hypre_global_timing -> FLOP_count)
+#define nalu_hypre_TimingWallTime(i) (nalu_hypre_global_timing -> wall_time[(i)])
+#define nalu_hypre_TimingCPUTime(i)  (nalu_hypre_global_timing -> cpu_time[(i)])
+#define nalu_hypre_TimingFLOPS(i)    (nalu_hypre_global_timing -> flops[(i)])
+#define nalu_hypre_TimingName(i)     (nalu_hypre_global_timing -> name[(i)])
+#define nalu_hypre_TimingState(i)    (nalu_hypre_global_timing -> state[(i)])
+#define nalu_hypre_TimingNumRegs(i)  (nalu_hypre_global_timing -> num_regs[(i)])
+#define nalu_hypre_TimingWallCount   (nalu_hypre_global_timing -> wall_count)
+#define nalu_hypre_TimingCPUCount    (nalu_hypre_global_timing -> CPU_count)
+#define nalu_hypre_TimingFLOPCount   (nalu_hypre_global_timing -> FLOP_count)
 
 /*-------------------------------------------------------
  * Prototypes
  *-------------------------------------------------------*/
 
 /* timing.c */
-NALU_HYPRE_Int hypre_InitializeTiming( const char *name );
-NALU_HYPRE_Int hypre_FinalizeTiming( NALU_HYPRE_Int time_index );
-NALU_HYPRE_Int hypre_FinalizeAllTimings();
-NALU_HYPRE_Int hypre_IncFLOPCount( NALU_HYPRE_BigInt inc );
-NALU_HYPRE_Int hypre_BeginTiming( NALU_HYPRE_Int time_index );
-NALU_HYPRE_Int hypre_EndTiming( NALU_HYPRE_Int time_index );
-NALU_HYPRE_Int hypre_ClearTiming( void );
-NALU_HYPRE_Int hypre_PrintTiming( const char *heading, MPI_Comm comm );
-NALU_HYPRE_Int hypre_GetTiming( const char *heading, NALU_HYPRE_Real *wall_time_ptr, MPI_Comm comm );
+NALU_HYPRE_Int nalu_hypre_InitializeTiming( const char *name );
+NALU_HYPRE_Int nalu_hypre_FinalizeTiming( NALU_HYPRE_Int time_index );
+NALU_HYPRE_Int nalu_hypre_FinalizeAllTimings();
+NALU_HYPRE_Int nalu_hypre_IncFLOPCount( NALU_HYPRE_BigInt inc );
+NALU_HYPRE_Int nalu_hypre_BeginTiming( NALU_HYPRE_Int time_index );
+NALU_HYPRE_Int nalu_hypre_EndTiming( NALU_HYPRE_Int time_index );
+NALU_HYPRE_Int nalu_hypre_ClearTiming( void );
+NALU_HYPRE_Int nalu_hypre_PrintTiming( const char *heading, MPI_Comm comm );
+NALU_HYPRE_Int nalu_hypre_GetTiming( const char *heading, NALU_HYPRE_Real *wall_time_ptr, MPI_Comm comm );
 
 #endif
 

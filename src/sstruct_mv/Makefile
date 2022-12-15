@@ -20,7 +20,7 @@ C_COMPILE_FLAGS = \
 
 HEADERS =\
  NALU_HYPRE_sstruct_mv.h\
- _hypre_sstruct_mv.h\
+ _nalu_hypre_sstruct_mv.h\
  sstruct_graph.h\
  sstruct_grid.h\
  sstruct_matrix.h\
@@ -63,12 +63,12 @@ SONAME = libNALU_HYPRE_sstruct_mv-${NALU_HYPRE_RELEASE_VERSION}${NALU_HYPRE_LIB_
 
 all: libNALU_HYPRE_sstruct_mv${NALU_HYPRE_LIB_SUFFIX}
 	cp -fR $(srcdir)/NALU_HYPRE_*.h $(NALU_HYPRE_BUILD_DIR)/include
-	cp -fR $(srcdir)/_hypre_sstruct_mv.h $(NALU_HYPRE_BUILD_DIR)/include
+	cp -fR $(srcdir)/_nalu_hypre_sstruct_mv.h $(NALU_HYPRE_BUILD_DIR)/include
 #	cp -fR libNALU_HYPRE* $(NALU_HYPRE_BUILD_DIR)/lib
 
 install: libNALU_HYPRE_sstruct_mv${NALU_HYPRE_LIB_SUFFIX}
 	cp -fR $(srcdir)/NALU_HYPRE_*.h $(NALU_HYPRE_INC_INSTALL)
-	cp -fR $(srcdir)/_hypre_sstruct_mv.h $(NALU_HYPRE_INC_INSTALL)
+	cp -fR $(srcdir)/_nalu_hypre_sstruct_mv.h $(NALU_HYPRE_INC_INSTALL)
 #	cp -fR libNALU_HYPRE* $(NALU_HYPRE_LIB_INSTALL)
 
 clean:

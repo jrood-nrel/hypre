@@ -14,7 +14,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "NALU_HYPRE.h"
-#include "_hypre_parcsr_mv.h"
+#include "_nalu_hypre_parcsr_mv.h"
 #include "mli_fedata.h"
 #include "mli_matrix.h"
 

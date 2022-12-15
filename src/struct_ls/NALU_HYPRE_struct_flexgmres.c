@@ -5,29 +5,29 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_struct_ls.h"
+#include "_nalu_hypre_struct_ls.h"
 
 /*==========================================================================*/
 
 NALU_HYPRE_Int
 NALU_HYPRE_StructFlexGMRESCreate( MPI_Comm comm, NALU_HYPRE_StructSolver *solver )
 {
-   hypre_FlexGMRESFunctions * fgmres_functions =
-      hypre_FlexGMRESFunctionsCreate(
-         hypre_StructKrylovCAlloc, hypre_StructKrylovFree,
-         hypre_StructKrylovCommInfo,
-         hypre_StructKrylovCreateVector,
-         hypre_StructKrylovCreateVectorArray,
-         hypre_StructKrylovDestroyVector, hypre_StructKrylovMatvecCreate,
-         hypre_StructKrylovMatvec, hypre_StructKrylovMatvecDestroy,
-         hypre_StructKrylovInnerProd, hypre_StructKrylovCopyVector,
-         hypre_StructKrylovClearVector,
-         hypre_StructKrylovScaleVector, hypre_StructKrylovAxpy,
-         hypre_StructKrylovIdentitySetup, hypre_StructKrylovIdentity );
+   nalu_hypre_FlexGMRESFunctions * fgmres_functions =
+      nalu_hypre_FlexGMRESFunctionsCreate(
+         nalu_hypre_StructKrylovCAlloc, nalu_hypre_StructKrylovFree,
+         nalu_hypre_StructKrylovCommInfo,
+         nalu_hypre_StructKrylovCreateVector,
+         nalu_hypre_StructKrylovCreateVectorArray,
+         nalu_hypre_StructKrylovDestroyVector, nalu_hypre_StructKrylovMatvecCreate,
+         nalu_hypre_StructKrylovMatvec, nalu_hypre_StructKrylovMatvecDestroy,
+         nalu_hypre_StructKrylovInnerProd, nalu_hypre_StructKrylovCopyVector,
+         nalu_hypre_StructKrylovClearVector,
+         nalu_hypre_StructKrylovScaleVector, nalu_hypre_StructKrylovAxpy,
+         nalu_hypre_StructKrylovIdentitySetup, nalu_hypre_StructKrylovIdentity );
 
-   *solver = ( (NALU_HYPRE_StructSolver) hypre_FlexGMRESCreate( fgmres_functions ) );
+   *solver = ( (NALU_HYPRE_StructSolver) nalu_hypre_FlexGMRESCreate( fgmres_functions ) );
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*==========================================================================*/
@@ -35,7 +35,7 @@ NALU_HYPRE_StructFlexGMRESCreate( MPI_Comm comm, NALU_HYPRE_StructSolver *solver
 NALU_HYPRE_Int
 NALU_HYPRE_StructFlexGMRESDestroy( NALU_HYPRE_StructSolver solver )
 {
-   return ( hypre_FlexGMRESDestroy( (void *) solver ) );
+   return ( nalu_hypre_FlexGMRESDestroy( (void *) solver ) );
 }
 
 /*==========================================================================*/

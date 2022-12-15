@@ -21,7 +21,7 @@ HEADERS =\
  aux_parcsr_matrix.h\
  aux_par_vector.h\
  NALU_HYPRE_IJ_mv.h\
- _hypre_IJ_mv.h\
+ _nalu_hypre_IJ_mv.h\
  IJ_matrix.h\
  IJ_vector.h
 
@@ -59,12 +59,12 @@ SONAME = libNALU_HYPRE_IJ_mv-${NALU_HYPRE_RELEASE_VERSION}${NALU_HYPRE_LIB_SUFFI
 
 all: libNALU_HYPRE_IJ_mv${NALU_HYPRE_LIB_SUFFIX}
 	cp -fR $(srcdir)/NALU_HYPRE_*.h $(NALU_HYPRE_BUILD_DIR)/include
-	cp -fR $(srcdir)/_hypre_IJ_mv.h $(NALU_HYPRE_BUILD_DIR)/include
+	cp -fR $(srcdir)/_nalu_hypre_IJ_mv.h $(NALU_HYPRE_BUILD_DIR)/include
 #	cp -fR libNALU_HYPRE* $(NALU_HYPRE_BUILD_DIR)/lib
 
 install: libNALU_HYPRE_IJ_mv${NALU_HYPRE_LIB_SUFFIX}
 	cp -fR $(srcdir)/NALU_HYPRE_*.h $(NALU_HYPRE_INC_INSTALL)
-	cp -fR $(srcdir)/_hypre_IJ_mv.h $(NALU_HYPRE_INC_INSTALL)
+	cp -fR $(srcdir)/_nalu_hypre_IJ_mv.h $(NALU_HYPRE_INC_INSTALL)
 #	cp -fR libNALU_HYPRE* $(NALU_HYPRE_LIB_INSTALL)
 
 clean:

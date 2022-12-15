@@ -16,10 +16,10 @@
 #include <string.h>
 
 #include "NALU_HYPRE.h"
-#include "_hypre_utilities.h"
+#include "_nalu_hypre_utilities.h"
 #include "NALU_HYPRE_IJ_mv.h"
 #include "seq_mv.h"
-#include "_hypre_parcsr_mv.h"
+#include "_nalu_hypre_parcsr_mv.h"
 
 #include "mli_method_amgsa.h"
 #include "mli_utils.h"
@@ -58,7 +58,7 @@ int MLI_Method_AMGSA::setupUsingFEData( MLI *mli )
    MLI_Mapper   *nodeEqnMap;
    MLI_Function *funcPtr;
    MLI_Matrix   *mliAmat, *mliENMat, *mliNEMat, *mliEEMat;
-   hypre_ParCSRMatrix *hypreA, *hypreEE, *hypreEN, *hypreNE;
+   nalu_hypre_ParCSRMatrix *hypreA, *hypreEE, *hypreEN, *hypreNE;
 
 #ifdef MLI_DEBUG_DETAILED
    printf("MLI_Method_AMGSA::setupUsingFEData begins...\n");
@@ -90,7 +90,7 @@ int MLI_Method_AMGSA::setupUsingFEData( MLI *mli )
    MPI_Comm_rank( comm, &mypid );
    MPI_Comm_size( comm, &nprocs );
    mliAmat = mli->getSystemMatrix( level );
-   hypreA  = (hypre_ParCSRMatrix *) mliAmat->getMatrix();
+   hypreA  = (nalu_hypre_ParCSRMatrix *) mliAmat->getMatrix();
    NALU_HYPRE_ParCSRMatrixGetRowPartitioning((NALU_HYPRE_ParCSRMatrix) hypreA, 
                                         &partition);
    localStartRow = partition[mypid];
@@ -121,12 +121,12 @@ int MLI_Method_AMGSA::setupUsingFEData( MLI *mli )
    /* --------------------------------------------------------------- */
 
    MLI_FEDataConstructElemNodeMatrix(comm, fedata, &mliENMat);
-   hypreEN = (hypre_ParCSRMatrix *) mliENMat->getMatrix();
+   hypreEN = (nalu_hypre_ParCSRMatrix *) mliENMat->getMatrix();
    MLI_FEDataConstructNodeElemMatrix(comm, fedata, &mliNEMat);
-   hypreNE = (hypre_ParCSRMatrix *) mliNEMat->getMatrix();
-   hypreEE = (hypre_ParCSRMatrix *) 
-              hypre_ParMatmul( (hypre_ParCSRMatrix *) hypreEN,
-                               (hypre_ParCSRMatrix *) hypreNE);
+   hypreNE = (nalu_hypre_ParCSRMatrix *) mliNEMat->getMatrix();
+   hypreEE = (nalu_hypre_ParCSRMatrix *) 
+              nalu_hypre_ParMatmul( (nalu_hypre_ParCSRMatrix *) hypreEN,
+                               (nalu_hypre_ParCSRMatrix *) hypreNE);
 
    /* --------------------------------------------------------------- */
    /* perform element agglomeration                                   */

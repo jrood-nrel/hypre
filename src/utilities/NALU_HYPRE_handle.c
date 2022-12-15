@@ -11,7 +11,7 @@
  *
  *****************************************************************************/
 
-#include "_hypre_utilities.h"
+#include "_nalu_hypre_utilities.h"
 
 /*--------------------------------------------------------------------------
  * NALU_HYPRE_SetSpTransUseVendor
@@ -19,7 +19,7 @@
 NALU_HYPRE_Int
 NALU_HYPRE_SetSpTransUseVendor( NALU_HYPRE_Int use_vendor )
 {
-   return hypre_SetSpTransUseVendor(use_vendor);
+   return nalu_hypre_SetSpTransUseVendor(use_vendor);
 }
 
 /*--------------------------------------------------------------------------
@@ -28,7 +28,7 @@ NALU_HYPRE_SetSpTransUseVendor( NALU_HYPRE_Int use_vendor )
 NALU_HYPRE_Int
 NALU_HYPRE_SetSpMVUseVendor( NALU_HYPRE_Int use_vendor )
 {
-   return hypre_SetSpMVUseVendor(use_vendor);
+   return nalu_hypre_SetSpMVUseVendor(use_vendor);
 }
 
 /*--------------------------------------------------------------------------
@@ -37,7 +37,7 @@ NALU_HYPRE_SetSpMVUseVendor( NALU_HYPRE_Int use_vendor )
 NALU_HYPRE_Int
 NALU_HYPRE_SetSpGemmUseVendor( NALU_HYPRE_Int use_vendor )
 {
-   return hypre_SetSpGemmUseVendor(use_vendor);
+   return nalu_hypre_SetSpGemmUseVendor(use_vendor);
 }
 
 /*--------------------------------------------------------------------------
@@ -46,6 +46,6 @@ NALU_HYPRE_SetSpGemmUseVendor( NALU_HYPRE_Int use_vendor )
 NALU_HYPRE_Int
 NALU_HYPRE_SetUseGpuRand( NALU_HYPRE_Int use_gpu_rand )
 {
-   return hypre_SetUseGpuRand(use_gpu_rand);
+   return nalu_hypre_SetUseGpuRand(use_gpu_rand);
 }
 

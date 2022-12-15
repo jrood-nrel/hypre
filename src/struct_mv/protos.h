@@ -6,182 +6,182 @@
  ******************************************************************************/
 
 /* assumed_part.c */
-NALU_HYPRE_Int hypre_APSubdivideRegion ( hypre_Box *region, NALU_HYPRE_Int dim, NALU_HYPRE_Int level,
-                                    hypre_BoxArray *box_array, NALU_HYPRE_Int *num_new_boxes );
-NALU_HYPRE_Int hypre_APFindMyBoxesInRegions ( hypre_BoxArray *region_array, hypre_BoxArray *my_box_array,
+NALU_HYPRE_Int nalu_hypre_APSubdivideRegion ( nalu_hypre_Box *region, NALU_HYPRE_Int dim, NALU_HYPRE_Int level,
+                                    nalu_hypre_BoxArray *box_array, NALU_HYPRE_Int *num_new_boxes );
+NALU_HYPRE_Int nalu_hypre_APFindMyBoxesInRegions ( nalu_hypre_BoxArray *region_array, nalu_hypre_BoxArray *my_box_array,
                                          NALU_HYPRE_Int **p_count_array, NALU_HYPRE_Real **p_vol_array );
-NALU_HYPRE_Int hypre_APGetAllBoxesInRegions ( hypre_BoxArray *region_array, hypre_BoxArray *my_box_array,
+NALU_HYPRE_Int nalu_hypre_APGetAllBoxesInRegions ( nalu_hypre_BoxArray *region_array, nalu_hypre_BoxArray *my_box_array,
                                          NALU_HYPRE_Int **p_count_array, NALU_HYPRE_Real **p_vol_array, MPI_Comm comm );
-NALU_HYPRE_Int hypre_APShrinkRegions ( hypre_BoxArray *region_array, hypre_BoxArray *my_box_array,
+NALU_HYPRE_Int nalu_hypre_APShrinkRegions ( nalu_hypre_BoxArray *region_array, nalu_hypre_BoxArray *my_box_array,
                                   MPI_Comm comm );
-NALU_HYPRE_Int hypre_APPruneRegions ( hypre_BoxArray *region_array, NALU_HYPRE_Int **p_count_array,
+NALU_HYPRE_Int nalu_hypre_APPruneRegions ( nalu_hypre_BoxArray *region_array, NALU_HYPRE_Int **p_count_array,
                                  NALU_HYPRE_Real **p_vol_array );
-NALU_HYPRE_Int hypre_APRefineRegionsByVol ( hypre_BoxArray *region_array, NALU_HYPRE_Real *vol_array,
+NALU_HYPRE_Int nalu_hypre_APRefineRegionsByVol ( nalu_hypre_BoxArray *region_array, NALU_HYPRE_Real *vol_array,
                                        NALU_HYPRE_Int max_regions, NALU_HYPRE_Real gamma, NALU_HYPRE_Int dim, NALU_HYPRE_Int *return_code, MPI_Comm comm );
-NALU_HYPRE_Int hypre_StructAssumedPartitionCreate ( NALU_HYPRE_Int dim, hypre_Box *bounding_box,
-                                               NALU_HYPRE_Real global_boxes_size, NALU_HYPRE_Int global_num_boxes, hypre_BoxArray *local_boxes,
+NALU_HYPRE_Int nalu_hypre_StructAssumedPartitionCreate ( NALU_HYPRE_Int dim, nalu_hypre_Box *bounding_box,
+                                               NALU_HYPRE_Real global_boxes_size, NALU_HYPRE_Int global_num_boxes, nalu_hypre_BoxArray *local_boxes,
                                                NALU_HYPRE_Int *local_boxnums, NALU_HYPRE_Int max_regions, NALU_HYPRE_Int max_refinements, NALU_HYPRE_Real gamma,
-                                               MPI_Comm comm, hypre_StructAssumedPart **p_assumed_partition );
-NALU_HYPRE_Int hypre_StructAssumedPartitionDestroy ( hypre_StructAssumedPart *assumed_part );
-NALU_HYPRE_Int hypre_APFillResponseStructAssumedPart ( void *p_recv_contact_buf, NALU_HYPRE_Int contact_size,
+                                               MPI_Comm comm, nalu_hypre_StructAssumedPart **p_assumed_partition );
+NALU_HYPRE_Int nalu_hypre_StructAssumedPartitionDestroy ( nalu_hypre_StructAssumedPart *assumed_part );
+NALU_HYPRE_Int nalu_hypre_APFillResponseStructAssumedPart ( void *p_recv_contact_buf, NALU_HYPRE_Int contact_size,
                                                   NALU_HYPRE_Int contact_proc, void *ro, MPI_Comm comm, void **p_send_response_buf,
                                                   NALU_HYPRE_Int *response_message_size );
-NALU_HYPRE_Int hypre_StructAssumedPartitionGetRegionsFromProc ( hypre_StructAssumedPart *assumed_part,
-                                                           NALU_HYPRE_Int proc_id, hypre_BoxArray *assumed_regions );
-NALU_HYPRE_Int hypre_StructAssumedPartitionGetProcsFromBox ( hypre_StructAssumedPart *assumed_part,
-                                                        hypre_Box *box, NALU_HYPRE_Int *num_proc_array, NALU_HYPRE_Int *size_alloc_proc_array,
+NALU_HYPRE_Int nalu_hypre_StructAssumedPartitionGetRegionsFromProc ( nalu_hypre_StructAssumedPart *assumed_part,
+                                                           NALU_HYPRE_Int proc_id, nalu_hypre_BoxArray *assumed_regions );
+NALU_HYPRE_Int nalu_hypre_StructAssumedPartitionGetProcsFromBox ( nalu_hypre_StructAssumedPart *assumed_part,
+                                                        nalu_hypre_Box *box, NALU_HYPRE_Int *num_proc_array, NALU_HYPRE_Int *size_alloc_proc_array,
                                                         NALU_HYPRE_Int **p_proc_array );
 
 /* box_algebra.c */
-NALU_HYPRE_Int hypre_IntersectBoxes ( hypre_Box *box1, hypre_Box *box2, hypre_Box *ibox );
-NALU_HYPRE_Int hypre_SubtractBoxes ( hypre_Box *box1, hypre_Box *box2, hypre_BoxArray *box_array );
-NALU_HYPRE_Int hypre_SubtractBoxArrays ( hypre_BoxArray *box_array1, hypre_BoxArray *box_array2,
-                                    hypre_BoxArray *tmp_box_array );
-NALU_HYPRE_Int hypre_UnionBoxes ( hypre_BoxArray *boxes );
-NALU_HYPRE_Int hypre_MinUnionBoxes ( hypre_BoxArray *boxes );
+NALU_HYPRE_Int nalu_hypre_IntersectBoxes ( nalu_hypre_Box *box1, nalu_hypre_Box *box2, nalu_hypre_Box *ibox );
+NALU_HYPRE_Int nalu_hypre_SubtractBoxes ( nalu_hypre_Box *box1, nalu_hypre_Box *box2, nalu_hypre_BoxArray *box_array );
+NALU_HYPRE_Int nalu_hypre_SubtractBoxArrays ( nalu_hypre_BoxArray *box_array1, nalu_hypre_BoxArray *box_array2,
+                                    nalu_hypre_BoxArray *tmp_box_array );
+NALU_HYPRE_Int nalu_hypre_UnionBoxes ( nalu_hypre_BoxArray *boxes );
+NALU_HYPRE_Int nalu_hypre_MinUnionBoxes ( nalu_hypre_BoxArray *boxes );
 
 /* box_boundary.c */
-NALU_HYPRE_Int hypre_BoxBoundaryIntersect ( hypre_Box *box, hypre_StructGrid *grid, NALU_HYPRE_Int d,
-                                       NALU_HYPRE_Int dir, hypre_BoxArray *boundary );
-NALU_HYPRE_Int hypre_BoxBoundaryG ( hypre_Box *box, hypre_StructGrid *g, hypre_BoxArray *boundary );
-NALU_HYPRE_Int hypre_BoxBoundaryDG ( hypre_Box *box, hypre_StructGrid *g, hypre_BoxArray *boundarym,
-                                hypre_BoxArray *boundaryp, NALU_HYPRE_Int d );
-NALU_HYPRE_Int hypre_GeneralBoxBoundaryIntersect( hypre_Box *box, hypre_StructGrid *grid,
-                                             hypre_Index stencil_element, hypre_BoxArray *boundary );
+NALU_HYPRE_Int nalu_hypre_BoxBoundaryIntersect ( nalu_hypre_Box *box, nalu_hypre_StructGrid *grid, NALU_HYPRE_Int d,
+                                       NALU_HYPRE_Int dir, nalu_hypre_BoxArray *boundary );
+NALU_HYPRE_Int nalu_hypre_BoxBoundaryG ( nalu_hypre_Box *box, nalu_hypre_StructGrid *g, nalu_hypre_BoxArray *boundary );
+NALU_HYPRE_Int nalu_hypre_BoxBoundaryDG ( nalu_hypre_Box *box, nalu_hypre_StructGrid *g, nalu_hypre_BoxArray *boundarym,
+                                nalu_hypre_BoxArray *boundaryp, NALU_HYPRE_Int d );
+NALU_HYPRE_Int nalu_hypre_GeneralBoxBoundaryIntersect( nalu_hypre_Box *box, nalu_hypre_StructGrid *grid,
+                                             nalu_hypre_Index stencil_element, nalu_hypre_BoxArray *boundary );
 
 /* box.c */
-NALU_HYPRE_Int hypre_SetIndex ( hypre_Index index, NALU_HYPRE_Int val );
-NALU_HYPRE_Int hypre_CopyIndex( hypre_Index in_index, hypre_Index out_index );
-NALU_HYPRE_Int hypre_CopyToCleanIndex( hypre_Index in_index, NALU_HYPRE_Int ndim, hypre_Index out_index );
-NALU_HYPRE_Int hypre_IndexEqual ( hypre_Index index, NALU_HYPRE_Int val, NALU_HYPRE_Int ndim );
-NALU_HYPRE_Int hypre_IndexMin( hypre_Index index, NALU_HYPRE_Int ndim );
-NALU_HYPRE_Int hypre_IndexMax( hypre_Index index, NALU_HYPRE_Int ndim );
-NALU_HYPRE_Int hypre_AddIndexes ( hypre_Index index1, hypre_Index index2, NALU_HYPRE_Int ndim,
-                             hypre_Index result );
-NALU_HYPRE_Int hypre_SubtractIndexes ( hypre_Index index1, hypre_Index index2, NALU_HYPRE_Int ndim,
-                                  hypre_Index result );
-NALU_HYPRE_Int hypre_IndexesEqual ( hypre_Index index1, hypre_Index index2, NALU_HYPRE_Int ndim );
-NALU_HYPRE_Int hypre_IndexPrint ( FILE *file, NALU_HYPRE_Int ndim, hypre_Index index );
-NALU_HYPRE_Int hypre_IndexRead ( FILE *file, NALU_HYPRE_Int ndim, hypre_Index index );
-hypre_Box *hypre_BoxCreate ( NALU_HYPRE_Int ndim );
-NALU_HYPRE_Int hypre_BoxDestroy ( hypre_Box *box );
-NALU_HYPRE_Int hypre_BoxInit( hypre_Box *box, NALU_HYPRE_Int  ndim );
-NALU_HYPRE_Int hypre_BoxSetExtents ( hypre_Box *box, hypre_Index imin, hypre_Index imax );
-NALU_HYPRE_Int hypre_CopyBox( hypre_Box *box1, hypre_Box *box2 );
-hypre_Box *hypre_BoxDuplicate ( hypre_Box *box );
-NALU_HYPRE_Int hypre_BoxVolume( hypre_Box *box );
-NALU_HYPRE_Real hypre_doubleBoxVolume( hypre_Box *box );
-NALU_HYPRE_Int hypre_IndexInBox ( hypre_Index index, hypre_Box *box );
-NALU_HYPRE_Int hypre_BoxGetSize ( hypre_Box *box, hypre_Index size );
-NALU_HYPRE_Int hypre_BoxGetStrideSize ( hypre_Box *box, hypre_Index stride, hypre_Index size );
-NALU_HYPRE_Int hypre_BoxGetStrideVolume ( hypre_Box *box, hypre_Index stride, NALU_HYPRE_Int *volume_ptr );
-NALU_HYPRE_Int hypre_BoxIndexRank( hypre_Box *box, hypre_Index index );
-NALU_HYPRE_Int hypre_BoxRankIndex( hypre_Box *box, NALU_HYPRE_Int rank, hypre_Index index );
-NALU_HYPRE_Int hypre_BoxOffsetDistance( hypre_Box *box, hypre_Index index );
-NALU_HYPRE_Int hypre_BoxShiftPos( hypre_Box *box, hypre_Index shift );
-NALU_HYPRE_Int hypre_BoxShiftNeg( hypre_Box *box, hypre_Index shift );
-NALU_HYPRE_Int hypre_BoxGrowByIndex( hypre_Box *box, hypre_Index  index );
-NALU_HYPRE_Int hypre_BoxGrowByValue( hypre_Box *box, NALU_HYPRE_Int val );
-NALU_HYPRE_Int hypre_BoxGrowByArray ( hypre_Box *box, NALU_HYPRE_Int *array );
-NALU_HYPRE_Int hypre_BoxPrint ( FILE *file, hypre_Box *box );
-NALU_HYPRE_Int hypre_BoxRead ( FILE *file, NALU_HYPRE_Int ndim, hypre_Box **box_ptr );
-hypre_BoxArray *hypre_BoxArrayCreate ( NALU_HYPRE_Int size, NALU_HYPRE_Int ndim );
-NALU_HYPRE_Int hypre_BoxArrayDestroy ( hypre_BoxArray *box_array );
-NALU_HYPRE_Int hypre_BoxArraySetSize ( hypre_BoxArray *box_array, NALU_HYPRE_Int size );
-hypre_BoxArray *hypre_BoxArrayDuplicate ( hypre_BoxArray *box_array );
-NALU_HYPRE_Int hypre_AppendBox ( hypre_Box *box, hypre_BoxArray *box_array );
-NALU_HYPRE_Int hypre_DeleteBox ( hypre_BoxArray *box_array, NALU_HYPRE_Int index );
-NALU_HYPRE_Int hypre_DeleteMultipleBoxes ( hypre_BoxArray *box_array, NALU_HYPRE_Int *indices,
+NALU_HYPRE_Int nalu_hypre_SetIndex ( nalu_hypre_Index index, NALU_HYPRE_Int val );
+NALU_HYPRE_Int nalu_hypre_CopyIndex( nalu_hypre_Index in_index, nalu_hypre_Index out_index );
+NALU_HYPRE_Int nalu_hypre_CopyToCleanIndex( nalu_hypre_Index in_index, NALU_HYPRE_Int ndim, nalu_hypre_Index out_index );
+NALU_HYPRE_Int nalu_hypre_IndexEqual ( nalu_hypre_Index index, NALU_HYPRE_Int val, NALU_HYPRE_Int ndim );
+NALU_HYPRE_Int nalu_hypre_IndexMin( nalu_hypre_Index index, NALU_HYPRE_Int ndim );
+NALU_HYPRE_Int nalu_hypre_IndexMax( nalu_hypre_Index index, NALU_HYPRE_Int ndim );
+NALU_HYPRE_Int nalu_hypre_AddIndexes ( nalu_hypre_Index index1, nalu_hypre_Index index2, NALU_HYPRE_Int ndim,
+                             nalu_hypre_Index result );
+NALU_HYPRE_Int nalu_hypre_SubtractIndexes ( nalu_hypre_Index index1, nalu_hypre_Index index2, NALU_HYPRE_Int ndim,
+                                  nalu_hypre_Index result );
+NALU_HYPRE_Int nalu_hypre_IndexesEqual ( nalu_hypre_Index index1, nalu_hypre_Index index2, NALU_HYPRE_Int ndim );
+NALU_HYPRE_Int nalu_hypre_IndexPrint ( FILE *file, NALU_HYPRE_Int ndim, nalu_hypre_Index index );
+NALU_HYPRE_Int nalu_hypre_IndexRead ( FILE *file, NALU_HYPRE_Int ndim, nalu_hypre_Index index );
+nalu_hypre_Box *nalu_hypre_BoxCreate ( NALU_HYPRE_Int ndim );
+NALU_HYPRE_Int nalu_hypre_BoxDestroy ( nalu_hypre_Box *box );
+NALU_HYPRE_Int nalu_hypre_BoxInit( nalu_hypre_Box *box, NALU_HYPRE_Int  ndim );
+NALU_HYPRE_Int nalu_hypre_BoxSetExtents ( nalu_hypre_Box *box, nalu_hypre_Index imin, nalu_hypre_Index imax );
+NALU_HYPRE_Int nalu_hypre_CopyBox( nalu_hypre_Box *box1, nalu_hypre_Box *box2 );
+nalu_hypre_Box *nalu_hypre_BoxDuplicate ( nalu_hypre_Box *box );
+NALU_HYPRE_Int nalu_hypre_BoxVolume( nalu_hypre_Box *box );
+NALU_HYPRE_Real nalu_hypre_doubleBoxVolume( nalu_hypre_Box *box );
+NALU_HYPRE_Int nalu_hypre_IndexInBox ( nalu_hypre_Index index, nalu_hypre_Box *box );
+NALU_HYPRE_Int nalu_hypre_BoxGetSize ( nalu_hypre_Box *box, nalu_hypre_Index size );
+NALU_HYPRE_Int nalu_hypre_BoxGetStrideSize ( nalu_hypre_Box *box, nalu_hypre_Index stride, nalu_hypre_Index size );
+NALU_HYPRE_Int nalu_hypre_BoxGetStrideVolume ( nalu_hypre_Box *box, nalu_hypre_Index stride, NALU_HYPRE_Int *volume_ptr );
+NALU_HYPRE_Int nalu_hypre_BoxIndexRank( nalu_hypre_Box *box, nalu_hypre_Index index );
+NALU_HYPRE_Int nalu_hypre_BoxRankIndex( nalu_hypre_Box *box, NALU_HYPRE_Int rank, nalu_hypre_Index index );
+NALU_HYPRE_Int nalu_hypre_BoxOffsetDistance( nalu_hypre_Box *box, nalu_hypre_Index index );
+NALU_HYPRE_Int nalu_hypre_BoxShiftPos( nalu_hypre_Box *box, nalu_hypre_Index shift );
+NALU_HYPRE_Int nalu_hypre_BoxShiftNeg( nalu_hypre_Box *box, nalu_hypre_Index shift );
+NALU_HYPRE_Int nalu_hypre_BoxGrowByIndex( nalu_hypre_Box *box, nalu_hypre_Index  index );
+NALU_HYPRE_Int nalu_hypre_BoxGrowByValue( nalu_hypre_Box *box, NALU_HYPRE_Int val );
+NALU_HYPRE_Int nalu_hypre_BoxGrowByArray ( nalu_hypre_Box *box, NALU_HYPRE_Int *array );
+NALU_HYPRE_Int nalu_hypre_BoxPrint ( FILE *file, nalu_hypre_Box *box );
+NALU_HYPRE_Int nalu_hypre_BoxRead ( FILE *file, NALU_HYPRE_Int ndim, nalu_hypre_Box **box_ptr );
+nalu_hypre_BoxArray *nalu_hypre_BoxArrayCreate ( NALU_HYPRE_Int size, NALU_HYPRE_Int ndim );
+NALU_HYPRE_Int nalu_hypre_BoxArrayDestroy ( nalu_hypre_BoxArray *box_array );
+NALU_HYPRE_Int nalu_hypre_BoxArraySetSize ( nalu_hypre_BoxArray *box_array, NALU_HYPRE_Int size );
+nalu_hypre_BoxArray *nalu_hypre_BoxArrayDuplicate ( nalu_hypre_BoxArray *box_array );
+NALU_HYPRE_Int nalu_hypre_AppendBox ( nalu_hypre_Box *box, nalu_hypre_BoxArray *box_array );
+NALU_HYPRE_Int nalu_hypre_DeleteBox ( nalu_hypre_BoxArray *box_array, NALU_HYPRE_Int index );
+NALU_HYPRE_Int nalu_hypre_DeleteMultipleBoxes ( nalu_hypre_BoxArray *box_array, NALU_HYPRE_Int *indices,
                                       NALU_HYPRE_Int num );
-NALU_HYPRE_Int hypre_AppendBoxArray ( hypre_BoxArray *box_array_0, hypre_BoxArray *box_array_1 );
-hypre_BoxArrayArray *hypre_BoxArrayArrayCreate ( NALU_HYPRE_Int size, NALU_HYPRE_Int ndim );
-NALU_HYPRE_Int hypre_BoxArrayArrayDestroy ( hypre_BoxArrayArray *box_array_array );
-hypre_BoxArrayArray *hypre_BoxArrayArrayDuplicate ( hypre_BoxArrayArray *box_array_array );
+NALU_HYPRE_Int nalu_hypre_AppendBoxArray ( nalu_hypre_BoxArray *box_array_0, nalu_hypre_BoxArray *box_array_1 );
+nalu_hypre_BoxArrayArray *nalu_hypre_BoxArrayArrayCreate ( NALU_HYPRE_Int size, NALU_HYPRE_Int ndim );
+NALU_HYPRE_Int nalu_hypre_BoxArrayArrayDestroy ( nalu_hypre_BoxArrayArray *box_array_array );
+nalu_hypre_BoxArrayArray *nalu_hypre_BoxArrayArrayDuplicate ( nalu_hypre_BoxArrayArray *box_array_array );
 
 /* box_manager.c */
-NALU_HYPRE_Int hypre_BoxManEntryGetInfo ( hypre_BoxManEntry *entry, void **info_ptr );
-NALU_HYPRE_Int hypre_BoxManEntryGetExtents ( hypre_BoxManEntry *entry, hypre_Index imin,
-                                        hypre_Index imax );
-NALU_HYPRE_Int hypre_BoxManEntryCopy ( hypre_BoxManEntry *fromentry, hypre_BoxManEntry *toentry );
-NALU_HYPRE_Int hypre_BoxManSetAllGlobalKnown ( hypre_BoxManager *manager, NALU_HYPRE_Int known );
-NALU_HYPRE_Int hypre_BoxManGetAllGlobalKnown ( hypre_BoxManager *manager, NALU_HYPRE_Int *known );
-NALU_HYPRE_Int hypre_BoxManSetIsEntriesSort ( hypre_BoxManager *manager, NALU_HYPRE_Int is_sort );
-NALU_HYPRE_Int hypre_BoxManGetIsEntriesSort ( hypre_BoxManager *manager, NALU_HYPRE_Int *is_sort );
-NALU_HYPRE_Int hypre_BoxManGetGlobalIsGatherCalled ( hypre_BoxManager *manager, MPI_Comm comm,
+NALU_HYPRE_Int nalu_hypre_BoxManEntryGetInfo ( nalu_hypre_BoxManEntry *entry, void **info_ptr );
+NALU_HYPRE_Int nalu_hypre_BoxManEntryGetExtents ( nalu_hypre_BoxManEntry *entry, nalu_hypre_Index imin,
+                                        nalu_hypre_Index imax );
+NALU_HYPRE_Int nalu_hypre_BoxManEntryCopy ( nalu_hypre_BoxManEntry *fromentry, nalu_hypre_BoxManEntry *toentry );
+NALU_HYPRE_Int nalu_hypre_BoxManSetAllGlobalKnown ( nalu_hypre_BoxManager *manager, NALU_HYPRE_Int known );
+NALU_HYPRE_Int nalu_hypre_BoxManGetAllGlobalKnown ( nalu_hypre_BoxManager *manager, NALU_HYPRE_Int *known );
+NALU_HYPRE_Int nalu_hypre_BoxManSetIsEntriesSort ( nalu_hypre_BoxManager *manager, NALU_HYPRE_Int is_sort );
+NALU_HYPRE_Int nalu_hypre_BoxManGetIsEntriesSort ( nalu_hypre_BoxManager *manager, NALU_HYPRE_Int *is_sort );
+NALU_HYPRE_Int nalu_hypre_BoxManGetGlobalIsGatherCalled ( nalu_hypre_BoxManager *manager, MPI_Comm comm,
                                                 NALU_HYPRE_Int *is_gather );
-NALU_HYPRE_Int hypre_BoxManGetAssumedPartition ( hypre_BoxManager *manager,
-                                            hypre_StructAssumedPart **assumed_partition );
-NALU_HYPRE_Int hypre_BoxManSetAssumedPartition ( hypre_BoxManager *manager,
-                                            hypre_StructAssumedPart *assumed_partition );
-NALU_HYPRE_Int hypre_BoxManSetBoundingBox ( hypre_BoxManager *manager, hypre_Box *bounding_box );
-NALU_HYPRE_Int hypre_BoxManSetNumGhost ( hypre_BoxManager *manager, NALU_HYPRE_Int *num_ghost );
-NALU_HYPRE_Int hypre_BoxManDeleteMultipleEntriesAndInfo ( hypre_BoxManager *manager, NALU_HYPRE_Int *indices,
+NALU_HYPRE_Int nalu_hypre_BoxManGetAssumedPartition ( nalu_hypre_BoxManager *manager,
+                                            nalu_hypre_StructAssumedPart **assumed_partition );
+NALU_HYPRE_Int nalu_hypre_BoxManSetAssumedPartition ( nalu_hypre_BoxManager *manager,
+                                            nalu_hypre_StructAssumedPart *assumed_partition );
+NALU_HYPRE_Int nalu_hypre_BoxManSetBoundingBox ( nalu_hypre_BoxManager *manager, nalu_hypre_Box *bounding_box );
+NALU_HYPRE_Int nalu_hypre_BoxManSetNumGhost ( nalu_hypre_BoxManager *manager, NALU_HYPRE_Int *num_ghost );
+NALU_HYPRE_Int nalu_hypre_BoxManDeleteMultipleEntriesAndInfo ( nalu_hypre_BoxManager *manager, NALU_HYPRE_Int *indices,
                                                      NALU_HYPRE_Int num );
-NALU_HYPRE_Int hypre_BoxManCreate ( NALU_HYPRE_Int max_nentries, NALU_HYPRE_Int info_size, NALU_HYPRE_Int dim,
-                               hypre_Box *bounding_box, MPI_Comm comm, hypre_BoxManager **manager_ptr );
-NALU_HYPRE_Int hypre_BoxManIncSize ( hypre_BoxManager *manager, NALU_HYPRE_Int inc_size );
-NALU_HYPRE_Int hypre_BoxManDestroy ( hypre_BoxManager *manager );
-NALU_HYPRE_Int hypre_BoxManAddEntry ( hypre_BoxManager *manager, hypre_Index imin, hypre_Index imax,
+NALU_HYPRE_Int nalu_hypre_BoxManCreate ( NALU_HYPRE_Int max_nentries, NALU_HYPRE_Int info_size, NALU_HYPRE_Int dim,
+                               nalu_hypre_Box *bounding_box, MPI_Comm comm, nalu_hypre_BoxManager **manager_ptr );
+NALU_HYPRE_Int nalu_hypre_BoxManIncSize ( nalu_hypre_BoxManager *manager, NALU_HYPRE_Int inc_size );
+NALU_HYPRE_Int nalu_hypre_BoxManDestroy ( nalu_hypre_BoxManager *manager );
+NALU_HYPRE_Int nalu_hypre_BoxManAddEntry ( nalu_hypre_BoxManager *manager, nalu_hypre_Index imin, nalu_hypre_Index imax,
                                  NALU_HYPRE_Int proc_id, NALU_HYPRE_Int box_id, void *info );
-NALU_HYPRE_Int hypre_BoxManGetEntry ( hypre_BoxManager *manager, NALU_HYPRE_Int proc, NALU_HYPRE_Int id,
-                                 hypre_BoxManEntry **entry_ptr );
-NALU_HYPRE_Int hypre_BoxManGetAllEntries ( hypre_BoxManager *manager, NALU_HYPRE_Int *num_entries,
-                                      hypre_BoxManEntry **entries );
-NALU_HYPRE_Int hypre_BoxManGetAllEntriesBoxes ( hypre_BoxManager *manager, hypre_BoxArray *boxes );
-NALU_HYPRE_Int hypre_BoxManGetLocalEntriesBoxes ( hypre_BoxManager *manager, hypre_BoxArray *boxes );
-NALU_HYPRE_Int hypre_BoxManGetAllEntriesBoxesProc ( hypre_BoxManager *manager, hypre_BoxArray *boxes,
+NALU_HYPRE_Int nalu_hypre_BoxManGetEntry ( nalu_hypre_BoxManager *manager, NALU_HYPRE_Int proc, NALU_HYPRE_Int id,
+                                 nalu_hypre_BoxManEntry **entry_ptr );
+NALU_HYPRE_Int nalu_hypre_BoxManGetAllEntries ( nalu_hypre_BoxManager *manager, NALU_HYPRE_Int *num_entries,
+                                      nalu_hypre_BoxManEntry **entries );
+NALU_HYPRE_Int nalu_hypre_BoxManGetAllEntriesBoxes ( nalu_hypre_BoxManager *manager, nalu_hypre_BoxArray *boxes );
+NALU_HYPRE_Int nalu_hypre_BoxManGetLocalEntriesBoxes ( nalu_hypre_BoxManager *manager, nalu_hypre_BoxArray *boxes );
+NALU_HYPRE_Int nalu_hypre_BoxManGetAllEntriesBoxesProc ( nalu_hypre_BoxManager *manager, nalu_hypre_BoxArray *boxes,
                                                NALU_HYPRE_Int **procs_ptr );
-NALU_HYPRE_Int hypre_BoxManGatherEntries ( hypre_BoxManager *manager, hypre_Index imin,
-                                      hypre_Index imax );
-NALU_HYPRE_Int hypre_BoxManAssemble ( hypre_BoxManager *manager );
-NALU_HYPRE_Int hypre_BoxManIntersect ( hypre_BoxManager *manager, hypre_Index ilower, hypre_Index iupper,
-                                  hypre_BoxManEntry ***entries_ptr, NALU_HYPRE_Int *nentries_ptr );
-NALU_HYPRE_Int hypre_FillResponseBoxManAssemble1 ( void *p_recv_contact_buf, NALU_HYPRE_Int contact_size,
+NALU_HYPRE_Int nalu_hypre_BoxManGatherEntries ( nalu_hypre_BoxManager *manager, nalu_hypre_Index imin,
+                                      nalu_hypre_Index imax );
+NALU_HYPRE_Int nalu_hypre_BoxManAssemble ( nalu_hypre_BoxManager *manager );
+NALU_HYPRE_Int nalu_hypre_BoxManIntersect ( nalu_hypre_BoxManager *manager, nalu_hypre_Index ilower, nalu_hypre_Index iupper,
+                                  nalu_hypre_BoxManEntry ***entries_ptr, NALU_HYPRE_Int *nentries_ptr );
+NALU_HYPRE_Int nalu_hypre_FillResponseBoxManAssemble1 ( void *p_recv_contact_buf, NALU_HYPRE_Int contact_size,
                                               NALU_HYPRE_Int contact_proc, void *ro, MPI_Comm comm, void **p_send_response_buf,
                                               NALU_HYPRE_Int *response_message_size );
-NALU_HYPRE_Int hypre_FillResponseBoxManAssemble2 ( void *p_recv_contact_buf, NALU_HYPRE_Int contact_size,
+NALU_HYPRE_Int nalu_hypre_FillResponseBoxManAssemble2 ( void *p_recv_contact_buf, NALU_HYPRE_Int contact_size,
                                               NALU_HYPRE_Int contact_proc, void *ro, MPI_Comm comm, void **p_send_response_buf,
                                               NALU_HYPRE_Int *response_message_size );
 
 /* communication_info.c */
-NALU_HYPRE_Int hypre_CommInfoCreate ( hypre_BoxArrayArray *send_boxes, hypre_BoxArrayArray *recv_boxes,
+NALU_HYPRE_Int nalu_hypre_CommInfoCreate ( nalu_hypre_BoxArrayArray *send_boxes, nalu_hypre_BoxArrayArray *recv_boxes,
                                  NALU_HYPRE_Int **send_procs, NALU_HYPRE_Int **recv_procs, NALU_HYPRE_Int **send_rboxnums,
-                                 NALU_HYPRE_Int **recv_rboxnums, hypre_BoxArrayArray *send_rboxes, hypre_BoxArrayArray *recv_rboxes,
-                                 NALU_HYPRE_Int boxes_match, hypre_CommInfo **comm_info_ptr );
-NALU_HYPRE_Int hypre_CommInfoSetTransforms ( hypre_CommInfo *comm_info, NALU_HYPRE_Int num_transforms,
-                                        hypre_Index *coords, hypre_Index *dirs, NALU_HYPRE_Int **send_transforms, NALU_HYPRE_Int **recv_transforms );
-NALU_HYPRE_Int hypre_CommInfoGetTransforms ( hypre_CommInfo *comm_info, NALU_HYPRE_Int *num_transforms,
-                                        hypre_Index **coords, hypre_Index **dirs );
-NALU_HYPRE_Int hypre_CommInfoProjectSend ( hypre_CommInfo *comm_info, hypre_Index index,
-                                      hypre_Index stride );
-NALU_HYPRE_Int hypre_CommInfoProjectRecv ( hypre_CommInfo *comm_info, hypre_Index index,
-                                      hypre_Index stride );
-NALU_HYPRE_Int hypre_CommInfoDestroy ( hypre_CommInfo *comm_info );
-NALU_HYPRE_Int hypre_CreateCommInfoFromStencil ( hypre_StructGrid *grid, hypre_StructStencil *stencil,
-                                            hypre_CommInfo **comm_info_ptr );
-NALU_HYPRE_Int hypre_CreateCommInfoFromNumGhost ( hypre_StructGrid *grid, NALU_HYPRE_Int *num_ghost,
-                                             hypre_CommInfo **comm_info_ptr );
-NALU_HYPRE_Int hypre_CreateCommInfoFromGrids ( hypre_StructGrid *from_grid, hypre_StructGrid *to_grid,
-                                          hypre_CommInfo **comm_info_ptr );
+                                 NALU_HYPRE_Int **recv_rboxnums, nalu_hypre_BoxArrayArray *send_rboxes, nalu_hypre_BoxArrayArray *recv_rboxes,
+                                 NALU_HYPRE_Int boxes_match, nalu_hypre_CommInfo **comm_info_ptr );
+NALU_HYPRE_Int nalu_hypre_CommInfoSetTransforms ( nalu_hypre_CommInfo *comm_info, NALU_HYPRE_Int num_transforms,
+                                        nalu_hypre_Index *coords, nalu_hypre_Index *dirs, NALU_HYPRE_Int **send_transforms, NALU_HYPRE_Int **recv_transforms );
+NALU_HYPRE_Int nalu_hypre_CommInfoGetTransforms ( nalu_hypre_CommInfo *comm_info, NALU_HYPRE_Int *num_transforms,
+                                        nalu_hypre_Index **coords, nalu_hypre_Index **dirs );
+NALU_HYPRE_Int nalu_hypre_CommInfoProjectSend ( nalu_hypre_CommInfo *comm_info, nalu_hypre_Index index,
+                                      nalu_hypre_Index stride );
+NALU_HYPRE_Int nalu_hypre_CommInfoProjectRecv ( nalu_hypre_CommInfo *comm_info, nalu_hypre_Index index,
+                                      nalu_hypre_Index stride );
+NALU_HYPRE_Int nalu_hypre_CommInfoDestroy ( nalu_hypre_CommInfo *comm_info );
+NALU_HYPRE_Int nalu_hypre_CreateCommInfoFromStencil ( nalu_hypre_StructGrid *grid, nalu_hypre_StructStencil *stencil,
+                                            nalu_hypre_CommInfo **comm_info_ptr );
+NALU_HYPRE_Int nalu_hypre_CreateCommInfoFromNumGhost ( nalu_hypre_StructGrid *grid, NALU_HYPRE_Int *num_ghost,
+                                             nalu_hypre_CommInfo **comm_info_ptr );
+NALU_HYPRE_Int nalu_hypre_CreateCommInfoFromGrids ( nalu_hypre_StructGrid *from_grid, nalu_hypre_StructGrid *to_grid,
+                                          nalu_hypre_CommInfo **comm_info_ptr );
 
 /* computation.c */
-NALU_HYPRE_Int hypre_ComputeInfoCreate ( hypre_CommInfo *comm_info, hypre_BoxArrayArray *indt_boxes,
-                                    hypre_BoxArrayArray *dept_boxes, hypre_ComputeInfo **compute_info_ptr );
-NALU_HYPRE_Int hypre_ComputeInfoProjectSend ( hypre_ComputeInfo *compute_info, hypre_Index index,
-                                         hypre_Index stride );
-NALU_HYPRE_Int hypre_ComputeInfoProjectRecv ( hypre_ComputeInfo *compute_info, hypre_Index index,
-                                         hypre_Index stride );
-NALU_HYPRE_Int hypre_ComputeInfoProjectComp ( hypre_ComputeInfo *compute_info, hypre_Index index,
-                                         hypre_Index stride );
-NALU_HYPRE_Int hypre_ComputeInfoDestroy ( hypre_ComputeInfo *compute_info );
-NALU_HYPRE_Int hypre_CreateComputeInfo ( hypre_StructGrid *grid, hypre_StructStencil *stencil,
-                                    hypre_ComputeInfo **compute_info_ptr );
-NALU_HYPRE_Int hypre_ComputePkgCreate ( hypre_ComputeInfo *compute_info, hypre_BoxArray *data_space,
-                                   NALU_HYPRE_Int num_values, hypre_StructGrid *grid, hypre_ComputePkg **compute_pkg_ptr );
-NALU_HYPRE_Int hypre_ComputePkgDestroy ( hypre_ComputePkg *compute_pkg );
-NALU_HYPRE_Int hypre_InitializeIndtComputations ( hypre_ComputePkg *compute_pkg, NALU_HYPRE_Complex *data,
-                                             hypre_CommHandle **comm_handle_ptr );
-NALU_HYPRE_Int hypre_FinalizeIndtComputations ( hypre_CommHandle *comm_handle );
+NALU_HYPRE_Int nalu_hypre_ComputeInfoCreate ( nalu_hypre_CommInfo *comm_info, nalu_hypre_BoxArrayArray *indt_boxes,
+                                    nalu_hypre_BoxArrayArray *dept_boxes, nalu_hypre_ComputeInfo **compute_info_ptr );
+NALU_HYPRE_Int nalu_hypre_ComputeInfoProjectSend ( nalu_hypre_ComputeInfo *compute_info, nalu_hypre_Index index,
+                                         nalu_hypre_Index stride );
+NALU_HYPRE_Int nalu_hypre_ComputeInfoProjectRecv ( nalu_hypre_ComputeInfo *compute_info, nalu_hypre_Index index,
+                                         nalu_hypre_Index stride );
+NALU_HYPRE_Int nalu_hypre_ComputeInfoProjectComp ( nalu_hypre_ComputeInfo *compute_info, nalu_hypre_Index index,
+                                         nalu_hypre_Index stride );
+NALU_HYPRE_Int nalu_hypre_ComputeInfoDestroy ( nalu_hypre_ComputeInfo *compute_info );
+NALU_HYPRE_Int nalu_hypre_CreateComputeInfo ( nalu_hypre_StructGrid *grid, nalu_hypre_StructStencil *stencil,
+                                    nalu_hypre_ComputeInfo **compute_info_ptr );
+NALU_HYPRE_Int nalu_hypre_ComputePkgCreate ( nalu_hypre_ComputeInfo *compute_info, nalu_hypre_BoxArray *data_space,
+                                   NALU_HYPRE_Int num_values, nalu_hypre_StructGrid *grid, nalu_hypre_ComputePkg **compute_pkg_ptr );
+NALU_HYPRE_Int nalu_hypre_ComputePkgDestroy ( nalu_hypre_ComputePkg *compute_pkg );
+NALU_HYPRE_Int nalu_hypre_InitializeIndtComputations ( nalu_hypre_ComputePkg *compute_pkg, NALU_HYPRE_Complex *data,
+                                             nalu_hypre_CommHandle **comm_handle_ptr );
+NALU_HYPRE_Int nalu_hypre_FinalizeIndtComputations ( nalu_hypre_CommHandle *comm_handle );
 
 /* NALU_HYPRE_struct_grid.c */
 NALU_HYPRE_Int NALU_HYPRE_StructGridCreate ( MPI_Comm comm, NALU_HYPRE_Int dim, NALU_HYPRE_StructGrid *grid );
@@ -253,8 +253,8 @@ NALU_HYPRE_Int NALU_HYPRE_StructVectorGetValues ( NALU_HYPRE_StructVector vector
 NALU_HYPRE_Int NALU_HYPRE_StructVectorGetBoxValues ( NALU_HYPRE_StructVector vector, NALU_HYPRE_Int *ilower,
                                            NALU_HYPRE_Int *iupper, NALU_HYPRE_Complex *values );
 NALU_HYPRE_Int NALU_HYPRE_StructVectorAssemble ( NALU_HYPRE_StructVector vector );
-NALU_HYPRE_Int hypre_StructVectorPrintData ( FILE *file, hypre_StructVector *vector, NALU_HYPRE_Int all );
-NALU_HYPRE_Int hypre_StructVectorReadData ( FILE *file, hypre_StructVector *vector );
+NALU_HYPRE_Int nalu_hypre_StructVectorPrintData ( FILE *file, nalu_hypre_StructVector *vector, NALU_HYPRE_Int all );
+NALU_HYPRE_Int nalu_hypre_StructVectorReadData ( FILE *file, nalu_hypre_StructVector *vector );
 NALU_HYPRE_Int NALU_HYPRE_StructVectorPrint ( const char *filename, NALU_HYPRE_StructVector vector,
                                     NALU_HYPRE_Int all );
 NALU_HYPRE_Int NALU_HYPRE_StructVectorRead ( MPI_Comm comm, const char *filename,
@@ -269,186 +269,186 @@ NALU_HYPRE_Int NALU_HYPRE_StructVectorMigrate ( NALU_HYPRE_CommPkg comm_pkg, NAL
 NALU_HYPRE_Int NALU_HYPRE_CommPkgDestroy ( NALU_HYPRE_CommPkg comm_pkg );
 
 /* project.c */
-NALU_HYPRE_Int hypre_ProjectBox ( hypre_Box *box, hypre_Index index, hypre_Index stride );
-NALU_HYPRE_Int hypre_ProjectBoxArray ( hypre_BoxArray *box_array, hypre_Index index,
-                                  hypre_Index stride );
-NALU_HYPRE_Int hypre_ProjectBoxArrayArray ( hypre_BoxArrayArray *box_array_array, hypre_Index index,
-                                       hypre_Index stride );
+NALU_HYPRE_Int nalu_hypre_ProjectBox ( nalu_hypre_Box *box, nalu_hypre_Index index, nalu_hypre_Index stride );
+NALU_HYPRE_Int nalu_hypre_ProjectBoxArray ( nalu_hypre_BoxArray *box_array, nalu_hypre_Index index,
+                                  nalu_hypre_Index stride );
+NALU_HYPRE_Int nalu_hypre_ProjectBoxArrayArray ( nalu_hypre_BoxArrayArray *box_array_array, nalu_hypre_Index index,
+                                       nalu_hypre_Index stride );
 
 /* struct_axpy.c */
-NALU_HYPRE_Int hypre_StructAxpy ( NALU_HYPRE_Complex alpha, hypre_StructVector *x, hypre_StructVector *y );
+NALU_HYPRE_Int nalu_hypre_StructAxpy ( NALU_HYPRE_Complex alpha, nalu_hypre_StructVector *x, nalu_hypre_StructVector *y );
 
 /* struct_communication.c */
-NALU_HYPRE_Int hypre_CommPkgCreate ( hypre_CommInfo *comm_info, hypre_BoxArray *send_data_space,
-                                hypre_BoxArray *recv_data_space, NALU_HYPRE_Int num_values, NALU_HYPRE_Int **orders, NALU_HYPRE_Int reverse,
-                                MPI_Comm comm, hypre_CommPkg **comm_pkg_ptr );
-NALU_HYPRE_Int hypre_CommTypeSetEntries ( hypre_CommType *comm_type, NALU_HYPRE_Int *boxnums,
-                                     hypre_Box *boxes, hypre_Index stride, hypre_Index coord, hypre_Index dir, NALU_HYPRE_Int *order,
-                                     hypre_BoxArray *data_space, NALU_HYPRE_Int *data_offsets );
-NALU_HYPRE_Int hypre_CommTypeSetEntry ( hypre_Box *box, hypre_Index stride, hypre_Index coord,
-                                   hypre_Index dir, NALU_HYPRE_Int *order, hypre_Box *data_box, NALU_HYPRE_Int data_box_offset,
-                                   hypre_CommEntryType *comm_entry );
-NALU_HYPRE_Int hypre_InitializeCommunication ( hypre_CommPkg *comm_pkg, NALU_HYPRE_Complex *send_data,
-                                          NALU_HYPRE_Complex *recv_data, NALU_HYPRE_Int action, NALU_HYPRE_Int tag, hypre_CommHandle **comm_handle_ptr );
-NALU_HYPRE_Int hypre_FinalizeCommunication ( hypre_CommHandle *comm_handle );
-NALU_HYPRE_Int hypre_ExchangeLocalData ( hypre_CommPkg *comm_pkg, NALU_HYPRE_Complex *send_data,
+NALU_HYPRE_Int nalu_hypre_CommPkgCreate ( nalu_hypre_CommInfo *comm_info, nalu_hypre_BoxArray *send_data_space,
+                                nalu_hypre_BoxArray *recv_data_space, NALU_HYPRE_Int num_values, NALU_HYPRE_Int **orders, NALU_HYPRE_Int reverse,
+                                MPI_Comm comm, nalu_hypre_CommPkg **comm_pkg_ptr );
+NALU_HYPRE_Int nalu_hypre_CommTypeSetEntries ( nalu_hypre_CommType *comm_type, NALU_HYPRE_Int *boxnums,
+                                     nalu_hypre_Box *boxes, nalu_hypre_Index stride, nalu_hypre_Index coord, nalu_hypre_Index dir, NALU_HYPRE_Int *order,
+                                     nalu_hypre_BoxArray *data_space, NALU_HYPRE_Int *data_offsets );
+NALU_HYPRE_Int nalu_hypre_CommTypeSetEntry ( nalu_hypre_Box *box, nalu_hypre_Index stride, nalu_hypre_Index coord,
+                                   nalu_hypre_Index dir, NALU_HYPRE_Int *order, nalu_hypre_Box *data_box, NALU_HYPRE_Int data_box_offset,
+                                   nalu_hypre_CommEntryType *comm_entry );
+NALU_HYPRE_Int nalu_hypre_InitializeCommunication ( nalu_hypre_CommPkg *comm_pkg, NALU_HYPRE_Complex *send_data,
+                                          NALU_HYPRE_Complex *recv_data, NALU_HYPRE_Int action, NALU_HYPRE_Int tag, nalu_hypre_CommHandle **comm_handle_ptr );
+NALU_HYPRE_Int nalu_hypre_FinalizeCommunication ( nalu_hypre_CommHandle *comm_handle );
+NALU_HYPRE_Int nalu_hypre_ExchangeLocalData ( nalu_hypre_CommPkg *comm_pkg, NALU_HYPRE_Complex *send_data,
                                     NALU_HYPRE_Complex *recv_data, NALU_HYPRE_Int action );
-NALU_HYPRE_Int hypre_CommPkgDestroy ( hypre_CommPkg *comm_pkg );
+NALU_HYPRE_Int nalu_hypre_CommPkgDestroy ( nalu_hypre_CommPkg *comm_pkg );
 
 /* struct_copy.c */
-NALU_HYPRE_Int hypre_StructCopy ( hypre_StructVector *x, hypre_StructVector *y );
-NALU_HYPRE_Int hypre_StructPartialCopy ( hypre_StructVector *x, hypre_StructVector *y,
-                                    hypre_BoxArrayArray *array_boxes );
+NALU_HYPRE_Int nalu_hypre_StructCopy ( nalu_hypre_StructVector *x, nalu_hypre_StructVector *y );
+NALU_HYPRE_Int nalu_hypre_StructPartialCopy ( nalu_hypre_StructVector *x, nalu_hypre_StructVector *y,
+                                    nalu_hypre_BoxArrayArray *array_boxes );
 
 /* struct_grid.c */
-NALU_HYPRE_Int hypre_StructGridCreate ( MPI_Comm comm, NALU_HYPRE_Int dim, hypre_StructGrid **grid_ptr );
-NALU_HYPRE_Int hypre_StructGridRef ( hypre_StructGrid *grid, hypre_StructGrid **grid_ref );
-NALU_HYPRE_Int hypre_StructGridDestroy ( hypre_StructGrid *grid );
-NALU_HYPRE_Int hypre_StructGridSetPeriodic ( hypre_StructGrid *grid, hypre_Index periodic );
-NALU_HYPRE_Int hypre_StructGridSetExtents ( hypre_StructGrid *grid, hypre_Index ilower,
-                                       hypre_Index iupper );
-NALU_HYPRE_Int hypre_StructGridSetBoxes ( hypre_StructGrid *grid, hypre_BoxArray *boxes );
-NALU_HYPRE_Int hypre_StructGridSetBoundingBox ( hypre_StructGrid *grid, hypre_Box *new_bb );
-NALU_HYPRE_Int hypre_StructGridSetIDs ( hypre_StructGrid *grid, NALU_HYPRE_Int *ids );
-NALU_HYPRE_Int hypre_StructGridSetBoxManager ( hypre_StructGrid *grid, hypre_BoxManager *boxman );
-NALU_HYPRE_Int hypre_StructGridSetMaxDistance ( hypre_StructGrid *grid, hypre_Index dist );
-NALU_HYPRE_Int hypre_StructGridAssemble ( hypre_StructGrid *grid );
-NALU_HYPRE_Int hypre_GatherAllBoxes ( MPI_Comm comm, hypre_BoxArray *boxes, NALU_HYPRE_Int dim,
-                                 hypre_BoxArray **all_boxes_ptr, NALU_HYPRE_Int **all_procs_ptr, NALU_HYPRE_Int *first_local_ptr );
-NALU_HYPRE_Int hypre_ComputeBoxnums ( hypre_BoxArray *boxes, NALU_HYPRE_Int *procs, NALU_HYPRE_Int **boxnums_ptr );
-NALU_HYPRE_Int hypre_StructGridPrint ( FILE *file, hypre_StructGrid *grid );
-NALU_HYPRE_Int hypre_StructGridRead ( MPI_Comm comm, FILE *file, hypre_StructGrid **grid_ptr );
-NALU_HYPRE_Int hypre_StructGridSetNumGhost ( hypre_StructGrid *grid, NALU_HYPRE_Int *num_ghost );
-NALU_HYPRE_Int hypre_StructGridGetMaxBoxSize ( hypre_StructGrid *grid );
+NALU_HYPRE_Int nalu_hypre_StructGridCreate ( MPI_Comm comm, NALU_HYPRE_Int dim, nalu_hypre_StructGrid **grid_ptr );
+NALU_HYPRE_Int nalu_hypre_StructGridRef ( nalu_hypre_StructGrid *grid, nalu_hypre_StructGrid **grid_ref );
+NALU_HYPRE_Int nalu_hypre_StructGridDestroy ( nalu_hypre_StructGrid *grid );
+NALU_HYPRE_Int nalu_hypre_StructGridSetPeriodic ( nalu_hypre_StructGrid *grid, nalu_hypre_Index periodic );
+NALU_HYPRE_Int nalu_hypre_StructGridSetExtents ( nalu_hypre_StructGrid *grid, nalu_hypre_Index ilower,
+                                       nalu_hypre_Index iupper );
+NALU_HYPRE_Int nalu_hypre_StructGridSetBoxes ( nalu_hypre_StructGrid *grid, nalu_hypre_BoxArray *boxes );
+NALU_HYPRE_Int nalu_hypre_StructGridSetBoundingBox ( nalu_hypre_StructGrid *grid, nalu_hypre_Box *new_bb );
+NALU_HYPRE_Int nalu_hypre_StructGridSetIDs ( nalu_hypre_StructGrid *grid, NALU_HYPRE_Int *ids );
+NALU_HYPRE_Int nalu_hypre_StructGridSetBoxManager ( nalu_hypre_StructGrid *grid, nalu_hypre_BoxManager *boxman );
+NALU_HYPRE_Int nalu_hypre_StructGridSetMaxDistance ( nalu_hypre_StructGrid *grid, nalu_hypre_Index dist );
+NALU_HYPRE_Int nalu_hypre_StructGridAssemble ( nalu_hypre_StructGrid *grid );
+NALU_HYPRE_Int nalu_hypre_GatherAllBoxes ( MPI_Comm comm, nalu_hypre_BoxArray *boxes, NALU_HYPRE_Int dim,
+                                 nalu_hypre_BoxArray **all_boxes_ptr, NALU_HYPRE_Int **all_procs_ptr, NALU_HYPRE_Int *first_local_ptr );
+NALU_HYPRE_Int nalu_hypre_ComputeBoxnums ( nalu_hypre_BoxArray *boxes, NALU_HYPRE_Int *procs, NALU_HYPRE_Int **boxnums_ptr );
+NALU_HYPRE_Int nalu_hypre_StructGridPrint ( FILE *file, nalu_hypre_StructGrid *grid );
+NALU_HYPRE_Int nalu_hypre_StructGridRead ( MPI_Comm comm, FILE *file, nalu_hypre_StructGrid **grid_ptr );
+NALU_HYPRE_Int nalu_hypre_StructGridSetNumGhost ( nalu_hypre_StructGrid *grid, NALU_HYPRE_Int *num_ghost );
+NALU_HYPRE_Int nalu_hypre_StructGridGetMaxBoxSize ( nalu_hypre_StructGrid *grid );
 #if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
-NALU_HYPRE_Int hypre_StructGridSetDataLocation( NALU_HYPRE_StructGrid grid,
+NALU_HYPRE_Int nalu_hypre_StructGridSetDataLocation( NALU_HYPRE_StructGrid grid,
                                            NALU_HYPRE_MemoryLocation data_location );
 #endif
 /* struct_innerprod.c */
-NALU_HYPRE_Real hypre_StructInnerProd ( hypre_StructVector *x, hypre_StructVector *y );
+NALU_HYPRE_Real nalu_hypre_StructInnerProd ( nalu_hypre_StructVector *x, nalu_hypre_StructVector *y );
 
 /* struct_io.c */
-NALU_HYPRE_Int hypre_PrintBoxArrayData ( FILE *file, hypre_BoxArray *box_array,
-                                    hypre_BoxArray *data_space, NALU_HYPRE_Int num_values, NALU_HYPRE_Int dim, NALU_HYPRE_Complex *data );
-NALU_HYPRE_Int hypre_PrintCCVDBoxArrayData ( FILE *file, hypre_BoxArray *box_array,
-                                        hypre_BoxArray *data_space, NALU_HYPRE_Int num_values, NALU_HYPRE_Int center_rank, NALU_HYPRE_Int stencil_size,
+NALU_HYPRE_Int nalu_hypre_PrintBoxArrayData ( FILE *file, nalu_hypre_BoxArray *box_array,
+                                    nalu_hypre_BoxArray *data_space, NALU_HYPRE_Int num_values, NALU_HYPRE_Int dim, NALU_HYPRE_Complex *data );
+NALU_HYPRE_Int nalu_hypre_PrintCCVDBoxArrayData ( FILE *file, nalu_hypre_BoxArray *box_array,
+                                        nalu_hypre_BoxArray *data_space, NALU_HYPRE_Int num_values, NALU_HYPRE_Int center_rank, NALU_HYPRE_Int stencil_size,
                                         NALU_HYPRE_Int *symm_elements, NALU_HYPRE_Int dim, NALU_HYPRE_Complex *data );
-NALU_HYPRE_Int hypre_PrintCCBoxArrayData ( FILE *file, hypre_BoxArray *box_array,
-                                      hypre_BoxArray *data_space, NALU_HYPRE_Int num_values, NALU_HYPRE_Complex *data );
-NALU_HYPRE_Int hypre_ReadBoxArrayData ( FILE *file, hypre_BoxArray *box_array,
-                                   hypre_BoxArray *data_space, NALU_HYPRE_Int num_values, NALU_HYPRE_Int dim, NALU_HYPRE_Complex *data );
-NALU_HYPRE_Int hypre_ReadBoxArrayData_CC ( FILE *file, hypre_BoxArray *box_array,
-                                      hypre_BoxArray *data_space, NALU_HYPRE_Int stencil_size, NALU_HYPRE_Int real_stencil_size,
+NALU_HYPRE_Int nalu_hypre_PrintCCBoxArrayData ( FILE *file, nalu_hypre_BoxArray *box_array,
+                                      nalu_hypre_BoxArray *data_space, NALU_HYPRE_Int num_values, NALU_HYPRE_Complex *data );
+NALU_HYPRE_Int nalu_hypre_ReadBoxArrayData ( FILE *file, nalu_hypre_BoxArray *box_array,
+                                   nalu_hypre_BoxArray *data_space, NALU_HYPRE_Int num_values, NALU_HYPRE_Int dim, NALU_HYPRE_Complex *data );
+NALU_HYPRE_Int nalu_hypre_ReadBoxArrayData_CC ( FILE *file, nalu_hypre_BoxArray *box_array,
+                                      nalu_hypre_BoxArray *data_space, NALU_HYPRE_Int stencil_size, NALU_HYPRE_Int real_stencil_size,
                                       NALU_HYPRE_Int constant_coefficient, NALU_HYPRE_Int dim, NALU_HYPRE_Complex *data );
 
 /* struct_matrix.c */
-NALU_HYPRE_Complex *hypre_StructMatrixExtractPointerByIndex ( hypre_StructMatrix *matrix, NALU_HYPRE_Int b,
-                                                         hypre_Index index );
-hypre_StructMatrix *hypre_StructMatrixCreate ( MPI_Comm comm, hypre_StructGrid *grid,
-                                               hypre_StructStencil *user_stencil );
-hypre_StructMatrix *hypre_StructMatrixRef ( hypre_StructMatrix *matrix );
-NALU_HYPRE_Int hypre_StructMatrixDestroy ( hypre_StructMatrix *matrix );
-NALU_HYPRE_Int hypre_StructMatrixInitializeShell ( hypre_StructMatrix *matrix );
-NALU_HYPRE_Int hypre_StructMatrixInitializeData ( hypre_StructMatrix *matrix, NALU_HYPRE_Complex *data,
+NALU_HYPRE_Complex *nalu_hypre_StructMatrixExtractPointerByIndex ( nalu_hypre_StructMatrix *matrix, NALU_HYPRE_Int b,
+                                                         nalu_hypre_Index index );
+nalu_hypre_StructMatrix *nalu_hypre_StructMatrixCreate ( MPI_Comm comm, nalu_hypre_StructGrid *grid,
+                                               nalu_hypre_StructStencil *user_stencil );
+nalu_hypre_StructMatrix *nalu_hypre_StructMatrixRef ( nalu_hypre_StructMatrix *matrix );
+NALU_HYPRE_Int nalu_hypre_StructMatrixDestroy ( nalu_hypre_StructMatrix *matrix );
+NALU_HYPRE_Int nalu_hypre_StructMatrixInitializeShell ( nalu_hypre_StructMatrix *matrix );
+NALU_HYPRE_Int nalu_hypre_StructMatrixInitializeData ( nalu_hypre_StructMatrix *matrix, NALU_HYPRE_Complex *data,
                                              NALU_HYPRE_Complex *data_const);
-NALU_HYPRE_Int hypre_StructMatrixInitialize ( hypre_StructMatrix *matrix );
-NALU_HYPRE_Int hypre_StructMatrixSetValues ( hypre_StructMatrix *matrix, hypre_Index grid_index,
+NALU_HYPRE_Int nalu_hypre_StructMatrixInitialize ( nalu_hypre_StructMatrix *matrix );
+NALU_HYPRE_Int nalu_hypre_StructMatrixSetValues ( nalu_hypre_StructMatrix *matrix, nalu_hypre_Index grid_index,
                                         NALU_HYPRE_Int num_stencil_indices, NALU_HYPRE_Int *stencil_indices, NALU_HYPRE_Complex *values, NALU_HYPRE_Int action,
                                         NALU_HYPRE_Int boxnum, NALU_HYPRE_Int outside );
-NALU_HYPRE_Int hypre_StructMatrixSetBoxValues ( hypre_StructMatrix *matrix, hypre_Box *set_box,
-                                           hypre_Box *value_box, NALU_HYPRE_Int num_stencil_indices, NALU_HYPRE_Int *stencil_indices,
+NALU_HYPRE_Int nalu_hypre_StructMatrixSetBoxValues ( nalu_hypre_StructMatrix *matrix, nalu_hypre_Box *set_box,
+                                           nalu_hypre_Box *value_box, NALU_HYPRE_Int num_stencil_indices, NALU_HYPRE_Int *stencil_indices,
                                            NALU_HYPRE_Complex *values, NALU_HYPRE_Int action, NALU_HYPRE_Int boxnum, NALU_HYPRE_Int outside );
-NALU_HYPRE_Int hypre_StructMatrixSetConstantValues ( hypre_StructMatrix *matrix,
+NALU_HYPRE_Int nalu_hypre_StructMatrixSetConstantValues ( nalu_hypre_StructMatrix *matrix,
                                                 NALU_HYPRE_Int num_stencil_indices, NALU_HYPRE_Int *stencil_indices, NALU_HYPRE_Complex *values,
                                                 NALU_HYPRE_Int action );
-NALU_HYPRE_Int hypre_StructMatrixClearValues ( hypre_StructMatrix *matrix, hypre_Index grid_index,
+NALU_HYPRE_Int nalu_hypre_StructMatrixClearValues ( nalu_hypre_StructMatrix *matrix, nalu_hypre_Index grid_index,
                                           NALU_HYPRE_Int num_stencil_indices, NALU_HYPRE_Int *stencil_indices, NALU_HYPRE_Int boxnum, NALU_HYPRE_Int outside );
-NALU_HYPRE_Int hypre_StructMatrixClearBoxValues ( hypre_StructMatrix *matrix, hypre_Box *clear_box,
+NALU_HYPRE_Int nalu_hypre_StructMatrixClearBoxValues ( nalu_hypre_StructMatrix *matrix, nalu_hypre_Box *clear_box,
                                              NALU_HYPRE_Int num_stencil_indices, NALU_HYPRE_Int *stencil_indices, NALU_HYPRE_Int boxnum, NALU_HYPRE_Int outside );
-NALU_HYPRE_Int hypre_StructMatrixAssemble ( hypre_StructMatrix *matrix );
-NALU_HYPRE_Int hypre_StructMatrixSetNumGhost ( hypre_StructMatrix *matrix, NALU_HYPRE_Int *num_ghost );
-NALU_HYPRE_Int hypre_StructMatrixSetConstantCoefficient ( hypre_StructMatrix *matrix,
+NALU_HYPRE_Int nalu_hypre_StructMatrixAssemble ( nalu_hypre_StructMatrix *matrix );
+NALU_HYPRE_Int nalu_hypre_StructMatrixSetNumGhost ( nalu_hypre_StructMatrix *matrix, NALU_HYPRE_Int *num_ghost );
+NALU_HYPRE_Int nalu_hypre_StructMatrixSetConstantCoefficient ( nalu_hypre_StructMatrix *matrix,
                                                      NALU_HYPRE_Int constant_coefficient );
-NALU_HYPRE_Int hypre_StructMatrixSetConstantEntries ( hypre_StructMatrix *matrix, NALU_HYPRE_Int nentries,
+NALU_HYPRE_Int nalu_hypre_StructMatrixSetConstantEntries ( nalu_hypre_StructMatrix *matrix, NALU_HYPRE_Int nentries,
                                                  NALU_HYPRE_Int *entries );
-NALU_HYPRE_Int hypre_StructMatrixClearGhostValues ( hypre_StructMatrix *matrix );
-NALU_HYPRE_Int hypre_StructMatrixPrintData ( FILE *file, hypre_StructMatrix *matrix, NALU_HYPRE_Int all );
-NALU_HYPRE_Int hypre_StructMatrixReadData ( FILE *file, hypre_StructMatrix *matrix );
-NALU_HYPRE_Int hypre_StructMatrixPrint ( const char *filename, hypre_StructMatrix *matrix,
+NALU_HYPRE_Int nalu_hypre_StructMatrixClearGhostValues ( nalu_hypre_StructMatrix *matrix );
+NALU_HYPRE_Int nalu_hypre_StructMatrixPrintData ( FILE *file, nalu_hypre_StructMatrix *matrix, NALU_HYPRE_Int all );
+NALU_HYPRE_Int nalu_hypre_StructMatrixReadData ( FILE *file, nalu_hypre_StructMatrix *matrix );
+NALU_HYPRE_Int nalu_hypre_StructMatrixPrint ( const char *filename, nalu_hypre_StructMatrix *matrix,
                                     NALU_HYPRE_Int all );
-hypre_StructMatrix *hypre_StructMatrixRead ( MPI_Comm comm, const char *filename,
+nalu_hypre_StructMatrix *nalu_hypre_StructMatrixRead ( MPI_Comm comm, const char *filename,
                                              NALU_HYPRE_Int *num_ghost );
-NALU_HYPRE_Int hypre_StructMatrixMigrate ( hypre_StructMatrix *from_matrix,
-                                      hypre_StructMatrix *to_matrix );
-NALU_HYPRE_Int hypre_StructMatrixClearBoundary( hypre_StructMatrix *matrix);
+NALU_HYPRE_Int nalu_hypre_StructMatrixMigrate ( nalu_hypre_StructMatrix *from_matrix,
+                                      nalu_hypre_StructMatrix *to_matrix );
+NALU_HYPRE_Int nalu_hypre_StructMatrixClearBoundary( nalu_hypre_StructMatrix *matrix);
 
 /* struct_matrix_mask.c */
-hypre_StructMatrix *hypre_StructMatrixCreateMask ( hypre_StructMatrix *matrix,
+nalu_hypre_StructMatrix *nalu_hypre_StructMatrixCreateMask ( nalu_hypre_StructMatrix *matrix,
                                                    NALU_HYPRE_Int num_stencil_indices, NALU_HYPRE_Int *stencil_indices );
 
 /* struct_matvec.c */
-void *hypre_StructMatvecCreate ( void );
-NALU_HYPRE_Int hypre_StructMatvecSetup ( void *matvec_vdata, hypre_StructMatrix *A,
-                                    hypre_StructVector *x );
-NALU_HYPRE_Int hypre_StructMatvecCompute ( void *matvec_vdata, NALU_HYPRE_Complex alpha,
-                                      hypre_StructMatrix *A, hypre_StructVector *x, NALU_HYPRE_Complex beta, hypre_StructVector *y );
-NALU_HYPRE_Int hypre_StructMatvecCC0 ( NALU_HYPRE_Complex alpha, hypre_StructMatrix *A, hypre_StructVector *x,
-                                  hypre_StructVector *y, hypre_BoxArrayArray *compute_box_aa, hypre_IndexRef stride );
-NALU_HYPRE_Int hypre_StructMatvecCC1 ( NALU_HYPRE_Complex alpha, hypre_StructMatrix *A, hypre_StructVector *x,
-                                  hypre_StructVector *y, hypre_BoxArrayArray *compute_box_aa, hypre_IndexRef stride );
-NALU_HYPRE_Int hypre_StructMatvecCC2 ( NALU_HYPRE_Complex alpha, hypre_StructMatrix *A, hypre_StructVector *x,
-                                  hypre_StructVector *y, hypre_BoxArrayArray *compute_box_aa, hypre_IndexRef stride );
-NALU_HYPRE_Int hypre_StructMatvecDestroy ( void *matvec_vdata );
-NALU_HYPRE_Int hypre_StructMatvec ( NALU_HYPRE_Complex alpha, hypre_StructMatrix *A, hypre_StructVector *x,
-                               NALU_HYPRE_Complex beta, hypre_StructVector *y );
+void *nalu_hypre_StructMatvecCreate ( void );
+NALU_HYPRE_Int nalu_hypre_StructMatvecSetup ( void *matvec_vdata, nalu_hypre_StructMatrix *A,
+                                    nalu_hypre_StructVector *x );
+NALU_HYPRE_Int nalu_hypre_StructMatvecCompute ( void *matvec_vdata, NALU_HYPRE_Complex alpha,
+                                      nalu_hypre_StructMatrix *A, nalu_hypre_StructVector *x, NALU_HYPRE_Complex beta, nalu_hypre_StructVector *y );
+NALU_HYPRE_Int nalu_hypre_StructMatvecCC0 ( NALU_HYPRE_Complex alpha, nalu_hypre_StructMatrix *A, nalu_hypre_StructVector *x,
+                                  nalu_hypre_StructVector *y, nalu_hypre_BoxArrayArray *compute_box_aa, nalu_hypre_IndexRef stride );
+NALU_HYPRE_Int nalu_hypre_StructMatvecCC1 ( NALU_HYPRE_Complex alpha, nalu_hypre_StructMatrix *A, nalu_hypre_StructVector *x,
+                                  nalu_hypre_StructVector *y, nalu_hypre_BoxArrayArray *compute_box_aa, nalu_hypre_IndexRef stride );
+NALU_HYPRE_Int nalu_hypre_StructMatvecCC2 ( NALU_HYPRE_Complex alpha, nalu_hypre_StructMatrix *A, nalu_hypre_StructVector *x,
+                                  nalu_hypre_StructVector *y, nalu_hypre_BoxArrayArray *compute_box_aa, nalu_hypre_IndexRef stride );
+NALU_HYPRE_Int nalu_hypre_StructMatvecDestroy ( void *matvec_vdata );
+NALU_HYPRE_Int nalu_hypre_StructMatvec ( NALU_HYPRE_Complex alpha, nalu_hypre_StructMatrix *A, nalu_hypre_StructVector *x,
+                               NALU_HYPRE_Complex beta, nalu_hypre_StructVector *y );
 
 /* struct_scale.c */
-NALU_HYPRE_Int hypre_StructScale ( NALU_HYPRE_Complex alpha, hypre_StructVector *y );
+NALU_HYPRE_Int nalu_hypre_StructScale ( NALU_HYPRE_Complex alpha, nalu_hypre_StructVector *y );
 
 /* struct_stencil.c */
-hypre_StructStencil *hypre_StructStencilCreate ( NALU_HYPRE_Int dim, NALU_HYPRE_Int size,
-                                                 hypre_Index *shape );
-hypre_StructStencil *hypre_StructStencilRef ( hypre_StructStencil *stencil );
-NALU_HYPRE_Int hypre_StructStencilDestroy ( hypre_StructStencil *stencil );
-NALU_HYPRE_Int hypre_StructStencilElementRank ( hypre_StructStencil *stencil,
-                                           hypre_Index stencil_element );
-NALU_HYPRE_Int hypre_StructStencilSymmetrize ( hypre_StructStencil *stencil,
-                                          hypre_StructStencil **symm_stencil_ptr, NALU_HYPRE_Int **symm_elements_ptr );
+nalu_hypre_StructStencil *nalu_hypre_StructStencilCreate ( NALU_HYPRE_Int dim, NALU_HYPRE_Int size,
+                                                 nalu_hypre_Index *shape );
+nalu_hypre_StructStencil *nalu_hypre_StructStencilRef ( nalu_hypre_StructStencil *stencil );
+NALU_HYPRE_Int nalu_hypre_StructStencilDestroy ( nalu_hypre_StructStencil *stencil );
+NALU_HYPRE_Int nalu_hypre_StructStencilElementRank ( nalu_hypre_StructStencil *stencil,
+                                           nalu_hypre_Index stencil_element );
+NALU_HYPRE_Int nalu_hypre_StructStencilSymmetrize ( nalu_hypre_StructStencil *stencil,
+                                          nalu_hypre_StructStencil **symm_stencil_ptr, NALU_HYPRE_Int **symm_elements_ptr );
 
 /* struct_vector.c */
-hypre_StructVector *hypre_StructVectorCreate ( MPI_Comm comm, hypre_StructGrid *grid );
-hypre_StructVector *hypre_StructVectorRef ( hypre_StructVector *vector );
-NALU_HYPRE_Int hypre_StructVectorDestroy ( hypre_StructVector *vector );
-NALU_HYPRE_Int hypre_StructVectorInitializeShell ( hypre_StructVector *vector );
-NALU_HYPRE_Int hypre_StructVectorInitializeData ( hypre_StructVector *vector, NALU_HYPRE_Complex *data);
-NALU_HYPRE_Int hypre_StructVectorInitialize ( hypre_StructVector *vector );
-NALU_HYPRE_Int hypre_StructVectorSetValues ( hypre_StructVector *vector, hypre_Index grid_index,
+nalu_hypre_StructVector *nalu_hypre_StructVectorCreate ( MPI_Comm comm, nalu_hypre_StructGrid *grid );
+nalu_hypre_StructVector *nalu_hypre_StructVectorRef ( nalu_hypre_StructVector *vector );
+NALU_HYPRE_Int nalu_hypre_StructVectorDestroy ( nalu_hypre_StructVector *vector );
+NALU_HYPRE_Int nalu_hypre_StructVectorInitializeShell ( nalu_hypre_StructVector *vector );
+NALU_HYPRE_Int nalu_hypre_StructVectorInitializeData ( nalu_hypre_StructVector *vector, NALU_HYPRE_Complex *data);
+NALU_HYPRE_Int nalu_hypre_StructVectorInitialize ( nalu_hypre_StructVector *vector );
+NALU_HYPRE_Int nalu_hypre_StructVectorSetValues ( nalu_hypre_StructVector *vector, nalu_hypre_Index grid_index,
                                         NALU_HYPRE_Complex *values, NALU_HYPRE_Int action, NALU_HYPRE_Int boxnum, NALU_HYPRE_Int outside );
-NALU_HYPRE_Int hypre_StructVectorSetBoxValues ( hypre_StructVector *vector, hypre_Box *set_box,
-                                           hypre_Box *value_box, NALU_HYPRE_Complex *values, NALU_HYPRE_Int action, NALU_HYPRE_Int boxnum,
+NALU_HYPRE_Int nalu_hypre_StructVectorSetBoxValues ( nalu_hypre_StructVector *vector, nalu_hypre_Box *set_box,
+                                           nalu_hypre_Box *value_box, NALU_HYPRE_Complex *values, NALU_HYPRE_Int action, NALU_HYPRE_Int boxnum,
                                            NALU_HYPRE_Int outside );
-NALU_HYPRE_Int hypre_StructVectorClearValues ( hypre_StructVector *vector, hypre_Index grid_index,
+NALU_HYPRE_Int nalu_hypre_StructVectorClearValues ( nalu_hypre_StructVector *vector, nalu_hypre_Index grid_index,
                                           NALU_HYPRE_Int boxnum, NALU_HYPRE_Int outside );
-NALU_HYPRE_Int hypre_StructVectorClearBoxValues ( hypre_StructVector *vector, hypre_Box *clear_box,
+NALU_HYPRE_Int nalu_hypre_StructVectorClearBoxValues ( nalu_hypre_StructVector *vector, nalu_hypre_Box *clear_box,
                                              NALU_HYPRE_Int boxnum, NALU_HYPRE_Int outside );
-NALU_HYPRE_Int hypre_StructVectorClearAllValues ( hypre_StructVector *vector );
-NALU_HYPRE_Int hypre_StructVectorSetNumGhost ( hypre_StructVector *vector, NALU_HYPRE_Int *num_ghost );
-NALU_HYPRE_Int hypre_StructVectorSetDataSize(hypre_StructVector *vector, NALU_HYPRE_Int *data_size,
+NALU_HYPRE_Int nalu_hypre_StructVectorClearAllValues ( nalu_hypre_StructVector *vector );
+NALU_HYPRE_Int nalu_hypre_StructVectorSetNumGhost ( nalu_hypre_StructVector *vector, NALU_HYPRE_Int *num_ghost );
+NALU_HYPRE_Int nalu_hypre_StructVectorSetDataSize(nalu_hypre_StructVector *vector, NALU_HYPRE_Int *data_size,
                                         NALU_HYPRE_Int *data_host_size);
-NALU_HYPRE_Int hypre_StructVectorAssemble ( hypre_StructVector *vector );
-NALU_HYPRE_Int hypre_StructVectorCopy ( hypre_StructVector *x, hypre_StructVector *y );
-NALU_HYPRE_Int hypre_StructVectorSetConstantValues ( hypre_StructVector *vector, NALU_HYPRE_Complex values );
-NALU_HYPRE_Int hypre_StructVectorSetFunctionValues ( hypre_StructVector *vector,
+NALU_HYPRE_Int nalu_hypre_StructVectorAssemble ( nalu_hypre_StructVector *vector );
+NALU_HYPRE_Int nalu_hypre_StructVectorCopy ( nalu_hypre_StructVector *x, nalu_hypre_StructVector *y );
+NALU_HYPRE_Int nalu_hypre_StructVectorSetConstantValues ( nalu_hypre_StructVector *vector, NALU_HYPRE_Complex values );
+NALU_HYPRE_Int nalu_hypre_StructVectorSetFunctionValues ( nalu_hypre_StructVector *vector,
                                                 NALU_HYPRE_Complex (*fcn )());
-NALU_HYPRE_Int hypre_StructVectorClearGhostValues ( hypre_StructVector *vector );
-NALU_HYPRE_Int hypre_StructVectorClearBoundGhostValues ( hypre_StructVector *vector, NALU_HYPRE_Int force );
-NALU_HYPRE_Int hypre_StructVectorScaleValues ( hypre_StructVector *vector, NALU_HYPRE_Complex factor );
-hypre_CommPkg *hypre_StructVectorGetMigrateCommPkg ( hypre_StructVector *from_vector,
-                                                     hypre_StructVector *to_vector );
-NALU_HYPRE_Int hypre_StructVectorMigrate ( hypre_CommPkg *comm_pkg, hypre_StructVector *from_vector,
-                                      hypre_StructVector *to_vector );
-NALU_HYPRE_Int hypre_StructVectorPrint ( const char *filename, hypre_StructVector *vector,
+NALU_HYPRE_Int nalu_hypre_StructVectorClearGhostValues ( nalu_hypre_StructVector *vector );
+NALU_HYPRE_Int nalu_hypre_StructVectorClearBoundGhostValues ( nalu_hypre_StructVector *vector, NALU_HYPRE_Int force );
+NALU_HYPRE_Int nalu_hypre_StructVectorScaleValues ( nalu_hypre_StructVector *vector, NALU_HYPRE_Complex factor );
+nalu_hypre_CommPkg *nalu_hypre_StructVectorGetMigrateCommPkg ( nalu_hypre_StructVector *from_vector,
+                                                     nalu_hypre_StructVector *to_vector );
+NALU_HYPRE_Int nalu_hypre_StructVectorMigrate ( nalu_hypre_CommPkg *comm_pkg, nalu_hypre_StructVector *from_vector,
+                                      nalu_hypre_StructVector *to_vector );
+NALU_HYPRE_Int nalu_hypre_StructVectorPrint ( const char *filename, nalu_hypre_StructVector *vector,
                                     NALU_HYPRE_Int all );
-hypre_StructVector *hypre_StructVectorRead ( MPI_Comm comm, const char *filename,
+nalu_hypre_StructVector *nalu_hypre_StructVectorRead ( MPI_Comm comm, const char *filename,
                                              NALU_HYPRE_Int *num_ghost );
-hypre_StructVector *hypre_StructVectorClone ( hypre_StructVector *vector );
+nalu_hypre_StructVector *nalu_hypre_StructVectorClone ( nalu_hypre_StructVector *vector );

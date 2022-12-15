@@ -8,21 +8,21 @@
 /******************************************************************************
  *
  * a few more relaxation schemes: Chebychev, FCF-Jacobi, CG  -
- * these do not go through the CF interface (hypre_BoomerAMGRelaxIF)
+ * these do not go through the CF interface (nalu_hypre_BoomerAMGRelaxIF)
  *
  *****************************************************************************/
 
-#include "_hypre_parcsr_ls.h"
+#include "_nalu_hypre_parcsr_ls.h"
 
 #if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
-#include "_hypre_utilities.hpp"
+#include "_nalu_hypre_utilities.hpp"
 
 /**
  * @brief Calculates row sums and other metrics of a matrix on the device
  * to be used for the MaxEigEstimate
  */
 __global__ void
-hypreGPUKernel_CSRMaxEigEstimate(hypre_DeviceItem    &item,
+hypreGPUKernel_CSRMaxEigEstimate(nalu_hypre_DeviceItem    &item,
                                  NALU_HYPRE_Int      nrows,
                                  NALU_HYPRE_Int     *diag_ia,
                                  NALU_HYPRE_Int     *diag_ja,
@@ -34,14 +34,14 @@ hypreGPUKernel_CSRMaxEigEstimate(hypre_DeviceItem    &item,
                                  NALU_HYPRE_Complex *row_sum_upper,
                                  NALU_HYPRE_Int      scale)
 {
-   NALU_HYPRE_Int row_i = hypre_gpu_get_grid_warp_id<1, 1>(item);
+   NALU_HYPRE_Int row_i = nalu_hypre_gpu_get_grid_warp_id<1, 1>(item);
 
    if (row_i >= nrows)
    {
       return;
    }
 
-   NALU_HYPRE_Int lane = hypre_gpu_get_lane_id<1>(item);
+   NALU_HYPRE_Int lane = nalu_hypre_gpu_get_lane_id<1>(item);
    NALU_HYPRE_Int p = 0, q;
 
    NALU_HYPRE_Complex diag_value = 0.0;
@@ -93,8 +93,8 @@ hypreGPUKernel_CSRMaxEigEstimate(hypre_DeviceItem    &item,
 
       if (scale)
       {
-         lower /= hypre_abs(diag_value);
-         upper /= hypre_abs(diag_value);
+         lower /= nalu_hypre_abs(diag_value);
+         upper /= nalu_hypre_abs(diag_value);
       }
 
       row_sum_upper[row_i] = upper;
@@ -110,7 +110,7 @@ hypreGPUKernel_CSRMaxEigEstimate(hypre_DeviceItem    &item,
  * @param[out] Maximum eigenvalue
  */
 NALU_HYPRE_Int
-hypre_ParCSRMaxEigEstimateDevice( hypre_ParCSRMatrix *A,
+nalu_hypre_ParCSRMaxEigEstimateDevice( nalu_hypre_ParCSRMatrix *A,
                                   NALU_HYPRE_Int           scale,
                                   NALU_HYPRE_Real         *max_eig,
                                   NALU_HYPRE_Real         *min_eig )
@@ -128,24 +128,24 @@ hypre_ParCSRMaxEigEstimateDevice( hypre_ParCSRMatrix *A,
    NALU_HYPRE_Int  *A_offd_j;
 
 
-   A_num_rows = hypre_CSRMatrixNumRows(hypre_ParCSRMatrixDiag(A));
+   A_num_rows = nalu_hypre_CSRMatrixNumRows(nalu_hypre_ParCSRMatrixDiag(A));
 
-   NALU_HYPRE_Real *rowsums_lower = hypre_TAlloc(NALU_HYPRE_Real, A_num_rows,
-                                            hypre_ParCSRMatrixMemoryLocation(A));
-   NALU_HYPRE_Real *rowsums_upper = hypre_TAlloc(NALU_HYPRE_Real, A_num_rows,
-                                            hypre_ParCSRMatrixMemoryLocation(A));
+   NALU_HYPRE_Real *rowsums_lower = nalu_hypre_TAlloc(NALU_HYPRE_Real, A_num_rows,
+                                            nalu_hypre_ParCSRMatrixMemoryLocation(A));
+   NALU_HYPRE_Real *rowsums_upper = nalu_hypre_TAlloc(NALU_HYPRE_Real, A_num_rows,
+                                            nalu_hypre_ParCSRMatrixMemoryLocation(A));
 
-   A_diag_i    = hypre_CSRMatrixI(hypre_ParCSRMatrixDiag(A));
-   A_diag_j    = hypre_CSRMatrixJ(hypre_ParCSRMatrixDiag(A));
-   A_diag_data = hypre_CSRMatrixData(hypre_ParCSRMatrixDiag(A));
-   A_offd_i    = hypre_CSRMatrixI(hypre_ParCSRMatrixOffd(A));
-   A_offd_j    = hypre_CSRMatrixJ(hypre_ParCSRMatrixOffd(A));
-   A_offd_data = hypre_CSRMatrixData(hypre_ParCSRMatrixOffd(A));
+   A_diag_i    = nalu_hypre_CSRMatrixI(nalu_hypre_ParCSRMatrixDiag(A));
+   A_diag_j    = nalu_hypre_CSRMatrixJ(nalu_hypre_ParCSRMatrixDiag(A));
+   A_diag_data = nalu_hypre_CSRMatrixData(nalu_hypre_ParCSRMatrixDiag(A));
+   A_offd_i    = nalu_hypre_CSRMatrixI(nalu_hypre_ParCSRMatrixOffd(A));
+   A_offd_j    = nalu_hypre_CSRMatrixJ(nalu_hypre_ParCSRMatrixOffd(A));
+   A_offd_data = nalu_hypre_CSRMatrixData(nalu_hypre_ParCSRMatrixOffd(A));
 
    dim3 bDim, gDim;
 
-   bDim = hypre_GetDefaultDeviceBlockDimension();
-   gDim = hypre_GetDefaultDeviceGridDimension(A_num_rows, "warp", bDim);
+   bDim = nalu_hypre_GetDefaultDeviceBlockDimension();
+   gDim = nalu_hypre_GetDefaultDeviceGridDimension(A_num_rows, "warp", bDim);
    NALU_HYPRE_GPU_LAUNCH(hypreGPUKernel_CSRMaxEigEstimate,
                     gDim,
                     bDim,
@@ -160,14 +160,14 @@ hypre_ParCSRMaxEigEstimateDevice( hypre_ParCSRMatrix *A,
                     rowsums_upper,
                     scale);
 
-   hypre_SyncComputeStream(hypre_handle());
+   nalu_hypre_SyncComputeStream(nalu_hypre_handle());
 
    e_min = NALU_HYPRE_THRUST_CALL(reduce, rowsums_lower, rowsums_lower + A_num_rows, (NALU_HYPRE_Real)0,
                              thrust::minimum<NALU_HYPRE_Real>());
    e_max = NALU_HYPRE_THRUST_CALL(reduce, rowsums_upper, rowsums_upper + A_num_rows, (NALU_HYPRE_Real)0,
                              thrust::maximum<NALU_HYPRE_Real>());
 
-   /* Same as hypre_ParCSRMaxEigEstimateHost */
+   /* Same as nalu_hypre_ParCSRMaxEigEstimateHost */
 
    NALU_HYPRE_Real send_buf[2];
    NALU_HYPRE_Real recv_buf[2];
@@ -175,25 +175,25 @@ hypre_ParCSRMaxEigEstimateDevice( hypre_ParCSRMatrix *A,
    send_buf[0] = -e_min;
    send_buf[1] = e_max;
 
-   hypre_MPI_Allreduce(send_buf, recv_buf, 2, NALU_HYPRE_MPI_REAL, hypre_MPI_MAX,
-                       hypre_ParCSRMatrixComm(A));
+   nalu_hypre_MPI_Allreduce(send_buf, recv_buf, 2, NALU_HYPRE_MPI_REAL, nalu_hypre_MPI_MAX,
+                       nalu_hypre_ParCSRMatrixComm(A));
 
    /* return */
-   if ( hypre_abs(e_min) > hypre_abs(e_max) )
+   if ( nalu_hypre_abs(e_min) > nalu_hypre_abs(e_max) )
    {
       *min_eig = e_min;
-      *max_eig = hypre_min(0.0, e_max);
+      *max_eig = nalu_hypre_min(0.0, e_max);
    }
    else
    {
-      *min_eig = hypre_max(e_min, 0.0);
+      *min_eig = nalu_hypre_max(e_min, 0.0);
       *max_eig = e_max;
    }
 
-   hypre_TFree(rowsums_lower, hypre_ParCSRMatrixMemoryLocation(A));
-   hypre_TFree(rowsums_upper, hypre_ParCSRMatrixMemoryLocation(A));
+   nalu_hypre_TFree(rowsums_lower, nalu_hypre_ParCSRMatrixMemoryLocation(A));
+   nalu_hypre_TFree(rowsums_upper, nalu_hypre_ParCSRMatrixMemoryLocation(A));
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /**
@@ -206,21 +206,21 @@ hypre_ParCSRMaxEigEstimateDevice( hypre_ParCSRMatrix *A,
  *  @param[out] min_eig Estimated min eigenvalue
  */
 NALU_HYPRE_Int
-hypre_ParCSRMaxEigEstimateCGDevice(hypre_ParCSRMatrix *A,     /* matrix to relax with */
+nalu_hypre_ParCSRMaxEigEstimateCGDevice(nalu_hypre_ParCSRMatrix *A,     /* matrix to relax with */
                                    NALU_HYPRE_Int           scale, /* scale by diagonal?*/
                                    NALU_HYPRE_Int           max_iter,
                                    NALU_HYPRE_Real         *max_eig,
                                    NALU_HYPRE_Real         *min_eig)
 {
 #if defined(NALU_HYPRE_USING_CUDA)
-   hypre_GpuProfilingPushRange("ParCSRMaxEigEstimate_Setup");
+   nalu_hypre_GpuProfilingPushRange("ParCSRMaxEigEstimate_Setup");
 #endif
    NALU_HYPRE_Int        i, err;
-   hypre_ParVector *p;
-   hypre_ParVector *s;
-   hypre_ParVector *r;
-   hypre_ParVector *ds;
-   hypre_ParVector *u;
+   nalu_hypre_ParVector *p;
+   nalu_hypre_ParVector *s;
+   nalu_hypre_ParVector *r;
+   nalu_hypre_ParVector *ds;
+   nalu_hypre_ParVector *u;
 
    NALU_HYPRE_Real *tridiag = NULL;
    NALU_HYPRE_Real *trioffd = NULL;
@@ -229,10 +229,10 @@ hypre_ParCSRMaxEigEstimateCGDevice(hypre_ParCSRMatrix *A,     /* matrix to relax
    NALU_HYPRE_Real  beta, gamma = 0.0, alpha, sdotp, gamma_old, alphainv;
    NALU_HYPRE_Real  lambda_min;
    NALU_HYPRE_Real *s_data, *p_data, *ds_data, *u_data, *r_data;
-   NALU_HYPRE_Int   local_size = hypre_CSRMatrixNumRows(hypre_ParCSRMatrixDiag(A));
+   NALU_HYPRE_Int   local_size = nalu_hypre_CSRMatrixNumRows(nalu_hypre_ParCSRMatrixDiag(A));
 
    /* check the size of A - don't iterate more than the size */
-   NALU_HYPRE_BigInt size = hypre_ParCSRMatrixGlobalNumRows(A);
+   NALU_HYPRE_BigInt size = nalu_hypre_ParCSRMatrixGlobalNumRows(A);
 
    if (size < (NALU_HYPRE_BigInt)max_iter)
    {
@@ -240,63 +240,63 @@ hypre_ParCSRMaxEigEstimateCGDevice(hypre_ParCSRMatrix *A,     /* matrix to relax
    }
 
 #if defined(NALU_HYPRE_USING_CUDA)
-   hypre_GpuProfilingPushRange("ParCSRMaxEigEstimate_Setup_DataAlloc");
+   nalu_hypre_GpuProfilingPushRange("ParCSRMaxEigEstimate_Setup_DataAlloc");
 #endif
    /* create some temp vectors: p, s, r , ds, u*/
-   r = hypre_ParVectorCreate(hypre_ParCSRMatrixComm(A),
-                             hypre_ParCSRMatrixGlobalNumRows(A),
-                             hypre_ParCSRMatrixRowStarts(A));
-   hypre_ParVectorInitialize_v2(r, hypre_ParCSRMatrixMemoryLocation(A));
+   r = nalu_hypre_ParVectorCreate(nalu_hypre_ParCSRMatrixComm(A),
+                             nalu_hypre_ParCSRMatrixGlobalNumRows(A),
+                             nalu_hypre_ParCSRMatrixRowStarts(A));
+   nalu_hypre_ParVectorInitialize_v2(r, nalu_hypre_ParCSRMatrixMemoryLocation(A));
 
-   p = hypre_ParVectorCreate(hypre_ParCSRMatrixComm(A),
-                             hypre_ParCSRMatrixGlobalNumRows(A),
-                             hypre_ParCSRMatrixRowStarts(A));
-   hypre_ParVectorInitialize_v2(p, hypre_ParCSRMatrixMemoryLocation(A));
+   p = nalu_hypre_ParVectorCreate(nalu_hypre_ParCSRMatrixComm(A),
+                             nalu_hypre_ParCSRMatrixGlobalNumRows(A),
+                             nalu_hypre_ParCSRMatrixRowStarts(A));
+   nalu_hypre_ParVectorInitialize_v2(p, nalu_hypre_ParCSRMatrixMemoryLocation(A));
 
-   s = hypre_ParVectorCreate(hypre_ParCSRMatrixComm(A),
-                             hypre_ParCSRMatrixGlobalNumRows(A),
-                             hypre_ParCSRMatrixRowStarts(A));
-   hypre_ParVectorInitialize_v2(s, hypre_ParCSRMatrixMemoryLocation(A));
+   s = nalu_hypre_ParVectorCreate(nalu_hypre_ParCSRMatrixComm(A),
+                             nalu_hypre_ParCSRMatrixGlobalNumRows(A),
+                             nalu_hypre_ParCSRMatrixRowStarts(A));
+   nalu_hypre_ParVectorInitialize_v2(s, nalu_hypre_ParCSRMatrixMemoryLocation(A));
 
    /* DS Starts on host to be populated, then transferred to device */
-   ds = hypre_ParVectorCreate(hypre_ParCSRMatrixComm(A),
-                              hypre_ParCSRMatrixGlobalNumRows(A),
-                              hypre_ParCSRMatrixRowStarts(A));
-   hypre_ParVectorInitialize_v2(ds, hypre_ParCSRMatrixMemoryLocation(A));
-   ds_data = hypre_VectorData(hypre_ParVectorLocalVector(ds));
+   ds = nalu_hypre_ParVectorCreate(nalu_hypre_ParCSRMatrixComm(A),
+                              nalu_hypre_ParCSRMatrixGlobalNumRows(A),
+                              nalu_hypre_ParCSRMatrixRowStarts(A));
+   nalu_hypre_ParVectorInitialize_v2(ds, nalu_hypre_ParCSRMatrixMemoryLocation(A));
+   ds_data = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(ds));
 
-   u = hypre_ParVectorCreate(hypre_ParCSRMatrixComm(A),
-                             hypre_ParCSRMatrixGlobalNumRows(A),
-                             hypre_ParCSRMatrixRowStarts(A));
-   hypre_ParVectorInitialize_v2(u, hypre_ParCSRMatrixMemoryLocation(A));
+   u = nalu_hypre_ParVectorCreate(nalu_hypre_ParCSRMatrixComm(A),
+                             nalu_hypre_ParCSRMatrixGlobalNumRows(A),
+                             nalu_hypre_ParCSRMatrixRowStarts(A));
+   nalu_hypre_ParVectorInitialize_v2(u, nalu_hypre_ParCSRMatrixMemoryLocation(A));
 
    /* point to local data */
-   s_data = hypre_VectorData(hypre_ParVectorLocalVector(s));
-   p_data = hypre_VectorData(hypre_ParVectorLocalVector(p));
-   u_data = hypre_VectorData(hypre_ParVectorLocalVector(u));
-   r_data = hypre_VectorData(hypre_ParVectorLocalVector(r));
+   s_data = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(s));
+   p_data = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(p));
+   u_data = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(u));
+   r_data = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(r));
 
 #if defined(NALU_HYPRE_USING_CUDA)
-   hypre_GpuProfilingPopRange(); /*Setup Data Alloc*/
+   nalu_hypre_GpuProfilingPopRange(); /*Setup Data Alloc*/
 #endif
 
 #if defined(NALU_HYPRE_USING_CUDA)
-   hypre_GpuProfilingPushRange("ParCSRMaxEigEstimate_Setup_CPUAlloc_Setup");
+   nalu_hypre_GpuProfilingPushRange("ParCSRMaxEigEstimate_Setup_CPUAlloc_Setup");
 #endif
 
 #if defined(NALU_HYPRE_USING_CUDA)
-   hypre_GpuProfilingPushRange("ParCSRMaxEigEstimate_Setup_CPUAlloc_Setup_Alloc");
+   nalu_hypre_GpuProfilingPushRange("ParCSRMaxEigEstimate_Setup_CPUAlloc_Setup_Alloc");
 #endif
 
    /* make room for tri-diag matrix */
-   tridiag = hypre_CTAlloc(NALU_HYPRE_Real, max_iter + 1, NALU_HYPRE_MEMORY_HOST);
-   trioffd = hypre_CTAlloc(NALU_HYPRE_Real, max_iter + 1, NALU_HYPRE_MEMORY_HOST);
+   tridiag = nalu_hypre_CTAlloc(NALU_HYPRE_Real, max_iter + 1, NALU_HYPRE_MEMORY_HOST);
+   trioffd = nalu_hypre_CTAlloc(NALU_HYPRE_Real, max_iter + 1, NALU_HYPRE_MEMORY_HOST);
 #if defined(NALU_HYPRE_USING_CUDA)
-   hypre_GpuProfilingPopRange(); /*SETUP_Alloc*/
+   nalu_hypre_GpuProfilingPopRange(); /*SETUP_Alloc*/
 #endif
 
 #if defined(NALU_HYPRE_USING_CUDA)
-   hypre_GpuProfilingPushRange("ParCSRMaxEigEstimate_Setup_CPUAlloc_Zeroing");
+   nalu_hypre_GpuProfilingPushRange("ParCSRMaxEigEstimate_Setup_CPUAlloc_Zeroing");
 #endif
    for (i = 0; i < max_iter + 1; i++)
    {
@@ -304,56 +304,56 @@ hypre_ParCSRMaxEigEstimateCGDevice(hypre_ParCSRMatrix *A,     /* matrix to relax
       trioffd[i] = 0;
    }
 #if defined(NALU_HYPRE_USING_CUDA)
-   hypre_GpuProfilingPopRange(); /*Zeroing */
+   nalu_hypre_GpuProfilingPopRange(); /*Zeroing */
 #endif
 
 #if defined(NALU_HYPRE_USING_CUDA)
-   hypre_GpuProfilingPushRange("ParCSRMaxEigEstimate_Setup_CPUAlloc_Random");
+   nalu_hypre_GpuProfilingPushRange("ParCSRMaxEigEstimate_Setup_CPUAlloc_Random");
 #endif
 
    /* set residual to random */
-   hypre_CurandUniform(local_size, r_data, 0, 0, 0, 0);
+   nalu_hypre_CurandUniform(local_size, r_data, 0, 0, 0, 0);
 
-   hypre_SyncComputeStream(hypre_handle());
+   nalu_hypre_SyncComputeStream(nalu_hypre_handle());
 
    NALU_HYPRE_THRUST_CALL(transform,
                      r_data, r_data + local_size, r_data,
                      2.0 * _1 - 1.0);
 
 #if defined(NALU_HYPRE_USING_CUDA)
-   hypre_GpuProfilingPopRange(); /*CPUAlloc_Random*/
+   nalu_hypre_GpuProfilingPopRange(); /*CPUAlloc_Random*/
 #endif
 
 #if defined(NALU_HYPRE_USING_CUDA)
-   hypre_GpuProfilingPushRange("ParCSRMaxEigEstimate_Setup_CPUAlloc_Diag");
+   nalu_hypre_GpuProfilingPushRange("ParCSRMaxEigEstimate_Setup_CPUAlloc_Diag");
 #endif
 
    if (scale)
    {
-      hypre_CSRMatrixExtractDiagonal(hypre_ParCSRMatrixDiag(A), ds_data, 4);
+      nalu_hypre_CSRMatrixExtractDiagonal(nalu_hypre_ParCSRMatrixDiag(A), ds_data, 4);
    }
    else
    {
       /* set ds to 1 */
-      hypre_ParVectorSetConstantValues(ds, 1.0);
+      nalu_hypre_ParVectorSetConstantValues(ds, 1.0);
    }
 
 #if defined(NALU_HYPRE_USING_CUDA)
-   hypre_GpuProfilingPopRange(); /*Setup_CPUAlloc__Diag */
+   nalu_hypre_GpuProfilingPopRange(); /*Setup_CPUAlloc__Diag */
 #endif
 #if defined(NALU_HYPRE_USING_CUDA) /*CPUAlloc_Setup */
-   hypre_GpuProfilingPopRange();
+   nalu_hypre_GpuProfilingPopRange();
 #endif
 
 #if defined(NALU_HYPRE_USING_CUDA)
-   hypre_GpuProfilingPopRange(); /* Setup */
+   nalu_hypre_GpuProfilingPopRange(); /* Setup */
 #endif
 #if defined(NALU_HYPRE_USING_CUDA)
-   hypre_GpuProfilingPushRange("ParCSRMaxEigEstimate_Iter");
+   nalu_hypre_GpuProfilingPushRange("ParCSRMaxEigEstimate_Iter");
 #endif
 
    /* gamma = <r,Cr> */
-   gamma = hypre_ParVectorInnerProd(r, p);
+   gamma = nalu_hypre_ParVectorInnerProd(r, p);
 
    /* for the initial filling of the tridiag matrix */
    beta = 1.0;
@@ -363,11 +363,11 @@ hypre_ParCSRMaxEigEstimateCGDevice(hypre_ParCSRMatrix *A,     /* matrix to relax
    {
       /* s = C*r */
       /* TO DO:  C = diag scale */
-      hypre_ParVectorCopy(r, s);
+      nalu_hypre_ParVectorCopy(r, s);
 
       /*gamma = <r,Cr> */
       gamma_old = gamma;
-      gamma     = hypre_ParVectorInnerProd(r, s);
+      gamma     = nalu_hypre_ParVectorInnerProd(r, s);
 
       if (gamma < NALU_HYPRE_REAL_EPSILON)
       {
@@ -378,7 +378,7 @@ hypre_ParCSRMaxEigEstimateCGDevice(hypre_ParCSRMatrix *A,     /* matrix to relax
       {
          beta = 1.0;
          /* p_0 = C*r */
-         hypre_ParVectorCopy(s, p);
+         nalu_hypre_ParVectorCopy(s, p);
       }
       else
       {
@@ -396,7 +396,7 @@ hypre_ParCSRMaxEigEstimateCGDevice(hypre_ParCSRMatrix *A,     /* matrix to relax
          /* u = ds .* p */
          NALU_HYPRE_THRUST_CALL( transform, ds_data, ds_data + local_size, p_data, u_data, _1 * _2 );
 
-         hypre_ParCSRMatrixMatvec(1.0, A, u, 0.0, s);
+         nalu_hypre_ParCSRMatrixMatvec(1.0, A, u, 0.0, s);
 
          /* s = ds .* s */
          NALU_HYPRE_THRUST_CALL( transform, ds_data, ds_data + local_size, s_data, s_data, _1 * _2 );
@@ -404,11 +404,11 @@ hypre_ParCSRMaxEigEstimateCGDevice(hypre_ParCSRMatrix *A,     /* matrix to relax
       else
       {
          /* s = A*p */
-         hypre_ParCSRMatrixMatvec(1.0, A, p, 0.0, s);
+         nalu_hypre_ParCSRMatrixMatvec(1.0, A, p, 0.0, s);
       }
 
       /* <s,p> */
-      sdotp = hypre_ParVectorInnerProd(s, p);
+      sdotp = nalu_hypre_ParVectorInnerProd(s, p);
 
       /* alpha = gamma / <s,p> */
       alpha = gamma / sdotp;
@@ -427,7 +427,7 @@ hypre_ParCSRMaxEigEstimateCGDevice(hypre_ParCSRMatrix *A,     /* matrix to relax
       /* don't need */
 
       /* r = r - alpha*s */
-      hypre_ParVectorAxpy(-alpha, s, r);
+      nalu_hypre_ParVectorAxpy(-alpha, s, r);
 
       i++;
    }
@@ -446,37 +446,37 @@ hypre_ParCSRMaxEigEstimateCGDevice(hypre_ParCSRMatrix *A,     /* matrix to relax
     * license is compatible with that which HYPRE is released under.
     */
 #if defined(NALU_HYPRE_USING_CUDA)
-   hypre_GpuProfilingPopRange();
+   nalu_hypre_GpuProfilingPopRange();
 #endif
 #if defined(NALU_HYPRE_USING_CUDA)
-   hypre_GpuProfilingPushRange("ParCSRMaxEigEstimate_TriDiagEigenSolve");
+   nalu_hypre_GpuProfilingPushRange("ParCSRMaxEigEstimate_TriDiagEigenSolve");
 #endif
 
    /* eispack routine - eigenvalues return in tridiag and ordered*/
-   hypre_LINPACKcgtql1(&i, tridiag, trioffd, &err);
+   nalu_hypre_LINPACKcgtql1(&i, tridiag, trioffd, &err);
 
    lambda_max = tridiag[i - 1];
    lambda_min = tridiag[0];
 #if defined(NALU_HYPRE_USING_CUDA)
-   hypre_GpuProfilingPopRange();
+   nalu_hypre_GpuProfilingPopRange();
 #endif
-   /* hypre_printf("linpack max eig est = %g\n", lambda_max);*/
-   /* hypre_printf("linpack min eig est = %g\n", lambda_min);*/
+   /* nalu_hypre_printf("linpack max eig est = %g\n", lambda_max);*/
+   /* nalu_hypre_printf("linpack min eig est = %g\n", lambda_min);*/
 
-   hypre_TFree(tridiag, NALU_HYPRE_MEMORY_HOST);
-   hypre_TFree(trioffd, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(tridiag, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(trioffd, NALU_HYPRE_MEMORY_HOST);
 
-   hypre_ParVectorDestroy(r);
-   hypre_ParVectorDestroy(s);
-   hypre_ParVectorDestroy(p);
-   hypre_ParVectorDestroy(ds);
-   hypre_ParVectorDestroy(u);
+   nalu_hypre_ParVectorDestroy(r);
+   nalu_hypre_ParVectorDestroy(s);
+   nalu_hypre_ParVectorDestroy(p);
+   nalu_hypre_ParVectorDestroy(ds);
+   nalu_hypre_ParVectorDestroy(u);
 
    /* return */
    *max_eig = lambda_max;
    *min_eig = lambda_min;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 #endif

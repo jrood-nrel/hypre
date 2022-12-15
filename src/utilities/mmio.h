@@ -22,54 +22,54 @@
 
 typedef char MM_typecode[4];
 
-NALU_HYPRE_Int hypre_mm_is_valid(MM_typecode matcode); /* too complex for a macro */
-NALU_HYPRE_Int hypre_mm_read_banner(FILE *f, MM_typecode *matcode);
-NALU_HYPRE_Int hypre_mm_read_mtx_crd_size(FILE *f, NALU_HYPRE_Int *M, NALU_HYPRE_Int *N, NALU_HYPRE_Int *nz);
+NALU_HYPRE_Int nalu_hypre_mm_is_valid(MM_typecode matcode); /* too complex for a macro */
+NALU_HYPRE_Int nalu_hypre_mm_read_banner(FILE *f, MM_typecode *matcode);
+NALU_HYPRE_Int nalu_hypre_mm_read_mtx_crd_size(FILE *f, NALU_HYPRE_Int *M, NALU_HYPRE_Int *N, NALU_HYPRE_Int *nz);
 
 /********************* MM_typecode query fucntions ***************************/
 
-#define hypre_mm_is_matrix(typecode)    ((typecode)[0]=='M')
+#define nalu_hypre_mm_is_matrix(typecode)    ((typecode)[0]=='M')
 
-#define hypre_mm_is_sparse(typecode)    ((typecode)[1]=='C')
-#define hypre_mm_is_coordinate(typecode)((typecode)[1]=='C')
-#define hypre_mm_is_dense(typecode)   ((typecode)[1]=='A')
-#define hypre_mm_is_array(typecode)   ((typecode)[1]=='A')
+#define nalu_hypre_mm_is_sparse(typecode)    ((typecode)[1]=='C')
+#define nalu_hypre_mm_is_coordinate(typecode)((typecode)[1]=='C')
+#define nalu_hypre_mm_is_dense(typecode)   ((typecode)[1]=='A')
+#define nalu_hypre_mm_is_array(typecode)   ((typecode)[1]=='A')
 
-#define hypre_mm_is_complex(typecode) ((typecode)[2]=='C')
-#define hypre_mm_is_real(typecode)    ((typecode)[2]=='R')
-#define hypre_mm_is_pattern(typecode) ((typecode)[2]=='P')
-#define hypre_mm_is_integer(typecode) ((typecode)[2]=='I')
+#define nalu_hypre_mm_is_complex(typecode) ((typecode)[2]=='C')
+#define nalu_hypre_mm_is_real(typecode)    ((typecode)[2]=='R')
+#define nalu_hypre_mm_is_pattern(typecode) ((typecode)[2]=='P')
+#define nalu_hypre_mm_is_integer(typecode) ((typecode)[2]=='I')
 
-#define hypre_mm_is_symmetric(typecode)((typecode)[3]=='S')
-#define hypre_mm_is_general(typecode) ((typecode)[3]=='G')
-#define hypre_mm_is_skew(typecode) ((typecode)[3]=='K')
-#define hypre_mm_is_hermitian(typecode)((typecode)[3]=='H')
+#define nalu_hypre_mm_is_symmetric(typecode)((typecode)[3]=='S')
+#define nalu_hypre_mm_is_general(typecode) ((typecode)[3]=='G')
+#define nalu_hypre_mm_is_skew(typecode) ((typecode)[3]=='K')
+#define nalu_hypre_mm_is_hermitian(typecode)((typecode)[3]=='H')
 
 
 
 /********************* MM_typecode modify fucntions ***************************/
 
-#define hypre_mm_set_matrix(typecode) ((*typecode)[0]='M')
-#define hypre_mm_set_coordinate(typecode) ((*typecode)[1]='C')
-#define hypre_mm_set_array(typecode)  ((*typecode)[1]='A')
-#define hypre_mm_set_dense(typecode)  hypre_mm_set_array(typecode)
-#define hypre_mm_set_sparse(typecode) hypre_mm_set_coordinate(typecode)
+#define nalu_hypre_mm_set_matrix(typecode) ((*typecode)[0]='M')
+#define nalu_hypre_mm_set_coordinate(typecode) ((*typecode)[1]='C')
+#define nalu_hypre_mm_set_array(typecode)  ((*typecode)[1]='A')
+#define nalu_hypre_mm_set_dense(typecode)  nalu_hypre_mm_set_array(typecode)
+#define nalu_hypre_mm_set_sparse(typecode) nalu_hypre_mm_set_coordinate(typecode)
 
-#define hypre_mm_set_complex(typecode)((*typecode)[2]='C')
-#define hypre_mm_set_real(typecode)   ((*typecode)[2]='R')
-#define hypre_mm_set_pattern(typecode)((*typecode)[2]='P')
-#define hypre_mm_set_integer(typecode)((*typecode)[2]='I')
+#define nalu_hypre_mm_set_complex(typecode)((*typecode)[2]='C')
+#define nalu_hypre_mm_set_real(typecode)   ((*typecode)[2]='R')
+#define nalu_hypre_mm_set_pattern(typecode)((*typecode)[2]='P')
+#define nalu_hypre_mm_set_integer(typecode)((*typecode)[2]='I')
 
 
-#define hypre_mm_set_symmetric(typecode)((*typecode)[3]='S')
-#define hypre_mm_set_general(typecode)  ((*typecode)[3]='G')
-#define hypre_mm_set_skew(typecode)     ((*typecode)[3]='K')
-#define hypre_mm_set_hermitian(typecode)((*typecode)[3]='H')
+#define nalu_hypre_mm_set_symmetric(typecode)((*typecode)[3]='S')
+#define nalu_hypre_mm_set_general(typecode)  ((*typecode)[3]='G')
+#define nalu_hypre_mm_set_skew(typecode)     ((*typecode)[3]='K')
+#define nalu_hypre_mm_set_hermitian(typecode)((*typecode)[3]='H')
 
-#define hypre_mm_clear_typecode(typecode) ((*typecode)[0]=(*typecode)[1]= \
+#define nalu_hypre_mm_clear_typecode(typecode) ((*typecode)[0]=(*typecode)[1]= \
       (*typecode)[2]=' ',(*typecode)[3]='G')
 
-#define hypre_mm_initialize_typecode(typecode) hypre_mm_clear_typecode(typecode)
+#define nalu_hypre_mm_initialize_typecode(typecode) nalu_hypre_mm_clear_typecode(typecode)
 
 
 /********************* Matrix Market error codes ***************************/

@@ -29,7 +29,7 @@ extern "C" int
 NALU_HYPRE_FEMeshCreate(MPI_Comm comm, NALU_HYPRE_FEMesh *meshptr)
 {
    NALU_HYPRE_FEMesh myMesh;
-   myMesh = (NALU_HYPRE_FEMesh) hypre_TAlloc(NALU_HYPRE_FEMesh, 1, NALU_HYPRE_MEMORY_HOST);
+   myMesh = (NALU_HYPRE_FEMesh) nalu_hypre_TAlloc(NALU_HYPRE_FEMesh, 1, NALU_HYPRE_MEMORY_HOST);
    myMesh->comm_   = comm;
    myMesh->linSys_ = NULL;
    myMesh->feiPtr_ = NULL;

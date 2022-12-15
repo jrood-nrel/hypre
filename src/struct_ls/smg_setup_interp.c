@@ -5,22 +5,22 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_struct_ls.h"
-#include "_hypre_struct_mv.hpp"
+#include "_nalu_hypre_struct_ls.h"
+#include "_nalu_hypre_struct_mv.hpp"
 #include "smg.h"
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-hypre_StructMatrix *
-hypre_SMGCreateInterpOp( hypre_StructMatrix *A,
-                         hypre_StructGrid   *cgrid,
+nalu_hypre_StructMatrix *
+nalu_hypre_SMGCreateInterpOp( nalu_hypre_StructMatrix *A,
+                         nalu_hypre_StructGrid   *cgrid,
                          NALU_HYPRE_Int           cdir  )
 {
-   hypre_StructMatrix   *PT;
+   nalu_hypre_StructMatrix   *PT;
 
-   hypre_StructStencil  *stencil;
-   hypre_Index          *stencil_shape;
+   nalu_hypre_StructStencil  *stencil;
+   nalu_hypre_Index          *stencil_shape;
    NALU_HYPRE_Int             stencil_size;
    NALU_HYPRE_Int             stencil_dim;
 
@@ -30,22 +30,22 @@ hypre_SMGCreateInterpOp( hypre_StructMatrix *A,
 
    /* set up stencil */
    stencil_size = 2;
-   stencil_dim = hypre_StructStencilNDim(hypre_StructMatrixStencil(A));
-   stencil_shape = hypre_CTAlloc(hypre_Index,  stencil_size, NALU_HYPRE_MEMORY_HOST);
+   stencil_dim = nalu_hypre_StructStencilNDim(nalu_hypre_StructMatrixStencil(A));
+   stencil_shape = nalu_hypre_CTAlloc(nalu_hypre_Index,  stencil_size, NALU_HYPRE_MEMORY_HOST);
    for (i = 0; i < stencil_size; i++)
    {
-      hypre_SetIndex3(stencil_shape[i], 0, 0, 0);
+      nalu_hypre_SetIndex3(stencil_shape[i], 0, 0, 0);
    }
-   hypre_IndexD(stencil_shape[0], cdir) = -1;
-   hypre_IndexD(stencil_shape[1], cdir) =  1;
+   nalu_hypre_IndexD(stencil_shape[0], cdir) = -1;
+   nalu_hypre_IndexD(stencil_shape[1], cdir) =  1;
    stencil =
-      hypre_StructStencilCreate(stencil_dim, stencil_size, stencil_shape);
+      nalu_hypre_StructStencilCreate(stencil_dim, stencil_size, stencil_shape);
 
    /* set up matrix */
-   PT = hypre_StructMatrixCreate(hypre_StructMatrixComm(A), cgrid, stencil);
-   hypre_StructMatrixSetNumGhost(PT, num_ghost);
+   PT = nalu_hypre_StructMatrixCreate(nalu_hypre_StructMatrixComm(A), cgrid, stencil);
+   nalu_hypre_StructMatrixSetNumGhost(PT, num_ghost);
 
-   hypre_StructStencilDestroy(stencil);
+   nalu_hypre_StructStencilDestroy(stencil);
 
    return PT;
 }
@@ -68,52 +68,52 @@ hypre_SMGCreateInterpOp( hypre_StructMatrix *A,
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_SMGSetupInterpOp( void               *relax_data,
-                        hypre_StructMatrix *A,
-                        hypre_StructVector *b,
-                        hypre_StructVector *x,
-                        hypre_StructMatrix *PT,
+nalu_hypre_SMGSetupInterpOp( void               *relax_data,
+                        nalu_hypre_StructMatrix *A,
+                        nalu_hypre_StructVector *b,
+                        nalu_hypre_StructVector *x,
+                        nalu_hypre_StructMatrix *PT,
                         NALU_HYPRE_Int           cdir,
-                        hypre_Index         cindex,
-                        hypre_Index         findex,
-                        hypre_Index         stride    )
+                        nalu_hypre_Index         cindex,
+                        nalu_hypre_Index         findex,
+                        nalu_hypre_Index         stride    )
 {
-   hypre_StructMatrix   *A_mask;
+   nalu_hypre_StructMatrix   *A_mask;
 
-   hypre_StructStencil  *A_stencil;
-   hypre_Index          *A_stencil_shape;
+   nalu_hypre_StructStencil  *A_stencil;
+   nalu_hypre_Index          *A_stencil_shape;
    NALU_HYPRE_Int             A_stencil_size;
-   hypre_StructStencil  *PT_stencil;
-   hypre_Index          *PT_stencil_shape;
+   nalu_hypre_StructStencil  *PT_stencil;
+   nalu_hypre_Index          *PT_stencil_shape;
    NALU_HYPRE_Int             PT_stencil_size;
 
    NALU_HYPRE_Int            *stencil_indices;
    NALU_HYPRE_Int             num_stencil_indices;
 
-   hypre_StructGrid     *fgrid;
+   nalu_hypre_StructGrid     *fgrid;
 
-   hypre_StructStencil  *compute_pkg_stencil;
-   hypre_Index          *compute_pkg_stencil_shape;
+   nalu_hypre_StructStencil  *compute_pkg_stencil;
+   nalu_hypre_Index          *compute_pkg_stencil_shape;
    NALU_HYPRE_Int             compute_pkg_stencil_size = 1;
    NALU_HYPRE_Int             compute_pkg_stencil_dim = 1;
-   hypre_ComputePkg     *compute_pkg;
-   hypre_ComputeInfo    *compute_info;
+   nalu_hypre_ComputePkg     *compute_pkg;
+   nalu_hypre_ComputeInfo    *compute_info;
 
-   hypre_CommHandle     *comm_handle;
+   nalu_hypre_CommHandle     *comm_handle;
 
-   hypre_BoxArrayArray  *compute_box_aa;
-   hypre_BoxArray       *compute_box_a;
-   hypre_Box            *compute_box;
+   nalu_hypre_BoxArrayArray  *compute_box_aa;
+   nalu_hypre_BoxArray       *compute_box_a;
+   nalu_hypre_Box            *compute_box;
 
-   hypre_Box            *PT_data_box;
-   hypre_Box            *x_data_box;
+   nalu_hypre_Box            *PT_data_box;
+   nalu_hypre_Box            *x_data_box;
    NALU_HYPRE_Real           *PTp;
    NALU_HYPRE_Real           *xp;
 
-   hypre_Index           loop_size;
-   hypre_Index           start;
-   hypre_Index           startc;
-   hypre_Index           stridec;
+   nalu_hypre_Index           loop_size;
+   nalu_hypre_Index           start;
+   nalu_hypre_Index           startc;
+   nalu_hypre_Index           stridec;
 
    NALU_HYPRE_Int             si, sj, d;
    NALU_HYPRE_Int             compute_i, i, j;
@@ -122,26 +122,26 @@ hypre_SMGSetupInterpOp( void               *relax_data,
     * Initialize some things
     *--------------------------------------------------------*/
 
-   hypre_SetIndex3(stridec, 1, 1, 1);
+   nalu_hypre_SetIndex3(stridec, 1, 1, 1);
 
-   fgrid = hypre_StructMatrixGrid(A);
+   fgrid = nalu_hypre_StructMatrixGrid(A);
 
-   A_stencil = hypre_StructMatrixStencil(A);
-   A_stencil_shape = hypre_StructStencilShape(A_stencil);
-   A_stencil_size  = hypre_StructStencilSize(A_stencil);
-   PT_stencil = hypre_StructMatrixStencil(PT);
-   PT_stencil_shape = hypre_StructStencilShape(PT_stencil);
-   PT_stencil_size  = hypre_StructStencilSize(PT_stencil);
+   A_stencil = nalu_hypre_StructMatrixStencil(A);
+   A_stencil_shape = nalu_hypre_StructStencilShape(A_stencil);
+   A_stencil_size  = nalu_hypre_StructStencilSize(A_stencil);
+   PT_stencil = nalu_hypre_StructMatrixStencil(PT);
+   PT_stencil_shape = nalu_hypre_StructStencilShape(PT_stencil);
+   PT_stencil_size  = nalu_hypre_StructStencilSize(PT_stencil);
 
    /* Set up relaxation parameters */
-   hypre_SMGRelaxSetMaxIter(relax_data, 1);
-   hypre_SMGRelaxSetNumPreSpaces(relax_data, 0);
-   hypre_SMGRelaxSetNumRegSpaces(relax_data, 1);
-   hypre_SMGRelaxSetRegSpaceRank(relax_data, 0, 1);
+   nalu_hypre_SMGRelaxSetMaxIter(relax_data, 1);
+   nalu_hypre_SMGRelaxSetNumPreSpaces(relax_data, 0);
+   nalu_hypre_SMGRelaxSetNumRegSpaces(relax_data, 1);
+   nalu_hypre_SMGRelaxSetRegSpaceRank(relax_data, 0, 1);
 
    compute_pkg_stencil_shape =
-      hypre_CTAlloc(hypre_Index,  compute_pkg_stencil_size, NALU_HYPRE_MEMORY_HOST);
-   compute_pkg_stencil = hypre_StructStencilCreate(compute_pkg_stencil_dim,
+      nalu_hypre_CTAlloc(nalu_hypre_Index,  compute_pkg_stencil_size, NALU_HYPRE_MEMORY_HOST);
+   compute_pkg_stencil = nalu_hypre_StructStencilCreate(compute_pkg_stencil_dim,
                                                    compute_pkg_stencil_size,
                                                    compute_pkg_stencil_shape);
 
@@ -154,37 +154,37 @@ hypre_SMGSetupInterpOp( void               *relax_data,
        * coefficient being computed (same direction for P^T).
        *-----------------------------------------------------*/
 
-      stencil_indices = hypre_TAlloc(NALU_HYPRE_Int,  A_stencil_size, NALU_HYPRE_MEMORY_HOST);
+      stencil_indices = nalu_hypre_TAlloc(NALU_HYPRE_Int,  A_stencil_size, NALU_HYPRE_MEMORY_HOST);
       num_stencil_indices = 0;
       for (sj = 0; sj < A_stencil_size; sj++)
       {
-         if (hypre_IndexD(A_stencil_shape[sj],  cdir) !=
-             hypre_IndexD(PT_stencil_shape[si], cdir)   )
+         if (nalu_hypre_IndexD(A_stencil_shape[sj],  cdir) !=
+             nalu_hypre_IndexD(PT_stencil_shape[si], cdir)   )
          {
             stencil_indices[num_stencil_indices] = sj;
             num_stencil_indices++;
          }
       }
       A_mask =
-         hypre_StructMatrixCreateMask(A, num_stencil_indices, stencil_indices);
-      hypre_TFree(stencil_indices, NALU_HYPRE_MEMORY_HOST);
+         nalu_hypre_StructMatrixCreateMask(A, num_stencil_indices, stencil_indices);
+      nalu_hypre_TFree(stencil_indices, NALU_HYPRE_MEMORY_HOST);
 
       /*-----------------------------------------------------
        * Do relaxation sweep to compute coefficients
        *-----------------------------------------------------*/
 
-      hypre_StructVectorClearGhostValues(x);
-      hypre_StructVectorSetConstantValues(x, 1.0);
-      hypre_StructVectorSetConstantValues(b, 0.0);
-      hypre_SMGRelaxSetNewMatrixStencil(relax_data, PT_stencil);
-      hypre_SMGRelaxSetup(relax_data, A_mask, b, x);
-      hypre_SMGRelax(relax_data, A_mask, b, x);
+      nalu_hypre_StructVectorClearGhostValues(x);
+      nalu_hypre_StructVectorSetConstantValues(x, 1.0);
+      nalu_hypre_StructVectorSetConstantValues(b, 0.0);
+      nalu_hypre_SMGRelaxSetNewMatrixStencil(relax_data, PT_stencil);
+      nalu_hypre_SMGRelaxSetup(relax_data, A_mask, b, x);
+      nalu_hypre_SMGRelax(relax_data, A_mask, b, x);
 
       /*-----------------------------------------------------
        * Free up A_mask matrix
        *-----------------------------------------------------*/
 
-      hypre_StructMatrixDestroy(A_mask);
+      nalu_hypre_StructMatrixDestroy(A_mask);
 
       /*-----------------------------------------------------
        * Set up compute package for communication of
@@ -192,12 +192,12 @@ hypre_SMGSetupInterpOp( void               *relax_data,
        * boundaries.
        *-----------------------------------------------------*/
 
-      hypre_CopyIndex(PT_stencil_shape[si], compute_pkg_stencil_shape[0]);
-      hypre_CreateComputeInfo(fgrid, compute_pkg_stencil, &compute_info);
-      hypre_ComputeInfoProjectSend(compute_info, findex, stride);
-      hypre_ComputeInfoProjectRecv(compute_info, findex, stride);
-      hypre_ComputeInfoProjectComp(compute_info, cindex, stride);
-      hypre_ComputePkgCreate(compute_info, hypre_StructVectorDataSpace(x), 1,
+      nalu_hypre_CopyIndex(PT_stencil_shape[si], compute_pkg_stencil_shape[0]);
+      nalu_hypre_CreateComputeInfo(fgrid, compute_pkg_stencil, &compute_info);
+      nalu_hypre_ComputeInfoProjectSend(compute_info, findex, stride);
+      nalu_hypre_ComputeInfoProjectRecv(compute_info, findex, stride);
+      nalu_hypre_ComputeInfoProjectComp(compute_info, cindex, stride);
+      nalu_hypre_ComputePkgCreate(compute_info, nalu_hypre_StructVectorDataSpace(x), 1,
                              fgrid, &compute_pkg);
 
       /*-----------------------------------------------------
@@ -210,58 +210,58 @@ hypre_SMGSetupInterpOp( void               *relax_data,
          {
             case 0:
             {
-               xp = hypre_StructVectorData(x);
-               hypre_InitializeIndtComputations(compute_pkg, xp, &comm_handle);
-               compute_box_aa = hypre_ComputePkgIndtBoxes(compute_pkg);
+               xp = nalu_hypre_StructVectorData(x);
+               nalu_hypre_InitializeIndtComputations(compute_pkg, xp, &comm_handle);
+               compute_box_aa = nalu_hypre_ComputePkgIndtBoxes(compute_pkg);
             }
             break;
 
             case 1:
             {
-               hypre_FinalizeIndtComputations(comm_handle);
-               compute_box_aa = hypre_ComputePkgDeptBoxes(compute_pkg);
+               nalu_hypre_FinalizeIndtComputations(comm_handle);
+               compute_box_aa = nalu_hypre_ComputePkgDeptBoxes(compute_pkg);
             }
             break;
          }
 
-         hypre_ForBoxArrayI(i, compute_box_aa)
+         nalu_hypre_ForBoxArrayI(i, compute_box_aa)
          {
             compute_box_a =
-               hypre_BoxArrayArrayBoxArray(compute_box_aa, i);
+               nalu_hypre_BoxArrayArrayBoxArray(compute_box_aa, i);
 
             x_data_box  =
-               hypre_BoxArrayBox(hypre_StructVectorDataSpace(x), i);
+               nalu_hypre_BoxArrayBox(nalu_hypre_StructVectorDataSpace(x), i);
             PT_data_box =
-               hypre_BoxArrayBox(hypre_StructMatrixDataSpace(PT), i);
+               nalu_hypre_BoxArrayBox(nalu_hypre_StructMatrixDataSpace(PT), i);
 
-            xp  = hypre_StructVectorBoxData(x, i);
-            PTp = hypre_StructMatrixBoxData(PT, i, si);
+            xp  = nalu_hypre_StructVectorBoxData(x, i);
+            PTp = nalu_hypre_StructMatrixBoxData(PT, i, si);
 
-            hypre_ForBoxI(j, compute_box_a)
+            nalu_hypre_ForBoxI(j, compute_box_a)
             {
-               compute_box = hypre_BoxArrayBox(compute_box_a, j);
+               compute_box = nalu_hypre_BoxArrayBox(compute_box_a, j);
 
-               hypre_CopyIndex(hypre_BoxIMin(compute_box), start);
-               hypre_StructMapFineToCoarse(start, cindex, stride,
+               nalu_hypre_CopyIndex(nalu_hypre_BoxIMin(compute_box), start);
+               nalu_hypre_StructMapFineToCoarse(start, cindex, stride,
                                            startc);
 
                /* shift start index to appropriate F-point */
                for (d = 0; d < 3; d++)
                {
-                  hypre_IndexD(start, d) +=
-                     hypre_IndexD(PT_stencil_shape[si], d);
+                  nalu_hypre_IndexD(start, d) +=
+                     nalu_hypre_IndexD(PT_stencil_shape[si], d);
                }
 
-               hypre_BoxGetStrideSize(compute_box, stride, loop_size);
+               nalu_hypre_BoxGetStrideSize(compute_box, stride, loop_size);
 
 #define DEVICE_VAR is_device_ptr(PTp,xp)
-               hypre_BoxLoop2Begin(hypre_StructMatrixNDim(A), loop_size,
+               nalu_hypre_BoxLoop2Begin(nalu_hypre_StructMatrixNDim(A), loop_size,
                                    x_data_box,  start,  stride,  xi,
                                    PT_data_box, startc, stridec, PTi);
                {
                   PTp[PTi] = xp[xi];
                }
-               hypre_BoxLoop2End(xi, PTi);
+               nalu_hypre_BoxLoop2End(xi, PTi);
 #undef DEVICE_VAR
             }
          }
@@ -271,20 +271,20 @@ hypre_SMGSetupInterpOp( void               *relax_data,
        * Free up compute package info
        *-----------------------------------------------------*/
 
-      hypre_ComputePkgDestroy(compute_pkg);
+      nalu_hypre_ComputePkgDestroy(compute_pkg);
    }
 
    /* Tell SMGRelax that the stencil has changed */
-   hypre_SMGRelaxSetNewMatrixStencil(relax_data, PT_stencil);
+   nalu_hypre_SMGRelaxSetNewMatrixStencil(relax_data, PT_stencil);
 
-   hypre_StructStencilDestroy(compute_pkg_stencil);
+   nalu_hypre_StructStencilDestroy(compute_pkg_stencil);
 
 #if 0
-   hypre_StructMatrixAssemble(PT);
+   nalu_hypre_StructMatrixAssemble(PT);
 #else
-   hypre_StructInterpAssemble(A, PT, 1, cdir, cindex, stride);
+   nalu_hypre_StructInterpAssemble(A, PT, 1, cdir, cindex, stride);
 #endif
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 

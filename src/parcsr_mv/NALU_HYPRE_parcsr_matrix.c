@@ -11,7 +11,7 @@
  *
  *****************************************************************************/
 
-#include "_hypre_parcsr_mv.h"
+#include "_nalu_hypre_parcsr_mv.h"
 
 /*--------------------------------------------------------------------------
  * NALU_HYPRE_ParCSRMatrixCreate
@@ -30,16 +30,16 @@ NALU_HYPRE_ParCSRMatrixCreate( MPI_Comm            comm,
 {
    if (!matrix)
    {
-      hypre_error_in_arg(9);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(9);
+      return nalu_hypre_error_flag;
    }
 
    *matrix = (NALU_HYPRE_ParCSRMatrix)
-             hypre_ParCSRMatrixCreate(comm, global_num_rows, global_num_cols,
+             nalu_hypre_ParCSRMatrixCreate(comm, global_num_rows, global_num_cols,
                                       row_starts, col_starts, num_cols_offd,
                                       num_nonzeros_diag, num_nonzeros_offd);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
@@ -49,7 +49,7 @@ NALU_HYPRE_ParCSRMatrixCreate( MPI_Comm            comm,
 NALU_HYPRE_Int
 NALU_HYPRE_ParCSRMatrixDestroy( NALU_HYPRE_ParCSRMatrix matrix )
 {
-   return ( hypre_ParCSRMatrixDestroy( (hypre_ParCSRMatrix *) matrix ) );
+   return ( nalu_hypre_ParCSRMatrixDestroy( (nalu_hypre_ParCSRMatrix *) matrix ) );
 }
 
 /*--------------------------------------------------------------------------
@@ -59,7 +59,7 @@ NALU_HYPRE_ParCSRMatrixDestroy( NALU_HYPRE_ParCSRMatrix matrix )
 NALU_HYPRE_Int
 NALU_HYPRE_ParCSRMatrixInitialize( NALU_HYPRE_ParCSRMatrix matrix )
 {
-   return ( hypre_ParCSRMatrixInitialize( (hypre_ParCSRMatrix *) matrix ) );
+   return ( nalu_hypre_ParCSRMatrixInitialize( (nalu_hypre_ParCSRMatrix *) matrix ) );
 }
 
 /*--------------------------------------------------------------------------
@@ -73,11 +73,11 @@ NALU_HYPRE_ParCSRMatrixRead( MPI_Comm            comm,
 {
    if (!matrix)
    {
-      hypre_error_in_arg(3);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(3);
+      return nalu_hypre_error_flag;
    }
-   *matrix = (NALU_HYPRE_ParCSRMatrix) hypre_ParCSRMatrixRead( comm, file_name );
-   return hypre_error_flag;
+   *matrix = (NALU_HYPRE_ParCSRMatrix) nalu_hypre_ParCSRMatrixRead( comm, file_name );
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
@@ -88,9 +88,9 @@ NALU_HYPRE_Int
 NALU_HYPRE_ParCSRMatrixPrint( NALU_HYPRE_ParCSRMatrix  matrix,
                          const char         *file_name )
 {
-   hypre_ParCSRMatrixPrint( (hypre_ParCSRMatrix *) matrix,
+   nalu_hypre_ParCSRMatrixPrint( (nalu_hypre_ParCSRMatrix *) matrix,
                             file_name );
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
@@ -103,12 +103,12 @@ NALU_HYPRE_ParCSRMatrixGetComm( NALU_HYPRE_ParCSRMatrix  matrix,
 {
    if (!matrix)
    {
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
-   *comm = hypre_ParCSRMatrixComm((hypre_ParCSRMatrix *) matrix);
+   *comm = nalu_hypre_ParCSRMatrixComm((nalu_hypre_ParCSRMatrix *) matrix);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 /*--------------------------------------------------------------------------
  * NALU_HYPRE_ParCSRMatrixGetDims
@@ -121,13 +121,13 @@ NALU_HYPRE_ParCSRMatrixGetDims( NALU_HYPRE_ParCSRMatrix  matrix,
 {
    if (!matrix)
    {
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
-   *M = hypre_ParCSRMatrixGlobalNumRows((hypre_ParCSRMatrix *) matrix);
-   *N = hypre_ParCSRMatrixGlobalNumCols((hypre_ParCSRMatrix *) matrix);
+   *M = nalu_hypre_ParCSRMatrixGlobalNumRows((nalu_hypre_ParCSRMatrix *) matrix);
+   *N = nalu_hypre_ParCSRMatrixGlobalNumCols((nalu_hypre_ParCSRMatrix *) matrix);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
@@ -143,22 +143,22 @@ NALU_HYPRE_ParCSRMatrixGetRowPartitioning( NALU_HYPRE_ParCSRMatrix   matrix,
 
    if (!matrix)
    {
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
 
-   hypre_MPI_Comm_size(hypre_ParCSRMatrixComm((hypre_ParCSRMatrix *) matrix),
+   nalu_hypre_MPI_Comm_size(nalu_hypre_ParCSRMatrixComm((nalu_hypre_ParCSRMatrix *) matrix),
                        &num_procs);
-   row_starts = hypre_ParCSRMatrixRowStarts((hypre_ParCSRMatrix *) matrix);
+   row_starts = nalu_hypre_ParCSRMatrixRowStarts((nalu_hypre_ParCSRMatrix *) matrix);
    if (!row_starts) { return -1; }
-   row_partitioning = hypre_CTAlloc(NALU_HYPRE_BigInt,  num_procs + 1, NALU_HYPRE_MEMORY_HOST);
+   row_partitioning = nalu_hypre_CTAlloc(NALU_HYPRE_BigInt,  num_procs + 1, NALU_HYPRE_MEMORY_HOST);
    for (i = 0; i < num_procs + 1; i++)
    {
       row_partitioning[i] = row_starts[i];
    }
 
    *row_partitioning_ptr = row_partitioning;
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
@@ -175,42 +175,42 @@ NALU_HYPRE_ParCSRMatrixGetGlobalRowPartitioning( NALU_HYPRE_ParCSRMatrix   matri
 
    if (!matrix)
    {
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
 
-   comm = hypre_ParCSRMatrixComm((hypre_ParCSRMatrix *) matrix);
-   hypre_MPI_Comm_rank(comm, &my_id);
+   comm = nalu_hypre_ParCSRMatrixComm((nalu_hypre_ParCSRMatrix *) matrix);
+   nalu_hypre_MPI_Comm_rank(comm, &my_id);
 
    NALU_HYPRE_Int       num_procs;
    NALU_HYPRE_BigInt    row_start;
 
-   hypre_MPI_Comm_size(comm, &num_procs);
+   nalu_hypre_MPI_Comm_size(comm, &num_procs);
    if (my_id == 0 || all_procs)
    {
-      row_partitioning = hypre_CTAlloc(NALU_HYPRE_BigInt, num_procs + 1, NALU_HYPRE_MEMORY_HOST);
+      row_partitioning = nalu_hypre_CTAlloc(NALU_HYPRE_BigInt, num_procs + 1, NALU_HYPRE_MEMORY_HOST);
    }
 
-   row_start = hypre_ParCSRMatrixFirstRowIndex((hypre_ParCSRMatrix *) matrix);
+   row_start = nalu_hypre_ParCSRMatrixFirstRowIndex((nalu_hypre_ParCSRMatrix *) matrix);
    if (all_procs)
    {
-      hypre_MPI_Allgather(&row_start, 1, NALU_HYPRE_MPI_BIG_INT, row_partitioning,
+      nalu_hypre_MPI_Allgather(&row_start, 1, NALU_HYPRE_MPI_BIG_INT, row_partitioning,
                           1, NALU_HYPRE_MPI_BIG_INT, comm);
    }
    else
    {
-      hypre_MPI_Gather(&row_start, 1, NALU_HYPRE_MPI_BIG_INT, row_partitioning,
+      nalu_hypre_MPI_Gather(&row_start, 1, NALU_HYPRE_MPI_BIG_INT, row_partitioning,
                        1, NALU_HYPRE_MPI_BIG_INT, 0, comm);
    }
 
    if (my_id == 0 || all_procs)
    {
-      row_partitioning[num_procs] = hypre_ParCSRMatrixGlobalNumRows((hypre_ParCSRMatrix *) matrix);
+      row_partitioning[num_procs] = nalu_hypre_ParCSRMatrixGlobalNumRows((nalu_hypre_ParCSRMatrix *) matrix);
    }
 
    *row_partitioning_ptr = row_partitioning;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
@@ -226,22 +226,22 @@ NALU_HYPRE_ParCSRMatrixGetColPartitioning( NALU_HYPRE_ParCSRMatrix   matrix,
 
    if (!matrix)
    {
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
 
-   hypre_MPI_Comm_size(hypre_ParCSRMatrixComm((hypre_ParCSRMatrix *) matrix),
+   nalu_hypre_MPI_Comm_size(nalu_hypre_ParCSRMatrixComm((nalu_hypre_ParCSRMatrix *) matrix),
                        &num_procs);
-   col_starts = hypre_ParCSRMatrixColStarts((hypre_ParCSRMatrix *) matrix);
+   col_starts = nalu_hypre_ParCSRMatrixColStarts((nalu_hypre_ParCSRMatrix *) matrix);
    if (!col_starts) { return -1; }
-   col_partitioning = hypre_CTAlloc(NALU_HYPRE_BigInt,  num_procs + 1, NALU_HYPRE_MEMORY_HOST);
+   col_partitioning = nalu_hypre_CTAlloc(NALU_HYPRE_BigInt,  num_procs + 1, NALU_HYPRE_MEMORY_HOST);
    for (i = 0; i < num_procs + 1; i++)
    {
       col_partitioning[i] = col_starts[i];
    }
 
    *col_partitioning_ptr = col_partitioning;
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
@@ -273,13 +273,13 @@ NALU_HYPRE_ParCSRMatrixGetLocalRange( NALU_HYPRE_ParCSRMatrix  matrix,
 {
    if (!matrix)
    {
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
 
-   hypre_ParCSRMatrixGetLocalRange( (hypre_ParCSRMatrix *) matrix,
+   nalu_hypre_ParCSRMatrixGetLocalRange( (nalu_hypre_ParCSRMatrix *) matrix,
                                     row_start, row_end, col_start, col_end );
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
@@ -295,13 +295,13 @@ NALU_HYPRE_ParCSRMatrixGetRow( NALU_HYPRE_ParCSRMatrix  matrix,
 {
    if (!matrix)
    {
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
 
-   hypre_ParCSRMatrixGetRow( (hypre_ParCSRMatrix *) matrix,
+   nalu_hypre_ParCSRMatrixGetRow( (nalu_hypre_ParCSRMatrix *) matrix,
                              row, size, col_ind, values );
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
@@ -317,13 +317,13 @@ NALU_HYPRE_ParCSRMatrixRestoreRow( NALU_HYPRE_ParCSRMatrix  matrix,
 {
    if (!matrix)
    {
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
 
-   hypre_ParCSRMatrixRestoreRow( (hypre_ParCSRMatrix *) matrix,
+   nalu_hypre_ParCSRMatrixRestoreRow( (nalu_hypre_ParCSRMatrix *) matrix,
                                  row, size, col_ind, values );
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
@@ -345,13 +345,13 @@ NALU_HYPRE_CSRMatrixToParCSRMatrix( MPI_Comm            comm,
 {
    if (!matrix)
    {
-      hypre_error_in_arg(5);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(5);
+      return nalu_hypre_error_flag;
    }
    *matrix = (NALU_HYPRE_ParCSRMatrix)
-             hypre_CSRMatrixToParCSRMatrix( comm, (hypre_CSRMatrix *) A_CSR,
+             nalu_hypre_CSRMatrixToParCSRMatrix( comm, (nalu_hypre_CSRMatrix *) A_CSR,
                                             row_partitioning, col_partitioning) ;
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
@@ -369,12 +369,12 @@ NALU_HYPRE_CSRMatrixToParCSRMatrix_WithNewPartitioning(
 {
    if (!matrix)
    {
-      hypre_error_in_arg(3);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(3);
+      return nalu_hypre_error_flag;
    }
    *matrix = (NALU_HYPRE_ParCSRMatrix)
-             hypre_CSRMatrixToParCSRMatrix( comm, (hypre_CSRMatrix *) A_CSR, NULL, NULL ) ;
-   return hypre_error_flag;
+             nalu_hypre_CSRMatrixToParCSRMatrix( comm, (nalu_hypre_CSRMatrix *) A_CSR, NULL, NULL ) ;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
@@ -388,9 +388,9 @@ NALU_HYPRE_ParCSRMatrixMatvec( NALU_HYPRE_Complex      alpha,
                           NALU_HYPRE_Complex      beta,
                           NALU_HYPRE_ParVector    y )
 {
-   return ( hypre_ParCSRMatrixMatvec(
-               alpha, (hypre_ParCSRMatrix *) A,
-               (hypre_ParVector *) x, beta, (hypre_ParVector *) y) );
+   return ( nalu_hypre_ParCSRMatrixMatvec(
+               alpha, (nalu_hypre_ParCSRMatrix *) A,
+               (nalu_hypre_ParVector *) x, beta, (nalu_hypre_ParVector *) y) );
 }
 
 /*--------------------------------------------------------------------------
@@ -404,7 +404,7 @@ NALU_HYPRE_ParCSRMatrixMatvecT( NALU_HYPRE_Complex      alpha,
                            NALU_HYPRE_Complex      beta,
                            NALU_HYPRE_ParVector    y )
 {
-   return ( hypre_ParCSRMatrixMatvecT(
-               alpha, (hypre_ParCSRMatrix *) A,
-               (hypre_ParVector *) x, beta, (hypre_ParVector *) y) );
+   return ( nalu_hypre_ParCSRMatrixMatvecT(
+               alpha, (nalu_hypre_ParCSRMatrix *) A,
+               (nalu_hypre_ParVector *) x, beta, (nalu_hypre_ParVector *) y) );
 }

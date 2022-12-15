@@ -305,13 +305,13 @@ have occurred:
 .. code-block:: c
 
    /* call some HYPRE functions */
-   int  hypre_ierr;
-   hypre_ierr = NALU_HYPRE_Function();
+   int  nalu_hypre_ierr;
+   nalu_hypre_ierr = NALU_HYPRE_Function();
 
    /* check if the previously called hypre functions returned error(s) */
-   if (hypre_ierr)
+   if (nalu_hypre_ierr)
       /* check if the error with code NALU_HYPRE_ERROR_CODE has occurred */
-      if (NALU_HYPRE_CheckError(hypre_ierr,NALU_HYPRE_ERROR_CODE))
+      if (NALU_HYPRE_CheckError(nalu_hypre_ierr,NALU_HYPRE_ERROR_CODE))
 
 The corresponding FORTRAN code is
 
@@ -321,13 +321,13 @@ The corresponding FORTRAN code is
    include 'NALU_HYPRE_error_f.h'
 
    ! call some HYPRE functions
-   integer  hypre_ierr
-   call NALU_HYPRE_Function(hypre_ierr)
+   integer  nalu_hypre_ierr
+   call NALU_HYPRE_Function(nalu_hypre_ierr)
 
    ! check if the previously called hypre functions returned error(s)
-   if (hypre_ierr .ne. 0) then
+   if (nalu_hypre_ierr .ne. 0) then
       ! check if the error with code NALU_HYPRE_ERROR_CODE has occurred
-      call NALU_HYPRE_CheckError(hypre_ierr, NALU_HYPRE_ERROR_CODE, check)
+      call NALU_HYPRE_CheckError(nalu_hypre_ierr, NALU_HYPRE_ERROR_CODE, check)
       if (check .ne. 0) then
 
 The global error flag can also be obtained directly, between calls to other
@@ -338,7 +338,7 @@ description of all errors in a given error flag, use
 
 .. code-block:: c
 
-   NALU_HYPRE_DescribeError(int hypre_ierr, char *descr);
+   NALU_HYPRE_DescribeError(int nalu_hypre_ierr, char *descr);
 
 The global error flag can be cleared manually by calling
 ``NALU_HYPRE_ClearAllErrors()``, which will essentially ignore all previous hypre

@@ -6,7 +6,7 @@
  ******************************************************************************/
 
 #include <stdlib.h>
-#include "_hypre_Euclid.h"
+#include "_nalu_hypre_Euclid.h"
 /* #include "Vec_dh.h" */
 /* #include "Mem_dh.h" */
 /* #include "SubdomainGraph_dh.h" */
@@ -55,7 +55,7 @@ void Vec_dhCopy(Vec_dh x, Vec_dh y)
   if (x->vals == NULL) SET_V_ERROR("x->vals is NULL");
   if (y->vals == NULL) SET_V_ERROR("y->vals is NULL");
   if (x->n != y->n) SET_V_ERROR("x and y are different lengths");
-  hypre_TMemcpy(y->vals,  x->vals, NALU_HYPRE_Real, x->n, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_HOST);
+  nalu_hypre_TMemcpy(y->vals,  x->vals, NALU_HYPRE_Real, x->n, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_HOST);
   END_FUNC_DH
 }
 
@@ -125,7 +125,7 @@ void Vec_dhPrint(Vec_dh v, SubdomainGraph_dh sg, char *filename)
    *--------------------------------------------------------*/
   if (sg == NULL) {
     for (pe=0; pe<np_dh; ++pe) {
-      hypre_MPI_Barrier(comm_dh);
+      nalu_hypre_MPI_Barrier(comm_dh);
       if (pe == myid_dh) {
         if (pe == 0) {
           fp=openFile_dh(filename, "w"); CHECK_V_ERROR;
@@ -133,7 +133,7 @@ void Vec_dhPrint(Vec_dh v, SubdomainGraph_dh sg, char *filename)
           fp=openFile_dh(filename, "a"); CHECK_V_ERROR;
         }
 
-        for (i=0; i<m; ++i) hypre_fprintf(fp, "%g\n", vals[i]);
+        for (i=0; i<m; ++i) nalu_hypre_fprintf(fp, "%g\n", vals[i]);
 
         closeFile_dh(fp); CHECK_V_ERROR;
       }
@@ -153,11 +153,11 @@ void Vec_dhPrint(Vec_dh v, SubdomainGraph_dh sg, char *filename)
       NALU_HYPRE_Int beg_row = sg->beg_rowP[oldBlock];
       NALU_HYPRE_Int end_row = beg_row + sg->row_count[oldBlock];
 
-hypre_printf("seq: block= %i  beg= %i  end= %i\n", oldBlock, beg_row, end_row);
+nalu_hypre_printf("seq: block= %i  beg= %i  end= %i\n", oldBlock, beg_row, end_row);
 
 
       for (j=beg_row; j<end_row; ++j) {
-        hypre_fprintf(fp, "%g\n", vals[j]);
+        nalu_hypre_fprintf(fp, "%g\n", vals[j]);
       }
     }
   }
@@ -168,7 +168,7 @@ hypre_printf("seq: block= %i  beg= %i  end= %i\n", oldBlock, beg_row, end_row);
   else {
     NALU_HYPRE_Int id = sg->o2n_sub[myid_dh];
     for (pe=0; pe<np_dh; ++pe) {
-      hypre_MPI_Barrier(comm_dh);
+      nalu_hypre_MPI_Barrier(comm_dh);
       if (id == pe) {
         if (pe == 0) {
           fp=openFile_dh(filename, "w"); CHECK_V_ERROR;
@@ -177,10 +177,10 @@ hypre_printf("seq: block= %i  beg= %i  end= %i\n", oldBlock, beg_row, end_row);
           fp=openFile_dh(filename, "a"); CHECK_V_ERROR;
         }
 
-hypre_fprintf(stderr, "par: block= %i\n", id);
+nalu_hypre_fprintf(stderr, "par: block= %i\n", id);
 
         for (i=0; i<m; ++i) {
-          hypre_fprintf(fp, "%g\n", vals[i]);
+          nalu_hypre_fprintf(fp, "%g\n", vals[i]);
         }
 
         closeFile_dh(fp); CHECK_V_ERROR;
@@ -232,27 +232,27 @@ void Vec_dhRead(Vec_dh *vout, NALU_HYPRE_Int ignore, char *filename)
 
   /* skip over file lines */
   if (ignore) {
-    hypre_printf("Vec_dhRead:: ignoring following header lines:\n");
-    hypre_printf("--------------------------------------------------------------\n");
+    nalu_hypre_printf("Vec_dhRead:: ignoring following header lines:\n");
+    nalu_hypre_printf("--------------------------------------------------------------\n");
     for (i=0; i<ignore; ++i) {
       if (fgets(junk, MAX_JUNK, fp) != NULL) {
-        hypre_printf("%s", junk);
+        nalu_hypre_printf("%s", junk);
       }
     }
-    hypre_printf("--------------------------------------------------------------\n");
+    nalu_hypre_printf("--------------------------------------------------------------\n");
   }
 
   /* count floating point entries in file */
   n = 0;
   while (!feof(fp)) {
-    items = hypre_fscanf(fp,"%lg", &w);
+    items = nalu_hypre_fscanf(fp,"%lg", &w);
     if (items != 1) {
       break;
     }
     ++n;
   }
 
-  hypre_printf("Vec_dhRead:: n= %i\n", n);
+  nalu_hypre_printf("Vec_dhRead:: n= %i\n", n);
 
   /* allocate storage */
   tmp->n = n;
@@ -263,15 +263,15 @@ void Vec_dhRead(Vec_dh *vout, NALU_HYPRE_Int ignore, char *filename)
   rewind(fp);
   for (i=0; i<ignore; ++i) {
     if (fgets(junk, MAX_JUNK, fp) != NULL) {
-      hypre_printf("%s", junk);
+      nalu_hypre_printf("%s", junk);
     }
   }
 
   /* read values */
   for (i=0; i<n;  ++i) {
-    items = hypre_fscanf(fp,"%lg", v+i);
+    items = nalu_hypre_fscanf(fp,"%lg", v+i);
     if (items != 1) {
-      hypre_sprintf(msgBuf_dh, "failed to read value %i of %i", i+1, n);
+      nalu_hypre_sprintf(msgBuf_dh, "failed to read value %i of %i", i+1, n);
     }
   }
 

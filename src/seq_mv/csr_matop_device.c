@@ -7,69 +7,69 @@
 
 /******************************************************************************
  *
- * Matrix operation functions for hypre_CSRMatrix class.
+ * Matrix operation functions for nalu_hypre_CSRMatrix class.
  *
  *****************************************************************************/
 
-#include "_hypre_onedpl.hpp"
+#include "_nalu_hypre_onedpl.hpp"
 #include "seq_mv.h"
-#include "_hypre_utilities.hpp"
+#include "_nalu_hypre_utilities.hpp"
 #include "seq_mv.hpp"
 
 #if defined(NALU_HYPRE_USING_CUSPARSE) || defined(NALU_HYPRE_USING_ROCSPARSE) || defined(NALU_HYPRE_USING_ONEMKLSPARSE)
-hypre_CsrsvData*
-hypre_CsrsvDataCreate()
+nalu_hypre_CsrsvData*
+nalu_hypre_CsrsvDataCreate()
 {
-   hypre_CsrsvData *data = hypre_CTAlloc(hypre_CsrsvData, 1, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_CsrsvData *data = nalu_hypre_CTAlloc(nalu_hypre_CsrsvData, 1, NALU_HYPRE_MEMORY_HOST);
 
    return data;
 }
 
 void
-hypre_CsrsvDataDestroy(hypre_CsrsvData* data)
+nalu_hypre_CsrsvDataDestroy(nalu_hypre_CsrsvData* data)
 {
    if (!data)
    {
       return;
    }
 
-   if ( hypre_CsrsvDataInfoL(data) )
+   if ( nalu_hypre_CsrsvDataInfoL(data) )
    {
 #if defined(NALU_HYPRE_USING_CUSPARSE)
-      NALU_HYPRE_CUSPARSE_CALL( cusparseDestroyCsrsv2Info( hypre_CsrsvDataInfoL(data) ) );
+      NALU_HYPRE_CUSPARSE_CALL( cusparseDestroyCsrsv2Info( nalu_hypre_CsrsvDataInfoL(data) ) );
 #elif defined(NALU_HYPRE_USING_ROCSPARSE)
-      NALU_HYPRE_ROCSPARSE_CALL( rocsparse_destroy_mat_info( hypre_CsrsvDataInfoL(data) ) );
+      NALU_HYPRE_ROCSPARSE_CALL( rocsparse_destroy_mat_info( nalu_hypre_CsrsvDataInfoL(data) ) );
 #endif
    }
 
-   if ( hypre_CsrsvDataInfoU(data) )
+   if ( nalu_hypre_CsrsvDataInfoU(data) )
    {
 #if defined(NALU_HYPRE_USING_CUSPARSE)
-      NALU_HYPRE_CUSPARSE_CALL( cusparseDestroyCsrsv2Info( hypre_CsrsvDataInfoU(data) ) );
+      NALU_HYPRE_CUSPARSE_CALL( cusparseDestroyCsrsv2Info( nalu_hypre_CsrsvDataInfoU(data) ) );
 #elif defined(NALU_HYPRE_USING_ROCSPARSE)
-      NALU_HYPRE_ROCSPARSE_CALL( rocsparse_destroy_mat_info( hypre_CsrsvDataInfoU(data) ) );
+      NALU_HYPRE_ROCSPARSE_CALL( rocsparse_destroy_mat_info( nalu_hypre_CsrsvDataInfoU(data) ) );
 #endif
    }
 
-   if ( hypre_CsrsvDataBuffer(data) )
+   if ( nalu_hypre_CsrsvDataBuffer(data) )
    {
-      hypre_TFree(hypre_CsrsvDataBuffer(data), NALU_HYPRE_MEMORY_DEVICE);
+      nalu_hypre_TFree(nalu_hypre_CsrsvDataBuffer(data), NALU_HYPRE_MEMORY_DEVICE);
    }
 
-   hypre_TFree(data, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(data, NALU_HYPRE_MEMORY_HOST);
 }
 
-hypre_GpuMatData *
-hypre_GpuMatDataCreate()
+nalu_hypre_GpuMatData *
+nalu_hypre_GpuMatDataCreate()
 {
-   hypre_GpuMatData *data = hypre_CTAlloc(hypre_GpuMatData, 1, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_GpuMatData *data = nalu_hypre_CTAlloc(nalu_hypre_GpuMatData, 1, NALU_HYPRE_MEMORY_HOST);
 
 #if defined(NALU_HYPRE_USING_CUSPARSE)
    cusparseMatDescr_t mat_descr;
    NALU_HYPRE_CUSPARSE_CALL( cusparseCreateMatDescr(&mat_descr) );
    NALU_HYPRE_CUSPARSE_CALL( cusparseSetMatType(mat_descr, CUSPARSE_MATRIX_TYPE_GENERAL) );
    NALU_HYPRE_CUSPARSE_CALL( cusparseSetMatIndexBase(mat_descr, CUSPARSE_INDEX_BASE_ZERO) );
-   hypre_GpuMatDataMatDecsr(data) = mat_descr;
+   nalu_hypre_GpuMatDataMatDecsr(data) = mat_descr;
 #endif
 
 #if defined(NALU_HYPRE_USING_ROCSPARSE)
@@ -78,40 +78,40 @@ hypre_GpuMatDataCreate()
    NALU_HYPRE_ROCSPARSE_CALL( rocsparse_create_mat_descr(&mat_descr) );
    NALU_HYPRE_ROCSPARSE_CALL( rocsparse_set_mat_type(mat_descr, rocsparse_matrix_type_general) );
    NALU_HYPRE_ROCSPARSE_CALL( rocsparse_set_mat_index_base(mat_descr, rocsparse_index_base_zero) );
-   hypre_GpuMatDataMatDecsr(data) = mat_descr;
+   nalu_hypre_GpuMatDataMatDecsr(data) = mat_descr;
    NALU_HYPRE_ROCSPARSE_CALL( rocsparse_create_mat_info(&info) );
-   hypre_GpuMatDataMatInfo(data) = info;
+   nalu_hypre_GpuMatDataMatInfo(data) = info;
 #endif
 
 #if defined(NALU_HYPRE_USING_ONEMKLSPARSE)
    oneapi::mkl::sparse::matrix_handle_t mat_handle;
    NALU_HYPRE_ONEMKL_CALL( oneapi::mkl::sparse::init_matrix_handle(&mat_handle) );
-   hypre_GpuMatDataMatHandle(data) = mat_handle;
+   nalu_hypre_GpuMatDataMatHandle(data) = mat_handle;
 #endif
 
    return data;
 }
 
 void
-hypre_GPUMatDataSetCSRData( hypre_GpuMatData *data,
-                            hypre_CSRMatrix *matrix)
+nalu_hypre_GPUMatDataSetCSRData( nalu_hypre_GpuMatData *data,
+                            nalu_hypre_CSRMatrix *matrix)
 {
 
 #if defined(NALU_HYPRE_USING_ONEMKLSPARSE)
-   oneapi::mkl::sparse::matrix_handle_t mat_handle = hypre_GpuMatDataMatHandle(data);
+   oneapi::mkl::sparse::matrix_handle_t mat_handle = nalu_hypre_GpuMatDataMatHandle(data);
    NALU_HYPRE_ONEMKL_CALL( oneapi::mkl::sparse::set_csr_data(mat_handle,
-                                                        hypre_CSRMatrixNumRows(matrix),
-                                                        hypre_CSRMatrixNumCols(matrix),
+                                                        nalu_hypre_CSRMatrixNumRows(matrix),
+                                                        nalu_hypre_CSRMatrixNumCols(matrix),
                                                         oneapi::mkl::index_base::zero,
-                                                        hypre_CSRMatrixI(matrix),
-                                                        hypre_CSRMatrixJ(matrix),
-                                                        hypre_CSRMatrixData(matrix)) );
+                                                        nalu_hypre_CSRMatrixI(matrix),
+                                                        nalu_hypre_CSRMatrixJ(matrix),
+                                                        nalu_hypre_CSRMatrixData(matrix)) );
 #endif
 
 }
 
 void
-hypre_GpuMatDataDestroy(hypre_GpuMatData *data)
+nalu_hypre_GpuMatDataDestroy(nalu_hypre_GpuMatData *data)
 {
    if (!data)
    {
@@ -119,53 +119,53 @@ hypre_GpuMatDataDestroy(hypre_GpuMatData *data)
    }
 
 #if defined(NALU_HYPRE_USING_CUSPARSE)
-   NALU_HYPRE_CUSPARSE_CALL( cusparseDestroyMatDescr(hypre_GpuMatDataMatDecsr(data)) );
-   hypre_TFree(hypre_GpuMatDataSpMVBuffer(data), NALU_HYPRE_MEMORY_DEVICE);
+   NALU_HYPRE_CUSPARSE_CALL( cusparseDestroyMatDescr(nalu_hypre_GpuMatDataMatDecsr(data)) );
+   nalu_hypre_TFree(nalu_hypre_GpuMatDataSpMVBuffer(data), NALU_HYPRE_MEMORY_DEVICE);
 #endif
 
 #if defined(NALU_HYPRE_USING_ROCSPARSE)
-   NALU_HYPRE_ROCSPARSE_CALL( rocsparse_destroy_mat_descr(hypre_GpuMatDataMatDecsr(data)) );
-   NALU_HYPRE_ROCSPARSE_CALL( rocsparse_destroy_mat_info(hypre_GpuMatDataMatInfo(data)) );
+   NALU_HYPRE_ROCSPARSE_CALL( rocsparse_destroy_mat_descr(nalu_hypre_GpuMatDataMatDecsr(data)) );
+   NALU_HYPRE_ROCSPARSE_CALL( rocsparse_destroy_mat_info(nalu_hypre_GpuMatDataMatInfo(data)) );
 #endif
 
 #if defined(NALU_HYPRE_USING_ONEMKLSPARSE)
-   NALU_HYPRE_ONEMKL_CALL( oneapi::mkl::sparse::release_matrix_handle(&hypre_GpuMatDataMatHandle(data)) );
+   NALU_HYPRE_ONEMKL_CALL( oneapi::mkl::sparse::release_matrix_handle(&nalu_hypre_GpuMatDataMatHandle(data)) );
 #endif
 
-   hypre_TFree(data, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(data, NALU_HYPRE_MEMORY_HOST);
 }
 
 #endif /* #if defined(NALU_HYPRE_USING_CUSPARSE) || defined(NALU_HYPRE_USING_ROCSPARSE) || defined(NALU_HYPRE_USING_ONEMKLSPARSE) */
 
 #if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP) || defined(NALU_HYPRE_USING_SYCL)
 
-hypre_CSRMatrix*
-hypre_CSRMatrixAddDevice ( NALU_HYPRE_Complex    alpha,
-                           hypre_CSRMatrix *A,
+nalu_hypre_CSRMatrix*
+nalu_hypre_CSRMatrixAddDevice ( NALU_HYPRE_Complex    alpha,
+                           nalu_hypre_CSRMatrix *A,
                            NALU_HYPRE_Complex    beta,
-                           hypre_CSRMatrix *B     )
+                           nalu_hypre_CSRMatrix *B     )
 {
-   NALU_HYPRE_Complex    *A_data   = hypre_CSRMatrixData(A);
-   NALU_HYPRE_Int        *A_i      = hypre_CSRMatrixI(A);
-   NALU_HYPRE_Int        *A_j      = hypre_CSRMatrixJ(A);
-   NALU_HYPRE_Int         nrows_A  = hypre_CSRMatrixNumRows(A);
-   NALU_HYPRE_Int         ncols_A  = hypre_CSRMatrixNumCols(A);
-   NALU_HYPRE_Int         nnz_A    = hypre_CSRMatrixNumNonzeros(A);
-   NALU_HYPRE_Complex    *B_data   = hypre_CSRMatrixData(B);
-   NALU_HYPRE_Int        *B_i      = hypre_CSRMatrixI(B);
-   NALU_HYPRE_Int        *B_j      = hypre_CSRMatrixJ(B);
-   NALU_HYPRE_Int         nrows_B  = hypre_CSRMatrixNumRows(B);
-   NALU_HYPRE_Int         ncols_B  = hypre_CSRMatrixNumCols(B);
-   NALU_HYPRE_Int         nnz_B    = hypre_CSRMatrixNumNonzeros(B);
+   NALU_HYPRE_Complex    *A_data   = nalu_hypre_CSRMatrixData(A);
+   NALU_HYPRE_Int        *A_i      = nalu_hypre_CSRMatrixI(A);
+   NALU_HYPRE_Int        *A_j      = nalu_hypre_CSRMatrixJ(A);
+   NALU_HYPRE_Int         nrows_A  = nalu_hypre_CSRMatrixNumRows(A);
+   NALU_HYPRE_Int         ncols_A  = nalu_hypre_CSRMatrixNumCols(A);
+   NALU_HYPRE_Int         nnz_A    = nalu_hypre_CSRMatrixNumNonzeros(A);
+   NALU_HYPRE_Complex    *B_data   = nalu_hypre_CSRMatrixData(B);
+   NALU_HYPRE_Int        *B_i      = nalu_hypre_CSRMatrixI(B);
+   NALU_HYPRE_Int        *B_j      = nalu_hypre_CSRMatrixJ(B);
+   NALU_HYPRE_Int         nrows_B  = nalu_hypre_CSRMatrixNumRows(B);
+   NALU_HYPRE_Int         ncols_B  = nalu_hypre_CSRMatrixNumCols(B);
+   NALU_HYPRE_Int         nnz_B    = nalu_hypre_CSRMatrixNumNonzeros(B);
    NALU_HYPRE_Complex    *C_data;
    NALU_HYPRE_Int        *C_i;
    NALU_HYPRE_Int        *C_j;
    NALU_HYPRE_Int         nnzC;
-   hypre_CSRMatrix  *C;
+   nalu_hypre_CSRMatrix  *C;
 
    if (nrows_A != nrows_B || ncols_A != ncols_B)
    {
-      hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "Warning! Incompatible matrix dimensions!\n");
+      nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "Warning! Incompatible matrix dimensions!\n");
 
       return NULL;
    }
@@ -174,57 +174,57 @@ hypre_CSRMatrixAddDevice ( NALU_HYPRE_Complex    alpha,
                         A_i, A_j, alpha, A_data, NULL, B_i, B_j, beta, B_data, NULL, NULL,
                         &nnzC, &C_i, &C_j, &C_data);
 
-   C = hypre_CSRMatrixCreate(nrows_A, ncols_B, nnzC);
-   hypre_CSRMatrixI(C) = C_i;
-   hypre_CSRMatrixJ(C) = C_j;
-   hypre_CSRMatrixData(C) = C_data;
-   hypre_CSRMatrixMemoryLocation(C) = NALU_HYPRE_MEMORY_DEVICE;
+   C = nalu_hypre_CSRMatrixCreate(nrows_A, ncols_B, nnzC);
+   nalu_hypre_CSRMatrixI(C) = C_i;
+   nalu_hypre_CSRMatrixJ(C) = C_j;
+   nalu_hypre_CSRMatrixData(C) = C_data;
+   nalu_hypre_CSRMatrixMemoryLocation(C) = NALU_HYPRE_MEMORY_DEVICE;
 
-   hypre_SyncComputeStream(hypre_handle());
+   nalu_hypre_SyncComputeStream(nalu_hypre_handle());
 
    return C;
 }
 
-hypre_CSRMatrix*
-hypre_CSRMatrixMultiplyDevice( hypre_CSRMatrix *A,
-                               hypre_CSRMatrix *B)
+nalu_hypre_CSRMatrix*
+nalu_hypre_CSRMatrixMultiplyDevice( nalu_hypre_CSRMatrix *A,
+                               nalu_hypre_CSRMatrix *B)
 {
 /* WM: currently do not have a reliable device matmat routine for sycl */
 #if defined(NALU_HYPRE_USING_SYCL)
-   return hypre_CSRMatrixMultiplyHost(A, B);
+   return nalu_hypre_CSRMatrixMultiplyHost(A, B);
 #endif
-   NALU_HYPRE_Int         ncols_A  = hypre_CSRMatrixNumCols(A);
-   NALU_HYPRE_Int         nrows_B  = hypre_CSRMatrixNumRows(B);
-   hypre_CSRMatrix  *C;
+   NALU_HYPRE_Int         ncols_A  = nalu_hypre_CSRMatrixNumCols(A);
+   NALU_HYPRE_Int         nrows_B  = nalu_hypre_CSRMatrixNumRows(B);
+   nalu_hypre_CSRMatrix  *C;
 
    if (ncols_A != nrows_B)
    {
-      hypre_printf("Warning! incompatible matrix dimensions!\n");
-      hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "Warning! incompatible matrix dimensions!\n");
+      nalu_hypre_printf("Warning! incompatible matrix dimensions!\n");
+      nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "Warning! incompatible matrix dimensions!\n");
 
       return NULL;
    }
 
-   hypre_GpuProfilingPushRange("CSRMatrixMultiply");
+   nalu_hypre_GpuProfilingPushRange("CSRMatrixMultiply");
 
    hypreDevice_CSRSpGemm(A, B, &C);
 
-   hypre_SyncComputeStream(hypre_handle());
+   nalu_hypre_SyncComputeStream(nalu_hypre_handle());
 
-   hypre_GpuProfilingPopRange();
+   nalu_hypre_GpuProfilingPopRange();
 
    return C;
 }
 
-hypre_CSRMatrix*
-hypre_CSRMatrixTripleMultiplyDevice ( hypre_CSRMatrix *A,
-                                      hypre_CSRMatrix *B,
-                                      hypre_CSRMatrix *C )
+nalu_hypre_CSRMatrix*
+nalu_hypre_CSRMatrixTripleMultiplyDevice ( nalu_hypre_CSRMatrix *A,
+                                      nalu_hypre_CSRMatrix *B,
+                                      nalu_hypre_CSRMatrix *C )
 {
-   hypre_CSRMatrix *BC  = hypre_CSRMatrixMultiplyDevice(B, C);
-   hypre_CSRMatrix *ABC = hypre_CSRMatrixMultiplyDevice(A, BC);
+   nalu_hypre_CSRMatrix *BC  = nalu_hypre_CSRMatrixMultiplyDevice(B, C);
+   nalu_hypre_CSRMatrix *ABC = nalu_hypre_CSRMatrixMultiplyDevice(A, BC);
 
-   hypre_CSRMatrixDestroy(BC);
+   nalu_hypre_CSRMatrixDestroy(BC);
 
    return ABC;
 }
@@ -237,7 +237,7 @@ hypre_CSRMatrixTripleMultiplyDevice ( hypre_CSRMatrix *A,
  */
 
 NALU_HYPRE_Int
-hypre_CSRMatrixSplitDevice( hypre_CSRMatrix  *B_ext,
+nalu_hypre_CSRMatrixSplitDevice( nalu_hypre_CSRMatrix  *B_ext,
                             NALU_HYPRE_BigInt      first_col_diag_B,
                             NALU_HYPRE_BigInt      last_col_diag_B,
                             NALU_HYPRE_Int         num_cols_offd_B,
@@ -245,24 +245,24 @@ hypre_CSRMatrixSplitDevice( hypre_CSRMatrix  *B_ext,
                             NALU_HYPRE_Int       **map_B_to_C_ptr,
                             NALU_HYPRE_Int        *num_cols_offd_C_ptr,
                             NALU_HYPRE_BigInt    **col_map_offd_C_ptr,
-                            hypre_CSRMatrix **B_ext_diag_ptr,
-                            hypre_CSRMatrix **B_ext_offd_ptr )
+                            nalu_hypre_CSRMatrix **B_ext_diag_ptr,
+                            nalu_hypre_CSRMatrix **B_ext_offd_ptr )
 {
-   NALU_HYPRE_Int num_rows = hypre_CSRMatrixNumRows(B_ext);
-   NALU_HYPRE_Int B_ext_nnz = hypre_CSRMatrixNumNonzeros(B_ext);
+   NALU_HYPRE_Int num_rows = nalu_hypre_CSRMatrixNumRows(B_ext);
+   NALU_HYPRE_Int B_ext_nnz = nalu_hypre_CSRMatrixNumNonzeros(B_ext);
 
-   NALU_HYPRE_Int *B_ext_ii = hypre_TAlloc(NALU_HYPRE_Int, B_ext_nnz, NALU_HYPRE_MEMORY_DEVICE);
-   hypreDevice_CsrRowPtrsToIndices_v2(num_rows, B_ext_nnz, hypre_CSRMatrixI(B_ext), B_ext_ii);
+   NALU_HYPRE_Int *B_ext_ii = nalu_hypre_TAlloc(NALU_HYPRE_Int, B_ext_nnz, NALU_HYPRE_MEMORY_DEVICE);
+   hypreDevice_CsrRowPtrsToIndices_v2(num_rows, B_ext_nnz, nalu_hypre_CSRMatrixI(B_ext), B_ext_ii);
 
    NALU_HYPRE_Int B_ext_diag_nnz;
    NALU_HYPRE_Int B_ext_offd_nnz;
    NALU_HYPRE_Int ierr;
 
-   ierr = hypre_CSRMatrixSplitDevice_core( 0,
+   ierr = nalu_hypre_CSRMatrixSplitDevice_core( 0,
                                            num_rows,
                                            B_ext_nnz,
                                            NULL,
-                                           hypre_CSRMatrixBigJ(B_ext),
+                                           nalu_hypre_CSRMatrixBigJ(B_ext),
                                            NULL,
                                            NULL,
                                            first_col_diag_B,
@@ -283,20 +283,20 @@ hypre_CSRMatrixSplitDevice( hypre_CSRMatrix  *B_ext,
                                            NULL,
                                            NULL );
 
-   NALU_HYPRE_Int     *B_ext_diag_ii = hypre_TAlloc(NALU_HYPRE_Int,     B_ext_diag_nnz, NALU_HYPRE_MEMORY_DEVICE);
-   NALU_HYPRE_Int     *B_ext_diag_j  = hypre_TAlloc(NALU_HYPRE_Int,     B_ext_diag_nnz, NALU_HYPRE_MEMORY_DEVICE);
-   NALU_HYPRE_Complex *B_ext_diag_a  = hypre_TAlloc(NALU_HYPRE_Complex, B_ext_diag_nnz, NALU_HYPRE_MEMORY_DEVICE);
+   NALU_HYPRE_Int     *B_ext_diag_ii = nalu_hypre_TAlloc(NALU_HYPRE_Int,     B_ext_diag_nnz, NALU_HYPRE_MEMORY_DEVICE);
+   NALU_HYPRE_Int     *B_ext_diag_j  = nalu_hypre_TAlloc(NALU_HYPRE_Int,     B_ext_diag_nnz, NALU_HYPRE_MEMORY_DEVICE);
+   NALU_HYPRE_Complex *B_ext_diag_a  = nalu_hypre_TAlloc(NALU_HYPRE_Complex, B_ext_diag_nnz, NALU_HYPRE_MEMORY_DEVICE);
 
-   NALU_HYPRE_Int     *B_ext_offd_ii = hypre_TAlloc(NALU_HYPRE_Int,     B_ext_offd_nnz, NALU_HYPRE_MEMORY_DEVICE);
-   NALU_HYPRE_Int     *B_ext_offd_j  = hypre_TAlloc(NALU_HYPRE_Int,     B_ext_offd_nnz, NALU_HYPRE_MEMORY_DEVICE);
-   NALU_HYPRE_Complex *B_ext_offd_a  = hypre_TAlloc(NALU_HYPRE_Complex, B_ext_offd_nnz, NALU_HYPRE_MEMORY_DEVICE);
+   NALU_HYPRE_Int     *B_ext_offd_ii = nalu_hypre_TAlloc(NALU_HYPRE_Int,     B_ext_offd_nnz, NALU_HYPRE_MEMORY_DEVICE);
+   NALU_HYPRE_Int     *B_ext_offd_j  = nalu_hypre_TAlloc(NALU_HYPRE_Int,     B_ext_offd_nnz, NALU_HYPRE_MEMORY_DEVICE);
+   NALU_HYPRE_Complex *B_ext_offd_a  = nalu_hypre_TAlloc(NALU_HYPRE_Complex, B_ext_offd_nnz, NALU_HYPRE_MEMORY_DEVICE);
 
-   ierr = hypre_CSRMatrixSplitDevice_core( 1,
+   ierr = nalu_hypre_CSRMatrixSplitDevice_core( 1,
                                            num_rows,
                                            B_ext_nnz,
                                            B_ext_ii,
-                                           hypre_CSRMatrixBigJ(B_ext),
-                                           hypre_CSRMatrixData(B_ext),
+                                           nalu_hypre_CSRMatrixBigJ(B_ext),
+                                           nalu_hypre_CSRMatrixData(B_ext),
                                            NULL,
                                            first_col_diag_B,
                                            last_col_diag_B,
@@ -316,42 +316,42 @@ hypre_CSRMatrixSplitDevice( hypre_CSRMatrix  *B_ext,
                                            B_ext_offd_a,
                                            NULL );
 
-   hypre_TFree(B_ext_ii, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(B_ext_ii, NALU_HYPRE_MEMORY_DEVICE);
 
    /* convert to row ptrs */
    NALU_HYPRE_Int *B_ext_diag_i = hypreDevice_CsrRowIndicesToPtrs(num_rows, B_ext_diag_nnz, B_ext_diag_ii);
    NALU_HYPRE_Int *B_ext_offd_i = hypreDevice_CsrRowIndicesToPtrs(num_rows, B_ext_offd_nnz, B_ext_offd_ii);
 
-   hypre_TFree(B_ext_diag_ii, NALU_HYPRE_MEMORY_DEVICE);
-   hypre_TFree(B_ext_offd_ii, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(B_ext_diag_ii, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(B_ext_offd_ii, NALU_HYPRE_MEMORY_DEVICE);
 
    /* create diag and offd CSR */
-   hypre_CSRMatrix *B_ext_diag = hypre_CSRMatrixCreate(num_rows,
+   nalu_hypre_CSRMatrix *B_ext_diag = nalu_hypre_CSRMatrixCreate(num_rows,
                                                        last_col_diag_B - first_col_diag_B + 1, B_ext_diag_nnz);
-   hypre_CSRMatrix *B_ext_offd = hypre_CSRMatrixCreate(num_rows, *num_cols_offd_C_ptr, B_ext_offd_nnz);
+   nalu_hypre_CSRMatrix *B_ext_offd = nalu_hypre_CSRMatrixCreate(num_rows, *num_cols_offd_C_ptr, B_ext_offd_nnz);
 
-   hypre_CSRMatrixI(B_ext_diag) = B_ext_diag_i;
-   hypre_CSRMatrixJ(B_ext_diag) = B_ext_diag_j;
-   hypre_CSRMatrixData(B_ext_diag) = B_ext_diag_a;
-   hypre_CSRMatrixNumNonzeros(B_ext_diag) = B_ext_diag_nnz;
-   hypre_CSRMatrixMemoryLocation(B_ext_diag) = NALU_HYPRE_MEMORY_DEVICE;
+   nalu_hypre_CSRMatrixI(B_ext_diag) = B_ext_diag_i;
+   nalu_hypre_CSRMatrixJ(B_ext_diag) = B_ext_diag_j;
+   nalu_hypre_CSRMatrixData(B_ext_diag) = B_ext_diag_a;
+   nalu_hypre_CSRMatrixNumNonzeros(B_ext_diag) = B_ext_diag_nnz;
+   nalu_hypre_CSRMatrixMemoryLocation(B_ext_diag) = NALU_HYPRE_MEMORY_DEVICE;
 
-   hypre_CSRMatrixI(B_ext_offd) = B_ext_offd_i;
-   hypre_CSRMatrixJ(B_ext_offd) = B_ext_offd_j;
-   hypre_CSRMatrixData(B_ext_offd) = B_ext_offd_a;
-   hypre_CSRMatrixNumNonzeros(B_ext_offd) = B_ext_offd_nnz;
-   hypre_CSRMatrixMemoryLocation(B_ext_offd) = NALU_HYPRE_MEMORY_DEVICE;
+   nalu_hypre_CSRMatrixI(B_ext_offd) = B_ext_offd_i;
+   nalu_hypre_CSRMatrixJ(B_ext_offd) = B_ext_offd_j;
+   nalu_hypre_CSRMatrixData(B_ext_offd) = B_ext_offd_a;
+   nalu_hypre_CSRMatrixNumNonzeros(B_ext_offd) = B_ext_offd_nnz;
+   nalu_hypre_CSRMatrixMemoryLocation(B_ext_offd) = NALU_HYPRE_MEMORY_DEVICE;
 
    *B_ext_diag_ptr = B_ext_diag;
    *B_ext_offd_ptr = B_ext_offd;
 
-   hypre_SyncComputeStream(hypre_handle());
+   nalu_hypre_SyncComputeStream(nalu_hypre_handle());
 
    return ierr;
 }
 
 NALU_HYPRE_Int
-hypre_CSRMatrixMergeColMapOffd( NALU_HYPRE_Int      num_cols_offd_B,
+nalu_hypre_CSRMatrixMergeColMapOffd( NALU_HYPRE_Int      num_cols_offd_B,
                                 NALU_HYPRE_BigInt  *col_map_offd_B,
                                 NALU_HYPRE_Int      B_ext_offd_nnz,
                                 NALU_HYPRE_BigInt  *B_ext_offd_bigj,
@@ -360,13 +360,13 @@ hypre_CSRMatrixMergeColMapOffd( NALU_HYPRE_Int      num_cols_offd_B,
                                 NALU_HYPRE_Int    **map_B_to_C_ptr )
 {
    /* offd map of B_ext_offd Union col_map_offd_B */
-   NALU_HYPRE_BigInt *col_map_offd_C = hypre_TAlloc(NALU_HYPRE_BigInt, B_ext_offd_nnz + num_cols_offd_B,
+   NALU_HYPRE_BigInt *col_map_offd_C = nalu_hypre_TAlloc(NALU_HYPRE_BigInt, B_ext_offd_nnz + num_cols_offd_B,
                                                NALU_HYPRE_MEMORY_DEVICE);
 
-   hypre_TMemcpy(col_map_offd_C, B_ext_offd_bigj, NALU_HYPRE_BigInt, B_ext_offd_nnz,
+   nalu_hypre_TMemcpy(col_map_offd_C, B_ext_offd_bigj, NALU_HYPRE_BigInt, B_ext_offd_nnz,
                  NALU_HYPRE_MEMORY_DEVICE, NALU_HYPRE_MEMORY_DEVICE);
 
-   hypre_TMemcpy(col_map_offd_C + B_ext_offd_nnz, col_map_offd_B, NALU_HYPRE_BigInt, num_cols_offd_B,
+   nalu_hypre_TMemcpy(col_map_offd_C + B_ext_offd_nnz, col_map_offd_B, NALU_HYPRE_BigInt, num_cols_offd_B,
                  NALU_HYPRE_MEMORY_DEVICE, NALU_HYPRE_MEMORY_DEVICE);
 
 #if defined(NALU_HYPRE_USING_SYCL)
@@ -390,18 +390,18 @@ hypre_CSRMatrixMergeColMapOffd( NALU_HYPRE_Int      num_cols_offd_B,
    NALU_HYPRE_Int num_cols_offd_C = new_end - col_map_offd_C;
 
 #if 1
-   NALU_HYPRE_BigInt *tmp = hypre_TAlloc(NALU_HYPRE_BigInt, num_cols_offd_C, NALU_HYPRE_MEMORY_DEVICE);
-   hypre_TMemcpy(tmp, col_map_offd_C, NALU_HYPRE_BigInt, num_cols_offd_C, NALU_HYPRE_MEMORY_DEVICE,
+   NALU_HYPRE_BigInt *tmp = nalu_hypre_TAlloc(NALU_HYPRE_BigInt, num_cols_offd_C, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TMemcpy(tmp, col_map_offd_C, NALU_HYPRE_BigInt, num_cols_offd_C, NALU_HYPRE_MEMORY_DEVICE,
                  NALU_HYPRE_MEMORY_DEVICE);
-   hypre_TFree(col_map_offd_C, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(col_map_offd_C, NALU_HYPRE_MEMORY_DEVICE);
    col_map_offd_C = tmp;
 #else
-   col_map_offd_C = hypre_TReAlloc_v2(col_map_offd_C, NALU_HYPRE_BigInt, B_ext_offd_nnz + num_cols_offd_B,
+   col_map_offd_C = nalu_hypre_TReAlloc_v2(col_map_offd_C, NALU_HYPRE_BigInt, B_ext_offd_nnz + num_cols_offd_B,
                                       NALU_HYPRE_Int, num_cols_offd_C, NALU_HYPRE_MEMORY_DEVICE);
 #endif
 
    /* create map from col_map_offd_B */
-   NALU_HYPRE_Int *map_B_to_C = hypre_TAlloc(NALU_HYPRE_Int, num_cols_offd_B, NALU_HYPRE_MEMORY_DEVICE);
+   NALU_HYPRE_Int *map_B_to_C = nalu_hypre_TAlloc(NALU_HYPRE_Int, num_cols_offd_B, NALU_HYPRE_MEMORY_DEVICE);
 
    if (num_cols_offd_B)
    {
@@ -426,12 +426,12 @@ hypre_CSRMatrixMergeColMapOffd( NALU_HYPRE_Int      num_cols_offd_B,
    *num_cols_offd_C_ptr = num_cols_offd_C;
    *col_map_offd_C_ptr  = col_map_offd_C;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /* job = 0: query B_ext_diag/offd_nnz; 1: real computation */
 NALU_HYPRE_Int
-hypre_CSRMatrixSplitDevice_core( NALU_HYPRE_Int      job,
+nalu_hypre_CSRMatrixSplitDevice_core( NALU_HYPRE_Int      job,
                                  NALU_HYPRE_Int      num_rows,
                                  NALU_HYPRE_Int      B_ext_nnz,
                                  NALU_HYPRE_Int     *B_ext_ii,            /* Note: NOT row pointers of CSR but row indices of COO */
@@ -464,7 +464,7 @@ hypre_CSRMatrixSplitDevice_core( NALU_HYPRE_Int      job,
    NALU_HYPRE_Int     *map_B_to_C = NULL;
    NALU_HYPRE_Int      num_cols_offd_C;
 
-   hypre_GpuProfilingPushRange("CSRMatrixSplitDevice_core");
+   nalu_hypre_GpuProfilingPushRange("CSRMatrixSplitDevice_core");
 
    in_range<NALU_HYPRE_BigInt> pred1(first_col_diag_B, last_col_diag_B);
 
@@ -488,9 +488,9 @@ hypre_CSRMatrixSplitDevice_core( NALU_HYPRE_Int      job,
       *B_ext_diag_nnz_ptr = B_ext_diag_nnz;
       *B_ext_offd_nnz_ptr = B_ext_offd_nnz;
 
-      hypre_GpuProfilingPopRange();
+      nalu_hypre_GpuProfilingPopRange();
 
-      return hypre_error_flag;
+      return nalu_hypre_error_flag;
    }
    else
    {
@@ -499,7 +499,7 @@ hypre_CSRMatrixSplitDevice_core( NALU_HYPRE_Int      job,
    }
 
    /* copy to diag */
-   B_ext_diag_bigj = hypre_TAlloc(NALU_HYPRE_BigInt, B_ext_diag_nnz, NALU_HYPRE_MEMORY_DEVICE);
+   B_ext_diag_bigj = nalu_hypre_TAlloc(NALU_HYPRE_BigInt, B_ext_diag_nnz, NALU_HYPRE_MEMORY_DEVICE);
 
    if (B_ext_diag_xata)
    {
@@ -512,7 +512,7 @@ hypre_CSRMatrixSplitDevice_core( NALU_HYPRE_Int      job,
                         oneapi::dpl::make_zip_iterator(B_ext_diag_ii, B_ext_diag_bigj, B_ext_diag_data,
                                                        B_ext_diag_xata),                   /* result  */
                         pred1 );
-      hypre_assert( std::get<0>(new_end.base()) == B_ext_diag_ii + B_ext_diag_nnz );
+      nalu_hypre_assert( std::get<0>(new_end.base()) == B_ext_diag_ii + B_ext_diag_nnz );
 #else
       auto new_end = NALU_HYPRE_THRUST_CALL(
                         copy_if,
@@ -525,7 +525,7 @@ hypre_CSRMatrixSplitDevice_core( NALU_HYPRE_Int      job,
                                                                      B_ext_diag_xata)),        /* result */
                         pred1 );
 
-      hypre_assert( thrust::get<0>(new_end.get_iterator_tuple()) == B_ext_diag_ii + B_ext_diag_nnz );
+      nalu_hypre_assert( thrust::get<0>(new_end.get_iterator_tuple()) == B_ext_diag_ii + B_ext_diag_nnz );
 #endif
    }
    else
@@ -538,7 +538,7 @@ hypre_CSRMatrixSplitDevice_core( NALU_HYPRE_Int      job,
                         B_ext_bigj,                                                           /* stencil */
                         oneapi::dpl::make_zip_iterator(B_ext_diag_ii, B_ext_diag_bigj, B_ext_diag_data),   /* result  */
                         pred1 );
-      hypre_assert( std::get<0>(new_end.base()) == B_ext_diag_ii + B_ext_diag_nnz );
+      nalu_hypre_assert( std::get<0>(new_end.base()) == B_ext_diag_ii + B_ext_diag_nnz );
 #else
       auto new_end = NALU_HYPRE_THRUST_CALL(
                         copy_if,
@@ -551,7 +551,7 @@ hypre_CSRMatrixSplitDevice_core( NALU_HYPRE_Int      job,
                                                                      B_ext_diag_data)),        /* result */
                         pred1 );
 
-      hypre_assert( thrust::get<0>(new_end.get_iterator_tuple()) == B_ext_diag_ii + B_ext_diag_nnz );
+      nalu_hypre_assert( thrust::get<0>(new_end.get_iterator_tuple()) == B_ext_diag_ii + B_ext_diag_nnz );
 #endif
    }
 
@@ -569,10 +569,10 @@ hypre_CSRMatrixSplitDevice_core( NALU_HYPRE_Int      job,
                       B_ext_diag_j,
                       thrust::minus<NALU_HYPRE_BigInt>());
 #endif
-   hypre_TFree(B_ext_diag_bigj, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(B_ext_diag_bigj, NALU_HYPRE_MEMORY_DEVICE);
 
    /* copy to offd */
-   B_ext_offd_bigj = hypre_TAlloc(NALU_HYPRE_BigInt, B_ext_offd_nnz, NALU_HYPRE_MEMORY_DEVICE);
+   B_ext_offd_bigj = nalu_hypre_TAlloc(NALU_HYPRE_BigInt, B_ext_offd_nnz, NALU_HYPRE_MEMORY_DEVICE);
 
    if (B_ext_offd_xata)
    {
@@ -585,7 +585,7 @@ hypre_CSRMatrixSplitDevice_core( NALU_HYPRE_Int      job,
                         oneapi::dpl::make_zip_iterator(B_ext_offd_ii, B_ext_offd_bigj, B_ext_offd_data,
                                                        B_ext_offd_xata), /* result */
                         std::not_fn(pred1) );
-      hypre_assert( std::get<0>(new_end.base()) == B_ext_offd_ii + B_ext_offd_nnz );
+      nalu_hypre_assert( std::get<0>(new_end.base()) == B_ext_offd_ii + B_ext_offd_nnz );
 #else
       auto new_end = NALU_HYPRE_THRUST_CALL(
                         copy_if,
@@ -598,7 +598,7 @@ hypre_CSRMatrixSplitDevice_core( NALU_HYPRE_Int      job,
                                                                      B_ext_offd_xata)),        /* result */
                         thrust::not1(pred1) );
 
-      hypre_assert( thrust::get<0>(new_end.get_iterator_tuple()) == B_ext_offd_ii + B_ext_offd_nnz );
+      nalu_hypre_assert( thrust::get<0>(new_end.get_iterator_tuple()) == B_ext_offd_ii + B_ext_offd_nnz );
 #endif
    }
    else
@@ -611,7 +611,7 @@ hypre_CSRMatrixSplitDevice_core( NALU_HYPRE_Int      job,
                         B_ext_bigj,                                                         /* stencil */
                         oneapi::dpl::make_zip_iterator(B_ext_offd_ii, B_ext_offd_bigj, B_ext_offd_data), /* result  */
                         std::not_fn(pred1) );
-      hypre_assert( std::get<0>(new_end.base()) == B_ext_offd_ii + B_ext_offd_nnz );
+      nalu_hypre_assert( std::get<0>(new_end.base()) == B_ext_offd_ii + B_ext_offd_nnz );
 #else
       auto new_end = NALU_HYPRE_THRUST_CALL(
                         copy_if,
@@ -624,11 +624,11 @@ hypre_CSRMatrixSplitDevice_core( NALU_HYPRE_Int      job,
                                                                      B_ext_offd_data)),        /* result */
                         thrust::not1(pred1) );
 
-      hypre_assert( thrust::get<0>(new_end.get_iterator_tuple()) == B_ext_offd_ii + B_ext_offd_nnz );
+      nalu_hypre_assert( thrust::get<0>(new_end.get_iterator_tuple()) == B_ext_offd_ii + B_ext_offd_nnz );
 #endif
    }
 
-   hypre_CSRMatrixMergeColMapOffd(num_cols_offd_B, col_map_offd_B, B_ext_offd_nnz, B_ext_offd_bigj,
+   nalu_hypre_CSRMatrixMergeColMapOffd(num_cols_offd_B, col_map_offd_B, B_ext_offd_nnz, B_ext_offd_bigj,
                                   &num_cols_offd_C, &col_map_offd_C, &map_B_to_C);
 
 #if defined(NALU_HYPRE_USING_SYCL)
@@ -650,15 +650,15 @@ hypre_CSRMatrixSplitDevice_core( NALU_HYPRE_Int      job,
                       B_ext_offd_j );
 #endif
 
-   hypre_TFree(B_ext_offd_bigj, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(B_ext_offd_bigj, NALU_HYPRE_MEMORY_DEVICE);
 
    *map_B_to_C_ptr = map_B_to_C;
    *num_cols_offd_C_ptr = num_cols_offd_C;
    *col_map_offd_C_ptr  = col_map_offd_C;
 
-   hypre_GpuProfilingPopRange();
+   nalu_hypre_GpuProfilingPopRange();
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 #endif /* defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP) || defined(NALU_HYPRE_USING_SYCL) */
@@ -666,21 +666,21 @@ hypre_CSRMatrixSplitDevice_core( NALU_HYPRE_Int      job,
 #if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
 
 NALU_HYPRE_Int
-hypre_CSRMatrixTriLowerUpperSolveDevice(char             uplo,
-                                        hypre_CSRMatrix *A,
+nalu_hypre_CSRMatrixTriLowerUpperSolveDevice(char             uplo,
+                                        nalu_hypre_CSRMatrix *A,
                                         NALU_HYPRE_Real      *l1_norms,
-                                        hypre_Vector    *f,
-                                        hypre_Vector    *u )
+                                        nalu_hypre_Vector    *f,
+                                        nalu_hypre_Vector    *u )
 {
 #if defined(NALU_HYPRE_USING_CUSPARSE)
-   hypre_CSRMatrixTriLowerUpperSolveCusparse(uplo, A, l1_norms, f, u);
+   nalu_hypre_CSRMatrixTriLowerUpperSolveCusparse(uplo, A, l1_norms, f, u);
 #elif defined(NALU_HYPRE_USING_ROCSPARSE)
-   hypre_CSRMatrixTriLowerUpperSolveRocsparse(uplo, A, l1_norms, f, u);
+   nalu_hypre_CSRMatrixTriLowerUpperSolveRocsparse(uplo, A, l1_norms, f, u);
 #else
-   hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC,
-                     "hypre_CSRMatrixTriLowerUpperSolveDevice requires configuration with either cusparse or rocsparse\n");
+   nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC,
+                     "nalu_hypre_CSRMatrixTriLowerUpperSolveDevice requires configuration with either cusparse or rocsparse\n");
 #endif
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 #endif /* defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP) */
@@ -688,41 +688,41 @@ hypre_CSRMatrixTriLowerUpperSolveDevice(char             uplo,
 #if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP) || defined(NALU_HYPRE_USING_SYCL)
 
 /*--------------------------------------------------------------------------
- * hypre_CSRMatrixAddPartial:
+ * nalu_hypre_CSRMatrixAddPartial:
  * adds matrix rows in the CSR matrix B to the CSR Matrix A, where row_nums[i]
  * defines to which row of A the i-th row of B is added, and returns a CSR Matrix C;
  * Repeated row indices are allowed in row_nums
  * Note: The routine does not check for 0-elements which might be generated
  *       through cancellation of elements in A and B or already contained
- *       in A and B. To remove those, use hypre_CSRMatrixDeleteZeros
+ *       in A and B. To remove those, use nalu_hypre_CSRMatrixDeleteZeros
  *--------------------------------------------------------------------------*/
 
-hypre_CSRMatrix*
-hypre_CSRMatrixAddPartialDevice( hypre_CSRMatrix *A,
-                                 hypre_CSRMatrix *B,
+nalu_hypre_CSRMatrix*
+nalu_hypre_CSRMatrixAddPartialDevice( nalu_hypre_CSRMatrix *A,
+                                 nalu_hypre_CSRMatrix *B,
                                  NALU_HYPRE_Int       *row_nums)
 {
-   NALU_HYPRE_Complex    *A_data   = hypre_CSRMatrixData(A);
-   NALU_HYPRE_Int        *A_i      = hypre_CSRMatrixI(A);
-   NALU_HYPRE_Int        *A_j      = hypre_CSRMatrixJ(A);
-   NALU_HYPRE_Int         nrows_A  = hypre_CSRMatrixNumRows(A);
-   NALU_HYPRE_Int         ncols_A  = hypre_CSRMatrixNumCols(A);
-   NALU_HYPRE_Int         nnz_A    = hypre_CSRMatrixNumNonzeros(A);
-   NALU_HYPRE_Complex    *B_data   = hypre_CSRMatrixData(B);
-   NALU_HYPRE_Int        *B_i      = hypre_CSRMatrixI(B);
-   NALU_HYPRE_Int        *B_j      = hypre_CSRMatrixJ(B);
-   NALU_HYPRE_Int         nrows_B  = hypre_CSRMatrixNumRows(B);
-   NALU_HYPRE_Int         ncols_B  = hypre_CSRMatrixNumCols(B);
-   NALU_HYPRE_Int         nnz_B    = hypre_CSRMatrixNumNonzeros(B);
+   NALU_HYPRE_Complex    *A_data   = nalu_hypre_CSRMatrixData(A);
+   NALU_HYPRE_Int        *A_i      = nalu_hypre_CSRMatrixI(A);
+   NALU_HYPRE_Int        *A_j      = nalu_hypre_CSRMatrixJ(A);
+   NALU_HYPRE_Int         nrows_A  = nalu_hypre_CSRMatrixNumRows(A);
+   NALU_HYPRE_Int         ncols_A  = nalu_hypre_CSRMatrixNumCols(A);
+   NALU_HYPRE_Int         nnz_A    = nalu_hypre_CSRMatrixNumNonzeros(A);
+   NALU_HYPRE_Complex    *B_data   = nalu_hypre_CSRMatrixData(B);
+   NALU_HYPRE_Int        *B_i      = nalu_hypre_CSRMatrixI(B);
+   NALU_HYPRE_Int        *B_j      = nalu_hypre_CSRMatrixJ(B);
+   NALU_HYPRE_Int         nrows_B  = nalu_hypre_CSRMatrixNumRows(B);
+   NALU_HYPRE_Int         ncols_B  = nalu_hypre_CSRMatrixNumCols(B);
+   NALU_HYPRE_Int         nnz_B    = nalu_hypre_CSRMatrixNumNonzeros(B);
    NALU_HYPRE_Complex    *C_data;
    NALU_HYPRE_Int        *C_i;
    NALU_HYPRE_Int        *C_j;
    NALU_HYPRE_Int         nnzC;
-   hypre_CSRMatrix  *C;
+   nalu_hypre_CSRMatrix  *C;
 
    if (ncols_A != ncols_B)
    {
-      hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "Warning! incompatible matrix dimensions!\n");
+      nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "Warning! incompatible matrix dimensions!\n");
 
       return NULL;
    }
@@ -731,39 +731,39 @@ hypre_CSRMatrixAddPartialDevice( hypre_CSRMatrix *A,
                         1.0, B_data, NULL, row_nums,
                         &nnzC, &C_i, &C_j, &C_data);
 
-   C = hypre_CSRMatrixCreate(nrows_A, ncols_B, nnzC);
-   hypre_CSRMatrixI(C) = C_i;
-   hypre_CSRMatrixJ(C) = C_j;
-   hypre_CSRMatrixData(C) = C_data;
-   hypre_CSRMatrixMemoryLocation(C) = NALU_HYPRE_MEMORY_DEVICE;
+   C = nalu_hypre_CSRMatrixCreate(nrows_A, ncols_B, nnzC);
+   nalu_hypre_CSRMatrixI(C) = C_i;
+   nalu_hypre_CSRMatrixJ(C) = C_j;
+   nalu_hypre_CSRMatrixData(C) = C_data;
+   nalu_hypre_CSRMatrixMemoryLocation(C) = NALU_HYPRE_MEMORY_DEVICE;
 
-   hypre_SyncComputeStream(hypre_handle());
+   nalu_hypre_SyncComputeStream(nalu_hypre_handle());
 
    return C;
 }
 
 NALU_HYPRE_Int
-hypre_CSRMatrixColNNzRealDevice( hypre_CSRMatrix  *A,
+nalu_hypre_CSRMatrixColNNzRealDevice( nalu_hypre_CSRMatrix  *A,
                                  NALU_HYPRE_Real       *colnnz)
 {
-   NALU_HYPRE_Int *A_j      = hypre_CSRMatrixJ(A);
-   NALU_HYPRE_Int  ncols_A  = hypre_CSRMatrixNumCols(A);
-   NALU_HYPRE_Int  nnz_A    = hypre_CSRMatrixNumNonzeros(A);
+   NALU_HYPRE_Int *A_j      = nalu_hypre_CSRMatrixJ(A);
+   NALU_HYPRE_Int  ncols_A  = nalu_hypre_CSRMatrixNumCols(A);
+   NALU_HYPRE_Int  nnz_A    = nalu_hypre_CSRMatrixNumNonzeros(A);
    NALU_HYPRE_Int *A_j_sorted;
    NALU_HYPRE_Int  num_reduced_col_indices;
    NALU_HYPRE_Int *reduced_col_indices;
    NALU_HYPRE_Int *reduced_col_nnz;
 
-   A_j_sorted = hypre_TAlloc(NALU_HYPRE_Int, nnz_A, NALU_HYPRE_MEMORY_DEVICE);
-   hypre_TMemcpy(A_j_sorted, A_j, NALU_HYPRE_Int, nnz_A, NALU_HYPRE_MEMORY_DEVICE, NALU_HYPRE_MEMORY_DEVICE);
+   A_j_sorted = nalu_hypre_TAlloc(NALU_HYPRE_Int, nnz_A, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TMemcpy(A_j_sorted, A_j, NALU_HYPRE_Int, nnz_A, NALU_HYPRE_MEMORY_DEVICE, NALU_HYPRE_MEMORY_DEVICE);
 #if defined(NALU_HYPRE_USING_SYCL)
    NALU_HYPRE_ONEDPL_CALL(std::sort, A_j_sorted, A_j_sorted + nnz_A);
 #else
    NALU_HYPRE_THRUST_CALL(sort, A_j_sorted, A_j_sorted + nnz_A);
 #endif
 
-   reduced_col_indices = hypre_TAlloc(NALU_HYPRE_Int, ncols_A, NALU_HYPRE_MEMORY_DEVICE);
-   reduced_col_nnz     = hypre_TAlloc(NALU_HYPRE_Int, ncols_A, NALU_HYPRE_MEMORY_DEVICE);
+   reduced_col_indices = nalu_hypre_TAlloc(NALU_HYPRE_Int, ncols_A, NALU_HYPRE_MEMORY_DEVICE);
+   reduced_col_nnz     = nalu_hypre_TAlloc(NALU_HYPRE_Int, ncols_A, NALU_HYPRE_MEMORY_DEVICE);
 
 #if defined(NALU_HYPRE_USING_SYCL)
 
@@ -771,7 +771,7 @@ hypre_CSRMatrixColNNzRealDevice( hypre_CSRMatrix  *A,
    if (nnz_A > 0)
    {
       /* WM: better way to get around lack of constant iterator in DPL? */
-      NALU_HYPRE_Int *ones = hypre_TAlloc(NALU_HYPRE_Int, nnz_A, NALU_HYPRE_MEMORY_DEVICE);
+      NALU_HYPRE_Int *ones = nalu_hypre_TAlloc(NALU_HYPRE_Int, nnz_A, NALU_HYPRE_MEMORY_DEVICE);
       NALU_HYPRE_ONEDPL_CALL( std::fill_n, ones, nnz_A, 1 );
       auto new_end = NALU_HYPRE_ONEDPL_CALL( oneapi::dpl::reduce_by_segment,
                                         A_j_sorted,
@@ -780,8 +780,8 @@ hypre_CSRMatrixColNNzRealDevice( hypre_CSRMatrix  *A,
                                         reduced_col_indices,
                                         reduced_col_nnz);
 
-      hypre_TFree(ones, NALU_HYPRE_MEMORY_DEVICE);
-      hypre_assert(new_end.first - reduced_col_indices == new_end.second - reduced_col_nnz);
+      nalu_hypre_TFree(ones, NALU_HYPRE_MEMORY_DEVICE);
+      nalu_hypre_assert(new_end.first - reduced_col_indices == new_end.second - reduced_col_nnz);
       num_reduced_col_indices = new_end.first - reduced_col_indices;
    }
    else
@@ -794,12 +794,12 @@ hypre_CSRMatrixColNNzRealDevice( hypre_CSRMatrix  *A,
                         thrust::make_constant_iterator(1),
                         reduced_col_indices,
                         reduced_col_nnz);
-   hypre_assert(new_end.first - reduced_col_indices == new_end.second - reduced_col_nnz);
+   nalu_hypre_assert(new_end.first - reduced_col_indices == new_end.second - reduced_col_nnz);
    num_reduced_col_indices = new_end.first - reduced_col_indices;
 #endif
 
 
-   hypre_Memset(colnnz, 0, ncols_A * sizeof(NALU_HYPRE_Real), NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_Memset(colnnz, 0, ncols_A * sizeof(NALU_HYPRE_Real), NALU_HYPRE_MEMORY_DEVICE);
 #if defined(NALU_HYPRE_USING_SYCL)
    NALU_HYPRE_ONEDPL_CALL( std::copy, reduced_col_nnz, reduced_col_nnz + num_reduced_col_indices,
                       oneapi::dpl::make_permutation_iterator(colnnz, reduced_col_indices) );
@@ -808,24 +808,24 @@ hypre_CSRMatrixColNNzRealDevice( hypre_CSRMatrix  *A,
                      reduced_col_indices, colnnz);
 #endif
 
-   hypre_TFree(A_j_sorted,          NALU_HYPRE_MEMORY_DEVICE);
-   hypre_TFree(reduced_col_indices, NALU_HYPRE_MEMORY_DEVICE);
-   hypre_TFree(reduced_col_nnz,     NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(A_j_sorted,          NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(reduced_col_indices, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(reduced_col_nnz,     NALU_HYPRE_MEMORY_DEVICE);
 
-   hypre_SyncComputeStream(hypre_handle());
+   nalu_hypre_SyncComputeStream(nalu_hypre_handle());
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 __global__ void
-hypreGPUKernel_CSRMoveDiagFirst( hypre_DeviceItem    &item,
+hypreGPUKernel_CSRMoveDiagFirst( nalu_hypre_DeviceItem    &item,
                                  NALU_HYPRE_Int      nrows,
                                  NALU_HYPRE_Int     *ia,
                                  NALU_HYPRE_Int     *ja,
                                  NALU_HYPRE_Complex *aa )
 {
-   NALU_HYPRE_Int row  = hypre_gpu_get_grid_warp_id<1, 1>(item);
-   NALU_HYPRE_Int lane = hypre_gpu_get_lane_id<1>(item);
+   NALU_HYPRE_Int row  = nalu_hypre_gpu_get_grid_warp_id<1, 1>(item);
+   NALU_HYPRE_Int lane = nalu_hypre_gpu_get_lane_id<1>(item);
 
    if (row >= nrows)
    {
@@ -845,7 +845,7 @@ hypreGPUKernel_CSRMoveDiagFirst( hypre_DeviceItem    &item,
    for (NALU_HYPRE_Int j = p + lane + 1; warp_any_sync(item, NALU_HYPRE_WARP_FULL_MASK, j < q);
         j += NALU_HYPRE_WARP_SIZE)
    {
-      hypre_int find_diag = j < q && ja[j] == row;
+      nalu_hypre_int find_diag = j < q && ja[j] == row;
 
       if (find_diag)
       {
@@ -864,81 +864,81 @@ hypreGPUKernel_CSRMoveDiagFirst( hypre_DeviceItem    &item,
 }
 
 NALU_HYPRE_Int
-hypre_CSRMatrixMoveDiagFirstDevice( hypre_CSRMatrix  *A )
+nalu_hypre_CSRMatrixMoveDiagFirstDevice( nalu_hypre_CSRMatrix  *A )
 {
-   NALU_HYPRE_Int      nrows  = hypre_CSRMatrixNumRows(A);
-   NALU_HYPRE_Complex *A_data = hypre_CSRMatrixData(A);
-   NALU_HYPRE_Int     *A_i    = hypre_CSRMatrixI(A);
-   NALU_HYPRE_Int     *A_j    = hypre_CSRMatrixJ(A);
+   NALU_HYPRE_Int      nrows  = nalu_hypre_CSRMatrixNumRows(A);
+   NALU_HYPRE_Complex *A_data = nalu_hypre_CSRMatrixData(A);
+   NALU_HYPRE_Int     *A_i    = nalu_hypre_CSRMatrixI(A);
+   NALU_HYPRE_Int     *A_j    = nalu_hypre_CSRMatrixJ(A);
 
-   dim3 bDim = hypre_GetDefaultDeviceBlockDimension();
-   dim3 gDim = hypre_GetDefaultDeviceGridDimension(nrows, "warp", bDim);
+   dim3 bDim = nalu_hypre_GetDefaultDeviceBlockDimension();
+   dim3 gDim = nalu_hypre_GetDefaultDeviceGridDimension(nrows, "warp", bDim);
 
    NALU_HYPRE_GPU_LAUNCH(hypreGPUKernel_CSRMoveDiagFirst, gDim, bDim,
                     nrows, A_i, A_j, A_data);
 
-   hypre_SyncComputeStream(hypre_handle());
+   nalu_hypre_SyncComputeStream(nalu_hypre_handle());
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /* return C = [A; B] */
-hypre_CSRMatrix*
-hypre_CSRMatrixStack2Device(hypre_CSRMatrix *A, hypre_CSRMatrix *B)
+nalu_hypre_CSRMatrix*
+nalu_hypre_CSRMatrixStack2Device(nalu_hypre_CSRMatrix *A, nalu_hypre_CSRMatrix *B)
 {
-   hypre_GpuProfilingPushRange("CSRMatrixStack2");
+   nalu_hypre_GpuProfilingPushRange("CSRMatrixStack2");
 
-   hypre_assert( hypre_CSRMatrixNumCols(A) == hypre_CSRMatrixNumCols(B) );
+   nalu_hypre_assert( nalu_hypre_CSRMatrixNumCols(A) == nalu_hypre_CSRMatrixNumCols(B) );
 
-   hypre_CSRMatrix *C = hypre_CSRMatrixCreate( hypre_CSRMatrixNumRows(A) + hypre_CSRMatrixNumRows(B),
-                                               hypre_CSRMatrixNumCols(A),
-                                               hypre_CSRMatrixNumNonzeros(A) + hypre_CSRMatrixNumNonzeros(B) );
+   nalu_hypre_CSRMatrix *C = nalu_hypre_CSRMatrixCreate( nalu_hypre_CSRMatrixNumRows(A) + nalu_hypre_CSRMatrixNumRows(B),
+                                               nalu_hypre_CSRMatrixNumCols(A),
+                                               nalu_hypre_CSRMatrixNumNonzeros(A) + nalu_hypre_CSRMatrixNumNonzeros(B) );
 
-   NALU_HYPRE_Int     *C_i = hypre_TAlloc(NALU_HYPRE_Int,     hypre_CSRMatrixNumRows(C) + 1,
+   NALU_HYPRE_Int     *C_i = nalu_hypre_TAlloc(NALU_HYPRE_Int,     nalu_hypre_CSRMatrixNumRows(C) + 1,
                                      NALU_HYPRE_MEMORY_DEVICE);
-   NALU_HYPRE_Int     *C_j = hypre_TAlloc(NALU_HYPRE_Int,     hypre_CSRMatrixNumNonzeros(C),
+   NALU_HYPRE_Int     *C_j = nalu_hypre_TAlloc(NALU_HYPRE_Int,     nalu_hypre_CSRMatrixNumNonzeros(C),
                                      NALU_HYPRE_MEMORY_DEVICE);
-   NALU_HYPRE_Complex *C_a = hypre_TAlloc(NALU_HYPRE_Complex, hypre_CSRMatrixNumNonzeros(C),
+   NALU_HYPRE_Complex *C_a = nalu_hypre_TAlloc(NALU_HYPRE_Complex, nalu_hypre_CSRMatrixNumNonzeros(C),
                                      NALU_HYPRE_MEMORY_DEVICE);
 
-   hypre_TMemcpy(C_i, hypre_CSRMatrixI(A), NALU_HYPRE_Int, hypre_CSRMatrixNumRows(A) + 1,
+   nalu_hypre_TMemcpy(C_i, nalu_hypre_CSRMatrixI(A), NALU_HYPRE_Int, nalu_hypre_CSRMatrixNumRows(A) + 1,
                  NALU_HYPRE_MEMORY_DEVICE, NALU_HYPRE_MEMORY_DEVICE);
-   hypre_TMemcpy(C_i + hypre_CSRMatrixNumRows(A) + 1, hypre_CSRMatrixI(B) + 1, NALU_HYPRE_Int,
-                 hypre_CSRMatrixNumRows(B),
+   nalu_hypre_TMemcpy(C_i + nalu_hypre_CSRMatrixNumRows(A) + 1, nalu_hypre_CSRMatrixI(B) + 1, NALU_HYPRE_Int,
+                 nalu_hypre_CSRMatrixNumRows(B),
                  NALU_HYPRE_MEMORY_DEVICE, NALU_HYPRE_MEMORY_DEVICE);
 #if defined(NALU_HYPRE_USING_SYCL)
    NALU_HYPRE_ONEDPL_CALL( std::transform,
-                      C_i + hypre_CSRMatrixNumRows(A) + 1,
-                      C_i + hypre_CSRMatrixNumRows(C) + 1,
-                      C_i + hypre_CSRMatrixNumRows(A) + 1,
-   [const_val = hypre_CSRMatrixNumNonzeros(A)] (const auto & x) {return x + const_val;} );
+                      C_i + nalu_hypre_CSRMatrixNumRows(A) + 1,
+                      C_i + nalu_hypre_CSRMatrixNumRows(C) + 1,
+                      C_i + nalu_hypre_CSRMatrixNumRows(A) + 1,
+   [const_val = nalu_hypre_CSRMatrixNumNonzeros(A)] (const auto & x) {return x + const_val;} );
 #else
    NALU_HYPRE_THRUST_CALL( transform,
-                      C_i + hypre_CSRMatrixNumRows(A) + 1,
-                      C_i + hypre_CSRMatrixNumRows(C) + 1,
-                      thrust::make_constant_iterator(hypre_CSRMatrixNumNonzeros(A)),
-                      C_i + hypre_CSRMatrixNumRows(A) + 1,
+                      C_i + nalu_hypre_CSRMatrixNumRows(A) + 1,
+                      C_i + nalu_hypre_CSRMatrixNumRows(C) + 1,
+                      thrust::make_constant_iterator(nalu_hypre_CSRMatrixNumNonzeros(A)),
+                      C_i + nalu_hypre_CSRMatrixNumRows(A) + 1,
                       thrust::plus<NALU_HYPRE_Int>() );
 #endif
 
-   hypre_TMemcpy(C_j, hypre_CSRMatrixJ(A), NALU_HYPRE_Int, hypre_CSRMatrixNumNonzeros(A),
+   nalu_hypre_TMemcpy(C_j, nalu_hypre_CSRMatrixJ(A), NALU_HYPRE_Int, nalu_hypre_CSRMatrixNumNonzeros(A),
                  NALU_HYPRE_MEMORY_DEVICE, NALU_HYPRE_MEMORY_DEVICE);
-   hypre_TMemcpy(C_j + hypre_CSRMatrixNumNonzeros(A), hypre_CSRMatrixJ(B), NALU_HYPRE_Int,
-                 hypre_CSRMatrixNumNonzeros(B),
-                 NALU_HYPRE_MEMORY_DEVICE, NALU_HYPRE_MEMORY_DEVICE);
-
-   hypre_TMemcpy(C_a, hypre_CSRMatrixData(A), NALU_HYPRE_Complex, hypre_CSRMatrixNumNonzeros(A),
-                 NALU_HYPRE_MEMORY_DEVICE, NALU_HYPRE_MEMORY_DEVICE);
-   hypre_TMemcpy(C_a + hypre_CSRMatrixNumNonzeros(A), hypre_CSRMatrixData(B), NALU_HYPRE_Complex,
-                 hypre_CSRMatrixNumNonzeros(B),
+   nalu_hypre_TMemcpy(C_j + nalu_hypre_CSRMatrixNumNonzeros(A), nalu_hypre_CSRMatrixJ(B), NALU_HYPRE_Int,
+                 nalu_hypre_CSRMatrixNumNonzeros(B),
                  NALU_HYPRE_MEMORY_DEVICE, NALU_HYPRE_MEMORY_DEVICE);
 
-   hypre_CSRMatrixI(C) = C_i;
-   hypre_CSRMatrixJ(C) = C_j;
-   hypre_CSRMatrixData(C) = C_a;
-   hypre_CSRMatrixMemoryLocation(C) = NALU_HYPRE_MEMORY_DEVICE;
+   nalu_hypre_TMemcpy(C_a, nalu_hypre_CSRMatrixData(A), NALU_HYPRE_Complex, nalu_hypre_CSRMatrixNumNonzeros(A),
+                 NALU_HYPRE_MEMORY_DEVICE, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TMemcpy(C_a + nalu_hypre_CSRMatrixNumNonzeros(A), nalu_hypre_CSRMatrixData(B), NALU_HYPRE_Complex,
+                 nalu_hypre_CSRMatrixNumNonzeros(B),
+                 NALU_HYPRE_MEMORY_DEVICE, NALU_HYPRE_MEMORY_DEVICE);
 
-   hypre_GpuProfilingPopRange();
+   nalu_hypre_CSRMatrixI(C) = C_i;
+   nalu_hypre_CSRMatrixJ(C) = C_j;
+   nalu_hypre_CSRMatrixData(C) = C_a;
+   nalu_hypre_CSRMatrixMemoryLocation(C) = NALU_HYPRE_MEMORY_DEVICE;
+
+   nalu_hypre_GpuProfilingPopRange();
 
    return C;
 }
@@ -949,7 +949,7 @@ hypre_CSRMatrixStack2Device(hypre_CSRMatrix *A, hypre_CSRMatrix *B)
  */
 template<NALU_HYPRE_Int type>
 __global__ void
-hypreGPUKernel_CSRRowSum( hypre_DeviceItem    &item,
+hypreGPUKernel_CSRRowSum( nalu_hypre_DeviceItem    &item,
                           NALU_HYPRE_Int      nrows,
                           NALU_HYPRE_Int     *ia,
                           NALU_HYPRE_Int     *ja,
@@ -960,14 +960,14 @@ hypreGPUKernel_CSRRowSum( hypre_DeviceItem    &item,
                           NALU_HYPRE_Complex  scal,
                           NALU_HYPRE_Int      set)
 {
-   NALU_HYPRE_Int row_i = hypre_gpu_get_grid_warp_id<1, 1>(item);
+   NALU_HYPRE_Int row_i = nalu_hypre_gpu_get_grid_warp_id<1, 1>(item);
 
    if (row_i >= nrows)
    {
       return;
    }
 
-   NALU_HYPRE_Int lane = hypre_gpu_get_lane_id<1>(item);
+   NALU_HYPRE_Int lane = nalu_hypre_gpu_get_lane_id<1>(item);
    NALU_HYPRE_Int p = 0, q = 0;
 
    if (lane < 2)
@@ -1018,7 +1018,7 @@ hypreGPUKernel_CSRRowSum( hypre_DeviceItem    &item,
 }
 
 void
-hypre_CSRMatrixComputeRowSumDevice( hypre_CSRMatrix *A,
+nalu_hypre_CSRMatrixComputeRowSumDevice( nalu_hypre_CSRMatrix *A,
                                     NALU_HYPRE_Int       *CF_i,
                                     NALU_HYPRE_Int       *CF_j,
                                     NALU_HYPRE_Complex   *row_sum,
@@ -1026,13 +1026,13 @@ hypre_CSRMatrixComputeRowSumDevice( hypre_CSRMatrix *A,
                                     NALU_HYPRE_Complex    scal,
                                     const char      *set_or_add)
 {
-   NALU_HYPRE_Int      nrows  = hypre_CSRMatrixNumRows(A);
-   NALU_HYPRE_Complex *A_data = hypre_CSRMatrixData(A);
-   NALU_HYPRE_Int     *A_i    = hypre_CSRMatrixI(A);
-   NALU_HYPRE_Int     *A_j    = hypre_CSRMatrixJ(A);
+   NALU_HYPRE_Int      nrows  = nalu_hypre_CSRMatrixNumRows(A);
+   NALU_HYPRE_Complex *A_data = nalu_hypre_CSRMatrixData(A);
+   NALU_HYPRE_Int     *A_i    = nalu_hypre_CSRMatrixI(A);
+   NALU_HYPRE_Int     *A_j    = nalu_hypre_CSRMatrixJ(A);
 
-   dim3 bDim = hypre_GetDefaultDeviceBlockDimension();
-   dim3 gDim = hypre_GetDefaultDeviceGridDimension(nrows, "warp", bDim);
+   dim3 bDim = nalu_hypre_GetDefaultDeviceBlockDimension();
+   dim3 gDim = nalu_hypre_GetDefaultDeviceGridDimension(nrows, "warp", bDim);
 
    NALU_HYPRE_Int set = set_or_add[0] == 's';
    if (type == 0)
@@ -1051,14 +1051,14 @@ hypre_CSRMatrixComputeRowSumDevice( hypre_CSRMatrix *A,
                         row_sum, scal, set );
    }
 
-   hypre_SyncComputeStream(hypre_handle());
+   nalu_hypre_SyncComputeStream(nalu_hypre_handle());
 }
 
 /* mark is of size nA
  * diag_option: 1: special treatment for diag entries, mark as -2
  */
 __global__ void
-hypreGPUKernel_CSRMatrixIntersectPattern(hypre_DeviceItem &item,
+hypreGPUKernel_CSRMatrixIntersectPattern(nalu_hypre_DeviceItem &item,
                                          NALU_HYPRE_Int  n,
                                          NALU_HYPRE_Int  nA,
                                          NALU_HYPRE_Int *rowid,
@@ -1067,7 +1067,7 @@ hypreGPUKernel_CSRMatrixIntersectPattern(hypre_DeviceItem &item,
                                          NALU_HYPRE_Int *mark,
                                          NALU_HYPRE_Int  diag_option)
 {
-   NALU_HYPRE_Int i = hypre_gpu_get_grid_thread_id<1, 1>(item);
+   NALU_HYPRE_Int i = nalu_hypre_gpu_get_grid_thread_id<1, 1>(item);
 
    if (i >= n)
    {
@@ -1123,24 +1123,24 @@ hypreGPUKernel_CSRMatrixIntersectPattern(hypre_DeviceItem &item,
  * Otherwise, mark pattern not in A-B as -1 in markA
  * Note the special treatment for diagonal entries of A (marked as -2) */
 NALU_HYPRE_Int
-hypre_CSRMatrixIntersectPattern(hypre_CSRMatrix *A,
-                                hypre_CSRMatrix *B,
+nalu_hypre_CSRMatrixIntersectPattern(nalu_hypre_CSRMatrix *A,
+                                nalu_hypre_CSRMatrix *B,
                                 NALU_HYPRE_Int       *markA,
                                 NALU_HYPRE_Int        diag_opt)
 {
-   NALU_HYPRE_Int nrows = hypre_CSRMatrixNumRows(A);
-   NALU_HYPRE_Int nnzA  = hypre_CSRMatrixNumNonzeros(A);
-   NALU_HYPRE_Int nnzB  = hypre_CSRMatrixNumNonzeros(B);
+   NALU_HYPRE_Int nrows = nalu_hypre_CSRMatrixNumRows(A);
+   NALU_HYPRE_Int nnzA  = nalu_hypre_CSRMatrixNumNonzeros(A);
+   NALU_HYPRE_Int nnzB  = nalu_hypre_CSRMatrixNumNonzeros(B);
 
-   NALU_HYPRE_Int *Cii = hypre_TAlloc(NALU_HYPRE_Int, nnzA + nnzB, NALU_HYPRE_MEMORY_DEVICE);
-   NALU_HYPRE_Int *Cjj = hypre_TAlloc(NALU_HYPRE_Int, nnzA + nnzB, NALU_HYPRE_MEMORY_DEVICE);
-   NALU_HYPRE_Int *idx = hypre_TAlloc(NALU_HYPRE_Int, nnzA + nnzB, NALU_HYPRE_MEMORY_DEVICE);
+   NALU_HYPRE_Int *Cii = nalu_hypre_TAlloc(NALU_HYPRE_Int, nnzA + nnzB, NALU_HYPRE_MEMORY_DEVICE);
+   NALU_HYPRE_Int *Cjj = nalu_hypre_TAlloc(NALU_HYPRE_Int, nnzA + nnzB, NALU_HYPRE_MEMORY_DEVICE);
+   NALU_HYPRE_Int *idx = nalu_hypre_TAlloc(NALU_HYPRE_Int, nnzA + nnzB, NALU_HYPRE_MEMORY_DEVICE);
 
-   hypreDevice_CsrRowPtrsToIndices_v2(nrows, nnzA, hypre_CSRMatrixI(A), Cii);
-   hypreDevice_CsrRowPtrsToIndices_v2(nrows, nnzB, hypre_CSRMatrixI(B), Cii + nnzA);
-   hypre_TMemcpy(Cjj,        hypre_CSRMatrixJ(A), NALU_HYPRE_Int, nnzA, NALU_HYPRE_MEMORY_DEVICE,
+   hypreDevice_CsrRowPtrsToIndices_v2(nrows, nnzA, nalu_hypre_CSRMatrixI(A), Cii);
+   hypreDevice_CsrRowPtrsToIndices_v2(nrows, nnzB, nalu_hypre_CSRMatrixI(B), Cii + nnzA);
+   nalu_hypre_TMemcpy(Cjj,        nalu_hypre_CSRMatrixJ(A), NALU_HYPRE_Int, nnzA, NALU_HYPRE_MEMORY_DEVICE,
                  NALU_HYPRE_MEMORY_DEVICE);
-   hypre_TMemcpy(Cjj + nnzA, hypre_CSRMatrixJ(B), NALU_HYPRE_Int, nnzB, NALU_HYPRE_MEMORY_DEVICE,
+   nalu_hypre_TMemcpy(Cjj + nnzA, nalu_hypre_CSRMatrixJ(B), NALU_HYPRE_Int, nnzB, NALU_HYPRE_MEMORY_DEVICE,
                  NALU_HYPRE_MEMORY_DEVICE);
 
 #if defined(NALU_HYPRE_USING_SYCL)
@@ -1166,20 +1166,20 @@ hypre_CSRMatrixIntersectPattern(hypre_CSRMatrix *A,
                       idx );
 #endif
 
-   hypre_TMemcpy(markA, hypre_CSRMatrixJ(A), NALU_HYPRE_Int, nnzA, NALU_HYPRE_MEMORY_DEVICE,
+   nalu_hypre_TMemcpy(markA, nalu_hypre_CSRMatrixJ(A), NALU_HYPRE_Int, nnzA, NALU_HYPRE_MEMORY_DEVICE,
                  NALU_HYPRE_MEMORY_DEVICE);
 
-   dim3 bDim = hypre_GetDefaultDeviceBlockDimension();
-   dim3 gDim = hypre_GetDefaultDeviceGridDimension(nnzA + nnzB, "thread", bDim);
+   dim3 bDim = nalu_hypre_GetDefaultDeviceBlockDimension();
+   dim3 gDim = nalu_hypre_GetDefaultDeviceGridDimension(nnzA + nnzB, "thread", bDim);
 
    NALU_HYPRE_GPU_LAUNCH( hypreGPUKernel_CSRMatrixIntersectPattern, gDim, bDim,
                      nnzA + nnzB, nnzA, Cii, Cjj, idx, markA, diag_opt );
 
-   hypre_TFree(Cii, NALU_HYPRE_MEMORY_DEVICE);
-   hypre_TFree(Cjj, NALU_HYPRE_MEMORY_DEVICE);
-   hypre_TFree(idx, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(Cii, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(Cjj, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(idx, NALU_HYPRE_MEMORY_DEVICE);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /* type 0: diag
@@ -1189,7 +1189,7 @@ hypre_CSRMatrixIntersectPattern(hypre_CSRMatrix *A,
  *      4: abs diag inverse sqrt
  */
 __global__ void
-hypreGPUKernel_CSRExtractDiag( hypre_DeviceItem    &item,
+hypreGPUKernel_CSRExtractDiag( nalu_hypre_DeviceItem    &item,
                                NALU_HYPRE_Int      nrows,
                                NALU_HYPRE_Int     *ia,
                                NALU_HYPRE_Int     *ja,
@@ -1197,14 +1197,14 @@ hypreGPUKernel_CSRExtractDiag( hypre_DeviceItem    &item,
                                NALU_HYPRE_Complex *d,
                                NALU_HYPRE_Int      type)
 {
-   NALU_HYPRE_Int row = hypre_gpu_get_grid_warp_id<1, 1>(item);
+   NALU_HYPRE_Int row = nalu_hypre_gpu_get_grid_warp_id<1, 1>(item);
 
    if (row >= nrows)
    {
       return;
    }
 
-   NALU_HYPRE_Int lane = hypre_gpu_get_lane_id<1>(item);
+   NALU_HYPRE_Int lane = nalu_hypre_gpu_get_lane_id<1>(item);
    NALU_HYPRE_Int p = 0, q = 0;
 
    if (lane < 2)
@@ -1218,7 +1218,7 @@ hypreGPUKernel_CSRExtractDiag( hypre_DeviceItem    &item,
 
    for (NALU_HYPRE_Int j = p + lane; warp_any_sync(item, NALU_HYPRE_WARP_FULL_MASK, j < q); j += NALU_HYPRE_WARP_SIZE)
    {
-      hypre_int find_diag = j < q && ja[j] == row;
+      nalu_hypre_int find_diag = j < q && ja[j] == row;
 
       if (find_diag)
       {
@@ -1258,21 +1258,21 @@ hypreGPUKernel_CSRExtractDiag( hypre_DeviceItem    &item,
 }
 
 void
-hypre_CSRMatrixExtractDiagonalDevice( hypre_CSRMatrix *A,
+nalu_hypre_CSRMatrixExtractDiagonalDevice( nalu_hypre_CSRMatrix *A,
                                       NALU_HYPRE_Complex   *d,
                                       NALU_HYPRE_Int        type)
 {
-   NALU_HYPRE_Int      nrows  = hypre_CSRMatrixNumRows(A);
-   NALU_HYPRE_Complex *A_data = hypre_CSRMatrixData(A);
-   NALU_HYPRE_Int     *A_i    = hypre_CSRMatrixI(A);
-   NALU_HYPRE_Int     *A_j    = hypre_CSRMatrixJ(A);
+   NALU_HYPRE_Int      nrows  = nalu_hypre_CSRMatrixNumRows(A);
+   NALU_HYPRE_Complex *A_data = nalu_hypre_CSRMatrixData(A);
+   NALU_HYPRE_Int     *A_i    = nalu_hypre_CSRMatrixI(A);
+   NALU_HYPRE_Int     *A_j    = nalu_hypre_CSRMatrixJ(A);
 
-   dim3 bDim = hypre_GetDefaultDeviceBlockDimension();
-   dim3 gDim = hypre_GetDefaultDeviceGridDimension(nrows, "warp", bDim);
+   dim3 bDim = nalu_hypre_GetDefaultDeviceBlockDimension();
+   dim3 gDim = nalu_hypre_GetDefaultDeviceGridDimension(nrows, "warp", bDim);
 
    NALU_HYPRE_GPU_LAUNCH( hypreGPUKernel_CSRExtractDiag, gDim, bDim, nrows, A_i, A_j, A_data, d, type );
 
-   hypre_SyncComputeStream(hypre_handle());
+   nalu_hypre_SyncComputeStream(nalu_hypre_handle());
 }
 
 /* check if diagonal entry is the first one at each row
@@ -1280,13 +1280,13 @@ hypre_CSRMatrixExtractDiagonalDevice( hypre_CSRMatrix *A,
  * RL: only check if it's a non-empty row
  */
 __global__ void
-hypreGPUKernel_CSRCheckDiagFirst( hypre_DeviceItem &item,
+hypreGPUKernel_CSRCheckDiagFirst( nalu_hypre_DeviceItem &item,
                                   NALU_HYPRE_Int  nrows,
                                   NALU_HYPRE_Int *ia,
                                   NALU_HYPRE_Int *ja,
                                   NALU_HYPRE_Int *result )
 {
-   const NALU_HYPRE_Int row = hypre_gpu_get_grid_thread_id<1, 1>(item);
+   const NALU_HYPRE_Int row = nalu_hypre_gpu_get_grid_thread_id<1, 1>(item);
    if (row < nrows)
    {
       result[row] = (ia[row + 1] > ia[row]) && (ja[ia[row]] != row);
@@ -1294,36 +1294,36 @@ hypreGPUKernel_CSRCheckDiagFirst( hypre_DeviceItem &item,
 }
 
 NALU_HYPRE_Int
-hypre_CSRMatrixCheckDiagFirstDevice( hypre_CSRMatrix *A )
+nalu_hypre_CSRMatrixCheckDiagFirstDevice( nalu_hypre_CSRMatrix *A )
 {
-   if (hypre_CSRMatrixNumRows(A) != hypre_CSRMatrixNumCols(A))
+   if (nalu_hypre_CSRMatrixNumRows(A) != nalu_hypre_CSRMatrixNumCols(A))
    {
       return 0;
    }
 
-   dim3 bDim = hypre_GetDefaultDeviceBlockDimension();
-   dim3 gDim = hypre_GetDefaultDeviceGridDimension(hypre_CSRMatrixNumRows(A), "thread", bDim);
+   dim3 bDim = nalu_hypre_GetDefaultDeviceBlockDimension();
+   dim3 gDim = nalu_hypre_GetDefaultDeviceGridDimension(nalu_hypre_CSRMatrixNumRows(A), "thread", bDim);
 
-   NALU_HYPRE_Int *result = hypre_TAlloc(NALU_HYPRE_Int, hypre_CSRMatrixNumRows(A), NALU_HYPRE_MEMORY_DEVICE);
-   NALU_HYPRE_Int *A_i = hypre_CSRMatrixI(A);
-   NALU_HYPRE_Int *A_j = hypre_CSRMatrixJ(A);
-   NALU_HYPRE_Int nrows = hypre_CSRMatrixNumRows(A);
+   NALU_HYPRE_Int *result = nalu_hypre_TAlloc(NALU_HYPRE_Int, nalu_hypre_CSRMatrixNumRows(A), NALU_HYPRE_MEMORY_DEVICE);
+   NALU_HYPRE_Int *A_i = nalu_hypre_CSRMatrixI(A);
+   NALU_HYPRE_Int *A_j = nalu_hypre_CSRMatrixJ(A);
+   NALU_HYPRE_Int nrows = nalu_hypre_CSRMatrixNumRows(A);
    NALU_HYPRE_GPU_LAUNCH( hypreGPUKernel_CSRCheckDiagFirst, gDim, bDim,
                      nrows, A_i, A_j, result );
 
 #if defined(NALU_HYPRE_USING_SYCL)
    NALU_HYPRE_Int ierr = NALU_HYPRE_ONEDPL_CALL( std::reduce,
                                        result,
-                                       result + hypre_CSRMatrixNumRows(A) );
+                                       result + nalu_hypre_CSRMatrixNumRows(A) );
 #else
    NALU_HYPRE_Int ierr = NALU_HYPRE_THRUST_CALL( reduce,
                                        result,
-                                       result + hypre_CSRMatrixNumRows(A) );
+                                       result + nalu_hypre_CSRMatrixNumRows(A) );
 #endif
 
-   hypre_TFree(result, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(result, NALU_HYPRE_MEMORY_DEVICE);
 
-   hypre_SyncComputeStream(hypre_handle());
+   nalu_hypre_SyncComputeStream(nalu_hypre_handle());
 
    return ierr;
 }
@@ -1333,7 +1333,7 @@ hypre_CSRMatrixCheckDiagFirstDevice( hypre_CSRMatrix *A )
 #if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
 
 __global__ void
-hypreGPUKernel_CSRMatrixFixZeroDiagDevice( hypre_DeviceItem    &item,
+hypreGPUKernel_CSRMatrixFixZeroDiagDevice( nalu_hypre_DeviceItem    &item,
                                            NALU_HYPRE_Complex  v,
                                            NALU_HYPRE_Int      nrows,
                                            NALU_HYPRE_Int     *ia,
@@ -1342,14 +1342,14 @@ hypreGPUKernel_CSRMatrixFixZeroDiagDevice( hypre_DeviceItem    &item,
                                            NALU_HYPRE_Real     tol,
                                            NALU_HYPRE_Int     *result )
 {
-   const NALU_HYPRE_Int row = hypre_gpu_get_grid_warp_id<1, 1>(item);
+   const NALU_HYPRE_Int row = nalu_hypre_gpu_get_grid_warp_id<1, 1>(item);
 
    if (row >= nrows)
    {
       return;
    }
 
-   NALU_HYPRE_Int lane = hypre_gpu_get_lane_id<1>(item);
+   NALU_HYPRE_Int lane = nalu_hypre_gpu_get_lane_id<1>(item);
    NALU_HYPRE_Int p = 0, q = 0;
    bool has_diag = false;
 
@@ -1362,7 +1362,7 @@ hypreGPUKernel_CSRMatrixFixZeroDiagDevice( hypre_DeviceItem    &item,
 
    for (NALU_HYPRE_Int j = p + lane; warp_any_sync(item, NALU_HYPRE_WARP_FULL_MASK, j < q); j += NALU_HYPRE_WARP_SIZE)
    {
-      hypre_int find_diag = j < q && read_only_load(&ja[j]) == row;
+      nalu_hypre_int find_diag = j < q && read_only_load(&ja[j]) == row;
 
       if (find_diag)
       {
@@ -1392,46 +1392,46 @@ hypreGPUKernel_CSRMatrixFixZeroDiagDevice( hypre_DeviceItem    &item,
  *    (i.e., structural zeroes on the diagonal)
  */
 NALU_HYPRE_Int
-hypre_CSRMatrixFixZeroDiagDevice( hypre_CSRMatrix *A,
+nalu_hypre_CSRMatrixFixZeroDiagDevice( nalu_hypre_CSRMatrix *A,
                                   NALU_HYPRE_Complex    v,
                                   NALU_HYPRE_Real       tol )
 {
    NALU_HYPRE_Int ierr = 0;
 
-   if (hypre_CSRMatrixNumRows(A) != hypre_CSRMatrixNumCols(A))
+   if (nalu_hypre_CSRMatrixNumRows(A) != nalu_hypre_CSRMatrixNumCols(A))
    {
       return ierr;
    }
 
-   dim3 bDim = hypre_GetDefaultDeviceBlockDimension();
-   dim3 gDim = hypre_GetDefaultDeviceGridDimension(hypre_CSRMatrixNumRows(A), "warp", bDim);
+   dim3 bDim = nalu_hypre_GetDefaultDeviceBlockDimension();
+   dim3 gDim = nalu_hypre_GetDefaultDeviceGridDimension(nalu_hypre_CSRMatrixNumRows(A), "warp", bDim);
 
 #if NALU_HYPRE_DEBUG
-   NALU_HYPRE_Int *result = hypre_CTAlloc(NALU_HYPRE_Int, hypre_CSRMatrixNumRows(A), NALU_HYPRE_MEMORY_DEVICE);
+   NALU_HYPRE_Int *result = nalu_hypre_CTAlloc(NALU_HYPRE_Int, nalu_hypre_CSRMatrixNumRows(A), NALU_HYPRE_MEMORY_DEVICE);
 #else
    NALU_HYPRE_Int *result = NULL;
 #endif
 
    NALU_HYPRE_GPU_LAUNCH( hypreGPUKernel_CSRMatrixFixZeroDiagDevice, gDim, bDim,
-                     v, hypre_CSRMatrixNumRows(A),
-                     hypre_CSRMatrixI(A), hypre_CSRMatrixJ(A), hypre_CSRMatrixData(A),
+                     v, nalu_hypre_CSRMatrixNumRows(A),
+                     nalu_hypre_CSRMatrixI(A), nalu_hypre_CSRMatrixJ(A), nalu_hypre_CSRMatrixData(A),
                      tol, result );
 
 #if NALU_HYPRE_DEBUG
    ierr = NALU_HYPRE_THRUST_CALL( reduce,
                              result,
-                             result + hypre_CSRMatrixNumRows(A) );
+                             result + nalu_hypre_CSRMatrixNumRows(A) );
 
-   hypre_TFree(result, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(result, NALU_HYPRE_MEMORY_DEVICE);
 #endif
 
-   hypre_SyncComputeStream(hypre_handle());
+   nalu_hypre_SyncComputeStream(nalu_hypre_handle());
 
    return ierr;
 }
 
 __global__ void
-hypreGPUKernel_CSRMatrixReplaceDiagDevice( hypre_DeviceItem    &item,
+hypreGPUKernel_CSRMatrixReplaceDiagDevice( nalu_hypre_DeviceItem    &item,
                                            NALU_HYPRE_Complex *new_diag,
                                            NALU_HYPRE_Complex  v,
                                            NALU_HYPRE_Int      nrows,
@@ -1441,14 +1441,14 @@ hypreGPUKernel_CSRMatrixReplaceDiagDevice( hypre_DeviceItem    &item,
                                            NALU_HYPRE_Real     tol,
                                            NALU_HYPRE_Int     *result )
 {
-   const NALU_HYPRE_Int row = hypre_gpu_get_grid_warp_id<1, 1>(item);
+   const NALU_HYPRE_Int row = nalu_hypre_gpu_get_grid_warp_id<1, 1>(item);
 
    if (row >= nrows)
    {
       return;
    }
 
-   NALU_HYPRE_Int lane = hypre_gpu_get_lane_id<1>(item);
+   NALU_HYPRE_Int lane = nalu_hypre_gpu_get_lane_id<1>(item);
    NALU_HYPRE_Int p = 0, q = 0;
    bool has_diag = false;
 
@@ -1461,7 +1461,7 @@ hypreGPUKernel_CSRMatrixReplaceDiagDevice( hypre_DeviceItem    &item,
 
    for (NALU_HYPRE_Int j = p + lane; warp_any_sync(item, NALU_HYPRE_WARP_FULL_MASK, j < q); j += NALU_HYPRE_WARP_SIZE)
    {
-      hypre_int find_diag = j < q && read_only_load(&ja[j]) == row;
+      nalu_hypre_int find_diag = j < q && read_only_load(&ja[j]) == row;
 
       if (find_diag)
       {
@@ -1487,41 +1487,41 @@ hypreGPUKernel_CSRMatrixReplaceDiagDevice( hypre_DeviceItem    &item,
 }
 
 NALU_HYPRE_Int
-hypre_CSRMatrixReplaceDiagDevice( hypre_CSRMatrix *A,
+nalu_hypre_CSRMatrixReplaceDiagDevice( nalu_hypre_CSRMatrix *A,
                                   NALU_HYPRE_Complex   *new_diag,
                                   NALU_HYPRE_Complex    v,
                                   NALU_HYPRE_Real       tol )
 {
    NALU_HYPRE_Int ierr = 0;
 
-   if (hypre_CSRMatrixNumRows(A) != hypre_CSRMatrixNumCols(A))
+   if (nalu_hypre_CSRMatrixNumRows(A) != nalu_hypre_CSRMatrixNumCols(A))
    {
       return ierr;
    }
 
-   dim3 bDim = hypre_GetDefaultDeviceBlockDimension();
-   dim3 gDim = hypre_GetDefaultDeviceGridDimension(hypre_CSRMatrixNumRows(A), "warp", bDim);
+   dim3 bDim = nalu_hypre_GetDefaultDeviceBlockDimension();
+   dim3 gDim = nalu_hypre_GetDefaultDeviceGridDimension(nalu_hypre_CSRMatrixNumRows(A), "warp", bDim);
 
 #if NALU_HYPRE_DEBUG
-   NALU_HYPRE_Int *result = hypre_CTAlloc(NALU_HYPRE_Int, hypre_CSRMatrixNumRows(A), NALU_HYPRE_MEMORY_DEVICE);
+   NALU_HYPRE_Int *result = nalu_hypre_CTAlloc(NALU_HYPRE_Int, nalu_hypre_CSRMatrixNumRows(A), NALU_HYPRE_MEMORY_DEVICE);
 #else
    NALU_HYPRE_Int *result = NULL;
 #endif
 
    NALU_HYPRE_GPU_LAUNCH( hypreGPUKernel_CSRMatrixReplaceDiagDevice, gDim, bDim,
-                     new_diag, v, hypre_CSRMatrixNumRows(A),
-                     hypre_CSRMatrixI(A), hypre_CSRMatrixJ(A), hypre_CSRMatrixData(A),
+                     new_diag, v, nalu_hypre_CSRMatrixNumRows(A),
+                     nalu_hypre_CSRMatrixI(A), nalu_hypre_CSRMatrixJ(A), nalu_hypre_CSRMatrixData(A),
                      tol, result );
 
 #if NALU_HYPRE_DEBUG
    ierr = NALU_HYPRE_THRUST_CALL( reduce,
                              result,
-                             result + hypre_CSRMatrixNumRows(A) );
+                             result + nalu_hypre_CSRMatrixNumRows(A) );
 
-   hypre_TFree(result, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(result, NALU_HYPRE_MEMORY_DEVICE);
 #endif
 
-   hypre_SyncComputeStream(hypre_handle());
+   nalu_hypre_SyncComputeStream(nalu_hypre_handle());
 
    return ierr;
 }
@@ -1552,13 +1552,13 @@ struct Int2Unequal : public thrust::unary_function<Int2, bool>
 #endif
 
 NALU_HYPRE_Int
-hypre_CSRMatrixRemoveDiagonalDevice(hypre_CSRMatrix *A)
+nalu_hypre_CSRMatrixRemoveDiagonalDevice(nalu_hypre_CSRMatrix *A)
 {
-   NALU_HYPRE_Int      nrows  = hypre_CSRMatrixNumRows(A);
-   NALU_HYPRE_Int      nnz    = hypre_CSRMatrixNumNonzeros(A);
-   NALU_HYPRE_Int     *A_i    = hypre_CSRMatrixI(A);
-   NALU_HYPRE_Int     *A_j    = hypre_CSRMatrixJ(A);
-   NALU_HYPRE_Complex *A_data = hypre_CSRMatrixData(A);
+   NALU_HYPRE_Int      nrows  = nalu_hypre_CSRMatrixNumRows(A);
+   NALU_HYPRE_Int      nnz    = nalu_hypre_CSRMatrixNumNonzeros(A);
+   NALU_HYPRE_Int     *A_i    = nalu_hypre_CSRMatrixI(A);
+   NALU_HYPRE_Int     *A_j    = nalu_hypre_CSRMatrixJ(A);
+   NALU_HYPRE_Complex *A_data = nalu_hypre_CSRMatrixData(A);
    NALU_HYPRE_Int     *A_ii   = hypreDevice_CsrRowPtrsToIndices(nrows, nnz, A_i);
    NALU_HYPRE_Int      new_nnz;
    NALU_HYPRE_Int     *new_ii;
@@ -1581,16 +1581,16 @@ hypre_CSRMatrixRemoveDiagonalDevice(hypre_CSRMatrix *A)
    if (new_nnz == nnz)
    {
       /* no diagonal entries found */
-      hypre_TFree(A_ii, NALU_HYPRE_MEMORY_DEVICE);
-      return hypre_error_flag;
+      nalu_hypre_TFree(A_ii, NALU_HYPRE_MEMORY_DEVICE);
+      return nalu_hypre_error_flag;
    }
 
-   new_ii = hypre_TAlloc(NALU_HYPRE_Int, new_nnz, NALU_HYPRE_MEMORY_DEVICE);
-   new_j = hypre_TAlloc(NALU_HYPRE_Int, new_nnz, NALU_HYPRE_MEMORY_DEVICE);
+   new_ii = nalu_hypre_TAlloc(NALU_HYPRE_Int, new_nnz, NALU_HYPRE_MEMORY_DEVICE);
+   new_j = nalu_hypre_TAlloc(NALU_HYPRE_Int, new_nnz, NALU_HYPRE_MEMORY_DEVICE);
 
    if (A_data)
    {
-      new_data = hypre_TAlloc(NALU_HYPRE_Complex, new_nnz, NALU_HYPRE_MEMORY_DEVICE);
+      new_data = nalu_hypre_TAlloc(NALU_HYPRE_Complex, new_nnz, NALU_HYPRE_MEMORY_DEVICE);
 
 #if defined(NALU_HYPRE_USING_SYCL)
       auto zip_ija = oneapi::dpl::make_zip_iterator(A_ii, A_j, A_data);
@@ -1602,7 +1602,7 @@ hypre_CSRMatrixRemoveDiagonalDevice(hypre_CSRMatrix *A)
                         zip_new_ija,
                         Int2Unequal() );
 
-      hypre_assert( std::get<0>(new_end.base()) == new_ii + new_nnz );
+      nalu_hypre_assert( std::get<0>(new_end.base()) == new_ii + new_nnz );
 #else
       auto new_end = NALU_HYPRE_THRUST_CALL( copy_if,
                                         thrust::make_zip_iterator(thrust::make_tuple(A_ii, A_j, A_data)),
@@ -1611,7 +1611,7 @@ hypre_CSRMatrixRemoveDiagonalDevice(hypre_CSRMatrix *A)
                                         thrust::make_zip_iterator(thrust::make_tuple(new_ii, new_j, new_data)),
                                         Int2Unequal() );
 
-      hypre_assert( thrust::get<0>(new_end.get_iterator_tuple()) == new_ii + new_nnz );
+      nalu_hypre_assert( thrust::get<0>(new_end.get_iterator_tuple()) == new_ii + new_nnz );
 #endif
    }
    else
@@ -1626,7 +1626,7 @@ hypre_CSRMatrixRemoveDiagonalDevice(hypre_CSRMatrix *A)
                                         zip_new_ij,
                                         Int2Unequal() );
 
-      hypre_assert( std::get<0>(new_end.base()) == new_ii + new_nnz );
+      nalu_hypre_assert( std::get<0>(new_end.base()) == new_ii + new_nnz );
 #else
       auto new_end = NALU_HYPRE_THRUST_CALL( copy_if,
                                         thrust::make_zip_iterator(thrust::make_tuple(A_ii, A_j)),
@@ -1635,22 +1635,22 @@ hypre_CSRMatrixRemoveDiagonalDevice(hypre_CSRMatrix *A)
                                         thrust::make_zip_iterator(thrust::make_tuple(new_ii, new_j)),
                                         Int2Unequal() );
 
-      hypre_assert( thrust::get<0>(new_end.get_iterator_tuple()) == new_ii + new_nnz );
+      nalu_hypre_assert( thrust::get<0>(new_end.get_iterator_tuple()) == new_ii + new_nnz );
 #endif
    }
 
-   hypre_TFree(A_ii,   NALU_HYPRE_MEMORY_DEVICE);
-   hypre_TFree(A_i,    NALU_HYPRE_MEMORY_DEVICE);
-   hypre_TFree(A_j,    NALU_HYPRE_MEMORY_DEVICE);
-   hypre_TFree(A_data, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(A_ii,   NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(A_i,    NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(A_j,    NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(A_data, NALU_HYPRE_MEMORY_DEVICE);
 
-   hypre_CSRMatrixNumNonzeros(A) = new_nnz;
-   hypre_CSRMatrixI(A) = hypreDevice_CsrRowIndicesToPtrs(nrows, new_nnz, new_ii);
-   hypre_CSRMatrixJ(A) = new_j;
-   hypre_CSRMatrixData(A) = new_data;
-   hypre_TFree(new_ii, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_CSRMatrixNumNonzeros(A) = new_nnz;
+   nalu_hypre_CSRMatrixI(A) = hypreDevice_CsrRowIndicesToPtrs(nrows, new_nnz, new_ii);
+   nalu_hypre_CSRMatrixJ(A) = new_j;
+   nalu_hypre_CSRMatrixData(A) = new_data;
+   nalu_hypre_TFree(new_ii, NALU_HYPRE_MEMORY_DEVICE);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 #endif /* defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP) || defined(NALU_HYPRE_USING_SYCL) */
@@ -1658,68 +1658,68 @@ hypre_CSRMatrixRemoveDiagonalDevice(hypre_CSRMatrix *A)
 #if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
 
 /* A = alp * I */
-hypre_CSRMatrix *
-hypre_CSRMatrixIdentityDevice(NALU_HYPRE_Int n, NALU_HYPRE_Complex alp)
+nalu_hypre_CSRMatrix *
+nalu_hypre_CSRMatrixIdentityDevice(NALU_HYPRE_Int n, NALU_HYPRE_Complex alp)
 {
-   hypre_CSRMatrix *A = hypre_CSRMatrixCreate(n, n, n);
+   nalu_hypre_CSRMatrix *A = nalu_hypre_CSRMatrixCreate(n, n, n);
 
-   hypre_CSRMatrixInitialize_v2(A, 0, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_CSRMatrixInitialize_v2(A, 0, NALU_HYPRE_MEMORY_DEVICE);
 
    NALU_HYPRE_THRUST_CALL( sequence,
-                      hypre_CSRMatrixI(A),
-                      hypre_CSRMatrixI(A) + n + 1,
+                      nalu_hypre_CSRMatrixI(A),
+                      nalu_hypre_CSRMatrixI(A) + n + 1,
                       0  );
 
    NALU_HYPRE_THRUST_CALL( sequence,
-                      hypre_CSRMatrixJ(A),
-                      hypre_CSRMatrixJ(A) + n,
+                      nalu_hypre_CSRMatrixJ(A),
+                      nalu_hypre_CSRMatrixJ(A) + n,
                       0  );
 
    NALU_HYPRE_THRUST_CALL( fill,
-                      hypre_CSRMatrixData(A),
-                      hypre_CSRMatrixData(A) + n,
+                      nalu_hypre_CSRMatrixData(A),
+                      nalu_hypre_CSRMatrixData(A) + n,
                       alp );
 
    return A;
 }
 
 /* A = diag(v) */
-hypre_CSRMatrix *
-hypre_CSRMatrixDiagMatrixFromVectorDevice(NALU_HYPRE_Int n, NALU_HYPRE_Complex *v)
+nalu_hypre_CSRMatrix *
+nalu_hypre_CSRMatrixDiagMatrixFromVectorDevice(NALU_HYPRE_Int n, NALU_HYPRE_Complex *v)
 {
-   hypre_CSRMatrix *A = hypre_CSRMatrixCreate(n, n, n);
+   nalu_hypre_CSRMatrix *A = nalu_hypre_CSRMatrixCreate(n, n, n);
 
-   hypre_CSRMatrixInitialize_v2(A, 0, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_CSRMatrixInitialize_v2(A, 0, NALU_HYPRE_MEMORY_DEVICE);
 
    NALU_HYPRE_THRUST_CALL( sequence,
-                      hypre_CSRMatrixI(A),
-                      hypre_CSRMatrixI(A) + n + 1,
+                      nalu_hypre_CSRMatrixI(A),
+                      nalu_hypre_CSRMatrixI(A) + n + 1,
                       0  );
 
    NALU_HYPRE_THRUST_CALL( sequence,
-                      hypre_CSRMatrixJ(A),
-                      hypre_CSRMatrixJ(A) + n,
+                      nalu_hypre_CSRMatrixJ(A),
+                      nalu_hypre_CSRMatrixJ(A) + n,
                       0  );
 
    NALU_HYPRE_THRUST_CALL( copy,
                       v,
                       v + n,
-                      hypre_CSRMatrixData(A) );
+                      nalu_hypre_CSRMatrixData(A) );
 
    return A;
 }
 
 /* B = diagm(A) */
-hypre_CSRMatrix *
-hypre_CSRMatrixDiagMatrixFromMatrixDevice(hypre_CSRMatrix *A, NALU_HYPRE_Int type)
+nalu_hypre_CSRMatrix *
+nalu_hypre_CSRMatrixDiagMatrixFromMatrixDevice(nalu_hypre_CSRMatrix *A, NALU_HYPRE_Int type)
 {
-   NALU_HYPRE_Int      nrows  = hypre_CSRMatrixNumRows(A);
-   NALU_HYPRE_Complex  *diag = hypre_CTAlloc(NALU_HYPRE_Complex, nrows, NALU_HYPRE_MEMORY_DEVICE);
-   hypre_CSRMatrixExtractDiagonalDevice(A, diag, type);
+   NALU_HYPRE_Int      nrows  = nalu_hypre_CSRMatrixNumRows(A);
+   NALU_HYPRE_Complex  *diag = nalu_hypre_CTAlloc(NALU_HYPRE_Complex, nrows, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_CSRMatrixExtractDiagonalDevice(A, diag, type);
 
-   hypre_CSRMatrix *diag_mat = hypre_CSRMatrixDiagMatrixFromVectorDevice(nrows, diag);
+   nalu_hypre_CSRMatrix *diag_mat = nalu_hypre_CSRMatrixDiagMatrixFromVectorDevice(nrows, diag);
 
-   hypre_TFree(diag, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(diag, NALU_HYPRE_MEMORY_DEVICE);
    return diag_mat;
 }
 
@@ -1734,7 +1734,7 @@ struct cabsfirst_greaterthan_second_pred : public
       const NALU_HYPRE_Complex i = thrust::get<0>(t);
       const NALU_HYPRE_Real j = thrust::get<1>(t);
 
-      return hypre_cabs(i) > j;
+      return nalu_hypre_cabs(i) > j;
    }
 };
 
@@ -1742,15 +1742,15 @@ struct cabsfirst_greaterthan_second_pred : public
  *    tol if elmt_tols == null,
  *    elmt_tols[j] otherwise where j = 0...NumNonzeros(A) */
 NALU_HYPRE_Int
-hypre_CSRMatrixDropSmallEntriesDevice( hypre_CSRMatrix *A,
+nalu_hypre_CSRMatrixDropSmallEntriesDevice( nalu_hypre_CSRMatrix *A,
                                        NALU_HYPRE_Real       tol,
                                        NALU_HYPRE_Real      *elmt_tols)
 {
-   NALU_HYPRE_Int      nrows  = hypre_CSRMatrixNumRows(A);
-   NALU_HYPRE_Int      nnz    = hypre_CSRMatrixNumNonzeros(A);
-   NALU_HYPRE_Int     *A_i    = hypre_CSRMatrixI(A);
-   NALU_HYPRE_Int     *A_j    = hypre_CSRMatrixJ(A);
-   NALU_HYPRE_Complex *A_data = hypre_CSRMatrixData(A);
+   NALU_HYPRE_Int      nrows  = nalu_hypre_CSRMatrixNumRows(A);
+   NALU_HYPRE_Int      nnz    = nalu_hypre_CSRMatrixNumNonzeros(A);
+   NALU_HYPRE_Int     *A_i    = nalu_hypre_CSRMatrixI(A);
+   NALU_HYPRE_Int     *A_j    = nalu_hypre_CSRMatrixJ(A);
+   NALU_HYPRE_Complex *A_data = nalu_hypre_CSRMatrixData(A);
    NALU_HYPRE_Int     *A_ii   = NULL;
    NALU_HYPRE_Int      new_nnz = 0;
    NALU_HYPRE_Int     *new_ii;
@@ -1774,17 +1774,17 @@ hypre_CSRMatrixDropSmallEntriesDevice( hypre_CSRMatrix *A,
 
    if (new_nnz == nnz)
    {
-      hypre_TFree(A_ii, NALU_HYPRE_MEMORY_DEVICE);
-      return hypre_error_flag;
+      nalu_hypre_TFree(A_ii, NALU_HYPRE_MEMORY_DEVICE);
+      return nalu_hypre_error_flag;
    }
 
    if (!A_ii)
    {
       A_ii = hypreDevice_CsrRowPtrsToIndices(nrows, nnz, A_i);
    }
-   new_ii = hypre_TAlloc(NALU_HYPRE_Int, new_nnz, NALU_HYPRE_MEMORY_DEVICE);
-   new_j = hypre_TAlloc(NALU_HYPRE_Int, new_nnz, NALU_HYPRE_MEMORY_DEVICE);
-   new_data = hypre_TAlloc(NALU_HYPRE_Complex, new_nnz, NALU_HYPRE_MEMORY_DEVICE);
+   new_ii = nalu_hypre_TAlloc(NALU_HYPRE_Int, new_nnz, NALU_HYPRE_MEMORY_DEVICE);
+   new_j = nalu_hypre_TAlloc(NALU_HYPRE_Int, new_nnz, NALU_HYPRE_MEMORY_DEVICE);
+   new_data = nalu_hypre_TAlloc(NALU_HYPRE_Complex, new_nnz, NALU_HYPRE_MEMORY_DEVICE);
 
    thrust::zip_iterator< thrust::tuple<NALU_HYPRE_Int*, NALU_HYPRE_Int*, NALU_HYPRE_Complex*> > new_end;
 
@@ -1807,24 +1807,24 @@ hypre_CSRMatrixDropSmallEntriesDevice( hypre_CSRMatrix *A,
                                    cabsfirst_greaterthan_second_pred() );
    }
 
-   hypre_assert( thrust::get<0>(new_end.get_iterator_tuple()) == new_ii + new_nnz );
+   nalu_hypre_assert( thrust::get<0>(new_end.get_iterator_tuple()) == new_ii + new_nnz );
 
-   hypre_TFree(A_ii,   NALU_HYPRE_MEMORY_DEVICE);
-   hypre_TFree(A_i,    NALU_HYPRE_MEMORY_DEVICE);
-   hypre_TFree(A_j,    NALU_HYPRE_MEMORY_DEVICE);
-   hypre_TFree(A_data, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(A_ii,   NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(A_i,    NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(A_j,    NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(A_data, NALU_HYPRE_MEMORY_DEVICE);
 
-   hypre_CSRMatrixNumNonzeros(A) = new_nnz;
-   hypre_CSRMatrixI(A) = hypreDevice_CsrRowIndicesToPtrs(nrows, new_nnz, new_ii);
-   hypre_CSRMatrixJ(A) = new_j;
-   hypre_CSRMatrixData(A) = new_data;
-   hypre_TFree(new_ii, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_CSRMatrixNumNonzeros(A) = new_nnz;
+   nalu_hypre_CSRMatrixI(A) = hypreDevice_CsrRowIndicesToPtrs(nrows, new_nnz, new_ii);
+   nalu_hypre_CSRMatrixJ(A) = new_j;
+   nalu_hypre_CSRMatrixData(A) = new_data;
+   nalu_hypre_TFree(new_ii, NALU_HYPRE_MEMORY_DEVICE);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 __global__ void
-hypreGPUKernel_CSRDiagScale( hypre_DeviceItem    &item,
+hypreGPUKernel_CSRDiagScale( nalu_hypre_DeviceItem    &item,
                              NALU_HYPRE_Int      nrows,
                              NALU_HYPRE_Int     *ia,
                              NALU_HYPRE_Int     *ja,
@@ -1832,14 +1832,14 @@ hypreGPUKernel_CSRDiagScale( hypre_DeviceItem    &item,
                              NALU_HYPRE_Complex *ld,
                              NALU_HYPRE_Complex *rd)
 {
-   NALU_HYPRE_Int row = hypre_gpu_get_grid_warp_id<1, 1>(item);
+   NALU_HYPRE_Int row = nalu_hypre_gpu_get_grid_warp_id<1, 1>(item);
 
    if (row >= nrows)
    {
       return;
    }
 
-   NALU_HYPRE_Int lane = hypre_gpu_get_lane_id<1>(item);
+   NALU_HYPRE_Int lane = nalu_hypre_gpu_get_lane_id<1>(item);
    NALU_HYPRE_Int p = 0, q = 0;
 
    if (lane < 2)
@@ -1879,27 +1879,27 @@ hypreGPUKernel_CSRDiagScale( hypre_DeviceItem    &item,
 }
 
 NALU_HYPRE_Int
-hypre_CSRMatrixDiagScaleDevice( hypre_CSRMatrix *A,
-                                hypre_Vector    *ld,
-                                hypre_Vector    *rd)
+nalu_hypre_CSRMatrixDiagScaleDevice( nalu_hypre_CSRMatrix *A,
+                                nalu_hypre_Vector    *ld,
+                                nalu_hypre_Vector    *rd)
 {
-   NALU_HYPRE_Int      nrows  = hypre_CSRMatrixNumRows(A);
-   NALU_HYPRE_Complex *A_data = hypre_CSRMatrixData(A);
-   NALU_HYPRE_Int     *A_i    = hypre_CSRMatrixI(A);
-   NALU_HYPRE_Int     *A_j    = hypre_CSRMatrixJ(A);
-   NALU_HYPRE_Complex *ldata  = ld ? hypre_VectorData(ld) : NULL;
-   NALU_HYPRE_Complex *rdata  = rd ? hypre_VectorData(rd) : NULL;
+   NALU_HYPRE_Int      nrows  = nalu_hypre_CSRMatrixNumRows(A);
+   NALU_HYPRE_Complex *A_data = nalu_hypre_CSRMatrixData(A);
+   NALU_HYPRE_Int     *A_i    = nalu_hypre_CSRMatrixI(A);
+   NALU_HYPRE_Int     *A_j    = nalu_hypre_CSRMatrixJ(A);
+   NALU_HYPRE_Complex *ldata  = ld ? nalu_hypre_VectorData(ld) : NULL;
+   NALU_HYPRE_Complex *rdata  = rd ? nalu_hypre_VectorData(rd) : NULL;
    dim3           bDim, gDim;
 
-   bDim = hypre_GetDefaultDeviceBlockDimension();
-   gDim = hypre_GetDefaultDeviceGridDimension(nrows, "warp", bDim);
+   bDim = nalu_hypre_GetDefaultDeviceBlockDimension();
+   gDim = nalu_hypre_GetDefaultDeviceGridDimension(nrows, "warp", bDim);
 
    NALU_HYPRE_GPU_LAUNCH(hypreGPUKernel_CSRDiagScale, gDim, bDim,
                     nrows, A_i, A_j, A_data, ldata, rdata);
 
-   hypre_SyncComputeStream(hypre_handle());
+   nalu_hypre_SyncComputeStream(nalu_hypre_handle());
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 #endif /* NALU_HYPRE_USING_CUDA || defined(NALU_HYPRE_USING_HIP) */
@@ -1907,34 +1907,34 @@ hypre_CSRMatrixDiagScaleDevice( hypre_CSRMatrix *A,
 #if defined(NALU_HYPRE_USING_GPU)
 
 NALU_HYPRE_Int
-hypre_CSRMatrixTransposeDevice(hypre_CSRMatrix  *A,
-                               hypre_CSRMatrix **AT_ptr,
+nalu_hypre_CSRMatrixTransposeDevice(nalu_hypre_CSRMatrix  *A,
+                               nalu_hypre_CSRMatrix **AT_ptr,
                                NALU_HYPRE_Int         data)
 {
-   hypre_GpuProfilingPushRange("CSRMatrixTranspose");
+   nalu_hypre_GpuProfilingPushRange("CSRMatrixTranspose");
 
-   NALU_HYPRE_Complex    *A_data   = hypre_CSRMatrixData(A);
-   NALU_HYPRE_Int        *A_i      = hypre_CSRMatrixI(A);
-   NALU_HYPRE_Int        *A_j      = hypre_CSRMatrixJ(A);
-   NALU_HYPRE_Int         nrows_A  = hypre_CSRMatrixNumRows(A);
-   NALU_HYPRE_Int         ncols_A  = hypre_CSRMatrixNumCols(A);
-   NALU_HYPRE_Int         nnz_A    = hypre_CSRMatrixNumNonzeros(A);
+   NALU_HYPRE_Complex    *A_data   = nalu_hypre_CSRMatrixData(A);
+   NALU_HYPRE_Int        *A_i      = nalu_hypre_CSRMatrixI(A);
+   NALU_HYPRE_Int        *A_j      = nalu_hypre_CSRMatrixJ(A);
+   NALU_HYPRE_Int         nrows_A  = nalu_hypre_CSRMatrixNumRows(A);
+   NALU_HYPRE_Int         ncols_A  = nalu_hypre_CSRMatrixNumCols(A);
+   NALU_HYPRE_Int         nnz_A    = nalu_hypre_CSRMatrixNumNonzeros(A);
    NALU_HYPRE_Complex    *C_data;
    NALU_HYPRE_Int        *C_i;
    NALU_HYPRE_Int        *C_j;
-   hypre_CSRMatrix  *C;
+   nalu_hypre_CSRMatrix  *C;
 
 
    /* trivial case */
    if (nnz_A == 0)
    {
-      C_i =    hypre_CTAlloc(NALU_HYPRE_Int,     ncols_A + 1, NALU_HYPRE_MEMORY_DEVICE);
-      C_j =    hypre_CTAlloc(NALU_HYPRE_Int,     0,           NALU_HYPRE_MEMORY_DEVICE);
-      C_data = hypre_CTAlloc(NALU_HYPRE_Complex, 0,           NALU_HYPRE_MEMORY_DEVICE);
+      C_i =    nalu_hypre_CTAlloc(NALU_HYPRE_Int,     ncols_A + 1, NALU_HYPRE_MEMORY_DEVICE);
+      C_j =    nalu_hypre_CTAlloc(NALU_HYPRE_Int,     0,           NALU_HYPRE_MEMORY_DEVICE);
+      C_data = nalu_hypre_CTAlloc(NALU_HYPRE_Complex, 0,           NALU_HYPRE_MEMORY_DEVICE);
    }
    else
    {
-      if ( !hypre_HandleSpTransUseVendor(hypre_handle()) )
+      if ( !nalu_hypre_HandleSpTransUseVendor(nalu_hypre_handle()) )
       {
 #if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP) || defined(NALU_HYPRE_USING_SYCL)
          hypreDevice_CSRSpTrans(nrows_A, ncols_A, nnz_A, A_i, A_j, A_data, &C_i, &C_j, &C_data, data);
@@ -1954,40 +1954,40 @@ hypre_CSRMatrixTransposeDevice(hypre_CSRMatrix  *A,
       }
    }
 
-   C = hypre_CSRMatrixCreate(ncols_A, nrows_A, nnz_A);
-   hypre_CSRMatrixI(C) = C_i;
-   hypre_CSRMatrixJ(C) = C_j;
-   hypre_CSRMatrixData(C) = C_data;
-   hypre_CSRMatrixMemoryLocation(C) = NALU_HYPRE_MEMORY_DEVICE;
+   C = nalu_hypre_CSRMatrixCreate(ncols_A, nrows_A, nnz_A);
+   nalu_hypre_CSRMatrixI(C) = C_i;
+   nalu_hypre_CSRMatrixJ(C) = C_j;
+   nalu_hypre_CSRMatrixData(C) = C_data;
+   nalu_hypre_CSRMatrixMemoryLocation(C) = NALU_HYPRE_MEMORY_DEVICE;
 
    *AT_ptr = C;
 
-   hypre_SyncComputeStream(hypre_handle());
+   nalu_hypre_SyncComputeStream(nalu_hypre_handle());
 
-   hypre_GpuProfilingPopRange();
+   nalu_hypre_GpuProfilingPopRange();
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 #endif /* #if defined(NALU_HYPRE_USING_GPU) */
 
 NALU_HYPRE_Int
-hypre_CSRMatrixSortRow(hypre_CSRMatrix *A)
+nalu_hypre_CSRMatrixSortRow(nalu_hypre_CSRMatrix *A)
 {
 #if defined(NALU_HYPRE_USING_CUSPARSE)
-   hypre_SortCSRCusparse(hypre_CSRMatrixNumRows(A), hypre_CSRMatrixNumCols(A),
-                         hypre_CSRMatrixNumNonzeros(A), hypre_CSRMatrixGPUMatDescr(A),
-                         hypre_CSRMatrixI(A), hypre_CSRMatrixJ(A), hypre_CSRMatrixData(A));
+   nalu_hypre_SortCSRCusparse(nalu_hypre_CSRMatrixNumRows(A), nalu_hypre_CSRMatrixNumCols(A),
+                         nalu_hypre_CSRMatrixNumNonzeros(A), nalu_hypre_CSRMatrixGPUMatDescr(A),
+                         nalu_hypre_CSRMatrixI(A), nalu_hypre_CSRMatrixJ(A), nalu_hypre_CSRMatrixData(A));
 #elif defined(NALU_HYPRE_USING_ROCSPARSE)
-   hypre_SortCSRRocsparse(hypre_CSRMatrixNumRows(A), hypre_CSRMatrixNumCols(A),
-                          hypre_CSRMatrixNumNonzeros(A), hypre_CSRMatrixGPUMatDescr(A),
-                          hypre_CSRMatrixI(A), hypre_CSRMatrixJ(A), hypre_CSRMatrixData(A));
+   nalu_hypre_SortCSRRocsparse(nalu_hypre_CSRMatrixNumRows(A), nalu_hypre_CSRMatrixNumCols(A),
+                          nalu_hypre_CSRMatrixNumNonzeros(A), nalu_hypre_CSRMatrixGPUMatDescr(A),
+                          nalu_hypre_CSRMatrixI(A), nalu_hypre_CSRMatrixJ(A), nalu_hypre_CSRMatrixData(A));
 #else
-   hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC,
-                     "hypre_CSRMatrixSortRow only implemented for cuSPARSE/rocSPARSE!\n");
+   nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC,
+                     "nalu_hypre_CSRMatrixSortRow only implemented for cuSPARSE/rocSPARSE!\n");
 #endif
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 #if defined(NALU_HYPRE_USING_CUSPARSE)
@@ -2000,7 +2000,7 @@ hypre_CSRMatrixSortRow(hypre_CSRMatrix *A)
  * @param[in,out] *d_a_sorted On Start: Unsorted values. On Return: Sorted values corresponding with column indices
  */
 void
-hypre_SortCSRCusparse( NALU_HYPRE_Int           n,
+nalu_hypre_SortCSRCusparse( NALU_HYPRE_Int           n,
                        NALU_HYPRE_Int           m,
                        NALU_HYPRE_Int           nnzA,
                        cusparseMatDescr_t  descrA,
@@ -2008,7 +2008,7 @@ hypre_SortCSRCusparse( NALU_HYPRE_Int           n,
                        NALU_HYPRE_Int           *d_ja_sorted,
                        NALU_HYPRE_Complex       *d_a_sorted )
 {
-   cusparseHandle_t cusparsehandle = hypre_HandleCusparseHandle(hypre_handle());
+   cusparseHandle_t cusparsehandle = nalu_hypre_HandleCusparseHandle(nalu_hypre_handle());
 
    size_t pBufferSizeInBytes = 0;
    void *pBuffer = NULL;
@@ -2016,187 +2016,187 @@ hypre_SortCSRCusparse( NALU_HYPRE_Int           n,
    csru2csrInfo_t sortInfoA;
    NALU_HYPRE_CUSPARSE_CALL( cusparseCreateCsru2csrInfo(&sortInfoA) );
 
-   NALU_HYPRE_CUSPARSE_CALL( hypre_cusparse_csru2csr_bufferSizeExt(cusparsehandle,
+   NALU_HYPRE_CUSPARSE_CALL( nalu_hypre_cusparse_csru2csr_bufferSizeExt(cusparsehandle,
                                                               n, m, nnzA, d_a_sorted, d_ia, d_ja_sorted,
                                                               sortInfoA, &pBufferSizeInBytes) );
 
-   pBuffer = hypre_TAlloc(char, pBufferSizeInBytes, NALU_HYPRE_MEMORY_DEVICE);
+   pBuffer = nalu_hypre_TAlloc(char, pBufferSizeInBytes, NALU_HYPRE_MEMORY_DEVICE);
 
-   NALU_HYPRE_CUSPARSE_CALL( hypre_cusparse_csru2csr(cusparsehandle,
+   NALU_HYPRE_CUSPARSE_CALL( nalu_hypre_cusparse_csru2csr(cusparsehandle,
                                                 n, m, nnzA, descrA, d_a_sorted, d_ia, d_ja_sorted,
                                                 sortInfoA, pBuffer) );
 
-   hypre_TFree(pBuffer, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(pBuffer, NALU_HYPRE_MEMORY_DEVICE);
    NALU_HYPRE_CUSPARSE_CALL(cusparseDestroyCsru2csrInfo(sortInfoA));
 }
 
 NALU_HYPRE_Int
-hypre_CSRMatrixTriLowerUpperSolveCusparse(char             uplo,
-                                          hypre_CSRMatrix *A,
+nalu_hypre_CSRMatrixTriLowerUpperSolveCusparse(char             uplo,
+                                          nalu_hypre_CSRMatrix *A,
                                           NALU_HYPRE_Real      *l1_norms,
-                                          hypre_Vector    *f,
-                                          hypre_Vector    *u )
+                                          nalu_hypre_Vector    *f,
+                                          nalu_hypre_Vector    *u )
 {
-   NALU_HYPRE_Int      nrow   = hypre_CSRMatrixNumRows(A);
-   NALU_HYPRE_Int      ncol   = hypre_CSRMatrixNumCols(A);
-   NALU_HYPRE_Int      nnzA   = hypre_CSRMatrixNumNonzeros(A);
-   NALU_HYPRE_Int     *A_i    = hypre_CSRMatrixI(A);
-   NALU_HYPRE_Int     *A_j    = hypre_CSRMatrixJ(A);
-   NALU_HYPRE_Complex *A_a    = hypre_CSRMatrixData(A);
-   NALU_HYPRE_Int     *A_sj   = hypre_CSRMatrixSortedJ(A);
-   NALU_HYPRE_Complex *A_sa   = hypre_CSRMatrixSortedData(A);
-   NALU_HYPRE_Complex *f_data = hypre_VectorData(f);
-   NALU_HYPRE_Complex *u_data = hypre_VectorData(u);
+   NALU_HYPRE_Int      nrow   = nalu_hypre_CSRMatrixNumRows(A);
+   NALU_HYPRE_Int      ncol   = nalu_hypre_CSRMatrixNumCols(A);
+   NALU_HYPRE_Int      nnzA   = nalu_hypre_CSRMatrixNumNonzeros(A);
+   NALU_HYPRE_Int     *A_i    = nalu_hypre_CSRMatrixI(A);
+   NALU_HYPRE_Int     *A_j    = nalu_hypre_CSRMatrixJ(A);
+   NALU_HYPRE_Complex *A_a    = nalu_hypre_CSRMatrixData(A);
+   NALU_HYPRE_Int     *A_sj   = nalu_hypre_CSRMatrixSortedJ(A);
+   NALU_HYPRE_Complex *A_sa   = nalu_hypre_CSRMatrixSortedData(A);
+   NALU_HYPRE_Complex *f_data = nalu_hypre_VectorData(f);
+   NALU_HYPRE_Complex *u_data = nalu_hypre_VectorData(u);
    NALU_HYPRE_Complex  alpha  = 1.0;
-   hypre_int      buffer_size;
-   hypre_int      structural_zero;
+   nalu_hypre_int      buffer_size;
+   nalu_hypre_int      structural_zero;
 
    if (nrow != ncol)
    {
-      hypre_assert(0);
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_assert(0);
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
 
    if (nrow <= 0)
    {
-      return hypre_error_flag;
+      return nalu_hypre_error_flag;
    }
 
    if (nnzA <= 0)
    {
-      hypre_assert(0);
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_assert(0);
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
 
-   cusparseHandle_t handle = hypre_HandleCusparseHandle(hypre_handle());
-   cusparseMatDescr_t descr = hypre_CSRMatrixGPUMatDescr(A);
+   cusparseHandle_t handle = nalu_hypre_HandleCusparseHandle(nalu_hypre_handle());
+   cusparseMatDescr_t descr = nalu_hypre_CSRMatrixGPUMatDescr(A);
 
    if ( !A_sj && !A_sa )
    {
-      hypre_CSRMatrixSortedJ(A) = A_sj = hypre_TAlloc(NALU_HYPRE_Int, nnzA, NALU_HYPRE_MEMORY_DEVICE);
-      hypre_CSRMatrixSortedData(A) = A_sa = hypre_TAlloc(NALU_HYPRE_Complex, nnzA, NALU_HYPRE_MEMORY_DEVICE);
-      hypre_TMemcpy(A_sj, A_j, NALU_HYPRE_Int, nnzA, NALU_HYPRE_MEMORY_DEVICE, NALU_HYPRE_MEMORY_DEVICE);
-      hypre_TMemcpy(A_sa, A_a, NALU_HYPRE_Complex, nnzA, NALU_HYPRE_MEMORY_DEVICE, NALU_HYPRE_MEMORY_DEVICE);
+      nalu_hypre_CSRMatrixSortedJ(A) = A_sj = nalu_hypre_TAlloc(NALU_HYPRE_Int, nnzA, NALU_HYPRE_MEMORY_DEVICE);
+      nalu_hypre_CSRMatrixSortedData(A) = A_sa = nalu_hypre_TAlloc(NALU_HYPRE_Complex, nnzA, NALU_HYPRE_MEMORY_DEVICE);
+      nalu_hypre_TMemcpy(A_sj, A_j, NALU_HYPRE_Int, nnzA, NALU_HYPRE_MEMORY_DEVICE, NALU_HYPRE_MEMORY_DEVICE);
+      nalu_hypre_TMemcpy(A_sa, A_a, NALU_HYPRE_Complex, nnzA, NALU_HYPRE_MEMORY_DEVICE, NALU_HYPRE_MEMORY_DEVICE);
 
 #if defined(NALU_HYPRE_USING_CUDA)
-      hypre_CSRMatrixData(A) = A_sa;
+      nalu_hypre_CSRMatrixData(A) = A_sa;
       NALU_HYPRE_Int err = 0;
       if (l1_norms)
       {
-         err = hypre_CSRMatrixReplaceDiagDevice(A, l1_norms, INFINITY, 0.0);
+         err = nalu_hypre_CSRMatrixReplaceDiagDevice(A, l1_norms, INFINITY, 0.0);
       }
       else
       {
-         err = hypre_CSRMatrixFixZeroDiagDevice(A, INFINITY, 0.0);
+         err = nalu_hypre_CSRMatrixFixZeroDiagDevice(A, INFINITY, 0.0);
       }
-      hypre_CSRMatrixData(A) = A_a;
+      nalu_hypre_CSRMatrixData(A) = A_a;
       if (err)
       {
-         hypre_error_w_msg(1, "structural zero in hypre_CSRMatrixTriLowerUpperSolveCusparse");
-         //hypre_assert(0);
+         nalu_hypre_error_w_msg(1, "structural zero in nalu_hypre_CSRMatrixTriLowerUpperSolveCusparse");
+         //nalu_hypre_assert(0);
       }
 #endif
 
-      hypre_SortCSRCusparse(nrow, ncol, nnzA, descr, A_i, A_sj, A_sa);
+      nalu_hypre_SortCSRCusparse(nrow, ncol, nnzA, descr, A_i, A_sj, A_sa);
    }
 
    NALU_HYPRE_CUSPARSE_CALL( cusparseSetMatDiagType(descr, CUSPARSE_DIAG_TYPE_NON_UNIT) );
 
-   if (!hypre_CSRMatrixCsrsvData(A))
+   if (!nalu_hypre_CSRMatrixCsrsvData(A))
    {
-      hypre_CSRMatrixCsrsvData(A) = hypre_CsrsvDataCreate();
+      nalu_hypre_CSRMatrixCsrsvData(A) = nalu_hypre_CsrsvDataCreate();
    }
-   hypre_CsrsvData *csrsv_data = hypre_CSRMatrixCsrsvData(A);
+   nalu_hypre_CsrsvData *csrsv_data = nalu_hypre_CSRMatrixCsrsvData(A);
 
    if (uplo == 'L')
    {
       NALU_HYPRE_CUSPARSE_CALL( cusparseSetMatFillMode(descr, CUSPARSE_FILL_MODE_LOWER) );
 
-      if (!hypre_CsrsvDataInfoL(csrsv_data))
+      if (!nalu_hypre_CsrsvDataInfoL(csrsv_data))
       {
-         NALU_HYPRE_CUSPARSE_CALL( cusparseCreateCsrsv2Info(&hypre_CsrsvDataInfoL(csrsv_data)) );
+         NALU_HYPRE_CUSPARSE_CALL( cusparseCreateCsrsv2Info(&nalu_hypre_CsrsvDataInfoL(csrsv_data)) );
 
-         NALU_HYPRE_CUSPARSE_CALL( hypre_cusparse_csrsv2_bufferSize(handle, CUSPARSE_OPERATION_NON_TRANSPOSE,
-                                                               nrow, nnzA, descr, A_sa, A_i, A_sj, hypre_CsrsvDataInfoL(csrsv_data), &buffer_size) );
+         NALU_HYPRE_CUSPARSE_CALL( nalu_hypre_cusparse_csrsv2_bufferSize(handle, CUSPARSE_OPERATION_NON_TRANSPOSE,
+                                                               nrow, nnzA, descr, A_sa, A_i, A_sj, nalu_hypre_CsrsvDataInfoL(csrsv_data), &buffer_size) );
 
-         if (hypre_CsrsvDataBufferSize(csrsv_data) < buffer_size)
+         if (nalu_hypre_CsrsvDataBufferSize(csrsv_data) < buffer_size)
          {
-            hypre_CsrsvDataBuffer(csrsv_data) = hypre_TReAlloc_v2(hypre_CsrsvDataBuffer(csrsv_data),
-                                                                  char, hypre_CsrsvDataBufferSize(csrsv_data),
+            nalu_hypre_CsrsvDataBuffer(csrsv_data) = nalu_hypre_TReAlloc_v2(nalu_hypre_CsrsvDataBuffer(csrsv_data),
+                                                                  char, nalu_hypre_CsrsvDataBufferSize(csrsv_data),
                                                                   char, buffer_size,
                                                                   NALU_HYPRE_MEMORY_DEVICE);
-            hypre_CsrsvDataBufferSize(csrsv_data) = buffer_size;
+            nalu_hypre_CsrsvDataBufferSize(csrsv_data) = buffer_size;
          }
 
-         NALU_HYPRE_CUSPARSE_CALL( hypre_cusparse_csrsv2_analysis(handle, CUSPARSE_OPERATION_NON_TRANSPOSE,
+         NALU_HYPRE_CUSPARSE_CALL( nalu_hypre_cusparse_csrsv2_analysis(handle, CUSPARSE_OPERATION_NON_TRANSPOSE,
                                                              nrow, nnzA, descr, A_sa, A_i, A_sj,
-                                                             hypre_CsrsvDataInfoL(csrsv_data), CUSPARSE_SOLVE_POLICY_USE_LEVEL,
-                                                             hypre_CsrsvDataBuffer(csrsv_data)) );
+                                                             nalu_hypre_CsrsvDataInfoL(csrsv_data), CUSPARSE_SOLVE_POLICY_USE_LEVEL,
+                                                             nalu_hypre_CsrsvDataBuffer(csrsv_data)) );
 
-         cusparseStatus_t status = cusparseXcsrsv2_zeroPivot(handle, hypre_CsrsvDataInfoL(csrsv_data),
+         cusparseStatus_t status = cusparseXcsrsv2_zeroPivot(handle, nalu_hypre_CsrsvDataInfoL(csrsv_data),
                                                              &structural_zero);
          if (CUSPARSE_STATUS_ZERO_PIVOT == status)
          {
             char msg[256];
-            hypre_sprintf(msg, "hypre_CSRMatrixTriLowerUpperSolveCusparse A(%d,%d) is missing\n",
+            nalu_hypre_sprintf(msg, "nalu_hypre_CSRMatrixTriLowerUpperSolveCusparse A(%d,%d) is missing\n",
                           structural_zero, structural_zero);
-            hypre_error_w_msg(1, msg);
-            //hypre_assert(0);
+            nalu_hypre_error_w_msg(1, msg);
+            //nalu_hypre_assert(0);
          }
       }
 
-      NALU_HYPRE_CUSPARSE_CALL( hypre_cusparse_csrsv2_solve(handle, CUSPARSE_OPERATION_NON_TRANSPOSE,
+      NALU_HYPRE_CUSPARSE_CALL( nalu_hypre_cusparse_csrsv2_solve(handle, CUSPARSE_OPERATION_NON_TRANSPOSE,
                                                        nrow, nnzA, &alpha, descr, A_sa, A_i, A_sj,
-                                                       hypre_CsrsvDataInfoL(csrsv_data), f_data, u_data,
+                                                       nalu_hypre_CsrsvDataInfoL(csrsv_data), f_data, u_data,
                                                        CUSPARSE_SOLVE_POLICY_USE_LEVEL,
-                                                       hypre_CsrsvDataBuffer(csrsv_data)) );
+                                                       nalu_hypre_CsrsvDataBuffer(csrsv_data)) );
    }
    else
    {
       NALU_HYPRE_CUSPARSE_CALL( cusparseSetMatFillMode(descr, CUSPARSE_FILL_MODE_UPPER) );
 
-      if (!hypre_CsrsvDataInfoU(csrsv_data))
+      if (!nalu_hypre_CsrsvDataInfoU(csrsv_data))
       {
-         NALU_HYPRE_CUSPARSE_CALL( cusparseCreateCsrsv2Info(&hypre_CsrsvDataInfoU(csrsv_data)) );
+         NALU_HYPRE_CUSPARSE_CALL( cusparseCreateCsrsv2Info(&nalu_hypre_CsrsvDataInfoU(csrsv_data)) );
 
-         NALU_HYPRE_CUSPARSE_CALL( hypre_cusparse_csrsv2_bufferSize(handle, CUSPARSE_OPERATION_NON_TRANSPOSE,
-                                                               nrow, nnzA, descr, A_sa, A_i, A_sj, hypre_CsrsvDataInfoU(csrsv_data), &buffer_size) );
+         NALU_HYPRE_CUSPARSE_CALL( nalu_hypre_cusparse_csrsv2_bufferSize(handle, CUSPARSE_OPERATION_NON_TRANSPOSE,
+                                                               nrow, nnzA, descr, A_sa, A_i, A_sj, nalu_hypre_CsrsvDataInfoU(csrsv_data), &buffer_size) );
 
-         if (hypre_CsrsvDataBufferSize(csrsv_data) < buffer_size)
+         if (nalu_hypre_CsrsvDataBufferSize(csrsv_data) < buffer_size)
          {
-            hypre_CsrsvDataBuffer(csrsv_data) = hypre_TReAlloc_v2(hypre_CsrsvDataBuffer(csrsv_data),
-                                                                  char, hypre_CsrsvDataBufferSize(csrsv_data),
+            nalu_hypre_CsrsvDataBuffer(csrsv_data) = nalu_hypre_TReAlloc_v2(nalu_hypre_CsrsvDataBuffer(csrsv_data),
+                                                                  char, nalu_hypre_CsrsvDataBufferSize(csrsv_data),
                                                                   char, buffer_size,
                                                                   NALU_HYPRE_MEMORY_DEVICE);
-            hypre_CsrsvDataBufferSize(csrsv_data) = buffer_size;
+            nalu_hypre_CsrsvDataBufferSize(csrsv_data) = buffer_size;
          }
 
-         NALU_HYPRE_CUSPARSE_CALL( hypre_cusparse_csrsv2_analysis(handle, CUSPARSE_OPERATION_NON_TRANSPOSE,
+         NALU_HYPRE_CUSPARSE_CALL( nalu_hypre_cusparse_csrsv2_analysis(handle, CUSPARSE_OPERATION_NON_TRANSPOSE,
                                                              nrow, nnzA, descr, A_sa, A_i, A_sj,
-                                                             hypre_CsrsvDataInfoU(csrsv_data), CUSPARSE_SOLVE_POLICY_USE_LEVEL,
-                                                             hypre_CsrsvDataBuffer(csrsv_data)) );
+                                                             nalu_hypre_CsrsvDataInfoU(csrsv_data), CUSPARSE_SOLVE_POLICY_USE_LEVEL,
+                                                             nalu_hypre_CsrsvDataBuffer(csrsv_data)) );
 
-         cusparseStatus_t status = cusparseXcsrsv2_zeroPivot(handle, hypre_CsrsvDataInfoU(csrsv_data),
+         cusparseStatus_t status = cusparseXcsrsv2_zeroPivot(handle, nalu_hypre_CsrsvDataInfoU(csrsv_data),
                                                              &structural_zero);
          if (CUSPARSE_STATUS_ZERO_PIVOT == status)
          {
             char msg[256];
-            hypre_sprintf(msg, "hypre_CSRMatrixTriLowerUpperSolveCusparse A(%d,%d) is missing\n",
+            nalu_hypre_sprintf(msg, "nalu_hypre_CSRMatrixTriLowerUpperSolveCusparse A(%d,%d) is missing\n",
                           structural_zero, structural_zero);
-            hypre_error_w_msg(1, msg);
+            nalu_hypre_error_w_msg(1, msg);
          }
       }
 
-      NALU_HYPRE_CUSPARSE_CALL( hypre_cusparse_csrsv2_solve(handle, CUSPARSE_OPERATION_NON_TRANSPOSE,
+      NALU_HYPRE_CUSPARSE_CALL( nalu_hypre_cusparse_csrsv2_solve(handle, CUSPARSE_OPERATION_NON_TRANSPOSE,
                                                        nrow, nnzA, &alpha, descr, A_sa, A_i, A_sj,
-                                                       hypre_CsrsvDataInfoU(csrsv_data), f_data, u_data,
+                                                       nalu_hypre_CsrsvDataInfoU(csrsv_data), f_data, u_data,
                                                        CUSPARSE_SOLVE_POLICY_USE_LEVEL,
-                                                       hypre_CsrsvDataBuffer(csrsv_data)) );
+                                                       nalu_hypre_CsrsvDataBuffer(csrsv_data)) );
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 #endif /* #if defined(NALU_HYPRE_USING_CUSPARSE) */
@@ -2204,173 +2204,173 @@ hypre_CSRMatrixTriLowerUpperSolveCusparse(char             uplo,
 
 #if defined(NALU_HYPRE_USING_ROCSPARSE)
 NALU_HYPRE_Int
-hypre_CSRMatrixTriLowerUpperSolveRocsparse(char              uplo,
-                                           hypre_CSRMatrix * A,
+nalu_hypre_CSRMatrixTriLowerUpperSolveRocsparse(char              uplo,
+                                           nalu_hypre_CSRMatrix * A,
                                            NALU_HYPRE_Real      * l1_norms,
-                                           hypre_Vector    * f,
-                                           hypre_Vector    * u )
+                                           nalu_hypre_Vector    * f,
+                                           nalu_hypre_Vector    * u )
 {
-   NALU_HYPRE_Int      nrow   = hypre_CSRMatrixNumRows(A);
-   NALU_HYPRE_Int      ncol   = hypre_CSRMatrixNumCols(A);
-   NALU_HYPRE_Int      nnzA   = hypre_CSRMatrixNumNonzeros(A);
-   NALU_HYPRE_Int     *A_i    = hypre_CSRMatrixI(A);
-   NALU_HYPRE_Int     *A_j    = hypre_CSRMatrixJ(A);
-   NALU_HYPRE_Complex *A_a    = hypre_CSRMatrixData(A);
-   NALU_HYPRE_Int     *A_sj   = hypre_CSRMatrixSortedJ(A);
-   NALU_HYPRE_Complex *A_sa   = hypre_CSRMatrixSortedData(A);
-   NALU_HYPRE_Complex *f_data = hypre_VectorData(f);
-   NALU_HYPRE_Complex *u_data = hypre_VectorData(u);
+   NALU_HYPRE_Int      nrow   = nalu_hypre_CSRMatrixNumRows(A);
+   NALU_HYPRE_Int      ncol   = nalu_hypre_CSRMatrixNumCols(A);
+   NALU_HYPRE_Int      nnzA   = nalu_hypre_CSRMatrixNumNonzeros(A);
+   NALU_HYPRE_Int     *A_i    = nalu_hypre_CSRMatrixI(A);
+   NALU_HYPRE_Int     *A_j    = nalu_hypre_CSRMatrixJ(A);
+   NALU_HYPRE_Complex *A_a    = nalu_hypre_CSRMatrixData(A);
+   NALU_HYPRE_Int     *A_sj   = nalu_hypre_CSRMatrixSortedJ(A);
+   NALU_HYPRE_Complex *A_sa   = nalu_hypre_CSRMatrixSortedData(A);
+   NALU_HYPRE_Complex *f_data = nalu_hypre_VectorData(f);
+   NALU_HYPRE_Complex *u_data = nalu_hypre_VectorData(u);
    NALU_HYPRE_Complex  alpha  = 1.0;
    size_t         buffer_size;
-   hypre_int      structural_zero;
+   nalu_hypre_int      structural_zero;
 
    if (nrow != ncol)
    {
-      hypre_assert(0);
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_assert(0);
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
 
    if (nrow <= 0)
    {
-      return hypre_error_flag;
+      return nalu_hypre_error_flag;
    }
 
    if (nnzA <= 0)
    {
-      hypre_assert(0);
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_assert(0);
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
 
-   rocsparse_handle handle = hypre_HandleCusparseHandle(hypre_handle());
-   rocsparse_mat_descr descr = hypre_CSRMatrixGPUMatDescr(A);
+   rocsparse_handle handle = nalu_hypre_HandleCusparseHandle(nalu_hypre_handle());
+   rocsparse_mat_descr descr = nalu_hypre_CSRMatrixGPUMatDescr(A);
 
    if ( !A_sj && !A_sa )
    {
-      hypre_CSRMatrixSortedJ(A) = A_sj = hypre_TAlloc(NALU_HYPRE_Int, nnzA, NALU_HYPRE_MEMORY_DEVICE);
-      hypre_CSRMatrixSortedData(A) = A_sa = hypre_TAlloc(NALU_HYPRE_Complex, nnzA, NALU_HYPRE_MEMORY_DEVICE);
-      hypre_TMemcpy(A_sj, A_j, NALU_HYPRE_Int, nnzA, NALU_HYPRE_MEMORY_DEVICE, NALU_HYPRE_MEMORY_DEVICE);
-      hypre_TMemcpy(A_sa, A_a, NALU_HYPRE_Complex, nnzA, NALU_HYPRE_MEMORY_DEVICE, NALU_HYPRE_MEMORY_DEVICE);
+      nalu_hypre_CSRMatrixSortedJ(A) = A_sj = nalu_hypre_TAlloc(NALU_HYPRE_Int, nnzA, NALU_HYPRE_MEMORY_DEVICE);
+      nalu_hypre_CSRMatrixSortedData(A) = A_sa = nalu_hypre_TAlloc(NALU_HYPRE_Complex, nnzA, NALU_HYPRE_MEMORY_DEVICE);
+      nalu_hypre_TMemcpy(A_sj, A_j, NALU_HYPRE_Int, nnzA, NALU_HYPRE_MEMORY_DEVICE, NALU_HYPRE_MEMORY_DEVICE);
+      nalu_hypre_TMemcpy(A_sa, A_a, NALU_HYPRE_Complex, nnzA, NALU_HYPRE_MEMORY_DEVICE, NALU_HYPRE_MEMORY_DEVICE);
 
 #if defined(NALU_HYPRE_USING_HIP)
-      hypre_CSRMatrixData(A) = A_sa;
+      nalu_hypre_CSRMatrixData(A) = A_sa;
       NALU_HYPRE_Int err = 0;
       if (l1_norms)
       {
-         err = hypre_CSRMatrixReplaceDiagDevice(A, l1_norms, INFINITY, 0.0);
+         err = nalu_hypre_CSRMatrixReplaceDiagDevice(A, l1_norms, INFINITY, 0.0);
       }
       else
       {
-         err = hypre_CSRMatrixFixZeroDiagDevice(A, INFINITY, 0.0);
+         err = nalu_hypre_CSRMatrixFixZeroDiagDevice(A, INFINITY, 0.0);
       }
-      hypre_CSRMatrixData(A) = A_a;
+      nalu_hypre_CSRMatrixData(A) = A_a;
       if (err)
       {
-         hypre_error_w_msg(1, "structural zero in hypre_CSRMatrixTriLowerUpperSolveRocsparse");
-         //hypre_assert(0);
+         nalu_hypre_error_w_msg(1, "structural zero in nalu_hypre_CSRMatrixTriLowerUpperSolveRocsparse");
+         //nalu_hypre_assert(0);
       }
 #endif
 
-      hypre_SortCSRRocsparse(nrow, ncol, nnzA, descr, A_i, A_sj, A_sa);
+      nalu_hypre_SortCSRRocsparse(nrow, ncol, nnzA, descr, A_i, A_sj, A_sa);
    }
 
    NALU_HYPRE_ROCSPARSE_CALL( rocsparse_set_mat_diag_type(descr, rocsparse_diag_type_non_unit) );
 
-   if (!hypre_CSRMatrixCsrsvData(A))
+   if (!nalu_hypre_CSRMatrixCsrsvData(A))
    {
-      hypre_CSRMatrixCsrsvData(A) = hypre_CsrsvDataCreate();
+      nalu_hypre_CSRMatrixCsrsvData(A) = nalu_hypre_CsrsvDataCreate();
    }
-   hypre_CsrsvData *csrsv_data = hypre_CSRMatrixCsrsvData(A);
+   nalu_hypre_CsrsvData *csrsv_data = nalu_hypre_CSRMatrixCsrsvData(A);
 
    if (uplo == 'L')
    {
       NALU_HYPRE_ROCSPARSE_CALL( rocsparse_set_mat_fill_mode(descr, rocsparse_fill_mode_lower) );
 
-      if (!hypre_CsrsvDataInfoL(csrsv_data))
+      if (!nalu_hypre_CsrsvDataInfoL(csrsv_data))
       {
-         NALU_HYPRE_ROCSPARSE_CALL( rocsparse_create_mat_info(&hypre_CsrsvDataInfoL(csrsv_data)) );
+         NALU_HYPRE_ROCSPARSE_CALL( rocsparse_create_mat_info(&nalu_hypre_CsrsvDataInfoL(csrsv_data)) );
 
-         NALU_HYPRE_ROCSPARSE_CALL( hypre_rocsparse_csrsv_buffer_size(handle, rocsparse_operation_none,
-                                                                 nrow, nnzA, descr, A_sa, A_i, A_sj, hypre_CsrsvDataInfoL(csrsv_data), &buffer_size) );
+         NALU_HYPRE_ROCSPARSE_CALL( nalu_hypre_rocsparse_csrsv_buffer_size(handle, rocsparse_operation_none,
+                                                                 nrow, nnzA, descr, A_sa, A_i, A_sj, nalu_hypre_CsrsvDataInfoL(csrsv_data), &buffer_size) );
 
-         if (hypre_CsrsvDataBufferSize(csrsv_data) < buffer_size)
+         if (nalu_hypre_CsrsvDataBufferSize(csrsv_data) < buffer_size)
          {
-            hypre_CsrsvDataBuffer(csrsv_data) = hypre_TReAlloc_v2(hypre_CsrsvDataBuffer(csrsv_data),
-                                                                  char, hypre_CsrsvDataBufferSize(csrsv_data),
+            nalu_hypre_CsrsvDataBuffer(csrsv_data) = nalu_hypre_TReAlloc_v2(nalu_hypre_CsrsvDataBuffer(csrsv_data),
+                                                                  char, nalu_hypre_CsrsvDataBufferSize(csrsv_data),
                                                                   char, buffer_size,
                                                                   NALU_HYPRE_MEMORY_DEVICE);
-            hypre_CsrsvDataBufferSize(csrsv_data) = buffer_size;
+            nalu_hypre_CsrsvDataBufferSize(csrsv_data) = buffer_size;
          }
 
-         NALU_HYPRE_ROCSPARSE_CALL( hypre_rocsparse_csrsv_analysis(handle, rocsparse_operation_none,
+         NALU_HYPRE_ROCSPARSE_CALL( nalu_hypre_rocsparse_csrsv_analysis(handle, rocsparse_operation_none,
                                                               nrow, nnzA, descr, A_sa, A_i, A_sj,
-                                                              hypre_CsrsvDataInfoL(csrsv_data), rocsparse_analysis_policy_reuse,
-                                                              rocsparse_solve_policy_auto, hypre_CsrsvDataBuffer(csrsv_data)) );
+                                                              nalu_hypre_CsrsvDataInfoL(csrsv_data), rocsparse_analysis_policy_reuse,
+                                                              rocsparse_solve_policy_auto, nalu_hypre_CsrsvDataBuffer(csrsv_data)) );
 
          rocsparse_status status = rocsparse_csrsv_zero_pivot(handle, descr,
-                                                              hypre_CsrsvDataInfoL(csrsv_data), &structural_zero);
+                                                              nalu_hypre_CsrsvDataInfoL(csrsv_data), &structural_zero);
          if (rocsparse_status_zero_pivot == status)
          {
             char msg[256];
-            hypre_sprintf(msg, "hypre_CSRMatrixTriLowerUpperSolveRocsparse A(%d,%d) is missing\n",
+            nalu_hypre_sprintf(msg, "nalu_hypre_CSRMatrixTriLowerUpperSolveRocsparse A(%d,%d) is missing\n",
                           structural_zero, structural_zero);
-            hypre_error_w_msg(1, msg);
-            //hypre_assert(0);
+            nalu_hypre_error_w_msg(1, msg);
+            //nalu_hypre_assert(0);
          }
       }
 
-      NALU_HYPRE_ROCSPARSE_CALL( hypre_rocsparse_csrsv_solve(handle, rocsparse_operation_none,
+      NALU_HYPRE_ROCSPARSE_CALL( nalu_hypre_rocsparse_csrsv_solve(handle, rocsparse_operation_none,
                                                         nrow, nnzA, &alpha, descr, A_sa, A_i, A_sj,
-                                                        hypre_CsrsvDataInfoL(csrsv_data), f_data, u_data,
+                                                        nalu_hypre_CsrsvDataInfoL(csrsv_data), f_data, u_data,
                                                         rocsparse_solve_policy_auto,
-                                                        hypre_CsrsvDataBuffer(csrsv_data)) );
+                                                        nalu_hypre_CsrsvDataBuffer(csrsv_data)) );
    }
    else
    {
       NALU_HYPRE_ROCSPARSE_CALL( rocsparse_set_mat_fill_mode(descr, rocsparse_fill_mode_upper) );
 
-      if (!hypre_CsrsvDataInfoU(csrsv_data))
+      if (!nalu_hypre_CsrsvDataInfoU(csrsv_data))
       {
-         NALU_HYPRE_ROCSPARSE_CALL( rocsparse_create_mat_info(&hypre_CsrsvDataInfoU(csrsv_data)) );
+         NALU_HYPRE_ROCSPARSE_CALL( rocsparse_create_mat_info(&nalu_hypre_CsrsvDataInfoU(csrsv_data)) );
 
-         NALU_HYPRE_ROCSPARSE_CALL( hypre_rocsparse_csrsv_buffer_size(handle, rocsparse_operation_none,
-                                                                 nrow, nnzA, descr, A_sa, A_i, A_sj, hypre_CsrsvDataInfoU(csrsv_data), &buffer_size) );
+         NALU_HYPRE_ROCSPARSE_CALL( nalu_hypre_rocsparse_csrsv_buffer_size(handle, rocsparse_operation_none,
+                                                                 nrow, nnzA, descr, A_sa, A_i, A_sj, nalu_hypre_CsrsvDataInfoU(csrsv_data), &buffer_size) );
 
-         if (hypre_CsrsvDataBufferSize(csrsv_data) < buffer_size)
+         if (nalu_hypre_CsrsvDataBufferSize(csrsv_data) < buffer_size)
          {
-            hypre_CsrsvDataBuffer(csrsv_data) = hypre_TReAlloc_v2(hypre_CsrsvDataBuffer(csrsv_data),
-                                                                  char, hypre_CsrsvDataBufferSize(csrsv_data),
+            nalu_hypre_CsrsvDataBuffer(csrsv_data) = nalu_hypre_TReAlloc_v2(nalu_hypre_CsrsvDataBuffer(csrsv_data),
+                                                                  char, nalu_hypre_CsrsvDataBufferSize(csrsv_data),
                                                                   char, buffer_size,
                                                                   NALU_HYPRE_MEMORY_DEVICE);
-            hypre_CsrsvDataBufferSize(csrsv_data) = buffer_size;
+            nalu_hypre_CsrsvDataBufferSize(csrsv_data) = buffer_size;
          }
 
-         NALU_HYPRE_ROCSPARSE_CALL( hypre_rocsparse_csrsv_analysis(handle, rocsparse_operation_none,
+         NALU_HYPRE_ROCSPARSE_CALL( nalu_hypre_rocsparse_csrsv_analysis(handle, rocsparse_operation_none,
                                                               nrow, nnzA, descr, A_sa, A_i, A_sj,
-                                                              hypre_CsrsvDataInfoU(csrsv_data), rocsparse_analysis_policy_reuse,
-                                                              rocsparse_solve_policy_auto, hypre_CsrsvDataBuffer(csrsv_data)) );
+                                                              nalu_hypre_CsrsvDataInfoU(csrsv_data), rocsparse_analysis_policy_reuse,
+                                                              rocsparse_solve_policy_auto, nalu_hypre_CsrsvDataBuffer(csrsv_data)) );
 
          rocsparse_status status = rocsparse_csrsv_zero_pivot(handle, descr,
-                                                              hypre_CsrsvDataInfoU(csrsv_data), &structural_zero);
+                                                              nalu_hypre_CsrsvDataInfoU(csrsv_data), &structural_zero);
          if (rocsparse_status_zero_pivot == status)
          {
             char msg[256];
-            hypre_sprintf(msg, "hypre_CSRMatrixTriLowerUpperSolveRocsparse A(%d,%d) is missing\n",
+            nalu_hypre_sprintf(msg, "nalu_hypre_CSRMatrixTriLowerUpperSolveRocsparse A(%d,%d) is missing\n",
                           structural_zero, structural_zero);
-            hypre_error_w_msg(1, msg);
-            //hypre_assert(0);
+            nalu_hypre_error_w_msg(1, msg);
+            //nalu_hypre_assert(0);
          }
       }
 
-      NALU_HYPRE_ROCSPARSE_CALL( hypre_rocsparse_csrsv_solve(handle, rocsparse_operation_none,
+      NALU_HYPRE_ROCSPARSE_CALL( nalu_hypre_rocsparse_csrsv_solve(handle, rocsparse_operation_none,
                                                         nrow, nnzA, &alpha, descr, A_sa, A_i, A_sj,
-                                                        hypre_CsrsvDataInfoU(csrsv_data), f_data, u_data,
+                                                        nalu_hypre_CsrsvDataInfoU(csrsv_data), f_data, u_data,
                                                         rocsparse_solve_policy_auto,
-                                                        hypre_CsrsvDataBuffer(csrsv_data)) );
+                                                        nalu_hypre_CsrsvDataBuffer(csrsv_data)) );
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /* @brief This functions sorts values and column indices in each row in ascending order OUT-OF-PLACE
@@ -2382,7 +2382,7 @@ hypre_CSRMatrixTriLowerUpperSolveRocsparse(char              uplo,
  * @param[in,out] *d_a_sorted On Start: Unsorted values. On Return: Sorted values corresponding with column indices
  */
 void
-hypre_SortCSRRocsparse( NALU_HYPRE_Int            n,
+nalu_hypre_SortCSRRocsparse( NALU_HYPRE_Int            n,
                         NALU_HYPRE_Int            m,
                         NALU_HYPRE_Int            nnzA,
                         rocsparse_mat_descr  descrA,
@@ -2390,7 +2390,7 @@ hypre_SortCSRRocsparse( NALU_HYPRE_Int            n,
                         NALU_HYPRE_Int           *d_ja_sorted,
                         NALU_HYPRE_Complex       *d_a_sorted )
 {
-   rocsparse_handle handle = hypre_HandleCusparseHandle(hypre_handle());
+   rocsparse_handle handle = nalu_hypre_HandleCusparseHandle(nalu_hypre_handle());
 
    size_t pBufferSizeInBytes = 0;
    void *pBuffer = NULL;
@@ -2401,47 +2401,47 @@ hypre_SortCSRRocsparse( NALU_HYPRE_Int            n,
    //        back to the array being returned. Where there is an in-place version available,
    //        we should use it.
    NALU_HYPRE_Complex *d_a_tmp;
-   d_a_tmp  = hypre_TAlloc(NALU_HYPRE_Complex, nnzA, NALU_HYPRE_MEMORY_DEVICE);
+   d_a_tmp  = nalu_hypre_TAlloc(NALU_HYPRE_Complex, nnzA, NALU_HYPRE_MEMORY_DEVICE);
 
    NALU_HYPRE_ROCSPARSE_CALL( rocsparse_csrsort_buffer_size(handle, n, m, nnzA, d_ia, d_ja_sorted,
                                                        &pBufferSizeInBytes) );
 
-   pBuffer = hypre_TAlloc(char, pBufferSizeInBytes, NALU_HYPRE_MEMORY_DEVICE);
-   P       = hypre_TAlloc(NALU_HYPRE_Int, nnzA, NALU_HYPRE_MEMORY_DEVICE);
+   pBuffer = nalu_hypre_TAlloc(char, pBufferSizeInBytes, NALU_HYPRE_MEMORY_DEVICE);
+   P       = nalu_hypre_TAlloc(NALU_HYPRE_Int, nnzA, NALU_HYPRE_MEMORY_DEVICE);
 
    NALU_HYPRE_ROCSPARSE_CALL( rocsparse_create_identity_permutation(handle, nnzA, P) );
    NALU_HYPRE_ROCSPARSE_CALL( rocsparse_csrsort(handle, n, m, nnzA, descrA, d_ia, d_ja_sorted, P,
                                            pBuffer) );
 
-   NALU_HYPRE_ROCSPARSE_CALL( hypre_rocsparse_gthr(handle, nnzA, d_a_sorted, d_a_tmp, P,
+   NALU_HYPRE_ROCSPARSE_CALL( nalu_hypre_rocsparse_gthr(handle, nnzA, d_a_sorted, d_a_tmp, P,
                                               rocsparse_index_base_zero) );
 
-   hypre_TFree(pBuffer, NALU_HYPRE_MEMORY_DEVICE);
-   hypre_TFree(P, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(pBuffer, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(P, NALU_HYPRE_MEMORY_DEVICE);
 
-   hypre_TMemcpy(d_a_sorted, d_a_tmp, NALU_HYPRE_Complex, nnzA, NALU_HYPRE_MEMORY_DEVICE, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TMemcpy(d_a_sorted, d_a_tmp, NALU_HYPRE_Complex, nnzA, NALU_HYPRE_MEMORY_DEVICE, NALU_HYPRE_MEMORY_DEVICE);
 
-   hypre_TFree(d_a_tmp, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(d_a_tmp, NALU_HYPRE_MEMORY_DEVICE);
 }
 #endif // #if defined(NALU_HYPRE_USING_ROCSPARSE)
 
-void hypre_CSRMatrixGpuSpMVAnalysis(hypre_CSRMatrix *matrix)
+void nalu_hypre_CSRMatrixGpuSpMVAnalysis(nalu_hypre_CSRMatrix *matrix)
 {
 #if defined(NALU_HYPRE_USING_ROCSPARSE)
-   NALU_HYPRE_ExecutionPolicy exec = hypre_GetExecPolicy1( hypre_CSRMatrixMemoryLocation(matrix) );
+   NALU_HYPRE_ExecutionPolicy exec = nalu_hypre_GetExecPolicy1( nalu_hypre_CSRMatrixMemoryLocation(matrix) );
 
    if (exec == NALU_HYPRE_EXEC_DEVICE)
    {
-      NALU_HYPRE_ROCSPARSE_CALL( hypre_rocsparse_csrmv_analysis(hypre_HandleCusparseHandle(hypre_handle()),
+      NALU_HYPRE_ROCSPARSE_CALL( nalu_hypre_rocsparse_csrmv_analysis(nalu_hypre_HandleCusparseHandle(nalu_hypre_handle()),
                                                            rocsparse_operation_none,
-                                                           hypre_CSRMatrixNumRows(matrix),
-                                                           hypre_CSRMatrixNumCols(matrix),
-                                                           hypre_CSRMatrixNumNonzeros(matrix),
-                                                           hypre_CSRMatrixGPUMatDescr(matrix),
-                                                           hypre_CSRMatrixData(matrix),
-                                                           hypre_CSRMatrixI(matrix),
-                                                           hypre_CSRMatrixJ(matrix),
-                                                           hypre_CSRMatrixGPUMatInfo(matrix)) );
+                                                           nalu_hypre_CSRMatrixNumRows(matrix),
+                                                           nalu_hypre_CSRMatrixNumCols(matrix),
+                                                           nalu_hypre_CSRMatrixNumNonzeros(matrix),
+                                                           nalu_hypre_CSRMatrixGPUMatDescr(matrix),
+                                                           nalu_hypre_CSRMatrixData(matrix),
+                                                           nalu_hypre_CSRMatrixI(matrix),
+                                                           nalu_hypre_CSRMatrixJ(matrix),
+                                                           nalu_hypre_CSRMatrixGPUMatInfo(matrix)) );
    }
 #endif // #if defined(NALU_HYPRE_USING_ROCSPARSE)
 }

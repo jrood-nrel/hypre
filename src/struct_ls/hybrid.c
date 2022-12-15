@@ -5,10 +5,10 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_struct_ls.h"
+#include "_nalu_hypre_struct_ls.h"
 
 /*--------------------------------------------------------------------------
- * hypre_HybridData:
+ * nalu_hypre_HybridData:
  *--------------------------------------------------------------------------*/
 
 typedef struct
@@ -43,21 +43,21 @@ typedef struct
    /* additional information (place-holder currently used to print norms) */
    NALU_HYPRE_Int             logging;
 
-} hypre_HybridData;
+} nalu_hypre_HybridData;
 
 /*--------------------------------------------------------------------------
- * hypre_HybridCreate
+ * nalu_hypre_HybridCreate
  *--------------------------------------------------------------------------*/
 
 void *
-hypre_HybridCreate( MPI_Comm  comm )
+nalu_hypre_HybridCreate( MPI_Comm  comm )
 {
-   hypre_HybridData *hybrid_data;
+   nalu_hypre_HybridData *hybrid_data;
 
-   hybrid_data = hypre_CTAlloc(hypre_HybridData,  1, NALU_HYPRE_MEMORY_HOST);
+   hybrid_data = nalu_hypre_CTAlloc(nalu_hypre_HybridData,  1, NALU_HYPRE_MEMORY_HOST);
 
    (hybrid_data -> comm)        = comm;
-   (hybrid_data -> time_index)  = hypre_InitializeTiming("Hybrid");
+   (hybrid_data -> time_index)  = nalu_hypre_InitializeTiming("Hybrid");
 
    /* set defaults */
    (hybrid_data -> tol)               = 1.0e-06;
@@ -85,349 +85,349 @@ hypre_HybridCreate( MPI_Comm  comm )
 }
 
 /*--------------------------------------------------------------------------
- * hypre_HybridDestroy
+ * nalu_hypre_HybridDestroy
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_HybridDestroy( void  *hybrid_vdata )
+nalu_hypre_HybridDestroy( void  *hybrid_vdata )
 {
-   hypre_HybridData *hybrid_data = (hypre_HybridData *) hybrid_vdata;
+   nalu_hypre_HybridData *hybrid_data = (nalu_hypre_HybridData *) hybrid_vdata;
 
    if (hybrid_data)
    {
-      hypre_TFree(hybrid_data, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(hybrid_data, NALU_HYPRE_MEMORY_HOST);
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_HybridSetTol
+ * nalu_hypre_HybridSetTol
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_HybridSetTol( void       *hybrid_vdata,
+nalu_hypre_HybridSetTol( void       *hybrid_vdata,
                     NALU_HYPRE_Real  tol       )
 {
-   hypre_HybridData *hybrid_data = (hypre_HybridData *)hybrid_vdata;
+   nalu_hypre_HybridData *hybrid_data = (nalu_hypre_HybridData *)hybrid_vdata;
 
    (hybrid_data -> tol) = tol;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_HybridSetConvergenceTol
+ * nalu_hypre_HybridSetConvergenceTol
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_HybridSetConvergenceTol( void       *hybrid_vdata,
+nalu_hypre_HybridSetConvergenceTol( void       *hybrid_vdata,
                                NALU_HYPRE_Real  cf_tol       )
 {
-   hypre_HybridData *hybrid_data = (hypre_HybridData *)hybrid_vdata;
+   nalu_hypre_HybridData *hybrid_data = (nalu_hypre_HybridData *)hybrid_vdata;
 
    (hybrid_data -> cf_tol) = cf_tol;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_HybridSetDSCGMaxIter
+ * nalu_hypre_HybridSetDSCGMaxIter
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_HybridSetDSCGMaxIter( void      *hybrid_vdata,
+nalu_hypre_HybridSetDSCGMaxIter( void      *hybrid_vdata,
                             NALU_HYPRE_Int  dscg_max_its )
 {
-   hypre_HybridData *hybrid_data = (hypre_HybridData *)hybrid_vdata;
+   nalu_hypre_HybridData *hybrid_data = (nalu_hypre_HybridData *)hybrid_vdata;
 
    (hybrid_data -> dscg_max_its) = dscg_max_its;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_HybridSetPCGMaxIter
+ * nalu_hypre_HybridSetPCGMaxIter
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_HybridSetPCGMaxIter( void      *hybrid_vdata,
+nalu_hypre_HybridSetPCGMaxIter( void      *hybrid_vdata,
                            NALU_HYPRE_Int  krylov_max_its  )
 {
-   hypre_HybridData *hybrid_data = (hypre_HybridData *)hybrid_vdata;
+   nalu_hypre_HybridData *hybrid_data = (nalu_hypre_HybridData *)hybrid_vdata;
 
    (hybrid_data -> krylov_max_its) = krylov_max_its;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_HybridSetPCGAbsoluteTolFactor
+ * nalu_hypre_HybridSetPCGAbsoluteTolFactor
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_HybridSetPCGAbsoluteTolFactor( void       *hybrid_vdata,
+nalu_hypre_HybridSetPCGAbsoluteTolFactor( void       *hybrid_vdata,
                                      NALU_HYPRE_Real  pcg_atolf  )
 {
-   hypre_HybridData *hybrid_data = (hypre_HybridData *)hybrid_vdata;
+   nalu_hypre_HybridData *hybrid_data = (nalu_hypre_HybridData *)hybrid_vdata;
 
    (hybrid_data -> pcg_atolf) = pcg_atolf;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_HybridSetTwoNorm
+ * nalu_hypre_HybridSetTwoNorm
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_HybridSetTwoNorm( void      *hybrid_vdata,
+nalu_hypre_HybridSetTwoNorm( void      *hybrid_vdata,
                         NALU_HYPRE_Int  two_norm  )
 {
-   hypre_HybridData *hybrid_data = ( hypre_HybridData *)hybrid_vdata;
+   nalu_hypre_HybridData *hybrid_data = ( nalu_hypre_HybridData *)hybrid_vdata;
 
    (hybrid_data -> two_norm) = two_norm;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_HybridSetStopCrit
+ * nalu_hypre_HybridSetStopCrit
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_HybridSetStopCrit( void      *hybrid_vdata,
+nalu_hypre_HybridSetStopCrit( void      *hybrid_vdata,
                          NALU_HYPRE_Int  stop_crit  )
 {
-   hypre_HybridData *hybrid_data = ( hypre_HybridData *)hybrid_vdata;
+   nalu_hypre_HybridData *hybrid_data = ( nalu_hypre_HybridData *)hybrid_vdata;
 
    (hybrid_data -> stop_crit) = stop_crit;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_HybridSetRelChange
+ * nalu_hypre_HybridSetRelChange
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_HybridSetRelChange( void      *hybrid_vdata,
+nalu_hypre_HybridSetRelChange( void      *hybrid_vdata,
                           NALU_HYPRE_Int  rel_change  )
 {
-   hypre_HybridData *hybrid_data = (hypre_HybridData *)hybrid_vdata;
+   nalu_hypre_HybridData *hybrid_data = (nalu_hypre_HybridData *)hybrid_vdata;
 
    (hybrid_data -> rel_change) = rel_change;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_HybridSetSolverType
+ * nalu_hypre_HybridSetSolverType
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_HybridSetSolverType( void      *hybrid_vdata,
+nalu_hypre_HybridSetSolverType( void      *hybrid_vdata,
                            NALU_HYPRE_Int  solver_type  )
 {
-   hypre_HybridData *hybrid_data = (hypre_HybridData *)hybrid_vdata;
+   nalu_hypre_HybridData *hybrid_data = (nalu_hypre_HybridData *)hybrid_vdata;
 
    (hybrid_data -> solver_type) = solver_type;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_HybridSetRecomputeResidual
+ * nalu_hypre_HybridSetRecomputeResidual
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_HybridSetRecomputeResidual( void      *hybrid_vdata,
+nalu_hypre_HybridSetRecomputeResidual( void      *hybrid_vdata,
                                   NALU_HYPRE_Int  recompute_residual )
 {
-   hypre_HybridData *hybrid_data = (hypre_HybridData *)hybrid_vdata;
+   nalu_hypre_HybridData *hybrid_data = (nalu_hypre_HybridData *)hybrid_vdata;
 
    (hybrid_data -> recompute_residual) = recompute_residual;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 NALU_HYPRE_Int
-hypre_HybridGetRecomputeResidual( void      *hybrid_vdata,
+nalu_hypre_HybridGetRecomputeResidual( void      *hybrid_vdata,
                                   NALU_HYPRE_Int *recompute_residual )
 {
-   hypre_HybridData *hybrid_data = (hypre_HybridData *)hybrid_vdata;
+   nalu_hypre_HybridData *hybrid_data = (nalu_hypre_HybridData *)hybrid_vdata;
 
    *recompute_residual = (hybrid_data -> recompute_residual);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_HybridSetRecomputeResidualP
+ * nalu_hypre_HybridSetRecomputeResidualP
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_HybridSetRecomputeResidualP( void      *hybrid_vdata,
+nalu_hypre_HybridSetRecomputeResidualP( void      *hybrid_vdata,
                                    NALU_HYPRE_Int  recompute_residual_p )
 {
-   hypre_HybridData *hybrid_data = (hypre_HybridData *)hybrid_vdata;
+   nalu_hypre_HybridData *hybrid_data = (nalu_hypre_HybridData *)hybrid_vdata;
 
    (hybrid_data -> recompute_residual_p) = recompute_residual_p;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 NALU_HYPRE_Int
-hypre_HybridGetRecomputeResidualP( void      *hybrid_vdata,
+nalu_hypre_HybridGetRecomputeResidualP( void      *hybrid_vdata,
                                    NALU_HYPRE_Int *recompute_residual_p )
 {
-   hypre_HybridData *hybrid_data = (hypre_HybridData *)hybrid_vdata;
+   nalu_hypre_HybridData *hybrid_data = (nalu_hypre_HybridData *)hybrid_vdata;
 
    *recompute_residual_p = (hybrid_data -> recompute_residual_p);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_HybridSetKDim
+ * nalu_hypre_HybridSetKDim
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_HybridSetKDim( void      *hybrid_vdata,
+nalu_hypre_HybridSetKDim( void      *hybrid_vdata,
                      NALU_HYPRE_Int  k_dim  )
 {
-   hypre_HybridData *hybrid_data = (hypre_HybridData *)hybrid_vdata;
+   nalu_hypre_HybridData *hybrid_data = (nalu_hypre_HybridData *)hybrid_vdata;
 
    (hybrid_data -> k_dim) = k_dim;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_HybridSetPrecond
+ * nalu_hypre_HybridSetPrecond
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_HybridSetPrecond( void  *krylov_vdata,
+nalu_hypre_HybridSetPrecond( void  *krylov_vdata,
                         NALU_HYPRE_Int  (*krylov_precond_solve)(void*, void*, void*, void*),
                         NALU_HYPRE_Int  (*krylov_precond_setup)(void*, void*, void*, void*),
                         void  *krylov_precond          )
 {
-   hypre_HybridData *krylov_data = (hypre_HybridData *)krylov_vdata;
+   nalu_hypre_HybridData *krylov_data = (nalu_hypre_HybridData *)krylov_vdata;
 
    (krylov_data -> krylov_default)       = 0;
    (krylov_data -> krylov_precond_solve) = krylov_precond_solve;
    (krylov_data -> krylov_precond_setup) = krylov_precond_setup;
    (krylov_data -> krylov_precond)       = krylov_precond;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_HybridSetLogging
+ * nalu_hypre_HybridSetLogging
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_HybridSetLogging( void       *hybrid_vdata,
+nalu_hypre_HybridSetLogging( void       *hybrid_vdata,
                         NALU_HYPRE_Int   logging  )
 {
-   hypre_HybridData *hybrid_data = (hypre_HybridData *)hybrid_vdata;
+   nalu_hypre_HybridData *hybrid_data = (nalu_hypre_HybridData *)hybrid_vdata;
 
    (hybrid_data -> logging) = logging;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_HybridSetPrintLevel
+ * nalu_hypre_HybridSetPrintLevel
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_HybridSetPrintLevel( void      *hybrid_vdata,
+nalu_hypre_HybridSetPrintLevel( void      *hybrid_vdata,
                            NALU_HYPRE_Int  print_level  )
 {
-   hypre_HybridData *hybrid_data = (hypre_HybridData *)hybrid_vdata;
+   nalu_hypre_HybridData *hybrid_data = (nalu_hypre_HybridData *)hybrid_vdata;
 
    (hybrid_data -> print_level) = print_level;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_HybridGetNumIterations
+ * nalu_hypre_HybridGetNumIterations
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_HybridGetNumIterations( void       *hybrid_vdata,
+nalu_hypre_HybridGetNumIterations( void       *hybrid_vdata,
                               NALU_HYPRE_Int  *num_its      )
 {
-   hypre_HybridData *hybrid_data = (hypre_HybridData *)hybrid_vdata;
+   nalu_hypre_HybridData *hybrid_data = (nalu_hypre_HybridData *)hybrid_vdata;
 
    *num_its = (hybrid_data -> dscg_num_its) + (hybrid_data -> krylov_num_its);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_HybridGetDSCGNumIterations
+ * nalu_hypre_HybridGetDSCGNumIterations
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_HybridGetDSCGNumIterations( void       *hybrid_vdata,
+nalu_hypre_HybridGetDSCGNumIterations( void       *hybrid_vdata,
                                   NALU_HYPRE_Int  *dscg_num_its )
 {
-   hypre_HybridData *hybrid_data = (hypre_HybridData *)hybrid_vdata;
+   nalu_hypre_HybridData *hybrid_data = (nalu_hypre_HybridData *)hybrid_vdata;
 
    *dscg_num_its = (hybrid_data -> dscg_num_its);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_HybridGetPCGNumIterations
+ * nalu_hypre_HybridGetPCGNumIterations
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_HybridGetPCGNumIterations( void       *hybrid_vdata,
+nalu_hypre_HybridGetPCGNumIterations( void       *hybrid_vdata,
                                  NALU_HYPRE_Int  *krylov_num_its  )
 {
-   hypre_HybridData *hybrid_data = (hypre_HybridData *)hybrid_vdata;
+   nalu_hypre_HybridData *hybrid_data = (nalu_hypre_HybridData *)hybrid_vdata;
 
    *krylov_num_its = (hybrid_data -> krylov_num_its);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_HybridGetFinalRelativeResidualNorm
+ * nalu_hypre_HybridGetFinalRelativeResidualNorm
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_HybridGetFinalRelativeResidualNorm( void        *hybrid_vdata,
+nalu_hypre_HybridGetFinalRelativeResidualNorm( void        *hybrid_vdata,
                                           NALU_HYPRE_Real  *final_rel_res_norm )
 {
-   hypre_HybridData *hybrid_data = (hypre_HybridData *)hybrid_vdata;
+   nalu_hypre_HybridData *hybrid_data = (nalu_hypre_HybridData *)hybrid_vdata;
 
    *final_rel_res_norm = (hybrid_data -> final_rel_res_norm);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_HybridSetup
+ * nalu_hypre_HybridSetup
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_HybridSetup( void               *hybrid_vdata,
-                   hypre_StructMatrix *A,
-                   hypre_StructVector *b,
-                   hypre_StructVector *x            )
+nalu_hypre_HybridSetup( void               *hybrid_vdata,
+                   nalu_hypre_StructMatrix *A,
+                   nalu_hypre_StructVector *b,
+                   nalu_hypre_StructVector *x            )
 {
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_HybridSolve
+ * nalu_hypre_HybridSolve
  *--------------------------------------------------------------------------
  *
  * This solver is designed to solve Ax=b using a hybrid algorithm. First
@@ -439,7 +439,7 @@ hypre_HybridSetup( void               *hybrid_vdata,
 
 /* Local helper function for creating default PCG solver */
 void *
-hypre_HybridSolveUsePCG( hypre_HybridData  *hybrid_data )
+nalu_hypre_HybridSolveUsePCG( nalu_hypre_HybridData  *hybrid_data )
 {
    void       *krylov_solver;
    NALU_HYPRE_Real  tol            = (hybrid_data -> tol);
@@ -452,35 +452,35 @@ hypre_HybridSolveUsePCG( hypre_HybridData  *hybrid_data )
    NALU_HYPRE_Int   logging        = (hybrid_data -> logging);
    NALU_HYPRE_Int   print_level    = (hybrid_data -> print_level);
 
-   hypre_PCGFunctions  *pcg_functions =
-      hypre_PCGFunctionsCreate(
-         hypre_StructKrylovCAlloc, hypre_StructKrylovFree,
-         hypre_StructKrylovCommInfo,
-         hypre_StructKrylovCreateVector,
-         hypre_StructKrylovDestroyVector, hypre_StructKrylovMatvecCreate,
-         hypre_StructKrylovMatvec, hypre_StructKrylovMatvecDestroy,
-         hypre_StructKrylovInnerProd, hypre_StructKrylovCopyVector,
-         hypre_StructKrylovClearVector,
-         hypre_StructKrylovScaleVector, hypre_StructKrylovAxpy,
-         hypre_StructKrylovIdentitySetup, hypre_StructKrylovIdentity );
-   krylov_solver = hypre_PCGCreate( pcg_functions );
+   nalu_hypre_PCGFunctions  *pcg_functions =
+      nalu_hypre_PCGFunctionsCreate(
+         nalu_hypre_StructKrylovCAlloc, nalu_hypre_StructKrylovFree,
+         nalu_hypre_StructKrylovCommInfo,
+         nalu_hypre_StructKrylovCreateVector,
+         nalu_hypre_StructKrylovDestroyVector, nalu_hypre_StructKrylovMatvecCreate,
+         nalu_hypre_StructKrylovMatvec, nalu_hypre_StructKrylovMatvecDestroy,
+         nalu_hypre_StructKrylovInnerProd, nalu_hypre_StructKrylovCopyVector,
+         nalu_hypre_StructKrylovClearVector,
+         nalu_hypre_StructKrylovScaleVector, nalu_hypre_StructKrylovAxpy,
+         nalu_hypre_StructKrylovIdentitySetup, nalu_hypre_StructKrylovIdentity );
+   krylov_solver = nalu_hypre_PCGCreate( pcg_functions );
 
-   hypre_PCGSetTol(krylov_solver, tol);
-   hypre_PCGSetAbsoluteTolFactor(krylov_solver, pcg_atolf);
-   hypre_PCGSetTwoNorm(krylov_solver, two_norm);
-   hypre_PCGSetStopCrit(krylov_solver, stop_crit);
-   hypre_PCGSetRelChange(krylov_solver, rel_change);
-   hypre_PCGSetRecomputeResidual(krylov_solver, recompute_residual);
-   hypre_PCGSetRecomputeResidualP(krylov_solver, recompute_residual_p);
-   hypre_PCGSetPrintLevel(krylov_solver, print_level);
-   hypre_PCGSetLogging(krylov_solver, logging);
+   nalu_hypre_PCGSetTol(krylov_solver, tol);
+   nalu_hypre_PCGSetAbsoluteTolFactor(krylov_solver, pcg_atolf);
+   nalu_hypre_PCGSetTwoNorm(krylov_solver, two_norm);
+   nalu_hypre_PCGSetStopCrit(krylov_solver, stop_crit);
+   nalu_hypre_PCGSetRelChange(krylov_solver, rel_change);
+   nalu_hypre_PCGSetRecomputeResidual(krylov_solver, recompute_residual);
+   nalu_hypre_PCGSetRecomputeResidualP(krylov_solver, recompute_residual_p);
+   nalu_hypre_PCGSetPrintLevel(krylov_solver, print_level);
+   nalu_hypre_PCGSetLogging(krylov_solver, logging);
 
    return krylov_solver;
 }
 
 /* Local helper function for setting up GMRES */
 void *
-hypre_HybridSolveUseGMRES( hypre_HybridData  *hybrid_data )
+nalu_hypre_HybridSolveUseGMRES( nalu_hypre_HybridData  *hybrid_data )
 {
    void       *krylov_solver;
    NALU_HYPRE_Real  tol            = (hybrid_data -> tol);
@@ -490,33 +490,33 @@ hypre_HybridSolveUseGMRES( hypre_HybridData  *hybrid_data )
    NALU_HYPRE_Int   print_level    = (hybrid_data -> print_level);
    NALU_HYPRE_Int   k_dim          = (hybrid_data -> k_dim);
 
-   hypre_GMRESFunctions  *gmres_functions =
-      hypre_GMRESFunctionsCreate(
-         hypre_StructKrylovCAlloc, hypre_StructKrylovFree,
-         hypre_StructKrylovCommInfo,
-         hypre_StructKrylovCreateVector,
-         hypre_StructKrylovCreateVectorArray,
-         hypre_StructKrylovDestroyVector, hypre_StructKrylovMatvecCreate,
-         hypre_StructKrylovMatvec, hypre_StructKrylovMatvecDestroy,
-         hypre_StructKrylovInnerProd, hypre_StructKrylovCopyVector,
-         hypre_StructKrylovClearVector,
-         hypre_StructKrylovScaleVector, hypre_StructKrylovAxpy,
-         hypre_StructKrylovIdentitySetup, hypre_StructKrylovIdentity );
-   krylov_solver = hypre_GMRESCreate( gmres_functions );
+   nalu_hypre_GMRESFunctions  *gmres_functions =
+      nalu_hypre_GMRESFunctionsCreate(
+         nalu_hypre_StructKrylovCAlloc, nalu_hypre_StructKrylovFree,
+         nalu_hypre_StructKrylovCommInfo,
+         nalu_hypre_StructKrylovCreateVector,
+         nalu_hypre_StructKrylovCreateVectorArray,
+         nalu_hypre_StructKrylovDestroyVector, nalu_hypre_StructKrylovMatvecCreate,
+         nalu_hypre_StructKrylovMatvec, nalu_hypre_StructKrylovMatvecDestroy,
+         nalu_hypre_StructKrylovInnerProd, nalu_hypre_StructKrylovCopyVector,
+         nalu_hypre_StructKrylovClearVector,
+         nalu_hypre_StructKrylovScaleVector, nalu_hypre_StructKrylovAxpy,
+         nalu_hypre_StructKrylovIdentitySetup, nalu_hypre_StructKrylovIdentity );
+   krylov_solver = nalu_hypre_GMRESCreate( gmres_functions );
 
-   hypre_GMRESSetTol(krylov_solver, tol);
-   hypre_GMRESSetKDim(krylov_solver, k_dim);
-   hypre_GMRESSetStopCrit(krylov_solver, stop_crit);
-   hypre_GMRESSetRelChange(krylov_solver, rel_change);
-   hypre_GMRESSetPrintLevel(krylov_solver, print_level);
-   hypre_GMRESSetLogging(krylov_solver, logging);
+   nalu_hypre_GMRESSetTol(krylov_solver, tol);
+   nalu_hypre_GMRESSetKDim(krylov_solver, k_dim);
+   nalu_hypre_GMRESSetStopCrit(krylov_solver, stop_crit);
+   nalu_hypre_GMRESSetRelChange(krylov_solver, rel_change);
+   nalu_hypre_GMRESSetPrintLevel(krylov_solver, print_level);
+   nalu_hypre_GMRESSetLogging(krylov_solver, logging);
 
    return krylov_solver;
 }
 
 /* Local helper function for setting up BiCGSTAB */
 void *
-hypre_HybridSolveUseBiCGSTAB( hypre_HybridData  *hybrid_data )
+nalu_hypre_HybridSolveUseBiCGSTAB( nalu_hypre_HybridData  *hybrid_data )
 {
    void       *krylov_solver;
    NALU_HYPRE_Real  tol            = (hybrid_data -> tol);
@@ -524,33 +524,33 @@ hypre_HybridSolveUseBiCGSTAB( hypre_HybridData  *hybrid_data )
    NALU_HYPRE_Int   logging        = (hybrid_data -> logging);
    NALU_HYPRE_Int   print_level    = (hybrid_data -> print_level);
 
-   hypre_BiCGSTABFunctions  *bicgstab_functions =
-      hypre_BiCGSTABFunctionsCreate(
-         hypre_StructKrylovCreateVector,
-         hypre_StructKrylovDestroyVector, hypre_StructKrylovMatvecCreate,
-         hypre_StructKrylovMatvec, hypre_StructKrylovMatvecDestroy,
-         hypre_StructKrylovInnerProd, hypre_StructKrylovCopyVector,
-         hypre_StructKrylovClearVector,
-         hypre_StructKrylovScaleVector, hypre_StructKrylovAxpy,
-         hypre_StructKrylovCommInfo,
-         hypre_StructKrylovIdentitySetup, hypre_StructKrylovIdentity );
-   krylov_solver = hypre_BiCGSTABCreate( bicgstab_functions );
+   nalu_hypre_BiCGSTABFunctions  *bicgstab_functions =
+      nalu_hypre_BiCGSTABFunctionsCreate(
+         nalu_hypre_StructKrylovCreateVector,
+         nalu_hypre_StructKrylovDestroyVector, nalu_hypre_StructKrylovMatvecCreate,
+         nalu_hypre_StructKrylovMatvec, nalu_hypre_StructKrylovMatvecDestroy,
+         nalu_hypre_StructKrylovInnerProd, nalu_hypre_StructKrylovCopyVector,
+         nalu_hypre_StructKrylovClearVector,
+         nalu_hypre_StructKrylovScaleVector, nalu_hypre_StructKrylovAxpy,
+         nalu_hypre_StructKrylovCommInfo,
+         nalu_hypre_StructKrylovIdentitySetup, nalu_hypre_StructKrylovIdentity );
+   krylov_solver = nalu_hypre_BiCGSTABCreate( bicgstab_functions );
 
-   hypre_BiCGSTABSetTol(krylov_solver, tol);
-   hypre_BiCGSTABSetStopCrit(krylov_solver, stop_crit);
-   hypre_BiCGSTABSetPrintLevel(krylov_solver, print_level);
-   hypre_BiCGSTABSetLogging(krylov_solver, logging);
+   nalu_hypre_BiCGSTABSetTol(krylov_solver, tol);
+   nalu_hypre_BiCGSTABSetStopCrit(krylov_solver, stop_crit);
+   nalu_hypre_BiCGSTABSetPrintLevel(krylov_solver, print_level);
+   nalu_hypre_BiCGSTABSetLogging(krylov_solver, logging);
 
    return krylov_solver;
 }
 
 NALU_HYPRE_Int
-hypre_HybridSolve( void               *hybrid_vdata,
-                   hypre_StructMatrix *A,
-                   hypre_StructVector *b,
-                   hypre_StructVector *x            )
+nalu_hypre_HybridSolve( void               *hybrid_vdata,
+                   nalu_hypre_StructMatrix *A,
+                   nalu_hypre_StructVector *b,
+                   nalu_hypre_StructVector *x            )
 {
-   hypre_HybridData  *hybrid_data    = (hypre_HybridData *)hybrid_vdata;
+   nalu_hypre_HybridData  *hybrid_data    = (nalu_hypre_HybridData *)hybrid_vdata;
 
    MPI_Comm           comm           = (hybrid_data -> comm);
 
@@ -578,29 +578,29 @@ hypre_HybridSolve( void               *hybrid_vdata,
       /*--------------------------------------------------------------------
        * Setup DSCG.
        *--------------------------------------------------------------------*/
-      krylov_solver = hypre_HybridSolveUsePCG(hybrid_data);
-      hypre_PCGSetMaxIter(krylov_solver, dscg_max_its);
-      hypre_PCGSetConvergenceFactorTol(krylov_solver, cf_tol);
+      krylov_solver = nalu_hypre_HybridSolveUsePCG(hybrid_data);
+      nalu_hypre_PCGSetMaxIter(krylov_solver, dscg_max_its);
+      nalu_hypre_PCGSetConvergenceFactorTol(krylov_solver, cf_tol);
 
       krylov_precond = NULL;
 
-      hypre_PCGSetPrecond((void*) krylov_solver,
+      nalu_hypre_PCGSetPrecond((void*) krylov_solver,
                           (NALU_HYPRE_Int (*)(void*, void*, void*, void*)) NALU_HYPRE_StructDiagScale,
                           (NALU_HYPRE_Int (*)(void*, void*, void*, void*)) NALU_HYPRE_StructDiagScaleSetup,
                           (void*) krylov_precond);
-      hypre_PCGSetup(krylov_solver, (void*) A, (void*) b, (void*) x);
+      nalu_hypre_PCGSetup(krylov_solver, (void*) A, (void*) b, (void*) x);
 
       /*--------------------------------------------------------------------
        * Solve with DSCG.
        *--------------------------------------------------------------------*/
-      hypre_PCGSolve(krylov_solver, (void*) A, (void*) b, (void*) x);
+      nalu_hypre_PCGSolve(krylov_solver, (void*) A, (void*) b, (void*) x);
 
       /*--------------------------------------------------------------------
        * Get information for DSCG.
        *--------------------------------------------------------------------*/
-      hypre_PCGGetNumIterations(krylov_solver, &dscg_num_its);
+      nalu_hypre_PCGGetNumIterations(krylov_solver, &dscg_num_its);
       (hybrid_data -> dscg_num_its) = dscg_num_its;
-      hypre_PCGGetFinalRelativeResidualNorm(krylov_solver, &res_norm);
+      nalu_hypre_PCGGetFinalRelativeResidualNorm(krylov_solver, &res_norm);
 
       /*--------------------------------------------------------------------
        * Get additional information from PCG if logging on for hybrid solver.
@@ -608,48 +608,48 @@ hypre_HybridSolve( void               *hybrid_vdata,
        *--------------------------------------------------------------------*/
       if ( logging > 1 )
       {
-         hypre_MPI_Comm_rank(comm, &myid );
-         hypre_PCGPrintLogging(krylov_solver, myid);
+         nalu_hypre_MPI_Comm_rank(comm, &myid );
+         nalu_hypre_PCGPrintLogging(krylov_solver, myid);
       }
 
       /*--------------------------------------------------------------------
        * check if converged.
        *--------------------------------------------------------------------*/
-      hypre_PCGGetConverged(krylov_solver, &converged);
+      nalu_hypre_PCGGetConverged(krylov_solver, &converged);
    }
    else if (solver_type == 2)
    {
       /*--------------------------------------------------------------------
        * Setup GMRES
        *--------------------------------------------------------------------*/
-      krylov_solver = hypre_HybridSolveUseGMRES(hybrid_data);
-      hypre_GMRESSetMaxIter(krylov_solver, dscg_max_its);
-      hypre_GMRESSetConvergenceFactorTol(krylov_solver, cf_tol);
+      krylov_solver = nalu_hypre_HybridSolveUseGMRES(hybrid_data);
+      nalu_hypre_GMRESSetMaxIter(krylov_solver, dscg_max_its);
+      nalu_hypre_GMRESSetConvergenceFactorTol(krylov_solver, cf_tol);
 
       krylov_precond = NULL;
 
-      hypre_GMRESSetPrecond((void*) krylov_solver,
+      nalu_hypre_GMRESSetPrecond((void*) krylov_solver,
                             (NALU_HYPRE_Int (*)(void*, void*, void*, void*))NALU_HYPRE_StructDiagScale,
                             (NALU_HYPRE_Int (*)(void*, void*, void*, void*))NALU_HYPRE_StructDiagScaleSetup,
                             (void*) krylov_precond);
-      hypre_GMRESSetup(krylov_solver, (void*) A, (void*) b, (void*) x);
+      nalu_hypre_GMRESSetup(krylov_solver, (void*) A, (void*) b, (void*) x);
 
       /*--------------------------------------------------------------------
        * Solve with GMRES
        *--------------------------------------------------------------------*/
-      hypre_GMRESSolve(krylov_solver, (void*) A, (void*) b, (void*) x);
+      nalu_hypre_GMRESSolve(krylov_solver, (void*) A, (void*) b, (void*) x);
 
       /*--------------------------------------------------------------------
        * Get information for GMRES
        *--------------------------------------------------------------------*/
-      hypre_GMRESGetNumIterations(krylov_solver, &dscg_num_its);
+      nalu_hypre_GMRESGetNumIterations(krylov_solver, &dscg_num_its);
       (hybrid_data -> dscg_num_its) = dscg_num_its;
-      hypre_GMRESGetFinalRelativeResidualNorm(krylov_solver, &res_norm);
+      nalu_hypre_GMRESGetFinalRelativeResidualNorm(krylov_solver, &res_norm);
 
       /*--------------------------------------------------------------------
        * check if converged.
        *--------------------------------------------------------------------*/
-      hypre_GMRESGetConverged(krylov_solver, &converged);
+      nalu_hypre_GMRESGetConverged(krylov_solver, &converged);
    }
 
    else
@@ -657,34 +657,34 @@ hypre_HybridSolve( void               *hybrid_vdata,
       /*--------------------------------------------------------------------
        * Setup BiCGSTAB
        *--------------------------------------------------------------------*/
-      krylov_solver = hypre_HybridSolveUseBiCGSTAB(hybrid_data);
-      hypre_BiCGSTABSetMaxIter(krylov_solver, dscg_max_its);
-      hypre_BiCGSTABSetConvergenceFactorTol(krylov_solver, cf_tol);
+      krylov_solver = nalu_hypre_HybridSolveUseBiCGSTAB(hybrid_data);
+      nalu_hypre_BiCGSTABSetMaxIter(krylov_solver, dscg_max_its);
+      nalu_hypre_BiCGSTABSetConvergenceFactorTol(krylov_solver, cf_tol);
 
       krylov_precond = NULL;
 
-      hypre_BiCGSTABSetPrecond((void*) krylov_solver,
+      nalu_hypre_BiCGSTABSetPrecond((void*) krylov_solver,
                                (NALU_HYPRE_Int (*)(void*, void*, void*, void*)) NALU_HYPRE_StructDiagScale,
                                (NALU_HYPRE_Int (*)(void*, void*, void*, void*)) NALU_HYPRE_StructDiagScaleSetup,
                                (void*) krylov_precond);
-      hypre_BiCGSTABSetup(krylov_solver, (void*) A, (void*) b, (void*) x);
+      nalu_hypre_BiCGSTABSetup(krylov_solver, (void*) A, (void*) b, (void*) x);
 
       /*--------------------------------------------------------------------
        * Solve with BiCGSTAB
        *--------------------------------------------------------------------*/
-      hypre_BiCGSTABSolve(krylov_solver, (void*) A, (void*) b, (void*) x);
+      nalu_hypre_BiCGSTABSolve(krylov_solver, (void*) A, (void*) b, (void*) x);
 
       /*--------------------------------------------------------------------
        * Get information for BiCGSTAB
        *--------------------------------------------------------------------*/
-      hypre_BiCGSTABGetNumIterations(krylov_solver, &dscg_num_its);
+      nalu_hypre_BiCGSTABGetNumIterations(krylov_solver, &dscg_num_its);
       (hybrid_data -> dscg_num_its) = dscg_num_its;
-      hypre_BiCGSTABGetFinalRelativeResidualNorm(krylov_solver, &res_norm);
+      nalu_hypre_BiCGSTABGetFinalRelativeResidualNorm(krylov_solver, &res_norm);
 
       /*--------------------------------------------------------------------
        * check if converged.
        *--------------------------------------------------------------------*/
-      hypre_BiCGSTABGetConverged(krylov_solver, &converged);
+      nalu_hypre_BiCGSTABGetConverged(krylov_solver, &converged);
    }
 
    /*-----------------------------------------------------------------------
@@ -695,15 +695,15 @@ hypre_HybridSolve( void               *hybrid_vdata,
       (hybrid_data -> final_rel_res_norm) = res_norm;
       if (solver_type == 1)
       {
-         hypre_PCGDestroy(krylov_solver);
+         nalu_hypre_PCGDestroy(krylov_solver);
       }
       else if (solver_type == 2)
       {
-         hypre_GMRESDestroy(krylov_solver);
+         nalu_hypre_GMRESDestroy(krylov_solver);
       }
       else
       {
-         hypre_BiCGSTABDestroy(krylov_solver);
+         nalu_hypre_BiCGSTABDestroy(krylov_solver);
       }
    }
 
@@ -717,40 +717,40 @@ hypre_HybridSolve( void               *hybrid_vdata,
        *--------------------------------------------------------------------*/
       if (solver_type == 1)
       {
-         hypre_PCGDestroy(krylov_solver);
+         nalu_hypre_PCGDestroy(krylov_solver);
 
-         krylov_solver = hypre_HybridSolveUsePCG(hybrid_data);
-         hypre_PCGSetMaxIter(krylov_solver, krylov_max_its);
-         hypre_PCGSetConvergenceFactorTol(krylov_solver, 0.0);
+         krylov_solver = nalu_hypre_HybridSolveUsePCG(hybrid_data);
+         nalu_hypre_PCGSetMaxIter(krylov_solver, krylov_max_its);
+         nalu_hypre_PCGSetConvergenceFactorTol(krylov_solver, 0.0);
       }
       else if (solver_type == 2)
       {
-         hypre_GMRESDestroy(krylov_solver);
+         nalu_hypre_GMRESDestroy(krylov_solver);
 
-         krylov_solver = hypre_HybridSolveUseGMRES(hybrid_data);
-         hypre_GMRESSetMaxIter(krylov_solver, krylov_max_its);
-         hypre_GMRESSetConvergenceFactorTol(krylov_solver, 0.0);
+         krylov_solver = nalu_hypre_HybridSolveUseGMRES(hybrid_data);
+         nalu_hypre_GMRESSetMaxIter(krylov_solver, krylov_max_its);
+         nalu_hypre_GMRESSetConvergenceFactorTol(krylov_solver, 0.0);
       }
       else
       {
-         hypre_BiCGSTABDestroy(krylov_solver);
+         nalu_hypre_BiCGSTABDestroy(krylov_solver);
 
-         krylov_solver = hypre_HybridSolveUseBiCGSTAB(hybrid_data);
-         hypre_BiCGSTABSetMaxIter(krylov_solver, krylov_max_its);
-         hypre_BiCGSTABSetConvergenceFactorTol(krylov_solver, 0.0);
+         krylov_solver = nalu_hypre_HybridSolveUseBiCGSTAB(hybrid_data);
+         nalu_hypre_BiCGSTABSetMaxIter(krylov_solver, krylov_max_its);
+         nalu_hypre_BiCGSTABSetConvergenceFactorTol(krylov_solver, 0.0);
       }
 
       /* Setup preconditioner */
       if (krylov_default)
       {
-         krylov_precond = hypre_SMGCreate(comm);
-         hypre_SMGSetMaxIter(krylov_precond, 1);
-         hypre_SMGSetTol(krylov_precond, 0.0);
-         hypre_SMGSetNumPreRelax(krylov_precond, 1);
-         hypre_SMGSetNumPostRelax(krylov_precond, 1);
-         hypre_SMGSetLogging(krylov_precond, 0);
-         krylov_precond_solve = (NALU_HYPRE_Int (*)(void*, void*, void*, void*))hypre_SMGSolve;
-         krylov_precond_setup = (NALU_HYPRE_Int (*)(void*, void*, void*, void*))hypre_SMGSetup;
+         krylov_precond = nalu_hypre_SMGCreate(comm);
+         nalu_hypre_SMGSetMaxIter(krylov_precond, 1);
+         nalu_hypre_SMGSetTol(krylov_precond, 0.0);
+         nalu_hypre_SMGSetNumPreRelax(krylov_precond, 1);
+         nalu_hypre_SMGSetNumPostRelax(krylov_precond, 1);
+         nalu_hypre_SMGSetLogging(krylov_precond, 0);
+         krylov_precond_solve = (NALU_HYPRE_Int (*)(void*, void*, void*, void*))nalu_hypre_SMGSolve;
+         krylov_precond_setup = (NALU_HYPRE_Int (*)(void*, void*, void*, void*))nalu_hypre_SMGSetup;
       }
       else
       {
@@ -762,19 +762,19 @@ hypre_HybridSolve( void               *hybrid_vdata,
       /* Complete setup of solver+precond */
       if (solver_type == 1)
       {
-         hypre_PCGSetPrecond((void*) krylov_solver,
+         nalu_hypre_PCGSetPrecond((void*) krylov_solver,
                              (NALU_HYPRE_Int (*)(void*, void*, void*, void*)) krylov_precond_solve,
                              (NALU_HYPRE_Int (*)(void*, void*, void*, void*)) krylov_precond_setup,
                              (void*) krylov_precond);
-         hypre_PCGSetup(krylov_solver, (void*) A, (void*) b, (void*) x);
+         nalu_hypre_PCGSetup(krylov_solver, (void*) A, (void*) b, (void*) x);
 
          /* Solve */
-         hypre_PCGSolve(krylov_solver, (void*) A, (void*) b, (void*) x);
+         nalu_hypre_PCGSolve(krylov_solver, (void*) A, (void*) b, (void*) x);
 
          /* Get information from PCG that is always logged in hybrid solver*/
-         hypre_PCGGetNumIterations(krylov_solver, &krylov_num_its);
+         nalu_hypre_PCGGetNumIterations(krylov_solver, &krylov_num_its);
          (hybrid_data -> krylov_num_its)  = krylov_num_its;
-         hypre_PCGGetFinalRelativeResidualNorm(krylov_solver, &res_norm);
+         nalu_hypre_PCGGetFinalRelativeResidualNorm(krylov_solver, &res_norm);
          (hybrid_data -> final_rel_res_norm) = res_norm;
 
          /*-----------------------------------------------------------------
@@ -783,56 +783,56 @@ hypre_HybridSolve( void               *hybrid_vdata,
           *-----------------------------------------------------------------*/
          if ( logging > 1 )
          {
-            hypre_MPI_Comm_rank(comm, &myid );
-            hypre_PCGPrintLogging(krylov_solver, myid);
+            nalu_hypre_MPI_Comm_rank(comm, &myid );
+            nalu_hypre_PCGPrintLogging(krylov_solver, myid);
          }
 
          /* Free PCG and preconditioner */
-         hypre_PCGDestroy(krylov_solver);
+         nalu_hypre_PCGDestroy(krylov_solver);
       }
       else if (solver_type == 2)
       {
-         hypre_GMRESSetPrecond(krylov_solver,
+         nalu_hypre_GMRESSetPrecond(krylov_solver,
                                krylov_precond_solve, krylov_precond_setup, krylov_precond);
-         hypre_GMRESSetup(krylov_solver, (void*) A, (void*) b, (void*) x);
+         nalu_hypre_GMRESSetup(krylov_solver, (void*) A, (void*) b, (void*) x);
 
          /* Solve */
-         hypre_GMRESSolve(krylov_solver, (void*) A, (void*) b, (void*) x);
+         nalu_hypre_GMRESSolve(krylov_solver, (void*) A, (void*) b, (void*) x);
 
          /* Get information from GMRES that is always logged in hybrid solver*/
-         hypre_GMRESGetNumIterations(krylov_solver, &krylov_num_its);
+         nalu_hypre_GMRESGetNumIterations(krylov_solver, &krylov_num_its);
          (hybrid_data -> krylov_num_its)  = krylov_num_its;
-         hypre_GMRESGetFinalRelativeResidualNorm(krylov_solver, &res_norm);
+         nalu_hypre_GMRESGetFinalRelativeResidualNorm(krylov_solver, &res_norm);
          (hybrid_data -> final_rel_res_norm) = res_norm;
 
          /* Free GMRES and preconditioner */
-         hypre_GMRESDestroy(krylov_solver);
+         nalu_hypre_GMRESDestroy(krylov_solver);
       }
       else
       {
-         hypre_BiCGSTABSetPrecond(krylov_solver, krylov_precond_solve,
+         nalu_hypre_BiCGSTABSetPrecond(krylov_solver, krylov_precond_solve,
                                   krylov_precond_setup, krylov_precond);
-         hypre_BiCGSTABSetup(krylov_solver, (void*) A, (void*) b, (void*) x);
+         nalu_hypre_BiCGSTABSetup(krylov_solver, (void*) A, (void*) b, (void*) x);
 
          /* Solve */
-         hypre_BiCGSTABSolve(krylov_solver, (void*) A, (void*) b, (void*) x);
+         nalu_hypre_BiCGSTABSolve(krylov_solver, (void*) A, (void*) b, (void*) x);
 
          /* Get information from BiCGSTAB that is always logged in hybrid solver*/
-         hypre_BiCGSTABGetNumIterations(krylov_solver, &krylov_num_its);
+         nalu_hypre_BiCGSTABGetNumIterations(krylov_solver, &krylov_num_its);
          (hybrid_data -> krylov_num_its)  = krylov_num_its;
-         hypre_BiCGSTABGetFinalRelativeResidualNorm(krylov_solver, &res_norm);
+         nalu_hypre_BiCGSTABGetFinalRelativeResidualNorm(krylov_solver, &res_norm);
          (hybrid_data -> final_rel_res_norm) = res_norm;
 
          /* Free BiCGSTAB and preconditioner */
-         hypre_BiCGSTABDestroy(krylov_solver);
+         nalu_hypre_BiCGSTABDestroy(krylov_solver);
       }
 
       if (krylov_default)
       {
-         hypre_SMGDestroy(krylov_precond);
+         nalu_hypre_SMGDestroy(krylov_precond);
       }
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 

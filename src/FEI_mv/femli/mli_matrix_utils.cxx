@@ -8,14 +8,14 @@
 #include <string.h>
 #include <stdio.h>
 #include "NALU_HYPRE.h"
-#include "_hypre_utilities.h"
-#include "_hypre_parcsr_mv.h"
+#include "_nalu_hypre_utilities.h"
+#include "_nalu_hypre_parcsr_mv.h"
 #include "NALU_HYPRE_IJ_mv.h"
 #include "mli_matrix.h"
 #include "mli_utils.h"
 
 extern "C" {
-   void hypre_qsort0(int *, int, int);
+   void nalu_hypre_qsort0(int *, int, int);
 }
 
 /***************************************************************************
@@ -120,15 +120,15 @@ int MLI_Matrix_GetSubMatrix(MLI_Matrix *A_in, int nRows, int *rowIndices,
    int        mypid, nprocs, *partition, startRow, endRow;
    int        i, j, myNRows, irow, rowInd, rowLeng, *cols, *myRowIndices;
    double     *AA, *vals;
-   hypre_ParCSRMatrix *A;
+   nalu_hypre_ParCSRMatrix *A;
    MPI_Comm           comm;
 
    /*-----------------------------------------------------------------
     * fetch machine and matrix parameters (off_offset)
     *-----------------------------------------------------------------*/
 
-   A = (hypre_ParCSRMatrix *) A_in;
-   comm = hypre_ParCSRMatrixComm(A);
+   A = (nalu_hypre_ParCSRMatrix *) A_in;
+   comm = nalu_hypre_ParCSRMatrixComm(A);
    MPI_Comm_rank(comm, &mypid);  
    MPI_Comm_size(comm, &nprocs);  
    NALU_HYPRE_ParCSRMatrixGetRowPartitioning((NALU_HYPRE_ParCSRMatrix) A, &partition);
@@ -142,9 +142,9 @@ int MLI_Matrix_GetSubMatrix(MLI_Matrix *A_in, int nRows, int *rowIndices,
       rowInd = rowIndices[irow];
       if ( rowInd >= startRow && rowInd < endRow )
       {
-         hypre_ParCSRMatrixGetRow(A,rowInd,&rowLeng,&cols,NULL);
+         nalu_hypre_ParCSRMatrixGetRow(A,rowInd,&rowLeng,&cols,NULL);
          myNRows += rowLeng;
-         hypre_ParCSRMatrixRestoreRow(A,rowInd,&rowLeng,&cols,NULL);
+         nalu_hypre_ParCSRMatrixRestoreRow(A,rowInd,&rowLeng,&cols,NULL);
       }
    }
 
@@ -155,14 +155,14 @@ int MLI_Matrix_GetSubMatrix(MLI_Matrix *A_in, int nRows, int *rowIndices,
       rowInd = rowIndices[irow];
       if ( rowInd >= startRow && rowInd < endRow )
       {
-         hypre_ParCSRMatrixGetRow(A,rowInd,&rowLeng,&cols,NULL);
+         nalu_hypre_ParCSRMatrixGetRow(A,rowInd,&rowLeng,&cols,NULL);
          for ( i = 0; i < rowLeng; i++ )
             myRowIndices[myNRows++] = cols[i];
-         hypre_ParCSRMatrixRestoreRow(A,rowInd,&rowLeng,&cols,NULL);
+         nalu_hypre_ParCSRMatrixRestoreRow(A,rowInd,&rowLeng,&cols,NULL);
       }
    }
 
-   hypre_qsort0(myRowIndices, 0, myNRows-1);
+   nalu_hypre_qsort0(myRowIndices, 0, myNRows-1);
    j = 1;
    for ( i = 1; i < myNRows; i++ )
       if ( myRowIndices[i] != myRowIndices[j-1] ) 
@@ -177,10 +177,10 @@ int MLI_Matrix_GetSubMatrix(MLI_Matrix *A_in, int nRows, int *rowIndices,
       rowInd = myRowIndices[irow];
       if ( rowInd >= startRow && rowInd < endRow )
       {
-         hypre_ParCSRMatrixGetRow(A,rowInd,&rowLeng,&cols,&vals);
+         nalu_hypre_ParCSRMatrixGetRow(A,rowInd,&rowLeng,&cols,&vals);
          for ( i = 0; i < rowLeng; i++ )
             AA[(cols[i]-startRow)*myNRows+irow] = vals[i]; 
-         hypre_ParCSRMatrixRestoreRow(A,rowInd,&rowLeng,&cols,&vals);
+         nalu_hypre_ParCSRMatrixRestoreRow(A,rowInd,&rowLeng,&cols,&vals);
       }
    }
 
@@ -203,18 +203,18 @@ int MLI_Matrix_GetOverlappedMatrix(MLI_Matrix *mli_mat, int *offNRows,
    int         totalRecvs, rowNum, rowLength, *colInd, *sendStarts;
    int         limit, *isendBuf, *cols, curNnz, *rowIndices; 
    double      *dsendBuf, *vals, *colVal;
-   hypre_ParCSRMatrix  *A;
+   nalu_hypre_ParCSRMatrix  *A;
    MPI_Comm            comm;
    MPI_Request         *requests;
    MPI_Status          *status;
-   hypre_ParCSRCommPkg *commPkg;
+   nalu_hypre_ParCSRCommPkg *commPkg;
 
    /*-----------------------------------------------------------------
     * fetch machine and matrix parameters (off_offset)
     *-----------------------------------------------------------------*/
 
-   A    = (hypre_ParCSRMatrix *) mli_mat->getMatrix();
-   comm = hypre_ParCSRMatrixComm(A);
+   A    = (nalu_hypre_ParCSRMatrix *) mli_mat->getMatrix();
+   comm = nalu_hypre_ParCSRMatrixComm(A);
    MPI_Comm_rank(comm,&mypid);  
    MPI_Comm_size(comm,&nprocs);  
    if ( nprocs == 1 )
@@ -227,21 +227,21 @@ int MLI_Matrix_GetOverlappedMatrix(MLI_Matrix *mli_mat, int *offNRows,
    }
    NALU_HYPRE_ParCSRMatrixGetRowPartitioning((NALU_HYPRE_ParCSRMatrix) A, &partition);
    startRow   = partition[mypid];
-   hypre_TFree( partition , NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree( partition , NALU_HYPRE_MEMORY_HOST);
 
    /*-----------------------------------------------------------------
     * fetch matrix communication information (off_nrows)
     *-----------------------------------------------------------------*/
 
-   hypre_MatvecCommPkgCreate((hypre_ParCSRMatrix *) A);
-   commPkg    = hypre_ParCSRMatrixCommPkg(A);
-   nSends     = hypre_ParCSRCommPkgNumSends(commPkg);
-   sendProcs  = hypre_ParCSRCommPkgSendProcs(commPkg);
-   sendStarts = hypre_ParCSRCommPkgSendMapStarts(commPkg);
-   nRecvs     = hypre_ParCSRCommPkgNumRecvs(commPkg);
-   recvProcs  = hypre_ParCSRCommPkgRecvProcs(commPkg);
-   recvStarts = hypre_ParCSRCommPkgRecvVecStarts(commPkg);
-   requests = hypre_CTAlloc( MPI_Request, nRecvs+nSends , NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_MatvecCommPkgCreate((nalu_hypre_ParCSRMatrix *) A);
+   commPkg    = nalu_hypre_ParCSRMatrixCommPkg(A);
+   nSends     = nalu_hypre_ParCSRCommPkgNumSends(commPkg);
+   sendProcs  = nalu_hypre_ParCSRCommPkgSendProcs(commPkg);
+   sendStarts = nalu_hypre_ParCSRCommPkgSendMapStarts(commPkg);
+   nRecvs     = nalu_hypre_ParCSRCommPkgNumRecvs(commPkg);
+   recvProcs  = nalu_hypre_ParCSRCommPkgRecvProcs(commPkg);
+   recvStarts = nalu_hypre_ParCSRCommPkgRecvVecStarts(commPkg);
+   requests = nalu_hypre_CTAlloc( MPI_Request, nRecvs+nSends , NALU_HYPRE_MEMORY_HOST);
    totalSends  = sendStarts[nSends];
    totalRecvs  = recvStarts[nRecvs];
    (*offNRows) = totalRecvs;
@@ -261,7 +261,7 @@ int MLI_Matrix_GetOverlappedMatrix(MLI_Matrix *mli_mat, int *offNRows,
       MPI_Irecv(&((*offRowLengths)[offset]),length,MPI_INT,proc,13278,comm, 
                 &requests[reqNum++]);
    }
-   if ( totalSends > 0 ) isendBuf = hypre_CTAlloc( int, totalSends , NALU_HYPRE_MEMORY_HOST);
+   if ( totalSends > 0 ) isendBuf = nalu_hypre_CTAlloc( int, totalSends , NALU_HYPRE_MEMORY_HOST);
    index = totalSendNnz = 0;
    for (i = 0; i < nSends; i++)
    {
@@ -271,19 +271,19 @@ int MLI_Matrix_GetOverlappedMatrix(MLI_Matrix *mli_mat, int *offNRows,
       length = limit - offset;
       for (j = offset; j < limit; j++)
       {
-         rowNum = hypre_ParCSRCommPkgSendMapElmt(commPkg,j) + startRow;
-         hypre_ParCSRMatrixGetRow(A,rowNum,&rowLength,&colInd,NULL);
+         rowNum = nalu_hypre_ParCSRCommPkgSendMapElmt(commPkg,j) + startRow;
+         nalu_hypre_ParCSRMatrixGetRow(A,rowNum,&rowLength,&colInd,NULL);
          isendBuf[index++] = rowLength;
          totalSendNnz += rowLength;
-         hypre_ParCSRMatrixRestoreRow(A,rowNum,&rowLength,&colInd,NULL);
+         nalu_hypre_ParCSRMatrixRestoreRow(A,rowNum,&rowLength,&colInd,NULL);
       }
       MPI_Isend(&isendBuf[offset], length, MPI_INT, proc, 13278, comm, 
                 &requests[reqNum++]);
    }
-   status = hypre_CTAlloc(MPI_Status, reqNum, NALU_HYPRE_MEMORY_HOST);
+   status = nalu_hypre_CTAlloc(MPI_Status, reqNum, NALU_HYPRE_MEMORY_HOST);
    MPI_Waitall( reqNum, requests, status );
-   hypre_TFree( status , NALU_HYPRE_MEMORY_HOST);
-   if ( totalSends > 0 ) hypre_TFree( isendBuf , NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree( status , NALU_HYPRE_MEMORY_HOST);
+   if ( totalSends > 0 ) nalu_hypre_TFree( isendBuf , NALU_HYPRE_MEMORY_HOST);
 
    /*-----------------------------------------------------------------
     * construct row indices 
@@ -300,7 +300,7 @@ int MLI_Matrix_GetOverlappedMatrix(MLI_Matrix *mli_mat, int *offNRows,
       MPI_Irecv(&(rowIndices[offset]), length, MPI_INT, proc, 13279, comm, 
                 &requests[reqNum++]);
    }
-   if ( totalSends > 0 ) isendBuf = hypre_CTAlloc( int, totalSends , NALU_HYPRE_MEMORY_HOST);
+   if ( totalSends > 0 ) isendBuf = nalu_hypre_CTAlloc( int, totalSends , NALU_HYPRE_MEMORY_HOST);
    index = 0;
    for (i = 0; i < nSends; i++)
    {
@@ -310,16 +310,16 @@ int MLI_Matrix_GetOverlappedMatrix(MLI_Matrix *mli_mat, int *offNRows,
       length = limit - offset;
       for (j = offset; j < limit; j++)
       {
-         rowNum = hypre_ParCSRCommPkgSendMapElmt(commPkg,j) + startRow;
+         rowNum = nalu_hypre_ParCSRCommPkgSendMapElmt(commPkg,j) + startRow;
          isendBuf[index++] = rowNum;
       }
       MPI_Isend(&isendBuf[offset], length, MPI_INT, proc, 13279, comm, 
                 &requests[reqNum++]);
    }
-   status = hypre_CTAlloc(MPI_Status, reqNum, NALU_HYPRE_MEMORY_HOST);
+   status = nalu_hypre_CTAlloc(MPI_Status, reqNum, NALU_HYPRE_MEMORY_HOST);
    MPI_Waitall( reqNum, requests, status );
-   hypre_TFree( status , NALU_HYPRE_MEMORY_HOST);
-   if ( totalSends > 0 ) hypre_TFree( isendBuf , NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree( status , NALU_HYPRE_MEMORY_HOST);
+   if ( totalSends > 0 ) nalu_hypre_TFree( isendBuf , NALU_HYPRE_MEMORY_HOST);
 
    /*-----------------------------------------------------------------
     * construct offCols 
@@ -344,7 +344,7 @@ int MLI_Matrix_GetOverlappedMatrix(MLI_Matrix *mli_mat, int *offNRows,
                 &requests[reqNum++]);
       totalRecvNnz += curNnz;
    }
-   if ( totalSendNnz > 0 ) isendBuf = hypre_CTAlloc( int, totalSendNnz , NALU_HYPRE_MEMORY_HOST);
+   if ( totalSendNnz > 0 ) isendBuf = nalu_hypre_CTAlloc( int, totalSendNnz , NALU_HYPRE_MEMORY_HOST);
    index = totalSendNnz = 0;
    for (i = 0; i < nSends; i++)
    {
@@ -355,20 +355,20 @@ int MLI_Matrix_GetOverlappedMatrix(MLI_Matrix *mli_mat, int *offNRows,
       base   = totalSendNnz;
       for (j = offset; j < limit; j++)
       {
-         rowNum = hypre_ParCSRCommPkgSendMapElmt(commPkg,j) + startRow;
-         hypre_ParCSRMatrixGetRow(A,rowNum,&rowLength,&colInd,NULL);
+         rowNum = nalu_hypre_ParCSRCommPkgSendMapElmt(commPkg,j) + startRow;
+         nalu_hypre_ParCSRMatrixGetRow(A,rowNum,&rowLength,&colInd,NULL);
          for (k = 0; k < rowLength; k++) 
             isendBuf[totalSendNnz++] = colInd[k];
-         hypre_ParCSRMatrixRestoreRow(A,rowNum,&rowLength,&colInd,NULL);
+         nalu_hypre_ParCSRMatrixRestoreRow(A,rowNum,&rowLength,&colInd,NULL);
       }
       length = totalSendNnz - base;
       MPI_Isend(&isendBuf[base], length, MPI_INT, proc, 13280, comm, 
                 &requests[reqNum++]);
    }
-   status = hypre_CTAlloc(MPI_Status, reqNum, NALU_HYPRE_MEMORY_HOST);
+   status = nalu_hypre_CTAlloc(MPI_Status, reqNum, NALU_HYPRE_MEMORY_HOST);
    MPI_Waitall( reqNum, requests, status );
-   hypre_TFree( status , NALU_HYPRE_MEMORY_HOST);
-   if ( totalSendNnz > 0 ) hypre_TFree( isendBuf , NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree( status , NALU_HYPRE_MEMORY_HOST);
+   if ( totalSendNnz > 0 ) nalu_hypre_TFree( isendBuf , NALU_HYPRE_MEMORY_HOST);
 
    /*-----------------------------------------------------------------
     * construct offVals 
@@ -386,7 +386,7 @@ int MLI_Matrix_GetOverlappedMatrix(MLI_Matrix *mli_mat, int *offNRows,
                 &requests[reqNum++]);
       totalRecvNnz += curNnz;
    }
-   if ( totalSendNnz > 0 ) dsendBuf = hypre_CTAlloc( double, totalSendNnz , NALU_HYPRE_MEMORY_HOST);
+   if ( totalSendNnz > 0 ) dsendBuf = nalu_hypre_CTAlloc( double, totalSendNnz , NALU_HYPRE_MEMORY_HOST);
    index = totalSendNnz = 0;
    for (i = 0; i < nSends; i++)
    {
@@ -397,22 +397,22 @@ int MLI_Matrix_GetOverlappedMatrix(MLI_Matrix *mli_mat, int *offNRows,
       base   = totalSendNnz;
       for (j = offset; j < limit; j++)
       {
-         rowNum = hypre_ParCSRCommPkgSendMapElmt(commPkg,j) + startRow;
-         hypre_ParCSRMatrixGetRow(A,rowNum,&rowLength,NULL,&colVal);
+         rowNum = nalu_hypre_ParCSRCommPkgSendMapElmt(commPkg,j) + startRow;
+         nalu_hypre_ParCSRMatrixGetRow(A,rowNum,&rowLength,NULL,&colVal);
          for (k = 0; k < rowLength; k++) 
             dsendBuf[totalSendNnz++] = colVal[k];
-         hypre_ParCSRMatrixRestoreRow(A,rowNum,&rowLength,NULL,&colVal);
+         nalu_hypre_ParCSRMatrixRestoreRow(A,rowNum,&rowLength,NULL,&colVal);
       }
       length = totalSendNnz - base;
       MPI_Isend(&dsendBuf[base], length, MPI_DOUBLE, proc, 13281, comm, 
                 &requests[reqNum++]);
    }
-   status = hypre_CTAlloc(MPI_Status, reqNum, NALU_HYPRE_MEMORY_HOST);
+   status = nalu_hypre_CTAlloc(MPI_Status, reqNum, NALU_HYPRE_MEMORY_HOST);
    MPI_Waitall( reqNum, requests, status );
-   hypre_TFree( status , NALU_HYPRE_MEMORY_HOST);
-   if ( totalSendNnz > 0 ) hypre_TFree( dsendBuf , NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree( status , NALU_HYPRE_MEMORY_HOST);
+   if ( totalSendNnz > 0 ) nalu_hypre_TFree( dsendBuf , NALU_HYPRE_MEMORY_HOST);
 
-   if ( nSends+nRecvs > 0 ) hypre_TFree( requests , NALU_HYPRE_MEMORY_HOST);
+   if ( nSends+nRecvs > 0 ) nalu_hypre_TFree( requests , NALU_HYPRE_MEMORY_HOST);
 
    (*offCols) = cols;
    (*offVals) = vals;
@@ -430,18 +430,18 @@ void MLI_Matrix_Transpose(MLI_Matrix *Amat, MLI_Matrix **AmatT)
    int                localNRows;
    double             dTemp, *ATDiagA;
    char               paramString[30];
-   hypre_CSRMatrix    *ATDiag;
-   hypre_ParCSRMatrix *hypreA, *hypreAT;
+   nalu_hypre_CSRMatrix    *ATDiag;
+   nalu_hypre_ParCSRMatrix *hypreA, *hypreAT;
    MLI_Matrix         *mli_AmatT;
    MLI_Function       *funcPtr;
 
-   hypreA = (hypre_ParCSRMatrix *) Amat->getMatrix();
-   hypre_ParCSRMatrixTranspose( hypreA, &hypreAT, one );
-   ATDiag = hypre_ParCSRMatrixDiag(hypreAT);
-   localNRows = hypre_CSRMatrixNumRows(ATDiag);
-   ATDiagI = hypre_CSRMatrixI(ATDiag);
-   ATDiagJ = hypre_CSRMatrixJ(ATDiag);
-   ATDiagA = hypre_CSRMatrixData(ATDiag);
+   hypreA = (nalu_hypre_ParCSRMatrix *) Amat->getMatrix();
+   nalu_hypre_ParCSRMatrixTranspose( hypreA, &hypreAT, one );
+   ATDiag = nalu_hypre_ParCSRMatrixDiag(hypreAT);
+   localNRows = nalu_hypre_CSRMatrixNumRows(ATDiag);
+   ATDiagI = nalu_hypre_CSRMatrixI(ATDiag);
+   ATDiagJ = nalu_hypre_CSRMatrixJ(ATDiag);
+   ATDiagA = nalu_hypre_CSRMatrixData(ATDiag);
 
    /* -----------------------------------------------------------------------
     * move the diagonal entry to the beginning of the row

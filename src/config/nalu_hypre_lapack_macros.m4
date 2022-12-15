@@ -53,8 +53,8 @@ AC_DEFUN([AC_NALU_HYPRE_FIND_LAPACK],
 #***************************************************************
 #   Save incoming LIBS and LDFLAGS values to be restored
 #***************************************************************
-  hypre_save_LIBS="$LIBS"
-  hypre_save_LDFLGS="$LDFLAGS"
+  nalu_hypre_save_LIBS="$LIBS"
+  nalu_hypre_save_LDFLGS="$LDFLAGS"
   LIBS="$LIBS $FCLIBS"
 
 #***************************************************************
@@ -109,8 +109,8 @@ AC_DEFUN([AC_NALU_HYPRE_FIND_LAPACK],
 #***************************************************************
 #   Restore incoming LIBS and LDFLAGS values
 #***************************************************************
-  LIBS="$hypre_save_LIBS"
-  LDFLAGS="$hypre_save_LDFLGS"
+  LIBS="$nalu_hypre_save_LIBS"
+  LDFLAGS="$nalu_hypre_save_LDFLGS"
 
 ])dnl AC_NALU_HYPRE_FIND_LAPACK
 
@@ -142,27 +142,27 @@ AC_DEFUN([AC_NALU_HYPRE_CHECK_USER_LAPACKLIBS],
 dnl **************************************************************
 dnl Define some variables
 dnl **************************************************************
-  hypre_lapack_link_ok=""
+  nalu_hypre_lapack_link_ok=""
 dnl **************************************************************
 dnl Get fortran linker name for test function (dsygv in this case)
 dnl **************************************************************
 dnl  AC_FC_FUNC(dsygv)
   
-  if test $hypre_fmangle_lapack = 1
+  if test $nalu_hypre_fmangle_lapack = 1
   then
      LAPACKFUNC="dsygv"
-  elif test $hypre_fmangle_lapack = 2
+  elif test $nalu_hypre_fmangle_lapack = 2
   then
      LAPACKFUNC="dsygv_"
-  elif test $hypre_fmangle_lapack = 3
+  elif test $nalu_hypre_fmangle_lapack = 3
   then
      LAPACKFUNC="dsygv__"
-  elif test $hypre_fmangle_lapack = 4
+  elif test $nalu_hypre_fmangle_lapack = 4
   then
      LAPACKFUNC="DSYGV"          
   else
      LAPACKFUNC="dsygv dsygv_ dsygv__ DSYGV"
-     hypre_fmangle_lapack=0
+     nalu_hypre_fmangle_lapack=0
   fi
   
 dnl **************************************************************
@@ -224,8 +224,8 @@ dnl            then
 dnl **************************************************************
 dnl Save current LIBS and LDFLAGS to be restored later 
 dnl **************************************************************
-    hypre_saved_LIBS="$LIBS"
-    hypre_saved_LDFLAGS="$LDFLAGS"
+    nalu_hypre_saved_LIBS="$LIBS"
+    nalu_hypre_saved_LDFLAGS="$LDFLAGS"
     LIBS="$LIBS $FCLIBS"
     LDFLAGS="$LAPACKLIBDIRS $LDFLAGS"
 
@@ -233,21 +233,21 @@ dnl **************************************************************
 dnl Check for dsygv in linkable list of libraries
 dnl **************************************************************
     if test "x$LAPACKLIBNAMES" != "x"; then
-       hypre_lapack_link_ok=no
+       nalu_hypre_lapack_link_ok=no
     fi
     for lapack_lib in $LAPACKLIBNAMES; do
 dnl **************************************************************
 dnl Check if library works and print result
 dnl **************************************************************      
         for func in $LAPACKFUNC; do                
-           AC_CHECK_LIB($lapack_lib, $func, [hypre_lapack_link_ok=yes],[],[-lblas])
-           if test "$hypre_lapack_link_ok" = "yes"; then
+           AC_CHECK_LIB($lapack_lib, $func, [nalu_hypre_lapack_link_ok=yes],[],[-lblas])
+           if test "$nalu_hypre_lapack_link_ok" = "yes"; then
               break 2
            fi
         done
     done
 
-    if test "$hypre_lapack_link_ok" = "no"; then
+    if test "$nalu_hypre_lapack_link_ok" = "no"; then
       AC_MSG_ERROR([**************** Non-linkable lapack library error: ***************************
       User set LAPACK library path using either --with-lapack-lib=<lib>, or 
       --with-lapack-libs=<lapack_lib_base_name> and --with-lapack_dirs=<path-to-lapack-lib>, 
@@ -258,28 +258,28 @@ dnl **************************************************************
 dnl **************************************************************
 dnl set NALU_HYPRE_FMANGLE_LAPACK flag if not set
 dnl **************************************************************
-    if test "$hypre_lapack_link_ok" = "yes" -a "$hypre_fmangle_lapack" = "0"
+    if test "$nalu_hypre_lapack_link_ok" = "yes" -a "$nalu_hypre_fmangle_lapack" = "0"
     then
        if test "$func" = "dsygv"
        then
-          hypre_fmangle_lapack=1
+          nalu_hypre_fmangle_lapack=1
        elif test "$func" = "dsygv_"
        then
-          hypre_fmangle_lapack=2
+          nalu_hypre_fmangle_lapack=2
        elif test "$func" = "dsygv__"
        then
-          hypre_fmangle_lapack=3
+          nalu_hypre_fmangle_lapack=3
        else
-          hypre_fmangle_lapack=4
+          nalu_hypre_fmangle_lapack=4
        fi
-       AC_DEFINE_UNQUOTED(NALU_HYPRE_FMANGLE_LAPACK, [$hypre_fmangle_lapack], [Define as in NALU_HYPRE_FMANGLE to set the LAPACK name mangling scheme])
+       AC_DEFINE_UNQUOTED(NALU_HYPRE_FMANGLE_LAPACK, [$nalu_hypre_fmangle_lapack], [Define as in NALU_HYPRE_FMANGLE to set the LAPACK name mangling scheme])
     fi                    
 
 dnl **************************************************************
 dnl Restore LIBS and LDFLAGS
 dnl **************************************************************
-    LIBS="$hypre_saved_LIBS"
-    LDFLAGS="$hypre_saved_LDFLAGS" 
+    LIBS="$nalu_hypre_saved_LIBS"
+    LDFLAGS="$nalu_hypre_saved_LDFLAGS" 
 dnl  fi
 ])
 dnl Done with macro AC_NALU_HYPRE_CHECK_USER_LAPACKLIBS

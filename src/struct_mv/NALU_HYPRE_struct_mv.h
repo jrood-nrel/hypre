@@ -17,8 +17,8 @@ extern "C" {
 /* forward declarations */
 #ifndef NALU_HYPRE_StructVector_defined
 #define NALU_HYPRE_StructVector_defined
-struct hypre_StructVector_struct;
-typedef struct hypre_StructVector_struct *NALU_HYPRE_StructVector;
+struct nalu_hypre_StructVector_struct;
+typedef struct nalu_hypre_StructVector_struct *NALU_HYPRE_StructVector;
 #endif
 
 /*--------------------------------------------------------------------------
@@ -44,12 +44,12 @@ typedef struct hypre_StructVector_struct *NALU_HYPRE_StructVector;
  * @{
  **/
 
-struct hypre_StructGrid_struct;
+struct nalu_hypre_StructGrid_struct;
 /**
  * A grid object is constructed out of several "boxes", defined on a global
  * abstract index space.
  **/
-typedef struct hypre_StructGrid_struct *NALU_HYPRE_StructGrid;
+typedef struct nalu_hypre_StructGrid_struct *NALU_HYPRE_StructGrid;
 
 /**
  * Create an <em>ndim</em>-dimensional grid object.
@@ -112,11 +112,11 @@ NALU_HYPRE_Int NALU_HYPRE_StructGridSetNumGhost(NALU_HYPRE_StructGrid  grid,
  * @{
  **/
 
-struct hypre_StructStencil_struct;
+struct nalu_hypre_StructStencil_struct;
 /**
  * The stencil object.
  **/
-typedef struct hypre_StructStencil_struct *NALU_HYPRE_StructStencil;
+typedef struct nalu_hypre_StructStencil_struct *NALU_HYPRE_StructStencil;
 
 /**
  * Create a stencil object for the specified number of spatial dimensions and
@@ -152,11 +152,11 @@ NALU_HYPRE_Int NALU_HYPRE_StructStencilSetElement(NALU_HYPRE_StructStencil  sten
  * @{
  **/
 
-struct hypre_StructMatrix_struct;
+struct nalu_hypre_StructMatrix_struct;
 /**
  * The matrix object.
  **/
-typedef struct hypre_StructMatrix_struct *NALU_HYPRE_StructMatrix;
+typedef struct nalu_hypre_StructMatrix_struct *NALU_HYPRE_StructMatrix;
 
 /**
  * Create a matrix object.
@@ -389,12 +389,12 @@ NALU_HYPRE_Int NALU_HYPRE_StructMatrixMatvec ( NALU_HYPRE_Complex alpha,
  * @{
  **/
 
-struct hypre_StructVector_struct;
+struct nalu_hypre_StructVector_struct;
 /**
  * The vector object.
  **/
 #ifndef NALU_HYPRE_StructVector_defined
-typedef struct hypre_StructVector_struct *NALU_HYPRE_StructVector;
+typedef struct nalu_hypre_StructVector_struct *NALU_HYPRE_StructVector;
 #endif
 
 /**
@@ -546,8 +546,8 @@ NALU_HYPRE_Int NALU_HYPRE_StructVectorRead( MPI_Comm             comm,
 NALU_HYPRE_Int NALU_HYPRE_StructMatrixGetGrid(NALU_HYPRE_StructMatrix  matrix,
                                     NALU_HYPRE_StructGrid   *grid);
 
-struct hypre_CommPkg_struct;
-typedef struct hypre_CommPkg_struct *NALU_HYPRE_CommPkg;
+struct nalu_hypre_CommPkg_struct;
+typedef struct nalu_hypre_CommPkg_struct *NALU_HYPRE_CommPkg;
 
 NALU_HYPRE_Int NALU_HYPRE_StructVectorSetNumGhost(NALU_HYPRE_StructVector  vector,
                                         NALU_HYPRE_Int          *num_ghost);

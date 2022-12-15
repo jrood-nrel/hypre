@@ -11,75 +11,75 @@
  *
  *****************************************************************************/
 
-#include "_hypre_parcsr_ls.h"
+#include "_nalu_hypre_parcsr_ls.h"
 
 /*--------------------------------------------------------------------------
- * hypre_BoomerAMGDDCreate
+ * nalu_hypre_BoomerAMGDDCreate
  *--------------------------------------------------------------------------*/
 
 void *
-hypre_BoomerAMGDDCreate()
+nalu_hypre_BoomerAMGDDCreate()
 {
-   hypre_ParAMGDDData  *amgdd_data = hypre_CTAlloc(hypre_ParAMGDDData, 1, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_ParAMGDDData  *amgdd_data = nalu_hypre_CTAlloc(nalu_hypre_ParAMGDDData, 1, NALU_HYPRE_MEMORY_HOST);
 
-   hypre_ParAMGDDDataAMG(amgdd_data) = (hypre_ParAMGData*) hypre_BoomerAMGCreate();
+   nalu_hypre_ParAMGDDDataAMG(amgdd_data) = (nalu_hypre_ParAMGData*) nalu_hypre_BoomerAMGCreate();
 
-   hypre_ParAMGDDDataFACNumCycles(amgdd_data)   = 2;
-   hypre_ParAMGDDDataFACCycleType(amgdd_data)   = 1;
-   hypre_ParAMGDDDataFACRelaxType(amgdd_data)   = 3;
-   hypre_ParAMGDDDataFACNumRelax(amgdd_data)    = 1;
-   hypre_ParAMGDDDataFACRelaxWeight(amgdd_data) = 1.0;
-   hypre_ParAMGDDDataPadding(amgdd_data)        = 1;
-   hypre_ParAMGDDDataNumGhostLayers(amgdd_data) = 1;
-   hypre_ParAMGDDDataCommPkg(amgdd_data)        = NULL;
-   hypre_ParAMGDDDataCompGrid(amgdd_data)       = NULL;
-   hypre_ParAMGDDDataUserFACRelaxation(amgdd_data) = hypre_BoomerAMGDD_FAC_CFL1Jacobi;
+   nalu_hypre_ParAMGDDDataFACNumCycles(amgdd_data)   = 2;
+   nalu_hypre_ParAMGDDDataFACCycleType(amgdd_data)   = 1;
+   nalu_hypre_ParAMGDDDataFACRelaxType(amgdd_data)   = 3;
+   nalu_hypre_ParAMGDDDataFACNumRelax(amgdd_data)    = 1;
+   nalu_hypre_ParAMGDDDataFACRelaxWeight(amgdd_data) = 1.0;
+   nalu_hypre_ParAMGDDDataPadding(amgdd_data)        = 1;
+   nalu_hypre_ParAMGDDDataNumGhostLayers(amgdd_data) = 1;
+   nalu_hypre_ParAMGDDDataCommPkg(amgdd_data)        = NULL;
+   nalu_hypre_ParAMGDDDataCompGrid(amgdd_data)       = NULL;
+   nalu_hypre_ParAMGDDDataUserFACRelaxation(amgdd_data) = nalu_hypre_BoomerAMGDD_FAC_CFL1Jacobi;
 
    return (void *) amgdd_data;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_BoomerAMGDDDestroy
+ * nalu_hypre_BoomerAMGDDDestroy
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_BoomerAMGDDDestroy( void *data )
+nalu_hypre_BoomerAMGDDDestroy( void *data )
 {
-   hypre_ParAMGDDData  *amgdd_data = (hypre_ParAMGDDData*) data;
-   hypre_ParAMGData    *amg_data;
+   nalu_hypre_ParAMGDDData  *amgdd_data = (nalu_hypre_ParAMGDDData*) data;
+   nalu_hypre_ParAMGData    *amg_data;
    NALU_HYPRE_Int            num_levels;
    NALU_HYPRE_Int            i;
 
    if (amgdd_data)
    {
-      amg_data   = hypre_ParAMGDDDataAMG(amgdd_data);
-      num_levels = hypre_ParAMGDataNumLevels(amg_data);
+      amg_data   = nalu_hypre_ParAMGDDDataAMG(amgdd_data);
+      num_levels = nalu_hypre_ParAMGDataNumLevels(amg_data);
 
       /* destroy amgdd composite grids and commpkg */
-      if (hypre_ParAMGDDDataCompGrid(amgdd_data))
+      if (nalu_hypre_ParAMGDDDataCompGrid(amgdd_data))
       {
          for (i = 0; i < num_levels; i++)
          {
-            hypre_AMGDDCompGridDestroy(hypre_ParAMGDDDataCompGrid(amgdd_data)[i]);
+            nalu_hypre_AMGDDCompGridDestroy(nalu_hypre_ParAMGDDDataCompGrid(amgdd_data)[i]);
          }
-         hypre_TFree(hypre_ParAMGDDDataCompGrid(amgdd_data), NALU_HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(nalu_hypre_ParAMGDDDataCompGrid(amgdd_data), NALU_HYPRE_MEMORY_HOST);
       }
 
-      if (hypre_ParAMGDDDataCommPkg(amgdd_data))
+      if (nalu_hypre_ParAMGDDDataCommPkg(amgdd_data))
       {
-         hypre_AMGDDCommPkgDestroy(hypre_ParAMGDDDataCommPkg(amgdd_data));
+         nalu_hypre_AMGDDCommPkgDestroy(nalu_hypre_ParAMGDDDataCommPkg(amgdd_data));
       }
 
       /* destroy temporary vector */
-      hypre_ParVectorDestroy(hypre_ParAMGDDDataZtemp(amgdd_data));
+      nalu_hypre_ParVectorDestroy(nalu_hypre_ParAMGDDDataZtemp(amgdd_data));
 
       /* destroy the underlying amg */
-      hypre_BoomerAMGDestroy((void*) amg_data);
+      nalu_hypre_BoomerAMGDestroy((void*) amg_data);
 
-      hypre_TFree(amgdd_data, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(amgdd_data, NALU_HYPRE_MEMORY_HOST);
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
@@ -87,301 +87,301 @@ hypre_BoomerAMGDDDestroy( void *data )
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_BoomerAMGDDSetStartLevel( void     *data,
+nalu_hypre_BoomerAMGDDSetStartLevel( void     *data,
                                 NALU_HYPRE_Int start_level )
 {
-   hypre_ParAMGDDData  *amgdd_data = (hypre_ParAMGDDData*) data;
+   nalu_hypre_ParAMGDDData  *amgdd_data = (nalu_hypre_ParAMGDDData*) data;
 
    if (!amgdd_data)
    {
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
 
-   hypre_ParAMGDDDataStartLevel(amgdd_data) = start_level;
+   nalu_hypre_ParAMGDDDataStartLevel(amgdd_data) = start_level;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 NALU_HYPRE_Int
-hypre_BoomerAMGDDGetStartLevel( void      *data,
+nalu_hypre_BoomerAMGDDGetStartLevel( void      *data,
                                 NALU_HYPRE_Int *start_level )
 {
-   hypre_ParAMGDDData  *amgdd_data = (hypre_ParAMGDDData*) data;
+   nalu_hypre_ParAMGDDData  *amgdd_data = (nalu_hypre_ParAMGDDData*) data;
 
    if (!amgdd_data)
    {
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
 
-   *start_level = hypre_ParAMGDDDataStartLevel(amgdd_data);
+   *start_level = nalu_hypre_ParAMGDDDataStartLevel(amgdd_data);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 NALU_HYPRE_Int
-hypre_BoomerAMGDDSetFACNumRelax( void     *data,
+nalu_hypre_BoomerAMGDDSetFACNumRelax( void     *data,
                                  NALU_HYPRE_Int fac_num_relax )
 {
-   hypre_ParAMGDDData  *amgdd_data = (hypre_ParAMGDDData*) data;
+   nalu_hypre_ParAMGDDData  *amgdd_data = (nalu_hypre_ParAMGDDData*) data;
 
    if (!amgdd_data)
    {
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
 
-   hypre_ParAMGDDDataFACNumRelax(amgdd_data) = fac_num_relax;
+   nalu_hypre_ParAMGDDDataFACNumRelax(amgdd_data) = fac_num_relax;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 NALU_HYPRE_Int
-hypre_BoomerAMGDDGetFACNumRelax( void      *data,
+nalu_hypre_BoomerAMGDDGetFACNumRelax( void      *data,
                                  NALU_HYPRE_Int *fac_num_relax )
 {
-   hypre_ParAMGDDData  *amgdd_data = (hypre_ParAMGDDData*) data;
+   nalu_hypre_ParAMGDDData  *amgdd_data = (nalu_hypre_ParAMGDDData*) data;
 
    if (!amgdd_data)
    {
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
 
-   *fac_num_relax = hypre_ParAMGDDDataFACNumRelax(amgdd_data);
+   *fac_num_relax = nalu_hypre_ParAMGDDDataFACNumRelax(amgdd_data);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 NALU_HYPRE_Int
-hypre_BoomerAMGDDSetFACNumCycles( void     *data,
+nalu_hypre_BoomerAMGDDSetFACNumCycles( void     *data,
                                   NALU_HYPRE_Int fac_num_cycles )
 {
-   hypre_ParAMGDDData  *amgdd_data = (hypre_ParAMGDDData*) data;
+   nalu_hypre_ParAMGDDData  *amgdd_data = (nalu_hypre_ParAMGDDData*) data;
 
    if (!amgdd_data)
    {
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
 
-   hypre_ParAMGDDDataFACNumCycles(amgdd_data) = fac_num_cycles;
+   nalu_hypre_ParAMGDDDataFACNumCycles(amgdd_data) = fac_num_cycles;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 NALU_HYPRE_Int
-hypre_BoomerAMGDDGetFACNumCycles( void      *data,
+nalu_hypre_BoomerAMGDDGetFACNumCycles( void      *data,
                                   NALU_HYPRE_Int *fac_num_cycles )
 {
-   hypre_ParAMGDDData  *amgdd_data = (hypre_ParAMGDDData*) data;
+   nalu_hypre_ParAMGDDData  *amgdd_data = (nalu_hypre_ParAMGDDData*) data;
 
    if (!amgdd_data)
    {
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
 
-   *fac_num_cycles = hypre_ParAMGDDDataFACNumCycles(amgdd_data);
+   *fac_num_cycles = nalu_hypre_ParAMGDDDataFACNumCycles(amgdd_data);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 NALU_HYPRE_Int
-hypre_BoomerAMGDDSetFACCycleType( void     *data,
+nalu_hypre_BoomerAMGDDSetFACCycleType( void     *data,
                                   NALU_HYPRE_Int fac_cycle_type )
 {
-   hypre_ParAMGDDData  *amgdd_data = (hypre_ParAMGDDData*) data;
+   nalu_hypre_ParAMGDDData  *amgdd_data = (nalu_hypre_ParAMGDDData*) data;
 
    if (!amgdd_data)
    {
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
 
-   hypre_ParAMGDDDataFACCycleType(amgdd_data) = fac_cycle_type;
+   nalu_hypre_ParAMGDDDataFACCycleType(amgdd_data) = fac_cycle_type;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 NALU_HYPRE_Int
-hypre_BoomerAMGDDGetFACCycleType( void      *data,
+nalu_hypre_BoomerAMGDDGetFACCycleType( void      *data,
                                   NALU_HYPRE_Int *fac_cycle_type )
 {
-   hypre_ParAMGDDData  *amgdd_data = (hypre_ParAMGDDData*) data;
+   nalu_hypre_ParAMGDDData  *amgdd_data = (nalu_hypre_ParAMGDDData*) data;
 
    if (!amgdd_data)
    {
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
 
-   *fac_cycle_type = hypre_ParAMGDDDataFACCycleType(amgdd_data);
+   *fac_cycle_type = nalu_hypre_ParAMGDDDataFACCycleType(amgdd_data);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 NALU_HYPRE_Int
-hypre_BoomerAMGDDSetFACRelaxType( void     *data,
+nalu_hypre_BoomerAMGDDSetFACRelaxType( void     *data,
                                   NALU_HYPRE_Int fac_relax_type )
 {
-   hypre_ParAMGDDData  *amgdd_data = (hypre_ParAMGDDData*) data;
+   nalu_hypre_ParAMGDDData  *amgdd_data = (nalu_hypre_ParAMGDDData*) data;
 
    if (!amgdd_data)
    {
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
 
-   hypre_ParAMGDDDataFACRelaxType(amgdd_data) = fac_relax_type;
+   nalu_hypre_ParAMGDDDataFACRelaxType(amgdd_data) = fac_relax_type;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 NALU_HYPRE_Int
-hypre_BoomerAMGDDGetFACRelaxType( void      *data,
+nalu_hypre_BoomerAMGDDGetFACRelaxType( void      *data,
                                   NALU_HYPRE_Int *fac_relax_type )
 {
-   hypre_ParAMGDDData  *amgdd_data = (hypre_ParAMGDDData*) data;
+   nalu_hypre_ParAMGDDData  *amgdd_data = (nalu_hypre_ParAMGDDData*) data;
 
    if (!amgdd_data)
    {
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
 
-   *fac_relax_type = hypre_ParAMGDDDataFACRelaxType(amgdd_data);
+   *fac_relax_type = nalu_hypre_ParAMGDDDataFACRelaxType(amgdd_data);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 NALU_HYPRE_Int
-hypre_BoomerAMGDDSetFACRelaxWeight( void       *data,
+nalu_hypre_BoomerAMGDDSetFACRelaxWeight( void       *data,
                                     NALU_HYPRE_Real  fac_relax_weight )
 {
-   hypre_ParAMGDDData  *amgdd_data = (hypre_ParAMGDDData*) data;
+   nalu_hypre_ParAMGDDData  *amgdd_data = (nalu_hypre_ParAMGDDData*) data;
 
    if (!amgdd_data)
    {
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
 
-   hypre_ParAMGDDDataFACRelaxWeight(amgdd_data) = fac_relax_weight;
+   nalu_hypre_ParAMGDDDataFACRelaxWeight(amgdd_data) = fac_relax_weight;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 NALU_HYPRE_Int
-hypre_BoomerAMGDDGetFACRelaxWeight( void       *data,
+nalu_hypre_BoomerAMGDDGetFACRelaxWeight( void       *data,
                                     NALU_HYPRE_Real *fac_relax_weight )
 {
-   hypre_ParAMGDDData  *amgdd_data = (hypre_ParAMGDDData*) data;
+   nalu_hypre_ParAMGDDData  *amgdd_data = (nalu_hypre_ParAMGDDData*) data;
 
    if (!amgdd_data)
    {
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
 
-   *fac_relax_weight = hypre_ParAMGDDDataFACRelaxWeight(amgdd_data);
+   *fac_relax_weight = nalu_hypre_ParAMGDDDataFACRelaxWeight(amgdd_data);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 NALU_HYPRE_Int
-hypre_BoomerAMGDDSetPadding( void      *data,
+nalu_hypre_BoomerAMGDDSetPadding( void      *data,
                              NALU_HYPRE_Int  padding )
 {
-   hypre_ParAMGDDData  *amgdd_data = (hypre_ParAMGDDData*) data;
+   nalu_hypre_ParAMGDDData  *amgdd_data = (nalu_hypre_ParAMGDDData*) data;
 
    if (!amgdd_data)
    {
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
 
-   hypre_ParAMGDDDataPadding(amgdd_data) = padding;
+   nalu_hypre_ParAMGDDDataPadding(amgdd_data) = padding;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 NALU_HYPRE_Int
-hypre_BoomerAMGDDGetPadding( void      *data,
+nalu_hypre_BoomerAMGDDGetPadding( void      *data,
                              NALU_HYPRE_Int *padding )
 {
-   hypre_ParAMGDDData  *amgdd_data = (hypre_ParAMGDDData*) data;
+   nalu_hypre_ParAMGDDData  *amgdd_data = (nalu_hypre_ParAMGDDData*) data;
 
    if (!amgdd_data)
    {
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
 
-   *padding = hypre_ParAMGDDDataPadding(amgdd_data);
+   *padding = nalu_hypre_ParAMGDDDataPadding(amgdd_data);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 NALU_HYPRE_Int
-hypre_BoomerAMGDDSetNumGhostLayers( void      *data,
+nalu_hypre_BoomerAMGDDSetNumGhostLayers( void      *data,
                                     NALU_HYPRE_Int  num_ghost_layers )
 {
-   hypre_ParAMGDDData  *amgdd_data = (hypre_ParAMGDDData*) data;
+   nalu_hypre_ParAMGDDData  *amgdd_data = (nalu_hypre_ParAMGDDData*) data;
 
    if (!amgdd_data)
    {
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
 
-   hypre_ParAMGDDDataNumGhostLayers(amgdd_data) = num_ghost_layers;
+   nalu_hypre_ParAMGDDDataNumGhostLayers(amgdd_data) = num_ghost_layers;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 NALU_HYPRE_Int
-hypre_BoomerAMGDDGetNumGhostLayers( void      *data,
+nalu_hypre_BoomerAMGDDGetNumGhostLayers( void      *data,
                                     NALU_HYPRE_Int *num_ghost_layers )
 {
-   hypre_ParAMGDDData  *amgdd_data = (hypre_ParAMGDDData*) data;
+   nalu_hypre_ParAMGDDData  *amgdd_data = (nalu_hypre_ParAMGDDData*) data;
 
    if (!amgdd_data)
    {
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
 
-   *num_ghost_layers = hypre_ParAMGDDDataNumGhostLayers(amgdd_data);
+   *num_ghost_layers = nalu_hypre_ParAMGDDDataNumGhostLayers(amgdd_data);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 NALU_HYPRE_Int
-hypre_BoomerAMGDDSetUserFACRelaxation( void *data,
+nalu_hypre_BoomerAMGDDSetUserFACRelaxation( void *data,
                                        NALU_HYPRE_Int (*userFACRelaxation)( void *amgdd_vdata, NALU_HYPRE_Int level, NALU_HYPRE_Int cycle_param ))
 {
-   hypre_ParAMGDDData  *amgdd_data = (hypre_ParAMGDDData*) data;
+   nalu_hypre_ParAMGDDData  *amgdd_data = (nalu_hypre_ParAMGDDData*) data;
 
-   hypre_ParAMGDDDataUserFACRelaxation(amgdd_data) = userFACRelaxation;
+   nalu_hypre_ParAMGDDDataUserFACRelaxation(amgdd_data) = userFACRelaxation;
 
    return 0;
 }
 
 NALU_HYPRE_Int
-hypre_BoomerAMGDDGetAMG( void   *data,
+nalu_hypre_BoomerAMGDDGetAMG( void   *data,
                          void  **amg_solver )
 {
-   hypre_ParAMGDDData  *amgdd_data = (hypre_ParAMGDDData*) data;
+   nalu_hypre_ParAMGDDData  *amgdd_data = (nalu_hypre_ParAMGDDData*) data;
 
    if (!amgdd_data)
    {
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
 
-   *amg_solver = (void*) hypre_ParAMGDDDataAMG(amgdd_data);
+   *amg_solver = (void*) nalu_hypre_ParAMGDDDataAMG(amgdd_data);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }

@@ -60,9 +60,9 @@ int MLI_Solver_Jacobi::setup(MLI_Matrix *Amat)
    double             *ADiagA, *ritzValues;
    char               *paramString;
    MPI_Comm           comm;
-   hypre_ParCSRMatrix *A;
-   hypre_CSRMatrix    *ADiag;
-   hypre_ParVector    *hypreVec;
+   nalu_hypre_ParCSRMatrix *A;
+   nalu_hypre_CSRMatrix    *ADiag;
+   nalu_hypre_ParVector    *hypreVec;
    MLI_Function       *funcPtr;
 
    /*-----------------------------------------------------------------
@@ -70,14 +70,14 @@ int MLI_Solver_Jacobi::setup(MLI_Matrix *Amat)
     *-----------------------------------------------------------------*/
 
    Amat_       = Amat;
-   A           = (hypre_ParCSRMatrix *) Amat_->getMatrix();
-   comm        = hypre_ParCSRMatrixComm(A);
-   ADiag       = hypre_ParCSRMatrixDiag(A);
-   ADiagI      = hypre_CSRMatrixI(ADiag);
-   ADiagJ      = hypre_CSRMatrixJ(ADiag);
-   ADiagA      = hypre_CSRMatrixData(ADiag);
-   localNRows  = hypre_CSRMatrixNumRows(ADiag);
-   globalNRows = hypre_ParCSRMatrixGlobalNumRows( A );
+   A           = (nalu_hypre_ParCSRMatrix *) Amat_->getMatrix();
+   comm        = nalu_hypre_ParCSRMatrixComm(A);
+   ADiag       = nalu_hypre_ParCSRMatrixDiag(A);
+   ADiagI      = nalu_hypre_CSRMatrixI(ADiag);
+   ADiagJ      = nalu_hypre_CSRMatrixJ(ADiag);
+   ADiagA      = nalu_hypre_CSRMatrixData(ADiag);
+   localNRows  = nalu_hypre_CSRMatrixNumRows(ADiag);
+   globalNRows = nalu_hypre_ParCSRMatrixGlobalNumRows( A );
 
    /*-----------------------------------------------------------------
     * extract and store matrix diagonal
@@ -121,24 +121,24 @@ int MLI_Solver_Jacobi::setup(MLI_Matrix *Amat)
     * create temporary vector
     *-----------------------------------------------------------------*/
 
-   funcPtr = hypre_TAlloc( MLI_Function , 1, NALU_HYPRE_MEMORY_HOST);
+   funcPtr = nalu_hypre_TAlloc( MLI_Function , 1, NALU_HYPRE_MEMORY_HOST);
    MLI_Utils_HypreParVectorGetDestroyFunc(funcPtr);
    paramString = new char[20];
    strcpy( paramString, "NALU_HYPRE_ParVector" );
 
    NALU_HYPRE_ParCSRMatrixGetRowPartitioning((NALU_HYPRE_ParCSRMatrix) A, &partition);
-   hypreVec = hypre_ParVectorCreate(comm, globalNRows, partition);
-   hypre_ParVectorInitialize(hypreVec);
+   hypreVec = nalu_hypre_ParVectorCreate(comm, globalNRows, partition);
+   nalu_hypre_ParVectorInitialize(hypreVec);
    auxVec_ = new MLI_Vector(hypreVec, paramString, funcPtr);
 
    NALU_HYPRE_ParCSRMatrixGetRowPartitioning((NALU_HYPRE_ParCSRMatrix) A, &partition);
-   hypreVec = hypre_ParVectorCreate(comm, globalNRows, partition);
-   hypre_ParVectorInitialize(hypreVec);
+   hypreVec = nalu_hypre_ParVectorCreate(comm, globalNRows, partition);
+   nalu_hypre_ParVectorInitialize(hypreVec);
    auxVec2_ = new MLI_Vector(hypreVec, paramString, funcPtr);
 
    NALU_HYPRE_ParCSRMatrixGetRowPartitioning((NALU_HYPRE_ParCSRMatrix) A, &partition);
-   hypreVec = hypre_ParVectorCreate(comm, globalNRows, partition);
-   hypre_ParVectorInitialize(hypreVec);
+   hypreVec = nalu_hypre_ParVectorCreate(comm, globalNRows, partition);
+   nalu_hypre_ParVectorInitialize(hypreVec);
    auxVec3_ = new MLI_Vector(hypreVec, paramString, funcPtr);
 
    delete [] paramString;
@@ -174,25 +174,25 @@ int MLI_Solver_Jacobi::solve(MLI_Vector *fIn, MLI_Vector *uIn)
    int                i, j, is, localNRows, *ADiagI, *ADiagJ, index;
    double             *rData, *uData, weight, *f2Data, *u2Data, *fData;
    double             *ADiagA, dtemp, coeff;
-   hypre_ParCSRMatrix *A;
-   hypre_CSRMatrix    *ADiag;
-   hypre_ParVector    *f, *u, *r, *f2, *u2;
+   nalu_hypre_ParCSRMatrix *A;
+   nalu_hypre_CSRMatrix    *ADiag;
+   nalu_hypre_ParVector    *f, *u, *r, *f2, *u2;
 
    /*-----------------------------------------------------------------
     * fetch machine and matrix parameters
     *-----------------------------------------------------------------*/
 
-   A          = (hypre_ParCSRMatrix *) Amat_->getMatrix();
-   ADiag      = hypre_ParCSRMatrixDiag(A);
-   localNRows = hypre_CSRMatrixNumRows(ADiag);
-   f          = (hypre_ParVector *) fIn->getVector();
-   u          = (hypre_ParVector *) uIn->getVector();
-   r          = (hypre_ParVector *) auxVec_->getVector();
-   rData      = hypre_VectorData(hypre_ParVectorLocalVector(r));
-   uData      = hypre_VectorData(hypre_ParVectorLocalVector(u));
-   ADiagI     = hypre_CSRMatrixI(ADiag);
-   ADiagJ     = hypre_CSRMatrixJ(ADiag);
-   ADiagA     = hypre_CSRMatrixData(ADiag);
+   A          = (nalu_hypre_ParCSRMatrix *) Amat_->getMatrix();
+   ADiag      = nalu_hypre_ParCSRMatrixDiag(A);
+   localNRows = nalu_hypre_CSRMatrixNumRows(ADiag);
+   f          = (nalu_hypre_ParVector *) fIn->getVector();
+   u          = (nalu_hypre_ParVector *) uIn->getVector();
+   r          = (nalu_hypre_ParVector *) auxVec_->getVector();
+   rData      = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(r));
+   uData      = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(u));
+   ADiagI     = nalu_hypre_CSRMatrixI(ADiag);
+   ADiagJ     = nalu_hypre_CSRMatrixJ(ADiag);
+   ADiagA     = nalu_hypre_CSRMatrixData(ADiag);
    
    /*-----------------------------------------------------------------
     * loop 
@@ -203,11 +203,11 @@ int MLI_Solver_Jacobi::solve(MLI_Vector *fIn, MLI_Vector *uIn)
       for ( is = 0; is < nSweeps_; is++ )
       {
          weight = relaxWeights_[is];
-         hypre_ParVectorCopy(f, r); 
+         nalu_hypre_ParVectorCopy(f, r); 
          if ( zeroInitialGuess_ == 0 )
          {
             if ((modifiedD_ & 2) == 0)
-               hypre_ParCSRMatrixMatvec(-1.0, A, u, 1.0, r);
+               nalu_hypre_ParCSRMatrixMatvec(-1.0, A, u, 1.0, r);
             else
             {
                for ( i = 0; i < localNRows; i++ ) 
@@ -243,20 +243,20 @@ int MLI_Solver_Jacobi::solve(MLI_Vector *fIn, MLI_Vector *uIn)
          printf("MLI_Solver_Jacobi::solve ERROR : length mismatch.\n");
          exit(1);
       }
-      f2 = (hypre_ParVector *) auxVec2_->getVector();
-      u2 = (hypre_ParVector *) auxVec3_->getVector();
-      fData  = hypre_VectorData(hypre_ParVectorLocalVector(f));
-      f2Data = hypre_VectorData(hypre_ParVectorLocalVector(f2));
-      u2Data = hypre_VectorData(hypre_ParVectorLocalVector(u2));
+      f2 = (nalu_hypre_ParVector *) auxVec2_->getVector();
+      u2 = (nalu_hypre_ParVector *) auxVec3_->getVector();
+      fData  = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(f));
+      f2Data = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(f2));
+      u2Data = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(u2));
       for (i = 0; i < numFpts_; i++) f2Data[i] = fData[FptList_[i]]; 
       for (i = 0; i < numFpts_; i++) u2Data[i] = uData[FptList_[i]]; 
 
       for ( is = 0; is < nSweeps_; is++ )
       {
          weight = relaxWeights_[is];
-         hypre_ParVectorCopy(f2, r); 
+         nalu_hypre_ParVectorCopy(f2, r); 
          if ( zeroInitialGuess_ == 0 )
-            hypre_ParCSRMatrixMatvec(-1.0, A, u2, 1.0, r);
+            nalu_hypre_ParCSRMatrixMatvec(-1.0, A, u2, 1.0, r);
  
 #ifdef NALU_HYPRE_USING_OPENMP
 #pragma omp parallel for private(i) NALU_HYPRE_SMP_SCHEDULE
@@ -419,7 +419,7 @@ int MLI_Solver_Jacobi::getParams( char *paramString, int *argc, char **argv )
       if ( maxEigen_ == 0.0 )
       {
          ritzValues = new double[2];
-         MLI_Utils_ComputeExtremeRitzValues((hypre_ParCSRMatrix *) 
+         MLI_Utils_ComputeExtremeRitzValues((nalu_hypre_ParCSRMatrix *) 
                                  Amat_->getMatrix(), ritzValues, 1);
          maxEigen_ = ritzValues[0]; 
          delete [] ritzValues;

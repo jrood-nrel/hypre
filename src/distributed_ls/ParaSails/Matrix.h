@@ -47,11 +47,11 @@ typedef struct
     NALU_HYPRE_Real *sendbuf;
     NALU_HYPRE_Real *recvbuf;
 
-    hypre_MPI_Request *recv_req;
-    hypre_MPI_Request *send_req;
-    hypre_MPI_Request *recv_req2;
-    hypre_MPI_Request *send_req2;
-    hypre_MPI_Status  *statuses;
+    nalu_hypre_MPI_Request *recv_req;
+    nalu_hypre_MPI_Request *send_req;
+    nalu_hypre_MPI_Request *recv_req2;
+    nalu_hypre_MPI_Request *send_req2;
+    nalu_hypre_MPI_Status  *statuses;
 
     struct numbering *numb;
 }

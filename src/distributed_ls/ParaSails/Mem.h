@@ -24,8 +24,8 @@ typedef struct
     NALU_HYPRE_Int   num_blocks;
     NALU_HYPRE_Int   bytes_left;
 
-    hypre_longint  total_bytes;
-    hypre_longint  bytes_alloc;
+    nalu_hypre_longint  total_bytes;
+    nalu_hypre_longint  bytes_alloc;
     NALU_HYPRE_Int   num_over;
 
     char *avail;

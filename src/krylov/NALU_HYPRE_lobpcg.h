@@ -5,8 +5,8 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#ifndef hypre_LOBPCG_SOLVER
-#define hypre_LOBPCG_SOLVER
+#ifndef nalu_hypre_LOBPCG_SOLVER
+#define nalu_hypre_LOBPCG_SOLVER
 
 #include "NALU_HYPRE_krylov.h"
 
@@ -46,29 +46,29 @@ extern "C" {
 
 #ifndef NALU_HYPRE_SOLVER_STRUCT
 #define NALU_HYPRE_SOLVER_STRUCT
-struct hypre_Solver_struct;
+struct nalu_hypre_Solver_struct;
 /**
  * The solver object.
  **/
-typedef struct hypre_Solver_struct *NALU_HYPRE_Solver;
+typedef struct nalu_hypre_Solver_struct *NALU_HYPRE_Solver;
 #endif
 
 #ifndef NALU_HYPRE_MATRIX_STRUCT
 #define NALU_HYPRE_MATRIX_STRUCT
-struct hypre_Matrix_struct;
+struct nalu_hypre_Matrix_struct;
 /**
  * The matrix object.
  **/
-typedef struct hypre_Matrix_struct *NALU_HYPRE_Matrix;
+typedef struct nalu_hypre_Matrix_struct *NALU_HYPRE_Matrix;
 #endif
 
 #ifndef NALU_HYPRE_VECTOR_STRUCT
 #define NALU_HYPRE_VECTOR_STRUCT
-struct hypre_Vector_struct;
+struct nalu_hypre_Vector_struct;
 /**
  * The vector object.
  **/
-typedef struct hypre_Vector_struct *NALU_HYPRE_Vector;
+typedef struct nalu_hypre_Vector_struct *NALU_HYPRE_Vector;
 #endif
 
 /**@}*/
@@ -184,7 +184,7 @@ NALU_HYPRE_LOBPCGEigenvaluesHistory(NALU_HYPRE_Solver solver);
 /* Returns the number of iterations performed by LOBPCG */
 NALU_HYPRE_Int NALU_HYPRE_LOBPCGIterations(NALU_HYPRE_Solver solver);
 
-void hypre_LOBPCGMultiOperatorB(void *data,
+void nalu_hypre_LOBPCGMultiOperatorB(void *data,
                                 void *x,
                                 void *y);
 

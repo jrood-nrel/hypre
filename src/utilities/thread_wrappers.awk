@@ -64,13 +64,13 @@ BEGIN {
 	  print "   "arg_type[i] arg[i]";";
 	}
     }
-  print "   "routine_type" returnvalue[hypre_MAX_THREADS];";
+  print "   "routine_type" returnvalue[nalu_hypre_MAX_THREADS];";
   print "} "routine_args";";
   print "";
   print "void";
   print routine_vptr"( void *argptr )";
   print "{";
-  print "   int threadid = hypre_GetThreadID();";
+  print "   int threadid = nalu_hypre_GetThreadID();";
   print "";
   print "   "routine_args" *localargs =";
   print "      ("routine_args" *) argptr;";
@@ -151,10 +151,10 @@ BEGIN {
 	  print "   pushargs."arg[i]" = "arg[i]";";
 	}
     }
-  print "   for (i = 0; i < hypre_NumThreads; i++)";
-  print "      hypre_work_put( "routine_vptr", (void *)&pushargs );";
+  print "   for (i = 0; i < nalu_hypre_NumThreads; i++)";
+  print "      nalu_hypre_work_put( "routine_vptr", (void *)&pushargs );";
   print "";
-  print "   hypre_work_wait();";
+  print "   nalu_hypre_work_wait();";
   print "";
   print "   returnvalue = pushargs.returnvalue[0];";
   print "";

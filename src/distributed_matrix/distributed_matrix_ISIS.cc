@@ -26,24 +26,24 @@ RowBuf;
 #endif
 
 /*--------------------------------------------------------------------------
- * hypre_InitializeDistributedMatrixISIS
+ * nalu_hypre_InitializeDistributedMatrixISIS
  *--------------------------------------------------------------------------*/
 
   /* matrix must be set before calling this function*/
 
 NALU_HYPRE_Int 
-hypre_InitializeDistributedMatrixISIS(hypre_DistributedMatrix *dm)
+nalu_hypre_InitializeDistributedMatrixISIS(nalu_hypre_DistributedMatrix *dm)
 {
 #ifdef ISIS_AVAILABLE
-   RowMatrix *mat = (RowMatrix *) hypre_DistributedMatrixLocalStorage(dm);
+   RowMatrix *mat = (RowMatrix *) nalu_hypre_DistributedMatrixLocalStorage(dm);
 
    const Map& map = mat->getMap();
 
    NALU_HYPRE_BigInt num_rows = mat->getMap().n();
    NALU_HYPRE_BigInt num_cols = mat->getMap().n();
    
-   hypre_DistributedMatrixM(dm) = num_rows;
-   hypre_DistributedMatrixN(dm) = num_cols;
+   nalu_hypre_DistributedMatrixM(dm) = num_rows;
+   nalu_hypre_DistributedMatrixN(dm) = num_cols;
 
    /* allocate space for row buffers */
 
@@ -58,11 +58,11 @@ hypre_InitializeDistributedMatrixISIS(hypre_DistributedMatrix *dm)
 }
 
 /*--------------------------------------------------------------------------
- * hypre_FreeDistributedMatrixISIS
+ * nalu_hypre_FreeDistributedMatrixISIS
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int 
-hypre_FreeDistributedMatrixISIS( hypre_DistributedMatrix *dm)
+nalu_hypre_FreeDistributedMatrixISIS( nalu_hypre_DistributedMatrix *dm)
 {
 #ifdef ISIS_AVAILABLE
    RowBuf *rowbuf = (RowBuf *) dm->auxiliary_data;
@@ -76,30 +76,30 @@ hypre_FreeDistributedMatrixISIS( hypre_DistributedMatrix *dm)
 }
 
 /*--------------------------------------------------------------------------
- * hypre_PrintDistributedMatrixISIS
+ * nalu_hypre_PrintDistributedMatrixISIS
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int 
-hypre_PrintDistributedMatrixISIS( hypre_DistributedMatrix *matrix )
+nalu_hypre_PrintDistributedMatrixISIS( nalu_hypre_DistributedMatrix *matrix )
 {
 #ifdef ISIS_AVAILABLE
-   cout << "hypre_PrintDistributedMatrixISIS not implemented" << endl;
+   cout << "nalu_hypre_PrintDistributedMatrixISIS not implemented" << endl;
 #endif
 
    return -1;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_GetDistributedMatrixLocalRangeISIS
+ * nalu_hypre_GetDistributedMatrixLocalRangeISIS
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int 
-hypre_GetDistributedMatrixLocalRangeISIS( hypre_DistributedMatrix *dm,
+nalu_hypre_GetDistributedMatrixLocalRangeISIS( nalu_hypre_DistributedMatrix *dm,
                              NALU_HYPRE_BigInt *start,
                              NALU_HYPRE_BigInt *end )
 {
 #ifdef ISIS_AVAILABLE
-   RowMatrix *mat = (RowMatrix *) hypre_DistributedMatrixLocalStorage(dm);
+   RowMatrix *mat = (RowMatrix *) nalu_hypre_DistributedMatrixLocalStorage(dm);
 
    *start = mat->getMap().startRow() - 1;  // convert to 0-based
    *end = mat->getMap().endRow(); // endRow actually returns 1 less
@@ -110,21 +110,21 @@ hypre_GetDistributedMatrixLocalRangeISIS( hypre_DistributedMatrix *dm,
 }
 
 /*--------------------------------------------------------------------------
- * hypre_GetDistributedMatrixRowISIS
+ * nalu_hypre_GetDistributedMatrixRowISIS
  *--------------------------------------------------------------------------*/
 
 /* semantics: buffers returned will be overwritten on next call to 
 // this get function */
 
 NALU_HYPRE_Int 
-hypre_GetDistributedMatrixRowISIS( hypre_DistributedMatrix *dm,
+nalu_hypre_GetDistributedMatrixRowISIS( nalu_hypre_DistributedMatrix *dm,
                              NALU_HYPRE_BigInt row,
                              NALU_HYPRE_Int *size,
                              NALU_HYPRE_BigInt **col_ind,
                              NALU_HYPRE_Real **values )
 {
 #ifdef ISIS_AVAILABLE
-   RowMatrix *mat = (RowMatrix *) hypre_DistributedMatrixLocalStorage(dm);
+   RowMatrix *mat = (RowMatrix *) nalu_hypre_DistributedMatrixLocalStorage(dm);
    RowBuf *rowbuf;
    NALU_HYPRE_Int i, temp;
 
@@ -178,11 +178,11 @@ hypre_GetDistributedMatrixRowISIS( hypre_DistributedMatrix *dm,
 }
 
 /*--------------------------------------------------------------------------
- * hypre_RestoreDistributedMatrixRowISIS
+ * nalu_hypre_RestoreDistributedMatrixRowISIS
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int 
-hypre_RestoreDistributedMatrixRowISIS( hypre_DistributedMatrix *dm,
+nalu_hypre_RestoreDistributedMatrixRowISIS( nalu_hypre_DistributedMatrix *dm,
                              NALU_HYPRE_BigInt row,
                              NALU_HYPRE_Int *size,
                              NALU_HYPRE_BigInt **col_ind,

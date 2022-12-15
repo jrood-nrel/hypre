@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_sstruct_ls.h"
+#include "_nalu_hypre_sstruct_ls.h"
 #include "sys_pfmg.h"
 
 #define DEBUG 0
@@ -14,16 +14,16 @@
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_SysPFMGSolve( void                 *sys_pfmg_vdata,
-                    hypre_SStructMatrix  *A_in,
-                    hypre_SStructVector  *b_in,
-                    hypre_SStructVector  *x_in         )
+nalu_hypre_SysPFMGSolve( void                 *sys_pfmg_vdata,
+                    nalu_hypre_SStructMatrix  *A_in,
+                    nalu_hypre_SStructVector  *b_in,
+                    nalu_hypre_SStructVector  *x_in         )
 {
-   hypre_SysPFMGData       *sys_pfmg_data = (hypre_SysPFMGData*)sys_pfmg_vdata;
+   nalu_hypre_SysPFMGData       *sys_pfmg_data = (nalu_hypre_SysPFMGData*)sys_pfmg_vdata;
 
-   hypre_SStructPMatrix *A;
-   hypre_SStructPVector *b;
-   hypre_SStructPVector *x;
+   nalu_hypre_SStructPMatrix *A;
+   nalu_hypre_SStructPVector *b;
+   nalu_hypre_SStructPVector *x;
 
    NALU_HYPRE_Real            tol             = (sys_pfmg_data -> tol);
    NALU_HYPRE_Int             max_iter        = (sys_pfmg_data -> max_iter);
@@ -32,13 +32,13 @@ hypre_SysPFMGSolve( void                 *sys_pfmg_vdata,
    NALU_HYPRE_Int             num_pre_relax   = (sys_pfmg_data -> num_pre_relax);
    NALU_HYPRE_Int             num_post_relax  = (sys_pfmg_data -> num_post_relax);
    NALU_HYPRE_Int             num_levels      = (sys_pfmg_data -> num_levels);
-   hypre_SStructPMatrix  **A_l           = (sys_pfmg_data -> A_l);
-   hypre_SStructPMatrix  **P_l           = (sys_pfmg_data -> P_l);
-   hypre_SStructPMatrix  **RT_l          = (sys_pfmg_data -> RT_l);
-   hypre_SStructPVector  **b_l           = (sys_pfmg_data -> b_l);
-   hypre_SStructPVector  **x_l           = (sys_pfmg_data -> x_l);
-   hypre_SStructPVector  **r_l           = (sys_pfmg_data -> r_l);
-   hypre_SStructPVector  **e_l           = (sys_pfmg_data -> e_l);
+   nalu_hypre_SStructPMatrix  **A_l           = (sys_pfmg_data -> A_l);
+   nalu_hypre_SStructPMatrix  **P_l           = (sys_pfmg_data -> P_l);
+   nalu_hypre_SStructPMatrix  **RT_l          = (sys_pfmg_data -> RT_l);
+   nalu_hypre_SStructPVector  **b_l           = (sys_pfmg_data -> b_l);
+   nalu_hypre_SStructPVector  **x_l           = (sys_pfmg_data -> x_l);
+   nalu_hypre_SStructPVector  **r_l           = (sys_pfmg_data -> r_l);
+   nalu_hypre_SStructPVector  **e_l           = (sys_pfmg_data -> e_l);
    void                **relax_data_l    = (sys_pfmg_data -> relax_data_l);
    void                **matvec_data_l   = (sys_pfmg_data -> matvec_data_l);
    void                **restrict_data_l = (sys_pfmg_data -> restrict_data_l);
@@ -62,23 +62,23 @@ hypre_SysPFMGSolve( void                 *sys_pfmg_vdata,
     *-----------------------------------------------------*/
 
    NALU_HYPRE_ANNOTATE_FUNC_BEGIN;
-   hypre_BeginTiming(sys_pfmg_data -> time_index);
+   nalu_hypre_BeginTiming(sys_pfmg_data -> time_index);
 
    /*-----------------------------------------------------
     * Refs to A,x,b (the PMatrix & PVectors within
     * the input SStructMatrix & SStructVectors)
     *-----------------------------------------------------*/
-   hypre_SStructPMatrixRef(hypre_SStructMatrixPMatrix(A_in, 0), &A);
-   hypre_SStructPVectorRef(hypre_SStructVectorPVector(b_in, 0), &b);
-   hypre_SStructPVectorRef(hypre_SStructVectorPVector(x_in, 0), &x);
+   nalu_hypre_SStructPMatrixRef(nalu_hypre_SStructMatrixPMatrix(A_in, 0), &A);
+   nalu_hypre_SStructPVectorRef(nalu_hypre_SStructVectorPVector(b_in, 0), &b);
+   nalu_hypre_SStructPVectorRef(nalu_hypre_SStructVectorPVector(x_in, 0), &x);
 
 
-   hypre_SStructPMatrixDestroy(A_l[0]);
-   hypre_SStructPVectorDestroy(b_l[0]);
-   hypre_SStructPVectorDestroy(x_l[0]);
-   hypre_SStructPMatrixRef(A, &A_l[0]);
-   hypre_SStructPVectorRef(b, &b_l[0]);
-   hypre_SStructPVectorRef(x, &x_l[0]);
+   nalu_hypre_SStructPMatrixDestroy(A_l[0]);
+   nalu_hypre_SStructPVectorDestroy(b_l[0]);
+   nalu_hypre_SStructPVectorDestroy(x_l[0]);
+   nalu_hypre_SStructPMatrixRef(A, &A_l[0]);
+   nalu_hypre_SStructPVectorRef(b, &b_l[0]);
+   nalu_hypre_SStructPVectorRef(x, &x_l[0]);
 
 
    (sys_pfmg_data -> num_iterations) = 0;
@@ -89,36 +89,36 @@ hypre_SysPFMGSolve( void                 *sys_pfmg_vdata,
       /* if using a zero initial guess, return zero */
       if (zero_guess)
       {
-         hypre_SStructPVectorSetConstantValues(x, 0.0);
+         nalu_hypre_SStructPVectorSetConstantValues(x, 0.0);
       }
 
-      hypre_EndTiming(sys_pfmg_data -> time_index);
+      nalu_hypre_EndTiming(sys_pfmg_data -> time_index);
       NALU_HYPRE_ANNOTATE_FUNC_END;
 
-      return hypre_error_flag;
+      return nalu_hypre_error_flag;
    }
 
    /* part of convergence check */
    if (tol > 0.0)
    {
       /* eps = (tol^2) */
-      hypre_SStructPInnerProd(b_l[0], b_l[0], &b_dot_b);
+      nalu_hypre_SStructPInnerProd(b_l[0], b_l[0], &b_dot_b);
       eps = tol * tol;
 
       /* if rhs is zero, return a zero solution */
       if (b_dot_b == 0.0)
       {
-         hypre_SStructPVectorSetConstantValues(x, 0.0);
+         nalu_hypre_SStructPVectorSetConstantValues(x, 0.0);
          if (logging > 0)
          {
             norms[0]     = 0.0;
             rel_norms[0] = 0.0;
          }
 
-         hypre_EndTiming(sys_pfmg_data -> time_index);
+         nalu_hypre_EndTiming(sys_pfmg_data -> time_index);
          NALU_HYPRE_ANNOTATE_FUNC_END;
 
-         return hypre_error_flag;
+         return nalu_hypre_error_flag;
       }
    }
 
@@ -135,21 +135,21 @@ hypre_SysPFMGSolve( void                 *sys_pfmg_vdata,
       NALU_HYPRE_ANNOTATE_MGLEVEL_BEGIN(0);
 
       /* fine grid pre-relaxation */
-      hypre_SysPFMGRelaxSetPreRelax(relax_data_l[0]);
-      hypre_SysPFMGRelaxSetMaxIter(relax_data_l[0], num_pre_relax);
-      hypre_SysPFMGRelaxSetZeroGuess(relax_data_l[0], zero_guess);
-      hypre_SysPFMGRelax(relax_data_l[0], A_l[0], b_l[0], x_l[0]);
+      nalu_hypre_SysPFMGRelaxSetPreRelax(relax_data_l[0]);
+      nalu_hypre_SysPFMGRelaxSetMaxIter(relax_data_l[0], num_pre_relax);
+      nalu_hypre_SysPFMGRelaxSetZeroGuess(relax_data_l[0], zero_guess);
+      nalu_hypre_SysPFMGRelax(relax_data_l[0], A_l[0], b_l[0], x_l[0]);
       zero_guess = 0;
 
       /* compute fine grid residual (b - Ax) */
-      hypre_SStructPCopy(b_l[0], r_l[0]);
-      hypre_SStructPMatvecCompute(matvec_data_l[0],
+      nalu_hypre_SStructPCopy(b_l[0], r_l[0]);
+      nalu_hypre_SStructPMatvecCompute(matvec_data_l[0],
                                   -1.0, A_l[0], x_l[0], 1.0, r_l[0]);
 
       /* convergence check */
       if (tol > 0.0)
       {
-         hypre_SStructPInnerProd(r_l[0], r_l[0], &r_dot_r);
+         nalu_hypre_SStructPInnerProd(r_l[0], r_l[0], &r_dot_r);
 
          if (logging > 0)
          {
@@ -178,14 +178,14 @@ hypre_SysPFMGSolve( void                 *sys_pfmg_vdata,
       if (num_levels > 1)
       {
          /* restrict fine grid residual */
-         hypre_SysSemiRestrict(restrict_data_l[0], RT_l[0], r_l[0], b_l[1]);
+         nalu_hypre_SysSemiRestrict(restrict_data_l[0], RT_l[0], r_l[0], b_l[1]);
 #if DEBUG
-         hypre_sprintf(filename, "zout_xdown.%02d", 0);
-         hypre_SStructPVectorPrint(filename, x_l[0], 0);
-         hypre_sprintf(filename, "zout_rdown.%02d", 0);
-         hypre_SStructPVectorPrint(filename, r_l[0], 0);
-         hypre_sprintf(filename, "zout_b.%02d", 1);
-         hypre_SStructPVectorPrint(filename, b_l[1], 0);
+         nalu_hypre_sprintf(filename, "zout_xdown.%02d", 0);
+         nalu_hypre_SStructPVectorPrint(filename, x_l[0], 0);
+         nalu_hypre_sprintf(filename, "zout_rdown.%02d", 0);
+         nalu_hypre_SStructPVectorPrint(filename, r_l[0], 0);
+         nalu_hypre_sprintf(filename, "zout_b.%02d", 1);
+         nalu_hypre_SStructPVectorPrint(filename, b_l[1], 0);
 #endif
          NALU_HYPRE_ANNOTATE_MGLEVEL_END(0);
 
@@ -196,35 +196,35 @@ hypre_SysPFMGSolve( void                 *sys_pfmg_vdata,
                NALU_HYPRE_ANNOTATE_MGLEVEL_BEGIN(l);
 
                /* pre-relaxation */
-               hypre_SysPFMGRelaxSetPreRelax(relax_data_l[l]);
-               hypre_SysPFMGRelaxSetMaxIter(relax_data_l[l], num_pre_relax);
-               hypre_SysPFMGRelaxSetZeroGuess(relax_data_l[l], 1);
-               hypre_SysPFMGRelax(relax_data_l[l], A_l[l], b_l[l], x_l[l]);
+               nalu_hypre_SysPFMGRelaxSetPreRelax(relax_data_l[l]);
+               nalu_hypre_SysPFMGRelaxSetMaxIter(relax_data_l[l], num_pre_relax);
+               nalu_hypre_SysPFMGRelaxSetZeroGuess(relax_data_l[l], 1);
+               nalu_hypre_SysPFMGRelax(relax_data_l[l], A_l[l], b_l[l], x_l[l]);
 
                /* compute residual (b - Ax) */
-               hypre_SStructPCopy(b_l[l], r_l[l]);
-               hypre_SStructPMatvecCompute(matvec_data_l[l],
+               nalu_hypre_SStructPCopy(b_l[l], r_l[l]);
+               nalu_hypre_SStructPMatvecCompute(matvec_data_l[l],
                                            -1.0, A_l[l], x_l[l], 1.0, r_l[l]);
             }
             else
             {
                /* inactive level, set x=0, so r=(b-Ax)=b */
-               hypre_SStructPVectorSetConstantValues(x_l[l], 0.0);
-               hypre_SStructPCopy(b_l[l], r_l[l]);
+               nalu_hypre_SStructPVectorSetConstantValues(x_l[l], 0.0);
+               nalu_hypre_SStructPCopy(b_l[l], r_l[l]);
             }
 
             /* restrict residual */
-            hypre_SysSemiRestrict(restrict_data_l[l],
+            nalu_hypre_SysSemiRestrict(restrict_data_l[l],
                                   RT_l[l], r_l[l], b_l[l + 1]);
 #if DEBUG
-            hypre_sprintf(filename, "zout_xdown.%02d", l);
-            hypre_SStructPVectorPrint(filename, x_l[l], 0);
-            hypre_sprintf(filename, "zout_rdown.%02d", l);
-            hypre_SStructPVectorPrint(filename, r_l[l], 0);
-            hypre_sprintf(filename, "zout_RT.%02d", l);
-            hypre_SStructPMatrixPrint(filename, RT_l[l], 0);
-            hypre_sprintf(filename, "zout_b.%02d", l + 1);
-            hypre_SStructPVectorPrint(filename, b_l[l + 1], 0);
+            nalu_hypre_sprintf(filename, "zout_xdown.%02d", l);
+            nalu_hypre_SStructPVectorPrint(filename, x_l[l], 0);
+            nalu_hypre_sprintf(filename, "zout_rdown.%02d", l);
+            nalu_hypre_SStructPVectorPrint(filename, r_l[l], 0);
+            nalu_hypre_sprintf(filename, "zout_RT.%02d", l);
+            nalu_hypre_SStructPMatrixPrint(filename, RT_l[l], 0);
+            nalu_hypre_sprintf(filename, "zout_b.%02d", l + 1);
+            nalu_hypre_SStructPVectorPrint(filename, b_l[l + 1], 0);
 #endif
             NALU_HYPRE_ANNOTATE_MGLEVEL_END(l);
          }
@@ -234,11 +234,11 @@ hypre_SysPFMGSolve( void                 *sys_pfmg_vdata,
           *--------------------------------------------------*/
          NALU_HYPRE_ANNOTATE_MGLEVEL_BEGIN(num_levels - 1);
 
-         hypre_SysPFMGRelaxSetZeroGuess(relax_data_l[l], 1);
-         hypre_SysPFMGRelax(relax_data_l[l], A_l[l], b_l[l], x_l[l]);
+         nalu_hypre_SysPFMGRelaxSetZeroGuess(relax_data_l[l], 1);
+         nalu_hypre_SysPFMGRelax(relax_data_l[l], A_l[l], b_l[l], x_l[l]);
 #if DEBUG
-         hypre_sprintf(filename, "zout_xbottom.%02d", l);
-         hypre_SStructPVectorPrint(filename, x_l[l], 0);
+         nalu_hypre_sprintf(filename, "zout_xbottom.%02d", l);
+         nalu_hypre_SStructPVectorPrint(filename, x_l[l], 0);
 #endif
 
          /*--------------------------------------------------
@@ -248,36 +248,36 @@ hypre_SysPFMGSolve( void                 *sys_pfmg_vdata,
          for (l = (num_levels - 2); l >= 1; l--)
          {
             /* interpolate error and correct (x = x + Pe_c) */
-            hypre_SysSemiInterp(interp_data_l[l], P_l[l], x_l[l + 1], e_l[l]);
-            hypre_SStructPAxpy(1.0, e_l[l], x_l[l]);
+            nalu_hypre_SysSemiInterp(interp_data_l[l], P_l[l], x_l[l + 1], e_l[l]);
+            nalu_hypre_SStructPAxpy(1.0, e_l[l], x_l[l]);
             NALU_HYPRE_ANNOTATE_MGLEVEL_END(l + 1);
 #if DEBUG
-            hypre_sprintf(filename, "zout_eup.%02d", l);
-            hypre_SStructPVectorPrint(filename, e_l[l], 0);
-            hypre_sprintf(filename, "zout_xup.%02d", l);
-            hypre_SStructPVectorPrint(filename, x_l[l], 0);
+            nalu_hypre_sprintf(filename, "zout_eup.%02d", l);
+            nalu_hypre_SStructPVectorPrint(filename, e_l[l], 0);
+            nalu_hypre_sprintf(filename, "zout_xup.%02d", l);
+            nalu_hypre_SStructPVectorPrint(filename, x_l[l], 0);
 #endif
             NALU_HYPRE_ANNOTATE_MGLEVEL_BEGIN(l);
 
             if (active_l[l])
             {
                /* post-relaxation */
-               hypre_SysPFMGRelaxSetPostRelax(relax_data_l[l]);
-               hypre_SysPFMGRelaxSetMaxIter(relax_data_l[l], num_post_relax);
-               hypre_SysPFMGRelaxSetZeroGuess(relax_data_l[l], 0);
-               hypre_SysPFMGRelax(relax_data_l[l], A_l[l], b_l[l], x_l[l]);
+               nalu_hypre_SysPFMGRelaxSetPostRelax(relax_data_l[l]);
+               nalu_hypre_SysPFMGRelaxSetMaxIter(relax_data_l[l], num_post_relax);
+               nalu_hypre_SysPFMGRelaxSetZeroGuess(relax_data_l[l], 0);
+               nalu_hypre_SysPFMGRelax(relax_data_l[l], A_l[l], b_l[l], x_l[l]);
             }
          }
 
          /* interpolate error and correct on fine grid (x = x + Pe_c) */
-         hypre_SysSemiInterp(interp_data_l[0], P_l[0], x_l[1], e_l[0]);
-         hypre_SStructPAxpy(1.0, e_l[0], x_l[0]);
+         nalu_hypre_SysSemiInterp(interp_data_l[0], P_l[0], x_l[1], e_l[0]);
+         nalu_hypre_SStructPAxpy(1.0, e_l[0], x_l[0]);
          NALU_HYPRE_ANNOTATE_MGLEVEL_END(1);
 #if DEBUG
-         hypre_sprintf(filename, "zout_eup.%02d", 0);
-         hypre_SStructPVectorPrint(filename, e_l[0], 0);
-         hypre_sprintf(filename, "zout_xup.%02d", 0);
-         hypre_SStructPVectorPrint(filename, x_l[0], 0);
+         nalu_hypre_sprintf(filename, "zout_eup.%02d", 0);
+         nalu_hypre_SStructPVectorPrint(filename, e_l[0], 0);
+         nalu_hypre_sprintf(filename, "zout_xup.%02d", 0);
+         nalu_hypre_SStructPVectorPrint(filename, x_l[0], 0);
 #endif
          NALU_HYPRE_ANNOTATE_MGLEVEL_BEGIN(0);
       }
@@ -287,15 +287,15 @@ hypre_SysPFMGSolve( void                 *sys_pfmg_vdata,
       {
          if (num_levels > 1)
          {
-            hypre_SStructPInnerProd(e_l[0], e_l[0], &e_dot_e);
-            hypre_SStructPInnerProd(x_l[0], x_l[0], &x_dot_x);
+            nalu_hypre_SStructPInnerProd(e_l[0], e_l[0], &e_dot_e);
+            nalu_hypre_SStructPInnerProd(x_l[0], x_l[0], &x_dot_x);
          }
       }
       /* fine grid post-relaxation */
-      hypre_SysPFMGRelaxSetPostRelax(relax_data_l[0]);
-      hypre_SysPFMGRelaxSetMaxIter(relax_data_l[0], num_post_relax);
-      hypre_SysPFMGRelaxSetZeroGuess(relax_data_l[0], 0);
-      hypre_SysPFMGRelax(relax_data_l[0], A_l[0], b_l[0], x_l[0]);
+      nalu_hypre_SysPFMGRelaxSetPostRelax(relax_data_l[0]);
+      nalu_hypre_SysPFMGRelaxSetMaxIter(relax_data_l[0], num_post_relax);
+      nalu_hypre_SysPFMGRelaxSetZeroGuess(relax_data_l[0], 0);
+      nalu_hypre_SysPFMGRelax(relax_data_l[0], A_l[0], b_l[0], x_l[0]);
       (sys_pfmg_data -> num_iterations) = (i + 1);
 
       NALU_HYPRE_ANNOTATE_MGLEVEL_END(0);
@@ -305,12 +305,12 @@ hypre_SysPFMGSolve( void                 *sys_pfmg_vdata,
     * Destroy Refs to A,x,b (the PMatrix & PVectors within
     * the input SStructMatrix & SStructVectors).
     *-----------------------------------------------------*/
-   hypre_SStructPMatrixDestroy(A);
-   hypre_SStructPVectorDestroy(x);
-   hypre_SStructPVectorDestroy(b);
+   nalu_hypre_SStructPMatrixDestroy(A);
+   nalu_hypre_SStructPVectorDestroy(x);
+   nalu_hypre_SStructPVectorDestroy(b);
 
-   hypre_EndTiming(sys_pfmg_data -> time_index);
+   nalu_hypre_EndTiming(sys_pfmg_data -> time_index);
    NALU_HYPRE_ANNOTATE_FUNC_END;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }

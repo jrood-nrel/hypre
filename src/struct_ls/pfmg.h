@@ -11,11 +11,11 @@
  *
  *****************************************************************************/
 
-#ifndef hypre_PFMG_HEADER
-#define hypre_PFMG_HEADER
+#ifndef nalu_hypre_PFMG_HEADER
+#define nalu_hypre_PFMG_HEADER
 
 /*--------------------------------------------------------------------------
- * hypre_PFMGData:
+ * nalu_hypre_PFMGData:
  *--------------------------------------------------------------------------*/
 
 typedef struct
@@ -44,22 +44,22 @@ typedef struct
    NALU_HYPRE_Int            *cdir_l;  /* coarsening directions */
    NALU_HYPRE_Int            *active_l;  /* flags to relax on level l*/
 
-   hypre_StructGrid    **grid_l;
-   hypre_StructGrid    **P_grid_l;
+   nalu_hypre_StructGrid    **grid_l;
+   nalu_hypre_StructGrid    **P_grid_l;
 
    NALU_HYPRE_MemoryLocation  memory_location; /* memory location of data */
    NALU_HYPRE_Real           *data;
    NALU_HYPRE_Real           *data_const;
-   hypre_StructMatrix  **A_l;
-   hypre_StructMatrix  **P_l;
-   hypre_StructMatrix  **RT_l;
-   hypre_StructVector  **b_l;
-   hypre_StructVector  **x_l;
+   nalu_hypre_StructMatrix  **A_l;
+   nalu_hypre_StructMatrix  **P_l;
+   nalu_hypre_StructMatrix  **RT_l;
+   nalu_hypre_StructVector  **b_l;
+   nalu_hypre_StructVector  **x_l;
 
    /* temp vectors */
-   hypre_StructVector  **tx_l;
-   hypre_StructVector  **r_l;
-   hypre_StructVector  **e_l;
+   nalu_hypre_StructVector  **tx_l;
+   nalu_hypre_StructVector  **r_l;
+   nalu_hypre_StructVector  **e_l;
 
    void                **relax_data_l;
    void                **matvec_data_l;
@@ -79,6 +79,6 @@ typedef struct
    NALU_HYPRE_Int             devicelevel;
 #endif
 
-} hypre_PFMGData;
+} nalu_hypre_PFMGData;
 
 #endif

@@ -6,7 +6,7 @@ extern "C" {
 #endif
 
 #include "f2c.h"
-#include "hypre_lapack.h"
+#include "nalu_hypre_lapack.h"
 
 /* Subroutine */ integer dgetri_(integer *n, doublereal *a, integer *lda, integer
 	*ipiv, doublereal *work, integer *lwork, integer *info)

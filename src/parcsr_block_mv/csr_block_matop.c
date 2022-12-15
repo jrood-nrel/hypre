@@ -7,56 +7,56 @@
 
 /******************************************************************************
  *
- * Matrix operation functions for hypre_CSRMatrix class.
+ * Matrix operation functions for nalu_hypre_CSRMatrix class.
  *
  *****************************************************************************/
 
 /*--------------------------------------------------------------------------
- * hypre_CSRMatrixAdd:
+ * nalu_hypre_CSRMatrixAdd:
  * adds two CSR Matrices A and B and returns a CSR Matrix C;
  * Note: The routine does not check for 0-elements which might be generated
  *       through cancellation of elements in A and B or already contained
-         in A and B. To remove those, use hypre_CSRMatrixDeleteZeros
+         in A and B. To remove those, use nalu_hypre_CSRMatrixDeleteZeros
  *--------------------------------------------------------------------------*/
 
-hypre_CSRBlockMatrix *
-hypre_CSRBlockMatrixAdd(hypre_CSRBlockMatrix *A, hypre_CSRBlockMatrix *B)
+nalu_hypre_CSRBlockMatrix *
+nalu_hypre_CSRBlockMatrixAdd(nalu_hypre_CSRBlockMatrix *A, nalu_hypre_CSRBlockMatrix *B)
 {
-   NALU_HYPRE_Complex    *A_data   = hypre_CSRMatrixData(A);
-   NALU_HYPRE_Int        *A_i      = hypre_CSRMatrixI(A);
-   NALU_HYPRE_Int        *A_j      = hypre_CSRMatrixJ(A);
-   NALU_HYPRE_Int         nrows_A  = hypre_CSRMatrixNumRows(A);
-   NALU_HYPRE_Int         ncols_A  = hypre_CSRMatrixNumCols(A);
-   NALU_HYPRE_Complex    *B_data   = hypre_CSRMatrixData(B);
-   NALU_HYPRE_Int        *B_i      = hypre_CSRMatrixI(B);
-   NALU_HYPRE_Int        *B_j      = hypre_CSRMatrixJ(B);
-   NALU_HYPRE_Int         nrows_B  = hypre_CSRMatrixNumRows(B);
-   NALU_HYPRE_Int         ncols_B  = hypre_CSRMatrixNumCols(B);
-   hypre_CSRMatrix  *C;
+   NALU_HYPRE_Complex    *A_data   = nalu_hypre_CSRMatrixData(A);
+   NALU_HYPRE_Int        *A_i      = nalu_hypre_CSRMatrixI(A);
+   NALU_HYPRE_Int        *A_j      = nalu_hypre_CSRMatrixJ(A);
+   NALU_HYPRE_Int         nrows_A  = nalu_hypre_CSRMatrixNumRows(A);
+   NALU_HYPRE_Int         ncols_A  = nalu_hypre_CSRMatrixNumCols(A);
+   NALU_HYPRE_Complex    *B_data   = nalu_hypre_CSRMatrixData(B);
+   NALU_HYPRE_Int        *B_i      = nalu_hypre_CSRMatrixI(B);
+   NALU_HYPRE_Int        *B_j      = nalu_hypre_CSRMatrixJ(B);
+   NALU_HYPRE_Int         nrows_B  = nalu_hypre_CSRMatrixNumRows(B);
+   NALU_HYPRE_Int         ncols_B  = nalu_hypre_CSRMatrixNumCols(B);
+   nalu_hypre_CSRMatrix  *C;
    NALU_HYPRE_Complex    *C_data;
    NALU_HYPRE_Int        *C_i;
    NALU_HYPRE_Int        *C_j;
 
-   NALU_HYPRE_Int         block_size  = hypre_CSRBlockMatrixBlockSize(A);
-   NALU_HYPRE_Int         block_sizeB = hypre_CSRBlockMatrixBlockSize(B);
+   NALU_HYPRE_Int         block_size  = nalu_hypre_CSRBlockMatrixBlockSize(A);
+   NALU_HYPRE_Int         block_sizeB = nalu_hypre_CSRBlockMatrixBlockSize(B);
    NALU_HYPRE_Int         ia, ib, ic, ii, jcol, num_nonzeros, bnnz;
    NALU_HYPRE_Int           pos;
    NALU_HYPRE_Int         *marker;
 
    if (nrows_A != nrows_B || ncols_A != ncols_B)
    {
-      hypre_printf("Warning! incompatible matrix dimensions!\n");
+      nalu_hypre_printf("Warning! incompatible matrix dimensions!\n");
       return NULL;
    }
    if (block_size != block_sizeB)
    {
-      hypre_printf("Warning! incompatible matrix block size!\n");
+      nalu_hypre_printf("Warning! incompatible matrix block size!\n");
       return NULL;
    }
 
    bnnz = block_size * block_size;
-   marker = hypre_CTAlloc(NALU_HYPRE_Int,  ncols_A, NALU_HYPRE_MEMORY_HOST);
-   C_i = hypre_CTAlloc(NALU_HYPRE_Int,  nrows_A + 1, NALU_HYPRE_MEMORY_HOST);
+   marker = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  ncols_A, NALU_HYPRE_MEMORY_HOST);
+   C_i = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  nrows_A + 1, NALU_HYPRE_MEMORY_HOST);
 
    for (ia = 0; ia < ncols_A; ia++) { marker[ia] = -1; }
 
@@ -82,11 +82,11 @@ hypre_CSRBlockMatrixAdd(hypre_CSRBlockMatrix *A, hypre_CSRBlockMatrix *B)
       C_i[ic + 1] = num_nonzeros;
    }
 
-   C = hypre_CSRBlockMatrixCreate(block_size, nrows_A, ncols_A, num_nonzeros);
-   hypre_CSRMatrixI(C) = C_i;
-   hypre_CSRMatrixInitialize(C);
-   C_j = hypre_CSRMatrixJ(C);
-   C_data = hypre_CSRMatrixData(C);
+   C = nalu_hypre_CSRBlockMatrixCreate(block_size, nrows_A, ncols_A, num_nonzeros);
+   nalu_hypre_CSRMatrixI(C) = C_i;
+   nalu_hypre_CSRMatrixInitialize(C);
+   C_j = nalu_hypre_CSRMatrixJ(C);
+   C_data = nalu_hypre_CSRMatrixData(C);
 
    for (ia = 0; ia < ncols_A; ia++) { marker[ia] = -1; }
 
@@ -126,34 +126,34 @@ hypre_CSRBlockMatrixAdd(hypre_CSRBlockMatrix *A, hypre_CSRBlockMatrix *B)
          }
       }
    }
-   hypre_TFree(marker, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(marker, NALU_HYPRE_MEMORY_HOST);
    return C;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_CSRMatrixMultiply
+ * nalu_hypre_CSRMatrixMultiply
  * multiplies two CSR Matrices A and B and returns a CSR Matrix C;
  * Note: The routine does not check for 0-elements which might be generated
  *       through cancellation of elements in A and B or already contained
-         in A and B. To remove those, use hypre_CSRMatrixDeleteZeros
+         in A and B. To remove those, use nalu_hypre_CSRMatrixDeleteZeros
  *--------------------------------------------------------------------------*/
 
-hypre_CSRBlockMatrix *
-hypre_CSRBlockMatrixMultiply(hypre_CSRBlockMatrix *A, hypre_CSRBlockMatrix *B)
+nalu_hypre_CSRBlockMatrix *
+nalu_hypre_CSRBlockMatrixMultiply(nalu_hypre_CSRBlockMatrix *A, nalu_hypre_CSRBlockMatrix *B)
 {
-   NALU_HYPRE_Complex    *A_data   = hypre_CSRMatrixData(A);
-   NALU_HYPRE_Int        *A_i      = hypre_CSRMatrixI(A);
-   NALU_HYPRE_Int        *A_j      = hypre_CSRMatrixJ(A);
-   NALU_HYPRE_Int         nrows_A  = hypre_CSRMatrixNumRows(A);
-   NALU_HYPRE_Int         ncols_A  = hypre_CSRMatrixNumCols(A);
-   NALU_HYPRE_Int         block_size  = hypre_CSRBlockMatrixBlockSize(A);
-   NALU_HYPRE_Complex    *B_data   = hypre_CSRMatrixData(B);
-   NALU_HYPRE_Int        *B_i      = hypre_CSRMatrixI(B);
-   NALU_HYPRE_Int        *B_j      = hypre_CSRMatrixJ(B);
-   NALU_HYPRE_Int         nrows_B  = hypre_CSRMatrixNumRows(B);
-   NALU_HYPRE_Int         ncols_B  = hypre_CSRMatrixNumCols(B);
-   NALU_HYPRE_Int         block_sizeB = hypre_CSRBlockMatrixBlockSize(B);
-   hypre_CSRMatrix  *C;
+   NALU_HYPRE_Complex    *A_data   = nalu_hypre_CSRMatrixData(A);
+   NALU_HYPRE_Int        *A_i      = nalu_hypre_CSRMatrixI(A);
+   NALU_HYPRE_Int        *A_j      = nalu_hypre_CSRMatrixJ(A);
+   NALU_HYPRE_Int         nrows_A  = nalu_hypre_CSRMatrixNumRows(A);
+   NALU_HYPRE_Int         ncols_A  = nalu_hypre_CSRMatrixNumCols(A);
+   NALU_HYPRE_Int         block_size  = nalu_hypre_CSRBlockMatrixBlockSize(A);
+   NALU_HYPRE_Complex    *B_data   = nalu_hypre_CSRMatrixData(B);
+   NALU_HYPRE_Int        *B_i      = nalu_hypre_CSRMatrixI(B);
+   NALU_HYPRE_Int        *B_j      = nalu_hypre_CSRMatrixJ(B);
+   NALU_HYPRE_Int         nrows_B  = nalu_hypre_CSRMatrixNumRows(B);
+   NALU_HYPRE_Int         ncols_B  = nalu_hypre_CSRMatrixNumCols(B);
+   NALU_HYPRE_Int         block_sizeB = nalu_hypre_CSRBlockMatrixBlockSize(B);
+   nalu_hypre_CSRMatrix  *C;
    NALU_HYPRE_Complex    *C_data;
    NALU_HYPRE_Int        *C_i;
    NALU_HYPRE_Int        *C_j;
@@ -165,18 +165,18 @@ hypre_CSRBlockMatrixMultiply(hypre_CSRBlockMatrix *A, hypre_CSRBlockMatrix *B)
 
    if (ncols_A != nrows_B)
    {
-      hypre_printf("Warning! incompatible matrix dimensions!\n");
+      nalu_hypre_printf("Warning! incompatible matrix dimensions!\n");
       return NULL;
    }
    if (block_size != block_sizeB)
    {
-      hypre_printf("Warning! incompatible matrix block size!\n");
+      nalu_hypre_printf("Warning! incompatible matrix block size!\n");
       return NULL;
    }
 
    bnnz = block_size * block_size;
-   B_marker = hypre_CTAlloc(NALU_HYPRE_Int,  ncols_B, NALU_HYPRE_MEMORY_HOST);
-   C_i = hypre_CTAlloc(NALU_HYPRE_Int,  nrows_A + 1, NALU_HYPRE_MEMORY_HOST);
+   B_marker = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  ncols_B, NALU_HYPRE_MEMORY_HOST);
+   C_i = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  nrows_A + 1, NALU_HYPRE_MEMORY_HOST);
 
    for (ib = 0; ib < ncols_B; ib++) { B_marker[ib] = -1; }
 
@@ -198,11 +198,11 @@ hypre_CSRBlockMatrixMultiply(hypre_CSRBlockMatrix *A, hypre_CSRBlockMatrix *B)
       C_i[ic + 1] = num_nonzeros;
    }
 
-   C = hypre_CSRBlockMatrixCreate(block_size, nrows_A, ncols_B, num_nonzeros);
-   hypre_CSRMatrixI(C) = C_i;
-   hypre_CSRMatrixInitialize(C);
-   C_j = hypre_CSRMatrixJ(C);
-   C_data = hypre_CSRMatrixData(C);
+   C = nalu_hypre_CSRBlockMatrixCreate(block_size, nrows_A, ncols_B, num_nonzeros);
+   nalu_hypre_CSRMatrixI(C) = C_i;
+   nalu_hypre_CSRMatrixInitialize(C);
+   C_j = nalu_hypre_CSRMatrixJ(C);
+   C_data = nalu_hypre_CSRMatrixData(C);
 
    for (ib = 0; ib < ncols_B; ib++) { B_marker[ib] = -1; }
 
@@ -223,20 +223,20 @@ hypre_CSRBlockMatrixMultiply(hypre_CSRBlockMatrix *A, hypre_CSRBlockMatrix *B)
                B_marker[jb] = counter;
                C_j[B_marker[jb]] = jb;
                c_entries = &(C_data[B_marker[jb] * bnnz]);
-               hypre_CSRBlockMatrixBlockMultAdd(a_entries, b_entries, dzero,
+               nalu_hypre_CSRBlockMatrixBlockMultAdd(a_entries, b_entries, dzero,
                                                 c_entries, block_size);
                counter++;
             }
             else
             {
                c_entries = &(C_data[B_marker[jb] * bnnz]);
-               hypre_CSRBlockMatrixBlockMultAdd(a_entries, b_entries, done,
+               nalu_hypre_CSRBlockMatrixBlockMultAdd(a_entries, b_entries, done,
                                                 c_entries, block_size);
             }
          }
       }
    }
-   hypre_TFree(B_marker, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(B_marker, NALU_HYPRE_MEMORY_HOST);
    return C;
 }
 

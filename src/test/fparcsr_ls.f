@@ -6,7 +6,7 @@
 !--------------------------------------------------------------------------
 ! GenerateLaplacian
 !--------------------------------------------------------------------------
-      subroutine fhypre_generatelaplacian(fcom, fnx, fny, fnz,
+      subroutine fnalu_hypre_generatelaplacian(fcom, fnx, fny, fnz,
      1                                    fcapp, fcapq, fcapr, 
      1                                    fp, fq, fr,
      2                                    fvalue, fmatrix)
@@ -19,11 +19,11 @@
       double precision fvalue
       integer*8 fmatrix
 
-      call hypre_GenerateLaplacian(fcomm, fnx, fny, fnz, fcapp, fcapq,
+      call nalu_hypre_GenerateLaplacian(fcomm, fnx, fny, fnz, fcapp, fcapq,
      1                       fcapr, fp, fq, fr, fvalue, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_generatelaplacian error: ', ierr
+         print *, 'fnalu_hypre_generatelaplacian error: ', ierr
       endif
 
       return
@@ -32,7 +32,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_BoomerAMGCreate
 !--------------------------------------------------------------------------
-      subroutine fhypre_boomeramgcreate(fsolver)
+      subroutine fnalu_hypre_boomeramgcreate(fsolver)
 
       integer ierr
       integer*8 fsolver
@@ -40,7 +40,7 @@
       call NALU_HYPRE_BoomerAMGCreate(fsolver, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_boomeramgcreate error: ', ierr
+         print *, 'fnalu_hypre_boomeramgcreate error: ', ierr
       endif
 
       return
@@ -49,7 +49,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_BoomerAMGDestroy
 !--------------------------------------------------------------------------
-      subroutine fhypre_boomeramgdestroy(fsolver)
+      subroutine fnalu_hypre_boomeramgdestroy(fsolver)
 
       integer ierr
       integer*8 fsolver
@@ -57,7 +57,7 @@
       call NALU_HYPRE_BoomerAMGDestroy(fsolver, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_boomeramgdestroy error: ', ierr
+         print *, 'fnalu_hypre_boomeramgdestroy error: ', ierr
       endif
 
       return
@@ -66,7 +66,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_BoomerAMGSetup
 !--------------------------------------------------------------------------
-      subroutine fhypre_boomeramgsetup(fsolver, fA, fb, fx)
+      subroutine fnalu_hypre_boomeramgsetup(fsolver, fA, fb, fx)
 
       integer ierr
       integer*8 fsolver
@@ -77,7 +77,7 @@
       call NALU_HYPRE_BoomerAMGSetup(fsolver, fA, fb, fx, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_boomeramgsetup error: ', ierr
+         print *, 'fnalu_hypre_boomeramgsetup error: ', ierr
       endif
 
       return
@@ -86,7 +86,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_BoomerAMGSolve
 !-------------------------------------------------------------------------- 
-      subroutine fhypre_boomeramgsolve(fsolver, fA, fb, fx)
+      subroutine fnalu_hypre_boomeramgsolve(fsolver, fA, fb, fx)
 
       integer ierr
       integer*8 fsolver
@@ -97,7 +97,7 @@
       call NALU_HYPRE_BoomerAMGSolve(fsolver, fA, fb, fx, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_boomeramgsolve error: ', ierr
+         print *, 'fnalu_hypre_boomeramgsolve error: ', ierr
       endif
 
       return
@@ -106,7 +106,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_BoomerAMGSolveT
 !--------------------------------------------------------------------------
-      subroutine fhypre_boomeramgsolvet(fsolver, fA, fb, fx)
+      subroutine fnalu_hypre_boomeramgsolvet(fsolver, fA, fb, fx)
 
       integer ierr
       integer*8 fsolver
@@ -117,7 +117,7 @@
       call NALU_HYPRE_BoomerAMGSolveT(fsolver, fA, fb, fx, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_boomeramgsolvet error: ', ierr
+         print *, 'fnalu_hypre_boomeramgsolvet error: ', ierr
       endif
 
       return
@@ -126,7 +126,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_BoomerAMGSetRestriction
 !--------------------------------------------------------------------------
-      subroutine fhypre_boomeramgsetrestriction(fsolver, frestr_par)
+      subroutine fnalu_hypre_boomeramgsetrestriction(fsolver, frestr_par)
 
       integer ierr
       integer frestr_par
@@ -135,7 +135,7 @@
       call NALU_HYPRE_BoomerAMGSetRestriction(fsolver, frestr_par, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_boomeramgsetrestriction error: ', ierr
+         print *, 'fnalu_hypre_boomeramgsetrestriction error: ', ierr
       endif
 
       return
@@ -144,7 +144,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_BoomerAMGSetMaxLevels
 !--------------------------------------------------------------------------
-      subroutine fhypre_boomeramgsetmaxlevels(fsolver, fmaxlvl)
+      subroutine fnalu_hypre_boomeramgsetmaxlevels(fsolver, fmaxlvl)
 
       integer ierr
       integer fmaxlvl
@@ -153,7 +153,7 @@
       call NALU_HYPRE_BoomerAMGSetMaxLevels(fsolver, fmaxlvl, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_boomeramgsetmaxlevels error: ', ierr
+         print *, 'fnalu_hypre_boomeramgsetmaxlevels error: ', ierr
       endif
 
       return
@@ -162,7 +162,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_BoomerAMGGetMaxLevels
 !--------------------------------------------------------------------------
-      subroutine fhypre_boomeramggetmaxlevels(fsolver, fmaxlvl)
+      subroutine fnalu_hypre_boomeramggetmaxlevels(fsolver, fmaxlvl)
 
       integer ierr
       integer fmaxlvl
@@ -171,7 +171,7 @@
       call NALU_HYPRE_BoomerAMGGetMaxLevels(fsolver, fmaxlvl, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_boomeramggetmaxlevels error: ', ierr
+         print *, 'fnalu_hypre_boomeramggetmaxlevels error: ', ierr
       endif
 
       return
@@ -180,7 +180,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_BoomerAMGSetStrongThreshold
 !--------------------------------------------------------------------------
-      subroutine fhypre_boomeramgsetstrongthrshl(fsolver, fstrong)
+      subroutine fnalu_hypre_boomeramgsetstrongthrshl(fsolver, fstrong)
 
       integer ierr
       double precision fstrong
@@ -189,7 +189,7 @@
       call NALU_HYPRE_BoomerAMGSetStrongThrshld(fsolver, fstrong, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_boomeramgsetstrongthreshold error: ', ierr
+         print *, 'fnalu_hypre_boomeramgsetstrongthreshold error: ', ierr
       endif
 
       return
@@ -198,7 +198,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_BoomerAMGGetStrongThreshold
 !--------------------------------------------------------------------------
-      subroutine fhypre_boomeramggetstrongthrshl(fsolver, fstrong)
+      subroutine fnalu_hypre_boomeramggetstrongthrshl(fsolver, fstrong)
 
       integer ierr
       double precision fstrong
@@ -207,7 +207,7 @@
       call NALU_HYPRE_BoomerAMGGetStrongThrshld(fsolver, fstrong, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_boomeramggetstrongthreshold error: ', ierr
+         print *, 'fnalu_hypre_boomeramggetstrongthreshold error: ', ierr
       endif
 
       return
@@ -216,7 +216,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_BoomerAMGSetMaxRowSum
 !--------------------------------------------------------------------------
-      subroutine fhypre_boomeramgsetmaxrowsum(fsolver, fmaxrowsum)
+      subroutine fnalu_hypre_boomeramgsetmaxrowsum(fsolver, fmaxrowsum)
 
       integer ierr
       double precision fmaxrowsum
@@ -225,7 +225,7 @@
       call NALU_HYPRE_BoomerAMGSetMaxRowSum(fsolver, fmaxrowsum, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_boomeramgsetmaxrowsum error: ', ierr
+         print *, 'fnalu_hypre_boomeramgsetmaxrowsum error: ', ierr
       endif
 
       return
@@ -234,7 +234,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_BoomerAMGGetMaxRowSum
 !--------------------------------------------------------------------------
-      subroutine fhypre_boomeramggetmaxrowsum(fsolver, fmaxrowsum)
+      subroutine fnalu_hypre_boomeramggetmaxrowsum(fsolver, fmaxrowsum)
 
       integer ierr
       double precision fmaxrowsum
@@ -243,7 +243,7 @@
       call NALU_HYPRE_BoomerAMGGetMaxRowSum(fsolver, fmaxrowsum, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_boomeramggetmaxrowsum error: ', ierr
+         print *, 'fnalu_hypre_boomeramggetmaxrowsum error: ', ierr
       endif
 
       return
@@ -252,7 +252,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_BoomerAMGSetTruncFactor
 !--------------------------------------------------------------------------
-      subroutine fhypre_boomeramgsettruncfactor(fsolver, ftrunc_factor)
+      subroutine fnalu_hypre_boomeramgsettruncfactor(fsolver, ftrunc_factor)
 
       integer ierr
       double precision ftrunc_factor
@@ -261,7 +261,7 @@
       call NALU_HYPRE_BoomerAMGSetTruncFactor(fsolver, ftrunc_factor, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_boomeramgsettruncfactor error: ', ierr
+         print *, 'fnalu_hypre_boomeramgsettruncfactor error: ', ierr
       endif
 
       return
@@ -270,7 +270,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_BoomerAMGGetTruncFactor
 !--------------------------------------------------------------------------
-      subroutine fhypre_boomeramggettruncfactor(fsolver, ftrunc_factor)
+      subroutine fnalu_hypre_boomeramggettruncfactor(fsolver, ftrunc_factor)
 
       integer ierr
       double precision ftrunc_factor
@@ -279,7 +279,7 @@
       call NALU_HYPRE_BoomerAMGGetTruncFactor(fsolver, ftrunc_factor, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_boomeramggettruncfactor error: ', ierr
+         print *, 'fnalu_hypre_boomeramggettruncfactor error: ', ierr
       endif
 
       return
@@ -288,7 +288,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_BoomerAMGSetSCommPkgSwitch
 !--------------------------------------------------------------------------
-      subroutine fhypre_boomeramgsetscommpkgswit(fsolver, fcommswtch)
+      subroutine fnalu_hypre_boomeramgsetscommpkgswit(fsolver, fcommswtch)
 
       integer ierr
       integer fcommswtch
@@ -297,7 +297,7 @@
       call NALU_HYPRE_BoomerAMGSetSCommPkgSwitc(fsolver, fcommswtch, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_boomeramgsetscommpkgswitch error: ', ierr
+         print *, 'fnalu_hypre_boomeramgsetscommpkgswitch error: ', ierr
       endif
 
       return
@@ -306,7 +306,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_BoomerAMGSetInterpType
 !--------------------------------------------------------------------------
-      subroutine fhypre_boomeramgsetinterptype(fsolver, finterp)
+      subroutine fnalu_hypre_boomeramgsetinterptype(fsolver, finterp)
 
       integer ierr
       integer finterp
@@ -315,7 +315,7 @@
       call NALU_HYPRE_BoomerAMGSetInterpType(fsolver, finterp, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_boomeramgsetinterptype error: ', ierr
+         print *, 'fnalu_hypre_boomeramgsetinterptype error: ', ierr
       endif
 
       return
@@ -324,7 +324,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_BoomerAMGSetMinIter
 !--------------------------------------------------------------------------
-      subroutine fhypre_boomeramgsetminiter(fsolver, fminiter)
+      subroutine fnalu_hypre_boomeramgsetminiter(fsolver, fminiter)
 
       integer ierr
       integer fminiter  
@@ -333,7 +333,7 @@
       call NALU_HYPRE_BoomerAMGSetMinIter(fsolver, fminiter, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_boomeramgsetminiter error: ', ierr
+         print *, 'fnalu_hypre_boomeramgsetminiter error: ', ierr
       endif
 
       return
@@ -342,7 +342,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_BoomerAMGSetMaxIter
 !--------------------------------------------------------------------------
-      subroutine fhypre_boomeramgsetmaxiter(fsolver, fmaxiter)
+      subroutine fnalu_hypre_boomeramgsetmaxiter(fsolver, fmaxiter)
 
       integer ierr
       integer fmaxiter  
@@ -351,7 +351,7 @@
       call NALU_HYPRE_BoomerAMGSetMaxIter(fsolver, fmaxiter, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_boomeramgsetmaxiter error: ', ierr
+         print *, 'fnalu_hypre_boomeramgsetmaxiter error: ', ierr
       endif
 
       return
@@ -360,7 +360,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_BoomerAMGGetMaxIter
 !--------------------------------------------------------------------------
-      subroutine fhypre_boomeramggetmaxiter(fsolver, fmaxiter)
+      subroutine fnalu_hypre_boomeramggetmaxiter(fsolver, fmaxiter)
 
       integer ierr
       integer fmaxiter  
@@ -369,7 +369,7 @@
       call NALU_HYPRE_BoomerAMGGetMaxIter(fsolver, fmaxiter, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_boomeramggetmaxiter error: ', ierr
+         print *, 'fnalu_hypre_boomeramggetmaxiter error: ', ierr
       endif
 
       return
@@ -378,7 +378,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_BoomerAMGSetCoarsenType
 !--------------------------------------------------------------------------
-      subroutine fhypre_boomeramgsetcoarsentype(fsolver, fcoarsen)
+      subroutine fnalu_hypre_boomeramgsetcoarsentype(fsolver, fcoarsen)
 
       integer ierr
       integer fcoarsen
@@ -387,7 +387,7 @@
       call NALU_HYPRE_BoomerAMGSetCoarsenType(fsolver, fcoarsen, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_boomeramgsetcoarsentype error: ', ierr
+         print *, 'fnalu_hypre_boomeramgsetcoarsentype error: ', ierr
       endif
 
       return
@@ -396,7 +396,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_BoomerAMGGetCoarsenType
 !--------------------------------------------------------------------------
-      subroutine fhypre_boomeramggetcoarsentype(fsolver, fcoarsen)
+      subroutine fnalu_hypre_boomeramggetcoarsentype(fsolver, fcoarsen)
 
       integer ierr
       integer fcoarsen
@@ -405,7 +405,7 @@
       call NALU_HYPRE_BoomerAMGGetCoarsenType(fsolver, fcoarsen, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_boomeramggetcoarsentype error: ', ierr
+         print *, 'fnalu_hypre_boomeramggetcoarsentype error: ', ierr
       endif
 
       return
@@ -414,7 +414,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_BoomerAMGSetMeasureType
 !--------------------------------------------------------------------------
-      subroutine fhypre_boomeramgsetmeasuretype(fsolver, fmeasure)
+      subroutine fnalu_hypre_boomeramgsetmeasuretype(fsolver, fmeasure)
 
       integer ierr
       integer fmeasure
@@ -423,7 +423,7 @@
       call NALU_HYPRE_BoomerAMGSetMeasureType(fsolver, fmeasure, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_boomeramgsetmeasuretype error: ', ierr
+         print *, 'fnalu_hypre_boomeramgsetmeasuretype error: ', ierr
       endif
 
       return
@@ -432,7 +432,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_BoomerAMGGetMeasureType
 !--------------------------------------------------------------------------
-      subroutine fhypre_boomeramggetmeasuretype(fsolver, fmeasure)
+      subroutine fnalu_hypre_boomeramggetmeasuretype(fsolver, fmeasure)
 
       integer ierr
       integer fmeasure
@@ -441,7 +441,7 @@
       call NALU_HYPRE_BoomerAMGGetMeasureType(fsolver, fmeasure, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_boomeramggetmeasuretype error: ', ierr
+         print *, 'fnalu_hypre_boomeramggetmeasuretype error: ', ierr
       endif
 
       return
@@ -450,7 +450,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_BoomerAMGSetSetupType
 !--------------------------------------------------------------------------
-      subroutine fhypre_boomeramgsetsetuptype(fsolver, fsetup)
+      subroutine fnalu_hypre_boomeramgsetsetuptype(fsolver, fsetup)
 
       integer ierr
       integer fsetup
@@ -459,7 +459,7 @@
       call NALU_HYPRE_BoomerAMGSetSetupType(fsolver, fsetup, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_boomeramgsetuptype error: ', ierr
+         print *, 'fnalu_hypre_boomeramgsetuptype error: ', ierr
       endif
 
       return
@@ -468,7 +468,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_BoomerAMGSetCycleType
 !--------------------------------------------------------------------------
-      subroutine fhypre_boomeramgsetcycletype(fsolver, fcycle)
+      subroutine fnalu_hypre_boomeramgsetcycletype(fsolver, fcycle)
 
       integer ierr
       integer fcycle
@@ -477,7 +477,7 @@
       call NALU_HYPRE_BoomerAMGSetCycleType(fsolver, fcycle, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_boomeramgsetcycletype error: ', ierr
+         print *, 'fnalu_hypre_boomeramgsetcycletype error: ', ierr
       endif
 
       return
@@ -486,7 +486,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_BoomerAMGGetCycleType
 !--------------------------------------------------------------------------
-      subroutine fhypre_boomeramggetcycletype(fsolver, fcycle)
+      subroutine fnalu_hypre_boomeramggetcycletype(fsolver, fcycle)
 
       integer ierr
       integer fcycle
@@ -495,7 +495,7 @@
       call NALU_HYPRE_BoomerAMGGetCycleType(fsolver, fcycle, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_boomeramggetcycletype error: ', ierr
+         print *, 'fnalu_hypre_boomeramggetcycletype error: ', ierr
       endif
 
       return
@@ -504,7 +504,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_BoomerAMGSetTol
 !--------------------------------------------------------------------------
-      subroutine fhypre_boomeramgsettol(fsolver, ftol)
+      subroutine fnalu_hypre_boomeramgsettol(fsolver, ftol)
 
       integer ierr
       double precision ftol
@@ -513,7 +513,7 @@
       call NALU_HYPRE_BoomerAMGSetTol(fsolver, ftol, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_boomeramgsettol error: ', ierr
+         print *, 'fnalu_hypre_boomeramgsettol error: ', ierr
       endif
 
       return
@@ -522,7 +522,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_BoomerAMGGetTol
 !--------------------------------------------------------------------------
-      subroutine fhypre_boomeramggettol(fsolver, ftol)
+      subroutine fnalu_hypre_boomeramggettol(fsolver, ftol)
 
       integer ierr
       double precision ftol
@@ -531,7 +531,7 @@
       call NALU_HYPRE_BoomerAMGGetTol(fsolver, ftol, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_boomeramggettol error: ', ierr
+         print *, 'fnalu_hypre_boomeramggettol error: ', ierr
       endif
 
       return
@@ -540,7 +540,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_BoomerAMGSetNumSweeps
 !--------------------------------------------------------------------------
-      subroutine fhypre_boomeramgsetnumsweeps(fsolver, fnumsweeps)
+      subroutine fnalu_hypre_boomeramgsetnumsweeps(fsolver, fnumsweeps)
 
       integer ierr
       integer fnumsweeps
@@ -549,7 +549,7 @@
       call NALU_HYPRE_BoomerAMGSetNumSweeps(fsolver, fnumsweeps, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_boomeramgsetnumsweeps error: ', ierr
+         print *, 'fnalu_hypre_boomeramgsetnumsweeps error: ', ierr
       endif
 
       return
@@ -558,7 +558,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_BoomerAMGSetCycleNumSweeps
 !--------------------------------------------------------------------------
-      subroutine fhypre_boomeramgsetcyclenumswee(fsolver, fnumsweeps,
+      subroutine fnalu_hypre_boomeramgsetcyclenumswee(fsolver, fnumsweeps,
      1                                             fk)
 
       integer ierr
@@ -570,7 +570,7 @@
      1                                      ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_boomeramgsetcyclenumsweeps error: ', ierr
+         print *, 'fnalu_hypre_boomeramgsetcyclenumsweeps error: ', ierr
       endif
 
       return
@@ -579,7 +579,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_BoomerAMGGetCycleNumSweeps
 !--------------------------------------------------------------------------
-      subroutine fhypre_boomeramggetcyclenumswee(fsolver, fnumsweeps,
+      subroutine fnalu_hypre_boomeramggetcyclenumswee(fsolver, fnumsweeps,
      1                                             fk)
 
       integer ierr
@@ -591,7 +591,7 @@
      1                                      ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_boomeramggetcyclenumsweeps error: ', ierr
+         print *, 'fnalu_hypre_boomeramggetcyclenumsweeps error: ', ierr
       endif
 
       return
@@ -599,7 +599,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_BoomerAMGInitGridRelaxation
 !--------------------------------------------------------------------------
-      subroutine fhypre_boomeramginitgridrelaxat(fnumsweeps, fgridtype,
+      subroutine fnalu_hypre_boomeramginitgridrelaxat(fnumsweeps, fgridtype,
      1                                            fgridrelax, fcoarsen,
      2                                            frelaxwt, fmaxlvl)
 
@@ -616,7 +616,7 @@
      2                                       frelaxwt, fmaxlvl, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_boomeramginitgridrelaxation error: ', ierr
+         print *, 'fnalu_hypre_boomeramginitgridrelaxation error: ', ierr
       endif
 
       return
@@ -625,7 +625,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_BoomerAMGFinalizeGridRelaxation
 !--------------------------------------------------------------------------
-      subroutine fhypre_boomeramgfingridrelaxatn(fnumsweeps, fgridtype,
+      subroutine fnalu_hypre_boomeramgfingridrelaxatn(fnumsweeps, fgridtype,
      1                                            fgridrelax, frelaxwt)
 
       integer ierr
@@ -634,10 +634,10 @@
       integer*8 fgridrelax
       integer*8 frelaxwt
 
-!     hypre_TFree(num_grid_sweeps);
-!     hypre_TFree(grid_relax_type);
-!     hypre_TFree(grid_relax_points);
-!     hypre_TFree(relax_weights);
+!     nalu_hypre_TFree(num_grid_sweeps);
+!     nalu_hypre_TFree(grid_relax_type);
+!     nalu_hypre_TFree(grid_relax_points);
+!     nalu_hypre_TFree(relax_weights);
 
       ierr = 0
 
@@ -647,7 +647,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_BoomerAMGSetRelaxType
 !--------------------------------------------------------------------------
-      subroutine fhypre_boomeramgsetrelaxtype(fsolver, frelaxtype)
+      subroutine fnalu_hypre_boomeramgsetrelaxtype(fsolver, frelaxtype)
 
       integer ierr
       integer frelaxtype
@@ -656,7 +656,7 @@
       call NALU_HYPRE_BoomerAMGSetRelaxType(fsolver, frelaxtype, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_boomeramgsetrelaxtype error: ', ierr
+         print *, 'fnalu_hypre_boomeramgsetrelaxtype error: ', ierr
       endif
  
       return
@@ -665,7 +665,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_BoomerAMGSetCycleRelaxType
 !--------------------------------------------------------------------------
-      subroutine fhypre_boomeramgsetcyclerelaxty(fsolver, frelaxtype,
+      subroutine fnalu_hypre_boomeramgsetcyclerelaxty(fsolver, frelaxtype,
      1                                             fk)
 
       integer ierr
@@ -677,7 +677,7 @@
      1                                      ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_boomeramgsetcyclerelaxtype error: ', ierr
+         print *, 'fnalu_hypre_boomeramgsetcyclerelaxtype error: ', ierr
       endif
 
       return
@@ -686,7 +686,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_BoomerAMGGetCycleRelaxType
 !--------------------------------------------------------------------------
-      subroutine fhypre_boomeramggetcyclerelaxty(fsolver, frelaxtype,
+      subroutine fnalu_hypre_boomeramggetcyclerelaxty(fsolver, frelaxtype,
      1                                             fk)
 
       integer ierr
@@ -698,7 +698,7 @@
      1                                      ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_boomeramggetcyclerelaxtype error: ', ierr
+         print *, 'fnalu_hypre_boomeramggetcyclerelaxtype error: ', ierr
       endif
 
       return
@@ -707,7 +707,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_BoomerAMGSetRelaxOrder
 !--------------------------------------------------------------------------
-      subroutine fhypre_boomeramgsetrelaxorder(fsolver, frlxorder)
+      subroutine fnalu_hypre_boomeramgsetrelaxorder(fsolver, frlxorder)
      
       integer ierr
       integer frlxorder
@@ -716,7 +716,7 @@
       call NALU_HYPRE_BoomerAMGSetRelaxOrder(fsolver, frlxorder, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_boomeramgsetrelaxorder error: ', ierr
+         print *, 'fnalu_hypre_boomeramgsetrelaxorder error: ', ierr
       endif
 
       return
@@ -725,7 +725,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_BoomerAMGSetRelaxWt
 !--------------------------------------------------------------------------
-      subroutine fhypre_boomeramgsetrelaxwt(fsolver, frelaxwt)
+      subroutine fnalu_hypre_boomeramgsetrelaxwt(fsolver, frelaxwt)
      
       integer ierr
       integer*8 fsolver
@@ -734,7 +734,7 @@
       call NALU_HYPRE_BoomerAMGSetRelaxWt(fsolver, frelaxwt, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_boomeramgsetrelaxwt error: ', ierr
+         print *, 'fnalu_hypre_boomeramgsetrelaxwt error: ', ierr
       endif
 
       return
@@ -743,7 +743,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_BoomerAMGSetLevelRelaxWt
 !--------------------------------------------------------------------------
-      subroutine fhypre_boomeramgsetlevelrelaxwt(fsolver, frelaxwt, 
+      subroutine fnalu_hypre_boomeramgsetlevelrelaxwt(fsolver, frelaxwt, 
      1                                           flevel)
 
       integer ierr
@@ -755,7 +755,7 @@
      1                                    ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_boomeramgsetlevelrelaxwt error: ', ierr
+         print *, 'fnalu_hypre_boomeramgsetlevelrelaxwt error: ', ierr
       endif
 
       return
@@ -764,7 +764,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_BoomerAMGSetOuterWt
 !--------------------------------------------------------------------------
-      subroutine fhypre_boomeramgsetouterwt(fsolver, fouterwt)
+      subroutine fnalu_hypre_boomeramgsetouterwt(fsolver, fouterwt)
      
       integer ierr
       integer*8 fsolver
@@ -773,7 +773,7 @@
       call NALU_HYPRE_BoomerAMGSetOuterWt(fsolver, fouterwt, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_boomeramgsetouterwt error: ', ierr
+         print *, 'fnalu_hypre_boomeramgsetouterwt error: ', ierr
       endif
 
       return
@@ -782,7 +782,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_BoomerAMGSetLevelOuterWt
 !--------------------------------------------------------------------------
-      subroutine fhypre_boomeramgsetlevelouterwt(fsolver, fouterwt, 
+      subroutine fnalu_hypre_boomeramgsetlevelouterwt(fsolver, fouterwt, 
      1                                           flevel)
 
       integer ierr
@@ -794,7 +794,7 @@
      1                                    ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_boomeramgsetlevelouterwt error: ', ierr
+         print *, 'fnalu_hypre_boomeramgsetlevelouterwt error: ', ierr
       endif
 
       return
@@ -803,7 +803,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_BoomerAMGSetSmoothType
 !--------------------------------------------------------------------------
-      subroutine fhypre_boomeramgsetsmoothtype(fsolver, fsmooth) 
+      subroutine fnalu_hypre_boomeramgsetsmoothtype(fsolver, fsmooth) 
 
       integer ierr
       integer fsmooth
@@ -812,7 +812,7 @@
       call NALU_HYPRE_BoomerAMGSetSmoothType(fsolver, fsmooth, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_boomeramgsetsmoothtype error: ', ierr
+         print *, 'fnalu_hypre_boomeramgsetsmoothtype error: ', ierr
       endif
 
       return
@@ -821,7 +821,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_BoomerAMGGetSmoothType
 !--------------------------------------------------------------------------
-      subroutine fhypre_boomeramggetsmoothtype(fsolver, fsmooth) 
+      subroutine fnalu_hypre_boomeramggetsmoothtype(fsolver, fsmooth) 
 
       integer ierr
       integer fsmooth
@@ -830,7 +830,7 @@
       call NALU_HYPRE_BoomerAMGGetSmoothType(fsolver, fsmooth, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_boomeramggetsmoothtype error: ', ierr
+         print *, 'fnalu_hypre_boomeramggetsmoothtype error: ', ierr
       endif
 
       return
@@ -839,7 +839,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_BoomerAMGSetSmoothNumLvls
 !--------------------------------------------------------------------------
-      subroutine fhypre_boomeramgsetsmoothnumlvl(fsolver, fsmooth) 
+      subroutine fnalu_hypre_boomeramgsetsmoothnumlvl(fsolver, fsmooth) 
 
       integer ierr
       integer fsmooth
@@ -848,7 +848,7 @@
       call NALU_HYPRE_BoomerAMGSetSmoothNumLvls(fsolver, fsmooth, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_boomeramgsetsmoothnumlvls error: ', ierr
+         print *, 'fnalu_hypre_boomeramgsetsmoothnumlvls error: ', ierr
       endif
 
       return
@@ -857,7 +857,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_BoomerAMGGetSmoothNumLvls
 !--------------------------------------------------------------------------
-      subroutine fhypre_boomeramggetsmoothnumlvl(fsolver, fsmooth) 
+      subroutine fnalu_hypre_boomeramggetsmoothnumlvl(fsolver, fsmooth) 
 
       integer ierr
       integer fsmooth
@@ -866,7 +866,7 @@
       call NALU_HYPRE_BoomerAMGGetSmoothNumLvls(fsolver, fsmooth, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_boomeramggetsmoothnumlvls error: ', ierr
+         print *, 'fnalu_hypre_boomeramggetsmoothnumlvls error: ', ierr
       endif
 
       return
@@ -875,7 +875,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_BoomerAMGSetSmoothNumSwps
 !--------------------------------------------------------------------------
-      subroutine fhypre_boomeramgsetsmoothnumswp(fsolver, fsmooth) 
+      subroutine fnalu_hypre_boomeramgsetsmoothnumswp(fsolver, fsmooth) 
 
       integer ierr
       integer fsmooth
@@ -884,7 +884,7 @@
       call NALU_HYPRE_BoomerAMGSetSmoothNumSwps(fsolver, fsmooth, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_boomeramgsetsmoothnumswps error: ', ierr
+         print *, 'fnalu_hypre_boomeramgsetsmoothnumswps error: ', ierr
       endif
 
       return
@@ -893,7 +893,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_BoomerAMGGetSmoothNumSwps
 !--------------------------------------------------------------------------
-      subroutine fhypre_boomeramggetsmoothnumswp(fsolver, fsmooth) 
+      subroutine fnalu_hypre_boomeramggetsmoothnumswp(fsolver, fsmooth) 
 
       integer ierr
       integer fsmooth
@@ -902,7 +902,7 @@
       call NALU_HYPRE_BoomerAMGGetSmoothNumSwps(fsolver, fsmooth, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_boomeramggetsmoothnumswps error: ', ierr
+         print *, 'fnalu_hypre_boomeramggetsmoothnumswps error: ', ierr
       endif
 
       return
@@ -911,7 +911,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_BoomerAMGSetLogging
 !--------------------------------------------------------------------------
-      subroutine fhypre_boomeramgsetlogging(fsolver, flogging)
+      subroutine fnalu_hypre_boomeramgsetlogging(fsolver, flogging)
 
       integer ierr
       integer flogging
@@ -920,7 +920,7 @@
       call NALU_HYPRE_BoomerAMGSetLogging(fsolver, flogging, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_boomeramgsetlogging error: ', ierr
+         print *, 'fnalu_hypre_boomeramgsetlogging error: ', ierr
       endif
 
       return
@@ -929,7 +929,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_BoomerAMGGetLogging
 !--------------------------------------------------------------------------
-      subroutine fhypre_boomeramggetlogging(fsolver, flogging)
+      subroutine fnalu_hypre_boomeramggetlogging(fsolver, flogging)
 
       integer ierr
       integer flogging
@@ -938,7 +938,7 @@
       call NALU_HYPRE_BoomerAMGGetLogging(fsolver, flogging, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_boomeramggetlogging error: ', ierr
+         print *, 'fnalu_hypre_boomeramggetlogging error: ', ierr
       endif
 
       return
@@ -947,7 +947,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_BoomerAMGSetPrintLevel
 !--------------------------------------------------------------------------
-      subroutine fhypre_boomeramgsetprintlevel(fsolver, fprintlevel)
+      subroutine fnalu_hypre_boomeramgsetprintlevel(fsolver, fprintlevel)
 
       integer ierr
       integer fprintlevel
@@ -956,7 +956,7 @@
       call NALU_HYPRE_BoomerAMGSetPrintLevel(fsolver, fprintlevel, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_boomeramgsetprintlevel error: ', ierr
+         print *, 'fnalu_hypre_boomeramgsetprintlevel error: ', ierr
       endif
 
       return
@@ -965,7 +965,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_BoomerAMGGetPrintLevel
 !--------------------------------------------------------------------------
-      subroutine fhypre_boomeramggetprintlevel(fsolver, fprintlevel)
+      subroutine fnalu_hypre_boomeramggetprintlevel(fsolver, fprintlevel)
 
       integer ierr
       integer fprintlevel
@@ -974,7 +974,7 @@
       call NALU_HYPRE_BoomerAMGGetPrintLevel(fsolver, fprintlevel, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_boomeramggetprintlevel error: ', ierr
+         print *, 'fnalu_hypre_boomeramggetprintlevel error: ', ierr
       endif
 
       return
@@ -983,7 +983,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_BoomerAMGSetPrintFileName
 !--------------------------------------------------------------------------
-      subroutine fhypre_boomeramgsetprintfilenam(fsolver, fname)
+      subroutine fnalu_hypre_boomeramgsetprintfilenam(fsolver, fname)
 
       integer ierr
       integer*8 fsolver
@@ -992,7 +992,7 @@
       call NALU_HYPRE_BoomerAMGSetPrintFileName(fsolver, fname, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_boomeramgsetprintfilename error: ', ierr
+         print *, 'fnalu_hypre_boomeramgsetprintfilename error: ', ierr
       endif
 
       return
@@ -1001,7 +1001,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_BoomerAMGSetDebugFlag
 !--------------------------------------------------------------------------
-      subroutine fhypre_boomeramgsetdebugflag(fsolver, fdebug)
+      subroutine fnalu_hypre_boomeramgsetdebugflag(fsolver, fdebug)
 
       integer ierr
       integer fdebug
@@ -1010,7 +1010,7 @@
       call NALU_HYPRE_BoomerAMGSetDebugFlag(fsolver, fdebug, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_boomeramgsetdebugflag error: ', ierr
+         print *, 'fnalu_hypre_boomeramgsetdebugflag error: ', ierr
       endif
 
       return
@@ -1019,7 +1019,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_BoomerAMGGetDebugFlag
 !--------------------------------------------------------------------------
-      subroutine fhypre_boomeramggetdebugflag(fsolver, fdebug)
+      subroutine fnalu_hypre_boomeramggetdebugflag(fsolver, fdebug)
 
       integer ierr
       integer fdebug
@@ -1028,7 +1028,7 @@
       call NALU_HYPRE_BoomerAMGGetDebugFlag(fsolver, fdebug, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_boomeramggetdebugflag error: ', ierr
+         print *, 'fnalu_hypre_boomeramggetdebugflag error: ', ierr
       endif
 
       return
@@ -1037,7 +1037,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_BoomerAMGGetNumIterations
 !--------------------------------------------------------------------------
-      subroutine fhypre_boomeramggetnumiteration(fsolver, fnumiter)
+      subroutine fnalu_hypre_boomeramggetnumiteration(fsolver, fnumiter)
 
       integer ierr
       integer fnumiter
@@ -1046,7 +1046,7 @@
       call NALU_HYPRE_BoomerAMGGetNumIterations(fsolver, fnumiter, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_boomeramggetnumiterations error: ', ierr
+         print *, 'fnalu_hypre_boomeramggetnumiterations error: ', ierr
       endif
 
       return
@@ -1055,7 +1055,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_BoomerAMGGetCumNumIterations
 !--------------------------------------------------------------------------
-      subroutine fhypre_boomeramggetcumnumiterat(fsolver, fnumiter)
+      subroutine fnalu_hypre_boomeramggetcumnumiterat(fsolver, fnumiter)
 
       integer ierr
       integer fnumiter
@@ -1064,7 +1064,7 @@
       call NALU_HYPRE_BoomerAMGGetNumIterations(fsolver, fnumiter, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_boomeramggetnumiterations error: ', ierr
+         print *, 'fnalu_hypre_boomeramggetnumiterations error: ', ierr
       endif
 
       return
@@ -1073,7 +1073,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_BoomerAMGGetResidual
 !--------------------------------------------------------------------------
-      subroutine fhypre_boomeramggetresidual(fsolver, fresid)
+      subroutine fnalu_hypre_boomeramggetresidual(fsolver, fresid)
 
       integer ierr
       integer*8 fsolver
@@ -1082,7 +1082,7 @@
       call NALU_HYPRE_BoomerAMGGetResidual(fsolver, fresid, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_boomeramggetresidual error: ', ierr
+         print *, 'fnalu_hypre_boomeramggetresidual error: ', ierr
       endif
 
       return
@@ -1091,7 +1091,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_BoomerAMGGetFinalRelativeResidual
 !--------------------------------------------------------------------------
-      subroutine fhypre_boomeramggetfinalreltvre(fsolver, frelresid)
+      subroutine fnalu_hypre_boomeramggetfinalreltvre(fsolver, frelresid)
 
       integer ierr
       integer*8 fsolver
@@ -1100,7 +1100,7 @@
       call NALU_HYPRE_BoomerAMGGetFinalReltvRes(fsolver, frelresid, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_boomeramggetfinalrelativeres error: ', ierr
+         print *, 'fnalu_hypre_boomeramggetfinalrelativeres error: ', ierr
       endif
 
       return
@@ -1109,7 +1109,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_BoomerAMGSetVariant
 !--------------------------------------------------------------------------
-      subroutine fhypre_boomeramgsetvariant(fsolver, fvariant)
+      subroutine fnalu_hypre_boomeramgsetvariant(fsolver, fvariant)
 
       integer ierr
       integer fvariant
@@ -1118,7 +1118,7 @@
       call NALU_HYPRE_BoomerAMGSetVariant(fsolver, fvariant, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_boomeramgsetvariant error: ', ierr
+         print *, 'fnalu_hypre_boomeramgsetvariant error: ', ierr
       endif
 
       return
@@ -1127,7 +1127,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_BoomerAMGGetVariant
 !--------------------------------------------------------------------------
-      subroutine fhypre_boomeramggetvariant(fsolver, fvariant)
+      subroutine fnalu_hypre_boomeramggetvariant(fsolver, fvariant)
 
       integer ierr
       integer fvariant
@@ -1136,7 +1136,7 @@
       call NALU_HYPRE_BoomerAMGGetVariant(fsolver, fvariant, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_boomeramggetvariant error: ', ierr
+         print *, 'fnalu_hypre_boomeramggetvariant error: ', ierr
       endif
 
       return
@@ -1145,7 +1145,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_BoomerAMGSetOverlap
 !--------------------------------------------------------------------------
-      subroutine fhypre_boomeramgsetoverlap(fsolver, foverlap)
+      subroutine fnalu_hypre_boomeramgsetoverlap(fsolver, foverlap)
 
       integer ierr
       integer foverlap
@@ -1154,7 +1154,7 @@
       call NALU_HYPRE_BoomerAMGSetOverlap(fsolver, foverlap, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_boomeramgsetoverlap error: ', ierr
+         print *, 'fnalu_hypre_boomeramgsetoverlap error: ', ierr
       endif
 
       return
@@ -1163,7 +1163,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_BoomerAMGGetOverlap
 !--------------------------------------------------------------------------
-      subroutine fhypre_boomeramggetoverlap(fsolver, foverlap)
+      subroutine fnalu_hypre_boomeramggetoverlap(fsolver, foverlap)
 
       integer ierr
       integer foverlap
@@ -1172,7 +1172,7 @@
       call NALU_HYPRE_BoomerAMGGetOverlap(fsolver, foverlap, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_boomeramggetoverlap error: ', ierr
+         print *, 'fnalu_hypre_boomeramggetoverlap error: ', ierr
       endif
 
       return
@@ -1181,7 +1181,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_BoomerAMGSetDomainType
 !--------------------------------------------------------------------------
-      subroutine fhypre_boomeramgsetdomaintype(fsolver, fdomain)
+      subroutine fnalu_hypre_boomeramgsetdomaintype(fsolver, fdomain)
 
       integer ierr
       integer fdomain
@@ -1190,7 +1190,7 @@
       call NALU_HYPRE_BoomerAMGSetDomainType(fsolver, fdomain, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_boomeramgsetdomaintype error: ', ierr
+         print *, 'fnalu_hypre_boomeramgsetdomaintype error: ', ierr
       endif
 
       return
@@ -1199,7 +1199,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_BoomerAMGGetDomainType
 !--------------------------------------------------------------------------
-      subroutine fhypre_boomeramggetdomaintype(fsolver, fdomain)
+      subroutine fnalu_hypre_boomeramggetdomaintype(fsolver, fdomain)
 
       integer ierr
       integer fdomain
@@ -1208,7 +1208,7 @@
       call NALU_HYPRE_BoomerAMGGetDomainType(fsolver, fdomain, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_boomeramggetdomaintype error: ', ierr
+         print *, 'fnalu_hypre_boomeramggetdomaintype error: ', ierr
       endif
 
       return
@@ -1217,7 +1217,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_BoomerAMGSetSchwarzRlxWt
 !--------------------------------------------------------------------------
-      subroutine fhypre_boomeramgsetschwarzrlxwt(fsolver, fschwarz)
+      subroutine fnalu_hypre_boomeramgsetschwarzrlxwt(fsolver, fschwarz)
 
       integer ierr
       integer fschwarz
@@ -1226,7 +1226,7 @@
       call NALU_HYPRE_BoomerAMGSetSchwarzRlxWt(fsolver, fschwarz, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_boomeramgsetschwarzrlxwt error: ', ierr
+         print *, 'fnalu_hypre_boomeramgsetschwarzrlxwt error: ', ierr
       endif
 
       return
@@ -1235,7 +1235,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_BoomerAMGGetSchwarzRlxWt
 !--------------------------------------------------------------------------
-      subroutine fhypre_boomeramggetschwarzrlxwt(fsolver, fschwarz)
+      subroutine fnalu_hypre_boomeramggetschwarzrlxwt(fsolver, fschwarz)
 
       integer ierr
       integer fschwarz
@@ -1244,7 +1244,7 @@
       call NALU_HYPRE_BoomerAMGGetSchwarzRlxWt(fsolver, fschwarz, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_boomeramggetschwarzrlxwt error: ', ierr
+         print *, 'fnalu_hypre_boomeramggetschwarzrlxwt error: ', ierr
       endif
 
       return
@@ -1253,7 +1253,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_BoomerAMGSetSym
 !--------------------------------------------------------------------------
-      subroutine fhypre_boomeramgsetsym(fsolver, fsym)
+      subroutine fnalu_hypre_boomeramgsetsym(fsolver, fsym)
 
       integer ierr
       integer fsym
@@ -1262,7 +1262,7 @@
       call NALU_HYPRE_BoomerAMGSetSym(fsolver, fsym, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_boomeramgsetsym error: ', ierr
+         print *, 'fnalu_hypre_boomeramgsetsym error: ', ierr
       endif
 
       return
@@ -1271,7 +1271,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_BoomerAMGSetLevel
 !--------------------------------------------------------------------------
-      subroutine fhypre_boomeramgsetlevel(fsolver, flevel)
+      subroutine fnalu_hypre_boomeramgsetlevel(fsolver, flevel)
 
       integer ierr
       integer flevel
@@ -1280,7 +1280,7 @@
       call NALU_HYPRE_BoomerAMGSetLevel(fsolver, flevel, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_boomeramgsetlevel error: ', ierr
+         print *, 'fnalu_hypre_boomeramgsetlevel error: ', ierr
       endif
 
       return
@@ -1289,7 +1289,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_BoomerAMGSetFilter
 !--------------------------------------------------------------------------
-      subroutine fhypre_boomeramgsetfilter(fsolver, ffilter)
+      subroutine fnalu_hypre_boomeramgsetfilter(fsolver, ffilter)
 
       integer ierr
       integer ffilter
@@ -1298,7 +1298,7 @@
       call NALU_HYPRE_BoomerAMGSetFilter(fsolver, ffilter, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_boomeramgsetfilter error: ', ierr
+         print *, 'fnalu_hypre_boomeramgsetfilter error: ', ierr
       endif
 
       return
@@ -1307,7 +1307,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_BoomerAMGSetDropTol
 !--------------------------------------------------------------------------
-      subroutine fhypre_boomeramgsetdroptol(fsolver, fdroptol)
+      subroutine fnalu_hypre_boomeramgsetdroptol(fsolver, fdroptol)
 
       integer ierr
       integer fdroptol
@@ -1316,7 +1316,7 @@
       call NALU_HYPRE_BoomerAMGSetDropTol(fsolver, fdroptol, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_boomeramgsetdroptol error: ', ierr
+         print *, 'fnalu_hypre_boomeramgsetdroptol error: ', ierr
       endif
 
       return
@@ -1325,7 +1325,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_BoomerAMGSetMaxNzPerRow
 !--------------------------------------------------------------------------
-      subroutine fhypre_boomeramgsetmaxnzperrow(fsolver, fmaxnzperrow)
+      subroutine fnalu_hypre_boomeramgsetmaxnzperrow(fsolver, fmaxnzperrow)
 
       integer ierr
       integer fmaxnzperrow
@@ -1334,7 +1334,7 @@
       call NALU_HYPRE_BoomerAMGSetMaxNzPerRow(fsolver, fmaxnzperrow, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_boomeramgsetmaxnzperrow error: ', ierr
+         print *, 'fnalu_hypre_boomeramgsetmaxnzperrow error: ', ierr
       endif
 
       return
@@ -1343,7 +1343,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_BoomerAMGSetEuclidFile
 !--------------------------------------------------------------------------
-      subroutine fhypre_boomeramgseteuclidfile(fsolver, ffile)
+      subroutine fnalu_hypre_boomeramgseteuclidfile(fsolver, ffile)
 
       integer ierr
       integer*8 fsolver
@@ -1352,7 +1352,7 @@
       call NALU_HYPRE_BoomerAMGSetEuclidFile(fsolver, ffile, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_boomeramgseteuclidfile error: ', ierr
+         print *, 'fnalu_hypre_boomeramgseteuclidfile error: ', ierr
       endif
 
       return
@@ -1361,7 +1361,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_BoomerAMGSetNumFunctions
 !--------------------------------------------------------------------------
-      subroutine fhypre_boomeramgsetnumfunctions(fsolver, fnfncs)
+      subroutine fnalu_hypre_boomeramgsetnumfunctions(fsolver, fnfncs)
 
       integer ierr
       integer fnfncs
@@ -1370,7 +1370,7 @@
       call NALU_HYPRE_BoomerAMGSetNumFunctions(fsolver, fnfncs, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_boomeramgsetnumfunctions error: ', ierr
+         print *, 'fnalu_hypre_boomeramgsetnumfunctions error: ', ierr
       endif
 
       return
@@ -1379,7 +1379,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_BoomerAMGGetNumFunctions
 !--------------------------------------------------------------------------
-      subroutine fhypre_boomeramggetnumfunctions(fsolver, fnfncs)
+      subroutine fnalu_hypre_boomeramggetnumfunctions(fsolver, fnfncs)
 
       integer ierr
       integer fnfncs
@@ -1388,7 +1388,7 @@
       call NALU_HYPRE_BoomerAMGGetNumFunctions(fsolver, fnfncs, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_boomeramggetnumfunctions error: ', ierr
+         print *, 'fnalu_hypre_boomeramggetnumfunctions error: ', ierr
       endif
 
       return
@@ -1397,7 +1397,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_BoomerAMGSetNodal
 !--------------------------------------------------------------------------
-      subroutine fhypre_boomeramgsetnodal(fsolver, fnodal)
+      subroutine fnalu_hypre_boomeramgsetnodal(fsolver, fnodal)
 
       integer ierr
       integer fnodal
@@ -1406,7 +1406,7 @@
       call NALU_HYPRE_BoomerAMGSetNodal(fsolver, fnodal, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_boomeramgsetnodal error: ', ierr
+         print *, 'fnalu_hypre_boomeramgsetnodal error: ', ierr
       endif
 
       return
@@ -1415,7 +1415,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_BoomerAMGSetDofFunc
 !--------------------------------------------------------------------------
-      subroutine fhypre_boomeramgsetdoffunc(fsolver, fdoffunc)
+      subroutine fnalu_hypre_boomeramgsetdoffunc(fsolver, fdoffunc)
 
       integer ierr
       integer fdoffunc
@@ -1424,7 +1424,7 @@
       call NALU_HYPRE_BoomerAMGSetDofFunc(fsolver, fdoffunc, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_boomeramgsetdoffunc error: ', ierr
+         print *, 'fnalu_hypre_boomeramgsetdoffunc error: ', ierr
       endif
 
       return
@@ -1433,7 +1433,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_BoomerAMGSetNumPaths
 !--------------------------------------------------------------------------
-      subroutine fhypre_boomeramgsetnumpaths(fsolver, fnumpaths)
+      subroutine fnalu_hypre_boomeramgsetnumpaths(fsolver, fnumpaths)
 
       integer ierr
       integer fnumpaths
@@ -1442,7 +1442,7 @@
       call NALU_HYPRE_BoomerAMGSetNumPaths(fsolver, fnumpaths, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_boomeramgsetnumpaths error: ', ierr
+         print *, 'fnalu_hypre_boomeramgsetnumpaths error: ', ierr
       endif
 
       return
@@ -1451,7 +1451,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_BoomerAMGSetAggNumLevels
 !--------------------------------------------------------------------------
-      subroutine fhypre_boomeramgsetaggnumlevels(fsolver, fagglvl)
+      subroutine fnalu_hypre_boomeramgsetaggnumlevels(fsolver, fagglvl)
 
       integer ierr
       integer fagglvl
@@ -1460,7 +1460,7 @@
       call NALU_HYPRE_BoomerAMGSetAggNumLevels(fsolver, fagglvl, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_boomeramgsetaggnumlevels error: ', ierr
+         print *, 'fnalu_hypre_boomeramgsetaggnumlevels error: ', ierr
       endif
 
       return
@@ -1469,7 +1469,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_BoomerAMGSetGSMG
 !--------------------------------------------------------------------------
-      subroutine fhypre_boomeramgsetgsmg(fsolver, fgsmg)
+      subroutine fnalu_hypre_boomeramgsetgsmg(fsolver, fgsmg)
 
       integer ierr
       integer fgsmg
@@ -1478,7 +1478,7 @@
       call NALU_HYPRE_BoomerAMGSetGSMG(fsolver, fgsmg, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_boomeramgsetgsmg error: ', ierr
+         print *, 'fnalu_hypre_boomeramgsetgsmg error: ', ierr
       endif
 
       return
@@ -1487,7 +1487,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_BoomerAMGSetNumSamples
 !--------------------------------------------------------------------------
-      subroutine fhypre_boomeramgsetnumsamples(fsolver, fsamples)
+      subroutine fnalu_hypre_boomeramgsetnumsamples(fsolver, fsamples)
 
       integer ierr
       integer fsamples
@@ -1496,7 +1496,7 @@
       call NALU_HYPRE_BoomerAMGSetNumSamples(fsolver, fsamples, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_boomeramgsetnumsamples error: ', ierr
+         print *, 'fnalu_hypre_boomeramgsetnumsamples error: ', ierr
       endif
 
       return
@@ -1505,7 +1505,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRBiCGSTABCreate
 !--------------------------------------------------------------------------
-      subroutine fhypre_parcsrbicgstabcreate(fcomm, fsolver)
+      subroutine fnalu_hypre_parcsrbicgstabcreate(fcomm, fsolver)
 
       integer fcomm
       integer ierr
@@ -1514,7 +1514,7 @@
       call NALU_HYPRE_ParCSRBiCGSTABCreate(fcomm, fsolver, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrbicgstabcreate error: ', ierr
+         print *, 'fnalu_hypre_parcsrbicgstabcreate error: ', ierr
       endif
 
       return
@@ -1523,7 +1523,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRBiCGSTABDestroy
 !-------------------------------------------------------------------------- 
-      subroutine fhypre_parcsrbicgstabdestroy(fsolver)
+      subroutine fnalu_hypre_parcsrbicgstabdestroy(fsolver)
 
       integer ierr
       integer*8 fsolver
@@ -1531,7 +1531,7 @@
       call NALU_HYPRE_ParCSRBiCGSTABDestroy(fsolver, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrbicgstabdestroy error: ', ierr
+         print *, 'fnalu_hypre_parcsrbicgstabdestroy error: ', ierr
       endif
 
       return
@@ -1540,7 +1540,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRBiCGSTABSetup
 !------------------------------------------------------------------------- 
-      subroutine fhypre_parcsrbicgstabsetup(fsolver, fA, fb, fx)
+      subroutine fnalu_hypre_parcsrbicgstabsetup(fsolver, fA, fb, fx)
 
       integer ierr
       integer*8 fsolver
@@ -1551,7 +1551,7 @@
       call NALU_HYPRE_ParCSRBiCGSTABSetup(fsolver, fA, fb, fx, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrbicgstabsetup error: ', ierr
+         print *, 'fnalu_hypre_parcsrbicgstabsetup error: ', ierr
       endif
 
       return
@@ -1560,7 +1560,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRBiCGSTABSolve
 !-------------------------------------------------------------------------- 
-      subroutine fhypre_parcsrbicgstabsolve(fsolver, fA, fb, fx)
+      subroutine fnalu_hypre_parcsrbicgstabsolve(fsolver, fA, fb, fx)
      
       integer ierr
       integer*8 fsolver
@@ -1571,7 +1571,7 @@
       call NALU_HYPRE_ParCSRBiCGSTABSolve(fsolver, fA, fb, fx)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrbicgstabsolve error: ', ierr
+         print *, 'fnalu_hypre_parcsrbicgstabsolve error: ', ierr
       endif
 
       return
@@ -1580,7 +1580,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRBiCGSTABSetTol
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrbicgstabsettol(fsolver, ftol)
+      subroutine fnalu_hypre_parcsrbicgstabsettol(fsolver, ftol)
 
       integer ierr
       integer*8 fsolver
@@ -1589,7 +1589,7 @@
       call NALU_HYPRE_ParCSRBiCGSTABSetTol(fsolver, ftol, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrbicgstabsettol error: ', ierr
+         print *, 'fnalu_hypre_parcsrbicgstabsettol error: ', ierr
       endif
 
       return
@@ -1598,7 +1598,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRBiCGSTABSetMinIter
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrbicgstabsetminiter(fsolver, fminiter)
+      subroutine fnalu_hypre_parcsrbicgstabsetminiter(fsolver, fminiter)
 
       integer ierr
       integer fminiter
@@ -1607,7 +1607,7 @@
       call NALU_HYPRE_ParCSRBiCGSTABSetMinIter(fsolver, fminiter, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrparcsrbicgstabsetminiter error: ', ierr
+         print *, 'fnalu_hypre_parcsrparcsrbicgstabsetminiter error: ', ierr
       endif
 
       return
@@ -1616,7 +1616,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRBiCGSTABSetMaxIter
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrbicgstabsetmaxiter(fsolver, fmaxiter)
+      subroutine fnalu_hypre_parcsrbicgstabsetmaxiter(fsolver, fmaxiter)
 
       integer ierr
       integer fmaxiter
@@ -1625,7 +1625,7 @@
       call NALU_HYPRE_ParCSRBiCGSTABSetMaxIter(fsolver, fmaxiter, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrbicgstabsetmaxiter error: ', ierr
+         print *, 'fnalu_hypre_parcsrbicgstabsetmaxiter error: ', ierr
       endif
 
       return
@@ -1634,7 +1634,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRBiCGSTABSetStopCrit
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrbicgstabsetstopcrit(fsolver, fstopcrit)
+      subroutine fnalu_hypre_parcsrbicgstabsetstopcrit(fsolver, fstopcrit)
 
       integer ierr
       integer fstopcrit
@@ -1643,7 +1643,7 @@
       call NALU_HYPRE_ParCSRBiCGSTABSetStopCrit(fsolver, fstopcrit, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrbicgstabsetstopcrit error: ', ierr
+         print *, 'fnalu_hypre_parcsrbicgstabsetstopcrit error: ', ierr
       endif
 
       return
@@ -1652,7 +1652,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRBiCGSTABSetPrecond
 !--------------------------------------------------------------------------
-      subroutine fhypre_parcsrbicgstabsetprecond(fsolver, fprecond_id, 
+      subroutine fnalu_hypre_parcsrbicgstabsetprecond(fsolver, fprecond_id, 
      1                                           fprecond)       
 
       integer ierr
@@ -1664,7 +1664,7 @@
      1                                    fprecond, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrbicgstabsetprecond error: ', ierr
+         print *, 'fnalu_hypre_parcsrbicgstabsetprecond error: ', ierr
       endif
 
       return
@@ -1673,7 +1673,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRBiCGSTABGetPrecond
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrbicgstabgetprecond(fsolver, fprecond)
+      subroutine fnalu_hypre_parcsrbicgstabgetprecond(fsolver, fprecond)
       
       integer ierr
       integer*8 fsolver
@@ -1682,7 +1682,7 @@
       call NALU_HYPRE_ParCSRBiCGSTABGetPrecond(fsolver, fprecond)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrbicgstabgetprecond error: ', ierr
+         print *, 'fnalu_hypre_parcsrbicgstabgetprecond error: ', ierr
       endif
 
       return
@@ -1691,7 +1691,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRBiCGSTABSetLogging
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrbicgstabsetlogging(fsolver, flog)
+      subroutine fnalu_hypre_parcsrbicgstabsetlogging(fsolver, flog)
 
       integer ierr
       integer flog
@@ -1700,7 +1700,7 @@
       call NALU_HYPRE_ParCSRBiCGSTABSetLogging(fsolver, flog, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrbicgstabsetlogging error: ', ierr
+         print *, 'fnalu_hypre_parcsrbicgstabsetlogging error: ', ierr
       endif
 
       return
@@ -1709,7 +1709,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRBiCGSTABSetPrintLevel
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrbicgstabsetprintle(fsolver, fprntlvl)
+      subroutine fnalu_hypre_parcsrbicgstabsetprintle(fsolver, fprntlvl)
 
       integer ierr
       integer fprntlvl
@@ -1718,7 +1718,7 @@
       call NALU_HYPRE_ParCSRBiCGSTABSetPrintLev(fsolver, fprntlvl, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrbicgstabsetprintlevel error: ', ierr
+         print *, 'fnalu_hypre_parcsrbicgstabsetprintlevel error: ', ierr
       endif
 
       return
@@ -1727,7 +1727,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRBiCGSTABGetNumIter
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrbicgstabgetnumiter(fsolver, fnumiter)
+      subroutine fnalu_hypre_parcsrbicgstabgetnumiter(fsolver, fnumiter)
 
       integer ierr
       integer fnumiter
@@ -1736,7 +1736,7 @@
       call NALU_HYPRE_ParCSRBiCGSTABGetNumIter(fsolver, fnumiter, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrbicgstabgetnumiterations error: ', ierr
+         print *, 'fnalu_hypre_parcsrbicgstabgetnumiterations error: ', ierr
       endif
 
       return
@@ -1745,7 +1745,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRBiCGSTABGetFinalRelativeResidualNorm
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrbicgstabgetfinalre(fsolver, fnorm)
+      subroutine fnalu_hypre_parcsrbicgstabgetfinalre(fsolver, fnorm)
 
       integer ierr
       integer*8 fsolver
@@ -1754,7 +1754,7 @@
       call NALU_HYPRE_ParCSRBiCGSTABGetFinalRel(fsolver, fnorm, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrbicgstabgetfinalrel error: ', ierr
+         print *, 'fnalu_hypre_parcsrbicgstabgetfinalrel error: ', ierr
       endif
       return
       end
@@ -1764,7 +1764,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_BlockTridiagCreate
 !-------------------------------------------------------------------------
-      subroutine fhypre_blocktridiagcreate(fsolver)
+      subroutine fnalu_hypre_blocktridiagcreate(fsolver)
 
       integer ierr
       integer*8 fsolver
@@ -1772,7 +1772,7 @@
       call NALU_HYPRE_BlockTridiagCreate(fsolver, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_blocktridiagcreate error: ', ierr
+         print *, 'fnalu_hypre_blocktridiagcreate error: ', ierr
       endif
 
       return
@@ -1781,7 +1781,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_BlockTridiagDestroy
 !-------------------------------------------------------------------------
-      subroutine fhypre_blocktridiagdestroy(fsolver)
+      subroutine fnalu_hypre_blocktridiagdestroy(fsolver)
 
       integer ierr
       integer*8 fsolver
@@ -1789,7 +1789,7 @@
       call NALU_HYPRE_BlockTridiagDestroy(fsolver, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_blocktridiagdestroy error: ', ierr
+         print *, 'fnalu_hypre_blocktridiagdestroy error: ', ierr
       endif
 
       return
@@ -1798,7 +1798,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_BlockTridiagSetup
 !-------------------------------------------------------------------------
-      subroutine fhypre_blocktridiagsetup(fsolver, fA, fb, fx)
+      subroutine fnalu_hypre_blocktridiagsetup(fsolver, fA, fb, fx)
 
       integer ierr
       integer*8 fsolver
@@ -1809,7 +1809,7 @@
       call NALU_HYPRE_BlockTridiagSetup(fsolver, fA, fb, fx, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_blocktridiagsetup error: ', ierr
+         print *, 'fnalu_hypre_blocktridiagsetup error: ', ierr
       endif
 
       return
@@ -1818,7 +1818,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_BlockTridiagSolve
 !-------------------------------------------------------------------------
-      subroutine fhypre_blocktridiagsolve(fsolver, fA, fb, fx)
+      subroutine fnalu_hypre_blocktridiagsolve(fsolver, fA, fb, fx)
 
       integer ierr
       integer*8 fsolver
@@ -1829,7 +1829,7 @@
       call NALU_HYPRE_BlockTridiagSolve(fsolver, fA, fb, fx, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_blocktridiagsolve error: ', ierr
+         print *, 'fnalu_hypre_blocktridiagsolve error: ', ierr
       endif
 
       return
@@ -1838,7 +1838,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_BlockTridiagSetIndexSet
 !-------------------------------------------------------------------------
-      subroutine fhypre_blocktridiagsetindexset(fsolver, fn, finds)
+      subroutine fnalu_hypre_blocktridiagsetindexset(fsolver, fn, finds)
 
       integer ierr
       integer fn
@@ -1848,7 +1848,7 @@
       call NALU_HYPRE_BlockTridiagSetIndexSet(fsolver, fn, finds, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_blocktridiagsetindexset error: ', ierr
+         print *, 'fnalu_hypre_blocktridiagsetindexset error: ', ierr
       endif
 
       return
@@ -1857,7 +1857,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_BlockTridiagSetAMGStrengthThreshold
 !-------------------------------------------------------------------------
-      subroutine fhypre_blocktridiagsetamgstreng(fsolver, fthresh)
+      subroutine fnalu_hypre_blocktridiagsetamgstreng(fsolver, fthresh)
 
       integer ierr
       integer*8 fsolver
@@ -1867,7 +1867,7 @@
      1                                     ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_blocktridiagsetamgstrengththreshold error: ',
+         print *, 'fnalu_hypre_blocktridiagsetamgstrengththreshold error: ',
      1                                            ierr
       endif
 
@@ -1877,7 +1877,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_BlockTridiagSetAMGNumSweeps
 !-------------------------------------------------------------------------
-      subroutine fhypre_blocktridiagsetamgnumswe(fsolver, fnumsweep)
+      subroutine fnalu_hypre_blocktridiagsetamgnumswe(fsolver, fnumsweep)
 
       integer ierr
       integer fnumsweep
@@ -1886,7 +1886,7 @@
       call NALU_HYPRE_BlockTridiagSetAMGNumSwee(fsolver, fnumsweep, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_blocktridiagsetamgnumsweeps error: ', ierr
+         print *, 'fnalu_hypre_blocktridiagsetamgnumsweeps error: ', ierr
       endif
 
       return
@@ -1895,7 +1895,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_BlockTridiagSetAMGRelaxType
 !-------------------------------------------------------------------------
-      subroutine fhypre_blocktridiagsetamgrelaxt(fsolver, frlxtyp)
+      subroutine fnalu_hypre_blocktridiagsetamgrelaxt(fsolver, frlxtyp)
 
       integer ierr
       integer frlxtyp
@@ -1904,7 +1904,7 @@
       call NALU_HYPRE_BlockTridiagSetAMGRelaxTy(fsolver, frlxtyp, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_blocktridiagsetamgrelaxype error: ', ierr
+         print *, 'fnalu_hypre_blocktridiagsetamgrelaxype error: ', ierr
       endif
 
       return
@@ -1913,7 +1913,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_BlockTridiagSetPrintLevel
 !-------------------------------------------------------------------------
-      subroutine fhypre_blocktridiagsetprintleve(fsolver, fprntlvl)
+      subroutine fnalu_hypre_blocktridiagsetprintleve(fsolver, fprntlvl)
 
       integer ierr
       integer fprntlvl
@@ -1922,7 +1922,7 @@
       call NALU_HYPRE_BlockTridiagSetPrintLevel(fsolver, fprntlvl, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_blocktridiagsetprintlevel error: ', ierr
+         print *, 'fnalu_hypre_blocktridiagsetprintlevel error: ', ierr
       endif
 
       return
@@ -1933,7 +1933,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRCGNRCreate
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrcgnrcreate(fcomm, fsolver)
+      subroutine fnalu_hypre_parcsrcgnrcreate(fcomm, fsolver)
 
       integer ierr
       integer fcomm
@@ -1942,7 +1942,7 @@
       call NALU_HYPRE_ParCSRCGNRCreate(fcomm, fsolver, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrcgnrcreate error: ', ierr
+         print *, 'fnalu_hypre_parcsrcgnrcreate error: ', ierr
       endif
 
       return
@@ -1951,7 +1951,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRCGNRDestroy
 !------------------------------------------------------------------------- 
-      subroutine fhypre_parcsrcgnrdestroy(fsolver)
+      subroutine fnalu_hypre_parcsrcgnrdestroy(fsolver)
 
       integer ierr
       integer*8 fsolver
@@ -1959,7 +1959,7 @@
       call NALU_HYPRE_ParCSRCGNRDestroy(fsolver, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrcgnrdestroy error: ', ierr
+         print *, 'fnalu_hypre_parcsrcgnrdestroy error: ', ierr
       endif
 
       return
@@ -1968,7 +1968,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRCGNRSetup
 !------------------------------------------------------------------------- 
-      subroutine fhypre_parcsrcgnrsetup(fsolver, fA, fb, fx)
+      subroutine fnalu_hypre_parcsrcgnrsetup(fsolver, fA, fb, fx)
 
       integer ierr
       integer*8 fA
@@ -1978,7 +1978,7 @@
       call NALU_HYPRE_ParCSRCGNRSetup(fsolver, fA, fb, fx, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrcgnrsetup error: ', ierr
+         print *, 'fnalu_hypre_parcsrcgnrsetup error: ', ierr
       endif
 
       return
@@ -1987,7 +1987,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRCGNRSolve
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrcgnrsolve(fsolver, fA, fb, fx)
+      subroutine fnalu_hypre_parcsrcgnrsolve(fsolver, fA, fb, fx)
 
       integer ierr
       integer*8 fA
@@ -1997,7 +1997,7 @@
       call NALU_HYPRE_ParCSRCGNRSolve(fsolver, fA, fb, fx, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrcgnrsolve error: ', ierr
+         print *, 'fnalu_hypre_parcsrcgnrsolve error: ', ierr
       endif
 
       return
@@ -2006,7 +2006,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRCGNRSetTol
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrcgnrsettol(fsolver, ftol)
+      subroutine fnalu_hypre_parcsrcgnrsettol(fsolver, ftol)
 
       integer ierr
       integer*8 fsolver
@@ -2015,7 +2015,7 @@
       call NALU_HYPRE_ParCSRCGNRSetTol(fsolver, ftol, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrcgnrsettol error: ', ierr
+         print *, 'fnalu_hypre_parcsrcgnrsettol error: ', ierr
       endif
 
       return
@@ -2024,7 +2024,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRCGNRSetMinIter
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrcgnrsetminiter(fsolver, fminiter)
+      subroutine fnalu_hypre_parcsrcgnrsetminiter(fsolver, fminiter)
  
       integer ierr
       integer fminiter
@@ -2033,7 +2033,7 @@
       call NALU_HYPRE_ParCSRCGNRSetMinIter(fsolver, fminiter, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrcgnrsetminiter error: ', ierr
+         print *, 'fnalu_hypre_parcsrcgnrsetminiter error: ', ierr
       endif
 
       return
@@ -2042,7 +2042,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRCGNRSetMaxIter
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrcgnrsetmaxiter(fsolver, fmaxiter)
+      subroutine fnalu_hypre_parcsrcgnrsetmaxiter(fsolver, fmaxiter)
  
       integer ierr
       integer fmaxiter
@@ -2051,7 +2051,7 @@
       call NALU_HYPRE_ParCSRCGNRSetMaxIter(fsolver, fmaxiter, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrcgnrsetmaxiter error: ', ierr
+         print *, 'fnalu_hypre_parcsrcgnrsetmaxiter error: ', ierr
       endif
 
       return
@@ -2060,7 +2060,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRCGNRSetStopCrit
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrcgnrsetstopcri(fsolver, fstopcrit)
+      subroutine fnalu_hypre_parcsrcgnrsetstopcri(fsolver, fstopcrit)
  
       integer ierr
       integer fstopcrit
@@ -2069,7 +2069,7 @@
       call NALU_HYPRE_ParCSRCGNRSetStopCrit(fsolver, fstopcrit, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrcgnrsetstopcrit error: ', ierr
+         print *, 'fnalu_hypre_parcsrcgnrsetstopcrit error: ', ierr
       endif
 
       return
@@ -2078,7 +2078,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRCGNRSetPrecond
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrcgnrsetprecond(fsolver, fprecond_id, 
+      subroutine fnalu_hypre_parcsrcgnrsetprecond(fsolver, fprecond_id, 
      1                                       fprecond)
 
       integer ierr
@@ -2090,7 +2090,7 @@
      1                                ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrcgnrsetprecond error: ', ierr
+         print *, 'fnalu_hypre_parcsrcgnrsetprecond error: ', ierr
       endif
 
       return
@@ -2099,7 +2099,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRCGNRGetPrecond
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrcgnrgetprecond(fsolver, fprecond)
+      subroutine fnalu_hypre_parcsrcgnrgetprecond(fsolver, fprecond)
 
       integer ierr
       integer*8 fsolver
@@ -2108,7 +2108,7 @@
       call NALU_HYPRE_ParCSRCGNRGetPrecond(fsolver, fprecond, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrcgnrgetprecond error: ', ierr
+         print *, 'fnalu_hypre_parcsrcgnrgetprecond error: ', ierr
       endif
 
       return
@@ -2117,7 +2117,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRCGNRSetLogging
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrcgnrsetlogging(fsolver, flog)
+      subroutine fnalu_hypre_parcsrcgnrsetlogging(fsolver, flog)
 
       integer ierr
       integer flog
@@ -2126,7 +2126,7 @@
       call NALU_HYPRE_ParCSRCGNRSetLogging(fsolver, flog, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrcgnrsetlogging error: ', ierr
+         print *, 'fnalu_hypre_parcsrcgnrsetlogging error: ', ierr
       endif
 
       return
@@ -2135,7 +2135,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRCGNRGetNumIteration
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrcgnrgetnumiteratio(fsolver, fnumiter)
+      subroutine fnalu_hypre_parcsrcgnrgetnumiteratio(fsolver, fnumiter)
 
       integer ierr
       integer fnumiter
@@ -2144,7 +2144,7 @@
       call NALU_HYPRE_ParCSRCGNRGetNumIteration(fsolver, fnumiter, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrcgnrgetnumiterations error: ', ierr
+         print *, 'fnalu_hypre_parcsrcgnrgetnumiterations error: ', ierr
       endif
 
       return
@@ -2153,7 +2153,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRCGNRGetFinalRelativeResidualNorm
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrcgnrgetfinalrelati(fsolver, fnorm)
+      subroutine fnalu_hypre_parcsrcgnrgetfinalrelati(fsolver, fnorm)
 
       integer ierr
       integer*8 fsolver
@@ -2162,7 +2162,7 @@
       call NALU_HYPRE_ParCSRCGNRGetFinalRelativ(fsolver, fnorm, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrcgnrgetfinalrelativ error: ', ierr
+         print *, 'fnalu_hypre_parcsrcgnrgetfinalrelativ error: ', ierr
       endif
 
       return
@@ -2173,7 +2173,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_EuclidCreate
 !-------------------------------------------------------------------------
-      subroutine fhypre_euclidcreate(fcomm, fsolver)
+      subroutine fnalu_hypre_euclidcreate(fcomm, fsolver)
 
       integer ierr
       integer fcomm
@@ -2182,7 +2182,7 @@
       call NALU_HYPRE_EuclidCreate(fcomm, fsolver, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_euclidcreate error: ', ierr
+         print *, 'fnalu_hypre_euclidcreate error: ', ierr
       endif
 
       return
@@ -2191,7 +2191,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_EuclidDestroy
 !-------------------------------------------------------------------------
-      subroutine fhypre_eucliddestroy(fsolver)
+      subroutine fnalu_hypre_eucliddestroy(fsolver)
 
       integer ierr
       integer*8 fsolver
@@ -2199,7 +2199,7 @@
       call NALU_HYPRE_EuclidDestroy(fsolver, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_eucliddestroy error: ', ierr
+         print *, 'fnalu_hypre_eucliddestroy error: ', ierr
       endif
 
       return
@@ -2208,7 +2208,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_EuclidSetup
 !-------------------------------------------------------------------------
-      subroutine fhypre_euclidsetup(fsolver, fA, fb, fx)
+      subroutine fnalu_hypre_euclidsetup(fsolver, fA, fb, fx)
 
       integer ierr
       integer*8 fsolver
@@ -2219,7 +2219,7 @@
       call NALU_HYPRE_EuclidSetup(fsolver, fA, fb, fx, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_euclidsetup error: ', ierr
+         print *, 'fnalu_hypre_euclidsetup error: ', ierr
       endif
 
       return
@@ -2228,7 +2228,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_EuclidSolve
 !-------------------------------------------------------------------------
-      subroutine fhypre_euclidsolve(fsolver, fA, fb, fx)
+      subroutine fnalu_hypre_euclidsolve(fsolver, fA, fb, fx)
 
       integer ierr
       integer*8 fsolver
@@ -2239,7 +2239,7 @@
       call NALU_HYPRE_EuclidSolve(fsolver, fA, fb, fx, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_euclidsolve error: ', ierr
+         print *, 'fnalu_hypre_euclidsolve error: ', ierr
       endif
 
       return
@@ -2248,7 +2248,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_EuclidSetParams
 !-------------------------------------------------------------------------
-      subroutine fhypre_euclidsetparams(fsolver, fargc, fargv)
+      subroutine fnalu_hypre_euclidsetparams(fsolver, fargc, fargv)
 
       integer ierr
       integer fargc
@@ -2258,7 +2258,7 @@
       call NALU_HYPRE_EuclidSetParams(fsolver, fargc, fargv, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_euclidsetparams error: ', ierr
+         print *, 'fnalu_hypre_euclidsetparams error: ', ierr
       endif
 
       return
@@ -2267,7 +2267,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_EuclidSetParamsFromFile
 !-------------------------------------------------------------------------
-      subroutine fhypre_euclidsetparamsfromfile(fsolver, ffile)
+      subroutine fnalu_hypre_euclidsetparamsfromfile(fsolver, ffile)
 
       integer ierr
       integer*8 fsolver
@@ -2276,7 +2276,7 @@
       call NALU_HYPRE_EuclidSetParamsFromFile(fsolver, ffile, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_euclidsetparamsfromfile error: ', ierr
+         print *, 'fnalu_hypre_euclidsetparamsfromfile error: ', ierr
       endif
 
       return
@@ -2287,7 +2287,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRGMRESCreate
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrgmrescreate(fcomm, fsolver)
+      subroutine fnalu_hypre_parcsrgmrescreate(fcomm, fsolver)
 
       integer ierr
       integer fcomm
@@ -2296,7 +2296,7 @@
       call NALU_HYPRE_ParCSRGMRESCreate(fcomm, fsolver, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrgmrescreate error: ', ierr
+         print *, 'fnalu_hypre_parcsrgmrescreate error: ', ierr
       endif
 
       return
@@ -2305,7 +2305,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRGMRESDestroy
 !------------------------------------------------------------------------- 
-      subroutine fhypre_parcsrgmresdestroy(fsolver)
+      subroutine fnalu_hypre_parcsrgmresdestroy(fsolver)
 
       integer ierr
       integer*8 fsolver
@@ -2313,7 +2313,7 @@
       call NALU_HYPRE_ParCSRGMRESDestroy(fsolver)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrgmresdestroy error: ', ierr
+         print *, 'fnalu_hypre_parcsrgmresdestroy error: ', ierr
       endif
 
       return
@@ -2322,7 +2322,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRGMRESSetup
 !------------------------------------------------------------------------- 
-      subroutine fhypre_parcsrgmressetup(fsolver, fA, fb, fx)
+      subroutine fnalu_hypre_parcsrgmressetup(fsolver, fA, fb, fx)
 
       integer ierr
       integer*8 fsolver
@@ -2333,7 +2333,7 @@
       call NALU_HYPRE_ParCSRGMRESSetup(fsolver, fA, fb, fx, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrgmressetup error: ', ierr
+         print *, 'fnalu_hypre_parcsrgmressetup error: ', ierr
       endif
 
       return
@@ -2342,7 +2342,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRGMRESSolve
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrgmressolve(fsolver, fA, fb, fx)
+      subroutine fnalu_hypre_parcsrgmressolve(fsolver, fA, fb, fx)
 
       integer ierr
       integer*8 fsolver
@@ -2353,7 +2353,7 @@
       call NALU_HYPRE_ParCSRGMRESSolve(fsolver, fA, fb, fx, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrgmressolve error: ', ierr
+         print *, 'fnalu_hypre_parcsrgmressolve error: ', ierr
       endif
 
       return
@@ -2362,7 +2362,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRGMRESSetKDim
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrgmressetkdim(fsolver, fkdim)
+      subroutine fnalu_hypre_parcsrgmressetkdim(fsolver, fkdim)
 
       integer ierr
       integer fkdim
@@ -2371,7 +2371,7 @@
       call NALU_HYPRE_ParCSRGMRESSetKDim(fsolver, fkdim, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrgmressetkdim error: ', ierr
+         print *, 'fnalu_hypre_parcsrgmressetkdim error: ', ierr
       endif
 
       return
@@ -2380,7 +2380,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRGMRESSetTol
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrgmressettol(fsolver, ftol)
+      subroutine fnalu_hypre_parcsrgmressettol(fsolver, ftol)
 
       integer ierr
       integer*8 fsolver
@@ -2389,7 +2389,7 @@
       call NALU_HYPRE_ParCSRGMRESSetTol(fsolver, ftol, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrgmressettol error: ', ierr
+         print *, 'fnalu_hypre_parcsrgmressettol error: ', ierr
       endif
 
       return
@@ -2398,7 +2398,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRGMRESSetMinIter
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrgmressetminiter(fsolver, fminiter)
+      subroutine fnalu_hypre_parcsrgmressetminiter(fsolver, fminiter)
 
       integer ierr
       integer fminiter
@@ -2407,7 +2407,7 @@
       call NALU_HYPRE_ParCSRGMRESSetMinIter(fsolver, fminiter, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrgmressetminiter error: ', ierr
+         print *, 'fnalu_hypre_parcsrgmressetminiter error: ', ierr
       endif
 
       return
@@ -2416,7 +2416,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRGMRESSetMaxIter
 !--------------------------------------------------------------------------
-      subroutine fhypre_parcsrgmressetmaxiter(fsolver, fmaxiter)
+      subroutine fnalu_hypre_parcsrgmressetmaxiter(fsolver, fmaxiter)
 
       integer ierr
       integer fmaxiter
@@ -2425,7 +2425,7 @@
       call NALU_HYPRE_ParCSRGMRESSetMaxIter(fsolver, fmaxiter, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrgmressetmaxiter error: ', ierr
+         print *, 'fnalu_hypre_parcsrgmressetmaxiter error: ', ierr
       endif
 
       return
@@ -2434,7 +2434,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRGMRESSetStopCrit
 !--------------------------------------------------------------------------
-      subroutine fhypre_parcsrgmressetstopcrit(fsolver, fstopcrit)
+      subroutine fnalu_hypre_parcsrgmressetstopcrit(fsolver, fstopcrit)
 
       integer ierr
       integer fstopcrit
@@ -2443,7 +2443,7 @@
       call NALU_HYPRE_ParCSRGMRESSetStopCrit(fsolver, fstopcrit, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrgmressetstopcrit error: ', ierr
+         print *, 'fnalu_hypre_parcsrgmressetstopcrit error: ', ierr
       endif
 
       return
@@ -2452,7 +2452,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRGMRESSetPrecond
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrgmressetprecond(fsolver, fprecond_id, 
+      subroutine fnalu_hypre_parcsrgmressetprecond(fsolver, fprecond_id, 
      1                                        fprecond)
 
       integer ierr
@@ -2464,7 +2464,7 @@
      1                                 ierr)
      
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrgmressetprecond error: ', ierr
+         print *, 'fnalu_hypre_parcsrgmressetprecond error: ', ierr
       endif
 
       return
@@ -2473,7 +2473,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRGMRESGetPrecond
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrgmresgetprecond(fsolver, fprecond)
+      subroutine fnalu_hypre_parcsrgmresgetprecond(fsolver, fprecond)
 
       integer ierr
       integer*8 fsolver
@@ -2482,7 +2482,7 @@
       call NALU_HYPRE_ParCSRGMRESGetPrecond(fsolver, fprecond, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrgmresgetprecond error: ', ierr
+         print *, 'fnalu_hypre_parcsrgmresgetprecond error: ', ierr
       endif
 
       return
@@ -2491,7 +2491,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRGMRESSetLogging
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrgmressetlogging(fsolver, flog)
+      subroutine fnalu_hypre_parcsrgmressetlogging(fsolver, flog)
 
       integer ierr
       integer flog
@@ -2500,7 +2500,7 @@
       call NALU_HYPRE_ParCSRGMRESSetLogging(fsolver, flog, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrgmressetlogging error: ', ierr
+         print *, 'fnalu_hypre_parcsrgmressetlogging error: ', ierr
       endif
 
       return
@@ -2509,7 +2509,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRGMRESSetPrintLevel
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrgmressetprintlevel(fsolver, fprntlvl)
+      subroutine fnalu_hypre_parcsrgmressetprintlevel(fsolver, fprntlvl)
 
       integer ierr
       integer fprntlvl
@@ -2518,7 +2518,7 @@
       call NALU_HYPRE_ParCSRGMRESSetPrintLevel(fsolver, fprntlvl, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrgmressetprintlevel error: ', ierr
+         print *, 'fnalu_hypre_parcsrgmressetprintlevel error: ', ierr
       endif
 
       return
@@ -2527,7 +2527,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRGMRESGetNumIterations
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrgmresgetnumiterati(fsolver, fnumiter)
+      subroutine fnalu_hypre_parcsrgmresgetnumiterati(fsolver, fnumiter)
 
       integer ierr
       integer fnumiter
@@ -2536,7 +2536,7 @@
       call NALU_HYPRE_ParCSRGMRESGetNumIteratio(fsolver, fnumiter, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrgmresgetnumiterations error: ', ierr
+         print *, 'fnalu_hypre_parcsrgmresgetnumiterations error: ', ierr
       endif
 
       return
@@ -2545,7 +2545,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRGMRESGetFinalRelativeResidualNorm
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrgmresgetfinalrelat(fsolver, fnorm)
+      subroutine fnalu_hypre_parcsrgmresgetfinalrelat(fsolver, fnorm)
 
       integer ierr
       integer*8 fsolver
@@ -2554,7 +2554,7 @@
       call NALU_HYPRE_ParCSRGMRESGetFinalRelati(fsolver, fnorm, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrgmresgetfinalrelative error: ', ierr
+         print *, 'fnalu_hypre_parcsrgmresgetfinalrelative error: ', ierr
       endif
 
       return
@@ -2565,7 +2565,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRHybridCreate
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrhybridcreate(fsolver)
+      subroutine fnalu_hypre_parcsrhybridcreate(fsolver)
 
       integer ierr
       integer*8 fsolver
@@ -2573,7 +2573,7 @@
       call NALU_HYPRE_ParCSRHybridCreate(fsolver, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrhybridcreate error: ', ierr
+         print *, 'fnalu_hypre_parcsrhybridcreate error: ', ierr
       endif
 
       return
@@ -2582,7 +2582,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRHybridDestroy
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrhybriddestroy(fsolver)
+      subroutine fnalu_hypre_parcsrhybriddestroy(fsolver)
 
       integer ierr
       integer*8 fsolver
@@ -2590,7 +2590,7 @@
       call NALU_HYPRE_ParCSRHybridDestroy(fsolver, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrhybriddestroy error: ', ierr
+         print *, 'fnalu_hypre_parcsrhybriddestroy error: ', ierr
       endif
 
       return
@@ -2599,7 +2599,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRHybridSetup
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrhybridsetup(fsolver, fA, fb, fx)
+      subroutine fnalu_hypre_parcsrhybridsetup(fsolver, fA, fb, fx)
 
       integer ierr
       integer*8 fsolver
@@ -2610,7 +2610,7 @@
       call NALU_HYPRE_ParCSRHybridSetup(fsolver, fA, fb, fx, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrhybridsetup error: ', ierr
+         print *, 'fnalu_hypre_parcsrhybridsetup error: ', ierr
       endif
 
       return
@@ -2619,7 +2619,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRHybridSolve
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrhybridsolve(fsolver, fA, fb, fx)
+      subroutine fnalu_hypre_parcsrhybridsolve(fsolver, fA, fb, fx)
 
       integer ierr
       integer*8 fsolver
@@ -2630,7 +2630,7 @@
       call NALU_HYPRE_ParCSRHybridSolve(fsolver, fA, fb, fx, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrhybridsolve error: ', ierr
+         print *, 'fnalu_hypre_parcsrhybridsolve error: ', ierr
       endif
 
       return
@@ -2639,7 +2639,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRHybridSetTol
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrhybridsettol(fsolver, ftol)
+      subroutine fnalu_hypre_parcsrhybridsettol(fsolver, ftol)
 
       integer ierr
       integer*8 fsolver
@@ -2648,7 +2648,7 @@
       call NALU_HYPRE_ParCSRHybridSetTol(fsolver, ftol, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrhybridsettol error: ', ierr
+         print *, 'fnalu_hypre_parcsrhybridsettol error: ', ierr
       endif
 
       return
@@ -2657,7 +2657,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRHybridSetConvergenceTol
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrhybridsetconvergenc(fsolver, fcftol)
+      subroutine fnalu_hypre_parcsrhybridsetconvergenc(fsolver, fcftol)
 
       integer ierr
       integer*8 fsolver
@@ -2666,7 +2666,7 @@
       call NALU_HYPRE_ParCSRHybridSetConvergenc(fsolver, fcftol, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrhybridsetconvergencetol error: ', ierr
+         print *, 'fnalu_hypre_parcsrhybridsetconvergencetol error: ', ierr
       endif
 
       return
@@ -2675,7 +2675,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRHybridSetDSCGMaxIter
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrhybridsetdscgmaxit(fsolver, fmaxiter)
+      subroutine fnalu_hypre_parcsrhybridsetdscgmaxit(fsolver, fmaxiter)
 
       integer ierr
       integer fmaxiter
@@ -2684,7 +2684,7 @@
       call NALU_HYPRE_ParCSRHybridSetDSCGMaxIte(fsolver, fmaxiter, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrhybridsetdscgmaxiter error: ', ierr
+         print *, 'fnalu_hypre_parcsrhybridsetdscgmaxiter error: ', ierr
       endif
 
       return
@@ -2693,7 +2693,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRHybridSetPCGMaxIter
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrhybridsetpcgmaxite(fsolver, fmaxiter)
+      subroutine fnalu_hypre_parcsrhybridsetpcgmaxite(fsolver, fmaxiter)
 
       integer ierr
       integer fmaxiter
@@ -2702,7 +2702,7 @@
       call NALU_HYPRE_ParCSRHybridSetPCGMaxIter(fsolver, fmaxiter, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrhybridsetpcgmaxiter error: ', ierr
+         print *, 'fnalu_hypre_parcsrhybridsetpcgmaxiter error: ', ierr
       endif
 
       return
@@ -2711,7 +2711,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRHybridSetSolverType
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrhybridsetsolvertyp(fsolver, ftype)
+      subroutine fnalu_hypre_parcsrhybridsetsolvertyp(fsolver, ftype)
 
       integer ierr
       integer ftype
@@ -2720,7 +2720,7 @@
       call NALU_HYPRE_ParCSRHybridSetSolverType(fsolver, ftype, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrhybridsetsolvertype error: ', ierr
+         print *, 'fnalu_hypre_parcsrhybridsetsolvertype error: ', ierr
       endif
 
       return
@@ -2729,7 +2729,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRHybridSetKDim
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrhybridsetkdim(fsolver, fkdim)
+      subroutine fnalu_hypre_parcsrhybridsetkdim(fsolver, fkdim)
 
       integer ierr
       integer fkdim
@@ -2738,7 +2738,7 @@
       call NALU_HYPRE_ParCSRHybridSetKDim(fsolver, fkdim, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrhybridsetkdim error: ', ierr
+         print *, 'fnalu_hypre_parcsrhybridsetkdim error: ', ierr
       endif
 
       return
@@ -2747,7 +2747,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRHybridSetTwoNorm
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrhybridsettwonorm(fsolver, f2norm)
+      subroutine fnalu_hypre_parcsrhybridsettwonorm(fsolver, f2norm)
 
       integer ierr
       integer f2norm
@@ -2756,7 +2756,7 @@
       call NALU_HYPRE_ParCSRHybridSetTwoNorm(fsolver, f2norm, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrhybridsettwonorm error: ', ierr
+         print *, 'fnalu_hypre_parcsrhybridsettwonorm error: ', ierr
       endif
 
       return
@@ -2765,7 +2765,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRHybridSetStopCrit
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrhybridsetstopcrit(fsolver, fstopcrit)
+      subroutine fnalu_hypre_parcsrhybridsetstopcrit(fsolver, fstopcrit)
 
       integer ierr
       integer fstopcrit
@@ -2774,7 +2774,7 @@
       call NALU_HYPRE_ParCSRHybridSetStopCrit(fsolver, fstopcrit, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrhybridsetstopcrit error: ', ierr
+         print *, 'fnalu_hypre_parcsrhybridsetstopcrit error: ', ierr
       endif
 
       return
@@ -2783,7 +2783,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRHybridSetRelChange
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrhybridsetrelchange(fsolver, frelchg)
+      subroutine fnalu_hypre_parcsrhybridsetrelchange(fsolver, frelchg)
 
       integer ierr
       integer  frelchg
@@ -2792,7 +2792,7 @@
       call NALU_HYPRE_ParCSRHybridSetRelChange(fsolver, frelchg, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrhybridsetrelchange error: ', ierr
+         print *, 'fnalu_hypre_parcsrhybridsetrelchange error: ', ierr
       endif
 
       return
@@ -2801,7 +2801,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRHybridSetPrecond
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrhybridsetprecond(fsolver, fpreid, 
+      subroutine fnalu_hypre_parcsrhybridsetprecond(fsolver, fpreid, 
      1                                         fpresolver)
 
       integer ierr
@@ -2813,7 +2813,7 @@
      1                                  ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrhybridsetprecond error: ', ierr
+         print *, 'fnalu_hypre_parcsrhybridsetprecond error: ', ierr
       endif
 
       return
@@ -2822,7 +2822,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRHybridSetLogging
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrhybridsetlogging(fsolver, flogging)
+      subroutine fnalu_hypre_parcsrhybridsetlogging(fsolver, flogging)
 
       integer ierr
       integer  flogging
@@ -2831,7 +2831,7 @@
       call NALU_HYPRE_ParCSRHybridSetLogging(fsolver, flogging, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrhybridsetlogging error: ', ierr
+         print *, 'fnalu_hypre_parcsrhybridsetlogging error: ', ierr
       endif
 
       return
@@ -2840,7 +2840,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRHybridSetPrintLevel
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrhybridsetprintlevel(fsolver, fprntlvl)
+      subroutine fnalu_hypre_parcsrhybridsetprintlevel(fsolver, fprntlvl)
 
       integer ierr
       integer  fprntlvl
@@ -2849,7 +2849,7 @@
       call NALU_HYPRE_ParCSRHybridSetPrintLevel(fsolver, fprntlvl, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrhybridsetprintlevel error: ', ierr
+         print *, 'fnalu_hypre_parcsrhybridsetprintlevel error: ', ierr
       endif
 
       return
@@ -2858,7 +2858,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRHybridSetStrongThreshold
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrhybridsetstrongthr(fsolver, fthresh)
+      subroutine fnalu_hypre_parcsrhybridsetstrongthr(fsolver, fthresh)
 
       integer ierr
       integer  fthresh
@@ -2867,7 +2867,7 @@
       call NALU_HYPRE_ParCSRHybridSetStrongThre(fsolver, fthresh, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrhybridsetstrongthreshold error: ', ierr
+         print *, 'fnalu_hypre_parcsrhybridsetstrongthreshold error: ', ierr
       endif
 
       return
@@ -2876,7 +2876,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRHybridSetMaxRowSum
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrhybridsetmaxrowsum(fsolver, fsum)
+      subroutine fnalu_hypre_parcsrhybridsetmaxrowsum(fsolver, fsum)
 
       integer ierr
       integer  fsum
@@ -2885,7 +2885,7 @@
       call NALU_HYPRE_ParCSRHybridSetMaxRowSum(fsolver, fsum, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrhybridsetmaxrowsum error: ', ierr
+         print *, 'fnalu_hypre_parcsrhybridsetmaxrowsum error: ', ierr
       endif
 
       return
@@ -2894,7 +2894,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRHybridSetTruncFactor
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrhybridsettruncfact(fsolver, ftfact)
+      subroutine fnalu_hypre_parcsrhybridsettruncfact(fsolver, ftfact)
 
       integer ierr
       integer  ftfact
@@ -2903,7 +2903,7 @@
       call NALU_HYPRE_ParCSRHybridSetTruncFacto(fsolver, ftfact, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrhybridsettruncfactor error: ', ierr
+         print *, 'fnalu_hypre_parcsrhybridsettruncfactor error: ', ierr
       endif
 
       return
@@ -2912,7 +2912,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRHybridSetMaxLevels
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrhybridsetmaxlevels(fsolver, fmaxlvl)
+      subroutine fnalu_hypre_parcsrhybridsetmaxlevels(fsolver, fmaxlvl)
 
       integer ierr
       integer  fmaxlvl
@@ -2921,7 +2921,7 @@
       call NALU_HYPRE_ParCSRHybridSetMaxLevels(fsolver, fmaxlvl, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrhybridsetmaxlevels error: ', ierr
+         print *, 'fnalu_hypre_parcsrhybridsetmaxlevels error: ', ierr
       endif
 
       return
@@ -2930,7 +2930,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRHybridSetMeasureType
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrhybridsetmeasurety(fsolver, fmtype)
+      subroutine fnalu_hypre_parcsrhybridsetmeasurety(fsolver, fmtype)
 
       integer ierr
       integer  fmtype
@@ -2939,7 +2939,7 @@
       call NALU_HYPRE_ParCSRHybridSetMeasureTyp(fsolver, fmtype, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrhybridsetmeasuretype error: ', ierr
+         print *, 'fnalu_hypre_parcsrhybridsetmeasuretype error: ', ierr
       endif
 
       return
@@ -2948,7 +2948,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRHybridSetCoarsenType
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrhybridsetcoarsenty(fsolver, fcoarse)
+      subroutine fnalu_hypre_parcsrhybridsetcoarsenty(fsolver, fcoarse)
 
       integer ierr
       integer  fcoarse
@@ -2957,7 +2957,7 @@
       call NALU_HYPRE_ParCSRHybridSetCoarsenTyp(fsolver, fcoarse, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrhybridsetcoarsentype error: ', ierr
+         print *, 'fnalu_hypre_parcsrhybridsetcoarsentype error: ', ierr
       endif
 
       return
@@ -2966,7 +2966,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRHybridSetCycleType
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrhybridsetcycletype(fsolver, fcycle)
+      subroutine fnalu_hypre_parcsrhybridsetcycletype(fsolver, fcycle)
 
       integer ierr
       integer  fcycle
@@ -2975,7 +2975,7 @@
       call NALU_HYPRE_ParCSRHybridSetCycleType(fsolver, fcycle, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrhybridsetcycletype error: ', ierr
+         print *, 'fnalu_hypre_parcsrhybridsetcycletype error: ', ierr
       endif
 
       return
@@ -2984,7 +2984,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRHybridSetNumGridSweeps
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrhybridsetnumgridsw(fsolver, fsweep)
+      subroutine fnalu_hypre_parcsrhybridsetnumgridsw(fsolver, fsweep)
 
       integer ierr
       integer  fsweep
@@ -2993,7 +2993,7 @@
       call NALU_HYPRE_ParCSRHybridSetNumGridSwe(fsolver, fsweep, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrhybridsetnumgridsweeps error: ', ierr
+         print *, 'fnalu_hypre_parcsrhybridsetnumgridsweeps error: ', ierr
       endif
 
       return
@@ -3002,7 +3002,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRHybridSetGridRelaxType
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrhybridsetgridrlxtyp(fsolver, frlxt)
+      subroutine fnalu_hypre_parcsrhybridsetgridrlxtyp(fsolver, frlxt)
 
       integer ierr
       integer  frlxt
@@ -3011,7 +3011,7 @@
       call NALU_HYPRE_ParCSRHybridSetGridRelaxT(fsolver, frlxt, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrhybridsetgridrelaxtype error: ', ierr
+         print *, 'fnalu_hypre_parcsrhybridsetgridrelaxtype error: ', ierr
       endif
 
       return
@@ -3020,7 +3020,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRHybridSetGridRelaxPoints
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrhybridsetgridrlxpts(fsolver, frlxp)
+      subroutine fnalu_hypre_parcsrhybridsetgridrlxpts(fsolver, frlxp)
 
       integer ierr
       integer  frlxp
@@ -3029,7 +3029,7 @@
       call NALU_HYPRE_ParCSRHybridSetGridRelaxP(fsolver, frlxp, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrhybridsetgridrelaxpoints error: ', ierr
+         print *, 'fnalu_hypre_parcsrhybridsetgridrelaxpoints error: ', ierr
       endif
 
       return
@@ -3038,7 +3038,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRHybridSetNumSweeps
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrhybridsetnumsweeps(fsolver, fsweep)
+      subroutine fnalu_hypre_parcsrhybridsetnumsweeps(fsolver, fsweep)
 
       integer ierr
       integer  fsweep
@@ -3047,7 +3047,7 @@
       call NALU_HYPRE_ParCSRHybridSetNumSweeps(fsolver, fsweep, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrhybridsetnumsweeps error: ', ierr
+         print *, 'fnalu_hypre_parcsrhybridsetnumsweeps error: ', ierr
       endif
 
       return
@@ -3056,7 +3056,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRHybridSetCycleNumSweeps
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrhybridsetcyclenums(fsolver, fsweep)
+      subroutine fnalu_hypre_parcsrhybridsetcyclenums(fsolver, fsweep)
 
       integer ierr
       integer  fsweep
@@ -3065,7 +3065,7 @@
       call NALU_HYPRE_ParCSRHybridSetCycleNumSw(fsolver, fsweep, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrhybridsetcyclenumsweeps error: ', ierr
+         print *, 'fnalu_hypre_parcsrhybridsetcyclenumsweeps error: ', ierr
       endif
 
       return
@@ -3074,7 +3074,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRHybridSetRelaxType
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrhybridsetrelaxtype(fsolver, frlxt)
+      subroutine fnalu_hypre_parcsrhybridsetrelaxtype(fsolver, frlxt)
 
       integer ierr
       integer  frlxt
@@ -3083,7 +3083,7 @@
       call NALU_HYPRE_ParCSRHybridSetRelaxType(fsolver, frlxt, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrhybridsetrelaxtype error: ', ierr
+         print *, 'fnalu_hypre_parcsrhybridsetrelaxtype error: ', ierr
       endif
 
       return
@@ -3092,7 +3092,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRHybridSetCycleRelaxType
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrhybridsetcyclerela(fsolver, frlxt)
+      subroutine fnalu_hypre_parcsrhybridsetcyclerela(fsolver, frlxt)
 
       integer ierr
       integer  frlxt
@@ -3101,7 +3101,7 @@
       call NALU_HYPRE_ParCSRHybridSetCycleRelax(fsolver, frlxt, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrhybridsetcyclerelaxtype error: ', ierr
+         print *, 'fnalu_hypre_parcsrhybridsetcyclerelaxtype error: ', ierr
       endif
 
       return
@@ -3110,7 +3110,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRHybridSetRelaxOrder
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrhybridsetrelaxorde(fsolver, frlx)
+      subroutine fnalu_hypre_parcsrhybridsetrelaxorde(fsolver, frlx)
 
       integer ierr
       integer  frlx
@@ -3119,7 +3119,7 @@
       call NALU_HYPRE_ParCSRHybridSetRelaxOrder(fsolver, frlx, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrhybridsetrelaxorder error: ', ierr
+         print *, 'fnalu_hypre_parcsrhybridsetrelaxorder error: ', ierr
       endif
 
       return
@@ -3128,7 +3128,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRHybridSetRelaxWt
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrhybridsetrelaxwt(fsolver, frlx)
+      subroutine fnalu_hypre_parcsrhybridsetrelaxwt(fsolver, frlx)
 
       integer ierr
       integer  frlx
@@ -3137,7 +3137,7 @@
       call NALU_HYPRE_ParCSRHybridSetRelaxWt(fsolver, frlx, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrhybridsetrelaxwt error: ', ierr
+         print *, 'fnalu_hypre_parcsrhybridsetrelaxwt error: ', ierr
       endif
 
       return
@@ -3146,7 +3146,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRHybridSetLevelRelaxWt
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrhybridsetlevelrela(fsolver, frlx)
+      subroutine fnalu_hypre_parcsrhybridsetlevelrela(fsolver, frlx)
 
       integer ierr
       integer  frlx
@@ -3155,7 +3155,7 @@
       call NALU_HYPRE_ParCSRHybridSetLevelRelax(fsolver, frlx, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrhybridsetlevelrelaxwt error: ', ierr
+         print *, 'fnalu_hypre_parcsrhybridsetlevelrelaxwt error: ', ierr
       endif
 
       return
@@ -3164,7 +3164,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRHybridSetOuterWt
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrhybridsetouterwt(fsolver, fout)
+      subroutine fnalu_hypre_parcsrhybridsetouterwt(fsolver, fout)
 
       integer ierr
       integer  fout
@@ -3173,7 +3173,7 @@
       call NALU_HYPRE_ParCSRHybridSetOuterWt(fsolver, fout, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrhybridsetouterwt error: ', ierr
+         print *, 'fnalu_hypre_parcsrhybridsetouterwt error: ', ierr
       endif
 
       return
@@ -3182,7 +3182,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRHybridSetLevelOuterWt
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrhybridsetleveloute(fsolver, fout)
+      subroutine fnalu_hypre_parcsrhybridsetleveloute(fsolver, fout)
 
       integer ierr
       integer  fout
@@ -3191,7 +3191,7 @@
       call NALU_HYPRE_ParCSRHybridSetLevelOuter(fsolver, fout ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrhybridsetlevelouterwt error: ', ierr
+         print *, 'fnalu_hypre_parcsrhybridsetlevelouterwt error: ', ierr
       endif
 
       return
@@ -3200,7 +3200,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRHybridSetRelaxWeight
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrhybridsetrelaxweig(fsolver, frlx)
+      subroutine fnalu_hypre_parcsrhybridsetrelaxweig(fsolver, frlx)
 
       integer ierr
       integer  frlx
@@ -3209,7 +3209,7 @@
       call NALU_HYPRE_ParCSRHybridSetRelaxWeigh(fsolver, frlx, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrhybridsetrelaxweight error: ', ierr
+         print *, 'fnalu_hypre_parcsrhybridsetrelaxweight error: ', ierr
       endif
 
       return
@@ -3218,7 +3218,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRHybridSetOmega
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrhybridsetomega(fsolver, fomega)
+      subroutine fnalu_hypre_parcsrhybridsetomega(fsolver, fomega)
 
       integer ierr
       integer  fomega
@@ -3227,7 +3227,7 @@
       call NALU_HYPRE_ParCSRHybridSetOmega(fsolver, fomega, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrhybridsetomega error: ', ierr
+         print *, 'fnalu_hypre_parcsrhybridsetomega error: ', ierr
       endif
 
       return
@@ -3236,7 +3236,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRHybridGetNumIterations
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrhybridgetnumiterat(fsolver, fiters)
+      subroutine fnalu_hypre_parcsrhybridgetnumiterat(fsolver, fiters)
 
       integer ierr
       integer  fiters
@@ -3245,7 +3245,7 @@
       call NALU_HYPRE_ParCSRHybridGetNumIterati(fsolver, fiters, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrhybridgetnumiterations error: ', ierr
+         print *, 'fnalu_hypre_parcsrhybridgetnumiterations error: ', ierr
       endif
 
       return
@@ -3254,7 +3254,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRHybridGetDSCGNumIterations
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrhybridgetdscgnumit(fsolver, fiters)
+      subroutine fnalu_hypre_parcsrhybridgetdscgnumit(fsolver, fiters)
 
       integer ierr
       integer  fiters
@@ -3263,7 +3263,7 @@
       call NALU_HYPRE_ParCSRHybridGetDSCGNumIte(fsolver, fiters, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrhybridgetdscgnumiterations error: ',
+         print *, 'fnalu_hypre_parcsrhybridgetdscgnumiterations error: ',
      1                                                    ierr
       endif
 
@@ -3273,7 +3273,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRHybridGetPCGNumIterations
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrhybridgetpcgnumite(fsolver, fiters)
+      subroutine fnalu_hypre_parcsrhybridgetpcgnumite(fsolver, fiters)
 
       integer ierr
       integer  fiters
@@ -3282,7 +3282,7 @@
       call NALU_HYPRE_ParCSRHybridGetPCGNumIter(fsolver, fiters, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrhybridgetpcgnumiterations error: ',
+         print *, 'fnalu_hypre_parcsrhybridgetpcgnumiterations error: ',
      1                                                    ierr
       endif
 
@@ -3292,7 +3292,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRHybridGetFinalRelativeResidualNorm
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrhybridgetfinalrela(fsolver, fnorm)
+      subroutine fnalu_hypre_parcsrhybridgetfinalrela(fsolver, fnorm)
 
       integer ierr
       integer  fnorm
@@ -3303,7 +3303,7 @@
 
       if(ierr .ne. 0) then
          print *, 
-     1        'fhypre_parcsrhybridgetfinalrelativeresidualnorm error: ',
+     1        'fnalu_hypre_parcsrhybridgetfinalrelativeresidualnorm error: ',
      1                                                    ierr
       endif
 
@@ -3315,7 +3315,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParSetRandomValues
 !-------------------------------------------------------------------------
-      subroutine fhypre_parsetrandomvalues(fv, fseed)
+      subroutine fnalu_hypre_parsetrandomvalues(fv, fseed)
 
       integer ierr
       integer fseed
@@ -3324,7 +3324,7 @@
       call NALU_HYPRE_ParVectorSetRandomValues(fv, fseed, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parsetrandomvalues error: ', ierr
+         print *, 'fnalu_hypre_parsetrandomvalues error: ', ierr
       endif
 
       return
@@ -3333,16 +3333,16 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParPrintVector
 !-------------------------------------------------------------------------
-      subroutine fhypre_parprintvector(fv, ffile)
+      subroutine fnalu_hypre_parprintvector(fv, ffile)
 
       integer ierr
       integer*8 fv
       character*(*) ffile
 
-      call hypre_ParVectorPrint(fv, ffile, ierr)
+      call nalu_hypre_ParVectorPrint(fv, ffile, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parprintvector error: ', ierr
+         print *, 'fnalu_hypre_parprintvector error: ', ierr
       endif
 
       return
@@ -3351,16 +3351,16 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParReadVector
 !-------------------------------------------------------------------------
-      subroutine fhypre_parreadvector(fcomm, ffile)
+      subroutine fnalu_hypre_parreadvector(fcomm, ffile)
 
       integer ierr
       integer fcomm
       character*(*) ffile
 
-      call hypre_ParReadVector(fcomm, ffile, ierr)
+      call nalu_hypre_ParReadVector(fcomm, ffile, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parreadvector error: ', ierr
+         print *, 'fnalu_hypre_parreadvector error: ', ierr
       endif
 
       return
@@ -3369,15 +3369,15 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParVectorSize
 !-------------------------------------------------------------------------
-      subroutine fhypre_parvectorsize(fx)
+      subroutine fnalu_hypre_parvectorsize(fx)
 
       integer ierr
       integer*8 fx
 
-      call hypre_ParVectorSize(fx, ierr)
+      call nalu_hypre_ParVectorSize(fx, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parvectorsize error: ', ierr
+         print *, 'fnalu_hypre_parvectorsize error: ', ierr
       endif
 
       return
@@ -3386,16 +3386,16 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRMultiVectorPrint
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrmultivectorprint(fx, ffile)
+      subroutine fnalu_hypre_parcsrmultivectorprint(fx, ffile)
 
       integer ierr
       integer*8 fx
       character*(*) ffile
 
-      call hypre_ParCSRMultiVectorPrint(fx, ffile, ierr)
+      call nalu_hypre_ParCSRMultiVectorPrint(fx, ffile, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrmultivectorprint error: ', ierr
+         print *, 'fnalu_hypre_parcsrmultivectorprint error: ', ierr
       endif
 
       return
@@ -3404,17 +3404,17 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRMultiVectorRead
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrmultivectorread(fcomm, fii, ffile)
+      subroutine fnalu_hypre_parcsrmultivectorread(fcomm, fii, ffile)
 
       integer ierr
       integer fcomm
       integer*8 fii
       character*(*) ffile
 
-      call hypre_ParCSRMultiVectorRead(fcomm, fii, ffile, ierr)
+      call nalu_hypre_ParCSRMultiVectorRead(fcomm, fii, ffile, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrmultivectorread error: ', ierr
+         print *, 'fnalu_hypre_parcsrmultivectorread error: ', ierr
       endif
 
       return
@@ -3423,7 +3423,7 @@
 !-------------------------------------------------------------------------
 ! aux_maskCount
 !-------------------------------------------------------------------------
-      subroutine fhypre_aux_maskcount(fn, fmask)
+      subroutine fnalu_hypre_aux_maskcount(fn, fmask)
 
       integer ierr
       integer fn
@@ -3432,7 +3432,7 @@
       call aux_maskCount(fn, fmask, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_aux_maskcount error: ', ierr
+         print *, 'fnalu_hypre_aux_maskcount error: ', ierr
       endif
 
       return
@@ -3441,7 +3441,7 @@
 !-------------------------------------------------------------------------
 ! aux_indexFromMask
 !-------------------------------------------------------------------------
-      subroutine fhypre_auxindexfrommask(fn, fmask, findex)
+      subroutine fnalu_hypre_auxindexfrommask(fn, fmask, findex)
 
       integer ierr
       integer fn
@@ -3451,7 +3451,7 @@
       call aux_indexFromMask(fn, fmask, findex, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_aux_indexfrommask error: ', ierr
+         print *, 'fnalu_hypre_aux_indexfrommask error: ', ierr
       endif
 
       return
@@ -3460,7 +3460,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_TempParCSRSetupInterpreter
 !-------------------------------------------------------------------------
-      subroutine fhypre_tempparcsrsetupinterpret(fi)
+      subroutine fnalu_hypre_tempparcsrsetupinterpret(fi)
 
       integer ierr
       integer*8 fi
@@ -3468,7 +3468,7 @@
       call NALU_HYPRE_TempParCSRSetupInterprete(fi, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_tempparcsrsetupinterpreter error: ', ierr
+         print *, 'fnalu_hypre_tempparcsrsetupinterpreter error: ', ierr
       endif
 
       return
@@ -3477,7 +3477,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRSetupInterpreter
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrsetupinterpreter(fi)
+      subroutine fnalu_hypre_parcsrsetupinterpreter(fi)
 
       integer ierr
       integer*8 fi
@@ -3485,7 +3485,7 @@
       call NALU_HYPRE_ParCSRSetupInterpreter(fi, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrsetupinterpreter error: ', ierr
+         print *, 'fnalu_hypre_parcsrsetupinterpreter error: ', ierr
       endif
 
       return
@@ -3494,7 +3494,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRSetupMatvec
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrsetupmatvec(fmv)
+      subroutine fnalu_hypre_parcsrsetupmatvec(fmv)
 
       integer ierr
       integer*8 fmv
@@ -3502,7 +3502,7 @@
       call NALU_HYPRE_ParCSRSetupMatvec(fmv, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrsetupmatvec error: ', ierr
+         print *, 'fnalu_hypre_parcsrsetupmatvec error: ', ierr
       endif
 
       return
@@ -3513,7 +3513,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParaSailsCreate
 !-------------------------------------------------------------------------
-      subroutine fhypre_parasailscreate(fcomm, fsolver)
+      subroutine fnalu_hypre_parasailscreate(fcomm, fsolver)
 
       integer ierr
       integer fcomm
@@ -3522,7 +3522,7 @@
       call NALU_HYPRE_ParaSailsCreate(fcomm, fsolver, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parasailscreate error: ', ierr
+         print *, 'fnalu_hypre_parasailscreate error: ', ierr
       endif
 
       return
@@ -3531,7 +3531,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParaSailsDestroy
 !-------------------------------------------------------------------------
-      subroutine fhypre_parasailsdestroy(fsolver)
+      subroutine fnalu_hypre_parasailsdestroy(fsolver)
 
       integer ierr
       integer*8 fsolver
@@ -3539,7 +3539,7 @@
       call NALU_HYPRE_ParaSailsDestroy(fsolver, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parasailsdestroy error: ', ierr
+         print *, 'fnalu_hypre_parasailsdestroy error: ', ierr
       endif
 
       return
@@ -3548,7 +3548,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParaSailsSetup
 !------------------------------------------------------------------------- 
-      subroutine fhypre_parasailssetup(fsolver, fA, fb, fx)
+      subroutine fnalu_hypre_parasailssetup(fsolver, fA, fb, fx)
 
       integer ierr
       integer*8 fsolver
@@ -3559,7 +3559,7 @@
       call NALU_HYPRE_ParaSailsSetup(fsolver, fA, fb, fx, ierr) 
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parasailssetup error: ', ierr
+         print *, 'fnalu_hypre_parasailssetup error: ', ierr
       endif
 
       return
@@ -3568,7 +3568,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParaSailsSolve
 !------------------------------------------------------------------------- 
-      subroutine fhypre_parasailssolve(fsolver, fA, fb, fx)
+      subroutine fnalu_hypre_parasailssolve(fsolver, fA, fb, fx)
 
       integer ierr
       integer*8 fsolver
@@ -3579,7 +3579,7 @@
       call NALU_HYPRE_ParaSailsSolve(fsolver, fA, fb, fx, ierr) 
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parasailssolve error: ', ierr
+         print *, 'fnalu_hypre_parasailssolve error: ', ierr
       endif
 
       return
@@ -3588,7 +3588,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParaSailsSetParams
 !-------------------------------------------------------------------------
-      subroutine fhypre_parasailssetparams(fsolver, fthresh, fnlevels)
+      subroutine fnalu_hypre_parasailssetparams(fsolver, fthresh, fnlevels)
 
       integer ierr
       integer fnlevels
@@ -3598,7 +3598,7 @@
       call NALU_HYPRE_ParaSailsSetParams(fsolver, fthresh, fnlevels, ierr) 
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parasailssetparams error: ', ierr
+         print *, 'fnalu_hypre_parasailssetparams error: ', ierr
       endif
 
       return
@@ -3607,7 +3607,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParaSailsSetThresh
 !-------------------------------------------------------------------------
-      subroutine fhypre_parasailssetthresh(fsolver, fthresh)
+      subroutine fnalu_hypre_parasailssetthresh(fsolver, fthresh)
 
       integer ierr
       integer*8 fsolver
@@ -3616,7 +3616,7 @@
       call NALU_HYPRE_ParaSailsSetThresh(fsolver, fthresh, ierr) 
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parasailssetthresh error: ', ierr
+         print *, 'fnalu_hypre_parasailssetthresh error: ', ierr
       endif
 
       return
@@ -3625,7 +3625,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParaSailsGetThresh
 !-------------------------------------------------------------------------
-      subroutine fhypre_parasailsgetthresh(fsolver, fthresh)
+      subroutine fnalu_hypre_parasailsgetthresh(fsolver, fthresh)
 
       integer ierr
       integer*8 fsolver
@@ -3634,7 +3634,7 @@
       call NALU_HYPRE_ParaSailsGetThresh(fsolver, fthresh, ierr) 
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parasailsgetthresh error: ', ierr
+         print *, 'fnalu_hypre_parasailsgetthresh error: ', ierr
       endif
 
       return
@@ -3643,7 +3643,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParaSailsSetNlevels
 !-------------------------------------------------------------------------
-      subroutine fhypre_parasailssetnlevels(fsolver, fnlevels)
+      subroutine fnalu_hypre_parasailssetnlevels(fsolver, fnlevels)
 
       integer ierr
       integer fnlevels
@@ -3652,7 +3652,7 @@
       call NALU_HYPRE_ParaSailsSetNlevels(fsolver, fnlevels, ierr) 
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parasailssetnlevels error: ', ierr
+         print *, 'fnalu_hypre_parasailssetnlevels error: ', ierr
       endif
 
       return
@@ -3661,7 +3661,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParaSailsGetNlevels
 !-------------------------------------------------------------------------
-      subroutine fhypre_parasailsgetnlevels(fsolver, fnlevels)
+      subroutine fnalu_hypre_parasailsgetnlevels(fsolver, fnlevels)
 
       integer ierr
       integer fnlevels
@@ -3670,7 +3670,7 @@
       call NALU_HYPRE_ParaSailsGetNlevels(fsolver, fnlevels, ierr) 
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parasailsgetnlevels error: ', ierr
+         print *, 'fnalu_hypre_parasailsgetnlevels error: ', ierr
       endif
 
       return
@@ -3679,7 +3679,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParaSailsSetFilter
 !-------------------------------------------------------------------------
-      subroutine fhypre_parasailssetfilter(fsolver, ffilter)
+      subroutine fnalu_hypre_parasailssetfilter(fsolver, ffilter)
 
       integer ierr
       integer*8 fsolver
@@ -3688,7 +3688,7 @@
       call NALU_HYPRE_ParaSailsSetFilter(fsolver, ffilter, ierr) 
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parasailssetfilter error: ', ierr
+         print *, 'fnalu_hypre_parasailssetfilter error: ', ierr
       endif
 
       return
@@ -3697,7 +3697,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParaSailsGetFilter
 !-------------------------------------------------------------------------
-      subroutine fhypre_parasailsgetfilter(fsolver, ffilter)
+      subroutine fnalu_hypre_parasailsgetfilter(fsolver, ffilter)
 
       integer ierr
       integer*8 fsolver
@@ -3706,7 +3706,7 @@
       call NALU_HYPRE_ParaSailsGetFilter(fsolver, ffilter, ierr) 
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parasailsgetfilter error: ', ierr
+         print *, 'fnalu_hypre_parasailsgetfilter error: ', ierr
       endif
 
       return
@@ -3715,7 +3715,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParaSailsSetSym
 !-------------------------------------------------------------------------
-      subroutine fhypre_parasailssetsym(fsolver, fsym)
+      subroutine fnalu_hypre_parasailssetsym(fsolver, fsym)
 
       integer ierr
       integer fsym
@@ -3724,7 +3724,7 @@
       call NALU_HYPRE_ParaSailsSetSym(fsolver, fsym, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parasailssetsym error: ', ierr
+         print *, 'fnalu_hypre_parasailssetsym error: ', ierr
       endif
 
       return
@@ -3733,7 +3733,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParaSailsGetSym
 !-------------------------------------------------------------------------
-      subroutine fhypre_parasailsgetsym(fsolver, fsym)
+      subroutine fnalu_hypre_parasailsgetsym(fsolver, fsym)
 
       integer ierr
       integer fsym
@@ -3742,7 +3742,7 @@
       call NALU_HYPRE_ParaSailsGetSym(fsolver, fsym, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parasailsgetsym error: ', ierr
+         print *, 'fnalu_hypre_parasailsgetsym error: ', ierr
       endif
 
       return
@@ -3751,7 +3751,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParaSailsSetLoadbal
 !-------------------------------------------------------------------------
-      subroutine fhypre_parasailssetloadbal(fsolver, floadbal)
+      subroutine fnalu_hypre_parasailssetloadbal(fsolver, floadbal)
 
       integer ierr
       integer*8 fsolver
@@ -3760,7 +3760,7 @@
       call NALU_HYPRE_ParaSailsSetLoadbal(fsolver, floadbal, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parasailssetloadbal error: ', ierr
+         print *, 'fnalu_hypre_parasailssetloadbal error: ', ierr
       endif
 
       return
@@ -3769,7 +3769,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParaSailsGetLoadbal
 !-------------------------------------------------------------------------
-      subroutine fhypre_parasailsgetloadbal(fsolver, floadbal)
+      subroutine fnalu_hypre_parasailsgetloadbal(fsolver, floadbal)
 
       integer ierr
       integer*8 fsolver
@@ -3778,7 +3778,7 @@
       call NALU_HYPRE_ParaSailsGetLoadbal(fsolver, floadbal, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parasailsgetloadbal error: ', ierr
+         print *, 'fnalu_hypre_parasailsgetloadbal error: ', ierr
       endif
 
       return
@@ -3787,7 +3787,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParaSailsSetReuse
 !-------------------------------------------------------------------------
-      subroutine fhypre_parasailssetreuse(fsolver, freuse)
+      subroutine fnalu_hypre_parasailssetreuse(fsolver, freuse)
 
       integer ierr
       integer freuse
@@ -3796,7 +3796,7 @@
       call NALU_HYPRE_ParaSailsSetReuse(fsolver, freuse, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parasailssetreuse error: ', ierr
+         print *, 'fnalu_hypre_parasailssetreuse error: ', ierr
       endif
 
       return
@@ -3805,7 +3805,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParaSailsGetReuse
 !-------------------------------------------------------------------------
-      subroutine fhypre_parasailsgetreuse(fsolver, freuse)
+      subroutine fnalu_hypre_parasailsgetreuse(fsolver, freuse)
 
       integer ierr
       integer freuse
@@ -3814,7 +3814,7 @@
       call NALU_HYPRE_ParaSailsGetReuse(fsolver, freuse, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parasailsgetreuse error: ', ierr
+         print *, 'fnalu_hypre_parasailsgetreuse error: ', ierr
       endif
 
       return
@@ -3823,7 +3823,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParaSailsSetLogging
 !-------------------------------------------------------------------------
-      subroutine fhypre_parasailssetlogging(fsolver, flog)
+      subroutine fnalu_hypre_parasailssetlogging(fsolver, flog)
 
       integer ierr
       integer flog
@@ -3832,7 +3832,7 @@
       call NALU_HYPRE_ParaSailsSetLogging(fsolver, flog, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parasailssetlogging error: ', ierr
+         print *, 'fnalu_hypre_parasailssetlogging error: ', ierr
       endif
       
       return
@@ -3841,7 +3841,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParaSailsGetLogging
 !-------------------------------------------------------------------------
-      subroutine fhypre_parasailsgetlogging(fsolver, flog)
+      subroutine fnalu_hypre_parasailsgetlogging(fsolver, flog)
 
       integer ierr
       integer flog
@@ -3850,7 +3850,7 @@
       call NALU_HYPRE_ParaSailsGetLogging(fsolver, flog, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parasailsgetlogging error: ', ierr
+         print *, 'fnalu_hypre_parasailsgetlogging error: ', ierr
       endif
       
       return
@@ -3861,7 +3861,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRPCGCreate
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrpcgcreate(fcomm, fsolver)
+      subroutine fnalu_hypre_parcsrpcgcreate(fcomm, fsolver)
 
       integer ierr
       integer fcomm
@@ -3870,7 +3870,7 @@
       call NALU_HYPRE_ParCSRPCGCreate(fcomm, fsolver, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrpcgcreate error: ', ierr
+         print *, 'fnalu_hypre_parcsrpcgcreate error: ', ierr
       endif
 
       return
@@ -3879,7 +3879,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRPCGDestroy
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrpcgdestroy(fsolver)
+      subroutine fnalu_hypre_parcsrpcgdestroy(fsolver)
 
       integer ierr
       integer*8 fsolver
@@ -3887,7 +3887,7 @@
       call NALU_HYPRE_ParCSRPCGDestroy(fsolver)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrpcgdestroy error: ', ierr
+         print *, 'fnalu_hypre_parcsrpcgdestroy error: ', ierr
       endif
 
       return
@@ -3896,7 +3896,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRPCGSetup
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrpcgsetup(fsolver, fA, fb, fx)
+      subroutine fnalu_hypre_parcsrpcgsetup(fsolver, fA, fb, fx)
 
       integer ierr
       integer*8 fsolver
@@ -3907,7 +3907,7 @@
       call NALU_HYPRE_ParCSRPCGSetup(fsolver, fA, fb, fx, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrpcgcreate error: ', ierr
+         print *, 'fnalu_hypre_parcsrpcgcreate error: ', ierr
       endif
 
       return
@@ -3916,7 +3916,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRPCGSolve
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrpcgsolve(fsolver, fA, fb, fx)
+      subroutine fnalu_hypre_parcsrpcgsolve(fsolver, fA, fb, fx)
 
       integer ierr
       integer*8 fsolver
@@ -3927,7 +3927,7 @@
       call NALU_HYPRE_ParCSRPCGSolve(fsolver, fA, fb, fx, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrpcgsolve error: ', ierr
+         print *, 'fnalu_hypre_parcsrpcgsolve error: ', ierr
       endif
 
       return
@@ -3936,7 +3936,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRPCGSetTol
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrpcgsettol(fsolver, ftol)
+      subroutine fnalu_hypre_parcsrpcgsettol(fsolver, ftol)
 
       integer ierr
       integer*8 fsolver
@@ -3945,7 +3945,7 @@
       call NALU_HYPRE_ParCSRPCGSetTol(fsolver, ftol, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrpcgsettol error: ', ierr
+         print *, 'fnalu_hypre_parcsrpcgsettol error: ', ierr
       endif
 
       return
@@ -3954,7 +3954,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRPCGSetMaxIter
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrpcgsetmaxiter(fsolver, fmaxiter)
+      subroutine fnalu_hypre_parcsrpcgsetmaxiter(fsolver, fmaxiter)
 
       integer ierr
       integer fmaxiter
@@ -3963,7 +3963,7 @@
       call NALU_HYPRE_ParCSRPCGSetMaxIter(fsolver, fmaxiter, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrpcgsetmaxiter error: ', ierr
+         print *, 'fnalu_hypre_parcsrpcgsetmaxiter error: ', ierr
       endif
 
       return
@@ -3972,7 +3972,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRPCGSetStopCrit
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrpcgsetstopcrit(fsolver, ftol)
+      subroutine fnalu_hypre_parcsrpcgsetstopcrit(fsolver, ftol)
 
       integer ierr
       integer*8 fsolver
@@ -3981,7 +3981,7 @@
       call NALU_HYPRE_ParCSRPCGSetStopCrit(fsolver, ftol, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrpcgsetstopcrit error: ', ierr
+         print *, 'fnalu_hypre_parcsrpcgsetstopcrit error: ', ierr
       endif
 
       return
@@ -3990,7 +3990,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRPCGSetTwoNorm
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrpcgsettwonorm(fsolver, ftwonorm)
+      subroutine fnalu_hypre_parcsrpcgsettwonorm(fsolver, ftwonorm)
 
       integer ierr
       integer ftwonorm
@@ -3999,7 +3999,7 @@
       call NALU_HYPRE_ParCSRPCGSetTwoNorm(fsolver, ftwonorm, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrpcgsettwonorm error: ', ierr
+         print *, 'fnalu_hypre_parcsrpcgsettwonorm error: ', ierr
       endif
 
       return
@@ -4008,7 +4008,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRPCGSetRelChange
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrpcgsetrelchange(fsolver, frelchange)
+      subroutine fnalu_hypre_parcsrpcgsetrelchange(fsolver, frelchange)
 
       integer ierr
       integer frelchange
@@ -4017,7 +4017,7 @@
       call NALU_HYPRE_ParCSRPCGSetRelChange(fsolver, frelchange, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrpcgsetrelchange error: ', ierr
+         print *, 'fnalu_hypre_parcsrpcgsetrelchange error: ', ierr
       endif
 
       return
@@ -4026,7 +4026,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRPCGSetPrecond
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrpcgsetprecond(fsolver, fprecond_id, 
+      subroutine fnalu_hypre_parcsrpcgsetprecond(fsolver, fprecond_id, 
      1                                      fprecond)
 
       integer ierr
@@ -4038,7 +4038,7 @@
      1                              ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrpcgsetprecond error: ', ierr
+         print *, 'fnalu_hypre_parcsrpcgsetprecond error: ', ierr
       endif
 
       return
@@ -4047,7 +4047,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRPCGGetPrecond
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrpcggetprecond(fsolver, fprecond)
+      subroutine fnalu_hypre_parcsrpcggetprecond(fsolver, fprecond)
 
       integer ierr
       integer*8 fsolver
@@ -4056,7 +4056,7 @@
       call NALU_HYPRE_ParCSRPCGGetPrecond(fsolver, fprecond, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrpcggetprecond error: ', ierr
+         print *, 'fnalu_hypre_parcsrpcggetprecond error: ', ierr
       endif
 
       return
@@ -4065,7 +4065,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRPCGSetPrintLevel
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrpcgsetprintlevel(fsolver, flevel)
+      subroutine fnalu_hypre_parcsrpcgsetprintlevel(fsolver, flevel)
 
       integer ierr
       integer flevel
@@ -4074,7 +4074,7 @@
       call NALU_HYPRE_ParCSRPCGSetPrintLevel(fsolver, flevel, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrpcgsetprintlevel error: ', ierr
+         print *, 'fnalu_hypre_parcsrpcgsetprintlevel error: ', ierr
       endif
 
       return
@@ -4083,7 +4083,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRPCGGetNumIterations
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrpcggetnumiteration(fsolver, fnumiter)
+      subroutine fnalu_hypre_parcsrpcggetnumiteration(fsolver, fnumiter)
 
       integer ierr
       integer fnumiter
@@ -4092,7 +4092,7 @@
       call NALU_HYPRE_ParCSRPCGGetNumIterations(fsolver, fnumiter, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrpcggetnumiteration error: ', ierr
+         print *, 'fnalu_hypre_parcsrpcggetnumiteration error: ', ierr
       endif
 
       return
@@ -4101,7 +4101,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRPCGGetFinalRelativeResidualNorm
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrpcggetfinalrelativ(fsolver, fnorm)
+      subroutine fnalu_hypre_parcsrpcggetfinalrelativ(fsolver, fnorm)
 
       integer ierr
       integer*8 fsolver
@@ -4109,7 +4109,7 @@
 
       call NALU_HYPRE_ParCSRPCGGetFinalRelative(fsolver, fnorm, ierr)
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrpcggetfinalrelative error: ', ierr
+         print *, 'fnalu_hypre_parcsrpcggetfinalrelative error: ', ierr
       endif
 
       return
@@ -4118,7 +4118,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRDiagScaleSetup
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrdiagscalesetup(fsolver, fA, fb, fx)
+      subroutine fnalu_hypre_parcsrdiagscalesetup(fsolver, fA, fb, fx)
 
       integer ierr
       integer*8 fsolver
@@ -4129,7 +4129,7 @@
       call NALU_HYPRE_ParCSRDiagScaleSetup(fsolver, fA, fb, fx, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrdiagscalesetup error: ', ierr
+         print *, 'fnalu_hypre_parcsrdiagscalesetup error: ', ierr
       endif
 
       return
@@ -4138,7 +4138,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRDiagScale
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrdiagscale(fsolver, fHA, fHy, fHx)
+      subroutine fnalu_hypre_parcsrdiagscale(fsolver, fHA, fHy, fHx)
 
       integer ierr
       integer*8 fsolver
@@ -4149,7 +4149,7 @@
       call NALU_HYPRE_ParCSRDiagScale(fsolver, fHA, fHy, fHx, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrdiagscale error: ', ierr
+         print *, 'fnalu_hypre_parcsrdiagscale error: ', ierr
       endif
 
       return
@@ -4160,7 +4160,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRPilutCreate
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrpilutcreate(fcomm, fsolver)
+      subroutine fnalu_hypre_parcsrpilutcreate(fcomm, fsolver)
 
       integer ierr
       integer fcomm
@@ -4169,7 +4169,7 @@
       call NALU_HYPRE_ParCSRPilutCreate(fcomm, fsolver, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrpilutcreate error: ', ierr
+         print *, 'fnalu_hypre_parcsrpilutcreate error: ', ierr
       endif
 
       return
@@ -4178,7 +4178,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRPilutDestroy
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrpilutdestroy(fsolver)
+      subroutine fnalu_hypre_parcsrpilutdestroy(fsolver)
 
       integer ierr
       integer*8 fsolver
@@ -4186,7 +4186,7 @@
       call NALU_HYPRE_ParCSRPilutDestroy(fsolver, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrpilutdestroy error: ', ierr
+         print *, 'fnalu_hypre_parcsrpilutdestroy error: ', ierr
       endif
 
       return
@@ -4195,7 +4195,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRPilutSetup
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrpilutsetup(fsolver, fA, fb, fx)
+      subroutine fnalu_hypre_parcsrpilutsetup(fsolver, fA, fb, fx)
 
       integer ierr
       integer*8 fsolver
@@ -4206,7 +4206,7 @@
       call NALU_HYPRE_ParCSRPilutSetup(fsolver, fA, fb, fx, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrpilutsetup error: ', ierr
+         print *, 'fnalu_hypre_parcsrpilutsetup error: ', ierr
       endif
 
       return
@@ -4215,7 +4215,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRPilutSolve
 !------------------------------------------------------------------------- 
-      subroutine fhypre_parcsrpilutsolve(fsolver, fA, fb, fx)
+      subroutine fnalu_hypre_parcsrpilutsolve(fsolver, fA, fb, fx)
 
       integer ierr
       integer*8 fsolver
@@ -4226,7 +4226,7 @@
       call NALU_HYPRE_ParCSRPilutSolve(fsolver, fA, fb, fx, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrpilutsolve error: ', ierr
+         print *, 'fnalu_hypre_parcsrpilutsolve error: ', ierr
       endif
 
       return
@@ -4235,7 +4235,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRPilutSetMaxIter
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrpilutsetmaxiter(fsolver, fmaxiter)
+      subroutine fnalu_hypre_parcsrpilutsetmaxiter(fsolver, fmaxiter)
 
       integer ierr
       integer fmaxiter
@@ -4244,7 +4244,7 @@
       call NALU_HYPRE_ParCSRPilutSetMaxIter(fsolver, fmaxiter, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrpilutsetmaxiter error: ', ierr
+         print *, 'fnalu_hypre_parcsrpilutsetmaxiter error: ', ierr
       endif
 
       return
@@ -4253,7 +4253,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRPilutSetDropToleran
 !-------------------------------------------------------------------------
-      subroutine fhypre_parcsrpilutsetdroptolera(fsolver, ftol)
+      subroutine fnalu_hypre_parcsrpilutsetdroptolera(fsolver, ftol)
 
       integer ierr
       integer*8 fsolver
@@ -4262,7 +4262,7 @@
       call NALU_HYPRE_ParCSRPilutSetDropToleran(fsolver, ftol, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrpilutsetdroptol error: ', ierr
+         print *, 'fnalu_hypre_parcsrpilutsetdroptol error: ', ierr
       endif
 
       return
@@ -4271,7 +4271,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRPilutSetFacRowSize
 !--------------------------------------------------------------------------
-      subroutine fhypre_parcsrpilutsetfacrowsize(fsolver, fsize)
+      subroutine fnalu_hypre_parcsrpilutsetfacrowsize(fsolver, fsize)
       
       integer ierr
       integer fsize
@@ -4280,7 +4280,7 @@
       call NALU_HYPRE_ParCSRPilutSetFacRowSize(fsolver, fsize, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_parcsrpilutsetfacrowsize error: ', ierr
+         print *, 'fnalu_hypre_parcsrpilutsetfacrowsize error: ', ierr
       endif
 
       return
@@ -4291,7 +4291,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_SchwarzCreate
 !-------------------------------------------------------------------------
-      subroutine fhypre_schwarzcreate(fsolver)
+      subroutine fnalu_hypre_schwarzcreate(fsolver)
 
       integer ierr
       integer*8 fsolver
@@ -4299,7 +4299,7 @@
       call NALU_HYPRE_SchwarzCreate(fsolver, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_schwarzcreate error: ', ierr
+         print *, 'fnalu_hypre_schwarzcreate error: ', ierr
       endif
 
       return
@@ -4308,7 +4308,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_SchwarzDestroy
 !-------------------------------------------------------------------------
-      subroutine fhypre_schwarzdestroy(fsolver)
+      subroutine fnalu_hypre_schwarzdestroy(fsolver)
 
       integer ierr
       integer*8 fsolver
@@ -4316,7 +4316,7 @@
       call NALU_HYPRE_SchwarzDestroy(fsolver, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_schwarzdestroy error: ', ierr
+         print *, 'fnalu_hypre_schwarzdestroy error: ', ierr
       endif
 
       return
@@ -4325,7 +4325,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_SchwarzSetup
 !-------------------------------------------------------------------------
-      subroutine fhypre_schwarzsetup(fsolver, fA, fb, fx)
+      subroutine fnalu_hypre_schwarzsetup(fsolver, fA, fb, fx)
 
       integer ierr
       integer*8 fsolver
@@ -4336,7 +4336,7 @@
       call NALU_HYPRE_SchwarzSetup(fsolver, fA, fb, fx, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_schwarzsetup error: ', ierr
+         print *, 'fnalu_hypre_schwarzsetup error: ', ierr
       endif
 
       return
@@ -4345,7 +4345,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_SchwarzSolve
 !------------------------------------------------------------------------- 
-      subroutine fhypre_schwarzsolve(fsolver, fA, fb, fx)
+      subroutine fnalu_hypre_schwarzsolve(fsolver, fA, fb, fx)
 
       integer ierr
       integer*8 fsolver
@@ -4356,7 +4356,7 @@
       call NALU_HYPRE_SchwarzSolve(fsolver, fA, fb, fx, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_schwarzsolve error: ', ierr
+         print *, 'fnalu_hypre_schwarzsolve error: ', ierr
       endif
 
       return
@@ -4365,7 +4365,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_SchwarzSetVariant
 !------------------------------------------------------------------------- 
-      subroutine fhypre_schwarzsetvariant(fsolver, fvariant)
+      subroutine fnalu_hypre_schwarzsetvariant(fsolver, fvariant)
 
       integer ierr
       integer fvariant
@@ -4374,7 +4374,7 @@
       call NALU_HYPRE_SchwarzSetVariant(fsolver, fvariant, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_schwarzsetvariant error: ', ierr
+         print *, 'fnalu_hypre_schwarzsetvariant error: ', ierr
       endif
 
       return
@@ -4383,7 +4383,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_SchwarzSetOverlap
 !------------------------------------------------------------------------- 
-      subroutine fhypre_schwarzsetoverlap(fsolver, foverlap)
+      subroutine fnalu_hypre_schwarzsetoverlap(fsolver, foverlap)
 
       integer ierr
       integer foverlap
@@ -4392,7 +4392,7 @@
       call NALU_HYPRE_SchwarzSetOverlap(fsolver, foverlap, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_schwarzsetoverlap error: ', ierr
+         print *, 'fnalu_hypre_schwarzsetoverlap error: ', ierr
       endif
 
       return
@@ -4401,7 +4401,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_SchwarzSetDomainType
 !------------------------------------------------------------------------- 
-      subroutine fhypre_schwarzsetdomaintype(fsolver, fdomaint)
+      subroutine fnalu_hypre_schwarzsetdomaintype(fsolver, fdomaint)
 
       integer ierr
       integer fdomaint
@@ -4410,7 +4410,7 @@
       call NALU_HYPRE_SchwarzSetDomainType(fsolver, fdomaint, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_schwarzsetdomaintype error: ', ierr
+         print *, 'fnalu_hypre_schwarzsetdomaintype error: ', ierr
       endif
 
       return
@@ -4419,7 +4419,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_SchwarzSetDomainStructure
 !------------------------------------------------------------------------- 
-      subroutine fhypre_schwarzsetdomainstructur(fsolver, fdomains)
+      subroutine fnalu_hypre_schwarzsetdomainstructur(fsolver, fdomains)
 
       integer ierr
       integer fdomains
@@ -4428,7 +4428,7 @@
       call NALU_HYPRE_SchwarzSetDomainStructure(fsolver, fdomains, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_schwarzsetdomainstructure error: ', ierr
+         print *, 'fnalu_hypre_schwarzsetdomainstructure error: ', ierr
       endif
 
       return
@@ -4437,7 +4437,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_SchwarzSetNumFunctions
 !------------------------------------------------------------------------- 
-      subroutine fhypre_schwarzsetnumfunctions(fsolver, fnumfncs)
+      subroutine fnalu_hypre_schwarzsetnumfunctions(fsolver, fnumfncs)
 
       integer ierr
       integer fnumfncs
@@ -4446,7 +4446,7 @@
       call NALU_HYPRE_SchwarzSetNumFunctions(fsolver, fnumfncs, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_schwarzsetnumfunctions error: ', ierr
+         print *, 'fnalu_hypre_schwarzsetnumfunctions error: ', ierr
       endif
 
       return
@@ -4455,7 +4455,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_SchwarzSetRelaxWeight
 !------------------------------------------------------------------------- 
-      subroutine fhypre_schwarzsetrelaxweight(fsolver, frlxwt)
+      subroutine fnalu_hypre_schwarzsetrelaxweight(fsolver, frlxwt)
 
       integer ierr
       integer*8 fsolver
@@ -4464,7 +4464,7 @@
       call NALU_HYPRE_SchwarzSetRelaxWeight(fsolver, frlxwt, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_schwarzsetrelaxweight error: ', ierr
+         print *, 'fnalu_hypre_schwarzsetrelaxweight error: ', ierr
       endif
 
       return
@@ -4473,7 +4473,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_SchwarzSetDofFunc
 !------------------------------------------------------------------------- 
-      subroutine fhypre_schwarzsetdoffunc(fsolver, fdofnc)
+      subroutine fnalu_hypre_schwarzsetdoffunc(fsolver, fdofnc)
 
       integer ierr
       integer fdofnc
@@ -4482,7 +4482,7 @@
       call NALU_HYPRE_SchwarzSetDofFunc(fsolver, fdofnc, ierr)
 
       if(ierr .ne. 0) then
-         print *, 'fhypre_schwarzsetdoffunc error: ', ierr
+         print *, 'fnalu_hypre_schwarzsetdoffunc error: ', ierr
       endif
 
       return

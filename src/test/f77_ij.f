@@ -330,7 +330,7 @@
    
       call NALU_HYPRE_IJMatrixPrint(A, matfile, ierr)
 
-      call hypre_ParCSRMatrixRowStarts(A_storage, row_starts, ierr)
+      call nalu_hypre_ParCSRMatrixRowStarts(A_storage, row_starts, ierr)
 
 !-----------------------------------------------------------------------
 !     Set up the rhs and initial guess

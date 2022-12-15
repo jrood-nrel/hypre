@@ -6,7 +6,7 @@ extern "C" {
 #endif
 
 #include "f2c.h"
-#include "hypre_lapack.h"
+#include "nalu_hypre_lapack.h"
 
 /* Subroutine */ integer dlarfg_(integer *n, doublereal *alpha, doublereal *x,
 	integer *incx, doublereal *tau)

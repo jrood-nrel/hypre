@@ -15,8 +15,8 @@
 */
 
 /* hypre/AMS prototypes */
-#include "_hypre_parcsr_ls.h"
-#include "_hypre_IJ_mv.h"
+#include "_nalu_hypre_parcsr_ls.h"
+#include "_nalu_hypre_IJ_mv.h"
 #include "NALU_HYPRE.h"
 
 void CheckIfFileExists(char *file)
@@ -24,8 +24,8 @@ void CheckIfFileExists(char *file)
    FILE *test;
    if (!(test = fopen(file, "r")))
    {
-      hypre_MPI_Finalize();
-      hypre_printf("Can't find the input file \"%s\"\n", file);
+      nalu_hypre_MPI_Finalize();
+      nalu_hypre_printf("Can't find the input file \"%s\"\n", file);
       exit(1);
    }
    fclose(test);
@@ -41,24 +41,24 @@ void AMSDriverMatrixRead(const char *file, NALU_HYPRE_ParCSRMatrix *A)
       sprintf(file0, "%s.00000", file);
       if (!(test = fopen(file0, "r")))
       {
-         hypre_MPI_Finalize();
-         hypre_printf("Can't find the input file \"%s\"\n", file);
+         nalu_hypre_MPI_Finalize();
+         nalu_hypre_printf("Can't find the input file \"%s\"\n", file);
          exit(1);
       }
       else /* Read in IJ format*/
       {
          NALU_HYPRE_IJMatrix ij_A;
          void *object;
-         NALU_HYPRE_IJMatrixRead(file, hypre_MPI_COMM_WORLD, NALU_HYPRE_PARCSR, &ij_A);
+         NALU_HYPRE_IJMatrixRead(file, nalu_hypre_MPI_COMM_WORLD, NALU_HYPRE_PARCSR, &ij_A);
          NALU_HYPRE_IJMatrixGetObject(ij_A, &object);
          *A = (NALU_HYPRE_ParCSRMatrix) object;
-         hypre_IJMatrixObject((hypre_IJMatrix *)ij_A) = NULL;
+         nalu_hypre_IJMatrixObject((nalu_hypre_IJMatrix *)ij_A) = NULL;
          NALU_HYPRE_IJMatrixDestroy(ij_A);
       }
    }
    else /* Read in ParCSR format*/
    {
-      NALU_HYPRE_ParCSRMatrixRead(hypre_MPI_COMM_WORLD, file, A);
+      NALU_HYPRE_ParCSRMatrixRead(nalu_hypre_MPI_COMM_WORLD, file, A);
    }
    fclose(test);
 }
@@ -73,29 +73,29 @@ void AMSDriverVectorRead(const char *file, NALU_HYPRE_ParVector *x)
       sprintf(file0, "%s.00000", file);
       if (!(test = fopen(file0, "r")))
       {
-         hypre_MPI_Finalize();
-         hypre_printf("Can't find the input file \"%s\"\n", file);
+         nalu_hypre_MPI_Finalize();
+         nalu_hypre_printf("Can't find the input file \"%s\"\n", file);
          exit(1);
       }
       else /* Read in IJ format*/
       {
          NALU_HYPRE_IJVector ij_x;
          void *object;
-         NALU_HYPRE_IJVectorRead(file, hypre_MPI_COMM_WORLD, NALU_HYPRE_PARCSR, &ij_x);
+         NALU_HYPRE_IJVectorRead(file, nalu_hypre_MPI_COMM_WORLD, NALU_HYPRE_PARCSR, &ij_x);
          NALU_HYPRE_IJVectorGetObject(ij_x, &object);
          *x = (NALU_HYPRE_ParVector) object;
-         hypre_IJVectorObject((hypre_IJVector *)ij_x) = NULL;
+         nalu_hypre_IJVectorObject((nalu_hypre_IJVector *)ij_x) = NULL;
          NALU_HYPRE_IJVectorDestroy(ij_x);
       }
    }
    else /* Read in ParCSR format*/
    {
-      NALU_HYPRE_ParVectorRead(hypre_MPI_COMM_WORLD, file, x);
+      NALU_HYPRE_ParVectorRead(nalu_hypre_MPI_COMM_WORLD, file, x);
    }
    fclose(test);
 }
 
-hypre_int main (hypre_int argc, char *argv[])
+nalu_hypre_int main (nalu_hypre_int argc, char *argv[])
 {
    NALU_HYPRE_Int num_procs, myid;
    NALU_HYPRE_Int time_index;
@@ -129,15 +129,15 @@ hypre_int main (hypre_int argc, char *argv[])
 #endif
 
    /* Initialize MPI */
-   hypre_MPI_Init(&argc, &argv);
-   hypre_MPI_Comm_size(hypre_MPI_COMM_WORLD, &num_procs);
-   hypre_MPI_Comm_rank(hypre_MPI_COMM_WORLD, &myid);
+   nalu_hypre_MPI_Init(&argc, &argv);
+   nalu_hypre_MPI_Comm_size(nalu_hypre_MPI_COMM_WORLD, &num_procs);
+   nalu_hypre_MPI_Comm_rank(nalu_hypre_MPI_COMM_WORLD, &myid);
 
    /*-----------------------------------------------------------------
     * GPU Device binding
     * Must be done before NALU_HYPRE_Init() and should not be changed after
     *-----------------------------------------------------------------*/
-   hypre_bind_device(myid, num_procs, hypre_MPI_COMM_WORLD);
+   nalu_hypre_bind_device(myid, num_procs, nalu_hypre_MPI_COMM_WORLD);
 
    /*-----------------------------------------------------------
     * Initialize : must be the first HYPRE function to call
@@ -167,7 +167,7 @@ hypre_int main (hypre_int argc, char *argv[])
    singular_problem = 0;
    rlx_sweeps = 1;
    rlx_weight = 1.0; rlx_omega = 1.0;
-   if (hypre_GetExecPolicy1(memory_location) == NALU_HYPRE_EXEC_DEVICE)
+   if (nalu_hypre_GetExecPolicy1(memory_location) == NALU_HYPRE_EXEC_DEVICE)
    {
       cycle_type = 1; amg_coarsen_type =  8; amg_agg_levels = 1; amg_rlx_type = 8;
       coarse_rlx_type = 8, rlx_type = 2; /* PMIS */
@@ -330,45 +330,45 @@ hypre_int main (hypre_int argc, char *argv[])
 
       if ((print_usage) && (myid == 0))
       {
-         hypre_printf("\n");
-         hypre_printf("Usage: mpirun -np <np> %s [<options>]\n", argv[0]);
-         hypre_printf("\n");
-         hypre_printf("  Hypre solvers options:                                       \n");
-         hypre_printf("    -solver <ID>         : solver ID                           \n");
-         hypre_printf("                           0  - AMG                            \n");
-         hypre_printf("                           1  - AMG-PCG                        \n");
-         hypre_printf("                           2  - AMS                            \n");
-         hypre_printf("                           3  - AMS-PCG (default)              \n");
-         hypre_printf("                           4  - DS-PCG                         \n");
-         hypre_printf("                           5  - AME eigensolver                \n");
-         hypre_printf("    -maxit <num>         : maximum number of iterations (100)  \n");
-         hypre_printf("    -tol <num>           : convergence tolerance (1e-6)        \n");
-         hypre_printf("\n");
-         hypre_printf("  AMS solver options:                                          \n");
-         hypre_printf("    -dim <num>           : space dimension                     \n");
-         hypre_printf("    -type <num>          : 3-level cycle type (0-8, 11-14)     \n");
-         hypre_printf("    -theta <num>         : BoomerAMG threshold (0.25)          \n");
-         hypre_printf("    -ctype <num>         : BoomerAMG coarsening type           \n");
-         hypre_printf("    -agg <num>           : Levels of BoomerAMG agg. coarsening \n");
-         hypre_printf("    -amgrlx <num>        : BoomerAMG relaxation type           \n");
-         hypre_printf("    -itype <num>         : BoomerAMG interpolation type        \n");
-         hypre_printf("    -pmax <num>          : BoomerAMG interpolation truncation  \n");
-         hypre_printf("    -rlx <num>           : relaxation type                     \n");
-         hypre_printf("    -rlxn <num>          : number of relaxation sweeps         \n");
-         hypre_printf("    -rlxw <num>          : damping parameter (usually <=1)     \n");
-         hypre_printf("    -rlxo <num>          : SOR parameter (usuallyin (0,2))     \n");
-         hypre_printf("    -coord               : use coordinate vectors              \n");
-         hypre_printf("    -h1                  : use block-diag Poisson solves       \n");
-         hypre_printf("    -sing                : curl-curl only (singular) problem   \n");
-         hypre_printf("\n");
-         hypre_printf("  AME eigensolver options:                                     \n");
-         hypre_printf("    -bsize<num>          : number of eigenvalues to compute    \n");
-         hypre_printf("\n");
+         nalu_hypre_printf("\n");
+         nalu_hypre_printf("Usage: mpirun -np <np> %s [<options>]\n", argv[0]);
+         nalu_hypre_printf("\n");
+         nalu_hypre_printf("  Hypre solvers options:                                       \n");
+         nalu_hypre_printf("    -solver <ID>         : solver ID                           \n");
+         nalu_hypre_printf("                           0  - AMG                            \n");
+         nalu_hypre_printf("                           1  - AMG-PCG                        \n");
+         nalu_hypre_printf("                           2  - AMS                            \n");
+         nalu_hypre_printf("                           3  - AMS-PCG (default)              \n");
+         nalu_hypre_printf("                           4  - DS-PCG                         \n");
+         nalu_hypre_printf("                           5  - AME eigensolver                \n");
+         nalu_hypre_printf("    -maxit <num>         : maximum number of iterations (100)  \n");
+         nalu_hypre_printf("    -tol <num>           : convergence tolerance (1e-6)        \n");
+         nalu_hypre_printf("\n");
+         nalu_hypre_printf("  AMS solver options:                                          \n");
+         nalu_hypre_printf("    -dim <num>           : space dimension                     \n");
+         nalu_hypre_printf("    -type <num>          : 3-level cycle type (0-8, 11-14)     \n");
+         nalu_hypre_printf("    -theta <num>         : BoomerAMG threshold (0.25)          \n");
+         nalu_hypre_printf("    -ctype <num>         : BoomerAMG coarsening type           \n");
+         nalu_hypre_printf("    -agg <num>           : Levels of BoomerAMG agg. coarsening \n");
+         nalu_hypre_printf("    -amgrlx <num>        : BoomerAMG relaxation type           \n");
+         nalu_hypre_printf("    -itype <num>         : BoomerAMG interpolation type        \n");
+         nalu_hypre_printf("    -pmax <num>          : BoomerAMG interpolation truncation  \n");
+         nalu_hypre_printf("    -rlx <num>           : relaxation type                     \n");
+         nalu_hypre_printf("    -rlxn <num>          : number of relaxation sweeps         \n");
+         nalu_hypre_printf("    -rlxw <num>          : damping parameter (usually <=1)     \n");
+         nalu_hypre_printf("    -rlxo <num>          : SOR parameter (usuallyin (0,2))     \n");
+         nalu_hypre_printf("    -coord               : use coordinate vectors              \n");
+         nalu_hypre_printf("    -h1                  : use block-diag Poisson solves       \n");
+         nalu_hypre_printf("    -sing                : curl-curl only (singular) problem   \n");
+         nalu_hypre_printf("\n");
+         nalu_hypre_printf("  AME eigensolver options:                                     \n");
+         nalu_hypre_printf("    -bsize<num>          : number of eigenvalues to compute    \n");
+         nalu_hypre_printf("\n");
       }
 
       if (print_usage)
       {
-         hypre_MPI_Finalize();
+         nalu_hypre_MPI_Finalize();
          return (0);
       }
    }
@@ -414,26 +414,26 @@ hypre_int main (hypre_int argc, char *argv[])
 
    if (!myid)
    {
-      hypre_printf("Problem size: %d\n\n",
-                   hypre_ParCSRMatrixGlobalNumRows((hypre_ParCSRMatrix*)A));
+      nalu_hypre_printf("Problem size: %d\n\n",
+                   nalu_hypre_ParCSRMatrixGlobalNumRows((nalu_hypre_ParCSRMatrix*)A));
    }
 
-   hypre_ParCSRMatrixMigrate(A,      hypre_HandleMemoryLocation(hypre_handle()));
-   hypre_ParCSRMatrixMigrate(G,      hypre_HandleMemoryLocation(hypre_handle()));
-   hypre_ParCSRMatrixMigrate(Aalpha, hypre_HandleMemoryLocation(hypre_handle()));
-   hypre_ParCSRMatrixMigrate(Abeta,  hypre_HandleMemoryLocation(hypre_handle()));
+   nalu_hypre_ParCSRMatrixMigrate(A,      nalu_hypre_HandleMemoryLocation(nalu_hypre_handle()));
+   nalu_hypre_ParCSRMatrixMigrate(G,      nalu_hypre_HandleMemoryLocation(nalu_hypre_handle()));
+   nalu_hypre_ParCSRMatrixMigrate(Aalpha, nalu_hypre_HandleMemoryLocation(nalu_hypre_handle()));
+   nalu_hypre_ParCSRMatrixMigrate(Abeta,  nalu_hypre_HandleMemoryLocation(nalu_hypre_handle()));
 
-   hypre_ParVectorMigrate(x0, hypre_HandleMemoryLocation(hypre_handle()));
-   hypre_ParVectorMigrate(b,  hypre_HandleMemoryLocation(hypre_handle()));
-   hypre_ParVectorMigrate(Gx, hypre_HandleMemoryLocation(hypre_handle()));
-   hypre_ParVectorMigrate(Gy, hypre_HandleMemoryLocation(hypre_handle()));
-   hypre_ParVectorMigrate(Gz, hypre_HandleMemoryLocation(hypre_handle()));
-   hypre_ParVectorMigrate(x,  hypre_HandleMemoryLocation(hypre_handle()));
-   hypre_ParVectorMigrate(y,  hypre_HandleMemoryLocation(hypre_handle()));
-   hypre_ParVectorMigrate(z,  hypre_HandleMemoryLocation(hypre_handle()));
-   hypre_ParVectorMigrate(interior_nodes, hypre_HandleMemoryLocation(hypre_handle()));
+   nalu_hypre_ParVectorMigrate(x0, nalu_hypre_HandleMemoryLocation(nalu_hypre_handle()));
+   nalu_hypre_ParVectorMigrate(b,  nalu_hypre_HandleMemoryLocation(nalu_hypre_handle()));
+   nalu_hypre_ParVectorMigrate(Gx, nalu_hypre_HandleMemoryLocation(nalu_hypre_handle()));
+   nalu_hypre_ParVectorMigrate(Gy, nalu_hypre_HandleMemoryLocation(nalu_hypre_handle()));
+   nalu_hypre_ParVectorMigrate(Gz, nalu_hypre_HandleMemoryLocation(nalu_hypre_handle()));
+   nalu_hypre_ParVectorMigrate(x,  nalu_hypre_HandleMemoryLocation(nalu_hypre_handle()));
+   nalu_hypre_ParVectorMigrate(y,  nalu_hypre_HandleMemoryLocation(nalu_hypre_handle()));
+   nalu_hypre_ParVectorMigrate(z,  nalu_hypre_HandleMemoryLocation(nalu_hypre_handle()));
+   nalu_hypre_ParVectorMigrate(interior_nodes, nalu_hypre_HandleMemoryLocation(nalu_hypre_handle()));
 
-   hypre_MPI_Barrier(hypre_MPI_COMM_WORLD);
+   nalu_hypre_MPI_Barrier(nalu_hypre_MPI_COMM_WORLD);
 
    /* AMG */
    if (solver_id == 0)
@@ -442,8 +442,8 @@ hypre_int main (hypre_int argc, char *argv[])
       NALU_HYPRE_Real final_res_norm;
 
       /* Start timing */
-      time_index = hypre_InitializeTiming("BoomerAMG Setup");
-      hypre_BeginTiming(time_index);
+      time_index = nalu_hypre_InitializeTiming("BoomerAMG Setup");
+      nalu_hypre_BeginTiming(time_index);
 
       /* Create solver */
       NALU_HYPRE_BoomerAMGCreate(&solver);
@@ -461,33 +461,33 @@ hypre_int main (hypre_int argc, char *argv[])
       NALU_HYPRE_BoomerAMGSetup(solver, A, b, x0);
 
       /* Finalize setup timing */
-      hypre_EndTiming(time_index);
-      hypre_PrintTiming("Setup phase times", hypre_MPI_COMM_WORLD);
-      hypre_FinalizeTiming(time_index);
-      hypre_ClearTiming();
+      nalu_hypre_EndTiming(time_index);
+      nalu_hypre_PrintTiming("Setup phase times", nalu_hypre_MPI_COMM_WORLD);
+      nalu_hypre_FinalizeTiming(time_index);
+      nalu_hypre_ClearTiming();
 
       /* Start timing again */
-      time_index = hypre_InitializeTiming("BoomerAMG Solve");
-      hypre_BeginTiming(time_index);
+      time_index = nalu_hypre_InitializeTiming("BoomerAMG Solve");
+      nalu_hypre_BeginTiming(time_index);
 
       /* Solve */
       NALU_HYPRE_BoomerAMGSolve(solver, A, b, x0);
 
       /* Finalize solve timing */
-      hypre_EndTiming(time_index);
-      hypre_PrintTiming("Solve phase times", hypre_MPI_COMM_WORLD);
-      hypre_FinalizeTiming(time_index);
-      hypre_ClearTiming();
+      nalu_hypre_EndTiming(time_index);
+      nalu_hypre_PrintTiming("Solve phase times", nalu_hypre_MPI_COMM_WORLD);
+      nalu_hypre_FinalizeTiming(time_index);
+      nalu_hypre_ClearTiming();
 
       /* Run info - needed logging turned on */
       NALU_HYPRE_BoomerAMGGetNumIterations(solver, &num_iterations);
       NALU_HYPRE_BoomerAMGGetFinalRelativeResidualNorm(solver, &final_res_norm);
       if (myid == 0)
       {
-         hypre_printf("\n");
-         hypre_printf("Iterations = %d\n", num_iterations);
-         hypre_printf("Final Relative Residual Norm = %e\n", final_res_norm);
-         hypre_printf("\n");
+         nalu_hypre_printf("\n");
+         nalu_hypre_printf("Iterations = %d\n", num_iterations);
+         nalu_hypre_printf("Final Relative Residual Norm = %e\n", final_res_norm);
+         nalu_hypre_printf("\n");
       }
 
       /* Destroy solver */
@@ -498,8 +498,8 @@ hypre_int main (hypre_int argc, char *argv[])
    if (solver_id == 2)
    {
       /* Start timing */
-      time_index = hypre_InitializeTiming("AMS Setup");
-      hypre_BeginTiming(time_index);
+      time_index = nalu_hypre_InitializeTiming("AMS Setup");
+      nalu_hypre_BeginTiming(time_index);
 
       /* Create solver */
       NALU_HYPRE_AMSCreate(&solver);
@@ -548,23 +548,23 @@ hypre_int main (hypre_int argc, char *argv[])
       NALU_HYPRE_AMSSetup(solver, A, b, x0);
 
       /* Finalize setup timing */
-      hypre_EndTiming(time_index);
-      hypre_PrintTiming("Setup phase times", hypre_MPI_COMM_WORLD);
-      hypre_FinalizeTiming(time_index);
-      hypre_ClearTiming();
+      nalu_hypre_EndTiming(time_index);
+      nalu_hypre_PrintTiming("Setup phase times", nalu_hypre_MPI_COMM_WORLD);
+      nalu_hypre_FinalizeTiming(time_index);
+      nalu_hypre_ClearTiming();
 
       /* Start timing again */
-      time_index = hypre_InitializeTiming("AMS Solve");
-      hypre_BeginTiming(time_index);
+      time_index = nalu_hypre_InitializeTiming("AMS Solve");
+      nalu_hypre_BeginTiming(time_index);
 
       /* Solve */
       NALU_HYPRE_AMSSolve(solver, A, b, x0);
 
       /* Finalize solve timing */
-      hypre_EndTiming(time_index);
-      hypre_PrintTiming("Solve phase times", hypre_MPI_COMM_WORLD);
-      hypre_FinalizeTiming(time_index);
-      hypre_ClearTiming();
+      nalu_hypre_EndTiming(time_index);
+      nalu_hypre_PrintTiming("Solve phase times", nalu_hypre_MPI_COMM_WORLD);
+      nalu_hypre_FinalizeTiming(time_index);
+      nalu_hypre_ClearTiming();
 
       /* Destroy solver */
       NALU_HYPRE_AMSDestroy(solver);
@@ -579,20 +579,20 @@ hypre_int main (hypre_int argc, char *argv[])
       /* Start timing */
       if (solver_id == 1)
       {
-         time_index = hypre_InitializeTiming("BoomerAMG-PCG Setup");
+         time_index = nalu_hypre_InitializeTiming("BoomerAMG-PCG Setup");
       }
       else if (solver_id == 3)
       {
-         time_index = hypre_InitializeTiming("AMS-PCG Setup");
+         time_index = nalu_hypre_InitializeTiming("AMS-PCG Setup");
       }
       else if (solver_id == 4)
       {
-         time_index = hypre_InitializeTiming("DS-PCG Setup");
+         time_index = nalu_hypre_InitializeTiming("DS-PCG Setup");
       }
-      hypre_BeginTiming(time_index);
+      nalu_hypre_BeginTiming(time_index);
 
       /* Create solver */
-      NALU_HYPRE_ParCSRPCGCreate(hypre_MPI_COMM_WORLD, &solver);
+      NALU_HYPRE_ParCSRPCGCreate(nalu_hypre_MPI_COMM_WORLD, &solver);
 
       /* Set some parameters (See Reference Manual for more parameters) */
       NALU_HYPRE_PCGSetMaxIter(solver, maxit); /* max iterations */
@@ -694,44 +694,44 @@ hypre_int main (hypre_int argc, char *argv[])
       NALU_HYPRE_ParCSRPCGSetup(solver, A, b, x0);
 
       /* Finalize setup timing */
-      hypre_EndTiming(time_index);
-      hypre_PrintTiming("Setup phase times", hypre_MPI_COMM_WORLD);
-      hypre_FinalizeTiming(time_index);
-      hypre_ClearTiming();
+      nalu_hypre_EndTiming(time_index);
+      nalu_hypre_PrintTiming("Setup phase times", nalu_hypre_MPI_COMM_WORLD);
+      nalu_hypre_FinalizeTiming(time_index);
+      nalu_hypre_ClearTiming();
 
       /* Start timing again */
       if (solver_id == 1)
       {
-         time_index = hypre_InitializeTiming("BoomerAMG-PCG Solve");
+         time_index = nalu_hypre_InitializeTiming("BoomerAMG-PCG Solve");
       }
       else if (solver_id == 3)
       {
-         time_index = hypre_InitializeTiming("AMS-PCG Solve");
+         time_index = nalu_hypre_InitializeTiming("AMS-PCG Solve");
       }
       else if (solver_id == 4)
       {
-         time_index = hypre_InitializeTiming("DS-PCG Solve");
+         time_index = nalu_hypre_InitializeTiming("DS-PCG Solve");
       }
-      hypre_BeginTiming(time_index);
+      nalu_hypre_BeginTiming(time_index);
 
       /* Solve */
       NALU_HYPRE_ParCSRPCGSolve(solver, A, b, x0);
 
       /* Finalize solve timing */
-      hypre_EndTiming(time_index);
-      hypre_PrintTiming("Solve phase times", hypre_MPI_COMM_WORLD);
-      hypre_FinalizeTiming(time_index);
-      hypre_ClearTiming();
+      nalu_hypre_EndTiming(time_index);
+      nalu_hypre_PrintTiming("Solve phase times", nalu_hypre_MPI_COMM_WORLD);
+      nalu_hypre_FinalizeTiming(time_index);
+      nalu_hypre_ClearTiming();
 
       /* Run info - needed logging turned on */
       NALU_HYPRE_PCGGetNumIterations(solver, &num_iterations);
       NALU_HYPRE_PCGGetFinalRelativeResidualNorm(solver, &final_res_norm);
       if (myid == 0)
       {
-         hypre_printf("\n");
-         hypre_printf("Iterations = %d\n", num_iterations);
-         hypre_printf("Final Relative Residual Norm = %e\n", final_res_norm);
-         hypre_printf("\n");
+         nalu_hypre_printf("\n");
+         nalu_hypre_printf("Iterations = %d\n", num_iterations);
+         nalu_hypre_printf("Final Relative Residual Norm = %e\n", final_res_norm);
+         nalu_hypre_printf("\n");
       }
 
       /* Destroy solver and preconditioner */
@@ -750,10 +750,10 @@ hypre_int main (hypre_int argc, char *argv[])
    {
       AMSDriverMatrixRead("mfem.M", &M);
 
-      hypre_ParCSRMatrixMigrate(M, hypre_HandleMemoryLocation(hypre_handle()));
+      nalu_hypre_ParCSRMatrixMigrate(M, nalu_hypre_HandleMemoryLocation(nalu_hypre_handle()));
 
-      time_index = hypre_InitializeTiming("AME Setup");
-      hypre_BeginTiming(time_index);
+      time_index = nalu_hypre_InitializeTiming("AME Setup");
+      nalu_hypre_BeginTiming(time_index);
 
       /* Create AMS preconditioner and specify any parameters */
       NALU_HYPRE_AMSCreate(&precond);
@@ -824,22 +824,22 @@ hypre_int main (hypre_int argc, char *argv[])
       NALU_HYPRE_AMESetup(solver);
 
       /* Finalize setup timing */
-      hypre_EndTiming(time_index);
-      hypre_PrintTiming("Setup phase times", hypre_MPI_COMM_WORLD);
-      hypre_FinalizeTiming(time_index);
-      hypre_ClearTiming();
+      nalu_hypre_EndTiming(time_index);
+      nalu_hypre_PrintTiming("Setup phase times", nalu_hypre_MPI_COMM_WORLD);
+      nalu_hypre_FinalizeTiming(time_index);
+      nalu_hypre_ClearTiming();
 
-      time_index = hypre_InitializeTiming("AME Solve");
-      hypre_BeginTiming(time_index);
+      time_index = nalu_hypre_InitializeTiming("AME Solve");
+      nalu_hypre_BeginTiming(time_index);
 
       /* Solve */
       NALU_HYPRE_AMESolve(solver);
 
       /* Finalize solve timing */
-      hypre_EndTiming(time_index);
-      hypre_PrintTiming("Solve phase times", hypre_MPI_COMM_WORLD);
-      hypre_FinalizeTiming(time_index);
-      hypre_ClearTiming();
+      nalu_hypre_EndTiming(time_index);
+      nalu_hypre_PrintTiming("Solve phase times", nalu_hypre_MPI_COMM_WORLD);
+      nalu_hypre_FinalizeTiming(time_index);
+      nalu_hypre_ClearTiming();
 
       /* Destroy solver and preconditioner */
       NALU_HYPRE_AMEDestroy(solver);
@@ -877,11 +877,11 @@ hypre_int main (hypre_int argc, char *argv[])
    NALU_HYPRE_Finalize();
 
    /* Finalize MPI */
-   hypre_MPI_Finalize();
+   nalu_hypre_MPI_Finalize();
 
    if (NALU_HYPRE_GetError() && !myid)
    {
-      hypre_fprintf(stderr, "hypre_error_flag = %d\n", NALU_HYPRE_GetError());
+      nalu_hypre_fprintf(stderr, "nalu_hypre_error_flag = %d\n", NALU_HYPRE_GetError());
    }
 
    return 0;

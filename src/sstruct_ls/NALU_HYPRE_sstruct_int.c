@@ -5,70 +5,70 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_sstruct_ls.h"
+#include "_nalu_hypre_sstruct_ls.h"
 #include "interpreter.h"
 #include "NALU_HYPRE_MatvecFunctions.h"
 #include "temp_multivector.h"
 
 
 NALU_HYPRE_Int
-hypre_SStructPVectorSetRandomValues( hypre_SStructPVector *pvector, NALU_HYPRE_Int seed )
+nalu_hypre_SStructPVectorSetRandomValues( nalu_hypre_SStructPVector *pvector, NALU_HYPRE_Int seed )
 {
    NALU_HYPRE_Int ierr = 0;
-   NALU_HYPRE_Int           nvars = hypre_SStructPVectorNVars(pvector);
-   hypre_StructVector *svector;
+   NALU_HYPRE_Int           nvars = nalu_hypre_SStructPVectorNVars(pvector);
+   nalu_hypre_StructVector *svector;
    NALU_HYPRE_Int           var;
 
-   hypre_SeedRand( seed );
+   nalu_hypre_SeedRand( seed );
 
    for (var = 0; var < nvars; var++)
    {
-      svector = hypre_SStructPVectorSVector(pvector, var);
-      seed = hypre_RandI();
-      hypre_StructVectorSetRandomValues(svector, seed);
+      svector = nalu_hypre_SStructPVectorSVector(pvector, var);
+      seed = nalu_hypre_RandI();
+      nalu_hypre_StructVectorSetRandomValues(svector, seed);
    }
 
    return ierr;
 }
 
 NALU_HYPRE_Int
-hypre_SStructVectorSetRandomValues( hypre_SStructVector *vector, NALU_HYPRE_Int seed )
+nalu_hypre_SStructVectorSetRandomValues( nalu_hypre_SStructVector *vector, NALU_HYPRE_Int seed )
 {
    NALU_HYPRE_Int ierr = 0;
-   NALU_HYPRE_Int             nparts = hypre_SStructVectorNParts(vector);
-   hypre_SStructPVector *pvector;
+   NALU_HYPRE_Int             nparts = nalu_hypre_SStructVectorNParts(vector);
+   nalu_hypre_SStructPVector *pvector;
    NALU_HYPRE_Int             part;
 
-   hypre_SeedRand( seed );
+   nalu_hypre_SeedRand( seed );
 
    for (part = 0; part < nparts; part++)
    {
-      pvector = hypre_SStructVectorPVector(vector, part);
-      seed = hypre_RandI();
-      hypre_SStructPVectorSetRandomValues(pvector, seed);
+      pvector = nalu_hypre_SStructVectorPVector(vector, part);
+      seed = nalu_hypre_RandI();
+      nalu_hypre_SStructPVectorSetRandomValues(pvector, seed);
    }
 
    return ierr;
 }
 
 NALU_HYPRE_Int
-hypre_SStructSetRandomValues( void* v, NALU_HYPRE_Int seed )
+nalu_hypre_SStructSetRandomValues( void* v, NALU_HYPRE_Int seed )
 {
 
-   return hypre_SStructVectorSetRandomValues( (hypre_SStructVector*)v, seed );
+   return nalu_hypre_SStructVectorSetRandomValues( (nalu_hypre_SStructVector*)v, seed );
 }
 
 NALU_HYPRE_Int
 NALU_HYPRE_SStructSetupInterpreter( mv_InterfaceInterpreter *i )
 {
-   i->CreateVector = hypre_SStructKrylovCreateVector;
-   i->DestroyVector = hypre_SStructKrylovDestroyVector;
-   i->InnerProd = hypre_SStructKrylovInnerProd;
-   i->CopyVector = hypre_SStructKrylovCopyVector;
-   i->ClearVector = hypre_SStructKrylovClearVector;
-   i->SetRandomValues = hypre_SStructSetRandomValues;
-   i->ScaleVector = hypre_SStructKrylovScaleVector;
-   i->Axpy = hypre_SStructKrylovAxpy;
+   i->CreateVector = nalu_hypre_SStructKrylovCreateVector;
+   i->DestroyVector = nalu_hypre_SStructKrylovDestroyVector;
+   i->InnerProd = nalu_hypre_SStructKrylovInnerProd;
+   i->CopyVector = nalu_hypre_SStructKrylovCopyVector;
+   i->ClearVector = nalu_hypre_SStructKrylovClearVector;
+   i->SetRandomValues = nalu_hypre_SStructSetRandomValues;
+   i->ScaleVector = nalu_hypre_SStructKrylovScaleVector;
+   i->Axpy = nalu_hypre_SStructKrylovAxpy;
 
    i->CreateMultiVector = mv_TempMultiVectorCreateFromSampleVector;
    i->CopyCreateMultiVector = mv_TempMultiVectorCreateCopy;
@@ -94,9 +94,9 @@ NALU_HYPRE_SStructSetupInterpreter( mv_InterfaceInterpreter *i )
 NALU_HYPRE_Int
 NALU_HYPRE_SStructSetupMatvec(NALU_HYPRE_MatvecFunctions * mv)
 {
-   mv->MatvecCreate = hypre_SStructKrylovMatvecCreate;
-   mv->Matvec = hypre_SStructKrylovMatvec;
-   mv->MatvecDestroy = hypre_SStructKrylovMatvecDestroy;
+   mv->MatvecCreate = nalu_hypre_SStructKrylovMatvecCreate;
+   mv->Matvec = nalu_hypre_SStructKrylovMatvec;
+   mv->MatvecDestroy = nalu_hypre_SStructKrylovMatvecDestroy;
 
    mv->MatMultiVecCreate = NULL;
    mv->MatMultiVec = NULL;

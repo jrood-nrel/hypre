@@ -20,5 +20,5 @@ set(TEST_SRCS
   ij_mv.c
 )
 
-add_hypre_executables(TEST_SRCS)
+add_nalu_hypre_executables(TEST_SRCS)
  

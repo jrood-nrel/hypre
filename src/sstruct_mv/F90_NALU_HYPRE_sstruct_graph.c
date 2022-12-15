@@ -11,7 +11,7 @@
  *
  *****************************************************************************/
 
-#include "_hypre_sstruct_mv.h"
+#include "_nalu_hypre_sstruct_mv.h"
 #include "fortran.h"
 
 #ifdef __cplusplus
@@ -23,17 +23,17 @@ extern "C" {
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_sstructgraphcreate, NALU_HYPRE_SSTRUCTGRAPHCREATE)
-(hypre_F90_Comm *comm,
- hypre_F90_Obj *grid,
- hypre_F90_Obj *graph_ptr,
- hypre_F90_Int *ierr)
+nalu_hypre_F90_IFACE(nalu_hypre_sstructgraphcreate, NALU_HYPRE_SSTRUCTGRAPHCREATE)
+(nalu_hypre_F90_Comm *comm,
+ nalu_hypre_F90_Obj *grid,
+ nalu_hypre_F90_Obj *graph_ptr,
+ nalu_hypre_F90_Int *ierr)
 {
-   *ierr = (hypre_F90_Int)
+   *ierr = (nalu_hypre_F90_Int)
            (NALU_HYPRE_SStructGraphCreate(
-               hypre_F90_PassComm (comm),
-               hypre_F90_PassObj (NALU_HYPRE_SStructGrid, grid),
-               hypre_F90_PassObjRef (NALU_HYPRE_SStructGraph, graph_ptr) ) );
+               nalu_hypre_F90_PassComm (comm),
+               nalu_hypre_F90_PassObj (NALU_HYPRE_SStructGrid, grid),
+               nalu_hypre_F90_PassObjRef (NALU_HYPRE_SStructGraph, graph_ptr) ) );
 }
 
 /*--------------------------------------------------------------------------
@@ -41,13 +41,13 @@ hypre_F90_IFACE(hypre_sstructgraphcreate, NALU_HYPRE_SSTRUCTGRAPHCREATE)
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_sstructgraphdestroy, NALU_HYPRE_SSTRUCTGRAPHDESTROY)
-(hypre_F90_Obj *graph,
- hypre_F90_Int *ierr)
+nalu_hypre_F90_IFACE(nalu_hypre_sstructgraphdestroy, NALU_HYPRE_SSTRUCTGRAPHDESTROY)
+(nalu_hypre_F90_Obj *graph,
+ nalu_hypre_F90_Int *ierr)
 {
-   *ierr = (hypre_F90_Int)
+   *ierr = (nalu_hypre_F90_Int)
            (NALU_HYPRE_SStructGraphDestroy(
-               hypre_F90_PassObj (NALU_HYPRE_SStructGraph, graph) ) );
+               nalu_hypre_F90_PassObj (NALU_HYPRE_SStructGraph, graph) ) );
 }
 
 /*--------------------------------------------------------------------------
@@ -55,15 +55,15 @@ hypre_F90_IFACE(hypre_sstructgraphdestroy, NALU_HYPRE_SSTRUCTGRAPHDESTROY)
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_sstructgraphsetdomaingrid, NALU_HYPRE_SSTRUCTGRAPHSETDOMAINGRID)
-(hypre_F90_Obj *graph,
- hypre_F90_Obj *domain_grid,
- hypre_F90_Int *ierr)
+nalu_hypre_F90_IFACE(nalu_hypre_sstructgraphsetdomaingrid, NALU_HYPRE_SSTRUCTGRAPHSETDOMAINGRID)
+(nalu_hypre_F90_Obj *graph,
+ nalu_hypre_F90_Obj *domain_grid,
+ nalu_hypre_F90_Int *ierr)
 {
-   *ierr = (hypre_F90_Int)
+   *ierr = (nalu_hypre_F90_Int)
            (NALU_HYPRE_SStructGraphSetDomainGrid(
-               hypre_F90_PassObj (NALU_HYPRE_SStructGraph, graph),
-               hypre_F90_PassObj (NALU_HYPRE_SStructGrid, domain_grid) ) );
+               nalu_hypre_F90_PassObj (NALU_HYPRE_SStructGraph, graph),
+               nalu_hypre_F90_PassObj (NALU_HYPRE_SStructGrid, domain_grid) ) );
 }
 
 /*--------------------------------------------------------------------------
@@ -71,19 +71,19 @@ hypre_F90_IFACE(hypre_sstructgraphsetdomaingrid, NALU_HYPRE_SSTRUCTGRAPHSETDOMAI
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_sstructgraphsetstencil, NALU_HYPRE_SSTRUCTGRAPHSETSTENCIL)
-(hypre_F90_Obj *graph,
- hypre_F90_Int *part,
- hypre_F90_Int *var,
- hypre_F90_Obj *stencil,
- hypre_F90_Int *ierr)
+nalu_hypre_F90_IFACE(nalu_hypre_sstructgraphsetstencil, NALU_HYPRE_SSTRUCTGRAPHSETSTENCIL)
+(nalu_hypre_F90_Obj *graph,
+ nalu_hypre_F90_Int *part,
+ nalu_hypre_F90_Int *var,
+ nalu_hypre_F90_Obj *stencil,
+ nalu_hypre_F90_Int *ierr)
 {
-   *ierr = (hypre_F90_Int)
+   *ierr = (nalu_hypre_F90_Int)
            (NALU_HYPRE_SStructGraphSetStencil(
-               hypre_F90_PassObj (NALU_HYPRE_SStructGraph, graph),
-               hypre_F90_PassInt (part),
-               hypre_F90_PassInt (var),
-               hypre_F90_PassObj (NALU_HYPRE_SStructStencil, stencil) ) );
+               nalu_hypre_F90_PassObj (NALU_HYPRE_SStructGraph, graph),
+               nalu_hypre_F90_PassInt (part),
+               nalu_hypre_F90_PassInt (var),
+               nalu_hypre_F90_PassObj (NALU_HYPRE_SStructStencil, stencil) ) );
 }
 
 /*--------------------------------------------------------------------------
@@ -91,15 +91,15 @@ hypre_F90_IFACE(hypre_sstructgraphsetstencil, NALU_HYPRE_SSTRUCTGRAPHSETSTENCIL)
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_sstructgraphsetfem, NALU_HYPRE_SSTRUCTGRAPHSETFEM)
-(hypre_F90_Obj *graph,
- hypre_F90_Int *part,
- hypre_F90_Int *ierr)
+nalu_hypre_F90_IFACE(nalu_hypre_sstructgraphsetfem, NALU_HYPRE_SSTRUCTGRAPHSETFEM)
+(nalu_hypre_F90_Obj *graph,
+ nalu_hypre_F90_Int *part,
+ nalu_hypre_F90_Int *ierr)
 {
-   *ierr = (hypre_F90_Int)
+   *ierr = (nalu_hypre_F90_Int)
            (NALU_HYPRE_SStructGraphSetFEM(
-               hypre_F90_PassObj (NALU_HYPRE_SStructGraph, graph),
-               hypre_F90_PassInt (part) ) );
+               nalu_hypre_F90_PassObj (NALU_HYPRE_SStructGraph, graph),
+               nalu_hypre_F90_PassInt (part) ) );
 }
 
 /*--------------------------------------------------------------------------
@@ -107,19 +107,19 @@ hypre_F90_IFACE(hypre_sstructgraphsetfem, NALU_HYPRE_SSTRUCTGRAPHSETFEM)
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_sstructgraphsetfemsparsity, NALU_HYPRE_SSTRUCTGRAPHSETFEMSPARSITY)
-(hypre_F90_Obj *graph,
- hypre_F90_Int *part,
- hypre_F90_Int *nsparse,
- hypre_F90_IntArray *sparsity,
- hypre_F90_Int *ierr)
+nalu_hypre_F90_IFACE(nalu_hypre_sstructgraphsetfemsparsity, NALU_HYPRE_SSTRUCTGRAPHSETFEMSPARSITY)
+(nalu_hypre_F90_Obj *graph,
+ nalu_hypre_F90_Int *part,
+ nalu_hypre_F90_Int *nsparse,
+ nalu_hypre_F90_IntArray *sparsity,
+ nalu_hypre_F90_Int *ierr)
 {
-   *ierr = (hypre_F90_Int)
+   *ierr = (nalu_hypre_F90_Int)
            (NALU_HYPRE_SStructGraphSetFEMSparsity(
-               hypre_F90_PassObj (NALU_HYPRE_SStructGraph, graph),
-               hypre_F90_PassInt (part),
-               hypre_F90_PassInt (nsparse),
-               hypre_F90_PassIntArray (sparsity) ) );
+               nalu_hypre_F90_PassObj (NALU_HYPRE_SStructGraph, graph),
+               nalu_hypre_F90_PassInt (part),
+               nalu_hypre_F90_PassInt (nsparse),
+               nalu_hypre_F90_PassIntArray (sparsity) ) );
 }
 
 /*--------------------------------------------------------------------------
@@ -128,25 +128,25 @@ hypre_F90_IFACE(hypre_sstructgraphsetfemsparsity, NALU_HYPRE_SSTRUCTGRAPHSETFEMS
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_sstructgraphaddentries, NALU_HYPRE_SSTRUCTGRAPHADDENTRIES)
-(hypre_F90_Obj *graph,
- hypre_F90_Int *part,
- hypre_F90_IntArray *index,
- hypre_F90_Int *var,
- hypre_F90_Int *to_part,
- hypre_F90_IntArray *to_index,
- hypre_F90_Int *to_var,
- hypre_F90_Int *ierr)
+nalu_hypre_F90_IFACE(nalu_hypre_sstructgraphaddentries, NALU_HYPRE_SSTRUCTGRAPHADDENTRIES)
+(nalu_hypre_F90_Obj *graph,
+ nalu_hypre_F90_Int *part,
+ nalu_hypre_F90_IntArray *index,
+ nalu_hypre_F90_Int *var,
+ nalu_hypre_F90_Int *to_part,
+ nalu_hypre_F90_IntArray *to_index,
+ nalu_hypre_F90_Int *to_var,
+ nalu_hypre_F90_Int *ierr)
 {
-   *ierr = (hypre_F90_Int)
+   *ierr = (nalu_hypre_F90_Int)
            (NALU_HYPRE_SStructGraphAddEntries(
-               hypre_F90_PassObj (NALU_HYPRE_SStructGraph, graph),
-               hypre_F90_PassInt (part),
-               hypre_F90_PassIntArray (index),
-               hypre_F90_PassInt (var),
-               hypre_F90_PassInt (to_part),
-               hypre_F90_PassIntArray (to_index),
-               hypre_F90_PassInt (to_var) ) );
+               nalu_hypre_F90_PassObj (NALU_HYPRE_SStructGraph, graph),
+               nalu_hypre_F90_PassInt (part),
+               nalu_hypre_F90_PassIntArray (index),
+               nalu_hypre_F90_PassInt (var),
+               nalu_hypre_F90_PassInt (to_part),
+               nalu_hypre_F90_PassIntArray (to_index),
+               nalu_hypre_F90_PassInt (to_var) ) );
 }
 
 /*--------------------------------------------------------------------------
@@ -154,13 +154,13 @@ hypre_F90_IFACE(hypre_sstructgraphaddentries, NALU_HYPRE_SSTRUCTGRAPHADDENTRIES)
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_sstructgraphassemble, NALU_HYPRE_SSTRUCTGRAPHASSEMBLE)
-(hypre_F90_Obj *graph,
- hypre_F90_Int *ierr)
+nalu_hypre_F90_IFACE(nalu_hypre_sstructgraphassemble, NALU_HYPRE_SSTRUCTGRAPHASSEMBLE)
+(nalu_hypre_F90_Obj *graph,
+ nalu_hypre_F90_Int *ierr)
 {
-   *ierr = (hypre_F90_Int)
+   *ierr = (nalu_hypre_F90_Int)
            (NALU_HYPRE_SStructGraphAssemble(
-               hypre_F90_PassObj (NALU_HYPRE_SStructGraph, graph) ) );
+               nalu_hypre_F90_PassObj (NALU_HYPRE_SStructGraph, graph) ) );
 }
 
 /*--------------------------------------------------------------------------
@@ -168,15 +168,15 @@ hypre_F90_IFACE(hypre_sstructgraphassemble, NALU_HYPRE_SSTRUCTGRAPHASSEMBLE)
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_sstructgraphsetobjecttype, NALU_HYPRE_SSTRUCTGRAPHSETOBJECTTYPE)
-(hypre_F90_Obj *graph,
- hypre_F90_Int *type,
- hypre_F90_Int *ierr)
+nalu_hypre_F90_IFACE(nalu_hypre_sstructgraphsetobjecttype, NALU_HYPRE_SSTRUCTGRAPHSETOBJECTTYPE)
+(nalu_hypre_F90_Obj *graph,
+ nalu_hypre_F90_Int *type,
+ nalu_hypre_F90_Int *ierr)
 {
-   *ierr = (hypre_F90_Int)
+   *ierr = (nalu_hypre_F90_Int)
            (NALU_HYPRE_SStructGraphSetObjectType(
-               hypre_F90_PassObj (NALU_HYPRE_SStructGraph, graph),
-               hypre_F90_PassInt (type) ) );
+               nalu_hypre_F90_PassObj (NALU_HYPRE_SStructGraph, graph),
+               nalu_hypre_F90_PassInt (type) ) );
 }
 
 #ifdef __cplusplus

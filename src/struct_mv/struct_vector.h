@@ -7,24 +7,24 @@
 
 /******************************************************************************
  *
- * Header info for the hypre_StructVector structures
+ * Header info for the nalu_hypre_StructVector structures
  *
  *****************************************************************************/
 
-#ifndef hypre_STRUCT_VECTOR_HEADER
-#define hypre_STRUCT_VECTOR_HEADER
+#ifndef nalu_hypre_STRUCT_VECTOR_HEADER
+#define nalu_hypre_STRUCT_VECTOR_HEADER
 
 /*--------------------------------------------------------------------------
- * hypre_StructVector:
+ * nalu_hypre_StructVector:
  *--------------------------------------------------------------------------*/
 
-typedef struct hypre_StructVector_struct
+typedef struct nalu_hypre_StructVector_struct
 {
    MPI_Comm              comm;
 
-   hypre_StructGrid     *grid;
+   nalu_hypre_StructGrid     *grid;
 
-   hypre_BoxArray       *data_space;
+   nalu_hypre_BoxArray       *data_space;
 
    NALU_HYPRE_MemoryLocation  memory_location;             /* memory location of data */
    NALU_HYPRE_Complex        *data;                        /* Pointer to vector data on device*/
@@ -43,36 +43,36 @@ typedef struct hypre_StructVector_struct
 
    NALU_HYPRE_Int             ref_count;
 
-} hypre_StructVector;
+} nalu_hypre_StructVector;
 
 /*--------------------------------------------------------------------------
- * Accessor macros: hypre_StructVector
+ * Accessor macros: nalu_hypre_StructVector
  *--------------------------------------------------------------------------*/
 
-#define hypre_StructVectorComm(vector)           ((vector) -> comm)
-#define hypre_StructVectorGrid(vector)           ((vector) -> grid)
-#define hypre_StructVectorDataSpace(vector)      ((vector) -> data_space)
-#define hypre_StructVectorMemoryLocation(vector) ((vector) -> memory_location)
-#define hypre_StructVectorData(vector)           ((vector) -> data)
-#define hypre_StructVectorDataAlloced(vector)    ((vector) -> data_alloced)
-#define hypre_StructVectorDataSize(vector)       ((vector) -> data_size)
-#define hypre_StructVectorDataIndices(vector)    ((vector) -> data_indices)
-#define hypre_StructVectorNumGhost(vector)       ((vector) -> num_ghost)
-#define hypre_StructVectorBGhostNotClear(vector) ((vector) -> bghost_not_clear)
-#define hypre_StructVectorGlobalSize(vector)     ((vector) -> global_size)
-#define hypre_StructVectorRefCount(vector)       ((vector) -> ref_count)
+#define nalu_hypre_StructVectorComm(vector)           ((vector) -> comm)
+#define nalu_hypre_StructVectorGrid(vector)           ((vector) -> grid)
+#define nalu_hypre_StructVectorDataSpace(vector)      ((vector) -> data_space)
+#define nalu_hypre_StructVectorMemoryLocation(vector) ((vector) -> memory_location)
+#define nalu_hypre_StructVectorData(vector)           ((vector) -> data)
+#define nalu_hypre_StructVectorDataAlloced(vector)    ((vector) -> data_alloced)
+#define nalu_hypre_StructVectorDataSize(vector)       ((vector) -> data_size)
+#define nalu_hypre_StructVectorDataIndices(vector)    ((vector) -> data_indices)
+#define nalu_hypre_StructVectorNumGhost(vector)       ((vector) -> num_ghost)
+#define nalu_hypre_StructVectorBGhostNotClear(vector) ((vector) -> bghost_not_clear)
+#define nalu_hypre_StructVectorGlobalSize(vector)     ((vector) -> global_size)
+#define nalu_hypre_StructVectorRefCount(vector)       ((vector) -> ref_count)
 
-#define hypre_StructVectorNDim(vector) \
-hypre_StructGridNDim(hypre_StructVectorGrid(vector))
+#define nalu_hypre_StructVectorNDim(vector) \
+nalu_hypre_StructGridNDim(nalu_hypre_StructVectorGrid(vector))
 
-#define hypre_StructVectorBox(vector, b) \
-hypre_BoxArrayBox(hypre_StructVectorDataSpace(vector), b)
+#define nalu_hypre_StructVectorBox(vector, b) \
+nalu_hypre_BoxArrayBox(nalu_hypre_StructVectorDataSpace(vector), b)
 
-#define hypre_StructVectorBoxData(vector, b) \
-(hypre_StructVectorData(vector) + hypre_StructVectorDataIndices(vector)[b])
+#define nalu_hypre_StructVectorBoxData(vector, b) \
+(nalu_hypre_StructVectorData(vector) + nalu_hypre_StructVectorDataIndices(vector)[b])
 
-#define hypre_StructVectorBoxDataValue(vector, b, index) \
-(hypre_StructVectorBoxData(vector, b) + \
- hypre_BoxIndexRank(hypre_StructVectorBox(vector, b), index))
+#define nalu_hypre_StructVectorBoxDataValue(vector, b, index) \
+(nalu_hypre_StructVectorBoxData(vector, b) + \
+ nalu_hypre_BoxIndexRank(nalu_hypre_StructVectorBox(vector, b), index))
 
 #endif

@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_Euclid.h"
+#include "_nalu_hypre_Euclid.h"
 /* #include "Hash_i_dh.h" */
 /* #include "Parser_dh.h" */
 /* #include "Mem_dh.h" */
@@ -131,14 +131,14 @@ NALU_HYPRE_Int Hash_i_dhLookup(Hash_i_dh h, NALU_HYPRE_Int key)
   HASH_1(key, size, &start)
   HASH_2(key, size, &inc)
 
-/*hypre_printf("Hash_i_dhLookup:: key: %i  tableSize: %i start: %i  inc: %i\n", key, size, start, inc);
+/*nalu_hypre_printf("Hash_i_dhLookup:: key: %i  tableSize: %i start: %i  inc: %i\n", key, size, start, inc);
 */
 
   for (i=0; i<size; ++i) {
     /* idx = (start + i*inc) % size; */
-    idx = (start + hypre_multmod(i, inc, size)) % size;
+    idx = (start + nalu_hypre_multmod(i, inc, size)) % size;
 
-/* hypre_printf("   idx= %i\n", idx); */
+/* nalu_hypre_printf("   idx= %i\n", idx); */
 
     if (data[idx].mark != curMark) {
       break;  /* key wasn't found */
@@ -164,7 +164,7 @@ void Hash_i_dhInsert(Hash_i_dh h, NALU_HYPRE_Int key, NALU_HYPRE_Int dataIN)
   bool success = false;
 
   if (dataIN < 0) {
-    hypre_sprintf(msgBuf_dh, "data = %i must be >= 0", dataIN);
+    nalu_hypre_sprintf(msgBuf_dh, "data = %i must be >= 0", dataIN);
     SET_V_ERROR(msgBuf_dh);
   }
 
@@ -182,18 +182,18 @@ void Hash_i_dhInsert(Hash_i_dh h, NALU_HYPRE_Int key, NALU_HYPRE_Int dataIN)
 
 
 
-/*hypre_printf("Hash_i_dhInsert::  tableSize= %i  start= %i  inc= %i\n", size, start, inc);
+/*nalu_hypre_printf("Hash_i_dhInsert::  tableSize= %i  start= %i  inc= %i\n", size, start, inc);
 */
   for (i=0; i<size; ++i) {
     /* idx = (start + i*inc) % size; */
-    idx = (start + hypre_multmod(i, inc, size)) % size;
+    idx = (start + nalu_hypre_multmod(i, inc, size)) % size;
 
-/* hypre_printf("   idx= %i\n", idx);
+/* nalu_hypre_printf("   idx= %i\n", idx);
 */
 
     /* check for previous insertion */
     if (data[idx].mark == curMark  &&  data[idx].key == key) {
-      hypre_sprintf(msgBuf_dh, "key,data= <%i, %i> already inserted", key, dataIN);
+      nalu_hypre_sprintf(msgBuf_dh, "key,data= <%i, %i> already inserted", key, dataIN);
       SET_V_ERROR(msgBuf_dh);
     }
 
@@ -207,7 +207,7 @@ void Hash_i_dhInsert(Hash_i_dh h, NALU_HYPRE_Int key, NALU_HYPRE_Int dataIN)
   }
 
   if (! success) {  /* should be impossible to be here, I think . . . */
-    hypre_sprintf(msgBuf_dh, "Failed to insert key= %i, data= %i", key, dataIN);
+    nalu_hypre_sprintf(msgBuf_dh, "Failed to insert key= %i, data= %i", key, dataIN);
   }
   END_FUNC_DH
 }
@@ -225,7 +225,7 @@ void rehash_private(Hash_i_dh h)
   Hash_i_Record *oldData = h->data,
                  *newData;
 
-  hypre_sprintf(msgBuf_dh, "rehashing; old_size= %i, new_size= %i", old_size, new_size);
+  nalu_hypre_sprintf(msgBuf_dh, "rehashing; old_size= %i, new_size= %i", old_size, new_size);
   SET_INFO(msgBuf_dh);
 
   /* allocate new data table, and install it in the Hash_i_dh object;

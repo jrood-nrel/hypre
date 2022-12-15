@@ -15,10 +15,10 @@
 #define __MLIUTILS__
 
 #include <time.h>
-#include "_hypre_utilities.h"
-#include "_hypre_parcsr_mv.h"
+#include "_nalu_hypre_utilities.h"
+#include "_nalu_hypre_parcsr_mv.h"
 #include "krylov.h"
-#include "_hypre_parcsr_ls.h"
+#include "_nalu_hypre_parcsr_ls.h"
 typedef struct MLI_Function_Struct MLI_Function;
 #include "cmli.h"
 
@@ -59,10 +59,10 @@ int    MLI_Utils_HypreParVectorGetDestroyFunc(MLI_Function *funcPtr);
 int    MLI_Utils_HypreVectorGetDestroyFunc(MLI_Function *funcPtr);
 int    MLI_Utils_HypreMatrixFormJacobi(void *A, double, void **J);
 int    MLI_Utils_GenPartition(MPI_Comm comm, int n, int **part);
-int    MLI_Utils_ScaleVec(hypre_ParCSRMatrix *Amat, hypre_ParVector *vec);
-int    MLI_Utils_ComputeSpectralRadius(hypre_ParCSRMatrix *, double *);
-int    MLI_Utils_ComputeExtremeRitzValues(hypre_ParCSRMatrix *, double *, int);
-int    MLI_Utils_ComputeMatrixMaxNorm(hypre_ParCSRMatrix *, double *, int);
+int    MLI_Utils_ScaleVec(nalu_hypre_ParCSRMatrix *Amat, nalu_hypre_ParVector *vec);
+int    MLI_Utils_ComputeSpectralRadius(nalu_hypre_ParCSRMatrix *, double *);
+int    MLI_Utils_ComputeExtremeRitzValues(nalu_hypre_ParCSRMatrix *, double *, int);
+int    MLI_Utils_ComputeMatrixMaxNorm(nalu_hypre_ParCSRMatrix *, double *, int);
 double MLI_Utils_WTime();
 int    MLI_Utils_HypreMatrixPrint(void *, char *);
 int    MLI_Utils_HypreMatrixGetInfo(void *, int *, double *);
@@ -73,7 +73,7 @@ int    MLI_Utils_QR(double *Q, double *R, int nrows, int ncols);
 int    MLI_Utils_SVD(double *uArray, double *sArray, double *vtArray,
                  double *workArray, int m, int n, int workLen);
 int    MLI_Utils_singular_vectors(int n, double *uArray);
-int    MLI_Utils_ComputeLowEnergyLanczos(hypre_ParCSRMatrix *A, 
+int    MLI_Utils_ComputeLowEnergyLanczos(nalu_hypre_ParCSRMatrix *A, 
                  int maxIter, int num_vecs_to_return, double *le_vectors);
 int    MLI_Utils_HypreMatrixReadTuminFormat(char *filename, MPI_Comm comm, 
                  int blksize, void **mat, int flag, double **scaleVec);

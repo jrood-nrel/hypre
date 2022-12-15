@@ -204,13 +204,13 @@ test_mgr_gpu: test_mgr_gpu.o
 
 # RDF: Keep these for now
 
-hypre_set_precond: hypre_set_precond.o
+nalu_hypre_set_precond: nalu_hypre_set_precond.o
 	@echo  "Building" $@ "... "
 	${LINK_CC} -o $@ $@.o ${LFLAGS}
 
-test_ij: hypre_set_precond.o test_ij.o
+test_ij: nalu_hypre_set_precond.o test_ij.o
 	@echo  "Building" $@ "... "
-	${LINK_CC} -o $@ hypre_set_precond.o $@.o ${LFLAGS}
+	${LINK_CC} -o $@ nalu_hypre_set_precond.o $@.o ${LFLAGS}
 
 driver_commpkg: driver_commpkg.o
 	@echo  "Building" $@ "... "

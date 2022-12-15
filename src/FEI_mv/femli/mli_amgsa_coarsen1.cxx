@@ -16,10 +16,10 @@
 #include <string.h>
 #include <stdlib.h>
 #include "NALU_HYPRE.h"
-#include "_hypre_utilities.h"
+#include "_nalu_hypre_utilities.h"
 #include "NALU_HYPRE_IJ_mv.h"
 #include "seq_mv.h"
-#include "_hypre_parcsr_mv.h"
+#include "_nalu_hypre_parcsr_mv.h"
 
 #include "mli_vector.h"
 #include "mli_method_amgsa.h"
@@ -48,8 +48,8 @@ double MLI_Method_AMGSA::genP(MLI_Matrix *mli_Amat,
                               int initCount, int *initAggr)
 {
    NALU_HYPRE_IJMatrix         IJPmat;
-   hypre_ParCSRMatrix     *Amat, *A2mat, *Pmat, *Gmat=NULL, *Jmat, *Pmat2;
-   hypre_ParCSRCommPkg    *comm_pkg;
+   nalu_hypre_ParCSRMatrix     *Amat, *A2mat, *Pmat, *Gmat=NULL, *Jmat, *Pmat2;
+   nalu_hypre_ParCSRCommPkg    *comm_pkg;
    MLI_Matrix             *mli_Pmat, *mli_Jmat, *mli_A2mat=NULL;
    MLI_Function           *funcPtr;
    MPI_Comm  comm;
@@ -67,15 +67,15 @@ double MLI_Method_AMGSA::genP(MLI_Matrix *mli_Amat,
     * fetch matrix and machine information
     *-----------------------------------------------------------------*/
 
-   Amat = (hypre_ParCSRMatrix *) mli_Amat->getMatrix();
+   Amat = (nalu_hypre_ParCSRMatrix *) mli_Amat->getMatrix();
 
 #if 0
    sprintf(paramString, "matrix%d", currLevel_);
-   hypre_ParCSRMatrixPrintIJ(Amat, 1, 1, paramString);
+   nalu_hypre_ParCSRMatrixPrintIJ(Amat, 1, 1, paramString);
    printf("matrix %s printed\n", paramString);
 #endif
 
-   comm = hypre_ParCSRMatrixComm(Amat);
+   comm = nalu_hypre_ParCSRMatrixComm(Amat);
    MPI_Comm_rank(comm,&mypid);
    MPI_Comm_size(comm,&numProcs);
 
@@ -151,7 +151,7 @@ double MLI_Method_AMGSA::genP(MLI_Matrix *mli_Amat,
          else
             localLabels = NULL;
       }
-      A2mat = (hypre_ParCSRMatrix *) mli_A2mat->getMatrix();
+      A2mat = (nalu_hypre_ParCSRMatrix *) mli_A2mat->getMatrix();
    }
 
    /*-----------------------------------------------------------------
@@ -176,18 +176,18 @@ double MLI_Method_AMGSA::genP(MLI_Matrix *mli_Amat,
 
    if ( initAggr == NULL )
    {
-      GGlobalNRows = hypre_ParCSRMatrixGlobalNumRows(A2mat);
+      GGlobalNRows = nalu_hypre_ParCSRMatrixGlobalNumRows(A2mat);
       if ( GGlobalNRows <= minAggrSize_*numProcs )
       {
          formGlobalGraph(A2mat, &Gmat);
          coarsenGlobal(Gmat, &naggr, &node2aggr);
-         hypre_ParCSRMatrixDestroy(Gmat);
+         nalu_hypre_ParCSRMatrixDestroy(Gmat);
       }
       else if ( GGlobalNRows > minAggrSize_*numProcs )
       {
          formLocalGraph(A2mat, &Gmat, localLabels);
          coarsenLocal(Gmat, &naggr, &node2aggr);
-         hypre_ParCSRMatrixDestroy(Gmat);
+         nalu_hypre_ParCSRMatrixDestroy(Gmat);
       }
       if ( blkSize > 1 && scalar_ == 0 )
       {
@@ -243,7 +243,7 @@ double MLI_Method_AMGSA::genP(MLI_Matrix *mli_Amat,
    ierr = NALU_HYPRE_IJMatrixCreate(comm,PStartRow,PStartRow+PLocalNRows-1,
                           PStartCol,PStartCol+PLocalNCols-1,&IJPmat);
    ierr = NALU_HYPRE_IJMatrixSetObjectType(IJPmat, NALU_HYPRE_PARCSR);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
 
    /*-----------------------------------------------------------------
     * expand the aggregation information if block size > 1 ==> eqn2aggr
@@ -298,7 +298,7 @@ double MLI_Method_AMGSA::genP(MLI_Matrix *mli_Amat,
       maxEigen = ritzValues[0];
       if ( mypid == 0 && outputLevel_ > 1 )
          printf("\tEstimated spectral radius of A = %e\n", maxEigen);
-      hypre_assert ( maxEigen > 0.0 );
+      nalu_hypre_assert ( maxEigen > 0.0 );
       alpha = Pweight_ / maxEigen;
    }
 
@@ -650,7 +650,7 @@ double MLI_Method_AMGSA::genP(MLI_Matrix *mli_Amat,
       for ( i = 0; i < PLocalNRows; i++ ) rowLengths[i] = nullspaceDim_;
       ierr = NALU_HYPRE_IJMatrixSetRowSizes(IJPmat, rowLengths);
       ierr = NALU_HYPRE_IJMatrixInitialize(IJPmat);
-      hypre_assert(!ierr);
+      nalu_hypre_assert(!ierr);
       delete [] rowLengths;
 
       /*-----------------------------------------------------------------
@@ -679,11 +679,11 @@ double MLI_Method_AMGSA::genP(MLI_Matrix *mli_Amat,
          }
       }
       ierr = NALU_HYPRE_IJMatrixAssemble(IJPmat);
-      hypre_assert( !ierr );
+      nalu_hypre_assert( !ierr );
       NALU_HYPRE_IJMatrixGetObject(IJPmat, (void **) &Pmat);
-      hypre_MatvecCommPkgCreate((hypre_ParCSRMatrix *) Pmat);
-      comm_pkg = hypre_ParCSRMatrixCommPkg(Amat);
-      if (!comm_pkg) hypre_MatvecCommPkgCreate(Amat);
+      nalu_hypre_MatvecCommPkgCreate((nalu_hypre_ParCSRMatrix *) Pmat);
+      comm_pkg = nalu_hypre_ParCSRMatrixCommPkg(Amat);
+      if (!comm_pkg) nalu_hypre_MatvecCommPkgCreate(Amat);
       NALU_HYPRE_IJMatrixSetObjectType(IJPmat, -1);
       NALU_HYPRE_IJMatrixDestroy( IJPmat );
       delete [] colInd;
@@ -697,12 +697,12 @@ double MLI_Method_AMGSA::genP(MLI_Matrix *mli_Amat,
    else
    {
       MLI_Matrix_FormJacobi(mli_Amat, alpha, &mli_Jmat);
-      Jmat = (hypre_ParCSRMatrix *) mli_Jmat->getMatrix();
+      Jmat = (nalu_hypre_ParCSRMatrix *) mli_Jmat->getMatrix();
       rowLengths = new int[PLocalNRows];
       for ( i = 0; i < PLocalNRows; i++ ) rowLengths[i] = nullspaceDim_;
       ierr = NALU_HYPRE_IJMatrixSetRowSizes(IJPmat, rowLengths);
       ierr = NALU_HYPRE_IJMatrixInitialize(IJPmat);
-      hypre_assert(!ierr);
+      nalu_hypre_assert(!ierr);
       delete [] rowLengths;
       colInd = new int[nullspaceDim_];
       colVal = new double[nullspaceDim_];
@@ -726,19 +726,19 @@ double MLI_Method_AMGSA::genP(MLI_Matrix *mli_Amat,
          }
       }
       ierr = NALU_HYPRE_IJMatrixAssemble(IJPmat);
-      hypre_assert( !ierr );
+      nalu_hypre_assert( !ierr );
       NALU_HYPRE_IJMatrixGetObject(IJPmat, (void **) &Pmat2);
       NALU_HYPRE_IJMatrixSetObjectType(IJPmat, -1);
       NALU_HYPRE_IJMatrixDestroy( IJPmat );
       delete [] colInd;
       delete [] colVal;
-      Pmat = hypre_ParMatmul( Jmat, Pmat2);
-      hypre_ParCSRMatrixDestroy(Pmat2);
+      Pmat = nalu_hypre_ParMatmul( Jmat, Pmat2);
+      nalu_hypre_ParCSRMatrixDestroy(Pmat2);
       delete mli_Jmat;
    }
 
 #if 0
-   hypre_ParCSRMatrixPrintIJ(Pmat, 1, 1, "pmat");
+   nalu_hypre_ParCSRMatrixPrintIJ(Pmat, 1, 1, "pmat");
 #endif
 
    /*-----------------------------------------------------------------
@@ -772,7 +772,7 @@ double MLI_Method_AMGSA::genP(MLI_Matrix *mli_Amat,
 //             corresponding Pmat using the global aggregation scheme
 // ---------------------------------------------------------------------
 
-double MLI_Method_AMGSA::genPGlobal(hypre_ParCSRMatrix *Amat,
+double MLI_Method_AMGSA::genPGlobal(nalu_hypre_ParCSRMatrix *Amat,
                                     MLI_Matrix **PmatOut,
                                     int nAggr, int *aggrMap)
 {
@@ -782,8 +782,8 @@ double MLI_Method_AMGSA::genPGlobal(hypre_ParCSRMatrix *Amat,
    double   *colVal, dtemp, *accum, *accum2;
    char     paramString[50];
    MPI_Comm comm;
-   hypre_ParCSRMatrix  *Pmat;
-   hypre_ParCSRCommPkg *commPkg;
+   nalu_hypre_ParCSRMatrix  *Pmat;
+   nalu_hypre_ParCSRCommPkg *commPkg;
    NALU_HYPRE_IJMatrix      IJPmat;
    MLI_Matrix          *mli_Pmat;
    MLI_Function        *funcPtr;
@@ -792,7 +792,7 @@ double MLI_Method_AMGSA::genPGlobal(hypre_ParCSRMatrix *Amat,
     * fetch and construct matrix parameters
     *-----------------------------------------------------------------*/
 
-   comm = hypre_ParCSRMatrixComm(Amat);
+   comm = nalu_hypre_ParCSRMatrixComm(Amat);
    MPI_Comm_rank(comm,&mypid);
    MPI_Comm_size(comm,&nprocs);
    NALU_HYPRE_ParCSRMatrixGetRowPartitioning((NALU_HYPRE_ParCSRMatrix) Amat,
@@ -818,13 +818,13 @@ double MLI_Method_AMGSA::genPGlobal(hypre_ParCSRMatrix *Amat,
    ierr = NALU_HYPRE_IJMatrixCreate(comm,PStartRow,PStartRow+PLocalNRows-1,
                   PStartCol,PStartCol+PLocalNCols-1,&IJPmat);
    ierr = NALU_HYPRE_IJMatrixSetObjectType(IJPmat, NALU_HYPRE_PARCSR);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
 
    rowLengths = new int[PLocalNRows];
    for (irow = 0; irow < PLocalNRows; irow++) rowLengths[irow] = nullspaceDim_;
    ierr = NALU_HYPRE_IJMatrixSetRowSizes(IJPmat, rowLengths);
    ierr = NALU_HYPRE_IJMatrixInitialize(IJPmat);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
    delete [] rowLengths;
 
    /*-----------------------------------------------------------------
@@ -888,11 +888,11 @@ double MLI_Method_AMGSA::genPGlobal(hypre_ParCSRMatrix *Amat,
     *-----------------------------------------------------------------*/
 
    ierr = NALU_HYPRE_IJMatrixAssemble(IJPmat);
-   hypre_assert( !ierr );
+   nalu_hypre_assert( !ierr );
    NALU_HYPRE_IJMatrixGetObject(IJPmat, (void **) &Pmat);
-   hypre_MatvecCommPkgCreate((hypre_ParCSRMatrix *) Pmat);
-   commPkg = hypre_ParCSRMatrixCommPkg(Amat);
-   if ( !commPkg ) hypre_MatvecCommPkgCreate(Amat);
+   nalu_hypre_MatvecCommPkgCreate((nalu_hypre_ParCSRMatrix *) Pmat);
+   commPkg = nalu_hypre_ParCSRMatrixCommPkg(Amat);
+   if ( !commPkg ) nalu_hypre_MatvecCommPkgCreate(Amat);
    NALU_HYPRE_IJMatrixSetObjectType(IJPmat, -1);
    NALU_HYPRE_IJMatrixDestroy( IJPmat );
 
@@ -910,7 +910,7 @@ double MLI_Method_AMGSA::genPGlobal(hypre_ParCSRMatrix *Amat,
  * local coarsening scheme (Given a graph, aggregate on the local subgraph)
  * --------------------------------------------------------------------- */
 
-int MLI_Method_AMGSA::coarsenLocal(hypre_ParCSRMatrix *hypre_graph,
+int MLI_Method_AMGSA::coarsenLocal(nalu_hypre_ParCSRMatrix *nalu_hypre_graph,
                                    int *mliAggrLeng, int **mliAggrArray)
 {
    MPI_Comm  comm;
@@ -925,10 +925,10 @@ int MLI_Method_AMGSA::coarsenLocal(hypre_ParCSRMatrix *hypre_graph,
     * fetch machine and matrix parameters
     *-----------------------------------------------------------------*/
 
-   comm = hypre_ParCSRMatrixComm(hypre_graph);
+   comm = nalu_hypre_ParCSRMatrixComm(nalu_hypre_graph);
    MPI_Comm_rank(comm,&mypid);
    MPI_Comm_size(comm,&numProcs);
-   NALU_HYPRE_ParCSRMatrixGetRowPartitioning((NALU_HYPRE_ParCSRMatrix) hypre_graph,
+   NALU_HYPRE_ParCSRMatrixGetRowPartitioning((NALU_HYPRE_ParCSRMatrix) nalu_hypre_graph,
                                         &partition);
    startRow = partition[mypid];
    endRow   = partition[mypid+1] - 1;
@@ -956,13 +956,13 @@ int MLI_Method_AMGSA::coarsenLocal(hypre_ParCSRMatrix *hypre_graph,
          node2aggr[irow] = -1;
          nodeStat[irow] = MLI_METHOD_AMGSA_READY;
          rowNum = startRow + irow;
-         hypre_ParCSRMatrixGetRow(hypre_graph,rowNum,&rowLeng,NULL,NULL);
+         nalu_hypre_ParCSRMatrixGetRow(nalu_hypre_graph,rowNum,&rowLeng,NULL,NULL);
          if (rowLeng <= 0)
          {
             nodeStat[irow] = MLI_METHOD_AMGSA_NOTSELECTED;
             nNotSelected++;
          }
-         hypre_ParCSRMatrixRestoreRow(hypre_graph,rowNum,&rowLeng,NULL,NULL);
+         nalu_hypre_ParCSRMatrixRestoreRow(nalu_hypre_graph,rowNum,&rowLeng,NULL,NULL);
       }
    }
    else node2aggr = aggrSizes = nodeStat = NULL;
@@ -976,7 +976,7 @@ int MLI_Method_AMGSA::coarsenLocal(hypre_ParCSRMatrix *hypre_graph,
       if ( nodeStat[irow] == MLI_METHOD_AMGSA_READY )
       {
          rowNum = startRow + irow;
-         hypre_ParCSRMatrixGetRow(hypre_graph,rowNum,&rowLeng,&cols,NULL);
+         nalu_hypre_ParCSRMatrixGetRow(nalu_hypre_graph,rowNum,&rowLeng,&cols,NULL);
          selectFlag = 1;
          count      = 1;
          for ( icol = 0; icol < rowLeng; icol++ )
@@ -1011,7 +1011,7 @@ int MLI_Method_AMGSA::coarsenLocal(hypre_ParCSRMatrix *hypre_graph,
             }
             naggr++;
          }
-         hypre_ParCSRMatrixRestoreRow(hypre_graph,rowNum,&rowLeng,&cols,NULL);
+         nalu_hypre_ParCSRMatrixRestoreRow(nalu_hypre_graph,rowNum,&rowLeng,&cols,NULL);
       }
    }
    itmp[0] = naggr;
@@ -1034,7 +1034,7 @@ int MLI_Method_AMGSA::coarsenLocal(hypre_ParCSRMatrix *hypre_graph,
          if ( nodeStat[irow] == MLI_METHOD_AMGSA_READY )
          {
             rowNum = startRow + irow;
-            hypre_ParCSRMatrixGetRow(hypre_graph,rowNum,&rowLeng,&cols,&vals);
+            nalu_hypre_ParCSRMatrixGetRow(nalu_hypre_graph,rowNum,&rowLeng,&cols,&vals);
             maxInd = -1;
             maxVal = 0.0;
             for ( icol = 0; icol < rowLeng; icol++ )
@@ -1058,7 +1058,7 @@ int MLI_Method_AMGSA::coarsenLocal(hypre_ParCSRMatrix *hypre_graph,
                nodeStat[irow] = MLI_METHOD_AMGSA_PENDING;
                aggrSizes[node2aggr[maxInd]]++;
             }
-            hypre_ParCSRMatrixRestoreRow(hypre_graph,rowNum,&rowLeng,&cols,
+            nalu_hypre_ParCSRMatrixRestoreRow(nalu_hypre_graph,rowNum,&rowLeng,&cols,
                                          &vals);
          }
       }
@@ -1091,7 +1091,7 @@ int MLI_Method_AMGSA::coarsenLocal(hypre_ParCSRMatrix *hypre_graph,
          if ( nodeStat[irow] == MLI_METHOD_AMGSA_READY )
          {
             rowNum = startRow + irow;
-            hypre_ParCSRMatrixGetRow(hypre_graph,rowNum,&rowLeng,&cols,NULL);
+            nalu_hypre_ParCSRMatrixGetRow(nalu_hypre_graph,rowNum,&rowLeng,&cols,NULL);
             count = 1;
             for ( icol = 0; icol < rowLeng; icol++ )
             {
@@ -1123,7 +1123,7 @@ int MLI_Method_AMGSA::coarsenLocal(hypre_ParCSRMatrix *hypre_graph,
                }
                naggr++;
             }
-            hypre_ParCSRMatrixRestoreRow(hypre_graph,rowNum,&rowLeng,&cols,
+            nalu_hypre_ParCSRMatrixRestoreRow(nalu_hypre_graph,rowNum,&rowLeng,&cols,
                                          NULL);
          }
       }
@@ -1148,7 +1148,7 @@ int MLI_Method_AMGSA::coarsenLocal(hypre_ParCSRMatrix *hypre_graph,
          if ( nodeStat[irow] == MLI_METHOD_AMGSA_READY )
          {
             rowNum = startRow + irow;
-            hypre_ParCSRMatrixGetRow(hypre_graph,rowNum,&rowLeng,&cols,NULL);
+            nalu_hypre_ParCSRMatrixGetRow(nalu_hypre_graph,rowNum,&rowLeng,&cols,NULL);
             for ( icol = 0; icol < rowLeng; icol++ )
             {
                colNum = cols[icol] - startRow;
@@ -1164,7 +1164,7 @@ int MLI_Method_AMGSA::coarsenLocal(hypre_ParCSRMatrix *hypre_graph,
                   }
                }
             }
-            hypre_ParCSRMatrixRestoreRow(hypre_graph,rowNum,&rowLeng,&cols,
+            nalu_hypre_ParCSRMatrixRestoreRow(nalu_hypre_graph,rowNum,&rowLeng,&cols,
                                          NULL);
          }
       }
@@ -1226,7 +1226,7 @@ int MLI_Method_AMGSA::coarsenLocal(hypre_ParCSRMatrix *hypre_graph,
          {
             rowNum = startRow + irow;
             printf("%5d : unaggregated node = %8d\n", mypid, rowNum);
-            hypre_ParCSRMatrixGetRow(hypre_graph,rowNum,&rowLeng,&cols,NULL);
+            nalu_hypre_ParCSRMatrixGetRow(nalu_hypre_graph,rowNum,&rowLeng,&cols,NULL);
             for ( icol = 0; icol < rowLeng; icol++ )
             {
                colNum = cols[icol];
@@ -1258,24 +1258,24 @@ int MLI_Method_AMGSA::coarsenLocal(hypre_ParCSRMatrix *hypre_graph,
  * global coarsening scheme (for the coarsest grid only)
  * --------------------------------------------------------------------- */
 
-int MLI_Method_AMGSA::coarsenGlobal(hypre_ParCSRMatrix *Gmat,
+int MLI_Method_AMGSA::coarsenGlobal(nalu_hypre_ParCSRMatrix *Gmat,
                                     int *mliAggrLeng, int **mliAggrArray)
 {
    int                 nRecvs, *recvProcs, mypid, nprocs, *commGraphI;
    int                 *commGraphJ, *recvCounts, i, j, *aggrInds, nAggr;
    int                 pIndex, *aggrCnts, *rowCounts, nRows;
    MPI_Comm            comm;
-   hypre_ParCSRCommPkg *commPkg;
+   nalu_hypre_ParCSRCommPkg *commPkg;
 
-   comm    = hypre_ParCSRMatrixComm(Gmat);
-   commPkg = hypre_ParCSRMatrixCommPkg(Gmat);
+   comm    = nalu_hypre_ParCSRMatrixComm(Gmat);
+   commPkg = nalu_hypre_ParCSRMatrixCommPkg(Gmat);
    if ( commPkg == NULL )
    {
-      hypre_MatvecCommPkgCreate((hypre_ParCSRMatrix *) Gmat);
-      commPkg = hypre_ParCSRMatrixCommPkg(Gmat);
+      nalu_hypre_MatvecCommPkgCreate((nalu_hypre_ParCSRMatrix *) Gmat);
+      commPkg = nalu_hypre_ParCSRMatrixCommPkg(Gmat);
    }
-   nRecvs    = hypre_ParCSRCommPkgNumRecvs(commPkg);
-   recvProcs = hypre_ParCSRCommPkgRecvProcs(commPkg);
+   nRecvs    = nalu_hypre_ParCSRCommPkgNumRecvs(commPkg);
+   recvProcs = nalu_hypre_ParCSRCommPkgRecvProcs(commPkg);
 
    MPI_Comm_rank(comm, &mypid);
    MPI_Comm_size(comm, &nprocs);
@@ -1292,7 +1292,7 @@ int MLI_Method_AMGSA::coarsenGlobal(hypre_ParCSRMatrix *Gmat,
    delete [] recvCounts;
 
    rowCounts = new int[nprocs];
-   nRows = hypre_ParCSRMatrixNumRows(Gmat);
+   nRows = nalu_hypre_ParCSRMatrixNumRows(Gmat);
    MPI_Allgather(&nRows, 1, MPI_INT, rowCounts, 1, MPI_INT, comm);
 
    nAggr = 0;
@@ -1344,7 +1344,7 @@ int MLI_Method_AMGSA::coarsenGlobal(hypre_ParCSRMatrix *Gmat,
    {
       printf("\t*** Aggregation(C) : no. of aggregates     = %d\n",nAggr);
       printf("\t*** Aggregation(C) : no. nodes aggregated  = %d\n",
-             hypre_ParCSRMatrixGlobalNumRows(Gmat));
+             nalu_hypre_ParCSRMatrixGlobalNumRows(Gmat));
    }
    delete [] aggrCnts;
    delete [] rowCounts;
@@ -1357,13 +1357,13 @@ int MLI_Method_AMGSA::coarsenGlobal(hypre_ParCSRMatrix *Gmat,
  * form graph from matrix (internal subroutine)
  * ------------------------------------------------------------------- */
 
-int MLI_Method_AMGSA::formLocalGraph( hypre_ParCSRMatrix *Amat,
-                                      hypre_ParCSRMatrix **graph_in,
+int MLI_Method_AMGSA::formLocalGraph( nalu_hypre_ParCSRMatrix *Amat,
+                                      nalu_hypre_ParCSRMatrix **graph_in,
                                       int *localLabels)
 {
    NALU_HYPRE_IJMatrix     IJGraph;
-   hypre_CSRMatrix    *AdiagBlock;
-   hypre_ParCSRMatrix *graph;
+   nalu_hypre_CSRMatrix    *AdiagBlock;
+   nalu_hypre_ParCSRMatrix *graph;
    MPI_Comm           comm;
    int                i, j, jj, index, mypid, *partition;
    int                startRow, endRow, *rowLengths;
@@ -1376,19 +1376,19 @@ int MLI_Method_AMGSA::formLocalGraph( hypre_ParCSRMatrix *Amat,
     * fetch machine and matrix parameters
     *-----------------------------------------------------------------*/
 
-   hypre_assert( Amat != NULL );
-   comm = hypre_ParCSRMatrixComm(Amat);
+   nalu_hypre_assert( Amat != NULL );
+   comm = nalu_hypre_ParCSRMatrixComm(Amat);
    MPI_Comm_rank(comm,&mypid);
 
    NALU_HYPRE_ParCSRMatrixGetRowPartitioning((NALU_HYPRE_ParCSRMatrix) Amat,&partition);
    startRow = partition[mypid];
    endRow   = partition[mypid+1] - 1;
    free( partition );
-   AdiagBlock = hypre_ParCSRMatrixDiag(Amat);
-   AdiagNRows = hypre_CSRMatrixNumRows(AdiagBlock);
-   AdiagRPtr  = hypre_CSRMatrixI(AdiagBlock);
-   AdiagCols  = hypre_CSRMatrixJ(AdiagBlock);
-   AdiagVals  = hypre_CSRMatrixData(AdiagBlock);
+   AdiagBlock = nalu_hypre_ParCSRMatrixDiag(Amat);
+   AdiagNRows = nalu_hypre_CSRMatrixNumRows(AdiagBlock);
+   AdiagRPtr  = nalu_hypre_CSRMatrixI(AdiagBlock);
+   AdiagCols  = nalu_hypre_CSRMatrixJ(AdiagBlock);
+   AdiagVals  = nalu_hypre_CSRMatrixData(AdiagBlock);
 
 #if 0
 // seems to give some problems (12/31/03)
@@ -1399,7 +1399,7 @@ int MLI_Method_AMGSA::formLocalGraph( hypre_ParCSRMatrix *Amat,
          partition = new int[AdiagNRows/currNodeDofs_];
          for ( i = 0; i < AdiagNRows; i+=currNodeDofs_ )
             partition[i/currNodeDofs_] = saLabels_[currLevel_][i];
-         hypre_qsort0(partition, 0, AdiagNRows/currNodeDofs_-1);
+         nalu_hypre_qsort0(partition, 0, AdiagNRows/currNodeDofs_-1);
          jj = 1;
          for ( i = 1; i < AdiagNRows/currNodeDofs_; i++ )
             if (partition[i] != partition[i-1]) jj++;
@@ -1447,7 +1447,7 @@ int MLI_Method_AMGSA::formLocalGraph( hypre_ParCSRMatrix *Amat,
    ierr = NALU_HYPRE_IJMatrixCreate(comm, startRow, endRow, startRow,
                                endRow, &IJGraph);
    ierr = NALU_HYPRE_IJMatrixSetObjectType(IJGraph, NALU_HYPRE_PARCSR);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
 
    /*-----------------------------------------------------------------
     * find and initialize the length of each row in the graph
@@ -1505,7 +1505,7 @@ int MLI_Method_AMGSA::formLocalGraph( hypre_ParCSRMatrix *Amat,
    }
    ierr = NALU_HYPRE_IJMatrixSetRowSizes(IJGraph, rowLengths);
    ierr = NALU_HYPRE_IJMatrixInitialize(IJGraph);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
    delete [] rowLengths;
 
    /*-----------------------------------------------------------------
@@ -1563,7 +1563,7 @@ int MLI_Method_AMGSA::formLocalGraph( hypre_ParCSRMatrix *Amat,
                               (const int *) colInd, (const double *) colVal);
    }
    ierr = NALU_HYPRE_IJMatrixAssemble(IJGraph);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
 
    /*-----------------------------------------------------------------
     * return the graph and clean up
@@ -1583,12 +1583,12 @@ int MLI_Method_AMGSA::formLocalGraph( hypre_ParCSRMatrix *Amat,
  * form global graph from matrix (threshold assumed 0)
  * ------------------------------------------------------------------- */
 
-int MLI_Method_AMGSA::formGlobalGraph( hypre_ParCSRMatrix *Amat,
-                                       hypre_ParCSRMatrix **Gmat)
+int MLI_Method_AMGSA::formGlobalGraph( nalu_hypre_ParCSRMatrix *Amat,
+                                       nalu_hypre_ParCSRMatrix **Gmat)
 {
    NALU_HYPRE_IJMatrix     IJGraph;
-   hypre_CSRMatrix    *ADiag, *AOffd;
-   hypre_ParCSRMatrix *graph;
+   nalu_hypre_CSRMatrix    *ADiag, *AOffd;
+   nalu_hypre_ParCSRMatrix *graph;
    MPI_Comm           comm;
    int                cInd, jcol, index, mypid, nprocs, *partition;
    int                startRow, endRow, *rowLengths, length;
@@ -1600,8 +1600,8 @@ int MLI_Method_AMGSA::formGlobalGraph( hypre_ParCSRMatrix *Amat,
     * fetch machine and matrix parameters
     *-----------------------------------------------------------------*/
 
-   hypre_assert( Amat != NULL );
-   comm = hypre_ParCSRMatrixComm(Amat);
+   nalu_hypre_assert( Amat != NULL );
+   comm = nalu_hypre_ParCSRMatrixComm(Amat);
    MPI_Comm_rank(comm,&mypid);
    MPI_Comm_size(comm,&nprocs);
 
@@ -1609,16 +1609,16 @@ int MLI_Method_AMGSA::formGlobalGraph( hypre_ParCSRMatrix *Amat,
    startRow = partition[mypid];
    endRow   = partition[mypid+1] - 1;
    free( partition );
-   ADiag      = hypre_ParCSRMatrixDiag(Amat);
-   AOffd      = hypre_ParCSRMatrixOffd(Amat);
-   localNRows = hypre_CSRMatrixNumRows(ADiag);
+   ADiag      = nalu_hypre_ParCSRMatrixDiag(Amat);
+   AOffd      = nalu_hypre_ParCSRMatrixOffd(Amat);
+   localNRows = nalu_hypre_CSRMatrixNumRows(ADiag);
 
-   ADiagI = hypre_CSRMatrixI(ADiag);
-   ADiagJ = hypre_CSRMatrixJ(ADiag);
-   ADiagA = hypre_CSRMatrixData(ADiag);
-   AOffdI = hypre_CSRMatrixI(AOffd);
-   AOffdJ = hypre_CSRMatrixJ(AOffd);
-   AOffdA = hypre_CSRMatrixData(AOffd);
+   ADiagI = nalu_hypre_CSRMatrixI(ADiag);
+   ADiagJ = nalu_hypre_CSRMatrixJ(ADiag);
+   ADiagA = nalu_hypre_CSRMatrixData(ADiag);
+   AOffdI = nalu_hypre_CSRMatrixI(AOffd);
+   AOffdJ = nalu_hypre_CSRMatrixJ(AOffd);
+   AOffdA = nalu_hypre_CSRMatrixData(AOffd);
 
    /*-----------------------------------------------------------------
     * initialize the graph
@@ -1627,7 +1627,7 @@ int MLI_Method_AMGSA::formGlobalGraph( hypre_ParCSRMatrix *Amat,
    ierr = NALU_HYPRE_IJMatrixCreate(comm, startRow, endRow, startRow,
                                endRow, &IJGraph);
    ierr = NALU_HYPRE_IJMatrixSetObjectType(IJGraph, NALU_HYPRE_PARCSR);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
 
    /*-----------------------------------------------------------------
     * find and initialize the length of each row in the graph
@@ -1656,7 +1656,7 @@ int MLI_Method_AMGSA::formGlobalGraph( hypre_ParCSRMatrix *Amat,
    }
    ierr = NALU_HYPRE_IJMatrixSetRowSizes(IJGraph, rowLengths);
    ierr = NALU_HYPRE_IJMatrixInitialize(IJGraph);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
    if (localNRows > 0) delete [] rowLengths;
 
    /*-----------------------------------------------------------------
@@ -1665,7 +1665,7 @@ int MLI_Method_AMGSA::formGlobalGraph( hypre_ParCSRMatrix *Amat,
 
    if (localNRows > 0) colInd = new int[maxRowNnz];
    if (localNRows > 0) colVal = new double[maxRowNnz];
-   if (nprocs > 1) colMapOffd = hypre_ParCSRMatrixColMapOffd(Amat);
+   if (nprocs > 1) colMapOffd = nalu_hypre_ParCSRMatrixColMapOffd(Amat);
    for ( irow = 0; irow < localNRows; irow++ )
    {
       length = 0;
@@ -1695,7 +1695,7 @@ int MLI_Method_AMGSA::formGlobalGraph( hypre_ParCSRMatrix *Amat,
                               (const int *) colInd, (const double *) colVal);
    }
    ierr = NALU_HYPRE_IJMatrixAssemble(IJGraph);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
 
    /*-----------------------------------------------------------------
     * return the graph and clean up
@@ -1721,13 +1721,13 @@ int MLI_Method_AMGSA::formGlobalGraph( hypre_ParCSRMatrix *Amat,
 
 int MLI_Method_AMGSA::formSmoothVec(MLI_Matrix *mli_Amat)
 {
-   hypre_ParCSRMatrix     *Amat;
+   nalu_hypre_ParCSRMatrix     *Amat;
    MPI_Comm  comm;
    int mypid, nprocs;
    int *partition;
-   hypre_ParVector    *trial_sol, *zero_rhs;
+   nalu_hypre_ParVector    *trial_sol, *zero_rhs;
    MLI_Vector *mli_rhs, *mli_sol;
-   hypre_Vector       *sol_local;
+   nalu_hypre_Vector       *sol_local;
    double *sol_data;
    int local_nrows;
    char   paramString[200];
@@ -1744,8 +1744,8 @@ int MLI_Method_AMGSA::formSmoothVec(MLI_Matrix *mli_Amat)
        nullspaceVec_ = NULL;
    }
 
-   Amat = (hypre_ParCSRMatrix *) mli_Amat->getMatrix();
-   comm = hypre_ParCSRMatrixComm(Amat);
+   Amat = (nalu_hypre_ParCSRMatrix *) mli_Amat->getMatrix();
+   comm = nalu_hypre_ParCSRMatrixComm(Amat);
    MPI_Comm_rank(comm,&mypid);
    MPI_Comm_size(comm,&nprocs);
 
@@ -1755,21 +1755,21 @@ int MLI_Method_AMGSA::formSmoothVec(MLI_Matrix *mli_Amat)
 
    NALU_HYPRE_ParCSRMatrixGetRowPartitioning((NALU_HYPRE_ParCSRMatrix) Amat,
                                         &partition);
-   zero_rhs = hypre_ParVectorCreate(comm, partition[nprocs], partition);
-   hypre_ParVectorInitialize( zero_rhs );
-   hypre_ParVectorSetConstantValues( zero_rhs, 0.0 );
+   zero_rhs = nalu_hypre_ParVectorCreate(comm, partition[nprocs], partition);
+   nalu_hypre_ParVectorInitialize( zero_rhs );
+   nalu_hypre_ParVectorSetConstantValues( zero_rhs, 0.0 );
    strcpy( paramString, "NALU_HYPRE_ParVector" );
    mli_rhs = new MLI_Vector( (void*) zero_rhs, paramString, NULL );
 
    NALU_HYPRE_ParCSRMatrixGetRowPartitioning((NALU_HYPRE_ParCSRMatrix) Amat,
                                         &partition);
-   trial_sol = hypre_ParVectorCreate(comm, partition[nprocs], partition);
-   hypre_ParVectorInitialize( trial_sol );
+   trial_sol = nalu_hypre_ParVectorCreate(comm, partition[nprocs], partition);
+   nalu_hypre_ParVectorInitialize( trial_sol );
    mli_sol = new MLI_Vector( (void*) trial_sol, paramString, NULL );
 
    local_nrows = partition[mypid+1] - partition[mypid];
-   sol_local = hypre_ParVectorLocalVector(trial_sol);
-   sol_data  = hypre_VectorData(sol_local);
+   sol_local = nalu_hypre_ParVectorLocalVector(trial_sol);
+   sol_data  = nalu_hypre_VectorData(sol_local);
 
    /*-----------------------------------------------------------------
     * allocate space for smooth vectors and set up smoother
@@ -1801,8 +1801,8 @@ int MLI_Method_AMGSA::formSmoothVec(MLI_Matrix *mli_Amat)
            *nsptr++ = sol_data[j];
    }
 
-   hypre_ParVectorDestroy(zero_rhs);
-   hypre_ParVectorDestroy(trial_sol);
+   nalu_hypre_ParVectorDestroy(zero_rhs);
+   nalu_hypre_ParVectorDestroy(trial_sol);
    delete smoother;
 
    return 0;
@@ -1815,30 +1815,30 @@ int MLI_Method_AMGSA::formSmoothVec(MLI_Matrix *mli_Amat)
 
 int MLI_Method_AMGSA::formSmoothVecLanczos(MLI_Matrix *mli_Amat)
 {
-    hypre_ParCSRMatrix *Amat;
+    nalu_hypre_ParCSRMatrix *Amat;
     MPI_Comm comm;
     int mypid, nprocs;
     int *partition;
-    hypre_ParVector    *trial_sol;
+    nalu_hypre_ParVector    *trial_sol;
     int local_nrows;
-    hypre_Vector       *sol_local;
+    nalu_hypre_Vector       *sol_local;
     double *sol_data;
     double *nsptr;
     int i, j;
 
-    Amat = (hypre_ParCSRMatrix *) mli_Amat->getMatrix();
-    comm = hypre_ParCSRMatrixComm(Amat);
+    Amat = (nalu_hypre_ParCSRMatrix *) mli_Amat->getMatrix();
+    comm = nalu_hypre_ParCSRMatrixComm(Amat);
     MPI_Comm_rank(comm, &mypid);
     MPI_Comm_size(comm, &nprocs);
 
     NALU_HYPRE_ParCSRMatrixGetRowPartitioning((NALU_HYPRE_ParCSRMatrix) Amat, &partition);
     local_nrows = partition[mypid+1] - partition[mypid];
 
-    trial_sol = hypre_ParVectorCreate(comm, partition[nprocs], partition);
-    hypre_ParVectorInitialize( trial_sol );
+    trial_sol = nalu_hypre_ParVectorCreate(comm, partition[nprocs], partition);
+    nalu_hypre_ParVectorInitialize( trial_sol );
 
-    sol_local = hypre_ParVectorLocalVector(trial_sol);
-    sol_data  = hypre_VectorData(sol_local);
+    sol_local = nalu_hypre_ParVectorLocalVector(trial_sol);
+    sol_data  = nalu_hypre_VectorData(sol_local);
 
     if (nullspaceVec_ != NULL)
     {
@@ -1887,13 +1887,13 @@ int MLI_Method_AMGSA::formSmoothVecLanczos(MLI_Matrix *mli_Amat)
 
 int MLI_Method_AMGSA::smoothTwice(MLI_Matrix *mli_Amat)
 {
-   hypre_ParCSRMatrix     *Amat;
+   nalu_hypre_ParCSRMatrix     *Amat;
    MPI_Comm  comm;
    int mypid, nprocs;
    int *partition;
-   hypre_ParVector    *trial_sol, *zero_rhs;
+   nalu_hypre_ParVector    *trial_sol, *zero_rhs;
    MLI_Vector *mli_rhs, *mli_sol;
-   hypre_Vector       *sol_local;
+   nalu_hypre_Vector       *sol_local;
    double *sol_data;
    int local_nrows;
    char paramString[200];
@@ -1904,8 +1904,8 @@ int MLI_Method_AMGSA::smoothTwice(MLI_Matrix *mli_Amat)
 
    printf("Smoothing twice\n");
 
-   Amat = (hypre_ParCSRMatrix *) mli_Amat->getMatrix();
-   comm = hypre_ParCSRMatrixComm(Amat);
+   Amat = (nalu_hypre_ParCSRMatrix *) mli_Amat->getMatrix();
+   comm = nalu_hypre_ParCSRMatrixComm(Amat);
    MPI_Comm_rank(comm,&mypid);
    MPI_Comm_size(comm,&nprocs);
 
@@ -1915,21 +1915,21 @@ int MLI_Method_AMGSA::smoothTwice(MLI_Matrix *mli_Amat)
 
    NALU_HYPRE_ParCSRMatrixGetRowPartitioning((NALU_HYPRE_ParCSRMatrix) Amat,
                                         &partition);
-   zero_rhs = hypre_ParVectorCreate(comm, partition[nprocs], partition);
-   hypre_ParVectorInitialize( zero_rhs );
-   hypre_ParVectorSetConstantValues( zero_rhs, 0.0 );
+   zero_rhs = nalu_hypre_ParVectorCreate(comm, partition[nprocs], partition);
+   nalu_hypre_ParVectorInitialize( zero_rhs );
+   nalu_hypre_ParVectorSetConstantValues( zero_rhs, 0.0 );
    strcpy( paramString, "NALU_HYPRE_ParVector" );
    mli_rhs = new MLI_Vector( (void*) zero_rhs,  paramString, NULL );
 
    NALU_HYPRE_ParCSRMatrixGetRowPartitioning((NALU_HYPRE_ParCSRMatrix) Amat,
                                         &partition);
-   trial_sol = hypre_ParVectorCreate(comm, partition[nprocs], partition);
-   hypre_ParVectorInitialize( trial_sol );
+   trial_sol = nalu_hypre_ParVectorCreate(comm, partition[nprocs], partition);
+   nalu_hypre_ParVectorInitialize( trial_sol );
    mli_sol = new MLI_Vector( (void*) trial_sol, paramString, NULL );
 
    local_nrows = partition[mypid+1] - partition[mypid];
-   sol_local = hypre_ParVectorLocalVector(trial_sol);
-   sol_data  = hypre_VectorData(sol_local);
+   sol_local = nalu_hypre_ParVectorLocalVector(trial_sol);
+   sol_data  = nalu_hypre_VectorData(sol_local);
 
    /*-----------------------------------------------------------------
     * set up smoother
@@ -1964,8 +1964,8 @@ int MLI_Method_AMGSA::smoothTwice(MLI_Matrix *mli_Amat)
            *nsptr++ = sol_data[j];
    }
 
-   hypre_ParVectorDestroy(zero_rhs);
-   hypre_ParVectorDestroy(trial_sol);
+   nalu_hypre_ParVectorDestroy(zero_rhs);
+   nalu_hypre_ParVectorDestroy(trial_sol);
    delete smoother;
 
    return 0;

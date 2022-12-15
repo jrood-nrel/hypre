@@ -11,7 +11,7 @@
  *
  *****************************************************************************/
 
-#include "./_hypre_IJ_mv.h"
+#include "./_nalu_hypre_IJ_mv.h"
 
 #include "../NALU_HYPRE.h"
 
@@ -25,31 +25,31 @@ NALU_HYPRE_IJVectorCreate( MPI_Comm        comm,
                       NALU_HYPRE_BigInt    jupper,
                       NALU_HYPRE_IJVector *vector )
 {
-   hypre_IJVector *vec;
+   nalu_hypre_IJVector *vec;
    NALU_HYPRE_Int       num_procs, my_id;
    NALU_HYPRE_BigInt    row0, rowN;
 
-   vec = hypre_CTAlloc(hypre_IJVector,  1, NALU_HYPRE_MEMORY_HOST);
+   vec = nalu_hypre_CTAlloc(nalu_hypre_IJVector,  1, NALU_HYPRE_MEMORY_HOST);
 
    if (!vec)
    {
-      hypre_error(NALU_HYPRE_ERROR_MEMORY);
-      return hypre_error_flag;
+      nalu_hypre_error(NALU_HYPRE_ERROR_MEMORY);
+      return nalu_hypre_error_flag;
    }
 
-   hypre_MPI_Comm_size(comm, &num_procs);
-   hypre_MPI_Comm_rank(comm, &my_id);
+   nalu_hypre_MPI_Comm_size(comm, &num_procs);
+   nalu_hypre_MPI_Comm_rank(comm, &my_id);
 
    if (jlower > jupper + 1 || jlower < 0)
    {
-      hypre_error_in_arg(2);
-      hypre_TFree(vec, NALU_HYPRE_MEMORY_HOST);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(2);
+      nalu_hypre_TFree(vec, NALU_HYPRE_MEMORY_HOST);
+      return nalu_hypre_error_flag;
    }
    if (jupper < -1)
    {
-      hypre_error_in_arg(3);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(3);
+      return nalu_hypre_error_flag;
    }
 
    /* now we need the global number of rows as well
@@ -60,30 +60,30 @@ NALU_HYPRE_IJVectorCreate( MPI_Comm        comm,
    {
       row0 = jlower;
    }
-   hypre_MPI_Bcast(&row0, 1, NALU_HYPRE_MPI_BIG_INT, 0, comm);
+   nalu_hypre_MPI_Bcast(&row0, 1, NALU_HYPRE_MPI_BIG_INT, 0, comm);
    /* proc (num_procs-1) has the last row  */
    if (my_id == (num_procs - 1))
    {
       rowN = jupper;
    }
-   hypre_MPI_Bcast(&rowN, 1, NALU_HYPRE_MPI_BIG_INT, num_procs - 1, comm);
+   nalu_hypre_MPI_Bcast(&rowN, 1, NALU_HYPRE_MPI_BIG_INT, num_procs - 1, comm);
 
-   hypre_IJVectorGlobalFirstRow(vec) = row0;
-   hypre_IJVectorGlobalNumRows(vec) = rowN - row0 + 1;
+   nalu_hypre_IJVectorGlobalFirstRow(vec) = row0;
+   nalu_hypre_IJVectorGlobalNumRows(vec) = rowN - row0 + 1;
 
-   hypre_IJVectorComm(vec)            = comm;
-   hypre_IJVectorNumComponents(vec)   = 1;
-   hypre_IJVectorObjectType(vec)      = NALU_HYPRE_UNITIALIZED;
-   hypre_IJVectorObject(vec)          = NULL;
-   hypre_IJVectorTranslator(vec)      = NULL;
-   hypre_IJVectorAssumedPart(vec)     = NULL;
-   hypre_IJVectorPrintLevel(vec)      = 0;
-   hypre_IJVectorPartitioning(vec)[0] = jlower;
-   hypre_IJVectorPartitioning(vec)[1] = jupper + 1;
+   nalu_hypre_IJVectorComm(vec)            = comm;
+   nalu_hypre_IJVectorNumComponents(vec)   = 1;
+   nalu_hypre_IJVectorObjectType(vec)      = NALU_HYPRE_UNITIALIZED;
+   nalu_hypre_IJVectorObject(vec)          = NULL;
+   nalu_hypre_IJVectorTranslator(vec)      = NULL;
+   nalu_hypre_IJVectorAssumedPart(vec)     = NULL;
+   nalu_hypre_IJVectorPrintLevel(vec)      = 0;
+   nalu_hypre_IJVectorPartitioning(vec)[0] = jlower;
+   nalu_hypre_IJVectorPartitioning(vec)[1] = jupper + 1;
 
    *vector = (NALU_HYPRE_IJVector) vec;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
@@ -94,23 +94,23 @@ NALU_HYPRE_Int
 NALU_HYPRE_IJVectorSetNumComponents( NALU_HYPRE_IJVector vector,
                                 NALU_HYPRE_Int      num_components )
 {
-   hypre_IJVector *vec = (hypre_IJVector *) vector;
+   nalu_hypre_IJVector *vec = (nalu_hypre_IJVector *) vector;
 
    if (!vec)
    {
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
 
    if (num_components < 0)
    {
-      hypre_error_in_arg(2);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(2);
+      return nalu_hypre_error_flag;
    }
 
-   hypre_IJVectorNumComponents(vector) = num_components;
+   nalu_hypre_IJVectorNumComponents(vector) = num_components;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
@@ -121,25 +121,25 @@ NALU_HYPRE_Int
 NALU_HYPRE_IJVectorSetComponent( NALU_HYPRE_IJVector vector,
                             NALU_HYPRE_Int      component )
 {
-   hypre_IJVector *vec = (hypre_IJVector *) vector;
+   nalu_hypre_IJVector *vec = (nalu_hypre_IJVector *) vector;
 
    if (!vec)
    {
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
 
-   if (hypre_IJVectorObjectType(vec) == NALU_HYPRE_PARCSR)
+   if (nalu_hypre_IJVectorObjectType(vec) == NALU_HYPRE_PARCSR)
    {
-      hypre_IJVectorSetComponentPar(vector, component);
+      nalu_hypre_IJVectorSetComponentPar(vector, component);
    }
    else
    {
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
@@ -149,37 +149,37 @@ NALU_HYPRE_IJVectorSetComponent( NALU_HYPRE_IJVector vector,
 NALU_HYPRE_Int
 NALU_HYPRE_IJVectorDestroy( NALU_HYPRE_IJVector vector )
 {
-   hypre_IJVector *vec = (hypre_IJVector *) vector;
+   nalu_hypre_IJVector *vec = (nalu_hypre_IJVector *) vector;
 
    if (!vec)
    {
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
 
-   if (hypre_IJVectorAssumedPart(vec))
+   if (nalu_hypre_IJVectorAssumedPart(vec))
    {
-      hypre_AssumedPartitionDestroy((hypre_IJAssumedPart*)hypre_IJVectorAssumedPart(vec));
+      nalu_hypre_AssumedPartitionDestroy((nalu_hypre_IJAssumedPart*)nalu_hypre_IJVectorAssumedPart(vec));
    }
 
-   if ( hypre_IJVectorObjectType(vec) == NALU_HYPRE_PARCSR )
+   if ( nalu_hypre_IJVectorObjectType(vec) == NALU_HYPRE_PARCSR )
    {
-      hypre_IJVectorDestroyPar(vec);
-      if (hypre_IJVectorTranslator(vec))
+      nalu_hypre_IJVectorDestroyPar(vec);
+      if (nalu_hypre_IJVectorTranslator(vec))
       {
-         hypre_AuxParVectorDestroy((hypre_AuxParVector *)
-                                   (hypre_IJVectorTranslator(vec)));
+         nalu_hypre_AuxParVectorDestroy((nalu_hypre_AuxParVector *)
+                                   (nalu_hypre_IJVectorTranslator(vec)));
       }
    }
-   else if ( hypre_IJVectorObjectType(vec) != -1 )
+   else if ( nalu_hypre_IJVectorObjectType(vec) != -1 )
    {
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
 
-   hypre_TFree(vec, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(vec, NALU_HYPRE_MEMORY_HOST);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
@@ -189,57 +189,57 @@ NALU_HYPRE_IJVectorDestroy( NALU_HYPRE_IJVector vector )
 NALU_HYPRE_Int
 NALU_HYPRE_IJVectorInitialize( NALU_HYPRE_IJVector vector )
 {
-   hypre_IJVector *vec = (hypre_IJVector *) vector;
+   nalu_hypre_IJVector *vec = (nalu_hypre_IJVector *) vector;
 
    if (!vec)
    {
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
 
-   if ( hypre_IJVectorObjectType(vec) == NALU_HYPRE_PARCSR )
+   if ( nalu_hypre_IJVectorObjectType(vec) == NALU_HYPRE_PARCSR )
    {
-      if (!hypre_IJVectorObject(vec))
+      if (!nalu_hypre_IJVectorObject(vec))
       {
-         hypre_IJVectorCreatePar(vec, hypre_IJVectorPartitioning(vec));
+         nalu_hypre_IJVectorCreatePar(vec, nalu_hypre_IJVectorPartitioning(vec));
       }
 
-      hypre_IJVectorInitializePar(vec);
+      nalu_hypre_IJVectorInitializePar(vec);
    }
    else
    {
-      hypre_error_in_arg(1);
+      nalu_hypre_error_in_arg(1);
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 NALU_HYPRE_Int
 NALU_HYPRE_IJVectorInitialize_v2( NALU_HYPRE_IJVector vector, NALU_HYPRE_MemoryLocation memory_location )
 {
-   hypre_IJVector *vec = (hypre_IJVector *) vector;
+   nalu_hypre_IJVector *vec = (nalu_hypre_IJVector *) vector;
 
    if (!vec)
    {
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
 
-   if ( hypre_IJVectorObjectType(vec) == NALU_HYPRE_PARCSR )
+   if ( nalu_hypre_IJVectorObjectType(vec) == NALU_HYPRE_PARCSR )
    {
-      if (!hypre_IJVectorObject(vec))
+      if (!nalu_hypre_IJVectorObject(vec))
       {
-         hypre_IJVectorCreatePar(vec, hypre_IJVectorPartitioning(vec));
+         nalu_hypre_IJVectorCreatePar(vec, nalu_hypre_IJVectorPartitioning(vec));
       }
 
-      hypre_IJVectorInitializePar_v2(vec, memory_location);
+      nalu_hypre_IJVectorInitializePar_v2(vec, memory_location);
    }
    else
    {
-      hypre_error_in_arg(1);
+      nalu_hypre_error_in_arg(1);
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
@@ -250,16 +250,16 @@ NALU_HYPRE_Int
 NALU_HYPRE_IJVectorSetPrintLevel( NALU_HYPRE_IJVector vector,
                              NALU_HYPRE_Int print_level )
 {
-   hypre_IJVector *ijvector = (hypre_IJVector *) vector;
+   nalu_hypre_IJVector *ijvector = (nalu_hypre_IJVector *) vector;
 
    if (!ijvector)
    {
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
 
-   hypre_IJVectorPrintLevel(ijvector) = 1;
-   return hypre_error_flag;
+   nalu_hypre_IJVectorPrintLevel(ijvector) = 1;
+   return nalu_hypre_error_flag;
 }
 
 
@@ -273,49 +273,49 @@ NALU_HYPRE_IJVectorSetValues( NALU_HYPRE_IJVector        vector,
                          const NALU_HYPRE_BigInt   *indices,
                          const NALU_HYPRE_Complex  *values   )
 {
-   hypre_IJVector *vec = (hypre_IJVector *) vector;
+   nalu_hypre_IJVector *vec = (nalu_hypre_IJVector *) vector;
 
-   if (nvalues == 0) { return hypre_error_flag; }
+   if (nvalues == 0) { return nalu_hypre_error_flag; }
 
    if (!vec)
    {
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
 
    if (nvalues < 0)
    {
-      hypre_error_in_arg(2);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(2);
+      return nalu_hypre_error_flag;
    }
 
    if (!values)
    {
-      hypre_error_in_arg(4);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(4);
+      return nalu_hypre_error_flag;
    }
 
-   if ( hypre_IJVectorObjectType(vec) == NALU_HYPRE_PARCSR )
+   if ( nalu_hypre_IJVectorObjectType(vec) == NALU_HYPRE_PARCSR )
    {
 #if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP) || defined(NALU_HYPRE_USING_SYCL)
-      NALU_HYPRE_ExecutionPolicy exec = hypre_GetExecPolicy1( hypre_IJVectorMemoryLocation(vector) );
+      NALU_HYPRE_ExecutionPolicy exec = nalu_hypre_GetExecPolicy1( nalu_hypre_IJVectorMemoryLocation(vector) );
 
       if (exec == NALU_HYPRE_EXEC_DEVICE)
       {
-         return ( hypre_IJVectorSetAddValuesParDevice(vec, nvalues, indices, values, "set") );
+         return ( nalu_hypre_IJVectorSetAddValuesParDevice(vec, nvalues, indices, values, "set") );
       }
       else
 #endif
       {
-         return ( hypre_IJVectorSetValuesPar(vec, nvalues, indices, values) );
+         return ( nalu_hypre_IJVectorSetValuesPar(vec, nvalues, indices, values) );
       }
    }
    else
    {
-      hypre_error_in_arg(1);
+      nalu_hypre_error_in_arg(1);
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
@@ -328,49 +328,49 @@ NALU_HYPRE_IJVectorAddToValues( NALU_HYPRE_IJVector        vector,
                            const NALU_HYPRE_BigInt   *indices,
                            const NALU_HYPRE_Complex  *values )
 {
-   hypre_IJVector *vec = (hypre_IJVector *) vector;
+   nalu_hypre_IJVector *vec = (nalu_hypre_IJVector *) vector;
 
-   if (nvalues == 0) { return hypre_error_flag; }
+   if (nvalues == 0) { return nalu_hypre_error_flag; }
 
    if (!vec)
    {
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
 
    if (nvalues < 0)
    {
-      hypre_error_in_arg(2);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(2);
+      return nalu_hypre_error_flag;
    }
 
    if (!values)
    {
-      hypre_error_in_arg(4);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(4);
+      return nalu_hypre_error_flag;
    }
 
-   if ( hypre_IJVectorObjectType(vec) == NALU_HYPRE_PARCSR )
+   if ( nalu_hypre_IJVectorObjectType(vec) == NALU_HYPRE_PARCSR )
    {
 #if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP) || defined(NALU_HYPRE_USING_SYCL)
-      NALU_HYPRE_ExecutionPolicy exec = hypre_GetExecPolicy1( hypre_IJVectorMemoryLocation(vector) );
+      NALU_HYPRE_ExecutionPolicy exec = nalu_hypre_GetExecPolicy1( nalu_hypre_IJVectorMemoryLocation(vector) );
 
       if (exec == NALU_HYPRE_EXEC_DEVICE)
       {
-         return ( hypre_IJVectorSetAddValuesParDevice(vec, nvalues, indices, values, "add") );
+         return ( nalu_hypre_IJVectorSetAddValuesParDevice(vec, nvalues, indices, values, "add") );
       }
       else
 #endif
       {
-         return ( hypre_IJVectorAddToValuesPar(vec, nvalues, indices, values) );
+         return ( nalu_hypre_IJVectorAddToValuesPar(vec, nvalues, indices, values) );
       }
    }
    else
    {
-      hypre_error_in_arg(1);
+      nalu_hypre_error_in_arg(1);
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
@@ -380,35 +380,35 @@ NALU_HYPRE_IJVectorAddToValues( NALU_HYPRE_IJVector        vector,
 NALU_HYPRE_Int
 NALU_HYPRE_IJVectorAssemble( NALU_HYPRE_IJVector vector )
 {
-   hypre_IJVector *vec = (hypre_IJVector *) vector;
+   nalu_hypre_IJVector *vec = (nalu_hypre_IJVector *) vector;
 
    if (!vec)
    {
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
 
-   if ( hypre_IJVectorObjectType(vec) == NALU_HYPRE_PARCSR )
+   if ( nalu_hypre_IJVectorObjectType(vec) == NALU_HYPRE_PARCSR )
    {
 #if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP) || defined(NALU_HYPRE_USING_SYCL)
-      NALU_HYPRE_ExecutionPolicy exec = hypre_GetExecPolicy1( hypre_IJVectorMemoryLocation(vector) );
+      NALU_HYPRE_ExecutionPolicy exec = nalu_hypre_GetExecPolicy1( nalu_hypre_IJVectorMemoryLocation(vector) );
 
       if (exec == NALU_HYPRE_EXEC_DEVICE)
       {
-         return ( hypre_IJVectorAssembleParDevice(vec) );
+         return ( nalu_hypre_IJVectorAssembleParDevice(vec) );
       }
       else
 #endif
       {
-         return ( hypre_IJVectorAssemblePar(vec) );
+         return ( nalu_hypre_IJVectorAssemblePar(vec) );
       }
    }
    else
    {
-      hypre_error_in_arg(1);
+      nalu_hypre_error_in_arg(1);
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
@@ -422,56 +422,56 @@ NALU_HYPRE_IJVectorUpdateValues( NALU_HYPRE_IJVector        vector,
                             const NALU_HYPRE_Complex  *values,
                             NALU_HYPRE_Int             action )
 {
-   hypre_IJVector *vec = (hypre_IJVector *) vector;
+   nalu_hypre_IJVector *vec = (nalu_hypre_IJVector *) vector;
 
-   if (nvalues == 0) { return hypre_error_flag; }
+   if (nvalues == 0) { return nalu_hypre_error_flag; }
 
    if (!vec)
    {
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
 
    if (nvalues < 0)
    {
-      hypre_error_in_arg(2);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(2);
+      return nalu_hypre_error_flag;
    }
 
    if (!values)
    {
-      hypre_error_in_arg(4);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(4);
+      return nalu_hypre_error_flag;
    }
 
-   if ( hypre_IJVectorObjectType(vec) == NALU_HYPRE_PARCSR )
+   if ( nalu_hypre_IJVectorObjectType(vec) == NALU_HYPRE_PARCSR )
    {
 #if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
-      NALU_HYPRE_ExecutionPolicy exec = hypre_GetExecPolicy1( hypre_IJVectorMemoryLocation(vector) );
+      NALU_HYPRE_ExecutionPolicy exec = nalu_hypre_GetExecPolicy1( nalu_hypre_IJVectorMemoryLocation(vector) );
 
       if (exec == NALU_HYPRE_EXEC_DEVICE)
       {
-         return ( hypre_IJVectorUpdateValuesDevice(vec, nvalues, indices, values, action) );
+         return ( nalu_hypre_IJVectorUpdateValuesDevice(vec, nvalues, indices, values, action) );
       }
       else
 #endif
       {
          if (action == 1)
          {
-            return ( hypre_IJVectorSetValuesPar(vec, nvalues, indices, values) );
+            return ( nalu_hypre_IJVectorSetValuesPar(vec, nvalues, indices, values) );
          }
          else
          {
-            return ( hypre_IJVectorAddToValuesPar(vec, nvalues, indices, values) );
+            return ( nalu_hypre_IJVectorAddToValuesPar(vec, nvalues, indices, values) );
          }
       }
    }
    else
    {
-      hypre_error_in_arg(1);
+      nalu_hypre_error_in_arg(1);
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
@@ -484,38 +484,38 @@ NALU_HYPRE_IJVectorGetValues( NALU_HYPRE_IJVector      vector,
                          const NALU_HYPRE_BigInt *indices,
                          NALU_HYPRE_Complex      *values )
 {
-   hypre_IJVector *vec = (hypre_IJVector *) vector;
+   nalu_hypre_IJVector *vec = (nalu_hypre_IJVector *) vector;
 
-   if (nvalues == 0) { return hypre_error_flag; }
+   if (nvalues == 0) { return nalu_hypre_error_flag; }
 
    if (!vec)
    {
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
 
    if (nvalues < 0)
    {
-      hypre_error_in_arg(2);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(2);
+      return nalu_hypre_error_flag;
    }
 
    if (!values)
    {
-      hypre_error_in_arg(4);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(4);
+      return nalu_hypre_error_flag;
    }
 
-   if ( hypre_IJVectorObjectType(vec) == NALU_HYPRE_PARCSR )
+   if ( nalu_hypre_IJVectorObjectType(vec) == NALU_HYPRE_PARCSR )
    {
-      return ( hypre_IJVectorGetValuesPar(vec, nvalues, indices, values) );
+      return ( nalu_hypre_IJVectorGetValuesPar(vec, nvalues, indices, values) );
    }
    else
    {
-      hypre_error_in_arg(1);
+      nalu_hypre_error_in_arg(1);
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
@@ -526,24 +526,24 @@ NALU_HYPRE_Int
 NALU_HYPRE_IJVectorSetMaxOffProcElmts( NALU_HYPRE_IJVector vector,
                                   NALU_HYPRE_Int      max_off_proc_elmts )
 {
-   hypre_IJVector *vec = (hypre_IJVector *) vector;
+   nalu_hypre_IJVector *vec = (nalu_hypre_IJVector *) vector;
 
    if (!vec)
    {
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
 
-   if ( hypre_IJVectorObjectType(vec) == NALU_HYPRE_PARCSR )
+   if ( nalu_hypre_IJVectorObjectType(vec) == NALU_HYPRE_PARCSR )
    {
-      return ( hypre_IJVectorSetMaxOffProcElmtsPar(vec, max_off_proc_elmts));
+      return ( nalu_hypre_IJVectorSetMaxOffProcElmtsPar(vec, max_off_proc_elmts));
    }
    else
    {
-      hypre_error_in_arg(1);
+      nalu_hypre_error_in_arg(1);
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
@@ -554,17 +554,17 @@ NALU_HYPRE_Int
 NALU_HYPRE_IJVectorSetObjectType( NALU_HYPRE_IJVector vector,
                              NALU_HYPRE_Int      type )
 {
-   hypre_IJVector *vec = (hypre_IJVector *) vector;
+   nalu_hypre_IJVector *vec = (nalu_hypre_IJVector *) vector;
 
    if (!vec)
    {
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
 
-   hypre_IJVectorObjectType(vec) = type;
+   nalu_hypre_IJVectorObjectType(vec) = type;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
@@ -575,17 +575,17 @@ NALU_HYPRE_Int
 NALU_HYPRE_IJVectorGetObjectType( NALU_HYPRE_IJVector  vector,
                              NALU_HYPRE_Int      *type )
 {
-   hypre_IJVector *vec = (hypre_IJVector *) vector;
+   nalu_hypre_IJVector *vec = (nalu_hypre_IJVector *) vector;
 
    if (!vec)
    {
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
 
-   *type = hypre_IJVectorObjectType(vec);
+   *type = nalu_hypre_IJVectorObjectType(vec);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
@@ -597,18 +597,18 @@ NALU_HYPRE_IJVectorGetLocalRange( NALU_HYPRE_IJVector  vector,
                              NALU_HYPRE_BigInt   *jlower,
                              NALU_HYPRE_BigInt   *jupper )
 {
-   hypre_IJVector *vec = (hypre_IJVector *) vector;
+   nalu_hypre_IJVector *vec = (nalu_hypre_IJVector *) vector;
 
    if (!vec)
    {
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
 
-   *jlower = hypre_IJVectorPartitioning(vec)[0];
-   *jupper = hypre_IJVectorPartitioning(vec)[1] - 1;
+   *jlower = nalu_hypre_IJVectorPartitioning(vec)[0];
+   *jupper = nalu_hypre_IJVectorPartitioning(vec)[1] - 1;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
@@ -619,17 +619,17 @@ NALU_HYPRE_Int
 NALU_HYPRE_IJVectorGetObject( NALU_HYPRE_IJVector   vector,
                          void           **object )
 {
-   hypre_IJVector *vec = (hypre_IJVector *) vector;
+   nalu_hypre_IJVector *vec = (nalu_hypre_IJVector *) vector;
 
    if (!vec)
    {
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
 
-   *object = hypre_IJVectorObject(vec);
+   *object = nalu_hypre_IJVectorObject(vec);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
@@ -650,17 +650,17 @@ NALU_HYPRE_IJVectorRead( const char     *filename,
    char            new_filename[255];
    FILE           *file;
 
-   hypre_MPI_Comm_rank(comm, &myid);
+   nalu_hypre_MPI_Comm_rank(comm, &myid);
 
-   hypre_sprintf(new_filename, "%s.%05d", filename, myid);
+   nalu_hypre_sprintf(new_filename, "%s.%05d", filename, myid);
 
    if ((file = fopen(new_filename, "r")) == NULL)
    {
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
 
-   hypre_fscanf(file, "%b %b", &jlower, &jupper);
+   nalu_hypre_fscanf(file, "%b %b", &jlower, &jupper);
    NALU_HYPRE_IJVectorCreate(comm, jlower, jupper, &vector);
 
    NALU_HYPRE_IJVectorSetObjectType(vector, type);
@@ -671,12 +671,12 @@ NALU_HYPRE_IJVectorRead( const char     *filename,
     * catch mistakes in the input file.  This is done with %*[ \t].  Using a
     * space here causes an input line with a single decimal value on it to be
     * read as if it were an integer followed by a decimal value. */
-   while ( (ret = hypre_fscanf(file, "%b%*[ \t]%le", &j, &value)) != EOF )
+   while ( (ret = nalu_hypre_fscanf(file, "%b%*[ \t]%le", &j, &value)) != EOF )
    {
       if (ret != 2)
       {
-         hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "Error in IJ vector input file.");
-         return hypre_error_flag;
+         nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "Error in IJ vector input file.");
+         return nalu_hypre_error_flag;
       }
       if (j < jlower || j > jupper)
       {
@@ -694,7 +694,7 @@ NALU_HYPRE_IJVectorRead( const char     *filename,
 
    *vector_ptr = vector;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
@@ -715,56 +715,56 @@ NALU_HYPRE_IJVectorPrint( NALU_HYPRE_IJVector  vector,
 
    if (!vector)
    {
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
 
-   comm = hypre_IJVectorComm(vector);
-   hypre_MPI_Comm_rank(comm, &myid);
+   comm = nalu_hypre_IJVectorComm(vector);
+   nalu_hypre_MPI_Comm_rank(comm, &myid);
 
-   hypre_sprintf(new_filename, "%s.%05d", filename, myid);
+   nalu_hypre_sprintf(new_filename, "%s.%05d", filename, myid);
 
    if ((file = fopen(new_filename, "w")) == NULL)
    {
-      hypre_error_in_arg(2);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(2);
+      return nalu_hypre_error_flag;
    }
 
-   partitioning = hypre_IJVectorPartitioning(vector);
+   partitioning = nalu_hypre_IJVectorPartitioning(vector);
    jlower = partitioning[0];
    jupper = partitioning[1] - 1;
    n_local = jupper - jlower + 1;
 
-   hypre_fprintf(file, "%b %b\n", jlower, jupper);
+   nalu_hypre_fprintf(file, "%b %b\n", jlower, jupper);
 
-   NALU_HYPRE_MemoryLocation memory_location = hypre_IJVectorMemoryLocation(vector);
+   NALU_HYPRE_MemoryLocation memory_location = nalu_hypre_IJVectorMemoryLocation(vector);
 
-   d_values = hypre_TAlloc(NALU_HYPRE_Complex, n_local, memory_location);
+   d_values = nalu_hypre_TAlloc(NALU_HYPRE_Complex, n_local, memory_location);
 
    NALU_HYPRE_IJVectorGetValues(vector, n_local, NULL, d_values);
 
-   if ( hypre_GetActualMemLocation(memory_location) == hypre_MEMORY_HOST )
+   if ( nalu_hypre_GetActualMemLocation(memory_location) == nalu_hypre_MEMORY_HOST )
    {
       values = d_values;
    }
    else
    {
-      h_values = hypre_TAlloc(NALU_HYPRE_Complex, n_local, NALU_HYPRE_MEMORY_HOST);
-      hypre_TMemcpy(h_values, d_values, NALU_HYPRE_Complex, n_local, NALU_HYPRE_MEMORY_HOST, memory_location);
+      h_values = nalu_hypre_TAlloc(NALU_HYPRE_Complex, n_local, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TMemcpy(h_values, d_values, NALU_HYPRE_Complex, n_local, NALU_HYPRE_MEMORY_HOST, memory_location);
       values = h_values;
    }
 
    for (j = jlower; j <= jupper; j++)
    {
-      hypre_fprintf(file, "%b %.14e\n", j, values[j - jlower]);
+      nalu_hypre_fprintf(file, "%b %.14e\n", j, values[j - jlower]);
    }
 
-   hypre_TFree(d_values, memory_location);
-   hypre_TFree(h_values, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(d_values, memory_location);
+   nalu_hypre_TFree(h_values, NALU_HYPRE_MEMORY_HOST);
 
    fclose(file);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
@@ -776,39 +776,39 @@ NALU_HYPRE_IJVectorInnerProd( NALU_HYPRE_IJVector  x,
                          NALU_HYPRE_IJVector  y,
                          NALU_HYPRE_Real     *prod )
 {
-   hypre_IJVector *xvec = (hypre_IJVector *) x;
-   hypre_IJVector *yvec = (hypre_IJVector *) y;
+   nalu_hypre_IJVector *xvec = (nalu_hypre_IJVector *) x;
+   nalu_hypre_IJVector *yvec = (nalu_hypre_IJVector *) y;
 
    if (!xvec)
    {
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
 
    if (!yvec)
    {
-      hypre_error_in_arg(2);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(2);
+      return nalu_hypre_error_flag;
    }
 
-   if (hypre_IJVectorObjectType(xvec) != hypre_IJVectorObjectType(yvec))
+   if (nalu_hypre_IJVectorObjectType(xvec) != nalu_hypre_IJVectorObjectType(yvec))
    {
-      hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "Input vectors don't have the same object type!");
-      return hypre_error_flag;
+      nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "Input vectors don't have the same object type!");
+      return nalu_hypre_error_flag;
    }
 
-   if (hypre_IJVectorObjectType(xvec) == NALU_HYPRE_PARCSR)
+   if (nalu_hypre_IJVectorObjectType(xvec) == NALU_HYPRE_PARCSR)
    {
-      hypre_ParVector *par_x = (hypre_ParVector*) hypre_IJVectorObject(xvec);
-      hypre_ParVector *par_y = (hypre_ParVector*) hypre_IJVectorObject(yvec);
+      nalu_hypre_ParVector *par_x = (nalu_hypre_ParVector*) nalu_hypre_IJVectorObject(xvec);
+      nalu_hypre_ParVector *par_y = (nalu_hypre_ParVector*) nalu_hypre_IJVectorObject(yvec);
 
       NALU_HYPRE_ParVectorInnerProd(par_x, par_y, prod);
    }
    else
    {
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }

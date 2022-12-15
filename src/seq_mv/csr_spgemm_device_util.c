@@ -27,7 +27,7 @@ struct row_size : public thrust::unary_function<NALU_HYPRE_Int, NALU_HYPRE_Int>
  *        d_i has size (m+1) on entry
  * generate (i,j,a) with d_c */
 void
-hypre_create_ija( NALU_HYPRE_Int       m,
+nalu_hypre_create_ija( NALU_HYPRE_Int       m,
                   NALU_HYPRE_Int      *row_id, /* length of m, row indices; if null, it is [0,1,2,3,...] */
                   NALU_HYPRE_Int      *d_c,    /* d_c[row_id[i]] is the size of ith row */
                   NALU_HYPRE_Int      *d_i,
@@ -39,7 +39,7 @@ hypre_create_ija( NALU_HYPRE_Int       m,
 {
    NALU_HYPRE_Int nnz = 0;
 
-   hypre_Memset(d_i, 0, sizeof(NALU_HYPRE_Int), NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_Memset(d_i, 0, sizeof(NALU_HYPRE_Int), NALU_HYPRE_MEMORY_DEVICE);
 
    if (row_id)
    {
@@ -59,25 +59,25 @@ hypre_create_ija( NALU_HYPRE_Int       m,
    if (*nnz_ptr >= 0)
    {
 #if defined(NALU_HYPRE_DEBUG)
-      hypre_TMemcpy(&nnz, d_i + m, NALU_HYPRE_Int, 1, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_DEVICE);
-      hypre_assert(nnz == *nnz_ptr);
+      nalu_hypre_TMemcpy(&nnz, d_i + m, NALU_HYPRE_Int, 1, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_DEVICE);
+      nalu_hypre_assert(nnz == *nnz_ptr);
 #endif
       nnz = *nnz_ptr;
    }
    else
    {
-      hypre_TMemcpy(&nnz, d_i + m, NALU_HYPRE_Int, 1, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_DEVICE);
+      nalu_hypre_TMemcpy(&nnz, d_i + m, NALU_HYPRE_Int, 1, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_DEVICE);
       *nnz_ptr = nnz;
    }
 
    if (d_j)
    {
-      *d_j = hypre_TAlloc(NALU_HYPRE_Int, nnz, NALU_HYPRE_MEMORY_DEVICE);
+      *d_j = nalu_hypre_TAlloc(NALU_HYPRE_Int, nnz, NALU_HYPRE_MEMORY_DEVICE);
    }
 
    if (d_a)
    {
-      *d_a = hypre_TAlloc(NALU_HYPRE_Complex, nnz, NALU_HYPRE_MEMORY_DEVICE);
+      *d_a = nalu_hypre_TAlloc(NALU_HYPRE_Complex, nnz, NALU_HYPRE_MEMORY_DEVICE);
    }
 }
 
@@ -85,7 +85,7 @@ hypre_create_ija( NALU_HYPRE_Int       m,
  *        d_i has size (m+1) on entry
  * generate (i,j,a) with row_size(d_c) see above (over allocation) */
 void
-hypre_create_ija( NALU_HYPRE_Int       SHMEM_HASH_SIZE,
+nalu_hypre_create_ija( NALU_HYPRE_Int       SHMEM_HASH_SIZE,
                   NALU_HYPRE_Int       m,
                   NALU_HYPRE_Int      *row_id,        /* length of m, row indices; if null, it is [0,1,2,3,...] */
                   NALU_HYPRE_Int      *d_c,           /* d_c[row_id[i]] is the size of ith row */
@@ -96,7 +96,7 @@ hypre_create_ija( NALU_HYPRE_Int       SHMEM_HASH_SIZE,
 {
    NALU_HYPRE_Int nnz = 0;
 
-   hypre_Memset(d_i, 0, sizeof(NALU_HYPRE_Int), NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_Memset(d_i, 0, sizeof(NALU_HYPRE_Int), NALU_HYPRE_MEMORY_DEVICE);
 
    if (row_id)
    {
@@ -115,7 +115,7 @@ hypre_create_ija( NALU_HYPRE_Int       SHMEM_HASH_SIZE,
                          d_i + 1 );
    }
 
-   hypre_TMemcpy(&nnz, d_i + m, NALU_HYPRE_Int, 1, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TMemcpy(&nnz, d_i + m, NALU_HYPRE_Int, 1, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_DEVICE);
 
    if (nnz_ptr)
    {
@@ -124,17 +124,17 @@ hypre_create_ija( NALU_HYPRE_Int       SHMEM_HASH_SIZE,
 
    if (d_j)
    {
-      *d_j = hypre_TAlloc(NALU_HYPRE_Int, nnz, NALU_HYPRE_MEMORY_DEVICE);
+      *d_j = nalu_hypre_TAlloc(NALU_HYPRE_Int, nnz, NALU_HYPRE_MEMORY_DEVICE);
    }
 
    if (d_a)
    {
-      *d_a = hypre_TAlloc(NALU_HYPRE_Complex, nnz, NALU_HYPRE_MEMORY_DEVICE);
+      *d_a = nalu_hypre_TAlloc(NALU_HYPRE_Complex, nnz, NALU_HYPRE_MEMORY_DEVICE);
    }
 }
 
 __global__ void
-hypre_SpGemmGhashSize( hypre_DeviceItem &item,
+nalu_hypre_SpGemmGhashSize( nalu_hypre_DeviceItem &item,
                        NALU_HYPRE_Int  num_rows,
                        NALU_HYPRE_Int *row_id,
                        NALU_HYPRE_Int  num_ghash,
@@ -142,7 +142,7 @@ hypre_SpGemmGhashSize( hypre_DeviceItem &item,
                        NALU_HYPRE_Int *ghash_sizes,
                        NALU_HYPRE_Int  SHMEM_HASH_SIZE )
 {
-   const NALU_HYPRE_Int global_thread_id = hypre_gpu_get_grid_thread_id<1, 1>(item);
+   const NALU_HYPRE_Int global_thread_id = nalu_hypre_gpu_get_grid_thread_id<1, 1>(item);
 
    if (global_thread_id >= num_ghash)
    {
@@ -156,14 +156,14 @@ hypre_SpGemmGhashSize( hypre_DeviceItem &item,
       const NALU_HYPRE_Int rid = row_id ? read_only_load(&row_id[i]) : i;
       const NALU_HYPRE_Int rnz = read_only_load(&row_sizes[rid]);
       const NALU_HYPRE_Int j1 = next_power_of_2(rnz - SHMEM_HASH_SIZE);
-      j = hypre_max(j, j1);
+      j = nalu_hypre_max(j, j1);
    }
 
    ghash_sizes[global_thread_id] = j;
 }
 
 NALU_HYPRE_Int
-hypre_SpGemmCreateGlobalHashTable( NALU_HYPRE_Int       num_rows,        /* number of rows */
+nalu_hypre_SpGemmCreateGlobalHashTable( NALU_HYPRE_Int       num_rows,        /* number of rows */
                                    NALU_HYPRE_Int      *row_id,          /* row_id[i] is index of ith row; i if row_id == NULL */
                                    NALU_HYPRE_Int       num_ghash,       /* number of hash tables <= num_rows */
                                    NALU_HYPRE_Int      *row_sizes,       /* row_sizes[rowid[i]] is the size of ith row */
@@ -173,25 +173,25 @@ hypre_SpGemmCreateGlobalHashTable( NALU_HYPRE_Int       num_rows,        /* numb
                                    NALU_HYPRE_Complex **ghash_a_ptr,
                                    NALU_HYPRE_Int      *ghash_size_ptr )
 {
-   hypre_assert(num_ghash <= num_rows);
+   nalu_hypre_assert(num_ghash <= num_rows);
 
    NALU_HYPRE_Int *ghash_i, ghash_size;
-   dim3 bDim = hypre_GetDefaultDeviceBlockDimension();
+   dim3 bDim = nalu_hypre_GetDefaultDeviceBlockDimension();
 
-   ghash_i = hypre_TAlloc(NALU_HYPRE_Int, num_ghash + 1, NALU_HYPRE_MEMORY_DEVICE);
-   hypre_Memset(ghash_i + num_ghash, 0, sizeof(NALU_HYPRE_Int), NALU_HYPRE_MEMORY_DEVICE);
-   dim3 gDim = hypre_GetDefaultDeviceGridDimension(num_ghash, "thread", bDim);
-   NALU_HYPRE_GPU_LAUNCH( hypre_SpGemmGhashSize, gDim, bDim,
+   ghash_i = nalu_hypre_TAlloc(NALU_HYPRE_Int, num_ghash + 1, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_Memset(ghash_i + num_ghash, 0, sizeof(NALU_HYPRE_Int), NALU_HYPRE_MEMORY_DEVICE);
+   dim3 gDim = nalu_hypre_GetDefaultDeviceGridDimension(num_ghash, "thread", bDim);
+   NALU_HYPRE_GPU_LAUNCH( nalu_hypre_SpGemmGhashSize, gDim, bDim,
                      num_rows, row_id, num_ghash, row_sizes, ghash_i, SHMEM_HASH_SIZE );
 
    hypreDevice_IntegerExclusiveScan(num_ghash + 1, ghash_i);
 
-   hypre_TMemcpy(&ghash_size, ghash_i + num_ghash, NALU_HYPRE_Int, 1, NALU_HYPRE_MEMORY_HOST,
+   nalu_hypre_TMemcpy(&ghash_size, ghash_i + num_ghash, NALU_HYPRE_Int, 1, NALU_HYPRE_MEMORY_HOST,
                  NALU_HYPRE_MEMORY_DEVICE);
 
    if (!ghash_size)
    {
-      hypre_TFree(ghash_i, NALU_HYPRE_MEMORY_DEVICE);  hypre_assert(ghash_i == NULL);
+      nalu_hypre_TFree(ghash_i, NALU_HYPRE_MEMORY_DEVICE);  nalu_hypre_assert(ghash_i == NULL);
    }
 
    if (ghash_i_ptr)
@@ -201,12 +201,12 @@ hypre_SpGemmCreateGlobalHashTable( NALU_HYPRE_Int       num_rows,        /* numb
 
    if (ghash_j_ptr)
    {
-      *ghash_j_ptr = hypre_TAlloc(NALU_HYPRE_Int, ghash_size, NALU_HYPRE_MEMORY_DEVICE);
+      *ghash_j_ptr = nalu_hypre_TAlloc(NALU_HYPRE_Int, ghash_size, NALU_HYPRE_MEMORY_DEVICE);
    }
 
    if (ghash_a_ptr)
    {
-      *ghash_a_ptr = hypre_TAlloc(NALU_HYPRE_Complex, ghash_size, NALU_HYPRE_MEMORY_DEVICE);
+      *ghash_a_ptr = nalu_hypre_TAlloc(NALU_HYPRE_Complex, ghash_size, NALU_HYPRE_MEMORY_DEVICE);
    }
 
    if (ghash_size_ptr)
@@ -214,10 +214,10 @@ hypre_SpGemmCreateGlobalHashTable( NALU_HYPRE_Int       num_rows,        /* numb
       *ghash_size_ptr = ghash_size;
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
-NALU_HYPRE_Int hypre_SpGemmCreateBins( NALU_HYPRE_Int  m,
+NALU_HYPRE_Int nalu_hypre_SpGemmCreateBins( NALU_HYPRE_Int  m,
                                   char       s,
                                   char       t,
                                   char       u,
@@ -227,15 +227,15 @@ NALU_HYPRE_Int hypre_SpGemmCreateBins( NALU_HYPRE_Int  m,
                                   NALU_HYPRE_Int *h_bin_ptr )
 {
 #ifdef NALU_HYPRE_SPGEMM_TIMING
-   hypre_ForceSyncComputeStream(hypre_handle());
-   NALU_HYPRE_Real t1 = hypre_MPI_Wtime();
+   nalu_hypre_ForceSyncComputeStream(nalu_hypre_handle());
+   NALU_HYPRE_Real t1 = nalu_hypre_MPI_Wtime();
 #endif
 
-   NALU_HYPRE_Int  num_bins = hypre_HandleSpgemmNumBin(hypre_handle());
-   NALU_HYPRE_Int *d_bin_ptr = hypre_TAlloc(NALU_HYPRE_Int, num_bins + 1, NALU_HYPRE_MEMORY_DEVICE);
+   NALU_HYPRE_Int  num_bins = nalu_hypre_HandleSpgemmNumBin(nalu_hypre_handle());
+   NALU_HYPRE_Int *d_bin_ptr = nalu_hypre_TAlloc(NALU_HYPRE_Int, num_bins + 1, NALU_HYPRE_MEMORY_DEVICE);
 
    /* assume there are no more than 127 = 2^7-1 bins, which should be enough */
-   char *d_bin_key = hypre_TAlloc(char, m, NALU_HYPRE_MEMORY_DEVICE);
+   char *d_bin_key = nalu_hypre_TAlloc(char, m, NALU_HYPRE_MEMORY_DEVICE);
 
    NALU_HYPRE_THRUST_CALL( transform,
                       d_rc,
@@ -257,21 +257,21 @@ NALU_HYPRE_Int hypre_SpGemmCreateBins( NALU_HYPRE_Int  m,
                       thrust::make_counting_iterator(num_bins + 2),
                       d_bin_ptr );
 
-   hypre_TMemcpy(h_bin_ptr, d_bin_ptr, NALU_HYPRE_Int, num_bins + 1, NALU_HYPRE_MEMORY_HOST,
+   nalu_hypre_TMemcpy(h_bin_ptr, d_bin_ptr, NALU_HYPRE_Int, num_bins + 1, NALU_HYPRE_MEMORY_HOST,
                  NALU_HYPRE_MEMORY_DEVICE);
 
-   hypre_assert(h_bin_ptr[num_bins] == m);
+   nalu_hypre_assert(h_bin_ptr[num_bins] == m);
 
-   hypre_TFree(d_bin_key, NALU_HYPRE_MEMORY_DEVICE);
-   hypre_TFree(d_bin_ptr, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(d_bin_key, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(d_bin_ptr, NALU_HYPRE_MEMORY_DEVICE);
 
 #ifdef NALU_HYPRE_SPGEMM_TIMING
-   hypre_ForceSyncComputeStream(hypre_handle());
-   NALU_HYPRE_Real t2 = hypre_MPI_Wtime() - t1;
+   nalu_hypre_ForceSyncComputeStream(nalu_hypre_handle());
+   NALU_HYPRE_Real t2 = nalu_hypre_MPI_Wtime() - t1;
    NALU_HYPRE_SPGEMM_PRINT("%s[%d]: Binning time %f\n", __FILE__, __LINE__, t2);
 #endif
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 #endif

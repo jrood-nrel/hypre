@@ -5,9 +5,9 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_onedpl.hpp"
-#include "_hypre_parcsr_ls.h"
-#include "_hypre_utilities.hpp"
+#include "_nalu_hypre_onedpl.hpp"
+#include "_nalu_hypre_parcsr_ls.h"
+#include "_nalu_hypre_utilities.hpp"
 
 #if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP) || defined(NALU_HYPRE_USING_SYCL)
 
@@ -103,27 +103,27 @@ struct globalC_functor : public thrust::unary_function<NALU_HYPRE_Int, NALU_HYPR
 };
 #endif
 
-void hypre_modmp_init_fine_to_coarse( NALU_HYPRE_Int n_fine, NALU_HYPRE_Int *pass_marker, NALU_HYPRE_Int color,
+void nalu_hypre_modmp_init_fine_to_coarse( NALU_HYPRE_Int n_fine, NALU_HYPRE_Int *pass_marker, NALU_HYPRE_Int color,
                                       NALU_HYPRE_Int *fine_to_coarse );
 
-void hypre_modmp_compute_num_cols_offd_fine_to_coarse( NALU_HYPRE_Int * pass_marker_offd,
+void nalu_hypre_modmp_compute_num_cols_offd_fine_to_coarse( NALU_HYPRE_Int * pass_marker_offd,
                                                        NALU_HYPRE_Int color, NALU_HYPRE_Int num_cols_offd_A, NALU_HYPRE_Int & num_cols_offd,
                                                        NALU_HYPRE_Int ** fine_to_coarse_offd );
 
-__global__ void hypreGPUKernel_cfmarker_masked_rowsum( hypre_DeviceItem &item, NALU_HYPRE_Int nrows,
+__global__ void hypreGPUKernel_cfmarker_masked_rowsum( nalu_hypre_DeviceItem &item, NALU_HYPRE_Int nrows,
                                                        NALU_HYPRE_Int *A_diag_i,
                                                        NALU_HYPRE_Int *A_diag_j, NALU_HYPRE_Complex *A_diag_data, NALU_HYPRE_Int *A_offd_i, NALU_HYPRE_Int *A_offd_j,
                                                        NALU_HYPRE_Complex *A_offd_data, NALU_HYPRE_Int *CF_marker, NALU_HYPRE_Int *dof_func, NALU_HYPRE_Int *dof_func_offd,
                                                        NALU_HYPRE_Complex *row_sums );
 
-__global__ void hypreGPUKernel_generate_Pdiag_i_Poffd_i( hypre_DeviceItem &item,
+__global__ void hypreGPUKernel_generate_Pdiag_i_Poffd_i( nalu_hypre_DeviceItem &item,
                                                          NALU_HYPRE_Int num_points,
                                                          NALU_HYPRE_Int color,
                                                          NALU_HYPRE_Int *pass_order, NALU_HYPRE_Int *pass_marker, NALU_HYPRE_Int *pass_marker_offd, NALU_HYPRE_Int *S_diag_i,
                                                          NALU_HYPRE_Int *S_diag_j, NALU_HYPRE_Int *S_offd_i, NALU_HYPRE_Int *S_offd_j, NALU_HYPRE_Int *P_diag_i,
                                                          NALU_HYPRE_Int *P_offd_i );
 
-__global__ void hypreGPUKernel_generate_Pdiag_j_Poffd_j( hypre_DeviceItem &item,
+__global__ void hypreGPUKernel_generate_Pdiag_j_Poffd_j( nalu_hypre_DeviceItem &item,
                                                          NALU_HYPRE_Int num_points,
                                                          NALU_HYPRE_Int color,
                                                          NALU_HYPRE_Int *pass_order, NALU_HYPRE_Int *pass_marker, NALU_HYPRE_Int *pass_marker_offd,
@@ -133,14 +133,14 @@ __global__ void hypreGPUKernel_generate_Pdiag_j_Poffd_j( hypre_DeviceItem &item,
                                                          NALU_HYPRE_Int *P_diag_j, NALU_HYPRE_Complex *P_diag_data, NALU_HYPRE_Int *P_offd_j, NALU_HYPRE_Complex *P_offd_data,
                                                          NALU_HYPRE_Complex *row_sums );
 
-__global__ void hypreGPUKernel_insert_remaining_weights( hypre_DeviceItem &item, NALU_HYPRE_Int start,
+__global__ void hypreGPUKernel_insert_remaining_weights( nalu_hypre_DeviceItem &item, NALU_HYPRE_Int start,
                                                          NALU_HYPRE_Int stop,
                                                          NALU_HYPRE_Int *pass_order, NALU_HYPRE_Int *Pi_diag_i, NALU_HYPRE_Int *Pi_diag_j, NALU_HYPRE_Real *Pi_diag_data,
                                                          NALU_HYPRE_Int *P_diag_i, NALU_HYPRE_Int *P_diag_j, NALU_HYPRE_Real *P_diag_data, NALU_HYPRE_Int *Pi_offd_i,
                                                          NALU_HYPRE_Int *Pi_offd_j, NALU_HYPRE_Real *Pi_offd_data, NALU_HYPRE_Int *P_offd_i, NALU_HYPRE_Int *P_offd_j,
                                                          NALU_HYPRE_Real *P_offd_data );
 
-__global__ void hypreGPUKernel_generate_Qdiag_j_Qoffd_j( hypre_DeviceItem &item,
+__global__ void hypreGPUKernel_generate_Qdiag_j_Qoffd_j( nalu_hypre_DeviceItem &item,
                                                          NALU_HYPRE_Int num_points,
                                                          NALU_HYPRE_Int color,
                                                          NALU_HYPRE_Int *pass_order, NALU_HYPRE_Int *pass_marker, NALU_HYPRE_Int *pass_marker_offd,
@@ -150,83 +150,83 @@ __global__ void hypreGPUKernel_generate_Qdiag_j_Qoffd_j( hypre_DeviceItem &item,
                                                          NALU_HYPRE_Int *Q_diag_j, NALU_HYPRE_Complex *Q_diag_data, NALU_HYPRE_Int *Q_offd_j, NALU_HYPRE_Complex *Q_offd_data,
                                                          NALU_HYPRE_Complex *w_row_sum, NALU_HYPRE_Int num_functions, NALU_HYPRE_Int *dof_func, NALU_HYPRE_Int *dof_func_offd );
 
-__global__ void hypreGPUKernel_mutli_pi_rowsum( hypre_DeviceItem &item, NALU_HYPRE_Int num_points,
+__global__ void hypreGPUKernel_mutli_pi_rowsum( nalu_hypre_DeviceItem &item, NALU_HYPRE_Int num_points,
                                                 NALU_HYPRE_Int *pass_order,
                                                 NALU_HYPRE_Int *A_diag_i, NALU_HYPRE_Complex *A_diag_data, NALU_HYPRE_Int *Pi_diag_i, NALU_HYPRE_Complex *Pi_diag_data,
                                                 NALU_HYPRE_Int *Pi_offd_i, NALU_HYPRE_Complex *Pi_offd_data, NALU_HYPRE_Complex *w_row_sum );
 
-__global__ void hypreGPUKernel_pass_order_count( hypre_DeviceItem &item, NALU_HYPRE_Int num_points,
+__global__ void hypreGPUKernel_pass_order_count( nalu_hypre_DeviceItem &item, NALU_HYPRE_Int num_points,
                                                  NALU_HYPRE_Int color,
                                                  NALU_HYPRE_Int *points_left, NALU_HYPRE_Int *pass_marker, NALU_HYPRE_Int *pass_marker_offd, NALU_HYPRE_Int *S_diag_i,
                                                  NALU_HYPRE_Int *S_diag_j, NALU_HYPRE_Int *S_offd_i, NALU_HYPRE_Int *S_offd_j, NALU_HYPRE_Int *diag_shifts );
 
-__global__ void hypreGPUKernel_populate_big_P_offd_j( hypre_DeviceItem &item, NALU_HYPRE_Int start,
+__global__ void hypreGPUKernel_populate_big_P_offd_j( nalu_hypre_DeviceItem &item, NALU_HYPRE_Int start,
                                                       NALU_HYPRE_Int stop,
                                                       NALU_HYPRE_Int *pass_order, NALU_HYPRE_Int *P_offd_i, NALU_HYPRE_Int *P_offd_j, NALU_HYPRE_BigInt *col_map_offd_Pi,
                                                       NALU_HYPRE_BigInt *big_P_offd_j );
 
 /*--------------------------------------------------------------------------
- * hypre_ParAMGBuildModMultipass
+ * nalu_hypre_ParAMGBuildModMultipass
  * This routine implements Stuben's direct interpolation with multiple passes.
  * expressed with matrix matrix multiplications
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_BoomerAMGBuildModMultipassDevice( hypre_ParCSRMatrix  *A,
+nalu_hypre_BoomerAMGBuildModMultipassDevice( nalu_hypre_ParCSRMatrix  *A,
                                         NALU_HYPRE_Int           *CF_marker,
-                                        hypre_ParCSRMatrix  *S,
+                                        nalu_hypre_ParCSRMatrix  *S,
                                         NALU_HYPRE_BigInt        *num_cpts_global,
                                         NALU_HYPRE_Real           trunc_factor,
                                         NALU_HYPRE_Int            P_max_elmts,
                                         NALU_HYPRE_Int            interp_type,
                                         NALU_HYPRE_Int            num_functions,
                                         NALU_HYPRE_Int           *dof_func,
-                                        hypre_ParCSRMatrix **P_ptr )
+                                        nalu_hypre_ParCSRMatrix **P_ptr )
 {
 #ifdef NALU_HYPRE_PROFILE
-   hypre_profile_times[NALU_HYPRE_TIMER_ID_MULTIPASS_INTERP] -= hypre_MPI_Wtime();
+   nalu_hypre_profile_times[NALU_HYPRE_TIMER_ID_MULTIPASS_INTERP] -= nalu_hypre_MPI_Wtime();
 #endif
 
-   hypre_assert( hypre_ParCSRMatrixMemoryLocation(A) == NALU_HYPRE_MEMORY_DEVICE );
-   hypre_assert( hypre_ParCSRMatrixMemoryLocation(S) == NALU_HYPRE_MEMORY_DEVICE );
+   nalu_hypre_assert( nalu_hypre_ParCSRMatrixMemoryLocation(A) == NALU_HYPRE_MEMORY_DEVICE );
+   nalu_hypre_assert( nalu_hypre_ParCSRMatrixMemoryLocation(S) == NALU_HYPRE_MEMORY_DEVICE );
 
-   MPI_Comm                comm     = hypre_ParCSRMatrixComm(A);
-   hypre_ParCSRCommPkg    *comm_pkg = hypre_ParCSRMatrixCommPkg(A);
-   hypre_ParCSRCommHandle *comm_handle;
+   MPI_Comm                comm     = nalu_hypre_ParCSRMatrixComm(A);
+   nalu_hypre_ParCSRCommPkg    *comm_pkg = nalu_hypre_ParCSRMatrixCommPkg(A);
+   nalu_hypre_ParCSRCommHandle *comm_handle;
 
-   NALU_HYPRE_Int        n_fine          = hypre_ParCSRMatrixNumRows(A);
-   hypre_CSRMatrix *A_diag          = hypre_ParCSRMatrixDiag(A);
-   NALU_HYPRE_Real      *A_diag_data     = hypre_CSRMatrixData(A_diag);
-   NALU_HYPRE_Int       *A_diag_i        = hypre_CSRMatrixI(A_diag);
-   NALU_HYPRE_Int       *A_diag_j        = hypre_CSRMatrixJ(A_diag);
-   hypre_CSRMatrix *A_offd          = hypre_ParCSRMatrixOffd(A);
-   NALU_HYPRE_Int       *A_offd_i        = hypre_CSRMatrixI(A_offd);
-   NALU_HYPRE_Int       *A_offd_j        = hypre_CSRMatrixJ(A_offd);
-   NALU_HYPRE_Real      *A_offd_data     = hypre_CSRMatrixData(A_offd);
-   NALU_HYPRE_Int        num_cols_offd_A = hypre_CSRMatrixNumCols(A_offd);
+   NALU_HYPRE_Int        n_fine          = nalu_hypre_ParCSRMatrixNumRows(A);
+   nalu_hypre_CSRMatrix *A_diag          = nalu_hypre_ParCSRMatrixDiag(A);
+   NALU_HYPRE_Real      *A_diag_data     = nalu_hypre_CSRMatrixData(A_diag);
+   NALU_HYPRE_Int       *A_diag_i        = nalu_hypre_CSRMatrixI(A_diag);
+   NALU_HYPRE_Int       *A_diag_j        = nalu_hypre_CSRMatrixJ(A_diag);
+   nalu_hypre_CSRMatrix *A_offd          = nalu_hypre_ParCSRMatrixOffd(A);
+   NALU_HYPRE_Int       *A_offd_i        = nalu_hypre_CSRMatrixI(A_offd);
+   NALU_HYPRE_Int       *A_offd_j        = nalu_hypre_CSRMatrixJ(A_offd);
+   NALU_HYPRE_Real      *A_offd_data     = nalu_hypre_CSRMatrixData(A_offd);
+   NALU_HYPRE_Int        num_cols_offd_A = nalu_hypre_CSRMatrixNumCols(A_offd);
 
-   hypre_CSRMatrix *S_diag       = hypre_ParCSRMatrixDiag(S);
-   NALU_HYPRE_Int       *S_diag_i     = hypre_CSRMatrixI(S_diag);
-   NALU_HYPRE_Int       *S_diag_j     = hypre_CSRMatrixJ(S_diag);
-   hypre_CSRMatrix *S_offd       = hypre_ParCSRMatrixOffd(S);
-   NALU_HYPRE_Int       *S_offd_i     = hypre_CSRMatrixI(S_offd);
-   NALU_HYPRE_Int       *S_offd_j     = hypre_CSRMatrixJ(S_offd);
+   nalu_hypre_CSRMatrix *S_diag       = nalu_hypre_ParCSRMatrixDiag(S);
+   NALU_HYPRE_Int       *S_diag_i     = nalu_hypre_CSRMatrixI(S_diag);
+   NALU_HYPRE_Int       *S_diag_j     = nalu_hypre_CSRMatrixJ(S_diag);
+   nalu_hypre_CSRMatrix *S_offd       = nalu_hypre_ParCSRMatrixOffd(S);
+   NALU_HYPRE_Int       *S_offd_i     = nalu_hypre_CSRMatrixI(S_offd);
+   NALU_HYPRE_Int       *S_offd_j     = nalu_hypre_CSRMatrixJ(S_offd);
 
-   hypre_ParCSRMatrix **Pi;
-   hypre_ParCSRMatrix  *P;
-   hypre_CSRMatrix     *P_diag;
+   nalu_hypre_ParCSRMatrix **Pi;
+   nalu_hypre_ParCSRMatrix  *P;
+   nalu_hypre_CSRMatrix     *P_diag;
    NALU_HYPRE_Real          *P_diag_data;
    NALU_HYPRE_Int           *P_diag_i;
    NALU_HYPRE_Int           *P_diag_j;
-   hypre_CSRMatrix     *P_offd;
+   nalu_hypre_CSRMatrix     *P_offd;
    NALU_HYPRE_Real          *P_offd_data = NULL;
    NALU_HYPRE_Int           *P_offd_i;
    NALU_HYPRE_Int           *P_offd_j = NULL;
    NALU_HYPRE_BigInt        *col_map_offd_P = NULL;
    NALU_HYPRE_BigInt        *col_map_offd_P_host = NULL;
    NALU_HYPRE_Int            num_cols_offd_P = 0;
-   NALU_HYPRE_Int            num_sends = hypre_ParCSRCommPkgNumSends(comm_pkg);
-   NALU_HYPRE_Int            num_elem_send = hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends);
+   NALU_HYPRE_Int            num_sends = nalu_hypre_ParCSRCommPkgNumSends(comm_pkg);
+   NALU_HYPRE_Int            num_elem_send = nalu_hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends);
    NALU_HYPRE_Int           *int_buf_data = NULL;
    NALU_HYPRE_Int            P_diag_size = 0, P_offd_size = 0;
 
@@ -251,12 +251,12 @@ hypre_BoomerAMGBuildModMultipassDevice( hypre_ParCSRMatrix  *A,
    NALU_HYPRE_Real      *row_sums = NULL;
 
 #if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
-   hypre_GpuProfilingPushRange("Section1");
+   nalu_hypre_GpuProfilingPushRange("Section1");
 #endif
 
    /* MPI size and rank*/
-   hypre_MPI_Comm_size(comm, &num_procs);
-   hypre_MPI_Comm_rank(comm, &my_id);
+   nalu_hypre_MPI_Comm_size(comm, &num_procs);
+   nalu_hypre_MPI_Comm_rank(comm, &my_id);
 
    if (num_procs > 1)
    {
@@ -264,7 +264,7 @@ hypre_BoomerAMGBuildModMultipassDevice( hypre_ParCSRMatrix  *A,
       {
          total_global_cpts = num_cpts_global[1];
       }
-      hypre_MPI_Bcast(&total_global_cpts, 1, NALU_HYPRE_MPI_BIG_INT, num_procs - 1, comm);
+      nalu_hypre_MPI_Bcast(&total_global_cpts, 1, NALU_HYPRE_MPI_BIG_INT, num_procs - 1, comm);
    }
    else
    {
@@ -274,23 +274,23 @@ hypre_BoomerAMGBuildModMultipassDevice( hypre_ParCSRMatrix  *A,
    if (!total_global_cpts)
    {
       *P_ptr = NULL;
-      return hypre_error_flag;
+      return nalu_hypre_error_flag;
    }
 
-   hypre_BoomerAMGMakeSocFromSDevice(A, S);
+   nalu_hypre_BoomerAMGMakeSocFromSDevice(A, S);
 
    /* Generate pass marker array */
    /* contains pass numbers for each variable according to original order */
-   pass_marker = hypre_CTAlloc(NALU_HYPRE_Int, n_fine, NALU_HYPRE_MEMORY_DEVICE);
+   pass_marker = nalu_hypre_CTAlloc(NALU_HYPRE_Int, n_fine, NALU_HYPRE_MEMORY_DEVICE);
    /* contains row numbers according to new order, pass 1 followed by pass 2 etc */
-   pass_order = hypre_CTAlloc(NALU_HYPRE_Int, n_fine, NALU_HYPRE_MEMORY_DEVICE);
+   pass_order = nalu_hypre_CTAlloc(NALU_HYPRE_Int, n_fine, NALU_HYPRE_MEMORY_DEVICE);
    /* F2C mapping */
    /* reverse of pass_order, keeps track where original numbers go */
-   fine_to_coarse = hypre_TAlloc(NALU_HYPRE_Int, n_fine, NALU_HYPRE_MEMORY_DEVICE);
+   fine_to_coarse = nalu_hypre_TAlloc(NALU_HYPRE_Int, n_fine, NALU_HYPRE_MEMORY_DEVICE);
    /* contains row numbers of remaining points, auxiliary */
-   points_left = hypre_CTAlloc(NALU_HYPRE_Int, n_fine, NALU_HYPRE_MEMORY_DEVICE);
-   P_diag_i = hypre_CTAlloc(NALU_HYPRE_Int, n_fine + 1, NALU_HYPRE_MEMORY_DEVICE);
-   P_offd_i = hypre_CTAlloc(NALU_HYPRE_Int, n_fine + 1, NALU_HYPRE_MEMORY_DEVICE);
+   points_left = nalu_hypre_CTAlloc(NALU_HYPRE_Int, n_fine, NALU_HYPRE_MEMORY_DEVICE);
+   P_diag_i = nalu_hypre_CTAlloc(NALU_HYPRE_Int, n_fine + 1, NALU_HYPRE_MEMORY_DEVICE);
+   P_offd_i = nalu_hypre_CTAlloc(NALU_HYPRE_Int, n_fine + 1, NALU_HYPRE_MEMORY_DEVICE);
 
 #if defined(NALU_HYPRE_USING_SYCL)
    /* Fpts; number of F pts */
@@ -361,7 +361,7 @@ hypre_BoomerAMGBuildModMultipassDevice( hypre_ParCSRMatrix  *A,
 #endif
 
    /* contains beginning for each pass in pass_order field, assume no more than 10 passes */
-   pass_starts = hypre_CTAlloc(NALU_HYPRE_Int, 11, NALU_HYPRE_MEMORY_HOST);
+   pass_starts = nalu_hypre_CTAlloc(NALU_HYPRE_Int, 11, NALU_HYPRE_MEMORY_HOST);
    /* first pass is C */
    pass_starts[0] = 0;
    pass_starts[1] = cnt;
@@ -369,32 +369,32 @@ hypre_BoomerAMGBuildModMultipassDevice( hypre_ParCSRMatrix  *A,
    /* communicate dof_func */
    if (num_procs > 1 && num_functions > 1)
    {
-      int_buf_data = hypre_TAlloc(NALU_HYPRE_Int, num_elem_send, NALU_HYPRE_MEMORY_DEVICE);
+      int_buf_data = nalu_hypre_TAlloc(NALU_HYPRE_Int, num_elem_send, NALU_HYPRE_MEMORY_DEVICE);
 
-      hypre_ParCSRCommPkgCopySendMapElmtsToDevice(comm_pkg);
+      nalu_hypre_ParCSRCommPkgCopySendMapElmtsToDevice(comm_pkg);
 #if defined(NALU_HYPRE_USING_SYCL)
-      hypreSycl_gather( hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg),
-                        hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg) + num_elem_send,
+      hypreSycl_gather( nalu_hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg),
+                        nalu_hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg) + num_elem_send,
                         dof_func,
                         int_buf_data );
 #else
       NALU_HYPRE_THRUST_CALL( gather,
-                         hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg),
-                         hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg) + num_elem_send,
+                         nalu_hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg),
+                         nalu_hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg) + num_elem_send,
                          dof_func,
                          int_buf_data );
 #endif
 
 #if defined(NALU_HYPRE_WITH_GPU_AWARE_MPI) && THRUST_CALL_BLOCKING == 0
       /* RL: make sure int_buf_data is ready before issuing GPU-GPU MPI */
-      hypre_ForceSyncComputeStream(hypre_handle());
+      nalu_hypre_ForceSyncComputeStream(nalu_hypre_handle());
 #endif
 
-      dof_func_offd = hypre_TAlloc(NALU_HYPRE_Int, num_cols_offd_A, NALU_HYPRE_MEMORY_DEVICE);
+      dof_func_offd = nalu_hypre_TAlloc(NALU_HYPRE_Int, num_cols_offd_A, NALU_HYPRE_MEMORY_DEVICE);
 
-      comm_handle = hypre_ParCSRCommHandleCreate_v2(11, comm_pkg, NALU_HYPRE_MEMORY_DEVICE, int_buf_data,
+      comm_handle = nalu_hypre_ParCSRCommHandleCreate_v2(11, comm_pkg, NALU_HYPRE_MEMORY_DEVICE, int_buf_data,
                                                     NALU_HYPRE_MEMORY_DEVICE, dof_func_offd);
-      hypre_ParCSRCommHandleDestroy(comm_handle);
+      nalu_hypre_ParCSRCommHandleDestroy(comm_handle);
    }
 
    /* communicate pass_marker */
@@ -402,56 +402,56 @@ hypre_BoomerAMGBuildModMultipassDevice( hypre_ParCSRMatrix  *A,
    {
       if (!int_buf_data)
       {
-         int_buf_data = hypre_CTAlloc(NALU_HYPRE_Int, num_elem_send, NALU_HYPRE_MEMORY_DEVICE);
+         int_buf_data = nalu_hypre_CTAlloc(NALU_HYPRE_Int, num_elem_send, NALU_HYPRE_MEMORY_DEVICE);
       }
 
-      hypre_ParCSRCommPkgCopySendMapElmtsToDevice(comm_pkg);
+      nalu_hypre_ParCSRCommPkgCopySendMapElmtsToDevice(comm_pkg);
 
 #if defined(NALU_HYPRE_USING_SYCL)
-      hypreSycl_gather( hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg),
-                        hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg) + num_elem_send,
+      hypreSycl_gather( nalu_hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg),
+                        nalu_hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg) + num_elem_send,
                         pass_marker,
                         int_buf_data );
 #else
       NALU_HYPRE_THRUST_CALL( gather,
-                         hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg),
-                         hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg) + num_elem_send,
+                         nalu_hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg),
+                         nalu_hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg) + num_elem_send,
                          pass_marker,
                          int_buf_data );
 #endif
 
 #if defined(NALU_HYPRE_WITH_GPU_AWARE_MPI) && THRUST_CALL_BLOCKING == 0
       /* RL: make sure int_buf_data is ready before issuing GPU-GPU MPI */
-      hypre_ForceSyncComputeStream(hypre_handle());
+      nalu_hypre_ForceSyncComputeStream(nalu_hypre_handle());
 #endif
 
-      /* allocate one more see comments in hypre_modmp_compute_num_cols_offd_fine_to_coarse */
-      pass_marker_offd = hypre_CTAlloc(NALU_HYPRE_Int, num_cols_offd_A + 1, NALU_HYPRE_MEMORY_DEVICE);
+      /* allocate one more see comments in nalu_hypre_modmp_compute_num_cols_offd_fine_to_coarse */
+      pass_marker_offd = nalu_hypre_CTAlloc(NALU_HYPRE_Int, num_cols_offd_A + 1, NALU_HYPRE_MEMORY_DEVICE);
 
       /* create a handle to start communication. 11: for integer */
-      comm_handle = hypre_ParCSRCommHandleCreate_v2(11, comm_pkg, NALU_HYPRE_MEMORY_DEVICE, int_buf_data,
+      comm_handle = nalu_hypre_ParCSRCommHandleCreate_v2(11, comm_pkg, NALU_HYPRE_MEMORY_DEVICE, int_buf_data,
                                                     NALU_HYPRE_MEMORY_DEVICE, pass_marker_offd);
 
       /* destroy the handle to finish communication */
-      hypre_ParCSRCommHandleDestroy(comm_handle);
+      nalu_hypre_ParCSRCommHandleDestroy(comm_handle);
    }
 
    current_pass = 1;
    num_passes = 1;
    /* color points according to pass number */
    remaining_big = remaining;
-   hypre_MPI_Allreduce(&remaining_big, &global_remaining, 1, NALU_HYPRE_MPI_BIG_INT, hypre_MPI_SUM, comm);
+   nalu_hypre_MPI_Allreduce(&remaining_big, &global_remaining, 1, NALU_HYPRE_MPI_BIG_INT, nalu_hypre_MPI_SUM, comm);
 
 #if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
-   hypre_GpuProfilingPopRange();
+   nalu_hypre_GpuProfilingPopRange();
 #endif
 
 #if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
-   hypre_GpuProfilingPushRange("Section2");
+   nalu_hypre_GpuProfilingPushRange("Section2");
 #endif
 
-   NALU_HYPRE_Int *points_left_old = hypre_TAlloc(NALU_HYPRE_Int, remaining, NALU_HYPRE_MEMORY_DEVICE);
-   NALU_HYPRE_Int *diag_shifts     = hypre_TAlloc(NALU_HYPRE_Int, remaining, NALU_HYPRE_MEMORY_DEVICE);
+   NALU_HYPRE_Int *points_left_old = nalu_hypre_TAlloc(NALU_HYPRE_Int, remaining, NALU_HYPRE_MEMORY_DEVICE);
+   NALU_HYPRE_Int *diag_shifts     = nalu_hypre_TAlloc(NALU_HYPRE_Int, remaining, NALU_HYPRE_MEMORY_DEVICE);
 
    while (global_remaining > 0)
    {
@@ -459,8 +459,8 @@ hypre_BoomerAMGBuildModMultipassDevice( hypre_ParCSRMatrix  *A,
       cnt_old = cnt;
 
       {
-         dim3 bDim = hypre_GetDefaultDeviceBlockDimension();
-         dim3 gDim = hypre_GetDefaultDeviceGridDimension(remaining, "warp", bDim);
+         dim3 bDim = nalu_hypre_GetDefaultDeviceBlockDimension();
+         dim3 gDim = nalu_hypre_GetDefaultDeviceGridDimension(remaining, "warp", bDim);
 
          /* output diag_shifts is 0/1 indicating if points_left_dev[i] is picked in this pass */
          NALU_HYPRE_GPU_LAUNCH( hypreGPUKernel_pass_order_count,
@@ -493,7 +493,7 @@ hypre_BoomerAMGBuildModMultipassDevice( hypre_ParCSRMatrix  *A,
          [current_pass = current_pass] (const auto & x) {return current_pass + 1;},
          [] (const auto & x) {return x;} );
 
-         hypre_TMemcpy(points_left_old, points_left, NALU_HYPRE_Int, remaining, NALU_HYPRE_MEMORY_DEVICE,
+         nalu_hypre_TMemcpy(points_left_old, points_left, NALU_HYPRE_Int, remaining, NALU_HYPRE_MEMORY_DEVICE,
                        NALU_HYPRE_MEMORY_DEVICE);
 
          NALU_HYPRE_Int *new_end;
@@ -503,7 +503,7 @@ hypre_BoomerAMGBuildModMultipassDevice( hypre_ParCSRMatrix  *A,
                                       pass_order + cnt_old,
          [] (const auto & x) {return x;} );
 
-         hypre_assert(new_end - pass_order == cnt);
+         nalu_hypre_assert(new_end - pass_order == cnt);
 
          new_end = hypreSycl_copy_if( points_left_old,
                                       points_left_old + remaining,
@@ -526,7 +526,7 @@ hypre_BoomerAMGBuildModMultipassDevice( hypre_ParCSRMatrix  *A,
                             thrust::identity<NALU_HYPRE_Int>(),
                             current_pass + 1 );
 
-         hypre_TMemcpy(points_left_old, points_left, NALU_HYPRE_Int, remaining, NALU_HYPRE_MEMORY_DEVICE,
+         nalu_hypre_TMemcpy(points_left_old, points_left, NALU_HYPRE_Int, remaining, NALU_HYPRE_MEMORY_DEVICE,
                        NALU_HYPRE_MEMORY_DEVICE);
 
          NALU_HYPRE_Int *new_end;
@@ -537,7 +537,7 @@ hypre_BoomerAMGBuildModMultipassDevice( hypre_ParCSRMatrix  *A,
                                       pass_order + cnt_old,
                                       thrust::identity<NALU_HYPRE_Int>() );
 
-         hypre_assert(new_end - pass_order == cnt);
+         nalu_hypre_assert(new_end - pass_order == cnt);
 
          new_end = NALU_HYPRE_THRUST_CALL( copy_if,
                                       points_left_old,
@@ -547,7 +547,7 @@ hypre_BoomerAMGBuildModMultipassDevice( hypre_ParCSRMatrix  *A,
                                       thrust::not1(thrust::identity<NALU_HYPRE_Int>()) );
 #endif
 
-         hypre_assert(new_end - points_left == cnt_rem);
+         nalu_hypre_assert(new_end - points_left == cnt_rem);
       }
 
       remaining = cnt_rem;
@@ -556,7 +556,7 @@ hypre_BoomerAMGBuildModMultipassDevice( hypre_ParCSRMatrix  *A,
 
       if (num_passes > 9)
       {
-         hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, " Warning!!! too many passes! out of range!\n");
+         nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, " Warning!!! too many passes! out of range!\n");
          break;
       }
 
@@ -566,35 +566,35 @@ hypre_BoomerAMGBuildModMultipassDevice( hypre_ParCSRMatrix  *A,
       if (num_procs > 1)
       {
 #if defined(NALU_HYPRE_USING_SYCL)
-         hypreSycl_gather( hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg),
-                           hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg) + num_elem_send,
+         hypreSycl_gather( nalu_hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg),
+                           nalu_hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg) + num_elem_send,
                            pass_marker,
                            int_buf_data );
 #else
          NALU_HYPRE_THRUST_CALL( gather,
-                            hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg),
-                            hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg) + num_elem_send,
+                            nalu_hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg),
+                            nalu_hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg) + num_elem_send,
                             pass_marker,
                             int_buf_data );
 #endif
 
 #if defined(NALU_HYPRE_WITH_GPU_AWARE_MPI) && THRUST_CALL_BLOCKING == 0
          /* RL: make sure int_buf_data is ready before issuing GPU-GPU MPI */
-         hypre_ForceSyncComputeStream(hypre_handle());
+         nalu_hypre_ForceSyncComputeStream(nalu_hypre_handle());
 #endif
 
          /* create a handle to start communication. 11: for integer */
-         comm_handle = hypre_ParCSRCommHandleCreate_v2(11, comm_pkg, NALU_HYPRE_MEMORY_DEVICE, int_buf_data,
+         comm_handle = nalu_hypre_ParCSRCommHandleCreate_v2(11, comm_pkg, NALU_HYPRE_MEMORY_DEVICE, int_buf_data,
                                                        NALU_HYPRE_MEMORY_DEVICE, pass_marker_offd);
 
          /* destroy the handle to finish communication */
-         hypre_ParCSRCommHandleDestroy(comm_handle);
+         nalu_hypre_ParCSRCommHandleDestroy(comm_handle);
       }
 
       NALU_HYPRE_BigInt old_global_remaining = global_remaining;
 
       remaining_big = remaining;
-      hypre_MPI_Allreduce(&remaining_big, &global_remaining, 1, NALU_HYPRE_MPI_BIG_INT, hypre_MPI_SUM, comm);
+      nalu_hypre_MPI_Allreduce(&remaining_big, &global_remaining, 1, NALU_HYPRE_MPI_BIG_INT, nalu_hypre_MPI_SUM, comm);
 
       /* if the number of remaining points does not change, we have a situation of isolated areas of
        * fine points that are not connected to any C-points, and the pass generation process breaks
@@ -607,17 +607,17 @@ hypre_BoomerAMGBuildModMultipassDevice( hypre_ParCSRMatrix  *A,
 
    } // while (global_remaining > 0)
 
-   hypre_TFree(diag_shifts,     NALU_HYPRE_MEMORY_DEVICE);
-   hypre_TFree(points_left_old, NALU_HYPRE_MEMORY_DEVICE);
-   hypre_TFree(int_buf_data,    NALU_HYPRE_MEMORY_DEVICE);
-   hypre_TFree(points_left,     NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(diag_shifts,     NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(points_left_old, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(int_buf_data,    NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(points_left,     NALU_HYPRE_MEMORY_DEVICE);
 
    /* generate row sum of weak points and C-points to be ignored */
-   row_sums = hypre_CTAlloc(NALU_HYPRE_Real, n_fine, NALU_HYPRE_MEMORY_DEVICE);
+   row_sums = nalu_hypre_CTAlloc(NALU_HYPRE_Real, n_fine, NALU_HYPRE_MEMORY_DEVICE);
 
    {
-      dim3 bDim = hypre_GetDefaultDeviceBlockDimension();
-      dim3 gDim = hypre_GetDefaultDeviceGridDimension(n_fine, "warp", bDim);
+      dim3 bDim = nalu_hypre_GetDefaultDeviceBlockDimension();
+      dim3 gDim = nalu_hypre_GetDefaultDeviceGridDimension(n_fine, "warp", bDim);
 
       NALU_HYPRE_GPU_LAUNCH( hypreGPUKernel_cfmarker_masked_rowsum, gDim, bDim,
                         n_fine, A_diag_i, A_diag_j, A_diag_data,
@@ -629,21 +629,21 @@ hypre_BoomerAMGBuildModMultipassDevice( hypre_ParCSRMatrix  *A,
    }
 
 #if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
-   hypre_GpuProfilingPopRange();
+   nalu_hypre_GpuProfilingPopRange();
 #endif
 
 #if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
-   hypre_GpuProfilingPushRange("MultipassPiDevice");
+   nalu_hypre_GpuProfilingPushRange("MultipassPiDevice");
 #endif
 
-   Pi = hypre_CTAlloc(hypre_ParCSRMatrix*, num_passes, NALU_HYPRE_MEMORY_HOST);
+   Pi = nalu_hypre_CTAlloc(nalu_hypre_ParCSRMatrix*, num_passes, NALU_HYPRE_MEMORY_HOST);
 
-   hypre_GenerateMultipassPiDevice(A, S, num_cpts_global, &pass_order[pass_starts[1]],
+   nalu_hypre_GenerateMultipassPiDevice(A, S, num_cpts_global, &pass_order[pass_starts[1]],
                                    pass_marker, pass_marker_offd,
                                    pass_starts[2] - pass_starts[1], 1, row_sums, &Pi[0]);
 
 #if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
-   hypre_GpuProfilingPopRange();
+   nalu_hypre_GpuProfilingPopRange();
 #endif
 
    if (interp_type == 8)
@@ -651,22 +651,22 @@ hypre_BoomerAMGBuildModMultipassDevice( hypre_ParCSRMatrix  *A,
       for (i = 1; i < num_passes - 1; i++)
       {
 #if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
-         hypre_GpuProfilingPushRange(std::string("MultipassPiDevice Loop" + std::to_string(i)).c_str());
+         nalu_hypre_GpuProfilingPushRange(std::string("MultipassPiDevice Loop" + std::to_string(i)).c_str());
 #endif
 
-         hypre_ParCSRMatrix *Q;
-         NALU_HYPRE_BigInt *c_pts_starts = hypre_ParCSRMatrixRowStarts(Pi[i - 1]);
+         nalu_hypre_ParCSRMatrix *Q;
+         NALU_HYPRE_BigInt *c_pts_starts = nalu_hypre_ParCSRMatrixRowStarts(Pi[i - 1]);
 
-         hypre_GenerateMultipassPiDevice(A, S, c_pts_starts, &pass_order[pass_starts[i + 1]],
+         nalu_hypre_GenerateMultipassPiDevice(A, S, c_pts_starts, &pass_order[pass_starts[i + 1]],
                                          pass_marker, pass_marker_offd,
                                          pass_starts[i + 2] - pass_starts[i + 1], i + 1, row_sums, &Q);
 
 #if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
-         hypre_GpuProfilingPopRange();
+         nalu_hypre_GpuProfilingPopRange();
 #endif
-         Pi[i] = hypre_ParCSRMatMat(Q, Pi[i - 1]);
+         Pi[i] = nalu_hypre_ParCSRMatMat(Q, Pi[i - 1]);
 
-         hypre_ParCSRMatrixDestroy(Q);
+         nalu_hypre_ParCSRMatrixDestroy(Q);
       }
    }
    else if (interp_type == 9)
@@ -674,33 +674,33 @@ hypre_BoomerAMGBuildModMultipassDevice( hypre_ParCSRMatrix  *A,
       for (i = 1; i < num_passes - 1; i++)
       {
 #if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
-         hypre_GpuProfilingPushRange(std::string("MultiPiDevice Loop" + std::to_string(i)).c_str());
+         nalu_hypre_GpuProfilingPushRange(std::string("MultiPiDevice Loop" + std::to_string(i)).c_str());
 #endif
-         NALU_HYPRE_BigInt *c_pts_starts = hypre_ParCSRMatrixRowStarts(Pi[i - 1]);
+         NALU_HYPRE_BigInt *c_pts_starts = nalu_hypre_ParCSRMatrixRowStarts(Pi[i - 1]);
 
-         hypre_GenerateMultiPiDevice(A, S, Pi[i - 1], c_pts_starts, &pass_order[pass_starts[i + 1]],
+         nalu_hypre_GenerateMultiPiDevice(A, S, Pi[i - 1], c_pts_starts, &pass_order[pass_starts[i + 1]],
                                      pass_marker, pass_marker_offd,
                                      pass_starts[i + 2] - pass_starts[i + 1], i + 1,
                                      num_functions, dof_func, dof_func_offd, &Pi[i] );
 
 #if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
-         hypre_GpuProfilingPopRange();
+         nalu_hypre_GpuProfilingPopRange();
 #endif
       }
    }
 
 #if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
-   hypre_GpuProfilingPushRange("Section3");
+   nalu_hypre_GpuProfilingPushRange("Section3");
 #endif
 
    // We don't need the row sums anymore
-   hypre_TFree(row_sums, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(row_sums, NALU_HYPRE_MEMORY_DEVICE);
 
    /* populate P_diag_i/P_offd_i[i] with nnz of i-th row */
    for (i = 0; i < num_passes - 1; i++)
    {
-      NALU_HYPRE_Int *Pi_diag_i = hypre_CSRMatrixI(hypre_ParCSRMatrixDiag(Pi[i]));
-      NALU_HYPRE_Int *Pi_offd_i = hypre_CSRMatrixI(hypre_ParCSRMatrixOffd(Pi[i]));
+      NALU_HYPRE_Int *Pi_diag_i = nalu_hypre_CSRMatrixI(nalu_hypre_ParCSRMatrixDiag(Pi[i]));
+      NALU_HYPRE_Int *Pi_offd_i = nalu_hypre_CSRMatrixI(nalu_hypre_ParCSRMatrixOffd(Pi[i]));
 
       NALU_HYPRE_Int start = pass_starts[i + 1];
       NALU_HYPRE_Int stop  = pass_starts[i + 2];
@@ -728,27 +728,27 @@ hypre_BoomerAMGBuildModMultipassDevice( hypre_ParCSRMatrix  *A,
                          tuple_minus<NALU_HYPRE_Int>() );
 #endif
 
-      P_diag_size += hypre_CSRMatrixNumNonzeros(hypre_ParCSRMatrixDiag(Pi[i]));
-      P_offd_size += hypre_CSRMatrixNumNonzeros(hypre_ParCSRMatrixOffd(Pi[i]));
+      P_diag_size += nalu_hypre_CSRMatrixNumNonzeros(nalu_hypre_ParCSRMatrixDiag(Pi[i]));
+      P_offd_size += nalu_hypre_CSRMatrixNumNonzeros(nalu_hypre_ParCSRMatrixOffd(Pi[i]));
    }
 
 #if defined(NALU_HYPRE_USING_SYCL)
    /* WM: todo - this is a workaround since oneDPL's exclusive_scan gives incorrect results when doing the scan in place */
    auto zip2 = oneapi::dpl::make_zip_iterator( P_diag_i, P_offd_i );
-   NALU_HYPRE_Int *P_diag_i_tmp = hypre_CTAlloc(NALU_HYPRE_Int, n_fine + 1, NALU_HYPRE_MEMORY_DEVICE);
-   NALU_HYPRE_Int *P_offd_i_tmp = hypre_CTAlloc(NALU_HYPRE_Int, n_fine + 1, NALU_HYPRE_MEMORY_DEVICE);
+   NALU_HYPRE_Int *P_diag_i_tmp = nalu_hypre_CTAlloc(NALU_HYPRE_Int, n_fine + 1, NALU_HYPRE_MEMORY_DEVICE);
+   NALU_HYPRE_Int *P_offd_i_tmp = nalu_hypre_CTAlloc(NALU_HYPRE_Int, n_fine + 1, NALU_HYPRE_MEMORY_DEVICE);
    NALU_HYPRE_ONEDPL_CALL( std::exclusive_scan,
                       zip2,
                       zip2 + n_fine + 1,
                       oneapi::dpl::make_zip_iterator(P_diag_i_tmp, P_offd_i_tmp),
                       std::make_tuple(NALU_HYPRE_Int(0), NALU_HYPRE_Int(0)),
                       tuple_plus<NALU_HYPRE_Int>() );
-   hypre_TMemcpy(P_diag_i, P_diag_i_tmp, NALU_HYPRE_Int, n_fine + 1, NALU_HYPRE_MEMORY_DEVICE,
+   nalu_hypre_TMemcpy(P_diag_i, P_diag_i_tmp, NALU_HYPRE_Int, n_fine + 1, NALU_HYPRE_MEMORY_DEVICE,
                  NALU_HYPRE_MEMORY_DEVICE);
-   hypre_TMemcpy(P_offd_i, P_offd_i_tmp, NALU_HYPRE_Int, n_fine + 1, NALU_HYPRE_MEMORY_DEVICE,
+   nalu_hypre_TMemcpy(P_offd_i, P_offd_i_tmp, NALU_HYPRE_Int, n_fine + 1, NALU_HYPRE_MEMORY_DEVICE,
                  NALU_HYPRE_MEMORY_DEVICE);
-   hypre_TFree(P_diag_i_tmp, NALU_HYPRE_MEMORY_DEVICE);
-   hypre_TFree(P_offd_i_tmp, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(P_diag_i_tmp, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(P_offd_i_tmp, NALU_HYPRE_MEMORY_DEVICE);
 #else
    NALU_HYPRE_THRUST_CALL( exclusive_scan,
                       thrust::make_zip_iterator( thrust::make_tuple(P_diag_i, P_offd_i) ),
@@ -761,17 +761,17 @@ hypre_BoomerAMGBuildModMultipassDevice( hypre_ParCSRMatrix  *A,
 #ifdef NALU_HYPRE_DEBUG
    {
       NALU_HYPRE_Int tmp;
-      hypre_TMemcpy(&tmp, &P_diag_i[n_fine], NALU_HYPRE_Int, 1, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_DEVICE);
-      hypre_assert(tmp == P_diag_size);
-      hypre_TMemcpy(&tmp, &P_offd_i[n_fine], NALU_HYPRE_Int, 1, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_DEVICE);
-      hypre_assert(tmp == P_offd_size);
+      nalu_hypre_TMemcpy(&tmp, &P_diag_i[n_fine], NALU_HYPRE_Int, 1, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_DEVICE);
+      nalu_hypre_assert(tmp == P_diag_size);
+      nalu_hypre_TMemcpy(&tmp, &P_offd_i[n_fine], NALU_HYPRE_Int, 1, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_DEVICE);
+      nalu_hypre_assert(tmp == P_offd_size);
    }
 #endif
 
-   P_diag_j    = hypre_TAlloc(NALU_HYPRE_Int,  P_diag_size, NALU_HYPRE_MEMORY_DEVICE);
-   P_diag_data = hypre_TAlloc(NALU_HYPRE_Real, P_diag_size, NALU_HYPRE_MEMORY_DEVICE);
-   P_offd_j    = hypre_TAlloc(NALU_HYPRE_Int,  P_offd_size, NALU_HYPRE_MEMORY_DEVICE);
-   P_offd_data = hypre_TAlloc(NALU_HYPRE_Real, P_offd_size, NALU_HYPRE_MEMORY_DEVICE);
+   P_diag_j    = nalu_hypre_TAlloc(NALU_HYPRE_Int,  P_diag_size, NALU_HYPRE_MEMORY_DEVICE);
+   P_diag_data = nalu_hypre_TAlloc(NALU_HYPRE_Real, P_diag_size, NALU_HYPRE_MEMORY_DEVICE);
+   P_offd_j    = nalu_hypre_TAlloc(NALU_HYPRE_Int,  P_offd_size, NALU_HYPRE_MEMORY_DEVICE);
+   P_offd_data = nalu_hypre_TAlloc(NALU_HYPRE_Real, P_offd_size, NALU_HYPRE_MEMORY_DEVICE);
 
    /* insert weights for coarse points */
    {
@@ -810,17 +810,17 @@ hypre_BoomerAMGBuildModMultipassDevice( hypre_ParCSRMatrix  *A,
    /* insert remaining weights */
    for (p = 0; p < num_passes - 1; p++)
    {
-      NALU_HYPRE_Int  *Pi_diag_i    = hypre_CSRMatrixI(hypre_ParCSRMatrixDiag(Pi[p]));
-      NALU_HYPRE_Int  *Pi_offd_i    = hypre_CSRMatrixI(hypre_ParCSRMatrixOffd(Pi[p]));
-      NALU_HYPRE_Int  *Pi_diag_j    = hypre_CSRMatrixJ(hypre_ParCSRMatrixDiag(Pi[p]));
-      NALU_HYPRE_Int  *Pi_offd_j    = hypre_CSRMatrixJ(hypre_ParCSRMatrixOffd(Pi[p]));
-      NALU_HYPRE_Real *Pi_diag_data = hypre_CSRMatrixData(hypre_ParCSRMatrixDiag(Pi[p]));
-      NALU_HYPRE_Real *Pi_offd_data = hypre_CSRMatrixData(hypre_ParCSRMatrixOffd(Pi[p]));
+      NALU_HYPRE_Int  *Pi_diag_i    = nalu_hypre_CSRMatrixI(nalu_hypre_ParCSRMatrixDiag(Pi[p]));
+      NALU_HYPRE_Int  *Pi_offd_i    = nalu_hypre_CSRMatrixI(nalu_hypre_ParCSRMatrixOffd(Pi[p]));
+      NALU_HYPRE_Int  *Pi_diag_j    = nalu_hypre_CSRMatrixJ(nalu_hypre_ParCSRMatrixDiag(Pi[p]));
+      NALU_HYPRE_Int  *Pi_offd_j    = nalu_hypre_CSRMatrixJ(nalu_hypre_ParCSRMatrixOffd(Pi[p]));
+      NALU_HYPRE_Real *Pi_diag_data = nalu_hypre_CSRMatrixData(nalu_hypre_ParCSRMatrixDiag(Pi[p]));
+      NALU_HYPRE_Real *Pi_offd_data = nalu_hypre_CSRMatrixData(nalu_hypre_ParCSRMatrixOffd(Pi[p]));
 
       NALU_HYPRE_Int num_points = pass_starts[p + 2] - pass_starts[p + 1];
 
-      dim3 bDim = hypre_GetDefaultDeviceBlockDimension();
-      dim3 gDim = hypre_GetDefaultDeviceGridDimension(num_points, "warp", bDim);
+      dim3 bDim = nalu_hypre_GetDefaultDeviceBlockDimension();
+      dim3 gDim = nalu_hypre_GetDefaultDeviceGridDimension(num_points, "warp", bDim);
 
       pass_starts_p1 = pass_starts[p + 1];
       pass_starts_p2 = pass_starts[p + 2];
@@ -834,40 +834,40 @@ hypre_BoomerAMGBuildModMultipassDevice( hypre_ParCSRMatrix  *A,
 
    /* Note that col indices in P_offd_j probably not consistent,
       this gets fixed after truncation */
-   P = hypre_ParCSRMatrixCreate(comm,
-                                hypre_ParCSRMatrixGlobalNumRows(A),
+   P = nalu_hypre_ParCSRMatrixCreate(comm,
+                                nalu_hypre_ParCSRMatrixGlobalNumRows(A),
                                 total_global_cpts,
-                                hypre_ParCSRMatrixRowStarts(A),
+                                nalu_hypre_ParCSRMatrixRowStarts(A),
                                 num_cpts_global,
                                 num_cols_offd_P,
                                 P_diag_size,
                                 P_offd_size);
 
-   P_diag = hypre_ParCSRMatrixDiag(P);
-   hypre_CSRMatrixData(P_diag) = P_diag_data;
-   hypre_CSRMatrixI(P_diag)    = P_diag_i;
-   hypre_CSRMatrixJ(P_diag)    = P_diag_j;
+   P_diag = nalu_hypre_ParCSRMatrixDiag(P);
+   nalu_hypre_CSRMatrixData(P_diag) = P_diag_data;
+   nalu_hypre_CSRMatrixI(P_diag)    = P_diag_i;
+   nalu_hypre_CSRMatrixJ(P_diag)    = P_diag_j;
 
-   P_offd = hypre_ParCSRMatrixOffd(P);
-   hypre_CSRMatrixData(P_offd) = P_offd_data;
-   hypre_CSRMatrixI(P_offd)    = P_offd_i;
-   hypre_CSRMatrixJ(P_offd)    = P_offd_j;
+   P_offd = nalu_hypre_ParCSRMatrixOffd(P);
+   nalu_hypre_CSRMatrixData(P_offd) = P_offd_data;
+   nalu_hypre_CSRMatrixI(P_offd)    = P_offd_i;
+   nalu_hypre_CSRMatrixJ(P_offd)    = P_offd_j;
 
    /* Compress P, removing coefficients smaller than trunc_factor * Max */
    if (trunc_factor != 0.0 || P_max_elmts > 0)
    {
-      hypre_BoomerAMGInterpTruncationDevice(P, trunc_factor, P_max_elmts);
-      P_diag_data = hypre_CSRMatrixData(P_diag);
-      P_diag_i = hypre_CSRMatrixI(P_diag);
-      P_diag_j = hypre_CSRMatrixJ(P_diag);
-      P_offd_data = hypre_CSRMatrixData(P_offd);
-      P_offd_i = hypre_CSRMatrixI(P_offd);
-      P_offd_j = hypre_CSRMatrixJ(P_offd);
-      P_offd_size = hypre_CSRMatrixNumNonzeros(P_offd);
+      nalu_hypre_BoomerAMGInterpTruncationDevice(P, trunc_factor, P_max_elmts);
+      P_diag_data = nalu_hypre_CSRMatrixData(P_diag);
+      P_diag_i = nalu_hypre_CSRMatrixI(P_diag);
+      P_diag_j = nalu_hypre_CSRMatrixJ(P_diag);
+      P_offd_data = nalu_hypre_CSRMatrixData(P_offd);
+      P_offd_i = nalu_hypre_CSRMatrixI(P_offd);
+      P_offd_j = nalu_hypre_CSRMatrixJ(P_offd);
+      P_offd_size = nalu_hypre_CSRMatrixNumNonzeros(P_offd);
    }
 
 #if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
-   hypre_GpuProfilingPopRange();
+   nalu_hypre_GpuProfilingPopRange();
 #endif
 
    num_cols_offd_P = 0;
@@ -875,18 +875,18 @@ hypre_BoomerAMGBuildModMultipassDevice( hypre_ParCSRMatrix  *A,
    if (P_offd_size)
    {
 #if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
-      hypre_GpuProfilingPushRange("Section4");
+      nalu_hypre_GpuProfilingPushRange("Section4");
 #endif
 
-      NALU_HYPRE_BigInt *big_P_offd_j = hypre_TAlloc(NALU_HYPRE_BigInt, P_offd_size, NALU_HYPRE_MEMORY_DEVICE);
+      NALU_HYPRE_BigInt *big_P_offd_j = nalu_hypre_TAlloc(NALU_HYPRE_BigInt, P_offd_size, NALU_HYPRE_MEMORY_DEVICE);
 
       for (p = 0; p < num_passes - 1; p++)
       {
-         NALU_HYPRE_BigInt *col_map_offd_Pi = hypre_ParCSRMatrixDeviceColMapOffd(Pi[p]);
+         NALU_HYPRE_BigInt *col_map_offd_Pi = nalu_hypre_ParCSRMatrixDeviceColMapOffd(Pi[p]);
 
          NALU_HYPRE_Int npoints = pass_starts[p + 2] - pass_starts[p + 1];
-         dim3 bDim = hypre_GetDefaultDeviceBlockDimension();
-         dim3 gDim = hypre_GetDefaultDeviceGridDimension(npoints, "warp", bDim);
+         dim3 bDim = nalu_hypre_GetDefaultDeviceBlockDimension();
+         dim3 gDim = nalu_hypre_GetDefaultDeviceGridDimension(npoints, "warp", bDim);
 
          pass_starts_p1 = pass_starts[p + 1];
          pass_starts_p2 = pass_starts[p + 2];
@@ -901,8 +901,8 @@ hypre_BoomerAMGBuildModMultipassDevice( hypre_ParCSRMatrix  *A,
 
       } // end num_passes for loop
 
-      NALU_HYPRE_BigInt *tmp_P_offd_j = hypre_TAlloc(NALU_HYPRE_BigInt, P_offd_size, NALU_HYPRE_MEMORY_DEVICE);
-      hypre_TMemcpy(tmp_P_offd_j, big_P_offd_j, NALU_HYPRE_BigInt, P_offd_size, NALU_HYPRE_MEMORY_DEVICE,
+      NALU_HYPRE_BigInt *tmp_P_offd_j = nalu_hypre_TAlloc(NALU_HYPRE_BigInt, P_offd_size, NALU_HYPRE_MEMORY_DEVICE);
+      nalu_hypre_TMemcpy(tmp_P_offd_j, big_P_offd_j, NALU_HYPRE_BigInt, P_offd_size, NALU_HYPRE_MEMORY_DEVICE,
                     NALU_HYPRE_MEMORY_DEVICE);
 
 #if defined(NALU_HYPRE_USING_SYCL)
@@ -924,14 +924,14 @@ hypre_BoomerAMGBuildModMultipassDevice( hypre_ParCSRMatrix  *A,
 #endif
 
       num_cols_offd_P = new_end - tmp_P_offd_j;
-      col_map_offd_P = hypre_TAlloc(NALU_HYPRE_BigInt, num_cols_offd_P, NALU_HYPRE_MEMORY_DEVICE);
-      hypre_TMemcpy(col_map_offd_P, tmp_P_offd_j, NALU_HYPRE_BigInt, num_cols_offd_P, NALU_HYPRE_MEMORY_DEVICE,
+      col_map_offd_P = nalu_hypre_TAlloc(NALU_HYPRE_BigInt, num_cols_offd_P, NALU_HYPRE_MEMORY_DEVICE);
+      nalu_hypre_TMemcpy(col_map_offd_P, tmp_P_offd_j, NALU_HYPRE_BigInt, num_cols_offd_P, NALU_HYPRE_MEMORY_DEVICE,
                     NALU_HYPRE_MEMORY_DEVICE);
-      hypre_TFree(tmp_P_offd_j, NALU_HYPRE_MEMORY_DEVICE);
+      nalu_hypre_TFree(tmp_P_offd_j, NALU_HYPRE_MEMORY_DEVICE);
 
       // PB: It seems we still need this on the host??
-      col_map_offd_P_host = hypre_TAlloc(NALU_HYPRE_BigInt, num_cols_offd_P, NALU_HYPRE_MEMORY_HOST);
-      hypre_TMemcpy(col_map_offd_P_host, col_map_offd_P, NALU_HYPRE_BigInt, num_cols_offd_P, NALU_HYPRE_MEMORY_HOST,
+      col_map_offd_P_host = nalu_hypre_TAlloc(NALU_HYPRE_BigInt, num_cols_offd_P, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TMemcpy(col_map_offd_P_host, col_map_offd_P, NALU_HYPRE_BigInt, num_cols_offd_P, NALU_HYPRE_MEMORY_HOST,
                     NALU_HYPRE_MEMORY_DEVICE);
 
 #if defined(NALU_HYPRE_USING_SYCL)
@@ -950,38 +950,38 @@ hypre_BoomerAMGBuildModMultipassDevice( hypre_ParCSRMatrix  *A,
                          P_offd_j );
 #endif
 
-      hypre_TFree(big_P_offd_j, NALU_HYPRE_MEMORY_DEVICE);
+      nalu_hypre_TFree(big_P_offd_j, NALU_HYPRE_MEMORY_DEVICE);
 
 #if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
-      hypre_GpuProfilingPopRange();
+      nalu_hypre_GpuProfilingPopRange();
 #endif
    } // if (P_offd_size)
 
 #if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
-   hypre_GpuProfilingPushRange("Section5");
+   nalu_hypre_GpuProfilingPushRange("Section5");
 #endif
 
-   hypre_ParCSRMatrixColMapOffd(P)       = col_map_offd_P_host;
-   hypre_ParCSRMatrixDeviceColMapOffd(P) = col_map_offd_P;
-   hypre_CSRMatrixNumCols(P_offd)        = num_cols_offd_P;
+   nalu_hypre_ParCSRMatrixColMapOffd(P)       = col_map_offd_P_host;
+   nalu_hypre_ParCSRMatrixDeviceColMapOffd(P) = col_map_offd_P;
+   nalu_hypre_CSRMatrixNumCols(P_offd)        = num_cols_offd_P;
 
-   hypre_CSRMatrixMemoryLocation(P_diag) = NALU_HYPRE_MEMORY_DEVICE;
-   hypre_CSRMatrixMemoryLocation(P_offd) = NALU_HYPRE_MEMORY_DEVICE;
+   nalu_hypre_CSRMatrixMemoryLocation(P_diag) = NALU_HYPRE_MEMORY_DEVICE;
+   nalu_hypre_CSRMatrixMemoryLocation(P_offd) = NALU_HYPRE_MEMORY_DEVICE;
 
-   hypre_MatvecCommPkgCreate(P);
+   nalu_hypre_MatvecCommPkgCreate(P);
 
    for (i = 0; i < num_passes - 1; i++)
    {
-      hypre_ParCSRMatrixDestroy(Pi[i]);
+      nalu_hypre_ParCSRMatrixDestroy(Pi[i]);
    }
 
-   hypre_TFree(Pi,               NALU_HYPRE_MEMORY_HOST);
-   hypre_TFree(dof_func_offd,    NALU_HYPRE_MEMORY_DEVICE);
-   hypre_TFree(pass_starts,      NALU_HYPRE_MEMORY_HOST);
-   hypre_TFree(pass_marker,      NALU_HYPRE_MEMORY_DEVICE);
-   hypre_TFree(pass_marker_offd, NALU_HYPRE_MEMORY_DEVICE);
-   hypre_TFree(pass_order,       NALU_HYPRE_MEMORY_DEVICE);
-   hypre_TFree(fine_to_coarse,   NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(Pi,               NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(dof_func_offd,    NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(pass_starts,      NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(pass_marker,      NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(pass_marker_offd, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(pass_order,       NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(fine_to_coarse,   NALU_HYPRE_MEMORY_DEVICE);
 
 #if defined(NALU_HYPRE_USING_SYCL)
    NALU_HYPRE_ONEDPL_CALL( std::replace_if,
@@ -1000,15 +1000,15 @@ hypre_BoomerAMGBuildModMultipassDevice( hypre_ParCSRMatrix  *A,
    *P_ptr = P;
 
 #if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
-   hypre_GpuProfilingPopRange();
+   nalu_hypre_GpuProfilingPopRange();
 #endif
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 NALU_HYPRE_Int
-hypre_GenerateMultipassPiDevice( hypre_ParCSRMatrix  *A,
-                                 hypre_ParCSRMatrix  *S,
+nalu_hypre_GenerateMultipassPiDevice( nalu_hypre_ParCSRMatrix  *A,
+                                 nalu_hypre_ParCSRMatrix  *S,
                                  NALU_HYPRE_BigInt        *c_pts_starts,
                                  NALU_HYPRE_Int           *pass_order,
                                  NALU_HYPRE_Int           *pass_marker,
@@ -1016,47 +1016,47 @@ hypre_GenerateMultipassPiDevice( hypre_ParCSRMatrix  *A,
                                  NALU_HYPRE_Int            num_points, /* |F| */
                                  NALU_HYPRE_Int            color, /* C-color */
                                  NALU_HYPRE_Real          *row_sums,
-                                 hypre_ParCSRMatrix **P_ptr)
+                                 nalu_hypre_ParCSRMatrix **P_ptr)
 {
-   MPI_Comm                comm     = hypre_ParCSRMatrixComm(A);
-   hypre_ParCSRCommPkg    *comm_pkg = hypre_ParCSRMatrixCommPkg(A);
-   hypre_ParCSRCommHandle *comm_handle;
+   MPI_Comm                comm     = nalu_hypre_ParCSRMatrixComm(A);
+   nalu_hypre_ParCSRCommPkg    *comm_pkg = nalu_hypre_ParCSRMatrixCommPkg(A);
+   nalu_hypre_ParCSRCommHandle *comm_handle;
 
-   hypre_CSRMatrix *A_diag      = hypre_ParCSRMatrixDiag(A);
-   NALU_HYPRE_Real      *A_diag_data = hypre_CSRMatrixData(A_diag);
-   NALU_HYPRE_Int       *A_diag_i    = hypre_CSRMatrixI(A_diag);
-   NALU_HYPRE_Int       *A_diag_j    = hypre_CSRMatrixJ(A_diag);
-   NALU_HYPRE_Int        n_fine      = hypre_CSRMatrixNumRows(A_diag);
+   nalu_hypre_CSRMatrix *A_diag      = nalu_hypre_ParCSRMatrixDiag(A);
+   NALU_HYPRE_Real      *A_diag_data = nalu_hypre_CSRMatrixData(A_diag);
+   NALU_HYPRE_Int       *A_diag_i    = nalu_hypre_CSRMatrixI(A_diag);
+   NALU_HYPRE_Int       *A_diag_j    = nalu_hypre_CSRMatrixJ(A_diag);
+   NALU_HYPRE_Int        n_fine      = nalu_hypre_CSRMatrixNumRows(A_diag);
 
-   hypre_CSRMatrix *A_offd          = hypre_ParCSRMatrixOffd(A);
-   NALU_HYPRE_Int       *A_offd_i        = hypre_CSRMatrixI(A_offd);
-   NALU_HYPRE_Int       *A_offd_j        = hypre_CSRMatrixJ(A_offd);
-   NALU_HYPRE_Real      *A_offd_data     = hypre_CSRMatrixData(A_offd);
-   NALU_HYPRE_Int        num_cols_offd_A = hypre_CSRMatrixNumCols(A_offd);
+   nalu_hypre_CSRMatrix *A_offd          = nalu_hypre_ParCSRMatrixOffd(A);
+   NALU_HYPRE_Int       *A_offd_i        = nalu_hypre_CSRMatrixI(A_offd);
+   NALU_HYPRE_Int       *A_offd_j        = nalu_hypre_CSRMatrixJ(A_offd);
+   NALU_HYPRE_Real      *A_offd_data     = nalu_hypre_CSRMatrixData(A_offd);
+   NALU_HYPRE_Int        num_cols_offd_A = nalu_hypre_CSRMatrixNumCols(A_offd);
 
-   hypre_CSRMatrix *S_diag   = hypre_ParCSRMatrixDiag(S);
-   NALU_HYPRE_Int       *S_diag_i = hypre_CSRMatrixI(S_diag);
-   NALU_HYPRE_Int       *S_diag_j = hypre_CSRMatrixJ(S_diag);
+   nalu_hypre_CSRMatrix *S_diag   = nalu_hypre_ParCSRMatrixDiag(S);
+   NALU_HYPRE_Int       *S_diag_i = nalu_hypre_CSRMatrixI(S_diag);
+   NALU_HYPRE_Int       *S_diag_j = nalu_hypre_CSRMatrixJ(S_diag);
 
-   hypre_CSRMatrix *S_offd   = hypre_ParCSRMatrixOffd(S);
-   NALU_HYPRE_Int       *S_offd_i = hypre_CSRMatrixI(S_offd);
-   NALU_HYPRE_Int       *S_offd_j = hypre_CSRMatrixJ(S_offd);
+   nalu_hypre_CSRMatrix *S_offd   = nalu_hypre_ParCSRMatrixOffd(S);
+   NALU_HYPRE_Int       *S_offd_i = nalu_hypre_CSRMatrixI(S_offd);
+   NALU_HYPRE_Int       *S_offd_j = nalu_hypre_CSRMatrixJ(S_offd);
 
-   NALU_HYPRE_Int *Soc_diag_j = hypre_ParCSRMatrixSocDiagJ(S);
-   NALU_HYPRE_Int *Soc_offd_j = hypre_ParCSRMatrixSocOffdJ(S);
+   NALU_HYPRE_Int *Soc_diag_j = nalu_hypre_ParCSRMatrixSocDiagJ(S);
+   NALU_HYPRE_Int *Soc_offd_j = nalu_hypre_ParCSRMatrixSocOffdJ(S);
 
    NALU_HYPRE_BigInt    *col_map_offd_P     = NULL;
    NALU_HYPRE_BigInt    *col_map_offd_P_dev = NULL;
    NALU_HYPRE_Int        num_cols_offd_P;
    NALU_HYPRE_Int        nnz_diag, nnz_offd;
 
-   hypre_ParCSRMatrix *P;
-   hypre_CSRMatrix    *P_diag;
+   nalu_hypre_ParCSRMatrix *P;
+   nalu_hypre_CSRMatrix    *P_diag;
    NALU_HYPRE_Real         *P_diag_data;
    NALU_HYPRE_Int          *P_diag_i; /*at first counter of nonzero cols for each row,
                                    finally will be pointer to start of row */
    NALU_HYPRE_Int          *P_diag_j;
-   hypre_CSRMatrix    *P_offd;
+   nalu_hypre_CSRMatrix    *P_offd;
    NALU_HYPRE_Real         *P_offd_data = NULL;
    NALU_HYPRE_Int          *P_offd_i; /*at first counter of nonzero cols for each row,
                                    finally will be pointer to start of row */
@@ -1072,18 +1072,18 @@ hypre_GenerateMultipassPiDevice( hypre_ParCSRMatrix  *A,
    NALU_HYPRE_BigInt    *big_buf_data = NULL;
 
    /* MPI size and rank*/
-   hypre_MPI_Comm_size(comm, &num_procs);
-   hypre_MPI_Comm_rank(comm, &my_id);
+   nalu_hypre_MPI_Comm_size(comm, &num_procs);
+   nalu_hypre_MPI_Comm_rank(comm, &my_id);
 
-   fine_to_coarse = hypre_TAlloc(NALU_HYPRE_Int, n_fine, NALU_HYPRE_MEMORY_DEVICE);
+   fine_to_coarse = nalu_hypre_TAlloc(NALU_HYPRE_Int, n_fine, NALU_HYPRE_MEMORY_DEVICE);
 
-   hypre_modmp_init_fine_to_coarse(n_fine, pass_marker, color, fine_to_coarse);
+   nalu_hypre_modmp_init_fine_to_coarse(n_fine, pass_marker, color, fine_to_coarse);
 
    if (num_procs > 1)
    {
       NALU_HYPRE_BigInt big_Fpts = num_points;
 
-      hypre_MPI_Scan(&big_Fpts, f_pts_starts + 1, 1, NALU_HYPRE_MPI_BIG_INT, hypre_MPI_SUM, comm);
+      nalu_hypre_MPI_Scan(&big_Fpts, f_pts_starts + 1, 1, NALU_HYPRE_MPI_BIG_INT, nalu_hypre_MPI_SUM, comm);
 
       f_pts_starts[0] = f_pts_starts[1] - big_Fpts;
 
@@ -1092,8 +1092,8 @@ hypre_GenerateMultipassPiDevice( hypre_ParCSRMatrix  *A,
          total_global_fpts = f_pts_starts[1];
          total_global_cpts = c_pts_starts[1];
       }
-      hypre_MPI_Bcast(&total_global_fpts, 1, NALU_HYPRE_MPI_BIG_INT, num_procs - 1, comm);
-      hypre_MPI_Bcast(&total_global_cpts, 1, NALU_HYPRE_MPI_BIG_INT, num_procs - 1, comm);
+      nalu_hypre_MPI_Bcast(&total_global_fpts, 1, NALU_HYPRE_MPI_BIG_INT, num_procs - 1, comm);
+      nalu_hypre_MPI_Bcast(&total_global_cpts, 1, NALU_HYPRE_MPI_BIG_INT, num_procs - 1, comm);
    }
    else
    {
@@ -1107,44 +1107,44 @@ hypre_GenerateMultipassPiDevice( hypre_ParCSRMatrix  *A,
 
    if (num_procs > 1)
    {
-      NALU_HYPRE_Int num_sends = hypre_ParCSRCommPkgNumSends(comm_pkg);
-      NALU_HYPRE_Int num_elem_send = hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends);
+      NALU_HYPRE_Int num_sends = nalu_hypre_ParCSRCommPkgNumSends(comm_pkg);
+      NALU_HYPRE_Int num_elem_send = nalu_hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends);
 
-      big_convert_offd = hypre_TAlloc(NALU_HYPRE_BigInt, num_cols_offd_A, NALU_HYPRE_MEMORY_DEVICE);
-      big_buf_data     = hypre_TAlloc(NALU_HYPRE_BigInt, num_elem_send,   NALU_HYPRE_MEMORY_DEVICE);
+      big_convert_offd = nalu_hypre_TAlloc(NALU_HYPRE_BigInt, num_cols_offd_A, NALU_HYPRE_MEMORY_DEVICE);
+      big_buf_data     = nalu_hypre_TAlloc(NALU_HYPRE_BigInt, num_elem_send,   NALU_HYPRE_MEMORY_DEVICE);
 
       globalC_functor functor(c_pts_starts[0]);
 
 #if defined(NALU_HYPRE_USING_SYCL)
-      hypreSycl_gather( hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg),
-                        hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg) + num_elem_send,
+      hypreSycl_gather( nalu_hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg),
+                        nalu_hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg) + num_elem_send,
                         oneapi::dpl::make_transform_iterator(fine_to_coarse, functor),
                         big_buf_data );
 #else
       NALU_HYPRE_THRUST_CALL( gather,
-                         hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg),
-                         hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg) + num_elem_send,
+                         nalu_hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg),
+                         nalu_hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg) + num_elem_send,
                          thrust::make_transform_iterator(fine_to_coarse, functor),
                          big_buf_data );
 #endif
 
 #if defined(NALU_HYPRE_WITH_GPU_AWARE_MPI) && THRUST_CALL_BLOCKING == 0
       /* RL: make sure big_buf_data is ready before issuing GPU-GPU MPI */
-      hypre_ForceSyncComputeStream(hypre_handle());
+      nalu_hypre_ForceSyncComputeStream(nalu_hypre_handle());
 #endif
 
-      comm_handle = hypre_ParCSRCommHandleCreate_v2(21, comm_pkg, NALU_HYPRE_MEMORY_DEVICE, big_buf_data,
+      comm_handle = nalu_hypre_ParCSRCommHandleCreate_v2(21, comm_pkg, NALU_HYPRE_MEMORY_DEVICE, big_buf_data,
                                                     NALU_HYPRE_MEMORY_DEVICE, big_convert_offd);
 
-      hypre_ParCSRCommHandleDestroy(comm_handle);
+      nalu_hypre_ParCSRCommHandleDestroy(comm_handle);
 
       // This will allocate fine_to_coarse_offd
-      hypre_modmp_compute_num_cols_offd_fine_to_coarse( pass_marker_offd, color, num_cols_offd_A,
+      nalu_hypre_modmp_compute_num_cols_offd_fine_to_coarse( pass_marker_offd, color, num_cols_offd_A,
                                                         num_cols_offd_P, &fine_to_coarse_offd );
 
       //FIXME: Clean this up when we don't need the host pointer anymore
-      col_map_offd_P     = hypre_TAlloc(NALU_HYPRE_BigInt, num_cols_offd_P, NALU_HYPRE_MEMORY_HOST);
-      col_map_offd_P_dev = hypre_TAlloc(NALU_HYPRE_BigInt, num_cols_offd_P, NALU_HYPRE_MEMORY_DEVICE);
+      col_map_offd_P     = nalu_hypre_TAlloc(NALU_HYPRE_BigInt, num_cols_offd_P, NALU_HYPRE_MEMORY_HOST);
+      col_map_offd_P_dev = nalu_hypre_TAlloc(NALU_HYPRE_BigInt, num_cols_offd_P, NALU_HYPRE_MEMORY_DEVICE);
 
 #if defined(NALU_HYPRE_USING_SYCL)
       NALU_HYPRE_BigInt *col_map_end = hypreSycl_copy_if( big_convert_offd,
@@ -1161,49 +1161,49 @@ hypre_GenerateMultipassPiDevice( hypre_ParCSRMatrix  *A,
                                                      equal<NALU_HYPRE_Int>(color) );
 #endif
 
-      hypre_assert(num_cols_offd_P == col_map_end - col_map_offd_P_dev);
+      nalu_hypre_assert(num_cols_offd_P == col_map_end - col_map_offd_P_dev);
 
       //FIXME: Clean this up when we don't need the host pointer anymore
-      hypre_TMemcpy(col_map_offd_P, col_map_offd_P_dev, NALU_HYPRE_BigInt, num_cols_offd_P, NALU_HYPRE_MEMORY_HOST,
+      nalu_hypre_TMemcpy(col_map_offd_P, col_map_offd_P_dev, NALU_HYPRE_BigInt, num_cols_offd_P, NALU_HYPRE_MEMORY_HOST,
                     NALU_HYPRE_MEMORY_DEVICE);
 
-      hypre_TFree(big_convert_offd, NALU_HYPRE_MEMORY_DEVICE);
-      hypre_TFree(big_buf_data,     NALU_HYPRE_MEMORY_DEVICE);
+      nalu_hypre_TFree(big_convert_offd, NALU_HYPRE_MEMORY_DEVICE);
+      nalu_hypre_TFree(big_buf_data,     NALU_HYPRE_MEMORY_DEVICE);
    }
 
-   P_diag_i = hypre_TAlloc(NALU_HYPRE_Int, num_points + 1, NALU_HYPRE_MEMORY_DEVICE);
-   P_offd_i = hypre_TAlloc(NALU_HYPRE_Int, num_points + 1, NALU_HYPRE_MEMORY_DEVICE);
+   P_diag_i = nalu_hypre_TAlloc(NALU_HYPRE_Int, num_points + 1, NALU_HYPRE_MEMORY_DEVICE);
+   P_offd_i = nalu_hypre_TAlloc(NALU_HYPRE_Int, num_points + 1, NALU_HYPRE_MEMORY_DEVICE);
 
    /* generate P_diag_i and P_offd_i */
    {
-      dim3 bDim = hypre_GetDefaultDeviceBlockDimension();
-      dim3 gDim = hypre_GetDefaultDeviceGridDimension(num_points, "warp", bDim);
+      dim3 bDim = nalu_hypre_GetDefaultDeviceBlockDimension();
+      dim3 gDim = nalu_hypre_GetDefaultDeviceGridDimension(num_points, "warp", bDim);
 
       NALU_HYPRE_GPU_LAUNCH( hypreGPUKernel_generate_Pdiag_i_Poffd_i, gDim, bDim,
                         num_points, color, pass_order, pass_marker, pass_marker_offd,
                         S_diag_i, S_diag_j, S_offd_i, S_offd_j,
                         P_diag_i, P_offd_i );
 
-      hypre_Memset(P_diag_i + num_points, 0, sizeof(NALU_HYPRE_Int), NALU_HYPRE_MEMORY_DEVICE);
-      hypre_Memset(P_offd_i + num_points, 0, sizeof(NALU_HYPRE_Int), NALU_HYPRE_MEMORY_DEVICE);
+      nalu_hypre_Memset(P_diag_i + num_points, 0, sizeof(NALU_HYPRE_Int), NALU_HYPRE_MEMORY_DEVICE);
+      nalu_hypre_Memset(P_offd_i + num_points, 0, sizeof(NALU_HYPRE_Int), NALU_HYPRE_MEMORY_DEVICE);
 
 #if defined(NALU_HYPRE_USING_SYCL)
       /* WM: todo - this is a workaround since oneDPL's exclusive_scan gives incorrect results when doing the scan in place */
       auto zip3 = oneapi::dpl::make_zip_iterator( P_diag_i, P_offd_i );
-      NALU_HYPRE_Int *P_diag_i_tmp = hypre_CTAlloc(NALU_HYPRE_Int, num_points + 1, NALU_HYPRE_MEMORY_DEVICE);
-      NALU_HYPRE_Int *P_offd_i_tmp = hypre_CTAlloc(NALU_HYPRE_Int, num_points + 1, NALU_HYPRE_MEMORY_DEVICE);
+      NALU_HYPRE_Int *P_diag_i_tmp = nalu_hypre_CTAlloc(NALU_HYPRE_Int, num_points + 1, NALU_HYPRE_MEMORY_DEVICE);
+      NALU_HYPRE_Int *P_offd_i_tmp = nalu_hypre_CTAlloc(NALU_HYPRE_Int, num_points + 1, NALU_HYPRE_MEMORY_DEVICE);
       NALU_HYPRE_ONEDPL_CALL( std::exclusive_scan,
                          zip3,
                          zip3 + num_points + 1,
                          oneapi::dpl::make_zip_iterator( P_diag_i_tmp, P_offd_i_tmp ),
                          std::make_tuple(NALU_HYPRE_Int(0), NALU_HYPRE_Int(0)),
                          tuple_plus<NALU_HYPRE_Int>() );
-      hypre_TMemcpy(P_diag_i, P_diag_i_tmp, NALU_HYPRE_Int, num_points + 1, NALU_HYPRE_MEMORY_DEVICE,
+      nalu_hypre_TMemcpy(P_diag_i, P_diag_i_tmp, NALU_HYPRE_Int, num_points + 1, NALU_HYPRE_MEMORY_DEVICE,
                     NALU_HYPRE_MEMORY_DEVICE);
-      hypre_TMemcpy(P_offd_i, P_offd_i_tmp, NALU_HYPRE_Int, num_points + 1, NALU_HYPRE_MEMORY_DEVICE,
+      nalu_hypre_TMemcpy(P_offd_i, P_offd_i_tmp, NALU_HYPRE_Int, num_points + 1, NALU_HYPRE_MEMORY_DEVICE,
                     NALU_HYPRE_MEMORY_DEVICE);
-      hypre_TFree(P_diag_i_tmp, NALU_HYPRE_MEMORY_DEVICE);
-      hypre_TFree(P_offd_i_tmp, NALU_HYPRE_MEMORY_DEVICE);
+      nalu_hypre_TFree(P_diag_i_tmp, NALU_HYPRE_MEMORY_DEVICE);
+      nalu_hypre_TFree(P_offd_i_tmp, NALU_HYPRE_MEMORY_DEVICE);
 #else
       NALU_HYPRE_THRUST_CALL( exclusive_scan,
                          thrust::make_zip_iterator( thrust::make_tuple(P_diag_i, P_offd_i) ),
@@ -1213,21 +1213,21 @@ hypre_GenerateMultipassPiDevice( hypre_ParCSRMatrix  *A,
                          tuple_plus<NALU_HYPRE_Int>() );
 #endif
 
-      hypre_TMemcpy(&nnz_diag, &P_diag_i[num_points], NALU_HYPRE_Int, 1, NALU_HYPRE_MEMORY_HOST,
+      nalu_hypre_TMemcpy(&nnz_diag, &P_diag_i[num_points], NALU_HYPRE_Int, 1, NALU_HYPRE_MEMORY_HOST,
                     NALU_HYPRE_MEMORY_DEVICE);
-      hypre_TMemcpy(&nnz_offd, &P_offd_i[num_points], NALU_HYPRE_Int, 1, NALU_HYPRE_MEMORY_HOST,
+      nalu_hypre_TMemcpy(&nnz_offd, &P_offd_i[num_points], NALU_HYPRE_Int, 1, NALU_HYPRE_MEMORY_HOST,
                     NALU_HYPRE_MEMORY_DEVICE);
    }
 
    /* generate P_diag_j/data and P_offd_j/data */
-   P_diag_j    = hypre_TAlloc(NALU_HYPRE_Int,  nnz_diag, NALU_HYPRE_MEMORY_DEVICE);
-   P_diag_data = hypre_TAlloc(NALU_HYPRE_Real, nnz_diag, NALU_HYPRE_MEMORY_DEVICE);
-   P_offd_j    = hypre_TAlloc(NALU_HYPRE_Int,  nnz_offd, NALU_HYPRE_MEMORY_DEVICE);
-   P_offd_data = hypre_TAlloc(NALU_HYPRE_Real, nnz_offd, NALU_HYPRE_MEMORY_DEVICE);
+   P_diag_j    = nalu_hypre_TAlloc(NALU_HYPRE_Int,  nnz_diag, NALU_HYPRE_MEMORY_DEVICE);
+   P_diag_data = nalu_hypre_TAlloc(NALU_HYPRE_Real, nnz_diag, NALU_HYPRE_MEMORY_DEVICE);
+   P_offd_j    = nalu_hypre_TAlloc(NALU_HYPRE_Int,  nnz_offd, NALU_HYPRE_MEMORY_DEVICE);
+   P_offd_data = nalu_hypre_TAlloc(NALU_HYPRE_Real, nnz_offd, NALU_HYPRE_MEMORY_DEVICE);
 
    {
-      dim3 bDim = hypre_GetDefaultDeviceBlockDimension();
-      dim3 gDim = hypre_GetDefaultDeviceGridDimension(num_points, "warp", bDim);
+      dim3 bDim = nalu_hypre_GetDefaultDeviceBlockDimension();
+      dim3 gDim = nalu_hypre_GetDefaultDeviceGridDimension(num_points, "warp", bDim);
 
       NALU_HYPRE_GPU_LAUNCH( hypreGPUKernel_generate_Pdiag_j_Poffd_j, gDim, bDim,
                         num_points,
@@ -1254,10 +1254,10 @@ hypre_GenerateMultipassPiDevice( hypre_ParCSRMatrix  *A,
                         row_sums );
    }
 
-   hypre_TFree(fine_to_coarse,      NALU_HYPRE_MEMORY_DEVICE);
-   hypre_TFree(fine_to_coarse_offd, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(fine_to_coarse,      NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(fine_to_coarse_offd, NALU_HYPRE_MEMORY_DEVICE);
 
-   P = hypre_ParCSRMatrixCreate(comm,
+   P = nalu_hypre_ParCSRMatrixCreate(comm,
                                 total_global_fpts,
                                 total_global_cpts,
                                 f_pts_starts,
@@ -1266,33 +1266,33 @@ hypre_GenerateMultipassPiDevice( hypre_ParCSRMatrix  *A,
                                 nnz_diag,
                                 nnz_offd);
 
-   P_diag = hypre_ParCSRMatrixDiag(P);
-   hypre_CSRMatrixData(P_diag) = P_diag_data;
-   hypre_CSRMatrixI(P_diag)    = P_diag_i;
-   hypre_CSRMatrixJ(P_diag)    = P_diag_j;
+   P_diag = nalu_hypre_ParCSRMatrixDiag(P);
+   nalu_hypre_CSRMatrixData(P_diag) = P_diag_data;
+   nalu_hypre_CSRMatrixI(P_diag)    = P_diag_i;
+   nalu_hypre_CSRMatrixJ(P_diag)    = P_diag_j;
 
-   P_offd = hypre_ParCSRMatrixOffd(P);
-   hypre_CSRMatrixData(P_offd) = P_offd_data;
-   hypre_CSRMatrixI(P_offd)    = P_offd_i;
-   hypre_CSRMatrixJ(P_offd)    = P_offd_j;
+   P_offd = nalu_hypre_ParCSRMatrixOffd(P);
+   nalu_hypre_CSRMatrixData(P_offd) = P_offd_data;
+   nalu_hypre_CSRMatrixI(P_offd)    = P_offd_i;
+   nalu_hypre_CSRMatrixJ(P_offd)    = P_offd_j;
 
-   hypre_ParCSRMatrixColMapOffd(P) = col_map_offd_P;
-   hypre_ParCSRMatrixDeviceColMapOffd(P) = col_map_offd_P_dev;
+   nalu_hypre_ParCSRMatrixColMapOffd(P) = col_map_offd_P;
+   nalu_hypre_ParCSRMatrixDeviceColMapOffd(P) = col_map_offd_P_dev;
 
-   hypre_CSRMatrixMemoryLocation(P_diag) = NALU_HYPRE_MEMORY_DEVICE;
-   hypre_CSRMatrixMemoryLocation(P_offd) = NALU_HYPRE_MEMORY_DEVICE;
+   nalu_hypre_CSRMatrixMemoryLocation(P_diag) = NALU_HYPRE_MEMORY_DEVICE;
+   nalu_hypre_CSRMatrixMemoryLocation(P_offd) = NALU_HYPRE_MEMORY_DEVICE;
 
-   hypre_MatvecCommPkgCreate(P);
+   nalu_hypre_MatvecCommPkgCreate(P);
 
    *P_ptr = P;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 NALU_HYPRE_Int
-hypre_GenerateMultiPiDevice( hypre_ParCSRMatrix  *A,
-                             hypre_ParCSRMatrix  *S,
-                             hypre_ParCSRMatrix  *P,
+nalu_hypre_GenerateMultiPiDevice( nalu_hypre_ParCSRMatrix  *A,
+                             nalu_hypre_ParCSRMatrix  *S,
+                             nalu_hypre_ParCSRMatrix  *P,
                              NALU_HYPRE_BigInt        *c_pts_starts,
                              NALU_HYPRE_Int           *pass_order,
                              NALU_HYPRE_Int           *pass_marker,
@@ -1302,56 +1302,56 @@ hypre_GenerateMultiPiDevice( hypre_ParCSRMatrix  *A,
                              NALU_HYPRE_Int            num_functions,
                              NALU_HYPRE_Int           *dof_func,
                              NALU_HYPRE_Int           *dof_func_offd,
-                             hypre_ParCSRMatrix **Pi_ptr )
+                             nalu_hypre_ParCSRMatrix **Pi_ptr )
 {
-   MPI_Comm                comm = hypre_ParCSRMatrixComm(A);
-   hypre_ParCSRCommPkg    *comm_pkg = hypre_ParCSRMatrixCommPkg(A);
-   hypre_ParCSRCommHandle *comm_handle;
+   MPI_Comm                comm = nalu_hypre_ParCSRMatrixComm(A);
+   nalu_hypre_ParCSRCommPkg    *comm_pkg = nalu_hypre_ParCSRMatrixCommPkg(A);
+   nalu_hypre_ParCSRCommHandle *comm_handle;
 
-   hypre_CSRMatrix *A_diag      = hypre_ParCSRMatrixDiag(A);
-   NALU_HYPRE_Real      *A_diag_data = hypre_CSRMatrixData(A_diag);
-   NALU_HYPRE_Int       *A_diag_i    = hypre_CSRMatrixI(A_diag);
-   NALU_HYPRE_Int       *A_diag_j    = hypre_CSRMatrixJ(A_diag);
-   NALU_HYPRE_Int        n_fine      = hypre_CSRMatrixNumRows(A_diag);
+   nalu_hypre_CSRMatrix *A_diag      = nalu_hypre_ParCSRMatrixDiag(A);
+   NALU_HYPRE_Real      *A_diag_data = nalu_hypre_CSRMatrixData(A_diag);
+   NALU_HYPRE_Int       *A_diag_i    = nalu_hypre_CSRMatrixI(A_diag);
+   NALU_HYPRE_Int       *A_diag_j    = nalu_hypre_CSRMatrixJ(A_diag);
+   NALU_HYPRE_Int        n_fine      = nalu_hypre_CSRMatrixNumRows(A_diag);
 
-   hypre_CSRMatrix *A_offd          = hypre_ParCSRMatrixOffd(A);
-   NALU_HYPRE_Int       *A_offd_i        = hypre_CSRMatrixI(A_offd);
-   NALU_HYPRE_Int       *A_offd_j        = hypre_CSRMatrixJ(A_offd);
-   NALU_HYPRE_Real      *A_offd_data     = hypre_CSRMatrixData(A_offd);
-   NALU_HYPRE_Int        num_cols_offd_A = hypre_CSRMatrixNumCols(A_offd);
+   nalu_hypre_CSRMatrix *A_offd          = nalu_hypre_ParCSRMatrixOffd(A);
+   NALU_HYPRE_Int       *A_offd_i        = nalu_hypre_CSRMatrixI(A_offd);
+   NALU_HYPRE_Int       *A_offd_j        = nalu_hypre_CSRMatrixJ(A_offd);
+   NALU_HYPRE_Real      *A_offd_data     = nalu_hypre_CSRMatrixData(A_offd);
+   NALU_HYPRE_Int        num_cols_offd_A = nalu_hypre_CSRMatrixNumCols(A_offd);
 
-   hypre_CSRMatrix *S_diag   = hypre_ParCSRMatrixDiag(S);
-   NALU_HYPRE_Int       *S_diag_i = hypre_CSRMatrixI(S_diag);
-   NALU_HYPRE_Int       *S_diag_j = hypre_CSRMatrixJ(S_diag);
+   nalu_hypre_CSRMatrix *S_diag   = nalu_hypre_ParCSRMatrixDiag(S);
+   NALU_HYPRE_Int       *S_diag_i = nalu_hypre_CSRMatrixI(S_diag);
+   NALU_HYPRE_Int       *S_diag_j = nalu_hypre_CSRMatrixJ(S_diag);
 
-   hypre_CSRMatrix *S_offd   = hypre_ParCSRMatrixOffd(S);
-   NALU_HYPRE_Int       *S_offd_i = hypre_CSRMatrixI(S_offd);
-   NALU_HYPRE_Int       *S_offd_j = hypre_CSRMatrixJ(S_offd);
+   nalu_hypre_CSRMatrix *S_offd   = nalu_hypre_ParCSRMatrixOffd(S);
+   NALU_HYPRE_Int       *S_offd_i = nalu_hypre_CSRMatrixI(S_offd);
+   NALU_HYPRE_Int       *S_offd_j = nalu_hypre_CSRMatrixJ(S_offd);
 
-   NALU_HYPRE_Int *Soc_diag_j = hypre_ParCSRMatrixSocDiagJ(S);
-   NALU_HYPRE_Int *Soc_offd_j = hypre_ParCSRMatrixSocOffdJ(S);
+   NALU_HYPRE_Int *Soc_diag_j = nalu_hypre_ParCSRMatrixSocDiagJ(S);
+   NALU_HYPRE_Int *Soc_offd_j = nalu_hypre_ParCSRMatrixSocOffdJ(S);
 
    NALU_HYPRE_BigInt    *col_map_offd_Q     = NULL;
    NALU_HYPRE_BigInt    *col_map_offd_Q_dev = NULL;
    NALU_HYPRE_Int        num_cols_offd_Q;
 
-   hypre_ParCSRMatrix *Pi;
-   hypre_CSRMatrix    *Pi_diag;
+   nalu_hypre_ParCSRMatrix *Pi;
+   nalu_hypre_CSRMatrix    *Pi_diag;
    NALU_HYPRE_Int          *Pi_diag_i;
    NALU_HYPRE_Real         *Pi_diag_data;
-   hypre_CSRMatrix    *Pi_offd;
+   nalu_hypre_CSRMatrix    *Pi_offd;
    NALU_HYPRE_Int          *Pi_offd_i;
    NALU_HYPRE_Real         *Pi_offd_data;
 
    NALU_HYPRE_Int           nnz_diag, nnz_offd;
 
-   hypre_ParCSRMatrix *Q;
-   hypre_CSRMatrix    *Q_diag;
+   nalu_hypre_ParCSRMatrix *Q;
+   nalu_hypre_CSRMatrix    *Q_diag;
    NALU_HYPRE_Real         *Q_diag_data;
    NALU_HYPRE_Int          *Q_diag_i; /*at first counter of nonzero cols for each row,
                                    finally will be pointer to start of row */
    NALU_HYPRE_Int          *Q_diag_j;
-   hypre_CSRMatrix    *Q_offd;
+   nalu_hypre_CSRMatrix    *Q_offd;
    NALU_HYPRE_Real         *Q_offd_data = NULL;
    NALU_HYPRE_Int          *Q_offd_i; /*at first counter of nonzero cols for each row,
                                   finally will be pointer to start of row */
@@ -1368,18 +1368,18 @@ hypre_GenerateMultiPiDevice( hypre_ParCSRMatrix  *A,
    NALU_HYPRE_Real      *w_row_sum;
 
    /* MPI size and rank*/
-   hypre_MPI_Comm_size(comm, &num_procs);
-   hypre_MPI_Comm_rank(comm, &my_id);
+   nalu_hypre_MPI_Comm_size(comm, &num_procs);
+   nalu_hypre_MPI_Comm_rank(comm, &my_id);
 
-   fine_to_coarse = hypre_TAlloc(NALU_HYPRE_Int, n_fine, NALU_HYPRE_MEMORY_DEVICE);
+   fine_to_coarse = nalu_hypre_TAlloc(NALU_HYPRE_Int, n_fine, NALU_HYPRE_MEMORY_DEVICE);
 
-   hypre_modmp_init_fine_to_coarse(n_fine, pass_marker, color, fine_to_coarse);
+   nalu_hypre_modmp_init_fine_to_coarse(n_fine, pass_marker, color, fine_to_coarse);
 
    if (num_procs > 1)
    {
       NALU_HYPRE_BigInt big_Fpts = num_points;
 
-      hypre_MPI_Scan(&big_Fpts, f_pts_starts + 1, 1, NALU_HYPRE_MPI_BIG_INT, hypre_MPI_SUM, comm);
+      nalu_hypre_MPI_Scan(&big_Fpts, f_pts_starts + 1, 1, NALU_HYPRE_MPI_BIG_INT, nalu_hypre_MPI_SUM, comm);
 
       f_pts_starts[0] = f_pts_starts[1] - big_Fpts;
 
@@ -1388,8 +1388,8 @@ hypre_GenerateMultiPiDevice( hypre_ParCSRMatrix  *A,
          total_global_fpts = f_pts_starts[1];
          total_global_cpts = c_pts_starts[1];
       }
-      hypre_MPI_Bcast(&total_global_fpts, 1, NALU_HYPRE_MPI_BIG_INT, num_procs - 1, comm);
-      hypre_MPI_Bcast(&total_global_cpts, 1, NALU_HYPRE_MPI_BIG_INT, num_procs - 1, comm);
+      nalu_hypre_MPI_Bcast(&total_global_fpts, 1, NALU_HYPRE_MPI_BIG_INT, num_procs - 1, comm);
+      nalu_hypre_MPI_Bcast(&total_global_cpts, 1, NALU_HYPRE_MPI_BIG_INT, num_procs - 1, comm);
    }
    else
    {
@@ -1403,44 +1403,44 @@ hypre_GenerateMultiPiDevice( hypre_ParCSRMatrix  *A,
 
    if (num_procs > 1)
    {
-      NALU_HYPRE_Int num_sends = hypre_ParCSRCommPkgNumSends(comm_pkg);
-      NALU_HYPRE_Int num_elem_send = hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends);
+      NALU_HYPRE_Int num_sends = nalu_hypre_ParCSRCommPkgNumSends(comm_pkg);
+      NALU_HYPRE_Int num_elem_send = nalu_hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends);
 
-      big_convert_offd = hypre_TAlloc(NALU_HYPRE_BigInt, num_cols_offd_A, NALU_HYPRE_MEMORY_DEVICE);
-      big_buf_data     = hypre_TAlloc(NALU_HYPRE_BigInt, num_elem_send,   NALU_HYPRE_MEMORY_DEVICE);
+      big_convert_offd = nalu_hypre_TAlloc(NALU_HYPRE_BigInt, num_cols_offd_A, NALU_HYPRE_MEMORY_DEVICE);
+      big_buf_data     = nalu_hypre_TAlloc(NALU_HYPRE_BigInt, num_elem_send,   NALU_HYPRE_MEMORY_DEVICE);
 
       globalC_functor functor(c_pts_starts[0]);
 
 #if defined(NALU_HYPRE_USING_SYCL)
-      hypreSycl_gather( hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg),
-                        hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg) + num_elem_send,
+      hypreSycl_gather( nalu_hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg),
+                        nalu_hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg) + num_elem_send,
                         oneapi::dpl::make_transform_iterator(fine_to_coarse, functor),
                         big_buf_data );
 #else
       NALU_HYPRE_THRUST_CALL( gather,
-                         hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg),
-                         hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg) + num_elem_send,
+                         nalu_hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg),
+                         nalu_hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg) + num_elem_send,
                          thrust::make_transform_iterator(fine_to_coarse, functor),
                          big_buf_data );
 #endif
 
 #if defined(NALU_HYPRE_WITH_GPU_AWARE_MPI) && THRUST_CALL_BLOCKING == 0
       /* RL: make sure big_buf_data is ready before issuing GPU-GPU MPI */
-      hypre_ForceSyncComputeStream(hypre_handle());
+      nalu_hypre_ForceSyncComputeStream(nalu_hypre_handle());
 #endif
 
-      comm_handle = hypre_ParCSRCommHandleCreate_v2(21, comm_pkg, NALU_HYPRE_MEMORY_DEVICE, big_buf_data,
+      comm_handle = nalu_hypre_ParCSRCommHandleCreate_v2(21, comm_pkg, NALU_HYPRE_MEMORY_DEVICE, big_buf_data,
                                                     NALU_HYPRE_MEMORY_DEVICE, big_convert_offd);
 
-      hypre_ParCSRCommHandleDestroy(comm_handle);
+      nalu_hypre_ParCSRCommHandleDestroy(comm_handle);
 
       // This will allocate fine_to_coarse_offd_dev
-      hypre_modmp_compute_num_cols_offd_fine_to_coarse( pass_marker_offd, color, num_cols_offd_A,
+      nalu_hypre_modmp_compute_num_cols_offd_fine_to_coarse( pass_marker_offd, color, num_cols_offd_A,
                                                         num_cols_offd_Q, &fine_to_coarse_offd );
 
       //FIXME: PB: It seems we need the host value too?!?!
-      col_map_offd_Q     = hypre_TAlloc(NALU_HYPRE_BigInt, num_cols_offd_Q, NALU_HYPRE_MEMORY_HOST);
-      col_map_offd_Q_dev = hypre_TAlloc(NALU_HYPRE_BigInt, num_cols_offd_Q, NALU_HYPRE_MEMORY_DEVICE);
+      col_map_offd_Q     = nalu_hypre_TAlloc(NALU_HYPRE_BigInt, num_cols_offd_Q, NALU_HYPRE_MEMORY_HOST);
+      col_map_offd_Q_dev = nalu_hypre_TAlloc(NALU_HYPRE_BigInt, num_cols_offd_Q, NALU_HYPRE_MEMORY_DEVICE);
 
 #if defined(NALU_HYPRE_USING_SYCL)
       NALU_HYPRE_BigInt *col_map_end = hypreSycl_copy_if( big_convert_offd,
@@ -1457,49 +1457,49 @@ hypre_GenerateMultiPiDevice( hypre_ParCSRMatrix  *A,
                                                      equal<NALU_HYPRE_Int>(color) );
 #endif
 
-      hypre_assert(num_cols_offd_Q == col_map_end - col_map_offd_Q_dev);
+      nalu_hypre_assert(num_cols_offd_Q == col_map_end - col_map_offd_Q_dev);
 
       //FIXME: PB: It seems like we're required to have a host version of this??
-      hypre_TMemcpy(col_map_offd_Q, col_map_offd_Q_dev, NALU_HYPRE_BigInt, num_cols_offd_Q, NALU_HYPRE_MEMORY_HOST,
+      nalu_hypre_TMemcpy(col_map_offd_Q, col_map_offd_Q_dev, NALU_HYPRE_BigInt, num_cols_offd_Q, NALU_HYPRE_MEMORY_HOST,
                     NALU_HYPRE_MEMORY_DEVICE);
 
-      hypre_TFree(big_convert_offd, NALU_HYPRE_MEMORY_DEVICE );
-      hypre_TFree(big_buf_data, NALU_HYPRE_MEMORY_DEVICE);
+      nalu_hypre_TFree(big_convert_offd, NALU_HYPRE_MEMORY_DEVICE );
+      nalu_hypre_TFree(big_buf_data, NALU_HYPRE_MEMORY_DEVICE);
    }
 
-   Q_diag_i = hypre_TAlloc(NALU_HYPRE_Int, num_points + 1, NALU_HYPRE_MEMORY_DEVICE);
-   Q_offd_i = hypre_TAlloc(NALU_HYPRE_Int, num_points + 1, NALU_HYPRE_MEMORY_DEVICE);
+   Q_diag_i = nalu_hypre_TAlloc(NALU_HYPRE_Int, num_points + 1, NALU_HYPRE_MEMORY_DEVICE);
+   Q_offd_i = nalu_hypre_TAlloc(NALU_HYPRE_Int, num_points + 1, NALU_HYPRE_MEMORY_DEVICE);
 
    /* generate Q_diag_i and Q_offd_i */
    {
-      dim3 bDim = hypre_GetDefaultDeviceBlockDimension();
-      dim3 gDim = hypre_GetDefaultDeviceGridDimension(num_points, "warp", bDim);
+      dim3 bDim = nalu_hypre_GetDefaultDeviceBlockDimension();
+      dim3 gDim = nalu_hypre_GetDefaultDeviceGridDimension(num_points, "warp", bDim);
 
       NALU_HYPRE_GPU_LAUNCH( hypreGPUKernel_generate_Pdiag_i_Poffd_i, gDim, bDim,
                         num_points, color, pass_order, pass_marker, pass_marker_offd,
                         S_diag_i, S_diag_j, S_offd_i, S_offd_j,
                         Q_diag_i, Q_offd_i );
 
-      hypre_Memset(Q_diag_i + num_points, 0, sizeof(NALU_HYPRE_Int), NALU_HYPRE_MEMORY_DEVICE);
-      hypre_Memset(Q_offd_i + num_points, 0, sizeof(NALU_HYPRE_Int), NALU_HYPRE_MEMORY_DEVICE);
+      nalu_hypre_Memset(Q_diag_i + num_points, 0, sizeof(NALU_HYPRE_Int), NALU_HYPRE_MEMORY_DEVICE);
+      nalu_hypre_Memset(Q_offd_i + num_points, 0, sizeof(NALU_HYPRE_Int), NALU_HYPRE_MEMORY_DEVICE);
 
 #if defined(NALU_HYPRE_USING_SYCL)
       /* WM: todo - this is a workaround since oneDPL's exclusive_scan gives incorrect results when doing the scan in place */
       auto zip4 = oneapi::dpl::make_zip_iterator( Q_diag_i, Q_offd_i );
-      NALU_HYPRE_Int *Q_diag_i_tmp = hypre_CTAlloc(NALU_HYPRE_Int, num_points + 1, NALU_HYPRE_MEMORY_DEVICE);
-      NALU_HYPRE_Int *Q_offd_i_tmp = hypre_CTAlloc(NALU_HYPRE_Int, num_points + 1, NALU_HYPRE_MEMORY_DEVICE);
+      NALU_HYPRE_Int *Q_diag_i_tmp = nalu_hypre_CTAlloc(NALU_HYPRE_Int, num_points + 1, NALU_HYPRE_MEMORY_DEVICE);
+      NALU_HYPRE_Int *Q_offd_i_tmp = nalu_hypre_CTAlloc(NALU_HYPRE_Int, num_points + 1, NALU_HYPRE_MEMORY_DEVICE);
       NALU_HYPRE_ONEDPL_CALL( std::exclusive_scan,
                          zip4,
                          zip4 + num_points + 1,
                          oneapi::dpl::make_zip_iterator( Q_diag_i_tmp, Q_offd_i_tmp ),
                          std::make_tuple(NALU_HYPRE_Int(0), NALU_HYPRE_Int(0)),
                          tuple_plus<NALU_HYPRE_Int>() );
-      hypre_TMemcpy(Q_diag_i, Q_diag_i_tmp, NALU_HYPRE_Int, num_points + 1, NALU_HYPRE_MEMORY_DEVICE,
+      nalu_hypre_TMemcpy(Q_diag_i, Q_diag_i_tmp, NALU_HYPRE_Int, num_points + 1, NALU_HYPRE_MEMORY_DEVICE,
                     NALU_HYPRE_MEMORY_DEVICE);
-      hypre_TMemcpy(Q_offd_i, Q_offd_i_tmp, NALU_HYPRE_Int, num_points + 1, NALU_HYPRE_MEMORY_DEVICE,
+      nalu_hypre_TMemcpy(Q_offd_i, Q_offd_i_tmp, NALU_HYPRE_Int, num_points + 1, NALU_HYPRE_MEMORY_DEVICE,
                     NALU_HYPRE_MEMORY_DEVICE);
-      hypre_TFree(Q_diag_i_tmp, NALU_HYPRE_MEMORY_DEVICE);
-      hypre_TFree(Q_offd_i_tmp, NALU_HYPRE_MEMORY_DEVICE);
+      nalu_hypre_TFree(Q_diag_i_tmp, NALU_HYPRE_MEMORY_DEVICE);
+      nalu_hypre_TFree(Q_offd_i_tmp, NALU_HYPRE_MEMORY_DEVICE);
 #else
       NALU_HYPRE_THRUST_CALL( exclusive_scan,
                          thrust::make_zip_iterator( thrust::make_tuple(Q_diag_i, Q_offd_i) ),
@@ -1509,22 +1509,22 @@ hypre_GenerateMultiPiDevice( hypre_ParCSRMatrix  *A,
                          tuple_plus<NALU_HYPRE_Int>() );
 #endif
 
-      hypre_TMemcpy(&nnz_diag, &Q_diag_i[num_points], NALU_HYPRE_Int, 1, NALU_HYPRE_MEMORY_HOST,
+      nalu_hypre_TMemcpy(&nnz_diag, &Q_diag_i[num_points], NALU_HYPRE_Int, 1, NALU_HYPRE_MEMORY_HOST,
                     NALU_HYPRE_MEMORY_DEVICE);
-      hypre_TMemcpy(&nnz_offd, &Q_offd_i[num_points], NALU_HYPRE_Int, 1, NALU_HYPRE_MEMORY_HOST,
+      nalu_hypre_TMemcpy(&nnz_offd, &Q_offd_i[num_points], NALU_HYPRE_Int, 1, NALU_HYPRE_MEMORY_HOST,
                     NALU_HYPRE_MEMORY_DEVICE);
    }
 
    /* generate P_diag_j/data and P_offd_j/data */
-   Q_diag_j    = hypre_TAlloc(NALU_HYPRE_Int,  nnz_diag,   NALU_HYPRE_MEMORY_DEVICE);
-   Q_diag_data = hypre_TAlloc(NALU_HYPRE_Real, nnz_diag,   NALU_HYPRE_MEMORY_DEVICE);
-   Q_offd_j    = hypre_TAlloc(NALU_HYPRE_Int,  nnz_offd,   NALU_HYPRE_MEMORY_DEVICE);
-   Q_offd_data = hypre_TAlloc(NALU_HYPRE_Real, nnz_offd,   NALU_HYPRE_MEMORY_DEVICE);
-   w_row_sum   = hypre_TAlloc(NALU_HYPRE_Real, num_points, NALU_HYPRE_MEMORY_DEVICE);
+   Q_diag_j    = nalu_hypre_TAlloc(NALU_HYPRE_Int,  nnz_diag,   NALU_HYPRE_MEMORY_DEVICE);
+   Q_diag_data = nalu_hypre_TAlloc(NALU_HYPRE_Real, nnz_diag,   NALU_HYPRE_MEMORY_DEVICE);
+   Q_offd_j    = nalu_hypre_TAlloc(NALU_HYPRE_Int,  nnz_offd,   NALU_HYPRE_MEMORY_DEVICE);
+   Q_offd_data = nalu_hypre_TAlloc(NALU_HYPRE_Real, nnz_offd,   NALU_HYPRE_MEMORY_DEVICE);
+   w_row_sum   = nalu_hypre_TAlloc(NALU_HYPRE_Real, num_points, NALU_HYPRE_MEMORY_DEVICE);
 
    {
-      dim3 bDim = hypre_GetDefaultDeviceBlockDimension();
-      dim3 gDim = hypre_GetDefaultDeviceGridDimension(num_points, "warp", bDim);
+      dim3 bDim = nalu_hypre_GetDefaultDeviceBlockDimension();
+      dim3 gDim = nalu_hypre_GetDefaultDeviceGridDimension(num_points, "warp", bDim);
 
       NALU_HYPRE_GPU_LAUNCH( hypreGPUKernel_generate_Qdiag_j_Qoffd_j, gDim, bDim,
                         num_points,
@@ -1554,10 +1554,10 @@ hypre_GenerateMultiPiDevice( hypre_ParCSRMatrix  *A,
                         dof_func_offd );
    }
 
-   hypre_TFree(fine_to_coarse,      NALU_HYPRE_MEMORY_DEVICE);
-   hypre_TFree(fine_to_coarse_offd, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(fine_to_coarse,      NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(fine_to_coarse_offd, NALU_HYPRE_MEMORY_DEVICE);
 
-   Q = hypre_ParCSRMatrixCreate(comm,
+   Q = nalu_hypre_ParCSRMatrixCreate(comm,
                                 total_global_fpts,
                                 total_global_cpts,
                                 f_pts_starts,
@@ -1566,36 +1566,36 @@ hypre_GenerateMultiPiDevice( hypre_ParCSRMatrix  *A,
                                 nnz_diag,
                                 nnz_offd);
 
-   Q_diag = hypre_ParCSRMatrixDiag(Q);
-   hypre_CSRMatrixData(Q_diag) = Q_diag_data;
-   hypre_CSRMatrixI(Q_diag)    = Q_diag_i;
-   hypre_CSRMatrixJ(Q_diag)    = Q_diag_j;
+   Q_diag = nalu_hypre_ParCSRMatrixDiag(Q);
+   nalu_hypre_CSRMatrixData(Q_diag) = Q_diag_data;
+   nalu_hypre_CSRMatrixI(Q_diag)    = Q_diag_i;
+   nalu_hypre_CSRMatrixJ(Q_diag)    = Q_diag_j;
 
-   Q_offd = hypre_ParCSRMatrixOffd(Q);
-   hypre_CSRMatrixData(Q_offd) = Q_offd_data;
-   hypre_CSRMatrixI(Q_offd)    = Q_offd_i;
-   hypre_CSRMatrixJ(Q_offd)    = Q_offd_j;
+   Q_offd = nalu_hypre_ParCSRMatrixOffd(Q);
+   nalu_hypre_CSRMatrixData(Q_offd) = Q_offd_data;
+   nalu_hypre_CSRMatrixI(Q_offd)    = Q_offd_i;
+   nalu_hypre_CSRMatrixJ(Q_offd)    = Q_offd_j;
 
-   hypre_ParCSRMatrixColMapOffd(Q) = col_map_offd_Q;
-   hypre_ParCSRMatrixDeviceColMapOffd(Q) = col_map_offd_Q_dev;
+   nalu_hypre_ParCSRMatrixColMapOffd(Q) = col_map_offd_Q;
+   nalu_hypre_ParCSRMatrixDeviceColMapOffd(Q) = col_map_offd_Q_dev;
 
-   hypre_CSRMatrixMemoryLocation(Q_diag) = NALU_HYPRE_MEMORY_DEVICE;
-   hypre_CSRMatrixMemoryLocation(Q_offd) = NALU_HYPRE_MEMORY_DEVICE;
+   nalu_hypre_CSRMatrixMemoryLocation(Q_diag) = NALU_HYPRE_MEMORY_DEVICE;
+   nalu_hypre_CSRMatrixMemoryLocation(Q_offd) = NALU_HYPRE_MEMORY_DEVICE;
 
-   hypre_MatvecCommPkgCreate(Q);
+   nalu_hypre_MatvecCommPkgCreate(Q);
 
-   Pi = hypre_ParCSRMatMat(Q, P);
+   Pi = nalu_hypre_ParCSRMatMat(Q, P);
 
-   Pi_diag = hypre_ParCSRMatrixDiag(Pi);
-   Pi_diag_data = hypre_CSRMatrixData(Pi_diag);
-   Pi_diag_i = hypre_CSRMatrixI(Pi_diag);
-   Pi_offd = hypre_ParCSRMatrixOffd(Pi);
-   Pi_offd_data = hypre_CSRMatrixData(Pi_offd);
-   Pi_offd_i = hypre_CSRMatrixI(Pi_offd);
+   Pi_diag = nalu_hypre_ParCSRMatrixDiag(Pi);
+   Pi_diag_data = nalu_hypre_CSRMatrixData(Pi_diag);
+   Pi_diag_i = nalu_hypre_CSRMatrixI(Pi_diag);
+   Pi_offd = nalu_hypre_ParCSRMatrixOffd(Pi);
+   Pi_offd_data = nalu_hypre_CSRMatrixData(Pi_offd);
+   Pi_offd_i = nalu_hypre_CSRMatrixI(Pi_offd);
 
    {
-      dim3 bDim = hypre_GetDefaultDeviceBlockDimension();
-      dim3 gDim = hypre_GetDefaultDeviceGridDimension(num_points, "warp", bDim);
+      dim3 bDim = nalu_hypre_GetDefaultDeviceBlockDimension();
+      dim3 gDim = nalu_hypre_GetDefaultDeviceGridDimension(num_points, "warp", bDim);
 
       NALU_HYPRE_GPU_LAUNCH( hypreGPUKernel_mutli_pi_rowsum, gDim, bDim,
                         num_points, pass_order, A_diag_i, A_diag_data,
@@ -1603,16 +1603,16 @@ hypre_GenerateMultiPiDevice( hypre_ParCSRMatrix  *A,
                         w_row_sum );
    }
 
-   hypre_TFree(w_row_sum, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(w_row_sum, NALU_HYPRE_MEMORY_DEVICE);
 
-   hypre_ParCSRMatrixDestroy(Q);
+   nalu_hypre_ParCSRMatrixDestroy(Q);
 
    *Pi_ptr = Pi;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
-void hypre_modmp_init_fine_to_coarse( NALU_HYPRE_Int  n_fine,
+void nalu_hypre_modmp_init_fine_to_coarse( NALU_HYPRE_Int  n_fine,
                                       NALU_HYPRE_Int *pass_marker,
                                       NALU_HYPRE_Int  color,
                                       NALU_HYPRE_Int *fine_to_coarse )
@@ -1663,7 +1663,7 @@ void hypre_modmp_init_fine_to_coarse( NALU_HYPRE_Int  n_fine,
 }
 
 void
-hypre_modmp_compute_num_cols_offd_fine_to_coarse( NALU_HYPRE_Int  *pass_marker_offd,
+nalu_hypre_modmp_compute_num_cols_offd_fine_to_coarse( NALU_HYPRE_Int  *pass_marker_offd,
                                                   NALU_HYPRE_Int   color,
                                                   NALU_HYPRE_Int   num_cols_offd_A,
                                                   NALU_HYPRE_Int  &num_cols_offd,
@@ -1673,7 +1673,7 @@ hypre_modmp_compute_num_cols_offd_fine_to_coarse( NALU_HYPRE_Int  *pass_marker_o
    // even on the last match, so we create an extra entry the exclusive_scan will reflect this
    // and we can read off the last entry and only do 1 kernel call and 1 memcpy
    // RL: this trick requires pass_marker_offd has 1 more space allocated too
-   NALU_HYPRE_Int *fine_to_coarse_offd = hypre_TAlloc(NALU_HYPRE_Int, num_cols_offd_A + 1, NALU_HYPRE_MEMORY_DEVICE);
+   NALU_HYPRE_Int *fine_to_coarse_offd = nalu_hypre_TAlloc(NALU_HYPRE_Int, num_cols_offd_A + 1, NALU_HYPRE_MEMORY_DEVICE);
 
 #if defined(NALU_HYPRE_USING_SYCL)
    NALU_HYPRE_ONEDPL_CALL( std::exclusive_scan,
@@ -1691,14 +1691,14 @@ hypre_modmp_compute_num_cols_offd_fine_to_coarse( NALU_HYPRE_Int  *pass_marker_o
                       NALU_HYPRE_Int(0) );
 #endif
 
-   hypre_TMemcpy( &num_cols_offd, fine_to_coarse_offd + num_cols_offd_A, NALU_HYPRE_Int, 1,
+   nalu_hypre_TMemcpy( &num_cols_offd, fine_to_coarse_offd + num_cols_offd_A, NALU_HYPRE_Int, 1,
                   NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_DEVICE);
 
    *fine_to_coarse_offd_ptr = fine_to_coarse_offd;
 }
 
 __global__
-void hypreGPUKernel_cfmarker_masked_rowsum( hypre_DeviceItem    &item,
+void hypreGPUKernel_cfmarker_masked_rowsum( nalu_hypre_DeviceItem    &item,
                                             NALU_HYPRE_Int      nrows,
                                             NALU_HYPRE_Int     *A_diag_i,
                                             NALU_HYPRE_Int     *A_diag_j,
@@ -1711,14 +1711,14 @@ void hypreGPUKernel_cfmarker_masked_rowsum( hypre_DeviceItem    &item,
                                             NALU_HYPRE_Int     *dof_func_offd,
                                             NALU_HYPRE_Complex *row_sums )
 {
-   NALU_HYPRE_Int row_i = hypre_gpu_get_grid_warp_id<1, 1>(item);
+   NALU_HYPRE_Int row_i = nalu_hypre_gpu_get_grid_warp_id<1, 1>(item);
 
    if (row_i >= nrows || read_only_load(&CF_marker[row_i]) >= 0)
    {
       return;
    }
 
-   NALU_HYPRE_Int lane = hypre_gpu_get_lane_id<1>(item);
+   NALU_HYPRE_Int lane = nalu_hypre_gpu_get_lane_id<1>(item);
    NALU_HYPRE_Int p = 0;
    NALU_HYPRE_Int q = 0;
    NALU_HYPRE_Int func_i = dof_func ? read_only_load(&dof_func[row_i]) : 0;
@@ -1783,7 +1783,7 @@ void hypreGPUKernel_cfmarker_masked_rowsum( hypre_DeviceItem    &item,
 }
 
 __global__
-void hypreGPUKernel_mutli_pi_rowsum( hypre_DeviceItem    &item,
+void hypreGPUKernel_mutli_pi_rowsum( nalu_hypre_DeviceItem    &item,
                                      NALU_HYPRE_Int      num_points,
                                      NALU_HYPRE_Int     *pass_order,
                                      NALU_HYPRE_Int     *A_diag_i,
@@ -1794,14 +1794,14 @@ void hypreGPUKernel_mutli_pi_rowsum( hypre_DeviceItem    &item,
                                      NALU_HYPRE_Complex *Pi_offd_data,
                                      NALU_HYPRE_Complex *w_row_sum )
 {
-   NALU_HYPRE_Int row_i = hypre_gpu_get_grid_warp_id<1, 1>(item);
+   NALU_HYPRE_Int row_i = nalu_hypre_gpu_get_grid_warp_id<1, 1>(item);
 
    if (row_i >= num_points)
    {
       return;
    }
 
-   NALU_HYPRE_Int lane = hypre_gpu_get_lane_id<1>(item);
+   NALU_HYPRE_Int lane = nalu_hypre_gpu_get_lane_id<1>(item);
    NALU_HYPRE_Int p_diag = 0, q_diag = 0, p_offd = 0, q_offd = 0;
    NALU_HYPRE_Real row_sum_C = 0.0;
 
@@ -1864,7 +1864,7 @@ void hypreGPUKernel_mutli_pi_rowsum( hypre_DeviceItem    &item,
 }
 
 __global__
-void hypreGPUKernel_generate_Pdiag_i_Poffd_i( hypre_DeviceItem &item,
+void hypreGPUKernel_generate_Pdiag_i_Poffd_i( nalu_hypre_DeviceItem &item,
                                               NALU_HYPRE_Int  num_points,
                                               NALU_HYPRE_Int  color,
                                               NALU_HYPRE_Int *pass_order,
@@ -1904,7 +1904,7 @@ void hypreGPUKernel_generate_Pdiag_i_Poffd_i( hypre_DeviceItem &item,
     }
    */
 
-   NALU_HYPRE_Int row_i = hypre_gpu_get_grid_warp_id<1, 1>(item);
+   NALU_HYPRE_Int row_i = nalu_hypre_gpu_get_grid_warp_id<1, 1>(item);
 
    if (row_i >= num_points)
    {
@@ -1912,7 +1912,7 @@ void hypreGPUKernel_generate_Pdiag_i_Poffd_i( hypre_DeviceItem &item,
    }
 
    NALU_HYPRE_Int i1 = read_only_load(&pass_order[row_i]);
-   NALU_HYPRE_Int lane = hypre_gpu_get_lane_id<1>(item);
+   NALU_HYPRE_Int lane = nalu_hypre_gpu_get_lane_id<1>(item);
    NALU_HYPRE_Int p = 0;
    NALU_HYPRE_Int q = 0;
    NALU_HYPRE_Int diag_increment = 0;
@@ -1972,7 +1972,7 @@ void hypreGPUKernel_generate_Pdiag_i_Poffd_i( hypre_DeviceItem &item,
 }
 
 __global__
-void hypreGPUKernel_generate_Pdiag_j_Poffd_j( hypre_DeviceItem    &item,
+void hypreGPUKernel_generate_Pdiag_j_Poffd_j( nalu_hypre_DeviceItem    &item,
                                               NALU_HYPRE_Int      num_points,
                                               NALU_HYPRE_Int      color,
                                               NALU_HYPRE_Int     *pass_order,
@@ -1996,7 +1996,7 @@ void hypreGPUKernel_generate_Pdiag_j_Poffd_j( hypre_DeviceItem    &item,
                                               NALU_HYPRE_Complex *P_offd_data,
                                               NALU_HYPRE_Complex *row_sums )
 {
-   NALU_HYPRE_Int row_i = hypre_gpu_get_grid_warp_id<1, 1>(item);
+   NALU_HYPRE_Int row_i = nalu_hypre_gpu_get_grid_warp_id<1, 1>(item);
 
    if (row_i >= num_points)
    {
@@ -2004,7 +2004,7 @@ void hypreGPUKernel_generate_Pdiag_j_Poffd_j( hypre_DeviceItem    &item,
    }
 
    NALU_HYPRE_Int i1 = read_only_load(&pass_order[row_i]);
-   NALU_HYPRE_Int lane = hypre_gpu_get_lane_id<1>(item);
+   NALU_HYPRE_Int lane = nalu_hypre_gpu_get_lane_id<1>(item);
    NALU_HYPRE_Int p_diag_A = 0, q_diag_A, p_diag_P = 0, q_diag_P;
    NALU_HYPRE_Int k;
    NALU_HYPRE_Complex row_sum_C = 0.0, diagonal = 0.0;
@@ -2052,7 +2052,7 @@ void hypreGPUKernel_generate_Pdiag_j_Poffd_j( hypre_DeviceItem    &item,
       k += sum;
    }
 
-   hypre_device_assert(k == q_diag_P);
+   nalu_hypre_device_assert(k == q_diag_P);
 
    // S_offd
    NALU_HYPRE_Int p_offd_A = 0, q_offd_A, p_offd_P = 0, q_offd_P;
@@ -2094,7 +2094,7 @@ void hypreGPUKernel_generate_Pdiag_j_Poffd_j( hypre_DeviceItem    &item,
       k += sum;
    }
 
-   hypre_device_assert(k == q_offd_P);
+   nalu_hypre_device_assert(k == q_offd_P);
 
    row_sum_C = warp_reduce_sum(item, row_sum_C);
    diagonal = warp_reduce_sum(item, diagonal);
@@ -2126,7 +2126,7 @@ void hypreGPUKernel_generate_Pdiag_j_Poffd_j( hypre_DeviceItem    &item,
 }
 
 __global__
-void hypreGPUKernel_insert_remaining_weights( hypre_DeviceItem &item,
+void hypreGPUKernel_insert_remaining_weights( nalu_hypre_DeviceItem &item,
                                               NALU_HYPRE_Int   start,
                                               NALU_HYPRE_Int   stop,
                                               NALU_HYPRE_Int  *pass_order,
@@ -2143,7 +2143,7 @@ void hypreGPUKernel_insert_remaining_weights( hypre_DeviceItem &item,
                                               NALU_HYPRE_Int  *P_offd_j,
                                               NALU_HYPRE_Real *P_offd_data )
 {
-   NALU_HYPRE_Int row_i = hypre_gpu_get_grid_warp_id<1, 1>(item);
+   NALU_HYPRE_Int row_i = nalu_hypre_gpu_get_grid_warp_id<1, 1>(item);
 
    if (row_i >= stop - start)
    {
@@ -2151,7 +2151,7 @@ void hypreGPUKernel_insert_remaining_weights( hypre_DeviceItem &item,
    }
 
    NALU_HYPRE_Int i1 = read_only_load(&pass_order[row_i + start]);
-   NALU_HYPRE_Int lane = hypre_gpu_get_lane_id<1>(item);
+   NALU_HYPRE_Int lane = nalu_hypre_gpu_get_lane_id<1>(item);
    NALU_HYPRE_Int p = 0;
    NALU_HYPRE_Int q = 0;
    NALU_HYPRE_Int i2;
@@ -2189,7 +2189,7 @@ void hypreGPUKernel_insert_remaining_weights( hypre_DeviceItem &item,
 
 
 __global__
-void hypreGPUKernel_generate_Qdiag_j_Qoffd_j( hypre_DeviceItem    &item,
+void hypreGPUKernel_generate_Qdiag_j_Qoffd_j( nalu_hypre_DeviceItem    &item,
                                               NALU_HYPRE_Int      num_points,
                                               NALU_HYPRE_Int      color,
                                               NALU_HYPRE_Int     *pass_order,
@@ -2216,7 +2216,7 @@ void hypreGPUKernel_generate_Qdiag_j_Qoffd_j( hypre_DeviceItem    &item,
                                               NALU_HYPRE_Int     *dof_func,
                                               NALU_HYPRE_Int     *dof_func_offd )
 {
-   NALU_HYPRE_Int row_i = hypre_gpu_get_grid_warp_id<1, 1>(item);
+   NALU_HYPRE_Int row_i = nalu_hypre_gpu_get_grid_warp_id<1, 1>(item);
 
    if (row_i >= num_points)
    {
@@ -2224,7 +2224,7 @@ void hypreGPUKernel_generate_Qdiag_j_Qoffd_j( hypre_DeviceItem    &item,
    }
 
    NALU_HYPRE_Int i1 = read_only_load(&pass_order[row_i]);
-   NALU_HYPRE_Int lane = hypre_gpu_get_lane_id<1>(item);
+   NALU_HYPRE_Int lane = nalu_hypre_gpu_get_lane_id<1>(item);
    NALU_HYPRE_Int p_diag_A = 0, q_diag_A, p_diag_P = 0;
 #ifdef NALU_HYPRE_DEBUG
    NALU_HYPRE_Int q_diag_P;
@@ -2308,7 +2308,7 @@ void hypreGPUKernel_generate_Qdiag_j_Qoffd_j( hypre_DeviceItem    &item,
    }
 
 #ifdef NALU_HYPRE_DEBUG
-   hypre_device_assert(k == q_diag_P);
+   nalu_hypre_device_assert(k == q_diag_P);
 #endif
 
    // S_offd
@@ -2382,7 +2382,7 @@ void hypreGPUKernel_generate_Qdiag_j_Qoffd_j( hypre_DeviceItem    &item,
    }
 
 #ifdef NALU_HYPRE_DEBUG
-   hypre_device_assert(k == q_offd_P);
+   nalu_hypre_device_assert(k == q_offd_P);
 #endif
 
    w_row_sum_i = warp_reduce_sum(item, w_row_sum_i);
@@ -2394,7 +2394,7 @@ void hypreGPUKernel_generate_Qdiag_j_Qoffd_j( hypre_DeviceItem    &item,
 }
 
 __global__
-void hypreGPUKernel_pass_order_count( hypre_DeviceItem &item,
+void hypreGPUKernel_pass_order_count( nalu_hypre_DeviceItem &item,
                                       NALU_HYPRE_Int  num_points,
                                       NALU_HYPRE_Int  color,
                                       NALU_HYPRE_Int *points_left,
@@ -2406,7 +2406,7 @@ void hypreGPUKernel_pass_order_count( hypre_DeviceItem &item,
                                       NALU_HYPRE_Int *S_offd_j,
                                       NALU_HYPRE_Int *diag_shifts )
 {
-   NALU_HYPRE_Int row_i = hypre_gpu_get_grid_warp_id<1, 1>(item);
+   NALU_HYPRE_Int row_i = nalu_hypre_gpu_get_grid_warp_id<1, 1>(item);
 
    if (row_i >= num_points)
    {
@@ -2414,10 +2414,10 @@ void hypreGPUKernel_pass_order_count( hypre_DeviceItem &item,
    }
 
    NALU_HYPRE_Int i1 = read_only_load(&points_left[row_i]);
-   NALU_HYPRE_Int lane = hypre_gpu_get_lane_id<1>(item);
+   NALU_HYPRE_Int lane = nalu_hypre_gpu_get_lane_id<1>(item);
    NALU_HYPRE_Int p = 0;
    NALU_HYPRE_Int q = 0;
-   hypre_int brk = 0;
+   nalu_hypre_int brk = 0;
 
    // S_diag
    if (lane < 2)
@@ -2494,7 +2494,7 @@ void hypreGPUKernel_pass_order_count( hypre_DeviceItem &item,
 }
 
 __global__
-void hypreGPUKernel_populate_big_P_offd_j( hypre_DeviceItem   &item,
+void hypreGPUKernel_populate_big_P_offd_j( nalu_hypre_DeviceItem   &item,
                                            NALU_HYPRE_Int     start,
                                            NALU_HYPRE_Int     stop,
                                            NALU_HYPRE_Int    *pass_order,
@@ -2503,14 +2503,14 @@ void hypreGPUKernel_populate_big_P_offd_j( hypre_DeviceItem   &item,
                                            NALU_HYPRE_BigInt *col_map_offd_Pi,
                                            NALU_HYPRE_BigInt *big_P_offd_j )
 {
-   NALU_HYPRE_Int i = hypre_gpu_get_grid_warp_id<1, 1>(item) + start;
+   NALU_HYPRE_Int i = nalu_hypre_gpu_get_grid_warp_id<1, 1>(item) + start;
 
    if (i >= stop)
    {
       return;
    }
 
-   NALU_HYPRE_Int lane = hypre_gpu_get_lane_id<1>(item);
+   NALU_HYPRE_Int lane = nalu_hypre_gpu_get_lane_id<1>(item);
    NALU_HYPRE_Int i1 = read_only_load(&pass_order[i]);
    NALU_HYPRE_Int p = 0;
    NALU_HYPRE_Int q = 0;

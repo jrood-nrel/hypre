@@ -9,19 +9,19 @@
 #include <stdio.h>
 #include <math.h>
 
-#include "_hypre_utilities.h"
+#include "_nalu_hypre_utilities.h"
 #include "NALU_HYPRE_struct_ls.h"
 #include "NALU_HYPRE_krylov.h"
 
-#include "_hypre_struct_mv.h"
-#include "_hypre_struct_mv.hpp"
+#include "_nalu_hypre_struct_mv.h"
+#include "_nalu_hypre_struct_mv.hpp"
 
 /*--------------------------------------------------------------------------
  * Test driver to time new boxloops and compare to the old ones
  *--------------------------------------------------------------------------*/
 
-hypre_int
-main( hypre_int argc,
+nalu_hypre_int
+main( nalu_hypre_int argc,
       char *argv[] )
 {
    NALU_HYPRE_Int         arg_index;
@@ -33,22 +33,22 @@ main( hypre_int argc,
    NALU_HYPRE_Int         dim;
    NALU_HYPRE_Int         rep, reps, fail, sum;
    NALU_HYPRE_Int         size;
-   hypre_Box        *x1_data_box, *x2_data_box, *x3_data_box, *x4_data_box;
+   nalu_hypre_Box        *x1_data_box, *x2_data_box, *x3_data_box, *x4_data_box;
    //NALU_HYPRE_Int         xi1, xi2, xi3, xi4;
    NALU_HYPRE_Int         xi1;
    NALU_HYPRE_Real       *xp1, *xp2, *xp3, *xp4;
    NALU_HYPRE_Real       *d_xp1, *d_xp2, *d_xp3, *d_xp4;
-   hypre_Index       loop_size, start, unit_stride, index;
+   nalu_hypre_Index       loop_size, start, unit_stride, index;
 
    /*-----------------------------------------------------------
     * Initialize some stuff
     *-----------------------------------------------------------*/
 
    /* Initialize MPI */
-   hypre_MPI_Init(&argc, &argv);
+   nalu_hypre_MPI_Init(&argc, &argv);
 
-   hypre_MPI_Comm_size(hypre_MPI_COMM_WORLD, &num_procs );
-   hypre_MPI_Comm_rank(hypre_MPI_COMM_WORLD, &myid );
+   nalu_hypre_MPI_Comm_size(nalu_hypre_MPI_COMM_WORLD, &num_procs );
+   nalu_hypre_MPI_Comm_rank(nalu_hypre_MPI_COMM_WORLD, &myid );
 
    NALU_HYPRE_Init();
 
@@ -121,13 +121,13 @@ main( hypre_int argc,
 
    if ( (print_usage) && (myid == 0) )
    {
-      hypre_printf("\n");
-      hypre_printf("Usage: %s [<options>]\n", argv[0]);
-      hypre_printf("\n");
-      hypre_printf("  -n <nx> <ny> <nz>   : problem size per block\n");
-      hypre_printf("  -P <Px> <Py> <Pz>   : processor topology\n");
-      hypre_printf("  -d <dim>            : problem dimension (2 or 3)\n");
-      hypre_printf("\n");
+      nalu_hypre_printf("\n");
+      nalu_hypre_printf("Usage: %s [<options>]\n", argv[0]);
+      nalu_hypre_printf("\n");
+      nalu_hypre_printf("  -n <nx> <ny> <nz>   : problem size per block\n");
+      nalu_hypre_printf("  -P <Px> <Py> <Pz>   : processor topology\n");
+      nalu_hypre_printf("  -d <dim>            : problem dimension (2 or 3)\n");
+      nalu_hypre_printf("\n");
    }
 
    if ( print_usage )
@@ -143,7 +143,7 @@ main( hypre_int argc,
    {
       if (myid == 0)
       {
-         hypre_printf("Error: PxQxR is more than the number of processors\n");
+         nalu_hypre_printf("Error: PxQxR is more than the number of processors\n");
       }
       exit(1);
    }
@@ -151,7 +151,7 @@ main( hypre_int argc,
    {
       if (myid == 0)
       {
-         hypre_printf("Warning: PxQxR is less than the number of processors\n");
+         nalu_hypre_printf("Warning: PxQxR is less than the number of processors\n");
       }
    }
 
@@ -159,30 +159,30 @@ main( hypre_int argc,
     * Initialize some stuff
     *-----------------------------------------------------------*/
 
-   hypre_SetIndex3(start, 1, 1, 1);
-   hypre_SetIndex3(loop_size, nx, ny, nz);
-   hypre_SetIndex3(unit_stride, 1, 1, 1);
+   nalu_hypre_SetIndex3(start, 1, 1, 1);
+   nalu_hypre_SetIndex3(loop_size, nx, ny, nz);
+   nalu_hypre_SetIndex3(unit_stride, 1, 1, 1);
 
-   x1_data_box = hypre_BoxCreate(dim);
-   x2_data_box = hypre_BoxCreate(dim);
-   x3_data_box = hypre_BoxCreate(dim);
-   x4_data_box = hypre_BoxCreate(dim);
-   hypre_SetIndex3(hypre_BoxIMin(x1_data_box), 0, 0, 0);
-   hypre_SetIndex3(hypre_BoxIMax(x1_data_box), nx + 1, ny + 1, nz + 1);
-   hypre_CopyBox(x1_data_box, x2_data_box);
-   hypre_CopyBox(x1_data_box, x3_data_box);
-   hypre_CopyBox(x1_data_box, x4_data_box);
+   x1_data_box = nalu_hypre_BoxCreate(dim);
+   x2_data_box = nalu_hypre_BoxCreate(dim);
+   x3_data_box = nalu_hypre_BoxCreate(dim);
+   x4_data_box = nalu_hypre_BoxCreate(dim);
+   nalu_hypre_SetIndex3(nalu_hypre_BoxIMin(x1_data_box), 0, 0, 0);
+   nalu_hypre_SetIndex3(nalu_hypre_BoxIMax(x1_data_box), nx + 1, ny + 1, nz + 1);
+   nalu_hypre_CopyBox(x1_data_box, x2_data_box);
+   nalu_hypre_CopyBox(x1_data_box, x3_data_box);
+   nalu_hypre_CopyBox(x1_data_box, x4_data_box);
 
    size = (nx + 2) * (ny + 2) * (nz + 2);
-   xp1 = hypre_CTAlloc(NALU_HYPRE_Real, size, NALU_HYPRE_MEMORY_HOST);
-   xp2 = hypre_CTAlloc(NALU_HYPRE_Real, size, NALU_HYPRE_MEMORY_HOST);
-   xp3 = hypre_CTAlloc(NALU_HYPRE_Real, size, NALU_HYPRE_MEMORY_HOST);
-   xp4 = hypre_CTAlloc(NALU_HYPRE_Real, size, NALU_HYPRE_MEMORY_HOST);
+   xp1 = nalu_hypre_CTAlloc(NALU_HYPRE_Real, size, NALU_HYPRE_MEMORY_HOST);
+   xp2 = nalu_hypre_CTAlloc(NALU_HYPRE_Real, size, NALU_HYPRE_MEMORY_HOST);
+   xp3 = nalu_hypre_CTAlloc(NALU_HYPRE_Real, size, NALU_HYPRE_MEMORY_HOST);
+   xp4 = nalu_hypre_CTAlloc(NALU_HYPRE_Real, size, NALU_HYPRE_MEMORY_HOST);
 
-   d_xp1 = hypre_CTAlloc(NALU_HYPRE_Real, size, NALU_HYPRE_MEMORY_DEVICE);
-   d_xp2 = hypre_CTAlloc(NALU_HYPRE_Real, size, NALU_HYPRE_MEMORY_DEVICE);
-   d_xp3 = hypre_CTAlloc(NALU_HYPRE_Real, size, NALU_HYPRE_MEMORY_DEVICE);
-   d_xp4 = hypre_CTAlloc(NALU_HYPRE_Real, size, NALU_HYPRE_MEMORY_DEVICE);
+   d_xp1 = nalu_hypre_CTAlloc(NALU_HYPRE_Real, size, NALU_HYPRE_MEMORY_DEVICE);
+   d_xp2 = nalu_hypre_CTAlloc(NALU_HYPRE_Real, size, NALU_HYPRE_MEMORY_DEVICE);
+   d_xp3 = nalu_hypre_CTAlloc(NALU_HYPRE_Real, size, NALU_HYPRE_MEMORY_DEVICE);
+   d_xp4 = nalu_hypre_CTAlloc(NALU_HYPRE_Real, size, NALU_HYPRE_MEMORY_DEVICE);
 
    if (reps < 0)
    {
@@ -195,11 +195,11 @@ main( hypre_int argc,
 
    if (myid == 0)
    {
-      hypre_printf("Running with these driver parameters:\n");
-      hypre_printf("  (nx, ny, nz)    = (%d, %d, %d)\n", nx, ny, nz);
-      hypre_printf("  (Px, Py, Pz)    = (%d, %d, %d)\n", P,  Q,  R);
-      hypre_printf("  dim             = %d\n", dim);
-      hypre_printf("  reps            = %d\n", reps);
+      nalu_hypre_printf("Running with these driver parameters:\n");
+      nalu_hypre_printf("  (nx, ny, nz)    = (%d, %d, %d)\n", nx, ny, nz);
+      nalu_hypre_printf("  (Px, Py, Pz)    = (%d, %d, %d)\n", P,  Q,  R);
+      nalu_hypre_printf("  dim             = %d\n", dim);
+      nalu_hypre_printf("  reps            = %d\n", reps);
    }
 
    /*-----------------------------------------------------------
@@ -218,23 +218,23 @@ main( hypre_int argc,
    /* Use old boxloop to check that values are set to 1 */
    fail = 0;
    sum = 0;
-   hypre_SerialBoxLoop1Begin(3, loop_size,
+   nalu_hypre_SerialBoxLoop1Begin(3, loop_size,
                              x1_data_box, start, unit_stride, xi1);
    {
       sum += xp1[xi1];
       if (xp1[xi1] != 1)
       {
          zypre_BoxLoopGetIndex(index);
-         hypre_printf("*(%d,%d,%d) = %d\n",
+         nalu_hypre_printf("*(%d,%d,%d) = %d\n",
                       index[0], index[1], index[2], (NALU_HYPRE_Int) xp1[xi1]);
          fail = 1;
       }
    }
-   hypre_SerialBoxLoop1End(xi1);
+   nalu_hypre_SerialBoxLoop1End(xi1);
 
    if (sum != (nx * ny * nz))
    {
-      hypre_printf("*sum = %d\n", sum);
+      nalu_hypre_printf("*sum = %d\n", sum);
       fail = 1;
    }
    if (fail)
@@ -246,87 +246,87 @@ main( hypre_int argc,
     * Synchronize so that timings make sense
     *-----------------------------------------------------------*/
 
-   hypre_MPI_Barrier(hypre_MPI_COMM_WORLD);
+   nalu_hypre_MPI_Barrier(nalu_hypre_MPI_COMM_WORLD);
 
    /*-----------------------------------------------------------
     * Time (device) boxloops
     *-----------------------------------------------------------*/
 
    /* Time BoxLoop0 */
-   time_index = hypre_InitializeTiming("BoxLoop0");
-   hypre_BeginTiming(time_index);
+   time_index = nalu_hypre_InitializeTiming("BoxLoop0");
+   nalu_hypre_BeginTiming(time_index);
    for (rep = 0; rep < reps; rep++)
    {
       xi1 = 0;
 #define DEVICE_VAR is_device_ptr(d_xp1)
-      hypre_BoxLoop0Begin(3, loop_size);
+      nalu_hypre_BoxLoop0Begin(3, loop_size);
       {
          d_xp1[xi1] += d_xp1[xi1];
          //xi1++;
       }
-      hypre_BoxLoop0End();
+      nalu_hypre_BoxLoop0End();
 #undef DEVICE_VAR
    }
-   hypre_EndTiming(time_index);
+   nalu_hypre_EndTiming(time_index);
 
    /* Time BoxLoop1 */
-   time_index = hypre_InitializeTiming("BoxLoop1");
-   hypre_BeginTiming(time_index);
+   time_index = nalu_hypre_InitializeTiming("BoxLoop1");
+   nalu_hypre_BeginTiming(time_index);
    for (rep = 0; rep < reps; rep++)
    {
 #define DEVICE_VAR is_device_ptr(d_xp1)
-      hypre_BoxLoop1Begin(3, loop_size,
+      nalu_hypre_BoxLoop1Begin(3, loop_size,
                           x1_data_box, start, unit_stride, xi1);
       {
          d_xp1[xi1] += d_xp1[xi1];
       }
-      hypre_BoxLoop1End(xi1);
+      nalu_hypre_BoxLoop1End(xi1);
 #undef DEVICE_VAR
    }
-   hypre_EndTiming(time_index);
+   nalu_hypre_EndTiming(time_index);
 
    /* Time BoxLoop2 */
-   time_index = hypre_InitializeTiming("BoxLoop2");
-   hypre_BeginTiming(time_index);
+   time_index = nalu_hypre_InitializeTiming("BoxLoop2");
+   nalu_hypre_BeginTiming(time_index);
    for (rep = 0; rep < reps; rep++)
    {
 #define DEVICE_VAR is_device_ptr(d_xp1,d_xp2)
-      hypre_BoxLoop2Begin(3, loop_size,
+      nalu_hypre_BoxLoop2Begin(3, loop_size,
                           x1_data_box, start, unit_stride, xi1,
                           x2_data_box, start, unit_stride, xi2);
       {
          d_xp1[xi1] += d_xp1[xi1] + d_xp2[xi2];
       }
-      hypre_BoxLoop2End(xi1, xi2);
+      nalu_hypre_BoxLoop2End(xi1, xi2);
 #undef DEVICE_VAR
    }
-   hypre_EndTiming(time_index);
+   nalu_hypre_EndTiming(time_index);
 
    /* Time BoxLoop3 */
-   time_index = hypre_InitializeTiming("BoxLoop3");
-   hypre_BeginTiming(time_index);
+   time_index = nalu_hypre_InitializeTiming("BoxLoop3");
+   nalu_hypre_BeginTiming(time_index);
    for (rep = 0; rep < reps; rep++)
    {
 #define DEVICE_VAR is_device_ptr(d_xp1,d_xp2,d_xp3)
-      hypre_BoxLoop3Begin(3, loop_size,
+      nalu_hypre_BoxLoop3Begin(3, loop_size,
                           x1_data_box, start, unit_stride, xi1,
                           x2_data_box, start, unit_stride, xi2,
                           x3_data_box, start, unit_stride, xi3);
       {
          d_xp1[xi1] += d_xp1[xi1] + d_xp2[xi2] + d_xp3[xi3];
       }
-      hypre_BoxLoop3End(xi1, xi2, xi3);
+      nalu_hypre_BoxLoop3End(xi1, xi2, xi3);
 #undef DEVICE_VAR
    }
-   hypre_EndTiming(time_index);
+   nalu_hypre_EndTiming(time_index);
 
    /* Time BoxLoop4 */
-   time_index = hypre_InitializeTiming("BoxLoop4");
-   hypre_BeginTiming(time_index);
+   time_index = nalu_hypre_InitializeTiming("BoxLoop4");
+   nalu_hypre_BeginTiming(time_index);
    for (rep = 0; rep < reps; rep++)
    {
 #define DEVICE_VAR is_device_ptr(d_xp1,d_xp2,d_xp3,d_xp4)
-      hypre_BoxLoop4Begin(3, loop_size,
+      nalu_hypre_BoxLoop4Begin(3, loop_size,
                           x1_data_box, start, unit_stride, xi1,
                           x2_data_box, start, unit_stride, xi2,
                           x3_data_box, start, unit_stride, xi3,
@@ -334,22 +334,22 @@ main( hypre_int argc,
       {
          d_xp1[xi1] += d_xp1[xi1] + d_xp2[xi2] + d_xp3[xi3] + d_xp4[xi4];
       }
-      hypre_BoxLoop4End(xi1, xi2, xi3, xi4);
+      nalu_hypre_BoxLoop4End(xi1, xi2, xi3, xi4);
 #undef DEVICE_VAR
    }
-   hypre_EndTiming(time_index);
+   nalu_hypre_EndTiming(time_index);
 
-   hypre_PrintTiming("BoxLoop times [DEVICE]", hypre_MPI_COMM_WORLD);
-   hypre_FinalizeAllTimings();
-   hypre_ClearTiming();
+   nalu_hypre_PrintTiming("BoxLoop times [DEVICE]", nalu_hypre_MPI_COMM_WORLD);
+   nalu_hypre_FinalizeAllTimings();
+   nalu_hypre_ClearTiming();
 
    /*-----------------------------------------------------------
     * Time host boxloops
     *-----------------------------------------------------------*/
 
    /* Time BoxLoop0 */
-   time_index = hypre_InitializeTiming("BoxLoop0");
-   hypre_BeginTiming(time_index);
+   time_index = nalu_hypre_InitializeTiming("BoxLoop0");
+   nalu_hypre_BeginTiming(time_index);
    for (rep = 0; rep < reps; rep++)
    {
       xi1 = 0;
@@ -362,11 +362,11 @@ main( hypre_int argc,
       }
       zypre_BoxLoop0End();
    }
-   hypre_EndTiming(time_index);
+   nalu_hypre_EndTiming(time_index);
 
    /* Time BoxLoop1 */
-   time_index = hypre_InitializeTiming("BoxLoop1");
-   hypre_BeginTiming(time_index);
+   time_index = nalu_hypre_InitializeTiming("BoxLoop1");
+   nalu_hypre_BeginTiming(time_index);
    for (rep = 0; rep < reps; rep++)
    {
       zypre_BoxLoop1Begin(dim, loop_size,
@@ -376,11 +376,11 @@ main( hypre_int argc,
       }
       zypre_BoxLoop1End(xi1);
    }
-   hypre_EndTiming(time_index);
+   nalu_hypre_EndTiming(time_index);
 
    /* Time BoxLoop2 */
-   time_index = hypre_InitializeTiming("BoxLoop2");
-   hypre_BeginTiming(time_index);
+   time_index = nalu_hypre_InitializeTiming("BoxLoop2");
+   nalu_hypre_BeginTiming(time_index);
    for (rep = 0; rep < reps; rep++)
    {
       zypre_BoxLoop2Begin(dim, loop_size,
@@ -391,11 +391,11 @@ main( hypre_int argc,
       }
       zypre_BoxLoop2End(xi1, xi2);
    }
-   hypre_EndTiming(time_index);
+   nalu_hypre_EndTiming(time_index);
 
    /* Time BoxLoop3 */
-   time_index = hypre_InitializeTiming("BoxLoop3");
-   hypre_BeginTiming(time_index);
+   time_index = nalu_hypre_InitializeTiming("BoxLoop3");
+   nalu_hypre_BeginTiming(time_index);
    for (rep = 0; rep < reps; rep++)
    {
       zypre_BoxLoop3Begin(dim, loop_size,
@@ -407,11 +407,11 @@ main( hypre_int argc,
       }
       zypre_BoxLoop3End(xi1, xi2, xi3);
    }
-   hypre_EndTiming(time_index);
+   nalu_hypre_EndTiming(time_index);
 
    /* Time BoxLoop4 */
-   time_index = hypre_InitializeTiming("BoxLoop4");
-   hypre_BeginTiming(time_index);
+   time_index = nalu_hypre_InitializeTiming("BoxLoop4");
+   nalu_hypre_BeginTiming(time_index);
    for (rep = 0; rep < reps; rep++)
    {
       zypre_BoxLoop4Begin(dim, loop_size,
@@ -424,11 +424,11 @@ main( hypre_int argc,
       }
       zypre_BoxLoop4End(xi1, xi2, xi3, xi4);
    }
-   hypre_EndTiming(time_index);
+   nalu_hypre_EndTiming(time_index);
 
-   hypre_PrintTiming("BoxLoop times [HOST]", hypre_MPI_COMM_WORLD);
-   hypre_FinalizeAllTimings();
-   hypre_ClearTiming();
+   nalu_hypre_PrintTiming("BoxLoop times [HOST]", nalu_hypre_MPI_COMM_WORLD);
+   nalu_hypre_FinalizeAllTimings();
+   nalu_hypre_ClearTiming();
 
    /*-----------------------------------------------------------
     * Reduction Loops
@@ -440,14 +440,14 @@ main( hypre_int argc,
          xp1[i] = cos(i + 1.0);
          xp2[i] = sin(i + 2.0);
       }
-      hypre_TMemcpy(d_xp1, xp1, NALU_HYPRE_Real, size, NALU_HYPRE_MEMORY_DEVICE, NALU_HYPRE_MEMORY_HOST);
-      hypre_TMemcpy(d_xp2, xp2, NALU_HYPRE_Real, size, NALU_HYPRE_MEMORY_DEVICE, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TMemcpy(d_xp1, xp1, NALU_HYPRE_Real, size, NALU_HYPRE_MEMORY_DEVICE, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TMemcpy(d_xp2, xp2, NALU_HYPRE_Real, size, NALU_HYPRE_MEMORY_DEVICE, NALU_HYPRE_MEMORY_HOST);
    }
 
 #if defined(NALU_HYPRE_USING_KOKKOS)
    NALU_HYPRE_Real reducer = 0.0;
 #elif defined(NALU_HYPRE_USING_RAJA)
-   ReduceSum<hypre_raja_reduce_policy, NALU_HYPRE_Real> reducer(0.0);
+   ReduceSum<nalu_hypre_raja_reduce_policy, NALU_HYPRE_Real> reducer(0.0);
 #elif defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
    ReduceSum<NALU_HYPRE_Real> reducer(0.0);
 #else
@@ -467,47 +467,47 @@ main( hypre_int argc,
     *-----------------------------------------------------------*/
 
    /* Time BoxLoop1Reduction */
-   time_index = hypre_InitializeTiming("BoxLoopReduction1");
-   hypre_BeginTiming(time_index);
+   time_index = nalu_hypre_InitializeTiming("BoxLoopReduction1");
+   nalu_hypre_BeginTiming(time_index);
    for (rep = 0; rep < reps; rep++)
    {
       reducer = 0.0;
 #define DEVICE_VAR is_device_ptr(d_xp1)
-      hypre_BoxLoop1ReductionBegin(3, loop_size,
+      nalu_hypre_BoxLoop1ReductionBegin(3, loop_size,
                                    x1_data_box, start, unit_stride, xi1,
                                    reducer);
       {
          reducer += 1.0 / d_xp1[xi1];
       }
-      hypre_BoxLoop1ReductionEnd(xi1, reducer);
+      nalu_hypre_BoxLoop1ReductionEnd(xi1, reducer);
 #undef DEVICE_VAR
       box_sum1 += (NALU_HYPRE_Real) reducer;
    }
-   hypre_EndTiming(time_index);
+   nalu_hypre_EndTiming(time_index);
 
    /* Time BoxLoop2Reduction */
-   time_index = hypre_InitializeTiming("BoxLoopReduction2");
-   hypre_BeginTiming(time_index);
+   time_index = nalu_hypre_InitializeTiming("BoxLoopReduction2");
+   nalu_hypre_BeginTiming(time_index);
    for (rep = 0; rep < reps; rep++)
    {
       reducer = 0.0;
 #define DEVICE_VAR is_device_ptr(d_xp1,d_xp2)
-      hypre_BoxLoop2ReductionBegin(3, loop_size,
+      nalu_hypre_BoxLoop2ReductionBegin(3, loop_size,
                                    x1_data_box, start, unit_stride, xi1,
                                    x2_data_box, start, unit_stride, xi2,
                                    reducer);
       {
          reducer += 1.0 / d_xp1[xi1] + d_xp2[xi2] * 3.1415926;
       }
-      hypre_BoxLoop2ReductionEnd(xi1, xi2, reducer);
+      nalu_hypre_BoxLoop2ReductionEnd(xi1, xi2, reducer);
 #undef DEVICE_VAR
       box_sum2 += (NALU_HYPRE_Real) reducer;
    }
-   hypre_EndTiming(time_index);
+   nalu_hypre_EndTiming(time_index);
 
-   hypre_PrintTiming("BoxLoopReduction times [DEVICE]", hypre_MPI_COMM_WORLD);
-   hypre_FinalizeAllTimings();
-   hypre_ClearTiming();
+   nalu_hypre_PrintTiming("BoxLoopReduction times [DEVICE]", nalu_hypre_MPI_COMM_WORLD);
+   nalu_hypre_FinalizeAllTimings();
+   nalu_hypre_ClearTiming();
 
    /*-----------------------------------------------------------
     * Time host boxloops
@@ -515,8 +515,8 @@ main( hypre_int argc,
    NALU_HYPRE_Real zbox_sum1 = 0.0, zbox_sum2 = 0.0;
 
    /* Time BoxLoop1 */
-   time_index = hypre_InitializeTiming("BoxLoopReduction1");
-   hypre_BeginTiming(time_index);
+   time_index = nalu_hypre_InitializeTiming("BoxLoopReduction1");
+   nalu_hypre_BeginTiming(time_index);
    for (rep = 0; rep < reps; rep++)
    {
 #undef NALU_HYPRE_BOX_REDUCTION
@@ -528,11 +528,11 @@ main( hypre_int argc,
       }
       zypre_BoxLoop1End(xi1);
    }
-   hypre_EndTiming(time_index);
+   nalu_hypre_EndTiming(time_index);
 
    /* Time BoxLoop2 */
-   time_index = hypre_InitializeTiming("BoxLoopReduction2");
-   hypre_BeginTiming(time_index);
+   time_index = nalu_hypre_InitializeTiming("BoxLoopReduction2");
+   nalu_hypre_BeginTiming(time_index);
    for (rep = 0; rep < reps; rep++)
    {
 #undef NALU_HYPRE_BOX_REDUCTION
@@ -545,33 +545,33 @@ main( hypre_int argc,
       }
       zypre_BoxLoop2End(xi1, xi2);
    }
-   hypre_EndTiming(time_index);
+   nalu_hypre_EndTiming(time_index);
 
-   hypre_PrintTiming("BoxLoopReduction times [HOST]", hypre_MPI_COMM_WORLD);
-   hypre_FinalizeAllTimings();
-   hypre_ClearTiming();
+   nalu_hypre_PrintTiming("BoxLoopReduction times [HOST]", nalu_hypre_MPI_COMM_WORLD);
+   nalu_hypre_FinalizeAllTimings();
+   nalu_hypre_ClearTiming();
 
-   hypre_printf("BoxLoopReduction1, error %e\n", hypre_abs((zbox_sum1 - box_sum1) / zbox_sum1));
-   hypre_printf("BoxLoopReduction2, error %e\n", hypre_abs((zbox_sum2 - box_sum2) / zbox_sum2));
+   nalu_hypre_printf("BoxLoopReduction1, error %e\n", nalu_hypre_abs((zbox_sum1 - box_sum1) / zbox_sum1));
+   nalu_hypre_printf("BoxLoopReduction2, error %e\n", nalu_hypre_abs((zbox_sum2 - box_sum2) / zbox_sum2));
 
    /*-----------------------------------------------------------
     * Finalize things
     *-----------------------------------------------------------*/
 
-   hypre_BoxDestroy(x1_data_box);
-   hypre_BoxDestroy(x2_data_box);
-   hypre_BoxDestroy(x3_data_box);
-   hypre_BoxDestroy(x4_data_box);
+   nalu_hypre_BoxDestroy(x1_data_box);
+   nalu_hypre_BoxDestroy(x2_data_box);
+   nalu_hypre_BoxDestroy(x3_data_box);
+   nalu_hypre_BoxDestroy(x4_data_box);
 
-   hypre_TFree(xp1, NALU_HYPRE_MEMORY_HOST);
-   hypre_TFree(xp2, NALU_HYPRE_MEMORY_HOST);
-   hypre_TFree(xp3, NALU_HYPRE_MEMORY_HOST);
-   hypre_TFree(xp4, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(xp1, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(xp2, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(xp3, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(xp4, NALU_HYPRE_MEMORY_HOST);
 
-   hypre_TFree(d_xp1, NALU_HYPRE_MEMORY_DEVICE);
-   hypre_TFree(d_xp2, NALU_HYPRE_MEMORY_DEVICE);
-   hypre_TFree(d_xp3, NALU_HYPRE_MEMORY_DEVICE);
-   hypre_TFree(d_xp4, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(d_xp1, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(d_xp2, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(d_xp3, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(d_xp4, NALU_HYPRE_MEMORY_DEVICE);
 
 #if defined(NALU_HYPRE_USING_KOKKOS)
    Kokkos::finalize ();
@@ -580,7 +580,7 @@ main( hypre_int argc,
    NALU_HYPRE_Finalize();
 
    /* Finalize MPI */
-   hypre_MPI_Finalize();
+   nalu_hypre_MPI_Finalize();
 
    return (0);
 }

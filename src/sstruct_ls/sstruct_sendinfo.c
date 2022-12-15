@@ -5,49 +5,49 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_sstruct_ls.h"
+#include "_nalu_hypre_sstruct_ls.h"
 
 /*--------------------------------------------------------------------------
- * hypre_SStructSendInfo: Given a fgrid, coarsen each fbox and find the
+ * nalu_hypre_SStructSendInfo: Given a fgrid, coarsen each fbox and find the
  * coarsened boxes that must be sent, the procs that they must be sent to,
  * and the remote boxnums of these sendboxes.
  *--------------------------------------------------------------------------*/
 
-hypre_SStructSendInfoData *
-hypre_SStructSendInfo( hypre_StructGrid      *fgrid,
-                       hypre_BoxManager      *cboxman,
-                       hypre_Index            rfactor )
+nalu_hypre_SStructSendInfoData *
+nalu_hypre_SStructSendInfo( nalu_hypre_StructGrid      *fgrid,
+                       nalu_hypre_BoxManager      *cboxman,
+                       nalu_hypre_Index            rfactor )
 {
-   hypre_SStructSendInfoData *sendinfo_data;
+   nalu_hypre_SStructSendInfoData *sendinfo_data;
 
-   MPI_Comm                   comm = hypre_StructGridComm(fgrid);
-   NALU_HYPRE_Int                  ndim = hypre_StructGridNDim(fgrid);
+   MPI_Comm                   comm = nalu_hypre_StructGridComm(fgrid);
+   NALU_HYPRE_Int                  ndim = nalu_hypre_StructGridNDim(fgrid);
 
-   hypre_BoxArray            *grid_boxes;
-   hypre_Box                 *grid_box, cbox;
-   hypre_Box                 *intersect_box, boxman_entry_box;
+   nalu_hypre_BoxArray            *grid_boxes;
+   nalu_hypre_Box                 *grid_box, cbox;
+   nalu_hypre_Box                 *intersect_box, boxman_entry_box;
 
-   hypre_BoxManEntry        **boxman_entries;
+   nalu_hypre_BoxManEntry        **boxman_entries;
    NALU_HYPRE_Int                  nboxman_entries;
 
-   hypre_BoxArrayArray       *send_boxes;
+   nalu_hypre_BoxArrayArray       *send_boxes;
    NALU_HYPRE_Int                **send_processes;
    NALU_HYPRE_Int                **send_remote_boxnums;
 
-   hypre_Index                ilower, iupper, index;
+   nalu_hypre_Index                ilower, iupper, index;
 
    NALU_HYPRE_Int                  myproc, proc;
 
    NALU_HYPRE_Int                  cnt;
    NALU_HYPRE_Int                  i, j;
 
-   hypre_BoxInit(&cbox, ndim);
-   hypre_BoxInit(&boxman_entry_box, ndim);
+   nalu_hypre_BoxInit(&cbox, ndim);
+   nalu_hypre_BoxInit(&boxman_entry_box, ndim);
 
-   hypre_ClearIndex(index);
-   hypre_MPI_Comm_rank(comm, &myproc);
+   nalu_hypre_ClearIndex(index);
+   nalu_hypre_MPI_Comm_rank(comm, &myproc);
 
-   sendinfo_data = hypre_CTAlloc(hypre_SStructSendInfoData,  1, NALU_HYPRE_MEMORY_HOST);
+   sendinfo_data = nalu_hypre_CTAlloc(nalu_hypre_SStructSendInfoData,  1, NALU_HYPRE_MEMORY_HOST);
 
    /*------------------------------------------------------------------------
     * Create the structured sendbox patterns.
@@ -58,17 +58,17 @@ hypre_SStructSendInfo( hypre_StructGrid      *fgrid,
     *   through the boxes of grid and find the processors that own a chunk
     *   of it.
     *------------------------------------------------------------------------*/
-   intersect_box = hypre_BoxCreate(ndim);
-   grid_boxes   = hypre_StructGridBoxes(fgrid);
+   intersect_box = nalu_hypre_BoxCreate(ndim);
+   grid_boxes   = nalu_hypre_StructGridBoxes(fgrid);
 
-   send_boxes = hypre_BoxArrayArrayCreate(hypre_BoxArraySize(grid_boxes), ndim);
-   send_processes = hypre_CTAlloc(NALU_HYPRE_Int *,  hypre_BoxArraySize(grid_boxes), NALU_HYPRE_MEMORY_HOST);
-   send_remote_boxnums = hypre_CTAlloc(NALU_HYPRE_Int *,  hypre_BoxArraySize(grid_boxes),
+   send_boxes = nalu_hypre_BoxArrayArrayCreate(nalu_hypre_BoxArraySize(grid_boxes), ndim);
+   send_processes = nalu_hypre_CTAlloc(NALU_HYPRE_Int *,  nalu_hypre_BoxArraySize(grid_boxes), NALU_HYPRE_MEMORY_HOST);
+   send_remote_boxnums = nalu_hypre_CTAlloc(NALU_HYPRE_Int *,  nalu_hypre_BoxArraySize(grid_boxes),
                                        NALU_HYPRE_MEMORY_HOST);
 
-   hypre_ForBoxI(i, grid_boxes)
+   nalu_hypre_ForBoxI(i, grid_boxes)
    {
-      grid_box = hypre_BoxArrayBox(grid_boxes, i);
+      grid_box = nalu_hypre_BoxArrayBox(grid_boxes, i);
 
       /*---------------------------------------------------------------------
        * Find the boxarray that must be sent. BoxManIntersect returns
@@ -76,52 +76,52 @@ hypre_SStructSendInfo( hypre_StructGrid      *fgrid,
        * We further need to intersect each box in the list with the given
        * box to determine the actual box that needs to be sent.
        *---------------------------------------------------------------------*/
-      hypre_SStructIndexScaleF_C(hypre_BoxIMin(grid_box), index,
-                                 rfactor, hypre_BoxIMin(&cbox));
-      hypre_SStructIndexScaleF_C(hypre_BoxIMax(grid_box), index,
-                                 rfactor, hypre_BoxIMax(&cbox));
+      nalu_hypre_SStructIndexScaleF_C(nalu_hypre_BoxIMin(grid_box), index,
+                                 rfactor, nalu_hypre_BoxIMin(&cbox));
+      nalu_hypre_SStructIndexScaleF_C(nalu_hypre_BoxIMax(grid_box), index,
+                                 rfactor, nalu_hypre_BoxIMax(&cbox));
 
-      hypre_BoxManIntersect(cboxman, hypre_BoxIMin(&cbox), hypre_BoxIMax(&cbox),
+      nalu_hypre_BoxManIntersect(cboxman, nalu_hypre_BoxIMin(&cbox), nalu_hypre_BoxIMax(&cbox),
                             &boxman_entries, &nboxman_entries);
 
       cnt = 0;
       for (j = 0; j < nboxman_entries; j++)
       {
-         hypre_SStructBoxManEntryGetProcess(boxman_entries[j], &proc);
+         nalu_hypre_SStructBoxManEntryGetProcess(boxman_entries[j], &proc);
          if (proc != myproc)
          {
             cnt++;
          }
       }
-      send_processes[i]     = hypre_CTAlloc(NALU_HYPRE_Int,  cnt, NALU_HYPRE_MEMORY_HOST);
-      send_remote_boxnums[i] = hypre_CTAlloc(NALU_HYPRE_Int,  cnt, NALU_HYPRE_MEMORY_HOST);
+      send_processes[i]     = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  cnt, NALU_HYPRE_MEMORY_HOST);
+      send_remote_boxnums[i] = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  cnt, NALU_HYPRE_MEMORY_HOST);
 
       cnt = 0;
       for (j = 0; j < nboxman_entries; j++)
       {
-         hypre_SStructBoxManEntryGetProcess(boxman_entries[j], &proc);
+         nalu_hypre_SStructBoxManEntryGetProcess(boxman_entries[j], &proc);
 
          /* determine the chunk of the boxman_entries[j] box that is needed */
-         hypre_BoxManEntryGetExtents(boxman_entries[j], ilower, iupper);
-         hypre_BoxSetExtents(&boxman_entry_box, ilower, iupper);
-         hypre_IntersectBoxes(&boxman_entry_box, &cbox, &boxman_entry_box);
+         nalu_hypre_BoxManEntryGetExtents(boxman_entries[j], ilower, iupper);
+         nalu_hypre_BoxSetExtents(&boxman_entry_box, ilower, iupper);
+         nalu_hypre_IntersectBoxes(&boxman_entry_box, &cbox, &boxman_entry_box);
 
          if (proc != myproc)
          {
             send_processes[i][cnt]     = proc;
-            hypre_SStructBoxManEntryGetBoxnum(boxman_entries[j],
+            nalu_hypre_SStructBoxManEntryGetBoxnum(boxman_entries[j],
                                               &send_remote_boxnums[i][cnt]);
-            hypre_AppendBox(&boxman_entry_box,
-                            hypre_BoxArrayArrayBoxArray(send_boxes, i));
+            nalu_hypre_AppendBox(&boxman_entry_box,
+                            nalu_hypre_BoxArrayArrayBoxArray(send_boxes, i));
             cnt++;
          }
       }
-      hypre_TFree(boxman_entries, NALU_HYPRE_MEMORY_HOST);
-   }  /* hypre_ForBoxI(i, grid_boxes) */
+      nalu_hypre_TFree(boxman_entries, NALU_HYPRE_MEMORY_HOST);
+   }  /* nalu_hypre_ForBoxI(i, grid_boxes) */
 
-   hypre_BoxDestroy(intersect_box);
+   nalu_hypre_BoxDestroy(intersect_box);
 
-   (sendinfo_data -> size)               = hypre_BoxArraySize(grid_boxes);
+   (sendinfo_data -> size)               = nalu_hypre_BoxArraySize(grid_boxes);
    (sendinfo_data -> send_boxes)         = send_boxes;
    (sendinfo_data -> send_procs)         = send_processes;
    (sendinfo_data -> send_remote_boxnums) = send_remote_boxnums;
@@ -130,10 +130,10 @@ hypre_SStructSendInfo( hypre_StructGrid      *fgrid,
 }
 
 /*--------------------------------------------------------------------------
- * hypre_SStructSendInfoDataDestroy
+ * nalu_hypre_SStructSendInfoDataDestroy
  *--------------------------------------------------------------------------*/
 NALU_HYPRE_Int
-hypre_SStructSendInfoDataDestroy(hypre_SStructSendInfoData *sendinfo_data)
+nalu_hypre_SStructSendInfoDataDestroy(nalu_hypre_SStructSendInfoData *sendinfo_data)
 {
    NALU_HYPRE_Int ierr = 0;
    NALU_HYPRE_Int i;
@@ -142,26 +142,26 @@ hypre_SStructSendInfoDataDestroy(hypre_SStructSendInfoData *sendinfo_data)
    {
       if (sendinfo_data -> send_boxes)
       {
-         hypre_BoxArrayArrayDestroy( (sendinfo_data -> send_boxes) );
+         nalu_hypre_BoxArrayArrayDestroy( (sendinfo_data -> send_boxes) );
       }
 
       for (i = 0; i < (sendinfo_data -> size); i++)
       {
          if (sendinfo_data -> send_procs[i])
          {
-            hypre_TFree(sendinfo_data -> send_procs[i], NALU_HYPRE_MEMORY_HOST);
+            nalu_hypre_TFree(sendinfo_data -> send_procs[i], NALU_HYPRE_MEMORY_HOST);
          }
 
          if (sendinfo_data -> send_remote_boxnums[i])
          {
-            hypre_TFree(sendinfo_data -> send_remote_boxnums[i], NALU_HYPRE_MEMORY_HOST);
+            nalu_hypre_TFree(sendinfo_data -> send_remote_boxnums[i], NALU_HYPRE_MEMORY_HOST);
          }
       }
-      hypre_TFree(sendinfo_data -> send_procs, NALU_HYPRE_MEMORY_HOST);
-      hypre_TFree(sendinfo_data -> send_remote_boxnums, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(sendinfo_data -> send_procs, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(sendinfo_data -> send_remote_boxnums, NALU_HYPRE_MEMORY_HOST);
    }
 
-   hypre_TFree(sendinfo_data, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(sendinfo_data, NALU_HYPRE_MEMORY_HOST);
 
    return ierr;
 }

@@ -37,7 +37,7 @@
 #include "NALU_HYPRE_lobpcg.h"
 
 #ifdef NALU_HYPRE_EXVIS
-#include "_hypre_utilities.h"
+#include "_nalu_hypre_utilities.h"
 #include "vis.c"
 #endif
 
@@ -339,8 +339,8 @@ int main (int argc, char *argv[])
       NALU_HYPRE_ParVector*    pvx = (NALU_HYPRE_ParVector*)(tmp -> vector);
 
       /* get the local solution */
-      values = hypre_VectorData(hypre_ParVectorLocalVector(
-                                   (hypre_ParVector*)pvx[blockSize - 1]));
+      values = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(
+                                   (nalu_hypre_ParVector*)pvx[blockSize - 1]));
 
       sprintf(filename, "%s.%06d", "vis/ex11.sol", myid);
       if ((file = fopen(filename, "w")) == NULL)

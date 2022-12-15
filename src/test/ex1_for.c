@@ -31,7 +31,7 @@
 
 #ifdef NALU_HYPRE_FORTRAN
 #include "fortran.h"
-#include "hypre_struct_fortran_test.h"
+#include "nalu_hypre_struct_fortran_test.h"
 #endif
 
 NALU_HYPRE_Int main (NALU_HYPRE_Int argc, char *argv[])
@@ -39,12 +39,12 @@ NALU_HYPRE_Int main (NALU_HYPRE_Int argc, char *argv[])
    NALU_HYPRE_Int i, j, myid;
 
 #ifdef NALU_HYPRE_FORTRAN
-   hypre_F90_Obj grid;
-   hypre_F90_Obj stencil;
-   hypre_F90_Obj A;
-   hypre_F90_Obj b;
-   hypre_F90_Obj x;
-   hypre_F90_Obj solver;
+   nalu_hypre_F90_Obj grid;
+   nalu_hypre_F90_Obj stencil;
+   nalu_hypre_F90_Obj A;
+   nalu_hypre_F90_Obj b;
+   nalu_hypre_F90_Obj x;
+   nalu_hypre_F90_Obj solver;
    NALU_HYPRE_Int temp_COMM;
    NALU_HYPRE_Int one = 1;
    NALU_HYPRE_Int two = 2;
@@ -60,18 +60,18 @@ NALU_HYPRE_Int main (NALU_HYPRE_Int argc, char *argv[])
 #endif
 
    /* Initialize MPI */
-   hypre_MPI_Init(&argc, &argv);
-   hypre_MPI_Comm_rank(hypre_MPI_COMM_WORLD, &myid);
+   nalu_hypre_MPI_Init(&argc, &argv);
+   nalu_hypre_MPI_Comm_rank(nalu_hypre_MPI_COMM_WORLD, &myid);
 
    /* 1. Set up a grid. Each processor describes the piece
       of the grid that it owns. */
    {
       /* Create an empty 2D grid object */
 #ifdef NALU_HYPRE_FORTRAN
-      temp_COMM = (NALU_HYPRE_Int) hypre_MPI_COMM_WORLD;
+      temp_COMM = (NALU_HYPRE_Int) nalu_hypre_MPI_COMM_WORLD;
       NALU_HYPRE_StructGridCreate(&temp_COMM, &two, &grid);
 #else
-      NALU_HYPRE_StructGridCreate(hypre_MPI_COMM_WORLD, 2, &grid);
+      NALU_HYPRE_StructGridCreate(nalu_hypre_MPI_COMM_WORLD, 2, &grid);
 #endif
 
       /* Add boxes to the grid */
@@ -139,7 +139,7 @@ NALU_HYPRE_Int main (NALU_HYPRE_Int argc, char *argv[])
 #ifdef NALU_HYPRE_FORTRAN
       NALU_HYPRE_StructMatrixCreate(&temp_COMM, &grid, &stencil, &A);
 #else
-      NALU_HYPRE_StructMatrixCreate(hypre_MPI_COMM_WORLD, grid, stencil, &A);
+      NALU_HYPRE_StructMatrixCreate(nalu_hypre_MPI_COMM_WORLD, grid, stencil, &A);
 #endif
 
       /* Indicate that the matrix coefficients are ready to be set */
@@ -329,8 +329,8 @@ NALU_HYPRE_Int main (NALU_HYPRE_Int argc, char *argv[])
       NALU_HYPRE_StructVectorCreate(&temp_COMM, &grid, &b);
       NALU_HYPRE_StructVectorCreate(&temp_COMM, &grid, &x);
 #else
-      NALU_HYPRE_StructVectorCreate(hypre_MPI_COMM_WORLD, grid, &b);
-      NALU_HYPRE_StructVectorCreate(hypre_MPI_COMM_WORLD, grid, &x);
+      NALU_HYPRE_StructVectorCreate(nalu_hypre_MPI_COMM_WORLD, grid, &b);
+      NALU_HYPRE_StructVectorCreate(nalu_hypre_MPI_COMM_WORLD, grid, &x);
 #endif
 
       /* Indicate that the vector coefficients are ready to be set */
@@ -412,7 +412,7 @@ NALU_HYPRE_Int main (NALU_HYPRE_Int argc, char *argv[])
 #ifdef NALU_HYPRE_FORTRAN
       NALU_HYPRE_StructPCGCreate(&temp_COMM, &solver);
 #else
-      NALU_HYPRE_StructPCGCreate(hypre_MPI_COMM_WORLD, &solver);
+      NALU_HYPRE_StructPCGCreate(nalu_hypre_MPI_COMM_WORLD, &solver);
 #endif
 
       /* Set some parameters */
@@ -452,7 +452,7 @@ NALU_HYPRE_Int main (NALU_HYPRE_Int argc, char *argv[])
 #endif
 
    /* Finalize MPI */
-   hypre_MPI_Finalize();
+   nalu_hypre_MPI_Finalize();
 
    return (0);
 }

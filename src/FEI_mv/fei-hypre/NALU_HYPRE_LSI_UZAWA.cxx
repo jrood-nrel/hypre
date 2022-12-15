@@ -42,10 +42,10 @@
 
 extern "C"
 {
-   int hypre_BoomerAMGBuildCoarseOperator(hypre_ParCSRMatrix*,
-                                          hypre_ParCSRMatrix*,
-                                          hypre_ParCSRMatrix*,
-                                          hypre_ParCSRMatrix**);
+   int nalu_hypre_BoomerAMGBuildCoarseOperator(nalu_hypre_ParCSRMatrix*,
+                                          nalu_hypre_ParCSRMatrix*,
+                                          nalu_hypre_ParCSRMatrix*,
+                                          nalu_hypre_ParCSRMatrix**);
 }
 
 //***************************************************************************
@@ -68,7 +68,7 @@ extern "C" int NALU_HYPRE_LSI_UzawaCreate(MPI_Comm mpi_comm, NALU_HYPRE_Solver *
 {
    (void) mpi_comm;
    NALU_HYPRE_LSI_UzawaStruct *cprecon = (NALU_HYPRE_LSI_UzawaStruct *)
-                                     hypre_CTAlloc(NALU_HYPRE_LSI_UzawaStruct, 1, NALU_HYPRE_MEMORY_HOST);
+                                     nalu_hypre_CTAlloc(NALU_HYPRE_LSI_UzawaStruct, 1, NALU_HYPRE_MEMORY_HOST);
    NALU_HYPRE_LSI_Uzawa *precon = (NALU_HYPRE_LSI_Uzawa *) new NALU_HYPRE_LSI_Uzawa(mpi_comm);
    cprecon->precon = (void *) precon;
    (*solver) = (NALU_HYPRE_Solver) cprecon;
@@ -778,8 +778,8 @@ int NALU_HYPRE_LSI_Uzawa::solve(NALU_HYPRE_ParVector b, NALU_HYPRE_ParVector x)
    NALU_HYPRE_IJVector  IJR, IJF1, IJF2, IJU1, IJU2, IJT1, IJT2, IJV1, IJV2;
    NALU_HYPRE_ParVector r_csr, f1_csr, f2_csr, u1_csr, u2_csr, t1_csr, t2_csr;
    NALU_HYPRE_ParVector v1_csr, v2_csr;
-   hypre_Vector    *b_local, *f1_local, *f2_local;
-   hypre_Vector    *x_local, *u1_local, *u2_local, *v1_local;
+   nalu_hypre_Vector    *b_local, *f1_local, *f2_local;
+   nalu_hypre_Vector    *x_local, *u1_local, *u2_local, *v1_local;
 
    //------------------------------------------------------------------
    // get machine information
@@ -799,7 +799,7 @@ int NALU_HYPRE_LSI_Uzawa::solve(NALU_HYPRE_ParVector b, NALU_HYPRE_ParVector x)
    ierr = NALU_HYPRE_IJVectorSetObjectType(IJR, NALU_HYPRE_PARCSR);
    ierr = NALU_HYPRE_IJVectorInitialize(IJR);
    ierr = NALU_HYPRE_IJVectorAssemble(IJR);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
    NALU_HYPRE_IJVectorGetObject(IJR, (void **) &r_csr);
 
    startRow = procNRows[mypid] - procA22Sizes_[mypid];
@@ -808,25 +808,25 @@ int NALU_HYPRE_LSI_Uzawa::solve(NALU_HYPRE_ParVector b, NALU_HYPRE_ParVector x)
    ierr = NALU_HYPRE_IJVectorSetObjectType(IJF1, NALU_HYPRE_PARCSR);
    ierr = NALU_HYPRE_IJVectorInitialize(IJF1);
    ierr = NALU_HYPRE_IJVectorAssemble(IJF1);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
    NALU_HYPRE_IJVectorGetObject(IJF1, (void **) &f1_csr);
    ierr = NALU_HYPRE_IJVectorCreate(mpiComm_, startRow, endRow, &IJU1);
    ierr = NALU_HYPRE_IJVectorSetObjectType(IJU1, NALU_HYPRE_PARCSR);
    ierr = NALU_HYPRE_IJVectorInitialize(IJU1);
    ierr = NALU_HYPRE_IJVectorAssemble(IJU1);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
    NALU_HYPRE_IJVectorGetObject(IJU1, (void **) &u1_csr);
    ierr = NALU_HYPRE_IJVectorCreate(mpiComm_, startRow, endRow, &IJT1);
    ierr = NALU_HYPRE_IJVectorSetObjectType(IJT1, NALU_HYPRE_PARCSR);
    ierr = NALU_HYPRE_IJVectorInitialize(IJT1);
    ierr = NALU_HYPRE_IJVectorAssemble(IJT1);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
    NALU_HYPRE_IJVectorGetObject(IJT1, (void **) &t1_csr);
    ierr = NALU_HYPRE_IJVectorCreate(mpiComm_, startRow, endRow, &IJV1);
    ierr = NALU_HYPRE_IJVectorSetObjectType(IJV1, NALU_HYPRE_PARCSR);
    ierr = NALU_HYPRE_IJVectorInitialize(IJV1);
    ierr = NALU_HYPRE_IJVectorAssemble(IJV1);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
    NALU_HYPRE_IJVectorGetObject(IJV1, (void **) &v1_csr);
 
    startRow = procA22Sizes_[mypid];
@@ -835,25 +835,25 @@ int NALU_HYPRE_LSI_Uzawa::solve(NALU_HYPRE_ParVector b, NALU_HYPRE_ParVector x)
    ierr = NALU_HYPRE_IJVectorSetObjectType(IJF2, NALU_HYPRE_PARCSR);
    ierr = NALU_HYPRE_IJVectorInitialize(IJF2);
    ierr = NALU_HYPRE_IJVectorAssemble(IJF2);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
    NALU_HYPRE_IJVectorGetObject(IJF2, (void **) &f2_csr);
    ierr = NALU_HYPRE_IJVectorCreate(mpiComm_, startRow, endRow, &IJU2);
    ierr = NALU_HYPRE_IJVectorSetObjectType(IJU2, NALU_HYPRE_PARCSR);
    ierr = NALU_HYPRE_IJVectorInitialize(IJU2);
    ierr = NALU_HYPRE_IJVectorAssemble(IJU2);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
    NALU_HYPRE_IJVectorGetObject(IJU2, (void **) &u2_csr);
    ierr = NALU_HYPRE_IJVectorCreate(mpiComm_, startRow, endRow, &IJT2);
    ierr = NALU_HYPRE_IJVectorSetObjectType(IJT2, NALU_HYPRE_PARCSR);
    ierr = NALU_HYPRE_IJVectorInitialize(IJT2);
    ierr = NALU_HYPRE_IJVectorAssemble(IJT2);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
    NALU_HYPRE_IJVectorGetObject(IJT2, (void **) &t2_csr);
    ierr = NALU_HYPRE_IJVectorCreate(mpiComm_, startRow, endRow, &IJV2);
    ierr = NALU_HYPRE_IJVectorSetObjectType(IJV2, NALU_HYPRE_PARCSR);
    ierr = NALU_HYPRE_IJVectorInitialize(IJV2);
    ierr = NALU_HYPRE_IJVectorAssemble(IJV2);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
    NALU_HYPRE_IJVectorGetObject(IJV2, (void **) &v2_csr);
    free( procNRows );
 
@@ -887,20 +887,20 @@ int NALU_HYPRE_LSI_Uzawa::solve(NALU_HYPRE_ParVector b, NALU_HYPRE_ParVector x)
    //------------------------------------------------------------------
 
    A22NRows = procA22Sizes_[mypid+1] - procA22Sizes_[mypid];
-   b_local  = hypre_ParVectorLocalVector((hypre_ParVector *) b);
-   b_data   = (double *) hypre_VectorData(b_local);
-   f1_local = hypre_ParVectorLocalVector((hypre_ParVector *) f1_csr);
-   f1_data  = (double *) hypre_VectorData(f1_local);
-   f2_local = hypre_ParVectorLocalVector((hypre_ParVector *) f2_csr);
-   f2_data  = (double *) hypre_VectorData(f2_local);
-   x_local  = hypre_ParVectorLocalVector((hypre_ParVector *) x);
-   x_data   = (double *) hypre_VectorData(x_local);
-   u1_local = hypre_ParVectorLocalVector((hypre_ParVector *) u1_csr);
-   u1_data  = (double *) hypre_VectorData(u1_local);
-   u2_local = hypre_ParVectorLocalVector((hypre_ParVector *) u2_csr);
-   u2_data  = (double *) hypre_VectorData(u2_local);
-   v1_local = hypre_ParVectorLocalVector((hypre_ParVector *) v1_csr);
-   v1_data  = (double *) hypre_VectorData(v1_local);
+   b_local  = nalu_hypre_ParVectorLocalVector((nalu_hypre_ParVector *) b);
+   b_data   = (double *) nalu_hypre_VectorData(b_local);
+   f1_local = nalu_hypre_ParVectorLocalVector((nalu_hypre_ParVector *) f1_csr);
+   f1_data  = (double *) nalu_hypre_VectorData(f1_local);
+   f2_local = nalu_hypre_ParVectorLocalVector((nalu_hypre_ParVector *) f2_csr);
+   f2_data  = (double *) nalu_hypre_VectorData(f2_local);
+   x_local  = nalu_hypre_ParVectorLocalVector((nalu_hypre_ParVector *) x);
+   x_data   = (double *) nalu_hypre_VectorData(x_local);
+   u1_local = nalu_hypre_ParVectorLocalVector((nalu_hypre_ParVector *) u1_csr);
+   u1_data  = (double *) nalu_hypre_VectorData(u1_local);
+   u2_local = nalu_hypre_ParVectorLocalVector((nalu_hypre_ParVector *) u2_csr);
+   u2_data  = (double *) nalu_hypre_VectorData(u2_local);
+   v1_local = nalu_hypre_ParVectorLocalVector((nalu_hypre_ParVector *) v1_csr);
+   v1_data  = (double *) nalu_hypre_VectorData(v1_local);
 
    for ( irow = 0; irow < localNRows-A22NRows; irow++ )
       f1_data[irow] = b_data[irow];
@@ -939,8 +939,8 @@ int NALU_HYPRE_LSI_Uzawa::solve(NALU_HYPRE_ParVector b, NALU_HYPRE_ParVector x)
       else if ( A11Params_.SolverID_ == 2 )
          NALU_HYPRE_ParCSRGMRESSolve(A11Solver_, A11mat_, t1_csr, u1_csr);
 
-      hypre_ParVectorAxpy( 1.0, (hypre_ParVector*)v1_csr ,
-                                (hypre_ParVector*)u1_csr );
+      nalu_hypre_ParVectorAxpy( 1.0, (nalu_hypre_ParVector*)v1_csr ,
+                                (nalu_hypre_ParVector*)u1_csr );
 
       //----------------------------------------------------------------
       // y_{i+1/2} = y_i + Q_B^{-1} (A21 x_{i+1/2} - f2)
@@ -961,8 +961,8 @@ int NALU_HYPRE_LSI_Uzawa::solve(NALU_HYPRE_ParVector b, NALU_HYPRE_ParVector x)
             NALU_HYPRE_ParVectorScale( S22SolverDampFactor_, v2_csr );
          }
 
-         hypre_ParVectorAxpy( 1.0, (hypre_ParVector*)v2_csr ,
-                                   (hypre_ParVector*)u2_csr );
+         nalu_hypre_ParVectorAxpy( 1.0, (nalu_hypre_ParVector*)v2_csr ,
+                                   (nalu_hypre_ParVector*)u2_csr );
 
          //----------------------------------------------------------------
          // x_{i+1} = x_i + Q_A^{-1} (f - A x_i - A12 y_{i+1/2})
@@ -977,8 +977,8 @@ int NALU_HYPRE_LSI_Uzawa::solve(NALU_HYPRE_ParVector b, NALU_HYPRE_ParVector x)
          else if ( A11Params_.SolverID_ == 2 )
             NALU_HYPRE_ParCSRGMRESSolve(A11Solver_, A11mat_, t1_csr, u1_csr);
 
-         hypre_ParVectorAxpy( 1.0, (hypre_ParVector*)v1_csr ,
-                                   (hypre_ParVector*)u1_csr );
+         nalu_hypre_ParVectorAxpy( 1.0, (nalu_hypre_ParVector*)v1_csr ,
+                                   (nalu_hypre_ParVector*)u1_csr );
 
          //----------------------------------------------------------------
          // y_{i+1} = y_{i+1/2} + Q_B^{-1} (A21 x_{i+1} - f2)
@@ -997,8 +997,8 @@ int NALU_HYPRE_LSI_Uzawa::solve(NALU_HYPRE_ParVector b, NALU_HYPRE_ParVector x)
             NALU_HYPRE_ParVectorScale( S22SolverDampFactor_, v2_csr );
          }
 
-         hypre_ParVectorAxpy( 1.0, (hypre_ParVector*)v2_csr ,
-                                   (hypre_ParVector*)u2_csr );
+         nalu_hypre_ParVectorAxpy( 1.0, (nalu_hypre_ParVector*)v2_csr ,
+                                   (nalu_hypre_ParVector*)u2_csr );
       }
 
       //----------------------------------------------------------------
@@ -1166,11 +1166,11 @@ int NALU_HYPRE_LSI_Uzawa::buildA11A12Mat()
    ierr  = NALU_HYPRE_IJMatrixCreate(mpiComm_,A11StartRow,A11StartRow+A11NRows-1,
                                 A11StartRow,A11StartRow+A11NRows-1,&IJA11);
    ierr += NALU_HYPRE_IJMatrixSetObjectType(IJA11, NALU_HYPRE_PARCSR);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
    ierr  = NALU_HYPRE_IJMatrixCreate(mpiComm_,A11StartRow,A11StartRow+A11NRows-1,
                                 A12StartCol,A12StartCol+A12NCols-1,&IJA12);
    ierr += NALU_HYPRE_IJMatrixSetObjectType(IJA12, NALU_HYPRE_PARCSR);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
 
    //------------------------------------------------------------------
    // compute the number of nonzeros in each matrix
@@ -1206,10 +1206,10 @@ int NALU_HYPRE_LSI_Uzawa::buildA11A12Mat()
 
    ierr  = NALU_HYPRE_IJMatrixSetRowSizes(IJA11, A11MatSize);
    ierr += NALU_HYPRE_IJMatrixInitialize(IJA11);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
    ierr  = NALU_HYPRE_IJMatrixSetRowSizes(IJA12, A12MatSize);
    ierr += NALU_HYPRE_IJMatrixInitialize(IJA12);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
 
    //------------------------------------------------------------------
    // next load the matrices
@@ -1246,11 +1246,11 @@ int NALU_HYPRE_LSI_Uzawa::buildA11A12Mat()
       ierr = NALU_HYPRE_IJMatrixSetValues(IJA11, 1, &A11RowSize,
                    (const int *) &rowIndex, (const int *) A11ColInd,
                    (const double *) A11ColVal);
-      hypre_assert( !ierr );
+      nalu_hypre_assert( !ierr );
       ierr = NALU_HYPRE_IJMatrixSetValues(IJA12, 1, &A12RowSize,
                    (const int *) &rowIndex, (const int *) A12ColInd,
                    (const double *) A12ColVal);
-      hypre_assert( !ierr );
+      nalu_hypre_assert( !ierr );
    }
 
    //------------------------------------------------------------------
@@ -1259,10 +1259,10 @@ int NALU_HYPRE_LSI_Uzawa::buildA11A12Mat()
 
    NALU_HYPRE_IJMatrixAssemble(IJA11);
    NALU_HYPRE_IJMatrixGetObject(IJA11, (void **) &A11mat_);
-   hypre_MatvecCommPkgCreate((hypre_ParCSRMatrix *) A11mat_);
+   nalu_hypre_MatvecCommPkgCreate((nalu_hypre_ParCSRMatrix *) A11mat_);
    NALU_HYPRE_IJMatrixAssemble(IJA12);
    NALU_HYPRE_IJMatrixGetObject(IJA12, (void **) &A12mat_);
-   hypre_MatvecCommPkgCreate((hypre_ParCSRMatrix *) A11mat_);
+   nalu_hypre_MatvecCommPkgCreate((nalu_hypre_ParCSRMatrix *) A11mat_);
 
    NALU_HYPRE_IJMatrixSetObjectType(IJA11, -1);
    NALU_HYPRE_IJMatrixDestroy(IJA11);
@@ -1388,13 +1388,13 @@ int NALU_HYPRE_LSI_Uzawa::buildS22Mat()
                     A11StartRow+A11NRows-1, A11StartRow,
                     A11StartRow+A11NRows-1,&ainvA11);
       ierr += NALU_HYPRE_IJMatrixSetObjectType(ainvA11, NALU_HYPRE_PARCSR);
-      hypre_assert(!ierr);
+      nalu_hypre_assert(!ierr);
 
       A11MatSize = new int[A11NRows];
       for ( irow = 0; irow < A11NRows; irow++ ) A11MatSize[irow] = 1;
       ierr  = NALU_HYPRE_IJMatrixSetRowSizes(ainvA11, A11MatSize);
       ierr += NALU_HYPRE_IJMatrixInitialize(ainvA11);
-      hypre_assert(!ierr);
+      nalu_hypre_assert(!ierr);
 
       for ( irow = A11StartRow; irow < A11StartRow+A11NRows; irow++ )
       {
@@ -1411,7 +1411,7 @@ int NALU_HYPRE_LSI_Uzawa::buildS22Mat()
          NALU_HYPRE_ParCSRMatrixRestoreRow(A11mat_,irow,&rowSize,&colInd,&colVal);
          ierr = NALU_HYPRE_IJMatrixSetValues(ainvA11, 1, &one, (const int *) &irow,
                               (const int *) &irow, (const double *) &ddata);
-         hypre_assert( !ierr );
+         nalu_hypre_assert( !ierr );
       }
       NALU_HYPRE_IJMatrixAssemble(ainvA11);
       free( procNRows );
@@ -1423,10 +1423,10 @@ int NALU_HYPRE_LSI_Uzawa::buildS22Mat()
    //------------------------------------------------------------------
 
    NALU_HYPRE_IJMatrixGetObject(ainvA11, (void **) &ainvA11_csr);
-   hypre_BoomerAMGBuildCoarseOperator((hypre_ParCSRMatrix *) A12mat_,
-                                      (hypre_ParCSRMatrix *) ainvA11_csr,
-                                      (hypre_ParCSRMatrix *) A12mat_,
-                                      (hypre_ParCSRMatrix **) &S22mat_);
+   nalu_hypre_BoomerAMGBuildCoarseOperator((nalu_hypre_ParCSRMatrix *) A12mat_,
+                                      (nalu_hypre_ParCSRMatrix *) ainvA11_csr,
+                                      (nalu_hypre_ParCSRMatrix *) A12mat_,
+                                      (nalu_hypre_ParCSRMatrix **) &S22mat_);
 
    //------------------------------------------------------------------
    // clean up and return
@@ -1477,10 +1477,10 @@ int NALU_HYPRE_LSI_Uzawa::setupPrecon(NALU_HYPRE_Solver *precon,NALU_HYPRE_ParCS
           NALU_HYPRE_BoomerAMGSetStrongThreshold(*precon,paramPtr.AMGThresh_);
           if ( paramPtr.AMGSystemSize_ > 1 )
              NALU_HYPRE_BoomerAMGSetNumFunctions(*precon,paramPtr.AMGSystemSize_);
-          nsweeps = hypre_CTAlloc(int,4,NALU_HYPRE_MEMORY_HOST);
+          nsweeps = nalu_hypre_CTAlloc(int,4,NALU_HYPRE_MEMORY_HOST);
           for ( i = 0; i < 4; i++ ) nsweeps[i] = paramPtr.AMGNSweeps_;
           NALU_HYPRE_BoomerAMGSetNumGridSweeps(*precon, nsweeps);
-          relaxType = hypre_CTAlloc(int,4,NALU_HYPRE_MEMORY_HOST);
+          relaxType = nalu_hypre_CTAlloc(int,4,NALU_HYPRE_MEMORY_HOST);
           for ( i = 0; i < 4; i++ ) relaxType[i] = 6;
           NALU_HYPRE_BoomerAMGSetGridRelaxType(*precon, relaxType);
           break;
@@ -1492,8 +1492,8 @@ int NALU_HYPRE_LSI_Uzawa::setupPrecon(NALU_HYPRE_Solver *precon,NALU_HYPRE_ParCS
           break;
       case 5 :
           NALU_HYPRE_EuclidCreate( mpiComm_, precon );
-          targv = hypre_TAlloc(char*,  4 , NALU_HYPRE_MEMORY_HOST);
-          for ( i = 0; i < 4; i++ ) targv[i] = hypre_TAlloc(char, 50, NALU_HYPRE_MEMORY_HOST);
+          targv = nalu_hypre_TAlloc(char*,  4 , NALU_HYPRE_MEMORY_HOST);
+          for ( i = 0; i < 4; i++ ) targv[i] = nalu_hypre_TAlloc(char, 50, NALU_HYPRE_MEMORY_HOST);
           strcpy(targv[0], "-level");
           sprintf(targv[1], "%1d", paramPtr.EuclidNLevels_);
           strcpy(targv[2], "-sparseA");

@@ -41,13 +41,13 @@ PrunedRows *PrunedRowsCreate(Matrix *mat, NALU_HYPRE_Int size, DiagScale *diag_s
     NALU_HYPRE_Int row, len, *ind, count, j, *data;
     NALU_HYPRE_Real *val, temp;
 
-    PrunedRows *p = hypre_TAlloc(PrunedRows, 1, NALU_HYPRE_MEMORY_HOST);
+    PrunedRows *p = nalu_hypre_TAlloc(PrunedRows, 1, NALU_HYPRE_MEMORY_HOST);
 
     p->mem  = MemCreate();
     p->size = MAX(size, mat->end_row - mat->beg_row + 1);
 
-    p->len = hypre_TAlloc(NALU_HYPRE_Int, p->size , NALU_HYPRE_MEMORY_HOST);
-    p->ind = hypre_TAlloc(NALU_HYPRE_Int *, p->size , NALU_HYPRE_MEMORY_HOST);
+    p->len = nalu_hypre_TAlloc(NALU_HYPRE_Int, p->size , NALU_HYPRE_MEMORY_HOST);
+    p->ind = nalu_hypre_TAlloc(NALU_HYPRE_Int *, p->size , NALU_HYPRE_MEMORY_HOST);
 
     /* Prune and store the rows on the local processor */
 
@@ -88,9 +88,9 @@ PrunedRows *PrunedRowsCreate(Matrix *mat, NALU_HYPRE_Int size, DiagScale *diag_s
 void PrunedRowsDestroy(PrunedRows *p)
 {
     MemDestroy(p->mem);
-    hypre_TFree(p->len,NALU_HYPRE_MEMORY_HOST);
-    hypre_TFree(p->ind,NALU_HYPRE_MEMORY_HOST);
-    hypre_TFree(p,NALU_HYPRE_MEMORY_HOST);
+    nalu_hypre_TFree(p->len,NALU_HYPRE_MEMORY_HOST);
+    nalu_hypre_TFree(p->ind,NALU_HYPRE_MEMORY_HOST);
+    nalu_hypre_TFree(p,NALU_HYPRE_MEMORY_HOST);
 }
 
 /*--------------------------------------------------------------------------
@@ -115,10 +115,10 @@ void PrunedRowsPut(PrunedRows *p, NALU_HYPRE_Int index, NALU_HYPRE_Int len, NALU
     {
 	p->size = index*2;
 #ifdef PARASAILS_DEBUG
-	hypre_printf("StoredRows resize %d\n", p->size);
+	nalu_hypre_printf("StoredRows resize %d\n", p->size);
 #endif
-	p->len = hypre_TReAlloc(p->len,NALU_HYPRE_Int,  p->size , NALU_HYPRE_MEMORY_HOST);
-	p->ind = hypre_TReAlloc(p->ind,NALU_HYPRE_Int *,  p->size , NALU_HYPRE_MEMORY_HOST);
+	p->len = nalu_hypre_TReAlloc(p->len,NALU_HYPRE_Int,  p->size , NALU_HYPRE_MEMORY_HOST);
+	p->ind = nalu_hypre_TReAlloc(p->ind,NALU_HYPRE_Int *,  p->size , NALU_HYPRE_MEMORY_HOST);
     }
 
     p->len[index] = len;

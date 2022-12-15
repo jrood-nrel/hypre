@@ -7,7 +7,7 @@
 
 /******************************************************************************
  *
- * Member functions for hypre_DistributedMatrix class for PETSc storage scheme.
+ * Member functions for nalu_hypre_DistributedMatrix class for PETSc storage scheme.
  *
  *****************************************************************************/
 
@@ -19,15 +19,15 @@
 #endif
 
 /*--------------------------------------------------------------------------
- * hypre_DistributedMatrixDestroyPETSc
+ * nalu_hypre_DistributedMatrixDestroyPETSc
  *   Internal routine for freeing a matrix stored in PETSc form.
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int 
-hypre_DistributedMatrixDestroyPETSc( hypre_DistributedMatrix *distributed_matrix )
+nalu_hypre_DistributedMatrixDestroyPETSc( nalu_hypre_DistributedMatrix *distributed_matrix )
 {
 #ifdef PETSC_AVAILABLE
-   Mat PETSc_matrix = (Mat) hypre_DistributedMatrixLocalStorage(distributed_matrix);
+   Mat PETSc_matrix = (Mat) nalu_hypre_DistributedMatrixLocalStorage(distributed_matrix);
 
    MatDestroy( PETSc_matrix );
 #endif
@@ -40,16 +40,16 @@ hypre_DistributedMatrixDestroyPETSc( hypre_DistributedMatrix *distributed_matrix
  *--------------------------------------------------------------------------*/
 
 /*--------------------------------------------------------------------------
- * hypre_DistributedMatrixPrintPETSc
+ * nalu_hypre_DistributedMatrixPrintPETSc
  *   Internal routine for printing a matrix stored in PETSc form.
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int 
-hypre_DistributedMatrixPrintPETSc( hypre_DistributedMatrix *matrix )
+nalu_hypre_DistributedMatrixPrintPETSc( nalu_hypre_DistributedMatrix *matrix )
 {
    NALU_HYPRE_Int  ierr=0;
 #ifdef PETSC_AVAILABLE
-   Mat PETSc_matrix = (Mat) hypre_DistributedMatrixLocalStorage(matrix);
+   Mat PETSc_matrix = (Mat) nalu_hypre_DistributedMatrixLocalStorage(matrix);
 
    ierr = MatView( PETSc_matrix, VIEWER_STDOUT_WORLD );
 #endif
@@ -57,17 +57,17 @@ hypre_DistributedMatrixPrintPETSc( hypre_DistributedMatrix *matrix )
 }
 
 /*--------------------------------------------------------------------------
- * hypre_DistributedMatrixGetLocalRangePETSc
+ * nalu_hypre_DistributedMatrixGetLocalRangePETSc
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int 
-hypre_DistributedMatrixGetLocalRangePETSc( hypre_DistributedMatrix *matrix,
+nalu_hypre_DistributedMatrixGetLocalRangePETSc( nalu_hypre_DistributedMatrix *matrix,
                              NALU_HYPRE_BigInt *start,
                              NALU_HYPRE_BigInt *end )
 {
    NALU_HYPRE_Int ierr=0;
 #ifdef PETSC_AVAILABLE
-   Mat PETSc_matrix = (Mat) hypre_DistributedMatrixLocalStorage(matrix);
+   Mat PETSc_matrix = (Mat) nalu_hypre_DistributedMatrixLocalStorage(matrix);
 
    if (!PETSc_matrix) return(-1);
 
@@ -88,11 +88,11 @@ hypre_DistributedMatrixGetLocalRangePETSc( hypre_DistributedMatrix *matrix,
 }
 
 /*--------------------------------------------------------------------------
- * hypre_DistributedMatrixGetRowPETSc
+ * nalu_hypre_DistributedMatrixGetRowPETSc
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int 
-hypre_DistributedMatrixGetRowPETSc( hypre_DistributedMatrix *matrix,
+nalu_hypre_DistributedMatrixGetRowPETSc( nalu_hypre_DistributedMatrix *matrix,
                              NALU_HYPRE_BigInt row,
                              NALU_HYPRE_Int *size,
                              NALU_HYPRE_BigInt **col_ind,
@@ -100,7 +100,7 @@ hypre_DistributedMatrixGetRowPETSc( hypre_DistributedMatrix *matrix,
 {
    NALU_HYPRE_Int ierr=0;
 #ifdef PETSC_AVAILABLE
-   Mat PETSc_matrix = (Mat) hypre_DistributedMatrixLocalStorage(matrix);
+   Mat PETSc_matrix = (Mat) nalu_hypre_DistributedMatrixLocalStorage(matrix);
 
    if (!PETSc_matrix) return(-1);
 
@@ -111,11 +111,11 @@ hypre_DistributedMatrixGetRowPETSc( hypre_DistributedMatrix *matrix,
 }
 
 /*--------------------------------------------------------------------------
- * hypre_DistributedMatrixRestoreRowPETSc
+ * nalu_hypre_DistributedMatrixRestoreRowPETSc
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int 
-hypre_DistributedMatrixRestoreRowPETSc( hypre_DistributedMatrix *matrix,
+nalu_hypre_DistributedMatrixRestoreRowPETSc( nalu_hypre_DistributedMatrix *matrix,
                              NALU_HYPRE_BigInt row,
                              NALU_HYPRE_Int *size,
                              NALU_HYPRE_BigInt **col_ind,
@@ -123,7 +123,7 @@ hypre_DistributedMatrixRestoreRowPETSc( hypre_DistributedMatrix *matrix,
 {
    NALU_HYPRE_Int ierr=0;
 #ifdef PETSC_AVAILABLE
-   Mat PETSc_matrix = (Mat) hypre_DistributedMatrixLocalStorage(matrix);
+   Mat PETSc_matrix = (Mat) nalu_hypre_DistributedMatrixLocalStorage(matrix);
 
    if (PETSc_matrix == NULL) return(-1);
 

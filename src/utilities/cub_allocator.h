@@ -64,7 +64,7 @@
  *   - Wraps std::mutex when compiled with C++11 or newer (supported on all platforms)
  *   - Uses GNU/Windows spinlock mechanisms for pre C++11 (supported on x86/x64 when compiled with cl.exe or g++)
  */
-struct hypre_cub_Mutex
+struct nalu_hypre_cub_Mutex
 {
 #if (__cplusplus > 199711L) || (defined(_MSC_VER) && _MSC_VER >= 1800)
 
@@ -90,12 +90,12 @@ struct hypre_cub_Mutex
     #if defined(_MSC_VER)
 
         // Microsoft VC++
-        typedef hypre_longint Spinlock;
+        typedef nalu_hypre_longint Spinlock;
 
     #else
 
         // GNU g++
-        typedef hypre_int Spinlock;
+        typedef nalu_hypre_int Spinlock;
 
         /**
          * Compiler read/write barrier
@@ -108,7 +108,7 @@ struct hypre_cub_Mutex
         /**
          * Atomic exchange
          */
-        __forceinline__ hypre_longint _InterlockedExchange(volatile hypre_int * const Target, const hypre_int Value)
+        __forceinline__ nalu_hypre_longint _InterlockedExchange(volatile nalu_hypre_int * const Target, const nalu_hypre_int Value)
         {
             // NOTE: __sync_lock_test_and_set would be an acquire barrier, so we force a full barrier
             _ReadWriteBarrier();
@@ -130,7 +130,7 @@ struct hypre_cub_Mutex
         /**
          * Constructor
          */
-        hypre_cub_Mutex() : lock(0) {}
+        nalu_hypre_cub_Mutex() : lock(0) {}
 
         /**
          * Return when the specified spinlock has been acquired
@@ -203,7 +203,7 @@ struct hypre_cub_Mutex
  * and sets a maximum of 6,291,455 cached bytes per device
  *
  */
-struct hypre_cub_CachingDeviceAllocator
+struct nalu_hypre_cub_CachingDeviceAllocator
 {
    typedef char value_type;
 
@@ -212,13 +212,13 @@ struct hypre_cub_CachingDeviceAllocator
    //---------------------------------------------------------------------
 
    /// Out-of-bounds bin
-   static const hypre_uint INVALID_BIN = (hypre_uint) -1;
+   static const nalu_hypre_uint INVALID_BIN = (nalu_hypre_uint) -1;
 
    /// Invalid size
    static const size_t INVALID_SIZE = (size_t) -1;
 
    /// Invalid device ordinal
-   static const hypre_int INVALID_DEVICE_ORDINAL = -1;
+   static const nalu_hypre_int INVALID_DEVICE_ORDINAL = -1;
 
    //---------------------------------------------------------------------
    // Type definitions and helper types
@@ -231,13 +231,13 @@ struct hypre_cub_CachingDeviceAllocator
    {
       void*           d_ptr;              // Device pointer
       size_t          bytes;              // Size of allocation in bytes
-      hypre_uint      bin;                // Bin enumeration
-      hypre_int       device;             // device ordinal
+      nalu_hypre_uint      bin;                // Bin enumeration
+      nalu_hypre_int       device;             // device ordinal
       cudaStream_t    associated_stream;  // Associated associated_stream
       cudaEvent_t     ready_event;        // Signal when associated stream has run to the point at which this block was freed
 
       // Constructor (suitable for searching maps for a specific block, given its pointer and device)
-      BlockDescriptor(void *d_ptr, hypre_int device) :
+      BlockDescriptor(void *d_ptr, nalu_hypre_int device) :
          d_ptr(d_ptr),
          bytes(0),
          bin(INVALID_BIN),
@@ -247,7 +247,7 @@ struct hypre_cub_CachingDeviceAllocator
       {}
 
       // Constructor (suitable for searching maps for a range of suitable blocks, given a device)
-      BlockDescriptor(hypre_int device) :
+      BlockDescriptor(nalu_hypre_int device) :
          d_ptr(NULL),
          bytes(0),
          bin(INVALID_BIN),
@@ -292,7 +292,7 @@ struct hypre_cub_CachingDeviceAllocator
    typedef std::multiset<BlockDescriptor, Compare> BusyBlocks;
 
    /// Map type of device ordinals to the number of cached bytes cached by each device
-   typedef std::map<hypre_int, TotalBytes> GpuCachedBytes;
+   typedef std::map<nalu_hypre_int, TotalBytes> GpuCachedBytes;
 
 
    //---------------------------------------------------------------------
@@ -302,11 +302,11 @@ struct hypre_cub_CachingDeviceAllocator
    /**
     * Integer pow function for unsigned base and exponent
     */
-   static hypre_uint IntPow(
-         hypre_uint base,
-         hypre_uint exp)
+   static nalu_hypre_uint IntPow(
+         nalu_hypre_uint base,
+         nalu_hypre_uint exp)
    {
-      hypre_uint retval = 1;
+      nalu_hypre_uint retval = 1;
       while (exp > 0)
       {
          if (exp & 1) {
@@ -323,9 +323,9 @@ struct hypre_cub_CachingDeviceAllocator
     * Round up to the nearest power-of
     */
    void NearestPowerOf(
-         hypre_uint      &power,
+         nalu_hypre_uint      &power,
          size_t          &rounded_bytes,
-         hypre_uint       base,
+         nalu_hypre_uint       base,
          size_t           value)
    {
       power = 0;
@@ -351,11 +351,11 @@ struct hypre_cub_CachingDeviceAllocator
    // Fields
    //---------------------------------------------------------------------
 
-   hypre_cub_Mutex mutex;              /// Mutex for thread-safety
+   nalu_hypre_cub_Mutex mutex;              /// Mutex for thread-safety
 
-   hypre_uint      bin_growth;         /// Geometric growth factor for bin-sizes
-   hypre_uint      min_bin;            /// Minimum bin enumeration
-   hypre_uint      max_bin;            /// Maximum bin enumeration
+   nalu_hypre_uint      bin_growth;         /// Geometric growth factor for bin-sizes
+   nalu_hypre_uint      min_bin;            /// Minimum bin enumeration
+   nalu_hypre_uint      max_bin;            /// Maximum bin enumeration
 
    size_t          min_bin_bytes;      /// Minimum bin size
    size_t          max_bin_bytes;      /// Maximum bin size
@@ -377,10 +377,10 @@ struct hypre_cub_CachingDeviceAllocator
    /**
     * \brief Constructor.
     */
-   hypre_cub_CachingDeviceAllocator(
-         hypre_uint      bin_growth,                             ///< Geometric growth factor for bin-sizes
-         hypre_uint      min_bin             = 1,                ///< Minimum bin (default is bin_growth ^ 1)
-         hypre_uint      max_bin             = INVALID_BIN,      ///< Maximum bin (default is no max bin)
+   nalu_hypre_cub_CachingDeviceAllocator(
+         nalu_hypre_uint      bin_growth,                             ///< Geometric growth factor for bin-sizes
+         nalu_hypre_uint      min_bin             = 1,                ///< Minimum bin (default is bin_growth ^ 1)
+         nalu_hypre_uint      max_bin             = INVALID_BIN,      ///< Maximum bin (default is no max bin)
          size_t          max_cached_bytes    = INVALID_SIZE,     ///< Maximum aggregate cached bytes per device (default is no limit)
          bool            skip_cleanup        = false,            ///< Whether or not to skip a call to \p FreeAllCached() when the destructor is called (default is to deallocate)
          bool            debug               = false,            ///< Whether or not to print (de)allocation events to stdout (default is no stderr output)
@@ -413,7 +413,7 @@ struct hypre_cub_CachingDeviceAllocator
     * which delineates five bin-sizes: 512B, 4KB, 32KB, 256KB, and 2MB and
     * sets a maximum of 6,291,455 cached bytes per device
     */
-   hypre_cub_CachingDeviceAllocator(
+   nalu_hypre_cub_CachingDeviceAllocator(
          bool skip_cleanup = false,
          bool debug = false,
          bool use_managed_memory = false)
@@ -463,13 +463,13 @@ struct hypre_cub_CachingDeviceAllocator
     * streams when all prior work submitted to \p active_stream has completed.
     */
    cudaError_t DeviceAllocate(
-         hypre_int       device,             ///< [in] Device on which to place the allocation
+         nalu_hypre_int       device,             ///< [in] Device on which to place the allocation
          void            **d_ptr,            ///< [out] Reference to pointer to the allocation
          size_t          bytes,              ///< [in] Minimum number of bytes for the allocation
          cudaStream_t    active_stream = 0)  ///< [in] The stream to be associated with this allocation
    {
       *d_ptr                          = NULL;
-      hypre_int entrypoint_device     = INVALID_DEVICE_ORDINAL;
+      nalu_hypre_int entrypoint_device     = INVALID_DEVICE_ORDINAL;
       cudaError_t error               = cudaSuccess;
 
       if (device == INVALID_DEVICE_ORDINAL)
@@ -678,10 +678,10 @@ struct hypre_cub_CachingDeviceAllocator
     * streams when all prior work submitted to \p active_stream has completed.
     */
    cudaError_t DeviceFree(
-         hypre_int       device,
+         nalu_hypre_int       device,
          void*           d_ptr)
    {
-      hypre_int entrypoint_device     = INVALID_DEVICE_ORDINAL;
+      nalu_hypre_int entrypoint_device     = INVALID_DEVICE_ORDINAL;
       cudaError_t error               = cudaSuccess;
 
       if (device == INVALID_DEVICE_ORDINAL)
@@ -777,8 +777,8 @@ struct hypre_cub_CachingDeviceAllocator
    cudaError_t FreeAllCached()
    {
       cudaError_t error           = cudaSuccess;
-      hypre_int entrypoint_device = INVALID_DEVICE_ORDINAL;
-      hypre_int current_device    = INVALID_DEVICE_ORDINAL;
+      nalu_hypre_int entrypoint_device = INVALID_DEVICE_ORDINAL;
+      nalu_hypre_int current_device    = INVALID_DEVICE_ORDINAL;
 
       mutex.Lock();
 
@@ -828,7 +828,7 @@ struct hypre_cub_CachingDeviceAllocator
    /**
     * \brief Destructor
     */
-   virtual ~hypre_cub_CachingDeviceAllocator()
+   virtual ~nalu_hypre_cub_CachingDeviceAllocator()
    {
       if (!skip_cleanup)
          FreeAllCached();

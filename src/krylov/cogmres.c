@@ -12,14 +12,14 @@
  *****************************************************************************/
 
 #include "krylov.h"
-#include "_hypre_utilities.h"
+#include "_nalu_hypre_utilities.h"
 
 /*--------------------------------------------------------------------------
- * hypre_COGMRESFunctionsCreate
+ * nalu_hypre_COGMRESFunctionsCreate
  *--------------------------------------------------------------------------*/
 
-hypre_COGMRESFunctions *
-hypre_COGMRESFunctionsCreate(
+nalu_hypre_COGMRESFunctions *
+nalu_hypre_COGMRESFunctionsCreate(
    void *       (*CAlloc)        ( size_t count, size_t elt_size, NALU_HYPRE_MemoryLocation location ),
    NALU_HYPRE_Int    (*Free)          ( void *ptr ),
    NALU_HYPRE_Int    (*CommInfo)      ( void  *A, NALU_HYPRE_Int   *my_id,
@@ -45,9 +45,9 @@ hypre_COGMRESFunctionsCreate(
    NALU_HYPRE_Int    (*Precond)       ( void *vdata, void *A, void *b, void *x )
 )
 {
-   hypre_COGMRESFunctions * cogmres_functions;
-   cogmres_functions = (hypre_COGMRESFunctions *)
-                       CAlloc( 1, sizeof(hypre_COGMRESFunctions), NALU_HYPRE_MEMORY_HOST );
+   nalu_hypre_COGMRESFunctions * cogmres_functions;
+   cogmres_functions = (nalu_hypre_COGMRESFunctions *)
+                       CAlloc( 1, sizeof(nalu_hypre_COGMRESFunctions), NALU_HYPRE_MEMORY_HOST );
 
    cogmres_functions->CAlloc            = CAlloc;
    cogmres_functions->Free              = Free;
@@ -74,17 +74,17 @@ hypre_COGMRESFunctionsCreate(
 }
 
 /*--------------------------------------------------------------------------
- * hypre_COGMRESCreate
+ * nalu_hypre_COGMRESCreate
  *--------------------------------------------------------------------------*/
 
 void *
-hypre_COGMRESCreate( hypre_COGMRESFunctions *cogmres_functions )
+nalu_hypre_COGMRESCreate( nalu_hypre_COGMRESFunctions *cogmres_functions )
 {
-   hypre_COGMRESData *cogmres_data;
+   nalu_hypre_COGMRESData *cogmres_data;
 
    NALU_HYPRE_ANNOTATE_FUNC_BEGIN;
 
-   cogmres_data = hypre_CTAllocF(hypre_COGMRESData, 1, cogmres_functions, NALU_HYPRE_MEMORY_HOST);
+   cogmres_data = nalu_hypre_CTAllocF(nalu_hypre_COGMRESData, 1, cogmres_functions, NALU_HYPRE_MEMORY_HOST);
    cogmres_data->functions = cogmres_functions;
 
    /* set defaults */
@@ -116,24 +116,24 @@ hypre_COGMRESCreate( hypre_COGMRESFunctions *cogmres_functions )
 }
 
 /*--------------------------------------------------------------------------
- * hypre_COGMRESDestroy
+ * nalu_hypre_COGMRESDestroy
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_COGMRESDestroy( void *cogmres_vdata )
+nalu_hypre_COGMRESDestroy( void *cogmres_vdata )
 {
-   hypre_COGMRESData *cogmres_data = (hypre_COGMRESData *)cogmres_vdata;
+   nalu_hypre_COGMRESData *cogmres_data = (nalu_hypre_COGMRESData *)cogmres_vdata;
    NALU_HYPRE_Int i;
 
    NALU_HYPRE_ANNOTATE_FUNC_BEGIN;
    if (cogmres_data)
    {
-      hypre_COGMRESFunctions *cogmres_functions = cogmres_data->functions;
+      nalu_hypre_COGMRESFunctions *cogmres_functions = cogmres_data->functions;
       if ( (cogmres_data->logging > 0) || (cogmres_data->print_level) > 0 )
       {
          if ( (cogmres_data -> norms) != NULL )
          {
-            hypre_TFreeF( cogmres_data -> norms, cogmres_functions );
+            nalu_hypre_TFreeF( cogmres_data -> norms, cogmres_functions );
          }
       }
 
@@ -165,41 +165,41 @@ hypre_COGMRESDestroy( void *cogmres_vdata )
                (*(cogmres_functions->DestroyVector))( (cogmres_data -> p) [i]);
             }
          }
-         hypre_TFreeF( cogmres_data->p, cogmres_functions );
+         nalu_hypre_TFreeF( cogmres_data->p, cogmres_functions );
       }
-      hypre_TFreeF( cogmres_data, cogmres_functions );
-      hypre_TFreeF( cogmres_functions, cogmres_functions );
+      nalu_hypre_TFreeF( cogmres_data, cogmres_functions );
+      nalu_hypre_TFreeF( cogmres_functions, cogmres_functions );
    }
 
    NALU_HYPRE_ANNOTATE_FUNC_END;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_COGMRESGetResidual
+ * nalu_hypre_COGMRESGetResidual
  *--------------------------------------------------------------------------*/
 
-NALU_HYPRE_Int hypre_COGMRESGetResidual( void *cogmres_vdata, void **residual )
+NALU_HYPRE_Int nalu_hypre_COGMRESGetResidual( void *cogmres_vdata, void **residual )
 {
-   hypre_COGMRESData  *cogmres_data = (hypre_COGMRESData *)cogmres_vdata;
+   nalu_hypre_COGMRESData  *cogmres_data = (nalu_hypre_COGMRESData *)cogmres_vdata;
    *residual = cogmres_data->r;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_COGMRESSetup
+ * nalu_hypre_COGMRESSetup
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_COGMRESSetup( void *cogmres_vdata,
+nalu_hypre_COGMRESSetup( void *cogmres_vdata,
                     void *A,
                     void *b,
                     void *x         )
 {
-   hypre_COGMRESData *cogmres_data     = (hypre_COGMRESData *)cogmres_vdata;
-   hypre_COGMRESFunctions *cogmres_functions = cogmres_data->functions;
+   nalu_hypre_COGMRESData *cogmres_data     = (nalu_hypre_COGMRESData *)cogmres_vdata;
+   nalu_hypre_COGMRESFunctions *cogmres_functions = cogmres_data->functions;
 
    NALU_HYPRE_Int k_dim            = (cogmres_data -> k_dim);
    NALU_HYPRE_Int max_iter         = (cogmres_data -> max_iter);
@@ -254,7 +254,7 @@ hypre_COGMRESSetup( void *cogmres_vdata,
    {
       if ((cogmres_data -> norms) == NULL)
       {
-         (cogmres_data -> norms) = hypre_CTAllocF(NALU_HYPRE_Real, max_iter + 1, cogmres_functions,
+         (cogmres_data -> norms) = nalu_hypre_CTAllocF(NALU_HYPRE_Real, max_iter + 1, cogmres_functions,
                                                   NALU_HYPRE_MEMORY_HOST);
       }
    }
@@ -268,21 +268,21 @@ hypre_COGMRESSetup( void *cogmres_vdata,
 
    NALU_HYPRE_ANNOTATE_FUNC_END;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 /*--------------------------------------------------------------------------
- * hypre_COGMRESSolve
+ * nalu_hypre_COGMRESSolve
  *-------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_COGMRESSolve(void  *cogmres_vdata,
+nalu_hypre_COGMRESSolve(void  *cogmres_vdata,
                    void  *A,
                    void  *b,
                    void  *x)
 {
 
-   hypre_COGMRESData      *cogmres_data      = (hypre_COGMRESData *)cogmres_vdata;
-   hypre_COGMRESFunctions *cogmres_functions = cogmres_data->functions;
+   nalu_hypre_COGMRESData      *cogmres_data      = (nalu_hypre_COGMRESData *)cogmres_vdata;
+   nalu_hypre_COGMRESFunctions *cogmres_functions = cogmres_data->functions;
    NALU_HYPRE_Int     k_dim             = (cogmres_data -> k_dim);
    NALU_HYPRE_Int     unroll            = (cogmres_data -> unroll);
    NALU_HYPRE_Int     cgs               = (cogmres_data -> cgs);
@@ -355,15 +355,15 @@ hypre_COGMRESSolve(void  *cogmres_vdata,
    }
 
    /* initialize work arrays */
-   rs = hypre_CTAllocF(NALU_HYPRE_Real, k_dim + 1, cogmres_functions, NALU_HYPRE_MEMORY_HOST);
-   c  = hypre_CTAllocF(NALU_HYPRE_Real, k_dim, cogmres_functions, NALU_HYPRE_MEMORY_HOST);
-   s  = hypre_CTAllocF(NALU_HYPRE_Real, k_dim, cogmres_functions, NALU_HYPRE_MEMORY_HOST);
-   if (rel_change) { rs_2 = hypre_CTAllocF(NALU_HYPRE_Real, k_dim + 1, cogmres_functions, NALU_HYPRE_MEMORY_HOST); }
+   rs = nalu_hypre_CTAllocF(NALU_HYPRE_Real, k_dim + 1, cogmres_functions, NALU_HYPRE_MEMORY_HOST);
+   c  = nalu_hypre_CTAllocF(NALU_HYPRE_Real, k_dim, cogmres_functions, NALU_HYPRE_MEMORY_HOST);
+   s  = nalu_hypre_CTAllocF(NALU_HYPRE_Real, k_dim, cogmres_functions, NALU_HYPRE_MEMORY_HOST);
+   if (rel_change) { rs_2 = nalu_hypre_CTAllocF(NALU_HYPRE_Real, k_dim + 1, cogmres_functions, NALU_HYPRE_MEMORY_HOST); }
 
-   rv = hypre_CTAllocF(NALU_HYPRE_Real, k_dim + 1, cogmres_functions, NALU_HYPRE_MEMORY_HOST);
+   rv = nalu_hypre_CTAllocF(NALU_HYPRE_Real, k_dim + 1, cogmres_functions, NALU_HYPRE_MEMORY_HOST);
 
-   hh = hypre_CTAllocF(NALU_HYPRE_Real, (k_dim + 1) * k_dim, cogmres_functions, NALU_HYPRE_MEMORY_HOST);
-   uu = hypre_CTAllocF(NALU_HYPRE_Real, (k_dim + 1) * k_dim, cogmres_functions, NALU_HYPRE_MEMORY_HOST);
+   hh = nalu_hypre_CTAllocF(NALU_HYPRE_Real, (k_dim + 1) * k_dim, cogmres_functions, NALU_HYPRE_MEMORY_HOST);
+   uu = nalu_hypre_CTAllocF(NALU_HYPRE_Real, (k_dim + 1) * k_dim, cogmres_functions, NALU_HYPRE_MEMORY_HOST);
 
    (*(cogmres_functions->CopyVector))(b, p[0]);
 
@@ -385,16 +385,16 @@ hypre_COGMRESSolve(void  *cogmres_vdata,
          found at http://HTTP.CS.Berkeley.EDU/~wkahan/ieee754status/IEEE754.PDF */
       if (logging > 0 || print_level > 0)
       {
-         hypre_printf("\n\nERROR detected by Hypre ... BEGIN\n");
-         hypre_printf("ERROR -- hypre_COGMRESSolve: INFs and/or NaNs detected in input.\n");
-         hypre_printf("User probably placed non-numerics in supplied b.\n");
-         hypre_printf("Returning error flag += 101.  Program not terminated.\n");
-         hypre_printf("ERROR detected by Hypre ... END\n\n\n");
+         nalu_hypre_printf("\n\nERROR detected by Hypre ... BEGIN\n");
+         nalu_hypre_printf("ERROR -- nalu_hypre_COGMRESSolve: INFs and/or NaNs detected in input.\n");
+         nalu_hypre_printf("User probably placed non-numerics in supplied b.\n");
+         nalu_hypre_printf("Returning error flag += 101.  Program not terminated.\n");
+         nalu_hypre_printf("ERROR detected by Hypre ... END\n\n\n");
       }
-      hypre_error(NALU_HYPRE_ERROR_GENERIC);
+      nalu_hypre_error(NALU_HYPRE_ERROR_GENERIC);
       NALU_HYPRE_ANNOTATE_FUNC_END;
 
-      return hypre_error_flag;
+      return nalu_hypre_error_flag;
    }
 
    r_norm   = sqrt((*(cogmres_functions->InnerProd))(p[0], p[0]));
@@ -412,16 +412,16 @@ hypre_COGMRESSolve(void  *cogmres_vdata,
          found at http://HTTP.CS.Berkeley.EDU/~wkahan/ieee754status/IEEE754.PDF */
       if (logging > 0 || print_level > 0)
       {
-         hypre_printf("\n\nERROR detected by Hypre ... BEGIN\n");
-         hypre_printf("ERROR -- hypre_COGMRESSolve: INFs and/or NaNs detected in input.\n");
-         hypre_printf("User probably placed non-numerics in supplied A or x_0.\n");
-         hypre_printf("Returning error flag += 101.  Program not terminated.\n");
-         hypre_printf("ERROR detected by Hypre ... END\n\n\n");
+         nalu_hypre_printf("\n\nERROR detected by Hypre ... BEGIN\n");
+         nalu_hypre_printf("ERROR -- nalu_hypre_COGMRESSolve: INFs and/or NaNs detected in input.\n");
+         nalu_hypre_printf("User probably placed non-numerics in supplied A or x_0.\n");
+         nalu_hypre_printf("Returning error flag += 101.  Program not terminated.\n");
+         nalu_hypre_printf("ERROR detected by Hypre ... END\n\n\n");
       }
-      hypre_error(NALU_HYPRE_ERROR_GENERIC);
+      nalu_hypre_error(NALU_HYPRE_ERROR_GENERIC);
       NALU_HYPRE_ANNOTATE_FUNC_END;
 
-      return hypre_error_flag;
+      return nalu_hypre_error_flag;
    }
 
    if ( logging > 0 || print_level > 0)
@@ -429,12 +429,12 @@ hypre_COGMRESSolve(void  *cogmres_vdata,
       norms[0] = r_norm;
       if ( print_level > 1 && my_id == 0 )
       {
-         hypre_printf("L2 norm of b: %e\n", b_norm);
+         nalu_hypre_printf("L2 norm of b: %e\n", b_norm);
          if (b_norm == 0.0)
          {
-            hypre_printf("Rel_resid_norm actually contains the residual norm\n");
+            nalu_hypre_printf("Rel_resid_norm actually contains the residual norm\n");
          }
-         hypre_printf("Initial L2 norm of residual: %e\n", r_norm);
+         nalu_hypre_printf("Initial L2 norm of residual: %e\n", r_norm);
       }
    }
    iter = 0;
@@ -456,7 +456,7 @@ hypre_COGMRESSolve(void  *cogmres_vdata,
       user specifies a_tol, or sets r_tol = 0.0, which means absolute
       tol only is checked  */
 
-   epsilon = hypre_max(a_tol, r_tol * den_norm);
+   epsilon = nalu_hypre_max(a_tol, r_tol * den_norm);
 
    /* so now our stop criteria is |r_i| <= epsilon */
 
@@ -464,16 +464,16 @@ hypre_COGMRESSolve(void  *cogmres_vdata,
    {
       if (b_norm > 0.0)
       {
-         hypre_printf("=============================================\n\n");
-         hypre_printf("Iters     resid.norm     conv.rate  rel.res.norm\n");
-         hypre_printf("-----    ------------    ---------- ------------\n");
+         nalu_hypre_printf("=============================================\n\n");
+         nalu_hypre_printf("Iters     resid.norm     conv.rate  rel.res.norm\n");
+         nalu_hypre_printf("-----    ------------    ---------- ------------\n");
 
       }
       else
       {
-         hypre_printf("=============================================\n\n");
-         hypre_printf("Iters     resid.norm     conv.rate\n");
-         hypre_printf("-----    ------------    ----------\n");
+         nalu_hypre_printf("=============================================\n\n");
+         nalu_hypre_printf("Iters     resid.norm     conv.rate\n");
+         nalu_hypre_printf("-----    ------------    ----------\n");
       };
    }
 
@@ -487,16 +487,16 @@ hypre_COGMRESSolve(void  *cogmres_vdata,
       rs[0] = r_norm;
       if (r_norm == 0.0)
       {
-         hypre_TFreeF(c, cogmres_functions);
-         hypre_TFreeF(s, cogmres_functions);
-         hypre_TFreeF(rs, cogmres_functions);
-         hypre_TFreeF(rv, cogmres_functions);
-         if (rel_change) { hypre_TFreeF(rs_2, cogmres_functions); }
-         hypre_TFreeF(hh, cogmres_functions);
-         hypre_TFreeF(uu, cogmres_functions);
+         nalu_hypre_TFreeF(c, cogmres_functions);
+         nalu_hypre_TFreeF(s, cogmres_functions);
+         nalu_hypre_TFreeF(rs, cogmres_functions);
+         nalu_hypre_TFreeF(rv, cogmres_functions);
+         if (rel_change) { nalu_hypre_TFreeF(rs_2, cogmres_functions); }
+         nalu_hypre_TFreeF(hh, cogmres_functions);
+         nalu_hypre_TFreeF(uu, cogmres_functions);
          NALU_HYPRE_ANNOTATE_FUNC_END;
 
-         return hypre_error_flag;
+         return nalu_hypre_error_flag;
       }
 
       /* see if we are already converged and
@@ -514,14 +514,14 @@ hypre_COGMRESSolve(void  *cogmres_vdata,
             {
                if ( print_level > 1 && my_id == 0)
                {
-                  hypre_printf("\n\n");
-                  hypre_printf("Final L2 norm of residual: %e\n\n", r_norm);
+                  nalu_hypre_printf("\n\n");
+                  nalu_hypre_printf("Final L2 norm of residual: %e\n\n", r_norm);
                }
                break;
             }
             else if ( print_level > 0 && my_id == 0)
             {
-               hypre_printf("false convergence 1\n");
+               nalu_hypre_printf("false convergence 1\n");
             }
          }
       }
@@ -610,11 +610,11 @@ hypre_COGMRESSolve(void  *cogmres_vdata,
             if ( print_level > 1 && my_id == 0 )
             {
                if (b_norm > 0.0)
-                  hypre_printf("% 5d    %e    %f   %e\n", iter,
+                  nalu_hypre_printf("% 5d    %e    %f   %e\n", iter,
                                norms[iter], norms[iter] / norms[iter - 1],
                                norms[iter] / b_norm);
                else
-                  hypre_printf("% 5d    %e    %f\n", iter, norms[iter],
+                  nalu_hypre_printf("% 5d    %e    %f\n", iter, norms[iter],
                                norms[iter] / norms[iter - 1]);
             }
          }
@@ -625,11 +625,11 @@ hypre_COGMRESSolve(void  *cogmres_vdata,
             cf_ave_1 = pow( r_norm / r_norm_0, 1.0 / (2.0 * iter));
 
             weight = fabs(cf_ave_1 - cf_ave_0);
-            weight = weight / hypre_max(cf_ave_1, cf_ave_0);
+            weight = weight / nalu_hypre_max(cf_ave_1, cf_ave_0);
 
             weight = 1.0 - weight;
 #if 0
-            hypre_printf("I = %d: cf_new = %e, cf_old = %e, weight = %e\n",
+            nalu_hypre_printf("I = %d: cf_new = %e, cf_old = %e, weight = %e\n",
                          i, cf_ave_1, cf_ave_0, weight );
 #endif
             if (weight * cf_ave_1 > cf_tol)
@@ -809,8 +809,8 @@ hypre_COGMRESSolve(void  *cogmres_vdata,
                      (cogmres_data -> converged) = 1;
                      if ( print_level > 1 && my_id == 0 )
                      {
-                        hypre_printf("\n\n");
-                        hypre_printf("Final L2 norm of residual: %e\n\n", r_norm);
+                        nalu_hypre_printf("\n\n");
+                        nalu_hypre_printf("Final L2 norm of residual: %e\n\n", r_norm);
                      }
                      break;
                   }
@@ -820,8 +820,8 @@ hypre_COGMRESSolve(void  *cogmres_vdata,
                   (cogmres_data -> converged) = 1;
                   if ( print_level > 1 && my_id == 0 )
                   {
-                     hypre_printf("\n\n");
-                     hypre_printf("Final L2 norm of residual: %e\n\n", r_norm);
+                     nalu_hypre_printf("\n\n");
+                     nalu_hypre_printf("Final L2 norm of residual: %e\n\n", r_norm);
                   }
                   break;
                }
@@ -830,8 +830,8 @@ hypre_COGMRESSolve(void  *cogmres_vdata,
             {
                if ( print_level > 1 && my_id == 0 )
                {
-                  hypre_printf("\n\n");
-                  hypre_printf("Final L2 norm of residual: %e\n\n", r_norm);
+                  nalu_hypre_printf("\n\n");
+                  nalu_hypre_printf("Final L2 norm of residual: %e\n\n", r_norm);
                }
                (cogmres_data -> converged) = 1;
                break;
@@ -844,8 +844,8 @@ hypre_COGMRESSolve(void  *cogmres_vdata,
             {
                if (print_level > 1 && my_id == 0)
                {
-                  hypre_printf("\n\n");
-                  hypre_printf("Final L2 norm of residual: %e\n\n", r_norm);
+                  nalu_hypre_printf("\n\n");
+                  nalu_hypre_printf("Final L2 norm of residual: %e\n\n", r_norm);
                }
                (cogmres_data -> converged) = 1;
                break;
@@ -853,7 +853,7 @@ hypre_COGMRESSolve(void  *cogmres_vdata,
             /* report discrepancy between real/COGMRES residuals and restart */
             if ( print_level > 0 && my_id == 0)
             {
-               hypre_printf("false convergence 2, L2 norm of residual: %e\n", r_norm);
+               nalu_hypre_printf("false convergence 2, L2 norm of residual: %e\n", r_norm);
             }
             (*(cogmres_functions->CopyVector))(r, p[0]);
             i = 0;
@@ -893,366 +893,366 @@ hypre_COGMRESSolve(void  *cogmres_vdata,
       (cogmres_data -> rel_residual_norm) = r_norm;
    }
 
-   if (iter >= max_iter && r_norm > epsilon && epsilon > 0) { hypre_error(NALU_HYPRE_ERROR_CONV); }
+   if (iter >= max_iter && r_norm > epsilon && epsilon > 0) { nalu_hypre_error(NALU_HYPRE_ERROR_CONV); }
 
-   hypre_TFreeF(c, cogmres_functions);
-   hypre_TFreeF(s, cogmres_functions);
-   hypre_TFreeF(rs, cogmres_functions);
-   hypre_TFreeF(rv, cogmres_functions);
-   if (rel_change) { hypre_TFreeF(rs_2, cogmres_functions); }
+   nalu_hypre_TFreeF(c, cogmres_functions);
+   nalu_hypre_TFreeF(s, cogmres_functions);
+   nalu_hypre_TFreeF(rs, cogmres_functions);
+   nalu_hypre_TFreeF(rv, cogmres_functions);
+   if (rel_change) { nalu_hypre_TFreeF(rs_2, cogmres_functions); }
 
    /*for (i=0; i < k_dim+1; i++)
    {
-      hypre_TFreeF(hh[i],cogmres_functions);
-      hypre_TFreeF(uu[i],cogmres_functions);
+      nalu_hypre_TFreeF(hh[i],cogmres_functions);
+      nalu_hypre_TFreeF(uu[i],cogmres_functions);
    }*/
-   hypre_TFreeF(hh, cogmres_functions);
-   hypre_TFreeF(uu, cogmres_functions);
+   nalu_hypre_TFreeF(hh, cogmres_functions);
+   nalu_hypre_TFreeF(uu, cogmres_functions);
 
    NALU_HYPRE_ANNOTATE_FUNC_END;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_COGMRESSetKDim, hypre_COGMRESGetKDim
+ * nalu_hypre_COGMRESSetKDim, nalu_hypre_COGMRESGetKDim
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_COGMRESSetKDim( void   *cogmres_vdata,
+nalu_hypre_COGMRESSetKDim( void   *cogmres_vdata,
                       NALU_HYPRE_Int   k_dim )
 {
-   hypre_COGMRESData *cogmres_data = (hypre_COGMRESData *) cogmres_vdata;
+   nalu_hypre_COGMRESData *cogmres_data = (nalu_hypre_COGMRESData *) cogmres_vdata;
    (cogmres_data -> k_dim) = k_dim;
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 NALU_HYPRE_Int
-hypre_COGMRESGetKDim( void   *cogmres_vdata,
+nalu_hypre_COGMRESGetKDim( void   *cogmres_vdata,
                       NALU_HYPRE_Int * k_dim )
 {
-   hypre_COGMRESData *cogmres_data = (hypre_COGMRESData *)cogmres_vdata;
+   nalu_hypre_COGMRESData *cogmres_data = (nalu_hypre_COGMRESData *)cogmres_vdata;
    *k_dim = (cogmres_data -> k_dim);
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_COGMRESSetUnroll, hypre_COGMRESGetUnroll
+ * nalu_hypre_COGMRESSetUnroll, nalu_hypre_COGMRESGetUnroll
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_COGMRESSetUnroll( void   *cogmres_vdata,
+nalu_hypre_COGMRESSetUnroll( void   *cogmres_vdata,
                         NALU_HYPRE_Int   unroll )
 {
-   hypre_COGMRESData *cogmres_data = (hypre_COGMRESData *) cogmres_vdata;
+   nalu_hypre_COGMRESData *cogmres_data = (nalu_hypre_COGMRESData *) cogmres_vdata;
    (cogmres_data -> unroll) = unroll;
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 NALU_HYPRE_Int
-hypre_COGMRESGetUnroll( void   *cogmres_vdata,
+nalu_hypre_COGMRESGetUnroll( void   *cogmres_vdata,
                         NALU_HYPRE_Int * unroll )
 {
-   hypre_COGMRESData *cogmres_data = (hypre_COGMRESData *)cogmres_vdata;
+   nalu_hypre_COGMRESData *cogmres_data = (nalu_hypre_COGMRESData *)cogmres_vdata;
    *unroll = (cogmres_data -> unroll);
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_COGMRESSetCGS, hypre_COGMRESGetCGS
+ * nalu_hypre_COGMRESSetCGS, nalu_hypre_COGMRESGetCGS
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_COGMRESSetCGS( void   *cogmres_vdata,
+nalu_hypre_COGMRESSetCGS( void   *cogmres_vdata,
                      NALU_HYPRE_Int   cgs )
 {
-   hypre_COGMRESData *cogmres_data = (hypre_COGMRESData *) cogmres_vdata;
+   nalu_hypre_COGMRESData *cogmres_data = (nalu_hypre_COGMRESData *) cogmres_vdata;
    (cogmres_data -> cgs) = cgs;
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 NALU_HYPRE_Int
-hypre_COGMRESGetCGS( void   *cogmres_vdata,
+nalu_hypre_COGMRESGetCGS( void   *cogmres_vdata,
                      NALU_HYPRE_Int * cgs )
 {
-   hypre_COGMRESData *cogmres_data = (hypre_COGMRESData *)cogmres_vdata;
+   nalu_hypre_COGMRESData *cogmres_data = (nalu_hypre_COGMRESData *)cogmres_vdata;
    *cgs = (cogmres_data -> cgs);
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_COGMRESSetTol, hypre_COGMRESGetTol
+ * nalu_hypre_COGMRESSetTol, nalu_hypre_COGMRESGetTol
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_COGMRESSetTol( void   *cogmres_vdata,
+nalu_hypre_COGMRESSetTol( void   *cogmres_vdata,
                      NALU_HYPRE_Real  tol       )
 {
-   hypre_COGMRESData *cogmres_data = (hypre_COGMRESData *)cogmres_vdata;
+   nalu_hypre_COGMRESData *cogmres_data = (nalu_hypre_COGMRESData *)cogmres_vdata;
    (cogmres_data -> tol) = tol;
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 NALU_HYPRE_Int
-hypre_COGMRESGetTol( void   *cogmres_vdata,
+nalu_hypre_COGMRESGetTol( void   *cogmres_vdata,
                      NALU_HYPRE_Real  * tol      )
 {
-   hypre_COGMRESData *cogmres_data = (hypre_COGMRESData *)cogmres_vdata;
+   nalu_hypre_COGMRESData *cogmres_data = (nalu_hypre_COGMRESData *)cogmres_vdata;
    *tol = (cogmres_data -> tol);
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 /*--------------------------------------------------------------------------
- * hypre_COGMRESSetAbsoluteTol, hypre_COGMRESGetAbsoluteTol
+ * nalu_hypre_COGMRESSetAbsoluteTol, nalu_hypre_COGMRESGetAbsoluteTol
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_COGMRESSetAbsoluteTol( void   *cogmres_vdata,
+nalu_hypre_COGMRESSetAbsoluteTol( void   *cogmres_vdata,
                              NALU_HYPRE_Real  a_tol       )
 {
-   hypre_COGMRESData *cogmres_data = (hypre_COGMRESData *)cogmres_vdata;
+   nalu_hypre_COGMRESData *cogmres_data = (nalu_hypre_COGMRESData *)cogmres_vdata;
    (cogmres_data -> a_tol) = a_tol;
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 NALU_HYPRE_Int
-hypre_COGMRESGetAbsoluteTol( void   *cogmres_vdata,
+nalu_hypre_COGMRESGetAbsoluteTol( void   *cogmres_vdata,
                              NALU_HYPRE_Real  * a_tol      )
 {
-   hypre_COGMRESData *cogmres_data = (hypre_COGMRESData *)cogmres_vdata;
+   nalu_hypre_COGMRESData *cogmres_data = (nalu_hypre_COGMRESData *)cogmres_vdata;
    *a_tol = (cogmres_data -> a_tol);
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 /*--------------------------------------------------------------------------
- * hypre_COGMRESSetConvergenceFactorTol, hypre_COGMRESGetConvergenceFactorTol
+ * nalu_hypre_COGMRESSetConvergenceFactorTol, nalu_hypre_COGMRESGetConvergenceFactorTol
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_COGMRESSetConvergenceFactorTol( void   *cogmres_vdata,
+nalu_hypre_COGMRESSetConvergenceFactorTol( void   *cogmres_vdata,
                                       NALU_HYPRE_Real  cf_tol       )
 {
-   hypre_COGMRESData *cogmres_data = (hypre_COGMRESData *)cogmres_vdata;
+   nalu_hypre_COGMRESData *cogmres_data = (nalu_hypre_COGMRESData *)cogmres_vdata;
    (cogmres_data -> cf_tol) = cf_tol;
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 NALU_HYPRE_Int
-hypre_COGMRESGetConvergenceFactorTol( void   *cogmres_vdata,
+nalu_hypre_COGMRESGetConvergenceFactorTol( void   *cogmres_vdata,
                                       NALU_HYPRE_Real * cf_tol       )
 {
-   hypre_COGMRESData *cogmres_data = (hypre_COGMRESData *)cogmres_vdata;
+   nalu_hypre_COGMRESData *cogmres_data = (nalu_hypre_COGMRESData *)cogmres_vdata;
    *cf_tol = (cogmres_data -> cf_tol);
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_COGMRESSetMinIter, hypre_COGMRESGetMinIter
+ * nalu_hypre_COGMRESSetMinIter, nalu_hypre_COGMRESGetMinIter
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_COGMRESSetMinIter( void *cogmres_vdata,
+nalu_hypre_COGMRESSetMinIter( void *cogmres_vdata,
                          NALU_HYPRE_Int   min_iter  )
 {
-   hypre_COGMRESData *cogmres_data = (hypre_COGMRESData *)cogmres_vdata;
+   nalu_hypre_COGMRESData *cogmres_data = (nalu_hypre_COGMRESData *)cogmres_vdata;
    (cogmres_data -> min_iter) = min_iter;
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 NALU_HYPRE_Int
-hypre_COGMRESGetMinIter( void *cogmres_vdata,
+nalu_hypre_COGMRESGetMinIter( void *cogmres_vdata,
                          NALU_HYPRE_Int * min_iter  )
 {
-   hypre_COGMRESData *cogmres_data = (hypre_COGMRESData *)cogmres_vdata;
+   nalu_hypre_COGMRESData *cogmres_data = (nalu_hypre_COGMRESData *)cogmres_vdata;
    *min_iter = (cogmres_data -> min_iter);
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_COGMRESSetMaxIter, hypre_COGMRESGetMaxIter
+ * nalu_hypre_COGMRESSetMaxIter, nalu_hypre_COGMRESGetMaxIter
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_COGMRESSetMaxIter( void *cogmres_vdata,
+nalu_hypre_COGMRESSetMaxIter( void *cogmres_vdata,
                          NALU_HYPRE_Int   max_iter  )
 {
-   hypre_COGMRESData *cogmres_data = (hypre_COGMRESData *)cogmres_vdata;
+   nalu_hypre_COGMRESData *cogmres_data = (nalu_hypre_COGMRESData *)cogmres_vdata;
    (cogmres_data -> max_iter) = max_iter;
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 NALU_HYPRE_Int
-hypre_COGMRESGetMaxIter( void *cogmres_vdata,
+nalu_hypre_COGMRESGetMaxIter( void *cogmres_vdata,
                          NALU_HYPRE_Int * max_iter  )
 {
-   hypre_COGMRESData *cogmres_data = (hypre_COGMRESData *)cogmres_vdata;
+   nalu_hypre_COGMRESData *cogmres_data = (nalu_hypre_COGMRESData *)cogmres_vdata;
    *max_iter = (cogmres_data -> max_iter);
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_COGMRESSetRelChange, hypre_COGMRESGetRelChange
+ * nalu_hypre_COGMRESSetRelChange, nalu_hypre_COGMRESGetRelChange
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_COGMRESSetRelChange( void *cogmres_vdata,
+nalu_hypre_COGMRESSetRelChange( void *cogmres_vdata,
                            NALU_HYPRE_Int   rel_change  )
 {
-   hypre_COGMRESData *cogmres_data = (hypre_COGMRESData *)cogmres_vdata;
+   nalu_hypre_COGMRESData *cogmres_data = (nalu_hypre_COGMRESData *)cogmres_vdata;
    (cogmres_data -> rel_change) = rel_change;
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 NALU_HYPRE_Int
-hypre_COGMRESGetRelChange( void *cogmres_vdata,
+nalu_hypre_COGMRESGetRelChange( void *cogmres_vdata,
                            NALU_HYPRE_Int * rel_change  )
 {
-   hypre_COGMRESData *cogmres_data = (hypre_COGMRESData *)cogmres_vdata;
+   nalu_hypre_COGMRESData *cogmres_data = (nalu_hypre_COGMRESData *)cogmres_vdata;
    *rel_change = (cogmres_data -> rel_change);
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_COGMRESSetSkipRealResidualCheck, hypre_COGMRESGetSkipRealResidualCheck
+ * nalu_hypre_COGMRESSetSkipRealResidualCheck, nalu_hypre_COGMRESGetSkipRealResidualCheck
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_COGMRESSetSkipRealResidualCheck( void *cogmres_vdata,
+nalu_hypre_COGMRESSetSkipRealResidualCheck( void *cogmres_vdata,
                                        NALU_HYPRE_Int skip_real_r_check )
 {
-   hypre_COGMRESData *cogmres_data = (hypre_COGMRESData *)cogmres_vdata;
+   nalu_hypre_COGMRESData *cogmres_data = (nalu_hypre_COGMRESData *)cogmres_vdata;
    (cogmres_data -> skip_real_r_check) = skip_real_r_check;
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 NALU_HYPRE_Int
-hypre_COGMRESGetSkipRealResidualCheck( void *cogmres_vdata,
+nalu_hypre_COGMRESGetSkipRealResidualCheck( void *cogmres_vdata,
                                        NALU_HYPRE_Int *skip_real_r_check)
 {
-   hypre_COGMRESData *cogmres_data = (hypre_COGMRESData *)cogmres_vdata;
+   nalu_hypre_COGMRESData *cogmres_data = (nalu_hypre_COGMRESData *)cogmres_vdata;
    *skip_real_r_check = (cogmres_data -> skip_real_r_check);
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_COGMRESSetPrecond
+ * nalu_hypre_COGMRESSetPrecond
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_COGMRESSetPrecond( void  *cogmres_vdata,
+nalu_hypre_COGMRESSetPrecond( void  *cogmres_vdata,
                          NALU_HYPRE_Int  (*precond)(void*, void*, void*, void*),
                          NALU_HYPRE_Int  (*precond_setup)(void*, void*, void*, void*),
                          void  *precond_data )
 {
-   hypre_COGMRESData *cogmres_data = (hypre_COGMRESData *)cogmres_vdata;
-   hypre_COGMRESFunctions *cogmres_functions = cogmres_data->functions;
+   nalu_hypre_COGMRESData *cogmres_data = (nalu_hypre_COGMRESData *)cogmres_vdata;
+   nalu_hypre_COGMRESFunctions *cogmres_functions = cogmres_data->functions;
    (cogmres_functions -> precond)        = precond;
    (cogmres_functions -> precond_setup)  = precond_setup;
    (cogmres_data -> precond_data)   = precond_data;
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_COGMRESGetPrecond
+ * nalu_hypre_COGMRESGetPrecond
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_COGMRESGetPrecond( void         *cogmres_vdata,
+nalu_hypre_COGMRESGetPrecond( void         *cogmres_vdata,
                          NALU_HYPRE_Solver *precond_data_ptr )
 {
-   hypre_COGMRESData *cogmres_data = (hypre_COGMRESData *)cogmres_vdata;
+   nalu_hypre_COGMRESData *cogmres_data = (nalu_hypre_COGMRESData *)cogmres_vdata;
    *precond_data_ptr = (NALU_HYPRE_Solver)(cogmres_data -> precond_data);
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_COGMRESSetPrintLevel, hypre_COGMRESGetPrintLevel
+ * nalu_hypre_COGMRESSetPrintLevel, nalu_hypre_COGMRESGetPrintLevel
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_COGMRESSetPrintLevel( void *cogmres_vdata,
+nalu_hypre_COGMRESSetPrintLevel( void *cogmres_vdata,
                             NALU_HYPRE_Int   level)
 {
-   hypre_COGMRESData *cogmres_data = (hypre_COGMRESData *)cogmres_vdata;
+   nalu_hypre_COGMRESData *cogmres_data = (nalu_hypre_COGMRESData *)cogmres_vdata;
    (cogmres_data -> print_level) = level;
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 NALU_HYPRE_Int
-hypre_COGMRESGetPrintLevel( void *cogmres_vdata,
+nalu_hypre_COGMRESGetPrintLevel( void *cogmres_vdata,
                             NALU_HYPRE_Int * level)
 {
-   hypre_COGMRESData *cogmres_data = (hypre_COGMRESData *)cogmres_vdata;
+   nalu_hypre_COGMRESData *cogmres_data = (nalu_hypre_COGMRESData *)cogmres_vdata;
    *level = (cogmres_data -> print_level);
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_COGMRESSetLogging, hypre_COGMRESGetLogging
+ * nalu_hypre_COGMRESSetLogging, nalu_hypre_COGMRESGetLogging
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_COGMRESSetLogging( void *cogmres_vdata,
+nalu_hypre_COGMRESSetLogging( void *cogmres_vdata,
                          NALU_HYPRE_Int   level)
 {
-   hypre_COGMRESData *cogmres_data = (hypre_COGMRESData *)cogmres_vdata;
+   nalu_hypre_COGMRESData *cogmres_data = (nalu_hypre_COGMRESData *)cogmres_vdata;
    (cogmres_data -> logging) = level;
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 NALU_HYPRE_Int
-hypre_COGMRESGetLogging( void *cogmres_vdata,
+nalu_hypre_COGMRESGetLogging( void *cogmres_vdata,
                          NALU_HYPRE_Int * level)
 {
-   hypre_COGMRESData *cogmres_data = (hypre_COGMRESData *)cogmres_vdata;
+   nalu_hypre_COGMRESData *cogmres_data = (nalu_hypre_COGMRESData *)cogmres_vdata;
    *level = (cogmres_data -> logging);
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_COGMRESGetNumIterations
+ * nalu_hypre_COGMRESGetNumIterations
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_COGMRESGetNumIterations( void *cogmres_vdata,
+nalu_hypre_COGMRESGetNumIterations( void *cogmres_vdata,
                                NALU_HYPRE_Int  *num_iterations )
 {
-   hypre_COGMRESData *cogmres_data = (hypre_COGMRESData *)cogmres_vdata;
+   nalu_hypre_COGMRESData *cogmres_data = (nalu_hypre_COGMRESData *)cogmres_vdata;
    *num_iterations = (cogmres_data -> num_iterations);
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_COGMRESGetConverged
+ * nalu_hypre_COGMRESGetConverged
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_COGMRESGetConverged( void *cogmres_vdata,
+nalu_hypre_COGMRESGetConverged( void *cogmres_vdata,
                            NALU_HYPRE_Int  *converged )
 {
-   hypre_COGMRESData *cogmres_data = (hypre_COGMRESData *)cogmres_vdata;
+   nalu_hypre_COGMRESData *cogmres_data = (nalu_hypre_COGMRESData *)cogmres_vdata;
    *converged = (cogmres_data -> converged);
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_COGMRESGetFinalRelativeResidualNorm
+ * nalu_hypre_COGMRESGetFinalRelativeResidualNorm
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_COGMRESGetFinalRelativeResidualNorm( void   *cogmres_vdata,
+nalu_hypre_COGMRESGetFinalRelativeResidualNorm( void   *cogmres_vdata,
                                            NALU_HYPRE_Real *relative_residual_norm )
 {
-   hypre_COGMRESData *cogmres_data = (hypre_COGMRESData *)cogmres_vdata;
+   nalu_hypre_COGMRESData *cogmres_data = (nalu_hypre_COGMRESData *)cogmres_vdata;
    *relative_residual_norm = (cogmres_data -> rel_residual_norm);
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 
 NALU_HYPRE_Int
-hypre_COGMRESSetModifyPC(void *cogmres_vdata,
+nalu_hypre_COGMRESSetModifyPC(void *cogmres_vdata,
                          NALU_HYPRE_Int (*modify_pc)(void *precond_data, NALU_HYPRE_Int iteration, NALU_HYPRE_Real rel_residual_norm))
 {
-   hypre_COGMRESData *cogmres_data = (hypre_COGMRESData *)cogmres_vdata;
-   hypre_COGMRESFunctions *cogmres_functions = cogmres_data->functions;
+   nalu_hypre_COGMRESData *cogmres_data = (nalu_hypre_COGMRESData *)cogmres_vdata;
+   nalu_hypre_COGMRESFunctions *cogmres_functions = cogmres_data->functions;
    (cogmres_functions -> modify_pc)        = modify_pc;
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }

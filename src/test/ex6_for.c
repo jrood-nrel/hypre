@@ -34,8 +34,8 @@
 /*     include fortran headers       */
 #ifdef NALU_HYPRE_FORTRAN
 #include "fortran.h"
-#include "hypre_struct_fortran_test.h"
-#include "hypre_sstruct_fortran_test.h"
+#include "nalu_hypre_struct_fortran_test.h"
+#include "nalu_hypre_sstruct_fortran_test.h"
 #endif
 
 NALU_HYPRE_Int main (NALU_HYPRE_Int argc, char *argv[])
@@ -44,22 +44,22 @@ NALU_HYPRE_Int main (NALU_HYPRE_Int argc, char *argv[])
 
    /* We are using struct solvers for this example */
 #ifdef NALU_HYPRE_FORTRAN
-   hypre_F90_Obj     grid;
-   hypre_F90_Obj     graph;
-   hypre_F90_Obj     stencil;
-   hypre_F90_Obj     A;
-   hypre_F90_Obj     b;
-   hypre_F90_Obj     x;
+   nalu_hypre_F90_Obj     grid;
+   nalu_hypre_F90_Obj     graph;
+   nalu_hypre_F90_Obj     stencil;
+   nalu_hypre_F90_Obj     A;
+   nalu_hypre_F90_Obj     b;
+   nalu_hypre_F90_Obj     x;
 
-   hypre_F90_Obj     solver;
-   hypre_F90_Obj     precond;
+   nalu_hypre_F90_Obj     solver;
+   nalu_hypre_F90_Obj     precond;
 
-   hypre_F90_Obj     long_temp_COMM;
+   nalu_hypre_F90_Obj     long_temp_COMM;
    NALU_HYPRE_Int          temp_COMM;
 
    NALU_HYPRE_Int          precond_id;
 
-   NALU_HYPRE_Int          hypre_var_cell = NALU_HYPRE_SSTRUCT_VARIABLE_CELL;
+   NALU_HYPRE_Int          nalu_hypre_var_cell = NALU_HYPRE_SSTRUCT_VARIABLE_CELL;
 
    NALU_HYPRE_Int          one = 1;
    NALU_HYPRE_Int          two = 2;
@@ -83,20 +83,20 @@ NALU_HYPRE_Int main (NALU_HYPRE_Int argc, char *argv[])
    NALU_HYPRE_Int object_type;
 
    /* Initialize MPI */
-   hypre_MPI_Init(&argc, &argv);
-   hypre_MPI_Comm_rank(hypre_MPI_COMM_WORLD, &myid);
-   hypre_MPI_Comm_size(hypre_MPI_COMM_WORLD, &num_procs);
+   nalu_hypre_MPI_Init(&argc, &argv);
+   nalu_hypre_MPI_Comm_rank(nalu_hypre_MPI_COMM_WORLD, &myid);
+   nalu_hypre_MPI_Comm_size(nalu_hypre_MPI_COMM_WORLD, &num_procs);
 
    if (num_procs != 2)
    {
-      if (myid == 0) { hypre_printf("Must run with 2 processors!\n"); }
-      hypre_MPI_Finalize();
+      if (myid == 0) { nalu_hypre_printf("Must run with 2 processors!\n"); }
+      nalu_hypre_MPI_Finalize();
 
       return (0);
    }
 #ifdef NALU_HYPRE_FORTRAN
-   temp_COMM = (NALU_HYPRE_Int) hypre_MPI_COMM_WORLD;
-   long_temp_COMM = (hypre_F90_Obj) hypre_MPI_COMM_WORLD;
+   temp_COMM = (NALU_HYPRE_Int) nalu_hypre_MPI_COMM_WORLD;
+   long_temp_COMM = (nalu_hypre_F90_Obj) nalu_hypre_MPI_COMM_WORLD;
 #endif
 
    /* 1. Set up the 2D grid.  This gives the index space in each part.
@@ -111,7 +111,7 @@ NALU_HYPRE_Int main (NALU_HYPRE_Int argc, char *argv[])
 #ifdef NALU_HYPRE_FORTRAN
       NALU_HYPRE_SStructGridCreate(&temp_COMM, &ndim, &nparts, &grid);
 #else
-      NALU_HYPRE_SStructGridCreate(hypre_MPI_COMM_WORLD, ndim, nparts, &grid);
+      NALU_HYPRE_SStructGridCreate(nalu_hypre_MPI_COMM_WORLD, ndim, nparts, &grid);
 #endif
 
       /* Set the extents of the grid - each processor sets its grid
@@ -170,7 +170,7 @@ NALU_HYPRE_Int main (NALU_HYPRE_Int argc, char *argv[])
          NALU_HYPRE_Int nvars = 1;
 
 #ifdef NALU_HYPRE_FORTRAN
-         hypre_F90_Obj vartypes[1] = {NALU_HYPRE_SSTRUCT_VARIABLE_CELL};
+         nalu_hypre_F90_Obj vartypes[1] = {NALU_HYPRE_SSTRUCT_VARIABLE_CELL};
 #else
          NALU_HYPRE_SStructVariable vartypes[1] = {NALU_HYPRE_SSTRUCT_VARIABLE_CELL};
 #endif
@@ -235,7 +235,7 @@ NALU_HYPRE_Int main (NALU_HYPRE_Int argc, char *argv[])
 #ifdef NALU_HYPRE_FORTRAN
       NALU_HYPRE_SStructGraphCreate(&temp_COMM, &grid, &graph);
 #else
-      NALU_HYPRE_SStructGraphCreate(hypre_MPI_COMM_WORLD, grid, &graph);
+      NALU_HYPRE_SStructGraphCreate(nalu_hypre_MPI_COMM_WORLD, grid, &graph);
 #endif
 
       /* Now we need to tell the graph which stencil to use for each
@@ -271,7 +271,7 @@ NALU_HYPRE_Int main (NALU_HYPRE_Int argc, char *argv[])
 #ifdef NALU_HYPRE_FORTRAN
       NALU_HYPRE_SStructMatrixCreate(&temp_COMM, &graph, &A);
 #else
-      NALU_HYPRE_SStructMatrixCreate(hypre_MPI_COMM_WORLD, graph, &A);
+      NALU_HYPRE_SStructMatrixCreate(nalu_hypre_MPI_COMM_WORLD, graph, &A);
 #endif
 
       /* Set the object type (by default NALU_HYPRE_SSTRUCT). This determines the
@@ -620,8 +620,8 @@ NALU_HYPRE_Int main (NALU_HYPRE_Int argc, char *argv[])
       NALU_HYPRE_SStructVectorCreate(&temp_COMM, &grid, &b);
       NALU_HYPRE_SStructVectorCreate(&temp_COMM, &grid, &x);
 #else
-      NALU_HYPRE_SStructVectorCreate(hypre_MPI_COMM_WORLD, grid, &b);
-      NALU_HYPRE_SStructVectorCreate(hypre_MPI_COMM_WORLD, grid, &x);
+      NALU_HYPRE_SStructVectorCreate(nalu_hypre_MPI_COMM_WORLD, grid, &b);
+      NALU_HYPRE_SStructVectorCreate(nalu_hypre_MPI_COMM_WORLD, grid, &x);
 #endif
 
       /* As with the matrix,  set the object type for the vectors
@@ -762,9 +762,9 @@ NALU_HYPRE_Int main (NALU_HYPRE_Int argc, char *argv[])
    {
 
 #ifdef NALU_HYPRE_FORTRAN
-      hypre_F90_Obj sA;
-      hypre_F90_Obj sb;
-      hypre_F90_Obj sx;
+      nalu_hypre_F90_Obj sA;
+      nalu_hypre_F90_Obj sb;
+      nalu_hypre_F90_Obj sx;
 #else
       NALU_HYPRE_StructMatrix sA;
       NALU_HYPRE_StructVector sb;
@@ -789,7 +789,7 @@ NALU_HYPRE_Int main (NALU_HYPRE_Int argc, char *argv[])
 #ifdef NALU_HYPRE_FORTRAN
       NALU_HYPRE_StructPCGCreate(&temp_COMM, &solver);
 #else
-      NALU_HYPRE_StructPCGCreate(hypre_MPI_COMM_WORLD, &solver);
+      NALU_HYPRE_StructPCGCreate(nalu_hypre_MPI_COMM_WORLD, &solver);
 #endif
 
       /* Set PCG parameters */
@@ -809,7 +809,7 @@ NALU_HYPRE_Int main (NALU_HYPRE_Int argc, char *argv[])
 #ifdef NALU_HYPRE_FORTRAN
       NALU_HYPRE_StructSMGCreate(&temp_COMM, &precond);
 #else
-      NALU_HYPRE_StructSMGCreate(hypre_MPI_COMM_WORLD, &precond);
+      NALU_HYPRE_StructSMGCreate(nalu_hypre_MPI_COMM_WORLD, &precond);
 #endif
 
       /* Set SMG parameters */
@@ -868,7 +868,7 @@ NALU_HYPRE_Int main (NALU_HYPRE_Int argc, char *argv[])
 #endif
 
    /* Finalize MPI */
-   hypre_MPI_Finalize();
+   nalu_hypre_MPI_Finalize();
 
    return (0);
 }

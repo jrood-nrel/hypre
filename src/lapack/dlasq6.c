@@ -6,7 +6,7 @@ extern "C" {
 #endif
 
 #include "f2c.h"
-#include "hypre_lapack.h"
+#include "nalu_hypre_lapack.h"
 
 /*  -- translated by f2c (version 19990503).
    You must link the resulting object file with the libraries:

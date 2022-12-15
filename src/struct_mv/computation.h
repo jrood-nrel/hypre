@@ -11,63 +11,63 @@
  *
  *****************************************************************************/
 
-#ifndef hypre_COMPUTATION_HEADER
-#define hypre_COMPUTATION_HEADER
+#ifndef nalu_hypre_COMPUTATION_HEADER
+#define nalu_hypre_COMPUTATION_HEADER
 
 /*--------------------------------------------------------------------------
- * hypre_ComputeInfo:
+ * nalu_hypre_ComputeInfo:
  *--------------------------------------------------------------------------*/
 
-typedef struct hypre_ComputeInfo_struct
+typedef struct nalu_hypre_ComputeInfo_struct
 {
-   hypre_CommInfo        *comm_info;
+   nalu_hypre_CommInfo        *comm_info;
 
-   hypre_BoxArrayArray   *indt_boxes;
-   hypre_BoxArrayArray   *dept_boxes;
-   hypre_Index            stride;
+   nalu_hypre_BoxArrayArray   *indt_boxes;
+   nalu_hypre_BoxArrayArray   *dept_boxes;
+   nalu_hypre_Index            stride;
 
-} hypre_ComputeInfo;
+} nalu_hypre_ComputeInfo;
 
 /*--------------------------------------------------------------------------
- * hypre_ComputePkg:
+ * nalu_hypre_ComputePkg:
  *   Structure containing information for doing computations.
  *--------------------------------------------------------------------------*/
 
-typedef struct hypre_ComputePkg_struct
+typedef struct nalu_hypre_ComputePkg_struct
 {
-   hypre_CommPkg         *comm_pkg;
+   nalu_hypre_CommPkg         *comm_pkg;
 
-   hypre_BoxArrayArray   *indt_boxes;
-   hypre_BoxArrayArray   *dept_boxes;
-   hypre_Index            stride;
+   nalu_hypre_BoxArrayArray   *indt_boxes;
+   nalu_hypre_BoxArrayArray   *dept_boxes;
+   nalu_hypre_Index            stride;
 
-   hypre_StructGrid      *grid;
-   hypre_BoxArray        *data_space;
+   nalu_hypre_StructGrid      *grid;
+   nalu_hypre_BoxArray        *data_space;
    NALU_HYPRE_Int              num_values;
 
-} hypre_ComputePkg;
+} nalu_hypre_ComputePkg;
 
 /*--------------------------------------------------------------------------
- * Accessor macros: hypre_ComputeInfo
+ * Accessor macros: nalu_hypre_ComputeInfo
  *--------------------------------------------------------------------------*/
 
-#define hypre_ComputeInfoCommInfo(info)     (info -> comm_info)
-#define hypre_ComputeInfoIndtBoxes(info)    (info -> indt_boxes)
-#define hypre_ComputeInfoDeptBoxes(info)    (info -> dept_boxes)
-#define hypre_ComputeInfoStride(info)       (info -> stride)
+#define nalu_hypre_ComputeInfoCommInfo(info)     (info -> comm_info)
+#define nalu_hypre_ComputeInfoIndtBoxes(info)    (info -> indt_boxes)
+#define nalu_hypre_ComputeInfoDeptBoxes(info)    (info -> dept_boxes)
+#define nalu_hypre_ComputeInfoStride(info)       (info -> stride)
 
 /*--------------------------------------------------------------------------
- * Accessor macros: hypre_ComputePkg
+ * Accessor macros: nalu_hypre_ComputePkg
  *--------------------------------------------------------------------------*/
 
-#define hypre_ComputePkgCommPkg(compute_pkg)      (compute_pkg -> comm_pkg)
+#define nalu_hypre_ComputePkgCommPkg(compute_pkg)      (compute_pkg -> comm_pkg)
 
-#define hypre_ComputePkgIndtBoxes(compute_pkg)    (compute_pkg -> indt_boxes)
-#define hypre_ComputePkgDeptBoxes(compute_pkg)    (compute_pkg -> dept_boxes)
-#define hypre_ComputePkgStride(compute_pkg)       (compute_pkg -> stride)
+#define nalu_hypre_ComputePkgIndtBoxes(compute_pkg)    (compute_pkg -> indt_boxes)
+#define nalu_hypre_ComputePkgDeptBoxes(compute_pkg)    (compute_pkg -> dept_boxes)
+#define nalu_hypre_ComputePkgStride(compute_pkg)       (compute_pkg -> stride)
 
-#define hypre_ComputePkgGrid(compute_pkg)         (compute_pkg -> grid)
-#define hypre_ComputePkgDataSpace(compute_pkg)    (compute_pkg -> data_space)
-#define hypre_ComputePkgNumValues(compute_pkg)    (compute_pkg -> num_values)
+#define nalu_hypre_ComputePkgGrid(compute_pkg)         (compute_pkg -> grid)
+#define nalu_hypre_ComputePkgDataSpace(compute_pkg)    (compute_pkg -> data_space)
+#define nalu_hypre_ComputePkgNumValues(compute_pkg)    (compute_pkg -> num_values)
 
 #endif

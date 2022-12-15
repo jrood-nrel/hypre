@@ -30,7 +30,7 @@ C_COMPILE_FLAGS =\
 
 HEADERS =\
  NALU_HYPRE_parcsr_ls.h\
- _hypre_parcsr_ls.h\
+ _nalu_hypre_parcsr_ls.h\
  aux_interp.h\
  block_tridiag.h\
  Common.h\
@@ -43,7 +43,7 @@ HEADERS =\
 FILES =\
  amg_hybrid.c\
  aux_interp.c\
- F90_hypre_laplace.c\
+ F90_nalu_hypre_laplace.c\
  F90_NALU_HYPRE_parcsr_amg.c\
  F90_NALU_HYPRE_parcsr_bicgstab.c\
  F90_NALU_HYPRE_parcsr_block.c\
@@ -185,12 +185,12 @@ SONAME = libNALU_HYPRE_parcsr_ls-${NALU_HYPRE_RELEASE_VERSION}${NALU_HYPRE_LIB_S
 
 all: libNALU_HYPRE_parcsr_ls${NALU_HYPRE_LIB_SUFFIX}
 	cp -fR $(srcdir)/NALU_HYPRE_*.h $(NALU_HYPRE_BUILD_DIR)/include
-	cp -fR $(srcdir)/_hypre_parcsr_ls.h $(NALU_HYPRE_BUILD_DIR)/include
+	cp -fR $(srcdir)/_nalu_hypre_parcsr_ls.h $(NALU_HYPRE_BUILD_DIR)/include
 #	cp -fR libNALU_HYPRE* $(NALU_HYPRE_BUILD_DIR)/lib
 
 install: libNALU_HYPRE_parcsr_ls${NALU_HYPRE_LIB_SUFFIX}
 	cp -fR $(srcdir)/NALU_HYPRE_*.h $(NALU_HYPRE_INC_INSTALL)
-	cp -fR $(srcdir)/_hypre_parcsr_ls.h $(NALU_HYPRE_INC_INSTALL)
+	cp -fR $(srcdir)/_nalu_hypre_parcsr_ls.h $(NALU_HYPRE_INC_INSTALL)
 #	cp -fR libNALU_HYPRE* $(NALU_HYPRE_LIB_INSTALL)
 
 clean:

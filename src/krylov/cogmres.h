@@ -11,8 +11,8 @@
  *
  *****************************************************************************/
 
-#ifndef hypre_KRYLOV_COGMRES_HEADER
-#define hypre_KRYLOV_COGMRES_HEADER
+#ifndef nalu_hypre_KRYLOV_COGMRES_HEADER
+#define nalu_hypre_KRYLOV_COGMRES_HEADER
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
@@ -30,7 +30,7 @@
  *--------------------------------------------------------------------------*/
 
 /*--------------------------------------------------------------------------
- * hypre_COGMRESData and hypre_COGMRESFunctions
+ * nalu_hypre_COGMRESData and nalu_hypre_COGMRESFunctions
  *--------------------------------------------------------------------------*/
 
 /**
@@ -72,7 +72,7 @@ typedef struct
 
    NALU_HYPRE_Int    (*modify_pc)(void *precond_data, NALU_HYPRE_Int iteration, NALU_HYPRE_Real rel_residual_norm );
 
-} hypre_COGMRESFunctions;
+} nalu_hypre_COGMRESFunctions;
 
 /**
  * The {\tt hypre\_COGMRESData} object ...
@@ -102,7 +102,7 @@ typedef struct
    void    *matvec_data;
    void    *precond_data;
 
-   hypre_COGMRESFunctions * functions;
+   nalu_hypre_COGMRESFunctions * functions;
 
    /* log info (always logged) */
    NALU_HYPRE_Int      num_iterations;
@@ -112,7 +112,7 @@ typedef struct
    NALU_HYPRE_Real  *norms;
    char    *log_file_name;
 
-} hypre_COGMRESData;
+} nalu_hypre_COGMRESData;
 
 #ifdef __cplusplus
 extern "C" {
@@ -131,8 +131,8 @@ extern "C" {
  * @param param [IN] ...
  **/
 
-hypre_COGMRESFunctions *
-hypre_COGMRESFunctionsCreate(
+nalu_hypre_COGMRESFunctions *
+nalu_hypre_COGMRESFunctionsCreate(
    void *       (*CAlloc)        ( size_t count, size_t elt_size ),
    NALU_HYPRE_Int    (*Free)          ( void *ptr ),
    NALU_HYPRE_Int    (*CommInfo)      ( void  *A, NALU_HYPRE_Int   *my_id,
@@ -165,7 +165,7 @@ hypre_COGMRESFunctionsCreate(
  **/
 
 void *
-hypre_COGMRESCreate( hypre_COGMRESFunctions *gmres_functions );
+nalu_hypre_COGMRESCreate( nalu_hypre_COGMRESFunctions *gmres_functions );
 
 #ifdef __cplusplus
 }

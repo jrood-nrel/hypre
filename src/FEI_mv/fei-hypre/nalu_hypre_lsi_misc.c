@@ -9,16 +9,16 @@
 #include <string.h>
 #include <stdio.h>
 
-#include "utilities/_hypre_utilities.h"
+#include "utilities/_nalu_hypre_utilities.h"
 #include "IJ_mv/NALU_HYPRE_IJ_mv.h"
-#include "parcsr_mv/_hypre_parcsr_mv.h"
-#include "parcsr_ls/_hypre_parcsr_ls.h"
+#include "parcsr_mv/_nalu_hypre_parcsr_mv.h"
+#include "parcsr_ls/_nalu_hypre_parcsr_ls.h"
 #include "seq_mv/seq_mv.h"
 
 #include "NALU_HYPRE_FEI.h"
 
-extern void hypre_qsort0(int*, int, int);
-extern void hypre_qsort1(int*, double*, int, int);
+extern void nalu_hypre_qsort0(int*, int, int);
+extern void nalu_hypre_qsort1(int*, double*, int, int);
 
 #define habs(x) ((x) > 0.0 ? x : -(x))
 
@@ -50,9 +50,9 @@ void NALU_HYPRE_LSI_Get_IJAMatrixFromFile(double **val, int **ia,
        printf("Error : nrows,nnz = %d %d\n", Nrows, nnz);
        exit(1);
     }
-    mat_ia = hypre_TAlloc(int, (Nrows+1) , NALU_HYPRE_MEMORY_HOST);
-    mat_ja = hypre_TAlloc(int,  nnz , NALU_HYPRE_MEMORY_HOST);
-    mat_a  = hypre_TAlloc(double,  nnz , NALU_HYPRE_MEMORY_HOST);
+    mat_ia = nalu_hypre_TAlloc(int, (Nrows+1) , NALU_HYPRE_MEMORY_HOST);
+    mat_ja = nalu_hypre_TAlloc(int,  nnz , NALU_HYPRE_MEMORY_HOST);
+    mat_a  = nalu_hypre_TAlloc(double,  nnz , NALU_HYPRE_MEMORY_HOST);
     mat_ia[0] = 0;
 
     curr_row = 0;
@@ -95,7 +95,7 @@ void NALU_HYPRE_LSI_Get_IJAMatrixFromFile(double **val, int **ia,
        exit(1);
     }
     fflush(stdout);
-    rhs_local  = hypre_TAlloc(double,  Nrows , NALU_HYPRE_MEMORY_HOST);
+    rhs_local  = nalu_hypre_TAlloc(double,  Nrows , NALU_HYPRE_MEMORY_HOST);
     m = 0;
     for ( k = 0; k < ncnt; k++ ) {
        fscanf(fp, "%d %lg", &rnum, &dtemp);
@@ -115,7 +115,7 @@ void NALU_HYPRE_LSI_Get_IJAMatrixFromFile(double **val, int **ia,
 
 
 /***************************************************************************/
-/* NALU_HYPRE_LSI_Search - this is a modification of hypre_BinarySearch         */
+/* NALU_HYPRE_LSI_Search - this is a modification of nalu_hypre_BinarySearch         */
 /*-------------------------------------------------------------------------*/
 
 int NALU_HYPRE_LSI_Search(int *list,int value,int list_length)
@@ -199,15 +199,15 @@ int NALU_HYPRE_LSI_GetParCSRMatrix(NALU_HYPRE_IJMatrix Amat, int nrows, int nnz,
     for ( i = 0; i < nrows; i++ )
     {
        ierr = NALU_HYPRE_ParCSRMatrixGetRow(A_csr,i,&rowSize,&colInd,&colVal);
-       hypre_assert(!ierr);
-       colInd2 = hypre_TAlloc(int, rowSize , NALU_HYPRE_MEMORY_HOST);
-       colVal2 = hypre_TAlloc(double, rowSize , NALU_HYPRE_MEMORY_HOST);
+       nalu_hypre_assert(!ierr);
+       colInd2 = nalu_hypre_TAlloc(int, rowSize , NALU_HYPRE_MEMORY_HOST);
+       colVal2 = nalu_hypre_TAlloc(double, rowSize , NALU_HYPRE_MEMORY_HOST);
        for ( j = 0; j < rowSize; j++ )
        {
           colInd2[j] = colInd[j];
           colVal2[j] = colVal[j];
        }
-       hypre_qsort1(colInd2, colVal2, 0, rowSize-1);
+       nalu_hypre_qsort1(colInd2, colVal2, 0, rowSize-1);
        for ( j = 0; j < rowSize-1; j++ )
           if ( colInd2[j] == colInd2[j+1] )
              printf("NALU_HYPRE_LSI_GetParCSRMatrix-duplicate colind at row %d \n",i);
@@ -236,11 +236,11 @@ int NALU_HYPRE_LSI_GetParCSRMatrix(NALU_HYPRE_IJMatrix Amat, int nrows, int nnz,
              }
           } else nz++;
        }
-       hypre_TFree(colInd2, NALU_HYPRE_MEMORY_HOST);
-       hypre_TFree(colVal2, NALU_HYPRE_MEMORY_HOST);
+       nalu_hypre_TFree(colInd2, NALU_HYPRE_MEMORY_HOST);
+       nalu_hypre_TFree(colVal2, NALU_HYPRE_MEMORY_HOST);
        ia_ptr[i+1] = nz_ptr;
        ierr = NALU_HYPRE_ParCSRMatrixRestoreRow(A_csr,i,&rowSize,&colInd,&colVal);
-       hypre_assert(!ierr);
+       nalu_hypre_assert(!ierr);
     }
     /*
     if ( nnz != nz_ptr )
@@ -314,9 +314,9 @@ int NALU_HYPRE_LSI_SplitDSort2(double *dlist, int nlist, int *ilist, int limit)
    }
    count1 = 0;
    count2 = 0;
-   iarray1 = hypre_TAlloc(int,  2 * nlist , NALU_HYPRE_MEMORY_HOST);
+   iarray1 = nalu_hypre_TAlloc(int,  2 * nlist , NALU_HYPRE_MEMORY_HOST);
    iarray2 = iarray1 + nlist;
-   darray1 = hypre_TAlloc(double,  2 * nlist , NALU_HYPRE_MEMORY_HOST);
+   darray1 = nalu_hypre_TAlloc(double,  2 * nlist , NALU_HYPRE_MEMORY_HOST);
    darray2 = darray1 + nlist;
 
    if ( darray2 == NULL )
@@ -351,8 +351,8 @@ int NALU_HYPRE_LSI_SplitDSort2(double *dlist, int nlist, int *ilist, int limit)
       dlist[count1+1+i] = darray2[i];
       ilist[count1+1+i] = iarray2[i];
    }
-   hypre_TFree(darray1, NALU_HYPRE_MEMORY_HOST);
-   hypre_TFree(iarray1, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(darray1, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(iarray1, NALU_HYPRE_MEMORY_HOST);
    if ( count1+1 == limit ) return 0;
    else if ( count1+1 < limit )
       NALU_HYPRE_LSI_SplitDSort2(&(dlist[count1+1]),count2,&(ilist[count1+1]),
@@ -441,11 +441,11 @@ int NALU_HYPRE_LSI_Cuthill(int n, int *ia, int *ja, double *aa, int *order_array
    int    root, norder, mindeg, *ia2, *ja2;
    double *aa2;
 
-   nz_array = hypre_TAlloc(int,  n , NALU_HYPRE_MEMORY_HOST);
+   nz_array = nalu_hypre_TAlloc(int,  n , NALU_HYPRE_MEMORY_HOST);
    nnz      = ia[n];
    for ( i = 0; i < n; i++ ) nz_array[i] = ia[i+1] - ia[i];
-   tag_array = hypre_TAlloc(int,  n , NALU_HYPRE_MEMORY_HOST);
-   queue     = hypre_TAlloc(int,  n , NALU_HYPRE_MEMORY_HOST);
+   tag_array = nalu_hypre_TAlloc(int,  n , NALU_HYPRE_MEMORY_HOST);
+   queue     = nalu_hypre_TAlloc(int,  n , NALU_HYPRE_MEMORY_HOST);
    for ( i = 0; i < n; i++ ) tag_array[i] = 0;
    norder = 0;
    mindeg = 10000000;
@@ -490,9 +490,9 @@ int NALU_HYPRE_LSI_Cuthill(int n, int *ia, int *ja, double *aa, int *order_array
          for ( j = 0; j < n; j++ )
             if ( tag_array[j] == 0 ) queue[nqueue++] = j;
    }
-   ia2 = hypre_TAlloc(int,  (n+1) , NALU_HYPRE_MEMORY_HOST);
-   ja2 = hypre_TAlloc(int,  nnz , NALU_HYPRE_MEMORY_HOST);
-   aa2 = hypre_TAlloc(double,  nnz , NALU_HYPRE_MEMORY_HOST);
+   ia2 = nalu_hypre_TAlloc(int,  (n+1) , NALU_HYPRE_MEMORY_HOST);
+   ja2 = nalu_hypre_TAlloc(int,  nnz , NALU_HYPRE_MEMORY_HOST);
+   aa2 = nalu_hypre_TAlloc(double,  nnz , NALU_HYPRE_MEMORY_HOST);
    ia2[0] = 0;
    nnz = 0;
    for ( i = 0; i < n; i++ )
@@ -508,12 +508,12 @@ int NALU_HYPRE_LSI_Cuthill(int n, int *ia, int *ja, double *aa, int *order_array
    for ( i = 0; i < nnz; i++ ) ja[i] = reorder_array[ja2[i]];
    for ( i = 0; i < nnz; i++ ) aa[i] = aa2[i];
    for ( i = 0; i <= n; i++ )  ia[i] = ia2[i];
-   hypre_TFree(ia2, NALU_HYPRE_MEMORY_HOST);
-   hypre_TFree(ja2, NALU_HYPRE_MEMORY_HOST);
-   hypre_TFree(aa2, NALU_HYPRE_MEMORY_HOST);
-   hypre_TFree(nz_array, NALU_HYPRE_MEMORY_HOST);
-   hypre_TFree(tag_array, NALU_HYPRE_MEMORY_HOST);
-   hypre_TFree(queue, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(ia2, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(ja2, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(aa2, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(nz_array, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(tag_array, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(queue, NALU_HYPRE_MEMORY_HOST);
    return 0;
 }
 
@@ -530,9 +530,9 @@ int NALU_HYPRE_LSI_MatrixInverse( double **Amat, int ndim, double ***Cmat )
    if ( ndim == 1 )
    {
       if ( habs(Amat[0][0]) <= 1.0e-16 ) return -1;
-      Bmat = hypre_TAlloc(double*,  ndim , NALU_HYPRE_MEMORY_HOST);
+      Bmat = nalu_hypre_TAlloc(double*,  ndim , NALU_HYPRE_MEMORY_HOST);
       for ( i = 0; i < ndim; i++ )
-         Bmat[i] = hypre_TAlloc(double,  ndim , NALU_HYPRE_MEMORY_HOST);
+         Bmat[i] = nalu_hypre_TAlloc(double,  ndim , NALU_HYPRE_MEMORY_HOST);
       Bmat[0][0] = 1.0 / Amat[0][0];
       (*Cmat) = Bmat;
       return 0;
@@ -541,9 +541,9 @@ int NALU_HYPRE_LSI_MatrixInverse( double **Amat, int ndim, double ***Cmat )
    {
       denom = Amat[0][0] * Amat[1][1] - Amat[0][1] * Amat[1][0];
       if ( habs( denom ) <= 1.0e-16 ) return -1;
-      Bmat = hypre_TAlloc(double*,  ndim , NALU_HYPRE_MEMORY_HOST);
+      Bmat = nalu_hypre_TAlloc(double*,  ndim , NALU_HYPRE_MEMORY_HOST);
       for ( i = 0; i < ndim; i++ )
-         Bmat[i] = hypre_TAlloc(double,  ndim , NALU_HYPRE_MEMORY_HOST);
+         Bmat[i] = nalu_hypre_TAlloc(double,  ndim , NALU_HYPRE_MEMORY_HOST);
       Bmat[0][0] = Amat[1][1] / denom;
       Bmat[1][1] = Amat[0][0] / denom;
       Bmat[0][1] = - ( Amat[0][1] / denom );
@@ -553,10 +553,10 @@ int NALU_HYPRE_LSI_MatrixInverse( double **Amat, int ndim, double ***Cmat )
    }
    else
    {
-      Bmat = hypre_TAlloc(double*,  ndim , NALU_HYPRE_MEMORY_HOST);
+      Bmat = nalu_hypre_TAlloc(double*,  ndim , NALU_HYPRE_MEMORY_HOST);
       for ( i = 0; i < ndim; i++ )
       {
-         Bmat[i] = hypre_TAlloc(double,  ndim , NALU_HYPRE_MEMORY_HOST);
+         Bmat[i] = nalu_hypre_TAlloc(double,  ndim , NALU_HYPRE_MEMORY_HOST);
          for ( j = 0; j < ndim; j++ ) Bmat[i][j] = 0.0;
          Bmat[i][i] = 1.0;
       }
@@ -641,9 +641,9 @@ int NALU_HYPRE_LSI_PartitionMatrix( int nRows, int startRow, int *rowLengths,
    /* search for constraint rows                                     */
    /*----------------------------------------------------------------*/
 
-   localLabels = hypre_TAlloc(int,  actualNRows , NALU_HYPRE_MEMORY_HOST);
+   localLabels = nalu_hypre_TAlloc(int,  actualNRows , NALU_HYPRE_MEMORY_HOST);
    for ( irow = 0; irow < actualNRows; irow++ ) localLabels[irow] = -1;
-   indSet = hypre_TAlloc(int,  actualNRows , NALU_HYPRE_MEMORY_HOST);
+   indSet = nalu_hypre_TAlloc(int,  actualNRows , NALU_HYPRE_MEMORY_HOST);
 
    labelNum = 0;
    rowCnt   = actualNRows;
@@ -690,7 +690,7 @@ int NALU_HYPRE_LSI_PartitionMatrix( int nRows, int startRow, int *rowLengths,
    {
       printf("NALU_HYPRE_LSI_PartitionMatrix : number of labels %d too large.\n",
              labelNum+1);
-      hypre_TFree(localLabels, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(localLabels, NALU_HYPRE_MEMORY_HOST);
       (*nLabels) = 0;
       (*labels)  = NULL;
    }
@@ -700,7 +700,7 @@ int NALU_HYPRE_LSI_PartitionMatrix( int nRows, int startRow, int *rowLengths,
              labelNum);
       (*labels)  = localLabels;
    }
-   hypre_TFree(indSet, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(indSet, NALU_HYPRE_MEMORY_HOST);
    return 0;
 }
 

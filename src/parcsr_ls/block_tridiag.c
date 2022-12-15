@@ -12,19 +12,19 @@
  *****************************************************************************/
 
 #include "NALU_HYPRE.h"
-#include "utilities/_hypre_utilities.h"
-#include "IJ_mv/_hypre_IJ_mv.h"
-#include "parcsr_mv/_hypre_parcsr_mv.h"
+#include "utilities/_nalu_hypre_utilities.h"
+#include "IJ_mv/_nalu_hypre_IJ_mv.h"
+#include "parcsr_mv/_nalu_hypre_parcsr_mv.h"
 #include "block_tridiag.h"
 
 /*--------------------------------------------------------------------------
- * hypre_BlockTridiagCreate
+ * nalu_hypre_BlockTridiagCreate
  *--------------------------------------------------------------------------*/
 
-void *hypre_BlockTridiagCreate()
+void *nalu_hypre_BlockTridiagCreate()
 {
-   hypre_BlockTridiagData *b_data;
-   b_data = hypre_CTAlloc(hypre_BlockTridiagData,  1, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_BlockTridiagData *b_data;
+   b_data = nalu_hypre_CTAlloc(nalu_hypre_BlockTridiagData,  1, NALU_HYPRE_MEMORY_HOST);
    b_data->threshold = 0.0;
    b_data->num_sweeps = 1;
    b_data->relax_type = 6;
@@ -44,56 +44,56 @@ void *hypre_BlockTridiagCreate()
 }
 
 /*--------------------------------------------------------------------------
- * hypre_BoomerAMGDestroy
+ * nalu_hypre_BoomerAMGDestroy
  *--------------------------------------------------------------------------*/
 
-NALU_HYPRE_Int hypre_BlockTridiagDestroy(void *data)
+NALU_HYPRE_Int nalu_hypre_BlockTridiagDestroy(void *data)
 {
-   hypre_BlockTridiagData *b_data = (hypre_BlockTridiagData *) data;
+   nalu_hypre_BlockTridiagData *b_data = (nalu_hypre_BlockTridiagData *) data;
 
    if (b_data->F1)
    {
-      hypre_ParVectorDestroy(b_data->F1);
+      nalu_hypre_ParVectorDestroy(b_data->F1);
       b_data->F1 = NULL;
    }
    if (b_data->F2)
    {
-      hypre_ParVectorDestroy(b_data->F2);
+      nalu_hypre_ParVectorDestroy(b_data->F2);
       b_data->F2 = NULL;
    }
    if (b_data->U1)
    {
-      hypre_ParVectorDestroy(b_data->U1);
+      nalu_hypre_ParVectorDestroy(b_data->U1);
       b_data->U1 = NULL;
    }
    if (b_data->U2)
    {
-      hypre_ParVectorDestroy(b_data->U2);
+      nalu_hypre_ParVectorDestroy(b_data->U2);
       b_data->U2 = NULL;
    }
    if (b_data->index_set1)
    {
-      hypre_TFree(b_data->index_set1, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(b_data->index_set1, NALU_HYPRE_MEMORY_HOST);
       b_data->index_set1 = NULL;
    }
    if (b_data->index_set2)
    {
-      hypre_TFree(b_data->index_set2, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(b_data->index_set2, NALU_HYPRE_MEMORY_HOST);
       b_data->index_set2 = NULL;
    }
    if (b_data->A11)
    {
-      hypre_ParCSRMatrixDestroy(b_data->A11);
+      nalu_hypre_ParCSRMatrixDestroy(b_data->A11);
       b_data->A11 = NULL;
    }
    if (b_data->A21)
    {
-      hypre_ParCSRMatrixDestroy(b_data->A21);
+      nalu_hypre_ParCSRMatrixDestroy(b_data->A21);
       b_data->A21 = NULL;
    }
    if (b_data->A22)
    {
-      hypre_ParCSRMatrixDestroy(b_data->A22);
+      nalu_hypre_ParCSRMatrixDestroy(b_data->A22);
       b_data->A22 = NULL;
    }
    if (b_data->precon1)
@@ -106,7 +106,7 @@ NALU_HYPRE_Int hypre_BlockTridiagDestroy(void *data)
       NALU_HYPRE_BoomerAMGDestroy(b_data->precon2);
       b_data->precon2 = NULL;
    }
-   hypre_TFree(b_data, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(b_data, NALU_HYPRE_MEMORY_HOST);
    return (0);
 }
 
@@ -114,27 +114,27 @@ NALU_HYPRE_Int hypre_BlockTridiagDestroy(void *data)
  * Routines to setup the preconditioner
  *--------------------------------------------------------------------------*/
 
-NALU_HYPRE_Int hypre_BlockTridiagSetup(void *data, hypre_ParCSRMatrix *A,
-                                  hypre_ParVector *b, hypre_ParVector *x)
+NALU_HYPRE_Int nalu_hypre_BlockTridiagSetup(void *data, nalu_hypre_ParCSRMatrix *A,
+                                  nalu_hypre_ParVector *b, nalu_hypre_ParVector *x)
 {
    NALU_HYPRE_Int                i, j, *index_set1, print_level, nsweeps, relax_type;
    NALU_HYPRE_Int                nrows, nrows1, nrows2, start1, start2, *index_set2;
    NALU_HYPRE_Int                count, ierr;
    NALU_HYPRE_Real         threshold;
-   hypre_ParCSRMatrix **submatrices;
+   nalu_hypre_ParCSRMatrix **submatrices;
    NALU_HYPRE_Solver       precon1;
    NALU_HYPRE_Solver       precon2;
    NALU_HYPRE_IJVector     ij_u1, ij_u2, ij_f1, ij_f2;
-   hypre_ParVector    *vector;
+   nalu_hypre_ParVector    *vector;
    MPI_Comm           comm;
-   hypre_BlockTridiagData *b_data = (hypre_BlockTridiagData *) data;
+   nalu_hypre_BlockTridiagData *b_data = (nalu_hypre_BlockTridiagData *) data;
 
    NALU_HYPRE_ParCSRMatrixGetComm((NALU_HYPRE_ParCSRMatrix) A, &comm);
    index_set1 = b_data->index_set1;
    nrows1 = index_set1[0];
-   nrows  = hypre_ParCSRMatrixNumRows(A);
+   nrows  = nalu_hypre_ParCSRMatrixNumRows(A);
    nrows2 = nrows - nrows1;
-   b_data->index_set2 = hypre_CTAlloc(NALU_HYPRE_Int,  nrows2 + 1, NALU_HYPRE_MEMORY_HOST);
+   b_data->index_set2 = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  nrows2 + 1, NALU_HYPRE_MEMORY_HOST);
    index_set2 = b_data->index_set2;
    index_set2[0] = nrows2;
    count = 1;
@@ -146,33 +146,33 @@ NALU_HYPRE_Int hypre_BlockTridiagSetup(void *data, hypre_ParCSRMatrix *A,
       }
    for (i = index_set1[nrows1] + 1; i < nrows; i++) { index_set2[count++] = i; }
 
-   submatrices = hypre_CTAlloc(hypre_ParCSRMatrix *,  4, NALU_HYPRE_MEMORY_HOST);
-   hypre_ParCSRMatrixExtractSubmatrices(A, index_set1, &submatrices);
+   submatrices = nalu_hypre_CTAlloc(nalu_hypre_ParCSRMatrix *,  4, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_ParCSRMatrixExtractSubmatrices(A, index_set1, &submatrices);
 
-   nrows1 = hypre_ParCSRMatrixNumRows(submatrices[0]);
-   nrows2 = hypre_ParCSRMatrixNumRows(submatrices[3]);
-   start1 = hypre_ParCSRMatrixFirstRowIndex(submatrices[0]);
-   start2 = hypre_ParCSRMatrixFirstRowIndex(submatrices[3]);
+   nrows1 = nalu_hypre_ParCSRMatrixNumRows(submatrices[0]);
+   nrows2 = nalu_hypre_ParCSRMatrixNumRows(submatrices[3]);
+   start1 = nalu_hypre_ParCSRMatrixFirstRowIndex(submatrices[0]);
+   start2 = nalu_hypre_ParCSRMatrixFirstRowIndex(submatrices[3]);
    NALU_HYPRE_IJVectorCreate(comm, start1, start1 + nrows1 - 1, &ij_u1);
    NALU_HYPRE_IJVectorSetObjectType(ij_u1, NALU_HYPRE_PARCSR);
    ierr  = NALU_HYPRE_IJVectorInitialize(ij_u1);
    ierr += NALU_HYPRE_IJVectorAssemble(ij_u1);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
    NALU_HYPRE_IJVectorCreate(comm, start1, start1 + nrows1 - 1, &ij_f1);
    NALU_HYPRE_IJVectorSetObjectType(ij_f1, NALU_HYPRE_PARCSR);
    ierr  = NALU_HYPRE_IJVectorInitialize(ij_f1);
    ierr += NALU_HYPRE_IJVectorAssemble(ij_f1);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
    NALU_HYPRE_IJVectorCreate(comm, start2, start2 + nrows2 - 1, &ij_u2);
    NALU_HYPRE_IJVectorSetObjectType(ij_u2, NALU_HYPRE_PARCSR);
    ierr  = NALU_HYPRE_IJVectorInitialize(ij_u2);
    ierr += NALU_HYPRE_IJVectorAssemble(ij_u2);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
    NALU_HYPRE_IJVectorCreate(comm, start2, start2 + nrows1 - 1, &ij_f2);
    NALU_HYPRE_IJVectorSetObjectType(ij_f2, NALU_HYPRE_PARCSR);
    ierr  = NALU_HYPRE_IJVectorInitialize(ij_f2);
    ierr += NALU_HYPRE_IJVectorAssemble(ij_f2);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
    NALU_HYPRE_IJVectorGetObject(ij_f1, (void **) &vector);
    b_data->F1 = vector;
    NALU_HYPRE_IJVectorGetObject(ij_u1, (void **) &vector);
@@ -198,7 +198,7 @@ NALU_HYPRE_Int hypre_BlockTridiagSetup(void *data, hypre_ParCSRMatrix *A,
    NALU_HYPRE_BoomerAMGSetNumFunctions(precon1, 1);
    NALU_HYPRE_BoomerAMGSetNumSweeps(precon1, nsweeps);
    NALU_HYPRE_BoomerAMGSetRelaxType(precon1, relax_type);
-   hypre_BoomerAMGSetup(precon1, submatrices[0], b_data->U1, b_data->F1);
+   nalu_hypre_BoomerAMGSetup(precon1, submatrices[0], b_data->U1, b_data->F1);
 
    NALU_HYPRE_BoomerAMGCreate(&precon2);
    NALU_HYPRE_BoomerAMGSetMaxIter(precon2, 1);
@@ -212,17 +212,17 @@ NALU_HYPRE_Int hypre_BlockTridiagSetup(void *data, hypre_ParCSRMatrix *A,
    NALU_HYPRE_BoomerAMGSetNumFunctions(precon2, 1);
    NALU_HYPRE_BoomerAMGSetNumSweeps(precon2, nsweeps);
    NALU_HYPRE_BoomerAMGSetRelaxType(precon2, relax_type);
-   hypre_BoomerAMGSetup(precon2, submatrices[3], NULL, NULL);
+   nalu_hypre_BoomerAMGSetup(precon2, submatrices[3], NULL, NULL);
 
    b_data->precon1 = precon1;
    b_data->precon2 = precon2;
 
    b_data->A11 = submatrices[0];
-   hypre_ParCSRMatrixDestroy(submatrices[1]);
+   nalu_hypre_ParCSRMatrixDestroy(submatrices[1]);
    b_data->A21 = submatrices[2];
    b_data->A22 = submatrices[3];
 
-   hypre_TFree(submatrices, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(submatrices, NALU_HYPRE_MEMORY_HOST);
    return (0);
 }
 
@@ -230,15 +230,15 @@ NALU_HYPRE_Int hypre_BlockTridiagSetup(void *data, hypre_ParCSRMatrix *A,
  * Routines to solve the preconditioner
  *--------------------------------------------------------------------------*/
 
-NALU_HYPRE_Int hypre_BlockTridiagSolve(void *data, hypre_ParCSRMatrix *A,
-                                  hypre_ParVector *b, hypre_ParVector *x)
+NALU_HYPRE_Int nalu_hypre_BlockTridiagSolve(void *data, nalu_hypre_ParCSRMatrix *A,
+                                  nalu_hypre_ParVector *b, nalu_hypre_ParVector *x)
 {
    NALU_HYPRE_Int                i, ind, nrows1, nrows2, *index_set1, *index_set2;
    NALU_HYPRE_Real         *ffv, *uuv, *f1v, *f2v, *u1v, *u2v;
    NALU_HYPRE_ParCSRMatrix A21, A11, A22;
-   hypre_ParVector    *F1, *U1, *F2, *U2;
+   nalu_hypre_ParVector    *F1, *U1, *F2, *U2;
    NALU_HYPRE_Solver       precon1, precon2;
-   hypre_BlockTridiagData *b_data = (hypre_BlockTridiagData *) data;
+   nalu_hypre_BlockTridiagData *b_data = (nalu_hypre_BlockTridiagData *) data;
 
    index_set1 = b_data->index_set1;
    index_set2 = b_data->index_set2;
@@ -253,12 +253,12 @@ NALU_HYPRE_Int hypre_BlockTridiagSolve(void *data, hypre_ParCSRMatrix *A,
    U1  = b_data->U1;
    F2  = b_data->F2;
    U2  = b_data->U2;
-   ffv = hypre_VectorData(hypre_ParVectorLocalVector(b));
-   uuv = hypre_VectorData(hypre_ParVectorLocalVector(x));
-   f1v = hypre_VectorData(hypre_ParVectorLocalVector(F1));
-   u1v = hypre_VectorData(hypre_ParVectorLocalVector(U1));
-   f2v = hypre_VectorData(hypre_ParVectorLocalVector(F2));
-   u2v = hypre_VectorData(hypre_ParVectorLocalVector(U2));
+   ffv = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(b));
+   uuv = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(x));
+   f1v = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(F1));
+   u1v = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(U1));
+   f2v = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(F2));
+   u2v = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(U2));
    for (i = 0; i < nrows1; i++)
    {
       ind = index_set1[i + 1];
@@ -294,13 +294,13 @@ NALU_HYPRE_Int hypre_BlockTridiagSolve(void *data, hypre_ParCSRMatrix *A,
  * Routines to set the index set for block 1
  *--------------------------------------------------------------------------*/
 
-NALU_HYPRE_Int hypre_BlockTridiagSetIndexSet(void *data, NALU_HYPRE_Int n, NALU_HYPRE_Int *inds)
+NALU_HYPRE_Int nalu_hypre_BlockTridiagSetIndexSet(void *data, NALU_HYPRE_Int n, NALU_HYPRE_Int *inds)
 {
    NALU_HYPRE_Int i, ierr = 0, *indices;
-   hypre_BlockTridiagData *b_data = (hypre_BlockTridiagData *) data;
+   nalu_hypre_BlockTridiagData *b_data = (nalu_hypre_BlockTridiagData *) data;
 
    if (n <= 0 || inds == NULL) { ierr = 1; }
-   b_data->index_set1 = hypre_CTAlloc(NALU_HYPRE_Int,  n + 1, NALU_HYPRE_MEMORY_HOST);
+   b_data->index_set1 = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  n + 1, NALU_HYPRE_MEMORY_HOST);
    indices = b_data->index_set1;
    indices[0] = n;
    for (i = 0; i < n; i++) { indices[i + 1] = inds[i]; }
@@ -311,9 +311,9 @@ NALU_HYPRE_Int hypre_BlockTridiagSetIndexSet(void *data, NALU_HYPRE_Int n, NALU_
  * Routines to set the strength threshold for AMG
  *--------------------------------------------------------------------------*/
 
-NALU_HYPRE_Int hypre_BlockTridiagSetAMGStrengthThreshold(void *data, NALU_HYPRE_Real thresh)
+NALU_HYPRE_Int nalu_hypre_BlockTridiagSetAMGStrengthThreshold(void *data, NALU_HYPRE_Real thresh)
 {
-   hypre_BlockTridiagData *b_data = (hypre_BlockTridiagData *) data;
+   nalu_hypre_BlockTridiagData *b_data = (nalu_hypre_BlockTridiagData *) data;
    b_data->threshold = thresh;
    return (0);
 }
@@ -322,9 +322,9 @@ NALU_HYPRE_Int hypre_BlockTridiagSetAMGStrengthThreshold(void *data, NALU_HYPRE_
  * Routines to set the number of relaxation sweeps for AMG
  *--------------------------------------------------------------------------*/
 
-NALU_HYPRE_Int hypre_BlockTridiagSetAMGNumSweeps(void *data, NALU_HYPRE_Int nsweeps)
+NALU_HYPRE_Int nalu_hypre_BlockTridiagSetAMGNumSweeps(void *data, NALU_HYPRE_Int nsweeps)
 {
-   hypre_BlockTridiagData *b_data = (hypre_BlockTridiagData *) data;
+   nalu_hypre_BlockTridiagData *b_data = (nalu_hypre_BlockTridiagData *) data;
    b_data->num_sweeps = nsweeps;
    return (0);
 }
@@ -333,9 +333,9 @@ NALU_HYPRE_Int hypre_BlockTridiagSetAMGNumSweeps(void *data, NALU_HYPRE_Int nswe
  * Routines to set the relaxation method for AMG
  *--------------------------------------------------------------------------*/
 
-NALU_HYPRE_Int hypre_BlockTridiagSetAMGRelaxType(void *data, NALU_HYPRE_Int relax_type)
+NALU_HYPRE_Int nalu_hypre_BlockTridiagSetAMGRelaxType(void *data, NALU_HYPRE_Int relax_type)
 {
-   hypre_BlockTridiagData *b_data = (hypre_BlockTridiagData *) data;
+   nalu_hypre_BlockTridiagData *b_data = (nalu_hypre_BlockTridiagData *) data;
    b_data->relax_type = relax_type;
    return (0);
 }
@@ -344,9 +344,9 @@ NALU_HYPRE_Int hypre_BlockTridiagSetAMGRelaxType(void *data, NALU_HYPRE_Int rela
  * Routines to set the print level
  *--------------------------------------------------------------------------*/
 
-NALU_HYPRE_Int hypre_BlockTridiagSetPrintLevel(void *data, NALU_HYPRE_Int print_level)
+NALU_HYPRE_Int nalu_hypre_BlockTridiagSetPrintLevel(void *data, NALU_HYPRE_Int print_level)
 {
-   hypre_BlockTridiagData *b_data = (hypre_BlockTridiagData *) data;
+   nalu_hypre_BlockTridiagData *b_data = (nalu_hypre_BlockTridiagData *) data;
    b_data->print_level = print_level;
    return (0);
 }

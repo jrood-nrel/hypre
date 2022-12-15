@@ -39,11 +39,11 @@ extern "C" {
  * @{
  **/
 
-struct hypre_IJMatrix_struct;
+struct nalu_hypre_IJMatrix_struct;
 /**
  * The matrix object.
  **/
-typedef struct hypre_IJMatrix_struct *NALU_HYPRE_IJMatrix;
+typedef struct nalu_hypre_IJMatrix_struct *NALU_HYPRE_IJMatrix;
 
 /**
  * Create a matrix object.  Each process owns some unique consecutive
@@ -356,11 +356,11 @@ NALU_HYPRE_Int NALU_HYPRE_IJMatrixPrint(NALU_HYPRE_IJMatrix  matrix,
  * @{
  **/
 
-struct hypre_IJVector_struct;
+struct nalu_hypre_IJVector_struct;
 /**
  * The vector object.
  **/
-typedef struct hypre_IJVector_struct *NALU_HYPRE_IJVector;
+typedef struct nalu_hypre_IJVector_struct *NALU_HYPRE_IJVector;
 
 /**
  * Create a vector object.  Each process owns some unique consecutive

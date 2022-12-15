@@ -40,13 +40,13 @@ extern "C" {
  * @{
  **/
 
-struct hypre_SStructGrid_struct;
+struct nalu_hypre_SStructGrid_struct;
 /**
  * A grid object is constructed out of several structured "parts" and an
  * optional unstructured "part".  Each structured part has its own abstract
  * index space.
  **/
-typedef struct hypre_SStructGrid_struct *NALU_HYPRE_SStructGrid;
+typedef struct nalu_hypre_SStructGrid_struct *NALU_HYPRE_SStructGrid;
 
 /**
  * An enumerated type that supports cell centered, node centered, face centered,
@@ -339,11 +339,11 @@ NALU_HYPRE_SStructGridSetNumGhost(NALU_HYPRE_SStructGrid  grid,
  * @{
  **/
 
-struct hypre_SStructStencil_struct;
+struct nalu_hypre_SStructStencil_struct;
 /**
  * The stencil object.
  **/
-typedef struct hypre_SStructStencil_struct *NALU_HYPRE_SStructStencil;
+typedef struct nalu_hypre_SStructStencil_struct *NALU_HYPRE_SStructStencil;
 
 /**
  * Create a stencil object for the specified number of spatial dimensions and
@@ -380,11 +380,11 @@ NALU_HYPRE_SStructStencilSetEntry(NALU_HYPRE_SStructStencil  stencil,
  * @{
  **/
 
-struct hypre_SStructGraph_struct;
+struct nalu_hypre_SStructGraph_struct;
 /**
  * The graph object is used to describe the nonzero structure of a matrix.
  **/
-typedef struct hypre_SStructGraph_struct *NALU_HYPRE_SStructGraph;
+typedef struct nalu_hypre_SStructGraph_struct *NALU_HYPRE_SStructGraph;
 
 /**
  * Create a graph object.
@@ -487,11 +487,11 @@ NALU_HYPRE_SStructGraphSetObjectType(NALU_HYPRE_SStructGraph  graph,
  * @{
  **/
 
-struct hypre_SStructMatrix_struct;
+struct nalu_hypre_SStructMatrix_struct;
 /**
  * The matrix object.
  **/
-typedef struct hypre_SStructMatrix_struct *NALU_HYPRE_SStructMatrix;
+typedef struct nalu_hypre_SStructMatrix_struct *NALU_HYPRE_SStructMatrix;
 
 /**
  * Create a matrix object.
@@ -810,11 +810,11 @@ NALU_HYPRE_SStructMatrixRead( MPI_Comm              comm,
  * @{
  **/
 
-struct hypre_SStructVector_struct;
+struct nalu_hypre_SStructVector_struct;
 /**
  * The vector object.
  **/
-typedef struct hypre_SStructVector_struct *NALU_HYPRE_SStructVector;
+typedef struct nalu_hypre_SStructVector_struct *NALU_HYPRE_SStructVector;
 
 /**
  * Create a vector object.

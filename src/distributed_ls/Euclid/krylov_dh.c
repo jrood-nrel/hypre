@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_Euclid.h"
+#include "_nalu_hypre_Euclid.h"
 /* #include "Euclid_dh.h" */
 /* #include "krylov_dh.h" */
 /* #include "Mem_dh.h" */
@@ -132,7 +132,7 @@ void bicgstab_euclid(Mat_dh A, Euclid_dh ctx, NALU_HYPRE_Real *x, NALU_HYPRE_Rea
 
     /* monitor convergence */
     if (monitor && myid_dh == 0) {
-      hypre_fprintf(stderr, "[it = %i] %e\n", its, sqrt(r_iprod/b_iprod));
+      nalu_hypre_fprintf(stderr, "[it = %i] %e\n", its, sqrt(r_iprod/b_iprod));
     }
 
     /* prepare for next iteration */
@@ -223,7 +223,7 @@ void cg_euclid(Mat_dh A, Euclid_dh ctx, NALU_HYPRE_Real *x, NALU_HYPRE_Real *b, 
     i_prod = InnerProd(m, r, r); CHECK_V_ERROR;
 
     if (monitor && myid_dh == 0) {
-      hypre_fprintf(stderr, "iter = %i  rel. resid. norm: %e\n", its, sqrt(i_prod/bi_prod));
+      nalu_hypre_fprintf(stderr, "iter = %i  rel. resid. norm: %e\n", its, sqrt(i_prod/bi_prod));
     }
 
     /* check for convergence */

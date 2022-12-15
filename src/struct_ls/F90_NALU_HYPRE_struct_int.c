@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_struct_ls.h"
+#include "_nalu_hypre_struct_ls.h"
 #include "fortran.h"
 
 #ifdef __cplusplus
@@ -17,15 +17,15 @@ extern "C" {
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_structvectorsetrandomvalu, NALU_HYPRE_STRUCTVECTORSETRANDOMVALU)
-(hypre_F90_Obj *vector,
- hypre_F90_Int *seed,
- hypre_F90_Int *ierr)
+nalu_hypre_F90_IFACE(nalu_hypre_structvectorsetrandomvalu, NALU_HYPRE_STRUCTVECTORSETRANDOMVALU)
+(nalu_hypre_F90_Obj *vector,
+ nalu_hypre_F90_Int *seed,
+ nalu_hypre_F90_Int *ierr)
 {
-   *ierr = (hypre_F90_Int)
-           ( hypre_StructVectorSetRandomValues(
-                (hypre_StructVector *) vector,
-                hypre_F90_PassInt (seed) ));
+   *ierr = (nalu_hypre_F90_Int)
+           ( nalu_hypre_StructVectorSetRandomValues(
+                (nalu_hypre_StructVector *) vector,
+                nalu_hypre_F90_PassInt (seed) ));
 }
 
 
@@ -34,15 +34,15 @@ hypre_F90_IFACE(hypre_structvectorsetrandomvalu, NALU_HYPRE_STRUCTVECTORSETRANDO
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_structsetrandomvalues, NALU_HYPRE_STRUCTSETRANDOMVALUES)
-(hypre_F90_Obj *vector,
- hypre_F90_Int *seed,
- hypre_F90_Int *ierr)
+nalu_hypre_F90_IFACE(nalu_hypre_structsetrandomvalues, NALU_HYPRE_STRUCTSETRANDOMVALUES)
+(nalu_hypre_F90_Obj *vector,
+ nalu_hypre_F90_Int *seed,
+ nalu_hypre_F90_Int *ierr)
 {
-   *ierr = (hypre_F90_Int)
-           ( hypre_StructSetRandomValues(
-                (hypre_StructVector *) vector,
-                hypre_F90_PassInt (seed) ));
+   *ierr = (nalu_hypre_F90_Int)
+           ( nalu_hypre_StructSetRandomValues(
+                (nalu_hypre_StructVector *) vector,
+                nalu_hypre_F90_PassInt (seed) ));
 }
 
 /*--------------------------------------------------------------------------
@@ -50,11 +50,11 @@ hypre_F90_IFACE(hypre_structsetrandomvalues, NALU_HYPRE_STRUCTSETRANDOMVALUES)
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_structsetupinterpreter, NALU_HYPRE_STRUCTSETUPINTERPRETER)
-(hypre_F90_Obj *i,
- hypre_F90_Int *ierr)
+nalu_hypre_F90_IFACE(nalu_hypre_structsetupinterpreter, NALU_HYPRE_STRUCTSETUPINTERPRETER)
+(nalu_hypre_F90_Obj *i,
+ nalu_hypre_F90_Int *ierr)
 {
-   *ierr = (hypre_F90_Int)
+   *ierr = (nalu_hypre_F90_Int)
            ( NALU_HYPRE_StructSetupInterpreter(
                 (mv_InterfaceInterpreter *) i ));
 }
@@ -64,13 +64,13 @@ hypre_F90_IFACE(hypre_structsetupinterpreter, NALU_HYPRE_STRUCTSETUPINTERPRETER)
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_structsetupmatvec, NALU_HYPRE_STRUCTSETUPMATVEC)
-(hypre_F90_Obj *mv,
- hypre_F90_Int *ierr)
+nalu_hypre_F90_IFACE(nalu_hypre_structsetupmatvec, NALU_HYPRE_STRUCTSETUPMATVEC)
+(nalu_hypre_F90_Obj *mv,
+ nalu_hypre_F90_Int *ierr)
 {
-   *ierr = (hypre_F90_Int)
+   *ierr = (nalu_hypre_F90_Int)
            ( NALU_HYPRE_StructSetupMatvec(
-                hypre_F90_PassObjRef (NALU_HYPRE_MatvecFunctions, mv)));
+                nalu_hypre_F90_PassObjRef (NALU_HYPRE_MatvecFunctions, mv)));
 }
 
 #ifdef __cplusplus

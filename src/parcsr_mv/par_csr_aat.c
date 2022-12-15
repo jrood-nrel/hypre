@@ -8,14 +8,14 @@
 /* Will compute A*A^T, A a Boolean matrix or matrix of doubles.
    based on par_csr_matop.c and mli_pcsr_bool_matop.c */
 
-#include "_hypre_parcsr_mv.h"
+#include "_nalu_hypre_parcsr_mv.h"
 
-extern hypre_CSRMatrix *
-hypre_ParCSRMatrixExtractAExt( hypre_ParCSRMatrix *A,
+extern nalu_hypre_CSRMatrix *
+nalu_hypre_ParCSRMatrixExtractAExt( nalu_hypre_ParCSRMatrix *A,
                                NALU_HYPRE_Int data,
                                NALU_HYPRE_BigInt ** pA_ext_row_map );
 
-void hypre_ParAat_RowSizes(
+void nalu_hypre_ParAat_RowSizes(
    NALU_HYPRE_Int ** C_diag_i,
    NALU_HYPRE_Int ** C_offd_i,
    NALU_HYPRE_Int * B_marker,
@@ -55,8 +55,8 @@ void hypre_ParAat_RowSizes(
    NALU_HYPRE_Int last_col_diag_C;
    NALU_HYPRE_Int start_indexing = 0; /* start indexing for C_data at 0 */
 
-   *C_diag_i = hypre_CTAlloc(NALU_HYPRE_Int,  num_rows_diag_A + 1, NALU_HYPRE_MEMORY_HOST);
-   *C_offd_i = hypre_CTAlloc(NALU_HYPRE_Int,  num_rows_diag_A + 1, NALU_HYPRE_MEMORY_HOST);
+   *C_diag_i = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  num_rows_diag_A + 1, NALU_HYPRE_MEMORY_HOST);
+   *C_offd_i = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  num_rows_diag_A + 1, NALU_HYPRE_MEMORY_HOST);
 
    last_col_diag_C = first_row_index_A + num_rows_diag_A - 1;
 
@@ -308,7 +308,7 @@ void hypre_ParAat_RowSizes(
 
 
 /*--------------------------------------------------------------------------
- * hypre_ParCSRAAt : multiplies ParCSRMatrix A by its transpose, A*A^T
+ * nalu_hypre_ParCSRAAt : multiplies ParCSRMatrix A by its transpose, A*A^T
  * and returns the product in ParCSRMatrix C
  * Note that C does not own the partitionings
  *--------------------------------------------------------------------------*/
@@ -316,38 +316,38 @@ void hypre_ParAat_RowSizes(
    going on, nothing is being done to take advantage of symmetry, and probably
    more things. */
 
-hypre_ParCSRMatrix *hypre_ParCSRAAt( hypre_ParCSRMatrix  *A )
+nalu_hypre_ParCSRMatrix *nalu_hypre_ParCSRAAt( nalu_hypre_ParCSRMatrix  *A )
 {
-   MPI_Comm         comm = hypre_ParCSRMatrixComm(A);
+   MPI_Comm         comm = nalu_hypre_ParCSRMatrixComm(A);
 
-   hypre_CSRMatrix *A_diag = hypre_ParCSRMatrixDiag(A);
+   nalu_hypre_CSRMatrix *A_diag = nalu_hypre_ParCSRMatrixDiag(A);
 
-   NALU_HYPRE_Complex   *A_diag_data = hypre_CSRMatrixData(A_diag);
-   NALU_HYPRE_Int       *A_diag_i = hypre_CSRMatrixI(A_diag);
-   NALU_HYPRE_Int       *A_diag_j = hypre_CSRMatrixJ(A_diag);
+   NALU_HYPRE_Complex   *A_diag_data = nalu_hypre_CSRMatrixData(A_diag);
+   NALU_HYPRE_Int       *A_diag_i = nalu_hypre_CSRMatrixI(A_diag);
+   NALU_HYPRE_Int       *A_diag_j = nalu_hypre_CSRMatrixJ(A_diag);
 
-   hypre_CSRMatrix *A_offd = hypre_ParCSRMatrixOffd(A);
+   nalu_hypre_CSRMatrix *A_offd = nalu_hypre_ParCSRMatrixOffd(A);
 
-   NALU_HYPRE_Complex   *A_offd_data = hypre_CSRMatrixData(A_offd);
-   NALU_HYPRE_Int       *A_offd_i = hypre_CSRMatrixI(A_offd);
-   NALU_HYPRE_Int       *A_offd_j = hypre_CSRMatrixJ(A_offd);
-   NALU_HYPRE_BigInt    *A_col_map_offd = hypre_ParCSRMatrixColMapOffd(A);
+   NALU_HYPRE_Complex   *A_offd_data = nalu_hypre_CSRMatrixData(A_offd);
+   NALU_HYPRE_Int       *A_offd_i = nalu_hypre_CSRMatrixI(A_offd);
+   NALU_HYPRE_Int       *A_offd_j = nalu_hypre_CSRMatrixJ(A_offd);
+   NALU_HYPRE_BigInt    *A_col_map_offd = nalu_hypre_ParCSRMatrixColMapOffd(A);
    NALU_HYPRE_BigInt    *A_ext_row_map;
 
-   NALU_HYPRE_BigInt    *row_starts_A = hypre_ParCSRMatrixRowStarts(A);
-   NALU_HYPRE_Int        num_rows_diag_A = hypre_CSRMatrixNumRows(A_diag);
-   NALU_HYPRE_Int        num_cols_offd_A = hypre_CSRMatrixNumCols(A_offd);
+   NALU_HYPRE_BigInt    *row_starts_A = nalu_hypre_ParCSRMatrixRowStarts(A);
+   NALU_HYPRE_Int        num_rows_diag_A = nalu_hypre_CSRMatrixNumRows(A_diag);
+   NALU_HYPRE_Int        num_cols_offd_A = nalu_hypre_CSRMatrixNumCols(A_offd);
 
-   hypre_ParCSRMatrix *C;
+   nalu_hypre_ParCSRMatrix *C;
    NALU_HYPRE_BigInt    *col_map_offd_C;
 
-   hypre_CSRMatrix *C_diag;
+   nalu_hypre_CSRMatrix *C_diag;
 
    NALU_HYPRE_Complex   *C_diag_data;
    NALU_HYPRE_Int       *C_diag_i;
    NALU_HYPRE_Int       *C_diag_j;
 
-   hypre_CSRMatrix *C_offd;
+   nalu_hypre_CSRMatrix *C_offd;
 
    NALU_HYPRE_Complex   *C_offd_data = NULL;
    NALU_HYPRE_Int       *C_offd_i = NULL;
@@ -359,15 +359,15 @@ hypre_ParCSRMatrix *hypre_ParCSRAAt( hypre_ParCSRMatrix  *A )
    NALU_HYPRE_Int        last_col_diag_C;
    NALU_HYPRE_Int        num_cols_offd_C;
 
-   hypre_CSRMatrix *A_ext;
+   nalu_hypre_CSRMatrix *A_ext;
 
    NALU_HYPRE_Complex   *A_ext_data;
    NALU_HYPRE_Int       *A_ext_i;
    NALU_HYPRE_BigInt    *A_ext_j;
    NALU_HYPRE_Int        num_rows_A_ext = 0;
 
-   NALU_HYPRE_BigInt     first_row_index_A = hypre_ParCSRMatrixFirstRowIndex(A);
-   NALU_HYPRE_BigInt     first_col_diag_A = hypre_ParCSRMatrixFirstColDiag(A);
+   NALU_HYPRE_BigInt     first_row_index_A = nalu_hypre_ParCSRMatrixFirstRowIndex(A);
+   NALU_HYPRE_BigInt     first_col_diag_A = nalu_hypre_ParCSRMatrixFirstColDiag(A);
    NALU_HYPRE_Int       *B_marker;
 
    NALU_HYPRE_Int        i;
@@ -385,12 +385,12 @@ hypre_ParCSRMatrix *hypre_ParCSRAAt( hypre_ParCSRMatrix  *A )
 
    NALU_HYPRE_Complex    zero = 0.0;
 
-   n_rows_A = hypre_ParCSRMatrixGlobalNumRows(A);
-   n_cols_A = hypre_ParCSRMatrixGlobalNumCols(A);
+   n_rows_A = nalu_hypre_ParCSRMatrixGlobalNumRows(A);
+   n_cols_A = nalu_hypre_ParCSRMatrixGlobalNumCols(A);
 
    if (n_cols_A != n_rows_A)
    {
-      hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, " Error! Incompatible matrix dimensions!\n");
+      nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, " Error! Incompatible matrix dimensions!\n");
       return NULL;
    }
    /*-----------------------------------------------------------------------
@@ -404,22 +404,22 @@ hypre_ParCSRMatrix *hypre_ParCSRAAt( hypre_ParCSRMatrix  *A )
        * If there exists no CommPkg for A, a CommPkg is generated using
        * equally load balanced partitionings
        *--------------------------------------------------------------------*/
-      if (!hypre_ParCSRMatrixCommPkg(A))
+      if (!nalu_hypre_ParCSRMatrixCommPkg(A))
       {
-         hypre_MatTCommPkgCreate(A);
+         nalu_hypre_MatTCommPkgCreate(A);
       }
 
-      A_ext = hypre_ParCSRMatrixExtractAExt( A, 1, &A_ext_row_map );
-      A_ext_data = hypre_CSRMatrixData(A_ext);
-      A_ext_i    = hypre_CSRMatrixI(A_ext);
-      A_ext_j    = hypre_CSRMatrixBigJ(A_ext);
-      num_rows_A_ext = hypre_CSRMatrixNumRows(A_ext);
+      A_ext = nalu_hypre_ParCSRMatrixExtractAExt( A, 1, &A_ext_row_map );
+      A_ext_data = nalu_hypre_CSRMatrixData(A_ext);
+      A_ext_i    = nalu_hypre_CSRMatrixI(A_ext);
+      A_ext_j    = nalu_hypre_CSRMatrixBigJ(A_ext);
+      num_rows_A_ext = nalu_hypre_CSRMatrixNumRows(A_ext);
    }
    /*-----------------------------------------------------------------------
     *  Allocate marker array.
     *-----------------------------------------------------------------------*/
 
-   B_marker = hypre_CTAlloc(NALU_HYPRE_Int,  num_rows_diag_A + num_rows_A_ext, NALU_HYPRE_MEMORY_HOST);
+   B_marker = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  num_rows_diag_A + num_rows_A_ext, NALU_HYPRE_MEMORY_HOST);
 
    /*-----------------------------------------------------------------------
     *  Initialize some stuff.
@@ -431,7 +431,7 @@ hypre_ParCSRMatrix *hypre_ParCSRAAt( hypre_ParCSRMatrix  *A )
    }
 
 
-   hypre_ParAat_RowSizes(
+   nalu_hypre_ParAat_RowSizes(
       &C_diag_i, &C_offd_i, B_marker,
       A_diag_i, A_diag_j,
       A_offd_i, A_offd_j, A_col_map_offd,
@@ -444,13 +444,13 @@ hypre_ParCSRMatrix *hypre_ParCSRAAt( hypre_ParCSRMatrix  *A )
 
 #if 0
    /* debugging output: */
-   hypre_printf("A_ext_row_map (%i):", num_rows_A_ext);
-   for ( i1 = 0; i1 < num_rows_A_ext; ++i1 ) { hypre_printf(" %i", A_ext_row_map[i1] ); }
-   hypre_printf("\nC_diag_i (%i):", C_diag_size);
-   for ( i1 = 0; i1 <= num_rows_diag_A; ++i1 ) { hypre_printf(" %i", C_diag_i[i1] ); }
-   hypre_printf("\nC_offd_i (%i):", C_offd_size);
-   for ( i1 = 0; i1 <= num_rows_diag_A; ++i1 ) { hypre_printf(" %i", C_offd_i[i1] ); }
-   hypre_printf("\n");
+   nalu_hypre_printf("A_ext_row_map (%i):", num_rows_A_ext);
+   for ( i1 = 0; i1 < num_rows_A_ext; ++i1 ) { nalu_hypre_printf(" %i", A_ext_row_map[i1] ); }
+   nalu_hypre_printf("\nC_diag_i (%i):", C_diag_size);
+   for ( i1 = 0; i1 <= num_rows_diag_A; ++i1 ) { nalu_hypre_printf(" %i", C_diag_i[i1] ); }
+   nalu_hypre_printf("\nC_offd_i (%i):", C_offd_size);
+   for ( i1 = 0; i1 <= num_rows_diag_A; ++i1 ) { nalu_hypre_printf(" %i", C_offd_i[i1] ); }
+   nalu_hypre_printf("\n");
 #endif
 
    /*-----------------------------------------------------------------------
@@ -459,12 +459,12 @@ hypre_ParCSRMatrix *hypre_ParCSRAAt( hypre_ParCSRMatrix  *A )
     *-----------------------------------------------------------------------*/
 
    last_col_diag_C = first_row_index_A + (NALU_HYPRE_BigInt)num_rows_diag_A - 1;
-   C_diag_data = hypre_CTAlloc(NALU_HYPRE_Complex,  C_diag_size, NALU_HYPRE_MEMORY_HOST);
-   C_diag_j    = hypre_CTAlloc(NALU_HYPRE_Int,  C_diag_size, NALU_HYPRE_MEMORY_HOST);
+   C_diag_data = nalu_hypre_CTAlloc(NALU_HYPRE_Complex,  C_diag_size, NALU_HYPRE_MEMORY_HOST);
+   C_diag_j    = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  C_diag_size, NALU_HYPRE_MEMORY_HOST);
    if (C_offd_size)
    {
-      C_offd_data = hypre_CTAlloc(NALU_HYPRE_Complex,  C_offd_size, NALU_HYPRE_MEMORY_HOST);
-      C_offd_j    = hypre_CTAlloc(NALU_HYPRE_Int,  C_offd_size, NALU_HYPRE_MEMORY_HOST);
+      C_offd_data = nalu_hypre_CTAlloc(NALU_HYPRE_Complex,  C_offd_size, NALU_HYPRE_MEMORY_HOST);
+      C_offd_j    = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  C_offd_size, NALU_HYPRE_MEMORY_HOST);
    }
 
    /*-----------------------------------------------------------------------
@@ -758,23 +758,23 @@ hypre_ParCSRMatrix *hypre_ParCSRAAt( hypre_ParCSRMatrix  *A )
 
       }        /* end of fourth and last i2 loop */
 #if 0          /* debugging printout */
-      hypre_printf("end of i1 loop: i1=%i jj_count_diag=%i\n", i1, jj_count_diag );
-      hypre_printf("  C_diag_j=");
-      for ( jj3 = 0; jj3 < jj_count_diag; ++jj3) { hypre_printf("%i ", C_diag_j[jj3]); }
-      hypre_printf("  C_diag_data=");
-      for ( jj3 = 0; jj3 < jj_count_diag; ++jj3) { hypre_printf("%f ", C_diag_data[jj3]); }
-      hypre_printf("\n");
-      hypre_printf("  C_offd_j=");
-      for ( jj3 = 0; jj3 < jj_count_offd; ++jj3) { hypre_printf("%i ", C_offd_j[jj3]); }
-      hypre_printf("  C_offd_data=");
-      for ( jj3 = 0; jj3 < jj_count_offd; ++jj3) { hypre_printf("%f ", C_offd_data[jj3]); }
-      hypre_printf("\n");
-      hypre_printf( "  B_marker =" );
+      nalu_hypre_printf("end of i1 loop: i1=%i jj_count_diag=%i\n", i1, jj_count_diag );
+      nalu_hypre_printf("  C_diag_j=");
+      for ( jj3 = 0; jj3 < jj_count_diag; ++jj3) { nalu_hypre_printf("%i ", C_diag_j[jj3]); }
+      nalu_hypre_printf("  C_diag_data=");
+      for ( jj3 = 0; jj3 < jj_count_diag; ++jj3) { nalu_hypre_printf("%f ", C_diag_data[jj3]); }
+      nalu_hypre_printf("\n");
+      nalu_hypre_printf("  C_offd_j=");
+      for ( jj3 = 0; jj3 < jj_count_offd; ++jj3) { nalu_hypre_printf("%i ", C_offd_j[jj3]); }
+      nalu_hypre_printf("  C_offd_data=");
+      for ( jj3 = 0; jj3 < jj_count_offd; ++jj3) { nalu_hypre_printf("%f ", C_offd_data[jj3]); }
+      nalu_hypre_printf("\n");
+      nalu_hypre_printf( "  B_marker =" );
       for ( it = 0; it < num_rows_diag_A + num_rows_A_ext; ++it )
       {
-         hypre_printf(" %i", B_marker[it] );
+         nalu_hypre_printf(" %i", B_marker[it] );
       }
-      hypre_printf( "\n" );
+      nalu_hypre_printf( "\n" );
 #endif
    }           /* end of i1 loop */
 
@@ -806,8 +806,8 @@ hypre_ParCSRMatrix *hypre_ParCSRAAt( hypre_ParCSRMatrix  *A )
 
    if (num_cols_offd_C)
    {
-      col_map_offd_C = hypre_CTAlloc(NALU_HYPRE_BigInt, num_cols_offd_C, NALU_HYPRE_MEMORY_HOST);
-      new_C_offd_j = hypre_CTAlloc(NALU_HYPRE_Int, C_offd_size, NALU_HYPRE_MEMORY_HOST);
+      col_map_offd_C = nalu_hypre_CTAlloc(NALU_HYPRE_BigInt, num_cols_offd_C, NALU_HYPRE_MEMORY_HOST);
+      new_C_offd_j = nalu_hypre_CTAlloc(NALU_HYPRE_Int, C_offd_size, NALU_HYPRE_MEMORY_HOST);
       /* ... a bit big, but num_cols_offd_C is too small.  It might be worth
          computing the correct size, which is sum( no. columns in row i, over all rows i )
       */
@@ -818,7 +818,7 @@ hypre_ParCSRMatrix *hypre_ParCSRAAt( hypre_ParCSRMatrix  *A )
          col_map_offd_C[ new_C_offd_j[i] ] = A_ext_row_map[ C_offd_j[i] ];
       }
 
-      hypre_TFree(C_offd_j, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(C_offd_j, NALU_HYPRE_MEMORY_HOST);
       C_offd_j = new_C_offd_j;
 
    }
@@ -827,28 +827,28 @@ hypre_ParCSRMatrix *hypre_ParCSRAAt( hypre_ParCSRMatrix  *A )
     * Create C
     *----------------------------------------------------------------*/
 
-   C = hypre_ParCSRMatrixCreate(comm, n_rows_A, n_rows_A, row_starts_A,
+   C = nalu_hypre_ParCSRMatrixCreate(comm, n_rows_A, n_rows_A, row_starts_A,
                                 row_starts_A, num_cols_offd_C,
                                 C_diag_size, C_offd_size);
 
-   C_diag = hypre_ParCSRMatrixDiag(C);
-   hypre_CSRMatrixData(C_diag) = C_diag_data;
-   hypre_CSRMatrixI(C_diag) = C_diag_i;
-   hypre_CSRMatrixJ(C_diag) = C_diag_j;
+   C_diag = nalu_hypre_ParCSRMatrixDiag(C);
+   nalu_hypre_CSRMatrixData(C_diag) = C_diag_data;
+   nalu_hypre_CSRMatrixI(C_diag) = C_diag_i;
+   nalu_hypre_CSRMatrixJ(C_diag) = C_diag_j;
 
    if (num_cols_offd_C)
    {
-      C_offd = hypre_ParCSRMatrixOffd(C);
-      hypre_CSRMatrixData(C_offd) = C_offd_data;
-      hypre_CSRMatrixI(C_offd) = C_offd_i;
-      hypre_CSRMatrixJ(C_offd) = C_offd_j;
-      hypre_ParCSRMatrixOffd(C) = C_offd;
-      hypre_ParCSRMatrixColMapOffd(C) = col_map_offd_C;
+      C_offd = nalu_hypre_ParCSRMatrixOffd(C);
+      nalu_hypre_CSRMatrixData(C_offd) = C_offd_data;
+      nalu_hypre_CSRMatrixI(C_offd) = C_offd_i;
+      nalu_hypre_CSRMatrixJ(C_offd) = C_offd_j;
+      nalu_hypre_ParCSRMatrixOffd(C) = C_offd;
+      nalu_hypre_ParCSRMatrixColMapOffd(C) = col_map_offd_C;
 
    }
    else
    {
-      hypre_TFree(C_offd_i, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(C_offd_i, NALU_HYPRE_MEMORY_HOST);
    }
 
    /*-----------------------------------------------------------------------
@@ -857,13 +857,13 @@ hypre_ParCSRMatrix *hypre_ParCSRAAt( hypre_ParCSRMatrix  *A )
 
    if (num_cols_offd_A)
    {
-      hypre_CSRMatrixDestroy(A_ext);
+      nalu_hypre_CSRMatrixDestroy(A_ext);
       A_ext = NULL;
    }
-   hypre_TFree(B_marker, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(B_marker, NALU_HYPRE_MEMORY_HOST);
    if ( num_rows_diag_A != n_rows_A )
    {
-      hypre_TFree(A_ext_row_map, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(A_ext_row_map, NALU_HYPRE_MEMORY_HOST);
    }
 
    return C;
@@ -872,14 +872,14 @@ hypre_ParCSRMatrix *hypre_ParCSRAAt( hypre_ParCSRMatrix  *A )
 
 
 /*--------------------------------------------------------------------------
- * hypre_ParCSRMatrixExtractAExt : extracts rows from A which are located on other
+ * nalu_hypre_ParCSRMatrixExtractAExt : extracts rows from A which are located on other
  * processors and needed for multiplying A^T with the local part of A. The rows
  * are returned as CSRMatrix.  A row map for A_ext (like the ParCSRColMap) is
  * returned through the third argument.
  *--------------------------------------------------------------------------*/
 
-hypre_CSRMatrix *
-hypre_ParCSRMatrixExtractAExt( hypre_ParCSRMatrix *A,
+nalu_hypre_CSRMatrix *
+nalu_hypre_ParCSRMatrixExtractAExt( nalu_hypre_ParCSRMatrix *A,
                                NALU_HYPRE_Int data,
                                NALU_HYPRE_BigInt ** pA_ext_row_map )
 {
@@ -888,46 +888,46 @@ hypre_ParCSRMatrixExtractAExt( hypre_ParCSRMatrix *A,
       (columns of A^T) are needed.  In all the other places where A
       serves as an input, it is through its role as A^T, the matrix
       whose data needs to be passed between processors. */
-   MPI_Comm comm = hypre_ParCSRMatrixComm(A);
-   NALU_HYPRE_BigInt first_col_diag = hypre_ParCSRMatrixFirstColDiag(A);
-   /*NALU_HYPRE_Int first_row_index = hypre_ParCSRMatrixFirstRowIndex(A);*/
-   NALU_HYPRE_BigInt *col_map_offd = hypre_ParCSRMatrixColMapOffd(A);
+   MPI_Comm comm = nalu_hypre_ParCSRMatrixComm(A);
+   NALU_HYPRE_BigInt first_col_diag = nalu_hypre_ParCSRMatrixFirstColDiag(A);
+   /*NALU_HYPRE_Int first_row_index = nalu_hypre_ParCSRMatrixFirstRowIndex(A);*/
+   NALU_HYPRE_BigInt *col_map_offd = nalu_hypre_ParCSRMatrixColMapOffd(A);
 
-   hypre_ParCSRCommPkg *comm_pkg = hypre_ParCSRMatrixCommPkgT(A);
+   nalu_hypre_ParCSRCommPkg *comm_pkg = nalu_hypre_ParCSRMatrixCommPkgT(A);
    /* ... CommPkgT(A) should identify all rows of A^T needed for A*A^T (that is
     * generally a bigger set than ...CommPkg(A), the rows of B needed for A*B) */
-   NALU_HYPRE_Int num_recvs = hypre_ParCSRCommPkgNumRecvs(comm_pkg);
-   NALU_HYPRE_Int *recv_vec_starts = hypre_ParCSRCommPkgRecvVecStarts(comm_pkg);
-   NALU_HYPRE_Int num_sends = hypre_ParCSRCommPkgNumSends(comm_pkg);
-   NALU_HYPRE_Int *send_map_starts = hypre_ParCSRCommPkgSendMapStarts(comm_pkg);
-   NALU_HYPRE_Int *send_map_elmts = hypre_ParCSRCommPkgSendMapElmts(comm_pkg);
+   NALU_HYPRE_Int num_recvs = nalu_hypre_ParCSRCommPkgNumRecvs(comm_pkg);
+   NALU_HYPRE_Int *recv_vec_starts = nalu_hypre_ParCSRCommPkgRecvVecStarts(comm_pkg);
+   NALU_HYPRE_Int num_sends = nalu_hypre_ParCSRCommPkgNumSends(comm_pkg);
+   NALU_HYPRE_Int *send_map_starts = nalu_hypre_ParCSRCommPkgSendMapStarts(comm_pkg);
+   NALU_HYPRE_Int *send_map_elmts = nalu_hypre_ParCSRCommPkgSendMapElmts(comm_pkg);
 
-   hypre_CSRMatrix *diag = hypre_ParCSRMatrixDiag(A);
+   nalu_hypre_CSRMatrix *diag = nalu_hypre_ParCSRMatrixDiag(A);
 
-   NALU_HYPRE_Int *diag_i = hypre_CSRMatrixI(diag);
-   NALU_HYPRE_Int *diag_j = hypre_CSRMatrixJ(diag);
-   NALU_HYPRE_Complex *diag_data = hypre_CSRMatrixData(diag);
+   NALU_HYPRE_Int *diag_i = nalu_hypre_CSRMatrixI(diag);
+   NALU_HYPRE_Int *diag_j = nalu_hypre_CSRMatrixJ(diag);
+   NALU_HYPRE_Complex *diag_data = nalu_hypre_CSRMatrixData(diag);
 
-   hypre_CSRMatrix *offd = hypre_ParCSRMatrixOffd(A);
+   nalu_hypre_CSRMatrix *offd = nalu_hypre_ParCSRMatrixOffd(A);
 
-   NALU_HYPRE_Int *offd_i = hypre_CSRMatrixI(offd);
-   NALU_HYPRE_Int *offd_j = hypre_CSRMatrixJ(offd);
-   NALU_HYPRE_Complex *offd_data = hypre_CSRMatrixData(offd);
+   NALU_HYPRE_Int *offd_i = nalu_hypre_CSRMatrixI(offd);
+   NALU_HYPRE_Int *offd_j = nalu_hypre_CSRMatrixJ(offd);
+   NALU_HYPRE_Complex *offd_data = nalu_hypre_CSRMatrixData(offd);
 
    NALU_HYPRE_BigInt num_cols_A;
    NALU_HYPRE_Int num_nonzeros;
    NALU_HYPRE_Int num_rows_A_ext;
 
-   hypre_CSRMatrix *A_ext;
+   nalu_hypre_CSRMatrix *A_ext;
 
    NALU_HYPRE_Int *A_ext_i;
    NALU_HYPRE_BigInt *A_ext_j;
    NALU_HYPRE_Complex *A_ext_data;
 
-   num_cols_A = hypre_ParCSRMatrixGlobalNumCols(A);
+   num_cols_A = nalu_hypre_ParCSRMatrixGlobalNumCols(A);
    num_rows_A_ext = recv_vec_starts[num_recvs];
 
-   hypre_ParCSRMatrixExtractBExt_Arrays
+   nalu_hypre_ParCSRMatrixExtractBExt_Arrays
    ( &A_ext_i, &A_ext_j, &A_ext_data, pA_ext_row_map,
      &num_nonzeros,
      data, 1, comm, comm_pkg,
@@ -938,10 +938,10 @@ hypre_ParCSRMatrixExtractAExt( hypre_ParCSRMatrix *A,
      diag_data, offd_data
    );
 
-   A_ext = hypre_CSRMatrixCreate(num_rows_A_ext, num_cols_A, num_nonzeros);
-   hypre_CSRMatrixI(A_ext) = A_ext_i;
-   hypre_CSRMatrixBigJ(A_ext) = A_ext_j;
-   if (data) { hypre_CSRMatrixData(A_ext) = A_ext_data; }
+   A_ext = nalu_hypre_CSRMatrixCreate(num_rows_A_ext, num_cols_A, num_nonzeros);
+   nalu_hypre_CSRMatrixI(A_ext) = A_ext_i;
+   nalu_hypre_CSRMatrixBigJ(A_ext) = A_ext_j;
+   if (data) { nalu_hypre_CSRMatrixData(A_ext) = A_ext_data; }
 
    return A_ext;
 }

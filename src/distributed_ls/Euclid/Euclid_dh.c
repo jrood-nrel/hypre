@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_Euclid.h"
+#include "_nalu_hypre_Euclid.h"
 /* #include "Euclid_dh.h" */
 /* #include "Mem_dh.h" */
 /* #include "Mat_dh.h" */
@@ -151,7 +151,7 @@ void Euclid_dhSetup(Euclid_dh ctx)
   /*----------------------------------------------------
    * internal timing
    *----------------------------------------------------*/
-  ctx->timing[SOLVE_START_T] = hypre_MPI_Wtime();
+  ctx->timing[SOLVE_START_T] = nalu_hypre_MPI_Wtime();
   /* sum timing from last linear solve cycle, if any */
   ctx->timing[TOTAL_SOLVE_T] += ctx->timing[TOTAL_SOLVE_TEMP_T];
   ctx->timing[TOTAL_SOLVE_TEMP_T] = 0.0;
@@ -174,7 +174,7 @@ void Euclid_dhSetup(Euclid_dh ctx)
     printf_dh("setting up linear system; global rows: %i  local rows: %i (on P_0)\n", n,m);
   }
 
-  hypre_sprintf(msgBuf_dh, "localRow= %i;  globalRows= %i;  beg_row= %i", m, n, beg_row);
+  nalu_hypre_sprintf(msgBuf_dh, "localRow= %i;  globalRows= %i;  beg_row= %i", m, n, beg_row);
   SET_INFO(msgBuf_dh);
 
   bj = Parser_dhHasSwitch(parser_dh, "-bj");
@@ -187,7 +187,7 @@ void Euclid_dhSetup(Euclid_dh ctx)
    *------------------------------------------------------------------------*/
   if (ctx->sg == NULL) {
     NALU_HYPRE_Int blocks = np_dh;
-    t1 = hypre_MPI_Wtime();
+    t1 = nalu_hypre_MPI_Wtime();
     if (np_dh == 1) {
       Parser_dhReadInt(parser_dh, "-blocks", &blocks); CHECK_V_ERROR;
       SubdomainGraph_dhCreate(&(ctx->sg)); CHECK_V_ERROR;
@@ -196,7 +196,7 @@ void Euclid_dhSetup(Euclid_dh ctx)
       SubdomainGraph_dhCreate(&(ctx->sg)); CHECK_V_ERROR;
       SubdomainGraph_dhInit(ctx->sg, -1, bj, ctx->A); CHECK_V_ERROR;
     }
-    ctx->timing[SUB_GRAPH_T] += (hypre_MPI_Wtime() - t1);
+    ctx->timing[SUB_GRAPH_T] += (nalu_hypre_MPI_Wtime() - t1);
   }
 
 
@@ -241,9 +241,9 @@ void Euclid_dhSetup(Euclid_dh ctx)
    * perform the incomplete factorization (this should be, at least
    * for higher level ILUK, the most time-intensive portion of setup)
    *-----------------------------------------------------------------*/
-  t1 = hypre_MPI_Wtime();
+  t1 = nalu_hypre_MPI_Wtime();
   factor_private(ctx); CHECK_V_ERROR;
-  ctx->timing[FACTOR_T] += (hypre_MPI_Wtime() - t1);
+  ctx->timing[FACTOR_T] += (nalu_hypre_MPI_Wtime() - t1);
 
   /*--------------------------------------------------------------
    * invert diagonals, for faster triangular solves
@@ -262,9 +262,9 @@ void Euclid_dhSetup(Euclid_dh ctx)
    */
   if (Parser_dhHasSwitch(parser_dh, "-computeRho") || np_dh == 1) {
    if (strcmp(ctx->algo_par, "none")) {
-     t1 = hypre_MPI_Wtime();
+     t1 = nalu_hypre_MPI_Wtime();
      compute_rho_private(ctx); CHECK_V_ERROR;
-     ctx->timing[COMPUTE_RHO_T] += (hypre_MPI_Wtime() - t1);
+     ctx->timing[COMPUTE_RHO_T] += (nalu_hypre_MPI_Wtime() - t1);
    }
  }
 
@@ -275,9 +275,9 @@ void Euclid_dhSetup(Euclid_dh ctx)
    *--------------------------------------------------------------*/
 
   if (! strcmp(ctx->algo_par, "pilu")  &&  np_dh > 1) {
-    t1 = hypre_MPI_Wtime();
+    t1 = nalu_hypre_MPI_Wtime();
     Factor_dhSolveSetup(ctx->F, ctx->sg); CHECK_V_ERROR;
-    ctx->timing[SOLVE_SETUP_T] += (hypre_MPI_Wtime() - t1);
+    ctx->timing[SOLVE_SETUP_T] += (nalu_hypre_MPI_Wtime() - t1);
   }
 
 END_OF_FUNCTION: ;
@@ -285,7 +285,7 @@ END_OF_FUNCTION: ;
   /*-------------------------------------------------------
    * internal timing
    *-------------------------------------------------------*/
-  ctx->timing[SETUP_T] += (hypre_MPI_Wtime() - ctx->timing[SOLVE_START_T]);
+  ctx->timing[SETUP_T] += (nalu_hypre_MPI_Wtime() - ctx->timing[SOLVE_START_T]);
   ctx->setupCount += 1;
 
   ctx->isSetup = true;
@@ -407,7 +407,7 @@ void compute_rho_private(Euclid_dh ctx)
       bufGlobal[1] = bufLocal[1];
       bufGlobal[2] = bufLocal[2];
     } else {
-      hypre_MPI_Reduce(bufLocal, bufGlobal, 3, hypre_MPI_REAL, hypre_MPI_SUM, 0, comm_dh);
+      nalu_hypre_MPI_Reduce(bufLocal, bufGlobal, 3, nalu_hypre_MPI_REAL, nalu_hypre_MPI_SUM, 0, comm_dh);
     }
 
     if (myid_dh == 0) {
@@ -492,7 +492,7 @@ void factor_private(Euclid_dh ctx)
 
     /* all other factorization methods */
     else {
-        hypre_sprintf(msgBuf_dh, "factorization method: %s is not implemented",
+        nalu_hypre_sprintf(msgBuf_dh, "factorization method: %s is not implemented",
                                                                 ctx->algo_ilu);
         SET_V_ERROR(msgBuf_dh);
     }
@@ -526,7 +526,7 @@ void factor_private(Euclid_dh ctx)
 
 /*
 if (Parser_dhHasSwitch(parser_dh, "-test")) {
-       hypre_printf("[%i] Euclid_dh :: TESTING ilu_seq\n", myid_dh);
+       nalu_hypre_printf("[%i] Euclid_dh :: TESTING ilu_seq\n", myid_dh);
        iluk_seq(ctx); CHECK_V_ERROR;
 } else {
        iluk_mpi_pilu(ctx); CHECK_V_ERROR;
@@ -569,7 +569,7 @@ if (Parser_dhHasSwitch(parser_dh, "-test")) {
 
     /* all other factorization methods */
     else {
-        hypre_sprintf(msgBuf_dh, "factorization method: %s is not implemented",
+        nalu_hypre_sprintf(msgBuf_dh, "factorization method: %s is not implemented",
                                                                 ctx->algo_ilu);
         SET_V_ERROR(msgBuf_dh);
     }
@@ -622,7 +622,7 @@ void discard_indices_private(Euclid_dh ctx)
     }
   }
 
-  hypre_sprintf(msgBuf_dh, "deleting %i indices that would alter the subdomain graph", count);
+  nalu_hypre_sprintf(msgBuf_dh, "deleting %i indices that would alter the subdomain graph", count);
   SET_INFO(msgBuf_dh);
 
   /* Second, perform the actual deletion */
@@ -669,7 +669,7 @@ void Euclid_dhSolve(Euclid_dh ctx, Vec_dh x, Vec_dh b, NALU_HYPRE_Int *its)
   } else if (! strcmp(ctx->krylovMethod, "bicgstab")) {
     bicgstab_euclid(A, ctx, x->vals, b->vals, &itsOUT); ERRCHKA;
   } else {
-    hypre_sprintf(msgBuf_dh, "unknown krylov solver: %s", ctx->krylovMethod);
+    nalu_hypre_sprintf(msgBuf_dh, "unknown krylov solver: %s", ctx->krylovMethod);
     SET_V_ERROR(msgBuf_dh);
   }
   *its = itsOUT;
@@ -868,9 +868,9 @@ void Euclid_dhPrintScaling(Euclid_dh ctx, FILE *fp)
     SET_V_ERROR("ctx->scale is NULL; was Euclid_dhSetup() called?");
   }
 
-  hypre_fprintf(fp, "\n---------- 1st %i row scaling values:\n", m);
+  nalu_hypre_fprintf(fp, "\n---------- 1st %i row scaling values:\n", m);
   for (i=0; i<m; ++i) {
-    hypre_fprintf(fp, "   %i  %g  \n", i+1, ctx->scale[i]);
+    nalu_hypre_fprintf(fp, "   %i  %g  \n", i+1, ctx->scale[i]);
   }
   END_FUNC_DH
 }
@@ -884,8 +884,8 @@ void reduce_timings_private(Euclid_dh ctx)
   if (np_dh > 1) {
     NALU_HYPRE_Real bufOUT[TIMING_BINS];
 
-    hypre_TMemcpy(bufOUT,  ctx->timing, NALU_HYPRE_Real, TIMING_BINS, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_HOST);
-    hypre_MPI_Reduce(bufOUT, ctx->timing, TIMING_BINS, hypre_MPI_REAL, hypre_MPI_MAX, 0, comm_dh);
+    nalu_hypre_TMemcpy(bufOUT,  ctx->timing, NALU_HYPRE_Real, TIMING_BINS, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_HOST);
+    nalu_hypre_MPI_Reduce(bufOUT, ctx->timing, TIMING_BINS, nalu_hypre_MPI_REAL, nalu_hypre_MPI_MAX, 0, comm_dh);
   }
 
   ctx->timingsWereReduced = true;
@@ -911,7 +911,7 @@ void Euclid_dhPrintHypreReport(Euclid_dh ctx, FILE *fp)
 
  if (myid_dh == 0) {
 
-  hypre_fprintf(fp, "@@@@@@@@@@@@@@@@@@@@@@ Euclid statistical report (start)\n");
+  nalu_hypre_fprintf(fp, "@@@@@@@@@@@@@@@@@@@@@@ Euclid statistical report (start)\n");
   fprintf_dh(fp, "\nruntime parameters\n");
   fprintf_dh(fp, "------------------\n");
   fprintf_dh(fp, "   setups:                 %i\n", ctx->setupCount);
@@ -950,7 +950,7 @@ void Euclid_dhPrintHypreReport(Euclid_dh ctx, FILE *fp)
     SubdomainGraph_dhPrintRatios(ctx->sg, fp); CHECK_V_ERROR;
   }
 
-  hypre_fprintf(fp, "@@@@@@@@@@@@@@@@@@@@@@ Euclid statistical report (end)\n");
+  nalu_hypre_fprintf(fp, "@@@@@@@@@@@@@@@@@@@@@@ Euclid statistical report (end)\n");
 
  }
 
@@ -967,12 +967,12 @@ void Euclid_dhPrintTestData(Euclid_dh ctx, FILE *fp)
      Possibly "tri solves" may change . . .
   */
   if (myid_dh == 0) {
-    hypre_fprintf(fp, "   setups:                 %i\n", ctx->setupCount);
-    hypre_fprintf(fp, "   tri solves:             %i\n", ctx->its);
-    hypre_fprintf(fp, "   parallelization method: %s\n", ctx->algo_par);
-    hypre_fprintf(fp, "   factorization method:   %s\n", ctx->algo_ilu);
-    hypre_fprintf(fp, "   level:                  %i\n", ctx->level);
-    hypre_fprintf(fp, "   row scaling:            %i\n", ctx->isScaled);
+    nalu_hypre_fprintf(fp, "   setups:                 %i\n", ctx->setupCount);
+    nalu_hypre_fprintf(fp, "   tri solves:             %i\n", ctx->its);
+    nalu_hypre_fprintf(fp, "   parallelization method: %s\n", ctx->algo_par);
+    nalu_hypre_fprintf(fp, "   factorization method:   %s\n", ctx->algo_ilu);
+    nalu_hypre_fprintf(fp, "   level:                  %i\n", ctx->level);
+    nalu_hypre_fprintf(fp, "   row scaling:            %i\n", ctx->isScaled);
   }
   SubdomainGraph_dhPrintRatios(ctx->sg, fp); CHECK_V_ERROR;
   END_FUNC_DH

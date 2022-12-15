@@ -11,7 +11,7 @@
 #include <math.h>
 
 #include "mli_solver_mls.h"
-#include "_hypre_parcsr_mv.h"
+#include "_nalu_hypre_parcsr_mv.h"
 
 #define hmin(x,y) (((x) < (y)) ? (x) : (y))
 
@@ -67,7 +67,7 @@ int MLI_Solver_MLS::setup(MLI_Matrix *mat)
    if ( maxEigen_ <= 0.0 )
    {
       ritzValues = new double[2];
-      MLI_Utils_ComputeExtremeRitzValues( (hypre_ParCSRMatrix *)
+      MLI_Utils_ComputeExtremeRitzValues( (nalu_hypre_ParCSRMatrix *)
                               Amat_->getMatrix(), ritzValues, 0 );
       maxEigen_ = ritzValues[0];
       delete [] ritzValues;
@@ -148,9 +148,9 @@ int MLI_Solver_MLS::solve(MLI_Vector *fIn, MLI_Vector *uIn)
    int                 i, localNRows, deg;
    double              omega, coef, *uData;
    double              *VtempData, *WtempData, *YtempData;
-   hypre_ParCSRMatrix  *A;
-   hypre_CSRMatrix     *ADiag;
-   hypre_ParVector     *Vtemp, *Wtemp, *Ytemp, *f, *u;
+   nalu_hypre_ParCSRMatrix  *A;
+   nalu_hypre_CSRMatrix     *ADiag;
+   nalu_hypre_ParVector     *Vtemp, *Wtemp, *Ytemp, *f, *u;
 
    /*-----------------------------------------------------------------
     * check that proper spectral radius is passed in
@@ -166,23 +166,23 @@ int MLI_Solver_MLS::solve(MLI_Vector *fIn, MLI_Vector *uIn)
     * fetch machine and smoother parameters
     *-----------------------------------------------------------------*/
 
-   A          = (hypre_ParCSRMatrix *) Amat_->getMatrix();
-   ADiag      = hypre_ParCSRMatrixDiag(A);
-   localNRows = hypre_CSRMatrixNumRows(ADiag);
-   f          = (hypre_ParVector *) fIn->getVector();
-   u          = (hypre_ParVector *) uIn->getVector();
-   uData      = hypre_VectorData(hypre_ParVectorLocalVector(u));
+   A          = (nalu_hypre_ParCSRMatrix *) Amat_->getMatrix();
+   ADiag      = nalu_hypre_ParCSRMatrixDiag(A);
+   localNRows = nalu_hypre_CSRMatrixNumRows(ADiag);
+   f          = (nalu_hypre_ParVector *) fIn->getVector();
+   u          = (nalu_hypre_ParVector *) uIn->getVector();
+   uData      = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(u));
 
    /*-----------------------------------------------------------------
     * create temporary vector
     *-----------------------------------------------------------------*/
 
-   Vtemp       = (hypre_ParVector *) Vtemp_->getVector();
-   Wtemp       = (hypre_ParVector *) Wtemp_->getVector();
-   Ytemp       = (hypre_ParVector *) Ytemp_->getVector();
-   VtempData  = hypre_VectorData(hypre_ParVectorLocalVector(Vtemp));
-   WtempData  = hypre_VectorData(hypre_ParVectorLocalVector(Wtemp));
-   YtempData  = hypre_VectorData(hypre_ParVectorLocalVector(Ytemp));
+   Vtemp       = (nalu_hypre_ParVector *) Vtemp_->getVector();
+   Wtemp       = (nalu_hypre_ParVector *) Wtemp_->getVector();
+   Ytemp       = (nalu_hypre_ParVector *) Ytemp_->getVector();
+   VtempData  = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(Vtemp));
+   WtempData  = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(Wtemp));
+   YtempData  = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(Ytemp));
 
    /*-----------------------------------------------------------------
     * Perform MLS iterations
@@ -190,10 +190,10 @@ int MLI_Solver_MLS::solve(MLI_Vector *fIn, MLI_Vector *uIn)
  
    /* compute  Vtemp = f - A u */
 
-   hypre_ParVectorCopy(f,Vtemp); 
+   nalu_hypre_ParVectorCopy(f,Vtemp); 
    if ( zeroInitialGuess_ != 0 )
    {
-      hypre_ParCSRMatrixMatvec(-1.0, A, u, 1.0, Vtemp);
+      nalu_hypre_ParCSRMatrixMatvec(-1.0, A, u, 1.0, Vtemp);
       zeroInitialGuess_ = 0;
    }
 
@@ -210,27 +210,27 @@ int MLI_Solver_MLS::solve(MLI_Vector *fIn, MLI_Vector *uIn)
 
       /* compute residual Vtemp = A u - f */
 
-      hypre_ParVectorCopy(f,Vtemp); 
-      hypre_ParCSRMatrixMatvec(1.0, A, u, -1.0, Vtemp);
+      nalu_hypre_ParVectorCopy(f,Vtemp); 
+      nalu_hypre_ParCSRMatrixMatvec(1.0, A, u, -1.0, Vtemp);
 
       /* compute residual Wtemp = (I - omega * A)^deg Vtemp */
 
-      hypre_ParVectorCopy(Vtemp,Wtemp); 
+      nalu_hypre_ParVectorCopy(Vtemp,Wtemp); 
       for ( deg = 0; deg < mlsDeg_; deg++ ) 
       {
          omega = mlsOm_[deg];
-         hypre_ParCSRMatrixMatvec(1.0, A, Wtemp, 0.0, Vtemp);
+         nalu_hypre_ParCSRMatrixMatvec(1.0, A, Wtemp, 0.0, Vtemp);
          for (i = 0; i < localNRows; i++) 
             WtempData[i] -= (omega * VtempData[i]);
       }
 
       /* compute residual Vtemp = (I - omega * A)^deg Wtemp */
 
-      hypre_ParVectorCopy(Wtemp,Vtemp); 
+      nalu_hypre_ParVectorCopy(Wtemp,Vtemp); 
       for ( deg = mlsDeg_-1; deg > -1; deg-- ) 
       {
          omega = mlsOm_[deg];
-         hypre_ParCSRMatrixMatvec(1.0, A, Vtemp, 0.0, Wtemp);
+         nalu_hypre_ParCSRMatrixMatvec(1.0, A, Vtemp, 0.0, Wtemp);
          for (i = 0; i < localNRows; i++) 
             VtempData[i] -= (omega * WtempData[i]);
       }
@@ -260,8 +260,8 @@ int MLI_Solver_MLS::solve(MLI_Vector *fIn, MLI_Vector *uIn)
 
       for ( deg = 1; deg < mlsDeg_; deg++ ) 
       {
-         hypre_ParCSRMatrixMatvec(1.0, A, Vtemp, 0.0, Wtemp);
-         hypre_ParVectorCopy(Wtemp,Vtemp); 
+         nalu_hypre_ParCSRMatrixMatvec(1.0, A, Vtemp, 0.0, Wtemp);
+         nalu_hypre_ParVectorCopy(Wtemp,Vtemp); 
          coef = mlsCf_[deg];
 
 #ifdef NALU_HYPRE_USING_OPENMP
@@ -278,27 +278,27 @@ int MLI_Solver_MLS::solve(MLI_Vector *fIn, MLI_Vector *uIn)
 
       /* compute residual Vtemp = A u - f */
 
-      hypre_ParVectorCopy(f,Vtemp); 
-      hypre_ParCSRMatrixMatvec(1.0, A, u, -1.0, Vtemp);
+      nalu_hypre_ParVectorCopy(f,Vtemp); 
+      nalu_hypre_ParCSRMatrixMatvec(1.0, A, u, -1.0, Vtemp);
 
       /* compute residual Wtemp = (I - omega * A)^deg Vtemp */
 
-      hypre_ParVectorCopy(Vtemp,Wtemp); 
+      nalu_hypre_ParVectorCopy(Vtemp,Wtemp); 
       for ( deg = 0; deg < mlsDeg_; deg++ ) 
       {
          omega = mlsOm_[deg];
-         hypre_ParCSRMatrixMatvec(1.0, A, Wtemp, 0.0, Vtemp);
+         nalu_hypre_ParCSRMatrixMatvec(1.0, A, Wtemp, 0.0, Vtemp);
          for (i = 0; i < localNRows; i++) 
             WtempData[i] -= (omega * VtempData[i]);
       }
 
       /* compute residual Vtemp = (I - omega * A)^deg Wtemp */
 
-      hypre_ParVectorCopy(Wtemp,Vtemp); 
+      nalu_hypre_ParVectorCopy(Wtemp,Vtemp); 
       for ( deg = mlsDeg_-1; deg > -1; deg-- ) 
       {
          omega = mlsOm_[deg];
-         hypre_ParCSRMatrixMatvec(1.0, A, Vtemp, 0.0, Wtemp);
+         nalu_hypre_ParCSRMatrixMatvec(1.0, A, Vtemp, 0.0, Wtemp);
          for (i = 0; i < localNRows; i++) 
             VtempData[i] -= (omega * WtempData[i]);
       }

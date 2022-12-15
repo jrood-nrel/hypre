@@ -24,14 +24,14 @@ struct _extrows_dh {
     SubdomainGraph_dh sg;  /* not owned! */
     Factor_dh F;           /* not owned! */
 
-    hypre_MPI_Status status[MAX_MPI_TASKS];
-    hypre_MPI_Request req1[MAX_MPI_TASKS]; 
-    hypre_MPI_Request req2[MAX_MPI_TASKS];
-    hypre_MPI_Request req3[MAX_MPI_TASKS]; 
-    hypre_MPI_Request req4[MAX_MPI_TASKS];
-    hypre_MPI_Request cval_req[MAX_MPI_TASKS];
-    hypre_MPI_Request fill_req[MAX_MPI_TASKS];
-    hypre_MPI_Request aval_req[MAX_MPI_TASKS];
+    nalu_hypre_MPI_Status status[MAX_MPI_TASKS];
+    nalu_hypre_MPI_Request req1[MAX_MPI_TASKS]; 
+    nalu_hypre_MPI_Request req2[MAX_MPI_TASKS];
+    nalu_hypre_MPI_Request req3[MAX_MPI_TASKS]; 
+    nalu_hypre_MPI_Request req4[MAX_MPI_TASKS];
+    nalu_hypre_MPI_Request cval_req[MAX_MPI_TASKS];
+    nalu_hypre_MPI_Request fill_req[MAX_MPI_TASKS];
+    nalu_hypre_MPI_Request aval_req[MAX_MPI_TASKS];
 
     /*------------------------------------------------------------------------
      *  data structures for receiving, storing, and accessing external rows 

@@ -11,18 +11,18 @@
  *
  *****************************************************************************/
 
-#include "utilities/_hypre_utilities.h"
+#include "utilities/_nalu_hypre_utilities.h"
 #include "NALU_HYPRE.h"
 #include "IJ_mv/NALU_HYPRE_IJ_mv.h"
 #include "parcsr_mv/NALU_HYPRE_parcsr_mv.h"
-#include "parcsr_mv/_hypre_parcsr_mv.h"
-#include "parcsr_ls/_hypre_parcsr_ls.h"
+#include "parcsr_mv/_nalu_hypre_parcsr_mv.h"
+#include "parcsr_ls/_nalu_hypre_parcsr_ls.h"
 #include "parcsr_ls/NALU_HYPRE_parcsr_ls.h"
 
-#include "_hypre_FEI.h"
+#include "_nalu_hypre_FEI.h"
 
 /*--------------------------------------------------------------------------
- * hypre_TFQmrData
+ * nalu_hypre_TFQmrData
  *--------------------------------------------------------------------------*/
 
 typedef struct
@@ -58,24 +58,24 @@ typedef struct
    double  *norms;
    char    *log_file_name;
 
-} hypre_TFQmrData;
+} nalu_hypre_TFQmrData;
 
 /*--------------------------------------------------------------------------
- * hypre_TFQmrCreate
+ * nalu_hypre_TFQmrCreate
  *--------------------------------------------------------------------------*/
  
-void * hypre_TFQmrCreate( )
+void * nalu_hypre_TFQmrCreate( )
 {
-   hypre_TFQmrData *tfqmr_data;
+   nalu_hypre_TFQmrData *tfqmr_data;
  
-   tfqmr_data = hypre_CTAlloc(hypre_TFQmrData,  1, NALU_HYPRE_MEMORY_HOST);
+   tfqmr_data = nalu_hypre_CTAlloc(nalu_hypre_TFQmrData,  1, NALU_HYPRE_MEMORY_HOST);
  
    /* set defaults */
    (tfqmr_data -> tol)            = 1.0e-06;
    (tfqmr_data -> max_iter)       = 1000;
    (tfqmr_data -> stop_crit)      = 0; /* rel. residual norm */
-   (tfqmr_data -> precond)        = hypre_ParKrylovIdentity;
-   (tfqmr_data -> precond_setup)  = hypre_ParKrylovIdentitySetup;
+   (tfqmr_data -> precond)        = nalu_hypre_ParKrylovIdentity;
+   (tfqmr_data -> precond_setup)  = nalu_hypre_ParKrylovIdentitySetup;
    (tfqmr_data -> precond_data)   = NULL;
    (tfqmr_data -> logging)        = 0;
    (tfqmr_data -> r)              = NULL;
@@ -96,47 +96,47 @@ void * hypre_TFQmrCreate( )
 }
 
 /*--------------------------------------------------------------------------
- * hypre_TFQmrDestroy
+ * nalu_hypre_TFQmrDestroy
  *--------------------------------------------------------------------------*/
  
-int hypre_TFQmrDestroy( void *tfqmr_vdata )
+int nalu_hypre_TFQmrDestroy( void *tfqmr_vdata )
 {
-	hypre_TFQmrData *tfqmr_data = (hypre_TFQmrData *) tfqmr_vdata;
+	nalu_hypre_TFQmrData *tfqmr_data = (nalu_hypre_TFQmrData *) tfqmr_vdata;
    int ierr = 0;
  
    if (tfqmr_data)
    {
       if ((tfqmr_data -> logging) > 0)
       {
-         hypre_TFree(tfqmr_data -> norms, NALU_HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(tfqmr_data -> norms, NALU_HYPRE_MEMORY_HOST);
       }
  
-      hypre_ParKrylovMatvecDestroy(tfqmr_data -> matvec_data);
+      nalu_hypre_ParKrylovMatvecDestroy(tfqmr_data -> matvec_data);
  
-      hypre_ParKrylovDestroyVector(tfqmr_data -> r);
-      hypre_ParKrylovDestroyVector(tfqmr_data -> tr);
-      hypre_ParKrylovDestroyVector(tfqmr_data -> yo);
-      hypre_ParKrylovDestroyVector(tfqmr_data -> ye);
-      hypre_ParKrylovDestroyVector(tfqmr_data -> t1);
-      hypre_ParKrylovDestroyVector(tfqmr_data -> t2);
-      hypre_ParKrylovDestroyVector(tfqmr_data -> w);
-      hypre_ParKrylovDestroyVector(tfqmr_data -> v);
-      hypre_ParKrylovDestroyVector(tfqmr_data -> d);
-      hypre_ParKrylovDestroyVector(tfqmr_data -> t3);
+      nalu_hypre_ParKrylovDestroyVector(tfqmr_data -> r);
+      nalu_hypre_ParKrylovDestroyVector(tfqmr_data -> tr);
+      nalu_hypre_ParKrylovDestroyVector(tfqmr_data -> yo);
+      nalu_hypre_ParKrylovDestroyVector(tfqmr_data -> ye);
+      nalu_hypre_ParKrylovDestroyVector(tfqmr_data -> t1);
+      nalu_hypre_ParKrylovDestroyVector(tfqmr_data -> t2);
+      nalu_hypre_ParKrylovDestroyVector(tfqmr_data -> w);
+      nalu_hypre_ParKrylovDestroyVector(tfqmr_data -> v);
+      nalu_hypre_ParKrylovDestroyVector(tfqmr_data -> d);
+      nalu_hypre_ParKrylovDestroyVector(tfqmr_data -> t3);
  
-      hypre_TFree(tfqmr_data, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(tfqmr_data, NALU_HYPRE_MEMORY_HOST);
    }
  
    return(ierr);
 }
 
 /*--------------------------------------------------------------------------
- * hypre_TFQmrSetup
+ * nalu_hypre_TFQmrSetup
  *--------------------------------------------------------------------------*/
  
-int hypre_TFQmrSetup( void *tfqmr_vdata, void *A, void *b, void *x         )
+int nalu_hypre_TFQmrSetup( void *tfqmr_vdata, void *A, void *b, void *x         )
 {
-	hypre_TFQmrData *tfqmr_data     = (hypre_TFQmrData *) tfqmr_vdata;
+	nalu_hypre_TFQmrData *tfqmr_data     = (nalu_hypre_TFQmrData *) tfqmr_vdata;
    int            max_iter         = (tfqmr_data -> max_iter);
    int          (*precond_setup)(void*, void*, void*, void*) = (tfqmr_data -> precond_setup);
    void          *precond_data     = (tfqmr_data -> precond_data);
@@ -151,27 +151,27 @@ int hypre_TFQmrSetup( void *tfqmr_vdata, void *A, void *b, void *x         )
     *--------------------------------------------------*/
  
    if ((tfqmr_data -> r) == NULL)
-      (tfqmr_data -> r) = hypre_ParKrylovCreateVector(b);
+      (tfqmr_data -> r) = nalu_hypre_ParKrylovCreateVector(b);
    if ((tfqmr_data -> tr) == NULL)
-      (tfqmr_data -> tr) = hypre_ParKrylovCreateVector(b);
+      (tfqmr_data -> tr) = nalu_hypre_ParKrylovCreateVector(b);
    if ((tfqmr_data -> yo) == NULL)
-      (tfqmr_data -> yo) = hypre_ParKrylovCreateVector(b);
+      (tfqmr_data -> yo) = nalu_hypre_ParKrylovCreateVector(b);
    if ((tfqmr_data -> ye) == NULL)
-      (tfqmr_data -> ye) = hypre_ParKrylovCreateVector(b);
+      (tfqmr_data -> ye) = nalu_hypre_ParKrylovCreateVector(b);
    if ((tfqmr_data -> t1) == NULL)
-      (tfqmr_data -> t1) = hypre_ParKrylovCreateVector(b);
+      (tfqmr_data -> t1) = nalu_hypre_ParKrylovCreateVector(b);
    if ((tfqmr_data -> t2) == NULL)
-      (tfqmr_data -> t2) = hypre_ParKrylovCreateVector(b);
+      (tfqmr_data -> t2) = nalu_hypre_ParKrylovCreateVector(b);
    if ((tfqmr_data -> w) == NULL)
-      (tfqmr_data -> w) = hypre_ParKrylovCreateVector(b);
+      (tfqmr_data -> w) = nalu_hypre_ParKrylovCreateVector(b);
    if ((tfqmr_data -> v) == NULL)
-      (tfqmr_data -> v) = hypre_ParKrylovCreateVector(b);
+      (tfqmr_data -> v) = nalu_hypre_ParKrylovCreateVector(b);
    if ((tfqmr_data -> d) == NULL)
-      (tfqmr_data -> d) = hypre_ParKrylovCreateVector(b);
+      (tfqmr_data -> d) = nalu_hypre_ParKrylovCreateVector(b);
    if ((tfqmr_data -> t3) == NULL)
-      (tfqmr_data -> t3) = hypre_ParKrylovCreateVector(b);
+      (tfqmr_data -> t3) = nalu_hypre_ParKrylovCreateVector(b);
    if ((tfqmr_data -> matvec_data) == NULL)
-      (tfqmr_data -> matvec_data) = hypre_ParKrylovMatvecCreate(A, x);
+      (tfqmr_data -> matvec_data) = nalu_hypre_ParKrylovMatvecCreate(A, x);
  
    ierr = precond_setup(precond_data, A, b, x);
  
@@ -182,7 +182,7 @@ int hypre_TFQmrSetup( void *tfqmr_vdata, void *A, void *b, void *x         )
    if ((tfqmr_data -> logging) > 0)
    {
       if ((tfqmr_data -> norms) == NULL)
-         (tfqmr_data -> norms) = hypre_CTAlloc(double,  max_iter + 1, NALU_HYPRE_MEMORY_HOST);
+         (tfqmr_data -> norms) = nalu_hypre_CTAlloc(double,  max_iter + 1, NALU_HYPRE_MEMORY_HOST);
       if ((tfqmr_data -> log_file_name) == NULL)
 		  (tfqmr_data -> log_file_name) = (char*)"tfqmr.out.log";
    }
@@ -191,12 +191,12 @@ int hypre_TFQmrSetup( void *tfqmr_vdata, void *A, void *b, void *x         )
 }
  
 /*--------------------------------------------------------------------------
- * hypre_TFQmrSolve
+ * nalu_hypre_TFQmrSolve
  *-------------------------------------------------------------------------*/
 
-int hypre_TFQmrSolve(void  *tfqmr_vdata, void  *A, void  *b, void  *x)
+int nalu_hypre_TFQmrSolve(void  *tfqmr_vdata, void  *A, void  *b, void  *x)
 {
-	hypre_TFQmrData  *tfqmr_data    = (hypre_TFQmrData *) tfqmr_vdata;
+	nalu_hypre_TFQmrData  *tfqmr_data    = (nalu_hypre_TFQmrData *) tfqmr_vdata;
    int 		     max_iter      = (tfqmr_data -> max_iter);
    int 		     stop_crit     = (tfqmr_data -> stop_crit);
    double 	     accuracy      = (tfqmr_data -> tol);
@@ -224,7 +224,7 @@ int hypre_TFQmrSolve(void  *tfqmr_vdata, void  *A, void  *b, void  *x)
    double            rnbnd, etam1, thetam1, c, epsilon; 
    double            sigma, alpha, beta;
 
-   hypre_ParKrylovCommInfo(A,&my_id,&num_procs);
+   nalu_hypre_ParKrylovCommInfo(A,&my_id,&num_procs);
    if (logging > 0)
    {
       norms          = (tfqmr_data -> norms);
@@ -232,13 +232,13 @@ int hypre_TFQmrSolve(void  *tfqmr_vdata, void  *A, void  *b, void  *x)
 
    /* initialize work arrays */
 
-   hypre_ParKrylovCopyVector(b,r);
+   nalu_hypre_ParKrylovCopyVector(b,r);
 
    /* compute initial residual */
 
-   hypre_ParKrylovMatvec(matvec_data,-1.0, A, x, 1.0, r);
-   r_norm = sqrt(hypre_ParKrylovInnerProd(r,r));
-   b_norm = sqrt(hypre_ParKrylovInnerProd(b,b));
+   nalu_hypre_ParKrylovMatvec(matvec_data,-1.0, A, x, 1.0, r);
+   r_norm = sqrt(nalu_hypre_ParKrylovInnerProd(r,r));
+   b_norm = sqrt(nalu_hypre_ParKrylovInnerProd(b,b));
    if (logging > 0)
    {
       norms[0] = r_norm;
@@ -267,14 +267,14 @@ int hypre_TFQmrSolve(void  *tfqmr_vdata, void  *A, void  *b, void  *x)
    /* convergence criterion |r_i| <= accuracy , absolute residual norm*/
    if (stop_crit) epsilon = accuracy;
 
-   hypre_ParKrylovCopyVector(r,tr);
-   hypre_ParKrylovCopyVector(r,yo);
-   hypre_ParKrylovCopyVector(r,w);
-   hypre_ParKrylovClearVector(d);
-   hypre_ParKrylovClearVector(v);
+   nalu_hypre_ParKrylovCopyVector(r,tr);
+   nalu_hypre_ParKrylovCopyVector(r,yo);
+   nalu_hypre_ParKrylovCopyVector(r,w);
+   nalu_hypre_ParKrylovClearVector(d);
+   nalu_hypre_ParKrylovClearVector(v);
    precond(precond_data, A, yo, t3);
-   hypre_ParKrylovMatvec(matvec_data,1.0,A,t3,0.0,v);
-   hypre_ParKrylovCopyVector(v,t1);
+   nalu_hypre_ParKrylovMatvec(matvec_data,1.0,A,t3,0.0,v);
+   nalu_hypre_ParKrylovCopyVector(v,t1);
 
    tau   = r_norm;
    theta = 0.0;
@@ -285,47 +285,47 @@ int hypre_TFQmrSolve(void  *tfqmr_vdata, void  *A, void  *b, void  *x)
    {
       iter++;
 
-      sigma = hypre_ParKrylovInnerProd(tr,v);
+      sigma = nalu_hypre_ParKrylovInnerProd(tr,v);
       alpha = rho / sigma;
-      hypre_ParKrylovCopyVector(yo,ye);
+      nalu_hypre_ParKrylovCopyVector(yo,ye);
       dtmp = - alpha;
-      hypre_ParKrylovAxpy(dtmp,v,ye);
-      hypre_ParKrylovAxpy(dtmp,t1,w);
+      nalu_hypre_ParKrylovAxpy(dtmp,v,ye);
+      nalu_hypre_ParKrylovAxpy(dtmp,t1,w);
 
       thetam1 = theta;
-      theta = sqrt(hypre_ParKrylovInnerProd(w,w)) / tau;
+      theta = sqrt(nalu_hypre_ParKrylovInnerProd(w,w)) / tau;
       c = 1.0 / sqrt(1.0 + theta * theta );
       tau = tau * theta * c;
       etam1 = eta;
       eta = c * c * alpha;
 
       dtmp = thetam1 * thetam1 * etam1 / alpha;
-      hypre_ParKrylovCopyVector(d,t3);
-      hypre_ParKrylovCopyVector(yo,d);
-      hypre_ParKrylovAxpy(dtmp,t3,d);
+      nalu_hypre_ParKrylovCopyVector(d,t3);
+      nalu_hypre_ParKrylovCopyVector(yo,d);
+      nalu_hypre_ParKrylovAxpy(dtmp,t3,d);
 
-      hypre_ParKrylovAxpy(eta,d,x);
+      nalu_hypre_ParKrylovAxpy(eta,d,x);
       dtmp = 2.0 * iter;
       rnbnd = tau * sqrt( dtmp );
 
       precond(precond_data, A, ye, t3);
-      hypre_ParKrylovMatvec(matvec_data,1.0,A,t3,0.0,t2);
+      nalu_hypre_ParKrylovMatvec(matvec_data,1.0,A,t3,0.0,t2);
       dtmp = - alpha;
-      hypre_ParKrylovAxpy(dtmp,t2,w);
+      nalu_hypre_ParKrylovAxpy(dtmp,t2,w);
 
       thetam1 = theta;
-      theta = sqrt(hypre_ParKrylovInnerProd(w,w)) / tau;
+      theta = sqrt(nalu_hypre_ParKrylovInnerProd(w,w)) / tau;
       c = 1.0 / sqrt(1.0 + theta * theta );
       tau = tau * theta * c;
       etam1 = eta;
       eta = c * c * alpha;
   
       dtmp = thetam1 * thetam1 * etam1 / alpha;
-      hypre_ParKrylovCopyVector(d,t3);
-      hypre_ParKrylovCopyVector(ye,d);
-      hypre_ParKrylovAxpy(dtmp,t3,d);
+      nalu_hypre_ParKrylovCopyVector(d,t3);
+      nalu_hypre_ParKrylovCopyVector(ye,d);
+      nalu_hypre_ParKrylovAxpy(dtmp,t3,d);
 
-      hypre_ParKrylovAxpy(eta,d,x);
+      nalu_hypre_ParKrylovAxpy(eta,d,x);
       dtmp = 2.0 * iter + 1.0;
       rnbnd = tau * sqrt( dtmp );
 
@@ -336,21 +336,21 @@ int hypre_TFQmrSolve(void  *tfqmr_vdata, void  *A, void  *b, void  *x)
          printf(" TFQmr : iter %4d - res. norm = %e \n", iter, r_norm);
 
       rhom1 = rho;
-      rho = hypre_ParKrylovInnerProd(tr,w);
+      rho = nalu_hypre_ParKrylovInnerProd(tr,w);
       beta = rho / rhom1;
 
-      hypre_ParKrylovCopyVector(w,yo);
-      hypre_ParKrylovAxpy(beta,ye,yo);
+      nalu_hypre_ParKrylovCopyVector(w,yo);
+      nalu_hypre_ParKrylovAxpy(beta,ye,yo);
      
       precond(precond_data, A, yo, t3);
-      hypre_ParKrylovMatvec(matvec_data,1.0,A,t3,0.0,t1);
-      hypre_ParKrylovCopyVector(t2,t3);
-      hypre_ParKrylovAxpy(beta,v,t3);
-      hypre_ParKrylovCopyVector(t1,v);
-      hypre_ParKrylovAxpy(beta,t3,v);
+      nalu_hypre_ParKrylovMatvec(matvec_data,1.0,A,t3,0.0,t1);
+      nalu_hypre_ParKrylovCopyVector(t2,t3);
+      nalu_hypre_ParKrylovAxpy(beta,v,t3);
+      nalu_hypre_ParKrylovCopyVector(t1,v);
+      nalu_hypre_ParKrylovAxpy(beta,t3,v);
    }
    precond(precond_data, A, x, t3);
-   hypre_ParKrylovCopyVector(t3,x);
+   nalu_hypre_ParKrylovCopyVector(t3,x);
 
    (tfqmr_data -> num_iterations) = iter;
    if (b_norm > 0.0)
@@ -364,12 +364,12 @@ int hypre_TFQmrSolve(void  *tfqmr_vdata, void  *A, void  *b, void  *x)
 }
 
 /*--------------------------------------------------------------------------
- * hypre_TFQmrSetTol
+ * nalu_hypre_TFQmrSetTol
  *--------------------------------------------------------------------------*/
  
-int hypre_TFQmrSetTol( void *tfqmr_vdata, double tol )
+int nalu_hypre_TFQmrSetTol( void *tfqmr_vdata, double tol )
 {
-	hypre_TFQmrData *tfqmr_data = (hypre_TFQmrData *) tfqmr_vdata;
+	nalu_hypre_TFQmrData *tfqmr_data = (nalu_hypre_TFQmrData *) tfqmr_vdata;
    int            ierr = 0;
  
    (tfqmr_data -> tol) = tol;
@@ -378,12 +378,12 @@ int hypre_TFQmrSetTol( void *tfqmr_vdata, double tol )
 }
 
 /*--------------------------------------------------------------------------
- * hypre_TFQmrSetMaxIter
+ * nalu_hypre_TFQmrSetMaxIter
  *--------------------------------------------------------------------------*/
  
-int hypre_TFQmrSetMaxIter( void *tfqmr_vdata, int max_iter )
+int nalu_hypre_TFQmrSetMaxIter( void *tfqmr_vdata, int max_iter )
 {
-	hypre_TFQmrData *tfqmr_data = (hypre_TFQmrData *) tfqmr_vdata;
+	nalu_hypre_TFQmrData *tfqmr_data = (nalu_hypre_TFQmrData *) tfqmr_vdata;
    int              ierr = 0;
  
    (tfqmr_data -> max_iter) = max_iter;
@@ -392,12 +392,12 @@ int hypre_TFQmrSetMaxIter( void *tfqmr_vdata, int max_iter )
 }
 
 /*--------------------------------------------------------------------------
- * hypre_TFQmrSetStopCrit
+ * nalu_hypre_TFQmrSetStopCrit
  *--------------------------------------------------------------------------*/ 
  
-int hypre_TFQmrSetStopCrit( void *tfqmr_vdata, double stop_crit )
+int nalu_hypre_TFQmrSetStopCrit( void *tfqmr_vdata, double stop_crit )
 {
-	hypre_TFQmrData *tfqmr_data = (hypre_TFQmrData *) tfqmr_vdata;
+	nalu_hypre_TFQmrData *tfqmr_data = (nalu_hypre_TFQmrData *) tfqmr_vdata;
    int            ierr = 0;
  
    (tfqmr_data -> stop_crit) = stop_crit;
@@ -406,13 +406,13 @@ int hypre_TFQmrSetStopCrit( void *tfqmr_vdata, double stop_crit )
 }
 
 /*--------------------------------------------------------------------------
- * hypre_TFQmrSetPrecond
+ * nalu_hypre_TFQmrSetPrecond
  *--------------------------------------------------------------------------*/
  
-int hypre_TFQmrSetPrecond( void  *tfqmr_vdata, int  (*precond)(void*,void*,void*,void*),
+int nalu_hypre_TFQmrSetPrecond( void  *tfqmr_vdata, int  (*precond)(void*,void*,void*,void*),
 						   int  (*precond_setup)(void*,void*,void*,void*), void  *precond_data )
 {
-	hypre_TFQmrData *tfqmr_data = (hypre_TFQmrData *) tfqmr_vdata;
+	nalu_hypre_TFQmrData *tfqmr_data = (nalu_hypre_TFQmrData *) tfqmr_vdata;
    int              ierr = 0;
  
    (tfqmr_data -> precond)        = precond;
@@ -423,12 +423,12 @@ int hypre_TFQmrSetPrecond( void  *tfqmr_vdata, int  (*precond)(void*,void*,void*
 }
  
 /*--------------------------------------------------------------------------
- * hypre_TFQmrSetLogging
+ * nalu_hypre_TFQmrSetLogging
  *--------------------------------------------------------------------------*/
  
-int hypre_TFQmrSetLogging( void *tfqmr_vdata, int logging)
+int nalu_hypre_TFQmrSetLogging( void *tfqmr_vdata, int logging)
 {
-	hypre_TFQmrData *tfqmr_data = (hypre_TFQmrData *) tfqmr_vdata;
+	nalu_hypre_TFQmrData *tfqmr_data = (nalu_hypre_TFQmrData *) tfqmr_vdata;
    int              ierr = 0;
  
    (tfqmr_data -> logging) = logging;
@@ -437,12 +437,12 @@ int hypre_TFQmrSetLogging( void *tfqmr_vdata, int logging)
 }
 
 /*--------------------------------------------------------------------------
- * hypre_TFQmrGetNumIterations
+ * nalu_hypre_TFQmrGetNumIterations
  *--------------------------------------------------------------------------*/
  
-int hypre_TFQmrGetNumIterations(void *tfqmr_vdata,int  *num_iterations)
+int nalu_hypre_TFQmrGetNumIterations(void *tfqmr_vdata,int  *num_iterations)
 {
-	hypre_TFQmrData *tfqmr_data = (hypre_TFQmrData *) tfqmr_vdata;
+	nalu_hypre_TFQmrData *tfqmr_data = (nalu_hypre_TFQmrData *) tfqmr_vdata;
    int              ierr = 0;
  
    *num_iterations = (tfqmr_data -> num_iterations);
@@ -451,13 +451,13 @@ int hypre_TFQmrGetNumIterations(void *tfqmr_vdata,int  *num_iterations)
 }
  
 /*--------------------------------------------------------------------------
- * hypre_TFQmrGetFinalRelativeResidualNorm
+ * nalu_hypre_TFQmrGetFinalRelativeResidualNorm
  *--------------------------------------------------------------------------*/
  
-int hypre_TFQmrGetFinalRelativeResidualNorm( void   *tfqmr_vdata,
+int nalu_hypre_TFQmrGetFinalRelativeResidualNorm( void   *tfqmr_vdata,
                                          double *relative_residual_norm )
 {
-	hypre_TFQmrData *tfqmr_data = (hypre_TFQmrData *) tfqmr_vdata;
+	nalu_hypre_TFQmrData *tfqmr_data = (nalu_hypre_TFQmrData *) tfqmr_vdata;
    int 		ierr = 0;
  
    *relative_residual_norm = (tfqmr_data -> rel_residual_norm);

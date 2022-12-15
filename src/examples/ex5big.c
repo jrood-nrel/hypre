@@ -39,7 +39,7 @@
 #include "NALU_HYPRE.h"
 #include "NALU_HYPRE_parcsr_ls.h"
 
-int hypre_FlexGMRESModifyPCAMGExample(void *precond_data, int iterations,
+int nalu_hypre_FlexGMRESModifyPCAMGExample(void *precond_data, int iterations,
                                       double rel_residual_norm);
 
 #define my_min(a,b)  (((a)<(b)) ? (a) : (b))
@@ -520,11 +520,11 @@ int main (int argc, char *argv[])
 
       if (modify)
       {
-         /* this is an optional call  - if you don't call it, hypre_FlexGMRESModifyPCDefault
+         /* this is an optional call  - if you don't call it, nalu_hypre_FlexGMRESModifyPCDefault
             is used - which does nothing.  Otherwise, you can define your own, similar to
             the one used here */
          NALU_HYPRE_FlexGMRESSetModifyPC(
-            solver, (NALU_HYPRE_PtrToModifyPCFcn) hypre_FlexGMRESModifyPCAMGExample);
+            solver, (NALU_HYPRE_PtrToModifyPCFcn) nalu_hypre_FlexGMRESModifyPCAMGExample);
       }
 
 
@@ -568,7 +568,7 @@ int main (int argc, char *argv[])
 }
 
 /*--------------------------------------------------------------------------
-   hypre_FlexGMRESModifyPCAMGExample -
+   nalu_hypre_FlexGMRESModifyPCAMGExample -
 
     This is an example (not recommended)
    of how we can modify things about AMG that
@@ -577,7 +577,7 @@ int main (int argc, char *argv[])
 
  *--------------------------------------------------------------------------*/
 
-int hypre_FlexGMRESModifyPCAMGExample(void *precond_data, int iterations,
+int nalu_hypre_FlexGMRESModifyPCAMGExample(void *precond_data, int iterations,
                                       double rel_residual_norm)
 {
 

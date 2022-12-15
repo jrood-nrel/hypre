@@ -9,7 +9,7 @@
 #define _DISTRIBUTED_MATRIX_PILUT_SOLVER_HEADER
 
 #include "NALU_HYPRE_config.h"
-#include "_hypre_utilities.h"
+#include "_nalu_hypre_utilities.h"
 /*
 #ifdef NALU_HYPRE_DEBUG
 #include <gmalloc.h>
@@ -31,7 +31,7 @@
 
 typedef struct
 {
-MPI_Comm hypre_MPI_communicator;
+MPI_Comm nalu_hypre_MPI_communicator;
 NALU_HYPRE_Int _mype, _npes;
 NALU_HYPRE_Real _secpertick;
 NALU_HYPRE_Int _Mfactor;
@@ -75,10 +75,10 @@ NALU_HYPRE_Int Up_timer;
 NALU_HYPRE_Int Ul_timer;
 #endif
 
-} hypre_PilutSolverGlobals;
+} nalu_hypre_PilutSolverGlobals;
 
 /* DEFINES for global variables */
-#define pilut_comm (globals->hypre_MPI_communicator)
+#define pilut_comm (globals->nalu_hypre_MPI_communicator)
 #define mype (globals->_mype)
 #define npes (globals->_npes)
 #define secpertick (globals->_secpertick)
@@ -86,7 +86,7 @@ NALU_HYPRE_Int Ul_timer;
 #define jr (globals->_jr)
 #define jw (globals->_jw)
 #define lastjr (globals->_lastjr)
-#define hypre_lr (globals->_lr)
+#define nalu_hypre_lr (globals->_lr)
 #define lastlr (globals->_lastlr)
 #define w (globals->_w)
 #define firstrow (globals->_firstrow)
@@ -115,7 +115,7 @@ NALU_HYPRE_Int Ul_timer;
 #include "./struct.h"
 
 /*--------------------------------------------------------------------------
- * hypre_DistributedMatrixPilutSolver
+ * nalu_hypre_DistributedMatrixPilutSolver
  *--------------------------------------------------------------------------*/
 
 typedef struct
@@ -134,22 +134,22 @@ typedef struct
   /* Data that is passed from the factor to the solve */
   FactorMatType         *FactorMat;
 
-  hypre_PilutSolverGlobals *globals;
+  nalu_hypre_PilutSolverGlobals *globals;
 
-} hypre_DistributedMatrixPilutSolver;
+} nalu_hypre_DistributedMatrixPilutSolver;
 
 /*--------------------------------------------------------------------------
- * Accessor functions for the hypre_DistributedMatrixPilutSolver structure
+ * Accessor functions for the nalu_hypre_DistributedMatrixPilutSolver structure
  *--------------------------------------------------------------------------*/
 
-#define hypre_DistributedMatrixPilutSolverComm(solver)            ((solver) -> comm)
-#define hypre_DistributedMatrixPilutSolverDataDist(solver)        ((solver) -> DataDist)
-#define hypre_DistributedMatrixPilutSolverMatrix(solver)          ((solver) -> Matrix)
-#define hypre_DistributedMatrixPilutSolverGmaxnz(solver)          ((solver) -> gmaxnz)
-#define hypre_DistributedMatrixPilutSolverTol(solver)             ((solver) -> tol)
-#define hypre_DistributedMatrixPilutSolverMaxIts(solver)          ((solver) -> max_its)
-#define hypre_DistributedMatrixPilutSolverFactorMat(solver)       ((solver) -> FactorMat)
-#define hypre_DistributedMatrixPilutSolverGlobals(solver)         ((solver) -> globals)
+#define nalu_hypre_DistributedMatrixPilutSolverComm(solver)            ((solver) -> comm)
+#define nalu_hypre_DistributedMatrixPilutSolverDataDist(solver)        ((solver) -> DataDist)
+#define nalu_hypre_DistributedMatrixPilutSolverMatrix(solver)          ((solver) -> Matrix)
+#define nalu_hypre_DistributedMatrixPilutSolverGmaxnz(solver)          ((solver) -> gmaxnz)
+#define nalu_hypre_DistributedMatrixPilutSolverTol(solver)             ((solver) -> tol)
+#define nalu_hypre_DistributedMatrixPilutSolverMaxIts(solver)          ((solver) -> max_its)
+#define nalu_hypre_DistributedMatrixPilutSolverFactorMat(solver)       ((solver) -> FactorMat)
+#define nalu_hypre_DistributedMatrixPilutSolverGlobals(solver)         ((solver) -> globals)
 
 /* Include internal prototypes */
 #include "./internal_protos.h"

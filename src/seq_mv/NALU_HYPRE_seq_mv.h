@@ -24,16 +24,16 @@ extern "C" {
  * Structures
  *--------------------------------------------------------------------------*/
 
-struct hypre_CSRMatrix_struct;
-typedef struct hypre_CSRMatrix_struct *NALU_HYPRE_CSRMatrix;
-struct hypre_MappedMatrix_struct;
-typedef struct hypre_MappedMatrix_struct *NALU_HYPRE_MappedMatrix;
-struct hypre_MultiblockMatrix_struct;
-typedef struct hypre_MultiblockMatrix_struct *NALU_HYPRE_MultiblockMatrix;
+struct nalu_hypre_CSRMatrix_struct;
+typedef struct nalu_hypre_CSRMatrix_struct *NALU_HYPRE_CSRMatrix;
+struct nalu_hypre_MappedMatrix_struct;
+typedef struct nalu_hypre_MappedMatrix_struct *NALU_HYPRE_MappedMatrix;
+struct nalu_hypre_MultiblockMatrix_struct;
+typedef struct nalu_hypre_MultiblockMatrix_struct *NALU_HYPRE_MultiblockMatrix;
 #ifndef NALU_HYPRE_VECTOR_STRUCT
 #define NALU_HYPRE_VECTOR_STRUCT
-struct hypre_Vector_struct;
-typedef struct hypre_Vector_struct *NALU_HYPRE_Vector;
+struct nalu_hypre_Vector_struct;
+typedef struct nalu_hypre_Vector_struct *NALU_HYPRE_Vector;
 #endif
 
 /*--------------------------------------------------------------------------
@@ -137,7 +137,7 @@ typedef enum NALU_HYPRE_TimerID
    NALU_HYPRE_TIMER_ID_COUNT
 } NALU_HYPRE_TimerID;
 
-extern NALU_HYPRE_Real hypre_profile_times[NALU_HYPRE_TIMER_ID_COUNT];
+extern NALU_HYPRE_Real nalu_hypre_profile_times[NALU_HYPRE_TIMER_ID_COUNT];
 
 #ifdef __cplusplus
 }

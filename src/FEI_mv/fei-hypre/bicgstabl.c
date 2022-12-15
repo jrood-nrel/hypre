@@ -11,17 +11,17 @@
  *
  *****************************************************************************/
 
-#include "utilities/_hypre_utilities.h"
+#include "utilities/_nalu_hypre_utilities.h"
 #include "NALU_HYPRE.h"
 #include "IJ_mv/NALU_HYPRE_IJ_mv.h"
 #include "parcsr_mv/NALU_HYPRE_parcsr_mv.h"
-#include "parcsr_mv/_hypre_parcsr_mv.h"
-#include "parcsr_ls/_hypre_parcsr_ls.h"
+#include "parcsr_mv/_nalu_hypre_parcsr_mv.h"
+#include "parcsr_ls/_nalu_hypre_parcsr_ls.h"
 #include "parcsr_ls/NALU_HYPRE_parcsr_ls.h"
 
-#include "_hypre_FEI.h"
+#include "_nalu_hypre_FEI.h"
 /*--------------------------------------------------------------------------
- * hypre_BiCGSTABLData
+ * nalu_hypre_BiCGSTABLData
  *--------------------------------------------------------------------------*/
 
 typedef struct
@@ -62,25 +62,25 @@ typedef struct
    double  *norms;
    char    *log_file_name;
 
-} hypre_BiCGSTABLData;
+} nalu_hypre_BiCGSTABLData;
 
 /*--------------------------------------------------------------------------
- * hypre_BiCGSTABLCreate
+ * nalu_hypre_BiCGSTABLCreate
  *--------------------------------------------------------------------------*/
  
-void * hypre_BiCGSTABLCreate( )
+void * nalu_hypre_BiCGSTABLCreate( )
 {
-   hypre_BiCGSTABLData *bicgstab_data;
+   nalu_hypre_BiCGSTABLData *bicgstab_data;
  
-   bicgstab_data = hypre_CTAlloc(hypre_BiCGSTABLData,  1, NALU_HYPRE_MEMORY_HOST);
+   bicgstab_data = nalu_hypre_CTAlloc(nalu_hypre_BiCGSTABLData,  1, NALU_HYPRE_MEMORY_HOST);
  
    /* set defaults */
    (bicgstab_data -> tol)            = 1.0e-06;
    (bicgstab_data -> size)           = 2;
    (bicgstab_data -> max_iter)       = 1000;
    (bicgstab_data -> stop_crit)      = 0; /* rel. residual norm */
-   (bicgstab_data -> precond)        = hypre_ParKrylovIdentity;
-   (bicgstab_data -> precond_setup)  = hypre_ParKrylovIdentitySetup;
+   (bicgstab_data -> precond)        = nalu_hypre_ParKrylovIdentity;
+   (bicgstab_data -> precond_setup)  = nalu_hypre_ParKrylovIdentitySetup;
    (bicgstab_data -> precond_data)   = NULL;
    (bicgstab_data -> logging)        = 0;
    (bicgstab_data -> s)              = NULL;
@@ -104,51 +104,51 @@ void * hypre_BiCGSTABLCreate( )
 }
 
 /*--------------------------------------------------------------------------
- * hypre_BiCGSTABLDestroy
+ * nalu_hypre_BiCGSTABLDestroy
  *--------------------------------------------------------------------------*/
  
-int hypre_BiCGSTABLDestroy( void *bicgstab_vdata )
+int nalu_hypre_BiCGSTABLDestroy( void *bicgstab_vdata )
 {
-	hypre_BiCGSTABLData *bicgstab_data = (hypre_BiCGSTABLData *) bicgstab_vdata;
+	nalu_hypre_BiCGSTABLData *bicgstab_data = (nalu_hypre_BiCGSTABLData *) bicgstab_vdata;
    int ierr = 0;
  
    if (bicgstab_data)
    {
       if ((bicgstab_data -> logging) > 0)
       {
-         hypre_TFree(bicgstab_data -> norms, NALU_HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(bicgstab_data -> norms, NALU_HYPRE_MEMORY_HOST);
       }
  
-      hypre_ParKrylovMatvecDestroy(bicgstab_data -> matvec_data);
+      nalu_hypre_ParKrylovMatvecDestroy(bicgstab_data -> matvec_data);
  
-      hypre_ParKrylovDestroyVector(bicgstab_data -> r);
-      hypre_ParKrylovDestroyVector(bicgstab_data -> s);
-      hypre_ParKrylovDestroyVector(bicgstab_data -> y);
-      hypre_ParKrylovDestroyVector(bicgstab_data -> t);
-      hypre_ParKrylovDestroyVector(bicgstab_data -> tt);
-      hypre_ParKrylovDestroyVector(bicgstab_data -> st);
-      hypre_ParKrylovDestroyVector(bicgstab_data -> as);
-      hypre_ParKrylovDestroyVector(bicgstab_data -> asm1);
-      hypre_ParKrylovDestroyVector(bicgstab_data -> awt);
-      hypre_ParKrylovDestroyVector(bicgstab_data -> wt);
-      hypre_ParKrylovDestroyVector(bicgstab_data -> wh);
-      hypre_ParKrylovDestroyVector(bicgstab_data -> at);
-      hypre_ParKrylovDestroyVector(bicgstab_data -> xt);
-      hypre_ParKrylovDestroyVector(bicgstab_data -> t2);
+      nalu_hypre_ParKrylovDestroyVector(bicgstab_data -> r);
+      nalu_hypre_ParKrylovDestroyVector(bicgstab_data -> s);
+      nalu_hypre_ParKrylovDestroyVector(bicgstab_data -> y);
+      nalu_hypre_ParKrylovDestroyVector(bicgstab_data -> t);
+      nalu_hypre_ParKrylovDestroyVector(bicgstab_data -> tt);
+      nalu_hypre_ParKrylovDestroyVector(bicgstab_data -> st);
+      nalu_hypre_ParKrylovDestroyVector(bicgstab_data -> as);
+      nalu_hypre_ParKrylovDestroyVector(bicgstab_data -> asm1);
+      nalu_hypre_ParKrylovDestroyVector(bicgstab_data -> awt);
+      nalu_hypre_ParKrylovDestroyVector(bicgstab_data -> wt);
+      nalu_hypre_ParKrylovDestroyVector(bicgstab_data -> wh);
+      nalu_hypre_ParKrylovDestroyVector(bicgstab_data -> at);
+      nalu_hypre_ParKrylovDestroyVector(bicgstab_data -> xt);
+      nalu_hypre_ParKrylovDestroyVector(bicgstab_data -> t2);
  
-      hypre_TFree(bicgstab_data, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(bicgstab_data, NALU_HYPRE_MEMORY_HOST);
    }
  
    return(ierr);
 }
 
 /*--------------------------------------------------------------------------
- * hypre_BiCGSTABLSetup
+ * nalu_hypre_BiCGSTABLSetup
  *--------------------------------------------------------------------------*/
  
-int hypre_BiCGSTABLSetup( void *bicgstab_vdata, void *A, void *b, void *x         )
+int nalu_hypre_BiCGSTABLSetup( void *bicgstab_vdata, void *A, void *b, void *x         )
 {
-	hypre_BiCGSTABLData *bicgstab_data     = (hypre_BiCGSTABLData *) bicgstab_vdata;
+	nalu_hypre_BiCGSTABLData *bicgstab_data     = (nalu_hypre_BiCGSTABLData *) bicgstab_vdata;
    int            max_iter         = (bicgstab_data -> max_iter);
    int          (*precond_setup)(void*, void*, void*, void*) = (bicgstab_data -> precond_setup);
    void          *precond_data     = (bicgstab_data -> precond_data);
@@ -163,36 +163,36 @@ int hypre_BiCGSTABLSetup( void *bicgstab_vdata, void *A, void *b, void *x       
     *--------------------------------------------------*/
  
    if ((bicgstab_data -> r) == NULL)
-      (bicgstab_data -> r) = hypre_ParKrylovCreateVector(b);
+      (bicgstab_data -> r) = nalu_hypre_ParKrylovCreateVector(b);
    if ((bicgstab_data -> s) == NULL)
-      (bicgstab_data -> s) = hypre_ParKrylovCreateVector(b);
+      (bicgstab_data -> s) = nalu_hypre_ParKrylovCreateVector(b);
    if ((bicgstab_data -> y) == NULL)
-      (bicgstab_data -> y) = hypre_ParKrylovCreateVector(b);
+      (bicgstab_data -> y) = nalu_hypre_ParKrylovCreateVector(b);
    if ((bicgstab_data -> t) == NULL)
-      (bicgstab_data -> t) = hypre_ParKrylovCreateVector(b);
+      (bicgstab_data -> t) = nalu_hypre_ParKrylovCreateVector(b);
    if ((bicgstab_data -> tt) == NULL)
-      (bicgstab_data -> tt) = hypre_ParKrylovCreateVector(b);
+      (bicgstab_data -> tt) = nalu_hypre_ParKrylovCreateVector(b);
    if ((bicgstab_data -> st) == NULL)
-      (bicgstab_data -> st) = hypre_ParKrylovCreateVector(b);
+      (bicgstab_data -> st) = nalu_hypre_ParKrylovCreateVector(b);
    if ((bicgstab_data -> asm1) == NULL)
-      (bicgstab_data -> asm1) = hypre_ParKrylovCreateVector(b);
+      (bicgstab_data -> asm1) = nalu_hypre_ParKrylovCreateVector(b);
    if ((bicgstab_data -> as) == NULL)
-      (bicgstab_data -> as) = hypre_ParKrylovCreateVector(b);
+      (bicgstab_data -> as) = nalu_hypre_ParKrylovCreateVector(b);
    if ((bicgstab_data -> awt) == NULL)
-      (bicgstab_data -> awt) = hypre_ParKrylovCreateVector(b);
+      (bicgstab_data -> awt) = nalu_hypre_ParKrylovCreateVector(b);
    if ((bicgstab_data -> wt) == NULL)
-      (bicgstab_data -> wt) = hypre_ParKrylovCreateVector(b);
+      (bicgstab_data -> wt) = nalu_hypre_ParKrylovCreateVector(b);
    if ((bicgstab_data -> wh) == NULL)
-      (bicgstab_data -> wh) = hypre_ParKrylovCreateVector(b);
+      (bicgstab_data -> wh) = nalu_hypre_ParKrylovCreateVector(b);
    if ((bicgstab_data -> at) == NULL)
-      (bicgstab_data -> at) = hypre_ParKrylovCreateVector(b);
+      (bicgstab_data -> at) = nalu_hypre_ParKrylovCreateVector(b);
    if ((bicgstab_data -> xt) == NULL)
-      (bicgstab_data -> xt) = hypre_ParKrylovCreateVector(b);
+      (bicgstab_data -> xt) = nalu_hypre_ParKrylovCreateVector(b);
    if ((bicgstab_data -> t2) == NULL)
-      (bicgstab_data -> t2) = hypre_ParKrylovCreateVector(b);
+      (bicgstab_data -> t2) = nalu_hypre_ParKrylovCreateVector(b);
  
    if ((bicgstab_data -> matvec_data) == NULL)
-      (bicgstab_data -> matvec_data) = hypre_ParKrylovMatvecCreate(A, x);
+      (bicgstab_data -> matvec_data) = nalu_hypre_ParKrylovMatvecCreate(A, x);
  
    ierr = precond_setup(precond_data, A, b, x);
  
@@ -203,7 +203,7 @@ int hypre_BiCGSTABLSetup( void *bicgstab_vdata, void *A, void *b, void *x       
    if ((bicgstab_data -> logging) > 0)
    {
       if ((bicgstab_data -> norms) == NULL)
-         (bicgstab_data -> norms) = hypre_CTAlloc(double,  max_iter + 1, NALU_HYPRE_MEMORY_HOST);
+         (bicgstab_data -> norms) = nalu_hypre_CTAlloc(double,  max_iter + 1, NALU_HYPRE_MEMORY_HOST);
       if ((bicgstab_data -> log_file_name) == NULL)
 		  (bicgstab_data -> log_file_name) = (char*) "bicgstab.out.log";
    }
@@ -212,12 +212,12 @@ int hypre_BiCGSTABLSetup( void *bicgstab_vdata, void *A, void *b, void *x       
 }
  
 /*--------------------------------------------------------------------------
- * hypre_BiCGSTABLSolve
+ * nalu_hypre_BiCGSTABLSolve
  *-------------------------------------------------------------------------*/
 
-int hypre_BiCGSTABLSolve(void  *bicgstab_vdata, void  *A, void  *b, void  *x)
+int nalu_hypre_BiCGSTABLSolve(void  *bicgstab_vdata, void  *A, void  *b, void  *x)
 {
-	hypre_BiCGSTABLData  *bicgstab_data   = (hypre_BiCGSTABLData *) bicgstab_vdata;
+	nalu_hypre_BiCGSTABLData  *bicgstab_data   = (nalu_hypre_BiCGSTABLData *) bicgstab_vdata;
    int 		     max_iter     = (bicgstab_data -> max_iter);
    int 		     stop_crit    = (bicgstab_data -> stop_crit);
    double 	     accuracy     = (bicgstab_data -> tol);
@@ -251,21 +251,21 @@ int hypre_BiCGSTABLSolve(void  *bicgstab_vdata, void  *A, void  *b, void  *x)
    double     A11, A12, A21, A22, B1, B2, omega; 
    double     epsilon, phi, delta, deltam1, omegam1;
 
-   hypre_ParKrylovCommInfo(A,&my_id,&num_procs);
+   nalu_hypre_ParKrylovCommInfo(A,&my_id,&num_procs);
    if (logging > 0)
    {
       norms          = (bicgstab_data -> norms);
    }
 
    /* initialize work arrays */
-hypre_ParKrylovClearVector(x);
-   hypre_ParKrylovCopyVector(b,r);
+nalu_hypre_ParKrylovClearVector(x);
+   nalu_hypre_ParKrylovCopyVector(b,r);
 
    /* compute initial residual */
 
-   hypre_ParKrylovMatvec(matvec_data,-1.0, A, x, 1.0, r);
-   r_norm = sqrt(hypre_ParKrylovInnerProd(r,r));
-   b_norm = sqrt(hypre_ParKrylovInnerProd(b,b));
+   nalu_hypre_ParKrylovMatvec(matvec_data,-1.0, A, x, 1.0, r);
+   r_norm = sqrt(nalu_hypre_ParKrylovInnerProd(r,r));
+   b_norm = sqrt(nalu_hypre_ParKrylovInnerProd(b,b));
    if (logging > 0)
    {
       norms[0] = r_norm;
@@ -294,12 +294,12 @@ hypre_ParKrylovClearVector(x);
    /* convergence criterion |r_i| <= accuracy , absolute residual norm*/
    if (stop_crit) epsilon = accuracy;
 
-   hypre_ParKrylovCopyVector(r,s);
-   hypre_ParKrylovCopyVector(r,y);
-   delta = hypre_ParKrylovInnerProd(r,y);
+   nalu_hypre_ParKrylovCopyVector(r,s);
+   nalu_hypre_ParKrylovCopyVector(r,y);
+   delta = nalu_hypre_ParKrylovInnerProd(r,y);
    precond(precond_data, A, s, t);
-   hypre_ParKrylovMatvec(matvec_data,1.0,A,t,0.0,as);
-   phi = hypre_ParKrylovInnerProd(y,as) / delta;
+   nalu_hypre_ParKrylovMatvec(matvec_data,1.0,A,t,0.0,as);
+   phi = nalu_hypre_ParKrylovInnerProd(y,as) / delta;
    omega = 0.0;
    
    while ( iter < max_iter && r_norm > epsilon )
@@ -311,55 +311,55 @@ hypre_ParKrylovClearVector(x);
 
       if ( iter >= 2 ) 
       {
-         hypre_ParKrylovCopyVector(awt,at);
+         nalu_hypre_ParKrylovCopyVector(awt,at);
          dtmp = - psi;
-         hypre_ParKrylovAxpy(dtmp,asm1,at);
-         hypre_ParKrylovCopyVector(wt,wh);
+         nalu_hypre_ParKrylovAxpy(dtmp,asm1,at);
+         nalu_hypre_ParKrylovCopyVector(wt,wh);
          dtmp = - omega;
-         hypre_ParKrylovAxpy(dtmp,at,wh);
+         nalu_hypre_ParKrylovAxpy(dtmp,at,wh);
       }
 
-      hypre_ParKrylovCopyVector(r,wt);
+      nalu_hypre_ParKrylovCopyVector(r,wt);
       dtmp = - omega;
-      hypre_ParKrylovAxpy(dtmp,as,wt);
+      nalu_hypre_ParKrylovAxpy(dtmp,as,wt);
 
       if ( iter % 2 == 1 )
       {
          precond(precond_data, A, wt, t);
-         hypre_ParKrylovMatvec(matvec_data,1.0,A,t,0.0,awt);
-         dtmp = hypre_ParKrylovInnerProd(wt,awt);
-         dtmp2 = hypre_ParKrylovInnerProd(awt,awt);
+         nalu_hypre_ParKrylovMatvec(matvec_data,1.0,A,t,0.0,awt);
+         dtmp = nalu_hypre_ParKrylovInnerProd(wt,awt);
+         dtmp2 = nalu_hypre_ParKrylovInnerProd(awt,awt);
          chi = dtmp / dtmp2;
-         hypre_ParKrylovCopyVector(wt,r);
+         nalu_hypre_ParKrylovCopyVector(wt,r);
          dtmp = - chi;
-         hypre_ParKrylovAxpy(dtmp,awt,r);
-         hypre_ParKrylovCopyVector(x,xt);
-         hypre_ParKrylovAxpy(omega,s,x);
-         hypre_ParKrylovAxpy(chi,wt,x);
+         nalu_hypre_ParKrylovAxpy(dtmp,awt,r);
+         nalu_hypre_ParKrylovCopyVector(x,xt);
+         nalu_hypre_ParKrylovAxpy(omega,s,x);
+         nalu_hypre_ParKrylovAxpy(chi,wt,x);
          deltam1 = delta;
-         delta = hypre_ParKrylovInnerProd(r,y);
+         delta = nalu_hypre_ParKrylovInnerProd(r,y);
          psi = - omega * delta / ( deltam1 * chi);
-         hypre_ParKrylovCopyVector(s,st);
-         hypre_ParKrylovCopyVector(s,t);
+         nalu_hypre_ParKrylovCopyVector(s,st);
+         nalu_hypre_ParKrylovCopyVector(s,t);
          dtmp = - chi;
-         hypre_ParKrylovAxpy(dtmp,as,t);
-         hypre_ParKrylovCopyVector(r,s);
+         nalu_hypre_ParKrylovAxpy(dtmp,as,t);
+         nalu_hypre_ParKrylovCopyVector(r,s);
          dtmp = - psi;
-         hypre_ParKrylovAxpy(dtmp,t,s);
+         nalu_hypre_ParKrylovAxpy(dtmp,t,s);
       }
       else
       {
          dtmp = - 1.0;
-         hypre_ParKrylovCopyVector(wt,t2);
-         hypre_ParKrylovAxpy(dtmp,wh,t2);
+         nalu_hypre_ParKrylovCopyVector(wt,t2);
+         nalu_hypre_ParKrylovAxpy(dtmp,wh,t2);
          precond(precond_data, A, wt, t);
-         hypre_ParKrylovMatvec(matvec_data,1.0,A,t,0.0,awt);
-         A11 = hypre_ParKrylovInnerProd(t2,t2);
-         A12 = hypre_ParKrylovInnerProd(t2,awt);
+         nalu_hypre_ParKrylovMatvec(matvec_data,1.0,A,t,0.0,awt);
+         A11 = nalu_hypre_ParKrylovInnerProd(t2,t2);
+         A12 = nalu_hypre_ParKrylovInnerProd(t2,awt);
          A21 = A12;
-         A22 = hypre_ParKrylovInnerProd(awt,awt);
-         B1  = hypre_ParKrylovInnerProd(t2,wh);
-         B2  = hypre_ParKrylovInnerProd(awt,wh);
+         A22 = nalu_hypre_ParKrylovInnerProd(awt,awt);
+         B1  = nalu_hypre_ParKrylovInnerProd(t2,wh);
+         B2  = nalu_hypre_ParKrylovInnerProd(awt,wh);
          flag = 0;
          if ( A21 > A11 )
          {
@@ -377,49 +377,49 @@ hypre_ParKrylovClearVector(x);
          eta = -eta;
          if ( flag == 1 ) { dtmp = eta; eta = xi; xi = dtmp;}
          dtmp = 1.0 - xi;
-         hypre_ParKrylovCopyVector(wh,r);
-         hypre_ParKrylovScaleVector(dtmp,r);
-         hypre_ParKrylovAxpy(xi,wt,r);
-         hypre_ParKrylovAxpy(eta,awt,r);
-         hypre_ParKrylovCopyVector(x,t);
-         hypre_ParKrylovAxpy(omega,s,t);
-         hypre_ParKrylovCopyVector(xt,x);
-         hypre_ParKrylovAxpy(omegam1,st,x);
-         hypre_ParKrylovAxpy(omega,tt,x);
+         nalu_hypre_ParKrylovCopyVector(wh,r);
+         nalu_hypre_ParKrylovScaleVector(dtmp,r);
+         nalu_hypre_ParKrylovAxpy(xi,wt,r);
+         nalu_hypre_ParKrylovAxpy(eta,awt,r);
+         nalu_hypre_ParKrylovCopyVector(x,t);
+         nalu_hypre_ParKrylovAxpy(omega,s,t);
+         nalu_hypre_ParKrylovCopyVector(xt,x);
+         nalu_hypre_ParKrylovAxpy(omegam1,st,x);
+         nalu_hypre_ParKrylovAxpy(omega,tt,x);
          dtmp = 1.0 - xi;
-         hypre_ParKrylovScaleVector(dtmp,x);
-         hypre_ParKrylovAxpy(xi,t,x);
+         nalu_hypre_ParKrylovScaleVector(dtmp,x);
+         nalu_hypre_ParKrylovAxpy(xi,t,x);
          dtmp = - eta;
-         hypre_ParKrylovAxpy(dtmp,wt,x);
+         nalu_hypre_ParKrylovAxpy(dtmp,wt,x);
          deltam1 = delta;
-         delta  = hypre_ParKrylovInnerProd(r,y);
+         delta  = nalu_hypre_ParKrylovInnerProd(r,y);
          psi = omega * delta / ( deltam1 * eta);
-         hypre_ParKrylovCopyVector(s,st);
+         nalu_hypre_ParKrylovCopyVector(s,st);
          dtmp = 1.0 - xi;
-         hypre_ParKrylovCopyVector(tt,t);
-         hypre_ParKrylovAxpy(xi,s,t);
-         hypre_ParKrylovAxpy(eta,as,t);
-         hypre_ParKrylovCopyVector(r,s);
+         nalu_hypre_ParKrylovCopyVector(tt,t);
+         nalu_hypre_ParKrylovAxpy(xi,s,t);
+         nalu_hypre_ParKrylovAxpy(eta,as,t);
+         nalu_hypre_ParKrylovCopyVector(r,s);
          dtmp = - psi;
-         hypre_ParKrylovAxpy(dtmp,t,s);
+         nalu_hypre_ParKrylovAxpy(dtmp,t,s);
       }
 
-      hypre_ParKrylovCopyVector(wt,tt);
+      nalu_hypre_ParKrylovCopyVector(wt,tt);
       dtmp = - psi;
-      hypre_ParKrylovAxpy(dtmp,st,tt);
-      hypre_ParKrylovCopyVector(as,asm1);
+      nalu_hypre_ParKrylovAxpy(dtmp,st,tt);
+      nalu_hypre_ParKrylovCopyVector(as,asm1);
       precond(precond_data, A, s, t);
-      hypre_ParKrylovMatvec(matvec_data,1.0,A,t,0.0,as);
-      phi = hypre_ParKrylovInnerProd(as,y) / delta;
+      nalu_hypre_ParKrylovMatvec(matvec_data,1.0,A,t,0.0,as);
+      phi = nalu_hypre_ParKrylovInnerProd(as,y) / delta;
         
       precond(precond_data, A, x, t);
-      hypre_ParKrylovMatvec(matvec_data,-1.0, A, t, 1.0, r);
-      r_norm = hypre_ParKrylovInnerProd(r,r);
+      nalu_hypre_ParKrylovMatvec(matvec_data,-1.0, A, t, 1.0, r);
+      r_norm = nalu_hypre_ParKrylovInnerProd(r,r);
       if ( my_id == 0 && logging )
          printf(" BiCGSTAB2 : iter %4d - res. norm = %e \n", iter, r_norm);
    }
    precond(precond_data, A, x, t);
-   hypre_ParKrylovCopyVector(t,x);
+   nalu_hypre_ParKrylovCopyVector(t,x);
 
    (bicgstab_data -> num_iterations) = iter;
    if (b_norm > 0.0)
@@ -433,12 +433,12 @@ hypre_ParKrylovClearVector(x);
 }
 
 /*--------------------------------------------------------------------------
- * hypre_BiCGSTABLSetTol
+ * nalu_hypre_BiCGSTABLSetTol
  *--------------------------------------------------------------------------*/
  
-int hypre_BiCGSTABLSetTol( void *bicgstab_vdata, double tol )
+int nalu_hypre_BiCGSTABLSetTol( void *bicgstab_vdata, double tol )
 {
-	hypre_BiCGSTABLData *bicgstab_data = (hypre_BiCGSTABLData *) bicgstab_vdata;
+	nalu_hypre_BiCGSTABLData *bicgstab_data = (nalu_hypre_BiCGSTABLData *) bicgstab_vdata;
    int            ierr = 0;
  
    (bicgstab_data -> tol) = tol;
@@ -447,12 +447,12 @@ int hypre_BiCGSTABLSetTol( void *bicgstab_vdata, double tol )
 }
 
 /*--------------------------------------------------------------------------
- * hypre_BiCGSTABLSetMinIter
+ * nalu_hypre_BiCGSTABLSetMinIter
  *--------------------------------------------------------------------------*/
  
-int hypre_BiCGSTABLSetSize( void *bicgstab_vdata, int size )
+int nalu_hypre_BiCGSTABLSetSize( void *bicgstab_vdata, int size )
 {
-	hypre_BiCGSTABLData *bicgstab_data = (hypre_BiCGSTABLData *) bicgstab_vdata;
+	nalu_hypre_BiCGSTABLData *bicgstab_data = (nalu_hypre_BiCGSTABLData *) bicgstab_vdata;
    int              ierr = 0;
  
    (bicgstab_data -> size) = size;
@@ -461,12 +461,12 @@ int hypre_BiCGSTABLSetSize( void *bicgstab_vdata, int size )
 }
 
 /*--------------------------------------------------------------------------
- * hypre_BiCGSTABLSetMaxIter
+ * nalu_hypre_BiCGSTABLSetMaxIter
  *--------------------------------------------------------------------------*/
  
-int hypre_BiCGSTABLSetMaxIter( void *bicgstab_vdata, int max_iter )
+int nalu_hypre_BiCGSTABLSetMaxIter( void *bicgstab_vdata, int max_iter )
 {
-	hypre_BiCGSTABLData *bicgstab_data = (hypre_BiCGSTABLData *) bicgstab_vdata;
+	nalu_hypre_BiCGSTABLData *bicgstab_data = (nalu_hypre_BiCGSTABLData *) bicgstab_vdata;
    int              ierr = 0;
  
    (bicgstab_data -> max_iter) = max_iter;
@@ -475,12 +475,12 @@ int hypre_BiCGSTABLSetMaxIter( void *bicgstab_vdata, int max_iter )
 }
 
 /*--------------------------------------------------------------------------
- * hypre_BiCGSTABLSetStopCrit
+ * nalu_hypre_BiCGSTABLSetStopCrit
  *--------------------------------------------------------------------------*/
  
-int hypre_BiCGSTABLSetStopCrit( void *bicgstab_vdata, double stop_crit )
+int nalu_hypre_BiCGSTABLSetStopCrit( void *bicgstab_vdata, double stop_crit )
 {
-	hypre_BiCGSTABLData *bicgstab_data = (hypre_BiCGSTABLData *) bicgstab_vdata;
+	nalu_hypre_BiCGSTABLData *bicgstab_data = (nalu_hypre_BiCGSTABLData *) bicgstab_vdata;
    int            ierr = 0;
  
    (bicgstab_data -> stop_crit) = stop_crit;
@@ -489,13 +489,13 @@ int hypre_BiCGSTABLSetStopCrit( void *bicgstab_vdata, double stop_crit )
 }
 
 /*--------------------------------------------------------------------------
- * hypre_BiCGSTABLSetPrecond
+ * nalu_hypre_BiCGSTABLSetPrecond
  *--------------------------------------------------------------------------*/
  
-int hypre_BiCGSTABLSetPrecond( void  *bicgstab_vdata, int  (*precond)(void*, void*, void*, void*),
+int nalu_hypre_BiCGSTABLSetPrecond( void  *bicgstab_vdata, int  (*precond)(void*, void*, void*, void*),
                        int  (*precond_setup)(void*, void*, void*, void*), void  *precond_data )
 {
-	hypre_BiCGSTABLData *bicgstab_data = (hypre_BiCGSTABLData *) bicgstab_vdata;
+	nalu_hypre_BiCGSTABLData *bicgstab_data = (nalu_hypre_BiCGSTABLData *) bicgstab_vdata;
    int              ierr = 0;
  
    (bicgstab_data -> precond)        = precond;
@@ -506,12 +506,12 @@ int hypre_BiCGSTABLSetPrecond( void  *bicgstab_vdata, int  (*precond)(void*, voi
 }
  
 /*--------------------------------------------------------------------------
- * hypre_BiCGSTABLSetLogging
+ * nalu_hypre_BiCGSTABLSetLogging
  *--------------------------------------------------------------------------*/
  
-int hypre_BiCGSTABLSetLogging( void *bicgstab_vdata, int logging)
+int nalu_hypre_BiCGSTABLSetLogging( void *bicgstab_vdata, int logging)
 {
-	hypre_BiCGSTABLData *bicgstab_data = (hypre_BiCGSTABLData *) bicgstab_vdata;
+	nalu_hypre_BiCGSTABLData *bicgstab_data = (nalu_hypre_BiCGSTABLData *) bicgstab_vdata;
    int              ierr = 0;
  
    (bicgstab_data -> logging) = logging;
@@ -520,12 +520,12 @@ int hypre_BiCGSTABLSetLogging( void *bicgstab_vdata, int logging)
 }
 
 /*--------------------------------------------------------------------------
- * hypre_BiCGSTABLGetNumIterations
+ * nalu_hypre_BiCGSTABLGetNumIterations
  *--------------------------------------------------------------------------*/
  
-int hypre_BiCGSTABLGetNumIterations(void *bicgstab_vdata,int  *num_iterations)
+int nalu_hypre_BiCGSTABLGetNumIterations(void *bicgstab_vdata,int  *num_iterations)
 {
-	hypre_BiCGSTABLData *bicgstab_data = (hypre_BiCGSTABLData *) bicgstab_vdata;
+	nalu_hypre_BiCGSTABLData *bicgstab_data = (nalu_hypre_BiCGSTABLData *) bicgstab_vdata;
    int              ierr = 0;
  
    *num_iterations = (bicgstab_data -> num_iterations);
@@ -534,13 +534,13 @@ int hypre_BiCGSTABLGetNumIterations(void *bicgstab_vdata,int  *num_iterations)
 }
  
 /*--------------------------------------------------------------------------
- * hypre_BiCGSTABLGetFinalRelativeResidualNorm
+ * nalu_hypre_BiCGSTABLGetFinalRelativeResidualNorm
  *--------------------------------------------------------------------------*/
  
-int hypre_BiCGSTABLGetFinalRelativeResidualNorm( void   *bicgstab_vdata,
+int nalu_hypre_BiCGSTABLGetFinalRelativeResidualNorm( void   *bicgstab_vdata,
                                          double *relative_residual_norm )
 {
-	hypre_BiCGSTABLData *bicgstab_data = (hypre_BiCGSTABLData *) bicgstab_vdata;
+	nalu_hypre_BiCGSTABLData *bicgstab_data = (nalu_hypre_BiCGSTABLData *) bicgstab_vdata;
    int 		ierr = 0;
  
    *relative_residual_norm = (bicgstab_data -> rel_residual_norm);
@@ -562,7 +562,7 @@ int hypre_BiCGSTABLGetFinalRelativeResidualNorm( void   *bicgstab_vdata,
  *
  *****************************************************************************/
 
-#include "utilities/_hypre_utilities.h"
+#include "utilities/_nalu_hypre_utilities.h"
 #include "NALU_HYPRE.h"
 #include "IJ_mv/NALU_HYPRE_IJ_mv.h"
 #include "parcsr_mv/NALU_HYPRE_parcsr_mv.h"
@@ -572,7 +572,7 @@ int hypre_BiCGSTABLGetFinalRelativeResidualNorm( void   *bicgstab_vdata,
 #include "headers.h"
 
 /*--------------------------------------------------------------------------
- * hypre_BiCGSTABLData
+ * nalu_hypre_BiCGSTABLData
  *--------------------------------------------------------------------------*/
 
 typedef struct
@@ -611,25 +611,25 @@ typedef struct
    double  *norms;
    char    *log_file_name;
 
-} hypre_BiCGSTABLData;
+} nalu_hypre_BiCGSTABLData;
 
 /*--------------------------------------------------------------------------
- * hypre_BiCGSTABLCreate
+ * nalu_hypre_BiCGSTABLCreate
  *--------------------------------------------------------------------------*/
  
-void * hypre_BiCGSTABLCreate( )
+void * nalu_hypre_BiCGSTABLCreate( )
 {
-   hypre_BiCGSTABLData *bicgstab_data;
+   nalu_hypre_BiCGSTABLData *bicgstab_data;
  
-   bicgstab_data = hypre_CTAlloc(hypre_BiCGSTABLData,  1, NALU_HYPRE_MEMORY_HOST);
+   bicgstab_data = nalu_hypre_CTAlloc(nalu_hypre_BiCGSTABLData,  1, NALU_HYPRE_MEMORY_HOST);
  
    /* set defaults */
    (bicgstab_data -> tol)            = 1.0e-06;
    (bicgstab_data -> size)           = 2;
    (bicgstab_data -> max_iter)       = 1000;
    (bicgstab_data -> stop_crit)      = 0; /* rel. residual norm */
-   (bicgstab_data -> precond)        = hypre_ParKrylovIdentity;
-   (bicgstab_data -> precond_setup)  = hypre_ParKrylovIdentitySetup;
+   (bicgstab_data -> precond)        = nalu_hypre_ParKrylovIdentity;
+   (bicgstab_data -> precond_setup)  = nalu_hypre_ParKrylovIdentitySetup;
    (bicgstab_data -> precond_data)   = NULL;
    (bicgstab_data -> logging)        = 0;
    (bicgstab_data -> r)              = NULL;
@@ -652,49 +652,49 @@ void * hypre_BiCGSTABLCreate( )
 }
 
 /*--------------------------------------------------------------------------
- * hypre_BiCGSTABLDestroy
+ * nalu_hypre_BiCGSTABLDestroy
  *--------------------------------------------------------------------------*/
  
-int hypre_BiCGSTABLDestroy( void *bicgstab_vdata )
+int nalu_hypre_BiCGSTABLDestroy( void *bicgstab_vdata )
 {
-	hypre_BiCGSTABLData *bicgstab_data = (hypre_BiCGSTABLData *) bicgstab_vdata;
+	nalu_hypre_BiCGSTABLData *bicgstab_data = (nalu_hypre_BiCGSTABLData *) bicgstab_vdata;
    int i, ierr = 0;
  
    if (bicgstab_data)
    {
       if ((bicgstab_data -> logging) > 0)
       {
-         hypre_TFree(bicgstab_data -> norms, NALU_HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(bicgstab_data -> norms, NALU_HYPRE_MEMORY_HOST);
       }
  
-      hypre_ParKrylovMatvecDestroy(bicgstab_data -> matvec_data);
+      nalu_hypre_ParKrylovMatvecDestroy(bicgstab_data -> matvec_data);
  
-      hypre_ParKrylovDestroyVector(bicgstab_data -> r);
-      hypre_ParKrylovDestroyVector(bicgstab_data -> rh);
-      hypre_ParKrylovDestroyVector(bicgstab_data -> rt);
-      hypre_ParKrylovDestroyVector(bicgstab_data -> rt1);
-      hypre_ParKrylovDestroyVector(bicgstab_data -> rt2);
-      hypre_ParKrylovDestroyVector(bicgstab_data -> rt3);
-      hypre_ParKrylovDestroyVector(bicgstab_data -> ut);
-      hypre_ParKrylovDestroyVector(bicgstab_data -> ut1);
-      hypre_ParKrylovDestroyVector(bicgstab_data -> ut2);
-      hypre_ParKrylovDestroyVector(bicgstab_data -> ut3);
-      hypre_ParKrylovDestroyVector(bicgstab_data -> xh);
-      hypre_ParKrylovDestroyVector(bicgstab_data -> t);
+      nalu_hypre_ParKrylovDestroyVector(bicgstab_data -> r);
+      nalu_hypre_ParKrylovDestroyVector(bicgstab_data -> rh);
+      nalu_hypre_ParKrylovDestroyVector(bicgstab_data -> rt);
+      nalu_hypre_ParKrylovDestroyVector(bicgstab_data -> rt1);
+      nalu_hypre_ParKrylovDestroyVector(bicgstab_data -> rt2);
+      nalu_hypre_ParKrylovDestroyVector(bicgstab_data -> rt3);
+      nalu_hypre_ParKrylovDestroyVector(bicgstab_data -> ut);
+      nalu_hypre_ParKrylovDestroyVector(bicgstab_data -> ut1);
+      nalu_hypre_ParKrylovDestroyVector(bicgstab_data -> ut2);
+      nalu_hypre_ParKrylovDestroyVector(bicgstab_data -> ut3);
+      nalu_hypre_ParKrylovDestroyVector(bicgstab_data -> xh);
+      nalu_hypre_ParKrylovDestroyVector(bicgstab_data -> t);
  
-      hypre_TFree(bicgstab_data, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(bicgstab_data, NALU_HYPRE_MEMORY_HOST);
    }
  
    return(ierr);
 }
 
 /*--------------------------------------------------------------------------
- * hypre_BiCGSTABLSetup
+ * nalu_hypre_BiCGSTABLSetup
  *--------------------------------------------------------------------------*/
  
-int hypre_BiCGSTABLSetup( void *bicgstab_vdata, void *A, void *b, void *x         )
+int nalu_hypre_BiCGSTABLSetup( void *bicgstab_vdata, void *A, void *b, void *x         )
 {
-	hypre_BiCGSTABLData *bicgstab_data     = (hypre_BiCGSTABLData *) bicgstab_vdata;
+	nalu_hypre_BiCGSTABLData *bicgstab_data     = (nalu_hypre_BiCGSTABLData *) bicgstab_vdata;
    int            max_iter         = (bicgstab_data -> max_iter);
    int          (*precond_setup)(void*,void*,void*,void*) = (bicgstab_data -> precond_setup);
    void          *precond_data     = (bicgstab_data -> precond_data);
@@ -709,32 +709,32 @@ int hypre_BiCGSTABLSetup( void *bicgstab_vdata, void *A, void *b, void *x       
     *--------------------------------------------------*/
  
    if ((bicgstab_data -> r) == NULL)
-      (bicgstab_data -> r) = hypre_ParKrylovCreateVector(b);
+      (bicgstab_data -> r) = nalu_hypre_ParKrylovCreateVector(b);
    if ((bicgstab_data -> rh) == NULL)
-      (bicgstab_data -> rh) = hypre_ParKrylovCreateVector(b);
+      (bicgstab_data -> rh) = nalu_hypre_ParKrylovCreateVector(b);
    if ((bicgstab_data -> rt) == NULL)
-      (bicgstab_data -> rt) = hypre_ParKrylovCreateVector(b);
+      (bicgstab_data -> rt) = nalu_hypre_ParKrylovCreateVector(b);
    if ((bicgstab_data -> rt1) == NULL)
-      (bicgstab_data -> rt1) = hypre_ParKrylovCreateVector(b);
+      (bicgstab_data -> rt1) = nalu_hypre_ParKrylovCreateVector(b);
    if ((bicgstab_data -> rt2) == NULL)
-      (bicgstab_data -> rt2) = hypre_ParKrylovCreateVector(b);
+      (bicgstab_data -> rt2) = nalu_hypre_ParKrylovCreateVector(b);
    if ((bicgstab_data -> rt3) == NULL)
-      (bicgstab_data -> rt3) = hypre_ParKrylovCreateVector(b);
+      (bicgstab_data -> rt3) = nalu_hypre_ParKrylovCreateVector(b);
    if ((bicgstab_data -> ut) == NULL)
-      (bicgstab_data -> ut) = hypre_ParKrylovCreateVector(b);
+      (bicgstab_data -> ut) = nalu_hypre_ParKrylovCreateVector(b);
    if ((bicgstab_data -> ut1) == NULL)
-      (bicgstab_data -> ut1) = hypre_ParKrylovCreateVector(b);
+      (bicgstab_data -> ut1) = nalu_hypre_ParKrylovCreateVector(b);
    if ((bicgstab_data -> ut2) == NULL)
-      (bicgstab_data -> ut2) = hypre_ParKrylovCreateVector(b);
+      (bicgstab_data -> ut2) = nalu_hypre_ParKrylovCreateVector(b);
    if ((bicgstab_data -> ut3) == NULL)
-      (bicgstab_data -> ut3) = hypre_ParKrylovCreateVector(b);
+      (bicgstab_data -> ut3) = nalu_hypre_ParKrylovCreateVector(b);
    if ((bicgstab_data -> xh) == NULL)
-      (bicgstab_data -> xh) = hypre_ParKrylovCreateVector(b);
+      (bicgstab_data -> xh) = nalu_hypre_ParKrylovCreateVector(b);
    if ((bicgstab_data -> t) == NULL)
-      (bicgstab_data -> t) = hypre_ParKrylovCreateVector(b);
+      (bicgstab_data -> t) = nalu_hypre_ParKrylovCreateVector(b);
  
    if ((bicgstab_data -> matvec_data) == NULL)
-      (bicgstab_data -> matvec_data) = hypre_ParKrylovMatvecCreate(A, x);
+      (bicgstab_data -> matvec_data) = nalu_hypre_ParKrylovMatvecCreate(A, x);
  
    precond_setup(precond_data, A, b, x);
  
@@ -745,7 +745,7 @@ int hypre_BiCGSTABLSetup( void *bicgstab_vdata, void *A, void *b, void *x       
    if ((bicgstab_data -> logging) > 0)
    {
       if ((bicgstab_data -> norms) == NULL)
-         (bicgstab_data -> norms) = hypre_CTAlloc(double,  max_iter + 1, NALU_HYPRE_MEMORY_HOST);
+         (bicgstab_data -> norms) = nalu_hypre_CTAlloc(double,  max_iter + 1, NALU_HYPRE_MEMORY_HOST);
       if ((bicgstab_data -> log_file_name) == NULL)
 		  (bicgstab_data -> log_file_name) = (char*)"bicgstab.out.log";
    }
@@ -754,12 +754,12 @@ int hypre_BiCGSTABLSetup( void *bicgstab_vdata, void *A, void *b, void *x       
 }
  
 /*--------------------------------------------------------------------------
- * hypre_BiCGSTABLSolve
+ * nalu_hypre_BiCGSTABLSolve
  *-------------------------------------------------------------------------*/
 
-int hypre_BiCGSTABLSolve(void  *bicgstab_vdata, void  *A, void  *b, void  *x)
+int nalu_hypre_BiCGSTABLSolve(void  *bicgstab_vdata, void  *A, void  *b, void  *x)
 {
-	hypre_BiCGSTABLData  *bicgstab_data   =  (hypre_BiCGSTABLData *) bicgstab_vdata;
+	nalu_hypre_BiCGSTABLData  *bicgstab_data   =  (nalu_hypre_BiCGSTABLData *) bicgstab_vdata;
    int               size         = (bicgstab_data -> size);
    int 		     max_iter     = (bicgstab_data -> max_iter);
    int 		     stop_crit    = (bicgstab_data -> stop_crit);
@@ -795,7 +795,7 @@ int hypre_BiCGSTABLSolve(void  *bicgstab_vdata, void  *A, void  *b, void  *x)
    double     alpha, beta, gamma, epsilon, rho, rho1, dtmp, r_norm, b_norm;
    double     gammapp[2], darray[2], epsmac = 1.e-16, omega; 
 
-   hypre_ParKrylovCommInfo(A,&my_id,&num_procs);
+   nalu_hypre_ParKrylovCommInfo(A,&my_id,&num_procs);
    if (logging > 0)
    {
       norms          = (bicgstab_data -> norms);
@@ -803,14 +803,14 @@ int hypre_BiCGSTABLSolve(void  *bicgstab_vdata, void  *A, void  *b, void  *x)
    }
 
    /* initialize work arrays */
-hypre_ParKrylovClearVector(x);
-   hypre_ParKrylovCopyVector(b,r);
+nalu_hypre_ParKrylovClearVector(x);
+   nalu_hypre_ParKrylovCopyVector(b,r);
 
    /* compute initial residual */
 
-   hypre_ParKrylovMatvec(matvec_data,-1.0, A, x, 1.0, r);
-   r_norm = sqrt(hypre_ParKrylovInnerProd(r,r));
-   b_norm = sqrt(hypre_ParKrylovInnerProd(b,b));
+   nalu_hypre_ParKrylovMatvec(matvec_data,-1.0, A, x, 1.0, r);
+   r_norm = sqrt(nalu_hypre_ParKrylovInnerProd(r,r));
+   b_norm = sqrt(nalu_hypre_ParKrylovInnerProd(b,b));
    if (logging > 0)
    {
       norms[0] = r_norm;
@@ -839,72 +839,72 @@ hypre_ParKrylovClearVector(x);
    /* convergence criterion |r_i| <= accuracy , absolute residual norm*/
    if (stop_crit) epsilon = accuracy;
 
-   hypre_ParKrylovCopyVector(r,rh);
-   hypre_ParKrylovCopyVector(r,rt);
-   hypre_ParKrylovCopyVector(x,xh);
-   hypre_ParKrylovClearVector(ut);
+   nalu_hypre_ParKrylovCopyVector(r,rh);
+   nalu_hypre_ParKrylovCopyVector(r,rt);
+   nalu_hypre_ParKrylovCopyVector(x,xh);
+   nalu_hypre_ParKrylovClearVector(ut);
    omega = rho = 1.0; alpha = 0.0;
 
    while ( iter < max_iter && r_norm > epsilon )
    {
       iter += size;
 
-      hypre_ParKrylovCopyVector(ut,ut1);
-      hypre_ParKrylovCopyVector(rt,rt1);
+      nalu_hypre_ParKrylovCopyVector(ut,ut1);
+      nalu_hypre_ParKrylovCopyVector(rt,rt1);
     
       rho = - omega * rho;    
 
-      rho1 = hypre_ParKrylovInnerProd(rh,rt1);
+      rho1 = nalu_hypre_ParKrylovInnerProd(rh,rt1);
       beta = alpha * rho1 / rho;
       rho = rho1;
       dtmp = -beta;
-      hypre_ParKrylovScaleVector(dtmp,ut1);
-      hypre_ParKrylovAxpy(1.0,rt1,ut1);
+      nalu_hypre_ParKrylovScaleVector(dtmp,ut1);
+      nalu_hypre_ParKrylovAxpy(1.0,rt1,ut1);
       precond(precond_data, A, ut1, t);
-      hypre_ParKrylovMatvec(matvec_data,1.0,A,t,0.0,ut2);
-      gamma = hypre_ParKrylovInnerProd(rh,ut2);
+      nalu_hypre_ParKrylovMatvec(matvec_data,1.0,A,t,0.0,ut2);
+      gamma = nalu_hypre_ParKrylovInnerProd(rh,ut2);
       alpha = rho / gamma; dtmp = -alpha;
-      hypre_ParKrylovAxpy(dtmp,ut2,rt1);
+      nalu_hypre_ParKrylovAxpy(dtmp,ut2,rt1);
       precond(precond_data, A, rt1, t);
-      hypre_ParKrylovMatvec(matvec_data,1.0,A,t,0.0,rt2);
-      hypre_ParKrylovAxpy(alpha,ut1,xh);
+      nalu_hypre_ParKrylovMatvec(matvec_data,1.0,A,t,0.0,rt2);
+      nalu_hypre_ParKrylovAxpy(alpha,ut1,xh);
 
-      rho1 = hypre_ParKrylovInnerProd(rh,rt2);
+      rho1 = nalu_hypre_ParKrylovInnerProd(rh,rt2);
       beta = alpha * rho1 / rho;
       rho = rho1;
       dtmp = -beta;
-      hypre_ParKrylovScaleVector(dtmp,ut1);
-      hypre_ParKrylovAxpy(1.0,rt1,ut1);
-      hypre_ParKrylovScaleVector(dtmp,ut2);
-      hypre_ParKrylovAxpy(1.0,rt2,ut2);
+      nalu_hypre_ParKrylovScaleVector(dtmp,ut1);
+      nalu_hypre_ParKrylovAxpy(1.0,rt1,ut1);
+      nalu_hypre_ParKrylovScaleVector(dtmp,ut2);
+      nalu_hypre_ParKrylovAxpy(1.0,rt2,ut2);
       precond(precond_data, A, ut2, t);
-      hypre_ParKrylovMatvec(matvec_data,1.0,A,t,0.0,ut3);
-      gamma = hypre_ParKrylovInnerProd(rh,ut3);
+      nalu_hypre_ParKrylovMatvec(matvec_data,1.0,A,t,0.0,ut3);
+      gamma = nalu_hypre_ParKrylovInnerProd(rh,ut3);
       alpha = rho / gamma; dtmp = -alpha;
-      hypre_ParKrylovAxpy(dtmp,ut2,rt1);
-      hypre_ParKrylovAxpy(dtmp,ut3,rt2);
+      nalu_hypre_ParKrylovAxpy(dtmp,ut2,rt1);
+      nalu_hypre_ParKrylovAxpy(dtmp,ut3,rt2);
       precond(precond_data, A, rt2, t);
-      hypre_ParKrylovMatvec(matvec_data,1.0,A,t,0.0,rt3);
-      hypre_ParKrylovAxpy(alpha,ut1,xh);
+      nalu_hypre_ParKrylovMatvec(matvec_data,1.0,A,t,0.0,rt3);
+      nalu_hypre_ParKrylovAxpy(alpha,ut1,xh);
 
       mat[0][0] = 0.0;
       mat[0][1] = 0.0;
       mat[1][0] = 0.0;
       mat[1][1] = 0.0;
 
-      darray[0] = hypre_ParKrylovInnerProd(rt2,rt2);
-      darray[1] = hypre_ParKrylovInnerProd(rt1,rt2);
+      darray[0] = nalu_hypre_ParKrylovInnerProd(rt2,rt2);
+      darray[1] = nalu_hypre_ParKrylovInnerProd(rt1,rt2);
       sigma[0]  = darray[0];
       mat[0][0] = sigma[0];
       gammap[0] = darray[1] / sigma[0];
 
-      dtmp = hypre_ParKrylovInnerProd(rt2,rt3);
+      dtmp = nalu_hypre_ParKrylovInnerProd(rt2,rt3);
       tau[0][1] = dtmp / sigma[0];
       mat[0][1] = tau[0][1] * sigma[0];
       dtmp = -tau[0][1];
-      hypre_ParKrylovAxpy(dtmp,rt2,rt3);
-      darray[0] = hypre_ParKrylovInnerProd(rt3,rt3);
-      darray[1] = hypre_ParKrylovInnerProd(rt1,rt3);
+      nalu_hypre_ParKrylovAxpy(dtmp,rt2,rt3);
+      darray[0] = nalu_hypre_ParKrylovInnerProd(rt3,rt3);
+      darray[1] = nalu_hypre_ParKrylovInnerProd(rt1,rt3);
       sigma[1]  = darray[0];
       mat[1][1] = sigma[1];
       gammap[1] = darray[1] / sigma[1];
@@ -916,30 +916,30 @@ hypre_ParKrylovClearVector(x);
       gammapp[0] = gammanp[1];
 
       dtmp = gammanp[0];
-      hypre_ParKrylovAxpy(dtmp,rt1,xh);
+      nalu_hypre_ParKrylovAxpy(dtmp,rt1,xh);
       dtmp = - gammap[1];
-      hypre_ParKrylovAxpy(dtmp,rt3,rt1);
+      nalu_hypre_ParKrylovAxpy(dtmp,rt3,rt1);
       dtmp = - gammanp[1];
-      hypre_ParKrylovAxpy(dtmp,ut3,ut1);
+      nalu_hypre_ParKrylovAxpy(dtmp,ut3,ut1);
       dtmp = - gammanp[0];
-      hypre_ParKrylovAxpy(dtmp,ut2,ut1);
+      nalu_hypre_ParKrylovAxpy(dtmp,ut2,ut1);
       dtmp = gammapp[0];
-      hypre_ParKrylovAxpy(dtmp,rt2,xh);
+      nalu_hypre_ParKrylovAxpy(dtmp,rt2,xh);
       dtmp = - gammap[0];
-      hypre_ParKrylovAxpy(dtmp,rt2,rt1);
+      nalu_hypre_ParKrylovAxpy(dtmp,rt2,rt1);
 
-      hypre_ParKrylovCopyVector(ut1,ut);
-      hypre_ParKrylovCopyVector(rt1,rt);
-      hypre_ParKrylovCopyVector(xh,x);
+      nalu_hypre_ParKrylovCopyVector(ut1,ut);
+      nalu_hypre_ParKrylovCopyVector(rt1,rt);
+      nalu_hypre_ParKrylovCopyVector(xh,x);
 
       precond(precond_data, A, x, t);
-      hypre_ParKrylovMatvec(matvec_data,-1.0, A, t, 1.0, r);
-      r_norm = hypre_ParKrylovInnerProd(r,r);
+      nalu_hypre_ParKrylovMatvec(matvec_data,-1.0, A, t, 1.0, r);
+      r_norm = nalu_hypre_ParKrylovInnerProd(r,r);
       if ( my_id == 0 && logging )
          printf(" BiCGSTABL : iter %4d - res. norm = %e \n", iter, r_norm);
    }
    precond(precond_data, A, x, t);
-   hypre_ParKrylovCopyVector(t,x);
+   nalu_hypre_ParKrylovCopyVector(t,x);
 
    (bicgstab_data -> num_iterations) = iter;
    if (b_norm > 0.0)
@@ -953,12 +953,12 @@ hypre_ParKrylovClearVector(x);
 }
 
 /*--------------------------------------------------------------------------
- * hypre_BiCGSTABLSetTol
+ * nalu_hypre_BiCGSTABLSetTol
  *--------------------------------------------------------------------------*/
  
-int hypre_BiCGSTABLSetTol( void *bicgstab_vdata, double tol )
+int nalu_hypre_BiCGSTABLSetTol( void *bicgstab_vdata, double tol )
 {
-	hypre_BiCGSTABLData *bicgstab_data =  (hypre_BiCGSTABLData *) bicgstab_vdata;
+	nalu_hypre_BiCGSTABLData *bicgstab_data =  (nalu_hypre_BiCGSTABLData *) bicgstab_vdata;
    int            ierr = 0;
  
    (bicgstab_data -> tol) = tol;
@@ -967,12 +967,12 @@ int hypre_BiCGSTABLSetTol( void *bicgstab_vdata, double tol )
 }
 
 /*--------------------------------------------------------------------------
- * hypre_BiCGSTABLSetMinIter
+ * nalu_hypre_BiCGSTABLSetMinIter
  *--------------------------------------------------------------------------*/
  
-int hypre_BiCGSTABLSetSize( void *bicgstab_vdata, int size )
+int nalu_hypre_BiCGSTABLSetSize( void *bicgstab_vdata, int size )
 {
-	hypre_BiCGSTABLData *bicgstab_data =  (hypre_BiCGSTABLData *) bicgstab_vdata;
+	nalu_hypre_BiCGSTABLData *bicgstab_data =  (nalu_hypre_BiCGSTABLData *) bicgstab_vdata;
    int              ierr = 0;
  
    (bicgstab_data -> size) = size;
@@ -981,12 +981,12 @@ int hypre_BiCGSTABLSetSize( void *bicgstab_vdata, int size )
 }
 
 /*--------------------------------------------------------------------------
- * hypre_BiCGSTABLSetMaxIter
+ * nalu_hypre_BiCGSTABLSetMaxIter
  *--------------------------------------------------------------------------*/
  
-int hypre_BiCGSTABLSetMaxIter( void *bicgstab_vdata, int max_iter )
+int nalu_hypre_BiCGSTABLSetMaxIter( void *bicgstab_vdata, int max_iter )
 {
-	hypre_BiCGSTABLData *bicgstab_data =  (hypre_BiCGSTABLData *) bicgstab_vdata;
+	nalu_hypre_BiCGSTABLData *bicgstab_data =  (nalu_hypre_BiCGSTABLData *) bicgstab_vdata;
    int              ierr = 0;
  
    (bicgstab_data -> max_iter) = max_iter;
@@ -995,12 +995,12 @@ int hypre_BiCGSTABLSetMaxIter( void *bicgstab_vdata, int max_iter )
 }
 
 /*--------------------------------------------------------------------------
- * hypre_BiCGSTABLSetStopCrit
+ * nalu_hypre_BiCGSTABLSetStopCrit
  *--------------------------------------------------------------------------*/
  
-int hypre_BiCGSTABLSetStopCrit( void *bicgstab_vdata, double stop_crit )
+int nalu_hypre_BiCGSTABLSetStopCrit( void *bicgstab_vdata, double stop_crit )
 {
-	hypre_BiCGSTABLData *bicgstab_data =  (hypre_BiCGSTABLData *) bicgstab_vdata;
+	nalu_hypre_BiCGSTABLData *bicgstab_data =  (nalu_hypre_BiCGSTABLData *) bicgstab_vdata;
    int            ierr = 0;
  
    (bicgstab_data -> stop_crit) = stop_crit;
@@ -1009,13 +1009,13 @@ int hypre_BiCGSTABLSetStopCrit( void *bicgstab_vdata, double stop_crit )
 }
 
 /*--------------------------------------------------------------------------
- * hypre_BiCGSTABLSetPrecond
+ * nalu_hypre_BiCGSTABLSetPrecond
  *--------------------------------------------------------------------------*/
  
-int hypre_BiCGSTABLSetPrecond( void  *bicgstab_vdata, int  (*precond)(void*,void*,void*,void*),
+int nalu_hypre_BiCGSTABLSetPrecond( void  *bicgstab_vdata, int  (*precond)(void*,void*,void*,void*),
 							   int  (*precond_setup)(void*,void*,void*,void*), void  *precond_data )
 {
-	hypre_BiCGSTABLData *bicgstab_data =  (hypre_BiCGSTABLData *) bicgstab_vdata;
+	nalu_hypre_BiCGSTABLData *bicgstab_data =  (nalu_hypre_BiCGSTABLData *) bicgstab_vdata;
    int              ierr = 0;
  
    (bicgstab_data -> precond)        = precond;
@@ -1026,12 +1026,12 @@ int hypre_BiCGSTABLSetPrecond( void  *bicgstab_vdata, int  (*precond)(void*,void
 }
  
 /*--------------------------------------------------------------------------
- * hypre_BiCGSTABLSetLogging
+ * nalu_hypre_BiCGSTABLSetLogging
  *--------------------------------------------------------------------------*/
  
-int hypre_BiCGSTABLSetLogging( void *bicgstab_vdata, int logging)
+int nalu_hypre_BiCGSTABLSetLogging( void *bicgstab_vdata, int logging)
 {
-	hypre_BiCGSTABLData *bicgstab_data = (hypre_BiCGSTABLData *) bicgstab_vdata;
+	nalu_hypre_BiCGSTABLData *bicgstab_data = (nalu_hypre_BiCGSTABLData *) bicgstab_vdata;
    int              ierr = 0;
  
    (bicgstab_data -> logging) = logging;
@@ -1040,12 +1040,12 @@ int hypre_BiCGSTABLSetLogging( void *bicgstab_vdata, int logging)
 }
 
 /*--------------------------------------------------------------------------
- * hypre_BiCGSTABLGetNumIterations
+ * nalu_hypre_BiCGSTABLGetNumIterations
  *--------------------------------------------------------------------------*/
  
-int hypre_BiCGSTABLGetNumIterations(void *bicgstab_vdata,int  *num_iterations)
+int nalu_hypre_BiCGSTABLGetNumIterations(void *bicgstab_vdata,int  *num_iterations)
 {
-	hypre_BiCGSTABLData *bicgstab_data = (hypre_BiCGSTABLData *) bicgstab_vdata;
+	nalu_hypre_BiCGSTABLData *bicgstab_data = (nalu_hypre_BiCGSTABLData *) bicgstab_vdata;
    int              ierr = 0;
  
    *num_iterations = (bicgstab_data -> num_iterations);
@@ -1054,13 +1054,13 @@ int hypre_BiCGSTABLGetNumIterations(void *bicgstab_vdata,int  *num_iterations)
 }
  
 /*--------------------------------------------------------------------------
- * hypre_BiCGSTABLGetFinalRelativeResidualNorm
+ * nalu_hypre_BiCGSTABLGetFinalRelativeResidualNorm
  *--------------------------------------------------------------------------*/
  
-int hypre_BiCGSTABLGetFinalRelativeResidualNorm( void   *bicgstab_vdata,
+int nalu_hypre_BiCGSTABLGetFinalRelativeResidualNorm( void   *bicgstab_vdata,
                                          double *relative_residual_norm )
 {
-	hypre_BiCGSTABLData *bicgstab_data = (hypre_BiCGSTABLData *) bicgstab_vdata;
+	nalu_hypre_BiCGSTABLData *bicgstab_data = (nalu_hypre_BiCGSTABLData *) bicgstab_vdata;
    int 		ierr = 0;
  
    *relative_residual_norm = (bicgstab_data -> rel_residual_norm);

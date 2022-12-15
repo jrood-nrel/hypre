@@ -59,7 +59,7 @@
             - re-work launchSolver parameter setting for preconditioners.
             - add diagnostic information to SuperLUX
 06/14/01    2.0.0R11
-            - re-work hypre_slide_reduce.C to give smaller subroutines
+            - re-work nalu_hypre_slide_reduce.C to give smaller subroutines
             - output matrices to file in longer precision
 06/25/01    2.0.1R1
             - change to the new IJ interface

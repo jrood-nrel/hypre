@@ -11,8 +11,8 @@
  *
  *****************************************************************************/
 
-#ifndef hypre_KRYLOV_FLEXGMRES_HEADER
-#define hypre_KRYLOV_FLEXGMRES_HEADER
+#ifndef nalu_hypre_KRYLOV_FLEXGMRES_HEADER
+#define nalu_hypre_KRYLOV_FLEXGMRES_HEADER
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
@@ -29,7 +29,7 @@
  *--------------------------------------------------------------------------*/
 
 /*--------------------------------------------------------------------------
- * hypre_FlexGMRESData and hypre_FlexGMRESFunctions
+ * nalu_hypre_FlexGMRESData and nalu_hypre_FlexGMRESFunctions
  *--------------------------------------------------------------------------*/
 
 /**
@@ -67,7 +67,7 @@ typedef struct
 
    NALU_HYPRE_Int    (*modify_pc)(void *precond_data, NALU_HYPRE_Int iteration, NALU_HYPRE_Real rel_residual_norm );
 
-} hypre_FlexGMRESFunctions;
+} nalu_hypre_FlexGMRESFunctions;
 
 /**
  * The {\tt hypre\_FlexGMRESData} object ...
@@ -97,7 +97,7 @@ typedef struct
    void    *matvec_data;
    void    *precond_data;
 
-   hypre_FlexGMRESFunctions * functions;
+   nalu_hypre_FlexGMRESFunctions * functions;
 
    /* log info (always logged) */
    NALU_HYPRE_Int      num_iterations;
@@ -107,7 +107,7 @@ typedef struct
    NALU_HYPRE_Real  *norms;
    char    *log_file_name;
 
-} hypre_FlexGMRESData;
+} nalu_hypre_FlexGMRESData;
 
 #ifdef __cplusplus
 extern "C" {
@@ -126,8 +126,8 @@ extern "C" {
  * @param param [IN] ...
  **/
 
-hypre_FlexGMRESFunctions *
-hypre_FlexGMRESFunctionsCreate(
+nalu_hypre_FlexGMRESFunctions *
+nalu_hypre_FlexGMRESFunctionsCreate(
    void *       (*CAlloc)        ( size_t count, size_t elt_size ),
    NALU_HYPRE_Int    (*Free)          ( void *ptr ),
    NALU_HYPRE_Int    (*CommInfo)      ( void  *A, NALU_HYPRE_Int   *my_id,
@@ -155,7 +155,7 @@ hypre_FlexGMRESFunctionsCreate(
  **/
 
 void *
-hypre_FlexGMRESCreate( hypre_FlexGMRESFunctions *fgmres_functions );
+nalu_hypre_FlexGMRESCreate( nalu_hypre_FlexGMRESFunctions *fgmres_functions );
 
 #ifdef __cplusplus
 }

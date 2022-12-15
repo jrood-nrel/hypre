@@ -12,14 +12,14 @@
  *****************************************************************************/
 
 #include "krylov.h"
-#include "_hypre_utilities.h"
+#include "_nalu_hypre_utilities.h"
 
 /*--------------------------------------------------------------------------
- * hypre_FlexGMRESFunctionsCreate
+ * nalu_hypre_FlexGMRESFunctionsCreate
  *--------------------------------------------------------------------------*/
 
-hypre_FlexGMRESFunctions *
-hypre_FlexGMRESFunctionsCreate(
+nalu_hypre_FlexGMRESFunctions *
+nalu_hypre_FlexGMRESFunctionsCreate(
    void *       (*CAlloc)        ( size_t count, size_t elt_size, NALU_HYPRE_MemoryLocation location ),
    NALU_HYPRE_Int    (*Free)          ( void *ptr ),
    NALU_HYPRE_Int    (*CommInfo)      ( void  *A, NALU_HYPRE_Int   *my_id,
@@ -40,9 +40,9 @@ hypre_FlexGMRESFunctionsCreate(
    NALU_HYPRE_Int    (*Precond)       ( void *vdata, void *A, void *b, void *x )
 )
 {
-   hypre_FlexGMRESFunctions * fgmres_functions;
-   fgmres_functions = (hypre_FlexGMRESFunctions *)
-                      CAlloc( 1, sizeof(hypre_FlexGMRESFunctions), NALU_HYPRE_MEMORY_HOST );
+   nalu_hypre_FlexGMRESFunctions * fgmres_functions;
+   fgmres_functions = (nalu_hypre_FlexGMRESFunctions *)
+                      CAlloc( 1, sizeof(nalu_hypre_FlexGMRESFunctions), NALU_HYPRE_MEMORY_HOST );
 
    fgmres_functions->CAlloc = CAlloc;
    fgmres_functions->Free = Free;
@@ -62,24 +62,24 @@ hypre_FlexGMRESFunctionsCreate(
    fgmres_functions->precond_setup = PrecondSetup;
    fgmres_functions->precond       = Precond;
 
-   fgmres_functions->modify_pc     = hypre_FlexGMRESModifyPCDefault;
+   fgmres_functions->modify_pc     = nalu_hypre_FlexGMRESModifyPCDefault;
 
 
    return fgmres_functions;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_FlexGMRESCreate
+ * nalu_hypre_FlexGMRESCreate
  *--------------------------------------------------------------------------*/
 
 void *
-hypre_FlexGMRESCreate( hypre_FlexGMRESFunctions *fgmres_functions )
+nalu_hypre_FlexGMRESCreate( nalu_hypre_FlexGMRESFunctions *fgmres_functions )
 {
-   hypre_FlexGMRESData *fgmres_data;
+   nalu_hypre_FlexGMRESData *fgmres_data;
 
    NALU_HYPRE_ANNOTATE_FUNC_BEGIN;
 
-   fgmres_data = hypre_CTAllocF(hypre_FlexGMRESData, 1, fgmres_functions, NALU_HYPRE_MEMORY_HOST);
+   fgmres_data = nalu_hypre_CTAllocF(nalu_hypre_FlexGMRESData, 1, fgmres_functions, NALU_HYPRE_MEMORY_HOST);
    fgmres_data->functions = fgmres_functions;
 
    /* set defaults */
@@ -109,24 +109,24 @@ hypre_FlexGMRESCreate( hypre_FlexGMRESFunctions *fgmres_functions )
 }
 
 /*--------------------------------------------------------------------------
- * hypre_FlexGMRESDestroy
+ * nalu_hypre_FlexGMRESDestroy
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_FlexGMRESDestroy( void *fgmres_vdata )
+nalu_hypre_FlexGMRESDestroy( void *fgmres_vdata )
 {
-   hypre_FlexGMRESData *fgmres_data = (hypre_FlexGMRESData *)fgmres_vdata;
+   nalu_hypre_FlexGMRESData *fgmres_data = (nalu_hypre_FlexGMRESData *)fgmres_vdata;
    NALU_HYPRE_Int i;
 
    NALU_HYPRE_ANNOTATE_FUNC_BEGIN;
    if (fgmres_data)
    {
-      hypre_FlexGMRESFunctions *fgmres_functions = fgmres_data->functions;
+      nalu_hypre_FlexGMRESFunctions *fgmres_functions = fgmres_data->functions;
       if ( (fgmres_data->logging > 0) || (fgmres_data->print_level) > 0 )
       {
          if ( (fgmres_data -> norms) != NULL )
          {
-            hypre_TFreeF( fgmres_data -> norms, fgmres_functions );
+            nalu_hypre_TFreeF( fgmres_data -> norms, fgmres_functions );
          }
       }
 
@@ -157,7 +157,7 @@ hypre_FlexGMRESDestroy( void *fgmres_vdata )
                (*(fgmres_functions->DestroyVector))( (fgmres_data -> p) [i]);
             }
          }
-         hypre_TFreeF( fgmres_data->p, fgmres_functions );
+         nalu_hypre_TFreeF( fgmres_data->p, fgmres_functions );
       }
 
       /* fgmres mod  - space for precond. vectors*/
@@ -170,43 +170,43 @@ hypre_FlexGMRESDestroy( void *fgmres_vdata )
                (*(fgmres_functions->DestroyVector))( (fgmres_data -> pre_vecs) [i]);
             }
          }
-         hypre_TFreeF( fgmres_data->pre_vecs, fgmres_functions );
+         nalu_hypre_TFreeF( fgmres_data->pre_vecs, fgmres_functions );
       }
       /*---*/
 
-      hypre_TFreeF( fgmres_data, fgmres_functions );
-      hypre_TFreeF( fgmres_functions, fgmres_functions );
+      nalu_hypre_TFreeF( fgmres_data, fgmres_functions );
+      nalu_hypre_TFreeF( fgmres_functions, fgmres_functions );
    }
 
    NALU_HYPRE_ANNOTATE_FUNC_END;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_FlexGMRESGetResidual
+ * nalu_hypre_FlexGMRESGetResidual
  *--------------------------------------------------------------------------*/
 
-NALU_HYPRE_Int hypre_FlexGMRESGetResidual( void *fgmres_vdata, void **residual )
+NALU_HYPRE_Int nalu_hypre_FlexGMRESGetResidual( void *fgmres_vdata, void **residual )
 {
-   hypre_FlexGMRESData  *fgmres_data  = (hypre_FlexGMRESData *)fgmres_vdata;
+   nalu_hypre_FlexGMRESData  *fgmres_data  = (nalu_hypre_FlexGMRESData *)fgmres_vdata;
    *residual = fgmres_data->r;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_FlexGMRESSetup
+ * nalu_hypre_FlexGMRESSetup
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_FlexGMRESSetup( void *fgmres_vdata,
+nalu_hypre_FlexGMRESSetup( void *fgmres_vdata,
                       void *A,
                       void *b,
                       void *x         )
 {
-   hypre_FlexGMRESData *fgmres_data     = (hypre_FlexGMRESData *)fgmres_vdata;
-   hypre_FlexGMRESFunctions *fgmres_functions = fgmres_data->functions;
+   nalu_hypre_FlexGMRESData *fgmres_data     = (nalu_hypre_FlexGMRESData *)fgmres_vdata;
+   nalu_hypre_FlexGMRESFunctions *fgmres_functions = fgmres_data->functions;
 
    NALU_HYPRE_Int            k_dim            = (fgmres_data -> k_dim);
    NALU_HYPRE_Int            max_iter         = (fgmres_data -> max_iter);
@@ -265,7 +265,7 @@ hypre_FlexGMRESSetup( void *fgmres_vdata,
    {
       if ((fgmres_data -> norms) == NULL)
       {
-         (fgmres_data -> norms) = hypre_CTAllocF(NALU_HYPRE_Real, max_iter + 1, fgmres_functions,
+         (fgmres_data -> norms) = nalu_hypre_CTAllocF(NALU_HYPRE_Real, max_iter + 1, fgmres_functions,
                                                  NALU_HYPRE_MEMORY_HOST);
       }
    }
@@ -279,21 +279,21 @@ hypre_FlexGMRESSetup( void *fgmres_vdata,
 
    NALU_HYPRE_ANNOTATE_FUNC_END;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_FlexGMRESSolve
+ * nalu_hypre_FlexGMRESSolve
  *-------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_FlexGMRESSolve(void  *fgmres_vdata,
+nalu_hypre_FlexGMRESSolve(void  *fgmres_vdata,
                      void  *A,
                      void  *b,
                      void  *x)
 {
-   hypre_FlexGMRESData  *fgmres_data   = (hypre_FlexGMRESData *)fgmres_vdata;
-   hypre_FlexGMRESFunctions *fgmres_functions = fgmres_data->functions;
+   nalu_hypre_FlexGMRESData  *fgmres_data   = (nalu_hypre_FlexGMRESData *)fgmres_vdata;
+   nalu_hypre_FlexGMRESFunctions *fgmres_functions = fgmres_data->functions;
    NALU_HYPRE_Int           k_dim        = (fgmres_data -> k_dim);
    NALU_HYPRE_Int               min_iter     = (fgmres_data -> min_iter);
    NALU_HYPRE_Int           max_iter     = (fgmres_data -> max_iter);
@@ -357,16 +357,16 @@ hypre_FlexGMRESSolve(void  *fgmres_vdata,
    }
 
    /* initialize work arrays  */
-   rs = hypre_CTAllocF(NALU_HYPRE_Real, k_dim + 1, fgmres_functions, NALU_HYPRE_MEMORY_HOST);
-   c = hypre_CTAllocF(NALU_HYPRE_Real, k_dim, fgmres_functions, NALU_HYPRE_MEMORY_HOST);
-   s = hypre_CTAllocF(NALU_HYPRE_Real, k_dim, fgmres_functions, NALU_HYPRE_MEMORY_HOST);
+   rs = nalu_hypre_CTAllocF(NALU_HYPRE_Real, k_dim + 1, fgmres_functions, NALU_HYPRE_MEMORY_HOST);
+   c = nalu_hypre_CTAllocF(NALU_HYPRE_Real, k_dim, fgmres_functions, NALU_HYPRE_MEMORY_HOST);
+   s = nalu_hypre_CTAllocF(NALU_HYPRE_Real, k_dim, fgmres_functions, NALU_HYPRE_MEMORY_HOST);
 
 
    /* fgmres mod. - need non-modified hessenberg ???? */
-   hh = hypre_CTAllocF(NALU_HYPRE_Real*, k_dim + 1, fgmres_functions, NALU_HYPRE_MEMORY_HOST);
+   hh = nalu_hypre_CTAllocF(NALU_HYPRE_Real*, k_dim + 1, fgmres_functions, NALU_HYPRE_MEMORY_HOST);
    for (i = 0; i < k_dim + 1; i++)
    {
-      hh[i] = hypre_CTAllocF(NALU_HYPRE_Real, k_dim, fgmres_functions, NALU_HYPRE_MEMORY_HOST);
+      hh[i] = nalu_hypre_CTAllocF(NALU_HYPRE_Real, k_dim, fgmres_functions, NALU_HYPRE_MEMORY_HOST);
    }
 
    (*(fgmres_functions->CopyVector))(b, p[0]);
@@ -388,16 +388,16 @@ hypre_FlexGMRESSolve(void  *fgmres_vdata,
          found at http://HTTP.CS.Berkeley.EDU/~wkahan/ieee754status/IEEE754.PDF */
       if (logging > 0 || print_level > 0)
       {
-         hypre_printf("\n\nERROR detected by Hypre ... BEGIN\n");
-         hypre_printf("ERROR -- hypre_FlexGMRESSolve: INFs and/or NaNs detected in input.\n");
-         hypre_printf("User probably placed non-numerics in supplied b.\n");
-         hypre_printf("Returning error flag += 101.  Program not terminated.\n");
-         hypre_printf("ERROR detected by Hypre ... END\n\n\n");
+         nalu_hypre_printf("\n\nERROR detected by Hypre ... BEGIN\n");
+         nalu_hypre_printf("ERROR -- nalu_hypre_FlexGMRESSolve: INFs and/or NaNs detected in input.\n");
+         nalu_hypre_printf("User probably placed non-numerics in supplied b.\n");
+         nalu_hypre_printf("Returning error flag += 101.  Program not terminated.\n");
+         nalu_hypre_printf("ERROR detected by Hypre ... END\n\n\n");
       }
-      hypre_error(NALU_HYPRE_ERROR_GENERIC);
+      nalu_hypre_error(NALU_HYPRE_ERROR_GENERIC);
       NALU_HYPRE_ANNOTATE_FUNC_END;
 
-      return hypre_error_flag;
+      return nalu_hypre_error_flag;
    }
 
    r_norm = sqrt((*(fgmres_functions->InnerProd))(p[0], p[0]));
@@ -415,16 +415,16 @@ hypre_FlexGMRESSolve(void  *fgmres_vdata,
          found at http://HTTP.CS.Berkeley.EDU/~wkahan/ieee754status/IEEE754.PDF */
       if (logging > 0 || print_level > 0)
       {
-         hypre_printf("\n\nERROR detected by Hypre ... BEGIN\n");
-         hypre_printf("ERROR -- hypre_FlexGMRESSolve: INFs and/or NaNs detected in input.\n");
-         hypre_printf("User probably placed non-numerics in supplied A or x_0.\n");
-         hypre_printf("Returning error flag += 101.  Program not terminated.\n");
-         hypre_printf("ERROR detected by Hypre ... END\n\n\n");
+         nalu_hypre_printf("\n\nERROR detected by Hypre ... BEGIN\n");
+         nalu_hypre_printf("ERROR -- nalu_hypre_FlexGMRESSolve: INFs and/or NaNs detected in input.\n");
+         nalu_hypre_printf("User probably placed non-numerics in supplied A or x_0.\n");
+         nalu_hypre_printf("Returning error flag += 101.  Program not terminated.\n");
+         nalu_hypre_printf("ERROR detected by Hypre ... END\n\n\n");
       }
-      hypre_error(NALU_HYPRE_ERROR_GENERIC);
+      nalu_hypre_error(NALU_HYPRE_ERROR_GENERIC);
       NALU_HYPRE_ANNOTATE_FUNC_END;
 
-      return hypre_error_flag;
+      return nalu_hypre_error_flag;
    }
 
    if ( logging > 0 || print_level > 0)
@@ -432,12 +432,12 @@ hypre_FlexGMRESSolve(void  *fgmres_vdata,
       norms[0] = r_norm;
       if ( print_level > 1 && my_id == 0 )
       {
-         hypre_printf("L2 norm of b: %e\n", b_norm);
+         nalu_hypre_printf("L2 norm of b: %e\n", b_norm);
          if (b_norm == 0.0)
          {
-            hypre_printf("Rel_resid_norm actually contains the residual norm\n");
+            nalu_hypre_printf("Rel_resid_norm actually contains the residual norm\n");
          }
-         hypre_printf("Initial L2 norm of residual: %e\n", r_norm);
+         nalu_hypre_printf("Initial L2 norm of residual: %e\n", r_norm);
 
       }
    }
@@ -460,7 +460,7 @@ hypre_FlexGMRESSolve(void  *fgmres_vdata,
                user specifies a_tol, or sets r_tol = 0.0, which means absolute
                tol only is checked  */
 
-   epsilon = hypre_max(a_tol, r_tol * den_norm);
+   epsilon = nalu_hypre_max(a_tol, r_tol * den_norm);
 
    /* so now our stop criteria is |r_i| <= epsilon */
 
@@ -469,17 +469,17 @@ hypre_FlexGMRESSolve(void  *fgmres_vdata,
    {
       if (b_norm > 0.0)
       {
-         hypre_printf("=============================================\n\n");
-         hypre_printf("Iters     resid.norm     conv.rate  rel.res.norm\n");
-         hypre_printf("-----    ------------    ---------- ------------\n");
+         nalu_hypre_printf("=============================================\n\n");
+         nalu_hypre_printf("Iters     resid.norm     conv.rate  rel.res.norm\n");
+         nalu_hypre_printf("-----    ------------    ---------- ------------\n");
 
       }
 
       else
       {
-         hypre_printf("=============================================\n\n");
-         hypre_printf("Iters     resid.norm     conv.rate\n");
-         hypre_printf("-----    ------------    ----------\n");
+         nalu_hypre_printf("=============================================\n\n");
+         nalu_hypre_printf("Iters     resid.norm     conv.rate\n");
+         nalu_hypre_printf("-----    ------------    ----------\n");
 
       };
    }
@@ -494,19 +494,19 @@ hypre_FlexGMRESSolve(void  *fgmres_vdata,
       rs[0] = r_norm;
       if (r_norm == 0.0)
       {
-         hypre_TFreeF(c, fgmres_functions);
-         hypre_TFreeF(s, fgmres_functions);
-         hypre_TFreeF(rs, fgmres_functions);
+         nalu_hypre_TFreeF(c, fgmres_functions);
+         nalu_hypre_TFreeF(s, fgmres_functions);
+         nalu_hypre_TFreeF(rs, fgmres_functions);
 
          for (i = 0; i < k_dim + 1; i++)
          {
-            hypre_TFreeF(hh[i], fgmres_functions);
+            nalu_hypre_TFreeF(hh[i], fgmres_functions);
          }
 
-         hypre_TFreeF(hh, fgmres_functions);
+         nalu_hypre_TFreeF(hh, fgmres_functions);
          NALU_HYPRE_ANNOTATE_FUNC_END;
 
-         return hypre_error_flag;
+         return nalu_hypre_error_flag;
       }
 
       /* see if we are already converged and
@@ -521,14 +521,14 @@ hypre_FlexGMRESSolve(void  *fgmres_vdata,
          {
             if ( print_level > 1 && my_id == 0)
             {
-               hypre_printf("\n\n");
-               hypre_printf("Final L2 norm of residual: %e\n\n", r_norm);
+               nalu_hypre_printf("\n\n");
+               nalu_hypre_printf("Final L2 norm of residual: %e\n\n", r_norm);
             }
             break;
          }
          else if ( print_level > 0 && my_id == 0)
          {
-            hypre_printf("false convergence 1\n");
+            nalu_hypre_printf("false convergence 1\n");
          }
 
       }
@@ -601,11 +601,11 @@ hypre_FlexGMRESSolve(void  *fgmres_vdata,
             if ( print_level > 1 && my_id == 0 )
             {
                if (b_norm > 0.0)
-                  hypre_printf("% 5d    %e    %f   %e\n", iter,
+                  nalu_hypre_printf("% 5d    %e    %f   %e\n", iter,
                                norms[iter], norms[iter] / norms[iter - 1],
                                norms[iter] / b_norm);
                else
-                  hypre_printf("% 5d    %e    %f\n", iter, norms[iter],
+                  nalu_hypre_printf("% 5d    %e    %f\n", iter, norms[iter],
                                norms[iter] / norms[iter - 1]);
             }
          }
@@ -616,10 +616,10 @@ hypre_FlexGMRESSolve(void  *fgmres_vdata,
             cf_ave_1 = pow( r_norm / r_norm_0, 1.0 / (2.0 * iter));
 
             weight   = fabs(cf_ave_1 - cf_ave_0);
-            weight   = weight / hypre_max(cf_ave_1, cf_ave_0);
+            weight   = weight / nalu_hypre_max(cf_ave_1, cf_ave_0);
             weight   = 1.0 - weight;
 #if 0
-            hypre_printf("I = %d: cf_new = %e, cf_old = %e, weight = %e\n",
+            nalu_hypre_printf("I = %d: cf_new = %e, cf_old = %e, weight = %e\n",
                          i, cf_ave_1, cf_ave_0, weight );
 #endif
             if (weight * cf_ave_1 > cf_tol)
@@ -685,8 +685,8 @@ hypre_FlexGMRESSolve(void  *fgmres_vdata,
          {
             if ( print_level > 1 && my_id == 0 )
             {
-               hypre_printf("\n\n");
-               hypre_printf("Final L2 norm of residual: %e\n\n", r_norm);
+               nalu_hypre_printf("\n\n");
+               nalu_hypre_printf("Final L2 norm of residual: %e\n\n", r_norm);
             }
             (fgmres_data -> converged) = 1;
             break;
@@ -696,7 +696,7 @@ hypre_FlexGMRESSolve(void  *fgmres_vdata,
          {
             if ( print_level > 0 && my_id == 0)
             {
-               hypre_printf("false convergence 2\n");
+               nalu_hypre_printf("false convergence 2\n");
             }
             (*(fgmres_functions->CopyVector))(r, p[0]);
             i = 0;
@@ -727,7 +727,7 @@ hypre_FlexGMRESSolve(void  *fgmres_vdata,
 
    if ( print_level > 1 && my_id == 0 )
    {
-      hypre_printf("\n\n");
+      nalu_hypre_printf("\n\n");
    }
 
    (fgmres_data -> num_iterations) = iter;
@@ -740,383 +740,383 @@ hypre_FlexGMRESSolve(void  *fgmres_vdata,
       (fgmres_data -> rel_residual_norm) = r_norm;
    }
 
-   if (iter >= max_iter && r_norm > epsilon && epsilon > 0) { hypre_error(NALU_HYPRE_ERROR_CONV); }
+   if (iter >= max_iter && r_norm > epsilon && epsilon > 0) { nalu_hypre_error(NALU_HYPRE_ERROR_CONV); }
 
 
-   hypre_TFreeF(c, fgmres_functions);
-   hypre_TFreeF(s, fgmres_functions);
-   hypre_TFreeF(rs, fgmres_functions);
+   nalu_hypre_TFreeF(c, fgmres_functions);
+   nalu_hypre_TFreeF(s, fgmres_functions);
+   nalu_hypre_TFreeF(rs, fgmres_functions);
 
    for (i = 0; i < k_dim + 1; i++)
    {
-      hypre_TFreeF(hh[i], fgmres_functions);
+      nalu_hypre_TFreeF(hh[i], fgmres_functions);
    }
-   hypre_TFreeF(hh, fgmres_functions);
+   nalu_hypre_TFreeF(hh, fgmres_functions);
 
    NALU_HYPRE_ANNOTATE_FUNC_END;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_FlexGMRESSetKDim, hypre_FlexGMRESGetKDim
+ * nalu_hypre_FlexGMRESSetKDim, nalu_hypre_FlexGMRESGetKDim
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_FlexGMRESSetKDim( void   *fgmres_vdata,
+nalu_hypre_FlexGMRESSetKDim( void   *fgmres_vdata,
                         NALU_HYPRE_Int   k_dim )
 {
-   hypre_FlexGMRESData *fgmres_data = (hypre_FlexGMRESData *)fgmres_vdata;
+   nalu_hypre_FlexGMRESData *fgmres_data = (nalu_hypre_FlexGMRESData *)fgmres_vdata;
 
 
    (fgmres_data -> k_dim) = k_dim;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 
 }
 
 NALU_HYPRE_Int
-hypre_FlexGMRESGetKDim( void   *fgmres_vdata,
+nalu_hypre_FlexGMRESGetKDim( void   *fgmres_vdata,
                         NALU_HYPRE_Int * k_dim )
 {
-   hypre_FlexGMRESData *fgmres_data = (hypre_FlexGMRESData *)fgmres_vdata;
+   nalu_hypre_FlexGMRESData *fgmres_data = (nalu_hypre_FlexGMRESData *)fgmres_vdata;
 
 
    *k_dim = (fgmres_data -> k_dim);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 
 /*--------------------------------------------------------------------------
- * hypre_FlexGMRESSetTol, hypre_FlexGMRESGetTol
+ * nalu_hypre_FlexGMRESSetTol, nalu_hypre_FlexGMRESGetTol
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_FlexGMRESSetTol( void   *fgmres_vdata,
+nalu_hypre_FlexGMRESSetTol( void   *fgmres_vdata,
                        NALU_HYPRE_Real  tol       )
 {
-   hypre_FlexGMRESData *fgmres_data = (hypre_FlexGMRESData *)fgmres_vdata;
+   nalu_hypre_FlexGMRESData *fgmres_data = (nalu_hypre_FlexGMRESData *)fgmres_vdata;
 
 
    (fgmres_data -> tol) = tol;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 NALU_HYPRE_Int
-hypre_FlexGMRESGetTol( void   *fgmres_vdata,
+nalu_hypre_FlexGMRESGetTol( void   *fgmres_vdata,
                        NALU_HYPRE_Real  * tol      )
 {
-   hypre_FlexGMRESData *fgmres_data = (hypre_FlexGMRESData *)fgmres_vdata;
+   nalu_hypre_FlexGMRESData *fgmres_data = (nalu_hypre_FlexGMRESData *)fgmres_vdata;
 
 
    *tol = (fgmres_data -> tol);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 /*--------------------------------------------------------------------------
- * hypre_FlexGMRESSetAbsoluteTol, hypre_FlexGMRESGetAbsoluteTol
+ * nalu_hypre_FlexGMRESSetAbsoluteTol, nalu_hypre_FlexGMRESGetAbsoluteTol
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_FlexGMRESSetAbsoluteTol( void   *fgmres_vdata,
+nalu_hypre_FlexGMRESSetAbsoluteTol( void   *fgmres_vdata,
                                NALU_HYPRE_Real  a_tol       )
 {
-   hypre_FlexGMRESData *fgmres_data = (hypre_FlexGMRESData *)fgmres_vdata;
+   nalu_hypre_FlexGMRESData *fgmres_data = (nalu_hypre_FlexGMRESData *)fgmres_vdata;
 
 
    (fgmres_data -> a_tol) = a_tol;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 NALU_HYPRE_Int
-hypre_FlexGMRESGetAbsoluteTol( void   *fgmres_vdata,
+nalu_hypre_FlexGMRESGetAbsoluteTol( void   *fgmres_vdata,
                                NALU_HYPRE_Real  * a_tol      )
 {
-   hypre_FlexGMRESData *fgmres_data = (hypre_FlexGMRESData *)fgmres_vdata;
+   nalu_hypre_FlexGMRESData *fgmres_data = (nalu_hypre_FlexGMRESData *)fgmres_vdata;
 
 
    *a_tol = (fgmres_data -> a_tol);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 /*--------------------------------------------------------------------------
- * hypre_FlexGMRESSetConvergenceFactorTol, hypre_FlexGMRESGetConvergenceFactorTol
+ * nalu_hypre_FlexGMRESSetConvergenceFactorTol, nalu_hypre_FlexGMRESGetConvergenceFactorTol
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_FlexGMRESSetConvergenceFactorTol( void   *fgmres_vdata,
+nalu_hypre_FlexGMRESSetConvergenceFactorTol( void   *fgmres_vdata,
                                         NALU_HYPRE_Real  cf_tol       )
 {
-   hypre_FlexGMRESData *fgmres_data = (hypre_FlexGMRESData *)fgmres_vdata;
+   nalu_hypre_FlexGMRESData *fgmres_data = (nalu_hypre_FlexGMRESData *)fgmres_vdata;
 
 
    (fgmres_data -> cf_tol) = cf_tol;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 NALU_HYPRE_Int
-hypre_FlexGMRESGetConvergenceFactorTol( void   *fgmres_vdata,
+nalu_hypre_FlexGMRESGetConvergenceFactorTol( void   *fgmres_vdata,
                                         NALU_HYPRE_Real * cf_tol       )
 {
-   hypre_FlexGMRESData *fgmres_data = (hypre_FlexGMRESData *)fgmres_vdata;
+   nalu_hypre_FlexGMRESData *fgmres_data = (nalu_hypre_FlexGMRESData *)fgmres_vdata;
 
 
    *cf_tol = (fgmres_data -> cf_tol);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_FlexGMRESSetMinIter, hypre_FlexGMRESGetMinIter
+ * nalu_hypre_FlexGMRESSetMinIter, nalu_hypre_FlexGMRESGetMinIter
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_FlexGMRESSetMinIter( void *fgmres_vdata,
+nalu_hypre_FlexGMRESSetMinIter( void *fgmres_vdata,
                            NALU_HYPRE_Int   min_iter  )
 {
-   hypre_FlexGMRESData *fgmres_data = (hypre_FlexGMRESData *)fgmres_vdata;
+   nalu_hypre_FlexGMRESData *fgmres_data = (nalu_hypre_FlexGMRESData *)fgmres_vdata;
 
 
    (fgmres_data -> min_iter) = min_iter;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 NALU_HYPRE_Int
-hypre_FlexGMRESGetMinIter( void *fgmres_vdata,
+nalu_hypre_FlexGMRESGetMinIter( void *fgmres_vdata,
                            NALU_HYPRE_Int * min_iter  )
 {
-   hypre_FlexGMRESData *fgmres_data = (hypre_FlexGMRESData *)fgmres_vdata;
+   nalu_hypre_FlexGMRESData *fgmres_data = (nalu_hypre_FlexGMRESData *)fgmres_vdata;
 
 
    *min_iter = (fgmres_data -> min_iter);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_FlexGMRESSetMaxIter, hypre_FlexGMRESGetMaxIter
+ * nalu_hypre_FlexGMRESSetMaxIter, nalu_hypre_FlexGMRESGetMaxIter
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_FlexGMRESSetMaxIter( void *fgmres_vdata,
+nalu_hypre_FlexGMRESSetMaxIter( void *fgmres_vdata,
                            NALU_HYPRE_Int   max_iter  )
 {
-   hypre_FlexGMRESData *fgmres_data = (hypre_FlexGMRESData *)fgmres_vdata;
+   nalu_hypre_FlexGMRESData *fgmres_data = (nalu_hypre_FlexGMRESData *)fgmres_vdata;
 
 
    (fgmres_data -> max_iter) = max_iter;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 NALU_HYPRE_Int
-hypre_FlexGMRESGetMaxIter( void *fgmres_vdata,
+nalu_hypre_FlexGMRESGetMaxIter( void *fgmres_vdata,
                            NALU_HYPRE_Int * max_iter  )
 {
-   hypre_FlexGMRESData *fgmres_data = (hypre_FlexGMRESData *)fgmres_vdata;
+   nalu_hypre_FlexGMRESData *fgmres_data = (nalu_hypre_FlexGMRESData *)fgmres_vdata;
 
 
    *max_iter = (fgmres_data -> max_iter);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 
 /*--------------------------------------------------------------------------
- * hypre_FlexGMRESSetStopCrit, hypre_FlexGMRESGetStopCrit
+ * nalu_hypre_FlexGMRESSetStopCrit, nalu_hypre_FlexGMRESGetStopCrit
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_FlexGMRESSetStopCrit( void   *fgmres_vdata,
+nalu_hypre_FlexGMRESSetStopCrit( void   *fgmres_vdata,
                             NALU_HYPRE_Int  stop_crit       )
 {
-   hypre_FlexGMRESData *fgmres_data = (hypre_FlexGMRESData *)fgmres_vdata;
+   nalu_hypre_FlexGMRESData *fgmres_data = (nalu_hypre_FlexGMRESData *)fgmres_vdata;
 
 
    (fgmres_data -> stop_crit) = stop_crit;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 NALU_HYPRE_Int
-hypre_FlexGMRESGetStopCrit( void   *fgmres_vdata,
+nalu_hypre_FlexGMRESGetStopCrit( void   *fgmres_vdata,
                             NALU_HYPRE_Int * stop_crit       )
 {
-   hypre_FlexGMRESData *fgmres_data = (hypre_FlexGMRESData *)fgmres_vdata;
+   nalu_hypre_FlexGMRESData *fgmres_data = (nalu_hypre_FlexGMRESData *)fgmres_vdata;
 
 
    *stop_crit = (fgmres_data -> stop_crit);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_FlexGMRESSetPrecond
+ * nalu_hypre_FlexGMRESSetPrecond
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_FlexGMRESSetPrecond( void  *fgmres_vdata,
+nalu_hypre_FlexGMRESSetPrecond( void  *fgmres_vdata,
                            NALU_HYPRE_Int  (*precond)(void*, void*, void*, void*),
                            NALU_HYPRE_Int  (*precond_setup)(void*, void*, void*, void*),
                            void  *precond_data )
 {
-   hypre_FlexGMRESData *fgmres_data = (hypre_FlexGMRESData *)fgmres_vdata;
-   hypre_FlexGMRESFunctions *fgmres_functions = fgmres_data->functions;
+   nalu_hypre_FlexGMRESData *fgmres_data = (nalu_hypre_FlexGMRESData *)fgmres_vdata;
+   nalu_hypre_FlexGMRESFunctions *fgmres_functions = fgmres_data->functions;
 
 
    (fgmres_functions -> precond)        = precond;
    (fgmres_functions -> precond_setup)  = precond_setup;
    (fgmres_data -> precond_data)   = precond_data;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_FlexGMRESGetPrecond
+ * nalu_hypre_FlexGMRESGetPrecond
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_FlexGMRESGetPrecond( void         *fgmres_vdata,
+nalu_hypre_FlexGMRESGetPrecond( void         *fgmres_vdata,
                            NALU_HYPRE_Solver *precond_data_ptr )
 {
-   hypre_FlexGMRESData *fgmres_data = (hypre_FlexGMRESData *)fgmres_vdata;
+   nalu_hypre_FlexGMRESData *fgmres_data = (nalu_hypre_FlexGMRESData *)fgmres_vdata;
 
 
    *precond_data_ptr = (NALU_HYPRE_Solver)(fgmres_data -> precond_data);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_FlexGMRESSetPrintLevel, hypre_FlexGMRESGetPrintLevel
+ * nalu_hypre_FlexGMRESSetPrintLevel, nalu_hypre_FlexGMRESGetPrintLevel
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_FlexGMRESSetPrintLevel( void *fgmres_vdata,
+nalu_hypre_FlexGMRESSetPrintLevel( void *fgmres_vdata,
                               NALU_HYPRE_Int   level)
 {
-   hypre_FlexGMRESData *fgmres_data = (hypre_FlexGMRESData *)fgmres_vdata;
+   nalu_hypre_FlexGMRESData *fgmres_data = (nalu_hypre_FlexGMRESData *)fgmres_vdata;
 
 
    (fgmres_data -> print_level) = level;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 NALU_HYPRE_Int
-hypre_FlexGMRESGetPrintLevel( void *fgmres_vdata,
+nalu_hypre_FlexGMRESGetPrintLevel( void *fgmres_vdata,
                               NALU_HYPRE_Int * level)
 {
-   hypre_FlexGMRESData *fgmres_data = (hypre_FlexGMRESData *)fgmres_vdata;
+   nalu_hypre_FlexGMRESData *fgmres_data = (nalu_hypre_FlexGMRESData *)fgmres_vdata;
 
 
    *level = (fgmres_data -> print_level);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_FlexGMRESSetLogging, hypre_FlexGMRESGetLogging
+ * nalu_hypre_FlexGMRESSetLogging, nalu_hypre_FlexGMRESGetLogging
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_FlexGMRESSetLogging( void *fgmres_vdata,
+nalu_hypre_FlexGMRESSetLogging( void *fgmres_vdata,
                            NALU_HYPRE_Int   level)
 {
-   hypre_FlexGMRESData *fgmres_data = (hypre_FlexGMRESData *)fgmres_vdata;
+   nalu_hypre_FlexGMRESData *fgmres_data = (nalu_hypre_FlexGMRESData *)fgmres_vdata;
 
 
    (fgmres_data -> logging) = level;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 NALU_HYPRE_Int
-hypre_FlexGMRESGetLogging( void *fgmres_vdata,
+nalu_hypre_FlexGMRESGetLogging( void *fgmres_vdata,
                            NALU_HYPRE_Int * level)
 {
-   hypre_FlexGMRESData *fgmres_data = (hypre_FlexGMRESData *)fgmres_vdata;
+   nalu_hypre_FlexGMRESData *fgmres_data = (nalu_hypre_FlexGMRESData *)fgmres_vdata;
 
 
    *level = (fgmres_data -> logging);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_FlexGMRESGetNumIterations
+ * nalu_hypre_FlexGMRESGetNumIterations
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_FlexGMRESGetNumIterations( void *fgmres_vdata,
+nalu_hypre_FlexGMRESGetNumIterations( void *fgmres_vdata,
                                  NALU_HYPRE_Int  *num_iterations )
 {
-   hypre_FlexGMRESData *fgmres_data = (hypre_FlexGMRESData *)fgmres_vdata;
+   nalu_hypre_FlexGMRESData *fgmres_data = (nalu_hypre_FlexGMRESData *)fgmres_vdata;
 
 
    *num_iterations = (fgmres_data -> num_iterations);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_FlexGMRESGetConverged
+ * nalu_hypre_FlexGMRESGetConverged
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_FlexGMRESGetConverged( void *fgmres_vdata,
+nalu_hypre_FlexGMRESGetConverged( void *fgmres_vdata,
                              NALU_HYPRE_Int  *converged )
 {
-   hypre_FlexGMRESData *fgmres_data = (hypre_FlexGMRESData *)fgmres_vdata;
+   nalu_hypre_FlexGMRESData *fgmres_data = (nalu_hypre_FlexGMRESData *)fgmres_vdata;
 
 
    *converged = (fgmres_data -> converged);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_FlexGMRESGetFinalRelativeResidualNorm
+ * nalu_hypre_FlexGMRESGetFinalRelativeResidualNorm
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_FlexGMRESGetFinalRelativeResidualNorm( void   *fgmres_vdata,
+nalu_hypre_FlexGMRESGetFinalRelativeResidualNorm( void   *fgmres_vdata,
                                              NALU_HYPRE_Real *relative_residual_norm )
 {
-   hypre_FlexGMRESData *fgmres_data = (hypre_FlexGMRESData *)fgmres_vdata;
+   nalu_hypre_FlexGMRESData *fgmres_data = (nalu_hypre_FlexGMRESData *)fgmres_vdata;
 
 
    *relative_residual_norm = (fgmres_data -> rel_residual_norm);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 /*--------------------------------------------------------------------------
- * hypre_FlexGMRESSetModifyPC
+ * nalu_hypre_FlexGMRESSetModifyPC
  *--------------------------------------------------------------------------*/
 
-NALU_HYPRE_Int hypre_FlexGMRESSetModifyPC(void *fgmres_vdata,
+NALU_HYPRE_Int nalu_hypre_FlexGMRESSetModifyPC(void *fgmres_vdata,
                                      NALU_HYPRE_Int (*modify_pc)(void *precond_data, NALU_HYPRE_Int iteration, NALU_HYPRE_Real rel_residual_norm))
 {
 
-   hypre_FlexGMRESData *fgmres_data = (hypre_FlexGMRESData *)fgmres_vdata;
-   hypre_FlexGMRESFunctions *fgmres_functions = fgmres_data->functions;
+   nalu_hypre_FlexGMRESData *fgmres_data = (nalu_hypre_FlexGMRESData *)fgmres_vdata;
+   nalu_hypre_FlexGMRESFunctions *fgmres_functions = fgmres_data->functions;
 
    (fgmres_functions -> modify_pc)        = modify_pc;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 
 /*--------------------------------------------------------------------------
- * hypre_FlexGMRESModifyPCDefault - if the user does not specify a function
+ * nalu_hypre_FlexGMRESModifyPCDefault - if the user does not specify a function
  *--------------------------------------------------------------------------*/
 
-NALU_HYPRE_Int hypre_FlexGMRESModifyPCDefault(void *precond_data, NALU_HYPRE_Int iteration,
+NALU_HYPRE_Int nalu_hypre_FlexGMRESModifyPCDefault(void *precond_data, NALU_HYPRE_Int iteration,
                                          NALU_HYPRE_Real rel_residual_norm)
 {
 

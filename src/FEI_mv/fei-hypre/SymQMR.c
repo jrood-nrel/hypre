@@ -11,16 +11,16 @@
  *
  *****************************************************************************/
 
-#include "utilities/_hypre_utilities.h"
+#include "utilities/_nalu_hypre_utilities.h"
 #include "NALU_HYPRE.h"
 #include "IJ_mv/NALU_HYPRE_IJ_mv.h"
 #include "parcsr_mv/NALU_HYPRE_parcsr_mv.h"
-#include "parcsr_mv/_hypre_parcsr_mv.h"
-#include "parcsr_ls/_hypre_parcsr_ls.h"
+#include "parcsr_mv/_nalu_hypre_parcsr_mv.h"
+#include "parcsr_ls/_nalu_hypre_parcsr_ls.h"
 #include "parcsr_ls/NALU_HYPRE_parcsr_ls.h"
 
 /*--------------------------------------------------------------------------
- * hypre_SymQMRData
+ * nalu_hypre_SymQMRData
  *--------------------------------------------------------------------------*/
 
 typedef struct
@@ -52,24 +52,24 @@ typedef struct
    double  *norms;
    char    *log_file_name;
 
-} hypre_SymQMRData;
+} nalu_hypre_SymQMRData;
 
 /*--------------------------------------------------------------------------
- * hypre_SymQMRCreate
+ * nalu_hypre_SymQMRCreate
  *--------------------------------------------------------------------------*/
  
-void * hypre_SymQMRCreate( )
+void * nalu_hypre_SymQMRCreate( )
 {
-   hypre_SymQMRData *symqmr_data;
+   nalu_hypre_SymQMRData *symqmr_data;
  
-   symqmr_data = hypre_CTAlloc(hypre_SymQMRData,  1, NALU_HYPRE_MEMORY_HOST);
+   symqmr_data = nalu_hypre_CTAlloc(nalu_hypre_SymQMRData,  1, NALU_HYPRE_MEMORY_HOST);
  
    /* set defaults */
    (symqmr_data -> tol)            = 1.0e-06;
    (symqmr_data -> max_iter)       = 1000;
    (symqmr_data -> stop_crit)      = 0; /* rel. residual norm */
-   (symqmr_data -> precond)        = hypre_ParKrylovIdentity;
-   (symqmr_data -> precond_setup)  = hypre_ParKrylovIdentitySetup;
+   (symqmr_data -> precond)        = nalu_hypre_ParKrylovIdentity;
+   (symqmr_data -> precond_setup)  = nalu_hypre_ParKrylovIdentitySetup;
    (symqmr_data -> precond_data)   = NULL;
    (symqmr_data -> logging)        = 0;
    (symqmr_data -> r)              = NULL;
@@ -86,43 +86,43 @@ void * hypre_SymQMRCreate( )
 }
 
 /*--------------------------------------------------------------------------
- * hypre_SymQMRDestroy
+ * nalu_hypre_SymQMRDestroy
  *--------------------------------------------------------------------------*/
  
-int hypre_SymQMRDestroy( void *symqmr_vdata )
+int nalu_hypre_SymQMRDestroy( void *symqmr_vdata )
 {
-	hypre_SymQMRData *symqmr_data = (hypre_SymQMRData*) symqmr_vdata;
+	nalu_hypre_SymQMRData *symqmr_data = (nalu_hypre_SymQMRData*) symqmr_vdata;
    int ierr = 0;
  
    if (symqmr_data)
    {
       if ((symqmr_data -> logging) > 0)
       {
-         hypre_TFree(symqmr_data -> norms, NALU_HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(symqmr_data -> norms, NALU_HYPRE_MEMORY_HOST);
       }
  
-      hypre_ParKrylovMatvecDestroy(symqmr_data -> matvec_data);
+      nalu_hypre_ParKrylovMatvecDestroy(symqmr_data -> matvec_data);
  
-      hypre_ParKrylovDestroyVector(symqmr_data -> r);
-      hypre_ParKrylovDestroyVector(symqmr_data -> q);
-      hypre_ParKrylovDestroyVector(symqmr_data -> u);
-      hypre_ParKrylovDestroyVector(symqmr_data -> d);
-      hypre_ParKrylovDestroyVector(symqmr_data -> t);
-      hypre_ParKrylovDestroyVector(symqmr_data -> rq);
+      nalu_hypre_ParKrylovDestroyVector(symqmr_data -> r);
+      nalu_hypre_ParKrylovDestroyVector(symqmr_data -> q);
+      nalu_hypre_ParKrylovDestroyVector(symqmr_data -> u);
+      nalu_hypre_ParKrylovDestroyVector(symqmr_data -> d);
+      nalu_hypre_ParKrylovDestroyVector(symqmr_data -> t);
+      nalu_hypre_ParKrylovDestroyVector(symqmr_data -> rq);
  
-      hypre_TFree(symqmr_data, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(symqmr_data, NALU_HYPRE_MEMORY_HOST);
    }
  
    return(ierr);
 }
 
 /*--------------------------------------------------------------------------
- * hypre_SymQMRSetup
+ * nalu_hypre_SymQMRSetup
  *--------------------------------------------------------------------------*/
  
-int hypre_SymQMRSetup( void *symqmr_vdata, void *A, void *b, void *x         )
+int nalu_hypre_SymQMRSetup( void *symqmr_vdata, void *A, void *b, void *x         )
 {
-	hypre_SymQMRData *symqmr_data   = (hypre_SymQMRData*) symqmr_vdata;
+	nalu_hypre_SymQMRData *symqmr_data   = (nalu_hypre_SymQMRData*) symqmr_vdata;
    int            max_iter         = (symqmr_data -> max_iter);
    int          (*precond_setup)(void*, void*, void*, void*) = (symqmr_data -> precond_setup);
    void          *precond_data     = (symqmr_data -> precond_data);
@@ -137,19 +137,19 @@ int hypre_SymQMRSetup( void *symqmr_vdata, void *A, void *b, void *x         )
     *--------------------------------------------------*/
  
    if ((symqmr_data -> r) == NULL)
-      (symqmr_data -> r) = hypre_ParKrylovCreateVector(b);
+      (symqmr_data -> r) = nalu_hypre_ParKrylovCreateVector(b);
    if ((symqmr_data -> q) == NULL)
-      (symqmr_data -> q) = hypre_ParKrylovCreateVector(b);
+      (symqmr_data -> q) = nalu_hypre_ParKrylovCreateVector(b);
    if ((symqmr_data -> u) == NULL)
-      (symqmr_data -> u) = hypre_ParKrylovCreateVector(b);
+      (symqmr_data -> u) = nalu_hypre_ParKrylovCreateVector(b);
    if ((symqmr_data -> d) == NULL)
-      (symqmr_data -> d) = hypre_ParKrylovCreateVector(b);
+      (symqmr_data -> d) = nalu_hypre_ParKrylovCreateVector(b);
    if ((symqmr_data -> t) == NULL)
-      (symqmr_data -> t) = hypre_ParKrylovCreateVector(b);
+      (symqmr_data -> t) = nalu_hypre_ParKrylovCreateVector(b);
    if ((symqmr_data -> rq) == NULL)
-      (symqmr_data -> rq) = hypre_ParKrylovCreateVector(b);
+      (symqmr_data -> rq) = nalu_hypre_ParKrylovCreateVector(b);
    if ((symqmr_data -> matvec_data) == NULL)
-      (symqmr_data -> matvec_data) = hypre_ParKrylovMatvecCreate(A, x);
+      (symqmr_data -> matvec_data) = nalu_hypre_ParKrylovMatvecCreate(A, x);
  
    ierr = precond_setup(precond_data, A, b, x);
  
@@ -160,7 +160,7 @@ int hypre_SymQMRSetup( void *symqmr_vdata, void *A, void *b, void *x         )
    if ((symqmr_data -> logging) > 0)
    {
       if ((symqmr_data -> norms) == NULL)
-         (symqmr_data -> norms) = hypre_CTAlloc(double,  max_iter + 1, NALU_HYPRE_MEMORY_HOST);
+         (symqmr_data -> norms) = nalu_hypre_CTAlloc(double,  max_iter + 1, NALU_HYPRE_MEMORY_HOST);
       if ((symqmr_data -> log_file_name) == NULL)
 		  (symqmr_data -> log_file_name) = (char*)"symqmr.out.log";
    }
@@ -169,12 +169,12 @@ int hypre_SymQMRSetup( void *symqmr_vdata, void *A, void *b, void *x         )
 }
  
 /*--------------------------------------------------------------------------
- * hypre_SymQMRSolve
+ * nalu_hypre_SymQMRSolve
  *-------------------------------------------------------------------------*/
 
-int hypre_SymQMRSolve(void  *symqmr_vdata, void  *A, void  *b, void  *x)
+int nalu_hypre_SymQMRSolve(void  *symqmr_vdata, void  *A, void  *b, void  *x)
 {
-	hypre_SymQMRData  *symqmr_data    = (hypre_SymQMRData*) symqmr_vdata;
+	nalu_hypre_SymQMRData  *symqmr_data    = (nalu_hypre_SymQMRData*) symqmr_vdata;
    int 		     max_iter      = (symqmr_data -> max_iter);
    int 		     stop_crit     = (symqmr_data -> stop_crit);
    double 	     accuracy      = (symqmr_data -> tol);
@@ -198,7 +198,7 @@ int hypre_SymQMRSolve(void  *symqmr_vdata, void  *A, void  *b, void  *x)
    double            thetam1, c, epsilon; 
    double            sigma, alpha, beta;
 
-   hypre_ParKrylovCommInfo(A,&my_id,&num_procs);
+   nalu_hypre_ParKrylovCommInfo(A,&my_id,&num_procs);
    if (logging > 0)
    {
       norms          = (symqmr_data -> norms);
@@ -206,12 +206,12 @@ int hypre_SymQMRSolve(void  *symqmr_vdata, void  *A, void  *b, void  *x)
 
    /* initialize work arrays */
 
-   hypre_ParKrylovCopyVector(b,r);
+   nalu_hypre_ParKrylovCopyVector(b,r);
 
    /* compute initial residual */
 
-   hypre_ParKrylovMatvec(matvec_data,-1.0, A, x, 1.0, r);
-   r_norm = sqrt(hypre_ParKrylovInnerProd(r,r));
+   nalu_hypre_ParKrylovMatvec(matvec_data,-1.0, A, x, 1.0, r);
+   r_norm = sqrt(nalu_hypre_ParKrylovInnerProd(r,r));
    if (logging > 0)
    {
       norms[0] = r_norm;
@@ -230,17 +230,17 @@ int hypre_SymQMRSolve(void  *symqmr_vdata, void  *A, void  *b, void  *x)
 
       tau = r_norm;
       precond(precond_data, A, r, q);
-      rho = hypre_ParKrylovInnerProd(r,q);
+      rho = nalu_hypre_ParKrylovInnerProd(r,q);
       theta = 0.0;
-      hypre_ParKrylovClearVector(d);
-      hypre_ParKrylovCopyVector(r,rq);
+      nalu_hypre_ParKrylovClearVector(d);
+      nalu_hypre_ParKrylovCopyVector(r,rq);
 
       while ( iter < max_iter && r_norm > epsilon )
       {
          iter++;
 
-         hypre_ParKrylovMatvec(matvec_data,1.0,A,q,0.0,t);
-         sigma = hypre_ParKrylovInnerProd(q,t);
+         nalu_hypre_ParKrylovMatvec(matvec_data,1.0,A,q,0.0,t);
+         sigma = nalu_hypre_ParKrylovInnerProd(q,t);
          if ( sigma == 0.0 )
          {
             printf("SymQMR ERROR : sigma = 0.0\n");
@@ -248,31 +248,31 @@ int hypre_SymQMRSolve(void  *symqmr_vdata, void  *A, void  *b, void  *x)
          }
          alpha = rho / sigma;
          dtmp = - alpha;
-         hypre_ParKrylovAxpy(dtmp,t,r);
+         nalu_hypre_ParKrylovAxpy(dtmp,t,r);
          thetam1 = theta;
-         theta = sqrt(hypre_ParKrylovInnerProd(r,r)) / tau;
+         theta = sqrt(nalu_hypre_ParKrylovInnerProd(r,r)) / tau;
          c = 1.0 / sqrt(1.0 + theta * theta );
          tau = tau * theta * c;
          dtmp = c * c * thetam1 * thetam1;
-         hypre_ParKrylovScaleVector(dtmp,d);
+         nalu_hypre_ParKrylovScaleVector(dtmp,d);
          dtmp = c * c * alpha;
-         hypre_ParKrylovAxpy(dtmp,q,d);
+         nalu_hypre_ParKrylovAxpy(dtmp,q,d);
          dtmp = 1.0;
-         hypre_ParKrylovAxpy(dtmp,d,x);
+         nalu_hypre_ParKrylovAxpy(dtmp,d,x);
 
          precond(precond_data, A, r, u);
          rhom1 = rho;
-         rho = hypre_ParKrylovInnerProd(r,u);
+         rho = nalu_hypre_ParKrylovInnerProd(r,u);
          beta = rho / rhom1;
-         hypre_ParKrylovScaleVector(beta,q);
+         nalu_hypre_ParKrylovScaleVector(beta,q);
          dtmp = 1.0;
-         hypre_ParKrylovAxpy(dtmp,u,q);
+         nalu_hypre_ParKrylovAxpy(dtmp,u,q);
 
          dtmp = 1.0 - c * c;
-         hypre_ParKrylovScaleVector(dtmp,rq);
+         nalu_hypre_ParKrylovScaleVector(dtmp,rq);
          dtmp = c * c;
-         hypre_ParKrylovAxpy(dtmp,r,rq);
-         r_norm = sqrt(hypre_ParKrylovInnerProd(rq,rq));
+         nalu_hypre_ParKrylovAxpy(dtmp,r,rq);
+         r_norm = sqrt(nalu_hypre_ParKrylovInnerProd(rq,rq));
          norms[iter] = r_norm;
 
          if ( my_id == 0 && logging )
@@ -282,9 +282,9 @@ int hypre_SymQMRSolve(void  *symqmr_vdata, void  *A, void  *b, void  *x)
 
       /* compute true residual */
 
-      hypre_ParKrylovCopyVector(b,r);
-      hypre_ParKrylovMatvec(matvec_data,-1.0, A, x, 1.0, r);
-      r_norm = sqrt(hypre_ParKrylovInnerProd(r,r));
+      nalu_hypre_ParKrylovCopyVector(b,r);
+      nalu_hypre_ParKrylovMatvec(matvec_data,-1.0, A, x, 1.0, r);
+      r_norm = sqrt(nalu_hypre_ParKrylovInnerProd(r,r));
    }
 
    (symqmr_data -> num_iterations)    = iter;
@@ -296,12 +296,12 @@ int hypre_SymQMRSolve(void  *symqmr_vdata, void  *A, void  *b, void  *x)
 }
 
 /*--------------------------------------------------------------------------
- * hypre_SymQMRSetTol
+ * nalu_hypre_SymQMRSetTol
  *--------------------------------------------------------------------------*/
  
-int hypre_SymQMRSetTol( void *symqmr_vdata, double tol )
+int nalu_hypre_SymQMRSetTol( void *symqmr_vdata, double tol )
 {
-	hypre_SymQMRData *symqmr_data = (hypre_SymQMRData*) symqmr_vdata;
+	nalu_hypre_SymQMRData *symqmr_data = (nalu_hypre_SymQMRData*) symqmr_vdata;
    int            ierr = 0;
  
    (symqmr_data -> tol) = tol;
@@ -310,12 +310,12 @@ int hypre_SymQMRSetTol( void *symqmr_vdata, double tol )
 }
 
 /*--------------------------------------------------------------------------
- * hypre_SymQMRSetMaxIter
+ * nalu_hypre_SymQMRSetMaxIter
  *--------------------------------------------------------------------------*/
  
-int hypre_SymQMRSetMaxIter( void *symqmr_vdata, int max_iter )
+int nalu_hypre_SymQMRSetMaxIter( void *symqmr_vdata, int max_iter )
 {
-	hypre_SymQMRData *symqmr_data = (hypre_SymQMRData*) symqmr_vdata;
+	nalu_hypre_SymQMRData *symqmr_data = (nalu_hypre_SymQMRData*) symqmr_vdata;
    int              ierr = 0;
  
    (symqmr_data -> max_iter) = max_iter;
@@ -324,12 +324,12 @@ int hypre_SymQMRSetMaxIter( void *symqmr_vdata, int max_iter )
 }
 
 /*--------------------------------------------------------------------------
- * hypre_SymQMRSetStopCrit
+ * nalu_hypre_SymQMRSetStopCrit
  *--------------------------------------------------------------------------*/
  
-int hypre_SymQMRSetStopCrit( void *symqmr_vdata, double stop_crit )
+int nalu_hypre_SymQMRSetStopCrit( void *symqmr_vdata, double stop_crit )
 {
-	hypre_SymQMRData *symqmr_data = (hypre_SymQMRData*) symqmr_vdata;
+	nalu_hypre_SymQMRData *symqmr_data = (nalu_hypre_SymQMRData*) symqmr_vdata;
    int            ierr = 0;
  
    (symqmr_data -> stop_crit) = stop_crit;
@@ -338,13 +338,13 @@ int hypre_SymQMRSetStopCrit( void *symqmr_vdata, double stop_crit )
 }
 
 /*--------------------------------------------------------------------------
- * hypre_SymQMRSetPrecond
+ * nalu_hypre_SymQMRSetPrecond
  *--------------------------------------------------------------------------*/
  
-int hypre_SymQMRSetPrecond( void  *symqmr_vdata, int  (*precond)(void*,void*,void*,void*),
+int nalu_hypre_SymQMRSetPrecond( void  *symqmr_vdata, int  (*precond)(void*,void*,void*,void*),
 							int  (*precond_setup)(void*,void*,void*,void*), void  *precond_data )
 {
-	hypre_SymQMRData *symqmr_data = (hypre_SymQMRData*) symqmr_vdata;
+	nalu_hypre_SymQMRData *symqmr_data = (nalu_hypre_SymQMRData*) symqmr_vdata;
    int              ierr = 0;
  
    (symqmr_data -> precond)        = precond;
@@ -355,12 +355,12 @@ int hypre_SymQMRSetPrecond( void  *symqmr_vdata, int  (*precond)(void*,void*,voi
 }
  
 /*--------------------------------------------------------------------------
- * hypre_SymQMRSetLogging
+ * nalu_hypre_SymQMRSetLogging
  *--------------------------------------------------------------------------*/
  
-int hypre_SymQMRSetLogging( void *symqmr_vdata, int logging)
+int nalu_hypre_SymQMRSetLogging( void *symqmr_vdata, int logging)
 {
-	hypre_SymQMRData *symqmr_data = (hypre_SymQMRData*) symqmr_vdata;
+	nalu_hypre_SymQMRData *symqmr_data = (nalu_hypre_SymQMRData*) symqmr_vdata;
    int              ierr = 0;
  
    (symqmr_data -> logging) = logging;
@@ -369,12 +369,12 @@ int hypre_SymQMRSetLogging( void *symqmr_vdata, int logging)
 }
 
 /*--------------------------------------------------------------------------
- * hypre_SymQMRGetNumIterations
+ * nalu_hypre_SymQMRGetNumIterations
  *--------------------------------------------------------------------------*/
  
-int hypre_SymQMRGetNumIterations(void *symqmr_vdata,int  *num_iterations)
+int nalu_hypre_SymQMRGetNumIterations(void *symqmr_vdata,int  *num_iterations)
 {
-	hypre_SymQMRData *symqmr_data = (hypre_SymQMRData*) symqmr_vdata;
+	nalu_hypre_SymQMRData *symqmr_data = (nalu_hypre_SymQMRData*) symqmr_vdata;
    int              ierr = 0;
  
    *num_iterations = (symqmr_data -> num_iterations);
@@ -383,13 +383,13 @@ int hypre_SymQMRGetNumIterations(void *symqmr_vdata,int  *num_iterations)
 }
  
 /*--------------------------------------------------------------------------
- * hypre_SymQMRGetFinalRelativeResidualNorm
+ * nalu_hypre_SymQMRGetFinalRelativeResidualNorm
  *--------------------------------------------------------------------------*/
  
-int hypre_SymQMRGetFinalRelativeResidualNorm( void   *symqmr_vdata,
+int nalu_hypre_SymQMRGetFinalRelativeResidualNorm( void   *symqmr_vdata,
                                          double *relative_residual_norm )
 {
-	hypre_SymQMRData *symqmr_data = (hypre_SymQMRData*) symqmr_vdata;
+	nalu_hypre_SymQMRData *symqmr_data = (nalu_hypre_SymQMRData*) symqmr_vdata;
    int 		ierr = 0;
  
    *relative_residual_norm = (symqmr_data -> rel_residual_norm);

@@ -6,7 +6,7 @@
  ******************************************************************************/
 
 #include "multivector.h"
-#include "_hypre_utilities.h"
+#include "_nalu_hypre_utilities.h"
 
 #ifndef LOCALLY_OPTIMAL_BLOCK_PRECONDITIONED_CONJUGATE_GRADIENTS
 #define LOCALLY_OPTIMAL_BLOCK_PRECONDITIONED_CONJUGATE_GRADIENTS

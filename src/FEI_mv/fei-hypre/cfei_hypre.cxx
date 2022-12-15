@@ -9,7 +9,7 @@
 #include <stdlib.h>
 
 #include "NALU_HYPRE.h"
-#include "utilities/_hypre_utilities.h"
+#include "utilities/_nalu_hypre_utilities.h"
 #include "IJ_mv/NALU_HYPRE_IJ_mv.h"
 #include "parcsr_mv/NALU_HYPRE_parcsr_mv.h"
 #include "parcsr_ls/NALU_HYPRE_parcsr_ls.h"

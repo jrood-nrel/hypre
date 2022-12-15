@@ -8,11 +8,11 @@
 /******************************************************************************
  *
  * a few more relaxation schemes: Chebychev, FCF-Jacobi, CG  -
- * these do not go through the CF interface (hypre_BoomerAMGRelaxIF)
+ * these do not go through the CF interface (nalu_hypre_BoomerAMGRelaxIF)
  *
  *****************************************************************************/
 
-#include "_hypre_parcsr_ls.h"
+#include "_nalu_hypre_parcsr_ls.h"
 #include "float.h"
 
 /******************************************************************************
@@ -32,27 +32,27 @@
  *
  *****************************************************************************/
 NALU_HYPRE_Int
-hypre_ParCSRMaxEigEstimateHost( hypre_ParCSRMatrix *A,       /* matrix to relax with */
+nalu_hypre_ParCSRMaxEigEstimateHost( nalu_hypre_ParCSRMatrix *A,       /* matrix to relax with */
                                 NALU_HYPRE_Int           scale,   /* scale by diagonal?   */
                                 NALU_HYPRE_Real         *max_eig,
                                 NALU_HYPRE_Real         *min_eig )
 {
-   NALU_HYPRE_Int   A_num_rows  = hypre_ParCSRMatrixNumRows(A);
-   NALU_HYPRE_Int  *A_diag_i    = hypre_CSRMatrixI(hypre_ParCSRMatrixDiag(A));
-   NALU_HYPRE_Int  *A_diag_j    = hypre_CSRMatrixJ(hypre_ParCSRMatrixDiag(A));
-   NALU_HYPRE_Int  *A_offd_i    = hypre_CSRMatrixI(hypre_ParCSRMatrixOffd(A));
-   NALU_HYPRE_Real *A_diag_data = hypre_CSRMatrixData(hypre_ParCSRMatrixDiag(A));
-   NALU_HYPRE_Real *A_offd_data = hypre_CSRMatrixData(hypre_ParCSRMatrixOffd(A));
+   NALU_HYPRE_Int   A_num_rows  = nalu_hypre_ParCSRMatrixNumRows(A);
+   NALU_HYPRE_Int  *A_diag_i    = nalu_hypre_CSRMatrixI(nalu_hypre_ParCSRMatrixDiag(A));
+   NALU_HYPRE_Int  *A_diag_j    = nalu_hypre_CSRMatrixJ(nalu_hypre_ParCSRMatrixDiag(A));
+   NALU_HYPRE_Int  *A_offd_i    = nalu_hypre_CSRMatrixI(nalu_hypre_ParCSRMatrixOffd(A));
+   NALU_HYPRE_Real *A_diag_data = nalu_hypre_CSRMatrixData(nalu_hypre_ParCSRMatrixDiag(A));
+   NALU_HYPRE_Real *A_offd_data = nalu_hypre_CSRMatrixData(nalu_hypre_ParCSRMatrixOffd(A));
    NALU_HYPRE_Real *diag        = NULL;
    NALU_HYPRE_Int   i, j;
    NALU_HYPRE_Real  e_max, e_min;
    NALU_HYPRE_Real  send_buf[2], recv_buf[2];
 
-   NALU_HYPRE_MemoryLocation memory_location = hypre_ParCSRMatrixMemoryLocation(A);
+   NALU_HYPRE_MemoryLocation memory_location = nalu_hypre_ParCSRMatrixMemoryLocation(A);
 
    if (scale > 1)
    {
-      diag = hypre_TAlloc(NALU_HYPRE_Real, A_num_rows, memory_location);
+      diag = nalu_hypre_TAlloc(NALU_HYPRE_Real, A_num_rows, memory_location);
    }
 
    for (i = 0; i < A_num_rows; i++)
@@ -67,13 +67,13 @@ hypre_ParCSRMaxEigEstimateHost( hypre_ParCSRMatrix *A,       /* matrix to relax 
          }
          else
          {
-            r_i += hypre_abs(A_diag_data[j]);
+            r_i += nalu_hypre_abs(A_diag_data[j]);
          }
       }
 
       for (j = A_offd_i[i]; j < A_offd_i[i + 1]; j++)
       {
-         r_i += hypre_abs(A_offd_data[j]);
+         r_i += nalu_hypre_abs(A_offd_data[j]);
       }
 
       lower = a_ii - r_i;
@@ -81,14 +81,14 @@ hypre_ParCSRMaxEigEstimateHost( hypre_ParCSRMatrix *A,       /* matrix to relax 
 
       if (scale == 1)
       {
-         lower /= hypre_abs(a_ii);
-         upper /= hypre_abs(a_ii);
+         lower /= nalu_hypre_abs(a_ii);
+         upper /= nalu_hypre_abs(a_ii);
       }
 
       if (i)
       {
-         e_max = hypre_max(e_max, upper);
-         e_min = hypre_min(e_min, lower);
+         e_max = nalu_hypre_max(e_max, upper);
+         e_min = nalu_hypre_min(e_min, lower);
       }
       else
       {
@@ -101,27 +101,27 @@ hypre_ParCSRMaxEigEstimateHost( hypre_ParCSRMatrix *A,       /* matrix to relax 
    send_buf[1] =  e_max;
 
    /* get e_min e_max across procs */
-   hypre_MPI_Allreduce(send_buf, recv_buf, 2, NALU_HYPRE_MPI_REAL, hypre_MPI_MAX,
-                       hypre_ParCSRMatrixComm(A));
+   nalu_hypre_MPI_Allreduce(send_buf, recv_buf, 2, NALU_HYPRE_MPI_REAL, nalu_hypre_MPI_MAX,
+                       nalu_hypre_ParCSRMatrixComm(A));
 
    e_min = -recv_buf[0];
    e_max =  recv_buf[1];
 
    /* return */
-   if ( hypre_abs(e_min) > hypre_abs(e_max) )
+   if ( nalu_hypre_abs(e_min) > nalu_hypre_abs(e_max) )
    {
       *min_eig = e_min;
-      *max_eig = hypre_min(0.0, e_max);
+      *max_eig = nalu_hypre_min(0.0, e_max);
    }
    else
    {
-      *min_eig = hypre_max(e_min, 0.0);
+      *min_eig = nalu_hypre_max(e_min, 0.0);
       *max_eig = e_max;
    }
 
-   hypre_TFree(diag, memory_location);
+   nalu_hypre_TFree(diag, memory_location);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /**
@@ -133,28 +133,28 @@ hypre_ParCSRMaxEigEstimateHost( hypre_ParCSRMatrix *A,       /* matrix to relax 
  * @param[out] Maximum eigenvalue
  */
 NALU_HYPRE_Int
-hypre_ParCSRMaxEigEstimate(hypre_ParCSRMatrix *A, /* matrix to relax with */
+nalu_hypre_ParCSRMaxEigEstimate(nalu_hypre_ParCSRMatrix *A, /* matrix to relax with */
                            NALU_HYPRE_Int scale, /* scale by diagonal?*/
                            NALU_HYPRE_Real *max_eig,
                            NALU_HYPRE_Real *min_eig)
 {
 #if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
-   hypre_GpuProfilingPushRange("ParCSRMaxEigEstimate");
+   nalu_hypre_GpuProfilingPushRange("ParCSRMaxEigEstimate");
 #endif
    NALU_HYPRE_Int ierr = 0;
 #if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
-   NALU_HYPRE_ExecutionPolicy exec = hypre_GetExecPolicy1( hypre_ParCSRMatrixMemoryLocation(A) );
+   NALU_HYPRE_ExecutionPolicy exec = nalu_hypre_GetExecPolicy1( nalu_hypre_ParCSRMatrixMemoryLocation(A) );
    if (exec == NALU_HYPRE_EXEC_DEVICE)
    {
-      ierr = hypre_ParCSRMaxEigEstimateDevice(A, scale, max_eig, min_eig);
+      ierr = nalu_hypre_ParCSRMaxEigEstimateDevice(A, scale, max_eig, min_eig);
    }
    else
 #endif
    {
-      ierr = hypre_ParCSRMaxEigEstimateHost(A, scale, max_eig, min_eig);
+      ierr = nalu_hypre_ParCSRMaxEigEstimateHost(A, scale, max_eig, min_eig);
    }
 #if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
-   hypre_GpuProfilingPopRange();
+   nalu_hypre_GpuProfilingPopRange();
 #endif
    return ierr;
 }
@@ -170,29 +170,29 @@ hypre_ParCSRMaxEigEstimate(hypre_ParCSRMatrix *A, /* matrix to relax with */
  *  @param[out] min_eig Estimated min eigenvalue
  */
 NALU_HYPRE_Int
-hypre_ParCSRMaxEigEstimateCG(hypre_ParCSRMatrix *A,     /* matrix to relax with */
+nalu_hypre_ParCSRMaxEigEstimateCG(nalu_hypre_ParCSRMatrix *A,     /* matrix to relax with */
                              NALU_HYPRE_Int           scale, /* scale by diagonal?*/
                              NALU_HYPRE_Int           max_iter,
                              NALU_HYPRE_Real         *max_eig,
                              NALU_HYPRE_Real         *min_eig)
 {
 #if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
-   hypre_GpuProfilingPushRange("ParCSRMaxEigEstimateCG");
+   nalu_hypre_GpuProfilingPushRange("ParCSRMaxEigEstimateCG");
 #endif
    NALU_HYPRE_Int             ierr = 0;
 #if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
-   NALU_HYPRE_ExecutionPolicy exec = hypre_GetExecPolicy1(hypre_ParCSRMatrixMemoryLocation(A));
+   NALU_HYPRE_ExecutionPolicy exec = nalu_hypre_GetExecPolicy1(nalu_hypre_ParCSRMatrixMemoryLocation(A));
    if (exec == NALU_HYPRE_EXEC_DEVICE)
    {
-      ierr = hypre_ParCSRMaxEigEstimateCGDevice(A, scale, max_iter, max_eig, min_eig);
+      ierr = nalu_hypre_ParCSRMaxEigEstimateCGDevice(A, scale, max_iter, max_eig, min_eig);
    }
    else
 #endif
    {
-      ierr = hypre_ParCSRMaxEigEstimateCGHost(A, scale, max_iter, max_eig, min_eig);
+      ierr = nalu_hypre_ParCSRMaxEigEstimateCGHost(A, scale, max_iter, max_eig, min_eig);
    }
 #if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
-   hypre_GpuProfilingPopRange();
+   nalu_hypre_GpuProfilingPopRange();
 #endif
    return ierr;
 }
@@ -207,18 +207,18 @@ hypre_ParCSRMaxEigEstimateCG(hypre_ParCSRMatrix *A,     /* matrix to relax with 
  *  @param[out] min_eig Estimated min eigenvalue
  */
 NALU_HYPRE_Int
-hypre_ParCSRMaxEigEstimateCGHost( hypre_ParCSRMatrix *A,     /* matrix to relax with */
+nalu_hypre_ParCSRMaxEigEstimateCGHost( nalu_hypre_ParCSRMatrix *A,     /* matrix to relax with */
                                   NALU_HYPRE_Int           scale, /* scale by diagonal?*/
                                   NALU_HYPRE_Int           max_iter,
                                   NALU_HYPRE_Real         *max_eig,
                                   NALU_HYPRE_Real         *min_eig )
 {
    NALU_HYPRE_Int i, j, err;
-   hypre_ParVector *p;
-   hypre_ParVector *s;
-   hypre_ParVector *r;
-   hypre_ParVector *ds;
-   hypre_ParVector *u;
+   nalu_hypre_ParVector *p;
+   nalu_hypre_ParVector *s;
+   nalu_hypre_ParVector *r;
+   nalu_hypre_ParVector *ds;
+   nalu_hypre_ParVector *u;
 
    NALU_HYPRE_Real *tridiag = NULL;
    NALU_HYPRE_Real *trioffd = NULL;
@@ -227,10 +227,10 @@ hypre_ParCSRMaxEigEstimateCGHost( hypre_ParCSRMatrix *A,     /* matrix to relax 
    NALU_HYPRE_Real beta, gamma = 0.0, alpha, sdotp, gamma_old, alphainv;
    NALU_HYPRE_Real lambda_min;
    NALU_HYPRE_Real *s_data, *p_data, *ds_data, *u_data;
-   NALU_HYPRE_Int local_size = hypre_CSRMatrixNumRows(hypre_ParCSRMatrixDiag(A));
+   NALU_HYPRE_Int local_size = nalu_hypre_CSRMatrixNumRows(nalu_hypre_ParCSRMatrixDiag(A));
 
    /* check the size of A - don't iterate more than the size */
-   NALU_HYPRE_BigInt size = hypre_ParCSRMatrixGlobalNumRows(A);
+   NALU_HYPRE_BigInt size = nalu_hypre_ParCSRMatrixGlobalNumRows(A);
 
    if (size < (NALU_HYPRE_BigInt) max_iter)
    {
@@ -238,40 +238,40 @@ hypre_ParCSRMaxEigEstimateCGHost( hypre_ParCSRMatrix *A,     /* matrix to relax 
    }
 
    /* create some temp vectors: p, s, r , ds, u*/
-   r = hypre_ParVectorCreate(hypre_ParCSRMatrixComm(A),
-                             hypre_ParCSRMatrixGlobalNumRows(A),
-                             hypre_ParCSRMatrixRowStarts(A));
-   hypre_ParVectorInitialize(r);
+   r = nalu_hypre_ParVectorCreate(nalu_hypre_ParCSRMatrixComm(A),
+                             nalu_hypre_ParCSRMatrixGlobalNumRows(A),
+                             nalu_hypre_ParCSRMatrixRowStarts(A));
+   nalu_hypre_ParVectorInitialize(r);
 
-   p = hypre_ParVectorCreate(hypre_ParCSRMatrixComm(A),
-                             hypre_ParCSRMatrixGlobalNumRows(A),
-                             hypre_ParCSRMatrixRowStarts(A));
-   hypre_ParVectorInitialize(p);
+   p = nalu_hypre_ParVectorCreate(nalu_hypre_ParCSRMatrixComm(A),
+                             nalu_hypre_ParCSRMatrixGlobalNumRows(A),
+                             nalu_hypre_ParCSRMatrixRowStarts(A));
+   nalu_hypre_ParVectorInitialize(p);
 
-   s = hypre_ParVectorCreate(hypre_ParCSRMatrixComm(A),
-                             hypre_ParCSRMatrixGlobalNumRows(A),
-                             hypre_ParCSRMatrixRowStarts(A));
-   hypre_ParVectorInitialize(s);
+   s = nalu_hypre_ParVectorCreate(nalu_hypre_ParCSRMatrixComm(A),
+                             nalu_hypre_ParCSRMatrixGlobalNumRows(A),
+                             nalu_hypre_ParCSRMatrixRowStarts(A));
+   nalu_hypre_ParVectorInitialize(s);
 
-   ds = hypre_ParVectorCreate(hypre_ParCSRMatrixComm(A),
-                              hypre_ParCSRMatrixGlobalNumRows(A),
-                              hypre_ParCSRMatrixRowStarts(A));
-   hypre_ParVectorInitialize(ds);
+   ds = nalu_hypre_ParVectorCreate(nalu_hypre_ParCSRMatrixComm(A),
+                              nalu_hypre_ParCSRMatrixGlobalNumRows(A),
+                              nalu_hypre_ParCSRMatrixRowStarts(A));
+   nalu_hypre_ParVectorInitialize(ds);
 
-   u = hypre_ParVectorCreate(hypre_ParCSRMatrixComm(A),
-                             hypre_ParCSRMatrixGlobalNumRows(A),
-                             hypre_ParCSRMatrixRowStarts(A));
-   hypre_ParVectorInitialize(u);
+   u = nalu_hypre_ParVectorCreate(nalu_hypre_ParCSRMatrixComm(A),
+                             nalu_hypre_ParCSRMatrixGlobalNumRows(A),
+                             nalu_hypre_ParCSRMatrixRowStarts(A));
+   nalu_hypre_ParVectorInitialize(u);
 
    /* point to local data */
-   s_data = hypre_VectorData(hypre_ParVectorLocalVector(s));
-   p_data = hypre_VectorData(hypre_ParVectorLocalVector(p));
-   ds_data = hypre_VectorData(hypre_ParVectorLocalVector(ds));
-   u_data = hypre_VectorData(hypre_ParVectorLocalVector(u));
+   s_data = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(s));
+   p_data = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(p));
+   ds_data = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(ds));
+   u_data = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(u));
 
    /* make room for tri-diag matrix */
-   tridiag = hypre_CTAlloc(NALU_HYPRE_Real, max_iter + 1, NALU_HYPRE_MEMORY_HOST);
-   trioffd = hypre_CTAlloc(NALU_HYPRE_Real, max_iter + 1, NALU_HYPRE_MEMORY_HOST);
+   tridiag = nalu_hypre_CTAlloc(NALU_HYPRE_Real, max_iter + 1, NALU_HYPRE_MEMORY_HOST);
+   trioffd = nalu_hypre_CTAlloc(NALU_HYPRE_Real, max_iter + 1, NALU_HYPRE_MEMORY_HOST);
    for (i = 0; i < max_iter + 1; i++)
    {
       tridiag[i] = 0;
@@ -279,20 +279,20 @@ hypre_ParCSRMaxEigEstimateCGHost( hypre_ParCSRMatrix *A,     /* matrix to relax 
    }
 
    /* set residual to random */
-   hypre_ParVectorSetRandomValues(r, 1);
+   nalu_hypre_ParVectorSetRandomValues(r, 1);
 
    if (scale)
    {
-      hypre_CSRMatrixExtractDiagonal(hypre_ParCSRMatrixDiag(A), ds_data, 4);
+      nalu_hypre_CSRMatrixExtractDiagonal(nalu_hypre_ParCSRMatrixDiag(A), ds_data, 4);
    }
    else
    {
       /* set ds to 1 */
-      hypre_ParVectorSetConstantValues(ds, 1.0);
+      nalu_hypre_ParVectorSetConstantValues(ds, 1.0);
    }
 
    /* gamma = <r,Cr> */
-   gamma = hypre_ParVectorInnerProd(r, p);
+   gamma = nalu_hypre_ParVectorInnerProd(r, p);
 
    /* for the initial filling of the tridiag matrix */
    beta = 1.0;
@@ -302,11 +302,11 @@ hypre_ParCSRMaxEigEstimateCGHost( hypre_ParCSRMatrix *A,     /* matrix to relax 
    {
       /* s = C*r */
       /* TO DO:  C = diag scale */
-      hypre_ParVectorCopy(r, s);
+      nalu_hypre_ParVectorCopy(r, s);
 
       /*gamma = <r,Cr> */
       gamma_old = gamma;
-      gamma = hypre_ParVectorInnerProd(r, s);
+      gamma = nalu_hypre_ParVectorInnerProd(r, s);
 
       if (gamma < NALU_HYPRE_REAL_EPSILON)
       {
@@ -317,7 +317,7 @@ hypre_ParCSRMaxEigEstimateCGHost( hypre_ParCSRMatrix *A,     /* matrix to relax 
       {
          beta = 1.0;
          /* p_0 = C*r */
-         hypre_ParVectorCopy(s, p);
+         nalu_hypre_ParVectorCopy(s, p);
       }
       else
       {
@@ -341,7 +341,7 @@ hypre_ParCSRMaxEigEstimateCGHost( hypre_ParCSRMatrix *A,     /* matrix to relax 
          {
             u_data[j] = ds_data[j] * p_data[j];
          }
-         hypre_ParCSRMatrixMatvec(1.0, A, u, 0.0, s);
+         nalu_hypre_ParCSRMatrixMatvec(1.0, A, u, 0.0, s);
          for (j = 0; j < local_size; j++)
          {
             s_data[j] = ds_data[j] * s_data[j];
@@ -350,11 +350,11 @@ hypre_ParCSRMaxEigEstimateCGHost( hypre_ParCSRMatrix *A,     /* matrix to relax 
       else
       {
          /* s = A*p */
-         hypre_ParCSRMatrixMatvec(1.0, A, p, 0.0, s);
+         nalu_hypre_ParCSRMatrixMatvec(1.0, A, p, 0.0, s);
       }
 
       /* <s,p> */
-      sdotp =  hypre_ParVectorInnerProd(s, p);
+      sdotp =  nalu_hypre_ParVectorInnerProd(s, p);
 
       /* alpha = gamma / <s,p> */
       alpha = gamma / sdotp;
@@ -373,33 +373,33 @@ hypre_ParCSRMaxEigEstimateCGHost( hypre_ParCSRMatrix *A,     /* matrix to relax 
       /* don't need */
 
       /* r = r - alpha*s */
-      hypre_ParVectorAxpy(-alpha, s, r);
+      nalu_hypre_ParVectorAxpy(-alpha, s, r);
 
       i++;
    }
 
    /* eispack routine - eigenvalues return in tridiag and ordered*/
-   hypre_LINPACKcgtql1(&i, tridiag, trioffd, &err);
+   nalu_hypre_LINPACKcgtql1(&i, tridiag, trioffd, &err);
 
    lambda_max = tridiag[i - 1];
    lambda_min = tridiag[0];
-   /* hypre_printf("linpack max eig est = %g\n", lambda_max);*/
-   /* hypre_printf("linpack min eig est = %g\n", lambda_min);*/
+   /* nalu_hypre_printf("linpack max eig est = %g\n", lambda_max);*/
+   /* nalu_hypre_printf("linpack min eig est = %g\n", lambda_min);*/
 
-   hypre_TFree(tridiag, NALU_HYPRE_MEMORY_HOST);
-   hypre_TFree(trioffd, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(tridiag, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(trioffd, NALU_HYPRE_MEMORY_HOST);
 
-   hypre_ParVectorDestroy(r);
-   hypre_ParVectorDestroy(s);
-   hypre_ParVectorDestroy(p);
-   hypre_ParVectorDestroy(ds);
-   hypre_ParVectorDestroy(u);
+   nalu_hypre_ParVectorDestroy(r);
+   nalu_hypre_ParVectorDestroy(s);
+   nalu_hypre_ParVectorDestroy(p);
+   nalu_hypre_ParVectorDestroy(ds);
+   nalu_hypre_ParVectorDestroy(u);
 
    /* return */
    *max_eig = lambda_max;
    *min_eig = lambda_min;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /******************************************************************************
@@ -419,48 +419,48 @@ means half, and .1 means 10percent)
 *******************************************************************************/
 
 NALU_HYPRE_Int
-hypre_ParCSRRelax_Cheby(hypre_ParCSRMatrix *A, /* matrix to relax with */
-                        hypre_ParVector    *f, /* right-hand side */
+nalu_hypre_ParCSRRelax_Cheby(nalu_hypre_ParCSRMatrix *A, /* matrix to relax with */
+                        nalu_hypre_ParVector    *f, /* right-hand side */
                         NALU_HYPRE_Real          max_eig,
                         NALU_HYPRE_Real          min_eig,
                         NALU_HYPRE_Real          fraction,
                         NALU_HYPRE_Int           order, /* polynomial order */
                         NALU_HYPRE_Int           scale, /* scale by diagonal?*/
                         NALU_HYPRE_Int           variant,
-                        hypre_ParVector    *u, /* initial/updated approximation */
-                        hypre_ParVector    *v, /* temporary vector */
-                        hypre_ParVector    *r /*another temp vector */)
+                        nalu_hypre_ParVector    *u, /* initial/updated approximation */
+                        nalu_hypre_ParVector    *v, /* temporary vector */
+                        nalu_hypre_ParVector    *r /*another temp vector */)
 {
    NALU_HYPRE_Real *coefs   = NULL;
    NALU_HYPRE_Real *ds_data = NULL;
 
-   hypre_ParVector *tmp_vec    = NULL;
-   hypre_ParVector *orig_u_vec = NULL;
+   nalu_hypre_ParVector *tmp_vec    = NULL;
+   nalu_hypre_ParVector *orig_u_vec = NULL;
 
-   hypre_ParCSRRelax_Cheby_Setup(A, max_eig, min_eig, fraction, order, scale, variant, &coefs,
+   nalu_hypre_ParCSRRelax_Cheby_Setup(A, max_eig, min_eig, fraction, order, scale, variant, &coefs,
                                  &ds_data);
 
-   orig_u_vec = hypre_ParVectorCreate(hypre_ParCSRMatrixComm(A),
-                                      hypre_ParCSRMatrixGlobalNumRows(A),
-                                      hypre_ParCSRMatrixRowStarts(A));
-   hypre_ParVectorInitialize_v2(orig_u_vec, hypre_ParCSRMatrixMemoryLocation(A));
+   orig_u_vec = nalu_hypre_ParVectorCreate(nalu_hypre_ParCSRMatrixComm(A),
+                                      nalu_hypre_ParCSRMatrixGlobalNumRows(A),
+                                      nalu_hypre_ParCSRMatrixRowStarts(A));
+   nalu_hypre_ParVectorInitialize_v2(orig_u_vec, nalu_hypre_ParCSRMatrixMemoryLocation(A));
 
    if (scale)
    {
-      tmp_vec = hypre_ParVectorCreate(hypre_ParCSRMatrixComm(A),
-                                      hypre_ParCSRMatrixGlobalNumRows(A),
-                                      hypre_ParCSRMatrixRowStarts(A));
-      hypre_ParVectorInitialize_v2(tmp_vec, hypre_ParCSRMatrixMemoryLocation(A));
+      tmp_vec = nalu_hypre_ParVectorCreate(nalu_hypre_ParCSRMatrixComm(A),
+                                      nalu_hypre_ParCSRMatrixGlobalNumRows(A),
+                                      nalu_hypre_ParCSRMatrixRowStarts(A));
+      nalu_hypre_ParVectorInitialize_v2(tmp_vec, nalu_hypre_ParCSRMatrixMemoryLocation(A));
    }
-   hypre_ParCSRRelax_Cheby_Solve(A, f, ds_data, coefs, order, scale, variant, u, v, r, orig_u_vec,
+   nalu_hypre_ParCSRRelax_Cheby_Solve(A, f, ds_data, coefs, order, scale, variant, u, v, r, orig_u_vec,
                                  tmp_vec);
 
-   hypre_TFree(ds_data, hypre_ParCSRMatrixMemoryLocation(A));
-   hypre_TFree(coefs, NALU_HYPRE_MEMORY_HOST);
-   hypre_ParVectorDestroy(orig_u_vec);
-   hypre_ParVectorDestroy(tmp_vec);
+   nalu_hypre_TFree(ds_data, nalu_hypre_ParCSRMatrixMemoryLocation(A));
+   nalu_hypre_TFree(coefs, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_ParVectorDestroy(orig_u_vec);
+   nalu_hypre_ParVectorDestroy(tmp_vec);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
@@ -468,10 +468,10 @@ hypre_ParCSRRelax_Cheby(hypre_ParCSRMatrix *A, /* matrix to relax with */
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_ParCSRRelax_CG( NALU_HYPRE_Solver        solver,
-                      hypre_ParCSRMatrix *A,
-                      hypre_ParVector    *f,
-                      hypre_ParVector    *u,
+nalu_hypre_ParCSRRelax_CG( NALU_HYPRE_Solver        solver,
+                      nalu_hypre_ParCSRMatrix *A,
+                      nalu_hypre_ParVector    *f,
+                      nalu_hypre_ParVector    *u,
                       NALU_HYPRE_Int           num_its)
 {
 
@@ -485,18 +485,18 @@ hypre_ParCSRRelax_CG( NALU_HYPRE_Solver        solver,
       NALU_HYPRE_Int num_iterations;
       NALU_HYPRE_Real final_res_norm;
 
-      hypre_MPI_Comm_rank(hypre_MPI_COMM_WORLD, &myid);
+      nalu_hypre_MPI_Comm_rank(nalu_hypre_MPI_COMM_WORLD, &myid);
       NALU_HYPRE_PCGGetNumIterations(solver, &num_iterations);
       NALU_HYPRE_PCGGetFinalRelativeResidualNorm(solver, &final_res_norm);
       if (myid == 0)
       {
-         hypre_printf("            -----CG PCG Iterations = %d\n", num_iterations);
-         hypre_printf("            -----CG PCG Final Relative Residual Norm = %e\n", final_res_norm);
+         nalu_hypre_printf("            -----CG PCG Iterations = %d\n", num_iterations);
+         nalu_hypre_printf("            -----CG PCG Final Relative Residual Norm = %e\n", final_res_norm);
       }
    }
 #endif
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 
@@ -511,7 +511,7 @@ hypre_ParCSRRelax_CG( NALU_HYPRE_Solver        solver,
 */
 
 NALU_HYPRE_Int
-hypre_LINPACKcgtql1(NALU_HYPRE_Int *n, NALU_HYPRE_Real *d, NALU_HYPRE_Real *e, NALU_HYPRE_Int *ierr)
+nalu_hypre_LINPACKcgtql1(NALU_HYPRE_Int *n, NALU_HYPRE_Real *d, NALU_HYPRE_Real *e, NALU_HYPRE_Int *ierr)
 {
    /* System generated locals */
    NALU_HYPRE_Int  i__1, i__2;
@@ -627,7 +627,7 @@ hypre_LINPACKcgtql1(NALU_HYPRE_Int *n, NALU_HYPRE_Real *d, NALU_HYPRE_Real *e, N
       l2 = l1 + 1;
       g = d[l];
       p = (d[l1] - g) / (e[l] * 2.);
-      r = hypre_LINPACKcgpthy(&p, &c_b10);
+      r = nalu_hypre_LINPACKcgpthy(&p, &c_b10);
       ds = 1.0;
       if (p < 0.0) { ds = -1.0; }
       d[l] = e[l] / (p + ds * r);
@@ -664,7 +664,7 @@ hypre_LINPACKcgtql1(NALU_HYPRE_Int *n, NALU_HYPRE_Real *d, NALU_HYPRE_Real *e, N
          i = m - ii;
          g = c * e[i];
          h = c * p;
-         r = hypre_LINPACKcgpthy(&p, &e[i]);
+         r = nalu_hypre_LINPACKcgpthy(&p, &e[i]);
          e[i + 1] = s * r;
          s = e[i] / r;
          c = p / r;
@@ -716,7 +716,7 @@ L1001:
 } /* cgtql1_ */
 
 NALU_HYPRE_Real
-hypre_LINPACKcgpthy(NALU_HYPRE_Real *a, NALU_HYPRE_Real *b)
+nalu_hypre_LINPACKcgpthy(NALU_HYPRE_Real *a, NALU_HYPRE_Real *b)
 {
    /* System generated locals */
    NALU_HYPRE_Real ret_val, d__1, d__2, d__3;
@@ -729,7 +729,7 @@ hypre_LINPACKcgpthy(NALU_HYPRE_Real *a, NALU_HYPRE_Real *b)
 
    /* Computing MAX */
    d__1 = fabs(*a), d__2 = fabs(*b);
-   p = hypre_max(d__1, d__2);
+   p = nalu_hypre_max(d__1, d__2);
    if (!p)
    {
       goto L20;
@@ -737,7 +737,7 @@ hypre_LINPACKcgpthy(NALU_HYPRE_Real *a, NALU_HYPRE_Real *b)
    /* Computing MIN */
    d__2 = fabs(*a), d__3 = fabs(*b);
    /* Computing 2nd power */
-   d__1 = hypre_min(d__2, d__3) / p;
+   d__1 = nalu_hypre_min(d__2, d__3) / p;
    r = d__1 * d__1;
 L10:
    t = r + 4.;

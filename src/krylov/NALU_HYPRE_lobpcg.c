@@ -11,7 +11,7 @@
  *
  *****************************************************************************/
 
-#include "_hypre_utilities.h"
+#include "_nalu_hypre_utilities.h"
 
 #include "NALU_HYPRE_config.h"
 
@@ -21,14 +21,14 @@
 #include "interpreter.h"
 #include "NALU_HYPRE_MatvecFunctions.h"
 
-#include "_hypre_lapack.h"
+#include "_nalu_hypre_lapack.h"
 
 typedef struct
 {
    NALU_HYPRE_Int    (*Precond)(void*, void*, void*, void*);
    NALU_HYPRE_Int    (*PrecondSetup)(void*, void*, void*, void*);
 
-} hypre_LOBPCGPrecond;
+} nalu_hypre_LOBPCGPrecond;
 
 typedef struct
 {
@@ -70,24 +70,24 @@ typedef struct
    void*                         T;
    void*                         matvecDataT;
 
-   hypre_LOBPCGPrecond           precondFunctions;
+   nalu_hypre_LOBPCGPrecond           precondFunctions;
 
    NALU_HYPRE_MatvecFunctions*        matvecFunctions;
 
-} hypre_LOBPCGData;
+} nalu_hypre_LOBPCGData;
 
 static NALU_HYPRE_Int dsygv_interface (NALU_HYPRE_Int *itype, char *jobz, char *uplo, NALU_HYPRE_Int *
                                   n, NALU_HYPRE_Real *a, NALU_HYPRE_Int *lda, NALU_HYPRE_Real *b, NALU_HYPRE_Int *ldb,
                                   NALU_HYPRE_Real *w, NALU_HYPRE_Real *work, NALU_HYPRE_Int *lwork, NALU_HYPRE_Int *info)
 {
-   hypre_dsygv(itype, jobz, uplo, n, a, lda, b, ldb, w, work, lwork, info);
+   nalu_hypre_dsygv(itype, jobz, uplo, n, a, lda, b, ldb, w, work, lwork, info);
    return 0;
 }
 
 static NALU_HYPRE_Int dpotrf_interface (const char *uplo, NALU_HYPRE_Int *n, NALU_HYPRE_Real *a, NALU_HYPRE_Int *
                                    lda, NALU_HYPRE_Int *info)
 {
-   hypre_dpotrf(uplo, n, a, lda, info);
+   nalu_hypre_dpotrf(uplo, n, a, lda, info);
    return 0;
 }
 
@@ -118,9 +118,9 @@ lobpcg_clean( lobpcg_Data* data )
 }
 
 NALU_HYPRE_Int
-hypre_LOBPCGDestroy( void *pcg_vdata )
+nalu_hypre_LOBPCGDestroy( void *pcg_vdata )
 {
-   hypre_LOBPCGData      *pcg_data      = (hypre_LOBPCGData*)pcg_vdata;
+   nalu_hypre_LOBPCGData      *pcg_data      = (nalu_hypre_LOBPCGData*)pcg_vdata;
 
    if (pcg_data)
    {
@@ -143,16 +143,16 @@ hypre_LOBPCGDestroy( void *pcg_vdata )
 
       lobpcg_clean( &(pcg_data->lobpcgData) );
 
-      hypre_TFree( pcg_vdata, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree( pcg_vdata, NALU_HYPRE_MEMORY_HOST);
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 NALU_HYPRE_Int
-hypre_LOBPCGSetup( void *pcg_vdata, void *A, void *b, void *x )
+nalu_hypre_LOBPCGSetup( void *pcg_vdata, void *A, void *b, void *x )
 {
-   hypre_LOBPCGData *pcg_data = (hypre_LOBPCGData*)pcg_vdata;
+   nalu_hypre_LOBPCGData *pcg_data = (nalu_hypre_LOBPCGData*)pcg_vdata;
    NALU_HYPRE_MatvecFunctions * mv = pcg_data->matvecFunctions;
    NALU_HYPRE_Int  (*precond_setup)(void*, void*, void*, void*) = (pcg_data->precondFunctions).PrecondSetup;
    void *precond_data = (pcg_data->precondData);
@@ -177,13 +177,13 @@ hypre_LOBPCGSetup( void *pcg_vdata, void *A, void *b, void *x )
       }
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 NALU_HYPRE_Int
-hypre_LOBPCGSetupB( void *pcg_vdata, void *B, void *x )
+nalu_hypre_LOBPCGSetupB( void *pcg_vdata, void *B, void *x )
 {
-   hypre_LOBPCGData *pcg_data = (hypre_LOBPCGData*)pcg_vdata;
+   nalu_hypre_LOBPCGData *pcg_data = (nalu_hypre_LOBPCGData*)pcg_vdata;
    NALU_HYPRE_MatvecFunctions * mv = pcg_data->matvecFunctions;
 
    (pcg_data->B) = B;
@@ -202,13 +202,13 @@ hypre_LOBPCGSetupB( void *pcg_vdata, void *B, void *x )
       (pcg_data->matvecDataB) = NULL;
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 NALU_HYPRE_Int
-hypre_LOBPCGSetupT( void *pcg_vdata, void *T, void *x )
+nalu_hypre_LOBPCGSetupT( void *pcg_vdata, void *T, void *x )
 {
-   hypre_LOBPCGData *pcg_data = (hypre_LOBPCGData*)pcg_vdata;
+   nalu_hypre_LOBPCGData *pcg_data = (nalu_hypre_LOBPCGData*)pcg_vdata;
    NALU_HYPRE_MatvecFunctions * mv = pcg_data->matvecFunctions;
 
    (pcg_data -> T) = T;
@@ -226,89 +226,89 @@ hypre_LOBPCGSetupT( void *pcg_vdata, void *T, void *x )
       (pcg_data->matvecDataT) = NULL;
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 NALU_HYPRE_Int
-hypre_LOBPCGSetTol( void* pcg_vdata, NALU_HYPRE_Real tol )
+nalu_hypre_LOBPCGSetTol( void* pcg_vdata, NALU_HYPRE_Real tol )
 {
-   hypre_LOBPCGData *pcg_data = (hypre_LOBPCGData*)pcg_vdata;
+   nalu_hypre_LOBPCGData *pcg_data = (nalu_hypre_LOBPCGData*)pcg_vdata;
 
    lobpcg_absoluteTolerance(pcg_data->lobpcgData) = tol;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 NALU_HYPRE_Int
-hypre_LOBPCGSetRTol( void* pcg_vdata, NALU_HYPRE_Real tol )
+nalu_hypre_LOBPCGSetRTol( void* pcg_vdata, NALU_HYPRE_Real tol )
 {
-   hypre_LOBPCGData *pcg_data = (hypre_LOBPCGData*) pcg_vdata;
+   nalu_hypre_LOBPCGData *pcg_data = (nalu_hypre_LOBPCGData*) pcg_vdata;
 
    lobpcg_relativeTolerance(pcg_data->lobpcgData) = tol;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 NALU_HYPRE_Int
-hypre_LOBPCGSetMaxIter( void* pcg_vdata, NALU_HYPRE_Int max_iter  )
+nalu_hypre_LOBPCGSetMaxIter( void* pcg_vdata, NALU_HYPRE_Int max_iter  )
 {
-   hypre_LOBPCGData *pcg_data = (hypre_LOBPCGData*)pcg_vdata;
+   nalu_hypre_LOBPCGData *pcg_data = (nalu_hypre_LOBPCGData*)pcg_vdata;
 
    lobpcg_maxIterations(pcg_data->lobpcgData) = max_iter;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 NALU_HYPRE_Int
-hypre_LOBPCGSetPrecondUsageMode( void* pcg_vdata, NALU_HYPRE_Int mode  )
+nalu_hypre_LOBPCGSetPrecondUsageMode( void* pcg_vdata, NALU_HYPRE_Int mode  )
 {
-   hypre_LOBPCGData *pcg_data = (hypre_LOBPCGData*)pcg_vdata;
+   nalu_hypre_LOBPCGData *pcg_data = (nalu_hypre_LOBPCGData*)pcg_vdata;
 
    lobpcg_precondUsageMode(pcg_data->lobpcgData) = mode;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 NALU_HYPRE_Int
-hypre_LOBPCGGetPrecond( void         *pcg_vdata,
+nalu_hypre_LOBPCGGetPrecond( void         *pcg_vdata,
                         NALU_HYPRE_Solver *precond_data_ptr )
 {
-   hypre_LOBPCGData* pcg_data = (hypre_LOBPCGData*)pcg_vdata;
+   nalu_hypre_LOBPCGData* pcg_data = (nalu_hypre_LOBPCGData*)pcg_vdata;
 
    *precond_data_ptr = (NALU_HYPRE_Solver)(pcg_data -> precondData);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 NALU_HYPRE_Int
-hypre_LOBPCGSetPrecond( void  *pcg_vdata,
+nalu_hypre_LOBPCGSetPrecond( void  *pcg_vdata,
                         NALU_HYPRE_Int  (*precond)(void*, void*, void*, void*),
                         NALU_HYPRE_Int  (*precond_setup)(void*, void*, void*, void*),
                         void  *precond_data )
 {
-   hypre_LOBPCGData* pcg_data = (hypre_LOBPCGData*)pcg_vdata;
+   nalu_hypre_LOBPCGData* pcg_data = (nalu_hypre_LOBPCGData*)pcg_vdata;
 
    (pcg_data->precondFunctions).Precond      = precond;
    (pcg_data->precondFunctions).PrecondSetup = precond_setup;
    (pcg_data->precondData)                   = precond_data;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 NALU_HYPRE_Int
-hypre_LOBPCGSetPrintLevel( void *pcg_vdata, NALU_HYPRE_Int level )
+nalu_hypre_LOBPCGSetPrintLevel( void *pcg_vdata, NALU_HYPRE_Int level )
 {
-   hypre_LOBPCGData *pcg_data = (hypre_LOBPCGData*)pcg_vdata;
+   nalu_hypre_LOBPCGData *pcg_data = (nalu_hypre_LOBPCGData*)pcg_vdata;
 
    lobpcg_verbosityLevel(pcg_data->lobpcgData) = level;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 void
-hypre_LOBPCGPreconditioner( void *vdata, void* x, void* y )
+nalu_hypre_LOBPCGPreconditioner( void *vdata, void* x, void* y )
 {
-   hypre_LOBPCGData *data = (hypre_LOBPCGData*)vdata;
+   nalu_hypre_LOBPCGData *data = (nalu_hypre_LOBPCGData*)vdata;
    mv_InterfaceInterpreter* ii = data->interpreter;
    NALU_HYPRE_Int (*precond)(void*, void*, void*, void*) = (data->precondFunctions).Precond;
 
@@ -338,9 +338,9 @@ hypre_LOBPCGPreconditioner( void *vdata, void* x, void* y )
 }
 
 void
-hypre_LOBPCGOperatorA( void *pcg_vdata, void* x, void* y )
+nalu_hypre_LOBPCGOperatorA( void *pcg_vdata, void* x, void* y )
 {
-   hypre_LOBPCGData*           pcg_data    = (hypre_LOBPCGData*)pcg_vdata;
+   nalu_hypre_LOBPCGData*           pcg_data    = (nalu_hypre_LOBPCGData*)pcg_vdata;
    NALU_HYPRE_MatvecFunctions * mv = pcg_data->matvecFunctions;
    void*                      matvec_data = (pcg_data -> matvecData);
 
@@ -348,9 +348,9 @@ hypre_LOBPCGOperatorA( void *pcg_vdata, void* x, void* y )
 }
 
 void
-hypre_LOBPCGOperatorB( void *pcg_vdata, void* x, void* y )
+nalu_hypre_LOBPCGOperatorB( void *pcg_vdata, void* x, void* y )
 {
-   hypre_LOBPCGData*           pcg_data    = (hypre_LOBPCGData*)pcg_vdata;
+   nalu_hypre_LOBPCGData*           pcg_data    = (nalu_hypre_LOBPCGData*)pcg_vdata;
    mv_InterfaceInterpreter* ii          = pcg_data->interpreter;
    NALU_HYPRE_MatvecFunctions * mv = pcg_data->matvecFunctions;
    void*                       matvec_data = (pcg_data -> matvecDataB);
@@ -371,39 +371,39 @@ hypre_LOBPCGOperatorB( void *pcg_vdata, void* x, void* y )
 }
 
 void
-hypre_LOBPCGMultiPreconditioner( void *data, void * x, void*  y )
+nalu_hypre_LOBPCGMultiPreconditioner( void *data, void * x, void*  y )
 {
-   hypre_LOBPCGData *pcg_data = (hypre_LOBPCGData*)data;
+   nalu_hypre_LOBPCGData *pcg_data = (nalu_hypre_LOBPCGData*)data;
    mv_InterfaceInterpreter* ii = pcg_data->interpreter;
 
-   ii->Eval( hypre_LOBPCGPreconditioner, data, x, y );
+   ii->Eval( nalu_hypre_LOBPCGPreconditioner, data, x, y );
 }
 
 void
-hypre_LOBPCGMultiOperatorA( void *data, void * x, void*  y )
+nalu_hypre_LOBPCGMultiOperatorA( void *data, void * x, void*  y )
 {
-   hypre_LOBPCGData *pcg_data = (hypre_LOBPCGData*)data;
+   nalu_hypre_LOBPCGData *pcg_data = (nalu_hypre_LOBPCGData*)data;
    mv_InterfaceInterpreter* ii = pcg_data->interpreter;
 
-   ii->Eval( hypre_LOBPCGOperatorA, data, x, y );
+   ii->Eval( nalu_hypre_LOBPCGOperatorA, data, x, y );
 }
 
 void
-hypre_LOBPCGMultiOperatorB( void *data, void * x, void*  y )
+nalu_hypre_LOBPCGMultiOperatorB( void *data, void * x, void*  y )
 {
-   hypre_LOBPCGData *pcg_data = (hypre_LOBPCGData*)data;
+   nalu_hypre_LOBPCGData *pcg_data = (nalu_hypre_LOBPCGData*)data;
    mv_InterfaceInterpreter* ii = pcg_data->interpreter;
 
-   ii->Eval( hypre_LOBPCGOperatorB, data, x, y );
+   ii->Eval( nalu_hypre_LOBPCGOperatorB, data, x, y );
 }
 
 NALU_HYPRE_Int
-hypre_LOBPCGSolve( void *vdata,
+nalu_hypre_LOBPCGSolve( void *vdata,
                    mv_MultiVectorPtr con,
                    mv_MultiVectorPtr vec,
                    NALU_HYPRE_Real* val )
 {
-   hypre_LOBPCGData* data = (hypre_LOBPCGData*)vdata;
+   nalu_hypre_LOBPCGData* data = (nalu_hypre_LOBPCGData*)vdata;
    NALU_HYPRE_Int (*precond)(void*, void*, void*, void*) = (data->precondFunctions).Precond;
    void* opB = data->B;
 
@@ -431,18 +431,18 @@ hypre_LOBPCGSolve( void *vdata,
 
    if ( precond != NULL )
    {
-      prec = hypre_LOBPCGMultiPreconditioner;
+      prec = nalu_hypre_LOBPCGMultiPreconditioner;
    }
    else
    {
       prec = NULL;
    }
 
-   operatorA = hypre_LOBPCGMultiOperatorA;
+   operatorA = nalu_hypre_LOBPCGMultiOperatorA;
 
    if ( opB != NULL )
    {
-      operatorB = hypre_LOBPCGMultiOperatorB;
+      operatorB = nalu_hypre_LOBPCGMultiOperatorB;
    }
    else
    {
@@ -468,34 +468,34 @@ hypre_LOBPCGSolve( void *vdata,
                  utilities_FortranMatrixGlobalHeight(residualsHistory)
                );
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 utilities_FortranMatrix*
-hypre_LOBPCGResidualNorms( void *vdata )
+nalu_hypre_LOBPCGResidualNorms( void *vdata )
 {
-   hypre_LOBPCGData *data = (hypre_LOBPCGData*)vdata;
+   nalu_hypre_LOBPCGData *data = (nalu_hypre_LOBPCGData*)vdata;
    return (lobpcg_residualNorms(data->lobpcgData));
 }
 
 utilities_FortranMatrix*
-hypre_LOBPCGResidualNormsHistory( void *vdata )
+nalu_hypre_LOBPCGResidualNormsHistory( void *vdata )
 {
-   hypre_LOBPCGData *data = (hypre_LOBPCGData*)vdata;
+   nalu_hypre_LOBPCGData *data = (nalu_hypre_LOBPCGData*)vdata;
    return (lobpcg_residualNormsHistory(data->lobpcgData));
 }
 
 utilities_FortranMatrix*
-hypre_LOBPCGEigenvaluesHistory( void *vdata )
+nalu_hypre_LOBPCGEigenvaluesHistory( void *vdata )
 {
-   hypre_LOBPCGData *data = (hypre_LOBPCGData*)vdata;
+   nalu_hypre_LOBPCGData *data = (nalu_hypre_LOBPCGData*)vdata;
    return (lobpcg_eigenvaluesHistory(data->lobpcgData));
 }
 
 NALU_HYPRE_Int
-hypre_LOBPCGIterations( void* vdata )
+nalu_hypre_LOBPCGIterations( void* vdata )
 {
-   hypre_LOBPCGData *data = (hypre_LOBPCGData*)vdata;
+   nalu_hypre_LOBPCGData *data = (nalu_hypre_LOBPCGData*)vdata;
    return (lobpcg_iterationNumber(data->lobpcgData));
 }
 
@@ -504,9 +504,9 @@ NALU_HYPRE_Int
 NALU_HYPRE_LOBPCGCreate( mv_InterfaceInterpreter* ii, NALU_HYPRE_MatvecFunctions* mv,
                     NALU_HYPRE_Solver* solver )
 {
-   hypre_LOBPCGData *pcg_data;
+   nalu_hypre_LOBPCGData *pcg_data;
 
-   pcg_data = hypre_CTAlloc(hypre_LOBPCGData, 1, NALU_HYPRE_MEMORY_HOST);
+   pcg_data = nalu_hypre_CTAlloc(nalu_hypre_LOBPCGData, 1, NALU_HYPRE_MEMORY_HOST);
 
    (pcg_data->precondFunctions).Precond = NULL;
    (pcg_data->precondFunctions).PrecondSetup = NULL;
@@ -527,13 +527,13 @@ NALU_HYPRE_LOBPCGCreate( mv_InterfaceInterpreter* ii, NALU_HYPRE_MatvecFunctions
 
    *solver = (NALU_HYPRE_Solver)pcg_data;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 NALU_HYPRE_Int
 NALU_HYPRE_LOBPCGDestroy( NALU_HYPRE_Solver solver )
 {
-   return ( hypre_LOBPCGDestroy( (void *) solver ) );
+   return ( nalu_hypre_LOBPCGDestroy( (void *) solver ) );
 }
 
 NALU_HYPRE_Int
@@ -542,7 +542,7 @@ NALU_HYPRE_LOBPCGSetup( NALU_HYPRE_Solver solver,
                    NALU_HYPRE_Vector b,
                    NALU_HYPRE_Vector x      )
 {
-   return ( hypre_LOBPCGSetup( solver, A, b, x ) );
+   return ( nalu_hypre_LOBPCGSetup( solver, A, b, x ) );
 }
 
 NALU_HYPRE_Int
@@ -550,7 +550,7 @@ NALU_HYPRE_LOBPCGSetupB( NALU_HYPRE_Solver solver,
                     NALU_HYPRE_Matrix B,
                     NALU_HYPRE_Vector x      )
 {
-   return ( hypre_LOBPCGSetupB( solver, B, x ) );
+   return ( nalu_hypre_LOBPCGSetupB( solver, B, x ) );
 }
 
 NALU_HYPRE_Int
@@ -558,38 +558,38 @@ NALU_HYPRE_LOBPCGSetupT( NALU_HYPRE_Solver solver,
                     NALU_HYPRE_Matrix T,
                     NALU_HYPRE_Vector x      )
 {
-   return ( hypre_LOBPCGSetupT( solver, T, x ) );
+   return ( nalu_hypre_LOBPCGSetupT( solver, T, x ) );
 }
 
 NALU_HYPRE_Int
 NALU_HYPRE_LOBPCGSolve( NALU_HYPRE_Solver solver, mv_MultiVectorPtr con,
                    mv_MultiVectorPtr vec, NALU_HYPRE_Real* val )
 {
-   return ( hypre_LOBPCGSolve( (void *) solver, con, vec, val ) );
+   return ( nalu_hypre_LOBPCGSolve( (void *) solver, con, vec, val ) );
 }
 
 NALU_HYPRE_Int
 NALU_HYPRE_LOBPCGSetTol( NALU_HYPRE_Solver solver, NALU_HYPRE_Real tol )
 {
-   return ( hypre_LOBPCGSetTol( (void *) solver, tol ) );
+   return ( nalu_hypre_LOBPCGSetTol( (void *) solver, tol ) );
 }
 
 NALU_HYPRE_Int
 NALU_HYPRE_LOBPCGSetRTol( NALU_HYPRE_Solver solver, NALU_HYPRE_Real tol )
 {
-   return ( hypre_LOBPCGSetRTol( (void *) solver, tol ) );
+   return ( nalu_hypre_LOBPCGSetRTol( (void *) solver, tol ) );
 }
 
 NALU_HYPRE_Int
 NALU_HYPRE_LOBPCGSetMaxIter( NALU_HYPRE_Solver solver, NALU_HYPRE_Int max_iter )
 {
-   return ( hypre_LOBPCGSetMaxIter( (void *) solver, max_iter ) );
+   return ( nalu_hypre_LOBPCGSetMaxIter( (void *) solver, max_iter ) );
 }
 
 NALU_HYPRE_Int
 NALU_HYPRE_LOBPCGSetPrecondUsageMode( NALU_HYPRE_Solver solver, NALU_HYPRE_Int mode )
 {
-   return ( hypre_LOBPCGSetPrecondUsageMode( (void *) solver, mode ) );
+   return ( nalu_hypre_LOBPCGSetPrecondUsageMode( (void *) solver, mode ) );
 }
 
 NALU_HYPRE_Int
@@ -598,7 +598,7 @@ NALU_HYPRE_LOBPCGSetPrecond( NALU_HYPRE_Solver         solver,
                         NALU_HYPRE_PtrToSolverFcn precond_setup,
                         NALU_HYPRE_Solver         precond_solver )
 {
-   return ( hypre_LOBPCGSetPrecond( (void *) solver,
+   return ( nalu_hypre_LOBPCGSetPrecond( (void *) solver,
                                     (NALU_HYPRE_Int (*)(void*, void*, void*, void*))precond,
                                     (NALU_HYPRE_Int (*)(void*, void*, void*, void*))precond_setup,
                                     (void *) precond_solver ) );
@@ -608,38 +608,38 @@ NALU_HYPRE_Int
 NALU_HYPRE_LOBPCGGetPrecond( NALU_HYPRE_Solver  solver,
                         NALU_HYPRE_Solver *precond_data_ptr )
 {
-   return ( hypre_LOBPCGGetPrecond( (void *)     solver,
+   return ( nalu_hypre_LOBPCGGetPrecond( (void *)     solver,
                                     (NALU_HYPRE_Solver *) precond_data_ptr ) );
 }
 
 NALU_HYPRE_Int
 NALU_HYPRE_LOBPCGSetPrintLevel( NALU_HYPRE_Solver solver, NALU_HYPRE_Int level )
 {
-   return ( hypre_LOBPCGSetPrintLevel( (void*)solver, level ) );
+   return ( nalu_hypre_LOBPCGSetPrintLevel( (void*)solver, level ) );
 }
 
 utilities_FortranMatrix*
 NALU_HYPRE_LOBPCGResidualNorms( NALU_HYPRE_Solver solver )
 {
-   return ( hypre_LOBPCGResidualNorms( (void*)solver ) );
+   return ( nalu_hypre_LOBPCGResidualNorms( (void*)solver ) );
 }
 
 utilities_FortranMatrix*
 NALU_HYPRE_LOBPCGResidualNormsHistory( NALU_HYPRE_Solver solver )
 {
-   return ( hypre_LOBPCGResidualNormsHistory( (void*)solver ) );
+   return ( nalu_hypre_LOBPCGResidualNormsHistory( (void*)solver ) );
 }
 
 utilities_FortranMatrix*
 NALU_HYPRE_LOBPCGEigenvaluesHistory( NALU_HYPRE_Solver solver )
 {
-   return ( hypre_LOBPCGEigenvaluesHistory( (void*)solver ) );
+   return ( nalu_hypre_LOBPCGEigenvaluesHistory( (void*)solver ) );
 }
 
 NALU_HYPRE_Int
 NALU_HYPRE_LOBPCGIterations( NALU_HYPRE_Solver solver )
 {
-   return ( hypre_LOBPCGIterations( (void*)solver ) );
+   return ( nalu_hypre_LOBPCGIterations( (void*)solver ) );
 }
 
 void

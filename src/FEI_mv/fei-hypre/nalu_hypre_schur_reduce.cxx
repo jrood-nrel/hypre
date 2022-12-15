@@ -10,7 +10,7 @@
 #include <stdio.h>
 
 #include "NALU_HYPRE.h"
-#include "utilities/_hypre_utilities.h"
+#include "utilities/_nalu_hypre_utilities.h"
 #include "IJ_mv/NALU_HYPRE_IJ_mv.h"
 #include "parcsr_mv/NALU_HYPRE_parcsr_mv.h"
 #include "parcsr_ls/NALU_HYPRE_parcsr_ls.h"
@@ -19,24 +19,24 @@
 #define habs(x) ((x > 0) ? x : -(x))
 
 //---------------------------------------------------------------------------
-// _hypre_parcsr_mv.h is put here instead of in NALU_HYPRE_LinSysCore.h
+// _nalu_hypre_parcsr_mv.h is put here instead of in NALU_HYPRE_LinSysCore.h
 // because it gives warning when compiling cfei.cc
 //---------------------------------------------------------------------------
 
-#include "parcsr_mv/_hypre_parcsr_mv.h"
+#include "parcsr_mv/_nalu_hypre_parcsr_mv.h"
 
 //---------------------------------------------------------------------------
 // These are external functions needed internally here
 //---------------------------------------------------------------------------
 
 extern "C" {
-   int hypre_BoomerAMGBuildCoarseOperator(hypre_ParCSRMatrix*,
-                                       hypre_ParCSRMatrix*,
-                                       hypre_ParCSRMatrix*,
-                                       hypre_ParCSRMatrix**);
+   int nalu_hypre_BoomerAMGBuildCoarseOperator(nalu_hypre_ParCSRMatrix*,
+                                       nalu_hypre_ParCSRMatrix*,
+                                       nalu_hypre_ParCSRMatrix*,
+                                       nalu_hypre_ParCSRMatrix**);
    int NALU_HYPRE_LSI_Search(int*, int, int);
-   void hypre_qsort0(int *, int, int);
-   void hypre_qsort1(int *, double *, int, int);
+   void nalu_hypre_qsort0(int *, int, int);
+   void nalu_hypre_qsort1(int *, double *, int, int);
 }
 
 //*****************************************************************************
@@ -266,7 +266,7 @@ void NALU_HYPRE_LinSysCore::buildSchurReducedSystem()
     ierr  = NALU_HYPRE_IJMatrixCreate(comm_, CStartRow, CStartRow+CNRows-1,
 				 CStartCol, CStartCol+CNCols-1, &Cmat);
     ierr += NALU_HYPRE_IJMatrixSetObjectType(Cmat, NALU_HYPRE_PARCSR);
-    hypre_assert(!ierr);
+    nalu_hypre_assert(!ierr);
 
     //------------------------------------------------------------------
     // compute the number of nonzeros per row in Cmat and call set up
@@ -283,7 +283,7 @@ void NALU_HYPRE_LinSysCore::buildSchurReducedSystem()
        for (j = 0; j < rowSize; j++)
        {
           colIndex = colInd[j];
-	  searchIndex = hypre_BinarySearch(globalSchurList,colIndex,
+	  searchIndex = nalu_hypre_BinarySearch(globalSchurList,colIndex,
                                            globalNSchur);
           if (searchIndex < 0) newRowSize++;
           else if ( colVal[j] != 0.0 )
@@ -302,7 +302,7 @@ void NALU_HYPRE_LinSysCore::buildSchurReducedSystem()
     }
     ierr  = NALU_HYPRE_IJMatrixSetRowSizes(Cmat, CMatSize);
     ierr += NALU_HYPRE_IJMatrixInitialize(Cmat);
-    hypre_assert(!ierr);
+    nalu_hypre_assert(!ierr);
     delete [] CMatSize;
 
     //------------------------------------------------------------------
@@ -368,7 +368,7 @@ void NALU_HYPRE_LinSysCore::buildSchurReducedSystem()
 
     NALU_HYPRE_IJMatrixAssemble(Cmat);
     NALU_HYPRE_IJMatrixGetObject(Cmat, (void **) &C_csr);
-    hypre_MatvecCommPkgCreate((hypre_ParCSRMatrix *) C_csr);
+    nalu_hypre_MatvecCommPkgCreate((nalu_hypre_ParCSRMatrix *) C_csr);
 
     if ( HYOutputLevel_ & HYFEI_SCHURREDUCE3 )
     {
@@ -431,7 +431,7 @@ void NALU_HYPRE_LinSysCore::buildSchurReducedSystem()
     for ( i = 0; i < MNRows; i++ ) MMatSize[i] = 1;
     ierr  = NALU_HYPRE_IJMatrixSetRowSizes(Mmat, MMatSize);
     ierr += NALU_HYPRE_IJMatrixInitialize(Mmat);
-    hypre_assert(!ierr);
+    nalu_hypre_assert(!ierr);
     delete [] MMatSize;
 
     //------------------------------------------------------------------
@@ -445,7 +445,7 @@ void NALU_HYPRE_LinSysCore::buildSchurReducedSystem()
     ierr     = 0;
     for ( i = StartRow; i <= EndRow; i++ )
     {
-       searchIndex = hypre_BinarySearch(schurList, i, nSchur);
+       searchIndex = nalu_hypre_BinarySearch(schurList, i, nSchur);
        if ( searchIndex < 0 )
        {
           ncnt = 0;
@@ -494,7 +494,7 @@ void NALU_HYPRE_LinSysCore::buildSchurReducedSystem()
 
     NALU_HYPRE_IJMatrixAssemble(Mmat);
     NALU_HYPRE_IJMatrixGetObject(Mmat, (void **) &M_csr);
-    hypre_MatvecCommPkgCreate((hypre_ParCSRMatrix *) M_csr);
+    nalu_hypre_MatvecCommPkgCreate((nalu_hypre_ParCSRMatrix *) M_csr);
 
     //------------------------------------------------------------------
     // Error checking
@@ -547,7 +547,7 @@ void NALU_HYPRE_LinSysCore::buildSchurReducedSystem()
     ierr  = NALU_HYPRE_IJMatrixCreate(comm_, CTStartRow, CTStartRow+CTNRows-1,
                                  CStartRow, CStartRow+CTNCols-1, &CTmat);
     ierr += NALU_HYPRE_IJMatrixSetObjectType(CTmat, NALU_HYPRE_PARCSR);
-    hypre_assert(!ierr);
+    nalu_hypre_assert(!ierr);
 
     //------------------------------------------------------------------
     // compute the number of nonzeros per row in CTmat and call set up
@@ -559,7 +559,7 @@ void NALU_HYPRE_LinSysCore::buildSchurReducedSystem()
     rowCount = 0;
     for ( i = StartRow; i <= EndRow; i++ )
     {
-       searchIndex = hypre_BinarySearch(schurList, i, nSchur);
+       searchIndex = nalu_hypre_BinarySearch(schurList, i, nSchur);
        if ( searchIndex < 0 )
        {
           NALU_HYPRE_ParCSRMatrixGetRow(A_csr,i,&rowSize,&colInd,&colVal);
@@ -567,7 +567,7 @@ void NALU_HYPRE_LinSysCore::buildSchurReducedSystem()
           for (j = 0; j < rowSize; j++)
           {
              colIndex = colInd[j];
-             searchIndex = hypre_BinarySearch(globalSchurList,colIndex,
+             searchIndex = nalu_hypre_BinarySearch(globalSchurList,colIndex,
                                               globalNSchur);
              if (searchIndex >= 0) newRowSize++;
           }
@@ -581,7 +581,7 @@ void NALU_HYPRE_LinSysCore::buildSchurReducedSystem()
     }
     ierr  = NALU_HYPRE_IJMatrixSetRowSizes(CTmat, CTMatSize);
     ierr += NALU_HYPRE_IJMatrixInitialize(CTmat);
-    hypre_assert(!ierr);
+    nalu_hypre_assert(!ierr);
     delete [] CTMatSize;
 
     //------------------------------------------------------------------
@@ -594,7 +594,7 @@ void NALU_HYPRE_LinSysCore::buildSchurReducedSystem()
 
     for ( i = StartRow; i <= EndRow; i++ )
     {
-       searchIndex = hypre_BinarySearch(schurList, i, nSchur);
+       searchIndex = nalu_hypre_BinarySearch(schurList, i, nSchur);
        if ( searchIndex < 0 )
        {
           NALU_HYPRE_ParCSRMatrixGetRow(A_csr,i,&rowSize,&colInd,&colVal);
@@ -602,7 +602,7 @@ void NALU_HYPRE_LinSysCore::buildSchurReducedSystem()
           for (j = 0; j < rowSize; j++)
           {
              colIndex = colInd[j];
-             searchIndex = hypre_BinarySearch(globalSchurList,colIndex,
+             searchIndex = nalu_hypre_BinarySearch(globalSchurList,colIndex,
                                               globalNSchur);
              if (searchIndex >= 0)
              {
@@ -641,7 +641,7 @@ void NALU_HYPRE_LinSysCore::buildSchurReducedSystem()
 
     NALU_HYPRE_IJMatrixAssemble(CTmat);
     NALU_HYPRE_IJMatrixGetObject(CTmat, (void **) &CT_csr);
-    hypre_MatvecCommPkgCreate((hypre_ParCSRMatrix *) CT_csr);
+    nalu_hypre_MatvecCommPkgCreate((nalu_hypre_ParCSRMatrix *) CT_csr);
 
     if ( HYOutputLevel_ & HYFEI_SCHURREDUCE3 )
     {
@@ -678,10 +678,10 @@ void NALU_HYPRE_LinSysCore::buildSchurReducedSystem()
     if ( HYOutputLevel_ & HYFEI_SCHURREDUCE1 )
        printf("%4d : buildSchurSystem - Triple matrix product begins..\n",
               mypid_);
-    hypre_BoomerAMGBuildCoarseOperator( (hypre_ParCSRMatrix *) CT_csr,
-                                     (hypre_ParCSRMatrix *) M_csr,
-                                     (hypre_ParCSRMatrix *) CT_csr,
-                                     (hypre_ParCSRMatrix **) &S_csr);
+    nalu_hypre_BoomerAMGBuildCoarseOperator( (nalu_hypre_ParCSRMatrix *) CT_csr,
+                                     (nalu_hypre_ParCSRMatrix *) M_csr,
+                                     (nalu_hypre_ParCSRMatrix *) CT_csr,
+                                     (nalu_hypre_ParCSRMatrix **) &S_csr);
     if ( HYOutputLevel_ & HYFEI_SCHURREDUCE1 )
        printf("%4d : buildSchurSystem - Triple matrix product ends\n",mypid_);
 
@@ -719,24 +719,24 @@ void NALU_HYPRE_LinSysCore::buildSchurReducedSystem()
     NALU_HYPRE_IJVectorSetObjectType(f1, NALU_HYPRE_PARCSR);
     ierr += NALU_HYPRE_IJVectorInitialize(f1);
     ierr += NALU_HYPRE_IJVectorAssemble(f1);
-    hypre_assert(!ierr);
+    nalu_hypre_assert(!ierr);
     NALU_HYPRE_IJVectorCreate(comm_, CStartRow, CStartRow+CNRows-1, &f2hat);
     NALU_HYPRE_IJVectorSetObjectType(f2hat, NALU_HYPRE_PARCSR);
     ierr += NALU_HYPRE_IJVectorInitialize(f2hat);
     ierr += NALU_HYPRE_IJVectorAssemble(f2hat);
-    hypre_assert(!ierr);
+    nalu_hypre_assert(!ierr);
 
     rowCount = CTStartRow;
     for ( i = StartRow; i <= EndRow; i++ )
     {
-       searchIndex = hypre_BinarySearch(schurList, i, nSchur);
+       searchIndex = nalu_hypre_BinarySearch(schurList, i, nSchur);
        if ( searchIndex < 0 )
        {
           NALU_HYPRE_IJVectorGetValues(HYb_, 1, &i, &ddata);
           ddata *= diagonal[rowCount-CTStartRow];
           ierr = NALU_HYPRE_IJVectorSetValues(f1, 1, (const int *) &rowCount,
 			(const double *) &ddata);
-          hypre_assert( !ierr );
+          nalu_hypre_assert( !ierr );
           rowCount++;
        }
     }
@@ -755,7 +755,7 @@ void NALU_HYPRE_LinSysCore::buildSchurReducedSystem()
     NALU_HYPRE_IJVectorSetObjectType(f2, NALU_HYPRE_PARCSR);
     ierr += NALU_HYPRE_IJVectorInitialize(f2);
     ierr += NALU_HYPRE_IJVectorAssemble(f2);
-    hypre_assert(!ierr);
+    nalu_hypre_assert(!ierr);
 
     rowCount = CStartRow;
     for ( i = 0; i < nSchur; i++ )
@@ -769,7 +769,7 @@ void NALU_HYPRE_LinSysCore::buildSchurReducedSystem()
        NALU_HYPRE_IJVectorAddToValues(f2, 1, (const int *) &rowCount,
 			(const double *) &ddata);
        NALU_HYPRE_IJVectorGetValues(f2, 1, &rowCount, &ddata);
-       hypre_assert( !ierr );
+       nalu_hypre_assert( !ierr );
        rowCount++;
     }
     NALU_HYPRE_IJVectorDestroy(f2hat);
@@ -781,7 +781,7 @@ void NALU_HYPRE_LinSysCore::buildSchurReducedSystem()
     ierr  = NALU_HYPRE_IJMatrixCreate(comm_, CStartRow, CStartRow+CNRows-1,
 				 CStartRow, CStartRow+CNRows-1, &reducedA_);
     ierr += NALU_HYPRE_IJMatrixSetObjectType(reducedA_, NALU_HYPRE_PARCSR);
-    hypre_assert(!ierr);
+    nalu_hypre_assert(!ierr);
 
     //------------------------------------------------------------------
     // compute row sizes for the Schur complement
@@ -801,7 +801,7 @@ void NALU_HYPRE_LinSysCore::buildSchurReducedSystem()
        for (j = 0; j < rowSize2; j++)
        {
           colIndex = colInd2[j];
-          searchIndex = hypre_BinarySearch(globalSchurList,colIndex,
+          searchIndex = nalu_hypre_BinarySearch(globalSchurList,colIndex,
                                            globalNSchur);
           if ( searchIndex >= 0 )
           {
@@ -810,7 +810,7 @@ void NALU_HYPRE_LinSysCore::buildSchurReducedSystem()
           }
        }
        newRowSize = rowSize + ncnt;
-       hypre_qsort0(newColInd, 0, newRowSize-1);
+       nalu_hypre_qsort0(newColInd, 0, newRowSize-1);
        ncnt = 0;
        for ( j = 1; j < newRowSize; j++ )
        {
@@ -829,7 +829,7 @@ void NALU_HYPRE_LinSysCore::buildSchurReducedSystem()
     }
     ierr  = NALU_HYPRE_IJMatrixSetRowSizes(reducedA_, CMatSize);
     ierr += NALU_HYPRE_IJMatrixInitialize(reducedA_);
-    hypre_assert(!ierr);
+    nalu_hypre_assert(!ierr);
     delete [] CMatSize;
 
     //------------------------------------------------------------------
@@ -853,7 +853,7 @@ void NALU_HYPRE_LinSysCore::buildSchurReducedSystem()
        for (j = 0; j < rowSize2; j++)
        {
           colIndex = colInd2[j];
-          searchIndex = hypre_BinarySearch(globalSchurList,colIndex,
+          searchIndex = nalu_hypre_BinarySearch(globalSchurList,colIndex,
                                            globalNSchur);
           if ( searchIndex >= 0 )
           {
@@ -863,7 +863,7 @@ void NALU_HYPRE_LinSysCore::buildSchurReducedSystem()
           }
        }
        newRowSize = rowSize + ncnt;
-       hypre_qsort1(newColInd, newColVal, 0, newRowSize-1);
+       nalu_hypre_qsort1(newColInd, newColVal, 0, newRowSize-1);
        ncnt = 0;
        for ( j = 1; j < newRowSize; j++ )
        {
@@ -912,13 +912,13 @@ void NALU_HYPRE_LinSysCore::buildSchurReducedSystem()
     ierr = NALU_HYPRE_IJVectorSetObjectType(reducedX_, NALU_HYPRE_PARCSR);
     ierr = NALU_HYPRE_IJVectorInitialize(reducedX_);
     ierr = NALU_HYPRE_IJVectorAssemble(reducedX_);
-    hypre_assert(!ierr);
+    nalu_hypre_assert(!ierr);
 
     ierr = NALU_HYPRE_IJVectorCreate(comm_,CStartRow,CStartRow+CNRows-1,&reducedR_);
     ierr = NALU_HYPRE_IJVectorSetObjectType(reducedR_, NALU_HYPRE_PARCSR);
     ierr = NALU_HYPRE_IJVectorInitialize(reducedR_);
     ierr = NALU_HYPRE_IJVectorAssemble(reducedR_);
-    hypre_assert(!ierr);
+    nalu_hypre_assert(!ierr);
 
     //------------------------------------------------------------------
     // save A21 and invA22 for solution recovery
@@ -1000,7 +1000,7 @@ double NALU_HYPRE_LinSysCore::buildSchurReducedSoln()
        ierr = NALU_HYPRE_IJVectorSetObjectType(R1, NALU_HYPRE_PARCSR);
        ierr = NALU_HYPRE_IJVectorInitialize(R1);
        ierr = NALU_HYPRE_IJVectorAssemble(R1);
-       hypre_assert(!ierr);
+       nalu_hypre_assert(!ierr);
        NALU_HYPRE_IJMatrixGetObject(HYA21_, (void **) &A21_csr);
        NALU_HYPRE_IJVectorGetObject(currX_, (void **) &x_csr);
        NALU_HYPRE_IJVectorGetObject(R1, (void **) &r_csr);
@@ -1044,7 +1044,7 @@ double NALU_HYPRE_LinSysCore::buildSchurReducedSoln()
        ierr = NALU_HYPRE_IJVectorSetObjectType(x2, NALU_HYPRE_PARCSR);
        ierr = NALU_HYPRE_IJVectorInitialize(x2);
        ierr = NALU_HYPRE_IJVectorAssemble(x2);
-       hypre_assert(!ierr);
+       nalu_hypre_assert(!ierr);
        NALU_HYPRE_IJMatrixGetObject(HYinvA22_, (void **) &A22_csr);
        NALU_HYPRE_IJVectorGetObject(R1, (void **) &r_csr);
        NALU_HYPRE_IJVectorGetObject(x2, (void **) &x2_csr);
@@ -1129,7 +1129,7 @@ void NALU_HYPRE_LinSysCore::buildSchurInitialGuess()
     int    i, ierr, EndRow, nSchur, *partition, CStartRow;
     int    *getIndices, *putIndices;
     double *dArray;
-    NALU_HYPRE_ParVector hypre_x;
+    NALU_HYPRE_ParVector nalu_hypre_x;
 
     //------------------------------------------------------------------
     // initial set up
@@ -1139,8 +1139,8 @@ void NALU_HYPRE_LinSysCore::buildSchurInitialGuess()
     EndRow    = localEndRow_ - 1;
     nSchur    = A21NCols_;
     if ( nSchur == 0 ) return;
-    NALU_HYPRE_IJVectorGetObject(reducedX_, (void **) &hypre_x);
-    partition = hypre_ParVectorPartitioning((hypre_ParVector *) hypre_x);
+    NALU_HYPRE_IJVectorGetObject(reducedX_, (void **) &nalu_hypre_x);
+    partition = nalu_hypre_ParVectorPartitioning((nalu_hypre_ParVector *) nalu_hypre_x);
     CStartRow = partition[mypid_];
 
     //------------------------------------------------------------------
@@ -1159,7 +1159,7 @@ void NALU_HYPRE_LinSysCore::buildSchurInitialGuess()
     NALU_HYPRE_IJVectorGetValues(HYx_, nSchur, getIndices, dArray);
     ierr = NALU_HYPRE_IJVectorSetValues(reducedX_, nSchur,
                     (const int *) putIndices, (const double *) dArray);
-    hypre_assert( !ierr );
+    nalu_hypre_assert( !ierr );
     delete [] dArray;
     delete [] putIndices;
     if ( selectedList_ == NULL ) delete [] getIndices;
@@ -1253,19 +1253,19 @@ void NALU_HYPRE_LinSysCore::buildSchurReducedRHS()
     NALU_HYPRE_IJVectorSetObjectType(f1, NALU_HYPRE_PARCSR);
     ierr = NALU_HYPRE_IJVectorInitialize(f1);
     ierr = NALU_HYPRE_IJVectorAssemble(f1);
-    hypre_assert(!ierr);
+    nalu_hypre_assert(!ierr);
     NALU_HYPRE_IJVectorCreate(comm_, CStartRow, CStartRow+CNRows-1, &f2hat);
     NALU_HYPRE_IJVectorSetObjectType(f2hat, NALU_HYPRE_PARCSR);
     ierr += NALU_HYPRE_IJVectorInitialize(f2hat);
     ierr  = NALU_HYPRE_IJVectorAssemble(f2hat);
-    hypre_assert(!ierr);
+    nalu_hypre_assert(!ierr);
 
     rowCount = CTStartRow;
     if ( schurList != NULL )
     {
        for ( i = StartRow; i <= EndRow; i++ )
        {
-          searchIndex = hypre_BinarySearch(schurList, i, nSchur);
+          searchIndex = nalu_hypre_BinarySearch(schurList, i, nSchur);
           if ( searchIndex < 0 )
           {
              NALU_HYPRE_IJVectorGetValues(HYb_, 1, &i, &ddata);
@@ -1276,7 +1276,7 @@ void NALU_HYPRE_LinSysCore::buildSchurReducedRHS()
 			(const double *) &ddata);
              NALU_HYPRE_ParCSRMatrixRestoreRow(M_csr,rowCount,&rowSize,&colInd,
                                           &colVal);
-             hypre_assert( !ierr );
+             nalu_hypre_assert( !ierr );
              rowCount++;
           }
        }
@@ -1293,7 +1293,7 @@ void NALU_HYPRE_LinSysCore::buildSchurReducedRHS()
 			(const double *) &ddata);
           NALU_HYPRE_ParCSRMatrixRestoreRow(M_csr,rowCount,&rowSize,&colInd,
                                        &colVal);
-          hypre_assert( !ierr );
+          nalu_hypre_assert( !ierr );
           rowCount++;
        }
     }
@@ -1310,7 +1310,7 @@ void NALU_HYPRE_LinSysCore::buildSchurReducedRHS()
     NALU_HYPRE_IJVectorSetObjectType(f2, NALU_HYPRE_PARCSR);
     ierr += NALU_HYPRE_IJVectorInitialize(f2);
     ierr += NALU_HYPRE_IJVectorAssemble(f2);
-    hypre_assert(!ierr);
+    nalu_hypre_assert(!ierr);
 
     rowCount = CStartRow;
     for ( i = 0; i < nSchur; i++ )
@@ -1322,7 +1322,7 @@ void NALU_HYPRE_LinSysCore::buildSchurReducedRHS()
        ddata = ddata2 - ddata;
        ierr = NALU_HYPRE_IJVectorSetValues(f2, 1, (const int *) &rowCount,
 			(const double *) &ddata);
-       hypre_assert( !ierr );
+       nalu_hypre_assert( !ierr );
        rowCount++;
     }
     NALU_HYPRE_IJVectorDestroy(f2hat);
@@ -1505,7 +1505,7 @@ void NALU_HYPRE_LinSysCore::buildSchurReducedSystem2()
     ierr  = NALU_HYPRE_IJMatrixCreate(comm_, CStartRow, CStartRow+CNRows-1,
 				 CStartCol, CStartCol+CNCols-1, &Cmat);
     ierr += NALU_HYPRE_IJMatrixSetObjectType(Cmat, NALU_HYPRE_PARCSR);
-    hypre_assert(!ierr);
+    nalu_hypre_assert(!ierr);
 
     //------------------------------------------------------------------
     // compute the number of nonzeros per row in Cmat and call set up
@@ -1532,7 +1532,7 @@ void NALU_HYPRE_LinSysCore::buildSchurReducedSystem2()
     }
     ierr  = NALU_HYPRE_IJMatrixSetRowSizes(Cmat, CMatSize);
     ierr += NALU_HYPRE_IJMatrixInitialize(Cmat);
-    hypre_assert(!ierr);
+    nalu_hypre_assert(!ierr);
     delete [] CMatSize;
 
     //------------------------------------------------------------------
@@ -1594,7 +1594,7 @@ void NALU_HYPRE_LinSysCore::buildSchurReducedSystem2()
 
     NALU_HYPRE_IJMatrixAssemble(Cmat);
     NALU_HYPRE_IJMatrixGetObject(Cmat, (void **) &C_csr);
-    hypre_MatvecCommPkgCreate((hypre_ParCSRMatrix *) C_csr);
+    nalu_hypre_MatvecCommPkgCreate((nalu_hypre_ParCSRMatrix *) C_csr);
 
     if ( HYOutputLevel_ & HYFEI_SCHURREDUCE3 )
     {
@@ -1657,11 +1657,11 @@ void NALU_HYPRE_LinSysCore::buildSchurReducedSystem2()
     ierr  = NALU_HYPRE_IJMatrixCreate(comm_, MStartRow, MStartRow+MNRows-1,
 				 MStartRow, MStartRow+MNCols-1, &Mmat);
     ierr += NALU_HYPRE_IJMatrixSetObjectType(Mmat, NALU_HYPRE_PARCSR);
-    hypre_assert(!ierr);
+    nalu_hypre_assert(!ierr);
     ierr  = NALU_HYPRE_IJMatrixCreate(comm_, CTStartRow, CTStartRow+CTNRows-1,
 				 CStartRow, CStartRow+CTNCols-1, &CTmat);
     ierr += NALU_HYPRE_IJMatrixSetObjectType(Mmat, NALU_HYPRE_PARCSR);
-    hypre_assert(!ierr);
+    nalu_hypre_assert(!ierr);
 
     //------------------------------------------------------------------
     // compute row sizes for Mmat
@@ -1671,7 +1671,7 @@ void NALU_HYPRE_LinSysCore::buildSchurReducedSystem2()
     for ( i = 0; i < MNRows; i++ ) MMatSize[i] = 1;
     ierr  = NALU_HYPRE_IJMatrixSetRowSizes(Mmat, MMatSize);
     ierr += NALU_HYPRE_IJMatrixInitialize(Mmat);
-    hypre_assert(!ierr);
+    nalu_hypre_assert(!ierr);
     delete [] MMatSize;
 
     //------------------------------------------------------------------
@@ -1704,7 +1704,7 @@ void NALU_HYPRE_LinSysCore::buildSchurReducedSystem2()
     }
     ierr  = NALU_HYPRE_IJMatrixSetRowSizes(CTmat, CTMatSize);
     ierr += NALU_HYPRE_IJMatrixInitialize(CTmat);
-    hypre_assert(!ierr);
+    nalu_hypre_assert(!ierr);
     delete [] CTMatSize;
 
     //------------------------------------------------------------------
@@ -1801,10 +1801,10 @@ void NALU_HYPRE_LinSysCore::buildSchurReducedSystem2()
 
     NALU_HYPRE_IJMatrixAssemble(Mmat);
     NALU_HYPRE_IJMatrixGetObject(Mmat, (void **) &M_csr);
-    hypre_MatvecCommPkgCreate((hypre_ParCSRMatrix *) M_csr);
+    nalu_hypre_MatvecCommPkgCreate((nalu_hypre_ParCSRMatrix *) M_csr);
     NALU_HYPRE_IJMatrixAssemble(CTmat);
     NALU_HYPRE_IJMatrixGetObject(CTmat, (void **) &CT_csr);
-    hypre_MatvecCommPkgCreate((hypre_ParCSRMatrix *) CT_csr);
+    nalu_hypre_MatvecCommPkgCreate((nalu_hypre_ParCSRMatrix *) CT_csr);
 
     //------------------------------------------------------------------
     // Error checking
@@ -1866,10 +1866,10 @@ void NALU_HYPRE_LinSysCore::buildSchurReducedSystem2()
        printf("%4d : buildSchurSystem - Triple matrix product begins..\n",
               mypid_);
 
-    hypre_BoomerAMGBuildCoarseOperator( (hypre_ParCSRMatrix *) CT_csr,
-                                     (hypre_ParCSRMatrix *) M_csr,
-                                     (hypre_ParCSRMatrix *) CT_csr,
-                                     (hypre_ParCSRMatrix **) &S_csr);
+    nalu_hypre_BoomerAMGBuildCoarseOperator( (nalu_hypre_ParCSRMatrix *) CT_csr,
+                                     (nalu_hypre_ParCSRMatrix *) M_csr,
+                                     (nalu_hypre_ParCSRMatrix *) CT_csr,
+                                     (nalu_hypre_ParCSRMatrix **) &S_csr);
 
     if ( HYOutputLevel_ & HYFEI_SCHURREDUCE1 )
        printf("%4d : buildSchurSystem - Triple matrix product ends\n",
@@ -1908,12 +1908,12 @@ void NALU_HYPRE_LinSysCore::buildSchurReducedSystem2()
     NALU_HYPRE_IJVectorSetObjectType(f1, NALU_HYPRE_PARCSR);
     ierr += NALU_HYPRE_IJVectorInitialize(f1);
     ierr += NALU_HYPRE_IJVectorAssemble(f1);
-    hypre_assert(!ierr);
+    nalu_hypre_assert(!ierr);
     NALU_HYPRE_IJVectorCreate(comm_, CStartRow, CStartRow+CNRows-1, &f2hat);
     NALU_HYPRE_IJVectorSetObjectType(f2hat, NALU_HYPRE_PARCSR);
     ierr += NALU_HYPRE_IJVectorInitialize(f2hat);
     ierr += NALU_HYPRE_IJVectorAssemble(f2hat);
-    hypre_assert(!ierr);
+    nalu_hypre_assert(!ierr);
 
     rowCount = CTStartRow;
     for ( i = StartRow; i <= EndRow-nSchur; i++ )
@@ -1922,7 +1922,7 @@ void NALU_HYPRE_LinSysCore::buildSchurReducedSystem2()
        ddata *= diagonal[rowCount-CTStartRow];
        ierr = NALU_HYPRE_IJVectorSetValues(f1, 1, (const int *) &rowCount,
 			(const double *) &ddata);
-       hypre_assert( !ierr );
+       nalu_hypre_assert( !ierr );
        rowCount++;
     }
     NALU_HYPRE_IJVectorGetObject(f1, (void **) &f1_csr);
@@ -1939,7 +1939,7 @@ void NALU_HYPRE_LinSysCore::buildSchurReducedSystem2()
     NALU_HYPRE_IJVectorSetObjectType(f2, NALU_HYPRE_PARCSR);
     ierr += NALU_HYPRE_IJVectorInitialize(f2);
     ierr += NALU_HYPRE_IJVectorAssemble(f2);
-    hypre_assert(!ierr);
+    nalu_hypre_assert(!ierr);
 
     rowCount = CStartRow;
     for ( i = 0; i < nSchur; i++ )
@@ -1953,7 +1953,7 @@ void NALU_HYPRE_LinSysCore::buildSchurReducedSystem2()
        NALU_HYPRE_IJVectorAddToValues(f2, 1, (const int *) &rowCount,
 		(const double *) &ddata);
        NALU_HYPRE_IJVectorGetValues(f2, 1, &rowCount, &ddata);
-       hypre_assert( !ierr );
+       nalu_hypre_assert( !ierr );
        rowCount++;
     }
     NALU_HYPRE_IJVectorDestroy(f2hat);
@@ -1965,7 +1965,7 @@ void NALU_HYPRE_LinSysCore::buildSchurReducedSystem2()
     ierr  = NALU_HYPRE_IJMatrixCreate(comm_, CStartRow, CStartRow+CNRows-1,
 				 CStartRow, CStartRow+CNRows-1, &reducedA_);
     ierr += NALU_HYPRE_IJMatrixSetObjectType(reducedA_, NALU_HYPRE_PARCSR);
-    hypre_assert(!ierr);
+    nalu_hypre_assert(!ierr);
 
     //------------------------------------------------------------------
     // compute row sizes for the Schur complement
@@ -1994,7 +1994,7 @@ void NALU_HYPRE_LinSysCore::buildSchurReducedSystem2()
           }
        }
        newRowSize = rowSize + ncnt;
-       hypre_qsort0(newColInd, 0, newRowSize-1);
+       nalu_hypre_qsort0(newColInd, 0, newRowSize-1);
        ncnt = 0;
        for ( j = 1; j < newRowSize; j++ )
        {
@@ -2013,7 +2013,7 @@ void NALU_HYPRE_LinSysCore::buildSchurReducedSystem2()
     }
     ierr  = NALU_HYPRE_IJMatrixSetRowSizes(reducedA_, CMatSize);
     ierr += NALU_HYPRE_IJMatrixInitialize(reducedA_);
-    hypre_assert(!ierr);
+    nalu_hypre_assert(!ierr);
     delete [] CMatSize;
 
     //------------------------------------------------------------------
@@ -2047,7 +2047,7 @@ void NALU_HYPRE_LinSysCore::buildSchurReducedSystem2()
           }
        }
        newRowSize = rowSize + ncnt;
-       hypre_qsort1(newColInd, newColVal, 0, newRowSize-1);
+       nalu_hypre_qsort1(newColInd, newColVal, 0, newRowSize-1);
        ncnt = 0;
        for ( j = 1; j < newRowSize; j++ )
        {
@@ -2095,12 +2095,12 @@ void NALU_HYPRE_LinSysCore::buildSchurReducedSystem2()
     ierr = NALU_HYPRE_IJVectorSetObjectType(reducedX_, NALU_HYPRE_PARCSR);
     ierr = NALU_HYPRE_IJVectorInitialize(reducedX_);
     ierr = NALU_HYPRE_IJVectorAssemble(reducedX_);
-    hypre_assert(!ierr);
+    nalu_hypre_assert(!ierr);
     ierr = NALU_HYPRE_IJVectorCreate(comm_,CStartRow,CStartRow+CNRows-1,&reducedR_);
     ierr = NALU_HYPRE_IJVectorSetObjectType(reducedR_, NALU_HYPRE_PARCSR);
     ierr = NALU_HYPRE_IJVectorInitialize(reducedR_);
     ierr = NALU_HYPRE_IJVectorAssemble(reducedR_);
-    hypre_assert(!ierr);
+    nalu_hypre_assert(!ierr);
 
     reducedB_ = f2;
     currA_ = reducedA_;

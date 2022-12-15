@@ -7,7 +7,7 @@
 
 #include "./NALU_HYPRE_parcsr_ls.h"
 #include "../matrix_matrix/NALU_HYPRE_matrix_matrix_protos.h"
-#include "_hypre_utilities.h"
+#include "_nalu_hypre_utilities.h"
 
 /* Must include implementation definition for ParVector since no data access
   functions are publically provided. AJC, 5/99 */
@@ -16,10 +16,10 @@
 
 /* AB 8/06 - replace header file */
 /* #include "../parcsr_mv/par_vector.h" */
-#include "../parcsr_mv/_hypre_parcsr_mv.h"
+#include "../parcsr_mv/_nalu_hypre_parcsr_mv.h"
 
 /* These are what we need from Euclid */
-#include "distributed_ls/Euclid/_hypre_Euclid.h"
+#include "distributed_ls/Euclid/_nalu_hypre_Euclid.h"
 /* #include "../distributed_ls/Euclid/Mem_dh.h" */
 /* #include "../distributed_ls/Euclid/io_dh.h" */
 /* #include "../distributed_ls/Euclid/TimeLog_dh.h" */
@@ -34,7 +34,7 @@
           if (errFlag_dh) {  \
             setError_dh("", __FUNC__, __FILE__, __LINE__); \
             printErrorMsg(stderr);  \
-            hypre_MPI_Abort(comm_dh, -1); \
+            nalu_hypre_MPI_Abort(comm_dh, -1); \
           }
 
 /* What is best to do here?
@@ -90,8 +90,8 @@ NALU_HYPRE_EuclidCreate( MPI_Comm comm,
                     NALU_HYPRE_Solver *solver )
 {
 #ifdef NALU_HYPRE_MIXEDINT
-   hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "Euclid cannot be used in mixedint mode!");
-   return hypre_error_flag;
+   nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "Euclid cannot be used in mixedint mode!");
+   return nalu_hypre_error_flag;
 #else
 
    START_FUNC_DH
@@ -106,8 +106,8 @@ NALU_HYPRE_EuclidCreate( MPI_Comm comm,
     *-----------------------------------------------------------*/
 
    comm_dh = comm;
-   hypre_MPI_Comm_size(comm_dh, &np_dh);    NALU_HYPRE_EUCLID_ERRCHKA;
-   hypre_MPI_Comm_rank(comm_dh, &myid_dh);  NALU_HYPRE_EUCLID_ERRCHKA;
+   nalu_hypre_MPI_Comm_size(comm_dh, &np_dh);    NALU_HYPRE_EUCLID_ERRCHKA;
+   nalu_hypre_MPI_Comm_rank(comm_dh, &myid_dh);  NALU_HYPRE_EUCLID_ERRCHKA;
 
 #ifdef ENABLE_EUCLID_LOGGING
    openLogfile_dh(0, NULL); NALU_HYPRE_EUCLID_ERRCHKA;
@@ -149,8 +149,8 @@ NALU_HYPRE_Int
 NALU_HYPRE_EuclidDestroy( NALU_HYPRE_Solver solver )
 {
 #ifdef NALU_HYPRE_MIXEDINT
-   hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "Euclid cannot be used in mixedint mode!");
-   return hypre_error_flag;
+   nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "Euclid cannot be used in mixedint mode!");
+   return nalu_hypre_error_flag;
 #else
 
    START_FUNC_DH
@@ -268,8 +268,8 @@ NALU_HYPRE_EuclidSetup( NALU_HYPRE_Solver solver,
                    NALU_HYPRE_ParVector x   )
 {
 #ifdef NALU_HYPRE_MIXEDINT
-   hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "Euclid cannot be used in mixedint mode!");
-   return hypre_error_flag;
+   nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "Euclid cannot be used in mixedint mode!");
+   return nalu_hypre_error_flag;
 #else
 
    START_FUNC_DH
@@ -291,7 +291,7 @@ NALU_HYPRE_EuclidSetup( NALU_HYPRE_Solver solver,
       ierr = NALU_HYPRE_DistributedMatrixGetLocalRange(mat, &rs, &re,
                                                   &cs, &ce);
 
-      hypre_printf("\n### [%i] m= %i, n= %i, rs= %i, re= %i, cs= %i, ce= %i\n",
+      nalu_hypre_printf("\n### [%i] m= %i, n= %i, rs= %i, re= %i, cs= %i, ce= %i\n",
                    myid_dh, m, n, rs, re, cs, ce);
 
       ierr = NALU_HYPRE_DistributedMatrixDestroy(mat);
@@ -320,16 +320,16 @@ NALU_HYPRE_EuclidSolve( NALU_HYPRE_Solver solver,
                    NALU_HYPRE_ParVector xx  )
 {
 #ifdef NALU_HYPRE_MIXEDINT
-   hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "Euclid cannot be used in mixedint mode!");
-   return hypre_error_flag;
+   nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "Euclid cannot be used in mixedint mode!");
+   return nalu_hypre_error_flag;
 #else
 
    START_FUNC_DH
    Euclid_dh eu = (Euclid_dh)solver;
    NALU_HYPRE_Real *b, *x;
 
-   x = hypre_VectorData(hypre_ParVectorLocalVector((hypre_ParVector *) bb));
-   b = hypre_VectorData(hypre_ParVectorLocalVector((hypre_ParVector *) xx));
+   x = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector((nalu_hypre_ParVector *) bb));
+   b = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector((nalu_hypre_ParVector *) xx));
 
    Euclid_dhApply(eu, x, b); NALU_HYPRE_EUCLID_ERRCHKA;
    END_FUNC_VAL(0)
@@ -348,8 +348,8 @@ NALU_HYPRE_EuclidSetParams(NALU_HYPRE_Solver solver,
                       char *argv[] )
 {
 #ifdef NALU_HYPRE_MIXEDINT
-   hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "Euclid cannot be used in mixedint mode!");
-   return hypre_error_flag;
+   nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "Euclid cannot be used in mixedint mode!");
+   return nalu_hypre_error_flag;
 #else
    START_FUNC_DH
    Parser_dhInit(parser_dh, argc, argv); NALU_HYPRE_EUCLID_ERRCHKA;
@@ -372,8 +372,8 @@ NALU_HYPRE_EuclidSetParamsFromFile(NALU_HYPRE_Solver solver,
                               char *filename )
 {
 #ifdef NALU_HYPRE_MIXEDINT
-   hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "Euclid cannot be used in mixedint mode!");
-   return hypre_error_flag;
+   nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "Euclid cannot be used in mixedint mode!");
+   return nalu_hypre_error_flag;
 #else
 
    START_FUNC_DH
@@ -387,13 +387,13 @@ NALU_HYPRE_EuclidSetLevel(NALU_HYPRE_Solver solver,
                      NALU_HYPRE_Int level)
 {
 #ifdef NALU_HYPRE_MIXEDINT
-   hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "Euclid cannot be used in mixedint mode!");
-   return hypre_error_flag;
+   nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "Euclid cannot be used in mixedint mode!");
+   return nalu_hypre_error_flag;
 #else
 
    char str_level[8];
    START_FUNC_DH
-   hypre_sprintf(str_level, "%d", level);
+   nalu_hypre_sprintf(str_level, "%d", level);
    Parser_dhInsert(parser_dh, "-level", str_level); NALU_HYPRE_EUCLID_ERRCHKA;
    END_FUNC_VAL(0)
 #endif
@@ -404,13 +404,13 @@ NALU_HYPRE_EuclidSetBJ(NALU_HYPRE_Solver solver,
                   NALU_HYPRE_Int bj)
 {
 #ifdef NALU_HYPRE_MIXEDINT
-   hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "Euclid cannot be used in mixedint mode!");
-   return hypre_error_flag;
+   nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "Euclid cannot be used in mixedint mode!");
+   return nalu_hypre_error_flag;
 #else
 
    char str_bj[8];
    START_FUNC_DH
-   hypre_sprintf(str_bj, "%d", bj);
+   nalu_hypre_sprintf(str_bj, "%d", bj);
    Parser_dhInsert(parser_dh, "-bj", str_bj); NALU_HYPRE_EUCLID_ERRCHKA;
    END_FUNC_VAL(0)
 #endif
@@ -421,13 +421,13 @@ NALU_HYPRE_EuclidSetStats(NALU_HYPRE_Solver solver,
                      NALU_HYPRE_Int eu_stats)
 {
 #ifdef NALU_HYPRE_MIXEDINT
-   hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "Euclid cannot be used in mixedint mode!");
-   return hypre_error_flag;
+   nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "Euclid cannot be used in mixedint mode!");
+   return nalu_hypre_error_flag;
 #else
 
    char str_eu_stats[8];
    START_FUNC_DH
-   hypre_sprintf(str_eu_stats, "%d", eu_stats);
+   nalu_hypre_sprintf(str_eu_stats, "%d", eu_stats);
    Parser_dhInsert(parser_dh, "-eu_stats", str_eu_stats); NALU_HYPRE_EUCLID_ERRCHKA;
    END_FUNC_VAL(0)
 #endif
@@ -438,13 +438,13 @@ NALU_HYPRE_EuclidSetMem(NALU_HYPRE_Solver solver,
                    NALU_HYPRE_Int eu_mem)
 {
 #ifdef NALU_HYPRE_MIXEDINT
-   hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "Euclid cannot be used in mixedint mode!");
-   return hypre_error_flag;
+   nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "Euclid cannot be used in mixedint mode!");
+   return nalu_hypre_error_flag;
 #else
 
    char str_eu_mem[8];
    START_FUNC_DH
-   hypre_sprintf(str_eu_mem, "%d", eu_mem);
+   nalu_hypre_sprintf(str_eu_mem, "%d", eu_mem);
    Parser_dhInsert(parser_dh, "-eu_mem", str_eu_mem); NALU_HYPRE_EUCLID_ERRCHKA;
    END_FUNC_VAL(0)
 #endif
@@ -455,13 +455,13 @@ NALU_HYPRE_EuclidSetSparseA(NALU_HYPRE_Solver solver,
                        NALU_HYPRE_Real sparse_A)
 {
 #ifdef NALU_HYPRE_MIXEDINT
-   hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "Euclid cannot be used in mixedint mode!");
-   return hypre_error_flag;
+   nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "Euclid cannot be used in mixedint mode!");
+   return nalu_hypre_error_flag;
 #else
 
    char str_sparse_A[256];
    START_FUNC_DH
-   hypre_sprintf(str_sparse_A, "%f", sparse_A);
+   nalu_hypre_sprintf(str_sparse_A, "%f", sparse_A);
    Parser_dhInsert(parser_dh, "-sparseA", str_sparse_A);
    NALU_HYPRE_EUCLID_ERRCHKA;
    END_FUNC_VAL(0)
@@ -473,13 +473,13 @@ NALU_HYPRE_EuclidSetRowScale(NALU_HYPRE_Solver solver,
                         NALU_HYPRE_Int row_scale)
 {
 #ifdef NALU_HYPRE_MIXEDINT
-   hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "Euclid cannot be used in mixedint mode!");
-   return hypre_error_flag;
+   nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "Euclid cannot be used in mixedint mode!");
+   return nalu_hypre_error_flag;
 #else
 
    char str_row_scale[8];
    START_FUNC_DH
-   hypre_sprintf(str_row_scale, "%d", row_scale);
+   nalu_hypre_sprintf(str_row_scale, "%d", row_scale);
    Parser_dhInsert(parser_dh, "-rowScale", str_row_scale);
    NALU_HYPRE_EUCLID_ERRCHKA;
    END_FUNC_VAL(0)
@@ -491,13 +491,13 @@ NALU_HYPRE_EuclidSetILUT(NALU_HYPRE_Solver solver,
                     NALU_HYPRE_Real ilut)
 {
 #ifdef NALU_HYPRE_MIXEDINT
-   hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "Euclid cannot be used in mixedint mode!");
-   return hypre_error_flag;
+   nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "Euclid cannot be used in mixedint mode!");
+   return nalu_hypre_error_flag;
 #else
 
    char str_ilut[256];
    START_FUNC_DH
-   hypre_sprintf(str_ilut, "%f", ilut);
+   nalu_hypre_sprintf(str_ilut, "%f", ilut);
    Parser_dhInsert(parser_dh, "-ilut", str_ilut); NALU_HYPRE_EUCLID_ERRCHKA;
    END_FUNC_VAL(0)
 #endif

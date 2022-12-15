@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_parcsr_ls.h"
+#include "_nalu_hypre_parcsr_ls.h"
 
 /*--------------------------------------------------------------------------
  * GenerateCoordinates
@@ -41,9 +41,9 @@ GenerateCoordinates( MPI_Comm comm,
       return NULL;
    }
 
-   hypre_GeneratePartitioning(nx, P, &nx_part);
-   hypre_GeneratePartitioning(ny, Q, &ny_part);
-   hypre_GeneratePartitioning(nz, R, &nz_part);
+   nalu_hypre_GeneratePartitioning(nx, P, &nx_part);
+   nalu_hypre_GeneratePartitioning(ny, Q, &ny_part);
+   nalu_hypre_GeneratePartitioning(nz, R, &nz_part);
 
    nx_local = (NALU_HYPRE_Int)(nx_part[p + 1] - nx_part[p]);
    ny_local = (NALU_HYPRE_Int)(ny_part[q + 1] - ny_part[q]);
@@ -51,7 +51,7 @@ GenerateCoordinates( MPI_Comm comm,
 
    local_num_rows = nx_local * ny_local * nz_local;
 
-   coord = hypre_CTAlloc(float,  coorddim * local_num_rows, NALU_HYPRE_MEMORY_HOST);
+   coord = nalu_hypre_CTAlloc(float,  coorddim * local_num_rows, NALU_HYPRE_MEMORY_HOST);
 
    cnt = 0;
    for (iz = nz_part[r]; iz < nz_part[r + 1]; iz++)
@@ -71,9 +71,9 @@ GenerateCoordinates( MPI_Comm comm,
       }
    }
 
-   hypre_TFree(nx_part, NALU_HYPRE_MEMORY_HOST);
-   hypre_TFree(ny_part, NALU_HYPRE_MEMORY_HOST);
-   hypre_TFree(nz_part, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(nx_part, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(ny_part, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(nz_part, NALU_HYPRE_MEMORY_HOST);
 
    return coord;
 }

@@ -7,45 +7,45 @@
 
 /******************************************************************************
  *
- * Member functions for hypre_MultiblockMatrix class.
+ * Member functions for nalu_hypre_MultiblockMatrix class.
  *
  *****************************************************************************/
 
 #include "seq_mv.h"
 
 /*--------------------------------------------------------------------------
- * hypre_MultiblockMatrixCreate
+ * nalu_hypre_MultiblockMatrixCreate
  *--------------------------------------------------------------------------*/
 
-hypre_MultiblockMatrix *
-hypre_MultiblockMatrixCreate( )
+nalu_hypre_MultiblockMatrix *
+nalu_hypre_MultiblockMatrixCreate( )
 {
-   hypre_MultiblockMatrix  *matrix;
+   nalu_hypre_MultiblockMatrix  *matrix;
 
-   matrix = hypre_CTAlloc(hypre_MultiblockMatrix,  1, NALU_HYPRE_MEMORY_HOST);
+   matrix = nalu_hypre_CTAlloc(nalu_hypre_MultiblockMatrix,  1, NALU_HYPRE_MEMORY_HOST);
 
    return ( matrix );
 }
 
 /*--------------------------------------------------------------------------
- * hypre_MultiblockMatrixDestroy
+ * nalu_hypre_MultiblockMatrixDestroy
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_MultiblockMatrixDestroy( hypre_MultiblockMatrix *matrix )
+nalu_hypre_MultiblockMatrixDestroy( nalu_hypre_MultiblockMatrix *matrix )
 {
    NALU_HYPRE_Int  ierr = 0, i;
 
    if (matrix)
    {
-      for (i = 0; i < hypre_MultiblockMatrixNumSubmatrices(matrix); i++)
+      for (i = 0; i < nalu_hypre_MultiblockMatrixNumSubmatrices(matrix); i++)
       {
-         hypre_TFree(hypre_MultiblockMatrixSubmatrix(matrix, i), NALU_HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(nalu_hypre_MultiblockMatrixSubmatrix(matrix, i), NALU_HYPRE_MEMORY_HOST);
       }
-      hypre_TFree(hypre_MultiblockMatrixSubmatrices(matrix), NALU_HYPRE_MEMORY_HOST);
-      hypre_TFree(hypre_MultiblockMatrixSubmatrixTypes(matrix), NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(nalu_hypre_MultiblockMatrixSubmatrices(matrix), NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(nalu_hypre_MultiblockMatrixSubmatrixTypes(matrix), NALU_HYPRE_MEMORY_HOST);
 
-      hypre_TFree(matrix, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(matrix, NALU_HYPRE_MEMORY_HOST);
    }
 
    return ierr;
@@ -53,20 +53,20 @@ hypre_MultiblockMatrixDestroy( hypre_MultiblockMatrix *matrix )
 
 
 /*--------------------------------------------------------------------------
- * hypre_MultiblockMatrixLimitedDestroy
+ * nalu_hypre_MultiblockMatrixLimitedDestroy
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_MultiblockMatrixLimitedDestroy( hypre_MultiblockMatrix *matrix )
+nalu_hypre_MultiblockMatrixLimitedDestroy( nalu_hypre_MultiblockMatrix *matrix )
 {
    NALU_HYPRE_Int  ierr = 0;
 
    if (matrix)
    {
-      hypre_TFree(hypre_MultiblockMatrixSubmatrices(matrix), NALU_HYPRE_MEMORY_HOST);
-      hypre_TFree(hypre_MultiblockMatrixSubmatrixTypes(matrix), NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(nalu_hypre_MultiblockMatrixSubmatrices(matrix), NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(nalu_hypre_MultiblockMatrixSubmatrixTypes(matrix), NALU_HYPRE_MEMORY_HOST);
 
-      hypre_TFree(matrix, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(matrix, NALU_HYPRE_MEMORY_HOST);
    }
 
    return ierr;
@@ -74,35 +74,35 @@ hypre_MultiblockMatrixLimitedDestroy( hypre_MultiblockMatrix *matrix )
 
 
 /*--------------------------------------------------------------------------
- * hypre_MultiblockMatrixInitialize
+ * nalu_hypre_MultiblockMatrixInitialize
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_MultiblockMatrixInitialize( hypre_MultiblockMatrix *matrix )
+nalu_hypre_MultiblockMatrixInitialize( nalu_hypre_MultiblockMatrix *matrix )
 {
    NALU_HYPRE_Int    ierr = 0;
 
-   if ( hypre_MultiblockMatrixNumSubmatrices(matrix) <= 0 )
+   if ( nalu_hypre_MultiblockMatrixNumSubmatrices(matrix) <= 0 )
    {
       return (-1);
    }
 
-   hypre_MultiblockMatrixSubmatrixTypes(matrix) =
-      hypre_CTAlloc( NALU_HYPRE_Int,  hypre_MultiblockMatrixNumSubmatrices(matrix), NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_MultiblockMatrixSubmatrixTypes(matrix) =
+      nalu_hypre_CTAlloc( NALU_HYPRE_Int,  nalu_hypre_MultiblockMatrixNumSubmatrices(matrix), NALU_HYPRE_MEMORY_HOST);
 
-   hypre_MultiblockMatrixSubmatrices(matrix) =
-      hypre_CTAlloc( void *,  hypre_MultiblockMatrixNumSubmatrices(matrix), NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_MultiblockMatrixSubmatrices(matrix) =
+      nalu_hypre_CTAlloc( void *,  nalu_hypre_MultiblockMatrixNumSubmatrices(matrix), NALU_HYPRE_MEMORY_HOST);
 
    return ierr;
 }
 
 
 /*--------------------------------------------------------------------------
- * hypre_MultiblockMatrixAssemble
+ * nalu_hypre_MultiblockMatrixAssemble
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_MultiblockMatrixAssemble( hypre_MultiblockMatrix *matrix )
+nalu_hypre_MultiblockMatrixAssemble( nalu_hypre_MultiblockMatrix *matrix )
 {
    NALU_HYPRE_Int    ierr = 0;
 
@@ -111,68 +111,68 @@ hypre_MultiblockMatrixAssemble( hypre_MultiblockMatrix *matrix )
 
 
 /*--------------------------------------------------------------------------
- * hypre_MultiblockMatrixPrint
+ * nalu_hypre_MultiblockMatrixPrint
  *--------------------------------------------------------------------------*/
 
 void
-hypre_MultiblockMatrixPrint(hypre_MultiblockMatrix *matrix  )
+nalu_hypre_MultiblockMatrixPrint(nalu_hypre_MultiblockMatrix *matrix  )
 {
-   hypre_printf("Stub for hypre_MultiblockMatrix\n");
+   nalu_hypre_printf("Stub for nalu_hypre_MultiblockMatrix\n");
 }
 
 /*--------------------------------------------------------------------------
- * hypre_MultiblockMatrixSetNumSubmatrices
+ * nalu_hypre_MultiblockMatrixSetNumSubmatrices
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_MultiblockMatrixSetNumSubmatrices(hypre_MultiblockMatrix *matrix, NALU_HYPRE_Int n  )
+nalu_hypre_MultiblockMatrixSetNumSubmatrices(nalu_hypre_MultiblockMatrix *matrix, NALU_HYPRE_Int n  )
 {
    NALU_HYPRE_Int ierr = 0;
 
-   hypre_MultiblockMatrixNumSubmatrices(matrix) = n;
+   nalu_hypre_MultiblockMatrixNumSubmatrices(matrix) = n;
    return ( ierr );
 }
 
 /*--------------------------------------------------------------------------
- * hypre_MultiblockMatrixSetSubmatrixType
+ * nalu_hypre_MultiblockMatrixSetSubmatrixType
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_MultiblockMatrixSetSubmatrixType(hypre_MultiblockMatrix *matrix,
+nalu_hypre_MultiblockMatrixSetSubmatrixType(nalu_hypre_MultiblockMatrix *matrix,
                                        NALU_HYPRE_Int j,
                                        NALU_HYPRE_Int type  )
 {
    NALU_HYPRE_Int ierr = 0;
 
    if ( (j < 0) ||
-        (j >= hypre_MultiblockMatrixNumSubmatrices(matrix)) )
+        (j >= nalu_hypre_MultiblockMatrixNumSubmatrices(matrix)) )
    {
       return (-1);
    }
 
-   hypre_MultiblockMatrixSubmatrixType(matrix, j) = type;
+   nalu_hypre_MultiblockMatrixSubmatrixType(matrix, j) = type;
 
    return ( ierr );
 }
 
 /*--------------------------------------------------------------------------
- * hypre_MultiblockMatrixSetSubmatrix
+ * nalu_hypre_MultiblockMatrixSetSubmatrix
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_MultiblockMatrixSetSubmatrix(hypre_MultiblockMatrix *matrix,
+nalu_hypre_MultiblockMatrixSetSubmatrix(nalu_hypre_MultiblockMatrix *matrix,
                                    NALU_HYPRE_Int j,
                                    void *submatrix  )
 {
    NALU_HYPRE_Int ierr = 0;
 
    if ( (j < 0) ||
-        (j >= hypre_MultiblockMatrixNumSubmatrices(matrix)) )
+        (j >= nalu_hypre_MultiblockMatrixNumSubmatrices(matrix)) )
    {
       return (-1);
    }
 
-   hypre_MultiblockMatrixSubmatrix(matrix, j) = submatrix;
+   nalu_hypre_MultiblockMatrixSubmatrix(matrix, j) = submatrix;
 
    return ( ierr );
 }

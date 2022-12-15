@@ -47,7 +47,7 @@
 */
 
 #include <math.h>
-#include "_hypre_utilities.h"
+#include "_nalu_hypre_utilities.h"
 #include "NALU_HYPRE_krylov.h"
 #include "NALU_HYPRE_sstruct_ls.h"
 
@@ -63,8 +63,8 @@
 
 #ifdef NALU_HYPRE_FORTRAN
 #include "fortran.h"
-#include "hypre_struct_fortran_test.h"
-#include "hypre_sstruct_fortran_test.h"
+#include "nalu_hypre_struct_fortran_test.h"
+#include "nalu_hypre_sstruct_fortran_test.h"
 #endif
 
 NALU_HYPRE_Int optionK, optionB, optionC, optionU0, optionF;
@@ -227,18 +227,18 @@ NALU_HYPRE_Int main (NALU_HYPRE_Int argc, char *argv[])
 
    /* We are using struct solvers for this example */
 #ifdef NALU_HYPRE_FORTRAN
-   hypre_F90_Obj grid;
-   hypre_F90_Obj stencil;
-   hypre_F90_Obj graph;
-   hypre_F90_Obj A;
-   hypre_F90_Obj b;
-   hypre_F90_Obj x;
+   nalu_hypre_F90_Obj grid;
+   nalu_hypre_F90_Obj stencil;
+   nalu_hypre_F90_Obj graph;
+   nalu_hypre_F90_Obj A;
+   nalu_hypre_F90_Obj b;
+   nalu_hypre_F90_Obj x;
 
-   hypre_F90_Obj solver;
-   hypre_F90_Obj precond;
+   nalu_hypre_F90_Obj solver;
+   nalu_hypre_F90_Obj precond;
    NALU_HYPRE_Int      precond_id;
 
-   hypre_F90_Obj long_temp_COMM;
+   nalu_hypre_F90_Obj long_temp_COMM;
    NALU_HYPRE_Int      temp_COMM;
 
    NALU_HYPRE_Int      zero = 0;
@@ -265,9 +265,9 @@ NALU_HYPRE_Int main (NALU_HYPRE_Int argc, char *argv[])
 #endif
 
    /* Initialize MPI */
-   hypre_MPI_Init(&argc, &argv);
-   hypre_MPI_Comm_rank(hypre_MPI_COMM_WORLD, &myid);
-   hypre_MPI_Comm_size(hypre_MPI_COMM_WORLD, &num_procs);
+   nalu_hypre_MPI_Init(&argc, &argv);
+   nalu_hypre_MPI_Comm_rank(nalu_hypre_MPI_COMM_WORLD, &myid);
+   nalu_hypre_MPI_Comm_size(nalu_hypre_MPI_COMM_WORLD, &num_procs);
 
    /* Set default parameters */
    n         = 33;
@@ -372,47 +372,47 @@ NALU_HYPRE_Int main (NALU_HYPRE_Int argc, char *argv[])
 
       if ((print_usage) && (myid == 0))
       {
-         hypre_printf("\n");
-         hypre_printf("Usage: %s [<options>]\n", argv[0]);
-         hypre_printf("\n");
-         hypre_printf("  -n  <n>             : problem size per processor (default: 8)\n");
-         hypre_printf("  -K  <K>             : choice for the diffusion coefficient (default: 1.0)\n");
-         hypre_printf("  -B  <B>             : choice for the convection vector (default: 0.0)\n");
-         hypre_printf("  -C  <C>             : choice for the reaction coefficient (default: 0.0)\n");
-         hypre_printf("  -U0 <U0>            : choice for the boundary condition (default: 0.0)\n");
-         hypre_printf("  -F  <F>             : choice for the right-hand side (default: 1.0) \n");
-         hypre_printf("  -solver <ID>        : solver ID\n");
-         hypre_printf("                        0  - SMG \n");
-         hypre_printf("                        1  - PFMG\n");
-         hypre_printf("                        10 - CG with SMG precond (default)\n");
-         hypre_printf("                        11 - CG with PFMG precond\n");
-         hypre_printf("                        17 - CG with 2-step Jacobi\n");
-         hypre_printf("                        18 - CG with diagonal scaling\n");
-         hypre_printf("                        19 - CG\n");
-         hypre_printf("                        30 - GMRES with SMG precond\n");
-         hypre_printf("                        31 - GMRES with PFMG precond\n");
-         hypre_printf("                        37 - GMRES with 2-step Jacobi\n");
-         hypre_printf("                        38 - GMRES with diagonal scaling\n");
-         hypre_printf("                        39 - GMRES\n");
-         hypre_printf("  -v <n_pre> <n_post> : number of pre and post relaxations\n");
-         hypre_printf("  -rap <r>            : coarse grid operator type\n");
-         hypre_printf("                        0 - Galerkin (default)\n");
-         hypre_printf("                        1 - non-Galerkin ParFlow operators\n");
-         hypre_printf("                        2 - Galerkin, general operators\n");
-         hypre_printf("  -relax <r>          : relaxation type\n");
-         hypre_printf("                        0 - Jacobi\n");
-         hypre_printf("                        1 - Weighted Jacobi (default)\n");
-         hypre_printf("                        2 - R/B Gauss-Seidel\n");
-         hypre_printf("                        3 - R/B Gauss-Seidel (nonsymmetric)\n");
-         hypre_printf("  -skip <s>           : skip levels in PFMG (0 or 1)\n");
-         hypre_printf("  -sym <s>            : symmetric storage (1) or not (0)\n");
-         hypre_printf("  -print_solution     : print the solution vector\n");
-         hypre_printf("\n");
+         nalu_hypre_printf("\n");
+         nalu_hypre_printf("Usage: %s [<options>]\n", argv[0]);
+         nalu_hypre_printf("\n");
+         nalu_hypre_printf("  -n  <n>             : problem size per processor (default: 8)\n");
+         nalu_hypre_printf("  -K  <K>             : choice for the diffusion coefficient (default: 1.0)\n");
+         nalu_hypre_printf("  -B  <B>             : choice for the convection vector (default: 0.0)\n");
+         nalu_hypre_printf("  -C  <C>             : choice for the reaction coefficient (default: 0.0)\n");
+         nalu_hypre_printf("  -U0 <U0>            : choice for the boundary condition (default: 0.0)\n");
+         nalu_hypre_printf("  -F  <F>             : choice for the right-hand side (default: 1.0) \n");
+         nalu_hypre_printf("  -solver <ID>        : solver ID\n");
+         nalu_hypre_printf("                        0  - SMG \n");
+         nalu_hypre_printf("                        1  - PFMG\n");
+         nalu_hypre_printf("                        10 - CG with SMG precond (default)\n");
+         nalu_hypre_printf("                        11 - CG with PFMG precond\n");
+         nalu_hypre_printf("                        17 - CG with 2-step Jacobi\n");
+         nalu_hypre_printf("                        18 - CG with diagonal scaling\n");
+         nalu_hypre_printf("                        19 - CG\n");
+         nalu_hypre_printf("                        30 - GMRES with SMG precond\n");
+         nalu_hypre_printf("                        31 - GMRES with PFMG precond\n");
+         nalu_hypre_printf("                        37 - GMRES with 2-step Jacobi\n");
+         nalu_hypre_printf("                        38 - GMRES with diagonal scaling\n");
+         nalu_hypre_printf("                        39 - GMRES\n");
+         nalu_hypre_printf("  -v <n_pre> <n_post> : number of pre and post relaxations\n");
+         nalu_hypre_printf("  -rap <r>            : coarse grid operator type\n");
+         nalu_hypre_printf("                        0 - Galerkin (default)\n");
+         nalu_hypre_printf("                        1 - non-Galerkin ParFlow operators\n");
+         nalu_hypre_printf("                        2 - Galerkin, general operators\n");
+         nalu_hypre_printf("  -relax <r>          : relaxation type\n");
+         nalu_hypre_printf("                        0 - Jacobi\n");
+         nalu_hypre_printf("                        1 - Weighted Jacobi (default)\n");
+         nalu_hypre_printf("                        2 - R/B Gauss-Seidel\n");
+         nalu_hypre_printf("                        3 - R/B Gauss-Seidel (nonsymmetric)\n");
+         nalu_hypre_printf("  -skip <s>           : skip levels in PFMG (0 or 1)\n");
+         nalu_hypre_printf("  -sym <s>            : symmetric storage (1) or not (0)\n");
+         nalu_hypre_printf("  -print_solution     : print the solution vector\n");
+         nalu_hypre_printf("\n");
       }
 
       if (print_usage)
       {
-         hypre_MPI_Finalize();
+         nalu_hypre_MPI_Finalize();
          return (0);
       }
    }
@@ -449,11 +449,11 @@ NALU_HYPRE_Int main (NALU_HYPRE_Int argc, char *argv[])
 
       /* Create an empty 2D grid object */
 #ifdef NALU_HYPRE_FORTRAN
-      temp_COMM = (NALU_HYPRE_Int) hypre_MPI_COMM_WORLD;
-      long_temp_COMM = (hypre_F90_Obj) hypre_MPI_COMM_WORLD;
+      temp_COMM = (NALU_HYPRE_Int) nalu_hypre_MPI_COMM_WORLD;
+      long_temp_COMM = (nalu_hypre_F90_Obj) nalu_hypre_MPI_COMM_WORLD;
       NALU_HYPRE_SStructGridCreate(&temp_COMM, &ndim, &nparts, &grid);
 #else
-      NALU_HYPRE_SStructGridCreate(hypre_MPI_COMM_WORLD, ndim, nparts, &grid);
+      NALU_HYPRE_SStructGridCreate(nalu_hypre_MPI_COMM_WORLD, ndim, nparts, &grid);
 #endif
 
       /* Add a new box to the grid */
@@ -466,7 +466,7 @@ NALU_HYPRE_Int main (NALU_HYPRE_Int argc, char *argv[])
       /* Set the variable type for each part */
       {
 #ifdef NALU_HYPRE_FORTRAN
-         hypre_F90_Obj vartypes[1] = {NALU_HYPRE_SSTRUCT_VARIABLE_CELL};
+         nalu_hypre_F90_Obj vartypes[1] = {NALU_HYPRE_SSTRUCT_VARIABLE_CELL};
 #else
          NALU_HYPRE_SStructVariable vartypes[1] = {NALU_HYPRE_SSTRUCT_VARIABLE_CELL};
 #endif
@@ -545,7 +545,7 @@ NALU_HYPRE_Int main (NALU_HYPRE_Int argc, char *argv[])
 #ifdef NALU_HYPRE_FORTRAN
       NALU_HYPRE_SStructGraphCreate(&temp_COMM, &grid, &graph);
 #else
-      NALU_HYPRE_SStructGraphCreate(hypre_MPI_COMM_WORLD, grid, &graph);
+      NALU_HYPRE_SStructGraphCreate(nalu_hypre_MPI_COMM_WORLD, grid, &graph);
 #endif
 
       /* Now we need to tell the graph which stencil to use for each
@@ -580,8 +580,8 @@ NALU_HYPRE_Int main (NALU_HYPRE_Int argc, char *argv[])
       NALU_HYPRE_SStructVectorCreate(&temp_COMM, &grid, &b);
       NALU_HYPRE_SStructVectorCreate(&temp_COMM, &grid, &x);
 #else
-      NALU_HYPRE_SStructVectorCreate(hypre_MPI_COMM_WORLD, grid, &b);
-      NALU_HYPRE_SStructVectorCreate(hypre_MPI_COMM_WORLD, grid, &x);
+      NALU_HYPRE_SStructVectorCreate(nalu_hypre_MPI_COMM_WORLD, grid, &b);
+      NALU_HYPRE_SStructVectorCreate(nalu_hypre_MPI_COMM_WORLD, grid, &x);
 #endif
 
       /* Set the object type (by default NALU_HYPRE_SSTRUCT). This determines the
@@ -608,7 +608,7 @@ NALU_HYPRE_Int main (NALU_HYPRE_Int argc, char *argv[])
       NALU_HYPRE_SStructVectorInitialize(x);
 #endif
 
-      values = hypre_CTAlloc(NALU_HYPRE_Real, (n * n), NALU_HYPRE_MEMORY_HOST);
+      values = nalu_hypre_CTAlloc(NALU_HYPRE_Real, (n * n), NALU_HYPRE_MEMORY_HOST);
 
       /* Set the values of b in left-to-right, bottom-to-top order */
       for (k = 0, j = 0; j < n; j++)
@@ -633,7 +633,7 @@ NALU_HYPRE_Int main (NALU_HYPRE_Int argc, char *argv[])
       NALU_HYPRE_SStructVectorSetBoxValues(x, part, ilower, iupper, var, values);
 #endif
 
-      hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
 
       /* Assembling is postponed since the vectors will be further modified */
    }
@@ -648,7 +648,7 @@ NALU_HYPRE_Int main (NALU_HYPRE_Int argc, char *argv[])
 #ifdef NALU_HYPRE_FORTRAN
       NALU_HYPRE_SStructMatrixCreate(&temp_COMM, &graph, &A);
 #else
-      NALU_HYPRE_SStructMatrixCreate(hypre_MPI_COMM_WORLD, graph, &A);
+      NALU_HYPRE_SStructMatrixCreate(nalu_hypre_MPI_COMM_WORLD, graph, &A);
 #endif
 
       /* Use symmetric storage? The function below is for symmetric stencil entries
@@ -683,7 +683,7 @@ NALU_HYPRE_Int main (NALU_HYPRE_Int argc, char *argv[])
                                                       to the offsets */
          NALU_HYPRE_Real *values;
 
-         values = hypre_CTAlloc(NALU_HYPRE_Real, 5 * (n * n), NALU_HYPRE_MEMORY_HOST);
+         values = nalu_hypre_CTAlloc(NALU_HYPRE_Real, 5 * (n * n), NALU_HYPRE_MEMORY_HOST);
 
          /* The order is left-to-right, bottom-to-top */
          for (k = 0, j = 0; j < n; j++)
@@ -714,14 +714,14 @@ NALU_HYPRE_Int main (NALU_HYPRE_Int argc, char *argv[])
                                          stencil_indices, values);
 #endif
 
-         hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
       }
       else /* Symmetric storage */
       {
          NALU_HYPRE_Int stencil_indices[3] = {0, 1, 2};
          NALU_HYPRE_Real *values;
 
-         values = hypre_CTAlloc(NALU_HYPRE_Real, 3 * (n * n), NALU_HYPRE_MEMORY_HOST);
+         values = nalu_hypre_CTAlloc(NALU_HYPRE_Real, 3 * (n * n), NALU_HYPRE_MEMORY_HOST);
 
          /* The order is left-to-right, bottom-to-top */
          for (k = 0, j = 0; j < n; j++)
@@ -744,7 +744,7 @@ NALU_HYPRE_Int main (NALU_HYPRE_Int argc, char *argv[])
                                          stencil_indices, values);
 #endif
 
-         hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
       }
    }
 
@@ -773,8 +773,8 @@ NALU_HYPRE_Int main (NALU_HYPRE_Int argc, char *argv[])
          nentries = 3;
       }
 
-      values  = hypre_CTAlloc(NALU_HYPRE_Real, nentries * n, NALU_HYPRE_MEMORY_HOST);
-      bvalues = hypre_CTAlloc(NALU_HYPRE_Real, n, NALU_HYPRE_MEMORY_HOST);
+      values  = nalu_hypre_CTAlloc(NALU_HYPRE_Real, nentries * n, NALU_HYPRE_MEMORY_HOST);
+      bvalues = nalu_hypre_CTAlloc(NALU_HYPRE_Real, n, NALU_HYPRE_MEMORY_HOST);
 
       /* The stencil at the boundary nodes is 1-0-0-0-0. Because
          we have I x_b = u_0; */
@@ -1158,8 +1158,8 @@ NALU_HYPRE_Int main (NALU_HYPRE_Int argc, char *argv[])
 #endif
       }
 
-      hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
-      hypre_TFree(bvalues, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(bvalues, NALU_HYPRE_MEMORY_HOST);
    }
 
    /* Finalize the vector and matrix assembly */
@@ -1176,9 +1176,9 @@ NALU_HYPRE_Int main (NALU_HYPRE_Int argc, char *argv[])
    /* 6. Set up and use a solver */
    {
 #ifdef NALU_HYPRE_FORTRAN
-      hypre_F90_Obj sA;
-      hypre_F90_Obj sb;
-      hypre_F90_Obj sx;
+      nalu_hypre_F90_Obj sA;
+      nalu_hypre_F90_Obj sb;
+      nalu_hypre_F90_Obj sx;
 #else
       NALU_HYPRE_StructMatrix    sA;
       NALU_HYPRE_StructVector    sb;
@@ -1201,8 +1201,8 @@ NALU_HYPRE_Int main (NALU_HYPRE_Int argc, char *argv[])
       if (solver_id == 0) /* SMG */
       {
          /* Start timing */
-         time_index = hypre_InitializeTiming("SMG Setup");
-         hypre_BeginTiming(time_index);
+         time_index = nalu_hypre_InitializeTiming("SMG Setup");
+         nalu_hypre_BeginTiming(time_index);
 
          /* Options and setup */
 #ifdef NALU_HYPRE_FORTRAN
@@ -1217,7 +1217,7 @@ NALU_HYPRE_Int main (NALU_HYPRE_Int argc, char *argv[])
          NALU_HYPRE_StructSMGSetLogging(&solver, &one);
          NALU_HYPRE_StructSMGSetup(&solver, &sA, &sb, &sx);
 #else
-         NALU_HYPRE_StructSMGCreate(hypre_MPI_COMM_WORLD, &solver);
+         NALU_HYPRE_StructSMGCreate(nalu_hypre_MPI_COMM_WORLD, &solver);
          NALU_HYPRE_StructSMGSetMemoryUse(solver, 0);
          NALU_HYPRE_StructSMGSetMaxIter(solver, 50);
          NALU_HYPRE_StructSMGSetTol(solver, 1.0e-06);
@@ -1230,14 +1230,14 @@ NALU_HYPRE_Int main (NALU_HYPRE_Int argc, char *argv[])
 #endif
 
          /* Finalize current timing */
-         hypre_EndTiming(time_index);
-         hypre_PrintTiming("Setup phase times", hypre_MPI_COMM_WORLD);
-         hypre_FinalizeTiming(time_index);
-         hypre_ClearTiming();
+         nalu_hypre_EndTiming(time_index);
+         nalu_hypre_PrintTiming("Setup phase times", nalu_hypre_MPI_COMM_WORLD);
+         nalu_hypre_FinalizeTiming(time_index);
+         nalu_hypre_ClearTiming();
 
          /* Start timing again */
-         time_index = hypre_InitializeTiming("SMG Solve");
-         hypre_BeginTiming(time_index);
+         time_index = nalu_hypre_InitializeTiming("SMG Solve");
+         nalu_hypre_BeginTiming(time_index);
 
          /* Solve */
 #ifdef NALU_HYPRE_FORTRAN
@@ -1245,12 +1245,12 @@ NALU_HYPRE_Int main (NALU_HYPRE_Int argc, char *argv[])
 #else
          NALU_HYPRE_StructSMGSolve(solver, sA, sb, sx);
 #endif
-         hypre_EndTiming(time_index);
+         nalu_hypre_EndTiming(time_index);
          /* Finalize current timing */
 
-         hypre_PrintTiming("Solve phase times", hypre_MPI_COMM_WORLD);
-         hypre_FinalizeTiming(time_index);
-         hypre_ClearTiming();
+         nalu_hypre_PrintTiming("Solve phase times", nalu_hypre_MPI_COMM_WORLD);
+         nalu_hypre_FinalizeTiming(time_index);
+         nalu_hypre_ClearTiming();
 
          /* Get info and release memory */
 #ifdef NALU_HYPRE_FORTRAN
@@ -1267,8 +1267,8 @@ NALU_HYPRE_Int main (NALU_HYPRE_Int argc, char *argv[])
       if (solver_id == 1) /* PFMG */
       {
          /* Start timing */
-         time_index = hypre_InitializeTiming("PFMG Setup");
-         hypre_BeginTiming(time_index);
+         time_index = nalu_hypre_InitializeTiming("PFMG Setup");
+         nalu_hypre_BeginTiming(time_index);
 
          /* Options and setup */
 #ifdef NALU_HYPRE_FORTRAN
@@ -1285,7 +1285,7 @@ NALU_HYPRE_Int main (NALU_HYPRE_Int argc, char *argv[])
          NALU_HYPRE_StructPFMGSetLogging(&solver, &one);
          NALU_HYPRE_StructPFMGSetup(&solver, &sA, &sb, &sx);
 #else
-         NALU_HYPRE_StructPFMGCreate(hypre_MPI_COMM_WORLD, &solver);
+         NALU_HYPRE_StructPFMGCreate(nalu_hypre_MPI_COMM_WORLD, &solver);
          NALU_HYPRE_StructPFMGSetMaxIter(solver, 50);
          NALU_HYPRE_StructPFMGSetTol(solver, 1.0e-06);
          NALU_HYPRE_StructPFMGSetRelChange(solver, 0);
@@ -1300,14 +1300,14 @@ NALU_HYPRE_Int main (NALU_HYPRE_Int argc, char *argv[])
 #endif
 
          /* Finalize current timing */
-         hypre_EndTiming(time_index);
-         hypre_PrintTiming("Setup phase times", hypre_MPI_COMM_WORLD);
-         hypre_FinalizeTiming(time_index);
-         hypre_ClearTiming();
+         nalu_hypre_EndTiming(time_index);
+         nalu_hypre_PrintTiming("Setup phase times", nalu_hypre_MPI_COMM_WORLD);
+         nalu_hypre_FinalizeTiming(time_index);
+         nalu_hypre_ClearTiming();
 
          /* Start timing again */
-         time_index = hypre_InitializeTiming("PFMG Solve");
-         hypre_BeginTiming(time_index);
+         time_index = nalu_hypre_InitializeTiming("PFMG Solve");
+         nalu_hypre_BeginTiming(time_index);
 
          /* Solve */
 #ifdef NALU_HYPRE_FORTRAN
@@ -1317,10 +1317,10 @@ NALU_HYPRE_Int main (NALU_HYPRE_Int argc, char *argv[])
 #endif
 
          /* Finalize current timing */
-         hypre_EndTiming(time_index);
-         hypre_PrintTiming("Solve phase times", hypre_MPI_COMM_WORLD);
-         hypre_FinalizeTiming(time_index);
-         hypre_ClearTiming();
+         nalu_hypre_EndTiming(time_index);
+         nalu_hypre_PrintTiming("Solve phase times", nalu_hypre_MPI_COMM_WORLD);
+         nalu_hypre_FinalizeTiming(time_index);
+         nalu_hypre_ClearTiming();
 
          /* Get info and release memory */
 #ifdef NALU_HYPRE_FORTRAN
@@ -1337,8 +1337,8 @@ NALU_HYPRE_Int main (NALU_HYPRE_Int argc, char *argv[])
       /* Preconditioned CG */
       if ((solver_id > 9) && (solver_id < 20))
       {
-         time_index = hypre_InitializeTiming("PCG Setup");
-         hypre_BeginTiming(time_index);
+         time_index = nalu_hypre_InitializeTiming("PCG Setup");
+         nalu_hypre_BeginTiming(time_index);
 
 #ifdef NALU_HYPRE_FORTRAN
          NALU_HYPRE_StructPCGCreate(&temp_COMM, &solver);
@@ -1348,7 +1348,7 @@ NALU_HYPRE_Int main (NALU_HYPRE_Int argc, char *argv[])
          NALU_HYPRE_StructPCGSetRelChange(&solver, &zero );
          NALU_HYPRE_StructPCGSetPrintLevel(&solver, &two );
 #else
-         NALU_HYPRE_StructPCGCreate(hypre_MPI_COMM_WORLD, &solver);
+         NALU_HYPRE_StructPCGCreate(nalu_hypre_MPI_COMM_WORLD, &solver);
          NALU_HYPRE_StructPCGSetMaxIter(solver, 200 );
          NALU_HYPRE_StructPCGSetTol(solver, 1.0e-06 );
          NALU_HYPRE_StructPCGSetTwoNorm(solver, 1 );
@@ -1372,7 +1372,7 @@ NALU_HYPRE_Int main (NALU_HYPRE_Int argc, char *argv[])
             precond_id = 0;
             NALU_HYPRE_StructPCGSetPrecond(&solver, &precond_id, &precond);
 #else
-            NALU_HYPRE_StructSMGCreate(hypre_MPI_COMM_WORLD, &precond);
+            NALU_HYPRE_StructSMGCreate(nalu_hypre_MPI_COMM_WORLD, &precond);
             NALU_HYPRE_StructSMGSetMemoryUse(precond, 0);
             NALU_HYPRE_StructSMGSetMaxIter(precond, 1);
             NALU_HYPRE_StructSMGSetTol(precond, 0.0);
@@ -1406,7 +1406,7 @@ NALU_HYPRE_Int main (NALU_HYPRE_Int argc, char *argv[])
             precond_id = 1;
             NALU_HYPRE_StructPCGSetPrecond(&solver, &precond_id, &precond);
 #else
-            NALU_HYPRE_StructPFMGCreate(hypre_MPI_COMM_WORLD, &precond);
+            NALU_HYPRE_StructPFMGCreate(nalu_hypre_MPI_COMM_WORLD, &precond);
             NALU_HYPRE_StructPFMGSetMaxIter(precond, 1);
             NALU_HYPRE_StructPFMGSetTol(precond, 0.0);
             NALU_HYPRE_StructPFMGSetZeroGuess(precond);
@@ -1435,7 +1435,7 @@ NALU_HYPRE_Int main (NALU_HYPRE_Int argc, char *argv[])
             precond_id = 7;
             NALU_HYPRE_StructPCGSetPrecond(&solver, &precond_id, &precond);
 #else
-            NALU_HYPRE_StructJacobiCreate(hypre_MPI_COMM_WORLD, &precond);
+            NALU_HYPRE_StructJacobiCreate(nalu_hypre_MPI_COMM_WORLD, &precond);
             NALU_HYPRE_StructJacobiSetMaxIter(precond, 2);
             NALU_HYPRE_StructJacobiSetTol(precond, 0.0);
             NALU_HYPRE_StructJacobiSetZeroGuess(precond);
@@ -1468,13 +1468,13 @@ NALU_HYPRE_Int main (NALU_HYPRE_Int argc, char *argv[])
          NALU_HYPRE_StructPCGSetup(solver, sA, sb, sx );
 #endif
 
-         hypre_EndTiming(time_index);
-         hypre_PrintTiming("Setup phase times", hypre_MPI_COMM_WORLD);
-         hypre_FinalizeTiming(time_index);
-         hypre_ClearTiming();
+         nalu_hypre_EndTiming(time_index);
+         nalu_hypre_PrintTiming("Setup phase times", nalu_hypre_MPI_COMM_WORLD);
+         nalu_hypre_FinalizeTiming(time_index);
+         nalu_hypre_ClearTiming();
 
-         time_index = hypre_InitializeTiming("PCG Solve");
-         hypre_BeginTiming(time_index);
+         time_index = nalu_hypre_InitializeTiming("PCG Solve");
+         nalu_hypre_BeginTiming(time_index);
 
          /* PCG Solve */
 #ifdef NALU_HYPRE_FORTRAN
@@ -1483,10 +1483,10 @@ NALU_HYPRE_Int main (NALU_HYPRE_Int argc, char *argv[])
          NALU_HYPRE_StructPCGSolve(solver, sA, sb, sx);
 #endif
 
-         hypre_EndTiming(time_index);
-         hypre_PrintTiming("Solve phase times", hypre_MPI_COMM_WORLD);
-         hypre_FinalizeTiming(time_index);
-         hypre_ClearTiming();
+         nalu_hypre_EndTiming(time_index);
+         nalu_hypre_PrintTiming("Solve phase times", nalu_hypre_MPI_COMM_WORLD);
+         nalu_hypre_FinalizeTiming(time_index);
+         nalu_hypre_ClearTiming();
 
          /* Get info and release memory */
 #ifdef NALU_HYPRE_FORTRAN
@@ -1528,13 +1528,13 @@ NALU_HYPRE_Int main (NALU_HYPRE_Int argc, char *argv[])
       /* Preconditioned GMRES */
       if ((solver_id > 29) && (solver_id < 40))
       {
-         time_index = hypre_InitializeTiming("GMRES Setup");
-         hypre_BeginTiming(time_index);
+         time_index = nalu_hypre_InitializeTiming("GMRES Setup");
+         nalu_hypre_BeginTiming(time_index);
 
 #ifdef NALU_HYPRE_FORTRAN
          NALU_HYPRE_StructGMRESCreate(&temp_COMM, &solver);
 #else
-         NALU_HYPRE_StructGMRESCreate(hypre_MPI_COMM_WORLD, &solver);
+         NALU_HYPRE_StructGMRESCreate(nalu_hypre_MPI_COMM_WORLD, &solver);
 #endif
 
          /* Note that GMRES can be used with all the interfaces - not
@@ -1575,7 +1575,7 @@ NALU_HYPRE_Int main (NALU_HYPRE_Int argc, char *argv[])
             precond_id = 0;
             NALU_HYPRE_StructGMRESSetPrecond(&solver, &precond_id, &precond);
 #else
-            NALU_HYPRE_StructSMGCreate(hypre_MPI_COMM_WORLD, &precond);
+            NALU_HYPRE_StructSMGCreate(nalu_hypre_MPI_COMM_WORLD, &precond);
             NALU_HYPRE_StructSMGSetMemoryUse(precond, 0);
             NALU_HYPRE_StructSMGSetMaxIter(precond, 1);
             NALU_HYPRE_StructSMGSetTol(precond, 0.0);
@@ -1609,7 +1609,7 @@ NALU_HYPRE_Int main (NALU_HYPRE_Int argc, char *argv[])
             precond_id = 1;
             NALU_HYPRE_StructGMRESSetPrecond(&solver, &precond_id, &precond);
 #else
-            NALU_HYPRE_StructPFMGCreate(hypre_MPI_COMM_WORLD, &precond);
+            NALU_HYPRE_StructPFMGCreate(nalu_hypre_MPI_COMM_WORLD, &precond);
             NALU_HYPRE_StructPFMGSetMaxIter(precond, 1);
             NALU_HYPRE_StructPFMGSetTol(precond, 0.0);
             NALU_HYPRE_StructPFMGSetZeroGuess(precond);
@@ -1638,7 +1638,7 @@ NALU_HYPRE_Int main (NALU_HYPRE_Int argc, char *argv[])
             precond_id = 7;
             NALU_HYPRE_StructGMRESSetPrecond(&solver, &precond_id, &precond);
 #else
-            NALU_HYPRE_StructJacobiCreate(hypre_MPI_COMM_WORLD, &precond);
+            NALU_HYPRE_StructJacobiCreate(nalu_hypre_MPI_COMM_WORLD, &precond);
             NALU_HYPRE_StructJacobiSetMaxIter(precond, 2);
             NALU_HYPRE_StructJacobiSetTol(precond, 0.0);
             NALU_HYPRE_StructJacobiSetZeroGuess(precond);
@@ -1671,13 +1671,13 @@ NALU_HYPRE_Int main (NALU_HYPRE_Int argc, char *argv[])
          NALU_HYPRE_StructGMRESSetup(solver, sA, sb, sx );
 #endif
 
-         hypre_EndTiming(time_index);
-         hypre_PrintTiming("Setup phase times", hypre_MPI_COMM_WORLD);
-         hypre_FinalizeTiming(time_index);
-         hypre_ClearTiming();
+         nalu_hypre_EndTiming(time_index);
+         nalu_hypre_PrintTiming("Setup phase times", nalu_hypre_MPI_COMM_WORLD);
+         nalu_hypre_FinalizeTiming(time_index);
+         nalu_hypre_ClearTiming();
 
-         time_index = hypre_InitializeTiming("GMRES Solve");
-         hypre_BeginTiming(time_index);
+         time_index = nalu_hypre_InitializeTiming("GMRES Solve");
+         nalu_hypre_BeginTiming(time_index);
 
          /* GMRES Solve */
 #ifdef NALU_HYPRE_FORTRAN
@@ -1686,10 +1686,10 @@ NALU_HYPRE_Int main (NALU_HYPRE_Int argc, char *argv[])
          NALU_HYPRE_StructGMRESSolve(solver, sA, sb, sx);
 #endif
 
-         hypre_EndTiming(time_index);
-         hypre_PrintTiming("Solve phase times", hypre_MPI_COMM_WORLD);
-         hypre_FinalizeTiming(time_index);
-         hypre_ClearTiming();
+         nalu_hypre_EndTiming(time_index);
+         nalu_hypre_PrintTiming("Solve phase times", nalu_hypre_MPI_COMM_WORLD);
+         nalu_hypre_FinalizeTiming(time_index);
+         nalu_hypre_ClearTiming();
 
          /* Get info and release memory */
 #ifdef NALU_HYPRE_FORTRAN
@@ -1740,10 +1740,10 @@ NALU_HYPRE_Int main (NALU_HYPRE_Int argc, char *argv[])
 
    if (myid == 0)
    {
-      hypre_printf("\n");
-      hypre_printf("Iterations = %d\n", num_iterations);
-      hypre_printf("Final Relative Residual Norm = %e\n", final_res_norm);
-      hypre_printf("\n");
+      nalu_hypre_printf("\n");
+      nalu_hypre_printf("Iterations = %d\n", num_iterations);
+      nalu_hypre_printf("Final Relative Residual Norm = %e\n", final_res_norm);
+      nalu_hypre_printf("\n");
    }
 
    /* Free memory */
@@ -1764,7 +1764,7 @@ NALU_HYPRE_Int main (NALU_HYPRE_Int argc, char *argv[])
 #endif
 
    /* Finalize MPI */
-   hypre_MPI_Finalize();
+   nalu_hypre_MPI_Finalize();
 
    return (0);
 }

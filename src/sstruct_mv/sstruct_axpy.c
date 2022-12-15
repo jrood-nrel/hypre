@@ -11,72 +11,72 @@
  *
  *****************************************************************************/
 
-#include "_hypre_sstruct_mv.h"
+#include "_nalu_hypre_sstruct_mv.h"
 
 /*--------------------------------------------------------------------------
- * hypre_SStructPAxpy
+ * nalu_hypre_SStructPAxpy
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_SStructPAxpy( NALU_HYPRE_Complex         alpha,
-                    hypre_SStructPVector *px,
-                    hypre_SStructPVector *py )
+nalu_hypre_SStructPAxpy( NALU_HYPRE_Complex         alpha,
+                    nalu_hypre_SStructPVector *px,
+                    nalu_hypre_SStructPVector *py )
 {
-   NALU_HYPRE_Int nvars = hypre_SStructPVectorNVars(px);
+   NALU_HYPRE_Int nvars = nalu_hypre_SStructPVectorNVars(px);
    NALU_HYPRE_Int var;
 
    for (var = 0; var < nvars; var++)
    {
-      hypre_StructAxpy(alpha,
-                       hypre_SStructPVectorSVector(px, var),
-                       hypre_SStructPVectorSVector(py, var));
+      nalu_hypre_StructAxpy(alpha,
+                       nalu_hypre_SStructPVectorSVector(px, var),
+                       nalu_hypre_SStructPVectorSVector(py, var));
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_SStructAxpy
+ * nalu_hypre_SStructAxpy
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_SStructAxpy( NALU_HYPRE_Complex        alpha,
-                   hypre_SStructVector *x,
-                   hypre_SStructVector *y )
+nalu_hypre_SStructAxpy( NALU_HYPRE_Complex        alpha,
+                   nalu_hypre_SStructVector *x,
+                   nalu_hypre_SStructVector *y )
 {
-   NALU_HYPRE_Int nparts = hypre_SStructVectorNParts(x);
+   NALU_HYPRE_Int nparts = nalu_hypre_SStructVectorNParts(x);
    NALU_HYPRE_Int part;
 
-   NALU_HYPRE_Int    x_object_type = hypre_SStructVectorObjectType(x);
-   NALU_HYPRE_Int    y_object_type = hypre_SStructVectorObjectType(y);
+   NALU_HYPRE_Int    x_object_type = nalu_hypre_SStructVectorObjectType(x);
+   NALU_HYPRE_Int    y_object_type = nalu_hypre_SStructVectorObjectType(y);
 
    if (x_object_type != y_object_type)
    {
-      hypre_error_in_arg(2);
-      hypre_error_in_arg(3);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(2);
+      nalu_hypre_error_in_arg(3);
+      return nalu_hypre_error_flag;
    }
 
    if (x_object_type == NALU_HYPRE_SSTRUCT)
    {
       for (part = 0; part < nparts; part++)
       {
-         hypre_SStructPAxpy(alpha,
-                            hypre_SStructVectorPVector(x, part),
-                            hypre_SStructVectorPVector(y, part));
+         nalu_hypre_SStructPAxpy(alpha,
+                            nalu_hypre_SStructVectorPVector(x, part),
+                            nalu_hypre_SStructVectorPVector(y, part));
       }
    }
 
    else if (x_object_type == NALU_HYPRE_PARCSR)
    {
-      hypre_ParVector  *x_par;
-      hypre_ParVector  *y_par;
+      nalu_hypre_ParVector  *x_par;
+      nalu_hypre_ParVector  *y_par;
 
-      hypre_SStructVectorConvert(x, &x_par);
-      hypre_SStructVectorConvert(y, &y_par);
+      nalu_hypre_SStructVectorConvert(x, &x_par);
+      nalu_hypre_SStructVectorConvert(y, &y_par);
 
-      hypre_ParVectorAxpy(alpha, x_par, y_par);
+      nalu_hypre_ParVectorAxpy(alpha, x_par, y_par);
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }

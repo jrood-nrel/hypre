@@ -11,52 +11,52 @@
  *
  *****************************************************************************/
 
-#include "_hypre_parcsr_ls.h"
+#include "_nalu_hypre_parcsr_ls.h"
 
 /*--------------------------------------------------------------------------
- * hypre_ParCSRMatrixScaledNorm
+ * nalu_hypre_ParCSRMatrixScaledNorm
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_ParCSRMatrixScaledNorm( hypre_ParCSRMatrix *A, NALU_HYPRE_Real *scnorm)
+nalu_hypre_ParCSRMatrixScaledNorm( nalu_hypre_ParCSRMatrix *A, NALU_HYPRE_Real *scnorm)
 {
-   hypre_ParCSRCommHandle  *comm_handle;
-   hypre_ParCSRCommPkg  *comm_pkg = hypre_ParCSRMatrixCommPkg(A);
-   MPI_Comm     comm = hypre_ParCSRMatrixComm(A);
-   hypre_CSRMatrix      *diag   = hypre_ParCSRMatrixDiag(A);
-   NALU_HYPRE_Int      *diag_i = hypre_CSRMatrixI(diag);
-   NALU_HYPRE_Int      *diag_j = hypre_CSRMatrixJ(diag);
-   NALU_HYPRE_Real     *diag_data = hypre_CSRMatrixData(diag);
-   hypre_CSRMatrix      *offd   = hypre_ParCSRMatrixOffd(A);
-   NALU_HYPRE_Int      *offd_i = hypre_CSRMatrixI(offd);
-   NALU_HYPRE_Int      *offd_j = hypre_CSRMatrixJ(offd);
-   NALU_HYPRE_Real     *offd_data = hypre_CSRMatrixData(offd);
-   NALU_HYPRE_BigInt       global_num_rows = hypre_ParCSRMatrixGlobalNumRows(A);
-   NALU_HYPRE_BigInt           *row_starts = hypre_ParCSRMatrixRowStarts(A);
-   NALU_HYPRE_Int       num_rows = hypre_CSRMatrixNumRows(diag);
+   nalu_hypre_ParCSRCommHandle  *comm_handle;
+   nalu_hypre_ParCSRCommPkg  *comm_pkg = nalu_hypre_ParCSRMatrixCommPkg(A);
+   MPI_Comm     comm = nalu_hypre_ParCSRMatrixComm(A);
+   nalu_hypre_CSRMatrix      *diag   = nalu_hypre_ParCSRMatrixDiag(A);
+   NALU_HYPRE_Int      *diag_i = nalu_hypre_CSRMatrixI(diag);
+   NALU_HYPRE_Int      *diag_j = nalu_hypre_CSRMatrixJ(diag);
+   NALU_HYPRE_Real     *diag_data = nalu_hypre_CSRMatrixData(diag);
+   nalu_hypre_CSRMatrix      *offd   = nalu_hypre_ParCSRMatrixOffd(A);
+   NALU_HYPRE_Int      *offd_i = nalu_hypre_CSRMatrixI(offd);
+   NALU_HYPRE_Int      *offd_j = nalu_hypre_CSRMatrixJ(offd);
+   NALU_HYPRE_Real     *offd_data = nalu_hypre_CSRMatrixData(offd);
+   NALU_HYPRE_BigInt       global_num_rows = nalu_hypre_ParCSRMatrixGlobalNumRows(A);
+   NALU_HYPRE_BigInt           *row_starts = nalu_hypre_ParCSRMatrixRowStarts(A);
+   NALU_HYPRE_Int       num_rows = nalu_hypre_CSRMatrixNumRows(diag);
 
-   hypre_ParVector      *dinvsqrt;
+   nalu_hypre_ParVector      *dinvsqrt;
    NALU_HYPRE_Real     *dis_data;
-   hypre_Vector         *dis_ext;
+   nalu_hypre_Vector         *dis_ext;
    NALU_HYPRE_Real     *dis_ext_data;
-   hypre_Vector         *sum;
+   nalu_hypre_Vector         *sum;
    NALU_HYPRE_Real     *sum_data;
 
-   NALU_HYPRE_Int         num_cols_offd = hypre_CSRMatrixNumCols(offd);
+   NALU_HYPRE_Int         num_cols_offd = nalu_hypre_CSRMatrixNumCols(offd);
    NALU_HYPRE_Int         num_sends, i, j, index, start;
 
    NALU_HYPRE_Real *d_buf_data;
    NALU_HYPRE_Real  mat_norm, max_row_sum;
 
-   dinvsqrt = hypre_ParVectorCreate(comm, global_num_rows, row_starts);
-   hypre_ParVectorInitialize(dinvsqrt);
-   dis_data = hypre_VectorData(hypre_ParVectorLocalVector(dinvsqrt));
-   dis_ext = hypre_SeqVectorCreate(num_cols_offd);
-   hypre_SeqVectorInitialize(dis_ext);
-   dis_ext_data = hypre_VectorData(dis_ext);
-   sum = hypre_SeqVectorCreate(num_rows);
-   hypre_SeqVectorInitialize(sum);
-   sum_data = hypre_VectorData(sum);
+   dinvsqrt = nalu_hypre_ParVectorCreate(comm, global_num_rows, row_starts);
+   nalu_hypre_ParVectorInitialize(dinvsqrt);
+   dis_data = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(dinvsqrt));
+   dis_ext = nalu_hypre_SeqVectorCreate(num_cols_offd);
+   nalu_hypre_SeqVectorInitialize(dis_ext);
+   dis_ext_data = nalu_hypre_VectorData(dis_ext);
+   sum = nalu_hypre_SeqVectorCreate(num_rows);
+   nalu_hypre_SeqVectorInitialize(sum);
+   sum_data = nalu_hypre_VectorData(sum);
 
    /* generate dinvsqrt */
    for (i = 0; i < num_rows; i++)
@@ -70,24 +70,24 @@ hypre_ParCSRMatrixScaledNorm( hypre_ParCSRMatrix *A, NALU_HYPRE_Real *scnorm)
     *--------------------------------------------------------------------*/
    if (!comm_pkg)
    {
-      hypre_MatvecCommPkgCreate(A);
-      comm_pkg = hypre_ParCSRMatrixCommPkg(A);
+      nalu_hypre_MatvecCommPkgCreate(A);
+      comm_pkg = nalu_hypre_ParCSRMatrixCommPkg(A);
    }
 
-   num_sends = hypre_ParCSRCommPkgNumSends(comm_pkg);
-   d_buf_data = hypre_CTAlloc(NALU_HYPRE_Real,  hypre_ParCSRCommPkgSendMapStart(comm_pkg,
+   num_sends = nalu_hypre_ParCSRCommPkgNumSends(comm_pkg);
+   d_buf_data = nalu_hypre_CTAlloc(NALU_HYPRE_Real,  nalu_hypre_ParCSRCommPkgSendMapStart(comm_pkg,
                                                                            num_sends), NALU_HYPRE_MEMORY_HOST);
 
    index = 0;
    for (i = 0; i < num_sends; i++)
    {
-      start = hypre_ParCSRCommPkgSendMapStart(comm_pkg, i);
-      for (j = start; j < hypre_ParCSRCommPkgSendMapStart(comm_pkg, i + 1); j++)
+      start = nalu_hypre_ParCSRCommPkgSendMapStart(comm_pkg, i);
+      for (j = start; j < nalu_hypre_ParCSRCommPkgSendMapStart(comm_pkg, i + 1); j++)
          d_buf_data[index++]
-            = dis_data[hypre_ParCSRCommPkgSendMapElmt(comm_pkg, j)];
+            = dis_data[nalu_hypre_ParCSRCommPkgSendMapElmt(comm_pkg, j)];
    }
 
-   comm_handle = hypre_ParCSRCommHandleCreate( 1, comm_pkg, d_buf_data,
+   comm_handle = nalu_hypre_ParCSRCommHandleCreate( 1, comm_pkg, d_buf_data,
                                                dis_ext_data);
 
    for (i = 0; i < num_rows; i++)
@@ -97,7 +97,7 @@ hypre_ParCSRMatrixScaledNorm( hypre_ParCSRMatrix *A, NALU_HYPRE_Real *scnorm)
          sum_data[i] += fabs(diag_data[j]) * dis_data[i] * dis_data[diag_j[j]];
       }
    }
-   hypre_ParCSRCommHandleDestroy(comm_handle);
+   nalu_hypre_ParCSRCommHandleDestroy(comm_handle);
 
    for (i = 0; i < num_rows; i++)
    {
@@ -116,12 +116,12 @@ hypre_ParCSRMatrixScaledNorm( hypre_ParCSRMatrix *A, NALU_HYPRE_Real *scnorm)
       }
    }
 
-   hypre_MPI_Allreduce(&max_row_sum, &mat_norm, 1, NALU_HYPRE_MPI_REAL, hypre_MPI_MAX, comm);
+   nalu_hypre_MPI_Allreduce(&max_row_sum, &mat_norm, 1, NALU_HYPRE_MPI_REAL, nalu_hypre_MPI_MAX, comm);
 
-   hypre_ParVectorDestroy(dinvsqrt);
-   hypre_SeqVectorDestroy(sum);
-   hypre_SeqVectorDestroy(dis_ext);
-   hypre_TFree(d_buf_data, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_ParVectorDestroy(dinvsqrt);
+   nalu_hypre_SeqVectorDestroy(sum);
+   nalu_hypre_SeqVectorDestroy(dis_ext);
+   nalu_hypre_TFree(d_buf_data, NALU_HYPRE_MEMORY_HOST);
 
    *scnorm = mat_norm;
    return 0;

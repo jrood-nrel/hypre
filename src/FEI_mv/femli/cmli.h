@@ -14,7 +14,7 @@
 #ifndef __CINTFACEH__
 #define __CINTFACEH__
 
-#include "_hypre_utilities.h"
+#include "_nalu_hypre_utilities.h"
 
 #ifdef __cplusplus
 extern "C" {

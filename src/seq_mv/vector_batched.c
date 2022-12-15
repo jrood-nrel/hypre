@@ -8,17 +8,17 @@
 #include "seq_mv.h"
 
 /*--------------------------------------------------------------------------
- * hypre_SeqVectorMassAxpy8
+ * nalu_hypre_SeqVectorMassAxpy8
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_SeqVectorMassAxpy8( NALU_HYPRE_Complex *alpha,
-                          hypre_Vector **x,
-                          hypre_Vector  *y, NALU_HYPRE_Int k)
+nalu_hypre_SeqVectorMassAxpy8( NALU_HYPRE_Complex *alpha,
+                          nalu_hypre_Vector **x,
+                          nalu_hypre_Vector  *y, NALU_HYPRE_Int k)
 {
-   NALU_HYPRE_Complex  *x_data = hypre_VectorData(x[0]);
-   NALU_HYPRE_Complex  *y_data = hypre_VectorData(y);
-   NALU_HYPRE_Int       size   = hypre_VectorSize(x[0]);
+   NALU_HYPRE_Complex  *x_data = nalu_hypre_VectorData(x[0]);
+   NALU_HYPRE_Complex  *y_data = nalu_hypre_VectorData(y);
+   NALU_HYPRE_Int       size   = nalu_hypre_VectorSize(x[0]);
 
    NALU_HYPRE_Int      i, j, jstart, restk;
 
@@ -129,21 +129,21 @@ hypre_SeqVectorMassAxpy8( NALU_HYPRE_Complex *alpha,
       }
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_SeqVectorMassAxpy4
+ * nalu_hypre_SeqVectorMassAxpy4
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_SeqVectorMassAxpy4( NALU_HYPRE_Complex *alpha,
-                          hypre_Vector **x,
-                          hypre_Vector  *y, NALU_HYPRE_Int k)
+nalu_hypre_SeqVectorMassAxpy4( NALU_HYPRE_Complex *alpha,
+                          nalu_hypre_Vector **x,
+                          nalu_hypre_Vector  *y, NALU_HYPRE_Int k)
 {
-   NALU_HYPRE_Complex  *x_data = hypre_VectorData(x[0]);
-   NALU_HYPRE_Complex  *y_data = hypre_VectorData(y);
-   NALU_HYPRE_Int       size   = hypre_VectorSize(x[0]);
+   NALU_HYPRE_Complex  *x_data = nalu_hypre_VectorData(x[0]);
+   NALU_HYPRE_Complex  *y_data = nalu_hypre_VectorData(y);
+   NALU_HYPRE_Int       size   = nalu_hypre_VectorSize(x[0]);
 
    NALU_HYPRE_Int      i, j, jstart, restk;
 
@@ -201,33 +201,33 @@ hypre_SeqVectorMassAxpy4( NALU_HYPRE_Complex *alpha,
       }
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_SeqVectorMassAxpy
+ * nalu_hypre_SeqVectorMassAxpy
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_SeqVectorMassAxpy( NALU_HYPRE_Complex *alpha,
-                         hypre_Vector **x,
-                         hypre_Vector  *y, NALU_HYPRE_Int k, NALU_HYPRE_Int unroll)
+nalu_hypre_SeqVectorMassAxpy( NALU_HYPRE_Complex *alpha,
+                         nalu_hypre_Vector **x,
+                         nalu_hypre_Vector  *y, NALU_HYPRE_Int k, NALU_HYPRE_Int unroll)
 {
-   NALU_HYPRE_Complex  *x_data = hypre_VectorData(x[0]);
-   NALU_HYPRE_Complex  *y_data = hypre_VectorData(y);
-   NALU_HYPRE_Int       size   = hypre_VectorSize(x[0]);
+   NALU_HYPRE_Complex  *x_data = nalu_hypre_VectorData(x[0]);
+   NALU_HYPRE_Complex  *y_data = nalu_hypre_VectorData(y);
+   NALU_HYPRE_Int       size   = nalu_hypre_VectorSize(x[0]);
 
    NALU_HYPRE_Int      i, j, jstart;
 
    if (unroll == 8)
    {
-      hypre_SeqVectorMassAxpy8(alpha, x, y, k);
-      return hypre_error_flag;
+      nalu_hypre_SeqVectorMassAxpy8(alpha, x, y, k);
+      return nalu_hypre_error_flag;
    }
    else if (unroll == 4)
    {
-      hypre_SeqVectorMassAxpy4(alpha, x, y, k);
-      return hypre_error_flag;
+      nalu_hypre_SeqVectorMassAxpy4(alpha, x, y, k);
+      return nalu_hypre_error_flag;
    }
    else
    {
@@ -244,18 +244,18 @@ hypre_SeqVectorMassAxpy( NALU_HYPRE_Complex *alpha,
       }
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_SeqVectorMassInnerProd8
+ * nalu_hypre_SeqVectorMassInnerProd8
  *--------------------------------------------------------------------------*/
-NALU_HYPRE_Int hypre_SeqVectorMassInnerProd8( hypre_Vector *x,
-                                         hypre_Vector **y, NALU_HYPRE_Int k, NALU_HYPRE_Real *result)
+NALU_HYPRE_Int nalu_hypre_SeqVectorMassInnerProd8( nalu_hypre_Vector *x,
+                                         nalu_hypre_Vector **y, NALU_HYPRE_Int k, NALU_HYPRE_Real *result)
 {
-   NALU_HYPRE_Complex *x_data = hypre_VectorData(x);
-   NALU_HYPRE_Complex *y_data = hypre_VectorData(y[0]);
-   NALU_HYPRE_Int      size   = hypre_VectorSize(x);
+   NALU_HYPRE_Complex *x_data = nalu_hypre_VectorData(x);
+   NALU_HYPRE_Complex *y_data = nalu_hypre_VectorData(y[0]);
+   NALU_HYPRE_Int      size   = nalu_hypre_VectorSize(x);
 
    NALU_HYPRE_Int      i, j, restk;
    NALU_HYPRE_Real res1;
@@ -302,14 +302,14 @@ NALU_HYPRE_Int hypre_SeqVectorMassInnerProd8( hypre_Vector *x,
 #endif
          for (i = 0; i < size; i++)
          {
-            res1 += hypre_conj(y_data[jstart + i]) * x_data[i];
-            res2 += hypre_conj(y_data[jstart1 + i]) * x_data[i];
-            res3 += hypre_conj(y_data[jstart2 + i]) * x_data[i];
-            res4 += hypre_conj(y_data[jstart3 + i]) * x_data[i];
-            res5 += hypre_conj(y_data[jstart4 + i]) * x_data[i];
-            res6 += hypre_conj(y_data[jstart5 + i]) * x_data[i];
-            res7 += hypre_conj(y_data[jstart6 + i]) * x_data[i];
-            res8 += hypre_conj(y_data[jstart7 + i]) * x_data[i];
+            res1 += nalu_hypre_conj(y_data[jstart + i]) * x_data[i];
+            res2 += nalu_hypre_conj(y_data[jstart1 + i]) * x_data[i];
+            res3 += nalu_hypre_conj(y_data[jstart2 + i]) * x_data[i];
+            res4 += nalu_hypre_conj(y_data[jstart3 + i]) * x_data[i];
+            res5 += nalu_hypre_conj(y_data[jstart4 + i]) * x_data[i];
+            res6 += nalu_hypre_conj(y_data[jstart5 + i]) * x_data[i];
+            res7 += nalu_hypre_conj(y_data[jstart6 + i]) * x_data[i];
+            res8 += nalu_hypre_conj(y_data[jstart7 + i]) * x_data[i];
          }
          result[j] = res1;
          result[j + 1] = res2;
@@ -330,7 +330,7 @@ NALU_HYPRE_Int hypre_SeqVectorMassInnerProd8( hypre_Vector *x,
 #endif
       for (i = 0; i < size; i++)
       {
-         res1 += hypre_conj(y_data[jstart + i]) * x_data[i];
+         res1 += nalu_hypre_conj(y_data[jstart + i]) * x_data[i];
       }
       result[k - 1] = res1;
    }
@@ -345,8 +345,8 @@ NALU_HYPRE_Int hypre_SeqVectorMassInnerProd8( hypre_Vector *x,
 #endif
       for (i = 0; i < size; i++)
       {
-         res1 += hypre_conj(y_data[jstart + i]) * x_data[i];
-         res2 += hypre_conj(y_data[jstart1 + i]) * x_data[i];
+         res1 += nalu_hypre_conj(y_data[jstart + i]) * x_data[i];
+         res2 += nalu_hypre_conj(y_data[jstart1 + i]) * x_data[i];
       }
       result[k - 2] = res1;
       result[k - 1] = res2;
@@ -364,9 +364,9 @@ NALU_HYPRE_Int hypre_SeqVectorMassInnerProd8( hypre_Vector *x,
 #endif
       for (i = 0; i < size; i++)
       {
-         res1 += hypre_conj(y_data[jstart + i]) * x_data[i];
-         res2 += hypre_conj(y_data[jstart1 + i]) * x_data[i];
-         res3 += hypre_conj(y_data[jstart2 + i]) * x_data[i];
+         res1 += nalu_hypre_conj(y_data[jstart + i]) * x_data[i];
+         res2 += nalu_hypre_conj(y_data[jstart1 + i]) * x_data[i];
+         res3 += nalu_hypre_conj(y_data[jstart2 + i]) * x_data[i];
       }
       result[k - 3] = res1;
       result[k - 2] = res2;
@@ -387,10 +387,10 @@ NALU_HYPRE_Int hypre_SeqVectorMassInnerProd8( hypre_Vector *x,
 #endif
       for (i = 0; i < size; i++)
       {
-         res1 += hypre_conj(y_data[jstart + i]) * x_data[i];
-         res2 += hypre_conj(y_data[jstart1 + i]) * x_data[i];
-         res3 += hypre_conj(y_data[jstart2 + i]) * x_data[i];
-         res4 += hypre_conj(y_data[jstart3 + i]) * x_data[i];
+         res1 += nalu_hypre_conj(y_data[jstart + i]) * x_data[i];
+         res2 += nalu_hypre_conj(y_data[jstart1 + i]) * x_data[i];
+         res3 += nalu_hypre_conj(y_data[jstart2 + i]) * x_data[i];
+         res4 += nalu_hypre_conj(y_data[jstart3 + i]) * x_data[i];
       }
       result[k - 4] = res1;
       result[k - 3] = res2;
@@ -414,11 +414,11 @@ NALU_HYPRE_Int hypre_SeqVectorMassInnerProd8( hypre_Vector *x,
 #endif
       for (i = 0; i < size; i++)
       {
-         res1 += hypre_conj(y_data[jstart + i]) * x_data[i];
-         res2 += hypre_conj(y_data[jstart1 + i]) * x_data[i];
-         res3 += hypre_conj(y_data[jstart2 + i]) * x_data[i];
-         res4 += hypre_conj(y_data[jstart3 + i]) * x_data[i];
-         res5 += hypre_conj(y_data[jstart4 + i]) * x_data[i];
+         res1 += nalu_hypre_conj(y_data[jstart + i]) * x_data[i];
+         res2 += nalu_hypre_conj(y_data[jstart1 + i]) * x_data[i];
+         res3 += nalu_hypre_conj(y_data[jstart2 + i]) * x_data[i];
+         res4 += nalu_hypre_conj(y_data[jstart3 + i]) * x_data[i];
+         res5 += nalu_hypre_conj(y_data[jstart4 + i]) * x_data[i];
       }
       result[k - 5] = res1;
       result[k - 4] = res2;
@@ -445,12 +445,12 @@ NALU_HYPRE_Int hypre_SeqVectorMassInnerProd8( hypre_Vector *x,
 #endif
       for (i = 0; i < size; i++)
       {
-         res1 += hypre_conj(y_data[jstart + i]) * x_data[i];
-         res2 += hypre_conj(y_data[jstart1 + i]) * x_data[i];
-         res3 += hypre_conj(y_data[jstart2 + i]) * x_data[i];
-         res4 += hypre_conj(y_data[jstart3 + i]) * x_data[i];
-         res5 += hypre_conj(y_data[jstart4 + i]) * x_data[i];
-         res6 += hypre_conj(y_data[jstart5 + i]) * x_data[i];
+         res1 += nalu_hypre_conj(y_data[jstart + i]) * x_data[i];
+         res2 += nalu_hypre_conj(y_data[jstart1 + i]) * x_data[i];
+         res3 += nalu_hypre_conj(y_data[jstart2 + i]) * x_data[i];
+         res4 += nalu_hypre_conj(y_data[jstart3 + i]) * x_data[i];
+         res5 += nalu_hypre_conj(y_data[jstart4 + i]) * x_data[i];
+         res6 += nalu_hypre_conj(y_data[jstart5 + i]) * x_data[i];
       }
       result[k - 6] = res1;
       result[k - 5] = res2;
@@ -480,13 +480,13 @@ NALU_HYPRE_Int hypre_SeqVectorMassInnerProd8( hypre_Vector *x,
 #endif
       for (i = 0; i < size; i++)
       {
-         res1 += hypre_conj(y_data[jstart + i]) * x_data[i];
-         res2 += hypre_conj(y_data[jstart1 + i]) * x_data[i];
-         res3 += hypre_conj(y_data[jstart2 + i]) * x_data[i];
-         res4 += hypre_conj(y_data[jstart3 + i]) * x_data[i];
-         res5 += hypre_conj(y_data[jstart4 + i]) * x_data[i];
-         res6 += hypre_conj(y_data[jstart5 + i]) * x_data[i];
-         res7 += hypre_conj(y_data[jstart6 + i]) * x_data[i];
+         res1 += nalu_hypre_conj(y_data[jstart + i]) * x_data[i];
+         res2 += nalu_hypre_conj(y_data[jstart1 + i]) * x_data[i];
+         res3 += nalu_hypre_conj(y_data[jstart2 + i]) * x_data[i];
+         res4 += nalu_hypre_conj(y_data[jstart3 + i]) * x_data[i];
+         res5 += nalu_hypre_conj(y_data[jstart4 + i]) * x_data[i];
+         res6 += nalu_hypre_conj(y_data[jstart5 + i]) * x_data[i];
+         res7 += nalu_hypre_conj(y_data[jstart6 + i]) * x_data[i];
       }
       result[k - 7] = res1;
       result[k - 6] = res2;
@@ -498,18 +498,18 @@ NALU_HYPRE_Int hypre_SeqVectorMassInnerProd8( hypre_Vector *x,
    }
 
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_SeqVectorMassInnerProd4
+ * nalu_hypre_SeqVectorMassInnerProd4
  *--------------------------------------------------------------------------*/
-NALU_HYPRE_Int hypre_SeqVectorMassInnerProd4( hypre_Vector *x,
-                                         hypre_Vector **y, NALU_HYPRE_Int k, NALU_HYPRE_Real *result)
+NALU_HYPRE_Int nalu_hypre_SeqVectorMassInnerProd4( nalu_hypre_Vector *x,
+                                         nalu_hypre_Vector **y, NALU_HYPRE_Int k, NALU_HYPRE_Real *result)
 {
-   NALU_HYPRE_Complex *x_data = hypre_VectorData(x);
-   NALU_HYPRE_Complex *y_data = hypre_VectorData(y[0]);
-   NALU_HYPRE_Int      size   = hypre_VectorSize(x);
+   NALU_HYPRE_Complex *x_data = nalu_hypre_VectorData(x);
+   NALU_HYPRE_Complex *y_data = nalu_hypre_VectorData(y[0]);
+   NALU_HYPRE_Int      size   = nalu_hypre_VectorSize(x);
 
    NALU_HYPRE_Int      i, j, restk;
    NALU_HYPRE_Real res1;
@@ -540,10 +540,10 @@ NALU_HYPRE_Int hypre_SeqVectorMassInnerProd4( hypre_Vector *x,
 #endif
          for (i = 0; i < size; i++)
          {
-            res1 += hypre_conj(y_data[jstart + i]) * x_data[i];
-            res2 += hypre_conj(y_data[jstart1 + i]) * x_data[i];
-            res3 += hypre_conj(y_data[jstart2 + i]) * x_data[i];
-            res4 += hypre_conj(y_data[jstart3 + i]) * x_data[i];
+            res1 += nalu_hypre_conj(y_data[jstart + i]) * x_data[i];
+            res2 += nalu_hypre_conj(y_data[jstart1 + i]) * x_data[i];
+            res3 += nalu_hypre_conj(y_data[jstart2 + i]) * x_data[i];
+            res4 += nalu_hypre_conj(y_data[jstart3 + i]) * x_data[i];
          }
          result[j] = res1;
          result[j + 1] = res2;
@@ -560,7 +560,7 @@ NALU_HYPRE_Int hypre_SeqVectorMassInnerProd4( hypre_Vector *x,
 #endif
       for (i = 0; i < size; i++)
       {
-         res1 += hypre_conj(y_data[jstart + i]) * x_data[i];
+         res1 += nalu_hypre_conj(y_data[jstart + i]) * x_data[i];
       }
       result[k - 1] = res1;
    }
@@ -575,8 +575,8 @@ NALU_HYPRE_Int hypre_SeqVectorMassInnerProd4( hypre_Vector *x,
 #endif
       for (i = 0; i < size; i++)
       {
-         res1 += hypre_conj(y_data[jstart + i]) * x_data[i];
-         res2 += hypre_conj(y_data[jstart1 + i]) * x_data[i];
+         res1 += nalu_hypre_conj(y_data[jstart + i]) * x_data[i];
+         res2 += nalu_hypre_conj(y_data[jstart1 + i]) * x_data[i];
       }
       result[k - 2] = res1;
       result[k - 1] = res2;
@@ -594,9 +594,9 @@ NALU_HYPRE_Int hypre_SeqVectorMassInnerProd4( hypre_Vector *x,
 #endif
       for (i = 0; i < size; i++)
       {
-         res1 += hypre_conj(y_data[jstart + i]) * x_data[i];
-         res2 += hypre_conj(y_data[jstart1 + i]) * x_data[i];
-         res3 += hypre_conj(y_data[jstart2 + i]) * x_data[i];
+         res1 += nalu_hypre_conj(y_data[jstart + i]) * x_data[i];
+         res2 += nalu_hypre_conj(y_data[jstart1 + i]) * x_data[i];
+         res3 += nalu_hypre_conj(y_data[jstart2 + i]) * x_data[i];
       }
       result[k - 3] = res1;
       result[k - 2] = res2;
@@ -604,19 +604,19 @@ NALU_HYPRE_Int hypre_SeqVectorMassInnerProd4( hypre_Vector *x,
    }
 
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_SeqVectorMassDotpTwo8
+ * nalu_hypre_SeqVectorMassDotpTwo8
  *--------------------------------------------------------------------------*/
-NALU_HYPRE_Int hypre_SeqVectorMassDotpTwo8( hypre_Vector *x, hypre_Vector *y,
-                                       hypre_Vector **z, NALU_HYPRE_Int k, NALU_HYPRE_Real *result_x, NALU_HYPRE_Real *result_y)
+NALU_HYPRE_Int nalu_hypre_SeqVectorMassDotpTwo8( nalu_hypre_Vector *x, nalu_hypre_Vector *y,
+                                       nalu_hypre_Vector **z, NALU_HYPRE_Int k, NALU_HYPRE_Real *result_x, NALU_HYPRE_Real *result_y)
 {
-   NALU_HYPRE_Complex *x_data = hypre_VectorData(x);
-   NALU_HYPRE_Complex *y_data = hypre_VectorData(y);
-   NALU_HYPRE_Complex *z_data = hypre_VectorData(z[0]);
-   NALU_HYPRE_Int      size   = hypre_VectorSize(x);
+   NALU_HYPRE_Complex *x_data = nalu_hypre_VectorData(x);
+   NALU_HYPRE_Complex *y_data = nalu_hypre_VectorData(y);
+   NALU_HYPRE_Complex *z_data = nalu_hypre_VectorData(z[0]);
+   NALU_HYPRE_Int      size   = nalu_hypre_VectorSize(x);
 
    NALU_HYPRE_Int      i, j, restk;
    NALU_HYPRE_Real res_x1;
@@ -679,22 +679,22 @@ NALU_HYPRE_Int hypre_SeqVectorMassDotpTwo8( hypre_Vector *x, hypre_Vector *y,
 #endif
          for (i = 0; i < size; i++)
          {
-            res_x1 += hypre_conj(z_data[jstart + i]) * x_data[i];
-            res_y1 += hypre_conj(z_data[jstart + i]) * y_data[i];
-            res_x2 += hypre_conj(z_data[jstart1 + i]) * x_data[i];
-            res_y2 += hypre_conj(z_data[jstart1 + i]) * y_data[i];
-            res_x3 += hypre_conj(z_data[jstart2 + i]) * x_data[i];
-            res_y3 += hypre_conj(z_data[jstart2 + i]) * y_data[i];
-            res_x4 += hypre_conj(z_data[jstart3 + i]) * x_data[i];
-            res_y4 += hypre_conj(z_data[jstart3 + i]) * y_data[i];
-            res_x5 += hypre_conj(z_data[jstart4 + i]) * x_data[i];
-            res_y5 += hypre_conj(z_data[jstart4 + i]) * y_data[i];
-            res_x6 += hypre_conj(z_data[jstart5 + i]) * x_data[i];
-            res_y6 += hypre_conj(z_data[jstart5 + i]) * y_data[i];
-            res_x7 += hypre_conj(z_data[jstart6 + i]) * x_data[i];
-            res_y7 += hypre_conj(z_data[jstart6 + i]) * y_data[i];
-            res_x8 += hypre_conj(z_data[jstart7 + i]) * x_data[i];
-            res_y8 += hypre_conj(z_data[jstart7 + i]) * y_data[i];
+            res_x1 += nalu_hypre_conj(z_data[jstart + i]) * x_data[i];
+            res_y1 += nalu_hypre_conj(z_data[jstart + i]) * y_data[i];
+            res_x2 += nalu_hypre_conj(z_data[jstart1 + i]) * x_data[i];
+            res_y2 += nalu_hypre_conj(z_data[jstart1 + i]) * y_data[i];
+            res_x3 += nalu_hypre_conj(z_data[jstart2 + i]) * x_data[i];
+            res_y3 += nalu_hypre_conj(z_data[jstart2 + i]) * y_data[i];
+            res_x4 += nalu_hypre_conj(z_data[jstart3 + i]) * x_data[i];
+            res_y4 += nalu_hypre_conj(z_data[jstart3 + i]) * y_data[i];
+            res_x5 += nalu_hypre_conj(z_data[jstart4 + i]) * x_data[i];
+            res_y5 += nalu_hypre_conj(z_data[jstart4 + i]) * y_data[i];
+            res_x6 += nalu_hypre_conj(z_data[jstart5 + i]) * x_data[i];
+            res_y6 += nalu_hypre_conj(z_data[jstart5 + i]) * y_data[i];
+            res_x7 += nalu_hypre_conj(z_data[jstart6 + i]) * x_data[i];
+            res_y7 += nalu_hypre_conj(z_data[jstart6 + i]) * y_data[i];
+            res_x8 += nalu_hypre_conj(z_data[jstart7 + i]) * x_data[i];
+            res_y8 += nalu_hypre_conj(z_data[jstart7 + i]) * y_data[i];
          }
          result_x[j] = res_x1;
          result_x[j + 1] = res_x2;
@@ -724,8 +724,8 @@ NALU_HYPRE_Int hypre_SeqVectorMassDotpTwo8( hypre_Vector *x, hypre_Vector *y,
 #endif
       for (i = 0; i < size; i++)
       {
-         res_x1 += hypre_conj(z_data[jstart + i]) * x_data[i];
-         res_y1 += hypre_conj(z_data[jstart + i]) * y_data[i];
+         res_x1 += nalu_hypre_conj(z_data[jstart + i]) * x_data[i];
+         res_y1 += nalu_hypre_conj(z_data[jstart + i]) * y_data[i];
       }
       result_x[k - 1] = res_x1;
       result_y[k - 1] = res_y1;
@@ -743,10 +743,10 @@ NALU_HYPRE_Int hypre_SeqVectorMassDotpTwo8( hypre_Vector *x, hypre_Vector *y,
 #endif
       for (i = 0; i < size; i++)
       {
-         res_x1 += hypre_conj(z_data[jstart + i]) * x_data[i];
-         res_y1 += hypre_conj(z_data[jstart + i]) * y_data[i];
-         res_x2 += hypre_conj(z_data[jstart1 + i]) * x_data[i];
-         res_y2 += hypre_conj(z_data[jstart1 + i]) * y_data[i];
+         res_x1 += nalu_hypre_conj(z_data[jstart + i]) * x_data[i];
+         res_y1 += nalu_hypre_conj(z_data[jstart + i]) * y_data[i];
+         res_x2 += nalu_hypre_conj(z_data[jstart1 + i]) * x_data[i];
+         res_y2 += nalu_hypre_conj(z_data[jstart1 + i]) * y_data[i];
       }
       result_x[k - 2] = res_x1;
       result_x[k - 1] = res_x2;
@@ -769,12 +769,12 @@ NALU_HYPRE_Int hypre_SeqVectorMassDotpTwo8( hypre_Vector *x, hypre_Vector *y,
 #endif
       for (i = 0; i < size; i++)
       {
-         res_x1 += hypre_conj(z_data[jstart + i]) * x_data[i];
-         res_y1 += hypre_conj(z_data[jstart + i]) * y_data[i];
-         res_x2 += hypre_conj(z_data[jstart1 + i]) * x_data[i];
-         res_y2 += hypre_conj(z_data[jstart1 + i]) * y_data[i];
-         res_x3 += hypre_conj(z_data[jstart2 + i]) * x_data[i];
-         res_y3 += hypre_conj(z_data[jstart2 + i]) * y_data[i];
+         res_x1 += nalu_hypre_conj(z_data[jstart + i]) * x_data[i];
+         res_y1 += nalu_hypre_conj(z_data[jstart + i]) * y_data[i];
+         res_x2 += nalu_hypre_conj(z_data[jstart1 + i]) * x_data[i];
+         res_y2 += nalu_hypre_conj(z_data[jstart1 + i]) * y_data[i];
+         res_x3 += nalu_hypre_conj(z_data[jstart2 + i]) * x_data[i];
+         res_y3 += nalu_hypre_conj(z_data[jstart2 + i]) * y_data[i];
       }
       result_x[k - 3] = res_x1;
       result_x[k - 2] = res_x2;
@@ -802,14 +802,14 @@ NALU_HYPRE_Int hypre_SeqVectorMassDotpTwo8( hypre_Vector *x, hypre_Vector *y,
 #endif
       for (i = 0; i < size; i++)
       {
-         res_x1 += hypre_conj(z_data[jstart + i]) * x_data[i];
-         res_y1 += hypre_conj(z_data[jstart + i]) * y_data[i];
-         res_x2 += hypre_conj(z_data[jstart1 + i]) * x_data[i];
-         res_y2 += hypre_conj(z_data[jstart1 + i]) * y_data[i];
-         res_x3 += hypre_conj(z_data[jstart2 + i]) * x_data[i];
-         res_y3 += hypre_conj(z_data[jstart2 + i]) * y_data[i];
-         res_x4 += hypre_conj(z_data[jstart3 + i]) * x_data[i];
-         res_y4 += hypre_conj(z_data[jstart3 + i]) * y_data[i];
+         res_x1 += nalu_hypre_conj(z_data[jstart + i]) * x_data[i];
+         res_y1 += nalu_hypre_conj(z_data[jstart + i]) * y_data[i];
+         res_x2 += nalu_hypre_conj(z_data[jstart1 + i]) * x_data[i];
+         res_y2 += nalu_hypre_conj(z_data[jstart1 + i]) * y_data[i];
+         res_x3 += nalu_hypre_conj(z_data[jstart2 + i]) * x_data[i];
+         res_y3 += nalu_hypre_conj(z_data[jstart2 + i]) * y_data[i];
+         res_x4 += nalu_hypre_conj(z_data[jstart3 + i]) * x_data[i];
+         res_y4 += nalu_hypre_conj(z_data[jstart3 + i]) * y_data[i];
       }
       result_x[k - 4] = res_x1;
       result_x[k - 3] = res_x2;
@@ -842,16 +842,16 @@ NALU_HYPRE_Int hypre_SeqVectorMassDotpTwo8( hypre_Vector *x, hypre_Vector *y,
 #endif
       for (i = 0; i < size; i++)
       {
-         res_x1 += hypre_conj(z_data[jstart + i]) * x_data[i];
-         res_y1 += hypre_conj(z_data[jstart + i]) * y_data[i];
-         res_x2 += hypre_conj(z_data[jstart1 + i]) * x_data[i];
-         res_y2 += hypre_conj(z_data[jstart1 + i]) * y_data[i];
-         res_x3 += hypre_conj(z_data[jstart2 + i]) * x_data[i];
-         res_y3 += hypre_conj(z_data[jstart2 + i]) * y_data[i];
-         res_x4 += hypre_conj(z_data[jstart3 + i]) * x_data[i];
-         res_y4 += hypre_conj(z_data[jstart3 + i]) * y_data[i];
-         res_x5 += hypre_conj(z_data[jstart4 + i]) * x_data[i];
-         res_y5 += hypre_conj(z_data[jstart4 + i]) * y_data[i];
+         res_x1 += nalu_hypre_conj(z_data[jstart + i]) * x_data[i];
+         res_y1 += nalu_hypre_conj(z_data[jstart + i]) * y_data[i];
+         res_x2 += nalu_hypre_conj(z_data[jstart1 + i]) * x_data[i];
+         res_y2 += nalu_hypre_conj(z_data[jstart1 + i]) * y_data[i];
+         res_x3 += nalu_hypre_conj(z_data[jstart2 + i]) * x_data[i];
+         res_y3 += nalu_hypre_conj(z_data[jstart2 + i]) * y_data[i];
+         res_x4 += nalu_hypre_conj(z_data[jstart3 + i]) * x_data[i];
+         res_y4 += nalu_hypre_conj(z_data[jstart3 + i]) * y_data[i];
+         res_x5 += nalu_hypre_conj(z_data[jstart4 + i]) * x_data[i];
+         res_y5 += nalu_hypre_conj(z_data[jstart4 + i]) * y_data[i];
       }
       result_x[k - 5] = res_x1;
       result_x[k - 4] = res_x2;
@@ -889,18 +889,18 @@ NALU_HYPRE_Int hypre_SeqVectorMassDotpTwo8( hypre_Vector *x, hypre_Vector *y,
 #endif
       for (i = 0; i < size; i++)
       {
-         res_x1 += hypre_conj(z_data[jstart + i]) * x_data[i];
-         res_y1 += hypre_conj(z_data[jstart + i]) * y_data[i];
-         res_x2 += hypre_conj(z_data[jstart1 + i]) * x_data[i];
-         res_y2 += hypre_conj(z_data[jstart1 + i]) * y_data[i];
-         res_x3 += hypre_conj(z_data[jstart2 + i]) * x_data[i];
-         res_y3 += hypre_conj(z_data[jstart2 + i]) * y_data[i];
-         res_x4 += hypre_conj(z_data[jstart3 + i]) * x_data[i];
-         res_y4 += hypre_conj(z_data[jstart3 + i]) * y_data[i];
-         res_x5 += hypre_conj(z_data[jstart4 + i]) * x_data[i];
-         res_y5 += hypre_conj(z_data[jstart4 + i]) * y_data[i];
-         res_x6 += hypre_conj(z_data[jstart5 + i]) * x_data[i];
-         res_y6 += hypre_conj(z_data[jstart5 + i]) * y_data[i];
+         res_x1 += nalu_hypre_conj(z_data[jstart + i]) * x_data[i];
+         res_y1 += nalu_hypre_conj(z_data[jstart + i]) * y_data[i];
+         res_x2 += nalu_hypre_conj(z_data[jstart1 + i]) * x_data[i];
+         res_y2 += nalu_hypre_conj(z_data[jstart1 + i]) * y_data[i];
+         res_x3 += nalu_hypre_conj(z_data[jstart2 + i]) * x_data[i];
+         res_y3 += nalu_hypre_conj(z_data[jstart2 + i]) * y_data[i];
+         res_x4 += nalu_hypre_conj(z_data[jstart3 + i]) * x_data[i];
+         res_y4 += nalu_hypre_conj(z_data[jstart3 + i]) * y_data[i];
+         res_x5 += nalu_hypre_conj(z_data[jstart4 + i]) * x_data[i];
+         res_y5 += nalu_hypre_conj(z_data[jstart4 + i]) * y_data[i];
+         res_x6 += nalu_hypre_conj(z_data[jstart5 + i]) * x_data[i];
+         res_y6 += nalu_hypre_conj(z_data[jstart5 + i]) * y_data[i];
       }
       result_x[k - 6] = res_x1;
       result_x[k - 5] = res_x2;
@@ -943,20 +943,20 @@ NALU_HYPRE_Int hypre_SeqVectorMassDotpTwo8( hypre_Vector *x, hypre_Vector *y,
 #endif
       for (i = 0; i < size; i++)
       {
-         res_x1 += hypre_conj(z_data[jstart + i]) * x_data[i];
-         res_y1 += hypre_conj(z_data[jstart + i]) * y_data[i];
-         res_x2 += hypre_conj(z_data[jstart1 + i]) * x_data[i];
-         res_y2 += hypre_conj(z_data[jstart1 + i]) * y_data[i];
-         res_x3 += hypre_conj(z_data[jstart2 + i]) * x_data[i];
-         res_y3 += hypre_conj(z_data[jstart2 + i]) * y_data[i];
-         res_x4 += hypre_conj(z_data[jstart3 + i]) * x_data[i];
-         res_y4 += hypre_conj(z_data[jstart3 + i]) * y_data[i];
-         res_x5 += hypre_conj(z_data[jstart4 + i]) * x_data[i];
-         res_y5 += hypre_conj(z_data[jstart4 + i]) * y_data[i];
-         res_x6 += hypre_conj(z_data[jstart5 + i]) * x_data[i];
-         res_y6 += hypre_conj(z_data[jstart5 + i]) * y_data[i];
-         res_x7 += hypre_conj(z_data[jstart6 + i]) * x_data[i];
-         res_y7 += hypre_conj(z_data[jstart6 + i]) * y_data[i];
+         res_x1 += nalu_hypre_conj(z_data[jstart + i]) * x_data[i];
+         res_y1 += nalu_hypre_conj(z_data[jstart + i]) * y_data[i];
+         res_x2 += nalu_hypre_conj(z_data[jstart1 + i]) * x_data[i];
+         res_y2 += nalu_hypre_conj(z_data[jstart1 + i]) * y_data[i];
+         res_x3 += nalu_hypre_conj(z_data[jstart2 + i]) * x_data[i];
+         res_y3 += nalu_hypre_conj(z_data[jstart2 + i]) * y_data[i];
+         res_x4 += nalu_hypre_conj(z_data[jstart3 + i]) * x_data[i];
+         res_y4 += nalu_hypre_conj(z_data[jstart3 + i]) * y_data[i];
+         res_x5 += nalu_hypre_conj(z_data[jstart4 + i]) * x_data[i];
+         res_y5 += nalu_hypre_conj(z_data[jstart4 + i]) * y_data[i];
+         res_x6 += nalu_hypre_conj(z_data[jstart5 + i]) * x_data[i];
+         res_y6 += nalu_hypre_conj(z_data[jstart5 + i]) * y_data[i];
+         res_x7 += nalu_hypre_conj(z_data[jstart6 + i]) * x_data[i];
+         res_y7 += nalu_hypre_conj(z_data[jstart6 + i]) * y_data[i];
       }
       result_x[k - 7] = res_x1;
       result_x[k - 6] = res_x2;
@@ -975,19 +975,19 @@ NALU_HYPRE_Int hypre_SeqVectorMassDotpTwo8( hypre_Vector *x, hypre_Vector *y,
    }
 
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_SeqVectorMassDotpTwo4
+ * nalu_hypre_SeqVectorMassDotpTwo4
  *--------------------------------------------------------------------------*/
-NALU_HYPRE_Int hypre_SeqVectorMassDotpTwo4( hypre_Vector *x, hypre_Vector *y,
-                                       hypre_Vector **z, NALU_HYPRE_Int k, NALU_HYPRE_Real *result_x, NALU_HYPRE_Real *result_y)
+NALU_HYPRE_Int nalu_hypre_SeqVectorMassDotpTwo4( nalu_hypre_Vector *x, nalu_hypre_Vector *y,
+                                       nalu_hypre_Vector **z, NALU_HYPRE_Int k, NALU_HYPRE_Real *result_x, NALU_HYPRE_Real *result_y)
 {
-   NALU_HYPRE_Complex *x_data = hypre_VectorData(x);
-   NALU_HYPRE_Complex *y_data = hypre_VectorData(y);
-   NALU_HYPRE_Complex *z_data = hypre_VectorData(z[0]);
-   NALU_HYPRE_Int      size   = hypre_VectorSize(x);
+   NALU_HYPRE_Complex *x_data = nalu_hypre_VectorData(x);
+   NALU_HYPRE_Complex *y_data = nalu_hypre_VectorData(y);
+   NALU_HYPRE_Complex *z_data = nalu_hypre_VectorData(z[0]);
+   NALU_HYPRE_Int      size   = nalu_hypre_VectorSize(x);
 
    NALU_HYPRE_Int      i, j, restk;
    NALU_HYPRE_Real res_x1;
@@ -1026,14 +1026,14 @@ NALU_HYPRE_Int hypre_SeqVectorMassDotpTwo4( hypre_Vector *x, hypre_Vector *y,
 #endif
          for (i = 0; i < size; i++)
          {
-            res_x1 += hypre_conj(z_data[jstart + i]) * x_data[i];
-            res_y1 += hypre_conj(z_data[jstart + i]) * y_data[i];
-            res_x2 += hypre_conj(z_data[jstart1 + i]) * x_data[i];
-            res_y2 += hypre_conj(z_data[jstart1 + i]) * y_data[i];
-            res_x3 += hypre_conj(z_data[jstart2 + i]) * x_data[i];
-            res_y3 += hypre_conj(z_data[jstart2 + i]) * y_data[i];
-            res_x4 += hypre_conj(z_data[jstart3 + i]) * x_data[i];
-            res_y4 += hypre_conj(z_data[jstart3 + i]) * y_data[i];
+            res_x1 += nalu_hypre_conj(z_data[jstart + i]) * x_data[i];
+            res_y1 += nalu_hypre_conj(z_data[jstart + i]) * y_data[i];
+            res_x2 += nalu_hypre_conj(z_data[jstart1 + i]) * x_data[i];
+            res_y2 += nalu_hypre_conj(z_data[jstart1 + i]) * y_data[i];
+            res_x3 += nalu_hypre_conj(z_data[jstart2 + i]) * x_data[i];
+            res_y3 += nalu_hypre_conj(z_data[jstart2 + i]) * y_data[i];
+            res_x4 += nalu_hypre_conj(z_data[jstart3 + i]) * x_data[i];
+            res_y4 += nalu_hypre_conj(z_data[jstart3 + i]) * y_data[i];
          }
          result_x[j] = res_x1;
          result_x[j + 1] = res_x2;
@@ -1055,8 +1055,8 @@ NALU_HYPRE_Int hypre_SeqVectorMassDotpTwo4( hypre_Vector *x, hypre_Vector *y,
 #endif
       for (i = 0; i < size; i++)
       {
-         res_x1 += hypre_conj(z_data[jstart + i]) * x_data[i];
-         res_y1 += hypre_conj(z_data[jstart + i]) * y_data[i];
+         res_x1 += nalu_hypre_conj(z_data[jstart + i]) * x_data[i];
+         res_y1 += nalu_hypre_conj(z_data[jstart + i]) * y_data[i];
       }
       result_x[k - 1] = res_x1;
       result_y[k - 1] = res_y1;
@@ -1074,10 +1074,10 @@ NALU_HYPRE_Int hypre_SeqVectorMassDotpTwo4( hypre_Vector *x, hypre_Vector *y,
 #endif
       for (i = 0; i < size; i++)
       {
-         res_x1 += hypre_conj(z_data[jstart + i]) * x_data[i];
-         res_y1 += hypre_conj(z_data[jstart + i]) * y_data[i];
-         res_x2 += hypre_conj(z_data[jstart1 + i]) * x_data[i];
-         res_y2 += hypre_conj(z_data[jstart1 + i]) * y_data[i];
+         res_x1 += nalu_hypre_conj(z_data[jstart + i]) * x_data[i];
+         res_y1 += nalu_hypre_conj(z_data[jstart + i]) * y_data[i];
+         res_x2 += nalu_hypre_conj(z_data[jstart1 + i]) * x_data[i];
+         res_y2 += nalu_hypre_conj(z_data[jstart1 + i]) * y_data[i];
       }
       result_x[k - 2] = res_x1;
       result_x[k - 1] = res_x2;
@@ -1100,12 +1100,12 @@ NALU_HYPRE_Int hypre_SeqVectorMassDotpTwo4( hypre_Vector *x, hypre_Vector *y,
 #endif
       for (i = 0; i < size; i++)
       {
-         res_x1 += hypre_conj(z_data[jstart + i]) * x_data[i];
-         res_y1 += hypre_conj(z_data[jstart + i]) * y_data[i];
-         res_x2 += hypre_conj(z_data[jstart1 + i]) * x_data[i];
-         res_y2 += hypre_conj(z_data[jstart1 + i]) * y_data[i];
-         res_x3 += hypre_conj(z_data[jstart2 + i]) * x_data[i];
-         res_y3 += hypre_conj(z_data[jstart2 + i]) * y_data[i];
+         res_x1 += nalu_hypre_conj(z_data[jstart + i]) * x_data[i];
+         res_y1 += nalu_hypre_conj(z_data[jstart + i]) * y_data[i];
+         res_x2 += nalu_hypre_conj(z_data[jstart1 + i]) * x_data[i];
+         res_y2 += nalu_hypre_conj(z_data[jstart1 + i]) * y_data[i];
+         res_x3 += nalu_hypre_conj(z_data[jstart2 + i]) * x_data[i];
+         res_y3 += nalu_hypre_conj(z_data[jstart2 + i]) * y_data[i];
       }
       result_x[k - 3] = res_x1;
       result_x[k - 2] = res_x2;
@@ -1116,28 +1116,28 @@ NALU_HYPRE_Int hypre_SeqVectorMassDotpTwo4( hypre_Vector *x, hypre_Vector *y,
    }
 
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
-NALU_HYPRE_Int hypre_SeqVectorMassInnerProd( hypre_Vector *x,
-                                        hypre_Vector **y, NALU_HYPRE_Int k, NALU_HYPRE_Int unroll, NALU_HYPRE_Real *result)
+NALU_HYPRE_Int nalu_hypre_SeqVectorMassInnerProd( nalu_hypre_Vector *x,
+                                        nalu_hypre_Vector **y, NALU_HYPRE_Int k, NALU_HYPRE_Int unroll, NALU_HYPRE_Real *result)
 {
-   NALU_HYPRE_Complex *x_data = hypre_VectorData(x);
-   NALU_HYPRE_Complex *y_data = hypre_VectorData(y[0]);
+   NALU_HYPRE_Complex *x_data = nalu_hypre_VectorData(x);
+   NALU_HYPRE_Complex *y_data = nalu_hypre_VectorData(y[0]);
    NALU_HYPRE_Real res;
-   NALU_HYPRE_Int      size   = hypre_VectorSize(x);
+   NALU_HYPRE_Int      size   = nalu_hypre_VectorSize(x);
 
    NALU_HYPRE_Int      i, j, jstart;
 
    if (unroll == 8)
    {
-      hypre_SeqVectorMassInnerProd8(x, y, k, result);
-      return hypre_error_flag;
+      nalu_hypre_SeqVectorMassInnerProd8(x, y, k, result);
+      return nalu_hypre_error_flag;
    }
    else if (unroll == 4)
    {
-      hypre_SeqVectorMassInnerProd4(x, y, k, result);
-      return hypre_error_flag;
+      nalu_hypre_SeqVectorMassInnerProd4(x, y, k, result);
+      return nalu_hypre_error_flag;
    }
    else
    {
@@ -1150,40 +1150,40 @@ NALU_HYPRE_Int hypre_SeqVectorMassInnerProd( hypre_Vector *x,
 #endif
          for (i = 0; i < size; i++)
          {
-            res += hypre_conj(y_data[jstart + i]) * x_data[i];
+            res += nalu_hypre_conj(y_data[jstart + i]) * x_data[i];
          }
          result[j] = res;
       }
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_SeqVectorMassDotpTwo
+ * nalu_hypre_SeqVectorMassDotpTwo
  *--------------------------------------------------------------------------*/
 
-NALU_HYPRE_Int hypre_SeqVectorMassDotpTwo( hypre_Vector *x, hypre_Vector *y,
-                                      hypre_Vector **z, NALU_HYPRE_Int k,  NALU_HYPRE_Int unroll,
+NALU_HYPRE_Int nalu_hypre_SeqVectorMassDotpTwo( nalu_hypre_Vector *x, nalu_hypre_Vector *y,
+                                      nalu_hypre_Vector **z, NALU_HYPRE_Int k,  NALU_HYPRE_Int unroll,
                                       NALU_HYPRE_Real *result_x, NALU_HYPRE_Real *result_y)
 {
-   NALU_HYPRE_Complex *x_data = hypre_VectorData(x);
-   NALU_HYPRE_Complex *y_data = hypre_VectorData(y);
-   NALU_HYPRE_Complex *z_data = hypre_VectorData(z[0]);
+   NALU_HYPRE_Complex *x_data = nalu_hypre_VectorData(x);
+   NALU_HYPRE_Complex *y_data = nalu_hypre_VectorData(y);
+   NALU_HYPRE_Complex *z_data = nalu_hypre_VectorData(z[0]);
    NALU_HYPRE_Real res_x, res_y;
-   NALU_HYPRE_Int      size   = hypre_VectorSize(x);
+   NALU_HYPRE_Int      size   = nalu_hypre_VectorSize(x);
 
    NALU_HYPRE_Int      i, j, jstart;
 
    if (unroll == 8)
    {
-      hypre_SeqVectorMassDotpTwo8(x, y, z, k, result_x, result_y);
-      return hypre_error_flag;
+      nalu_hypre_SeqVectorMassDotpTwo8(x, y, z, k, result_x, result_y);
+      return nalu_hypre_error_flag;
    }
    else if (unroll == 4)
    {
-      hypre_SeqVectorMassDotpTwo4(x, y, z, k, result_x, result_y);
-      return hypre_error_flag;
+      nalu_hypre_SeqVectorMassDotpTwo4(x, y, z, k, result_x, result_y);
+      return nalu_hypre_error_flag;
    }
    else
    {
@@ -1197,13 +1197,13 @@ NALU_HYPRE_Int hypre_SeqVectorMassDotpTwo( hypre_Vector *x, hypre_Vector *y,
 #endif
          for (i = 0; i < size; i++)
          {
-            res_x += hypre_conj(z_data[jstart + i]) * x_data[i];
-            res_y += hypre_conj(z_data[jstart + i]) * y_data[i];
+            res_x += nalu_hypre_conj(z_data[jstart + i]) * x_data[i];
+            res_y += nalu_hypre_conj(z_data[jstart + i]) * y_data[i];
          }
          result_x[j] = res_x;
          result_y[j] = res_y;
       }
    }
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 

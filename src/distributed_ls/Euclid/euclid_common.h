@@ -105,11 +105,11 @@ extern void  setInfo_dh(const char *msg, const char *function, const char *file,
 extern void  setError_dh(const char *msg, const char *function, const char *file, NALU_HYPRE_Int line);
 extern void  printErrorMsg(FILE *fp);
 
-#ifndef hypre_MPI_MAX_ERROR_STRING
-#define hypre_MPI_MAX_ERROR_STRING 256
+#ifndef nalu_hypre_MPI_MAX_ERROR_STRING
+#define nalu_hypre_MPI_MAX_ERROR_STRING 256
 #endif
 
-#define MSG_BUF_SIZE_DH MAX(1024, hypre_MPI_MAX_ERROR_STRING)
+#define MSG_BUF_SIZE_DH MAX(1024, nalu_hypre_MPI_MAX_ERROR_STRING)
 extern char  msgBuf_dh[MSG_BUF_SIZE_DH];
 
 /* Each processor (may) open a logfile.

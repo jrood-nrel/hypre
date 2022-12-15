@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_parcsr_ls.h"
+#include "_nalu_hypre_parcsr_ls.h"
 
 /*--------------------------------------------------------------------------
  * NALU_HYPRE_ParCSRPCGCreate
@@ -14,26 +14,26 @@
 NALU_HYPRE_Int
 NALU_HYPRE_ParCSRPCGCreate( MPI_Comm comm, NALU_HYPRE_Solver *solver )
 {
-   hypre_PCGFunctions * pcg_functions;
+   nalu_hypre_PCGFunctions * pcg_functions;
 
    if (!solver)
    {
-      hypre_error_in_arg(2);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(2);
+      return nalu_hypre_error_flag;
    }
    pcg_functions =
-      hypre_PCGFunctionsCreate(
-         hypre_ParKrylovCAlloc, hypre_ParKrylovFree, hypre_ParKrylovCommInfo,
-         hypre_ParKrylovCreateVector,
-         hypre_ParKrylovDestroyVector, hypre_ParKrylovMatvecCreate,
-         hypre_ParKrylovMatvec, hypre_ParKrylovMatvecDestroy,
-         hypre_ParKrylovInnerProd, hypre_ParKrylovCopyVector,
-         hypre_ParKrylovClearVector,
-         hypre_ParKrylovScaleVector, hypre_ParKrylovAxpy,
-         hypre_ParKrylovIdentitySetup, hypre_ParKrylovIdentity );
-   *solver = ( (NALU_HYPRE_Solver) hypre_PCGCreate( pcg_functions ) );
+      nalu_hypre_PCGFunctionsCreate(
+         nalu_hypre_ParKrylovCAlloc, nalu_hypre_ParKrylovFree, nalu_hypre_ParKrylovCommInfo,
+         nalu_hypre_ParKrylovCreateVector,
+         nalu_hypre_ParKrylovDestroyVector, nalu_hypre_ParKrylovMatvecCreate,
+         nalu_hypre_ParKrylovMatvec, nalu_hypre_ParKrylovMatvecDestroy,
+         nalu_hypre_ParKrylovInnerProd, nalu_hypre_ParKrylovCopyVector,
+         nalu_hypre_ParKrylovClearVector,
+         nalu_hypre_ParKrylovScaleVector, nalu_hypre_ParKrylovAxpy,
+         nalu_hypre_ParKrylovIdentitySetup, nalu_hypre_ParKrylovIdentity );
+   *solver = ( (NALU_HYPRE_Solver) nalu_hypre_PCGCreate( pcg_functions ) );
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
@@ -43,7 +43,7 @@ NALU_HYPRE_ParCSRPCGCreate( MPI_Comm comm, NALU_HYPRE_Solver *solver )
 NALU_HYPRE_Int
 NALU_HYPRE_ParCSRPCGDestroy( NALU_HYPRE_Solver solver )
 {
-   return ( hypre_PCGDestroy( (void *) solver ) );
+   return ( nalu_hypre_PCGDestroy( (void *) solver ) );
 }
 
 /*--------------------------------------------------------------------------
@@ -251,9 +251,9 @@ NALU_HYPRE_ParCSRDiagScale( NALU_HYPRE_Solver solver,
                        NALU_HYPRE_ParVector Hy,
                        NALU_HYPRE_ParVector Hx      )
 {
-   return hypre_ParCSRDiagScaleVector((hypre_ParCSRMatrix *) HA,
-                                      (hypre_ParVector *)    Hy,
-                                      (hypre_ParVector *)    Hx);
+   return nalu_hypre_ParCSRDiagScaleVector((nalu_hypre_ParCSRMatrix *) HA,
+                                      (nalu_hypre_ParVector *)    Hy,
+                                      (nalu_hypre_ParVector *)    Hx);
 }
 
 /*--------------------------------------------------------------------------
@@ -268,17 +268,17 @@ NALU_HYPRE_ParCSRSymPrecondSetup( NALU_HYPRE_Solver solver,
                              NALU_HYPRE_ParVector b,
                              NALU_HYPRE_ParVector x      )
 {
-   hypre_ParCSRMatrix *A = (hypre_ParCSRMatrix *) A;
-   hypre_ParVector    *y = (hypre_ParVector *) b;
-   hypre_ParVector    *x = (hypre_ParVector *) x;
+   nalu_hypre_ParCSRMatrix *A = (nalu_hypre_ParCSRMatrix *) A;
+   nalu_hypre_ParVector    *y = (nalu_hypre_ParVector *) b;
+   nalu_hypre_ParVector    *x = (nalu_hypre_ParVector *) x;
 
-   NALU_HYPRE_Real *x_data = hypre_VectorData(hypre_ParVectorLocalVector(x));
-   NALU_HYPRE_Real *y_data = hypre_VectorData(hypre_ParVectorLocalVector(y));
-   NALU_HYPRE_Real *A_diag = hypre_CSRMatrixData(hypre_ParCSRMatrixDiag(A));
-   NALU_HYPRE_Real *A_offd = hypre_CSRMatrixData(hypre_ParCSRMatrixOffD(A));
+   NALU_HYPRE_Real *x_data = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(x));
+   NALU_HYPRE_Real *y_data = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(y));
+   NALU_HYPRE_Real *A_diag = nalu_hypre_CSRMatrixData(nalu_hypre_ParCSRMatrixDiag(A));
+   NALU_HYPRE_Real *A_offd = nalu_hypre_CSRMatrixData(nalu_hypre_ParCSRMatrixOffD(A));
 
    NALU_HYPRE_Int i, ierr = 0;
-   hypre_ParCSRMatrix *Asym;
+   nalu_hypre_ParCSRMatrix *Asym;
    MPI_Comm comm;
    NALU_HYPRE_Int global_num_rows;
    NALU_HYPRE_Int global_num_cols;
@@ -288,11 +288,11 @@ NALU_HYPRE_ParCSRSymPrecondSetup( NALU_HYPRE_Solver solver,
    NALU_HYPRE_Int num_nonzeros_diag;
    NALU_HYPRE_Int num_nonzeros_offd;
 
-   Asym = hypre_ParCSRMatrixCreate(comm, global_num_rows, global_num_cols,
+   Asym = nalu_hypre_ParCSRMatrixCreate(comm, global_num_rows, global_num_cols,
                                    row_starts, col_starts, num_cols_offd,
                                    num_nonzeros_diag, num_nonzeros_offd);
 
-   for (i=0; i < hypre_VectorSize(hypre_ParVectorLocalVector(x)); i++)
+   for (i=0; i < nalu_hypre_VectorSize(nalu_hypre_ParVectorLocalVector(x)); i++)
    {
       x_data[i] = y_data[i]/A_data[A_i[i]];
    }

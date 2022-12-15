@@ -41,15 +41,15 @@ extern "C" {
  * @{
  **/
 
-struct hypre_Solver_struct;
+struct nalu_hypre_Solver_struct;
 /**
  * The solver object.
  **/
 
 #ifndef NALU_HYPRE_SOLVER_STRUCT
 #define NALU_HYPRE_SOLVER_STRUCT
-struct hypre_Solver_struct;
-typedef struct hypre_Solver_struct *NALU_HYPRE_Solver;
+struct nalu_hypre_Solver_struct;
+typedef struct nalu_hypre_Solver_struct *NALU_HYPRE_Solver;
 #endif
 
 typedef NALU_HYPRE_Int (*NALU_HYPRE_PtrToParSolverFcn)(NALU_HYPRE_Solver,
@@ -1493,7 +1493,7 @@ NALU_HYPRE_BoomerAMGDDSetNumGhostLayers( NALU_HYPRE_Solver solver,
 
 /**
  * (Optional) Pass a custom user-defined function as a relaxation method for the AMG-DD FAC cycles.
- * Function should have the following form, where amgdd_solver is of type hypre_ParAMGDDData* and level is the level on which to relax:
+ * Function should have the following form, where amgdd_solver is of type nalu_hypre_ParAMGDDData* and level is the level on which to relax:
  * NALU_HYPRE_Int userFACRelaxation( NALU_HYPRE_Solver amgdd_solver, NALU_HYPRE_Int level )
  **/
 NALU_HYPRE_Int
@@ -2460,7 +2460,7 @@ NALU_HYPRE_Int NALU_HYPRE_ADSSetCoordinateVectors(NALU_HYPRE_Solver    solver,
  * listed first, followed by the \f$x\f$/\f$y\f$/\f$z\f$ components of the second node and
  * so on (see the documentation of NALU_HYPRE_BoomerAMGSetDofFunc).
  *
- * If used, this function should be called before hypre_ADSSetup() and there is
+ * If used, this function should be called before nalu_hypre_ADSSetup() and there is
  * no need to provide the vertex coordinates. Furthermore, only one of the sets
  * \f$\{\Pi_{RT}\}\f$ and \f$\{\Pi_{RT}^x,\Pi_{RT}^y,\Pi_{RT}^z\}\f$ needs to be
  * specified (though it is OK to provide both).  If \e RT_Pix is NULL, then scalar
@@ -4642,14 +4642,14 @@ NALU_HYPRE_Int NALU_HYPRE_BoomerAMGSetISType(NALU_HYPRE_Solver solver,
  **/
 
 /**
- * Load interface interpreter.  Vector part loaded with hypre_ParKrylov
+ * Load interface interpreter.  Vector part loaded with nalu_hypre_ParKrylov
  * functions and multivector part loaded with mv_TempMultiVector functions.
  **/
 NALU_HYPRE_Int
 NALU_HYPRE_ParCSRSetupInterpreter(mv_InterfaceInterpreter *i);
 
 /**
- * Load Matvec interpreter with hypre_ParKrylov functions.
+ * Load Matvec interpreter with nalu_hypre_ParKrylov functions.
  **/
 NALU_HYPRE_Int
 NALU_HYPRE_ParCSRSetupMatvec(NALU_HYPRE_MatvecFunctions *mv);

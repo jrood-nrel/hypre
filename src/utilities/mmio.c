@@ -16,18 +16,18 @@
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
-#include "_hypre_utilities.h"
+#include "_nalu_hypre_utilities.h"
 
-NALU_HYPRE_Int hypre_mm_is_valid(MM_typecode matcode)
+NALU_HYPRE_Int nalu_hypre_mm_is_valid(MM_typecode matcode)
 {
-   if (!hypre_mm_is_matrix(matcode)) { return 0; }
-   if (hypre_mm_is_dense(matcode) && hypre_mm_is_pattern(matcode)) { return 0; }
-   if (hypre_mm_is_real(matcode) && hypre_mm_is_hermitian(matcode)) { return 0; }
-   if (hypre_mm_is_pattern(matcode) && (hypre_mm_is_hermitian(matcode) || hypre_mm_is_skew(matcode))) { return 0; }
+   if (!nalu_hypre_mm_is_matrix(matcode)) { return 0; }
+   if (nalu_hypre_mm_is_dense(matcode) && nalu_hypre_mm_is_pattern(matcode)) { return 0; }
+   if (nalu_hypre_mm_is_real(matcode) && nalu_hypre_mm_is_hermitian(matcode)) { return 0; }
+   if (nalu_hypre_mm_is_pattern(matcode) && (nalu_hypre_mm_is_hermitian(matcode) || nalu_hypre_mm_is_skew(matcode))) { return 0; }
    return 1;
 }
 
-NALU_HYPRE_Int hypre_mm_read_banner(FILE *f, MM_typecode *matcode)
+NALU_HYPRE_Int nalu_hypre_mm_read_banner(FILE *f, MM_typecode *matcode)
 {
    char line[MM_MAX_LINE_LENGTH];
    char banner[MM_MAX_TOKEN_LENGTH];
@@ -37,7 +37,7 @@ NALU_HYPRE_Int hypre_mm_read_banner(FILE *f, MM_typecode *matcode)
    char storage_scheme[MM_MAX_TOKEN_LENGTH];
    char *p;
 
-   hypre_mm_clear_typecode(matcode);
+   nalu_hypre_mm_clear_typecode(matcode);
 
    if (fgets(line, MM_MAX_LINE_LENGTH, f) == NULL)
    {
@@ -66,7 +66,7 @@ NALU_HYPRE_Int hypre_mm_read_banner(FILE *f, MM_typecode *matcode)
    {
       return MM_UNSUPPORTED_TYPE;
    }
-   hypre_mm_set_matrix(matcode);
+   nalu_hypre_mm_set_matrix(matcode);
 
 
    /* second field describes whether this is a sparse matrix (in coordinate
@@ -75,11 +75,11 @@ NALU_HYPRE_Int hypre_mm_read_banner(FILE *f, MM_typecode *matcode)
 
    if (strcmp(crd, MM_SPARSE_STR) == 0)
    {
-      hypre_mm_set_sparse(matcode);
+      nalu_hypre_mm_set_sparse(matcode);
    }
    else if (strcmp(crd, MM_DENSE_STR) == 0)
    {
-      hypre_mm_set_dense(matcode);
+      nalu_hypre_mm_set_dense(matcode);
    }
    else
    {
@@ -91,19 +91,19 @@ NALU_HYPRE_Int hypre_mm_read_banner(FILE *f, MM_typecode *matcode)
 
    if (strcmp(data_type, MM_REAL_STR) == 0)
    {
-      hypre_mm_set_real(matcode);
+      nalu_hypre_mm_set_real(matcode);
    }
    else if (strcmp(data_type, MM_COMPLEX_STR) == 0)
    {
-      hypre_mm_set_complex(matcode);
+      nalu_hypre_mm_set_complex(matcode);
    }
    else if (strcmp(data_type, MM_PATTERN_STR) == 0)
    {
-      hypre_mm_set_pattern(matcode);
+      nalu_hypre_mm_set_pattern(matcode);
    }
    else if (strcmp(data_type, MM_INT_STR) == 0)
    {
-      hypre_mm_set_integer(matcode);
+      nalu_hypre_mm_set_integer(matcode);
    }
    else
    {
@@ -115,19 +115,19 @@ NALU_HYPRE_Int hypre_mm_read_banner(FILE *f, MM_typecode *matcode)
 
    if (strcmp(storage_scheme, MM_GENERAL_STR) == 0)
    {
-      hypre_mm_set_general(matcode);
+      nalu_hypre_mm_set_general(matcode);
    }
    else if (strcmp(storage_scheme, MM_SYMM_STR) == 0)
    {
-      hypre_mm_set_symmetric(matcode);
+      nalu_hypre_mm_set_symmetric(matcode);
    }
    else if (strcmp(storage_scheme, MM_HERM_STR) == 0)
    {
-      hypre_mm_set_hermitian(matcode);
+      nalu_hypre_mm_set_hermitian(matcode);
    }
    else if (strcmp(storage_scheme, MM_SKEW_STR) == 0)
    {
-      hypre_mm_set_skew(matcode);
+      nalu_hypre_mm_set_skew(matcode);
    }
    else
    {
@@ -137,7 +137,7 @@ NALU_HYPRE_Int hypre_mm_read_banner(FILE *f, MM_typecode *matcode)
    return 0;
 }
 
-NALU_HYPRE_Int hypre_mm_read_mtx_crd_size(FILE *f, NALU_HYPRE_Int *M, NALU_HYPRE_Int *N, NALU_HYPRE_Int *nz )
+NALU_HYPRE_Int nalu_hypre_mm_read_mtx_crd_size(FILE *f, NALU_HYPRE_Int *M, NALU_HYPRE_Int *N, NALU_HYPRE_Int *nz )
 {
    char line[MM_MAX_LINE_LENGTH];
    NALU_HYPRE_Int num_items_read;
@@ -156,7 +156,7 @@ NALU_HYPRE_Int hypre_mm_read_mtx_crd_size(FILE *f, NALU_HYPRE_Int *M, NALU_HYPRE
    while (line[0] == '%');
 
    /* line[] is either blank or has M,N, nz */
-   if (hypre_sscanf(line, "%d %d %d", M, N, nz) == 3)
+   if (nalu_hypre_sscanf(line, "%d %d %d", M, N, nz) == 3)
    {
       return 0;
    }
@@ -164,7 +164,7 @@ NALU_HYPRE_Int hypre_mm_read_mtx_crd_size(FILE *f, NALU_HYPRE_Int *M, NALU_HYPRE
    {
       do
       {
-         num_items_read = hypre_fscanf(f, "%d %d %d", M, N, nz);
+         num_items_read = nalu_hypre_fscanf(f, "%d %d %d", M, N, nz);
          if (num_items_read == EOF) { return MM_PREMATURE_EOF; }
       }
       while (num_items_read != 3);

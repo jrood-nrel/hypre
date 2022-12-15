@@ -7,7 +7,7 @@
 
 /******************************************************************************
  *
- * Header info for the hypre_DistributedMatrix structures
+ * Header info for the nalu_hypre_DistributedMatrix structures
  *
  *****************************************************************************/
 

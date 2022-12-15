@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_parcsr_ls.h"
+#include "_nalu_hypre_parcsr_ls.h"
 
 /*--------------------------------------------------------------------------
  * NALU_HYPRE_ParCSRGMRESCreate
@@ -14,27 +14,27 @@
 NALU_HYPRE_Int
 NALU_HYPRE_ParCSRGMRESCreate( MPI_Comm comm, NALU_HYPRE_Solver *solver )
 {
-   hypre_GMRESFunctions * gmres_functions;
+   nalu_hypre_GMRESFunctions * gmres_functions;
 
    if (!solver)
    {
-      hypre_error_in_arg(2);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(2);
+      return nalu_hypre_error_flag;
    }
    gmres_functions =
-      hypre_GMRESFunctionsCreate(
-         hypre_ParKrylovCAlloc, hypre_ParKrylovFree, hypre_ParKrylovCommInfo,
-         hypre_ParKrylovCreateVector,
-         hypre_ParKrylovCreateVectorArray,
-         hypre_ParKrylovDestroyVector, hypre_ParKrylovMatvecCreate,
-         hypre_ParKrylovMatvec, hypre_ParKrylovMatvecDestroy,
-         hypre_ParKrylovInnerProd, hypre_ParKrylovCopyVector,
-         hypre_ParKrylovClearVector,
-         hypre_ParKrylovScaleVector, hypre_ParKrylovAxpy,
-         hypre_ParKrylovIdentitySetup, hypre_ParKrylovIdentity );
-   *solver = ( (NALU_HYPRE_Solver) hypre_GMRESCreate( gmres_functions ) );
+      nalu_hypre_GMRESFunctionsCreate(
+         nalu_hypre_ParKrylovCAlloc, nalu_hypre_ParKrylovFree, nalu_hypre_ParKrylovCommInfo,
+         nalu_hypre_ParKrylovCreateVector,
+         nalu_hypre_ParKrylovCreateVectorArray,
+         nalu_hypre_ParKrylovDestroyVector, nalu_hypre_ParKrylovMatvecCreate,
+         nalu_hypre_ParKrylovMatvec, nalu_hypre_ParKrylovMatvecDestroy,
+         nalu_hypre_ParKrylovInnerProd, nalu_hypre_ParKrylovCopyVector,
+         nalu_hypre_ParKrylovClearVector,
+         nalu_hypre_ParKrylovScaleVector, nalu_hypre_ParKrylovAxpy,
+         nalu_hypre_ParKrylovIdentitySetup, nalu_hypre_ParKrylovIdentity );
+   *solver = ( (NALU_HYPRE_Solver) nalu_hypre_GMRESCreate( gmres_functions ) );
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
@@ -44,7 +44,7 @@ NALU_HYPRE_ParCSRGMRESCreate( MPI_Comm comm, NALU_HYPRE_Solver *solver )
 NALU_HYPRE_Int
 NALU_HYPRE_ParCSRGMRESDestroy( NALU_HYPRE_Solver solver )
 {
-   return ( hypre_GMRESDestroy( (void *) solver ) );
+   return ( nalu_hypre_GMRESDestroy( (void *) solver ) );
 }
 
 /*--------------------------------------------------------------------------
@@ -234,19 +234,19 @@ NALU_HYPRE_Int NALU_HYPRE_ParCSROnProcTriSetup(NALU_HYPRE_Solver       solver,
                                      NALU_HYPRE_ParVector    Hy,
                                      NALU_HYPRE_ParVector    Hx)
 {
-   hypre_ParCSRMatrix *A = (hypre_ParCSRMatrix *) HA;
+   nalu_hypre_ParCSRMatrix *A = (nalu_hypre_ParCSRMatrix *) HA;
 
    // Check for and get topological ordering of matrix
-   if (!hypre_ParCSRMatrixProcOrdering(A))
+   if (!nalu_hypre_ParCSRMatrixProcOrdering(A))
    {
-      hypre_CSRMatrix *A_diag  = hypre_ParCSRMatrixDiag(A);
-      NALU_HYPRE_Real *A_diag_data  = hypre_CSRMatrixData(A_diag);
-      NALU_HYPRE_Int *A_diag_i      = hypre_CSRMatrixI(A_diag);
-      NALU_HYPRE_Int *A_diag_j      = hypre_CSRMatrixJ(A_diag);
-      NALU_HYPRE_Int n              = hypre_CSRMatrixNumRows(A_diag);
-      NALU_HYPRE_Int *proc_ordering = hypre_TAlloc(NALU_HYPRE_Int, n, NALU_HYPRE_MEMORY_HOST);
-      hypre_topo_sort(A_diag_i, A_diag_j, A_diag_data, proc_ordering, n);
-      hypre_ParCSRMatrixProcOrdering(A) = proc_ordering;
+      nalu_hypre_CSRMatrix *A_diag  = nalu_hypre_ParCSRMatrixDiag(A);
+      NALU_HYPRE_Real *A_diag_data  = nalu_hypre_CSRMatrixData(A_diag);
+      NALU_HYPRE_Int *A_diag_i      = nalu_hypre_CSRMatrixI(A_diag);
+      NALU_HYPRE_Int *A_diag_j      = nalu_hypre_CSRMatrixJ(A_diag);
+      NALU_HYPRE_Int n              = nalu_hypre_CSRMatrixNumRows(A_diag);
+      NALU_HYPRE_Int *proc_ordering = nalu_hypre_TAlloc(NALU_HYPRE_Int, n, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_topo_sort(A_diag_i, A_diag_j, A_diag_data, proc_ordering, n);
+      nalu_hypre_ParCSRMatrixProcOrdering(A) = proc_ordering;
    }
 
    return 0;
@@ -261,11 +261,11 @@ NALU_HYPRE_Int NALU_HYPRE_ParCSROnProcTriSolve(NALU_HYPRE_Solver       solver,
                                      NALU_HYPRE_ParVector    Hy,
                                      NALU_HYPRE_ParVector    Hx)
 {
-   hypre_ParCSRMatrix *A = (hypre_ParCSRMatrix *) HA;
-   hypre_ParVector    *y = (hypre_ParVector *) Hy;
-   hypre_ParVector    *x = (hypre_ParVector *) Hx;
+   nalu_hypre_ParCSRMatrix *A = (nalu_hypre_ParCSRMatrix *) HA;
+   nalu_hypre_ParVector    *y = (nalu_hypre_ParVector *) Hy;
+   nalu_hypre_ParVector    *x = (nalu_hypre_ParVector *) Hx;
    NALU_HYPRE_Int ierr = 0;
-   ierr = hypre_BoomerAMGRelax(A, y, NULL, 10, 0, 1, 1, NULL, x, NULL, NULL);
+   ierr = nalu_hypre_BoomerAMGRelax(A, y, NULL, 10, 0, 1, 1, NULL, x, NULL, NULL);
    return ierr;
 }
 

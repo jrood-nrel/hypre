@@ -12,7 +12,7 @@
 #ifndef _NALU_HYPRE_Builder_h_
 #define _NALU_HYPRE_Builder_h_
 
-#include "utilities/_hypre_utilities.h"
+#include "utilities/_nalu_hypre_utilities.h"
 
 #include "NALU_HYPRE.h"
 #include "../../IJ_mv/NALU_HYPRE_IJ_mv.h"

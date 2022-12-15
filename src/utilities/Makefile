@@ -31,9 +31,9 @@ HEADERS =\
  mpistubs.h\
  threading.h\
  timing.h\
- _hypre_onedpl.hpp\
- _hypre_utilities.h\
- _hypre_utilities.hpp
+ _nalu_hypre_onedpl.hpp\
+ _nalu_hypre_utilities.h\
+ _nalu_hypre_utilities.hpp
 
 FILES =\
  F90_NALU_HYPRE_error.c\
@@ -85,15 +85,15 @@ SONAME = libNALU_HYPRE_utilities-${NALU_HYPRE_RELEASE_VERSION}${NALU_HYPRE_LIB_S
 
 all: libNALU_HYPRE_utilities${NALU_HYPRE_LIB_SUFFIX}
 	cp -fR $(srcdir)/NALU_HYPRE_*.h $(NALU_HYPRE_BUILD_DIR)/include
-	cp -fR $(srcdir)/_hypre_onedpl.hpp $(NALU_HYPRE_BUILD_DIR)/include
-	cp -fR $(srcdir)/_hypre_utilities.h $(NALU_HYPRE_BUILD_DIR)/include
-	cp -fR $(srcdir)/_hypre_utilities.hpp $(NALU_HYPRE_BUILD_DIR)/include
+	cp -fR $(srcdir)/_nalu_hypre_onedpl.hpp $(NALU_HYPRE_BUILD_DIR)/include
+	cp -fR $(srcdir)/_nalu_hypre_utilities.h $(NALU_HYPRE_BUILD_DIR)/include
+	cp -fR $(srcdir)/_nalu_hypre_utilities.hpp $(NALU_HYPRE_BUILD_DIR)/include
 	cp -fR $(srcdir)/fortran*.h $(NALU_HYPRE_BUILD_DIR)/include
 #	cp -fR libNALU_HYPRE* $(NALU_HYPRE_BUILD_DIR)/lib
 
 install: libNALU_HYPRE_utilities${NALU_HYPRE_LIB_SUFFIX}
 	cp -fR $(srcdir)/NALU_HYPRE_*.h $(NALU_HYPRE_INC_INSTALL)
-	cp -fR $(srcdir)/_hypre_utilities.h $(NALU_HYPRE_INC_INSTALL)
+	cp -fR $(srcdir)/_nalu_hypre_utilities.h $(NALU_HYPRE_INC_INSTALL)
 	cp -fR $(srcdir)/fortran*.h $(NALU_HYPRE_INC_INSTALL)
 #	cp -fR libNALU_HYPRE* $(NALU_HYPRE_LIB_INSTALL)
 

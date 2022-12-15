@@ -31,7 +31,7 @@
 #include <math.h>
 #include <iostream>
 #include <fstream>
-#include "_hypre_utilities.h"
+#include "_nalu_hypre_utilities.h"
 #include "LLNL_FEI_Impl.h"
 #include "ex.h"
 

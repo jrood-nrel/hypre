@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_Euclid.h"
+#include "_nalu_hypre_Euclid.h"
 /* #include "blas_dh.h" */
 
 #undef __FUNC__
@@ -114,7 +114,7 @@ NALU_HYPRE_Real InnerProd(NALU_HYPRE_Int n, NALU_HYPRE_Real *x, NALU_HYPRE_Real 
     }
 
     if (np_dh > 1) {
-      hypre_MPI_Allreduce(&local_result, &result, 1, hypre_MPI_REAL, hypre_MPI_SUM, comm_dh);
+      nalu_hypre_MPI_Allreduce(&local_result, &result, 1, nalu_hypre_MPI_REAL, nalu_hypre_MPI_SUM, comm_dh);
     } else {
       result = local_result;
     }
@@ -140,7 +140,7 @@ NALU_HYPRE_Real Norm2(NALU_HYPRE_Int n, NALU_HYPRE_Real *x)
   }
 
   if (np_dh > 1) {
-    hypre_MPI_Allreduce(&local_result, &result, 1, hypre_MPI_REAL, hypre_MPI_SUM, comm_dh);
+    nalu_hypre_MPI_Allreduce(&local_result, &result, 1, nalu_hypre_MPI_REAL, nalu_hypre_MPI_SUM, comm_dh);
   } else {
     result = local_result;
   }

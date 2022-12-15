@@ -9,13 +9,13 @@
 #include <stdio.h>
 #include <math.h>
 
-#include "_hypre_utilities.h"
+#include "_nalu_hypre_utilities.h"
 #include "NALU_HYPRE_struct_mv.h"
 /* RDF: This include is only needed for AddValuesVector() */
-#include "_hypre_struct_mv.h"
+#include "_nalu_hypre_struct_mv.h"
 
-NALU_HYPRE_Int AddValuesVector( hypre_StructGrid   *grid,
-                           hypre_StructVector *vector,
+NALU_HYPRE_Int AddValuesVector( nalu_hypre_StructGrid   *grid,
+                           nalu_hypre_StructVector *vector,
                            NALU_HYPRE_Real          value );
 
 /*--------------------------------------------------------------------------
@@ -27,8 +27,8 @@ NALU_HYPRE_Int AddValuesVector( hypre_StructGrid   *grid,
  * as command line arguments.  Do `driver -help' for usage info.
  *----------------------------------------------------------------------*/
 
-hypre_int
-main( hypre_int argc,
+nalu_hypre_int
+main( nalu_hypre_int argc,
       char *argv[] )
 {
    NALU_HYPRE_Int           arg_index;
@@ -59,15 +59,15 @@ main( hypre_int argc,
     *-----------------------------------------------------------*/
 
    /* Initialize MPI */
-   hypre_MPI_Init(&argc, &argv);
-   hypre_MPI_Comm_size(hypre_MPI_COMM_WORLD, &num_procs );
-   hypre_MPI_Comm_rank(hypre_MPI_COMM_WORLD, &myid );
+   nalu_hypre_MPI_Init(&argc, &argv);
+   nalu_hypre_MPI_Comm_size(nalu_hypre_MPI_COMM_WORLD, &num_procs );
+   nalu_hypre_MPI_Comm_rank(nalu_hypre_MPI_COMM_WORLD, &myid );
 
    /*-----------------------------------------------------------------
     * GPU Device binding
     * Must be done before NALU_HYPRE_Init() and should not be changed after
     *-----------------------------------------------------------------*/
-   hypre_bind_device(myid, num_procs, hypre_MPI_COMM_WORLD);
+   nalu_hypre_bind_device(myid, num_procs, nalu_hypre_MPI_COMM_WORLD);
 
    /*-----------------------------------------------------------
     * Initialize : must be the first HYPRE function to call
@@ -163,16 +163,16 @@ main( hypre_int argc,
 
    if ( (print_usage) && (myid == 0) )
    {
-      hypre_printf("\n");
-      hypre_printf("Usage: %s [<options>]\n", argv[0]);
-      hypre_printf("\n");
-      hypre_printf("  -n <nx> <ny> <nz>   : problem size per block\n");
-      hypre_printf("  -istart <ix> <iy> <iz> : start of box\n");
-      hypre_printf("  -P <Px> <Py> <Pz>   : processor topology\n");
-      hypre_printf("  -b <bx> <by> <bz>   : blocking per processor\n");
-      hypre_printf("  -d <dim>            : problem dimension (2 or 3)\n");
-      hypre_printf("  -print              : print vectors\n");
-      hypre_printf("\n");
+      nalu_hypre_printf("\n");
+      nalu_hypre_printf("Usage: %s [<options>]\n", argv[0]);
+      nalu_hypre_printf("\n");
+      nalu_hypre_printf("  -n <nx> <ny> <nz>   : problem size per block\n");
+      nalu_hypre_printf("  -istart <ix> <iy> <iz> : start of box\n");
+      nalu_hypre_printf("  -P <Px> <Py> <Pz>   : processor topology\n");
+      nalu_hypre_printf("  -b <bx> <by> <bz>   : blocking per processor\n");
+      nalu_hypre_printf("  -d <dim>            : problem dimension (2 or 3)\n");
+      nalu_hypre_printf("  -print              : print vectors\n");
+      nalu_hypre_printf("\n");
    }
 
    if ( print_usage )
@@ -188,7 +188,7 @@ main( hypre_int argc,
    {
       if (myid == 0)
       {
-         hypre_printf("Error: PxQxR is more than the number of processors\n");
+         nalu_hypre_printf("Error: PxQxR is more than the number of processors\n");
       }
       exit(1);
    }
@@ -196,7 +196,7 @@ main( hypre_int argc,
    {
       if (myid == 0)
       {
-         hypre_printf("Warning: PxQxR is less than the number of processors\n");
+         nalu_hypre_printf("Warning: PxQxR is less than the number of processors\n");
       }
    }
 
@@ -206,13 +206,13 @@ main( hypre_int argc,
 
    if (myid == 0)
    {
-      hypre_printf("Running with these driver parameters:\n");
-      hypre_printf("  (nx, ny, nz)    = (%d, %d, %d)\n", nx, ny, nz);
-      hypre_printf("  (ix, iy, iz)    = (%d, %d, %d)\n",
+      nalu_hypre_printf("Running with these driver parameters:\n");
+      nalu_hypre_printf("  (nx, ny, nz)    = (%d, %d, %d)\n", nx, ny, nz);
+      nalu_hypre_printf("  (ix, iy, iz)    = (%d, %d, %d)\n",
                    istart[0], istart[1], istart[2]);
-      hypre_printf("  (Px, Py, Pz)    = (%d, %d, %d)\n", P,  Q,  R);
-      hypre_printf("  (bx, by, bz)    = (%d, %d, %d)\n", bx, by, bz);
-      hypre_printf("  dim             = %d\n", dim);
+      nalu_hypre_printf("  (Px, Py, Pz)    = (%d, %d, %d)\n", P,  Q,  R);
+      nalu_hypre_printf("  (bx, by, bz)    = (%d, %d, %d)\n", bx, by, bz);
+      nalu_hypre_printf("  dim             = %d\n", dim);
    }
 
    /*-----------------------------------------------------------
@@ -251,14 +251,14 @@ main( hypre_int argc,
     * prepare space for the extents
     *-----------------------------------------------------------*/
 
-   ilower = hypre_CTAlloc(NALU_HYPRE_Int*,  nblocks, NALU_HYPRE_MEMORY_HOST);
-   iupper = hypre_CTAlloc(NALU_HYPRE_Int*,  nblocks, NALU_HYPRE_MEMORY_HOST);
-   iupper2 = hypre_CTAlloc(NALU_HYPRE_Int*,  nblocks, NALU_HYPRE_MEMORY_HOST);
+   ilower = nalu_hypre_CTAlloc(NALU_HYPRE_Int*,  nblocks, NALU_HYPRE_MEMORY_HOST);
+   iupper = nalu_hypre_CTAlloc(NALU_HYPRE_Int*,  nblocks, NALU_HYPRE_MEMORY_HOST);
+   iupper2 = nalu_hypre_CTAlloc(NALU_HYPRE_Int*,  nblocks, NALU_HYPRE_MEMORY_HOST);
    for (i = 0; i < nblocks; i++)
    {
-      ilower[i] = hypre_CTAlloc(NALU_HYPRE_Int,  dim, NALU_HYPRE_MEMORY_HOST);
-      iupper[i] = hypre_CTAlloc(NALU_HYPRE_Int,  dim, NALU_HYPRE_MEMORY_HOST);
-      iupper2[i] = hypre_CTAlloc(NALU_HYPRE_Int,  dim, NALU_HYPRE_MEMORY_HOST);
+      ilower[i] = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  dim, NALU_HYPRE_MEMORY_HOST);
+      iupper[i] = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  dim, NALU_HYPRE_MEMORY_HOST);
+      iupper2[i] = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  dim, NALU_HYPRE_MEMORY_HOST);
    }
 
    ib = 0;
@@ -329,8 +329,8 @@ main( hypre_int argc,
          break;
    }
 
-   NALU_HYPRE_StructGridCreate(hypre_MPI_COMM_WORLD, dim, &from_grid);
-   NALU_HYPRE_StructGridCreate(hypre_MPI_COMM_WORLD, dim, &to_grid);
+   NALU_HYPRE_StructGridCreate(nalu_hypre_MPI_COMM_WORLD, dim, &from_grid);
+   NALU_HYPRE_StructGridCreate(nalu_hypre_MPI_COMM_WORLD, dim, &to_grid);
    for (ib = 0; ib < nblocks; ib++)
    {
       NALU_HYPRE_StructGridSetExtents(from_grid, ilower[ib], iupper[ib]);
@@ -343,18 +343,18 @@ main( hypre_int argc,
     * Set up the vectors
     *-----------------------------------------------------------*/
 
-   NALU_HYPRE_StructVectorCreate(hypre_MPI_COMM_WORLD, from_grid, &from_vector);
+   NALU_HYPRE_StructVectorCreate(nalu_hypre_MPI_COMM_WORLD, from_grid, &from_vector);
    NALU_HYPRE_StructVectorInitialize(from_vector);
    AddValuesVector(from_grid, from_vector, 1.0);
    NALU_HYPRE_StructVectorAssemble(from_vector);
 
-   NALU_HYPRE_StructVectorCreate(hypre_MPI_COMM_WORLD, to_grid, &to_vector);
+   NALU_HYPRE_StructVectorCreate(nalu_hypre_MPI_COMM_WORLD, to_grid, &to_vector);
    NALU_HYPRE_StructVectorInitialize(to_vector);
    AddValuesVector(to_grid, to_vector, 0.0);
    NALU_HYPRE_StructVectorAssemble(to_vector);
 
    /* Vector used to check the migration */
-   NALU_HYPRE_StructVectorCreate(hypre_MPI_COMM_WORLD, to_grid, &check_vector);
+   NALU_HYPRE_StructVectorCreate(nalu_hypre_MPI_COMM_WORLD, to_grid, &check_vector);
    NALU_HYPRE_StructVectorInitialize(check_vector);
    AddValuesVector(to_grid, check_vector, 1.0);
    NALU_HYPRE_StructVectorAssemble(check_vector);
@@ -363,27 +363,27 @@ main( hypre_int argc,
     * Migrate
     *-----------------------------------------------------------*/
 
-   time_index = hypre_InitializeTiming("Struct Migrate");
-   hypre_BeginTiming(time_index);
+   time_index = nalu_hypre_InitializeTiming("Struct Migrate");
+   nalu_hypre_BeginTiming(time_index);
 
    NALU_HYPRE_StructVectorGetMigrateCommPkg(from_vector, to_vector, &comm_pkg);
    NALU_HYPRE_StructVectorMigrate(comm_pkg, from_vector, to_vector);
    NALU_HYPRE_CommPkgDestroy(comm_pkg);
 
-   hypre_EndTiming(time_index);
-   hypre_PrintTiming("Struct Migrate", hypre_MPI_COMM_WORLD);
-   hypre_FinalizeTiming(time_index);
+   nalu_hypre_EndTiming(time_index);
+   nalu_hypre_PrintTiming("Struct Migrate", nalu_hypre_MPI_COMM_WORLD);
+   nalu_hypre_FinalizeTiming(time_index);
 
    /*-----------------------------------------------------------
     * Check the migration and print the result
     *-----------------------------------------------------------*/
 
-   hypre_StructAxpy(-1.0, to_vector, check_vector);
-   check = hypre_StructInnerProd (check_vector, check_vector);
+   nalu_hypre_StructAxpy(-1.0, to_vector, check_vector);
+   check = nalu_hypre_StructInnerProd (check_vector, check_vector);
 
    if (myid == 0)
    {
-      hypre_printf("\nCheck = %1.0f (success = 0)\n\n", check);
+      nalu_hypre_printf("\nCheck = %1.0f (success = 0)\n\n", check);
    }
 
    /*-----------------------------------------------------------
@@ -405,13 +405,13 @@ main( hypre_int argc,
 
    for (i = 0; i < nblocks; i++)
    {
-      hypre_TFree(ilower[i], NALU_HYPRE_MEMORY_HOST);
-      hypre_TFree(iupper[i], NALU_HYPRE_MEMORY_HOST);
-      hypre_TFree(iupper2[i], NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(ilower[i], NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(iupper[i], NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(iupper2[i], NALU_HYPRE_MEMORY_HOST);
    }
-   hypre_TFree(ilower, NALU_HYPRE_MEMORY_HOST);
-   hypre_TFree(iupper, NALU_HYPRE_MEMORY_HOST);
-   hypre_TFree(iupper2, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(ilower, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(iupper, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(iupper2, NALU_HYPRE_MEMORY_HOST);
 
    NALU_HYPRE_StructVectorDestroy(from_vector);
    NALU_HYPRE_StructVectorDestroy(to_vector);
@@ -425,7 +425,7 @@ main( hypre_int argc,
    NALU_HYPRE_Finalize();
 
    /* Finalize MPI */
-   hypre_MPI_Finalize();
+   nalu_hypre_MPI_Finalize();
 
    return (0);
 }
@@ -435,44 +435,44 @@ main( hypre_int argc,
  *-------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-AddValuesVector( hypre_StructGrid   *grid,
-                 hypre_StructVector *vector,
+AddValuesVector( nalu_hypre_StructGrid   *grid,
+                 nalu_hypre_StructVector *vector,
                  NALU_HYPRE_Real          value )
 {
    NALU_HYPRE_Int          i, ierr = 0;
-   hypre_BoxArray    *gridboxes;
+   nalu_hypre_BoxArray    *gridboxes;
    NALU_HYPRE_Int          ib;
-   hypre_IndexRef     ilower;
-   hypre_IndexRef     iupper;
-   hypre_Box         *box;
+   nalu_hypre_IndexRef     ilower;
+   nalu_hypre_IndexRef     iupper;
+   nalu_hypre_Box         *box;
    NALU_HYPRE_Real        *values;
    NALU_HYPRE_Real        *values_h;
    NALU_HYPRE_Int          volume;
 
-   NALU_HYPRE_MemoryLocation memory_location = hypre_StructVectorMemoryLocation(vector);
+   NALU_HYPRE_MemoryLocation memory_location = nalu_hypre_StructVectorMemoryLocation(vector);
 
-   gridboxes = hypre_StructGridBoxes(grid);
+   gridboxes = nalu_hypre_StructGridBoxes(grid);
 
    ib = 0;
-   hypre_ForBoxI(ib, gridboxes)
+   nalu_hypre_ForBoxI(ib, gridboxes)
    {
-      box    = hypre_BoxArrayBox(gridboxes, ib);
-      volume = hypre_BoxVolume(box);
-      values = hypre_CTAlloc(NALU_HYPRE_Real, volume, memory_location);
-      values_h = hypre_CTAlloc(NALU_HYPRE_Real, volume, NALU_HYPRE_MEMORY_HOST);
+      box    = nalu_hypre_BoxArrayBox(gridboxes, ib);
+      volume = nalu_hypre_BoxVolume(box);
+      values = nalu_hypre_CTAlloc(NALU_HYPRE_Real, volume, memory_location);
+      values_h = nalu_hypre_CTAlloc(NALU_HYPRE_Real, volume, NALU_HYPRE_MEMORY_HOST);
 
       for (i = 0; i < volume; i++)
       {
          values_h[i] = value;
       }
 
-      hypre_TMemcpy(values, values_h, NALU_HYPRE_Real, volume, memory_location, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TMemcpy(values, values_h, NALU_HYPRE_Real, volume, memory_location, NALU_HYPRE_MEMORY_HOST);
 
-      ilower = hypre_BoxIMin(box);
-      iupper = hypre_BoxIMax(box);
+      ilower = nalu_hypre_BoxIMin(box);
+      iupper = nalu_hypre_BoxIMax(box);
       NALU_HYPRE_StructVectorSetBoxValues(vector, ilower, iupper, values);
-      hypre_TFree(values, memory_location);
-      hypre_TFree(values_h, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(values, memory_location);
+      nalu_hypre_TFree(values_h, NALU_HYPRE_MEMORY_HOST);
    }
 
    return ierr;

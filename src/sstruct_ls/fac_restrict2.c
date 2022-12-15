@@ -18,8 +18,8 @@
  *  inside patch.
  ******************************************************************************/
 
-#include "_hypre_sstruct_ls.h"
-#include "_hypre_struct_mv.hpp"
+#include "_nalu_hypre_sstruct_ls.h"
+#include "_nalu_hypre_struct_mv.hpp"
 #include "fac.h"
 
 #define MapCellRank(i, j , k, rank)             \
@@ -34,51 +34,51 @@
       ii = (ij%2);                              \
       jj = (ij-ii)/2;                           \
       kk = (rank-2*jj-ii)/4;                    \
-      hypre_SetIndex3(stencil, ii, jj, kk);     \
+      nalu_hypre_SetIndex3(stencil, ii, jj, kk);     \
    }
 
 /*--------------------------------------------------------------------------
- * hypre_FacSemiRestrictData data structure
+ * nalu_hypre_FacSemiRestrictData data structure
  *--------------------------------------------------------------------------*/
 
 typedef struct
 {
    NALU_HYPRE_Int             nvars;
-   hypre_Index           stride;
+   nalu_hypre_Index           stride;
 
-   hypre_SStructPVector *fgrid_cvectors;     /* the grid of this vector may not
+   nalu_hypre_SStructPVector *fgrid_cvectors;     /* the grid of this vector may not
                                                 be on the actual grid */
-   hypre_BoxArrayArray **identity_arrayboxes;
-   hypre_BoxArrayArray **fullwgt_ownboxes;
-   hypre_BoxArrayArray **fullwgt_sendboxes;
+   nalu_hypre_BoxArrayArray **identity_arrayboxes;
+   nalu_hypre_BoxArrayArray **fullwgt_ownboxes;
+   nalu_hypre_BoxArrayArray **fullwgt_sendboxes;
 
    NALU_HYPRE_Int          ***own_cboxnums;       /* local crs boxnums of ownboxes */
 
-   hypre_CommPkg       **interlevel_comm;
-   /*   hypre_CommPkg       **intralevel_comm;*/ /* may need to build an intra comm so
+   nalu_hypre_CommPkg       **interlevel_comm;
+   /*   nalu_hypre_CommPkg       **intralevel_comm;*/ /* may need to build an intra comm so
         that each processor only fullwts its
         own fine data- may need to add contrib */
 
-} hypre_FacSemiRestrictData2;
+} nalu_hypre_FacSemiRestrictData2;
 
 /*--------------------------------------------------------------------------
- * hypre_FacSemiRestrictCreate
+ * nalu_hypre_FacSemiRestrictCreate
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_FacSemiRestrictCreate2( void **fac_restrict_vdata_ptr)
+nalu_hypre_FacSemiRestrictCreate2( void **fac_restrict_vdata_ptr)
 {
    NALU_HYPRE_Int                   ierr = 0;
-   hypre_FacSemiRestrictData2 *fac_restrict_data;
+   nalu_hypre_FacSemiRestrictData2 *fac_restrict_data;
 
-   fac_restrict_data       = hypre_CTAlloc(hypre_FacSemiRestrictData2,  1, NALU_HYPRE_MEMORY_HOST);
+   fac_restrict_data       = nalu_hypre_CTAlloc(nalu_hypre_FacSemiRestrictData2,  1, NALU_HYPRE_MEMORY_HOST);
    *fac_restrict_vdata_ptr  = (void *) fac_restrict_data;
 
    return ierr;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_FacSemiRestrictSetup:
+ * nalu_hypre_FacSemiRestrictSetup:
  *   Two types of communication are needed- one for the interlevel coarsened
  *   fine boxes, and the other for the ghostlayer of the restricted vector.
  *
@@ -96,49 +96,49 @@ hypre_FacSemiRestrictCreate2( void **fac_restrict_vdata_ptr)
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_FacSemiRestrictSetup2( void                 *fac_restrict_vdata,
-                             hypre_SStructVector  *r,
+nalu_hypre_FacSemiRestrictSetup2( void                 *fac_restrict_vdata,
+                             nalu_hypre_SStructVector  *r,
                              NALU_HYPRE_Int             part_crse,
                              NALU_HYPRE_Int             part_fine,
-                             hypre_SStructPVector *rc,
-                             hypre_Index           rfactors )
+                             nalu_hypre_SStructPVector *rc,
+                             nalu_hypre_Index           rfactors )
 {
    NALU_HYPRE_Int                 ierr = 0;
 
-   hypre_FacSemiRestrictData2 *fac_restrict_data = (hypre_FacSemiRestrictData2 *)fac_restrict_vdata;
-   MPI_Comm                    comm = hypre_SStructPVectorComm(rc);
-   hypre_CommInfo             *comm_info;
-   hypre_CommPkg             **interlevel_comm;
+   nalu_hypre_FacSemiRestrictData2 *fac_restrict_data = (nalu_hypre_FacSemiRestrictData2 *)fac_restrict_vdata;
+   MPI_Comm                    comm = nalu_hypre_SStructPVectorComm(rc);
+   nalu_hypre_CommInfo             *comm_info;
+   nalu_hypre_CommPkg             **interlevel_comm;
 
-   hypre_SStructPVector       *rf = hypre_SStructVectorPVector(r, part_fine);
-   hypre_StructVector         *s_rc, *s_cvector;
-   hypre_SStructPGrid         *pgrid;
+   nalu_hypre_SStructPVector       *rf = nalu_hypre_SStructVectorPVector(r, part_fine);
+   nalu_hypre_StructVector         *s_rc, *s_cvector;
+   nalu_hypre_SStructPGrid         *pgrid;
 
-   hypre_SStructPVector       *fgrid_cvectors;
-   hypre_SStructPGrid         *fgrid_coarsen;
-   hypre_BoxArrayArray       **identity_arrayboxes;
-   hypre_BoxArrayArray       **fullwgt_ownboxes;
-   hypre_BoxArrayArray       **fullwgt_sendboxes;
-   hypre_BoxArray             *boxarray;
-   hypre_BoxArray             *tmp_boxarray, *intersect_boxes;
+   nalu_hypre_SStructPVector       *fgrid_cvectors;
+   nalu_hypre_SStructPGrid         *fgrid_coarsen;
+   nalu_hypre_BoxArrayArray       **identity_arrayboxes;
+   nalu_hypre_BoxArrayArray       **fullwgt_ownboxes;
+   nalu_hypre_BoxArrayArray       **fullwgt_sendboxes;
+   nalu_hypre_BoxArray             *boxarray;
+   nalu_hypre_BoxArray             *tmp_boxarray, *intersect_boxes;
    NALU_HYPRE_Int                ***own_cboxnums;
 
-   hypre_BoxArrayArray       **send_boxes, *send_rboxes;
+   nalu_hypre_BoxArrayArray       **send_boxes, *send_rboxes;
    NALU_HYPRE_Int                ***send_processes;
    NALU_HYPRE_Int                ***send_remote_boxnums;
 
-   hypre_BoxArrayArray       **recv_boxes, *recv_rboxes;
+   nalu_hypre_BoxArrayArray       **recv_boxes, *recv_rboxes;
    NALU_HYPRE_Int                ***recv_processes;
    NALU_HYPRE_Int                ***recv_remote_boxnums;
 
-   hypre_BoxManager           *boxman;
-   hypre_BoxManEntry         **boxman_entries;
+   nalu_hypre_BoxManager           *boxman;
+   nalu_hypre_BoxManEntry         **boxman_entries;
    NALU_HYPRE_Int                   nboxman_entries;
 
-   hypre_Box                   box, scaled_box;
+   nalu_hypre_Box                   box, scaled_box;
 
-   hypre_Index                 zero_index, index, ilower, iupper;
-   NALU_HYPRE_Int                   ndim = hypre_SStructVectorNDim(r);
+   nalu_hypre_Index                 zero_index, index, ilower, iupper;
+   NALU_HYPRE_Int                   ndim = nalu_hypre_SStructVectorNDim(r);
    NALU_HYPRE_Int                   myproc, proc;
    NALU_HYPRE_Int                   nvars, vars;
    NALU_HYPRE_Int                   num_values;
@@ -146,49 +146,49 @@ hypre_FacSemiRestrictSetup2( void                 *fac_restrict_vdata,
    NALU_HYPRE_Int                   i, cnt1, cnt2;
    NALU_HYPRE_Int                   fi, ci;
 
-   hypre_BoxInit(&box, ndim);
-   hypre_BoxInit(&scaled_box, ndim);
+   nalu_hypre_BoxInit(&box, ndim);
+   nalu_hypre_BoxInit(&scaled_box, ndim);
 
-   hypre_MPI_Comm_rank(comm, &myproc);
-   hypre_ClearIndex(zero_index);
+   nalu_hypre_MPI_Comm_rank(comm, &myproc);
+   nalu_hypre_ClearIndex(zero_index);
 
-   nvars = hypre_SStructPVectorNVars(rc);
+   nvars = nalu_hypre_SStructPVectorNVars(rc);
    (fac_restrict_data -> nvars) =  nvars;
-   hypre_CopyIndex(rfactors, (fac_restrict_data -> stride));
+   nalu_hypre_CopyIndex(rfactors, (fac_restrict_data -> stride));
    for (i = ndim; i < 3; i++)
    {
       rfactors[i] = 1;
    }
 
    /* work vector for storing the fullweighted fgrid boxes */
-   hypre_SStructPGridCreate(hypre_SStructPVectorComm(rf), ndim, &fgrid_coarsen);
-   pgrid = hypre_SStructPVectorPGrid(rf);
+   nalu_hypre_SStructPGridCreate(nalu_hypre_SStructPVectorComm(rf), ndim, &fgrid_coarsen);
+   pgrid = nalu_hypre_SStructPVectorPGrid(rf);
    for (vars = 0; vars < nvars; vars++)
    {
-      boxarray = hypre_StructGridBoxes(hypre_SStructPGridSGrid(pgrid, vars));
-      hypre_ForBoxI(fi, boxarray)
+      boxarray = nalu_hypre_StructGridBoxes(nalu_hypre_SStructPGridSGrid(pgrid, vars));
+      nalu_hypre_ForBoxI(fi, boxarray)
       {
-         hypre_CopyBox(hypre_BoxArrayBox(boxarray, fi), &box);
-         hypre_StructMapFineToCoarse(hypre_BoxIMin(&box), zero_index,
-                                     rfactors, hypre_BoxIMin(&box));
-         hypre_StructMapFineToCoarse(hypre_BoxIMax(&box), zero_index,
-                                     rfactors, hypre_BoxIMax(&box));
-         hypre_SStructPGridSetExtents(fgrid_coarsen,
-                                      hypre_BoxIMin(&box),
-                                      hypre_BoxIMax(&box));
+         nalu_hypre_CopyBox(nalu_hypre_BoxArrayBox(boxarray, fi), &box);
+         nalu_hypre_StructMapFineToCoarse(nalu_hypre_BoxIMin(&box), zero_index,
+                                     rfactors, nalu_hypre_BoxIMin(&box));
+         nalu_hypre_StructMapFineToCoarse(nalu_hypre_BoxIMax(&box), zero_index,
+                                     rfactors, nalu_hypre_BoxIMax(&box));
+         nalu_hypre_SStructPGridSetExtents(fgrid_coarsen,
+                                      nalu_hypre_BoxIMin(&box),
+                                      nalu_hypre_BoxIMax(&box));
       }
    }
-   hypre_SStructPGridSetVariables( fgrid_coarsen, nvars,
-                                   hypre_SStructPGridVarTypes(pgrid) );
-   hypre_SStructPGridAssemble(fgrid_coarsen);
+   nalu_hypre_SStructPGridSetVariables( fgrid_coarsen, nvars,
+                                   nalu_hypre_SStructPGridVarTypes(pgrid) );
+   nalu_hypre_SStructPGridAssemble(fgrid_coarsen);
 
-   hypre_SStructPVectorCreate(hypre_SStructPGridComm(fgrid_coarsen), fgrid_coarsen,
+   nalu_hypre_SStructPVectorCreate(nalu_hypre_SStructPGridComm(fgrid_coarsen), fgrid_coarsen,
                               &fgrid_cvectors);
-   hypre_SStructPVectorInitialize(fgrid_cvectors);
-   hypre_SStructPVectorAssemble(fgrid_cvectors);
+   nalu_hypre_SStructPVectorInitialize(fgrid_cvectors);
+   nalu_hypre_SStructPVectorAssemble(fgrid_cvectors);
 
    /* pgrid fgrid_coarsen no longer needed */
-   hypre_SStructPGridDestroy(fgrid_coarsen);
+   nalu_hypre_SStructPGridDestroy(fgrid_coarsen);
 
    fac_restrict_data -> fgrid_cvectors = fgrid_cvectors;
 
@@ -206,63 +206,63 @@ hypre_FacSemiRestrictSetup2( void                 *fac_restrict_vdata,
     * will be subtracted from the cbox. Contraction can erroneously lead
     * to bigger identity boxes.
     *--------------------------------------------------------------------------*/
-   identity_arrayboxes = hypre_CTAlloc(hypre_BoxArrayArray *,  nvars, NALU_HYPRE_MEMORY_HOST);
-   pgrid = hypre_SStructPVectorPGrid(rc);
+   identity_arrayboxes = nalu_hypre_CTAlloc(nalu_hypre_BoxArrayArray *,  nvars, NALU_HYPRE_MEMORY_HOST);
+   pgrid = nalu_hypre_SStructPVectorPGrid(rc);
 
-   hypre_ClearIndex(index);
+   nalu_hypre_ClearIndex(index);
    for (i = 0; i < ndim; i++)
    {
       index[i] = rfactors[i] - 1;
    }
 
-   tmp_boxarray = hypre_BoxArrayCreate(0, ndim);
+   tmp_boxarray = nalu_hypre_BoxArrayCreate(0, ndim);
    for (vars = 0; vars < nvars; vars++)
    {
-      boxman = hypre_SStructGridBoxManager(hypre_SStructVectorGrid(r),
+      boxman = nalu_hypre_SStructGridBoxManager(nalu_hypre_SStructVectorGrid(r),
                                            part_fine, vars);
-      boxarray = hypre_StructGridBoxes(hypre_SStructPGridSGrid(pgrid, vars));
+      boxarray = nalu_hypre_StructGridBoxes(nalu_hypre_SStructPGridSGrid(pgrid, vars));
 
-      identity_arrayboxes[vars] = hypre_BoxArrayArrayCreate(hypre_BoxArraySize(boxarray), ndim);
+      identity_arrayboxes[vars] = nalu_hypre_BoxArrayArrayCreate(nalu_hypre_BoxArraySize(boxarray), ndim);
 
-      hypre_ForBoxI(ci, boxarray)
+      nalu_hypre_ForBoxI(ci, boxarray)
       {
-         hypre_CopyBox(hypre_BoxArrayBox(boxarray, ci), &box);
-         hypre_AppendBox(&box,
-                         hypre_BoxArrayArrayBoxArray(identity_arrayboxes[vars], ci));
+         nalu_hypre_CopyBox(nalu_hypre_BoxArrayBox(boxarray, ci), &box);
+         nalu_hypre_AppendBox(&box,
+                         nalu_hypre_BoxArrayArrayBoxArray(identity_arrayboxes[vars], ci));
 
-         hypre_StructMapCoarseToFine(hypre_BoxIMin(&box), zero_index,
-                                     rfactors, hypre_BoxIMin(&scaled_box));
-         hypre_StructMapCoarseToFine(hypre_BoxIMax(&box), index,
-                                     rfactors, hypre_BoxIMax(&scaled_box));
+         nalu_hypre_StructMapCoarseToFine(nalu_hypre_BoxIMin(&box), zero_index,
+                                     rfactors, nalu_hypre_BoxIMin(&scaled_box));
+         nalu_hypre_StructMapCoarseToFine(nalu_hypre_BoxIMax(&box), index,
+                                     rfactors, nalu_hypre_BoxIMax(&scaled_box));
 
-         hypre_BoxManIntersect(boxman, hypre_BoxIMin(&scaled_box),
-                               hypre_BoxIMax(&scaled_box), &boxman_entries,
+         nalu_hypre_BoxManIntersect(boxman, nalu_hypre_BoxIMin(&scaled_box),
+                               nalu_hypre_BoxIMax(&scaled_box), &boxman_entries,
                                &nboxman_entries);
 
          /* all send and coarsened fboxes on this processor are collected */
-         intersect_boxes = hypre_BoxArrayCreate(0, ndim);
+         intersect_boxes = nalu_hypre_BoxArrayCreate(0, ndim);
          for (i = 0; i < nboxman_entries; i++)
          {
-            hypre_BoxManEntryGetExtents(boxman_entries[i], ilower, iupper);
-            hypre_BoxSetExtents(&box, ilower, iupper);
-            hypre_IntersectBoxes(&box, &scaled_box, &box);
+            nalu_hypre_BoxManEntryGetExtents(boxman_entries[i], ilower, iupper);
+            nalu_hypre_BoxSetExtents(&box, ilower, iupper);
+            nalu_hypre_IntersectBoxes(&box, &scaled_box, &box);
 
-            hypre_StructMapFineToCoarse(hypre_BoxIMin(&box), zero_index,
-                                        rfactors, hypre_BoxIMin(&box));
-            hypre_StructMapFineToCoarse(hypre_BoxIMax(&box), zero_index,
-                                        rfactors, hypre_BoxIMax(&box));
-            hypre_AppendBox(&box, intersect_boxes);
+            nalu_hypre_StructMapFineToCoarse(nalu_hypre_BoxIMin(&box), zero_index,
+                                        rfactors, nalu_hypre_BoxIMin(&box));
+            nalu_hypre_StructMapFineToCoarse(nalu_hypre_BoxIMax(&box), zero_index,
+                                        rfactors, nalu_hypre_BoxIMax(&box));
+            nalu_hypre_AppendBox(&box, intersect_boxes);
          }
 
-         hypre_SubtractBoxArrays(hypre_BoxArrayArrayBoxArray(identity_arrayboxes[vars], ci),
+         nalu_hypre_SubtractBoxArrays(nalu_hypre_BoxArrayArrayBoxArray(identity_arrayboxes[vars], ci),
                                  intersect_boxes, tmp_boxarray);
-         hypre_MinUnionBoxes(hypre_BoxArrayArrayBoxArray(identity_arrayboxes[vars], ci));
+         nalu_hypre_MinUnionBoxes(nalu_hypre_BoxArrayArrayBoxArray(identity_arrayboxes[vars], ci));
 
-         hypre_TFree(boxman_entries, NALU_HYPRE_MEMORY_HOST);
-         hypre_BoxArrayDestroy(intersect_boxes);
+         nalu_hypre_TFree(boxman_entries, NALU_HYPRE_MEMORY_HOST);
+         nalu_hypre_BoxArrayDestroy(intersect_boxes);
       }
    }
-   hypre_BoxArrayDestroy(tmp_boxarray);
+   nalu_hypre_BoxArrayDestroy(tmp_boxarray);
    fac_restrict_data -> identity_arrayboxes = identity_arrayboxes;
 
    /*--------------------------------------------------------------------------
@@ -276,47 +276,47 @@ hypre_FacSemiRestrictSetup2( void                 *fac_restrict_vdata,
     * Note that no contraction is needed. Contraction can lead to erroneous
     * send_boxes.
     *--------------------------------------------------------------------------*/
-   interlevel_comm = hypre_CTAlloc(hypre_CommPkg *,  nvars, NALU_HYPRE_MEMORY_HOST);
-   fullwgt_sendboxes = hypre_CTAlloc(hypre_BoxArrayArray *,  nvars, NALU_HYPRE_MEMORY_HOST);
-   fullwgt_ownboxes = hypre_CTAlloc(hypre_BoxArrayArray *,  nvars, NALU_HYPRE_MEMORY_HOST);
-   own_cboxnums = hypre_CTAlloc(NALU_HYPRE_Int **,  nvars, NALU_HYPRE_MEMORY_HOST);
+   interlevel_comm = nalu_hypre_CTAlloc(nalu_hypre_CommPkg *,  nvars, NALU_HYPRE_MEMORY_HOST);
+   fullwgt_sendboxes = nalu_hypre_CTAlloc(nalu_hypre_BoxArrayArray *,  nvars, NALU_HYPRE_MEMORY_HOST);
+   fullwgt_ownboxes = nalu_hypre_CTAlloc(nalu_hypre_BoxArrayArray *,  nvars, NALU_HYPRE_MEMORY_HOST);
+   own_cboxnums = nalu_hypre_CTAlloc(NALU_HYPRE_Int **,  nvars, NALU_HYPRE_MEMORY_HOST);
 
-   send_boxes = hypre_CTAlloc(hypre_BoxArrayArray *,  nvars, NALU_HYPRE_MEMORY_HOST);
-   send_processes = hypre_CTAlloc(NALU_HYPRE_Int **,  nvars, NALU_HYPRE_MEMORY_HOST);
-   send_remote_boxnums = hypre_CTAlloc(NALU_HYPRE_Int **,  nvars, NALU_HYPRE_MEMORY_HOST);
+   send_boxes = nalu_hypre_CTAlloc(nalu_hypre_BoxArrayArray *,  nvars, NALU_HYPRE_MEMORY_HOST);
+   send_processes = nalu_hypre_CTAlloc(NALU_HYPRE_Int **,  nvars, NALU_HYPRE_MEMORY_HOST);
+   send_remote_boxnums = nalu_hypre_CTAlloc(NALU_HYPRE_Int **,  nvars, NALU_HYPRE_MEMORY_HOST);
 
-   pgrid = hypre_SStructPVectorPGrid(rf);
+   pgrid = nalu_hypre_SStructPVectorPGrid(rf);
    for (vars = 0; vars < nvars; vars++)
    {
-      boxman = hypre_SStructGridBoxManager(hypre_SStructVectorGrid(r),
+      boxman = nalu_hypre_SStructGridBoxManager(nalu_hypre_SStructVectorGrid(r),
                                            part_crse, vars);
-      boxarray = hypre_StructGridBoxes(hypre_SStructPGridSGrid(pgrid, vars));
-      fullwgt_sendboxes[vars] = hypre_BoxArrayArrayCreate(hypre_BoxArraySize(boxarray), ndim);
-      fullwgt_ownboxes[vars] = hypre_BoxArrayArrayCreate(hypre_BoxArraySize(boxarray), ndim);
-      own_cboxnums[vars]     = hypre_CTAlloc(NALU_HYPRE_Int *,  hypre_BoxArraySize(boxarray),
+      boxarray = nalu_hypre_StructGridBoxes(nalu_hypre_SStructPGridSGrid(pgrid, vars));
+      fullwgt_sendboxes[vars] = nalu_hypre_BoxArrayArrayCreate(nalu_hypre_BoxArraySize(boxarray), ndim);
+      fullwgt_ownboxes[vars] = nalu_hypre_BoxArrayArrayCreate(nalu_hypre_BoxArraySize(boxarray), ndim);
+      own_cboxnums[vars]     = nalu_hypre_CTAlloc(NALU_HYPRE_Int *,  nalu_hypre_BoxArraySize(boxarray),
                                              NALU_HYPRE_MEMORY_HOST);
 
-      send_boxes[vars]         = hypre_BoxArrayArrayCreate(hypre_BoxArraySize(boxarray), ndim);
-      send_processes[vars]     = hypre_CTAlloc(NALU_HYPRE_Int *,  hypre_BoxArraySize(boxarray),
+      send_boxes[vars]         = nalu_hypre_BoxArrayArrayCreate(nalu_hypre_BoxArraySize(boxarray), ndim);
+      send_processes[vars]     = nalu_hypre_CTAlloc(NALU_HYPRE_Int *,  nalu_hypre_BoxArraySize(boxarray),
                                                NALU_HYPRE_MEMORY_HOST);
-      send_remote_boxnums[vars] = hypre_CTAlloc(NALU_HYPRE_Int *,  hypre_BoxArraySize(boxarray),
+      send_remote_boxnums[vars] = nalu_hypre_CTAlloc(NALU_HYPRE_Int *,  nalu_hypre_BoxArraySize(boxarray),
                                                 NALU_HYPRE_MEMORY_HOST);
 
-      hypre_ForBoxI(fi, boxarray)
+      nalu_hypre_ForBoxI(fi, boxarray)
       {
-         hypre_CopyBox(hypre_BoxArrayBox(boxarray, fi), &box);
-         hypre_StructMapFineToCoarse(hypre_BoxIMin(&box), zero_index,
-                                     rfactors, hypre_BoxIMin(&scaled_box));
-         hypre_StructMapFineToCoarse(hypre_BoxIMax(&box), zero_index,
-                                     rfactors, hypre_BoxIMax(&scaled_box));
+         nalu_hypre_CopyBox(nalu_hypre_BoxArrayBox(boxarray, fi), &box);
+         nalu_hypre_StructMapFineToCoarse(nalu_hypre_BoxIMin(&box), zero_index,
+                                     rfactors, nalu_hypre_BoxIMin(&scaled_box));
+         nalu_hypre_StructMapFineToCoarse(nalu_hypre_BoxIMax(&box), zero_index,
+                                     rfactors, nalu_hypre_BoxIMax(&scaled_box));
 
-         hypre_BoxManIntersect(boxman, hypre_BoxIMin(&scaled_box),
-                               hypre_BoxIMax(&scaled_box), &boxman_entries, &nboxman_entries);
+         nalu_hypre_BoxManIntersect(boxman, nalu_hypre_BoxIMin(&scaled_box),
+                               nalu_hypre_BoxIMax(&scaled_box), &boxman_entries, &nboxman_entries);
 
          cnt1 = 0; cnt2 = 0;
          for (i = 0; i < nboxman_entries; i++)
          {
-            hypre_SStructBoxManEntryGetProcess(boxman_entries[i], &proc);
+            nalu_hypre_SStructBoxManEntryGetProcess(boxman_entries[i], &proc);
             if (proc != myproc)
             {
                cnt1++;
@@ -326,43 +326,43 @@ hypre_FacSemiRestrictSetup2( void                 *fac_restrict_vdata,
                cnt2++;
             }
          }
-         send_processes[vars][fi]     = hypre_CTAlloc(NALU_HYPRE_Int,  cnt1, NALU_HYPRE_MEMORY_HOST);
-         send_remote_boxnums[vars][fi] = hypre_CTAlloc(NALU_HYPRE_Int,  cnt1, NALU_HYPRE_MEMORY_HOST);
-         own_cboxnums[vars][fi]       = hypre_CTAlloc(NALU_HYPRE_Int,  cnt2, NALU_HYPRE_MEMORY_HOST);
+         send_processes[vars][fi]     = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  cnt1, NALU_HYPRE_MEMORY_HOST);
+         send_remote_boxnums[vars][fi] = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  cnt1, NALU_HYPRE_MEMORY_HOST);
+         own_cboxnums[vars][fi]       = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  cnt2, NALU_HYPRE_MEMORY_HOST);
 
          cnt1 = 0; cnt2 = 0;
          for (i = 0; i < nboxman_entries; i++)
          {
-            hypre_BoxManEntryGetExtents(boxman_entries[i], ilower, iupper);
-            hypre_BoxSetExtents(&box, ilower, iupper);
-            hypre_IntersectBoxes(&box, &scaled_box, &box);
+            nalu_hypre_BoxManEntryGetExtents(boxman_entries[i], ilower, iupper);
+            nalu_hypre_BoxSetExtents(&box, ilower, iupper);
+            nalu_hypre_IntersectBoxes(&box, &scaled_box, &box);
 
-            hypre_SStructBoxManEntryGetProcess(boxman_entries[i], &proc);
+            nalu_hypre_SStructBoxManEntryGetProcess(boxman_entries[i], &proc);
             if (proc != myproc)
             {
-               hypre_AppendBox(&box,
-                               hypre_BoxArrayArrayBoxArray(fullwgt_sendboxes[vars], fi));
-               hypre_AppendBox(&box,
-                               hypre_BoxArrayArrayBoxArray(send_boxes[vars], fi));
+               nalu_hypre_AppendBox(&box,
+                               nalu_hypre_BoxArrayArrayBoxArray(fullwgt_sendboxes[vars], fi));
+               nalu_hypre_AppendBox(&box,
+                               nalu_hypre_BoxArrayArrayBoxArray(send_boxes[vars], fi));
 
                send_processes[vars][fi][cnt1] = proc;
-               hypre_SStructBoxManEntryGetBoxnum(boxman_entries[i],
+               nalu_hypre_SStructBoxManEntryGetBoxnum(boxman_entries[i],
                                                  &send_remote_boxnums[vars][fi][cnt1]);
                cnt1++;
             }
 
             else
             {
-               hypre_AppendBox(&box,
-                               hypre_BoxArrayArrayBoxArray(fullwgt_ownboxes[vars], fi));
-               hypre_SStructBoxManEntryGetBoxnum(boxman_entries[i],
+               nalu_hypre_AppendBox(&box,
+                               nalu_hypre_BoxArrayArrayBoxArray(fullwgt_ownboxes[vars], fi));
+               nalu_hypre_SStructBoxManEntryGetBoxnum(boxman_entries[i],
                                                  &own_cboxnums[vars][fi][cnt2]);
                cnt2++;
             }
          }
-         hypre_TFree(boxman_entries, NALU_HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(boxman_entries, NALU_HYPRE_MEMORY_HOST);
 
-      }  /* hypre_ForBoxI(fi, boxarray) */
+      }  /* nalu_hypre_ForBoxI(fi, boxarray) */
    }     /* for (vars= 0; vars< nvars; vars++) */
 
    (fac_restrict_data -> fullwgt_sendboxes) = fullwgt_sendboxes;
@@ -376,64 +376,64 @@ hypre_FacSemiRestrictSetup2( void                 *fac_restrict_vdata,
     * processors the refinement belongs in. The processors owning a chunk
     * are the recv_processors.
     *--------------------------------------------------------------------------*/
-   recv_boxes = hypre_CTAlloc(hypre_BoxArrayArray *,  nvars, NALU_HYPRE_MEMORY_HOST);
-   recv_processes = hypre_CTAlloc(NALU_HYPRE_Int **,  nvars, NALU_HYPRE_MEMORY_HOST);
+   recv_boxes = nalu_hypre_CTAlloc(nalu_hypre_BoxArrayArray *,  nvars, NALU_HYPRE_MEMORY_HOST);
+   recv_processes = nalu_hypre_CTAlloc(NALU_HYPRE_Int **,  nvars, NALU_HYPRE_MEMORY_HOST);
 
    /* dummy pointer for CommInfoCreate */
-   recv_remote_boxnums = hypre_CTAlloc(NALU_HYPRE_Int **,  nvars, NALU_HYPRE_MEMORY_HOST);
+   recv_remote_boxnums = nalu_hypre_CTAlloc(NALU_HYPRE_Int **,  nvars, NALU_HYPRE_MEMORY_HOST);
 
-   pgrid = hypre_SStructPVectorPGrid(rc);
+   pgrid = nalu_hypre_SStructPVectorPGrid(rc);
    for (vars = 0; vars < nvars; vars++)
    {
-      boxman = hypre_SStructGridBoxManager(hypre_SStructVectorGrid(r),
+      boxman = nalu_hypre_SStructGridBoxManager(nalu_hypre_SStructVectorGrid(r),
                                            part_fine, vars);
-      boxarray = hypre_StructGridBoxes(hypre_SStructPGridSGrid(pgrid, vars));
+      boxarray = nalu_hypre_StructGridBoxes(nalu_hypre_SStructPGridSGrid(pgrid, vars));
 
-      recv_boxes[vars]    = hypre_BoxArrayArrayCreate(hypre_BoxArraySize(boxarray), ndim);
-      recv_processes[vars] = hypre_CTAlloc(NALU_HYPRE_Int *,  hypre_BoxArraySize(boxarray), NALU_HYPRE_MEMORY_HOST);
-      recv_remote_boxnums[vars] = hypre_CTAlloc(NALU_HYPRE_Int *,  hypre_BoxArraySize(boxarray),
+      recv_boxes[vars]    = nalu_hypre_BoxArrayArrayCreate(nalu_hypre_BoxArraySize(boxarray), ndim);
+      recv_processes[vars] = nalu_hypre_CTAlloc(NALU_HYPRE_Int *,  nalu_hypre_BoxArraySize(boxarray), NALU_HYPRE_MEMORY_HOST);
+      recv_remote_boxnums[vars] = nalu_hypre_CTAlloc(NALU_HYPRE_Int *,  nalu_hypre_BoxArraySize(boxarray),
                                                 NALU_HYPRE_MEMORY_HOST);
 
-      hypre_ForBoxI(ci, boxarray)
+      nalu_hypre_ForBoxI(ci, boxarray)
       {
-         hypre_CopyBox(hypre_BoxArrayBox(boxarray, ci), &box);
-         hypre_StructMapCoarseToFine(hypre_BoxIMin(&box), zero_index,
-                                     rfactors, hypre_BoxIMin(&scaled_box));
-         hypre_StructMapCoarseToFine(hypre_BoxIMax(&box), index,
-                                     rfactors, hypre_BoxIMax(&scaled_box));
+         nalu_hypre_CopyBox(nalu_hypre_BoxArrayBox(boxarray, ci), &box);
+         nalu_hypre_StructMapCoarseToFine(nalu_hypre_BoxIMin(&box), zero_index,
+                                     rfactors, nalu_hypre_BoxIMin(&scaled_box));
+         nalu_hypre_StructMapCoarseToFine(nalu_hypre_BoxIMax(&box), index,
+                                     rfactors, nalu_hypre_BoxIMax(&scaled_box));
 
-         hypre_BoxManIntersect(boxman, hypre_BoxIMin(&scaled_box),
-                               hypre_BoxIMax(&scaled_box), &boxman_entries, &nboxman_entries);
+         nalu_hypre_BoxManIntersect(boxman, nalu_hypre_BoxIMin(&scaled_box),
+                               nalu_hypre_BoxIMax(&scaled_box), &boxman_entries, &nboxman_entries);
 
          cnt1 = 0;
          for (i = 0; i < nboxman_entries; i++)
          {
-            hypre_SStructBoxManEntryGetProcess(boxman_entries[i], &proc);
+            nalu_hypre_SStructBoxManEntryGetProcess(boxman_entries[i], &proc);
             if (proc != myproc)
             {
                cnt1++;
             }
          }
-         recv_processes[vars][ci] = hypre_CTAlloc(NALU_HYPRE_Int,  cnt1, NALU_HYPRE_MEMORY_HOST);
-         recv_remote_boxnums[vars][ci] = hypre_CTAlloc(NALU_HYPRE_Int,  cnt1, NALU_HYPRE_MEMORY_HOST);
+         recv_processes[vars][ci] = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  cnt1, NALU_HYPRE_MEMORY_HOST);
+         recv_remote_boxnums[vars][ci] = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  cnt1, NALU_HYPRE_MEMORY_HOST);
 
          cnt1 = 0;
          for (i = 0; i < nboxman_entries; i++)
          {
-            hypre_SStructBoxManEntryGetProcess(boxman_entries[i], &proc);
+            nalu_hypre_SStructBoxManEntryGetProcess(boxman_entries[i], &proc);
             if (proc != myproc)
             {
-               hypre_BoxManEntryGetExtents(boxman_entries[i], ilower, iupper);
-               hypre_BoxSetExtents(&box, ilower, iupper);
-               hypre_IntersectBoxes(&box, &scaled_box, &box);
+               nalu_hypre_BoxManEntryGetExtents(boxman_entries[i], ilower, iupper);
+               nalu_hypre_BoxSetExtents(&box, ilower, iupper);
+               nalu_hypre_IntersectBoxes(&box, &scaled_box, &box);
 
                /* no contracting neede */
-               hypre_StructMapFineToCoarse(hypre_BoxIMin(&box), zero_index,
-                                           rfactors, hypre_BoxIMin(&box));
-               hypre_StructMapFineToCoarse(hypre_BoxIMax(&box), zero_index,
-                                           rfactors, hypre_BoxIMax(&box));
-               hypre_AppendBox(&box,
-                               hypre_BoxArrayArrayBoxArray(recv_boxes[vars], ci));
+               nalu_hypre_StructMapFineToCoarse(nalu_hypre_BoxIMin(&box), zero_index,
+                                           rfactors, nalu_hypre_BoxIMin(&box));
+               nalu_hypre_StructMapFineToCoarse(nalu_hypre_BoxIMax(&box), zero_index,
+                                           rfactors, nalu_hypre_BoxIMax(&box));
+               nalu_hypre_AppendBox(&box,
+                               nalu_hypre_BoxArrayArrayBoxArray(recv_boxes[vars], ci));
 
                recv_processes[vars][ci][cnt1] = proc;
                cnt1++;
@@ -441,38 +441,38 @@ hypre_FacSemiRestrictSetup2( void                 *fac_restrict_vdata,
             }  /* if (proc != myproc) */
          }     /* for (i= 0; i< nmap_entries; i++) */
 
-         hypre_TFree(boxman_entries, NALU_HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(boxman_entries, NALU_HYPRE_MEMORY_HOST);
 
-      }        /* hypre_ForBoxI(ci, boxarray) */
+      }        /* nalu_hypre_ForBoxI(ci, boxarray) */
    }           /* for (vars= 0; vars< nvars; vars++) */
 
    num_values = 1;
    for (vars = 0; vars < nvars; vars++)
    {
-      s_rc     = hypre_SStructPVectorSVector(rc, vars);
-      s_cvector = hypre_SStructPVectorSVector(fgrid_cvectors, vars);
-      send_rboxes = hypre_BoxArrayArrayDuplicate(send_boxes[vars]);
-      recv_rboxes = hypre_BoxArrayArrayDuplicate(recv_boxes[vars]);
+      s_rc     = nalu_hypre_SStructPVectorSVector(rc, vars);
+      s_cvector = nalu_hypre_SStructPVectorSVector(fgrid_cvectors, vars);
+      send_rboxes = nalu_hypre_BoxArrayArrayDuplicate(send_boxes[vars]);
+      recv_rboxes = nalu_hypre_BoxArrayArrayDuplicate(recv_boxes[vars]);
 
-      hypre_CommInfoCreate(send_boxes[vars], recv_boxes[vars],
+      nalu_hypre_CommInfoCreate(send_boxes[vars], recv_boxes[vars],
                            send_processes[vars], recv_processes[vars],
                            send_remote_boxnums[vars], recv_remote_boxnums[vars],
                            send_rboxes, recv_rboxes, 1, &comm_info);
 
-      hypre_CommPkgCreate(comm_info,
-                          hypre_StructVectorDataSpace(s_cvector),
-                          hypre_StructVectorDataSpace(s_rc),
+      nalu_hypre_CommPkgCreate(comm_info,
+                          nalu_hypre_StructVectorDataSpace(s_cvector),
+                          nalu_hypre_StructVectorDataSpace(s_rc),
                           num_values, NULL, 0,
-                          hypre_StructVectorComm(s_rc),
+                          nalu_hypre_StructVectorComm(s_rc),
                           &interlevel_comm[vars]);
-      hypre_CommInfoDestroy(comm_info);
+      nalu_hypre_CommInfoDestroy(comm_info);
    }
-   hypre_TFree(send_boxes, NALU_HYPRE_MEMORY_HOST);
-   hypre_TFree(recv_boxes, NALU_HYPRE_MEMORY_HOST);
-   hypre_TFree(send_processes, NALU_HYPRE_MEMORY_HOST);
-   hypre_TFree(recv_processes, NALU_HYPRE_MEMORY_HOST);
-   hypre_TFree(send_remote_boxnums, NALU_HYPRE_MEMORY_HOST);
-   hypre_TFree(recv_remote_boxnums, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(send_boxes, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(recv_boxes, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(send_processes, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(recv_processes, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(send_remote_boxnums, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(recv_remote_boxnums, NALU_HYPRE_MEMORY_HOST);
 
    (fac_restrict_data -> interlevel_comm) = interlevel_comm;
 
@@ -481,53 +481,53 @@ hypre_FacSemiRestrictSetup2( void                 *fac_restrict_vdata,
 }
 
 NALU_HYPRE_Int
-hypre_FACRestrict2( void                 *  fac_restrict_vdata,
-                    hypre_SStructVector  *  xf,
-                    hypre_SStructPVector *  xc)
+nalu_hypre_FACRestrict2( void                 *  fac_restrict_vdata,
+                    nalu_hypre_SStructVector  *  xf,
+                    nalu_hypre_SStructPVector *  xc)
 {
    NALU_HYPRE_Int ierr = 0;
 
-   hypre_FacSemiRestrictData2 *restrict_data = (hypre_FacSemiRestrictData2 *)fac_restrict_vdata;
+   nalu_hypre_FacSemiRestrictData2 *restrict_data = (nalu_hypre_FacSemiRestrictData2 *)fac_restrict_vdata;
 
-   hypre_SStructPVector   *fgrid_cvectors     = restrict_data->fgrid_cvectors;
-   hypre_BoxArrayArray   **identity_arrayboxes = restrict_data->identity_arrayboxes;
-   hypre_BoxArrayArray   **fullwgt_ownboxes   = restrict_data->fullwgt_ownboxes;
+   nalu_hypre_SStructPVector   *fgrid_cvectors     = restrict_data->fgrid_cvectors;
+   nalu_hypre_BoxArrayArray   **identity_arrayboxes = restrict_data->identity_arrayboxes;
+   nalu_hypre_BoxArrayArray   **fullwgt_ownboxes   = restrict_data->fullwgt_ownboxes;
    NALU_HYPRE_Int            ***own_cboxnums       = restrict_data->own_cboxnums;
-   hypre_CommPkg         **interlevel_comm = restrict_data-> interlevel_comm;
-   hypre_CommHandle       *comm_handle;
+   nalu_hypre_CommPkg         **interlevel_comm = restrict_data-> interlevel_comm;
+   nalu_hypre_CommHandle       *comm_handle;
 
-   NALU_HYPRE_Int               ndim           =  hypre_SStructVectorNDim(xf);
+   NALU_HYPRE_Int               ndim           =  nalu_hypre_SStructVectorNDim(xf);
 
-   hypre_BoxArrayArray    *arrayarray_ownboxes;
+   nalu_hypre_BoxArrayArray    *arrayarray_ownboxes;
 
-   hypre_IndexRef          stride;  /* refinement factors */
+   nalu_hypre_IndexRef          stride;  /* refinement factors */
 
-   hypre_StructGrid       *fgrid;
-   hypre_BoxArray         *fgrid_boxes;
-   hypre_Box              *fgrid_box;
-   hypre_StructGrid       *cgrid;
-   hypre_BoxArray         *cgrid_boxes;
-   hypre_BoxArray         *own_boxes;
-   hypre_Box              *own_box;
+   nalu_hypre_StructGrid       *fgrid;
+   nalu_hypre_BoxArray         *fgrid_boxes;
+   nalu_hypre_Box              *fgrid_box;
+   nalu_hypre_StructGrid       *cgrid;
+   nalu_hypre_BoxArray         *cgrid_boxes;
+   nalu_hypre_BoxArray         *own_boxes;
+   nalu_hypre_Box              *own_box;
    NALU_HYPRE_Int              *boxnums;
 
-   hypre_Box              *xc_temp_dbox;
-   hypre_Box              *xf_dbox;
+   nalu_hypre_Box              *xc_temp_dbox;
+   nalu_hypre_Box              *xf_dbox;
 
-   hypre_StructVector     *xc_temp;
-   hypre_StructVector     *xc_var;
-   hypre_StructVector     *xf_var;
+   nalu_hypre_StructVector     *xc_temp;
+   nalu_hypre_StructVector     *xc_var;
+   nalu_hypre_StructVector     *xf_var;
 
    NALU_HYPRE_Real           ***xfp;
    NALU_HYPRE_Real           ***xcp;
    NALU_HYPRE_Real           ***xcp_temp;
 
-   hypre_Index             loop_size, lindex;
-   hypre_Index             start, fbox_size, node_offset;
-   hypre_Index             startc;
-   hypre_Index             stridec;
-   hypre_Index             rfactors;
-   hypre_Index             temp_index1, temp_index2;
+   nalu_hypre_Index             loop_size, lindex;
+   nalu_hypre_Index             start, fbox_size, node_offset;
+   nalu_hypre_Index             startc;
+   nalu_hypre_Index             stridec;
+   nalu_hypre_Index             rfactors;
+   nalu_hypre_Index             temp_index1, temp_index2;
 
    NALU_HYPRE_Int               fi, ci;
    NALU_HYPRE_Int               nvars, var;
@@ -549,13 +549,13 @@ hypre_FACRestrict2( void                 *  fac_restrict_vdata,
     *-----------------------------------------------------------------------*/
    stride = (restrict_data -> stride);
 
-   hypre_ClearIndex(stridec);
+   nalu_hypre_ClearIndex(stridec);
    for (i = 0; i < ndim; i++)
    {
       stridec[i] = 1;
    }
 
-   hypre_CopyIndex(stride, rfactors);
+   nalu_hypre_CopyIndex(stride, rfactors);
    for (i = ndim; i < 3; i++)
    {
       rfactors[i] = 1;
@@ -571,7 +571,7 @@ hypre_FACRestrict2( void                 *  fac_restrict_vdata,
     * We are assuming the refinement and coarsening have same variable
     * types.
     *-----------------------------------------------------------------------*/
-   nvars =  hypre_SStructPVectorNVars(xc);
+   nvars =  nalu_hypre_SStructPVectorNVars(xc);
 
    /*-----------------------------------------------------------------------
     * For each coordinate direction, a fine node can contribute only to the
@@ -582,7 +582,7 @@ hypre_FACRestrict2( void                 *  fac_restrict_vdata,
    {
       num_coarse_cells *= 2;
    }
-   sum = hypre_CTAlloc(NALU_HYPRE_Real,  num_coarse_cells, NALU_HYPRE_MEMORY_HOST);
+   sum = nalu_hypre_CTAlloc(NALU_HYPRE_Real,  num_coarse_cells, NALU_HYPRE_MEMORY_HOST);
 
    /*--------------------------------------------------------------------------
     * Scaling for averaging restriction.
@@ -596,12 +596,12 @@ hypre_FACRestrict2( void                 *  fac_restrict_vdata,
    /*-----------------------------------------------------------------------
     * Initialize the coarse vector to zero.
     *-----------------------------------------------------------------------*/
-   hypre_SStructPVectorSetConstantValues(xc, 0.0);
+   nalu_hypre_SStructPVectorSetConstantValues(xc, 0.0);
 
    /*-----------------------------------------------------------------------
     * Copy the coarse data: xf[part_crse] -> xc
     *-----------------------------------------------------------------------*/
-   hypre_SStructPartialPCopy(hypre_SStructVectorPVector(xf, part_crse),
+   nalu_hypre_SStructPartialPCopy(nalu_hypre_SStructVectorPVector(xf, part_crse),
                              xc, identity_arrayboxes);
 
    /*-----------------------------------------------------------------------
@@ -609,7 +609,7 @@ hypre_FACRestrict2( void                 *  fac_restrict_vdata,
     *
     * Initialize the work vector by setting to zero.
     *-----------------------------------------------------------------------*/
-   hypre_SStructPVectorSetConstantValues(fgrid_cvectors, 0.0);
+   nalu_hypre_SStructPVectorSetConstantValues(fgrid_cvectors, 0.0);
 
    /*-----------------------------------------------------------------------
     * Allocate memory for the data pointers. Assuming constant restriction.
@@ -620,55 +620,55 @@ hypre_FACRestrict2( void                 *  fac_restrict_vdata,
     *-----------------------------------------------------------------------*/
    if (ndim > 1)
    {
-      xcp_temp = hypre_TAlloc(NALU_HYPRE_Real **,  (ndim - 1), NALU_HYPRE_MEMORY_HOST);
-      xcp     = hypre_TAlloc(NALU_HYPRE_Real **,  (ndim - 1), NALU_HYPRE_MEMORY_HOST);
+      xcp_temp = nalu_hypre_TAlloc(NALU_HYPRE_Real **,  (ndim - 1), NALU_HYPRE_MEMORY_HOST);
+      xcp     = nalu_hypre_TAlloc(NALU_HYPRE_Real **,  (ndim - 1), NALU_HYPRE_MEMORY_HOST);
       for (k = 0; k < (ndim - 1); k++)
       {
-         xcp_temp[k] = hypre_TAlloc(NALU_HYPRE_Real *,  2, NALU_HYPRE_MEMORY_HOST);
-         xcp[k]     = hypre_TAlloc(NALU_HYPRE_Real *,  2, NALU_HYPRE_MEMORY_HOST);
+         xcp_temp[k] = nalu_hypre_TAlloc(NALU_HYPRE_Real *,  2, NALU_HYPRE_MEMORY_HOST);
+         xcp[k]     = nalu_hypre_TAlloc(NALU_HYPRE_Real *,  2, NALU_HYPRE_MEMORY_HOST);
       }
    }
    else /* 1d does not really require these NALU_HYPRE_Real ptrs */
    {
-      xcp_temp   = hypre_TAlloc(NALU_HYPRE_Real **,  1, NALU_HYPRE_MEMORY_HOST);
-      xcp        = hypre_TAlloc(NALU_HYPRE_Real **,  1, NALU_HYPRE_MEMORY_HOST);
-      xcp_temp[0] = hypre_TAlloc(NALU_HYPRE_Real *,  1, NALU_HYPRE_MEMORY_HOST);
-      xcp[0]     = hypre_TAlloc(NALU_HYPRE_Real *,  1, NALU_HYPRE_MEMORY_HOST);
+      xcp_temp   = nalu_hypre_TAlloc(NALU_HYPRE_Real **,  1, NALU_HYPRE_MEMORY_HOST);
+      xcp        = nalu_hypre_TAlloc(NALU_HYPRE_Real **,  1, NALU_HYPRE_MEMORY_HOST);
+      xcp_temp[0] = nalu_hypre_TAlloc(NALU_HYPRE_Real *,  1, NALU_HYPRE_MEMORY_HOST);
+      xcp[0]     = nalu_hypre_TAlloc(NALU_HYPRE_Real *,  1, NALU_HYPRE_MEMORY_HOST);
    }
 
    /* memory allocation of xfp is okay for all dimensions */
-   xfp = hypre_TAlloc(NALU_HYPRE_Real **,  rfactors[2], NALU_HYPRE_MEMORY_HOST);
+   xfp = nalu_hypre_TAlloc(NALU_HYPRE_Real **,  rfactors[2], NALU_HYPRE_MEMORY_HOST);
    for (k = 0; k < rfactors[2]; k++)
    {
-      xfp[k] = hypre_TAlloc(NALU_HYPRE_Real *,  rfactors[1], NALU_HYPRE_MEMORY_HOST);
+      xfp[k] = nalu_hypre_TAlloc(NALU_HYPRE_Real *,  rfactors[1], NALU_HYPRE_MEMORY_HOST);
    }
 
    for (var = 0; var < nvars; var++)
    {
-      xc_temp = hypre_SStructPVectorSVector(fgrid_cvectors, var);
-      xf_var = hypre_SStructPVectorSVector(hypre_SStructVectorPVector(xf, part_fine),
+      xc_temp = nalu_hypre_SStructPVectorSVector(fgrid_cvectors, var);
+      xf_var = nalu_hypre_SStructPVectorSVector(nalu_hypre_SStructVectorPVector(xf, part_fine),
                                            var);
 
-      fgrid        = hypre_StructVectorGrid(xf_var);
-      fgrid_boxes  = hypre_StructGridBoxes(fgrid);
-      cgrid        = hypre_StructVectorGrid(xc_temp);
-      cgrid_boxes  = hypre_StructGridBoxes(cgrid);
+      fgrid        = nalu_hypre_StructVectorGrid(xf_var);
+      fgrid_boxes  = nalu_hypre_StructGridBoxes(fgrid);
+      cgrid        = nalu_hypre_StructVectorGrid(xc_temp);
+      cgrid_boxes  = nalu_hypre_StructGridBoxes(cgrid);
 
-      hypre_ForBoxI(fi, fgrid_boxes)
+      nalu_hypre_ForBoxI(fi, fgrid_boxes)
       {
-         fgrid_box = hypre_BoxArrayBox(fgrid_boxes, fi);
+         fgrid_box = nalu_hypre_BoxArrayBox(fgrid_boxes, fi);
 
          /*--------------------------------------------------------------------
           * Get the ptrs for the fine struct_vectors.
           *--------------------------------------------------------------------*/
-         xf_dbox  = hypre_BoxArrayBox(hypre_StructVectorDataSpace(xf_var), fi);
+         xf_dbox  = nalu_hypre_BoxArrayBox(nalu_hypre_StructVectorDataSpace(xf_var), fi);
          for (k = 0; k < rfactors[2]; k++)
          {
             for (j = 0; j < rfactors[1]; j++)
             {
-               hypre_SetIndex3(temp_index1, 0, j, k);
-               xfp[k][j] = hypre_StructVectorBoxData(xf_var, fi) +
-                           hypre_BoxOffsetDistance(xf_dbox, temp_index1);
+               nalu_hypre_SetIndex3(temp_index1, 0, j, k);
+               xfp[k][j] = nalu_hypre_StructVectorBoxData(xf_var, fi) +
+                           nalu_hypre_BoxOffsetDistance(xf_dbox, temp_index1);
             }
          }
 
@@ -678,32 +678,32 @@ hypre_FACRestrict2( void                 *  fac_restrict_vdata,
           * Work vectors were created this way.
           * Dimensionally dependent.
           *--------------------------------------------------------------------*/
-         xc_temp_dbox = hypre_BoxArrayBox(hypre_StructVectorDataSpace(xc_temp), fi);
+         xc_temp_dbox = nalu_hypre_BoxArrayBox(nalu_hypre_StructVectorDataSpace(xc_temp), fi);
          if (ndim > 1)
          {
             for (k = 0; k < (ndim - 1); k++)
             {
                for (j = 0; j < 2; j++)
                {
-                  hypre_SetIndex3(temp_index1, 0, j, k);
-                  xcp_temp[k][j] = hypre_StructVectorBoxData(xc_temp, fi) +
-                                   hypre_BoxOffsetDistance(xc_temp_dbox, temp_index1);
+                  nalu_hypre_SetIndex3(temp_index1, 0, j, k);
+                  xcp_temp[k][j] = nalu_hypre_StructVectorBoxData(xc_temp, fi) +
+                                   nalu_hypre_BoxOffsetDistance(xc_temp_dbox, temp_index1);
                }
             }
          }
          else /* 1d case */
          {
-            hypre_ClearIndex(temp_index1);
-            xcp_temp[0][0] = hypre_StructVectorBoxData(xc_temp, fi) +
-                             hypre_BoxOffsetDistance(xc_temp_dbox, temp_index1);
+            nalu_hypre_ClearIndex(temp_index1);
+            xcp_temp[0][0] = nalu_hypre_StructVectorBoxData(xc_temp, fi) +
+                             nalu_hypre_BoxOffsetDistance(xc_temp_dbox, temp_index1);
          }
-         hypre_CopyIndex(hypre_BoxIMin(fgrid_box), start);
-         hypre_CopyIndex(hypre_BoxIMax(fgrid_box), fbox_size);
+         nalu_hypre_CopyIndex(nalu_hypre_BoxIMin(fgrid_box), start);
+         nalu_hypre_CopyIndex(nalu_hypre_BoxIMax(fgrid_box), fbox_size);
 
          /*--------------------------------------------------------------------
-          * Adjust "fbox_size" so that this hypre_Index is appropriate for
+          * Adjust "fbox_size" so that this nalu_hypre_Index is appropriate for
           * ndim < 3.
-          *    fbox_size= hypre_BoxIMax(fgrid_box)-hypre_BoxIMin(fgrid_box)+1.
+          *    fbox_size= nalu_hypre_BoxIMax(fgrid_box)-nalu_hypre_BoxIMin(fgrid_box)+1.
           *--------------------------------------------------------------------*/
          for (i = 0; i < 3; i++)
          {
@@ -715,19 +715,19 @@ hypre_FACRestrict2( void                 *  fac_restrict_vdata,
           * factor. We need to know the remainder to determine which
           * coarse node gets the restricted values.
           *--------------------------------------------------------------------*/
-         hypre_ClearIndex(node_offset);
+         nalu_hypre_ClearIndex(node_offset);
          for (i = 0; i < ndim; i++)
          {
             node_offset[i] = rfactors[i] - (start[i] % rfactors[i]) - 1;
          }
 
-         hypre_SetIndex3(temp_index2, 0, 0, 0);
-         hypre_StructMapFineToCoarse(start, temp_index2, rfactors, startc);
+         nalu_hypre_SetIndex3(temp_index2, 0, 0, 0);
+         nalu_hypre_StructMapFineToCoarse(start, temp_index2, rfactors, startc);
 
-         hypre_BoxGetSize(fgrid_box, temp_index1);
-         hypre_StructMapFineToCoarse(temp_index1, temp_index2, rfactors, loop_size);
+         nalu_hypre_BoxGetSize(fgrid_box, temp_index1);
+         nalu_hypre_StructMapFineToCoarse(temp_index1, temp_index2, rfactors, loop_size);
 
-         hypre_SerialBoxLoop2Begin(ndim, loop_size,
+         nalu_hypre_SerialBoxLoop2Begin(ndim, loop_size,
                                    xf_dbox, start, stride,  xfi,
                                    xc_temp_dbox, startc, stridec, xci);
          {
@@ -737,9 +737,9 @@ hypre_FACRestrict2( void                 *  fac_restrict_vdata,
              * piecewise constant restriction.
              *-----------------------------------------------------------------*/
             zypre_BoxLoopGetIndex(lindex);
-            imax = hypre_min( (fbox_size[0] - lindex[0] * stride[0]), rfactors[0] );
-            jmax = hypre_min( (fbox_size[1] - lindex[1] * stride[1]), rfactors[1] );
-            kmax = hypre_min( (fbox_size[2] - lindex[2] * stride[2]), rfactors[2] );
+            imax = nalu_hypre_min( (fbox_size[0] - lindex[0] * stride[0]), rfactors[0] );
+            jmax = nalu_hypre_min( (fbox_size[1] - lindex[1] * stride[1]), rfactors[1] );
+            kmax = nalu_hypre_min( (fbox_size[2] - lindex[2] * stride[2]), rfactors[2] );
 
             for (i = 0; i < num_coarse_cells; i++)
             {
@@ -793,9 +793,9 @@ hypre_FACRestrict2( void                 *  fac_restrict_vdata,
             }
 
          }
-         hypre_SerialBoxLoop2End(xfi, xci);
+         nalu_hypre_SerialBoxLoop2End(xfi, xci);
 
-      }   /* hypre_ForBoxI(fi, fgrid_boxes) */
+      }   /* nalu_hypre_ForBoxI(fi, fgrid_boxes) */
    }      /* for (var= 0; var< nvars; var++)*/
 
    /*------------------------------------------------------------------
@@ -805,14 +805,14 @@ hypre_FACRestrict2( void                 *  fac_restrict_vdata,
     *------------------------------------------------------------------*/
    for (var = 0; var < nvars; var++)
    {
-      xc_temp = hypre_SStructPVectorSVector(fgrid_cvectors, var);
-      xc_var = hypre_SStructPVectorSVector(xc, var);
-      hypre_InitializeCommunication(interlevel_comm[var],
-                                    hypre_StructVectorData(xc_temp),
-                                    hypre_StructVectorData(xc_var), 0, 0,
+      xc_temp = nalu_hypre_SStructPVectorSVector(fgrid_cvectors, var);
+      xc_var = nalu_hypre_SStructPVectorSVector(xc, var);
+      nalu_hypre_InitializeCommunication(interlevel_comm[var],
+                                    nalu_hypre_StructVectorData(xc_temp),
+                                    nalu_hypre_StructVectorData(xc_var), 0, 0,
                                     &comm_handle);
 
-      hypre_FinalizeCommunication(comm_handle);
+      nalu_hypre_FinalizeCommunication(comm_handle);
    }
 
    /*------------------------------------------------------------------
@@ -821,82 +821,82 @@ hypre_FACRestrict2( void                 *  fac_restrict_vdata,
     *------------------------------------------------------------------*/
    for (var = 0; var < nvars; var++)
    {
-      xc_temp = hypre_SStructPVectorSVector(fgrid_cvectors, var);
-      xc_var = hypre_SStructPVectorSVector(xc, var);
+      xc_temp = nalu_hypre_SStructPVectorSVector(fgrid_cvectors, var);
+      xc_var = nalu_hypre_SStructPVectorSVector(xc, var);
 
-      cgrid        = hypre_StructVectorGrid(xc_temp);
-      cgrid_boxes  = hypre_StructGridBoxes(cgrid);
+      cgrid        = nalu_hypre_StructVectorGrid(xc_temp);
+      cgrid_boxes  = nalu_hypre_StructGridBoxes(cgrid);
 
       arrayarray_ownboxes = fullwgt_ownboxes[var];
-      hypre_ForBoxI(ci, cgrid_boxes)
+      nalu_hypre_ForBoxI(ci, cgrid_boxes)
       {
-         xc_temp_dbox = hypre_BoxArrayBox(hypre_StructVectorDataSpace(xc_temp), ci);
-         xcp_temp[0][0] = hypre_StructVectorBoxData(xc_temp, ci);
+         xc_temp_dbox = nalu_hypre_BoxArrayBox(nalu_hypre_StructVectorDataSpace(xc_temp), ci);
+         xcp_temp[0][0] = nalu_hypre_StructVectorBoxData(xc_temp, ci);
 
          /*--------------------------------------------------------------
           * Each ci box of cgrid_box has a boxarray of subboxes. Copy
           * each of these subboxes to the coarse vector.
           *--------------------------------------------------------------*/
-         own_boxes = hypre_BoxArrayArrayBoxArray(arrayarray_ownboxes, ci);
+         own_boxes = nalu_hypre_BoxArrayArrayBoxArray(arrayarray_ownboxes, ci);
          boxnums  = own_cboxnums[var][ci];
-         hypre_ForBoxI(i, own_boxes)
+         nalu_hypre_ForBoxI(i, own_boxes)
          {
-            own_box = hypre_BoxArrayBox(own_boxes, i);
-            xf_dbox = hypre_BoxArrayBox(hypre_StructVectorDataSpace(xc_var), boxnums[i]);
-            xcp[0][0] = hypre_StructVectorBoxData(xc_var, boxnums[i]);
+            own_box = nalu_hypre_BoxArrayBox(own_boxes, i);
+            xf_dbox = nalu_hypre_BoxArrayBox(nalu_hypre_StructVectorDataSpace(xc_var), boxnums[i]);
+            xcp[0][0] = nalu_hypre_StructVectorBoxData(xc_var, boxnums[i]);
 
-            hypre_BoxGetSize(own_box, loop_size);
+            nalu_hypre_BoxGetSize(own_box, loop_size);
 
 #define DEVICE_VAR is_device_ptr(xcp, xcp_temp)
-            hypre_BoxLoop2Begin(ndim, loop_size,
-                                xc_temp_dbox, hypre_BoxIMin(own_box), stridec, xfi,
-                                xf_dbox, hypre_BoxIMin(own_box), stridec, xci);
+            nalu_hypre_BoxLoop2Begin(ndim, loop_size,
+                                xc_temp_dbox, nalu_hypre_BoxIMin(own_box), stridec, xfi,
+                                xf_dbox, nalu_hypre_BoxIMin(own_box), stridec, xci);
             {
                xcp[0][0][xci] += xcp_temp[0][0][xfi];
             }
-            hypre_BoxLoop2End(xfi, xci);
+            nalu_hypre_BoxLoop2End(xfi, xci);
 #undef DEVICE_VAR
 
-         }  /* hypre_ForBoxI(i, own_boxes) */
-      }     /* hypre_ForBoxI(ci, cgrid_boxes) */
+         }  /* nalu_hypre_ForBoxI(i, own_boxes) */
+      }     /* nalu_hypre_ForBoxI(ci, cgrid_boxes) */
    }        /* for (var= 0; var< nvars; var++) */
 
-   hypre_TFree(sum, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(sum, NALU_HYPRE_MEMORY_HOST);
    for (k = 0; k < rfactors[2]; k++)
    {
-      hypre_TFree(xfp[k], NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(xfp[k], NALU_HYPRE_MEMORY_HOST);
    }
-   hypre_TFree(xfp, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(xfp, NALU_HYPRE_MEMORY_HOST);
 
    if (ndim > 1)
    {
       for (k = 0; k < (ndim - 1); k++)
       {
-         hypre_TFree(xcp_temp[k], NALU_HYPRE_MEMORY_HOST);
-         hypre_TFree(xcp[k], NALU_HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(xcp_temp[k], NALU_HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(xcp[k], NALU_HYPRE_MEMORY_HOST);
       }
    }
    else
    {
-      hypre_TFree(xcp_temp[0], NALU_HYPRE_MEMORY_HOST);
-      hypre_TFree(xcp[0], NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(xcp_temp[0], NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(xcp[0], NALU_HYPRE_MEMORY_HOST);
    }
 
-   hypre_TFree(xcp_temp, NALU_HYPRE_MEMORY_HOST);
-   hypre_TFree(xcp, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(xcp_temp, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(xcp, NALU_HYPRE_MEMORY_HOST);
 
    return ierr;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_FacSemiRestrictDestroy
+ * nalu_hypre_FacSemiRestrictDestroy
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_FacSemiRestrictDestroy2( void *fac_restrict_vdata )
+nalu_hypre_FacSemiRestrictDestroy2( void *fac_restrict_vdata )
 {
    NALU_HYPRE_Int                   ierr = 0;
-   hypre_FacSemiRestrictData2 *fac_restrict_data = (hypre_FacSemiRestrictData2 *)fac_restrict_vdata;
+   nalu_hypre_FacSemiRestrictData2 *fac_restrict_data = (nalu_hypre_FacSemiRestrictData2 *)fac_restrict_vdata;
    NALU_HYPRE_Int                   nvars;
    NALU_HYPRE_Int                   i, j;
 
@@ -904,29 +904,29 @@ hypre_FacSemiRestrictDestroy2( void *fac_restrict_vdata )
    if (fac_restrict_data)
    {
       nvars = (fac_restrict_data-> nvars);
-      hypre_SStructPVectorDestroy(fac_restrict_data-> fgrid_cvectors);
+      nalu_hypre_SStructPVectorDestroy(fac_restrict_data-> fgrid_cvectors);
 
       for (i = 0; i < nvars; i++)
       {
-         hypre_BoxArrayArrayDestroy((fac_restrict_data -> identity_arrayboxes)[i]);
-         hypre_BoxArrayArrayDestroy((fac_restrict_data -> fullwgt_sendboxes)[i]);
-         for (j = 0; j < hypre_BoxArrayArraySize(fac_restrict_data->fullwgt_ownboxes[i]); j++)
+         nalu_hypre_BoxArrayArrayDestroy((fac_restrict_data -> identity_arrayboxes)[i]);
+         nalu_hypre_BoxArrayArrayDestroy((fac_restrict_data -> fullwgt_sendboxes)[i]);
+         for (j = 0; j < nalu_hypre_BoxArrayArraySize(fac_restrict_data->fullwgt_ownboxes[i]); j++)
          {
-            hypre_TFree((fac_restrict_data -> own_cboxnums)[i][j], NALU_HYPRE_MEMORY_HOST);
+            nalu_hypre_TFree((fac_restrict_data -> own_cboxnums)[i][j], NALU_HYPRE_MEMORY_HOST);
          }
-         hypre_TFree((fac_restrict_data -> own_cboxnums)[i], NALU_HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree((fac_restrict_data -> own_cboxnums)[i], NALU_HYPRE_MEMORY_HOST);
 
-         hypre_BoxArrayArrayDestroy((fac_restrict_data -> fullwgt_ownboxes)[i]);
-         hypre_CommPkgDestroy((fac_restrict_data -> interlevel_comm)[i]);
+         nalu_hypre_BoxArrayArrayDestroy((fac_restrict_data -> fullwgt_ownboxes)[i]);
+         nalu_hypre_CommPkgDestroy((fac_restrict_data -> interlevel_comm)[i]);
       }
 
-      hypre_TFree(fac_restrict_data -> identity_arrayboxes, NALU_HYPRE_MEMORY_HOST);
-      hypre_TFree(fac_restrict_data -> fullwgt_sendboxes, NALU_HYPRE_MEMORY_HOST);
-      hypre_TFree(fac_restrict_data -> own_cboxnums, NALU_HYPRE_MEMORY_HOST);
-      hypre_TFree(fac_restrict_data -> fullwgt_ownboxes, NALU_HYPRE_MEMORY_HOST);
-      hypre_TFree(fac_restrict_data -> interlevel_comm, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(fac_restrict_data -> identity_arrayboxes, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(fac_restrict_data -> fullwgt_sendboxes, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(fac_restrict_data -> own_cboxnums, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(fac_restrict_data -> fullwgt_ownboxes, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(fac_restrict_data -> interlevel_comm, NALU_HYPRE_MEMORY_HOST);
 
-      hypre_TFree(fac_restrict_data, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(fac_restrict_data, NALU_HYPRE_MEMORY_HOST);
    }
    return ierr;
 

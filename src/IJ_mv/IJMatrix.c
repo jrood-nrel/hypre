@@ -7,16 +7,16 @@
 
 /******************************************************************************
  *
- * hypre_IJMatrix interface
+ * nalu_hypre_IJMatrix interface
  *
  *****************************************************************************/
 
-#include "./_hypre_IJ_mv.h"
+#include "./_nalu_hypre_IJ_mv.h"
 
 #include "../NALU_HYPRE.h"
 
 /*--------------------------------------------------------------------------
- * hypre_IJMatrixGetRowPartitioning
+ * nalu_hypre_IJMatrixGetRowPartitioning
  *--------------------------------------------------------------------------*/
 
 /**
@@ -28,33 +28,33 @@ The ijmatrix to be pointed to.
 */
 
 NALU_HYPRE_Int
-hypre_IJMatrixGetRowPartitioning( NALU_HYPRE_IJMatrix matrix,
+nalu_hypre_IJMatrixGetRowPartitioning( NALU_HYPRE_IJMatrix matrix,
                                   NALU_HYPRE_BigInt **row_partitioning )
 {
-   hypre_IJMatrix *ijmatrix = (hypre_IJMatrix *) matrix;
+   nalu_hypre_IJMatrix *ijmatrix = (nalu_hypre_IJMatrix *) matrix;
 
    if (!ijmatrix)
    {
-      hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC,
-                        "Variable ijmatrix is NULL -- hypre_IJMatrixGetRowPartitioning\n");
-      return hypre_error_flag;
+      nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC,
+                        "Variable ijmatrix is NULL -- nalu_hypre_IJMatrixGetRowPartitioning\n");
+      return nalu_hypre_error_flag;
    }
 
-   if ( hypre_IJMatrixRowPartitioning(ijmatrix))
+   if ( nalu_hypre_IJMatrixRowPartitioning(ijmatrix))
    {
-      *row_partitioning = hypre_IJMatrixRowPartitioning(ijmatrix);
+      *row_partitioning = nalu_hypre_IJMatrixRowPartitioning(ijmatrix);
    }
    else
    {
-      hypre_error(NALU_HYPRE_ERROR_GENERIC);
-      return hypre_error_flag;
+      nalu_hypre_error(NALU_HYPRE_ERROR_GENERIC);
+      return nalu_hypre_error_flag;
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_IJMatrixGetColPartitioning
+ * nalu_hypre_IJMatrixGetColPartitioning
  *--------------------------------------------------------------------------*/
 
 /**
@@ -66,60 +66,60 @@ The ijmatrix to be pointed to.
 */
 
 NALU_HYPRE_Int
-hypre_IJMatrixGetColPartitioning( NALU_HYPRE_IJMatrix matrix,
+nalu_hypre_IJMatrixGetColPartitioning( NALU_HYPRE_IJMatrix matrix,
                                   NALU_HYPRE_BigInt **col_partitioning )
 {
-   hypre_IJMatrix *ijmatrix = (hypre_IJMatrix *) matrix;
+   nalu_hypre_IJMatrix *ijmatrix = (nalu_hypre_IJMatrix *) matrix;
 
    if (!ijmatrix)
    {
-      hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC,
-                        "Variable ijmatrix is NULL -- hypre_IJMatrixGetColPartitioning\n");
-      return hypre_error_flag;
+      nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC,
+                        "Variable ijmatrix is NULL -- nalu_hypre_IJMatrixGetColPartitioning\n");
+      return nalu_hypre_error_flag;
    }
 
-   if ( hypre_IJMatrixColPartitioning(ijmatrix))
+   if ( nalu_hypre_IJMatrixColPartitioning(ijmatrix))
    {
-      *col_partitioning = hypre_IJMatrixColPartitioning(ijmatrix);
+      *col_partitioning = nalu_hypre_IJMatrixColPartitioning(ijmatrix);
    }
    else
    {
-      hypre_error(NALU_HYPRE_ERROR_GENERIC);
-      return hypre_error_flag;
+      nalu_hypre_error(NALU_HYPRE_ERROR_GENERIC);
+      return nalu_hypre_error_flag;
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 /*--------------------------------------------------------------------------
- * hypre_IJMatrixSetObject
+ * nalu_hypre_IJMatrixSetObject
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_IJMatrixSetObject( NALU_HYPRE_IJMatrix  matrix,
+nalu_hypre_IJMatrixSetObject( NALU_HYPRE_IJMatrix  matrix,
                          void           *object )
 {
-   hypre_IJMatrix *ijmatrix = (hypre_IJMatrix *) matrix;
+   nalu_hypre_IJMatrix *ijmatrix = (nalu_hypre_IJMatrix *) matrix;
 
-   if (hypre_IJMatrixObject(ijmatrix) != NULL)
+   if (nalu_hypre_IJMatrixObject(ijmatrix) != NULL)
    {
-      /*hypre_printf("Referencing a new IJMatrix object can orphan an old -- ");
-      hypre_printf("hypre_IJMatrixSetObject\n");*/
-      hypre_error(NALU_HYPRE_ERROR_GENERIC);
-      return hypre_error_flag;
+      /*nalu_hypre_printf("Referencing a new IJMatrix object can orphan an old -- ");
+      nalu_hypre_printf("nalu_hypre_IJMatrixSetObject\n");*/
+      nalu_hypre_error(NALU_HYPRE_ERROR_GENERIC);
+      return nalu_hypre_error_flag;
    }
 
-   hypre_IJMatrixObject(ijmatrix) = object;
+   nalu_hypre_IJMatrixObject(ijmatrix) = object;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_IJMatrixRead: Read from file, HYPRE's IJ format or MM format
+ * nalu_hypre_IJMatrixRead: Read from file, HYPRE's IJ format or MM format
  * create IJMatrix on host memory
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_IJMatrixRead( const char     *filename,
+nalu_hypre_IJMatrixRead( const char     *filename,
                     MPI_Comm        comm,
                     NALU_HYPRE_Int       type,
                     NALU_HYPRE_IJMatrix *matrix_ptr,
@@ -135,21 +135,21 @@ hypre_IJMatrixRead( const char     *filename,
    char            new_filename[255];
    FILE           *file;
 
-   hypre_MPI_Comm_rank(comm, &myid);
+   nalu_hypre_MPI_Comm_rank(comm, &myid);
 
    if (is_mm)
    {
-      hypre_sprintf(new_filename, "%s", filename);
+      nalu_hypre_sprintf(new_filename, "%s", filename);
    }
    else
    {
-      hypre_sprintf(new_filename, "%s.%05d", filename, myid);
+      nalu_hypre_sprintf(new_filename, "%s.%05d", filename, myid);
    }
 
    if ((file = fopen(new_filename, "r")) == NULL)
    {
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
 
    if (is_mm)
@@ -157,35 +157,35 @@ hypre_IJMatrixRead( const char     *filename,
       MM_typecode matcode;
       NALU_HYPRE_Int nrow, ncol, nnz;
 
-      if (hypre_mm_read_banner(file, &matcode) != 0)
+      if (nalu_hypre_mm_read_banner(file, &matcode) != 0)
       {
-         hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "Could not process Matrix Market banner.");
-         return hypre_error_flag;
+         nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "Could not process Matrix Market banner.");
+         return nalu_hypre_error_flag;
       }
 
-      if (!hypre_mm_is_valid(matcode))
+      if (!nalu_hypre_mm_is_valid(matcode))
       {
-         hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "Invalid Matrix Market file.");
-         return hypre_error_flag;
+         nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "Invalid Matrix Market file.");
+         return nalu_hypre_error_flag;
       }
 
-      if ( !( (hypre_mm_is_real(matcode) || hypre_mm_is_integer(matcode)) &&
-              hypre_mm_is_coordinate(matcode) && hypre_mm_is_sparse(matcode) ) )
+      if ( !( (nalu_hypre_mm_is_real(matcode) || nalu_hypre_mm_is_integer(matcode)) &&
+              nalu_hypre_mm_is_coordinate(matcode) && nalu_hypre_mm_is_sparse(matcode) ) )
       {
-         hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC,
+         nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC,
                            "Only sparse real-valued/integer coordinate matrices are supported");
-         return hypre_error_flag;
+         return nalu_hypre_error_flag;
       }
 
-      if (hypre_mm_is_symmetric(matcode))
+      if (nalu_hypre_mm_is_symmetric(matcode))
       {
          isSym = 1;
       }
 
-      if (hypre_mm_read_mtx_crd_size(file, &nrow, &ncol, &nnz) != 0)
+      if (nalu_hypre_mm_read_mtx_crd_size(file, &nrow, &ncol, &nnz) != 0)
       {
-         hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "MM read size error !");
-         return hypre_error_flag;
+         nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "MM read size error !");
+         return nalu_hypre_error_flag;
       }
 
       ilower = 0;
@@ -195,7 +195,7 @@ hypre_IJMatrixRead( const char     *filename,
    }
    else
    {
-      hypre_fscanf(file, "%b %b %b %b", &ilower, &iupper, &jlower, &jupper);
+      nalu_hypre_fscanf(file, "%b %b %b %b", &ilower, &iupper, &jlower, &jupper);
    }
 
    NALU_HYPRE_IJMatrixCreate(comm, ilower, iupper, jlower, jupper, &matrix);
@@ -207,12 +207,12 @@ hypre_IJMatrixRead( const char     *filename,
    /* It is important to ensure that whitespace follows the index value to help
     * catch mistakes in the input file.  See comments in IJVectorRead(). */
    ncols = 1;
-   while ( (ret = hypre_fscanf(file, "%b %b%*[ \t]%le", &I, &J, &value)) != EOF )
+   while ( (ret = nalu_hypre_fscanf(file, "%b %b%*[ \t]%le", &I, &J, &value)) != EOF )
    {
       if (ret != 3)
       {
-         hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "Error in IJ matrix input file.");
-         return hypre_error_flag;
+         nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "Error in IJ matrix input file.");
+         return nalu_hypre_error_flag;
       }
 
       if (is_mm)
@@ -249,6 +249,6 @@ hypre_IJMatrixRead( const char     *filename,
 
    *matrix_ptr = matrix;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 

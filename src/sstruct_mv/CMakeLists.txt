@@ -5,7 +5,7 @@
 
 set(HDRS
   NALU_HYPRE_sstruct_mv.h
-  _hypre_sstruct_mv.h
+  _nalu_hypre_sstruct_mv.h
 )
 
 set(SRCS

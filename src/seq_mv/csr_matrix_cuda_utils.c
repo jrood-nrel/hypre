@@ -6,7 +6,7 @@
  ******************************************************************************/
 
 #include "seq_mv.h"
-#include "_hypre_utilities.hpp"
+#include "_nalu_hypre_utilities.hpp"
 #include "seq_mv.hpp"
 
 #if defined(NALU_HYPRE_USING_CUSPARSE)
@@ -23,7 +23,7 @@
  * @return Descriptor
  */
 cusparseSpMatDescr_t
-hypre_CSRMatrixToCusparseSpMat_core( NALU_HYPRE_Int      n,
+nalu_hypre_CSRMatrixToCusparseSpMat_core( NALU_HYPRE_Int      n,
                                      NALU_HYPRE_Int      m,
                                      NALU_HYPRE_Int      offset,
                                      NALU_HYPRE_Int      nnz,
@@ -31,16 +31,16 @@ hypre_CSRMatrixToCusparseSpMat_core( NALU_HYPRE_Int      n,
                                      NALU_HYPRE_Int     *j,
                                      NALU_HYPRE_Complex *data)
 {
-   const cudaDataType        data_type  = hypre_HYPREComplexToCudaDataType();
-   const cusparseIndexType_t index_type = hypre_HYPREIntToCusparseIndexType();
+   const cudaDataType        data_type  = nalu_hypre_HYPREComplexToCudaDataType();
+   const cusparseIndexType_t index_type = nalu_hypre_HYPREIntToCusparseIndexType();
    const cusparseIndexBase_t index_base = CUSPARSE_INDEX_BASE_ZERO;
 
    cusparseSpMatDescr_t matA;
 
    /*
-   hypre_assert( (hypre_CSRMatrixNumRows(A) - offset != 0) &&
-                 (hypre_CSRMatrixNumCols(A) != 0) &&
-                 (hypre_CSRMatrixNumNonzeros(A) != 0) &&
+   nalu_hypre_assert( (nalu_hypre_CSRMatrixNumRows(A) - offset != 0) &&
+                 (nalu_hypre_CSRMatrixNumCols(A) != 0) &&
+                 (nalu_hypre_CSRMatrixNumNonzeros(A) != 0) &&
                  "Matrix has no nonzeros");
    */
 
@@ -60,63 +60,63 @@ hypre_CSRMatrixToCusparseSpMat_core( NALU_HYPRE_Int      n,
 }
 
 /*
- * @brief Creates a cuSPARSE CSR descriptor from a hypre_CSRMatrix
- * @param[in] *A Pointer to hypre_CSRMatrix
+ * @brief Creates a cuSPARSE CSR descriptor from a nalu_hypre_CSRMatrix
+ * @param[in] *A Pointer to nalu_hypre_CSRMatrix
  * @param[in] offset Row offset
  * @return cuSPARSE CSR Descriptor
  * @warning Assumes CSRMatrix has base 0
  */
 cusparseSpMatDescr_t
-hypre_CSRMatrixToCusparseSpMat(const hypre_CSRMatrix *A,
+nalu_hypre_CSRMatrixToCusparseSpMat(const nalu_hypre_CSRMatrix *A,
                                NALU_HYPRE_Int        offset)
 {
-   return hypre_CSRMatrixToCusparseSpMat_core( hypre_CSRMatrixNumRows(A),
-                                               hypre_CSRMatrixNumCols(A),
+   return nalu_hypre_CSRMatrixToCusparseSpMat_core( nalu_hypre_CSRMatrixNumRows(A),
+                                               nalu_hypre_CSRMatrixNumCols(A),
                                                offset,
-                                               hypre_CSRMatrixNumNonzeros(A),
-                                               hypre_CSRMatrixI(A),
-                                               hypre_CSRMatrixJ(A),
-                                               hypre_CSRMatrixData(A) );
+                                               nalu_hypre_CSRMatrixNumNonzeros(A),
+                                               nalu_hypre_CSRMatrixI(A),
+                                               nalu_hypre_CSRMatrixJ(A),
+                                               nalu_hypre_CSRMatrixData(A) );
 }
 
 /*
- * @brief Creates a cuSPARSE dense vector descriptor from a hypre_Vector
- * @param[in] *x Pointer to a hypre_Vector
+ * @brief Creates a cuSPARSE dense vector descriptor from a nalu_hypre_Vector
+ * @param[in] *x Pointer to a nalu_hypre_Vector
  * @param[in] offset Row offset
  * @return cuSPARSE dense vector descriptor
  * @warning Assumes CSRMatrix uses doubles for values
  */
 cusparseDnVecDescr_t
-hypre_VectorToCusparseDnVec(const hypre_Vector *x,
+nalu_hypre_VectorToCusparseDnVec(const nalu_hypre_Vector *x,
                             NALU_HYPRE_Int     offset,
                             NALU_HYPRE_Int     size_override)
 {
-   const cudaDataType data_type = hypre_HYPREComplexToCudaDataType();
+   const cudaDataType data_type = nalu_hypre_HYPREComplexToCudaDataType();
 
    cusparseDnVecDescr_t vecX;
 
    NALU_HYPRE_CUSPARSE_CALL( cusparseCreateDnVec(&vecX,
-                                            size_override >= 0 ? size_override : hypre_VectorSize(x) - offset,
-                                            hypre_VectorData(x) + offset,
+                                            size_override >= 0 ? size_override : nalu_hypre_VectorSize(x) - offset,
+                                            nalu_hypre_VectorData(x) + offset,
                                             data_type) );
    return vecX;
 }
 
 /*
- * @brief Creates a cuSPARSE dense matrix descriptor from a hypre_Vector
- * @param[in] *x Pointer to a hypre_Vector
+ * @brief Creates a cuSPARSE dense matrix descriptor from a nalu_hypre_Vector
+ * @param[in] *x Pointer to a nalu_hypre_Vector
  * @return cuSPARSE dense matrix descriptor
  * @warning Assumes CSRMatrix uses doubles for values
  */
 cusparseDnMatDescr_t
-hypre_VectorToCusparseDnMat(const hypre_Vector *x)
+nalu_hypre_VectorToCusparseDnMat(const nalu_hypre_Vector *x)
 {
-   NALU_HYPRE_Int             storage = hypre_VectorMultiVecStorageMethod(x);
-   NALU_HYPRE_Int             num_vectors = hypre_VectorNumVectors(x);
-   NALU_HYPRE_Int             size = hypre_VectorSize(x);
-   NALU_HYPRE_Complex        *data = hypre_VectorData(x);
+   NALU_HYPRE_Int             storage = nalu_hypre_VectorMultiVecStorageMethod(x);
+   NALU_HYPRE_Int             num_vectors = nalu_hypre_VectorNumVectors(x);
+   NALU_HYPRE_Int             size = nalu_hypre_VectorSize(x);
+   NALU_HYPRE_Complex        *data = nalu_hypre_VectorData(x);
 
-   cudaDataType          data_type = hypre_HYPREComplexToCudaDataType();
+   cudaDataType          data_type = nalu_hypre_HYPREComplexToCudaDataType();
    cusparseDnMatDescr_t  matX;
 
    NALU_HYPRE_CUSPARSE_CALL( cusparseCreateDnMat(&matX,

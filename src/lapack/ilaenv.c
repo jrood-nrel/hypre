@@ -6,7 +6,7 @@ extern "C" {
 #endif
 
 #include "f2c.h"
-#include "hypre_lapack.h"
+#include "nalu_hypre_lapack.h"
 
 integer ilaenv_(integer *ispec,const char *name__,const char *opts, integer *n1,
 	integer *n2, integer *n3, integer *n4, ftnlen name_len, ftnlen

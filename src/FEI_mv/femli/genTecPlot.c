@@ -31,7 +31,7 @@ main(int argc, char **argv)
       exit(1);
    }
    fscanf(fp,"%d %d", &nrows, &ncols);
-   eVec = hypre_TAlloc(double, nrows*ncols, NALU_HYPRE_MEMORY_HOST);
+   eVec = nalu_hypre_TAlloc(double, nrows*ncols, NALU_HYPRE_MEMORY_HOST);
    for (i = 0; i < nrows; i++)
       for (j = 0; j < ncols; j++) fscanf(fp,"%lg", &eVec[i+j*nrows]);
    fclose(fp);
@@ -45,7 +45,7 @@ main(int argc, char **argv)
       exit(1);
    }
    fscanf(fp,"%d", &nElems);
-   elemNodeList = hypre_TAlloc(int, nElems*8, NALU_HYPRE_MEMORY_HOST);
+   elemNodeList = nalu_hypre_TAlloc(int, nElems*8, NALU_HYPRE_MEMORY_HOST);
    ncnt = 0;
    for (i = 0; i < nElems; i++)
    {
@@ -68,7 +68,7 @@ main(int argc, char **argv)
       exit(1);
    }
    fscanf(fp,"%d", &nNodes);
-   nodalCoord = hypre_TAlloc(double, nNodes*3, NALU_HYPRE_MEMORY_HOST);
+   nodalCoord = nalu_hypre_TAlloc(double, nNodes*3, NALU_HYPRE_MEMORY_HOST);
    ncnt = 0;
    for (i = 0; i < nNodes; i++)
    {

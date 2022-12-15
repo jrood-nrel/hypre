@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_parcsr_mv.h"
+#include "_nalu_hypre_parcsr_mv.h"
 
 /*==========================================================================*/
 
@@ -39,297 +39,297 @@ static CommPkgJobType getJobTypeOf(NALU_HYPRE_Int job)
 }
 
 /*------------------------------------------------------------------
- * hypre_ParCSRPersistentCommHandleCreate
+ * nalu_hypre_ParCSRPersistentCommHandleCreate
  *
  * When send_data and recv_data are NULL, buffers are internally
  * allocated and CommHandle owns the buffer
  *------------------------------------------------------------------*/
 
-hypre_ParCSRPersistentCommHandle*
-hypre_ParCSRPersistentCommHandleCreate( NALU_HYPRE_Int job, hypre_ParCSRCommPkg *comm_pkg )
+nalu_hypre_ParCSRPersistentCommHandle*
+nalu_hypre_ParCSRPersistentCommHandleCreate( NALU_HYPRE_Int job, nalu_hypre_ParCSRCommPkg *comm_pkg )
 {
    NALU_HYPRE_Int i;
    size_t num_bytes_send, num_bytes_recv;
 
-   hypre_ParCSRPersistentCommHandle *comm_handle = hypre_CTAlloc(hypre_ParCSRPersistentCommHandle, 1,
+   nalu_hypre_ParCSRPersistentCommHandle *comm_handle = nalu_hypre_CTAlloc(nalu_hypre_ParCSRPersistentCommHandle, 1,
                                                                  NALU_HYPRE_MEMORY_HOST);
 
    CommPkgJobType job_type = getJobTypeOf(job);
 
-   NALU_HYPRE_Int num_sends = hypre_ParCSRCommPkgNumSends(comm_pkg);
-   NALU_HYPRE_Int num_recvs = hypre_ParCSRCommPkgNumRecvs(comm_pkg);
-   MPI_Comm  comm      = hypre_ParCSRCommPkgComm(comm_pkg);
+   NALU_HYPRE_Int num_sends = nalu_hypre_ParCSRCommPkgNumSends(comm_pkg);
+   NALU_HYPRE_Int num_recvs = nalu_hypre_ParCSRCommPkgNumRecvs(comm_pkg);
+   MPI_Comm  comm      = nalu_hypre_ParCSRCommPkgComm(comm_pkg);
 
    NALU_HYPRE_Int num_requests = num_sends + num_recvs;
-   hypre_MPI_Request *requests = hypre_CTAlloc(hypre_MPI_Request, num_requests, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_MPI_Request *requests = nalu_hypre_CTAlloc(nalu_hypre_MPI_Request, num_requests, NALU_HYPRE_MEMORY_HOST);
 
-   hypre_ParCSRCommHandleNumRequests(comm_handle) = num_requests;
-   hypre_ParCSRCommHandleRequests(comm_handle)    = requests;
+   nalu_hypre_ParCSRCommHandleNumRequests(comm_handle) = num_requests;
+   nalu_hypre_ParCSRCommHandleRequests(comm_handle)    = requests;
 
    void *send_buff = NULL, *recv_buff = NULL;
 
    switch (job_type)
    {
       case NALU_HYPRE_COMM_PKG_JOB_COMPLEX:
-         num_bytes_send = sizeof(NALU_HYPRE_Complex) * hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends);
-         num_bytes_recv = sizeof(NALU_HYPRE_Complex) * hypre_ParCSRCommPkgRecvVecStart(comm_pkg, num_recvs);
-         send_buff = hypre_TAlloc(NALU_HYPRE_Complex, hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends),
+         num_bytes_send = sizeof(NALU_HYPRE_Complex) * nalu_hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends);
+         num_bytes_recv = sizeof(NALU_HYPRE_Complex) * nalu_hypre_ParCSRCommPkgRecvVecStart(comm_pkg, num_recvs);
+         send_buff = nalu_hypre_TAlloc(NALU_HYPRE_Complex, nalu_hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends),
                                   NALU_HYPRE_MEMORY_HOST);
-         recv_buff = hypre_TAlloc(NALU_HYPRE_Complex, hypre_ParCSRCommPkgRecvVecStart(comm_pkg, num_recvs),
+         recv_buff = nalu_hypre_TAlloc(NALU_HYPRE_Complex, nalu_hypre_ParCSRCommPkgRecvVecStart(comm_pkg, num_recvs),
                                   NALU_HYPRE_MEMORY_HOST);
          for (i = 0; i < num_recvs; ++i)
          {
-            NALU_HYPRE_Int ip = hypre_ParCSRCommPkgRecvProc(comm_pkg, i);
-            NALU_HYPRE_Int vec_start = hypre_ParCSRCommPkgRecvVecStart(comm_pkg, i);
-            NALU_HYPRE_Int vec_len = hypre_ParCSRCommPkgRecvVecStart(comm_pkg, i + 1) - vec_start;
-            hypre_MPI_Recv_init( (NALU_HYPRE_Complex *)recv_buff + vec_start, vec_len, NALU_HYPRE_MPI_COMPLEX,
+            NALU_HYPRE_Int ip = nalu_hypre_ParCSRCommPkgRecvProc(comm_pkg, i);
+            NALU_HYPRE_Int vec_start = nalu_hypre_ParCSRCommPkgRecvVecStart(comm_pkg, i);
+            NALU_HYPRE_Int vec_len = nalu_hypre_ParCSRCommPkgRecvVecStart(comm_pkg, i + 1) - vec_start;
+            nalu_hypre_MPI_Recv_init( (NALU_HYPRE_Complex *)recv_buff + vec_start, vec_len, NALU_HYPRE_MPI_COMPLEX,
                                  ip, 0, comm, requests + i );
          }
          for (i = 0; i < num_sends; ++i)
          {
-            NALU_HYPRE_Int ip = hypre_ParCSRCommPkgSendProc(comm_pkg, i);
-            NALU_HYPRE_Int vec_start = hypre_ParCSRCommPkgSendMapStart(comm_pkg, i);
-            NALU_HYPRE_Int vec_len = hypre_ParCSRCommPkgSendMapStart(comm_pkg, i + 1) - vec_start;
-            hypre_MPI_Send_init( (NALU_HYPRE_Complex *)send_buff + vec_start, vec_len, NALU_HYPRE_MPI_COMPLEX,
+            NALU_HYPRE_Int ip = nalu_hypre_ParCSRCommPkgSendProc(comm_pkg, i);
+            NALU_HYPRE_Int vec_start = nalu_hypre_ParCSRCommPkgSendMapStart(comm_pkg, i);
+            NALU_HYPRE_Int vec_len = nalu_hypre_ParCSRCommPkgSendMapStart(comm_pkg, i + 1) - vec_start;
+            nalu_hypre_MPI_Send_init( (NALU_HYPRE_Complex *)send_buff + vec_start, vec_len, NALU_HYPRE_MPI_COMPLEX,
                                  ip, 0, comm, requests + num_recvs + i );
          }
          break;
 
       case NALU_HYPRE_COMM_PKG_JOB_COMPLEX_TRANSPOSE:
-         num_bytes_recv = sizeof(NALU_HYPRE_Complex) * hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends);
-         num_bytes_send = sizeof(NALU_HYPRE_Complex) * hypre_ParCSRCommPkgRecvVecStart(comm_pkg, num_recvs);
-         recv_buff = hypre_TAlloc(NALU_HYPRE_Complex, hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends),
+         num_bytes_recv = sizeof(NALU_HYPRE_Complex) * nalu_hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends);
+         num_bytes_send = sizeof(NALU_HYPRE_Complex) * nalu_hypre_ParCSRCommPkgRecvVecStart(comm_pkg, num_recvs);
+         recv_buff = nalu_hypre_TAlloc(NALU_HYPRE_Complex, nalu_hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends),
                                   NALU_HYPRE_MEMORY_HOST);
-         send_buff = hypre_TAlloc(NALU_HYPRE_Complex, hypre_ParCSRCommPkgRecvVecStart(comm_pkg, num_recvs),
+         send_buff = nalu_hypre_TAlloc(NALU_HYPRE_Complex, nalu_hypre_ParCSRCommPkgRecvVecStart(comm_pkg, num_recvs),
                                   NALU_HYPRE_MEMORY_HOST);
          for (i = 0; i < num_sends; ++i)
          {
-            NALU_HYPRE_Int ip = hypre_ParCSRCommPkgSendProc(comm_pkg, i);
-            NALU_HYPRE_Int vec_start = hypre_ParCSRCommPkgSendMapStart(comm_pkg, i);
-            NALU_HYPRE_Int vec_len = hypre_ParCSRCommPkgSendMapStart(comm_pkg, i + 1) - vec_start;
-            hypre_MPI_Recv_init( (NALU_HYPRE_Complex *)recv_buff + vec_start, vec_len, NALU_HYPRE_MPI_COMPLEX,
+            NALU_HYPRE_Int ip = nalu_hypre_ParCSRCommPkgSendProc(comm_pkg, i);
+            NALU_HYPRE_Int vec_start = nalu_hypre_ParCSRCommPkgSendMapStart(comm_pkg, i);
+            NALU_HYPRE_Int vec_len = nalu_hypre_ParCSRCommPkgSendMapStart(comm_pkg, i + 1) - vec_start;
+            nalu_hypre_MPI_Recv_init( (NALU_HYPRE_Complex *)recv_buff + vec_start, vec_len, NALU_HYPRE_MPI_COMPLEX,
                                  ip, 0, comm, requests + i );
          }
          for (i = 0; i < num_recvs; ++i)
          {
-            NALU_HYPRE_Int ip = hypre_ParCSRCommPkgRecvProc(comm_pkg, i);
-            NALU_HYPRE_Int vec_start = hypre_ParCSRCommPkgRecvVecStart(comm_pkg, i);
-            NALU_HYPRE_Int vec_len = hypre_ParCSRCommPkgRecvVecStart(comm_pkg, i + 1) - vec_start;
-            hypre_MPI_Send_init( (NALU_HYPRE_Complex *)send_buff + vec_start, vec_len, NALU_HYPRE_MPI_COMPLEX,
+            NALU_HYPRE_Int ip = nalu_hypre_ParCSRCommPkgRecvProc(comm_pkg, i);
+            NALU_HYPRE_Int vec_start = nalu_hypre_ParCSRCommPkgRecvVecStart(comm_pkg, i);
+            NALU_HYPRE_Int vec_len = nalu_hypre_ParCSRCommPkgRecvVecStart(comm_pkg, i + 1) - vec_start;
+            nalu_hypre_MPI_Send_init( (NALU_HYPRE_Complex *)send_buff + vec_start, vec_len, NALU_HYPRE_MPI_COMPLEX,
                                  ip, 0, comm, requests + num_sends + i );
          }
          break;
 
       case NALU_HYPRE_COMM_PKG_JOB_INT:
-         num_bytes_send = sizeof(NALU_HYPRE_Int) * hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends);
-         num_bytes_recv = sizeof(NALU_HYPRE_Int) * hypre_ParCSRCommPkgRecvVecStart(comm_pkg, num_recvs);
-         send_buff = hypre_TAlloc(NALU_HYPRE_Int, hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends),
+         num_bytes_send = sizeof(NALU_HYPRE_Int) * nalu_hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends);
+         num_bytes_recv = sizeof(NALU_HYPRE_Int) * nalu_hypre_ParCSRCommPkgRecvVecStart(comm_pkg, num_recvs);
+         send_buff = nalu_hypre_TAlloc(NALU_HYPRE_Int, nalu_hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends),
                                   NALU_HYPRE_MEMORY_HOST);
-         recv_buff = hypre_TAlloc(NALU_HYPRE_Int, hypre_ParCSRCommPkgRecvVecStart(comm_pkg, num_recvs),
+         recv_buff = nalu_hypre_TAlloc(NALU_HYPRE_Int, nalu_hypre_ParCSRCommPkgRecvVecStart(comm_pkg, num_recvs),
                                   NALU_HYPRE_MEMORY_HOST);
          for (i = 0; i < num_recvs; ++i)
          {
-            NALU_HYPRE_Int ip = hypre_ParCSRCommPkgRecvProc(comm_pkg, i);
-            NALU_HYPRE_Int vec_start = hypre_ParCSRCommPkgRecvVecStart(comm_pkg, i);
-            NALU_HYPRE_Int vec_len = hypre_ParCSRCommPkgRecvVecStart(comm_pkg, i + 1) - vec_start;
-            hypre_MPI_Recv_init( (NALU_HYPRE_Int *)recv_buff + vec_start, vec_len, NALU_HYPRE_MPI_INT,
+            NALU_HYPRE_Int ip = nalu_hypre_ParCSRCommPkgRecvProc(comm_pkg, i);
+            NALU_HYPRE_Int vec_start = nalu_hypre_ParCSRCommPkgRecvVecStart(comm_pkg, i);
+            NALU_HYPRE_Int vec_len = nalu_hypre_ParCSRCommPkgRecvVecStart(comm_pkg, i + 1) - vec_start;
+            nalu_hypre_MPI_Recv_init( (NALU_HYPRE_Int *)recv_buff + vec_start, vec_len, NALU_HYPRE_MPI_INT,
                                  ip, 0, comm, requests + i );
          }
          for (i = 0; i < num_sends; ++i)
          {
-            NALU_HYPRE_Int ip = hypre_ParCSRCommPkgSendProc(comm_pkg, i);
-            NALU_HYPRE_Int vec_start = hypre_ParCSRCommPkgSendMapStart(comm_pkg, i);
-            NALU_HYPRE_Int vec_len = hypre_ParCSRCommPkgSendMapStart(comm_pkg, i + 1) - vec_start;
-            hypre_MPI_Send_init( (NALU_HYPRE_Int *)send_buff + vec_start, vec_len, NALU_HYPRE_MPI_INT,
+            NALU_HYPRE_Int ip = nalu_hypre_ParCSRCommPkgSendProc(comm_pkg, i);
+            NALU_HYPRE_Int vec_start = nalu_hypre_ParCSRCommPkgSendMapStart(comm_pkg, i);
+            NALU_HYPRE_Int vec_len = nalu_hypre_ParCSRCommPkgSendMapStart(comm_pkg, i + 1) - vec_start;
+            nalu_hypre_MPI_Send_init( (NALU_HYPRE_Int *)send_buff + vec_start, vec_len, NALU_HYPRE_MPI_INT,
                                  ip, 0, comm, requests + num_recvs + i );
          }
          break;
 
       case NALU_HYPRE_COMM_PKG_JOB_INT_TRANSPOSE:
-         num_bytes_recv = sizeof(NALU_HYPRE_Int) * hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends);
-         num_bytes_send = sizeof(NALU_HYPRE_Int) * hypre_ParCSRCommPkgRecvVecStart(comm_pkg, num_recvs);
-         recv_buff = hypre_TAlloc(NALU_HYPRE_Int, hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends),
+         num_bytes_recv = sizeof(NALU_HYPRE_Int) * nalu_hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends);
+         num_bytes_send = sizeof(NALU_HYPRE_Int) * nalu_hypre_ParCSRCommPkgRecvVecStart(comm_pkg, num_recvs);
+         recv_buff = nalu_hypre_TAlloc(NALU_HYPRE_Int, nalu_hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends),
                                   NALU_HYPRE_MEMORY_HOST);
-         send_buff = hypre_TAlloc(NALU_HYPRE_Int, hypre_ParCSRCommPkgRecvVecStart(comm_pkg, num_recvs),
+         send_buff = nalu_hypre_TAlloc(NALU_HYPRE_Int, nalu_hypre_ParCSRCommPkgRecvVecStart(comm_pkg, num_recvs),
                                   NALU_HYPRE_MEMORY_HOST);
          for (i = 0; i < num_sends; ++i)
          {
-            NALU_HYPRE_Int ip = hypre_ParCSRCommPkgSendProc(comm_pkg, i);
-            NALU_HYPRE_Int vec_start = hypre_ParCSRCommPkgSendMapStart(comm_pkg, i);
-            NALU_HYPRE_Int vec_len = hypre_ParCSRCommPkgSendMapStart(comm_pkg, i + 1) - vec_start;
-            hypre_MPI_Recv_init( (NALU_HYPRE_Int *)recv_buff + vec_start, vec_len, NALU_HYPRE_MPI_INT,
+            NALU_HYPRE_Int ip = nalu_hypre_ParCSRCommPkgSendProc(comm_pkg, i);
+            NALU_HYPRE_Int vec_start = nalu_hypre_ParCSRCommPkgSendMapStart(comm_pkg, i);
+            NALU_HYPRE_Int vec_len = nalu_hypre_ParCSRCommPkgSendMapStart(comm_pkg, i + 1) - vec_start;
+            nalu_hypre_MPI_Recv_init( (NALU_HYPRE_Int *)recv_buff + vec_start, vec_len, NALU_HYPRE_MPI_INT,
                                  ip, 0, comm, requests + i );
          }
          for (i = 0; i < num_recvs; ++i)
          {
-            NALU_HYPRE_Int ip = hypre_ParCSRCommPkgRecvProc(comm_pkg, i);
-            NALU_HYPRE_Int vec_start = hypre_ParCSRCommPkgRecvVecStart(comm_pkg, i);
-            NALU_HYPRE_Int vec_len = hypre_ParCSRCommPkgRecvVecStart(comm_pkg, i + 1) - vec_start;
-            hypre_MPI_Send_init( (NALU_HYPRE_Int *)send_buff + vec_start, vec_len, NALU_HYPRE_MPI_INT,
+            NALU_HYPRE_Int ip = nalu_hypre_ParCSRCommPkgRecvProc(comm_pkg, i);
+            NALU_HYPRE_Int vec_start = nalu_hypre_ParCSRCommPkgRecvVecStart(comm_pkg, i);
+            NALU_HYPRE_Int vec_len = nalu_hypre_ParCSRCommPkgRecvVecStart(comm_pkg, i + 1) - vec_start;
+            nalu_hypre_MPI_Send_init( (NALU_HYPRE_Int *)send_buff + vec_start, vec_len, NALU_HYPRE_MPI_INT,
                                  ip, 0, comm, requests + num_sends + i );
          }
          break;
 
       case NALU_HYPRE_COMM_PKG_JOB_BIGINT:
-         num_bytes_send = sizeof(NALU_HYPRE_BigInt) * hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends);
-         num_bytes_recv = sizeof(NALU_HYPRE_BigInt) * hypre_ParCSRCommPkgRecvVecStart(comm_pkg, num_recvs);
-         send_buff = hypre_TAlloc(NALU_HYPRE_BigInt, hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends),
+         num_bytes_send = sizeof(NALU_HYPRE_BigInt) * nalu_hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends);
+         num_bytes_recv = sizeof(NALU_HYPRE_BigInt) * nalu_hypre_ParCSRCommPkgRecvVecStart(comm_pkg, num_recvs);
+         send_buff = nalu_hypre_TAlloc(NALU_HYPRE_BigInt, nalu_hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends),
                                   NALU_HYPRE_MEMORY_HOST);
-         recv_buff = hypre_TAlloc(NALU_HYPRE_BigInt, hypre_ParCSRCommPkgRecvVecStart(comm_pkg, num_recvs),
+         recv_buff = nalu_hypre_TAlloc(NALU_HYPRE_BigInt, nalu_hypre_ParCSRCommPkgRecvVecStart(comm_pkg, num_recvs),
                                   NALU_HYPRE_MEMORY_HOST);
          for (i = 0; i < num_recvs; ++i)
          {
-            NALU_HYPRE_Int ip = hypre_ParCSRCommPkgRecvProc(comm_pkg, i);
-            NALU_HYPRE_Int vec_start = hypre_ParCSRCommPkgRecvVecStart(comm_pkg, i);
-            NALU_HYPRE_Int vec_len = hypre_ParCSRCommPkgRecvVecStart(comm_pkg, i + 1) - vec_start;
-            hypre_MPI_Recv_init( (NALU_HYPRE_BigInt *)recv_buff + (NALU_HYPRE_BigInt)vec_start, vec_len,
+            NALU_HYPRE_Int ip = nalu_hypre_ParCSRCommPkgRecvProc(comm_pkg, i);
+            NALU_HYPRE_Int vec_start = nalu_hypre_ParCSRCommPkgRecvVecStart(comm_pkg, i);
+            NALU_HYPRE_Int vec_len = nalu_hypre_ParCSRCommPkgRecvVecStart(comm_pkg, i + 1) - vec_start;
+            nalu_hypre_MPI_Recv_init( (NALU_HYPRE_BigInt *)recv_buff + (NALU_HYPRE_BigInt)vec_start, vec_len,
                                  NALU_HYPRE_MPI_BIG_INT,
                                  ip, 0, comm, requests + i );
          }
          for (i = 0; i < num_sends; ++i)
          {
-            NALU_HYPRE_Int ip = hypre_ParCSRCommPkgSendProc(comm_pkg, i);
-            NALU_HYPRE_Int vec_start = hypre_ParCSRCommPkgSendMapStart(comm_pkg, i);
-            NALU_HYPRE_Int vec_len = hypre_ParCSRCommPkgSendMapStart(comm_pkg, i + 1) - vec_start;
-            hypre_MPI_Send_init( (NALU_HYPRE_BigInt *)send_buff + (NALU_HYPRE_BigInt)vec_start, vec_len,
+            NALU_HYPRE_Int ip = nalu_hypre_ParCSRCommPkgSendProc(comm_pkg, i);
+            NALU_HYPRE_Int vec_start = nalu_hypre_ParCSRCommPkgSendMapStart(comm_pkg, i);
+            NALU_HYPRE_Int vec_len = nalu_hypre_ParCSRCommPkgSendMapStart(comm_pkg, i + 1) - vec_start;
+            nalu_hypre_MPI_Send_init( (NALU_HYPRE_BigInt *)send_buff + (NALU_HYPRE_BigInt)vec_start, vec_len,
                                  NALU_HYPRE_MPI_BIG_INT,
                                  ip, 0, comm, requests + num_recvs + i);
          }
          break;
 
       case NALU_HYPRE_COMM_PKG_JOB_BIGINT_TRANSPOSE:
-         num_bytes_recv = sizeof(NALU_HYPRE_BigInt) * hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends);
-         num_bytes_send = sizeof(NALU_HYPRE_BigInt) * hypre_ParCSRCommPkgRecvVecStart(comm_pkg, num_recvs);
-         recv_buff = hypre_TAlloc(NALU_HYPRE_BigInt, hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends),
+         num_bytes_recv = sizeof(NALU_HYPRE_BigInt) * nalu_hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends);
+         num_bytes_send = sizeof(NALU_HYPRE_BigInt) * nalu_hypre_ParCSRCommPkgRecvVecStart(comm_pkg, num_recvs);
+         recv_buff = nalu_hypre_TAlloc(NALU_HYPRE_BigInt, nalu_hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends),
                                   NALU_HYPRE_MEMORY_HOST);
-         send_buff = hypre_TAlloc(NALU_HYPRE_BigInt, hypre_ParCSRCommPkgRecvVecStart(comm_pkg, num_recvs),
+         send_buff = nalu_hypre_TAlloc(NALU_HYPRE_BigInt, nalu_hypre_ParCSRCommPkgRecvVecStart(comm_pkg, num_recvs),
                                   NALU_HYPRE_MEMORY_HOST);
          for (i = 0; i < num_sends; ++i)
          {
-            NALU_HYPRE_Int ip = hypre_ParCSRCommPkgSendProc(comm_pkg, i);
-            NALU_HYPRE_Int vec_start = hypre_ParCSRCommPkgSendMapStart(comm_pkg, i);
-            NALU_HYPRE_Int vec_len = hypre_ParCSRCommPkgSendMapStart(comm_pkg, i + 1) - vec_start;
-            hypre_MPI_Recv_init( (NALU_HYPRE_BigInt *)recv_buff + (NALU_HYPRE_BigInt)vec_start, vec_len,
+            NALU_HYPRE_Int ip = nalu_hypre_ParCSRCommPkgSendProc(comm_pkg, i);
+            NALU_HYPRE_Int vec_start = nalu_hypre_ParCSRCommPkgSendMapStart(comm_pkg, i);
+            NALU_HYPRE_Int vec_len = nalu_hypre_ParCSRCommPkgSendMapStart(comm_pkg, i + 1) - vec_start;
+            nalu_hypre_MPI_Recv_init( (NALU_HYPRE_BigInt *)recv_buff + (NALU_HYPRE_BigInt)vec_start, vec_len,
                                  NALU_HYPRE_MPI_BIG_INT,
                                  ip, 0, comm, requests + i );
          }
          for (i = 0; i < num_recvs; ++i)
          {
-            NALU_HYPRE_Int ip = hypre_ParCSRCommPkgRecvProc(comm_pkg, i);
-            NALU_HYPRE_Int vec_start = hypre_ParCSRCommPkgRecvVecStart(comm_pkg, i);
-            NALU_HYPRE_Int vec_len = hypre_ParCSRCommPkgRecvVecStart(comm_pkg, i + 1) - vec_start;
+            NALU_HYPRE_Int ip = nalu_hypre_ParCSRCommPkgRecvProc(comm_pkg, i);
+            NALU_HYPRE_Int vec_start = nalu_hypre_ParCSRCommPkgRecvVecStart(comm_pkg, i);
+            NALU_HYPRE_Int vec_len = nalu_hypre_ParCSRCommPkgRecvVecStart(comm_pkg, i + 1) - vec_start;
 
-            hypre_MPI_Send_init( (NALU_HYPRE_BigInt *)send_buff + (NALU_HYPRE_BigInt)vec_start, vec_len,
+            nalu_hypre_MPI_Send_init( (NALU_HYPRE_BigInt *)send_buff + (NALU_HYPRE_BigInt)vec_start, vec_len,
                                  NALU_HYPRE_MPI_BIG_INT,
                                  ip, 0, comm, requests + num_sends + i);
          }
          break;
       default:
-         hypre_assert(1 == 0);
+         nalu_hypre_assert(1 == 0);
          break;
    } // switch (job_type)
 
-   hypre_ParCSRCommHandleRecvDataBuffer(comm_handle) = recv_buff;
-   hypre_ParCSRCommHandleSendDataBuffer(comm_handle) = send_buff;
-   hypre_ParCSRCommHandleNumSendBytes(comm_handle)   = num_bytes_send;
-   hypre_ParCSRCommHandleNumRecvBytes(comm_handle)   = num_bytes_recv;
+   nalu_hypre_ParCSRCommHandleRecvDataBuffer(comm_handle) = recv_buff;
+   nalu_hypre_ParCSRCommHandleSendDataBuffer(comm_handle) = send_buff;
+   nalu_hypre_ParCSRCommHandleNumSendBytes(comm_handle)   = num_bytes_send;
+   nalu_hypre_ParCSRCommHandleNumRecvBytes(comm_handle)   = num_bytes_recv;
 
    return ( comm_handle );
 }
 
 /*------------------------------------------------------------------
- * hypre_ParCSRCommPkgGetPersistentCommHandle
+ * nalu_hypre_ParCSRCommPkgGetPersistentCommHandle
  *------------------------------------------------------------------*/
 
-hypre_ParCSRPersistentCommHandle*
-hypre_ParCSRCommPkgGetPersistentCommHandle( NALU_HYPRE_Int job, hypre_ParCSRCommPkg *comm_pkg )
+nalu_hypre_ParCSRPersistentCommHandle*
+nalu_hypre_ParCSRCommPkgGetPersistentCommHandle( NALU_HYPRE_Int job, nalu_hypre_ParCSRCommPkg *comm_pkg )
 {
    CommPkgJobType type = getJobTypeOf(job);
    if (!comm_pkg->persistent_comm_handles[type])
    {
       /* data is owned by persistent comm handle */
       comm_pkg->persistent_comm_handles[type] =
-         hypre_ParCSRPersistentCommHandleCreate(job, comm_pkg);
+         nalu_hypre_ParCSRPersistentCommHandleCreate(job, comm_pkg);
    }
 
    return comm_pkg->persistent_comm_handles[type];
 }
 
 /*------------------------------------------------------------------
- * hypre_ParCSRPersistentCommHandleDestroy
+ * nalu_hypre_ParCSRPersistentCommHandleDestroy
  *------------------------------------------------------------------*/
 
 void
-hypre_ParCSRPersistentCommHandleDestroy( hypre_ParCSRPersistentCommHandle *comm_handle )
+nalu_hypre_ParCSRPersistentCommHandleDestroy( nalu_hypre_ParCSRPersistentCommHandle *comm_handle )
 {
    if (comm_handle)
    {
-      hypre_TFree(hypre_ParCSRCommHandleSendDataBuffer(comm_handle), NALU_HYPRE_MEMORY_HOST);
-      hypre_TFree(hypre_ParCSRCommHandleRecvDataBuffer(comm_handle), NALU_HYPRE_MEMORY_HOST);
-      hypre_TFree(comm_handle->requests, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(nalu_hypre_ParCSRCommHandleSendDataBuffer(comm_handle), NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(nalu_hypre_ParCSRCommHandleRecvDataBuffer(comm_handle), NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(comm_handle->requests, NALU_HYPRE_MEMORY_HOST);
 
-      hypre_TFree(comm_handle, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(comm_handle, NALU_HYPRE_MEMORY_HOST);
    }
 }
 
 /*------------------------------------------------------------------
- * hypre_ParCSRPersistentCommHandleStart
+ * nalu_hypre_ParCSRPersistentCommHandleStart
  *------------------------------------------------------------------*/
 
 void
-hypre_ParCSRPersistentCommHandleStart( hypre_ParCSRPersistentCommHandle *comm_handle,
+nalu_hypre_ParCSRPersistentCommHandleStart( nalu_hypre_ParCSRPersistentCommHandle *comm_handle,
                                        NALU_HYPRE_MemoryLocation              send_memory_location,
                                        void                             *send_data )
 {
-   hypre_ParCSRCommHandleSendData(comm_handle) = send_data;
-   hypre_ParCSRCommHandleSendMemoryLocation(comm_handle) = send_memory_location;
+   nalu_hypre_ParCSRCommHandleSendData(comm_handle) = send_data;
+   nalu_hypre_ParCSRCommHandleSendMemoryLocation(comm_handle) = send_memory_location;
 
-   if (hypre_ParCSRCommHandleNumRequests(comm_handle) > 0)
+   if (nalu_hypre_ParCSRCommHandleNumRequests(comm_handle) > 0)
    {
-      hypre_TMemcpy( hypre_ParCSRCommHandleSendDataBuffer(comm_handle),
+      nalu_hypre_TMemcpy( nalu_hypre_ParCSRCommHandleSendDataBuffer(comm_handle),
                      send_data,
                      char,
-                     hypre_ParCSRCommHandleNumSendBytes(comm_handle),
+                     nalu_hypre_ParCSRCommHandleNumSendBytes(comm_handle),
                      NALU_HYPRE_MEMORY_HOST,
                      send_memory_location );
 
-      NALU_HYPRE_Int ret = hypre_MPI_Startall(hypre_ParCSRCommHandleNumRequests(comm_handle),
-                                         hypre_ParCSRCommHandleRequests(comm_handle));
-      if (hypre_MPI_SUCCESS != ret)
+      NALU_HYPRE_Int ret = nalu_hypre_MPI_Startall(nalu_hypre_ParCSRCommHandleNumRequests(comm_handle),
+                                         nalu_hypre_ParCSRCommHandleRequests(comm_handle));
+      if (nalu_hypre_MPI_SUCCESS != ret)
       {
-         hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "MPI error\n");
-         /*hypre_printf("MPI error %d in %s (%s, line %u)\n", ret, __FUNCTION__, __FILE__, __LINE__);*/
+         nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "MPI error\n");
+         /*nalu_hypre_printf("MPI error %d in %s (%s, line %u)\n", ret, __FUNCTION__, __FILE__, __LINE__);*/
       }
    }
 }
 
 /*------------------------------------------------------------------
- * hypre_ParCSRPersistentCommHandleWait
+ * nalu_hypre_ParCSRPersistentCommHandleWait
  *------------------------------------------------------------------*/
 
 void
-hypre_ParCSRPersistentCommHandleWait( hypre_ParCSRPersistentCommHandle *comm_handle,
+nalu_hypre_ParCSRPersistentCommHandleWait( nalu_hypre_ParCSRPersistentCommHandle *comm_handle,
                                       NALU_HYPRE_MemoryLocation              recv_memory_location,
                                       void                             *recv_data )
 {
-   hypre_ParCSRCommHandleRecvData(comm_handle) = recv_data;
-   hypre_ParCSRCommHandleRecvMemoryLocation(comm_handle) = recv_memory_location;
+   nalu_hypre_ParCSRCommHandleRecvData(comm_handle) = recv_data;
+   nalu_hypre_ParCSRCommHandleRecvMemoryLocation(comm_handle) = recv_memory_location;
 
-   if (hypre_ParCSRCommHandleNumRequests(comm_handle) > 0)
+   if (nalu_hypre_ParCSRCommHandleNumRequests(comm_handle) > 0)
    {
-      NALU_HYPRE_Int ret = hypre_MPI_Waitall(hypre_ParCSRCommHandleNumRequests(comm_handle),
-                                        hypre_ParCSRCommHandleRequests(comm_handle),
-                                        hypre_MPI_STATUSES_IGNORE);
-      if (hypre_MPI_SUCCESS != ret)
+      NALU_HYPRE_Int ret = nalu_hypre_MPI_Waitall(nalu_hypre_ParCSRCommHandleNumRequests(comm_handle),
+                                        nalu_hypre_ParCSRCommHandleRequests(comm_handle),
+                                        nalu_hypre_MPI_STATUSES_IGNORE);
+      if (nalu_hypre_MPI_SUCCESS != ret)
       {
-         hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "MPI error\n");
-         /*hypre_printf("MPI error %d in %s (%s, line %u)\n", ret, __FUNCTION__, __FILE__, __LINE__);*/
+         nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "MPI error\n");
+         /*nalu_hypre_printf("MPI error %d in %s (%s, line %u)\n", ret, __FUNCTION__, __FILE__, __LINE__);*/
       }
 
-      hypre_TMemcpy(recv_data,
-                    hypre_ParCSRCommHandleRecvDataBuffer(comm_handle),
+      nalu_hypre_TMemcpy(recv_data,
+                    nalu_hypre_ParCSRCommHandleRecvDataBuffer(comm_handle),
                     char,
-                    hypre_ParCSRCommHandleNumRecvBytes(comm_handle),
+                    nalu_hypre_ParCSRCommHandleNumRecvBytes(comm_handle),
                     recv_memory_location,
                     NALU_HYPRE_MEMORY_HOST);
    }
@@ -337,43 +337,43 @@ hypre_ParCSRPersistentCommHandleWait( hypre_ParCSRPersistentCommHandle *comm_han
 #endif // NALU_HYPRE_USING_PERSISTENT_COMM
 
 /*------------------------------------------------------------------
- * hypre_ParCSRCommHandleCreate
+ * nalu_hypre_ParCSRCommHandleCreate
  *------------------------------------------------------------------*/
 
-hypre_ParCSRCommHandle*
-hypre_ParCSRCommHandleCreate ( NALU_HYPRE_Int            job,
-                               hypre_ParCSRCommPkg *comm_pkg,
+nalu_hypre_ParCSRCommHandle*
+nalu_hypre_ParCSRCommHandleCreate ( NALU_HYPRE_Int            job,
+                               nalu_hypre_ParCSRCommPkg *comm_pkg,
                                void                *send_data,
                                void                *recv_data )
 {
-   return hypre_ParCSRCommHandleCreate_v2(job, comm_pkg, NALU_HYPRE_MEMORY_HOST, send_data,
+   return nalu_hypre_ParCSRCommHandleCreate_v2(job, comm_pkg, NALU_HYPRE_MEMORY_HOST, send_data,
                                           NALU_HYPRE_MEMORY_HOST, recv_data);
 }
 
 /*------------------------------------------------------------------
- * hypre_ParCSRCommHandleCreate_v2
+ * nalu_hypre_ParCSRCommHandleCreate_v2
  *------------------------------------------------------------------*/
 
-hypre_ParCSRCommHandle*
-hypre_ParCSRCommHandleCreate_v2 ( NALU_HYPRE_Int            job,
-                                  hypre_ParCSRCommPkg *comm_pkg,
+nalu_hypre_ParCSRCommHandle*
+nalu_hypre_ParCSRCommHandleCreate_v2 ( NALU_HYPRE_Int            job,
+                                  nalu_hypre_ParCSRCommPkg *comm_pkg,
                                   NALU_HYPRE_MemoryLocation send_memory_location,
                                   void                *send_data_in,
                                   NALU_HYPRE_MemoryLocation recv_memory_location,
                                   void                *recv_data_in )
 {
 #if defined(NALU_HYPRE_USING_NVTX)
-   hypre_GpuProfilingPushRange("hypre_ParCSRCommHandleCreate_v2");
+   nalu_hypre_GpuProfilingPushRange("nalu_hypre_ParCSRCommHandleCreate_v2");
 #endif
 
-   NALU_HYPRE_Int                  num_sends = hypre_ParCSRCommPkgNumSends(comm_pkg);
-   NALU_HYPRE_Int                  num_recvs = hypre_ParCSRCommPkgNumRecvs(comm_pkg);
-   MPI_Comm                   comm      = hypre_ParCSRCommPkgComm(comm_pkg);
+   NALU_HYPRE_Int                  num_sends = nalu_hypre_ParCSRCommPkgNumSends(comm_pkg);
+   NALU_HYPRE_Int                  num_recvs = nalu_hypre_ParCSRCommPkgNumRecvs(comm_pkg);
+   MPI_Comm                   comm      = nalu_hypre_ParCSRCommPkgComm(comm_pkg);
    NALU_HYPRE_Int                  num_send_bytes = 0;
    NALU_HYPRE_Int                  num_recv_bytes = 0;
-   hypre_ParCSRCommHandle    *comm_handle;
+   nalu_hypre_ParCSRCommHandle    *comm_handle;
    NALU_HYPRE_Int                  num_requests;
-   hypre_MPI_Request         *requests;
+   nalu_hypre_MPI_Request         *requests;
    NALU_HYPRE_Int                  i, j;
    NALU_HYPRE_Int                  my_id, num_procs;
    NALU_HYPRE_Int                  ip, vec_start, vec_len;
@@ -381,7 +381,7 @@ hypre_ParCSRCommHandleCreate_v2 ( NALU_HYPRE_Int            job,
    void                      *recv_data;
 
    /*--------------------------------------------------------------------
-    * hypre_Initialize sets up a communication handle,
+    * nalu_hypre_Initialize sets up a communication handle,
     * posts receives and initiates sends. It always requires num_sends,
     * num_recvs, recv_procs and send_procs to be set in comm_pkg.
     * There are different options for job:
@@ -408,51 +408,51 @@ hypre_ParCSRCommHandleCreate_v2 ( NALU_HYPRE_Int            job,
     * default: ignores send_data and recv_data, requires send_mpi_types
     *           and recv_mpi_types to be set in comm_pkg.
     *           datatypes need to point to absolute
-    *           addresses, e.g. generated using hypre_MPI_Address .
+    *           addresses, e.g. generated using nalu_hypre_MPI_Address .
     *--------------------------------------------------------------------*/
 #ifndef NALU_HYPRE_WITH_GPU_AWARE_MPI
    switch (job)
    {
       case 1:
-         num_send_bytes = hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends) * sizeof(NALU_HYPRE_Complex);
-         num_recv_bytes = hypre_ParCSRCommPkgRecvVecStart(comm_pkg, num_recvs) * sizeof(NALU_HYPRE_Complex);
+         num_send_bytes = nalu_hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends) * sizeof(NALU_HYPRE_Complex);
+         num_recv_bytes = nalu_hypre_ParCSRCommPkgRecvVecStart(comm_pkg, num_recvs) * sizeof(NALU_HYPRE_Complex);
          break;
       case 2:
-         num_send_bytes = hypre_ParCSRCommPkgRecvVecStart(comm_pkg, num_recvs) * sizeof(NALU_HYPRE_Complex);
-         num_recv_bytes = hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends) * sizeof(NALU_HYPRE_Complex);
+         num_send_bytes = nalu_hypre_ParCSRCommPkgRecvVecStart(comm_pkg, num_recvs) * sizeof(NALU_HYPRE_Complex);
+         num_recv_bytes = nalu_hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends) * sizeof(NALU_HYPRE_Complex);
          break;
       case 11:
-         num_send_bytes = hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends) * sizeof(NALU_HYPRE_Int);
-         num_recv_bytes = hypre_ParCSRCommPkgRecvVecStart(comm_pkg, num_recvs) * sizeof(NALU_HYPRE_Int);
+         num_send_bytes = nalu_hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends) * sizeof(NALU_HYPRE_Int);
+         num_recv_bytes = nalu_hypre_ParCSRCommPkgRecvVecStart(comm_pkg, num_recvs) * sizeof(NALU_HYPRE_Int);
          break;
       case 12:
-         num_send_bytes = hypre_ParCSRCommPkgRecvVecStart(comm_pkg, num_recvs) * sizeof(NALU_HYPRE_Int);
-         num_recv_bytes = hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends) * sizeof(NALU_HYPRE_Int);
+         num_send_bytes = nalu_hypre_ParCSRCommPkgRecvVecStart(comm_pkg, num_recvs) * sizeof(NALU_HYPRE_Int);
+         num_recv_bytes = nalu_hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends) * sizeof(NALU_HYPRE_Int);
          break;
       case 21:
-         num_send_bytes = hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends) * sizeof(NALU_HYPRE_BigInt);
-         num_recv_bytes = hypre_ParCSRCommPkgRecvVecStart(comm_pkg, num_recvs) * sizeof(NALU_HYPRE_BigInt);
+         num_send_bytes = nalu_hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends) * sizeof(NALU_HYPRE_BigInt);
+         num_recv_bytes = nalu_hypre_ParCSRCommPkgRecvVecStart(comm_pkg, num_recvs) * sizeof(NALU_HYPRE_BigInt);
          break;
       case 22:
-         num_send_bytes = hypre_ParCSRCommPkgRecvVecStart(comm_pkg, num_recvs) * sizeof(NALU_HYPRE_BigInt);
-         num_recv_bytes = hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends) * sizeof(NALU_HYPRE_BigInt);
+         num_send_bytes = nalu_hypre_ParCSRCommPkgRecvVecStart(comm_pkg, num_recvs) * sizeof(NALU_HYPRE_BigInt);
+         num_recv_bytes = nalu_hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends) * sizeof(NALU_HYPRE_BigInt);
          break;
    }
 
-   hypre_MemoryLocation act_send_memory_location = hypre_GetActualMemLocation(send_memory_location);
+   nalu_hypre_MemoryLocation act_send_memory_location = nalu_hypre_GetActualMemLocation(send_memory_location);
 
-   if ( act_send_memory_location == hypre_MEMORY_DEVICE ||
-        act_send_memory_location == hypre_MEMORY_UNIFIED )
+   if ( act_send_memory_location == nalu_hypre_MEMORY_DEVICE ||
+        act_send_memory_location == nalu_hypre_MEMORY_UNIFIED )
    {
-      //send_data = _hypre_TAlloc(char, num_send_bytes, hypre_MEMORY_HOST_PINNED);
-      send_data = hypre_TAlloc(char, num_send_bytes, NALU_HYPRE_MEMORY_HOST);
+      //send_data = _nalu_hypre_TAlloc(char, num_send_bytes, nalu_hypre_MEMORY_HOST_PINNED);
+      send_data = nalu_hypre_TAlloc(char, num_send_bytes, NALU_HYPRE_MEMORY_HOST);
 #if defined(NALU_HYPRE_USING_NVTX)
-      hypre_GpuProfilingPushRange("MPI-D2H");
+      nalu_hypre_GpuProfilingPushRange("MPI-D2H");
 #endif
-      hypre_TMemcpy(send_data, send_data_in, char, num_send_bytes, NALU_HYPRE_MEMORY_HOST,
+      nalu_hypre_TMemcpy(send_data, send_data_in, char, num_send_bytes, NALU_HYPRE_MEMORY_HOST,
                     NALU_HYPRE_MEMORY_DEVICE);
 #if defined(NALU_HYPRE_USING_NVTX)
-      hypre_GpuProfilingPopRange();
+      nalu_hypre_GpuProfilingPopRange();
 #endif
    }
    else
@@ -460,13 +460,13 @@ hypre_ParCSRCommHandleCreate_v2 ( NALU_HYPRE_Int            job,
       send_data = send_data_in;
    }
 
-   hypre_MemoryLocation act_recv_memory_location = hypre_GetActualMemLocation(recv_memory_location);
+   nalu_hypre_MemoryLocation act_recv_memory_location = nalu_hypre_GetActualMemLocation(recv_memory_location);
 
-   if ( act_recv_memory_location == hypre_MEMORY_DEVICE ||
-        act_recv_memory_location == hypre_MEMORY_UNIFIED )
+   if ( act_recv_memory_location == nalu_hypre_MEMORY_DEVICE ||
+        act_recv_memory_location == nalu_hypre_MEMORY_UNIFIED )
    {
-      //recv_data = hypre_TAlloc(char, num_recv_bytes, hypre_MEMORY_HOST_PINNED);
-      recv_data = hypre_TAlloc(char, num_recv_bytes, NALU_HYPRE_MEMORY_HOST);
+      //recv_data = nalu_hypre_TAlloc(char, num_recv_bytes, nalu_hypre_MEMORY_HOST_PINNED);
+      recv_data = nalu_hypre_TAlloc(char, num_recv_bytes, NALU_HYPRE_MEMORY_HOST);
    }
    else
    {
@@ -478,10 +478,10 @@ hypre_ParCSRCommHandleCreate_v2 ( NALU_HYPRE_Int            job,
 #endif
 
    num_requests = num_sends + num_recvs;
-   requests = hypre_CTAlloc(hypre_MPI_Request, num_requests, NALU_HYPRE_MEMORY_HOST);
+   requests = nalu_hypre_CTAlloc(nalu_hypre_MPI_Request, num_requests, NALU_HYPRE_MEMORY_HOST);
 
-   hypre_MPI_Comm_size(comm, &num_procs);
-   hypre_MPI_Comm_rank(comm, &my_id);
+   nalu_hypre_MPI_Comm_size(comm, &num_procs);
+   nalu_hypre_MPI_Comm_rank(comm, &my_id);
 
    j = 0;
    switch (job)
@@ -492,18 +492,18 @@ hypre_ParCSRCommHandleCreate_v2 ( NALU_HYPRE_Int            job,
          NALU_HYPRE_Complex *d_recv_data = (NALU_HYPRE_Complex *) recv_data;
          for (i = 0; i < num_recvs; i++)
          {
-            ip = hypre_ParCSRCommPkgRecvProc(comm_pkg, i);
-            vec_start = hypre_ParCSRCommPkgRecvVecStart(comm_pkg, i);
-            vec_len = hypre_ParCSRCommPkgRecvVecStart(comm_pkg, i + 1) - vec_start;
-            hypre_MPI_Irecv(&d_recv_data[vec_start], vec_len, NALU_HYPRE_MPI_COMPLEX,
+            ip = nalu_hypre_ParCSRCommPkgRecvProc(comm_pkg, i);
+            vec_start = nalu_hypre_ParCSRCommPkgRecvVecStart(comm_pkg, i);
+            vec_len = nalu_hypre_ParCSRCommPkgRecvVecStart(comm_pkg, i + 1) - vec_start;
+            nalu_hypre_MPI_Irecv(&d_recv_data[vec_start], vec_len, NALU_HYPRE_MPI_COMPLEX,
                             ip, 0, comm, &requests[j++]);
          }
          for (i = 0; i < num_sends; i++)
          {
-            ip = hypre_ParCSRCommPkgSendProc(comm_pkg, i);
-            vec_start = hypre_ParCSRCommPkgSendMapStart(comm_pkg, i);
-            vec_len = hypre_ParCSRCommPkgSendMapStart(comm_pkg, i + 1) - vec_start;
-            hypre_MPI_Isend(&d_send_data[vec_start], vec_len, NALU_HYPRE_MPI_COMPLEX,
+            ip = nalu_hypre_ParCSRCommPkgSendProc(comm_pkg, i);
+            vec_start = nalu_hypre_ParCSRCommPkgSendMapStart(comm_pkg, i);
+            vec_len = nalu_hypre_ParCSRCommPkgSendMapStart(comm_pkg, i + 1) - vec_start;
+            nalu_hypre_MPI_Isend(&d_send_data[vec_start], vec_len, NALU_HYPRE_MPI_COMPLEX,
                             ip, 0, comm, &requests[j++]);
          }
          break;
@@ -514,18 +514,18 @@ hypre_ParCSRCommHandleCreate_v2 ( NALU_HYPRE_Int            job,
          NALU_HYPRE_Complex *d_recv_data = (NALU_HYPRE_Complex *) recv_data;
          for (i = 0; i < num_sends; i++)
          {
-            ip = hypre_ParCSRCommPkgSendProc(comm_pkg, i);
-            vec_start = hypre_ParCSRCommPkgSendMapStart(comm_pkg, i);
-            vec_len = hypre_ParCSRCommPkgSendMapStart(comm_pkg, i + 1) - vec_start;
-            hypre_MPI_Irecv(&d_recv_data[vec_start], vec_len, NALU_HYPRE_MPI_COMPLEX,
+            ip = nalu_hypre_ParCSRCommPkgSendProc(comm_pkg, i);
+            vec_start = nalu_hypre_ParCSRCommPkgSendMapStart(comm_pkg, i);
+            vec_len = nalu_hypre_ParCSRCommPkgSendMapStart(comm_pkg, i + 1) - vec_start;
+            nalu_hypre_MPI_Irecv(&d_recv_data[vec_start], vec_len, NALU_HYPRE_MPI_COMPLEX,
                             ip, 0, comm, &requests[j++]);
          }
          for (i = 0; i < num_recvs; i++)
          {
-            ip = hypre_ParCSRCommPkgRecvProc(comm_pkg, i);
-            vec_start = hypre_ParCSRCommPkgRecvVecStart(comm_pkg, i);
-            vec_len = hypre_ParCSRCommPkgRecvVecStart(comm_pkg, i + 1) - vec_start;
-            hypre_MPI_Isend(&d_send_data[vec_start], vec_len, NALU_HYPRE_MPI_COMPLEX,
+            ip = nalu_hypre_ParCSRCommPkgRecvProc(comm_pkg, i);
+            vec_start = nalu_hypre_ParCSRCommPkgRecvVecStart(comm_pkg, i);
+            vec_len = nalu_hypre_ParCSRCommPkgRecvVecStart(comm_pkg, i + 1) - vec_start;
+            nalu_hypre_MPI_Isend(&d_send_data[vec_start], vec_len, NALU_HYPRE_MPI_COMPLEX,
                             ip, 0, comm, &requests[j++]);
          }
          break;
@@ -536,18 +536,18 @@ hypre_ParCSRCommHandleCreate_v2 ( NALU_HYPRE_Int            job,
          NALU_HYPRE_Int *i_recv_data = (NALU_HYPRE_Int *) recv_data;
          for (i = 0; i < num_recvs; i++)
          {
-            ip = hypre_ParCSRCommPkgRecvProc(comm_pkg, i);
-            vec_start = hypre_ParCSRCommPkgRecvVecStart(comm_pkg, i);
-            vec_len = hypre_ParCSRCommPkgRecvVecStart(comm_pkg, i + 1) - vec_start;
-            hypre_MPI_Irecv(&i_recv_data[vec_start], vec_len, NALU_HYPRE_MPI_INT,
+            ip = nalu_hypre_ParCSRCommPkgRecvProc(comm_pkg, i);
+            vec_start = nalu_hypre_ParCSRCommPkgRecvVecStart(comm_pkg, i);
+            vec_len = nalu_hypre_ParCSRCommPkgRecvVecStart(comm_pkg, i + 1) - vec_start;
+            nalu_hypre_MPI_Irecv(&i_recv_data[vec_start], vec_len, NALU_HYPRE_MPI_INT,
                             ip, 0, comm, &requests[j++]);
          }
          for (i = 0; i < num_sends; i++)
          {
-            ip = hypre_ParCSRCommPkgSendProc(comm_pkg, i);
-            vec_start = hypre_ParCSRCommPkgSendMapStart(comm_pkg, i);
-            vec_len = hypre_ParCSRCommPkgSendMapStart(comm_pkg, i + 1) - vec_start;
-            hypre_MPI_Isend(&i_send_data[vec_start], vec_len, NALU_HYPRE_MPI_INT,
+            ip = nalu_hypre_ParCSRCommPkgSendProc(comm_pkg, i);
+            vec_start = nalu_hypre_ParCSRCommPkgSendMapStart(comm_pkg, i);
+            vec_len = nalu_hypre_ParCSRCommPkgSendMapStart(comm_pkg, i + 1) - vec_start;
+            nalu_hypre_MPI_Isend(&i_send_data[vec_start], vec_len, NALU_HYPRE_MPI_INT,
                             ip, 0, comm, &requests[j++]);
          }
          break;
@@ -558,18 +558,18 @@ hypre_ParCSRCommHandleCreate_v2 ( NALU_HYPRE_Int            job,
          NALU_HYPRE_Int *i_recv_data = (NALU_HYPRE_Int *) recv_data;
          for (i = 0; i < num_sends; i++)
          {
-            ip = hypre_ParCSRCommPkgSendProc(comm_pkg, i);
-            vec_start = hypre_ParCSRCommPkgSendMapStart(comm_pkg, i);
-            vec_len = hypre_ParCSRCommPkgSendMapStart(comm_pkg, i + 1) - vec_start;
-            hypre_MPI_Irecv(&i_recv_data[vec_start], vec_len, NALU_HYPRE_MPI_INT,
+            ip = nalu_hypre_ParCSRCommPkgSendProc(comm_pkg, i);
+            vec_start = nalu_hypre_ParCSRCommPkgSendMapStart(comm_pkg, i);
+            vec_len = nalu_hypre_ParCSRCommPkgSendMapStart(comm_pkg, i + 1) - vec_start;
+            nalu_hypre_MPI_Irecv(&i_recv_data[vec_start], vec_len, NALU_HYPRE_MPI_INT,
                             ip, 0, comm, &requests[j++]);
          }
          for (i = 0; i < num_recvs; i++)
          {
-            ip = hypre_ParCSRCommPkgRecvProc(comm_pkg, i);
-            vec_start = hypre_ParCSRCommPkgRecvVecStart(comm_pkg, i);
-            vec_len = hypre_ParCSRCommPkgRecvVecStart(comm_pkg, i + 1) - vec_start;
-            hypre_MPI_Isend(&i_send_data[vec_start], vec_len, NALU_HYPRE_MPI_INT,
+            ip = nalu_hypre_ParCSRCommPkgRecvProc(comm_pkg, i);
+            vec_start = nalu_hypre_ParCSRCommPkgRecvVecStart(comm_pkg, i);
+            vec_len = nalu_hypre_ParCSRCommPkgRecvVecStart(comm_pkg, i + 1) - vec_start;
+            nalu_hypre_MPI_Isend(&i_send_data[vec_start], vec_len, NALU_HYPRE_MPI_INT,
                             ip, 0, comm, &requests[j++]);
          }
          break;
@@ -580,18 +580,18 @@ hypre_ParCSRCommHandleCreate_v2 ( NALU_HYPRE_Int            job,
          NALU_HYPRE_BigInt *i_recv_data = (NALU_HYPRE_BigInt *) recv_data;
          for (i = 0; i < num_recvs; i++)
          {
-            ip = hypre_ParCSRCommPkgRecvProc(comm_pkg, i);
-            vec_start = hypre_ParCSRCommPkgRecvVecStart(comm_pkg, i);
-            vec_len = hypre_ParCSRCommPkgRecvVecStart(comm_pkg, i + 1) - vec_start;
-            hypre_MPI_Irecv(&i_recv_data[vec_start], vec_len, NALU_HYPRE_MPI_BIG_INT,
+            ip = nalu_hypre_ParCSRCommPkgRecvProc(comm_pkg, i);
+            vec_start = nalu_hypre_ParCSRCommPkgRecvVecStart(comm_pkg, i);
+            vec_len = nalu_hypre_ParCSRCommPkgRecvVecStart(comm_pkg, i + 1) - vec_start;
+            nalu_hypre_MPI_Irecv(&i_recv_data[vec_start], vec_len, NALU_HYPRE_MPI_BIG_INT,
                             ip, 0, comm, &requests[j++]);
          }
          for (i = 0; i < num_sends; i++)
          {
-            vec_start = hypre_ParCSRCommPkgSendMapStart(comm_pkg, i);
-            vec_len = hypre_ParCSRCommPkgSendMapStart(comm_pkg, i + 1) - vec_start;
-            ip = hypre_ParCSRCommPkgSendProc(comm_pkg, i);
-            hypre_MPI_Isend(&i_send_data[vec_start], vec_len, NALU_HYPRE_MPI_BIG_INT,
+            vec_start = nalu_hypre_ParCSRCommPkgSendMapStart(comm_pkg, i);
+            vec_len = nalu_hypre_ParCSRCommPkgSendMapStart(comm_pkg, i + 1) - vec_start;
+            ip = nalu_hypre_ParCSRCommPkgSendProc(comm_pkg, i);
+            nalu_hypre_MPI_Isend(&i_send_data[vec_start], vec_len, NALU_HYPRE_MPI_BIG_INT,
                             ip, 0, comm, &requests[j++]);
          }
          break;
@@ -602,18 +602,18 @@ hypre_ParCSRCommHandleCreate_v2 ( NALU_HYPRE_Int            job,
          NALU_HYPRE_BigInt *i_recv_data = (NALU_HYPRE_BigInt *) recv_data;
          for (i = 0; i < num_sends; i++)
          {
-            vec_start = hypre_ParCSRCommPkgSendMapStart(comm_pkg, i);
-            vec_len = hypre_ParCSRCommPkgSendMapStart(comm_pkg, i + 1) - vec_start;
-            ip = hypre_ParCSRCommPkgSendProc(comm_pkg, i);
-            hypre_MPI_Irecv(&i_recv_data[vec_start], vec_len, NALU_HYPRE_MPI_BIG_INT,
+            vec_start = nalu_hypre_ParCSRCommPkgSendMapStart(comm_pkg, i);
+            vec_len = nalu_hypre_ParCSRCommPkgSendMapStart(comm_pkg, i + 1) - vec_start;
+            ip = nalu_hypre_ParCSRCommPkgSendProc(comm_pkg, i);
+            nalu_hypre_MPI_Irecv(&i_recv_data[vec_start], vec_len, NALU_HYPRE_MPI_BIG_INT,
                             ip, 0, comm, &requests[j++]);
          }
          for (i = 0; i < num_recvs; i++)
          {
-            ip = hypre_ParCSRCommPkgRecvProc(comm_pkg, i);
-            vec_start = hypre_ParCSRCommPkgRecvVecStart(comm_pkg, i);
-            vec_len = hypre_ParCSRCommPkgRecvVecStart(comm_pkg, i + 1) - vec_start;
-            hypre_MPI_Isend(&i_send_data[vec_start], vec_len, NALU_HYPRE_MPI_BIG_INT,
+            ip = nalu_hypre_ParCSRCommPkgRecvProc(comm_pkg, i);
+            vec_start = nalu_hypre_ParCSRCommPkgRecvVecStart(comm_pkg, i);
+            vec_len = nalu_hypre_ParCSRCommPkgRecvVecStart(comm_pkg, i + 1) - vec_start;
+            nalu_hypre_MPI_Isend(&i_send_data[vec_start], vec_len, NALU_HYPRE_MPI_BIG_INT,
                             ip, 0, comm, &requests[j++]);
          }
          break;
@@ -623,114 +623,114 @@ hypre_ParCSRCommHandleCreate_v2 ( NALU_HYPRE_Int            job,
     * set up comm_handle and return
     *--------------------------------------------------------------------*/
 
-   comm_handle = hypre_CTAlloc(hypre_ParCSRCommHandle,  1, NALU_HYPRE_MEMORY_HOST);
+   comm_handle = nalu_hypre_CTAlloc(nalu_hypre_ParCSRCommHandle,  1, NALU_HYPRE_MEMORY_HOST);
 
-   hypre_ParCSRCommHandleCommPkg(comm_handle)            = comm_pkg;
-   hypre_ParCSRCommHandleSendMemoryLocation(comm_handle) = send_memory_location;
-   hypre_ParCSRCommHandleRecvMemoryLocation(comm_handle) = recv_memory_location;
-   hypre_ParCSRCommHandleNumSendBytes(comm_handle)       = num_send_bytes;
-   hypre_ParCSRCommHandleNumRecvBytes(comm_handle)       = num_recv_bytes;
-   hypre_ParCSRCommHandleSendData(comm_handle)           = send_data_in;
-   hypre_ParCSRCommHandleRecvData(comm_handle)           = recv_data_in;
-   hypre_ParCSRCommHandleSendDataBuffer(comm_handle)     = send_data;
-   hypre_ParCSRCommHandleRecvDataBuffer(comm_handle)     = recv_data;
-   hypre_ParCSRCommHandleNumRequests(comm_handle)        = num_requests;
-   hypre_ParCSRCommHandleRequests(comm_handle)           = requests;
+   nalu_hypre_ParCSRCommHandleCommPkg(comm_handle)            = comm_pkg;
+   nalu_hypre_ParCSRCommHandleSendMemoryLocation(comm_handle) = send_memory_location;
+   nalu_hypre_ParCSRCommHandleRecvMemoryLocation(comm_handle) = recv_memory_location;
+   nalu_hypre_ParCSRCommHandleNumSendBytes(comm_handle)       = num_send_bytes;
+   nalu_hypre_ParCSRCommHandleNumRecvBytes(comm_handle)       = num_recv_bytes;
+   nalu_hypre_ParCSRCommHandleSendData(comm_handle)           = send_data_in;
+   nalu_hypre_ParCSRCommHandleRecvData(comm_handle)           = recv_data_in;
+   nalu_hypre_ParCSRCommHandleSendDataBuffer(comm_handle)     = send_data;
+   nalu_hypre_ParCSRCommHandleRecvDataBuffer(comm_handle)     = recv_data;
+   nalu_hypre_ParCSRCommHandleNumRequests(comm_handle)        = num_requests;
+   nalu_hypre_ParCSRCommHandleRequests(comm_handle)           = requests;
 
 #if defined(NALU_HYPRE_USING_NVTX)
-   hypre_GpuProfilingPopRange();
+   nalu_hypre_GpuProfilingPopRange();
 #endif
 
    return ( comm_handle );
 }
 
 /*------------------------------------------------------------------
- * hypre_ParCSRCommHandleDestroy
+ * nalu_hypre_ParCSRCommHandleDestroy
  *------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_ParCSRCommHandleDestroy( hypre_ParCSRCommHandle *comm_handle )
+nalu_hypre_ParCSRCommHandleDestroy( nalu_hypre_ParCSRCommHandle *comm_handle )
 {
    if ( comm_handle == NULL )
    {
-      return hypre_error_flag;
+      return nalu_hypre_error_flag;
    }
 
 #if defined(NALU_HYPRE_USING_NVTX)
-   hypre_GpuProfilingPushRange("hypre_ParCSRCommHandleDestroy");
+   nalu_hypre_GpuProfilingPushRange("nalu_hypre_ParCSRCommHandleDestroy");
 #endif
 
-   if (hypre_ParCSRCommHandleNumRequests(comm_handle))
+   if (nalu_hypre_ParCSRCommHandleNumRequests(comm_handle))
    {
-      hypre_MPI_Status *status0;
-      status0 = hypre_CTAlloc(hypre_MPI_Status,
-                              hypre_ParCSRCommHandleNumRequests(comm_handle), NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_MPI_Status *status0;
+      status0 = nalu_hypre_CTAlloc(nalu_hypre_MPI_Status,
+                              nalu_hypre_ParCSRCommHandleNumRequests(comm_handle), NALU_HYPRE_MEMORY_HOST);
 #if defined(NALU_HYPRE_USING_NVTX)
-      hypre_GpuProfilingPushRange("hypre_MPI_Waitall");
+      nalu_hypre_GpuProfilingPushRange("nalu_hypre_MPI_Waitall");
 #endif
-      hypre_MPI_Waitall(hypre_ParCSRCommHandleNumRequests(comm_handle),
-                        hypre_ParCSRCommHandleRequests(comm_handle), status0);
+      nalu_hypre_MPI_Waitall(nalu_hypre_ParCSRCommHandleNumRequests(comm_handle),
+                        nalu_hypre_ParCSRCommHandleRequests(comm_handle), status0);
 #if defined(NALU_HYPRE_USING_NVTX)
-      hypre_GpuProfilingPopRange();
+      nalu_hypre_GpuProfilingPopRange();
 #endif
-      hypre_TFree(status0, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(status0, NALU_HYPRE_MEMORY_HOST);
    }
 
 #ifndef NALU_HYPRE_WITH_GPU_AWARE_MPI
-   hypre_MemoryLocation act_send_memory_location = hypre_GetActualMemLocation(
-                                                      hypre_ParCSRCommHandleSendMemoryLocation(comm_handle));
-   if ( act_send_memory_location == hypre_MEMORY_DEVICE ||
-        act_send_memory_location == hypre_MEMORY_UNIFIED )
+   nalu_hypre_MemoryLocation act_send_memory_location = nalu_hypre_GetActualMemLocation(
+                                                      nalu_hypre_ParCSRCommHandleSendMemoryLocation(comm_handle));
+   if ( act_send_memory_location == nalu_hypre_MEMORY_DEVICE ||
+        act_send_memory_location == nalu_hypre_MEMORY_UNIFIED )
    {
-      //hypre_HostPinnedFree(hypre_ParCSRCommHandleSendDataBuffer(comm_handle));
-      hypre_TFree(hypre_ParCSRCommHandleSendDataBuffer(comm_handle), NALU_HYPRE_MEMORY_HOST);
+      //nalu_hypre_HostPinnedFree(nalu_hypre_ParCSRCommHandleSendDataBuffer(comm_handle));
+      nalu_hypre_TFree(nalu_hypre_ParCSRCommHandleSendDataBuffer(comm_handle), NALU_HYPRE_MEMORY_HOST);
    }
 
-   hypre_MemoryLocation act_recv_memory_location = hypre_GetActualMemLocation(
-                                                      hypre_ParCSRCommHandleRecvMemoryLocation(comm_handle));
-   if ( act_recv_memory_location == hypre_MEMORY_DEVICE ||
-        act_recv_memory_location == hypre_MEMORY_UNIFIED )
+   nalu_hypre_MemoryLocation act_recv_memory_location = nalu_hypre_GetActualMemLocation(
+                                                      nalu_hypre_ParCSRCommHandleRecvMemoryLocation(comm_handle));
+   if ( act_recv_memory_location == nalu_hypre_MEMORY_DEVICE ||
+        act_recv_memory_location == nalu_hypre_MEMORY_UNIFIED )
    {
 #if defined(NALU_HYPRE_USING_NVTX)
-      hypre_GpuProfilingPushRange("MPI-H2D");
+      nalu_hypre_GpuProfilingPushRange("MPI-H2D");
 #endif
-      hypre_TMemcpy( hypre_ParCSRCommHandleRecvData(comm_handle),
-                     hypre_ParCSRCommHandleRecvDataBuffer(comm_handle),
+      nalu_hypre_TMemcpy( nalu_hypre_ParCSRCommHandleRecvData(comm_handle),
+                     nalu_hypre_ParCSRCommHandleRecvDataBuffer(comm_handle),
                      char,
-                     hypre_ParCSRCommHandleNumRecvBytes(comm_handle),
+                     nalu_hypre_ParCSRCommHandleNumRecvBytes(comm_handle),
                      NALU_HYPRE_MEMORY_DEVICE,
                      NALU_HYPRE_MEMORY_HOST );
 #if defined(NALU_HYPRE_USING_NVTX)
-      hypre_GpuProfilingPopRange();
+      nalu_hypre_GpuProfilingPopRange();
 #endif
-      //hypre_HostPinnedFree(hypre_ParCSRCommHandleRecvDataBuffer(comm_handle));
-      hypre_TFree(hypre_ParCSRCommHandleRecvDataBuffer(comm_handle), NALU_HYPRE_MEMORY_HOST);
+      //nalu_hypre_HostPinnedFree(nalu_hypre_ParCSRCommHandleRecvDataBuffer(comm_handle));
+      nalu_hypre_TFree(nalu_hypre_ParCSRCommHandleRecvDataBuffer(comm_handle), NALU_HYPRE_MEMORY_HOST);
    }
 #endif
 
-   hypre_TFree(hypre_ParCSRCommHandleRequests(comm_handle), NALU_HYPRE_MEMORY_HOST);
-   hypre_TFree(comm_handle, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(nalu_hypre_ParCSRCommHandleRequests(comm_handle), NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(comm_handle, NALU_HYPRE_MEMORY_HOST);
 
 #if defined(NALU_HYPRE_USING_NVTX)
-   hypre_GpuProfilingPopRange();
+   nalu_hypre_GpuProfilingPopRange();
 #endif
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*------------------------------------------------------------------
- * hypre_ParCSRCommPkgCreate_core
+ * nalu_hypre_ParCSRCommPkgCreate_core
  *
  * This function does all the communications and computations for
- * hypre_ParCSRCommPkgCreate(hypre_ParCSRMatrix *A) and
- * hypre_BooleanMatvecCommPkgCreate(hypre_ParCSRBooleanMatrix *A)
+ * nalu_hypre_ParCSRCommPkgCreate(nalu_hypre_ParCSRMatrix *A) and
+ * nalu_hypre_BooleanMatvecCommPkgCreate(nalu_hypre_ParCSRBooleanMatrix *A)
  *
  * To support both data types, it has hardly any data structures
  * other than NALU_HYPRE_Int*.
  *------------------------------------------------------------------*/
 
 void
-hypre_ParCSRCommPkgCreate_core(
+nalu_hypre_ParCSRCommPkgCreate_core(
    /* input args: */
    MPI_Comm   comm,
    NALU_HYPRE_BigInt *col_map_offd,
@@ -759,15 +759,15 @@ hypre_ParCSRCommPkgCreate_core(
    NALU_HYPRE_Int  num_sends, *send_procs, *send_map_starts, *send_map_elmts;
    NALU_HYPRE_Int  ip, vec_start, vec_len, num_requests;
 
-   hypre_MPI_Request *requests;
-   hypre_MPI_Status *status;
+   nalu_hypre_MPI_Request *requests;
+   nalu_hypre_MPI_Status *status;
 
-   hypre_MPI_Comm_size(comm, &num_procs);
-   hypre_MPI_Comm_rank(comm, &my_id);
+   nalu_hypre_MPI_Comm_size(comm, &num_procs);
+   nalu_hypre_MPI_Comm_rank(comm, &my_id);
 
-   proc_mark = hypre_CTAlloc(NALU_HYPRE_Int,  num_procs, NALU_HYPRE_MEMORY_HOST);
-   proc_add = hypre_CTAlloc(NALU_HYPRE_Int,  num_procs, NALU_HYPRE_MEMORY_HOST);
-   info = hypre_CTAlloc(NALU_HYPRE_Int,  num_procs, NALU_HYPRE_MEMORY_HOST);
+   proc_mark = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  num_procs, NALU_HYPRE_MEMORY_HOST);
+   proc_add = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  num_procs, NALU_HYPRE_MEMORY_HOST);
+   info = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  num_procs, NALU_HYPRE_MEMORY_HOST);
 
    /* ----------------------------------------------------------------------
     * determine which processors to receive from (set proc_mark) and num_recvs,
@@ -786,7 +786,7 @@ hypre_ParCSRCommPkgCreate_core(
    {
       if (num_cols_diag)
       {
-         proc_num = hypre_min(num_procs - 1, (NALU_HYPRE_Int)(offd_col / (NALU_HYPRE_BigInt)num_cols_diag));
+         proc_num = nalu_hypre_min(num_procs - 1, (NALU_HYPRE_Int)(offd_col / (NALU_HYPRE_BigInt)num_cols_diag));
       }
 
       while (col_starts[proc_num] > offd_col )
@@ -822,7 +822,7 @@ hypre_ParCSRCommPkgCreate_core(
 
    local_info = 2 * num_recvs;
 
-   hypre_MPI_Allgather(&local_info, 1, NALU_HYPRE_MPI_INT, info, 1, NALU_HYPRE_MPI_INT, comm);
+   nalu_hypre_MPI_Allgather(&local_info, 1, NALU_HYPRE_MPI_INT, info, 1, NALU_HYPRE_MPI_INT, comm);
 
    /* ----------------------------------------------------------------------
     * generate information to be sent: tmp contains for each recv_proc:
@@ -830,21 +830,21 @@ hypre_ParCSRCommPkgCreate_core(
     * indices of elements (in this order)
     * ---------------------------------------------------------------------*/
 
-   displs = hypre_CTAlloc(NALU_HYPRE_Int,  num_procs + 1, NALU_HYPRE_MEMORY_HOST);
+   displs = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  num_procs + 1, NALU_HYPRE_MEMORY_HOST);
    for (i = 1; i < num_procs + 1; i++)
    {
       displs[i] = displs[i - 1] + info[i - 1];
    }
-   recv_buf = hypre_CTAlloc(NALU_HYPRE_Int,  displs[num_procs], NALU_HYPRE_MEMORY_HOST);
+   recv_buf = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  displs[num_procs], NALU_HYPRE_MEMORY_HOST);
 
    recv_procs = NULL;
    tmp = NULL;
    if (num_recvs)
    {
-      recv_procs = hypre_CTAlloc(NALU_HYPRE_Int,  num_recvs, NALU_HYPRE_MEMORY_HOST);
-      tmp = hypre_CTAlloc(NALU_HYPRE_Int,  local_info, NALU_HYPRE_MEMORY_HOST);
+      recv_procs = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  num_recvs, NALU_HYPRE_MEMORY_HOST);
+      tmp = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  local_info, NALU_HYPRE_MEMORY_HOST);
    }
-   recv_vec_starts = hypre_CTAlloc(NALU_HYPRE_Int,  num_recvs + 1, NALU_HYPRE_MEMORY_HOST);
+   recv_vec_starts = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  num_recvs + 1, NALU_HYPRE_MEMORY_HOST);
 
    j = 0;
    for (i = 0; i < num_recvs; i++)
@@ -856,7 +856,7 @@ hypre_ParCSRCommPkgCreate_core(
       tmp[j++] = num_elmts;
    }
 
-   hypre_MPI_Allgatherv(tmp, local_info, NALU_HYPRE_MPI_INT, recv_buf, info,
+   nalu_hypre_MPI_Allgatherv(tmp, local_info, NALU_HYPRE_MPI_INT, recv_buf, info,
                         displs, NALU_HYPRE_MPI_INT, comm);
 
    /* ----------------------------------------------------------------------
@@ -893,16 +893,16 @@ hypre_ParCSRCommPkgCreate_core(
 
    if (num_sends)
    {
-      send_procs = hypre_CTAlloc(NALU_HYPRE_Int,  num_sends, NALU_HYPRE_MEMORY_HOST);
-      send_map_elmts = hypre_CTAlloc(NALU_HYPRE_Int,  proc_add[num_sends], NALU_HYPRE_MEMORY_HOST);
-      big_buf_data = hypre_CTAlloc(NALU_HYPRE_BigInt,  proc_add[num_sends], NALU_HYPRE_MEMORY_HOST);
+      send_procs = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  num_sends, NALU_HYPRE_MEMORY_HOST);
+      send_map_elmts = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  proc_add[num_sends], NALU_HYPRE_MEMORY_HOST);
+      big_buf_data = nalu_hypre_CTAlloc(NALU_HYPRE_BigInt,  proc_add[num_sends], NALU_HYPRE_MEMORY_HOST);
    }
-   send_map_starts = hypre_CTAlloc(NALU_HYPRE_Int,  num_sends + 1, NALU_HYPRE_MEMORY_HOST);
+   send_map_starts = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  num_sends + 1, NALU_HYPRE_MEMORY_HOST);
    num_requests = num_recvs + num_sends;
    if (num_requests)
    {
-      requests = hypre_CTAlloc(hypre_MPI_Request,  num_requests, NALU_HYPRE_MEMORY_HOST);
-      status = hypre_CTAlloc(hypre_MPI_Status,  num_requests, NALU_HYPRE_MEMORY_HOST);
+      requests = nalu_hypre_CTAlloc(nalu_hypre_MPI_Request,  num_requests, NALU_HYPRE_MEMORY_HOST);
+      status = nalu_hypre_CTAlloc(nalu_hypre_MPI_Status,  num_requests, NALU_HYPRE_MEMORY_HOST);
    }
 
    for (i = 0; i < num_sends; i++)
@@ -917,7 +917,7 @@ hypre_ParCSRCommPkgCreate_core(
       vec_start = send_map_starts[i];
       vec_len = send_map_starts[i + 1] - vec_start;
       ip = send_procs[i];
-      hypre_MPI_Irecv(&big_buf_data[vec_start], vec_len, NALU_HYPRE_MPI_BIG_INT,
+      nalu_hypre_MPI_Irecv(&big_buf_data[vec_start], vec_len, NALU_HYPRE_MPI_BIG_INT,
                       ip, 0, comm, &requests[j++]);
    }
    for (i = 0; i < num_recvs; i++)
@@ -925,15 +925,15 @@ hypre_ParCSRCommPkgCreate_core(
       vec_start = recv_vec_starts[i];
       vec_len = recv_vec_starts[i + 1] - vec_start;
       ip = recv_procs[i];
-      hypre_MPI_Isend(&col_map_offd[vec_start], vec_len, NALU_HYPRE_MPI_BIG_INT,
+      nalu_hypre_MPI_Isend(&col_map_offd[vec_start], vec_len, NALU_HYPRE_MPI_BIG_INT,
                       ip, 0, comm, &requests[j++]);
    }
 
    if (num_requests)
    {
-      hypre_MPI_Waitall(num_requests, requests, status);
-      hypre_TFree(requests, NALU_HYPRE_MEMORY_HOST);
-      hypre_TFree(status, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_MPI_Waitall(num_requests, requests, status);
+      nalu_hypre_TFree(requests, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(status, NALU_HYPRE_MEMORY_HOST);
    }
 
    if (num_sends)
@@ -944,13 +944,13 @@ hypre_ParCSRCommPkgCreate_core(
       }
    }
 
-   hypre_TFree(proc_add, NALU_HYPRE_MEMORY_HOST);
-   hypre_TFree(proc_mark, NALU_HYPRE_MEMORY_HOST);
-   hypre_TFree(tmp, NALU_HYPRE_MEMORY_HOST);
-   hypre_TFree(recv_buf, NALU_HYPRE_MEMORY_HOST);
-   hypre_TFree(displs, NALU_HYPRE_MEMORY_HOST);
-   hypre_TFree(info, NALU_HYPRE_MEMORY_HOST);
-   hypre_TFree(big_buf_data, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(proc_add, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(proc_mark, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(tmp, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(recv_buf, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(displs, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(info, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(big_buf_data, NALU_HYPRE_MEMORY_HOST);
 
    /* finish up with the hand-coded call-by-reference... */
    *p_num_recvs = num_recvs;
@@ -963,7 +963,7 @@ hypre_ParCSRCommPkgCreate_core(
 }
 
 /*------------------------------------------------------------------
- * hypre_ParCSRCommPkgCreate
+ * nalu_hypre_ParCSRCommPkgCreate
  *
  * Creates the communication package with MPI collectives calls.
  *
@@ -973,13 +973,13 @@ hypre_ParCSRCommPkgCreate_core(
  *------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_ParCSRCommPkgCreate( MPI_Comm             comm,
+nalu_hypre_ParCSRCommPkgCreate( MPI_Comm             comm,
                            NALU_HYPRE_BigInt        *col_map_offd,
                            NALU_HYPRE_BigInt         first_col_diag,
                            NALU_HYPRE_BigInt        *col_starts,
                            NALU_HYPRE_Int            num_cols_diag,
                            NALU_HYPRE_Int            num_cols_offd,
-                           hypre_ParCSRCommPkg *comm_pkg )
+                           nalu_hypre_ParCSRCommPkg *comm_pkg )
 {
    NALU_HYPRE_Int  num_sends;
    NALU_HYPRE_Int *send_procs;
@@ -990,28 +990,28 @@ hypre_ParCSRCommPkgCreate( MPI_Comm             comm,
    NALU_HYPRE_Int *recv_procs;
    NALU_HYPRE_Int *recv_vec_starts;
 
-   hypre_ParCSRCommPkgCreate_core(comm, col_map_offd, first_col_diag,
+   nalu_hypre_ParCSRCommPkgCreate_core(comm, col_map_offd, first_col_diag,
                                   col_starts, num_cols_diag, num_cols_offd,
                                   &num_recvs, &recv_procs, &recv_vec_starts,
                                   &num_sends, &send_procs, &send_map_starts,
                                   &send_map_elmts);
 
    /* Fill the communication package */
-   hypre_ParCSRCommPkgCreateAndFill(comm,
+   nalu_hypre_ParCSRCommPkgCreateAndFill(comm,
                                     num_recvs, recv_procs, recv_vec_starts,
                                     num_sends, send_procs, send_map_starts,
                                     send_map_elmts,
                                     &comm_pkg);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*------------------------------------------------------------------
- * hypre_ParCSRCommPkgCreateAndFill
+ * nalu_hypre_ParCSRCommPkgCreateAndFill
  *------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_ParCSRCommPkgCreateAndFill( MPI_Comm              comm,
+nalu_hypre_ParCSRCommPkgCreateAndFill( MPI_Comm              comm,
                                   NALU_HYPRE_Int             num_recvs,
                                   NALU_HYPRE_Int            *recv_procs,
                                   NALU_HYPRE_Int            *recv_vec_starts,
@@ -1019,14 +1019,14 @@ hypre_ParCSRCommPkgCreateAndFill( MPI_Comm              comm,
                                   NALU_HYPRE_Int            *send_procs,
                                   NALU_HYPRE_Int            *send_map_starts,
                                   NALU_HYPRE_Int            *send_map_elmts,
-                                  hypre_ParCSRCommPkg **comm_pkg_ptr )
+                                  nalu_hypre_ParCSRCommPkg **comm_pkg_ptr )
 {
-   hypre_ParCSRCommPkg  *comm_pkg;
+   nalu_hypre_ParCSRCommPkg  *comm_pkg;
 
    /* Allocate memory for comm_pkg if needed */
    if (*comm_pkg_ptr == NULL)
    {
-      comm_pkg = hypre_TAlloc(hypre_ParCSRCommPkg, 1, NALU_HYPRE_MEMORY_HOST);
+      comm_pkg = nalu_hypre_TAlloc(nalu_hypre_ParCSRCommPkg, 1, NALU_HYPRE_MEMORY_HOST);
    }
    else
    {
@@ -1034,12 +1034,12 @@ hypre_ParCSRCommPkgCreateAndFill( MPI_Comm              comm,
    }
 
    /* Set default info */
-   hypre_ParCSRCommPkgNumComponents(comm_pkg)      = 1;
-   hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg) = NULL;
+   nalu_hypre_ParCSRCommPkgNumComponents(comm_pkg)      = 1;
+   nalu_hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg) = NULL;
 #if defined(NALU_HYPRE_USING_GPU)
-   hypre_ParCSRCommPkgTmpData(comm_pkg)            = NULL;
-   hypre_ParCSRCommPkgBufData(comm_pkg)            = NULL;
-   hypre_ParCSRCommPkgMatrixE(comm_pkg)            = NULL;
+   nalu_hypre_ParCSRCommPkgTmpData(comm_pkg)            = NULL;
+   nalu_hypre_ParCSRCommPkgBufData(comm_pkg)            = NULL;
+   nalu_hypre_ParCSRCommPkgMatrixE(comm_pkg)            = NULL;
 #endif
 #if defined(NALU_HYPRE_USING_PERSISTENT_COMM)
    NALU_HYPRE_Int i;
@@ -1051,54 +1051,54 @@ hypre_ParCSRCommPkgCreateAndFill( MPI_Comm              comm,
 #endif
 
    /* Set input info */
-   hypre_ParCSRCommPkgComm(comm_pkg)          = comm;
-   hypre_ParCSRCommPkgNumRecvs(comm_pkg)      = num_recvs;
-   hypre_ParCSRCommPkgRecvProcs(comm_pkg)     = recv_procs;
-   hypre_ParCSRCommPkgRecvVecStarts(comm_pkg) = recv_vec_starts;
-   hypre_ParCSRCommPkgNumSends(comm_pkg)      = num_sends;
-   hypre_ParCSRCommPkgSendProcs(comm_pkg)     = send_procs;
-   hypre_ParCSRCommPkgSendMapStarts(comm_pkg) = send_map_starts;
-   hypre_ParCSRCommPkgSendMapElmts(comm_pkg)  = send_map_elmts;
+   nalu_hypre_ParCSRCommPkgComm(comm_pkg)          = comm;
+   nalu_hypre_ParCSRCommPkgNumRecvs(comm_pkg)      = num_recvs;
+   nalu_hypre_ParCSRCommPkgRecvProcs(comm_pkg)     = recv_procs;
+   nalu_hypre_ParCSRCommPkgRecvVecStarts(comm_pkg) = recv_vec_starts;
+   nalu_hypre_ParCSRCommPkgNumSends(comm_pkg)      = num_sends;
+   nalu_hypre_ParCSRCommPkgSendProcs(comm_pkg)     = send_procs;
+   nalu_hypre_ParCSRCommPkgSendMapStarts(comm_pkg) = send_map_starts;
+   nalu_hypre_ParCSRCommPkgSendMapElmts(comm_pkg)  = send_map_elmts;
 
    /* Set output pointer */
    *comm_pkg_ptr = comm_pkg;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*------------------------------------------------------------------
- * hypre_ParCSRCommPkgUpdateVecStarts
+ * nalu_hypre_ParCSRCommPkgUpdateVecStarts
  *------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_ParCSRCommPkgUpdateVecStarts( hypre_ParCSRCommPkg *comm_pkg,
-                                    hypre_ParVector     *x )
+nalu_hypre_ParCSRCommPkgUpdateVecStarts( nalu_hypre_ParCSRCommPkg *comm_pkg,
+                                    nalu_hypre_ParVector     *x )
 {
-   hypre_Vector *x_local         = hypre_ParVectorLocalVector(x);
-   NALU_HYPRE_Int     num_vectors     = hypre_VectorNumVectors(x_local);
-   NALU_HYPRE_Int     vecstride       = hypre_VectorVectorStride(x_local);
-   NALU_HYPRE_Int     idxstride       = hypre_VectorIndexStride(x_local);
+   nalu_hypre_Vector *x_local         = nalu_hypre_ParVectorLocalVector(x);
+   NALU_HYPRE_Int     num_vectors     = nalu_hypre_VectorNumVectors(x_local);
+   NALU_HYPRE_Int     vecstride       = nalu_hypre_VectorVectorStride(x_local);
+   NALU_HYPRE_Int     idxstride       = nalu_hypre_VectorIndexStride(x_local);
 
-   NALU_HYPRE_Int     num_components  = hypre_ParCSRCommPkgNumComponents(comm_pkg);
-   NALU_HYPRE_Int     num_sends       = hypre_ParCSRCommPkgNumSends(comm_pkg);
-   NALU_HYPRE_Int     num_recvs       = hypre_ParCSRCommPkgNumRecvs(comm_pkg);
-   NALU_HYPRE_Int    *recv_vec_starts = hypre_ParCSRCommPkgRecvVecStarts(comm_pkg);
-   NALU_HYPRE_Int    *send_map_starts = hypre_ParCSRCommPkgSendMapStarts(comm_pkg);
-   NALU_HYPRE_Int    *send_map_elmts  = hypre_ParCSRCommPkgSendMapElmts(comm_pkg);
+   NALU_HYPRE_Int     num_components  = nalu_hypre_ParCSRCommPkgNumComponents(comm_pkg);
+   NALU_HYPRE_Int     num_sends       = nalu_hypre_ParCSRCommPkgNumSends(comm_pkg);
+   NALU_HYPRE_Int     num_recvs       = nalu_hypre_ParCSRCommPkgNumRecvs(comm_pkg);
+   NALU_HYPRE_Int    *recv_vec_starts = nalu_hypre_ParCSRCommPkgRecvVecStarts(comm_pkg);
+   NALU_HYPRE_Int    *send_map_starts = nalu_hypre_ParCSRCommPkgSendMapStarts(comm_pkg);
+   NALU_HYPRE_Int    *send_map_elmts  = nalu_hypre_ParCSRCommPkgSendMapElmts(comm_pkg);
 
    NALU_HYPRE_Int    *send_map_elmts_new;
 
    NALU_HYPRE_Int     i, j;
 
-   hypre_assert(num_components > 0);
+   nalu_hypre_assert(num_components > 0);
 
    if (num_vectors != num_components)
    {
       /* Update number of components in the communication package */
-      hypre_ParCSRCommPkgNumComponents(comm_pkg) = num_vectors;
+      nalu_hypre_ParCSRCommPkgNumComponents(comm_pkg) = num_vectors;
 
       /* Allocate send_maps_elmts */
-      send_map_elmts_new = hypre_CTAlloc(NALU_HYPRE_Int,
+      send_map_elmts_new = nalu_hypre_CTAlloc(NALU_HYPRE_Int,
                                          send_map_starts[num_sends] * num_vectors,
                                          NALU_HYPRE_MEMORY_HOST);
 
@@ -1150,14 +1150,14 @@ hypre_ParCSRCommPkgUpdateVecStarts( hypre_ParCSRCommPkg *comm_pkg,
             }
          }
       }
-      hypre_ParCSRCommPkgSendMapElmts(comm_pkg) = send_map_elmts_new;
+      nalu_hypre_ParCSRCommPkgSendMapElmts(comm_pkg) = send_map_elmts_new;
 
       /* Free memory */
-      hypre_TFree(send_map_elmts, NALU_HYPRE_MEMORY_HOST);
-      hypre_TFree(hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg), NALU_HYPRE_MEMORY_DEVICE);
+      nalu_hypre_TFree(send_map_elmts, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(nalu_hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg), NALU_HYPRE_MEMORY_DEVICE);
 #if defined(NALU_HYPRE_USING_GPU)
-      hypre_CSRMatrixDestroy(hypre_ParCSRCommPkgMatrixE(comm_pkg));
-      hypre_ParCSRCommPkgMatrixE(comm_pkg) = NULL;
+      nalu_hypre_CSRMatrixDestroy(nalu_hypre_ParCSRCommPkgMatrixE(comm_pkg));
+      nalu_hypre_ParCSRCommPkgMatrixE(comm_pkg) = NULL;
 #endif
 
       /* Update send_map_starts */
@@ -1173,59 +1173,59 @@ hypre_ParCSRCommPkgUpdateVecStarts( hypre_ParCSRCommPkg *comm_pkg,
       }
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*------------------------------------------------------------------
- * hypre_MatvecCommPkgCreate
+ * nalu_hypre_MatvecCommPkgCreate
  *
  * Generates the communication package for A using assumed partition
  *------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_MatvecCommPkgCreate ( hypre_ParCSRMatrix *A )
+nalu_hypre_MatvecCommPkgCreate ( nalu_hypre_ParCSRMatrix *A )
 {
-   MPI_Comm             comm  = hypre_ParCSRMatrixComm(A);
-   hypre_IJAssumedPart *apart = hypre_ParCSRMatrixAssumedPartition(A);
-   hypre_ParCSRCommPkg *comm_pkg;
+   MPI_Comm             comm  = nalu_hypre_ParCSRMatrixComm(A);
+   nalu_hypre_IJAssumedPart *apart = nalu_hypre_ParCSRMatrixAssumedPartition(A);
+   nalu_hypre_ParCSRCommPkg *comm_pkg;
 
-   NALU_HYPRE_BigInt         first_col_diag  = hypre_ParCSRMatrixFirstColDiag(A);
-   NALU_HYPRE_BigInt        *col_map_offd    = hypre_ParCSRMatrixColMapOffd(A);
-   NALU_HYPRE_Int            num_cols_offd   = hypre_CSRMatrixNumCols(hypre_ParCSRMatrixOffd(A));
-   NALU_HYPRE_BigInt         global_num_cols = hypre_ParCSRMatrixGlobalNumCols(A);
+   NALU_HYPRE_BigInt         first_col_diag  = nalu_hypre_ParCSRMatrixFirstColDiag(A);
+   NALU_HYPRE_BigInt        *col_map_offd    = nalu_hypre_ParCSRMatrixColMapOffd(A);
+   NALU_HYPRE_Int            num_cols_offd   = nalu_hypre_CSRMatrixNumCols(nalu_hypre_ParCSRMatrixOffd(A));
+   NALU_HYPRE_BigInt         global_num_cols = nalu_hypre_ParCSRMatrixGlobalNumCols(A);
 
    NALU_HYPRE_ANNOTATE_FUNC_BEGIN;
 
    /* Create the assumed partition and should own it */
    if (apart == NULL)
    {
-      hypre_ParCSRMatrixCreateAssumedPartition(A);
-      hypre_ParCSRMatrixOwnsAssumedPartition(A) = 1;
-      apart = hypre_ParCSRMatrixAssumedPartition(A);
+      nalu_hypre_ParCSRMatrixCreateAssumedPartition(A);
+      nalu_hypre_ParCSRMatrixOwnsAssumedPartition(A) = 1;
+      apart = nalu_hypre_ParCSRMatrixAssumedPartition(A);
    }
 
    /*-----------------------------------------------------------
     * setup commpkg
     *----------------------------------------------------------*/
 
-   comm_pkg = hypre_TAlloc(hypre_ParCSRCommPkg, 1, NALU_HYPRE_MEMORY_HOST);
-   hypre_ParCSRMatrixCommPkg(A) = comm_pkg;
-   hypre_ParCSRCommPkgCreateApart( comm, col_map_offd, first_col_diag,
+   comm_pkg = nalu_hypre_TAlloc(nalu_hypre_ParCSRCommPkg, 1, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_ParCSRMatrixCommPkg(A) = comm_pkg;
+   nalu_hypre_ParCSRCommPkgCreateApart( comm, col_map_offd, first_col_diag,
                                    num_cols_offd, global_num_cols,
                                    apart,
                                    comm_pkg );
 
    NALU_HYPRE_ANNOTATE_FUNC_END;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*------------------------------------------------------------------
- * hypre_MatvecCommPkgDestroy
+ * nalu_hypre_MatvecCommPkgDestroy
  *------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_MatvecCommPkgDestroy( hypre_ParCSRCommPkg *comm_pkg )
+nalu_hypre_MatvecCommPkgDestroy( nalu_hypre_ParCSRCommPkg *comm_pkg )
 {
 #ifdef NALU_HYPRE_USING_PERSISTENT_COMM
    NALU_HYPRE_Int i;
@@ -1233,41 +1233,41 @@ hypre_MatvecCommPkgDestroy( hypre_ParCSRCommPkg *comm_pkg )
    {
       if (comm_pkg->persistent_comm_handles[i])
       {
-         hypre_ParCSRPersistentCommHandleDestroy(comm_pkg->persistent_comm_handles[i]);
+         nalu_hypre_ParCSRPersistentCommHandleDestroy(comm_pkg->persistent_comm_handles[i]);
       }
    }
 #endif
 
-   if (hypre_ParCSRCommPkgNumSends(comm_pkg))
+   if (nalu_hypre_ParCSRCommPkgNumSends(comm_pkg))
    {
-      hypre_TFree(hypre_ParCSRCommPkgSendProcs(comm_pkg), NALU_HYPRE_MEMORY_HOST);
-      hypre_TFree(hypre_ParCSRCommPkgSendMapElmts(comm_pkg), NALU_HYPRE_MEMORY_HOST);
-      hypre_TFree(hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg), NALU_HYPRE_MEMORY_DEVICE);
+      nalu_hypre_TFree(nalu_hypre_ParCSRCommPkgSendProcs(comm_pkg), NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(nalu_hypre_ParCSRCommPkgSendMapElmts(comm_pkg), NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(nalu_hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg), NALU_HYPRE_MEMORY_DEVICE);
    }
-   hypre_TFree(hypre_ParCSRCommPkgSendMapStarts(comm_pkg), NALU_HYPRE_MEMORY_HOST);
-   /* if (hypre_ParCSRCommPkgSendMPITypes(comm_pkg))
-      hypre_TFree(hypre_ParCSRCommPkgSendMPITypes(comm_pkg), NALU_HYPRE_MEMORY_HOST); */
-   if (hypre_ParCSRCommPkgNumRecvs(comm_pkg))
+   nalu_hypre_TFree(nalu_hypre_ParCSRCommPkgSendMapStarts(comm_pkg), NALU_HYPRE_MEMORY_HOST);
+   /* if (nalu_hypre_ParCSRCommPkgSendMPITypes(comm_pkg))
+      nalu_hypre_TFree(nalu_hypre_ParCSRCommPkgSendMPITypes(comm_pkg), NALU_HYPRE_MEMORY_HOST); */
+   if (nalu_hypre_ParCSRCommPkgNumRecvs(comm_pkg))
    {
-      hypre_TFree(hypre_ParCSRCommPkgRecvProcs(comm_pkg), NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(nalu_hypre_ParCSRCommPkgRecvProcs(comm_pkg), NALU_HYPRE_MEMORY_HOST);
    }
-   hypre_TFree(hypre_ParCSRCommPkgRecvVecStarts(comm_pkg), NALU_HYPRE_MEMORY_HOST);
-   /* if (hypre_ParCSRCommPkgRecvMPITypes(comm_pkg))
-      hypre_TFree(hypre_ParCSRCommPkgRecvMPITypes(comm_pkg), NALU_HYPRE_MEMORY_HOST); */
+   nalu_hypre_TFree(nalu_hypre_ParCSRCommPkgRecvVecStarts(comm_pkg), NALU_HYPRE_MEMORY_HOST);
+   /* if (nalu_hypre_ParCSRCommPkgRecvMPITypes(comm_pkg))
+      nalu_hypre_TFree(nalu_hypre_ParCSRCommPkgRecvMPITypes(comm_pkg), NALU_HYPRE_MEMORY_HOST); */
 
 #if defined(NALU_HYPRE_USING_GPU)
-   hypre_TFree(hypre_ParCSRCommPkgTmpData(comm_pkg), NALU_HYPRE_MEMORY_DEVICE);
-   hypre_TFree(hypre_ParCSRCommPkgBufData(comm_pkg), NALU_HYPRE_MEMORY_DEVICE);
-   hypre_CSRMatrixDestroy(hypre_ParCSRCommPkgMatrixE(comm_pkg));
+   nalu_hypre_TFree(nalu_hypre_ParCSRCommPkgTmpData(comm_pkg), NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(nalu_hypre_ParCSRCommPkgBufData(comm_pkg), NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_CSRMatrixDestroy(nalu_hypre_ParCSRCommPkgMatrixE(comm_pkg));
 #endif
 
-   hypre_TFree(comm_pkg, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(comm_pkg, NALU_HYPRE_MEMORY_HOST);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*------------------------------------------------------------------
- * hypre_ParCSRFindExtendCommPkg
+ * nalu_hypre_ParCSRFindExtendCommPkg
  *
  * AHB 11/06 : alternate to the extend function below - creates a
  * second comm pkg based on indices - this makes it easier to use the
@@ -1277,42 +1277,42 @@ hypre_MatvecCommPkgDestroy( hypre_ParCSRCommPkg *comm_pkg )
  *------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_ParCSRFindExtendCommPkg(MPI_Comm              comm,
+nalu_hypre_ParCSRFindExtendCommPkg(MPI_Comm              comm,
                               NALU_HYPRE_BigInt          global_num,
                               NALU_HYPRE_BigInt          my_first,
                               NALU_HYPRE_Int             local_num,
                               NALU_HYPRE_BigInt         *starts,
-                              hypre_IJAssumedPart  *apart,
+                              nalu_hypre_IJAssumedPart  *apart,
                               NALU_HYPRE_Int             indices_len,
                               NALU_HYPRE_BigInt         *indices,
-                              hypre_ParCSRCommPkg **extend_comm_pkg)
+                              nalu_hypre_ParCSRCommPkg **extend_comm_pkg)
 {
-   hypre_ParCSRCommPkg *new_comm_pkg = hypre_TAlloc(hypre_ParCSRCommPkg, 1, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_ParCSRCommPkg *new_comm_pkg = nalu_hypre_TAlloc(nalu_hypre_ParCSRCommPkg, 1, NALU_HYPRE_MEMORY_HOST);
 
-   hypre_assert(apart != NULL);
-   hypre_ParCSRCommPkgCreateApart(comm, indices, my_first, indices_len,
+   nalu_hypre_assert(apart != NULL);
+   nalu_hypre_ParCSRCommPkgCreateApart(comm, indices, my_first, indices_len,
                                   global_num, apart, new_comm_pkg);
 
    *extend_comm_pkg = new_comm_pkg;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*------------------------------------------------------------------
- * hypre_BuildCSRMatrixMPIDataType
+ * nalu_hypre_BuildCSRMatrixMPIDataType
  *------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_BuildCSRMatrixMPIDataType( NALU_HYPRE_Int num_nonzeros,
+nalu_hypre_BuildCSRMatrixMPIDataType( NALU_HYPRE_Int num_nonzeros,
                                  NALU_HYPRE_Int num_rows,
                                  NALU_HYPRE_Complex *a_data,
                                  NALU_HYPRE_Int *a_i,
                                  NALU_HYPRE_Int *a_j,
-                                 hypre_MPI_Datatype *csr_matrix_datatype )
+                                 nalu_hypre_MPI_Datatype *csr_matrix_datatype )
 {
    NALU_HYPRE_Int            block_lens[3];
-   hypre_MPI_Aint       displ[3];
-   hypre_MPI_Datatype   types[3];
+   nalu_hypre_MPI_Aint       displ[3];
+   nalu_hypre_MPI_Datatype   types[3];
 
    block_lens[0] = num_nonzeros;
    block_lens[1] = num_rows + 1;
@@ -1322,28 +1322,28 @@ hypre_BuildCSRMatrixMPIDataType( NALU_HYPRE_Int num_nonzeros,
    types[1] = NALU_HYPRE_MPI_INT;
    types[2] = NALU_HYPRE_MPI_INT;
 
-   hypre_MPI_Address(a_data, &displ[0]);
-   hypre_MPI_Address(a_i, &displ[1]);
-   hypre_MPI_Address(a_j, &displ[2]);
-   hypre_MPI_Type_struct(3, block_lens, displ, types, csr_matrix_datatype);
-   hypre_MPI_Type_commit(csr_matrix_datatype);
+   nalu_hypre_MPI_Address(a_data, &displ[0]);
+   nalu_hypre_MPI_Address(a_i, &displ[1]);
+   nalu_hypre_MPI_Address(a_j, &displ[2]);
+   nalu_hypre_MPI_Type_struct(3, block_lens, displ, types, csr_matrix_datatype);
+   nalu_hypre_MPI_Type_commit(csr_matrix_datatype);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*------------------------------------------------------------------
- * hypre_BuildCSRMatrixMPIDataType
+ * nalu_hypre_BuildCSRMatrixMPIDataType
  *------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_BuildCSRJDataType( NALU_HYPRE_Int num_nonzeros,
+nalu_hypre_BuildCSRJDataType( NALU_HYPRE_Int num_nonzeros,
                          NALU_HYPRE_Complex *a_data,
                          NALU_HYPRE_Int *a_j,
-                         hypre_MPI_Datatype *csr_jdata_datatype )
+                         nalu_hypre_MPI_Datatype *csr_jdata_datatype )
 {
    NALU_HYPRE_Int          block_lens[2];
-   hypre_MPI_Aint     displs[2];
-   hypre_MPI_Datatype types[2];
+   nalu_hypre_MPI_Aint     displs[2];
+   nalu_hypre_MPI_Datatype types[2];
 
    block_lens[0] = num_nonzeros;
    block_lens[1] = num_nonzeros;
@@ -1351,11 +1351,11 @@ hypre_BuildCSRJDataType( NALU_HYPRE_Int num_nonzeros,
    types[0] = NALU_HYPRE_MPI_COMPLEX;
    types[1] = NALU_HYPRE_MPI_INT;
 
-   hypre_MPI_Address(a_data, &displs[0]);
-   hypre_MPI_Address(a_j, &displs[1]);
+   nalu_hypre_MPI_Address(a_data, &displs[0]);
+   nalu_hypre_MPI_Address(a_j, &displs[1]);
 
-   hypre_MPI_Type_struct(2, block_lens, displs, types, csr_jdata_datatype);
-   hypre_MPI_Type_commit(csr_jdata_datatype);
+   nalu_hypre_MPI_Type_struct(2, block_lens, displs, types, csr_jdata_datatype);
+   nalu_hypre_MPI_Type_commit(csr_jdata_datatype);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }

@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_Euclid.h"
+#include "_nalu_hypre_Euclid.h"
 /* #include "MatGenFD.h" */
 /* #include "Mat_dh.h" */
 /* #include "Vec_dh.h" */
@@ -146,7 +146,7 @@ void MatGenFD_Run(MatGenFD mg, NALU_HYPRE_Int id, NALU_HYPRE_Int np, Mat_dh *AOu
       NALU_HYPRE_Int npTest = mg->px*mg->py;
       if (threeD) npTest *= mg->pz;
       if (npTest != np) {
-        hypre_sprintf(msgBuf_dh, "numbers don't match: np_dh = %i, px*py*pz = %i", np, npTest);
+        nalu_hypre_sprintf(msgBuf_dh, "numbers don't match: np_dh = %i, px*py*pz = %i", np, npTest);
         SET_V_ERROR(msgBuf_dh);
       }
     }
@@ -165,12 +165,12 @@ void MatGenFD_Run(MatGenFD mg, NALU_HYPRE_Int id, NALU_HYPRE_Int np, Mat_dh *AOu
   mg->hh = 1.0/(mg->px*mg->cc - 1);
   
   if (debug) {
-    hypre_sprintf(msgBuf_dh, "cc (local grid dimension) = %i", mg->cc);
+    nalu_hypre_sprintf(msgBuf_dh, "cc (local grid dimension) = %i", mg->cc);
     SET_INFO(msgBuf_dh);
-    if (threeD) { hypre_sprintf(msgBuf_dh, "threeD = true"); }
-    else            { hypre_sprintf(msgBuf_dh, "threeD = false"); }
+    if (threeD) { nalu_hypre_sprintf(msgBuf_dh, "threeD = true"); }
+    else            { nalu_hypre_sprintf(msgBuf_dh, "threeD = false"); }
     SET_INFO(msgBuf_dh);
-    hypre_sprintf(msgBuf_dh, "np= %i  id= %i", np, id);
+    nalu_hypre_sprintf(msgBuf_dh, "np= %i  id= %i", np, id);
     SET_INFO(msgBuf_dh);
   }
 
@@ -266,7 +266,7 @@ void generateStriped(MatGenFD mg, NALU_HYPRE_Int *rp, NALU_HYPRE_Int *cval, NALU
   plane = m*m;
 
   if (debug) {
-    hypre_fprintf(logFile, "generateStriped: beg_row= %i; end_row= %i; m= %i\n", beg_row+1, end_row+1, m);
+    nalu_hypre_fprintf(logFile, "generateStriped: beg_row= %i; end_row= %i; m= %i\n", beg_row+1, end_row+1, m);
   }
 
   for (row = beg_row; row<end_row; ++row) {
@@ -279,7 +279,7 @@ void generateStriped(MatGenFD mg, NALU_HYPRE_Int *rp, NALU_HYPRE_Int *cval, NALU
         i = nodeRemainder % m;
 
         if (debug) {
-          hypre_fprintf(logFile, "row= %i  x= %i  y= %i  z= %i\n", row+1, i,j,k);
+          nalu_hypre_fprintf(logFile, "row= %i  x= %i  y= %i  z= %i\n", row+1, i,j,k);
         }
 
         /* compute column values and rhs entry for the current node */
@@ -340,7 +340,7 @@ void generateStriped(MatGenFD mg, NALU_HYPRE_Int *rp, NALU_HYPRE_Int *cval, NALU
          NALU_HYPRE_Int len = rp[localRow] - rp[localRow-1];
          NALU_HYPRE_Real ctr, coeff;
 
-/* hypre_fprintf(logFile, "globalRow = %i; naborx2 = %i\n", row+1, row); */
+/* nalu_hypre_fprintf(logFile, "globalRow = %i; naborx2 = %i\n", row+1, row); */
 
          if (i == 0) {         /* if x1 */
            coeff = mg->A(mg->a, i+hhalf,j,k);
@@ -393,8 +393,8 @@ NALU_HYPRE_Int rownum(const bool threeD, const NALU_HYPRE_Int x, const NALU_HYPR
    r = z/nz;
 
 /*
-if (myid_dh == 0) hypre_printf("nx= %i  ny= %i  nz= %i\n", nx, ny, nz);
-if (myid_dh == 0) hypre_printf("x= %i y= %i z= %i  threeD= %i  p= %i q= %i r= %i\n",
+if (myid_dh == 0) nalu_hypre_printf("nx= %i  ny= %i  nz= %i\n", nx, ny, nz);
+if (myid_dh == 0) nalu_hypre_printf("x= %i y= %i z= %i  threeD= %i  p= %i q= %i r= %i\n",
               x,y,z,threeD, p,q,r);
 */
 
@@ -407,7 +407,7 @@ if (myid_dh == 0) hypre_printf("x= %i y= %i z= %i  threeD= %i  p= %i q= %i r= %i
      id = q*P+p;
    }
 
-/*  if (myid_dh == 0) hypre_printf(" id= %i\n", id);
+/*  if (myid_dh == 0) nalu_hypre_printf(" id= %i\n", id);
 */
 
    /* smallest row in the subdomain */
@@ -684,7 +684,7 @@ void generateBlocked(MatGenFD mg, NALU_HYPRE_Int *rp, NALU_HYPRE_Int *cval, NALU
   r = ( id - p - px*q)/( px*py );
 
   if (debug) {
-    hypre_sprintf(msgBuf_dh, "this proc's position in subdomain grid: p= %i  q= %i  r= %i", p,q,r);
+    nalu_hypre_sprintf(msgBuf_dh, "this proc's position in subdomain grid: p= %i  q= %i  r= %i", p,q,r);
     SET_INFO(msgBuf_dh);
   }
 
@@ -699,11 +699,11 @@ void generateBlocked(MatGenFD mg, NALU_HYPRE_Int *rp, NALU_HYPRE_Int *cval, NALU
    upperz = lowerz + nz;
 
   if (debug) {
-    hypre_sprintf(msgBuf_dh, "local grid parameters: lowerx= %i  upperx= %i", lowerx, upperx);
+    nalu_hypre_sprintf(msgBuf_dh, "local grid parameters: lowerx= %i  upperx= %i", lowerx, upperx);
     SET_INFO(msgBuf_dh);
-    hypre_sprintf(msgBuf_dh, "local grid parameters: lowery= %i  uppery= %i", lowery, uppery);
+    nalu_hypre_sprintf(msgBuf_dh, "local grid parameters: lowery= %i  uppery= %i", lowery, uppery);
     SET_INFO(msgBuf_dh);
-    hypre_sprintf(msgBuf_dh, "local grid parameters: lowerz= %i  upperz= %i", lowerz, upperz);
+    nalu_hypre_sprintf(msgBuf_dh, "local grid parameters: lowerz= %i  upperz= %i", lowerz, upperz);
     SET_INFO(msgBuf_dh);
   }
 
@@ -715,7 +715,7 @@ void generateBlocked(MatGenFD mg, NALU_HYPRE_Int *rp, NALU_HYPRE_Int *cval, NALU
       for (x=lowerx; x<upperx; x++) {
 
         if (debug) {
-          hypre_fprintf(logFile, "row= %i  x= %i  y= %i  z= %i\n", localRow+startRow+1, x, y, z);
+          nalu_hypre_fprintf(logFile, "row= %i  x= %i  y= %i  z= %i\n", localRow+startRow+1, x, y, z);
         }
 
         /* compute row values and rhs, at the current node */
@@ -742,12 +742,12 @@ void generateBlocked(MatGenFD mg, NALU_HYPRE_Int *rp, NALU_HYPRE_Int *cval, NALU
           naborx1 = rownum(threeD, x-1,y,z,nx,ny,nz,px,py);
           cval[idx]   = naborx1;
           aval[idx++] = WEST(stencil);
-/*hypre_fprintf(logFile, "--- row: %i;  naborx1= %i\n", localRow+startRow+1, 1+naborx1);
+/*nalu_hypre_fprintf(logFile, "--- row: %i;  naborx1= %i\n", localRow+startRow+1, 1+naborx1);
 */
         }
 /*
 else {
-hypre_fprintf(logFile, "--- row: %i;  x >= nx*px-1; naborx1 has old value: %i\n", localRow+startRow+1,1+naborx1);
+nalu_hypre_fprintf(logFile, "--- row: %i;  x >= nx*px-1; naborx1 has old value: %i\n", localRow+startRow+1,1+naborx1);
 }
 */
 
@@ -764,7 +764,7 @@ hypre_fprintf(logFile, "--- row: %i;  x >= nx*px-1; naborx1 has old value: %i\n"
         }
 /*
 else {
-hypre_fprintf(logFile, "--- row: %i;  x >= nx*px-1; nobors2 has old value: %i\n", localRow+startRow,1+naborx2);
+nalu_hypre_fprintf(logFile, "--- row: %i;  x >= nx*px-1; nobors2 has old value: %i\n", localRow+startRow,1+naborx2);
 }
 */
 
@@ -797,7 +797,7 @@ hypre_fprintf(logFile, "--- row: %i;  x >= nx*px-1; nobors2 has old value: %i\n"
          NALU_HYPRE_Int len = rp[localRow] - rp[localRow-1];
          NALU_HYPRE_Real ctr, coeff;
 
-/* hypre_fprintf(logFile, "globalRow = %i; naborx2 = %i\n", globalRow+1, naborx2+1); */
+/* nalu_hypre_fprintf(logFile, "globalRow = %i; naborx2 = %i\n", globalRow+1, naborx2+1); */
 
          if (x == 0) {         /* if x1 */
            coeff = mg->A(mg->a, x+hhalf,y,z);
@@ -863,7 +863,7 @@ void setBoundary_private(NALU_HYPRE_Int node, NALU_HYPRE_Int *cval, NALU_HYPRE_R
 
   /* case 2: neuman */
   else {
-/* hypre_fprintf(logFile, "node= %i  nabor= %i  coeff= %g\n", node+1, nabor+1, coeff); */
+/* nalu_hypre_fprintf(logFile, "node= %i  nabor= %i  coeff= %g\n", node+1, nabor+1, coeff); */
     /* adjust row values */
     for (i=0; i<len; ++i) {
       /* adjust diagonal */

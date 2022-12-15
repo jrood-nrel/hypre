@@ -20,8 +20,8 @@
 #include <oneapi/dpl/numeric>
 #include <oneapi/dpl/iterator>
 #include <oneapi/dpl/functional>
-#include "_hypre_utilities.h"
-#include "_hypre_utilities.hpp"
+#include "_nalu_hypre_utilities.h"
+#include "_nalu_hypre_utilities.hpp"
 
 //[pred, op](Ref1 a, Ref2 s) { return pred(s) ? op(a) : a; });
 template <typename T, typename Predicate, typename Operator>
@@ -116,13 +116,13 @@ Iter1 hypreSycl_remove_if(Iter1 first, Iter1 last, Iter2 mask, Pred pred)
       std::random_access_iterator_tag>::value,
       "Iterators passed to algorithms must be random-access iterators.");
    using ValueType = typename std::iterator_traits<Iter2>::value_type;
-   Iter2 mask_cpy = hypre_CTAlloc(ValueType, std::distance(first, last), NALU_HYPRE_MEMORY_DEVICE);
-   hypre_TMemcpy(mask_cpy, mask, ValueType, std::distance(first, last), NALU_HYPRE_MEMORY_DEVICE, NALU_HYPRE_MEMORY_DEVICE);
+   Iter2 mask_cpy = nalu_hypre_CTAlloc(ValueType, std::distance(first, last), NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TMemcpy(mask_cpy, mask, ValueType, std::distance(first, last), NALU_HYPRE_MEMORY_DEVICE, NALU_HYPRE_MEMORY_DEVICE);
    auto ret_val = NALU_HYPRE_ONEDPL_CALL( std::remove_if,
                                      oneapi::dpl::make_zip_iterator(first, mask_cpy),
                                      oneapi::dpl::make_zip_iterator(last, mask_cpy + std::distance(first, last)),
                                      predicate_key_fun<Pred>(pred));
-   hypre_TFree(mask_cpy, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(mask_cpy, NALU_HYPRE_MEMORY_DEVICE);
    return std::get<0>(ret_val.base());
 }
 

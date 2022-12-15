@@ -5,9 +5,9 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_parcsr_ls.h"
+#include "_nalu_hypre_parcsr_ls.h"
 #include "../NALU_HYPRE.h"
-#include "_hypre_IJ_mv.h"
+#include "_nalu_hypre_IJ_mv.h"
 
 /* This file contains the routines for constructing non-Galerkin coarse grid
  * operators, based on the original Galerkin coarse grid
@@ -20,7 +20,7 @@
  *      indices never contains an index that goes out of bounds in array
  * */
 NALU_HYPRE_Int
-hypre_GrabSubArray(NALU_HYPRE_Int * indices,
+nalu_hypre_GrabSubArray(NALU_HYPRE_Int * indices,
                    NALU_HYPRE_Int start,
                    NALU_HYPRE_Int end,
                    NALU_HYPRE_BigInt * array,
@@ -34,7 +34,7 @@ hypre_GrabSubArray(NALU_HYPRE_Int * indices,
       output[i] = array[indices[start + i]];
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /* Compute the intersection of x and y, placing
@@ -52,7 +52,7 @@ hypre_GrabSubArray(NALU_HYPRE_Int * indices,
  *          in the longer array is faster.
  * */
 NALU_HYPRE_Int
-hypre_IntersectTwoArrays(NALU_HYPRE_Int *x,
+nalu_hypre_IntersectTwoArrays(NALU_HYPRE_Int *x,
                          NALU_HYPRE_Real *x_data,
                          NALU_HYPRE_Int  x_length,
                          NALU_HYPRE_Int *y,
@@ -90,7 +90,7 @@ hypre_IntersectTwoArrays(NALU_HYPRE_Int *x,
 }
 
 NALU_HYPRE_Int
-hypre_IntersectTwoBigArrays(NALU_HYPRE_BigInt *x,
+nalu_hypre_IntersectTwoBigArrays(NALU_HYPRE_BigInt *x,
                             NALU_HYPRE_Real *x_data,
                             NALU_HYPRE_Int  x_length,
                             NALU_HYPRE_BigInt *y,
@@ -137,31 +137,31 @@ hypre_IntersectTwoBigArrays(NALU_HYPRE_BigInt *x,
  *      A and B are the same size and have same data layout
  **/
 NALU_HYPRE_Int
-hypre_SortedCopyParCSRData(hypre_ParCSRMatrix  *A,
-                           hypre_ParCSRMatrix  *B)
+nalu_hypre_SortedCopyParCSRData(nalu_hypre_ParCSRMatrix  *A,
+                           nalu_hypre_ParCSRMatrix  *B)
 {
    /* Grab off A and B's data structures */
-   hypre_CSRMatrix     *A_diag               = hypre_ParCSRMatrixDiag(A);
-   NALU_HYPRE_Int           *A_diag_i             = hypre_CSRMatrixI(A_diag);
-   NALU_HYPRE_Int           *A_diag_j             = hypre_CSRMatrixJ(A_diag);
-   NALU_HYPRE_Real          *A_diag_data          = hypre_CSRMatrixData(A_diag);
+   nalu_hypre_CSRMatrix     *A_diag               = nalu_hypre_ParCSRMatrixDiag(A);
+   NALU_HYPRE_Int           *A_diag_i             = nalu_hypre_CSRMatrixI(A_diag);
+   NALU_HYPRE_Int           *A_diag_j             = nalu_hypre_CSRMatrixJ(A_diag);
+   NALU_HYPRE_Real          *A_diag_data          = nalu_hypre_CSRMatrixData(A_diag);
 
-   hypre_CSRMatrix     *A_offd               = hypre_ParCSRMatrixOffd(A);
-   NALU_HYPRE_Int           *A_offd_i             = hypre_CSRMatrixI(A_offd);
-   NALU_HYPRE_Int           *A_offd_j             = hypre_CSRMatrixJ(A_offd);
-   NALU_HYPRE_Real          *A_offd_data          = hypre_CSRMatrixData(A_offd);
+   nalu_hypre_CSRMatrix     *A_offd               = nalu_hypre_ParCSRMatrixOffd(A);
+   NALU_HYPRE_Int           *A_offd_i             = nalu_hypre_CSRMatrixI(A_offd);
+   NALU_HYPRE_Int           *A_offd_j             = nalu_hypre_CSRMatrixJ(A_offd);
+   NALU_HYPRE_Real          *A_offd_data          = nalu_hypre_CSRMatrixData(A_offd);
 
-   hypre_CSRMatrix     *B_diag               = hypre_ParCSRMatrixDiag(B);
-   NALU_HYPRE_Int           *B_diag_i             = hypre_CSRMatrixI(B_diag);
-   NALU_HYPRE_Int           *B_diag_j             = hypre_CSRMatrixJ(B_diag);
-   NALU_HYPRE_Real          *B_diag_data          = hypre_CSRMatrixData(B_diag);
+   nalu_hypre_CSRMatrix     *B_diag               = nalu_hypre_ParCSRMatrixDiag(B);
+   NALU_HYPRE_Int           *B_diag_i             = nalu_hypre_CSRMatrixI(B_diag);
+   NALU_HYPRE_Int           *B_diag_j             = nalu_hypre_CSRMatrixJ(B_diag);
+   NALU_HYPRE_Real          *B_diag_data          = nalu_hypre_CSRMatrixData(B_diag);
 
-   hypre_CSRMatrix     *B_offd               = hypre_ParCSRMatrixOffd(B);
-   NALU_HYPRE_Int           *B_offd_i             = hypre_CSRMatrixI(B_offd);
-   NALU_HYPRE_Int           *B_offd_j             = hypre_CSRMatrixJ(B_offd);
-   NALU_HYPRE_Real          *B_offd_data          = hypre_CSRMatrixData(B_offd);
+   nalu_hypre_CSRMatrix     *B_offd               = nalu_hypre_ParCSRMatrixOffd(B);
+   NALU_HYPRE_Int           *B_offd_i             = nalu_hypre_CSRMatrixI(B_offd);
+   NALU_HYPRE_Int           *B_offd_j             = nalu_hypre_CSRMatrixJ(B_offd);
+   NALU_HYPRE_Real          *B_offd_data          = nalu_hypre_CSRMatrixData(B_offd);
 
-   NALU_HYPRE_Int            num_variables        = hypre_CSRMatrixNumRows(A_diag);
+   NALU_HYPRE_Int            num_variables        = nalu_hypre_CSRMatrixNumRows(A_diag);
    NALU_HYPRE_Int            *temp_int_array      = NULL;
    NALU_HYPRE_Int            temp_int_array_length = 0;
    NALU_HYPRE_Int            i, length, offset_A, offset_B;
@@ -186,11 +186,11 @@ hypre_SortedCopyParCSRData(hypre_ParCSRMatrix  *A,
        **/
       if ( (A_diag_i[i + 1] - A_diag_i[i] - offset_A) > temp_int_array_length )
       {
-         hypre_TFree(temp_int_array, NALU_HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(temp_int_array, NALU_HYPRE_MEMORY_HOST);
          temp_int_array_length = (A_diag_i[i + 1] - A_diag_i[i] - offset_A);
-         temp_int_array = hypre_CTAlloc(NALU_HYPRE_Int,  temp_int_array_length, NALU_HYPRE_MEMORY_HOST);
+         temp_int_array = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  temp_int_array_length, NALU_HYPRE_MEMORY_HOST);
       }
-      hypre_IntersectTwoArrays(&(A_diag_j[A_diag_i[i] + offset_A]),
+      nalu_hypre_IntersectTwoArrays(&(A_diag_j[A_diag_i[i] + offset_A]),
                                &(A_diag_data[A_diag_i[i] + offset_A]),
                                A_diag_i[i + 1] - A_diag_i[i] - offset_A,
                                &(B_diag_j[B_diag_i[i] + offset_B]),
@@ -201,11 +201,11 @@ hypre_SortedCopyParCSRData(hypre_ParCSRMatrix  *A,
 
       if ( (A_offd_i[i + 1] - A_offd_i[i]) > temp_int_array_length )
       {
-         hypre_TFree(temp_int_array, NALU_HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(temp_int_array, NALU_HYPRE_MEMORY_HOST);
          temp_int_array_length = (A_offd_i[i + 1] - A_offd_i[i]);
-         temp_int_array = hypre_CTAlloc(NALU_HYPRE_Int,  temp_int_array_length, NALU_HYPRE_MEMORY_HOST);
+         temp_int_array = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  temp_int_array_length, NALU_HYPRE_MEMORY_HOST);
       }
-      hypre_IntersectTwoArrays(&(A_offd_j[A_offd_i[i]]),
+      nalu_hypre_IntersectTwoArrays(&(A_offd_j[A_offd_i[i]]),
                                &(A_offd_data[A_offd_i[i]]),
                                A_offd_i[i + 1] - A_offd_i[i],
                                &(B_offd_j[B_offd_i[i]]),
@@ -216,49 +216,49 @@ hypre_SortedCopyParCSRData(hypre_ParCSRMatrix  *A,
    }
 
    if (temp_int_array)
-   {    hypre_TFree(temp_int_array, NALU_HYPRE_MEMORY_HOST); }
+   {    nalu_hypre_TFree(temp_int_array, NALU_HYPRE_MEMORY_HOST); }
    return 1;
 }
 
 /*
- * Equivalent to hypre_BoomerAMGCreateS, except, the data array of S
+ * Equivalent to nalu_hypre_BoomerAMGCreateS, except, the data array of S
  * is not Null and contains the data entries from A.
  */
 NALU_HYPRE_Int
-hypre_BoomerAMG_MyCreateS(hypre_ParCSRMatrix  *A,
+nalu_hypre_BoomerAMG_MyCreateS(nalu_hypre_ParCSRMatrix  *A,
                           NALU_HYPRE_Real           strength_threshold,
                           NALU_HYPRE_Real           max_row_sum,
                           NALU_HYPRE_Int            num_functions,
                           NALU_HYPRE_Int           *dof_func,
-                          hypre_ParCSRMatrix  **S_ptr)
+                          nalu_hypre_ParCSRMatrix  **S_ptr)
 {
-   MPI_Comm                 comm            = hypre_ParCSRMatrixComm(A);
-   hypre_ParCSRCommPkg     *comm_pkg        = hypre_ParCSRMatrixCommPkg(A);
-   hypre_ParCSRCommHandle  *comm_handle;
-   hypre_CSRMatrix         *A_diag          = hypre_ParCSRMatrixDiag(A);
-   NALU_HYPRE_Int               *A_diag_i        = hypre_CSRMatrixI(A_diag);
-   NALU_HYPRE_Real              *A_diag_data     = hypre_CSRMatrixData(A_diag);
+   MPI_Comm                 comm            = nalu_hypre_ParCSRMatrixComm(A);
+   nalu_hypre_ParCSRCommPkg     *comm_pkg        = nalu_hypre_ParCSRMatrixCommPkg(A);
+   nalu_hypre_ParCSRCommHandle  *comm_handle;
+   nalu_hypre_CSRMatrix         *A_diag          = nalu_hypre_ParCSRMatrixDiag(A);
+   NALU_HYPRE_Int               *A_diag_i        = nalu_hypre_CSRMatrixI(A_diag);
+   NALU_HYPRE_Real              *A_diag_data     = nalu_hypre_CSRMatrixData(A_diag);
 
 
-   hypre_CSRMatrix         *A_offd          = hypre_ParCSRMatrixOffd(A);
-   NALU_HYPRE_Int               *A_offd_i        = hypre_CSRMatrixI(A_offd);
+   nalu_hypre_CSRMatrix         *A_offd          = nalu_hypre_ParCSRMatrixOffd(A);
+   NALU_HYPRE_Int               *A_offd_i        = nalu_hypre_CSRMatrixI(A_offd);
    NALU_HYPRE_Real              *A_offd_data     = NULL;
-   NALU_HYPRE_Int               *A_diag_j        = hypre_CSRMatrixJ(A_diag);
-   NALU_HYPRE_Int               *A_offd_j        = hypre_CSRMatrixJ(A_offd);
+   NALU_HYPRE_Int               *A_diag_j        = nalu_hypre_CSRMatrixJ(A_diag);
+   NALU_HYPRE_Int               *A_offd_j        = nalu_hypre_CSRMatrixJ(A_offd);
 
-   NALU_HYPRE_BigInt            *row_starts      = hypre_ParCSRMatrixRowStarts(A);
-   NALU_HYPRE_Int                num_variables   = hypre_CSRMatrixNumRows(A_diag);
-   NALU_HYPRE_BigInt             global_num_vars = hypre_ParCSRMatrixGlobalNumRows(A);
+   NALU_HYPRE_BigInt            *row_starts      = nalu_hypre_ParCSRMatrixRowStarts(A);
+   NALU_HYPRE_Int                num_variables   = nalu_hypre_CSRMatrixNumRows(A_diag);
+   NALU_HYPRE_BigInt             global_num_vars = nalu_hypre_ParCSRMatrixGlobalNumRows(A);
    NALU_HYPRE_Int                num_nonzeros_diag;
    NALU_HYPRE_Int                num_nonzeros_offd = 0;
    NALU_HYPRE_Int                num_cols_offd     = 0;
 
-   hypre_ParCSRMatrix      *S;
-   hypre_CSRMatrix         *S_diag;
+   nalu_hypre_ParCSRMatrix      *S;
+   nalu_hypre_CSRMatrix         *S_diag;
    NALU_HYPRE_Int               *S_diag_i;
    NALU_HYPRE_Int               *S_diag_j;
    NALU_HYPRE_Real              *S_diag_data;
-   hypre_CSRMatrix         *S_offd;
+   nalu_hypre_CSRMatrix         *S_offd;
    NALU_HYPRE_Int               *S_offd_i = NULL;
    NALU_HYPRE_Int               *S_offd_j = NULL;
    NALU_HYPRE_Real              *S_offd_data;
@@ -278,9 +278,9 @@ hypre_BoomerAMG_MyCreateS(hypre_ParCSRMatrix  *A,
     *
     * For now, the "strength" of dependence/influence is defined in
     * the following way: i depends on j if
-    *     aij > hypre_max (k != i) aik,    aii < 0
+    *     aij > nalu_hypre_max (k != i) aik,    aii < 0
     * or
-    *     aij < hypre_min (k != i) aik,    aii >= 0
+    *     aij < nalu_hypre_min (k != i) aik,    aii >= 0
     * Then S_ij = aij, else S_ij = 0.
     *
     * NOTE: the entries are negative initially, corresponding
@@ -288,43 +288,43 @@ hypre_BoomerAMG_MyCreateS(hypre_ParCSRMatrix  *A,
     *----------------------------------------------------------------*/
 
    num_nonzeros_diag = A_diag_i[num_variables];
-   num_cols_offd = hypre_CSRMatrixNumCols(A_offd);
+   num_cols_offd = nalu_hypre_CSRMatrixNumCols(A_offd);
 
-   A_offd_i = hypre_CSRMatrixI(A_offd);
+   A_offd_i = nalu_hypre_CSRMatrixI(A_offd);
    num_nonzeros_offd = A_offd_i[num_variables];
 
    /* Initialize S */
-   S = hypre_ParCSRMatrixCreate(comm, global_num_vars, global_num_vars,
+   S = nalu_hypre_ParCSRMatrixCreate(comm, global_num_vars, global_num_vars,
                                 row_starts, row_starts,
                                 num_cols_offd, num_nonzeros_diag, num_nonzeros_offd);
-   S_diag = hypre_ParCSRMatrixDiag(S);
-   hypre_CSRMatrixI(S_diag) = hypre_CTAlloc(NALU_HYPRE_Int,  num_variables + 1, NALU_HYPRE_MEMORY_HOST);
-   hypre_CSRMatrixJ(S_diag) = hypre_CTAlloc(NALU_HYPRE_Int,  num_nonzeros_diag, NALU_HYPRE_MEMORY_HOST);
-   hypre_CSRMatrixData(S_diag) = hypre_CTAlloc(NALU_HYPRE_Real,  num_nonzeros_diag, NALU_HYPRE_MEMORY_HOST);
-   S_offd = hypre_ParCSRMatrixOffd(S);
-   hypre_CSRMatrixI(S_offd) = hypre_CTAlloc(NALU_HYPRE_Int,  num_variables + 1, NALU_HYPRE_MEMORY_HOST);
+   S_diag = nalu_hypre_ParCSRMatrixDiag(S);
+   nalu_hypre_CSRMatrixI(S_diag) = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  num_variables + 1, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_CSRMatrixJ(S_diag) = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  num_nonzeros_diag, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_CSRMatrixData(S_diag) = nalu_hypre_CTAlloc(NALU_HYPRE_Real,  num_nonzeros_diag, NALU_HYPRE_MEMORY_HOST);
+   S_offd = nalu_hypre_ParCSRMatrixOffd(S);
+   nalu_hypre_CSRMatrixI(S_offd) = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  num_variables + 1, NALU_HYPRE_MEMORY_HOST);
 
-   S_diag_i = hypre_CSRMatrixI(S_diag);
-   S_diag_j = hypre_CSRMatrixJ(S_diag);
-   S_diag_data = hypre_CSRMatrixData(S_diag);
-   S_offd_i = hypre_CSRMatrixI(S_offd);
+   S_diag_i = nalu_hypre_CSRMatrixI(S_diag);
+   S_diag_j = nalu_hypre_CSRMatrixJ(S_diag);
+   S_diag_data = nalu_hypre_CSRMatrixData(S_diag);
+   S_offd_i = nalu_hypre_CSRMatrixI(S_offd);
 
-   hypre_CSRMatrixMemoryLocation(S_diag) = NALU_HYPRE_MEMORY_HOST;
-   hypre_CSRMatrixMemoryLocation(S_offd) = NALU_HYPRE_MEMORY_HOST;
+   nalu_hypre_CSRMatrixMemoryLocation(S_diag) = NALU_HYPRE_MEMORY_HOST;
+   nalu_hypre_CSRMatrixMemoryLocation(S_offd) = NALU_HYPRE_MEMORY_HOST;
 
    dof_func_offd = NULL;
 
    if (num_cols_offd)
    {
-      A_offd_data = hypre_CSRMatrixData(A_offd);
-      hypre_CSRMatrixJ(S_offd) = hypre_CTAlloc(NALU_HYPRE_Int,  num_nonzeros_offd, NALU_HYPRE_MEMORY_HOST);
-      hypre_CSRMatrixData(S_offd) = hypre_CTAlloc(NALU_HYPRE_Real,  num_nonzeros_offd, NALU_HYPRE_MEMORY_HOST);
-      S_offd_j = hypre_CSRMatrixJ(S_offd);
-      S_offd_data = hypre_CSRMatrixData(S_offd);
-      hypre_ParCSRMatrixColMapOffd(S) = hypre_CTAlloc(NALU_HYPRE_BigInt,  num_cols_offd, NALU_HYPRE_MEMORY_HOST);
+      A_offd_data = nalu_hypre_CSRMatrixData(A_offd);
+      nalu_hypre_CSRMatrixJ(S_offd) = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  num_nonzeros_offd, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_CSRMatrixData(S_offd) = nalu_hypre_CTAlloc(NALU_HYPRE_Real,  num_nonzeros_offd, NALU_HYPRE_MEMORY_HOST);
+      S_offd_j = nalu_hypre_CSRMatrixJ(S_offd);
+      S_offd_data = nalu_hypre_CSRMatrixData(S_offd);
+      nalu_hypre_ParCSRMatrixColMapOffd(S) = nalu_hypre_CTAlloc(NALU_HYPRE_BigInt,  num_cols_offd, NALU_HYPRE_MEMORY_HOST);
       if (num_functions > 1)
       {
-         dof_func_offd = hypre_CTAlloc(NALU_HYPRE_Int,  num_cols_offd, NALU_HYPRE_MEMORY_HOST);
+         dof_func_offd = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  num_cols_offd, NALU_HYPRE_MEMORY_HOST);
       }
    }
 
@@ -335,34 +335,34 @@ hypre_BoomerAMG_MyCreateS(hypre_ParCSRMatrix  *A,
 
    if (!comm_pkg)
    {
-      hypre_MatvecCommPkgCreate(A);
-      comm_pkg = hypre_ParCSRMatrixCommPkg(A);
+      nalu_hypre_MatvecCommPkgCreate(A);
+      comm_pkg = nalu_hypre_ParCSRMatrixCommPkg(A);
    }
 
-   num_sends = hypre_ParCSRCommPkgNumSends(comm_pkg);
+   num_sends = nalu_hypre_ParCSRCommPkgNumSends(comm_pkg);
    if (num_functions > 1)
    {
-      int_buf_data = hypre_CTAlloc(NALU_HYPRE_Int, hypre_ParCSRCommPkgSendMapStart(comm_pkg,
+      int_buf_data = nalu_hypre_CTAlloc(NALU_HYPRE_Int, nalu_hypre_ParCSRCommPkgSendMapStart(comm_pkg,
                                                                               num_sends), NALU_HYPRE_MEMORY_HOST);
       index = 0;
       for (i = 0; i < num_sends; i++)
       {
-         start = hypre_ParCSRCommPkgSendMapStart(comm_pkg, i);
-         for (j = start; j < hypre_ParCSRCommPkgSendMapStart(comm_pkg, i + 1); j++)
+         start = nalu_hypre_ParCSRCommPkgSendMapStart(comm_pkg, i);
+         for (j = start; j < nalu_hypre_ParCSRCommPkgSendMapStart(comm_pkg, i + 1); j++)
          {
-            int_buf_data[index++] = dof_func[hypre_ParCSRCommPkgSendMapElmt(comm_pkg, j)];
+            int_buf_data[index++] = dof_func[nalu_hypre_ParCSRCommPkgSendMapElmt(comm_pkg, j)];
          }
       }
 
-      comm_handle = hypre_ParCSRCommHandleCreate( 11, comm_pkg, int_buf_data,
+      comm_handle = nalu_hypre_ParCSRCommHandleCreate( 11, comm_pkg, int_buf_data,
                                                   dof_func_offd);
 
-      hypre_ParCSRCommHandleDestroy(comm_handle);
-      hypre_TFree(int_buf_data, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_ParCSRCommHandleDestroy(comm_handle);
+      nalu_hypre_TFree(int_buf_data, NALU_HYPRE_MEMORY_HOST);
    }
 
    /* give S same nonzero structure as A */
-   hypre_ParCSRMatrixCopy(A, S, 1);
+   nalu_hypre_ParCSRMatrixCopy(A, S, 1);
 
 #ifdef NALU_HYPRE_USING_OPENMP
    #pragma omp parallel for private(i,diag,row_scale,row_sum,jA) NALU_HYPRE_SMP_SCHEDULE
@@ -382,7 +382,7 @@ hypre_BoomerAMG_MyCreateS(hypre_ParCSRMatrix  *A,
             {
                if (dof_func[i] == dof_func[A_diag_j[jA]])
                {
-                  row_scale = hypre_max(row_scale, A_diag_data[jA]);
+                  row_scale = nalu_hypre_max(row_scale, A_diag_data[jA]);
                   row_sum += A_diag_data[jA];
                }
             }
@@ -390,7 +390,7 @@ hypre_BoomerAMG_MyCreateS(hypre_ParCSRMatrix  *A,
             {
                if (dof_func[i] == dof_func_offd[A_offd_j[jA]])
                {
-                  row_scale = hypre_max(row_scale, A_offd_data[jA]);
+                  row_scale = nalu_hypre_max(row_scale, A_offd_data[jA]);
                   row_sum += A_offd_data[jA];
                }
             }
@@ -401,7 +401,7 @@ hypre_BoomerAMG_MyCreateS(hypre_ParCSRMatrix  *A,
             {
                if (dof_func[i] == dof_func[A_diag_j[jA]])
                {
-                  row_scale = hypre_min(row_scale, A_diag_data[jA]);
+                  row_scale = nalu_hypre_min(row_scale, A_diag_data[jA]);
                   row_sum += A_diag_data[jA];
                }
             }
@@ -409,7 +409,7 @@ hypre_BoomerAMG_MyCreateS(hypre_ParCSRMatrix  *A,
             {
                if (dof_func[i] == dof_func_offd[A_offd_j[jA]])
                {
-                  row_scale = hypre_min(row_scale, A_offd_data[jA]);
+                  row_scale = nalu_hypre_min(row_scale, A_offd_data[jA]);
                   row_sum += A_offd_data[jA];
                }
             }
@@ -421,12 +421,12 @@ hypre_BoomerAMG_MyCreateS(hypre_ParCSRMatrix  *A,
          {
             for (jA = A_diag_i[i] + 1; jA < A_diag_i[i + 1]; jA++)
             {
-               row_scale = hypre_max(row_scale, A_diag_data[jA]);
+               row_scale = nalu_hypre_max(row_scale, A_diag_data[jA]);
                row_sum += A_diag_data[jA];
             }
             for (jA = A_offd_i[i]; jA < A_offd_i[i + 1]; jA++)
             {
-               row_scale = hypre_max(row_scale, A_offd_data[jA]);
+               row_scale = nalu_hypre_max(row_scale, A_offd_data[jA]);
                row_sum += A_offd_data[jA];
             }
          }
@@ -434,12 +434,12 @@ hypre_BoomerAMG_MyCreateS(hypre_ParCSRMatrix  *A,
          {
             for (jA = A_diag_i[i] + 1; jA < A_diag_i[i + 1]; jA++)
             {
-               row_scale = hypre_min(row_scale, A_diag_data[jA]);
+               row_scale = nalu_hypre_min(row_scale, A_diag_data[jA]);
                row_sum += A_diag_data[jA];
             }
             for (jA = A_offd_i[i]; jA < A_offd_i[i + 1]; jA++)
             {
-               row_scale = hypre_min(row_scale, A_offd_data[jA]);
+               row_scale = nalu_hypre_min(row_scale, A_offd_data[jA]);
                row_sum += A_offd_data[jA];
             }
          }
@@ -567,7 +567,7 @@ hypre_BoomerAMG_MyCreateS(hypre_ParCSRMatrix  *A,
       }
    }
    S_diag_i[num_variables] = jS;
-   hypre_CSRMatrixNumNonzeros(S_diag) = jS;
+   nalu_hypre_CSRMatrixNumNonzeros(S_diag) = jS;
 
    /* RDF: not sure if able to thread this loop */
    jS = 0;
@@ -585,12 +585,12 @@ hypre_BoomerAMG_MyCreateS(hypre_ParCSRMatrix  *A,
       }
    }
    S_offd_i[num_variables] = jS;
-   hypre_CSRMatrixNumNonzeros(S_offd) = jS;
-   hypre_ParCSRMatrixCommPkg(S) = NULL;
+   nalu_hypre_CSRMatrixNumNonzeros(S_offd) = jS;
+   nalu_hypre_ParCSRMatrixCommPkg(S) = NULL;
 
    *S_ptr        = S;
 
-   hypre_TFree(dof_func_offd, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(dof_func_offd, NALU_HYPRE_MEMORY_HOST);
 
    return (ierr);
 }
@@ -599,7 +599,7 @@ hypre_BoomerAMG_MyCreateS(hypre_ParCSRMatrix  *A,
  * Initialize the IJBuffer counters
  **/
 NALU_HYPRE_Int
-hypre_NonGalerkinIJBufferInit( NALU_HYPRE_Int
+nalu_hypre_NonGalerkinIJBufferInit( NALU_HYPRE_Int
                                *ijbuf_cnt,           /* See NonGalerkinIJBufferWrite for parameter descriptions */
                                NALU_HYPRE_Int     *ijbuf_rowcounter,
                                NALU_HYPRE_Int     *ijbuf_numcols )
@@ -618,7 +618,7 @@ hypre_NonGalerkinIJBufferInit( NALU_HYPRE_Int
  * Initialize the IJBuffer counters
  **/
 NALU_HYPRE_Int
-hypre_NonGalerkinIJBigBufferInit( NALU_HYPRE_Int
+nalu_hypre_NonGalerkinIJBigBufferInit( NALU_HYPRE_Int
                                   *ijbuf_cnt,           /* See NonGalerkinIJBufferWrite for parameter descriptions */
                                   NALU_HYPRE_Int     *ijbuf_rowcounter,
                                   NALU_HYPRE_BigInt     *ijbuf_numcols )
@@ -638,7 +638,7 @@ hypre_NonGalerkinIJBigBufferInit( NALU_HYPRE_Int
  * Update the buffer counters
  **/
 NALU_HYPRE_Int
-hypre_NonGalerkinIJBufferNewRow(NALU_HYPRE_BigInt
+nalu_hypre_NonGalerkinIJBufferNewRow(NALU_HYPRE_BigInt
                                 *ijbuf_rownums, /* See NonGalerkinIJBufferWrite for parameter descriptions */
                                 NALU_HYPRE_Int     *ijbuf_numcols,
                                 NALU_HYPRE_Int     *ijbuf_rowcounter,
@@ -666,7 +666,7 @@ hypre_NonGalerkinIJBufferNewRow(NALU_HYPRE_BigInt
  * Compress the current row in an IJ Buffer by removing duplicate entries
  **/
 NALU_HYPRE_Int
-hypre_NonGalerkinIJBufferCompressRow( NALU_HYPRE_Int
+nalu_hypre_NonGalerkinIJBufferCompressRow( NALU_HYPRE_Int
                                       *ijbuf_cnt,      /* See NonGalerkinIJBufferWrite for parameter descriptions */
                                       NALU_HYPRE_Int      ijbuf_rowcounter,
                                       NALU_HYPRE_Real     *ijbuf_data,
@@ -681,7 +681,7 @@ hypre_NonGalerkinIJBufferCompressRow( NALU_HYPRE_Int
     * making sure to decrement ijbuf_cnt by nduplicate */
    nentries = ijbuf_numcols[ ijbuf_rowcounter - 1 ];
    nduplicate = 0;
-   hypre_BigQsort1(ijbuf_cols, ijbuf_data, (*ijbuf_cnt) - nentries, (*ijbuf_cnt) - 1 );
+   nalu_hypre_BigQsort1(ijbuf_cols, ijbuf_data, (*ijbuf_cnt) - nentries, (*ijbuf_cnt) - 1 );
 
    for (i = (*ijbuf_cnt) - nentries + 1; i <= (*ijbuf_cnt) - 1; i++)
    {
@@ -709,7 +709,7 @@ hypre_NonGalerkinIJBufferCompressRow( NALU_HYPRE_Int
  * Compress the entire buffer, removing duplicate rows
  **/
 NALU_HYPRE_Int
-hypre_NonGalerkinIJBufferCompress( NALU_HYPRE_MemoryLocation memory_location,
+nalu_hypre_NonGalerkinIJBufferCompress( NALU_HYPRE_MemoryLocation memory_location,
                                    NALU_HYPRE_Int            ijbuf_size,
                                    NALU_HYPRE_Int           *ijbuf_cnt,      /* See NonGalerkinIJBufferWrite for parameter descriptions */
                                    NALU_HYPRE_Int           *ijbuf_rowcounter,
@@ -719,7 +719,7 @@ hypre_NonGalerkinIJBufferCompress( NALU_HYPRE_MemoryLocation memory_location,
                                    NALU_HYPRE_Int          **ijbuf_numcols)
 {
    NALU_HYPRE_Int                ierr       = 0;
-   NALU_HYPRE_Int                *indys     = hypre_CTAlloc(NALU_HYPRE_Int,  (*ijbuf_rowcounter),
+   NALU_HYPRE_Int                *indys     = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  (*ijbuf_rowcounter),
                                                        NALU_HYPRE_MEMORY_HOST);
 
    NALU_HYPRE_Int                i, j, duplicate, cnt_new, rowcounter_new, prev_row;
@@ -736,7 +736,7 @@ hypre_NonGalerkinIJBufferCompress( NALU_HYPRE_MemoryLocation memory_location,
     * Then see if there are any duplicate rows */
    for (i = 0; i < (*ijbuf_rowcounter); i++)
    {   indys[i] = i; }
-   hypre_BigQsortbi((*ijbuf_rownums), indys, 0, (*ijbuf_rowcounter) - 1);
+   nalu_hypre_BigQsortbi((*ijbuf_rownums), indys, 0, (*ijbuf_rowcounter) - 1);
    duplicate = 0;
    for (i = 1; i < (*ijbuf_rowcounter); i++)
    {
@@ -759,10 +759,10 @@ hypre_NonGalerkinIJBufferCompress( NALU_HYPRE_MemoryLocation memory_location,
       prev_row         = -1;
       rowcounter_new   = 0;
       cnt_new          = 0;
-      data_new         = hypre_CTAlloc(NALU_HYPRE_Real,   ijbuf_size, memory_location);
-      cols_new         = hypre_CTAlloc(NALU_HYPRE_BigInt, ijbuf_size, memory_location);
-      rownums_new      = hypre_CTAlloc(NALU_HYPRE_BigInt, ijbuf_size, memory_location);
-      numcols_new      = hypre_CTAlloc(NALU_HYPRE_Int,    ijbuf_size, memory_location);
+      data_new         = nalu_hypre_CTAlloc(NALU_HYPRE_Real,   ijbuf_size, memory_location);
+      cols_new         = nalu_hypre_CTAlloc(NALU_HYPRE_BigInt, ijbuf_size, memory_location);
+      rownums_new      = nalu_hypre_CTAlloc(NALU_HYPRE_BigInt, ijbuf_size, memory_location);
+      numcols_new      = nalu_hypre_CTAlloc(NALU_HYPRE_Int,    ijbuf_size, memory_location);
       numcols_new[0]   = 0;
 
       /* Cycle through each row */
@@ -791,7 +791,7 @@ hypre_NonGalerkinIJBufferCompress( NALU_HYPRE_MemoryLocation memory_location,
             if (prev_row != -1)
             {
                /* Compress previous row */
-               hypre_NonGalerkinIJBufferCompressRow(&cnt_new, rowcounter_new, data_new,
+               nalu_hypre_NonGalerkinIJBufferCompressRow(&cnt_new, rowcounter_new, data_new,
                                                     cols_new, rownums_new, numcols_new);
             }
             prev_row = row;
@@ -813,7 +813,7 @@ hypre_NonGalerkinIJBufferCompress( NALU_HYPRE_MemoryLocation memory_location,
       /* Compress the final row */
       if (i > 1)
       {
-         hypre_NonGalerkinIJBufferCompressRow(&cnt_new, rowcounter_new, data_new,
+         nalu_hypre_NonGalerkinIJBufferCompressRow(&cnt_new, rowcounter_new, data_new,
                                               cols_new, rownums_new, numcols_new);
       }
 
@@ -821,17 +821,17 @@ hypre_NonGalerkinIJBufferCompress( NALU_HYPRE_MemoryLocation memory_location,
       *ijbuf_rowcounter = rowcounter_new;
 
       /* Point to the new buffer */
-      hypre_TFree(*ijbuf_data,    memory_location);
-      hypre_TFree(*ijbuf_cols,    memory_location);
-      hypre_TFree(*ijbuf_rownums, memory_location);
-      hypre_TFree(*ijbuf_numcols, memory_location);
+      nalu_hypre_TFree(*ijbuf_data,    memory_location);
+      nalu_hypre_TFree(*ijbuf_cols,    memory_location);
+      nalu_hypre_TFree(*ijbuf_rownums, memory_location);
+      nalu_hypre_TFree(*ijbuf_numcols, memory_location);
       (*ijbuf_data)    = data_new;
       (*ijbuf_cols)    = cols_new;
       (*ijbuf_rownums) = rownums_new;
       (*ijbuf_numcols) = numcols_new;
    }
 
-   hypre_TFree(indys, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(indys, NALU_HYPRE_MEMORY_HOST);
 
    return ierr;
 }
@@ -845,7 +845,7 @@ hypre_NonGalerkinIJBufferCompress( NALU_HYPRE_MemoryLocation memory_location,
  *  A[row_to_write, col_to_write] += val_to_write
  **/
 NALU_HYPRE_Int
-hypre_NonGalerkinIJBufferWrite( NALU_HYPRE_IJMatrix
+nalu_hypre_NonGalerkinIJBufferWrite( NALU_HYPRE_IJMatrix
                                 B,                 /* Unassembled matrix to add an entry to */
                                 NALU_HYPRE_Int    *ijbuf_cnt,          /* current buffer size */
                                 NALU_HYPRE_Int     ijbuf_size,         /* max buffer size */
@@ -864,21 +864,21 @@ hypre_NonGalerkinIJBufferWrite( NALU_HYPRE_IJMatrix
 {
    NALU_HYPRE_Int                ierr = 0;
 
-   NALU_HYPRE_MemoryLocation memory_location = hypre_IJMatrixMemoryLocation(B);
+   NALU_HYPRE_MemoryLocation memory_location = nalu_hypre_IJMatrixMemoryLocation(B);
 
    if ( (*ijbuf_cnt) == 0 )
    {
       /* brand new buffer: increment buffer structures for the new row */
-      hypre_NonGalerkinIJBufferNewRow((*ijbuf_rownums), (*ijbuf_numcols), ijbuf_rowcounter, row_to_write);
+      nalu_hypre_NonGalerkinIJBufferNewRow((*ijbuf_rownums), (*ijbuf_numcols), ijbuf_rowcounter, row_to_write);
 
    }
    else if ((*ijbuf_rownums)[ (*ijbuf_rowcounter) - 1 ] != row_to_write)
    {
       /* If this is a new row, compress the previous row */
-      hypre_NonGalerkinIJBufferCompressRow(ijbuf_cnt, (*ijbuf_rowcounter), (*ijbuf_data),
+      nalu_hypre_NonGalerkinIJBufferCompressRow(ijbuf_cnt, (*ijbuf_rowcounter), (*ijbuf_data),
                                            (*ijbuf_cols), (*ijbuf_rownums), (*ijbuf_numcols));
       /* increment buffer structures for the new row */
-      hypre_NonGalerkinIJBufferNewRow( (*ijbuf_rownums), (*ijbuf_numcols), ijbuf_rowcounter,
+      nalu_hypre_NonGalerkinIJBufferNewRow( (*ijbuf_rownums), (*ijbuf_numcols), ijbuf_rowcounter,
                                        row_to_write);
    }
 
@@ -896,17 +896,17 @@ hypre_NonGalerkinIJBufferWrite( NALU_HYPRE_IJMatrix
       {    (*ijbuf_rowcounter)--; }
 
       /* Compress and Add Entries */
-      hypre_NonGalerkinIJBufferCompressRow(ijbuf_cnt, (*ijbuf_rowcounter), (*ijbuf_data),
+      nalu_hypre_NonGalerkinIJBufferCompressRow(ijbuf_cnt, (*ijbuf_rowcounter), (*ijbuf_data),
                                            (*ijbuf_cols), (*ijbuf_rownums), (*ijbuf_numcols));
-      hypre_NonGalerkinIJBufferCompress(memory_location, ijbuf_size, ijbuf_cnt, ijbuf_rowcounter,
+      nalu_hypre_NonGalerkinIJBufferCompress(memory_location, ijbuf_size, ijbuf_cnt, ijbuf_rowcounter,
                                         ijbuf_data,
                                         ijbuf_cols, ijbuf_rownums, ijbuf_numcols);
       ierr += NALU_HYPRE_IJMatrixAddToValues(B, *ijbuf_rowcounter, (*ijbuf_numcols), (*ijbuf_rownums),
                                         (*ijbuf_cols), (*ijbuf_data));
 
       /* Reinitialize the buffer */
-      hypre_NonGalerkinIJBufferInit( ijbuf_cnt, ijbuf_rowcounter, (*ijbuf_numcols));
-      hypre_NonGalerkinIJBufferNewRow((*ijbuf_rownums), (*ijbuf_numcols), ijbuf_rowcounter, row_to_write);
+      nalu_hypre_NonGalerkinIJBufferInit( ijbuf_cnt, ijbuf_rowcounter, (*ijbuf_numcols));
+      nalu_hypre_NonGalerkinIJBufferNewRow((*ijbuf_rownums), (*ijbuf_numcols), ijbuf_rowcounter, row_to_write);
    }
 
    return ierr;
@@ -917,7 +917,7 @@ hypre_NonGalerkinIJBufferWrite( NALU_HYPRE_IJMatrix
  * Empty the IJ Buffer with a final AddToValues.
  **/
 NALU_HYPRE_Int
-hypre_NonGalerkinIJBufferEmpty(NALU_HYPRE_IJMatrix
+nalu_hypre_NonGalerkinIJBufferEmpty(NALU_HYPRE_IJMatrix
                                B, /* See NonGalerkinIJBufferWrite for parameter descriptions */
                                NALU_HYPRE_Int      ijbuf_size,
                                NALU_HYPRE_Int      *ijbuf_cnt,
@@ -928,14 +928,14 @@ hypre_NonGalerkinIJBufferEmpty(NALU_HYPRE_IJMatrix
                                NALU_HYPRE_Int      **ijbuf_numcols)
 {
    NALU_HYPRE_Int                ierr = 0;
-   NALU_HYPRE_MemoryLocation memory_location = hypre_IJMatrixMemoryLocation(B);
+   NALU_HYPRE_MemoryLocation memory_location = nalu_hypre_IJMatrixMemoryLocation(B);
 
    if ( (*ijbuf_cnt) > 0)
    {
       /* Compress the last row and then write */
-      hypre_NonGalerkinIJBufferCompressRow(ijbuf_cnt, ijbuf_rowcounter, (*ijbuf_data),
+      nalu_hypre_NonGalerkinIJBufferCompressRow(ijbuf_cnt, ijbuf_rowcounter, (*ijbuf_data),
                                            (*ijbuf_cols), (*ijbuf_rownums), (*ijbuf_numcols));
-      hypre_NonGalerkinIJBufferCompress(memory_location, ijbuf_size, ijbuf_cnt, &ijbuf_rowcounter,
+      nalu_hypre_NonGalerkinIJBufferCompress(memory_location, ijbuf_size, ijbuf_cnt, &ijbuf_rowcounter,
                                         ijbuf_data,
                                         ijbuf_cols, ijbuf_rownums, ijbuf_numcols);
       ierr += NALU_HYPRE_IJMatrixAddToValues(B, ijbuf_rowcounter, (*ijbuf_numcols), (*ijbuf_rownums),
@@ -950,53 +950,53 @@ hypre_NonGalerkinIJBufferEmpty(NALU_HYPRE_IJMatrix
 /*
  * Construct sparsity pattern based on R_I A P, plus entries required by drop tolerance
  */
-hypre_ParCSRMatrix *
-hypre_NonGalerkinSparsityPattern(hypre_ParCSRMatrix *R_IAP,
-                                 hypre_ParCSRMatrix *RAP,
+nalu_hypre_ParCSRMatrix *
+nalu_hypre_NonGalerkinSparsityPattern(nalu_hypre_ParCSRMatrix *R_IAP,
+                                 nalu_hypre_ParCSRMatrix *RAP,
                                  NALU_HYPRE_Int * CF_marker,
                                  NALU_HYPRE_Real droptol,
                                  NALU_HYPRE_Int sym_collapse,
                                  NALU_HYPRE_Int collapse_beta )
 {
    /* MPI Communicator */
-   MPI_Comm            comm               = hypre_ParCSRMatrixComm(RAP);
+   MPI_Comm            comm               = nalu_hypre_ParCSRMatrixComm(RAP);
 
-   NALU_HYPRE_MemoryLocation memory_location_RAP = hypre_ParCSRMatrixMemoryLocation(RAP);
+   NALU_HYPRE_MemoryLocation memory_location_RAP = nalu_hypre_ParCSRMatrixMemoryLocation(RAP);
 
    /* Declare R_IAP */
-   hypre_CSRMatrix    *R_IAP_diag         = hypre_ParCSRMatrixDiag(R_IAP);
-   NALU_HYPRE_Int          *R_IAP_diag_i       = hypre_CSRMatrixI(R_IAP_diag);
-   NALU_HYPRE_Int          *R_IAP_diag_j       = hypre_CSRMatrixJ(R_IAP_diag);
+   nalu_hypre_CSRMatrix    *R_IAP_diag         = nalu_hypre_ParCSRMatrixDiag(R_IAP);
+   NALU_HYPRE_Int          *R_IAP_diag_i       = nalu_hypre_CSRMatrixI(R_IAP_diag);
+   NALU_HYPRE_Int          *R_IAP_diag_j       = nalu_hypre_CSRMatrixJ(R_IAP_diag);
 
-   hypre_CSRMatrix    *R_IAP_offd         = hypre_ParCSRMatrixOffd(R_IAP);
-   NALU_HYPRE_Int          *R_IAP_offd_i       = hypre_CSRMatrixI(R_IAP_offd);
-   NALU_HYPRE_Int          *R_IAP_offd_j       = hypre_CSRMatrixJ(R_IAP_offd);
-   NALU_HYPRE_BigInt       *col_map_offd_R_IAP = hypre_ParCSRMatrixColMapOffd(R_IAP);
+   nalu_hypre_CSRMatrix    *R_IAP_offd         = nalu_hypre_ParCSRMatrixOffd(R_IAP);
+   NALU_HYPRE_Int          *R_IAP_offd_i       = nalu_hypre_CSRMatrixI(R_IAP_offd);
+   NALU_HYPRE_Int          *R_IAP_offd_j       = nalu_hypre_CSRMatrixJ(R_IAP_offd);
+   NALU_HYPRE_BigInt       *col_map_offd_R_IAP = nalu_hypre_ParCSRMatrixColMapOffd(R_IAP);
 
    /* Declare RAP */
-   hypre_CSRMatrix    *RAP_diag           = hypre_ParCSRMatrixDiag(RAP);
-   NALU_HYPRE_Int          *RAP_diag_i         = hypre_CSRMatrixI(RAP_diag);
-   NALU_HYPRE_Real         *RAP_diag_data      = hypre_CSRMatrixData(RAP_diag);
-   NALU_HYPRE_Int          *RAP_diag_j         = hypre_CSRMatrixJ(RAP_diag);
-   NALU_HYPRE_BigInt        first_col_diag_RAP = hypre_ParCSRMatrixFirstColDiag(RAP);
-   NALU_HYPRE_Int           num_cols_diag_RAP  = hypre_CSRMatrixNumCols(RAP_diag);
+   nalu_hypre_CSRMatrix    *RAP_diag           = nalu_hypre_ParCSRMatrixDiag(RAP);
+   NALU_HYPRE_Int          *RAP_diag_i         = nalu_hypre_CSRMatrixI(RAP_diag);
+   NALU_HYPRE_Real         *RAP_diag_data      = nalu_hypre_CSRMatrixData(RAP_diag);
+   NALU_HYPRE_Int          *RAP_diag_j         = nalu_hypre_CSRMatrixJ(RAP_diag);
+   NALU_HYPRE_BigInt        first_col_diag_RAP = nalu_hypre_ParCSRMatrixFirstColDiag(RAP);
+   NALU_HYPRE_Int           num_cols_diag_RAP  = nalu_hypre_CSRMatrixNumCols(RAP_diag);
    NALU_HYPRE_BigInt        last_col_diag_RAP  = first_col_diag_RAP + (NALU_HYPRE_BigInt)num_cols_diag_RAP - 1;
 
-   hypre_CSRMatrix    *RAP_offd           = hypre_ParCSRMatrixOffd(RAP);
-   NALU_HYPRE_Int          *RAP_offd_i         = hypre_CSRMatrixI(RAP_offd);
+   nalu_hypre_CSRMatrix    *RAP_offd           = nalu_hypre_ParCSRMatrixOffd(RAP);
+   NALU_HYPRE_Int          *RAP_offd_i         = nalu_hypre_CSRMatrixI(RAP_offd);
    NALU_HYPRE_Real         *RAP_offd_data      = NULL;
-   NALU_HYPRE_Int          *RAP_offd_j         = hypre_CSRMatrixJ(RAP_offd);
-   NALU_HYPRE_BigInt       *col_map_offd_RAP   = hypre_ParCSRMatrixColMapOffd(RAP);
-   NALU_HYPRE_Int           num_cols_RAP_offd  = hypre_CSRMatrixNumCols(RAP_offd);
+   NALU_HYPRE_Int          *RAP_offd_j         = nalu_hypre_CSRMatrixJ(RAP_offd);
+   NALU_HYPRE_BigInt       *col_map_offd_RAP   = nalu_hypre_ParCSRMatrixColMapOffd(RAP);
+   NALU_HYPRE_Int           num_cols_RAP_offd  = nalu_hypre_CSRMatrixNumCols(RAP_offd);
 
-   NALU_HYPRE_Int           num_variables      = hypre_CSRMatrixNumRows(RAP_diag);
+   NALU_HYPRE_Int           num_variables      = nalu_hypre_CSRMatrixNumRows(RAP_diag);
 
    /* Declare A */
-   NALU_HYPRE_Int           num_fine_variables = hypre_CSRMatrixNumRows(R_IAP_diag);
+   NALU_HYPRE_Int           num_fine_variables = nalu_hypre_CSRMatrixNumRows(R_IAP_diag);
 
    /* Declare IJ matrices */
    NALU_HYPRE_IJMatrix      Pattern;
-   hypre_ParCSRMatrix *Pattern_CSR        = NULL;
+   nalu_hypre_ParCSRMatrix *Pattern_CSR        = NULL;
 
    /* Buffered IJAddToValues */
    NALU_HYPRE_Int           ijbuf_cnt, ijbuf_size, ijbuf_rowcounter;
@@ -1020,7 +1020,7 @@ hypre_NonGalerkinSparsityPattern(hypre_ParCSRMatrix *R_IAP,
    /* Other Setup */
    if (num_cols_RAP_offd)
    {
-      RAP_offd_data = hypre_CSRMatrixData(RAP_offd);
+      RAP_offd_data = nalu_hypre_CSRMatrixData(RAP_offd);
    }
 
    /*
@@ -1031,7 +1031,7 @@ hypre_NonGalerkinSparsityPattern(hypre_ParCSRMatrix *R_IAP,
    NALU_HYPRE_IJMatrixCreate(comm, first_col_diag_RAP, last_col_diag_RAP, first_col_diag_RAP,
                         last_col_diag_RAP, &Pattern);
    NALU_HYPRE_IJMatrixSetObjectType(Pattern, NALU_HYPRE_PARCSR);
-   rownz = hypre_CTAlloc(NALU_HYPRE_Int,  num_variables, NALU_HYPRE_MEMORY_HOST);
+   rownz = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  num_variables, NALU_HYPRE_MEMORY_HOST);
    for (i = 0; i < num_variables; i++)
    {
       rownz[i] = 1.2 * (RAP_diag_i[i + 1] - RAP_diag_i[i]) +
@@ -1039,25 +1039,25 @@ hypre_NonGalerkinSparsityPattern(hypre_ParCSRMatrix *R_IAP,
    }
    NALU_HYPRE_IJMatrixSetRowSizes(Pattern, rownz);
    NALU_HYPRE_IJMatrixInitialize(Pattern);
-   hypre_TFree(rownz, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(rownz, NALU_HYPRE_MEMORY_HOST);
 
    /*
     * For efficiency, we do a buffered IJAddToValues.
     * Here, we initialize the buffer and then initialize the buffer counters
     */
    ijbuf_size       = 1000;
-   ijbuf_data       = hypre_CTAlloc(NALU_HYPRE_Real,   ijbuf_size, memory_location_RAP);
-   ijbuf_cols       = hypre_CTAlloc(NALU_HYPRE_BigInt, ijbuf_size, memory_location_RAP);
-   ijbuf_rownums    = hypre_CTAlloc(NALU_HYPRE_BigInt, ijbuf_size, memory_location_RAP);
-   ijbuf_numcols    = hypre_CTAlloc(NALU_HYPRE_Int,    ijbuf_size, memory_location_RAP);
-   hypre_NonGalerkinIJBigBufferInit(&ijbuf_cnt, &ijbuf_rowcounter, ijbuf_cols);
+   ijbuf_data       = nalu_hypre_CTAlloc(NALU_HYPRE_Real,   ijbuf_size, memory_location_RAP);
+   ijbuf_cols       = nalu_hypre_CTAlloc(NALU_HYPRE_BigInt, ijbuf_size, memory_location_RAP);
+   ijbuf_rownums    = nalu_hypre_CTAlloc(NALU_HYPRE_BigInt, ijbuf_size, memory_location_RAP);
+   ijbuf_numcols    = nalu_hypre_CTAlloc(NALU_HYPRE_Int,    ijbuf_size, memory_location_RAP);
+   nalu_hypre_NonGalerkinIJBigBufferInit(&ijbuf_cnt, &ijbuf_rowcounter, ijbuf_cols);
    if (sym_collapse)
    {
-      ijbuf_sym_data    = hypre_CTAlloc(NALU_HYPRE_Real,    ijbuf_size, memory_location_RAP);
-      ijbuf_sym_cols    = hypre_CTAlloc(NALU_HYPRE_BigInt,  ijbuf_size, memory_location_RAP);
-      ijbuf_sym_rownums = hypre_CTAlloc(NALU_HYPRE_BigInt,  ijbuf_size, memory_location_RAP);
-      ijbuf_sym_numcols = hypre_CTAlloc(NALU_HYPRE_Int,     ijbuf_size, memory_location_RAP);
-      hypre_NonGalerkinIJBigBufferInit(&ijbuf_sym_cnt, &ijbuf_sym_rowcounter, ijbuf_sym_cols);
+      ijbuf_sym_data    = nalu_hypre_CTAlloc(NALU_HYPRE_Real,    ijbuf_size, memory_location_RAP);
+      ijbuf_sym_cols    = nalu_hypre_CTAlloc(NALU_HYPRE_BigInt,  ijbuf_size, memory_location_RAP);
+      ijbuf_sym_rownums = nalu_hypre_CTAlloc(NALU_HYPRE_BigInt,  ijbuf_size, memory_location_RAP);
+      ijbuf_sym_numcols = nalu_hypre_CTAlloc(NALU_HYPRE_Int,     ijbuf_size, memory_location_RAP);
+      nalu_hypre_NonGalerkinIJBigBufferInit(&ijbuf_sym_cnt, &ijbuf_sym_rowcounter, ijbuf_sym_cols);
    }
 
    /*
@@ -1085,12 +1085,12 @@ hypre_NonGalerkinSparsityPattern(hypre_ParCSRMatrix *R_IAP,
       {
          global_col = R_IAP_diag_j[j] + first_col_diag_RAP;
          /* This call adds a                       1 x 1 to  i            j           data */
-         hypre_NonGalerkinIJBufferWrite(Pattern, &ijbuf_cnt, ijbuf_size, &ijbuf_rowcounter,
+         nalu_hypre_NonGalerkinIJBufferWrite(Pattern, &ijbuf_cnt, ijbuf_size, &ijbuf_rowcounter,
                                         &ijbuf_data, &ijbuf_cols, &ijbuf_rownums, &ijbuf_numcols,
                                         global_row, global_col, 1.0);
          if (sym_collapse)
          {
-            hypre_NonGalerkinIJBufferWrite(Pattern, &ijbuf_sym_cnt,
+            nalu_hypre_NonGalerkinIJBufferWrite(Pattern, &ijbuf_sym_cnt,
                                            ijbuf_size, &ijbuf_sym_rowcounter, &ijbuf_sym_data,
                                            &ijbuf_sym_cols, &ijbuf_sym_rownums, &ijbuf_sym_numcols,
                                            global_col, global_row, 1.0);
@@ -1104,13 +1104,13 @@ hypre_NonGalerkinSparsityPattern(hypre_ParCSRMatrix *R_IAP,
       {
          global_col = col_map_offd_R_IAP[R_IAP_offd_j[j]];
          /* This call adds a                       1 x 1 to  i            j           data */
-         hypre_NonGalerkinIJBufferWrite(Pattern, &ijbuf_cnt, ijbuf_size, &ijbuf_rowcounter,
+         nalu_hypre_NonGalerkinIJBufferWrite(Pattern, &ijbuf_cnt, ijbuf_size, &ijbuf_rowcounter,
                                         &ijbuf_data, &ijbuf_cols, &ijbuf_rownums, &ijbuf_numcols,
                                         global_row, global_col, 1.0);
 
          if (sym_collapse)
          {
-            hypre_NonGalerkinIJBufferWrite(Pattern, &ijbuf_sym_cnt,
+            nalu_hypre_NonGalerkinIJBufferWrite(Pattern, &ijbuf_sym_cnt,
                                            ijbuf_size, &ijbuf_sym_rowcounter, &ijbuf_sym_data,
                                            &ijbuf_sym_cols, &ijbuf_sym_rownums, &ijbuf_sym_numcols,
                                            global_col, global_row, 1.0);
@@ -1158,12 +1158,12 @@ hypre_NonGalerkinSparsityPattern(hypre_ParCSRMatrix *R_IAP,
             {*/
             /* For efficiency, we do a buffered IJAddToValues
              * A[global_row, global_col] += 1.0 */
-            hypre_NonGalerkinIJBufferWrite(Pattern, &ijbuf_cnt, ijbuf_size, &ijbuf_rowcounter,
+            nalu_hypre_NonGalerkinIJBufferWrite(Pattern, &ijbuf_cnt, ijbuf_size, &ijbuf_rowcounter,
                                            &ijbuf_data, &ijbuf_cols, &ijbuf_rownums, &ijbuf_numcols,
                                            global_row, global_col, 1.0);
             if (sym_collapse)
             {
-               hypre_NonGalerkinIJBufferWrite(Pattern, &ijbuf_sym_cnt,
+               nalu_hypre_NonGalerkinIJBufferWrite(Pattern, &ijbuf_sym_cnt,
                                               ijbuf_size, &ijbuf_sym_rowcounter, &ijbuf_sym_data,
                                               &ijbuf_sym_cols, &ijbuf_sym_rownums, &ijbuf_sym_numcols,
                                               global_col, global_row, 1.0);
@@ -1184,12 +1184,12 @@ hypre_NonGalerkinSparsityPattern(hypre_ParCSRMatrix *R_IAP,
             {*/
             /* For efficiency, we do a buffered IJAddToValues
              * A[global_row, global_col] += 1.0 */
-            hypre_NonGalerkinIJBufferWrite(Pattern, &ijbuf_cnt, ijbuf_size, &ijbuf_rowcounter,
+            nalu_hypre_NonGalerkinIJBufferWrite(Pattern, &ijbuf_cnt, ijbuf_size, &ijbuf_rowcounter,
                                            &ijbuf_data, &ijbuf_cols, &ijbuf_rownums, &ijbuf_numcols,
                                            global_row, global_col, 1.0);
             if (sym_collapse)
             {
-               hypre_NonGalerkinIJBufferWrite(Pattern, &ijbuf_sym_cnt,
+               nalu_hypre_NonGalerkinIJBufferWrite(Pattern, &ijbuf_sym_cnt,
                                               ijbuf_size, &ijbuf_sym_rowcounter, &ijbuf_sym_data,
                                               &ijbuf_sym_cols, &ijbuf_sym_rownums, &ijbuf_sym_numcols,
                                               global_col, global_row, 1.0);
@@ -1202,11 +1202,11 @@ hypre_NonGalerkinSparsityPattern(hypre_ParCSRMatrix *R_IAP,
 
    /* For efficiency, we do a buffered IJAddToValues.
     * This empties the buffer of any remaining values */
-   hypre_NonGalerkinIJBufferEmpty(Pattern, ijbuf_size, &ijbuf_cnt, ijbuf_rowcounter,
+   nalu_hypre_NonGalerkinIJBufferEmpty(Pattern, ijbuf_size, &ijbuf_cnt, ijbuf_rowcounter,
                                   &ijbuf_data, &ijbuf_cols, &ijbuf_rownums, &ijbuf_numcols);
    if (sym_collapse)
    {
-      hypre_NonGalerkinIJBufferEmpty(Pattern, ijbuf_size, &ijbuf_sym_cnt, ijbuf_sym_rowcounter,
+      nalu_hypre_NonGalerkinIJBufferEmpty(Pattern, ijbuf_size, &ijbuf_sym_cnt, ijbuf_sym_rowcounter,
                                      &ijbuf_sym_data, &ijbuf_sym_cols, &ijbuf_sym_rownums,
                                      &ijbuf_sym_numcols);
    }
@@ -1218,17 +1218,17 @@ hypre_NonGalerkinSparsityPattern(hypre_ParCSRMatrix *R_IAP,
    /* Deallocate */
    NALU_HYPRE_IJMatrixSetObjectType(Pattern, -1);
    NALU_HYPRE_IJMatrixDestroy(Pattern);
-   hypre_TFree(ijbuf_data,    memory_location_RAP);
-   hypre_TFree(ijbuf_cols,    memory_location_RAP);
-   hypre_TFree(ijbuf_rownums, memory_location_RAP);
-   hypre_TFree(ijbuf_numcols, memory_location_RAP);
+   nalu_hypre_TFree(ijbuf_data,    memory_location_RAP);
+   nalu_hypre_TFree(ijbuf_cols,    memory_location_RAP);
+   nalu_hypre_TFree(ijbuf_rownums, memory_location_RAP);
+   nalu_hypre_TFree(ijbuf_numcols, memory_location_RAP);
 
    if (sym_collapse)
    {
-      hypre_TFree(ijbuf_sym_data,    memory_location_RAP);
-      hypre_TFree(ijbuf_sym_cols,    memory_location_RAP);
-      hypre_TFree(ijbuf_sym_rownums, memory_location_RAP);
-      hypre_TFree(ijbuf_sym_numcols, memory_location_RAP);
+      nalu_hypre_TFree(ijbuf_sym_data,    memory_location_RAP);
+      nalu_hypre_TFree(ijbuf_sym_cols,    memory_location_RAP);
+      nalu_hypre_TFree(ijbuf_sym_rownums, memory_location_RAP);
+      nalu_hypre_TFree(ijbuf_sym_numcols, memory_location_RAP);
    }
 
    return Pattern_CSR;
@@ -1236,8 +1236,8 @@ hypre_NonGalerkinSparsityPattern(hypre_ParCSRMatrix *R_IAP,
 
 
 NALU_HYPRE_Int
-hypre_BoomerAMGBuildNonGalerkinCoarseOperator( hypre_ParCSRMatrix **RAP_ptr,
-                                               hypre_ParCSRMatrix *AP,
+nalu_hypre_BoomerAMGBuildNonGalerkinCoarseOperator( nalu_hypre_ParCSRMatrix **RAP_ptr,
+                                               nalu_hypre_ParCSRMatrix *AP,
                                                NALU_HYPRE_Real strong_threshold,
                                                NALU_HYPRE_Real max_row_sum,
                                                NALU_HYPRE_Int num_functions,
@@ -1247,19 +1247,19 @@ hypre_BoomerAMGBuildNonGalerkinCoarseOperator( hypre_ParCSRMatrix **RAP_ptr,
                                                NALU_HYPRE_Real lump_percent, NALU_HYPRE_Int collapse_beta )
 {
    /* Initializations */
-   MPI_Comm            comm                  = hypre_ParCSRMatrixComm(*RAP_ptr);
-   hypre_ParCSRMatrix  *S                    = NULL;
-   hypre_ParCSRMatrix  *RAP                  = *RAP_ptr;
+   MPI_Comm            comm                  = nalu_hypre_ParCSRMatrixComm(*RAP_ptr);
+   nalu_hypre_ParCSRMatrix  *S                    = NULL;
+   nalu_hypre_ParCSRMatrix  *RAP                  = *RAP_ptr;
    NALU_HYPRE_Int           i, j, k, row_start, row_end, value, num_cols_offd_Sext, num_procs;
    NALU_HYPRE_Int           S_ext_diag_size, S_ext_offd_size, last_col_diag_RAP, cnt_offd, cnt_diag, cnt;
    NALU_HYPRE_Int           col_indx_Pattern, current_Pattern_j, col_indx_RAP;
-   /* NALU_HYPRE_Real          start_time            = hypre_MPI_Wtime(); */
+   /* NALU_HYPRE_Real          start_time            = nalu_hypre_MPI_Wtime(); */
    /* NALU_HYPRE_Real          end_time; */
    NALU_HYPRE_BigInt       *temp                = NULL;
    NALU_HYPRE_Int           ierr                  = 0;
    char                filename[256];
 
-   NALU_HYPRE_MemoryLocation memory_location_RAP = hypre_ParCSRMatrixMemoryLocation(RAP);
+   NALU_HYPRE_MemoryLocation memory_location_RAP = nalu_hypre_ParCSRMatrixMemoryLocation(RAP);
 
    /* Lumping related variables */
    NALU_HYPRE_IJMatrix      ijmatrix;
@@ -1289,30 +1289,30 @@ hypre_BoomerAMGBuildNonGalerkinCoarseOperator( hypre_ParCSRMatrix **RAP_ptr,
    NALU_HYPRE_Int           * rownz                         = NULL;
 
    /* offd and diag portions of RAP */
-   hypre_CSRMatrix     *RAP_diag             = hypre_ParCSRMatrixDiag(RAP);
-   NALU_HYPRE_Int           *RAP_diag_i           = hypre_CSRMatrixI(RAP_diag);
-   NALU_HYPRE_Real          *RAP_diag_data        = hypre_CSRMatrixData(RAP_diag);
-   NALU_HYPRE_Int           *RAP_diag_j           = hypre_CSRMatrixJ(RAP_diag);
-   NALU_HYPRE_BigInt         first_col_diag_RAP   = hypre_ParCSRMatrixFirstColDiag(RAP);
-   NALU_HYPRE_Int            num_cols_diag_RAP    = hypre_CSRMatrixNumCols(RAP_diag);
+   nalu_hypre_CSRMatrix     *RAP_diag             = nalu_hypre_ParCSRMatrixDiag(RAP);
+   NALU_HYPRE_Int           *RAP_diag_i           = nalu_hypre_CSRMatrixI(RAP_diag);
+   NALU_HYPRE_Real          *RAP_diag_data        = nalu_hypre_CSRMatrixData(RAP_diag);
+   NALU_HYPRE_Int           *RAP_diag_j           = nalu_hypre_CSRMatrixJ(RAP_diag);
+   NALU_HYPRE_BigInt         first_col_diag_RAP   = nalu_hypre_ParCSRMatrixFirstColDiag(RAP);
+   NALU_HYPRE_Int            num_cols_diag_RAP    = nalu_hypre_CSRMatrixNumCols(RAP_diag);
 
-   hypre_CSRMatrix     *RAP_offd             = hypre_ParCSRMatrixOffd(RAP);
-   NALU_HYPRE_Int           *RAP_offd_i           = hypre_CSRMatrixI(RAP_offd);
+   nalu_hypre_CSRMatrix     *RAP_offd             = nalu_hypre_ParCSRMatrixOffd(RAP);
+   NALU_HYPRE_Int           *RAP_offd_i           = nalu_hypre_CSRMatrixI(RAP_offd);
    NALU_HYPRE_Real          *RAP_offd_data        = NULL;
-   NALU_HYPRE_Int           *RAP_offd_j           = hypre_CSRMatrixJ(RAP_offd);
-   NALU_HYPRE_BigInt        *col_map_offd_RAP     = hypre_ParCSRMatrixColMapOffd(RAP);
-   NALU_HYPRE_Int            num_cols_RAP_offd    = hypre_CSRMatrixNumCols(RAP_offd);
+   NALU_HYPRE_Int           *RAP_offd_j           = nalu_hypre_CSRMatrixJ(RAP_offd);
+   NALU_HYPRE_BigInt        *col_map_offd_RAP     = nalu_hypre_ParCSRMatrixColMapOffd(RAP);
+   NALU_HYPRE_Int            num_cols_RAP_offd    = nalu_hypre_CSRMatrixNumCols(RAP_offd);
 
-   NALU_HYPRE_Int            num_variables        = hypre_CSRMatrixNumRows(RAP_diag);
-   NALU_HYPRE_BigInt         global_num_vars      = hypre_ParCSRMatrixGlobalNumRows(RAP);
+   NALU_HYPRE_Int            num_variables        = nalu_hypre_CSRMatrixNumRows(RAP_diag);
+   NALU_HYPRE_BigInt         global_num_vars      = nalu_hypre_ParCSRMatrixGlobalNumRows(RAP);
 
    /* offd and diag portions of S */
-   hypre_CSRMatrix     *S_diag               = NULL;
+   nalu_hypre_CSRMatrix     *S_diag               = NULL;
    NALU_HYPRE_Int           *S_diag_i             = NULL;
    NALU_HYPRE_Real          *S_diag_data          = NULL;
    NALU_HYPRE_Int           *S_diag_j             = NULL;
 
-   hypre_CSRMatrix     *S_offd               = NULL;
+   nalu_hypre_CSRMatrix     *S_offd               = NULL;
    NALU_HYPRE_Int           *S_offd_i             = NULL;
    NALU_HYPRE_Real          *S_offd_data          = NULL;
    NALU_HYPRE_Int           *S_offd_j             = NULL;
@@ -1322,7 +1322,7 @@ hypre_BoomerAMGBuildNonGalerkinCoarseOperator( hypre_ParCSRMatrix **RAP_ptr,
    /* NALU_HYPRE_Int         num_nonzeros_S_diag; */
 
    /* off processor portions of S */
-   hypre_CSRMatrix    *S_ext                 = NULL;
+   nalu_hypre_CSRMatrix    *S_ext                 = NULL;
    NALU_HYPRE_Int          *S_ext_i               = NULL;
    NALU_HYPRE_Real         *S_ext_data            = NULL;
    NALU_HYPRE_BigInt       *S_ext_j               = NULL;
@@ -1342,13 +1342,13 @@ hypre_BoomerAMGBuildNonGalerkinCoarseOperator( hypre_ParCSRMatrix **RAP_ptr,
 
 
    /* offd and diag portions of Pattern */
-   hypre_ParCSRMatrix  *Pattern              = NULL;
-   hypre_CSRMatrix     *Pattern_diag         = NULL;
+   nalu_hypre_ParCSRMatrix  *Pattern              = NULL;
+   nalu_hypre_CSRMatrix     *Pattern_diag         = NULL;
    NALU_HYPRE_Int           *Pattern_diag_i       = NULL;
    NALU_HYPRE_Real          *Pattern_diag_data    = NULL;
    NALU_HYPRE_Int           *Pattern_diag_j       = NULL;
 
-   hypre_CSRMatrix     *Pattern_offd         = NULL;
+   nalu_hypre_CSRMatrix     *Pattern_offd         = NULL;
    NALU_HYPRE_Int           *Pattern_offd_i       = NULL;
    NALU_HYPRE_Real          *Pattern_offd_data    = NULL;
    NALU_HYPRE_Int           *Pattern_offd_j       = NULL;
@@ -1371,26 +1371,26 @@ hypre_BoomerAMGBuildNonGalerkinCoarseOperator( hypre_ParCSRMatrix **RAP_ptr,
 
    /* Further Initializations */
    if (num_cols_RAP_offd)
-   {   RAP_offd_data = hypre_CSRMatrixData(RAP_offd); }
-   hypre_MPI_Comm_size(comm, &num_procs);
-   hypre_MPI_Comm_rank(comm, &my_id);
+   {   RAP_offd_data = nalu_hypre_CSRMatrixData(RAP_offd); }
+   nalu_hypre_MPI_Comm_size(comm, &num_procs);
+   nalu_hypre_MPI_Comm_rank(comm, &my_id);
 
    /* Compute Sparsity Pattern  */
-   Pattern                    = hypre_NonGalerkinSparsityPattern(AP, RAP, CF_marker, droptol,
+   Pattern                    = nalu_hypre_NonGalerkinSparsityPattern(AP, RAP, CF_marker, droptol,
                                                                  sym_collapse, collapse_beta);
-   Pattern_diag               = hypre_ParCSRMatrixDiag(Pattern);
-   Pattern_diag_i             = hypre_CSRMatrixI(Pattern_diag);
-   Pattern_diag_data          = hypre_CSRMatrixData(Pattern_diag);
-   Pattern_diag_j             = hypre_CSRMatrixJ(Pattern_diag);
+   Pattern_diag               = nalu_hypre_ParCSRMatrixDiag(Pattern);
+   Pattern_diag_i             = nalu_hypre_CSRMatrixI(Pattern_diag);
+   Pattern_diag_data          = nalu_hypre_CSRMatrixData(Pattern_diag);
+   Pattern_diag_j             = nalu_hypre_CSRMatrixJ(Pattern_diag);
 
-   Pattern_offd               = hypre_ParCSRMatrixOffd(Pattern);
-   Pattern_offd_i             = hypre_CSRMatrixI(Pattern_offd);
-   Pattern_offd_j             = hypre_CSRMatrixJ(Pattern_offd);
-   col_map_offd_Pattern       = hypre_ParCSRMatrixColMapOffd(Pattern);
+   Pattern_offd               = nalu_hypre_ParCSRMatrixOffd(Pattern);
+   Pattern_offd_i             = nalu_hypre_CSRMatrixI(Pattern_offd);
+   Pattern_offd_j             = nalu_hypre_CSRMatrixJ(Pattern_offd);
+   col_map_offd_Pattern       = nalu_hypre_ParCSRMatrixColMapOffd(Pattern);
 
-   num_cols_Pattern_offd      = hypre_CSRMatrixNumCols(Pattern_offd);
+   num_cols_Pattern_offd      = nalu_hypre_CSRMatrixNumCols(Pattern_offd);
    if (num_cols_Pattern_offd)
-   {   Pattern_offd_data = hypre_CSRMatrixData(Pattern_offd); }
+   {   Pattern_offd_data = nalu_hypre_CSRMatrixData(Pattern_offd); }
 
    /**
     * Fill in the entries of Pattern with entries from RAP
@@ -1410,7 +1410,7 @@ hypre_BoomerAMGBuildNonGalerkinCoarseOperator( hypre_ParCSRMatrix **RAP_ptr,
       if ( RAP_diag_j[row_start] == i)
       {   row_start = row_start + 1; }
       row_end = RAP_diag_i[i + 1];
-      hypre_qsort1(RAP_diag_j, RAP_diag_data, row_start, row_end - 1 );
+      nalu_hypre_qsort1(RAP_diag_j, RAP_diag_data, row_start, row_end - 1 );
 
       /* Sort diag portion of Pattern */
       row_start = Pattern_diag_i[i];
@@ -1418,18 +1418,18 @@ hypre_BoomerAMGBuildNonGalerkinCoarseOperator( hypre_ParCSRMatrix **RAP_ptr,
       if ( Pattern_diag_j[row_start] == i)
       {   row_start = row_start + 1; }
       row_end = Pattern_diag_i[i + 1];
-      hypre_qsort1(Pattern_diag_j, Pattern_diag_data, row_start, row_end - 1 );
+      nalu_hypre_qsort1(Pattern_diag_j, Pattern_diag_data, row_start, row_end - 1 );
 
       /* Sort offd portion of RAP */
       row_start = RAP_offd_i[i];
       row_end = RAP_offd_i[i + 1];
-      hypre_qsort1(RAP_offd_j, RAP_offd_data, row_start, row_end - 1 );
+      nalu_hypre_qsort1(RAP_offd_j, RAP_offd_data, row_start, row_end - 1 );
 
       /* Sort offd portion of Pattern */
       /* Be careful to map coarse dof i with CF_marker into Pattern */
       row_start = Pattern_offd_i[i];
       row_end = Pattern_offd_i[i + 1];
-      hypre_qsort1(Pattern_offd_j, Pattern_offd_data, row_start, row_end - 1 );
+      nalu_hypre_qsort1(Pattern_offd_j, Pattern_offd_data, row_start, row_end - 1 );
 
    }
 
@@ -1437,34 +1437,34 @@ hypre_BoomerAMGBuildNonGalerkinCoarseOperator( hypre_ParCSRMatrix **RAP_ptr,
    /* Create Strength matrix based on RAP or Pattern.  If Pattern is used,
     * then the SortedCopyParCSRData(...) function call must also be commented
     * back in */
-   /* hypre_SortedCopyParCSRData(RAP, Pattern); */
+   /* nalu_hypre_SortedCopyParCSRData(RAP, Pattern); */
    if (0)
    {
-      /* hypre_BoomerAMG_MyCreateS(Pattern, strong_threshold, max_row_sum, */
-      hypre_BoomerAMG_MyCreateS(RAP, strong_threshold, max_row_sum,
+      /* nalu_hypre_BoomerAMG_MyCreateS(Pattern, strong_threshold, max_row_sum, */
+      nalu_hypre_BoomerAMG_MyCreateS(RAP, strong_threshold, max_row_sum,
                                 num_functions, dof_func_value, &S);
    }
    else
    {
       /* Passing in "1, NULL" because dof_array is not needed
        * because we assume that  the number of functions is 1 */
-      /* hypre_BoomerAMG_MyCreateS(Pattern, strong_threshold, max_row_sum,*/
-      hypre_BoomerAMG_MyCreateS(RAP, strong_threshold, max_row_sum,
+      /* nalu_hypre_BoomerAMG_MyCreateS(Pattern, strong_threshold, max_row_sum,*/
+      nalu_hypre_BoomerAMG_MyCreateS(RAP, strong_threshold, max_row_sum,
                                 1, NULL, &S);
    }
    /* Grab diag and offd parts of S */
-   S_diag               = hypre_ParCSRMatrixDiag(S);
-   S_diag_i             = hypre_CSRMatrixI(S_diag);
-   S_diag_j             = hypre_CSRMatrixJ(S_diag);
-   S_diag_data          = hypre_CSRMatrixData(S_diag);
+   S_diag               = nalu_hypre_ParCSRMatrixDiag(S);
+   S_diag_i             = nalu_hypre_CSRMatrixI(S_diag);
+   S_diag_j             = nalu_hypre_CSRMatrixJ(S_diag);
+   S_diag_data          = nalu_hypre_CSRMatrixData(S_diag);
 
-   S_offd               = hypre_ParCSRMatrixOffd(S);
-   S_offd_i             = hypre_CSRMatrixI(S_offd);
-   S_offd_j             = hypre_CSRMatrixJ(S_offd);
-   S_offd_data          = hypre_CSRMatrixData(S_offd);
-   col_map_offd_S       = hypre_ParCSRMatrixColMapOffd(S);
+   S_offd               = nalu_hypre_ParCSRMatrixOffd(S);
+   S_offd_i             = nalu_hypre_CSRMatrixI(S_offd);
+   S_offd_j             = nalu_hypre_CSRMatrixJ(S_offd);
+   S_offd_data          = nalu_hypre_CSRMatrixData(S_offd);
+   col_map_offd_S       = nalu_hypre_ParCSRMatrixColMapOffd(S);
 
-   num_cols_offd_S      = hypre_CSRMatrixNumCols(S_offd);
+   num_cols_offd_S      = nalu_hypre_CSRMatrixNumCols(S_offd);
    /* num_nonzeros_S_diag  = S_diag_i[num_variables]; */
 
 
@@ -1501,18 +1501,18 @@ hypre_BoomerAMGBuildNonGalerkinCoarseOperator( hypre_ParCSRMatrix **RAP_ptr,
 
    if (num_procs > 1)
    {
-      S_ext      = hypre_ParCSRMatrixExtractBExt(S, RAP, 1);
-      S_ext_data = hypre_CSRMatrixData(S_ext);
-      S_ext_i    = hypre_CSRMatrixI(S_ext);
-      S_ext_j    = hypre_CSRMatrixBigJ(S_ext);
+      S_ext      = nalu_hypre_ParCSRMatrixExtractBExt(S, RAP, 1);
+      S_ext_data = nalu_hypre_CSRMatrixData(S_ext);
+      S_ext_i    = nalu_hypre_CSRMatrixI(S_ext);
+      S_ext_j    = nalu_hypre_CSRMatrixBigJ(S_ext);
    }
 
    /* This uses the num_cols_RAP_offd to set S_ext_diag|offd_i, because S_ext
     * is the off-processor information needed to compute RAP*S.  That is,
     * num_cols_RAP_offd represents the number of rows needed from S_ext for
     * the multiplication */
-   S_ext_diag_i = hypre_CTAlloc(NALU_HYPRE_Int, num_cols_RAP_offd + 1, NALU_HYPRE_MEMORY_HOST);
-   S_ext_offd_i = hypre_CTAlloc(NALU_HYPRE_Int, num_cols_RAP_offd + 1, NALU_HYPRE_MEMORY_HOST);
+   S_ext_diag_i = nalu_hypre_CTAlloc(NALU_HYPRE_Int, num_cols_RAP_offd + 1, NALU_HYPRE_MEMORY_HOST);
+   S_ext_offd_i = nalu_hypre_CTAlloc(NALU_HYPRE_Int, num_cols_RAP_offd + 1, NALU_HYPRE_MEMORY_HOST);
    S_ext_diag_size = 0;
    S_ext_offd_size = 0;
    /* num_rows_Sext = num_cols_RAP_offd; */
@@ -1540,13 +1540,13 @@ hypre_BoomerAMGBuildNonGalerkinCoarseOperator( hypre_ParCSRMatrix **RAP_ptr,
 
    if (S_ext_diag_size)
    {
-      S_ext_diag_j = hypre_CTAlloc(NALU_HYPRE_Int,  S_ext_diag_size, NALU_HYPRE_MEMORY_HOST);
-      S_ext_diag_data = hypre_CTAlloc(NALU_HYPRE_Real,  S_ext_diag_size, NALU_HYPRE_MEMORY_HOST);
+      S_ext_diag_j = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  S_ext_diag_size, NALU_HYPRE_MEMORY_HOST);
+      S_ext_diag_data = nalu_hypre_CTAlloc(NALU_HYPRE_Real,  S_ext_diag_size, NALU_HYPRE_MEMORY_HOST);
    }
    if (S_ext_offd_size)
    {
-      S_ext_offd_j = hypre_CTAlloc(NALU_HYPRE_Int,  S_ext_offd_size, NALU_HYPRE_MEMORY_HOST);
-      S_ext_offd_data = hypre_CTAlloc(NALU_HYPRE_Real,  S_ext_offd_size, NALU_HYPRE_MEMORY_HOST);
+      S_ext_offd_j = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  S_ext_offd_size, NALU_HYPRE_MEMORY_HOST);
+      S_ext_offd_data = nalu_hypre_CTAlloc(NALU_HYPRE_Real,  S_ext_offd_size, NALU_HYPRE_MEMORY_HOST);
    }
 
    /* This copies over the column indices into the offd and diag parts.
@@ -1575,7 +1575,7 @@ hypre_BoomerAMGBuildNonGalerkinCoarseOperator( hypre_ParCSRMatrix **RAP_ptr,
    /* This creates col_map_offd_Sext */
    if (S_ext_offd_size || num_cols_offd_S)
    {
-      temp = hypre_CTAlloc(NALU_HYPRE_BigInt,  S_ext_offd_size + num_cols_offd_S, NALU_HYPRE_MEMORY_HOST);
+      temp = nalu_hypre_CTAlloc(NALU_HYPRE_BigInt,  S_ext_offd_size + num_cols_offd_S, NALU_HYPRE_MEMORY_HOST);
       for (i = 0; i < S_ext_offd_size; i++)
       {
          temp[i] = S_ext_j[i];
@@ -1591,7 +1591,7 @@ hypre_BoomerAMGBuildNonGalerkinCoarseOperator( hypre_ParCSRMatrix **RAP_ptr,
       /* after this, the first so many entries of temp will hold the
        * unique column indices in S_ext_offd_j unioned with the indices
        * in col_map_offd_S */
-      hypre_BigQsort0(temp, 0, cnt - 1);
+      nalu_hypre_BigQsort0(temp, 0, cnt - 1);
 
       num_cols_offd_Sext = 1;
       value = temp[0];
@@ -1614,7 +1614,7 @@ hypre_BoomerAMGBuildNonGalerkinCoarseOperator( hypre_ParCSRMatrix **RAP_ptr,
 
    if (num_cols_offd_Sext)
    {
-      col_map_offd_Sext = hypre_CTAlloc(NALU_HYPRE_BigInt,  num_cols_offd_Sext, NALU_HYPRE_MEMORY_HOST);
+      col_map_offd_Sext = nalu_hypre_CTAlloc(NALU_HYPRE_BigInt,  num_cols_offd_Sext, NALU_HYPRE_MEMORY_HOST);
    }
 
    for (i = 0; i < num_cols_offd_Sext; i++)
@@ -1624,20 +1624,20 @@ hypre_BoomerAMGBuildNonGalerkinCoarseOperator( hypre_ParCSRMatrix **RAP_ptr,
 
    if (S_ext_offd_size || num_cols_offd_S)
    {
-      hypre_TFree(temp, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(temp, NALU_HYPRE_MEMORY_HOST);
    }
 
    /* look for S_ext_offd_j[i] in col_map_offd_Sext, and set S_ext_offd_j[i]
     * to the index of that column value in col_map_offd_Sext */
    for (i = 0 ; i < S_ext_offd_size; i++)
-      S_ext_offd_j[i] = hypre_BigBinarySearch(col_map_offd_Sext,
+      S_ext_offd_j[i] = nalu_hypre_BigBinarySearch(col_map_offd_Sext,
                                               S_ext_j[i],
                                               num_cols_offd_Sext);
 
 
    if (num_procs > 1)
    {
-      hypre_CSRMatrixDestroy(S_ext);
+      nalu_hypre_CSRMatrixDestroy(S_ext);
       S_ext = NULL;
    }
 
@@ -1649,19 +1649,19 @@ hypre_BoomerAMGBuildNonGalerkinCoarseOperator( hypre_ParCSRMatrix **RAP_ptr,
        * sorted position */
       row_start = Pattern_diag_i[i];
       row_end = Pattern_diag_i[i + 1];
-      hypre_qsort1(Pattern_diag_j, Pattern_diag_data, row_start, row_end - 1 );
+      nalu_hypre_qsort1(Pattern_diag_j, Pattern_diag_data, row_start, row_end - 1 );
 
       /* Sort diag portion of S, noting that no diagonal entry */
       /* S has not "data" array...it's just NULL */
       row_start = S_diag_i[i];
       row_end = S_diag_i[i + 1];
-      hypre_qsort1(S_diag_j, S_diag_data, row_start, row_end - 1 );
+      nalu_hypre_qsort1(S_diag_j, S_diag_data, row_start, row_end - 1 );
 
       /* Sort offd portion of S */
       /* S has no "data" array...it's just NULL */
       row_start = S_offd_i[i];
       row_end = S_offd_i[i + 1];
-      hypre_qsort1(S_offd_j, S_offd_data, row_start, row_end - 1 );
+      nalu_hypre_qsort1(S_offd_j, S_offd_data, row_start, row_end - 1 );
 
    }
 
@@ -1672,12 +1672,12 @@ hypre_BoomerAMGBuildNonGalerkinCoarseOperator( hypre_ParCSRMatrix **RAP_ptr,
       /* Sort diag portion of S_ext */
       row_start = S_ext_diag_i[i];
       row_end = S_ext_diag_i[i + 1];
-      hypre_qsort1(S_ext_diag_j, S_ext_diag_data, row_start, row_end - 1 );
+      nalu_hypre_qsort1(S_ext_diag_j, S_ext_diag_data, row_start, row_end - 1 );
 
       /* Sort offd portion of S_ext */
       row_start = S_ext_offd_i[i];
       row_end = S_ext_offd_i[i + 1];
-      hypre_qsort1(S_ext_offd_j, S_ext_offd_data, row_start, row_end - 1 );
+      nalu_hypre_qsort1(S_ext_offd_j, S_ext_offd_data, row_start, row_end - 1 );
 
    }
 
@@ -1690,30 +1690,30 @@ hypre_BoomerAMGBuildNonGalerkinCoarseOperator( hypre_ParCSRMatrix **RAP_ptr,
    ierr += NALU_HYPRE_IJMatrixCreate(comm, first_col_diag_RAP, last_col_diag_RAP,
                                 first_col_diag_RAP, last_col_diag_RAP, &ijmatrix);
    ierr += NALU_HYPRE_IJMatrixSetObjectType(ijmatrix, NALU_HYPRE_PARCSR);
-   rownz = hypre_CTAlloc(NALU_HYPRE_Int,  num_variables, NALU_HYPRE_MEMORY_HOST);
+   rownz = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  num_variables, NALU_HYPRE_MEMORY_HOST);
    for (i = 0; i < num_variables; i++)
    {   rownz[i] = 1.2 * (Pattern_diag_i[i + 1] - Pattern_diag_i[i]) + 1.2 * (Pattern_offd_i[i + 1] - Pattern_offd_i[i]); }
    NALU_HYPRE_IJMatrixSetRowSizes(ijmatrix, rownz);
    ierr += NALU_HYPRE_IJMatrixInitialize(ijmatrix);
-   hypre_TFree(rownz, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(rownz, NALU_HYPRE_MEMORY_HOST);
 
    /*
     *For efficiency, we do a buffered IJAddToValues.
     * Here, we initialize the buffer and then initialize the buffer counters
     */
    ijbuf_size       = 1000;
-   ijbuf_data       = hypre_CTAlloc(NALU_HYPRE_Real,   ijbuf_size, memory_location_RAP);
-   ijbuf_cols       = hypre_CTAlloc(NALU_HYPRE_BigInt, ijbuf_size, memory_location_RAP);
-   ijbuf_rownums    = hypre_CTAlloc(NALU_HYPRE_BigInt, ijbuf_size, memory_location_RAP);
-   ijbuf_numcols    = hypre_CTAlloc(NALU_HYPRE_Int,    ijbuf_size, memory_location_RAP);
-   hypre_NonGalerkinIJBigBufferInit( &ijbuf_cnt, &ijbuf_rowcounter, ijbuf_cols );
+   ijbuf_data       = nalu_hypre_CTAlloc(NALU_HYPRE_Real,   ijbuf_size, memory_location_RAP);
+   ijbuf_cols       = nalu_hypre_CTAlloc(NALU_HYPRE_BigInt, ijbuf_size, memory_location_RAP);
+   ijbuf_rownums    = nalu_hypre_CTAlloc(NALU_HYPRE_BigInt, ijbuf_size, memory_location_RAP);
+   ijbuf_numcols    = nalu_hypre_CTAlloc(NALU_HYPRE_Int,    ijbuf_size, memory_location_RAP);
+   nalu_hypre_NonGalerkinIJBigBufferInit( &ijbuf_cnt, &ijbuf_rowcounter, ijbuf_cols );
    if (sym_collapse)
    {
-      ijbuf_sym_data   = hypre_CTAlloc(NALU_HYPRE_Real,   ijbuf_size, memory_location_RAP);
-      ijbuf_sym_cols   = hypre_CTAlloc(NALU_HYPRE_BigInt, ijbuf_size, memory_location_RAP);
-      ijbuf_sym_rownums = hypre_CTAlloc(NALU_HYPRE_BigInt, ijbuf_size, memory_location_RAP);
-      ijbuf_sym_numcols = hypre_CTAlloc(NALU_HYPRE_Int,    ijbuf_size, memory_location_RAP);
-      hypre_NonGalerkinIJBigBufferInit( &ijbuf_sym_cnt, &ijbuf_sym_rowcounter, ijbuf_sym_cols );
+      ijbuf_sym_data   = nalu_hypre_CTAlloc(NALU_HYPRE_Real,   ijbuf_size, memory_location_RAP);
+      ijbuf_sym_cols   = nalu_hypre_CTAlloc(NALU_HYPRE_BigInt, ijbuf_size, memory_location_RAP);
+      ijbuf_sym_rownums = nalu_hypre_CTAlloc(NALU_HYPRE_BigInt, ijbuf_size, memory_location_RAP);
+      ijbuf_sym_numcols = nalu_hypre_CTAlloc(NALU_HYPRE_Int,    ijbuf_size, memory_location_RAP);
+      nalu_hypre_NonGalerkinIJBigBufferInit( &ijbuf_sym_cnt, &ijbuf_sym_rowcounter, ijbuf_sym_cols );
    }
 
    /*
@@ -1739,12 +1739,12 @@ hypre_BoomerAMGBuildNonGalerkinCoarseOperator( hypre_ParCSRMatrix **RAP_ptr,
          Pattern_offd_indices_len = Pattern_offd_i[i + 1] - Pattern_offd_i[i];
          if (Pattern_offd_indices_allocated_len < Pattern_offd_indices_len)
          {
-            hypre_TFree(Pattern_offd_indices, NALU_HYPRE_MEMORY_HOST);
-            Pattern_offd_indices = hypre_CTAlloc(NALU_HYPRE_BigInt,  Pattern_offd_indices_len, NALU_HYPRE_MEMORY_HOST);
+            nalu_hypre_TFree(Pattern_offd_indices, NALU_HYPRE_MEMORY_HOST);
+            Pattern_offd_indices = nalu_hypre_CTAlloc(NALU_HYPRE_BigInt,  Pattern_offd_indices_len, NALU_HYPRE_MEMORY_HOST);
             Pattern_offd_indices_allocated_len = Pattern_offd_indices_len;
          }
          /* Grab sub array from col_map, corresponding to the slice of Pattern_offd_j */
-         hypre_GrabSubArray(Pattern_offd_j,
+         nalu_hypre_GrabSubArray(Pattern_offd_j,
                             Pattern_offd_i[i], Pattern_offd_i[i + 1] - 1,
                             col_map_offd_Pattern, Pattern_offd_indices);
          /* No need to grab info out of Pattern_diag_j[...], here we just start from
@@ -1778,7 +1778,7 @@ hypre_BoomerAMGBuildNonGalerkinCoarseOperator( hypre_ParCSRMatrix **RAP_ptr,
                {*/
                /* For efficiency, we do a buffered IJAddToValues.
                 * A[global_row, global_row] += RAP_diag_data[j] */
-               hypre_NonGalerkinIJBufferWrite( ijmatrix, &ijbuf_cnt, ijbuf_size, &ijbuf_rowcounter,
+               nalu_hypre_NonGalerkinIJBufferWrite( ijmatrix, &ijbuf_cnt, ijbuf_size, &ijbuf_rowcounter,
                                                &ijbuf_data, &ijbuf_cols, &ijbuf_rownums, &ijbuf_numcols, global_row,
                                                global_row, RAP_diag_data[j] );
                /*}*/
@@ -1794,30 +1794,30 @@ hypre_BoomerAMGBuildNonGalerkinCoarseOperator( hypre_ParCSRMatrix **RAP_ptr,
                S_offd_indices_len = S_offd_i[col_indx_RAP + 1] - S_offd_i[col_indx_RAP];
                if (S_offd_indices_allocated_len < S_offd_indices_len)
                {
-                  hypre_TFree(S_offd_indices, NALU_HYPRE_MEMORY_HOST);
-                  S_offd_indices = hypre_CTAlloc(NALU_HYPRE_BigInt,  S_offd_indices_len, NALU_HYPRE_MEMORY_HOST);
+                  nalu_hypre_TFree(S_offd_indices, NALU_HYPRE_MEMORY_HOST);
+                  S_offd_indices = nalu_hypre_CTAlloc(NALU_HYPRE_BigInt,  S_offd_indices_len, NALU_HYPRE_MEMORY_HOST);
                   S_offd_indices_allocated_len = S_offd_indices_len;
                }
                /* Grab sub array from col_map, corresponding to the slice of S_offd_j */
-               hypre_GrabSubArray(S_offd_j, S_offd_i[col_indx_RAP], S_offd_i[col_indx_RAP + 1] - 1,
+               nalu_hypre_GrabSubArray(S_offd_j, S_offd_i[col_indx_RAP], S_offd_i[col_indx_RAP + 1] - 1,
                                   col_map_offd_S, S_offd_indices);
                /* No need to grab info out of S_diag_j[...], here we just start from
                 * S_diag_i[col_indx_RAP] and end at index S_diag_i[col_indx_RAP+1] - 1 */
 
                /* Intersect the diag and offd pieces, remembering that the
                 * diag array will need to have the offset +first_col_diag_RAP */
-               cnt = hypre_max(S_offd_indices_len, Pattern_offd_indices_len);
+               cnt = nalu_hypre_max(S_offd_indices_len, Pattern_offd_indices_len);
                if (offd_intersection_allocated_len < cnt)
                {
-                  hypre_TFree(offd_intersection, NALU_HYPRE_MEMORY_HOST);
-                  hypre_TFree(offd_intersection_data, NALU_HYPRE_MEMORY_HOST);
-                  offd_intersection = hypre_CTAlloc(NALU_HYPRE_BigInt,  cnt, NALU_HYPRE_MEMORY_HOST);
-                  offd_intersection_data = hypre_CTAlloc(NALU_HYPRE_Real,  cnt, NALU_HYPRE_MEMORY_HOST);
+                  nalu_hypre_TFree(offd_intersection, NALU_HYPRE_MEMORY_HOST);
+                  nalu_hypre_TFree(offd_intersection_data, NALU_HYPRE_MEMORY_HOST);
+                  offd_intersection = nalu_hypre_CTAlloc(NALU_HYPRE_BigInt,  cnt, NALU_HYPRE_MEMORY_HOST);
+                  offd_intersection_data = nalu_hypre_CTAlloc(NALU_HYPRE_Real,  cnt, NALU_HYPRE_MEMORY_HOST);
                   offd_intersection_allocated_len = cnt;
                }
                /* This intersection also tracks S_offd_data and assumes that
                 * S_offd_indices is the first argument here */
-               hypre_IntersectTwoBigArrays(S_offd_indices,
+               nalu_hypre_IntersectTwoBigArrays(S_offd_indices,
                                            &(S_offd_data[ S_offd_i[col_indx_RAP] ]),
                                            S_offd_indices_len,
                                            Pattern_offd_indices,
@@ -1829,18 +1829,18 @@ hypre_BoomerAMGBuildNonGalerkinCoarseOperator( hypre_ParCSRMatrix **RAP_ptr,
 
                /* Now, intersect the indices for the diag block.  Note that S_diag_j does
                 * not have a diagonal entry, so no lumping occurs to the diagonal. */
-               cnt = hypre_max(Pattern_diag_indices_len,
+               cnt = nalu_hypre_max(Pattern_diag_indices_len,
                                S_diag_i[col_indx_RAP + 1] - S_diag_i[col_indx_RAP] );
                if (diag_intersection_allocated_len < cnt)
                {
-                  hypre_TFree(diag_intersection, NALU_HYPRE_MEMORY_HOST);
-                  hypre_TFree(diag_intersection_data, NALU_HYPRE_MEMORY_HOST);
-                  diag_intersection = hypre_CTAlloc(NALU_HYPRE_Int,  cnt, NALU_HYPRE_MEMORY_HOST);
-                  diag_intersection_data = hypre_CTAlloc(NALU_HYPRE_Real,  cnt, NALU_HYPRE_MEMORY_HOST);
+                  nalu_hypre_TFree(diag_intersection, NALU_HYPRE_MEMORY_HOST);
+                  nalu_hypre_TFree(diag_intersection_data, NALU_HYPRE_MEMORY_HOST);
+                  diag_intersection = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  cnt, NALU_HYPRE_MEMORY_HOST);
+                  diag_intersection_data = nalu_hypre_CTAlloc(NALU_HYPRE_Real,  cnt, NALU_HYPRE_MEMORY_HOST);
                   diag_intersection_allocated_len = cnt;
                }
                /* There is no diagonal entry in first position of S */
-               hypre_IntersectTwoArrays( &(S_diag_j[S_diag_i[col_indx_RAP]]),
+               nalu_hypre_IntersectTwoArrays( &(S_diag_j[S_diag_i[col_indx_RAP]]),
                                          &(S_diag_data[ S_diag_i[col_indx_RAP] ]),
                                          S_diag_i[col_indx_RAP + 1] - S_diag_i[col_indx_RAP],
                                          Pattern_indices_ptr,
@@ -1879,13 +1879,13 @@ hypre_BoomerAMGBuildNonGalerkinCoarseOperator( hypre_ParCSRMatrix **RAP_ptr,
                      {*/
                      /* For efficiency, we do a buffered IJAddToValues.
                       * A[global_row, cnt] += RAP_diag_data[j] */
-                     hypre_NonGalerkinIJBufferWrite( ijmatrix, &ijbuf_cnt, ijbuf_size, &ijbuf_rowcounter,
+                     nalu_hypre_NonGalerkinIJBufferWrite( ijmatrix, &ijbuf_cnt, ijbuf_size, &ijbuf_rowcounter,
                                                      &ijbuf_data, &ijbuf_cols, &ijbuf_rownums, &ijbuf_numcols, global_row,
                                                      cnt, lump_value );
                      if (lump_percent < 1.0)
                      {
                         /* Preserve row sum by updating diagonal */
-                        hypre_NonGalerkinIJBufferWrite( ijmatrix, &ijbuf_cnt, ijbuf_size, &ijbuf_rowcounter,
+                        nalu_hypre_NonGalerkinIJBufferWrite( ijmatrix, &ijbuf_cnt, ijbuf_size, &ijbuf_rowcounter,
                                                         &ijbuf_data, &ijbuf_cols, &ijbuf_rownums, &ijbuf_numcols, global_row,
                                                         global_row, diagonal_lump_value );
                      }
@@ -1894,12 +1894,12 @@ hypre_BoomerAMGBuildNonGalerkinCoarseOperator( hypre_ParCSRMatrix **RAP_ptr,
                      if (sym_collapse)
                      {
                         /* Update mirror entry */
-                        hypre_NonGalerkinIJBufferWrite( ijmatrix,
+                        nalu_hypre_NonGalerkinIJBufferWrite( ijmatrix,
                                                         &ijbuf_sym_cnt, ijbuf_size, &ijbuf_sym_rowcounter,
                                                         &ijbuf_sym_data, &ijbuf_sym_cols, &ijbuf_sym_rownums,
                                                         &ijbuf_sym_numcols, cnt, global_row, lump_value );
                         /* Update mirror entry diagonal */
-                        hypre_NonGalerkinIJBufferWrite( ijmatrix,
+                        nalu_hypre_NonGalerkinIJBufferWrite( ijmatrix,
                                                         &ijbuf_sym_cnt, ijbuf_size, &ijbuf_sym_rowcounter,
                                                         &ijbuf_sym_data, &ijbuf_sym_cols, &ijbuf_sym_rownums,
                                                         &ijbuf_sym_numcols, cnt, cnt, neg_lump_value );
@@ -1915,13 +1915,13 @@ hypre_BoomerAMGBuildNonGalerkinCoarseOperator( hypre_ParCSRMatrix **RAP_ptr,
                      diagonal_lump_value = (1.0 - lump_percent) * fabs(offd_intersection_data[k]) * sum_strong_neigh;
                      neg_lump_value = -1.0 * lump_value;
 
-                     hypre_NonGalerkinIJBufferWrite( ijmatrix, &ijbuf_cnt, ijbuf_size, &ijbuf_rowcounter,
+                     nalu_hypre_NonGalerkinIJBufferWrite( ijmatrix, &ijbuf_cnt, ijbuf_size, &ijbuf_rowcounter,
                                                      &ijbuf_data, &ijbuf_cols, &ijbuf_rownums, &ijbuf_numcols, global_row,
                                                      offd_intersection[k], lump_value );
 
                      if (lump_percent < 1.0)
                      {
-                        hypre_NonGalerkinIJBufferWrite( ijmatrix, &ijbuf_cnt, ijbuf_size, &ijbuf_rowcounter,
+                        nalu_hypre_NonGalerkinIJBufferWrite( ijmatrix, &ijbuf_cnt, ijbuf_size, &ijbuf_rowcounter,
                                                         &ijbuf_data, &ijbuf_cols, &ijbuf_rownums, &ijbuf_numcols, global_row,
                                                         global_row, diagonal_lump_value );
                      }
@@ -1929,12 +1929,12 @@ hypre_BoomerAMGBuildNonGalerkinCoarseOperator( hypre_ParCSRMatrix **RAP_ptr,
                      /* Update mirror entries, if symmetric collapsing */
                      if (sym_collapse)
                      {
-                        hypre_NonGalerkinIJBufferWrite( ijmatrix,
+                        nalu_hypre_NonGalerkinIJBufferWrite( ijmatrix,
                                                         &ijbuf_sym_cnt, ijbuf_size, &ijbuf_sym_rowcounter,
                                                         &ijbuf_sym_data, &ijbuf_sym_cols, &ijbuf_sym_rownums,
                                                         &ijbuf_sym_numcols, offd_intersection[k],
                                                         global_row, lump_value );
-                        hypre_NonGalerkinIJBufferWrite( ijmatrix,
+                        nalu_hypre_NonGalerkinIJBufferWrite( ijmatrix,
                                                         &ijbuf_sym_cnt, ijbuf_size, &ijbuf_sym_rowcounter,
                                                         &ijbuf_sym_data, &ijbuf_sym_cols, &ijbuf_sym_rownums,
                                                         &ijbuf_sym_numcols, offd_intersection[k],
@@ -1952,12 +1952,12 @@ hypre_BoomerAMGBuildNonGalerkinCoarseOperator( hypre_ParCSRMatrix **RAP_ptr,
                   {   lump_value = RAP_diag_data[j]; }
 
                   cnt = col_indx_RAP + first_col_diag_RAP;
-                  hypre_NonGalerkinIJBufferWrite( ijmatrix, &ijbuf_cnt, ijbuf_size, &ijbuf_rowcounter,
+                  nalu_hypre_NonGalerkinIJBufferWrite( ijmatrix, &ijbuf_cnt, ijbuf_size, &ijbuf_rowcounter,
                                                   &ijbuf_data, &ijbuf_cols, &ijbuf_rownums, &ijbuf_numcols, global_row,
                                                   cnt, lump_value );
                   if (sym_collapse)
                   {
-                     hypre_NonGalerkinIJBufferWrite( ijmatrix,
+                     nalu_hypre_NonGalerkinIJBufferWrite( ijmatrix,
                                                      &ijbuf_sym_cnt, ijbuf_size, &ijbuf_sym_rowcounter,
                                                      &ijbuf_sym_data, &ijbuf_sym_cols, &ijbuf_sym_rownums,
                                                      &ijbuf_sym_numcols, cnt, global_row, lump_value );
@@ -1968,7 +1968,7 @@ hypre_BoomerAMGBuildNonGalerkinCoarseOperator( hypre_ParCSRMatrix **RAP_ptr,
             else if (col_indx_RAP == col_indx_Pattern)
             {
                cnt = col_indx_RAP + first_col_diag_RAP;
-               hypre_NonGalerkinIJBufferWrite( ijmatrix, &ijbuf_cnt, ijbuf_size, &ijbuf_rowcounter,
+               nalu_hypre_NonGalerkinIJBufferWrite( ijmatrix, &ijbuf_cnt, ijbuf_size, &ijbuf_rowcounter,
                                                &ijbuf_data, &ijbuf_cols, &ijbuf_rownums, &ijbuf_numcols, global_row,
                                                cnt, RAP_diag_data[j] );
 
@@ -2040,7 +2040,7 @@ hypre_BoomerAMGBuildNonGalerkinCoarseOperator( hypre_ParCSRMatrix **RAP_ptr,
              * be for computing index set intersections for lumping.  The above
              * loop over RAP_diag ensures adequate length of Pattern_offd_indices */
             /* Ensure adequate length */
-            hypre_GrabSubArray(Pattern_offd_j,
+            nalu_hypre_GrabSubArray(Pattern_offd_j,
                                Pattern_offd_i[i], Pattern_offd_i[i + 1] - 1,
                                col_map_offd_Pattern, Pattern_offd_indices);
             /* No need to grab info out of Pattern_diag_j[...], here we just start from
@@ -2074,7 +2074,7 @@ hypre_BoomerAMGBuildNonGalerkinCoarseOperator( hypre_ParCSRMatrix **RAP_ptr,
                if ( (col_indx_RAP < col_indx_Pattern) || has_row_ended)
                {
                   /* The row_indx_Sext would be found with:
-                   row_indx_Sext     = hypre_BinarySearch(col_map_offd_RAP, col_indx_RAP, num_cols_RAP_offd);
+                   row_indx_Sext     = nalu_hypre_BinarySearch(col_map_offd_RAP, col_indx_RAP, num_cols_RAP_offd);
                    But, we already know the answer to this with, */
                   row_indx_Sext        = RAP_offd_j[j];
 
@@ -2083,28 +2083,28 @@ hypre_BoomerAMGBuildNonGalerkinCoarseOperator( hypre_ParCSRMatrix **RAP_ptr,
                   S_offd_indices_len = S_ext_offd_i[row_indx_Sext + 1] - S_ext_offd_i[row_indx_Sext];
                   if (S_offd_indices_allocated_len < S_offd_indices_len)
                   {
-                     hypre_TFree(S_offd_indices, NALU_HYPRE_MEMORY_HOST);
-                     S_offd_indices = hypre_CTAlloc(NALU_HYPRE_BigInt,  S_offd_indices_len, NALU_HYPRE_MEMORY_HOST);
+                     nalu_hypre_TFree(S_offd_indices, NALU_HYPRE_MEMORY_HOST);
+                     S_offd_indices = nalu_hypre_CTAlloc(NALU_HYPRE_BigInt,  S_offd_indices_len, NALU_HYPRE_MEMORY_HOST);
                      S_offd_indices_allocated_len = S_offd_indices_len;
                   }
                   /* Grab sub array from col_map, corresponding to the slice of S_ext_offd_j */
-                  hypre_GrabSubArray(S_ext_offd_j, S_ext_offd_i[row_indx_Sext], S_ext_offd_i[row_indx_Sext + 1] - 1,
+                  nalu_hypre_GrabSubArray(S_ext_offd_j, S_ext_offd_i[row_indx_Sext], S_ext_offd_i[row_indx_Sext + 1] - 1,
                                      col_map_offd_Sext, S_offd_indices);
                   /* No need to grab info out of S_ext_diag_j[...], here we just start from
                    * S_ext_diag_i[row_indx_Sext] and end at index S_ext_diag_i[row_indx_Sext+1] - 1 */
 
                   /* Intersect the diag and offd pieces, remembering that the
                    * diag array will need to have the offset +first_col_diag_RAP */
-                  cnt = hypre_max(S_offd_indices_len, Pattern_offd_indices_len);
+                  cnt = nalu_hypre_max(S_offd_indices_len, Pattern_offd_indices_len);
                   if (offd_intersection_allocated_len < cnt)
                   {
-                     hypre_TFree(offd_intersection, NALU_HYPRE_MEMORY_HOST);
-                     hypre_TFree(offd_intersection_data, NALU_HYPRE_MEMORY_HOST);
-                     offd_intersection = hypre_CTAlloc(NALU_HYPRE_BigInt,  cnt, NALU_HYPRE_MEMORY_HOST);
-                     offd_intersection_data = hypre_CTAlloc(NALU_HYPRE_Real,  cnt, NALU_HYPRE_MEMORY_HOST);
+                     nalu_hypre_TFree(offd_intersection, NALU_HYPRE_MEMORY_HOST);
+                     nalu_hypre_TFree(offd_intersection_data, NALU_HYPRE_MEMORY_HOST);
+                     offd_intersection = nalu_hypre_CTAlloc(NALU_HYPRE_BigInt,  cnt, NALU_HYPRE_MEMORY_HOST);
+                     offd_intersection_data = nalu_hypre_CTAlloc(NALU_HYPRE_Real,  cnt, NALU_HYPRE_MEMORY_HOST);
                      offd_intersection_allocated_len = cnt;
                   }
-                  hypre_IntersectTwoBigArrays(S_offd_indices,
+                  nalu_hypre_IntersectTwoBigArrays(S_offd_indices,
                                               &(S_ext_offd_data[ S_ext_offd_i[row_indx_Sext] ]),
                                               S_offd_indices_len,
                                               Pattern_offd_indices,
@@ -2114,17 +2114,17 @@ hypre_BoomerAMGBuildNonGalerkinCoarseOperator( hypre_ParCSRMatrix **RAP_ptr,
                                               &offd_intersection_len);
 
                   /* Now, intersect the indices for the diag block. */
-                  cnt = hypre_max(Pattern_diag_indices_len,
+                  cnt = nalu_hypre_max(Pattern_diag_indices_len,
                                   S_ext_diag_i[row_indx_Sext + 1] - S_ext_diag_i[row_indx_Sext] );
                   if (diag_intersection_allocated_len < cnt)
                   {
-                     hypre_TFree(diag_intersection, NALU_HYPRE_MEMORY_HOST);
-                     hypre_TFree(diag_intersection_data, NALU_HYPRE_MEMORY_HOST);
-                     diag_intersection = hypre_CTAlloc(NALU_HYPRE_Int,  cnt, NALU_HYPRE_MEMORY_HOST);
-                     diag_intersection_data = hypre_CTAlloc(NALU_HYPRE_Real,  cnt, NALU_HYPRE_MEMORY_HOST);
+                     nalu_hypre_TFree(diag_intersection, NALU_HYPRE_MEMORY_HOST);
+                     nalu_hypre_TFree(diag_intersection_data, NALU_HYPRE_MEMORY_HOST);
+                     diag_intersection = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  cnt, NALU_HYPRE_MEMORY_HOST);
+                     diag_intersection_data = nalu_hypre_CTAlloc(NALU_HYPRE_Real,  cnt, NALU_HYPRE_MEMORY_HOST);
                      diag_intersection_allocated_len = cnt;
                   }
-                  hypre_IntersectTwoArrays( &(S_ext_diag_j[S_ext_diag_i[row_indx_Sext]]),
+                  nalu_hypre_IntersectTwoArrays( &(S_ext_diag_j[S_ext_diag_i[row_indx_Sext]]),
                                             &(S_ext_diag_data[ S_ext_diag_i[row_indx_Sext] ]),
                                             S_ext_diag_i[row_indx_Sext + 1] - S_ext_diag_i[row_indx_Sext],
                                             Pattern_indices_ptr,
@@ -2157,11 +2157,11 @@ hypre_BoomerAMGBuildNonGalerkinCoarseOperator( hypre_ParCSRMatrix **RAP_ptr,
                         neg_lump_value = -1.0 * lump_value;
                         cnt = diag_intersection[k] + first_col_diag_RAP;
 
-                        hypre_NonGalerkinIJBufferWrite( ijmatrix, &ijbuf_cnt, ijbuf_size, &ijbuf_rowcounter,
+                        nalu_hypre_NonGalerkinIJBufferWrite( ijmatrix, &ijbuf_cnt, ijbuf_size, &ijbuf_rowcounter,
                                                         &ijbuf_data, &ijbuf_cols, &ijbuf_rownums, &ijbuf_numcols, global_row, cnt, lump_value );
                         if (lump_percent < 1.0)
                         {
-                           hypre_NonGalerkinIJBufferWrite( ijmatrix, &ijbuf_cnt, ijbuf_size, &ijbuf_rowcounter,
+                           nalu_hypre_NonGalerkinIJBufferWrite( ijmatrix, &ijbuf_cnt, ijbuf_size, &ijbuf_rowcounter,
                                                            &ijbuf_data, &ijbuf_cols, &ijbuf_rownums, &ijbuf_numcols, global_row, global_row,
                                                            diagonal_lump_value );
                         }
@@ -2169,12 +2169,12 @@ hypre_BoomerAMGBuildNonGalerkinCoarseOperator( hypre_ParCSRMatrix **RAP_ptr,
                         /* Update mirror entries, if symmetric collapsing */
                         if (sym_collapse)
                         {
-                           hypre_NonGalerkinIJBufferWrite( ijmatrix,
+                           nalu_hypre_NonGalerkinIJBufferWrite( ijmatrix,
                                                            &ijbuf_sym_cnt, ijbuf_size,
                                                            &ijbuf_sym_rowcounter, &ijbuf_sym_data,
                                                            &ijbuf_sym_cols, &ijbuf_sym_rownums,
                                                            &ijbuf_sym_numcols, cnt, global_row, lump_value);
-                           hypre_NonGalerkinIJBufferWrite( ijmatrix,
+                           nalu_hypre_NonGalerkinIJBufferWrite( ijmatrix,
                                                            &ijbuf_sym_cnt, ijbuf_size,
                                                            &ijbuf_sym_rowcounter, &ijbuf_sym_data,
                                                            &ijbuf_sym_cols, &ijbuf_sym_rownums,
@@ -2190,12 +2190,12 @@ hypre_BoomerAMGBuildNonGalerkinCoarseOperator( hypre_ParCSRMatrix **RAP_ptr,
                         diagonal_lump_value = (1.0 - lump_percent) * fabs(offd_intersection_data[k]) * sum_strong_neigh;
                         neg_lump_value = -1.0 * lump_value;
 
-                        hypre_NonGalerkinIJBufferWrite( ijmatrix, &ijbuf_cnt, ijbuf_size, &ijbuf_rowcounter,
+                        nalu_hypre_NonGalerkinIJBufferWrite( ijmatrix, &ijbuf_cnt, ijbuf_size, &ijbuf_rowcounter,
                                                         &ijbuf_data, &ijbuf_cols, &ijbuf_rownums, &ijbuf_numcols, global_row,
                                                         offd_intersection[k], lump_value );
                         if (lump_percent < 1.0)
                         {
-                           hypre_NonGalerkinIJBufferWrite( ijmatrix, &ijbuf_cnt, ijbuf_size, &ijbuf_rowcounter,
+                           nalu_hypre_NonGalerkinIJBufferWrite( ijmatrix, &ijbuf_cnt, ijbuf_size, &ijbuf_rowcounter,
                                                            &ijbuf_data, &ijbuf_cols, &ijbuf_rownums, &ijbuf_numcols, global_row, global_row,
                                                            diagonal_lump_value );
                         }
@@ -2204,13 +2204,13 @@ hypre_BoomerAMGBuildNonGalerkinCoarseOperator( hypre_ParCSRMatrix **RAP_ptr,
                         /* Update mirror entries, if symmetric collapsing */
                         if (sym_collapse)
                         {
-                           hypre_NonGalerkinIJBufferWrite( ijmatrix,
+                           nalu_hypre_NonGalerkinIJBufferWrite( ijmatrix,
                                                            &ijbuf_sym_cnt, ijbuf_size,
                                                            &ijbuf_sym_rowcounter, &ijbuf_sym_data,
                                                            &ijbuf_sym_cols, &ijbuf_sym_rownums,
                                                            &ijbuf_sym_numcols, offd_intersection[k],
                                                            global_row, lump_value );
-                           hypre_NonGalerkinIJBufferWrite( ijmatrix,
+                           nalu_hypre_NonGalerkinIJBufferWrite( ijmatrix,
                                                            &ijbuf_sym_cnt, ijbuf_size,
                                                            &ijbuf_sym_rowcounter, &ijbuf_sym_data,
                                                            &ijbuf_sym_cols, &ijbuf_sym_rownums,
@@ -2228,12 +2228,12 @@ hypre_BoomerAMGBuildNonGalerkinCoarseOperator( hypre_ParCSRMatrix **RAP_ptr,
                      else
                      {   lump_value = RAP_offd_data[j]; }
 
-                     hypre_NonGalerkinIJBufferWrite( ijmatrix, &ijbuf_cnt, ijbuf_size, &ijbuf_rowcounter,
+                     nalu_hypre_NonGalerkinIJBufferWrite( ijmatrix, &ijbuf_cnt, ijbuf_size, &ijbuf_rowcounter,
                                                      &ijbuf_data, &ijbuf_cols, &ijbuf_rownums, &ijbuf_numcols, global_row, col_indx_RAP,
                                                      lump_value );
                      if (sym_collapse)
                      {
-                        hypre_NonGalerkinIJBufferWrite( ijmatrix,
+                        nalu_hypre_NonGalerkinIJBufferWrite( ijmatrix,
                                                         &ijbuf_sym_cnt, ijbuf_size, &ijbuf_sym_rowcounter,
                                                         &ijbuf_sym_data, &ijbuf_sym_cols, &ijbuf_sym_rownums,
                                                         &ijbuf_sym_numcols, col_indx_RAP, global_row,
@@ -2245,7 +2245,7 @@ hypre_BoomerAMGBuildNonGalerkinCoarseOperator( hypre_ParCSRMatrix **RAP_ptr,
                else if (col_indx_RAP == col_indx_Pattern)
                {
                   /* For the offd structure, col_indx_RAP is a global dof number */
-                  hypre_NonGalerkinIJBufferWrite( ijmatrix, &ijbuf_cnt, ijbuf_size, &ijbuf_rowcounter,
+                  nalu_hypre_NonGalerkinIJBufferWrite( ijmatrix, &ijbuf_cnt, ijbuf_size, &ijbuf_rowcounter,
                                                   &ijbuf_data, &ijbuf_cols, &ijbuf_rownums, &ijbuf_numcols, global_row, col_indx_RAP,
                                                   RAP_offd_data[j]);
 
@@ -2287,10 +2287,10 @@ hypre_BoomerAMGBuildNonGalerkinCoarseOperator( hypre_ParCSRMatrix **RAP_ptr,
 
    /* For efficiency, we do a buffered IJAddToValues.
     * This empties the buffer of any remaining values */
-   hypre_NonGalerkinIJBufferEmpty(ijmatrix, ijbuf_size, &ijbuf_cnt, ijbuf_rowcounter,
+   nalu_hypre_NonGalerkinIJBufferEmpty(ijmatrix, ijbuf_size, &ijbuf_cnt, ijbuf_rowcounter,
                                   &ijbuf_data, &ijbuf_cols, &ijbuf_rownums, &ijbuf_numcols);
    if (sym_collapse)
-      hypre_NonGalerkinIJBufferEmpty(ijmatrix, ijbuf_size, &ijbuf_sym_cnt, ijbuf_sym_rowcounter,
+      nalu_hypre_NonGalerkinIJBufferEmpty(ijmatrix, ijbuf_size, &ijbuf_sym_cnt, ijbuf_sym_rowcounter,
                                      &ijbuf_sym_data, &ijbuf_sym_cols, &ijbuf_sym_rownums,
                                      &ijbuf_sym_numcols);
 
@@ -2301,59 +2301,59 @@ hypre_BoomerAMGBuildNonGalerkinCoarseOperator( hypre_ParCSRMatrix **RAP_ptr,
    /* Optional diagnostic matrix printing */
    if (0)
    {
-      hypre_sprintf(filename, "Pattern_%d.ij", global_num_vars);
-      hypre_ParCSRMatrixPrintIJ(Pattern, 0, 0, filename);
-      hypre_sprintf(filename, "Strength_%d.ij", global_num_vars);
-      hypre_ParCSRMatrixPrintIJ(S, 0, 0, filename);
-      hypre_sprintf(filename, "RAP_%d.ij", global_num_vars);
-      hypre_ParCSRMatrixPrintIJ(RAP, 0, 0, filename);
-      hypre_sprintf(filename, "RAPc_%d.ij", global_num_vars);
-      hypre_ParCSRMatrixPrintIJ(*RAP_ptr, 0, 0, filename);
-      hypre_sprintf(filename, "AP_%d.ij", global_num_vars);
-      hypre_ParCSRMatrixPrintIJ(AP, 0, 0, filename);
+      nalu_hypre_sprintf(filename, "Pattern_%d.ij", global_num_vars);
+      nalu_hypre_ParCSRMatrixPrintIJ(Pattern, 0, 0, filename);
+      nalu_hypre_sprintf(filename, "Strength_%d.ij", global_num_vars);
+      nalu_hypre_ParCSRMatrixPrintIJ(S, 0, 0, filename);
+      nalu_hypre_sprintf(filename, "RAP_%d.ij", global_num_vars);
+      nalu_hypre_ParCSRMatrixPrintIJ(RAP, 0, 0, filename);
+      nalu_hypre_sprintf(filename, "RAPc_%d.ij", global_num_vars);
+      nalu_hypre_ParCSRMatrixPrintIJ(*RAP_ptr, 0, 0, filename);
+      nalu_hypre_sprintf(filename, "AP_%d.ij", global_num_vars);
+      nalu_hypre_ParCSRMatrixPrintIJ(AP, 0, 0, filename);
    }
 
    /* Free matrices and variables and arrays */
-   hypre_TFree(ijbuf_data,    memory_location_RAP);
-   hypre_TFree(ijbuf_cols,    memory_location_RAP);
-   hypre_TFree(ijbuf_rownums, memory_location_RAP);
-   hypre_TFree(ijbuf_numcols, memory_location_RAP);
+   nalu_hypre_TFree(ijbuf_data,    memory_location_RAP);
+   nalu_hypre_TFree(ijbuf_cols,    memory_location_RAP);
+   nalu_hypre_TFree(ijbuf_rownums, memory_location_RAP);
+   nalu_hypre_TFree(ijbuf_numcols, memory_location_RAP);
    if (sym_collapse)
    {
-      hypre_TFree(ijbuf_sym_data,    memory_location_RAP);
-      hypre_TFree(ijbuf_sym_cols,    memory_location_RAP);
-      hypre_TFree(ijbuf_sym_rownums, memory_location_RAP);
-      hypre_TFree(ijbuf_sym_numcols, memory_location_RAP);
+      nalu_hypre_TFree(ijbuf_sym_data,    memory_location_RAP);
+      nalu_hypre_TFree(ijbuf_sym_cols,    memory_location_RAP);
+      nalu_hypre_TFree(ijbuf_sym_rownums, memory_location_RAP);
+      nalu_hypre_TFree(ijbuf_sym_numcols, memory_location_RAP);
    }
 
-   hypre_TFree(Pattern_offd_indices, NALU_HYPRE_MEMORY_HOST);
-   hypre_TFree(S_ext_diag_i, NALU_HYPRE_MEMORY_HOST);
-   hypre_TFree(S_ext_offd_i, NALU_HYPRE_MEMORY_HOST);
-   hypre_TFree(S_offd_indices, NALU_HYPRE_MEMORY_HOST);
-   hypre_TFree(offd_intersection, NALU_HYPRE_MEMORY_HOST);
-   hypre_TFree(offd_intersection_data, NALU_HYPRE_MEMORY_HOST);
-   hypre_TFree(diag_intersection, NALU_HYPRE_MEMORY_HOST);
-   hypre_TFree(diag_intersection_data, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(Pattern_offd_indices, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(S_ext_diag_i, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(S_ext_offd_i, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(S_offd_indices, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(offd_intersection, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(offd_intersection_data, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(diag_intersection, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(diag_intersection_data, NALU_HYPRE_MEMORY_HOST);
    if (S_ext_diag_size)
    {
-      hypre_TFree(S_ext_diag_j, NALU_HYPRE_MEMORY_HOST);
-      hypre_TFree(S_ext_diag_data, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(S_ext_diag_j, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(S_ext_diag_data, NALU_HYPRE_MEMORY_HOST);
    }
    if (S_ext_offd_size)
    {
-      hypre_TFree(S_ext_offd_j, NALU_HYPRE_MEMORY_HOST);
-      hypre_TFree(S_ext_offd_data, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(S_ext_offd_j, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(S_ext_offd_data, NALU_HYPRE_MEMORY_HOST);
    }
    if (num_cols_offd_Sext)
-   {   hypre_TFree(col_map_offd_Sext, NALU_HYPRE_MEMORY_HOST); }
+   {   nalu_hypre_TFree(col_map_offd_Sext, NALU_HYPRE_MEMORY_HOST); }
 
-   ierr += hypre_ParCSRMatrixDestroy(Pattern);
-   ierr += hypre_ParCSRMatrixDestroy(RAP);
-   ierr += hypre_ParCSRMatrixDestroy(S);
+   ierr += nalu_hypre_ParCSRMatrixDestroy(Pattern);
+   ierr += nalu_hypre_ParCSRMatrixDestroy(RAP);
+   ierr += nalu_hypre_ParCSRMatrixDestroy(S);
    ierr += NALU_HYPRE_IJMatrixSetObjectType(ijmatrix, -1);
    ierr += NALU_HYPRE_IJMatrixDestroy(ijmatrix);
 
-   /*end_time = hypre_MPI_Wtime();
+   /*end_time = nalu_hypre_MPI_Wtime();
      if(my_id == 0)
      {   fprintf(stdout, "NonGalerkin Time:  %1.2e\n", end_time-start_time); } */
 

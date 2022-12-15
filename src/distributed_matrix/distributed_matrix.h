@@ -7,19 +7,19 @@
 
 /******************************************************************************
  *
- * Header info for the hypre_DistributedMatrix structures
+ * Header info for the nalu_hypre_DistributedMatrix structures
  *
  *****************************************************************************/
 
-#ifndef hypre_DISTRIBUTED_MATRIX_HEADER
-#define hypre_DISTRIBUTED_MATRIX_HEADER
+#ifndef nalu_hypre_DISTRIBUTED_MATRIX_HEADER
+#define nalu_hypre_DISTRIBUTED_MATRIX_HEADER
 
 
-#include "_hypre_utilities.h"
+#include "_nalu_hypre_utilities.h"
 
 
 /*--------------------------------------------------------------------------
- * hypre_DistributedMatrix:
+ * nalu_hypre_DistributedMatrix:
  *--------------------------------------------------------------------------*/
 
 typedef struct
@@ -38,20 +38,20 @@ typedef struct
 #ifdef NALU_HYPRE_TIMING
    NALU_HYPRE_Int     GetRow_timer;
 #endif
-} hypre_DistributedMatrix;
+} nalu_hypre_DistributedMatrix;
 
 /*--------------------------------------------------------------------------
- * Accessor macros: hypre_DistributedMatrix
+ * Accessor macros: nalu_hypre_DistributedMatrix
  *--------------------------------------------------------------------------*/
 
-#define hypre_DistributedMatrixContext(matrix)      ((matrix) -> context)
-#define hypre_DistributedMatrixM(matrix)      ((matrix) -> M)
-#define hypre_DistributedMatrixN(matrix)      ((matrix) -> N)
-#define hypre_DistributedMatrixAuxiliaryData(matrix)         ((matrix) -> auxiliary_data)
+#define nalu_hypre_DistributedMatrixContext(matrix)      ((matrix) -> context)
+#define nalu_hypre_DistributedMatrixM(matrix)      ((matrix) -> M)
+#define nalu_hypre_DistributedMatrixN(matrix)      ((matrix) -> N)
+#define nalu_hypre_DistributedMatrixAuxiliaryData(matrix)         ((matrix) -> auxiliary_data)
 
-#define hypre_DistributedMatrixLocalStorageType(matrix)  ((matrix) -> local_storage_type)
-#define hypre_DistributedMatrixTranslator(matrix)   ((matrix) -> translator)
-#define hypre_DistributedMatrixLocalStorage(matrix)         ((matrix) -> local_storage)
+#define nalu_hypre_DistributedMatrixLocalStorageType(matrix)  ((matrix) -> local_storage_type)
+#define nalu_hypre_DistributedMatrixTranslator(matrix)   ((matrix) -> translator)
+#define nalu_hypre_DistributedMatrixLocalStorage(matrix)         ((matrix) -> local_storage)
 
 /*--------------------------------------------------------------------------
  * prototypes for operations on local objects

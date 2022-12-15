@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_Euclid.h"
+#include "_nalu_hypre_Euclid.h"
 /* #include "getRow_dh.h" */
 /* #include "Mat_dh.h" */
 /* #include "Euclid_dh.h" */
@@ -25,7 +25,7 @@ void EuclidGetRow(void *A, NALU_HYPRE_Int row, NALU_HYPRE_Int *len, NALU_HYPRE_I
   NALU_HYPRE_ParCSRMatrix mat = (NALU_HYPRE_ParCSRMatrix) A;
   ierr = NALU_HYPRE_ParCSRMatrixGetRow(mat, row, len, ind, val); 
   if (ierr) {
-    hypre_sprintf(msgBuf_dh, "NALU_HYPRE_ParCSRMatrixRestoreRow(row= %i) returned %i", row+1, ierr);
+    nalu_hypre_sprintf(msgBuf_dh, "NALU_HYPRE_ParCSRMatrixRestoreRow(row= %i) returned %i", row+1, ierr);
     SET_V_ERROR(msgBuf_dh);
   }
   END_FUNC_DH
@@ -40,7 +40,7 @@ void EuclidRestoreRow(void *A, NALU_HYPRE_Int row, NALU_HYPRE_Int *len, NALU_HYP
   NALU_HYPRE_ParCSRMatrix mat = (NALU_HYPRE_ParCSRMatrix) A;
   ierr = NALU_HYPRE_ParCSRMatrixRestoreRow(mat, row, len, ind, val); 
   if (ierr) {
-    hypre_sprintf(msgBuf_dh, "NALU_HYPRE_ParCSRMatrixRestoreRow(row= %i) returned %i", row+1, ierr);
+    nalu_hypre_sprintf(msgBuf_dh, "NALU_HYPRE_ParCSRMatrixRestoreRow(row= %i) returned %i", row+1, ierr);
     SET_V_ERROR(msgBuf_dh);
   }
   END_FUNC_DH
@@ -57,18 +57,18 @@ void EuclidGetDimensions(void *A, NALU_HYPRE_Int *beg_row, NALU_HYPRE_Int *rowsL
 
   ierr = NALU_HYPRE_ParCSRMatrixGetDims(mat, &m, &n);
   if (ierr) {
-    hypre_sprintf(msgBuf_dh, "NALU_HYPRE_ParCSRMatrixGetDims() returned %i", ierr);
+    nalu_hypre_sprintf(msgBuf_dh, "NALU_HYPRE_ParCSRMatrixGetDims() returned %i", ierr);
     SET_V_ERROR(msgBuf_dh);
   }
 
   ierr = NALU_HYPRE_ParCSRMatrixGetLocalRange(mat, &row_start, &row_end, 
                                        &col_start, &col_end);
   if (ierr) {
-    hypre_sprintf(msgBuf_dh, "NALU_HYPRE_ParCSRMatrixGetLocalRange() returned %i", ierr);
+    nalu_hypre_sprintf(msgBuf_dh, "NALU_HYPRE_ParCSRMatrixGetLocalRange() returned %i", ierr);
     SET_V_ERROR(msgBuf_dh);
   }
 
-/* hypre_fprintf(stderr, "\n##### [%i] EuclidGetDimensions: m= %i  n= %i  beg_row= %i row_end= %i  col_start= %i  col_end= %i\n",
+/* nalu_hypre_fprintf(stderr, "\n##### [%i] EuclidGetDimensions: m= %i  n= %i  beg_row= %i row_end= %i  col_start= %i  col_end= %i\n",
                              myid_dh, m,n,row_start,row_end,col_start,col_end);
 */
 
@@ -106,7 +106,7 @@ void EuclidGetRow(void *Ain, NALU_HYPRE_Int row, NALU_HYPRE_Int *len, NALU_HYPRE
 
   ierr = MatGetRow(A, row, len, ind, val);
   if (ierr) { 
-    hypre_sprintf(msgBuf_dh, "PETSc's MatGetRow bombed for row= %i", row);
+    nalu_hypre_sprintf(msgBuf_dh, "PETSc's MatGetRow bombed for row= %i", row);
     SET_V_ERROR(msgBuf_dh);
   }
 
@@ -123,7 +123,7 @@ void EuclidRestoreRow(void *Ain, NALU_HYPRE_Int row, NALU_HYPRE_Int *len, NALU_H
 
   ierr = MatRestoreRow(A, row, len, ind, val);
   if (ierr) {
-    hypre_sprintf(msgBuf_dh, "PETSc's MatRestoreRow bombed for row= %i", row);
+    nalu_hypre_sprintf(msgBuf_dh, "PETSc's MatRestoreRow bombed for row= %i", row);
     SET_V_ERROR(msgBuf_dh);
   }
   END_FUNC_DH
@@ -140,16 +140,16 @@ void EuclidGetDimensions(void *Ain, NALU_HYPRE_Int *beg_row, NALU_HYPRE_Int *row
 
   ierr = MatGetOwnershipRange(A, &first, &last);
   if (ierr) {
-    hypre_sprintf(msgBuf_dh, "PETSc's MatGetOwnershipRange failed");
+    nalu_hypre_sprintf(msgBuf_dh, "PETSc's MatGetOwnershipRange failed");
     SET_V_ERROR(msgBuf_dh);
   }
   ierr = MatGetSize(A, &rows, &cols); 
   if (ierr) {
-    hypre_sprintf(msgBuf_dh, "PETSc'MatGetSize failed");
+    nalu_hypre_sprintf(msgBuf_dh, "PETSc'MatGetSize failed");
     SET_V_ERROR(msgBuf_dh);
   }
   if (rows != cols) {
-    hypre_sprintf(msgBuf_dh, "matrix is not square; global dimensions: rows = %i, cols = %i", rows, cols);
+    nalu_hypre_sprintf(msgBuf_dh, "matrix is not square; global dimensions: rows = %i, cols = %i", rows, cols);
     SET_V_ERROR(msgBuf_dh);
   }
 
@@ -188,7 +188,7 @@ void EuclidGetRow(void *A, NALU_HYPRE_Int globalRow, NALU_HYPRE_Int *len, NALU_H
   Mat_dh B = (Mat_dh)A;  
   NALU_HYPRE_Int row = globalRow - B->beg_row;
   if (row > B->m) {
-    hypre_sprintf(msgBuf_dh, "requested globalRow= %i, which is local row= %i, but only have %i rows!",
+    nalu_hypre_sprintf(msgBuf_dh, "requested globalRow= %i, which is local row= %i, but only have %i rows!",
                                 globalRow, row, B->m);
     SET_V_ERROR(msgBuf_dh);
   }
@@ -296,7 +296,7 @@ void PrintMatUsingGetRow(void* A, NALU_HYPRE_Int beg_row, NALU_HYPRE_Int m,
 
   for (pe=0; pe<np_dh; ++pe) {
 
-    hypre_MPI_Barrier(comm_dh);
+    nalu_hypre_MPI_Barrier(comm_dh);
 
     if (myid_dh == pe) {
       if (pe == 0) {
@@ -305,7 +305,7 @@ void PrintMatUsingGetRow(void* A, NALU_HYPRE_Int beg_row, NALU_HYPRE_Int m,
         fp=fopen(filename, "a");
       }
       if (fp == NULL) {
-        hypre_sprintf(msgBuf_dh, "can't open %s for writing\n", filename);
+        nalu_hypre_sprintf(msgBuf_dh, "can't open %s for writing\n", filename);
         SET_V_ERROR(msgBuf_dh);
       }
 
@@ -314,7 +314,7 @@ void PrintMatUsingGetRow(void* A, NALU_HYPRE_Int beg_row, NALU_HYPRE_Int m,
         if (n2o_row == NULL) {
           EuclidGetRow(A, i+beg_row, &len, &cval, &aval); CHECK_V_ERROR;
           for (j=0; j<len; ++j) {
-            hypre_fprintf(fp, "%i %i %g\n", i+1, cval[j], aval[j]);
+            nalu_hypre_fprintf(fp, "%i %i %g\n", i+1, cval[j], aval[j]);
           }
           EuclidRestoreRow(A, i, &len, &cval, &aval); CHECK_V_ERROR;
         } else {
@@ -322,7 +322,7 @@ void PrintMatUsingGetRow(void* A, NALU_HYPRE_Int beg_row, NALU_HYPRE_Int m,
           EuclidGetRow(A, newRow, &len, &cval, &aval); CHECK_V_ERROR;
           for (j=0; j<len; ++j) {
             newCol = o2n_col[cval[j]-beg_row] + beg_row; 
-            hypre_fprintf(fp, "%i %i %g\n", i+1, newCol, aval[j]);
+            nalu_hypre_fprintf(fp, "%i %i %g\n", i+1, newCol, aval[j]);
           }
           EuclidRestoreRow(A, i, &len, &cval, &aval); CHECK_V_ERROR;
         }
@@ -353,7 +353,7 @@ void Euclid_dhInputHypreMat(Euclid_dh ctx, NALU_HYPRE_ParCSRMatrix A)
   /* get dimension and ownership information */
   NALU_HYPRE_ParCSRMatrixGetDims(A, &M , &N);
   if (M != N) {
-    hypre_sprintf(msgBuf_dh, "Global matrix is not square: M= %i, N= %i", M, N);
+    nalu_hypre_sprintf(msgBuf_dh, "Global matrix is not square: M= %i, N= %i", M, N);
     SET_V_ERROR(msgBuf_dh);
   }
   NALU_HYPRE_ParCSRMatrixGetLocalRange(A, &beg_row, &end_row, &junk, &junk);

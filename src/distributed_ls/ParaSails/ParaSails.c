@@ -24,7 +24,7 @@
 #include "LoadBal.h"
 #include "ParaSails.h"
 
-#include "_hypre_lapack.h"
+#include "_nalu_hypre_lapack.h"
 
 #define ROW_PRUNED_REQ_TAG        221
 #define ROW_STORED_REQ_TAG        222
@@ -61,15 +61,15 @@ NALU_HYPRE_Int FindNumReplies(MPI_Comm comm, NALU_HYPRE_Int *replies_list)
     NALU_HYPRE_Int npes, mype;
     NALU_HYPRE_Int *replies_list2;
 
-    hypre_MPI_Comm_rank(comm, &mype);
-    hypre_MPI_Comm_size(comm, &npes);
+    nalu_hypre_MPI_Comm_rank(comm, &mype);
+    nalu_hypre_MPI_Comm_size(comm, &npes);
 
-    replies_list2 = hypre_TAlloc(NALU_HYPRE_Int, npes , NALU_HYPRE_MEMORY_HOST);
+    replies_list2 = nalu_hypre_TAlloc(NALU_HYPRE_Int, npes , NALU_HYPRE_MEMORY_HOST);
 
-    hypre_MPI_Allreduce(replies_list, replies_list2, npes, NALU_HYPRE_MPI_INT, hypre_MPI_SUM, comm);
+    nalu_hypre_MPI_Allreduce(replies_list, replies_list2, npes, NALU_HYPRE_MPI_INT, nalu_hypre_MPI_SUM, comm);
     num_replies = replies_list2[mype];
 
-    hypre_TFree(replies_list2,NALU_HYPRE_MEMORY_HOST);
+    nalu_hypre_TFree(replies_list2,NALU_HYPRE_MEMORY_HOST);
 
     return num_replies;
 }
@@ -89,17 +89,17 @@ NALU_HYPRE_Int FindNumReplies(MPI_Comm comm, NALU_HYPRE_Int *replies_list)
  *          to zero of size the number of nonzero entries.  On output this
  *          buffer contains a 1 in position i if a request was made to
  *          processor i.  This array can be used to count (using
- *          hypre_MPI_AllReduce) the number of requests made to the current
+ *          nalu_hypre_MPI_AllReduce) the number of requests made to the current
  *          processor when the communication pattern is nonsymmetric.
  *--------------------------------------------------------------------------*/
 
 static void SendRequests(MPI_Comm comm, NALU_HYPRE_Int tag, Matrix *mat, NALU_HYPRE_Int reqlen, NALU_HYPRE_Int *reqind,
   NALU_HYPRE_Int *num_requests, NALU_HYPRE_Int *replies_list)
 {
-    hypre_MPI_Request request;
+    nalu_hypre_MPI_Request request;
     NALU_HYPRE_Int i, j, this_pe;
 
-    hypre_shell_sort(reqlen, reqind);
+    nalu_hypre_shell_sort(reqlen, reqind);
 
     *num_requests = 0;
 
@@ -118,9 +118,9 @@ static void SendRequests(MPI_Comm comm, NALU_HYPRE_Int tag, Matrix *mat, NALU_HY
         }
 
         /* Request rows in reqind[i..j-1] */
-        hypre_MPI_Isend(&reqind[i], j-i, NALU_HYPRE_MPI_INT, this_pe, tag,
+        nalu_hypre_MPI_Isend(&reqind[i], j-i, NALU_HYPRE_MPI_INT, this_pe, tag,
             comm, &request);
-        hypre_MPI_Request_free(&request);
+        nalu_hypre_MPI_Request_free(&request);
         (*num_requests)++;
 
         if (replies_list != NULL)
@@ -148,20 +148,20 @@ static void SendRequests(MPI_Comm comm, NALU_HYPRE_Int tag, Matrix *mat, NALU_HY
 static void ReceiveRequest(MPI_Comm comm, NALU_HYPRE_Int *source, NALU_HYPRE_Int tag, NALU_HYPRE_Int **buffer,
   NALU_HYPRE_Int *buflen, NALU_HYPRE_Int *count)
 {
-    hypre_MPI_Status status;
+    nalu_hypre_MPI_Status status;
 
-    hypre_MPI_Probe(hypre_MPI_ANY_SOURCE, tag, comm, &status);
-    *source = status.hypre_MPI_SOURCE;
-    hypre_MPI_Get_count(&status, NALU_HYPRE_MPI_INT, count);
+    nalu_hypre_MPI_Probe(nalu_hypre_MPI_ANY_SOURCE, tag, comm, &status);
+    *source = status.nalu_hypre_MPI_SOURCE;
+    nalu_hypre_MPI_Get_count(&status, NALU_HYPRE_MPI_INT, count);
 
     if (*count > *buflen)
     {
-        hypre_TFree(*buffer,NALU_HYPRE_MEMORY_HOST);
+        nalu_hypre_TFree(*buffer,NALU_HYPRE_MEMORY_HOST);
         *buflen = *count;
-        *buffer = hypre_TAlloc(NALU_HYPRE_Int, *buflen , NALU_HYPRE_MEMORY_HOST);
+        *buffer = nalu_hypre_TAlloc(NALU_HYPRE_Int, *buflen , NALU_HYPRE_MEMORY_HOST);
     }
 
-    hypre_MPI_Recv(*buffer, *count, NALU_HYPRE_MPI_INT, *source, tag, comm, &status);
+    nalu_hypre_MPI_Recv(*buffer, *count, NALU_HYPRE_MPI_INT, *source, tag, comm, &status);
 }
 
 /*--------------------------------------------------------------------------
@@ -185,7 +185,7 @@ static void ReceiveRequest(MPI_Comm comm, NALU_HYPRE_Int *source, NALU_HYPRE_Int
 
 static void SendReplyPrunedRows(MPI_Comm comm, Numbering *numb,
   NALU_HYPRE_Int dest, NALU_HYPRE_Int *buffer, NALU_HYPRE_Int count,
-  PrunedRows *pruned_rows, Mem *mem, hypre_MPI_Request *request)
+  PrunedRows *pruned_rows, Mem *mem, nalu_hypre_MPI_Request *request)
 {
     NALU_HYPRE_Int sendbacksize, j;
     NALU_HYPRE_Int len, *ind, *indbuf, *indbufp;
@@ -225,7 +225,7 @@ static void SendReplyPrunedRows(MPI_Comm comm, Numbering *numb,
         indbufp += len;
     }
 
-    hypre_MPI_Isend(indbuf, indbufp-indbuf, NALU_HYPRE_MPI_INT, dest, ROW_REPI_TAG,
+    nalu_hypre_MPI_Isend(indbuf, indbufp-indbuf, NALU_HYPRE_MPI_INT, dest, ROW_REPI_TAG,
         comm, request);
 }
 
@@ -242,18 +242,18 @@ static void SendReplyPrunedRows(MPI_Comm comm, Numbering *numb,
 static void ReceiveReplyPrunedRows(MPI_Comm comm, Numbering *numb,
   PrunedRows *pruned_rows, RowPatt *patt)
 {
-    hypre_MPI_Status status;
+    nalu_hypre_MPI_Status status;
     NALU_HYPRE_Int source, count;
     NALU_HYPRE_Int len, *ind, num_rows, *row_nums, j;
 
     /* Don't know the size of reply, so use probe and get count */
-    hypre_MPI_Probe(hypre_MPI_ANY_SOURCE, ROW_REPI_TAG, comm, &status);
-    source = status.hypre_MPI_SOURCE;
-    hypre_MPI_Get_count(&status, NALU_HYPRE_MPI_INT, &count);
+    nalu_hypre_MPI_Probe(nalu_hypre_MPI_ANY_SOURCE, ROW_REPI_TAG, comm, &status);
+    source = status.nalu_hypre_MPI_SOURCE;
+    nalu_hypre_MPI_Get_count(&status, NALU_HYPRE_MPI_INT, &count);
 
     /* Allocate space in stored rows data structure */
     ind = PrunedRowsAlloc(pruned_rows, count);
-    hypre_MPI_Recv(ind, count, NALU_HYPRE_MPI_INT, source, ROW_REPI_TAG, comm, &status);
+    nalu_hypre_MPI_Recv(ind, count, NALU_HYPRE_MPI_INT, source, ROW_REPI_TAG, comm, &status);
 
     /* Parse the message */
     num_rows = *ind++; /* number of rows */
@@ -298,7 +298,7 @@ static void ReceiveReplyPrunedRows(MPI_Comm comm, Numbering *numb,
 
 static void SendReplyStoredRows(MPI_Comm comm, Numbering *numb,
   NALU_HYPRE_Int dest, NALU_HYPRE_Int *buffer, NALU_HYPRE_Int count,
-  StoredRows *stored_rows, Mem *mem, hypre_MPI_Request *request)
+  StoredRows *stored_rows, Mem *mem, nalu_hypre_MPI_Request *request)
 {
     NALU_HYPRE_Int sendbacksize, j;
     NALU_HYPRE_Int len, *ind, *indbuf, *indbufp;
@@ -339,17 +339,17 @@ static void SendReplyStoredRows(MPI_Comm comm, Numbering *numb,
         *indbufp++ = len;
         /* memcpy(indbufp, ind, sizeof(NALU_HYPRE_Int)*len); */
         NumberingLocalToGlobal(numb, len, ind, indbufp);
-        hypre_TMemcpy(valbufp,  val, NALU_HYPRE_Real, len, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_HOST);
+        nalu_hypre_TMemcpy(valbufp,  val, NALU_HYPRE_Real, len, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_HOST);
         indbufp += len;
         valbufp += len;
     }
 
-    hypre_MPI_Isend(indbuf, indbufp-indbuf, NALU_HYPRE_MPI_INT, dest, ROW_REPI_TAG,
+    nalu_hypre_MPI_Isend(indbuf, indbufp-indbuf, NALU_HYPRE_MPI_INT, dest, ROW_REPI_TAG,
         comm, request);
 
-    hypre_MPI_Request_free(request);
+    nalu_hypre_MPI_Request_free(request);
 
-    hypre_MPI_Isend(valbuf, valbufp-valbuf, hypre_MPI_REAL, dest, ROW_REPV_TAG,
+    nalu_hypre_MPI_Isend(valbuf, valbufp-valbuf, nalu_hypre_MPI_REAL, dest, ROW_REPV_TAG,
         comm, request);
 }
 
@@ -364,21 +364,21 @@ static void SendReplyStoredRows(MPI_Comm comm, Numbering *numb,
 static void ReceiveReplyStoredRows(MPI_Comm comm, Numbering *numb,
   StoredRows *stored_rows)
 {
-    hypre_MPI_Status status;
+    nalu_hypre_MPI_Status status;
     NALU_HYPRE_Int source, count;
     NALU_HYPRE_Int len, *ind, num_rows, *row_nums, j;
     NALU_HYPRE_Real *val;
 
     /* Don't know the size of reply, so use probe and get count */
-    hypre_MPI_Probe(hypre_MPI_ANY_SOURCE, ROW_REPI_TAG, comm, &status);
-    source = status.hypre_MPI_SOURCE;
-    hypre_MPI_Get_count(&status, NALU_HYPRE_MPI_INT, &count);
+    nalu_hypre_MPI_Probe(nalu_hypre_MPI_ANY_SOURCE, ROW_REPI_TAG, comm, &status);
+    source = status.nalu_hypre_MPI_SOURCE;
+    nalu_hypre_MPI_Get_count(&status, NALU_HYPRE_MPI_INT, &count);
 
     /* Allocate space in stored rows data structure */
     ind = StoredRowsAllocInd(stored_rows, count);
-    hypre_MPI_Recv(ind, count, NALU_HYPRE_MPI_INT, source, ROW_REPI_TAG, comm, &status);
+    nalu_hypre_MPI_Recv(ind, count, NALU_HYPRE_MPI_INT, source, ROW_REPI_TAG, comm, &status);
     val = StoredRowsAllocVal(stored_rows, count);
-    hypre_MPI_Recv(val, count, hypre_MPI_REAL, source, ROW_REPV_TAG, comm, &status);
+    nalu_hypre_MPI_Recv(val, count, nalu_hypre_MPI_REAL, source, ROW_REPV_TAG, comm, &status);
 
     /* Parse the message */
     num_rows = *ind++; /* number of rows */
@@ -419,16 +419,16 @@ static void ExchangePrunedRows(MPI_Comm comm, Matrix *M, Numbering *numb,
 
     NALU_HYPRE_Int i;
     NALU_HYPRE_Int count;
-    hypre_MPI_Request *requests;
-    hypre_MPI_Status *statuses;
+    nalu_hypre_MPI_Request *requests;
+    nalu_hypre_MPI_Status *statuses;
     NALU_HYPRE_Int npes;
     NALU_HYPRE_Int num_replies, *replies_list;
 
     Mem *mem;
 
-    hypre_MPI_Comm_size(comm, &npes);
-    requests = hypre_TAlloc(hypre_MPI_Request, npes , NALU_HYPRE_MEMORY_HOST);
-    statuses = hypre_TAlloc(hypre_MPI_Status, npes , NALU_HYPRE_MEMORY_HOST);
+    nalu_hypre_MPI_Comm_size(comm, &npes);
+    requests = nalu_hypre_TAlloc(nalu_hypre_MPI_Request, npes , NALU_HYPRE_MEMORY_HOST);
+    statuses = nalu_hypre_TAlloc(nalu_hypre_MPI_Status, npes , NALU_HYPRE_MEMORY_HOST);
 
     /* Merged pattern of pruned rows on this processor */
 
@@ -443,7 +443,7 @@ static void ExchangePrunedRows(MPI_Comm comm, Matrix *M, Numbering *numb,
     /* Loop to construct pattern of pruned rows on this processor */
 
     bufferlen = 10; /* size will grow if get a long msg */
-    buffer = hypre_TAlloc(NALU_HYPRE_Int, bufferlen , NALU_HYPRE_MEMORY_HOST);
+    buffer = nalu_hypre_TAlloc(NALU_HYPRE_Int, bufferlen , NALU_HYPRE_MEMORY_HOST);
 
     for (level=1; level<=num_levels; level++)
     {
@@ -455,12 +455,12 @@ static void ExchangePrunedRows(MPI_Comm comm, Matrix *M, Numbering *numb,
         /* Convert local row numbers to global row numbers */
         NumberingLocalToGlobal(numb, len, ind, ind);
 
-        replies_list = hypre_CTAlloc(NALU_HYPRE_Int, npes, NALU_HYPRE_MEMORY_HOST);
+        replies_list = nalu_hypre_CTAlloc(NALU_HYPRE_Int, npes, NALU_HYPRE_MEMORY_HOST);
 
         SendRequests(comm, ROW_PRUNED_REQ_TAG, M, len, ind, &num_requests, replies_list);
 
         num_replies = FindNumReplies(comm, replies_list);
-        hypre_TFree(replies_list,NALU_HYPRE_MEMORY_HOST);
+        nalu_hypre_TFree(replies_list,NALU_HYPRE_MEMORY_HOST);
 
         for (i=0; i<num_replies; i++)
         {
@@ -477,14 +477,14 @@ static void ExchangePrunedRows(MPI_Comm comm, Matrix *M, Numbering *numb,
             ReceiveReplyPrunedRows(comm, numb, pruned_rows, patt);
         }
 
-        hypre_MPI_Waitall(num_replies, requests, statuses);
+        nalu_hypre_MPI_Waitall(num_replies, requests, statuses);
         MemDestroy(mem);
     }
 
     RowPattDestroy(patt);
-    hypre_TFree(buffer,NALU_HYPRE_MEMORY_HOST);
-    hypre_TFree(requests,NALU_HYPRE_MEMORY_HOST);
-    hypre_TFree(statuses,NALU_HYPRE_MEMORY_HOST);
+    nalu_hypre_TFree(buffer,NALU_HYPRE_MEMORY_HOST);
+    nalu_hypre_TFree(requests,NALU_HYPRE_MEMORY_HOST);
+    nalu_hypre_TFree(statuses,NALU_HYPRE_MEMORY_HOST);
 }
 
 /*--------------------------------------------------------------------------
@@ -507,16 +507,16 @@ static void ExchangePrunedRowsExt(MPI_Comm comm, Matrix *M, Numbering *numb,
 
     NALU_HYPRE_Int i;
     NALU_HYPRE_Int count;
-    hypre_MPI_Request *requests;
-    hypre_MPI_Status *statuses;
+    nalu_hypre_MPI_Request *requests;
+    nalu_hypre_MPI_Status *statuses;
     NALU_HYPRE_Int npes;
     NALU_HYPRE_Int num_replies, *replies_list;
 
     Mem *mem;
 
-    hypre_MPI_Comm_size(comm, &npes);
-    requests = hypre_TAlloc(hypre_MPI_Request, npes , NALU_HYPRE_MEMORY_HOST);
-    statuses = hypre_TAlloc(hypre_MPI_Status, npes , NALU_HYPRE_MEMORY_HOST);
+    nalu_hypre_MPI_Comm_size(comm, &npes);
+    requests = nalu_hypre_TAlloc(nalu_hypre_MPI_Request, npes , NALU_HYPRE_MEMORY_HOST);
+    statuses = nalu_hypre_TAlloc(nalu_hypre_MPI_Status, npes , NALU_HYPRE_MEMORY_HOST);
 
     /* Merged pattern of pruned rows on this processor */
 
@@ -531,7 +531,7 @@ static void ExchangePrunedRowsExt(MPI_Comm comm, Matrix *M, Numbering *numb,
     /* Loop to construct pattern of pruned rows on this processor */
 
     bufferlen = 10; /* size will grow if get a long msg */
-    buffer = hypre_TAlloc(NALU_HYPRE_Int, bufferlen , NALU_HYPRE_MEMORY_HOST);
+    buffer = nalu_hypre_TAlloc(NALU_HYPRE_Int, bufferlen , NALU_HYPRE_MEMORY_HOST);
 
     for (level=0; level<=num_levels; level++)  /* MUST DO THIS AT LEAST ONCE */
     {
@@ -543,12 +543,12 @@ static void ExchangePrunedRowsExt(MPI_Comm comm, Matrix *M, Numbering *numb,
         /* Convert local row numbers to global row numbers */
         NumberingLocalToGlobal(numb, len, ind, ind);
 
-        replies_list = hypre_CTAlloc(NALU_HYPRE_Int, npes, NALU_HYPRE_MEMORY_HOST);
+        replies_list = nalu_hypre_CTAlloc(NALU_HYPRE_Int, npes, NALU_HYPRE_MEMORY_HOST);
 
         SendRequests(comm, ROW_PRUNED_REQ_TAG, M, len, ind, &num_requests, replies_list);
 
         num_replies = FindNumReplies(comm, replies_list);
-        hypre_TFree(replies_list,NALU_HYPRE_MEMORY_HOST);
+        nalu_hypre_TFree(replies_list,NALU_HYPRE_MEMORY_HOST);
 
         for (i=0; i<num_replies; i++)
         {
@@ -565,14 +565,14 @@ static void ExchangePrunedRowsExt(MPI_Comm comm, Matrix *M, Numbering *numb,
             ReceiveReplyPrunedRows(comm, numb, pruned_rows_local, patt);
         }
 
-        hypre_MPI_Waitall(num_replies, requests, statuses);
+        nalu_hypre_MPI_Waitall(num_replies, requests, statuses);
         MemDestroy(mem);
     }
 
     RowPattDestroy(patt);
-    hypre_TFree(buffer,NALU_HYPRE_MEMORY_HOST);
-    hypre_TFree(requests,NALU_HYPRE_MEMORY_HOST);
-    hypre_TFree(statuses,NALU_HYPRE_MEMORY_HOST);
+    nalu_hypre_TFree(buffer,NALU_HYPRE_MEMORY_HOST);
+    nalu_hypre_TFree(requests,NALU_HYPRE_MEMORY_HOST);
+    nalu_hypre_TFree(statuses,NALU_HYPRE_MEMORY_HOST);
 }
 
 /*--------------------------------------------------------------------------
@@ -595,16 +595,16 @@ static void ExchangePrunedRowsExt2(MPI_Comm comm, Matrix *M, Numbering *numb,
 
     NALU_HYPRE_Int i;
     NALU_HYPRE_Int count;
-    hypre_MPI_Request *requests;
-    hypre_MPI_Status *statuses;
+    nalu_hypre_MPI_Request *requests;
+    nalu_hypre_MPI_Status *statuses;
     NALU_HYPRE_Int npes;
     NALU_HYPRE_Int num_replies, *replies_list;
 
     Mem *mem;
 
-    hypre_MPI_Comm_size(comm, &npes);
-    requests = hypre_TAlloc(hypre_MPI_Request, npes , NALU_HYPRE_MEMORY_HOST);
-    statuses = hypre_TAlloc(hypre_MPI_Status, npes , NALU_HYPRE_MEMORY_HOST);
+    nalu_hypre_MPI_Comm_size(comm, &npes);
+    requests = nalu_hypre_TAlloc(nalu_hypre_MPI_Request, npes , NALU_HYPRE_MEMORY_HOST);
+    statuses = nalu_hypre_TAlloc(nalu_hypre_MPI_Status, npes , NALU_HYPRE_MEMORY_HOST);
 
     /* Merged pattern of pruned rows on this processor */
 
@@ -635,7 +635,7 @@ static void ExchangePrunedRowsExt2(MPI_Comm comm, Matrix *M, Numbering *numb,
     /* Now get rows from pruned_rows_global */
 
     bufferlen = 10; /* size will grow if get a long msg */
-    buffer = hypre_TAlloc(NALU_HYPRE_Int, bufferlen , NALU_HYPRE_MEMORY_HOST);
+    buffer = nalu_hypre_TAlloc(NALU_HYPRE_Int, bufferlen , NALU_HYPRE_MEMORY_HOST);
 
     /* DO THIS ONCE */
     {
@@ -647,12 +647,12 @@ static void ExchangePrunedRowsExt2(MPI_Comm comm, Matrix *M, Numbering *numb,
         /* Convert local row numbers to global row numbers */
         NumberingLocalToGlobal(numb, len, ind, ind);
 
-        replies_list = hypre_CTAlloc(NALU_HYPRE_Int, npes, NALU_HYPRE_MEMORY_HOST);
+        replies_list = nalu_hypre_CTAlloc(NALU_HYPRE_Int, npes, NALU_HYPRE_MEMORY_HOST);
 
         SendRequests(comm, ROW_PRUNED_REQ_TAG, M, len, ind, &num_requests, replies_list);
 
         num_replies = FindNumReplies(comm, replies_list);
-        hypre_TFree(replies_list,NALU_HYPRE_MEMORY_HOST);
+        nalu_hypre_TFree(replies_list,NALU_HYPRE_MEMORY_HOST);
 
         for (i=0; i<num_replies; i++)
         {
@@ -669,14 +669,14 @@ static void ExchangePrunedRowsExt2(MPI_Comm comm, Matrix *M, Numbering *numb,
             ReceiveReplyPrunedRows(comm, numb, pruned_rows_global, patt);
         }
 
-        hypre_MPI_Waitall(num_replies, requests, statuses);
+        nalu_hypre_MPI_Waitall(num_replies, requests, statuses);
         MemDestroy(mem);
     }
 
     RowPattDestroy(patt);
-    hypre_TFree(buffer,NALU_HYPRE_MEMORY_HOST);
-    hypre_TFree(requests,NALU_HYPRE_MEMORY_HOST);
-    hypre_TFree(statuses,NALU_HYPRE_MEMORY_HOST);
+    nalu_hypre_TFree(buffer,NALU_HYPRE_MEMORY_HOST);
+    nalu_hypre_TFree(requests,NALU_HYPRE_MEMORY_HOST);
+    nalu_hypre_TFree(statuses,NALU_HYPRE_MEMORY_HOST);
 }
 
 /*--------------------------------------------------------------------------
@@ -698,14 +698,14 @@ static void ExchangeStoredRows(MPI_Comm comm, Matrix *A, Matrix *M,
 
     NALU_HYPRE_Int i;
     NALU_HYPRE_Int count;
-    hypre_MPI_Request *requests = NULL;
-    hypre_MPI_Status *statuses = NULL;
+    nalu_hypre_MPI_Request *requests = NULL;
+    nalu_hypre_MPI_Status *statuses = NULL;
     NALU_HYPRE_Int npes;
     NALU_HYPRE_Int num_replies, *replies_list;
 
     Mem *mem = (Mem *) MemCreate();
 
-    hypre_MPI_Comm_size(comm, &npes);
+    nalu_hypre_MPI_Comm_size(comm, &npes);
 
     /* Merge the patterns of all the rows of M on this processor */
     /* The merged pattern is not already known, since M is triangular */
@@ -739,21 +739,21 @@ static void ExchangeStoredRows(MPI_Comm comm, Matrix *A, Matrix *M,
     /* Convert local row numbers to global row numbers */
     NumberingLocalToGlobal(numb, len, ind, ind);
 
-    replies_list = hypre_CTAlloc(NALU_HYPRE_Int, npes, NALU_HYPRE_MEMORY_HOST);
+    replies_list = nalu_hypre_CTAlloc(NALU_HYPRE_Int, npes, NALU_HYPRE_MEMORY_HOST);
 
     SendRequests(comm, ROW_STORED_REQ_TAG, A, len, ind, &num_requests, replies_list);
 
     num_replies = FindNumReplies(comm, replies_list);
-    hypre_TFree(replies_list,NALU_HYPRE_MEMORY_HOST);
+    nalu_hypre_TFree(replies_list,NALU_HYPRE_MEMORY_HOST);
 
     if (num_replies)
     {
-        requests = hypre_TAlloc(hypre_MPI_Request, num_replies , NALU_HYPRE_MEMORY_HOST);
-        statuses = hypre_TAlloc(hypre_MPI_Status, num_replies , NALU_HYPRE_MEMORY_HOST);
+        requests = nalu_hypre_TAlloc(nalu_hypre_MPI_Request, num_replies , NALU_HYPRE_MEMORY_HOST);
+        statuses = nalu_hypre_TAlloc(nalu_hypre_MPI_Status, num_replies , NALU_HYPRE_MEMORY_HOST);
     }
 
     bufferlen = 10; /* size will grow if get a long msg */
-    buffer = hypre_TAlloc(NALU_HYPRE_Int, bufferlen , NALU_HYPRE_MEMORY_HOST);
+    buffer = nalu_hypre_TAlloc(NALU_HYPRE_Int, bufferlen , NALU_HYPRE_MEMORY_HOST);
 
     for (i=0; i<num_replies; i++)
     {
@@ -769,15 +769,15 @@ static void ExchangeStoredRows(MPI_Comm comm, Matrix *A, Matrix *M,
         ReceiveReplyStoredRows(comm, numb, stored_rows);
     }
 
-    hypre_MPI_Waitall(num_replies, requests, statuses);
+    nalu_hypre_MPI_Waitall(num_replies, requests, statuses);
 
     /* Free all send buffers */
     MemDestroy(mem);
 
     RowPattDestroy(patt);
-    hypre_TFree(buffer,NALU_HYPRE_MEMORY_HOST);
-    hypre_TFree(requests,NALU_HYPRE_MEMORY_HOST);
-    hypre_TFree(statuses,NALU_HYPRE_MEMORY_HOST);
+    nalu_hypre_TFree(buffer,NALU_HYPRE_MEMORY_HOST);
+    nalu_hypre_TFree(requests,NALU_HYPRE_MEMORY_HOST);
+    nalu_hypre_TFree(statuses,NALU_HYPRE_MEMORY_HOST);
 }
 
 /*--------------------------------------------------------------------------
@@ -800,7 +800,7 @@ static void ConstructPatternForEachRow(NALU_HYPRE_Int symmetric, PrunedRows *pru
     NALU_HYPRE_Int nnz = 0;
 #endif
 
-    hypre_MPI_Comm_size(M->comm, &npes);
+    nalu_hypre_MPI_Comm_size(M->comm, &npes);
     *costp = 0.0;
 
     row_patt = RowPattCreate(PARASAILS_MAXLEN);
@@ -855,8 +855,8 @@ static void ConstructPatternForEachRow(NALU_HYPRE_Int symmetric, PrunedRows *pru
     {
        NALU_HYPRE_Int mype;
 
-       hypre_MPI_Comm_rank(hypre_MPI_COMM_WORLD, &mype);
-       hypre_printf("%d: nnz: %10d  ********* cost %7.1e\n", mype, nnz, *costp);
+       nalu_hypre_MPI_Comm_rank(nalu_hypre_MPI_COMM_WORLD, &mype);
+       nalu_hypre_printf("%d: nnz: %10d  ********* cost %7.1e\n", mype, nnz, *costp);
        fflush(stdout);
     }
 #endif
@@ -886,7 +886,7 @@ static void ConstructPatternForEachRowExt(NALU_HYPRE_Int symmetric,
     NALU_HYPRE_Int nnz = 0;
 #endif
 
-    hypre_MPI_Comm_size(M->comm, &npes);
+    nalu_hypre_MPI_Comm_size(M->comm, &npes);
     *costp = 0.0;
 
     row_patt = RowPattCreate(PARASAILS_MAXLEN);
@@ -985,8 +985,8 @@ static void ConstructPatternForEachRowExt(NALU_HYPRE_Int symmetric,
     {
        NALU_HYPRE_Int mype;
 
-       hypre_MPI_Comm_rank(hypre_MPI_COMM_WORLD, &mype);
-       hypre_printf("%d: nnz: %10d  ********* cost %7.1e\n", mype, nnz, *costp);
+       nalu_hypre_MPI_Comm_rank(nalu_hypre_MPI_COMM_WORLD, &mype);
+       nalu_hypre_printf("%d: nnz: %10d  ********* cost %7.1e\n", mype, nnz, *costp);
        fflush(stdout);
     }
 #endif
@@ -1024,7 +1024,7 @@ static NALU_HYPRE_Int ComputeValuesSym(StoredRows *stored_rows, Matrix *mat,
 #endif
 
     /* Allocate and initialize full length marker array */
-    marker = hypre_TAlloc(NALU_HYPRE_Int, numb->num_ind , NALU_HYPRE_MEMORY_HOST);
+    marker = nalu_hypre_TAlloc(NALU_HYPRE_Int, numb->num_ind , NALU_HYPRE_MEMORY_HOST);
     for (i=0; i<numb->num_ind; i++)
         marker[i] = -1;
 
@@ -1038,9 +1038,9 @@ static NALU_HYPRE_Int ComputeValuesSym(StoredRows *stored_rows, Matrix *mat,
     }
 
 #ifdef ESSL
-    ahat = hypre_TAlloc(NALU_HYPRE_Real, maxlen*(maxlen+1)/2 , NALU_HYPRE_MEMORY_HOST);
+    ahat = nalu_hypre_TAlloc(NALU_HYPRE_Real, maxlen*(maxlen+1)/2 , NALU_HYPRE_MEMORY_HOST);
 #else
-    ahat = hypre_TAlloc(NALU_HYPRE_Real, maxlen*maxlen , NALU_HYPRE_MEMORY_HOST);
+    ahat = nalu_hypre_TAlloc(NALU_HYPRE_Real, maxlen*maxlen , NALU_HYPRE_MEMORY_HOST);
 #endif
 
     /* Compute values for row "row" of approximate inverse */
@@ -1063,7 +1063,7 @@ static NALU_HYPRE_Int ComputeValuesSym(StoredRows *stored_rows, Matrix *mat,
 #endif
 
 #ifdef PARASAILS_DEBUG
-        time0 = hypre_MPI_Wtime();
+        time0 = nalu_hypre_MPI_Wtime();
 #endif
 
         /* Form ahat matrix, entries correspond to indices in "ind" only */
@@ -1071,7 +1071,7 @@ static NALU_HYPRE_Int ComputeValuesSym(StoredRows *stored_rows, Matrix *mat,
         for (i=0; i<len; i++)
         {
             StoredRowsGet(stored_rows, ind[i], &len2, &ind2, &val2);
-            hypre_assert(len2 > 0);
+            nalu_hypre_assert(len2 > 0);
 
 #ifdef ESSL
             for (j=0; j<len2; j++)
@@ -1100,8 +1100,8 @@ static NALU_HYPRE_Int ComputeValuesSym(StoredRows *stored_rows, Matrix *mat,
         if (symmetric == 2)
         {
 #ifdef ESSL
-            hypre_printf("Symmetric precon for nonsym problem not yet available\n");
-            hypre_printf("for ESSL version.  Please contact the author.\n");
+            nalu_hypre_printf("Symmetric precon for nonsym problem not yet available\n");
+            nalu_hypre_printf("for ESSL version.  Please contact the author.\n");
             PARASAILS_EXIT;
 #else
             NALU_HYPRE_Int k, kk;
@@ -1119,7 +1119,7 @@ static NALU_HYPRE_Int ComputeValuesSym(StoredRows *stored_rows, Matrix *mat,
         }
 
 #ifdef PARASAILS_DEBUG
-        time1 = hypre_MPI_Wtime();
+        time1 = nalu_hypre_MPI_Wtime();
         timea += (time1 - time0);
         ahatcost += (NALU_HYPRE_Real) (len*len2);
 #endif
@@ -1129,7 +1129,7 @@ static NALU_HYPRE_Int ComputeValuesSym(StoredRows *stored_rows, Matrix *mat,
         memset(val, 0, len*sizeof(NALU_HYPRE_Real));
         NumberingGlobalToLocal(numb, 1, &row, &loc);
         loc = marker[loc];
-        hypre_assert(loc != -1);
+        nalu_hypre_assert(loc != -1);
         val[loc] = 1.0;
 
         /* Reset marker array */
@@ -1137,7 +1137,7 @@ static NALU_HYPRE_Int ComputeValuesSym(StoredRows *stored_rows, Matrix *mat,
             marker[ind[i]] = -1;
 
 #ifdef PARASAILS_DEBUG
-        time0 = hypre_MPI_Wtime();
+        time0 = nalu_hypre_MPI_Wtime();
 #endif
 
 #ifdef ESSL
@@ -1145,13 +1145,13 @@ static NALU_HYPRE_Int ComputeValuesSym(StoredRows *stored_rows, Matrix *mat,
         dpps(ahat, len, val, 1);
 #else
         /* Solve local linear system - factor phase */
-        hypre_dpotrf(&uplo, &len, ahat, &len, &info);
+        nalu_hypre_dpotrf(&uplo, &len, ahat, &len, &info);
         if (info != 0)
         {
 #if 0
-            hypre_printf("Matrix may not be symmetric positive definite.\n");
-            hypre_printf("ParaSails: row %d, dpotrf returned %d.\n", row, info);
-            hypre_printf("ParaSails: len %d, ahat: %f %f %f %f\n", len,
+            nalu_hypre_printf("Matrix may not be symmetric positive definite.\n");
+            nalu_hypre_printf("ParaSails: row %d, dpotrf returned %d.\n", row, info);
+            nalu_hypre_printf("ParaSails: len %d, ahat: %f %f %f %f\n", len,
                 ahat[0], ahat[1], ahat[2], ahat[3]);
             PARASAILS_EXIT;
 #endif
@@ -1159,12 +1159,12 @@ static NALU_HYPRE_Int ComputeValuesSym(StoredRows *stored_rows, Matrix *mat,
         }
 
         /* Solve local linear system - solve phase */
-        hypre_dpotrs(&uplo, &len, &one, ahat, &len, val, &len, &info);
+        nalu_hypre_dpotrs(&uplo, &len, &one, ahat, &len, val, &len, &info);
         if (info != 0)
         {
 #if 0
-            hypre_printf("ParaSails: row %d, dpotrs returned %d.\n", row, info);
-            hypre_printf("ParaSails: len %d, ahat: %f %f %f %f\n", len,
+            nalu_hypre_printf("ParaSails: row %d, dpotrs returned %d.\n", row, info);
+            nalu_hypre_printf("ParaSails: len %d, ahat: %f %f %f %f\n", len,
                 ahat[0], ahat[1], ahat[2], ahat[3]);
             PARASAILS_EXIT;
 #endif
@@ -1173,7 +1173,7 @@ static NALU_HYPRE_Int ComputeValuesSym(StoredRows *stored_rows, Matrix *mat,
 #endif
 
 #ifdef PARASAILS_DEBUG
-        time1 = hypre_MPI_Wtime();
+        time1 = nalu_hypre_MPI_Wtime();
         timet += (time1 - time0);
 #endif
 
@@ -1183,16 +1183,16 @@ static NALU_HYPRE_Int ComputeValuesSym(StoredRows *stored_rows, Matrix *mat,
             val[i] = val[i] * temp;
     }
 
-    hypre_TFree(marker,NALU_HYPRE_MEMORY_HOST);
-    hypre_TFree(ahat,NALU_HYPRE_MEMORY_HOST);
+    nalu_hypre_TFree(marker,NALU_HYPRE_MEMORY_HOST);
+    nalu_hypre_TFree(ahat,NALU_HYPRE_MEMORY_HOST);
 
 #ifdef PARASAILS_DEBUG
     {
        NALU_HYPRE_Int mype;
 
-       hypre_MPI_Comm_rank(hypre_MPI_COMM_WORLD, &mype);
-       hypre_printf("%d: Time for ahat: %f, for local solves: %f\n", mype, timea, timet);
-       hypre_printf("%d: ahatcost: %7.1e, numrows: %d, maxlen: %d\n",
+       nalu_hypre_MPI_Comm_rank(nalu_hypre_MPI_COMM_WORLD, &mype);
+       nalu_hypre_printf("%d: Time for ahat: %f, for local solves: %f\n", mype, timea, timet);
+       nalu_hypre_printf("%d: ahatcost: %7.1e, numrows: %d, maxlen: %d\n",
                     mype, ahatcost, mat->end_row-local_beg_row+1, maxlen);
        fflush(stdout);
     }
@@ -1226,7 +1226,7 @@ static NALU_HYPRE_Int ComputeValuesNonsym(StoredRows *stored_rows, Matrix *mat,
 
     NALU_HYPRE_Int npat;
     NALU_HYPRE_Int pattsize = 1000;
-    NALU_HYPRE_Int *patt = hypre_TAlloc(NALU_HYPRE_Int, pattsize, NALU_HYPRE_MEMORY_HOST);
+    NALU_HYPRE_Int *patt = nalu_hypre_TAlloc(NALU_HYPRE_Int, pattsize, NALU_HYPRE_MEMORY_HOST);
 
     NALU_HYPRE_Int info;
 
@@ -1240,19 +1240,19 @@ static NALU_HYPRE_Int ComputeValuesNonsym(StoredRows *stored_rows, Matrix *mat,
     /* Allocate and initialize marker array */
     /* Since numb already knows about the indices of the external rows that
        will be needed, numb_ind is the maximum size of the marker array */
-    marker = hypre_TAlloc(NALU_HYPRE_Int, numb->num_ind , NALU_HYPRE_MEMORY_HOST);
+    marker = nalu_hypre_TAlloc(NALU_HYPRE_Int, numb->num_ind , NALU_HYPRE_MEMORY_HOST);
     for (i=0; i<numb->num_ind; i++)
         marker[i] = -1;
 
-    bhat = hypre_TAlloc(NALU_HYPRE_Real, bhat_size , NALU_HYPRE_MEMORY_HOST);
-    ahat = hypre_TAlloc(NALU_HYPRE_Real, ahat_size , NALU_HYPRE_MEMORY_HOST);
-    work = hypre_CTAlloc(NALU_HYPRE_Real, work_size, NALU_HYPRE_MEMORY_HOST);
+    bhat = nalu_hypre_TAlloc(NALU_HYPRE_Real, bhat_size , NALU_HYPRE_MEMORY_HOST);
+    ahat = nalu_hypre_TAlloc(NALU_HYPRE_Real, ahat_size , NALU_HYPRE_MEMORY_HOST);
+    work = nalu_hypre_CTAlloc(NALU_HYPRE_Real, work_size, NALU_HYPRE_MEMORY_HOST);
 
     /* Compute values for row "row" of approximate inverse */
     for (row=local_beg_row; row<=mat->end_row; row++)
     {
 #ifdef PARASAILS_DEBUG
-        time0 = hypre_MPI_Wtime();
+        time0 = nalu_hypre_MPI_Wtime();
 #endif
 
         /* Retrieve local indices */
@@ -1269,7 +1269,7 @@ static NALU_HYPRE_Int ComputeValuesNonsym(StoredRows *stored_rows, Matrix *mat,
         for (i=0; i<len; i++)
         {
             StoredRowsGet(stored_rows, ind[i], &len2, &ind2, &val2);
-            hypre_assert(len2 > 0);
+            nalu_hypre_assert(len2 > 0);
 
             for (j=0; j<len2; j++)
             {
@@ -1281,7 +1281,7 @@ static NALU_HYPRE_Int ComputeValuesNonsym(StoredRows *stored_rows, Matrix *mat,
                     if (npat >= pattsize)
                     {
                         pattsize = npat*2;
-                        patt = hypre_TReAlloc(patt,NALU_HYPRE_Int,  pattsize, NALU_HYPRE_MEMORY_HOST);
+                        patt = nalu_hypre_TReAlloc(patt,NALU_HYPRE_Int,  pattsize, NALU_HYPRE_MEMORY_HOST);
                     }
                     patt[npat++] = ind2[j];
                 }
@@ -1290,9 +1290,9 @@ static NALU_HYPRE_Int ComputeValuesNonsym(StoredRows *stored_rows, Matrix *mat,
 
         if (len*npat > ahat_size)
         {
-            hypre_TFree(ahat,NALU_HYPRE_MEMORY_HOST);
+            nalu_hypre_TFree(ahat,NALU_HYPRE_MEMORY_HOST);
             ahat_size = len*npat;
-            ahat = hypre_TAlloc(NALU_HYPRE_Real, ahat_size , NALU_HYPRE_MEMORY_HOST);
+            ahat = nalu_hypre_TAlloc(NALU_HYPRE_Real, ahat_size , NALU_HYPRE_MEMORY_HOST);
         }
 
         /* Initialize ahat to zero */
@@ -1314,16 +1314,16 @@ static NALU_HYPRE_Int ComputeValuesNonsym(StoredRows *stored_rows, Matrix *mat,
         }
 
 #ifdef PARASAILS_DEBUG
-        time1 = hypre_MPI_Wtime();
+        time1 = nalu_hypre_MPI_Wtime();
         timea += (time1 - time0);
 #endif
 
         /* Reallocate bhat if necessary */
         if (npat > bhat_size)
         {
-            hypre_TFree(bhat,NALU_HYPRE_MEMORY_HOST);
+            nalu_hypre_TFree(bhat,NALU_HYPRE_MEMORY_HOST);
             bhat_size = npat;
-            bhat = hypre_TAlloc(NALU_HYPRE_Real, bhat_size , NALU_HYPRE_MEMORY_HOST);
+            bhat = nalu_hypre_TAlloc(NALU_HYPRE_Real, bhat_size , NALU_HYPRE_MEMORY_HOST);
         }
 
         /* Set the right-hand side, bhat */
@@ -1331,7 +1331,7 @@ static NALU_HYPRE_Int ComputeValuesNonsym(StoredRows *stored_rows, Matrix *mat,
         memset(bhat, 0, npat*sizeof(NALU_HYPRE_Real));
         NumberingGlobalToLocal(numb, 1, &row, &loc);
         loc = marker[loc];
-        hypre_assert(loc != -1);
+        nalu_hypre_assert(loc != -1);
         bhat[loc] = 1.0;
 
         /* Reset marker array */
@@ -1339,7 +1339,7 @@ static NALU_HYPRE_Int ComputeValuesNonsym(StoredRows *stored_rows, Matrix *mat,
             marker[patt[i]] = -1;
 
 #ifdef PARASAILS_DEBUG
-        time0 = hypre_MPI_Wtime();
+        time0 = nalu_hypre_MPI_Wtime();
 #endif
 
 #ifdef ESSL
@@ -1348,14 +1348,14 @@ static NALU_HYPRE_Int ComputeValuesNonsym(StoredRows *stored_rows, Matrix *mat,
             &info, work, work_size);
 #else
         /* rhs in bhat, and put solution in bhat */
-        hypre_dgels(&trans, &npat, &len, &one, ahat, &npat,
+        nalu_hypre_dgels(&trans, &npat, &len, &one, ahat, &npat,
             bhat, &npat, work, &work_size, &info);
 
         if (info != 0)
         {
 #if 0
-            hypre_printf("ParaSails: row %d, dgels returned %d.\n", row, info);
-            hypre_printf("ParaSails: len %d, ahat: %f %f %f %f\n", len,
+            nalu_hypre_printf("ParaSails: row %d, dgels returned %d.\n", row, info);
+            nalu_hypre_printf("ParaSails: len %d, ahat: %f %f %f %f\n", len,
                 ahat[0], ahat[1], ahat[2], ahat[3]);
             PARASAILS_EXIT;
 #endif
@@ -1367,23 +1367,23 @@ static NALU_HYPRE_Int ComputeValuesNonsym(StoredRows *stored_rows, Matrix *mat,
             val[j] = bhat[j];
 #endif
 #ifdef PARASAILS_DEBUG
-        time1 = hypre_MPI_Wtime();
+        time1 = nalu_hypre_MPI_Wtime();
         timet += (time1 - time0);
 #endif
     }
 
-    hypre_TFree(patt,NALU_HYPRE_MEMORY_HOST);
-    hypre_TFree(marker,NALU_HYPRE_MEMORY_HOST);
-    hypre_TFree(bhat,NALU_HYPRE_MEMORY_HOST);
-    hypre_TFree(ahat,NALU_HYPRE_MEMORY_HOST);
-    hypre_TFree(work,NALU_HYPRE_MEMORY_HOST);
+    nalu_hypre_TFree(patt,NALU_HYPRE_MEMORY_HOST);
+    nalu_hypre_TFree(marker,NALU_HYPRE_MEMORY_HOST);
+    nalu_hypre_TFree(bhat,NALU_HYPRE_MEMORY_HOST);
+    nalu_hypre_TFree(ahat,NALU_HYPRE_MEMORY_HOST);
+    nalu_hypre_TFree(work,NALU_HYPRE_MEMORY_HOST);
 
 #ifdef PARASAILS_DEBUG
     {
        NALU_HYPRE_Int mype;
 
-       hypre_MPI_Comm_rank(hypre_MPI_COMM_WORLD, &mype);
-       hypre_printf("%d: Time for ahat: %f, for local solves: %f\n", mype, timea, timet);
+       nalu_hypre_MPI_Comm_rank(nalu_hypre_MPI_COMM_WORLD, &mype);
+       nalu_hypre_printf("%d: Time for ahat: %f, for local solves: %f\n", mype, timea, timet);
        fflush(stdout);
     }
 #endif
@@ -1412,7 +1412,7 @@ static NALU_HYPRE_Real SelectThresh(MPI_Comm comm, Matrix *A, DiagScale *diag_sc
        i-th smallest element - buffer will grow if necessary */
     NALU_HYPRE_Real *buffer;
     NALU_HYPRE_Int buflen = 10;
-    buffer = hypre_TAlloc(NALU_HYPRE_Real, buflen , NALU_HYPRE_MEMORY_HOST);
+    buffer = nalu_hypre_TAlloc(NALU_HYPRE_Real, buflen , NALU_HYPRE_MEMORY_HOST);
 
     for (row=0; row<=A->end_row - A->beg_row; row++)
     {
@@ -1420,9 +1420,9 @@ static NALU_HYPRE_Real SelectThresh(MPI_Comm comm, Matrix *A, DiagScale *diag_sc
 
         if (len > buflen)
         {
-            hypre_TFree(buffer,NALU_HYPRE_MEMORY_HOST);
+            nalu_hypre_TFree(buffer,NALU_HYPRE_MEMORY_HOST);
             buflen = len;
-            buffer = hypre_TAlloc(NALU_HYPRE_Real, buflen , NALU_HYPRE_MEMORY_HOST);
+            buffer = nalu_hypre_TAlloc(NALU_HYPRE_Real, buflen , NALU_HYPRE_MEMORY_HOST);
         }
 
         /* Copy the scaled absolute values into a work buffer */
@@ -1442,10 +1442,10 @@ static NALU_HYPRE_Real SelectThresh(MPI_Comm comm, Matrix *A, DiagScale *diag_sc
     }
 
     /* Find the average across all processors */
-    hypre_MPI_Allreduce(&localsum, &sum, 1, hypre_MPI_REAL, hypre_MPI_SUM, comm);
-    hypre_MPI_Comm_size(comm, &npes);
+    nalu_hypre_MPI_Allreduce(&localsum, &sum, 1, nalu_hypre_MPI_REAL, nalu_hypre_MPI_SUM, comm);
+    nalu_hypre_MPI_Comm_size(comm, &npes);
 
-    hypre_TFree(buffer,NALU_HYPRE_MEMORY_HOST);
+    nalu_hypre_TFree(buffer,NALU_HYPRE_MEMORY_HOST);
     return sum / (A->end_rows[npes-1] - A->beg_rows[0] + 1);
 }
 
@@ -1466,7 +1466,7 @@ static NALU_HYPRE_Real SelectFilter(MPI_Comm comm, Matrix *M, DiagScale *diag_sc
        i-th smallest element - buffer will grow if necessary */
     NALU_HYPRE_Real *buffer;
     NALU_HYPRE_Int buflen = 10;
-    buffer = hypre_TAlloc(NALU_HYPRE_Real, buflen , NALU_HYPRE_MEMORY_HOST);
+    buffer = nalu_hypre_TAlloc(NALU_HYPRE_Real, buflen , NALU_HYPRE_MEMORY_HOST);
 
     for (row=0; row<=M->end_row - M->beg_row; row++)
     {
@@ -1474,9 +1474,9 @@ static NALU_HYPRE_Real SelectFilter(MPI_Comm comm, Matrix *M, DiagScale *diag_sc
 
         if (len > buflen)
         {
-            hypre_TFree(buffer,NALU_HYPRE_MEMORY_HOST);
+            nalu_hypre_TFree(buffer,NALU_HYPRE_MEMORY_HOST);
             buflen = len;
-            buffer = hypre_TAlloc(NALU_HYPRE_Real, buflen , NALU_HYPRE_MEMORY_HOST);
+            buffer = nalu_hypre_TAlloc(NALU_HYPRE_Real, buflen , NALU_HYPRE_MEMORY_HOST);
         }
 
         if (symmetric == 0)
@@ -1498,10 +1498,10 @@ static NALU_HYPRE_Real SelectFilter(MPI_Comm comm, Matrix *M, DiagScale *diag_sc
     }
 
     /* Find the average across all processors */
-    hypre_MPI_Allreduce(&localsum, &sum, 1, hypre_MPI_REAL, hypre_MPI_SUM, comm);
-    hypre_MPI_Comm_size(comm, &npes);
+    nalu_hypre_MPI_Allreduce(&localsum, &sum, 1, nalu_hypre_MPI_REAL, nalu_hypre_MPI_SUM, comm);
+    nalu_hypre_MPI_Comm_size(comm, &npes);
 
-    hypre_TFree(buffer,NALU_HYPRE_MEMORY_HOST);
+    nalu_hypre_TFree(buffer,NALU_HYPRE_MEMORY_HOST);
     return sum / (M->end_rows[npes-1] - M->beg_rows[0] + 1);
 }
 
@@ -1560,7 +1560,7 @@ static void Rescale(Matrix *M, StoredRows *stored_rows, NALU_HYPRE_Int num_ind)
     NALU_HYPRE_Real accum, prod;
 
     /* Allocate full-length workspace */
-    w = hypre_CTAlloc(NALU_HYPRE_Real, num_ind, NALU_HYPRE_MEMORY_HOST);
+    w = nalu_hypre_CTAlloc(NALU_HYPRE_Real, num_ind, NALU_HYPRE_MEMORY_HOST);
 
     /* Loop over rows */
     for (row=0; row<=M->end_row - M->beg_row; row++)
@@ -1578,7 +1578,7 @@ static void Rescale(Matrix *M, StoredRows *stored_rows, NALU_HYPRE_Int num_ind)
             /* Scatter nonzeros of A */
             for (i=0; i<len2; i++)
             {
-                hypre_assert(ind2[i] < num_ind);
+                nalu_hypre_assert(ind2[i] < num_ind);
                 w[ind2[i]] = val2[i];
             }
 
@@ -1586,7 +1586,7 @@ static void Rescale(Matrix *M, StoredRows *stored_rows, NALU_HYPRE_Int num_ind)
             prod = 0.0;
             for (i=0; i<len; i++)
             {
-                hypre_assert(ind[i] < num_ind);
+                nalu_hypre_assert(ind[i] < num_ind);
                 prod += val[i] * w[ind[i]];
             }
 
@@ -1603,7 +1603,7 @@ static void Rescale(Matrix *M, StoredRows *stored_rows, NALU_HYPRE_Int num_ind)
             val[j] *= accum;
     }
 
-    hypre_TFree(w,NALU_HYPRE_MEMORY_HOST);
+    nalu_hypre_TFree(w,NALU_HYPRE_MEMORY_HOST);
 }
 
 /******************************************************************************
@@ -1625,7 +1625,7 @@ static void Rescale(Matrix *M, StoredRows *stored_rows, NALU_HYPRE_Int num_ind)
 
 ParaSails *ParaSailsCreate(MPI_Comm comm, NALU_HYPRE_Int beg_row, NALU_HYPRE_Int end_row, NALU_HYPRE_Int sym)
 {
-    ParaSails *ps = hypre_TAlloc(ParaSails, 1, NALU_HYPRE_MEMORY_HOST);
+    ParaSails *ps = nalu_hypre_TAlloc(ParaSails, 1, NALU_HYPRE_MEMORY_HOST);
     NALU_HYPRE_Int npes;
 
     ps->symmetric          = sym;
@@ -1642,13 +1642,13 @@ ParaSails *ParaSailsCreate(MPI_Comm comm, NALU_HYPRE_Int beg_row, NALU_HYPRE_Int
     ps->beg_row            = beg_row;
     ps->end_row            = end_row;
 
-    hypre_MPI_Comm_size(comm, &npes);
+    nalu_hypre_MPI_Comm_size(comm, &npes);
 
-    ps->beg_rows = hypre_TAlloc(NALU_HYPRE_Int, npes , NALU_HYPRE_MEMORY_HOST);
-    ps->end_rows = hypre_TAlloc(NALU_HYPRE_Int, npes , NALU_HYPRE_MEMORY_HOST);
+    ps->beg_rows = nalu_hypre_TAlloc(NALU_HYPRE_Int, npes , NALU_HYPRE_MEMORY_HOST);
+    ps->end_rows = nalu_hypre_TAlloc(NALU_HYPRE_Int, npes , NALU_HYPRE_MEMORY_HOST);
 
-    hypre_MPI_Allgather(&beg_row, 1, NALU_HYPRE_MPI_INT, ps->beg_rows, 1, NALU_HYPRE_MPI_INT, comm);
-    hypre_MPI_Allgather(&end_row, 1, NALU_HYPRE_MPI_INT, ps->end_rows, 1, NALU_HYPRE_MPI_INT, comm);
+    nalu_hypre_MPI_Allgather(&beg_row, 1, NALU_HYPRE_MPI_INT, ps->beg_rows, 1, NALU_HYPRE_MPI_INT, comm);
+    nalu_hypre_MPI_Allgather(&end_row, 1, NALU_HYPRE_MPI_INT, ps->end_rows, 1, NALU_HYPRE_MPI_INT, comm);
 
     return ps;
 }
@@ -1668,10 +1668,10 @@ void ParaSailsDestroy(ParaSails *ps)
     if (ps->M)
         MatrixDestroy(ps->M);
 
-    hypre_TFree(ps->beg_rows,NALU_HYPRE_MEMORY_HOST);
-    hypre_TFree(ps->end_rows,NALU_HYPRE_MEMORY_HOST);
+    nalu_hypre_TFree(ps->beg_rows,NALU_HYPRE_MEMORY_HOST);
+    nalu_hypre_TFree(ps->end_rows,NALU_HYPRE_MEMORY_HOST);
 
-    hypre_TFree(ps,NALU_HYPRE_MEMORY_HOST);
+    nalu_hypre_TFree(ps,NALU_HYPRE_MEMORY_HOST);
 }
 
 /*--------------------------------------------------------------------------
@@ -1685,7 +1685,7 @@ void ParaSailsSetupPattern(ParaSails *ps, Matrix *A,
     PrunedRows *pruned_rows;
     NALU_HYPRE_Real time0, time1;
 
-    time0 = hypre_MPI_Wtime();
+    time0 = nalu_hypre_MPI_Wtime();
 
     ps->thresh     = thresh;
     ps->num_levels = num_levels;
@@ -1711,7 +1711,7 @@ void ParaSailsSetupPattern(ParaSails *ps, Matrix *A,
     DiagScaleDestroy(diag_scale);
     PrunedRowsDestroy(pruned_rows);
 
-    time1 = hypre_MPI_Wtime();
+    time1 = nalu_hypre_MPI_Wtime();
     ps->setup_pattern_time = time1 - time0;
 }
 
@@ -1728,7 +1728,7 @@ void ParaSailsSetupPatternExt(ParaSails *ps, Matrix *A,
     PrunedRows *pruned_rows_local;
     NALU_HYPRE_Real time0, time1;
 
-    time0 = hypre_MPI_Wtime();
+    time0 = nalu_hypre_MPI_Wtime();
 
     ps->thresh     = thresh_global*1000000.+thresh_local; /* dummy */
     ps->num_levels = num_levels;
@@ -1762,7 +1762,7 @@ void ParaSailsSetupPatternExt(ParaSails *ps, Matrix *A,
     PrunedRowsDestroy(pruned_rows_global);
     PrunedRowsDestroy(pruned_rows_local);
 
-    time1 = hypre_MPI_Wtime();
+    time1 = nalu_hypre_MPI_Wtime();
     ps->setup_pattern_time = time1 - time0;
 }
 
@@ -1784,7 +1784,7 @@ NALU_HYPRE_Int ParaSailsSetupValues(ParaSails *ps, Matrix *A, NALU_HYPRE_Real fi
     MPI_Comm comm = ps->comm;
     NALU_HYPRE_Int error = 0, error_sum;
 
-    time0 = hypre_MPI_Wtime();
+    time0 = nalu_hypre_MPI_Wtime();
 
     /*
      * If the preconditioner matrix has its own numbering object, then we
@@ -1840,19 +1840,19 @@ NALU_HYPRE_Int ParaSailsSetupValues(ParaSails *ps, Matrix *A, NALU_HYPRE_Real fi
         }
     }
 
-    time1 = hypre_MPI_Wtime();
+    time1 = nalu_hypre_MPI_Wtime();
     ps->setup_values_time = time1 - time0;
 
     LoadBalReturn(load_bal, ps->comm, ps->M);
 
     /* check if there was an error in computing the approximate inverse */
-    hypre_MPI_Allreduce(&error, &error_sum, 1, NALU_HYPRE_MPI_INT, hypre_MPI_SUM, comm);
+    nalu_hypre_MPI_Allreduce(&error, &error_sum, 1, NALU_HYPRE_MPI_INT, nalu_hypre_MPI_SUM, comm);
     if (error_sum != 0)
     {
-        hypre_printf("Hypre-ParaSails detected a problem.  The input matrix\n");
-        hypre_printf("may not be full-rank, or if you are using the SPD version,\n");
-        hypre_printf("the input matrix may not be positive definite.\n");
-        hypre_printf("This error is being returned to the calling function.\n");
+        nalu_hypre_printf("Hypre-ParaSails detected a problem.  The input matrix\n");
+        nalu_hypre_printf("may not be full-rank, or if you are using the SPD version,\n");
+        nalu_hypre_printf("the input matrix may not be positive definite.\n");
+        nalu_hypre_printf("This error is being returned to the calling function.\n");
         return error_sum;
     }
 
@@ -1980,8 +1980,8 @@ NALU_HYPRE_Real ParaSailsStatsPattern(ParaSails *ps, Matrix *A)
     MPI_Comm comm = ps->comm;
     NALU_HYPRE_Real max_pattern_time, max_cost, ave_cost;
 
-    hypre_MPI_Comm_rank(comm, &mype);
-    hypre_MPI_Comm_size(comm, &npes);
+    nalu_hypre_MPI_Comm_rank(comm, &mype);
+    nalu_hypre_MPI_Comm_size(comm, &npes);
 
     nnzm = MatrixNnz(ps->M);
     nnza = MatrixNnz(A);
@@ -1991,10 +1991,10 @@ NALU_HYPRE_Real ParaSailsStatsPattern(ParaSails *ps, Matrix *A)
 	nnza = (nnza - n) / 2 + n;
     }
 
-    hypre_MPI_Allreduce(&ps->setup_pattern_time, &max_pattern_time,
-	1, hypre_MPI_REAL, hypre_MPI_MAX, comm);
-    hypre_MPI_Allreduce(&ps->cost, &max_cost, 1, hypre_MPI_REAL, hypre_MPI_MAX, comm);
-    hypre_MPI_Allreduce(&ps->cost, &ave_cost, 1, hypre_MPI_REAL, hypre_MPI_SUM, comm);
+    nalu_hypre_MPI_Allreduce(&ps->setup_pattern_time, &max_pattern_time,
+	1, nalu_hypre_MPI_REAL, nalu_hypre_MPI_MAX, comm);
+    nalu_hypre_MPI_Allreduce(&ps->cost, &max_cost, 1, nalu_hypre_MPI_REAL, nalu_hypre_MPI_MAX, comm);
+    nalu_hypre_MPI_Allreduce(&ps->cost, &ave_cost, 1, nalu_hypre_MPI_REAL, nalu_hypre_MPI_SUM, comm);
     ave_cost = ave_cost / (NALU_HYPRE_Real) npes;
 
     if (mype)
@@ -2003,14 +2003,14 @@ NALU_HYPRE_Real ParaSailsStatsPattern(ParaSails *ps, Matrix *A)
     if (ps->symmetric == 0)
         max_cost *= 8.0;  /* nonsymmetric method is harder */
 
-    hypre_printf("** ParaSails Setup Pattern Statistics ***********\n");
-    hypre_printf("symmetric             : %d\n", ps->symmetric);
-    hypre_printf("thresh                : %f\n", ps->thresh);
-    hypre_printf("num_levels            : %d\n", ps->num_levels);
-    hypre_printf("Max cost (average)    : %7.1e (%7.1e)\n", max_cost, ave_cost);
-    hypre_printf("Nnz (ratio)           : %d (%5.2f)\n", nnzm, nnzm/(NALU_HYPRE_Real)nnza);
-    hypre_printf("Max setup pattern time: %8.1f\n", max_pattern_time);
-    hypre_printf("*************************************************\n");
+    nalu_hypre_printf("** ParaSails Setup Pattern Statistics ***********\n");
+    nalu_hypre_printf("symmetric             : %d\n", ps->symmetric);
+    nalu_hypre_printf("thresh                : %f\n", ps->thresh);
+    nalu_hypre_printf("num_levels            : %d\n", ps->num_levels);
+    nalu_hypre_printf("Max cost (average)    : %7.1e (%7.1e)\n", max_cost, ave_cost);
+    nalu_hypre_printf("Nnz (ratio)           : %d (%5.2f)\n", nnzm, nnzm/(NALU_HYPRE_Real)nnza);
+    nalu_hypre_printf("Max setup pattern time: %8.1f\n", max_pattern_time);
+    nalu_hypre_printf("*************************************************\n");
     fflush(stdout);
 
     return ave_cost;
@@ -2029,8 +2029,8 @@ void ParaSailsStatsValues(ParaSails *ps, Matrix *A)
     NALU_HYPRE_Real temp, *setup_times = NULL;
     NALU_HYPRE_Int i;
 
-    hypre_MPI_Comm_rank(comm, &mype);
-    hypre_MPI_Comm_size(comm, &npes);
+    nalu_hypre_MPI_Comm_rank(comm, &mype);
+    nalu_hypre_MPI_Comm_size(comm, &npes);
 
     nnzm = MatrixNnz(ps->M);
     nnza = MatrixNnz(A);
@@ -2040,36 +2040,36 @@ void ParaSailsStatsValues(ParaSails *ps, Matrix *A)
         nnza = (nnza - n) / 2 + n;
     }
 
-    hypre_MPI_Allreduce(&ps->setup_values_time, &max_values_time,
-	1, hypre_MPI_REAL, hypre_MPI_MAX, comm);
+    nalu_hypre_MPI_Allreduce(&ps->setup_values_time, &max_values_time,
+	1, nalu_hypre_MPI_REAL, nalu_hypre_MPI_MAX, comm);
 
     if (!mype)
-        setup_times = hypre_TAlloc(NALU_HYPRE_Real, npes , NALU_HYPRE_MEMORY_HOST);
+        setup_times = nalu_hypre_TAlloc(NALU_HYPRE_Real, npes , NALU_HYPRE_MEMORY_HOST);
 
     temp = ps->setup_pattern_time + ps->setup_values_time;
-    hypre_MPI_Gather(&temp, 1, hypre_MPI_REAL, setup_times, 1, hypre_MPI_REAL, 0, comm);
+    nalu_hypre_MPI_Gather(&temp, 1, nalu_hypre_MPI_REAL, setup_times, 1, nalu_hypre_MPI_REAL, 0, comm);
 
     if (mype)
         return;
 
-    hypre_printf("** ParaSails Setup Values Statistics ************\n");
-    hypre_printf("filter                : %f\n", ps->filter);
-    hypre_printf("loadbal               : %f\n", ps->loadbal_beta);
-    hypre_printf("Final Nnz (ratio)     : %d (%5.2f)\n", nnzm, nnzm/(NALU_HYPRE_Real)nnza);
-    hypre_printf("Max setup values time : %8.1f\n", max_values_time);
-    hypre_printf("*************************************************\n");
-    hypre_printf("Setup (pattern and values) times:\n");
+    nalu_hypre_printf("** ParaSails Setup Values Statistics ************\n");
+    nalu_hypre_printf("filter                : %f\n", ps->filter);
+    nalu_hypre_printf("loadbal               : %f\n", ps->loadbal_beta);
+    nalu_hypre_printf("Final Nnz (ratio)     : %d (%5.2f)\n", nnzm, nnzm/(NALU_HYPRE_Real)nnza);
+    nalu_hypre_printf("Max setup values time : %8.1f\n", max_values_time);
+    nalu_hypre_printf("*************************************************\n");
+    nalu_hypre_printf("Setup (pattern and values) times:\n");
 
     temp = 0.0;
     for (i=0; i<npes; i++)
     {
-        hypre_printf("%3d: %8.1f\n", i, setup_times[i]);
+        nalu_hypre_printf("%3d: %8.1f\n", i, setup_times[i]);
         temp += setup_times[i];
     }
-    hypre_printf("ave: %8.1f\n", temp / (NALU_HYPRE_Real) npes);
-    hypre_printf("*************************************************\n");
+    nalu_hypre_printf("ave: %8.1f\n", temp / (NALU_HYPRE_Real) npes);
+    nalu_hypre_printf("*************************************************\n");
 
-    hypre_TFree(setup_times,NALU_HYPRE_MEMORY_HOST);
+    nalu_hypre_TFree(setup_times,NALU_HYPRE_MEMORY_HOST);
 
     fflush(stdout);
 }

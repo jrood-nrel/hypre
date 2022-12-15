@@ -9,14 +9,14 @@
  * Routines to set up preconditioners for use in test codes.
  * June 16, 2005
  *--------------------------------------------------------------------------*/
-#include "hypre_test.h"
+#include "nalu_hypre_test.h"
 
 
-NALU_HYPRE_Int hypre_set_precond(NALU_HYPRE_Int matrix_id, NALU_HYPRE_Int solver_id, NALU_HYPRE_Int precond_id,
+NALU_HYPRE_Int nalu_hypre_set_precond(NALU_HYPRE_Int matrix_id, NALU_HYPRE_Int solver_id, NALU_HYPRE_Int precond_id,
                             void *solver,
                             void *precond)
 {
-   hypre_set_precond_params(precond_id, precond);
+   nalu_hypre_set_precond_params(precond_id, precond);
 
 
    /************************************************************************
@@ -441,7 +441,7 @@ NALU_HYPRE_Int hypre_set_precond(NALU_HYPRE_Int matrix_id, NALU_HYPRE_Int solver
 }
 
 
-NALU_HYPRE_Int hypre_set_precond_params(NALU_HYPRE_Int precond_id, void *precond)
+NALU_HYPRE_Int nalu_hypre_set_precond_params(NALU_HYPRE_Int precond_id, void *precond)
 {
    NALU_HYPRE_Int i;
    NALU_HYPRE_Int ierr;
@@ -489,7 +489,7 @@ NALU_HYPRE_Int hypre_set_precond_params(NALU_HYPRE_Int precond_id, void *precond
    /* use ParaSails preconditioner */
    else if (precond_id == NALU_HYPRE_PARASAILS)
    {
-      NALU_HYPRE_ParaSailsCreate(hypre_MPI_COMM_WORLD, precond);
+      NALU_HYPRE_ParaSailsCreate(nalu_hypre_MPI_COMM_WORLD, precond);
       NALU_HYPRE_ParaSailsSetParams(precond, sai_threshold, max_levels);
       NALU_HYPRE_ParaSailsSetFilter(precond, sai_filter);
       NALU_HYPRE_ParaSailsSetLogging(precond, poutdat);
@@ -509,8 +509,8 @@ NALU_HYPRE_Int hypre_set_precond_params(NALU_HYPRE_Int precond_id, void *precond
       /* fine grid */
       num_grid_sweeps[0] = num_sweep;
       grid_relax_type[0] = relax_default;
-      hypre_TFree(grid_relax_points[0], NALU_HYPRE_MEMORY_HOST);
-      grid_relax_points[0] = hypre_CTAlloc(NALU_HYPRE_Int,  num_sweep, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(grid_relax_points[0], NALU_HYPRE_MEMORY_HOST);
+      grid_relax_points[0] = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  num_sweep, NALU_HYPRE_MEMORY_HOST);
       for (i = 0; i < num_sweep; i++)
       {
          grid_relax_points[0][i] = 0;
@@ -519,8 +519,8 @@ NALU_HYPRE_Int hypre_set_precond_params(NALU_HYPRE_Int precond_id, void *precond
       /* down cycle */
       num_grid_sweeps[1] = num_sweep;
       grid_relax_type[1] = relax_default;
-      hypre_TFree(grid_relax_points[1], NALU_HYPRE_MEMORY_HOST);
-      grid_relax_points[1] = hypre_CTAlloc(NALU_HYPRE_Int,  num_sweep, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(grid_relax_points[1], NALU_HYPRE_MEMORY_HOST);
+      grid_relax_points[1] = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  num_sweep, NALU_HYPRE_MEMORY_HOST);
       for (i = 0; i < num_sweep; i++)
       {
          grid_relax_points[1][i] = 0;
@@ -529,8 +529,8 @@ NALU_HYPRE_Int hypre_set_precond_params(NALU_HYPRE_Int precond_id, void *precond
       /* up cycle */
       num_grid_sweeps[2] = num_sweep;
       grid_relax_type[2] = relax_default;
-      hypre_TFree(grid_relax_points[2], NALU_HYPRE_MEMORY_HOST);
-      grid_relax_points[2] = hypre_CTAlloc(NALU_HYPRE_Int,  num_sweep, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(grid_relax_points[2], NALU_HYPRE_MEMORY_HOST);
+      grid_relax_points[2] = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  num_sweep, NALU_HYPRE_MEMORY_HOST);
       for (i = 0; i < num_sweep; i++)
       {
          grid_relax_points[2][i] = 0;
@@ -539,8 +539,8 @@ NALU_HYPRE_Int hypre_set_precond_params(NALU_HYPRE_Int precond_id, void *precond
       /* coarsest grid */
       num_grid_sweeps[3] = 1;
       grid_relax_type[3] = 9;
-      hypre_TFree(grid_relax_points[3], NALU_HYPRE_MEMORY_HOST);
-      grid_relax_points[3] = hypre_CTAlloc(NALU_HYPRE_Int,  1, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(grid_relax_points[3], NALU_HYPRE_MEMORY_HOST);
+      grid_relax_points[3] = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  1, NALU_HYPRE_MEMORY_HOST);
       grid_relax_points[3][0] = 0;
 
       NALU_HYPRE_BoomerAMGCreate(precond);
@@ -580,12 +580,12 @@ NALU_HYPRE_Int hypre_set_precond_params(NALU_HYPRE_Int precond_id, void *precond
    /* use PILUT as preconditioner */
    else if (precond_id == NALU_HYPRE_PILUT)
    {
-      ierr = NALU_HYPRE_ParCSRPilutCreate( hypre_MPI_COMM_WORLD, precond );
+      ierr = NALU_HYPRE_ParCSRPilutCreate( nalu_hypre_MPI_COMM_WORLD, precond );
    }
 }
 
 
-NALU_HYPRE_Int hypre_destroy_precond(NALU_HYPRE_Int precond_id, void *precond)
+NALU_HYPRE_Int nalu_hypre_destroy_precond(NALU_HYPRE_Int precond_id, void *precond)
 {
 
    if (precond_id == NALU_HYPRE_BICGSTAB)

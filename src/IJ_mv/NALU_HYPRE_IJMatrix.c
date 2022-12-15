@@ -11,7 +11,7 @@
  *
  *****************************************************************************/
 
-#include "./_hypre_IJ_mv.h"
+#include "./_nalu_hypre_IJ_mv.h"
 
 #include "../NALU_HYPRE.h"
 
@@ -31,57 +31,57 @@ NALU_HYPRE_IJMatrixCreate( MPI_Comm        comm,
    NALU_HYPRE_Int num_procs;
    NALU_HYPRE_Int myid;
 
-   hypre_IJMatrix *ijmatrix;
+   nalu_hypre_IJMatrix *ijmatrix;
 
    NALU_HYPRE_BigInt  row0, col0, rowN, colN;
 
-   ijmatrix = hypre_CTAlloc(hypre_IJMatrix, 1, NALU_HYPRE_MEMORY_HOST);
+   ijmatrix = nalu_hypre_CTAlloc(nalu_hypre_IJMatrix, 1, NALU_HYPRE_MEMORY_HOST);
 
-   hypre_IJMatrixComm(ijmatrix)           = comm;
-   hypre_IJMatrixObject(ijmatrix)         = NULL;
-   hypre_IJMatrixTranslator(ijmatrix)     = NULL;
-   hypre_IJMatrixAssumedPart(ijmatrix)    = NULL;
-   hypre_IJMatrixObjectType(ijmatrix)     = NALU_HYPRE_UNITIALIZED;
-   hypre_IJMatrixAssembleFlag(ijmatrix)   = 0;
-   hypre_IJMatrixPrintLevel(ijmatrix)     = 0;
-   hypre_IJMatrixOMPFlag(ijmatrix)        = 0;
+   nalu_hypre_IJMatrixComm(ijmatrix)           = comm;
+   nalu_hypre_IJMatrixObject(ijmatrix)         = NULL;
+   nalu_hypre_IJMatrixTranslator(ijmatrix)     = NULL;
+   nalu_hypre_IJMatrixAssumedPart(ijmatrix)    = NULL;
+   nalu_hypre_IJMatrixObjectType(ijmatrix)     = NALU_HYPRE_UNITIALIZED;
+   nalu_hypre_IJMatrixAssembleFlag(ijmatrix)   = 0;
+   nalu_hypre_IJMatrixPrintLevel(ijmatrix)     = 0;
+   nalu_hypre_IJMatrixOMPFlag(ijmatrix)        = 0;
 
-   hypre_MPI_Comm_size(comm, &num_procs);
-   hypre_MPI_Comm_rank(comm, &myid);
+   nalu_hypre_MPI_Comm_size(comm, &num_procs);
+   nalu_hypre_MPI_Comm_rank(comm, &myid);
 
 
    if (ilower > iupper + 1 || ilower < 0)
    {
-      hypre_error_in_arg(2);
-      hypre_TFree(ijmatrix, NALU_HYPRE_MEMORY_HOST);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(2);
+      nalu_hypre_TFree(ijmatrix, NALU_HYPRE_MEMORY_HOST);
+      return nalu_hypre_error_flag;
    }
 
    if (iupper < -1)
    {
-      hypre_error_in_arg(3);
-      hypre_TFree(ijmatrix, NALU_HYPRE_MEMORY_HOST);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(3);
+      nalu_hypre_TFree(ijmatrix, NALU_HYPRE_MEMORY_HOST);
+      return nalu_hypre_error_flag;
    }
 
    if (jlower > jupper + 1 || jlower < 0)
    {
-      hypre_error_in_arg(4);
-      hypre_TFree(ijmatrix, NALU_HYPRE_MEMORY_HOST);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(4);
+      nalu_hypre_TFree(ijmatrix, NALU_HYPRE_MEMORY_HOST);
+      return nalu_hypre_error_flag;
    }
 
    if (jupper < -1)
    {
-      hypre_error_in_arg(5);
-      hypre_TFree(ijmatrix, NALU_HYPRE_MEMORY_HOST);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(5);
+      nalu_hypre_TFree(ijmatrix, NALU_HYPRE_MEMORY_HOST);
+      return nalu_hypre_error_flag;
    }
 
-   hypre_IJMatrixRowPartitioning(ijmatrix)[0] = ilower;
-   hypre_IJMatrixRowPartitioning(ijmatrix)[1] = iupper + 1;
-   hypre_IJMatrixColPartitioning(ijmatrix)[0] = jlower;
-   hypre_IJMatrixColPartitioning(ijmatrix)[1] = jupper + 1;
+   nalu_hypre_IJMatrixRowPartitioning(ijmatrix)[0] = ilower;
+   nalu_hypre_IJMatrixRowPartitioning(ijmatrix)[1] = iupper + 1;
+   nalu_hypre_IJMatrixColPartitioning(ijmatrix)[0] = jlower;
+   nalu_hypre_IJMatrixColPartitioning(ijmatrix)[1] = jupper + 1;
 
    /* now we need the global number of rows and columns as well
       as the global first row and column index */
@@ -92,7 +92,7 @@ NALU_HYPRE_IJMatrixCreate( MPI_Comm        comm,
       info[0] = ilower;
       info[1] = jlower;
    }
-   hypre_MPI_Bcast(info, 2, NALU_HYPRE_MPI_BIG_INT, 0, comm);
+   nalu_hypre_MPI_Bcast(info, 2, NALU_HYPRE_MPI_BIG_INT, 0, comm);
    row0 = info[0];
    col0 = info[1];
 
@@ -102,19 +102,19 @@ NALU_HYPRE_IJMatrixCreate( MPI_Comm        comm,
       info[0] = iupper;
       info[1] = jupper;
    }
-   hypre_MPI_Bcast(info, 2, NALU_HYPRE_MPI_BIG_INT, num_procs - 1, comm);
+   nalu_hypre_MPI_Bcast(info, 2, NALU_HYPRE_MPI_BIG_INT, num_procs - 1, comm);
 
    rowN = info[0];
    colN = info[1];
 
-   hypre_IJMatrixGlobalFirstRow(ijmatrix) = row0;
-   hypre_IJMatrixGlobalFirstCol(ijmatrix) = col0;
-   hypre_IJMatrixGlobalNumRows(ijmatrix) = rowN - row0 + 1;
-   hypre_IJMatrixGlobalNumCols(ijmatrix) = colN - col0 + 1;
+   nalu_hypre_IJMatrixGlobalFirstRow(ijmatrix) = row0;
+   nalu_hypre_IJMatrixGlobalFirstCol(ijmatrix) = col0;
+   nalu_hypre_IJMatrixGlobalNumRows(ijmatrix) = rowN - row0 + 1;
+   nalu_hypre_IJMatrixGlobalNumCols(ijmatrix) = colN - col0 + 1;
 
    *matrix = (NALU_HYPRE_IJMatrix) ijmatrix;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
@@ -123,34 +123,34 @@ NALU_HYPRE_IJMatrixCreate( MPI_Comm        comm,
 NALU_HYPRE_Int
 NALU_HYPRE_IJMatrixDestroy( NALU_HYPRE_IJMatrix matrix )
 {
-   hypre_IJMatrix *ijmatrix = (hypre_IJMatrix *) matrix;
+   nalu_hypre_IJMatrix *ijmatrix = (nalu_hypre_IJMatrix *) matrix;
 
    if (!ijmatrix)
    {
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
 
    if (ijmatrix)
    {
-      if hypre_IJMatrixAssumedPart(ijmatrix)
+      if nalu_hypre_IJMatrixAssumedPart(ijmatrix)
       {
-         hypre_AssumedPartitionDestroy((hypre_IJAssumedPart*)hypre_IJMatrixAssumedPart(ijmatrix));
+         nalu_hypre_AssumedPartitionDestroy((nalu_hypre_IJAssumedPart*)nalu_hypre_IJMatrixAssumedPart(ijmatrix));
       }
-      if ( hypre_IJMatrixObjectType(ijmatrix) == NALU_HYPRE_PARCSR )
+      if ( nalu_hypre_IJMatrixObjectType(ijmatrix) == NALU_HYPRE_PARCSR )
       {
-         hypre_IJMatrixDestroyParCSR( ijmatrix );
+         nalu_hypre_IJMatrixDestroyParCSR( ijmatrix );
       }
-      else if ( hypre_IJMatrixObjectType(ijmatrix) != -1 )
+      else if ( nalu_hypre_IJMatrixObjectType(ijmatrix) != -1 )
       {
-         hypre_error_in_arg(1);
-         return hypre_error_flag;
+         nalu_hypre_error_in_arg(1);
+         return nalu_hypre_error_flag;
       }
    }
 
-   hypre_TFree(ijmatrix, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(ijmatrix, NALU_HYPRE_MEMORY_HOST);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
@@ -159,48 +159,48 @@ NALU_HYPRE_IJMatrixDestroy( NALU_HYPRE_IJMatrix matrix )
 NALU_HYPRE_Int
 NALU_HYPRE_IJMatrixInitialize( NALU_HYPRE_IJMatrix matrix )
 {
-   hypre_IJMatrix *ijmatrix = (hypre_IJMatrix *) matrix;
+   nalu_hypre_IJMatrix *ijmatrix = (nalu_hypre_IJMatrix *) matrix;
 
    if (!ijmatrix)
    {
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
 
-   if ( hypre_IJMatrixObjectType(ijmatrix) == NALU_HYPRE_PARCSR )
+   if ( nalu_hypre_IJMatrixObjectType(ijmatrix) == NALU_HYPRE_PARCSR )
    {
-      hypre_IJMatrixInitializeParCSR( ijmatrix ) ;
+      nalu_hypre_IJMatrixInitializeParCSR( ijmatrix ) ;
    }
    else
    {
-      hypre_error_in_arg(1);
+      nalu_hypre_error_in_arg(1);
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 
 }
 
 NALU_HYPRE_Int
 NALU_HYPRE_IJMatrixInitialize_v2( NALU_HYPRE_IJMatrix matrix, NALU_HYPRE_MemoryLocation memory_location )
 {
-   hypre_IJMatrix *ijmatrix = (hypre_IJMatrix *) matrix;
+   nalu_hypre_IJMatrix *ijmatrix = (nalu_hypre_IJMatrix *) matrix;
 
    if (!ijmatrix)
    {
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
 
-   if ( hypre_IJMatrixObjectType(ijmatrix) == NALU_HYPRE_PARCSR )
+   if ( nalu_hypre_IJMatrixObjectType(ijmatrix) == NALU_HYPRE_PARCSR )
    {
-      hypre_IJMatrixInitializeParCSR_v2( ijmatrix, memory_location ) ;
+      nalu_hypre_IJMatrixInitializeParCSR_v2( ijmatrix, memory_location ) ;
    }
    else
    {
-      hypre_error_in_arg(1);
+      nalu_hypre_error_in_arg(1);
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 
 }
 
@@ -211,16 +211,16 @@ NALU_HYPRE_Int
 NALU_HYPRE_IJMatrixSetPrintLevel( NALU_HYPRE_IJMatrix matrix,
                              NALU_HYPRE_Int print_level )
 {
-   hypre_IJMatrix *ijmatrix = (hypre_IJMatrix *) matrix;
+   nalu_hypre_IJMatrix *ijmatrix = (nalu_hypre_IJMatrix *) matrix;
 
    if (!ijmatrix)
    {
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
 
-   hypre_IJMatrixPrintLevel(ijmatrix) = 1;
-   return hypre_error_flag;
+   nalu_hypre_IJMatrixPrintLevel(ijmatrix) = 1;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
@@ -230,13 +230,13 @@ NALU_HYPRE_IJMatrixSetPrintLevel( NALU_HYPRE_IJMatrix matrix,
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_PrefixSumInt(NALU_HYPRE_Int   nvals,
+nalu_hypre_PrefixSumInt(NALU_HYPRE_Int   nvals,
                    NALU_HYPRE_Int  *vals,
                    NALU_HYPRE_Int  *sums)
 {
    NALU_HYPRE_Int  j, nthreads, bsize;
 
-   nthreads = hypre_NumThreads();
+   nthreads = nalu_hypre_NumThreads();
    bsize = (nvals + nthreads - 1) / nthreads; /* This distributes the remainder */
 
    if (nvals < nthreads || bsize == 1)
@@ -256,7 +256,7 @@ hypre_PrefixSumInt(NALU_HYPRE_Int   nvals,
 #endif
       for (j = 0; j < nvals; j += bsize)
       {
-         NALU_HYPRE_Int  i, n = hypre_min((j + bsize), nvals);
+         NALU_HYPRE_Int  i, n = nalu_hypre_min((j + bsize), nvals);
 
          sums[j] = 0;
          for (i = j + 1; i < n; i++)
@@ -277,7 +277,7 @@ hypre_PrefixSumInt(NALU_HYPRE_Int   nvals,
 #endif
       for (j = bsize; j < nvals; j += bsize)
       {
-         NALU_HYPRE_Int  i, n = hypre_min((j + bsize), nvals);
+         NALU_HYPRE_Int  i, n = nalu_hypre_min((j + bsize), nvals);
 
          for (i = j + 1; i < n; i++)
          {
@@ -286,7 +286,7 @@ hypre_PrefixSumInt(NALU_HYPRE_Int   nvals,
       }
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 
@@ -301,54 +301,54 @@ NALU_HYPRE_IJMatrixSetValues( NALU_HYPRE_IJMatrix       matrix,
                          const NALU_HYPRE_BigInt  *cols,
                          const NALU_HYPRE_Complex *values )
 {
-   hypre_IJMatrix *ijmatrix = (hypre_IJMatrix *) matrix;
+   nalu_hypre_IJMatrix *ijmatrix = (nalu_hypre_IJMatrix *) matrix;
 
    if (nrows == 0)
    {
-      return hypre_error_flag;
+      return nalu_hypre_error_flag;
    }
 
    if (!ijmatrix)
    {
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
 
    /*
    if (!ncols)
    {
-      hypre_error_in_arg(3);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(3);
+      return nalu_hypre_error_flag;
    }
    */
 
    if (!rows)
    {
-      hypre_error_in_arg(4);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(4);
+      return nalu_hypre_error_flag;
    }
 
    if (!cols)
    {
-      hypre_error_in_arg(5);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(5);
+      return nalu_hypre_error_flag;
    }
 
    if (!values)
    {
-      hypre_error_in_arg(6);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(6);
+      return nalu_hypre_error_flag;
    }
 
-   if ( hypre_IJMatrixObjectType(ijmatrix) != NALU_HYPRE_PARCSR )
+   if ( nalu_hypre_IJMatrixObjectType(ijmatrix) != NALU_HYPRE_PARCSR )
    {
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
 
    NALU_HYPRE_IJMatrixSetValues2(matrix, nrows, ncols, rows, NULL, cols, values);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
@@ -362,63 +362,63 @@ NALU_HYPRE_IJMatrixSetValues2( NALU_HYPRE_IJMatrix       matrix,
                           const NALU_HYPRE_BigInt  *cols,
                           const NALU_HYPRE_Complex *values )
 {
-   hypre_IJMatrix *ijmatrix = (hypre_IJMatrix *) matrix;
+   nalu_hypre_IJMatrix *ijmatrix = (nalu_hypre_IJMatrix *) matrix;
 
    if (nrows == 0)
    {
-      return hypre_error_flag;
+      return nalu_hypre_error_flag;
    }
 
    if (!ijmatrix)
    {
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
 
    if (nrows < 0)
    {
-      hypre_error_in_arg(2);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(2);
+      return nalu_hypre_error_flag;
    }
 
    /*
    if (!ncols)
    {
-      hypre_error_in_arg(3);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(3);
+      return nalu_hypre_error_flag;
    }
    */
 
    if (!rows)
    {
-      hypre_error_in_arg(4);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(4);
+      return nalu_hypre_error_flag;
    }
 
    if (!cols)
    {
-      hypre_error_in_arg(6);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(6);
+      return nalu_hypre_error_flag;
    }
 
    if (!values)
    {
-      hypre_error_in_arg(7);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(7);
+      return nalu_hypre_error_flag;
    }
 
-   if ( hypre_IJMatrixObjectType(ijmatrix) != NALU_HYPRE_PARCSR )
+   if ( nalu_hypre_IJMatrixObjectType(ijmatrix) != NALU_HYPRE_PARCSR )
    {
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
 
 #if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP) || defined(NALU_HYPRE_USING_SYCL)
-   NALU_HYPRE_ExecutionPolicy exec = hypre_GetExecPolicy1( hypre_IJMatrixMemoryLocation(matrix) );
+   NALU_HYPRE_ExecutionPolicy exec = nalu_hypre_GetExecPolicy1( nalu_hypre_IJMatrixMemoryLocation(matrix) );
 
    if (exec == NALU_HYPRE_EXEC_DEVICE)
    {
-      hypre_IJMatrixSetAddValuesParCSRDevice(ijmatrix, nrows, ncols, rows, row_indexes, cols, values,
+      nalu_hypre_IJMatrixSetAddValuesParCSRDevice(ijmatrix, nrows, ncols, rows, row_indexes, cols, values,
                                              "set");
    }
    else
@@ -430,7 +430,7 @@ NALU_HYPRE_IJMatrixSetValues2( NALU_HYPRE_IJMatrix       matrix,
       if (!ncols_tmp)
       {
          NALU_HYPRE_Int i;
-         ncols_tmp = hypre_TAlloc(NALU_HYPRE_Int, nrows, NALU_HYPRE_MEMORY_HOST);
+         ncols_tmp = nalu_hypre_TAlloc(NALU_HYPRE_Int, nrows, NALU_HYPRE_MEMORY_HOST);
          for (i = 0; i < nrows; i++)
          {
             ncols_tmp[i] = 1;
@@ -439,31 +439,31 @@ NALU_HYPRE_IJMatrixSetValues2( NALU_HYPRE_IJMatrix       matrix,
 
       if (!row_indexes)
       {
-         row_indexes_tmp = hypre_CTAlloc(NALU_HYPRE_Int, nrows, NALU_HYPRE_MEMORY_HOST);
-         hypre_PrefixSumInt(nrows, ncols_tmp, row_indexes_tmp);
+         row_indexes_tmp = nalu_hypre_CTAlloc(NALU_HYPRE_Int, nrows, NALU_HYPRE_MEMORY_HOST);
+         nalu_hypre_PrefixSumInt(nrows, ncols_tmp, row_indexes_tmp);
       }
 
-      if (hypre_IJMatrixOMPFlag(ijmatrix))
+      if (nalu_hypre_IJMatrixOMPFlag(ijmatrix))
       {
-         hypre_IJMatrixSetValuesOMPParCSR(ijmatrix, nrows, ncols_tmp, rows, row_indexes_tmp, cols, values);
+         nalu_hypre_IJMatrixSetValuesOMPParCSR(ijmatrix, nrows, ncols_tmp, rows, row_indexes_tmp, cols, values);
       }
       else
       {
-         hypre_IJMatrixSetValuesParCSR(ijmatrix, nrows, ncols_tmp, rows, row_indexes_tmp, cols, values);
+         nalu_hypre_IJMatrixSetValuesParCSR(ijmatrix, nrows, ncols_tmp, rows, row_indexes_tmp, cols, values);
       }
 
       if (!ncols)
       {
-         hypre_TFree(ncols_tmp, NALU_HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(ncols_tmp, NALU_HYPRE_MEMORY_HOST);
       }
 
       if (!row_indexes)
       {
-         hypre_TFree(row_indexes_tmp, NALU_HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(row_indexes_tmp, NALU_HYPRE_MEMORY_HOST);
       }
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
@@ -471,24 +471,24 @@ NALU_HYPRE_IJMatrixSetValues2( NALU_HYPRE_IJMatrix       matrix,
 NALU_HYPRE_Int
 NALU_HYPRE_IJMatrixSetConstantValues( NALU_HYPRE_IJMatrix matrix, NALU_HYPRE_Complex value)
 {
-   hypre_IJMatrix *ijmatrix = (hypre_IJMatrix *) matrix;
+   nalu_hypre_IJMatrix *ijmatrix = (nalu_hypre_IJMatrix *) matrix;
 
    if (!ijmatrix)
    {
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
 
-   if ( hypre_IJMatrixObjectType(ijmatrix) == NALU_HYPRE_PARCSR )
+   if ( nalu_hypre_IJMatrixObjectType(ijmatrix) == NALU_HYPRE_PARCSR )
    {
-      return ( hypre_IJMatrixSetConstantValuesParCSR( ijmatrix, value));
+      return ( nalu_hypre_IJMatrixSetConstantValuesParCSR( ijmatrix, value));
    }
    else
    {
-      hypre_error_in_arg(1);
+      nalu_hypre_error_in_arg(1);
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
@@ -502,60 +502,60 @@ NALU_HYPRE_IJMatrixAddToValues( NALU_HYPRE_IJMatrix       matrix,
                            const NALU_HYPRE_BigInt  *cols,
                            const NALU_HYPRE_Complex *values )
 {
-   hypre_IJMatrix *ijmatrix = (hypre_IJMatrix *) matrix;
+   nalu_hypre_IJMatrix *ijmatrix = (nalu_hypre_IJMatrix *) matrix;
 
    if (nrows == 0)
    {
-      return hypre_error_flag;
+      return nalu_hypre_error_flag;
    }
 
    if (!ijmatrix)
    {
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
 
    if (nrows < 0)
    {
-      hypre_error_in_arg(2);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(2);
+      return nalu_hypre_error_flag;
    }
 
    /*
    if (!ncols)
    {
-      hypre_error_in_arg(3);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(3);
+      return nalu_hypre_error_flag;
    }
    */
 
    if (!rows)
    {
-      hypre_error_in_arg(4);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(4);
+      return nalu_hypre_error_flag;
    }
 
    if (!cols)
    {
-      hypre_error_in_arg(5);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(5);
+      return nalu_hypre_error_flag;
    }
 
    if (!values)
    {
-      hypre_error_in_arg(6);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(6);
+      return nalu_hypre_error_flag;
    }
 
-   if ( hypre_IJMatrixObjectType(ijmatrix) != NALU_HYPRE_PARCSR )
+   if ( nalu_hypre_IJMatrixObjectType(ijmatrix) != NALU_HYPRE_PARCSR )
    {
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
 
    NALU_HYPRE_IJMatrixAddToValues2(matrix, nrows, ncols, rows, NULL, cols, values);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
@@ -570,63 +570,63 @@ NALU_HYPRE_IJMatrixAddToValues2( NALU_HYPRE_IJMatrix       matrix,
                             const NALU_HYPRE_BigInt  *cols,
                             const NALU_HYPRE_Complex *values )
 {
-   hypre_IJMatrix *ijmatrix = (hypre_IJMatrix *) matrix;
+   nalu_hypre_IJMatrix *ijmatrix = (nalu_hypre_IJMatrix *) matrix;
 
    if (nrows == 0)
    {
-      return hypre_error_flag;
+      return nalu_hypre_error_flag;
    }
 
    if (!ijmatrix)
    {
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
 
    if (nrows < 0)
    {
-      hypre_error_in_arg(2);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(2);
+      return nalu_hypre_error_flag;
    }
 
    /*
    if (!ncols)
    {
-      hypre_error_in_arg(3);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(3);
+      return nalu_hypre_error_flag;
    }
    */
 
    if (!rows)
    {
-      hypre_error_in_arg(4);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(4);
+      return nalu_hypre_error_flag;
    }
 
    if (!cols)
    {
-      hypre_error_in_arg(6);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(6);
+      return nalu_hypre_error_flag;
    }
 
    if (!values)
    {
-      hypre_error_in_arg(7);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(7);
+      return nalu_hypre_error_flag;
    }
 
-   if ( hypre_IJMatrixObjectType(ijmatrix) != NALU_HYPRE_PARCSR )
+   if ( nalu_hypre_IJMatrixObjectType(ijmatrix) != NALU_HYPRE_PARCSR )
    {
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
 
 #if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP) || defined(NALU_HYPRE_USING_SYCL)
-   NALU_HYPRE_ExecutionPolicy exec = hypre_GetExecPolicy1( hypre_IJMatrixMemoryLocation(matrix) );
+   NALU_HYPRE_ExecutionPolicy exec = nalu_hypre_GetExecPolicy1( nalu_hypre_IJMatrixMemoryLocation(matrix) );
 
    if (exec == NALU_HYPRE_EXEC_DEVICE)
    {
-      hypre_IJMatrixSetAddValuesParCSRDevice(ijmatrix, nrows, ncols, rows, row_indexes, cols, values,
+      nalu_hypre_IJMatrixSetAddValuesParCSRDevice(ijmatrix, nrows, ncols, rows, row_indexes, cols, values,
                                              "add");
    }
    else
@@ -638,7 +638,7 @@ NALU_HYPRE_IJMatrixAddToValues2( NALU_HYPRE_IJMatrix       matrix,
       if (!ncols_tmp)
       {
          NALU_HYPRE_Int i;
-         ncols_tmp = hypre_TAlloc(NALU_HYPRE_Int, nrows, NALU_HYPRE_MEMORY_HOST);
+         ncols_tmp = nalu_hypre_TAlloc(NALU_HYPRE_Int, nrows, NALU_HYPRE_MEMORY_HOST);
          for (i = 0; i < nrows; i++)
          {
             ncols_tmp[i] = 1;
@@ -647,31 +647,31 @@ NALU_HYPRE_IJMatrixAddToValues2( NALU_HYPRE_IJMatrix       matrix,
 
       if (!row_indexes)
       {
-         row_indexes_tmp = hypre_CTAlloc(NALU_HYPRE_Int, nrows, NALU_HYPRE_MEMORY_HOST);
-         hypre_PrefixSumInt(nrows, ncols_tmp, row_indexes_tmp);
+         row_indexes_tmp = nalu_hypre_CTAlloc(NALU_HYPRE_Int, nrows, NALU_HYPRE_MEMORY_HOST);
+         nalu_hypre_PrefixSumInt(nrows, ncols_tmp, row_indexes_tmp);
       }
 
-      if (hypre_IJMatrixOMPFlag(ijmatrix))
+      if (nalu_hypre_IJMatrixOMPFlag(ijmatrix))
       {
-         hypre_IJMatrixAddToValuesOMPParCSR(ijmatrix, nrows, ncols_tmp, rows, row_indexes_tmp, cols, values);
+         nalu_hypre_IJMatrixAddToValuesOMPParCSR(ijmatrix, nrows, ncols_tmp, rows, row_indexes_tmp, cols, values);
       }
       else
       {
-         hypre_IJMatrixAddToValuesParCSR(ijmatrix, nrows, ncols_tmp, rows, row_indexes_tmp, cols, values);
+         nalu_hypre_IJMatrixAddToValuesParCSR(ijmatrix, nrows, ncols_tmp, rows, row_indexes_tmp, cols, values);
       }
 
       if (!ncols)
       {
-         hypre_TFree(ncols_tmp, NALU_HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(ncols_tmp, NALU_HYPRE_MEMORY_HOST);
       }
 
       if (!row_indexes)
       {
-         hypre_TFree(row_indexes_tmp, NALU_HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(row_indexes_tmp, NALU_HYPRE_MEMORY_HOST);
       }
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
@@ -680,35 +680,35 @@ NALU_HYPRE_IJMatrixAddToValues2( NALU_HYPRE_IJMatrix       matrix,
 NALU_HYPRE_Int
 NALU_HYPRE_IJMatrixAssemble( NALU_HYPRE_IJMatrix matrix )
 {
-   hypre_IJMatrix *ijmatrix = (hypre_IJMatrix *) matrix;
+   nalu_hypre_IJMatrix *ijmatrix = (nalu_hypre_IJMatrix *) matrix;
 
    if (!ijmatrix)
    {
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
 
-   if ( hypre_IJMatrixObjectType(ijmatrix) == NALU_HYPRE_PARCSR )
+   if ( nalu_hypre_IJMatrixObjectType(ijmatrix) == NALU_HYPRE_PARCSR )
    {
 #if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP) || defined(NALU_HYPRE_USING_SYCL)
-      NALU_HYPRE_ExecutionPolicy exec = hypre_GetExecPolicy1( hypre_IJMatrixMemoryLocation(matrix) );
+      NALU_HYPRE_ExecutionPolicy exec = nalu_hypre_GetExecPolicy1( nalu_hypre_IJMatrixMemoryLocation(matrix) );
 
       if (exec == NALU_HYPRE_EXEC_DEVICE)
       {
-         return ( hypre_IJMatrixAssembleParCSRDevice( ijmatrix ) );
+         return ( nalu_hypre_IJMatrixAssembleParCSRDevice( ijmatrix ) );
       }
       else
 #endif
       {
-         return ( hypre_IJMatrixAssembleParCSR( ijmatrix ) );
+         return ( nalu_hypre_IJMatrixAssembleParCSR( ijmatrix ) );
       }
    }
    else
    {
-      hypre_error_in_arg(1);
+      nalu_hypre_error_in_arg(1);
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
@@ -720,47 +720,47 @@ NALU_HYPRE_IJMatrixGetRowCounts( NALU_HYPRE_IJMatrix matrix,
                             NALU_HYPRE_BigInt  *rows,
                             NALU_HYPRE_Int     *ncols )
 {
-   hypre_IJMatrix *ijmatrix = (hypre_IJMatrix *) matrix;
+   nalu_hypre_IJMatrix *ijmatrix = (nalu_hypre_IJMatrix *) matrix;
 
    if (nrows == 0)
    {
-      return hypre_error_flag;
+      return nalu_hypre_error_flag;
    }
 
    if (!ijmatrix)
    {
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
 
    if (nrows < 0)
    {
-      hypre_error_in_arg(2);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(2);
+      return nalu_hypre_error_flag;
    }
 
    if (!rows)
    {
-      hypre_error_in_arg(3);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(3);
+      return nalu_hypre_error_flag;
    }
 
    if (!ncols)
    {
-      hypre_error_in_arg(4);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(4);
+      return nalu_hypre_error_flag;
    }
 
-   if ( hypre_IJMatrixObjectType(ijmatrix) == NALU_HYPRE_PARCSR )
+   if ( nalu_hypre_IJMatrixObjectType(ijmatrix) == NALU_HYPRE_PARCSR )
    {
-      hypre_IJMatrixGetRowCountsParCSR( ijmatrix, nrows, rows, ncols );
+      nalu_hypre_IJMatrixGetRowCountsParCSR( ijmatrix, nrows, rows, ncols );
    }
    else
    {
-      hypre_error_in_arg(1);
+      nalu_hypre_error_in_arg(1);
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
@@ -774,54 +774,54 @@ NALU_HYPRE_IJMatrixGetValues( NALU_HYPRE_IJMatrix matrix,
                          NALU_HYPRE_BigInt  *cols,
                          NALU_HYPRE_Complex *values )
 {
-   hypre_IJMatrix *ijmatrix = (hypre_IJMatrix *) matrix;
+   nalu_hypre_IJMatrix *ijmatrix = (nalu_hypre_IJMatrix *) matrix;
 
    if (nrows == 0)
    {
-      return hypre_error_flag;
+      return nalu_hypre_error_flag;
    }
 
    if (!ijmatrix)
    {
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
 
    if (!ncols)
    {
-      hypre_error_in_arg(3);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(3);
+      return nalu_hypre_error_flag;
    }
 
    if (!rows)
    {
-      hypre_error_in_arg(4);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(4);
+      return nalu_hypre_error_flag;
    }
 
    if (!cols)
    {
-      hypre_error_in_arg(5);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(5);
+      return nalu_hypre_error_flag;
    }
 
    if (!values)
    {
-      hypre_error_in_arg(6);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(6);
+      return nalu_hypre_error_flag;
    }
 
-   if ( hypre_IJMatrixObjectType(ijmatrix) == NALU_HYPRE_PARCSR )
+   if ( nalu_hypre_IJMatrixObjectType(ijmatrix) == NALU_HYPRE_PARCSR )
    {
-      hypre_IJMatrixGetValuesParCSR( ijmatrix, nrows, ncols,
+      nalu_hypre_IJMatrixGetValuesParCSR( ijmatrix, nrows, ncols,
                                      rows, cols, values );
    }
    else
    {
-      hypre_error_in_arg(1);
+      nalu_hypre_error_in_arg(1);
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 
 }
 
@@ -832,17 +832,17 @@ NALU_HYPRE_Int
 NALU_HYPRE_IJMatrixSetObjectType( NALU_HYPRE_IJMatrix matrix,
                              NALU_HYPRE_Int      type )
 {
-   hypre_IJMatrix *ijmatrix = (hypre_IJMatrix *) matrix;
+   nalu_hypre_IJMatrix *ijmatrix = (nalu_hypre_IJMatrix *) matrix;
 
    if (!ijmatrix)
    {
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
 
-   hypre_IJMatrixObjectType(ijmatrix) = type;
+   nalu_hypre_IJMatrixObjectType(ijmatrix) = type;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
@@ -852,16 +852,16 @@ NALU_HYPRE_Int
 NALU_HYPRE_IJMatrixGetObjectType( NALU_HYPRE_IJMatrix  matrix,
                              NALU_HYPRE_Int      *type )
 {
-   hypre_IJMatrix *ijmatrix = (hypre_IJMatrix *) matrix;
+   nalu_hypre_IJMatrix *ijmatrix = (nalu_hypre_IJMatrix *) matrix;
 
    if (!ijmatrix)
    {
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
 
-   *type = hypre_IJMatrixObjectType(ijmatrix);
-   return hypre_error_flag;
+   *type = nalu_hypre_IJMatrixObjectType(ijmatrix);
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
@@ -874,25 +874,25 @@ NALU_HYPRE_IJMatrixGetLocalRange( NALU_HYPRE_IJMatrix  matrix,
                              NALU_HYPRE_BigInt   *jlower,
                              NALU_HYPRE_BigInt   *jupper )
 {
-   hypre_IJMatrix  *ijmatrix = (hypre_IJMatrix *) matrix;
+   nalu_hypre_IJMatrix  *ijmatrix = (nalu_hypre_IJMatrix *) matrix;
    NALU_HYPRE_BigInt    *row_partitioning;
    NALU_HYPRE_BigInt    *col_partitioning;
 
    if (!ijmatrix)
    {
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
 
-   row_partitioning = hypre_IJMatrixRowPartitioning(ijmatrix);
-   col_partitioning = hypre_IJMatrixColPartitioning(ijmatrix);
+   row_partitioning = nalu_hypre_IJMatrixRowPartitioning(ijmatrix);
+   col_partitioning = nalu_hypre_IJMatrixColPartitioning(ijmatrix);
 
    *ilower = row_partitioning[0];
    *iupper = row_partitioning[1] - 1;
    *jlower = col_partitioning[0];
    *jupper = col_partitioning[1] - 1;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
@@ -912,17 +912,17 @@ NALU_HYPRE_Int
 NALU_HYPRE_IJMatrixGetObject( NALU_HYPRE_IJMatrix   matrix,
                          void           **object )
 {
-   hypre_IJMatrix *ijmatrix = (hypre_IJMatrix *) matrix;
+   nalu_hypre_IJMatrix *ijmatrix = (nalu_hypre_IJMatrix *) matrix;
 
    if (!ijmatrix)
    {
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
 
-   *object = hypre_IJMatrixObject( ijmatrix );
+   *object = nalu_hypre_IJMatrixObject( ijmatrix );
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
@@ -932,24 +932,24 @@ NALU_HYPRE_Int
 NALU_HYPRE_IJMatrixSetRowSizes( NALU_HYPRE_IJMatrix   matrix,
                            const NALU_HYPRE_Int *sizes )
 {
-   hypre_IJMatrix *ijmatrix = (hypre_IJMatrix *) matrix;
+   nalu_hypre_IJMatrix *ijmatrix = (nalu_hypre_IJMatrix *) matrix;
 
    if (!ijmatrix)
    {
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
 
-   if ( hypre_IJMatrixObjectType(ijmatrix) == NALU_HYPRE_PARCSR )
+   if ( nalu_hypre_IJMatrixObjectType(ijmatrix) == NALU_HYPRE_PARCSR )
    {
-      return ( hypre_IJMatrixSetRowSizesParCSR( ijmatrix, sizes ) );
+      return ( nalu_hypre_IJMatrixSetRowSizesParCSR( ijmatrix, sizes ) );
    }
    else
    {
-      hypre_error_in_arg(1);
+      nalu_hypre_error_in_arg(1);
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 
@@ -961,23 +961,23 @@ NALU_HYPRE_IJMatrixSetDiagOffdSizes( NALU_HYPRE_IJMatrix   matrix,
                                 const NALU_HYPRE_Int *diag_sizes,
                                 const NALU_HYPRE_Int *offdiag_sizes )
 {
-   hypre_IJMatrix *ijmatrix = (hypre_IJMatrix *) matrix;
+   nalu_hypre_IJMatrix *ijmatrix = (nalu_hypre_IJMatrix *) matrix;
 
    if (!ijmatrix)
    {
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
 
-   if ( hypre_IJMatrixObjectType(ijmatrix) == NALU_HYPRE_PARCSR )
+   if ( nalu_hypre_IJMatrixObjectType(ijmatrix) == NALU_HYPRE_PARCSR )
    {
-      hypre_IJMatrixSetDiagOffdSizesParCSR( ijmatrix, diag_sizes, offdiag_sizes );
+      nalu_hypre_IJMatrixSetDiagOffdSizesParCSR( ijmatrix, diag_sizes, offdiag_sizes );
    }
    else
    {
-      hypre_error_in_arg(1);
+      nalu_hypre_error_in_arg(1);
    }
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 
 }
 
@@ -988,25 +988,25 @@ NALU_HYPRE_Int
 NALU_HYPRE_IJMatrixSetMaxOffProcElmts( NALU_HYPRE_IJMatrix matrix,
                                   NALU_HYPRE_Int      max_off_proc_elmts)
 {
-   hypre_IJMatrix *ijmatrix = (hypre_IJMatrix *) matrix;
+   nalu_hypre_IJMatrix *ijmatrix = (nalu_hypre_IJMatrix *) matrix;
 
    if (!ijmatrix)
    {
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
 
-   if ( hypre_IJMatrixObjectType(ijmatrix) == NALU_HYPRE_PARCSR )
+   if ( nalu_hypre_IJMatrixObjectType(ijmatrix) == NALU_HYPRE_PARCSR )
    {
-      return ( hypre_IJMatrixSetMaxOffProcElmtsParCSR(ijmatrix,
+      return ( nalu_hypre_IJMatrixSetMaxOffProcElmtsParCSR(ijmatrix,
                                                       max_off_proc_elmts) );
    }
    else
    {
-      hypre_error_in_arg(1);
+      nalu_hypre_error_in_arg(1);
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
@@ -1020,9 +1020,9 @@ NALU_HYPRE_IJMatrixRead( const char     *filename,
                     NALU_HYPRE_Int       type,
                     NALU_HYPRE_IJMatrix *matrix_ptr )
 {
-   hypre_IJMatrixRead(filename, comm, type, matrix_ptr, 0);
+   nalu_hypre_IJMatrixRead(filename, comm, type, matrix_ptr, 0);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 NALU_HYPRE_Int
@@ -1031,9 +1031,9 @@ NALU_HYPRE_IJMatrixReadMM( const char     *filename,
                       NALU_HYPRE_Int       type,
                       NALU_HYPRE_IJMatrix *matrix_ptr )
 {
-   hypre_IJMatrixRead(filename, comm, type, matrix_ptr, 1);
+   nalu_hypre_IJMatrixRead(filename, comm, type, matrix_ptr, 1);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
@@ -1046,23 +1046,23 @@ NALU_HYPRE_IJMatrixPrint( NALU_HYPRE_IJMatrix  matrix,
 {
    if (!matrix)
    {
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
 
-   if ( (hypre_IJMatrixObjectType(matrix) != NALU_HYPRE_PARCSR) )
+   if ( (nalu_hypre_IJMatrixObjectType(matrix) != NALU_HYPRE_PARCSR) )
    {
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
 
    void *object;
    NALU_HYPRE_IJMatrixGetObject(matrix, &object);
-   hypre_ParCSRMatrix *par_csr = (hypre_ParCSRMatrix*) object;
+   nalu_hypre_ParCSRMatrix *par_csr = (nalu_hypre_ParCSRMatrix*) object;
 
-   hypre_ParCSRMatrixPrintIJ(par_csr, 0, 0, filename);
+   nalu_hypre_ParCSRMatrixPrintIJ(par_csr, 0, 0, filename);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
@@ -1073,17 +1073,17 @@ NALU_HYPRE_Int
 NALU_HYPRE_IJMatrixSetOMPFlag( NALU_HYPRE_IJMatrix matrix,
                           NALU_HYPRE_Int      omp_flag )
 {
-   hypre_IJMatrix *ijmatrix = (hypre_IJMatrix *) matrix;
+   nalu_hypre_IJMatrix *ijmatrix = (nalu_hypre_IJMatrix *) matrix;
 
    if (!ijmatrix)
    {
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
 
-   hypre_IJMatrixOMPFlag(ijmatrix) = omp_flag;
+   nalu_hypre_IJMatrixOMPFlag(ijmatrix) = omp_flag;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
@@ -1094,48 +1094,48 @@ NALU_HYPRE_Int
 NALU_HYPRE_IJMatrixTranspose( NALU_HYPRE_IJMatrix  matrix_A,
                          NALU_HYPRE_IJMatrix *matrix_AT )
 {
-   hypre_IJMatrix   *ij_A = (hypre_IJMatrix *) matrix_A;
-   hypre_IJMatrix   *ij_AT;
+   nalu_hypre_IJMatrix   *ij_A = (nalu_hypre_IJMatrix *) matrix_A;
+   nalu_hypre_IJMatrix   *ij_AT;
    NALU_HYPRE_Int         i;
 
    if (!ij_A)
    {
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
 
-   ij_AT = hypre_CTAlloc(hypre_IJMatrix, 1, NALU_HYPRE_MEMORY_HOST);
+   ij_AT = nalu_hypre_CTAlloc(nalu_hypre_IJMatrix, 1, NALU_HYPRE_MEMORY_HOST);
 
-   hypre_IJMatrixComm(ij_AT)           = hypre_IJMatrixComm(ij_A);
-   hypre_IJMatrixObject(ij_AT)         = NULL;
-   hypre_IJMatrixTranslator(ij_AT)     = NULL;
-   hypre_IJMatrixAssumedPart(ij_AT)    = NULL;
-   hypre_IJMatrixObjectType(ij_AT)     = hypre_IJMatrixObjectType(ij_A);
-   hypre_IJMatrixAssembleFlag(ij_AT)   = 1;
-   hypre_IJMatrixPrintLevel(ij_AT)     = hypre_IJMatrixPrintLevel(ij_A);
-   hypre_IJMatrixGlobalFirstRow(ij_AT) = hypre_IJMatrixGlobalFirstCol(ij_A);
-   hypre_IJMatrixGlobalFirstCol(ij_AT) = hypre_IJMatrixGlobalFirstRow(ij_A);
-   hypre_IJMatrixGlobalNumRows(ij_AT)  = hypre_IJMatrixGlobalNumCols(ij_A);
-   hypre_IJMatrixGlobalNumCols(ij_AT)  = hypre_IJMatrixGlobalNumRows(ij_A);
+   nalu_hypre_IJMatrixComm(ij_AT)           = nalu_hypre_IJMatrixComm(ij_A);
+   nalu_hypre_IJMatrixObject(ij_AT)         = NULL;
+   nalu_hypre_IJMatrixTranslator(ij_AT)     = NULL;
+   nalu_hypre_IJMatrixAssumedPart(ij_AT)    = NULL;
+   nalu_hypre_IJMatrixObjectType(ij_AT)     = nalu_hypre_IJMatrixObjectType(ij_A);
+   nalu_hypre_IJMatrixAssembleFlag(ij_AT)   = 1;
+   nalu_hypre_IJMatrixPrintLevel(ij_AT)     = nalu_hypre_IJMatrixPrintLevel(ij_A);
+   nalu_hypre_IJMatrixGlobalFirstRow(ij_AT) = nalu_hypre_IJMatrixGlobalFirstCol(ij_A);
+   nalu_hypre_IJMatrixGlobalFirstCol(ij_AT) = nalu_hypre_IJMatrixGlobalFirstRow(ij_A);
+   nalu_hypre_IJMatrixGlobalNumRows(ij_AT)  = nalu_hypre_IJMatrixGlobalNumCols(ij_A);
+   nalu_hypre_IJMatrixGlobalNumCols(ij_AT)  = nalu_hypre_IJMatrixGlobalNumRows(ij_A);
 
    for (i = 0; i < 2; i++)
    {
-      hypre_IJMatrixRowPartitioning(ij_AT)[i] = hypre_IJMatrixColPartitioning(ij_A)[i];
-      hypre_IJMatrixColPartitioning(ij_AT)[i] = hypre_IJMatrixRowPartitioning(ij_A)[i];
+      nalu_hypre_IJMatrixRowPartitioning(ij_AT)[i] = nalu_hypre_IJMatrixColPartitioning(ij_A)[i];
+      nalu_hypre_IJMatrixColPartitioning(ij_AT)[i] = nalu_hypre_IJMatrixRowPartitioning(ij_A)[i];
    }
 
-   if (hypre_IJMatrixObjectType(ij_A) == NALU_HYPRE_PARCSR)
+   if (nalu_hypre_IJMatrixObjectType(ij_A) == NALU_HYPRE_PARCSR)
    {
-      hypre_IJMatrixTransposeParCSR(ij_A, ij_AT);
+      nalu_hypre_IJMatrixTransposeParCSR(ij_A, ij_AT);
    }
    else
    {
-      hypre_error_in_arg(1);
+      nalu_hypre_error_in_arg(1);
    }
 
    *matrix_AT = (NALU_HYPRE_IJMatrix) ij_AT;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
@@ -1148,24 +1148,24 @@ NALU_HYPRE_Int
 NALU_HYPRE_IJMatrixNorm( NALU_HYPRE_IJMatrix  matrix,
                     NALU_HYPRE_Real     *norm )
 {
-   hypre_IJMatrix *ijmatrix = (hypre_IJMatrix *) matrix;
+   nalu_hypre_IJMatrix *ijmatrix = (nalu_hypre_IJMatrix *) matrix;
 
    if (!ijmatrix)
    {
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
 
-   if (hypre_IJMatrixObjectType(ijmatrix) == NALU_HYPRE_PARCSR)
+   if (nalu_hypre_IJMatrixObjectType(ijmatrix) == NALU_HYPRE_PARCSR)
    {
-      hypre_IJMatrixNormParCSR(ijmatrix, norm);
+      nalu_hypre_IJMatrixNormParCSR(ijmatrix, norm);
    }
    else
    {
-      hypre_error_in_arg(1);
+      nalu_hypre_error_in_arg(1);
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
@@ -1179,9 +1179,9 @@ NALU_HYPRE_IJMatrixAdd( NALU_HYPRE_Complex    alpha,
                    NALU_HYPRE_IJMatrix   matrix_B,
                    NALU_HYPRE_IJMatrix  *matrix_C )
 {
-   hypre_IJMatrix   *ij_A = (hypre_IJMatrix *) matrix_A;
-   hypre_IJMatrix   *ij_B = (hypre_IJMatrix *) matrix_B;
-   hypre_IJMatrix   *ij_C;
+   nalu_hypre_IJMatrix   *ij_A = (nalu_hypre_IJMatrix *) matrix_A;
+   nalu_hypre_IJMatrix   *ij_B = (nalu_hypre_IJMatrix *) matrix_B;
+   nalu_hypre_IJMatrix   *ij_C;
 
    NALU_HYPRE_BigInt     *row_partitioning_A;
    NALU_HYPRE_BigInt     *col_partitioning_A;
@@ -1191,59 +1191,59 @@ NALU_HYPRE_IJMatrixAdd( NALU_HYPRE_Complex    alpha,
 
    if (!ij_A)
    {
-      hypre_error_in_arg(1);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(1);
+      return nalu_hypre_error_flag;
    }
 
    /* Check if A and B have the same row/col partitionings */
-   row_partitioning_A = hypre_IJMatrixRowPartitioning(ij_A);
-   row_partitioning_B = hypre_IJMatrixRowPartitioning(ij_B);
-   col_partitioning_A = hypre_IJMatrixColPartitioning(ij_A);
-   col_partitioning_B = hypre_IJMatrixColPartitioning(ij_B);
+   row_partitioning_A = nalu_hypre_IJMatrixRowPartitioning(ij_A);
+   row_partitioning_B = nalu_hypre_IJMatrixRowPartitioning(ij_B);
+   col_partitioning_A = nalu_hypre_IJMatrixColPartitioning(ij_A);
+   col_partitioning_B = nalu_hypre_IJMatrixColPartitioning(ij_B);
    for (i = 0; i < 2; i++)
    {
       if (row_partitioning_A[i] != row_partitioning_B[i])
       {
-         hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC,
+         nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC,
                            "Input matrices must have same row partitioning!");
-         return hypre_error_flag;
+         return nalu_hypre_error_flag;
       }
 
       if (col_partitioning_A[i] != col_partitioning_B[i])
       {
-         hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC,
+         nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC,
                            "Input matrices must have same col partitioning!");
-         return hypre_error_flag;
+         return nalu_hypre_error_flag;
       }
    }
 
-   ij_C = hypre_CTAlloc(hypre_IJMatrix, 1, NALU_HYPRE_MEMORY_HOST);
+   ij_C = nalu_hypre_CTAlloc(nalu_hypre_IJMatrix, 1, NALU_HYPRE_MEMORY_HOST);
 
-   hypre_IJMatrixComm(ij_C)            = hypre_IJMatrixComm(ij_A);
-   hypre_IJMatrixObject(ij_C)          = NULL;
-   hypre_IJMatrixTranslator(ij_C)      = NULL;
-   hypre_IJMatrixAssumedPart(ij_C)     = NULL;
-   hypre_IJMatrixObjectType(ij_C)      = hypre_IJMatrixObjectType(ij_A);
-   hypre_IJMatrixAssembleFlag(ij_C)    = 1;
-   hypre_IJMatrixPrintLevel(ij_C)      = hypre_IJMatrixPrintLevel(ij_A);
+   nalu_hypre_IJMatrixComm(ij_C)            = nalu_hypre_IJMatrixComm(ij_A);
+   nalu_hypre_IJMatrixObject(ij_C)          = NULL;
+   nalu_hypre_IJMatrixTranslator(ij_C)      = NULL;
+   nalu_hypre_IJMatrixAssumedPart(ij_C)     = NULL;
+   nalu_hypre_IJMatrixObjectType(ij_C)      = nalu_hypre_IJMatrixObjectType(ij_A);
+   nalu_hypre_IJMatrixAssembleFlag(ij_C)    = 1;
+   nalu_hypre_IJMatrixPrintLevel(ij_C)      = nalu_hypre_IJMatrixPrintLevel(ij_A);
 
    /* Copy row/col partitioning of A to C */
    for (i = 0; i < 2; i++)
    {
-      hypre_IJMatrixRowPartitioning(ij_C)[i] = row_partitioning_A[i];
-      hypre_IJMatrixColPartitioning(ij_C)[i] = col_partitioning_A[i];
+      nalu_hypre_IJMatrixRowPartitioning(ij_C)[i] = row_partitioning_A[i];
+      nalu_hypre_IJMatrixColPartitioning(ij_C)[i] = col_partitioning_A[i];
    }
 
-   if (hypre_IJMatrixObjectType(ij_A) == NALU_HYPRE_PARCSR)
+   if (nalu_hypre_IJMatrixObjectType(ij_A) == NALU_HYPRE_PARCSR)
    {
-      hypre_IJMatrixAddParCSR(alpha, ij_A, beta, ij_B, ij_C);
+      nalu_hypre_IJMatrixAddParCSR(alpha, ij_A, beta, ij_B, ij_C);
    }
    else
    {
-      hypre_error_in_arg(1);
+      nalu_hypre_error_in_arg(1);
    }
 
    *matrix_C = (NALU_HYPRE_IJMatrix) ij_C;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }

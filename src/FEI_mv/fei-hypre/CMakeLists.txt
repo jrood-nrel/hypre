@@ -7,7 +7,7 @@
 set(NALU_HYPRE_fei_HEADERS
   cfei-hypre.h
   cfei_hypre.h
-  hypre_cfei.h
+  nalu_hypre_cfei.h
   NALU_HYPRE_LinSysCore.h
   NALU_HYPRE_FEI_includes.h
   LLNL_FEI_Fei.h
@@ -37,9 +37,9 @@ set(NALU_HYPRE_fei_SRCS
   bicgs.c
   bicgstabl.c
   fgmres.c
-  hypre_lsi_amge.c
-  hypre_lsi_ddamg.c
-  hypre_lsi_misc.c
+  nalu_hypre_lsi_amge.c
+  nalu_hypre_lsi_ddamg.c
+  nalu_hypre_lsi_misc.c
   lsicg.c
   FEI_NALU_HYPRE_Impl.cxx
   LLNL_FEI_Impl.cxx
@@ -54,9 +54,9 @@ set(NALU_HYPRE_fei_SRCS
   NALU_HYPRE_LinSysCore.cxx
   NALU_HYPRE_SlideReduction.cxx
   cfei_hypre.cxx
-  hypre_cfei.cxx
-  hypre_schur_reduce.cxx
-  hypre_slide_reduce.cxx
+  nalu_hypre_cfei.cxx
+  nalu_hypre_schur_reduce.cxx
+  nalu_hypre_slide_reduce.cxx
   NALU_HYPRE_fei_mesh.cxx
   NALU_HYPRE_fei_matrix.cxx
   NALU_HYPRE_fei_vector.cxx 

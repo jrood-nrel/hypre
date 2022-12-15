@@ -7,7 +7,7 @@
 
 #include <math.h>
 #include <string.h>
-#include "_hypre_parcsr_mv.h"
+#include "_nalu_hypre_parcsr_mv.h"
 #include "mli_solver_sgs.h"
 
 /******************************************************************************
@@ -51,7 +51,7 @@ MLI_Solver_SGS::~MLI_Solver_SGS()
 int MLI_Solver_SGS::setup(MLI_Matrix *mat)
 {
    Amat_ = mat;
-   hypre_ParCSRMatrix *A;
+   nalu_hypre_ParCSRMatrix *A;
    MPI_Comm           comm;
 
    if      ( scheme_ == 0 ) doProcColoring();
@@ -63,8 +63,8 @@ int MLI_Solver_SGS::setup(MLI_Matrix *mat)
    }
    else
    {
-      A    = (hypre_ParCSRMatrix *) Amat_->getMatrix();
-      comm = hypre_ParCSRMatrixComm(A);
+      A    = (nalu_hypre_ParCSRMatrix *) Amat_->getMatrix();
+      comm = nalu_hypre_ParCSRMatrixComm(A);
       MPI_Comm_size(comm, &numColors_);
       MPI_Comm_rank(comm, &myColor_);
    }
@@ -86,42 +86,42 @@ int MLI_Solver_SGS::solve(MLI_Vector *fIn, MLI_Vector *uIn)
    double              zero = 0.0, relaxWeight, rnorm;
    double              *vBufData=NULL, *tmpData, *vExtData=NULL;
    MPI_Comm            comm;
-   hypre_ParCSRMatrix     *A;
-   hypre_CSRMatrix        *ADiag, *AOffd;
-   hypre_ParVector        *f, *u;
-   hypre_ParCSRCommPkg    *commPkg;
-   hypre_ParCSRCommHandle *commHandle;
+   nalu_hypre_ParCSRMatrix     *A;
+   nalu_hypre_CSRMatrix        *ADiag, *AOffd;
+   nalu_hypre_ParVector        *f, *u;
+   nalu_hypre_ParCSRCommPkg    *commPkg;
+   nalu_hypre_ParCSRCommHandle *commHandle;
    MLI_Vector             *mliRvec;
-   hypre_ParVector        *hypreR;
+   nalu_hypre_ParVector        *hypreR;
 
    /*-----------------------------------------------------------------
     * fetch machine and smoother parameters
     *-----------------------------------------------------------------*/
 
-   A          = (hypre_ParCSRMatrix *) Amat_->getMatrix();
-   comm       = hypre_ParCSRMatrixComm(A);
-   commPkg    = hypre_ParCSRMatrixCommPkg(A);
-   ADiag      = hypre_ParCSRMatrixDiag(A);
-   localNRows = hypre_CSRMatrixNumRows(ADiag);
-   ADiagI     = hypre_CSRMatrixI(ADiag);
-   ADiagJ     = hypre_CSRMatrixJ(ADiag);
-   ADiagA     = hypre_CSRMatrixData(ADiag);
-   AOffd      = hypre_ParCSRMatrixOffd(A);
-   extNRows   = hypre_CSRMatrixNumCols(AOffd);
-   AOffdI     = hypre_CSRMatrixI(AOffd);
-   AOffdJ     = hypre_CSRMatrixJ(AOffd);
-   AOffdA     = hypre_CSRMatrixData(AOffd);
-   u          = (hypre_ParVector *) uIn->getVector();
-   uData      = hypre_VectorData(hypre_ParVectorLocalVector(u));
-   f          = (hypre_ParVector *) fIn->getVector();
-   fData      = hypre_VectorData(hypre_ParVectorLocalVector(f));
+   A          = (nalu_hypre_ParCSRMatrix *) Amat_->getMatrix();
+   comm       = nalu_hypre_ParCSRMatrixComm(A);
+   commPkg    = nalu_hypre_ParCSRMatrixCommPkg(A);
+   ADiag      = nalu_hypre_ParCSRMatrixDiag(A);
+   localNRows = nalu_hypre_CSRMatrixNumRows(ADiag);
+   ADiagI     = nalu_hypre_CSRMatrixI(ADiag);
+   ADiagJ     = nalu_hypre_CSRMatrixJ(ADiag);
+   ADiagA     = nalu_hypre_CSRMatrixData(ADiag);
+   AOffd      = nalu_hypre_ParCSRMatrixOffd(A);
+   extNRows   = nalu_hypre_CSRMatrixNumCols(AOffd);
+   AOffdI     = nalu_hypre_CSRMatrixI(AOffd);
+   AOffdJ     = nalu_hypre_CSRMatrixJ(AOffd);
+   AOffdA     = nalu_hypre_CSRMatrixData(AOffd);
+   u          = (nalu_hypre_ParVector *) uIn->getVector();
+   uData      = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(u));
+   f          = (nalu_hypre_ParVector *) fIn->getVector();
+   fData      = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(f));
    MPI_Comm_size(comm,&nprocs);  
    MPI_Comm_rank(comm,&mypid);  
 
    if ( printRNorm_ == 1 )
    {
       mliRvec = Amat_->createVector();
-      hypreR  = (hypre_ParVector *) mliRvec->getVector();
+      hypreR  = (nalu_hypre_ParVector *) mliRvec->getVector();
    }
 
    /*-----------------------------------------------------------------
@@ -130,9 +130,9 @@ int MLI_Solver_SGS::solve(MLI_Vector *fIn, MLI_Vector *uIn)
 
    if (nprocs > 1)
    {
-      nSends = hypre_ParCSRCommPkgNumSends(commPkg);
+      nSends = nalu_hypre_ParCSRCommPkgNumSends(commPkg);
       if ( nSends > 0 )
-         vBufData = new double[hypre_ParCSRCommPkgSendMapStart(commPkg,nSends)];
+         vBufData = new double[nalu_hypre_ParCSRCommPkgSendMapStart(commPkg,nSends)];
       else vBufData = NULL;
       if ( extNRows > 0 ) vExtData = new double[extNRows];
       else                vExtData = NULL;
@@ -167,15 +167,15 @@ int MLI_Solver_SGS::solve(MLI_Vector *fIn, MLI_Vector *uIn)
                index = 0;
                for (i = 0; i < nSends; i++)
                {
-                  start = hypre_ParCSRCommPkgSendMapStart(commPkg, i);
-                  for (j=start;j<hypre_ParCSRCommPkgSendMapStart(commPkg,i+1);
+                  start = nalu_hypre_ParCSRCommPkgSendMapStart(commPkg, i);
+                  for (j=start;j<nalu_hypre_ParCSRCommPkgSendMapStart(commPkg,i+1);
                        j++)
                      vBufData[index++]
-                         = uData[hypre_ParCSRCommPkgSendMapElmt(commPkg,j)];
+                         = uData[nalu_hypre_ParCSRCommPkgSendMapElmt(commPkg,j)];
                }
-               commHandle = hypre_ParCSRCommHandleCreate(1,commPkg,vBufData,
+               commHandle = nalu_hypre_ParCSRCommHandleCreate(1,commPkg,vBufData,
                                                          vExtData);
-               hypre_ParCSRCommHandleDestroy(commHandle);
+               nalu_hypre_ParCSRCommHandleDestroy(commHandle);
                commHandle = NULL;
             }
          }
@@ -223,15 +223,15 @@ int MLI_Solver_SGS::solve(MLI_Vector *fIn, MLI_Vector *uIn)
                index = 0;
                for (i = 0; i < nSends; i++)
                {
-                  start = hypre_ParCSRCommPkgSendMapStart(commPkg, i);
-                  for (j=start;j<hypre_ParCSRCommPkgSendMapStart(commPkg,i+1);
+                  start = nalu_hypre_ParCSRCommPkgSendMapStart(commPkg, i);
+                  for (j=start;j<nalu_hypre_ParCSRCommPkgSendMapStart(commPkg,i+1);
                        j++)
                      vBufData[index++]
-                         = uData[hypre_ParCSRCommPkgSendMapElmt(commPkg,j)];
+                         = uData[nalu_hypre_ParCSRCommPkgSendMapElmt(commPkg,j)];
                }
-               commHandle = hypre_ParCSRCommHandleCreate(1,commPkg,vBufData,
+               commHandle = nalu_hypre_ParCSRCommHandleCreate(1,commPkg,vBufData,
                                                          vExtData);
-               hypre_ParCSRCommHandleDestroy(commHandle);
+               nalu_hypre_ParCSRCommHandleDestroy(commHandle);
                commHandle = NULL;
             }
          }
@@ -265,9 +265,9 @@ int MLI_Solver_SGS::solve(MLI_Vector *fIn, MLI_Vector *uIn)
       }
       if ( printRNorm_ == 1 )
       {
-         hypre_ParVectorCopy( f, hypreR );
-         hypre_ParCSRMatrixMatvec( -1.0, A, u, 1.0, hypreR );
-         rnorm = sqrt(hypre_ParVectorInnerProd( hypreR, hypreR ));
+         nalu_hypre_ParVectorCopy( f, hypreR );
+         nalu_hypre_ParCSRMatrixMatvec( -1.0, A, u, 1.0, hypreR );
+         rnorm = sqrt(nalu_hypre_ParVectorInnerProd( hypreR, hypreR ));
          if ( mypid == 0 )
             printf("\tMLI_Solver_SGS iter = %4d, rnorm = %e (omega=%e)\n", 
                    is, rnorm, relaxWeight);
@@ -404,19 +404,19 @@ int MLI_Solver_SGS::doProcColoring()
    int                 *commGraphJ, *recvCounts, i, j, *colors, *colorsAux;
    int                 pIndex, pColor;
    MPI_Comm            comm;
-   hypre_ParCSRMatrix  *A;
-   hypre_ParCSRCommPkg *commPkg;
+   nalu_hypre_ParCSRMatrix  *A;
+   nalu_hypre_ParCSRCommPkg *commPkg;
 
-   A       = (hypre_ParCSRMatrix *) Amat_->getMatrix();
-   comm    = hypre_ParCSRMatrixComm(A);
-   commPkg = hypre_ParCSRMatrixCommPkg(A);
+   A       = (nalu_hypre_ParCSRMatrix *) Amat_->getMatrix();
+   comm    = nalu_hypre_ParCSRMatrixComm(A);
+   commPkg = nalu_hypre_ParCSRMatrixCommPkg(A);
    if ( commPkg == NULL )
    {
-      hypre_MatvecCommPkgCreate((hypre_ParCSRMatrix *) A);
-      commPkg = hypre_ParCSRMatrixCommPkg(A);
+      nalu_hypre_MatvecCommPkgCreate((nalu_hypre_ParCSRMatrix *) A);
+      commPkg = nalu_hypre_ParCSRMatrixCommPkg(A);
    }
-   nSends    = hypre_ParCSRCommPkgNumSends(commPkg);
-   sendProcs = hypre_ParCSRCommPkgSendProcs(commPkg);
+   nSends    = nalu_hypre_ParCSRCommPkgNumSends(commPkg);
+   sendProcs = nalu_hypre_ParCSRCommPkgSendProcs(commPkg);
 
    MPI_Comm_rank(comm, &mypid);
    MPI_Comm_size(comm, &nprocs);
@@ -488,30 +488,30 @@ int MLI_Solver_SGS::findOmega()
    double              zero = 0.0, relaxWeight, rnorm, *relNorms;
    double              *vBufData=NULL, *tmpData, *vExtData=NULL; 
    MPI_Comm            comm;
-   hypre_ParCSRMatrix     *A;
-   hypre_CSRMatrix        *ADiag, *AOffd;
-   hypre_ParCSRCommPkg    *commPkg;
-   hypre_ParCSRCommHandle *commHandle;
+   nalu_hypre_ParCSRMatrix     *A;
+   nalu_hypre_CSRMatrix        *ADiag, *AOffd;
+   nalu_hypre_ParCSRCommPkg    *commPkg;
+   nalu_hypre_ParCSRCommHandle *commHandle;
    MLI_Vector             *mliRvec, *mliFvec, *mliUvec;
-   hypre_ParVector        *hypreR, *hypreF, *hypreU;
+   nalu_hypre_ParVector        *hypreR, *hypreF, *hypreU;
 
    /*-----------------------------------------------------------------
     * fetch machine and matrix parameters
     *-----------------------------------------------------------------*/
 
-   A          = (hypre_ParCSRMatrix *) Amat_->getMatrix();
-   comm       = hypre_ParCSRMatrixComm(A);
-   commPkg    = hypre_ParCSRMatrixCommPkg(A);
-   ADiag      = hypre_ParCSRMatrixDiag(A);
-   localNRows = hypre_CSRMatrixNumRows(ADiag);
-   ADiagI     = hypre_CSRMatrixI(ADiag);
-   ADiagJ     = hypre_CSRMatrixJ(ADiag);
-   ADiagA     = hypre_CSRMatrixData(ADiag);
-   AOffd      = hypre_ParCSRMatrixOffd(A);
-   extNRows   = hypre_CSRMatrixNumCols(AOffd);
-   AOffdI     = hypre_CSRMatrixI(AOffd);
-   AOffdJ     = hypre_CSRMatrixJ(AOffd);
-   AOffdA     = hypre_CSRMatrixData(AOffd);
+   A          = (nalu_hypre_ParCSRMatrix *) Amat_->getMatrix();
+   comm       = nalu_hypre_ParCSRMatrixComm(A);
+   commPkg    = nalu_hypre_ParCSRMatrixCommPkg(A);
+   ADiag      = nalu_hypre_ParCSRMatrixDiag(A);
+   localNRows = nalu_hypre_CSRMatrixNumRows(ADiag);
+   ADiagI     = nalu_hypre_CSRMatrixI(ADiag);
+   ADiagJ     = nalu_hypre_CSRMatrixJ(ADiag);
+   ADiagA     = nalu_hypre_CSRMatrixData(ADiag);
+   AOffd      = nalu_hypre_ParCSRMatrixOffd(A);
+   extNRows   = nalu_hypre_CSRMatrixNumCols(AOffd);
+   AOffdI     = nalu_hypre_CSRMatrixI(AOffd);
+   AOffdJ     = nalu_hypre_CSRMatrixJ(AOffd);
+   AOffdA     = nalu_hypre_CSRMatrixData(AOffd);
    MPI_Comm_size(comm,&nprocs);  
    MPI_Comm_rank(comm,&mypid);  
 
@@ -520,14 +520,14 @@ int MLI_Solver_SGS::findOmega()
     *-----------------------------------------------------------------*/
 
    mliUvec = Amat_->createVector();
-   hypreU  = (hypre_ParVector *) mliUvec->getVector();
+   hypreU  = (nalu_hypre_ParVector *) mliUvec->getVector();
    mliFvec = Amat_->createVector();
-   hypreF  = (hypre_ParVector *) mliFvec->getVector();
+   hypreF  = (nalu_hypre_ParVector *) mliFvec->getVector();
    mliRvec = Amat_->createVector();
-   hypreR  = (hypre_ParVector *) mliRvec->getVector();
-   hypre_ParVectorSetRandomValues( hypreF, 23986131 ); 
-   fData   = hypre_VectorData(hypre_ParVectorLocalVector(hypreF));
-   uData   = hypre_VectorData(hypre_ParVectorLocalVector(hypreU));
+   hypreR  = (nalu_hypre_ParVector *) mliRvec->getVector();
+   nalu_hypre_ParVectorSetRandomValues( hypreF, 23986131 ); 
+   fData   = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(hypreF));
+   uData   = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(hypreU));
 
    /*-----------------------------------------------------------------
     * setting up for interprocessor communication
@@ -535,9 +535,9 @@ int MLI_Solver_SGS::findOmega()
 
    if (nprocs > 1)
    {
-      nSends = hypre_ParCSRCommPkgNumSends(commPkg);
+      nSends = nalu_hypre_ParCSRCommPkgNumSends(commPkg);
       if ( nSends > 0 )
-         vBufData = new double[hypre_ParCSRCommPkgSendMapStart(commPkg,nSends)];
+         vBufData = new double[nalu_hypre_ParCSRCommPkgSendMapStart(commPkg,nSends)];
       else vBufData = NULL;
       if ( extNRows > 0 ) vExtData = new double[extNRows];
       else                vExtData = NULL;
@@ -548,12 +548,12 @@ int MLI_Solver_SGS::findOmega()
     *-----------------------------------------------------------------*/
  
    relNorms = new double[omegaNumIncr_+1];
-   relNorms[0] = sqrt(hypre_ParVectorInnerProd( hypreF, hypreF ));
+   relNorms[0] = sqrt(nalu_hypre_ParVectorInnerProd( hypreF, hypreF ));
 
    for( iR = 0; iR < omegaNumIncr_; iR++ )
    {
       relaxWeight = omegaIncrement_ * (iR + 1);
-      hypre_ParVectorSetConstantValues(hypreU, zero);
+      nalu_hypre_ParVectorSetConstantValues(hypreU, zero);
       for( is = 0; is < nSweeps_+1; is++ )
       {
          /*--------------------------------------------------------------
@@ -567,15 +567,15 @@ int MLI_Solver_SGS::findOmega()
                index = 0;
                for (i = 0; i < nSends; i++)
                {
-                  start = hypre_ParCSRCommPkgSendMapStart(commPkg, i);
-                  for (j=start;j<hypre_ParCSRCommPkgSendMapStart(commPkg,i+1);
+                  start = nalu_hypre_ParCSRCommPkgSendMapStart(commPkg, i);
+                  for (j=start;j<nalu_hypre_ParCSRCommPkgSendMapStart(commPkg,i+1);
                        j++)
                      vBufData[index++]
-                         = uData[hypre_ParCSRCommPkgSendMapElmt(commPkg,j)];
+                         = uData[nalu_hypre_ParCSRCommPkgSendMapElmt(commPkg,j)];
                }
-               commHandle = hypre_ParCSRCommHandleCreate(1,commPkg,vBufData,
+               commHandle = nalu_hypre_ParCSRCommHandleCreate(1,commPkg,vBufData,
                                                          vExtData);
-               hypre_ParCSRCommHandleDestroy(commHandle);
+               nalu_hypre_ParCSRCommHandleDestroy(commHandle);
                commHandle = NULL;
             }
          }
@@ -633,9 +633,9 @@ int MLI_Solver_SGS::findOmega()
             }
          }
          zeroInitialGuess_ = 0;
-         hypre_ParVectorCopy( hypreF, hypreR );
-         hypre_ParCSRMatrixMatvec( -1.0, A, hypreU, 1.0, hypreR );
-         rnorm = sqrt(hypre_ParVectorInnerProd( hypreR, hypreR ));
+         nalu_hypre_ParVectorCopy( hypreF, hypreR );
+         nalu_hypre_ParCSRMatrixMatvec( -1.0, A, hypreU, 1.0, hypreR );
+         rnorm = sqrt(nalu_hypre_ParVectorInnerProd( hypreR, hypreR ));
          if ( rnorm > 1.0e20 ) break;
       }
       relNorms[iR+1] = rnorm;

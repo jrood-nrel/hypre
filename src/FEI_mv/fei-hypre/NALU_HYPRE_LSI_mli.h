@@ -26,10 +26,10 @@
  * HYPRE internal libraries
  *---------------------------------------------------------------------------*/
 
-#include "utilities/_hypre_utilities.h"
+#include "utilities/_nalu_hypre_utilities.h"
 #include "NALU_HYPRE.h"
 #include "parcsr_ls/NALU_HYPRE_parcsr_ls.h"
-#include "parcsr_mv/_hypre_parcsr_mv.h"
+#include "parcsr_mv/_nalu_hypre_parcsr_mv.h"
 #include "NALU_HYPRE_FEI_includes.h"
 
 /******************************************************************************

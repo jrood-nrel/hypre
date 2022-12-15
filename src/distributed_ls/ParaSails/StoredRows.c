@@ -36,7 +36,7 @@
 
 StoredRows *StoredRowsCreate(Matrix *mat, NALU_HYPRE_Int size)
 {
-    StoredRows *p = hypre_TAlloc(StoredRows, 1, NALU_HYPRE_MEMORY_HOST);
+    StoredRows *p = nalu_hypre_TAlloc(StoredRows, 1, NALU_HYPRE_MEMORY_HOST);
 
     p->mat  = mat;
     p->mem  = MemCreate();
@@ -44,9 +44,9 @@ StoredRows *StoredRowsCreate(Matrix *mat, NALU_HYPRE_Int size)
     p->size = size;
     p->num_loc = mat->end_row - mat->beg_row + 1;
 
-    p->len = hypre_CTAlloc(NALU_HYPRE_Int, size, NALU_HYPRE_MEMORY_HOST);
-    p->ind = hypre_TAlloc(NALU_HYPRE_Int *, size , NALU_HYPRE_MEMORY_HOST);
-    p->val = hypre_TAlloc(NALU_HYPRE_Real *, size , NALU_HYPRE_MEMORY_HOST);
+    p->len = nalu_hypre_CTAlloc(NALU_HYPRE_Int, size, NALU_HYPRE_MEMORY_HOST);
+    p->ind = nalu_hypre_TAlloc(NALU_HYPRE_Int *, size , NALU_HYPRE_MEMORY_HOST);
+    p->val = nalu_hypre_TAlloc(NALU_HYPRE_Real *, size , NALU_HYPRE_MEMORY_HOST);
 
     p->count = 0;
 
@@ -60,10 +60,10 @@ StoredRows *StoredRowsCreate(Matrix *mat, NALU_HYPRE_Int size)
 void StoredRowsDestroy(StoredRows *p)
 {
     MemDestroy(p->mem);
-    hypre_TFree(p->len,NALU_HYPRE_MEMORY_HOST);
-    hypre_TFree(p->ind,NALU_HYPRE_MEMORY_HOST);
-    hypre_TFree(p->val,NALU_HYPRE_MEMORY_HOST);
-    hypre_TFree(p,NALU_HYPRE_MEMORY_HOST);
+    nalu_hypre_TFree(p->len,NALU_HYPRE_MEMORY_HOST);
+    nalu_hypre_TFree(p->ind,NALU_HYPRE_MEMORY_HOST);
+    nalu_hypre_TFree(p->val,NALU_HYPRE_MEMORY_HOST);
+    nalu_hypre_TFree(p,NALU_HYPRE_MEMORY_HOST);
 }
 
 /*--------------------------------------------------------------------------
@@ -104,11 +104,11 @@ void StoredRowsPut(StoredRows *p, NALU_HYPRE_Int index, NALU_HYPRE_Int len, NALU
 
 	newsize = i*2;
 #ifdef PARASAILS_DEBUG
-		    hypre_printf("StoredRows resize %d\n", newsize);
+		    nalu_hypre_printf("StoredRows resize %d\n", newsize);
 #endif
-        p->len = hypre_TReAlloc(p->len,NALU_HYPRE_Int,  newsize , NALU_HYPRE_MEMORY_HOST);
-        p->ind = hypre_TReAlloc(p->ind,NALU_HYPRE_Int *,  newsize , NALU_HYPRE_MEMORY_HOST);
-        p->val = hypre_TReAlloc(p->val,NALU_HYPRE_Real *,  newsize , NALU_HYPRE_MEMORY_HOST);
+        p->len = nalu_hypre_TReAlloc(p->len,NALU_HYPRE_Int,  newsize , NALU_HYPRE_MEMORY_HOST);
+        p->ind = nalu_hypre_TReAlloc(p->ind,NALU_HYPRE_Int *,  newsize , NALU_HYPRE_MEMORY_HOST);
+        p->val = nalu_hypre_TReAlloc(p->val,NALU_HYPRE_Real *,  newsize , NALU_HYPRE_MEMORY_HOST);
 
 	/* set lengths to zero */
         for (j=p->size; j<newsize; j++)
@@ -118,7 +118,7 @@ void StoredRowsPut(StoredRows *p, NALU_HYPRE_Int index, NALU_HYPRE_Int len, NALU
     }
 
     /* check that row has not been put already */
-    hypre_assert(p->len[i] == 0);
+    nalu_hypre_assert(p->len[i] == 0);
 
     p->len[i] = len;
     p->ind[i] = ind;

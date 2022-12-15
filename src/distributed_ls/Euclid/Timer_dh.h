@@ -15,7 +15,7 @@
  * runs, since recording CPU time probably isn't useful.
  * if EUCLID_TIMING is defined in $PCPACK_DIR/bmake_XXX/common,
  * the times() function is used;
- * then hypre_MPI_Wtime() is used in preference to times().
+ * then nalu_hypre_MPI_Wtime() is used in preference to times().
  *
  * You may need to fiddle with some of these includes, depending
  * on your system.  Make sure and check the logFile to ensure
@@ -53,7 +53,7 @@
 
 struct _timer_dh {
   bool isRunning;
-  hypre_longint sc_clk_tck;
+  nalu_hypre_longint sc_clk_tck;
   NALU_HYPRE_Real begin_wall; 
   NALU_HYPRE_Real end_wall;
 

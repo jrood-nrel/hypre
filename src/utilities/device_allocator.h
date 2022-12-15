@@ -11,28 +11,28 @@
 #if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
 
 /* C++ style memory allocator for the device using the abstract memory model */
-struct hypre_device_allocator
+struct nalu_hypre_device_allocator
 {
    typedef char value_type;
 
-   hypre_device_allocator()
+   nalu_hypre_device_allocator()
    {
       // constructor
    }
 
-   ~hypre_device_allocator()
+   ~nalu_hypre_device_allocator()
    {
       // destructor
    }
 
    char *allocate(std::ptrdiff_t num_bytes)
    {
-      return hypre_TAlloc(char, num_bytes, NALU_HYPRE_MEMORY_DEVICE);
+      return nalu_hypre_TAlloc(char, num_bytes, NALU_HYPRE_MEMORY_DEVICE);
    }
 
    void deallocate(char *ptr, size_t n)
    {
-      hypre_TFree(ptr, NALU_HYPRE_MEMORY_DEVICE);
+      nalu_hypre_TFree(ptr, NALU_HYPRE_MEMORY_DEVICE);
    }
 };
 

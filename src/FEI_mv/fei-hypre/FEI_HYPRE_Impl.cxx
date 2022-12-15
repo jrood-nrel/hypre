@@ -20,7 +20,7 @@
  -------------------------------------------------------------------------*/
 
 #include "FEI_NALU_HYPRE_include.h"
-#include "_hypre_utilities.h"
+#include "_nalu_hypre_utilities.h"
 #include "NALU_HYPRE.h"
 
 /*-------------------------------------------------------------------------
@@ -1145,7 +1145,7 @@ int FEI_NALU_HYPRE_Impl::loadComplete()
    for ( iB = 0; iB < numBlocks_; iB++ )
    {
       ierr = elemBlocks_[iB]->checkLoadComplete();
-      hypre_assert( !ierr );
+      nalu_hypre_assert( !ierr );
    }
 
    /* -----------------------------------------------------------------
@@ -3358,9 +3358,9 @@ int FEI_NALU_HYPRE_Impl::solveUsingSuperLU()
       for ( jcol = diagIA_[irow]; jcol < diagIA_[irow+1]; jcol++ )
          countArray[diagJA_[jcol]]++;
    localNnz = diagIA_[localNRows];
-   cscJA = hypre_TAlloc(int,  (localNRows+1) , NALU_HYPRE_MEMORY_HOST);
-   cscIA = hypre_TAlloc(int,  localNnz , NALU_HYPRE_MEMORY_HOST);
-   cscAA = hypre_TAlloc(double,  localNnz , NALU_HYPRE_MEMORY_HOST);
+   cscJA = nalu_hypre_TAlloc(int,  (localNRows+1) , NALU_HYPRE_MEMORY_HOST);
+   cscIA = nalu_hypre_TAlloc(int,  localNnz , NALU_HYPRE_MEMORY_HOST);
+   cscAA = nalu_hypre_TAlloc(double,  localNnz , NALU_HYPRE_MEMORY_HOST);
    cscJA[0] = 0;
    localNnz = 0;
    for ( jcol = 1; jcol <= localNRows; jcol++ )

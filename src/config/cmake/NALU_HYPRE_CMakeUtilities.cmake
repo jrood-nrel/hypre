@@ -15,7 +15,7 @@ endfunction()
 
 # A function to add each executable in the list to the build with the
 # correct flags, includes, and linkage.
-function(add_hypre_executables EXE_SRCS)
+function(add_nalu_hypre_executables EXE_SRCS)
   # Add one executable per cpp file
   foreach(SRC_FILE IN LISTS ${EXE_SRCS})
     get_filename_component(SRC_FILENAME ${SRC_FILE} NAME)

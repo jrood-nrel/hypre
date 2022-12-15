@@ -36,5 +36,5 @@ if (NALU_HYPRE_COMPLEX)
   )
 endif()
 
-add_hypre_executables(EXAMPLE_SRCS)
+add_nalu_hypre_executables(EXAMPLE_SRCS)
 

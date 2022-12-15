@@ -12,8 +12,8 @@
 #include "NALU_HYPRE_FEI_includes.h"
 
 #include "NALU_HYPRE.h"
-#include "utilities/_hypre_utilities.h"
-#include "parcsr_mv/_hypre_parcsr_mv.h"
+#include "utilities/_nalu_hypre_utilities.h"
+#include "parcsr_mv/_nalu_hypre_parcsr_mv.h"
 
 #include "NALU_HYPRE_LSI_schur.h"
 
@@ -22,13 +22,13 @@
 //------------------------------------------------------------------------------
 
 extern "C" {
-   int hypre_BoomerAMGBuildCoarseOperator(hypre_ParCSRMatrix*,
-                                          hypre_ParCSRMatrix*,
-                                          hypre_ParCSRMatrix*,
-                                          hypre_ParCSRMatrix**);
+   int nalu_hypre_BoomerAMGBuildCoarseOperator(nalu_hypre_ParCSRMatrix*,
+                                          nalu_hypre_ParCSRMatrix*,
+                                          nalu_hypre_ParCSRMatrix*,
+                                          nalu_hypre_ParCSRMatrix**);
    int NALU_HYPRE_LSI_Search(int*, int, int);
-   void hypre_qsort0(int *, int, int);
-   void hypre_qsort1(int *, double *, int, int);
+   void nalu_hypre_qsort0(int *, int, int);
+   void nalu_hypre_qsort1(int *, double *, int, int);
 }
 
 //******************************************************************************
@@ -289,14 +289,14 @@ int NALU_HYPRE_LSI_Schur::buildBlocks(NALU_HYPRE_IJMatrix Amat)
    for ( irow = AStartRow; irow < AStartRow+ANRows; irow++ )
    {
       NALU_HYPRE_ParCSRMatrixGetRow(Amat_csr, irow, &rowSize, &inds, &vals);
-      searchInd = hypre_BinarySearch(P22LocalInds_, irow, P22Size_);
+      searchInd = nalu_hypre_BinarySearch(P22LocalInds_, irow, P22Size_);
       if ( searchInd < 0 )   // A(1,1) or A(1,2) block
       {
          A11NewSize = A12NewSize = 0;
          for ( j = 0; j < rowSize; j++ )
          {
             index = inds[j];
-            searchInd = hypre_BinarySearch(P22GlobalInds_,index,P22GSize_);
+            searchInd = nalu_hypre_BinarySearch(P22GlobalInds_,index,P22GSize_);
             if (searchInd >= 0) A12NewSize++;
             else                A11NewSize++;
          }
@@ -317,7 +317,7 @@ int NALU_HYPRE_LSI_Schur::buildBlocks(NALU_HYPRE_IJMatrix Amat)
          for ( j = 0; j < rowSize; j++ )
          {
             index = inds[j];
-            searchInd = hypre_BinarySearch(P22GlobalInds_,index,P22GSize_);
+            searchInd = nalu_hypre_BinarySearch(P22GlobalInds_,index,P22GSize_);
             if (searchInd >= 0) A22NewSize++;
          }
          A22RowLengs[A22RowCnt++] = A22NewSize;
@@ -336,14 +336,14 @@ int NALU_HYPRE_LSI_Schur::buildBlocks(NALU_HYPRE_IJMatrix Amat)
    ierr += NALU_HYPRE_IJMatrixSetObjectType(A11mat_, NALU_HYPRE_PARCSR);
    ierr  = NALU_HYPRE_IJMatrixSetRowSizes(A11mat_, A11RowLengs);
    ierr += NALU_HYPRE_IJMatrixInitialize(A11mat_);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
    delete [] A11RowLengs;
    ierr  = NALU_HYPRE_IJMatrixCreate(mpiComm_, A12StartRow, A12StartRow+A12NRows-1,
                                 A12StartCol, A12StartCol+A12NCols-1, &A12mat_);
    ierr += NALU_HYPRE_IJMatrixSetObjectType(A12mat_, NALU_HYPRE_PARCSR);
    ierr  = NALU_HYPRE_IJMatrixSetRowSizes(A12mat_, A12RowLengs);
    ierr += NALU_HYPRE_IJMatrixInitialize(A12mat_);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
    delete [] A12RowLengs;
    if ( A22MaxRowLeng > 0 )
    {
@@ -352,7 +352,7 @@ int NALU_HYPRE_LSI_Schur::buildBlocks(NALU_HYPRE_IJMatrix Amat)
       ierr += NALU_HYPRE_IJMatrixSetObjectType(A22mat_, NALU_HYPRE_PARCSR);
       ierr  = NALU_HYPRE_IJMatrixSetRowSizes(A22mat_, A22RowLengs);
       ierr += NALU_HYPRE_IJMatrixInitialize(A22mat_);
-      hypre_assert(!ierr);
+      nalu_hypre_assert(!ierr);
    }
    else A22mat_ = NULL;
    delete [] A22RowLengs;
@@ -375,7 +375,7 @@ int NALU_HYPRE_LSI_Schur::buildBlocks(NALU_HYPRE_IJMatrix Amat)
    for ( irow = AStartRow; irow < AStartRow+ANRows; irow++ )
    {
       NALU_HYPRE_ParCSRMatrixGetRow(Amat_csr, irow, &rowSize, &inds, &vals);
-      searchInd = hypre_BinarySearch(P22LocalInds_, irow, P22Size_);
+      searchInd = nalu_hypre_BinarySearch(P22LocalInds_, irow, P22Size_);
       if ( searchInd < 0 )   // A(1,1) or A(1,2) block
       {
          A11NewSize = A12NewSize = 0;
@@ -428,7 +428,7 @@ int NALU_HYPRE_LSI_Schur::buildBlocks(NALU_HYPRE_IJMatrix Amat)
          for ( j = 0; j < rowSize; j++ )
          {
             index = inds[j];
-            searchInd = hypre_BinarySearch(P22GlobalInds_,index,P22GSize_);
+            searchInd = nalu_hypre_BinarySearch(P22GlobalInds_,index,P22GSize_);
             if (searchInd >= 0)
             {
                A22_inds[A22NewSize] = searchInd;
@@ -461,18 +461,18 @@ int NALU_HYPRE_LSI_Schur::buildBlocks(NALU_HYPRE_IJMatrix Amat)
 
    ierr =  NALU_HYPRE_IJMatrixAssemble(A11mat_);
    ierr += NALU_HYPRE_IJMatrixGetObject(A11mat_, (void **) &A11mat_csr);
-   hypre_assert( !ierr );
-   hypre_MatvecCommPkgCreate((hypre_ParCSRMatrix *) A11mat_csr);
+   nalu_hypre_assert( !ierr );
+   nalu_hypre_MatvecCommPkgCreate((nalu_hypre_ParCSRMatrix *) A11mat_csr);
    ierr =  NALU_HYPRE_IJMatrixAssemble(A12mat_);
    ierr += NALU_HYPRE_IJMatrixGetObject(A12mat_, (void **) &A12mat_csr);
-   hypre_assert( !ierr );
-   hypre_MatvecCommPkgCreate((hypre_ParCSRMatrix *) A12mat_csr);
+   nalu_hypre_assert( !ierr );
+   nalu_hypre_MatvecCommPkgCreate((nalu_hypre_ParCSRMatrix *) A12mat_csr);
    if ( A22mat_ != NULL )
    {
       ierr =  NALU_HYPRE_IJMatrixAssemble(A22mat_);
       ierr += NALU_HYPRE_IJMatrixGetObject(A22mat_, (void **) &A22mat_csr);
-      hypre_assert( !ierr );
-      hypre_MatvecCommPkgCreate((hypre_ParCSRMatrix *) A22mat_csr);
+      nalu_hypre_assert( !ierr );
+      nalu_hypre_MatvecCommPkgCreate((nalu_hypre_ParCSRMatrix *) A22mat_csr);
    }
    else A22mat_csr = NULL;
 
@@ -573,11 +573,11 @@ int NALU_HYPRE_LSI_Schur::setup(NALU_HYPRE_IJMatrix Amat,  NALU_HYPRE_IJVector s
 
    NALU_HYPRE_IJMatrixGetObject(A11mat_, (void **) &Mmat_csr);
    NALU_HYPRE_IJMatrixGetObject(A12mat_, (void **) &Cmat_csr);
-   hypre_MatvecCommPkgCreate((hypre_ParCSRMatrix *) Mmat_csr);
-   hypre_BoomerAMGBuildCoarseOperator( (hypre_ParCSRMatrix *) Cmat_csr,
-                                       (hypre_ParCSRMatrix *) Mmat_csr,
-                                       (hypre_ParCSRMatrix *) Cmat_csr,
-                                       (hypre_ParCSRMatrix **) &RAP_csr);
+   nalu_hypre_MatvecCommPkgCreate((nalu_hypre_ParCSRMatrix *) Mmat_csr);
+   nalu_hypre_BoomerAMGBuildCoarseOperator( (nalu_hypre_ParCSRMatrix *) Cmat_csr,
+                                       (nalu_hypre_ParCSRMatrix *) Mmat_csr,
+                                       (nalu_hypre_ParCSRMatrix *) Cmat_csr,
+                                       (nalu_hypre_ParCSRMatrix **) &RAP_csr);
 
    if (outputLevel_ >= 1)
       printf("%4d : NALU_HYPRE_LSI_Schur setup : C^T M^{-1} C ends\n", mypid);
@@ -591,7 +591,7 @@ int NALU_HYPRE_LSI_Schur::setup(NALU_HYPRE_IJMatrix Amat,  NALU_HYPRE_IJVector s
    ierr  = NALU_HYPRE_IJMatrixCreate(mpiComm_, SStartRow, SStartRow+SNRows-1,
 			        SStartRow, SStartRow+SNRows-1, &Smat);
    ierr += NALU_HYPRE_IJMatrixSetObjectType(Smat, NALU_HYPRE_PARCSR);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
    if ( A22mat_ != NULL )
       NALU_HYPRE_IJMatrixGetObject(A22mat_, (void **) &A22mat_csr);
 
@@ -608,7 +608,7 @@ int NALU_HYPRE_LSI_Schur::setup(NALU_HYPRE_IJMatrix Amat,  NALU_HYPRE_IJVector s
          newColInd = new int[newRowSize];
          for (j = 0; j < rowSize;  j++) newColInd[j] = colInd[j];
          for (j = 0; j < rowSize2; j++) newColInd[j+rowSize] = colInd2[j];
-         hypre_qsort0(newColInd, 0, newRowSize-1);
+         nalu_hypre_qsort0(newColInd, 0, newRowSize-1);
          count = 0;
          for ( j = 1; j < newRowSize; j++ )
          {
@@ -629,7 +629,7 @@ int NALU_HYPRE_LSI_Schur::setup(NALU_HYPRE_IJMatrix Amat,  NALU_HYPRE_IJVector s
    }
    ierr  = NALU_HYPRE_IJMatrixSetRowSizes(Smat, SRowLengs);
    ierr += NALU_HYPRE_IJMatrixInitialize(Smat);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
    delete [] SRowLengs;
 
    for ( irow = SStartRow; irow < SStartRow+SNRows; irow++ )
@@ -662,7 +662,7 @@ int NALU_HYPRE_LSI_Schur::setup(NALU_HYPRE_IJMatrix Amat,  NALU_HYPRE_IJVector s
             newColInd[j+rowSize] = colInd2[j];
             newColVal[j+rowSize] = colVal2[j];
          }
-         hypre_qsort1(newColInd, newColVal, 0, newRowSize-1);
+         nalu_hypre_qsort1(newColInd, newColVal, 0, newRowSize-1);
          count = 0;
          for ( j = 1; j < newRowSize; j++ )
          {
@@ -708,12 +708,12 @@ int NALU_HYPRE_LSI_Schur::setup(NALU_HYPRE_IJMatrix Amat,  NALU_HYPRE_IJVector s
    NALU_HYPRE_IJVectorSetObjectType(X2vec, NALU_HYPRE_PARCSR);
    ierr  = NALU_HYPRE_IJVectorInitialize(X2vec);
    ierr += NALU_HYPRE_IJVectorAssemble(X2vec);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
    NALU_HYPRE_IJVectorCreate(mpiComm_, V2Start, V2Start+V2Leng-1, &R2vec);
    NALU_HYPRE_IJVectorSetObjectType(R2vec, NALU_HYPRE_PARCSR);
    ierr  = NALU_HYPRE_IJVectorInitialize(R2vec);
    ierr += NALU_HYPRE_IJVectorAssemble(R2vec);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
    (*rsol) = X2vec;
    (*rres) = R2vec;
    return 0;
@@ -760,20 +760,20 @@ int NALU_HYPRE_LSI_Schur::computeRHS(NALU_HYPRE_IJVector rhs, NALU_HYPRE_IJVecto
    NALU_HYPRE_IJVectorSetObjectType(F1vec_, NALU_HYPRE_PARCSR);
    ierr += NALU_HYPRE_IJVectorInitialize(F1vec_);
    ierr += NALU_HYPRE_IJVectorAssemble(F1vec_);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
    V2Leng  = P22Size_;
    V2Start = P22Offsets_[mypid];
    NALU_HYPRE_IJVectorCreate(mpiComm_, V2Start, V2Start+V2Leng-1, &F2vec);
    NALU_HYPRE_IJVectorSetObjectType(F2vec, NALU_HYPRE_PARCSR);
    ierr += NALU_HYPRE_IJVectorInitialize(F2vec);
    ierr += NALU_HYPRE_IJVectorAssemble(F2vec);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
 
    f1Ind = V1Start;
    f2Ind = V2Start;
    for ( irow = AStart; irow <= AEnd; irow++ )
    {
-      searchInd = hypre_BinarySearch(P22LocalInds_, irow, P22Size_);
+      searchInd = nalu_hypre_BinarySearch(P22LocalInds_, irow, P22Size_);
       NALU_HYPRE_IJVectorGetValues(rhs, 1, &irow, &ddata);
       if ( searchInd < 0 )
       {
@@ -782,14 +782,14 @@ int NALU_HYPRE_LSI_Schur::computeRHS(NALU_HYPRE_IJVector rhs, NALU_HYPRE_IJVecto
          ierr = NALU_HYPRE_IJVectorSetValues(F1vec_, 1, (const int *) &f1Ind,
                         (const double *) &ddata);
          NALU_HYPRE_ParCSRMatrixRestoreRow(A11_csr,f1Ind,&rowSize,&colInd,&colVal);
-         hypre_assert( !ierr );
+         nalu_hypre_assert( !ierr );
          f1Ind++;
       }
       else
       {
          ierr = NALU_HYPRE_IJVectorSetValues(F2vec, 1, (const int *) &f2Ind,
                         (const double *) &ddata);
-         hypre_assert( !ierr );
+         nalu_hypre_assert( !ierr );
          f2Ind++;
       }
    }
@@ -845,7 +845,7 @@ int NALU_HYPRE_LSI_Schur::computeSol(NALU_HYPRE_IJVector X2vec, NALU_HYPRE_IJVec
    NALU_HYPRE_IJVectorSetObjectType(X1vec, NALU_HYPRE_PARCSR);
    ierr += NALU_HYPRE_IJVectorInitialize(X1vec);
    ierr += NALU_HYPRE_IJVectorAssemble(X1vec);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
 
    //------------------------------------------------------------------
    // recover X1
@@ -860,20 +860,20 @@ int NALU_HYPRE_LSI_Schur::computeSol(NALU_HYPRE_IJVector X2vec, NALU_HYPRE_IJVec
 
    V1Cnt = AStart - P22Offsets_[mypid];
    V2Cnt = P22Offsets_[mypid];
-   xvals = hypre_VectorData(hypre_ParVectorLocalVector((hypre_ParVector*)Xvec));
+   xvals = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector((nalu_hypre_ParVector*)Xvec));
    for ( irow = AStart; irow < AEnd; irow++ )
    {
-      searchInd = hypre_BinarySearch( P22LocalInds_, irow, P22Size_);
+      searchInd = nalu_hypre_BinarySearch( P22LocalInds_, irow, P22Size_);
       if ( searchInd >= 0 )
       {
          ierr = NALU_HYPRE_IJVectorGetValues(X2vec, 1, &V2Cnt, &xvals[irow-AStart]);
-         hypre_assert( !ierr );
+         nalu_hypre_assert( !ierr );
          V2Cnt++;
       }
       else
       {
          ierr = NALU_HYPRE_IJVectorGetValues(X1vec, 1, &V1Cnt, &xvals[irow-AStart]);
-         hypre_assert( !ierr );
+         nalu_hypre_assert( !ierr );
          V1Cnt++;
       }
    }
@@ -900,7 +900,7 @@ int NALU_HYPRE_LSI_Schur::print()
 
    if ( ! assembled_ ) return 1;
    MPI_Comm_rank( mpiComm_, &mypid );
-   sprintf(fname, "hypre_mat.out.%d", mypid);
+   sprintf(fname, "nalu_hypre_mat.out.%d", mypid);
    fp      = fopen( fname, "w");
    nnz     = 0;
    V2Leng  = P22Size_;
@@ -924,7 +924,7 @@ int NALU_HYPRE_LSI_Schur::print()
       NALU_HYPRE_ParCSRMatrixRestoreRow(S_csr,irow,&rowSize,&colInd,&colVal);
    }
    fclose(fp);
-   sprintf(fname, "hypre_rhs.out.%d", mypid);
+   sprintf(fname, "nalu_hypre_rhs.out.%d", mypid);
    fp = fopen( fname, "w");
    fprintf(fp, "%6d \n", V2Leng);
    for ( irow = V2Start; irow < V2Start+V2Leng; irow++ )

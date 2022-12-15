@@ -101,10 +101,10 @@ NALU_HYPRE_Real randomized_select(NALU_HYPRE_Real *a, NALU_HYPRE_Int p, NALU_HYP
 }
 
 /*--------------------------------------------------------------------------
- * hypre_shell_sort - sorts x[0:n-1] in place, ascending order
+ * nalu_hypre_shell_sort - sorts x[0:n-1] in place, ascending order
  *--------------------------------------------------------------------------*/
 
-void hypre_shell_sort(const NALU_HYPRE_Int n, NALU_HYPRE_Int x[])
+void nalu_hypre_shell_sort(const NALU_HYPRE_Int n, NALU_HYPRE_Int x[])
 {
     NALU_HYPRE_Int m, max, j, k, itemp;
 

@@ -13,8 +13,8 @@
  *
  *****************************************************************************/
 
-#ifndef hypre_AUX_PAR_VECTOR_HEADER
-#define hypre_AUX_PAR_VECTOR_HEADER
+#ifndef nalu_hypre_AUX_PAR_VECTOR_HEADER
+#define nalu_hypre_AUX_PAR_VECTOR_HEADER
 
 /*--------------------------------------------------------------------------
  * Auxiliary Parallel Vector
@@ -41,29 +41,29 @@ typedef struct
    NALU_HYPRE_Real           init_alloc_factor;
    NALU_HYPRE_Real           grow_factor;
 #endif
-} hypre_AuxParVector;
+} nalu_hypre_AuxParVector;
 
 /*--------------------------------------------------------------------------
  * Accessor functions for the Parallel Vector structure
  *--------------------------------------------------------------------------*/
 
-#define hypre_AuxParVectorMaxOffProcElmts(vector)      ((vector) -> max_off_proc_elmts)
-#define hypre_AuxParVectorCurrentOffProcElmts(vector)  ((vector) -> current_off_proc_elmts)
-#define hypre_AuxParVectorOffProcI(vector)             ((vector) -> off_proc_i)
-#define hypre_AuxParVectorOffProcData(vector)          ((vector) -> off_proc_data)
+#define nalu_hypre_AuxParVectorMaxOffProcElmts(vector)      ((vector) -> max_off_proc_elmts)
+#define nalu_hypre_AuxParVectorCurrentOffProcElmts(vector)  ((vector) -> current_off_proc_elmts)
+#define nalu_hypre_AuxParVectorOffProcI(vector)             ((vector) -> off_proc_i)
+#define nalu_hypre_AuxParVectorOffProcData(vector)          ((vector) -> off_proc_data)
 
-#define hypre_AuxParVectorMemoryLocation(vector)       ((vector) -> memory_location)
+#define nalu_hypre_AuxParVectorMemoryLocation(vector)       ((vector) -> memory_location)
 
 #if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP) || defined(NALU_HYPRE_USING_SYCL)
-#define hypre_AuxParVectorMaxStackElmts(vector)        ((vector) -> max_stack_elmts)
-#define hypre_AuxParVectorCurrentStackElmts(vector)    ((vector) -> current_stack_elmts)
-#define hypre_AuxParVectorStackI(vector)               ((vector) -> stack_i)
-#define hypre_AuxParVectorStackVoff(vector)            ((vector) -> stack_voff)
-#define hypre_AuxParVectorStackData(vector)            ((vector) -> stack_data)
-#define hypre_AuxParVectorStackSorA(vector)            ((vector) -> stack_sora)
-#define hypre_AuxParVectorUsrOffProcElmts(vector)      ((vector) -> usr_off_proc_elmts)
-#define hypre_AuxParVectorInitAllocFactor(vector)      ((vector) -> init_alloc_factor)
-#define hypre_AuxParVectorGrowFactor(vector)           ((vector) -> grow_factor)
+#define nalu_hypre_AuxParVectorMaxStackElmts(vector)        ((vector) -> max_stack_elmts)
+#define nalu_hypre_AuxParVectorCurrentStackElmts(vector)    ((vector) -> current_stack_elmts)
+#define nalu_hypre_AuxParVectorStackI(vector)               ((vector) -> stack_i)
+#define nalu_hypre_AuxParVectorStackVoff(vector)            ((vector) -> stack_voff)
+#define nalu_hypre_AuxParVectorStackData(vector)            ((vector) -> stack_data)
+#define nalu_hypre_AuxParVectorStackSorA(vector)            ((vector) -> stack_sora)
+#define nalu_hypre_AuxParVectorUsrOffProcElmts(vector)      ((vector) -> usr_off_proc_elmts)
+#define nalu_hypre_AuxParVectorInitAllocFactor(vector)      ((vector) -> init_alloc_factor)
+#define nalu_hypre_AuxParVectorGrowFactor(vector)           ((vector) -> grow_factor)
 #endif
 
-#endif /* #ifndef hypre_AUX_PAR_VECTOR_HEADER */
+#endif /* #ifndef nalu_hypre_AUX_PAR_VECTOR_HEADER */

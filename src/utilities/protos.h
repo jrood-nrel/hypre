@@ -6,100 +6,100 @@
  ******************************************************************************/
 
 /* amg_linklist.c */
-void hypre_dispose_elt ( hypre_LinkList element_ptr );
-void hypre_remove_point ( hypre_LinkList *LoL_head_ptr, hypre_LinkList *LoL_tail_ptr,
+void nalu_hypre_dispose_elt ( nalu_hypre_LinkList element_ptr );
+void nalu_hypre_remove_point ( nalu_hypre_LinkList *LoL_head_ptr, nalu_hypre_LinkList *LoL_tail_ptr,
                           NALU_HYPRE_Int measure, NALU_HYPRE_Int index, NALU_HYPRE_Int *lists, NALU_HYPRE_Int *where );
-hypre_LinkList hypre_create_elt ( NALU_HYPRE_Int Item );
-void hypre_enter_on_lists ( hypre_LinkList *LoL_head_ptr, hypre_LinkList *LoL_tail_ptr,
+nalu_hypre_LinkList nalu_hypre_create_elt ( NALU_HYPRE_Int Item );
+void nalu_hypre_enter_on_lists ( nalu_hypre_LinkList *LoL_head_ptr, nalu_hypre_LinkList *LoL_tail_ptr,
                             NALU_HYPRE_Int measure, NALU_HYPRE_Int index, NALU_HYPRE_Int *lists, NALU_HYPRE_Int *where );
 
 /* binsearch.c */
-NALU_HYPRE_Int hypre_BinarySearch ( NALU_HYPRE_Int *list, NALU_HYPRE_Int value, NALU_HYPRE_Int list_length );
-NALU_HYPRE_Int hypre_BigBinarySearch ( NALU_HYPRE_BigInt *list, NALU_HYPRE_BigInt value, NALU_HYPRE_Int list_length );
-NALU_HYPRE_Int hypre_BinarySearch2 ( NALU_HYPRE_Int *list, NALU_HYPRE_Int value, NALU_HYPRE_Int low, NALU_HYPRE_Int high,
+NALU_HYPRE_Int nalu_hypre_BinarySearch ( NALU_HYPRE_Int *list, NALU_HYPRE_Int value, NALU_HYPRE_Int list_length );
+NALU_HYPRE_Int nalu_hypre_BigBinarySearch ( NALU_HYPRE_BigInt *list, NALU_HYPRE_BigInt value, NALU_HYPRE_Int list_length );
+NALU_HYPRE_Int nalu_hypre_BinarySearch2 ( NALU_HYPRE_Int *list, NALU_HYPRE_Int value, NALU_HYPRE_Int low, NALU_HYPRE_Int high,
                                 NALU_HYPRE_Int *spot );
-NALU_HYPRE_Int *hypre_LowerBound( NALU_HYPRE_Int *first, NALU_HYPRE_Int *last, NALU_HYPRE_Int value );
-NALU_HYPRE_BigInt *hypre_BigLowerBound( NALU_HYPRE_BigInt *first, NALU_HYPRE_BigInt *last, NALU_HYPRE_BigInt value );
+NALU_HYPRE_Int *nalu_hypre_LowerBound( NALU_HYPRE_Int *first, NALU_HYPRE_Int *last, NALU_HYPRE_Int value );
+NALU_HYPRE_BigInt *nalu_hypre_BigLowerBound( NALU_HYPRE_BigInt *first, NALU_HYPRE_BigInt *last, NALU_HYPRE_BigInt value );
 
 /* log.c */
-NALU_HYPRE_Int hypre_Log2( NALU_HYPRE_Int p );
+NALU_HYPRE_Int nalu_hypre_Log2( NALU_HYPRE_Int p );
 
 /* complex.c */
 #ifdef NALU_HYPRE_COMPLEX
-NALU_HYPRE_Complex hypre_conj( NALU_HYPRE_Complex value );
-NALU_HYPRE_Real    hypre_cabs( NALU_HYPRE_Complex value );
-NALU_HYPRE_Real    hypre_creal( NALU_HYPRE_Complex value );
-NALU_HYPRE_Real    hypre_cimag( NALU_HYPRE_Complex value );
-NALU_HYPRE_Complex hypre_csqrt( NALU_HYPRE_Complex value );
+NALU_HYPRE_Complex nalu_hypre_conj( NALU_HYPRE_Complex value );
+NALU_HYPRE_Real    nalu_hypre_cabs( NALU_HYPRE_Complex value );
+NALU_HYPRE_Real    nalu_hypre_creal( NALU_HYPRE_Complex value );
+NALU_HYPRE_Real    nalu_hypre_cimag( NALU_HYPRE_Complex value );
+NALU_HYPRE_Complex nalu_hypre_csqrt( NALU_HYPRE_Complex value );
 #else
-#define hypre_conj(value)  value
-#define hypre_cabs(value)  fabs(value)
-#define hypre_creal(value) value
-#define hypre_cimag(value) 0.0
-#define hypre_csqrt(value) sqrt(value)
+#define nalu_hypre_conj(value)  value
+#define nalu_hypre_cabs(value)  fabs(value)
+#define nalu_hypre_creal(value) value
+#define nalu_hypre_cimag(value) 0.0
+#define nalu_hypre_csqrt(value) sqrt(value)
 #endif
 
 /* general.c */
-hypre_Handle* hypre_handle();
-hypre_Handle* hypre_HandleCreate();
-NALU_HYPRE_Int hypre_HandleDestroy(hypre_Handle *hypre_handle_);
-NALU_HYPRE_Int hypre_SetDevice(hypre_int device_id, hypre_Handle *hypre_handle_);
-NALU_HYPRE_Int hypre_GetDevice(hypre_int *device_id);
-NALU_HYPRE_Int hypre_GetDeviceCount(hypre_int *device_count);
-NALU_HYPRE_Int hypre_GetDeviceLastError();
-NALU_HYPRE_Int hypre_UmpireInit(hypre_Handle *hypre_handle_);
-NALU_HYPRE_Int hypre_UmpireFinalize(hypre_Handle *hypre_handle_);
+nalu_hypre_Handle* nalu_hypre_handle();
+nalu_hypre_Handle* nalu_hypre_HandleCreate();
+NALU_HYPRE_Int nalu_hypre_HandleDestroy(nalu_hypre_Handle *nalu_hypre_handle_);
+NALU_HYPRE_Int nalu_hypre_SetDevice(nalu_hypre_int device_id, nalu_hypre_Handle *nalu_hypre_handle_);
+NALU_HYPRE_Int nalu_hypre_GetDevice(nalu_hypre_int *device_id);
+NALU_HYPRE_Int nalu_hypre_GetDeviceCount(nalu_hypre_int *device_count);
+NALU_HYPRE_Int nalu_hypre_GetDeviceLastError();
+NALU_HYPRE_Int nalu_hypre_UmpireInit(nalu_hypre_Handle *nalu_hypre_handle_);
+NALU_HYPRE_Int nalu_hypre_UmpireFinalize(nalu_hypre_Handle *nalu_hypre_handle_);
 
 /* qsort.c */
-void hypre_swap ( NALU_HYPRE_Int *v, NALU_HYPRE_Int i, NALU_HYPRE_Int j );
-void hypre_swap_c ( NALU_HYPRE_Complex *v, NALU_HYPRE_Int i, NALU_HYPRE_Int j );
-void hypre_swap2 ( NALU_HYPRE_Int *v, NALU_HYPRE_Real *w, NALU_HYPRE_Int i, NALU_HYPRE_Int j );
-void hypre_BigSwap2 ( NALU_HYPRE_BigInt *v, NALU_HYPRE_Real *w, NALU_HYPRE_Int i, NALU_HYPRE_Int j );
-void hypre_swap2i ( NALU_HYPRE_Int *v, NALU_HYPRE_Int *w, NALU_HYPRE_Int i, NALU_HYPRE_Int j );
-void hypre_BigSwap2i ( NALU_HYPRE_BigInt *v, NALU_HYPRE_Int *w, NALU_HYPRE_Int i, NALU_HYPRE_Int j );
-void hypre_swap3i ( NALU_HYPRE_Int *v, NALU_HYPRE_Int *w, NALU_HYPRE_Int *z, NALU_HYPRE_Int i, NALU_HYPRE_Int j );
-void hypre_swap3_d ( NALU_HYPRE_Real *v, NALU_HYPRE_Int *w, NALU_HYPRE_Int *z, NALU_HYPRE_Int i, NALU_HYPRE_Int j );
-void hypre_swap3_d_perm(NALU_HYPRE_Int  *v, NALU_HYPRE_Real  *w, NALU_HYPRE_Int  *z, NALU_HYPRE_Int  i, NALU_HYPRE_Int  j );
-void hypre_BigSwap4_d ( NALU_HYPRE_Real *v, NALU_HYPRE_BigInt *w, NALU_HYPRE_Int *z, NALU_HYPRE_Int *y, NALU_HYPRE_Int i,
+void nalu_hypre_swap ( NALU_HYPRE_Int *v, NALU_HYPRE_Int i, NALU_HYPRE_Int j );
+void nalu_hypre_swap_c ( NALU_HYPRE_Complex *v, NALU_HYPRE_Int i, NALU_HYPRE_Int j );
+void nalu_hypre_swap2 ( NALU_HYPRE_Int *v, NALU_HYPRE_Real *w, NALU_HYPRE_Int i, NALU_HYPRE_Int j );
+void nalu_hypre_BigSwap2 ( NALU_HYPRE_BigInt *v, NALU_HYPRE_Real *w, NALU_HYPRE_Int i, NALU_HYPRE_Int j );
+void nalu_hypre_swap2i ( NALU_HYPRE_Int *v, NALU_HYPRE_Int *w, NALU_HYPRE_Int i, NALU_HYPRE_Int j );
+void nalu_hypre_BigSwap2i ( NALU_HYPRE_BigInt *v, NALU_HYPRE_Int *w, NALU_HYPRE_Int i, NALU_HYPRE_Int j );
+void nalu_hypre_swap3i ( NALU_HYPRE_Int *v, NALU_HYPRE_Int *w, NALU_HYPRE_Int *z, NALU_HYPRE_Int i, NALU_HYPRE_Int j );
+void nalu_hypre_swap3_d ( NALU_HYPRE_Real *v, NALU_HYPRE_Int *w, NALU_HYPRE_Int *z, NALU_HYPRE_Int i, NALU_HYPRE_Int j );
+void nalu_hypre_swap3_d_perm(NALU_HYPRE_Int  *v, NALU_HYPRE_Real  *w, NALU_HYPRE_Int  *z, NALU_HYPRE_Int  i, NALU_HYPRE_Int  j );
+void nalu_hypre_BigSwap4_d ( NALU_HYPRE_Real *v, NALU_HYPRE_BigInt *w, NALU_HYPRE_Int *z, NALU_HYPRE_Int *y, NALU_HYPRE_Int i,
                         NALU_HYPRE_Int j );
-void hypre_swap_d ( NALU_HYPRE_Real *v, NALU_HYPRE_Int i, NALU_HYPRE_Int j );
-void hypre_qsort0 ( NALU_HYPRE_Int *v, NALU_HYPRE_Int left, NALU_HYPRE_Int right );
-void hypre_qsort1 ( NALU_HYPRE_Int *v, NALU_HYPRE_Real *w, NALU_HYPRE_Int left, NALU_HYPRE_Int right );
-void hypre_BigQsort1 ( NALU_HYPRE_BigInt *v, NALU_HYPRE_Real *w, NALU_HYPRE_Int left, NALU_HYPRE_Int right );
-void hypre_qsort2i ( NALU_HYPRE_Int *v, NALU_HYPRE_Int *w, NALU_HYPRE_Int left, NALU_HYPRE_Int right );
-void hypre_BigQsort2i( NALU_HYPRE_BigInt *v, NALU_HYPRE_Int *w, NALU_HYPRE_Int  left, NALU_HYPRE_Int  right );
-void hypre_qsort2 ( NALU_HYPRE_Int *v, NALU_HYPRE_Real *w, NALU_HYPRE_Int left, NALU_HYPRE_Int right );
-void hypre_qsort2_abs ( NALU_HYPRE_Int *v, NALU_HYPRE_Real *w, NALU_HYPRE_Int left, NALU_HYPRE_Int right );
-void hypre_qsort3i ( NALU_HYPRE_Int *v, NALU_HYPRE_Int *w, NALU_HYPRE_Int *z, NALU_HYPRE_Int left, NALU_HYPRE_Int right );
-void hypre_qsort3ir ( NALU_HYPRE_Int *v, NALU_HYPRE_Real *w, NALU_HYPRE_Int *z, NALU_HYPRE_Int left, NALU_HYPRE_Int right );
-void hypre_qsort3( NALU_HYPRE_Real *v, NALU_HYPRE_Int *w, NALU_HYPRE_Int *z, NALU_HYPRE_Int  left, NALU_HYPRE_Int  right );
-void hypre_qsort3_abs ( NALU_HYPRE_Real *v, NALU_HYPRE_Int *w, NALU_HYPRE_Int *z, NALU_HYPRE_Int left,
+void nalu_hypre_swap_d ( NALU_HYPRE_Real *v, NALU_HYPRE_Int i, NALU_HYPRE_Int j );
+void nalu_hypre_qsort0 ( NALU_HYPRE_Int *v, NALU_HYPRE_Int left, NALU_HYPRE_Int right );
+void nalu_hypre_qsort1 ( NALU_HYPRE_Int *v, NALU_HYPRE_Real *w, NALU_HYPRE_Int left, NALU_HYPRE_Int right );
+void nalu_hypre_BigQsort1 ( NALU_HYPRE_BigInt *v, NALU_HYPRE_Real *w, NALU_HYPRE_Int left, NALU_HYPRE_Int right );
+void nalu_hypre_qsort2i ( NALU_HYPRE_Int *v, NALU_HYPRE_Int *w, NALU_HYPRE_Int left, NALU_HYPRE_Int right );
+void nalu_hypre_BigQsort2i( NALU_HYPRE_BigInt *v, NALU_HYPRE_Int *w, NALU_HYPRE_Int  left, NALU_HYPRE_Int  right );
+void nalu_hypre_qsort2 ( NALU_HYPRE_Int *v, NALU_HYPRE_Real *w, NALU_HYPRE_Int left, NALU_HYPRE_Int right );
+void nalu_hypre_qsort2_abs ( NALU_HYPRE_Int *v, NALU_HYPRE_Real *w, NALU_HYPRE_Int left, NALU_HYPRE_Int right );
+void nalu_hypre_qsort3i ( NALU_HYPRE_Int *v, NALU_HYPRE_Int *w, NALU_HYPRE_Int *z, NALU_HYPRE_Int left, NALU_HYPRE_Int right );
+void nalu_hypre_qsort3ir ( NALU_HYPRE_Int *v, NALU_HYPRE_Real *w, NALU_HYPRE_Int *z, NALU_HYPRE_Int left, NALU_HYPRE_Int right );
+void nalu_hypre_qsort3( NALU_HYPRE_Real *v, NALU_HYPRE_Int *w, NALU_HYPRE_Int *z, NALU_HYPRE_Int  left, NALU_HYPRE_Int  right );
+void nalu_hypre_qsort3_abs ( NALU_HYPRE_Real *v, NALU_HYPRE_Int *w, NALU_HYPRE_Int *z, NALU_HYPRE_Int left,
                         NALU_HYPRE_Int right );
-void hypre_BigQsort4_abs ( NALU_HYPRE_Real *v, NALU_HYPRE_BigInt *w, NALU_HYPRE_Int *z, NALU_HYPRE_Int *y,
+void nalu_hypre_BigQsort4_abs ( NALU_HYPRE_Real *v, NALU_HYPRE_BigInt *w, NALU_HYPRE_Int *z, NALU_HYPRE_Int *y,
                            NALU_HYPRE_Int left, NALU_HYPRE_Int right );
-void hypre_qsort_abs ( NALU_HYPRE_Real *w, NALU_HYPRE_Int left, NALU_HYPRE_Int right );
-void hypre_BigSwapbi(NALU_HYPRE_BigInt  *v, NALU_HYPRE_Int  *w, NALU_HYPRE_Int  i, NALU_HYPRE_Int  j );
-void hypre_BigQsortbi( NALU_HYPRE_BigInt *v, NALU_HYPRE_Int *w, NALU_HYPRE_Int  left, NALU_HYPRE_Int  right );
-void hypre_BigSwapLoc(NALU_HYPRE_BigInt  *v, NALU_HYPRE_Int  *w, NALU_HYPRE_Int  i, NALU_HYPRE_Int  j );
-void hypre_BigQsortbLoc( NALU_HYPRE_BigInt *v, NALU_HYPRE_Int *w, NALU_HYPRE_Int  left, NALU_HYPRE_Int  right );
-void hypre_BigSwapb2i(NALU_HYPRE_BigInt  *v, NALU_HYPRE_Int  *w, NALU_HYPRE_Int  *z, NALU_HYPRE_Int  i, NALU_HYPRE_Int  j );
-void hypre_BigQsortb2i( NALU_HYPRE_BigInt *v, NALU_HYPRE_Int *w, NALU_HYPRE_Int *z, NALU_HYPRE_Int  left,
+void nalu_hypre_qsort_abs ( NALU_HYPRE_Real *w, NALU_HYPRE_Int left, NALU_HYPRE_Int right );
+void nalu_hypre_BigSwapbi(NALU_HYPRE_BigInt  *v, NALU_HYPRE_Int  *w, NALU_HYPRE_Int  i, NALU_HYPRE_Int  j );
+void nalu_hypre_BigQsortbi( NALU_HYPRE_BigInt *v, NALU_HYPRE_Int *w, NALU_HYPRE_Int  left, NALU_HYPRE_Int  right );
+void nalu_hypre_BigSwapLoc(NALU_HYPRE_BigInt  *v, NALU_HYPRE_Int  *w, NALU_HYPRE_Int  i, NALU_HYPRE_Int  j );
+void nalu_hypre_BigQsortbLoc( NALU_HYPRE_BigInt *v, NALU_HYPRE_Int *w, NALU_HYPRE_Int  left, NALU_HYPRE_Int  right );
+void nalu_hypre_BigSwapb2i(NALU_HYPRE_BigInt  *v, NALU_HYPRE_Int  *w, NALU_HYPRE_Int  *z, NALU_HYPRE_Int  i, NALU_HYPRE_Int  j );
+void nalu_hypre_BigQsortb2i( NALU_HYPRE_BigInt *v, NALU_HYPRE_Int *w, NALU_HYPRE_Int *z, NALU_HYPRE_Int  left,
                         NALU_HYPRE_Int  right );
-void hypre_BigSwap( NALU_HYPRE_BigInt *v, NALU_HYPRE_Int  i, NALU_HYPRE_Int  j );
-void hypre_BigQsort0( NALU_HYPRE_BigInt *v, NALU_HYPRE_Int  left, NALU_HYPRE_Int  right );
-void hypre_topo_sort(const NALU_HYPRE_Int *row_ptr, const NALU_HYPRE_Int *col_inds, const NALU_HYPRE_Complex *data,
+void nalu_hypre_BigSwap( NALU_HYPRE_BigInt *v, NALU_HYPRE_Int  i, NALU_HYPRE_Int  j );
+void nalu_hypre_BigQsort0( NALU_HYPRE_BigInt *v, NALU_HYPRE_Int  left, NALU_HYPRE_Int  right );
+void nalu_hypre_topo_sort(const NALU_HYPRE_Int *row_ptr, const NALU_HYPRE_Int *col_inds, const NALU_HYPRE_Complex *data,
                      NALU_HYPRE_Int *ordering, NALU_HYPRE_Int n);
-void hypre_dense_topo_sort(const NALU_HYPRE_Complex *L, NALU_HYPRE_Int *ordering, NALU_HYPRE_Int n,
+void nalu_hypre_dense_topo_sort(const NALU_HYPRE_Complex *L, NALU_HYPRE_Int *ordering, NALU_HYPRE_Int n,
                            NALU_HYPRE_Int is_col_major);
 
 /* qsplit.c */
-NALU_HYPRE_Int hypre_DoubleQuickSplit ( NALU_HYPRE_Real *values, NALU_HYPRE_Int *indices, NALU_HYPRE_Int list_length,
+NALU_HYPRE_Int nalu_hypre_DoubleQuickSplit ( NALU_HYPRE_Real *values, NALU_HYPRE_Int *indices, NALU_HYPRE_Int list_length,
                                    NALU_HYPRE_Int NumberKept );
 
 /* random.c */
-/* NALU_HYPRE_CUDA_GLOBAL */ void hypre_SeedRand ( NALU_HYPRE_Int seed );
-/* NALU_HYPRE_CUDA_GLOBAL */ NALU_HYPRE_Int hypre_RandI ( void );
-/* NALU_HYPRE_CUDA_GLOBAL */ NALU_HYPRE_Real hypre_Rand ( void );
+/* NALU_HYPRE_CUDA_GLOBAL */ void nalu_hypre_SeedRand ( NALU_HYPRE_Int seed );
+/* NALU_HYPRE_CUDA_GLOBAL */ NALU_HYPRE_Int nalu_hypre_RandI ( void );
+/* NALU_HYPRE_CUDA_GLOBAL */ NALU_HYPRE_Real nalu_hypre_Rand ( void );
 
 /* prefix_sum.c */
 /**
@@ -113,7 +113,7 @@ NALU_HYPRE_Int hypre_DoubleQuickSplit ( NALU_HYPRE_Real *values, NALU_HYPRE_Int 
  *                  workspace[tid] will contain result for tid
  *                  workspace[nthreads] will contain sum
  */
-void hypre_prefix_sum(NALU_HYPRE_Int *in_out, NALU_HYPRE_Int *sum, NALU_HYPRE_Int *workspace);
+void nalu_hypre_prefix_sum(NALU_HYPRE_Int *in_out, NALU_HYPRE_Int *sum, NALU_HYPRE_Int *workspace);
 /**
  * This version does prefix sum in pair.
  * Useful when we prefix sum of diag and offd in tandem.
@@ -122,13 +122,13 @@ void hypre_prefix_sum(NALU_HYPRE_Int *in_out, NALU_HYPRE_Int *sum, NALU_HYPRE_In
  *                  workspace[2*tid] and workspace[2*tid+1] will contain results for tid
  *                  workspace[3*nthreads] and workspace[3*nthreads + 1] will contain sums
  */
-void hypre_prefix_sum_pair(NALU_HYPRE_Int *in_out1, NALU_HYPRE_Int *sum1, NALU_HYPRE_Int *in_out2, NALU_HYPRE_Int *sum2,
+void nalu_hypre_prefix_sum_pair(NALU_HYPRE_Int *in_out1, NALU_HYPRE_Int *sum1, NALU_HYPRE_Int *in_out2, NALU_HYPRE_Int *sum2,
                            NALU_HYPRE_Int *workspace);
 /**
  * @param workspace at least with length 3*(nthreads+1)
  *                  workspace[3*tid:3*tid+3) will contain results for tid
  */
-void hypre_prefix_sum_triple(NALU_HYPRE_Int *in_out1, NALU_HYPRE_Int *sum1, NALU_HYPRE_Int *in_out2,
+void nalu_hypre_prefix_sum_triple(NALU_HYPRE_Int *in_out1, NALU_HYPRE_Int *sum1, NALU_HYPRE_Int *in_out2,
                              NALU_HYPRE_Int *sum2, NALU_HYPRE_Int *in_out3, NALU_HYPRE_Int *sum3, NALU_HYPRE_Int *workspace);
 
 /**
@@ -138,7 +138,7 @@ void hypre_prefix_sum_triple(NALU_HYPRE_Int *in_out1, NALU_HYPRE_Int *sum1, NALU
  *
  * @param workspace at least with length n*(nthreads+1)
  */
-void hypre_prefix_sum_multiple(NALU_HYPRE_Int *in_out, NALU_HYPRE_Int *sum, NALU_HYPRE_Int n,
+void nalu_hypre_prefix_sum_multiple(NALU_HYPRE_Int *in_out, NALU_HYPRE_Int *sum, NALU_HYPRE_Int n,
                                NALU_HYPRE_Int *workspace);
 
 /* hopscotch_hash.c */
@@ -170,7 +170,7 @@ typedef struct
 {
    NALU_HYPRE_Int volatile timestamp;
    omp_lock_t         lock;
-} hypre_HopscotchSegment;
+} nalu_hypre_HopscotchSegment;
 #endif
 
 /**
@@ -188,40 +188,40 @@ typedef struct
    NALU_HYPRE_Int  volatile              segmentMask;
    NALU_HYPRE_Int  volatile              bucketMask;
 #ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
-   hypre_HopscotchSegment* volatile segments;
+   nalu_hypre_HopscotchSegment* volatile segments;
 #endif
    NALU_HYPRE_Int *volatile              key;
-   hypre_uint *volatile             hopInfo;
+   nalu_hypre_uint *volatile             hopInfo;
    NALU_HYPRE_Int *volatile              hash;
-} hypre_UnorderedIntSet;
+} nalu_hypre_UnorderedIntSet;
 
 typedef struct
 {
    NALU_HYPRE_Int volatile            segmentMask;
    NALU_HYPRE_Int volatile            bucketMask;
 #ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
-   hypre_HopscotchSegment* volatile segments;
+   nalu_hypre_HopscotchSegment* volatile segments;
 #endif
    NALU_HYPRE_BigInt *volatile           key;
-   hypre_uint *volatile             hopInfo;
+   nalu_hypre_uint *volatile             hopInfo;
    NALU_HYPRE_BigInt *volatile           hash;
-} hypre_UnorderedBigIntSet;
+} nalu_hypre_UnorderedBigIntSet;
 
 typedef struct
 {
-   hypre_uint volatile hopInfo;
+   nalu_hypre_uint volatile hopInfo;
    NALU_HYPRE_Int  volatile hash;
    NALU_HYPRE_Int  volatile key;
    NALU_HYPRE_Int  volatile data;
-} hypre_HopscotchBucket;
+} nalu_hypre_HopscotchBucket;
 
 typedef struct
 {
-   hypre_uint volatile hopInfo;
+   nalu_hypre_uint volatile hopInfo;
    NALU_HYPRE_BigInt  volatile hash;
    NALU_HYPRE_BigInt  volatile key;
    NALU_HYPRE_Int  volatile data;
-} hypre_BigHopscotchBucket;
+} nalu_hypre_BigHopscotchBucket;
 
 /**
  * The current typical use case of unoredered map is putting input sequence
@@ -234,20 +234,20 @@ typedef struct
    NALU_HYPRE_Int  volatile              segmentMask;
    NALU_HYPRE_Int  volatile              bucketMask;
 #ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
-   hypre_HopscotchSegment* volatile segments;
+   nalu_hypre_HopscotchSegment* volatile segments;
 #endif
-   hypre_HopscotchBucket* volatile table;
-} hypre_UnorderedIntMap;
+   nalu_hypre_HopscotchBucket* volatile table;
+} nalu_hypre_UnorderedIntMap;
 
 typedef struct
 {
    NALU_HYPRE_Int  volatile segmentMask;
    NALU_HYPRE_Int  volatile bucketMask;
 #ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
-   hypre_HopscotchSegment* volatile segments;
+   nalu_hypre_HopscotchSegment* volatile segments;
 #endif
-   hypre_BigHopscotchBucket* volatile table;
-} hypre_UnorderedBigIntMap;
+   nalu_hypre_BigHopscotchBucket* volatile table;
+} nalu_hypre_UnorderedBigIntMap;
 
 /* merge_sort.c */
 /**
@@ -255,23 +255,23 @@ typedef struct
  * 1) Merge sort can take advantage of eliminating duplicates.
  * 2) Merge sort is more efficiently parallelizable than qsort
  */
-NALU_HYPRE_Int hypre_IntArrayMergeOrdered( hypre_IntArray *array1, hypre_IntArray *array2,
-                                      hypre_IntArray *array3 );
-void hypre_union2(NALU_HYPRE_Int n1, NALU_HYPRE_BigInt *arr1, NALU_HYPRE_Int n2, NALU_HYPRE_BigInt *arr2, NALU_HYPRE_Int *n3,
+NALU_HYPRE_Int nalu_hypre_IntArrayMergeOrdered( nalu_hypre_IntArray *array1, nalu_hypre_IntArray *array2,
+                                      nalu_hypre_IntArray *array3 );
+void nalu_hypre_union2(NALU_HYPRE_Int n1, NALU_HYPRE_BigInt *arr1, NALU_HYPRE_Int n2, NALU_HYPRE_BigInt *arr2, NALU_HYPRE_Int *n3,
                   NALU_HYPRE_BigInt *arr3, NALU_HYPRE_Int *map1, NALU_HYPRE_Int *map2);
-void hypre_merge_sort(NALU_HYPRE_Int *in, NALU_HYPRE_Int *temp, NALU_HYPRE_Int len, NALU_HYPRE_Int **sorted);
-void hypre_big_merge_sort(NALU_HYPRE_BigInt *in, NALU_HYPRE_BigInt *temp, NALU_HYPRE_Int len,
+void nalu_hypre_merge_sort(NALU_HYPRE_Int *in, NALU_HYPRE_Int *temp, NALU_HYPRE_Int len, NALU_HYPRE_Int **sorted);
+void nalu_hypre_big_merge_sort(NALU_HYPRE_BigInt *in, NALU_HYPRE_BigInt *temp, NALU_HYPRE_Int len,
                           NALU_HYPRE_BigInt **sorted);
-void hypre_sort_and_create_inverse_map(NALU_HYPRE_Int *in, NALU_HYPRE_Int len, NALU_HYPRE_Int **out,
-                                       hypre_UnorderedIntMap *inverse_map);
-void hypre_big_sort_and_create_inverse_map(NALU_HYPRE_BigInt *in, NALU_HYPRE_Int len, NALU_HYPRE_BigInt **out,
-                                           hypre_UnorderedBigIntMap *inverse_map);
+void nalu_hypre_sort_and_create_inverse_map(NALU_HYPRE_Int *in, NALU_HYPRE_Int len, NALU_HYPRE_Int **out,
+                                       nalu_hypre_UnorderedIntMap *inverse_map);
+void nalu_hypre_big_sort_and_create_inverse_map(NALU_HYPRE_BigInt *in, NALU_HYPRE_Int len, NALU_HYPRE_BigInt **out,
+                                           nalu_hypre_UnorderedBigIntMap *inverse_map);
 
 /* device_utils.c */
 #if defined(NALU_HYPRE_USING_GPU)
-NALU_HYPRE_Int hypre_SyncComputeStream(hypre_Handle *hypre_handle);
-NALU_HYPRE_Int hypre_SyncCudaDevice(hypre_Handle *hypre_handle);
-NALU_HYPRE_Int hypre_ResetCudaDevice(hypre_Handle *hypre_handle);
+NALU_HYPRE_Int nalu_hypre_SyncComputeStream(nalu_hypre_Handle *nalu_hypre_handle);
+NALU_HYPRE_Int nalu_hypre_SyncCudaDevice(nalu_hypre_Handle *nalu_hypre_handle);
+NALU_HYPRE_Int nalu_hypre_ResetCudaDevice(nalu_hypre_Handle *nalu_hypre_handle);
 NALU_HYPRE_Int hypreDevice_DiagScaleVector(NALU_HYPRE_Int num_vectors, NALU_HYPRE_Int num_rows,
                                       NALU_HYPRE_Int *A_i, NALU_HYPRE_Complex *A_data,
                                       NALU_HYPRE_Complex *x, NALU_HYPRE_Complex beta,
@@ -325,80 +325,80 @@ NALU_HYPRE_Int hypreDevice_IntegerInclusiveScan(NALU_HYPRE_Int n, NALU_HYPRE_Int
 
 NALU_HYPRE_Int hypreDevice_IntegerExclusiveScan(NALU_HYPRE_Int n, NALU_HYPRE_Int *d_i);
 
-NALU_HYPRE_Int hypre_CudaCompileFlagCheck();
+NALU_HYPRE_Int nalu_hypre_CudaCompileFlagCheck();
 
 NALU_HYPRE_Int hypreDevice_zeqxmydd(NALU_HYPRE_Int n, NALU_HYPRE_Complex *x, NALU_HYPRE_Complex alpha, NALU_HYPRE_Complex *y,
                                NALU_HYPRE_Complex *z, NALU_HYPRE_Complex *d);
 
 #endif
 
-NALU_HYPRE_Int hypre_CurandUniform( NALU_HYPRE_Int n, NALU_HYPRE_Real *urand, NALU_HYPRE_Int set_seed,
-                               hypre_ulonglongint seed, NALU_HYPRE_Int set_offset, hypre_ulonglongint offset);
-NALU_HYPRE_Int hypre_CurandUniformSingle( NALU_HYPRE_Int n, float *urand, NALU_HYPRE_Int set_seed,
-                                     hypre_ulonglongint seed, NALU_HYPRE_Int set_offset, hypre_ulonglongint offset);
+NALU_HYPRE_Int nalu_hypre_CurandUniform( NALU_HYPRE_Int n, NALU_HYPRE_Real *urand, NALU_HYPRE_Int set_seed,
+                               nalu_hypre_ulonglongint seed, NALU_HYPRE_Int set_offset, nalu_hypre_ulonglongint offset);
+NALU_HYPRE_Int nalu_hypre_CurandUniformSingle( NALU_HYPRE_Int n, float *urand, NALU_HYPRE_Int set_seed,
+                                     nalu_hypre_ulonglongint seed, NALU_HYPRE_Int set_offset, nalu_hypre_ulonglongint offset);
 
-NALU_HYPRE_Int hypre_ResetDeviceRandGenerator( hypre_ulonglongint seed, hypre_ulonglongint offset );
+NALU_HYPRE_Int nalu_hypre_ResetDeviceRandGenerator( nalu_hypre_ulonglongint seed, nalu_hypre_ulonglongint offset );
 
-NALU_HYPRE_Int hypre_bind_device(NALU_HYPRE_Int myid, NALU_HYPRE_Int nproc, MPI_Comm comm);
+NALU_HYPRE_Int nalu_hypre_bind_device(NALU_HYPRE_Int myid, NALU_HYPRE_Int nproc, MPI_Comm comm);
 
 /* nvtx.c */
-void hypre_GpuProfilingPushRangeColor(const char *name, NALU_HYPRE_Int cid);
-void hypre_GpuProfilingPushRange(const char *name);
-void hypre_GpuProfilingPopRange();
+void nalu_hypre_GpuProfilingPushRangeColor(const char *name, NALU_HYPRE_Int cid);
+void nalu_hypre_GpuProfilingPushRange(const char *name);
+void nalu_hypre_GpuProfilingPopRange();
 
 /* utilities.c */
-NALU_HYPRE_Int hypre_multmod(NALU_HYPRE_Int a, NALU_HYPRE_Int b, NALU_HYPRE_Int mod);
-void hypre_partition1D(NALU_HYPRE_Int n, NALU_HYPRE_Int p, NALU_HYPRE_Int j, NALU_HYPRE_Int *s, NALU_HYPRE_Int *e);
-char *hypre_strcpy(char *destination, const char *source);
+NALU_HYPRE_Int nalu_hypre_multmod(NALU_HYPRE_Int a, NALU_HYPRE_Int b, NALU_HYPRE_Int mod);
+void nalu_hypre_partition1D(NALU_HYPRE_Int n, NALU_HYPRE_Int p, NALU_HYPRE_Int j, NALU_HYPRE_Int *s, NALU_HYPRE_Int *e);
+char *nalu_hypre_strcpy(char *destination, const char *source);
 
-NALU_HYPRE_Int hypre_SetSyncCudaCompute(NALU_HYPRE_Int action);
-NALU_HYPRE_Int hypre_RestoreSyncCudaCompute();
-NALU_HYPRE_Int hypre_GetSyncCudaCompute(NALU_HYPRE_Int *cuda_compute_stream_sync_ptr);
-NALU_HYPRE_Int hypre_SyncComputeStream(hypre_Handle *hypre_handle);
-NALU_HYPRE_Int hypre_ForceSyncComputeStream(hypre_Handle *hypre_handle);
+NALU_HYPRE_Int nalu_hypre_SetSyncCudaCompute(NALU_HYPRE_Int action);
+NALU_HYPRE_Int nalu_hypre_RestoreSyncCudaCompute();
+NALU_HYPRE_Int nalu_hypre_GetSyncCudaCompute(NALU_HYPRE_Int *cuda_compute_stream_sync_ptr);
+NALU_HYPRE_Int nalu_hypre_SyncComputeStream(nalu_hypre_Handle *nalu_hypre_handle);
+NALU_HYPRE_Int nalu_hypre_ForceSyncComputeStream(nalu_hypre_Handle *nalu_hypre_handle);
 
 /* handle.c */
-NALU_HYPRE_Int hypre_SetSpTransUseVendor( NALU_HYPRE_Int use_vendor );
-NALU_HYPRE_Int hypre_SetSpMVUseVendor( NALU_HYPRE_Int use_vendor );
-NALU_HYPRE_Int hypre_SetSpGemmUseVendor( NALU_HYPRE_Int use_vendor );
-NALU_HYPRE_Int hypre_SetSpGemmAlgorithm( NALU_HYPRE_Int value );
-NALU_HYPRE_Int hypre_SetSpGemmBinned( NALU_HYPRE_Int value );
-NALU_HYPRE_Int hypre_SetSpGemmRownnzEstimateMethod( NALU_HYPRE_Int value );
-NALU_HYPRE_Int hypre_SetSpGemmRownnzEstimateNSamples( NALU_HYPRE_Int value );
-NALU_HYPRE_Int hypre_SetSpGemmRownnzEstimateMultFactor( NALU_HYPRE_Real value );
-NALU_HYPRE_Int hypre_SetSpGemmHashType( char value );
-NALU_HYPRE_Int hypre_SetUseGpuRand( NALU_HYPRE_Int use_gpurand );
-NALU_HYPRE_Int hypre_SetGaussSeidelMethod( NALU_HYPRE_Int gs_method );
-NALU_HYPRE_Int hypre_SetUserDeviceMalloc(GPUMallocFunc func);
-NALU_HYPRE_Int hypre_SetUserDeviceMfree(GPUMfreeFunc func);
+NALU_HYPRE_Int nalu_hypre_SetSpTransUseVendor( NALU_HYPRE_Int use_vendor );
+NALU_HYPRE_Int nalu_hypre_SetSpMVUseVendor( NALU_HYPRE_Int use_vendor );
+NALU_HYPRE_Int nalu_hypre_SetSpGemmUseVendor( NALU_HYPRE_Int use_vendor );
+NALU_HYPRE_Int nalu_hypre_SetSpGemmAlgorithm( NALU_HYPRE_Int value );
+NALU_HYPRE_Int nalu_hypre_SetSpGemmBinned( NALU_HYPRE_Int value );
+NALU_HYPRE_Int nalu_hypre_SetSpGemmRownnzEstimateMethod( NALU_HYPRE_Int value );
+NALU_HYPRE_Int nalu_hypre_SetSpGemmRownnzEstimateNSamples( NALU_HYPRE_Int value );
+NALU_HYPRE_Int nalu_hypre_SetSpGemmRownnzEstimateMultFactor( NALU_HYPRE_Real value );
+NALU_HYPRE_Int nalu_hypre_SetSpGemmHashType( char value );
+NALU_HYPRE_Int nalu_hypre_SetUseGpuRand( NALU_HYPRE_Int use_gpurand );
+NALU_HYPRE_Int nalu_hypre_SetGaussSeidelMethod( NALU_HYPRE_Int gs_method );
+NALU_HYPRE_Int nalu_hypre_SetUserDeviceMalloc(GPUMallocFunc func);
+NALU_HYPRE_Int nalu_hypre_SetUserDeviceMfree(GPUMfreeFunc func);
 
 /* int_array.c */
-hypre_IntArray* hypre_IntArrayCreate( NALU_HYPRE_Int size );
-NALU_HYPRE_Int hypre_IntArrayDestroy( hypre_IntArray *array );
-NALU_HYPRE_Int hypre_IntArrayInitialize_v2( hypre_IntArray *array,
+nalu_hypre_IntArray* nalu_hypre_IntArrayCreate( NALU_HYPRE_Int size );
+NALU_HYPRE_Int nalu_hypre_IntArrayDestroy( nalu_hypre_IntArray *array );
+NALU_HYPRE_Int nalu_hypre_IntArrayInitialize_v2( nalu_hypre_IntArray *array,
                                        NALU_HYPRE_MemoryLocation memory_location );
-NALU_HYPRE_Int hypre_IntArrayInitialize( hypre_IntArray *array );
-NALU_HYPRE_Int hypre_IntArrayCopy( hypre_IntArray *x, hypre_IntArray *y );
-hypre_IntArray* hypre_IntArrayCloneDeep_v2( hypre_IntArray *x,
+NALU_HYPRE_Int nalu_hypre_IntArrayInitialize( nalu_hypre_IntArray *array );
+NALU_HYPRE_Int nalu_hypre_IntArrayCopy( nalu_hypre_IntArray *x, nalu_hypre_IntArray *y );
+nalu_hypre_IntArray* nalu_hypre_IntArrayCloneDeep_v2( nalu_hypre_IntArray *x,
                                             NALU_HYPRE_MemoryLocation memory_location );
-hypre_IntArray* hypre_IntArrayCloneDeep( hypre_IntArray *x );
-NALU_HYPRE_Int hypre_IntArraySetConstantValues( hypre_IntArray *v, NALU_HYPRE_Int value );
+nalu_hypre_IntArray* nalu_hypre_IntArrayCloneDeep( nalu_hypre_IntArray *x );
+NALU_HYPRE_Int nalu_hypre_IntArraySetConstantValues( nalu_hypre_IntArray *v, NALU_HYPRE_Int value );
 
 /* memory_tracker.c */
 #ifdef NALU_HYPRE_USING_MEMORY_TRACKER
-hypre_MemoryTracker* hypre_memory_tracker();
-hypre_MemoryTracker * hypre_MemoryTrackerCreate();
-void hypre_MemoryTrackerDestroy(hypre_MemoryTracker *tracker);
-void hypre_MemoryTrackerInsert1(const char *action, void *ptr, size_t nbytes,
-                                hypre_MemoryLocation memory_location, const char *filename,
+nalu_hypre_MemoryTracker* nalu_hypre_memory_tracker();
+nalu_hypre_MemoryTracker * nalu_hypre_MemoryTrackerCreate();
+void nalu_hypre_MemoryTrackerDestroy(nalu_hypre_MemoryTracker *tracker);
+void nalu_hypre_MemoryTrackerInsert1(const char *action, void *ptr, size_t nbytes,
+                                nalu_hypre_MemoryLocation memory_location, const char *filename,
                                 const char *function, NALU_HYPRE_Int line);
-void hypre_MemoryTrackerInsert2(const char *action, void *ptr, void *ptr2, size_t nbytes,
-                                hypre_MemoryLocation memory_location, hypre_MemoryLocation memory_location2,
+void nalu_hypre_MemoryTrackerInsert2(const char *action, void *ptr, void *ptr2, size_t nbytes,
+                                nalu_hypre_MemoryLocation memory_location, nalu_hypre_MemoryLocation memory_location2,
                                 const char *filename,
                                 const char *function, NALU_HYPRE_Int line);
-NALU_HYPRE_Int hypre_PrintMemoryTracker( size_t *totl_bytes_o, size_t *peak_bytes_o,
+NALU_HYPRE_Int nalu_hypre_PrintMemoryTracker( size_t *totl_bytes_o, size_t *peak_bytes_o,
                                     size_t *curr_bytes_o, NALU_HYPRE_Int do_print, const char *fname );
-NALU_HYPRE_Int hypre_MemoryTrackerSetPrint(NALU_HYPRE_Int do_print);
-NALU_HYPRE_Int hypre_MemoryTrackerSetFileName(const char *file_name);
+NALU_HYPRE_Int nalu_hypre_MemoryTrackerSetPrint(NALU_HYPRE_Int do_print);
+NALU_HYPRE_Int nalu_hypre_MemoryTrackerSetFileName(const char *file_name);
 #endif
 

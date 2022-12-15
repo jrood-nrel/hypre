@@ -5,8 +5,8 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_struct_ls.h"
-#include "_hypre_struct_mv.hpp"
+#include "_nalu_hypre_struct_ls.h"
+#include "_nalu_hypre_struct_mv.hpp"
 
 /*==========================================================================*/
 
@@ -16,23 +16,23 @@ NALU_HYPRE_StructPCGCreate( MPI_Comm comm, NALU_HYPRE_StructSolver *solver )
    /* The function names with a PCG in them are in
       struct_ls/pcg_struct.c .  These functions do rather little -
       e.g., cast to the correct type - before calling something else.
-      These names should be called, e.g., hypre_struct_Free, to reduce the
+      These names should be called, e.g., nalu_hypre_struct_Free, to reduce the
       chance of name conflicts. */
-   hypre_PCGFunctions * pcg_functions =
-      hypre_PCGFunctionsCreate(
-         hypre_StructKrylovCAlloc, hypre_StructKrylovFree,
-         hypre_StructKrylovCommInfo,
-         hypre_StructKrylovCreateVector,
-         hypre_StructKrylovDestroyVector, hypre_StructKrylovMatvecCreate,
-         hypre_StructKrylovMatvec, hypre_StructKrylovMatvecDestroy,
-         hypre_StructKrylovInnerProd, hypre_StructKrylovCopyVector,
-         hypre_StructKrylovClearVector,
-         hypre_StructKrylovScaleVector, hypre_StructKrylovAxpy,
-         hypre_StructKrylovIdentitySetup, hypre_StructKrylovIdentity );
+   nalu_hypre_PCGFunctions * pcg_functions =
+      nalu_hypre_PCGFunctionsCreate(
+         nalu_hypre_StructKrylovCAlloc, nalu_hypre_StructKrylovFree,
+         nalu_hypre_StructKrylovCommInfo,
+         nalu_hypre_StructKrylovCreateVector,
+         nalu_hypre_StructKrylovDestroyVector, nalu_hypre_StructKrylovMatvecCreate,
+         nalu_hypre_StructKrylovMatvec, nalu_hypre_StructKrylovMatvecDestroy,
+         nalu_hypre_StructKrylovInnerProd, nalu_hypre_StructKrylovCopyVector,
+         nalu_hypre_StructKrylovClearVector,
+         nalu_hypre_StructKrylovScaleVector, nalu_hypre_StructKrylovAxpy,
+         nalu_hypre_StructKrylovIdentitySetup, nalu_hypre_StructKrylovIdentity );
 
-   *solver = ( (NALU_HYPRE_StructSolver) hypre_PCGCreate( pcg_functions ) );
+   *solver = ( (NALU_HYPRE_StructSolver) nalu_hypre_PCGCreate( pcg_functions ) );
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*==========================================================================*/
@@ -40,7 +40,7 @@ NALU_HYPRE_StructPCGCreate( MPI_Comm comm, NALU_HYPRE_StructSolver *solver )
 NALU_HYPRE_Int
 NALU_HYPRE_StructPCGDestroy( NALU_HYPRE_StructSolver solver )
 {
-   return ( hypre_PCGDestroy( (void *) solver ) );
+   return ( nalu_hypre_PCGDestroy( (void *) solver ) );
 }
 
 /*==========================================================================*/
@@ -174,7 +174,7 @@ NALU_HYPRE_StructDiagScaleSetup( NALU_HYPRE_StructSolver solver,
                             NALU_HYPRE_StructVector y,
                             NALU_HYPRE_StructVector x      )
 {
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*==========================================================================*/
@@ -185,60 +185,60 @@ NALU_HYPRE_StructDiagScale( NALU_HYPRE_StructSolver solver,
                        NALU_HYPRE_StructVector Hy,
                        NALU_HYPRE_StructVector Hx      )
 {
-   hypre_StructMatrix   *A = (hypre_StructMatrix *) HA;
-   hypre_StructVector   *y = (hypre_StructVector *) Hy;
-   hypre_StructVector   *x = (hypre_StructVector *) Hx;
+   nalu_hypre_StructMatrix   *A = (nalu_hypre_StructMatrix *) HA;
+   nalu_hypre_StructVector   *y = (nalu_hypre_StructVector *) Hy;
+   nalu_hypre_StructVector   *x = (nalu_hypre_StructVector *) Hx;
 
-   hypre_BoxArray       *boxes;
-   hypre_Box            *box;
+   nalu_hypre_BoxArray       *boxes;
+   nalu_hypre_Box            *box;
 
-   hypre_Box            *A_data_box;
-   hypre_Box            *y_data_box;
-   hypre_Box            *x_data_box;
+   nalu_hypre_Box            *A_data_box;
+   nalu_hypre_Box            *y_data_box;
+   nalu_hypre_Box            *x_data_box;
 
    NALU_HYPRE_Real           *Ap;
    NALU_HYPRE_Real           *yp;
    NALU_HYPRE_Real           *xp;
 
-   hypre_Index           index;
-   hypre_IndexRef        start;
-   hypre_Index           stride;
-   hypre_Index           loop_size;
+   nalu_hypre_Index           index;
+   nalu_hypre_IndexRef        start;
+   nalu_hypre_Index           stride;
+   nalu_hypre_Index           loop_size;
 
    NALU_HYPRE_Int             i;
 
    /* x = D^{-1} y */
-   hypre_SetIndex(stride, 1);
-   boxes = hypre_StructGridBoxes(hypre_StructMatrixGrid(A));
-   hypre_ForBoxI(i, boxes)
+   nalu_hypre_SetIndex(stride, 1);
+   boxes = nalu_hypre_StructGridBoxes(nalu_hypre_StructMatrixGrid(A));
+   nalu_hypre_ForBoxI(i, boxes)
    {
-      box = hypre_BoxArrayBox(boxes, i);
+      box = nalu_hypre_BoxArrayBox(boxes, i);
 
-      A_data_box = hypre_BoxArrayBox(hypre_StructMatrixDataSpace(A), i);
-      x_data_box = hypre_BoxArrayBox(hypre_StructVectorDataSpace(x), i);
-      y_data_box = hypre_BoxArrayBox(hypre_StructVectorDataSpace(y), i);
+      A_data_box = nalu_hypre_BoxArrayBox(nalu_hypre_StructMatrixDataSpace(A), i);
+      x_data_box = nalu_hypre_BoxArrayBox(nalu_hypre_StructVectorDataSpace(x), i);
+      y_data_box = nalu_hypre_BoxArrayBox(nalu_hypre_StructVectorDataSpace(y), i);
 
-      hypre_SetIndex(index, 0);
-      Ap = hypre_StructMatrixExtractPointerByIndex(A, i, index);
-      xp = hypre_StructVectorBoxData(x, i);
-      yp = hypre_StructVectorBoxData(y, i);
+      nalu_hypre_SetIndex(index, 0);
+      Ap = nalu_hypre_StructMatrixExtractPointerByIndex(A, i, index);
+      xp = nalu_hypre_StructVectorBoxData(x, i);
+      yp = nalu_hypre_StructVectorBoxData(y, i);
 
-      start  = hypre_BoxIMin(box);
+      start  = nalu_hypre_BoxIMin(box);
 
-      hypre_BoxGetSize(box, loop_size);
+      nalu_hypre_BoxGetSize(box, loop_size);
 
 #define DEVICE_VAR is_device_ptr(xp,yp,Ap)
-      hypre_BoxLoop3Begin(hypre_StructVectorNDim(Hx), loop_size,
+      nalu_hypre_BoxLoop3Begin(nalu_hypre_StructVectorNDim(Hx), loop_size,
                           A_data_box, start, stride, Ai,
                           x_data_box, start, stride, xi,
                           y_data_box, start, stride, yi);
       {
          xp[xi] = yp[yi] / Ap[Ai];
       }
-      hypre_BoxLoop3End(Ai, xi, yi);
+      nalu_hypre_BoxLoop3End(Ai, xi, yi);
 #undef DEVICE_VAR
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 

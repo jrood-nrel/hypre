@@ -8,7 +8,7 @@ set(SRCS
   DiagScale.c
   FGmres.c
   Hash.c
-  hypre_ParaSails.c
+  nalu_hypre_ParaSails.c
   LoadBal.c
   Matrix.c
   Mem.c

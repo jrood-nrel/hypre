@@ -17,16 +17,16 @@
 #include <stdio.h>
 #include <math.h>
 
-#include "_hypre_utilities.h"
+#include "_nalu_hypre_utilities.h"
 #include "NALU_HYPRE.h"
 #include "NALU_HYPRE_parcsr_mv.h"
 
 #include "NALU_HYPRE_IJ_mv.h"
 #include "NALU_HYPRE_parcsr_ls.h"
-#include "_hypre_parcsr_mv.h"
+#include "_nalu_hypre_parcsr_mv.h"
 #include "NALU_HYPRE_krylov.h"
 
-#include "hypre_test.h"
+#include "nalu_hypre_test.h"
 
 /* begin lobpcg */
 
@@ -121,7 +121,7 @@ main( NALU_HYPRE_Int   argc,
    NALU_HYPRE_Int                 num_functions = 1;
 
    NALU_HYPRE_Int                 time_index;
-   MPI_Comm            comm = hypre_MPI_COMM_WORLD;
+   MPI_Comm            comm = nalu_hypre_MPI_COMM_WORLD;
    NALU_HYPRE_Int M, N;
    NALU_HYPRE_Int first_local_row, last_local_row, local_num_rows;
    NALU_HYPRE_Int first_local_col, last_local_col, local_num_cols;
@@ -184,10 +184,10 @@ main( NALU_HYPRE_Int   argc,
     *-----------------------------------------------------------*/
 
    /* Initialize MPI */
-   hypre_MPI_Init(&argc, &argv);
+   nalu_hypre_MPI_Init(&argc, &argv);
 
-   hypre_MPI_Comm_size(hypre_MPI_COMM_WORLD, &num_procs );
-   hypre_MPI_Comm_rank(hypre_MPI_COMM_WORLD, &myid );
+   nalu_hypre_MPI_Comm_size(nalu_hypre_MPI_COMM_WORLD, &num_procs );
+   nalu_hypre_MPI_Comm_rank(nalu_hypre_MPI_COMM_WORLD, &myid );
 
    /*-----------------------------------------------------------
     * Set defaults
@@ -769,11 +769,11 @@ main( NALU_HYPRE_Int   argc,
       trunc_factor = 0.;
       cycle_type = 1;
 
-      num_grid_sweeps   = hypre_CTAlloc(NALU_HYPRE_Int, 4, NALU_HYPRE_MEMORY_HOST);
-      grid_relax_type   = hypre_CTAlloc(NALU_HYPRE_Int, 4, NALU_HYPRE_MEMORY_HOST);
-      grid_relax_points = hypre_CTAlloc(NALU_HYPRE_Int *, 4, NALU_HYPRE_MEMORY_HOST);
-      relax_weight      = hypre_CTAlloc(NALU_HYPRE_Real,  max_levels, NALU_HYPRE_MEMORY_HOST);
-      omega      = hypre_CTAlloc(NALU_HYPRE_Real,  max_levels, NALU_HYPRE_MEMORY_HOST);
+      num_grid_sweeps   = nalu_hypre_CTAlloc(NALU_HYPRE_Int, 4, NALU_HYPRE_MEMORY_HOST);
+      grid_relax_type   = nalu_hypre_CTAlloc(NALU_HYPRE_Int, 4, NALU_HYPRE_MEMORY_HOST);
+      grid_relax_points = nalu_hypre_CTAlloc(NALU_HYPRE_Int *, 4, NALU_HYPRE_MEMORY_HOST);
+      relax_weight      = nalu_hypre_CTAlloc(NALU_HYPRE_Real,  max_levels, NALU_HYPRE_MEMORY_HOST);
+      omega      = nalu_hypre_CTAlloc(NALU_HYPRE_Real,  max_levels, NALU_HYPRE_MEMORY_HOST);
 
       for (i = 0; i < max_levels; i++)
       {
@@ -789,7 +789,7 @@ main( NALU_HYPRE_Int   argc,
          relax_default = 7;
          grid_relax_type[0] = relax_default;
          num_grid_sweeps[0] = num_sweep;
-         grid_relax_points[0] = hypre_CTAlloc(NALU_HYPRE_Int,  num_sweep, NALU_HYPRE_MEMORY_HOST);
+         grid_relax_points[0] = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  num_sweep, NALU_HYPRE_MEMORY_HOST);
          for (i = 0; i < num_sweep; i++)
          {
             grid_relax_points[0][i] = 0;
@@ -797,7 +797,7 @@ main( NALU_HYPRE_Int   argc,
          /* down cycle */
          grid_relax_type[1] = relax_default;
          num_grid_sweeps[1] = num_sweep;
-         grid_relax_points[1] = hypre_CTAlloc(NALU_HYPRE_Int,  num_sweep, NALU_HYPRE_MEMORY_HOST);
+         grid_relax_points[1] = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  num_sweep, NALU_HYPRE_MEMORY_HOST);
          for (i = 0; i < num_sweep; i++)
          {
             grid_relax_points[1][i] = 0;
@@ -805,7 +805,7 @@ main( NALU_HYPRE_Int   argc,
          /* up cycle */
          grid_relax_type[2] = relax_default;
          num_grid_sweeps[2] = num_sweep;
-         grid_relax_points[2] = hypre_CTAlloc(NALU_HYPRE_Int,  num_sweep, NALU_HYPRE_MEMORY_HOST);
+         grid_relax_points[2] = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  num_sweep, NALU_HYPRE_MEMORY_HOST);
          for (i = 0; i < num_sweep; i++)
          {
             grid_relax_points[2][i] = 0;
@@ -816,7 +816,7 @@ main( NALU_HYPRE_Int   argc,
          /* fine grid */
          num_grid_sweeps[0] = 3;
          grid_relax_type[0] = relax_default;
-         grid_relax_points[0] = hypre_CTAlloc(NALU_HYPRE_Int,  3, NALU_HYPRE_MEMORY_HOST);
+         grid_relax_points[0] = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  3, NALU_HYPRE_MEMORY_HOST);
          grid_relax_points[0][0] = -2;
          grid_relax_points[0][1] = -1;
          grid_relax_points[0][2] = 1;
@@ -824,7 +824,7 @@ main( NALU_HYPRE_Int   argc,
          /* down cycle */
          num_grid_sweeps[1] = 4;
          grid_relax_type[1] = relax_default;
-         grid_relax_points[1] = hypre_CTAlloc(NALU_HYPRE_Int,  4, NALU_HYPRE_MEMORY_HOST);
+         grid_relax_points[1] = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  4, NALU_HYPRE_MEMORY_HOST);
          grid_relax_points[1][0] = -1;
          grid_relax_points[1][1] = 1;
          grid_relax_points[1][2] = -2;
@@ -833,7 +833,7 @@ main( NALU_HYPRE_Int   argc,
          /* up cycle */
          num_grid_sweeps[2] = 4;
          grid_relax_type[2] = relax_default;
-         grid_relax_points[2] = hypre_CTAlloc(NALU_HYPRE_Int,  4, NALU_HYPRE_MEMORY_HOST);
+         grid_relax_points[2] = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  4, NALU_HYPRE_MEMORY_HOST);
          grid_relax_points[2][0] = -2;
          grid_relax_points[2][1] = -2;
          grid_relax_points[2][2] = 1;
@@ -844,13 +844,13 @@ main( NALU_HYPRE_Int   argc,
          /* fine grid */
          grid_relax_type[0] = relax_default;
          /*num_grid_sweeps[0] = num_sweep;
-         grid_relax_points[0] = hypre_CTAlloc(NALU_HYPRE_Int,  num_sweep, NALU_HYPRE_MEMORY_HOST);
+         grid_relax_points[0] = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  num_sweep, NALU_HYPRE_MEMORY_HOST);
          for (i=0; i<num_sweep; i++)
          {
             grid_relax_points[0][i] = 0;
          } */
          num_grid_sweeps[0] = 2 * num_sweep;
-         grid_relax_points[0] = hypre_CTAlloc(NALU_HYPRE_Int,  2 * num_sweep, NALU_HYPRE_MEMORY_HOST);
+         grid_relax_points[0] = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  2 * num_sweep, NALU_HYPRE_MEMORY_HOST);
          for (i = 0; i < 2 * num_sweep; i += 2)
          {
             grid_relax_points[0][i] = 1;
@@ -860,14 +860,14 @@ main( NALU_HYPRE_Int   argc,
          /* down cycle */
          grid_relax_type[1] = relax_default;
          /* num_grid_sweeps[1] = num_sweep;
-         grid_relax_points[1] = hypre_CTAlloc(NALU_HYPRE_Int,  num_sweep, NALU_HYPRE_MEMORY_HOST);
+         grid_relax_points[1] = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  num_sweep, NALU_HYPRE_MEMORY_HOST);
          for (i=0; i<num_sweep; i++)
          {
             grid_relax_points[1][i] = 0;
          } */
          num_grid_sweeps[1] = 2 * num_sweep;
          grid_relax_type[1] = relax_default;
-         grid_relax_points[1] = hypre_CTAlloc(NALU_HYPRE_Int,  2 * num_sweep, NALU_HYPRE_MEMORY_HOST);
+         grid_relax_points[1] = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  2 * num_sweep, NALU_HYPRE_MEMORY_HOST);
          for (i = 0; i < 2 * num_sweep; i += 2)
          {
             grid_relax_points[1][i] = 1;
@@ -877,14 +877,14 @@ main( NALU_HYPRE_Int   argc,
          /* up cycle */
          grid_relax_type[2] = relax_default;
          /* num_grid_sweeps[2] = num_sweep;
-         grid_relax_points[2] = hypre_CTAlloc(NALU_HYPRE_Int,  num_sweep, NALU_HYPRE_MEMORY_HOST);
+         grid_relax_points[2] = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  num_sweep, NALU_HYPRE_MEMORY_HOST);
          for (i=0; i<num_sweep; i++)
          {
             grid_relax_points[2][i] = 0;
          } */
          num_grid_sweeps[2] = 2 * num_sweep;
          grid_relax_type[2] = relax_default;
-         grid_relax_points[2] = hypre_CTAlloc(NALU_HYPRE_Int,  2 * num_sweep, NALU_HYPRE_MEMORY_HOST);
+         grid_relax_points[2] = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  2 * num_sweep, NALU_HYPRE_MEMORY_HOST);
          for (i = 0; i < 2 * num_sweep; i += 2)
          {
             grid_relax_points[2][i] = -1;
@@ -895,7 +895,7 @@ main( NALU_HYPRE_Int   argc,
       /* coarsest grid */
       num_grid_sweeps[3] = 1;
       grid_relax_type[3] = 9;
-      grid_relax_points[3] = hypre_CTAlloc(NALU_HYPRE_Int,  1, NALU_HYPRE_MEMORY_HOST);
+      grid_relax_points[3] = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  1, NALU_HYPRE_MEMORY_HOST);
       grid_relax_points[3][0] = 0;
    }
 
@@ -1054,216 +1054,216 @@ main( NALU_HYPRE_Int   argc,
 
    if ( (print_usage) && (myid == 0) )
    {
-      hypre_printf("\n");
-      hypre_printf("Usage: %s [<options>]\n", argv[0]);
-      hypre_printf("\n");
-      hypre_printf("  -fromfile <filename>       : ");
-      hypre_printf("matrix read from multiple files (IJ format)\n");
-      hypre_printf("  -fromparcsrfile <filename> : ");
-      hypre_printf("matrix read from multiple files (ParCSR format)\n");
-      hypre_printf("  -fromonecsrfile <filename> : ");
-      hypre_printf("matrix read from a single file (CSR format)\n");
-      hypre_printf("\n");
-      hypre_printf("  -laplacian [<options>] : build 5pt 2D laplacian problem (default) \n");
-      hypre_printf("  -9pt [<opts>]          : build 9pt 2D laplacian problem\n");
-      hypre_printf("  -27pt [<opts>]         : build 27pt 3D laplacian problem\n");
-      hypre_printf("  -difconv [<opts>]      : build convection-diffusion problem\n");
-      hypre_printf("    -n <nx> <ny> <nz>    : total problem size \n");
-      hypre_printf("    -P <Px> <Py> <Pz>    : processor topology\n");
-      hypre_printf("    -c <cx> <cy> <cz>    : diffusion coefficients\n");
-      hypre_printf("    -a <ax> <ay> <az>    : convection coefficients\n");
-      hypre_printf("\n");
-      hypre_printf("  -exact_size            : inserts immediately into ParCSR structure\n");
-      hypre_printf("  -storage_low           : allocates not enough storage for aux struct\n");
-      hypre_printf("  -concrete_parcsr       : use parcsr matrix type as concrete type\n");
-      hypre_printf("\n");
-      hypre_printf("  -rhsfromfile           : ");
-      hypre_printf("rhs read from multiple files (IJ format)\n");
-      hypre_printf("  -rhsfromonefile        : ");
-      hypre_printf("rhs read from a single file (CSR format)\n");
-      hypre_printf("  -rhsrand               : rhs is random vector\n");
-      hypre_printf("  -rhsisone              : rhs is vector with unit components (default)\n");
-      hypre_printf("  -xisone                : solution of all ones\n");
-      hypre_printf("  -rhszero               : rhs is zero vector\n");
-      hypre_printf("\n");
-      hypre_printf("  -dt <val>              : specify finite backward Euler time step\n");
-      hypre_printf("                         :    -rhsfromfile, -rhsfromonefile, -rhsrand,\n");
-      hypre_printf("                         :    -rhsrand, or -xisone will be ignored\n");
-      hypre_printf("  -srcfromfile           : ");
-      hypre_printf("backward Euler source read from multiple files (IJ format)\n");
-      hypre_printf("  -srcfromonefile        : ");
-      hypre_printf("backward Euler source read from a single file (IJ format)\n");
-      hypre_printf("  -srcrand               : ");
-      hypre_printf("backward Euler source is random vector with components in range 0 - 1\n");
-      hypre_printf("  -srcisone              : ");
-      hypre_printf("backward Euler source is vector with unit components (default)\n");
-      hypre_printf("  -srczero               : ");
-      hypre_printf("backward Euler source is zero-vector\n");
-      hypre_printf("\n");
-      hypre_printf("  -matrix <ID>           : matrix ID\n");
-      hypre_printf("    allowed options:  \n");
-      hypre_printf("                parcsr   \n");
-      hypre_printf("                sstruct  \n");
-      hypre_printf("                struct   \n");
-      hypre_printf("\n");
-      hypre_printf("  -solver <ID>           : solver ID\n");
-      hypre_printf("    allowed options:  \n");
-      hypre_printf("                amg || boomeramg   \n");
-      hypre_printf("                bicgstab           \n");
-      hypre_printf("                cgnr               \n");
-      hypre_printf("                diagscale || ds    \n");
-      hypre_printf("                euclid             \n");
-      hypre_printf("                gmres              \n");
-      hypre_printf("                gsmg               \n");
-      hypre_printf("                hybrid             \n");
-      hypre_printf("                jacobi             \n");
-      hypre_printf("                parasails          \n");
-      hypre_printf("                pcg                \n");
-      hypre_printf("                pfmg               \n");
-      hypre_printf("                pilut              \n");
-      hypre_printf("                schwarz            \n");
-      hypre_printf("                smg                \n");
-      hypre_printf("                sparsemsg          \n");
-      hypre_printf("                split              \n");
-      hypre_printf("                splitpfmg          \n");
-      hypre_printf("                splitsmg           \n");
-      hypre_printf("                syspfmg            \n");
-      hypre_printf("\n");
-      hypre_printf("  -preconditioner <ID>  : precond ID\n");
-      hypre_printf("    allowed options:  \n");
-      hypre_printf("                amg || boomeramg   \n");
-      hypre_printf("                bicgstab           \n");
-      hypre_printf("                cgnr               \n");
-      hypre_printf("                diagscale || ds    \n");
-      hypre_printf("                euclid             \n");
-      hypre_printf("                gmres              \n");
-      hypre_printf("                gsmg               \n");
-      hypre_printf("                hybrid             \n");
-      hypre_printf("                jacobi             \n");
-      hypre_printf("                parasails          \n");
-      hypre_printf("                pcg                \n");
-      hypre_printf("                pfmg               \n");
-      hypre_printf("                pilut              \n");
-      hypre_printf("                schwarz            \n");
-      hypre_printf("                smg                \n");
-      hypre_printf("                sparsemsg          \n");
-      hypre_printf("                split              \n");
-      hypre_printf("                splitpfmg          \n");
-      hypre_printf("                splitsmg           \n");
-      hypre_printf("                syspfmg            \n");
-      hypre_printf("\n");
-      hypre_printf("  -cljp                 : CLJP coarsening \n");
-      hypre_printf("  -ruge                 : Ruge coarsening (local)\n");
-      hypre_printf("  -ruge3                : third pass on boundary\n");
-      hypre_printf("  -ruge3c               : third pass on boundary, keep c-points\n");
-      hypre_printf("  -ruge2b               : 2nd pass is global\n");
-      hypre_printf("  -rugerlx              : relaxes special points\n");
-      hypre_printf("  -falgout              : local ruge followed by LJP\n");
-      hypre_printf("  -nohybrid             : no switch in coarsening\n");
-      hypre_printf("  -gm                   : use global measures\n");
-      hypre_printf("\n");
-      hypre_printf("  -rlx  <val>            : relaxation type\n");
-      hypre_printf("       0=Weighted Jacobi  \n");
-      hypre_printf("       1=Gauss-Seidel (very slow!)  \n");
-      hypre_printf("       3=Hybrid Jacobi/Gauss-Seidel  \n");
-      hypre_printf("  -ns <val>              : Use <val> sweeps on each level\n");
-      hypre_printf("                           (default C/F down, F/C up, F/C fine\n");
-      hypre_printf("\n");
-      hypre_printf("  -mu   <val>            : set AMG cycles (1=V, 2=W, etc.)\n");
-      hypre_printf("  -th   <val>            : set AMG threshold Theta = val \n");
-      hypre_printf("  -tr   <val>            : set AMG interpolation truncation factor = val \n");
-      hypre_printf("  -mxrs <val>            : set AMG maximum row sum threshold for dependency weakening \n");
-      hypre_printf("  -nf <val>              : set number of functions for systems AMG\n");
-      hypre_printf("  -numsamp <val>         : set number of sample vectors for GSMG\n");
-      hypre_printf("  -interptype <val>      : set to 1 to get LS interpolation\n");
-      hypre_printf("                         : set to 2 to get interpolation for hyperbolic equations\n");
+      nalu_hypre_printf("\n");
+      nalu_hypre_printf("Usage: %s [<options>]\n", argv[0]);
+      nalu_hypre_printf("\n");
+      nalu_hypre_printf("  -fromfile <filename>       : ");
+      nalu_hypre_printf("matrix read from multiple files (IJ format)\n");
+      nalu_hypre_printf("  -fromparcsrfile <filename> : ");
+      nalu_hypre_printf("matrix read from multiple files (ParCSR format)\n");
+      nalu_hypre_printf("  -fromonecsrfile <filename> : ");
+      nalu_hypre_printf("matrix read from a single file (CSR format)\n");
+      nalu_hypre_printf("\n");
+      nalu_hypre_printf("  -laplacian [<options>] : build 5pt 2D laplacian problem (default) \n");
+      nalu_hypre_printf("  -9pt [<opts>]          : build 9pt 2D laplacian problem\n");
+      nalu_hypre_printf("  -27pt [<opts>]         : build 27pt 3D laplacian problem\n");
+      nalu_hypre_printf("  -difconv [<opts>]      : build convection-diffusion problem\n");
+      nalu_hypre_printf("    -n <nx> <ny> <nz>    : total problem size \n");
+      nalu_hypre_printf("    -P <Px> <Py> <Pz>    : processor topology\n");
+      nalu_hypre_printf("    -c <cx> <cy> <cz>    : diffusion coefficients\n");
+      nalu_hypre_printf("    -a <ax> <ay> <az>    : convection coefficients\n");
+      nalu_hypre_printf("\n");
+      nalu_hypre_printf("  -exact_size            : inserts immediately into ParCSR structure\n");
+      nalu_hypre_printf("  -storage_low           : allocates not enough storage for aux struct\n");
+      nalu_hypre_printf("  -concrete_parcsr       : use parcsr matrix type as concrete type\n");
+      nalu_hypre_printf("\n");
+      nalu_hypre_printf("  -rhsfromfile           : ");
+      nalu_hypre_printf("rhs read from multiple files (IJ format)\n");
+      nalu_hypre_printf("  -rhsfromonefile        : ");
+      nalu_hypre_printf("rhs read from a single file (CSR format)\n");
+      nalu_hypre_printf("  -rhsrand               : rhs is random vector\n");
+      nalu_hypre_printf("  -rhsisone              : rhs is vector with unit components (default)\n");
+      nalu_hypre_printf("  -xisone                : solution of all ones\n");
+      nalu_hypre_printf("  -rhszero               : rhs is zero vector\n");
+      nalu_hypre_printf("\n");
+      nalu_hypre_printf("  -dt <val>              : specify finite backward Euler time step\n");
+      nalu_hypre_printf("                         :    -rhsfromfile, -rhsfromonefile, -rhsrand,\n");
+      nalu_hypre_printf("                         :    -rhsrand, or -xisone will be ignored\n");
+      nalu_hypre_printf("  -srcfromfile           : ");
+      nalu_hypre_printf("backward Euler source read from multiple files (IJ format)\n");
+      nalu_hypre_printf("  -srcfromonefile        : ");
+      nalu_hypre_printf("backward Euler source read from a single file (IJ format)\n");
+      nalu_hypre_printf("  -srcrand               : ");
+      nalu_hypre_printf("backward Euler source is random vector with components in range 0 - 1\n");
+      nalu_hypre_printf("  -srcisone              : ");
+      nalu_hypre_printf("backward Euler source is vector with unit components (default)\n");
+      nalu_hypre_printf("  -srczero               : ");
+      nalu_hypre_printf("backward Euler source is zero-vector\n");
+      nalu_hypre_printf("\n");
+      nalu_hypre_printf("  -matrix <ID>           : matrix ID\n");
+      nalu_hypre_printf("    allowed options:  \n");
+      nalu_hypre_printf("                parcsr   \n");
+      nalu_hypre_printf("                sstruct  \n");
+      nalu_hypre_printf("                struct   \n");
+      nalu_hypre_printf("\n");
+      nalu_hypre_printf("  -solver <ID>           : solver ID\n");
+      nalu_hypre_printf("    allowed options:  \n");
+      nalu_hypre_printf("                amg || boomeramg   \n");
+      nalu_hypre_printf("                bicgstab           \n");
+      nalu_hypre_printf("                cgnr               \n");
+      nalu_hypre_printf("                diagscale || ds    \n");
+      nalu_hypre_printf("                euclid             \n");
+      nalu_hypre_printf("                gmres              \n");
+      nalu_hypre_printf("                gsmg               \n");
+      nalu_hypre_printf("                hybrid             \n");
+      nalu_hypre_printf("                jacobi             \n");
+      nalu_hypre_printf("                parasails          \n");
+      nalu_hypre_printf("                pcg                \n");
+      nalu_hypre_printf("                pfmg               \n");
+      nalu_hypre_printf("                pilut              \n");
+      nalu_hypre_printf("                schwarz            \n");
+      nalu_hypre_printf("                smg                \n");
+      nalu_hypre_printf("                sparsemsg          \n");
+      nalu_hypre_printf("                split              \n");
+      nalu_hypre_printf("                splitpfmg          \n");
+      nalu_hypre_printf("                splitsmg           \n");
+      nalu_hypre_printf("                syspfmg            \n");
+      nalu_hypre_printf("\n");
+      nalu_hypre_printf("  -preconditioner <ID>  : precond ID\n");
+      nalu_hypre_printf("    allowed options:  \n");
+      nalu_hypre_printf("                amg || boomeramg   \n");
+      nalu_hypre_printf("                bicgstab           \n");
+      nalu_hypre_printf("                cgnr               \n");
+      nalu_hypre_printf("                diagscale || ds    \n");
+      nalu_hypre_printf("                euclid             \n");
+      nalu_hypre_printf("                gmres              \n");
+      nalu_hypre_printf("                gsmg               \n");
+      nalu_hypre_printf("                hybrid             \n");
+      nalu_hypre_printf("                jacobi             \n");
+      nalu_hypre_printf("                parasails          \n");
+      nalu_hypre_printf("                pcg                \n");
+      nalu_hypre_printf("                pfmg               \n");
+      nalu_hypre_printf("                pilut              \n");
+      nalu_hypre_printf("                schwarz            \n");
+      nalu_hypre_printf("                smg                \n");
+      nalu_hypre_printf("                sparsemsg          \n");
+      nalu_hypre_printf("                split              \n");
+      nalu_hypre_printf("                splitpfmg          \n");
+      nalu_hypre_printf("                splitsmg           \n");
+      nalu_hypre_printf("                syspfmg            \n");
+      nalu_hypre_printf("\n");
+      nalu_hypre_printf("  -cljp                 : CLJP coarsening \n");
+      nalu_hypre_printf("  -ruge                 : Ruge coarsening (local)\n");
+      nalu_hypre_printf("  -ruge3                : third pass on boundary\n");
+      nalu_hypre_printf("  -ruge3c               : third pass on boundary, keep c-points\n");
+      nalu_hypre_printf("  -ruge2b               : 2nd pass is global\n");
+      nalu_hypre_printf("  -rugerlx              : relaxes special points\n");
+      nalu_hypre_printf("  -falgout              : local ruge followed by LJP\n");
+      nalu_hypre_printf("  -nohybrid             : no switch in coarsening\n");
+      nalu_hypre_printf("  -gm                   : use global measures\n");
+      nalu_hypre_printf("\n");
+      nalu_hypre_printf("  -rlx  <val>            : relaxation type\n");
+      nalu_hypre_printf("       0=Weighted Jacobi  \n");
+      nalu_hypre_printf("       1=Gauss-Seidel (very slow!)  \n");
+      nalu_hypre_printf("       3=Hybrid Jacobi/Gauss-Seidel  \n");
+      nalu_hypre_printf("  -ns <val>              : Use <val> sweeps on each level\n");
+      nalu_hypre_printf("                           (default C/F down, F/C up, F/C fine\n");
+      nalu_hypre_printf("\n");
+      nalu_hypre_printf("  -mu   <val>            : set AMG cycles (1=V, 2=W, etc.)\n");
+      nalu_hypre_printf("  -th   <val>            : set AMG threshold Theta = val \n");
+      nalu_hypre_printf("  -tr   <val>            : set AMG interpolation truncation factor = val \n");
+      nalu_hypre_printf("  -mxrs <val>            : set AMG maximum row sum threshold for dependency weakening \n");
+      nalu_hypre_printf("  -nf <val>              : set number of functions for systems AMG\n");
+      nalu_hypre_printf("  -numsamp <val>         : set number of sample vectors for GSMG\n");
+      nalu_hypre_printf("  -interptype <val>      : set to 1 to get LS interpolation\n");
+      nalu_hypre_printf("                         : set to 2 to get interpolation for hyperbolic equations\n");
 
-      hypre_printf("  -solver_type <val>     : sets solver within Hybrid solver\n");
-      hypre_printf("                         : 1  PCG  (default)\n");
-      hypre_printf("                         : 2  GMRES\n");
-      hypre_printf("                         : 3  BiCGSTAB\n");
+      nalu_hypre_printf("  -solver_type <val>     : sets solver within Hybrid solver\n");
+      nalu_hypre_printf("                         : 1  PCG  (default)\n");
+      nalu_hypre_printf("                         : 2  GMRES\n");
+      nalu_hypre_printf("                         : 3  BiCGSTAB\n");
 
-      hypre_printf("  -w   <val>             : set Jacobi relax weight = val\n");
-      hypre_printf("  -k   <val>             : dimension Krylov space for GMRES\n");
-      hypre_printf("  -mxl  <val>            : maximum number of levels (AMG, ParaSAILS)\n");
-      hypre_printf("  -tol  <val>            : set solver convergence tolerance = val\n");
-      hypre_printf("\n");
-      hypre_printf("  -sai_th   <val>        : set ParaSAILS threshold = val \n");
-      hypre_printf("  -sai_filt <val>        : set ParaSAILS filter = val \n");
-      hypre_printf("\n");
-      hypre_printf("  -drop_tol  <val>       : set threshold for dropping in PILUT\n");
-      hypre_printf("  -nonzeros_to_keep <val>: number of nonzeros in each row to keep\n");
-      hypre_printf("\n");
-      hypre_printf("  -iout <val>            : set output flag\n");
-      hypre_printf("       0=no output    1=matrix stats\n");
-      hypre_printf("       2=cycle stats  3=matrix & cycle stats\n");
-      hypre_printf("\n");
-      hypre_printf("  -dbg <val>             : set debug flag\n");
-      hypre_printf("       0=no debugging\n       1=internal timing\n       2=interpolation truncation\n       3=more detailed timing in coarsening routine\n");
-      hypre_printf("\n");
-      hypre_printf("  -print                 : print out the system\n");
-      hypre_printf("\n");
+      nalu_hypre_printf("  -w   <val>             : set Jacobi relax weight = val\n");
+      nalu_hypre_printf("  -k   <val>             : dimension Krylov space for GMRES\n");
+      nalu_hypre_printf("  -mxl  <val>            : maximum number of levels (AMG, ParaSAILS)\n");
+      nalu_hypre_printf("  -tol  <val>            : set solver convergence tolerance = val\n");
+      nalu_hypre_printf("\n");
+      nalu_hypre_printf("  -sai_th   <val>        : set ParaSAILS threshold = val \n");
+      nalu_hypre_printf("  -sai_filt <val>        : set ParaSAILS filter = val \n");
+      nalu_hypre_printf("\n");
+      nalu_hypre_printf("  -drop_tol  <val>       : set threshold for dropping in PILUT\n");
+      nalu_hypre_printf("  -nonzeros_to_keep <val>: number of nonzeros in each row to keep\n");
+      nalu_hypre_printf("\n");
+      nalu_hypre_printf("  -iout <val>            : set output flag\n");
+      nalu_hypre_printf("       0=no output    1=matrix stats\n");
+      nalu_hypre_printf("       2=cycle stats  3=matrix & cycle stats\n");
+      nalu_hypre_printf("\n");
+      nalu_hypre_printf("  -dbg <val>             : set debug flag\n");
+      nalu_hypre_printf("       0=no debugging\n       1=internal timing\n       2=interpolation truncation\n       3=more detailed timing in coarsening routine\n");
+      nalu_hypre_printf("\n");
+      nalu_hypre_printf("  -print                 : print out the system\n");
+      nalu_hypre_printf("\n");
 
       /* begin lobpcg */
 
-      hypre_printf("LOBPCG options:\n");
-      hypre_printf("\n");
-      hypre_printf("  -lobpcg                 : run LOBPCG instead of PCG\n");
-      hypre_printf("\n");
-      hypre_printf("  -gen                    : solve generalized EVP with B = Laplacian\n");
-      hypre_printf("\n");
-      hypre_printf("  -con                    : solve constrained EVP using 'vectors.*.*'\n");
-      hypre_printf("                            as constraints (see -vout 1 below)\n");
-      hypre_printf("\n");
-      hypre_printf("  -solver none            : no HYPRE preconditioner is used\n");
-      hypre_printf("\n");
-      hypre_printf("  -itr <val>              : maximal number of LOBPCG iterations\n");
-      hypre_printf("                            (default 100);\n");
-      hypre_printf("\n");
-      hypre_printf("  -vrand <val>            : compute <val> eigenpairs using random\n");
-      hypre_printf("                            initial vectors (default 1)\n");
-      hypre_printf("\n");
-      hypre_printf("  -seed <val>             : use <val> as the seed for the random\n");
-      hypre_printf("                            number generator(default seed is based\n");
-      hypre_printf("                            on the time of the run)\n");
-      hypre_printf("\n");
-      hypre_printf("  -vfromfile              : read initial vectors from files\n");
-      hypre_printf("                            vectors.i.j where i is vector number\n");
-      hypre_printf("                            and j is processor number\n");
-      hypre_printf("\n");
-      hypre_printf("  -orthchk                : check eigenvectors for orthonormality\n");
-      hypre_printf("\n");
-      hypre_printf("  -verb <val>             : verbosity level\n");
-      hypre_printf("  -verb 0                 : no print\n");
-      hypre_printf("  -verb 1                 : print initial eigenvalues and residuals,\n");
-      hypre_printf("                            the iteration number, the number of\n");
-      hypre_printf("                            non-convergent eigenpairs and final\n");
-      hypre_printf("                            eigenvalues and residuals (default)\n");
-      hypre_printf("  -verb 2                 : print eigenvalues and residuals on each\n");
-      hypre_printf("                            iteration\n");
-      hypre_printf("\n");
-      hypre_printf("  -pcgitr <val>           : maximal number of inner PCG iterations\n");
-      hypre_printf("                            for preconditioning (default 1);\n");
-      hypre_printf("                            if <val> = 0 then the preconditioner\n");
-      hypre_printf("                            is applied directly\n");
-      hypre_printf("\n");
-      hypre_printf("  -pcgtol <val>           : residual tolerance for inner iterations\n");
-      hypre_printf("                            (default 0.01)\n");
-      hypre_printf("\n");
-      hypre_printf("  -vout <val>             : file output level\n");
-      hypre_printf("  -vout 0                 : no files created (default)\n");
-      hypre_printf("  -vout 1                 : write eigenvalues to values.txt, residuals\n");
-      hypre_printf("                            to residuals.txt and eigenvectors to \n");
-      hypre_printf("                            vectors.i.j where i is vector number\n");
-      hypre_printf("                            and j is processor number\n");
-      hypre_printf("  -vout 2                 : in addition to the above, write the\n");
-      hypre_printf("                            eigenvalues history (the matrix whose\n");
-      hypre_printf("                            i-th column contains eigenvalues at\n");
-      hypre_printf("                            (i+1)-th iteration) to val_hist.txt and\n");
-      hypre_printf("                            residuals history to res_hist.txt\n");
-      hypre_printf("\nNOTE: in this test driver LOBPCG only works with solvers 1, 2, 8, 12, 14 and 43\n");
-      hypre_printf("\ndefault solver is 1\n");
-      hypre_printf("\n");
+      nalu_hypre_printf("LOBPCG options:\n");
+      nalu_hypre_printf("\n");
+      nalu_hypre_printf("  -lobpcg                 : run LOBPCG instead of PCG\n");
+      nalu_hypre_printf("\n");
+      nalu_hypre_printf("  -gen                    : solve generalized EVP with B = Laplacian\n");
+      nalu_hypre_printf("\n");
+      nalu_hypre_printf("  -con                    : solve constrained EVP using 'vectors.*.*'\n");
+      nalu_hypre_printf("                            as constraints (see -vout 1 below)\n");
+      nalu_hypre_printf("\n");
+      nalu_hypre_printf("  -solver none            : no HYPRE preconditioner is used\n");
+      nalu_hypre_printf("\n");
+      nalu_hypre_printf("  -itr <val>              : maximal number of LOBPCG iterations\n");
+      nalu_hypre_printf("                            (default 100);\n");
+      nalu_hypre_printf("\n");
+      nalu_hypre_printf("  -vrand <val>            : compute <val> eigenpairs using random\n");
+      nalu_hypre_printf("                            initial vectors (default 1)\n");
+      nalu_hypre_printf("\n");
+      nalu_hypre_printf("  -seed <val>             : use <val> as the seed for the random\n");
+      nalu_hypre_printf("                            number generator(default seed is based\n");
+      nalu_hypre_printf("                            on the time of the run)\n");
+      nalu_hypre_printf("\n");
+      nalu_hypre_printf("  -vfromfile              : read initial vectors from files\n");
+      nalu_hypre_printf("                            vectors.i.j where i is vector number\n");
+      nalu_hypre_printf("                            and j is processor number\n");
+      nalu_hypre_printf("\n");
+      nalu_hypre_printf("  -orthchk                : check eigenvectors for orthonormality\n");
+      nalu_hypre_printf("\n");
+      nalu_hypre_printf("  -verb <val>             : verbosity level\n");
+      nalu_hypre_printf("  -verb 0                 : no print\n");
+      nalu_hypre_printf("  -verb 1                 : print initial eigenvalues and residuals,\n");
+      nalu_hypre_printf("                            the iteration number, the number of\n");
+      nalu_hypre_printf("                            non-convergent eigenpairs and final\n");
+      nalu_hypre_printf("                            eigenvalues and residuals (default)\n");
+      nalu_hypre_printf("  -verb 2                 : print eigenvalues and residuals on each\n");
+      nalu_hypre_printf("                            iteration\n");
+      nalu_hypre_printf("\n");
+      nalu_hypre_printf("  -pcgitr <val>           : maximal number of inner PCG iterations\n");
+      nalu_hypre_printf("                            for preconditioning (default 1);\n");
+      nalu_hypre_printf("                            if <val> = 0 then the preconditioner\n");
+      nalu_hypre_printf("                            is applied directly\n");
+      nalu_hypre_printf("\n");
+      nalu_hypre_printf("  -pcgtol <val>           : residual tolerance for inner iterations\n");
+      nalu_hypre_printf("                            (default 0.01)\n");
+      nalu_hypre_printf("\n");
+      nalu_hypre_printf("  -vout <val>             : file output level\n");
+      nalu_hypre_printf("  -vout 0                 : no files created (default)\n");
+      nalu_hypre_printf("  -vout 1                 : write eigenvalues to values.txt, residuals\n");
+      nalu_hypre_printf("                            to residuals.txt and eigenvectors to \n");
+      nalu_hypre_printf("                            vectors.i.j where i is vector number\n");
+      nalu_hypre_printf("                            and j is processor number\n");
+      nalu_hypre_printf("  -vout 2                 : in addition to the above, write the\n");
+      nalu_hypre_printf("                            eigenvalues history (the matrix whose\n");
+      nalu_hypre_printf("                            i-th column contains eigenvalues at\n");
+      nalu_hypre_printf("                            (i+1)-th iteration) to val_hist.txt and\n");
+      nalu_hypre_printf("                            residuals history to res_hist.txt\n");
+      nalu_hypre_printf("\nNOTE: in this test driver LOBPCG only works with solvers 1, 2, 8, 12, 14 and 43\n");
+      nalu_hypre_printf("\ndefault solver is 1\n");
+      nalu_hypre_printf("\n");
 
       /* end lobpcg */
 
@@ -1276,10 +1276,10 @@ main( NALU_HYPRE_Int   argc,
 
    if (myid == 0)
    {
-      hypre_printf("Running with these driver parameters:\n");
-      hypre_printf("  matrix ID    = %d\n", matrix_id);
-      hypre_printf("  solver ID    = %d\n", solver_id);
-      hypre_printf("  precond ID   = %d\n\n", precond_id);
+      nalu_hypre_printf("Running with these driver parameters:\n");
+      nalu_hypre_printf("  matrix ID    = %d\n", matrix_id);
+      nalu_hypre_printf("  solver ID    = %d\n", solver_id);
+      nalu_hypre_printf("  precond ID   = %d\n\n", precond_id);
    }
 
    /*-----------------------------------------------------------
@@ -1288,8 +1288,8 @@ main( NALU_HYPRE_Int   argc,
 
    if ( myid == 0 && dt != dt_inf)
    {
-      hypre_printf("  Backward Euler time step with dt = %e\n", dt);
-      hypre_printf("  Dirichlet 0 BCs are implicit in the spatial operator\n");
+      nalu_hypre_printf("  Backward Euler time step with dt = %e\n", dt);
+      nalu_hypre_printf("  Dirichlet 0 BCs are implicit in the spatial operator\n");
    }
 
    if ( build_matrix_type == -1 )
@@ -1324,13 +1324,13 @@ main( NALU_HYPRE_Int   argc,
    }
    else
    {
-      hypre_printf("You have asked for an unsupported problem with\n");
-      hypre_printf("build_matrix_type = %d.\n", build_matrix_type);
+      nalu_hypre_printf("You have asked for an unsupported problem with\n");
+      nalu_hypre_printf("build_matrix_type = %d.\n", build_matrix_type);
       return (-1);
    }
 
-   time_index = hypre_InitializeTiming("Spatial operator");
-   hypre_BeginTiming(time_index);
+   time_index = nalu_hypre_InitializeTiming("Spatial operator");
+   nalu_hypre_BeginTiming(time_index);
 
    if (build_matrix_type < 0)
    {
@@ -1372,8 +1372,8 @@ main( NALU_HYPRE_Int   argc,
       {
          /*  build IJMatrix using exact row_sizes for diag and offdiag */
 
-         diag_sizes = hypre_CTAlloc(NALU_HYPRE_Int,  local_num_rows, NALU_HYPRE_MEMORY_HOST);
-         offdiag_sizes = hypre_CTAlloc(NALU_HYPRE_Int,  local_num_rows, NALU_HYPRE_MEMORY_HOST);
+         diag_sizes = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  local_num_rows, NALU_HYPRE_MEMORY_HOST);
+         offdiag_sizes = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  local_num_rows, NALU_HYPRE_MEMORY_HOST);
          local_row = 0;
          for (i = first_local_row; i <= last_local_row; i++)
          {
@@ -1398,8 +1398,8 @@ main( NALU_HYPRE_Int   argc,
          ierr += NALU_HYPRE_IJMatrixSetDiagOffdSizes( ij_A,
                                                  (const NALU_HYPRE_Int *) diag_sizes,
                                                  (const NALU_HYPRE_Int *) offdiag_sizes );
-         hypre_TFree(diag_sizes, NALU_HYPRE_MEMORY_HOST);
-         hypre_TFree(offdiag_sizes, NALU_HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(diag_sizes, NALU_HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(offdiag_sizes, NALU_HYPRE_MEMORY_HOST);
 
          ierr = NALU_HYPRE_IJMatrixInitialize( ij_A );
 
@@ -1418,7 +1418,7 @@ main( NALU_HYPRE_Int   argc,
       }
       else
       {
-         row_sizes = hypre_CTAlloc(NALU_HYPRE_Int,  local_num_rows, NALU_HYPRE_MEMORY_HOST);
+         row_sizes = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  local_num_rows, NALU_HYPRE_MEMORY_HOST);
 
          size = 5; /* this is in general too low, and supposed to test
                     the capability of the reallocation of the interface */
@@ -1438,7 +1438,7 @@ main( NALU_HYPRE_Int   argc,
 
          ierr = NALU_HYPRE_IJMatrixSetRowSizes ( ij_A, (const NALU_HYPRE_Int *) row_sizes );
 
-         hypre_TFree(row_sizes, NALU_HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(row_sizes, NALU_HYPRE_MEMORY_HOST);
 
          ierr = NALU_HYPRE_IJMatrixInitialize( ij_A );
 
@@ -1461,14 +1461,14 @@ main( NALU_HYPRE_Int   argc,
 
    }
 
-   hypre_EndTiming(time_index);
-   hypre_PrintTiming("IJ Matrix Setup", hypre_MPI_COMM_WORLD);
-   hypre_FinalizeTiming(time_index);
-   hypre_ClearTiming();
+   nalu_hypre_EndTiming(time_index);
+   nalu_hypre_PrintTiming("IJ Matrix Setup", nalu_hypre_MPI_COMM_WORLD);
+   nalu_hypre_FinalizeTiming(time_index);
+   nalu_hypre_ClearTiming();
 
    if (ierr)
    {
-      hypre_printf("Error in driver building IJMatrix from parcsr matrix. \n");
+      nalu_hypre_printf("Error in driver building IJMatrix from parcsr matrix. \n");
       return (-1);
    }
 
@@ -1516,42 +1516,42 @@ main( NALU_HYPRE_Int   argc,
     * Set up the RHS and initial guess
     *-----------------------------------------------------------*/
 
-   time_index = hypre_InitializeTiming("RHS and Initial Guess");
-   hypre_BeginTiming(time_index);
+   time_index = nalu_hypre_InitializeTiming("RHS and Initial Guess");
+   nalu_hypre_BeginTiming(time_index);
 
    if ( build_rhs_type == 0 )
    {
       if (myid == 0)
       {
-         hypre_printf("  RHS vector read from file %s\n", argv[build_rhs_arg_index]);
-         hypre_printf("  Initial guess is 0\n");
+         nalu_hypre_printf("  RHS vector read from file %s\n", argv[build_rhs_arg_index]);
+         nalu_hypre_printf("  Initial guess is 0\n");
       }
 
       /* RHS */
-      ierr = NALU_HYPRE_IJVectorRead( argv[build_rhs_arg_index], hypre_MPI_COMM_WORLD,
+      ierr = NALU_HYPRE_IJVectorRead( argv[build_rhs_arg_index], nalu_hypre_MPI_COMM_WORLD,
                                  NALU_HYPRE_PARCSR, &ij_b );
       ierr = NALU_HYPRE_IJVectorGetObject( ij_b, &object );
       b = (NALU_HYPRE_ParVector) object;
 
       /* Initial guess */
-      NALU_HYPRE_IJVectorCreate(hypre_MPI_COMM_WORLD, first_local_col, last_local_col, &ij_x);
+      NALU_HYPRE_IJVectorCreate(nalu_hypre_MPI_COMM_WORLD, first_local_col, last_local_col, &ij_x);
       NALU_HYPRE_IJVectorSetObjectType(ij_x, NALU_HYPRE_PARCSR);
       NALU_HYPRE_IJVectorInitialize(ij_x);
 
-      values = hypre_CTAlloc(NALU_HYPRE_Real,  local_num_cols, NALU_HYPRE_MEMORY_HOST);
+      values = nalu_hypre_CTAlloc(NALU_HYPRE_Real,  local_num_cols, NALU_HYPRE_MEMORY_HOST);
       for (i = 0; i < local_num_cols; i++)
       {
          values[i] = 0.;
       }
       NALU_HYPRE_IJVectorSetValues(ij_x, local_num_cols, NULL, values);
-      hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
 
       ierr = NALU_HYPRE_IJVectorGetObject( ij_x, &object );
       x = (NALU_HYPRE_ParVector) object;
    }
    else if ( build_rhs_type == 1 )
    {
-      hypre_printf("build_rhs_type == 1 not currently implemented\n");
+      nalu_hypre_printf("build_rhs_type == 1 not currently implemented\n");
       return (-1);
 
 #if 0
@@ -1563,38 +1563,38 @@ main( NALU_HYPRE_Int   argc,
    {
       if (myid == 0)
       {
-         hypre_printf("  RHS vector has unit components\n");
-         hypre_printf("  Initial guess is 0\n");
+         nalu_hypre_printf("  RHS vector has unit components\n");
+         nalu_hypre_printf("  Initial guess is 0\n");
       }
 
       /* RHS */
-      NALU_HYPRE_IJVectorCreate(hypre_MPI_COMM_WORLD, first_local_row, last_local_row, &ij_b);
+      NALU_HYPRE_IJVectorCreate(nalu_hypre_MPI_COMM_WORLD, first_local_row, last_local_row, &ij_b);
       NALU_HYPRE_IJVectorSetObjectType(ij_b, NALU_HYPRE_PARCSR);
       NALU_HYPRE_IJVectorInitialize(ij_b);
 
-      values = hypre_CTAlloc(NALU_HYPRE_Real,  local_num_rows, NALU_HYPRE_MEMORY_HOST);
+      values = nalu_hypre_CTAlloc(NALU_HYPRE_Real,  local_num_rows, NALU_HYPRE_MEMORY_HOST);
       for (i = 0; i < local_num_rows; i++)
       {
          values[i] = 1.0;
       }
       NALU_HYPRE_IJVectorSetValues(ij_b, local_num_rows, NULL, values);
-      hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
 
       ierr = NALU_HYPRE_IJVectorGetObject( ij_b, &object );
       b = (NALU_HYPRE_ParVector) object;
 
       /* Initial guess */
-      NALU_HYPRE_IJVectorCreate(hypre_MPI_COMM_WORLD, first_local_col, last_local_col, &ij_x);
+      NALU_HYPRE_IJVectorCreate(nalu_hypre_MPI_COMM_WORLD, first_local_col, last_local_col, &ij_x);
       NALU_HYPRE_IJVectorSetObjectType(ij_x, NALU_HYPRE_PARCSR);
       NALU_HYPRE_IJVectorInitialize(ij_x);
 
-      values = hypre_CTAlloc(NALU_HYPRE_Real,  local_num_cols, NALU_HYPRE_MEMORY_HOST);
+      values = nalu_hypre_CTAlloc(NALU_HYPRE_Real,  local_num_cols, NALU_HYPRE_MEMORY_HOST);
       for (i = 0; i < local_num_cols; i++)
       {
          values[i] = 0.;
       }
       NALU_HYPRE_IJVectorSetValues(ij_x, local_num_cols, NULL, values);
-      hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
 
       ierr = NALU_HYPRE_IJVectorGetObject( ij_x, &object );
       x = (NALU_HYPRE_ParVector) object;
@@ -1603,12 +1603,12 @@ main( NALU_HYPRE_Int   argc,
    {
       if (myid == 0)
       {
-         hypre_printf("  RHS vector has random components and unit 2-norm\n");
-         hypre_printf("  Initial guess is 0\n");
+         nalu_hypre_printf("  RHS vector has random components and unit 2-norm\n");
+         nalu_hypre_printf("  Initial guess is 0\n");
       }
 
       /* RHS */
-      NALU_HYPRE_IJVectorCreate(hypre_MPI_COMM_WORLD, first_local_row, last_local_row, &ij_b);
+      NALU_HYPRE_IJVectorCreate(nalu_hypre_MPI_COMM_WORLD, first_local_row, last_local_row, &ij_b);
       NALU_HYPRE_IJVectorSetObjectType(ij_b, NALU_HYPRE_PARCSR);
       NALU_HYPRE_IJVectorInitialize(ij_b);
       ierr = NALU_HYPRE_IJVectorGetObject( ij_b, &object );
@@ -1625,17 +1625,17 @@ main( NALU_HYPRE_Int   argc,
       ierr = NALU_HYPRE_ParVectorScale(norm, b);
 
       /* Initial guess */
-      NALU_HYPRE_IJVectorCreate(hypre_MPI_COMM_WORLD, first_local_col, last_local_col, &ij_x);
+      NALU_HYPRE_IJVectorCreate(nalu_hypre_MPI_COMM_WORLD, first_local_col, last_local_col, &ij_x);
       NALU_HYPRE_IJVectorSetObjectType(ij_x, NALU_HYPRE_PARCSR);
       NALU_HYPRE_IJVectorInitialize(ij_x);
 
-      values = hypre_CTAlloc(NALU_HYPRE_Real,  local_num_cols, NALU_HYPRE_MEMORY_HOST);
+      values = nalu_hypre_CTAlloc(NALU_HYPRE_Real,  local_num_cols, NALU_HYPRE_MEMORY_HOST);
       for (i = 0; i < local_num_cols; i++)
       {
          values[i] = 0.;
       }
       NALU_HYPRE_IJVectorSetValues(ij_x, local_num_cols, NULL, values);
-      hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
 
       ierr = NALU_HYPRE_IJVectorGetObject( ij_x, &object );
       x = (NALU_HYPRE_ParVector) object;
@@ -1644,28 +1644,28 @@ main( NALU_HYPRE_Int   argc,
    {
       if (myid == 0)
       {
-         hypre_printf("  RHS vector set for solution with unit components\n");
-         hypre_printf("  Initial guess is 0\n");
+         nalu_hypre_printf("  RHS vector set for solution with unit components\n");
+         nalu_hypre_printf("  Initial guess is 0\n");
       }
 
       /* Temporary use of solution vector */
-      NALU_HYPRE_IJVectorCreate(hypre_MPI_COMM_WORLD, first_local_col, last_local_col, &ij_x);
+      NALU_HYPRE_IJVectorCreate(nalu_hypre_MPI_COMM_WORLD, first_local_col, last_local_col, &ij_x);
       NALU_HYPRE_IJVectorSetObjectType(ij_x, NALU_HYPRE_PARCSR);
       NALU_HYPRE_IJVectorInitialize(ij_x);
 
-      values = hypre_CTAlloc(NALU_HYPRE_Real,  local_num_cols, NALU_HYPRE_MEMORY_HOST);
+      values = nalu_hypre_CTAlloc(NALU_HYPRE_Real,  local_num_cols, NALU_HYPRE_MEMORY_HOST);
       for (i = 0; i < local_num_cols; i++)
       {
          values[i] = 1.;
       }
       NALU_HYPRE_IJVectorSetValues(ij_x, local_num_cols, NULL, values);
-      hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
 
       ierr = NALU_HYPRE_IJVectorGetObject( ij_x, &object );
       x = (NALU_HYPRE_ParVector) object;
 
       /* RHS */
-      NALU_HYPRE_IJVectorCreate(hypre_MPI_COMM_WORLD, first_local_row, last_local_row, &ij_b);
+      NALU_HYPRE_IJVectorCreate(nalu_hypre_MPI_COMM_WORLD, first_local_row, last_local_row, &ij_b);
       NALU_HYPRE_IJVectorSetObjectType(ij_b, NALU_HYPRE_PARCSR);
       NALU_HYPRE_IJVectorInitialize(ij_b);
       ierr = NALU_HYPRE_IJVectorGetObject( ij_b, &object );
@@ -1674,50 +1674,50 @@ main( NALU_HYPRE_Int   argc,
       NALU_HYPRE_ParCSRMatrixMatvec(1., parcsr_A, x, 0., b);
 
       /* Initial guess */
-      values = hypre_CTAlloc(NALU_HYPRE_Real,  local_num_cols, NALU_HYPRE_MEMORY_HOST);
+      values = nalu_hypre_CTAlloc(NALU_HYPRE_Real,  local_num_cols, NALU_HYPRE_MEMORY_HOST);
       for (i = 0; i < local_num_cols; i++)
       {
          values[i] = 0.;
       }
       NALU_HYPRE_IJVectorSetValues(ij_x, local_num_cols, NULL, values);
-      hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
    }
    else if ( build_rhs_type == 5 )
    {
       if (myid == 0)
       {
-         hypre_printf("  RHS vector is 0\n");
-         hypre_printf("  Initial guess has unit components\n");
+         nalu_hypre_printf("  RHS vector is 0\n");
+         nalu_hypre_printf("  Initial guess has unit components\n");
       }
 
       /* RHS */
-      NALU_HYPRE_IJVectorCreate(hypre_MPI_COMM_WORLD, first_local_row, last_local_row, &ij_b);
+      NALU_HYPRE_IJVectorCreate(nalu_hypre_MPI_COMM_WORLD, first_local_row, last_local_row, &ij_b);
       NALU_HYPRE_IJVectorSetObjectType(ij_b, NALU_HYPRE_PARCSR);
       NALU_HYPRE_IJVectorInitialize(ij_b);
 
-      values = hypre_CTAlloc(NALU_HYPRE_Real,  local_num_rows, NALU_HYPRE_MEMORY_HOST);
+      values = nalu_hypre_CTAlloc(NALU_HYPRE_Real,  local_num_rows, NALU_HYPRE_MEMORY_HOST);
       for (i = 0; i < local_num_rows; i++)
       {
          values[i] = 0.;
       }
       NALU_HYPRE_IJVectorSetValues(ij_b, local_num_rows, NULL, values);
-      hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
 
       ierr = NALU_HYPRE_IJVectorGetObject( ij_b, &object );
       b = (NALU_HYPRE_ParVector) object;
 
       /* Initial guess */
-      NALU_HYPRE_IJVectorCreate(hypre_MPI_COMM_WORLD, first_local_col, last_local_col, &ij_x);
+      NALU_HYPRE_IJVectorCreate(nalu_hypre_MPI_COMM_WORLD, first_local_col, last_local_col, &ij_x);
       NALU_HYPRE_IJVectorSetObjectType(ij_x, NALU_HYPRE_PARCSR);
       NALU_HYPRE_IJVectorInitialize(ij_x);
 
-      values = hypre_CTAlloc(NALU_HYPRE_Real,  local_num_cols, NALU_HYPRE_MEMORY_HOST);
+      values = nalu_hypre_CTAlloc(NALU_HYPRE_Real,  local_num_cols, NALU_HYPRE_MEMORY_HOST);
       for (i = 0; i < local_num_cols; i++)
       {
          values[i] = 1.;
       }
       NALU_HYPRE_IJVectorSetValues(ij_x, local_num_cols, NULL, values);
-      hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
 
       ierr = NALU_HYPRE_IJVectorGetObject( ij_x, &object );
       x = (NALU_HYPRE_ParVector) object;
@@ -1732,35 +1732,35 @@ main( NALU_HYPRE_Int   argc,
 
       if (myid == 0)
       {
-         hypre_printf("  Source vector read from file %s\n", argv[build_src_arg_index]);
-         hypre_printf("  Initial unknown vector in evolution is 0\n");
+         nalu_hypre_printf("  Source vector read from file %s\n", argv[build_src_arg_index]);
+         nalu_hypre_printf("  Initial unknown vector in evolution is 0\n");
       }
 
-      ierr = NALU_HYPRE_IJVectorRead( argv[build_src_arg_index], hypre_MPI_COMM_WORLD,
+      ierr = NALU_HYPRE_IJVectorRead( argv[build_src_arg_index], nalu_hypre_MPI_COMM_WORLD,
                                  NALU_HYPRE_PARCSR, &ij_b );
 
       ierr = NALU_HYPRE_IJVectorGetObject( ij_b, &object );
       b = (NALU_HYPRE_ParVector) object;
 
       /* Initial unknown vector */
-      NALU_HYPRE_IJVectorCreate(hypre_MPI_COMM_WORLD, first_local_col, last_local_col, &ij_x);
+      NALU_HYPRE_IJVectorCreate(nalu_hypre_MPI_COMM_WORLD, first_local_col, last_local_col, &ij_x);
       NALU_HYPRE_IJVectorSetObjectType(ij_x, NALU_HYPRE_PARCSR);
       NALU_HYPRE_IJVectorInitialize(ij_x);
 
-      values = hypre_CTAlloc(NALU_HYPRE_Real,  local_num_cols, NALU_HYPRE_MEMORY_HOST);
+      values = nalu_hypre_CTAlloc(NALU_HYPRE_Real,  local_num_cols, NALU_HYPRE_MEMORY_HOST);
       for (i = 0; i < local_num_cols; i++)
       {
          values[i] = 0.;
       }
       NALU_HYPRE_IJVectorSetValues(ij_x, local_num_cols, NULL, values);
-      hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
 
       ierr = NALU_HYPRE_IJVectorGetObject( ij_x, &object );
       x = (NALU_HYPRE_ParVector) object;
    }
    else if ( build_src_type == 1 )
    {
-      hypre_printf("build_src_type == 1 not currently implemented\n");
+      nalu_hypre_printf("build_src_type == 1 not currently implemented\n");
       return (-1);
 
 #if 0
@@ -1771,40 +1771,40 @@ main( NALU_HYPRE_Int   argc,
    {
       if (myid == 0)
       {
-         hypre_printf("  Source vector has unit components\n");
-         hypre_printf("  Initial unknown vector is 0\n");
+         nalu_hypre_printf("  Source vector has unit components\n");
+         nalu_hypre_printf("  Initial unknown vector is 0\n");
       }
 
       /* RHS */
-      NALU_HYPRE_IJVectorCreate(hypre_MPI_COMM_WORLD, first_local_row, last_local_row, &ij_b);
+      NALU_HYPRE_IJVectorCreate(nalu_hypre_MPI_COMM_WORLD, first_local_row, last_local_row, &ij_b);
       NALU_HYPRE_IJVectorSetObjectType(ij_b, NALU_HYPRE_PARCSR);
       NALU_HYPRE_IJVectorInitialize(ij_b);
 
-      values = hypre_CTAlloc(NALU_HYPRE_Real,  local_num_rows, NALU_HYPRE_MEMORY_HOST);
+      values = nalu_hypre_CTAlloc(NALU_HYPRE_Real,  local_num_rows, NALU_HYPRE_MEMORY_HOST);
       for (i = 0; i < local_num_rows; i++)
       {
          values[i] = 1.;
       }
       NALU_HYPRE_IJVectorSetValues(ij_b, local_num_rows, NULL, values);
-      hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
 
       ierr = NALU_HYPRE_IJVectorGetObject( ij_b, &object );
       b = (NALU_HYPRE_ParVector) object;
 
       /* Initial guess */
-      NALU_HYPRE_IJVectorCreate(hypre_MPI_COMM_WORLD, first_local_col, last_local_col, &ij_x);
+      NALU_HYPRE_IJVectorCreate(nalu_hypre_MPI_COMM_WORLD, first_local_col, last_local_col, &ij_x);
       NALU_HYPRE_IJVectorSetObjectType(ij_x, NALU_HYPRE_PARCSR);
       NALU_HYPRE_IJVectorInitialize(ij_x);
 
       /* For backward Euler the previous backward Euler iterate (assumed
          0 here) is usually used as the initial guess */
-      values = hypre_CTAlloc(NALU_HYPRE_Real,  local_num_cols, NALU_HYPRE_MEMORY_HOST);
+      values = nalu_hypre_CTAlloc(NALU_HYPRE_Real,  local_num_cols, NALU_HYPRE_MEMORY_HOST);
       for (i = 0; i < local_num_cols; i++)
       {
          values[i] = 0.;
       }
       NALU_HYPRE_IJVectorSetValues(ij_x, local_num_cols, NULL, values);
-      hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
 
       ierr = NALU_HYPRE_IJVectorGetObject( ij_x, &object );
       x = (NALU_HYPRE_ParVector) object;
@@ -1813,42 +1813,42 @@ main( NALU_HYPRE_Int   argc,
    {
       if (myid == 0)
       {
-         hypre_printf("  Source vector has random components in range 0 - 1\n");
-         hypre_printf("  Initial unknown vector is 0\n");
+         nalu_hypre_printf("  Source vector has random components in range 0 - 1\n");
+         nalu_hypre_printf("  Initial unknown vector is 0\n");
       }
 
       /* RHS */
-      NALU_HYPRE_IJVectorCreate(hypre_MPI_COMM_WORLD, first_local_row, last_local_row, &ij_b);
+      NALU_HYPRE_IJVectorCreate(nalu_hypre_MPI_COMM_WORLD, first_local_row, last_local_row, &ij_b);
       NALU_HYPRE_IJVectorSetObjectType(ij_b, NALU_HYPRE_PARCSR);
       NALU_HYPRE_IJVectorInitialize(ij_b);
-      values = hypre_CTAlloc(NALU_HYPRE_Real,  local_num_rows, NALU_HYPRE_MEMORY_HOST);
+      values = nalu_hypre_CTAlloc(NALU_HYPRE_Real,  local_num_rows, NALU_HYPRE_MEMORY_HOST);
 
-      hypre_SeedRand(myid);
+      nalu_hypre_SeedRand(myid);
       for (i = 0; i < local_num_rows; i++)
       {
-         values[i] = hypre_Rand();
+         values[i] = nalu_hypre_Rand();
       }
 
       NALU_HYPRE_IJVectorSetValues(ij_b, local_num_rows, NULL, values);
-      hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
 
       ierr = NALU_HYPRE_IJVectorGetObject( ij_b, &object );
       b = (NALU_HYPRE_ParVector) object;
 
       /* Initial guess */
-      NALU_HYPRE_IJVectorCreate(hypre_MPI_COMM_WORLD, first_local_col, last_local_col, &ij_x);
+      NALU_HYPRE_IJVectorCreate(nalu_hypre_MPI_COMM_WORLD, first_local_col, last_local_col, &ij_x);
       NALU_HYPRE_IJVectorSetObjectType(ij_x, NALU_HYPRE_PARCSR);
       NALU_HYPRE_IJVectorInitialize(ij_x);
 
       /* For backward Euler the previous backward Euler iterate (assumed
          0 here) is usually used as the initial guess */
-      values = hypre_CTAlloc(NALU_HYPRE_Real,  local_num_cols, NALU_HYPRE_MEMORY_HOST);
+      values = nalu_hypre_CTAlloc(NALU_HYPRE_Real,  local_num_cols, NALU_HYPRE_MEMORY_HOST);
       for (i = 0; i < local_num_cols; i++)
       {
          values[i] = 0.;
       }
       NALU_HYPRE_IJVectorSetValues(ij_x, local_num_cols, NULL, values);
-      hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
 
       ierr = NALU_HYPRE_IJVectorGetObject( ij_x, &object );
       x = (NALU_HYPRE_ParVector) object;
@@ -1857,51 +1857,51 @@ main( NALU_HYPRE_Int   argc,
    {
       if (myid == 0)
       {
-         hypre_printf("  Source vector is 0 \n");
-         hypre_printf("  Initial unknown vector has random components in range 0 - 1\n");
+         nalu_hypre_printf("  Source vector is 0 \n");
+         nalu_hypre_printf("  Initial unknown vector has random components in range 0 - 1\n");
       }
 
       /* RHS */
-      NALU_HYPRE_IJVectorCreate(hypre_MPI_COMM_WORLD, first_local_row, last_local_row, &ij_b);
+      NALU_HYPRE_IJVectorCreate(nalu_hypre_MPI_COMM_WORLD, first_local_row, last_local_row, &ij_b);
       NALU_HYPRE_IJVectorSetObjectType(ij_b, NALU_HYPRE_PARCSR);
       NALU_HYPRE_IJVectorInitialize(ij_b);
 
-      values = hypre_CTAlloc(NALU_HYPRE_Real,  local_num_rows, NALU_HYPRE_MEMORY_HOST);
-      hypre_SeedRand(myid);
+      values = nalu_hypre_CTAlloc(NALU_HYPRE_Real,  local_num_rows, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_SeedRand(myid);
       for (i = 0; i < local_num_rows; i++)
       {
-         values[i] = hypre_Rand() / dt;
+         values[i] = nalu_hypre_Rand() / dt;
       }
       NALU_HYPRE_IJVectorSetValues(ij_b, local_num_rows, NULL, values);
-      hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
 
       ierr = NALU_HYPRE_IJVectorGetObject( ij_b, &object );
       b = (NALU_HYPRE_ParVector) object;
 
       /* Initial guess */
-      NALU_HYPRE_IJVectorCreate(hypre_MPI_COMM_WORLD, first_local_col, last_local_col, &ij_x);
+      NALU_HYPRE_IJVectorCreate(nalu_hypre_MPI_COMM_WORLD, first_local_col, last_local_col, &ij_x);
       NALU_HYPRE_IJVectorSetObjectType(ij_x, NALU_HYPRE_PARCSR);
       NALU_HYPRE_IJVectorInitialize(ij_x);
 
       /* For backward Euler the previous backward Euler iterate (assumed
          random in 0 - 1 here) is usually used as the initial guess */
-      values = hypre_CTAlloc(NALU_HYPRE_Real,  local_num_cols, NALU_HYPRE_MEMORY_HOST);
-      hypre_SeedRand(myid);
+      values = nalu_hypre_CTAlloc(NALU_HYPRE_Real,  local_num_cols, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_SeedRand(myid);
       for (i = 0; i < local_num_cols; i++)
       {
-         values[i] = hypre_Rand();
+         values[i] = nalu_hypre_Rand();
       }
       NALU_HYPRE_IJVectorSetValues(ij_x, local_num_cols, NULL, values);
-      hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
 
       ierr = NALU_HYPRE_IJVectorGetObject( ij_x, &object );
       x = (NALU_HYPRE_ParVector) object;
    }
 
-   hypre_EndTiming(time_index);
-   hypre_PrintTiming("IJ Vector Setup", hypre_MPI_COMM_WORLD);
-   hypre_FinalizeTiming(time_index);
-   hypre_ClearTiming();
+   nalu_hypre_EndTiming(time_index);
+   nalu_hypre_PrintTiming("IJ Vector Setup", nalu_hypre_MPI_COMM_WORLD);
+   nalu_hypre_FinalizeTiming(time_index);
+   nalu_hypre_ClearTiming();
 
    /* NALU_HYPRE_IJMatrixPrint(ij_A, "driver.out.A");
    NALU_HYPRE_IJVectorPrint(ij_x, "driver.out.x0"); */
@@ -1920,10 +1920,10 @@ main( NALU_HYPRE_Int   argc,
       else
       {
          local_num_vars = local_num_rows;
-         dof_func = hypre_CTAlloc(NALU_HYPRE_Int, local_num_vars, NALU_HYPRE_MEMORY_HOST);
+         dof_func = nalu_hypre_CTAlloc(NALU_HYPRE_Int, local_num_vars, NALU_HYPRE_MEMORY_HOST);
          if (myid == 0)
          {
-            hypre_printf (" Number of unknown functions = %d \n", num_functions);
+            nalu_hypre_printf (" Number of unknown functions = %d \n", num_functions);
          }
          rest = first_local_row - ((first_local_row / num_functions) * num_functions);
          indx = num_functions - rest;
@@ -1969,9 +1969,9 @@ main( NALU_HYPRE_Int   argc,
    {
       dscg_max_its = 1000;
       pcg_max_its = 200;
-      if (myid == 0) { hypre_printf("Solver:  AMG_Hybrid\n"); }
-      time_index = hypre_InitializeTiming("AMG_hybrid Setup");
-      hypre_BeginTiming(time_index);
+      if (myid == 0) { nalu_hypre_printf("Solver:  AMG_Hybrid\n"); }
+      time_index = nalu_hypre_InitializeTiming("AMG_hybrid Setup");
+      nalu_hypre_BeginTiming(time_index);
 
       NALU_HYPRE_ParCSRHybridCreate(&amg_solver);
       NALU_HYPRE_ParCSRHybridSetTol(amg_solver, tol);
@@ -1994,20 +1994,20 @@ main( NALU_HYPRE_Int   argc,
 
       NALU_HYPRE_ParCSRHybridSetup(amg_solver, parcsr_A, b, x);
 
-      hypre_EndTiming(time_index);
-      hypre_PrintTiming("Setup phase times", hypre_MPI_COMM_WORLD);
-      hypre_FinalizeTiming(time_index);
-      hypre_ClearTiming();
+      nalu_hypre_EndTiming(time_index);
+      nalu_hypre_PrintTiming("Setup phase times", nalu_hypre_MPI_COMM_WORLD);
+      nalu_hypre_FinalizeTiming(time_index);
+      nalu_hypre_ClearTiming();
 
-      time_index = hypre_InitializeTiming("ParCSR Hybrid Solve");
-      hypre_BeginTiming(time_index);
+      time_index = nalu_hypre_InitializeTiming("ParCSR Hybrid Solve");
+      nalu_hypre_BeginTiming(time_index);
 
       NALU_HYPRE_ParCSRHybridSolve(amg_solver, parcsr_A, b, x);
 
-      hypre_EndTiming(time_index);
-      hypre_PrintTiming("Solve phase times", hypre_MPI_COMM_WORLD);
-      hypre_FinalizeTiming(time_index);
-      hypre_ClearTiming();
+      nalu_hypre_EndTiming(time_index);
+      nalu_hypre_PrintTiming("Solve phase times", nalu_hypre_MPI_COMM_WORLD);
+      nalu_hypre_FinalizeTiming(time_index);
+      nalu_hypre_ClearTiming();
 
       NALU_HYPRE_ParCSRHybridGetNumIterations(amg_solver, &num_iterations);
       NALU_HYPRE_ParCSRHybridGetPCGNumIterations(amg_solver, &pcg_num_its);
@@ -2017,12 +2017,12 @@ main( NALU_HYPRE_Int   argc,
 
       if (myid == 0)
       {
-         hypre_printf("\n");
-         hypre_printf("Iterations = %d\n", num_iterations);
-         hypre_printf("PCG_Iterations = %d\n", pcg_num_its);
-         hypre_printf("DSCG_Iterations = %d\n", dscg_num_its);
-         hypre_printf("Final Relative Residual Norm = %e\n", final_res_norm);
-         hypre_printf("\n");
+         nalu_hypre_printf("\n");
+         nalu_hypre_printf("Iterations = %d\n", num_iterations);
+         nalu_hypre_printf("PCG_Iterations = %d\n", pcg_num_its);
+         nalu_hypre_printf("DSCG_Iterations = %d\n", dscg_num_its);
+         nalu_hypre_printf("Final Relative Residual Norm = %e\n", final_res_norm);
+         nalu_hypre_printf("\n");
       }
       NALU_HYPRE_ParCSRHybridDestroy(amg_solver);
    }
@@ -2032,9 +2032,9 @@ main( NALU_HYPRE_Int   argc,
 
    if (solver_id == NALU_HYPRE_BOOMERAMG)
    {
-      if (myid == 0) { hypre_printf("Solver:  AMG\n"); }
-      time_index = hypre_InitializeTiming("BoomerAMG Setup");
-      hypre_BeginTiming(time_index);
+      if (myid == 0) { nalu_hypre_printf("Solver:  AMG\n"); }
+      time_index = nalu_hypre_InitializeTiming("BoomerAMG Setup");
+      nalu_hypre_BeginTiming(time_index);
 
       NALU_HYPRE_BoomerAMGCreate(&amg_solver);
       NALU_HYPRE_BoomerAMGSetInterpType(amg_solver, interp_type);
@@ -2071,20 +2071,20 @@ main( NALU_HYPRE_Int   argc,
 
       NALU_HYPRE_BoomerAMGSetup(amg_solver, parcsr_A, b, x);
 
-      hypre_EndTiming(time_index);
-      hypre_PrintTiming("Setup phase times", hypre_MPI_COMM_WORLD);
-      hypre_FinalizeTiming(time_index);
-      hypre_ClearTiming();
+      nalu_hypre_EndTiming(time_index);
+      nalu_hypre_PrintTiming("Setup phase times", nalu_hypre_MPI_COMM_WORLD);
+      nalu_hypre_FinalizeTiming(time_index);
+      nalu_hypre_ClearTiming();
 
-      time_index = hypre_InitializeTiming("BoomerAMG Solve");
-      hypre_BeginTiming(time_index);
+      time_index = nalu_hypre_InitializeTiming("BoomerAMG Solve");
+      nalu_hypre_BeginTiming(time_index);
 
       NALU_HYPRE_BoomerAMGSolve(amg_solver, parcsr_A, b, x);
 
-      hypre_EndTiming(time_index);
-      hypre_PrintTiming("Solve phase times", hypre_MPI_COMM_WORLD);
-      hypre_FinalizeTiming(time_index);
-      hypre_ClearTiming();
+      nalu_hypre_EndTiming(time_index);
+      nalu_hypre_PrintTiming("Solve phase times", nalu_hypre_MPI_COMM_WORLD);
+      nalu_hypre_FinalizeTiming(time_index);
+      nalu_hypre_ClearTiming();
 
 #if SECOND_TIME
       /* run a second time to check for memory leaks */
@@ -2107,8 +2107,8 @@ main( NALU_HYPRE_Int   argc,
       /* fine grid */
       num_grid_sweeps[0] = num_sweep;
       grid_relax_type[0] = relax_default;
-      hypre_TFree(grid_relax_points[0], NALU_HYPRE_MEMORY_HOST);
-      grid_relax_points[0] = hypre_CTAlloc(NALU_HYPRE_Int,  num_sweep, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(grid_relax_points[0], NALU_HYPRE_MEMORY_HOST);
+      grid_relax_points[0] = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  num_sweep, NALU_HYPRE_MEMORY_HOST);
       for (i = 0; i < num_sweep; i++)
       {
          grid_relax_points[0][i] = 0;
@@ -2117,8 +2117,8 @@ main( NALU_HYPRE_Int   argc,
       /* down cycle */
       num_grid_sweeps[1] = num_sweep;
       grid_relax_type[1] = relax_default;
-      hypre_TFree(grid_relax_points[1], NALU_HYPRE_MEMORY_HOST);
-      grid_relax_points[1] = hypre_CTAlloc(NALU_HYPRE_Int,  num_sweep, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(grid_relax_points[1], NALU_HYPRE_MEMORY_HOST);
+      grid_relax_points[1] = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  num_sweep, NALU_HYPRE_MEMORY_HOST);
       for (i = 0; i < num_sweep; i++)
       {
          grid_relax_points[1][i] = 0;
@@ -2127,8 +2127,8 @@ main( NALU_HYPRE_Int   argc,
       /* up cycle */
       num_grid_sweeps[2] = num_sweep;
       grid_relax_type[2] = relax_default;
-      hypre_TFree(grid_relax_points[2], NALU_HYPRE_MEMORY_HOST);
-      grid_relax_points[2] = hypre_CTAlloc(NALU_HYPRE_Int,  num_sweep, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(grid_relax_points[2], NALU_HYPRE_MEMORY_HOST);
+      grid_relax_points[2] = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  num_sweep, NALU_HYPRE_MEMORY_HOST);
       for (i = 0; i < num_sweep; i++)
       {
          grid_relax_points[2][i] = 0;
@@ -2137,13 +2137,13 @@ main( NALU_HYPRE_Int   argc,
       /* coarsest grid */
       num_grid_sweeps[3] = 1;
       grid_relax_type[3] = 9;
-      hypre_TFree(grid_relax_points[3], NALU_HYPRE_MEMORY_HOST);
-      grid_relax_points[3] = hypre_CTAlloc(NALU_HYPRE_Int,  1, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(grid_relax_points[3], NALU_HYPRE_MEMORY_HOST);
+      grid_relax_points[3] = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  1, NALU_HYPRE_MEMORY_HOST);
       grid_relax_points[3][0] = 0;
 
-      if (myid == 0) { hypre_printf("Solver:  GSMG\n"); }
-      time_index = hypre_InitializeTiming("BoomerAMG Setup");
-      hypre_BeginTiming(time_index);
+      if (myid == 0) { nalu_hypre_printf("Solver:  GSMG\n"); }
+      time_index = nalu_hypre_InitializeTiming("BoomerAMG Setup");
+      nalu_hypre_BeginTiming(time_index);
 
       NALU_HYPRE_BoomerAMGCreate(&amg_solver);
       NALU_HYPRE_BoomerAMGSetGSMG(amg_solver, 4); /* specify GSMG */
@@ -2181,20 +2181,20 @@ main( NALU_HYPRE_Int   argc,
 
       NALU_HYPRE_BoomerAMGSetup(amg_solver, parcsr_A, b, x);
 
-      hypre_EndTiming(time_index);
-      hypre_PrintTiming("Setup phase times", hypre_MPI_COMM_WORLD);
-      hypre_FinalizeTiming(time_index);
-      hypre_ClearTiming();
+      nalu_hypre_EndTiming(time_index);
+      nalu_hypre_PrintTiming("Setup phase times", nalu_hypre_MPI_COMM_WORLD);
+      nalu_hypre_FinalizeTiming(time_index);
+      nalu_hypre_ClearTiming();
 
-      time_index = hypre_InitializeTiming("BoomerAMG Solve");
-      hypre_BeginTiming(time_index);
+      time_index = nalu_hypre_InitializeTiming("BoomerAMG Solve");
+      nalu_hypre_BeginTiming(time_index);
 
       NALU_HYPRE_BoomerAMGSolve(amg_solver, parcsr_A, b, x);
 
-      hypre_EndTiming(time_index);
-      hypre_PrintTiming("Solve phase times", hypre_MPI_COMM_WORLD);
-      hypre_FinalizeTiming(time_index);
-      hypre_ClearTiming();
+      nalu_hypre_EndTiming(time_index);
+      nalu_hypre_PrintTiming("Solve phase times", nalu_hypre_MPI_COMM_WORLD);
+      nalu_hypre_FinalizeTiming(time_index);
+      nalu_hypre_ClearTiming();
 
 #if SECOND_TIME
       /* run a second time to check for memory leaks */
@@ -2212,11 +2212,11 @@ main( NALU_HYPRE_Int   argc,
       NALU_HYPRE_ParCSRMatrix  parcsr_mat;
 
       /* use ParaSails preconditioner */
-      if (myid == 0) { hypre_printf("Test ParaSails Build IJMatrix\n"); }
+      if (myid == 0) { nalu_hypre_printf("Test ParaSails Build IJMatrix\n"); }
 
       NALU_HYPRE_IJMatrixPrint(ij_A, "parasails.in");
 
-      NALU_HYPRE_ParaSailsCreate(hypre_MPI_COMM_WORLD, &pcg_precond);
+      NALU_HYPRE_ParaSailsCreate(nalu_hypre_MPI_COMM_WORLD, &pcg_precond);
       NALU_HYPRE_ParaSailsSetParams(pcg_precond, 0., 0);
       NALU_HYPRE_ParaSailsSetFilter(pcg_precond, 0.);
       NALU_HYPRE_ParaSailsSetLogging(pcg_precond, ioutdat);
@@ -2228,7 +2228,7 @@ main( NALU_HYPRE_Int   argc,
       NALU_HYPRE_ParaSailsBuildIJMatrix(pcg_precond, &ij_M);
       NALU_HYPRE_IJMatrixPrint(ij_M, "parasails.out");
 
-      if (myid == 0) { hypre_printf("Printed to parasails.out.\n"); }
+      if (myid == 0) { nalu_hypre_printf("Printed to parasails.out.\n"); }
       exit(0);
    }
 
@@ -2240,11 +2240,11 @@ main( NALU_HYPRE_Int   argc,
    if ( !lobpcgFlag && ( solver_id == NALU_HYPRE_PCG) )
       /*end lobpcg */
    {
-      time_index = hypre_InitializeTiming("PCG Setup");
-      hypre_BeginTiming(time_index);
+      time_index = nalu_hypre_InitializeTiming("PCG Setup");
+      nalu_hypre_BeginTiming(time_index);
       ioutdat = 2;
 
-      NALU_HYPRE_ParCSRPCGCreate(hypre_MPI_COMM_WORLD, &pcg_solver);
+      NALU_HYPRE_ParCSRPCGCreate(nalu_hypre_MPI_COMM_WORLD, &pcg_solver);
       NALU_HYPRE_PCGSetMaxIter(pcg_solver, 1000);
       NALU_HYPRE_PCGSetTol(pcg_solver, tol);
       NALU_HYPRE_PCGSetTwoNorm(pcg_solver, 1);
@@ -2254,9 +2254,9 @@ main( NALU_HYPRE_Int   argc,
       if (precond_id == NALU_HYPRE_EUCLID)
       {
          /* use Euclid preconditioning */
-         if (myid == 0) { hypre_printf("Solver: Euclid-PCG\n"); }
+         if (myid == 0) { nalu_hypre_printf("Solver: Euclid-PCG\n"); }
 
-         NALU_HYPRE_EuclidCreate(hypre_MPI_COMM_WORLD, &pcg_precond);
+         NALU_HYPRE_EuclidCreate(nalu_hypre_MPI_COMM_WORLD, &pcg_precond);
 
          /* note: There are three three methods of setting run-time
             parameters for Euclid: (see NALU_HYPRE_parcsr_ls.h); here
@@ -2272,38 +2272,38 @@ main( NALU_HYPRE_Int   argc,
       }
       else
       {
-         hypre_set_precond(matrix_id, solver_id, precond_id, pcg_solver, pcg_precond);
+         nalu_hypre_set_precond(matrix_id, solver_id, precond_id, pcg_solver, pcg_precond);
       }
 
       NALU_HYPRE_PCGGetPrecond(pcg_solver, &pcg_precond_gotten);
       if (pcg_precond_gotten !=  pcg_precond)
       {
-         hypre_printf("NALU_HYPRE_ParCSRPCGGetPrecond got bad precond\n");
+         nalu_hypre_printf("NALU_HYPRE_ParCSRPCGGetPrecond got bad precond\n");
          return (-1);
       }
       else if (myid == 0)
       {
-         hypre_printf("NALU_HYPRE_ParCSRPCGGetPrecond got good precond\n");
+         nalu_hypre_printf("NALU_HYPRE_ParCSRPCGGetPrecond got good precond\n");
       }
 
       NALU_HYPRE_PCGSetup(pcg_solver, (NALU_HYPRE_Matrix)parcsr_A,
                      (NALU_HYPRE_Vector)b, (NALU_HYPRE_Vector)x);
 
-      hypre_EndTiming(time_index);
-      hypre_PrintTiming("Setup phase times", hypre_MPI_COMM_WORLD);
-      hypre_FinalizeTiming(time_index);
-      hypre_ClearTiming();
+      nalu_hypre_EndTiming(time_index);
+      nalu_hypre_PrintTiming("Setup phase times", nalu_hypre_MPI_COMM_WORLD);
+      nalu_hypre_FinalizeTiming(time_index);
+      nalu_hypre_ClearTiming();
 
-      time_index = hypre_InitializeTiming("PCG Solve");
-      hypre_BeginTiming(time_index);
+      time_index = nalu_hypre_InitializeTiming("PCG Solve");
+      nalu_hypre_BeginTiming(time_index);
 
       NALU_HYPRE_PCGSolve(pcg_solver, (NALU_HYPRE_Matrix)parcsr_A,
                      (NALU_HYPRE_Vector)b, (NALU_HYPRE_Vector)x);
 
-      hypre_EndTiming(time_index);
-      hypre_PrintTiming("Solve phase times", hypre_MPI_COMM_WORLD);
-      hypre_FinalizeTiming(time_index);
-      hypre_ClearTiming();
+      nalu_hypre_EndTiming(time_index);
+      nalu_hypre_PrintTiming("Solve phase times", nalu_hypre_MPI_COMM_WORLD);
+      nalu_hypre_FinalizeTiming(time_index);
+      nalu_hypre_ClearTiming();
 
       NALU_HYPRE_PCGGetNumIterations(pcg_solver, &num_iterations);
       NALU_HYPRE_PCGGetFinalRelativeResidualNorm(pcg_solver, &final_res_norm);
@@ -2319,15 +2319,15 @@ main( NALU_HYPRE_Int   argc,
 
       NALU_HYPRE_ParCSRPCGDestroy(pcg_solver);
 
-      hypre_destroy_precond(precond_id, pcg_precond);
+      nalu_hypre_destroy_precond(precond_id, pcg_precond);
 
 
       if (myid == 0)
       {
-         hypre_printf("\n");
-         hypre_printf("Iterations = %d\n", num_iterations);
-         hypre_printf("Final Relative Residual Norm = %e\n", final_res_norm);
-         hypre_printf("\n");
+         nalu_hypre_printf("\n");
+         nalu_hypre_printf("Iterations = %d\n", num_iterations);
+         nalu_hypre_printf("Final Relative Residual Norm = %e\n", final_res_norm);
+         nalu_hypre_printf("\n");
       }
 
    }
@@ -2341,7 +2341,7 @@ main( NALU_HYPRE_Int   argc,
    if ( lobpcgFlag )
    {
 
-      interpreter = hypre_CTAlloc(mv_InterfaceInterpreter, 1, NALU_HYPRE_MEMORY_HOST);
+      interpreter = nalu_hypre_CTAlloc(mv_InterfaceInterpreter, 1, NALU_HYPRE_MEMORY_HOST);
 
       NALU_HYPRE_ParCSRSetupInterpreter( interpreter );
       NALU_HYPRE_ParCSRSetupMatvec(&matvec_fn);
@@ -2371,8 +2371,8 @@ main( NALU_HYPRE_Int   argc,
 
          if (sparsity_known == 1)
          {
-            diag_sizes = hypre_CTAlloc(NALU_HYPRE_Int,  local_num_rows, NALU_HYPRE_MEMORY_HOST);
-            offdiag_sizes = hypre_CTAlloc(NALU_HYPRE_Int,  local_num_rows, NALU_HYPRE_MEMORY_HOST);
+            diag_sizes = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  local_num_rows, NALU_HYPRE_MEMORY_HOST);
+            offdiag_sizes = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  local_num_rows, NALU_HYPRE_MEMORY_HOST);
             local_row = 0;
             for (i = first_local_row; i <= last_local_row; i++)
             {
@@ -2396,8 +2396,8 @@ main( NALU_HYPRE_Int   argc,
             ierr += NALU_HYPRE_IJMatrixSetDiagOffdSizes( ij_B,
                                                     (const NALU_HYPRE_Int *) diag_sizes,
                                                     (const NALU_HYPRE_Int *) offdiag_sizes );
-            hypre_TFree(diag_sizes, NALU_HYPRE_MEMORY_HOST);
-            hypre_TFree(offdiag_sizes, NALU_HYPRE_MEMORY_HOST);
+            nalu_hypre_TFree(diag_sizes, NALU_HYPRE_MEMORY_HOST);
+            nalu_hypre_TFree(offdiag_sizes, NALU_HYPRE_MEMORY_HOST);
 
             ierr = NALU_HYPRE_IJMatrixInitialize( ij_B );
 
@@ -2416,7 +2416,7 @@ main( NALU_HYPRE_Int   argc,
          }
          else
          {
-            row_sizes = hypre_CTAlloc(NALU_HYPRE_Int,  local_num_rows, NALU_HYPRE_MEMORY_HOST);
+            row_sizes = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  local_num_rows, NALU_HYPRE_MEMORY_HOST);
 
             size = 5; /* this is in general too low, and supposed to test
                        the capability of the reallocation of the interface */
@@ -2436,7 +2436,7 @@ main( NALU_HYPRE_Int   argc,
 
             ierr = NALU_HYPRE_IJMatrixSetRowSizes ( ij_B, (const NALU_HYPRE_Int *) row_sizes );
 
-            hypre_TFree(row_sizes, NALU_HYPRE_MEMORY_HOST);
+            nalu_hypre_TFree(row_sizes, NALU_HYPRE_MEMORY_HOST);
 
             ierr = NALU_HYPRE_IJMatrixInitialize( ij_B );
 
@@ -2467,10 +2467,10 @@ main( NALU_HYPRE_Int   argc,
       if ( pcgIterations > 0 )   /* do inner pcg iterations */
       {
 
-         time_index = hypre_InitializeTiming("PCG Setup");
-         hypre_BeginTiming(time_index);
+         time_index = nalu_hypre_InitializeTiming("PCG Setup");
+         nalu_hypre_BeginTiming(time_index);
 
-         NALU_HYPRE_ParCSRPCGCreate(hypre_MPI_COMM_WORLD, &pcg_solver);
+         NALU_HYPRE_ParCSRPCGCreate(nalu_hypre_MPI_COMM_WORLD, &pcg_solver);
          NALU_HYPRE_PCGSetMaxIter(pcg_solver, pcgIterations);
          NALU_HYPRE_PCGSetTol(pcg_solver, pcgTol);
          NALU_HYPRE_PCGSetTwoNorm(pcg_solver, 1);
@@ -2482,7 +2482,7 @@ main( NALU_HYPRE_Int   argc,
          if (solver_id == 1)
          {
             /* use BoomerAMG as preconditioner */
-            if (myid == 0) { hypre_printf("Solver: AMG-PCG\n"); }
+            if (myid == 0) { nalu_hypre_printf("Solver: AMG-PCG\n"); }
             NALU_HYPRE_BoomerAMGCreate(&pcg_precond);
             NALU_HYPRE_BoomerAMGSetInterpType(pcg_precond, interp_type);
             NALU_HYPRE_BoomerAMGSetNumSamples(pcg_precond, gsmg_samples);
@@ -2523,7 +2523,7 @@ main( NALU_HYPRE_Int   argc,
          {
 
             /* use diagonal scaling as preconditioner */
-            if (myid == 0) { hypre_printf("Solver: DS-PCG\n"); }
+            if (myid == 0) { nalu_hypre_printf("Solver: DS-PCG\n"); }
             pcg_precond = NULL;
 
             NALU_HYPRE_PCGSetPrecond(pcg_solver,
@@ -2534,9 +2534,9 @@ main( NALU_HYPRE_Int   argc,
          else if (solver_id == 8)
          {
             /* use ParaSails preconditioner */
-            if (myid == 0) { hypre_printf("Solver: ParaSails-PCG\n"); }
+            if (myid == 0) { nalu_hypre_printf("Solver: ParaSails-PCG\n"); }
 
-            NALU_HYPRE_ParaSailsCreate(hypre_MPI_COMM_WORLD, &pcg_precond);
+            NALU_HYPRE_ParaSailsCreate(nalu_hypre_MPI_COMM_WORLD, &pcg_precond);
             NALU_HYPRE_ParaSailsSetParams(pcg_precond, sai_threshold, max_levels);
             NALU_HYPRE_ParaSailsSetFilter(pcg_precond, sai_filter);
             NALU_HYPRE_ParaSailsSetLogging(pcg_precond, poutdat);
@@ -2549,7 +2549,7 @@ main( NALU_HYPRE_Int   argc,
          else if (solver_id == 12)
          {
             /* use Schwarz preconditioner */
-            if (myid == 0) { hypre_printf("Solver: Schwarz-PCG\n"); }
+            if (myid == 0) { nalu_hypre_printf("Solver: Schwarz-PCG\n"); }
 
             NALU_HYPRE_SchwarzCreate(&pcg_precond);
             NALU_HYPRE_SchwarzSetVariant(pcg_precond, variant);
@@ -2571,8 +2571,8 @@ main( NALU_HYPRE_Int   argc,
             /* fine grid */
             num_grid_sweeps[0] = num_sweep;
             grid_relax_type[0] = relax_default;
-            hypre_TFree(grid_relax_points[0], NALU_HYPRE_MEMORY_HOST);
-            grid_relax_points[0] = hypre_CTAlloc(NALU_HYPRE_Int,  num_sweep, NALU_HYPRE_MEMORY_HOST);
+            nalu_hypre_TFree(grid_relax_points[0], NALU_HYPRE_MEMORY_HOST);
+            grid_relax_points[0] = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  num_sweep, NALU_HYPRE_MEMORY_HOST);
             for (i = 0; i < num_sweep; i++)
             {
                grid_relax_points[0][i] = 0;
@@ -2581,8 +2581,8 @@ main( NALU_HYPRE_Int   argc,
             /* down cycle */
             num_grid_sweeps[1] = num_sweep;
             grid_relax_type[1] = relax_default;
-            hypre_TFree(grid_relax_points[1], NALU_HYPRE_MEMORY_HOST);
-            grid_relax_points[1] = hypre_CTAlloc(NALU_HYPRE_Int,  num_sweep, NALU_HYPRE_MEMORY_HOST);
+            nalu_hypre_TFree(grid_relax_points[1], NALU_HYPRE_MEMORY_HOST);
+            grid_relax_points[1] = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  num_sweep, NALU_HYPRE_MEMORY_HOST);
             for (i = 0; i < num_sweep; i++)
             {
                grid_relax_points[1][i] = 0;
@@ -2591,8 +2591,8 @@ main( NALU_HYPRE_Int   argc,
             /* up cycle */
             num_grid_sweeps[2] = num_sweep;
             grid_relax_type[2] = relax_default;
-            hypre_TFree(grid_relax_points[2], NALU_HYPRE_MEMORY_HOST);
-            grid_relax_points[2] = hypre_CTAlloc(NALU_HYPRE_Int,  num_sweep, NALU_HYPRE_MEMORY_HOST);
+            nalu_hypre_TFree(grid_relax_points[2], NALU_HYPRE_MEMORY_HOST);
+            grid_relax_points[2] = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  num_sweep, NALU_HYPRE_MEMORY_HOST);
             for (i = 0; i < num_sweep; i++)
             {
                grid_relax_points[2][i] = 0;
@@ -2601,11 +2601,11 @@ main( NALU_HYPRE_Int   argc,
             /* coarsest grid */
             num_grid_sweeps[3] = 1;
             grid_relax_type[3] = 9;
-            hypre_TFree(grid_relax_points[3], NALU_HYPRE_MEMORY_HOST);
-            grid_relax_points[3] = hypre_CTAlloc(NALU_HYPRE_Int,  1, NALU_HYPRE_MEMORY_HOST);
+            nalu_hypre_TFree(grid_relax_points[3], NALU_HYPRE_MEMORY_HOST);
+            grid_relax_points[3] = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  1, NALU_HYPRE_MEMORY_HOST);
             grid_relax_points[3][0] = 0;
 
-            if (myid == 0) { hypre_printf("Solver: GSMG-PCG\n"); }
+            if (myid == 0) { nalu_hypre_printf("Solver: GSMG-PCG\n"); }
             NALU_HYPRE_BoomerAMGCreate(&pcg_precond);
             NALU_HYPRE_BoomerAMGSetGSMG(pcg_precond, 4);
             NALU_HYPRE_BoomerAMGSetInterpType(pcg_precond, interp_type);
@@ -2646,9 +2646,9 @@ main( NALU_HYPRE_Int   argc,
          else if (solver_id == 43)
          {
             /* use Euclid preconditioning */
-            if (myid == 0) { hypre_printf("Solver: Euclid-PCG\n"); }
+            if (myid == 0) { nalu_hypre_printf("Solver: Euclid-PCG\n"); }
 
-            NALU_HYPRE_EuclidCreate(hypre_MPI_COMM_WORLD, &pcg_precond);
+            NALU_HYPRE_EuclidCreate(nalu_hypre_MPI_COMM_WORLD, &pcg_precond);
 
             /* note: There are three three methods of setting run-time
                parameters for Euclid: (see NALU_HYPRE_parcsr_ls.h); here
@@ -2666,28 +2666,28 @@ main( NALU_HYPRE_Int   argc,
          {
             if ( verbosity )
             {
-               hypre_printf("Solver ID not recognized - running inner PCG iterations without preconditioner\n\n");
+               nalu_hypre_printf("Solver ID not recognized - running inner PCG iterations without preconditioner\n\n");
             }
          }
 
          NALU_HYPRE_PCGGetPrecond(pcg_solver, &pcg_precond_gotten);
          if (pcg_precond_gotten !=  pcg_precond)
          {
-            hypre_printf("NALU_HYPRE_ParCSRPCGGetPrecond got bad precond\n");
+            nalu_hypre_printf("NALU_HYPRE_ParCSRPCGGetPrecond got bad precond\n");
             return (-1);
          }
          else if (myid == 0)
          {
-            hypre_printf("NALU_HYPRE_ParCSRPCGGetPrecond got good precond\n");
+            nalu_hypre_printf("NALU_HYPRE_ParCSRPCGGetPrecond got good precond\n");
          }
 
          /*      NALU_HYPRE_PCGSetup(pcg_solver, (NALU_HYPRE_Matrix)parcsr_A,
                  (NALU_HYPRE_Vector)b, (NALU_HYPRE_Vector)x); */
 
-         hypre_EndTiming(time_index);
-         hypre_PrintTiming("Setup phase times", hypre_MPI_COMM_WORLD);
-         hypre_FinalizeTiming(time_index);
-         hypre_ClearTiming();
+         nalu_hypre_EndTiming(time_index);
+         nalu_hypre_PrintTiming("Setup phase times", nalu_hypre_MPI_COMM_WORLD);
+         nalu_hypre_FinalizeTiming(time_index);
+         nalu_hypre_ClearTiming();
 
          NALU_HYPRE_LOBPCGCreate(interpreter, &matvec_fn, &lobpcg_solver);
 
@@ -2714,10 +2714,10 @@ main( NALU_HYPRE_Int   argc,
          if ( vFromFileFlag )
          {
             eigenvectors = mv_MultiVectorWrap( interpreter,
-                                               hypre_ParCSRMultiVectorRead(hypre_MPI_COMM_WORLD,
+                                               nalu_hypre_ParCSRMultiVectorRead(nalu_hypre_MPI_COMM_WORLD,
                                                                            interpreter,
                                                                            "vectors" ), 1);
-            hypre_assert( eigenvectors != NULL );
+            nalu_hypre_assert( eigenvectors != NULL );
             blockSize = mv_MultiVectorWidth( eigenvectors );
          }
          else
@@ -2738,23 +2738,23 @@ main( NALU_HYPRE_Int   argc,
          if ( constrained )
          {
             constraints = mv_MultiVectorWrap( interpreter,
-                                              hypre_ParCSRMultiVectorRead(hypre_MPI_COMM_WORLD,
+                                              nalu_hypre_ParCSRMultiVectorRead(nalu_hypre_MPI_COMM_WORLD,
                                                                           interpreter,
                                                                           "vectors" ), 1);
-            hypre_assert( constraints != NULL );
+            nalu_hypre_assert( constraints != NULL );
          }
 
-         eigenvalues = hypre_CTAlloc(NALU_HYPRE_Real,  blockSize, NALU_HYPRE_MEMORY_HOST);
+         eigenvalues = nalu_hypre_CTAlloc(NALU_HYPRE_Real,  blockSize, NALU_HYPRE_MEMORY_HOST);
 
-         time_index = hypre_InitializeTiming("LOBPCG Solve");
-         hypre_BeginTiming(time_index);
+         time_index = nalu_hypre_InitializeTiming("LOBPCG Solve");
+         nalu_hypre_BeginTiming(time_index);
 
          NALU_HYPRE_LOBPCGSolve(lobpcg_solver, constraints, eigenvectors, eigenvalues );
 
-         hypre_EndTiming(time_index);
-         hypre_PrintTiming("Solve phase times", hypre_MPI_COMM_WORLD);
-         hypre_FinalizeTiming(time_index);
-         hypre_ClearTiming();
+         nalu_hypre_EndTiming(time_index);
+         nalu_hypre_PrintTiming("Solve phase times", nalu_hypre_MPI_COMM_WORLD);
+         nalu_hypre_FinalizeTiming(time_index);
+         nalu_hypre_ClearTiming();
 
 
          if ( checkOrtho )
@@ -2769,7 +2769,7 @@ main( NALU_HYPRE_Int   argc,
             if ( lobpcgGen )
             {
                workspace = mv_MultiVectorCreateCopy( eigenvectors, 0 );
-               hypre_LOBPCGMultiOperatorB( lobpcg_solver,
+               nalu_hypre_LOBPCGMultiOperatorB( lobpcg_solver,
                                            mv_MultiVectorGetData(eigenvectors),
                                            mv_MultiVectorGetData(workspace) );
                lobpcg_MultiVectorByMultiVector( eigenvectors, workspace, gramXX );
@@ -2784,7 +2784,7 @@ main( NALU_HYPRE_Int   argc,
             nonOrthF = utilities_FortranMatrixFNorm( gramXX );
             if ( myid == 0 )
             {
-               hypre_printf("Non-orthonormality of eigenvectors: %12.5e\n", nonOrthF);
+               nalu_hypre_printf("Non-orthonormality of eigenvectors: %12.5e\n", nonOrthF);
             }
 
             utilities_FortranMatrixDestroy( gramXX );
@@ -2795,16 +2795,16 @@ main( NALU_HYPRE_Int   argc,
          if ( printLevel )
          {
 
-            hypre_ParCSRMultiVectorPrint( mv_MultiVectorGetData(eigenvectors), "vectors" );
+            nalu_hypre_ParCSRMultiVectorPrint( mv_MultiVectorGetData(eigenvectors), "vectors" );
 
             if ( myid == 0 )
             {
                if ( (filePtr = fopen("values.txt", "w")) )
                {
-                  hypre_fprintf(filePtr, "%d\n", blockSize);
+                  nalu_hypre_fprintf(filePtr, "%d\n", blockSize);
                   for ( i = 0; i < blockSize; i++ )
                   {
-                     hypre_fprintf(filePtr, "%22.14e\n", eigenvalues[i]);
+                     nalu_hypre_fprintf(filePtr, "%22.14e\n", eigenvalues[i]);
                   }
                   fclose(filePtr);
                }
@@ -2813,10 +2813,10 @@ main( NALU_HYPRE_Int   argc,
                {
                   residualNorms = NALU_HYPRE_LOBPCGResidualNorms( lobpcg_solver );
                   residuals = utilities_FortranMatrixValues( residualNorms );
-                  hypre_fprintf(filePtr, "%d\n", blockSize);
+                  nalu_hypre_fprintf(filePtr, "%d\n", blockSize);
                   for ( i = 0; i < blockSize; i++ )
                   {
-                     hypre_fprintf(filePtr, "%22.14e\n", residuals[i]);
+                     nalu_hypre_fprintf(filePtr, "%22.14e\n", residuals[i]);
                   }
                   fclose(filePtr);
                }
@@ -2853,7 +2853,7 @@ main( NALU_HYPRE_Int   argc,
          {
             mv_MultiVectorDestroy( workspace );
          }
-         hypre_TFree(eigenvalues, NALU_HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(eigenvalues, NALU_HYPRE_MEMORY_HOST);
 
          NALU_HYPRE_ParCSRPCGDestroy(pcg_solver);
 
@@ -2882,8 +2882,8 @@ main( NALU_HYPRE_Int   argc,
       else   /* pcgIterations <= 0 --> use the preconditioner directly */
       {
 
-         time_index = hypre_InitializeTiming("LOBPCG Setup");
-         hypre_BeginTiming(time_index);
+         time_index = nalu_hypre_InitializeTiming("LOBPCG Setup");
+         nalu_hypre_BeginTiming(time_index);
          if (myid != 0)
          {
             verbosity = 0;
@@ -2901,7 +2901,7 @@ main( NALU_HYPRE_Int   argc,
             /* use BoomerAMG as preconditioner */
             if (myid == 0)
             {
-               hypre_printf("Solver: AMG-PCG\n");
+               nalu_hypre_printf("Solver: AMG-PCG\n");
             }
 
             NALU_HYPRE_BoomerAMGCreate(&pcg_precond);
@@ -2947,7 +2947,7 @@ main( NALU_HYPRE_Int   argc,
             /* use diagonal scaling as preconditioner */
             if (myid == 0)
             {
-               hypre_printf("Solver: DS-PCG\n");
+               nalu_hypre_printf("Solver: DS-PCG\n");
             }
 
             pcg_precond = NULL;
@@ -2962,10 +2962,10 @@ main( NALU_HYPRE_Int   argc,
             /* use ParaSails preconditioner */
             if (myid == 0)
             {
-               hypre_printf("Solver: ParaSails-PCG\n");
+               nalu_hypre_printf("Solver: ParaSails-PCG\n");
             }
 
-            NALU_HYPRE_ParaSailsCreate(hypre_MPI_COMM_WORLD, &pcg_precond);
+            NALU_HYPRE_ParaSailsCreate(nalu_hypre_MPI_COMM_WORLD, &pcg_precond);
             NALU_HYPRE_ParaSailsSetParams(pcg_precond, sai_threshold, max_levels);
             NALU_HYPRE_ParaSailsSetFilter(pcg_precond, sai_filter);
             NALU_HYPRE_ParaSailsSetLogging(pcg_precond, poutdat);
@@ -2980,7 +2980,7 @@ main( NALU_HYPRE_Int   argc,
             /* use Schwarz preconditioner */
             if (myid == 0)
             {
-               hypre_printf("Solver: Schwarz-PCG\n");
+               nalu_hypre_printf("Solver: Schwarz-PCG\n");
             }
 
             NALU_HYPRE_SchwarzCreate(&pcg_precond);
@@ -3003,8 +3003,8 @@ main( NALU_HYPRE_Int   argc,
             /* fine grid */
             num_grid_sweeps[0] = num_sweep;
             grid_relax_type[0] = relax_default;
-            hypre_TFree(grid_relax_points[0], NALU_HYPRE_MEMORY_HOST);
-            grid_relax_points[0] = hypre_CTAlloc(NALU_HYPRE_Int,  num_sweep, NALU_HYPRE_MEMORY_HOST);
+            nalu_hypre_TFree(grid_relax_points[0], NALU_HYPRE_MEMORY_HOST);
+            grid_relax_points[0] = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  num_sweep, NALU_HYPRE_MEMORY_HOST);
             for (i = 0; i < num_sweep; i++)
             {
                grid_relax_points[0][i] = 0;
@@ -3013,8 +3013,8 @@ main( NALU_HYPRE_Int   argc,
             /* down cycle */
             num_grid_sweeps[1] = num_sweep;
             grid_relax_type[1] = relax_default;
-            hypre_TFree(grid_relax_points[1], NALU_HYPRE_MEMORY_HOST);
-            grid_relax_points[1] = hypre_CTAlloc(NALU_HYPRE_Int,  num_sweep, NALU_HYPRE_MEMORY_HOST);
+            nalu_hypre_TFree(grid_relax_points[1], NALU_HYPRE_MEMORY_HOST);
+            grid_relax_points[1] = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  num_sweep, NALU_HYPRE_MEMORY_HOST);
             for (i = 0; i < num_sweep; i++)
             {
                grid_relax_points[1][i] = 0;
@@ -3023,8 +3023,8 @@ main( NALU_HYPRE_Int   argc,
             /* up cycle */
             num_grid_sweeps[2] = num_sweep;
             grid_relax_type[2] = relax_default;
-            hypre_TFree(grid_relax_points[2], NALU_HYPRE_MEMORY_HOST);
-            grid_relax_points[2] = hypre_CTAlloc(NALU_HYPRE_Int,  num_sweep, NALU_HYPRE_MEMORY_HOST);
+            nalu_hypre_TFree(grid_relax_points[2], NALU_HYPRE_MEMORY_HOST);
+            grid_relax_points[2] = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  num_sweep, NALU_HYPRE_MEMORY_HOST);
             for (i = 0; i < num_sweep; i++)
             {
                grid_relax_points[2][i] = 0;
@@ -3033,11 +3033,11 @@ main( NALU_HYPRE_Int   argc,
             /* coarsest grid */
             num_grid_sweeps[3] = 1;
             grid_relax_type[3] = 9;
-            hypre_TFree(grid_relax_points[3], NALU_HYPRE_MEMORY_HOST);
-            grid_relax_points[3] = hypre_CTAlloc(NALU_HYPRE_Int,  1, NALU_HYPRE_MEMORY_HOST);
+            nalu_hypre_TFree(grid_relax_points[3], NALU_HYPRE_MEMORY_HOST);
+            grid_relax_points[3] = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  1, NALU_HYPRE_MEMORY_HOST);
             grid_relax_points[3][0] = 0;
 
-            if (myid == 0) { hypre_printf("Solver: GSMG-PCG\n"); }
+            if (myid == 0) { nalu_hypre_printf("Solver: GSMG-PCG\n"); }
             NALU_HYPRE_BoomerAMGCreate(&pcg_precond);
             NALU_HYPRE_BoomerAMGSetGSMG(pcg_precond, 4);
             NALU_HYPRE_BoomerAMGSetInterpType(pcg_precond, interp_type);
@@ -3081,10 +3081,10 @@ main( NALU_HYPRE_Int   argc,
             /* use Euclid preconditioning */
             if (myid == 0)
             {
-               hypre_printf("Solver: Euclid-PCG\n");
+               nalu_hypre_printf("Solver: Euclid-PCG\n");
             }
 
-            NALU_HYPRE_EuclidCreate(hypre_MPI_COMM_WORLD, &pcg_precond);
+            NALU_HYPRE_EuclidCreate(nalu_hypre_MPI_COMM_WORLD, &pcg_precond);
 
             /* note: There are three three methods of setting run-time
                parameters for Euclid: (see NALU_HYPRE_parcsr_ls.h); here
@@ -3102,19 +3102,19 @@ main( NALU_HYPRE_Int   argc,
          {
             if ( verbosity )
             {
-               hypre_printf("Solver ID not recognized - running LOBPCG without preconditioner\n\n");
+               nalu_hypre_printf("Solver ID not recognized - running LOBPCG without preconditioner\n\n");
             }
          }
 
          NALU_HYPRE_LOBPCGGetPrecond(pcg_solver, &pcg_precond_gotten);
          if (pcg_precond_gotten !=  pcg_precond && pcgIterations)
          {
-            hypre_printf("NALU_HYPRE_ParCSRLOBPCGGetPrecond got bad precond\n");
+            nalu_hypre_printf("NALU_HYPRE_ParCSRLOBPCGGetPrecond got bad precond\n");
             return (-1);
          }
          else if (myid == 0)
          {
-            hypre_printf("NALU_HYPRE_ParCSRLOBPCGGetPrecond got good precond\n");
+            nalu_hypre_printf("NALU_HYPRE_ParCSRLOBPCGGetPrecond got good precond\n");
          }
 
          NALU_HYPRE_LOBPCGSetup(pcg_solver, (NALU_HYPRE_Matrix)parcsr_A,
@@ -3124,18 +3124,18 @@ main( NALU_HYPRE_Int   argc,
             NALU_HYPRE_LOBPCGSetupB(pcg_solver, (NALU_HYPRE_Matrix)parcsr_B,
                                (NALU_HYPRE_Vector)x);
 
-         hypre_EndTiming(time_index);
-         hypre_PrintTiming("Setup phase times", hypre_MPI_COMM_WORLD);
-         hypre_FinalizeTiming(time_index);
-         hypre_ClearTiming();
+         nalu_hypre_EndTiming(time_index);
+         nalu_hypre_PrintTiming("Setup phase times", nalu_hypre_MPI_COMM_WORLD);
+         nalu_hypre_FinalizeTiming(time_index);
+         nalu_hypre_ClearTiming();
 
          if ( vFromFileFlag )
          {
             eigenvectors = mv_MultiVectorWrap( interpreter,
-                                               hypre_ParCSRMultiVectorRead(hypre_MPI_COMM_WORLD,
+                                               nalu_hypre_ParCSRMultiVectorRead(nalu_hypre_MPI_COMM_WORLD,
                                                                            interpreter,
                                                                            "vectors" ), 1);
-            hypre_assert( eigenvectors != NULL );
+            nalu_hypre_assert( eigenvectors != NULL );
             blockSize = mv_MultiVectorWidth( eigenvectors );
          }
          else
@@ -3156,23 +3156,23 @@ main( NALU_HYPRE_Int   argc,
          if ( constrained )
          {
             constraints = mv_MultiVectorWrap( interpreter,
-                                              hypre_ParCSRMultiVectorRead(hypre_MPI_COMM_WORLD,
+                                              nalu_hypre_ParCSRMultiVectorRead(nalu_hypre_MPI_COMM_WORLD,
                                                                           interpreter,
                                                                           "vectors" ), 1);
-            hypre_assert( constraints != NULL );
+            nalu_hypre_assert( constraints != NULL );
          }
 
-         eigenvalues = hypre_CTAlloc(NALU_HYPRE_Real,  blockSize, NALU_HYPRE_MEMORY_HOST);
+         eigenvalues = nalu_hypre_CTAlloc(NALU_HYPRE_Real,  blockSize, NALU_HYPRE_MEMORY_HOST);
 
-         time_index = hypre_InitializeTiming("LOBPCG Solve");
-         hypre_BeginTiming(time_index);
+         time_index = nalu_hypre_InitializeTiming("LOBPCG Solve");
+         nalu_hypre_BeginTiming(time_index);
 
          NALU_HYPRE_LOBPCGSolve(pcg_solver, constraints, eigenvectors, eigenvalues);
 
-         hypre_EndTiming(time_index);
-         hypre_PrintTiming("Solve phase times", hypre_MPI_COMM_WORLD);
-         hypre_FinalizeTiming(time_index);
-         hypre_ClearTiming();
+         nalu_hypre_EndTiming(time_index);
+         nalu_hypre_PrintTiming("Solve phase times", nalu_hypre_MPI_COMM_WORLD);
+         nalu_hypre_FinalizeTiming(time_index);
+         nalu_hypre_ClearTiming();
 
          if ( checkOrtho )
          {
@@ -3186,7 +3186,7 @@ main( NALU_HYPRE_Int   argc,
             if ( lobpcgGen )
             {
                workspace = mv_MultiVectorCreateCopy( eigenvectors, 0 );
-               hypre_LOBPCGMultiOperatorB( pcg_solver,
+               nalu_hypre_LOBPCGMultiOperatorB( pcg_solver,
                                            mv_MultiVectorGetData(eigenvectors),
                                            mv_MultiVectorGetData(workspace) );
                lobpcg_MultiVectorByMultiVector( eigenvectors, workspace, gramXX );
@@ -3201,7 +3201,7 @@ main( NALU_HYPRE_Int   argc,
             nonOrthF = utilities_FortranMatrixFNorm( gramXX );
             if ( myid == 0 )
             {
-               hypre_printf("Non-orthonormality of eigenvectors: %12.5e\n", nonOrthF);
+               nalu_hypre_printf("Non-orthonormality of eigenvectors: %12.5e\n", nonOrthF);
             }
 
             utilities_FortranMatrixDestroy( gramXX );
@@ -3212,16 +3212,16 @@ main( NALU_HYPRE_Int   argc,
          if ( printLevel )
          {
 
-            hypre_ParCSRMultiVectorPrint( mv_MultiVectorGetData(eigenvectors), "vectors" );
+            nalu_hypre_ParCSRMultiVectorPrint( mv_MultiVectorGetData(eigenvectors), "vectors" );
 
             if ( myid == 0 )
             {
                if ( (filePtr = fopen("values.txt", "w")) )
                {
-                  hypre_fprintf(filePtr, "%d\n", blockSize);
+                  nalu_hypre_fprintf(filePtr, "%d\n", blockSize);
                   for ( i = 0; i < blockSize; i++ )
                   {
-                     hypre_fprintf(filePtr, "%22.14e\n", eigenvalues[i]);
+                     nalu_hypre_fprintf(filePtr, "%22.14e\n", eigenvalues[i]);
                   }
                   fclose(filePtr);
                }
@@ -3230,10 +3230,10 @@ main( NALU_HYPRE_Int   argc,
                {
                   residualNorms = NALU_HYPRE_LOBPCGResidualNorms( pcg_solver );
                   residuals = utilities_FortranMatrixValues( residualNorms );
-                  hypre_fprintf(filePtr, "%d\n", blockSize);
+                  nalu_hypre_fprintf(filePtr, "%d\n", blockSize);
                   for ( i = 0; i < blockSize; i++ )
                   {
-                     hypre_fprintf(filePtr, "%22.14e\n", residuals[i]);
+                     nalu_hypre_fprintf(filePtr, "%22.14e\n", residuals[i]);
                   }
                   fclose(filePtr);
                }
@@ -3300,10 +3300,10 @@ main( NALU_HYPRE_Int   argc,
          {
             mv_MultiVectorDestroy( workspace );
          }
-         hypre_TFree(eigenvalues, NALU_HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(eigenvalues, NALU_HYPRE_MEMORY_HOST);
       } /* if ( pcgIterations > 0 ) */
 
-      hypre_TFree( interpreter, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree( interpreter, NALU_HYPRE_MEMORY_HOST);
 
       if ( lobpcgGen )
       {
@@ -3321,11 +3321,11 @@ main( NALU_HYPRE_Int   argc,
    if (solver_id == 3 || solver_id == 4 || solver_id == 7 ||
        solver_id == 15 || solver_id == 18 || solver_id == 44)
    {
-      time_index = hypre_InitializeTiming("GMRES Setup");
-      hypre_BeginTiming(time_index);
+      time_index = nalu_hypre_InitializeTiming("GMRES Setup");
+      nalu_hypre_BeginTiming(time_index);
 
       ioutdat = 2;
-      NALU_HYPRE_ParCSRGMRESCreate(hypre_MPI_COMM_WORLD, &pcg_solver);
+      NALU_HYPRE_ParCSRGMRESCreate(nalu_hypre_MPI_COMM_WORLD, &pcg_solver);
       NALU_HYPRE_GMRESSetKDim(pcg_solver, k_dim);
       NALU_HYPRE_GMRESSetMaxIter(pcg_solver, 1000);
       NALU_HYPRE_GMRESSetTol(pcg_solver, tol);
@@ -3335,7 +3335,7 @@ main( NALU_HYPRE_Int   argc,
       if (solver_id == 3)
       {
          /* use BoomerAMG as preconditioner */
-         if (myid == 0) { hypre_printf("Solver: AMG-GMRES\n"); }
+         if (myid == 0) { nalu_hypre_printf("Solver: AMG-GMRES\n"); }
 
          NALU_HYPRE_BoomerAMGCreate(&pcg_precond);
          NALU_HYPRE_BoomerAMGSetInterpType(pcg_precond, interp_type);
@@ -3375,7 +3375,7 @@ main( NALU_HYPRE_Int   argc,
       else if (solver_id == 4)
       {
          /* use diagonal scaling as preconditioner */
-         if (myid == 0) { hypre_printf("Solver: DS-GMRES\n"); }
+         if (myid == 0) { nalu_hypre_printf("Solver: DS-GMRES\n"); }
          pcg_precond = NULL;
 
          NALU_HYPRE_GMRESSetPrecond(pcg_solver,
@@ -3386,12 +3386,12 @@ main( NALU_HYPRE_Int   argc,
       else if (solver_id == 7)
       {
          /* use PILUT as preconditioner */
-         if (myid == 0) { hypre_printf("Solver: PILUT-GMRES\n"); }
+         if (myid == 0) { nalu_hypre_printf("Solver: PILUT-GMRES\n"); }
 
-         ierr = NALU_HYPRE_ParCSRPilutCreate( hypre_MPI_COMM_WORLD, &pcg_precond );
+         ierr = NALU_HYPRE_ParCSRPilutCreate( nalu_hypre_MPI_COMM_WORLD, &pcg_precond );
          if (ierr)
          {
-            hypre_printf("Error in ParPilutCreate\n");
+            nalu_hypre_printf("Error in ParPilutCreate\n");
          }
 
          NALU_HYPRE_GMRESSetPrecond(pcg_solver,
@@ -3416,8 +3416,8 @@ main( NALU_HYPRE_Int   argc,
          /* fine grid */
          num_grid_sweeps[0] = num_sweep;
          grid_relax_type[0] = relax_default;
-         hypre_TFree(grid_relax_points[0], NALU_HYPRE_MEMORY_HOST);
-         grid_relax_points[0] = hypre_CTAlloc(NALU_HYPRE_Int,  num_sweep, NALU_HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(grid_relax_points[0], NALU_HYPRE_MEMORY_HOST);
+         grid_relax_points[0] = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  num_sweep, NALU_HYPRE_MEMORY_HOST);
          for (i = 0; i < num_sweep; i++)
          {
             grid_relax_points[0][i] = 0;
@@ -3426,8 +3426,8 @@ main( NALU_HYPRE_Int   argc,
          /* down cycle */
          num_grid_sweeps[1] = num_sweep;
          grid_relax_type[1] = relax_default;
-         hypre_TFree(grid_relax_points[1], NALU_HYPRE_MEMORY_HOST);
-         grid_relax_points[1] = hypre_CTAlloc(NALU_HYPRE_Int,  num_sweep, NALU_HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(grid_relax_points[1], NALU_HYPRE_MEMORY_HOST);
+         grid_relax_points[1] = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  num_sweep, NALU_HYPRE_MEMORY_HOST);
          for (i = 0; i < num_sweep; i++)
          {
             grid_relax_points[1][i] = 0;
@@ -3436,8 +3436,8 @@ main( NALU_HYPRE_Int   argc,
          /* up cycle */
          num_grid_sweeps[2] = num_sweep;
          grid_relax_type[2] = relax_default;
-         hypre_TFree(grid_relax_points[2], NALU_HYPRE_MEMORY_HOST);
-         grid_relax_points[2] = hypre_CTAlloc(NALU_HYPRE_Int,  num_sweep, NALU_HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(grid_relax_points[2], NALU_HYPRE_MEMORY_HOST);
+         grid_relax_points[2] = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  num_sweep, NALU_HYPRE_MEMORY_HOST);
          for (i = 0; i < num_sweep; i++)
          {
             grid_relax_points[2][i] = 0;
@@ -3446,11 +3446,11 @@ main( NALU_HYPRE_Int   argc,
          /* coarsest grid */
          num_grid_sweeps[3] = 1;
          grid_relax_type[3] = 9;
-         hypre_TFree(grid_relax_points[3], NALU_HYPRE_MEMORY_HOST);
-         grid_relax_points[3] = hypre_CTAlloc(NALU_HYPRE_Int,  1, NALU_HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(grid_relax_points[3], NALU_HYPRE_MEMORY_HOST);
+         grid_relax_points[3] = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  1, NALU_HYPRE_MEMORY_HOST);
          grid_relax_points[3][0] = 0;
 
-         if (myid == 0) { hypre_printf("Solver: GSMG-GMRES\n"); }
+         if (myid == 0) { nalu_hypre_printf("Solver: GSMG-GMRES\n"); }
          NALU_HYPRE_BoomerAMGCreate(&pcg_precond);
          NALU_HYPRE_BoomerAMGSetGSMG(pcg_precond, 4);
          NALU_HYPRE_BoomerAMGSetInterpType(pcg_precond, interp_type);
@@ -3491,9 +3491,9 @@ main( NALU_HYPRE_Int   argc,
       else if (solver_id == 18)
       {
          /* use ParaSails preconditioner */
-         if (myid == 0) { hypre_printf("Solver: ParaSails-GMRES\n"); }
+         if (myid == 0) { nalu_hypre_printf("Solver: ParaSails-GMRES\n"); }
 
-         NALU_HYPRE_ParaSailsCreate(hypre_MPI_COMM_WORLD, &pcg_precond);
+         NALU_HYPRE_ParaSailsCreate(nalu_hypre_MPI_COMM_WORLD, &pcg_precond);
          NALU_HYPRE_ParaSailsSetParams(pcg_precond, sai_threshold, max_levels);
          NALU_HYPRE_ParaSailsSetFilter(pcg_precond, sai_filter);
          NALU_HYPRE_ParaSailsSetLogging(pcg_precond, poutdat);
@@ -3507,9 +3507,9 @@ main( NALU_HYPRE_Int   argc,
       else if (solver_id == 44)
       {
          /* use Euclid preconditioning */
-         if (myid == 0) { hypre_printf("Solver: Euclid-GMRES\n"); }
+         if (myid == 0) { nalu_hypre_printf("Solver: Euclid-GMRES\n"); }
 
-         NALU_HYPRE_EuclidCreate(hypre_MPI_COMM_WORLD, &pcg_precond);
+         NALU_HYPRE_EuclidCreate(nalu_hypre_MPI_COMM_WORLD, &pcg_precond);
 
          /* note: There are three three methods of setting run-time
             parameters for Euclid: (see NALU_HYPRE_parcsr_ls.h); here
@@ -3527,31 +3527,31 @@ main( NALU_HYPRE_Int   argc,
       NALU_HYPRE_GMRESGetPrecond(pcg_solver, &pcg_precond_gotten);
       if (pcg_precond_gotten != pcg_precond)
       {
-         hypre_printf("NALU_HYPRE_GMRESGetPrecond got bad precond\n");
+         nalu_hypre_printf("NALU_HYPRE_GMRESGetPrecond got bad precond\n");
          return (-1);
       }
       else if (myid == 0)
       {
-         hypre_printf("NALU_HYPRE_GMRESGetPrecond got good precond\n");
+         nalu_hypre_printf("NALU_HYPRE_GMRESGetPrecond got good precond\n");
       }
       NALU_HYPRE_GMRESSetup
       (pcg_solver, (NALU_HYPRE_Matrix)parcsr_A, (NALU_HYPRE_Vector)b, (NALU_HYPRE_Vector)x);
 
-      hypre_EndTiming(time_index);
-      hypre_PrintTiming("Setup phase times", hypre_MPI_COMM_WORLD);
-      hypre_FinalizeTiming(time_index);
-      hypre_ClearTiming();
+      nalu_hypre_EndTiming(time_index);
+      nalu_hypre_PrintTiming("Setup phase times", nalu_hypre_MPI_COMM_WORLD);
+      nalu_hypre_FinalizeTiming(time_index);
+      nalu_hypre_ClearTiming();
 
-      time_index = hypre_InitializeTiming("GMRES Solve");
-      hypre_BeginTiming(time_index);
+      time_index = nalu_hypre_InitializeTiming("GMRES Solve");
+      nalu_hypre_BeginTiming(time_index);
 
       NALU_HYPRE_GMRESSolve
       (pcg_solver, (NALU_HYPRE_Matrix)parcsr_A, (NALU_HYPRE_Vector)b, (NALU_HYPRE_Vector)x);
 
-      hypre_EndTiming(time_index);
-      hypre_PrintTiming("Solve phase times", hypre_MPI_COMM_WORLD);
-      hypre_FinalizeTiming(time_index);
-      hypre_ClearTiming();
+      nalu_hypre_EndTiming(time_index);
+      nalu_hypre_PrintTiming("Solve phase times", nalu_hypre_MPI_COMM_WORLD);
+      nalu_hypre_FinalizeTiming(time_index);
+      nalu_hypre_ClearTiming();
 
       NALU_HYPRE_GMRESGetNumIterations(pcg_solver, &num_iterations);
       NALU_HYPRE_GMRESGetFinalRelativeResidualNorm(pcg_solver, &final_res_norm);
@@ -3586,10 +3586,10 @@ main( NALU_HYPRE_Int   argc,
 
       if (myid == 0)
       {
-         hypre_printf("\n");
-         hypre_printf("GMRES Iterations = %d\n", num_iterations);
-         hypre_printf("Final GMRES Relative Residual Norm = %e\n", final_res_norm);
-         hypre_printf("\n");
+         nalu_hypre_printf("\n");
+         nalu_hypre_printf("GMRES Iterations = %d\n", num_iterations);
+         nalu_hypre_printf("Final GMRES Relative Residual Norm = %e\n", final_res_norm);
+         nalu_hypre_printf("\n");
       }
    }
    /*-----------------------------------------------------------
@@ -3598,11 +3598,11 @@ main( NALU_HYPRE_Int   argc,
 
    if (solver_id == 9 || solver_id == 10 || solver_id == 11 || solver_id == 45)
    {
-      time_index = hypre_InitializeTiming("BiCGSTAB Setup");
-      hypre_BeginTiming(time_index);
+      time_index = nalu_hypre_InitializeTiming("BiCGSTAB Setup");
+      nalu_hypre_BeginTiming(time_index);
 
       ioutdat = 2;
-      NALU_HYPRE_ParCSRBiCGSTABCreate(hypre_MPI_COMM_WORLD, &pcg_solver);
+      NALU_HYPRE_ParCSRBiCGSTABCreate(nalu_hypre_MPI_COMM_WORLD, &pcg_solver);
       NALU_HYPRE_BiCGSTABSetMaxIter(pcg_solver, 1000);
       NALU_HYPRE_BiCGSTABSetTol(pcg_solver, tol);
       NALU_HYPRE_BiCGSTABSetLogging(pcg_solver, ioutdat);
@@ -3611,7 +3611,7 @@ main( NALU_HYPRE_Int   argc,
       if (solver_id == 9)
       {
          /* use BoomerAMG as preconditioner */
-         if (myid == 0) { hypre_printf("Solver: AMG-BiCGSTAB\n"); }
+         if (myid == 0) { nalu_hypre_printf("Solver: AMG-BiCGSTAB\n"); }
          NALU_HYPRE_BoomerAMGCreate(&pcg_precond);
          NALU_HYPRE_BoomerAMGSetInterpType(pcg_precond, interp_type);
          NALU_HYPRE_BoomerAMGSetNumSamples(pcg_precond, gsmg_samples);
@@ -3650,7 +3650,7 @@ main( NALU_HYPRE_Int   argc,
       else if (solver_id == 10)
       {
          /* use diagonal scaling as preconditioner */
-         if (myid == 0) { hypre_printf("Solver: DS-BiCGSTAB\n"); }
+         if (myid == 0) { nalu_hypre_printf("Solver: DS-BiCGSTAB\n"); }
          pcg_precond = NULL;
 
          NALU_HYPRE_BiCGSTABSetPrecond(pcg_solver,
@@ -3661,12 +3661,12 @@ main( NALU_HYPRE_Int   argc,
       else if (solver_id == 11)
       {
          /* use PILUT as preconditioner */
-         if (myid == 0) { hypre_printf("Solver: PILUT-BiCGSTAB\n"); }
+         if (myid == 0) { nalu_hypre_printf("Solver: PILUT-BiCGSTAB\n"); }
 
-         ierr = NALU_HYPRE_ParCSRPilutCreate( hypre_MPI_COMM_WORLD, &pcg_precond );
+         ierr = NALU_HYPRE_ParCSRPilutCreate( nalu_hypre_MPI_COMM_WORLD, &pcg_precond );
          if (ierr)
          {
-            hypre_printf("Error in ParPilutCreate\n");
+            nalu_hypre_printf("Error in ParPilutCreate\n");
          }
 
          NALU_HYPRE_BiCGSTABSetPrecond(pcg_solver,
@@ -3685,9 +3685,9 @@ main( NALU_HYPRE_Int   argc,
       else if (solver_id == 45)
       {
          /* use Euclid preconditioning */
-         if (myid == 0) { hypre_printf("Solver: Euclid-BICGSTAB\n"); }
+         if (myid == 0) { nalu_hypre_printf("Solver: Euclid-BICGSTAB\n"); }
 
-         NALU_HYPRE_EuclidCreate(hypre_MPI_COMM_WORLD, &pcg_precond);
+         NALU_HYPRE_EuclidCreate(nalu_hypre_MPI_COMM_WORLD, &pcg_precond);
 
          /* note: There are three three methods of setting run-time
             parameters for Euclid: (see NALU_HYPRE_parcsr_ls.h); here
@@ -3705,21 +3705,21 @@ main( NALU_HYPRE_Int   argc,
       NALU_HYPRE_BiCGSTABSetup(pcg_solver, (NALU_HYPRE_Matrix)parcsr_A,
                           (NALU_HYPRE_Vector)b, (NALU_HYPRE_Vector)x);
 
-      hypre_EndTiming(time_index);
-      hypre_PrintTiming("Setup phase times", hypre_MPI_COMM_WORLD);
-      hypre_FinalizeTiming(time_index);
-      hypre_ClearTiming();
+      nalu_hypre_EndTiming(time_index);
+      nalu_hypre_PrintTiming("Setup phase times", nalu_hypre_MPI_COMM_WORLD);
+      nalu_hypre_FinalizeTiming(time_index);
+      nalu_hypre_ClearTiming();
 
-      time_index = hypre_InitializeTiming("BiCGSTAB Solve");
-      hypre_BeginTiming(time_index);
+      time_index = nalu_hypre_InitializeTiming("BiCGSTAB Solve");
+      nalu_hypre_BeginTiming(time_index);
 
       NALU_HYPRE_BiCGSTABSolve(pcg_solver, (NALU_HYPRE_Matrix)parcsr_A,
                           (NALU_HYPRE_Vector)b, (NALU_HYPRE_Vector)x);
 
-      hypre_EndTiming(time_index);
-      hypre_PrintTiming("Solve phase times", hypre_MPI_COMM_WORLD);
-      hypre_FinalizeTiming(time_index);
-      hypre_ClearTiming();
+      nalu_hypre_EndTiming(time_index);
+      nalu_hypre_PrintTiming("Solve phase times", nalu_hypre_MPI_COMM_WORLD);
+      nalu_hypre_FinalizeTiming(time_index);
+      nalu_hypre_ClearTiming();
 
       NALU_HYPRE_BiCGSTABGetNumIterations(pcg_solver, &num_iterations);
       NALU_HYPRE_BiCGSTABGetFinalRelativeResidualNorm(pcg_solver, &final_res_norm);
@@ -3750,10 +3750,10 @@ main( NALU_HYPRE_Int   argc,
 
       if (myid == 0)
       {
-         hypre_printf("\n");
-         hypre_printf("BiCGSTAB Iterations = %d\n", num_iterations);
-         hypre_printf("Final BiCGSTAB Relative Residual Norm = %e\n", final_res_norm);
-         hypre_printf("\n");
+         nalu_hypre_printf("\n");
+         nalu_hypre_printf("BiCGSTAB Iterations = %d\n", num_iterations);
+         nalu_hypre_printf("Final BiCGSTAB Relative Residual Norm = %e\n", final_res_norm);
+         nalu_hypre_printf("\n");
       }
    }
    /*-----------------------------------------------------------
@@ -3762,11 +3762,11 @@ main( NALU_HYPRE_Int   argc,
 
    if (solver_id == 5 || solver_id == 6)
    {
-      time_index = hypre_InitializeTiming("CGNR Setup");
-      hypre_BeginTiming(time_index);
+      time_index = nalu_hypre_InitializeTiming("CGNR Setup");
+      nalu_hypre_BeginTiming(time_index);
 
       ioutdat = 2;
-      NALU_HYPRE_ParCSRCGNRCreate(hypre_MPI_COMM_WORLD, &pcg_solver);
+      NALU_HYPRE_ParCSRCGNRCreate(nalu_hypre_MPI_COMM_WORLD, &pcg_solver);
       NALU_HYPRE_CGNRSetMaxIter(pcg_solver, 1000);
       NALU_HYPRE_CGNRSetTol(pcg_solver, tol);
       NALU_HYPRE_CGNRSetLogging(pcg_solver, ioutdat);
@@ -3774,7 +3774,7 @@ main( NALU_HYPRE_Int   argc,
       if (solver_id == 5)
       {
          /* use BoomerAMG as preconditioner */
-         if (myid == 0) { hypre_printf("Solver: AMG-CGNR\n"); }
+         if (myid == 0) { nalu_hypre_printf("Solver: AMG-CGNR\n"); }
          NALU_HYPRE_BoomerAMGCreate(&pcg_precond);
          NALU_HYPRE_BoomerAMGSetInterpType(pcg_precond, interp_type);
          NALU_HYPRE_BoomerAMGSetNumSamples(pcg_precond, gsmg_samples);
@@ -3814,7 +3814,7 @@ main( NALU_HYPRE_Int   argc,
       else if (solver_id == 6)
       {
          /* use diagonal scaling as preconditioner */
-         if (myid == 0) { hypre_printf("Solver: DS-CGNR\n"); }
+         if (myid == 0) { nalu_hypre_printf("Solver: DS-CGNR\n"); }
          pcg_precond = NULL;
 
          NALU_HYPRE_CGNRSetPrecond(pcg_solver,
@@ -3827,31 +3827,31 @@ main( NALU_HYPRE_Int   argc,
       NALU_HYPRE_CGNRGetPrecond(pcg_solver, &pcg_precond_gotten);
       if (pcg_precond_gotten != pcg_precond)
       {
-         hypre_printf("NALU_HYPRE_ParCSRCGNRGetPrecond got bad precond\n");
+         nalu_hypre_printf("NALU_HYPRE_ParCSRCGNRGetPrecond got bad precond\n");
          return (-1);
       }
       else if (myid == 0)
       {
-         hypre_printf("NALU_HYPRE_ParCSRCGNRGetPrecond got good precond\n");
+         nalu_hypre_printf("NALU_HYPRE_ParCSRCGNRGetPrecond got good precond\n");
       }
       NALU_HYPRE_CGNRSetup(pcg_solver, (NALU_HYPRE_Matrix)parcsr_A, (NALU_HYPRE_Vector)b,
                       (NALU_HYPRE_Vector)x);
 
-      hypre_EndTiming(time_index);
-      hypre_PrintTiming("Setup phase times", hypre_MPI_COMM_WORLD);
-      hypre_FinalizeTiming(time_index);
-      hypre_ClearTiming();
+      nalu_hypre_EndTiming(time_index);
+      nalu_hypre_PrintTiming("Setup phase times", nalu_hypre_MPI_COMM_WORLD);
+      nalu_hypre_FinalizeTiming(time_index);
+      nalu_hypre_ClearTiming();
 
-      time_index = hypre_InitializeTiming("CGNR Solve");
-      hypre_BeginTiming(time_index);
+      time_index = nalu_hypre_InitializeTiming("CGNR Solve");
+      nalu_hypre_BeginTiming(time_index);
 
       NALU_HYPRE_CGNRSolve(pcg_solver, (NALU_HYPRE_Matrix)parcsr_A, (NALU_HYPRE_Vector)b,
                       (NALU_HYPRE_Vector)x);
 
-      hypre_EndTiming(time_index);
-      hypre_PrintTiming("Solve phase times", hypre_MPI_COMM_WORLD);
-      hypre_FinalizeTiming(time_index);
-      hypre_ClearTiming();
+      nalu_hypre_EndTiming(time_index);
+      nalu_hypre_PrintTiming("Solve phase times", nalu_hypre_MPI_COMM_WORLD);
+      nalu_hypre_FinalizeTiming(time_index);
+      nalu_hypre_ClearTiming();
 
       NALU_HYPRE_CGNRGetNumIterations(pcg_solver, &num_iterations);
       NALU_HYPRE_CGNRGetFinalRelativeResidualNorm(pcg_solver, &final_res_norm);
@@ -3873,10 +3873,10 @@ main( NALU_HYPRE_Int   argc,
       }
       if (myid == 0 /* begin lobpcg */ && !lobpcgFlag /* end lobpcg */)
       {
-         hypre_printf("\n");
-         hypre_printf("Iterations = %d\n", num_iterations);
-         hypre_printf("Final Relative Residual Norm = %e\n", final_res_norm);
-         hypre_printf("\n");
+         nalu_hypre_printf("\n");
+         nalu_hypre_printf("Iterations = %d\n", num_iterations);
+         nalu_hypre_printf("Final Relative Residual Norm = %e\n", final_res_norm);
+         nalu_hypre_printf("\n");
       }
    }
 
@@ -3896,7 +3896,7 @@ main( NALU_HYPRE_Int   argc,
    NALU_HYPRE_IJVectorDestroy(ij_b);
    NALU_HYPRE_IJVectorDestroy(ij_x);
 
-   hypre_MPI_Finalize();
+   nalu_hypre_MPI_Finalize();
 
    return (0);
 }
@@ -3926,7 +3926,7 @@ BuildParFromFile( NALU_HYPRE_Int                  argc,
     * Initialize some stuff
     *-----------------------------------------------------------*/
 
-   hypre_MPI_Comm_rank(hypre_MPI_COMM_WORLD, &myid );
+   nalu_hypre_MPI_Comm_rank(nalu_hypre_MPI_COMM_WORLD, &myid );
 
    /*-----------------------------------------------------------
     * Parse command line
@@ -3938,7 +3938,7 @@ BuildParFromFile( NALU_HYPRE_Int                  argc,
    }
    else
    {
-      hypre_printf("Error: No filename specified \n");
+      nalu_hypre_printf("Error: No filename specified \n");
       exit(1);
    }
 
@@ -3948,14 +3948,14 @@ BuildParFromFile( NALU_HYPRE_Int                  argc,
 
    if (myid == 0)
    {
-      hypre_printf("  FromFile: %s\n", filename);
+      nalu_hypre_printf("  FromFile: %s\n", filename);
    }
 
    /*-----------------------------------------------------------
     * Generate the matrix
     *-----------------------------------------------------------*/
 
-   NALU_HYPRE_ParCSRMatrixRead(hypre_MPI_COMM_WORLD, filename, &A);
+   NALU_HYPRE_ParCSRMatrixRead(nalu_hypre_MPI_COMM_WORLD, filename, &A);
 
    *A_ptr = A;
 
@@ -3987,8 +3987,8 @@ BuildParLaplacian( NALU_HYPRE_Int                  argc,
     * Initialize some stuff
     *-----------------------------------------------------------*/
 
-   hypre_MPI_Comm_size(hypre_MPI_COMM_WORLD, &num_procs );
-   hypre_MPI_Comm_rank(hypre_MPI_COMM_WORLD, &myid );
+   nalu_hypre_MPI_Comm_size(nalu_hypre_MPI_COMM_WORLD, &num_procs );
+   nalu_hypre_MPI_Comm_rank(nalu_hypre_MPI_COMM_WORLD, &myid );
 
    /*-----------------------------------------------------------
     * Set defaults
@@ -4045,7 +4045,7 @@ BuildParLaplacian( NALU_HYPRE_Int                  argc,
 
    if ((P * Q * R) != num_procs)
    {
-      hypre_printf("Error: Invalid number of processors or processor topology \n");
+      nalu_hypre_printf("Error: Invalid number of processors or processor topology \n");
       exit(1);
    }
 
@@ -4055,10 +4055,10 @@ BuildParLaplacian( NALU_HYPRE_Int                  argc,
 
    if (myid == 0)
    {
-      hypre_printf("  Laplacian:\n");
-      hypre_printf("    (nx, ny, nz) = (%d, %d, %d)\n", nx, ny, nz);
-      hypre_printf("    (Px, Py, Pz) = (%d, %d, %d)\n", P,  Q,  R);
-      hypre_printf("    (cx, cy, cz) = (%f, %f, %f)\n\n", cx, cy, cz);
+      nalu_hypre_printf("  Laplacian:\n");
+      nalu_hypre_printf("    (nx, ny, nz) = (%d, %d, %d)\n", nx, ny, nz);
+      nalu_hypre_printf("    (Px, Py, Pz) = (%d, %d, %d)\n", P,  Q,  R);
+      nalu_hypre_printf("    (cx, cy, cz) = (%f, %f, %f)\n\n", cx, cy, cz);
    }
 
    /*-----------------------------------------------------------
@@ -4074,7 +4074,7 @@ BuildParLaplacian( NALU_HYPRE_Int                  argc,
     * Generate the matrix
     *-----------------------------------------------------------*/
 
-   values = hypre_CTAlloc(NALU_HYPRE_Real,  4, NALU_HYPRE_MEMORY_HOST);
+   values = nalu_hypre_CTAlloc(NALU_HYPRE_Real,  4, NALU_HYPRE_MEMORY_HOST);
 
    values[1] = -cx;
    values[2] = -cy;
@@ -4094,10 +4094,10 @@ BuildParLaplacian( NALU_HYPRE_Int                  argc,
       values[0] += 2.0 * cz;
    }
 
-   A = (NALU_HYPRE_ParCSRMatrix) GenerateLaplacian(hypre_MPI_COMM_WORLD,
+   A = (NALU_HYPRE_ParCSRMatrix) GenerateLaplacian(nalu_hypre_MPI_COMM_WORLD,
                                               nx, ny, nz, P, Q, R, p, q, r, values);
 
-   hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
 
    *A_ptr = A;
 
@@ -4135,8 +4135,8 @@ BuildParDifConv( NALU_HYPRE_Int                  argc,
     * Initialize some stuff
     *-----------------------------------------------------------*/
 
-   hypre_MPI_Comm_size(hypre_MPI_COMM_WORLD, &num_procs );
-   hypre_MPI_Comm_rank(hypre_MPI_COMM_WORLD, &myid );
+   nalu_hypre_MPI_Comm_size(nalu_hypre_MPI_COMM_WORLD, &num_procs );
+   nalu_hypre_MPI_Comm_rank(nalu_hypre_MPI_COMM_WORLD, &myid );
 
    /*-----------------------------------------------------------
     * Set defaults
@@ -4204,7 +4204,7 @@ BuildParDifConv( NALU_HYPRE_Int                  argc,
 
    if ((P * Q * R) != num_procs)
    {
-      hypre_printf("Error: Invalid number of processors or processor topology \n");
+      nalu_hypre_printf("Error: Invalid number of processors or processor topology \n");
       exit(1);
    }
 
@@ -4214,12 +4214,12 @@ BuildParDifConv( NALU_HYPRE_Int                  argc,
 
    if (myid == 0)
    {
-      hypre_printf("  Convection-Diffusion: \n");
-      hypre_printf("    -cx Dxx - cy Dyy - cz Dzz + ax Dx + ay Dy + az Dz = f\n");
-      hypre_printf("    (nx, ny, nz) = (%d, %d, %d)\n", nx, ny, nz);
-      hypre_printf("    (Px, Py, Pz) = (%d, %d, %d)\n", P,  Q,  R);
-      hypre_printf("    (cx, cy, cz) = (%f, %f, %f)\n", cx, cy, cz);
-      hypre_printf("    (ax, ay, az) = (%f, %f, %f)\n\n", ax, ay, az);
+      nalu_hypre_printf("  Convection-Diffusion: \n");
+      nalu_hypre_printf("    -cx Dxx - cy Dyy - cz Dzz + ax Dx + ay Dy + az Dz = f\n");
+      nalu_hypre_printf("    (nx, ny, nz) = (%d, %d, %d)\n", nx, ny, nz);
+      nalu_hypre_printf("    (Px, Py, Pz) = (%d, %d, %d)\n", P,  Q,  R);
+      nalu_hypre_printf("    (cx, cy, cz) = (%f, %f, %f)\n", cx, cy, cz);
+      nalu_hypre_printf("    (ax, ay, az) = (%f, %f, %f)\n\n", ax, ay, az);
    }
 
    /*-----------------------------------------------------------
@@ -4239,7 +4239,7 @@ BuildParDifConv( NALU_HYPRE_Int                  argc,
     * Generate the matrix
     *-----------------------------------------------------------*/
 
-   values = hypre_CTAlloc(NALU_HYPRE_Real,  7, NALU_HYPRE_MEMORY_HOST);
+   values = nalu_hypre_CTAlloc(NALU_HYPRE_Real,  7, NALU_HYPRE_MEMORY_HOST);
 
    values[1] = -cx / (hinx * hinx);
    values[2] = -cy / (hiny * hiny);
@@ -4262,10 +4262,10 @@ BuildParDifConv( NALU_HYPRE_Int                  argc,
       values[0] += 2.0 * cz / (hinz * hinz) - 1.*az / hinz;
    }
 
-   A = (NALU_HYPRE_ParCSRMatrix) GenerateDifConv(hypre_MPI_COMM_WORLD,
+   A = (NALU_HYPRE_ParCSRMatrix) GenerateDifConv(nalu_hypre_MPI_COMM_WORLD,
                                             nx, ny, nz, P, Q, R, p, q, r, values);
 
-   hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
 
    *A_ptr = A;
 
@@ -4300,8 +4300,8 @@ BuildParFromOneFile2(NALU_HYPRE_Int                  argc,
     * Initialize some stuff
     *-----------------------------------------------------------*/
 
-   hypre_MPI_Comm_rank(hypre_MPI_COMM_WORLD, &myid );
-   hypre_MPI_Comm_size(hypre_MPI_COMM_WORLD, &numprocs );
+   nalu_hypre_MPI_Comm_rank(nalu_hypre_MPI_COMM_WORLD, &myid );
+   nalu_hypre_MPI_Comm_size(nalu_hypre_MPI_COMM_WORLD, &numprocs );
 
    /*-----------------------------------------------------------
     * Parse command line
@@ -4313,7 +4313,7 @@ BuildParFromOneFile2(NALU_HYPRE_Int                  argc,
    }
    else
    {
-      hypre_printf("Error: No filename specified \n");
+      nalu_hypre_printf("Error: No filename specified \n");
       exit(1);
    }
 
@@ -4323,7 +4323,7 @@ BuildParFromOneFile2(NALU_HYPRE_Int                  argc,
 
    if (myid == 0)
    {
-      hypre_printf("  FromFile: %s\n", filename);
+      nalu_hypre_printf("  FromFile: %s\n", filename);
 
       /*-----------------------------------------------------------
        * Generate the matrix
@@ -4345,7 +4345,7 @@ BuildParFromOneFile2(NALU_HYPRE_Int                  argc,
       }
       else
       {
-         row_part = hypre_CTAlloc(NALU_HYPRE_Int,  numprocs + 1, NALU_HYPRE_MEMORY_HOST);
+         row_part = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  numprocs + 1, NALU_HYPRE_MEMORY_HOST);
          row_part[0] = 0;
          size = num_nodes / numprocs;
          rest = num_nodes - size * numprocs;
@@ -4358,7 +4358,7 @@ BuildParFromOneFile2(NALU_HYPRE_Int                  argc,
       }
    }
 
-   NALU_HYPRE_CSRMatrixToParCSRMatrix(hypre_MPI_COMM_WORLD, A_CSR, row_part, col_part, &A);
+   NALU_HYPRE_CSRMatrixToParCSRMatrix(nalu_hypre_MPI_COMM_WORLD, A_CSR, row_part, col_part, &A);
 
    *A_ptr = A;
 
@@ -4382,7 +4382,7 @@ BuildFuncsFromFiles(    NALU_HYPRE_Int                  argc,
     * Build Function array from files on different processors
     *----------------------------------------------------------------------*/
 
-   hypre_printf (" Feature is not implemented yet!\n");
+   nalu_hypre_printf (" Feature is not implemented yet!\n");
    return (0);
 
 }
@@ -4403,17 +4403,17 @@ BuildFuncsFromOneFile(  NALU_HYPRE_Int                  argc,
    NALU_HYPRE_Int            *dof_func_local;
    NALU_HYPRE_Int             i, j;
    NALU_HYPRE_Int             local_size, global_size;
-   hypre_MPI_Request    *requests;
-   hypre_MPI_Status     *status, status0;
+   nalu_hypre_MPI_Request    *requests;
+   nalu_hypre_MPI_Status     *status, status0;
    MPI_Comm              comm;
 
    /*-----------------------------------------------------------
     * Initialize some stuff
     *-----------------------------------------------------------*/
 
-   comm = hypre_MPI_COMM_WORLD;
-   hypre_MPI_Comm_rank(hypre_MPI_COMM_WORLD, &myid );
-   hypre_MPI_Comm_size(hypre_MPI_COMM_WORLD, &num_procs );
+   comm = nalu_hypre_MPI_COMM_WORLD;
+   nalu_hypre_MPI_Comm_rank(nalu_hypre_MPI_COMM_WORLD, &myid );
+   nalu_hypre_MPI_Comm_size(nalu_hypre_MPI_COMM_WORLD, &num_procs );
 
    /*-----------------------------------------------------------
     * Parse command line
@@ -4425,7 +4425,7 @@ BuildFuncsFromOneFile(  NALU_HYPRE_Int                  argc,
    }
    else
    {
-      hypre_printf("Error: No filename specified \n");
+      nalu_hypre_printf("Error: No filename specified \n");
       exit(1);
    }
 
@@ -4436,19 +4436,19 @@ BuildFuncsFromOneFile(  NALU_HYPRE_Int                  argc,
    if (myid == 0)
    {
       FILE *fp;
-      hypre_printf("  Funcs FromFile: %s\n", filename);
+      nalu_hypre_printf("  Funcs FromFile: %s\n", filename);
 
       /*-----------------------------------------------------------
        * read in the data
        *-----------------------------------------------------------*/
       fp = fopen(filename, "r");
 
-      hypre_fscanf(fp, "%d", &global_size);
-      dof_func = hypre_CTAlloc(NALU_HYPRE_Int,  global_size, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_fscanf(fp, "%d", &global_size);
+      dof_func = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  global_size, NALU_HYPRE_MEMORY_HOST);
 
       for (j = 0; j < global_size; j++)
       {
-         hypre_fscanf(fp, "%d", &dof_func[j]);
+         nalu_hypre_fscanf(fp, "%d", &dof_func[j]);
       }
 
       fclose(fp);
@@ -4456,33 +4456,33 @@ BuildFuncsFromOneFile(  NALU_HYPRE_Int                  argc,
    }
    NALU_HYPRE_ParCSRMatrixGetRowPartitioning(parcsr_A, &partitioning);
    local_size = partitioning[myid + 1] - partitioning[myid];
-   dof_func_local = hypre_CTAlloc(NALU_HYPRE_Int, local_size, NALU_HYPRE_MEMORY_HOST);
+   dof_func_local = nalu_hypre_CTAlloc(NALU_HYPRE_Int, local_size, NALU_HYPRE_MEMORY_HOST);
 
    if (myid == 0)
    {
-      requests = hypre_CTAlloc(hypre_MPI_Request, num_procs - 1, NALU_HYPRE_MEMORY_HOST);
-      status = hypre_CTAlloc(hypre_MPI_Status, num_procs - 1, NALU_HYPRE_MEMORY_HOST);
+      requests = nalu_hypre_CTAlloc(nalu_hypre_MPI_Request, num_procs - 1, NALU_HYPRE_MEMORY_HOST);
+      status = nalu_hypre_CTAlloc(nalu_hypre_MPI_Status, num_procs - 1, NALU_HYPRE_MEMORY_HOST);
       j = 0;
       for (i = 1; i < num_procs; i++)
-         hypre_MPI_Isend(&dof_func[partitioning[i]],
+         nalu_hypre_MPI_Isend(&dof_func[partitioning[i]],
                          partitioning[i + 1] - partitioning[i],
                          NALU_HYPRE_MPI_INT, i, 0, comm, &requests[j++]);
       for (i = 0; i < local_size; i++)
       {
          dof_func_local[i] = dof_func[i];
       }
-      hypre_MPI_Waitall(num_procs - 1, requests, status);
-      hypre_TFree(requests, NALU_HYPRE_MEMORY_HOST);
-      hypre_TFree(status, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_MPI_Waitall(num_procs - 1, requests, status);
+      nalu_hypre_TFree(requests, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(status, NALU_HYPRE_MEMORY_HOST);
    }
    else
    {
-      hypre_MPI_Recv(dof_func_local, local_size, NALU_HYPRE_MPI_INT, 0, 0, comm, &status0);
+      nalu_hypre_MPI_Recv(dof_func_local, local_size, NALU_HYPRE_MPI_INT, 0, 0, comm, &status0);
    }
 
    *dof_func_ptr = dof_func_local;
 
-   if (myid == 0) { hypre_TFree(dof_func, NALU_HYPRE_MEMORY_HOST); }
+   if (myid == 0) { nalu_hypre_TFree(dof_func, NALU_HYPRE_MEMORY_HOST); }
 
    return (0);
 }
@@ -4510,7 +4510,7 @@ BuildRhsParFromOneFile2(NALU_HYPRE_Int                  argc,
     * Initialize some stuff
     *-----------------------------------------------------------*/
 
-   hypre_MPI_Comm_rank(hypre_MPI_COMM_WORLD, &myid );
+   nalu_hypre_MPI_Comm_rank(nalu_hypre_MPI_COMM_WORLD, &myid );
 
    /*-----------------------------------------------------------
     * Parse command line
@@ -4522,7 +4522,7 @@ BuildRhsParFromOneFile2(NALU_HYPRE_Int                  argc,
    }
    else
    {
-      hypre_printf("Error: No filename specified \n");
+      nalu_hypre_printf("Error: No filename specified \n");
       exit(1);
    }
 
@@ -4532,7 +4532,7 @@ BuildRhsParFromOneFile2(NALU_HYPRE_Int                  argc,
 
    if (myid == 0)
    {
-      hypre_printf("  Rhs FromFile: %s\n", filename);
+      nalu_hypre_printf("  Rhs FromFile: %s\n", filename);
 
       /*-----------------------------------------------------------
        * Generate the matrix
@@ -4540,7 +4540,7 @@ BuildRhsParFromOneFile2(NALU_HYPRE_Int                  argc,
 
       b_CSR = NALU_HYPRE_VectorRead(filename);
    }
-   NALU_HYPRE_VectorToParVector(hypre_MPI_COMM_WORLD, b_CSR, partitioning, &b);
+   NALU_HYPRE_VectorToParVector(nalu_hypre_MPI_COMM_WORLD, b_CSR, partitioning, &b);
 
    *b_ptr = b;
 
@@ -4573,8 +4573,8 @@ BuildParLaplacian9pt( NALU_HYPRE_Int                  argc,
     * Initialize some stuff
     *-----------------------------------------------------------*/
 
-   hypre_MPI_Comm_size(hypre_MPI_COMM_WORLD, &num_procs );
-   hypre_MPI_Comm_rank(hypre_MPI_COMM_WORLD, &myid );
+   nalu_hypre_MPI_Comm_size(nalu_hypre_MPI_COMM_WORLD, &num_procs );
+   nalu_hypre_MPI_Comm_rank(nalu_hypre_MPI_COMM_WORLD, &myid );
 
    /*-----------------------------------------------------------
     * Set defaults
@@ -4616,7 +4616,7 @@ BuildParLaplacian9pt( NALU_HYPRE_Int                  argc,
 
    if ((P * Q) != num_procs)
    {
-      hypre_printf("Error: Invalid number of processors or processor topology \n");
+      nalu_hypre_printf("Error: Invalid number of processors or processor topology \n");
       exit(1);
    }
 
@@ -4626,9 +4626,9 @@ BuildParLaplacian9pt( NALU_HYPRE_Int                  argc,
 
    if (myid == 0)
    {
-      hypre_printf("  Laplacian 9pt:\n");
-      hypre_printf("    (nx, ny) = (%d, %d)\n", nx, ny);
-      hypre_printf("    (Px, Py) = (%d, %d)\n\n", P,  Q);
+      nalu_hypre_printf("  Laplacian 9pt:\n");
+      nalu_hypre_printf("    (nx, ny) = (%d, %d)\n", nx, ny);
+      nalu_hypre_printf("    (Px, Py) = (%d, %d)\n\n", P,  Q);
    }
 
    /*-----------------------------------------------------------
@@ -4643,7 +4643,7 @@ BuildParLaplacian9pt( NALU_HYPRE_Int                  argc,
     * Generate the matrix
     *-----------------------------------------------------------*/
 
-   values = hypre_CTAlloc(NALU_HYPRE_Real,  2, NALU_HYPRE_MEMORY_HOST);
+   values = nalu_hypre_CTAlloc(NALU_HYPRE_Real,  2, NALU_HYPRE_MEMORY_HOST);
 
    values[1] = -1.;
 
@@ -4661,10 +4661,10 @@ BuildParLaplacian9pt( NALU_HYPRE_Int                  argc,
       values[0] += 4.0;
    }
 
-   A = (NALU_HYPRE_ParCSRMatrix) GenerateLaplacian9pt(hypre_MPI_COMM_WORLD,
+   A = (NALU_HYPRE_ParCSRMatrix) GenerateLaplacian9pt(nalu_hypre_MPI_COMM_WORLD,
                                                  nx, ny, P, Q, p, q, values);
 
-   hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
 
    *A_ptr = A;
 
@@ -4694,8 +4694,8 @@ BuildParLaplacian27pt( NALU_HYPRE_Int                  argc,
     * Initialize some stuff
     *-----------------------------------------------------------*/
 
-   hypre_MPI_Comm_size(hypre_MPI_COMM_WORLD, &num_procs );
-   hypre_MPI_Comm_rank(hypre_MPI_COMM_WORLD, &myid );
+   nalu_hypre_MPI_Comm_size(nalu_hypre_MPI_COMM_WORLD, &num_procs );
+   nalu_hypre_MPI_Comm_rank(nalu_hypre_MPI_COMM_WORLD, &myid );
 
    /*-----------------------------------------------------------
     * Set defaults
@@ -4741,7 +4741,7 @@ BuildParLaplacian27pt( NALU_HYPRE_Int                  argc,
 
    if ((P * Q * R) != num_procs)
    {
-      hypre_printf("Error: Invalid number of processors or processor topology \n");
+      nalu_hypre_printf("Error: Invalid number of processors or processor topology \n");
       exit(1);
    }
 
@@ -4751,9 +4751,9 @@ BuildParLaplacian27pt( NALU_HYPRE_Int                  argc,
 
    if (myid == 0)
    {
-      hypre_printf("  Laplacian_27pt:\n");
-      hypre_printf("    (nx, ny, nz) = (%d, %d, %d)\n", nx, ny, nz);
-      hypre_printf("    (Px, Py, Pz) = (%d, %d, %d)\n\n", P,  Q,  R);
+      nalu_hypre_printf("  Laplacian_27pt:\n");
+      nalu_hypre_printf("    (nx, ny, nz) = (%d, %d, %d)\n", nx, ny, nz);
+      nalu_hypre_printf("    (Px, Py, Pz) = (%d, %d, %d)\n\n", P,  Q,  R);
    }
 
    /*-----------------------------------------------------------
@@ -4769,7 +4769,7 @@ BuildParLaplacian27pt( NALU_HYPRE_Int                  argc,
     * Generate the matrix
     *-----------------------------------------------------------*/
 
-   values = hypre_CTAlloc(NALU_HYPRE_Real,  2, NALU_HYPRE_MEMORY_HOST);
+   values = nalu_hypre_CTAlloc(NALU_HYPRE_Real,  2, NALU_HYPRE_MEMORY_HOST);
 
    values[0] = 26.0;
    if (nx == 1 || ny == 1 || nz == 1)
@@ -4782,10 +4782,10 @@ BuildParLaplacian27pt( NALU_HYPRE_Int                  argc,
    }
    values[1] = -1.;
 
-   A = (NALU_HYPRE_ParCSRMatrix) GenerateLaplacian27pt(hypre_MPI_COMM_WORLD,
+   A = (NALU_HYPRE_ParCSRMatrix) GenerateLaplacian27pt(nalu_hypre_MPI_COMM_WORLD,
                                                   nx, ny, nz, P, Q, R, p, q, r, values);
 
-   hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
 
    *A_ptr = A;
 
@@ -4819,8 +4819,8 @@ BuildParIsoLaplacian( NALU_HYPRE_Int argc, char** argv, NALU_HYPRE_ParCSRMatrix 
     * Initialize some stuff
     *-----------------------------------------------------------*/
 
-   hypre_MPI_Comm_size(hypre_MPI_COMM_WORLD, &num_procs );
-   hypre_MPI_Comm_rank(hypre_MPI_COMM_WORLD, &myid );
+   nalu_hypre_MPI_Comm_size(nalu_hypre_MPI_COMM_WORLD, &num_procs );
+   nalu_hypre_MPI_Comm_rank(nalu_hypre_MPI_COMM_WORLD, &myid );
 
    /*-----------------------------------------------------------
     * Set defaults
@@ -4861,10 +4861,10 @@ BuildParIsoLaplacian( NALU_HYPRE_Int argc, char** argv, NALU_HYPRE_ParCSRMatrix 
 
    if (myid == 0)
    {
-      hypre_printf("  Laplacian:\n");
-      hypre_printf("    (nx, ny, nz) = (%d, %d, %d)\n", nx, ny, nz);
-      hypre_printf("    (Px, Py, Pz) = (%d, %d, %d)\n", P,  Q,  R);
-      hypre_printf("    (cx, cy, cz) = (%f, %f, %f)\n\n", cx, cy, cz);
+      nalu_hypre_printf("  Laplacian:\n");
+      nalu_hypre_printf("    (nx, ny, nz) = (%d, %d, %d)\n", nx, ny, nz);
+      nalu_hypre_printf("    (Px, Py, Pz) = (%d, %d, %d)\n", P,  Q,  R);
+      nalu_hypre_printf("    (cx, cy, cz) = (%f, %f, %f)\n\n", cx, cy, cz);
    }
 
    /*-----------------------------------------------------------
@@ -4880,7 +4880,7 @@ BuildParIsoLaplacian( NALU_HYPRE_Int argc, char** argv, NALU_HYPRE_ParCSRMatrix 
     * Generate the matrix
     *-----------------------------------------------------------*/
 
-   values = hypre_CTAlloc(NALU_HYPRE_Real,  4, NALU_HYPRE_MEMORY_HOST);
+   values = nalu_hypre_CTAlloc(NALU_HYPRE_Real,  4, NALU_HYPRE_MEMORY_HOST);
 
    values[1] = -cx;
    values[2] = -cy;
@@ -4900,10 +4900,10 @@ BuildParIsoLaplacian( NALU_HYPRE_Int argc, char** argv, NALU_HYPRE_ParCSRMatrix 
       values[0] += 2.0 * cz;
    }
 
-   A = (NALU_HYPRE_ParCSRMatrix) GenerateLaplacian(hypre_MPI_COMM_WORLD,
+   A = (NALU_HYPRE_ParCSRMatrix) GenerateLaplacian(nalu_hypre_MPI_COMM_WORLD,
                                               nx, ny, nz, P, Q, R, p, q, r, values);
 
-   hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
 
    *A_ptr = A;
 

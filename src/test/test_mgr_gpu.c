@@ -16,15 +16,15 @@
 #include <stdio.h>
 #include <math.h>
 
-#include "_hypre_utilities.h"
+#include "_nalu_hypre_utilities.h"
 #include "NALU_HYPRE.h"
 #include "NALU_HYPRE_parcsr_mv.h"
 
 #include "NALU_HYPRE_IJ_mv.h"
-#include "_hypre_IJ_mv.h"
+#include "_nalu_hypre_IJ_mv.h"
 #include "NALU_HYPRE_parcsr_ls.h"
-#include "_hypre_parcsr_mv.h"
-#include "_hypre_parcsr_ls.h"
+#include "_nalu_hypre_parcsr_mv.h"
+#include "_nalu_hypre_parcsr_ls.h"
 #include "NALU_HYPRE_krylov.h"
 
 #ifdef __cplusplus
@@ -39,8 +39,8 @@ extern "C" {
 
 
 
-hypre_int
-main( hypre_int argc,
+nalu_hypre_int
+main( nalu_hypre_int argc,
       char *argv[] )
 {
    NALU_HYPRE_Int                 arg_index;
@@ -69,7 +69,7 @@ main( hypre_int argc,
    NALU_HYPRE_MemoryLocation memory_location = NALU_HYPRE_MEMORY_DEVICE;
 
    /* CUB Allocator */
-   hypre_uint mempool_bin_growth   = 8,
+   nalu_hypre_uint mempool_bin_growth   = 8,
               mempool_min_bin      = 3,
               mempool_max_bin      = 9;
    size_t mempool_max_cached_bytes = 2000LL * 1024 * 1024;
@@ -91,7 +91,7 @@ main( hypre_int argc,
    NALU_HYPRE_Int           num_procs, myid;
 
    NALU_HYPRE_Int           time_index;
-   MPI_Comm            comm = hypre_MPI_COMM_WORLD;
+   MPI_Comm            comm = nalu_hypre_MPI_COMM_WORLD;
 
    NALU_HYPRE_BigInt first_local_row, last_local_row, local_num_rows;
    NALU_HYPRE_BigInt first_local_col, last_local_col, local_num_cols;
@@ -127,39 +127,39 @@ main( hypre_int argc,
 
    NALU_HYPRE_Int mgr_restrict_type = 0;
    NALU_HYPRE_Int mgr_num_restrict_sweeps = 0;
-   //NALU_HYPRE_Int *mgr_level_restrict_type = hypre_CTAlloc(NALU_HYPRE_Int, mgr_nlevels, NALU_HYPRE_MEMORY_HOST);
+   //NALU_HYPRE_Int *mgr_level_restrict_type = nalu_hypre_CTAlloc(NALU_HYPRE_Int, mgr_nlevels, NALU_HYPRE_MEMORY_HOST);
    //mgr_level_restrict_type[0] = 0;
    //mgr_level_restrict_type[1] = 0;
 
    NALU_HYPRE_Int mgr_interp_type = 2;
    NALU_HYPRE_Int mgr_num_interp_sweeps = 0;
-   //NALU_HYPRE_Int *mgr_level_interp_type = hypre_CTAlloc(NALU_HYPRE_Int, mgr_nlevels, NALU_HYPRE_MEMORY_HOST);
+   //NALU_HYPRE_Int *mgr_level_interp_type = nalu_hypre_CTAlloc(NALU_HYPRE_Int, mgr_nlevels, NALU_HYPRE_MEMORY_HOST);
    //mgr_level_interp_type[0] = 2;
    //mgr_level_interp_type[1] = 2;
 
-   NALU_HYPRE_Int *mgr_coarse_grid_method = hypre_CTAlloc(NALU_HYPRE_Int, mgr_nlevels, NALU_HYPRE_MEMORY_HOST);
+   NALU_HYPRE_Int *mgr_coarse_grid_method = nalu_hypre_CTAlloc(NALU_HYPRE_Int, mgr_nlevels, NALU_HYPRE_MEMORY_HOST);
    mgr_coarse_grid_method[0] = 0;
    mgr_coarse_grid_method[1] = 0;
 
-   mgr_cindexes = hypre_CTAlloc(NALU_HYPRE_Int*, mgr_nlevels, NALU_HYPRE_MEMORY_HOST);
-   NALU_HYPRE_Int *lv1 = hypre_CTAlloc(NALU_HYPRE_Int, mgr_bsize, NALU_HYPRE_MEMORY_HOST);
-   NALU_HYPRE_Int *lv2 = hypre_CTAlloc(NALU_HYPRE_Int, mgr_bsize, NALU_HYPRE_MEMORY_HOST);
+   mgr_cindexes = nalu_hypre_CTAlloc(NALU_HYPRE_Int*, mgr_nlevels, NALU_HYPRE_MEMORY_HOST);
+   NALU_HYPRE_Int *lv1 = nalu_hypre_CTAlloc(NALU_HYPRE_Int, mgr_bsize, NALU_HYPRE_MEMORY_HOST);
+   NALU_HYPRE_Int *lv2 = nalu_hypre_CTAlloc(NALU_HYPRE_Int, mgr_bsize, NALU_HYPRE_MEMORY_HOST);
    lv1[0] = 0;
    lv1[1] = 1;
    lv2[0] = 0;
    mgr_cindexes[0] = lv1;
    mgr_cindexes[1] = lv2;
 
-   mgr_num_cindexes = hypre_CTAlloc(NALU_HYPRE_Int, mgr_nlevels, NALU_HYPRE_MEMORY_HOST);
+   mgr_num_cindexes = nalu_hypre_CTAlloc(NALU_HYPRE_Int, mgr_nlevels, NALU_HYPRE_MEMORY_HOST);
    mgr_num_cindexes[0] = 2;
    mgr_num_cindexes[1] = 1;
 
    NALU_HYPRE_Int mgr_frelax_method = 0;
-   //NALU_HYPRE_Int *mgr_level_frelax_method = hypre_CTAlloc(NALU_HYPRE_Int, mgr_nlevels, NALU_HYPRE_MEMORY_HOST);
+   //NALU_HYPRE_Int *mgr_level_frelax_method = nalu_hypre_CTAlloc(NALU_HYPRE_Int, mgr_nlevels, NALU_HYPRE_MEMORY_HOST);
    //mgr_level_frelax_method[0] = 2;
    //mgr_level_frelax_method[1] = 0;
 
-   //NALU_HYPRE_Int *mgr_frelax_num_functions = hypre_CTAlloc(NALU_HYPRE_Int, mgr_nlevels, NALU_HYPRE_MEMORY_HOST);
+   //NALU_HYPRE_Int *mgr_frelax_num_functions = nalu_hypre_CTAlloc(NALU_HYPRE_Int, mgr_nlevels, NALU_HYPRE_MEMORY_HOST);
    //mgr_frelax_num_functions[0] = 3;
 
    char* indexList = NULL;
@@ -170,10 +170,10 @@ main( hypre_int argc,
     *-----------------------------------------------------------*/
 
    /* Initialize MPI */
-   hypre_MPI_Init(&argc, &argv);
+   nalu_hypre_MPI_Init(&argc, &argv);
 
-   hypre_MPI_Comm_size(hypre_MPI_COMM_WORLD, &num_procs );
-   hypre_MPI_Comm_rank(hypre_MPI_COMM_WORLD, &myid );
+   nalu_hypre_MPI_Comm_size(nalu_hypre_MPI_COMM_WORLD, &num_procs );
+   nalu_hypre_MPI_Comm_rank(nalu_hypre_MPI_COMM_WORLD, &myid );
 
    /*-----------------------------------------------------------
     * Set defaults
@@ -277,25 +277,25 @@ main( hypre_int argc,
 
    if (myid == 0)
    {
-      hypre_printf("Running with these driver parameters:\n");
-      hypre_printf("  solver ID    = %d\n\n", solver_id);
+      nalu_hypre_printf("Running with these driver parameters:\n");
+      nalu_hypre_printf("  solver ID    = %d\n\n", solver_id);
    }
 
-   time_index = hypre_InitializeTiming("Hypre init");
-   hypre_BeginTiming(time_index);
+   time_index = nalu_hypre_InitializeTiming("Hypre init");
+   nalu_hypre_BeginTiming(time_index);
 
    /*-----------------------------------------------------------
    * Initialize : must be the first HYPRE function to call
    *-----------------------------------------------------------*/
    NALU_HYPRE_Init();
 
-   hypre_EndTiming(time_index);
-   hypre_PrintTiming("Hypre init times", hypre_MPI_COMM_WORLD);
-   hypre_FinalizeTiming(time_index);
-   hypre_ClearTiming();
+   nalu_hypre_EndTiming(time_index);
+   nalu_hypre_PrintTiming("Hypre init times", nalu_hypre_MPI_COMM_WORLD);
+   nalu_hypre_FinalizeTiming(time_index);
+   nalu_hypre_ClearTiming();
 
-   /* To be effective, hypre_SetCubMemPoolSize must immediately follow NALU_HYPRE_Init */
-   hypre_SetCubMemPoolSize( mempool_bin_growth, mempool_min_bin,
+   /* To be effective, nalu_hypre_SetCubMemPoolSize must immediately follow NALU_HYPRE_Init */
+   nalu_hypre_SetCubMemPoolSize( mempool_bin_growth, mempool_min_bin,
                             mempool_max_bin, mempool_max_cached_bytes );
 
    NALU_HYPRE_SetMemoryLocation(memory_location);
@@ -303,7 +303,7 @@ main( hypre_int argc,
    NALU_HYPRE_SetExecutionPolicy(default_exec_policy);
 
 #if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_DEVICE_OPENMP)
-   ierr = NALU_HYPRE_SetSpGemmUseVendor(spgemm_use_vendor); hypre_assert(ierr == 0);
+   ierr = NALU_HYPRE_SetSpGemmUseVendor(spgemm_use_vendor); nalu_hypre_assert(ierr == 0);
 #endif
 
 
@@ -312,25 +312,25 @@ main( hypre_int argc,
    *-----------------------------------------------------------*/
    if (myid == 0)
    {
-      hypre_printf("Reading the system matrix\n");
+      nalu_hypre_printf("Reading the system matrix\n");
    }
-   time_index = hypre_InitializeTiming("Reading Input Matrix");
-   hypre_BeginTiming(time_index);
+   time_index = nalu_hypre_InitializeTiming("Reading Input Matrix");
+   nalu_hypre_BeginTiming(time_index);
    ierr = NALU_HYPRE_IJMatrixRead( argv[build_matrix_arg_index], comm,
                               NALU_HYPRE_PARCSR, &ij_A );
    if (ierr)
    {
-      hypre_printf("ERROR: Problem reading in the system matrix!\n");
+      nalu_hypre_printf("ERROR: Problem reading in the system matrix!\n");
       exit(1);
    }
    else
    {
-      hypre_printf("Done reading the system matrix\n");
+      nalu_hypre_printf("Done reading the system matrix\n");
    }
-   hypre_EndTiming(time_index);
-   hypre_PrintTiming("Reading Input Matrix", hypre_MPI_COMM_WORLD);
-   hypre_FinalizeTiming(time_index);
-   hypre_ClearTiming();
+   nalu_hypre_EndTiming(time_index);
+   nalu_hypre_PrintTiming("Reading Input Matrix", nalu_hypre_MPI_COMM_WORLD);
+   nalu_hypre_FinalizeTiming(time_index);
+   nalu_hypre_ClearTiming();
 
    if (build_matrix_type < 0)
    {
@@ -348,23 +348,23 @@ main( hypre_int argc,
    {
       if (myid == 0)
       {
-         hypre_printf("  RHS vector read from file %s\n", argv[build_rhs_arg_index]);
-         hypre_printf("  Initial guess is 0\n");
+         nalu_hypre_printf("  RHS vector read from file %s\n", argv[build_rhs_arg_index]);
+         nalu_hypre_printf("  Initial guess is 0\n");
       }
 
       /* RHS */
-      ierr = NALU_HYPRE_IJVectorRead( argv[build_rhs_arg_index], hypre_MPI_COMM_WORLD,
+      ierr = NALU_HYPRE_IJVectorRead( argv[build_rhs_arg_index], nalu_hypre_MPI_COMM_WORLD,
                                  NALU_HYPRE_PARCSR, &ij_b );
       if (ierr)
       {
-         hypre_printf("ERROR: Problem reading in the right-hand-side!\n");
+         nalu_hypre_printf("ERROR: Problem reading in the right-hand-side!\n");
          exit(1);
       }
       ierr = NALU_HYPRE_IJVectorGetObject( ij_b, &object );
       b = (NALU_HYPRE_ParVector) object;
 
       /* Initial guess */
-      NALU_HYPRE_IJVectorCreate(hypre_MPI_COMM_WORLD, first_local_col, last_local_col, &ij_x);
+      NALU_HYPRE_IJVectorCreate(nalu_hypre_MPI_COMM_WORLD, first_local_col, last_local_col, &ij_x);
       NALU_HYPRE_IJVectorSetObjectType(ij_x, NALU_HYPRE_PARCSR);
       NALU_HYPRE_IJVectorInitialize(ij_x);
       NALU_HYPRE_IJVectorAssemble(ij_x);
@@ -376,20 +376,20 @@ main( hypre_int argc,
    {
       if (myid == 0)
       {
-         hypre_printf("  RHS vector has unit components\n");
-         hypre_printf("  Initial guess is 0\n");
+         nalu_hypre_printf("  RHS vector has unit components\n");
+         nalu_hypre_printf("  Initial guess is 0\n");
       }
 
-      NALU_HYPRE_Real *values_h = hypre_CTAlloc(NALU_HYPRE_Real, local_num_rows, NALU_HYPRE_MEMORY_HOST);
-      NALU_HYPRE_Real *values_d = hypre_CTAlloc(NALU_HYPRE_Real, local_num_rows, memory_location);
+      NALU_HYPRE_Real *values_h = nalu_hypre_CTAlloc(NALU_HYPRE_Real, local_num_rows, NALU_HYPRE_MEMORY_HOST);
+      NALU_HYPRE_Real *values_d = nalu_hypre_CTAlloc(NALU_HYPRE_Real, local_num_rows, memory_location);
       for (i = 0; i < local_num_rows; i++)
       {
          values_h[i] = 1.0;
       }
-      hypre_TMemcpy(values_d, values_h, NALU_HYPRE_Real, local_num_rows, memory_location, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TMemcpy(values_d, values_h, NALU_HYPRE_Real, local_num_rows, memory_location, NALU_HYPRE_MEMORY_HOST);
 
       /* RHS */
-      NALU_HYPRE_IJVectorCreate(hypre_MPI_COMM_WORLD, first_local_row, last_local_row, &ij_b);
+      NALU_HYPRE_IJVectorCreate(nalu_hypre_MPI_COMM_WORLD, first_local_row, last_local_row, &ij_b);
       NALU_HYPRE_IJVectorSetObjectType(ij_b, NALU_HYPRE_PARCSR);
       NALU_HYPRE_IJVectorInitialize_v2(ij_b, memory_location);
       NALU_HYPRE_IJVectorSetValues(ij_b, local_num_rows, NULL, values_d);
@@ -397,9 +397,9 @@ main( hypre_int argc,
       ierr = NALU_HYPRE_IJVectorGetObject( ij_b, &object );
       b = (NALU_HYPRE_ParVector) object;
 
-      hypre_Memset(values_d, 0, local_num_rows * sizeof(NALU_HYPRE_Real), NALU_HYPRE_MEMORY_DEVICE);
+      nalu_hypre_Memset(values_d, 0, local_num_rows * sizeof(NALU_HYPRE_Real), NALU_HYPRE_MEMORY_DEVICE);
       /* Initial guess */
-      NALU_HYPRE_IJVectorCreate(hypre_MPI_COMM_WORLD, first_local_col, last_local_col, &ij_x);
+      NALU_HYPRE_IJVectorCreate(nalu_hypre_MPI_COMM_WORLD, first_local_col, last_local_col, &ij_x);
       NALU_HYPRE_IJVectorSetObjectType(ij_x, NALU_HYPRE_PARCSR);
       NALU_HYPRE_IJVectorInitialize_v2(ij_x, memory_location);
       NALU_HYPRE_IJVectorSetValues(ij_x, local_num_cols, NULL, values_d);
@@ -407,13 +407,13 @@ main( hypre_int argc,
       ierr = NALU_HYPRE_IJVectorGetObject( ij_x, &object );
       x = (NALU_HYPRE_ParVector) object;
 
-      hypre_TFree(values_h, NALU_HYPRE_MEMORY_HOST);
-      hypre_TFree(values_d, memory_location);
+      nalu_hypre_TFree(values_h, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(values_d, memory_location);
    }
 
    if (indexList != NULL)
    {
-      mgr_reserved_coarse_indexes = hypre_CTAlloc(NALU_HYPRE_BigInt, mgr_num_reserved_nodes,
+      mgr_reserved_coarse_indexes = nalu_hypre_CTAlloc(NALU_HYPRE_BigInt, mgr_num_reserved_nodes,
                                                   NALU_HYPRE_MEMORY_HOST);
       FILE* ifp;
       ifp = fopen(indexList, "r");
@@ -437,11 +437,11 @@ main( hypre_int argc,
 
    if (use_block_cf)
    {
-      mgr_idx_array = hypre_CTAlloc(NALU_HYPRE_BigInt, mgr_bsize, NALU_HYPRE_MEMORY_HOST);
+      mgr_idx_array = nalu_hypre_CTAlloc(NALU_HYPRE_BigInt, mgr_bsize, NALU_HYPRE_MEMORY_HOST);
       FILE *ifp;
       char fname[80];
-      hypre_sprintf(fname, "%s.%05i", argv[build_block_cf_arg_index], myid);
-      hypre_printf("Reading block CF indices from %s \n", fname);
+      nalu_hypre_sprintf(fname, "%s.%05i", argv[build_block_cf_arg_index], myid);
+      nalu_hypre_printf("Reading block CF indices from %s \n", fname);
       ifp = fopen(fname, "r");
       if (ifp == NULL)
       {
@@ -454,13 +454,13 @@ main( hypre_int argc,
       }
    }
 
-   mgr_point_marker_array = hypre_CTAlloc(NALU_HYPRE_Int, local_num_rows, NALU_HYPRE_MEMORY_HOST);
+   mgr_point_marker_array = nalu_hypre_CTAlloc(NALU_HYPRE_Int, local_num_rows, NALU_HYPRE_MEMORY_HOST);
    if (use_point_marker_array)
    {
       FILE *ifp;
       char fname[80];
-      hypre_sprintf(fname, "%s.%05i", argv[build_marker_array_arg_index], myid);
-      hypre_printf("Reading marker array from %s \n", fname);
+      nalu_hypre_sprintf(fname, "%s.%05i", argv[build_marker_array_arg_index], myid);
+      nalu_hypre_printf("Reading marker array from %s \n", fname);
       ifp = fopen(fname, "r");
       if (ifp == NULL)
       {
@@ -476,14 +476,14 @@ main( hypre_int argc,
    /*-----------------------------------------------------------
    * Migrate the system to the wanted memory space
    *-----------------------------------------------------------*/
-   hypre_ParCSRMatrixMigrate(parcsr_A, hypre_HandleMemoryLocation(hypre_handle()));
-   hypre_ParVectorMigrate(b, hypre_HandleMemoryLocation(hypre_handle()));
-   hypre_ParVectorMigrate(x, hypre_HandleMemoryLocation(hypre_handle()));
+   nalu_hypre_ParCSRMatrixMigrate(parcsr_A, nalu_hypre_HandleMemoryLocation(nalu_hypre_handle()));
+   nalu_hypre_ParVectorMigrate(b, nalu_hypre_HandleMemoryLocation(nalu_hypre_handle()));
+   nalu_hypre_ParVectorMigrate(x, nalu_hypre_HandleMemoryLocation(nalu_hypre_handle()));
 
    if (solver_id == 72)
    {
       // Initialize main solver
-      NALU_HYPRE_ParCSRFlexGMRESCreate(hypre_MPI_COMM_WORLD, &pcg_solver);
+      NALU_HYPRE_ParCSRFlexGMRESCreate(nalu_hypre_MPI_COMM_WORLD, &pcg_solver);
       NALU_HYPRE_FlexGMRESSetKDim(pcg_solver, k_dim);
       NALU_HYPRE_FlexGMRESSetMaxIter(pcg_solver, max_iter);
       //NALU_HYPRE_FlexGMRESSetMaxIter(pcg_solver, 0);
@@ -493,7 +493,7 @@ main( hypre_int argc,
       NALU_HYPRE_FlexGMRESSetPrintLevel(pcg_solver, 2);
 
       /* use MGR preconditioning */
-      if (myid == 0) { hypre_printf("Solver:  MGR-FlexGMRES\n"); }
+      if (myid == 0) { nalu_hypre_printf("Solver:  MGR-FlexGMRES\n"); }
 
       NALU_HYPRE_MGRCreate(&pcg_precond);
 
@@ -535,7 +535,7 @@ main( hypre_int argc,
 
       NALU_HYPRE_MGRSetGlobalsmoothType(pcg_precond, mgr_gsmooth_type);
       NALU_HYPRE_MGRSetMaxGlobalsmoothIters( pcg_precond, mgr_num_gsmooth_sweeps );
-      //hypre_MGRPrintCoarseSystem( pcg_precond, 1 );
+      //nalu_hypre_MGRPrintCoarseSystem( pcg_precond, 1 );
 
       NALU_HYPRE_BoomerAMGCreate(&amg_solver);
       NALU_HYPRE_BoomerAMGSetPrintLevel(amg_solver, 1);
@@ -561,52 +561,52 @@ main( hypre_int argc,
       NALU_HYPRE_FlexGMRESGetPrecond(pcg_solver, &pcg_precond_gotten);
       if (pcg_precond_gotten != pcg_precond)
       {
-         hypre_printf("NALU_HYPRE_FlexGMRESGetPrecond got bad precond\n");
+         nalu_hypre_printf("NALU_HYPRE_FlexGMRESGetPrecond got bad precond\n");
          return (-1);
       }
       else
       {
          if (myid == 0)
          {
-            hypre_printf("NALU_HYPRE_FlexGMRESGetPrecond got good precond\n");
+            nalu_hypre_printf("NALU_HYPRE_FlexGMRESGetPrecond got good precond\n");
          }
       }
 
 #if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_DEVICE_OPENMP)
-      hypre_SyncCudaDevice(hypre_handle());
+      nalu_hypre_SyncCudaDevice(nalu_hypre_handle());
 #endif
 
       // Setup main solver
-      time_index = hypre_InitializeTiming("FlexGMRES Setup");
-      hypre_BeginTiming(time_index);
+      time_index = nalu_hypre_InitializeTiming("FlexGMRES Setup");
+      nalu_hypre_BeginTiming(time_index);
       NALU_HYPRE_FlexGMRESSetup
       (pcg_solver, (NALU_HYPRE_Matrix)parcsr_A, (NALU_HYPRE_Vector)b, (NALU_HYPRE_Vector)x);
       //NALU_HYPRE_MGRSetup(pcg_precond, parcsr_A, b, x);
 
-      hypre_EndTiming(time_index);
-      hypre_PrintTiming("Setup phase times", hypre_MPI_COMM_WORLD);
-      hypre_FinalizeTiming(time_index);
-      hypre_ClearTiming();
+      nalu_hypre_EndTiming(time_index);
+      nalu_hypre_PrintTiming("Setup phase times", nalu_hypre_MPI_COMM_WORLD);
+      nalu_hypre_FinalizeTiming(time_index);
+      nalu_hypre_ClearTiming();
 
 #if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_DEVICE_OPENMP)
-      hypre_SyncCudaDevice(hypre_handle());
+      nalu_hypre_SyncCudaDevice(nalu_hypre_handle());
 #endif
 
-      time_index = hypre_InitializeTiming("FlexGMRES Solve");
-      hypre_BeginTiming(time_index);
+      time_index = nalu_hypre_InitializeTiming("FlexGMRES Solve");
+      nalu_hypre_BeginTiming(time_index);
 
-      //hypre_ParVectorSetConstantValues(x, 0.0);
+      //nalu_hypre_ParVectorSetConstantValues(x, 0.0);
       NALU_HYPRE_FlexGMRESSolve
       (pcg_solver, (NALU_HYPRE_Matrix)parcsr_A, (NALU_HYPRE_Vector)b, (NALU_HYPRE_Vector)x);
       //NALU_HYPRE_MGRSolve(pcg_precond, parcsr_A, b, x);
 
-      hypre_EndTiming(time_index);
-      hypre_PrintTiming("Solve phase times", hypre_MPI_COMM_WORLD);
-      hypre_FinalizeTiming(time_index);
-      hypre_ClearTiming();
+      nalu_hypre_EndTiming(time_index);
+      nalu_hypre_PrintTiming("Solve phase times", nalu_hypre_MPI_COMM_WORLD);
+      nalu_hypre_FinalizeTiming(time_index);
+      nalu_hypre_ClearTiming();
 
 #if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_DEVICE_OPENMP)
-      hypre_SyncCudaDevice(hypre_handle());
+      nalu_hypre_SyncCudaDevice(nalu_hypre_handle());
 #endif
 
       if (print_system)
@@ -619,27 +619,27 @@ main( hypre_int argc,
 #if SECOND_TIME
       /* run a second time to check for memory leaks */
       NALU_HYPRE_ParVectorSetRandomValues(x, 775);
-      time_index = hypre_InitializeTiming("FlexGMRES Setup");
-      hypre_BeginTiming(time_index);
+      time_index = nalu_hypre_InitializeTiming("FlexGMRES Setup");
+      nalu_hypre_BeginTiming(time_index);
 
       NALU_HYPRE_FlexGMRESSetup(pcg_solver, (NALU_HYPRE_Matrix)parcsr_A,
                            (NALU_HYPRE_Vector)b, (NALU_HYPRE_Vector)x);
 
-      hypre_EndTiming(time_index);
-      hypre_PrintTiming("Setup phase times", hypre_MPI_COMM_WORLD);
-      hypre_FinalizeTiming(time_index);
-      hypre_ClearTiming();
+      nalu_hypre_EndTiming(time_index);
+      nalu_hypre_PrintTiming("Setup phase times", nalu_hypre_MPI_COMM_WORLD);
+      nalu_hypre_FinalizeTiming(time_index);
+      nalu_hypre_ClearTiming();
 
-      time_index = hypre_InitializeTiming("FlexGMRES Solve");
-      hypre_BeginTiming(time_index);
+      time_index = nalu_hypre_InitializeTiming("FlexGMRES Solve");
+      nalu_hypre_BeginTiming(time_index);
 
       NALU_HYPRE_FlexGMRESSolve(pcg_solver, (NALU_HYPRE_Matrix)parcsr_A,
                            (NALU_HYPRE_Vector)b, (NALU_HYPRE_Vector)x);
 
-      hypre_EndTiming(time_index);
-      hypre_PrintTiming("Solve phase times", hypre_MPI_COMM_WORLD);
-      hypre_FinalizeTiming(time_index);
-      hypre_ClearTiming();
+      nalu_hypre_EndTiming(time_index);
+      nalu_hypre_PrintTiming("Solve phase times", nalu_hypre_MPI_COMM_WORLD);
+      nalu_hypre_FinalizeTiming(time_index);
+      nalu_hypre_ClearTiming();
 #endif
 
       // free memory for flex FlexGMRES
@@ -650,48 +650,48 @@ main( hypre_int argc,
       // Print out solver summary
       if (myid == 0)
       {
-         hypre_printf("\n");
-         hypre_printf("FlexGMRES Iterations = %d\n", num_iterations);
-         hypre_printf("Final FlexGMRES Relative Residual Norm = %e\n", final_res_norm);
-         hypre_printf("\n");
+         nalu_hypre_printf("\n");
+         nalu_hypre_printf("FlexGMRES Iterations = %d\n", num_iterations);
+         nalu_hypre_printf("Final FlexGMRES Relative Residual Norm = %e\n", final_res_norm);
+         nalu_hypre_printf("\n");
       }
    }
    else if (solver_id == 98)
    {
       // Test building MGR interpolation on device
-      comm = hypre_ParCSRMatrixComm(parcsr_A);
-      hypre_ParCSRMatrix *P = NULL;
-      hypre_IntArray *dof_func_buff = NULL;
+      comm = nalu_hypre_ParCSRMatrixComm(parcsr_A);
+      nalu_hypre_ParCSRMatrix *P = NULL;
+      nalu_hypre_IntArray *dof_func_buff = NULL;
       NALU_HYPRE_BigInt *coarse_pnts_global = NULL;
-      NALU_HYPRE_Int nloc =  hypre_CSRMatrixNumRows(hypre_ParCSRMatrixDiag(parcsr_A));
-      NALU_HYPRE_ExecutionPolicy exec = hypre_GetExecPolicy1( hypre_ParCSRMatrixMemoryLocation(parcsr_A) );
+      NALU_HYPRE_Int nloc =  nalu_hypre_CSRMatrixNumRows(nalu_hypre_ParCSRMatrixDiag(parcsr_A));
+      NALU_HYPRE_ExecutionPolicy exec = nalu_hypre_GetExecPolicy1( nalu_hypre_ParCSRMatrixMemoryLocation(parcsr_A) );
 
-      hypre_IntArray *CF_marker = hypre_IntArrayCreate(nloc);
-      hypre_IntArrayInitialize_v2(CF_marker, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_IntArray *CF_marker = nalu_hypre_IntArrayCreate(nloc);
+      nalu_hypre_IntArrayInitialize_v2(CF_marker, NALU_HYPRE_MEMORY_HOST);
 
       for (i = 0; i < nloc; i++)
       {
          if (i % 3 == 0)
          {
-            hypre_IntArrayData(CF_marker)[i] = 1;
+            nalu_hypre_IntArrayData(CF_marker)[i] = 1;
          }
          else
          {
-            hypre_IntArrayData(CF_marker)[i] = -1;
+            nalu_hypre_IntArrayData(CF_marker)[i] = -1;
          }
       }
 
-      hypre_BoomerAMGCoarseParms(comm, nloc, 1, NULL, CF_marker, &dof_func_buff, &coarse_pnts_global);
+      nalu_hypre_BoomerAMGCoarseParms(comm, nloc, 1, NULL, CF_marker, &dof_func_buff, &coarse_pnts_global);
       if (exec == NALU_HYPRE_EXEC_HOST)
       {
-         hypre_MGRBuildP(parcsr_A, hypre_IntArrayData(CF_marker), coarse_pnts_global, 2, 0, &P);
-         hypre_ParCSRMatrixPrintIJ(P, 0, 0, "P_host");
+         nalu_hypre_MGRBuildP(parcsr_A, nalu_hypre_IntArrayData(CF_marker), coarse_pnts_global, 2, 0, &P);
+         nalu_hypre_ParCSRMatrixPrintIJ(P, 0, 0, "P_host");
       }
 #if defined(NALU_HYPRE_USING_CUDA)
       else
       {
-         hypre_MGRBuildPDevice(parcsr_A, hypre_IntArrayData(CF_marker), coarse_pnts_global, 2, &P);
-         hypre_ParCSRMatrixPrintIJ(P, 0, 0, "P_device");
+         nalu_hypre_MGRBuildPDevice(parcsr_A, nalu_hypre_IntArrayData(CF_marker), coarse_pnts_global, 2, &P);
+         nalu_hypre_ParCSRMatrixPrintIJ(P, 0, 0, "P_device");
       }
 #endif
    }
@@ -704,24 +704,24 @@ main( hypre_int argc,
    NALU_HYPRE_IJVectorDestroy(ij_b);
    NALU_HYPRE_IJVectorDestroy(ij_x);
 
-   hypre_TFree(mgr_num_cindexes, NALU_HYPRE_MEMORY_HOST);
-   //hypre_TFree(mgr_level_frelax_method, NALU_HYPRE_MEMORY_HOST);
-   //hypre_TFree(mgr_frelax_num_functions, NALU_HYPRE_MEMORY_HOST);
-   hypre_TFree(mgr_idx_array, NALU_HYPRE_MEMORY_HOST);
-   hypre_TFree(mgr_point_marker_array, NALU_HYPRE_MEMORY_HOST);
-   hypre_TFree(mgr_coarse_grid_method, NALU_HYPRE_MEMORY_HOST);
-   hypre_TFree(lv1, NALU_HYPRE_MEMORY_HOST);
-   hypre_TFree(lv2, NALU_HYPRE_MEMORY_HOST);
-   hypre_TFree(mgr_cindexes, NALU_HYPRE_MEMORY_HOST);
-   //hypre_TFree(mgr_level_interp_type, NALU_HYPRE_MEMORY_HOST);
-   //hypre_TFree(mgr_level_restrict_type, NALU_HYPRE_MEMORY_HOST);
-   if (mgr_num_reserved_nodes > 0) { hypre_TFree(mgr_reserved_coarse_indexes, NALU_HYPRE_MEMORY_HOST); }
+   nalu_hypre_TFree(mgr_num_cindexes, NALU_HYPRE_MEMORY_HOST);
+   //nalu_hypre_TFree(mgr_level_frelax_method, NALU_HYPRE_MEMORY_HOST);
+   //nalu_hypre_TFree(mgr_frelax_num_functions, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(mgr_idx_array, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(mgr_point_marker_array, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(mgr_coarse_grid_method, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(lv1, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(lv2, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(mgr_cindexes, NALU_HYPRE_MEMORY_HOST);
+   //nalu_hypre_TFree(mgr_level_interp_type, NALU_HYPRE_MEMORY_HOST);
+   //nalu_hypre_TFree(mgr_level_restrict_type, NALU_HYPRE_MEMORY_HOST);
+   if (mgr_num_reserved_nodes > 0) { nalu_hypre_TFree(mgr_reserved_coarse_indexes, NALU_HYPRE_MEMORY_HOST); }
 
    NALU_HYPRE_Finalize();
-   hypre_MPI_Finalize();
+   nalu_hypre_MPI_Finalize();
 
 #if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_DEVICE_OPENMP)
-   hypre_ResetCudaDevice(hypre_handle());
+   nalu_hypre_ResetCudaDevice(nalu_hypre_handle());
 #endif
 
    return (0);

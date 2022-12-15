@@ -29,12 +29,12 @@ complement solve. Several strategies provided to efficiently solve the Schur
 complement system. 
 
 The following represents a minimal set of functions, and some optional
-functions, to call to use the hypre_ILU solver. For simplicity, we ignore the function
+functions, to call to use the nalu_hypre_ILU solver. For simplicity, we ignore the function
 parameters here, and refer the reader to the reference manual for more details
 on the parameters and their defaults.
 
 
-* ``NALU_HYPRE_ILUCreate:`` Create the hypre_ILU solver object.
+* ``NALU_HYPRE_ILUCreate:`` Create the nalu_hypre_ILU solver object.
 * ``NALU_HYPRE_ILUSetType:`` Set the type of ILU factorization to do. Here, the user specifies 
   one of several flavors of parallel ILU based on the different combinations of local 
   factorizations and global Schur complement solves. Please refer to the reference manual 
@@ -44,10 +44,10 @@ on the parameters and their defaults.
   the Schur complement system.
 * (Optional) ``NALU_HYPRE_ILUSetMaxIter:`` Set the maximum number of iterations when used as a 
   solver or smoother.
-* ``NALU_HYPRE_ILUSetup:`` Setup and hypre_ILU solver object.
+* ``NALU_HYPRE_ILUSetup:`` Setup and nalu_hypre_ILU solver object.
 * ``NALU_HYPRE_ILUSolve:`` Solve the linear system.
-* ``NALU_HYPRE_ILUDestroy:`` Destroy the hypre_ILU solver object
+* ``NALU_HYPRE_ILUDestroy:`` Destroy the nalu_hypre_ILU solver object
 
 For more details about additional solver options and parameters, please refer to
-the reference manual.  NOTE: The hypre_ILU solver is currently only supported by the
+the reference manual.  NOTE: The nalu_hypre_ILU solver is currently only supported by the
 IJ interface.

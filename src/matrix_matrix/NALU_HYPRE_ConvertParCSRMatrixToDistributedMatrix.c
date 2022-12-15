@@ -17,7 +17,7 @@
 
 #include <NALU_HYPRE_config.h>
 
-#include "_hypre_utilities.h"
+#include "_nalu_hypre_utilities.h"
 #include "NALU_HYPRE.h"
 
 /* Prototypes for DistributedMatrix */
@@ -41,15 +41,15 @@ NALU_HYPRE_ConvertParCSRMatrixToDistributedMatrix(
 
 #ifdef NALU_HYPRE_TIMING
    NALU_HYPRE_Int           timer;
-   timer = hypre_InitializeTiming( "ConvertParCSRMatrisToDistributedMatrix");
-   hypre_BeginTiming( timer );
+   timer = nalu_hypre_InitializeTiming( "ConvertParCSRMatrisToDistributedMatrix");
+   nalu_hypre_BeginTiming( timer );
 #endif
 
 
    if (!parcsr_matrix)
    {
-      hypre_error(NALU_HYPRE_ERROR_ARG);
-      return hypre_error_flag;
+      nalu_hypre_error(NALU_HYPRE_ERROR_ARG);
+      return nalu_hypre_error_flag;
    }
 
    NALU_HYPRE_ParCSRMatrixGetComm( parcsr_matrix, &comm);
@@ -69,10 +69,10 @@ NALU_HYPRE_ConvertParCSRMatrixToDistributedMatrix(
    NALU_HYPRE_DistributedMatrixAssemble( *DistributedMatrix );
 
 #ifdef NALU_HYPRE_TIMING
-   hypre_EndTiming( timer );
-   /* hypre_FinalizeTiming( timer ); */
+   nalu_hypre_EndTiming( timer );
+   /* nalu_hypre_FinalizeTiming( timer ); */
 #endif
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 

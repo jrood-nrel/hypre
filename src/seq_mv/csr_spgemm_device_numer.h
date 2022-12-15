@@ -24,7 +24,7 @@
 template <NALU_HYPRE_Int SHMEM_HASH_SIZE, char HASHTYPE, NALU_HYPRE_Int UNROLL_FACTOR>
 static __device__ __forceinline__
 NALU_HYPRE_Int
-hypre_spgemm_hash_insert_numer( volatile NALU_HYPRE_Int     *HashKeys,
+nalu_hypre_spgemm_hash_insert_numer( volatile NALU_HYPRE_Int     *HashKeys,
                                 volatile NALU_HYPRE_Complex *HashVals,
                                 NALU_HYPRE_Int               key,
                                 NALU_HYPRE_Complex           val )
@@ -61,7 +61,7 @@ hypre_spgemm_hash_insert_numer( volatile NALU_HYPRE_Int     *HashKeys,
 template <char HASHTYPE>
 static __device__ __forceinline__
 NALU_HYPRE_Int
-hypre_spgemm_hash_insert_numer( NALU_HYPRE_Int               HashSize,
+nalu_hypre_spgemm_hash_insert_numer( NALU_HYPRE_Int               HashSize,
                                 volatile NALU_HYPRE_Int     *HashKeys,
                                 volatile NALU_HYPRE_Complex *HashVals,
                                 NALU_HYPRE_Int               key,
@@ -98,7 +98,7 @@ hypre_spgemm_hash_insert_numer( NALU_HYPRE_Int               HashSize,
 template <NALU_HYPRE_Int SHMEM_HASH_SIZE, char HASHTYPE, NALU_HYPRE_Int GROUP_SIZE, bool HAS_GHASH, bool IA1, NALU_HYPRE_Int UNROLL_FACTOR>
 static __device__ __forceinline__
 void
-hypre_spgemm_compute_row_numer( NALU_HYPRE_Int               istart_a,
+nalu_hypre_spgemm_compute_row_numer( NALU_HYPRE_Int               istart_a,
                                 NALU_HYPRE_Int               iend_a,
                                 NALU_HYPRE_Int               istart_c,
 #if defined(NALU_HYPRE_DEBUG)
@@ -150,7 +150,7 @@ hypre_spgemm_compute_row_numer( NALU_HYPRE_Int               istart_a,
       const NALU_HYPRE_Int rowB_end   = __shfl_sync(NALU_HYPRE_WARP_FULL_MASK, tmp, 1, blockDim.x);
 
 #if defined(NALU_HYPRE_DEBUG)
-      if (IA1) { hypre_device_assert(rowB == -1 || rowB_end - rowB_start == iend_c - istart_c); }
+      if (IA1) { nalu_hypre_device_assert(rowB == -1 || rowB_end - rowB_start == iend_c - istart_c); }
 #endif
 
       for (NALU_HYPRE_Int k = rowB_start + threadIdx.x; __any_sync(NALU_HYPRE_WARP_FULL_MASK, k < rowB_end);
@@ -169,16 +169,16 @@ hypre_spgemm_compute_row_numer( NALU_HYPRE_Int               istart_a,
             else
             {
                /* first try to insert into shared memory hash table */
-               NALU_HYPRE_Int pos = hypre_spgemm_hash_insert_numer<SHMEM_HASH_SIZE, HASHTYPE, UNROLL_FACTOR>
+               NALU_HYPRE_Int pos = nalu_hypre_spgemm_hash_insert_numer<SHMEM_HASH_SIZE, HASHTYPE, UNROLL_FACTOR>
                                (s_HashKeys, s_HashVals, k_idx, k_val);
 
                if (HAS_GHASH && -1 == pos)
                {
-                  pos = hypre_spgemm_hash_insert_numer<HASHTYPE>
+                  pos = nalu_hypre_spgemm_hash_insert_numer<HASHTYPE>
                         (g_HashSize, g_HashKeys, g_HashVals, k_idx, k_val);
                }
 
-               hypre_device_assert(pos != -1);
+               nalu_hypre_device_assert(pos != -1);
             }
          }
       }
@@ -188,7 +188,7 @@ hypre_spgemm_compute_row_numer( NALU_HYPRE_Int               istart_a,
 template <NALU_HYPRE_Int GROUP_SIZE, NALU_HYPRE_Int SHMEM_HASH_SIZE, bool HAS_GHASH, NALU_HYPRE_Int UNROLL_FACTOR>
 static __device__ __forceinline__
 NALU_HYPRE_Int
-hypre_spgemm_copy_from_hash_into_C_row( NALU_HYPRE_Int               lane_id,
+nalu_hypre_spgemm_copy_from_hash_into_C_row( NALU_HYPRE_Int               lane_id,
                                         volatile NALU_HYPRE_Int     *s_HashKeys,
                                         volatile NALU_HYPRE_Complex *s_HashVals,
                                         NALU_HYPRE_Int               ghash_size,
@@ -198,7 +198,7 @@ hypre_spgemm_copy_from_hash_into_C_row( NALU_HYPRE_Int               lane_id,
                                         NALU_HYPRE_Complex          *ac_start )
 {
    NALU_HYPRE_Int j = 0;
-   const NALU_HYPRE_Int STEP_SIZE = hypre_min(GROUP_SIZE, NALU_HYPRE_WARP_SIZE);
+   const NALU_HYPRE_Int STEP_SIZE = nalu_hypre_min(GROUP_SIZE, NALU_HYPRE_WARP_SIZE);
 
    /* copy shared memory hash table into C */
    //#pragma unroll UNROLL_FACTOR
@@ -244,7 +244,7 @@ hypre_spgemm_copy_from_hash_into_C_row( NALU_HYPRE_Int               lane_id,
 template <NALU_HYPRE_Int NUM_GROUPS_PER_BLOCK, NALU_HYPRE_Int GROUP_SIZE, NALU_HYPRE_Int SHMEM_HASH_SIZE, bool HAS_RIND,
           bool FAILED_SYMBL, char HASHTYPE, bool HAS_GHASH>
 __global__ void
-hypre_spgemm_numeric( hypre_DeviceItem                       &item,
+nalu_hypre_spgemm_numeric( nalu_hypre_DeviceItem                       &item,
                       const NALU_HYPRE_Int                   M,
                       const NALU_HYPRE_Int*     __restrict__ rind,
                       const NALU_HYPRE_Int*     __restrict__ ia,
@@ -283,9 +283,9 @@ hypre_spgemm_numeric( hypre_DeviceItem                       &item,
    volatile NALU_HYPRE_Int     *group_s_HashKeys = s_HashKeys + group_id * SHMEM_HASH_SIZE;
    volatile NALU_HYPRE_Complex *group_s_HashVals = s_HashVals + group_id * SHMEM_HASH_SIZE;
 
-   const NALU_HYPRE_Int UNROLL_FACTOR = hypre_min(NALU_HYPRE_SPGEMM_NUMER_UNROLL, SHMEM_HASH_SIZE);
+   const NALU_HYPRE_Int UNROLL_FACTOR = nalu_hypre_min(NALU_HYPRE_SPGEMM_NUMER_UNROLL, SHMEM_HASH_SIZE);
 
-   hypre_device_assert(blockDim.x * blockDim.y == GROUP_SIZE);
+   nalu_hypre_device_assert(blockDim.x * blockDim.y == GROUP_SIZE);
 
    for (NALU_HYPRE_Int i = grid_group_id; __any_sync(NALU_HYPRE_WARP_FULL_MASK, i < M); i += grid_num_groups)
    {
@@ -351,7 +351,7 @@ hypre_spgemm_numeric( hypre_DeviceItem                       &item,
       /* work with two hash tables */
       if (iend_a == istart_a + 1)
       {
-         hypre_spgemm_compute_row_numer<SHMEM_HASH_SIZE, HASHTYPE, GROUP_SIZE, HAS_GHASH, true, UNROLL_FACTOR>
+         nalu_hypre_spgemm_compute_row_numer<SHMEM_HASH_SIZE, HASHTYPE, GROUP_SIZE, HAS_GHASH, true, UNROLL_FACTOR>
          (istart_a, iend_a, istart_c,
 #if defined(NALU_HYPRE_DEBUG)
           iend_c,
@@ -361,7 +361,7 @@ hypre_spgemm_numeric( hypre_DeviceItem                       &item,
       }
       else
       {
-         hypre_spgemm_compute_row_numer<SHMEM_HASH_SIZE, HASHTYPE, GROUP_SIZE, HAS_GHASH, false, UNROLL_FACTOR>
+         nalu_hypre_spgemm_compute_row_numer<SHMEM_HASH_SIZE, HASHTYPE, GROUP_SIZE, HAS_GHASH, false, UNROLL_FACTOR>
          (istart_a, iend_a, istart_c,
 #if defined(NALU_HYPRE_DEBUG)
           iend_c,
@@ -381,7 +381,7 @@ hypre_spgemm_numeric( hypre_DeviceItem                       &item,
        * if GROUP_SIZE < WARP_SIZE, the whole group copies */
       if (get_warp_in_group_id<GROUP_SIZE>(item) == 0)
       {
-         jsum = hypre_spgemm_copy_from_hash_into_C_row<GROUP_SIZE, SHMEM_HASH_SIZE, HAS_GHASH, UNROLL_FACTOR>
+         jsum = nalu_hypre_spgemm_copy_from_hash_into_C_row<GROUP_SIZE, SHMEM_HASH_SIZE, HAS_GHASH, UNROLL_FACTOR>
                 (lane_id,
                  (iend_a > istart_a + 1) && (GROUP_SIZE >= NALU_HYPRE_WARP_SIZE || i < M) ? group_s_HashKeys : NULL,
                  group_s_HashVals,
@@ -394,11 +394,11 @@ hypre_spgemm_numeric( hypre_DeviceItem                       &item,
          {
             if (FAILED_SYMBL)
             {
-               hypre_device_assert(istart_c + jsum <= iend_c);
+               nalu_hypre_device_assert(istart_c + jsum <= iend_c);
             }
             else
             {
-               hypre_device_assert(istart_c + jsum == iend_c);
+               nalu_hypre_device_assert(istart_c + jsum == iend_c);
             }
          }
 #endif
@@ -423,7 +423,7 @@ hypre_spgemm_numeric( hypre_DeviceItem                       &item,
 /* SpGeMM with Rownnz/Upper bound */
 template <NALU_HYPRE_Int BIN, NALU_HYPRE_Int SHMEM_HASH_SIZE, NALU_HYPRE_Int GROUP_SIZE, bool HAS_RIND>
 NALU_HYPRE_Int
-hypre_spgemm_numerical_with_rownnz( NALU_HYPRE_Int      m,
+nalu_hypre_spgemm_numerical_with_rownnz( NALU_HYPRE_Int      m,
                                     NALU_HYPRE_Int     *row_ind,
                                     NALU_HYPRE_Int      k,
                                     NALU_HYPRE_Int      n,
@@ -440,29 +440,29 @@ hypre_spgemm_numerical_with_rownnz( NALU_HYPRE_Int      m,
                                     NALU_HYPRE_Int     *d_jc,
                                     NALU_HYPRE_Complex *d_c )
 {
-   const NALU_HYPRE_Int num_groups_per_block = hypre_spgemm_get_num_groups_per_block<GROUP_SIZE>();
+   const NALU_HYPRE_Int num_groups_per_block = nalu_hypre_spgemm_get_num_groups_per_block<GROUP_SIZE>();
 #if defined(NALU_HYPRE_USING_CUDA)
-   const NALU_HYPRE_Int BDIMX                = hypre_min(4, GROUP_SIZE);
+   const NALU_HYPRE_Int BDIMX                = nalu_hypre_min(4, GROUP_SIZE);
 #elif defined(NALU_HYPRE_USING_HIP)
-   const NALU_HYPRE_Int BDIMX                = hypre_min(4, GROUP_SIZE);
+   const NALU_HYPRE_Int BDIMX                = nalu_hypre_min(4, GROUP_SIZE);
 #endif
    const NALU_HYPRE_Int BDIMY                = GROUP_SIZE / BDIMX;
 
    /* CUDA kernel configurations: bDim.z is the number of groups in block */
    dim3 bDim(BDIMX, BDIMY, num_groups_per_block);
-   hypre_assert(bDim.x * bDim.y == GROUP_SIZE);
+   nalu_hypre_assert(bDim.x * bDim.y == GROUP_SIZE);
    // grid dimension (number of blocks)
-   const NALU_HYPRE_Int num_blocks = hypre_min( hypre_HandleSpgemmBlockNumDim(hypre_handle())[1][BIN],
+   const NALU_HYPRE_Int num_blocks = nalu_hypre_min( nalu_hypre_HandleSpgemmBlockNumDim(nalu_hypre_handle())[1][BIN],
                                            (NALU_HYPRE_Int) ((m + bDim.z - 1) / bDim.z) );
    dim3 gDim( num_blocks );
    // number of active groups
-   NALU_HYPRE_Int num_act_groups = hypre_min((NALU_HYPRE_Int) (bDim.z * gDim.x), m);
+   NALU_HYPRE_Int num_act_groups = nalu_hypre_min((NALU_HYPRE_Int) (bDim.z * gDim.x), m);
 
    const char HASH_TYPE = NALU_HYPRE_SPGEMM_HASH_TYPE;
 
    if (HASH_TYPE != 'L' && HASH_TYPE != 'Q' && HASH_TYPE != 'D')
    {
-      hypre_error_w_msg(1, "Unrecognized hash type ... [L(inear), Q(uadratic), D(ouble)]\n");
+      nalu_hypre_error_w_msg(1, "Unrecognized hash type ... [L(inear), Q(uadratic), D(ouble)]\n");
    }
 
    /* ---------------------------------------------------------------------------
@@ -475,7 +475,7 @@ hypre_spgemm_numerical_with_rownnz( NALU_HYPRE_Int      m,
 
    if (need_ghash)
    {
-      hypre_SpGemmCreateGlobalHashTable(m, row_ind, num_act_groups, d_rc, SHMEM_HASH_SIZE,
+      nalu_hypre_SpGemmCreateGlobalHashTable(m, row_ind, num_act_groups, d_rc, SHMEM_HASH_SIZE,
                                         &d_ghash_i, &d_ghash_j, &d_ghash_a, &ghash_size);
    }
 
@@ -498,7 +498,7 @@ hypre_spgemm_numerical_with_rownnz( NALU_HYPRE_Int      m,
    /* ---------------------------------------------------------------------------
     * numerical multiplication:
     * ---------------------------------------------------------------------------*/
-   hypre_assert(HAS_RIND == (row_ind != NULL) );
+   nalu_hypre_assert(HAS_RIND == (row_ind != NULL) );
 
    /* <NUM_GROUPS_PER_BLOCK, GROUP_SIZE, SHMEM_HASH_SIZE, HAS_RIND, FAILED_SYMBL, HASHTYPE, HAS_GHASH> */
 
@@ -507,7 +507,7 @@ hypre_spgemm_numerical_with_rownnz( NALU_HYPRE_Int      m,
       if (ghash_size)
       {
          NALU_HYPRE_GPU_LAUNCH2 (
-            (hypre_spgemm_numeric<num_groups_per_block, GROUP_SIZE, SHMEM_HASH_SIZE, HAS_RIND, false, HASH_TYPE, true>),
+            (nalu_hypre_spgemm_numeric<num_groups_per_block, GROUP_SIZE, SHMEM_HASH_SIZE, HAS_RIND, false, HASH_TYPE, true>),
             gDim, bDim, shmem_bytes,
             m, row_ind, d_ia, d_ja, d_a, d_ib, d_jb, d_b, d_ic, d_jc, d_c, NULL, d_ghash_i, d_ghash_j,
             d_ghash_a );
@@ -515,7 +515,7 @@ hypre_spgemm_numerical_with_rownnz( NALU_HYPRE_Int      m,
       else
       {
          NALU_HYPRE_GPU_LAUNCH2 (
-            (hypre_spgemm_numeric<num_groups_per_block, GROUP_SIZE, SHMEM_HASH_SIZE, HAS_RIND, false, HASH_TYPE, false>),
+            (nalu_hypre_spgemm_numeric<num_groups_per_block, GROUP_SIZE, SHMEM_HASH_SIZE, HAS_RIND, false, HASH_TYPE, false>),
             gDim, bDim, shmem_bytes,
             m, row_ind, d_ia, d_ja, d_a, d_ib, d_jb, d_b, d_ic, d_jc, d_c, NULL, d_ghash_i, d_ghash_j,
             d_ghash_a );
@@ -526,7 +526,7 @@ hypre_spgemm_numerical_with_rownnz( NALU_HYPRE_Int      m,
       if (ghash_size)
       {
          NALU_HYPRE_GPU_LAUNCH2 (
-            (hypre_spgemm_numeric<num_groups_per_block, GROUP_SIZE, SHMEM_HASH_SIZE, HAS_RIND, true, HASH_TYPE, true>),
+            (nalu_hypre_spgemm_numeric<num_groups_per_block, GROUP_SIZE, SHMEM_HASH_SIZE, HAS_RIND, true, HASH_TYPE, true>),
             gDim, bDim, shmem_bytes,
             m, row_ind, d_ia, d_ja, d_a, d_ib, d_jb, d_b, d_ic, d_jc, d_c, d_rc, d_ghash_i, d_ghash_j,
             d_ghash_a );
@@ -534,23 +534,23 @@ hypre_spgemm_numerical_with_rownnz( NALU_HYPRE_Int      m,
       else
       {
          NALU_HYPRE_GPU_LAUNCH2 (
-            (hypre_spgemm_numeric<num_groups_per_block, GROUP_SIZE, SHMEM_HASH_SIZE, HAS_RIND, true, HASH_TYPE, false>),
+            (nalu_hypre_spgemm_numeric<num_groups_per_block, GROUP_SIZE, SHMEM_HASH_SIZE, HAS_RIND, true, HASH_TYPE, false>),
             gDim, bDim, shmem_bytes,
             m, row_ind, d_ia, d_ja, d_a, d_ib, d_jb, d_b, d_ic, d_jc, d_c, d_rc, d_ghash_i, d_ghash_j,
             d_ghash_a );
       }
    }
 
-   hypre_TFree(d_ghash_i, NALU_HYPRE_MEMORY_DEVICE);
-   hypre_TFree(d_ghash_j, NALU_HYPRE_MEMORY_DEVICE);
-   hypre_TFree(d_ghash_a, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(d_ghash_i, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(d_ghash_j, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(d_ghash_a, NALU_HYPRE_MEMORY_DEVICE);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 template <NALU_HYPRE_Int GROUP_SIZE>
 __global__ void
-hypre_spgemm_copy_from_Cext_into_C( hypre_DeviceItem    &item,
+nalu_hypre_spgemm_copy_from_Cext_into_C( nalu_hypre_DeviceItem    &item,
                                     NALU_HYPRE_Int      M,
                                     NALU_HYPRE_Int     *ix,
                                     NALU_HYPRE_Int     *jx,
@@ -568,7 +568,7 @@ hypre_spgemm_copy_from_Cext_into_C( hypre_DeviceItem    &item,
    /* lane id inside the group */
    const NALU_HYPRE_Int lane_id = get_group_lane_id(item);
 
-   hypre_device_assert(blockDim.x * blockDim.y == GROUP_SIZE);
+   nalu_hypre_device_assert(blockDim.x * blockDim.y == GROUP_SIZE);
 
    for (NALU_HYPRE_Int i = grid_group_id; __any_sync(NALU_HYPRE_WARP_FULL_MASK, i < M); i += grid_num_groups)
    {
@@ -579,7 +579,7 @@ hypre_spgemm_copy_from_Cext_into_C( hypre_DeviceItem    &item,
 #if defined(NALU_HYPRE_DEBUG)
       NALU_HYPRE_Int iend_x = 0;
       group_read<GROUP_SIZE>(item, ix + i, GROUP_SIZE >= NALU_HYPRE_WARP_SIZE || i < M, istart_x, iend_x);
-      hypre_device_assert(iend_c - istart_c <= iend_x - istart_x);
+      nalu_hypre_device_assert(iend_c - istart_c <= iend_x - istart_x);
 #else
       group_read<GROUP_SIZE>(item, ix + i, GROUP_SIZE >= NALU_HYPRE_WARP_SIZE || i < M, istart_x);
 #endif
@@ -603,32 +603,32 @@ hypreDevice_CSRSpGemmNumerPostCopy( NALU_HYPRE_Int       m,
 {
    NALU_HYPRE_Int nnzC_new = hypreDevice_IntegerReduceSum(m, d_rc);
 
-   hypre_assert(nnzC_new <= *nnzC && nnzC_new >= 0);
+   nalu_hypre_assert(nnzC_new <= *nnzC && nnzC_new >= 0);
 
    if (nnzC_new < *nnzC)
    {
-      NALU_HYPRE_Int     *d_ic_new = hypre_TAlloc(NALU_HYPRE_Int, m + 1, NALU_HYPRE_MEMORY_DEVICE);
+      NALU_HYPRE_Int     *d_ic_new = nalu_hypre_TAlloc(NALU_HYPRE_Int, m + 1, NALU_HYPRE_MEMORY_DEVICE);
       NALU_HYPRE_Int     *d_jc_new;
       NALU_HYPRE_Complex *d_c_new;
 
       /* alloc final C */
-      hypre_create_ija(m, NULL, d_rc, d_ic_new, &d_jc_new, &d_c_new, &nnzC_new);
+      nalu_hypre_create_ija(m, NULL, d_rc, d_ic_new, &d_jc_new, &d_c_new, &nnzC_new);
 
 #ifdef NALU_HYPRE_SPGEMM_PRINTF
       NALU_HYPRE_SPGEMM_PRINT("%s[%d]: Post Copy: new nnzC %d\n", __FILE__, __LINE__, nnzC_new);
 #endif
 
       /* copy to the final C */
-      const NALU_HYPRE_Int num_groups_per_block = hypre_spgemm_get_num_groups_per_block<GROUP_SIZE>();
+      const NALU_HYPRE_Int num_groups_per_block = nalu_hypre_spgemm_get_num_groups_per_block<GROUP_SIZE>();
       dim3 bDim(GROUP_SIZE, 1, num_groups_per_block);
       dim3 gDim( (m + bDim.z - 1) / bDim.z );
 
-      NALU_HYPRE_GPU_LAUNCH( (hypre_spgemm_copy_from_Cext_into_C<GROUP_SIZE>), gDim, bDim,
+      NALU_HYPRE_GPU_LAUNCH( (nalu_hypre_spgemm_copy_from_Cext_into_C<GROUP_SIZE>), gDim, bDim,
                         m, *d_ic, *d_jc, *d_c, d_ic_new, d_jc_new, d_c_new );
 
-      hypre_TFree(*d_ic, NALU_HYPRE_MEMORY_DEVICE);
-      hypre_TFree(*d_jc, NALU_HYPRE_MEMORY_DEVICE);
-      hypre_TFree(*d_c,  NALU_HYPRE_MEMORY_DEVICE);
+      nalu_hypre_TFree(*d_ic, NALU_HYPRE_MEMORY_DEVICE);
+      nalu_hypre_TFree(*d_jc, NALU_HYPRE_MEMORY_DEVICE);
+      nalu_hypre_TFree(*d_c,  NALU_HYPRE_MEMORY_DEVICE);
 
       *d_ic = d_ic_new;
       *d_jc = d_jc_new;
@@ -636,51 +636,51 @@ hypreDevice_CSRSpGemmNumerPostCopy( NALU_HYPRE_Int       m,
       *nnzC = nnzC_new;
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 template <NALU_HYPRE_Int SHMEM_HASH_SIZE, NALU_HYPRE_Int GROUP_SIZE>
-NALU_HYPRE_Int hypre_spgemm_numerical_max_num_blocks( NALU_HYPRE_Int  multiProcessorCount,
+NALU_HYPRE_Int nalu_hypre_spgemm_numerical_max_num_blocks( NALU_HYPRE_Int  multiProcessorCount,
                                                  NALU_HYPRE_Int *num_blocks_ptr,
                                                  NALU_HYPRE_Int *block_size_ptr )
 {
    const char HASH_TYPE = NALU_HYPRE_SPGEMM_HASH_TYPE;
-   const NALU_HYPRE_Int num_groups_per_block = hypre_spgemm_get_num_groups_per_block<GROUP_SIZE>();
+   const NALU_HYPRE_Int num_groups_per_block = nalu_hypre_spgemm_get_num_groups_per_block<GROUP_SIZE>();
    const NALU_HYPRE_Int block_size = num_groups_per_block * GROUP_SIZE;
-   hypre_int numBlocksPerSm = 0;
+   nalu_hypre_int numBlocksPerSm = 0;
 #if defined(NALU_HYPRE_SPGEMM_DEVICE_USE_DSHMEM)
-   const hypre_int shmem_bytes = num_groups_per_block * SHMEM_HASH_SIZE *
+   const nalu_hypre_int shmem_bytes = num_groups_per_block * SHMEM_HASH_SIZE *
                                  (sizeof(NALU_HYPRE_Int) + sizeof(NALU_HYPRE_Complex));
-   hypre_int dynamic_shmem_size = shmem_bytes;
+   nalu_hypre_int dynamic_shmem_size = shmem_bytes;
 #else
-   hypre_int dynamic_shmem_size = 0;
+   nalu_hypre_int dynamic_shmem_size = 0;
 #endif
 
 #if defined(NALU_HYPRE_SPGEMM_DEVICE_USE_DSHMEM)
 #if defined(NALU_HYPRE_USING_CUDA)
    /* with CUDA, to use > 48K shared memory, must use dynamic and must opt-in. BIN = 10 requires 96K */
-   const hypre_int max_shmem_optin = hypre_HandleDeviceMaxShmemPerBlock(hypre_handle())[1];
+   const nalu_hypre_int max_shmem_optin = nalu_hypre_HandleDeviceMaxShmemPerBlock(nalu_hypre_handle())[1];
    if (dynamic_shmem_size <= max_shmem_optin)
    {
       NALU_HYPRE_CUDA_CALL( cudaFuncSetAttribute(
-                          hypre_spgemm_numeric<num_groups_per_block, GROUP_SIZE, SHMEM_HASH_SIZE, true, false, HASH_TYPE, true>,
+                          nalu_hypre_spgemm_numeric<num_groups_per_block, GROUP_SIZE, SHMEM_HASH_SIZE, true, false, HASH_TYPE, true>,
                           cudaFuncAttributeMaxDynamicSharedMemorySize, dynamic_shmem_size) );
 
       NALU_HYPRE_CUDA_CALL( cudaFuncSetAttribute(
-                          hypre_spgemm_numeric<num_groups_per_block, GROUP_SIZE, SHMEM_HASH_SIZE, true, false, HASH_TYPE, false>,
+                          nalu_hypre_spgemm_numeric<num_groups_per_block, GROUP_SIZE, SHMEM_HASH_SIZE, true, false, HASH_TYPE, false>,
                           cudaFuncAttributeMaxDynamicSharedMemorySize, dynamic_shmem_size) );
 
       NALU_HYPRE_CUDA_CALL( cudaFuncSetAttribute(
-                          hypre_spgemm_numeric<num_groups_per_block, GROUP_SIZE, SHMEM_HASH_SIZE, true, true,  HASH_TYPE, true>,
+                          nalu_hypre_spgemm_numeric<num_groups_per_block, GROUP_SIZE, SHMEM_HASH_SIZE, true, true,  HASH_TYPE, true>,
                           cudaFuncAttributeMaxDynamicSharedMemorySize, dynamic_shmem_size) );
 
       NALU_HYPRE_CUDA_CALL( cudaFuncSetAttribute(
-                          hypre_spgemm_numeric<num_groups_per_block, GROUP_SIZE, SHMEM_HASH_SIZE, true, true, HASH_TYPE, false>,
+                          nalu_hypre_spgemm_numeric<num_groups_per_block, GROUP_SIZE, SHMEM_HASH_SIZE, true, true, HASH_TYPE, false>,
                           cudaFuncAttributeMaxDynamicSharedMemorySize, dynamic_shmem_size) );
 
       /*
          NALU_HYPRE_CUDA_CALL( cudaFuncSetAttribute(
-         hypre_spgemm_numeric<num_groups_per_block, GROUP_SIZE, SHMEM_HASH_SIZE, false, false, HASH_TYPE, false>,
+         nalu_hypre_spgemm_numeric<num_groups_per_block, GROUP_SIZE, SHMEM_HASH_SIZE, false, false, HASH_TYPE, false>,
          cudaFuncAttributeMaxDynamicSharedMemorySize, dynamic_shmem_size) );
       */
    }
@@ -690,21 +690,21 @@ NALU_HYPRE_Int hypre_spgemm_numerical_max_num_blocks( NALU_HYPRE_Int  multiProce
 #if defined(NALU_HYPRE_USING_CUDA)
    cudaOccupancyMaxActiveBlocksPerMultiprocessor(
       &numBlocksPerSm,
-      hypre_spgemm_numeric<num_groups_per_block, GROUP_SIZE, SHMEM_HASH_SIZE, true, false, HASH_TYPE, true>,
+      nalu_hypre_spgemm_numeric<num_groups_per_block, GROUP_SIZE, SHMEM_HASH_SIZE, true, false, HASH_TYPE, true>,
       block_size, dynamic_shmem_size);
 #endif
 
 #if defined(NALU_HYPRE_USING_HIP)
    hipOccupancyMaxActiveBlocksPerMultiprocessor(
       &numBlocksPerSm,
-      hypre_spgemm_numeric<num_groups_per_block, GROUP_SIZE, SHMEM_HASH_SIZE, true, false, HASH_TYPE, true>,
+      nalu_hypre_spgemm_numeric<num_groups_per_block, GROUP_SIZE, SHMEM_HASH_SIZE, true, false, HASH_TYPE, true>,
       block_size, dynamic_shmem_size);
 #endif
 
    *num_blocks_ptr = multiProcessorCount * numBlocksPerSm;
    *block_size_ptr = block_size;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 #endif /* NALU_HYPRE_USING_CUDA  || defined(NALU_HYPRE_USING_HIP) */

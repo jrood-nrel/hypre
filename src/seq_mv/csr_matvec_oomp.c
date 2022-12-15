@@ -7,34 +7,34 @@
 
 /******************************************************************************
  *
- * Matvec functions for hypre_CSRMatrix class.
+ * Matvec functions for nalu_hypre_CSRMatrix class.
  *
  *****************************************************************************/
 
 #include "seq_mv.h"
-#include "_hypre_utilities.hpp"
+#include "_nalu_hypre_utilities.hpp"
 
 #if defined(NALU_HYPRE_USING_DEVICE_OPENMP)
 
 /*--------------------------------------------------------------------------
- * hypre_CSRMatrixMatvec
+ * nalu_hypre_CSRMatrixMatvec
  *--------------------------------------------------------------------------*/
 
 /* y[offset:end] = alpha*A[offset:end,:]*x + beta*b[offset:end] */
 NALU_HYPRE_Int
-hypre_CSRMatrixMatvecOMPOffload( NALU_HYPRE_Int        trans,
+nalu_hypre_CSRMatrixMatvecOMPOffload( NALU_HYPRE_Int        trans,
                                  NALU_HYPRE_Complex    alpha,
-                                 hypre_CSRMatrix *A,
-                                 hypre_Vector    *x,
+                                 nalu_hypre_CSRMatrix *A,
+                                 nalu_hypre_Vector    *x,
                                  NALU_HYPRE_Complex    beta,
-                                 hypre_Vector    *y,
+                                 nalu_hypre_Vector    *y,
                                  NALU_HYPRE_Int        offset )
 {
-   hypre_CSRMatrix *B;
+   nalu_hypre_CSRMatrix *B;
 
    if (trans)
    {
-      hypre_CSRMatrixTransposeDevice(A, &B, 1);
+      nalu_hypre_CSRMatrixTransposeDevice(A, &B, 1);
 
       /* NALU_HYPRE_CUDA_CALL(cudaDeviceSynchronize()); */
    }
@@ -43,12 +43,12 @@ hypre_CSRMatrixMatvecOMPOffload( NALU_HYPRE_Int        trans,
       B = A;
    }
 
-   NALU_HYPRE_Int      A_nrows  = hypre_CSRMatrixNumRows(B);
-   NALU_HYPRE_Complex *A_data   = hypre_CSRMatrixData(B);
-   NALU_HYPRE_Int     *A_i      = hypre_CSRMatrixI(B);
-   NALU_HYPRE_Int     *A_j      = hypre_CSRMatrixJ(B);
-   NALU_HYPRE_Complex *x_data   = hypre_VectorData(x);
-   NALU_HYPRE_Complex *y_data   = hypre_VectorData(y);
+   NALU_HYPRE_Int      A_nrows  = nalu_hypre_CSRMatrixNumRows(B);
+   NALU_HYPRE_Complex *A_data   = nalu_hypre_CSRMatrixData(B);
+   NALU_HYPRE_Int     *A_i      = nalu_hypre_CSRMatrixI(B);
+   NALU_HYPRE_Int     *A_j      = nalu_hypre_CSRMatrixJ(B);
+   NALU_HYPRE_Complex *x_data   = nalu_hypre_VectorData(x);
+   NALU_HYPRE_Complex *y_data   = nalu_hypre_VectorData(y);
    NALU_HYPRE_Int      i;
 
    #pragma omp target teams distribute parallel for private(i) is_device_ptr(A_data, A_i, A_j, y_data, x_data)
@@ -65,7 +65,7 @@ hypre_CSRMatrixMatvecOMPOffload( NALU_HYPRE_Int        trans,
 
    /* NALU_HYPRE_CUDA_CALL(cudaDeviceSynchronize()); */
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 #endif /* #if defined(NALU_HYPRE_USING_DEVICE_OPENMP) */

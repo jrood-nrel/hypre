@@ -6,127 +6,127 @@
  ******************************************************************************/
 
 #include "seq_mv.h"
-#include "_hypre_parcsr_ls.h"
-#include "_hypre_utilities.hpp"
+#include "_nalu_hypre_parcsr_ls.h"
+#include "_nalu_hypre_utilities.hpp"
 
 #if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
 
 /*--------------------------------------------------------------------------
- * hypre_BoomerAMGRelaxHybridGaussSeidelDevice
+ * nalu_hypre_BoomerAMGRelaxHybridGaussSeidelDevice
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_BoomerAMGRelaxHybridGaussSeidelDevice( hypre_ParCSRMatrix *A,
-                                             hypre_ParVector    *f,
+nalu_hypre_BoomerAMGRelaxHybridGaussSeidelDevice( nalu_hypre_ParCSRMatrix *A,
+                                             nalu_hypre_ParVector    *f,
                                              NALU_HYPRE_Int          *cf_marker,
                                              NALU_HYPRE_Int           relax_points,
                                              NALU_HYPRE_Real          relax_weight,
                                              NALU_HYPRE_Real          omega,
                                              NALU_HYPRE_Real         *l1_norms,
-                                             hypre_ParVector    *u,
-                                             hypre_ParVector    *Vtemp,
-                                             hypre_ParVector    *Ztemp,
+                                             nalu_hypre_ParVector    *u,
+                                             nalu_hypre_ParVector    *Vtemp,
+                                             nalu_hypre_ParVector    *Ztemp,
                                              NALU_HYPRE_Int           GS_order,
                                              NALU_HYPRE_Int           Symm )
 {
    /* Vtemp, Ztemp have the fine-grid size. Create two shell vectors that have the correct size */
-   hypre_ParVector *w1 = hypre_ParVectorCloneShallow(f);
-   hypre_ParVector *w2 = hypre_ParVectorCloneShallow(u);
+   nalu_hypre_ParVector *w1 = nalu_hypre_ParVectorCloneShallow(f);
+   nalu_hypre_ParVector *w2 = nalu_hypre_ParVectorCloneShallow(u);
 
-   hypre_VectorData(hypre_ParVectorLocalVector(w1)) = hypre_VectorData(hypre_ParVectorLocalVector(
+   nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(w1)) = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(
                                                                           Vtemp));
-   hypre_VectorData(hypre_ParVectorLocalVector(w2)) = hypre_VectorData(hypre_ParVectorLocalVector(
+   nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(w2)) = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(
                                                                           Ztemp));
 
    if (Symm)
    {
       /* V = f - A*u */
-      hypre_ParCSRMatrixMatvecOutOfPlace(-1.0, A, u, 1.0, f, w1);
+      nalu_hypre_ParCSRMatrixMatvecOutOfPlace(-1.0, A, u, 1.0, f, w1);
 
       /* Z = L^{-1}*V */
-      hypre_CSRMatrixTriLowerUpperSolveDevice('L', hypre_ParCSRMatrixDiag(A), l1_norms,
-                                              hypre_ParVectorLocalVector(w1),
-                                              hypre_ParVectorLocalVector(w2));
+      nalu_hypre_CSRMatrixTriLowerUpperSolveDevice('L', nalu_hypre_ParCSRMatrixDiag(A), l1_norms,
+                                              nalu_hypre_ParVectorLocalVector(w1),
+                                              nalu_hypre_ParVectorLocalVector(w2));
 
       /* u = u + w*Z */
-      hypre_ParVectorAxpy(relax_weight, w2, u);
+      nalu_hypre_ParVectorAxpy(relax_weight, w2, u);
 
       /* Note: only update V from local change of u, i.e., V = V - w*A_diag*Z_local */
-      hypre_CSRMatrixMatvec(-relax_weight, hypre_ParCSRMatrixDiag(A),
-                            hypre_ParVectorLocalVector(w2), 1.0,
-                            hypre_ParVectorLocalVector(w1));
+      nalu_hypre_CSRMatrixMatvec(-relax_weight, nalu_hypre_ParCSRMatrixDiag(A),
+                            nalu_hypre_ParVectorLocalVector(w2), 1.0,
+                            nalu_hypre_ParVectorLocalVector(w1));
 
       /* Z = U^{-1}*V */
-      hypre_CSRMatrixTriLowerUpperSolveDevice('U', hypre_ParCSRMatrixDiag(A), l1_norms,
-                                              hypre_ParVectorLocalVector(w1),
-                                              hypre_ParVectorLocalVector(w2));
+      nalu_hypre_CSRMatrixTriLowerUpperSolveDevice('U', nalu_hypre_ParCSRMatrixDiag(A), l1_norms,
+                                              nalu_hypre_ParVectorLocalVector(w1),
+                                              nalu_hypre_ParVectorLocalVector(w2));
 
       /* u = u + w*Z */
-      hypre_ParVectorAxpy(relax_weight, w2, u);
+      nalu_hypre_ParVectorAxpy(relax_weight, w2, u);
    }
    else
    {
       const char uplo = GS_order > 0 ? 'L' : 'U';
       /* V = f - A*u */
-      hypre_ParCSRMatrixMatvecOutOfPlace(-1.0, A, u, 1.0, f, w1);
+      nalu_hypre_ParCSRMatrixMatvecOutOfPlace(-1.0, A, u, 1.0, f, w1);
 
       /* Z = L^{-1}*V or Z = U^{-1}*V */
-      hypre_CSRMatrixTriLowerUpperSolveDevice(uplo, hypre_ParCSRMatrixDiag(A), l1_norms,
-                                              hypre_ParVectorLocalVector(w1),
-                                              hypre_ParVectorLocalVector(w2));
+      nalu_hypre_CSRMatrixTriLowerUpperSolveDevice(uplo, nalu_hypre_ParCSRMatrixDiag(A), l1_norms,
+                                              nalu_hypre_ParVectorLocalVector(w1),
+                                              nalu_hypre_ParVectorLocalVector(w2));
 
       /* u = u + w*Z */
-      hypre_ParVectorAxpy(relax_weight, w2, u);
+      nalu_hypre_ParVectorAxpy(relax_weight, w2, u);
    }
 
-   hypre_ParVectorDestroy(w1);
-   hypre_ParVectorDestroy(w2);
+   nalu_hypre_ParVectorDestroy(w1);
+   nalu_hypre_ParVectorDestroy(w2);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_BoomerAMGRelaxTwoStageGaussSeidelDevice
+ * nalu_hypre_BoomerAMGRelaxTwoStageGaussSeidelDevice
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_BoomerAMGRelaxTwoStageGaussSeidelDevice ( hypre_ParCSRMatrix *A,
-                                                hypre_ParVector    *f,
+nalu_hypre_BoomerAMGRelaxTwoStageGaussSeidelDevice ( nalu_hypre_ParCSRMatrix *A,
+                                                nalu_hypre_ParVector    *f,
                                                 NALU_HYPRE_Real          relax_weight,
                                                 NALU_HYPRE_Real          omega,
                                                 NALU_HYPRE_Real         *A_diag_diag,
-                                                hypre_ParVector    *u,
-                                                hypre_ParVector    *r,
-                                                hypre_ParVector    *z,
+                                                nalu_hypre_ParVector    *u,
+                                                nalu_hypre_ParVector    *r,
+                                                nalu_hypre_ParVector    *z,
                                                 NALU_HYPRE_Int           num_inner_iters)
 {
-   hypre_CSRMatrix *A_diag       = hypre_ParCSRMatrixDiag(A);
-   NALU_HYPRE_Int        num_rows     = hypre_CSRMatrixNumRows(A_diag);
+   nalu_hypre_CSRMatrix *A_diag       = nalu_hypre_ParCSRMatrixDiag(A);
+   NALU_HYPRE_Int        num_rows     = nalu_hypre_CSRMatrixNumRows(A_diag);
 
-   hypre_Vector    *u_local      = hypre_ParVectorLocalVector(u);
-   hypre_Vector    *r_local      = hypre_ParVectorLocalVector(r);
-   hypre_Vector    *z_local      = hypre_ParVectorLocalVector(z);
+   nalu_hypre_Vector    *u_local      = nalu_hypre_ParVectorLocalVector(u);
+   nalu_hypre_Vector    *r_local      = nalu_hypre_ParVectorLocalVector(r);
+   nalu_hypre_Vector    *z_local      = nalu_hypre_ParVectorLocalVector(z);
 
-   NALU_HYPRE_Int        u_vecstride  = hypre_VectorVectorStride(u_local);
-   NALU_HYPRE_Int        r_vecstride  = hypre_VectorVectorStride(r_local);
-   NALU_HYPRE_Int        z_vecstride  = hypre_VectorVectorStride(z_local);
-   NALU_HYPRE_Complex   *u_data       = hypre_VectorData(u_local);
-   NALU_HYPRE_Complex   *r_data       = hypre_VectorData(r_local);
-   NALU_HYPRE_Complex   *z_data       = hypre_VectorData(z_local);
+   NALU_HYPRE_Int        u_vecstride  = nalu_hypre_VectorVectorStride(u_local);
+   NALU_HYPRE_Int        r_vecstride  = nalu_hypre_VectorVectorStride(r_local);
+   NALU_HYPRE_Int        z_vecstride  = nalu_hypre_VectorVectorStride(z_local);
+   NALU_HYPRE_Complex   *u_data       = nalu_hypre_VectorData(u_local);
+   NALU_HYPRE_Complex   *r_data       = nalu_hypre_VectorData(r_local);
+   NALU_HYPRE_Complex   *z_data       = nalu_hypre_VectorData(z_local);
 
-   NALU_HYPRE_Int        num_vectors  = hypre_VectorNumVectors(r_local);
+   NALU_HYPRE_Int        num_vectors  = nalu_hypre_VectorNumVectors(r_local);
    NALU_HYPRE_Complex    multiplier   = 1.0;
    NALU_HYPRE_Int        i;
 
-   hypre_GpuProfilingPushRange("BoomerAMGRelaxTwoStageGaussSeidelDevice");
+   nalu_hypre_GpuProfilingPushRange("BoomerAMGRelaxTwoStageGaussSeidelDevice");
 
    /* Sanity checks */
-   hypre_assert(u_vecstride == num_rows);
-   hypre_assert(r_vecstride == num_rows);
-   hypre_assert(z_vecstride == num_rows);
+   nalu_hypre_assert(u_vecstride == num_rows);
+   nalu_hypre_assert(r_vecstride == num_rows);
+   nalu_hypre_assert(z_vecstride == num_rows);
 
    // 0) r = relax_weight * (f - A * u)
-   hypre_ParCSRMatrixMatvecOutOfPlace(-relax_weight, A, u, relax_weight, f, r);
+   nalu_hypre_ParCSRMatrixMatvecOutOfPlace(-relax_weight, A, u, relax_weight, f, r);
 
    // 1) z = r/D, u = u + z
    hypreDevice_DiagScaleVector2(num_vectors, num_rows, A_diag_diag,
@@ -136,7 +136,7 @@ hypre_BoomerAMGRelaxTwoStageGaussSeidelDevice ( hypre_ParCSRMatrix *A,
    for (i = 0; i < num_inner_iters; i++)
    {
       // 2) r = L * z
-      hypre_CSRMatrixSpMVDevice(0, 1.0, A_diag, z_local, 0.0, r_local, -2);
+      nalu_hypre_CSRMatrixSpMVDevice(0, 1.0, A_diag, z_local, 0.0, r_local, -2);
 
       // 3) z = r/D, u = u + m * z
       hypreDevice_DiagScaleVector2(num_vectors, num_rows, A_diag_diag,
@@ -145,9 +145,9 @@ hypre_BoomerAMGRelaxTwoStageGaussSeidelDevice ( hypre_ParCSRMatrix *A,
       multiplier *= -1.0;
    }
 
-   hypre_GpuProfilingPopRange();
+   nalu_hypre_GpuProfilingPopRange();
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 #endif /* #if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP) */

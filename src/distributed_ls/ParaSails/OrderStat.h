@@ -14,9 +14,9 @@
 #ifndef _ORDERSTAT_H
 #define _ORDERSTAT_H
 
-#include "_hypre_utilities.h"
+#include "_nalu_hypre_utilities.h"
 
 NALU_HYPRE_Real randomized_select(NALU_HYPRE_Real *a, NALU_HYPRE_Int p, NALU_HYPRE_Int r, NALU_HYPRE_Int i);
-void hypre_shell_sort(const NALU_HYPRE_Int n, NALU_HYPRE_Int x[]);
+void nalu_hypre_shell_sort(const NALU_HYPRE_Int n, NALU_HYPRE_Int x[]);
 
 #endif /* _ORDERSTAT_H */

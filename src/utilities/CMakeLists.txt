@@ -5,8 +5,8 @@
 
 set(HDRS
   NALU_HYPRE_utilities.h
-  _hypre_utilities.h
-  _hypre_utilities.hpp
+  _nalu_hypre_utilities.h
+  _nalu_hypre_utilities.hpp
   NALU_HYPRE_error_f.h
   fortran.h
   fortran_matrix.h

@@ -12,15 +12,15 @@ extern "C" {
 #endif
 
 #if defined(NALU_HYPRE_USING_CUSPARSE)
-cusparseSpMatDescr_t hypre_CSRMatrixToCusparseSpMat(const hypre_CSRMatrix *A, NALU_HYPRE_Int offset);
+cusparseSpMatDescr_t nalu_hypre_CSRMatrixToCusparseSpMat(const nalu_hypre_CSRMatrix *A, NALU_HYPRE_Int offset);
 
-cusparseSpMatDescr_t hypre_CSRMatrixToCusparseSpMat_core( NALU_HYPRE_Int n, NALU_HYPRE_Int m,
+cusparseSpMatDescr_t nalu_hypre_CSRMatrixToCusparseSpMat_core( NALU_HYPRE_Int n, NALU_HYPRE_Int m,
                                                           NALU_HYPRE_Int offset, NALU_HYPRE_Int nnz, NALU_HYPRE_Int *i, NALU_HYPRE_Int *j, NALU_HYPRE_Complex *data);
 
-cusparseDnVecDescr_t hypre_VectorToCusparseDnVec(const hypre_Vector *x, NALU_HYPRE_Int offset,
+cusparseDnVecDescr_t nalu_hypre_VectorToCusparseDnVec(const nalu_hypre_Vector *x, NALU_HYPRE_Int offset,
                                                  NALU_HYPRE_Int size_override);
 
-cusparseDnMatDescr_t hypre_VectorToCusparseDnMat(const hypre_Vector *x);
+cusparseDnMatDescr_t nalu_hypre_VectorToCusparseDnMat(const nalu_hypre_Vector *x);
 
 NALU_HYPRE_Int hypreDevice_CSRSpGemmCusparseOldAPI(NALU_HYPRE_Int m, NALU_HYPRE_Int k, NALU_HYPRE_Int n,
                                               cusparseMatDescr_t descr_A, NALU_HYPRE_Int nnzA, NALU_HYPRE_Int *d_ia, NALU_HYPRE_Int *d_ja, NALU_HYPRE_Complex *d_a,
@@ -34,7 +34,7 @@ NALU_HYPRE_Int hypreDevice_CSRSpGemmCusparse(NALU_HYPRE_Int m, NALU_HYPRE_Int k,
                                         cusparseMatDescr_t descr_C, NALU_HYPRE_Int *nnzC_out, NALU_HYPRE_Int **d_ic_out, NALU_HYPRE_Int **d_jc_out,
                                         NALU_HYPRE_Complex **d_c_out);
 
-void hypre_SortCSRCusparse( NALU_HYPRE_Int n, NALU_HYPRE_Int m, NALU_HYPRE_Int nnzA, cusparseMatDescr_t descrA,
+void nalu_hypre_SortCSRCusparse( NALU_HYPRE_Int n, NALU_HYPRE_Int m, NALU_HYPRE_Int nnzA, cusparseMatDescr_t descrA,
                             const NALU_HYPRE_Int *d_ia, NALU_HYPRE_Int *d_ja_sorted, NALU_HYPRE_Complex *d_a_sorted );
 #endif
 
@@ -45,7 +45,7 @@ NALU_HYPRE_Int hypreDevice_CSRSpGemmRocsparse(NALU_HYPRE_Int m, NALU_HYPRE_Int k
                                          rocsparse_mat_descr descrC, rocsparse_mat_info infoC, NALU_HYPRE_Int *nnzC_out, NALU_HYPRE_Int **d_ic_out,
                                          NALU_HYPRE_Int **d_jc_out, NALU_HYPRE_Complex **d_c_out);
 
-void hypre_SortCSRRocsparse( NALU_HYPRE_Int n, NALU_HYPRE_Int m, NALU_HYPRE_Int nnzA, rocsparse_mat_descr descrA,
+void nalu_hypre_SortCSRRocsparse( NALU_HYPRE_Int n, NALU_HYPRE_Int m, NALU_HYPRE_Int nnzA, rocsparse_mat_descr descrA,
                              const NALU_HYPRE_Int *d_ia, NALU_HYPRE_Int *d_ja_sorted, NALU_HYPRE_Complex *d_a_sorted );
 #endif
 

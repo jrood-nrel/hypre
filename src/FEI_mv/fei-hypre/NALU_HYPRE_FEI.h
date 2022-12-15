@@ -11,8 +11,8 @@
 #include "NALU_HYPRE.h"
 #include "IJ_mv/NALU_HYPRE_IJ_mv.h"
 #include "parcsr_mv/NALU_HYPRE_parcsr_mv.h"
-#include "parcsr_mv/_hypre_parcsr_mv.h"
-#include "parcsr_ls/_hypre_parcsr_ls.h"
+#include "parcsr_mv/_nalu_hypre_parcsr_mv.h"
+#include "parcsr_ls/_nalu_hypre_parcsr_ls.h"
 #include "parcsr_ls/NALU_HYPRE_parcsr_ls.h"
 
 #ifdef __cplusplus
@@ -82,7 +82,7 @@ int NALU_HYPRE_LSI_DDIlutDecomposeNew(NALU_HYPRE_LSI_DDIlut *ilut_ptr,MH_Matrix 
 								 int total_recv_leng, int *recv_lengths, int *ext_ja, double *ext_aa, 
 								 int *map, int *map2, int Noffset);
 	
-/* hypre_lsi_misc.c */
+/* nalu_hypre_lsi_misc.c */
 void NALU_HYPRE_LSI_Get_IJAMatrixFromFile(double **val, int **ia, 
 									 int **ja, int *N, double **rhs, char *matfile, char *rhsfile);
 int NALU_HYPRE_LSI_Search(int *list,int value,int list_length);

@@ -31,8 +31,8 @@ struct double_linked_list
    NALU_HYPRE_Int                  tail;
 };
 
-typedef struct double_linked_list hypre_ListElement;
-typedef hypre_ListElement *hypre_LinkList;
+typedef struct double_linked_list nalu_hypre_ListElement;
+typedef nalu_hypre_ListElement *nalu_hypre_LinkList;
 
 #ifdef __cplusplus
 }

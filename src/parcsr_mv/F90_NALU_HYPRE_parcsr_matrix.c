@@ -11,7 +11,7 @@
  *
  *****************************************************************************/
 
-#include "_hypre_parcsr_mv.h"
+#include "_nalu_hypre_parcsr_mv.h"
 #include "fortran.h"
 
 #ifdef __cplusplus
@@ -23,29 +23,29 @@ extern "C" {
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_parcsrmatrixcreate, NALU_HYPRE_PARCSRMATRIXCREATE)
-( hypre_F90_Comm *comm,
-  hypre_F90_BigInt *global_num_rows,
-  hypre_F90_BigInt *global_num_cols,
-  hypre_F90_BigIntArray *row_starts,
-  hypre_F90_BigIntArray *col_starts,
-  hypre_F90_Int *num_cols_offd,
-  hypre_F90_Int *num_nonzeros_diag,
-  hypre_F90_Int *num_nonzeros_offd,
-  hypre_F90_Obj *matrix,
-  hypre_F90_Int *ierr               )
+nalu_hypre_F90_IFACE(nalu_hypre_parcsrmatrixcreate, NALU_HYPRE_PARCSRMATRIXCREATE)
+( nalu_hypre_F90_Comm *comm,
+  nalu_hypre_F90_BigInt *global_num_rows,
+  nalu_hypre_F90_BigInt *global_num_cols,
+  nalu_hypre_F90_BigIntArray *row_starts,
+  nalu_hypre_F90_BigIntArray *col_starts,
+  nalu_hypre_F90_Int *num_cols_offd,
+  nalu_hypre_F90_Int *num_nonzeros_diag,
+  nalu_hypre_F90_Int *num_nonzeros_offd,
+  nalu_hypre_F90_Obj *matrix,
+  nalu_hypre_F90_Int *ierr               )
 {
-   *ierr = (hypre_F90_Int)
+   *ierr = (nalu_hypre_F90_Int)
            ( NALU_HYPRE_ParCSRMatrixCreate(
-                hypre_F90_PassComm (comm),
-                hypre_F90_PassBigInt (global_num_rows),
-                hypre_F90_PassBigInt (global_num_cols),
-                hypre_F90_PassBigIntArray (row_starts),
-                hypre_F90_PassBigIntArray (col_starts),
-                hypre_F90_PassInt (num_cols_offd),
-                hypre_F90_PassInt (num_nonzeros_diag),
-                hypre_F90_PassInt (num_nonzeros_offd),
-                hypre_F90_PassObjRef (NALU_HYPRE_ParCSRMatrix, matrix)  ) );
+                nalu_hypre_F90_PassComm (comm),
+                nalu_hypre_F90_PassBigInt (global_num_rows),
+                nalu_hypre_F90_PassBigInt (global_num_cols),
+                nalu_hypre_F90_PassBigIntArray (row_starts),
+                nalu_hypre_F90_PassBigIntArray (col_starts),
+                nalu_hypre_F90_PassInt (num_cols_offd),
+                nalu_hypre_F90_PassInt (num_nonzeros_diag),
+                nalu_hypre_F90_PassInt (num_nonzeros_offd),
+                nalu_hypre_F90_PassObjRef (NALU_HYPRE_ParCSRMatrix, matrix)  ) );
 }
 
 /*--------------------------------------------------------------------------
@@ -53,13 +53,13 @@ hypre_F90_IFACE(hypre_parcsrmatrixcreate, NALU_HYPRE_PARCSRMATRIXCREATE)
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_parcsrmatrixdestroy, NALU_HYPRE_PARCSRMATRIXDESTROY)
-( hypre_F90_Obj *matrix,
-  hypre_F90_Int *ierr    )
+nalu_hypre_F90_IFACE(nalu_hypre_parcsrmatrixdestroy, NALU_HYPRE_PARCSRMATRIXDESTROY)
+( nalu_hypre_F90_Obj *matrix,
+  nalu_hypre_F90_Int *ierr    )
 {
-   *ierr = (hypre_F90_Int)
+   *ierr = (nalu_hypre_F90_Int)
            ( NALU_HYPRE_ParCSRMatrixDestroy(
-                hypre_F90_PassObj (NALU_HYPRE_ParCSRMatrix, matrix) ) );
+                nalu_hypre_F90_PassObj (NALU_HYPRE_ParCSRMatrix, matrix) ) );
 }
 
 /*--------------------------------------------------------------------------
@@ -67,13 +67,13 @@ hypre_F90_IFACE(hypre_parcsrmatrixdestroy, NALU_HYPRE_PARCSRMATRIXDESTROY)
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_parcsrmatrixinitialize, NALU_HYPRE_PARCSRMATRIXINITIALIZE)
-( hypre_F90_Obj *matrix,
-  hypre_F90_Int *ierr    )
+nalu_hypre_F90_IFACE(nalu_hypre_parcsrmatrixinitialize, NALU_HYPRE_PARCSRMATRIXINITIALIZE)
+( nalu_hypre_F90_Obj *matrix,
+  nalu_hypre_F90_Int *ierr    )
 {
-   *ierr = (hypre_F90_Int)
+   *ierr = (nalu_hypre_F90_Int)
            ( NALU_HYPRE_ParCSRMatrixInitialize(
-                hypre_F90_PassObj (NALU_HYPRE_ParCSRMatrix, matrix) ) );
+                nalu_hypre_F90_PassObj (NALU_HYPRE_ParCSRMatrix, matrix) ) );
 }
 
 /*--------------------------------------------------------------------------
@@ -81,17 +81,17 @@ hypre_F90_IFACE(hypre_parcsrmatrixinitialize, NALU_HYPRE_PARCSRMATRIXINITIALIZE)
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_parcsrmatrixread, NALU_HYPRE_PARCSRMATRIXREAD)
-( hypre_F90_Comm *comm,
+nalu_hypre_F90_IFACE(nalu_hypre_parcsrmatrixread, NALU_HYPRE_PARCSRMATRIXREAD)
+( nalu_hypre_F90_Comm *comm,
   char     *file_name,
-  hypre_F90_Obj *matrix,
-  hypre_F90_Int *ierr       )
+  nalu_hypre_F90_Obj *matrix,
+  nalu_hypre_F90_Int *ierr       )
 {
-   *ierr = (hypre_F90_Int)
+   *ierr = (nalu_hypre_F90_Int)
            ( NALU_HYPRE_ParCSRMatrixRead(
-                hypre_F90_PassComm (comm),
+                nalu_hypre_F90_PassComm (comm),
                 (char *)    file_name,
-                hypre_F90_PassObjRef (NALU_HYPRE_ParCSRMatrix, matrix) ) );
+                nalu_hypre_F90_PassObjRef (NALU_HYPRE_ParCSRMatrix, matrix) ) );
 
 }
 
@@ -100,28 +100,28 @@ hypre_F90_IFACE(hypre_parcsrmatrixread, NALU_HYPRE_PARCSRMATRIXREAD)
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_parcsrmatrixprint, NALU_HYPRE_PARCSRMATRIXPRINT)
-( hypre_F90_Obj *matrix,
+nalu_hypre_F90_IFACE(nalu_hypre_parcsrmatrixprint, NALU_HYPRE_PARCSRMATRIXPRINT)
+( nalu_hypre_F90_Obj *matrix,
   char     *fort_file_name,
-  hypre_F90_Int *fort_file_name_size,
-  hypre_F90_Int *ierr       )
+  nalu_hypre_F90_Int *fort_file_name_size,
+  nalu_hypre_F90_Int *ierr       )
 {
    NALU_HYPRE_Int i;
    char *c_file_name;
 
-   c_file_name = hypre_CTAlloc(char,  *fort_file_name_size, NALU_HYPRE_MEMORY_HOST);
+   c_file_name = nalu_hypre_CTAlloc(char,  *fort_file_name_size, NALU_HYPRE_MEMORY_HOST);
 
    for (i = 0; i < *fort_file_name_size; i++)
    {
       c_file_name[i] = fort_file_name[i];
    }
 
-   *ierr = (hypre_F90_Int)
+   *ierr = (nalu_hypre_F90_Int)
            ( NALU_HYPRE_ParCSRMatrixPrint(
-                hypre_F90_PassObj (NALU_HYPRE_ParCSRMatrix, matrix),
+                nalu_hypre_F90_PassObj (NALU_HYPRE_ParCSRMatrix, matrix),
                 (char *)              c_file_name ) );
 
-   hypre_TFree(c_file_name, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(c_file_name, NALU_HYPRE_MEMORY_HOST);
 
 }
 
@@ -130,14 +130,14 @@ hypre_F90_IFACE(hypre_parcsrmatrixprint, NALU_HYPRE_PARCSRMATRIXPRINT)
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_parcsrmatrixgetcomm, NALU_HYPRE_PARCSRMATRIXGETCOMM)
-( hypre_F90_Obj *matrix,
-  hypre_F90_Comm *comm,
-  hypre_F90_Int *ierr    )
+nalu_hypre_F90_IFACE(nalu_hypre_parcsrmatrixgetcomm, NALU_HYPRE_PARCSRMATRIXGETCOMM)
+( nalu_hypre_F90_Obj *matrix,
+  nalu_hypre_F90_Comm *comm,
+  nalu_hypre_F90_Int *ierr    )
 {
-   *ierr = (hypre_F90_Int)
+   *ierr = (nalu_hypre_F90_Int)
            ( NALU_HYPRE_ParCSRMatrixGetComm(
-                hypre_F90_PassObj (NALU_HYPRE_ParCSRMatrix, matrix),
+                nalu_hypre_F90_PassObj (NALU_HYPRE_ParCSRMatrix, matrix),
                 (MPI_Comm *)          comm    ) );
 }
 
@@ -146,17 +146,17 @@ hypre_F90_IFACE(hypre_parcsrmatrixgetcomm, NALU_HYPRE_PARCSRMATRIXGETCOMM)
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_parcsrmatrixgetdims, NALU_HYPRE_PARCSRMATRIXGETDIMS)
-( hypre_F90_Obj *matrix,
-  hypre_F90_BigInt *M,
-  hypre_F90_BigInt *N,
-  hypre_F90_Int *ierr    )
+nalu_hypre_F90_IFACE(nalu_hypre_parcsrmatrixgetdims, NALU_HYPRE_PARCSRMATRIXGETDIMS)
+( nalu_hypre_F90_Obj *matrix,
+  nalu_hypre_F90_BigInt *M,
+  nalu_hypre_F90_BigInt *N,
+  nalu_hypre_F90_Int *ierr    )
 {
-   *ierr = (hypre_F90_Int)
+   *ierr = (nalu_hypre_F90_Int)
            ( NALU_HYPRE_ParCSRMatrixGetDims(
-                hypre_F90_PassObj (NALU_HYPRE_ParCSRMatrix, matrix),
-                hypre_F90_PassBigIntRef (M),
-                hypre_F90_PassBigIntRef (N)       ) );
+                nalu_hypre_F90_PassObj (NALU_HYPRE_ParCSRMatrix, matrix),
+                nalu_hypre_F90_PassBigIntRef (M),
+                nalu_hypre_F90_PassBigIntRef (N)       ) );
 }
 
 /*--------------------------------------------------------------------------
@@ -164,18 +164,18 @@ hypre_F90_IFACE(hypre_parcsrmatrixgetdims, NALU_HYPRE_PARCSRMATRIXGETDIMS)
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_parcsrmatrixgetrowpartiti, NALU_HYPRE_PARCSRMATRIXGETROWPARTITI)
-( hypre_F90_Obj *matrix,
-  hypre_F90_Obj *row_partitioning_ptr,
-  hypre_F90_Int *ierr )
+nalu_hypre_F90_IFACE(nalu_hypre_parcsrmatrixgetrowpartiti, NALU_HYPRE_PARCSRMATRIXGETROWPARTITI)
+( nalu_hypre_F90_Obj *matrix,
+  nalu_hypre_F90_Obj *row_partitioning_ptr,
+  nalu_hypre_F90_Int *ierr )
 {
    NALU_HYPRE_Int *row_partitioning;
 
-   *ierr = (hypre_F90_Int) NALU_HYPRE_ParCSRMatrixGetRowPartitioning(
-              hypre_F90_PassObj (NALU_HYPRE_ParCSRMatrix, matrix),
+   *ierr = (nalu_hypre_F90_Int) NALU_HYPRE_ParCSRMatrixGetRowPartitioning(
+              nalu_hypre_F90_PassObj (NALU_HYPRE_ParCSRMatrix, matrix),
               (NALU_HYPRE_BigInt **)    &row_partitioning  );
 
-   *row_partitioning_ptr = (hypre_F90_Obj) row_partitioning;
+   *row_partitioning_ptr = (nalu_hypre_F90_Obj) row_partitioning;
 }
 
 /*--------------------------------------------------------------------------
@@ -183,18 +183,18 @@ hypre_F90_IFACE(hypre_parcsrmatrixgetrowpartiti, NALU_HYPRE_PARCSRMATRIXGETROWPA
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_parcsrmatrixgetcolpartiti, NALU_HYPRE_PARCSRMATRIXGETCOLPARTITI)
-( hypre_F90_Obj *matrix,
-  hypre_F90_Obj *col_partitioning_ptr,
-  hypre_F90_Int *ierr )
+nalu_hypre_F90_IFACE(nalu_hypre_parcsrmatrixgetcolpartiti, NALU_HYPRE_PARCSRMATRIXGETCOLPARTITI)
+( nalu_hypre_F90_Obj *matrix,
+  nalu_hypre_F90_Obj *col_partitioning_ptr,
+  nalu_hypre_F90_Int *ierr )
 {
    NALU_HYPRE_Int *col_partitioning;
 
-   *ierr = (hypre_F90_Int) NALU_HYPRE_ParCSRMatrixGetColPartitioning(
-              hypre_F90_PassObj (NALU_HYPRE_ParCSRMatrix, matrix),
+   *ierr = (nalu_hypre_F90_Int) NALU_HYPRE_ParCSRMatrixGetColPartitioning(
+              nalu_hypre_F90_PassObj (NALU_HYPRE_ParCSRMatrix, matrix),
               (NALU_HYPRE_BigInt **)    &col_partitioning  );
 
-   *col_partitioning_ptr = (hypre_F90_Obj) col_partitioning;
+   *col_partitioning_ptr = (nalu_hypre_F90_Obj) col_partitioning;
 }
 
 /*--------------------------------------------------------------------------
@@ -202,21 +202,21 @@ hypre_F90_IFACE(hypre_parcsrmatrixgetcolpartiti, NALU_HYPRE_PARCSRMATRIXGETCOLPA
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_parcsrmatrixgetlocalrange, NALU_HYPRE_PARCSRMATRIXGETLOCALRANGE)
-( hypre_F90_Obj *matrix,
-  hypre_F90_BigInt *row_start,
-  hypre_F90_BigInt *row_end,
-  hypre_F90_BigInt *col_start,
-  hypre_F90_BigInt *col_end,
-  hypre_F90_Int *ierr    )
+nalu_hypre_F90_IFACE(nalu_hypre_parcsrmatrixgetlocalrange, NALU_HYPRE_PARCSRMATRIXGETLOCALRANGE)
+( nalu_hypre_F90_Obj *matrix,
+  nalu_hypre_F90_BigInt *row_start,
+  nalu_hypre_F90_BigInt *row_end,
+  nalu_hypre_F90_BigInt *col_start,
+  nalu_hypre_F90_BigInt *col_end,
+  nalu_hypre_F90_Int *ierr    )
 {
-   *ierr = (hypre_F90_Int)
+   *ierr = (nalu_hypre_F90_Int)
            ( NALU_HYPRE_ParCSRMatrixGetLocalRange(
-                hypre_F90_PassObj (NALU_HYPRE_ParCSRMatrix, matrix),
-                hypre_F90_PassBigIntRef (row_start),
-                hypre_F90_PassBigIntRef (row_end),
-                hypre_F90_PassBigIntRef (col_start),
-                hypre_F90_PassBigIntRef (col_end)) );
+                nalu_hypre_F90_PassObj (NALU_HYPRE_ParCSRMatrix, matrix),
+                nalu_hypre_F90_PassBigIntRef (row_start),
+                nalu_hypre_F90_PassBigIntRef (row_end),
+                nalu_hypre_F90_PassBigIntRef (col_start),
+                nalu_hypre_F90_PassBigIntRef (col_end)) );
 }
 
 /*--------------------------------------------------------------------------
@@ -224,26 +224,26 @@ hypre_F90_IFACE(hypre_parcsrmatrixgetlocalrange, NALU_HYPRE_PARCSRMATRIXGETLOCAL
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_parcsrmatrixgetrow, NALU_HYPRE_PARCSRMATRIXGETROW)
-( hypre_F90_Obj *matrix,
-  hypre_F90_BigInt *row,
-  hypre_F90_Int *size,
-  hypre_F90_Obj *col_ind_ptr,
-  hypre_F90_Obj *values_ptr,
-  hypre_F90_Int *ierr )
+nalu_hypre_F90_IFACE(nalu_hypre_parcsrmatrixgetrow, NALU_HYPRE_PARCSRMATRIXGETROW)
+( nalu_hypre_F90_Obj *matrix,
+  nalu_hypre_F90_BigInt *row,
+  nalu_hypre_F90_Int *size,
+  nalu_hypre_F90_Obj *col_ind_ptr,
+  nalu_hypre_F90_Obj *values_ptr,
+  nalu_hypre_F90_Int *ierr )
 {
    NALU_HYPRE_Int *col_ind;
    NALU_HYPRE_Complex    *values;
 
-   *ierr = (hypre_F90_Int) NALU_HYPRE_ParCSRMatrixGetRow(
-              hypre_F90_PassObj      (NALU_HYPRE_ParCSRMatrix, matrix),
-              hypre_F90_PassBigInt      (row),
-              hypre_F90_PassIntRef (size),
+   *ierr = (nalu_hypre_F90_Int) NALU_HYPRE_ParCSRMatrixGetRow(
+              nalu_hypre_F90_PassObj      (NALU_HYPRE_ParCSRMatrix, matrix),
+              nalu_hypre_F90_PassBigInt      (row),
+              nalu_hypre_F90_PassIntRef (size),
               (NALU_HYPRE_BigInt **)         &col_ind,
               (NALU_HYPRE_Complex **)            &values );
 
-   *col_ind_ptr = (hypre_F90_Obj) col_ind;
-   *values_ptr  = (hypre_F90_Obj) values;
+   *col_ind_ptr = (nalu_hypre_F90_Obj) col_ind;
+   *values_ptr  = (nalu_hypre_F90_Obj) values;
 }
 
 /*--------------------------------------------------------------------------
@@ -251,26 +251,26 @@ hypre_F90_IFACE(hypre_parcsrmatrixgetrow, NALU_HYPRE_PARCSRMATRIXGETROW)
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_parcsrmatrixrestorerow, NALU_HYPRE_PARCSRMATRIXRESTOREROW)
-( hypre_F90_Obj *matrix,
-  hypre_F90_BigInt *row,
-  hypre_F90_Int *size,
-  hypre_F90_Obj *col_ind_ptr,
-  hypre_F90_Obj *values_ptr,
-  hypre_F90_Int *ierr )
+nalu_hypre_F90_IFACE(nalu_hypre_parcsrmatrixrestorerow, NALU_HYPRE_PARCSRMATRIXRESTOREROW)
+( nalu_hypre_F90_Obj *matrix,
+  nalu_hypre_F90_BigInt *row,
+  nalu_hypre_F90_Int *size,
+  nalu_hypre_F90_Obj *col_ind_ptr,
+  nalu_hypre_F90_Obj *values_ptr,
+  nalu_hypre_F90_Int *ierr )
 {
    NALU_HYPRE_Int *col_ind;
    NALU_HYPRE_Complex    *values;
 
-   *ierr = (hypre_F90_Int) NALU_HYPRE_ParCSRMatrixRestoreRow(
-              hypre_F90_PassObj      (NALU_HYPRE_ParCSRMatrix, matrix),
-              hypre_F90_PassBigInt      (row),
-              hypre_F90_PassIntRef (size),
+   *ierr = (nalu_hypre_F90_Int) NALU_HYPRE_ParCSRMatrixRestoreRow(
+              nalu_hypre_F90_PassObj      (NALU_HYPRE_ParCSRMatrix, matrix),
+              nalu_hypre_F90_PassBigInt      (row),
+              nalu_hypre_F90_PassIntRef (size),
               (NALU_HYPRE_BigInt **)         &col_ind,
               (NALU_HYPRE_Complex **)            &values );
 
-   *col_ind_ptr = (hypre_F90_Obj) col_ind;
-   *values_ptr  = (hypre_F90_Obj) values;
+   *col_ind_ptr = (nalu_hypre_F90_Obj) col_ind;
+   *values_ptr  = (nalu_hypre_F90_Obj) values;
 }
 
 /*--------------------------------------------------------------------------
@@ -278,22 +278,22 @@ hypre_F90_IFACE(hypre_parcsrmatrixrestorerow, NALU_HYPRE_PARCSRMATRIXRESTOREROW)
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_csrmatrixtoparcsrmatrix, NALU_HYPRE_CSRMATRIXTOPARCSRMATRIX)
-(hypre_F90_Comm *comm,
- hypre_F90_Obj *A_CSR,
- hypre_F90_BigIntArray *row_partitioning,
- hypre_F90_BigIntArray *col_partitioning,
- hypre_F90_Obj *matrix,
- hypre_F90_Int *ierr   )
+nalu_hypre_F90_IFACE(nalu_hypre_csrmatrixtoparcsrmatrix, NALU_HYPRE_CSRMATRIXTOPARCSRMATRIX)
+(nalu_hypre_F90_Comm *comm,
+ nalu_hypre_F90_Obj *A_CSR,
+ nalu_hypre_F90_BigIntArray *row_partitioning,
+ nalu_hypre_F90_BigIntArray *col_partitioning,
+ nalu_hypre_F90_Obj *matrix,
+ nalu_hypre_F90_Int *ierr   )
 {
 
-   *ierr = (hypre_F90_Int)
+   *ierr = (nalu_hypre_F90_Int)
            ( NALU_HYPRE_CSRMatrixToParCSRMatrix(
-                hypre_F90_PassComm (comm),
-                hypre_F90_PassObj (NALU_HYPRE_CSRMatrix, A_CSR),
-                hypre_F90_PassBigIntArray (row_partitioning),
-                hypre_F90_PassBigIntArray (col_partitioning),
-                hypre_F90_PassObjRef (NALU_HYPRE_ParCSRMatrix, matrix) ) );
+                nalu_hypre_F90_PassComm (comm),
+                nalu_hypre_F90_PassObj (NALU_HYPRE_CSRMatrix, A_CSR),
+                nalu_hypre_F90_PassBigIntArray (row_partitioning),
+                nalu_hypre_F90_PassBigIntArray (col_partitioning),
+                nalu_hypre_F90_PassObjRef (NALU_HYPRE_ParCSRMatrix, matrix) ) );
 }
 
 /*--------------------------------------------------------------------------
@@ -301,19 +301,19 @@ hypre_F90_IFACE(hypre_csrmatrixtoparcsrmatrix, NALU_HYPRE_CSRMATRIXTOPARCSRMATRI
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_csrmatrixtoparcsrmatrix_withnewpartitioning,
+nalu_hypre_F90_IFACE(nalu_hypre_csrmatrixtoparcsrmatrix_withnewpartitioning,
                 NALU_HYPRE_CSRMATRIXTOPARCSRMATRIX_WITHNEWPARTITIONING)
-(hypre_F90_Comm *comm,
- hypre_F90_Obj *A_CSR,
- hypre_F90_Obj *matrix,
- hypre_F90_Int *ierr   )
+(nalu_hypre_F90_Comm *comm,
+ nalu_hypre_F90_Obj *A_CSR,
+ nalu_hypre_F90_Obj *matrix,
+ nalu_hypre_F90_Int *ierr   )
 {
 
-   *ierr = (hypre_F90_Int)
+   *ierr = (nalu_hypre_F90_Int)
            ( NALU_HYPRE_CSRMatrixToParCSRMatrix_WithNewPartitioning(
-                hypre_F90_PassComm (comm),
-                hypre_F90_PassObj (NALU_HYPRE_CSRMatrix, A_CSR),
-                hypre_F90_PassObjRef (NALU_HYPRE_ParCSRMatrix, matrix) ) );
+                nalu_hypre_F90_PassComm (comm),
+                nalu_hypre_F90_PassObj (NALU_HYPRE_CSRMatrix, A_CSR),
+                nalu_hypre_F90_PassObjRef (NALU_HYPRE_ParCSRMatrix, matrix) ) );
 }
 
 /*--------------------------------------------------------------------------
@@ -321,22 +321,22 @@ hypre_F90_IFACE(hypre_csrmatrixtoparcsrmatrix_withnewpartitioning,
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_parcsrmatrixmatvec, NALU_HYPRE_PARCSRMATRIXMATVEC)
-( hypre_F90_Complex *alpha,
-  hypre_F90_Obj *A,
-  hypre_F90_Obj *x,
-  hypre_F90_Complex *beta,
-  hypre_F90_Obj *y,
-  hypre_F90_Int *ierr   )
+nalu_hypre_F90_IFACE(nalu_hypre_parcsrmatrixmatvec, NALU_HYPRE_PARCSRMATRIXMATVEC)
+( nalu_hypre_F90_Complex *alpha,
+  nalu_hypre_F90_Obj *A,
+  nalu_hypre_F90_Obj *x,
+  nalu_hypre_F90_Complex *beta,
+  nalu_hypre_F90_Obj *y,
+  nalu_hypre_F90_Int *ierr   )
 {
 
-   *ierr = (hypre_F90_Int)
+   *ierr = (nalu_hypre_F90_Int)
            ( NALU_HYPRE_ParCSRMatrixMatvec(
-                hypre_F90_PassComplex (alpha),
-                hypre_F90_PassObj (NALU_HYPRE_ParCSRMatrix, A),
-                hypre_F90_PassObj (NALU_HYPRE_ParVector, x),
-                hypre_F90_PassComplex (beta),
-                hypre_F90_PassObj (NALU_HYPRE_ParVector, y)      ) );
+                nalu_hypre_F90_PassComplex (alpha),
+                nalu_hypre_F90_PassObj (NALU_HYPRE_ParCSRMatrix, A),
+                nalu_hypre_F90_PassObj (NALU_HYPRE_ParVector, x),
+                nalu_hypre_F90_PassComplex (beta),
+                nalu_hypre_F90_PassObj (NALU_HYPRE_ParVector, y)      ) );
 }
 
 /*--------------------------------------------------------------------------
@@ -344,22 +344,22 @@ hypre_F90_IFACE(hypre_parcsrmatrixmatvec, NALU_HYPRE_PARCSRMATRIXMATVEC)
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_parcsrmatrixmatvect, NALU_HYPRE_PARCSRMATRIXMATVECT)
-( hypre_F90_Complex *alpha,
-  hypre_F90_Obj *A,
-  hypre_F90_Obj *x,
-  hypre_F90_Complex *beta,
-  hypre_F90_Obj *y,
-  hypre_F90_Int *ierr    )
+nalu_hypre_F90_IFACE(nalu_hypre_parcsrmatrixmatvect, NALU_HYPRE_PARCSRMATRIXMATVECT)
+( nalu_hypre_F90_Complex *alpha,
+  nalu_hypre_F90_Obj *A,
+  nalu_hypre_F90_Obj *x,
+  nalu_hypre_F90_Complex *beta,
+  nalu_hypre_F90_Obj *y,
+  nalu_hypre_F90_Int *ierr    )
 {
 
-   *ierr = (hypre_F90_Int)
+   *ierr = (nalu_hypre_F90_Int)
            ( NALU_HYPRE_ParCSRMatrixMatvecT(
-                hypre_F90_PassComplex (alpha),
-                hypre_F90_PassObj (NALU_HYPRE_ParCSRMatrix, A),
-                hypre_F90_PassObj (NALU_HYPRE_ParVector, x),
-                hypre_F90_PassComplex (beta),
-                hypre_F90_PassObj (NALU_HYPRE_ParVector, y)      ) );
+                nalu_hypre_F90_PassComplex (alpha),
+                nalu_hypre_F90_PassObj (NALU_HYPRE_ParCSRMatrix, A),
+                nalu_hypre_F90_PassObj (NALU_HYPRE_ParVector, x),
+                nalu_hypre_F90_PassComplex (beta),
+                nalu_hypre_F90_PassObj (NALU_HYPRE_ParVector, y)      ) );
 }
 
 #ifdef __cplusplus

@@ -35,13 +35,13 @@ Hash *HashCreate(NALU_HYPRE_Int size)
 {
     NALU_HYPRE_Int i, *p;
 
-    Hash *h = hypre_TAlloc(Hash, 1, NALU_HYPRE_MEMORY_HOST);
+    Hash *h = nalu_hypre_TAlloc(Hash, 1, NALU_HYPRE_MEMORY_HOST);
 
     h->size  = size;
     h->num   = 0;
-    h->keys  = hypre_TAlloc(NALU_HYPRE_Int, size , NALU_HYPRE_MEMORY_HOST);
-    h->table = hypre_TAlloc(NALU_HYPRE_Int, size , NALU_HYPRE_MEMORY_HOST);
-    h->data  = hypre_TAlloc(NALU_HYPRE_Int, size , NALU_HYPRE_MEMORY_HOST);
+    h->keys  = nalu_hypre_TAlloc(NALU_HYPRE_Int, size , NALU_HYPRE_MEMORY_HOST);
+    h->table = nalu_hypre_TAlloc(NALU_HYPRE_Int, size , NALU_HYPRE_MEMORY_HOST);
+    h->data  = nalu_hypre_TAlloc(NALU_HYPRE_Int, size , NALU_HYPRE_MEMORY_HOST);
 
     /* Initialize the table to empty */
     p = h->table;
@@ -57,10 +57,10 @@ Hash *HashCreate(NALU_HYPRE_Int size)
 
 void HashDestroy(Hash *h)
 {
-    hypre_TFree(h->keys,NALU_HYPRE_MEMORY_HOST);
-    hypre_TFree(h->table,NALU_HYPRE_MEMORY_HOST);
-    hypre_TFree(h->data,NALU_HYPRE_MEMORY_HOST);
-    hypre_TFree(h,NALU_HYPRE_MEMORY_HOST);
+    nalu_hypre_TFree(h->keys,NALU_HYPRE_MEMORY_HOST);
+    nalu_hypre_TFree(h->table,NALU_HYPRE_MEMORY_HOST);
+    nalu_hypre_TFree(h->data,NALU_HYPRE_MEMORY_HOST);
+    nalu_hypre_TFree(h,NALU_HYPRE_MEMORY_HOST);
 }
 
 /*--------------------------------------------------------------------------
@@ -104,7 +104,7 @@ void HashInsert(Hash *h, NALU_HYPRE_Int key, NALU_HYPRE_Int data)
     {
         if (h->table[loc] == HASH_EMPTY)
         {
-            hypre_assert(h->num < h->size);
+            nalu_hypre_assert(h->num < h->size);
 
 	    h->keys[h->num++] = key;
             h->table[loc] = key;
@@ -156,15 +156,15 @@ void HashPrint(Hash *h)
     NALU_HYPRE_Int i, j, *p;
     NALU_HYPRE_Int lines = h->size/38;
 
-    hypre_printf("Hash size: %d\n", h->size);
+    nalu_hypre_printf("Hash size: %d\n", h->size);
 
     p = h->table;
     for (i=0; i<lines; i++)
     {
 	for (j=0; j<38; j++)
-	    hypre_printf("%d ", ((*p++ == HASH_EMPTY) ? 0 : 1));
-	    /*hypre_printf("%d ", *p++);*/
-	hypre_printf("\n");
+	    nalu_hypre_printf("%d ", ((*p++ == HASH_EMPTY) ? 0 : 1));
+	    /*nalu_hypre_printf("%d ", *p++);*/
+	nalu_hypre_printf("\n");
     }
 }
 

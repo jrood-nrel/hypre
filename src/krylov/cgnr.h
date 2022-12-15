@@ -11,8 +11,8 @@
  *
  *****************************************************************************/
 
-#ifndef hypre_KRYLOV_CGNR_HEADER
-#define hypre_KRYLOV_CGNR_HEADER
+#ifndef nalu_hypre_KRYLOV_CGNR_HEADER
+#define nalu_hypre_KRYLOV_CGNR_HEADER
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
@@ -32,7 +32,7 @@
  *--------------------------------------------------------------------------*/
 
 /*--------------------------------------------------------------------------
- * hypre_CGNRData and hypre_CGNRFunctions
+ * nalu_hypre_CGNRData and nalu_hypre_CGNRFunctions
  *--------------------------------------------------------------------------*/
 
 /**
@@ -67,7 +67,7 @@ typedef struct
    NALU_HYPRE_Int    (*precond)       ( void *vdata, void *A, void *b, void *x );
    NALU_HYPRE_Int    (*precondT)      ( void *vdata, void *A, void *b, void *x );
 
-} hypre_CGNRFunctions;
+} nalu_hypre_CGNRFunctions;
 
 /**
  * The {\tt hypre\_CGNRData} object ...
@@ -90,7 +90,7 @@ typedef struct
    void    *matvec_data;
    void    *precond_data;
 
-   hypre_CGNRFunctions * functions;
+   nalu_hypre_CGNRFunctions * functions;
 
    /* log info (always logged) */
    NALU_HYPRE_Int      num_iterations;
@@ -100,7 +100,7 @@ typedef struct
    NALU_HYPRE_Real  *norms;
    char    *log_file_name;
 
-} hypre_CGNRData;
+} nalu_hypre_CGNRData;
 
 #ifdef __cplusplus
 extern "C" {
@@ -118,8 +118,8 @@ extern "C" {
  *
  * @param param [IN] ...
  **/
-hypre_CGNRFunctions *
-hypre_CGNRFunctionsCreate(
+nalu_hypre_CGNRFunctions *
+nalu_hypre_CGNRFunctionsCreate(
    NALU_HYPRE_Int    (*CommInfo)      ( void  *A, NALU_HYPRE_Int   *my_id,
                                    NALU_HYPRE_Int   *num_procs ),
    void *       (*CreateVector)  ( void *vector ),
@@ -147,7 +147,7 @@ hypre_CGNRFunctionsCreate(
  **/
 
 void *
-hypre_CGNRCreate( hypre_CGNRFunctions *cgnr_functions );
+nalu_hypre_CGNRCreate( nalu_hypre_CGNRFunctions *cgnr_functions );
 
 #ifdef __cplusplus
 }

@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_Euclid.h"
+#include "_nalu_hypre_Euclid.h"
 /* #include "SubdomainGraph_dh.h" */
 /* #include "getRow_dh.h" */
 /* #include "Mem_dh.h" */
@@ -109,7 +109,7 @@ void SubdomainGraph_dhDestroy(SubdomainGraph_dh s)
 void SubdomainGraph_dhInit(SubdomainGraph_dh s, NALU_HYPRE_Int blocks, bool bj, void *A)
 {
   START_FUNC_DH
-  NALU_HYPRE_Real t1 = hypre_MPI_Wtime();
+  NALU_HYPRE_Real t1 = nalu_hypre_MPI_Wtime();
 
   if (blocks < 1) blocks = 1;
 
@@ -121,7 +121,7 @@ void SubdomainGraph_dhInit(SubdomainGraph_dh s, NALU_HYPRE_Int blocks, bool bj, 
     init_mpi_private(s, np_dh, bj, A); CHECK_V_ERROR;
   }
 
-  s->timing[TOTAL_SGT] += (hypre_MPI_Wtime() - t1);
+  s->timing[TOTAL_SGT] += (nalu_hypre_MPI_Wtime() - t1);
   END_FUNC_DH
 }
 
@@ -148,10 +148,10 @@ NALU_HYPRE_Int SubdomainGraph_dhFindOwner(SubdomainGraph_dh s, NALU_HYPRE_Int id
 
   if (owner == -1) {
 
-hypre_fprintf(stderr, "@@@ failed to find owner for idx = %i @@@\n", idx);
-hypre_fprintf(stderr, "blocks= %i\n", blocks);
+nalu_hypre_fprintf(stderr, "@@@ failed to find owner for idx = %i @@@\n", idx);
+nalu_hypre_fprintf(stderr, "blocks= %i\n", blocks);
 
-    hypre_sprintf(msgBuf_dh, "failed to find owner for idx = %i", idx);
+    nalu_hypre_sprintf(msgBuf_dh, "failed to find owner for idx = %i", idx);
     SET_ERROR(-1, msgBuf_dh);
   }
 
@@ -167,12 +167,12 @@ void SubdomainGraph_dhPrintStatsLong(SubdomainGraph_dh s, FILE *fp)
     NALU_HYPRE_Int i, j, k;
     NALU_HYPRE_Real max = 0, min = (NALU_HYPRE_Real) INT_MAX;
 
-    hypre_fprintf(fp, "\n------------- SubdomainGraph_dhPrintStatsLong -----------\n");
-    hypre_fprintf(fp, "colors used     = %i\n", s->colors);
-    hypre_fprintf(fp, "subdomain count = %i\n", s->blocks);
+    nalu_hypre_fprintf(fp, "\n------------- SubdomainGraph_dhPrintStatsLong -----------\n");
+    nalu_hypre_fprintf(fp, "colors used     = %i\n", s->colors);
+    nalu_hypre_fprintf(fp, "subdomain count = %i\n", s->blocks);
 
 
-    hypre_fprintf(fp, "\ninterior/boundary node ratios:\n");
+    nalu_hypre_fprintf(fp, "\ninterior/boundary node ratios:\n");
 
     for (i=0; i<s->blocks; ++i) {
       NALU_HYPRE_Int inNodes = s->row_count[i] - s->bdry_count[i];
@@ -187,27 +187,27 @@ void SubdomainGraph_dhPrintStatsLong(SubdomainGraph_dh s, FILE *fp)
 
       max = MAX(max, ratio);
       min = MIN(min, ratio);
-      hypre_fprintf(fp, "   P_%i: first= %3i  rowCount= %3i  interior= %3i  bdry= %3i  ratio= %0.1f\n",
+      nalu_hypre_fprintf(fp, "   P_%i: first= %3i  rowCount= %3i  interior= %3i  bdry= %3i  ratio= %0.1f\n",
                    i, 1+s->beg_row[i], s->row_count[i], inNodes,
                    bdNodes, ratio);
     }
 
 
-    hypre_fprintf(fp, "\nmax interior/bdry ratio = %.1f\n", max);
-    hypre_fprintf(fp, "min interior/bdry ratio = %.1f\n", min);
+    nalu_hypre_fprintf(fp, "\nmax interior/bdry ratio = %.1f\n", max);
+    nalu_hypre_fprintf(fp, "min interior/bdry ratio = %.1f\n", min);
 
 
     /*-----------------------------------------
      * subdomain graph
      *-----------------------------------------*/
     if (s->adj != NULL) {
-      hypre_fprintf(fp, "\nunpermuted subdomain graph: \n");
+      nalu_hypre_fprintf(fp, "\nunpermuted subdomain graph: \n");
       for (i=0; i<s->blocks; ++i) {
-        hypre_fprintf(fp, "%i :: ", i);
+        nalu_hypre_fprintf(fp, "%i :: ", i);
         for (j=s->ptrs[i]; j<s->ptrs[i+1]; ++j) {
-          hypre_fprintf(fp, "%i  ", s->adj[j]);
+          nalu_hypre_fprintf(fp, "%i  ", s->adj[j]);
         }
-        hypre_fprintf(fp, "\n");
+        nalu_hypre_fprintf(fp, "\n");
       }
     }
 
@@ -215,61 +215,61 @@ void SubdomainGraph_dhPrintStatsLong(SubdomainGraph_dh s, FILE *fp)
     /*-----------------------------------------
      * subdomain permutation
      *-----------------------------------------*/
-    hypre_fprintf(fp, "\no2n subdomain permutation:\n");
+    nalu_hypre_fprintf(fp, "\no2n subdomain permutation:\n");
     for (i=0; i<s->blocks; ++i) {
-      hypre_fprintf(fp, "  %i %i\n", i, s->o2n_sub[i]);
+      nalu_hypre_fprintf(fp, "  %i %i\n", i, s->o2n_sub[i]);
     }
-    hypre_fprintf(fp, "\n");
+    nalu_hypre_fprintf(fp, "\n");
 
    if (np_dh > 1) {
 
     /*-----------------------------------------
      * local n2o_row permutation
      *-----------------------------------------*/
-    hypre_fprintf(fp, "\nlocal n2o_row permutation:\n   ");
+    nalu_hypre_fprintf(fp, "\nlocal n2o_row permutation:\n   ");
     for (i=0; i<s->row_count[myid_dh]; ++i) {
-      hypre_fprintf(fp, "%i ", s->n2o_row[i]);
+      nalu_hypre_fprintf(fp, "%i ", s->n2o_row[i]);
     }
-    hypre_fprintf(fp, "\n");
+    nalu_hypre_fprintf(fp, "\n");
 
     /*-----------------------------------------
      * local n2o permutation
      *-----------------------------------------*/
-    hypre_fprintf(fp, "\nlocal o2n_col permutation:\n   ");
+    nalu_hypre_fprintf(fp, "\nlocal o2n_col permutation:\n   ");
     for (i=0; i<s->row_count[myid_dh]; ++i) {
-      hypre_fprintf(fp, "%i ", s->o2n_col[i]);
+      nalu_hypre_fprintf(fp, "%i ", s->o2n_col[i]);
     }
-    hypre_fprintf(fp, "\n");
+    nalu_hypre_fprintf(fp, "\n");
 
   } else {
     /*-----------------------------------------
      * local n2o_row permutation
      *-----------------------------------------*/
-    hypre_fprintf(fp, "\nlocal n2o_row permutation:\n");
-    hypre_fprintf(fp, "--------------------------\n");
+    nalu_hypre_fprintf(fp, "\nlocal n2o_row permutation:\n");
+    nalu_hypre_fprintf(fp, "--------------------------\n");
     for (k=0; k<s->blocks; ++k) {
       NALU_HYPRE_Int beg_row = s->beg_row[k];
       NALU_HYPRE_Int end_row = beg_row + s->row_count[k];
 
       for (i=beg_row; i<end_row; ++i) {
-        hypre_fprintf(fp, "%i ", s->n2o_row[i]);
+        nalu_hypre_fprintf(fp, "%i ", s->n2o_row[i]);
       }
-      hypre_fprintf(fp, "\n");
+      nalu_hypre_fprintf(fp, "\n");
     }
 
     /*-----------------------------------------
      * local n2o permutation
      *-----------------------------------------*/
-    hypre_fprintf(fp, "\nlocal o2n_col permutation:\n");
-    hypre_fprintf(fp, "--------------------------\n");
+    nalu_hypre_fprintf(fp, "\nlocal o2n_col permutation:\n");
+    nalu_hypre_fprintf(fp, "--------------------------\n");
     for (k=0; k<s->blocks; ++k) {
       NALU_HYPRE_Int beg_row = s->beg_row[k];
       NALU_HYPRE_Int end_row = beg_row + s->row_count[k];
 
       for (i=beg_row; i<end_row; ++i) {
-        hypre_fprintf(fp, "%i ", s->o2n_col[i]);
+        nalu_hypre_fprintf(fp, "%i ", s->o2n_col[i]);
       }
-      hypre_fprintf(fp, "\n");
+      nalu_hypre_fprintf(fp, "\n");
     }
 
 
@@ -317,7 +317,7 @@ void init_seq_private(SubdomainGraph_dh s, NALU_HYPRE_Int blocks, bool bj, void 
     for (i=0; i<blocks; ++i) s->row_count[i] = rpp;
     s->row_count[blocks-1] = m - rpp*(blocks-1);
   }
-  hypre_TMemcpy(s->beg_rowP,  s->beg_row, NALU_HYPRE_Int, blocks, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_HOST);
+  nalu_hypre_TMemcpy(s->beg_rowP,  s->beg_row, NALU_HYPRE_Int, blocks, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_HOST);
 
 
   /*-----------------------------------------------------------------
@@ -335,7 +335,7 @@ void init_seq_private(SubdomainGraph_dh s, NALU_HYPRE_Int blocks, bool bj, void 
    *                      n2o_col[]
    *                      o2n_row[]
    *-------------------------------------------------------*/
-  t1 = hypre_MPI_Wtime();
+  t1 = nalu_hypre_MPI_Wtime();
   if (!bj) {
     find_bdry_nodes_seq_private(s, m, A); CHECK_V_ERROR;
   }
@@ -346,7 +346,7 @@ void init_seq_private(SubdomainGraph_dh s, NALU_HYPRE_Int blocks, bool bj, void 
       s->o2n_col[i] = i;
     }
   }
-  s->timing[ORDER_BDRY_SGT] += (hypre_MPI_Wtime() - t1);
+  s->timing[ORDER_BDRY_SGT] += (nalu_hypre_MPI_Wtime() - t1);
 
   /*-------------------------------------------------------
    * Form subdomain graph,
@@ -357,7 +357,7 @@ void init_seq_private(SubdomainGraph_dh s, NALU_HYPRE_Int blocks, bool bj, void 
    *                      n2o_sub[]
    *                      beg_rowP[]
    *-------------------------------------------------------*/
-  t1 = hypre_MPI_Wtime();
+  t1 = nalu_hypre_MPI_Wtime();
   if (! bj) {
     form_subdomaingraph_seq_private(s, m, A); CHECK_V_ERROR;
     if (s->doNotColor) {
@@ -382,7 +382,7 @@ void init_seq_private(SubdomainGraph_dh s, NALU_HYPRE_Int blocks, bool bj, void 
       s->n2o_sub[i] = i;
     }
   }
-  s->timing[FORM_GRAPH_SGT] += (hypre_MPI_Wtime() - t1);
+  s->timing[FORM_GRAPH_SGT] += (nalu_hypre_MPI_Wtime() - t1);
 
   /*-------------------------------------------------------
    * Here's a step we DON'T do for the parallel case:
@@ -494,9 +494,9 @@ void init_mpi_private(SubdomainGraph_dh s, NALU_HYPRE_Int blocks, bool bj, void 
    * At this point, beg_rowP[] is a copy of beg_row[])
    *-------------------------------------------------------------*/
   if (!bj) {
-    hypre_MPI_Allgather(&beg_row, 1, NALU_HYPRE_MPI_INT, s->beg_row, 1, NALU_HYPRE_MPI_INT, comm_dh);
-    hypre_MPI_Allgather(&m, 1, NALU_HYPRE_MPI_INT, s->row_count, 1, NALU_HYPRE_MPI_INT, comm_dh);
-    hypre_TMemcpy(s->beg_rowP,  s->beg_row, NALU_HYPRE_Int, np_dh, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_HOST);
+    nalu_hypre_MPI_Allgather(&beg_row, 1, NALU_HYPRE_MPI_INT, s->beg_row, 1, NALU_HYPRE_MPI_INT, comm_dh);
+    nalu_hypre_MPI_Allgather(&m, 1, NALU_HYPRE_MPI_INT, s->row_count, 1, NALU_HYPRE_MPI_INT, comm_dh);
+    nalu_hypre_TMemcpy(s->beg_rowP,  s->beg_row, NALU_HYPRE_Int, np_dh, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_HOST);
   } else {
     s->beg_row[myid_dh] = beg_row;
     s->beg_rowP[myid_dh] = beg_row;
@@ -508,13 +508,13 @@ void init_mpi_private(SubdomainGraph_dh s, NALU_HYPRE_Int blocks, bool bj, void 
    * This block fills in: allNabors[]
    *-----------------------------------------------------------------*/
   if (! bj) {
-    t1 = hypre_MPI_Wtime();
+    t1 = nalu_hypre_MPI_Wtime();
     if (symmetric) {
       find_all_neighbors_sym_private(s, m, A); CHECK_V_ERROR;
     } else {
       find_all_neighbors_unsym_private(s, m, A); CHECK_V_ERROR;
     }
-    s->timing[FIND_NABORS_SGT] += (hypre_MPI_Wtime() - t1);
+    s->timing[FIND_NABORS_SGT] += (nalu_hypre_MPI_Wtime() - t1);
   }
 
 
@@ -526,7 +526,7 @@ void init_mpi_private(SubdomainGraph_dh s, NALU_HYPRE_Int blocks, bool bj, void 
    *                       n2o_col[]
    *                       o2n_row[]
    *-----------------------------------------------------------------*/
-  t1 = hypre_MPI_Wtime();
+  t1 = nalu_hypre_MPI_Wtime();
   if (!bj) {
       NALU_HYPRE_Int *interiorNodes, *bdryNodes;
       NALU_HYPRE_Int interiorCount, bdryCount;
@@ -548,7 +548,7 @@ void init_mpi_private(SubdomainGraph_dh s, NALU_HYPRE_Int blocks, bool bj, void 
       }
 
       /* exchange number of boundary rows with all neighbors */
-      hypre_MPI_Allgather(&bdryCount, 1, NALU_HYPRE_MPI_INT, s->bdry_count, 1, NALU_HYPRE_MPI_INT, comm_dh);
+      nalu_hypre_MPI_Allgather(&bdryCount, 1, NALU_HYPRE_MPI_INT, s->bdry_count, 1, NALU_HYPRE_MPI_INT, comm_dh);
 
       /* form local permutation */
       idx = 0;
@@ -576,7 +576,7 @@ void init_mpi_private(SubdomainGraph_dh s, NALU_HYPRE_Int blocks, bool bj, void 
       n2o[i] = i;
     }
   }
-  s->timing[ORDER_BDRY_SGT] += (hypre_MPI_Wtime() - t1);
+  s->timing[ORDER_BDRY_SGT] += (nalu_hypre_MPI_Wtime() - t1);
 
   /*-------------------------------------------------------
    * Form subdomain graph,
@@ -588,7 +588,7 @@ void init_mpi_private(SubdomainGraph_dh s, NALU_HYPRE_Int blocks, bool bj, void 
    *                      beg_rowP[]
    *-------------------------------------------------------*/
   if (!bj) {
-    t1 = hypre_MPI_Wtime();
+    t1 = nalu_hypre_MPI_Wtime();
     form_subdomaingraph_mpi_private(s); CHECK_V_ERROR;
     if (s->doNotColor) {
       NALU_HYPRE_Int i;
@@ -602,7 +602,7 @@ void init_mpi_private(SubdomainGraph_dh s, NALU_HYPRE_Int blocks, bool bj, void 
       SET_INFO("subdomain coloring and reordering is ON");
       color_subdomain_graph_private(s); CHECK_V_ERROR;
     }
-    s->timing[FORM_GRAPH_SGT] += (hypre_MPI_Wtime() - t1);
+    s->timing[FORM_GRAPH_SGT] += (nalu_hypre_MPI_Wtime() - t1);
   }
 
   /*-------------------------------------------------------
@@ -621,9 +621,9 @@ void init_mpi_private(SubdomainGraph_dh s, NALU_HYPRE_Int blocks, bool bj, void 
    *                       n2o_ext (hash table)
    *-------------------------------------------------------*/
   if (!bj) {
-    t1 = hypre_MPI_Wtime();
+    t1 = nalu_hypre_MPI_Wtime();
     SubdomainGraph_dhExchangePerms(s); CHECK_V_ERROR;
-    s->timing[EXCHANGE_PERMS_SGT] += (hypre_MPI_Wtime() - t1);
+    s->timing[EXCHANGE_PERMS_SGT] += (nalu_hypre_MPI_Wtime() - t1);
   }
 
   END_FUNC_DH
@@ -636,8 +636,8 @@ void init_mpi_private(SubdomainGraph_dh s, NALU_HYPRE_Int blocks, bool bj, void 
 void SubdomainGraph_dhExchangePerms(SubdomainGraph_dh s)
 {
   START_FUNC_DH
-  hypre_MPI_Request *recv_req = NULL, *send_req = NULL;
-  hypre_MPI_Status *status = NULL;
+  nalu_hypre_MPI_Request *recv_req = NULL, *send_req = NULL;
+  nalu_hypre_MPI_Status *status = NULL;
   NALU_HYPRE_Int *nabors = s->allNabors, naborCount = s->allCount;
   NALU_HYPRE_Int i, j, *sendBuf = NULL, *recvBuf = NULL, *naborIdx = NULL, nz;
   NALU_HYPRE_Int m = s->row_count[myid_dh];
@@ -659,7 +659,7 @@ void SubdomainGraph_dhExchangePerms(SubdomainGraph_dh s)
 
 
   if (debug) {
-    hypre_fprintf(logFile, "\nSUBG myFirstBdry= %i  myBdryCount= %i  m= %i  beg_rowP= %i\n", 1+ myFirstBdry, myBdryCount, m, 1+beg_rowP);
+    nalu_hypre_fprintf(logFile, "\nSUBG myFirstBdry= %i  myBdryCount= %i  m= %i  beg_rowP= %i\n", 1+ myFirstBdry, myBdryCount, m, 1+beg_rowP);
     fflush(logFile);
   }
 
@@ -669,9 +669,9 @@ void SubdomainGraph_dhExchangePerms(SubdomainGraph_dh s)
   }
 
   if (debug) {
-    hypre_fprintf(logFile, "\nSUBG SEND_BUF:\n");
+    nalu_hypre_fprintf(logFile, "\nSUBG SEND_BUF:\n");
     for (i=myFirstBdry, j=0; j<myBdryCount; ++i, ++j) {
-      hypre_fprintf(logFile, "SUBG  %i, %i\n", 1+sendBuf[2*j], 1+sendBuf[2*j+1]);
+      nalu_hypre_fprintf(logFile, "SUBG  %i, %i\n", 1+sendBuf[2*j], 1+sendBuf[2*j+1]);
     }
     fflush(logFile);
   }
@@ -695,9 +695,9 @@ void SubdomainGraph_dhExchangePerms(SubdomainGraph_dh s)
 /* for (i=0; i<nz; ++i) recvBuf[i] = -10; */
 
   /* perform sends and receives */
-  recv_req = (hypre_MPI_Request*)MALLOC_DH(naborCount*sizeof(hypre_MPI_Request)); CHECK_V_ERROR;
-  send_req = (hypre_MPI_Request*)MALLOC_DH(naborCount*sizeof(hypre_MPI_Request)); CHECK_V_ERROR;
-  status = (hypre_MPI_Status*)MALLOC_DH(naborCount*sizeof(hypre_MPI_Status)); CHECK_V_ERROR;
+  recv_req = (nalu_hypre_MPI_Request*)MALLOC_DH(naborCount*sizeof(nalu_hypre_MPI_Request)); CHECK_V_ERROR;
+  send_req = (nalu_hypre_MPI_Request*)MALLOC_DH(naborCount*sizeof(nalu_hypre_MPI_Request)); CHECK_V_ERROR;
+  status = (nalu_hypre_MPI_Status*)MALLOC_DH(naborCount*sizeof(nalu_hypre_MPI_Status)); CHECK_V_ERROR;
 
   for (i=0; i<naborCount; ++i) {
     NALU_HYPRE_Int nabr = nabors[i];
@@ -705,23 +705,23 @@ void SubdomainGraph_dhExchangePerms(SubdomainGraph_dh s)
     NALU_HYPRE_Int ct = 2*bdryNodeCounts[nabr];
 
 
-    hypre_MPI_Isend(sendBuf, 2*myBdryCount, NALU_HYPRE_MPI_INT, nabr, 444, comm_dh, &(send_req[i]));
+    nalu_hypre_MPI_Isend(sendBuf, 2*myBdryCount, NALU_HYPRE_MPI_INT, nabr, 444, comm_dh, &(send_req[i]));
 
     if (debug) {
-      hypre_fprintf(logFile , "SUBG   sending %i elts to %i\n", 2*myBdryCount, nabr);
+      nalu_hypre_fprintf(logFile , "SUBG   sending %i elts to %i\n", 2*myBdryCount, nabr);
       fflush(logFile);
     }
 
-    hypre_MPI_Irecv(buf, ct, NALU_HYPRE_MPI_INT, nabr, 444, comm_dh, &(recv_req[i]));
+    nalu_hypre_MPI_Irecv(buf, ct, NALU_HYPRE_MPI_INT, nabr, 444, comm_dh, &(recv_req[i]));
 
     if (debug) {
-      hypre_fprintf(logFile, "SUBG  receiving %i elts from %i\n", ct, nabr);
+      nalu_hypre_fprintf(logFile, "SUBG  receiving %i elts from %i\n", ct, nabr);
       fflush(logFile);
     }
   }
 
-  hypre_MPI_Waitall(naborCount, send_req, status);
-  hypre_MPI_Waitall(naborCount, recv_req, status);
+  nalu_hypre_MPI_Waitall(naborCount, send_req, status);
+  nalu_hypre_MPI_Waitall(naborCount, recv_req, status);
 
   Hash_i_dhCreate(&n2o_table, nz/2); CHECK_V_ERROR;
   Hash_i_dhCreate(&o2n_table, nz/2); CHECK_V_ERROR;
@@ -734,7 +734,7 @@ void SubdomainGraph_dhExchangePerms(SubdomainGraph_dh s)
     NALU_HYPRE_Int newV = recvBuf[i+1];
 
     if (debug) {
-      hypre_fprintf(logFile, "SUBG  i= %i  old= %i  newV= %i\n", i, old+1, newV+1);
+      nalu_hypre_fprintf(logFile, "SUBG  i= %i  old= %i  newV= %i\n", i, old+1, newV+1);
       fflush(logFile);
     }
 
@@ -763,21 +763,21 @@ void form_subdomaingraph_mpi_private(SubdomainGraph_dh s)
   NALU_HYPRE_Int *nabors = s->allNabors, nct = s->allCount;
   NALU_HYPRE_Int *idxAll = NULL;
   NALU_HYPRE_Int i, j, nz, *adj, *ptrs = s->ptrs;
-  hypre_MPI_Request *recvReqs = NULL, sendReq;
-  hypre_MPI_Status *statuses = NULL, status;
+  nalu_hypre_MPI_Request *recvReqs = NULL, sendReq;
+  nalu_hypre_MPI_Status *statuses = NULL, status;
 
   /* all processors tell root how many nabors they have */
   if (myid_dh == 0) {
     idxAll = (NALU_HYPRE_Int*)MALLOC_DH(np_dh*sizeof(NALU_HYPRE_Int)); CHECK_V_ERROR;
   }
-  hypre_MPI_Gather(&nct, 1, NALU_HYPRE_MPI_INT, idxAll, 1, NALU_HYPRE_MPI_INT, 0, comm_dh);
+  nalu_hypre_MPI_Gather(&nct, 1, NALU_HYPRE_MPI_INT, idxAll, 1, NALU_HYPRE_MPI_INT, 0, comm_dh);
 
   /* root counts edges in graph, and broacasts to all */
   if (myid_dh == 0) {
     nz = 0;
     for (i=0; i<np_dh; ++i) nz += idxAll[i];
   }
-  hypre_MPI_Bcast(&nz, 1, NALU_HYPRE_MPI_INT, 0, comm_dh);
+  nalu_hypre_MPI_Bcast(&nz, 1, NALU_HYPRE_MPI_INT, 0, comm_dh);
 
   /* allocate space for adjacency lists (memory for the
      pointer array was previously allocated)
@@ -786,8 +786,8 @@ void form_subdomaingraph_mpi_private(SubdomainGraph_dh s)
 
   /* root receives adjacency lists from all processors */
   if (myid_dh == 0) {
-    recvReqs = (hypre_MPI_Request*)MALLOC_DH(np_dh*sizeof(hypre_MPI_Request)); CHECK_V_ERROR;
-    statuses = (hypre_MPI_Status*)MALLOC_DH(np_dh*sizeof(hypre_MPI_Status)); CHECK_V_ERROR;
+    recvReqs = (nalu_hypre_MPI_Request*)MALLOC_DH(np_dh*sizeof(nalu_hypre_MPI_Request)); CHECK_V_ERROR;
+    statuses = (nalu_hypre_MPI_Status*)MALLOC_DH(np_dh*sizeof(nalu_hypre_MPI_Status)); CHECK_V_ERROR;
 
     /* first, set up row pointer array */
     ptrs[0] = 0;
@@ -797,22 +797,22 @@ void form_subdomaingraph_mpi_private(SubdomainGraph_dh s)
     for (j=0; j<np_dh; ++j) {
       NALU_HYPRE_Int ct = idxAll[j];
 
-      hypre_MPI_Irecv(adj+ptrs[j], ct, NALU_HYPRE_MPI_INT, j, 42, comm_dh, recvReqs+j);
+      nalu_hypre_MPI_Irecv(adj+ptrs[j], ct, NALU_HYPRE_MPI_INT, j, 42, comm_dh, recvReqs+j);
     }
   }
 
   /* all processors send root their adjacency list */
-  hypre_MPI_Isend(nabors, nct, NALU_HYPRE_MPI_INT, 0, 42, comm_dh, &sendReq);
+  nalu_hypre_MPI_Isend(nabors, nct, NALU_HYPRE_MPI_INT, 0, 42, comm_dh, &sendReq);
 
   /* wait for comms to go through */
   if (myid_dh == 0) {
-    hypre_MPI_Waitall(np_dh, recvReqs, statuses);
+    nalu_hypre_MPI_Waitall(np_dh, recvReqs, statuses);
   }
-  hypre_MPI_Wait(&sendReq, &status);
+  nalu_hypre_MPI_Wait(&sendReq, &status);
 
   /* root broadcasts assembled subdomain graph to all processors */
-  hypre_MPI_Bcast(ptrs, 1+np_dh, NALU_HYPRE_MPI_INT, 0, comm_dh);
-  hypre_MPI_Bcast(adj, nz, NALU_HYPRE_MPI_INT, 0, comm_dh);
+  nalu_hypre_MPI_Bcast(ptrs, 1+np_dh, NALU_HYPRE_MPI_INT, 0, comm_dh);
+  nalu_hypre_MPI_Bcast(adj, nz, NALU_HYPRE_MPI_INT, 0, comm_dh);
 
   if (idxAll != NULL) { FREE_DH(idxAll); CHECK_V_ERROR; }
   if (recvReqs != NULL) { FREE_DH(recvReqs); CHECK_V_ERROR; }
@@ -914,7 +914,7 @@ void find_all_neighbors_sym_private(SubdomainGraph_dh s, NALU_HYPRE_Int m, void 
   }
   s->allCount = ct;
 
-/* hypre_fprintf(logFile, "@@@@@ allCount= %i\n", ct); */
+/* nalu_hypre_fprintf(logFile, "@@@@@ allCount= %i\n", ct); */
 
   if (marker != NULL) { FREE_DH(marker); CHECK_V_ERROR; }
   END_FUNC_DH
@@ -979,15 +979,15 @@ void find_all_neighbors_unsym_private(SubdomainGraph_dh s, NALU_HYPRE_Int m, voi
   -dah 1/31/06
   */
 
-/* hypre_fprintf(stderr, "[%i] marker: ", myid_dh);
+/* nalu_hypre_fprintf(stderr, "[%i] marker: ", myid_dh);
 for (j=0; j<np_dh; j++) {
-  hypre_fprintf(stderr, "[%i] (j=%d) %d\n", myid_dh, j,  marker[j]);
+  nalu_hypre_fprintf(stderr, "[%i] (j=%d) %d\n", myid_dh, j,  marker[j]);
 }
-hypre_fprintf(stderr, "\n");
+nalu_hypre_fprintf(stderr, "\n");
 */
 
   /* find out who my neighbors are that I cannot discern locally */
-  hypre_MPI_Alltoall(marker, 1, NALU_HYPRE_MPI_INT, nabors, 1, NALU_HYPRE_MPI_INT, comm_dh); CHECK_V_ERROR;
+  nalu_hypre_MPI_Alltoall(marker, 1, NALU_HYPRE_MPI_INT, nabors, 1, NALU_HYPRE_MPI_INT, comm_dh); CHECK_V_ERROR;
 
   /* add in neighbors that I know about from scanning my adjacency lists */
   for (i=0; i<idx; ++i) nabors[myNabors[i]] = 1;
@@ -1007,7 +1007,7 @@ hypre_fprintf(stderr, "\n");
     if (nabors[i]) myNabors[nz++] = i;
   }
   s->allCount = nz;
-  hypre_TMemcpy(nabors,  myNabors, NALU_HYPRE_Int, nz, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_HOST);
+  nalu_hypre_TMemcpy(nabors,  myNabors, NALU_HYPRE_Int, nz, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_HOST);
 
   if (marker != NULL) { FREE_DH(marker); CHECK_V_ERROR; }
   if (myNabors != NULL) { FREE_DH(myNabors); CHECK_V_ERROR; }
@@ -1077,8 +1077,8 @@ void find_bdry_nodes_unsym_private(SubdomainGraph_dh s, NALU_HYPRE_Int m, void* 
   NALU_HYPRE_Int *marker, inCt, bdCt;
   NALU_HYPRE_Int *bdryNodes, nz;
   NALU_HYPRE_Int sendCt, recvCt;
-  hypre_MPI_Request *sendReq, *recvReq;
-  hypre_MPI_Status *status;
+  nalu_hypre_MPI_Request *sendReq, *recvReq;
+  nalu_hypre_MPI_Status *status;
   SortedSet_dh ss;
 
   SortedSet_dhCreate(&ss, m); CHECK_V_ERROR;
@@ -1140,7 +1140,7 @@ void find_bdry_nodes_unsym_private(SubdomainGraph_dh s, NALU_HYPRE_Int m, void* 
    * processors tell each other how much information
    * each will send to whom
    *-----------------------------------------------------*/
-  hypre_MPI_Alltoall(sendBuf, 1, NALU_HYPRE_MPI_INT, recvBuf, 1, NALU_HYPRE_MPI_INT, comm_dh); CHECK_V_ERROR;
+  nalu_hypre_MPI_Alltoall(sendBuf, 1, NALU_HYPRE_MPI_INT, recvBuf, 1, NALU_HYPRE_MPI_INT, comm_dh); CHECK_V_ERROR;
 
   /*-----------------------------------------------------
    * exchange boundary node information
@@ -1160,16 +1160,16 @@ void find_bdry_nodes_unsym_private(SubdomainGraph_dh s, NALU_HYPRE_Int m, void* 
     }
   }
   bdryNodes = (NALU_HYPRE_Int*)MALLOC_DH(nz*sizeof(NALU_HYPRE_Int)); CHECK_V_ERROR;
-  sendReq = (hypre_MPI_Request*)MALLOC_DH(sendCt*sizeof(hypre_MPI_Request)); CHECK_V_ERROR;
-  recvReq = (hypre_MPI_Request*)MALLOC_DH(recvCt*sizeof(hypre_MPI_Request)); CHECK_V_ERROR;
+  sendReq = (nalu_hypre_MPI_Request*)MALLOC_DH(sendCt*sizeof(nalu_hypre_MPI_Request)); CHECK_V_ERROR;
+  recvReq = (nalu_hypre_MPI_Request*)MALLOC_DH(recvCt*sizeof(nalu_hypre_MPI_Request)); CHECK_V_ERROR;
   max = MAX(sendCt, recvCt);
-  status = (hypre_MPI_Status*)MALLOC_DH(max*sizeof(hypre_MPI_Status)); CHECK_V_ERROR;
+  status = (nalu_hypre_MPI_Status*)MALLOC_DH(max*sizeof(nalu_hypre_MPI_Status)); CHECK_V_ERROR;
 
   /* second, start receives for incoming data */
   j = 0;
   for (i=0; i<np_dh; ++i) {
     if (recvBuf[i]) {
-      hypre_MPI_Irecv(bdryNodes+rpIN[j], recvBuf[i], NALU_HYPRE_MPI_INT,
+      nalu_hypre_MPI_Irecv(bdryNodes+rpIN[j], recvBuf[i], NALU_HYPRE_MPI_INT,
                 i, BDRY_NODE_TAG, comm_dh, recvReq+j);
       ++j;
     }
@@ -1179,15 +1179,15 @@ void find_bdry_nodes_unsym_private(SubdomainGraph_dh s, NALU_HYPRE_Int m, void* 
   j = 0;
   for (i=0; i<np_dh; ++i) {
     if (sendBuf[i]) {
-      hypre_MPI_Isend(list+rpOUT[j], sendBuf[i], NALU_HYPRE_MPI_INT,
+      nalu_hypre_MPI_Isend(list+rpOUT[j], sendBuf[i], NALU_HYPRE_MPI_INT,
                 i, BDRY_NODE_TAG, comm_dh, sendReq+j);
       ++j;
     }
   }
 
   /* fourth, wait for all comms to finish */
-  hypre_MPI_Waitall(sendCt, sendReq, status);
-  hypre_MPI_Waitall(recvCt, recvReq, status);
+  nalu_hypre_MPI_Waitall(sendCt, sendReq, status);
+  nalu_hypre_MPI_Waitall(recvCt, recvReq, status);
 
   /* fifth, convert from global to local indices */
   for (i=0; i<nz; ++i) bdryNodes[i] -= beg_row;
@@ -1370,83 +1370,83 @@ void SubdomainGraph_dhDump(SubdomainGraph_dh s, char *filename)
   fp=openFile_dh(filename, "w"); CHECK_V_ERROR;
 
   /* write subdomain ordering permutations */
-  hypre_fprintf(fp, "----- colors used\n");
-  hypre_fprintf(fp, "%i\n", s->colors);
+  nalu_hypre_fprintf(fp, "----- colors used\n");
+  nalu_hypre_fprintf(fp, "%i\n", s->colors);
   if (s->colorVec == NULL) {
-    hypre_fprintf(fp, "s->colorVec == NULL\n");
+    nalu_hypre_fprintf(fp, "s->colorVec == NULL\n");
   } else {
-    hypre_fprintf(fp, "----- colorVec\n");
+    nalu_hypre_fprintf(fp, "----- colorVec\n");
     for (i=0; i<sCt; ++i) {
-      hypre_fprintf(fp, "%i ", s->colorVec[i]);
+      nalu_hypre_fprintf(fp, "%i ", s->colorVec[i]);
     }
-    hypre_fprintf(fp, "\n");
+    nalu_hypre_fprintf(fp, "\n");
   }
 
   if (s->o2n_sub == NULL || s->o2n_sub == NULL) {
-    hypre_fprintf(fp, "s->o2n_sub == NULL || s->o2n_sub == NULL\n");
+    nalu_hypre_fprintf(fp, "s->o2n_sub == NULL || s->o2n_sub == NULL\n");
   } else {
-    hypre_fprintf(fp, "----- o2n_sub\n");
+    nalu_hypre_fprintf(fp, "----- o2n_sub\n");
     for (i=0; i<sCt; ++i) {
-      hypre_fprintf(fp, "%i ", s->o2n_sub[i]);
+      nalu_hypre_fprintf(fp, "%i ", s->o2n_sub[i]);
     }
-    hypre_fprintf(fp, "\n");
-    hypre_fprintf(fp, "----- n2o_sub\n");
+    nalu_hypre_fprintf(fp, "\n");
+    nalu_hypre_fprintf(fp, "----- n2o_sub\n");
     for (i=0; i<sCt; ++i) {
-      hypre_fprintf(fp, "%i ", s->n2o_sub[i]);
+      nalu_hypre_fprintf(fp, "%i ", s->n2o_sub[i]);
     }
-    hypre_fprintf(fp, "\n");
+    nalu_hypre_fprintf(fp, "\n");
   }
 
   /* write begin row arrays */
   if (s->beg_row == NULL || s->beg_rowP == NULL) {
-    hypre_fprintf(fp, "s->beg_row == NULL || s->beg_rowP == NULL\n");
+    nalu_hypre_fprintf(fp, "s->beg_row == NULL || s->beg_rowP == NULL\n");
   } else {
-    hypre_fprintf(fp, "----- beg_row\n");
+    nalu_hypre_fprintf(fp, "----- beg_row\n");
     for (i=0; i<sCt; ++i) {
-      hypre_fprintf(fp, "%i ", 1+s->beg_row[i]);
+      nalu_hypre_fprintf(fp, "%i ", 1+s->beg_row[i]);
     }
-    hypre_fprintf(fp, "\n");
-    hypre_fprintf(fp, "----- beg_rowP\n");
+    nalu_hypre_fprintf(fp, "\n");
+    nalu_hypre_fprintf(fp, "----- beg_rowP\n");
     for (i=0; i<sCt; ++i) {
-      hypre_fprintf(fp, "%i ", 1+s->beg_rowP[i]);
+      nalu_hypre_fprintf(fp, "%i ", 1+s->beg_rowP[i]);
     }
-    hypre_fprintf(fp, "\n");
+    nalu_hypre_fprintf(fp, "\n");
   }
 
   /* write row count  and bdry count arrays */
   if (s->row_count == NULL || s->bdry_count == NULL) {
-    hypre_fprintf(fp, "s->row_count == NULL || s->bdry_count == NULL\n");
+    nalu_hypre_fprintf(fp, "s->row_count == NULL || s->bdry_count == NULL\n");
   } else {
-    hypre_fprintf(fp, "----- row_count\n");
+    nalu_hypre_fprintf(fp, "----- row_count\n");
     for (i=0; i<sCt; ++i) {
-      hypre_fprintf(fp, "%i ", s->row_count[i]);
+      nalu_hypre_fprintf(fp, "%i ", s->row_count[i]);
     }
-    hypre_fprintf(fp, "\n");
-    hypre_fprintf(fp, "----- bdry_count\n");
+    nalu_hypre_fprintf(fp, "\n");
+    nalu_hypre_fprintf(fp, "----- bdry_count\n");
     for (i=0; i<sCt; ++i) {
-      hypre_fprintf(fp, "%i ", s->bdry_count[i]);
+      nalu_hypre_fprintf(fp, "%i ", s->bdry_count[i]);
     }
-    hypre_fprintf(fp, "\n");
+    nalu_hypre_fprintf(fp, "\n");
 
   }
 
   /* write subdomain graph */
   if (s->ptrs == NULL || s->adj == NULL) {
-    hypre_fprintf(fp, "s->ptrs == NULL || s->adj == NULL\n");
+    nalu_hypre_fprintf(fp, "s->ptrs == NULL || s->adj == NULL\n");
   } else {
     NALU_HYPRE_Int j;
     NALU_HYPRE_Int ct;
-    hypre_fprintf(fp, "----- subdomain graph\n");
+    nalu_hypre_fprintf(fp, "----- subdomain graph\n");
     for (i=0; i<sCt; ++i) {
-      hypre_fprintf(fp, "%i :: ", i);
+      nalu_hypre_fprintf(fp, "%i :: ", i);
       ct = s->ptrs[i+1] - s->ptrs[i];
       if (ct) {
         shellSort_int(ct, s->adj+s->ptrs[i]); CHECK_V_ERROR;
       }
       for (j=s->ptrs[i]; j<s->ptrs[i+1]; ++j) {
-        hypre_fprintf(fp, "%i ", s->adj[j]);
+        nalu_hypre_fprintf(fp, "%i ", s->adj[j]);
       }
-      hypre_fprintf(fp, "\n");
+      nalu_hypre_fprintf(fp, "\n");
     }
   }
   closeFile_dh(fp); CHECK_V_ERROR;
@@ -1471,13 +1471,13 @@ void SubdomainGraph_dhDump(SubdomainGraph_dh s, char *filename)
 
     /* write n2o_row  and o2n_col */
     if (s->n2o_row == NULL|| s->o2n_col == NULL) {
-      hypre_fprintf(fp, "s->n2o_row == NULL|| s->o2n_col == NULL\n");
+      nalu_hypre_fprintf(fp, "s->n2o_row == NULL|| s->o2n_col == NULL\n");
     } else {
-      hypre_fprintf(fp, "----- n2o_row\n");
+      nalu_hypre_fprintf(fp, "----- n2o_row\n");
       for (i=0; i<s->m; ++i) {
-        hypre_fprintf(fp, "%i ", 1+s->n2o_row[i]);
+        nalu_hypre_fprintf(fp, "%i ", 1+s->n2o_row[i]);
       }
-      hypre_fprintf(fp, "\n");
+      nalu_hypre_fprintf(fp, "\n");
 
 #if 0
 /*
@@ -1486,17 +1486,17 @@ note: this won't match the parallel case, since
       local
 */
 
-      hypre_fprintf(fp, "----- o2n_col\n");
+      nalu_hypre_fprintf(fp, "----- o2n_col\n");
       for (i=0; i<sCt; ++i) {
         NALU_HYPRE_Int br = s->beg_row[i];
         NALU_HYPRE_Int er = br + s->row_count[i];
 
         for (j=br; j<er; ++j) {
-          hypre_fprintf(fp, "%i ", 1+s->o2n_col[j]);
+          nalu_hypre_fprintf(fp, "%i ", 1+s->o2n_col[j]);
         }
-        hypre_fprintf(fp, "\n");
+        nalu_hypre_fprintf(fp, "\n");
       }
-      hypre_fprintf(fp, "\n");
+      nalu_hypre_fprintf(fp, "\n");
 
 #endif
 
@@ -1514,15 +1514,15 @@ note: this won't match the parallel case, since
 
     /* write n2o_row */
     for (pe=0; pe<np_dh; ++pe) {
-      hypre_MPI_Barrier(comm_dh);
+      nalu_hypre_MPI_Barrier(comm_dh);
       if (id == pe) {
         fp=openFile_dh(filename, "a"); CHECK_V_ERROR;
-        if (id == 0) hypre_fprintf(fp, "----- n2o_row\n");
+        if (id == 0) nalu_hypre_fprintf(fp, "----- n2o_row\n");
 
         for (i=0; i<m; ++i) {
-          hypre_fprintf(fp, "%i ", 1+s->n2o_row[i]+beg_row);
+          nalu_hypre_fprintf(fp, "%i ", 1+s->n2o_row[i]+beg_row);
         }
-        if (id == np_dh - 1) hypre_fprintf(fp, "\n");
+        if (id == np_dh - 1) nalu_hypre_fprintf(fp, "\n");
         closeFile_dh(fp); CHECK_V_ERROR;
       }
     }
@@ -1531,17 +1531,17 @@ note: this won't match the parallel case, since
 
     /* write o2n_col */
     for (pe=0; pe<np_dh; ++pe) {
-      hypre_MPI_Barrier(comm_dh);
+      nalu_hypre_MPI_Barrier(comm_dh);
       if (myid_dh == pe) {
         fp=openFile_dh(filename, "a"); CHECK_V_ERROR;
-        if (myid_dh == 0) hypre_fprintf(fp, "----- o2n_col\n");
+        if (myid_dh == 0) nalu_hypre_fprintf(fp, "----- o2n_col\n");
 
         for (i=0; i<m; ++i) {
-          hypre_fprintf(fp, "%i ", 1+s->o2n_col[i]+beg_row);
+          nalu_hypre_fprintf(fp, "%i ", 1+s->o2n_col[i]+beg_row);
         }
-        hypre_fprintf(fp, "\n");
+        nalu_hypre_fprintf(fp, "\n");
 
-        if (myid_dh == np_dh - 1) hypre_fprintf(fp, "\n");
+        if (myid_dh == np_dh - 1) nalu_hypre_fprintf(fp, "\n");
 
         closeFile_dh(fp); CHECK_V_ERROR;
       }
@@ -1638,28 +1638,28 @@ void SubdomainGraph_dhPrintSubdomainGraph(SubdomainGraph_dh s, FILE *fp)
   if (myid_dh == 0) {
     NALU_HYPRE_Int i, j;
 
-    hypre_fprintf(fp, "\n-----------------------------------------------------\n");
-    hypre_fprintf(fp, "SubdomainGraph, and coloring and ordering information\n");
-    hypre_fprintf(fp, "-----------------------------------------------------\n");
-    hypre_fprintf(fp, "colors used: %i\n", s->colors);
+    nalu_hypre_fprintf(fp, "\n-----------------------------------------------------\n");
+    nalu_hypre_fprintf(fp, "SubdomainGraph, and coloring and ordering information\n");
+    nalu_hypre_fprintf(fp, "-----------------------------------------------------\n");
+    nalu_hypre_fprintf(fp, "colors used: %i\n", s->colors);
 
-    hypre_fprintf(fp, "o2n ordering vector: ");
-    for (i=0; i<s->blocks; ++i) hypre_fprintf(fp, "%i ", s->o2n_sub[i]);
+    nalu_hypre_fprintf(fp, "o2n ordering vector: ");
+    for (i=0; i<s->blocks; ++i) nalu_hypre_fprintf(fp, "%i ", s->o2n_sub[i]);
 
-    hypre_fprintf(fp, "\ncoloring vector (node, color): \n");
-    for (i=0; i<s->blocks; ++i) hypre_fprintf(fp, "  %i, %i\n", i, s->colorVec[i]);
+    nalu_hypre_fprintf(fp, "\ncoloring vector (node, color): \n");
+    for (i=0; i<s->blocks; ++i) nalu_hypre_fprintf(fp, "  %i, %i\n", i, s->colorVec[i]);
 
-    hypre_fprintf(fp, "\n");
-    hypre_fprintf(fp, "Adjacency lists:\n");
+    nalu_hypre_fprintf(fp, "\n");
+    nalu_hypre_fprintf(fp, "Adjacency lists:\n");
 
     for (i=0; i<s->blocks; ++i) {
-      hypre_fprintf(fp, "   P_%i :: ", i);
+      nalu_hypre_fprintf(fp, "   P_%i :: ", i);
       for (j=s->ptrs[i]; j<s->ptrs[i+1]; ++j) {
-        hypre_fprintf(fp, "%i ", s->adj[j]);
+        nalu_hypre_fprintf(fp, "%i ", s->adj[j]);
       }
-      hypre_fprintf(fp, "\n");
+      nalu_hypre_fprintf(fp, "\n");
     }
-    hypre_fprintf(fp, "-----------------------------------------------------\n");
+    nalu_hypre_fprintf(fp, "-----------------------------------------------------\n");
   }
   END_FUNC_DH
 }
@@ -1697,9 +1697,9 @@ void SubdomainGraph_dhPrintRatios(SubdomainGraph_dh s, FILE *fp)
     if (np_dh == 1) blocks = s->blocks;
     if (blocks > 25) blocks = 25;
 
-    hypre_fprintf(fp, "\n");
-    hypre_fprintf(fp, "Subdomain interior/boundary node ratios\n");
-    hypre_fprintf(fp, "---------------------------------------\n");
+    nalu_hypre_fprintf(fp, "\n");
+    nalu_hypre_fprintf(fp, "Subdomain interior/boundary node ratios\n");
+    nalu_hypre_fprintf(fp, "---------------------------------------\n");
 
     /* compute ratios */
     for (i=0; i<blocks; ++i) {
@@ -1717,24 +1717,24 @@ void SubdomainGraph_dhPrintRatios(SubdomainGraph_dh s, FILE *fp)
     if (blocks <= 20) {  /* print all ratios */
       NALU_HYPRE_Int j = 0;
       for (i=0; i<blocks; ++i) {
-        hypre_fprintf(fp, "%0.2g  ", ratio[i]);
+        nalu_hypre_fprintf(fp, "%0.2g  ", ratio[i]);
         ++j;
-        if (j == 10) { hypre_fprintf(fp, "\n"); }
+        if (j == 10) { nalu_hypre_fprintf(fp, "\n"); }
       }
-      hypre_fprintf(fp, "\n");
+      nalu_hypre_fprintf(fp, "\n");
     }
     else {  /* print 10 largest and 10 smallest ratios */
-      hypre_fprintf(fp, "10 smallest ratios: ");
+      nalu_hypre_fprintf(fp, "10 smallest ratios: ");
       for (i=0; i<10; ++i) {
-        hypre_fprintf(fp, "%0.2g  ", ratio[i]);
+        nalu_hypre_fprintf(fp, "%0.2g  ", ratio[i]);
       }
-      hypre_fprintf(fp, "\n");
-      hypre_fprintf(fp, "10 largest ratios:  ");
+      nalu_hypre_fprintf(fp, "\n");
+      nalu_hypre_fprintf(fp, "10 largest ratios:  ");
       { NALU_HYPRE_Int start = blocks-6, stop = blocks-1;
       for (i=start; i < stop; ++i) {
-        hypre_fprintf(fp, "%0.2g  ", ratio[i]);
+        nalu_hypre_fprintf(fp, "%0.2g  ", ratio[i]);
       }
-      hypre_fprintf(fp, "\n");
+      nalu_hypre_fprintf(fp, "\n");
     }
   }
  }

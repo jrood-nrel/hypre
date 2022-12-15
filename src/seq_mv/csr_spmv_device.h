@@ -5,8 +5,8 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#ifndef hypre_CSR_SPMV_DEVICE_H
-#define hypre_CSR_SPMV_DEVICE_H
+#ifndef nalu_hypre_CSR_SPMV_DEVICE_H
+#define nalu_hypre_CSR_SPMV_DEVICE_H
 
 #define NALU_HYPRE_SPMV_BLOCKDIM 512
 #define NALU_HYPRE_SPMV_VERSION 1

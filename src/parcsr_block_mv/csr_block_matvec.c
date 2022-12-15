@@ -7,7 +7,7 @@
 
 /******************************************************************************
  *
- * Matvec functions for hypre_CSRBlockMatrix class.
+ * Matvec functions for nalu_hypre_CSRBlockMatrix class.
  *
  *****************************************************************************/
 
@@ -15,24 +15,24 @@
 #include "../seq_mv/seq_mv.h"
 
 /*--------------------------------------------------------------------------
- * hypre_CSRBlockMatrixMatvec
+ * nalu_hypre_CSRBlockMatrixMatvec
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_CSRBlockMatrixMatvec(NALU_HYPRE_Complex alpha, hypre_CSRBlockMatrix *A,
-                           hypre_Vector *x, NALU_HYPRE_Complex beta, hypre_Vector *y)
+nalu_hypre_CSRBlockMatrixMatvec(NALU_HYPRE_Complex alpha, nalu_hypre_CSRBlockMatrix *A,
+                           nalu_hypre_Vector *x, NALU_HYPRE_Complex beta, nalu_hypre_Vector *y)
 {
-   NALU_HYPRE_Complex    *A_data   = hypre_CSRBlockMatrixData(A);
-   NALU_HYPRE_Int        *A_i      = hypre_CSRBlockMatrixI(A);
-   NALU_HYPRE_Int        *A_j      = hypre_CSRBlockMatrixJ(A);
-   NALU_HYPRE_Int         num_rows = hypre_CSRBlockMatrixNumRows(A);
-   NALU_HYPRE_Int         num_cols = hypre_CSRBlockMatrixNumCols(A);
-   NALU_HYPRE_Int         blk_size = hypre_CSRBlockMatrixBlockSize(A);
+   NALU_HYPRE_Complex    *A_data   = nalu_hypre_CSRBlockMatrixData(A);
+   NALU_HYPRE_Int        *A_i      = nalu_hypre_CSRBlockMatrixI(A);
+   NALU_HYPRE_Int        *A_j      = nalu_hypre_CSRBlockMatrixJ(A);
+   NALU_HYPRE_Int         num_rows = nalu_hypre_CSRBlockMatrixNumRows(A);
+   NALU_HYPRE_Int         num_cols = nalu_hypre_CSRBlockMatrixNumCols(A);
+   NALU_HYPRE_Int         blk_size = nalu_hypre_CSRBlockMatrixBlockSize(A);
 
-   NALU_HYPRE_Complex    *x_data = hypre_VectorData(x);
-   NALU_HYPRE_Complex    *y_data = hypre_VectorData(y);
-   NALU_HYPRE_Int         x_size = hypre_VectorSize(x);
-   NALU_HYPRE_Int         y_size = hypre_VectorSize(y);
+   NALU_HYPRE_Complex    *x_data = nalu_hypre_VectorData(x);
+   NALU_HYPRE_Complex    *y_data = nalu_hypre_VectorData(y);
+   NALU_HYPRE_Int         x_size = nalu_hypre_VectorSize(x);
+   NALU_HYPRE_Int         y_size = nalu_hypre_VectorSize(y);
 
    NALU_HYPRE_Int         i, b1, b2, jj, bnnz = blk_size * blk_size;
    NALU_HYPRE_Int         ierr = 0;
@@ -141,30 +141,30 @@ hypre_CSRBlockMatrixMatvec(NALU_HYPRE_Complex alpha, hypre_CSRBlockMatrix *A,
 
 
 /*--------------------------------------------------------------------------
- * hypre_CSRBlockMatrixMatvecT
+ * nalu_hypre_CSRBlockMatrixMatvecT
  *
  *   Performs y <- alpha * A^T * x + beta * y
  *
- *   From Van Henson's modification of hypre_CSRMatrixMatvec.
+ *   From Van Henson's modification of nalu_hypre_CSRMatrixMatvec.
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_CSRBlockMatrixMatvecT( NALU_HYPRE_Complex         alpha,
-                             hypre_CSRBlockMatrix *A,
-                             hypre_Vector         *x,
+nalu_hypre_CSRBlockMatrixMatvecT( NALU_HYPRE_Complex         alpha,
+                             nalu_hypre_CSRBlockMatrix *A,
+                             nalu_hypre_Vector         *x,
                              NALU_HYPRE_Complex         beta,
-                             hypre_Vector          *y     )
+                             nalu_hypre_Vector          *y     )
 {
-   NALU_HYPRE_Complex    *A_data    = hypre_CSRBlockMatrixData(A);
-   NALU_HYPRE_Int        *A_i       = hypre_CSRBlockMatrixI(A);
-   NALU_HYPRE_Int        *A_j       = hypre_CSRBlockMatrixJ(A);
-   NALU_HYPRE_Int         num_rows  = hypre_CSRBlockMatrixNumRows(A);
-   NALU_HYPRE_Int         num_cols  = hypre_CSRBlockMatrixNumCols(A);
+   NALU_HYPRE_Complex    *A_data    = nalu_hypre_CSRBlockMatrixData(A);
+   NALU_HYPRE_Int        *A_i       = nalu_hypre_CSRBlockMatrixI(A);
+   NALU_HYPRE_Int        *A_j       = nalu_hypre_CSRBlockMatrixJ(A);
+   NALU_HYPRE_Int         num_rows  = nalu_hypre_CSRBlockMatrixNumRows(A);
+   NALU_HYPRE_Int         num_cols  = nalu_hypre_CSRBlockMatrixNumCols(A);
 
-   NALU_HYPRE_Complex    *x_data = hypre_VectorData(x);
-   NALU_HYPRE_Complex    *y_data = hypre_VectorData(y);
-   NALU_HYPRE_Int         x_size = hypre_VectorSize(x);
-   NALU_HYPRE_Int         y_size = hypre_VectorSize(y);
+   NALU_HYPRE_Complex    *x_data = nalu_hypre_VectorData(x);
+   NALU_HYPRE_Complex    *y_data = nalu_hypre_VectorData(y);
+   NALU_HYPRE_Int         x_size = nalu_hypre_VectorSize(x);
+   NALU_HYPRE_Int         y_size = nalu_hypre_VectorSize(y);
 
    NALU_HYPRE_Complex     temp;
 
@@ -172,7 +172,7 @@ hypre_CSRBlockMatrixMatvecT( NALU_HYPRE_Complex         alpha,
    NALU_HYPRE_Int         ierr  = 0;
    NALU_HYPRE_Int         b1, b2;
 
-   NALU_HYPRE_Int         blk_size = hypre_CSRBlockMatrixBlockSize(A);
+   NALU_HYPRE_Int         blk_size = nalu_hypre_CSRBlockMatrixBlockSize(A);
    NALU_HYPRE_Int         bnnz = blk_size * blk_size;
 
    /*---------------------------------------------------------------------

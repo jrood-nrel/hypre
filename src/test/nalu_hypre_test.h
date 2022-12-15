@@ -16,7 +16,7 @@
 #include <math.h>
 
 #include "NALU_HYPRE_krylov.h"
-#include "_hypre_utilities.h"
+#include "_nalu_hypre_utilities.h"
 #include "NALU_HYPRE.h"
 #include "NALU_HYPRE_parcsr_ls.h"
 #include "NALU_HYPRE_struct_ls.h"
@@ -46,12 +46,12 @@
 /****************************************************************************
  * Prototypes for testing routines
  ***************************************************************************/
-NALU_HYPRE_Int hypre_set_precond(NALU_HYPRE_Int matrix_id, NALU_HYPRE_Int solver_id, NALU_HYPRE_Int precond_id,
+NALU_HYPRE_Int nalu_hypre_set_precond(NALU_HYPRE_Int matrix_id, NALU_HYPRE_Int solver_id, NALU_HYPRE_Int precond_id,
                             void *solver, void *precond);
 
-NALU_HYPRE_Int hypre_set_precond_params(NALU_HYPRE_Int precond_id, void *precond);
+NALU_HYPRE_Int nalu_hypre_set_precond_params(NALU_HYPRE_Int precond_id, void *precond);
 
-NALU_HYPRE_Int hypre_destroy_precond(NALU_HYPRE_Int precond_id, void *precond);
+NALU_HYPRE_Int nalu_hypre_destroy_precond(NALU_HYPRE_Int precond_id, void *precond);
 
 /****************************************************************************
  * Variables for testing routines

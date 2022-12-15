@@ -8,7 +8,7 @@
 #ifndef __MLISFEI_H__
 #define __MLISFEI_H__
 
-#include "_hypre_utilities.h"
+#include "_nalu_hypre_utilities.h"
 #include "mli_febase.h"
 
 /****************************************************************************/ 

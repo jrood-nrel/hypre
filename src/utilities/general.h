@@ -11,41 +11,41 @@
  *
  *****************************************************************************/
 
-#ifndef hypre_GENERAL_HEADER
-#define hypre_GENERAL_HEADER
+#ifndef nalu_hypre_GENERAL_HEADER
+#define nalu_hypre_GENERAL_HEADER
 
 /* This allows us to consistently avoid 'int' throughout hypre */
-typedef int                    hypre_int;
-typedef long int               hypre_longint;
-typedef unsigned int           hypre_uint;
-typedef unsigned long int      hypre_ulongint;
-typedef unsigned long long int hypre_ulonglongint;
+typedef int                    nalu_hypre_int;
+typedef long int               nalu_hypre_longint;
+typedef unsigned int           nalu_hypre_uint;
+typedef unsigned long int      nalu_hypre_ulongint;
+typedef unsigned long long int nalu_hypre_ulonglongint;
 
 /* This allows us to consistently avoid 'double' throughout hypre */
-typedef double                 hypre_double;
+typedef double                 nalu_hypre_double;
 
 /*--------------------------------------------------------------------------
  * Define various functions
  *--------------------------------------------------------------------------*/
 
-#ifndef hypre_max
-#define hypre_max(a,b)  (((a)<(b)) ? (b) : (a))
+#ifndef nalu_hypre_max
+#define nalu_hypre_max(a,b)  (((a)<(b)) ? (b) : (a))
 #endif
-#ifndef hypre_min
-#define hypre_min(a,b)  (((a)<(b)) ? (a) : (b))
-#endif
-
-#ifndef hypre_abs
-#define hypre_abs(a)  (((a)>0) ? (a) : -(a))
+#ifndef nalu_hypre_min
+#define nalu_hypre_min(a,b)  (((a)<(b)) ? (a) : (b))
 #endif
 
-#ifndef hypre_round
-#define hypre_round(x)  ( ((x) < 0.0) ? ((NALU_HYPRE_Int)(x - 0.5)) : ((NALU_HYPRE_Int)(x + 0.5)) )
+#ifndef nalu_hypre_abs
+#define nalu_hypre_abs(a)  (((a)>0) ? (a) : -(a))
 #endif
 
-#ifndef hypre_pow2
-#define hypre_pow2(i)  ( 1 << (i) )
+#ifndef nalu_hypre_round
+#define nalu_hypre_round(x)  ( ((x) < 0.0) ? ((NALU_HYPRE_Int)(x - 0.5)) : ((NALU_HYPRE_Int)(x + 0.5)) )
 #endif
 
-#endif /* hypre_GENERAL_HEADER */
+#ifndef nalu_hypre_pow2
+#define nalu_hypre_pow2(i)  ( 1 << (i) )
+#endif
+
+#endif /* nalu_hypre_GENERAL_HEADER */
 

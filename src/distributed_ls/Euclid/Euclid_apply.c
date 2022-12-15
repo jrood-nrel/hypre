@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_Euclid.h"
+#include "_nalu_hypre_Euclid.h"
 /* #include "Euclid_dh.h" */
 /* #include "Mat_dh.h" */
 /* #include "Factor_dh.h" */
@@ -25,7 +25,7 @@ void Euclid_dhApply(Euclid_dh ctx, NALU_HYPRE_Real *rhs, NALU_HYPRE_Real *lhs)
   NALU_HYPRE_Real *rhs_, *lhs_;
   NALU_HYPRE_Real t1, t2;
 
-  t1 = hypre_MPI_Wtime();
+  t1 = nalu_hypre_MPI_Wtime();
 
   /* default settings; for everything except PILU */
   ctx->from = 0;
@@ -44,7 +44,7 @@ void Euclid_dhApply(Euclid_dh ctx, NALU_HYPRE_Real *rhs, NALU_HYPRE_Real *lhs)
   /* permute rhs vector */
   if (ctx->sg != NULL) {
 
-/* hypre_printf("@@@@@@@@@@@@@@@@@ permute_vec_n2o_private\n"); */
+/* nalu_hypre_printf("@@@@@@@@@@@@@@@@@ permute_vec_n2o_private\n"); */
 
     permute_vec_n2o_private(ctx, rhs, lhs); CHECK_V_ERROR;
     rhs_ = lhs;
@@ -57,7 +57,7 @@ void Euclid_dhApply(Euclid_dh ctx, NALU_HYPRE_Real *rhs, NALU_HYPRE_Real *lhs)
   /* scale rhs vector */
   if (ctx->isScaled) {
 
-/* hypre_printf("@@@@@@@@@@@@@@@@@ scale_rhs_private\n"); */
+/* nalu_hypre_printf("@@@@@@@@@@@@@@@@@ scale_rhs_private\n"); */
 
     scale_rhs_private(ctx, rhs_); CHECK_V_ERROR;
   }
@@ -92,7 +92,7 @@ void Euclid_dhApply(Euclid_dh ctx, NALU_HYPRE_Real *rhs, NALU_HYPRE_Real *lhs)
 
 END_OF_FUNCTION: ;
 
-  t2 = hypre_MPI_Wtime();
+  t2 = nalu_hypre_MPI_Wtime();
   /* collective timing for triangular solves */
   ctx->timing[TRI_SOLVE_T] += (t2 - t1); 
 

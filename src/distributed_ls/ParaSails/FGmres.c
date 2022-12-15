@@ -16,16 +16,16 @@
 #include "Common.h"
 #include "Matrix.h"
 #include "ParaSails.h"
-#include "_hypre_blas.h"
+#include "_nalu_hypre_blas.h"
 
 static NALU_HYPRE_Real InnerProd(NALU_HYPRE_Int n, NALU_HYPRE_Real *x, NALU_HYPRE_Real *y, MPI_Comm comm)
 {
     NALU_HYPRE_Real local_result, result;
 
     NALU_HYPRE_Int one = 1;
-    local_result = hypre_ddot(&n, x, &one, y, &one);
+    local_result = nalu_hypre_ddot(&n, x, &one, y, &one);
 
-    hypre_MPI_Allreduce(&local_result, &result, 1, hypre_MPI_REAL, hypre_MPI_SUM, comm);
+    nalu_hypre_MPI_Allreduce(&local_result, &result, 1, nalu_hypre_MPI_REAL, nalu_hypre_MPI_SUM, comm);
 
     return result;
 }
@@ -33,19 +33,19 @@ static NALU_HYPRE_Real InnerProd(NALU_HYPRE_Int n, NALU_HYPRE_Real *x, NALU_HYPR
 static void CopyVector(NALU_HYPRE_Int n, NALU_HYPRE_Real *x, NALU_HYPRE_Real *y)
 {
     NALU_HYPRE_Int one = 1;
-    hypre_dcopy(&n, x, &one, y, &one);
+    nalu_hypre_dcopy(&n, x, &one, y, &one);
 }
 
 static void ScaleVector(NALU_HYPRE_Int n, NALU_HYPRE_Real alpha, NALU_HYPRE_Real *x)
 {
     NALU_HYPRE_Int one = 1;
-    hypre_dscal(&n, &alpha, x, &one);
+    nalu_hypre_dscal(&n, &alpha, x, &one);
 }
 
 static void Axpy(NALU_HYPRE_Int n, NALU_HYPRE_Real alpha, NALU_HYPRE_Real *x, NALU_HYPRE_Real *y)
 {
     NALU_HYPRE_Int one = 1;
-    hypre_daxpy(&n, &alpha, x, &one, y, &one);
+    nalu_hypre_daxpy(&n, &alpha, x, &one, y, &one);
 }
 
 /* simulate 2-D arrays at the cost of some arithmetic */
@@ -84,7 +84,7 @@ void FGMRES_ParaSails(Matrix *mat, ParaSails *ps, NALU_HYPRE_Real *b, NALU_HYPRE
     NALU_HYPRE_Int iter;
     NALU_HYPRE_Real rel_resid;
 
-    NALU_HYPRE_Real *H  = hypre_TAlloc(NALU_HYPRE_Real, dim*(dim+1) , NALU_HYPRE_MEMORY_HOST);
+    NALU_HYPRE_Real *H  = nalu_hypre_TAlloc(NALU_HYPRE_Real, dim*(dim+1) , NALU_HYPRE_MEMORY_HOST);
 
     /* local problem size */
     NALU_HYPRE_Int n = mat->end_row - mat->beg_row + 1;
@@ -93,15 +93,15 @@ void FGMRES_ParaSails(Matrix *mat, ParaSails *ps, NALU_HYPRE_Real *b, NALU_HYPRE
     NALU_HYPRE_Int i, j, k;
     NALU_HYPRE_Real beta, resid0;
 
-    NALU_HYPRE_Real *s  = hypre_TAlloc(NALU_HYPRE_Real, (dim+1) , NALU_HYPRE_MEMORY_HOST);
-    NALU_HYPRE_Real *cs = hypre_TAlloc(NALU_HYPRE_Real, dim , NALU_HYPRE_MEMORY_HOST);
-    NALU_HYPRE_Real *sn = hypre_TAlloc(NALU_HYPRE_Real, dim , NALU_HYPRE_MEMORY_HOST);
+    NALU_HYPRE_Real *s  = nalu_hypre_TAlloc(NALU_HYPRE_Real, (dim+1) , NALU_HYPRE_MEMORY_HOST);
+    NALU_HYPRE_Real *cs = nalu_hypre_TAlloc(NALU_HYPRE_Real, dim , NALU_HYPRE_MEMORY_HOST);
+    NALU_HYPRE_Real *sn = nalu_hypre_TAlloc(NALU_HYPRE_Real, dim , NALU_HYPRE_MEMORY_HOST);
 
-    NALU_HYPRE_Real *V  = hypre_TAlloc(NALU_HYPRE_Real, n*(dim+1) , NALU_HYPRE_MEMORY_HOST);
-    NALU_HYPRE_Real *W  = hypre_TAlloc(NALU_HYPRE_Real, n*dim , NALU_HYPRE_MEMORY_HOST);
+    NALU_HYPRE_Real *V  = nalu_hypre_TAlloc(NALU_HYPRE_Real, n*(dim+1) , NALU_HYPRE_MEMORY_HOST);
+    NALU_HYPRE_Real *W  = nalu_hypre_TAlloc(NALU_HYPRE_Real, n*dim , NALU_HYPRE_MEMORY_HOST);
 
     MPI_Comm comm = mat->comm;
-    hypre_MPI_Comm_rank(comm, &mype);
+    nalu_hypre_MPI_Comm_rank(comm, &mype);
 
     iter = 0;
     do
@@ -154,7 +154,7 @@ void FGMRES_ParaSails(Matrix *mat, ParaSails *ps, NALU_HYPRE_Real *b, NALU_HYPRE
             rel_resid = ABS(s[i+1]) / resid0;
 #ifdef PARASAILS_CG_PRINT
             if (mype == 0 && iter % 10 == 0)
-               hypre_printf("Iter (%d): rel. resid. norm: %e\n", iter, rel_resid);
+               nalu_hypre_printf("Iter (%d): rel. resid. norm: %e\n", iter, rel_resid);
 #endif
             if (rel_resid <= tol)
                 break;
@@ -185,13 +185,13 @@ void FGMRES_ParaSails(Matrix *mat, ParaSails *ps, NALU_HYPRE_Real *b, NALU_HYPRE
     rel_resid = beta / resid0;
 
     if (mype == 0)
-        hypre_printf("Iter (%d): computed rrn    : %e\n", iter, rel_resid);
+        nalu_hypre_printf("Iter (%d): computed rrn    : %e\n", iter, rel_resid);
 
-    hypre_TFree(H, NALU_HYPRE_MEMORY_HOST);
-    hypre_TFree(s, NALU_HYPRE_MEMORY_HOST);
-    hypre_TFree(cs, NALU_HYPRE_MEMORY_HOST);
-    hypre_TFree(sn, NALU_HYPRE_MEMORY_HOST);
-    hypre_TFree(V, NALU_HYPRE_MEMORY_HOST);
-    hypre_TFree(W, NALU_HYPRE_MEMORY_HOST);
+    nalu_hypre_TFree(H, NALU_HYPRE_MEMORY_HOST);
+    nalu_hypre_TFree(s, NALU_HYPRE_MEMORY_HOST);
+    nalu_hypre_TFree(cs, NALU_HYPRE_MEMORY_HOST);
+    nalu_hypre_TFree(sn, NALU_HYPRE_MEMORY_HOST);
+    nalu_hypre_TFree(V, NALU_HYPRE_MEMORY_HOST);
+    nalu_hypre_TFree(W, NALU_HYPRE_MEMORY_HOST);
 }
 

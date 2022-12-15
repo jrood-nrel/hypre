@@ -10,8 +10,8 @@
 
 #include "NALU_HYPRE.h"
 #include "LLNL_FEI_Impl.h"
-#include "utilities/_hypre_utilities.h"
-#include "hypre_cfei.h"
+#include "utilities/_nalu_hypre_utilities.h"
+#include "nalu_hypre_cfei.h"
 
 /******************************************************************************/
 /* constructor                                                                */
@@ -21,7 +21,7 @@ extern "C" NALU_HYPRE_FEI_Impl *NALU_HYPRE_FEI_create( MPI_Comm comm )
 {
    NALU_HYPRE_FEI_Impl *cfei;
    LLNL_FEI_Impl  *lfei;
-   cfei = hypre_TAlloc(NALU_HYPRE_FEI_Impl, 1, NALU_HYPRE_MEMORY_HOST);
+   cfei = nalu_hypre_TAlloc(NALU_HYPRE_FEI_Impl, 1, NALU_HYPRE_MEMORY_HOST);
    lfei = new LLNL_FEI_Impl(comm);
    cfei->fei_ = (void *) lfei;
    return (cfei);

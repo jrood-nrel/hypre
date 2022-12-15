@@ -21,7 +21,7 @@
 #include "mli_utils.h"
 #include "NALU_HYPRE_IJ_mv.h"
 #include "../fei-hypre/NALU_HYPRE_parcsr_fgmres.h"
-#include "_hypre_lapack.h"
+#include "_nalu_hypre_lapack.h"
 
 /*--------------------------------------------------------------------------
  * external function
@@ -32,10 +32,10 @@ extern "C" {
 #else
 extern
 #endif
-int hypre_BoomerAMGBuildCoarseOperator(hypre_ParCSRMatrix*,hypre_ParCSRMatrix*,
-                                    hypre_ParCSRMatrix *,hypre_ParCSRMatrix **);
-void hypre_qsort0(int *, int, int);
-void hypre_qsort1(int *, double *, int, int);
+int nalu_hypre_BoomerAMGBuildCoarseOperator(nalu_hypre_ParCSRMatrix*,nalu_hypre_ParCSRMatrix*,
+                                    nalu_hypre_ParCSRMatrix *,nalu_hypre_ParCSRMatrix **);
+void nalu_hypre_qsort0(int *, int, int);
+void nalu_hypre_qsort1(int *, double *, int, int);
 int  MLI_Utils_IntTreeUpdate(int treeLeng, int *tree,int *treeInd);
 
 #ifdef __cplusplus
@@ -45,42 +45,42 @@ int  MLI_Utils_IntTreeUpdate(int treeLeng, int *tree,int *treeInd);
 #define habs(x) (((x) > 0) ? x : -(x))
 
 /*****************************************************************************
- * destructor for hypre_ParCSRMatrix conforming to MLI requirements
+ * destructor for nalu_hypre_ParCSRMatrix conforming to MLI requirements
  *--------------------------------------------------------------------------*/
 
 int MLI_Utils_HypreParCSRMatrixGetDestroyFunc(MLI_Function *funcPtr)
 {
-   funcPtr->func_ = (int (*)(void *)) hypre_ParCSRMatrixDestroy;
+   funcPtr->func_ = (int (*)(void *)) nalu_hypre_ParCSRMatrixDestroy;
    return 0;
 }
 
 /*****************************************************************************
- * destructor for hypre_CSRMatrix conforming to MLI requirements
+ * destructor for nalu_hypre_CSRMatrix conforming to MLI requirements
  *--------------------------------------------------------------------------*/
 
 int MLI_Utils_HypreCSRMatrixGetDestroyFunc( MLI_Function *funcPtr )
 {
-   funcPtr->func_ = (int (*)(void *)) hypre_CSRMatrixDestroy;
+   funcPtr->func_ = (int (*)(void *)) nalu_hypre_CSRMatrixDestroy;
    return 0;
 }
 
 /*****************************************************************************
- * destructor for hypre_ParVector conforming to MLI requirements
+ * destructor for nalu_hypre_ParVector conforming to MLI requirements
  *--------------------------------------------------------------------------*/
 
 int MLI_Utils_HypreParVectorGetDestroyFunc( MLI_Function *funcPtr )
 {
-   funcPtr->func_ = (int (*)(void *)) hypre_ParVectorDestroy;
+   funcPtr->func_ = (int (*)(void *)) nalu_hypre_ParVectorDestroy;
    return 0;
 }
 
 /*****************************************************************************
- * destructor for hypre_Vector conforming to MLI requirements
+ * destructor for nalu_hypre_Vector conforming to MLI requirements
  *--------------------------------------------------------------------------*/
 
 int MLI_Utils_HypreVectorGetDestroyFunc( MLI_Function *funcPtr )
 {
-   funcPtr->func_ = (int (*)(void *)) hypre_SeqVectorDestroy;
+   funcPtr->func_ = (int (*)(void *)) nalu_hypre_SeqVectorDestroy;
    return 0;
 }
 
@@ -97,14 +97,14 @@ int MLI_Utils_HypreMatrixFormJacobi(void *A, double alpha, void **J)
    double             *colVal, *newColVal, dtemp;
    MPI_Comm           comm;
    NALU_HYPRE_IJMatrix     IJmat;
-   hypre_ParCSRMatrix *Amat, *Jmat;
+   nalu_hypre_ParCSRMatrix *Amat, *Jmat;
 
    /* -----------------------------------------------------------------------
     * get matrix parameters
     * ----------------------------------------------------------------------*/
 
-   Amat = (hypre_ParCSRMatrix *) A;
-   comm = hypre_ParCSRMatrixComm(Amat);
+   Amat = (nalu_hypre_ParCSRMatrix *) A;
+   comm = nalu_hypre_ParCSRMatrixComm(Amat);
    MPI_Comm_rank(comm, &mypid);
    MPI_Comm_size(comm, &nprocs);
    NALU_HYPRE_ParCSRMatrixGetRowPartitioning((NALU_HYPRE_ParCSRMatrix)Amat,&rowPart);
@@ -118,9 +118,9 @@ int MLI_Utils_HypreMatrixFormJacobi(void *A, double alpha, void **J)
    ierr =  NALU_HYPRE_IJMatrixCreate(comm, startRow, startRow+localNRows-1,
                                 startRow, startRow+localNRows-1, &IJmat);
    ierr += NALU_HYPRE_IJMatrixSetObjectType(IJmat, NALU_HYPRE_PARCSR);
-   hypre_assert( !ierr );
+   nalu_hypre_assert( !ierr );
    maxnnz = 0;
-   rowLengths = hypre_CTAlloc(int,  localNRows, NALU_HYPRE_MEMORY_HOST);
+   rowLengths = nalu_hypre_CTAlloc(int,  localNRows, NALU_HYPRE_MEMORY_HOST);
    if ( rowLengths == NULL )
    {
       printf("FormJacobi ERROR : memory allocation.\n");
@@ -129,7 +129,7 @@ int MLI_Utils_HypreMatrixFormJacobi(void *A, double alpha, void **J)
    for ( irow = 0; irow < localNRows; irow++ )
    {
       rownum = startRow + irow;
-      hypre_ParCSRMatrixGetRow(Amat, rownum, &rowSize, &colInd, NULL);
+      nalu_hypre_ParCSRMatrixGetRow(Amat, rownum, &rowSize, &colInd, NULL);
       rowLengths[irow] = rowSize;
       if ( rowSize <= 0 )
       {
@@ -139,24 +139,24 @@ int MLI_Utils_HypreMatrixFormJacobi(void *A, double alpha, void **J)
       for ( icol = 0; icol < rowSize; icol++ )
          if ( colInd[icol] == rownum ) break;
       if ( icol == rowSize ) rowLengths[irow]++;
-      hypre_ParCSRMatrixRestoreRow(Amat, rownum, &rowSize, &colInd, NULL);
+      nalu_hypre_ParCSRMatrixRestoreRow(Amat, rownum, &rowSize, &colInd, NULL);
       maxnnz = ( rowLengths[irow] > maxnnz ) ? rowLengths[irow] : maxnnz;
    }
    ierr = NALU_HYPRE_IJMatrixSetRowSizes(IJmat, rowLengths);
-   hypre_assert( !ierr );
+   nalu_hypre_assert( !ierr );
    NALU_HYPRE_IJMatrixInitialize(IJmat);
 
    /* -----------------------------------------------------------------------
     * load the new matrix
     * ----------------------------------------------------------------------*/
 
-   newColInd = hypre_CTAlloc(int,  maxnnz, NALU_HYPRE_MEMORY_HOST);
-   newColVal = hypre_CTAlloc(double,  maxnnz, NALU_HYPRE_MEMORY_HOST);
+   newColInd = nalu_hypre_CTAlloc(int,  maxnnz, NALU_HYPRE_MEMORY_HOST);
+   newColVal = nalu_hypre_CTAlloc(double,  maxnnz, NALU_HYPRE_MEMORY_HOST);
 
    for ( irow = 0; irow < localNRows; irow++ )
    {
       rownum = startRow + irow;
-      hypre_ParCSRMatrixGetRow(Amat, rownum, &rowSize, &colInd, &colVal);
+      nalu_hypre_ParCSRMatrixGetRow(Amat, rownum, &rowSize, &colInd, &colVal);
       dtemp = 1.0;
       for ( icol = 0; icol < rowSize; icol++ )
          if ( colInd[icol] == rownum ) {dtemp = colVal[icol]; break;}
@@ -174,7 +174,7 @@ int MLI_Utils_HypreMatrixFormJacobi(void *A, double alpha, void **J)
          newColInd[newRowSize] = rownum;
          newColVal[newRowSize++] = 1.0;
       }
-      hypre_ParCSRMatrixRestoreRow(Amat, rownum, &rowSize, &colInd, &colVal);
+      nalu_hypre_ParCSRMatrixRestoreRow(Amat, rownum, &rowSize, &colInd, &colVal);
       NALU_HYPRE_IJMatrixSetValues(IJmat, 1, &newRowSize,(const int *) &rownum,
                 (const int *) newColInd, (const double *) newColVal);
    }
@@ -187,13 +187,13 @@ int MLI_Utils_HypreMatrixFormJacobi(void *A, double alpha, void **J)
    NALU_HYPRE_IJMatrixGetObject(IJmat, (void **) &Jmat);
    NALU_HYPRE_IJMatrixSetObjectType(IJmat, -1);
    NALU_HYPRE_IJMatrixDestroy(IJmat);
-   hypre_MatvecCommPkgCreate((hypre_ParCSRMatrix *) Jmat);
+   nalu_hypre_MatvecCommPkgCreate((nalu_hypre_ParCSRMatrix *) Jmat);
    (*J) = (void *) Jmat;
 
-   hypre_TFree(newColInd , NALU_HYPRE_MEMORY_HOST);
-   hypre_TFree(newColVal , NALU_HYPRE_MEMORY_HOST);
-   hypre_TFree(rowLengths , NALU_HYPRE_MEMORY_HOST);
-   hypre_TFree(rowPart , NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(newColInd , NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(newColVal , NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(rowLengths , NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(rowPart , NALU_HYPRE_MEMORY_HOST);
    return 0;
 }
 
@@ -207,7 +207,7 @@ int MLI_Utils_GenPartition(MPI_Comm comm, int nlocal, int **rowPart)
 
    MPI_Comm_rank(comm, &mypid);
    MPI_Comm_size(comm, &nprocs);
-   garray = hypre_CTAlloc(int,  nprocs+1, NALU_HYPRE_MEMORY_HOST);
+   garray = nalu_hypre_CTAlloc(int,  nprocs+1, NALU_HYPRE_MEMORY_HOST);
    garray[mypid] = nlocal;
    MPI_Allgather(&nlocal, 1, MPI_INT, garray, 1, MPI_INT, comm);
    count = 0;
@@ -226,18 +226,18 @@ int MLI_Utils_GenPartition(MPI_Comm comm, int nlocal, int **rowPart)
  * Given matrix A and vector v, scale the vector by (v'*v)/(v'*A*v).
  *--------------------------------------------------------------------------*/
 
-int MLI_Utils_ScaleVec(hypre_ParCSRMatrix *Amat, hypre_ParVector *vec)
+int MLI_Utils_ScaleVec(nalu_hypre_ParCSRMatrix *Amat, nalu_hypre_ParVector *vec)
 {
    MPI_Comm        comm;
    int             mypid, nprocs, *partition;
-   hypre_ParVector *temp;
+   nalu_hypre_ParVector *temp;
    double          norm1, norm2;
 
    /* -----------------------------------------------------------------
     * fetch matrix parameters
     * ----------------------------------------------------------------*/
 
-   comm = hypre_ParCSRMatrixComm(Amat);
+   comm = nalu_hypre_ParCSRMatrixComm(Amat);
    MPI_Comm_rank(comm, &mypid);
    MPI_Comm_size(comm, &nprocs);
    NALU_HYPRE_ParCSRMatrixGetRowPartitioning((NALU_HYPRE_ParCSRMatrix)Amat,&partition);
@@ -246,26 +246,26 @@ int MLI_Utils_ScaleVec(hypre_ParCSRMatrix *Amat, hypre_ParVector *vec)
     * create temporary vector
     * ----------------------------------------------------------------*/
 
-   temp = hypre_ParVectorCreate(comm, partition[nprocs], partition);
-   hypre_ParVectorInitialize(temp);
+   temp = nalu_hypre_ParVectorCreate(comm, partition[nprocs], partition);
+   nalu_hypre_ParVectorInitialize(temp);
 
    /* -----------------------------------------------------------------
     * normalize vector
     * ----------------------------------------------------------------*/
-   norm2 = hypre_ParVectorInnerProd(vec, vec);
-   hypre_ParVectorScale(1./sqrt(norm2), vec);
+   norm2 = nalu_hypre_ParVectorInnerProd(vec, vec);
+   nalu_hypre_ParVectorScale(1./sqrt(norm2), vec);
 
    /* -----------------------------------------------------------------
     * multiply by matrix, perform inner product, and scale
     * ----------------------------------------------------------------*/
 
-   norm1 = hypre_ParVectorInnerProd(vec, vec);
-   hypre_ParCSRMatrixMatvec(1.0, Amat, vec, 0.0, temp);
-   norm2 = hypre_ParVectorInnerProd(vec, temp);
-   hypre_ParVectorScale(norm1/norm2, vec);
+   norm1 = nalu_hypre_ParVectorInnerProd(vec, vec);
+   nalu_hypre_ParCSRMatrixMatvec(1.0, Amat, vec, 0.0, temp);
+   norm2 = nalu_hypre_ParVectorInnerProd(vec, temp);
+   nalu_hypre_ParVectorScale(norm1/norm2, vec);
    /* printf("Rayleigh quotient: %f\n", norm2/norm1); */
 
-   hypre_ParVectorDestroy(temp);
+   nalu_hypre_ParVectorDestroy(temp);
    return 0;
 }
 
@@ -273,7 +273,7 @@ int MLI_Utils_ScaleVec(hypre_ParCSRMatrix *Amat, hypre_ParVector *vec)
  * Given a matrix, find its maximum eigenvalue
  *--------------------------------------------------------------------------*/
 
-int MLI_Utils_ComputeSpectralRadius(hypre_ParCSRMatrix *Amat, double *maxEigen)
+int MLI_Utils_ComputeSpectralRadius(nalu_hypre_ParCSRMatrix *Amat, double *maxEigen)
 {
    int             mypid, nprocs, *partition, startRow, endRow;
    int             it, maxits=20, ierr;
@@ -286,13 +286,13 @@ int MLI_Utils_ComputeSpectralRadius(hypre_ParCSRMatrix *Amat, double *maxEigen)
     * fetch matrix paramters
     * ----------------------------------------------------------------*/
 
-   comm = hypre_ParCSRMatrixComm(Amat);
+   comm = nalu_hypre_ParCSRMatrixComm(Amat);
    MPI_Comm_rank( comm, &mypid );
    MPI_Comm_size( comm, &nprocs );
    NALU_HYPRE_ParCSRMatrixGetRowPartitioning((NALU_HYPRE_ParCSRMatrix)Amat,&partition);
    startRow    = partition[mypid];
    endRow      = partition[mypid+1];
-   hypre_TFree(partition, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(partition, NALU_HYPRE_MEMORY_HOST);
 
    /* -----------------------------------------------------------------
     * create two temporary vectors
@@ -313,7 +313,7 @@ int MLI_Utils_ComputeSpectralRadius(hypre_ParCSRMatrix *Amat, double *maxEigen)
 
    ierr += NALU_HYPRE_IJVectorGetObject(IJvec1, (void **) &vec1);
    ierr += NALU_HYPRE_IJVectorGetObject(IJvec2, (void **) &vec2);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
    NALU_HYPRE_ParVectorSetRandomValues( vec1, 2934731 );
    NALU_HYPRE_ParCSRMatrixMatvec(1.0,(NALU_HYPRE_ParCSRMatrix) Amat,vec1,0.0,vec2 );
    NALU_HYPRE_ParVectorInnerProd( vec2, vec2, &norm2);
@@ -336,7 +336,7 @@ int MLI_Utils_ComputeSpectralRadius(hypre_ParCSRMatrix *Amat, double *maxEigen)
  * compute Ritz Values that approximates extreme eigenvalues
  *--------------------------------------------------------------------------*/
 
-int MLI_Utils_ComputeExtremeRitzValues(hypre_ParCSRMatrix *A, double *ritz,
+int MLI_Utils_ComputeExtremeRitzValues(nalu_hypre_ParCSRMatrix *A, double *ritz,
                                        int scaleFlag)
 {
    int      i, j, k, its, maxIter, nprocs, mypid, localNRows, globalNRows;
@@ -346,8 +346,8 @@ int MLI_Utils_ComputeExtremeRitzValues(hypre_ParCSRMatrix *A, double *ritz,
    double   app, aqq, arr, ass, apq, sign, tau, t, c, s;
    double   *ADiagA, one=1.0, *srdiag;
    MPI_Comm comm;
-   hypre_CSRMatrix *ADiag;
-   hypre_ParVector *rVec=NULL, *zVec, *pVec, *apVec;
+   nalu_hypre_CSRMatrix *ADiag;
+   nalu_hypre_ParVector *rVec=NULL, *zVec, *pVec, *apVec;
 
    double   *pData, *apData;
 
@@ -355,24 +355,24 @@ int MLI_Utils_ComputeExtremeRitzValues(hypre_ParCSRMatrix *A, double *ritz,
     * fetch matrix information
     *-----------------------------------------------------------------*/
 
-   comm = hypre_ParCSRMatrixComm(A);
+   comm = nalu_hypre_ParCSRMatrixComm(A);
    MPI_Comm_rank(comm,&mypid);
    MPI_Comm_size(comm,&nprocs);
 
-   ADiag      = hypre_ParCSRMatrixDiag(A);
-   ADiagA     = hypre_CSRMatrixData(ADiag);
-   ADiagI     = hypre_CSRMatrixI(ADiag);
-   ADiagJ     = hypre_CSRMatrixJ(ADiag);
+   ADiag      = nalu_hypre_ParCSRMatrixDiag(A);
+   ADiagA     = nalu_hypre_CSRMatrixData(ADiag);
+   ADiagI     = nalu_hypre_CSRMatrixI(ADiag);
+   ADiagJ     = nalu_hypre_CSRMatrixJ(ADiag);
    NALU_HYPRE_ParCSRMatrixGetRowPartitioning((NALU_HYPRE_ParCSRMatrix) A, &partition);
    startRow    = partition[mypid];
    endRow      = partition[mypid+1] - 1;
    globalNRows = partition[nprocs];
    localNRows  = endRow - startRow + 1;
-   hypre_TFree( partition , NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree( partition , NALU_HYPRE_MEMORY_HOST);
    maxIter     = 5;
    if ( globalNRows < maxIter ) maxIter = globalNRows;
    ritz[0] = ritz[1] = 0.0;
-   srdiag = hypre_TAlloc(double, localNRows , NALU_HYPRE_MEMORY_HOST);
+   srdiag = nalu_hypre_TAlloc(double, localNRows , NALU_HYPRE_MEMORY_HOST);
    for ( i = 0; i < localNRows; i++ )
    {
       srdiag[i] = 1.0;
@@ -389,29 +389,29 @@ int MLI_Utils_ComputeExtremeRitzValues(hypre_ParCSRMatrix *A, double *ritz,
    if ( localNRows > 0 )
    {
       NALU_HYPRE_ParCSRMatrixGetRowPartitioning((NALU_HYPRE_ParCSRMatrix)A,&partition);
-      rVec = hypre_ParVectorCreate(comm, globalNRows, partition);
-      hypre_ParVectorInitialize(rVec);
+      rVec = nalu_hypre_ParVectorCreate(comm, globalNRows, partition);
+      nalu_hypre_ParVectorInitialize(rVec);
       NALU_HYPRE_ParCSRMatrixGetRowPartitioning((NALU_HYPRE_ParCSRMatrix)A,&partition);
-      zVec = hypre_ParVectorCreate(comm, globalNRows, partition);
-      hypre_ParVectorInitialize(zVec);
+      zVec = nalu_hypre_ParVectorCreate(comm, globalNRows, partition);
+      nalu_hypre_ParVectorInitialize(zVec);
       NALU_HYPRE_ParCSRMatrixGetRowPartitioning((NALU_HYPRE_ParCSRMatrix)A,&partition);
-      pVec = hypre_ParVectorCreate(comm, globalNRows, partition);
-      hypre_ParVectorInitialize(pVec);
+      pVec = nalu_hypre_ParVectorCreate(comm, globalNRows, partition);
+      nalu_hypre_ParVectorInitialize(pVec);
       NALU_HYPRE_ParCSRMatrixGetRowPartitioning((NALU_HYPRE_ParCSRMatrix)A,&partition);
-      apVec = hypre_ParVectorCreate(comm, globalNRows, partition);
-      hypre_ParVectorInitialize(apVec);
-      zData  = hypre_VectorData( hypre_ParVectorLocalVector(zVec) );
+      apVec = nalu_hypre_ParVectorCreate(comm, globalNRows, partition);
+      nalu_hypre_ParVectorInitialize(apVec);
+      zData  = nalu_hypre_VectorData( nalu_hypre_ParVectorLocalVector(zVec) );
 
-      pData  = hypre_VectorData( hypre_ParVectorLocalVector(pVec) );
-      apData  = hypre_VectorData( hypre_ParVectorLocalVector(apVec) );
+      pData  = nalu_hypre_VectorData( nalu_hypre_ParVectorLocalVector(pVec) );
+      apData  = nalu_hypre_VectorData( nalu_hypre_ParVectorLocalVector(apVec) );
    }
    NALU_HYPRE_ParVectorSetRandomValues((NALU_HYPRE_ParVector) rVec, 1209873 );
-   alphaArray = hypre_TAlloc(double,  (maxIter+1) , NALU_HYPRE_MEMORY_HOST);
-   rnormArray = hypre_TAlloc(double,  (maxIter+1) , NALU_HYPRE_MEMORY_HOST);
-   Tmat       = hypre_TAlloc(double*,  (maxIter+1) , NALU_HYPRE_MEMORY_HOST);
+   alphaArray = nalu_hypre_TAlloc(double,  (maxIter+1) , NALU_HYPRE_MEMORY_HOST);
+   rnormArray = nalu_hypre_TAlloc(double,  (maxIter+1) , NALU_HYPRE_MEMORY_HOST);
+   Tmat       = nalu_hypre_TAlloc(double*,  (maxIter+1) , NALU_HYPRE_MEMORY_HOST);
    for ( i = 0; i <= maxIter; i++ )
    {
-      Tmat[i] = hypre_TAlloc(double,  (maxIter+1) , NALU_HYPRE_MEMORY_HOST);
+      Tmat[i] = nalu_hypre_TAlloc(double,  (maxIter+1) , NALU_HYPRE_MEMORY_HOST);
       for ( j = 0; j <= maxIter; j++ ) Tmat[i][j] = 0.0;
       Tmat[i][i] = 1.0;
    }
@@ -420,19 +420,19 @@ int MLI_Utils_ComputeExtremeRitzValues(hypre_ParCSRMatrix *A, double *ritz,
     * compute initial residual vector norm
     *-----------------------------------------------------------------*/
 
-   hypre_ParVectorSetRandomValues(rVec, 1209837);
-   hypre_ParVectorSetConstantValues(pVec, 0.0);
-   hypre_ParVectorSetConstantValues(zVec, 0.0);
-   rho = hypre_ParVectorInnerProd(rVec, rVec);
+   nalu_hypre_ParVectorSetRandomValues(rVec, 1209837);
+   nalu_hypre_ParVectorSetConstantValues(pVec, 0.0);
+   nalu_hypre_ParVectorSetConstantValues(zVec, 0.0);
+   rho = nalu_hypre_ParVectorInnerProd(rVec, rVec);
    rnorm = sqrt(rho);
    rnormArray[0] = rnorm;
    if ( rnorm == 0.0 )
    {
       printf("MLI_Utils_ComputeExtremeRitzValues : fail for res=0.\n");
-      hypre_ParVectorDestroy( rVec );
-      hypre_ParVectorDestroy( pVec );
-      hypre_ParVectorDestroy( zVec );
-      hypre_ParVectorDestroy( apVec );
+      nalu_hypre_ParVectorDestroy( rVec );
+      nalu_hypre_ParVectorDestroy( pVec );
+      nalu_hypre_ParVectorDestroy( zVec );
+      nalu_hypre_ParVectorDestroy( apVec );
       return 1;
    }
 
@@ -443,7 +443,7 @@ int MLI_Utils_ComputeExtremeRitzValues(hypre_ParCSRMatrix *A, double *ritz,
    for ( its = 0; its < maxIter; its++ )
    {
       rhom1 = rho;
-      rho   = hypre_ParVectorInnerProd(rVec, rVec);
+      rho   = nalu_hypre_ParVectorInnerProd(rVec, rVec);
       if (its == 0) beta = 0.0;
       else
       {
@@ -451,25 +451,25 @@ int MLI_Utils_ComputeExtremeRitzValues(hypre_ParCSRMatrix *A, double *ritz,
          Tmat[its-1][its] = -beta;
       }
       NALU_HYPRE_ParVectorScale( beta, (NALU_HYPRE_ParVector) pVec );
-      hypre_ParVectorAxpy( one, rVec, pVec );
+      nalu_hypre_ParVectorAxpy( one, rVec, pVec );
 
       if (scaleFlag)
          for ( i = 0; i < localNRows; i++ ) apData[i] = pData[i]*srdiag[i];
       else
          for ( i = 0; i < localNRows; i++ ) apData[i] = pData[i];
 
-      hypre_ParCSRMatrixMatvec(one, A, apVec, 0.0, zVec);
+      nalu_hypre_ParCSRMatrixMatvec(one, A, apVec, 0.0, zVec);
 
       if (scaleFlag)
          for ( i = 0; i < localNRows; i++ ) apData[i] = zData[i]*srdiag[i];
       else
          for ( i = 0; i < localNRows; i++ ) apData[i] = zData[i];
 
-      sigma = hypre_ParVectorInnerProd(pVec, apVec);
+      sigma = nalu_hypre_ParVectorInnerProd(pVec, apVec);
       alpha  = rho / sigma;
       alphaArray[its] = sigma;
-      hypre_ParVectorAxpy( -alpha, apVec, rVec );
-      rnorm = sqrt(hypre_ParVectorInnerProd(rVec, rVec));
+      nalu_hypre_ParVectorAxpy( -alpha, apVec, rVec );
+      rnorm = sqrt(nalu_hypre_ParVectorInnerProd(rVec, rVec));
       rnormArray[its+1] = rnorm;
       if ( rnorm < 1.0E-8 * rnormArray[0] )
       {
@@ -562,17 +562,17 @@ int MLI_Utils_ComputeExtremeRitzValues(hypre_ParCSRMatrix *A, double *ritz,
 
    if ( localNRows > 0 )
    {
-      hypre_ParVectorDestroy( rVec );
-      hypre_ParVectorDestroy( zVec );
-      hypre_ParVectorDestroy( pVec );
-      hypre_ParVectorDestroy( apVec );
+      nalu_hypre_ParVectorDestroy( rVec );
+      nalu_hypre_ParVectorDestroy( zVec );
+      nalu_hypre_ParVectorDestroy( pVec );
+      nalu_hypre_ParVectorDestroy( apVec );
    }
-   hypre_TFree(alphaArray, NALU_HYPRE_MEMORY_HOST);
-   hypre_TFree(rnormArray, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(alphaArray, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(rnormArray, NALU_HYPRE_MEMORY_HOST);
    for (i = 0; i <= maxIter; i++) 
-      hypre_TFree(Tmat[i], NALU_HYPRE_MEMORY_HOST);
-   hypre_TFree(Tmat, NALU_HYPRE_MEMORY_HOST);
-   hypre_TFree(srdiag, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(Tmat[i], NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(Tmat, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(srdiag, NALU_HYPRE_MEMORY_HOST);
    return 0;
 }
 
@@ -580,27 +580,27 @@ int MLI_Utils_ComputeExtremeRitzValues(hypre_ParCSRMatrix *A, double *ritz,
  * compute matrix max norm
  *--------------------------------------------------------------------------*/
 
-int MLI_Utils_ComputeMatrixMaxNorm(hypre_ParCSRMatrix *A, double *norm,
+int MLI_Utils_ComputeMatrixMaxNorm(nalu_hypre_ParCSRMatrix *A, double *norm,
                                    int scaleFlag)
 {
    int             i, j, iStart, iEnd, localNRows, *ADiagI, *AOffdI;
    int             mypid;
    double          *ADiagA, *AOffdA, maxVal, rowSum, dtemp;
-   hypre_CSRMatrix *ADiag, *AOffd;
+   nalu_hypre_CSRMatrix *ADiag, *AOffd;
    MPI_Comm        comm;
 
    /*-----------------------------------------------------------------
     * fetch machine and smoother parameters
     *-----------------------------------------------------------------*/
 
-   ADiag      = hypre_ParCSRMatrixDiag(A);
-   ADiagA     = hypre_CSRMatrixData(ADiag);
-   ADiagI     = hypre_CSRMatrixI(ADiag);
-   AOffd      = hypre_ParCSRMatrixDiag(A);
-   AOffdA     = hypre_CSRMatrixData(AOffd);
-   AOffdI     = hypre_CSRMatrixI(AOffd);
-   localNRows = hypre_CSRMatrixNumRows(ADiag);
-   comm       = hypre_ParCSRMatrixComm(A);
+   ADiag      = nalu_hypre_ParCSRMatrixDiag(A);
+   ADiagA     = nalu_hypre_CSRMatrixData(ADiag);
+   ADiagI     = nalu_hypre_CSRMatrixI(ADiag);
+   AOffd      = nalu_hypre_ParCSRMatrixDiag(A);
+   AOffdA     = nalu_hypre_CSRMatrixData(AOffd);
+   AOffdI     = nalu_hypre_CSRMatrixI(AOffd);
+   localNRows = nalu_hypre_CSRMatrixNumRows(ADiag);
+   comm       = nalu_hypre_ParCSRMatrixComm(A);
    MPI_Comm_rank(comm,&mypid);
 
    maxVal = 0.0;
@@ -651,34 +651,34 @@ int MLI_Utils_HypreMatrixPrint(void *in_mat, char *name)
    double   *colVal;
    char     fname[200];
    FILE     *fp;
-   hypre_ParCSRMatrix *mat;
-   NALU_HYPRE_ParCSRMatrix hypre_mat;
+   nalu_hypre_ParCSRMatrix *mat;
+   NALU_HYPRE_ParCSRMatrix nalu_hypre_mat;
 
-   mat       = (hypre_ParCSRMatrix *) in_mat;
-   hypre_mat = (NALU_HYPRE_ParCSRMatrix) mat;
-   comm = hypre_ParCSRMatrixComm(mat);
+   mat       = (nalu_hypre_ParCSRMatrix *) in_mat;
+   nalu_hypre_mat = (NALU_HYPRE_ParCSRMatrix) mat;
+   comm = nalu_hypre_ParCSRMatrixComm(mat);
    MPI_Comm_rank( comm, &mypid );
-   NALU_HYPRE_ParCSRMatrixGetRowPartitioning( hypre_mat, &rowPart);
+   NALU_HYPRE_ParCSRMatrixGetRowPartitioning( nalu_hypre_mat, &rowPart);
    localNRows  = rowPart[mypid+1] - rowPart[mypid];
    startRow    = rowPart[mypid];
-   hypre_TFree(rowPart, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(rowPart, NALU_HYPRE_MEMORY_HOST);
 
    sprintf(fname, "%s.%d", name, mypid);
    fp = fopen( fname, "w");
    nnz = 0;
    for ( i = startRow; i < startRow+localNRows; i++ )
    {
-      NALU_HYPRE_ParCSRMatrixGetRow(hypre_mat, i, &rowSize, &colInd, NULL);
+      NALU_HYPRE_ParCSRMatrixGetRow(nalu_hypre_mat, i, &rowSize, &colInd, NULL);
       nnz += rowSize;
-      NALU_HYPRE_ParCSRMatrixRestoreRow(hypre_mat, i, &rowSize, &colInd, NULL);
+      NALU_HYPRE_ParCSRMatrixRestoreRow(nalu_hypre_mat, i, &rowSize, &colInd, NULL);
    }
    fprintf(fp, "%6d  %7d \n", localNRows, nnz);
    for ( i = startRow; i < startRow+localNRows; i++ )
    {
-      NALU_HYPRE_ParCSRMatrixGetRow(hypre_mat, i, &rowSize, &colInd, &colVal);
+      NALU_HYPRE_ParCSRMatrixGetRow(nalu_hypre_mat, i, &rowSize, &colInd, &colVal);
       for ( j = 0; j < rowSize; j++ )
          fprintf(fp, "%6d  %6d  %25.16e \n", i+1, colInd[j]+1, colVal[j]);
-      NALU_HYPRE_ParCSRMatrixRestoreRow(hypre_mat, i, &rowSize, &colInd, &colVal);
+      NALU_HYPRE_ParCSRMatrixRestoreRow(nalu_hypre_mat, i, &rowSize, &colInd, &colVal);
    }
    fclose(fp);
    return 0;
@@ -690,10 +690,10 @@ int MLI_Utils_HypreMatrixPrint(void *in_mat, char *name)
 
 int MLI_Utils_HypreMatrixComputeRAP(void *Pmat, void *Amat, void **RAPmat)
 {
-   hypre_ParCSRMatrix *hypreP, *hypreA, *hypreRAP;
-   hypreP = (hypre_ParCSRMatrix *) Pmat;
-   hypreA = (hypre_ParCSRMatrix *) Amat;
-   hypre_BoomerAMGBuildCoarseOperator(hypreP, hypreA, hypreP, &hypreRAP);
+   nalu_hypre_ParCSRMatrix *hypreP, *hypreA, *hypreRAP;
+   hypreP = (nalu_hypre_ParCSRMatrix *) Pmat;
+   hypreA = (nalu_hypre_ParCSRMatrix *) Amat;
+   nalu_hypre_BoomerAMGBuildCoarseOperator(hypreP, hypreA, hypreP, &hypreRAP);
    (*RAPmat) = (void *) hypreRAP;
    return 0;
 }
@@ -709,17 +709,17 @@ int MLI_Utils_HypreMatrixGetInfo(void *Amat, int *matInfo, double *valInfo)
    int      globalNRows, maxNnz, minNnz, totalNnz;
    double   *colval, dsum[2], dbuf[2], maxVal, minVal;
    MPI_Comm mpiComm;
-   hypre_ParCSRMatrix *hypreA;
+   nalu_hypre_ParCSRMatrix *hypreA;
 
-   hypreA = (hypre_ParCSRMatrix *) Amat;
-   mpiComm = hypre_ParCSRMatrixComm(hypreA);
+   hypreA = (nalu_hypre_ParCSRMatrix *) Amat;
+   mpiComm = nalu_hypre_ParCSRMatrixComm(hypreA);
    MPI_Comm_rank( mpiComm, &mypid);
    MPI_Comm_size( mpiComm, &nprocs);
    NALU_HYPRE_ParCSRMatrixGetRowPartitioning((NALU_HYPRE_ParCSRMatrix) hypreA,&partition);
    localNRows  = partition[mypid+1] - partition[mypid];
    startrow    = partition[mypid];
    globalNRows = partition[nprocs];
-   hypre_TFree(partition, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(partition, NALU_HYPRE_MEMORY_HOST);
    maxVal  = -1.0E-30;
    minVal  = +1.0E30;
    maxNnz  = 0;
@@ -728,7 +728,7 @@ int MLI_Utils_HypreMatrixGetInfo(void *Amat, int *matInfo, double *valInfo)
    for ( irow = 0; irow < localNRows; irow++ )
    {
       rownum = startrow + irow;
-      hypre_ParCSRMatrixGetRow(hypreA,rownum,&rowsize,&colind,&colval);
+      nalu_hypre_ParCSRMatrixGetRow(hypreA,rownum,&rowsize,&colind,&colval);
       for ( icol = 0; icol < rowsize; icol++ )
       {
          if ( colval[icol] > maxVal ) maxVal = colval[icol];
@@ -737,7 +737,7 @@ int MLI_Utils_HypreMatrixGetInfo(void *Amat, int *matInfo, double *valInfo)
       if ( rowsize > maxNnz ) maxNnz = rowsize;
       if ( rowsize < minNnz ) minNnz = rowsize;
       thisNnz += rowsize;
-      hypre_ParCSRMatrixRestoreRow(hypreA,rownum,&rowsize,&colind,&colval);
+      nalu_hypre_ParCSRMatrixRestoreRow(hypreA,rownum,&rowsize,&colind,&colval);
    }
    dsum[0] = maxVal;
    dsum[1] = - minVal;
@@ -775,21 +775,21 @@ int MLI_Utils_HypreMatrixCompress(void *Amat, int blksize, void **Amat2)
    int                *newInd, newSize, j, k, nprocs;
    double             *colVal, *newVal, *newVal2;
    MPI_Comm           mpiComm;
-   hypre_ParCSRMatrix *hypreA, *hypreA2;
+   nalu_hypre_ParCSRMatrix *hypreA, *hypreA2;
    NALU_HYPRE_IJMatrix     IJAmat2;
 
    /* ----------------------------------------------------------------
     * fetch information about incoming matrix
     * ----------------------------------------------------------------*/
 
-   hypreA  = (hypre_ParCSRMatrix *) Amat;
-   mpiComm = hypre_ParCSRMatrixComm(hypreA);
+   hypreA  = (nalu_hypre_ParCSRMatrix *) Amat;
+   mpiComm = nalu_hypre_ParCSRMatrixComm(hypreA);
    MPI_Comm_rank(mpiComm, &mypid);
    MPI_Comm_size(mpiComm, &nprocs);
    NALU_HYPRE_ParCSRMatrixGetRowPartitioning((NALU_HYPRE_ParCSRMatrix) hypreA,&partition);
    startRow    = partition[mypid];
    localNRows  = partition[mypid+1] - startRow;
-   hypre_TFree(partition, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(partition, NALU_HYPRE_MEMORY_HOST);
    if ( blksize < 0 ) blksize2 = - blksize;
    else               blksize2 = blksize;
    if ( localNRows % blksize2 != 0 )
@@ -809,13 +809,13 @@ int MLI_Utils_HypreMatrixCompress(void *Amat, int blksize, void **Amat2)
                   newStartRow+newLNRows-1, newStartRow,
                   newStartRow+newLNRows-1, &IJAmat2);
    ierr += NALU_HYPRE_IJMatrixSetObjectType(IJAmat2, NALU_HYPRE_PARCSR);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
 
    /* ----------------------------------------------------------------
     * compute the row lengths of the new matrix
     * ----------------------------------------------------------------*/
 
-   if (newLNRows > 0) rowLengths = hypre_TAlloc(int, newLNRows, NALU_HYPRE_MEMORY_HOST);
+   if (newLNRows > 0) rowLengths = nalu_hypre_TAlloc(int, newLNRows, NALU_HYPRE_MEMORY_HOST);
    else               rowLengths = NULL;
 
    for ( irow = 0; irow < newLNRows; irow++ )
@@ -824,14 +824,14 @@ int MLI_Utils_HypreMatrixCompress(void *Amat, int blksize, void **Amat2)
       for ( j = 0; j < blksize2; j++)
       {
          rowNum = startRow + irow * blksize2 + j;
-         hypre_ParCSRMatrixGetRow(hypreA,rowNum,&rowSize,&colInd,NULL);
+         nalu_hypre_ParCSRMatrixGetRow(hypreA,rowNum,&rowSize,&colInd,NULL);
          rowLengths[irow] += rowSize;
-         hypre_ParCSRMatrixRestoreRow(hypreA,rowNum,&rowSize,&colInd,NULL);
+         nalu_hypre_ParCSRMatrixRestoreRow(hypreA,rowNum,&rowSize,&colInd,NULL);
       }
    }
    ierr =  NALU_HYPRE_IJMatrixSetRowSizes(IJAmat2, rowLengths);
    ierr += NALU_HYPRE_IJMatrixInitialize(IJAmat2);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
 
    /* ----------------------------------------------------------------
     * load the compressed matrix
@@ -839,25 +839,25 @@ int MLI_Utils_HypreMatrixCompress(void *Amat, int blksize, void **Amat2)
 
    for ( irow = 0; irow < newLNRows; irow++ )
    {
-      newInd  = hypre_TAlloc(int,  rowLengths[irow] , NALU_HYPRE_MEMORY_HOST);
-      newVal  = hypre_TAlloc(double,  rowLengths[irow] , NALU_HYPRE_MEMORY_HOST);
-      newVal2 = hypre_TAlloc(double,  rowLengths[irow] , NALU_HYPRE_MEMORY_HOST);
+      newInd  = nalu_hypre_TAlloc(int,  rowLengths[irow] , NALU_HYPRE_MEMORY_HOST);
+      newVal  = nalu_hypre_TAlloc(double,  rowLengths[irow] , NALU_HYPRE_MEMORY_HOST);
+      newVal2 = nalu_hypre_TAlloc(double,  rowLengths[irow] , NALU_HYPRE_MEMORY_HOST);
       newSize = 0;
       for ( j = 0; j < blksize2; j++)
       {
          rowNum = startRow + irow * blksize2 + j;
-         hypre_ParCSRMatrixGetRow(hypreA,rowNum,&rowSize,&colInd,&colVal);
+         nalu_hypre_ParCSRMatrixGetRow(hypreA,rowNum,&rowSize,&colInd,&colVal);
          for ( k = 0; k < rowSize; k++ )
          {
             newInd[newSize] = colInd[k] / blksize2;
             newVal[newSize++] = colVal[k];
          }
-         hypre_ParCSRMatrixRestoreRow(hypreA,rowNum,&rowSize,
+         nalu_hypre_ParCSRMatrixRestoreRow(hypreA,rowNum,&rowSize,
                                       &colInd,&colVal);
       }
       if ( newSize > 0 )
       {
-         hypre_qsort1(newInd, newVal, 0, newSize-1);
+         nalu_hypre_qsort1(newInd, newVal, 0, newSize-1);
          if ( blksize > 0 )
          {
             k = 0;
@@ -914,17 +914,17 @@ int MLI_Utils_HypreMatrixCompress(void *Amat, int blksize, void **Amat2)
       rowNum = newStartRow + irow;
       NALU_HYPRE_IJMatrixSetValues(IJAmat2, 1, &newSize,(const int *) &rowNum,
                 (const int *) newInd, (const double *) newVal);
-      hypre_TFree(newInd, NALU_HYPRE_MEMORY_HOST);
-      hypre_TFree(newVal, NALU_HYPRE_MEMORY_HOST);
-      hypre_TFree(newVal2, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(newInd, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(newVal, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(newVal2, NALU_HYPRE_MEMORY_HOST);
    }
    ierr = NALU_HYPRE_IJMatrixAssemble(IJAmat2);
-   hypre_assert( !ierr );
+   nalu_hypre_assert( !ierr );
    NALU_HYPRE_IJMatrixGetObject(IJAmat2, (void **) &hypreA2);
-   /*hypre_MatvecCommPkgCreate((hypre_ParCSRMatrix *) hypreA2);*/
+   /*nalu_hypre_MatvecCommPkgCreate((nalu_hypre_ParCSRMatrix *) hypreA2);*/
    NALU_HYPRE_IJMatrixSetObjectType( IJAmat2, -1 );
    NALU_HYPRE_IJMatrixDestroy( IJAmat2 );
-   hypre_TFree(rowLengths, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(rowLengths, NALU_HYPRE_MEMORY_HOST);
    (*Amat2) = (void *) hypreA2;
    return 0;
 }
@@ -943,22 +943,22 @@ int MLI_Utils_HypreBoolMatrixDecompress(void *Smat, int blkSize,
    int                sRowSize;
    double             *newVal=NULL;
    MPI_Comm           mpiComm;
-   hypre_ParCSRMatrix *hypreA, *hypreS, *hypreS2;
+   nalu_hypre_ParCSRMatrix *hypreA, *hypreS, *hypreS2;
    NALU_HYPRE_IJMatrix     IJSmat2;
 
    /* ----------------------------------------------------------------
     * fetch information about incoming matrix
     * ----------------------------------------------------------------*/
 
-   hypreS  = (hypre_ParCSRMatrix *) Smat;
-   hypreA  = (hypre_ParCSRMatrix *) Amat;
-   mpiComm = hypre_ParCSRMatrixComm(hypreA);
+   hypreS  = (nalu_hypre_ParCSRMatrix *) Smat;
+   hypreA  = (nalu_hypre_ParCSRMatrix *) Amat;
+   mpiComm = nalu_hypre_ParCSRMatrixComm(hypreA);
    MPI_Comm_rank(mpiComm, &mypid);
    MPI_Comm_size(mpiComm, &nprocs);
    NALU_HYPRE_ParCSRMatrixGetRowPartitioning((NALU_HYPRE_ParCSRMatrix) hypreA,&partition);
    startRow    = partition[mypid];
    localNRows  = partition[mypid+1] - startRow;
-   hypre_TFree(partition, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(partition, NALU_HYPRE_MEMORY_HOST);
    if ( localNRows % blkSize != 0 )
    {
       printf("MLI_DecompressMatrix ERROR : nrows not divisible by blksize.\n");
@@ -976,27 +976,27 @@ int MLI_Utils_HypreBoolMatrixDecompress(void *Smat, int blkSize,
                   startRow+localNRows-1, startRow,
                   startRow+localNRows-1, &IJSmat2);
    ierr += NALU_HYPRE_IJMatrixSetObjectType(IJSmat2, NALU_HYPRE_PARCSR);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
 
    /* ----------------------------------------------------------------
     * compute the row lengths of the new matrix
     * ----------------------------------------------------------------*/
 
-   if (localNRows > 0) rowLengths = hypre_TAlloc(int, localNRows, NALU_HYPRE_MEMORY_HOST);
+   if (localNRows > 0) rowLengths = nalu_hypre_TAlloc(int, localNRows, NALU_HYPRE_MEMORY_HOST);
 
    maxRowLeng = 0;
    for ( irow = 0; irow < localNRows; irow++ )
    {
       rowNum = startRow + irow;
-      hypre_ParCSRMatrixGetRow(hypreA,rowNum,&rowSize,&colInd,NULL);
+      nalu_hypre_ParCSRMatrixGetRow(hypreA,rowNum,&rowSize,&colInd,NULL);
       rowLengths[irow] = rowSize;
       if ( rowSize > maxRowLeng ) maxRowLeng = rowSize;
-      hypre_ParCSRMatrixRestoreRow(hypreA,rowNum,&rowSize,&colInd,NULL);
+      nalu_hypre_ParCSRMatrixRestoreRow(hypreA,rowNum,&rowSize,&colInd,NULL);
    }
    ierr =  NALU_HYPRE_IJMatrixSetRowSizes(IJSmat2, rowLengths);
    ierr += NALU_HYPRE_IJMatrixInitialize(IJSmat2);
-   hypre_assert(!ierr);
-   hypre_TFree(rowLengths, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_assert(!ierr);
+   nalu_hypre_TFree(rowLengths, NALU_HYPRE_MEMORY_HOST);
 
    /* ----------------------------------------------------------------
     * load the decompressed matrix
@@ -1004,22 +1004,22 @@ int MLI_Utils_HypreBoolMatrixDecompress(void *Smat, int blkSize,
 
    if ( maxRowLeng > 0 )
    {
-      newInd  = hypre_TAlloc(int,  maxRowLeng , NALU_HYPRE_MEMORY_HOST);
-      newVal  = hypre_TAlloc(double,  maxRowLeng , NALU_HYPRE_MEMORY_HOST);
-      sInd    = hypre_TAlloc(int,  maxRowLeng , NALU_HYPRE_MEMORY_HOST);
+      newInd  = nalu_hypre_TAlloc(int,  maxRowLeng , NALU_HYPRE_MEMORY_HOST);
+      newVal  = nalu_hypre_TAlloc(double,  maxRowLeng , NALU_HYPRE_MEMORY_HOST);
+      sInd    = nalu_hypre_TAlloc(int,  maxRowLeng , NALU_HYPRE_MEMORY_HOST);
       for ( irow = 0; irow < maxRowLeng; irow++ ) newVal[irow] = 1.0;
    }
    for ( irow = 0; irow < newLNRows; irow++ )
    {
       sRowNum = newStartRow + irow;
-      hypre_ParCSRMatrixGetRow(hypreS,sRowNum,&sRowSize,&colInd,NULL);
+      nalu_hypre_ParCSRMatrixGetRow(hypreS,sRowNum,&sRowSize,&colInd,NULL);
       for ( k = 0; k < sRowSize; k++ ) sInd[k] = colInd[k];
-      hypre_ParCSRMatrixRestoreRow(hypreS,sRowNum,&sRowSize,&colInd,NULL);
-      hypre_qsort0(sInd, 0, sRowSize-1);
+      nalu_hypre_ParCSRMatrixRestoreRow(hypreS,sRowNum,&sRowSize,&colInd,NULL);
+      nalu_hypre_qsort0(sInd, 0, sRowSize-1);
       for ( j = 0; j < blkSize; j++)
       {
          rowNum = startRow + irow * blkSize + j;
-         hypre_ParCSRMatrixGetRow(hypreA,rowNum,&rowSize,&colInd,NULL);
+         nalu_hypre_ParCSRMatrixGetRow(hypreA,rowNum,&rowSize,&colInd,NULL);
          for ( k = 0; k < rowSize; k++ )
          {
             index = colInd[k] / blkSize;
@@ -1031,16 +1031,16 @@ int MLI_Utils_HypreBoolMatrixDecompress(void *Smat, int blkSize,
          newSize = 0;
          for ( k = 0; k < rowSize; k++ )
             if ( newInd[k] >= 0 ) newInd[newSize++] = newInd[k];
-         hypre_ParCSRMatrixRestoreRow(hypreA,rowNum,&rowSize,&colInd,NULL);
+         nalu_hypre_ParCSRMatrixRestoreRow(hypreA,rowNum,&rowSize,&colInd,NULL);
          NALU_HYPRE_IJMatrixSetValues(IJSmat2, 1, &newSize,(const int *) &rowNum,
                 (const int *) newInd, (const double *) newVal);
       }
    }
-   hypre_TFree(newInd, NALU_HYPRE_MEMORY_HOST);
-   hypre_TFree(newVal, NALU_HYPRE_MEMORY_HOST);
-   hypre_TFree(sInd, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(newInd, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(newVal, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(sInd, NALU_HYPRE_MEMORY_HOST);
    ierr = NALU_HYPRE_IJMatrixAssemble(IJSmat2);
-   hypre_assert( !ierr );
+   nalu_hypre_assert( !ierr );
    NALU_HYPRE_IJMatrixGetObject(IJSmat2, (void **) &hypreS2);
    NALU_HYPRE_IJMatrixSetObjectType( IJSmat2, -1 );
    NALU_HYPRE_IJMatrixDestroy( IJSmat2 );
@@ -1153,7 +1153,7 @@ int MLI_Utils_SVD(double *uArray, double *sArray, double *vtArray,
     int  dim = MIN(m,n);
     int  info;
 
-    hypre_dgesvd(&jobu, &jobvt, &m, &n, uArray,
+    nalu_hypre_dgesvd(&jobu, &jobvt, &m, &n, uArray,
         &m, sArray, (double *) NULL, &m, vtArray, &dim, workArray,
         &workLen, &info);
 #endif
@@ -1174,15 +1174,15 @@ int MLI_Utils_singular_vectors(int n, double *uArray)
 #else
     char jobu  = 'O'; /* overwrite input with U */
     char jobvt = 'N';
-    double *sArray = hypre_TAlloc(double, n, NALU_HYPRE_MEMORY_HOST);
+    double *sArray = nalu_hypre_TAlloc(double, n, NALU_HYPRE_MEMORY_HOST);
     int workLen = 5*n;
-    double *workArray = hypre_TAlloc(double, workLen, NALU_HYPRE_MEMORY_HOST);
+    double *workArray = nalu_hypre_TAlloc(double, workLen, NALU_HYPRE_MEMORY_HOST);
 
-    hypre_dgesvd(&jobu, &jobvt, &n, &n, uArray,
+    nalu_hypre_dgesvd(&jobu, &jobvt, &n, &n, uArray,
         &n, sArray, NULL, &n, NULL, &n, workArray, &workLen, &info);
 
-    hypre_TFree(workArray, NALU_HYPRE_MEMORY_HOST);
-    hypre_TFree(sArray, NALU_HYPRE_MEMORY_HOST);
+    nalu_hypre_TFree(workArray, NALU_HYPRE_MEMORY_HOST);
+    nalu_hypre_TFree(sArray, NALU_HYPRE_MEMORY_HOST);
 #endif
 
     return info;
@@ -1197,7 +1197,7 @@ int MLI_Utils_singular_vectors(int n, double *uArray)
  * le_vectors = pointer to storage space where vectors will be returned
  *--------------------------------------------------------------------------*/
 
-int MLI_Utils_ComputeLowEnergyLanczos(hypre_ParCSRMatrix *A,
+int MLI_Utils_ComputeLowEnergyLanczos(nalu_hypre_ParCSRMatrix *A,
     int maxIter, int num_vecs_to_return, double *le_vectors)
 {
    int      i, j, k, its, nprocs, mypid, localNRows, globalNRows;
@@ -1206,7 +1206,7 @@ int MLI_Utils_ComputeLowEnergyLanczos(hypre_ParCSRMatrix *A,
    double   rnorm, *alphaArray, *rnormArray, **Tmat;
    double   one=1.0, *rData;
    MPI_Comm comm;
-   hypre_ParVector *rVec=NULL, *zVec, *pVec, *apVec;
+   nalu_hypre_ParVector *rVec=NULL, *zVec, *pVec, *apVec;
    double *lanczos, *lanczos_p, *Umat, *ptr, *Uptr, *curr_le_vector;
    double rVecNorm;
 
@@ -1214,7 +1214,7 @@ int MLI_Utils_ComputeLowEnergyLanczos(hypre_ParCSRMatrix *A,
     * fetch matrix information
     *-----------------------------------------------------------------*/
 
-   comm = hypre_ParCSRMatrixComm(A);
+   comm = nalu_hypre_ParCSRMatrixComm(A);
    MPI_Comm_rank(comm,&mypid);
    MPI_Comm_size(comm,&nprocs);
 
@@ -1223,7 +1223,7 @@ int MLI_Utils_ComputeLowEnergyLanczos(hypre_ParCSRMatrix *A,
    endRow      = partition[mypid+1] - 1;
    globalNRows = partition[nprocs];
    localNRows  = endRow - startRow + 1;
-   hypre_TFree( partition , NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree( partition , NALU_HYPRE_MEMORY_HOST);
 
    if ( globalNRows < maxIter )
    {
@@ -1239,27 +1239,27 @@ int MLI_Utils_ComputeLowEnergyLanczos(hypre_ParCSRMatrix *A,
    if ( localNRows > 0 )
    {
       NALU_HYPRE_ParCSRMatrixGetRowPartitioning((NALU_HYPRE_ParCSRMatrix)A,&partition);
-      rVec = hypre_ParVectorCreate(comm, globalNRows, partition);
-      hypre_ParVectorInitialize(rVec);
+      rVec = nalu_hypre_ParVectorCreate(comm, globalNRows, partition);
+      nalu_hypre_ParVectorInitialize(rVec);
       NALU_HYPRE_ParCSRMatrixGetRowPartitioning((NALU_HYPRE_ParCSRMatrix)A,&partition);
-      zVec = hypre_ParVectorCreate(comm, globalNRows, partition);
-      hypre_ParVectorInitialize(zVec);
+      zVec = nalu_hypre_ParVectorCreate(comm, globalNRows, partition);
+      nalu_hypre_ParVectorInitialize(zVec);
       NALU_HYPRE_ParCSRMatrixGetRowPartitioning((NALU_HYPRE_ParCSRMatrix)A,&partition);
-      pVec = hypre_ParVectorCreate(comm, globalNRows, partition);
-      hypre_ParVectorInitialize(pVec);
+      pVec = nalu_hypre_ParVectorCreate(comm, globalNRows, partition);
+      nalu_hypre_ParVectorInitialize(pVec);
       NALU_HYPRE_ParCSRMatrixGetRowPartitioning((NALU_HYPRE_ParCSRMatrix)A,&partition);
-      apVec = hypre_ParVectorCreate(comm, globalNRows, partition);
-      hypre_ParVectorInitialize(apVec);
-      zData  = hypre_VectorData( hypre_ParVectorLocalVector(zVec) );
-      rData  = hypre_VectorData( hypre_ParVectorLocalVector(rVec) );
+      apVec = nalu_hypre_ParVectorCreate(comm, globalNRows, partition);
+      nalu_hypre_ParVectorInitialize(apVec);
+      zData  = nalu_hypre_VectorData( nalu_hypre_ParVectorLocalVector(zVec) );
+      rData  = nalu_hypre_VectorData( nalu_hypre_ParVectorLocalVector(rVec) );
    }
    NALU_HYPRE_ParVectorSetRandomValues((NALU_HYPRE_ParVector) rVec, 1209873 );
-   alphaArray = hypre_TAlloc(double,  (maxIter+1) , NALU_HYPRE_MEMORY_HOST);
-   rnormArray = hypre_TAlloc(double,  (maxIter+1) , NALU_HYPRE_MEMORY_HOST);
-   Tmat       = hypre_TAlloc(double*,  (maxIter+1) , NALU_HYPRE_MEMORY_HOST);
+   alphaArray = nalu_hypre_TAlloc(double,  (maxIter+1) , NALU_HYPRE_MEMORY_HOST);
+   rnormArray = nalu_hypre_TAlloc(double,  (maxIter+1) , NALU_HYPRE_MEMORY_HOST);
+   Tmat       = nalu_hypre_TAlloc(double*,  (maxIter+1) , NALU_HYPRE_MEMORY_HOST);
    for ( i = 0; i <= maxIter; i++ )
    {
-      Tmat[i] = hypre_TAlloc(double,  (maxIter+1) , NALU_HYPRE_MEMORY_HOST);
+      Tmat[i] = nalu_hypre_TAlloc(double,  (maxIter+1) , NALU_HYPRE_MEMORY_HOST);
       for ( j = 0; j <= maxIter; j++ ) Tmat[i][j] = 0.0;
       Tmat[i][i] = 1.0;
    }
@@ -1268,25 +1268,25 @@ int MLI_Utils_ComputeLowEnergyLanczos(hypre_ParCSRMatrix *A,
     * compute initial residual vector norm
     *-----------------------------------------------------------------*/
 
-   hypre_ParVectorSetRandomValues(rVec, 1209837);
-   hypre_ParVectorSetConstantValues(pVec, 0.0);
-   hypre_ParVectorSetConstantValues(zVec, 0.0);
-   rho = hypre_ParVectorInnerProd(rVec, rVec);
+   nalu_hypre_ParVectorSetRandomValues(rVec, 1209837);
+   nalu_hypre_ParVectorSetConstantValues(pVec, 0.0);
+   nalu_hypre_ParVectorSetConstantValues(zVec, 0.0);
+   rho = nalu_hypre_ParVectorInnerProd(rVec, rVec);
    rnorm = sqrt(rho);
    rnormArray[0] = rnorm;
    if ( rnorm == 0.0 )
    {
       printf("MLI_Utils_ComputeLowEnergyLanczos : fail for res=0.\n");
-      hypre_ParVectorDestroy( rVec );
-      hypre_ParVectorDestroy( pVec );
-      hypre_ParVectorDestroy( zVec );
-      hypre_ParVectorDestroy( apVec );
+      nalu_hypre_ParVectorDestroy( rVec );
+      nalu_hypre_ParVectorDestroy( pVec );
+      nalu_hypre_ParVectorDestroy( zVec );
+      nalu_hypre_ParVectorDestroy( apVec );
       return 1;
    }
 
    /* allocate storage for lanzcos vectors */
 
-   lanczos = hypre_TAlloc(double, maxIter*localNRows, NALU_HYPRE_MEMORY_HOST);
+   lanczos = nalu_hypre_TAlloc(double, maxIter*localNRows, NALU_HYPRE_MEMORY_HOST);
    lanczos_p = lanczos;
 
    /*-----------------------------------------------------------------
@@ -1299,12 +1299,12 @@ int MLI_Utils_ComputeLowEnergyLanczos(hypre_ParCSRMatrix *A,
           zData[i] = rData[i];
 
       /* scale copy lanczos vector r for use later */
-      rVecNorm = sqrt(hypre_ParVectorInnerProd(rVec, rVec));
+      rVecNorm = sqrt(nalu_hypre_ParVectorInnerProd(rVec, rVec));
       for ( i = 0; i < localNRows; i++ )
           *lanczos_p++ = rData[i] / rVecNorm;
 
       rhom1 = rho;
-      rho = hypre_ParVectorInnerProd(rVec, zVec);
+      rho = nalu_hypre_ParVectorInnerProd(rVec, zVec);
       if (its == 0) beta = 0.0;
       else
       {
@@ -1312,13 +1312,13 @@ int MLI_Utils_ComputeLowEnergyLanczos(hypre_ParCSRMatrix *A,
          Tmat[its-1][its] = -beta;
       }
       NALU_HYPRE_ParVectorScale( beta, (NALU_HYPRE_ParVector) pVec );
-      hypre_ParVectorAxpy( one, zVec, pVec );
-      hypre_ParCSRMatrixMatvec(one, A, pVec, 0.0, apVec);
-      sigma = hypre_ParVectorInnerProd(pVec, apVec);
+      nalu_hypre_ParVectorAxpy( one, zVec, pVec );
+      nalu_hypre_ParCSRMatrixMatvec(one, A, pVec, 0.0, apVec);
+      sigma = nalu_hypre_ParVectorInnerProd(pVec, apVec);
       alpha  = rho / sigma;
       alphaArray[its] = sigma;
-      hypre_ParVectorAxpy( -alpha, apVec, rVec );
-      rnorm = sqrt(hypre_ParVectorInnerProd(rVec, rVec));
+      nalu_hypre_ParVectorAxpy( -alpha, apVec, rVec );
+      rnorm = sqrt(nalu_hypre_ParVectorInnerProd(rVec, rVec));
       rnormArray[its+1] = rnorm;
       if ( rnorm < 1.0E-8 * rnormArray[0] )
       {
@@ -1354,7 +1354,7 @@ int MLI_Utils_ComputeLowEnergyLanczos(hypre_ParCSRMatrix *A,
    /* and return all the singular vectors.                            */
    /* ----------------------------------------------------------------*/
 
-   Umat = hypre_TAlloc(double, maxIter*maxIter, NALU_HYPRE_MEMORY_HOST);
+   Umat = nalu_hypre_TAlloc(double, maxIter*maxIter, NALU_HYPRE_MEMORY_HOST);
    ptr = Umat;
    /* copy Tmat into Umat */
    for ( i = 0; i < maxIter; i++ )
@@ -1394,8 +1394,8 @@ int MLI_Utils_ComputeLowEnergyLanczos(hypre_ParCSRMatrix *A,
        }
    }
 
-   hypre_TFree(Umat, NALU_HYPRE_MEMORY_HOST);
-   hypre_TFree(lanczos, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(Umat, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(lanczos, NALU_HYPRE_MEMORY_HOST);
 
    /* ----------------------------------------------------------------*
     * de-allocate storage for temporary vectors
@@ -1403,21 +1403,21 @@ int MLI_Utils_ComputeLowEnergyLanczos(hypre_ParCSRMatrix *A,
 
    if ( localNRows > 0 )
    {
-      hypre_ParVectorDestroy( rVec );
-      hypre_ParVectorDestroy( zVec );
-      hypre_ParVectorDestroy( pVec );
-      hypre_ParVectorDestroy( apVec );
+      nalu_hypre_ParVectorDestroy( rVec );
+      nalu_hypre_ParVectorDestroy( zVec );
+      nalu_hypre_ParVectorDestroy( pVec );
+      nalu_hypre_ParVectorDestroy( apVec );
    }
-   hypre_TFree(alphaArray, NALU_HYPRE_MEMORY_HOST);
-   hypre_TFree(rnormArray, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(alphaArray, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(rnormArray, NALU_HYPRE_MEMORY_HOST);
    for (i = 0; i <= maxIter; i++) 
-      hypre_TFree(Tmat[i], NALU_HYPRE_MEMORY_HOST);
-   hypre_TFree(Tmat, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(Tmat[i], NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(Tmat, NALU_HYPRE_MEMORY_HOST);
    return 0;
 }
 
 /***************************************************************************
- * read a matrix file and create a hypre_ParCSRMatrix from it
+ * read a matrix file and create a nalu_hypre_ParCSRMatrix from it
  *--------------------------------------------------------------------------*/
 
 int MLI_Utils_HypreMatrixReadTuminFormat(char *filename, MPI_Comm mpiComm,
@@ -1428,7 +1428,7 @@ int MLI_Utils_HypreMatrixReadTuminFormat(char *filename, MPI_Comm mpiComm,
    int    j, nnz, currBufSize, *rowLengths, ierr;
    double colVal, *vals, *matAA, *tempAA, *diag=NULL, *diag2=NULL, scale;
    FILE   *fp;
-   hypre_ParCSRMatrix *hypreA;
+   nalu_hypre_ParCSRMatrix *hypreA;
    NALU_HYPRE_IJMatrix     IJmat;
 
    MPI_Comm_rank( mpiComm, &mypid );
@@ -1462,7 +1462,7 @@ int MLI_Utils_HypreMatrixReadTuminFormat(char *filename, MPI_Comm mpiComm,
          startRow   = localNRows * mypid;
          if ( mypid == nprocs - 1 ) localNRows = globalNRows - startRow;
 
-         if (scaleFlag) diag = hypre_TAlloc(double, globalNRows, NALU_HYPRE_MEMORY_HOST);
+         if (scaleFlag) diag = nalu_hypre_TAlloc(double, globalNRows, NALU_HYPRE_MEMORY_HOST);
          for ( irow = 0; irow < startRow; irow++ )
          {
             fscanf( fp, "%d", &colNum );
@@ -1475,9 +1475,9 @@ int MLI_Utils_HypreMatrixReadTuminFormat(char *filename, MPI_Comm mpiComm,
          }
 
          currBufSize = localNRows * 27;
-         matIA = hypre_TAlloc(int, (localNRows+1) , NALU_HYPRE_MEMORY_HOST);
-         matJA = hypre_TAlloc(int, currBufSize , NALU_HYPRE_MEMORY_HOST);
-         matAA = hypre_TAlloc(double, currBufSize , NALU_HYPRE_MEMORY_HOST);
+         matIA = nalu_hypre_TAlloc(int, (localNRows+1) , NALU_HYPRE_MEMORY_HOST);
+         matJA = nalu_hypre_TAlloc(int, currBufSize , NALU_HYPRE_MEMORY_HOST);
+         matAA = nalu_hypre_TAlloc(double, currBufSize , NALU_HYPRE_MEMORY_HOST);
          nnz    = 0;
          matIA[0] = nnz;
          for ( irow = startRow; irow < startRow+localNRows; irow++ )
@@ -1494,15 +1494,15 @@ int MLI_Utils_HypreMatrixReadTuminFormat(char *filename, MPI_Comm mpiComm,
                   tempJA = matJA;
                   tempAA = matAA;
                   currBufSize += ( 27 * localNRows );
-                  matJA = hypre_TAlloc(int, currBufSize , NALU_HYPRE_MEMORY_HOST);
-                  matAA = hypre_TAlloc(double, currBufSize , NALU_HYPRE_MEMORY_HOST);
+                  matJA = nalu_hypre_TAlloc(int, currBufSize , NALU_HYPRE_MEMORY_HOST);
+                  matAA = nalu_hypre_TAlloc(double, currBufSize , NALU_HYPRE_MEMORY_HOST);
                   for ( j = 0; j < nnz; j++ )
                   {
                      matJA[j] = tempJA[j];
                      matAA[j] = tempAA[j];
                   }
-                  hypre_TFree(tempJA , NALU_HYPRE_MEMORY_HOST);
-                  hypre_TFree(tempAA , NALU_HYPRE_MEMORY_HOST);
+                  nalu_hypre_TFree(tempJA , NALU_HYPRE_MEMORY_HOST);
+                  nalu_hypre_TFree(tempAA , NALU_HYPRE_MEMORY_HOST);
                }
                fscanf( fp, "%d", &colNum );
             }
@@ -1525,17 +1525,17 @@ int MLI_Utils_HypreMatrixReadTuminFormat(char *filename, MPI_Comm mpiComm,
    }
    printf("%5d : MLI_Utils_HypreMatrixReadTuminFormat : nlocal, nnz = %d %d\n",
           mypid, localNRows, nnz);
-   rowLengths = hypre_TAlloc(int, localNRows , NALU_HYPRE_MEMORY_HOST);
+   rowLengths = nalu_hypre_TAlloc(int, localNRows , NALU_HYPRE_MEMORY_HOST);
    for ( irow = 0; irow < localNRows; irow++ )
       rowLengths[irow] = matIA[irow+1] - matIA[irow];
 
    ierr = NALU_HYPRE_IJMatrixCreate(mpiComm, startRow, startRow+localNRows-1,
                                startRow, startRow+localNRows-1, &IJmat);
    ierr = NALU_HYPRE_IJMatrixSetObjectType(IJmat, NALU_HYPRE_PARCSR);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
    ierr = NALU_HYPRE_IJMatrixSetRowSizes(IJmat, rowLengths);
    ierr = NALU_HYPRE_IJMatrixInitialize(IJmat);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
    for ( irow = 0; irow < localNRows; irow++ )
    {
       length = rowLengths[irow];
@@ -1550,32 +1550,32 @@ int MLI_Utils_HypreMatrixReadTuminFormat(char *filename, MPI_Comm mpiComm,
       }
       ierr = NALU_HYPRE_IJMatrixSetValues(IJmat, 1, &length,(const int *) &rowNum,
                 (const int *) inds, (const double *) vals);
-      hypre_assert( !ierr );
+      nalu_hypre_assert( !ierr );
    }
-   hypre_TFree(rowLengths , NALU_HYPRE_MEMORY_HOST);
-   hypre_TFree(matIA , NALU_HYPRE_MEMORY_HOST);
-   hypre_TFree(matJA , NALU_HYPRE_MEMORY_HOST);
-   hypre_TFree(matAA , NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(rowLengths , NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(matIA , NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(matJA , NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(matAA , NALU_HYPRE_MEMORY_HOST);
 
    ierr = NALU_HYPRE_IJMatrixAssemble(IJmat);
-   hypre_assert( !ierr );
+   nalu_hypre_assert( !ierr );
    NALU_HYPRE_IJMatrixGetObject(IJmat, (void**) &hypreA);
    NALU_HYPRE_IJMatrixSetObjectType(IJmat, -1);
    NALU_HYPRE_IJMatrixDestroy(IJmat);
    (*Amat) = (void *) hypreA;
    if ( scaleFlag )
    {
-      diag2 = hypre_TAlloc(double,  localNRows, NALU_HYPRE_MEMORY_HOST);
+      diag2 = nalu_hypre_TAlloc(double,  localNRows, NALU_HYPRE_MEMORY_HOST);
       for ( irow = 0; irow < localNRows; irow++ )
          diag2[irow] = diag[startRow+irow];
-      hypre_TFree(diag, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(diag, NALU_HYPRE_MEMORY_HOST);
    }
    (*scaleVec) = diag2;
    return ierr;
 }
 
 /***************************************************************************
- * read a matrix file and create a hypre_ParCSRMatrix from it
+ * read a matrix file and create a nalu_hypre_ParCSRMatrix from it
  *--------------------------------------------------------------------------*/
 
 int MLI_Utils_HypreMatrixReadIJAFormat(char *filename, MPI_Comm mpiComm,
@@ -1589,7 +1589,7 @@ int MLI_Utils_HypreMatrixReadIJAFormat(char *filename, MPI_Comm mpiComm,
    char   fname[20];
 #endif
    FILE   *fp;
-   hypre_ParCSRMatrix *hypreA;
+   nalu_hypre_ParCSRMatrix *hypreA;
    NALU_HYPRE_IJMatrix     IJmat;
 
    MPI_Comm_rank( mpiComm, &mypid );
@@ -1625,12 +1625,12 @@ int MLI_Utils_HypreMatrixReadIJAFormat(char *filename, MPI_Comm mpiComm,
          startRow   = localNRows * mypid;
          if ( mypid == nprocs - 1 ) localNRows = globalNRows - startRow;
          currBufSize = globalNnz / nprocs * 3;
-         matIA = hypre_TAlloc(int, (localNRows+1) , NALU_HYPRE_MEMORY_HOST);
-         matJA = hypre_TAlloc(int, currBufSize , NALU_HYPRE_MEMORY_HOST);
-         matAA = hypre_TAlloc(double, currBufSize , NALU_HYPRE_MEMORY_HOST);
+         matIA = nalu_hypre_TAlloc(int, (localNRows+1) , NALU_HYPRE_MEMORY_HOST);
+         matJA = nalu_hypre_TAlloc(int, currBufSize , NALU_HYPRE_MEMORY_HOST);
+         matAA = nalu_hypre_TAlloc(double, currBufSize , NALU_HYPRE_MEMORY_HOST);
 
          if (scaleFlag == 1)
-            diag = hypre_TAlloc(double, globalNRows, NALU_HYPRE_MEMORY_HOST);
+            diag = nalu_hypre_TAlloc(double, globalNRows, NALU_HYPRE_MEMORY_HOST);
          for ( irow = 0; irow < globalNnz; irow++ )
          {
             fscanf( fp, "%d %d %lg", &rowNum, &colNum, &colVal );
@@ -1678,17 +1678,17 @@ int MLI_Utils_HypreMatrixReadIJAFormat(char *filename, MPI_Comm mpiComm,
    }
    printf("%5d : MLI_Utils_HypreMatrixRead : nlocal, nnz = %d %d\n",
           mypid, localNRows, nnz);
-   rowLengths = hypre_TAlloc(int, localNRows , NALU_HYPRE_MEMORY_HOST);
+   rowLengths = nalu_hypre_TAlloc(int, localNRows , NALU_HYPRE_MEMORY_HOST);
    for ( irow = 0; irow < localNRows; irow++ )
       rowLengths[irow] = matIA[irow+1] - matIA[irow];
 
    ierr = NALU_HYPRE_IJMatrixCreate(mpiComm, startRow, startRow+localNRows-1,
                                startRow, startRow+localNRows-1, &IJmat);
    ierr = NALU_HYPRE_IJMatrixSetObjectType(IJmat, NALU_HYPRE_PARCSR);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
    ierr = NALU_HYPRE_IJMatrixSetRowSizes(IJmat, rowLengths);
    ierr = NALU_HYPRE_IJMatrixInitialize(IJmat);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
    for ( irow = 0; irow < localNRows; irow++ )
    {
       length = rowLengths[irow];
@@ -1710,25 +1710,25 @@ int MLI_Utils_HypreMatrixReadIJAFormat(char *filename, MPI_Comm mpiComm,
       }
       ierr = NALU_HYPRE_IJMatrixSetValues(IJmat, 1, &length,(const int *) &rowNum,
                 (const int *) inds, (const double *) vals);
-      hypre_assert( !ierr );
+      nalu_hypre_assert( !ierr );
    }
-   hypre_TFree(rowLengths , NALU_HYPRE_MEMORY_HOST);
-   hypre_TFree(matIA , NALU_HYPRE_MEMORY_HOST);
-   hypre_TFree(matJA , NALU_HYPRE_MEMORY_HOST);
-   hypre_TFree(matAA , NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(rowLengths , NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(matIA , NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(matJA , NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(matAA , NALU_HYPRE_MEMORY_HOST);
 
    ierr = NALU_HYPRE_IJMatrixAssemble(IJmat);
-   hypre_assert( !ierr );
+   nalu_hypre_assert( !ierr );
    NALU_HYPRE_IJMatrixGetObject(IJmat, (void**) &hypreA);
    NALU_HYPRE_IJMatrixSetObjectType(IJmat, -1);
    NALU_HYPRE_IJMatrixDestroy(IJmat);
    (*Amat) = (void *) hypreA;
    if ( scaleFlag )
    {
-      diag2 = hypre_TAlloc(double,  localNRows, NALU_HYPRE_MEMORY_HOST);
+      diag2 = nalu_hypre_TAlloc(double,  localNRows, NALU_HYPRE_MEMORY_HOST);
       for ( irow = 0; irow < localNRows; irow++ )
          diag2[irow] = diag[startRow+irow];
-      hypre_TFree(diag, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(diag, NALU_HYPRE_MEMORY_HOST);
    }
    (*scaleVec) = diag2;
 #if 0
@@ -1737,10 +1737,10 @@ int MLI_Utils_HypreMatrixReadIJAFormat(char *filename, MPI_Comm mpiComm,
    for ( irow = 0; irow < localNRows; irow++ )
    {
       rowNum = startRow + irow;
-      hypre_ParCSRMatrixGetRow(hypreA, rowNum, &length, &inds, &vals);
+      nalu_hypre_ParCSRMatrixGetRow(hypreA, rowNum, &length, &inds, &vals);
       for ( colNum = 0; colNum < length; colNum++ )
          fprintf(fp, "%d %d %e\n", rowNum, inds[colNum], vals[colNum]);
-      hypre_ParCSRMatrixRestoreRow(hypreA, rowNum, &length, &inds, &vals);
+      nalu_hypre_ParCSRMatrixRestoreRow(hypreA, rowNum, &length, &inds, &vals);
    }
    fclose(fp);
 #endif
@@ -1749,7 +1749,7 @@ int MLI_Utils_HypreMatrixReadIJAFormat(char *filename, MPI_Comm mpiComm,
 }
 
 /***************************************************************************
- * read matrix files and create a hypre_ParCSRMatrix from them
+ * read matrix files and create a nalu_hypre_ParCSRMatrix from them
  *--------------------------------------------------------------------------*/
 
 int MLI_Utils_HypreParMatrixReadIJAFormat(char *filename, MPI_Comm mpiComm,
@@ -1761,7 +1761,7 @@ int MLI_Utils_HypreParMatrixReadIJAFormat(char *filename, MPI_Comm mpiComm,
    double colVal, *vals, *matAA, *diag=NULL, *diag2=NULL, scale;
    char   fname[20];
    FILE   *fp;
-   hypre_ParCSRMatrix *hypreA;
+   nalu_hypre_ParCSRMatrix *hypreA;
    NALU_HYPRE_IJMatrix     IJmat;
 
    MPI_Comm_rank( mpiComm, &mypid );
@@ -1785,7 +1785,7 @@ int MLI_Utils_HypreParMatrixReadIJAFormat(char *filename, MPI_Comm mpiComm,
       printf("invalid nrows %d.\n", localNRows);
       exit(1);
    }
-   rowsArray = hypre_TAlloc(int,  nprocs , NALU_HYPRE_MEMORY_HOST);
+   rowsArray = nalu_hypre_TAlloc(int,  nprocs , NALU_HYPRE_MEMORY_HOST);
    MPI_Allgather(&localNRows, 1, MPI_INT, rowsArray, 1, MPI_INT, mpiComm);
    globalNRows = 0;
    for ( j = 0; j < nprocs; j++ )
@@ -1793,15 +1793,15 @@ int MLI_Utils_HypreParMatrixReadIJAFormat(char *filename, MPI_Comm mpiComm,
       if ( j == mypid ) startRow = globalNRows;
       globalNRows += rowsArray[j];
    }
-   hypre_TFree(rowsArray, NALU_HYPRE_MEMORY_HOST);
-   matIA = hypre_TAlloc(int, (localNRows+1) , NALU_HYPRE_MEMORY_HOST);
-   matJA = hypre_TAlloc(int, localNnz , NALU_HYPRE_MEMORY_HOST);
-   matAA = hypre_TAlloc(double, localNnz , NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(rowsArray, NALU_HYPRE_MEMORY_HOST);
+   matIA = nalu_hypre_TAlloc(int, (localNRows+1) , NALU_HYPRE_MEMORY_HOST);
+   matJA = nalu_hypre_TAlloc(int, localNnz , NALU_HYPRE_MEMORY_HOST);
+   matAA = nalu_hypre_TAlloc(double, localNnz , NALU_HYPRE_MEMORY_HOST);
 
    if (scaleFlag == 1)
    {
-      diag  = hypre_TAlloc(double, globalNRows, NALU_HYPRE_MEMORY_HOST);
-      diag2 = hypre_TAlloc(double, globalNRows, NALU_HYPRE_MEMORY_HOST);
+      diag  = nalu_hypre_TAlloc(double, globalNRows, NALU_HYPRE_MEMORY_HOST);
+      diag2 = nalu_hypre_TAlloc(double, globalNRows, NALU_HYPRE_MEMORY_HOST);
       for (irow = 0; irow < globalNRows; irow++) diag[irow] = diag2[irow] = 0.0;
    }
    index = 0;
@@ -1829,17 +1829,17 @@ int MLI_Utils_HypreParMatrixReadIJAFormat(char *filename, MPI_Comm mpiComm,
    if ( scaleFlag == 1 )
       MPI_Allreduce(diag, diag2, globalNRows, MPI_DOUBLE, MPI_SUM, mpiComm);
 
-   rowLengths = hypre_TAlloc(int, localNRows , NALU_HYPRE_MEMORY_HOST);
+   rowLengths = nalu_hypre_TAlloc(int, localNRows , NALU_HYPRE_MEMORY_HOST);
    for ( irow = 0; irow < localNRows; irow++ )
       rowLengths[irow] = matIA[irow+1] - matIA[irow];
 
    ierr = NALU_HYPRE_IJMatrixCreate(mpiComm, startRow, startRow+localNRows-1,
                                startRow, startRow+localNRows-1, &IJmat);
    ierr = NALU_HYPRE_IJMatrixSetObjectType(IJmat, NALU_HYPRE_PARCSR);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
    ierr = NALU_HYPRE_IJMatrixSetRowSizes(IJmat, rowLengths);
    ierr = NALU_HYPRE_IJMatrixInitialize(IJmat);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
    for ( irow = 0; irow < localNRows; irow++ )
    {
       length = rowLengths[irow];
@@ -1861,26 +1861,26 @@ int MLI_Utils_HypreParMatrixReadIJAFormat(char *filename, MPI_Comm mpiComm,
       }
       ierr = NALU_HYPRE_IJMatrixSetValues(IJmat, 1, &length,(const int *) &rowNum,
                 (const int *) inds, (const double *) vals);
-      hypre_assert( !ierr );
+      nalu_hypre_assert( !ierr );
    }
-   hypre_TFree(rowLengths, NALU_HYPRE_MEMORY_HOST);
-   hypre_TFree(matIA, NALU_HYPRE_MEMORY_HOST);
-   hypre_TFree(matJA, NALU_HYPRE_MEMORY_HOST);
-   hypre_TFree(matAA, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(rowLengths, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(matIA, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(matJA, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(matAA, NALU_HYPRE_MEMORY_HOST);
 
    ierr = NALU_HYPRE_IJMatrixAssemble(IJmat);
-   hypre_assert( !ierr );
+   nalu_hypre_assert( !ierr );
    NALU_HYPRE_IJMatrixGetObject(IJmat, (void**) &hypreA);
    NALU_HYPRE_IJMatrixSetObjectType(IJmat, -1);
    NALU_HYPRE_IJMatrixDestroy(IJmat);
    (*Amat) = (void *) hypreA;
    if ( scaleFlag == 1 )
    {
-      hypre_TFree(diag, NALU_HYPRE_MEMORY_HOST);
-      diag = hypre_TAlloc(double,  localNRows, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(diag, NALU_HYPRE_MEMORY_HOST);
+      diag = nalu_hypre_TAlloc(double,  localNRows, NALU_HYPRE_MEMORY_HOST);
       for ( irow = 0; irow < localNRows; irow++ )
          diag[irow] = diag2[startRow+irow];
-      hypre_TFree(diag2, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(diag2, NALU_HYPRE_MEMORY_HOST);
    }
    (*scaleVec) = diag;
 
@@ -1900,7 +1900,7 @@ int MLI_Utils_HypreMatrixReadHBFormat(char *filename, MPI_Comm mpiComm,
    double *matAA, *vals;
    char   line[200], junk[100];
    FILE   *fp;
-   hypre_ParCSRMatrix *hypreA;
+   nalu_hypre_ParCSRMatrix *hypreA;
    NALU_HYPRE_IJMatrix     IJmat;
 
    fp = fopen(filename, "r");
@@ -1919,9 +1919,9 @@ int MLI_Utils_HypreMatrixReadHBFormat(char *filename, MPI_Comm mpiComm,
    if (rhsl)
       fgets(line, lineLeng, fp);
 
-   matIA = hypre_TAlloc(int, (localNRows+1) , NALU_HYPRE_MEMORY_HOST);
-   matJA = hypre_TAlloc(int, localNnz , NALU_HYPRE_MEMORY_HOST);
-   matAA = hypre_TAlloc(double, localNnz , NALU_HYPRE_MEMORY_HOST);
+   matIA = nalu_hypre_TAlloc(int, (localNRows+1) , NALU_HYPRE_MEMORY_HOST);
+   matJA = nalu_hypre_TAlloc(int, localNnz , NALU_HYPRE_MEMORY_HOST);
+   matAA = nalu_hypre_TAlloc(double, localNnz , NALU_HYPRE_MEMORY_HOST);
    for (irow = 0; irow <= localNRows; irow++) fscanf(fp, "%d", &matIA[irow]);
    for (irow = 0; irow < localNnz; irow++) fscanf(fp, "%d", &matJA[irow]);
    for (irow = 0; irow < localNnz; irow++) fscanf(fp, "%lg", &matAA[irow]);
@@ -1933,17 +1933,17 @@ int MLI_Utils_HypreMatrixReadHBFormat(char *filename, MPI_Comm mpiComm,
    fclose(fp);
 
    startRow = 0;
-   rowLengths = hypre_TAlloc(int, localNRows , NALU_HYPRE_MEMORY_HOST);
+   rowLengths = nalu_hypre_TAlloc(int, localNRows , NALU_HYPRE_MEMORY_HOST);
    for ( irow = 0; irow < localNRows; irow++ )
       rowLengths[irow] = matIA[irow+1] - matIA[irow];
 
    ierr = NALU_HYPRE_IJMatrixCreate(mpiComm, startRow, startRow+localNRows-1,
                                startRow, startRow+localNRows-1, &IJmat);
    ierr = NALU_HYPRE_IJMatrixSetObjectType(IJmat, NALU_HYPRE_PARCSR);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
    ierr = NALU_HYPRE_IJMatrixSetRowSizes(IJmat, rowLengths);
    ierr = NALU_HYPRE_IJMatrixInitialize(IJmat);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
    for (irow = 0; irow < localNRows; irow++)
    {
       length = rowLengths[irow];
@@ -1952,15 +1952,15 @@ int MLI_Utils_HypreMatrixReadHBFormat(char *filename, MPI_Comm mpiComm,
       vals = &(matAA[matIA[irow]]);
       ierr = NALU_HYPRE_IJMatrixSetValues(IJmat, 1, &length,(const int *) &rowNum,
                 (const int *) inds, (const double *) vals);
-      hypre_assert( !ierr );
+      nalu_hypre_assert( !ierr );
    }
-   hypre_TFree(rowLengths, NALU_HYPRE_MEMORY_HOST);
-   hypre_TFree(matIA, NALU_HYPRE_MEMORY_HOST);
-   hypre_TFree(matJA, NALU_HYPRE_MEMORY_HOST);
-   hypre_TFree(matAA, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(rowLengths, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(matIA, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(matJA, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(matAA, NALU_HYPRE_MEMORY_HOST);
 
    ierr = NALU_HYPRE_IJMatrixAssemble(IJmat);
-   hypre_assert( !ierr );
+   nalu_hypre_assert( !ierr );
    NALU_HYPRE_IJMatrixGetObject(IJmat, (void**) &hypreA);
    NALU_HYPRE_IJMatrixSetObjectType(IJmat, -1);
    NALU_HYPRE_IJMatrixDestroy(IJmat);
@@ -2123,7 +2123,7 @@ int MLI_Utils_mJacobiCreate(MPI_Comm comm, NALU_HYPRE_Solver *solver)
 {
    NALU_HYPRE_MLI_mJacobi *jacobiPtr;
 
-   jacobiPtr = hypre_TAlloc(NALU_HYPRE_MLI_mJacobi, 1, NALU_HYPRE_MEMORY_HOST);
+   jacobiPtr = nalu_hypre_TAlloc(NALU_HYPRE_MLI_mJacobi, 1, NALU_HYPRE_MEMORY_HOST);
 
    if (jacobiPtr == NULL) return 1;
 
@@ -2144,7 +2144,7 @@ int MLI_Utils_mJacobiDestroy(NALU_HYPRE_Solver solver)
 {
    NALU_HYPRE_MLI_mJacobi *jacobiPtr = (NALU_HYPRE_MLI_mJacobi *) solver;
    if (jacobiPtr == NULL) return 1;
-   hypre_TFree(jacobiPtr->diagonal_, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(jacobiPtr->diagonal_, NALU_HYPRE_MEMORY_HOST);
    if (jacobiPtr->hypreRes_ != NULL)
       NALU_HYPRE_ParVectorDestroy(jacobiPtr->hypreRes_);
    jacobiPtr->diagonal_ = NULL;
@@ -2173,20 +2173,20 @@ int MLI_Utils_mJacobiSetup(NALU_HYPRE_Solver solver, NALU_HYPRE_ParCSRMatrix A,
 {
    int    i, j, nrows, *AI, *AJ, gnrows, *partition, *newPartition, nprocs;
    double *AData;
-   hypre_ParCSRMatrix *hypreA;
-   hypre_ParVector    *hypreX;
+   nalu_hypre_ParCSRMatrix *hypreA;
+   nalu_hypre_ParVector    *hypreX;
    NALU_HYPRE_MLI_mJacobi  *jacobiPtr;
 
    jacobiPtr = (NALU_HYPRE_MLI_mJacobi *) solver;
    if (jacobiPtr == NULL) return 1;
-   hypre_TFree(jacobiPtr->diagonal_, NALU_HYPRE_MEMORY_HOST);
-   hypreX = (hypre_ParVector *) x;
-   nrows = hypre_VectorSize(hypre_ParVectorLocalVector(hypreX));
-   jacobiPtr->diagonal_ = hypre_TAlloc(double, nrows , NALU_HYPRE_MEMORY_HOST);
-   hypreA = (hypre_ParCSRMatrix *) A;
-   AI = hypre_CSRMatrixI(hypre_ParCSRMatrixDiag(hypreA));
-   AJ = hypre_CSRMatrixJ(hypre_ParCSRMatrixDiag(hypreA));
-   AData = hypre_CSRMatrixData(hypre_ParCSRMatrixDiag(hypreA));
+   nalu_hypre_TFree(jacobiPtr->diagonal_, NALU_HYPRE_MEMORY_HOST);
+   hypreX = (nalu_hypre_ParVector *) x;
+   nrows = nalu_hypre_VectorSize(nalu_hypre_ParVectorLocalVector(hypreX));
+   jacobiPtr->diagonal_ = nalu_hypre_TAlloc(double, nrows , NALU_HYPRE_MEMORY_HOST);
+   hypreA = (nalu_hypre_ParCSRMatrix *) A;
+   AI = nalu_hypre_CSRMatrixI(nalu_hypre_ParCSRMatrixDiag(hypreA));
+   AJ = nalu_hypre_CSRMatrixJ(nalu_hypre_ParCSRMatrixDiag(hypreA));
+   AData = nalu_hypre_CSRMatrixData(nalu_hypre_ParCSRMatrixDiag(hypreA));
    for (i = 0; i < nrows; i++)
    {
       jacobiPtr->diagonal_[i] = 1.0;
@@ -2214,10 +2214,10 @@ int MLI_Utils_mJacobiSetup(NALU_HYPRE_Solver solver, NALU_HYPRE_ParCSRMatrix A,
    }
    if (jacobiPtr->hypreRes_ != NULL)
       NALU_HYPRE_ParVectorDestroy(jacobiPtr->hypreRes_);
-   gnrows = hypre_ParVectorGlobalSize(hypreX);
-   partition = hypre_ParVectorPartitioning(hypreX);
+   gnrows = nalu_hypre_ParVectorGlobalSize(hypreX);
+   partition = nalu_hypre_ParVectorPartitioning(hypreX);
    MPI_Comm_size(jacobiPtr->comm_, &nprocs);
-   newPartition = hypre_TAlloc(int, (nprocs+1) , NALU_HYPRE_MEMORY_HOST);
+   newPartition = nalu_hypre_TAlloc(int, (nprocs+1) , NALU_HYPRE_MEMORY_HOST);
    for (i = 0; i <= nprocs; i++) newPartition[i] = partition[i];
    NALU_HYPRE_ParVectorCreate(jacobiPtr->comm_, gnrows, newPartition,
                          &(jacobiPtr->hypreRes_));
@@ -2235,17 +2235,17 @@ int MLI_Utils_mJacobiSolve(NALU_HYPRE_Solver solver, NALU_HYPRE_ParCSRMatrix A,
    int                i, j, nrows;
    double             *xData, *rData, omega=1;
    NALU_HYPRE_ParVector    res;
-   hypre_ParVector    *hypreX, *hypreR;
+   nalu_hypre_ParVector    *hypreX, *hypreR;
    NALU_HYPRE_MLI_mJacobi  *jacobiPtr;
 
    jacobiPtr = (NALU_HYPRE_MLI_mJacobi *) solver;
    if (jacobiPtr == NULL) return 1;
    res = (NALU_HYPRE_ParVector) jacobiPtr->hypreRes_;
-   hypreX = (hypre_ParVector *) x;
-   hypreR = (hypre_ParVector *) res;
-   xData = hypre_VectorData(hypre_ParVectorLocalVector(hypreX));
-   rData = hypre_VectorData(hypre_ParVectorLocalVector(hypreR));
-   nrows = hypre_VectorSize(hypre_ParVectorLocalVector(hypreX));
+   hypreX = (nalu_hypre_ParVector *) x;
+   hypreR = (nalu_hypre_ParVector *) res;
+   xData = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(hypreX));
+   rData = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(hypreR));
+   nrows = nalu_hypre_VectorSize(nalu_hypre_ParVectorLocalVector(hypreX));
    NALU_HYPRE_ParVectorCopy(b, res);
    for (j = 0; j < nrows; j++)
       xData[j] = (rData[j] * jacobiPtr->diagonal_[j]);
@@ -2347,15 +2347,15 @@ int MLI_Utils_HypreGMRESSolve(void *precon, NALU_HYPRE_Matrix A,
       NALU_HYPRE_BoomerAMGSetPrintLevel(gmresPrecond, 0);
       NALU_HYPRE_BoomerAMGSetCoarsenType(gmresPrecond, 0);
       NALU_HYPRE_BoomerAMGSetStrongThreshold(gmresPrecond, 0.9);
-      nSweeps = hypre_TAlloc(int, 4 , NALU_HYPRE_MEMORY_HOST);
+      nSweeps = nalu_hypre_TAlloc(int, 4 , NALU_HYPRE_MEMORY_HOST);
       for (i = 0; i < 4; i++) nSweeps[i] = 1;
       NALU_HYPRE_BoomerAMGSetNumGridSweeps(gmresPrecond, nSweeps);
-      rTypes = hypre_TAlloc(int, 4 , NALU_HYPRE_MEMORY_HOST);
+      rTypes = nalu_hypre_TAlloc(int, 4 , NALU_HYPRE_MEMORY_HOST);
       for (i = 0; i < 4; i++) rTypes[i] = 6;
-      relaxWt = hypre_TAlloc(double, 25 , NALU_HYPRE_MEMORY_HOST);
+      relaxWt = nalu_hypre_TAlloc(double, 25 , NALU_HYPRE_MEMORY_HOST);
       for (i = 0; i < 25; i++) relaxWt[i] = 1.0;
       NALU_HYPRE_BoomerAMGSetRelaxWeight(gmresPrecond, relaxWt);
-      relaxOmega = hypre_TAlloc(double, 25 , NALU_HYPRE_MEMORY_HOST);
+      relaxOmega = nalu_hypre_TAlloc(double, 25 , NALU_HYPRE_MEMORY_HOST);
       for (i = 0; i < 25; i++) relaxOmega[i] = 1.0;
       NALU_HYPRE_BoomerAMGSetOmega(gmresPrecond, relaxOmega);
       NALU_HYPRE_GMRESSetPrecond(gmresSolver,
@@ -2449,15 +2449,15 @@ int MLI_Utils_HypreFGMRESSolve(void *precon, NALU_HYPRE_Matrix A,
       NALU_HYPRE_BoomerAMGSetPrintLevel(gmresPrecond, 0);
       NALU_HYPRE_BoomerAMGSetCoarsenType(gmresPrecond, 0);
       NALU_HYPRE_BoomerAMGSetStrongThreshold(gmresPrecond, 0.9);
-      nSweeps = hypre_TAlloc(int, 4 , NALU_HYPRE_MEMORY_HOST);
+      nSweeps = nalu_hypre_TAlloc(int, 4 , NALU_HYPRE_MEMORY_HOST);
       for (i = 0; i < 4; i++) nSweeps[i] = 1;
       NALU_HYPRE_BoomerAMGSetNumGridSweeps(gmresPrecond, nSweeps);
-      rTypes = hypre_TAlloc(int, 4 , NALU_HYPRE_MEMORY_HOST);
+      rTypes = nalu_hypre_TAlloc(int, 4 , NALU_HYPRE_MEMORY_HOST);
       for (i = 0; i < 4; i++) rTypes[i] = 6;
-      relaxWt = hypre_TAlloc(double, 25 , NALU_HYPRE_MEMORY_HOST);
+      relaxWt = nalu_hypre_TAlloc(double, 25 , NALU_HYPRE_MEMORY_HOST);
       for (i = 0; i < 25; i++) relaxWt[i] = 1.0;
       NALU_HYPRE_BoomerAMGSetRelaxWeight(gmresPrecond, relaxWt);
-      relaxOmega = hypre_TAlloc(double, 25 , NALU_HYPRE_MEMORY_HOST);
+      relaxOmega = nalu_hypre_TAlloc(double, 25 , NALU_HYPRE_MEMORY_HOST);
       for (i = 0; i < 25; i++) relaxOmega[i] = 1.0;
       NALU_HYPRE_BoomerAMGSetOmega(gmresPrecond, relaxOmega);
       NALU_HYPRE_ParCSRFGMRESSetMaxIter(gmresSolver, maxIter);
@@ -2767,10 +2767,10 @@ int MLI_Utils_IntMergeSort(int nList, int *listLengs, int **lists,
    }
 #endif
 
-   newList  = hypre_TAlloc(int,  totalLeng , NALU_HYPRE_MEMORY_HOST);
-   indices  = hypre_TAlloc(int,  nList , NALU_HYPRE_MEMORY_HOST);
-   tree     = hypre_TAlloc(int,  nList , NALU_HYPRE_MEMORY_HOST);
-   treeInd  = hypre_TAlloc(int,  nList , NALU_HYPRE_MEMORY_HOST);
+   newList  = nalu_hypre_TAlloc(int,  totalLeng , NALU_HYPRE_MEMORY_HOST);
+   indices  = nalu_hypre_TAlloc(int,  nList , NALU_HYPRE_MEMORY_HOST);
+   tree     = nalu_hypre_TAlloc(int,  nList , NALU_HYPRE_MEMORY_HOST);
+   treeInd  = nalu_hypre_TAlloc(int,  nList , NALU_HYPRE_MEMORY_HOST);
    for ( i = 0; i < nList; i++ ) indices[i] = 0;
    for ( i = 0; i < nList; i++ )
    {
@@ -2816,9 +2816,9 @@ int MLI_Utils_IntMergeSort(int nList, int *listLengs, int **lists,
    }
    (*newListOut) = newList;
    (*newNListOut) = newListCnt;
-   hypre_TFree(indices, NALU_HYPRE_MEMORY_HOST);
-   hypre_TFree(tree, NALU_HYPRE_MEMORY_HOST);
-   hypre_TFree(treeInd, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(indices, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(tree, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(treeInd, NALU_HYPRE_MEMORY_HOST);
    return 0;
 }
 
@@ -2888,9 +2888,9 @@ int MLI_Utils_DenseMatrixInverse( double **Amat, int ndim, double ***Bmat )
    if ( ndim == 1 )
    {
       if ( habs(Amat[0][0]) <= 1.0e-16 ) return -1;
-      Cmat = hypre_TAlloc(double*,  ndim , NALU_HYPRE_MEMORY_HOST);
+      Cmat = nalu_hypre_TAlloc(double*,  ndim , NALU_HYPRE_MEMORY_HOST);
       for ( i = 0; i < ndim; i++ )
-         Cmat[i] = hypre_TAlloc(double,  ndim , NALU_HYPRE_MEMORY_HOST);
+         Cmat[i] = nalu_hypre_TAlloc(double,  ndim , NALU_HYPRE_MEMORY_HOST);
       Cmat[0][0] = 1.0 / Amat[0][0];
       (*Bmat) = Cmat;
       return 0;
@@ -2899,9 +2899,9 @@ int MLI_Utils_DenseMatrixInverse( double **Amat, int ndim, double ***Bmat )
    {
       denom = Amat[0][0] * Amat[1][1] - Amat[0][1] * Amat[1][0];
       if ( habs( denom ) <= 1.0e-16 ) return -1;
-      Cmat = hypre_TAlloc(double*,  ndim , NALU_HYPRE_MEMORY_HOST);
+      Cmat = nalu_hypre_TAlloc(double*,  ndim , NALU_HYPRE_MEMORY_HOST);
       for ( i = 0; i < ndim; i++ )
-         Cmat[i] = hypre_TAlloc(double,  ndim , NALU_HYPRE_MEMORY_HOST);
+         Cmat[i] = nalu_hypre_TAlloc(double,  ndim , NALU_HYPRE_MEMORY_HOST);
       Cmat[0][0] = Amat[1][1] / denom;
       Cmat[1][1] = Amat[0][0] / denom;
       Cmat[0][1] = - ( Amat[0][1] / denom );
@@ -2911,10 +2911,10 @@ int MLI_Utils_DenseMatrixInverse( double **Amat, int ndim, double ***Bmat )
    }
    else
    {
-      Cmat = hypre_TAlloc(double*,  ndim , NALU_HYPRE_MEMORY_HOST);
+      Cmat = nalu_hypre_TAlloc(double*,  ndim , NALU_HYPRE_MEMORY_HOST);
       for ( i = 0; i < ndim; i++ )
       {
-         Cmat[i] = hypre_TAlloc(double,  ndim , NALU_HYPRE_MEMORY_HOST);
+         Cmat[i] = nalu_hypre_TAlloc(double,  ndim , NALU_HYPRE_MEMORY_HOST);
          for ( j = 0; j < ndim; j++ ) Cmat[i][j] = 0.0;
          Cmat[i][i] = 1.0;
       }

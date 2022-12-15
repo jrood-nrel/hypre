@@ -14,16 +14,16 @@
 #ifndef NALU_HYPRE_HANDLE_H
 #define NALU_HYPRE_HANDLE_H
 
-struct hypre_DeviceData;
-typedef struct hypre_DeviceData hypre_DeviceData;
+struct nalu_hypre_DeviceData;
+typedef struct nalu_hypre_DeviceData nalu_hypre_DeviceData;
 
 typedef struct
 {
-   NALU_HYPRE_Int              hypre_error;
+   NALU_HYPRE_Int              nalu_hypre_error;
    NALU_HYPRE_MemoryLocation   memory_location;
    NALU_HYPRE_ExecutionPolicy  default_exec_policy;
 #if defined(NALU_HYPRE_USING_GPU)
-   hypre_DeviceData      *device_data;
+   nalu_hypre_DeviceData      *device_data;
    /* device G-S options */
    NALU_HYPRE_Int              device_gs_method;
 #endif
@@ -46,63 +46,63 @@ typedef struct
    /* user malloc/free function pointers */
    GPUMallocFunc          user_device_malloc;
    GPUMfreeFunc           user_device_free;
-} hypre_Handle;
+} nalu_hypre_Handle;
 
-/* accessor macros to hypre_Handle */
-#define hypre_HandleMemoryLocation(hypre_handle)                 ((hypre_handle) -> memory_location)
-#define hypre_HandleDefaultExecPolicy(hypre_handle)              ((hypre_handle) -> default_exec_policy)
-#define hypre_HandleDeviceData(hypre_handle)                     ((hypre_handle) -> device_data)
-#define hypre_HandleDeviceGSMethod(hypre_handle)                 ((hypre_handle) -> device_gs_method)
+/* accessor macros to nalu_hypre_Handle */
+#define nalu_hypre_HandleMemoryLocation(nalu_hypre_handle)                 ((nalu_hypre_handle) -> memory_location)
+#define nalu_hypre_HandleDefaultExecPolicy(nalu_hypre_handle)              ((nalu_hypre_handle) -> default_exec_policy)
+#define nalu_hypre_HandleDeviceData(nalu_hypre_handle)                     ((nalu_hypre_handle) -> device_data)
+#define nalu_hypre_HandleDeviceGSMethod(nalu_hypre_handle)                 ((nalu_hypre_handle) -> device_gs_method)
 
-#define hypre_HandleCurandGenerator(hypre_handle)                hypre_DeviceDataCurandGenerator(hypre_HandleDeviceData(hypre_handle))
-#define hypre_HandleCublasHandle(hypre_handle)                   hypre_DeviceDataCublasHandle(hypre_HandleDeviceData(hypre_handle))
-#define hypre_HandleCusparseHandle(hypre_handle)                 hypre_DeviceDataCusparseHandle(hypre_HandleDeviceData(hypre_handle))
-#define hypre_HandleComputeStream(hypre_handle)                  hypre_DeviceDataComputeStream(hypre_HandleDeviceData(hypre_handle))
-#define hypre_HandleCubBinGrowth(hypre_handle)                   hypre_DeviceDataCubBinGrowth(hypre_HandleDeviceData(hypre_handle))
-#define hypre_HandleCubMinBin(hypre_handle)                      hypre_DeviceDataCubMinBin(hypre_HandleDeviceData(hypre_handle))
-#define hypre_HandleCubMaxBin(hypre_handle)                      hypre_DeviceDataCubMaxBin(hypre_HandleDeviceData(hypre_handle))
-#define hypre_HandleCubMaxCachedBytes(hypre_handle)              hypre_DeviceDataCubMaxCachedBytes(hypre_HandleDeviceData(hypre_handle))
-#define hypre_HandleCubDevAllocator(hypre_handle)                hypre_DeviceDataCubDevAllocator(hypre_HandleDeviceData(hypre_handle))
-#define hypre_HandleCubUvmAllocator(hypre_handle)                hypre_DeviceDataCubUvmAllocator(hypre_HandleDeviceData(hypre_handle))
-#define hypre_HandleDevice(hypre_handle)                         hypre_DeviceDataDevice(hypre_HandleDeviceData(hypre_handle))
-#define hypre_HandleDeviceMaxWorkGroupSize(hypre_handle)         hypre_DeviceDataDeviceMaxWorkGroupSize(hypre_HandleDeviceData(hypre_handle))
-#define hypre_HandleDeviceMaxShmemPerBlock(hypre_handle)         hypre_DeviceDataDeviceMaxShmemPerBlock(hypre_HandleDeviceData(hypre_handle))
-#define hypre_HandleComputeStreamNum(hypre_handle)               hypre_DeviceDataComputeStreamNum(hypre_HandleDeviceData(hypre_handle))
-#define hypre_HandleReduceBuffer(hypre_handle)                   hypre_DeviceDataReduceBuffer(hypre_HandleDeviceData(hypre_handle))
-#define hypre_HandleStructCommRecvBuffer(hypre_handle)           hypre_DeviceDataStructCommRecvBuffer(hypre_HandleDeviceData(hypre_handle))
-#define hypre_HandleStructCommSendBuffer(hypre_handle)           hypre_DeviceDataStructCommSendBuffer(hypre_HandleDeviceData(hypre_handle))
-#define hypre_HandleStructCommRecvBufferSize(hypre_handle)       hypre_DeviceDataStructCommRecvBufferSize(hypre_HandleDeviceData(hypre_handle))
-#define hypre_HandleStructCommSendBufferSize(hypre_handle)       hypre_DeviceDataStructCommSendBufferSize(hypre_HandleDeviceData(hypre_handle))
-#define hypre_HandleSpgemmUseVendor(hypre_handle)                hypre_DeviceDataSpgemmUseVendor(hypre_HandleDeviceData(hypre_handle))
-#define hypre_HandleSpMVUseVendor(hypre_handle)                  hypre_DeviceDataSpMVUseVendor(hypre_HandleDeviceData(hypre_handle))
-#define hypre_HandleSpTransUseVendor(hypre_handle)               hypre_DeviceDataSpTransUseVendor(hypre_HandleDeviceData(hypre_handle))
-#define hypre_HandleSpgemmAlgorithm(hypre_handle)                hypre_DeviceDataSpgemmAlgorithm(hypre_HandleDeviceData(hypre_handle))
-#define hypre_HandleSpgemmBinned(hypre_handle)                   hypre_DeviceDataSpgemmBinned(hypre_HandleDeviceData(hypre_handle))
-#define hypre_HandleSpgemmNumBin(hypre_handle)                   hypre_DeviceDataSpgemmNumBin(hypre_HandleDeviceData(hypre_handle))
-#define hypre_HandleSpgemmHighestBin(hypre_handle)               hypre_DeviceDataSpgemmHighestBin(hypre_HandleDeviceData(hypre_handle))
-#define hypre_HandleSpgemmBlockNumDim(hypre_handle)              hypre_DeviceDataSpgemmBlockNumDim(hypre_HandleDeviceData(hypre_handle))
-#define hypre_HandleSpgemmRownnzEstimateMethod(hypre_handle)     hypre_DeviceDataSpgemmRownnzEstimateMethod(hypre_HandleDeviceData(hypre_handle))
-#define hypre_HandleSpgemmRownnzEstimateNsamples(hypre_handle)   hypre_DeviceDataSpgemmRownnzEstimateNsamples(hypre_HandleDeviceData(hypre_handle))
-#define hypre_HandleSpgemmRownnzEstimateMultFactor(hypre_handle) hypre_DeviceDataSpgemmRownnzEstimateMultFactor(hypre_HandleDeviceData(hypre_handle))
-#define hypre_HandleDeviceAllocator(hypre_handle)                hypre_DeviceDataDeviceAllocator(hypre_HandleDeviceData(hypre_handle))
-#define hypre_HandleUseGpuRand(hypre_handle)                     hypre_DeviceDataUseGpuRand(hypre_HandleDeviceData(hypre_handle))
+#define nalu_hypre_HandleCurandGenerator(nalu_hypre_handle)                nalu_hypre_DeviceDataCurandGenerator(nalu_hypre_HandleDeviceData(nalu_hypre_handle))
+#define nalu_hypre_HandleCublasHandle(nalu_hypre_handle)                   nalu_hypre_DeviceDataCublasHandle(nalu_hypre_HandleDeviceData(nalu_hypre_handle))
+#define nalu_hypre_HandleCusparseHandle(nalu_hypre_handle)                 nalu_hypre_DeviceDataCusparseHandle(nalu_hypre_HandleDeviceData(nalu_hypre_handle))
+#define nalu_hypre_HandleComputeStream(nalu_hypre_handle)                  nalu_hypre_DeviceDataComputeStream(nalu_hypre_HandleDeviceData(nalu_hypre_handle))
+#define nalu_hypre_HandleCubBinGrowth(nalu_hypre_handle)                   nalu_hypre_DeviceDataCubBinGrowth(nalu_hypre_HandleDeviceData(nalu_hypre_handle))
+#define nalu_hypre_HandleCubMinBin(nalu_hypre_handle)                      nalu_hypre_DeviceDataCubMinBin(nalu_hypre_HandleDeviceData(nalu_hypre_handle))
+#define nalu_hypre_HandleCubMaxBin(nalu_hypre_handle)                      nalu_hypre_DeviceDataCubMaxBin(nalu_hypre_HandleDeviceData(nalu_hypre_handle))
+#define nalu_hypre_HandleCubMaxCachedBytes(nalu_hypre_handle)              nalu_hypre_DeviceDataCubMaxCachedBytes(nalu_hypre_HandleDeviceData(nalu_hypre_handle))
+#define nalu_hypre_HandleCubDevAllocator(nalu_hypre_handle)                nalu_hypre_DeviceDataCubDevAllocator(nalu_hypre_HandleDeviceData(nalu_hypre_handle))
+#define nalu_hypre_HandleCubUvmAllocator(nalu_hypre_handle)                nalu_hypre_DeviceDataCubUvmAllocator(nalu_hypre_HandleDeviceData(nalu_hypre_handle))
+#define nalu_hypre_HandleDevice(nalu_hypre_handle)                         nalu_hypre_DeviceDataDevice(nalu_hypre_HandleDeviceData(nalu_hypre_handle))
+#define nalu_hypre_HandleDeviceMaxWorkGroupSize(nalu_hypre_handle)         nalu_hypre_DeviceDataDeviceMaxWorkGroupSize(nalu_hypre_HandleDeviceData(nalu_hypre_handle))
+#define nalu_hypre_HandleDeviceMaxShmemPerBlock(nalu_hypre_handle)         nalu_hypre_DeviceDataDeviceMaxShmemPerBlock(nalu_hypre_HandleDeviceData(nalu_hypre_handle))
+#define nalu_hypre_HandleComputeStreamNum(nalu_hypre_handle)               nalu_hypre_DeviceDataComputeStreamNum(nalu_hypre_HandleDeviceData(nalu_hypre_handle))
+#define nalu_hypre_HandleReduceBuffer(nalu_hypre_handle)                   nalu_hypre_DeviceDataReduceBuffer(nalu_hypre_HandleDeviceData(nalu_hypre_handle))
+#define nalu_hypre_HandleStructCommRecvBuffer(nalu_hypre_handle)           nalu_hypre_DeviceDataStructCommRecvBuffer(nalu_hypre_HandleDeviceData(nalu_hypre_handle))
+#define nalu_hypre_HandleStructCommSendBuffer(nalu_hypre_handle)           nalu_hypre_DeviceDataStructCommSendBuffer(nalu_hypre_HandleDeviceData(nalu_hypre_handle))
+#define nalu_hypre_HandleStructCommRecvBufferSize(nalu_hypre_handle)       nalu_hypre_DeviceDataStructCommRecvBufferSize(nalu_hypre_HandleDeviceData(nalu_hypre_handle))
+#define nalu_hypre_HandleStructCommSendBufferSize(nalu_hypre_handle)       nalu_hypre_DeviceDataStructCommSendBufferSize(nalu_hypre_HandleDeviceData(nalu_hypre_handle))
+#define nalu_hypre_HandleSpgemmUseVendor(nalu_hypre_handle)                nalu_hypre_DeviceDataSpgemmUseVendor(nalu_hypre_HandleDeviceData(nalu_hypre_handle))
+#define nalu_hypre_HandleSpMVUseVendor(nalu_hypre_handle)                  nalu_hypre_DeviceDataSpMVUseVendor(nalu_hypre_HandleDeviceData(nalu_hypre_handle))
+#define nalu_hypre_HandleSpTransUseVendor(nalu_hypre_handle)               nalu_hypre_DeviceDataSpTransUseVendor(nalu_hypre_HandleDeviceData(nalu_hypre_handle))
+#define nalu_hypre_HandleSpgemmAlgorithm(nalu_hypre_handle)                nalu_hypre_DeviceDataSpgemmAlgorithm(nalu_hypre_HandleDeviceData(nalu_hypre_handle))
+#define nalu_hypre_HandleSpgemmBinned(nalu_hypre_handle)                   nalu_hypre_DeviceDataSpgemmBinned(nalu_hypre_HandleDeviceData(nalu_hypre_handle))
+#define nalu_hypre_HandleSpgemmNumBin(nalu_hypre_handle)                   nalu_hypre_DeviceDataSpgemmNumBin(nalu_hypre_HandleDeviceData(nalu_hypre_handle))
+#define nalu_hypre_HandleSpgemmHighestBin(nalu_hypre_handle)               nalu_hypre_DeviceDataSpgemmHighestBin(nalu_hypre_HandleDeviceData(nalu_hypre_handle))
+#define nalu_hypre_HandleSpgemmBlockNumDim(nalu_hypre_handle)              nalu_hypre_DeviceDataSpgemmBlockNumDim(nalu_hypre_HandleDeviceData(nalu_hypre_handle))
+#define nalu_hypre_HandleSpgemmRownnzEstimateMethod(nalu_hypre_handle)     nalu_hypre_DeviceDataSpgemmRownnzEstimateMethod(nalu_hypre_HandleDeviceData(nalu_hypre_handle))
+#define nalu_hypre_HandleSpgemmRownnzEstimateNsamples(nalu_hypre_handle)   nalu_hypre_DeviceDataSpgemmRownnzEstimateNsamples(nalu_hypre_HandleDeviceData(nalu_hypre_handle))
+#define nalu_hypre_HandleSpgemmRownnzEstimateMultFactor(nalu_hypre_handle) nalu_hypre_DeviceDataSpgemmRownnzEstimateMultFactor(nalu_hypre_HandleDeviceData(nalu_hypre_handle))
+#define nalu_hypre_HandleDeviceAllocator(nalu_hypre_handle)                nalu_hypre_DeviceDataDeviceAllocator(nalu_hypre_HandleDeviceData(nalu_hypre_handle))
+#define nalu_hypre_HandleUseGpuRand(nalu_hypre_handle)                     nalu_hypre_DeviceDataUseGpuRand(nalu_hypre_HandleDeviceData(nalu_hypre_handle))
 
-#define hypre_HandleUserDeviceMalloc(hypre_handle)               ((hypre_handle) -> user_device_malloc)
-#define hypre_HandleUserDeviceMfree(hypre_handle)                ((hypre_handle) -> user_device_free)
+#define nalu_hypre_HandleUserDeviceMalloc(nalu_hypre_handle)               ((nalu_hypre_handle) -> user_device_malloc)
+#define nalu_hypre_HandleUserDeviceMfree(nalu_hypre_handle)                ((nalu_hypre_handle) -> user_device_free)
 
-#define hypre_HandleUmpireResourceMan(hypre_handle)              ((hypre_handle) -> umpire_rm)
-#define hypre_HandleUmpireDevicePoolSize(hypre_handle)           ((hypre_handle) -> umpire_device_pool_size)
-#define hypre_HandleUmpireUMPoolSize(hypre_handle)               ((hypre_handle) -> umpire_um_pool_size)
-#define hypre_HandleUmpireHostPoolSize(hypre_handle)             ((hypre_handle) -> umpire_host_pool_size)
-#define hypre_HandleUmpirePinnedPoolSize(hypre_handle)           ((hypre_handle) -> umpire_pinned_pool_size)
-#define hypre_HandleUmpireBlockSize(hypre_handle)                ((hypre_handle) -> umpire_block_size)
-#define hypre_HandleUmpireDevicePoolName(hypre_handle)           ((hypre_handle) -> umpire_device_pool_name)
-#define hypre_HandleUmpireUMPoolName(hypre_handle)               ((hypre_handle) -> umpire_um_pool_name)
-#define hypre_HandleUmpireHostPoolName(hypre_handle)             ((hypre_handle) -> umpire_host_pool_name)
-#define hypre_HandleUmpirePinnedPoolName(hypre_handle)           ((hypre_handle) -> umpire_pinned_pool_name)
-#define hypre_HandleOwnUmpireDevicePool(hypre_handle)            ((hypre_handle) -> own_umpire_device_pool)
-#define hypre_HandleOwnUmpireUMPool(hypre_handle)                ((hypre_handle) -> own_umpire_um_pool)
-#define hypre_HandleOwnUmpireHostPool(hypre_handle)              ((hypre_handle) -> own_umpire_host_pool)
-#define hypre_HandleOwnUmpirePinnedPool(hypre_handle)            ((hypre_handle) -> own_umpire_pinned_pool)
+#define nalu_hypre_HandleUmpireResourceMan(nalu_hypre_handle)              ((nalu_hypre_handle) -> umpire_rm)
+#define nalu_hypre_HandleUmpireDevicePoolSize(nalu_hypre_handle)           ((nalu_hypre_handle) -> umpire_device_pool_size)
+#define nalu_hypre_HandleUmpireUMPoolSize(nalu_hypre_handle)               ((nalu_hypre_handle) -> umpire_um_pool_size)
+#define nalu_hypre_HandleUmpireHostPoolSize(nalu_hypre_handle)             ((nalu_hypre_handle) -> umpire_host_pool_size)
+#define nalu_hypre_HandleUmpirePinnedPoolSize(nalu_hypre_handle)           ((nalu_hypre_handle) -> umpire_pinned_pool_size)
+#define nalu_hypre_HandleUmpireBlockSize(nalu_hypre_handle)                ((nalu_hypre_handle) -> umpire_block_size)
+#define nalu_hypre_HandleUmpireDevicePoolName(nalu_hypre_handle)           ((nalu_hypre_handle) -> umpire_device_pool_name)
+#define nalu_hypre_HandleUmpireUMPoolName(nalu_hypre_handle)               ((nalu_hypre_handle) -> umpire_um_pool_name)
+#define nalu_hypre_HandleUmpireHostPoolName(nalu_hypre_handle)             ((nalu_hypre_handle) -> umpire_host_pool_name)
+#define nalu_hypre_HandleUmpirePinnedPoolName(nalu_hypre_handle)           ((nalu_hypre_handle) -> umpire_pinned_pool_name)
+#define nalu_hypre_HandleOwnUmpireDevicePool(nalu_hypre_handle)            ((nalu_hypre_handle) -> own_umpire_device_pool)
+#define nalu_hypre_HandleOwnUmpireUMPool(nalu_hypre_handle)                ((nalu_hypre_handle) -> own_umpire_um_pool)
+#define nalu_hypre_HandleOwnUmpireHostPool(nalu_hypre_handle)              ((nalu_hypre_handle) -> own_umpire_host_pool)
+#define nalu_hypre_HandleOwnUmpirePinnedPool(nalu_hypre_handle)            ((nalu_hypre_handle) -> own_umpire_pinned_pool)
 
 #endif

@@ -11,86 +11,86 @@
  *
  *****************************************************************************/
 
-#include "_hypre_parcsr_ls.h"
-#include "_hypre_utilities.hpp"
+#include "_nalu_hypre_parcsr_ls.h"
+#include "_nalu_hypre_utilities.hpp"
 #include "par_ilu.h"
 
 /*--------------------------------------------------------------------
- * hypre_ILUSolve
+ * nalu_hypre_ILUSolve
  *--------------------------------------------------------------------*/
 NALU_HYPRE_Int
-hypre_ILUSolve( void               *ilu_vdata,
-                hypre_ParCSRMatrix *A,
-                hypre_ParVector    *f,
-                hypre_ParVector    *u )
+nalu_hypre_ILUSolve( void               *ilu_vdata,
+                nalu_hypre_ParCSRMatrix *A,
+                nalu_hypre_ParVector    *f,
+                nalu_hypre_ParVector    *u )
 {
-   MPI_Comm             comm           = hypre_ParCSRMatrixComm(A);
+   MPI_Comm             comm           = nalu_hypre_ParCSRMatrixComm(A);
    //   NALU_HYPRE_Int            i;
 
-   hypre_ParILUData     *ilu_data      = (hypre_ParILUData*) ilu_vdata;
+   nalu_hypre_ParILUData     *ilu_data      = (nalu_hypre_ParILUData*) ilu_vdata;
 
 #if defined(NALU_HYPRE_USING_CUDA) && defined(NALU_HYPRE_USING_CUSPARSE)
    /* pointers to cusparse data, note that they are not NULL only when needed */
-   cusparseMatDescr_t      matL_des          = hypre_ParILUDataMatLMatrixDescription(ilu_data);
-   cusparseMatDescr_t      matU_des          = hypre_ParILUDataMatUMatrixDescription(ilu_data);
-   void                    *ilu_solve_buffer = hypre_ParILUDataILUSolveBuffer(ilu_data);//device memory
-   cusparseSolvePolicy_t   ilu_solve_policy  = hypre_ParILUDataILUSolvePolicy(ilu_data);
-   hypre_CSRMatrix         *matALU_d         = hypre_ParILUDataMatAILUDevice(ilu_data);
-   hypre_CSRMatrix         *matBLU_d         = hypre_ParILUDataMatBILUDevice(ilu_data);
-   //hypre_CSRMatrix         *matSLU_d         = hypre_ParILUDataMatSILUDevice(ilu_data);
-   hypre_CSRMatrix         *matE_d           = hypre_ParILUDataMatEDevice(ilu_data);
-   hypre_CSRMatrix         *matF_d           = hypre_ParILUDataMatFDevice(ilu_data);
-   csrsv2Info_t            matAL_info        = hypre_ParILUDataMatALILUSolveInfo(ilu_data);
-   csrsv2Info_t            matAU_info        = hypre_ParILUDataMatAUILUSolveInfo(ilu_data);
-   csrsv2Info_t            matBL_info        = hypre_ParILUDataMatBLILUSolveInfo(ilu_data);
-   csrsv2Info_t            matBU_info        = hypre_ParILUDataMatBUILUSolveInfo(ilu_data);
-   csrsv2Info_t            matSL_info        = hypre_ParILUDataMatSLILUSolveInfo(ilu_data);
-   csrsv2Info_t            matSU_info        = hypre_ParILUDataMatSUILUSolveInfo(ilu_data);
-   hypre_ParCSRMatrix      *Aperm            = hypre_ParILUDataAperm(ilu_data);
-   //hypre_ParCSRMatrix      *R                = hypre_ParILUDataR(ilu_data);
-   //hypre_ParCSRMatrix      *P                = hypre_ParILUDataP(ilu_data);
+   cusparseMatDescr_t      matL_des          = nalu_hypre_ParILUDataMatLMatrixDescription(ilu_data);
+   cusparseMatDescr_t      matU_des          = nalu_hypre_ParILUDataMatUMatrixDescription(ilu_data);
+   void                    *ilu_solve_buffer = nalu_hypre_ParILUDataILUSolveBuffer(ilu_data);//device memory
+   cusparseSolvePolicy_t   ilu_solve_policy  = nalu_hypre_ParILUDataILUSolvePolicy(ilu_data);
+   nalu_hypre_CSRMatrix         *matALU_d         = nalu_hypre_ParILUDataMatAILUDevice(ilu_data);
+   nalu_hypre_CSRMatrix         *matBLU_d         = nalu_hypre_ParILUDataMatBILUDevice(ilu_data);
+   //nalu_hypre_CSRMatrix         *matSLU_d         = nalu_hypre_ParILUDataMatSILUDevice(ilu_data);
+   nalu_hypre_CSRMatrix         *matE_d           = nalu_hypre_ParILUDataMatEDevice(ilu_data);
+   nalu_hypre_CSRMatrix         *matF_d           = nalu_hypre_ParILUDataMatFDevice(ilu_data);
+   csrsv2Info_t            matAL_info        = nalu_hypre_ParILUDataMatALILUSolveInfo(ilu_data);
+   csrsv2Info_t            matAU_info        = nalu_hypre_ParILUDataMatAUILUSolveInfo(ilu_data);
+   csrsv2Info_t            matBL_info        = nalu_hypre_ParILUDataMatBLILUSolveInfo(ilu_data);
+   csrsv2Info_t            matBU_info        = nalu_hypre_ParILUDataMatBUILUSolveInfo(ilu_data);
+   csrsv2Info_t            matSL_info        = nalu_hypre_ParILUDataMatSLILUSolveInfo(ilu_data);
+   csrsv2Info_t            matSU_info        = nalu_hypre_ParILUDataMatSUILUSolveInfo(ilu_data);
+   nalu_hypre_ParCSRMatrix      *Aperm            = nalu_hypre_ParILUDataAperm(ilu_data);
+   //nalu_hypre_ParCSRMatrix      *R                = nalu_hypre_ParILUDataR(ilu_data);
+   //nalu_hypre_ParCSRMatrix      *P                = nalu_hypre_ParILUDataP(ilu_data);
 #else
-   hypre_ParCSRMatrix   *matmL         = hypre_ParILUDataMatLModified(ilu_data);
-   NALU_HYPRE_Real           *matmD         = hypre_ParILUDataMatDModified(ilu_data);
-   hypre_ParCSRMatrix   *matmU         = hypre_ParILUDataMatUModified(ilu_data);
+   nalu_hypre_ParCSRMatrix   *matmL         = nalu_hypre_ParILUDataMatLModified(ilu_data);
+   NALU_HYPRE_Real           *matmD         = nalu_hypre_ParILUDataMatDModified(ilu_data);
+   nalu_hypre_ParCSRMatrix   *matmU         = nalu_hypre_ParILUDataMatUModified(ilu_data);
 #endif
 
 #if defined(NALU_HYPRE_USING_CUSPARSE)
-   hypre_Vector         *Adiag_diag    = hypre_ParILUDataADiagDiag(ilu_data);
+   nalu_hypre_Vector         *Adiag_diag    = nalu_hypre_ParILUDataADiagDiag(ilu_data);
 #endif
-   hypre_Vector         *Ztemp         = hypre_ParILUDataZTemp(ilu_data);
+   nalu_hypre_Vector         *Ztemp         = nalu_hypre_ParILUDataZTemp(ilu_data);
 
    /* get matrices */
-   NALU_HYPRE_Int            ilu_type       = hypre_ParILUDataIluType(ilu_data);
-   NALU_HYPRE_Int            *perm          = hypre_ParILUDataPerm(ilu_data);
-   NALU_HYPRE_Int            *qperm         = hypre_ParILUDataQPerm(ilu_data);
-   hypre_ParCSRMatrix   *matA          = hypre_ParILUDataMatA(ilu_data);
-   hypre_ParCSRMatrix   *matL          = hypre_ParILUDataMatL(ilu_data);
-   NALU_HYPRE_Real           *matD          = hypre_ParILUDataMatD(ilu_data);
-   hypre_ParCSRMatrix   *matU          = hypre_ParILUDataMatU(ilu_data);
-   hypre_ParCSRMatrix   *matS          = hypre_ParILUDataMatS(ilu_data);
+   NALU_HYPRE_Int            ilu_type       = nalu_hypre_ParILUDataIluType(ilu_data);
+   NALU_HYPRE_Int            *perm          = nalu_hypre_ParILUDataPerm(ilu_data);
+   NALU_HYPRE_Int            *qperm         = nalu_hypre_ParILUDataQPerm(ilu_data);
+   nalu_hypre_ParCSRMatrix   *matA          = nalu_hypre_ParILUDataMatA(ilu_data);
+   nalu_hypre_ParCSRMatrix   *matL          = nalu_hypre_ParILUDataMatL(ilu_data);
+   NALU_HYPRE_Real           *matD          = nalu_hypre_ParILUDataMatD(ilu_data);
+   nalu_hypre_ParCSRMatrix   *matU          = nalu_hypre_ParILUDataMatU(ilu_data);
+   nalu_hypre_ParCSRMatrix   *matS          = nalu_hypre_ParILUDataMatS(ilu_data);
 
    NALU_HYPRE_Int            iter, num_procs,  my_id;
 
-   hypre_ParVector      *F_array       = hypre_ParILUDataF(ilu_data);
-   hypre_ParVector      *U_array       = hypre_ParILUDataU(ilu_data);
+   nalu_hypre_ParVector      *F_array       = nalu_hypre_ParILUDataF(ilu_data);
+   nalu_hypre_ParVector      *U_array       = nalu_hypre_ParILUDataU(ilu_data);
 
    /* get settings */
-   NALU_HYPRE_Real           tol            = hypre_ParILUDataTol(ilu_data);
-   NALU_HYPRE_Int            logging        = hypre_ParILUDataLogging(ilu_data);
-   NALU_HYPRE_Int            print_level    = hypre_ParILUDataPrintLevel(ilu_data);
-   NALU_HYPRE_Int            max_iter       = hypre_ParILUDataMaxIter(ilu_data);
-   NALU_HYPRE_Int            tri_solve            = hypre_ParILUDataTriSolve(ilu_data);
-   NALU_HYPRE_Int            lower_jacobi_iters   = hypre_ParILUDataLowerJacobiIters(ilu_data);
-   NALU_HYPRE_Int            upper_jacobi_iters   = hypre_ParILUDataUpperJacobiIters(ilu_data);
-   NALU_HYPRE_Real           *norms         = hypre_ParILUDataRelResNorms(ilu_data);
-   hypre_ParVector      *Ftemp         = hypre_ParILUDataFTemp(ilu_data);
-   hypre_ParVector      *Utemp         = hypre_ParILUDataUTemp(ilu_data);
-   hypre_ParVector      *Xtemp         = hypre_ParILUDataXTemp(ilu_data);
-   hypre_ParVector      *Ytemp         = hypre_ParILUDataYTemp(ilu_data);
-   NALU_HYPRE_Real           *fext          = hypre_ParILUDataFExt(ilu_data);
-   NALU_HYPRE_Real           *uext          = hypre_ParILUDataUExt(ilu_data);
-   hypre_ParVector      *residual;
+   NALU_HYPRE_Real           tol            = nalu_hypre_ParILUDataTol(ilu_data);
+   NALU_HYPRE_Int            logging        = nalu_hypre_ParILUDataLogging(ilu_data);
+   NALU_HYPRE_Int            print_level    = nalu_hypre_ParILUDataPrintLevel(ilu_data);
+   NALU_HYPRE_Int            max_iter       = nalu_hypre_ParILUDataMaxIter(ilu_data);
+   NALU_HYPRE_Int            tri_solve            = nalu_hypre_ParILUDataTriSolve(ilu_data);
+   NALU_HYPRE_Int            lower_jacobi_iters   = nalu_hypre_ParILUDataLowerJacobiIters(ilu_data);
+   NALU_HYPRE_Int            upper_jacobi_iters   = nalu_hypre_ParILUDataUpperJacobiIters(ilu_data);
+   NALU_HYPRE_Real           *norms         = nalu_hypre_ParILUDataRelResNorms(ilu_data);
+   nalu_hypre_ParVector      *Ftemp         = nalu_hypre_ParILUDataFTemp(ilu_data);
+   nalu_hypre_ParVector      *Utemp         = nalu_hypre_ParILUDataUTemp(ilu_data);
+   nalu_hypre_ParVector      *Xtemp         = nalu_hypre_ParILUDataXTemp(ilu_data);
+   nalu_hypre_ParVector      *Ytemp         = nalu_hypre_ParILUDataYTemp(ilu_data);
+   NALU_HYPRE_Real           *fext          = nalu_hypre_ParILUDataFExt(ilu_data);
+   NALU_HYPRE_Real           *uext          = nalu_hypre_ParILUDataUExt(ilu_data);
+   nalu_hypre_ParVector      *residual;
 
    NALU_HYPRE_Real           alpha          = -1;
    NALU_HYPRE_Real           beta           = 1;
@@ -101,7 +101,7 @@ hypre_ILUSolve( void               *ilu_vdata,
    NALU_HYPRE_Real           rhs_norm       = 0.0;
    NALU_HYPRE_Real           old_resnorm;
    NALU_HYPRE_Real           ieee_check     = 0.0;
-   NALU_HYPRE_Real           operat_cmplxty = hypre_ParILUDataOperatorComplexity(ilu_data);
+   NALU_HYPRE_Real           operat_cmplxty = nalu_hypre_ParILUDataOperatorComplexity(ilu_data);
 
    NALU_HYPRE_Int            Solve_err_flag;
 #if defined(NALU_HYPRE_USING_CUDA) && defined(NALU_HYPRE_USING_CUSPARSE)
@@ -109,35 +109,35 @@ hypre_ILUSolve( void               *ilu_vdata,
 #endif
 
    /* problem size */
-   NALU_HYPRE_Int            n              = hypre_CSRMatrixNumRows(hypre_ParCSRMatrixDiag(A));
-   NALU_HYPRE_Int            nLU            = hypre_ParILUDataNLU(ilu_data);
-   NALU_HYPRE_Int            *u_end         = hypre_ParILUDataUEnd(ilu_data);
+   NALU_HYPRE_Int            n              = nalu_hypre_CSRMatrixNumRows(nalu_hypre_ParCSRMatrixDiag(A));
+   NALU_HYPRE_Int            nLU            = nalu_hypre_ParILUDataNLU(ilu_data);
+   NALU_HYPRE_Int            *u_end         = nalu_hypre_ParILUDataUEnd(ilu_data);
 
    /* Schur system solve */
-   NALU_HYPRE_Solver         schur_solver   = hypre_ParILUDataSchurSolver(ilu_data);
-   NALU_HYPRE_Solver         schur_precond  = hypre_ParILUDataSchurPrecond(ilu_data);
-   hypre_ParVector      *rhs           = hypre_ParILUDataRhs(ilu_data);
-   hypre_ParVector      *x             = hypre_ParILUDataX(ilu_data);
+   NALU_HYPRE_Solver         schur_solver   = nalu_hypre_ParILUDataSchurSolver(ilu_data);
+   NALU_HYPRE_Solver         schur_precond  = nalu_hypre_ParILUDataSchurPrecond(ilu_data);
+   nalu_hypre_ParVector      *rhs           = nalu_hypre_ParILUDataRhs(ilu_data);
+   nalu_hypre_ParVector      *x             = nalu_hypre_ParILUDataX(ilu_data);
 
    /* begin */
    NALU_HYPRE_ANNOTATE_FUNC_BEGIN;
 
    if (logging > 1)
    {
-      residual = hypre_ParILUDataResidual(ilu_data);
+      residual = nalu_hypre_ParILUDataResidual(ilu_data);
    }
 
-   hypre_ParILUDataNumIterations(ilu_data) = 0;
+   nalu_hypre_ParILUDataNumIterations(ilu_data) = 0;
 
-   hypre_MPI_Comm_size(comm, &num_procs);
-   hypre_MPI_Comm_rank(comm, &my_id);
+   nalu_hypre_MPI_Comm_size(comm, &num_procs);
+   nalu_hypre_MPI_Comm_rank(comm, &my_id);
 
    /*-----------------------------------------------------------------------
     *    Write the solver parameters
     *-----------------------------------------------------------------------*/
    if (my_id == 0 && print_level > 1)
    {
-      hypre_ILUWriteSolverParams(ilu_data);
+      nalu_hypre_ILUWriteSolverParams(ilu_data);
    }
 
    /*-----------------------------------------------------------------------
@@ -151,7 +151,7 @@ hypre_ILUSolve( void               *ilu_vdata,
 
    if (my_id == 0 && print_level > 1 && tol > 0.)
    {
-      hypre_printf("\n\n ILU SOLVER SOLUTION INFO:\n");
+      nalu_hypre_printf("\n\n ILU SOLVER SOLUTION INFO:\n");
    }
 
    /*-----------------------------------------------------------------------
@@ -161,21 +161,21 @@ hypre_ILUSolve( void               *ilu_vdata,
    {
       if ( logging > 1 )
       {
-         hypre_ParVectorCopy(f, residual);
+         nalu_hypre_ParVectorCopy(f, residual);
          if (tol > 0.0)
          {
-            hypre_ParCSRMatrixMatvec(alpha, A, u, beta, residual);
+            nalu_hypre_ParCSRMatrixMatvec(alpha, A, u, beta, residual);
          }
-         resnorm = sqrt(hypre_ParVectorInnerProd( residual, residual ));
+         resnorm = sqrt(nalu_hypre_ParVectorInnerProd( residual, residual ));
       }
       else
       {
-         hypre_ParVectorCopy(f, Ftemp);
+         nalu_hypre_ParVectorCopy(f, Ftemp);
          if (tol > 0.0)
          {
-            hypre_ParCSRMatrixMatvec(alpha, A, u, beta, Ftemp);
+            nalu_hypre_ParCSRMatrixMatvec(alpha, A, u, beta, Ftemp);
          }
-         resnorm = sqrt(hypre_ParVectorInnerProd(Ftemp, Ftemp));
+         resnorm = sqrt(nalu_hypre_ParVectorInnerProd(Ftemp, Ftemp));
       }
 
       /* Since it is does not diminish performance, attempt to return an error flag
@@ -193,19 +193,19 @@ hypre_ILUSolve( void               *ilu_vdata,
             found at http://HTTP.CS.Berkeley.EDU/~wkahan/ieee754status/IEEE754.PDF */
          if (print_level > 0)
          {
-            hypre_printf("\n\nERROR detected by Hypre ...  BEGIN\n");
-            hypre_printf("ERROR -- hypre_ILUSolve: INFs and/or NaNs detected in input.\n");
-            hypre_printf("User probably placed non-numerics in supplied A, x_0, or b.\n");
-            hypre_printf("ERROR detected by Hypre ...  END\n\n\n");
+            nalu_hypre_printf("\n\nERROR detected by Hypre ...  BEGIN\n");
+            nalu_hypre_printf("ERROR -- nalu_hypre_ILUSolve: INFs and/or NaNs detected in input.\n");
+            nalu_hypre_printf("User probably placed non-numerics in supplied A, x_0, or b.\n");
+            nalu_hypre_printf("ERROR detected by Hypre ...  END\n\n\n");
          }
-         hypre_error(NALU_HYPRE_ERROR_GENERIC);
+         nalu_hypre_error(NALU_HYPRE_ERROR_GENERIC);
          NALU_HYPRE_ANNOTATE_FUNC_END;
 
-         return hypre_error_flag;
+         return nalu_hypre_error_flag;
       }
 
       init_resnorm = resnorm;
-      rhs_norm = sqrt(hypre_ParVectorInnerProd(f, f));
+      rhs_norm = sqrt(nalu_hypre_ParVectorInnerProd(f, f));
       if (rhs_norm > NALU_HYPRE_REAL_EPSILON)
       {
          rel_resnorm = init_resnorm / rhs_norm;
@@ -213,15 +213,15 @@ hypre_ILUSolve( void               *ilu_vdata,
       else
       {
          /* rhs is zero, return a zero solution */
-         hypre_ParVectorSetConstantValues(U_array, 0.0);
+         nalu_hypre_ParVectorSetConstantValues(U_array, 0.0);
          if (logging > 0)
          {
             rel_resnorm = 0.0;
-            hypre_ParILUDataFinalRelResidualNorm(ilu_data) = rel_resnorm;
+            nalu_hypre_ParILUDataFinalRelResidualNorm(ilu_data) = rel_resnorm;
          }
          NALU_HYPRE_ANNOTATE_FUNC_END;
 
-         return hypre_error_flag;
+         return nalu_hypre_error_flag;
       }
    }
    else
@@ -231,10 +231,10 @@ hypre_ILUSolve( void               *ilu_vdata,
 
    if (my_id == 0 && print_level > 1)
    {
-      hypre_printf("                                            relative\n");
-      hypre_printf("               residual        factor       residual\n");
-      hypre_printf("               --------        ------       --------\n");
-      hypre_printf("    Initial    %e                 %e\n", init_resnorm,
+      nalu_hypre_printf("                                            relative\n");
+      nalu_hypre_printf("               residual        factor       residual\n");
+      nalu_hypre_printf("               --------        ------       --------\n");
+      nalu_hypre_printf("    Initial    %e                 %e\n", init_resnorm,
                    rel_resnorm);
    }
 
@@ -257,26 +257,26 @@ hypre_ILUSolve( void               *ilu_vdata,
             if ( tri_solve == 1 )
             {
                /* Apply GPU-accelerated LU solve */
-               hypre_ILUSolveCusparseLU(matA, matL_des, matU_des, matBL_info, matBU_info, matBLU_d,
+               nalu_hypre_ILUSolveCusparseLU(matA, matL_des, matU_des, matBL_info, matBU_info, matBLU_d,
                                         ilu_solve_policy,
                                         ilu_solve_buffer, F_array, U_array, perm, n, Utemp, Ftemp);//BJ-cusparse
             }
             else
             {
-               hypre_ILUSolveDeviceLUIter(matA, matBLU_d,
+               nalu_hypre_ILUSolveDeviceLUIter(matA, matBLU_d,
                                           F_array, U_array, perm, n, Utemp, Ftemp, Ztemp,
                                           &Adiag_diag, lower_jacobi_iters, upper_jacobi_iters);//BJ-cusparse
                /* Assign this now, in case it was set in method above */
-               hypre_ParILUDataADiagDiag(ilu_data) = Adiag_diag;
+               nalu_hypre_ParILUDataADiagDiag(ilu_data) = Adiag_diag;
             }
 #else
             if ( tri_solve == 1 )
             {
-               hypre_ILUSolveLU(matA, F_array, U_array, perm, n, matL, matD, matU, Utemp, Ftemp);   //BJ
+               nalu_hypre_ILUSolveLU(matA, F_array, U_array, perm, n, matL, matD, matU, Utemp, Ftemp);   //BJ
             }
             else
             {
-               hypre_ILUSolveLUIter(matA, F_array, U_array, perm, n, matL, matD, matU, Utemp, Ftemp, Ztemp,
+               nalu_hypre_ILUSolveLUIter(matA, F_array, U_array, perm, n, matL, matD, matU, Utemp, Ftemp, Ztemp,
                                     lower_jacobi_iters, upper_jacobi_iters);   //BJ
             }
 #endif
@@ -284,35 +284,35 @@ hypre_ILUSolve( void               *ilu_vdata,
          case 10: case 11:
 #if defined(NALU_HYPRE_USING_CUDA) && defined(NALU_HYPRE_USING_CUSPARSE)
             /* Apply GPU-accelerated LU solve */
-            hypre_ILUSolveCusparseSchurGMRES(matA, F_array, U_array, perm, nLU, matS, Utemp, Ftemp,
+            nalu_hypre_ILUSolveCusparseSchurGMRES(matA, F_array, U_array, perm, nLU, matS, Utemp, Ftemp,
                                              schur_solver, schur_precond, rhs, x, u_end,
                                              matL_des, matU_des, matBL_info, matBU_info, matSL_info, matSU_info,
                                              matBLU_d, matE_d, matF_d, ilu_solve_policy, ilu_solve_buffer);//GMRES-cusparse
 #else
-            hypre_ILUSolveSchurGMRES(matA, F_array, U_array, perm, perm, nLU, matL, matD, matU, matS,
+            nalu_hypre_ILUSolveSchurGMRES(matA, F_array, U_array, perm, perm, nLU, matL, matD, matU, matS,
                                      Utemp, Ftemp, schur_solver, schur_precond, rhs, x, u_end); //GMRES
 #endif
             break;
          case 20: case 21:
-            hypre_ILUSolveSchurNSH(matA, F_array, U_array, perm, nLU, matL, matD, matU, matS,
+            nalu_hypre_ILUSolveSchurNSH(matA, F_array, U_array, perm, nLU, matL, matD, matU, matS,
                                    Utemp, Ftemp, schur_solver, rhs, x, u_end); //MR+NSH
             break;
          case 30: case 31:
-            hypre_ILUSolveLURAS(matA, F_array, U_array, perm, matL, matD, matU, Utemp, Utemp, fext, uext); //RAS
+            nalu_hypre_ILUSolveLURAS(matA, F_array, U_array, perm, matL, matD, matU, Utemp, Utemp, fext, uext); //RAS
             break;
          case 40: case 41:
-            hypre_ILUSolveSchurGMRES(matA, F_array, U_array, perm, qperm, nLU, matL, matD, matU, matS,
+            nalu_hypre_ILUSolveSchurGMRES(matA, F_array, U_array, perm, qperm, nLU, matL, matD, matU, matS,
                                      Utemp, Ftemp, schur_solver, schur_precond, rhs, x, u_end); //GMRES
             break;
          case 50:
 #if defined(NALU_HYPRE_USING_CUDA) && defined(NALU_HYPRE_USING_CUSPARSE)
-            test_opt = hypre_ParILUDataTestOption(ilu_data);
-            hypre_ILUSolveRAPGMRES(matA, F_array, U_array, perm, nLU, matS, Utemp, Ftemp, Xtemp, Ytemp,
+            test_opt = nalu_hypre_ParILUDataTestOption(ilu_data);
+            nalu_hypre_ILUSolveRAPGMRES(matA, F_array, U_array, perm, nLU, matS, Utemp, Ftemp, Xtemp, Ytemp,
                                    schur_solver, schur_precond, rhs, x, u_end,
                                    matL_des, matU_des, matAL_info, matAU_info, matBL_info, matBU_info, matSL_info, matSU_info,
                                    Aperm, matALU_d, matBLU_d, matE_d, matF_d, ilu_solve_policy, ilu_solve_buffer, test_opt);//GMRES-RAP
 #else
-            hypre_ILUSolveRAPGMRESHOST(matA, F_array, U_array, perm, nLU, matL, matD, matU, matmL, matmD, matmU,
+            nalu_hypre_ILUSolveRAPGMRESHOST(matA, F_array, U_array, perm, nLU, matL, matD, matU, matmL, matmD, matmU,
                                        Utemp, Ftemp, Xtemp, Ytemp,
                                        schur_solver, schur_precond, rhs, x, u_end);//GMRES-RAP
 #endif
@@ -323,25 +323,25 @@ hypre_ILUSolve( void               *ilu_vdata,
             if ( tri_solve == 1 )
             {
                /* Apply GPU-accelerated LU solve */
-               hypre_ILUSolveCusparseLU(matA, matL_des, matU_des, matBL_info, matBU_info, matBLU_d,
+               nalu_hypre_ILUSolveCusparseLU(matA, matL_des, matU_des, matBL_info, matBU_info, matBLU_d,
                                         ilu_solve_policy,
                                         ilu_solve_buffer, F_array, U_array, perm, n, Utemp, Ftemp);//BJ-cusparse
             }
             else
             {
-               hypre_ILUSolveDeviceLUIter(matA, matBLU_d, F_array, U_array, perm, n, Utemp, Ftemp,
+               nalu_hypre_ILUSolveDeviceLUIter(matA, matBLU_d, F_array, U_array, perm, n, Utemp, Ftemp,
                                           Ztemp, &Adiag_diag, lower_jacobi_iters, upper_jacobi_iters);//BJ-cusparse
                /* Assign this now, in case it was set in method above */
-               hypre_ParILUDataADiagDiag(ilu_data) = Adiag_diag;
+               nalu_hypre_ParILUDataADiagDiag(ilu_data) = Adiag_diag;
             }
 #else
             if ( tri_solve == 1 )
             {
-               hypre_ILUSolveLU(matA, F_array, U_array, perm, n, matL, matD, matU, Utemp, Ftemp); //BJ
+               nalu_hypre_ILUSolveLU(matA, F_array, U_array, perm, n, matL, matD, matU, Utemp, Ftemp); //BJ
             }
             else
             {
-               hypre_ILUSolveLUIter(matA, F_array, U_array, perm, n, matL, matD, matU, Utemp, Ftemp, Ztemp,
+               nalu_hypre_ILUSolveLUIter(matA, F_array, U_array, perm, n, matL, matD, matU, Utemp, Ftemp, Ztemp,
                                     lower_jacobi_iters, upper_jacobi_iters); //BJ
             }
 #endif
@@ -359,15 +359,15 @@ hypre_ILUSolve( void               *ilu_vdata,
 
          if ( logging > 1 )
          {
-            hypre_ParVectorCopy(F_array, residual);
-            hypre_ParCSRMatrixMatvec(alpha, matA, U_array, beta, residual );
-            resnorm = sqrt(hypre_ParVectorInnerProd( residual, residual ));
+            nalu_hypre_ParVectorCopy(F_array, residual);
+            nalu_hypre_ParCSRMatrixMatvec(alpha, matA, U_array, beta, residual );
+            resnorm = sqrt(nalu_hypre_ParVectorInnerProd( residual, residual ));
          }
          else
          {
-            hypre_ParVectorCopy(F_array, Ftemp);
-            hypre_ParCSRMatrixMatvec(alpha, matA, U_array, beta, Ftemp);
-            resnorm = sqrt(hypre_ParVectorInnerProd(Ftemp, Ftemp));
+            nalu_hypre_ParVectorCopy(F_array, Ftemp);
+            nalu_hypre_ParCSRMatrixMatvec(alpha, matA, U_array, beta, Ftemp);
+            resnorm = sqrt(nalu_hypre_ParVectorInnerProd(Ftemp, Ftemp));
          }
 
          if (old_resnorm) { conv_factor = resnorm / old_resnorm; }
@@ -385,12 +385,12 @@ hypre_ILUSolve( void               *ilu_vdata,
       }
 
       ++iter;
-      hypre_ParILUDataNumIterations(ilu_data) = iter;
-      hypre_ParILUDataFinalRelResidualNorm(ilu_data) = rel_resnorm;
+      nalu_hypre_ParILUDataNumIterations(ilu_data) = iter;
+      nalu_hypre_ParILUDataFinalRelResidualNorm(ilu_data) = rel_resnorm;
 
       if (my_id == 0 && print_level > 1)
       {
-         hypre_printf("    ILUSolve %2d   %e    %f     %e \n", iter,
+         nalu_hypre_printf("    ILUSolve %2d   %e    %f     %e \n", iter,
                       resnorm, conv_factor, rel_resnorm);
       }
    }
@@ -399,7 +399,7 @@ hypre_ILUSolve( void               *ilu_vdata,
    if (iter == max_iter && tol > 0.)
    {
       Solve_err_flag = 1;
-      hypre_error(NALU_HYPRE_ERROR_CONV);
+      nalu_hypre_error(NALU_HYPRE_ERROR_CONV);
    }
 
    /*-----------------------------------------------------------------------
@@ -423,19 +423,19 @@ hypre_ILUSolve( void               *ilu_vdata,
       {
          if (Solve_err_flag == 1)
          {
-            hypre_printf("\n\n==============================================");
-            hypre_printf("\n NOTE: Convergence tolerance was not achieved\n");
-            hypre_printf("      within the allowed %d iterations\n", max_iter);
-            hypre_printf("==============================================");
+            nalu_hypre_printf("\n\n==============================================");
+            nalu_hypre_printf("\n NOTE: Convergence tolerance was not achieved\n");
+            nalu_hypre_printf("      within the allowed %d iterations\n", max_iter);
+            nalu_hypre_printf("==============================================");
          }
-         hypre_printf("\n\n Average Convergence Factor = %f \n", conv_factor);
-         hypre_printf("                operator = %f\n", operat_cmplxty);
+         nalu_hypre_printf("\n\n Average Convergence Factor = %f \n", conv_factor);
+         nalu_hypre_printf("                operator = %f\n", operat_cmplxty);
       }
    }
 
    NALU_HYPRE_ANNOTATE_FUNC_END;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /* Schur Complement solve with GMRES on schur complement
@@ -450,55 +450,55 @@ hypre_ILUSolve( void               *ilu_vdata,
 */
 
 NALU_HYPRE_Int
-hypre_ILUSolveSchurGMRES(hypre_ParCSRMatrix *A,
-                         hypre_ParVector    *f,
-                         hypre_ParVector    *u,
+nalu_hypre_ILUSolveSchurGMRES(nalu_hypre_ParCSRMatrix *A,
+                         nalu_hypre_ParVector    *f,
+                         nalu_hypre_ParVector    *u,
                          NALU_HYPRE_Int          *perm,
                          NALU_HYPRE_Int          *qperm,
                          NALU_HYPRE_Int           nLU,
-                         hypre_ParCSRMatrix *L,
+                         nalu_hypre_ParCSRMatrix *L,
                          NALU_HYPRE_Real         *D,
-                         hypre_ParCSRMatrix *U,
-                         hypre_ParCSRMatrix *S,
-                         hypre_ParVector    *ftemp,
-                         hypre_ParVector    *utemp,
+                         nalu_hypre_ParCSRMatrix *U,
+                         nalu_hypre_ParCSRMatrix *S,
+                         nalu_hypre_ParVector    *ftemp,
+                         nalu_hypre_ParVector    *utemp,
                          NALU_HYPRE_Solver        schur_solver,
                          NALU_HYPRE_Solver        schur_precond,
-                         hypre_ParVector    *rhs,
-                         hypre_ParVector    *x,
+                         nalu_hypre_ParVector    *rhs,
+                         nalu_hypre_ParVector    *x,
                          NALU_HYPRE_Int          *u_end)
 {
    /* data objects for communication */
-   //   MPI_Comm          comm = hypre_ParCSRMatrixComm(A);
+   //   MPI_Comm          comm = nalu_hypre_ParCSRMatrixComm(A);
 
    /* data objects for L and U */
-   hypre_CSRMatrix   *L_diag = hypre_ParCSRMatrixDiag(L);
-   NALU_HYPRE_Real        *L_diag_data = hypre_CSRMatrixData(L_diag);
-   NALU_HYPRE_Int         *L_diag_i = hypre_CSRMatrixI(L_diag);
-   NALU_HYPRE_Int         *L_diag_j = hypre_CSRMatrixJ(L_diag);
-   hypre_CSRMatrix   *U_diag = hypre_ParCSRMatrixDiag(U);
-   NALU_HYPRE_Real        *U_diag_data = hypre_CSRMatrixData(U_diag);
-   NALU_HYPRE_Int         *U_diag_i = hypre_CSRMatrixI(U_diag);
-   NALU_HYPRE_Int         *U_diag_j = hypre_CSRMatrixJ(U_diag);
-   hypre_Vector      *utemp_local = hypre_ParVectorLocalVector(utemp);
-   NALU_HYPRE_Real        *utemp_data  = hypre_VectorData(utemp_local);
-   hypre_Vector      *ftemp_local = hypre_ParVectorLocalVector(ftemp);
-   NALU_HYPRE_Real        *ftemp_data  = hypre_VectorData(ftemp_local);
+   nalu_hypre_CSRMatrix   *L_diag = nalu_hypre_ParCSRMatrixDiag(L);
+   NALU_HYPRE_Real        *L_diag_data = nalu_hypre_CSRMatrixData(L_diag);
+   NALU_HYPRE_Int         *L_diag_i = nalu_hypre_CSRMatrixI(L_diag);
+   NALU_HYPRE_Int         *L_diag_j = nalu_hypre_CSRMatrixJ(L_diag);
+   nalu_hypre_CSRMatrix   *U_diag = nalu_hypre_ParCSRMatrixDiag(U);
+   NALU_HYPRE_Real        *U_diag_data = nalu_hypre_CSRMatrixData(U_diag);
+   NALU_HYPRE_Int         *U_diag_i = nalu_hypre_CSRMatrixI(U_diag);
+   NALU_HYPRE_Int         *U_diag_j = nalu_hypre_CSRMatrixJ(U_diag);
+   nalu_hypre_Vector      *utemp_local = nalu_hypre_ParVectorLocalVector(utemp);
+   NALU_HYPRE_Real        *utemp_data  = nalu_hypre_VectorData(utemp_local);
+   nalu_hypre_Vector      *ftemp_local = nalu_hypre_ParVectorLocalVector(ftemp);
+   NALU_HYPRE_Real        *ftemp_data  = nalu_hypre_VectorData(ftemp_local);
 
    NALU_HYPRE_Real        alpha;
    NALU_HYPRE_Real        beta;
    NALU_HYPRE_Int         i, j, k1, k2, col;
 
    /* problem size */
-   NALU_HYPRE_Int         n = hypre_CSRMatrixNumRows(L_diag);
+   NALU_HYPRE_Int         n = nalu_hypre_CSRMatrixNumRows(L_diag);
    //   NALU_HYPRE_Int         m = n - nLU;
 
    /* other data objects for computation */
-   //   hypre_Vector      *f_local;
+   //   nalu_hypre_Vector      *f_local;
    //   NALU_HYPRE_Real        *f_data;
-   hypre_Vector      *rhs_local;
+   nalu_hypre_Vector      *rhs_local;
    NALU_HYPRE_Real        *rhs_data;
-   hypre_Vector      *x_local;
+   nalu_hypre_Vector      *x_local;
    NALU_HYPRE_Real        *x_data;
 
    /* begin */
@@ -506,13 +506,13 @@ hypre_ILUSolveSchurGMRES(hypre_ParCSRMatrix *A,
    alpha = -1.0;
 
    /* compute residual */
-   hypre_ParCSRMatrixMatvecOutOfPlace(alpha, A, u, beta, f, ftemp);
+   nalu_hypre_ParCSRMatrixMatvecOutOfPlace(alpha, A, u, beta, f, ftemp);
 
    /* 1st need to solve LBi*xi = fi
     * L solve, solve xi put in u_temp upper
     */
-   //   f_local = hypre_ParVectorLocalVector(f);
-   //   f_data = hypre_VectorData(f_local);
+   //   f_local = nalu_hypre_ParVectorLocalVector(f);
+   //   f_data = nalu_hypre_VectorData(f_local);
    /* now update with L to solve */
    for (i = 0 ; i < nLU ; i ++)
    {
@@ -545,12 +545,12 @@ hypre_ILUSolveSchurGMRES(hypre_ParCSRMatrix *A,
    if (S)
    {
       /*initialize solution to zero for residual equation */
-      hypre_ParVectorSetConstantValues(x, 0.0);
+      nalu_hypre_ParVectorSetConstantValues(x, 0.0);
       /* setup vectors for solve */
-      rhs_local   = hypre_ParVectorLocalVector(rhs);
-      rhs_data    = hypre_VectorData(rhs_local);
-      x_local     = hypre_ParVectorLocalVector(x);
-      x_data      = hypre_VectorData(x_local);
+      rhs_local   = nalu_hypre_ParVectorLocalVector(rhs);
+      rhs_data    = nalu_hypre_VectorData(rhs_local);
+      x_local     = nalu_hypre_ParVectorLocalVector(x);
+      x_data      = nalu_hypre_VectorData(x_local);
 
       /* set rhs value */
       for (i = nLU ; i < n ; i ++)
@@ -605,8 +605,8 @@ hypre_ILUSolveSchurGMRES(hypre_ParCSRMatrix *A,
    }
 
    /* done, now everything are in u_temp, update solution */
-   hypre_ParVectorAxpy(beta, utemp, u);
-   return hypre_error_flag;
+   nalu_hypre_ParVectorAxpy(beta, utemp, u);
+   return nalu_hypre_error_flag;
 }
 
 /* Newton-Schulz-Hotelling solve
@@ -620,53 +620,53 @@ hypre_ILUSolveSchurGMRES(hypre_ParCSRMatrix *A,
 */
 
 NALU_HYPRE_Int
-hypre_ILUSolveSchurNSH(hypre_ParCSRMatrix *A,
-                       hypre_ParVector    *f,
-                       hypre_ParVector    *u,
+nalu_hypre_ILUSolveSchurNSH(nalu_hypre_ParCSRMatrix *A,
+                       nalu_hypre_ParVector    *f,
+                       nalu_hypre_ParVector    *u,
                        NALU_HYPRE_Int          *perm,
                        NALU_HYPRE_Int           nLU,
-                       hypre_ParCSRMatrix *L,
+                       nalu_hypre_ParCSRMatrix *L,
                        NALU_HYPRE_Real         *D,
-                       hypre_ParCSRMatrix *U,
-                       hypre_ParCSRMatrix *S,
-                       hypre_ParVector    *ftemp,
-                       hypre_ParVector    *utemp,
+                       nalu_hypre_ParCSRMatrix *U,
+                       nalu_hypre_ParCSRMatrix *S,
+                       nalu_hypre_ParVector    *ftemp,
+                       nalu_hypre_ParVector    *utemp,
                        NALU_HYPRE_Solver        schur_solver,
-                       hypre_ParVector    *rhs,
-                       hypre_ParVector    *x,
+                       nalu_hypre_ParVector    *rhs,
+                       nalu_hypre_ParVector    *x,
                        NALU_HYPRE_Int          *u_end)
 {
    /* data objects for communication */
-   //   MPI_Comm          comm = hypre_ParCSRMatrixComm(A);
+   //   MPI_Comm          comm = nalu_hypre_ParCSRMatrixComm(A);
 
    /* data objects for L and U */
-   hypre_CSRMatrix   *L_diag = hypre_ParCSRMatrixDiag(L);
-   NALU_HYPRE_Real        *L_diag_data = hypre_CSRMatrixData(L_diag);
-   NALU_HYPRE_Int         *L_diag_i = hypre_CSRMatrixI(L_diag);
-   NALU_HYPRE_Int         *L_diag_j = hypre_CSRMatrixJ(L_diag);
-   hypre_CSRMatrix   *U_diag = hypre_ParCSRMatrixDiag(U);
-   NALU_HYPRE_Real        *U_diag_data = hypre_CSRMatrixData(U_diag);
-   NALU_HYPRE_Int         *U_diag_i = hypre_CSRMatrixI(U_diag);
-   NALU_HYPRE_Int         *U_diag_j = hypre_CSRMatrixJ(U_diag);
-   hypre_Vector      *utemp_local = hypre_ParVectorLocalVector(utemp);
-   NALU_HYPRE_Real        *utemp_data  = hypre_VectorData(utemp_local);
-   hypre_Vector      *ftemp_local = hypre_ParVectorLocalVector(ftemp);
-   NALU_HYPRE_Real        *ftemp_data  = hypre_VectorData(ftemp_local);
+   nalu_hypre_CSRMatrix   *L_diag = nalu_hypre_ParCSRMatrixDiag(L);
+   NALU_HYPRE_Real        *L_diag_data = nalu_hypre_CSRMatrixData(L_diag);
+   NALU_HYPRE_Int         *L_diag_i = nalu_hypre_CSRMatrixI(L_diag);
+   NALU_HYPRE_Int         *L_diag_j = nalu_hypre_CSRMatrixJ(L_diag);
+   nalu_hypre_CSRMatrix   *U_diag = nalu_hypre_ParCSRMatrixDiag(U);
+   NALU_HYPRE_Real        *U_diag_data = nalu_hypre_CSRMatrixData(U_diag);
+   NALU_HYPRE_Int         *U_diag_i = nalu_hypre_CSRMatrixI(U_diag);
+   NALU_HYPRE_Int         *U_diag_j = nalu_hypre_CSRMatrixJ(U_diag);
+   nalu_hypre_Vector      *utemp_local = nalu_hypre_ParVectorLocalVector(utemp);
+   NALU_HYPRE_Real        *utemp_data  = nalu_hypre_VectorData(utemp_local);
+   nalu_hypre_Vector      *ftemp_local = nalu_hypre_ParVectorLocalVector(ftemp);
+   NALU_HYPRE_Real        *ftemp_data  = nalu_hypre_VectorData(ftemp_local);
 
    NALU_HYPRE_Real        alpha;
    NALU_HYPRE_Real        beta;
    NALU_HYPRE_Int         i, j, k1, k2, col;
 
    /* problem size */
-   NALU_HYPRE_Int         n = hypre_CSRMatrixNumRows(L_diag);
+   NALU_HYPRE_Int         n = nalu_hypre_CSRMatrixNumRows(L_diag);
    //   NALU_HYPRE_Int         m = n - nLU;
 
    /* other data objects for computation */
-   //   hypre_Vector      *f_local;
+   //   nalu_hypre_Vector      *f_local;
    //   NALU_HYPRE_Real        *f_data;
-   hypre_Vector      *rhs_local;
+   nalu_hypre_Vector      *rhs_local;
    NALU_HYPRE_Real        *rhs_data;
-   hypre_Vector      *x_local;
+   nalu_hypre_Vector      *x_local;
    NALU_HYPRE_Real        *x_data;
 
    /* begin */
@@ -674,13 +674,13 @@ hypre_ILUSolveSchurNSH(hypre_ParCSRMatrix *A,
    alpha = -1.0;
 
    /* compute residual */
-   hypre_ParCSRMatrixMatvecOutOfPlace(alpha, A, u, beta, f, ftemp);
+   nalu_hypre_ParCSRMatrixMatvecOutOfPlace(alpha, A, u, beta, f, ftemp);
 
    /* 1st need to solve LBi*xi = fi
     * L solve, solve xi put in u_temp upper
     */
-   //   f_local = hypre_ParVectorLocalVector(f);
-   //   f_data = hypre_VectorData(f_local);
+   //   f_local = nalu_hypre_ParVectorLocalVector(f);
+   //   f_data = nalu_hypre_VectorData(f_local);
    /* now update with L to solve */
    for (i = 0 ; i < nLU ; i ++)
    {
@@ -713,12 +713,12 @@ hypre_ILUSolveSchurNSH(hypre_ParCSRMatrix *A,
    if (S)
    {
       /*initialize solution to zero for residual equation */
-      hypre_ParVectorSetConstantValues(x, 0.0);
+      nalu_hypre_ParVectorSetConstantValues(x, 0.0);
       /* setup vectors for solve */
-      rhs_local   = hypre_ParVectorLocalVector(rhs);
-      rhs_data    = hypre_VectorData(rhs_local);
-      x_local     = hypre_ParVectorLocalVector(x);
-      x_data      = hypre_VectorData(x_local);
+      rhs_local   = nalu_hypre_ParVectorLocalVector(rhs);
+      rhs_data    = nalu_hypre_VectorData(rhs_local);
+      x_local     = nalu_hypre_ParVectorLocalVector(x);
+      x_data      = nalu_hypre_VectorData(x_local);
 
       /* set rhs value */
       for (i = nLU ; i < n ; i ++)
@@ -729,7 +729,7 @@ hypre_ILUSolveSchurNSH(hypre_ParCSRMatrix *A,
       /* Solve Schur system with approx inverse
        * x = S*rhs
        */
-      hypre_NSHSolve(schur_solver, S, rhs, x);
+      nalu_hypre_NSHSolve(schur_solver, S, rhs, x);
 
       /* copy value back to original */
       for (i = nLU ; i < n ; i ++)
@@ -775,9 +775,9 @@ hypre_ILUSolveSchurNSH(hypre_ParCSRMatrix *A,
    }
 
    /* done, now everything are in u_temp, update solution */
-   hypre_ParVectorAxpy(beta, utemp, u);
+   nalu_hypre_ParVectorAxpy(beta, utemp, u);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /* Incomplete LU solve
@@ -787,32 +787,32 @@ hypre_ILUSolveSchurNSH(hypre_ParCSRMatrix *A,
 */
 
 NALU_HYPRE_Int
-hypre_ILUSolveLU(hypre_ParCSRMatrix *A,
-                 hypre_ParVector    *f,
-                 hypre_ParVector    *u,
+nalu_hypre_ILUSolveLU(nalu_hypre_ParCSRMatrix *A,
+                 nalu_hypre_ParVector    *f,
+                 nalu_hypre_ParVector    *u,
                  NALU_HYPRE_Int          *perm,
                  NALU_HYPRE_Int           nLU,
-                 hypre_ParCSRMatrix *L,
+                 nalu_hypre_ParCSRMatrix *L,
                  NALU_HYPRE_Real         *D,
-                 hypre_ParCSRMatrix *U,
-                 hypre_ParVector    *ftemp,
-                 hypre_ParVector    *utemp)
+                 nalu_hypre_ParCSRMatrix *U,
+                 nalu_hypre_ParVector    *ftemp,
+                 nalu_hypre_ParVector    *utemp)
 {
-   hypre_CSRMatrix *L_diag = hypre_ParCSRMatrixDiag(L);
-   NALU_HYPRE_Real      *L_diag_data = hypre_CSRMatrixData(L_diag);
-   NALU_HYPRE_Int       *L_diag_i = hypre_CSRMatrixI(L_diag);
-   NALU_HYPRE_Int       *L_diag_j = hypre_CSRMatrixJ(L_diag);
+   nalu_hypre_CSRMatrix *L_diag = nalu_hypre_ParCSRMatrixDiag(L);
+   NALU_HYPRE_Real      *L_diag_data = nalu_hypre_CSRMatrixData(L_diag);
+   NALU_HYPRE_Int       *L_diag_i = nalu_hypre_CSRMatrixI(L_diag);
+   NALU_HYPRE_Int       *L_diag_j = nalu_hypre_CSRMatrixJ(L_diag);
 
-   hypre_CSRMatrix *U_diag = hypre_ParCSRMatrixDiag(U);
-   NALU_HYPRE_Real      *U_diag_data = hypre_CSRMatrixData(U_diag);
-   NALU_HYPRE_Int       *U_diag_i = hypre_CSRMatrixI(U_diag);
-   NALU_HYPRE_Int       *U_diag_j = hypre_CSRMatrixJ(U_diag);
+   nalu_hypre_CSRMatrix *U_diag = nalu_hypre_ParCSRMatrixDiag(U);
+   NALU_HYPRE_Real      *U_diag_data = nalu_hypre_CSRMatrixData(U_diag);
+   NALU_HYPRE_Int       *U_diag_i = nalu_hypre_CSRMatrixI(U_diag);
+   NALU_HYPRE_Int       *U_diag_j = nalu_hypre_CSRMatrixJ(U_diag);
 
-   hypre_Vector    *utemp_local = hypre_ParVectorLocalVector(utemp);
-   NALU_HYPRE_Real      *utemp_data  = hypre_VectorData(utemp_local);
+   nalu_hypre_Vector    *utemp_local = nalu_hypre_ParVectorLocalVector(utemp);
+   NALU_HYPRE_Real      *utemp_data  = nalu_hypre_VectorData(utemp_local);
 
-   hypre_Vector    *ftemp_local = hypre_ParVectorLocalVector(ftemp);
-   NALU_HYPRE_Real      *ftemp_data  = hypre_VectorData(ftemp_local);
+   nalu_hypre_Vector    *ftemp_local = nalu_hypre_ParVectorLocalVector(ftemp);
+   NALU_HYPRE_Real      *ftemp_data  = nalu_hypre_VectorData(ftemp_local);
 
    NALU_HYPRE_Real      alpha;
    NALU_HYPRE_Real      beta;
@@ -826,9 +826,9 @@ hypre_ILUSolveLU(hypre_ParCSRMatrix *A,
     * This is necessary for correctness, when we use optimized
     * vector operations in the case where sizeof(L, D or U) < sizeof(A)
     */
-   //hypre_ParVectorSetConstantValues( utemp, 0.);
+   //nalu_hypre_ParVectorSetConstantValues( utemp, 0.);
    /* compute residual */
-   hypre_ParCSRMatrixMatvecOutOfPlace(alpha, A, u, beta, f, ftemp);
+   nalu_hypre_ParCSRMatrixMatvecOutOfPlace(alpha, A, u, beta, f, ftemp);
 
    /* L solve - Forward solve */
    /* copy rhs to account for diagonal of L (which is identity) */
@@ -859,10 +859,10 @@ hypre_ILUSolveLU(hypre_ParCSRMatrix *A,
    }
 
    /* Update solution */
-   hypre_ParVectorAxpy(beta, utemp, u);
+   nalu_hypre_ParVectorAxpy(beta, utemp, u);
 
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 
@@ -873,37 +873,37 @@ hypre_ILUSolveLU(hypre_ParCSRMatrix *A,
 */
 
 NALU_HYPRE_Int
-hypre_ILUSolveLUIter(hypre_ParCSRMatrix *A,
-                     hypre_ParVector    *f,
-                     hypre_ParVector    *u,
+nalu_hypre_ILUSolveLUIter(nalu_hypre_ParCSRMatrix *A,
+                     nalu_hypre_ParVector    *f,
+                     nalu_hypre_ParVector    *u,
                      NALU_HYPRE_Int          *perm,
                      NALU_HYPRE_Int           nLU,
-                     hypre_ParCSRMatrix *L,
+                     nalu_hypre_ParCSRMatrix *L,
                      NALU_HYPRE_Real         *D,
-                     hypre_ParCSRMatrix *U,
-                     hypre_ParVector    *ftemp,
-                     hypre_ParVector    *utemp,
-                     hypre_Vector       *xtemp,
+                     nalu_hypre_ParCSRMatrix *U,
+                     nalu_hypre_ParVector    *ftemp,
+                     nalu_hypre_ParVector    *utemp,
+                     nalu_hypre_Vector       *xtemp,
                      NALU_HYPRE_Int           lower_jacobi_iters,
                      NALU_HYPRE_Int           upper_jacobi_iters)
 {
-   hypre_CSRMatrix *L_diag = hypre_ParCSRMatrixDiag(L);
-   NALU_HYPRE_Real      *L_diag_data = hypre_CSRMatrixData(L_diag);
-   NALU_HYPRE_Int       *L_diag_i = hypre_CSRMatrixI(L_diag);
-   NALU_HYPRE_Int       *L_diag_j = hypre_CSRMatrixJ(L_diag);
+   nalu_hypre_CSRMatrix *L_diag = nalu_hypre_ParCSRMatrixDiag(L);
+   NALU_HYPRE_Real      *L_diag_data = nalu_hypre_CSRMatrixData(L_diag);
+   NALU_HYPRE_Int       *L_diag_i = nalu_hypre_CSRMatrixI(L_diag);
+   NALU_HYPRE_Int       *L_diag_j = nalu_hypre_CSRMatrixJ(L_diag);
 
-   hypre_CSRMatrix *U_diag = hypre_ParCSRMatrixDiag(U);
-   NALU_HYPRE_Real      *U_diag_data = hypre_CSRMatrixData(U_diag);
-   NALU_HYPRE_Int       *U_diag_i = hypre_CSRMatrixI(U_diag);
-   NALU_HYPRE_Int       *U_diag_j = hypre_CSRMatrixJ(U_diag);
+   nalu_hypre_CSRMatrix *U_diag = nalu_hypre_ParCSRMatrixDiag(U);
+   NALU_HYPRE_Real      *U_diag_data = nalu_hypre_CSRMatrixData(U_diag);
+   NALU_HYPRE_Int       *U_diag_i = nalu_hypre_CSRMatrixI(U_diag);
+   NALU_HYPRE_Int       *U_diag_j = nalu_hypre_CSRMatrixJ(U_diag);
 
-   hypre_Vector    *utemp_local = hypre_ParVectorLocalVector(utemp);
-   NALU_HYPRE_Real      *utemp_data  = hypre_VectorData(utemp_local);
+   nalu_hypre_Vector    *utemp_local = nalu_hypre_ParVectorLocalVector(utemp);
+   NALU_HYPRE_Real      *utemp_data  = nalu_hypre_VectorData(utemp_local);
 
-   hypre_Vector    *ftemp_local = hypre_ParVectorLocalVector(ftemp);
-   NALU_HYPRE_Real      *ftemp_data  = hypre_VectorData(ftemp_local);
+   nalu_hypre_Vector    *ftemp_local = nalu_hypre_ParVectorLocalVector(ftemp);
+   NALU_HYPRE_Real      *ftemp_data  = nalu_hypre_VectorData(ftemp_local);
 
-   NALU_HYPRE_Real      *xtemp_data  = hypre_VectorData(xtemp);
+   NALU_HYPRE_Real      *xtemp_data  = nalu_hypre_VectorData(xtemp);
 
    NALU_HYPRE_Real      alpha;
    NALU_HYPRE_Real      beta;
@@ -918,9 +918,9 @@ hypre_ILUSolveLUIter(hypre_ParCSRMatrix *A,
     * This is necessary for correctness, when we use optimized
     * vector operations in the case where sizeof(L, D or U) < sizeof(A)
     */
-   //hypre_ParVectorSetConstantValues( utemp, 0.);
+   //nalu_hypre_ParVectorSetConstantValues( utemp, 0.);
    /* compute residual */
-   hypre_ParCSRMatrixMatvecOutOfPlace(alpha, A, u, beta, f, ftemp);
+   nalu_hypre_ParCSRMatrixMatvecOutOfPlace(alpha, A, u, beta, f, ftemp);
 
    /* L solve - Forward solve */
    /* copy rhs to account for diagonal of L (which is identity) */
@@ -986,9 +986,9 @@ hypre_ILUSolveLUIter(hypre_ParCSRMatrix *A,
    } /* end jacobi loop */
 
    /* Update solution */
-   hypre_ParVectorAxpy(beta, ftemp, u);
+   nalu_hypre_ParVectorAxpy(beta, ftemp, u);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /* Incomplete LU solve RAS
@@ -999,34 +999,34 @@ hypre_ILUSolveLUIter(hypre_ParCSRMatrix *A,
 */
 
 NALU_HYPRE_Int
-hypre_ILUSolveLURAS(hypre_ParCSRMatrix *A,
-                    hypre_ParVector    *f,
-                    hypre_ParVector    *u,
+nalu_hypre_ILUSolveLURAS(nalu_hypre_ParCSRMatrix *A,
+                    nalu_hypre_ParVector    *f,
+                    nalu_hypre_ParVector    *u,
                     NALU_HYPRE_Int          *perm,
-                    hypre_ParCSRMatrix *L,
+                    nalu_hypre_ParCSRMatrix *L,
                     NALU_HYPRE_Real         *D,
-                    hypre_ParCSRMatrix *U,
-                    hypre_ParVector    *ftemp,
-                    hypre_ParVector    *utemp,
+                    nalu_hypre_ParCSRMatrix *U,
+                    nalu_hypre_ParVector    *ftemp,
+                    nalu_hypre_ParVector    *utemp,
                     NALU_HYPRE_Real         *fext,
                     NALU_HYPRE_Real         *uext)
 {
-   hypre_ParCSRCommPkg        *comm_pkg;
-   hypre_ParCSRCommHandle     *comm_handle;
+   nalu_hypre_ParCSRCommPkg        *comm_pkg;
+   nalu_hypre_ParCSRCommHandle     *comm_handle;
    NALU_HYPRE_Int                  num_sends, begin, end;
 
-   hypre_CSRMatrix            *L_diag = hypre_ParCSRMatrixDiag(L);
-   NALU_HYPRE_Real                 *L_diag_data = hypre_CSRMatrixData(L_diag);
-   NALU_HYPRE_Int                  *L_diag_i = hypre_CSRMatrixI(L_diag);
-   NALU_HYPRE_Int                  *L_diag_j = hypre_CSRMatrixJ(L_diag);
+   nalu_hypre_CSRMatrix            *L_diag = nalu_hypre_ParCSRMatrixDiag(L);
+   NALU_HYPRE_Real                 *L_diag_data = nalu_hypre_CSRMatrixData(L_diag);
+   NALU_HYPRE_Int                  *L_diag_i = nalu_hypre_CSRMatrixI(L_diag);
+   NALU_HYPRE_Int                  *L_diag_j = nalu_hypre_CSRMatrixJ(L_diag);
 
-   hypre_CSRMatrix            *U_diag = hypre_ParCSRMatrixDiag(U);
-   NALU_HYPRE_Real                 *U_diag_data = hypre_CSRMatrixData(U_diag);
-   NALU_HYPRE_Int                  *U_diag_i = hypre_CSRMatrixI(U_diag);
-   NALU_HYPRE_Int                  *U_diag_j = hypre_CSRMatrixJ(U_diag);
+   nalu_hypre_CSRMatrix            *U_diag = nalu_hypre_ParCSRMatrixDiag(U);
+   NALU_HYPRE_Real                 *U_diag_data = nalu_hypre_CSRMatrixData(U_diag);
+   NALU_HYPRE_Int                  *U_diag_i = nalu_hypre_CSRMatrixI(U_diag);
+   NALU_HYPRE_Int                  *U_diag_j = nalu_hypre_CSRMatrixJ(U_diag);
 
-   NALU_HYPRE_Int                  n = hypre_CSRMatrixNumCols(hypre_ParCSRMatrixDiag(A));
-   NALU_HYPRE_Int                  m = hypre_CSRMatrixNumCols(hypre_ParCSRMatrixOffd(A));
+   NALU_HYPRE_Int                  n = nalu_hypre_CSRMatrixNumCols(nalu_hypre_ParCSRMatrixDiag(A));
+   NALU_HYPRE_Int                  m = nalu_hypre_CSRMatrixNumCols(nalu_hypre_ParCSRMatrixOffd(A));
    //   NALU_HYPRE_Int                  buffer_size;
    NALU_HYPRE_Int                  n_total = m + n;
 
@@ -1034,11 +1034,11 @@ hypre_ILUSolveLURAS(hypre_ParCSRMatrix *A,
    NALU_HYPRE_Int                  jcol;
    NALU_HYPRE_Int                  col;
 
-   hypre_Vector               *utemp_local = hypre_ParVectorLocalVector(utemp);
-   NALU_HYPRE_Real                 *utemp_data  = hypre_VectorData(utemp_local);
+   nalu_hypre_Vector               *utemp_local = nalu_hypre_ParVectorLocalVector(utemp);
+   NALU_HYPRE_Real                 *utemp_data  = nalu_hypre_VectorData(utemp_local);
 
-   hypre_Vector               *ftemp_local = hypre_ParVectorLocalVector(ftemp);
-   NALU_HYPRE_Real                 *ftemp_data  = hypre_VectorData(ftemp_local);
+   nalu_hypre_Vector               *ftemp_local = nalu_hypre_ParVectorLocalVector(ftemp);
+   NALU_HYPRE_Real                 *ftemp_data  = nalu_hypre_VectorData(ftemp_local);
 
    NALU_HYPRE_Real                 alpha;
    NALU_HYPRE_Real                 beta;
@@ -1049,28 +1049,28 @@ hypre_ILUSolveLURAS(hypre_ParCSRMatrix *A,
    beta = 1.0;
 
    /* prepare for communication */
-   comm_pkg = hypre_ParCSRMatrixCommPkg(A);
+   comm_pkg = nalu_hypre_ParCSRMatrixCommPkg(A);
    /* setup if not yet built */
    if (!comm_pkg)
    {
-      hypre_MatvecCommPkgCreate(A);
-      comm_pkg = hypre_ParCSRMatrixCommPkg(A);
+      nalu_hypre_MatvecCommPkgCreate(A);
+      comm_pkg = nalu_hypre_ParCSRMatrixCommPkg(A);
    }
 
    /* Initialize Utemp to zero.
     * This is necessary for correctness, when we use optimized
     * vector operations in the case where sizeof(L, D or U) < sizeof(A)
     */
-   //hypre_ParVectorSetConstantValues( utemp, 0.);
+   //nalu_hypre_ParVectorSetConstantValues( utemp, 0.);
    /* compute residual */
-   hypre_ParCSRMatrixMatvecOutOfPlace(alpha, A, u, beta, f, ftemp);
+   nalu_hypre_ParCSRMatrixMatvecOutOfPlace(alpha, A, u, beta, f, ftemp);
 
    /* communication to get external data */
 
    /* get total num of send */
-   num_sends = hypre_ParCSRCommPkgNumSends(comm_pkg);
-   begin = hypre_ParCSRCommPkgSendMapStart(comm_pkg, 0);
-   end = hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends);
+   num_sends = nalu_hypre_ParCSRCommPkgNumSends(comm_pkg);
+   begin = nalu_hypre_ParCSRCommPkgSendMapStart(comm_pkg, 0);
+   end = nalu_hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends);
 
    /* copy new index into send_buf */
    for (i = begin ; i < end ; i ++)
@@ -1080,12 +1080,12 @@ hypre_ILUSolveLURAS(hypre_ParCSRMatrix *A,
        *    permutation at all
        * borrow uext as send buffer .
        */
-      uext[i - begin] = ftemp_data[hypre_ParCSRCommPkgSendMapElmt(comm_pkg, i)];
+      uext[i - begin] = ftemp_data[nalu_hypre_ParCSRCommPkgSendMapElmt(comm_pkg, i)];
    }
 
    /* main communication */
-   comm_handle = hypre_ParCSRCommHandleCreate(1, comm_pkg, uext, fext);
-   hypre_ParCSRCommHandleDestroy(comm_handle);
+   comm_handle = nalu_hypre_ParCSRCommHandleCreate(1, comm_pkg, uext, fext);
+   nalu_hypre_ParCSRCommHandleDestroy(comm_handle);
 
    /* L solve - Forward solve */
    for ( i = 0 ; i < n_total ; i ++)
@@ -1177,9 +1177,9 @@ hypre_ILUSolveLURAS(hypre_ParCSRMatrix *A,
 
    }
    /* Update solution */
-   hypre_ParVectorAxpy(beta, utemp, u);
+   nalu_hypre_ParVectorAxpy(beta, utemp, u);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 #if defined(NALU_HYPRE_USING_CUDA) && defined(NALU_HYPRE_USING_CUSPARSE)
@@ -1191,7 +1191,7 @@ hypre_ILUSolveLURAS(hypre_ParCSRMatrix *A,
  * option 11: rperm real array
  * */
 NALU_HYPRE_Int
-hypre_ILUSeqVectorPerm(void      *vectori,
+nalu_hypre_ILUSeqVectorPerm(void      *vectori,
                        void      *vectoro,
                        NALU_HYPRE_Int  size,
                        NALU_HYPRE_Int *perm,
@@ -1244,10 +1244,10 @@ hypre_ILUSeqVectorPerm(void      *vectori,
       default:
       {
          printf("Error option in ILUSeqVectorPerm");
-         hypre_assert(1 == 0);
+         nalu_hypre_assert(1 == 0);
       }
    }
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /* Incomplete LU solve (GPU)
@@ -1257,38 +1257,38 @@ hypre_ILUSeqVectorPerm(void      *vectori,
 */
 
 NALU_HYPRE_Int
-hypre_ILUSolveCusparseLU(hypre_ParCSRMatrix   *A,
+nalu_hypre_ILUSolveCusparseLU(nalu_hypre_ParCSRMatrix   *A,
                          cusparseMatDescr_t    matL_des,
                          cusparseMatDescr_t    matU_des,
                          csrsv2Info_t          matL_info,
                          csrsv2Info_t          matU_info,
-                         hypre_CSRMatrix      *matLU_d,
+                         nalu_hypre_CSRMatrix      *matLU_d,
                          cusparseSolvePolicy_t ilu_solve_policy,
                          void                 *ilu_solve_buffer,
-                         hypre_ParVector      *f,
-                         hypre_ParVector      *u,
+                         nalu_hypre_ParVector      *f,
+                         nalu_hypre_ParVector      *u,
                          NALU_HYPRE_Int            *perm,
                          NALU_HYPRE_Int             n,
-                         hypre_ParVector      *ftemp,
-                         hypre_ParVector      *utemp)
+                         nalu_hypre_ParVector      *ftemp,
+                         nalu_hypre_ParVector      *utemp)
 {
    /* Only solve when we have stuffs to be solved */
    if (n == 0)
    {
-      return hypre_error_flag;
+      return nalu_hypre_error_flag;
    }
 
    /* ILU data */
-   NALU_HYPRE_Real              *LU_data             = hypre_CSRMatrixData(matLU_d);
-   NALU_HYPRE_Int               *LU_i                = hypre_CSRMatrixI(matLU_d);
-   NALU_HYPRE_Int               *LU_j                = hypre_CSRMatrixJ(matLU_d);
+   NALU_HYPRE_Real              *LU_data             = nalu_hypre_CSRMatrixData(matLU_d);
+   NALU_HYPRE_Int               *LU_i                = nalu_hypre_CSRMatrixI(matLU_d);
+   NALU_HYPRE_Int               *LU_j                = nalu_hypre_CSRMatrixJ(matLU_d);
    NALU_HYPRE_Int               nnz                  = LU_i[n];
 
-   hypre_Vector            *utemp_local         = hypre_ParVectorLocalVector(utemp);
-   NALU_HYPRE_Real              *utemp_data          = hypre_VectorData(utemp_local);
+   nalu_hypre_Vector            *utemp_local         = nalu_hypre_ParVectorLocalVector(utemp);
+   NALU_HYPRE_Real              *utemp_data          = nalu_hypre_VectorData(utemp_local);
 
-   hypre_Vector            *ftemp_local         = hypre_ParVectorLocalVector(ftemp);
-   NALU_HYPRE_Real              *ftemp_data          = hypre_VectorData(ftemp_local);
+   nalu_hypre_Vector            *ftemp_local         = nalu_hypre_ParVectorLocalVector(ftemp);
+   NALU_HYPRE_Real              *ftemp_data          = nalu_hypre_VectorData(ftemp_local);
 
    NALU_HYPRE_Real              alpha;
    NALU_HYPRE_Real              beta;
@@ -1298,27 +1298,27 @@ hypre_ILUSolveCusparseLU(hypre_ParCSRMatrix   *A,
    alpha = -1.0;
    beta = 1.0;
 
-   cusparseHandle_t handle = hypre_HandleCusparseHandle(hypre_handle());
+   cusparseHandle_t handle = nalu_hypre_HandleCusparseHandle(nalu_hypre_handle());
 
    /* Initialize Utemp to zero.
     * This is necessary for correctness, when we use optimized
     * vector operations in the case where sizeof(L, D or U) < sizeof(A)
    */
-   //hypre_ParVectorSetConstantValues( utemp, 0.);
+   //nalu_hypre_ParVectorSetConstantValues( utemp, 0.);
    /* compute residual */
-   hypre_ParCSRMatrixMatvecOutOfPlace(alpha, A, u, beta, f, ftemp);
+   nalu_hypre_ParCSRMatrixMatvecOutOfPlace(alpha, A, u, beta, f, ftemp);
 
    /* apply permutation */
    NALU_HYPRE_THRUST_CALL(gather, perm, perm + n, ftemp_data, utemp_data);
 
    /* L solve - Forward solve */
-   NALU_HYPRE_CUSPARSE_CALL(hypre_cusparse_csrsv2_solve(handle, CUSPARSE_OPERATION_NON_TRANSPOSE,
+   NALU_HYPRE_CUSPARSE_CALL(nalu_hypre_cusparse_csrsv2_solve(handle, CUSPARSE_OPERATION_NON_TRANSPOSE,
                                                    n, nnz, &beta, matL_des,
                                                    LU_data, LU_i, LU_j, matL_info,
                                                    utemp_data, ftemp_data, ilu_solve_policy, ilu_solve_buffer));
 
    /* U solve - Backward substitution */
-   NALU_HYPRE_CUSPARSE_CALL(hypre_cusparse_csrsv2_solve(handle, CUSPARSE_OPERATION_NON_TRANSPOSE,
+   NALU_HYPRE_CUSPARSE_CALL(nalu_hypre_cusparse_csrsv2_solve(handle, CUSPARSE_OPERATION_NON_TRANSPOSE,
                                                    n, nnz, &beta, matU_des,
                                                    LU_data, LU_i, LU_j, matU_info,
                                                    ftemp_data, utemp_data, ilu_solve_policy, ilu_solve_buffer));
@@ -1326,10 +1326,10 @@ hypre_ILUSolveCusparseLU(hypre_ParCSRMatrix   *A,
    /* apply reverse permutation */
    NALU_HYPRE_THRUST_CALL(scatter, utemp_data, utemp_data + n, perm, ftemp_data);
    /* Update solution */
-   hypre_ParVectorAxpy(beta, ftemp, u);
+   nalu_hypre_ParVectorAxpy(beta, ftemp, u);
 
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /* Schur Complement solve with GMRES on schur complement
@@ -1344,18 +1344,18 @@ hypre_ILUSolveCusparseLU(hypre_ParCSRMatrix   *A,
 */
 
 NALU_HYPRE_Int
-hypre_ILUSolveCusparseSchurGMRES(hypre_ParCSRMatrix   *A,
-                                 hypre_ParVector      *f,
-                                 hypre_ParVector      *u,
+nalu_hypre_ILUSolveCusparseSchurGMRES(nalu_hypre_ParCSRMatrix   *A,
+                                 nalu_hypre_ParVector      *f,
+                                 nalu_hypre_ParVector      *u,
                                  NALU_HYPRE_Int            *perm,
                                  NALU_HYPRE_Int             nLU,
-                                 hypre_ParCSRMatrix   *S,
-                                 hypre_ParVector      *ftemp,
-                                 hypre_ParVector      *utemp,
+                                 nalu_hypre_ParCSRMatrix   *S,
+                                 nalu_hypre_ParVector      *ftemp,
+                                 nalu_hypre_ParVector      *utemp,
                                  NALU_HYPRE_Solver          schur_solver,
                                  NALU_HYPRE_Solver          schur_precond,
-                                 hypre_ParVector      *rhs,
-                                 hypre_ParVector      *x,
+                                 nalu_hypre_ParVector      *rhs,
+                                 nalu_hypre_ParVector      *x,
                                  NALU_HYPRE_Int            *u_end,
                                  cusparseMatDescr_t    matL_des,
                                  cusparseMatDescr_t    matU_des,
@@ -1363,9 +1363,9 @@ hypre_ILUSolveCusparseSchurGMRES(hypre_ParCSRMatrix   *A,
                                  csrsv2Info_t          matBU_info,
                                  csrsv2Info_t          matSL_info,
                                  csrsv2Info_t          matSU_info,
-                                 hypre_CSRMatrix      *matBLU_d,
-                                 hypre_CSRMatrix      *matE_d,
-                                 hypre_CSRMatrix      *matF_d,
+                                 nalu_hypre_CSRMatrix      *matBLU_d,
+                                 nalu_hypre_CSRMatrix      *matE_d,
+                                 nalu_hypre_CSRMatrix      *matF_d,
                                  cusparseSolvePolicy_t ilu_solve_policy,
                                  void                 *ilu_solve_buffer)
 {
@@ -1373,23 +1373,23 @@ hypre_ILUSolveCusparseSchurGMRES(hypre_ParCSRMatrix   *A,
    if (!S)
    {
       /* Just call BJ cusparse and return */
-      return hypre_ILUSolveCusparseLU(A, matL_des, matU_des, matBL_info, matBU_info, matBLU_d,
+      return nalu_hypre_ILUSolveCusparseLU(A, matL_des, matU_des, matBL_info, matBU_info, matBLU_d,
                                       ilu_solve_policy,
                                       ilu_solve_buffer, f, u, perm, nLU, ftemp, utemp);
    }
 
    /* data objects for communication */
-   //   MPI_Comm          comm = hypre_ParCSRMatrixComm(A);
+   //   MPI_Comm          comm = nalu_hypre_ParCSRMatrixComm(A);
 
    /* data objects for temp vector */
-   hypre_Vector      *utemp_local = hypre_ParVectorLocalVector(utemp);
-   NALU_HYPRE_Real        *utemp_data  = hypre_VectorData(utemp_local);
-   hypre_Vector      *ftemp_local = hypre_ParVectorLocalVector(ftemp);
-   NALU_HYPRE_Real        *ftemp_data  = hypre_VectorData(ftemp_local);
-   hypre_Vector      *rhs_local   = hypre_ParVectorLocalVector(rhs);
-   NALU_HYPRE_Real        *rhs_data    = hypre_VectorData(rhs_local);
-   hypre_Vector      *x_local     = hypre_ParVectorLocalVector(x);
-   NALU_HYPRE_Real        *x_data      = hypre_VectorData(x_local);
+   nalu_hypre_Vector      *utemp_local = nalu_hypre_ParVectorLocalVector(utemp);
+   NALU_HYPRE_Real        *utemp_data  = nalu_hypre_VectorData(utemp_local);
+   nalu_hypre_Vector      *ftemp_local = nalu_hypre_ParVectorLocalVector(ftemp);
+   NALU_HYPRE_Real        *ftemp_data  = nalu_hypre_VectorData(ftemp_local);
+   nalu_hypre_Vector      *rhs_local   = nalu_hypre_ParVectorLocalVector(rhs);
+   NALU_HYPRE_Real        *rhs_data    = nalu_hypre_VectorData(rhs_local);
+   nalu_hypre_Vector      *x_local     = nalu_hypre_ParVectorLocalVector(x);
+   NALU_HYPRE_Real        *x_data      = nalu_hypre_VectorData(x_local);
 
    NALU_HYPRE_Real        alpha;
    NALU_HYPRE_Real        beta;
@@ -1401,28 +1401,28 @@ hypre_ILUSolveCusparseSchurGMRES(hypre_ParCSRMatrix   *A,
    NALU_HYPRE_Int         *BLU_j      = NULL;
    NALU_HYPRE_Real        *BLU_data   = NULL;
    NALU_HYPRE_Int         BLU_nnz     = 0;
-   hypre_CSRMatrix   *matSLU_d   = hypre_ParCSRMatrixDiag(S);
-   NALU_HYPRE_Int         *SLU_i      = hypre_CSRMatrixI(matSLU_d);
-   NALU_HYPRE_Int         *SLU_j      = hypre_CSRMatrixJ(matSLU_d);
-   NALU_HYPRE_Real        *SLU_data   = hypre_CSRMatrixData(matSLU_d);
-   NALU_HYPRE_Int         m           = hypre_CSRMatrixNumRows(matSLU_d);
+   nalu_hypre_CSRMatrix   *matSLU_d   = nalu_hypre_ParCSRMatrixDiag(S);
+   NALU_HYPRE_Int         *SLU_i      = nalu_hypre_CSRMatrixI(matSLU_d);
+   NALU_HYPRE_Int         *SLU_j      = nalu_hypre_CSRMatrixJ(matSLU_d);
+   NALU_HYPRE_Real        *SLU_data   = nalu_hypre_CSRMatrixData(matSLU_d);
+   NALU_HYPRE_Int         m           = nalu_hypre_CSRMatrixNumRows(matSLU_d);
    NALU_HYPRE_Int         n           = nLU + m;
    NALU_HYPRE_Int         SLU_nnz     = SLU_i[m];
 
-   hypre_Vector *ftemp_upper           = hypre_SeqVectorCreate(nLU);
-   hypre_Vector *utemp_lower           = hypre_SeqVectorCreate(m);
-   hypre_VectorOwnsData(ftemp_upper)   = 0;
-   hypre_VectorOwnsData(utemp_lower)   = 0;
-   hypre_VectorData(ftemp_upper)       = ftemp_data;
-   hypre_VectorData(utemp_lower)       = utemp_data + nLU;
-   hypre_SeqVectorInitialize(ftemp_upper);
-   hypre_SeqVectorInitialize(utemp_lower);
+   nalu_hypre_Vector *ftemp_upper           = nalu_hypre_SeqVectorCreate(nLU);
+   nalu_hypre_Vector *utemp_lower           = nalu_hypre_SeqVectorCreate(m);
+   nalu_hypre_VectorOwnsData(ftemp_upper)   = 0;
+   nalu_hypre_VectorOwnsData(utemp_lower)   = 0;
+   nalu_hypre_VectorData(ftemp_upper)       = ftemp_data;
+   nalu_hypre_VectorData(utemp_lower)       = utemp_data + nLU;
+   nalu_hypre_SeqVectorInitialize(ftemp_upper);
+   nalu_hypre_SeqVectorInitialize(utemp_lower);
 
    if ( nLU > 0)
    {
-      BLU_i                      = hypre_CSRMatrixI(matBLU_d);
-      BLU_j                      = hypre_CSRMatrixJ(matBLU_d);
-      BLU_data                   = hypre_CSRMatrixData(matBLU_d);
+      BLU_i                      = nalu_hypre_CSRMatrixI(matBLU_d);
+      BLU_j                      = nalu_hypre_CSRMatrixJ(matBLU_d);
+      BLU_data                   = nalu_hypre_CSRMatrixData(matBLU_d);
       BLU_nnz                    = BLU_i[nLU];
    }
 
@@ -1431,10 +1431,10 @@ hypre_ILUSolveCusparseSchurGMRES(hypre_ParCSRMatrix   *A,
    alpha = -1.0;
    //gamma = 0.0;
 
-   cusparseHandle_t handle = hypre_HandleCusparseHandle(hypre_handle());
+   cusparseHandle_t handle = nalu_hypre_HandleCusparseHandle(nalu_hypre_handle());
 
    /* compute residual */
-   hypre_ParCSRMatrixMatvecOutOfPlace(alpha, A, u, beta, f, ftemp);
+   nalu_hypre_ParCSRMatrixMatvecOutOfPlace(alpha, A, u, beta, f, ftemp);
 
    /* 1st need to solve LBi*xi = fi
     * L solve, solve xi put in u_temp upper
@@ -1448,7 +1448,7 @@ hypre_ILUSolveCusparseSchurGMRES(hypre_ParCSRMatrix   *A,
 
       /* This solve won't touch data in utemp, thus, gi is still in utemp_lower */
       /* L solve - Forward solve */
-      NALU_HYPRE_CUSPARSE_CALL(hypre_cusparse_csrsv2_solve(handle, CUSPARSE_OPERATION_NON_TRANSPOSE,
+      NALU_HYPRE_CUSPARSE_CALL(nalu_hypre_cusparse_csrsv2_solve(handle, CUSPARSE_OPERATION_NON_TRANSPOSE,
                                                       nLU, BLU_nnz, &beta, matL_des,
                                                       BLU_data, BLU_i, BLU_j, matBL_info,
                                                       utemp_data, ftemp_data, ilu_solve_policy, ilu_solve_buffer));
@@ -1459,7 +1459,7 @@ hypre_ILUSolveCusparseSchurGMRES(hypre_ParCSRMatrix   *A,
        *       gi' is in utemp_lower
        */
 
-      hypre_CSRMatrixMatvec(alpha, matE_d, ftemp_upper, beta, utemp_lower);
+      nalu_hypre_CSRMatrixMatvec(alpha, matE_d, ftemp_upper, beta, utemp_lower);
 
    }
 
@@ -1476,14 +1476,14 @@ hypre_ILUSolveCusparseSchurGMRES(hypre_ParCSRMatrix   *A,
    if (m > 0)
    {
       /* L solve */
-      NALU_HYPRE_CUSPARSE_CALL(hypre_cusparse_csrsv2_solve(handle, CUSPARSE_OPERATION_NON_TRANSPOSE,
+      NALU_HYPRE_CUSPARSE_CALL(nalu_hypre_cusparse_csrsv2_solve(handle, CUSPARSE_OPERATION_NON_TRANSPOSE,
                                                       m, SLU_nnz, &beta, matL_des,
                                                       SLU_data, SLU_i, SLU_j, matSL_info,
                                                       utemp_data + nLU, ftemp_data + nLU, ilu_solve_policy,
                                                       ilu_solve_buffer));
 
       /* U solve */
-      NALU_HYPRE_CUSPARSE_CALL(hypre_cusparse_csrsv2_solve(handle, CUSPARSE_OPERATION_NON_TRANSPOSE,
+      NALU_HYPRE_CUSPARSE_CALL(nalu_hypre_cusparse_csrsv2_solve(handle, CUSPARSE_OPERATION_NON_TRANSPOSE,
                                                       m, SLU_nnz, &beta, matU_des,
                                                       SLU_data, SLU_i, SLU_j, matSU_info,
                                                       ftemp_data + nLU, rhs_data, ilu_solve_policy, ilu_solve_buffer));
@@ -1492,8 +1492,8 @@ hypre_ILUSolveCusparseSchurGMRES(hypre_ParCSRMatrix   *A,
 
    /* solve */
    /* with tricky initial guess */
-   //hypre_Vector *tv = hypre_ParVectorLocalVector(x);
-   //NALU_HYPRE_Real *tz = hypre_VectorData(tv);
+   //nalu_hypre_Vector *tv = nalu_hypre_ParVectorLocalVector(x);
+   //NALU_HYPRE_Real *tz = nalu_hypre_VectorData(tv);
    NALU_HYPRE_GMRESSolve(schur_solver, (NALU_HYPRE_Matrix)schur_precond, (NALU_HYPRE_Vector)rhs, (NALU_HYPRE_Vector)x);
    /* 4th need to compute zi = xi - LBi^-1*yi
     * put zi in f_temp upper
@@ -1503,31 +1503,31 @@ hypre_ILUSolveCusparseSchurGMRES(hypre_ParCSRMatrix   *A,
 
    if (nLU > 0)
    {
-      hypre_CSRMatrixMatvec(alpha, matF_d, x_local, beta, ftemp_upper);
+      nalu_hypre_CSRMatrixMatvec(alpha, matF_d, x_local, beta, ftemp_upper);
 
       /* 5th need to solve UBi*ui = zi */
       /* put result in u_temp upper */
 
       /* U solve - Forward solve */
-      NALU_HYPRE_CUSPARSE_CALL(hypre_cusparse_csrsv2_solve(handle, CUSPARSE_OPERATION_NON_TRANSPOSE,
+      NALU_HYPRE_CUSPARSE_CALL(nalu_hypre_cusparse_csrsv2_solve(handle, CUSPARSE_OPERATION_NON_TRANSPOSE,
                                                       nLU, BLU_nnz, &beta, matU_des,
                                                       BLU_data, BLU_i, BLU_j, matBU_info,
                                                       ftemp_data, utemp_data, ilu_solve_policy, ilu_solve_buffer));
    }
 
    /* copy lower part solution into u_temp as well */
-   hypre_TMemcpy(utemp_data + nLU, x_data, NALU_HYPRE_Real, m, NALU_HYPRE_MEMORY_DEVICE, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TMemcpy(utemp_data + nLU, x_data, NALU_HYPRE_Real, m, NALU_HYPRE_MEMORY_DEVICE, NALU_HYPRE_MEMORY_DEVICE);
 
    /* perm back */
    NALU_HYPRE_THRUST_CALL(scatter, utemp_data, utemp_data + n, perm, ftemp_data);
 
    /* done, now everything are in u_temp, update solution */
-   hypre_ParVectorAxpy(beta, ftemp, u);
+   nalu_hypre_ParVectorAxpy(beta, ftemp, u);
 
-   hypre_SeqVectorDestroy(ftemp_upper);
-   hypre_SeqVectorDestroy(utemp_lower);
+   nalu_hypre_SeqVectorDestroy(ftemp_upper);
+   nalu_hypre_SeqVectorDestroy(utemp_lower);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /* Schur Complement solve with GMRES on schur complement, RAP style
@@ -1542,20 +1542,20 @@ hypre_ILUSolveCusparseSchurGMRES(hypre_ParCSRMatrix   *A,
 */
 
 NALU_HYPRE_Int
-hypre_ILUSolveRAPGMRES(hypre_ParCSRMatrix   *A,
-                       hypre_ParVector      *f,
-                       hypre_ParVector      *u,
+nalu_hypre_ILUSolveRAPGMRES(nalu_hypre_ParCSRMatrix   *A,
+                       nalu_hypre_ParVector      *f,
+                       nalu_hypre_ParVector      *u,
                        NALU_HYPRE_Int            *perm,
                        NALU_HYPRE_Int             nLU,
-                       hypre_ParCSRMatrix   *S,
-                       hypre_ParVector      *ftemp,
-                       hypre_ParVector      *utemp,
-                       hypre_ParVector      *xtemp,
-                       hypre_ParVector      *ytemp,
+                       nalu_hypre_ParCSRMatrix   *S,
+                       nalu_hypre_ParVector      *ftemp,
+                       nalu_hypre_ParVector      *utemp,
+                       nalu_hypre_ParVector      *xtemp,
+                       nalu_hypre_ParVector      *ytemp,
                        NALU_HYPRE_Solver          schur_solver,
                        NALU_HYPRE_Solver          schur_precond,
-                       hypre_ParVector      *rhs,
-                       hypre_ParVector      *x,
+                       nalu_hypre_ParVector      *rhs,
+                       nalu_hypre_ParVector      *x,
                        NALU_HYPRE_Int            *u_end,
                        cusparseMatDescr_t    matL_des,
                        cusparseMatDescr_t    matU_des,
@@ -1565,66 +1565,66 @@ hypre_ILUSolveRAPGMRES(hypre_ParCSRMatrix   *A,
                        csrsv2Info_t          matBU_info,
                        csrsv2Info_t          matSL_info,
                        csrsv2Info_t          matSU_info,
-                       hypre_ParCSRMatrix   *Aperm,
-                       hypre_CSRMatrix      *matALU_d,
-                       hypre_CSRMatrix      *matBLU_d,
-                       hypre_CSRMatrix      *matE_d,
-                       hypre_CSRMatrix      *matF_d,
+                       nalu_hypre_ParCSRMatrix   *Aperm,
+                       nalu_hypre_CSRMatrix      *matALU_d,
+                       nalu_hypre_CSRMatrix      *matBLU_d,
+                       nalu_hypre_CSRMatrix      *matE_d,
+                       nalu_hypre_CSRMatrix      *matF_d,
                        cusparseSolvePolicy_t ilu_solve_policy,
                        void                 *ilu_solve_buffer,
                        NALU_HYPRE_Int             test_opt)
 {
    /* data objects for communication */
-   //   MPI_Comm          comm = hypre_ParCSRMatrixComm(A);
+   //   MPI_Comm          comm = nalu_hypre_ParCSRMatrixComm(A);
 
    /* data objects for temp vector */
-   hypre_Vector      *utemp_local = hypre_ParVectorLocalVector(utemp);
-   NALU_HYPRE_Real        *utemp_data  = hypre_VectorData(utemp_local);
-   hypre_Vector      *ftemp_local = hypre_ParVectorLocalVector(ftemp);
-   NALU_HYPRE_Real        *ftemp_data  = hypre_VectorData(ftemp_local);
-   hypre_Vector      *xtemp_local = hypre_ParVectorLocalVector(xtemp);
-   NALU_HYPRE_Real        *xtemp_data  = hypre_VectorData(xtemp_local);
-   //hypre_Vector      *ytemp_local = hypre_ParVectorLocalVector(ytemp);
-   //NALU_HYPRE_Real        *ytemp_data  = hypre_VectorData(ytemp_local);
-   hypre_Vector      *rhs_local   = hypre_ParVectorLocalVector(rhs);
-   NALU_HYPRE_Real        *rhs_data    = hypre_VectorData(rhs_local);
-   hypre_Vector      *x_local     = hypre_ParVectorLocalVector(x);
-   NALU_HYPRE_Real        *x_data      = hypre_VectorData(x_local);
+   nalu_hypre_Vector      *utemp_local = nalu_hypre_ParVectorLocalVector(utemp);
+   NALU_HYPRE_Real        *utemp_data  = nalu_hypre_VectorData(utemp_local);
+   nalu_hypre_Vector      *ftemp_local = nalu_hypre_ParVectorLocalVector(ftemp);
+   NALU_HYPRE_Real        *ftemp_data  = nalu_hypre_VectorData(ftemp_local);
+   nalu_hypre_Vector      *xtemp_local = nalu_hypre_ParVectorLocalVector(xtemp);
+   NALU_HYPRE_Real        *xtemp_data  = nalu_hypre_VectorData(xtemp_local);
+   //nalu_hypre_Vector      *ytemp_local = nalu_hypre_ParVectorLocalVector(ytemp);
+   //NALU_HYPRE_Real        *ytemp_data  = nalu_hypre_VectorData(ytemp_local);
+   nalu_hypre_Vector      *rhs_local   = nalu_hypre_ParVectorLocalVector(rhs);
+   NALU_HYPRE_Real        *rhs_data    = nalu_hypre_VectorData(rhs_local);
+   nalu_hypre_Vector      *x_local     = nalu_hypre_ParVectorLocalVector(x);
+   NALU_HYPRE_Real        *x_data      = nalu_hypre_VectorData(x_local);
 
    //NALU_HYPRE_Int         i, j, k1, k2, col;
 
    /* problem size */
-   NALU_HYPRE_Int         *ALU_i      = hypre_CSRMatrixI(matALU_d);
-   NALU_HYPRE_Int         *ALU_j      = hypre_CSRMatrixJ(matALU_d);
-   NALU_HYPRE_Real        *ALU_data   = hypre_CSRMatrixData(matALU_d);
-   NALU_HYPRE_Int         *BLU_i      = hypre_CSRMatrixI(matBLU_d);
-   NALU_HYPRE_Int         *BLU_j      = hypre_CSRMatrixJ(matBLU_d);
-   NALU_HYPRE_Real        *BLU_data   = hypre_CSRMatrixData(matBLU_d);
+   NALU_HYPRE_Int         *ALU_i      = nalu_hypre_CSRMatrixI(matALU_d);
+   NALU_HYPRE_Int         *ALU_j      = nalu_hypre_CSRMatrixJ(matALU_d);
+   NALU_HYPRE_Real        *ALU_data   = nalu_hypre_CSRMatrixData(matALU_d);
+   NALU_HYPRE_Int         *BLU_i      = nalu_hypre_CSRMatrixI(matBLU_d);
+   NALU_HYPRE_Int         *BLU_j      = nalu_hypre_CSRMatrixJ(matBLU_d);
+   NALU_HYPRE_Real        *BLU_data   = nalu_hypre_CSRMatrixData(matBLU_d);
    NALU_HYPRE_Int          BLU_nnz    = BLU_i[nLU];
-   hypre_CSRMatrix   *matSLU_d   = hypre_ParCSRMatrixDiag(S);
-   NALU_HYPRE_Int         *SLU_i      = hypre_CSRMatrixI(matSLU_d);
-   NALU_HYPRE_Int         *SLU_j      = hypre_CSRMatrixJ(matSLU_d);
-   NALU_HYPRE_Real        *SLU_data   = hypre_CSRMatrixData(matSLU_d);
-   NALU_HYPRE_Int         m           = hypre_CSRMatrixNumRows(matSLU_d);
+   nalu_hypre_CSRMatrix   *matSLU_d   = nalu_hypre_ParCSRMatrixDiag(S);
+   NALU_HYPRE_Int         *SLU_i      = nalu_hypre_CSRMatrixI(matSLU_d);
+   NALU_HYPRE_Int         *SLU_j      = nalu_hypre_CSRMatrixJ(matSLU_d);
+   NALU_HYPRE_Real        *SLU_data   = nalu_hypre_CSRMatrixData(matSLU_d);
+   NALU_HYPRE_Int         m           = nalu_hypre_CSRMatrixNumRows(matSLU_d);
    NALU_HYPRE_Int         n           = nLU + m;
    NALU_HYPRE_Int         SLU_nnz     = SLU_i[m];
    NALU_HYPRE_Int         ALU_nnz     = ALU_i[n];
 
-   hypre_Vector *ftemp_upper           = hypre_SeqVectorCreate(nLU);
-   hypre_Vector *utemp_lower           = hypre_SeqVectorCreate(m);
-   hypre_VectorOwnsData(ftemp_upper)   = 0;
-   hypre_VectorOwnsData(utemp_lower)   = 0;
-   hypre_VectorData(ftemp_upper)       = ftemp_data;
-   hypre_VectorData(utemp_lower)       = utemp_data + nLU;
-   hypre_SeqVectorInitialize(ftemp_upper);
-   hypre_SeqVectorInitialize(utemp_lower);
+   nalu_hypre_Vector *ftemp_upper           = nalu_hypre_SeqVectorCreate(nLU);
+   nalu_hypre_Vector *utemp_lower           = nalu_hypre_SeqVectorCreate(m);
+   nalu_hypre_VectorOwnsData(ftemp_upper)   = 0;
+   nalu_hypre_VectorOwnsData(utemp_lower)   = 0;
+   nalu_hypre_VectorData(ftemp_upper)       = ftemp_data;
+   nalu_hypre_VectorData(utemp_lower)       = utemp_data + nLU;
+   nalu_hypre_SeqVectorInitialize(ftemp_upper);
+   nalu_hypre_SeqVectorInitialize(utemp_lower);
 
    /* begin */
    NALU_HYPRE_Real one = 1.0;
    NALU_HYPRE_Real mone = -1.0;
    NALU_HYPRE_Real zero = 0.0;
 
-   cusparseHandle_t handle = hypre_HandleCusparseHandle(hypre_handle());
+   cusparseHandle_t handle = nalu_hypre_HandleCusparseHandle(nalu_hypre_handle());
 
    switch (test_opt)
    {
@@ -1632,7 +1632,7 @@ hypre_ILUSolveRAPGMRES(hypre_ParCSRMatrix   *A,
       {
          /* E and F */
          /* compute residual */
-         hypre_ParCSRMatrixMatvecOutOfPlace(mone, A, u, one, f, utemp);
+         nalu_hypre_ParCSRMatrixMatvecOutOfPlace(mone, A, u, one, f, utemp);
 
          /* apply permutation before we can start our solve
           * Au=f -> (PAQ)Q'u=Pf
@@ -1645,12 +1645,12 @@ hypre_ILUSolveRAPGMRES(hypre_ParCSRMatrix   *A,
          if (n > 0)
          {
             /* L solve - Forward solve */
-            NALU_HYPRE_CUSPARSE_CALL(hypre_cusparse_csrsv2_solve(handle, CUSPARSE_OPERATION_NON_TRANSPOSE,
+            NALU_HYPRE_CUSPARSE_CALL(nalu_hypre_cusparse_csrsv2_solve(handle, CUSPARSE_OPERATION_NON_TRANSPOSE,
                                                             n, ALU_nnz, &one, matL_des,
                                                             ALU_data, ALU_i, ALU_j, matAL_info,
                                                             ftemp_data, utemp_data, ilu_solve_policy, ilu_solve_buffer));
             /* U solve - Forward solve */
-            NALU_HYPRE_CUSPARSE_CALL(hypre_cusparse_csrsv2_solve(handle, CUSPARSE_OPERATION_NON_TRANSPOSE,
+            NALU_HYPRE_CUSPARSE_CALL(nalu_hypre_cusparse_csrsv2_solve(handle, CUSPARSE_OPERATION_NON_TRANSPOSE,
                                                             n, ALU_nnz, &one, matU_des,
                                                             ALU_data, ALU_i, ALU_j, matAU_info,
                                                             utemp_data, xtemp_data, ilu_solve_policy, ilu_solve_buffer));
@@ -1658,29 +1658,29 @@ hypre_ILUSolveRAPGMRES(hypre_ParCSRMatrix   *A,
          /* residual, we should not touch xtemp for now
           * r = R*(f-PAQx)
           */
-         hypre_ParCSRMatrixMatvec(mone, Aperm, xtemp, one, ftemp);
+         nalu_hypre_ParCSRMatrixMatvec(mone, Aperm, xtemp, one, ftemp);
          /* with R is complex */
          /* copy partial data in */
-         hypre_TMemcpy( rhs_data, ftemp_data + nLU, NALU_HYPRE_Real, m, NALU_HYPRE_MEMORY_DEVICE, NALU_HYPRE_MEMORY_DEVICE);
+         nalu_hypre_TMemcpy( rhs_data, ftemp_data + nLU, NALU_HYPRE_Real, m, NALU_HYPRE_MEMORY_DEVICE, NALU_HYPRE_MEMORY_DEVICE);
 
          /* solve L^{-1} */
          if (nLU > 0)
          {
             /* L solve */
-            NALU_HYPRE_CUSPARSE_CALL(hypre_cusparse_csrsv2_solve(handle, CUSPARSE_OPERATION_NON_TRANSPOSE,
+            NALU_HYPRE_CUSPARSE_CALL(nalu_hypre_cusparse_csrsv2_solve(handle, CUSPARSE_OPERATION_NON_TRANSPOSE,
                                                             nLU, BLU_nnz, &one, matL_des,
                                                             BLU_data, BLU_i, BLU_j, matBL_info,
                                                             ftemp_data, utemp_data, ilu_solve_policy, ilu_solve_buffer));
 
             /* -U^{-1}L^{-1} */
             /* U solve */
-            NALU_HYPRE_CUSPARSE_CALL(hypre_cusparse_csrsv2_solve(handle, CUSPARSE_OPERATION_NON_TRANSPOSE,
+            NALU_HYPRE_CUSPARSE_CALL(nalu_hypre_cusparse_csrsv2_solve(handle, CUSPARSE_OPERATION_NON_TRANSPOSE,
                                                             nLU, BLU_nnz, &one, matU_des,
                                                             BLU_data, BLU_i, BLU_j, matBU_info,
                                                             utemp_data, ftemp_data, ilu_solve_policy, ilu_solve_buffer));
          }
          /* -EU^{-1}L^{-1} */
-         hypre_CSRMatrixMatvec(mone, matE_d, ftemp_upper, one, rhs_local);
+         nalu_hypre_CSRMatrixMatvec(mone, matE_d, ftemp_upper, one, rhs_local);
 
 
          /* now solve S
@@ -1688,33 +1688,33 @@ hypre_ILUSolveRAPGMRES(hypre_ParCSRMatrix   *A,
          if (S)
          {
             /* if we have a schur complement */
-            hypre_ParVectorSetConstantValues(x, 0.0);
+            nalu_hypre_ParVectorSetConstantValues(x, 0.0);
             NALU_HYPRE_GMRESSolve(schur_solver, (NALU_HYPRE_Matrix)schur_precond, (NALU_HYPRE_Vector)rhs, (NALU_HYPRE_Vector)x);
 
             /* u = xtemp + P*x */
             /* -Fx */
-            hypre_CSRMatrixMatvec(mone, matF_d, x_local, zero, ftemp_upper);
+            nalu_hypre_CSRMatrixMatvec(mone, matF_d, x_local, zero, ftemp_upper);
             /* -L^{-1}Fx */
             if (nLU > 0)
             {
                /* L solve */
-               NALU_HYPRE_CUSPARSE_CALL(hypre_cusparse_csrsv2_solve(handle, CUSPARSE_OPERATION_NON_TRANSPOSE,
+               NALU_HYPRE_CUSPARSE_CALL(nalu_hypre_cusparse_csrsv2_solve(handle, CUSPARSE_OPERATION_NON_TRANSPOSE,
                                                                nLU, BLU_nnz, &one, matL_des,
                                                                BLU_data, BLU_i, BLU_j, matBL_info,
                                                                ftemp_data, utemp_data, ilu_solve_policy, ilu_solve_buffer));
 
                /* -U{-1}L^{-1}Fx */
                /* U solve */
-               NALU_HYPRE_CUSPARSE_CALL(hypre_cusparse_csrsv2_solve(handle, CUSPARSE_OPERATION_NON_TRANSPOSE,
+               NALU_HYPRE_CUSPARSE_CALL(nalu_hypre_cusparse_csrsv2_solve(handle, CUSPARSE_OPERATION_NON_TRANSPOSE,
                                                                nLU, BLU_nnz, &one, matU_des,
                                                                BLU_data, BLU_i, BLU_j, matBU_info,
                                                                utemp_data, ftemp_data, ilu_solve_policy, ilu_solve_buffer));
             }
             /* now copy data to y_lower */
-            hypre_TMemcpy( ftemp_data + nLU, x_data, NALU_HYPRE_Real, m, NALU_HYPRE_MEMORY_DEVICE, NALU_HYPRE_MEMORY_DEVICE);
+            nalu_hypre_TMemcpy( ftemp_data + nLU, x_data, NALU_HYPRE_Real, m, NALU_HYPRE_MEMORY_DEVICE, NALU_HYPRE_MEMORY_DEVICE);
 
             /* correction to the residual */
-            hypre_ParVectorAxpy(one, ftemp, xtemp);
+            nalu_hypre_ParVectorAxpy(one, ftemp, xtemp);
 
          }
          else
@@ -1723,13 +1723,13 @@ hypre_ILUSolveRAPGMRES(hypre_ParCSRMatrix   *A,
             if (m > 0)
             {
                /* L solve - Forward solve */
-               NALU_HYPRE_CUSPARSE_CALL(hypre_cusparse_csrsv2_solve(handle, CUSPARSE_OPERATION_NON_TRANSPOSE,
+               NALU_HYPRE_CUSPARSE_CALL(nalu_hypre_cusparse_csrsv2_solve(handle, CUSPARSE_OPERATION_NON_TRANSPOSE,
                                                                m, SLU_nnz, &one, matL_des,
                                                                SLU_data, SLU_i, SLU_j, matSL_info,
                                                                rhs_data, x_data, ilu_solve_policy, ilu_solve_buffer));
 
                /* U solve - Forward solve */
-               NALU_HYPRE_CUSPARSE_CALL(hypre_cusparse_csrsv2_solve(handle, CUSPARSE_OPERATION_NON_TRANSPOSE,
+               NALU_HYPRE_CUSPARSE_CALL(nalu_hypre_cusparse_csrsv2_solve(handle, CUSPARSE_OPERATION_NON_TRANSPOSE,
                                                                m, SLU_nnz, &one, matU_des,
                                                                SLU_data, SLU_i, SLU_j, matSU_info,
                                                                x_data, rhs_data, ilu_solve_policy, ilu_solve_buffer));
@@ -1737,27 +1737,27 @@ hypre_ILUSolveRAPGMRES(hypre_ParCSRMatrix   *A,
 
             /* u = xtemp + P*x */
             /* -Fx */
-            hypre_CSRMatrixMatvec(mone, matF_d, rhs_local, zero, ftemp_upper);
+            nalu_hypre_CSRMatrixMatvec(mone, matF_d, rhs_local, zero, ftemp_upper);
             /* -L^{-1}Fx */
             if (nLU > 0)
             {
                /* L solve */
-               NALU_HYPRE_CUSPARSE_CALL(hypre_cusparse_csrsv2_solve(handle, CUSPARSE_OPERATION_NON_TRANSPOSE,
+               NALU_HYPRE_CUSPARSE_CALL(nalu_hypre_cusparse_csrsv2_solve(handle, CUSPARSE_OPERATION_NON_TRANSPOSE,
                                                                nLU, BLU_nnz, &one, matL_des,
                                                                BLU_data, BLU_i, BLU_j, matBL_info,
                                                                ftemp_data, utemp_data, ilu_solve_policy, ilu_solve_buffer));
 
                /* -U{-1}L^{-1}Fx */
                /* U solve */
-               NALU_HYPRE_CUSPARSE_CALL(hypre_cusparse_csrsv2_solve(handle, CUSPARSE_OPERATION_NON_TRANSPOSE,
+               NALU_HYPRE_CUSPARSE_CALL(nalu_hypre_cusparse_csrsv2_solve(handle, CUSPARSE_OPERATION_NON_TRANSPOSE,
                                                                nLU, BLU_nnz, &one, matU_des,
                                                                BLU_data, BLU_i, BLU_j, matBU_info,
                                                                utemp_data, ftemp_data, ilu_solve_policy, ilu_solve_buffer));
             }
             /* now copy data to y_lower */
-            hypre_TMemcpy( ftemp_data + nLU, rhs_data, NALU_HYPRE_Real, m, NALU_HYPRE_MEMORY_DEVICE, NALU_HYPRE_MEMORY_DEVICE);
+            nalu_hypre_TMemcpy( ftemp_data + nLU, rhs_data, NALU_HYPRE_Real, m, NALU_HYPRE_MEMORY_DEVICE, NALU_HYPRE_MEMORY_DEVICE);
 
-            hypre_ParVectorAxpy(one, ftemp, xtemp);
+            nalu_hypre_ParVectorAxpy(one, ftemp, xtemp);
 
          }
 
@@ -1765,14 +1765,14 @@ hypre_ILUSolveRAPGMRES(hypre_ParCSRMatrix   *A,
          NALU_HYPRE_THRUST_CALL(scatter, xtemp_data, xtemp_data + n, perm, ftemp_data);
 
          /* done, now everything are in u_temp, update solution */
-         hypre_ParVectorAxpy(one, ftemp, u);
+         nalu_hypre_ParVectorAxpy(one, ftemp, u);
       }
       break;
    case 0: case 2: default:
       {
          /* EU^{-1} and L^{-1}F */
          /* compute residual */
-         hypre_ParCSRMatrixMatvecOutOfPlace(mone, A, u, one, f, ftemp);
+         nalu_hypre_ParCSRMatrixMatvecOutOfPlace(mone, A, u, one, f, ftemp);
          /* apply permutation before we can start our solve
           * Au=f -> (PAQ)Q'u=Pf
           */
@@ -1784,12 +1784,12 @@ hypre_ILUSolveRAPGMRES(hypre_ParCSRMatrix   *A,
          if (n > 0)
          {
             /* L solve - Forward solve */
-            NALU_HYPRE_CUSPARSE_CALL(hypre_cusparse_csrsv2_solve(handle, CUSPARSE_OPERATION_NON_TRANSPOSE,
+            NALU_HYPRE_CUSPARSE_CALL(nalu_hypre_cusparse_csrsv2_solve(handle, CUSPARSE_OPERATION_NON_TRANSPOSE,
                                                             n, ALU_nnz, &one, matL_des,
                                                             ALU_data, ALU_i, ALU_j, matAL_info,
                                                             utemp_data, ftemp_data, ilu_solve_policy, ilu_solve_buffer));
             /* U solve - Forward solve */
-            NALU_HYPRE_CUSPARSE_CALL(hypre_cusparse_csrsv2_solve(handle, CUSPARSE_OPERATION_NON_TRANSPOSE,
+            NALU_HYPRE_CUSPARSE_CALL(nalu_hypre_cusparse_csrsv2_solve(handle, CUSPARSE_OPERATION_NON_TRANSPOSE,
                                                             n, ALU_nnz, &one, matU_des,
                                                             ALU_data, ALU_i, ALU_j, matAU_info,
                                                             ftemp_data, xtemp_data, ilu_solve_policy, ilu_solve_buffer));
@@ -1797,22 +1797,22 @@ hypre_ILUSolveRAPGMRES(hypre_ParCSRMatrix   *A,
          /* residual, we should not touch xtemp for now
           * r = R*(f-PAQx)
           */
-         hypre_ParCSRMatrixMatvec(mone, Aperm, xtemp, one, utemp);
+         nalu_hypre_ParCSRMatrixMatvec(mone, Aperm, xtemp, one, utemp);
          /* with R is complex */
          /* copy partial data in */
-         hypre_TMemcpy( rhs_data, utemp_data + nLU, NALU_HYPRE_Real, m, NALU_HYPRE_MEMORY_DEVICE, NALU_HYPRE_MEMORY_DEVICE);
+         nalu_hypre_TMemcpy( rhs_data, utemp_data + nLU, NALU_HYPRE_Real, m, NALU_HYPRE_MEMORY_DEVICE, NALU_HYPRE_MEMORY_DEVICE);
 
          /* solve L^{-1} */
          if (nLU > 0)
          {
             /* L solve */
-            NALU_HYPRE_CUSPARSE_CALL(hypre_cusparse_csrsv2_solve(handle, CUSPARSE_OPERATION_NON_TRANSPOSE,
+            NALU_HYPRE_CUSPARSE_CALL(nalu_hypre_cusparse_csrsv2_solve(handle, CUSPARSE_OPERATION_NON_TRANSPOSE,
                                                             nLU, BLU_nnz, &one, matL_des,
                                                             BLU_data, BLU_i, BLU_j, matBL_info,
                                                             utemp_data, ftemp_data, ilu_solve_policy, ilu_solve_buffer));
          }
          /* -EU^{-1}L^{-1} */
-         hypre_CSRMatrixMatvec(mone, matE_d, ftemp_upper, one, rhs_local);
+         nalu_hypre_CSRMatrixMatvec(mone, matE_d, ftemp_upper, one, rhs_local);
 
 
          /* now solve S
@@ -1820,25 +1820,25 @@ hypre_ILUSolveRAPGMRES(hypre_ParCSRMatrix   *A,
          if (S)
          {
             /* if we have a schur complement */
-            hypre_ParVectorSetConstantValues(x, 0.0);
+            nalu_hypre_ParVectorSetConstantValues(x, 0.0);
             NALU_HYPRE_GMRESSolve(schur_solver, (NALU_HYPRE_Matrix)schur_precond, (NALU_HYPRE_Vector)rhs, (NALU_HYPRE_Vector)x);
 
             /* u = xtemp + P*x */
             /* -L^{-1}Fx */
-            hypre_CSRMatrixMatvec(mone, matF_d, x_local, zero, ftemp_upper);
+            nalu_hypre_CSRMatrixMatvec(mone, matF_d, x_local, zero, ftemp_upper);
             /* -U{-1}L^{-1}Fx */
             if (nLU > 0)
             {
                /* U solve */
-               NALU_HYPRE_CUSPARSE_CALL(hypre_cusparse_csrsv2_solve(handle, CUSPARSE_OPERATION_NON_TRANSPOSE,
+               NALU_HYPRE_CUSPARSE_CALL(nalu_hypre_cusparse_csrsv2_solve(handle, CUSPARSE_OPERATION_NON_TRANSPOSE,
                                                                nLU, BLU_nnz, &one, matU_des,
                                                                BLU_data, BLU_i, BLU_j, matBU_info,
                                                                ftemp_data, utemp_data, ilu_solve_policy, ilu_solve_buffer));
             }
             /* now copy data to y_lower */
-            hypre_TMemcpy( utemp_data + nLU, x_data, NALU_HYPRE_Real, m, NALU_HYPRE_MEMORY_DEVICE, NALU_HYPRE_MEMORY_DEVICE);
+            nalu_hypre_TMemcpy( utemp_data + nLU, x_data, NALU_HYPRE_Real, m, NALU_HYPRE_MEMORY_DEVICE, NALU_HYPRE_MEMORY_DEVICE);
 
-            hypre_ParVectorAxpy(one, utemp, xtemp);
+            nalu_hypre_ParVectorAxpy(one, utemp, xtemp);
 
          }
          else
@@ -1847,32 +1847,32 @@ hypre_ILUSolveRAPGMRES(hypre_ParCSRMatrix   *A,
             if (m > 0)
             {
                /* L solve - Forward solve */
-               NALU_HYPRE_CUSPARSE_CALL(hypre_cusparse_csrsv2_solve(handle, CUSPARSE_OPERATION_NON_TRANSPOSE,
+               NALU_HYPRE_CUSPARSE_CALL(nalu_hypre_cusparse_csrsv2_solve(handle, CUSPARSE_OPERATION_NON_TRANSPOSE,
                                                                m, SLU_nnz, &one, matL_des,
                                                                SLU_data, SLU_i, SLU_j, matSL_info,
                                                                rhs_data, x_data, ilu_solve_policy, ilu_solve_buffer));
                /* U solve - Forward solve */
-               NALU_HYPRE_CUSPARSE_CALL(hypre_cusparse_csrsv2_solve(handle, CUSPARSE_OPERATION_NON_TRANSPOSE,
+               NALU_HYPRE_CUSPARSE_CALL(nalu_hypre_cusparse_csrsv2_solve(handle, CUSPARSE_OPERATION_NON_TRANSPOSE,
                                                                m, SLU_nnz, &one, matU_des,
                                                                SLU_data, SLU_i, SLU_j, matSU_info,
                                                                x_data, rhs_data, ilu_solve_policy, ilu_solve_buffer));
             }
             /* u = xtemp + P*x */
             /* -L^{-1}Fx */
-            hypre_CSRMatrixMatvec(mone, matF_d, rhs_local, zero, ftemp_upper);
+            nalu_hypre_CSRMatrixMatvec(mone, matF_d, rhs_local, zero, ftemp_upper);
             /* -U{-1}L^{-1}Fx */
             if (nLU > 0)
             {
                /* U solve */
-               NALU_HYPRE_CUSPARSE_CALL(hypre_cusparse_csrsv2_solve(handle, CUSPARSE_OPERATION_NON_TRANSPOSE,
+               NALU_HYPRE_CUSPARSE_CALL(nalu_hypre_cusparse_csrsv2_solve(handle, CUSPARSE_OPERATION_NON_TRANSPOSE,
                                                                nLU, BLU_nnz, &one, matU_des,
                                                                BLU_data, BLU_i, BLU_j, matBU_info,
                                                                ftemp_data, utemp_data, ilu_solve_policy, ilu_solve_buffer));
             }
             /* now copy data to y_lower */
-            hypre_TMemcpy( utemp_data + nLU, rhs_data, NALU_HYPRE_Real, m, NALU_HYPRE_MEMORY_DEVICE, NALU_HYPRE_MEMORY_DEVICE);
+            nalu_hypre_TMemcpy( utemp_data + nLU, rhs_data, NALU_HYPRE_Real, m, NALU_HYPRE_MEMORY_DEVICE, NALU_HYPRE_MEMORY_DEVICE);
 
-            hypre_ParVectorAxpy(one, utemp, xtemp);
+            nalu_hypre_ParVectorAxpy(one, utemp, xtemp);
 
          }
 
@@ -1880,80 +1880,80 @@ hypre_ILUSolveRAPGMRES(hypre_ParCSRMatrix   *A,
          NALU_HYPRE_THRUST_CALL(scatter, xtemp_data, xtemp_data + n, perm, ftemp_data);
 
          /* done, now everything are in u_temp, update solution */
-         hypre_ParVectorAxpy(one, ftemp, u);
+         nalu_hypre_ParVectorAxpy(one, ftemp, u);
       }
       break;
    }
 
-   hypre_SeqVectorDestroy(ftemp_upper);
-   hypre_SeqVectorDestroy(utemp_lower);
+   nalu_hypre_SeqVectorDestroy(ftemp_upper);
+   nalu_hypre_SeqVectorDestroy(utemp_lower);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 #endif
 
 NALU_HYPRE_Int
-hypre_ILUSolveRAPGMRESHOST(hypre_ParCSRMatrix *A,
-                           hypre_ParVector    *f,
-                           hypre_ParVector    *u,
+nalu_hypre_ILUSolveRAPGMRESHOST(nalu_hypre_ParCSRMatrix *A,
+                           nalu_hypre_ParVector    *f,
+                           nalu_hypre_ParVector    *u,
                            NALU_HYPRE_Int          *perm,
                            NALU_HYPRE_Int           nLU,
-                           hypre_ParCSRMatrix *L,
+                           nalu_hypre_ParCSRMatrix *L,
                            NALU_HYPRE_Real         *D,
-                           hypre_ParCSRMatrix *U,
-                           hypre_ParCSRMatrix *mL,
+                           nalu_hypre_ParCSRMatrix *U,
+                           nalu_hypre_ParCSRMatrix *mL,
                            NALU_HYPRE_Real         *mD,
-                           hypre_ParCSRMatrix *mU,
-                           hypre_ParVector    *ftemp,
-                           hypre_ParVector    *utemp,
-                           hypre_ParVector    *xtemp,
-                           hypre_ParVector    *ytemp,
+                           nalu_hypre_ParCSRMatrix *mU,
+                           nalu_hypre_ParVector    *ftemp,
+                           nalu_hypre_ParVector    *utemp,
+                           nalu_hypre_ParVector    *xtemp,
+                           nalu_hypre_ParVector    *ytemp,
                            NALU_HYPRE_Solver        schur_solver,
                            NALU_HYPRE_Solver        schur_precond,
-                           hypre_ParVector    *rhs,
-                           hypre_ParVector    *x,
+                           nalu_hypre_ParVector    *rhs,
+                           nalu_hypre_ParVector    *x,
                            NALU_HYPRE_Int          *u_end)
 {
    //#pragma omp parallel
    //        printf("threads %d\n",omp_get_num_threads());
    /* data objects for communication */
-   //   MPI_Comm          comm = hypre_ParCSRMatrixComm(A);
+   //   MPI_Comm          comm = nalu_hypre_ParCSRMatrixComm(A);
 
    /* data objects for L and U */
-   hypre_CSRMatrix   *L_diag = hypre_ParCSRMatrixDiag(L);
-   NALU_HYPRE_Real        *L_diag_data = hypre_CSRMatrixData(L_diag);
-   NALU_HYPRE_Int         *L_diag_i = hypre_CSRMatrixI(L_diag);
-   NALU_HYPRE_Int         *L_diag_j = hypre_CSRMatrixJ(L_diag);
-   hypre_CSRMatrix   *U_diag = hypre_ParCSRMatrixDiag(U);
-   NALU_HYPRE_Real        *U_diag_data = hypre_CSRMatrixData(U_diag);
-   NALU_HYPRE_Int         *U_diag_i = hypre_CSRMatrixI(U_diag);
-   NALU_HYPRE_Int         *U_diag_j = hypre_CSRMatrixJ(U_diag);
+   nalu_hypre_CSRMatrix   *L_diag = nalu_hypre_ParCSRMatrixDiag(L);
+   NALU_HYPRE_Real        *L_diag_data = nalu_hypre_CSRMatrixData(L_diag);
+   NALU_HYPRE_Int         *L_diag_i = nalu_hypre_CSRMatrixI(L_diag);
+   NALU_HYPRE_Int         *L_diag_j = nalu_hypre_CSRMatrixJ(L_diag);
+   nalu_hypre_CSRMatrix   *U_diag = nalu_hypre_ParCSRMatrixDiag(U);
+   NALU_HYPRE_Real        *U_diag_data = nalu_hypre_CSRMatrixData(U_diag);
+   NALU_HYPRE_Int         *U_diag_i = nalu_hypre_CSRMatrixI(U_diag);
+   NALU_HYPRE_Int         *U_diag_j = nalu_hypre_CSRMatrixJ(U_diag);
 
-   hypre_CSRMatrix   *mL_diag = hypre_ParCSRMatrixDiag(mL);
-   NALU_HYPRE_Real        *mL_diag_data = hypre_CSRMatrixData(mL_diag);
-   NALU_HYPRE_Int         *mL_diag_i = hypre_CSRMatrixI(mL_diag);
-   NALU_HYPRE_Int         *mL_diag_j = hypre_CSRMatrixJ(mL_diag);
-   hypre_CSRMatrix   *mU_diag = hypre_ParCSRMatrixDiag(mU);
-   NALU_HYPRE_Real        *mU_diag_data = hypre_CSRMatrixData(mU_diag);
-   NALU_HYPRE_Int         *mU_diag_i = hypre_CSRMatrixI(mU_diag);
-   NALU_HYPRE_Int         *mU_diag_j = hypre_CSRMatrixJ(mU_diag);
+   nalu_hypre_CSRMatrix   *mL_diag = nalu_hypre_ParCSRMatrixDiag(mL);
+   NALU_HYPRE_Real        *mL_diag_data = nalu_hypre_CSRMatrixData(mL_diag);
+   NALU_HYPRE_Int         *mL_diag_i = nalu_hypre_CSRMatrixI(mL_diag);
+   NALU_HYPRE_Int         *mL_diag_j = nalu_hypre_CSRMatrixJ(mL_diag);
+   nalu_hypre_CSRMatrix   *mU_diag = nalu_hypre_ParCSRMatrixDiag(mU);
+   NALU_HYPRE_Real        *mU_diag_data = nalu_hypre_CSRMatrixData(mU_diag);
+   NALU_HYPRE_Int         *mU_diag_i = nalu_hypre_CSRMatrixI(mU_diag);
+   NALU_HYPRE_Int         *mU_diag_j = nalu_hypre_CSRMatrixJ(mU_diag);
 
-   hypre_Vector      *utemp_local = hypre_ParVectorLocalVector(utemp);
-   NALU_HYPRE_Real        *utemp_data  = hypre_VectorData(utemp_local);
-   hypre_Vector      *ftemp_local = hypre_ParVectorLocalVector(ftemp);
-   NALU_HYPRE_Real        *ftemp_data  = hypre_VectorData(ftemp_local);
-   hypre_Vector      *xtemp_local = NULL;
+   nalu_hypre_Vector      *utemp_local = nalu_hypre_ParVectorLocalVector(utemp);
+   NALU_HYPRE_Real        *utemp_data  = nalu_hypre_VectorData(utemp_local);
+   nalu_hypre_Vector      *ftemp_local = nalu_hypre_ParVectorLocalVector(ftemp);
+   NALU_HYPRE_Real        *ftemp_data  = nalu_hypre_VectorData(ftemp_local);
+   nalu_hypre_Vector      *xtemp_local = NULL;
    NALU_HYPRE_Real        *xtemp_data  = NULL;
-   hypre_Vector      *ytemp_local = NULL;
+   nalu_hypre_Vector      *ytemp_local = NULL;
    NALU_HYPRE_Real        *ytemp_data  = NULL;
    if (xtemp)
    {
       /* xtemp might be null when we have no Schur complement */
-      xtemp_local = hypre_ParVectorLocalVector(xtemp);
-      xtemp_data  = hypre_VectorData(xtemp_local);
-      ytemp_local = hypre_ParVectorLocalVector(ytemp);
-      ytemp_data  = hypre_VectorData(ytemp_local);
+      xtemp_local = nalu_hypre_ParVectorLocalVector(xtemp);
+      xtemp_data  = nalu_hypre_VectorData(xtemp_local);
+      ytemp_local = nalu_hypre_ParVectorLocalVector(ytemp);
+      ytemp_data  = nalu_hypre_VectorData(ytemp_local);
    }
 
    NALU_HYPRE_Real        alpha;
@@ -1961,15 +1961,15 @@ hypre_ILUSolveRAPGMRESHOST(hypre_ParCSRMatrix *A,
    NALU_HYPRE_Int         i, j, k1, k2, col;
 
    /* problem size */
-   NALU_HYPRE_Int         n = hypre_CSRMatrixNumRows(L_diag);
+   NALU_HYPRE_Int         n = nalu_hypre_CSRMatrixNumRows(L_diag);
    NALU_HYPRE_Int         m = n - nLU;
 
    /* other data objects for computation */
-   //hypre_Vector      *f_local;
+   //nalu_hypre_Vector      *f_local;
    //NALU_HYPRE_Real        *f_data;
-   hypre_Vector      *rhs_local;
+   nalu_hypre_Vector      *rhs_local;
    NALU_HYPRE_Real        *rhs_data;
-   hypre_Vector      *x_local;
+   nalu_hypre_Vector      *x_local;
    NALU_HYPRE_Real        *x_data;
 
    /* begin */
@@ -1979,17 +1979,17 @@ hypre_ILUSolveRAPGMRESHOST(hypre_ParCSRMatrix *A,
    if (m > 0)
    {
       /* setup vectors for solve */
-      rhs_local   = hypre_ParVectorLocalVector(rhs);
-      rhs_data    = hypre_VectorData(rhs_local);
-      x_local     = hypre_ParVectorLocalVector(x);
-      x_data      = hypre_VectorData(x_local);
+      rhs_local   = nalu_hypre_ParVectorLocalVector(rhs);
+      rhs_data    = nalu_hypre_VectorData(rhs_local);
+      x_local     = nalu_hypre_ParVectorLocalVector(x);
+      x_data      = nalu_hypre_VectorData(x_local);
 
    }
 
    /* only support RAP with partial factorized W and Z */
 
    /* compute residual */
-   hypre_ParCSRMatrixMatvecOutOfPlace(alpha, A, u, beta, f, ftemp);
+   nalu_hypre_ParCSRMatrixMatvecOutOfPlace(alpha, A, u, beta, f, ftemp);
 
    /* A-smoothing f_temp = [UA \ LA \ (f_temp[perm])] */
    /* permuted L solve */
@@ -2020,9 +2020,9 @@ hypre_ILUSolveRAPGMRESHOST(hypre_ParCSRMatrix *A,
          ftemp_data[perm[i]] *= D[i];
       }
 
-      hypre_ParVectorAxpy(beta, ftemp, u);
+      nalu_hypre_ParVectorAxpy(beta, ftemp, u);
 
-      return hypre_error_flag;
+      return nalu_hypre_error_flag;
    }
 
    /* U solve */
@@ -2043,7 +2043,7 @@ hypre_ILUSolveRAPGMRESHOST(hypre_ParCSRMatrix *A,
     * rhs = R*(b - Ax)
     * */
    // utemp = (ftemp - A*xtemp)
-   hypre_ParCSRMatrixMatvecOutOfPlace(alpha, A, xtemp, beta, ftemp, utemp);
+   nalu_hypre_ParCSRMatrixMatvecOutOfPlace(alpha, A, xtemp, beta, ftemp, utemp);
 
    // R = [-L21 L\inv, I]
    if ( m > 0)
@@ -2074,7 +2074,7 @@ hypre_ILUSolveRAPGMRESHOST(hypre_ParCSRMatrix *A,
    }
 
    /* now the rhs is ready */
-   hypre_SeqVectorSetConstantValues(x_local, 0.0);
+   nalu_hypre_SeqVectorSetConstantValues(x_local, 0.0);
    NALU_HYPRE_GMRESSolve(schur_solver, (NALU_HYPRE_Matrix)schur_precond, (NALU_HYPRE_Vector)rhs, (NALU_HYPRE_Vector)x);
 
    if (m > 0)
@@ -2140,48 +2140,48 @@ hypre_ILUSolveRAPGMRESHOST(hypre_ParCSRMatrix *A,
       {
          ftemp_data[perm[i]] = x_data[i - nLU];
       }
-      hypre_ParVectorAxpy(beta, ftemp, u);
+      nalu_hypre_ParVectorAxpy(beta, ftemp, u);
    }
 
-   hypre_ParVectorAxpy(beta, xtemp, u);
+   nalu_hypre_ParVectorAxpy(beta, xtemp, u);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /* solve functions for NSH */
 
 /*--------------------------------------------------------------------
- * hypre_NSHSolve
+ * nalu_hypre_NSHSolve
  *--------------------------------------------------------------------*/
 NALU_HYPRE_Int
-hypre_NSHSolve( void               *nsh_vdata,
-                hypre_ParCSRMatrix *A,
-                hypre_ParVector    *f,
-                hypre_ParVector    *u )
+nalu_hypre_NSHSolve( void               *nsh_vdata,
+                nalu_hypre_ParCSRMatrix *A,
+                nalu_hypre_ParVector    *f,
+                nalu_hypre_ParVector    *u )
 {
-   MPI_Comm             comm = hypre_ParCSRMatrixComm(A);
+   MPI_Comm             comm = nalu_hypre_ParCSRMatrixComm(A);
    //   NALU_HYPRE_Int            i;
 
-   hypre_ParNSHData     *nsh_data = (hypre_ParNSHData*) nsh_vdata;
+   nalu_hypre_ParNSHData     *nsh_data = (nalu_hypre_ParNSHData*) nsh_vdata;
 
    /* get matrices */
-   hypre_ParCSRMatrix   *matA = hypre_ParNSHDataMatA(nsh_data);
-   hypre_ParCSRMatrix   *matM = hypre_ParNSHDataMatM(nsh_data);
+   nalu_hypre_ParCSRMatrix   *matA = nalu_hypre_ParNSHDataMatA(nsh_data);
+   nalu_hypre_ParCSRMatrix   *matM = nalu_hypre_ParNSHDataMatM(nsh_data);
 
    NALU_HYPRE_Int            iter, num_procs,  my_id;
 
-   hypre_ParVector      *F_array = hypre_ParNSHDataF(nsh_data);
-   hypre_ParVector      *U_array = hypre_ParNSHDataU(nsh_data);
+   nalu_hypre_ParVector      *F_array = nalu_hypre_ParNSHDataF(nsh_data);
+   nalu_hypre_ParVector      *U_array = nalu_hypre_ParNSHDataU(nsh_data);
 
    /* get settings */
-   NALU_HYPRE_Real           tol = hypre_ParNSHDataTol(nsh_data);
-   NALU_HYPRE_Int            logging = hypre_ParNSHDataLogging(nsh_data);
-   NALU_HYPRE_Int            print_level = hypre_ParNSHDataPrintLevel(nsh_data);
-   NALU_HYPRE_Int            max_iter = hypre_ParNSHDataMaxIter(nsh_data);
-   NALU_HYPRE_Real           *norms = hypre_ParNSHDataRelResNorms(nsh_data);
-   hypre_ParVector      *Ftemp = hypre_ParNSHDataFTemp(nsh_data);
-   hypre_ParVector      *Utemp = hypre_ParNSHDataUTemp(nsh_data);
-   hypre_ParVector      *residual;
+   NALU_HYPRE_Real           tol = nalu_hypre_ParNSHDataTol(nsh_data);
+   NALU_HYPRE_Int            logging = nalu_hypre_ParNSHDataLogging(nsh_data);
+   NALU_HYPRE_Int            print_level = nalu_hypre_ParNSHDataPrintLevel(nsh_data);
+   NALU_HYPRE_Int            max_iter = nalu_hypre_ParNSHDataMaxIter(nsh_data);
+   NALU_HYPRE_Real           *norms = nalu_hypre_ParNSHDataRelResNorms(nsh_data);
+   nalu_hypre_ParVector      *Ftemp = nalu_hypre_ParNSHDataFTemp(nsh_data);
+   nalu_hypre_ParVector      *Utemp = nalu_hypre_ParNSHDataUTemp(nsh_data);
+   nalu_hypre_ParVector      *residual;
 
    NALU_HYPRE_Real           alpha = -1.0;
    NALU_HYPRE_Real           beta = 1.0;
@@ -2192,30 +2192,30 @@ hypre_NSHSolve( void               *nsh_vdata,
    NALU_HYPRE_Real           rhs_norm = 0.0;
    NALU_HYPRE_Real           old_resnorm;
    NALU_HYPRE_Real           ieee_check = 0.;
-   NALU_HYPRE_Real           operat_cmplxty = hypre_ParNSHDataOperatorComplexity(nsh_data);
+   NALU_HYPRE_Real           operat_cmplxty = nalu_hypre_ParNSHDataOperatorComplexity(nsh_data);
 
    NALU_HYPRE_Int            Solve_err_flag;
 
    /* problem size */
-   //   NALU_HYPRE_Int            n = hypre_CSRMatrixNumRows(hypre_ParCSRMatrixDiag(A));
+   //   NALU_HYPRE_Int            n = nalu_hypre_CSRMatrixNumRows(nalu_hypre_ParCSRMatrixDiag(A));
 
    /* begin */
    if (logging > 1)
    {
-      residual = hypre_ParNSHDataResidual(nsh_data);
+      residual = nalu_hypre_ParNSHDataResidual(nsh_data);
    }
 
-   hypre_ParNSHDataNumIterations(nsh_data) = 0;
+   nalu_hypre_ParNSHDataNumIterations(nsh_data) = 0;
 
-   hypre_MPI_Comm_size(comm, &num_procs);
-   hypre_MPI_Comm_rank(comm, &my_id);
+   nalu_hypre_MPI_Comm_size(comm, &num_procs);
+   nalu_hypre_MPI_Comm_rank(comm, &my_id);
 
    /*-----------------------------------------------------------------------
     *    Write the solver parameters
     *-----------------------------------------------------------------------*/
    if (my_id == 0 && print_level > 1)
    {
-      hypre_NSHWriteSolverParams(nsh_data);
+      nalu_hypre_NSHWriteSolverParams(nsh_data);
    }
 
    /*-----------------------------------------------------------------------
@@ -2229,7 +2229,7 @@ hypre_NSHSolve( void               *nsh_vdata,
 
    if (my_id == 0 && print_level > 1 && tol > 0.)
    {
-      hypre_printf("\n\n Newton–Schulz–Hotelling SOLVER SOLUTION INFO:\n");
+      nalu_hypre_printf("\n\n Newton–Schulz–Hotelling SOLVER SOLUTION INFO:\n");
    }
 
 
@@ -2240,21 +2240,21 @@ hypre_NSHSolve( void               *nsh_vdata,
    {
       if ( logging > 1 )
       {
-         hypre_ParVectorCopy(f, residual );
+         nalu_hypre_ParVectorCopy(f, residual );
          if (tol > 0.0)
          {
-            hypre_ParCSRMatrixMatvec(alpha, A, u, beta, residual );
+            nalu_hypre_ParCSRMatrixMatvec(alpha, A, u, beta, residual );
          }
-         resnorm = sqrt(hypre_ParVectorInnerProd( residual, residual ));
+         resnorm = sqrt(nalu_hypre_ParVectorInnerProd( residual, residual ));
       }
       else
       {
-         hypre_ParVectorCopy(f, Ftemp);
+         nalu_hypre_ParVectorCopy(f, Ftemp);
          if (tol > 0.0)
          {
-            hypre_ParCSRMatrixMatvec(alpha, A, u, beta, Ftemp);
+            nalu_hypre_ParCSRMatrixMatvec(alpha, A, u, beta, Ftemp);
          }
-         resnorm = sqrt(hypre_ParVectorInnerProd(Ftemp, Ftemp));
+         resnorm = sqrt(nalu_hypre_ParVectorInnerProd(Ftemp, Ftemp));
       }
 
       /* Since it is does not diminish performance, attempt to return an error flag
@@ -2272,17 +2272,17 @@ hypre_NSHSolve( void               *nsh_vdata,
             found at http://HTTP.CS.Berkeley.EDU/~wkahan/ieee754status/IEEE754.PDF */
          if (print_level > 0)
          {
-            hypre_printf("\n\nERROR detected by Hypre ...  BEGIN\n");
-            hypre_printf("ERROR -- hypre_NSHSolve: INFs and/or NaNs detected in input.\n");
-            hypre_printf("User probably placed non-numerics in supplied A, x_0, or b.\n");
-            hypre_printf("ERROR detected by Hypre ...  END\n\n\n");
+            nalu_hypre_printf("\n\nERROR detected by Hypre ...  BEGIN\n");
+            nalu_hypre_printf("ERROR -- nalu_hypre_NSHSolve: INFs and/or NaNs detected in input.\n");
+            nalu_hypre_printf("User probably placed non-numerics in supplied A, x_0, or b.\n");
+            nalu_hypre_printf("ERROR detected by Hypre ...  END\n\n\n");
          }
-         hypre_error(NALU_HYPRE_ERROR_GENERIC);
-         return hypre_error_flag;
+         nalu_hypre_error(NALU_HYPRE_ERROR_GENERIC);
+         return nalu_hypre_error_flag;
       }
 
       init_resnorm = resnorm;
-      rhs_norm = sqrt(hypre_ParVectorInnerProd(f, f));
+      rhs_norm = sqrt(nalu_hypre_ParVectorInnerProd(f, f));
       if (rhs_norm > NALU_HYPRE_REAL_EPSILON)
       {
          rel_resnorm = init_resnorm / rhs_norm;
@@ -2290,13 +2290,13 @@ hypre_NSHSolve( void               *nsh_vdata,
       else
       {
          /* rhs is zero, return a zero solution */
-         hypre_ParVectorSetConstantValues(U_array, 0.0);
+         nalu_hypre_ParVectorSetConstantValues(U_array, 0.0);
          if (logging > 0)
          {
             rel_resnorm = 0.0;
-            hypre_ParNSHDataFinalRelResidualNorm(nsh_data) = rel_resnorm;
+            nalu_hypre_ParNSHDataFinalRelResidualNorm(nsh_data) = rel_resnorm;
          }
-         return hypre_error_flag;
+         return nalu_hypre_error_flag;
       }
    }
    else
@@ -2306,10 +2306,10 @@ hypre_NSHSolve( void               *nsh_vdata,
 
    if (my_id == 0 && print_level > 1)
    {
-      hypre_printf("                                            relative\n");
-      hypre_printf("               residual        factor       residual\n");
-      hypre_printf("               --------        ------       --------\n");
-      hypre_printf("    Initial    %e                 %e\n", init_resnorm,
+      nalu_hypre_printf("                                            relative\n");
+      nalu_hypre_printf("               residual        factor       residual\n");
+      nalu_hypre_printf("               --------        ------       --------\n");
+      nalu_hypre_printf("    Initial    %e                 %e\n", init_resnorm,
                    rel_resnorm);
    }
 
@@ -2325,7 +2325,7 @@ hypre_NSHSolve( void               *nsh_vdata,
    {
 
       /* Do one solve on e = Mr */
-      hypre_NSHSolveInverse(matA, f, u, matM, Utemp, Ftemp);
+      nalu_hypre_NSHSolveInverse(matA, f, u, matM, Utemp, Ftemp);
 
       /*---------------------------------------------------------------
        *    Compute residual and residual norm
@@ -2337,15 +2337,15 @@ hypre_NSHSolve( void               *nsh_vdata,
 
          if (logging > 1)
          {
-            hypre_ParVectorCopy(F_array, residual);
-            hypre_ParCSRMatrixMatvec(alpha, matA, U_array, beta, residual );
-            resnorm = sqrt(hypre_ParVectorInnerProd( residual, residual ));
+            nalu_hypre_ParVectorCopy(F_array, residual);
+            nalu_hypre_ParCSRMatrixMatvec(alpha, matA, U_array, beta, residual );
+            resnorm = sqrt(nalu_hypre_ParVectorInnerProd( residual, residual ));
          }
          else
          {
-            hypre_ParVectorCopy(F_array, Ftemp);
-            hypre_ParCSRMatrixMatvec(alpha, matA, U_array, beta, Ftemp);
-            resnorm = sqrt(hypre_ParVectorInnerProd(Ftemp, Ftemp));
+            nalu_hypre_ParVectorCopy(F_array, Ftemp);
+            nalu_hypre_ParCSRMatrixMatvec(alpha, matA, U_array, beta, Ftemp);
+            resnorm = sqrt(nalu_hypre_ParVectorInnerProd(Ftemp, Ftemp));
          }
 
          if (old_resnorm) { conv_factor = resnorm / old_resnorm; }
@@ -2363,12 +2363,12 @@ hypre_NSHSolve( void               *nsh_vdata,
       }
 
       ++iter;
-      hypre_ParNSHDataNumIterations(nsh_data) = iter;
-      hypre_ParNSHDataFinalRelResidualNorm(nsh_data) = rel_resnorm;
+      nalu_hypre_ParNSHDataNumIterations(nsh_data) = iter;
+      nalu_hypre_ParNSHDataFinalRelResidualNorm(nsh_data) = rel_resnorm;
 
       if (my_id == 0 && print_level > 1)
       {
-         hypre_printf("    NSHSolve %2d   %e    %f     %e \n", iter,
+         nalu_hypre_printf("    NSHSolve %2d   %e    %f     %e \n", iter,
                       resnorm, conv_factor, rel_resnorm);
       }
    }
@@ -2377,7 +2377,7 @@ hypre_NSHSolve( void               *nsh_vdata,
    if (iter == max_iter && tol > 0.)
    {
       Solve_err_flag = 1;
-      hypre_error(NALU_HYPRE_ERROR_CONV);
+      nalu_hypre_error(NALU_HYPRE_ERROR_CONV);
    }
 
    /*-----------------------------------------------------------------------
@@ -2401,16 +2401,16 @@ hypre_NSHSolve( void               *nsh_vdata,
       {
          if (Solve_err_flag == 1)
          {
-            hypre_printf("\n\n==============================================");
-            hypre_printf("\n NOTE: Convergence tolerance was not achieved\n");
-            hypre_printf("      within the allowed %d iterations\n", max_iter);
-            hypre_printf("==============================================");
+            nalu_hypre_printf("\n\n==============================================");
+            nalu_hypre_printf("\n NOTE: Convergence tolerance was not achieved\n");
+            nalu_hypre_printf("      within the allowed %d iterations\n", max_iter);
+            nalu_hypre_printf("==============================================");
          }
-         hypre_printf("\n\n Average Convergence Factor = %f \n", conv_factor);
-         hypre_printf("                operator = %f\n", operat_cmplxty);
+         nalu_hypre_printf("\n\n Average Convergence Factor = %f \n", conv_factor);
+         nalu_hypre_printf("                operator = %f\n", operat_cmplxty);
       }
    }
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /* NSH solve
@@ -2422,12 +2422,12 @@ hypre_NSHSolve( void               *nsh_vdata,
  * ftemp, utemp: working vectors
 */
 NALU_HYPRE_Int
-hypre_NSHSolveInverse(hypre_ParCSRMatrix *A,
-                      hypre_ParVector    *f,
-                      hypre_ParVector    *u,
-                      hypre_ParCSRMatrix *M,
-                      hypre_ParVector    *ftemp,
-                      hypre_ParVector    *utemp)
+nalu_hypre_NSHSolveInverse(nalu_hypre_ParCSRMatrix *A,
+                      nalu_hypre_ParVector    *f,
+                      nalu_hypre_ParVector    *u,
+                      nalu_hypre_ParCSRMatrix *M,
+                      nalu_hypre_ParVector    *ftemp,
+                      nalu_hypre_ParVector    *utemp)
 {
    NALU_HYPRE_Real      alpha;
    NALU_HYPRE_Real      beta;
@@ -2436,11 +2436,11 @@ hypre_NSHSolveInverse(hypre_ParCSRMatrix *A,
    alpha = -1.0;
    beta = 1.0;
    /* r = f-Au */
-   hypre_ParCSRMatrixMatvecOutOfPlace(alpha, A, u, beta, f, ftemp);
+   nalu_hypre_ParCSRMatrixMatvecOutOfPlace(alpha, A, u, beta, f, ftemp);
    /* e = Mr */
-   hypre_ParCSRMatrixMatvec(1.0, M, ftemp, 0.0, utemp);
+   nalu_hypre_ParCSRMatrixMatvec(1.0, M, ftemp, 0.0, utemp);
    /* u = u + e */
-   hypre_ParVectorAxpy(beta, utemp, u);
-   return hypre_error_flag;
+   nalu_hypre_ParVectorAxpy(beta, utemp, u);
+   return nalu_hypre_error_flag;
 }
 

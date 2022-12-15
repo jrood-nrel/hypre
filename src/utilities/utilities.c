@@ -5,15 +5,15 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_utilities.h"
+#include "_nalu_hypre_utilities.h"
 
 /*--------------------------------------------------------------------------
- * hypre_multmod
+ * nalu_hypre_multmod
  *--------------------------------------------------------------------------*/
 
 /* This function computes (a*b) % mod, which can avoid overflow in large value of (a*b) */
 NALU_HYPRE_Int
-hypre_multmod(NALU_HYPRE_Int a,
+nalu_hypre_multmod(NALU_HYPRE_Int a,
               NALU_HYPRE_Int b,
               NALU_HYPRE_Int mod)
 {
@@ -35,10 +35,10 @@ hypre_multmod(NALU_HYPRE_Int a,
 }
 
 /*--------------------------------------------------------------------------
- * hypre_partition1D
+ * nalu_hypre_partition1D
  *--------------------------------------------------------------------------*/
 void
-hypre_partition1D(NALU_HYPRE_Int  n, /* total number of elements */
+nalu_hypre_partition1D(NALU_HYPRE_Int  n, /* total number of elements */
                   NALU_HYPRE_Int  p, /* number of partitions */
                   NALU_HYPRE_Int  j, /* index of this partition */
                   NALU_HYPRE_Int *s, /* first element in this partition */
@@ -67,13 +67,13 @@ hypre_partition1D(NALU_HYPRE_Int  n, /* total number of elements */
 }
 
 /*--------------------------------------------------------------------------
- * hypre_strcpy
+ * nalu_hypre_strcpy
  *
  * Note: strcpy that allows overlapping in memory
  *--------------------------------------------------------------------------*/
 
 char *
-hypre_strcpy(char *destination, const char *source)
+nalu_hypre_strcpy(char *destination, const char *source)
 {
    size_t len = strlen(source);
 

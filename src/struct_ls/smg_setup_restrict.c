@@ -5,18 +5,18 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_struct_ls.h"
+#include "_nalu_hypre_struct_ls.h"
 #include "smg.h"
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-hypre_StructMatrix *
-hypre_SMGCreateRestrictOp( hypre_StructMatrix *A,
-                           hypre_StructGrid   *cgrid,
+nalu_hypre_StructMatrix *
+nalu_hypre_SMGCreateRestrictOp( nalu_hypre_StructMatrix *A,
+                           nalu_hypre_StructGrid   *cgrid,
                            NALU_HYPRE_Int           cdir  )
 {
-   hypre_StructMatrix *R = NULL;
+   nalu_hypre_StructMatrix *R = NULL;
 
    return R;
 }
@@ -25,12 +25,12 @@ hypre_SMGCreateRestrictOp( hypre_StructMatrix *A,
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_SMGSetupRestrictOp( hypre_StructMatrix *A,
-                          hypre_StructMatrix *R,
-                          hypre_StructVector *temp_vec,
+nalu_hypre_SMGSetupRestrictOp( nalu_hypre_StructMatrix *A,
+                          nalu_hypre_StructMatrix *R,
+                          nalu_hypre_StructVector *temp_vec,
                           NALU_HYPRE_Int           cdir,
-                          hypre_Index         cindex,
-                          hypre_Index         cstride  )
+                          nalu_hypre_Index         cindex,
+                          nalu_hypre_Index         cstride  )
 {
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }

@@ -62,7 +62,7 @@ CXX_COMPILE_FLAGS = \
 HEADERS =\
  cfei-hypre.h\
  cfei_hypre.h\
- hypre_cfei.h\
+ nalu_hypre_cfei.h\
  NALU_HYPRE_LinSysCore.h\
  NALU_HYPRE_FEI_includes.h \
  $(BASE_DIR)/fei_Data.hpp  \
@@ -120,9 +120,9 @@ FILESC = \
  bicgs.c\
  bicgstabl.c\
  fgmres.c\
- hypre_lsi_amge.c\
- hypre_lsi_ddamg.c\
- hypre_lsi_misc.c\
+ nalu_hypre_lsi_amge.c\
+ nalu_hypre_lsi_ddamg.c\
+ nalu_hypre_lsi_misc.c\
  lsicg.c
 
 FILESCXX = \
@@ -139,9 +139,9 @@ FILESCXX = \
  NALU_HYPRE_LinSysCore.cxx\
  NALU_HYPRE_SlideReduction.cxx\
  cfei_hypre.cxx\
- hypre_cfei.cxx\
- hypre_schur_reduce.cxx\
- hypre_slide_reduce.cxx\
+ nalu_hypre_cfei.cxx\
+ nalu_hypre_schur_reduce.cxx\
+ nalu_hypre_slide_reduce.cxx\
  NALU_HYPRE_fei_mesh.cxx\
  NALU_HYPRE_fei_matrix.cxx\
  NALU_HYPRE_fei_vector.cxx
@@ -159,7 +159,7 @@ SONAME = libNALU_HYPRE_FEI-${NALU_HYPRE_RELEASE_VERSION}${NALU_HYPRE_LIB_SUFFIX}
 all: libNALU_HYPRE_FEI${NALU_HYPRE_LIB_SUFFIX}
 	cp -fR $(srcdir)/cfei-hypre.h $(NALU_HYPRE_BUILD_DIR)/include
 	cp -fR $(srcdir)/cfei_hypre.h $(NALU_HYPRE_BUILD_DIR)/include
-	cp -fR $(srcdir)/hypre_cfei.h $(NALU_HYPRE_BUILD_DIR)/include
+	cp -fR $(srcdir)/nalu_hypre_cfei.h $(NALU_HYPRE_BUILD_DIR)/include
 	cp -fR $(srcdir)/NALU_HYPRE_LinSysCore.h $(NALU_HYPRE_BUILD_DIR)/include
 	cp -fR $(srcdir)/NALU_HYPRE_FEI*.h $(NALU_HYPRE_BUILD_DIR)/include
 	cp -fR $(srcdir)/LLNL_FEI*.h $(NALU_HYPRE_BUILD_DIR)/include
@@ -171,7 +171,7 @@ all: libNALU_HYPRE_FEI${NALU_HYPRE_LIB_SUFFIX}
 install: libNALU_HYPRE_FEI${NALU_HYPRE_LIB_SUFFIX}
 	cp -fR $(srcdir)/cfei-hypre.h $(NALU_HYPRE_INC_INSTALL)
 	cp -fR $(srcdir)/cfei_hypre.h $(NALU_HYPRE_INC_INSTALL)
-	cp -fR $(srcdir)/hypre_cfei.h $(NALU_HYPRE_BUILD_DIR)/include
+	cp -fR $(srcdir)/nalu_hypre_cfei.h $(NALU_HYPRE_BUILD_DIR)/include
 	cp -fR $(srcdir)/NALU_HYPRE_LinSysCore.h $(NALU_HYPRE_INC_INSTALL)
 	cp -fR $(srcdir)/NALU_HYPRE_FEI*.h $(NALU_HYPRE_INC_INSTALL)
 	cp -fR $(srcdir)/LLNL_FEI*.h $(NALU_HYPRE_INC_INSTALL)

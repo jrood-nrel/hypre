@@ -43,11 +43,11 @@ extern "C" {
  * @{
  **/
 
-struct hypre_SStructSolver_struct;
+struct nalu_hypre_SStructSolver_struct;
 /**
  * The solver object.
  **/
-typedef struct hypre_SStructSolver_struct *NALU_HYPRE_SStructSolver;
+typedef struct nalu_hypre_SStructSolver_struct *NALU_HYPRE_SStructSolver;
 
 typedef NALU_HYPRE_Int (*NALU_HYPRE_PtrToSStructSolverFcn)(NALU_HYPRE_SStructSolver,
                                                  NALU_HYPRE_SStructMatrix,
@@ -60,8 +60,8 @@ typedef NALU_HYPRE_Int (*NALU_HYPRE_PtrToSStructSolverFcn)(NALU_HYPRE_SStructSol
 
 #ifndef NALU_HYPRE_SOLVER_STRUCT
 #define NALU_HYPRE_SOLVER_STRUCT
-struct hypre_Solver_struct;
-typedef struct hypre_Solver_struct *NALU_HYPRE_Solver;
+struct nalu_hypre_Solver_struct;
+typedef struct nalu_hypre_Solver_struct *NALU_HYPRE_Solver;
 #endif
 
 typedef NALU_HYPRE_Int (*NALU_HYPRE_PtrToModifyPCFcn)(NALU_HYPRE_Solver,
@@ -1245,14 +1245,14 @@ NALU_HYPRE_SStructBiCGSTABGetResidual(NALU_HYPRE_SStructSolver   solver,
  **/
 
 /**
-  * Load interface interpreter.  Vector part loaded with hypre_SStructKrylov
+  * Load interface interpreter.  Vector part loaded with nalu_hypre_SStructKrylov
   * functions and multivector part loaded with mv_TempMultiVector functions.
   **/
 NALU_HYPRE_Int
 NALU_HYPRE_SStructSetupInterpreter(mv_InterfaceInterpreter *i);
 
 /**
-  * Load Matvec interpreter with hypre_SStructKrylov functions.
+  * Load Matvec interpreter with nalu_hypre_SStructKrylov functions.
   **/
 NALU_HYPRE_Int
 NALU_HYPRE_SStructSetupMatvec(NALU_HYPRE_MatvecFunctions *mv);

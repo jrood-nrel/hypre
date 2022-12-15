@@ -5,16 +5,16 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_utilities.h"
+#include "_nalu_hypre_utilities.h"
 
 /*--------------------------------------------------------------------------
- * hypre_Log2:
+ * nalu_hypre_Log2:
  *   This routine returns the integer, floor(log_2(p)).
  *   If p <= 0, it returns a -1.
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_Log2( NALU_HYPRE_Int p )
+nalu_hypre_Log2( NALU_HYPRE_Int p )
 {
    NALU_HYPRE_Int  e;
 

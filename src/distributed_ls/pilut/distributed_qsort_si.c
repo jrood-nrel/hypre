@@ -33,13 +33,13 @@ static void sdqst(NALU_HYPRE_Int *, NALU_HYPRE_Int *);
 
 
 /*
- * hypre_tex_qsort:
+ * nalu_hypre_tex_qsort:
  * First, set up some global parameters for qst to share.  Then, quicksort
  * with qst(), and then a cleanup insertion sort ourselves.  Sound simple?
  * It's not...
  */
 
-void hypre_sincsort_fast(NALU_HYPRE_Int n, NALU_HYPRE_Int *base)
+void nalu_hypre_sincsort_fast(NALU_HYPRE_Int n, NALU_HYPRE_Int *base)
 {
   REGISTER NALU_HYPRE_Int *i;
   REGISTER NALU_HYPRE_Int *j;
@@ -203,7 +203,7 @@ swap:
 /*************************************************************************
 * A decreasing sort of NALU_HYPRE_Int ints 
 **************************************************************************/
-void hypre_sdecsort_fast(NALU_HYPRE_Int n, NALU_HYPRE_Int *base)
+void nalu_hypre_sdecsort_fast(NALU_HYPRE_Int n, NALU_HYPRE_Int *base)
 {
   REGISTER NALU_HYPRE_Int *i;
   REGISTER NALU_HYPRE_Int *j;

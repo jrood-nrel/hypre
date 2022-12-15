@@ -8,9 +8,9 @@
 !*****************************************************************************
 
 !--------------------------------------------------------------------------
-!  fhypre_parcsrmatrixcreate
+!  fnalu_hypre_parcsrmatrixcreate
 !--------------------------------------------------------------------------
-      subroutine fhypre_parcsrmatrixcreate(fcomm, fglobal_num_rows, 
+      subroutine fnalu_hypre_parcsrmatrixcreate(fcomm, fglobal_num_rows, 
      1                                     fglobal_num_cols,
      1                                     frow_starts, fcol_starts, 
      3                                     fnum_cols_offd,
@@ -33,7 +33,7 @@
      3                              fnum_nonzeros_diag, 
      4                              fnum_nonzeros_offd, fmatrix, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_parcsrmatrixcreate: error = ', ierr
+         print *, 'fnalu_hypre_parcsrmatrixcreate: error = ', ierr
       endif
   
       return
@@ -42,13 +42,13 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRMatrixDestroy
 !--------------------------------------------------------------------------
-      subroutine fhypre_parcsrmatrixdestroy (fmatrix)
+      subroutine fnalu_hypre_parcsrmatrixdestroy (fmatrix)
       integer ierr
       integer*8 fmatrix
    
       call NALU_HYPRE_ParCSRMatrixDestroy(fmatrix, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_parcsrmatrixdestroy: error = ', ierr
+         print *, 'fnalu_hypre_parcsrmatrixdestroy: error = ', ierr
       endif
   
       return
@@ -57,14 +57,14 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRMatrixInitialize
 !--------------------------------------------------------------------------
-      subroutine fhypre_parcsrmatrixinitialize (fmatrix)
+      subroutine fnalu_hypre_parcsrmatrixinitialize (fmatrix)
       integer ierr
       integer*8 fmatrix
 
       call NALU_HYPRE_ParCSRMatrixInitialize(fmatrix, ierr)
 
       if (ierr .ne. 0) then
-         print *, 'fhypre_parcsrmatrixinitialize: error = ', ierr
+         print *, 'fnalu_hypre_parcsrmatrixinitialize: error = ', ierr
       endif
   
       return
@@ -73,7 +73,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRMatrixRead
 !--------------------------------------------------------------------------
-      subroutine fhypre_parcsrmatrixread (fcomm, ffile_name, fmatrix)
+      subroutine fnalu_hypre_parcsrmatrixread (fcomm, ffile_name, fmatrix)
 
       integer fcomm
       character*(*) ffile_name
@@ -83,7 +83,7 @@
       call NALU_HYPRE_ParCSRMatrixRead(fcomm, ffile_name, fmatrix, ierr)
 
       if (ierr .ne. 0) then
-         print *, 'fhypre_parcsrmatrixread: error = ', ierr
+         print *, 'fnalu_hypre_parcsrmatrixread: error = ', ierr
       endif
   
       return
@@ -92,7 +92,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRMatrixPrint
 !--------------------------------------------------------------------------
-      subroutine fhypre_parcsrmatrixprint (fmatrix, fname)
+      subroutine fnalu_hypre_parcsrmatrixprint (fmatrix, fname)
 
       integer ierr
       integer*8 fmatrix
@@ -101,7 +101,7 @@
       call NALU_HYPRE_ParCSRMatrixPrint(fmatrix, fname, ierr)
 
       if (ierr .ne. 0) then
-         print *, 'fhypre_parcsrmatrixprint: error = ', ierr
+         print *, 'fnalu_hypre_parcsrmatrixprint: error = ', ierr
       endif
   
       return
@@ -110,7 +110,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRMatrixGetComm
 !--------------------------------------------------------------------------
-      subroutine fhypre_parcsrmatrixgetcomm (fmatrix, fcomm)
+      subroutine fnalu_hypre_parcsrmatrixgetcomm (fmatrix, fcomm)
 
       integer ierr
       integer fcomm
@@ -119,7 +119,7 @@
       call NALU_HYPRE_ParCSRMatrixGetComm(fmatrix, fcomm)
 
       if (ierr .ne. 0) then
-         print *, 'fhypre_parcsrmatrixgetcomm: error = ', ierr
+         print *, 'fnalu_hypre_parcsrmatrixgetcomm: error = ', ierr
       endif
   
       return
@@ -128,7 +128,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRMatrixGetDims
 !--------------------------------------------------------------------------
-      subroutine fhypre_parcsrmatrixgetdims (fmatrix, fM, fN)
+      subroutine fnalu_hypre_parcsrmatrixgetdims (fmatrix, fM, fN)
       
       integer ierr
       integer fM
@@ -138,7 +138,7 @@
       call NALU_HYPRE_ParCSRMatrixGetDims(fmatrix, fM, fN, ierr)
 
       if (ierr .ne. 0) then
-         print *, 'fhypre_parcsrmatrixgetdims: error = ', ierr
+         print *, 'fnalu_hypre_parcsrmatrixgetdims: error = ', ierr
       endif
   
       return
@@ -147,7 +147,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRMatrixGetRowPartitioning
 !--------------------------------------------------------------------------
-      subroutine fhypre_parcsrmatrixgetrowpartit (fmatrix, frow_ptr) 
+      subroutine fnalu_hypre_parcsrmatrixgetrowpartit (fmatrix, frow_ptr) 
 
       integer ierr
       integer*8 fmatrix
@@ -157,7 +157,7 @@
      1                                          ierr)
 
       if (ierr .ne. 0) then
-         print *, 'fhypre_parcsrmatrixgetrowpartitioning: error = ',
+         print *, 'fnalu_hypre_parcsrmatrixgetrowpartitioning: error = ',
      1                                                     ierr
       endif
   
@@ -167,7 +167,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRMatrixGetColPartitioning
 !--------------------------------------------------------------------------
-      subroutine fhypre_parcsrmatrixgetcolpartit (fmatrix, fcol_ptr) 
+      subroutine fnalu_hypre_parcsrmatrixgetcolpartit (fmatrix, fcol_ptr) 
 
       integer ierr
       integer*8 fmatrix
@@ -177,7 +177,7 @@
      1                                          ierr)
 
       if (ierr .ne. 0) then
-         print *, 'fhypre_parcsrmatrixgetcolpartitioning: error = ',
+         print *, 'fnalu_hypre_parcsrmatrixgetcolpartitioning: error = ',
      1                                                     ierr
       endif
   
@@ -187,7 +187,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRMatrixGetLocalRange
 !--------------------------------------------------------------------------
-      subroutine fhypre_parcsrmatrixgetlocalrange (fmatrix, frow_start, 
+      subroutine fnalu_hypre_parcsrmatrixgetlocalrange (fmatrix, frow_start, 
      1                                             frow_end, fcol_start,
      2                                             fcol_end)
 
@@ -203,7 +203,7 @@
      2                                     fcol_end, ierr)
 
       if (ierr .ne. 0) then
-         print *, 'fhypre_parcsrmatrixgetlocalrange: error = ', ierr
+         print *, 'fnalu_hypre_parcsrmatrixgetlocalrange: error = ', ierr
       endif
   
       return
@@ -212,7 +212,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRMatrixGetRow
 !--------------------------------------------------------------------------
-      subroutine fhypre_parcsrmatrixgetrow (fmatrix, frow, fsize, 
+      subroutine fnalu_hypre_parcsrmatrixgetrow (fmatrix, frow, fsize, 
      1                                      fcolptr, fvalptr)
 
       integer ierr
@@ -226,7 +226,7 @@
      1                              fvalptr, ierr)
 
       if (ierr .ne. 0) then
-         print *, 'fhypre_parcsrmatrixgetrow: error = ', ierr
+         print *, 'fnalu_hypre_parcsrmatrixgetrow: error = ', ierr
       endif
   
       return
@@ -235,7 +235,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRMatrixRestoreRow
 !--------------------------------------------------------------------------
-      subroutine fhypre_parcsrmatrixrestorerow (fmatrix, frow, fsize, 
+      subroutine fnalu_hypre_parcsrmatrixrestorerow (fmatrix, frow, fsize, 
      1                                          fcolptr, fvalptr)
 
       integer ierr
@@ -249,7 +249,7 @@
      1                                  fvalptr, ierr)
 
       if (ierr .ne. 0) then
-         print *, 'fhypre_parcsrmatrixrestorerow: error = ', ierr
+         print *, 'fnalu_hypre_parcsrmatrixrestorerow: error = ', ierr
       endif
   
       return
@@ -258,7 +258,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_CSRMatrixtoParCSRMatrix
 !--------------------------------------------------------------------------
-      subroutine fhypre_csrmatrixtoparcsrmatrix (fcomm, fA_CSR, 
+      subroutine fnalu_hypre_csrmatrixtoparcsrmatrix (fcomm, fA_CSR, 
      1                                           frow_part, fcol_part,
      2                                           fmatrix)
 
@@ -273,7 +273,7 @@
      1                                   fcol_part, fmatrix, ierr)
 
       if (ierr .ne. 0) then
-         print *, 'fhypre_csrmatrixtoparcsrmatrix: error = ', ierr
+         print *, 'fnalu_hypre_csrmatrixtoparcsrmatrix: error = ', ierr
       endif
   
       return
@@ -282,7 +282,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRMatrixMatvec
 !--------------------------------------------------------------------------
-      subroutine fhypre_parcsrmatrixmatvec (falpha, fA, fx, fbeta, fy)
+      subroutine fnalu_hypre_parcsrmatrixmatvec (falpha, fA, fx, fbeta, fy)
 
       integer ierr
       double precision falpha
@@ -294,7 +294,7 @@
       call NALU_HYPRE_ParCSRMatrixMatvec(falpha, fA, fx, fbeta, fy, ierr)
 
       if (ierr .ne. 0) then
-         print *, 'fhypre_parcsrmatrixmatvec: error = ', ierr
+         print *, 'fnalu_hypre_parcsrmatrixmatvec: error = ', ierr
       endif
   
       return
@@ -303,7 +303,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_ParCSRMatrixMatvecT
 !--------------------------------------------------------------------------
-      subroutine fhypre_parcsrmatrixmatvect (falpha, fA, fx, fbeta, fy)
+      subroutine fnalu_hypre_parcsrmatrixmatvect (falpha, fA, fx, fbeta, fy)
       
       integer ierr
       double precision falpha
@@ -315,7 +315,7 @@
       call NALU_HYPRE_ParCSRMatrixMatvecT(falpha, fA, fx, fbeta, fy, ierr)
 
       if (ierr .ne. 0) then
-         print *, 'fhypre_parcsrmatrixmatvect: error = ', ierr
+         print *, 'fnalu_hypre_parcsrmatrixmatvect: error = ', ierr
       endif
   
       return
@@ -326,7 +326,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_ParVectorCreate
 !--------------------------------------------------------------------------
-      subroutine fhypre_parvectorcreate(fcomm, fsize, fpartion, fvector)
+      subroutine fnalu_hypre_parvectorcreate(fcomm, fsize, fpartion, fvector)
 
       integer ierr
       integer fcomm
@@ -337,7 +337,7 @@
       call NALU_HYPRE_ParVectorCreate(fcomm, fsize, fpartion, fvector, ierr)
 
       if (ierr .ne. 0) then
-         print *, 'fhypre_parvectorcreate: error = ', ierr
+         print *, 'fnalu_hypre_parvectorcreate: error = ', ierr
       endif
   
       return
@@ -346,7 +346,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_ParMultiVectorCreate
 !--------------------------------------------------------------------------
-      subroutine fhypre_parmultivectorcreate(fcomm, fsize, fpartion, 
+      subroutine fnalu_hypre_parmultivectorcreate(fcomm, fsize, fpartion, 
      1                                       fnumvecs, fvector)
 
       integer ierr
@@ -360,7 +360,7 @@
      1                                fvector, ierr)
 
       if (ierr .ne. 0) then
-         print *, 'fhypre_parmultivectorcreate: error = ', ierr
+         print *, 'fnalu_hypre_parmultivectorcreate: error = ', ierr
       endif
   
       return
@@ -369,7 +369,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_ParVectorDestroy
 !--------------------------------------------------------------------------
-      subroutine fhypre_parvectordestroy (fvector)
+      subroutine fnalu_hypre_parvectordestroy (fvector)
 
       integer ierr
       integer*8 fvector
@@ -377,7 +377,7 @@
       call NALU_HYPRE_ParVectorDestroy(fvector, ierr)
 
       if (ierr .ne. 0) then
-         print *, 'fhypre_parvectordestroy: error = ', ierr
+         print *, 'fnalu_hypre_parvectordestroy: error = ', ierr
       endif
   
       return
@@ -386,7 +386,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_ParVectorInitialize
 !--------------------------------------------------------------------------
-      subroutine fhypre_parvectorinitialize (fvector)
+      subroutine fnalu_hypre_parvectorinitialize (fvector)
    
       integer ierr
       integer*8 fvector
@@ -394,7 +394,7 @@
       call NALU_HYPRE_ParVectorInitialize(fvector, ierr)
 
       if (ierr .ne. 0) then
-         print *, 'fhypre_parvectorinitialize: error = ', ierr
+         print *, 'fnalu_hypre_parvectorinitialize: error = ', ierr
       endif
   
       return
@@ -403,7 +403,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_ParVectorRead
 !--------------------------------------------------------------------------
-      subroutine fhypre_parvectorread (fcomm, fvector, fname)
+      subroutine fnalu_hypre_parvectorread (fcomm, fvector, fname)
 
       integer ierr
       integer fcomm
@@ -413,7 +413,7 @@
       call NALU_HYPRE_ParVectorRead(fcomm, fname, fvector, ierr)
 
       if (ierr .ne. 0) then
-         print *, 'fhypre_parvectorread: error = ', ierr
+         print *, 'fnalu_hypre_parvectorread: error = ', ierr
       endif
   
       return
@@ -422,7 +422,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_ParVectorPrint
 !--------------------------------------------------------------------------
-      subroutine fhypre_parvectorprint (fvector, fname, fsize)
+      subroutine fnalu_hypre_parvectorprint (fvector, fname, fsize)
 
       integer ierr
       integer fsize
@@ -432,7 +432,7 @@
       call NALU_HYPRE_ParVectorPrint (fvector, fname, ierr)
 
       if (ierr .ne. 0) then
-         print *, 'fhypre_parvectorprint: error = ', ierr
+         print *, 'fnalu_hypre_parvectorprint: error = ', ierr
       endif
 
       return
@@ -441,7 +441,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_ParVectorSetConstantValues
 !--------------------------------------------------------------------------
-      subroutine fhypre_parvectorsetconstantvalue (fvector, fvalue)
+      subroutine fnalu_hypre_parvectorsetconstantvalue (fvector, fvalue)
 
       integer ierr
       double precision fvalue
@@ -450,7 +450,7 @@
       call NALU_HYPRE_ParVectorSetConstantValue (fvector, fvalue, ierr)
 
       if (ierr .ne. 0) then
-         print *, 'fhypre_parvectorconstantvalues: error = ', ierr
+         print *, 'fnalu_hypre_parvectorconstantvalues: error = ', ierr
       endif
 
       return
@@ -459,7 +459,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_ParVectorSetRandomValues
 !--------------------------------------------------------------------------
-      subroutine fhypre_parvectorsetrandomvalues (fvector, fseed)
+      subroutine fnalu_hypre_parvectorsetrandomvalues (fvector, fseed)
 
       integer ierr
       integer fseed
@@ -468,7 +468,7 @@
       call NALU_HYPRE_ParVectorSetRandomValues (fvector, fvalue, ierr)
 
       if (ierr .ne. 0) then
-         print *, 'fhypre_parvectorrandomvalues: error = ', ierr
+         print *, 'fnalu_hypre_parvectorrandomvalues: error = ', ierr
       endif
 
       return
@@ -477,7 +477,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_ParVectorCopy
 !--------------------------------------------------------------------------
-      subroutine fhypre_parvectorcopy (fx, fy)
+      subroutine fnalu_hypre_parvectorcopy (fx, fy)
 
       integer ierr
       integer*8 fx
@@ -486,7 +486,7 @@
       call NALU_HYPRE_ParVectorCopy (fx, fy, ierr)
 
       if (ierr .ne. 0) then
-         print *, 'fhypre_parvectorcopy: error = ', ierr
+         print *, 'fnalu_hypre_parvectorcopy: error = ', ierr
       endif
 
       return
@@ -495,7 +495,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_ParVectorCloneShallow
 !--------------------------------------------------------------------------
-      subroutine fhypre_parvectorcloneshallow (fx)
+      subroutine fnalu_hypre_parvectorcloneshallow (fx)
 
       integer ierr
       integer*8 fx
@@ -503,7 +503,7 @@
       call NALU_HYPRE_ParVectorCloneShallow (fx, ierr)
 
       if (ierr .ne. 0) then
-         print *, 'fhypre_parvectorcloneshallow: error = ', ierr
+         print *, 'fnalu_hypre_parvectorcloneshallow: error = ', ierr
       endif
 
       return
@@ -512,7 +512,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_ParVectorScale
 !--------------------------------------------------------------------------
-      subroutine fhypre_parvectorscale (fvalue, fx)
+      subroutine fnalu_hypre_parvectorscale (fvalue, fx)
 
       integer ierr
       double precision fvalue
@@ -521,7 +521,7 @@
       call NALU_HYPRE_ParVectorScale (fvalue, fx, ierr)
 
       if (ierr .ne. 0) then
-         print *, 'fhypre_parvectorscale: error = ', ierr
+         print *, 'fnalu_hypre_parvectorscale: error = ', ierr
       endif
 
       return
@@ -530,7 +530,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_ParVectorAxpy
 !--------------------------------------------------------------------------
-      subroutine fhypre_parvectoraxpy (fvalue, fx, fy)
+      subroutine fnalu_hypre_parvectoraxpy (fvalue, fx, fy)
 
       integer ierr
       double precision fvalue
@@ -540,7 +540,7 @@
       call NALU_HYPRE_ParVectorAxpy (fvalue, fx, fy, ierr)
 
       if (ierr .ne. 0) then
-         print *, 'fhypre_parvectoraxpy: error = ', ierr
+         print *, 'fnalu_hypre_parvectoraxpy: error = ', ierr
       endif
 
       return
@@ -549,7 +549,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_ParVectorInnerProd
 !--------------------------------------------------------------------------
-      subroutine fhypre_parvectorinnerprod (fx, fy, fprod)
+      subroutine fnalu_hypre_parvectorinnerprod (fx, fy, fprod)
 
       integer ierr
       double precision fprod
@@ -559,7 +559,7 @@
       call NALU_HYPRE_ParVectorInnerProd (fx, fy, fprod, ierr)
 
       if (ierr .ne. 0) then
-         print *, 'fhypre_parvectorinnerprod: error = ', ierr
+         print *, 'fnalu_hypre_parvectorinnerprod: error = ', ierr
       endif
 
       return
@@ -568,36 +568,36 @@
 
 
 !--------------------------------------------------------------------------
-! hypre_ParCSRMatrixGlobalNumRows
+! nalu_hypre_ParCSRMatrixGlobalNumRows
 !--------------------------------------------------------------------------
-      subroutine fhypre_parcsrmatrixglobalnumrow (fmatrix, fnrows)
+      subroutine fnalu_hypre_parcsrmatrixglobalnumrow (fmatrix, fnrows)
 
       integer ierr
       integer fnrows
       integer*8 fmatrix
 
-      call hypre_ParCSRMatrixGlobalNumRows (fmatrix, fnrows, ierr)
+      call nalu_hypre_ParCSRMatrixGlobalNumRows (fmatrix, fnrows, ierr)
 
       if (ierr .ne. 0) then
-         print *, 'fhypre_parcsrmatrixglobalnumrows: error = ', ierr
+         print *, 'fnalu_hypre_parcsrmatrixglobalnumrows: error = ', ierr
       endif
 
       return
       end
 
 !--------------------------------------------------------------------------
-! hypre_ParCSRMatrixRowStarts
+! nalu_hypre_ParCSRMatrixRowStarts
 !--------------------------------------------------------------------------
-      subroutine fhypre_parcsrmatrixrowstarts (fmatrix, frows)
+      subroutine fnalu_hypre_parcsrmatrixrowstarts (fmatrix, frows)
 
       integer ierr
       integer*8 frows
       integer*8 fmatrix
 
-      call hypre_ParCSRMatrixRowStarts (fmatrix, frows, ierr)
+      call nalu_hypre_ParCSRMatrixRowStarts (fmatrix, frows, ierr)
 
       if (ierr .ne. 0) then
-         print *, 'fhypre_parcsrmatrixrowstarts: error = ', ierr
+         print *, 'fnalu_hypre_parcsrmatrixrowstarts: error = ', ierr
       endif
 
       return
@@ -606,18 +606,18 @@
 
 
 !--------------------------------------------------------------------------
-! hypre_ParVectorSetDataOwner
+! nalu_hypre_ParVectorSetDataOwner
 !--------------------------------------------------------------------------
-      subroutine fhypre_parvectorsetdataowner (fv, fown)
+      subroutine fnalu_hypre_parvectorsetdataowner (fv, fown)
 
       integer ierr
       integer fown
       integer*8 fv
 
-      call hypre_SetParVectorDataOwner (fv, fown, ierr)
+      call nalu_hypre_SetParVectorDataOwner (fv, fown, ierr)
 
       if (ierr .ne. 0) then
-         print *, 'fhypre_parvectorsetdataowner: error = ', ierr
+         print *, 'fnalu_hypre_parvectorsetdataowner: error = ', ierr
       endif
 
       return

@@ -11,7 +11,7 @@
  *
  *****************************************************************************/
 
-#include "_hypre_sstruct_mv.h"
+#include "_nalu_hypre_sstruct_mv.h"
 #include "fortran.h"
 
 #ifdef __cplusplus
@@ -23,17 +23,17 @@ extern "C" {
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_sstructstencilcreate, NALU_HYPRE_SSTRUCTSTENCILCREATE)
-(hypre_F90_Int *ndim,
- hypre_F90_Int *size,
- hypre_F90_Obj *stencil_ptr,
- hypre_F90_Int *ierr)
+nalu_hypre_F90_IFACE(nalu_hypre_sstructstencilcreate, NALU_HYPRE_SSTRUCTSTENCILCREATE)
+(nalu_hypre_F90_Int *ndim,
+ nalu_hypre_F90_Int *size,
+ nalu_hypre_F90_Obj *stencil_ptr,
+ nalu_hypre_F90_Int *ierr)
 {
-   *ierr = (hypre_F90_Int)
+   *ierr = (nalu_hypre_F90_Int)
            (NALU_HYPRE_SStructStencilCreate(
-               hypre_F90_PassInt (ndim),
-               hypre_F90_PassInt (size),
-               hypre_F90_PassObjRef (NALU_HYPRE_SStructStencil, stencil_ptr) ) );
+               nalu_hypre_F90_PassInt (ndim),
+               nalu_hypre_F90_PassInt (size),
+               nalu_hypre_F90_PassObjRef (NALU_HYPRE_SStructStencil, stencil_ptr) ) );
 }
 
 /*--------------------------------------------------------------------------
@@ -41,13 +41,13 @@ hypre_F90_IFACE(hypre_sstructstencilcreate, NALU_HYPRE_SSTRUCTSTENCILCREATE)
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_sstructstencildestroy, NALU_HYPRE_SSTRUCTSTENCILDESTROY)
-(hypre_F90_Obj *stencil,
- hypre_F90_Int *ierr)
+nalu_hypre_F90_IFACE(nalu_hypre_sstructstencildestroy, NALU_HYPRE_SSTRUCTSTENCILDESTROY)
+(nalu_hypre_F90_Obj *stencil,
+ nalu_hypre_F90_Int *ierr)
 {
-   *ierr = (hypre_F90_Int)
+   *ierr = (nalu_hypre_F90_Int)
            (NALU_HYPRE_SStructStencilDestroy(
-               hypre_F90_PassObj (NALU_HYPRE_SStructStencil, stencil) ) );
+               nalu_hypre_F90_PassObj (NALU_HYPRE_SStructStencil, stencil) ) );
 }
 
 /*--------------------------------------------------------------------------
@@ -55,19 +55,19 @@ hypre_F90_IFACE(hypre_sstructstencildestroy, NALU_HYPRE_SSTRUCTSTENCILDESTROY)
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_sstructstencilsetentry, NALU_HYPRE_SSTRUCTSTENCILSETENTRY)
-(hypre_F90_Obj *stencil,
- hypre_F90_Int *entry,
- hypre_F90_IntArray *offset,
- hypre_F90_Int *var,
- hypre_F90_Int *ierr)
+nalu_hypre_F90_IFACE(nalu_hypre_sstructstencilsetentry, NALU_HYPRE_SSTRUCTSTENCILSETENTRY)
+(nalu_hypre_F90_Obj *stencil,
+ nalu_hypre_F90_Int *entry,
+ nalu_hypre_F90_IntArray *offset,
+ nalu_hypre_F90_Int *var,
+ nalu_hypre_F90_Int *ierr)
 {
-   *ierr = (hypre_F90_Int)
+   *ierr = (nalu_hypre_F90_Int)
            (NALU_HYPRE_SStructStencilSetEntry(
-               hypre_F90_PassObj (NALU_HYPRE_SStructStencil, stencil),
-               hypre_F90_PassInt (entry),
-               hypre_F90_PassIntArray (offset),
-               hypre_F90_PassInt (var) ) );
+               nalu_hypre_F90_PassObj (NALU_HYPRE_SStructStencil, stencil),
+               nalu_hypre_F90_PassInt (entry),
+               nalu_hypre_F90_PassIntArray (offset),
+               nalu_hypre_F90_PassInt (var) ) );
 }
 
 #ifdef __cplusplus

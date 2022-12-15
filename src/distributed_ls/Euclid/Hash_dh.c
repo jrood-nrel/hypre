@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_Euclid.h"
+#include "_nalu_hypre_Euclid.h"
 /* #include "Hash_dh.h" */
 /* #include "Parser_dh.h" */
 /* #include "Mem_dh.h" */
@@ -75,7 +75,7 @@ void Hash_dhInit_private(Hash_dh h, NALU_HYPRE_Int s)
   h->size = size;
 
 /*
-  hypre_sprintf(msgBuf_dh, "requested size = %i; allocated size = %i", s, size); 
+  nalu_hypre_sprintf(msgBuf_dh, "requested size = %i; allocated size = %i", s, size); 
   SET_INFO(msgBuf_dh);
 */
 
@@ -105,7 +105,7 @@ HashData * Hash_dhLookup(Hash_dh h, NALU_HYPRE_Int key)
     NALU_HYPRE_Int tmp, idx;
     HASH_2(key, size, &tmp)
     /* idx = (start + i*tmp) % size; */
-    idx = (start + hypre_multmod(i, tmp, size)) % size;
+    idx = (start + nalu_hypre_multmod(i, tmp, size)) % size;
     if (data[idx].mark != curMark) {
       break;  /* key wasn't found */
     } else {
@@ -147,11 +147,11 @@ void Hash_dhInsert(Hash_dh h, NALU_HYPRE_Int key, HashData *dataIN)
     HASH_2(key, size, &tmp)
 
     /* idx = (start + i*tmp) % size; */
-    idx = (start + hypre_multmod(i, tmp, size)) % size;
+    idx = (start + nalu_hypre_multmod(i, tmp, size)) % size;
     if (data[idx].mark < curMark) {
       data[idx].key = key;
       data[idx].mark = curMark;
-      hypre_TMemcpy(&(data[idx].data),  dataIN, HashData, 1, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TMemcpy(&(data[idx].data),  dataIN, HashData, 1, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_HOST);
       break;
     }
   }
@@ -168,13 +168,13 @@ void Hash_dhPrint(Hash_dh h, FILE *fp)
   HashRecord *data = h->data;
 
 
-  hypre_fprintf(fp, "\n--------------------------- hash table \n");
+  nalu_hypre_fprintf(fp, "\n--------------------------- hash table \n");
   for (i=0; i<size; ++i) {
     if (data[i].mark == curMark) {
-      hypre_fprintf(fp, "key = %2i;  iData = %3i;  fData = %g\n",
+      nalu_hypre_fprintf(fp, "key = %2i;  iData = %3i;  fData = %g\n",
                   data[i].key, data[i].data.iData, data[i].data.fData);
     }
   }
-  hypre_fprintf(fp, "\n");
+  nalu_hypre_fprintf(fp, "\n");
   END_FUNC_DH
 }

@@ -8,7 +8,7 @@
 #ifndef NALU_HYPRE_GSELIM_H
 #define NALU_HYPRE_GSELIM_H
 
-#define hypre_gselim(A,x,n,error)                      \
+#define nalu_hypre_gselim(A,x,n,error)                      \
 {                                                      \
    NALU_HYPRE_Int    j,k,m;                                 \
    NALU_HYPRE_Real factor;                                  \

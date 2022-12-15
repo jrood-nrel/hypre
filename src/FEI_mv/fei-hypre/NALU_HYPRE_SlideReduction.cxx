@@ -26,8 +26,8 @@
 #include "NALU_HYPRE.h"
 #include "NALU_HYPRE_SlideReduction.h"
 #include "NALU_HYPRE_LSI_mli.h"
-#include "parcsr_mv/_hypre_parcsr_mv.h"
-#include "parcsr_ls/_hypre_parcsr_ls.h"
+#include "parcsr_mv/_nalu_hypre_parcsr_mv.h"
+#include "parcsr_ls/_nalu_hypre_parcsr_ls.h"
 #include "seq_mv/seq_mv.h"
 #include "NALU_HYPRE_FEI.h"
 
@@ -39,10 +39,10 @@
 
 extern "C"
 {
-	// int hypre_BoomerAMGBuildCoarseOperator(hypre_ParCSRMatrix*,
-    //         hypre_ParCSRMatrix*, hypre_ParCSRMatrix*, hypre_ParCSRMatrix**);
-	//void hypre_qsort0(int *, int, int);
-	//void hypre_qsort1(int *, double *, int, int);
+	// int nalu_hypre_BoomerAMGBuildCoarseOperator(nalu_hypre_ParCSRMatrix*,
+    //         nalu_hypre_ParCSRMatrix*, nalu_hypre_ParCSRMatrix*, nalu_hypre_ParCSRMatrix**);
+	//void nalu_hypre_qsort0(int *, int, int);
+	//void nalu_hypre_qsort1(int *, double *, int, int);
 	//int  NALU_HYPRE_LSI_Search(int*, int, int);
 	//int  NALU_HYPRE_LSI_qsort1a(int *, int *, int, int);
 	//int  NALU_HYPRE_LSI_MatrixInverse(double **, int, double ***);
@@ -172,7 +172,7 @@ int NALU_HYPRE_SlideReduction::getMatrixNumRows()
    NALU_HYPRE_ParCSRMatrixGetRowPartitioning( A_csr, &procNRows );
    localNRows   = procNRows[mypid+1] - procNRows[mypid];
    nConstraints = procNConstr_[mypid+1] - procNConstr_[mypid];
-   hypre_TFree( procNRows,NALU_HYPRE_MEMORY_HOST );
+   nalu_hypre_TFree( procNRows,NALU_HYPRE_MEMORY_HOST );
    return (localNRows-nConstraints);
 }
 
@@ -306,7 +306,7 @@ int NALU_HYPRE_SlideReduction::setup(NALU_HYPRE_IJMatrix A, NALU_HYPRE_IJVector 
    if (reduceAFlag == 0)
    {
       NALU_HYPRE_IJVectorGetObject(b, (void **) &b_csr);
-      procNRows = hypre_ParVectorPartitioning((hypre_ParVector *) b_csr);
+      procNRows = nalu_hypre_ParVectorPartitioning((nalu_hypre_ParVector *) b_csr);
       nrows2 = procNRows[nprocs] - procNRows[0];
       if (nrows1 != nrows2)
       {
@@ -642,7 +642,7 @@ int NALU_HYPRE_SlideReduction::findSlaveEqns1()
              colInd[jcol] <= (endRow-nConstraints) &&
              eqnStatuses_[colInd[jcol]-startRow] == 0)
          {
-            colIndex = hypre_BinarySearch(candidateList, colInd[jcol],
+            colIndex = nalu_hypre_BinarySearch(candidateList, colInd[jcol],
                                           nCandidates);
             if ( colIndex >= 0 && habs(colVal[jcol]) > searchValue )
             {
@@ -856,7 +856,7 @@ int NALU_HYPRE_SlideReduction::findSlaveEqnsBlock(int blkSize)
             for ( jcol = 0; jcol < rowSize; jcol++ )
             {
                colIndex = colInd[jcol];
-               searchIndex = hypre_BinarySearch(tempSlaveList,colIndex,
+               searchIndex = nalu_hypre_BinarySearch(tempSlaveList,colIndex,
                                                 nConstraints);
                if ( searchIndex >= 0 )
                {
@@ -940,7 +940,7 @@ int NALU_HYPRE_SlideReduction::findSlaveEqnsBlock(int blkSize)
             {
                /* -- see if the nonzero entry is a potential candidate -- */
 
-               searchInd2 = hypre_BinarySearch(candidateList, colIndex,
+               searchInd2 = nalu_hypre_BinarySearch(candidateList, colIndex,
                                                nCandidates);
 
                /* -- if the nonzero entry is a potential candidate, see -- */
@@ -1004,7 +1004,7 @@ int NALU_HYPRE_SlideReduction::findSlaveEqnsBlock(int blkSize)
          delete [] colVal;
          if ( searchIndex >= 0 && searchValue > blockMinNorm_ )
          {
-            searchInd2 = hypre_BinarySearch(candidateList,searchIndex,
+            searchInd2 = nalu_hypre_BinarySearch(candidateList,searchIndex,
                                             nCandidates);
             newIndex = -9;
             for ( ic = 0;  ic < blkSize;  ic++ )
@@ -1032,7 +1032,7 @@ int NALU_HYPRE_SlideReduction::findSlaveEqnsBlock(int blkSize)
             constrBlkInfo_[irowLocal]  = newIndex;
             constrBlkSizes_[irowLocal] = searchBlkSize;
             slaveEqnList_[irowLocal]   = searchIndex;
-            searchInd2 = hypre_BinarySearch(candidateList, searchIndex,
+            searchInd2 = nalu_hypre_BinarySearch(candidateList, searchIndex,
                                             nCandidates);
             eqnStatuses_[searchIndex-startRow] = 1;
 
@@ -1047,7 +1047,7 @@ int NALU_HYPRE_SlideReduction::findSlaveEqnsBlock(int blkSize)
                                            &colInd2,&colVal2);
                   for ( jj = 0;  jj < rowSize2;  jj++ )
                   {
-                     searchInd3 = hypre_BinarySearch(candidateList,
+                     searchInd3 = nalu_hypre_BinarySearch(candidateList,
                                                      colInd2[jj],nCandidates);
                      if ( searchInd3 >= 0 )
                      {
@@ -1405,7 +1405,7 @@ int NALU_HYPRE_SlideReduction::buildSubMatrices()
    ierr  = NALU_HYPRE_IJMatrixCreate(mpiComm_,A21StartRow,A21StartRow+A21NRows-1,
                                 A21StartCol,A21StartCol+A21NCols-1,&A21mat_);
    ierr += NALU_HYPRE_IJMatrixSetObjectType(A21mat_, NALU_HYPRE_PARCSR);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
 
    //------------------------------------------------------------------
    // compute the number of nonzeros in the nConstraint row of A21
@@ -1441,7 +1441,7 @@ int NALU_HYPRE_SlideReduction::buildSubMatrices()
 
    ierr  = NALU_HYPRE_IJMatrixSetRowSizes(A21mat_, A21MatSize);
    ierr += NALU_HYPRE_IJMatrixInitialize(A21mat_);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
    if ( A21NRows > 0 ) delete [] A21MatSize;
 
    //------------------------------------------------------------------
@@ -1481,7 +1481,7 @@ int NALU_HYPRE_SlideReduction::buildSubMatrices()
 
    NALU_HYPRE_IJMatrixAssemble(A21mat_);
    NALU_HYPRE_IJMatrixGetObject(A21mat_, (void **) &A21_csr);
-   hypre_MatvecCommPkgCreate((hypre_ParCSRMatrix *) A21_csr);
+   nalu_hypre_MatvecCommPkgCreate((nalu_hypre_ParCSRMatrix *) A21_csr);
 
    //******************************************************************
    // extract submatrix of A not corresponding to constraints
@@ -1510,7 +1510,7 @@ int NALU_HYPRE_SlideReduction::buildSubMatrices()
                  reducedAStartRow+reducedANRows-1, reducedAStartCol,
                  reducedAStartCol+reducedANCols-1,&reducedAmat_);
    ierr += NALU_HYPRE_IJMatrixSetObjectType(reducedAmat_, NALU_HYPRE_PARCSR);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
 
    //------------------------------------------------------------------
    // compute row sizes for reducedA
@@ -1540,7 +1540,7 @@ int NALU_HYPRE_SlideReduction::buildSubMatrices()
    }
    ierr  = NALU_HYPRE_IJMatrixSetRowSizes(reducedAmat_, reducedAMatSize);
    ierr += NALU_HYPRE_IJMatrixInitialize(reducedAmat_);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
    delete [] reducedAMatSize;
 
    //------------------------------------------------------------------
@@ -1573,7 +1573,7 @@ int NALU_HYPRE_SlideReduction::buildSubMatrices()
       ierr = NALU_HYPRE_IJMatrixSetValues(reducedAmat_, 1, &newRowSize,
                    (const int *) &rowIndex, (const int *) newColInd,
                    (const double *) newColVal);
-      hypre_assert(!ierr);
+      nalu_hypre_assert(!ierr);
       rowCount++;
    }
    delete [] newColInd;
@@ -1605,7 +1605,7 @@ int NALU_HYPRE_SlideReduction::buildModifiedRHSVector(NALU_HYPRE_IJVector x,
    NALU_HYPRE_ParCSRMatrix A_csr, A21_csr;
    NALU_HYPRE_IJVector     x2;
    NALU_HYPRE_ParVector    b_csr, rb_csr, x_csr, x2_csr;
-   hypre_Vector       *b_local, *rb_local, *x_local, *x2_local;
+   nalu_hypre_Vector       *b_local, *rb_local, *x_local, *x2_local;
 
    //------------------------------------------------------------------
    // sanitize
@@ -1649,13 +1649,13 @@ int NALU_HYPRE_SlideReduction::buildModifiedRHSVector(NALU_HYPRE_IJVector x,
    ierr += NALU_HYPRE_IJVectorSetObjectType(reducedBvec_, NALU_HYPRE_PARCSR);
    ierr += NALU_HYPRE_IJVectorInitialize(reducedBvec_);
    ierr += NALU_HYPRE_IJVectorAssemble(reducedBvec_);
-   hypre_assert( !ierr );
+   nalu_hypre_assert( !ierr );
    NALU_HYPRE_IJVectorGetObject(reducedBvec_, (void **) &rb_csr);
    NALU_HYPRE_IJVectorGetObject(b, (void **) &b_csr);
-   b_local  = hypre_ParVectorLocalVector((hypre_ParVector *) b_csr);
-   b_data   = (double *) hypre_VectorData(b_local);
-   rb_local = hypre_ParVectorLocalVector((hypre_ParVector *) rb_csr);
-   rb_data  = (double *) hypre_VectorData(rb_local);
+   b_local  = nalu_hypre_ParVectorLocalVector((nalu_hypre_ParVector *) b_csr);
+   b_data   = (double *) nalu_hypre_VectorData(b_local);
+   rb_local = nalu_hypre_ParVectorLocalVector((nalu_hypre_ParVector *) rb_csr);
+   rb_data  = (double *) nalu_hypre_VectorData(rb_local);
    for ( irow = 0; irow < localNRows-nConstraints; irow++ )
       rb_data[irow] = b_data[irow];
 
@@ -1669,13 +1669,13 @@ int NALU_HYPRE_SlideReduction::buildModifiedRHSVector(NALU_HYPRE_IJVector x,
    NALU_HYPRE_IJVectorSetObjectType(x2, NALU_HYPRE_PARCSR);
    ierr  = NALU_HYPRE_IJVectorInitialize(x2);
    ierr += NALU_HYPRE_IJVectorAssemble(x2);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
    NALU_HYPRE_IJVectorGetObject(x2, (void **) &x2_csr);
    NALU_HYPRE_IJVectorGetObject(x, (void **) &x_csr);
-   x_local  = hypre_ParVectorLocalVector((hypre_ParVector *) x_csr);
-   x_data   = (double *) hypre_VectorData(x_local);
-   x2_local = hypre_ParVectorLocalVector((hypre_ParVector *) x2_csr);
-   x2_data  = (double *) hypre_VectorData(x2_local);
+   x_local  = nalu_hypre_ParVectorLocalVector((nalu_hypre_ParVector *) x_csr);
+   x_data   = (double *) nalu_hypre_VectorData(x_local);
+   x2_local = nalu_hypre_ParVectorLocalVector((nalu_hypre_ParVector *) x2_csr);
+   x2_data  = (double *) nalu_hypre_VectorData(x2_local);
    for ( irow = 0; irow < nConstraints; irow++ )
    {
       vecIndex = localNRows - nConstraints + irow;
@@ -1699,14 +1699,14 @@ int NALU_HYPRE_SlideReduction::buildModifiedRHSVector(NALU_HYPRE_IJVector x,
    ierr += NALU_HYPRE_IJVectorSetObjectType(reducedXvec_, NALU_HYPRE_PARCSR);
    ierr += NALU_HYPRE_IJVectorInitialize(reducedXvec_);
    ierr += NALU_HYPRE_IJVectorAssemble(reducedXvec_);
-   hypre_assert( !ierr );
+   nalu_hypre_assert( !ierr );
 
    ierr  = NALU_HYPRE_IJVectorCreate(mpiComm_, redBStart,
                         redBStart+redBNRows-1, &reducedRvec_);
    ierr += NALU_HYPRE_IJVectorSetObjectType(reducedRvec_, NALU_HYPRE_PARCSR);
    ierr += NALU_HYPRE_IJVectorInitialize(reducedRvec_);
    ierr += NALU_HYPRE_IJVectorAssemble(reducedRvec_);
-   hypre_assert( !ierr );
+   nalu_hypre_assert( !ierr );
    free( procNRows );
 
    return 0;
@@ -1723,7 +1723,7 @@ int NALU_HYPRE_SlideReduction::buildModifiedSolnVector(NALU_HYPRE_IJVector x)
    double *x_data, *rx_data;
    NALU_HYPRE_ParCSRMatrix A_csr;
    NALU_HYPRE_ParVector    x_csr, rx_csr;
-   hypre_Vector       *x_local, *rx_local;
+   nalu_hypre_Vector       *x_local, *rx_local;
 
    //------------------------------------------------------------------
    // get machine and matrix information
@@ -1752,11 +1752,11 @@ int NALU_HYPRE_SlideReduction::buildModifiedSolnVector(NALU_HYPRE_IJVector x)
    //------------------------------------------------------------------
 
    NALU_HYPRE_IJVectorGetObject(x, (void **) &x_csr);
-   x_local  = hypre_ParVectorLocalVector((hypre_ParVector *) x_csr);
-   x_data   = (double *) hypre_VectorData(x_local);
+   x_local  = nalu_hypre_ParVectorLocalVector((nalu_hypre_ParVector *) x_csr);
+   x_data   = (double *) nalu_hypre_VectorData(x_local);
    NALU_HYPRE_IJVectorGetObject(reducedXvec_, (void **) &rx_csr);
-   rx_local = hypre_ParVectorLocalVector((hypre_ParVector *) rx_csr);
-   rx_data  = (double *) hypre_VectorData(rx_local);
+   rx_local = nalu_hypre_ParVectorLocalVector((nalu_hypre_ParVector *) rx_csr);
+   rx_data  = (double *) nalu_hypre_VectorData(rx_local);
    for ( irow = 0; irow < localNRows-nConstraints; irow++ )
       x_data[irow] = rx_data[irow];
 
@@ -1820,10 +1820,10 @@ int NALU_HYPRE_SlideReduction::buildReducedMatrix()
       printf("%4d : buildReducedMatrix - Triple matrix product starts\n",
              mypid);
 
-   hypre_BoomerAMGBuildCoarseOperator((hypre_ParCSRMatrix *) A21_csr,
-                                      (hypre_ParCSRMatrix *) invA22_csr,
-                                      (hypre_ParCSRMatrix *) A21_csr,
-                                      (hypre_ParCSRMatrix **) &RAP_csr);
+   nalu_hypre_BoomerAMGBuildCoarseOperator((nalu_hypre_ParCSRMatrix *) A21_csr,
+                                      (nalu_hypre_ParCSRMatrix *) invA22_csr,
+                                      (nalu_hypre_ParCSRMatrix *) A21_csr,
+                                      (nalu_hypre_ParCSRMatrix **) &RAP_csr);
 
    if ( ( outputLevel_ & NALU_HYPRE_BITMASK2 ) >= 1 )
       printf("%4d : buildReducedMatrix - Triple matrix product ends\n",
@@ -1880,7 +1880,7 @@ int NALU_HYPRE_SlideReduction::buildReducedMatrix()
                  reducedAStartRow+reducedANRows-1, reducedAStartCol,
                  reducedAStartCol+reducedANCols-1,&reducedAmat_);
    ierr += NALU_HYPRE_IJMatrixSetObjectType(reducedAmat_, NALU_HYPRE_PARCSR);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
 
    //------------------------------------------------------------------
    // compute row sizes for reducedA
@@ -1889,7 +1889,7 @@ int NALU_HYPRE_SlideReduction::buildReducedMatrix()
    rowCount = maxRowSize = totalNNZ = 0;
    for ( irow = startRow; irow <= newEndRow; irow++ )
    {
-      searchIndex = hypre_BinarySearch(slaveEqnList_, irow, nConstraints);
+      searchIndex = nalu_hypre_BinarySearch(slaveEqnList_, irow, nConstraints);
       if ( searchIndex >= 0 )  reducedAMatSize[rowCount++] = 1;
       else
       {
@@ -1897,7 +1897,7 @@ int NALU_HYPRE_SlideReduction::buildReducedMatrix()
          rowIndex = reducedAStartRow + rowCount;
          ierr = NALU_HYPRE_ParCSRMatrixGetRow(RAP_csr,rowIndex,&rowSize2,
                                          &colInd2, &colVal2);
-         hypre_assert( !ierr );
+         nalu_hypre_assert( !ierr );
          newRowSize = rowSize + rowSize2;
          maxRowSize = ( newRowSize > maxRowSize ) ? newRowSize : maxRowSize;
          newColInd = new int[newRowSize];
@@ -1905,7 +1905,7 @@ int NALU_HYPRE_SlideReduction::buildReducedMatrix()
             newColInd[jcol] = colInd[jcol];
          for (jcol = 0; jcol < rowSize2; jcol++)
             newColInd[rowSize+jcol] = colInd2[jcol];
-         hypre_qsort0(newColInd, 0, newRowSize-1);
+         nalu_hypre_qsort0(newColInd, 0, newRowSize-1);
          ncnt = 0;
          for ( jcol = 1; jcol < newRowSize; jcol++ )
             if (newColInd[jcol] != newColInd[ncnt])
@@ -1917,12 +1917,12 @@ int NALU_HYPRE_SlideReduction::buildReducedMatrix()
          ierr = NALU_HYPRE_ParCSRMatrixRestoreRow(RAP_csr,rowIndex,&rowSize2,
                                              &colInd2,&colVal2);
          delete [] newColInd;
-         hypre_assert( !ierr );
+         nalu_hypre_assert( !ierr );
       }
    }
    ierr  = NALU_HYPRE_IJMatrixSetRowSizes(reducedAmat_, reducedAMatSize);
    ierr += NALU_HYPRE_IJMatrixInitialize(reducedAmat_);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
    delete [] reducedAMatSize;
 
    int totalNNZA = 0;
@@ -1947,7 +1947,7 @@ int NALU_HYPRE_SlideReduction::buildReducedMatrix()
    newColVal = new double[maxRowSize+1];
    for ( irow = startRow; irow <= newEndRow; irow++ )
    {
-      searchIndex = hypre_BinarySearch(slaveEqnList_, irow, nConstraints);
+      searchIndex = nalu_hypre_BinarySearch(slaveEqnList_, irow, nConstraints);
       rowIndex    = reducedAStartRow + rowCount;
       if ( searchIndex >= 0 )
       {
@@ -1972,7 +1972,7 @@ int NALU_HYPRE_SlideReduction::buildReducedMatrix()
             procIndex--;
             if ( colIndex < uBound )
             {
-               searchIndex = hypre_BinarySearch(gSlaveEqnList_, colIndex,
+               searchIndex = nalu_hypre_BinarySearch(gSlaveEqnList_, colIndex,
                                                 globalNConstr);
                if ( searchIndex < 0 )
                {
@@ -1987,7 +1987,7 @@ int NALU_HYPRE_SlideReduction::buildReducedMatrix()
             newColVal[ncnt+jcol] = - colVal2[jcol];
          }
          newRowSize = ncnt + rowSize2;
-         hypre_qsort1(newColInd, newColVal, 0, newRowSize-1);
+         nalu_hypre_qsort1(newColInd, newColVal, 0, newRowSize-1);
          ncnt = 0;
          for ( jcol = 0; jcol < newRowSize; jcol++ )
          {
@@ -2018,7 +2018,7 @@ int NALU_HYPRE_SlideReduction::buildReducedMatrix()
       ierr = NALU_HYPRE_IJMatrixSetValues(reducedAmat_, 1, &newRowSize,
                    (const int *) &rowIndex, (const int *) newColInd,
                    (const double *) newColVal);
-      hypre_assert(!ierr);
+      nalu_hypre_assert(!ierr);
       rowCount++;
    }
    delete [] newColInd;
@@ -2050,7 +2050,7 @@ int NALU_HYPRE_SlideReduction::buildReducedMatrix()
          //printf("%d : reducedA ROW %d\n", mypid, irow);
          ierr = NALU_HYPRE_ParCSRMatrixGetRow(reducedA_csr,irow,&rowSize,
                                          &colInd, &colVal);
-         //hypre_qsort1(colInd, colVal, 0, rowSize-1);
+         //nalu_hypre_qsort1(colInd, colVal, 0, rowSize-1);
          for ( jcol = 0; jcol < rowSize; jcol++ )
             if ( colVal[jcol] != 0.0 )
                fprintf(fp,"%6d  %6d  %25.16e \n",irow+1,colInd[jcol]+1,
@@ -2078,7 +2078,7 @@ int NALU_HYPRE_SlideReduction::buildReducedRHSVector(NALU_HYPRE_IJVector b)
    NALU_HYPRE_ParCSRMatrix A_csr, A21_csr, invA22_csr;
    NALU_HYPRE_IJVector     f2, f2hat;
    NALU_HYPRE_ParVector    b_csr, f2_csr, f2hat_csr, rb_csr;
-   hypre_Vector       *b_local, *f2_local;
+   nalu_hypre_Vector       *b_local, *f2_local;
 
    //------------------------------------------------------------------
    // get machine and matrix information
@@ -2112,21 +2112,21 @@ int NALU_HYPRE_SlideReduction::buildReducedRHSVector(NALU_HYPRE_IJVector b)
    NALU_HYPRE_IJVectorSetObjectType(f2, NALU_HYPRE_PARCSR);
    ierr  = NALU_HYPRE_IJVectorInitialize(f2);
    ierr += NALU_HYPRE_IJVectorAssemble(f2);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
    NALU_HYPRE_IJVectorGetObject(f2, (void **) &f2_csr);
 
    NALU_HYPRE_IJVectorCreate(mpiComm_, f2Start, f2Start+f2LocalLength-1, &f2hat);
    NALU_HYPRE_IJVectorSetObjectType(f2hat, NALU_HYPRE_PARCSR);
    ierr  = NALU_HYPRE_IJVectorInitialize(f2hat);
    ierr += NALU_HYPRE_IJVectorAssemble(f2hat);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
    NALU_HYPRE_IJVectorGetObject(f2hat, (void **) &f2hat_csr);
 
    NALU_HYPRE_IJVectorGetObject(b, (void **) &b_csr);
-   b_local  = hypre_ParVectorLocalVector((hypre_ParVector *) b_csr);
-   b_data   = (double *) hypre_VectorData(b_local);
-   f2_local = hypre_ParVectorLocalVector((hypre_ParVector *) f2_csr);
-   f2_data  = (double *) hypre_VectorData(f2_local);
+   b_local  = nalu_hypre_ParVectorLocalVector((nalu_hypre_ParVector *) b_csr);
+   b_data   = (double *) nalu_hypre_VectorData(b_local);
+   f2_local = nalu_hypre_ParVectorLocalVector((nalu_hypre_ParVector *) f2_csr);
+   f2_data  = (double *) nalu_hypre_VectorData(f2_local);
 
    for ( irow = 0; irow < nConstraints; irow++ )
    {
@@ -2139,8 +2139,8 @@ int NALU_HYPRE_SlideReduction::buildReducedRHSVector(NALU_HYPRE_IJVector b)
             break;
          }
       }
-      hypre_assert( vecIndex >= startRow );
-      hypre_assert( vecIndex <= endRow );
+      nalu_hypre_assert( vecIndex >= startRow );
+      nalu_hypre_assert( vecIndex <= endRow );
       f2_data[irow] = b_data[vecIndex-startRow];
    }
    for ( irow = 0; irow < nConstraints; irow++ )
@@ -2165,7 +2165,7 @@ int NALU_HYPRE_SlideReduction::buildReducedRHSVector(NALU_HYPRE_IJVector b)
    ierr += NALU_HYPRE_IJVectorSetObjectType(reducedBvec_, NALU_HYPRE_PARCSR);
    ierr += NALU_HYPRE_IJVectorInitialize(reducedBvec_);
    ierr += NALU_HYPRE_IJVectorAssemble(reducedBvec_);
-   hypre_assert( !ierr );
+   nalu_hypre_assert( !ierr );
 
    NALU_HYPRE_IJVectorGetObject(reducedBvec_, (void **) &rb_csr);
    NALU_HYPRE_IJMatrixGetObject(A21mat_, (void **) &A21_csr);
@@ -2179,7 +2179,7 @@ int NALU_HYPRE_SlideReduction::buildReducedRHSVector(NALU_HYPRE_IJVector b)
    rowIndex = redBStart;
    for ( irow = startRow; irow <= newEndRow; irow++ )
    {
-      if ( hypre_BinarySearch(slaveEqnList_, irow, nConstraints) < 0 )
+      if ( nalu_hypre_BinarySearch(slaveEqnList_, irow, nConstraints) < 0 )
       {
          ddata = b_data[irow-startRow];
          NALU_HYPRE_IJVectorAddToValues(reducedBvec_, 1, (const int *) &rowIndex,
@@ -2204,14 +2204,14 @@ int NALU_HYPRE_SlideReduction::buildReducedRHSVector(NALU_HYPRE_IJVector b)
    ierr += NALU_HYPRE_IJVectorSetObjectType(reducedXvec_, NALU_HYPRE_PARCSR);
    ierr += NALU_HYPRE_IJVectorInitialize(reducedXvec_);
    ierr += NALU_HYPRE_IJVectorAssemble(reducedXvec_);
-   hypre_assert( !ierr );
+   nalu_hypre_assert( !ierr );
 
    ierr  = NALU_HYPRE_IJVectorCreate(mpiComm_, redBStart,
 			redBStart+redBLocalLength-1, &reducedRvec_);
    ierr += NALU_HYPRE_IJVectorSetObjectType(reducedRvec_, NALU_HYPRE_PARCSR);
    ierr += NALU_HYPRE_IJVectorInitialize(reducedRvec_);
    ierr += NALU_HYPRE_IJVectorAssemble(reducedRvec_);
-   hypre_assert( !ierr );
+   nalu_hypre_assert( !ierr );
    free( procNRows );
 
    return 0;
@@ -2233,7 +2233,7 @@ int NALU_HYPRE_SlideReduction::buildReducedSolnVector(NALU_HYPRE_IJVector x,
    NALU_HYPRE_ParCSRMatrix A_csr, A21_csr, invA22_csr;
    NALU_HYPRE_ParVector    x_csr, x2_csr, v1_csr, b_csr, rx_csr;
    NALU_HYPRE_IJVector     v1, x2;
-   hypre_Vector       *b_local, *v1_local, *rx_local, *x_local, *x2_local;
+   nalu_hypre_Vector       *b_local, *v1_local, *rx_local, *x_local, *x2_local;
 
    //------------------------------------------------------------------
    // get machine and matrix information
@@ -2267,15 +2267,15 @@ int NALU_HYPRE_SlideReduction::buildReducedSolnVector(NALU_HYPRE_IJVector x,
    ierr += NALU_HYPRE_IJVectorSetObjectType(v1, NALU_HYPRE_PARCSR);
    ierr += NALU_HYPRE_IJVectorInitialize(v1);
    ierr += NALU_HYPRE_IJVectorAssemble(v1);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
    NALU_HYPRE_IJVectorGetObject(v1, (void **) &v1_csr);
    NALU_HYPRE_IJMatrixGetObject(A21mat_, (void **) &A21_csr);
    NALU_HYPRE_IJVectorGetObject(reducedXvec_, (void **) &rx_csr);
    if ( scaleMatrixFlag_ == 1 && ADiagISqrts_ != NULL )
    {
-      rx_local = hypre_ParVectorLocalVector((hypre_ParVector *) rx_csr);
-      rx_data  = (double *) hypre_VectorData(rx_local);
-      length   = hypre_VectorSize(rx_local);
+      rx_local = nalu_hypre_ParVectorLocalVector((nalu_hypre_ParVector *) rx_csr);
+      rx_data  = (double *) nalu_hypre_VectorData(rx_local);
+      length   = nalu_hypre_VectorSize(rx_local);
       for ( irow = 0; irow < length; irow++ )
          rx_data[irow] *= ADiagISqrts_[irow];
    }
@@ -2286,10 +2286,10 @@ int NALU_HYPRE_SlideReduction::buildReducedSolnVector(NALU_HYPRE_IJVector x,
    //------------------------------------------------------------------
 
    NALU_HYPRE_IJVectorGetObject(b, (void **) &b_csr);
-   b_local  = hypre_ParVectorLocalVector((hypre_ParVector *) b_csr);
-   b_data   = (double *) hypre_VectorData(b_local);
-   v1_local = hypre_ParVectorLocalVector((hypre_ParVector *) v1_csr);
-   v1_data  = (double *) hypre_VectorData(v1_local);
+   b_local  = nalu_hypre_ParVectorLocalVector((nalu_hypre_ParVector *) b_csr);
+   b_data   = (double *) nalu_hypre_VectorData(b_local);
+   v1_local = nalu_hypre_ParVectorLocalVector((nalu_hypre_ParVector *) v1_csr);
+   v1_data  = (double *) nalu_hypre_VectorData(v1_local);
 
    rowIndex = 0;
    for ( irow = 0; irow < nConstraints; irow++ )
@@ -2303,8 +2303,8 @@ int NALU_HYPRE_SlideReduction::buildReducedSolnVector(NALU_HYPRE_IJVector x,
             break;
          }
       }
-      hypre_assert( searchIndex >= startRow );
-      hypre_assert( searchIndex <= newEndRow );
+      nalu_hypre_assert( searchIndex >= startRow );
+      nalu_hypre_assert( searchIndex <= newEndRow );
       v1_data[rowIndex++] += b_data[searchIndex-startRow];
    }
    for ( irow = endRow-nConstraints+1; irow <= endRow; irow++ )
@@ -2319,7 +2319,7 @@ int NALU_HYPRE_SlideReduction::buildReducedSolnVector(NALU_HYPRE_IJVector x,
    ierr += NALU_HYPRE_IJVectorSetObjectType(x2, NALU_HYPRE_PARCSR);
    ierr += NALU_HYPRE_IJVectorInitialize(x2);
    ierr += NALU_HYPRE_IJVectorAssemble(x2);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
    NALU_HYPRE_IJVectorGetObject(x2, (void **) &x2_csr );
    NALU_HYPRE_IJMatrixGetObject(invA22mat_, (void **) &invA22_csr );
    NALU_HYPRE_ParCSRMatrixMatvec(1.0, invA22_csr, v1_csr, 0.0, x2_csr);
@@ -2336,12 +2336,12 @@ int NALU_HYPRE_SlideReduction::buildReducedSolnVector(NALU_HYPRE_IJVector x,
    //-------------------------------------------------------------
 
    NALU_HYPRE_IJVectorGetObject(x, (void **) &x_csr );
-   rx_local = hypre_ParVectorLocalVector((hypre_ParVector *) rx_csr);
-   rx_data  = (double *) hypre_VectorData(rx_local);
-   x_local  = hypre_ParVectorLocalVector((hypre_ParVector *) x_csr);
-   x_data   = (double *) hypre_VectorData(x_local);
-   x2_local = hypre_ParVectorLocalVector((hypre_ParVector *) x2_csr);
-   x2_data  = (double *) hypre_VectorData(x2_local);
+   rx_local = nalu_hypre_ParVectorLocalVector((nalu_hypre_ParVector *) rx_csr);
+   rx_data  = (double *) nalu_hypre_VectorData(rx_local);
+   x_local  = nalu_hypre_ParVectorLocalVector((nalu_hypre_ParVector *) x_csr);
+   x_data   = (double *) nalu_hypre_VectorData(x_local);
+   x2_local = nalu_hypre_ParVectorLocalVector((nalu_hypre_ParVector *) x2_csr);
+   x2_data  = (double *) nalu_hypre_VectorData(x2_local);
 
    for ( irow = 0; irow < localNRows-nConstraints; irow++ )
       x_data[irow] = rx_data[irow];
@@ -2375,13 +2375,13 @@ int NALU_HYPRE_SlideReduction::buildReducedSolnVector(NALU_HYPRE_IJVector x,
    ierr += NALU_HYPRE_IJVectorSetObjectType(R, NALU_HYPRE_PARCSR);
    ierr += NALU_HYPRE_IJVectorInitialize(R);
    ierr += NALU_HYPRE_IJVectorAssemble(R);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
    NALU_HYPRE_IJVectorGetObject(R, (void **) &R_csr);
    NALU_HYPRE_ParVectorCopy( b_csr, R_csr );
    NALU_HYPRE_ParCSRMatrixMatvec( -1.0, A_csr, x_csr, 1.0, R_csr );
    NALU_HYPRE_ParVectorInnerProd( R_csr, R_csr, &rnorm);
-   hypre_Vector *R_local=hypre_ParVectorLocalVector((hypre_ParVector*) R_csr);
-   double *R_data  = (double *) hypre_VectorData(R_local);
+   nalu_hypre_Vector *R_local=nalu_hypre_ParVectorLocalVector((nalu_hypre_ParVector*) R_csr);
+   double *R_data  = (double *) nalu_hypre_VectorData(R_local);
    NALU_HYPRE_ParVectorInnerProd( R_csr, R_csr, &rnorm);
    double rnorm2 = 0.0;
    for ( irow = 0; irow < nConstraints; irow++ )
@@ -2475,7 +2475,7 @@ int NALU_HYPRE_SlideReduction::buildA21Mat()
    ierr  = NALU_HYPRE_IJMatrixCreate(mpiComm_,A21StartRow,A21StartRow+A21NRows-1,
                                 A21StartCol,A21StartCol+A21NCols-1,&A21mat_);
    ierr += NALU_HYPRE_IJMatrixSetObjectType(A21mat_, NALU_HYPRE_PARCSR);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
 
    //------------------------------------------------------------------
    // compute the number of nonzeros in the first nConstraint row of A21
@@ -2506,7 +2506,7 @@ int NALU_HYPRE_SlideReduction::buildA21Mat()
          {
             if ( colIndex <= newEndRow || colIndex > endRow )
             {
-               searchIndex = hypre_BinarySearch(gSlaveEqnList_,colIndex,
+               searchIndex = nalu_hypre_BinarySearch(gSlaveEqnList_,colIndex,
                                                 globalNConstr);
                if ( searchIndex < 0 ) newRowSize++;
             }
@@ -2534,7 +2534,7 @@ int NALU_HYPRE_SlideReduction::buildA21Mat()
             colIndex = colInd[jcol];
             if ( colIndex <= newEndRow || colIndex > endRow )
             {
-               searchIndex = hypre_BinarySearch(gSlaveEqnList_,colIndex,
+               searchIndex = nalu_hypre_BinarySearch(gSlaveEqnList_,colIndex,
                                                 globalNConstr);
                if ( searchIndex < 0 ) newRowSize++;
             }
@@ -2557,7 +2557,7 @@ int NALU_HYPRE_SlideReduction::buildA21Mat()
 
    ierr  = NALU_HYPRE_IJMatrixSetRowSizes(A21mat_, A21MatSize);
    ierr += NALU_HYPRE_IJMatrixInitialize(A21mat_);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
    if ( A21NRows > 0 ) delete [] A21MatSize;
 
    //------------------------------------------------------------------
@@ -2640,7 +2640,7 @@ int NALU_HYPRE_SlideReduction::buildA21Mat()
          if (colVal[jcol] != 0.0 &&
              (colIndex <= newEndRow || colIndex > endRow))
          {
-            searchIndex = hypre_BinarySearch(gSlaveEqnList_, colIndex,
+            searchIndex = nalu_hypre_BinarySearch(gSlaveEqnList_, colIndex,
                                              globalNConstr);
             if ( searchIndex < 0 )
             {
@@ -2668,7 +2668,7 @@ int NALU_HYPRE_SlideReduction::buildA21Mat()
 
    NALU_HYPRE_IJMatrixAssemble(A21mat_);
    NALU_HYPRE_IJMatrixGetObject(A21mat_, (void **) &A21_csr);
-   hypre_MatvecCommPkgCreate((hypre_ParCSRMatrix *) A21_csr);
+   nalu_hypre_MatvecCommPkgCreate((nalu_hypre_ParCSRMatrix *) A21_csr);
 
    if ( outputLevel_ >= 5 )
    {
@@ -2740,7 +2740,7 @@ int NALU_HYPRE_SlideReduction::buildInvA22Mat()
       iTempList = new int[nConstraints];
       for ( irow = 0; irow < nConstraints; irow++ )
          iTempList[irow] = constrBlkInfo_[irow];
-      hypre_qsort0( iTempList, 0, nConstraints-1 );
+      nalu_hypre_qsort0( iTempList, 0, nConstraints-1 );
       nGroups = 1;
       for ( irow = 1; irow < nConstraints; irow++ )
          if ( iTempList[irow] != iTempList[irow-1] ) nGroups++;
@@ -2778,7 +2778,7 @@ int NALU_HYPRE_SlideReduction::buildInvA22Mat()
       for ( irow = 0; irow < nConstraints; irow++ )
       {
          index = constrBlkInfo_[irow];
-         searchIndex = hypre_BinarySearch(groupIDs, index, nGroups);
+         searchIndex = nalu_hypre_BinarySearch(groupIDs, index, nGroups);
          groupRowNums[searchIndex][groupSizes[searchIndex]++] = irow;
       }
       delete [] iTempList;
@@ -2809,7 +2809,7 @@ FILE *fp = fopen("CT.m","w");
       for ( jcol = 0; jcol < rowSize; jcol++ )
       {
          colIndex = colInd[jcol];
-         searchIndex = hypre_BinarySearch(slaveEqnList_,colIndex,nConstraints);
+         searchIndex = nalu_hypre_BinarySearch(slaveEqnList_,colIndex,nConstraints);
          if ( searchIndex >= 0 )
          {
             CT_JA[CTOffset+CTRowSize] = slaveEqnListAux_[searchIndex];
@@ -2833,9 +2833,9 @@ fclose(fp);
 #if 0
 FILE *fp2 = fopen("invCT.m","w");
 #endif
-   Imat = hypre_TAlloc(double*,  maxBlkSize , NALU_HYPRE_MEMORY_HOST);
+   Imat = nalu_hypre_TAlloc(double*,  maxBlkSize , NALU_HYPRE_MEMORY_HOST);
    for ( ir = 0; ir < maxBlkSize; ir++ )
-      Imat[ir] = hypre_TAlloc(double,  maxBlkSize , NALU_HYPRE_MEMORY_HOST);
+      Imat[ir] = nalu_hypre_TAlloc(double,  maxBlkSize , NALU_HYPRE_MEMORY_HOST);
 
    for ( ig = 0; ig < nGroups; ig++ )
    {
@@ -2892,7 +2892,7 @@ FILE *fp2 = fopen("invCT.m","w");
             }
          }
       }
-      hypre_assert( !ierr );
+      nalu_hypre_assert( !ierr );
       for ( ir = 0; ir < groupSizes[ig]; ir++ )
       {
          rowIndex = groupRowNums[ig][ir];
@@ -2924,14 +2924,14 @@ fclose(fp2);
    //------------------------------------------------------------------
 
    int                *hypreCTMatSize, maxRowSize;
-   hypre_ParCSRMatrix *hypreCT;
+   nalu_hypre_ParCSRMatrix *hypreCT;
    NALU_HYPRE_IJMatrix     IJCT;
 
    ierr = NALU_HYPRE_IJMatrixCreate(mpiComm_, procNConstr_[mypid],
                     procNConstr_[mypid]+nConstraints-1, procNConstr_[mypid],
                     procNConstr_[mypid]+nConstraints-1, &IJCT);
    ierr += NALU_HYPRE_IJMatrixSetObjectType(IJCT, NALU_HYPRE_PARCSR);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
    if ( nConstraints > 0 ) hypreCTMatSize = new int[nConstraints];
    else                    hypreCTMatSize = NULL;
    maxRowSize = 0;
@@ -2946,7 +2946,7 @@ fclose(fp2);
    }
    ierr = NALU_HYPRE_IJMatrixSetRowSizes(IJCT, hypreCTMatSize);
    ierr = NALU_HYPRE_IJMatrixInitialize(IJCT);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
    if ( nConstraints > 0 ) delete [] hypreCTMatSize;
    newColInd = new int[maxRowSize+1];
    newColVal = new double[maxRowSize+1];
@@ -2966,7 +2966,7 @@ fclose(fp2);
       ierr = NALU_HYPRE_IJMatrixSetValues(IJCT, 1, &newRowSize,
                    (const int *) &rowIndex, (const int *) newColInd,
                    (const double *) newColVal);
-      hypre_assert( !ierr );
+      nalu_hypre_assert( !ierr );
    }
    delete [] newColInd;
    delete [] newColVal;
@@ -2977,7 +2977,7 @@ fclose(fp2);
    }
    NALU_HYPRE_IJMatrixAssemble(IJCT);
    NALU_HYPRE_IJMatrixGetObject(IJCT, (void **) &hypreCT);
-   hypre_MatvecCommPkgCreate((hypre_ParCSRMatrix *) hypreCT);
+   nalu_hypre_MatvecCommPkgCreate((nalu_hypre_ParCSRMatrix *) hypreCT);
 
    //------------------------------------------------------------------
    // next extract the (1,2) block of A22
@@ -3022,9 +3022,9 @@ fclose(fp2);
    // invert the (2,1) block of A22
    //------------------------------------------------------------------
 
-   Imat = hypre_TAlloc(double*,  maxBlkSize , NALU_HYPRE_MEMORY_HOST);
+   Imat = nalu_hypre_TAlloc(double*,  maxBlkSize , NALU_HYPRE_MEMORY_HOST);
    for ( ir = 0; ir < maxBlkSize; ir++ )
-      Imat[ir] = hypre_TAlloc(double,  maxBlkSize , NALU_HYPRE_MEMORY_HOST);
+      Imat[ir] = nalu_hypre_TAlloc(double,  maxBlkSize , NALU_HYPRE_MEMORY_HOST);
 
    for ( ig = 0; ig < nGroups; ig++ )
    {
@@ -3046,7 +3046,7 @@ fclose(fp2);
          }
       }
       ierr = NALU_HYPRE_LSI_MatrixInverse((double**) Imat, groupSizes[ig], &Imat2);
-      hypre_assert( !ierr );
+      nalu_hypre_assert( !ierr );
       for ( ir = 0; ir < groupSizes[ig]; ir++ )
       {
          rowIndex = groupRowNums[ig][ir];
@@ -3072,14 +3072,14 @@ fclose(fp2);
    //------------------------------------------------------------------
 
    int                *hypreCMatSize;
-   hypre_ParCSRMatrix *hypreC;
+   nalu_hypre_ParCSRMatrix *hypreC;
    NALU_HYPRE_IJMatrix     IJC;
 
    ierr = NALU_HYPRE_IJMatrixCreate(mpiComm_, procNConstr_[mypid],
                     procNConstr_[mypid]+nConstraints-1, procNConstr_[mypid],
                     procNConstr_[mypid]+nConstraints-1, &IJC);
    ierr += NALU_HYPRE_IJMatrixSetObjectType(IJC, NALU_HYPRE_PARCSR);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
    if ( nConstraints > 0 ) hypreCMatSize = new int[nConstraints];
    else                    hypreCMatSize = NULL;
    maxRowSize = 0;
@@ -3094,7 +3094,7 @@ fclose(fp2);
    }
    ierr = NALU_HYPRE_IJMatrixSetRowSizes(IJC, hypreCMatSize);
    ierr = NALU_HYPRE_IJMatrixInitialize(IJC);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
    if ( nConstraints > 0 ) delete [] hypreCMatSize;
    newColInd = new int[maxRowSize+1];
    newColVal = new double[maxRowSize+1];
@@ -3114,7 +3114,7 @@ fclose(fp2);
       ierr = NALU_HYPRE_IJMatrixSetValues(IJC, 1, &newRowSize,
                    (const int *) &rowIndex, (const int *) newColInd,
                    (const double *) newColVal);
-      hypre_assert( !ierr );
+      nalu_hypre_assert( !ierr );
    }
    delete [] newColInd;
    delete [] newColVal;
@@ -3125,7 +3125,7 @@ fclose(fp2);
    }
    NALU_HYPRE_IJMatrixAssemble(IJC);
    NALU_HYPRE_IJMatrixGetObject(IJC, (void **) &hypreC);
-   hypre_MatvecCommPkgCreate((hypre_ParCSRMatrix *) hypreC);
+   nalu_hypre_MatvecCommPkgCreate((nalu_hypre_ParCSRMatrix *) hypreC);
    if ( nConstraints > 0 )
    {
       delete [] groupIDs;
@@ -3139,14 +3139,14 @@ fclose(fp2);
    //------------------------------------------------------------------
 
    int                *hypreBMatSize=NULL;
-   hypre_ParCSRMatrix *hypreB;
+   nalu_hypre_ParCSRMatrix *hypreB;
    NALU_HYPRE_IJMatrix     IJB;
 
    ierr = NALU_HYPRE_IJMatrixCreate(mpiComm_, procNConstr_[mypid],
                 procNConstr_[mypid]+nConstraints-1, procNConstr_[mypid],
                 procNConstr_[mypid]+nConstraints-1, &IJB);
    ierr = NALU_HYPRE_IJMatrixSetObjectType(IJB, NALU_HYPRE_PARCSR);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
    if ( nConstraints > 0 ) hypreBMatSize = new int[nConstraints];
    maxRowSize = 0;
    for ( irow = 0; irow < nConstraints; irow++ )
@@ -3164,7 +3164,7 @@ fclose(fp2);
       for ( jcol = 0; jcol < rowSize; jcol++ )
       {
          colIndex = colInd[jcol];
-         searchIndex = hypre_BinarySearch(gSlaveEqnList_, colIndex,
+         searchIndex = nalu_hypre_BinarySearch(gSlaveEqnList_, colIndex,
                                           globalNConstr);
          if ( searchIndex >= 0 ) newRowSize++;
       }
@@ -3174,7 +3174,7 @@ fclose(fp2);
    }
    ierr = NALU_HYPRE_IJMatrixSetRowSizes(IJB, hypreBMatSize);
    ierr = NALU_HYPRE_IJMatrixInitialize(IJB);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
    if ( nConstraints > 0 ) delete [] hypreBMatSize;
 
    newColInd = new int[maxRowSize+1];
@@ -3195,7 +3195,7 @@ fclose(fp2);
       for ( jcol = 0; jcol < rowSize; jcol++ )
       {
          colIndex = colInd[jcol];
-         searchIndex = hypre_BinarySearch(gSlaveEqnList_, colIndex,
+         searchIndex = nalu_hypre_BinarySearch(gSlaveEqnList_, colIndex,
                                           globalNConstr);
          if ( searchIndex >= 0 )
          {
@@ -3208,11 +3208,11 @@ fclose(fp2);
       ierr = NALU_HYPRE_IJMatrixSetValues(IJB, 1, &newRowSize,
                    (const int *) &rowIndex, (const int *) newColInd,
                    (const double *) newColVal);
-      hypre_assert( !ierr );
+      nalu_hypre_assert( !ierr );
    }
    NALU_HYPRE_IJMatrixAssemble(IJB);
    NALU_HYPRE_IJMatrixGetObject(IJB, (void **) &hypreB);
-   hypre_MatvecCommPkgCreate((hypre_ParCSRMatrix *) hypreB);
+   nalu_hypre_MatvecCommPkgCreate((nalu_hypre_ParCSRMatrix *) hypreB);
    delete [] newColInd;
    delete [] newColVal;
 
@@ -3229,8 +3229,8 @@ fclose(fp2);
    NALU_HYPRE_ParCSRMatrixPrint((NALU_HYPRE_ParCSRMatrix) hypreB, fname);
 #endif
 
-   hypre_BoomerAMGBuildCoarseOperator(hypreCT, hypreB, hypreCT,
-                                      (hypre_ParCSRMatrix **) &hypreCBC);
+   nalu_hypre_BoomerAMGBuildCoarseOperator(hypreCT, hypreB, hypreCT,
+                                      (nalu_hypre_ParCSRMatrix **) &hypreCBC);
 #if 0
    for ( irow = 0; irow < nConstraints; irow++ )
    {
@@ -3281,7 +3281,7 @@ fclose(fp2);
                     invA22StartRow+invA22NRows-1, invA22StartCol,
                     invA22StartCol+invA22NCols-1, &invA22mat_);
    ierr += NALU_HYPRE_IJMatrixSetObjectType(invA22mat_, NALU_HYPRE_PARCSR);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
 
    //------------------------------------------------------------------
    // compute the no. of nonzeros in the first nConstraint row of invA22
@@ -3294,7 +3294,7 @@ fclose(fp2);
       rowIndex = procNConstr_[mypid] + irow;
       ierr = NALU_HYPRE_ParCSRMatrixGetRow((NALU_HYPRE_ParCSRMatrix) hypreCT,rowIndex,
                                        &rowSize,NULL,NULL);
-      hypre_assert( !ierr );
+      nalu_hypre_assert( !ierr );
       invA22MatSize[irow] = rowSize;
       NALU_HYPRE_ParCSRMatrixRestoreRow((NALU_HYPRE_ParCSRMatrix) hypreCT,rowIndex,
                                    &rowSize,NULL,NULL);
@@ -3322,13 +3322,13 @@ fclose(fp2);
       rowIndex = procNConstr_[mypid] + irow;
       ierr = NALU_HYPRE_ParCSRMatrixGetRow((NALU_HYPRE_ParCSRMatrix) hypreC,rowIndex,
                                &rowSize,&colInd,&colVal);
-      hypre_assert( !ierr );
+      nalu_hypre_assert( !ierr );
       newRowSize = rowSize;
       NALU_HYPRE_ParCSRMatrixRestoreRow((NALU_HYPRE_ParCSRMatrix) hypreC,rowIndex,
                                    &rowSize,&colInd,&colVal);
       ierr = NALU_HYPRE_ParCSRMatrixGetRow((NALU_HYPRE_ParCSRMatrix) hypreCBC,rowIndex,
                                       &rowSize,&colInd,&colVal);
-      hypre_assert( !ierr );
+      nalu_hypre_assert( !ierr );
       newRowSize += rowSize;
       NALU_HYPRE_ParCSRMatrixRestoreRow((NALU_HYPRE_ParCSRMatrix) hypreCBC,rowIndex,
                                    &rowSize,&colInd,&colVal);
@@ -3353,7 +3353,7 @@ fclose(fp2);
 #endif
    ierr  = NALU_HYPRE_IJMatrixSetRowSizes(invA22mat_, invA22MatSize);
    ierr += NALU_HYPRE_IJMatrixInitialize(invA22mat_);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
    if ( invA22NRows > 0 ) delete [] invA22MatSize;
 
    //------------------------------------------------------------------
@@ -3368,7 +3368,7 @@ fclose(fp2);
       rowIndex = procNConstr_[mypid] + irow;
       ierr = NALU_HYPRE_ParCSRMatrixGetRow((NALU_HYPRE_ParCSRMatrix) hypreCT,rowIndex,
                                      &rowSize,&colInd,&colVal);
-      hypre_assert( !ierr );
+      nalu_hypre_assert( !ierr );
       newRowSize = 0;
       for ( jcol = 0; jcol < rowSize; jcol++ )
       {
@@ -3382,7 +3382,7 @@ fclose(fp2);
       ierr = NALU_HYPRE_IJMatrixSetValues(invA22mat_, 1, &rowSize,
                 (const int *) &rowCount, (const int *) newColInd,
                 (const double *) newColVal);
-      hypre_assert(!ierr);
+      nalu_hypre_assert(!ierr);
    }
 
    //------------------------------------------------------------------
@@ -3394,7 +3394,7 @@ fclose(fp2);
       rowIndex   = procNConstr_[mypid] + irow;
       ierr = NALU_HYPRE_ParCSRMatrixGetRow((NALU_HYPRE_ParCSRMatrix) hypreC,rowIndex,
                                &rowSize,&colInd,&colVal);
-      hypre_assert( !ierr );
+      nalu_hypre_assert( !ierr );
       newRowSize = 0;
       for ( jcol = 0; jcol < rowSize; jcol++ )
       {
@@ -3405,7 +3405,7 @@ fclose(fp2);
                                    &rowSize,&colInd,&colVal);
       ierr = NALU_HYPRE_ParCSRMatrixGetRow((NALU_HYPRE_ParCSRMatrix) hypreCBC,rowIndex,
                                       &rowSize2,&colInd2,&colVal2);
-      hypre_assert( !ierr );
+      nalu_hypre_assert( !ierr );
       for ( jcol = 0; jcol < rowSize2; jcol++ )
       {
          colIndex = colInd2[jcol];
@@ -3420,7 +3420,7 @@ fclose(fp2);
       ierr = NALU_HYPRE_IJMatrixSetValues(invA22mat_, 1, &newRowSize,
 		(const int *) &rowCount, (const int *) newColInd,
 		(const double *) newColVal);
-      hypre_assert(!ierr);
+      nalu_hypre_assert(!ierr);
    }
    delete [] newColInd;
    delete [] newColVal;
@@ -3435,7 +3435,7 @@ fclose(fp2);
 
    NALU_HYPRE_IJMatrixAssemble(invA22mat_);
    NALU_HYPRE_IJMatrixGetObject(invA22mat_, (void **) &invA22_csr);
-   hypre_MatvecCommPkgCreate((hypre_ParCSRMatrix *) invA22_csr);
+   nalu_hypre_MatvecCommPkgCreate((nalu_hypre_ParCSRMatrix *) invA22_csr);
 
    if ( outputLevel_ >= 5 )
    {
@@ -3481,11 +3481,11 @@ int NALU_HYPRE_SlideReduction::scaleMatrixVector()
    double              *scaleVec, *extScaleVec, *colVal, *sBuffer;
    NALU_HYPRE_IJMatrix      newA;
    NALU_HYPRE_IJVector      newB;
-   hypre_ParCSRMatrix  *A_csr;
-   hypre_CSRMatrix     *ADiag, *AOffd;
-   hypre_ParVector     *b_csr, *b2_csr;
-   hypre_ParCSRCommPkg *commPkg;
-   hypre_ParCSRCommHandle *commHandle;
+   nalu_hypre_ParCSRMatrix  *A_csr;
+   nalu_hypre_CSRMatrix     *ADiag, *AOffd;
+   nalu_hypre_ParVector     *b_csr, *b2_csr;
+   nalu_hypre_ParCSRCommPkg *commPkg;
+   nalu_hypre_ParCSRCommHandle *commHandle;
 
    //-----------------------------------------------------------------------
    // fetch matrix and parameters
@@ -3494,29 +3494,29 @@ int NALU_HYPRE_SlideReduction::scaleMatrixVector()
    MPI_Comm_rank( mpiComm_, &mypid );
    MPI_Comm_size( mpiComm_, &nprocs );
    NALU_HYPRE_IJMatrixGetObject(reducedAmat_, (void **) &A_csr);
-   hypre_MatvecCommPkgCreate((hypre_ParCSRMatrix *) A_csr);
+   nalu_hypre_MatvecCommPkgCreate((nalu_hypre_ParCSRMatrix *) A_csr);
    NALU_HYPRE_ParCSRMatrixGetRowPartitioning((NALU_HYPRE_ParCSRMatrix) A_csr,&partition);
    startRow    = partition[mypid];
    localNRows  = partition[mypid+1] - startRow;
    free( partition );
-   ADiag  = hypre_ParCSRMatrixDiag(A_csr);
-   ADiagI = hypre_CSRMatrixI(ADiag);
-   ADiagJ = hypre_CSRMatrixJ(ADiag);
-   ADiagA = hypre_CSRMatrixData(ADiag);
-   AOffd  = hypre_ParCSRMatrixOffd(A_csr);
-   AOffdI = hypre_CSRMatrixI(AOffd);
-   AOffdJ = hypre_CSRMatrixJ(AOffd);
-   AOffdA = hypre_CSRMatrixData(AOffd);
+   ADiag  = nalu_hypre_ParCSRMatrixDiag(A_csr);
+   ADiagI = nalu_hypre_CSRMatrixI(ADiag);
+   ADiagJ = nalu_hypre_CSRMatrixJ(ADiag);
+   ADiagA = nalu_hypre_CSRMatrixData(ADiag);
+   AOffd  = nalu_hypre_ParCSRMatrixOffd(A_csr);
+   AOffdI = nalu_hypre_CSRMatrixI(AOffd);
+   AOffdJ = nalu_hypre_CSRMatrixJ(AOffd);
+   AOffdA = nalu_hypre_CSRMatrixData(AOffd);
    NALU_HYPRE_IJVectorGetObject(reducedBvec_, (void **) &b_csr);
-   bData  = hypre_VectorData(hypre_ParVectorLocalVector(b_csr));
+   bData  = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(b_csr));
 
-   offdMap = hypre_ParCSRMatrixColMapOffd(A_csr);
-   commPkg = hypre_ParCSRMatrixCommPkg((hypre_ParCSRMatrix *) A_csr);
-   nSends  = hypre_ParCSRCommPkgNumSends(commPkg);
-   nRecvs  = hypre_ParCSRCommPkgNumRecvs(commPkg);
-   recvStarts = hypre_ParCSRCommPkgRecvVecStarts(commPkg);
-   sendStarts = hypre_ParCSRCommPkgSendMapStarts(commPkg);
-   sendMap    = hypre_ParCSRCommPkgSendMapElmts(commPkg);
+   offdMap = nalu_hypre_ParCSRMatrixColMapOffd(A_csr);
+   commPkg = nalu_hypre_ParCSRMatrixCommPkg((nalu_hypre_ParCSRMatrix *) A_csr);
+   nSends  = nalu_hypre_ParCSRCommPkgNumSends(commPkg);
+   nRecvs  = nalu_hypre_ParCSRCommPkgNumRecvs(commPkg);
+   recvStarts = nalu_hypre_ParCSRCommPkgRecvVecStarts(commPkg);
+   sendStarts = nalu_hypre_ParCSRCommPkgSendMapStarts(commPkg);
+   sendMap    = nalu_hypre_ParCSRCommPkgSendMapElmts(commPkg);
 
    //-----------------------------------------------------------------------
    // fetch diagonal of A
@@ -3569,8 +3569,8 @@ int NALU_HYPRE_SlideReduction::scaleMatrixVector()
    }
    else sBuffer = NULL;
 
-   commHandle = hypre_ParCSRCommHandleCreate(1,commPkg,sBuffer,extScaleVec);
-   hypre_ParCSRCommHandleDestroy(commHandle);
+   commHandle = nalu_hypre_ParCSRCommHandleCreate(1,commPkg,sBuffer,extScaleVec);
+   nalu_hypre_ParCSRCommHandleDestroy(commHandle);
 
    if ( nSends > 0 ) delete [] sBuffer;
 
@@ -3619,8 +3619,8 @@ int NALU_HYPRE_SlideReduction::scaleMatrixVector()
    ierr += NALU_HYPRE_IJVectorInitialize(newB);
    ierr += NALU_HYPRE_IJVectorAssemble(newB);
    ierr += NALU_HYPRE_IJVectorGetObject(newB, (void **) &b2_csr);
-   b2Data = hypre_VectorData(hypre_ParVectorLocalVector(b2_csr));
-   hypre_assert( !ierr );
+   b2Data = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(b2_csr));
+   nalu_hypre_assert( !ierr );
    for ( irow = 0; irow < localNRows; irow++ )
       b2Data[irow] = bData[irow] * scaleVec[irow];
 
@@ -3664,11 +3664,11 @@ double NALU_HYPRE_SlideReduction::matrixCondEst(int globalRowID, int globalColID
    localBlkInfo = new int[blkCnt];
    for (irow = 0; irow < blkCnt; irow++) localBlkInfo[irow] = blkInfo[irow];
 
-   hypre_qsort0(localBlkInfo, 0, localBlkCnt-1);
+   nalu_hypre_qsort0(localBlkInfo, 0, localBlkCnt-1);
    matDim = 1;
    for ( irow = 0; irow < nConstraints; irow++ )
    {
-      searchIndex = hypre_BinarySearch(localBlkInfo, constrBlkInfo_[irow],
+      searchIndex = nalu_hypre_BinarySearch(localBlkInfo, constrBlkInfo_[irow],
                                        localBlkCnt);
       if ( searchIndex >= 0 ) matDim++;
    }
@@ -3677,13 +3677,13 @@ double NALU_HYPRE_SlideReduction::matrixCondEst(int globalRowID, int globalColID
    rowIndices[matDim++] = globalRowID;
    for ( irow = 0; irow < nConstraints; irow++ )
    {
-      searchIndex = hypre_BinarySearch(localBlkInfo, constrBlkInfo_[irow],
+      searchIndex = nalu_hypre_BinarySearch(localBlkInfo, constrBlkInfo_[irow],
                                        localBlkCnt);
       if ( searchIndex >= 0 )
          rowIndices[matDim++] = endRow - nConstraints + irow + 1;
    }
-   hypre_qsort0(rowIndices, 0, matDim-1);
-   matrix = hypre_TAlloc(double*,  matDim , NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_qsort0(rowIndices, 0, matDim-1);
+   matrix = nalu_hypre_TAlloc(double*,  matDim , NALU_HYPRE_MEMORY_HOST);
    localSlaveEqns = new int[nConstraints];
    localSlaveAuxs = new int[nConstraints];
    for ( irow = 0; irow < nConstraints; irow++ )
@@ -3695,7 +3695,7 @@ double NALU_HYPRE_SlideReduction::matrixCondEst(int globalRowID, int globalColID
 
    for ( irow = 0; irow < matDim; irow++ )
    {
-      matrix[irow] = hypre_TAlloc(double,  matDim , NALU_HYPRE_MEMORY_HOST);
+      matrix[irow] = nalu_hypre_TAlloc(double,  matDim , NALU_HYPRE_MEMORY_HOST);
       for ( jcol = 0; jcol < matDim; jcol++ ) matrix[irow][jcol] = 0.0;
    }
    for ( irow = 0; irow < matDim; irow++ )
@@ -3704,12 +3704,12 @@ double NALU_HYPRE_SlideReduction::matrixCondEst(int globalRowID, int globalColID
       NALU_HYPRE_ParCSRMatrixGetRow(A_csr,rowIndex,&rowSize,&colInd,&colVal);
       for ( jcol = 0; jcol < rowSize; jcol++ )
       {
-         searchIndex = hypre_BinarySearch(localSlaveEqns,colInd[jcol],
+         searchIndex = nalu_hypre_BinarySearch(localSlaveEqns,colInd[jcol],
                                           nConstraints);
          if ( searchIndex >= 0 )
          {
             index2 = localSlaveAuxs[searchIndex] + endRow - nConstraints + 1;
-            searchIndex = hypre_BinarySearch(rowIndices,index2,matDim);
+            searchIndex = nalu_hypre_BinarySearch(rowIndices,index2,matDim);
             if ( searchIndex >= 0 ) matrix[irow][searchIndex] = colVal[jcol];
          }
       }
@@ -3869,7 +3869,7 @@ int NALU_HYPRE_SlideReduction::findSlaveEqns2(int **couplings)
             if (colVal[jcol] != 0.0 && colInd[jcol] >= startRow
                                     && colInd[jcol] <= (endRow-nConstraints))
             {
-               colIndex = hypre_BinarySearch(candidateList, colInd[jcol],
+               colIndex = nalu_hypre_BinarySearch(candidateList, colInd[jcol],
                                              nCandidates);
 
                /* -- if the column corresponds to a candidate, then    -- */
@@ -3896,7 +3896,7 @@ int NALU_HYPRE_SlideReduction::findSlaveEqns2(int **couplings)
          if ( searchIndex >= 0 )
          {
             slaveEqnList_[irow-endRow+nConstraints-1] = searchIndex;
-            index = hypre_BinarySearch(candidateList,searchIndex,nCandidates);
+            index = nalu_hypre_BinarySearch(candidateList,searchIndex,nCandidates);
             (*couplings)[nPairs*2+1] = constrListAux[index];
             (*couplings)[nPairs*2+2] = constrListAux2[index];
             nPairs++;
@@ -4016,7 +4016,7 @@ int NALU_HYPRE_SlideReduction::buildReducedMatrix2()
    ierr  = NALU_HYPRE_IJMatrixCreate(mpiComm_,A21StartRow,A21StartRow+A21NRows-1,
                                A21StartCol,A21StartCol+A21NCols-1,&A21mat_);
    ierr += NALU_HYPRE_IJMatrixSetObjectType(A21mat_, NALU_HYPRE_PARCSR);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
 
    //------------------------------------------------------------------
    // compute the number of nonzeros in the first nConstraint row of A21
@@ -4046,7 +4046,7 @@ int NALU_HYPRE_SlideReduction::buildReducedMatrix2()
          {
             if ( colIndex <= newEndRow || colIndex > endRow )
             {
-               searchIndex = hypre_BinarySearch(gSlaveEqnList_,colIndex,
+               searchIndex = nalu_hypre_BinarySearch(gSlaveEqnList_,colIndex,
                                                 globalNConstr);
                if ( searchIndex < 0 ) newRowSize++;
             }
@@ -4074,7 +4074,7 @@ int NALU_HYPRE_SlideReduction::buildReducedMatrix2()
             colIndex = colInd[jcol];
             if ( colIndex <= newEndRow || colIndex > endRow )
             {
-               searchIndex = hypre_BinarySearch(gSlaveEqnList_,colIndex,
+               searchIndex = nalu_hypre_BinarySearch(gSlaveEqnList_,colIndex,
                                                 globalNConstr);
                if ( searchIndex < 0 ) newRowSize++;
             }
@@ -4097,7 +4097,7 @@ int NALU_HYPRE_SlideReduction::buildReducedMatrix2()
 
    ierr  = NALU_HYPRE_IJMatrixSetRowSizes(A21mat_, A21MatSize);
    ierr += NALU_HYPRE_IJMatrixInitialize(A21mat_);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
    delete [] A21MatSize;
 
    //------------------------------------------------------------------
@@ -4180,7 +4180,7 @@ int NALU_HYPRE_SlideReduction::buildReducedMatrix2()
          if (colVal[jcol] != 0.0 &&
              (colIndex <= newEndRow || colIndex > endRow))
          {
-            searchIndex = hypre_BinarySearch(gSlaveEqnList_, colIndex,
+            searchIndex = nalu_hypre_BinarySearch(gSlaveEqnList_, colIndex,
                                              globalNConstr);
             if ( searchIndex < 0 )
             {
@@ -4207,7 +4207,7 @@ int NALU_HYPRE_SlideReduction::buildReducedMatrix2()
 
    NALU_HYPRE_IJMatrixAssemble(A21mat_);
    NALU_HYPRE_IJMatrixGetObject(A21mat_, (void **) &A21_csr);
-   hypre_MatvecCommPkgCreate((hypre_ParCSRMatrix *) A21_csr);
+   nalu_hypre_MatvecCommPkgCreate((nalu_hypre_ParCSRMatrix *) A21_csr);
 
    if ( outputLevel_ >= 5 )
    {
@@ -4262,7 +4262,7 @@ int NALU_HYPRE_SlideReduction::buildReducedMatrix2()
       for ( jcol = 0; jcol < rowSize; jcol++ )
       {
          colIndex = colInd[jcol];
-         searchIndex = hypre_BinarySearch(slaveEqnList_,colIndex,nConstraints);
+         searchIndex = nalu_hypre_BinarySearch(slaveEqnList_,colIndex,nConstraints);
          if ( searchIndex >= 0 )
          {
             if ( CT_JA[irow*2] == -1 )
@@ -4341,14 +4341,14 @@ int NALU_HYPRE_SlideReduction::buildReducedMatrix2()
    //------------------------------------------------------------------
 
    int                *hypreCTMatSize;
-   hypre_ParCSRMatrix *hypreCT;
+   nalu_hypre_ParCSRMatrix *hypreCT;
    NALU_HYPRE_IJMatrix     IJCT;
 
    ierr = NALU_HYPRE_IJMatrixCreate(mpiComm_, procNConstr_[mypid],
                     procNConstr_[mypid]+nConstraints-1, procNConstr_[mypid],
                     procNConstr_[mypid]+nConstraints-1, &IJCT);
    ierr += NALU_HYPRE_IJMatrixSetObjectType(IJCT, NALU_HYPRE_PARCSR);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
    if ( nConstraints > 0 ) hypreCTMatSize = new int[nConstraints];
    maxRowSize = 0;
    for ( irow = 0; irow < nConstraints; irow++ )
@@ -4359,7 +4359,7 @@ int NALU_HYPRE_SlideReduction::buildReducedMatrix2()
    }
    ierr = NALU_HYPRE_IJMatrixSetRowSizes(IJCT, hypreCTMatSize);
    ierr = NALU_HYPRE_IJMatrixInitialize(IJCT);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
    if ( nConstraints > 0 ) delete [] hypreCTMatSize;
    newColInd = new int[2];
    newColVal = new double[2];
@@ -4378,7 +4378,7 @@ int NALU_HYPRE_SlideReduction::buildReducedMatrix2()
       ierr = NALU_HYPRE_IJMatrixSetValues(IJCT, 1, &newRowSize,
                    (const int *) &rowIndex, (const int *) newColInd,
                    (const double *) newColVal);
-      hypre_assert( !ierr );
+      nalu_hypre_assert( !ierr );
    }
    delete [] newColInd;
    delete [] newColVal;
@@ -4389,7 +4389,7 @@ int NALU_HYPRE_SlideReduction::buildReducedMatrix2()
    }
    NALU_HYPRE_IJMatrixAssemble(IJCT);
    NALU_HYPRE_IJMatrixGetObject(IJCT, (void **) &hypreCT);
-   hypre_MatvecCommPkgCreate((hypre_ParCSRMatrix *) hypreCT);
+   nalu_hypre_MatvecCommPkgCreate((nalu_hypre_ParCSRMatrix *) hypreCT);
 
    //------------------------------------------------------------------
    // next extract the (1,2) block of A22
@@ -4497,14 +4497,14 @@ int NALU_HYPRE_SlideReduction::buildReducedMatrix2()
    //------------------------------------------------------------------
 
    int                *hypreCMatSize;
-   hypre_ParCSRMatrix *hypreC;
+   nalu_hypre_ParCSRMatrix *hypreC;
    NALU_HYPRE_IJMatrix     IJC;
 
    ierr = NALU_HYPRE_IJMatrixCreate(mpiComm_, procNConstr_[mypid],
                     procNConstr_[mypid]+nConstraints-1, procNConstr_[mypid],
                     procNConstr_[mypid]+nConstraints-1, &IJC);
    ierr += NALU_HYPRE_IJMatrixSetObjectType(IJC, NALU_HYPRE_PARCSR);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
    if ( nConstraints > 0 ) hypreCMatSize = new int[nConstraints];
    maxRowSize = 0;
    for ( irow = 0; irow < nConstraints; irow++ )
@@ -4515,7 +4515,7 @@ int NALU_HYPRE_SlideReduction::buildReducedMatrix2()
    }
    ierr = NALU_HYPRE_IJMatrixSetRowSizes(IJC, hypreCMatSize);
    ierr = NALU_HYPRE_IJMatrixInitialize(IJC);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
    if ( nConstraints > 0 ) delete [] hypreCMatSize;
    newColInd = new int[2];
    newColVal = new double[2];
@@ -4534,7 +4534,7 @@ int NALU_HYPRE_SlideReduction::buildReducedMatrix2()
       ierr = NALU_HYPRE_IJMatrixSetValues(IJC, 1, &newRowSize,
                    (const int *) &rowIndex, (const int *) newColInd,
                    (const double *) newColVal);
-      hypre_assert( !ierr );
+      nalu_hypre_assert( !ierr );
    }
    delete [] newColInd;
    delete [] newColVal;
@@ -4545,21 +4545,21 @@ int NALU_HYPRE_SlideReduction::buildReducedMatrix2()
    }
    NALU_HYPRE_IJMatrixAssemble(IJC);
    NALU_HYPRE_IJMatrixGetObject(IJC, (void **) &hypreC);
-   hypre_MatvecCommPkgCreate((hypre_ParCSRMatrix *) hypreC);
+   nalu_hypre_MatvecCommPkgCreate((nalu_hypre_ParCSRMatrix *) hypreC);
 
    //------------------------------------------------------------------
    // form ParCSRMatrix of the (2,2) block of the invA22 matrix
    //------------------------------------------------------------------
 
    int                *hypreBMatSize;
-   hypre_ParCSRMatrix *hypreB;
+   nalu_hypre_ParCSRMatrix *hypreB;
    NALU_HYPRE_IJMatrix     IJB;
 
    ierr = NALU_HYPRE_IJMatrixCreate(mpiComm_, procNConstr_[mypid],
                 procNConstr_[mypid]+nConstraints-1, procNConstr_[mypid],
                 procNConstr_[mypid]+nConstraints-1, &IJB);
    ierr = NALU_HYPRE_IJMatrixSetObjectType(IJB, NALU_HYPRE_PARCSR);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
    if ( nConstraints > 0 ) hypreBMatSize = new int[nConstraints];
    maxRowSize = 0;
    for ( irow = 0; irow < nConstraints; irow++ )
@@ -4577,7 +4577,7 @@ int NALU_HYPRE_SlideReduction::buildReducedMatrix2()
       for ( jcol = 0; jcol < rowSize; jcol++ )
       {
          colIndex = colInd[jcol];
-         searchIndex = hypre_BinarySearch(gSlaveEqnList_, colIndex,
+         searchIndex = nalu_hypre_BinarySearch(gSlaveEqnList_, colIndex,
                                           globalNConstr);
          if ( searchIndex >= 0 ) newRowSize++;
       }
@@ -4587,7 +4587,7 @@ int NALU_HYPRE_SlideReduction::buildReducedMatrix2()
    }
    ierr = NALU_HYPRE_IJMatrixSetRowSizes(IJB, hypreBMatSize);
    ierr = NALU_HYPRE_IJMatrixInitialize(IJB);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
    if ( nConstraints > 0 ) delete [] hypreBMatSize;
 
    if ( maxRowSize > 0 )
@@ -4610,7 +4610,7 @@ int NALU_HYPRE_SlideReduction::buildReducedMatrix2()
       for ( jcol = 0; jcol < rowSize; jcol++ )
       {
          colIndex = colInd[jcol];
-         searchIndex = hypre_BinarySearch(gSlaveEqnList_, colIndex,
+         searchIndex = nalu_hypre_BinarySearch(gSlaveEqnList_, colIndex,
                                           globalNConstr);
          if ( searchIndex >= 0 )
          {
@@ -4623,7 +4623,7 @@ int NALU_HYPRE_SlideReduction::buildReducedMatrix2()
       ierr = NALU_HYPRE_IJMatrixSetValues(IJB, 1, &newRowSize,
                    (const int *) &rowIndex, (const int *) newColInd,
                    (const double *) newColVal);
-      hypre_assert( !ierr );
+      nalu_hypre_assert( !ierr );
    }
    NALU_HYPRE_IJMatrixAssemble(IJB);
    NALU_HYPRE_IJMatrixGetObject(IJB, (void **) &hypreB);
@@ -4643,8 +4643,8 @@ int NALU_HYPRE_SlideReduction::buildReducedMatrix2()
    NALU_HYPRE_ParCSRMatrixPrint((NALU_HYPRE_ParCSRMatrix) hypreCT, fname);
    strcpy( fname, "hypreB" );
    NALU_HYPRE_ParCSRMatrixPrint((NALU_HYPRE_ParCSRMatrix) hypreB, fname);
-   hypre_BoomerAMGBuildCoarseOperator(hypreCT, hypreB, hypreCT,
-                                      (hypre_ParCSRMatrix **) &hypreCBC);
+   nalu_hypre_BoomerAMGBuildCoarseOperator(hypreCT, hypreB, hypreCT,
+                                      (nalu_hypre_ParCSRMatrix **) &hypreCBC);
 #if 0
    for ( irow = 0; irow < nConstraints; irow++ )
    {
@@ -4695,7 +4695,7 @@ int NALU_HYPRE_SlideReduction::buildReducedMatrix2()
                     invA22StartRow+invA22NRows-1, invA22StartCol,
                     invA22StartCol+invA22NCols-1, &invA22mat_);
    ierr += NALU_HYPRE_IJMatrixSetObjectType(invA22mat_, NALU_HYPRE_PARCSR);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
 
    //------------------------------------------------------------------
    // compute the no. of nonzeros in the first nConstraint row of invA22
@@ -4708,7 +4708,7 @@ int NALU_HYPRE_SlideReduction::buildReducedMatrix2()
       rowIndex = procNConstr_[mypid] + irow;
       ierr = NALU_HYPRE_ParCSRMatrixGetRow((NALU_HYPRE_ParCSRMatrix) hypreCT,rowIndex,
                                        &rowSize,NULL,NULL);
-      hypre_assert( !ierr );
+      nalu_hypre_assert( !ierr );
       invA22MatSize[irow] = rowSize;
       NALU_HYPRE_ParCSRMatrixRestoreRow((NALU_HYPRE_ParCSRMatrix) hypreCT,rowIndex,
                                    &rowSize,NULL,NULL);
@@ -4736,13 +4736,13 @@ int NALU_HYPRE_SlideReduction::buildReducedMatrix2()
       rowIndex = procNConstr_[mypid] + irow;
       ierr = NALU_HYPRE_ParCSRMatrixGetRow((NALU_HYPRE_ParCSRMatrix) hypreC,rowIndex,
                                &rowSize,&colInd,&colVal);
-      hypre_assert( !ierr );
+      nalu_hypre_assert( !ierr );
       newRowSize = rowSize;
       NALU_HYPRE_ParCSRMatrixRestoreRow((NALU_HYPRE_ParCSRMatrix) hypreC,rowIndex,
                                    &rowSize,&colInd,&colVal);
       ierr = NALU_HYPRE_ParCSRMatrixGetRow((NALU_HYPRE_ParCSRMatrix) hypreCBC,rowIndex,
                                       &rowSize,&colInd,&colVal);
-      hypre_assert( !ierr );
+      nalu_hypre_assert( !ierr );
       newRowSize += rowSize;
       NALU_HYPRE_ParCSRMatrixRestoreRow((NALU_HYPRE_ParCSRMatrix) hypreCBC,rowIndex,
                                    &rowSize,&colInd,&colVal);
@@ -4767,7 +4767,7 @@ int NALU_HYPRE_SlideReduction::buildReducedMatrix2()
 #endif
    ierr  = NALU_HYPRE_IJMatrixSetRowSizes(invA22mat_, invA22MatSize);
    ierr += NALU_HYPRE_IJMatrixInitialize(invA22mat_);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
    delete [] invA22MatSize;
 
    //------------------------------------------------------------------
@@ -4782,7 +4782,7 @@ int NALU_HYPRE_SlideReduction::buildReducedMatrix2()
       rowIndex = procNConstr_[mypid] + irow;
       ierr = NALU_HYPRE_ParCSRMatrixGetRow((NALU_HYPRE_ParCSRMatrix) hypreCT,rowIndex,
                                      &rowSize,&colInd,&colVal);
-      hypre_assert( !ierr );
+      nalu_hypre_assert( !ierr );
       newRowSize = 0;
       for ( jcol = 0; jcol < rowSize; jcol++ )
       {
@@ -4796,7 +4796,7 @@ int NALU_HYPRE_SlideReduction::buildReducedMatrix2()
       ierr = NALU_HYPRE_IJMatrixSetValues(invA22mat_, 1, &rowSize,
                 (const int *) &rowCount, (const int *) newColInd,
                 (const double *) newColVal);
-      hypre_assert(!ierr);
+      nalu_hypre_assert(!ierr);
 
    }
 
@@ -4809,7 +4809,7 @@ int NALU_HYPRE_SlideReduction::buildReducedMatrix2()
       rowIndex   = procNConstr_[mypid] + irow;
       ierr = NALU_HYPRE_ParCSRMatrixGetRow((NALU_HYPRE_ParCSRMatrix) hypreC,rowIndex,
                                &rowSize,&colInd,&colVal);
-      hypre_assert( !ierr );
+      nalu_hypre_assert( !ierr );
       newRowSize = 0;
       for ( jcol = 0; jcol < rowSize; jcol++ )
       {
@@ -4820,7 +4820,7 @@ int NALU_HYPRE_SlideReduction::buildReducedMatrix2()
                                    &rowSize,&colInd,&colVal);
       ierr = NALU_HYPRE_ParCSRMatrixGetRow((NALU_HYPRE_ParCSRMatrix) hypreCBC,rowIndex,
                                       &rowSize2,&colInd2,&colVal2);
-      hypre_assert( !ierr );
+      nalu_hypre_assert( !ierr );
       for ( jcol = 0; jcol < rowSize2; jcol++ )
       {
          newColInd[newRowSize] = colInd2[jcol] + procNConstr_[mypid] +
@@ -4833,7 +4833,7 @@ int NALU_HYPRE_SlideReduction::buildReducedMatrix2()
       ierr = NALU_HYPRE_IJMatrixSetValues(invA22mat_, 1, &newRowSize,
 		(const int *) &rowCount, (const int *) newColInd,
 		(const double *) newColVal);
-      hypre_assert(!ierr);
+      nalu_hypre_assert(!ierr);
    }
    delete [] newColInd;
    delete [] newColVal;
@@ -4847,7 +4847,7 @@ int NALU_HYPRE_SlideReduction::buildReducedMatrix2()
 
    NALU_HYPRE_IJMatrixAssemble(invA22mat_);
    NALU_HYPRE_IJMatrixGetObject(invA22mat_, (void **) &invA22_csr);
-   hypre_MatvecCommPkgCreate((hypre_ParCSRMatrix *) invA22_csr);
+   nalu_hypre_MatvecCommPkgCreate((nalu_hypre_ParCSRMatrix *) invA22_csr);
 
    if ( outputLevel_ >= 5 )
    {
@@ -4885,10 +4885,10 @@ int NALU_HYPRE_SlideReduction::buildReducedMatrix2()
       printf("%4d : buildReducedMatrix - Triple matrix product starts\n",
              mypid);
 
-   hypre_BoomerAMGBuildCoarseOperator((hypre_ParCSRMatrix *) A21_csr,
-                                      (hypre_ParCSRMatrix *) invA22_csr,
-                                      (hypre_ParCSRMatrix *) A21_csr,
-                                      (hypre_ParCSRMatrix **) &RAP_csr);
+   nalu_hypre_BoomerAMGBuildCoarseOperator((nalu_hypre_ParCSRMatrix *) A21_csr,
+                                      (nalu_hypre_ParCSRMatrix *) invA22_csr,
+                                      (nalu_hypre_ParCSRMatrix *) A21_csr,
+                                      (nalu_hypre_ParCSRMatrix **) &RAP_csr);
 
    if ( ( outputLevel_ & NALU_HYPRE_BITMASK2 ) >= 1 )
       printf("%4d : buildReducedMatrix - Triple matrix product ends\n",
@@ -4952,7 +4952,7 @@ int NALU_HYPRE_SlideReduction::buildReducedMatrix2()
                  reducedAStartRow+reducedANRows-1, reducedAStartCol,
                  reducedAStartCol+reducedANCols-1,&reducedAmat_);
    ierr += NALU_HYPRE_IJMatrixSetObjectType(reducedAmat_, NALU_HYPRE_PARCSR);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
 
    //------------------------------------------------------------------
    // compute row sizes for reducedA
@@ -4961,7 +4961,7 @@ int NALU_HYPRE_SlideReduction::buildReducedMatrix2()
    rowCount = maxRowSize = 0;
    for ( irow = startRow; irow <= newEndRow; irow++ )
    {
-      searchIndex = hypre_BinarySearch(slaveEqnList_, irow, nConstraints);
+      searchIndex = nalu_hypre_BinarySearch(slaveEqnList_, irow, nConstraints);
       if ( searchIndex >= 0 )  reducedAMatSize[rowCount++] = 1;
       else
       {
@@ -4969,14 +4969,14 @@ int NALU_HYPRE_SlideReduction::buildReducedMatrix2()
          rowIndex = reducedAStartRow + rowCount;
          ierr = NALU_HYPRE_ParCSRMatrixGetRow(RAP_csr,rowIndex,&rowSize2,
                                          &colInd2, NULL);
-         hypre_assert( !ierr );
+         nalu_hypre_assert( !ierr );
          newRowSize = rowSize + rowSize2;
          maxRowSize = ( newRowSize > maxRowSize ) ? newRowSize : maxRowSize;
          newColInd = new int[newRowSize];
          for (jcol = 0; jcol < rowSize; jcol++) newColInd[jcol] = colInd[jcol];
          for (jcol = 0; jcol < rowSize2; jcol++)
             newColInd[rowSize+jcol] = colInd2[jcol];
-         hypre_qsort0(newColInd, 0, newRowSize-1);
+         nalu_hypre_qsort0(newColInd, 0, newRowSize-1);
          ncnt = 0;
          for ( jcol = 1; jcol < newRowSize; jcol++ )
             if (newColInd[jcol] != newColInd[ncnt])
@@ -4987,13 +4987,13 @@ int NALU_HYPRE_SlideReduction::buildReducedMatrix2()
          ierr = NALU_HYPRE_ParCSRMatrixRestoreRow(RAP_csr,rowIndex,&rowSize2,
                                              &colInd2,NULL);
          delete [] newColInd;
-         hypre_assert( !ierr );
+         nalu_hypre_assert( !ierr );
          rowCount++;
       }
    }
    ierr  = NALU_HYPRE_IJMatrixSetRowSizes(reducedAmat_, reducedAMatSize);
    ierr += NALU_HYPRE_IJMatrixInitialize(reducedAmat_);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
    delete [] reducedAMatSize;
 
    //------------------------------------------------------------------
@@ -5005,7 +5005,7 @@ int NALU_HYPRE_SlideReduction::buildReducedMatrix2()
    newColVal = new double[maxRowSize+1];
    for ( irow = startRow; irow <= newEndRow; irow++ )
    {
-      searchIndex = hypre_BinarySearch(slaveEqnList_, irow, nConstraints);
+      searchIndex = nalu_hypre_BinarySearch(slaveEqnList_, irow, nConstraints);
       rowIndex    = reducedAStartRow + rowCount;
       if ( searchIndex >= 0 )
       {
@@ -5030,7 +5030,7 @@ int NALU_HYPRE_SlideReduction::buildReducedMatrix2()
             procIndex--;
             if ( colIndex < uBound )
             {
-               searchIndex = hypre_BinarySearch(gSlaveEqnList_, colIndex,
+               searchIndex = nalu_hypre_BinarySearch(gSlaveEqnList_, colIndex,
                                                 globalNConstr);
                if ( searchIndex < 0 )
                {
@@ -5045,7 +5045,7 @@ int NALU_HYPRE_SlideReduction::buildReducedMatrix2()
             newColVal[ncnt+jcol] = - colVal2[jcol];
          }
          newRowSize = ncnt + rowSize2;
-         hypre_qsort1(newColInd, newColVal, 0, newRowSize-1);
+         nalu_hypre_qsort1(newColInd, newColVal, 0, newRowSize-1);
          ncnt = 0;
          for ( jcol = 0; jcol < newRowSize; jcol++ )
          {
@@ -5066,7 +5066,7 @@ int NALU_HYPRE_SlideReduction::buildReducedMatrix2()
       ierr = NALU_HYPRE_IJMatrixSetValues(reducedAmat_, 1, &newRowSize,
                    (const int *) &rowIndex, (const int *) newColInd,
                    (const double *) newColVal);
-      hypre_assert(!ierr);
+      nalu_hypre_assert(!ierr);
       rowCount++;
    }
    delete [] newColInd;
@@ -5096,7 +5096,7 @@ int NALU_HYPRE_SlideReduction::buildReducedMatrix2()
                //printf("%d : reducedA ROW %d\n", mypid, irow);
                ierr = NALU_HYPRE_ParCSRMatrixGetRow(reducedA_csr,irow,&rowSize,
                                                &colInd, &colVal);
-               //hypre_qsort1(colInd, colVal, 0, rowSize-1);
+               //nalu_hypre_qsort1(colInd, colVal, 0, rowSize-1);
                for ( jcol = 0; jcol < rowSize; jcol++ )
                   if ( colVal[jcol] != 0.0 )
                      printf("%6d  %6d  %25.8e \n",irow+1,colInd[jcol]+1,

@@ -13,7 +13,7 @@
 #ifndef _LLNL_FEI_MATRIX_H_
 #define _LLNL_FEI_MATRIX_H_
 
-#include "_hypre_utilities.h"
+#include "_nalu_hypre_utilities.h"
 #include "NALU_HYPRE.h"
 
 /**************************************************************************

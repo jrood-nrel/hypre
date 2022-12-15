@@ -5,12 +5,12 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#ifndef hypre_DSLU_DATA_HEADER
-#define hypre_DSLU_DATA_HEADER
+#ifndef nalu_hypre_DSLU_DATA_HEADER
+#define nalu_hypre_DSLU_DATA_HEADER
 
 #include "superlu_ddefs.h"
 /*--------------------------------------------------------------------------
- * hypre_DSLUData
+ * nalu_hypre_DSLUData
  *--------------------------------------------------------------------------*/
 typedef struct
 {
@@ -24,6 +24,6 @@ typedef struct
    dScalePermstruct_t dslu_ScalePermstruct;
    dSOLVEstruct_t dslu_solve;
 }
-hypre_DSLUData;
+nalu_hypre_DSLUData;
 
 #endif

@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_Euclid.h"
+#include "_nalu_hypre_Euclid.h"
 /* #include "Mat_dh.h" */
 /* #include "getRow_dh.h" */
 /* #include "SubdomainGraph_dh.h" */
@@ -41,7 +41,7 @@ void Mat_dhCreate(Mat_dh *mat)
 
   commsOnly = Parser_dhHasSwitch(parser_dh, "-commsOnly");
   if (myid_dh == 0 && commsOnly == true) {
-/*     hypre_printf("\n@@@ commsOnly == true for matvecs! @@@\n"); */
+/*     nalu_hypre_printf("\n@@@ commsOnly == true for matvecs! @@@\n"); */
     fflush(stdout);
   }
 
@@ -104,8 +104,8 @@ void Mat_dhDestroy(Mat_dh mat)
     if (mat->row_perm != NULL) { FREE_DH(mat->row_perm); CHECK_V_ERROR; }
   }
 
-  for (i=0; i<mat->num_recv; i++) hypre_MPI_Request_free(&mat->recv_req[i]);
-  for (i=0; i<mat->num_send; i++) hypre_MPI_Request_free(&mat->send_req[i]);
+  for (i=0; i<mat->num_recv; i++) nalu_hypre_MPI_Request_free(&mat->recv_req[i]);
+  for (i=0; i<mat->num_send; i++) nalu_hypre_MPI_Request_free(&mat->send_req[i]);
   if (mat->recv_req != NULL) { FREE_DH(mat->recv_req); CHECK_V_ERROR; }
   if (mat->send_req != NULL) { FREE_DH(mat->send_req); CHECK_V_ERROR; }
   if (mat->status != NULL) { FREE_DH(mat->status); CHECK_V_ERROR; }
@@ -152,9 +152,9 @@ void Mat_dhMatVecSetup(Mat_dh mat)
     NALU_HYPRE_Int lastLocal = firstLocal+m;
     NALU_HYPRE_Int *beg_rows, *end_rows;
   
-    mat->recv_req = (hypre_MPI_Request *)MALLOC_DH(np_dh * sizeof(hypre_MPI_Request)); CHECK_V_ERROR;
-    mat->send_req = (hypre_MPI_Request *)MALLOC_DH(np_dh * sizeof(hypre_MPI_Request)); CHECK_V_ERROR;
-    mat->status = (hypre_MPI_Status *)MALLOC_DH(np_dh * sizeof(hypre_MPI_Status)); CHECK_V_ERROR;
+    mat->recv_req = (nalu_hypre_MPI_Request *)MALLOC_DH(np_dh * sizeof(nalu_hypre_MPI_Request)); CHECK_V_ERROR;
+    mat->send_req = (nalu_hypre_MPI_Request *)MALLOC_DH(np_dh * sizeof(nalu_hypre_MPI_Request)); CHECK_V_ERROR;
+    mat->status = (nalu_hypre_MPI_Status *)MALLOC_DH(np_dh * sizeof(nalu_hypre_MPI_Status)); CHECK_V_ERROR;
     beg_rows = (NALU_HYPRE_Int*)MALLOC_DH(np_dh*sizeof(NALU_HYPRE_Int)); CHECK_V_ERROR;
     end_rows = (NALU_HYPRE_Int*)MALLOC_DH(np_dh*sizeof(NALU_HYPRE_Int)); CHECK_V_ERROR;
   
@@ -162,11 +162,11 @@ void Mat_dhMatVecSetup(Mat_dh mat)
       beg_rows[0] = 0;
       end_rows[0] = m;
     } else {
-      ierr = hypre_MPI_Allgather(&firstLocal, 1, NALU_HYPRE_MPI_INT, beg_rows, 1, NALU_HYPRE_MPI_INT, comm_dh); 
+      ierr = nalu_hypre_MPI_Allgather(&firstLocal, 1, NALU_HYPRE_MPI_INT, beg_rows, 1, NALU_HYPRE_MPI_INT, comm_dh); 
   
   CHECK_MPI_V_ERROR(ierr);
   
-      ierr = hypre_MPI_Allgather(&lastLocal, 1, NALU_HYPRE_MPI_INT, end_rows, 1, NALU_HYPRE_MPI_INT, comm_dh); CHECK_MPI_V_ERROR(ierr);
+      ierr = nalu_hypre_MPI_Allgather(&lastLocal, 1, NALU_HYPRE_MPI_INT, end_rows, 1, NALU_HYPRE_MPI_INT, comm_dh); CHECK_MPI_V_ERROR(ierr);
     }
   
     outlist = (NALU_HYPRE_Int *)MALLOC_DH(np_dh*sizeof(NALU_HYPRE_Int)); CHECK_V_ERROR;
@@ -187,7 +187,7 @@ void Mat_dhMatVecSetup(Mat_dh mat)
     if (np_dh == 1) { /* this is for debugging purposes in some of the drivers */
       inlist[0] = outlist[0];
     } else {
-      ierr = hypre_MPI_Alltoall(outlist, 1, NALU_HYPRE_MPI_INT, inlist, 1, NALU_HYPRE_MPI_INT, comm_dh); CHECK_MPI_V_ERROR(ierr);
+      ierr = nalu_hypre_MPI_Alltoall(outlist, 1, NALU_HYPRE_MPI_INT, inlist, 1, NALU_HYPRE_MPI_INT, comm_dh); CHECK_MPI_V_ERROR(ierr);
     }
   
     setup_matvec_sends_private(mat, inlist); CHECK_V_ERROR;
@@ -218,7 +218,7 @@ void setup_matvec_receives_private(Mat_dh mat, NALU_HYPRE_Int *beg_rows, NALU_HY
 {
   START_FUNC_DH
   NALU_HYPRE_Int ierr, i, j, this_pe;
-  hypre_MPI_Request request;
+  nalu_hypre_MPI_Request request;
   NALU_HYPRE_Int m = mat->m;
 
   mat->num_recv = 0;
@@ -240,13 +240,13 @@ void setup_matvec_receives_private(Mat_dh mat, NALU_HYPRE_Int *beg_rows, NALU_HY
     }
 
     /* Request rows in reqind[i..j-1] */
-    ierr = hypre_MPI_Isend(&reqind[i], j-i, NALU_HYPRE_MPI_INT, this_pe, 444, comm_dh, &request); CHECK_MPI_V_ERROR(ierr);
-    ierr = hypre_MPI_Request_free(&request); CHECK_MPI_V_ERROR(ierr);
+    ierr = nalu_hypre_MPI_Isend(&reqind[i], j-i, NALU_HYPRE_MPI_INT, this_pe, 444, comm_dh, &request); CHECK_MPI_V_ERROR(ierr);
+    ierr = nalu_hypre_MPI_Request_free(&request); CHECK_MPI_V_ERROR(ierr);
 
     /* Count of number of number of indices needed from this_pe */
     outlist[this_pe] = j-i;
 
-    ierr = hypre_MPI_Recv_init(&mat->recvbuf[i+m], j-i, hypre_MPI_REAL, this_pe, 555,
+    ierr = nalu_hypre_MPI_Recv_init(&mat->recvbuf[i+m], j-i, nalu_hypre_MPI_REAL, this_pe, 555,
             comm_dh, &mat->recv_req[mat->num_recv]); CHECK_MPI_V_ERROR(ierr);
 
     mat->num_recv++;
@@ -263,11 +263,11 @@ void setup_matvec_sends_private(Mat_dh mat, NALU_HYPRE_Int *inlist)
 {
   START_FUNC_DH
   NALU_HYPRE_Int ierr, i, j, sendlen, first = mat->beg_row;
-  hypre_MPI_Request *requests;
-  hypre_MPI_Status  *statuses;
+  nalu_hypre_MPI_Request *requests;
+  nalu_hypre_MPI_Status  *statuses;
 
-  requests = (hypre_MPI_Request *) MALLOC_DH(np_dh * sizeof(hypre_MPI_Request)); CHECK_V_ERROR;
-  statuses = (hypre_MPI_Status *)  MALLOC_DH(np_dh * sizeof(hypre_MPI_Status)); CHECK_V_ERROR;
+  requests = (nalu_hypre_MPI_Request *) MALLOC_DH(np_dh * sizeof(nalu_hypre_MPI_Request)); CHECK_V_ERROR;
+  statuses = (nalu_hypre_MPI_Status *)  MALLOC_DH(np_dh * sizeof(nalu_hypre_MPI_Status)); CHECK_V_ERROR;
 
   /* Determine size of and allocate sendbuf and sendind */
   sendlen = 0;
@@ -281,10 +281,10 @@ void setup_matvec_sends_private(Mat_dh mat, NALU_HYPRE_Int *inlist)
   for (i=0; i<np_dh; i++) {
     if (inlist[i] != 0) {
       /* Post receive for the actual indices */
-      ierr = hypre_MPI_Irecv(&mat->sendind[j], inlist[i], NALU_HYPRE_MPI_INT, i, 444, comm_dh,
+      ierr = nalu_hypre_MPI_Irecv(&mat->sendind[j], inlist[i], NALU_HYPRE_MPI_INT, i, 444, comm_dh,
                             &requests[mat->num_send]); CHECK_MPI_V_ERROR(ierr);
       /* Set up the send */
-      ierr = hypre_MPI_Send_init(&mat->sendbuf[j], inlist[i], hypre_MPI_REAL, i, 555, comm_dh,
+      ierr = nalu_hypre_MPI_Send_init(&mat->sendbuf[j], inlist[i], nalu_hypre_MPI_REAL, i, 555, comm_dh,
                        &mat->send_req[mat->num_send]); CHECK_MPI_V_ERROR(ierr);
 
       mat->num_send++;
@@ -296,7 +296,7 @@ void setup_matvec_sends_private(Mat_dh mat, NALU_HYPRE_Int *inlist)
   mat->time[MATVEC_WORDS] = j;
 
 
-  ierr = hypre_MPI_Waitall(mat->num_send, requests, statuses); CHECK_MPI_V_ERROR(ierr);
+  ierr = nalu_hypre_MPI_Waitall(mat->num_send, requests, statuses); CHECK_MPI_V_ERROR(ierr);
   /* convert global indices to local indices */
   /* these are all indices on this processor */
   for (i=0; i<mat->sendlen; i++) mat->sendind[i] -= first;
@@ -329,7 +329,7 @@ void Mat_dhMatVec(Mat_dh mat, NALU_HYPRE_Real *x, NALU_HYPRE_Real *b)
     bool   timeFlag = mat->matvec_timing;
   
   
-    if (timeFlag) t1 = hypre_MPI_Wtime();
+    if (timeFlag) t1 = nalu_hypre_MPI_Wtime();
   
     /* Put components of x into the right outgoing buffers */
     if (! commsOnly) {
@@ -337,19 +337,19 @@ void Mat_dhMatVec(Mat_dh mat, NALU_HYPRE_Real *x, NALU_HYPRE_Real *b)
     }
   
     if (timeFlag) {
-      t2 = hypre_MPI_Wtime();
+      t2 = nalu_hypre_MPI_Wtime();
       mat->time[MATVEC_TIME] += (t2 - t1);
   
     }
   
-    ierr = hypre_MPI_Startall(mat->num_recv, mat->recv_req); CHECK_MPI_V_ERROR(ierr);
-    ierr = hypre_MPI_Startall(mat->num_send, mat->send_req); CHECK_MPI_V_ERROR(ierr);
-    ierr = hypre_MPI_Waitall(mat->num_recv, mat->recv_req, mat->status); CHECK_MPI_V_ERROR(ierr);
-    ierr = hypre_MPI_Waitall(mat->num_send, mat->send_req, mat->status); CHECK_MPI_V_ERROR(ierr);
+    ierr = nalu_hypre_MPI_Startall(mat->num_recv, mat->recv_req); CHECK_MPI_V_ERROR(ierr);
+    ierr = nalu_hypre_MPI_Startall(mat->num_send, mat->send_req); CHECK_MPI_V_ERROR(ierr);
+    ierr = nalu_hypre_MPI_Waitall(mat->num_recv, mat->recv_req, mat->status); CHECK_MPI_V_ERROR(ierr);
+    ierr = nalu_hypre_MPI_Waitall(mat->num_send, mat->send_req, mat->status); CHECK_MPI_V_ERROR(ierr);
   
   
     if (timeFlag) {
-      t3 = hypre_MPI_Wtime();
+      t3 = nalu_hypre_MPI_Wtime();
       mat->time[MATVEC_MPI_TIME] += (t3 - t2);
     }
   
@@ -371,7 +371,7 @@ void Mat_dhMatVec(Mat_dh mat, NALU_HYPRE_Real *x, NALU_HYPRE_Real *b)
   } /* if (! commsOnly) */
   
     if (timeFlag) {
-      t4 = hypre_MPI_Wtime();
+      t4 = nalu_hypre_MPI_Wtime();
       mat->time[MATVEC_TOTAL_TIME] += (t4 - t1);
       mat->time[MATVEC_TIME] += (t4 - t3);
     }
@@ -397,7 +397,7 @@ void Mat_dhMatVec_omp(Mat_dh mat, NALU_HYPRE_Real *x, NALU_HYPRE_Real *b)
   NALU_HYPRE_Int len, *ind;
   bool   timeFlag = mat->matvec_timing;
 
-  if (timeFlag) t1 = hypre_MPI_Wtime();
+  if (timeFlag) t1 = nalu_hypre_MPI_Wtime();
 
   /* Put components of x into the right outgoing buffers */
 #ifdef USING_OPENMP_DH
@@ -406,17 +406,17 @@ void Mat_dhMatVec_omp(Mat_dh mat, NALU_HYPRE_Real *x, NALU_HYPRE_Real *b)
   for (i=0; i<sendlen; i++) sendbuf[i] = x[sendind[i]]; 
 
   if (timeFlag) {
-    t2 = hypre_MPI_Wtime();
+    t2 = nalu_hypre_MPI_Wtime();
     mat->time[MATVEC_TIME] += (t2 - t1);
   }
 
-  ierr = hypre_MPI_Startall(mat->num_recv, mat->recv_req); CHECK_MPI_V_ERROR(ierr);
-  ierr = hypre_MPI_Startall(mat->num_send, mat->send_req); CHECK_MPI_V_ERROR(ierr);
-  ierr = hypre_MPI_Waitall(mat->num_recv, mat->recv_req, mat->status); CHECK_MPI_V_ERROR(ierr);
-  ierr = hypre_MPI_Waitall(mat->num_send, mat->send_req, mat->status); CHECK_MPI_V_ERROR(ierr);
+  ierr = nalu_hypre_MPI_Startall(mat->num_recv, mat->recv_req); CHECK_MPI_V_ERROR(ierr);
+  ierr = nalu_hypre_MPI_Startall(mat->num_send, mat->send_req); CHECK_MPI_V_ERROR(ierr);
+  ierr = nalu_hypre_MPI_Waitall(mat->num_recv, mat->recv_req, mat->status); CHECK_MPI_V_ERROR(ierr);
+  ierr = nalu_hypre_MPI_Waitall(mat->num_send, mat->send_req, mat->status); CHECK_MPI_V_ERROR(ierr);
 
   if (timeFlag) {
-    t3 = hypre_MPI_Wtime();
+    t3 = nalu_hypre_MPI_Wtime();
     mat->time[MATVEC_MPI_TIME] += (t3 - t2);
   }
 
@@ -427,7 +427,7 @@ void Mat_dhMatVec_omp(Mat_dh mat, NALU_HYPRE_Real *x, NALU_HYPRE_Real *b)
   for (i=0; i<m; i++) recvbuf[i] = x[i];
 
   if (timeFlag) {
-    tx = hypre_MPI_Wtime();
+    tx = nalu_hypre_MPI_Wtime();
     mat->time[MATVEC_MPI_TIME2] += (tx - t1);
   }
 
@@ -448,7 +448,7 @@ void Mat_dhMatVec_omp(Mat_dh mat, NALU_HYPRE_Real *x, NALU_HYPRE_Real *b)
   }
 
   if (timeFlag) {
-    t4 = hypre_MPI_Wtime();
+    t4 = nalu_hypre_MPI_Wtime();
     mat->time[MATVEC_TOTAL_TIME] += (t4 - t1);
     mat->time[MATVEC_TIME] += (t4 - t3);
   }
@@ -469,7 +469,7 @@ void Mat_dhMatVec_uni_omp(Mat_dh mat, NALU_HYPRE_Real *x, NALU_HYPRE_Real *b)
   NALU_HYPRE_Real t1 = 0, t2 = 0;
   bool   timeFlag = mat->matvec_timing;
 
-  if (timeFlag) { t1 = hypre_MPI_Wtime(); }
+  if (timeFlag) { t1 = nalu_hypre_MPI_Wtime(); }
 
   /* do the multiply */
 #ifdef USING_OPENMP_DH
@@ -487,7 +487,7 @@ void Mat_dhMatVec_uni_omp(Mat_dh mat, NALU_HYPRE_Real *x, NALU_HYPRE_Real *b)
   }
 
   if (timeFlag) {
-    t2 = hypre_MPI_Wtime();
+    t2 = nalu_hypre_MPI_Wtime();
     mat->time[MATVEC_TIME] += (t2 - t1);
     mat->time[MATVEC_TOTAL_TIME] += (t2 - t1);
   }
@@ -508,7 +508,7 @@ void Mat_dhMatVec_uni(Mat_dh mat, NALU_HYPRE_Real *x, NALU_HYPRE_Real *b)
   NALU_HYPRE_Real t1 = 0, t2 = 0;
   bool   timeFlag = mat->matvec_timing;
 
-  if (timeFlag) t1 = hypre_MPI_Wtime();
+  if (timeFlag) t1 = nalu_hypre_MPI_Wtime();
 
   for (row=0; row<m; row++) {
     NALU_HYPRE_Int len = rp[row+1] - rp[row];
@@ -522,7 +522,7 @@ void Mat_dhMatVec_uni(Mat_dh mat, NALU_HYPRE_Real *x, NALU_HYPRE_Real *b)
   }
 
   if (timeFlag)  {
-    t2 = hypre_MPI_Wtime();
+    t2 = nalu_hypre_MPI_Wtime();
     mat->time[MATVEC_TIME] += (t2 - t1);
     mat->time[MATVEC_TOTAL_TIME] += (t2 - t1);
   }
@@ -538,7 +538,7 @@ NALU_HYPRE_Int Mat_dhReadNz(Mat_dh mat)
   START_FUNC_DH
   NALU_HYPRE_Int ierr, retval = mat->rp[mat->m];
   NALU_HYPRE_Int nz = retval;
-  ierr = hypre_MPI_Allreduce(&nz, &retval, 1, NALU_HYPRE_MPI_INT, hypre_MPI_SUM, comm_dh); CHECK_MPI_ERROR(ierr);
+  ierr = nalu_hypre_MPI_Allreduce(&nz, &retval, 1, NALU_HYPRE_MPI_INT, nalu_hypre_MPI_SUM, comm_dh); CHECK_MPI_ERROR(ierr);
   END_FUNC_VAL(retval)
 }
 
@@ -596,8 +596,8 @@ void Mat_dhReduceTiming(Mat_dh mat)
   if (mat->time[MATVEC_MPI_TIME]) {
     mat->time[MATVEC_RATIO] = mat->time[MATVEC_TIME] / mat->time[MATVEC_MPI_TIME];
   }
-  hypre_MPI_Allreduce(mat->time, mat->time_min, MAT_DH_BINS, hypre_MPI_REAL, hypre_MPI_MIN, comm_dh);
-  hypre_MPI_Allreduce(mat->time, mat->time_max, MAT_DH_BINS, hypre_MPI_REAL, hypre_MPI_MAX, comm_dh);
+  nalu_hypre_MPI_Allreduce(mat->time, mat->time_min, MAT_DH_BINS, nalu_hypre_MPI_REAL, nalu_hypre_MPI_MIN, comm_dh);
+  nalu_hypre_MPI_Allreduce(mat->time, mat->time_max, MAT_DH_BINS, nalu_hypre_MPI_REAL, nalu_hypre_MPI_MAX, comm_dh);
   END_FUNC_DH
 }
 
@@ -665,7 +665,7 @@ void Mat_dhPrintGraph(Mat_dh A, SubdomainGraph_dh sg, FILE *fp)
   }
 
   for (pe=0; pe<np_dh; ++pe) {
-    ierr = hypre_MPI_Barrier(comm_dh); CHECK_MPI_V_ERROR(ierr);
+    ierr = nalu_hypre_MPI_Barrier(comm_dh); CHECK_MPI_V_ERROR(ierr);
     if (id == pe) {
       if (sg == NULL) {
         mat_dh_print_graph_private(A->m, A->beg_row, A->rp, A->cval, 
@@ -700,17 +700,17 @@ void Mat_dhPrintRows(Mat_dh A, SubdomainGraph_dh sg, FILE *fp)
     NALU_HYPRE_Int i, j;
     NALU_HYPRE_Int beg_row = A->beg_row;
 
-    hypre_fprintf(fp, "\n----- A, unpermuted ------------------------------------\n");
+    nalu_hypre_fprintf(fp, "\n----- A, unpermuted ------------------------------------\n");
     for (i=0; i<m; ++i) {
-      hypre_fprintf(fp, "%i :: ", 1+i+beg_row);
+      nalu_hypre_fprintf(fp, "%i :: ", 1+i+beg_row);
       for (j=rp[i]; j<rp[i+1]; ++j) {
         if (noValues) {
-          hypre_fprintf(fp, "%i ", 1+cval[j]);
+          nalu_hypre_fprintf(fp, "%i ", 1+cval[j]);
         } else {
-          hypre_fprintf(fp, "%i,%g ; ", 1+cval[j], aval[j]);
+          nalu_hypre_fprintf(fp, "%i,%g ; ", 1+cval[j], aval[j]);
         }
       }
-      hypre_fprintf(fp, "\n");
+      nalu_hypre_fprintf(fp, "\n");
     }
   }
 
@@ -730,32 +730,32 @@ void Mat_dhPrintRows(Mat_dh A, SubdomainGraph_dh sg, FILE *fp)
       NALU_HYPRE_Int beg_row = sg->beg_row[oldBlock];
       NALU_HYPRE_Int end_row = beg_row + sg->row_count[oldBlock];
 
-      hypre_fprintf(fp, "\n");
-      hypre_fprintf(fp, "\n----- A, permuted, single mpi task  ------------------\n");
-      hypre_fprintf(fp, "---- new subdomain: %i;  old subdomain: %i\n", i, oldBlock);
-      hypre_fprintf(fp, "     old beg_row:   %i;  new beg_row:   %i\n", 
+      nalu_hypre_fprintf(fp, "\n");
+      nalu_hypre_fprintf(fp, "\n----- A, permuted, single mpi task  ------------------\n");
+      nalu_hypre_fprintf(fp, "---- new subdomain: %i;  old subdomain: %i\n", i, oldBlock);
+      nalu_hypre_fprintf(fp, "     old beg_row:   %i;  new beg_row:   %i\n", 
                                 sg->beg_row[oldBlock], sg->beg_rowP[oldBlock]);
-      hypre_fprintf(fp, "     local rows in this block: %i\n", sg->row_count[oldBlock]);
-      hypre_fprintf(fp, "     bdry rows in this block:  %i\n", sg->bdry_count[oldBlock]);
-      hypre_fprintf(fp, "     1st bdry row= %i \n", 1+end_row-sg->bdry_count[oldBlock]);
+      nalu_hypre_fprintf(fp, "     local rows in this block: %i\n", sg->row_count[oldBlock]);
+      nalu_hypre_fprintf(fp, "     bdry rows in this block:  %i\n", sg->bdry_count[oldBlock]);
+      nalu_hypre_fprintf(fp, "     1st bdry row= %i \n", 1+end_row-sg->bdry_count[oldBlock]);
 
       for (oldRow=beg_row; oldRow<end_row; ++oldRow) {
         NALU_HYPRE_Int len = 0, *cval;
         NALU_HYPRE_Real *aval;
 
-        hypre_fprintf(fp, "%3i (old= %3i) :: ", idx, 1+oldRow);
+        nalu_hypre_fprintf(fp, "%3i (old= %3i) :: ", idx, 1+oldRow);
         ++idx;
         Mat_dhGetRow(A, oldRow, &len, &cval, &aval); CHECK_V_ERROR;
 
         for (k=0; k<len; ++k) {
           if (noValues) {
-            hypre_fprintf(fp, "%i ", 1+sg->o2n_col[cval[k]]); 
+            nalu_hypre_fprintf(fp, "%i ", 1+sg->o2n_col[cval[k]]); 
           } else {
-            hypre_fprintf(fp, "%i,%g ; ", 1+sg->o2n_col[cval[k]], aval[k]);
+            nalu_hypre_fprintf(fp, "%i,%g ; ", 1+sg->o2n_col[cval[k]], aval[k]);
           }
         }
 
-        hypre_fprintf(fp, "\n");
+        nalu_hypre_fprintf(fp, "\n");
         Mat_dhRestoreRow(A, oldRow, &len, &cval, &aval); CHECK_V_ERROR;
       }
     }
@@ -773,7 +773,7 @@ void Mat_dhPrintRows(Mat_dh A, SubdomainGraph_dh sg, FILE *fp)
 
     for (i=0; i<m; ++i) {
       NALU_HYPRE_Int row = n2o_row[i];
-      hypre_fprintf(fp, "%3i (old= %3i) :: ", 1+i+beg_rowP, 1+row+beg_row);
+      nalu_hypre_fprintf(fp, "%3i (old= %3i) :: ", 1+i+beg_rowP, 1+row+beg_row);
       for (j=rp[row]; j<rp[row+1]; ++j) {
         NALU_HYPRE_Int col = cval[j];
 
@@ -788,7 +788,7 @@ void Mat_dhPrintRows(Mat_dh A, SubdomainGraph_dh sg, FILE *fp)
           NALU_HYPRE_Int tmp = col;
           tmp = Hash_i_dhLookup(hash, col); CHECK_V_ERROR;
           if (tmp == -1) { 
-            hypre_sprintf(msgBuf_dh, "nonlocal column= %i not in hash table", 1+col); 
+            nalu_hypre_sprintf(msgBuf_dh, "nonlocal column= %i not in hash table", 1+col); 
             SET_V_ERROR(msgBuf_dh);
           } else {
             col = tmp;
@@ -796,12 +796,12 @@ void Mat_dhPrintRows(Mat_dh A, SubdomainGraph_dh sg, FILE *fp)
         }
 
         if (noValues) {
-          hypre_fprintf(fp, "%i ", 1+col);
+          nalu_hypre_fprintf(fp, "%i ", 1+col);
         } else {
-          hypre_fprintf(fp, "%i,%g ; ", 1+col, aval[j]);
+          nalu_hypre_fprintf(fp, "%i,%g ; ", 1+col, aval[j]);
         }
       }
-      hypre_fprintf(fp, "\n");
+      nalu_hypre_fprintf(fp, "\n");
     }
   }
   END_FUNC_DH
@@ -833,7 +833,7 @@ void Mat_dhPrintTriples(Mat_dh A, SubdomainGraph_dh sg, char *filename)
     NALU_HYPRE_Real val;
 
     for (pe=0; pe<np_dh; ++pe) {
-      hypre_MPI_Barrier(comm_dh); 
+      nalu_hypre_MPI_Barrier(comm_dh); 
       if (pe == myid_dh) {
         if (pe == 0) { 
           fp=openFile_dh(filename, "w"); CHECK_V_ERROR;
@@ -844,11 +844,11 @@ void Mat_dhPrintTriples(Mat_dh A, SubdomainGraph_dh sg, char *filename)
         for (i=0; i<m; ++i) {
           for (j=rp[i]; j<rp[i+1]; ++j) {
             if (noValues) {
-              hypre_fprintf(fp, "%i %i\n", 1+i+beg_row, 1+cval[j]);
+              nalu_hypre_fprintf(fp, "%i %i\n", 1+i+beg_row, 1+cval[j]);
             } else {
               val = aval[j];
               if (val == 0.0 && matlab) val = _MATLAB_ZERO_;
-              hypre_fprintf(fp, TRIPLES_FORMAT, 1+i+beg_row, 1+cval[j], val);
+              nalu_hypre_fprintf(fp, TRIPLES_FORMAT, 1+i+beg_row, 1+cval[j], val);
             }
           }
         }
@@ -879,7 +879,7 @@ void Mat_dhPrintTriples(Mat_dh A, SubdomainGraph_dh sg, char *filename)
    
         if (noValues) {
           for (k=0; k<len; ++k) {
-            hypre_fprintf(fp, "%i %i\n", idx, 1+sg->o2n_col[cval[k]]);
+            nalu_hypre_fprintf(fp, "%i %i\n", idx, 1+sg->o2n_col[cval[k]]);
           }
           ++idx;
         }
@@ -888,7 +888,7 @@ void Mat_dhPrintTriples(Mat_dh A, SubdomainGraph_dh sg, char *filename)
           for (k=0; k<len; ++k) {
             NALU_HYPRE_Real val = aval[k];
             if (val == 0.0 && matlab) val = _MATLAB_ZERO_;
-            hypre_fprintf(fp, TRIPLES_FORMAT, idx, 1+sg->o2n_col[cval[k]], val);
+            nalu_hypre_fprintf(fp, TRIPLES_FORMAT, idx, 1+sg->o2n_col[cval[k]], val);
           }
           ++idx;
         }
@@ -909,7 +909,7 @@ void Mat_dhPrintTriples(Mat_dh A, SubdomainGraph_dh sg, char *filename)
     NALU_HYPRE_Int id = sg->o2n_sub[myid_dh];
 
     for (pe=0; pe<np_dh; ++pe) {
-      hypre_MPI_Barrier(comm_dh);
+      nalu_hypre_MPI_Barrier(comm_dh);
       if (id == pe) {
         if (pe == 0) { 
           fp=openFile_dh(filename, "w"); CHECK_V_ERROR;
@@ -938,7 +938,7 @@ void Mat_dhPrintTriples(Mat_dh A, SubdomainGraph_dh sg, char *filename)
               NALU_HYPRE_Int tmp = col;
               tmp = Hash_i_dhLookup(hash, col); CHECK_V_ERROR;
               if (tmp == -1) { 
-                hypre_sprintf(msgBuf_dh, "nonlocal column= %i not in hash table", 1+col); 
+                nalu_hypre_sprintf(msgBuf_dh, "nonlocal column= %i not in hash table", 1+col); 
                 SET_V_ERROR(msgBuf_dh);
               } else {
                 col = tmp;
@@ -946,9 +946,9 @@ void Mat_dhPrintTriples(Mat_dh A, SubdomainGraph_dh sg, char *filename)
             }
 
             if (noValues) {
-              hypre_fprintf(fp, "%i %i\n", 1+i+beg_rowP, 1+col);
+              nalu_hypre_fprintf(fp, "%i %i\n", 1+i+beg_rowP, 1+col);
             } else {
-              hypre_fprintf(fp, TRIPLES_FORMAT, 1+i+beg_rowP, 1+col, val);
+              nalu_hypre_fprintf(fp, TRIPLES_FORMAT, 1+i+beg_rowP, 1+col, val);
             }
           }
         }
@@ -1140,7 +1140,7 @@ void Mat_dhFixDiags(Mat_dh A)
 
   /* insert any missing diagonal elements */
   if (ct) {
-    hypre_printf("\nMat_dhFixDiags:: %i diags not explicitly present; inserting!\n", ct);
+    nalu_hypre_printf("\nMat_dhFixDiags:: %i diags not explicitly present; inserting!\n", ct);
     insert_diags_private(A, ct); CHECK_V_ERROR;
     rp = A->rp;
     cval = A->cval;
@@ -1212,18 +1212,18 @@ void Mat_dhPrintDiags(Mat_dh A, FILE *fp)
   NALU_HYPRE_Int *rp = A->rp, *cval = A->cval;
   NALU_HYPRE_Real *aval = A->aval;
 
-  hypre_fprintf(fp, "=================== diagonal elements ====================\n");
+  nalu_hypre_fprintf(fp, "=================== diagonal elements ====================\n");
   for (i=0; i<m; ++i) {
     bool flag = true;
     for (j=rp[i]; j<rp[i+1]; ++j) {
       if (cval[j] == i) {
-        hypre_fprintf(fp, "%i  %g\n", i+1, aval[j]);
+        nalu_hypre_fprintf(fp, "%i  %g\n", i+1, aval[j]);
         flag = false;
         break;
       }
     }
     if (flag) {
-      hypre_fprintf(fp, "%i  ---------- missing\n", i+1);
+      nalu_hypre_fprintf(fp, "%i  ---------- missing\n", i+1);
     }
   }
   END_FUNC_DH
@@ -1237,7 +1237,7 @@ void Mat_dhGetRow(Mat_dh B, NALU_HYPRE_Int globalRow, NALU_HYPRE_Int *len, NALU_
   START_FUNC_DH
   NALU_HYPRE_Int row = globalRow - B->beg_row;
   if (row > B->m) {
-    hypre_sprintf(msgBuf_dh, "requested globalRow= %i, which is local row= %i, but only have %i rows!",
+    nalu_hypre_sprintf(msgBuf_dh, "requested globalRow= %i, which is local row= %i, but only have %i rows!",
                                 globalRow, row, B->m);
     SET_V_ERROR(msgBuf_dh);
   }
@@ -1295,7 +1295,7 @@ void Mat_dhRowPermute(Mat_dh mat)
   Parser_dhReadInt(parser_dh, "-rowPermute", &algo); CHECK_V_ERROR;
   if (algo < 1) algo = 1;
   if (algo > 5) algo = 1;
-  hypre_sprintf(msgBuf_dh, "calling row permutation with algo= %i", algo);
+  nalu_hypre_sprintf(msgBuf_dh, "calling row permutation with algo= %i", algo);
   SET_INFO(msgBuf_dh);
 
   r1 = (NALU_HYPRE_Real*)MALLOC_DH(m*sizeof(NALU_HYPRE_Real)); CHECK_V_ERROR;
@@ -1317,14 +1317,14 @@ void Mat_dhRowPermute(Mat_dh mat)
 
   /* debug block */
   if (debug && logFile != NULL) {
-    hypre_fprintf(logFile, "\n-------- row permutation vector --------\n");
-    for (i=0; i<m; ++i) hypre_fprintf(logFile, "%i ", 1+o2n[i]);
-    hypre_fprintf(logFile, "\n");
+    nalu_hypre_fprintf(logFile, "\n-------- row permutation vector --------\n");
+    for (i=0; i<m; ++i) nalu_hypre_fprintf(logFile, "%i ", 1+o2n[i]);
+    nalu_hypre_fprintf(logFile, "\n");
 
     if (myid_dh == 0) {
-      hypre_printf("\n-------- row permutation vector --------\n");
-      for (i=0; i<m; ++i) hypre_printf("%i ", 1+o2n[i]);
-      hypre_printf("\n");
+      nalu_hypre_printf("\n-------- row permutation vector --------\n");
+      for (i=0; i<m; ++i) nalu_hypre_printf("%i ", 1+o2n[i]);
+      nalu_hypre_printf("\n");
     }
   }
 
@@ -1338,13 +1338,13 @@ void Mat_dhRowPermute(Mat_dh mat)
   }
 
   if (isNatural) {
-    hypre_printf("@@@ [%i] Mat_dhRowPermute :: got natural ordering!\n", myid_dh);
+    nalu_hypre_printf("@@@ [%i] Mat_dhRowPermute :: got natural ordering!\n", myid_dh);
   } else {
     NALU_HYPRE_Int *rp = B->rp, *cval = B->cval;
     NALU_HYPRE_Real *aval = B->aval;
 
     if (algo == 5) {
-      hypre_printf("@@@ [%i] Mat_dhRowPermute :: scaling matrix rows and columns!\n", myid_dh);
+      nalu_hypre_printf("@@@ [%i] Mat_dhRowPermute :: scaling matrix rows and columns!\n", myid_dh);
 
       /* scale matrix */
       for (i=0; i<m; i++) {
@@ -1479,7 +1479,7 @@ part[]
   /* compute permutation vector */
   {
 	 NALU_HYPRE_Int *tmp = (NALU_HYPRE_Int*)MALLOC_DH(blocks*sizeof(NALU_HYPRE_Int)); CHECK_V_ERROR;
-	 hypre_TMemcpy(tmp,  beg_row, NALU_HYPRE_Int, blocks, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_HOST);
+	 nalu_hypre_TMemcpy(tmp,  beg_row, NALU_HYPRE_Int, blocks, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_HOST);
 	 for (i=0; i<m; ++i)
 	 {
 		bk = part[i];  /* block to which row i belongs */

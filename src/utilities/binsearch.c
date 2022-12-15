@@ -5,16 +5,16 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_utilities.h"
+#include "_nalu_hypre_utilities.h"
 
 /*--------------------------------------------------------------------------
- * hypre_BinarySearch
+ * nalu_hypre_BinarySearch
  * performs a binary search for value on array list where list needs
  * to contain ordered nonnegative numbers
  * the routine returns the location of the value or -1
  *--------------------------------------------------------------------------*/
 
-NALU_HYPRE_Int hypre_BinarySearch(NALU_HYPRE_Int *list, NALU_HYPRE_Int value, NALU_HYPRE_Int list_length)
+NALU_HYPRE_Int nalu_hypre_BinarySearch(NALU_HYPRE_Int *list, NALU_HYPRE_Int value, NALU_HYPRE_Int list_length)
 {
    NALU_HYPRE_Int low, high, m;
    NALU_HYPRE_Int not_found = 1;
@@ -42,13 +42,13 @@ NALU_HYPRE_Int hypre_BinarySearch(NALU_HYPRE_Int *list, NALU_HYPRE_Int value, NA
 }
 
 /*--------------------------------------------------------------------------
- * hypre_BigBinarySearch
+ * nalu_hypre_BigBinarySearch
  * performs a binary search for value on array list where list needs
  * to contain ordered nonnegative numbers
  * the routine returns the location of the value or -1
  *--------------------------------------------------------------------------*/
 
-NALU_HYPRE_Int hypre_BigBinarySearch(NALU_HYPRE_BigInt *list, NALU_HYPRE_BigInt value, NALU_HYPRE_Int list_length)
+NALU_HYPRE_Int nalu_hypre_BigBinarySearch(NALU_HYPRE_BigInt *list, NALU_HYPRE_BigInt value, NALU_HYPRE_Int list_length)
 {
    NALU_HYPRE_Int low, high, m;
    NALU_HYPRE_Int not_found = 1;
@@ -76,7 +76,7 @@ NALU_HYPRE_Int hypre_BigBinarySearch(NALU_HYPRE_BigInt *list, NALU_HYPRE_BigInt 
 }
 
 /*--------------------------------------------------------------------------
- * hypre_BinarySearch2
+ * nalu_hypre_BinarySearch2
  * this one is a bit more robust:
  *   avoids overflow of m as can happen above when (low+high) overflows
  *   lets user specify high and low bounds for array (so a subset
@@ -85,7 +85,7 @@ NALU_HYPRE_Int hypre_BigBinarySearch(NALU_HYPRE_BigInt *list, NALU_HYPRE_BigInt 
 
  *--------------------------------------------------------------------------*/
 
-NALU_HYPRE_Int hypre_BinarySearch2(NALU_HYPRE_Int *list, NALU_HYPRE_Int value, NALU_HYPRE_Int low, NALU_HYPRE_Int high,
+NALU_HYPRE_Int nalu_hypre_BinarySearch2(NALU_HYPRE_Int *list, NALU_HYPRE_Int value, NALU_HYPRE_Int low, NALU_HYPRE_Int high,
                               NALU_HYPRE_Int *spot)
 {
 
@@ -120,7 +120,7 @@ NALU_HYPRE_Int hypre_BinarySearch2(NALU_HYPRE_Int *list, NALU_HYPRE_Int value, N
  * Equivalent to C++ std::lower_bound
  *--------------------------------------------------------------------------*/
 
-NALU_HYPRE_Int *hypre_LowerBound( NALU_HYPRE_Int *first, NALU_HYPRE_Int *last, NALU_HYPRE_Int value )
+NALU_HYPRE_Int *nalu_hypre_LowerBound( NALU_HYPRE_Int *first, NALU_HYPRE_Int *last, NALU_HYPRE_Int value )
 {
    NALU_HYPRE_Int *it;
    NALU_HYPRE_Int count = last - first, step;
@@ -141,7 +141,7 @@ NALU_HYPRE_Int *hypre_LowerBound( NALU_HYPRE_Int *first, NALU_HYPRE_Int *last, N
  * Equivalent to C++ std::lower_bound
  *--------------------------------------------------------------------------*/
 
-NALU_HYPRE_BigInt *hypre_BigLowerBound( NALU_HYPRE_BigInt *first, NALU_HYPRE_BigInt *last, NALU_HYPRE_BigInt value )
+NALU_HYPRE_BigInt *nalu_hypre_BigLowerBound( NALU_HYPRE_BigInt *first, NALU_HYPRE_BigInt *last, NALU_HYPRE_BigInt value )
 {
    NALU_HYPRE_BigInt *it;
    NALU_HYPRE_BigInt count = last - first, step;

@@ -5,13 +5,13 @@
 
 set(HDRS
   NALU_HYPRE_parcsr_ls.h
-  _hypre_parcsr_ls.h
+  _nalu_hypre_parcsr_ls.h
 )
 
 set(SRCS
   amg_hybrid.c
   aux_interp.c
-  F90_hypre_laplace.c
+  F90_nalu_hypre_laplace.c
   F90_NALU_HYPRE_parcsr_amg.c
   F90_NALU_HYPRE_parcsr_bicgstab.c
   F90_NALU_HYPRE_parcsr_block.c

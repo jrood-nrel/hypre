@@ -10,23 +10,23 @@
  *  relaxation.
  ******************************************************************************/
 
-#include "_hypre_sstruct_ls.h"
+#include "_nalu_hypre_sstruct_ls.h"
 #include "fac.h"
 
 #define DEBUG 0
 
 NALU_HYPRE_Int
-hypre_FacLocalRelax(void                 *relax_vdata,
-                    hypre_SStructPMatrix *A,
-                    hypre_SStructPVector *x,
-                    hypre_SStructPVector *b,
+nalu_hypre_FacLocalRelax(void                 *relax_vdata,
+                    nalu_hypre_SStructPMatrix *A,
+                    nalu_hypre_SStructPVector *x,
+                    nalu_hypre_SStructPVector *b,
                     NALU_HYPRE_Int             num_relax,
                     NALU_HYPRE_Int            *zero_guess)
 {
-   hypre_SysPFMGRelaxSetPreRelax(relax_vdata);
-   hypre_SysPFMGRelaxSetMaxIter(relax_vdata, num_relax);
-   hypre_SysPFMGRelaxSetZeroGuess(relax_vdata, *zero_guess);
-   hypre_SysPFMGRelax(relax_vdata, A, b, x);
+   nalu_hypre_SysPFMGRelaxSetPreRelax(relax_vdata);
+   nalu_hypre_SysPFMGRelaxSetMaxIter(relax_vdata, num_relax);
+   nalu_hypre_SysPFMGRelaxSetZeroGuess(relax_vdata, *zero_guess);
+   nalu_hypre_SysPFMGRelax(relax_vdata, A, b, x);
    zero_guess = 0;
 
    return 0;

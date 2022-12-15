@@ -5,13 +5,13 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#ifndef cfei_hypre_h_included
-#define cfei_hypre_h_included
+#ifndef cfei_nalu_hypre_h_included
+#define cfei_nalu_hypre_h_included
 
 #include <stdlib.h>
 #include <string.h>
 
 #include "cfei_hypre.h"
 
-#endif /*cfei_hypre_h_included*/
+#endif /*cfei_nalu_hypre_h_included*/
 

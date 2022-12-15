@@ -5,8 +5,8 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#ifndef _hypre_cfei_h_
-#define _hypre_cfei_h_
+#ifndef _nalu_hypre_cfei_h_
+#define _nalu_hypre_cfei_h_
 
 struct NALU_HYPRE_FEI_struct {
    void* fei_;

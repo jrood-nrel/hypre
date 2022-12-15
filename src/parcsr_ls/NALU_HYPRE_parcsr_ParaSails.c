@@ -16,14 +16,14 @@
 #include <math.h>
 
 #include "./NALU_HYPRE_parcsr_ls.h"
-#include "./_hypre_parcsr_ls.h"
+#include "./_nalu_hypre_parcsr_ls.h"
 
 #include "../distributed_matrix/NALU_HYPRE_distributed_matrix_types.h"
 #include "../distributed_matrix/NALU_HYPRE_distributed_matrix_protos.h"
 
 #include "../matrix_matrix/NALU_HYPRE_matrix_matrix_protos.h"
 
-#include "../distributed_ls/ParaSails/hypre_ParaSails.h"
+#include "../distributed_ls/ParaSails/nalu_hypre_ParaSails.h"
 
 /* these includes required for NALU_HYPRE_ParaSailsBuildIJMatrix */
 #include "../IJ_mv/NALU_HYPRE_IJ_mv.h"
@@ -34,12 +34,12 @@
 #include "../seq_mv/vector.h"
 /* AB 8/06 - replace header file */
 /* #include "../parcsr_mv/par_vector.h" */
-#include "../parcsr_mv/_hypre_parcsr_mv.h"
+#include "../parcsr_mv/_nalu_hypre_parcsr_mv.h"
 
 /* If code is more mysterious, then it must be good */
 typedef struct
 {
-   hypre_ParaSails obj;
+   nalu_hypre_ParaSails obj;
    NALU_HYPRE_Int       sym;
    NALU_HYPRE_Real      thresh;
    NALU_HYPRE_Int       nlevels;
@@ -61,18 +61,18 @@ NALU_HYPRE_Int
 NALU_HYPRE_ParCSRParaSailsCreate( MPI_Comm comm, NALU_HYPRE_Solver *solver )
 {
 #ifdef NALU_HYPRE_MIXEDINT
-   hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "ParaSails not usable in mixedint mode!");
-   return hypre_error_flag;
+   nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "ParaSails not usable in mixedint mode!");
+   return nalu_hypre_error_flag;
 #else
 
    Secret *secret;
 
-   secret = hypre_TAlloc(Secret, 1, NALU_HYPRE_MEMORY_HOST);
+   secret = nalu_hypre_TAlloc(Secret, 1, NALU_HYPRE_MEMORY_HOST);
 
    if (secret == NULL)
    {
-      hypre_error(NALU_HYPRE_ERROR_MEMORY);
-      return hypre_error_flag;
+      nalu_hypre_error(NALU_HYPRE_ERROR_MEMORY);
+      return nalu_hypre_error_flag;
    }
 
    secret->sym     = 1;
@@ -84,11 +84,11 @@ NALU_HYPRE_ParCSRParaSailsCreate( MPI_Comm comm, NALU_HYPRE_Solver *solver )
    secret->comm    = comm;
    secret->logging = 0;
 
-   hypre_ParaSailsCreate(comm, &secret->obj);
+   nalu_hypre_ParaSailsCreate(comm, &secret->obj);
 
    *solver = (NALU_HYPRE_Solver) secret;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 #endif
 }
 
@@ -100,18 +100,18 @@ NALU_HYPRE_Int
 NALU_HYPRE_ParCSRParaSailsDestroy( NALU_HYPRE_Solver solver )
 {
 #ifdef NALU_HYPRE_MIXEDINT
-   hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "ParaSails not usable in mixedint mode!");
-   return hypre_error_flag;
+   nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "ParaSails not usable in mixedint mode!");
+   return nalu_hypre_error_flag;
 #else
 
    Secret *secret;
 
    secret = (Secret *) solver;
-   hypre_ParaSailsDestroy(secret->obj);
+   nalu_hypre_ParaSailsDestroy(secret->obj);
 
-   hypre_TFree(secret, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(secret, NALU_HYPRE_MEMORY_HOST);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 #endif
 }
 
@@ -128,8 +128,8 @@ NALU_HYPRE_ParCSRParaSailsSetup( NALU_HYPRE_Solver solver,
                             NALU_HYPRE_ParVector x      )
 {
 #ifdef NALU_HYPRE_MIXEDINT
-   hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "ParaSails not usable in mixedint mode!");
-   return hypre_error_flag;
+   nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "ParaSails not usable in mixedint mode!");
+   return nalu_hypre_error_flag;
 #else
 
    static NALU_HYPRE_Int virgin = 1;
@@ -139,27 +139,27 @@ NALU_HYPRE_ParCSRParaSailsSetup( NALU_HYPRE_Solver solver,
    /* The following call will also create the distributed matrix */
 
    NALU_HYPRE_ConvertParCSRMatrixToDistributedMatrix( A, &mat );
-   if (hypre_error_flag) { return hypre_error_flag; }
+   if (nalu_hypre_error_flag) { return nalu_hypre_error_flag; }
 
    if (virgin || secret->reuse == 0) /* call set up at least once */
    {
       virgin = 0;
-      hypre_ParaSailsSetup(
+      nalu_hypre_ParaSailsSetup(
          secret->obj, mat, secret->sym, secret->thresh, secret->nlevels,
          secret->filter, secret->loadbal, secret->logging);
-      if (hypre_error_flag) { return hypre_error_flag; }
+      if (nalu_hypre_error_flag) { return nalu_hypre_error_flag; }
    }
    else /* reuse is true; this is a subsequent call */
    {
       /* reuse pattern: always use filter value of 0 and loadbal of 0 */
-      hypre_ParaSailsSetupValues(secret->obj, mat,
+      nalu_hypre_ParaSailsSetupValues(secret->obj, mat,
                                  0.0, 0.0, secret->logging);
-      if (hypre_error_flag) { return hypre_error_flag; }
+      if (nalu_hypre_error_flag) { return nalu_hypre_error_flag; }
    }
 
    NALU_HYPRE_DistributedMatrixDestroy(mat);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 #endif
 }
 
@@ -174,19 +174,19 @@ NALU_HYPRE_ParCSRParaSailsSolve( NALU_HYPRE_Solver solver,
                             NALU_HYPRE_ParVector x     )
 {
 #ifdef NALU_HYPRE_MIXEDINT
-   hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "ParaSails not usable in mixedint mode!");
-   return hypre_error_flag;
+   nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "ParaSails not usable in mixedint mode!");
+   return nalu_hypre_error_flag;
 #else
 
    NALU_HYPRE_Real *rhs, *soln;
    Secret *secret = (Secret *) solver;
 
-   rhs  = hypre_VectorData(hypre_ParVectorLocalVector((hypre_ParVector *) b));
-   soln = hypre_VectorData(hypre_ParVectorLocalVector((hypre_ParVector *) x));
+   rhs  = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector((nalu_hypre_ParVector *) b));
+   soln = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector((nalu_hypre_ParVector *) x));
 
-   hypre_ParaSailsApply(secret->obj, rhs, soln);
+   nalu_hypre_ParaSailsApply(secret->obj, rhs, soln);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 #endif
 }
 
@@ -201,8 +201,8 @@ NALU_HYPRE_ParCSRParaSailsSetParams(NALU_HYPRE_Solver solver,
                                NALU_HYPRE_Int    nlevels )
 {
 #ifdef NALU_HYPRE_MIXEDINT
-   hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "ParaSails not usable in mixedint mode!");
-   return hypre_error_flag;
+   nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "ParaSails not usable in mixedint mode!");
+   return nalu_hypre_error_flag;
 #else
 
    Secret *secret = (Secret *) solver;
@@ -210,7 +210,7 @@ NALU_HYPRE_ParCSRParaSailsSetParams(NALU_HYPRE_Solver solver,
    secret->thresh  = thresh;
    secret->nlevels = nlevels;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 #endif
 }
 
@@ -224,15 +224,15 @@ NALU_HYPRE_ParCSRParaSailsSetFilter(NALU_HYPRE_Solver solver,
                                NALU_HYPRE_Real   filter  )
 {
 #ifdef NALU_HYPRE_MIXEDINT
-   hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "ParaSails not usable in mixedint mode!");
-   return hypre_error_flag;
+   nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "ParaSails not usable in mixedint mode!");
+   return nalu_hypre_error_flag;
 #else
 
    Secret *secret = (Secret *) solver;
 
    secret->filter = filter;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 #endif
 }
 
@@ -241,15 +241,15 @@ NALU_HYPRE_ParCSRParaSailsGetFilter(NALU_HYPRE_Solver solver,
                                NALU_HYPRE_Real * filter  )
 {
 #ifdef NALU_HYPRE_MIXEDINT
-   hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "ParaSails not usable in mixedint mode!");
-   return hypre_error_flag;
+   nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "ParaSails not usable in mixedint mode!");
+   return nalu_hypre_error_flag;
 #else
 
    Secret *secret = (Secret *) solver;
 
    *filter = secret->filter;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 #endif
 }
 
@@ -263,15 +263,15 @@ NALU_HYPRE_ParCSRParaSailsSetSym(NALU_HYPRE_Solver solver,
                             NALU_HYPRE_Int    sym     )
 {
 #ifdef NALU_HYPRE_MIXEDINT
-   hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "ParaSails not usable in mixedint mode!");
-   return hypre_error_flag;
+   nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "ParaSails not usable in mixedint mode!");
+   return nalu_hypre_error_flag;
 #else
 
    Secret *secret = (Secret *) solver;
 
    secret->sym = sym;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 #endif
 }
 
@@ -284,15 +284,15 @@ NALU_HYPRE_ParCSRParaSailsSetLoadbal(NALU_HYPRE_Solver solver,
                                 NALU_HYPRE_Real   loadbal )
 {
 #ifdef NALU_HYPRE_MIXEDINT
-   hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "ParaSails not usable in mixedint mode!");
-   return hypre_error_flag;
+   nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "ParaSails not usable in mixedint mode!");
+   return nalu_hypre_error_flag;
 #else
 
    Secret *secret = (Secret *) solver;
 
    secret->loadbal = loadbal;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 #endif
 }
 
@@ -301,15 +301,15 @@ NALU_HYPRE_ParCSRParaSailsGetLoadbal(NALU_HYPRE_Solver solver,
                                 NALU_HYPRE_Real * loadbal )
 {
 #ifdef NALU_HYPRE_MIXEDINT
-   hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "ParaSails not usable in mixedint mode!");
-   return hypre_error_flag;
+   nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "ParaSails not usable in mixedint mode!");
+   return nalu_hypre_error_flag;
 #else
 
    Secret *secret = (Secret *) solver;
 
    *loadbal = secret->loadbal;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 #endif
 }
 
@@ -322,15 +322,15 @@ NALU_HYPRE_ParCSRParaSailsSetReuse(NALU_HYPRE_Solver solver,
                               NALU_HYPRE_Int    reuse   )
 {
 #ifdef NALU_HYPRE_MIXEDINT
-   hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "ParaSails not usable in mixedint mode!");
-   return hypre_error_flag;
+   nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "ParaSails not usable in mixedint mode!");
+   return nalu_hypre_error_flag;
 #else
 
    Secret *secret = (Secret *) solver;
 
    secret->reuse = reuse;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 #endif
 }
 
@@ -343,15 +343,15 @@ NALU_HYPRE_ParCSRParaSailsSetLogging(NALU_HYPRE_Solver solver,
                                 NALU_HYPRE_Int    logging )
 {
 #ifdef NALU_HYPRE_MIXEDINT
-   hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "ParaSails not usable in mixedint mode!");
-   return hypre_error_flag;
+   nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "ParaSails not usable in mixedint mode!");
+   return nalu_hypre_error_flag;
 #else
 
    Secret *secret = (Secret *) solver;
 
    secret->logging = logging;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 #endif
 }
 
@@ -371,18 +371,18 @@ NALU_HYPRE_Int
 NALU_HYPRE_ParaSailsCreate( MPI_Comm comm, NALU_HYPRE_Solver *solver )
 {
 #ifdef NALU_HYPRE_MIXEDINT
-   hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "ParaSails not usable in mixedint mode!");
-   return hypre_error_flag;
+   nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "ParaSails not usable in mixedint mode!");
+   return nalu_hypre_error_flag;
 #else
 
    Secret *secret;
 
-   secret = hypre_TAlloc(Secret, 1, NALU_HYPRE_MEMORY_HOST);
+   secret = nalu_hypre_TAlloc(Secret, 1, NALU_HYPRE_MEMORY_HOST);
 
    if (secret == NULL)
    {
-      hypre_error(NALU_HYPRE_ERROR_MEMORY);
-      return hypre_error_flag;
+      nalu_hypre_error(NALU_HYPRE_ERROR_MEMORY);
+      return nalu_hypre_error_flag;
    }
 
    secret->sym     = 1;
@@ -394,11 +394,11 @@ NALU_HYPRE_ParaSailsCreate( MPI_Comm comm, NALU_HYPRE_Solver *solver )
    secret->comm    = comm;
    secret->logging = 0;
 
-   hypre_ParaSailsCreate(comm, &secret->obj);
+   nalu_hypre_ParaSailsCreate(comm, &secret->obj);
 
    *solver = (NALU_HYPRE_Solver) secret;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 #endif
 }
 
@@ -410,18 +410,18 @@ NALU_HYPRE_Int
 NALU_HYPRE_ParaSailsDestroy( NALU_HYPRE_Solver solver )
 {
 #ifdef NALU_HYPRE_MIXEDINT
-   hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "ParaSails not usable in mixedint mode!");
-   return hypre_error_flag;
+   nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "ParaSails not usable in mixedint mode!");
+   return nalu_hypre_error_flag;
 #else
 
    Secret *secret;
 
    secret = (Secret *) solver;
-   hypre_ParaSailsDestroy(secret->obj);
+   nalu_hypre_ParaSailsDestroy(secret->obj);
 
-   hypre_TFree(secret, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(secret, NALU_HYPRE_MEMORY_HOST);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 #endif
 }
 
@@ -438,8 +438,8 @@ NALU_HYPRE_ParaSailsSetup( NALU_HYPRE_Solver solver,
                       NALU_HYPRE_ParVector x     )
 {
 #ifdef NALU_HYPRE_MIXEDINT
-   hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "ParaSails not usable in mixedint mode!");
-   return hypre_error_flag;
+   nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "ParaSails not usable in mixedint mode!");
+   return nalu_hypre_error_flag;
 #else
 
    static NALU_HYPRE_Int virgin = 1;
@@ -451,27 +451,27 @@ NALU_HYPRE_ParaSailsSetup( NALU_HYPRE_Solver solver,
 
    ierr = NALU_HYPRE_GetError(); NALU_HYPRE_ClearAllErrors();
    NALU_HYPRE_ConvertParCSRMatrixToDistributedMatrix( A, &mat );
-   if (hypre_error_flag) { return hypre_error_flag |= ierr; }
+   if (nalu_hypre_error_flag) { return nalu_hypre_error_flag |= ierr; }
 
    if (virgin || secret->reuse == 0) /* call set up at least once */
    {
       virgin = 0;
-      hypre_ParaSailsSetup(
+      nalu_hypre_ParaSailsSetup(
          secret->obj, mat, secret->sym, secret->thresh, secret->nlevels,
          secret->filter, secret->loadbal, secret->logging);
-      if (hypre_error_flag) { return hypre_error_flag |= ierr; }
+      if (nalu_hypre_error_flag) { return nalu_hypre_error_flag |= ierr; }
    }
    else /* reuse is true; this is a subsequent call */
    {
       /* reuse pattern: always use filter value of 0 and loadbal of 0 */
-      hypre_ParaSailsSetupValues(secret->obj, mat,
+      nalu_hypre_ParaSailsSetupValues(secret->obj, mat,
                                  0.0, 0.0, secret->logging);
-      if (hypre_error_flag) { return hypre_error_flag |= ierr; }
+      if (nalu_hypre_error_flag) { return nalu_hypre_error_flag |= ierr; }
    }
 
    NALU_HYPRE_DistributedMatrixDestroy(mat);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 #endif
 }
 /*--------------------------------------------------------------------------
@@ -485,19 +485,19 @@ NALU_HYPRE_ParaSailsSolve( NALU_HYPRE_Solver solver,
                       NALU_HYPRE_ParVector x     )
 {
 #ifdef NALU_HYPRE_MIXEDINT
-   hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "ParaSails not usable in mixedint mode!");
-   return hypre_error_flag;
+   nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "ParaSails not usable in mixedint mode!");
+   return nalu_hypre_error_flag;
 #else
 
    NALU_HYPRE_Real *rhs, *soln;
    Secret *secret = (Secret *) solver;
 
-   rhs  = hypre_VectorData(hypre_ParVectorLocalVector((hypre_ParVector *) b));
-   soln = hypre_VectorData(hypre_ParVectorLocalVector((hypre_ParVector *) x));
+   rhs  = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector((nalu_hypre_ParVector *) b));
+   soln = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector((nalu_hypre_ParVector *) x));
 
-   hypre_ParaSailsApply(secret->obj, rhs, soln);
+   nalu_hypre_ParaSailsApply(secret->obj, rhs, soln);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 #endif
 }
 
@@ -512,8 +512,8 @@ NALU_HYPRE_ParaSailsSetParams(NALU_HYPRE_Solver solver,
                          NALU_HYPRE_Int    nlevels )
 {
 #ifdef NALU_HYPRE_MIXEDINT
-   hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "ParaSails not usable in mixedint mode!");
-   return hypre_error_flag;
+   nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "ParaSails not usable in mixedint mode!");
+   return nalu_hypre_error_flag;
 #else
 
    Secret *secret = (Secret *) solver;
@@ -521,7 +521,7 @@ NALU_HYPRE_ParaSailsSetParams(NALU_HYPRE_Solver solver,
    secret->thresh  = thresh;
    secret->nlevels = nlevels;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 #endif
 }
 
@@ -536,15 +536,15 @@ NALU_HYPRE_ParaSailsSetThresh( NALU_HYPRE_Solver solver,
                           NALU_HYPRE_Real   thresh )
 {
 #ifdef NALU_HYPRE_MIXEDINT
-   hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "ParaSails not usable in mixedint mode!");
-   return hypre_error_flag;
+   nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "ParaSails not usable in mixedint mode!");
+   return nalu_hypre_error_flag;
 #else
 
    Secret *secret = (Secret *) solver;
 
    secret->thresh  = thresh;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 #endif
 }
 
@@ -553,15 +553,15 @@ NALU_HYPRE_ParaSailsGetThresh( NALU_HYPRE_Solver solver,
                           NALU_HYPRE_Real * thresh )
 {
 #ifdef NALU_HYPRE_MIXEDINT
-   hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "ParaSails not usable in mixedint mode!");
-   return hypre_error_flag;
+   nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "ParaSails not usable in mixedint mode!");
+   return nalu_hypre_error_flag;
 #else
 
    Secret *secret = (Secret *) solver;
 
    *thresh = secret->thresh;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 #endif
 }
 
@@ -576,15 +576,15 @@ NALU_HYPRE_ParaSailsSetNlevels( NALU_HYPRE_Solver solver,
                            NALU_HYPRE_Int    nlevels )
 {
 #ifdef NALU_HYPRE_MIXEDINT
-   hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "ParaSails not usable in mixedint mode!");
-   return hypre_error_flag;
+   nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "ParaSails not usable in mixedint mode!");
+   return nalu_hypre_error_flag;
 #else
 
    Secret *secret = (Secret *) solver;
 
    secret->nlevels  = nlevels;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 #endif
 }
 
@@ -593,15 +593,15 @@ NALU_HYPRE_ParaSailsGetNlevels( NALU_HYPRE_Solver solver,
                            NALU_HYPRE_Int  * nlevels )
 {
 #ifdef NALU_HYPRE_MIXEDINT
-   hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "ParaSails not usable in mixedint mode!");
-   return hypre_error_flag;
+   nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "ParaSails not usable in mixedint mode!");
+   return nalu_hypre_error_flag;
 #else
 
    Secret *secret = (Secret *) solver;
 
    *nlevels = secret->nlevels;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 #endif
 }
 
@@ -615,15 +615,15 @@ NALU_HYPRE_ParaSailsSetFilter(NALU_HYPRE_Solver solver,
                          NALU_HYPRE_Real   filter  )
 {
 #ifdef NALU_HYPRE_MIXEDINT
-   hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "ParaSails not usable in mixedint mode!");
-   return hypre_error_flag;
+   nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "ParaSails not usable in mixedint mode!");
+   return nalu_hypre_error_flag;
 #else
 
    Secret *secret = (Secret *) solver;
 
    secret->filter = filter;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 #endif
 }
 
@@ -632,15 +632,15 @@ NALU_HYPRE_ParaSailsGetFilter(NALU_HYPRE_Solver solver,
                          NALU_HYPRE_Real * filter  )
 {
 #ifdef NALU_HYPRE_MIXEDINT
-   hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "ParaSails not usable in mixedint mode!");
-   return hypre_error_flag;
+   nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "ParaSails not usable in mixedint mode!");
+   return nalu_hypre_error_flag;
 #else
 
    Secret *secret = (Secret *) solver;
 
    *filter = secret->filter;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 #endif
 }
 
@@ -655,15 +655,15 @@ NALU_HYPRE_ParaSailsSetSym(NALU_HYPRE_Solver solver,
                       NALU_HYPRE_Int    sym     )
 {
 #ifdef NALU_HYPRE_MIXEDINT
-   hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "ParaSails not usable in mixedint mode!");
-   return hypre_error_flag;
+   nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "ParaSails not usable in mixedint mode!");
+   return nalu_hypre_error_flag;
 #else
 
    Secret *secret = (Secret *) solver;
 
    secret->sym = sym;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 #endif
 }
 
@@ -672,15 +672,15 @@ NALU_HYPRE_ParaSailsGetSym(NALU_HYPRE_Solver solver,
                       NALU_HYPRE_Int  * sym     )
 {
 #ifdef NALU_HYPRE_MIXEDINT
-   hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "ParaSails not usable in mixedint mode!");
-   return hypre_error_flag;
+   nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "ParaSails not usable in mixedint mode!");
+   return nalu_hypre_error_flag;
 #else
 
    Secret *secret = (Secret *) solver;
 
    *sym = secret->sym;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 #endif
 }
 
@@ -693,15 +693,15 @@ NALU_HYPRE_ParaSailsSetLoadbal(NALU_HYPRE_Solver solver,
                           NALU_HYPRE_Real   loadbal )
 {
 #ifdef NALU_HYPRE_MIXEDINT
-   hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "ParaSails not usable in mixedint mode!");
-   return hypre_error_flag;
+   nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "ParaSails not usable in mixedint mode!");
+   return nalu_hypre_error_flag;
 #else
 
    Secret *secret = (Secret *) solver;
 
    secret->loadbal = loadbal;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 #endif
 }
 
@@ -710,15 +710,15 @@ NALU_HYPRE_ParaSailsGetLoadbal(NALU_HYPRE_Solver solver,
                           NALU_HYPRE_Real * loadbal )
 {
 #ifdef NALU_HYPRE_MIXEDINT
-   hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "ParaSails not usable in mixedint mode!");
-   return hypre_error_flag;
+   nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "ParaSails not usable in mixedint mode!");
+   return nalu_hypre_error_flag;
 #else
 
    Secret *secret = (Secret *) solver;
 
    *loadbal = secret->loadbal;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 #endif
 }
 
@@ -732,15 +732,15 @@ NALU_HYPRE_ParaSailsSetReuse(NALU_HYPRE_Solver solver,
                         NALU_HYPRE_Int    reuse   )
 {
 #ifdef NALU_HYPRE_MIXEDINT
-   hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "ParaSails not usable in mixedint mode!");
-   return hypre_error_flag;
+   nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "ParaSails not usable in mixedint mode!");
+   return nalu_hypre_error_flag;
 #else
 
    Secret *secret = (Secret *) solver;
 
    secret->reuse = reuse;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 #endif
 }
 
@@ -749,15 +749,15 @@ NALU_HYPRE_ParaSailsGetReuse(NALU_HYPRE_Solver solver,
                         NALU_HYPRE_Int  * reuse   )
 {
 #ifdef NALU_HYPRE_MIXEDINT
-   hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "ParaSails not usable in mixedint mode!");
-   return hypre_error_flag;
+   nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "ParaSails not usable in mixedint mode!");
+   return nalu_hypre_error_flag;
 #else
 
    Secret *secret = (Secret *) solver;
 
    *reuse = secret->reuse;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 #endif
 }
 
@@ -770,15 +770,15 @@ NALU_HYPRE_ParaSailsSetLogging(NALU_HYPRE_Solver solver,
                           NALU_HYPRE_Int    logging )
 {
 #ifdef NALU_HYPRE_MIXEDINT
-   hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "ParaSails not usable in mixedint mode!");
-   return hypre_error_flag;
+   nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "ParaSails not usable in mixedint mode!");
+   return nalu_hypre_error_flag;
 #else
 
    Secret *secret = (Secret *) solver;
 
    secret->logging = logging;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 #endif
 }
 
@@ -787,15 +787,15 @@ NALU_HYPRE_ParaSailsGetLogging(NALU_HYPRE_Solver solver,
                           NALU_HYPRE_Int  * logging )
 {
 #ifdef NALU_HYPRE_MIXEDINT
-   hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "ParaSails not usable in mixedint mode!");
-   return hypre_error_flag;
+   nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "ParaSails not usable in mixedint mode!");
+   return nalu_hypre_error_flag;
 #else
 
    Secret *secret = (Secret *) solver;
 
    *logging = secret->logging;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 #endif
 }
 
@@ -806,14 +806,14 @@ NALU_HYPRE_Int
 NALU_HYPRE_ParaSailsBuildIJMatrix(NALU_HYPRE_Solver solver, NALU_HYPRE_IJMatrix *pij_A)
 {
 #ifdef NALU_HYPRE_MIXEDINT
-   hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "ParaSails not usable in mixedint mode!");
-   return hypre_error_flag;
+   nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "ParaSails not usable in mixedint mode!");
+   return nalu_hypre_error_flag;
 #else
 
    Secret *secret = (Secret *) solver;
 
-   hypre_ParaSailsBuildIJMatrix(secret->obj, pij_A);
+   nalu_hypre_ParaSailsBuildIJMatrix(secret->obj, pij_A);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 #endif
 }

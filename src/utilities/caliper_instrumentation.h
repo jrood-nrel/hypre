@@ -29,8 +29,8 @@ extern "C++"
 }
 #endif
 
-static char hypre__levelname[16];
-static char hypre__markname[1024];
+static char nalu_hypre__levelname[16];
+static char nalu_hypre__markname[1024];
 
 #define NALU_HYPRE_ANNOTATE_FUNC_BEGIN          CALI_MARK_FUNCTION_BEGIN
 #define NALU_HYPRE_ANNOTATE_FUNC_END            CALI_MARK_FUNCTION_END
@@ -40,23 +40,23 @@ static char hypre__markname[1024];
 #define NALU_HYPRE_ANNOTATE_ITER_END(id)        CALI_MARK_ITERATION_END(id)
 #define NALU_HYPRE_ANNOTATE_REGION_BEGIN(...)\
 {\
-   hypre_sprintf(hypre__markname, __VA_ARGS__);\
-   CALI_MARK_BEGIN(hypre__markname);\
+   nalu_hypre_sprintf(nalu_hypre__markname, __VA_ARGS__);\
+   CALI_MARK_BEGIN(nalu_hypre__markname);\
 }
 #define NALU_HYPRE_ANNOTATE_REGION_END(...)\
 {\
-   hypre_sprintf(hypre__markname, __VA_ARGS__);\
-   CALI_MARK_END(hypre__markname);\
+   nalu_hypre_sprintf(nalu_hypre__markname, __VA_ARGS__);\
+   CALI_MARK_END(nalu_hypre__markname);\
 }
 #define NALU_HYPRE_ANNOTATE_MGLEVEL_BEGIN(lvl)\
 {\
-   hypre_sprintf(hypre__levelname, "MG level %d", lvl);\
-   CALI_MARK_BEGIN(hypre__levelname);\
+   nalu_hypre_sprintf(nalu_hypre__levelname, "MG level %d", lvl);\
+   CALI_MARK_BEGIN(nalu_hypre__levelname);\
 }
 #define NALU_HYPRE_ANNOTATE_MGLEVEL_END(lvl)\
 {\
-   hypre_sprintf(hypre__levelname, "MG level %d", lvl);\
-   CALI_MARK_END(hypre__levelname);\
+   nalu_hypre_sprintf(nalu_hypre__levelname, "MG level %d", lvl);\
+   CALI_MARK_END(nalu_hypre__levelname);\
 }
 
 #else

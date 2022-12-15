@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_Euclid.h"
+#include "_nalu_hypre_Euclid.h"
 /* #include "Euclid_dh.h" */
 /* #include "Factor_dh.h" */
 /* #include "Mat_dh.h" */
@@ -82,15 +82,15 @@ void iluk_mpi_pilu(Euclid_dh ctx)
     NALU_HYPRE_Int globalRow = row + beg_row;   /* global row number */
 
     if (debug) {
-      hypre_fprintf(logFile, "\nILU_pilu global: %i  old_Local: %i =========================================================\n", i+1+beg_rowP, row+1);
+      nalu_hypre_fprintf(logFile, "\nILU_pilu global: %i  old_Local: %i =========================================================\n", i+1+beg_rowP, row+1);
     }
 
     EuclidGetRow(ctx->A, globalRow, &len, &CVAL, &AVAL); CHECK_V_ERROR;
 
     if (debug) {
       NALU_HYPRE_Int h;
-      hypre_fprintf(logFile, "ILU_pilu  EuclidGetRow:\n");
-      for (h=0; h<len; ++h) hypre_fprintf(logFile, "    %i   %g\n", 1+CVAL[h], AVAL[h]);
+      nalu_hypre_fprintf(logFile, "ILU_pilu  EuclidGetRow:\n");
+      for (h=0; h<len; ++h) nalu_hypre_fprintf(logFile, "    %i   %g\n", 1+CVAL[h], AVAL[h]);
     }
 
 
@@ -146,16 +146,16 @@ void iluk_mpi_pilu(Euclid_dh ctx)
     } 
 
     if (debug) {
-      hypre_fprintf(logFile, "ILU_pilu  ");
+      nalu_hypre_fprintf(logFile, "ILU_pilu  ");
       while (count--) {
         SRecord *sr = SortedList_dhGetSmallest(slist); CHECK_V_ERROR;
         cval[idx] = sr->col;
         aval[idx] = sr->val;
         fill[idx] = sr->level;
-        hypre_fprintf(logFile, "%i,%i,%g ; ", 1+cval[idx], fill[idx], aval[idx]);
+        nalu_hypre_fprintf(logFile, "%i,%i,%g ; ", 1+cval[idx], fill[idx], aval[idx]);
         ++idx;
       }
-      hypre_fprintf(logFile, "\n");
+      nalu_hypre_fprintf(logFile, "\n");
     }
 
     else {
@@ -185,14 +185,14 @@ void iluk_mpi_pilu(Euclid_dh ctx)
       if (flag) {
         if (logFile != NULL) {
           NALU_HYPRE_Int k;
-          hypre_fprintf(logFile, "Failed to find diag in localRow %i (globalRow %i; ct= %i)\n   ", 
+          nalu_hypre_fprintf(logFile, "Failed to find diag in localRow %i (globalRow %i; ct= %i)\n   ", 
                                 1+i, i+1+beg_rowP, rp[i+1] - rp[i]);
           for (k=rp[i]; k<rp[i+1]; ++k) {
-            hypre_fprintf(logFile, "%i ", cval[i]+1);
+            nalu_hypre_fprintf(logFile, "%i ", cval[i]+1);
           }
-          hypre_fprintf(logFile, "\n\n");
+          nalu_hypre_fprintf(logFile, "\n\n");
         }
-        hypre_sprintf(msgBuf_dh, "failed to find diagonal for localRow: %i", 1+i);
+        nalu_hypre_sprintf(msgBuf_dh, "failed to find diagonal for localRow: %i", 1+i);
         SET_V_ERROR(msgBuf_dh);
       }
     }
@@ -205,7 +205,7 @@ void iluk_mpi_pilu(Euclid_dh ctx)
 
     /* check for zero diagonal */
     if (! aval[diag[i]]) {
-      hypre_sprintf(msgBuf_dh, "zero diagonal in local row %i", i+1);
+      nalu_hypre_sprintf(msgBuf_dh, "zero diagonal in local row %i", i+1);
       SET_V_ERROR(msgBuf_dh);
     }
 
@@ -256,7 +256,7 @@ void iluk_symbolic_row_private(NALU_HYPRE_Int localRow, NALU_HYPRE_Int len, NALU
       if (wasInserted) ++count;
 /*    } */
     if (debug) {
-      hypre_fprintf(logFile, "ILU_pilu   inserted from A: col= %i  val= %g\n",
+      nalu_hypre_fprintf(logFile, "ILU_pilu   inserted from A: col= %i  val= %g\n",
                                         1+CVAL[j], sr.val);
     }
   }
@@ -269,7 +269,7 @@ void iluk_symbolic_row_private(NALU_HYPRE_Int localRow, NALU_HYPRE_Int len, NALU
     SortedList_dhInsert(slist, &sr); CHECK_V_ERROR;
     ++count;
     if (debug) {
-      hypre_fprintf(logFile, "ILU_pilu   inserted missing diagonal: %i\n", 1+localRow+beg_row);
+      nalu_hypre_fprintf(logFile, "ILU_pilu   inserted missing diagonal: %i\n", 1+localRow+beg_row);
     }
   }
   ctx->stats[NZA_USED_STATS] += (NALU_HYPRE_Real)count;
@@ -284,7 +284,7 @@ void iluk_symbolic_row_private(NALU_HYPRE_Int localRow, NALU_HYPRE_Int len, NALU
       node = srPtr->col;
 
         if (debug) {
-          hypre_fprintf(logFile, "ILU_pilu   sf updating from row: %i\n", 1+srPtr->col);
+          nalu_hypre_fprintf(logFile, "ILU_pilu   sf updating from row: %i\n", 1+srPtr->col);
         }
 
       level_1 = srPtr->level;
@@ -304,7 +304,7 @@ void iluk_symbolic_row_private(NALU_HYPRE_Int localRow, NALU_HYPRE_Int len, NALU
           ExternalRows_dhGetRow(extRows, node, &len, &cvalPtr, 
                                             &fillPtr, &avalPtr); CHECK_V_ERROR;
           if (debug && len == 0) {
-            hypre_fprintf(stderr, "ILU_pilu  sf failed to get extern row: %i\n", 1+node);
+            nalu_hypre_fprintf(stderr, "ILU_pilu  sf failed to get extern row: %i\n", 1+node);
           }
         }
 
@@ -367,7 +367,7 @@ void iluk_numeric_row_private(NALU_HYPRE_Int new_row, ExternalRows_dh extRows,
       ExternalRows_dhGetRow(extRows, row, &len, &cvalPtr, 
                                             NULL, &avalPtr); CHECK_V_ERROR;
       if (debug && len == 0) {
-        hypre_fprintf(stderr, "ILU_pilu  failed to get extern row: %i\n", 1+row);
+        nalu_hypre_fprintf(stderr, "ILU_pilu  failed to get extern row: %i\n", 1+row);
       }
 
     }
@@ -377,7 +377,7 @@ void iluk_numeric_row_private(NALU_HYPRE_Int new_row, ExternalRows_dh extRows,
       sr.col = row;
       srPtr = SortedList_dhFind(slist, &sr); CHECK_V_ERROR;
       if (srPtr == NULL) {
-        hypre_sprintf(msgBuf_dh, "find failed for sr.col = %i while factoring local row= %i \n", 1+sr.col, new_row+1);
+        nalu_hypre_sprintf(msgBuf_dh, "find failed for sr.col = %i while factoring local row= %i \n", 1+sr.col, new_row+1);
         SET_V_ERROR(msgBuf_dh);
       }
 
@@ -391,7 +391,7 @@ void iluk_numeric_row_private(NALU_HYPRE_Int new_row, ExternalRows_dh extRows,
         srPtr->val = multiplier;
 
         if (debug) {
-          hypre_fprintf(logFile, "ILU_pilu   nf updating from row: %i; multiplier = %g\n", 1+srPtr->col, multiplier);
+          nalu_hypre_fprintf(logFile, "ILU_pilu   nf updating from row: %i; multiplier = %g\n", 1+srPtr->col, multiplier);
         }
 
         /* second, update from strict upper triangular portion of row */
@@ -407,7 +407,7 @@ void iluk_numeric_row_private(NALU_HYPRE_Int new_row, ExternalRows_dh extRows,
 
        else {
         if (debug) {
-          hypre_fprintf(logFile, "ILU_pilu   NO UPDATE from row: %i; srPtr->val = 0.0\n", 1+srPtr->col);
+          nalu_hypre_fprintf(logFile, "ILU_pilu   NO UPDATE from row: %i; srPtr->val = 0.0\n", 1+srPtr->col);
         }
        }
 

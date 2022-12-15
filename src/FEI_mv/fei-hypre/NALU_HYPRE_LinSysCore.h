@@ -755,8 +755,8 @@ class NALU_HYPRE_LinSysCore
    // temporary functions for testing purposes
    // ----------------------------------------------------------------------
 
-   friend void fei_hypre_test(int argc, char *argv[]);
-   friend void fei_hypre_domaindecomposition(int argc, char *argv[]);
+   friend void fei_nalu_hypre_test(int argc, char *argv[]);
+   friend void fei_nalu_hypre_domaindecomposition(int argc, char *argv[]);
 
 };
 

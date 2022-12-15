@@ -11,35 +11,35 @@
  *
  *****************************************************************************/
 /*--------------------------------------------------------------------------
- * hypre_FACData:
+ * nalu_hypre_FACData:
  *--------------------------------------------------------------------------*/
 
-#ifndef hypre_FAC_HEADER
-#define hypre_FAC_HEADER
+#ifndef nalu_hypre_FAC_HEADER
+#define nalu_hypre_FAC_HEADER
 
 typedef struct
 {
    MPI_Comm               comm;
 
    NALU_HYPRE_Int             *plevels;
-   hypre_Index           *prefinements;
+   nalu_hypre_Index           *prefinements;
 
    NALU_HYPRE_Int              max_levels;
    NALU_HYPRE_Int             *level_to_part;
    NALU_HYPRE_Int             *part_to_level;
-   hypre_Index           *refine_factors;       /* refine_factors[level] */
+   nalu_hypre_Index           *refine_factors;       /* refine_factors[level] */
 
-   hypre_SStructGrid    **grid_level;
-   hypre_SStructGraph   **graph_level;
+   nalu_hypre_SStructGrid    **grid_level;
+   nalu_hypre_SStructGraph   **graph_level;
 
-   hypre_SStructMatrix   *A_rap;
-   hypre_SStructMatrix  **A_level;
-   hypre_SStructVector  **b_level;
-   hypre_SStructVector  **x_level;
-   hypre_SStructVector  **r_level;
-   hypre_SStructVector  **e_level;
-   hypre_SStructPVector **tx_level;
-   hypre_SStructVector   *tx;
+   nalu_hypre_SStructMatrix   *A_rap;
+   nalu_hypre_SStructMatrix  **A_level;
+   nalu_hypre_SStructVector  **b_level;
+   nalu_hypre_SStructVector  **x_level;
+   nalu_hypre_SStructVector  **r_level;
+   nalu_hypre_SStructVector  **e_level;
+   nalu_hypre_SStructPVector **tx_level;
+   nalu_hypre_SStructVector   *tx;
 
 
    void                 **matvec_data_level;
@@ -72,21 +72,21 @@ typedef struct
    NALU_HYPRE_Real            *rel_norms;
 
 
-} hypre_FACData;
+} nalu_hypre_FACData;
 
 /*--------------------------------------------------------------------------
- * Accessor macros: hypre_FACData
+ * Accessor macros: nalu_hypre_FACData
  *--------------------------------------------------------------------------*/
 
-#define hypre_FACDataMaxLevels(fac_data)\
+#define nalu_hypre_FACDataMaxLevels(fac_data)\
 ((fac_data) -> max_levels)
-#define hypre_FACDataLevelToPart(fac_data)\
+#define nalu_hypre_FACDataLevelToPart(fac_data)\
 ((fac_data) -> level_to_part)
-#define hypre_FACDataPartToLevel(fac_data)\
+#define nalu_hypre_FACDataPartToLevel(fac_data)\
 ((fac_data) -> part_to_level)
-#define hypre_FACDataRefineFactors(fac_data)\
+#define nalu_hypre_FACDataRefineFactors(fac_data)\
 ((fac_data) -> refine_factors)
-#define hypre_FACDataRefineFactorsLevel(fac_data, level)\
+#define nalu_hypre_FACDataRefineFactorsLevel(fac_data, level)\
 ((fac_data) -> refinements[level])
 
 

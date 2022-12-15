@@ -13,5 +13,5 @@ typedef struct
    NALU_HYPRE_BigInt      *cols;
    NALU_HYPRE_Real   *data;
 
-} hypre_MaxwellOffProcRow;
+} nalu_hypre_MaxwellOffProcRow;
 

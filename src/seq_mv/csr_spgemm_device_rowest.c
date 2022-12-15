@@ -19,7 +19,7 @@
  *- - - - - - - - - - - - - - - - - - - - - - - - - - */
 template <char type>
 static __device__ __forceinline__
-void hypre_rownnz_naive_rowi( NALU_HYPRE_Int  rowi,
+void nalu_hypre_rownnz_naive_rowi( NALU_HYPRE_Int  rowi,
                               NALU_HYPRE_Int  lane_id,
                               NALU_HYPRE_Int *ia,
                               NALU_HYPRE_Int *ja,
@@ -61,7 +61,7 @@ void hypre_rownnz_naive_rowi( NALU_HYPRE_Int  rowi,
 
 template <char type, NALU_HYPRE_Int NUM_WARPS_PER_BLOCK>
 __global__
-void hypre_spgemm_rownnz_naive( hypre_DeviceItem &item,
+void nalu_hypre_spgemm_rownnz_naive( nalu_hypre_DeviceItem &item,
                                 NALU_HYPRE_Int  M,
                                 NALU_HYPRE_Int  N,
                                 NALU_HYPRE_Int *ia,
@@ -77,7 +77,7 @@ void hypre_spgemm_rownnz_naive( hypre_DeviceItem &item,
    /* lane id inside the warp */
    volatile const NALU_HYPRE_Int lane_id = get_group_lane_id(item);
 
-   hypre_device_assert(blockDim.x * blockDim.y == NALU_HYPRE_WARP_SIZE);
+   nalu_hypre_device_assert(blockDim.x * blockDim.y == NALU_HYPRE_WARP_SIZE);
 
    for (NALU_HYPRE_Int i = blockIdx.x * NUM_WARPS_PER_BLOCK + warp_id;
         i < M;
@@ -85,7 +85,7 @@ void hypre_spgemm_rownnz_naive( hypre_DeviceItem &item,
    {
       NALU_HYPRE_Int jU, jL;
 
-      hypre_rownnz_naive_rowi<type>(i, lane_id, ia, ja, ib, jU, jL);
+      nalu_hypre_rownnz_naive_rowi<type>(i, lane_id, ia, ja, ib, jU, jL);
 
       if (type == 'U' || type == 'B')
       {
@@ -117,14 +117,14 @@ void hypre_spgemm_rownnz_naive( hypre_DeviceItem &item,
                        COHEN
  *- - - - - - - - - - - - - - - - - - - - - - - - - - */
 __global__
-void hypre_expdistfromuniform( hypre_DeviceItem &item,
+void nalu_hypre_expdistfromuniform( nalu_hypre_DeviceItem &item,
                                NALU_HYPRE_Int   n,
                                float      *x )
 {
-   const NALU_HYPRE_Int global_thread_id  = hypre_gpu_get_grid_thread_id<3, 1>(item);
-   const NALU_HYPRE_Int total_num_threads = hypre_gpu_get_grid_num_threads<3, 1>(item);
+   const NALU_HYPRE_Int global_thread_id  = nalu_hypre_gpu_get_grid_thread_id<3, 1>(item);
+   const NALU_HYPRE_Int total_num_threads = nalu_hypre_gpu_get_grid_num_threads<3, 1>(item);
 
-   hypre_device_assert(blockDim.x * blockDim.y == NALU_HYPRE_WARP_SIZE);
+   nalu_hypre_device_assert(blockDim.x * blockDim.y == NALU_HYPRE_WARP_SIZE);
 
    for (NALU_HYPRE_Int i = global_thread_id; i < n; i += total_num_threads)
    {
@@ -135,7 +135,7 @@ void hypre_expdistfromuniform( hypre_DeviceItem &item,
 /* T = float: single precision should be enough */
 template <typename T, NALU_HYPRE_Int NUM_WARPS_PER_BLOCK, NALU_HYPRE_Int SHMEM_SIZE_PER_WARP, NALU_HYPRE_Int layer>
 __global__
-void hypre_cohen_rowest_kernel( hypre_DeviceItem &item,
+void nalu_hypre_cohen_rowest_kernel( nalu_hypre_DeviceItem &item,
                                 NALU_HYPRE_Int  nrow,
                                 NALU_HYPRE_Int *rowptr,
                                 NALU_HYPRE_Int *colidx,
@@ -157,9 +157,9 @@ void hypre_cohen_rowest_kernel( hypre_DeviceItem &item,
    volatile NALU_HYPRE_Int  *warp_s_col = s_col + warp_id * SHMEM_SIZE_PER_WARP;
 #endif
 
-   hypre_device_assert(blockDim.z              == NUM_WARPS_PER_BLOCK);
-   hypre_device_assert(blockDim.x * blockDim.y == NALU_HYPRE_WARP_SIZE);
-   hypre_device_assert(sizeof(T) == sizeof(float));
+   nalu_hypre_device_assert(blockDim.z              == NUM_WARPS_PER_BLOCK);
+   nalu_hypre_device_assert(blockDim.x * blockDim.y == NALU_HYPRE_WARP_SIZE);
+   nalu_hypre_device_assert(sizeof(T) == sizeof(float));
 
    for (NALU_HYPRE_Int i = blockIdx.x * NUM_WARPS_PER_BLOCK + warp_id;
         i < nrow;
@@ -222,7 +222,7 @@ void hypre_cohen_rowest_kernel( hypre_DeviceItem &item,
                NALU_HYPRE_Int colk = warp_shuffle_sync(item, NALU_HYPRE_WARP_FULL_MASK, col, k);
                if (colk == -1)
                {
-                  hypre_device_assert(j + NALU_HYPRE_WARP_SIZE >= iend);
+                  nalu_hypre_device_assert(j + NALU_HYPRE_WARP_SIZE >= iend);
 
                   break;
                }
@@ -290,7 +290,7 @@ void hypre_cohen_rowest_kernel( hypre_DeviceItem &item,
 }
 
 template <typename T, NALU_HYPRE_Int BDIMX, NALU_HYPRE_Int BDIMY, NALU_HYPRE_Int NUM_WARPS_PER_BLOCK, NALU_HYPRE_Int SHMEM_SIZE_PER_WARP>
-void hypre_spgemm_rownnz_cohen( NALU_HYPRE_Int  M,
+void nalu_hypre_spgemm_rownnz_cohen( NALU_HYPRE_Int  M,
                                 NALU_HYPRE_Int  K,
                                 NALU_HYPRE_Int  N,
                                 NALU_HYPRE_Int *d_ia,
@@ -305,51 +305,51 @@ void hypre_spgemm_rownnz_cohen( NALU_HYPRE_Int  M,
                                 T         *work )
 {
    dim3 bDim(BDIMX, BDIMY, NUM_WARPS_PER_BLOCK);
-   hypre_assert(bDim.x * bDim.y == NALU_HYPRE_WARP_SIZE);
+   nalu_hypre_assert(bDim.x * bDim.y == NALU_HYPRE_WARP_SIZE);
 
    T *d_V1, *d_V2, *d_V3;
 
    d_V1 = work;
    d_V2 = d_V1 + nsamples * N;
-   //d_V1 = hypre_TAlloc(T, nsamples*N, NALU_HYPRE_MEMORY_DEVICE);
-   //d_V2 = hypre_TAlloc(T, nsamples*K, NALU_HYPRE_MEMORY_DEVICE);
+   //d_V1 = nalu_hypre_TAlloc(T, nsamples*N, NALU_HYPRE_MEMORY_DEVICE);
+   //d_V2 = nalu_hypre_TAlloc(T, nsamples*K, NALU_HYPRE_MEMORY_DEVICE);
 
 #ifdef NALU_HYPRE_SPGEMM_TIMING
    NALU_HYPRE_Real t1, t2;
-   t1 = hypre_MPI_Wtime();
+   t1 = nalu_hypre_MPI_Wtime();
 #endif
 
    /* random V1: uniform --> exp */
-   hypre_CurandUniformSingle(nsamples * N, d_V1, 0, 0, 0, 0);
+   nalu_hypre_CurandUniformSingle(nsamples * N, d_V1, 0, 0, 0, 0);
 
 #ifdef NALU_HYPRE_SPGEMM_TIMING
-   hypre_ForceSyncComputeStream(hypre_handle());
-   t2 = hypre_MPI_Wtime() - t1;
+   nalu_hypre_ForceSyncComputeStream(nalu_hypre_handle());
+   t2 = nalu_hypre_MPI_Wtime() - t1;
    NALU_HYPRE_SPGEMM_PRINT("Curand time %f\n", t2);
 #endif
 
    dim3 gDim( (nsamples * N + bDim.z * NALU_HYPRE_WARP_SIZE - 1) / (bDim.z * NALU_HYPRE_WARP_SIZE) );
 
-   NALU_HYPRE_GPU_LAUNCH( hypre_expdistfromuniform, gDim, bDim, nsamples * N, d_V1 );
+   NALU_HYPRE_GPU_LAUNCH( nalu_hypre_expdistfromuniform, gDim, bDim, nsamples * N, d_V1 );
 
    /* step-1: layer 3-2 */
    gDim.x = (K + bDim.z - 1) / bDim.z;
-   NALU_HYPRE_GPU_LAUNCH( (hypre_cohen_rowest_kernel<T, NUM_WARPS_PER_BLOCK, SHMEM_SIZE_PER_WARP, 2>),
+   NALU_HYPRE_GPU_LAUNCH( (nalu_hypre_cohen_rowest_kernel<T, NUM_WARPS_PER_BLOCK, SHMEM_SIZE_PER_WARP, 2>),
                      gDim, bDim,
                      K, d_ib, d_jb, d_V1, d_V2, NULL, nsamples, NULL, NULL, -1.0);
 
-   //hypre_TFree(d_V1, NALU_HYPRE_MEMORY_DEVICE);
+   //nalu_hypre_TFree(d_V1, NALU_HYPRE_MEMORY_DEVICE);
 
    /* step-2: layer 2-1 */
    d_V3 = (T*) d_rc;
 
    gDim.x = (M + bDim.z - 1) / bDim.z;
-   NALU_HYPRE_GPU_LAUNCH( (hypre_cohen_rowest_kernel<T, NUM_WARPS_PER_BLOCK, SHMEM_SIZE_PER_WARP, 1>),
+   NALU_HYPRE_GPU_LAUNCH( (nalu_hypre_cohen_rowest_kernel<T, NUM_WARPS_PER_BLOCK, SHMEM_SIZE_PER_WARP, 1>),
                      gDim, bDim,
                      M, d_ia, d_ja, d_V2, d_V3, d_rc, nsamples, d_low, d_upp, mult_factor);
 
    /* done */
-   //hypre_TFree(d_V2, NALU_HYPRE_MEMORY_DEVICE);
+   //nalu_hypre_TFree(d_V2, NALU_HYPRE_MEMORY_DEVICE);
 }
 
 
@@ -365,15 +365,15 @@ hypreDevice_CSRSpGemmRownnzEstimate( NALU_HYPRE_Int  m,
                                      NALU_HYPRE_Int  row_est_mtd )
 {
 #ifdef NALU_HYPRE_SPGEMM_NVTX
-   hypre_GpuProfilingPushRange("CSRSpGemmRowEstimate");
+   nalu_hypre_GpuProfilingPushRange("CSRSpGemmRowEstimate");
 #endif
 
 #ifdef NALU_HYPRE_PROFILE
-   hypre_profile_times[NALU_HYPRE_TIMER_ID_SPGEMM_ROWNNZ] -= hypre_MPI_Wtime();
+   nalu_hypre_profile_times[NALU_HYPRE_TIMER_ID_SPGEMM_ROWNNZ] -= nalu_hypre_MPI_Wtime();
 #endif
 
 #ifdef NALU_HYPRE_SPGEMM_TIMING
-   NALU_HYPRE_Real t1 = hypre_MPI_Wtime();
+   NALU_HYPRE_Real t1 = nalu_hypre_MPI_Wtime();
 #endif
 
    const NALU_HYPRE_Int num_warps_per_block =  16;
@@ -383,76 +383,76 @@ hypreDevice_CSRSpGemmRownnzEstimate( NALU_HYPRE_Int  m,
 
    /* CUDA kernel configurations */
    dim3 bDim(BDIMX, BDIMY, num_warps_per_block);
-   hypre_assert(bDim.x * bDim.y == NALU_HYPRE_WARP_SIZE);
+   nalu_hypre_assert(bDim.x * bDim.y == NALU_HYPRE_WARP_SIZE);
    // for cases where one WARP works on a row
    dim3 gDim( (m + bDim.z - 1) / bDim.z );
 
-   size_t cohen_nsamples = hypre_HandleSpgemmRownnzEstimateNsamples(hypre_handle());
-   float  cohen_mult     = hypre_HandleSpgemmRownnzEstimateMultFactor(hypre_handle());
+   size_t cohen_nsamples = nalu_hypre_HandleSpgemmRownnzEstimateNsamples(nalu_hypre_handle());
+   float  cohen_mult     = nalu_hypre_HandleSpgemmRownnzEstimateMultFactor(nalu_hypre_handle());
 
-   //hypre_printf("Cohen Nsamples %d, mult %f\n", cohen_nsamples, cohen_mult);
+   //nalu_hypre_printf("Cohen Nsamples %d, mult %f\n", cohen_nsamples, cohen_mult);
 
    if (row_est_mtd == 1)
    {
       /* naive overestimate */
-      NALU_HYPRE_GPU_LAUNCH( (hypre_spgemm_rownnz_naive<'U', num_warps_per_block>), gDim, bDim,
+      NALU_HYPRE_GPU_LAUNCH( (nalu_hypre_spgemm_rownnz_naive<'U', num_warps_per_block>), gDim, bDim,
                         m, /*k,*/ n, d_ia, d_ja, d_ib, d_jb, NULL, d_rc );
    }
    else if (row_est_mtd == 2)
    {
       /* naive underestimate */
-      NALU_HYPRE_GPU_LAUNCH( (hypre_spgemm_rownnz_naive<'L', num_warps_per_block>), gDim, bDim,
+      NALU_HYPRE_GPU_LAUNCH( (nalu_hypre_spgemm_rownnz_naive<'L', num_warps_per_block>), gDim, bDim,
                         m, /*k,*/ n, d_ia, d_ja, d_ib, d_jb, d_rc, NULL );
    }
    else if (row_est_mtd == 3)
    {
       /* [optional] first run naive estimate for naive lower and upper bounds,
                     which will be given to Cohen's alg as corrections */
-      char *work_mem = hypre_TAlloc(char,
+      char *work_mem = nalu_hypre_TAlloc(char,
                                     cohen_nsamples * (n + k) * sizeof(float) + 2 * m * sizeof(NALU_HYPRE_Int),
                                     NALU_HYPRE_MEMORY_DEVICE);
       char *work_mem_saved = work_mem;
 
-      //NALU_HYPRE_Int *d_low_upp = hypre_TAlloc(NALU_HYPRE_Int, 2 * m, NALU_HYPRE_MEMORY_DEVICE);
+      //NALU_HYPRE_Int *d_low_upp = nalu_hypre_TAlloc(NALU_HYPRE_Int, 2 * m, NALU_HYPRE_MEMORY_DEVICE);
       NALU_HYPRE_Int *d_low_upp = (NALU_HYPRE_Int *) work_mem;
       work_mem += 2 * m * sizeof(NALU_HYPRE_Int);
 
       NALU_HYPRE_Int *d_low = d_low_upp;
       NALU_HYPRE_Int *d_upp = d_low_upp + m;
 
-      NALU_HYPRE_GPU_LAUNCH( (hypre_spgemm_rownnz_naive<'B', num_warps_per_block>), gDim, bDim,
+      NALU_HYPRE_GPU_LAUNCH( (nalu_hypre_spgemm_rownnz_naive<'B', num_warps_per_block>), gDim, bDim,
                         m, /*k,*/ n, d_ia, d_ja, d_ib, d_jb, d_low, d_upp );
 
       /* Cohen's algorithm, stochastic approach */
-      hypre_spgemm_rownnz_cohen<float, BDIMX, BDIMY, num_warps_per_block, shmem_size_per_warp>
+      nalu_hypre_spgemm_rownnz_cohen<float, BDIMX, BDIMY, num_warps_per_block, shmem_size_per_warp>
       (m, k, n, d_ia, d_ja, d_ib, d_jb, d_low, d_upp, d_rc, cohen_nsamples, cohen_mult,
        (float *)work_mem);
 
-      //hypre_TFree(d_low_upp, NALU_HYPRE_MEMORY_DEVICE);
-      hypre_TFree(work_mem_saved, NALU_HYPRE_MEMORY_DEVICE);
+      //nalu_hypre_TFree(d_low_upp, NALU_HYPRE_MEMORY_DEVICE);
+      nalu_hypre_TFree(work_mem_saved, NALU_HYPRE_MEMORY_DEVICE);
    }
    else
    {
       char msg[256];
-      hypre_sprintf(msg, "Unknown row nnz estimation method %d! \n", row_est_mtd);
-      hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, msg);
+      nalu_hypre_sprintf(msg, "Unknown row nnz estimation method %d! \n", row_est_mtd);
+      nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, msg);
    }
 
 #ifdef NALU_HYPRE_SPGEMM_TIMING
-   hypre_ForceSyncComputeStream(hypre_handle());
-   NALU_HYPRE_Real t2 = hypre_MPI_Wtime() - t1;
+   nalu_hypre_ForceSyncComputeStream(nalu_hypre_handle());
+   NALU_HYPRE_Real t2 = nalu_hypre_MPI_Wtime() - t1;
    NALU_HYPRE_SPGEMM_PRINT("RownnzEst time %f\n", t2);
 #endif
 
 #ifdef NALU_HYPRE_PROFILE
-   hypre_profile_times[NALU_HYPRE_TIMER_ID_SPGEMM_ROWNNZ] += hypre_MPI_Wtime();
+   nalu_hypre_profile_times[NALU_HYPRE_TIMER_ID_SPGEMM_ROWNNZ] += nalu_hypre_MPI_Wtime();
 #endif
 
 #ifdef NALU_HYPRE_SPGEMM_NVTX
-   hypre_GpuProfilingPopRange();
+   nalu_hypre_GpuProfilingPopRange();
 #endif
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 #endif /* NALU_HYPRE_USING_CUDA  || defined(NALU_HYPRE_USING_HIP) */

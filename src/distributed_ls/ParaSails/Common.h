@@ -16,7 +16,7 @@
 
 #if 1 /* HYPRE */
 #include "NALU_HYPRE_config.h"
-#include "_hypre_utilities.h"
+#include "_nalu_hypre_utilities.h"
 #include "fortran.h"
 #ifdef NALU_HYPRE_USING_ESSL
 #define ESSL
@@ -43,9 +43,9 @@
 
 #define PARASAILS_EXIT              \
 {                                   \
-   hypre_fprintf(stderr, "Exiting...\n"); \
+   nalu_hypre_fprintf(stderr, "Exiting...\n"); \
    fflush(NULL);                    \
-   hypre_MPI_Abort(hypre_MPI_COMM_WORLD, -1);   \
+   nalu_hypre_MPI_Abort(nalu_hypre_MPI_COMM_WORLD, -1);   \
 }
 
 #endif /* _COMMON_H */

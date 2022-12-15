@@ -10,15 +10,15 @@
 #include <stdio.h>
 #include <math.h>
 
-#include "utilities/_hypre_utilities.h"
+#include "utilities/_nalu_hypre_utilities.h"
 #include "NALU_HYPRE.h"
 #include "IJ_mv/NALU_HYPRE_IJ_mv.h"
 #include "parcsr_mv/NALU_HYPRE_parcsr_mv.h"
-#include "parcsr_mv/_hypre_parcsr_mv.h"
+#include "parcsr_mv/_nalu_hypre_parcsr_mv.h"
 #include "parcsr_ls/NALU_HYPRE_parcsr_ls.h"
 
 #include "NALU_HYPRE_FEI.h"
-#include "_hypre_FEI.h"
+#include "_nalu_hypre_FEI.h"
 
 /*--------------------------------------------------------------------------
  * NALU_HYPRE_ParCSRBiCGSCreate
@@ -26,7 +26,7 @@
 
 int NALU_HYPRE_ParCSRBiCGSCreate( MPI_Comm comm, NALU_HYPRE_Solver *solver )
 {
-   *solver = (NALU_HYPRE_Solver) hypre_BiCGSCreate( );
+   *solver = (NALU_HYPRE_Solver) nalu_hypre_BiCGSCreate( );
 
    return 0;
 }
@@ -37,7 +37,7 @@ int NALU_HYPRE_ParCSRBiCGSCreate( MPI_Comm comm, NALU_HYPRE_Solver *solver )
 
 int NALU_HYPRE_ParCSRBiCGSDestroy( NALU_HYPRE_Solver solver )
 {
-   return( hypre_BiCGSDestroy( (void *) solver ) );
+   return( nalu_hypre_BiCGSDestroy( (void *) solver ) );
 }
 
 /*--------------------------------------------------------------------------
@@ -47,7 +47,7 @@ int NALU_HYPRE_ParCSRBiCGSDestroy( NALU_HYPRE_Solver solver )
 int NALU_HYPRE_ParCSRBiCGSSetup( NALU_HYPRE_Solver solver, NALU_HYPRE_ParCSRMatrix A,
                                NALU_HYPRE_ParVector b, NALU_HYPRE_ParVector x      )
 {
-   return( hypre_BiCGSSetup( (void *) solver, (void *) A, (void *) b,
+   return( nalu_hypre_BiCGSSetup( (void *) solver, (void *) A, (void *) b,
                                  (void *) x ) );
 }
 
@@ -58,7 +58,7 @@ int NALU_HYPRE_ParCSRBiCGSSetup( NALU_HYPRE_Solver solver, NALU_HYPRE_ParCSRMatr
 int NALU_HYPRE_ParCSRBiCGSSolve( NALU_HYPRE_Solver solver, NALU_HYPRE_ParCSRMatrix A,
                                 NALU_HYPRE_ParVector b, NALU_HYPRE_ParVector x      )
 {
-   return( hypre_BiCGSSolve( (void *) solver, (void *) A,
+   return( nalu_hypre_BiCGSSolve( (void *) solver, (void *) A,
                                  (void *) b, (void *) x ) );
 }
 
@@ -68,7 +68,7 @@ int NALU_HYPRE_ParCSRBiCGSSolve( NALU_HYPRE_Solver solver, NALU_HYPRE_ParCSRMatr
 
 int NALU_HYPRE_ParCSRBiCGSSetTol( NALU_HYPRE_Solver solver, double tol    )
 {
-   return( hypre_BiCGSSetTol( (void *) solver, tol ) );
+   return( nalu_hypre_BiCGSSetTol( (void *) solver, tol ) );
 }
 
 /*--------------------------------------------------------------------------
@@ -77,7 +77,7 @@ int NALU_HYPRE_ParCSRBiCGSSetTol( NALU_HYPRE_Solver solver, double tol    )
 
 int NALU_HYPRE_ParCSRBiCGSSetMaxIter( NALU_HYPRE_Solver solver, int max_iter )
 {
-   return( hypre_BiCGSSetMaxIter( (void *) solver, max_iter ) );
+   return( nalu_hypre_BiCGSSetMaxIter( (void *) solver, max_iter ) );
 }
 
 /*--------------------------------------------------------------------------
@@ -86,7 +86,7 @@ int NALU_HYPRE_ParCSRBiCGSSetMaxIter( NALU_HYPRE_Solver solver, int max_iter )
 
 int NALU_HYPRE_ParCSRBiCGSSetStopCrit( NALU_HYPRE_Solver solver, int stop_crit )
 {
-   return( hypre_BiCGSSetStopCrit( (void *) solver, stop_crit ) );
+   return( nalu_hypre_BiCGSSetStopCrit( (void *) solver, stop_crit ) );
 }
 
 /*--------------------------------------------------------------------------
@@ -100,7 +100,7 @@ int NALU_HYPRE_ParCSRBiCGSSetPrecond( NALU_HYPRE_Solver  solver,
 			       NALU_HYPRE_ParVector b, NALU_HYPRE_ParVector x),
           void               *precond_data )
 {
-   return( hypre_BiCGSSetPrecond( (void *) solver,
+   return( nalu_hypre_BiCGSSetPrecond( (void *) solver,
 								  (NALU_HYPRE_Int (*)(void*,void*,void*,void*))precond,
 								  (NALU_HYPRE_Int (*)(void*,void*,void*,void*))precond_setup,
 								  precond_data ) );
@@ -112,7 +112,7 @@ int NALU_HYPRE_ParCSRBiCGSSetPrecond( NALU_HYPRE_Solver  solver,
 
 int NALU_HYPRE_ParCSRBiCGSSetLogging( NALU_HYPRE_Solver solver, int logging)
 {
-   return( hypre_BiCGSSetLogging( (void *) solver, logging ) );
+   return( nalu_hypre_BiCGSSetLogging( (void *) solver, logging ) );
 }
 
 /*--------------------------------------------------------------------------
@@ -121,7 +121,7 @@ int NALU_HYPRE_ParCSRBiCGSSetLogging( NALU_HYPRE_Solver solver, int logging)
 
 int NALU_HYPRE_ParCSRBiCGSGetNumIterations(NALU_HYPRE_Solver solver,int *num_iterations)
 {
-   return( hypre_BiCGSGetNumIterations( (void *) solver, num_iterations ) );
+   return( nalu_hypre_BiCGSGetNumIterations( (void *) solver, num_iterations ) );
 }
 
 /*--------------------------------------------------------------------------
@@ -131,6 +131,6 @@ int NALU_HYPRE_ParCSRBiCGSGetNumIterations(NALU_HYPRE_Solver solver,int *num_ite
 int NALU_HYPRE_ParCSRBiCGSGetFinalRelativeResidualNorm( NALU_HYPRE_Solver  solver,
                                                        double *norm   )
 {
-   return( hypre_BiCGSGetFinalRelativeResidualNorm( (void *) solver, norm ) );
+   return( nalu_hypre_BiCGSGetFinalRelativeResidualNorm( (void *) solver, norm ) );
 }
 

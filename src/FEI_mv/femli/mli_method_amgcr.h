@@ -14,8 +14,8 @@
 #ifndef __MLIMETHODAMGCRH__
 #define __MLIMETHODAMGCRH__
 
-#include "_hypre_utilities.h"
-#include "_hypre_parcsr_mv.h"
+#include "_nalu_hypre_utilities.h"
+#include "_nalu_hypre_parcsr_mv.h"
 #include "mli.h"
 #include "mli_matrix.h"
 #include "mli_method.h"

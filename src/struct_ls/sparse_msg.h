@@ -11,11 +11,11 @@
  *
  *****************************************************************************/
 
-#ifndef hypre_SparseMSG_HEADER
-#define hypre_SparseMSG_HEADER
+#ifndef nalu_hypre_SparseMSG_HEADER
+#define nalu_hypre_SparseMSG_HEADER
 
 /*--------------------------------------------------------------------------
- * hypre_SparseMSGData:
+ * nalu_hypre_SparseMSGData:
  *--------------------------------------------------------------------------*/
 
 typedef struct
@@ -40,31 +40,31 @@ typedef struct
    NALU_HYPRE_Int          num_all_grids;
    NALU_HYPRE_Int          num_levels;
 
-   hypre_StructGrid    **grid_array;
-   hypre_StructGrid    **Px_grid_array;
-   hypre_StructGrid    **Py_grid_array;
-   hypre_StructGrid    **Pz_grid_array;
+   nalu_hypre_StructGrid    **grid_array;
+   nalu_hypre_StructGrid    **Px_grid_array;
+   nalu_hypre_StructGrid    **Py_grid_array;
+   nalu_hypre_StructGrid    **Pz_grid_array;
 
    NALU_HYPRE_MemoryLocation  memory_location; /* memory location of data */
    NALU_HYPRE_Real           *data;
-   hypre_StructMatrix  **A_array;
-   hypre_StructMatrix  **Px_array;
-   hypre_StructMatrix  **Py_array;
-   hypre_StructMatrix  **Pz_array;
-   hypre_StructMatrix  **RTx_array;
-   hypre_StructMatrix  **RTy_array;
-   hypre_StructMatrix  **RTz_array;
-   hypre_StructVector  **b_array;
-   hypre_StructVector  **x_array;
+   nalu_hypre_StructMatrix  **A_array;
+   nalu_hypre_StructMatrix  **Px_array;
+   nalu_hypre_StructMatrix  **Py_array;
+   nalu_hypre_StructMatrix  **Pz_array;
+   nalu_hypre_StructMatrix  **RTx_array;
+   nalu_hypre_StructMatrix  **RTy_array;
+   nalu_hypre_StructMatrix  **RTz_array;
+   nalu_hypre_StructVector  **b_array;
+   nalu_hypre_StructVector  **x_array;
 
    /* temp vectors */
-   hypre_StructVector  **t_array;
-   hypre_StructVector  **r_array;
-   hypre_StructVector  **e_array;
+   nalu_hypre_StructVector  **t_array;
+   nalu_hypre_StructVector  **r_array;
+   nalu_hypre_StructVector  **e_array;
 
-   hypre_StructVector  **visitx_array;
-   hypre_StructVector  **visity_array;
-   hypre_StructVector  **visitz_array;
+   nalu_hypre_StructVector  **visitx_array;
+   nalu_hypre_StructVector  **visity_array;
+   nalu_hypre_StructVector  **visitz_array;
    NALU_HYPRE_Int            *grid_on;
 
    void                **relax_array;
@@ -86,13 +86,13 @@ typedef struct
    NALU_HYPRE_Real           *norms;
    NALU_HYPRE_Real           *rel_norms;
 
-} hypre_SparseMSGData;
+} nalu_hypre_SparseMSGData;
 
 /*--------------------------------------------------------------------------
  * Utility routines:
  *--------------------------------------------------------------------------*/
 
-#define hypre_SparseMSGMapIndex(lx, ly, lz, nl, index) \
+#define nalu_hypre_SparseMSGMapIndex(lx, ly, lz, nl, index) \
 index = (lx) + ((ly) * nl[0]) + ((lz) * nl[0] * nl[1])
 
 #endif

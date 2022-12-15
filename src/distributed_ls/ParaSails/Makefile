@@ -22,7 +22,7 @@ HEADERS =\
  ConjGrad.h\
  DiagScale.h\
  Hash.h\
- hypre_ParaSails.h\
+ nalu_hypre_ParaSails.h\
  LoadBal.h\
  Matrix.h\
  Mem.h\
@@ -38,7 +38,7 @@ FILES =\
  DiagScale.c\
  FGmres.c\
  Hash.c\
- hypre_ParaSails.c\
+ nalu_hypre_ParaSails.c\
  LoadBal.c\
  Matrix.c\
  Mem.c\

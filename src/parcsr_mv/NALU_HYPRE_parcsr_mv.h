@@ -25,10 +25,10 @@ extern "C" {
  * Structures
  *--------------------------------------------------------------------------*/
 
-struct hypre_ParCSRMatrix_struct;
-typedef struct hypre_ParCSRMatrix_struct *NALU_HYPRE_ParCSRMatrix;
-struct hypre_ParVector_struct;
-typedef struct hypre_ParVector_struct *NALU_HYPRE_ParVector;
+struct nalu_hypre_ParCSRMatrix_struct;
+typedef struct nalu_hypre_ParCSRMatrix_struct *NALU_HYPRE_ParCSRMatrix;
+struct nalu_hypre_ParVector_struct;
+typedef struct nalu_hypre_ParVector_struct *NALU_HYPRE_ParVector;
 
 /*--------------------------------------------------------------------------
  * Prototypes

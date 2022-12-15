@@ -11,47 +11,47 @@
  *
  *****************************************************************************/
 
-#include "_hypre_onedpl.hpp"
-#include "_hypre_IJ_mv.h"
-#include "_hypre_utilities.hpp"
+#include "_nalu_hypre_onedpl.hpp"
+#include "_nalu_hypre_IJ_mv.h"
+#include "_nalu_hypre_utilities.hpp"
 
 #if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP) || defined(NALU_HYPRE_USING_SYCL)
 
 /*--------------------------------------------------------------------
- * hypre_IJVectorAssembleFunctor
+ * nalu_hypre_IJVectorAssembleFunctor
  *--------------------------------------------------------------------*/
 
 #if defined(NALU_HYPRE_USING_SYCL)
 template<typename T1, typename T2>
-struct hypre_IJVectorAssembleFunctor
+struct nalu_hypre_IJVectorAssembleFunctor
 {
    typedef std::tuple<T1, T2> Tuple;
 
    __device__ Tuple operator() (const Tuple& x, const Tuple& y ) const
    {
-      return std::make_tuple( hypre_max(std::get<0>(x), std::get<0>(y)),
+      return std::make_tuple( nalu_hypre_max(std::get<0>(x), std::get<0>(y)),
                               std::get<1>(x) + std::get<1>(y) );
    }
 };
 #else
 template<typename T1, typename T2>
-struct hypre_IJVectorAssembleFunctor : public
+struct nalu_hypre_IJVectorAssembleFunctor : public
    thrust::binary_function< thrust::tuple<T1, T2>, thrust::tuple<T1, T2>, thrust::tuple<T1, T2> >
 {
    typedef thrust::tuple<T1, T2> Tuple;
 
    __device__ Tuple operator() (const Tuple& x, const Tuple& y )
    {
-      return thrust::make_tuple( hypre_max(thrust::get<0>(x), thrust::get<0>(y)),
+      return thrust::make_tuple( nalu_hypre_max(thrust::get<0>(x), thrust::get<0>(y)),
                                  thrust::get<1>(x) + thrust::get<1>(y) );
    }
 };
 #endif
 
 /*--------------------------------------------------------------------
- * hypre_IJVectorAssembleSortAndReduce1
+ * nalu_hypre_IJVectorAssembleSortAndReduce1
  *
- * helper routine used in hypre_IJVectorAssembleParCSRDevice:
+ * helper routine used in nalu_hypre_IJVectorAssembleParCSRDevice:
  *   1. sort (X0, A0) with key I0
  *   2. for each segment in I0, zero out in A0 all before the last `set'
  *   3. reduce A0 [with sum] and reduce X0 [with max]
@@ -61,7 +61,7 @@ struct hypre_IJVectorAssembleFunctor : public
  *--------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_IJVectorAssembleSortAndReduce1( NALU_HYPRE_Int       N0,
+nalu_hypre_IJVectorAssembleSortAndReduce1( NALU_HYPRE_Int       N0,
                                       NALU_HYPRE_BigInt   *I0,
                                       char           *X0,
                                       NALU_HYPRE_Complex  *A0,
@@ -82,28 +82,28 @@ hypre_IJVectorAssembleSortAndReduce1( NALU_HYPRE_Int       N0,
                       thrust::make_zip_iterator(thrust::make_tuple(X0, A0)) );
 #endif
 
-   NALU_HYPRE_BigInt  *I = hypre_TAlloc(NALU_HYPRE_BigInt,  N0, NALU_HYPRE_MEMORY_DEVICE);
-   char          *X = hypre_TAlloc(char,          N0, NALU_HYPRE_MEMORY_DEVICE);
-   NALU_HYPRE_Complex *A = hypre_TAlloc(NALU_HYPRE_Complex, N0, NALU_HYPRE_MEMORY_DEVICE);
+   NALU_HYPRE_BigInt  *I = nalu_hypre_TAlloc(NALU_HYPRE_BigInt,  N0, NALU_HYPRE_MEMORY_DEVICE);
+   char          *X = nalu_hypre_TAlloc(char,          N0, NALU_HYPRE_MEMORY_DEVICE);
+   NALU_HYPRE_Complex *A = nalu_hypre_TAlloc(NALU_HYPRE_Complex, N0, NALU_HYPRE_MEMORY_DEVICE);
 
    /* output X: 0: keep, 1: zero-out */
 #if defined(NALU_HYPRE_USING_SYCL)
    /* WM: TODO - exclusive_scan_by_segment() currently does not work with a permutation iterator */
    /*            and oneDPL currently does not have a reverse iterator */
-   NALU_HYPRE_Int *reverse_perm = hypre_TAlloc(NALU_HYPRE_Int, N0, NALU_HYPRE_MEMORY_DEVICE);
+   NALU_HYPRE_Int *reverse_perm = nalu_hypre_TAlloc(NALU_HYPRE_Int, N0, NALU_HYPRE_MEMORY_DEVICE);
    NALU_HYPRE_ONEDPL_CALL( std::transform,
                       oneapi::dpl::counting_iterator(0),
                       oneapi::dpl::counting_iterator(N0),
                       reverse_perm,
    [N0] (auto i) { return N0 - i - 1; });
 
-   NALU_HYPRE_BigInt *I0_reversed = hypre_TAlloc(NALU_HYPRE_BigInt, N0, NALU_HYPRE_MEMORY_DEVICE);
+   NALU_HYPRE_BigInt *I0_reversed = nalu_hypre_TAlloc(NALU_HYPRE_BigInt, N0, NALU_HYPRE_MEMORY_DEVICE);
    hypreSycl_scatter(I0, I0 + N0, reverse_perm, I0_reversed);
 
-   char *X0_reversed = hypre_TAlloc(char, N0, NALU_HYPRE_MEMORY_DEVICE);
+   char *X0_reversed = nalu_hypre_TAlloc(char, N0, NALU_HYPRE_MEMORY_DEVICE);
    hypreSycl_scatter(X0, X0 + N0, reverse_perm, X0_reversed);
 
-   char *X_reversed = hypre_TAlloc(char, N0, NALU_HYPRE_MEMORY_DEVICE);
+   char *X_reversed = nalu_hypre_TAlloc(char, N0, NALU_HYPRE_MEMORY_DEVICE);
 
    NALU_HYPRE_ONEDPL_CALL(
       oneapi::dpl::exclusive_scan_by_segment,
@@ -116,10 +116,10 @@ hypre_IJVectorAssembleSortAndReduce1( NALU_HYPRE_Int       N0,
       oneapi::dpl::maximum<char>() );
 
    hypreSycl_scatter(X_reversed, X_reversed + N0, reverse_perm, X);
-   hypre_TFree(reverse_perm, NALU_HYPRE_MEMORY_DEVICE);
-   hypre_TFree(I0_reversed, NALU_HYPRE_MEMORY_DEVICE);
-   hypre_TFree(X0_reversed, NALU_HYPRE_MEMORY_DEVICE);
-   hypre_TFree(X_reversed, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(reverse_perm, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(I0_reversed, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(X0_reversed, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(X_reversed, NALU_HYPRE_MEMORY_DEVICE);
 
    hypreSycl_transform_if(A0,
                           A0 + N0,
@@ -135,7 +135,7 @@ hypre_IJVectorAssembleSortAndReduce1( NALU_HYPRE_Int       N0,
                                      I,                                                          /* keys_output */
                                      oneapi::dpl::make_zip_iterator(X, A),                       /* values_output */
                                      std::equal_to<NALU_HYPRE_BigInt>(),                              /* binary_pred */
-                                     hypre_IJVectorAssembleFunctor<char, NALU_HYPRE_Complex>()        /* binary_op */);
+                                     nalu_hypre_IJVectorAssembleFunctor<char, NALU_HYPRE_Complex>()        /* binary_op */);
 #else
    NALU_HYPRE_THRUST_CALL(
       exclusive_scan_by_key,
@@ -157,7 +157,7 @@ hypre_IJVectorAssembleSortAndReduce1( NALU_HYPRE_Int       N0,
                      I,                                                               /* keys_output */
                      thrust::make_zip_iterator(thrust::make_tuple(X,       A      )), /* values_output */
                      thrust::equal_to<NALU_HYPRE_BigInt>(),                                /* binary_pred */
-                     hypre_IJVectorAssembleFunctor<char, NALU_HYPRE_Complex>()             /* binary_op */);
+                     nalu_hypre_IJVectorAssembleFunctor<char, NALU_HYPRE_Complex>()             /* binary_op */);
 #endif
 
    *N1 = new_end.first - I;
@@ -165,15 +165,15 @@ hypre_IJVectorAssembleSortAndReduce1( NALU_HYPRE_Int       N0,
    *X1 = X;
    *A1 = A;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------
- * hypre_IJVectorAssembleSortAndReduce3
+ * nalu_hypre_IJVectorAssembleSortAndReduce3
  *--------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_IJVectorAssembleSortAndReduce3( NALU_HYPRE_Int      N0,
+nalu_hypre_IJVectorAssembleSortAndReduce3( NALU_HYPRE_Int      N0,
                                       NALU_HYPRE_BigInt  *I0,
                                       char          *X0,
                                       NALU_HYPRE_Complex *A0,
@@ -191,24 +191,24 @@ hypre_IJVectorAssembleSortAndReduce3( NALU_HYPRE_Int      N0,
                       thrust::make_zip_iterator(thrust::make_tuple(X0, A0)) );
 #endif
 
-   NALU_HYPRE_BigInt  *I = hypre_TAlloc(NALU_HYPRE_BigInt,  N0, NALU_HYPRE_MEMORY_DEVICE);
-   NALU_HYPRE_Complex *A = hypre_TAlloc(NALU_HYPRE_Complex, N0, NALU_HYPRE_MEMORY_DEVICE);
+   NALU_HYPRE_BigInt  *I = nalu_hypre_TAlloc(NALU_HYPRE_BigInt,  N0, NALU_HYPRE_MEMORY_DEVICE);
+   NALU_HYPRE_Complex *A = nalu_hypre_TAlloc(NALU_HYPRE_Complex, N0, NALU_HYPRE_MEMORY_DEVICE);
 
    /* output in X0: 0: keep, 1: zero-out */
 #if defined(NALU_HYPRE_USING_SYCL)
    /* WM: TODO - inclusive_scan_by_segment() currently does not work with a permutation iterator */
    /*            and oneDPL currently does not have a reverse iterator */
-   NALU_HYPRE_Int *reverse_perm = hypre_TAlloc(NALU_HYPRE_Int, N0, NALU_HYPRE_MEMORY_DEVICE);
+   NALU_HYPRE_Int *reverse_perm = nalu_hypre_TAlloc(NALU_HYPRE_Int, N0, NALU_HYPRE_MEMORY_DEVICE);
    NALU_HYPRE_ONEDPL_CALL( std::transform,
                       oneapi::dpl::counting_iterator(0),
                       oneapi::dpl::counting_iterator(N0),
                       reverse_perm,
    [N0] (auto i) { return N0 - i - 1; });
 
-   NALU_HYPRE_BigInt *I0_reversed = hypre_TAlloc(NALU_HYPRE_BigInt, N0, NALU_HYPRE_MEMORY_DEVICE);
+   NALU_HYPRE_BigInt *I0_reversed = nalu_hypre_TAlloc(NALU_HYPRE_BigInt, N0, NALU_HYPRE_MEMORY_DEVICE);
    hypreSycl_scatter(I0, I0 + N0, reverse_perm, I0_reversed);
 
-   char *X0_reversed = hypre_TAlloc(char, N0, NALU_HYPRE_MEMORY_DEVICE);
+   char *X0_reversed = nalu_hypre_TAlloc(char, N0, NALU_HYPRE_MEMORY_DEVICE);
    hypreSycl_scatter(X0, X0 + N0, reverse_perm, X0_reversed);
 
    NALU_HYPRE_ONEDPL_CALL(
@@ -221,9 +221,9 @@ hypre_IJVectorAssembleSortAndReduce3( NALU_HYPRE_Int      N0,
       oneapi::dpl::maximum<char>() );
 
    hypreSycl_scatter(X0_reversed, X0_reversed + N0, reverse_perm, X0);
-   hypre_TFree(reverse_perm, NALU_HYPRE_MEMORY_DEVICE);
-   hypre_TFree(I0_reversed, NALU_HYPRE_MEMORY_DEVICE);
-   hypre_TFree(X0_reversed, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(reverse_perm, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(I0_reversed, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(X0_reversed, NALU_HYPRE_MEMORY_DEVICE);
 
    hypreSycl_transform_if(A0,
                           A0 + N0,
@@ -234,8 +234,8 @@ hypre_IJVectorAssembleSortAndReduce3( NALU_HYPRE_Int      N0,
 
    /* WM: todo - why don't I use the NALU_HYPRE_ONEDPL_CALL macro here? Compile issue? */
    auto new_end = oneapi::dpl::reduce_by_segment(
-                     oneapi::dpl::execution::make_device_policy<class devutils>(*hypre_HandleComputeStream(
-                                                                                   hypre_handle())),
+                     oneapi::dpl::execution::make_device_policy<class devutils>(*nalu_hypre_HandleComputeStream(
+                                                                                   nalu_hypre_handle())),
                      I0,      /* keys_first */
                      I0 + N0, /* keys_last */
                      A0,      /* values_first */
@@ -264,7 +264,7 @@ hypre_IJVectorAssembleSortAndReduce3( NALU_HYPRE_Int      N0,
 
    NALU_HYPRE_Int Nt = new_end.second - A;
 
-   hypre_assert(Nt <= N0);
+   nalu_hypre_assert(Nt <= N0);
 
    /* remove numerical zeros */
 #if defined(NALU_HYPRE_USING_SYCL)
@@ -286,12 +286,12 @@ hypre_IJVectorAssembleSortAndReduce3( NALU_HYPRE_Int      N0,
    *N1 = thrust::get<0>(new_end2.get_iterator_tuple()) - I0;
 #endif
 
-   hypre_assert(*N1 <= Nt);
+   nalu_hypre_assert(*N1 <= Nt);
 
-   hypre_TFree(I, NALU_HYPRE_MEMORY_DEVICE);
-   hypre_TFree(A, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(I, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(A, NALU_HYPRE_MEMORY_DEVICE);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------
@@ -302,7 +302,7 @@ hypre_IJVectorAssembleSortAndReduce3( NALU_HYPRE_Int      N0,
  *--------------------------------------------------------------------*/
 
 __global__ void
-hypreGPUKernel_IJVectorAssemblePar( hypre_DeviceItem &item,
+hypreGPUKernel_IJVectorAssemblePar( nalu_hypre_DeviceItem &item,
                                     NALU_HYPRE_Int         n,
                                     NALU_HYPRE_Complex    *x,
                                     NALU_HYPRE_BigInt     *map,
@@ -310,7 +310,7 @@ hypreGPUKernel_IJVectorAssemblePar( hypre_DeviceItem &item,
                                     char             *SorA,
                                     NALU_HYPRE_Complex    *y )
 {
-   NALU_HYPRE_Int i = hypre_gpu_get_grid_thread_id<1, 1>(item);
+   NALU_HYPRE_Int i = nalu_hypre_gpu_get_grid_thread_id<1, 1>(item);
 
    if (i >= n)
    {
@@ -328,38 +328,38 @@ hypreGPUKernel_IJVectorAssemblePar( hypre_DeviceItem &item,
 }
 
 /*--------------------------------------------------------------------
- * hypre_IJVectorSetAddValuesParDevice
+ * nalu_hypre_IJVectorSetAddValuesParDevice
  *--------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_IJVectorSetAddValuesParDevice(hypre_IJVector       *vector,
+nalu_hypre_IJVectorSetAddValuesParDevice(nalu_hypre_IJVector       *vector,
                                     NALU_HYPRE_Int             num_values,
                                     const NALU_HYPRE_BigInt   *indices,
                                     const NALU_HYPRE_Complex  *values,
                                     const char           *action)
 {
-   NALU_HYPRE_BigInt    *IJpartitioning = hypre_IJVectorPartitioning(vector);
+   NALU_HYPRE_BigInt    *IJpartitioning = nalu_hypre_IJVectorPartitioning(vector);
    NALU_HYPRE_BigInt     vec_start      = IJpartitioning[0];
 
-   hypre_ParVector *par_vector     = (hypre_ParVector*) hypre_IJVectorObject(vector);
-   hypre_Vector    *local_vector   = hypre_ParVectorLocalVector(par_vector);
-   NALU_HYPRE_Int        size           = hypre_VectorSize(local_vector);
-   NALU_HYPRE_Int        num_vectors    = hypre_VectorNumVectors(local_vector);
-   NALU_HYPRE_Int        component      = hypre_VectorComponent(local_vector);
-   NALU_HYPRE_Int        vecstride      = hypre_VectorVectorStride(local_vector);
+   nalu_hypre_ParVector *par_vector     = (nalu_hypre_ParVector*) nalu_hypre_IJVectorObject(vector);
+   nalu_hypre_Vector    *local_vector   = nalu_hypre_ParVectorLocalVector(par_vector);
+   NALU_HYPRE_Int        size           = nalu_hypre_VectorSize(local_vector);
+   NALU_HYPRE_Int        num_vectors    = nalu_hypre_VectorNumVectors(local_vector);
+   NALU_HYPRE_Int        component      = nalu_hypre_VectorComponent(local_vector);
+   NALU_HYPRE_Int        vecstride      = nalu_hypre_VectorVectorStride(local_vector);
 
    const char       SorA           = action[0] == 's' ? 1 : 0;
 
    if (num_values <= 0)
    {
-      return hypre_error_flag;
+      return nalu_hypre_error_flag;
    }
 
    /* this is a special use to set/add local values */
    if (!indices)
    {
-      NALU_HYPRE_Int     num_values2 = hypre_min(size, num_values);
-      NALU_HYPRE_BigInt *indices2    = hypre_TAlloc(NALU_HYPRE_BigInt, num_values2, NALU_HYPRE_MEMORY_DEVICE);
+      NALU_HYPRE_Int     num_values2 = nalu_hypre_min(size, num_values);
+      NALU_HYPRE_BigInt *indices2    = nalu_hypre_TAlloc(NALU_HYPRE_BigInt, num_values2, NALU_HYPRE_MEMORY_DEVICE);
 
 #if defined(NALU_HYPRE_USING_SYCL)
       hypreSycl_sequence(indices2, indices2 + num_values2, vec_start);
@@ -367,60 +367,60 @@ hypre_IJVectorSetAddValuesParDevice(hypre_IJVector       *vector,
       NALU_HYPRE_THRUST_CALL(sequence, indices2, indices2 + num_values2, vec_start);
 #endif
 
-      hypre_IJVectorSetAddValuesParDevice(vector, num_values2, indices2, values, action);
+      nalu_hypre_IJVectorSetAddValuesParDevice(vector, num_values2, indices2, values, action);
 
-      hypre_TFree(indices2, NALU_HYPRE_MEMORY_DEVICE);
+      nalu_hypre_TFree(indices2, NALU_HYPRE_MEMORY_DEVICE);
 
-      return hypre_error_flag;
+      return nalu_hypre_error_flag;
    }
 
-   hypre_AuxParVector *aux_vector = (hypre_AuxParVector*) hypre_IJVectorTranslator(vector);
+   nalu_hypre_AuxParVector *aux_vector = (nalu_hypre_AuxParVector*) nalu_hypre_IJVectorTranslator(vector);
 
    if (!aux_vector)
    {
-      hypre_AuxParVectorCreate(&aux_vector);
-      hypre_AuxParVectorInitialize_v2(aux_vector, NALU_HYPRE_MEMORY_DEVICE);
-      hypre_IJVectorTranslator(vector) = aux_vector;
+      nalu_hypre_AuxParVectorCreate(&aux_vector);
+      nalu_hypre_AuxParVectorInitialize_v2(aux_vector, NALU_HYPRE_MEMORY_DEVICE);
+      nalu_hypre_IJVectorTranslator(vector) = aux_vector;
    }
 
-   NALU_HYPRE_Int      stack_elmts_max      = hypre_AuxParVectorMaxStackElmts(aux_vector);
-   NALU_HYPRE_Int      stack_elmts_current  = hypre_AuxParVectorCurrentStackElmts(aux_vector);
+   NALU_HYPRE_Int      stack_elmts_max      = nalu_hypre_AuxParVectorMaxStackElmts(aux_vector);
+   NALU_HYPRE_Int      stack_elmts_current  = nalu_hypre_AuxParVectorCurrentStackElmts(aux_vector);
    NALU_HYPRE_Int      stack_elmts_required = stack_elmts_current + num_values;
-   NALU_HYPRE_BigInt  *stack_i              = hypre_AuxParVectorStackI(aux_vector);
-   NALU_HYPRE_BigInt  *stack_voff           = hypre_AuxParVectorStackVoff(aux_vector);
-   NALU_HYPRE_Complex *stack_data           = hypre_AuxParVectorStackData(aux_vector);
-   char          *stack_sora           = hypre_AuxParVectorStackSorA(aux_vector);
+   NALU_HYPRE_BigInt  *stack_i              = nalu_hypre_AuxParVectorStackI(aux_vector);
+   NALU_HYPRE_BigInt  *stack_voff           = nalu_hypre_AuxParVectorStackVoff(aux_vector);
+   NALU_HYPRE_Complex *stack_data           = nalu_hypre_AuxParVectorStackData(aux_vector);
+   char          *stack_sora           = nalu_hypre_AuxParVectorStackSorA(aux_vector);
 
    if (stack_elmts_max < stack_elmts_required)
    {
-      NALU_HYPRE_Int stack_elmts_max_new = size * hypre_AuxParVectorInitAllocFactor(aux_vector);
+      NALU_HYPRE_Int stack_elmts_max_new = size * nalu_hypre_AuxParVectorInitAllocFactor(aux_vector);
 
-      if (hypre_AuxParVectorUsrOffProcElmts(aux_vector) >= 0)
+      if (nalu_hypre_AuxParVectorUsrOffProcElmts(aux_vector) >= 0)
       {
-         stack_elmts_max_new += hypre_AuxParVectorUsrOffProcElmts(aux_vector);
+         stack_elmts_max_new += nalu_hypre_AuxParVectorUsrOffProcElmts(aux_vector);
       }
-      stack_elmts_max_new = hypre_max(stack_elmts_max * hypre_AuxParVectorGrowFactor(aux_vector),
+      stack_elmts_max_new = nalu_hypre_max(stack_elmts_max * nalu_hypre_AuxParVectorGrowFactor(aux_vector),
                                       stack_elmts_max_new);
-      stack_elmts_max_new = hypre_max(stack_elmts_required, stack_elmts_max_new);
+      stack_elmts_max_new = nalu_hypre_max(stack_elmts_required, stack_elmts_max_new);
 
-      stack_i    = hypre_TReAlloc_v2(stack_i,     NALU_HYPRE_BigInt, stack_elmts_max,  NALU_HYPRE_BigInt,
+      stack_i    = nalu_hypre_TReAlloc_v2(stack_i,     NALU_HYPRE_BigInt, stack_elmts_max,  NALU_HYPRE_BigInt,
                                      stack_elmts_max_new, NALU_HYPRE_MEMORY_DEVICE);
-      stack_data = hypre_TReAlloc_v2(stack_data, NALU_HYPRE_Complex, stack_elmts_max, NALU_HYPRE_Complex,
+      stack_data = nalu_hypre_TReAlloc_v2(stack_data, NALU_HYPRE_Complex, stack_elmts_max, NALU_HYPRE_Complex,
                                      stack_elmts_max_new, NALU_HYPRE_MEMORY_DEVICE);
-      stack_sora = hypre_TReAlloc_v2(stack_sora,          char, stack_elmts_max,          char,
+      stack_sora = nalu_hypre_TReAlloc_v2(stack_sora,          char, stack_elmts_max,          char,
                                      stack_elmts_max_new, NALU_HYPRE_MEMORY_DEVICE);
 
       if (num_vectors > 1)
       {
-         stack_voff = hypre_TReAlloc_v2(stack_voff, NALU_HYPRE_BigInt, stack_elmts_max, NALU_HYPRE_BigInt,
+         stack_voff = nalu_hypre_TReAlloc_v2(stack_voff, NALU_HYPRE_BigInt, stack_elmts_max, NALU_HYPRE_BigInt,
                                         stack_elmts_max_new, NALU_HYPRE_MEMORY_DEVICE);
       }
 
-      hypre_AuxParVectorStackI(aux_vector)        = stack_i;
-      hypre_AuxParVectorStackVoff(aux_vector)     = stack_voff;
-      hypre_AuxParVectorStackData(aux_vector)     = stack_data;
-      hypre_AuxParVectorStackSorA(aux_vector)     = stack_sora;
-      hypre_AuxParVectorMaxStackElmts(aux_vector) = stack_elmts_max_new;
+      nalu_hypre_AuxParVectorStackI(aux_vector)        = stack_i;
+      nalu_hypre_AuxParVectorStackVoff(aux_vector)     = stack_voff;
+      nalu_hypre_AuxParVectorStackData(aux_vector)     = stack_data;
+      nalu_hypre_AuxParVectorStackSorA(aux_vector)     = stack_sora;
+      nalu_hypre_AuxParVectorMaxStackElmts(aux_vector) = stack_elmts_max_new;
    }
 
    hypreDevice_CharFilln(stack_sora + stack_elmts_current, num_values, SorA);
@@ -430,49 +430,49 @@ hypre_IJVectorSetAddValuesParDevice(hypre_IJVector       *vector,
                               (NALU_HYPRE_BigInt) component * vecstride);
    }
 
-   hypre_TMemcpy(stack_i    + stack_elmts_current, indices, NALU_HYPRE_BigInt,  num_values,
+   nalu_hypre_TMemcpy(stack_i    + stack_elmts_current, indices, NALU_HYPRE_BigInt,  num_values,
                  NALU_HYPRE_MEMORY_DEVICE, NALU_HYPRE_MEMORY_DEVICE);
-   hypre_TMemcpy(stack_data + stack_elmts_current, values,  NALU_HYPRE_Complex, num_values,
+   nalu_hypre_TMemcpy(stack_data + stack_elmts_current, values,  NALU_HYPRE_Complex, num_values,
                  NALU_HYPRE_MEMORY_DEVICE, NALU_HYPRE_MEMORY_DEVICE);
 
-   hypre_AuxParVectorCurrentStackElmts(aux_vector) += num_values;
+   nalu_hypre_AuxParVectorCurrentStackElmts(aux_vector) += num_values;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /******************************************************************************
- * hypre_IJVectorAssembleParDevice
+ * nalu_hypre_IJVectorAssembleParDevice
  *****************************************************************************/
 
 NALU_HYPRE_Int
-hypre_IJVectorAssembleParDevice(hypre_IJVector *vector)
+nalu_hypre_IJVectorAssembleParDevice(nalu_hypre_IJVector *vector)
 {
-   MPI_Comm            comm           = hypre_IJVectorComm(vector);
-   hypre_ParVector    *par_vector     = (hypre_ParVector*) hypre_IJVectorObject(vector);
-   hypre_AuxParVector *aux_vector     = (hypre_AuxParVector*) hypre_IJVectorTranslator(vector);
-   NALU_HYPRE_BigInt       *IJpartitioning = hypre_IJVectorPartitioning(vector);
+   MPI_Comm            comm           = nalu_hypre_IJVectorComm(vector);
+   nalu_hypre_ParVector    *par_vector     = (nalu_hypre_ParVector*) nalu_hypre_IJVectorObject(vector);
+   nalu_hypre_AuxParVector *aux_vector     = (nalu_hypre_AuxParVector*) nalu_hypre_IJVectorTranslator(vector);
+   NALU_HYPRE_BigInt       *IJpartitioning = nalu_hypre_IJVectorPartitioning(vector);
    NALU_HYPRE_BigInt        vec_start      = IJpartitioning[0];
    NALU_HYPRE_BigInt        vec_stop       = IJpartitioning[1] - 1;
 
-   hypre_Vector       *local_vector   = hypre_ParVectorLocalVector(par_vector);
-   NALU_HYPRE_Int           num_vectors    = hypre_VectorNumVectors(local_vector);
-   NALU_HYPRE_Complex      *data           = hypre_VectorData(local_vector);
+   nalu_hypre_Vector       *local_vector   = nalu_hypre_ParVectorLocalVector(par_vector);
+   NALU_HYPRE_Int           num_vectors    = nalu_hypre_VectorNumVectors(local_vector);
+   NALU_HYPRE_Complex      *data           = nalu_hypre_VectorData(local_vector);
 
    if (!aux_vector)
    {
-      return hypre_error_flag;
+      return nalu_hypre_error_flag;
    }
 
    if (!par_vector)
    {
-      return hypre_error_flag;
+      return nalu_hypre_error_flag;
    }
 
-   NALU_HYPRE_Int      nelms      = hypre_AuxParVectorCurrentStackElmts(aux_vector);
-   NALU_HYPRE_BigInt  *stack_i    = hypre_AuxParVectorStackI(aux_vector);
-   NALU_HYPRE_BigInt  *stack_voff = hypre_AuxParVectorStackVoff(aux_vector);
-   NALU_HYPRE_Complex *stack_data = hypre_AuxParVectorStackData(aux_vector);
-   char          *stack_sora = hypre_AuxParVectorStackSorA(aux_vector);
+   NALU_HYPRE_Int      nelms      = nalu_hypre_AuxParVectorCurrentStackElmts(aux_vector);
+   NALU_HYPRE_BigInt  *stack_i    = nalu_hypre_AuxParVectorStackI(aux_vector);
+   NALU_HYPRE_BigInt  *stack_voff = nalu_hypre_AuxParVectorStackVoff(aux_vector);
+   NALU_HYPRE_Complex *stack_data = nalu_hypre_AuxParVectorStackData(aux_vector);
+   char          *stack_sora = nalu_hypre_AuxParVectorStackSorA(aux_vector);
 
    in_range<NALU_HYPRE_BigInt> pred(vec_start, vec_stop);
 #if defined(NALU_HYPRE_USING_SYCL)
@@ -482,7 +482,7 @@ hypre_IJVectorAssembleParDevice(hypre_IJVector *vector)
 #endif
    NALU_HYPRE_Int nelms_off = nelms - nelms_on;
    NALU_HYPRE_Int nelms_off_max;
-   hypre_MPI_Allreduce(&nelms_off, &nelms_off_max, 1, NALU_HYPRE_MPI_INT, hypre_MPI_MAX, comm);
+   nalu_hypre_MPI_Allreduce(&nelms_off, &nelms_off_max, 1, NALU_HYPRE_MPI_INT, nalu_hypre_MPI_MAX, comm);
 
    /* communicate for aux off-proc and add to remote aux on-proc */
    if (nelms_off_max)
@@ -493,18 +493,18 @@ hypre_IJVectorAssembleParDevice(hypre_IJVector *vector)
 
       if (num_vectors > 1)
       {
-         hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC,
+         nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC,
                            "Off proc IJVectorAssembleParDevice not implemented for multivectors!\n");
-         return hypre_error_flag;
+         return nalu_hypre_error_flag;
       }
 
       if (nelms_off)
       {
          /* copy off-proc entries out of stack and remove from stack */
-         off_proc_i          = hypre_TAlloc(NALU_HYPRE_BigInt,  nelms_off, NALU_HYPRE_MEMORY_DEVICE);
-         off_proc_data       = hypre_TAlloc(NALU_HYPRE_Complex, nelms_off, NALU_HYPRE_MEMORY_DEVICE);
-         char *off_proc_sora = hypre_TAlloc(char,          nelms_off, NALU_HYPRE_MEMORY_DEVICE);
-         char *is_on_proc    = hypre_TAlloc(char,          nelms,     NALU_HYPRE_MEMORY_DEVICE);
+         off_proc_i          = nalu_hypre_TAlloc(NALU_HYPRE_BigInt,  nelms_off, NALU_HYPRE_MEMORY_DEVICE);
+         off_proc_data       = nalu_hypre_TAlloc(NALU_HYPRE_Complex, nelms_off, NALU_HYPRE_MEMORY_DEVICE);
+         char *off_proc_sora = nalu_hypre_TAlloc(char,          nelms_off, NALU_HYPRE_MEMORY_DEVICE);
+         char *is_on_proc    = nalu_hypre_TAlloc(char,          nelms,     NALU_HYPRE_MEMORY_DEVICE);
 
 #if defined(NALU_HYPRE_USING_SYCL)
          NALU_HYPRE_ONEDPL_CALL(std::transform, stack_i, stack_i + nelms, is_on_proc, pred);
@@ -516,7 +516,7 @@ hypre_IJVectorAssembleParDevice(hypre_IJVector *vector)
                                             zip_out, /* result */
          [] (const auto & x) {return !x;} );
 
-         hypre_assert(std::get<0>(new_end1.base()) - off_proc_i == nelms_off);
+         nalu_hypre_assert(std::get<0>(new_end1.base()) - off_proc_i == nelms_off);
 
          /* remove off-proc entries from stack */
          auto new_end2 = hypreSycl_remove_if( zip_in,         /* first */
@@ -524,7 +524,7 @@ hypre_IJVectorAssembleParDevice(hypre_IJVector *vector)
                                               is_on_proc,     /* stencil */
          [] (const auto & x) {return !x;} );
 
-         hypre_assert(std::get<0>(new_end2.base()) - stack_i == nelms_on);
+         nalu_hypre_assert(std::get<0>(new_end2.base()) - stack_i == nelms_on);
 #else
          NALU_HYPRE_THRUST_CALL(transform, stack_i, stack_i + nelms, is_on_proc, pred);
 
@@ -539,7 +539,7 @@ hypre_IJVectorAssembleParDevice(hypre_IJVector *vector)
                                                                          off_proc_sora)),       /* result */
                             thrust::not1(thrust::identity<char>()) );
 
-         hypre_assert(thrust::get<0>(new_end1.get_iterator_tuple()) - off_proc_i == nelms_off);
+         nalu_hypre_assert(thrust::get<0>(new_end1.get_iterator_tuple()) - off_proc_i == nelms_off);
 
          /* remove off-proc entries from stack */
          auto new_end2 = NALU_HYPRE_THRUST_CALL(
@@ -551,34 +551,34 @@ hypre_IJVectorAssembleParDevice(hypre_IJVector *vector)
                             is_on_proc,                                                         /* stencil */
                             thrust::not1(thrust::identity<char>()) );
 
-         hypre_assert(thrust::get<0>(new_end2.get_iterator_tuple()) - stack_i == nelms_on);
+         nalu_hypre_assert(thrust::get<0>(new_end2.get_iterator_tuple()) - stack_i == nelms_on);
 #endif
 
-         hypre_AuxParVectorCurrentStackElmts(aux_vector) = nelms_on;
+         nalu_hypre_AuxParVectorCurrentStackElmts(aux_vector) = nelms_on;
 
-         hypre_TFree(is_on_proc, NALU_HYPRE_MEMORY_DEVICE);
+         nalu_hypre_TFree(is_on_proc, NALU_HYPRE_MEMORY_DEVICE);
 
          /* sort and reduce */
-         hypre_IJVectorAssembleSortAndReduce3(nelms_off, off_proc_i, off_proc_sora, off_proc_data, &new_nnz);
+         nalu_hypre_IJVectorAssembleSortAndReduce3(nelms_off, off_proc_i, off_proc_sora, off_proc_data, &new_nnz);
 
-         hypre_TFree(off_proc_sora, NALU_HYPRE_MEMORY_DEVICE);
+         nalu_hypre_TFree(off_proc_sora, NALU_HYPRE_MEMORY_DEVICE);
       }
 
       /* send off_proc_i/data to remote processes and the receivers call addtovalues */
-      hypre_IJVectorAssembleOffProcValsPar(vector, -1, new_nnz, NALU_HYPRE_MEMORY_DEVICE,
+      nalu_hypre_IJVectorAssembleOffProcValsPar(vector, -1, new_nnz, NALU_HYPRE_MEMORY_DEVICE,
                                            off_proc_i, off_proc_data);
 
-      hypre_TFree(off_proc_i,    NALU_HYPRE_MEMORY_DEVICE);
-      hypre_TFree(off_proc_data, NALU_HYPRE_MEMORY_DEVICE);
+      nalu_hypre_TFree(off_proc_i,    NALU_HYPRE_MEMORY_DEVICE);
+      nalu_hypre_TFree(off_proc_data, NALU_HYPRE_MEMORY_DEVICE);
    }
 
-   /* Note: the stack might have been changed in hypre_IJVectorAssembleOffProcValsPar,
+   /* Note: the stack might have been changed in nalu_hypre_IJVectorAssembleOffProcValsPar,
     * so must get the size and the pointers again */
-   nelms      = hypre_AuxParVectorCurrentStackElmts(aux_vector);
-   stack_i    = hypre_AuxParVectorStackI(aux_vector);
-   stack_voff = hypre_AuxParVectorStackVoff(aux_vector);
-   stack_data = hypre_AuxParVectorStackData(aux_vector);
-   stack_sora = hypre_AuxParVectorStackSorA(aux_vector);
+   nelms      = nalu_hypre_AuxParVectorCurrentStackElmts(aux_vector);
+   stack_i    = nalu_hypre_AuxParVectorStackI(aux_vector);
+   stack_voff = nalu_hypre_AuxParVectorStackVoff(aux_vector);
+   stack_data = nalu_hypre_AuxParVectorStackData(aux_vector);
+   stack_sora = nalu_hypre_AuxParVectorStackSorA(aux_vector);
 
 #ifdef NALU_HYPRE_DEBUG
    /* the stack should only have on-proc elements now */
@@ -587,7 +587,7 @@ hypre_IJVectorAssembleParDevice(hypre_IJVector *vector)
 #else
    NALU_HYPRE_Int tmp = NALU_HYPRE_THRUST_CALL(count_if, stack_i, stack_i + nelms, pred);
 #endif
-   hypre_assert(nelms == tmp);
+   nalu_hypre_assert(nelms == tmp);
 #endif
 
    if (nelms)
@@ -604,30 +604,30 @@ hypre_IJVectorAssembleParDevice(hypre_IJVector *vector)
       }
 
       /* sort and reduce */
-      hypre_IJVectorAssembleSortAndReduce1(nelms, stack_i, stack_sora, stack_data,
+      nalu_hypre_IJVectorAssembleSortAndReduce1(nelms, stack_i, stack_sora, stack_data,
                                            &new_nnz, &new_i, &new_sora, &new_data);
 
       /* set/add to local vector */
-      dim3 bDim = hypre_GetDefaultDeviceBlockDimension();
-      dim3 gDim = hypre_GetDefaultDeviceGridDimension(new_nnz, "thread", bDim);
+      dim3 bDim = nalu_hypre_GetDefaultDeviceBlockDimension();
+      dim3 gDim = nalu_hypre_GetDefaultDeviceGridDimension(new_nnz, "thread", bDim);
       NALU_HYPRE_GPU_LAUNCH( hypreGPUKernel_IJVectorAssemblePar, gDim, bDim,
                         new_nnz, new_data, new_i,
                         vec_start, new_sora,
                         data );
 
-      hypre_TFree(new_i,    NALU_HYPRE_MEMORY_DEVICE);
-      hypre_TFree(new_data, NALU_HYPRE_MEMORY_DEVICE);
-      hypre_TFree(new_sora, NALU_HYPRE_MEMORY_DEVICE);
+      nalu_hypre_TFree(new_i,    NALU_HYPRE_MEMORY_DEVICE);
+      nalu_hypre_TFree(new_data, NALU_HYPRE_MEMORY_DEVICE);
+      nalu_hypre_TFree(new_sora, NALU_HYPRE_MEMORY_DEVICE);
    }
 
-   hypre_AuxParVectorDestroy(aux_vector);
-   hypre_IJVectorTranslator(vector) = NULL;
+   nalu_hypre_AuxParVectorDestroy(aux_vector);
+   nalu_hypre_IJVectorTranslator(vector) = NULL;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 __global__ void
-hypreCUDAKernel_IJVectorUpdateValues( hypre_DeviceItem    &item,
+hypreCUDAKernel_IJVectorUpdateValues( nalu_hypre_DeviceItem    &item,
                                       NALU_HYPRE_Int            n,
                                       const NALU_HYPRE_Complex *x,
                                       const NALU_HYPRE_BigInt  *indices,
@@ -636,7 +636,7 @@ hypreCUDAKernel_IJVectorUpdateValues( hypre_DeviceItem    &item,
                                       NALU_HYPRE_Int            action,
                                       NALU_HYPRE_Complex       *y )
 {
-   NALU_HYPRE_Int i = hypre_gpu_get_grid_thread_id<1, 1>(item);
+   NALU_HYPRE_Int i = nalu_hypre_gpu_get_grid_thread_id<1, 1>(item);
 
    if (i >= n)
    {
@@ -670,13 +670,13 @@ hypreCUDAKernel_IJVectorUpdateValues( hypre_DeviceItem    &item,
 }
 
 NALU_HYPRE_Int
-hypre_IJVectorUpdateValuesDevice( hypre_IJVector      *vector,
+nalu_hypre_IJVectorUpdateValuesDevice( nalu_hypre_IJVector      *vector,
                                   NALU_HYPRE_Int            num_values,
                                   const NALU_HYPRE_BigInt  *indices,
                                   const NALU_HYPRE_Complex *values,
                                   NALU_HYPRE_Int            action)
 {
-   NALU_HYPRE_BigInt *IJpartitioning = hypre_IJVectorPartitioning(vector);
+   NALU_HYPRE_BigInt *IJpartitioning = nalu_hypre_IJVectorPartitioning(vector);
    NALU_HYPRE_BigInt  vec_start = IJpartitioning[0];
    NALU_HYPRE_BigInt  vec_stop  = IJpartitioning[1] - 1;
 
@@ -687,22 +687,22 @@ hypre_IJVectorUpdateValuesDevice( hypre_IJVector      *vector,
 
    if (num_values <= 0)
    {
-      return hypre_error_flag;
+      return nalu_hypre_error_flag;
    }
 
    /* set/add to local vector */
-   dim3 bDim = hypre_GetDefaultDeviceBlockDimension();
-   dim3 gDim = hypre_GetDefaultDeviceGridDimension(num_values, "thread", bDim);
+   dim3 bDim = nalu_hypre_GetDefaultDeviceBlockDimension();
+   dim3 gDim = nalu_hypre_GetDefaultDeviceGridDimension(num_values, "thread", bDim);
 
-   hypre_ParVector *par_vector = (hypre_ParVector*) hypre_IJVectorObject(vector);
+   nalu_hypre_ParVector *par_vector = (nalu_hypre_ParVector*) nalu_hypre_IJVectorObject(vector);
 
    NALU_HYPRE_GPU_LAUNCH( hypreCUDAKernel_IJVectorUpdateValues,
                      gDim, bDim,
                      num_values, values, indices,
                      vec_start, vec_stop, action,
-                     hypre_VectorData(hypre_ParVectorLocalVector(par_vector)) );
+                     nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(par_vector)) );
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 #endif

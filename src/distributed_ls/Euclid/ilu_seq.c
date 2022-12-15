@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_Euclid.h"
+#include "_nalu_hypre_Euclid.h"
 
 /* to do: re-integrate fix-smalll-pivots */
 
@@ -124,11 +124,11 @@ void iluk_seq(Euclid_dh ctx)
     NALU_HYPRE_Int row = n2o_row[i];             /* local row number */
     NALU_HYPRE_Int globalRow = row+beg_row;      /* global row number */
 
-/*hypre_fprintf(logFile, "--------------------------------- localRow= %i\n", 1+i);
+/*nalu_hypre_fprintf(logFile, "--------------------------------- localRow= %i\n", 1+i);
 */
 
     if (debug) {
-	hypre_fprintf(logFile, "ILU_seq ================================= starting local row: %i, (global= %i) level= %i\n", i+1, i+1+sg->beg_rowP[myid_dh], ctx->level);
+	nalu_hypre_fprintf(logFile, "ILU_seq ================================= starting local row: %i, (global= %i) level= %i\n", i+1, i+1+sg->beg_rowP[myid_dh], ctx->level);
     }
 
     EuclidGetRow(ctx->A, globalRow, &len, &CVAL, &AVAL); CHECK_V_ERROR;
@@ -160,7 +160,7 @@ void iluk_seq(Euclid_dh ctx)
       cval[idx] = col;  
       fill[idx] = tmpFill[col];
       ++idx;
-/*hypre_fprintf(logFile, "  col= %i\n", 1+col);
+/*nalu_hypre_fprintf(logFile, "  col= %i\n", 1+col);
 */
       col = list[col];
     }
@@ -173,7 +173,7 @@ void iluk_seq(Euclid_dh ctx)
     while (cval[temp] != i) ++temp; 
     diag[i] = temp;
 
-/*hypre_fprintf(logFile, "  diag[i]= %i\n", diag);
+/*nalu_hypre_fprintf(logFile, "  diag[i]= %i\n", diag);
 */
 
     /* compute numeric factor for current row */
@@ -185,15 +185,15 @@ void iluk_seq(Euclid_dh ctx)
        and re-zero work vector
      */
     if (debug) {
-      hypre_fprintf(logFile, "ILU_seq:  ");
+      nalu_hypre_fprintf(logFile, "ILU_seq:  ");
       for (j=rp[i]; j<rp[i+1]; ++j) {
         col = cval[j];  
         aval[j] = work[col];  
         work[col] = 0.0;
-        hypre_fprintf(logFile, "%i,%i,%g ; ", 1+cval[j], fill[j], aval[j]);
+        nalu_hypre_fprintf(logFile, "%i,%i,%g ; ", 1+cval[j], fill[j], aval[j]);
         fflush(logFile);
       }
-      hypre_fprintf(logFile, "\n");
+      nalu_hypre_fprintf(logFile, "\n");
     } else {
       for (j=rp[i]; j<rp[i+1]; ++j) {
         col = cval[j];  
@@ -204,7 +204,7 @@ void iluk_seq(Euclid_dh ctx)
 
     /* check for zero diagonal */
     if (! aval[diag[i]]) {
-      hypre_sprintf(msgBuf_dh, "zero diagonal in local row %i", i+1);
+      nalu_hypre_sprintf(msgBuf_dh, "zero diagonal in local row %i", i+1);
       SET_V_ERROR(msgBuf_dh);
     }
   }
@@ -252,7 +252,7 @@ void iluk_seq_block(Euclid_dh ctx)
 
   if (logFile != NULL  &&  Parser_dhHasSwitch(parser_dh, "-debug_ilu")) debug = true;
 
-/*hypre_fprintf(stderr, "====================== starting iluk_seq_block; level= %i\n\n", ctx->level); 
+/*nalu_hypre_fprintf(stderr, "====================== starting iluk_seq_block; level= %i\n\n", ctx->level); 
 */
 
   if (!strcmp(ctx->algo_par, "bj")) bj = true;
@@ -306,7 +306,7 @@ void iluk_seq_block(Euclid_dh ctx)
   NALU_HYPRE_Int end_row   = first_row + row_count[curBlock];
 
     if (debug) {
-        hypre_fprintf(logFile, "\n\nILU_seq BLOCK: %i @@@@@@@@@@@@@@@ \n", curBlock);
+        nalu_hypre_fprintf(logFile, "\n\nILU_seq BLOCK: %i @@@@@@@@@@@@@@@ \n", curBlock);
     }
 
   for (i=first_row; i<end_row; ++i) {
@@ -314,7 +314,7 @@ void iluk_seq_block(Euclid_dh ctx)
     ++gr;
 
     if (debug) {
-      hypre_fprintf(logFile, "ILU_seq  global: %i  local: %i =================================\n", 1+gr, 1+i-first_row);
+      nalu_hypre_fprintf(logFile, "ILU_seq  global: %i  local: %i =================================\n", 1+gr, 1+i-first_row);
     }
 
 /*prinft("first_row= %i  end_row= %i\n", first_row, end_row);
@@ -403,14 +403,14 @@ void iluk_seq_block(Euclid_dh ctx)
        and re-zero work vector
      */
     if (debug) {
-      hypre_fprintf(logFile, "ILU_seq: ");
+      nalu_hypre_fprintf(logFile, "ILU_seq: ");
       for (j=rp[i]; j<rp[i+1]; ++j) {
         col = cval[j];  
         aval[j] = work[col];  
         work[col] = 0.0;
-        hypre_fprintf(logFile, "%i,%i,%g ; ", 1+cval[j], fill[j], aval[j]);
+        nalu_hypre_fprintf(logFile, "%i,%i,%g ; ", 1+cval[j], fill[j], aval[j]);
       }
-      hypre_fprintf(logFile, "\n");
+      nalu_hypre_fprintf(logFile, "\n");
      } 
 
      /* normal operation */
@@ -424,13 +424,13 @@ void iluk_seq_block(Euclid_dh ctx)
 
     /* check for zero diagonal */
     if (! aval[diag[i]]) {
-      hypre_sprintf(msgBuf_dh, "zero diagonal in local row %i", i+1);
+      nalu_hypre_sprintf(msgBuf_dh, "zero diagonal in local row %i", i+1);
       SET_V_ERROR(msgBuf_dh);
     }
   }
  }
 
-/*  hypre_printf("bj= %i  constrained= %i  discarded= %i\n", bj, constrained, discard); */
+/*  nalu_hypre_printf("bj= %i  constrained= %i  discarded= %i\n", bj, constrained, discard); */
 
   if (dummy != NULL) { FREE_DH(dummy); CHECK_V_ERROR; }
   FREE_DH(list); CHECK_V_ERROR;
@@ -512,7 +512,7 @@ NALU_HYPRE_Int symbolic_row_private(NALU_HYPRE_Int localRow,
       fill1 = tmpFill[node];
 
       if (debug) {
-        hypre_fprintf(logFile, "ILU_seq   sf updating from row: %i\n", 1+node);
+        nalu_hypre_fprintf(logFile, "ILU_seq   sf updating from row: %i\n", 1+node);
       }
 
       if (fill1 < level) {
@@ -585,7 +585,7 @@ NALU_HYPRE_Int numeric_row_private(NALU_HYPRE_Int localRow,
 
 
 
-/*hypre_fprintf(stderr, "local row= %i\n", 1+localRow);
+/*nalu_hypre_fprintf(stderr, "local row= %i\n", 1+localRow);
 */
 
 
@@ -598,7 +598,7 @@ NALU_HYPRE_Int numeric_row_private(NALU_HYPRE_Int localRow,
 
 /*
 if (pc == 0.0 || pv == 0.0) {
-hypre_fprintf(stderr, "pv= %g; pc= %g\n", pv, pc);
+nalu_hypre_fprintf(stderr, "pv= %g; pc= %g\n", pv, pc);
 }
 */
 
@@ -607,7 +607,7 @@ hypre_fprintf(stderr, "pv= %g; pc= %g\n", pv, pc);
       work[row] = multiplier;
 
       if (debug) {
-        hypre_fprintf(logFile, "ILU_seq   nf updating from row: %i; multiplier= %g\n", 1+row, multiplier);
+        nalu_hypre_fprintf(logFile, "ILU_seq   nf updating from row: %i; multiplier= %g\n", 1+row, multiplier);
       }
 
       for (k=diag[row]+1; k<rp[row+1]; ++k) {
@@ -616,7 +616,7 @@ hypre_fprintf(stderr, "pv= %g; pc= %g\n", pv, pc);
       }
     } else  {
       if (debug) {
-        hypre_fprintf(logFile, "ILU_seq   nf NO UPDATE from row %i; pc = %g; pv = %g\n", 1+row, pc, pv);
+        nalu_hypre_fprintf(logFile, "ILU_seq   nf NO UPDATE from row %i; pc = %g; pv = %g\n", 1+row, pc, pv);
       }
     }
   }
@@ -736,7 +736,7 @@ void ilut_seq(Euclid_dh ctx)
 
     /* check for zero diagonal */
     if (! aval[diag[i]]) {
-      hypre_sprintf(msgBuf_dh, "zero diagonal in local row %i", i+1);
+      nalu_hypre_sprintf(msgBuf_dh, "zero diagonal in local row %i", i+1);
       SET_V_ERROR(msgBuf_dh);
     }
   } /* --------- main loop end --------- */
@@ -869,13 +869,13 @@ bool check_constraint_private(Euclid_dh ctx, NALU_HYPRE_Int p1, NALU_HYPRE_Int j
   count = sg->ptrs[p1+1]  - sg->ptrs[p1];
 
 /*
-hypre_printf("p1= %i, p2= %i;  p1's nabors: ", p1, p2);
-for (i=0; i<count; ++i) hypre_printf("%i ", nabors[i]);
-hypre_printf("\n");
+nalu_hypre_printf("p1= %i, p2= %i;  p1's nabors: ", p1, p2);
+for (i=0; i<count; ++i) nalu_hypre_printf("%i ", nabors[i]);
+nalu_hypre_printf("\n");
 */
 
   for (i=0; i<count; ++i) {
-/* hypre_printf("  @@@ next nabor= %i\n", nabors[i]);
+/* nalu_hypre_printf("  @@@ next nabor= %i\n", nabors[i]);
 */
     if (nabors[i] == p2) {
       retval = true;

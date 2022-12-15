@@ -11,7 +11,7 @@ extern "C" {
 */
 
 #include "f2c.h"
-#include "hypre_blas.h"
+#include "nalu_hypre_blas.h"
 
 /* Subroutine */ integer dtrsv_(const char *uplo,const char *trans,const char *diag, integer *n,
 	doublereal *a, integer *lda, doublereal *x, integer *incx)

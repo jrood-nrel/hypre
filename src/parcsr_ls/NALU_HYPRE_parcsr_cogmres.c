@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_parcsr_ls.h"
+#include "_nalu_hypre_parcsr_ls.h"
 
 /*--------------------------------------------------------------------------
  * NALU_HYPRE_ParCSRCOGMRESCreate
@@ -14,29 +14,29 @@
 NALU_HYPRE_Int
 NALU_HYPRE_ParCSRCOGMRESCreate( MPI_Comm comm, NALU_HYPRE_Solver *solver )
 {
-   hypre_COGMRESFunctions * cogmres_functions;
+   nalu_hypre_COGMRESFunctions * cogmres_functions;
 
    if (!solver)
    {
-      hypre_error_in_arg(2);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(2);
+      return nalu_hypre_error_flag;
    }
    cogmres_functions =
-      hypre_COGMRESFunctionsCreate(
-         hypre_ParKrylovCAlloc, hypre_ParKrylovFree, hypre_ParKrylovCommInfo,
-         hypre_ParKrylovCreateVector,
-         hypre_ParKrylovCreateVectorArray,
-         hypre_ParKrylovDestroyVector, hypre_ParKrylovMatvecCreate,
-         hypre_ParKrylovMatvec, hypre_ParKrylovMatvecDestroy,
-         hypre_ParKrylovInnerProd, hypre_ParKrylovMassInnerProd,
-         hypre_ParKrylovMassDotpTwo, hypre_ParKrylovCopyVector,
-         //hypre_ParKrylovCopyVector,
-         hypre_ParKrylovClearVector,
-         hypre_ParKrylovScaleVector, hypre_ParKrylovAxpy, hypre_ParKrylovMassAxpy,
-         hypre_ParKrylovIdentitySetup, hypre_ParKrylovIdentity );
-   *solver = ( (NALU_HYPRE_Solver) hypre_COGMRESCreate( cogmres_functions ) );
+      nalu_hypre_COGMRESFunctionsCreate(
+         nalu_hypre_ParKrylovCAlloc, nalu_hypre_ParKrylovFree, nalu_hypre_ParKrylovCommInfo,
+         nalu_hypre_ParKrylovCreateVector,
+         nalu_hypre_ParKrylovCreateVectorArray,
+         nalu_hypre_ParKrylovDestroyVector, nalu_hypre_ParKrylovMatvecCreate,
+         nalu_hypre_ParKrylovMatvec, nalu_hypre_ParKrylovMatvecDestroy,
+         nalu_hypre_ParKrylovInnerProd, nalu_hypre_ParKrylovMassInnerProd,
+         nalu_hypre_ParKrylovMassDotpTwo, nalu_hypre_ParKrylovCopyVector,
+         //nalu_hypre_ParKrylovCopyVector,
+         nalu_hypre_ParKrylovClearVector,
+         nalu_hypre_ParKrylovScaleVector, nalu_hypre_ParKrylovAxpy, nalu_hypre_ParKrylovMassAxpy,
+         nalu_hypre_ParKrylovIdentitySetup, nalu_hypre_ParKrylovIdentity );
+   *solver = ( (NALU_HYPRE_Solver) nalu_hypre_COGMRESCreate( cogmres_functions ) );
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
@@ -46,7 +46,7 @@ NALU_HYPRE_ParCSRCOGMRESCreate( MPI_Comm comm, NALU_HYPRE_Solver *solver )
 NALU_HYPRE_Int
 NALU_HYPRE_ParCSRCOGMRESDestroy( NALU_HYPRE_Solver solver )
 {
-   return ( hypre_COGMRESDestroy( (void *) solver ) );
+   return ( nalu_hypre_COGMRESDestroy( (void *) solver ) );
 }
 
 /*--------------------------------------------------------------------------

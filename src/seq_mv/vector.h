@@ -11,11 +11,11 @@
  *
  *****************************************************************************/
 
-#ifndef hypre_VECTOR_HEADER
-#define hypre_VECTOR_HEADER
+#ifndef nalu_hypre_VECTOR_HEADER
+#define nalu_hypre_VECTOR_HEADER
 
 /*--------------------------------------------------------------------------
- * hypre_Vector
+ * nalu_hypre_Vector
  *--------------------------------------------------------------------------*/
 
 typedef struct
@@ -36,20 +36,20 @@ typedef struct
       With rowwise storage, vj[i] = data[ j + num_vectors*i] */
    NALU_HYPRE_Int  vecstride, idxstride;
    /* ... so vj[i] = data[ j*vecstride + i*idxstride ] regardless of row_storage.*/
-} hypre_Vector;
+} nalu_hypre_Vector;
 
 /*--------------------------------------------------------------------------
  * Accessor functions for the Vector structure
  *--------------------------------------------------------------------------*/
 
-#define hypre_VectorData(vector)                  ((vector) -> data)
-#define hypre_VectorSize(vector)                  ((vector) -> size)
-#define hypre_VectorComponent(vector)             ((vector) -> component)
-#define hypre_VectorOwnsData(vector)              ((vector) -> owns_data)
-#define hypre_VectorMemoryLocation(vector)        ((vector) -> memory_location)
-#define hypre_VectorNumVectors(vector)            ((vector) -> num_vectors)
-#define hypre_VectorMultiVecStorageMethod(vector) ((vector) -> multivec_storage_method)
-#define hypre_VectorVectorStride(vector)          ((vector) -> vecstride)
-#define hypre_VectorIndexStride(vector)           ((vector) -> idxstride)
+#define nalu_hypre_VectorData(vector)                  ((vector) -> data)
+#define nalu_hypre_VectorSize(vector)                  ((vector) -> size)
+#define nalu_hypre_VectorComponent(vector)             ((vector) -> component)
+#define nalu_hypre_VectorOwnsData(vector)              ((vector) -> owns_data)
+#define nalu_hypre_VectorMemoryLocation(vector)        ((vector) -> memory_location)
+#define nalu_hypre_VectorNumVectors(vector)            ((vector) -> num_vectors)
+#define nalu_hypre_VectorMultiVecStorageMethod(vector) ((vector) -> multivec_storage_method)
+#define nalu_hypre_VectorVectorStride(vector)          ((vector) -> vecstride)
+#define nalu_hypre_VectorIndexStride(vector)           ((vector) -> idxstride)
 
 #endif

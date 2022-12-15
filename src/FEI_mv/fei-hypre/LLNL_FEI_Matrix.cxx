@@ -15,7 +15,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
-#include "_hypre_utilities.h"
+#include "_nalu_hypre_utilities.h"
 #include "NALU_HYPRE.h"
 #include "LLNL_FEI_Matrix.h"
 

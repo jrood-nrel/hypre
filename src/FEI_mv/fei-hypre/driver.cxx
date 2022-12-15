@@ -22,7 +22,7 @@
 //---------------------------------------------------------------------------
 
 #include "NALU_HYPRE.h"
-#include "utilities/_hypre_utilities.h"
+#include "utilities/_nalu_hypre_utilities.h"
 #include "IJ_mv/NALU_HYPRE_IJ_mv.h"
 #include "parcsr_mv/NALU_HYPRE_parcsr_mv.h"
 #include "parcsr_ls/NALU_HYPRE_parcsr_ls.h"
@@ -33,8 +33,8 @@
 // local defines and local and external functions
 //---------------------------------------------------------------------------
 
-void fei_hypre_domaindecomposition(int, char **);
-void fei_hypre_test(int, char **);
+void fei_nalu_hypre_domaindecomposition(int, char **);
+void fei_nalu_hypre_test(int, char **);
 
 extern "C" {
 int  NALU_HYPRE_LSI_DDAMGSolve(NALU_HYPRE_ParCSRMatrix A_csr, NALU_HYPRE_ParVector x_csr,
@@ -49,14 +49,14 @@ void NALU_HYPRE_LSI_Get_IJAMatrixFromFile(double **val, int **ia,
 
 main(int argc, char *argv[])
 {
-    fei_hypre_test(argc, argv);
+    fei_nalu_hypre_test(argc, argv);
 }
 
 //***************************************************************************
 // a test program
 //***************************************************************************
 
-void fei_hypre_test(int argc, char *argv[])
+void fei_nalu_hypre_test(int argc, char *argv[])
 {
     int    i, j, k, my_rank, num_procs, nrows, nnz, mybegin, myend, status;
     int    *ia, *ja, ncnt, index, chunksize, iterations, local_nrows;
@@ -296,7 +296,7 @@ void fei_hypre_test(int argc, char *argv[])
 // driver program for domain decomposition
 //***************************************************************************
 
-void fei_hypre_domaindecomposition(int argc, char *argv[])
+void fei_nalu_hypre_domaindecomposition(int argc, char *argv[])
 {
     int                i, j, k, nrows, nnz, global_nrows;
     int                num_procs, status, rowCnt, relaxType[4];

@@ -4,9 +4,9 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 set(HDRS
-  _hypre_blas.h
+  _nalu_hypre_blas.h
   f2c.h
-  hypre_blas.h
+  nalu_hypre_blas.h
 )
 
 set(SRCS

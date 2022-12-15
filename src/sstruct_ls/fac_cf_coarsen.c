@@ -12,15 +12,15 @@
  *
  ******************************************************************************/
 
-#include "_hypre_sstruct_ls.h"
+#include "_nalu_hypre_sstruct_ls.h"
 #include "fac.h"
 
 #define MapStencilRank(stencil, rank)           \
    {                                            \
       NALU_HYPRE_Int ii,jj,kk;                       \
-      ii = hypre_IndexX(stencil);               \
-      jj = hypre_IndexY(stencil);               \
-      kk = hypre_IndexZ(stencil);               \
+      ii = nalu_hypre_IndexX(stencil);               \
+      jj = nalu_hypre_IndexY(stencil);               \
+      kk = nalu_hypre_IndexZ(stencil);               \
       if (ii==-1)                               \
          ii=2;                                  \
       if (jj==-1)                               \
@@ -43,21 +43,21 @@
          jj= -1;                                \
       if (kk==2)                                \
          kk= -1;                                \
-      hypre_SetIndex3(stencil, ii, jj, kk);     \
+      nalu_hypre_SetIndex3(stencil, ii, jj, kk);     \
    }
 
 
 #define AbsStencilShape(stencil, abs_shape)                     \
    {                                                            \
       NALU_HYPRE_Int ii,jj,kk;                                       \
-      ii = hypre_IndexX(stencil);                               \
-      jj = hypre_IndexY(stencil);                               \
-      kk = hypre_IndexZ(stencil);                               \
-      abs_shape= hypre_abs(ii) + hypre_abs(jj) + hypre_abs(kk); \
+      ii = nalu_hypre_IndexX(stencil);                               \
+      jj = nalu_hypre_IndexY(stencil);                               \
+      kk = nalu_hypre_IndexZ(stencil);                               \
+      abs_shape= nalu_hypre_abs(ii) + nalu_hypre_abs(jj) + nalu_hypre_abs(kk); \
    }
 
 /*--------------------------------------------------------------------------
- * hypre_AMR_CFCoarsen: Coarsens the CF interface to get the stencils
+ * nalu_hypre_AMR_CFCoarsen: Coarsens the CF interface to get the stencils
  * reaching into a coarsened fbox. Also sets the centre coefficient of CF
  * interface nodes to have "preserved" row sum.
  *
@@ -69,50 +69,50 @@
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_AMR_CFCoarsen( hypre_SStructMatrix  *   A,
-                     hypre_SStructMatrix  *   fac_A,
-                     hypre_Index              refine_factors,
+nalu_hypre_AMR_CFCoarsen( nalu_hypre_SStructMatrix  *   A,
+                     nalu_hypre_SStructMatrix  *   fac_A,
+                     nalu_hypre_Index              refine_factors,
                      NALU_HYPRE_Int                level )
 
 {
-   MPI_Comm                comm       = hypre_SStructMatrixComm(A);
-   hypre_SStructGraph     *graph      = hypre_SStructMatrixGraph(A);
-   NALU_HYPRE_Int               graph_type = hypre_SStructGraphObjectType(graph);
-   hypre_SStructGrid      *grid       = hypre_SStructGraphGrid(graph);
-   NALU_HYPRE_Int               nUventries = hypre_SStructGraphNUVEntries(graph);
-   NALU_HYPRE_IJMatrix          ij_A       = hypre_SStructMatrixIJMatrix(A);
-   NALU_HYPRE_Int               matrix_type = hypre_SStructMatrixObjectType(A);
-   NALU_HYPRE_Int               ndim       = hypre_SStructMatrixNDim(A);
+   MPI_Comm                comm       = nalu_hypre_SStructMatrixComm(A);
+   nalu_hypre_SStructGraph     *graph      = nalu_hypre_SStructMatrixGraph(A);
+   NALU_HYPRE_Int               graph_type = nalu_hypre_SStructGraphObjectType(graph);
+   nalu_hypre_SStructGrid      *grid       = nalu_hypre_SStructGraphGrid(graph);
+   NALU_HYPRE_Int               nUventries = nalu_hypre_SStructGraphNUVEntries(graph);
+   NALU_HYPRE_IJMatrix          ij_A       = nalu_hypre_SStructMatrixIJMatrix(A);
+   NALU_HYPRE_Int               matrix_type = nalu_hypre_SStructMatrixObjectType(A);
+   NALU_HYPRE_Int               ndim       = nalu_hypre_SStructMatrixNDim(A);
 
-   hypre_SStructPMatrix   *A_pmatrix;
-   hypre_StructMatrix     *smatrix_var;
-   hypre_StructStencil    *stencils;
+   nalu_hypre_SStructPMatrix   *A_pmatrix;
+   nalu_hypre_StructMatrix     *smatrix_var;
+   nalu_hypre_StructStencil    *stencils;
    NALU_HYPRE_Int               stencil_size;
-   hypre_Index             stencil_shape_i;
-   hypre_Index             loop_size;
-   hypre_Box               refined_box;
+   nalu_hypre_Index             stencil_shape_i;
+   nalu_hypre_Index             loop_size;
+   nalu_hypre_Box               refined_box;
    NALU_HYPRE_Real            **a_ptrs;
-   hypre_Box              *A_dbox;
+   nalu_hypre_Box              *A_dbox;
 
    NALU_HYPRE_Int               part_crse = level - 1;
    NALU_HYPRE_Int               part_fine = level;
 
-   hypre_BoxManager       *fboxman;
-   hypre_BoxManEntry     **boxman_entries, *boxman_entry;
+   nalu_hypre_BoxManager       *fboxman;
+   nalu_hypre_BoxManEntry     **boxman_entries, *boxman_entry;
    NALU_HYPRE_Int               nboxman_entries;
-   hypre_Box               boxman_entry_box;
+   nalu_hypre_Box               boxman_entry_box;
 
-   hypre_BoxArrayArray  ***fgrid_cinterface_extents;
+   nalu_hypre_BoxArrayArray  ***fgrid_cinterface_extents;
 
-   hypre_StructGrid       *cgrid;
-   hypre_BoxArray         *cgrid_boxes;
-   hypre_Box              *cgrid_box;
-   hypre_Index             node_extents;
-   hypre_Index             stridec, stridef;
+   nalu_hypre_StructGrid       *cgrid;
+   nalu_hypre_BoxArray         *cgrid_boxes;
+   nalu_hypre_Box              *cgrid_box;
+   nalu_hypre_Index             node_extents;
+   nalu_hypre_Index             stridec, stridef;
 
-   hypre_BoxArrayArray    *cinterface_arrays;
-   hypre_BoxArray         *cinterface_array;
-   hypre_Box              *fgrid_cinterface;
+   nalu_hypre_BoxArrayArray    *cinterface_arrays;
+   nalu_hypre_BoxArray         *cinterface_array;
+   nalu_hypre_Box              *fgrid_cinterface;
 
    NALU_HYPRE_Int               centre;
 
@@ -128,11 +128,11 @@ hypre_AMR_CFCoarsen( hypre_SStructMatrix  *   A,
    NALU_HYPRE_Int               i, j;
    NALU_HYPRE_Int               nvars, var1;
 
-   hypre_Index             lindex, zero_index;
-   hypre_Index             index1, index2;
-   hypre_Index             index_temp;
+   nalu_hypre_Index             lindex, zero_index;
+   nalu_hypre_Index             index1, index2;
+   nalu_hypre_Index             index_temp;
 
-   hypre_SStructUVEntry   *Uventry;
+   nalu_hypre_SStructUVEntry   *Uventry;
    NALU_HYPRE_Int               nUentries, cnt1;
    NALU_HYPRE_Int               box_array_size;
 
@@ -143,11 +143,11 @@ hypre_AMR_CFCoarsen( hypre_SStructMatrix  *   A,
 
    NALU_HYPRE_Int               myid;
 
-   hypre_MPI_Comm_rank(comm, &myid);
-   hypre_SetIndex3(zero_index, 0, 0, 0);
+   nalu_hypre_MPI_Comm_rank(comm, &myid);
+   nalu_hypre_SetIndex3(zero_index, 0, 0, 0);
 
-   hypre_BoxInit(&refined_box, ndim);
-   hypre_BoxInit(&boxman_entry_box, ndim);
+   nalu_hypre_BoxInit(&refined_box, ndim);
+   nalu_hypre_BoxInit(&boxman_entry_box, ndim);
 
    /*--------------------------------------------------------------------------
     *  Task: Coarsen the CF interface connections of A into fac_A so that
@@ -157,17 +157,17 @@ hypre_AMR_CFCoarsen( hypre_SStructMatrix  *   A,
 
    if (graph_type == NALU_HYPRE_SSTRUCT)
    {
-      startrank   = hypre_SStructGridGhstartRank(grid);
+      startrank   = nalu_hypre_SStructGridGhstartRank(grid);
    }
    if (graph_type == NALU_HYPRE_PARCSR)
    {
-      startrank   = hypre_SStructGridStartRank(grid);
+      startrank   = nalu_hypre_SStructGridStartRank(grid);
    }
 
    /*--------------------------------------------------------------------------
     * Fine grid strides by the refinement factors.
     *--------------------------------------------------------------------------*/
-   hypre_SetIndex3(stridec, 1, 1, 1);
+   nalu_hypre_SetIndex3(stridec, 1, 1, 1);
    for (i = 0; i < ndim; i++)
    {
       stridef[i] = refine_factors[i];
@@ -194,30 +194,30 @@ hypre_AMR_CFCoarsen( hypre_SStructMatrix  *   A,
     *
     *  fgrid_cinterface_extents[var1][ci]
     *--------------------------------------------------------------------------*/
-   A_pmatrix =  hypre_SStructMatrixPMatrix(fac_A, part_crse);
-   nvars    =  hypre_SStructPMatrixNVars(A_pmatrix);
+   A_pmatrix =  nalu_hypre_SStructMatrixPMatrix(fac_A, part_crse);
+   nvars    =  nalu_hypre_SStructPMatrixNVars(A_pmatrix);
 
-   fgrid_cinterface_extents = hypre_TAlloc(hypre_BoxArrayArray **,  nvars, NALU_HYPRE_MEMORY_HOST);
+   fgrid_cinterface_extents = nalu_hypre_TAlloc(nalu_hypre_BoxArrayArray **,  nvars, NALU_HYPRE_MEMORY_HOST);
    for (var1 = 0; var1 < nvars; var1++)
    {
-      fboxman = hypre_SStructGridBoxManager(grid, part_fine, var1);
-      stencils = hypre_SStructPMatrixSStencil(A_pmatrix, var1, var1);
+      fboxman = nalu_hypre_SStructGridBoxManager(grid, part_fine, var1);
+      stencils = nalu_hypre_SStructPMatrixSStencil(A_pmatrix, var1, var1);
 
-      cgrid = hypre_SStructPGridSGrid(hypre_SStructPMatrixPGrid(A_pmatrix), var1);
-      cgrid_boxes = hypre_StructGridBoxes(cgrid);
-      fgrid_cinterface_extents[var1] = hypre_TAlloc(hypre_BoxArrayArray *,
-                                                    hypre_BoxArraySize(cgrid_boxes), NALU_HYPRE_MEMORY_HOST);
+      cgrid = nalu_hypre_SStructPGridSGrid(nalu_hypre_SStructPMatrixPGrid(A_pmatrix), var1);
+      cgrid_boxes = nalu_hypre_StructGridBoxes(cgrid);
+      fgrid_cinterface_extents[var1] = nalu_hypre_TAlloc(nalu_hypre_BoxArrayArray *,
+                                                    nalu_hypre_BoxArraySize(cgrid_boxes), NALU_HYPRE_MEMORY_HOST);
 
-      hypre_ForBoxI(ci, cgrid_boxes)
+      nalu_hypre_ForBoxI(ci, cgrid_boxes)
       {
-         cgrid_box = hypre_BoxArrayBox(cgrid_boxes, ci);
+         cgrid_box = nalu_hypre_BoxArrayBox(cgrid_boxes, ci);
 
-         hypre_StructMapCoarseToFine(hypre_BoxIMin(cgrid_box), zero_index,
-                                     refine_factors, hypre_BoxIMin(&refined_box));
-         hypre_SetIndex3(index1, refine_factors[0] - 1, refine_factors[1] - 1,
+         nalu_hypre_StructMapCoarseToFine(nalu_hypre_BoxIMin(cgrid_box), zero_index,
+                                     refine_factors, nalu_hypre_BoxIMin(&refined_box));
+         nalu_hypre_SetIndex3(index1, refine_factors[0] - 1, refine_factors[1] - 1,
                          refine_factors[2] - 1);
-         hypre_StructMapCoarseToFine(hypre_BoxIMax(cgrid_box), index1,
-                                     refine_factors, hypre_BoxIMax(&refined_box));
+         nalu_hypre_StructMapCoarseToFine(nalu_hypre_BoxIMax(cgrid_box), index1,
+                                     refine_factors, nalu_hypre_BoxIMax(&refined_box));
 
          /*------------------------------------------------------------------------
           * Stretch the refined_box so that a BoxManIntersect will get abutting
@@ -225,15 +225,15 @@ hypre_AMR_CFCoarsen( hypre_SStructMatrix  *   A,
           *------------------------------------------------------------------------*/
          for (i = 0; i < ndim; i++)
          {
-            hypre_BoxIMin(&refined_box)[i] -= 1;
-            hypre_BoxIMax(&refined_box)[i] += 1;
+            nalu_hypre_BoxIMin(&refined_box)[i] -= 1;
+            nalu_hypre_BoxIMax(&refined_box)[i] += 1;
          }
 
-         hypre_BoxManIntersect(fboxman, hypre_BoxIMin(&refined_box),
-                               hypre_BoxIMax(&refined_box), &boxman_entries,
+         nalu_hypre_BoxManIntersect(fboxman, nalu_hypre_BoxIMin(&refined_box),
+                               nalu_hypre_BoxIMax(&refined_box), &boxman_entries,
                                &nboxman_entries);
 
-         fgrid_cinterface_extents[var1][ci] = hypre_BoxArrayArrayCreate(nboxman_entries, ndim);
+         fgrid_cinterface_extents[var1][ci] = nalu_hypre_BoxArrayArrayCreate(nboxman_entries, ndim);
 
          /*------------------------------------------------------------------------
           * Get the  fgrid_cinterface_extents using var1-var1 stencil (only like-
@@ -243,16 +243,16 @@ hypre_AMR_CFCoarsen( hypre_SStructMatrix  *   A,
          {
             for (i = 0; i < nboxman_entries; i++)
             {
-               hypre_BoxManEntryGetExtents(boxman_entries[i],
-                                           hypre_BoxIMin(&boxman_entry_box),
-                                           hypre_BoxIMax(&boxman_entry_box));
-               hypre_CFInterfaceExtents2(&boxman_entry_box, cgrid_box, stencils, refine_factors,
-                                         hypre_BoxArrayArrayBoxArray(fgrid_cinterface_extents[var1][ci], i) );
+               nalu_hypre_BoxManEntryGetExtents(boxman_entries[i],
+                                           nalu_hypre_BoxIMin(&boxman_entry_box),
+                                           nalu_hypre_BoxIMax(&boxman_entry_box));
+               nalu_hypre_CFInterfaceExtents2(&boxman_entry_box, cgrid_box, stencils, refine_factors,
+                                         nalu_hypre_BoxArrayArrayBoxArray(fgrid_cinterface_extents[var1][ci], i) );
             }
          }
-         hypre_TFree(boxman_entries, NALU_HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(boxman_entries, NALU_HYPRE_MEMORY_HOST);
 
-      }  /* hypre_ForBoxI(ci, cgrid_boxes) */
+      }  /* nalu_hypre_ForBoxI(ci, cgrid_boxes) */
    }     /* for (var1= 0; var1< nvars; var1++) */
 
    /*--------------------------------------------------------------------------
@@ -263,16 +263,16 @@ hypre_AMR_CFCoarsen( hypre_SStructMatrix  *   A,
     *--------------------------------------------------------------------------*/
    for (var1 = 0; var1 < nvars; var1++)
    {
-      cgrid = hypre_SStructPGridSGrid(hypre_SStructPMatrixPGrid(A_pmatrix), var1);
-      cgrid_boxes = hypre_StructGridBoxes(cgrid);
-      stencils =  hypre_SStructPMatrixSStencil(A_pmatrix, var1, var1);
+      cgrid = nalu_hypre_SStructPGridSGrid(nalu_hypre_SStructPMatrixPGrid(A_pmatrix), var1);
+      cgrid_boxes = nalu_hypre_StructGridBoxes(cgrid);
+      stencils =  nalu_hypre_SStructPMatrixSStencil(A_pmatrix, var1, var1);
 
       /*----------------------------------------------------------------------
        * Extract only where variables couple.
        *----------------------------------------------------------------------*/
       if (stencils != NULL)
       {
-         stencil_size = hypre_StructStencilSize(stencils);
+         stencil_size = nalu_hypre_StructStencilSize(stencils);
 
          /*------------------------------------------------------------------
           *  stencil_ranks[i]      =  rank of stencil entry i.
@@ -281,8 +281,8 @@ hypre_AMR_CFCoarsen( hypre_SStructMatrix  *   A,
           * These are needed in collapsing the unstructured connections to
           * a stencil connection.
           *------------------------------------------------------------------*/
-         stencil_ranks = hypre_TAlloc(NALU_HYPRE_Int,  stencil_size, NALU_HYPRE_MEMORY_HOST);
-         rank_stencils = hypre_TAlloc(NALU_HYPRE_Int,  max_stencil_size, NALU_HYPRE_MEMORY_HOST);
+         stencil_ranks = nalu_hypre_TAlloc(NALU_HYPRE_Int,  stencil_size, NALU_HYPRE_MEMORY_HOST);
+         rank_stencils = nalu_hypre_TAlloc(NALU_HYPRE_Int,  max_stencil_size, NALU_HYPRE_MEMORY_HOST);
          for (i = 0; i < max_stencil_size; i++)
          {
             rank_stencils[i] = -1;
@@ -294,30 +294,30 @@ hypre_AMR_CFCoarsen( hypre_SStructMatrix  *   A,
 
          for (i = 0; i < stencil_size; i++)
          {
-            hypre_CopyIndex(hypre_StructStencilElement(stencils, i), stencil_shape_i);
+            nalu_hypre_CopyIndex(nalu_hypre_StructStencilElement(stencils, i), stencil_shape_i);
             MapStencilRank(stencil_shape_i, j);
             stencil_ranks[i] = j;
             rank_stencils[stencil_ranks[i]] = i;
          }
          centre = rank_stencils[0];
 
-         smatrix_var = hypre_SStructPMatrixSMatrix(A_pmatrix, var1, var1);
+         smatrix_var = nalu_hypre_SStructPMatrixSMatrix(A_pmatrix, var1, var1);
 
-         a_ptrs   = hypre_TAlloc(NALU_HYPRE_Real *,  stencil_size, NALU_HYPRE_MEMORY_HOST);
-         hypre_ForBoxI(ci, cgrid_boxes)
+         a_ptrs   = nalu_hypre_TAlloc(NALU_HYPRE_Real *,  stencil_size, NALU_HYPRE_MEMORY_HOST);
+         nalu_hypre_ForBoxI(ci, cgrid_boxes)
          {
-            cgrid_box = hypre_BoxArrayBox(cgrid_boxes, ci);
+            cgrid_box = nalu_hypre_BoxArrayBox(cgrid_boxes, ci);
 
             cinterface_arrays = fgrid_cinterface_extents[var1][ci];
-            A_dbox = hypre_BoxArrayBox(hypre_StructMatrixDataSpace(smatrix_var), ci);
+            A_dbox = nalu_hypre_BoxArrayBox(nalu_hypre_StructMatrixDataSpace(smatrix_var), ci);
 
             /*-----------------------------------------------------------------
              * Ptrs to the correct data location.
              *-----------------------------------------------------------------*/
             for (i = 0; i < stencil_size; i++)
             {
-               hypre_CopyIndex(hypre_StructStencilElement(stencils, i), stencil_shape_i);
-               a_ptrs[i] = hypre_StructMatrixExtractPointerByIndex(smatrix_var,
+               nalu_hypre_CopyIndex(nalu_hypre_StructStencilElement(stencils, i), stencil_shape_i);
+               a_ptrs[i] = nalu_hypre_StructMatrixExtractPointerByIndex(smatrix_var,
                                                                    ci,
                                                                    stencil_shape_i);
             }
@@ -327,17 +327,17 @@ hypre_AMR_CFCoarsen( hypre_SStructMatrix  *   A,
              * sum. Coarsen the c/f connection and set the centre to preserve
              * the row sum of the composite operator along the c/f interface.
              *-------------------------------------------------------------------*/
-            hypre_ForBoxArrayI(fi, cinterface_arrays)
+            nalu_hypre_ForBoxArrayI(fi, cinterface_arrays)
             {
-               cinterface_array = hypre_BoxArrayArrayBoxArray(cinterface_arrays, fi);
-               box_array_size  = hypre_BoxArraySize(cinterface_array);
+               cinterface_array = nalu_hypre_BoxArrayArrayBoxArray(cinterface_arrays, fi);
+               box_array_size  = nalu_hypre_BoxArraySize(cinterface_array);
                for (boxi = stencil_size; boxi < box_array_size; boxi++)
                {
-                  fgrid_cinterface = hypre_BoxArrayBox(cinterface_array, boxi);
-                  hypre_CopyIndex(hypre_BoxIMin(fgrid_cinterface), node_extents);
-                  hypre_BoxGetSize(fgrid_cinterface, loop_size);
+                  fgrid_cinterface = nalu_hypre_BoxArrayBox(cinterface_array, boxi);
+                  nalu_hypre_CopyIndex(nalu_hypre_BoxIMin(fgrid_cinterface), node_extents);
+                  nalu_hypre_BoxGetSize(fgrid_cinterface, loop_size);
 
-                  hypre_SerialBoxLoop1Begin(ndim, loop_size,
+                  nalu_hypre_SerialBoxLoop1Begin(ndim, loop_size,
                                             A_dbox, node_extents, stridec, iA);
                   {
                      zypre_BoxLoopGetIndex(lindex);
@@ -359,15 +359,15 @@ hypre_AMR_CFCoarsen( hypre_SStructMatrix  *   A,
                      index_temp[1] = node_extents[1] + lindex[1];
                      index_temp[2] = node_extents[2] + lindex[2];
 
-                     hypre_SStructGridFindBoxManEntry(grid, part_crse, index_temp, var1,
+                     nalu_hypre_SStructGridFindBoxManEntry(grid, part_crse, index_temp, var1,
                                                       &boxman_entry);
-                     hypre_SStructBoxManEntryGetGlobalRank(boxman_entry, index_temp, &rank,
+                     nalu_hypre_SStructBoxManEntryGetGlobalRank(boxman_entry, index_temp, &rank,
                                                            matrix_type);
                      if (nUventries > 0)
                      {
                         found = falseV;
-                        if ((rank - startrank) >= hypre_SStructGraphIUVEntry(graph, 0) &&
-                            (rank - startrank) <= hypre_SStructGraphIUVEntry(graph, nUventries - 1))
+                        if ((rank - startrank) >= nalu_hypre_SStructGraphIUVEntry(graph, 0) &&
+                            (rank - startrank) <= nalu_hypre_SStructGraphIUVEntry(graph, nUventries - 1))
                         {
                            found = trueV;
                         }
@@ -379,44 +379,44 @@ hypre_AMR_CFCoarsen( hypre_SStructMatrix  *   A,
                       *-----------------------------------------------------------------*/
                      if (nUventries > 0 && found == trueV)
                      {
-                        Uventry = hypre_SStructGraphUVEntry(graph, rank - startrank);
+                        Uventry = nalu_hypre_SStructGraphUVEntry(graph, rank - startrank);
 
                         if (Uventry != NULL)
                         {
-                           nUentries = hypre_SStructUVEntryNUEntries(Uventry);
+                           nUentries = nalu_hypre_SStructUVEntryNUEntries(Uventry);
 
                            /*-----------------------------------------------------------
                             * extract only the connections to level part_fine and the
                             * correct variable.
                             *-----------------------------------------------------------*/
-                           temp1 = hypre_CTAlloc(NALU_HYPRE_Int,  nUentries, NALU_HYPRE_MEMORY_HOST);
+                           temp1 = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  nUentries, NALU_HYPRE_MEMORY_HOST);
                            cnt1 = 0;
                            for (i = 0; i < nUentries; i++)
                            {
-                              if (hypre_SStructUVEntryToPart(Uventry, i) == part_fine
-                                  &&  hypre_SStructUVEntryToVar(Uventry, i) == var1)
+                              if (nalu_hypre_SStructUVEntryToPart(Uventry, i) == part_fine
+                                  &&  nalu_hypre_SStructUVEntryToVar(Uventry, i) == var1)
                               {
                                  temp1[cnt1++] = i;
                               }
                            }
 
-                           ncols = hypre_TAlloc(NALU_HYPRE_Int,  cnt1, NALU_HYPRE_MEMORY_HOST);
-                           rows = hypre_TAlloc(NALU_HYPRE_BigInt,  cnt1, NALU_HYPRE_MEMORY_HOST);
-                           cols = hypre_TAlloc(NALU_HYPRE_BigInt,  cnt1, NALU_HYPRE_MEMORY_HOST);
-                           temp2 = hypre_TAlloc(NALU_HYPRE_Int,  cnt1, NALU_HYPRE_MEMORY_HOST);
-                           vals = hypre_CTAlloc(NALU_HYPRE_Real,  cnt1, NALU_HYPRE_MEMORY_HOST);
+                           ncols = nalu_hypre_TAlloc(NALU_HYPRE_Int,  cnt1, NALU_HYPRE_MEMORY_HOST);
+                           rows = nalu_hypre_TAlloc(NALU_HYPRE_BigInt,  cnt1, NALU_HYPRE_MEMORY_HOST);
+                           cols = nalu_hypre_TAlloc(NALU_HYPRE_BigInt,  cnt1, NALU_HYPRE_MEMORY_HOST);
+                           temp2 = nalu_hypre_TAlloc(NALU_HYPRE_Int,  cnt1, NALU_HYPRE_MEMORY_HOST);
+                           vals = nalu_hypre_CTAlloc(NALU_HYPRE_Real,  cnt1, NALU_HYPRE_MEMORY_HOST);
 
                            for (i = 0; i < cnt1; i++)
                            {
                               ncols[i] = 1;
                               rows[i] = rank;
-                              cols[i] = hypre_SStructUVEntryToRank(Uventry, temp1[i]);
+                              cols[i] = nalu_hypre_SStructUVEntryToRank(Uventry, temp1[i]);
 
                               /* determine the stencil connection pattern */
-                              hypre_StructMapFineToCoarse(
-                                 hypre_SStructUVEntryToIndex(Uventry, temp1[i]),
+                              nalu_hypre_StructMapFineToCoarse(
+                                 nalu_hypre_SStructUVEntryToIndex(Uventry, temp1[i]),
                                  zero_index, stridef, index2);
-                              hypre_SubtractIndexes(index2, index_temp,
+                              nalu_hypre_SubtractIndexes(index2, index_temp,
                                                     ndim, index1);
                               MapStencilRank(index1, temp2[i]);
 
@@ -431,7 +431,7 @@ hypre_AMR_CFCoarsen( hypre_SStructMatrix  *   A,
                               }
                            }  /* for (i= 0; i< cnt1; i++) */
 
-                           hypre_TFree(temp1, NALU_HYPRE_MEMORY_HOST);
+                           nalu_hypre_TFree(temp1, NALU_HYPRE_MEMORY_HOST);
 
                            NALU_HYPRE_IJMatrixGetValues(ij_A, cnt1, ncols, rows, cols, vals);
                            for (i = 0; i < cnt1; i++)
@@ -439,9 +439,9 @@ hypre_AMR_CFCoarsen( hypre_SStructMatrix  *   A,
                               a_ptrs[centre][iA] += vals[i];
                            }
 
-                           hypre_TFree(ncols, NALU_HYPRE_MEMORY_HOST);
-                           hypre_TFree(rows, NALU_HYPRE_MEMORY_HOST);
-                           hypre_TFree(cols, NALU_HYPRE_MEMORY_HOST);
+                           nalu_hypre_TFree(ncols, NALU_HYPRE_MEMORY_HOST);
+                           nalu_hypre_TFree(rows, NALU_HYPRE_MEMORY_HOST);
+                           nalu_hypre_TFree(cols, NALU_HYPRE_MEMORY_HOST);
 
                            /* compute the connection to the coarsened fine box */
                            for (i = 0; i < cnt1; i++)
@@ -455,8 +455,8 @@ hypre_AMR_CFCoarsen( hypre_SStructMatrix  *   A,
                                  }
                               }
                            }
-                           hypre_TFree(vals, NALU_HYPRE_MEMORY_HOST);
-                           hypre_TFree(temp2, NALU_HYPRE_MEMORY_HOST);
+                           nalu_hypre_TFree(vals, NALU_HYPRE_MEMORY_HOST);
+                           nalu_hypre_TFree(temp2, NALU_HYPRE_MEMORY_HOST);
 
                            /* centre connection which preserves the row sum */
                            for (i = 0; i < stencil_size; i++)
@@ -470,30 +470,30 @@ hypre_AMR_CFCoarsen( hypre_SStructMatrix  *   A,
                         }   /* if (Uventry != NULL) */
                      }       /* if (nUventries > 0) */
                   }
-                  hypre_SerialBoxLoop1End(iA);
+                  nalu_hypre_SerialBoxLoop1End(iA);
                }  /* for (boxi= stencil_size; boxi< box_array_size; boxi++) */
-            }     /* hypre_ForBoxArrayI(fi, cinterface_arrays) */
-         }        /* hypre_ForBoxI(ci, cgrid_boxes) */
+            }     /* nalu_hypre_ForBoxArrayI(fi, cinterface_arrays) */
+         }        /* nalu_hypre_ForBoxI(ci, cgrid_boxes) */
 
-         hypre_TFree(a_ptrs, NALU_HYPRE_MEMORY_HOST);
-         hypre_TFree(stencil_ranks, NALU_HYPRE_MEMORY_HOST);
-         hypre_TFree(rank_stencils, NALU_HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(a_ptrs, NALU_HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(stencil_ranks, NALU_HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(rank_stencils, NALU_HYPRE_MEMORY_HOST);
       }   /* if (stencils != NULL) */
    }      /* end var1 */
 
 
    for (var1 = 0; var1 < nvars; var1++)
    {
-      cgrid = hypre_SStructPGridSGrid(hypre_SStructPMatrixPGrid(A_pmatrix), var1);
-      cgrid_boxes = hypre_StructGridBoxes(cgrid);
+      cgrid = nalu_hypre_SStructPGridSGrid(nalu_hypre_SStructPMatrixPGrid(A_pmatrix), var1);
+      cgrid_boxes = nalu_hypre_StructGridBoxes(cgrid);
 
-      hypre_ForBoxI(ci, cgrid_boxes)
+      nalu_hypre_ForBoxI(ci, cgrid_boxes)
       {
-         hypre_BoxArrayArrayDestroy(fgrid_cinterface_extents[var1][ci]);
+         nalu_hypre_BoxArrayArrayDestroy(fgrid_cinterface_extents[var1][ci]);
       }
-      hypre_TFree(fgrid_cinterface_extents[var1], NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(fgrid_cinterface_extents[var1], NALU_HYPRE_MEMORY_HOST);
    }
-   hypre_TFree(fgrid_cinterface_extents, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(fgrid_cinterface_extents, NALU_HYPRE_MEMORY_HOST);
 
    return 0;
 }

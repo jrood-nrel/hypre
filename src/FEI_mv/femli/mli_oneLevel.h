@@ -12,7 +12,7 @@
 #ifndef __MLIONELEVELH__
 #define __MLIONELEVELH__
 
-#include "_hypre_utilities.h"
+#include "_nalu_hypre_utilities.h"
 #include "mli.h"
 
 class MLI;

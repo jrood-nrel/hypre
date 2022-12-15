@@ -40,7 +40,7 @@ NALU_HYPRE_ConvertPETScMatrixToDistributedMatrix(
    NALU_HYPRE_DistributedMatrix *DistributedMatrix )
 {
    NALU_HYPRE_Int ierr;
-   MPI_Comm hypre_MPI_Comm;
+   MPI_Comm nalu_hypre_MPI_Comm;
    NALU_HYPRE_BigInt M, N;
 #ifdef NALU_HYPRE_TIMING
    NALU_HYPRE_Int           timer;
@@ -51,8 +51,8 @@ NALU_HYPRE_ConvertPETScMatrixToDistributedMatrix(
    if (!PETSc_matrix) { return (-1); }
 
 #ifdef NALU_HYPRE_TIMING
-   timer = hypre_InitializeTiming( "ConvertPETScMatrixToDistributedMatrix");
-   hypre_BeginTiming( timer );
+   timer = nalu_hypre_InitializeTiming( "ConvertPETScMatrixToDistributedMatrix");
+   nalu_hypre_BeginTiming( timer );
 #endif
 
 
@@ -84,8 +84,8 @@ NALU_HYPRE_ConvertPETScMatrixToDistributedMatrix(
    /* if(ierr) return(ierr);*/
 
 #ifdef NALU_HYPRE_TIMING
-   hypre_EndTiming( timer );
-   /* hypre_FinalizeTiming( timer ); */
+   nalu_hypre_EndTiming( timer );
+   /* nalu_hypre_FinalizeTiming( timer ); */
 #endif
 
    return (0);

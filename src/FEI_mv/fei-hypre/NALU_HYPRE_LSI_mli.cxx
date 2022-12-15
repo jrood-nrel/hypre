@@ -163,7 +163,7 @@ NALU_HYPRE_MLI_SFEI;
 extern "C"
 int NALU_HYPRE_LSI_MLICreate( MPI_Comm comm, NALU_HYPRE_Solver *solver )
 {
-   NALU_HYPRE_LSI_MLI *mli_object = hypre_TAlloc(NALU_HYPRE_LSI_MLI, 1, NALU_HYPRE_MEMORY_HOST);
+   NALU_HYPRE_LSI_MLI *mli_object = nalu_hypre_TAlloc(NALU_HYPRE_LSI_MLI, 1, NALU_HYPRE_MEMORY_HOST);
    *solver = (NALU_HYPRE_Solver) mli_object;
    mli_object->mpiComm_             = comm;
    mli_object->outputLevel_         = 0;
@@ -482,7 +482,7 @@ int NALU_HYPRE_LSI_MLISetup( NALU_HYPRE_Solver solver, NALU_HYPRE_ParCSRMatrix A
          double             *NSpace, *vecInData, *vecOutData, *nullCorrection;
          NALU_HYPRE_IJVector     IJVecIn, IJVecOut;
          NALU_HYPRE_ParCSRMatrix hypreA;
-         hypre_ParVector    *hypreVecIn, *hypreVecOut;
+         nalu_hypre_ParVector    *hypreVecIn, *hypreVecOut;
          NALU_HYPRE_Solver       solver;
 
          strcpy( paramString, "getNullSpace" );
@@ -505,8 +505,8 @@ int NALU_HYPRE_LSI_MLISetup( NALU_HYPRE_Solver solver, NALU_HYPRE_ParCSRMatrix A
          NALU_HYPRE_IJVectorAssemble(IJVecOut);
          NALU_HYPRE_IJVectorGetObject(IJVecIn, (void **) &hypreVecIn);
          NALU_HYPRE_IJVectorGetObject(IJVecOut, (void **) &hypreVecOut);
-         vecInData = hypre_VectorData(hypre_ParVectorLocalVector(hypreVecIn));
-         vecOutData = hypre_VectorData(hypre_ParVectorLocalVector(hypreVecOut));
+         vecInData = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(hypreVecIn));
+         vecOutData = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(hypreVecOut));
          nullCorrection = new double[numNS*length];
          NALU_HYPRE_ParCSRGMRESCreate(mpiComm, &solver);
          NALU_HYPRE_ParCSRGMRESSetKDim(solver, 100);
@@ -1213,10 +1213,10 @@ int NALU_HYPRE_LSI_MLISetFEData(NALU_HYPRE_Solver solver, void *object)
 {
 #ifdef HAVE_MLI
    NALU_HYPRE_LSI_MLI *mli_object = (NALU_HYPRE_LSI_MLI *) solver;
-   NALU_HYPRE_MLI_FEData *hypre_fedata = (NALU_HYPRE_MLI_FEData *) object;
-   mli_object->feData_      = hypre_fedata->fedata_; 
-   hypre_fedata->fedata_    = NULL; 
-   hypre_fedata->fedataOwn_ = 0;
+   NALU_HYPRE_MLI_FEData *nalu_hypre_fedata = (NALU_HYPRE_MLI_FEData *) object;
+   mli_object->feData_      = nalu_hypre_fedata->fedata_; 
+   nalu_hypre_fedata->fedata_    = NULL; 
+   nalu_hypre_fedata->fedataOwn_ = 0;
    return 0;
 #else
    (void) solver;
@@ -1234,10 +1234,10 @@ int NALU_HYPRE_LSI_MLISetSFEI(NALU_HYPRE_Solver solver, void *object)
 {
 #ifdef HAVE_MLI
    NALU_HYPRE_LSI_MLI *mli_object = (NALU_HYPRE_LSI_MLI *) solver;
-   NALU_HYPRE_MLI_SFEI *hypre_sfei = (NALU_HYPRE_MLI_SFEI *) object;
-   mli_object->sfei_    = hypre_sfei->sfei_; 
-   hypre_sfei->sfei_    = NULL; 
-   hypre_sfei->sfeiOwn_ = 0;
+   NALU_HYPRE_MLI_SFEI *nalu_hypre_sfei = (NALU_HYPRE_MLI_SFEI *) object;
+   mli_object->sfei_    = nalu_hypre_sfei->sfei_; 
+   nalu_hypre_sfei->sfei_    = NULL; 
+   nalu_hypre_sfei->sfeiOwn_ = 0;
    return 0;
 #else
    (void) solver;
@@ -1644,14 +1644,14 @@ extern "C"
 void *NALU_HYPRE_LSI_MLIFEDataCreate( MPI_Comm mpi_comm )
 {
 #ifdef HAVE_MLI
-   NALU_HYPRE_MLI_FEData *hypre_fedata;
-   hypre_fedata = hypre_TAlloc(NALU_HYPRE_MLI_FEData, 1, NALU_HYPRE_MEMORY_HOST);  
-   hypre_fedata->comm_          = mpi_comm;
-   hypre_fedata->fedata_        = NULL;
-   hypre_fedata->fedataOwn_     = 0;
-   hypre_fedata->computeNull_   = 0;
-   hypre_fedata->nullDim_       = 1;
-   return ((void *) hypre_fedata);
+   NALU_HYPRE_MLI_FEData *nalu_hypre_fedata;
+   nalu_hypre_fedata = nalu_hypre_TAlloc(NALU_HYPRE_MLI_FEData, 1, NALU_HYPRE_MEMORY_HOST);  
+   nalu_hypre_fedata->comm_          = mpi_comm;
+   nalu_hypre_fedata->fedata_        = NULL;
+   nalu_hypre_fedata->fedataOwn_     = 0;
+   nalu_hypre_fedata->computeNull_   = 0;
+   nalu_hypre_fedata->nullDim_       = 1;
+   return ((void *) nalu_hypre_fedata);
 #else
    return NULL;
 #endif 
@@ -1665,12 +1665,12 @@ extern "C"
 int NALU_HYPRE_LSI_MLIFEDataDestroy( void *object )
 {
 #ifdef HAVE_MLI
-   NALU_HYPRE_MLI_FEData *hypre_fedata = (NALU_HYPRE_MLI_FEData *) object;
-   if ( hypre_fedata == NULL ) return 1;
-   if ( hypre_fedata->fedataOwn_ && hypre_fedata->fedata_ != NULL ) 
-      delete hypre_fedata->fedata_;
-   hypre_fedata->fedata_        = NULL;
-   free( hypre_fedata );
+   NALU_HYPRE_MLI_FEData *nalu_hypre_fedata = (NALU_HYPRE_MLI_FEData *) object;
+   if ( nalu_hypre_fedata == NULL ) return 1;
+   if ( nalu_hypre_fedata->fedataOwn_ && nalu_hypre_fedata->fedata_ != NULL ) 
+      delete nalu_hypre_fedata->fedata_;
+   nalu_hypre_fedata->fedata_        = NULL;
+   free( nalu_hypre_fedata );
    return 0;
 #else
    return 1;
@@ -1686,14 +1686,14 @@ int NALU_HYPRE_LSI_MLIFEDataInitFields( void *object, int nFields, int *fieldSiz
                                    int *fieldIDs )
 {
 #ifdef HAVE_MLI
-   NALU_HYPRE_MLI_FEData *hypre_fedata = (NALU_HYPRE_MLI_FEData *) object;
+   NALU_HYPRE_MLI_FEData *nalu_hypre_fedata = (NALU_HYPRE_MLI_FEData *) object;
    MLI_FEData       *fedata;
 
-   if ( hypre_fedata == NULL ) return 1;
-   if ( hypre_fedata->fedata_ != NULL ) delete hypre_fedata->fedata_;
-   hypre_fedata->fedata_    = new MLI_FEData(hypre_fedata->comm_);
-   hypre_fedata->fedataOwn_ = 1;
-   fedata = (MLI_FEData *) hypre_fedata->fedata_;
+   if ( nalu_hypre_fedata == NULL ) return 1;
+   if ( nalu_hypre_fedata->fedata_ != NULL ) delete nalu_hypre_fedata->fedata_;
+   nalu_hypre_fedata->fedata_    = new MLI_FEData(nalu_hypre_fedata->comm_);
+   nalu_hypre_fedata->fedataOwn_ = 1;
+   fedata = (MLI_FEData *) nalu_hypre_fedata->fedata_;
    fedata->initFields( nFields, fieldSizes, fieldIDs );
    return 0;
 #else
@@ -1715,14 +1715,14 @@ int NALU_HYPRE_LSI_MLIFEDataInitElemBlock(void *object, int nElems,
                                      int *nodeFieldIDs) 
 {
 #ifdef HAVE_MLI
-   NALU_HYPRE_MLI_FEData *hypre_fedata = (NALU_HYPRE_MLI_FEData *) object;
+   NALU_HYPRE_MLI_FEData *nalu_hypre_fedata = (NALU_HYPRE_MLI_FEData *) object;
    MLI_FEData       *fedata;
 
-   if ( hypre_fedata == NULL ) return 1;
-   fedata = (MLI_FEData *) hypre_fedata->fedata_;
+   if ( nalu_hypre_fedata == NULL ) return 1;
+   fedata = (MLI_FEData *) nalu_hypre_fedata->fedata_;
    if ( fedata == NULL ) return 1;
    if ( numNodeFields != 1 ) return 1;
-   hypre_fedata->fedata_->initElemBlock(nElems,nNodesPerElem,numNodeFields,
+   nalu_hypre_fedata->fedata_->initElemBlock(nElems,nNodesPerElem,numNodeFields,
                                         nodeFieldIDs,0,NULL);
    return 0;
 #else
@@ -1744,11 +1744,11 @@ int NALU_HYPRE_LSI_MLIFEDataInitElemNodeList( void *object, int elemID,
                        int nNodesPerElem, int *elemNodeList)
 {
 #ifdef HAVE_MLI
-   NALU_HYPRE_MLI_FEData *hypre_fedata = (NALU_HYPRE_MLI_FEData *) object;
+   NALU_HYPRE_MLI_FEData *nalu_hypre_fedata = (NALU_HYPRE_MLI_FEData *) object;
    MLI_FEData       *fedata;
 
-   if ( hypre_fedata == NULL ) return 1;
-   fedata = (MLI_FEData *) hypre_fedata->fedata_;
+   if ( nalu_hypre_fedata == NULL ) return 1;
+   fedata = (MLI_FEData *) nalu_hypre_fedata->fedata_;
    if ( fedata == NULL ) return 1;
    fedata->initElemNodeList(elemID,nNodesPerElem,elemNodeList,3,NULL);
    return 0;
@@ -1767,11 +1767,11 @@ int NALU_HYPRE_LSI_MLIFEDataInitSharedNodes(void *object, int nSharedNodes,
                   int **sharedProcIDs) 
 {
 #ifdef HAVE_MLI
-   NALU_HYPRE_MLI_FEData *hypre_fedata = (NALU_HYPRE_MLI_FEData *) object;
+   NALU_HYPRE_MLI_FEData *nalu_hypre_fedata = (NALU_HYPRE_MLI_FEData *) object;
    MLI_FEData       *fedata;
 
-   if ( hypre_fedata == NULL ) return 1;
-   fedata = (MLI_FEData *) hypre_fedata->fedata_;
+   if ( nalu_hypre_fedata == NULL ) return 1;
+   fedata = (MLI_FEData *) nalu_hypre_fedata->fedata_;
    if ( fedata == NULL ) return 1;
    if ( nSharedNodes > 0 )
       fedata->initSharedNodes(nSharedNodes, sharedNodeIDs, sharedProcLengs, 
@@ -1795,11 +1795,11 @@ extern "C"
 int NALU_HYPRE_LSI_MLIFEDataInitComplete( void *object )
 {
 #ifdef HAVE_MLI
-   NALU_HYPRE_MLI_FEData *hypre_fedata = (NALU_HYPRE_MLI_FEData *) object;
+   NALU_HYPRE_MLI_FEData *nalu_hypre_fedata = (NALU_HYPRE_MLI_FEData *) object;
    MLI_FEData       *fedata;
 
-   if ( hypre_fedata == NULL ) return 1;
-   fedata = (MLI_FEData *) hypre_fedata->fedata_;
+   if ( nalu_hypre_fedata == NULL ) return 1;
+   fedata = (MLI_FEData *) nalu_hypre_fedata->fedata_;
    if ( fedata == NULL ) return 1;
    fedata->initComplete();
    return 0;
@@ -1822,15 +1822,15 @@ int NALU_HYPRE_LSI_MLIFEDataLoadElemMatrix(void *object, int elemID, int nNodes,
 #ifdef HAVE_MLI
    int              i, j;
    double           *elemMat;
-   NALU_HYPRE_MLI_FEData *hypre_fedata = (NALU_HYPRE_MLI_FEData *) object;
+   NALU_HYPRE_MLI_FEData *nalu_hypre_fedata = (NALU_HYPRE_MLI_FEData *) object;
    MLI_FEData       *fedata;
 
    /* -------------------------------------------------------- */ 
    /* error checking                                           */
    /* -------------------------------------------------------- */ 
 
-   if ( hypre_fedata == NULL ) return 1;
-   fedata = (MLI_FEData *) hypre_fedata->fedata_;
+   if ( nalu_hypre_fedata == NULL ) return 1;
+   fedata = (MLI_FEData *) nalu_hypre_fedata->fedata_;
    if ( fedata == NULL ) return 1;
 
    /* -------------------------------------------------------- */ 
@@ -1863,14 +1863,14 @@ int NALU_HYPRE_LSI_MLIFEDataWriteToFile( void *object, char *filename )
 {
 #ifdef HAVE_MLI
    MLI_FEData       *fedata;
-   NALU_HYPRE_MLI_FEData *hypre_fedata = (NALU_HYPRE_MLI_FEData *) object;
+   NALU_HYPRE_MLI_FEData *nalu_hypre_fedata = (NALU_HYPRE_MLI_FEData *) object;
 
    /* -------------------------------------------------------- */ 
    /* error checking                                           */
    /* -------------------------------------------------------- */ 
 
-   if ( hypre_fedata == NULL ) return 1;
-   fedata = (MLI_FEData *) hypre_fedata->fedata_;
+   if ( nalu_hypre_fedata == NULL ) return 1;
+   fedata = (MLI_FEData *) nalu_hypre_fedata->fedata_;
    if ( fedata == NULL ) return 1;
 
    /* -------------------------------------------------------- */ 
@@ -1894,12 +1894,12 @@ extern "C"
 void *NALU_HYPRE_LSI_MLISFEICreate( MPI_Comm mpiComm )
 {
 #ifdef HAVE_MLI
-   NALU_HYPRE_MLI_SFEI *hypre_sfei;
-   hypre_sfei = hypre_TAlloc(NALU_HYPRE_MLI_SFEI, 1, NALU_HYPRE_MEMORY_HOST);  
-   hypre_sfei->comm_    = mpiComm;
-   hypre_sfei->sfei_    = new MLI_SFEI(mpiComm);;
-   hypre_sfei->sfeiOwn_ = 1;
-   return ((void *) hypre_sfei);
+   NALU_HYPRE_MLI_SFEI *nalu_hypre_sfei;
+   nalu_hypre_sfei = nalu_hypre_TAlloc(NALU_HYPRE_MLI_SFEI, 1, NALU_HYPRE_MEMORY_HOST);  
+   nalu_hypre_sfei->comm_    = mpiComm;
+   nalu_hypre_sfei->sfei_    = new MLI_SFEI(mpiComm);;
+   nalu_hypre_sfei->sfeiOwn_ = 1;
+   return ((void *) nalu_hypre_sfei);
 #else
    return NULL;
 #endif 
@@ -1913,12 +1913,12 @@ extern "C"
 int NALU_HYPRE_LSI_MLISFEIDestroy( void *object )
 {
 #ifdef HAVE_MLI
-   NALU_HYPRE_MLI_SFEI *hypre_sfei = (NALU_HYPRE_MLI_SFEI *) object;
-   if ( hypre_sfei == NULL ) return 1;
-   if ( hypre_sfei->sfeiOwn_ && hypre_sfei->sfei_ != NULL ) 
-      delete hypre_sfei->sfei_;
-   hypre_sfei->sfei_ = NULL;
-   free( hypre_sfei );
+   NALU_HYPRE_MLI_SFEI *nalu_hypre_sfei = (NALU_HYPRE_MLI_SFEI *) object;
+   if ( nalu_hypre_sfei == NULL ) return 1;
+   if ( nalu_hypre_sfei->sfeiOwn_ && nalu_hypre_sfei->sfei_ != NULL ) 
+      delete nalu_hypre_sfei->sfei_;
+   nalu_hypre_sfei->sfei_ = NULL;
+   free( nalu_hypre_sfei );
    return 0;
 #else
    return 1;
@@ -1934,15 +1934,15 @@ int NALU_HYPRE_LSI_MLISFEILoadElemMatrices(void *object, int elemBlk, int nElems
               int *elemIDs, double ***inMat, int elemNNodes, int **nodeLists)
 {
 #ifdef HAVE_MLI
-   NALU_HYPRE_MLI_SFEI *hypre_sfei = (NALU_HYPRE_MLI_SFEI *) object;
+   NALU_HYPRE_MLI_SFEI *nalu_hypre_sfei = (NALU_HYPRE_MLI_SFEI *) object;
    MLI_SFEI       *sfei;
 
    /* -------------------------------------------------------- */ 
    /* error checking                                           */
    /* -------------------------------------------------------- */ 
 
-   if ( hypre_sfei == NULL ) return 1;
-   sfei = (MLI_SFEI *) hypre_sfei->sfei_;
+   if ( nalu_hypre_sfei == NULL ) return 1;
+   sfei = (MLI_SFEI *) nalu_hypre_sfei->sfei_;
    if ( sfei == NULL ) return 1;
 
    /* -------------------------------------------------------- */ 
@@ -1972,15 +1972,15 @@ int NALU_HYPRE_LSI_MLISFEIAddNumElems(void *object, int elemBlk, int nElems,
                                  int elemNNodes)
 {
 #ifdef HAVE_MLI
-   NALU_HYPRE_MLI_SFEI *hypre_sfei = (NALU_HYPRE_MLI_SFEI *) object;
+   NALU_HYPRE_MLI_SFEI *nalu_hypre_sfei = (NALU_HYPRE_MLI_SFEI *) object;
    MLI_SFEI       *sfei;
 
    /* -------------------------------------------------------- */ 
    /* error checking                                           */
    /* -------------------------------------------------------- */ 
 
-   if ( hypre_sfei == NULL ) return 1;
-   sfei = (MLI_SFEI *) hypre_sfei->sfei_;
+   if ( nalu_hypre_sfei == NULL ) return 1;
+   sfei = (MLI_SFEI *) nalu_hypre_sfei->sfei_;
    if ( sfei == NULL ) return 1;
 
    /* -------------------------------------------------------- */ 

@@ -43,13 +43,13 @@
 */
 
 #include <math.h>
-#include "_hypre_utilities.h"
+#include "_nalu_hypre_utilities.h"
 #include "NALU_HYPRE_struct_ls.h"
 
 #ifdef NALU_HYPRE_FORTRAN
 #include "NALU_HYPRE_config.h"
 #include "fortran.h"
-#include "hypre_struct_fortran_test.h"
+#include "nalu_hypre_struct_fortran_test.h"
 #endif
 
 
@@ -67,13 +67,13 @@ NALU_HYPRE_Int main (NALU_HYPRE_Int argc, char *argv[])
    NALU_HYPRE_Int n_pre, n_post;
 
 #ifdef NALU_HYPRE_FORTRAN
-   hypre_F90_Obj grid;
-   hypre_F90_Obj stencil;
-   hypre_F90_Obj A;
-   hypre_F90_Obj b;
-   hypre_F90_Obj x;
-   hypre_F90_Obj solver;
-   hypre_F90_Obj precond;
+   nalu_hypre_F90_Obj grid;
+   nalu_hypre_F90_Obj stencil;
+   nalu_hypre_F90_Obj A;
+   nalu_hypre_F90_Obj b;
+   nalu_hypre_F90_Obj x;
+   nalu_hypre_F90_Obj solver;
+   nalu_hypre_F90_Obj precond;
    NALU_HYPRE_Int temp_COMM;
    NALU_HYPRE_Int precond_id;
    NALU_HYPRE_Int zero = 0;
@@ -99,9 +99,9 @@ NALU_HYPRE_Int main (NALU_HYPRE_Int argc, char *argv[])
    NALU_HYPRE_Int print_solution;
 
    /* Initialize MPI */
-   hypre_MPI_Init(&argc, &argv);
-   hypre_MPI_Comm_rank(hypre_MPI_COMM_WORLD, &myid);
-   hypre_MPI_Comm_size(hypre_MPI_COMM_WORLD, &num_procs);
+   nalu_hypre_MPI_Init(&argc, &argv);
+   nalu_hypre_MPI_Comm_rank(nalu_hypre_MPI_COMM_WORLD, &myid);
+   nalu_hypre_MPI_Comm_size(nalu_hypre_MPI_COMM_WORLD, &num_procs);
 
    /* Set defaults */
    n = 33;
@@ -151,21 +151,21 @@ NALU_HYPRE_Int main (NALU_HYPRE_Int argc, char *argv[])
 
       if ((print_usage) && (myid == 0))
       {
-         hypre_printf("\n");
-         hypre_printf("Usage: %s [<options>]\n", argv[0]);
-         hypre_printf("\n");
-         hypre_printf("  -n <n>              : problem size per procesor (default: 8)\n");
-         hypre_printf("  -solver <ID>        : solver ID\n");
-         hypre_printf("                        0  - PCG with SMG precond (default)\n");
-         hypre_printf("                        1  - SMG\n");
-         hypre_printf("  -v <n_pre> <n_post> : number of pre and post relaxations (default: 1 1)\n");
-         hypre_printf("  -print_solution     : print the solution vector\n");
-         hypre_printf("\n");
+         nalu_hypre_printf("\n");
+         nalu_hypre_printf("Usage: %s [<options>]\n", argv[0]);
+         nalu_hypre_printf("\n");
+         nalu_hypre_printf("  -n <n>              : problem size per procesor (default: 8)\n");
+         nalu_hypre_printf("  -solver <ID>        : solver ID\n");
+         nalu_hypre_printf("                        0  - PCG with SMG precond (default)\n");
+         nalu_hypre_printf("                        1  - SMG\n");
+         nalu_hypre_printf("  -v <n_pre> <n_post> : number of pre and post relaxations (default: 1 1)\n");
+         nalu_hypre_printf("  -print_solution     : print the solution vector\n");
+         nalu_hypre_printf("\n");
       }
 
       if (print_usage)
       {
-         hypre_MPI_Finalize();
+         nalu_hypre_MPI_Finalize();
          return (0);
       }
    }
@@ -190,7 +190,7 @@ NALU_HYPRE_Int main (NALU_HYPRE_Int argc, char *argv[])
    /* 1. Set up a grid */
    {
 #ifdef NALU_HYPRE_FORTRAN
-      temp_COMM = (NALU_HYPRE_Int) hypre_MPI_COMM_WORLD;
+      temp_COMM = (NALU_HYPRE_Int) nalu_hypre_MPI_COMM_WORLD;
       /* Create an empty 2D grid object */
       NALU_HYPRE_StructGridCreate(&temp_COMM, &two, &grid);
 
@@ -202,7 +202,7 @@ NALU_HYPRE_Int main (NALU_HYPRE_Int argc, char *argv[])
       NALU_HYPRE_StructGridAssemble(&grid);
 #else
       /* Create an empty 2D grid object */
-      NALU_HYPRE_StructGridCreate(hypre_MPI_COMM_WORLD, 2, &grid);
+      NALU_HYPRE_StructGridCreate(nalu_hypre_MPI_COMM_WORLD, 2, &grid);
 
       /* Add a new box to the grid */
       NALU_HYPRE_StructGridSetExtents(grid, ilower, iupper);
@@ -254,14 +254,14 @@ NALU_HYPRE_Int main (NALU_HYPRE_Int argc, char *argv[])
       NALU_HYPRE_Int stencil_indices[5];
 
 #ifdef NALU_HYPRE_FORTRAN
-      temp_COMM = (NALU_HYPRE_Int) hypre_MPI_COMM_WORLD;
+      temp_COMM = (NALU_HYPRE_Int) nalu_hypre_MPI_COMM_WORLD;
       /* Create an empty matrix object */
       NALU_HYPRE_StructMatrixCreate(&temp_COMM, &grid, &stencil, &A);
 
       /* Indicate that the matrix coefficients are ready to be set */
       NALU_HYPRE_StructMatrixInitialize(&A);
 
-      values = hypre_CTAlloc(NALU_HYPRE_Real, nvalues, NALU_HYPRE_MEMORY_HOST);
+      values = nalu_hypre_CTAlloc(NALU_HYPRE_Real, nvalues, NALU_HYPRE_MEMORY_HOST);
 
       for (j = 0; j < nentries; j++)
       {
@@ -282,15 +282,15 @@ NALU_HYPRE_Int main (NALU_HYPRE_Int argc, char *argv[])
       NALU_HYPRE_StructMatrixSetBoxValues(&A, ilower, iupper, &nentries,
                                      stencil_indices, values);
 
-      hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
 #else
       /* Create an empty matrix object */
-      NALU_HYPRE_StructMatrixCreate(hypre_MPI_COMM_WORLD, grid, stencil, &A);
+      NALU_HYPRE_StructMatrixCreate(nalu_hypre_MPI_COMM_WORLD, grid, stencil, &A);
 
       /* Indicate that the matrix coefficients are ready to be set */
       NALU_HYPRE_StructMatrixInitialize(A);
 
-      values = hypre_CTAlloc(NALU_HYPRE_Real, nvalues, NALU_HYPRE_MEMORY_HOST);
+      values = nalu_hypre_CTAlloc(NALU_HYPRE_Real, nvalues, NALU_HYPRE_MEMORY_HOST);
 
       for (j = 0; j < nentries; j++)
       {
@@ -311,7 +311,7 @@ NALU_HYPRE_Int main (NALU_HYPRE_Int argc, char *argv[])
       NALU_HYPRE_StructMatrixSetBoxValues(A, ilower, iupper, nentries,
                                      stencil_indices, values);
 
-      hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
 #endif
    }
 
@@ -327,7 +327,7 @@ NALU_HYPRE_Int main (NALU_HYPRE_Int argc, char *argv[])
       NALU_HYPRE_Real *values;
       NALU_HYPRE_Int stencil_indices[1];
 
-      values = hypre_CTAlloc(NALU_HYPRE_Real, nvalues, NALU_HYPRE_MEMORY_HOST);
+      values = nalu_hypre_CTAlloc(NALU_HYPRE_Real, nvalues, NALU_HYPRE_MEMORY_HOST);
       for (j = 0; j < nvalues; j++)
       {
          values[j] = 0.0;
@@ -414,7 +414,7 @@ NALU_HYPRE_Int main (NALU_HYPRE_Int argc, char *argv[])
 #endif
       }
 
-      hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
    }
 
    /* This is a collective call finalizing the matrix assembly.
@@ -430,16 +430,16 @@ NALU_HYPRE_Int main (NALU_HYPRE_Int argc, char *argv[])
       NALU_HYPRE_Int    nvalues = n * n;
       NALU_HYPRE_Real *values;
 
-      values = hypre_CTAlloc(NALU_HYPRE_Real, nvalues, NALU_HYPRE_MEMORY_HOST);
+      values = nalu_hypre_CTAlloc(NALU_HYPRE_Real, nvalues, NALU_HYPRE_MEMORY_HOST);
 
       /* Create an empty vector object */
 #ifdef NALU_HYPRE_FORTRAN
-      temp_COMM = (NALU_HYPRE_Int) hypre_MPI_COMM_WORLD;
+      temp_COMM = (NALU_HYPRE_Int) nalu_hypre_MPI_COMM_WORLD;
       NALU_HYPRE_StructVectorCreate(&temp_COMM, &grid, &b);
       NALU_HYPRE_StructVectorCreate(&temp_COMM, &grid, &x);
 #else
-      NALU_HYPRE_StructVectorCreate(hypre_MPI_COMM_WORLD, grid, &b);
-      NALU_HYPRE_StructVectorCreate(hypre_MPI_COMM_WORLD, grid, &x);
+      NALU_HYPRE_StructVectorCreate(nalu_hypre_MPI_COMM_WORLD, grid, &b);
+      NALU_HYPRE_StructVectorCreate(nalu_hypre_MPI_COMM_WORLD, grid, &x);
 #endif
 
       /* Indicate that the vector coefficients are ready to be set */
@@ -472,7 +472,7 @@ NALU_HYPRE_Int main (NALU_HYPRE_Int argc, char *argv[])
       NALU_HYPRE_StructVectorSetBoxValues(x, ilower, iupper, values);
 #endif
 
-      hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
 
       /* This is a collective call finalizing the vector assembly.
          The vector is now ``ready to be used'' */
@@ -490,7 +490,7 @@ NALU_HYPRE_Int main (NALU_HYPRE_Int argc, char *argv[])
    if (solver_id == 0)
    {
 #ifdef NALU_HYPRE_FORTRAN
-      temp_COMM = (NALU_HYPRE_Int) hypre_MPI_COMM_WORLD;
+      temp_COMM = (NALU_HYPRE_Int) nalu_hypre_MPI_COMM_WORLD;
       NALU_HYPRE_StructPCGCreate(&temp_COMM, &solver);
       NALU_HYPRE_StructPCGSetMaxIter(&solver, &fifty );
       NALU_HYPRE_StructPCGSetTol(&solver, &tol );
@@ -521,7 +521,7 @@ NALU_HYPRE_Int main (NALU_HYPRE_Int argc, char *argv[])
       /* Clean up */
       NALU_HYPRE_StructPCGDestroy(&solver);
 #else
-      NALU_HYPRE_StructPCGCreate(hypre_MPI_COMM_WORLD, &solver);
+      NALU_HYPRE_StructPCGCreate(nalu_hypre_MPI_COMM_WORLD, &solver);
       NALU_HYPRE_StructPCGSetMaxIter(solver, 50 );
       NALU_HYPRE_StructPCGSetTol(solver, 1.0e-06 );
       NALU_HYPRE_StructPCGSetTwoNorm(solver, 1 );
@@ -530,7 +530,7 @@ NALU_HYPRE_Int main (NALU_HYPRE_Int argc, char *argv[])
       NALU_HYPRE_StructPCGSetLogging(solver, 1);
 
       /* Use symmetric SMG as preconditioner */
-      NALU_HYPRE_StructSMGCreate(hypre_MPI_COMM_WORLD, &precond);
+      NALU_HYPRE_StructSMGCreate(nalu_hypre_MPI_COMM_WORLD, &precond);
       NALU_HYPRE_StructSMGSetMemoryUse(precond, 0);
       NALU_HYPRE_StructSMGSetMaxIter(precond, 1);
       NALU_HYPRE_StructSMGSetTol(precond, 0.0);
@@ -556,7 +556,7 @@ NALU_HYPRE_Int main (NALU_HYPRE_Int argc, char *argv[])
    if (solver_id == 1)
    {
 #ifdef NALU_HYPRE_FORTRAN
-      temp_COMM = (NALU_HYPRE_Int) hypre_MPI_COMM_WORLD;
+      temp_COMM = (NALU_HYPRE_Int) nalu_hypre_MPI_COMM_WORLD;
       NALU_HYPRE_StructSMGCreate(&temp_COMM, &solver);
       NALU_HYPRE_StructSMGSetMemoryUse(&solver, &zero);
       NALU_HYPRE_StructSMGSetMaxIter(&solver, &fifty);
@@ -578,7 +578,7 @@ NALU_HYPRE_Int main (NALU_HYPRE_Int argc, char *argv[])
       /* Clean up */
       NALU_HYPRE_StructSMGDestroy(&solver);
 #else
-      NALU_HYPRE_StructSMGCreate(hypre_MPI_COMM_WORLD, &solver);
+      NALU_HYPRE_StructSMGCreate(nalu_hypre_MPI_COMM_WORLD, &solver);
       NALU_HYPRE_StructSMGSetMemoryUse(solver, 0);
       NALU_HYPRE_StructSMGSetMaxIter(solver, 50);
       NALU_HYPRE_StructSMGSetTol(solver, 1.0e-06);
@@ -616,10 +616,10 @@ NALU_HYPRE_Int main (NALU_HYPRE_Int argc, char *argv[])
 
    if (myid == 0)
    {
-      hypre_printf("\n");
-      hypre_printf("Iterations = %d\n", num_iterations);
-      hypre_printf("Final Relative Residual Norm = %g\n", final_res_norm);
-      hypre_printf("\n");
+      nalu_hypre_printf("\n");
+      nalu_hypre_printf("Iterations = %d\n", num_iterations);
+      nalu_hypre_printf("Final Relative Residual Norm = %g\n", final_res_norm);
+      nalu_hypre_printf("\n");
    }
 
    /* Free memory */
@@ -638,7 +638,7 @@ NALU_HYPRE_Int main (NALU_HYPRE_Int argc, char *argv[])
 #endif
 
    /* Finalize MPI */
-   hypre_MPI_Finalize();
+   nalu_hypre_MPI_Finalize();
 
    return (0);
 }

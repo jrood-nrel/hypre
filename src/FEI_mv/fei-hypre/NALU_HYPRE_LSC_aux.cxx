@@ -35,10 +35,10 @@
 //---------------------------------------------------------------------------
 
 #include "NALU_HYPRE.h"
-#include "utilities/_hypre_utilities.h"
+#include "utilities/_nalu_hypre_utilities.h"
 #include "IJ_mv/NALU_HYPRE_IJ_mv.h"
 #include "parcsr_mv/NALU_HYPRE_parcsr_mv.h"
-#include "parcsr_mv/_hypre_parcsr_mv.h"
+#include "parcsr_mv/_nalu_hypre_parcsr_mv.h"
 #include "parcsr_ls/NALU_HYPRE_parcsr_ls.h"
 #include "NALU_HYPRE_parcsr_bicgstabl.h"
 #include "NALU_HYPRE_parcsr_lsicg.h"
@@ -47,7 +47,7 @@
 #include "NALU_HYPRE_parcsr_symqmr.h"
 #include "NALU_HYPRE_parcsr_fgmres.h"
 #include "NALU_HYPRE_LinSysCore.h"
-#include "parcsr_mv/_hypre_parcsr_mv.h"
+#include "parcsr_mv/_nalu_hypre_parcsr_mv.h"
 #include "NALU_HYPRE_LSI_schwarz.h"
 #include "NALU_HYPRE_LSI_ddilut.h"
 #include "NALU_HYPRE_LSI_ddict.h"
@@ -123,7 +123,7 @@ extern "C" {
  * other functions
  *-------------------------------------------------------------------------*/
 
-   void  hypre_qsort1(int *, double *, int, int);
+   void  nalu_hypre_qsort1(int *, double *, int, int);
    int   NALU_HYPRE_DummyFunction(NALU_HYPRE_Solver, NALU_HYPRE_ParCSRMatrix,
                             NALU_HYPRE_ParVector, NALU_HYPRE_ParVector) {return 0;}
    int   NALU_HYPRE_LSI_Search(int*, int, int);
@@ -4106,42 +4106,42 @@ void NALU_HYPRE_LinSysCore::setupPreconBoomerAMG()
    NALU_HYPRE_BoomerAMGSetStrongThreshold(HYPrecon_,amgStrongThreshold_);
    NALU_HYPRE_BoomerAMGSetTol(HYPrecon_, 0.0e0);
    NALU_HYPRE_BoomerAMGSetMaxIter(HYPrecon_, 1);
-   num_sweeps = hypre_CTAlloc(int,4,NALU_HYPRE_MEMORY_HOST);
+   num_sweeps = nalu_hypre_CTAlloc(int,4,NALU_HYPRE_MEMORY_HOST);
    for ( i = 0; i < 4; i++ ) num_sweeps[i] = amgNumSweeps_[i];
 
    NALU_HYPRE_BoomerAMGSetNumGridSweeps(HYPrecon_, num_sweeps);
-   relax_type = hypre_CTAlloc(int,4,NALU_HYPRE_MEMORY_HOST);
+   relax_type = nalu_hypre_CTAlloc(int,4,NALU_HYPRE_MEMORY_HOST);
    for ( i = 0; i < 4; i++ ) relax_type[i] = amgRelaxType_[i];
 
    NALU_HYPRE_BoomerAMGSetGridRelaxType(HYPrecon_, relax_type);
-   relax_wt = hypre_CTAlloc(double,amgMaxLevels_,NALU_HYPRE_MEMORY_HOST);
+   relax_wt = nalu_hypre_CTAlloc(double,amgMaxLevels_,NALU_HYPRE_MEMORY_HOST);
    for ( i = 0; i < amgMaxLevels_; i++ ) relax_wt[i] = amgRelaxWeight_[i];
    NALU_HYPRE_BoomerAMGSetRelaxWeight(HYPrecon_, relax_wt);
 
-   relax_omega = hypre_CTAlloc(double,amgMaxLevels_,NALU_HYPRE_MEMORY_HOST);
+   relax_omega = nalu_hypre_CTAlloc(double,amgMaxLevels_,NALU_HYPRE_MEMORY_HOST);
    for ( i = 0; i < amgMaxLevels_; i++ ) relax_omega[i] = amgRelaxOmega_[i];
    NALU_HYPRE_BoomerAMGSetOmega(HYPrecon_, relax_omega);
 
    if (amgGridRlxType_)
    {
-      relax_points = hypre_CTAlloc(int*,4,NALU_HYPRE_MEMORY_HOST);
-      relax_points[0] = hypre_CTAlloc(int,num_sweeps[0],NALU_HYPRE_MEMORY_HOST);
+      relax_points = nalu_hypre_CTAlloc(int*,4,NALU_HYPRE_MEMORY_HOST);
+      relax_points[0] = nalu_hypre_CTAlloc(int,num_sweeps[0],NALU_HYPRE_MEMORY_HOST);
       for ( j = 0; j < num_sweeps[0]; j++ ) relax_points[0][j] = 0;
-      relax_points[1] = hypre_CTAlloc(int,2*num_sweeps[1],NALU_HYPRE_MEMORY_HOST);
+      relax_points[1] = nalu_hypre_CTAlloc(int,2*num_sweeps[1],NALU_HYPRE_MEMORY_HOST);
       for ( j = 0; j < num_sweeps[1]; j+=2 )
 	 {relax_points[1][j] = -1;relax_points[1][j+1] =  1;}
-      relax_points[2] = hypre_CTAlloc(int,2*num_sweeps[2],NALU_HYPRE_MEMORY_HOST);
+      relax_points[2] = nalu_hypre_CTAlloc(int,2*num_sweeps[2],NALU_HYPRE_MEMORY_HOST);
       for ( j = 0; j < num_sweeps[2]; j+=2 )
 	 {relax_points[2][j] = -1;relax_points[2][j+1] =  1;}
-      relax_points[3] = hypre_CTAlloc(int,num_sweeps[3],NALU_HYPRE_MEMORY_HOST);
+      relax_points[3] = nalu_hypre_CTAlloc(int,num_sweeps[3],NALU_HYPRE_MEMORY_HOST);
       for ( j = 0; j < num_sweeps[3]; j++ ) relax_points[3][j] = 0;
    }
    else
    {
-      relax_points = hypre_CTAlloc(int*,4,NALU_HYPRE_MEMORY_HOST);
+      relax_points = nalu_hypre_CTAlloc(int*,4,NALU_HYPRE_MEMORY_HOST);
       for ( i = 0; i < 4; i++ )
       {
-         relax_points[i] = hypre_CTAlloc(int,num_sweeps[i],NALU_HYPRE_MEMORY_HOST);
+         relax_points[i] = nalu_hypre_CTAlloc(int,num_sweeps[i],NALU_HYPRE_MEMORY_HOST);
          for ( j = 0; j < num_sweeps[i]; j++ ) relax_points[i][j] = 0;
       }
    }
@@ -4219,10 +4219,10 @@ void NALU_HYPRE_LinSysCore::setupPreconMLMaxwell()
    if (maxwellANN_ == NULL)
    {
       NALU_HYPRE_IJMatrixGetObject(currA_, (void **) &A_csr);
-      hypre_BoomerAMGBuildCoarseOperator((hypre_ParCSRMatrix *) maxwellGEN_,
-                                      (hypre_ParCSRMatrix *) A_csr,
-                                      (hypre_ParCSRMatrix *) maxwellGEN_,
-                                      (hypre_ParCSRMatrix **) &maxwellANN_);
+      nalu_hypre_BoomerAMGBuildCoarseOperator((nalu_hypre_ParCSRMatrix *) maxwellGEN_,
+                                      (nalu_hypre_ParCSRMatrix *) A_csr,
+                                      (nalu_hypre_ParCSRMatrix *) maxwellGEN_,
+                                      (nalu_hypre_ParCSRMatrix **) &maxwellANN_);
    }
    NALU_HYPRE_LSI_MLMaxwellSetANNMatrix(HYPrecon_,maxwellANN_);
 #else
@@ -4462,7 +4462,7 @@ void NALU_HYPRE_LinSysCore::setupPreconPILUT()
 void NALU_HYPRE_LinSysCore::setupPreconBlock()
 {
    NALU_HYPRE_Lookup *newLookup;
-   newLookup = hypre_TAlloc(NALU_HYPRE_Lookup, 1, NALU_HYPRE_MEMORY_HOST);
+   newLookup = nalu_hypre_TAlloc(NALU_HYPRE_Lookup, 1, NALU_HYPRE_MEMORY_HOST);
    newLookup->object = (void *) lookup_;
    NALU_HYPRE_LSI_BlockPrecondSetLookup( HYPrecon_, newLookup );
    free( newLookup );
@@ -4522,27 +4522,27 @@ void NALU_HYPRE_LinSysCore::solveUsingBoomeramg(int& status)
    NALU_HYPRE_BoomerAMGSetMeasureType(HYSolver_, amgMeasureType_);
    NALU_HYPRE_BoomerAMGSetStrongThreshold(HYSolver_, amgStrongThreshold_);
 
-   num_sweeps = hypre_CTAlloc(int,4,NALU_HYPRE_MEMORY_HOST);
+   num_sweeps = nalu_hypre_CTAlloc(int,4,NALU_HYPRE_MEMORY_HOST);
    for ( i = 0; i < 4; i++ ) num_sweeps[i] = amgNumSweeps_[i];
    NALU_HYPRE_BoomerAMGSetNumGridSweeps(HYSolver_, num_sweeps);
 
-   relax_type = hypre_CTAlloc(int,4,NALU_HYPRE_MEMORY_HOST);
+   relax_type = nalu_hypre_CTAlloc(int,4,NALU_HYPRE_MEMORY_HOST);
    for ( i = 0; i < 4; i++ ) relax_type[i] = amgRelaxType_[i];
    NALU_HYPRE_BoomerAMGSetGridRelaxType(HYSolver_, relax_type);
 
    NALU_HYPRE_BoomerAMGSetMaxLevels(HYPrecon_, amgMaxLevels_);
-   relax_wt = hypre_CTAlloc(double, amgMaxLevels_,NALU_HYPRE_MEMORY_HOST);
+   relax_wt = nalu_hypre_CTAlloc(double, amgMaxLevels_,NALU_HYPRE_MEMORY_HOST);
    for ( i = 0; i <  amgMaxLevels_; i++ ) relax_wt[i] = amgRelaxWeight_[i];
    NALU_HYPRE_BoomerAMGSetRelaxWeight(HYSolver_, relax_wt);
 
-   relax_omega = hypre_CTAlloc(double, amgMaxLevels_,NALU_HYPRE_MEMORY_HOST);
+   relax_omega = nalu_hypre_CTAlloc(double, amgMaxLevels_,NALU_HYPRE_MEMORY_HOST);
    for ( i = 0; i <  amgMaxLevels_; i++ ) relax_omega[i] = amgRelaxOmega_[i];
    NALU_HYPRE_BoomerAMGSetOmega(HYPrecon_, relax_omega);
 
-   relax_points = hypre_CTAlloc(int*,4,NALU_HYPRE_MEMORY_HOST);
+   relax_points = nalu_hypre_CTAlloc(int*,4,NALU_HYPRE_MEMORY_HOST);
    for ( i = 0; i < 4; i++ )
    {
-      relax_points[i] = hypre_CTAlloc(int,num_sweeps[i],NALU_HYPRE_MEMORY_HOST);
+      relax_points[i] = nalu_hypre_CTAlloc(int,num_sweeps[i],NALU_HYPRE_MEMORY_HOST);
       for ( j = 0; j < num_sweeps[i]; j++ ) relax_points[i][j] = 0;
    }
    NALU_HYPRE_BoomerAMGSetGridRelaxPoints(HYPrecon_, relax_points);
@@ -4687,7 +4687,7 @@ double NALU_HYPRE_LinSysCore::solveUsingSuperLU(int& status)
 
    ierr = NALU_HYPRE_IJVectorGetValues(currB_, nrows, ind_array, rhs);
 
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
    dCreate_Dense_Matrix(&B, nrows, 1, rhs, nrows, SLU_DN, SLU_D, SLU_GE);
 
    //-------------------------------------------------------------------
@@ -4737,17 +4737,17 @@ double NALU_HYPRE_LinSysCore::solveUsingSuperLU(int& status)
       soln = (double *) ((DNformat *) B.Store)->nzval;
       ierr = NALU_HYPRE_IJVectorSetValues(currX_, nrows, (const int *) ind_array,
                    	       (const double *) soln);
-      hypre_assert(!ierr);
+      nalu_hypre_assert(!ierr);
 
       NALU_HYPRE_IJVectorGetObject(currX_, (void **) &x_csr);
       NALU_HYPRE_IJVectorGetObject(currB_, (void **) &b_csr);
       NALU_HYPRE_IJVectorGetObject(currR_, (void **) &r_csr);
 
       ierr = NALU_HYPRE_ParVectorCopy( b_csr, r_csr );
-      hypre_assert(!ierr);
+      nalu_hypre_assert(!ierr);
       NALU_HYPRE_ParCSRMatrixMatvec( -1.0, A_csr, x_csr, 1.0, r_csr );
       ierr = NALU_HYPRE_ParVectorInnerProd( r_csr, r_csr, &rnorm);
-      hypre_assert(!ierr);
+      nalu_hypre_assert(!ierr);
       rnorm = sqrt( rnorm );
       if ( (HYOutputLevel_ & HYFEI_SPECIALMASK) >= 2 )
          printf("NALU_HYPRE_LSC::solveUsingSuperLU - FINAL NORM = %e.\n",rnorm);
@@ -4873,7 +4873,7 @@ double NALU_HYPRE_LinSysCore::solveUsingSuperLUX(int& status)
 
    rhs = new double[nrows];
    ierr = NALU_HYPRE_IJVectorGetValues(currB_, nrows, ind_array, rhs);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
    dCreate_Dense_Matrix(&B, nrows, 1, rhs, nrows, SLU_DN, SLU_D, SLU_GE);
 
    soln = new double[nrows];
@@ -4958,17 +4958,17 @@ double NALU_HYPRE_LinSysCore::solveUsingSuperLUX(int& status)
 
       ierr = NALU_HYPRE_IJVectorSetValues(currX_, nrows, (const int *) ind_array,
                    	       (const double *) sol2);
-      hypre_assert(!ierr);
+      nalu_hypre_assert(!ierr);
 
       NALU_HYPRE_IJVectorGetObject(currX_, (void **) &x_csr);
       NALU_HYPRE_IJVectorGetObject(currR_, (void **) &r_csr);
       NALU_HYPRE_IJVectorGetObject(currB_, (void **) &b_csr);
       ierr = NALU_HYPRE_ParVectorCopy( b_csr, r_csr );
-      hypre_assert(!ierr);
+      nalu_hypre_assert(!ierr);
       ierr = NALU_HYPRE_ParCSRMatrixMatvec( -1.0, A_csr, x_csr, 1.0, r_csr );
-      hypre_assert(!ierr);
+      nalu_hypre_assert(!ierr);
       ierr = NALU_HYPRE_ParVectorInnerProd( r_csr, r_csr, &rnorm);
-      hypre_assert(!ierr);
+      nalu_hypre_assert(!ierr);
       rnorm = sqrt( rnorm );
       if ( (HYOutputLevel_ & HYFEI_SPECIALMASK) >= 2 )
          printf("NALU_HYPRE_LSC::solveUsingSuperLUX - FINAL NORM = %e.\n",rnorm);
@@ -5030,11 +5030,11 @@ double NALU_HYPRE_LinSysCore::solveUsingDSuperLU(int& status)
    NALU_HYPRE_LSI_DSuperLUSolve(HYSolver_, A_csr, b_csr, x_csr);
    NALU_HYPRE_LSI_DSuperLUDestroy(HYSolver_);
    ierr = NALU_HYPRE_ParVectorCopy( b_csr, r_csr );
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
    ierr = NALU_HYPRE_ParCSRMatrixMatvec( -1.0, A_csr, x_csr, 1.0, r_csr );
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
    ierr = NALU_HYPRE_ParVectorInnerProd( r_csr, r_csr, &rnorm);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
    rnorm = sqrt( rnorm );
    //if ( (HYOutputLevel_ & HYFEI_SPECIALMASK) >= 1 )
    //   printf("NALU_HYPRE_LSC::solveUsingDSuperLU - FINAL NORM = %e.\n",rnorm);
@@ -5155,7 +5155,7 @@ void NALU_HYPRE_LinSysCore::solveUsingY12M(int& status)
    rhs = new double[nrows];
 
    ierr = NALU_HYPRE_IJVectorGetValues(currB_, nrows, ind_array, rhs);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
 
    //-------------------------------------------------------------------
    // call Y12M to solve the linear system
@@ -5176,17 +5176,17 @@ void NALU_HYPRE_LinSysCore::solveUsingY12M(int& status)
    {
       ierr = NALU_HYPRE_IJVectorSetValues(currX_, nrows, (const int *) &ind_array,
                    	       (const double *) rhs);
-      hypre_assert(!ierr);
+      nalu_hypre_assert(!ierr);
 
       NALU_HYPRE_IJVectorGetObject(currX_, (void**) &x_csr);
       NALU_HYPRE_IJVectorGetObject(currR_, (void**) &r_csr);
       NALU_HYPRE_IJVectorGetObject(currB_, (void**) &b_csr);
       ierr = NALU_HYPRE_ParVectorCopy( b_csr, r_csr );
-      hypre_assert(!ierr);
+      nalu_hypre_assert(!ierr);
       ierr = NALU_HYPRE_ParCSRMatrixMatvec( -1.0, A_csr, x_csr, 1.0, r_csr );
-      hypre_assert(!ierr);
+      nalu_hypre_assert(!ierr);
       ierr = NALU_HYPRE_ParVectorInnerProd( r_csr, r_csr, &rnorm);
-      hypre_assert(!ierr);
+      nalu_hypre_assert(!ierr);
       rnorm = sqrt( rnorm );
       if ( (HYOutputLevel_ & HYFEI_SPECIALMASK) >= 1 )
          printf("NALU_HYPRE_LSC::solveUsingY12M - final norm = %e.\n", rnorm);
@@ -5262,7 +5262,7 @@ void NALU_HYPRE_LinSysCore::solveUsingAMGe(int &iterations)
    rhs = new double[nrows];
 
    ierr = NALU_HYPRE_IJVectorGetValues(currB_, nrows, ind_array, rhs);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
 
    //-------------------------------------------------------------------
    // call Y12M to solve the linear system
@@ -5277,18 +5277,18 @@ void NALU_HYPRE_LinSysCore::solveUsingAMGe(int &iterations)
 
    ierr = NALU_HYPRE_IJVectorSetValues(currX_, nrows, (const int *) &ind_array,
                                   (const double *) sol);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
 
    NALU_HYPRE_IJVectorGetObject(currX_, (void**) &x_csr);
    NALU_HYPRE_IJVectorGetObject(currR_, (void**) &r_csr);
    NALU_HYPRE_IJVectorGetObject(currB_, (void**) &b_csr);
 
    ierr = NALU_HYPRE_ParVectorCopy( b_csr, r_csr );
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
    ierr = NALU_HYPRE_ParCSRMatrixMatvec( -1.0, A_csr, x_csr, 1.0, r_csr );
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
    ierr = NALU_HYPRE_ParVectorInnerProd( r_csr, r_csr, &rnorm);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
    rnorm = sqrt( rnorm );
    if ( (HYOutputLevel_ & HYFEI_SPECIALMASK) >= 1 )
       printf("NALU_HYPRE_LSC::solveUsingAMGe - final norm = %e.\n", rnorm);
@@ -5367,7 +5367,7 @@ void NALU_HYPRE_LinSysCore::endCreateMapFromSoln()
    for ( i = 0; i < mapFromSolnLeng_; i++ )
       darray[i] = (double) mapFromSolnList_[i];
 
-   hypre_qsort1(mapFromSolnList2_, darray, 0, mapFromSolnLeng_-1);
+   nalu_hypre_qsort1(mapFromSolnList2_, darray, 0, mapFromSolnLeng_-1);
    iarray = mapFromSolnList2_;
    mapFromSolnList2_ = mapFromSolnList_;
    mapFromSolnList_ = iarray;
@@ -5460,7 +5460,7 @@ void NALU_HYPRE_LinSysCore::putIntoMappedMatrix(int row, int numValues,
             printf("%4d : putIntoMappedMatrix : row, col = %8d %8d %e \n",
                    mypid_, localRow, colIndices_[localRow][ind2]-1,
                    colValues_[localRow][ind2]);
-         hypre_qsort1(colIndices_[localRow],colValues_[localRow],0,index-1);
+         nalu_hypre_qsort1(colIndices_[localRow],colValues_[localRow],0,index-1);
       }
    }
    rowLengths_[localRow] = newLeng;
@@ -5505,7 +5505,7 @@ void NALU_HYPRE_LinSysCore::computeMinResProjection(NALU_HYPRE_ParCSRMatrix A_cs
    NALU_HYPRE_ParCSRMatrixMatvec( 1.0, A_csr, x_csr, 0.0, w_csr );
    NALU_HYPRE_ParVectorCopy( b_csr, r_csr );
    alpha = -1.0;
-   hypre_ParVectorAxpy(alpha,(hypre_ParVector*)w_csr,(hypre_ParVector*)r_csr);
+   nalu_hypre_ParVectorAxpy(alpha,(nalu_hypre_ParVector*)w_csr,(nalu_hypre_ParVector*)r_csr);
 
    //-----------------------------------------------------------------------
    // compute x + X v, accumulate offset to b (in w)
@@ -5515,11 +5515,11 @@ void NALU_HYPRE_LinSysCore::computeMinResProjection(NALU_HYPRE_ParCSRMatrix A_cs
    {
       NALU_HYPRE_IJVectorGetObject(HYpbs_[i], (void **) &v_csr);
       NALU_HYPRE_ParVectorInnerProd( r_csr, v_csr, &alpha);
-      hypre_ParVectorAxpy(alpha,(hypre_ParVector*)v_csr,
-                                (hypre_ParVector*)w_csr);
+      nalu_hypre_ParVectorAxpy(alpha,(nalu_hypre_ParVector*)v_csr,
+                                (nalu_hypre_ParVector*)w_csr);
       NALU_HYPRE_IJVectorGetObject(HYpxs_[i], (void **) &v_csr);
-      hypre_ParVectorAxpy(alpha,(hypre_ParVector*)v_csr,
-                                (hypre_ParVector*)x_csr);
+      nalu_hypre_ParVectorAxpy(alpha,(nalu_hypre_ParVector*)v_csr,
+                                (nalu_hypre_ParVector*)x_csr);
    }
 
    //-----------------------------------------------------------------------
@@ -5527,11 +5527,11 @@ void NALU_HYPRE_LinSysCore::computeMinResProjection(NALU_HYPRE_ParCSRMatrix A_cs
    //-----------------------------------------------------------------------
 
    alpha = - 1.0;
-   hypre_ParVectorAxpy(alpha,(hypre_ParVector*)w_csr,(hypre_ParVector*)b_csr);
+   nalu_hypre_ParVectorAxpy(alpha,(nalu_hypre_ParVector*)w_csr,(nalu_hypre_ParVector*)b_csr);
 
    NALU_HYPRE_IJVectorGetObject(HYpxs_[projectSize_], (void **) &v_csr);
    NALU_HYPRE_ParVectorCopy( x_csr, v_csr );
-   hypre_ParVectorScale(0.0,(hypre_ParVector*)x_csr);
+   nalu_hypre_ParVectorScale(0.0,(nalu_hypre_ParVector*)x_csr);
 
    //-----------------------------------------------------------------------
    // diagnostic message
@@ -5590,7 +5590,7 @@ void NALU_HYPRE_LinSysCore::addToMinResProjectionSpace(NALU_HYPRE_IJVector xvec,
          ierr = NALU_HYPRE_IJVectorSetObjectType(HYpbs_[i], NALU_HYPRE_PARCSR);
          ierr = NALU_HYPRE_IJVectorInitialize(HYpbs_[i]);
          ierr = NALU_HYPRE_IJVectorAssemble(HYpbs_[i]);
-         hypre_assert( !ierr );
+         nalu_hypre_assert( !ierr );
       }
       for ( i = 0; i <= projectSize_; i++ )
       {
@@ -5598,7 +5598,7 @@ void NALU_HYPRE_LinSysCore::addToMinResProjectionSpace(NALU_HYPRE_IJVector xvec,
          ierr = NALU_HYPRE_IJVectorSetObjectType(HYpxs_[i], NALU_HYPRE_PARCSR);
          ierr = NALU_HYPRE_IJVectorInitialize(HYpxs_[i]);
          ierr = NALU_HYPRE_IJVectorAssemble(HYpxs_[i]);
-         hypre_assert(!ierr);
+         nalu_hypre_assert(!ierr);
       }
    }
 
@@ -5652,11 +5652,11 @@ void NALU_HYPRE_LinSysCore::addToMinResProjectionSpace(NALU_HYPRE_IJVector xvec,
       alpha = - alpha;
       if ( alpha != 0.0 )
       {
-         hypre_ParVectorAxpy(alpha,(hypre_ParVector*)v_csr,
-                                   (hypre_ParVector*)bn_csr);
+         nalu_hypre_ParVectorAxpy(alpha,(nalu_hypre_ParVector*)v_csr,
+                                   (nalu_hypre_ParVector*)bn_csr);
          NALU_HYPRE_IJVectorGetObject(HYpxs_[i], (void **) &v_csr);
-         hypre_ParVectorAxpy(alpha,(hypre_ParVector*)v_csr,
-                                   (hypre_ParVector*)xn_csr);
+         nalu_hypre_ParVectorAxpy(alpha,(nalu_hypre_ParVector*)v_csr,
+                                   (nalu_hypre_ParVector*)xn_csr);
       }
    }
    NALU_HYPRE_ParVectorInnerProd( bn_csr, bn_csr, &alpha);
@@ -5664,8 +5664,8 @@ void NALU_HYPRE_LinSysCore::addToMinResProjectionSpace(NALU_HYPRE_IJVector xvec,
    if ( alpha != 0.0 )
    {
       alpha = 1.0 / alpha;
-      hypre_ParVectorScale(alpha,(hypre_ParVector*)bn_csr);
-      hypre_ParVectorScale(alpha,(hypre_ParVector*)xn_csr);
+      nalu_hypre_ParVectorScale(alpha,(nalu_hypre_ParVector*)bn_csr);
+      nalu_hypre_ParVectorScale(alpha,(nalu_hypre_ParVector*)xn_csr);
       projectCurrSize_++;
    }
 
@@ -5676,10 +5676,10 @@ void NALU_HYPRE_LinSysCore::addToMinResProjectionSpace(NALU_HYPRE_IJVector xvec,
    if ( alpha != 0.0 )
    {
       NALU_HYPRE_IJVectorGetObject(HYpxs_[projectSize_], (void **) &v_csr);
-      hypre_ParVectorAxpy(1.0,(hypre_ParVector*)v_csr,(hypre_ParVector*)x_csr);
+      nalu_hypre_ParVectorAxpy(1.0,(nalu_hypre_ParVector*)v_csr,(nalu_hypre_ParVector*)x_csr);
 
       NALU_HYPRE_IJVectorGetObject(HYpbs_[projectSize_], (void **) &v_csr);
-      hypre_ParVectorAxpy(1.0,(hypre_ParVector*)v_csr,(hypre_ParVector*)b_csr);
+      nalu_hypre_ParVectorAxpy(1.0,(nalu_hypre_ParVector*)v_csr,(nalu_hypre_ParVector*)b_csr);
    }
 
    //-----------------------------------------------------------------------
@@ -5736,7 +5736,7 @@ void NALU_HYPRE_LinSysCore::computeAConjProjection(NALU_HYPRE_ParCSRMatrix A_csr
    NALU_HYPRE_ParCSRMatrixMatvec( 1.0, A_csr, x_csr, 0.0, w_csr );
    NALU_HYPRE_ParVectorCopy( b_csr, r_csr );
    alpha = -1.0;
-   hypre_ParVectorAxpy(alpha,(hypre_ParVector*)w_csr,(hypre_ParVector*)r_csr);
+   nalu_hypre_ParVectorAxpy(alpha,(nalu_hypre_ParVector*)w_csr,(nalu_hypre_ParVector*)r_csr);
 
    //-----------------------------------------------------------------------
    // compute alpha_i = (phi_i, r)
@@ -5748,12 +5748,12 @@ void NALU_HYPRE_LinSysCore::computeAConjProjection(NALU_HYPRE_ParCSRMatrix A_csr
    {
       NALU_HYPRE_IJVectorGetObject(HYpxs_[i], (void **) &v_csr);
       NALU_HYPRE_ParVectorInnerProd(r_csr,  v_csr, &alpha);
-      hypre_ParVectorAxpy(alpha,(hypre_ParVector*)v_csr,
-                                (hypre_ParVector*)x_csr);
+      nalu_hypre_ParVectorAxpy(alpha,(nalu_hypre_ParVector*)v_csr,
+                                (nalu_hypre_ParVector*)x_csr);
 
       NALU_HYPRE_IJVectorGetObject(HYpbs_[i], (void **) &v_csr);
-      hypre_ParVectorAxpy(alpha,(hypre_ParVector*)v_csr,
-                                (hypre_ParVector*)w_csr);
+      nalu_hypre_ParVectorAxpy(alpha,(nalu_hypre_ParVector*)v_csr,
+                                (nalu_hypre_ParVector*)w_csr);
    }
 
    //-----------------------------------------------------------------------
@@ -5762,14 +5762,14 @@ void NALU_HYPRE_LinSysCore::computeAConjProjection(NALU_HYPRE_ParCSRMatrix A_csr
 
    NALU_HYPRE_IJVectorGetObject(HYpxs_[projectSize_], (void **) &v_csr);
    NALU_HYPRE_ParVectorCopy( x_csr, v_csr );
-   hypre_ParVectorScale(0.0,(hypre_ParVector*)x_csr);
+   nalu_hypre_ParVectorScale(0.0,(nalu_hypre_ParVector*)x_csr);
 
    //-----------------------------------------------------------------------
    // compute new residual b = b - w
    //-----------------------------------------------------------------------
 
    alpha = -1.0;
-   hypre_ParVectorAxpy(alpha,(hypre_ParVector*)w_csr,(hypre_ParVector*)b_csr);
+   nalu_hypre_ParVectorAxpy(alpha,(nalu_hypre_ParVector*)w_csr,(nalu_hypre_ParVector*)b_csr);
 
    //-----------------------------------------------------------------------
    // diagnostic message
@@ -5833,7 +5833,7 @@ void NALU_HYPRE_LinSysCore::addToAConjProjectionSpace(NALU_HYPRE_IJVector xvec,
          ierr = NALU_HYPRE_IJVectorSetObjectType(HYpbs_[i], NALU_HYPRE_PARCSR);
          ierr = NALU_HYPRE_IJVectorInitialize(HYpbs_[i]);
          ierr = NALU_HYPRE_IJVectorAssemble(HYpbs_[i]);
-         hypre_assert( !ierr );
+         nalu_hypre_assert( !ierr );
       }
       for ( i = 0; i <= projectSize_; i++ )
       {
@@ -5841,7 +5841,7 @@ void NALU_HYPRE_LinSysCore::addToAConjProjectionSpace(NALU_HYPRE_IJVector xvec,
          ierr = NALU_HYPRE_IJVectorSetObjectType(HYpxs_[i], NALU_HYPRE_PARCSR);
          ierr = NALU_HYPRE_IJVectorInitialize(HYpxs_[i]);
          ierr = NALU_HYPRE_IJVectorAssemble(HYpxs_[i]);
-         hypre_assert(!ierr);
+         nalu_hypre_assert(!ierr);
       }
    }
 
@@ -5878,8 +5878,8 @@ void NALU_HYPRE_LinSysCore::addToAConjProjectionSpace(NALU_HYPRE_IJVector xvec,
       {
          alpha = - alpha;
          NALU_HYPRE_IJVectorGetObject(HYpxs_[i], (void **) &v_csr);
-         hypre_ParVectorAxpy(alpha,(hypre_ParVector*)v_csr,
-                                   (hypre_ParVector*)xn_csr);
+         nalu_hypre_ParVectorAxpy(alpha,(nalu_hypre_ParVector*)v_csr,
+                                   (nalu_hypre_ParVector*)xn_csr);
       }
    }
    NALU_HYPRE_ParCSRMatrixMatvec( 1.0, A_csr, xn_csr, 0.0, bn_csr );
@@ -5887,8 +5887,8 @@ void NALU_HYPRE_LinSysCore::addToAConjProjectionSpace(NALU_HYPRE_IJVector xvec,
    if ( alpha != 0.0 )
    {
       alpha = 1.0 / sqrt( alpha );
-      hypre_ParVectorScale(alpha,(hypre_ParVector*)xn_csr);
-      hypre_ParVectorScale(alpha,(hypre_ParVector*)bn_csr);
+      nalu_hypre_ParVectorScale(alpha,(nalu_hypre_ParVector*)xn_csr);
+      nalu_hypre_ParVectorScale(alpha,(nalu_hypre_ParVector*)bn_csr);
       projectCurrSize_++;
    }
 
@@ -5899,10 +5899,10 @@ void NALU_HYPRE_LinSysCore::addToAConjProjectionSpace(NALU_HYPRE_IJVector xvec,
    if ( alpha != 0.0 )
    {
       NALU_HYPRE_IJVectorGetObject(HYpxs_[projectSize_], (void **) &v_csr);
-      hypre_ParVectorAxpy(1.0,(hypre_ParVector*)v_csr,(hypre_ParVector*)x_csr);
+      nalu_hypre_ParVectorAxpy(1.0,(nalu_hypre_ParVector*)v_csr,(nalu_hypre_ParVector*)x_csr);
 
       NALU_HYPRE_IJVectorGetObject(HYpbs_[projectSize_], (void **) &v_csr);
-      hypre_ParVectorAxpy(1.0,(hypre_ParVector*)v_csr,(hypre_ParVector*)b_csr);
+      nalu_hypre_ParVectorAxpy(1.0,(nalu_hypre_ParVector*)v_csr,(nalu_hypre_ParVector*)b_csr);
    }
 
    //-----------------------------------------------------------------------
@@ -6293,9 +6293,9 @@ void NALU_HYPRE_LinSysCore::NALU_HYPRE_LSI_BuildNodalCoordinates()
    ierr += NALU_HYPRE_IJVectorSetObjectType(amsX_, NALU_HYPRE_PARCSR);
    ierr += NALU_HYPRE_IJVectorInitialize(amsX_);
    ierr += NALU_HYPRE_IJVectorAssemble(amsX_);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
    NALU_HYPRE_IJVectorGetObject(amsX_, (void **) &parVec);
-   vecData = (double *) hypre_VectorData(hypre_ParVectorLocalVector((hypre_ParVector *) parVec));
+   vecData = (double *) nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector((nalu_hypre_ParVector *) parVec));
    for (iN = 0; iN < localNRows/MLI_FieldSize_; iN++)
       vecData[iN] = nCoords[iN*MLI_FieldSize_];
    ierr  = NALU_HYPRE_IJVectorCreate(comm_,(localStartRow_-1)/MLI_FieldSize_,
@@ -6303,9 +6303,9 @@ void NALU_HYPRE_LinSysCore::NALU_HYPRE_LSI_BuildNodalCoordinates()
    ierr += NALU_HYPRE_IJVectorSetObjectType(amsY_, NALU_HYPRE_PARCSR);
    ierr += NALU_HYPRE_IJVectorInitialize(amsY_);
    ierr += NALU_HYPRE_IJVectorAssemble(amsY_);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
    NALU_HYPRE_IJVectorGetObject(amsY_, (void **) &parVec);
-   vecData = (double *) hypre_VectorData(hypre_ParVectorLocalVector((hypre_ParVector *) parVec));
+   vecData = (double *) nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector((nalu_hypre_ParVector *) parVec));
    for (iN = 0; iN < localNRows/MLI_FieldSize_; iN++)
       vecData[iN] = nCoords[iN*MLI_FieldSize_+1];
    ierr  = NALU_HYPRE_IJVectorCreate(comm_,(localStartRow_-1)/MLI_FieldSize_,
@@ -6313,9 +6313,9 @@ void NALU_HYPRE_LinSysCore::NALU_HYPRE_LSI_BuildNodalCoordinates()
    ierr += NALU_HYPRE_IJVectorSetObjectType(amsZ_, NALU_HYPRE_PARCSR);
    ierr += NALU_HYPRE_IJVectorInitialize(amsZ_);
    ierr += NALU_HYPRE_IJVectorAssemble(amsZ_);
-   hypre_assert(!ierr);
+   nalu_hypre_assert(!ierr);
    NALU_HYPRE_IJVectorGetObject(amsZ_, (void **) &parVec);
-   vecData = (double *) hypre_VectorData(hypre_ParVectorLocalVector((hypre_ParVector *) parVec));
+   vecData = (double *) nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector((nalu_hypre_ParVector *) parVec));
    for (iN = 0; iN < localNRows/MLI_FieldSize_; iN++)
       vecData[iN] = nCoords[iN*MLI_FieldSize_+2];
 

@@ -31,10 +31,10 @@
 /*************************************************************************
 * This function computes the max of a single element
 **************************************************************************/
-NALU_HYPRE_Int hypre_GlobalSEMax(NALU_HYPRE_Int value, MPI_Comm hypre_MPI_Context )
+NALU_HYPRE_Int nalu_hypre_GlobalSEMax(NALU_HYPRE_Int value, MPI_Comm nalu_hypre_MPI_Context )
 {
   NALU_HYPRE_Int max;
-  hypre_MPI_Allreduce( &value, &max, 1, NALU_HYPRE_MPI_INT, hypre_MPI_MAX, hypre_MPI_Context );
+  nalu_hypre_MPI_Allreduce( &value, &max, 1, NALU_HYPRE_MPI_INT, nalu_hypre_MPI_MAX, nalu_hypre_MPI_Context );
 
   return max;
 }
@@ -43,10 +43,10 @@ NALU_HYPRE_Int hypre_GlobalSEMax(NALU_HYPRE_Int value, MPI_Comm hypre_MPI_Contex
 /*************************************************************************
 * This function computes the max of a single element
 **************************************************************************/
-NALU_HYPRE_Int hypre_GlobalSEMin(NALU_HYPRE_Int value, MPI_Comm hypre_MPI_Context)
+NALU_HYPRE_Int nalu_hypre_GlobalSEMin(NALU_HYPRE_Int value, MPI_Comm nalu_hypre_MPI_Context)
 {
   NALU_HYPRE_Int min;
-  hypre_MPI_Allreduce( &value, &min, 1, NALU_HYPRE_MPI_INT, hypre_MPI_MIN, hypre_MPI_Context );
+  nalu_hypre_MPI_Allreduce( &value, &min, 1, NALU_HYPRE_MPI_INT, nalu_hypre_MPI_MIN, nalu_hypre_MPI_Context );
 
   return min;
 }
@@ -54,11 +54,11 @@ NALU_HYPRE_Int hypre_GlobalSEMin(NALU_HYPRE_Int value, MPI_Comm hypre_MPI_Contex
 /*************************************************************************
 * This function computes the max of a single element
 **************************************************************************/
-NALU_HYPRE_Int hypre_GlobalSESum(NALU_HYPRE_Int value, MPI_Comm hypre_MPI_Context)
+NALU_HYPRE_Int nalu_hypre_GlobalSESum(NALU_HYPRE_Int value, MPI_Comm nalu_hypre_MPI_Context)
 {
   NALU_HYPRE_Int sum;
 
-  hypre_MPI_Allreduce( &value, &sum, 1, NALU_HYPRE_MPI_INT, hypre_MPI_SUM, hypre_MPI_Context );
+  nalu_hypre_MPI_Allreduce( &value, &sum, 1, NALU_HYPRE_MPI_INT, nalu_hypre_MPI_SUM, nalu_hypre_MPI_Context );
 
   return sum;
 }
@@ -66,10 +66,10 @@ NALU_HYPRE_Int hypre_GlobalSESum(NALU_HYPRE_Int value, MPI_Comm hypre_MPI_Contex
 /*************************************************************************
 * This function computes the max of a single element
 **************************************************************************/
-NALU_HYPRE_Real hypre_GlobalSEMaxDouble(NALU_HYPRE_Real value, MPI_Comm hypre_MPI_Context)
+NALU_HYPRE_Real nalu_hypre_GlobalSEMaxDouble(NALU_HYPRE_Real value, MPI_Comm nalu_hypre_MPI_Context)
 {
   NALU_HYPRE_Real max;
-  hypre_MPI_Allreduce( &value, &max, 1, hypre_MPI_REAL, hypre_MPI_MAX, hypre_MPI_Context );
+  nalu_hypre_MPI_Allreduce( &value, &max, 1, nalu_hypre_MPI_REAL, nalu_hypre_MPI_MAX, nalu_hypre_MPI_Context );
 
   return max;
 }
@@ -77,10 +77,10 @@ NALU_HYPRE_Real hypre_GlobalSEMaxDouble(NALU_HYPRE_Real value, MPI_Comm hypre_MP
 /*************************************************************************
 * This function computes the max of a single element
 **************************************************************************/
-NALU_HYPRE_Real hypre_GlobalSEMinDouble(NALU_HYPRE_Real value, MPI_Comm hypre_MPI_Context)
+NALU_HYPRE_Real nalu_hypre_GlobalSEMinDouble(NALU_HYPRE_Real value, MPI_Comm nalu_hypre_MPI_Context)
 {
   NALU_HYPRE_Real min;
-  hypre_MPI_Allreduce( &value, &min, 1, hypre_MPI_REAL, hypre_MPI_MIN, hypre_MPI_Context );
+  nalu_hypre_MPI_Allreduce( &value, &min, 1, nalu_hypre_MPI_REAL, nalu_hypre_MPI_MIN, nalu_hypre_MPI_Context );
 
   return min;
 }
@@ -88,10 +88,10 @@ NALU_HYPRE_Real hypre_GlobalSEMinDouble(NALU_HYPRE_Real value, MPI_Comm hypre_MP
 /*************************************************************************
 * This function computes the max of a single element
 **************************************************************************/
-NALU_HYPRE_Real hypre_GlobalSESumDouble(NALU_HYPRE_Real value, MPI_Comm hypre_MPI_Context)
+NALU_HYPRE_Real nalu_hypre_GlobalSESumDouble(NALU_HYPRE_Real value, MPI_Comm nalu_hypre_MPI_Context)
 {
   NALU_HYPRE_Real sum;
-  hypre_MPI_Allreduce( &value, &sum, 1, hypre_MPI_REAL, hypre_MPI_SUM, hypre_MPI_Context );
+  nalu_hypre_MPI_Allreduce( &value, &sum, 1, nalu_hypre_MPI_REAL, nalu_hypre_MPI_SUM, nalu_hypre_MPI_Context );
 
   return sum;
 }

@@ -5,27 +5,27 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_struct_ls.h"
+#include "_nalu_hypre_struct_ls.h"
 
 /*==========================================================================*/
 
 NALU_HYPRE_Int
 NALU_HYPRE_StructBiCGSTABCreate( MPI_Comm comm, NALU_HYPRE_StructSolver *solver )
 {
-   hypre_BiCGSTABFunctions * bicgstab_functions =
-      hypre_BiCGSTABFunctionsCreate(
-         hypre_StructKrylovCreateVector,
-         hypre_StructKrylovDestroyVector, hypre_StructKrylovMatvecCreate,
-         hypre_StructKrylovMatvec, hypre_StructKrylovMatvecDestroy,
-         hypre_StructKrylovInnerProd, hypre_StructKrylovCopyVector,
-         hypre_StructKrylovClearVector,
-         hypre_StructKrylovScaleVector, hypre_StructKrylovAxpy,
-         hypre_StructKrylovCommInfo,
-         hypre_StructKrylovIdentitySetup, hypre_StructKrylovIdentity );
+   nalu_hypre_BiCGSTABFunctions * bicgstab_functions =
+      nalu_hypre_BiCGSTABFunctionsCreate(
+         nalu_hypre_StructKrylovCreateVector,
+         nalu_hypre_StructKrylovDestroyVector, nalu_hypre_StructKrylovMatvecCreate,
+         nalu_hypre_StructKrylovMatvec, nalu_hypre_StructKrylovMatvecDestroy,
+         nalu_hypre_StructKrylovInnerProd, nalu_hypre_StructKrylovCopyVector,
+         nalu_hypre_StructKrylovClearVector,
+         nalu_hypre_StructKrylovScaleVector, nalu_hypre_StructKrylovAxpy,
+         nalu_hypre_StructKrylovCommInfo,
+         nalu_hypre_StructKrylovIdentitySetup, nalu_hypre_StructKrylovIdentity );
 
-   *solver = ( (NALU_HYPRE_StructSolver) hypre_BiCGSTABCreate( bicgstab_functions ) );
+   *solver = ( (NALU_HYPRE_StructSolver) nalu_hypre_BiCGSTABCreate( bicgstab_functions ) );
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*==========================================================================*/
@@ -33,7 +33,7 @@ NALU_HYPRE_StructBiCGSTABCreate( MPI_Comm comm, NALU_HYPRE_StructSolver *solver 
 NALU_HYPRE_Int
 NALU_HYPRE_StructBiCGSTABDestroy( NALU_HYPRE_StructSolver solver )
 {
-   return ( hypre_BiCGSTABDestroy( (void *) solver ) );
+   return ( nalu_hypre_BiCGSTABDestroy( (void *) solver ) );
 }
 
 /*==========================================================================*/

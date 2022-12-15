@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_Euclid.h"
+#include "_nalu_hypre_Euclid.h"
 /* #include "io_dh.h" */
 /* #include "Mat_dh.h" */
 /* #include "Vec_dh.h" */
@@ -23,7 +23,7 @@ FILE * openFile_dh(const char *filenameIN, const char *modeIN)
   FILE *fp = NULL;
 
   if ((fp = fopen(filenameIN, modeIN)) == NULL) {
-    hypre_sprintf(msgBuf_dh, "can't open file: %s for mode %s\n", filenameIN, modeIN);
+    nalu_hypre_sprintf(msgBuf_dh, "can't open file: %s for mode %s\n", filenameIN, modeIN);
     SET_ERROR(NULL, msgBuf_dh);
   }
   END_FUNC_VAL(fp)

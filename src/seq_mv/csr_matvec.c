@@ -7,52 +7,52 @@
 
 /******************************************************************************
  *
- * Matvec functions for hypre_CSRMatrix class.
+ * Matvec functions for nalu_hypre_CSRMatrix class.
  *
  *****************************************************************************/
 
 #include "seq_mv.h"
 
 /*--------------------------------------------------------------------------
- * hypre_CSRMatrixMatvec
+ * nalu_hypre_CSRMatrixMatvec
  *--------------------------------------------------------------------------*/
 
 /* y[offset:end] = alpha*A[offset:end,:]*x + beta*b[offset:end] */
 NALU_HYPRE_Int
-hypre_CSRMatrixMatvecOutOfPlaceHost( NALU_HYPRE_Complex    alpha,
-                                     hypre_CSRMatrix *A,
-                                     hypre_Vector    *x,
+nalu_hypre_CSRMatrixMatvecOutOfPlaceHost( NALU_HYPRE_Complex    alpha,
+                                     nalu_hypre_CSRMatrix *A,
+                                     nalu_hypre_Vector    *x,
                                      NALU_HYPRE_Complex    beta,
-                                     hypre_Vector    *b,
-                                     hypre_Vector    *y,
+                                     nalu_hypre_Vector    *b,
+                                     nalu_hypre_Vector    *y,
                                      NALU_HYPRE_Int        offset )
 {
-   NALU_HYPRE_Complex    *A_data   = hypre_CSRMatrixData(A);
-   NALU_HYPRE_Int        *A_i      = hypre_CSRMatrixI(A) + offset;
-   NALU_HYPRE_Int        *A_j      = hypre_CSRMatrixJ(A);
-   NALU_HYPRE_Int         num_rows = hypre_CSRMatrixNumRows(A) - offset;
-   NALU_HYPRE_Int         num_cols = hypre_CSRMatrixNumCols(A);
+   NALU_HYPRE_Complex    *A_data   = nalu_hypre_CSRMatrixData(A);
+   NALU_HYPRE_Int        *A_i      = nalu_hypre_CSRMatrixI(A) + offset;
+   NALU_HYPRE_Int        *A_j      = nalu_hypre_CSRMatrixJ(A);
+   NALU_HYPRE_Int         num_rows = nalu_hypre_CSRMatrixNumRows(A) - offset;
+   NALU_HYPRE_Int         num_cols = nalu_hypre_CSRMatrixNumCols(A);
 
-   NALU_HYPRE_Int        *A_rownnz = hypre_CSRMatrixRownnz(A);
-   NALU_HYPRE_Int         num_rownnz = hypre_CSRMatrixNumRownnz(A);
+   NALU_HYPRE_Int        *A_rownnz = nalu_hypre_CSRMatrixRownnz(A);
+   NALU_HYPRE_Int         num_rownnz = nalu_hypre_CSRMatrixNumRownnz(A);
 
-   NALU_HYPRE_Complex    *x_data = hypre_VectorData(x);
-   NALU_HYPRE_Complex    *b_data = hypre_VectorData(b) + offset;
-   NALU_HYPRE_Complex    *y_data = hypre_VectorData(y) + offset;
-   NALU_HYPRE_Int         x_size = hypre_VectorSize(x);
-   NALU_HYPRE_Int         b_size = hypre_VectorSize(b) - offset;
-   NALU_HYPRE_Int         y_size = hypre_VectorSize(y) - offset;
-   NALU_HYPRE_Int         num_vectors = hypre_VectorNumVectors(x);
-   NALU_HYPRE_Int         idxstride_y = hypre_VectorIndexStride(y);
-   NALU_HYPRE_Int         vecstride_y = hypre_VectorVectorStride(y);
-   NALU_HYPRE_Int         idxstride_b = hypre_VectorIndexStride(b);
-   NALU_HYPRE_Int         vecstride_b = hypre_VectorVectorStride(b);
-   NALU_HYPRE_Int         idxstride_x = hypre_VectorIndexStride(x);
-   NALU_HYPRE_Int         vecstride_x = hypre_VectorVectorStride(x);
+   NALU_HYPRE_Complex    *x_data = nalu_hypre_VectorData(x);
+   NALU_HYPRE_Complex    *b_data = nalu_hypre_VectorData(b) + offset;
+   NALU_HYPRE_Complex    *y_data = nalu_hypre_VectorData(y) + offset;
+   NALU_HYPRE_Int         x_size = nalu_hypre_VectorSize(x);
+   NALU_HYPRE_Int         b_size = nalu_hypre_VectorSize(b) - offset;
+   NALU_HYPRE_Int         y_size = nalu_hypre_VectorSize(y) - offset;
+   NALU_HYPRE_Int         num_vectors = nalu_hypre_VectorNumVectors(x);
+   NALU_HYPRE_Int         idxstride_y = nalu_hypre_VectorIndexStride(y);
+   NALU_HYPRE_Int         vecstride_y = nalu_hypre_VectorVectorStride(y);
+   NALU_HYPRE_Int         idxstride_b = nalu_hypre_VectorIndexStride(b);
+   NALU_HYPRE_Int         vecstride_b = nalu_hypre_VectorVectorStride(b);
+   NALU_HYPRE_Int         idxstride_x = nalu_hypre_VectorIndexStride(x);
+   NALU_HYPRE_Int         vecstride_x = nalu_hypre_VectorVectorStride(x);
    NALU_HYPRE_Complex     temp, tempx;
    NALU_HYPRE_Int         i, j, jj, m, ierr = 0;
    NALU_HYPRE_Real        xpar = 0.7;
-   hypre_Vector     *x_tmp = NULL;
+   nalu_hypre_Vector     *x_tmp = NULL;
 
    /*---------------------------------------------------------------------
     *  Check for size compatibility.  Matvec returns ierr = 1 if
@@ -65,10 +65,10 @@ hypre_CSRMatrixMatvecOutOfPlaceHost( NALU_HYPRE_Complex    alpha,
     *  is informational only.
     *--------------------------------------------------------------------*/
 
-   hypre_assert(num_vectors == hypre_VectorNumVectors(y));
-   hypre_assert(num_vectors == hypre_VectorNumVectors(b));
-   hypre_assert(idxstride_b == idxstride_y);
-   hypre_assert(vecstride_b == vecstride_y);
+   nalu_hypre_assert(num_vectors == nalu_hypre_VectorNumVectors(y));
+   nalu_hypre_assert(num_vectors == nalu_hypre_VectorNumVectors(b));
+   nalu_hypre_assert(idxstride_b == idxstride_y);
+   nalu_hypre_assert(vecstride_b == vecstride_y);
 
    if (num_cols != x_size)
    {
@@ -100,7 +100,7 @@ hypre_CSRMatrixMatvecOutOfPlaceHost( NALU_HYPRE_Complex    alpha,
       }
 
 #ifdef NALU_HYPRE_PROFILE
-      hypre_profile_times[NALU_HYPRE_TIMER_ID_MATVEC] += hypre_MPI_Wtime() - time_begin;
+      nalu_hypre_profile_times[NALU_HYPRE_TIMER_ID_MATVEC] += nalu_hypre_MPI_Wtime() - time_begin;
 #endif
 
       return ierr;
@@ -108,8 +108,8 @@ hypre_CSRMatrixMatvecOutOfPlaceHost( NALU_HYPRE_Complex    alpha,
 
    if (x == y)
    {
-      x_tmp = hypre_SeqVectorCloneDeep(x);
-      x_data = hypre_VectorData(x_tmp);
+      x_tmp = nalu_hypre_SeqVectorCloneDeep(x);
+      x_data = nalu_hypre_VectorData(x_tmp);
    }
 
    temp = beta / alpha;
@@ -674,11 +674,11 @@ hypre_CSRMatrixMatvecOutOfPlaceHost( NALU_HYPRE_Complex    alpha,
       #pragma omp parallel private(i,jj,tempx)
 #endif
       {
-         NALU_HYPRE_Int iBegin = hypre_CSRMatrixGetLoadBalancedPartitionBegin(A);
-         NALU_HYPRE_Int iEnd = hypre_CSRMatrixGetLoadBalancedPartitionEnd(A);
-         hypre_assert(iBegin <= iEnd);
-         hypre_assert(iBegin >= 0 && iBegin <= num_rows);
-         hypre_assert(iEnd >= 0 && iEnd <= num_rows);
+         NALU_HYPRE_Int iBegin = nalu_hypre_CSRMatrixGetLoadBalancedPartitionBegin(A);
+         NALU_HYPRE_Int iEnd = nalu_hypre_CSRMatrixGetLoadBalancedPartitionEnd(A);
+         nalu_hypre_assert(iBegin <= iEnd);
+         nalu_hypre_assert(iBegin >= 0 && iBegin <= num_rows);
+         nalu_hypre_assert(iEnd >= 0 && iEnd <= num_rows);
 
          if (temp == 0.0)
          {
@@ -850,88 +850,88 @@ hypre_CSRMatrixMatvecOutOfPlaceHost( NALU_HYPRE_Complex    alpha,
 
    if (x == y)
    {
-      hypre_SeqVectorDestroy(x_tmp);
+      nalu_hypre_SeqVectorDestroy(x_tmp);
    }
 
    return ierr;
 }
 
 NALU_HYPRE_Int
-hypre_CSRMatrixMatvecOutOfPlace( NALU_HYPRE_Complex    alpha,
-                                 hypre_CSRMatrix *A,
-                                 hypre_Vector    *x,
+nalu_hypre_CSRMatrixMatvecOutOfPlace( NALU_HYPRE_Complex    alpha,
+                                 nalu_hypre_CSRMatrix *A,
+                                 nalu_hypre_Vector    *x,
                                  NALU_HYPRE_Complex    beta,
-                                 hypre_Vector    *b,
-                                 hypre_Vector    *y,
+                                 nalu_hypre_Vector    *b,
+                                 nalu_hypre_Vector    *y,
                                  NALU_HYPRE_Int        offset )
 {
 #ifdef NALU_HYPRE_PROFILE
-   NALU_HYPRE_Real time_begin = hypre_MPI_Wtime();
+   NALU_HYPRE_Real time_begin = nalu_hypre_MPI_Wtime();
 #endif
 
    NALU_HYPRE_Int ierr = 0;
 
 #if defined(NALU_HYPRE_USING_GPU)
-   NALU_HYPRE_ExecutionPolicy exec = hypre_GetExecPolicy1( hypre_CSRMatrixMemoryLocation(A) );
+   NALU_HYPRE_ExecutionPolicy exec = nalu_hypre_GetExecPolicy1( nalu_hypre_CSRMatrixMemoryLocation(A) );
    if (exec == NALU_HYPRE_EXEC_DEVICE)
    {
-      ierr = hypre_CSRMatrixMatvecDevice(0, alpha, A, x, beta, b, y, offset);
+      ierr = nalu_hypre_CSRMatrixMatvecDevice(0, alpha, A, x, beta, b, y, offset);
    }
    else
 #endif
    {
-      ierr = hypre_CSRMatrixMatvecOutOfPlaceHost(alpha, A, x, beta, b, y, offset);
+      ierr = nalu_hypre_CSRMatrixMatvecOutOfPlaceHost(alpha, A, x, beta, b, y, offset);
    }
 
 #ifdef NALU_HYPRE_PROFILE
-   hypre_profile_times[NALU_HYPRE_TIMER_ID_MATVEC] += hypre_MPI_Wtime() - time_begin;
+   nalu_hypre_profile_times[NALU_HYPRE_TIMER_ID_MATVEC] += nalu_hypre_MPI_Wtime() - time_begin;
 #endif
 
    return ierr;
 }
 
 NALU_HYPRE_Int
-hypre_CSRMatrixMatvec( NALU_HYPRE_Complex    alpha,
-                       hypre_CSRMatrix *A,
-                       hypre_Vector    *x,
+nalu_hypre_CSRMatrixMatvec( NALU_HYPRE_Complex    alpha,
+                       nalu_hypre_CSRMatrix *A,
+                       nalu_hypre_Vector    *x,
                        NALU_HYPRE_Complex    beta,
-                       hypre_Vector    *y     )
+                       nalu_hypre_Vector    *y     )
 {
-   return hypre_CSRMatrixMatvecOutOfPlace(alpha, A, x, beta, y, y, 0);
+   return nalu_hypre_CSRMatrixMatvecOutOfPlace(alpha, A, x, beta, y, y, 0);
 }
 
 /*--------------------------------------------------------------------------
- * hypre_CSRMatrixMatvecT
+ * nalu_hypre_CSRMatrixMatvecT
  *
  *  This version is using a different (more efficient) threading scheme
 
  *   Performs y <- alpha * A^T * x + beta * y
  *
- *   From Van Henson's modification of hypre_CSRMatrixMatvec.
+ *   From Van Henson's modification of nalu_hypre_CSRMatrixMatvec.
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_CSRMatrixMatvecTHost( NALU_HYPRE_Complex    alpha,
-                            hypre_CSRMatrix *A,
-                            hypre_Vector    *x,
+nalu_hypre_CSRMatrixMatvecTHost( NALU_HYPRE_Complex    alpha,
+                            nalu_hypre_CSRMatrix *A,
+                            nalu_hypre_Vector    *x,
                             NALU_HYPRE_Complex    beta,
-                            hypre_Vector    *y     )
+                            nalu_hypre_Vector    *y     )
 {
-   NALU_HYPRE_Complex    *A_data    = hypre_CSRMatrixData(A);
-   NALU_HYPRE_Int        *A_i       = hypre_CSRMatrixI(A);
-   NALU_HYPRE_Int        *A_j       = hypre_CSRMatrixJ(A);
-   NALU_HYPRE_Int         num_rows  = hypre_CSRMatrixNumRows(A);
-   NALU_HYPRE_Int         num_cols  = hypre_CSRMatrixNumCols(A);
+   NALU_HYPRE_Complex    *A_data    = nalu_hypre_CSRMatrixData(A);
+   NALU_HYPRE_Int        *A_i       = nalu_hypre_CSRMatrixI(A);
+   NALU_HYPRE_Int        *A_j       = nalu_hypre_CSRMatrixJ(A);
+   NALU_HYPRE_Int         num_rows  = nalu_hypre_CSRMatrixNumRows(A);
+   NALU_HYPRE_Int         num_cols  = nalu_hypre_CSRMatrixNumCols(A);
 
-   NALU_HYPRE_Complex    *x_data = hypre_VectorData(x);
-   NALU_HYPRE_Complex    *y_data = hypre_VectorData(y);
-   NALU_HYPRE_Int         x_size = hypre_VectorSize(x);
-   NALU_HYPRE_Int         y_size = hypre_VectorSize(y);
-   NALU_HYPRE_Int         num_vectors = hypre_VectorNumVectors(x);
-   NALU_HYPRE_Int         idxstride_y = hypre_VectorIndexStride(y);
-   NALU_HYPRE_Int         vecstride_y = hypre_VectorVectorStride(y);
-   NALU_HYPRE_Int         idxstride_x = hypre_VectorIndexStride(x);
-   NALU_HYPRE_Int         vecstride_x = hypre_VectorVectorStride(x);
+   NALU_HYPRE_Complex    *x_data = nalu_hypre_VectorData(x);
+   NALU_HYPRE_Complex    *y_data = nalu_hypre_VectorData(y);
+   NALU_HYPRE_Int         x_size = nalu_hypre_VectorSize(x);
+   NALU_HYPRE_Int         y_size = nalu_hypre_VectorSize(y);
+   NALU_HYPRE_Int         num_vectors = nalu_hypre_VectorNumVectors(x);
+   NALU_HYPRE_Int         idxstride_y = nalu_hypre_VectorIndexStride(y);
+   NALU_HYPRE_Int         vecstride_y = nalu_hypre_VectorVectorStride(y);
+   NALU_HYPRE_Int         idxstride_x = nalu_hypre_VectorIndexStride(x);
+   NALU_HYPRE_Int         vecstride_x = nalu_hypre_VectorVectorStride(x);
 
    NALU_HYPRE_Complex     temp;
 
@@ -943,7 +943,7 @@ hypre_CSRMatrixMatvecTHost( NALU_HYPRE_Complex    alpha,
 
    NALU_HYPRE_Int         ierr  = 0;
 
-   hypre_Vector     *x_tmp = NULL;
+   nalu_hypre_Vector     *x_tmp = NULL;
 
    /*---------------------------------------------------------------------
     *  Check for size compatibility.  MatvecT returns ierr = 1 if
@@ -956,7 +956,7 @@ hypre_CSRMatrixMatvecTHost( NALU_HYPRE_Complex    alpha,
     *  is informational only.
     *--------------------------------------------------------------------*/
 
-   hypre_assert( num_vectors == hypre_VectorNumVectors(y) );
+   nalu_hypre_assert( num_vectors == nalu_hypre_VectorNumVectors(y) );
 
    if (num_rows != x_size)
    {
@@ -991,8 +991,8 @@ hypre_CSRMatrixMatvecTHost( NALU_HYPRE_Complex    alpha,
 
    if (x == y)
    {
-      x_tmp = hypre_SeqVectorCloneDeep(x);
-      x_data = hypre_VectorData(x_tmp);
+      x_tmp = nalu_hypre_SeqVectorCloneDeep(x);
+      x_data = nalu_hypre_VectorData(x_tmp);
    }
 
    /*-----------------------------------------------------------------------
@@ -1028,10 +1028,10 @@ hypre_CSRMatrixMatvecTHost( NALU_HYPRE_Complex    alpha,
    /*-----------------------------------------------------------------
     * y += A^T*x
     *-----------------------------------------------------------------*/
-   num_threads = hypre_NumThreads();
+   num_threads = nalu_hypre_NumThreads();
    if (num_threads > 1)
    {
-      y_data_expand = hypre_CTAlloc(NALU_HYPRE_Complex,  num_threads * y_size, NALU_HYPRE_MEMORY_HOST);
+      y_data_expand = nalu_hypre_CTAlloc(NALU_HYPRE_Complex,  num_threads * y_size, NALU_HYPRE_MEMORY_HOST);
 
       if ( num_vectors == 1 )
       {
@@ -1040,7 +1040,7 @@ hypre_CSRMatrixMatvecTHost( NALU_HYPRE_Complex    alpha,
          #pragma omp parallel private(i,jj,j,my_thread_num,offset)
 #endif
          {
-            my_thread_num = hypre_GetThreadNum();
+            my_thread_num = nalu_hypre_GetThreadNum();
             offset =  y_size * my_thread_num;
 #ifdef NALU_HYPRE_USING_OPENMP
             #pragma omp for NALU_HYPRE_SMP_SCHEDULE
@@ -1086,7 +1086,7 @@ hypre_CSRMatrixMatvecTHost( NALU_HYPRE_Complex    alpha,
          }
       }
 
-      hypre_TFree(y_data_expand, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(y_data_expand, NALU_HYPRE_MEMORY_HOST);
 
    }
    else
@@ -1132,67 +1132,67 @@ hypre_CSRMatrixMatvecTHost( NALU_HYPRE_Complex    alpha,
 
    if (x == y)
    {
-      hypre_SeqVectorDestroy(x_tmp);
+      nalu_hypre_SeqVectorDestroy(x_tmp);
    }
 
    return ierr;
 }
 
 NALU_HYPRE_Int
-hypre_CSRMatrixMatvecT( NALU_HYPRE_Complex    alpha,
-                        hypre_CSRMatrix *A,
-                        hypre_Vector    *x,
+nalu_hypre_CSRMatrixMatvecT( NALU_HYPRE_Complex    alpha,
+                        nalu_hypre_CSRMatrix *A,
+                        nalu_hypre_Vector    *x,
                         NALU_HYPRE_Complex    beta,
-                        hypre_Vector    *y )
+                        nalu_hypre_Vector    *y )
 {
 #ifdef NALU_HYPRE_PROFILE
-   NALU_HYPRE_Real time_begin = hypre_MPI_Wtime();
+   NALU_HYPRE_Real time_begin = nalu_hypre_MPI_Wtime();
 #endif
 
    NALU_HYPRE_Int ierr = 0;
 
 #if defined(NALU_HYPRE_USING_GPU)
-   NALU_HYPRE_ExecutionPolicy exec = hypre_GetExecPolicy1( hypre_CSRMatrixMemoryLocation(A) );
+   NALU_HYPRE_ExecutionPolicy exec = nalu_hypre_GetExecPolicy1( nalu_hypre_CSRMatrixMemoryLocation(A) );
    if (exec == NALU_HYPRE_EXEC_DEVICE)
    {
-      ierr = hypre_CSRMatrixMatvecDevice(1, alpha, A, x, beta, y, y, 0 );
+      ierr = nalu_hypre_CSRMatrixMatvecDevice(1, alpha, A, x, beta, y, y, 0 );
    }
    else
 #endif
    {
-      ierr = hypre_CSRMatrixMatvecTHost(alpha, A, x, beta, y);
+      ierr = nalu_hypre_CSRMatrixMatvecTHost(alpha, A, x, beta, y);
    }
 
 #ifdef NALU_HYPRE_PROFILE
-   hypre_profile_times[NALU_HYPRE_TIMER_ID_MATVEC] += hypre_MPI_Wtime() - time_begin;
+   nalu_hypre_profile_times[NALU_HYPRE_TIMER_ID_MATVEC] += nalu_hypre_MPI_Wtime() - time_begin;
 #endif
 
    return ierr;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_CSRMatrixMatvec_FF
+ * nalu_hypre_CSRMatrixMatvec_FF
  *--------------------------------------------------------------------------*/
 NALU_HYPRE_Int
-hypre_CSRMatrixMatvec_FF( NALU_HYPRE_Complex    alpha,
-                          hypre_CSRMatrix *A,
-                          hypre_Vector    *x,
+nalu_hypre_CSRMatrixMatvec_FF( NALU_HYPRE_Complex    alpha,
+                          nalu_hypre_CSRMatrix *A,
+                          nalu_hypre_Vector    *x,
                           NALU_HYPRE_Complex    beta,
-                          hypre_Vector    *y,
+                          nalu_hypre_Vector    *y,
                           NALU_HYPRE_Int       *CF_marker_x,
                           NALU_HYPRE_Int       *CF_marker_y,
                           NALU_HYPRE_Int        fpt )
 {
-   NALU_HYPRE_Complex    *A_data   = hypre_CSRMatrixData(A);
-   NALU_HYPRE_Int        *A_i      = hypre_CSRMatrixI(A);
-   NALU_HYPRE_Int        *A_j      = hypre_CSRMatrixJ(A);
-   NALU_HYPRE_Int         num_rows = hypre_CSRMatrixNumRows(A);
-   NALU_HYPRE_Int         num_cols = hypre_CSRMatrixNumCols(A);
+   NALU_HYPRE_Complex    *A_data   = nalu_hypre_CSRMatrixData(A);
+   NALU_HYPRE_Int        *A_i      = nalu_hypre_CSRMatrixI(A);
+   NALU_HYPRE_Int        *A_j      = nalu_hypre_CSRMatrixJ(A);
+   NALU_HYPRE_Int         num_rows = nalu_hypre_CSRMatrixNumRows(A);
+   NALU_HYPRE_Int         num_cols = nalu_hypre_CSRMatrixNumCols(A);
 
-   NALU_HYPRE_Complex    *x_data = hypre_VectorData(x);
-   NALU_HYPRE_Complex    *y_data = hypre_VectorData(y);
-   NALU_HYPRE_Int         x_size = hypre_VectorSize(x);
-   NALU_HYPRE_Int         y_size = hypre_VectorSize(y);
+   NALU_HYPRE_Complex    *x_data = nalu_hypre_VectorData(x);
+   NALU_HYPRE_Complex    *y_data = nalu_hypre_VectorData(y);
+   NALU_HYPRE_Int         x_size = nalu_hypre_VectorSize(x);
+   NALU_HYPRE_Int         y_size = nalu_hypre_VectorSize(y);
 
    NALU_HYPRE_Complex      temp;
 

@@ -33,7 +33,7 @@ extern "C" int
 NALU_HYPRE_FEVectorCreate(MPI_Comm comm, NALU_HYPRE_FEMesh mesh, NALU_HYPRE_FEVector *vector)
 {
    NALU_HYPRE_FEVector myVector;
-   myVector = (NALU_HYPRE_FEVector) hypre_TAlloc(NALU_HYPRE_FEVector, 1, NALU_HYPRE_MEMORY_HOST);
+   myVector = (NALU_HYPRE_FEVector) nalu_hypre_TAlloc(NALU_HYPRE_FEVector, 1, NALU_HYPRE_MEMORY_HOST);
    myVector->mesh_ = mesh;
    myVector->comm_ = comm;
    (*vector) = myVector;

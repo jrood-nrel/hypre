@@ -167,9 +167,9 @@ int MLI_Solver_CG::solve(MLI_Vector *f_in, MLI_Vector *u_in)
    double             rho, rhom1, alpha, beta, sigma, rnorm, dOne=1.0;
    double             *fData, *uData;
    char               paramString[30];
-   hypre_ParCSRMatrix *A, *P;
-   hypre_CSRMatrix    *ADiag;
-   hypre_ParVector    *f, *u, *p, *z, *r, *ap, *f2;
+   nalu_hypre_ParCSRMatrix *A, *P;
+   nalu_hypre_CSRMatrix    *ADiag;
+   nalu_hypre_ParVector    *f, *u, *p, *z, *r, *ap, *f2;
    MPI_Request        *mpiRequests;
    MPI_Status         mpiStatus;
    MLI_Vector         *zVecLocal, *rVecLocal;
@@ -178,35 +178,35 @@ int MLI_Solver_CG::solve(MLI_Vector *f_in, MLI_Vector *u_in)
     * fetch machine and smoother parameters
     *-----------------------------------------------------------------*/
 
-   A          = (hypre_ParCSRMatrix *) Amat_->getMatrix();
-   ADiag      = hypre_ParCSRMatrixDiag(A);
-   localNRows = hypre_CSRMatrixNumRows(ADiag);
+   A          = (nalu_hypre_ParCSRMatrix *) Amat_->getMatrix();
+   ADiag      = nalu_hypre_ParCSRMatrixDiag(A);
+   localNRows = nalu_hypre_CSRMatrixNumRows(ADiag);
    
    /*-----------------------------------------------------------------
     * fetch local vectors
     *-----------------------------------------------------------------*/
 
-   r  = (hypre_ParVector *) rVec_->getVector();  /* -- r  -- */
-   z  = (hypre_ParVector *) zVec_->getVector();  /* -- z  -- */
-   p  = (hypre_ParVector *) pVec_->getVector();  /* -- p  -- */
-   ap = (hypre_ParVector *) apVec_->getVector(); /* -- ap -- */
+   r  = (nalu_hypre_ParVector *) rVec_->getVector();  /* -- r  -- */
+   z  = (nalu_hypre_ParVector *) zVec_->getVector();  /* -- z  -- */
+   p  = (nalu_hypre_ParVector *) pVec_->getVector();  /* -- p  -- */
+   ap = (nalu_hypre_ParVector *) apVec_->getVector(); /* -- ap -- */
 
    /*-----------------------------------------------------------------
     * for domain decomposition, set up for extended vector f
     *-----------------------------------------------------------------*/
 
-   f = (hypre_ParVector *) f_in->getVector();
-   u = (hypre_ParVector *) u_in->getVector();
-   rData = hypre_VectorData(hypre_ParVectorLocalVector(r));
+   f = (nalu_hypre_ParVector *) f_in->getVector();
+   u = (nalu_hypre_ParVector *) u_in->getVector();
+   rData = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(r));
    if ( PSmat_ != NULL )
    {
-      P  = (hypre_ParCSRMatrix *) PSmat_->getMatrix();
-      f2 = (hypre_ParVector *) PSvec_->getVector();
-      hypre_ParCSRMatrixMatvecT(dOne, P, f, dZero, f2);
+      P  = (nalu_hypre_ParCSRMatrix *) PSmat_->getMatrix();
+      f2 = (nalu_hypre_ParVector *) PSvec_->getVector();
+      nalu_hypre_ParCSRMatrixMatvecT(dOne, P, f, dZero, f2);
       rlength = 0;
       for ( iP = 0; iP < nRecvs_; iP++ ) rlength += recvLengs_[iP];
       shortNRows = localNRows - rlength;
-      f2Data = hypre_VectorData(hypre_ParVectorLocalVector(f2));
+      f2Data = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(f2));
       if ( nRecvs_ > 0 ) mpiRequests = new MPI_Request[nRecvs_];
       for ( iP = 0; iP < nRecvs_; iP++ )
       {
@@ -221,7 +221,7 @@ int MLI_Solver_CG::solve(MLI_Vector *f_in, MLI_Vector *u_in)
          MPI_Wait( &(mpiRequests[iP]), &mpiStatus );
       if ( nRecvs_ > 0 ) delete [] mpiRequests;
       shortNRows = localNRows - rlength;
-      fData = hypre_VectorData(hypre_ParVectorLocalVector(f));
+      fData = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(f));
       for ( i = 0; i < shortNRows; i++ ) rData[i] = fData[i];
       zeroInitialGuess_ = 0;
       u2Data = new double[localNRows];
@@ -229,8 +229,8 @@ int MLI_Solver_CG::solve(MLI_Vector *f_in, MLI_Vector *u_in)
    }
    else
    {
-      hypre_ParVectorCopy(f, r);
-      if (zeroInitialGuess_==0) hypre_ParCSRMatrixMatvec(-1.0,A,u,1.0,r);
+      nalu_hypre_ParVectorCopy(f, r);
+      if (zeroInitialGuess_==0) nalu_hypre_ParCSRMatrixMatvec(-1.0,A,u,1.0,r);
       zeroInitialGuess_ = 0;
    }
 
@@ -238,15 +238,15 @@ int MLI_Solver_CG::solve(MLI_Vector *f_in, MLI_Vector *u_in)
     * set up for outer iterations 
     *-----------------------------------------------------------------*/
 
-   if ( tolerance_ != 0.0 ) rnorm = sqrt(hypre_ParVectorInnerProd(r, r));
+   if ( tolerance_ != 0.0 ) rnorm = sqrt(nalu_hypre_ParVectorInnerProd(r, r));
    else                     rnorm = 1.0;
 
    /*-----------------------------------------------------------------
     * fetch auxiliary vectors
     *-----------------------------------------------------------------*/
 
-   pData  = hypre_VectorData(hypre_ParVectorLocalVector(p));
-   zData  = hypre_VectorData(hypre_ParVectorLocalVector(z));
+   pData  = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(p));
+   zData  = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(z));
 
    /*-----------------------------------------------------------------
     * Perform iterations
@@ -257,7 +257,7 @@ int MLI_Solver_CG::solve(MLI_Vector *f_in, MLI_Vector *u_in)
    while ( iter < maxIterations_ && rnorm > tolerance_ )
    {
       iter++;
-      hypre_ParVectorSetConstantValues(z, 0.0);
+      nalu_hypre_ParVectorSetConstantValues(z, 0.0);
       strcpy(paramString, "zeroInitialGuess");
       if (baseMethod_ != MLI_SOLVER_ILU_ID) 
          baseSolver_->setParams( paramString, 0, NULL );
@@ -267,11 +267,11 @@ int MLI_Solver_CG::solve(MLI_Vector *f_in, MLI_Vector *u_in)
       if (baseMethod_ == MLI_SOLVER_ILU_ID) iluSolve(rData, zData);
       else               baseSolver_->solve( rVecLocal, zVecLocal );
       rhom1 = rho;
-      rho   = hypre_ParVectorInnerProd(r, z);
+      rho   = nalu_hypre_ParVectorInnerProd(r, z);
       if ( iter == 1 ) 
       {
          beta = 0.0;
-         hypre_ParVectorCopy(z, p);
+         nalu_hypre_ParVectorCopy(z, p);
       }
       else
       {
@@ -284,17 +284,17 @@ int MLI_Solver_CG::solve(MLI_Vector *f_in, MLI_Vector *u_in)
             pData[i] = beta * pData[i] + zData[i];
 
       }
-      hypre_ParCSRMatrixMatvec(1.0, A, p, 0.0, ap);
-      sigma = hypre_ParVectorInnerProd(p, ap);
+      nalu_hypre_ParCSRMatrixMatvec(1.0, A, p, 0.0, ap);
+      sigma = nalu_hypre_ParVectorInnerProd(p, ap);
       alpha = rho /sigma;
       if ( PSmat_ == NULL )
-         hypre_ParVectorAxpy(alpha, p, u);  /* u = u + alpha p */
+         nalu_hypre_ParVectorAxpy(alpha, p, u);  /* u = u + alpha p */
       else
          for ( i = 0; i < localNRows; i++ ) u2Data[i] += alpha * pData[i];
 
-      hypre_ParVectorAxpy(-alpha, ap, r); /* r = r - alpha ap */
+      nalu_hypre_ParVectorAxpy(-alpha, ap, r); /* r = r - alpha ap */
       if (tolerance_ != 0.0 && maxIterations_ > 1) 
-         rnorm = sqrt(hypre_ParVectorInnerProd(r, r));
+         rnorm = sqrt(nalu_hypre_ParVectorInnerProd(r, r));
    }
 
    /*-----------------------------------------------------------------
@@ -303,7 +303,7 @@ int MLI_Solver_CG::solve(MLI_Vector *f_in, MLI_Vector *u_in)
 
    if ( PSmat_ != NULL )
    {
-      uData  = hypre_VectorData(hypre_ParVectorLocalVector(u));
+      uData  = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(u));
       for ( i = 0; i < shortNRows; i++ ) uData[i] = u2Data[i];
       delete [] u2Data;
    }
@@ -380,11 +380,11 @@ int MLI_Solver_CG::setParams( char *paramString, int argc, char **argv )
       }
       NALU_HYPRE_IJVector auxVec;
       PSmat_ = (MLI_Matrix *) argv[0];
-      hypre_ParCSRMatrix *hypreAux;
-      hypre_ParCSRMatrix *ps = (hypre_ParCSRMatrix *) PSmat_->getMatrix();
-      int nCols = hypre_ParCSRMatrixNumCols(ps);
-      int start = hypre_ParCSRMatrixFirstColDiag(ps);
-      MPI_Comm vComm = hypre_ParCSRMatrixComm(ps);
+      nalu_hypre_ParCSRMatrix *hypreAux;
+      nalu_hypre_ParCSRMatrix *ps = (nalu_hypre_ParCSRMatrix *) PSmat_->getMatrix();
+      int nCols = nalu_hypre_ParCSRMatrixNumCols(ps);
+      int start = nalu_hypre_ParCSRMatrixFirstColDiag(ps);
+      MPI_Comm vComm = nalu_hypre_ParCSRMatrixComm(ps);
       NALU_HYPRE_IJVectorCreate(vComm, start, start+nCols-1, &auxVec);
       NALU_HYPRE_IJVectorSetObjectType(auxVec, NALU_HYPRE_PARCSR);
       NALU_HYPRE_IJVectorInitialize(auxVec);
@@ -445,15 +445,15 @@ int MLI_Solver_CG::iluDecomposition()
    int                 nrows, i, j, jj, jjj, k, rownum, colnum;
    int                 *ADiagI, *ADiagJ;
    double              *ADiagA, *darray, dt;
-   hypre_ParCSRMatrix *A;
-   hypre_CSRMatrix    *ADiag;
+   nalu_hypre_ParCSRMatrix *A;
+   nalu_hypre_CSRMatrix    *ADiag;
 
-   A       = (hypre_ParCSRMatrix *) Amat_->getMatrix();
-   ADiag   = hypre_ParCSRMatrixDiag(A);
-   nrows   = hypre_CSRMatrixNumRows(ADiag);
-   ADiagI  = hypre_CSRMatrixI(ADiag);
-   ADiagJ  = hypre_CSRMatrixJ(ADiag);
-   ADiagA  = hypre_CSRMatrixData(ADiag);
+   A       = (nalu_hypre_ParCSRMatrix *) Amat_->getMatrix();
+   ADiag   = nalu_hypre_ParCSRMatrixDiag(A);
+   nrows   = nalu_hypre_CSRMatrixNumRows(ADiag);
+   ADiagI  = nalu_hypre_CSRMatrixI(ADiag);
+   ADiagJ  = nalu_hypre_CSRMatrixJ(ADiag);
+   ADiagA  = nalu_hypre_CSRMatrixData(ADiag);
    iluI_   = new int[nrows+2];
    iluJ_   = new int[ADiagI[nrows]];
    iluA_   = new double[ADiagI[nrows]];
@@ -531,12 +531,12 @@ int MLI_Solver_CG::iluSolve(double *inData, double *outData)
 {
    int                i, j, k, nrows;
    double             dtmp;
-   hypre_ParCSRMatrix *A;
-   hypre_CSRMatrix    *ADiag;
+   nalu_hypre_ParCSRMatrix *A;
+   nalu_hypre_CSRMatrix    *ADiag;
 
-   A     = (hypre_ParCSRMatrix *) Amat_->getMatrix();
-   ADiag = hypre_ParCSRMatrixDiag(A);
-   nrows = hypre_CSRMatrixNumRows(ADiag);
+   A     = (nalu_hypre_ParCSRMatrix *) Amat_->getMatrix();
+   ADiag = nalu_hypre_ParCSRMatrixDiag(A);
+   nrows = nalu_hypre_CSRMatrixNumRows(ADiag);
 
    for (i = 0; i < nrows; i++) outData[i] = inData[i];
    for (i = 1; i <= nrows; i++) {

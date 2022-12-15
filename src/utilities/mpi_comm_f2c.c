@@ -16,12 +16,12 @@
 
 #if 0 /* This function is problematic and no longer needed anyway. */
 void
-hypre_F90_IFACE(hypre_mpi_comm_f2c, NALU_HYPRE_MPI_COMM_F2C)
-(hypre_F90_Obj  *c_comm,
- hypre_F90_Comm *f_comm,
- hypre_F90_Int  *ierr)
+nalu_hypre_F90_IFACE(nalu_hypre_mpi_comm_f2c, NALU_HYPRE_MPI_COMM_F2C)
+(nalu_hypre_F90_Obj  *c_comm,
+ nalu_hypre_F90_Comm *f_comm,
+ nalu_hypre_F90_Int  *ierr)
 {
-   *c_comm = (hypre_F90_Obj) hypre_MPI_Comm_f2c( (hypre_int) * f_comm );
+   *c_comm = (nalu_hypre_F90_Obj) nalu_hypre_MPI_Comm_f2c( (nalu_hypre_int) * f_comm );
    *ierr = 0;
 }
 #endif

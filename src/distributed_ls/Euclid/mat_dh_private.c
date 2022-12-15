@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_Euclid.h"
+#include "_nalu_hypre_Euclid.h"
 /* #include "mat_dh_private.h" */
 /* #include "Parser_dh.h" */
 /* #include "Hash_i_dh.h" */
@@ -71,7 +71,7 @@ void mat_dh_print_graph_private(NALU_HYPRE_Int m, NALU_HYPRE_Int beg_row, NALU_H
         /* nonlocal column: get permutation from hash table */
         tmp = Hash_i_dhLookup(hash, col); CHECK_V_ERROR;
         if (tmp == -1) {
-          hypre_sprintf(msgBuf_dh, "beg_row= %i  m= %i; nonlocal column= %i not in hash table",
+          nalu_hypre_sprintf(msgBuf_dh, "beg_row= %i  m= %i; nonlocal column= %i not in hash table",
                                 beg_row, m, col);
           SET_V_ERROR(msgBuf_dh);
         } else {
@@ -86,7 +86,7 @@ void mat_dh_print_graph_private(NALU_HYPRE_Int m, NALU_HYPRE_Int beg_row, NALU_H
       } else {
         val = aval[j];
       }
-      hypre_fprintf(fp, "%i %i %g\n", 1+row+beg_row, 1+col, val);
+      nalu_hypre_fprintf(fp, "%i %i %g\n", 1+row+beg_row, 1+col, val);
     }
   }
 
@@ -146,7 +146,7 @@ void mat_dh_print_graph_private(NALU_HYPRE_Int m, NALU_HYPRE_Int beg_row, NALU_H
 
         tmp = Hash_i_dhLookup(hash, col); CHECK_V_ERROR;
         if (tmp == -1) {
-          hypre_sprintf(msgBuf_dh, "beg_row= %i  m= %i; nonlocal column= %i not in hash table",
+          nalu_hypre_sprintf(msgBuf_dh, "beg_row= %i  m= %i; nonlocal column= %i not in hash table",
                                 beg_row, m, col);
           SET_V_ERROR(msgBuf_dh);
         } else {
@@ -159,12 +159,12 @@ void mat_dh_print_graph_private(NALU_HYPRE_Int m, NALU_HYPRE_Int beg_row, NALU_H
 
     for (j=0; j<m; ++j) {
       if (work[j]) {
-        hypre_fprintf(fp, " x ");
+        nalu_hypre_fprintf(fp, " x ");
       } else {
-        hypre_fprintf(fp, "   ");
+        nalu_hypre_fprintf(fp, "   ");
       }
     }
-    hypre_fprintf(fp, "\n");
+    nalu_hypre_fprintf(fp, "\n");
   }
 
   if (private_n2o) {
@@ -226,19 +226,19 @@ void mat_dh_print_csr_private(NALU_HYPRE_Int m, NALU_HYPRE_Int *rp, NALU_HYPRE_I
   NALU_HYPRE_Int i, nz = rp[m];
 
   /* print header line */
-  hypre_fprintf(fp, "%i %i\n", m, rp[m]);
+  nalu_hypre_fprintf(fp, "%i %i\n", m, rp[m]);
 
   /* print rp[] */
-  for (i=0; i<=m; ++i) hypre_fprintf(fp, "%i ", rp[i]);
-  hypre_fprintf(fp, "\n");
+  for (i=0; i<=m; ++i) nalu_hypre_fprintf(fp, "%i ", rp[i]);
+  nalu_hypre_fprintf(fp, "\n");
 
   /* print cval[] */
-  for (i=0; i<nz; ++i) hypre_fprintf(fp, "%i ", cval[i]);
-  hypre_fprintf(fp, "\n");
+  for (i=0; i<nz; ++i) nalu_hypre_fprintf(fp, "%i ", cval[i]);
+  nalu_hypre_fprintf(fp, "\n");
 
   /* print aval[] */
-  for (i=0; i<nz; ++i) hypre_fprintf(fp, "%1.19e ", aval[i]);
-  hypre_fprintf(fp, "\n");
+  for (i=0; i<nz; ++i) nalu_hypre_fprintf(fp, "%1.19e ", aval[i]);
+  nalu_hypre_fprintf(fp, "\n");
 
   END_FUNC_DH
 }
@@ -256,11 +256,11 @@ void mat_dh_read_csr_private(NALU_HYPRE_Int *mOUT, NALU_HYPRE_Int **rpOUT, NALU_
   NALU_HYPRE_Real *aval;
 
   /* read header line */
-  items = hypre_fscanf(fp,"%d %d",&m, &nz);
+  items = nalu_hypre_fscanf(fp,"%d %d",&m, &nz);
   if (items != 2) {
     SET_V_ERROR("failed to read header");
   } else {
-    hypre_printf("mat_dh_read_csr_private:: m= %i  nz= %i\n", m, nz);
+    nalu_hypre_printf("mat_dh_read_csr_private:: m= %i  nz= %i\n", m, nz);
   }
 
   *mOUT = m;
@@ -270,27 +270,27 @@ void mat_dh_read_csr_private(NALU_HYPRE_Int *mOUT, NALU_HYPRE_Int **rpOUT, NALU_
 
   /* read rp[] block */
   for (i=0; i<=m; ++i) {
-    items = hypre_fscanf(fp,"%d", &(rp[i]));
+    items = nalu_hypre_fscanf(fp,"%d", &(rp[i]));
     if (items != 1) {
-      hypre_sprintf(msgBuf_dh, "failed item %i of %i in rp block", i, m+1);
+      nalu_hypre_sprintf(msgBuf_dh, "failed item %i of %i in rp block", i, m+1);
       SET_V_ERROR(msgBuf_dh);
     }
   }
 
   /* read cval[] block */
   for (i=0; i<nz; ++i) {
-    items = hypre_fscanf(fp,"%d", &(cval[i]));
+    items = nalu_hypre_fscanf(fp,"%d", &(cval[i]));
     if (items != 1) {
-      hypre_sprintf(msgBuf_dh, "failed item %i of %i in cval block", i, m+1);
+      nalu_hypre_sprintf(msgBuf_dh, "failed item %i of %i in cval block", i, m+1);
       SET_V_ERROR(msgBuf_dh);
     }
   }
 
   /* read aval[] block */
   for (i=0; i<nz; ++i) {
-    items = hypre_fscanf(fp,"%lg", &(aval[i]));
+    items = nalu_hypre_fscanf(fp,"%lg", &(aval[i]));
     if (items != 1) {
-      hypre_sprintf(msgBuf_dh, "failed item %i of %i in aval block", i, m+1);
+      nalu_hypre_sprintf(msgBuf_dh, "failed item %i of %i in aval block", i, m+1);
       SET_V_ERROR(msgBuf_dh);
     }
   }
@@ -315,33 +315,33 @@ void mat_dh_read_triples_private(NALU_HYPRE_Int ignore, NALU_HYPRE_Int *mOUT, NA
 
   /* skip over header */
   if (ignore && myid_dh == 0) {
-    hypre_printf("mat_dh_read_triples_private:: ignoring following header lines:\n");
-    hypre_printf("--------------------------------------------------------------\n");
+    nalu_hypre_printf("mat_dh_read_triples_private:: ignoring following header lines:\n");
+    nalu_hypre_printf("--------------------------------------------------------------\n");
     for (i=0; i<ignore; ++i) {
       if (fgets(junk, MAX_JUNK, fp) != NULL) {
-        hypre_printf("%s", junk);
+        nalu_hypre_printf("%s", junk);
       }
     }
-    hypre_printf("--------------------------------------------------------------\n");
+    nalu_hypre_printf("--------------------------------------------------------------\n");
     if (fgetpos(fp, &fpos)) SET_V_ERROR("fgetpos failed!");
-    hypre_printf("\nmat_dh_read_triples_private::1st two non-ignored lines:\n");
-    hypre_printf("--------------------------------------------------------------\n");
+    nalu_hypre_printf("\nmat_dh_read_triples_private::1st two non-ignored lines:\n");
+    nalu_hypre_printf("--------------------------------------------------------------\n");
     for (i=0; i<2; ++i) {
       if (fgets(junk, MAX_JUNK, fp) != NULL) {
-        hypre_printf("%s", junk);
+        nalu_hypre_printf("%s", junk);
       }
     }
-    hypre_printf("--------------------------------------------------------------\n");
+    nalu_hypre_printf("--------------------------------------------------------------\n");
     if (fsetpos(fp, &fpos)) SET_V_ERROR("fsetpos failed!");
   }
 
 
-if (feof(fp)) hypre_printf("trouble!");
+if (feof(fp)) nalu_hypre_printf("trouble!");
 
   /* determine matrix dimensions */
   m=n=nz=0;
   while (!feof(fp)) {
-    items = hypre_fscanf(fp,"%d %d %lg",&i,&j,&v);
+    items = nalu_hypre_fscanf(fp,"%d %d %lg",&i,&j,&v);
     if (items != 3) {
       break;
     }
@@ -351,7 +351,7 @@ if (feof(fp)) hypre_printf("trouble!");
   }
 
   if (myid_dh == 0) {
-    hypre_printf("mat_dh_read_triples_private: m= %i  nz= %i\n", m, nz);
+    nalu_hypre_printf("mat_dh_read_triples_private: m= %i  nz= %i\n", m, nz);
   }
 
 
@@ -359,14 +359,14 @@ if (feof(fp)) hypre_printf("trouble!");
   rewind(fp);
   for (i=0; i<ignore; ++i) {
     if (fgets(junk, MAX_JUNK, fp) == NULL) {
-       hypre_sprintf(msgBuf_dh, "Error reading file");
+       nalu_hypre_sprintf(msgBuf_dh, "Error reading file");
        SET_V_ERROR(msgBuf_dh);
     }
   }
 
   /* error check for squareness */
   if (m != n) {
-    hypre_sprintf(msgBuf_dh, "matrix is not square; row= %i, cols= %i", m, n);
+    nalu_hypre_sprintf(msgBuf_dh, "matrix is not square; row= %i, cols= %i", m, n);
     SET_V_ERROR(msgBuf_dh);
   }
 
@@ -383,7 +383,7 @@ if (feof(fp)) hypre_printf("trouble!");
 
   /* read <row, col, value> triples into arrays */
   while (!feof(fp)) {
-    items = hypre_fscanf(fp,"%d %d %lg",&i,&j,&v);
+    items = nalu_hypre_fscanf(fp,"%d %d %lg",&i,&j,&v);
     if (items < 3) break;
     j--;
     i--;
@@ -400,9 +400,9 @@ if (feof(fp)) hypre_printf("trouble!");
   { NALU_HYPRE_Int type;
     type = isTriangular(m, rp, cval); CHECK_V_ERROR;
     if (type == IS_UPPER_TRI) {
-      hypre_printf("CAUTION: matrix is upper triangular; converting to full\n");
+      nalu_hypre_printf("CAUTION: matrix is upper triangular; converting to full\n");
     } else if (type == IS_LOWER_TRI) {
-      hypre_printf("CAUTION: matrix is lower triangular; converting to full\n");
+      nalu_hypre_printf("CAUTION: matrix is lower triangular; converting to full\n");
     }
 
     if (type == IS_UPPER_TRI || type == IS_LOWER_TRI) {
@@ -444,7 +444,7 @@ void convert_triples_to_scr_private(NALU_HYPRE_Int m, NALU_HYPRE_Int nz, NALU_HY
   for (i=1; i<=m; ++i) {
     rp[i] = rp[i-1] + rowCounts[i-1];
   }
-  hypre_TMemcpy(rowCounts,  rp, NALU_HYPRE_Int, (m+1), NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_HOST);
+  nalu_hypre_TMemcpy(rowCounts,  rp, NALU_HYPRE_Int, (m+1), NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_HOST);
 
   /* write SCR arrays */
   for (i=0; i<nz; ++i) {
@@ -524,19 +524,19 @@ void readMat(Mat_dh *Aout, char *ft, char *fn, NALU_HYPRE_Int ignore)
   }
 #else
   else if (!strcmp(ft, "petsc")) {
-    hypre_sprintf(msgBuf_dh, "must recompile Euclid using petsc mode!");
+    nalu_hypre_sprintf(msgBuf_dh, "must recompile Euclid using petsc mode!");
     SET_V_ERROR(msgBuf_dh);
   }
 #endif
 
   else
   {
-    hypre_sprintf(msgBuf_dh, "unknown filetype: -ftin %s", ft);
+    nalu_hypre_sprintf(msgBuf_dh, "unknown filetype: -ftin %s", ft);
     SET_V_ERROR(msgBuf_dh);
   }
 
   if (makeStructurallySymmetric) {
-    hypre_printf("\npadding with zeros to make structurally symmetric\n");
+    nalu_hypre_printf("\npadding with zeros to make structurally symmetric\n");
     Mat_dhMakeStructurallySymmetric(*Aout); CHECK_V_ERROR;
   }
 
@@ -678,14 +678,14 @@ void readVec(Vec_dh *bout, char *ft, char *fn, NALU_HYPRE_Int ignore)
   }
 #else
   else if (!strcmp(ft, "petsc")) {
-    hypre_sprintf(msgBuf_dh, "must recompile Euclid using petsc mode!");
+    nalu_hypre_sprintf(msgBuf_dh, "must recompile Euclid using petsc mode!");
     SET_V_ERROR(msgBuf_dh);
   }
 #endif
 
   else
   {
-    hypre_sprintf(msgBuf_dh, "unknown filetype: -ftin %s", ft);
+    nalu_hypre_sprintf(msgBuf_dh, "unknown filetype: -ftin %s", ft);
     SET_V_ERROR(msgBuf_dh);
   }
 
@@ -741,14 +741,14 @@ void writeMat(Mat_dh Ain, char *ft, char *fn)
 #else
 
   else if (!strcmp(ft, "petsc")) {
-    hypre_sprintf(msgBuf_dh, "must recompile Euclid using petsc mode!");
+    nalu_hypre_sprintf(msgBuf_dh, "must recompile Euclid using petsc mode!");
     SET_V_ERROR(msgBuf_dh);
   }
 #endif
 
   else
   {
-    hypre_sprintf(msgBuf_dh, "unknown filetype: -ftout %s", ft);
+    nalu_hypre_sprintf(msgBuf_dh, "unknown filetype: -ftout %s", ft);
     SET_V_ERROR(msgBuf_dh);
   }
 
@@ -794,14 +794,14 @@ void writeVec(Vec_dh bin, char *ft, char *fn)
   }
 #else
   else if (!strcmp(ft, "petsc")) {
-    hypre_sprintf(msgBuf_dh, "must recompile Euclid using petsc mode!");
+    nalu_hypre_sprintf(msgBuf_dh, "must recompile Euclid using petsc mode!");
     SET_V_ERROR(msgBuf_dh);
   }
 #endif
 
   else
   {
-    hypre_sprintf(msgBuf_dh, "unknown filetype: -ftout %s", ft);
+    nalu_hypre_sprintf(msgBuf_dh, "unknown filetype: -ftout %s", ft);
     SET_V_ERROR(msgBuf_dh);
   }
 
@@ -907,7 +907,7 @@ void mat_dh_transpose_reuse_private_private(bool allocateMem, NALU_HYPRE_Int m,
     }
   }
   for (i=1; i<=m; ++i) tmp[i] += tmp[i-1];
-  hypre_TMemcpy(rp,  tmp, NALU_HYPRE_Int, (m+1), NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_HOST);
+  nalu_hypre_TMemcpy(rp,  tmp, NALU_HYPRE_Int, (m+1), NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_HOST);
 
   if (avalOUT != NULL) {
     for (i=0; i<m; ++i) {
@@ -953,7 +953,7 @@ NALU_HYPRE_Int mat_find_owner(NALU_HYPRE_Int *beg_rows, NALU_HYPRE_Int *end_rows
   }
 
   if (owner == -1) {
-    hypre_sprintf(msgBuf_dh, "failed to find owner for index= %i", index);
+    nalu_hypre_sprintf(msgBuf_dh, "failed to find owner for index= %i", index);
     SET_ERROR(-1, msgBuf_dh);
   }
 
@@ -1018,17 +1018,17 @@ void partition_and_distribute_metis_private(Mat_dh A, Mat_dh *Bout)
   NALU_HYPRE_Int *rowLengths = NULL;
   NALU_HYPRE_Int *o2n_row = NULL, *n2o_col = NULL, *rowToBlock = NULL;
   NALU_HYPRE_Int *beg_row = NULL, *row_count = NULL;
-  hypre_MPI_Request *send_req = NULL;
-  hypre_MPI_Request *rcv_req = NULL;
-  hypre_MPI_Status  *send_status = NULL;
-  hypre_MPI_Status  *rcv_status = NULL;
+  nalu_hypre_MPI_Request *send_req = NULL;
+  nalu_hypre_MPI_Request *rcv_req = NULL;
+  nalu_hypre_MPI_Status  *send_status = NULL;
+  nalu_hypre_MPI_Status  *rcv_status = NULL;
 
-  hypre_MPI_Barrier(comm_dh);
+  nalu_hypre_MPI_Barrier(comm_dh);
   printf_dh("@@@ partitioning with metis\n");
 
   /* broadcast number of rows to all processors */
   if (myid_dh == 0)  m = A->m;
-  hypre_MPI_Bcast(&m, 1, NALU_HYPRE_MPI_INT, 0, hypre_MPI_COMM_WORLD);
+  nalu_hypre_MPI_Bcast(&m, 1, NALU_HYPRE_MPI_INT, 0, nalu_hypre_MPI_COMM_WORLD);
 
   /* broadcast number of nonzeros in each row to all processors */
   rowLengths = (NALU_HYPRE_Int*)MALLOC_DH(m*sizeof(NALU_HYPRE_Int)); CHECK_V_ERROR;
@@ -1040,7 +1040,7 @@ void partition_and_distribute_metis_private(Mat_dh A, Mat_dh *Bout)
       rowLengths[i] = tmp[i+1] - tmp[i];
     }
   }
-  hypre_MPI_Bcast(rowLengths, m, NALU_HYPRE_MPI_INT, 0, comm_dh);
+  nalu_hypre_MPI_Bcast(rowLengths, m, NALU_HYPRE_MPI_INT, 0, comm_dh);
 
   /* partition matrix */
   if (myid_dh == 0) {
@@ -1060,7 +1060,7 @@ void partition_and_distribute_metis_private(Mat_dh A, Mat_dh *Bout)
   }
 
   /* broadcast partitiioning information to all processors */
-  hypre_MPI_Bcast(rowToBlock, m, NALU_HYPRE_MPI_INT, 0, comm_dh);
+  nalu_hypre_MPI_Bcast(rowToBlock, m, NALU_HYPRE_MPI_INT, 0, comm_dh);
 
   /* allocate storage for local portion of matrix */
   mat_par_read_allocate_private(&B, m, rowLengths, rowToBlock); CHECK_V_ERROR;
@@ -1069,20 +1069,20 @@ void partition_and_distribute_metis_private(Mat_dh A, Mat_dh *Bout)
   if (myid_dh == 0) {
     NALU_HYPRE_Int *cval = C->cval, *rp = C->rp;
     NALU_HYPRE_Real *aval = C->aval;
-    send_req = (hypre_MPI_Request*)MALLOC_DH(2*m*sizeof(hypre_MPI_Request)); CHECK_V_ERROR;
-    send_status = (hypre_MPI_Status*)MALLOC_DH(2*m*sizeof(hypre_MPI_Status)); CHECK_V_ERROR;
+    send_req = (nalu_hypre_MPI_Request*)MALLOC_DH(2*m*sizeof(nalu_hypre_MPI_Request)); CHECK_V_ERROR;
+    send_status = (nalu_hypre_MPI_Status*)MALLOC_DH(2*m*sizeof(nalu_hypre_MPI_Status)); CHECK_V_ERROR;
     for (i=0; i<m; ++i) {
       NALU_HYPRE_Int owner = rowToBlock[i];
       NALU_HYPRE_Int count = rp[i+1]-rp[i];
 
       /* error check for empty row */
       if (! count) {
-        hypre_sprintf(msgBuf_dh, "row %i of %i is empty!", i+1, m);
+        nalu_hypre_sprintf(msgBuf_dh, "row %i of %i is empty!", i+1, m);
         SET_V_ERROR(msgBuf_dh);
       }
 
-      hypre_MPI_Isend(cval+rp[i], count, NALU_HYPRE_MPI_INT, owner, CVAL_TAG, comm_dh, send_req+2*i);
-      hypre_MPI_Isend(aval+rp[i], count, hypre_MPI_REAL, owner, AVAL_TAG, comm_dh, send_req+2*i+1);
+      nalu_hypre_MPI_Isend(cval+rp[i], count, NALU_HYPRE_MPI_INT, owner, CVAL_TAG, comm_dh, send_req+2*i);
+      nalu_hypre_MPI_Isend(aval+rp[i], count, nalu_hypre_MPI_REAL, owner, AVAL_TAG, comm_dh, send_req+2*i+1);
     }
   }
 
@@ -1092,28 +1092,28 @@ void partition_and_distribute_metis_private(Mat_dh A, Mat_dh *Bout)
     NALU_HYPRE_Real *aval = B->aval;
     m = B->m;
 
-    rcv_req = (hypre_MPI_Request*)MALLOC_DH(2*m*sizeof(hypre_MPI_Request)); CHECK_V_ERROR;
-    rcv_status = (hypre_MPI_Status*)MALLOC_DH(2*m*sizeof(hypre_MPI_Status)); CHECK_V_ERROR;
+    rcv_req = (nalu_hypre_MPI_Request*)MALLOC_DH(2*m*sizeof(nalu_hypre_MPI_Request)); CHECK_V_ERROR;
+    rcv_status = (nalu_hypre_MPI_Status*)MALLOC_DH(2*m*sizeof(nalu_hypre_MPI_Status)); CHECK_V_ERROR;
 
     for (i=0; i<m; ++i) {
 
       /* error check for empty row */
       NALU_HYPRE_Int count = rp[i+1] - rp[i];
       if (! count) {
-        hypre_sprintf(msgBuf_dh, "local row %i of %i is empty!", i+1, m);
+        nalu_hypre_sprintf(msgBuf_dh, "local row %i of %i is empty!", i+1, m);
         SET_V_ERROR(msgBuf_dh);
       }
 
-      hypre_MPI_Irecv(cval+rp[i], count, NALU_HYPRE_MPI_INT, 0, CVAL_TAG, comm_dh, rcv_req+2*i);
-      hypre_MPI_Irecv(aval+rp[i], count, hypre_MPI_REAL, 0, AVAL_TAG, comm_dh, rcv_req+2*i+1);
+      nalu_hypre_MPI_Irecv(cval+rp[i], count, NALU_HYPRE_MPI_INT, 0, CVAL_TAG, comm_dh, rcv_req+2*i);
+      nalu_hypre_MPI_Irecv(aval+rp[i], count, nalu_hypre_MPI_REAL, 0, AVAL_TAG, comm_dh, rcv_req+2*i+1);
     }
   }
 
   /* wait for all sends/receives to finish */
   if (myid_dh == 0) {
-    hypre_MPI_Waitall(m*2, send_req, send_status);
+    nalu_hypre_MPI_Waitall(m*2, send_req, send_status);
   }
-  hypre_MPI_Waitall(2*B->m, rcv_req, rcv_status);
+  nalu_hypre_MPI_Waitall(2*B->m, rcv_req, rcv_status);
 
   /* clean up */
   if (rowLengths != NULL) { FREE_DH(rowLengths); CHECK_V_ERROR; }
@@ -1143,16 +1143,16 @@ void partition_and_distribute_private(Mat_dh A, Mat_dh *Bout)
   NALU_HYPRE_Int i, m;
   NALU_HYPRE_Int *rowLengths = NULL;
   NALU_HYPRE_Int *o2n_row = NULL, *n2o_col = NULL, *rowToBlock = NULL;
-  hypre_MPI_Request *send_req = NULL;
-  hypre_MPI_Request *rcv_req = NULL;
-  hypre_MPI_Status  *send_status = NULL;
-  hypre_MPI_Status  *rcv_status = NULL;
+  nalu_hypre_MPI_Request *send_req = NULL;
+  nalu_hypre_MPI_Request *rcv_req = NULL;
+  nalu_hypre_MPI_Status  *send_status = NULL;
+  nalu_hypre_MPI_Status  *rcv_status = NULL;
 
-  hypre_MPI_Barrier(comm_dh);
+  nalu_hypre_MPI_Barrier(comm_dh);
 
   /* broadcast number of rows to all processors */
   if (myid_dh == 0)  m = A->m;
-  hypre_MPI_Bcast(&m, 1, NALU_HYPRE_MPI_INT, 0, hypre_MPI_COMM_WORLD);
+  nalu_hypre_MPI_Bcast(&m, 1, NALU_HYPRE_MPI_INT, 0, nalu_hypre_MPI_COMM_WORLD);
 
   /* broadcast number of nonzeros in each row to all processors */
   rowLengths = (NALU_HYPRE_Int*)MALLOC_DH(m*sizeof(NALU_HYPRE_Int)); CHECK_V_ERROR;
@@ -1162,7 +1162,7 @@ void partition_and_distribute_private(Mat_dh A, Mat_dh *Bout)
       rowLengths[i] = tmp[i+1] - tmp[i];
     }
   }
-  hypre_MPI_Bcast(rowLengths, m, NALU_HYPRE_MPI_INT, 0, comm_dh);
+  nalu_hypre_MPI_Bcast(rowLengths, m, NALU_HYPRE_MPI_INT, 0, comm_dh);
 
   /* partition matrix */
   rowToBlock = (NALU_HYPRE_Int*)MALLOC_DH(m*sizeof(NALU_HYPRE_Int)); CHECK_V_ERROR;
@@ -1173,7 +1173,7 @@ void partition_and_distribute_private(Mat_dh A, Mat_dh *Bout)
   }
 
   /* broadcast partitiioning information to all processors */
-  hypre_MPI_Bcast(rowToBlock, m, NALU_HYPRE_MPI_INT, 0, comm_dh);
+  nalu_hypre_MPI_Bcast(rowToBlock, m, NALU_HYPRE_MPI_INT, 0, comm_dh);
 
   /* allocate storage for local portion of matrix */
   mat_par_read_allocate_private(&B, m, rowLengths, rowToBlock); CHECK_V_ERROR;
@@ -1182,20 +1182,20 @@ void partition_and_distribute_private(Mat_dh A, Mat_dh *Bout)
   if (myid_dh == 0) {
     NALU_HYPRE_Int *cval = A->cval, *rp = A->rp;
     NALU_HYPRE_Real *aval = A->aval;
-    send_req = (hypre_MPI_Request*)MALLOC_DH(2*m*sizeof(hypre_MPI_Request)); CHECK_V_ERROR;
-    send_status = (hypre_MPI_Status*)MALLOC_DH(2*m*sizeof(hypre_MPI_Status)); CHECK_V_ERROR;
+    send_req = (nalu_hypre_MPI_Request*)MALLOC_DH(2*m*sizeof(nalu_hypre_MPI_Request)); CHECK_V_ERROR;
+    send_status = (nalu_hypre_MPI_Status*)MALLOC_DH(2*m*sizeof(nalu_hypre_MPI_Status)); CHECK_V_ERROR;
     for (i=0; i<m; ++i) {
       NALU_HYPRE_Int owner = rowToBlock[i];
       NALU_HYPRE_Int count = rp[i+1]-rp[i];
 
       /* error check for empty row */
       if (! count) {
-        hypre_sprintf(msgBuf_dh, "row %i of %i is empty!", i+1, m);
+        nalu_hypre_sprintf(msgBuf_dh, "row %i of %i is empty!", i+1, m);
         SET_V_ERROR(msgBuf_dh);
       }
 
-      hypre_MPI_Isend(cval+rp[i], count, NALU_HYPRE_MPI_INT, owner, CVAL_TAG, comm_dh, send_req+2*i);
-      hypre_MPI_Isend(aval+rp[i], count, hypre_MPI_REAL, owner, AVAL_TAG, comm_dh, send_req+2*i+1);
+      nalu_hypre_MPI_Isend(cval+rp[i], count, NALU_HYPRE_MPI_INT, owner, CVAL_TAG, comm_dh, send_req+2*i);
+      nalu_hypre_MPI_Isend(aval+rp[i], count, nalu_hypre_MPI_REAL, owner, AVAL_TAG, comm_dh, send_req+2*i+1);
     }
   }
 
@@ -1205,28 +1205,28 @@ void partition_and_distribute_private(Mat_dh A, Mat_dh *Bout)
     NALU_HYPRE_Real *aval = B->aval;
     m = B->m;
 
-    rcv_req = (hypre_MPI_Request*)MALLOC_DH(2*m*sizeof(hypre_MPI_Request)); CHECK_V_ERROR;
-    rcv_status = (hypre_MPI_Status*)MALLOC_DH(2*m*sizeof(hypre_MPI_Status)); CHECK_V_ERROR;
+    rcv_req = (nalu_hypre_MPI_Request*)MALLOC_DH(2*m*sizeof(nalu_hypre_MPI_Request)); CHECK_V_ERROR;
+    rcv_status = (nalu_hypre_MPI_Status*)MALLOC_DH(2*m*sizeof(nalu_hypre_MPI_Status)); CHECK_V_ERROR;
 
     for (i=0; i<m; ++i) {
 
       /* error check for empty row */
       NALU_HYPRE_Int count = rp[i+1] - rp[i];
       if (! count) {
-        hypre_sprintf(msgBuf_dh, "local row %i of %i is empty!", i+1, m);
+        nalu_hypre_sprintf(msgBuf_dh, "local row %i of %i is empty!", i+1, m);
         SET_V_ERROR(msgBuf_dh);
       }
 
-      hypre_MPI_Irecv(cval+rp[i], count, NALU_HYPRE_MPI_INT, 0, CVAL_TAG, comm_dh, rcv_req+2*i);
-      hypre_MPI_Irecv(aval+rp[i], count, hypre_MPI_REAL, 0, AVAL_TAG, comm_dh, rcv_req+2*i+1);
+      nalu_hypre_MPI_Irecv(cval+rp[i], count, NALU_HYPRE_MPI_INT, 0, CVAL_TAG, comm_dh, rcv_req+2*i);
+      nalu_hypre_MPI_Irecv(aval+rp[i], count, nalu_hypre_MPI_REAL, 0, AVAL_TAG, comm_dh, rcv_req+2*i+1);
     }
   }
 
   /* wait for all sends/receives to finish */
   if (myid_dh == 0) {
-    hypre_MPI_Waitall(m*2, send_req, send_status);
+    nalu_hypre_MPI_Waitall(m*2, send_req, send_status);
   }
-  hypre_MPI_Waitall(2*B->m, rcv_req, rcv_status);
+  nalu_hypre_MPI_Waitall(2*B->m, rcv_req, rcv_status);
 
   /* clean up */
   if (rowLengths != NULL) { FREE_DH(rowLengths); CHECK_V_ERROR; }
@@ -1350,7 +1350,7 @@ void make_full_private(NALU_HYPRE_Int m, NALU_HYPRE_Int **rpIN, NALU_HYPRE_Int *
   /* prefix sum to form row pointers for full representation */
   rpNew = (NALU_HYPRE_Int*)MALLOC_DH((m+1)*sizeof(NALU_HYPRE_Int)); CHECK_V_ERROR;
   for (i=1; i<=m; ++i) rowCounts[i] += rowCounts[i-1];
-  hypre_TMemcpy(rpNew,  rowCounts, NALU_HYPRE_Int, (m+1), NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_HOST);
+  nalu_hypre_TMemcpy(rpNew,  rowCounts, NALU_HYPRE_Int, (m+1), NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_HOST);
 
   /* form full representation */
   nz = rpNew[m];
@@ -1427,7 +1427,7 @@ void make_symmetric_private(NALU_HYPRE_Int m, NALU_HYPRE_Int **rpIN, NALU_HYPRE_
    * if matrix is already symmetric, do nothing
    *---------------------------------------------------------*/
   if (transCount == 0) {
-    hypre_printf("make_symmetric_private: matrix is already structurally symmetric!\n");
+    nalu_hypre_printf("make_symmetric_private: matrix is already structurally symmetric!\n");
     FREE_DH(rpTrans); CHECK_V_ERROR;
     FREE_DH(cvalTrans); CHECK_V_ERROR;
     FREE_DH(avalTrans); CHECK_V_ERROR;
@@ -1440,16 +1440,16 @@ void make_symmetric_private(NALU_HYPRE_Int m, NALU_HYPRE_Int **rpIN, NALU_HYPRE_
    * otherwise, finish symmetrizing
    *---------------------------------------------------------*/
     else {
-    hypre_printf("original nz= %i\n", rp[m]);
-    hypre_printf("zeros added= %i\n", transCount);
-    hypre_printf("ratio of added zeros to nonzeros = %0.2f (assumes all original entries were nonzero!)\n",
+    nalu_hypre_printf("original nz= %i\n", rp[m]);
+    nalu_hypre_printf("zeros added= %i\n", transCount);
+    nalu_hypre_printf("ratio of added zeros to nonzeros = %0.2f (assumes all original entries were nonzero!)\n",
                  (NALU_HYPRE_Real)transCount/(NALU_HYPRE_Real)(nzCount) );
   }
 
   /* prefix sum to form row pointers for full representation */
   rpNew = (NALU_HYPRE_Int*)MALLOC_DH((m+1)*sizeof(NALU_HYPRE_Int)); CHECK_V_ERROR;
   for (i=1; i<=m; ++i) rowCounts[i] += rowCounts[i-1];
-  hypre_TMemcpy(rpNew,  rowCounts, NALU_HYPRE_Int, (m+1), NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_HOST);
+  nalu_hypre_TMemcpy(rpNew,  rowCounts, NALU_HYPRE_Int, (m+1), NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_HOST);
   for (i=0; i<m; ++i) work[i] = -1;
 
   /* form full representation */
@@ -1516,16 +1516,16 @@ void profileMat(Mat_dh A)
 
   m = A->m;
 
-  hypre_printf("\nYY----------------------------------------------------\n");
+  nalu_hypre_printf("\nYY----------------------------------------------------\n");
 
   /* count number of explicit zeros */
   nz = A->rp[m];
   for (i=0; i<nz; ++i) {
     if (A->aval[i] == 0) ++zeroCount;
   }
-  hypre_printf("YY  row count:      %i\n", m);
-  hypre_printf("YY  nz count:       %i\n", nz);
-  hypre_printf("YY  explicit zeros: %i (entire matrix)\n", zeroCount);
+  nalu_hypre_printf("YY  row count:      %i\n", m);
+  nalu_hypre_printf("YY  nz count:       %i\n", nz);
+  nalu_hypre_printf("YY  explicit zeros: %i (entire matrix)\n", zeroCount);
 
   /* count number of missing or zero diagonals */
   { NALU_HYPRE_Int m_diag = 0, z_diag = 0;
@@ -1546,18 +1546,18 @@ void profileMat(Mat_dh A)
       /* row has an implicit zero diagonal element */
       if (flag) ++m_diag;
     }
-    hypre_printf("YY  missing diagonals:   %i\n", m_diag);
-    hypre_printf("YY  explicit zero diags: %i\n", z_diag);
+    nalu_hypre_printf("YY  missing diagonals:   %i\n", m_diag);
+    nalu_hypre_printf("YY  explicit zero diags: %i\n", z_diag);
   }
 
   /* check to see if matrix is triangular */
   type = isTriangular(m, A->rp, A->cval); CHECK_V_ERROR;
   if (type == IS_UPPER_TRI) {
-    hypre_printf("YY  matrix is upper triangular\n");
+    nalu_hypre_printf("YY  matrix is upper triangular\n");
     is_Triangular = true;
     goto END_OF_FUNCTION;
   } else if (type == IS_LOWER_TRI) {
-    hypre_printf("YY  matrix is lower triangular\n");
+    nalu_hypre_printf("YY  matrix is lower triangular\n");
     is_Triangular = true;
     goto END_OF_FUNCTION;
   }
@@ -1571,8 +1571,8 @@ void profileMat(Mat_dh A)
         if (col > i) ++unz;
       }
     }
-    hypre_printf("YY  strict upper triangular nonzeros: %i\n", unz);
-    hypre_printf("YY  strict lower triangular nonzeros: %i\n", lnz);
+    nalu_hypre_printf("YY  strict upper triangular nonzeros: %i\n", unz);
+    nalu_hypre_printf("YY  strict lower triangular nonzeros: %i\n", lnz);
   }
 
 
@@ -1614,16 +1614,16 @@ void profileMat(Mat_dh A)
 END_OF_FUNCTION: ;
 
   if (! is_Triangular) {
-    hypre_printf("YY  matrix is NOT triangular\n");
+    nalu_hypre_printf("YY  matrix is NOT triangular\n");
     if (isStructurallySymmetric) {
-      hypre_printf("YY  matrix IS structurally symmetric\n");
+      nalu_hypre_printf("YY  matrix IS structurally symmetric\n");
     } else {
-      hypre_printf("YY  matrix is NOT structurally symmetric\n");
+      nalu_hypre_printf("YY  matrix is NOT structurally symmetric\n");
     }
     if (isNumericallySymmetric) {
-      hypre_printf("YY  matrix IS numerically symmetric\n");
+      nalu_hypre_printf("YY  matrix IS numerically symmetric\n");
     } else {
-      hypre_printf("YY  matrix is NOT numerically symmetric\n");
+      nalu_hypre_printf("YY  matrix is NOT numerically symmetric\n");
     }
   }
 
@@ -1631,7 +1631,7 @@ END_OF_FUNCTION: ;
   if (work2 != NULL) { FREE_DH(work2); CHECK_V_ERROR; }
   if (B != NULL) { Mat_dhDestroy(B); CHECK_V_ERROR; }
 
-  hypre_printf("YY----------------------------------------------------\n");
+  nalu_hypre_printf("YY----------------------------------------------------\n");
 
   END_FUNC_DH
 }

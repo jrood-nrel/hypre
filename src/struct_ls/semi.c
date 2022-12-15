@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_struct_ls.h"
+#include "_nalu_hypre_struct_ls.h"
 
 /*--------------------------------------------------------------------------
  * This routine serves as an alternative to the MatrixAssemble routine for the
@@ -34,33 +34,33 @@
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_StructInterpAssemble( hypre_StructMatrix  *A,
-                            hypre_StructMatrix  *P,
+nalu_hypre_StructInterpAssemble( nalu_hypre_StructMatrix  *A,
+                            nalu_hypre_StructMatrix  *P,
                             NALU_HYPRE_Int            P_stored_as_transpose,
                             NALU_HYPRE_Int            cdir,
-                            hypre_Index          index,
-                            hypre_Index          stride )
+                            nalu_hypre_Index          index,
+                            nalu_hypre_Index          stride )
 {
-   hypre_StructGrid     *grid = hypre_StructMatrixGrid(A);
+   nalu_hypre_StructGrid     *grid = nalu_hypre_StructMatrixGrid(A);
 
-   hypre_BoxArrayArray  *box_aa;
-   hypre_BoxArray       *box_a;
-   hypre_Box            *box;
+   nalu_hypre_BoxArrayArray  *box_aa;
+   nalu_hypre_BoxArray       *box_a;
+   nalu_hypre_Box            *box;
 
-   hypre_CommInfo       *comm_info;
-   hypre_CommPkg        *comm_pkg;
-   hypre_CommHandle     *comm_handle;
+   nalu_hypre_CommInfo       *comm_info;
+   nalu_hypre_CommPkg        *comm_pkg;
+   nalu_hypre_CommHandle     *comm_handle;
 
    NALU_HYPRE_Int             num_ghost[] = {0, 0, 0, 0, 0, 0};
    NALU_HYPRE_Int             i, j, s, dim;
 
-   if (hypre_StructMatrixConstantCoefficient(P) != 0)
+   if (nalu_hypre_StructMatrixConstantCoefficient(P) != 0)
    {
-      return hypre_error_flag;
+      return nalu_hypre_error_flag;
    }
 
    /* set num_ghost */
-   dim = hypre_StructGridNDim(grid);
+   dim = nalu_hypre_StructGridNDim(grid);
    for (j = 0; j < dim; j++)
    {
       num_ghost[2 * j]   = 1;
@@ -74,71 +74,71 @@ hypre_StructInterpAssemble( hypre_StructMatrix  *A,
 
    /* comm_info <-- From fine grid grown by num_ghost */
 
-   hypre_CreateCommInfoFromNumGhost(grid, num_ghost, &comm_info);
+   nalu_hypre_CreateCommInfoFromNumGhost(grid, num_ghost, &comm_info);
 
    /* Project and map comm_info onto coarsened index space */
 
-   hypre_CommInfoProjectSend(comm_info, index, stride);
-   hypre_CommInfoProjectRecv(comm_info, index, stride);
+   nalu_hypre_CommInfoProjectSend(comm_info, index, stride);
+   nalu_hypre_CommInfoProjectRecv(comm_info, index, stride);
 
    for (s = 0; s < 4; s++)
    {
       switch (s)
       {
          case 0:
-            box_aa = hypre_CommInfoSendBoxes(comm_info);
-            hypre_SetIndex3(hypre_CommInfoSendStride(comm_info), 1, 1, 1);
+            box_aa = nalu_hypre_CommInfoSendBoxes(comm_info);
+            nalu_hypre_SetIndex3(nalu_hypre_CommInfoSendStride(comm_info), 1, 1, 1);
             break;
 
          case 1:
-            box_aa = hypre_CommInfoRecvBoxes(comm_info);
-            hypre_SetIndex3(hypre_CommInfoRecvStride(comm_info), 1, 1, 1);
+            box_aa = nalu_hypre_CommInfoRecvBoxes(comm_info);
+            nalu_hypre_SetIndex3(nalu_hypre_CommInfoRecvStride(comm_info), 1, 1, 1);
             break;
 
          case 2:
-            box_aa = hypre_CommInfoSendRBoxes(comm_info);
+            box_aa = nalu_hypre_CommInfoSendRBoxes(comm_info);
             break;
 
          case 3:
-            box_aa = hypre_CommInfoRecvRBoxes(comm_info);
+            box_aa = nalu_hypre_CommInfoRecvRBoxes(comm_info);
             break;
       }
 
-      hypre_ForBoxArrayI(j, box_aa)
+      nalu_hypre_ForBoxArrayI(j, box_aa)
       {
-         box_a = hypre_BoxArrayArrayBoxArray(box_aa, j);
-         hypre_ForBoxI(i, box_a)
+         box_a = nalu_hypre_BoxArrayArrayBoxArray(box_aa, j);
+         nalu_hypre_ForBoxI(i, box_a)
          {
-            box = hypre_BoxArrayBox(box_a, i);
-            hypre_StructMapFineToCoarse(hypre_BoxIMin(box), index, stride,
-                                        hypre_BoxIMin(box));
-            hypre_StructMapFineToCoarse(hypre_BoxIMax(box), index, stride,
-                                        hypre_BoxIMax(box));
+            box = nalu_hypre_BoxArrayBox(box_a, i);
+            nalu_hypre_StructMapFineToCoarse(nalu_hypre_BoxIMin(box), index, stride,
+                                        nalu_hypre_BoxIMin(box));
+            nalu_hypre_StructMapFineToCoarse(nalu_hypre_BoxIMax(box), index, stride,
+                                        nalu_hypre_BoxIMax(box));
          }
       }
    }
 
-   comm_pkg = hypre_StructMatrixCommPkg(P);
+   comm_pkg = nalu_hypre_StructMatrixCommPkg(P);
    if (comm_pkg)
    {
-      hypre_CommPkgDestroy(comm_pkg);
+      nalu_hypre_CommPkgDestroy(comm_pkg);
    }
 
-   hypre_CommPkgCreate(comm_info,
-                       hypre_StructMatrixDataSpace(P),
-                       hypre_StructMatrixDataSpace(P),
-                       hypre_StructMatrixNumValues(P), NULL, 0,
-                       hypre_StructMatrixComm(P),
+   nalu_hypre_CommPkgCreate(comm_info,
+                       nalu_hypre_StructMatrixDataSpace(P),
+                       nalu_hypre_StructMatrixDataSpace(P),
+                       nalu_hypre_StructMatrixNumValues(P), NULL, 0,
+                       nalu_hypre_StructMatrixComm(P),
                        &comm_pkg);
-   hypre_CommInfoDestroy(comm_info);
-   hypre_StructMatrixCommPkg(P) = comm_pkg;
+   nalu_hypre_CommInfoDestroy(comm_info);
+   nalu_hypre_StructMatrixCommPkg(P) = comm_pkg;
 
-   hypre_InitializeCommunication(comm_pkg,
-                                 hypre_StructMatrixStencilData(P)[0],//hypre_StructMatrixData(P),
-                                 hypre_StructMatrixStencilData(P)[0],//hypre_StructMatrixData(P),
+   nalu_hypre_InitializeCommunication(comm_pkg,
+                                 nalu_hypre_StructMatrixStencilData(P)[0],//nalu_hypre_StructMatrixData(P),
+                                 nalu_hypre_StructMatrixStencilData(P)[0],//nalu_hypre_StructMatrixData(P),
                                  0, 0,
                                  &comm_handle);
-   hypre_FinalizeCommunication(comm_handle);
+   nalu_hypre_FinalizeCommunication(comm_handle);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }

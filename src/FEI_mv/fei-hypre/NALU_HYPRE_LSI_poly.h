@@ -19,9 +19,9 @@
 #include <math.h>
 #include <math.h>
 
-#include "utilities/_hypre_utilities.h"
+#include "utilities/_nalu_hypre_utilities.h"
 #include "parcsr_ls/NALU_HYPRE_parcsr_ls.h"
-#include "parcsr_mv/_hypre_parcsr_mv.h"
+#include "parcsr_mv/_nalu_hypre_parcsr_mv.h"
 
 #ifdef __cplusplus
 extern "C"

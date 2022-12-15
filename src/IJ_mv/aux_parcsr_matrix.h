@@ -13,8 +13,8 @@
  *
  *****************************************************************************/
 
-#ifndef hypre_AUX_PARCSR_MATRIX_HEADER
-#define hypre_AUX_PARCSR_MATRIX_HEADER
+#ifndef nalu_hypre_AUX_PARCSR_MATRIX_HEADER
+#define nalu_hypre_AUX_PARCSR_MATRIX_HEADER
 
 /*--------------------------------------------------------------------------
  * Auxiliary Parallel CSR Matrix
@@ -77,49 +77,49 @@ typedef struct
    NALU_HYPRE_Real           init_alloc_factor;
    NALU_HYPRE_Real           grow_factor;
 #endif
-} hypre_AuxParCSRMatrix;
+} nalu_hypre_AuxParCSRMatrix;
 
 /*--------------------------------------------------------------------------
  * Accessor functions for the Parallel CSR Matrix structure
  *--------------------------------------------------------------------------*/
 
-#define hypre_AuxParCSRMatrixLocalNumRows(matrix)         ((matrix) -> local_num_rows)
-#define hypre_AuxParCSRMatrixLocalNumRownnz(matrix)       ((matrix) -> local_num_rownnz)
-#define hypre_AuxParCSRMatrixLocalNumCols(matrix)         ((matrix) -> local_num_cols)
+#define nalu_hypre_AuxParCSRMatrixLocalNumRows(matrix)         ((matrix) -> local_num_rows)
+#define nalu_hypre_AuxParCSRMatrixLocalNumRownnz(matrix)       ((matrix) -> local_num_rownnz)
+#define nalu_hypre_AuxParCSRMatrixLocalNumCols(matrix)         ((matrix) -> local_num_cols)
 
-#define hypre_AuxParCSRMatrixNeedAux(matrix)              ((matrix) -> need_aux)
-#define hypre_AuxParCSRMatrixRownnz(matrix)               ((matrix) -> rownnz)
-#define hypre_AuxParCSRMatrixRowLength(matrix)            ((matrix) -> row_length)
-#define hypre_AuxParCSRMatrixRowSpace(matrix)             ((matrix) -> row_space)
-#define hypre_AuxParCSRMatrixAuxJ(matrix)                 ((matrix) -> aux_j)
-#define hypre_AuxParCSRMatrixAuxData(matrix)              ((matrix) -> aux_data)
+#define nalu_hypre_AuxParCSRMatrixNeedAux(matrix)              ((matrix) -> need_aux)
+#define nalu_hypre_AuxParCSRMatrixRownnz(matrix)               ((matrix) -> rownnz)
+#define nalu_hypre_AuxParCSRMatrixRowLength(matrix)            ((matrix) -> row_length)
+#define nalu_hypre_AuxParCSRMatrixRowSpace(matrix)             ((matrix) -> row_space)
+#define nalu_hypre_AuxParCSRMatrixAuxJ(matrix)                 ((matrix) -> aux_j)
+#define nalu_hypre_AuxParCSRMatrixAuxData(matrix)              ((matrix) -> aux_data)
 
-#define hypre_AuxParCSRMatrixIndxDiag(matrix)             ((matrix) -> indx_diag)
-#define hypre_AuxParCSRMatrixIndxOffd(matrix)             ((matrix) -> indx_offd)
+#define nalu_hypre_AuxParCSRMatrixIndxDiag(matrix)             ((matrix) -> indx_diag)
+#define nalu_hypre_AuxParCSRMatrixIndxOffd(matrix)             ((matrix) -> indx_offd)
 
-#define hypre_AuxParCSRMatrixDiagSizes(matrix)            ((matrix) -> diag_sizes)
-#define hypre_AuxParCSRMatrixOffdSizes(matrix)            ((matrix) -> offd_sizes)
+#define nalu_hypre_AuxParCSRMatrixDiagSizes(matrix)            ((matrix) -> diag_sizes)
+#define nalu_hypre_AuxParCSRMatrixOffdSizes(matrix)            ((matrix) -> offd_sizes)
 
-#define hypre_AuxParCSRMatrixMaxOffProcElmts(matrix)      ((matrix) -> max_off_proc_elmts)
-#define hypre_AuxParCSRMatrixCurrentOffProcElmts(matrix)  ((matrix) -> current_off_proc_elmts)
-#define hypre_AuxParCSRMatrixOffProcIIndx(matrix)         ((matrix) -> off_proc_i_indx)
-#define hypre_AuxParCSRMatrixOffProcI(matrix)             ((matrix) -> off_proc_i)
-#define hypre_AuxParCSRMatrixOffProcJ(matrix)             ((matrix) -> off_proc_j)
-#define hypre_AuxParCSRMatrixOffProcData(matrix)          ((matrix) -> off_proc_data)
+#define nalu_hypre_AuxParCSRMatrixMaxOffProcElmts(matrix)      ((matrix) -> max_off_proc_elmts)
+#define nalu_hypre_AuxParCSRMatrixCurrentOffProcElmts(matrix)  ((matrix) -> current_off_proc_elmts)
+#define nalu_hypre_AuxParCSRMatrixOffProcIIndx(matrix)         ((matrix) -> off_proc_i_indx)
+#define nalu_hypre_AuxParCSRMatrixOffProcI(matrix)             ((matrix) -> off_proc_i)
+#define nalu_hypre_AuxParCSRMatrixOffProcJ(matrix)             ((matrix) -> off_proc_j)
+#define nalu_hypre_AuxParCSRMatrixOffProcData(matrix)          ((matrix) -> off_proc_data)
 
-#define hypre_AuxParCSRMatrixMemoryLocation(matrix)       ((matrix) -> memory_location)
+#define nalu_hypre_AuxParCSRMatrixMemoryLocation(matrix)       ((matrix) -> memory_location)
 
 #if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP) || defined(NALU_HYPRE_USING_SYCL)
-#define hypre_AuxParCSRMatrixMaxStackElmts(matrix)        ((matrix) -> max_stack_elmts)
-#define hypre_AuxParCSRMatrixCurrentStackElmts(matrix)    ((matrix) -> current_stack_elmts)
-#define hypre_AuxParCSRMatrixStackI(matrix)               ((matrix) -> stack_i)
-#define hypre_AuxParCSRMatrixStackJ(matrix)               ((matrix) -> stack_j)
-#define hypre_AuxParCSRMatrixStackData(matrix)            ((matrix) -> stack_data)
-#define hypre_AuxParCSRMatrixStackSorA(matrix)            ((matrix) -> stack_sora)
-#define hypre_AuxParCSRMatrixUsrOnProcElmts(matrix)       ((matrix) -> usr_on_proc_elmts)
-#define hypre_AuxParCSRMatrixUsrOffProcElmts(matrix)      ((matrix) -> usr_off_proc_elmts)
-#define hypre_AuxParCSRMatrixInitAllocFactor(matrix)      ((matrix) -> init_alloc_factor)
-#define hypre_AuxParCSRMatrixGrowFactor(matrix)           ((matrix) -> grow_factor)
+#define nalu_hypre_AuxParCSRMatrixMaxStackElmts(matrix)        ((matrix) -> max_stack_elmts)
+#define nalu_hypre_AuxParCSRMatrixCurrentStackElmts(matrix)    ((matrix) -> current_stack_elmts)
+#define nalu_hypre_AuxParCSRMatrixStackI(matrix)               ((matrix) -> stack_i)
+#define nalu_hypre_AuxParCSRMatrixStackJ(matrix)               ((matrix) -> stack_j)
+#define nalu_hypre_AuxParCSRMatrixStackData(matrix)            ((matrix) -> stack_data)
+#define nalu_hypre_AuxParCSRMatrixStackSorA(matrix)            ((matrix) -> stack_sora)
+#define nalu_hypre_AuxParCSRMatrixUsrOnProcElmts(matrix)       ((matrix) -> usr_on_proc_elmts)
+#define nalu_hypre_AuxParCSRMatrixUsrOffProcElmts(matrix)      ((matrix) -> usr_off_proc_elmts)
+#define nalu_hypre_AuxParCSRMatrixInitAllocFactor(matrix)      ((matrix) -> init_alloc_factor)
+#define nalu_hypre_AuxParCSRMatrixGrowFactor(matrix)           ((matrix) -> grow_factor)
 #endif
 
-#endif /* #ifndef hypre_AUX_PARCSR_MATRIX_HEADER */
+#endif /* #ifndef nalu_hypre_AUX_PARCSR_MATRIX_HEADER */

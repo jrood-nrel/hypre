@@ -15,11 +15,11 @@
 #include <stdio.h>
 #include <math.h>
 
-#include "utilities/_hypre_utilities.h"
+#include "utilities/_nalu_hypre_utilities.h"
 #include "NALU_HYPRE.h"
 #include "IJ_mv/NALU_HYPRE_IJ_mv.h"
 #include "parcsr_mv/NALU_HYPRE_parcsr_mv.h"
-#include "parcsr_mv/_hypre_parcsr_mv.h"
+#include "parcsr_mv/_nalu_hypre_parcsr_mv.h"
 #include "parcsr_ls/NALU_HYPRE_parcsr_ls.h"
 #include "NALU_HYPRE_MHMatrix.h"
 #include "NALU_HYPRE_FEI.h"
@@ -44,7 +44,7 @@ int NALU_HYPRE_LSI_PolyCreate( MPI_Comm comm, NALU_HYPRE_Solver *solver )
 {
    NALU_HYPRE_LSI_Poly *poly_ptr;
 
-   poly_ptr = hypre_TAlloc(NALU_HYPRE_LSI_Poly, 1, NALU_HYPRE_MEMORY_HOST);
+   poly_ptr = nalu_hypre_TAlloc(NALU_HYPRE_LSI_Poly, 1, NALU_HYPRE_MEMORY_HOST);
 
    if (poly_ptr == NULL) return 1;
 
@@ -68,8 +68,8 @@ int NALU_HYPRE_LSI_PolyDestroy( NALU_HYPRE_Solver solver )
    NALU_HYPRE_LSI_Poly *poly_ptr;
 
    poly_ptr = (NALU_HYPRE_LSI_Poly *) solver;
-   hypre_TFree(poly_ptr->coefficients, NALU_HYPRE_MEMORY_HOST);
-   hypre_TFree(poly_ptr, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(poly_ptr->coefficients, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(poly_ptr, NALU_HYPRE_MEMORY_HOST);
 
    return 0;
 }
@@ -85,7 +85,7 @@ int NALU_HYPRE_LSI_PolySetOrder(NALU_HYPRE_Solver solver, int order )
    poly_ptr->order = order;
    if ( poly_ptr->order < 0 ) poly_ptr->order = 0;
    if ( poly_ptr->order > 8 ) poly_ptr->order = 8;
-   hypre_TFree(poly_ptr->coefficients, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(poly_ptr->coefficients, NALU_HYPRE_MEMORY_HOST);
    poly_ptr->coefficients = NULL;
 
    return 0;
@@ -115,8 +115,8 @@ int NALU_HYPRE_LSI_PolySolve( NALU_HYPRE_Solver solver, NALU_HYPRE_ParCSRMatrix 
    double         *rhs, *soln, *orig_rhs, mult, *coefs;
    NALU_HYPRE_LSI_Poly *poly_ptr = (NALU_HYPRE_LSI_Poly *) solver;
 
-   rhs  = hypre_VectorData(hypre_ParVectorLocalVector((hypre_ParVector *) b));
-   soln = hypre_VectorData(hypre_ParVectorLocalVector((hypre_ParVector *) x));
+   rhs  = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector((nalu_hypre_ParVector *) b));
+   soln = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector((nalu_hypre_ParVector *) x));
 
    order = poly_ptr->order;
    Nrows = poly_ptr->Nrows;
@@ -126,7 +126,7 @@ int NALU_HYPRE_LSI_PolySolve( NALU_HYPRE_Solver solver, NALU_HYPRE_ParCSRMatrix 
       printf("NALU_HYPRE_LSI_PolySolve ERROR : PolySetup not called.\n");
       exit(1);
    }
-   orig_rhs = hypre_TAlloc(double,  Nrows , NALU_HYPRE_MEMORY_HOST);
+   orig_rhs = nalu_hypre_TAlloc(double,  Nrows , NALU_HYPRE_MEMORY_HOST);
    for ( i = 0; i < Nrows; i++ )
    {
       orig_rhs[i] = rhs[i];
@@ -140,7 +140,7 @@ int NALU_HYPRE_LSI_PolySolve( NALU_HYPRE_Solver solver, NALU_HYPRE_ParCSRMatrix 
          soln[j] = mult * orig_rhs[j] + rhs[j];
    }
    for ( i = 0; i < Nrows; i++ ) rhs[i] = orig_rhs[i];
-   hypre_TFree(orig_rhs, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(orig_rhs, NALU_HYPRE_MEMORY_HOST);
 
    return 0;
 }
@@ -167,7 +167,7 @@ int NALU_HYPRE_LSI_PolySetup(NALU_HYPRE_Solver solver, NALU_HYPRE_ParCSRMatrix A
    /* ---------------------------------------------------------------- */
 
    order = poly_ptr->order;
-   coefs = hypre_TAlloc(double, (order+1) , NALU_HYPRE_MEMORY_HOST);
+   coefs = nalu_hypre_TAlloc(double, (order+1) , NALU_HYPRE_MEMORY_HOST);
    poly_ptr->coefficients = coefs;
 
    /* ---------------------------------------------------------------- */
@@ -183,7 +183,7 @@ int NALU_HYPRE_LSI_PolySetup(NALU_HYPRE_Solver solver, NALU_HYPRE_ParCSRMatrix A
 
    startRow  = row_partition[my_id];
    endRow    = row_partition[my_id+1] - 1;
-   hypre_TFree( row_partition , NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree( row_partition , NALU_HYPRE_MEMORY_HOST);
    poly_ptr->Nrows = endRow - startRow + 1;
 
    max_norm = 0.0;

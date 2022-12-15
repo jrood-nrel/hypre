@@ -5,9 +5,9 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_onedpl.hpp"
-#include "_hypre_parcsr_ls.h"
-#include "_hypre_utilities.hpp"
+#include "_nalu_hypre_onedpl.hpp"
+#include "_nalu_hypre_parcsr_ls.h"
+#include "_nalu_hypre_utilities.hpp"
 
 #define C_PT  1
 #define F_PT -1
@@ -17,29 +17,29 @@
 
 #if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP) || defined(NALU_HYPRE_USING_SYCL)
 
-NALU_HYPRE_Int hypre_PMISCoarseningInitDevice( hypre_ParCSRMatrix *S, hypre_ParCSRCommPkg *comm_pkg,
+NALU_HYPRE_Int nalu_hypre_PMISCoarseningInitDevice( nalu_hypre_ParCSRMatrix *S, nalu_hypre_ParCSRCommPkg *comm_pkg,
                                           NALU_HYPRE_Int CF_init, NALU_HYPRE_Real *measure_diag, NALU_HYPRE_Real *measure_offd, NALU_HYPRE_Real *real_send_buf,
                                           NALU_HYPRE_Int *graph_diag_size, NALU_HYPRE_Int *graph_diag, NALU_HYPRE_Int *CF_marker_diag);
 
-NALU_HYPRE_Int hypre_PMISCoarseningUpdateCFDevice( hypre_ParCSRMatrix *S, NALU_HYPRE_Real *measure_diag,
+NALU_HYPRE_Int nalu_hypre_PMISCoarseningUpdateCFDevice( nalu_hypre_ParCSRMatrix *S, NALU_HYPRE_Real *measure_diag,
                                               NALU_HYPRE_Real *measure_offd, NALU_HYPRE_Int graph_diag_size, NALU_HYPRE_Int *graph_diag,
-                                              NALU_HYPRE_Int *CF_marker_diag, NALU_HYPRE_Int *CF_marker_offd, hypre_ParCSRCommPkg *comm_pkg,
+                                              NALU_HYPRE_Int *CF_marker_diag, NALU_HYPRE_Int *CF_marker_offd, nalu_hypre_ParCSRCommPkg *comm_pkg,
                                               NALU_HYPRE_Real *real_send_buf, NALU_HYPRE_Int *int_send_buf);
 
 NALU_HYPRE_Int
-hypre_BoomerAMGCoarsenPMISDevice( hypre_ParCSRMatrix    *S,
-                                  hypre_ParCSRMatrix    *A,
+nalu_hypre_BoomerAMGCoarsenPMISDevice( nalu_hypre_ParCSRMatrix    *S,
+                                  nalu_hypre_ParCSRMatrix    *A,
                                   NALU_HYPRE_Int              CF_init,
                                   NALU_HYPRE_Int              debug_flag,
-                                  hypre_IntArray       **CF_marker_ptr )
+                                  nalu_hypre_IntArray       **CF_marker_ptr )
 {
-   MPI_Comm                  comm            = hypre_ParCSRMatrixComm(S);
-   hypre_ParCSRCommPkg      *comm_pkg        = hypre_ParCSRMatrixCommPkg(S);
-   hypre_ParCSRCommHandle   *comm_handle;
-   hypre_CSRMatrix          *S_diag          = hypre_ParCSRMatrixDiag(S);
-   hypre_CSRMatrix          *S_offd          = hypre_ParCSRMatrixOffd(S);
-   NALU_HYPRE_Int                 num_cols_diag   = hypre_CSRMatrixNumCols(S_diag);
-   NALU_HYPRE_Int                 num_cols_offd   = hypre_CSRMatrixNumCols(S_offd);
+   MPI_Comm                  comm            = nalu_hypre_ParCSRMatrixComm(S);
+   nalu_hypre_ParCSRCommPkg      *comm_pkg        = nalu_hypre_ParCSRMatrixCommPkg(S);
+   nalu_hypre_ParCSRCommHandle   *comm_handle;
+   nalu_hypre_CSRMatrix          *S_diag          = nalu_hypre_ParCSRMatrixDiag(S);
+   nalu_hypre_CSRMatrix          *S_offd          = nalu_hypre_ParCSRMatrixOffd(S);
+   NALU_HYPRE_Int                 num_cols_diag   = nalu_hypre_CSRMatrixNumCols(S_diag);
+   NALU_HYPRE_Int                 num_cols_offd   = nalu_hypre_CSRMatrixNumCols(S_offd);
    NALU_HYPRE_Real               *measure_diag;
    NALU_HYPRE_Real               *measure_offd;
    NALU_HYPRE_Int                 graph_diag_size;
@@ -53,52 +53,52 @@ hypre_BoomerAMGCoarsenPMISDevice( hypre_ParCSRMatrix    *S,
    NALU_HYPRE_Int                 aug_rand;
 
 #ifdef NALU_HYPRE_PROFILE
-   hypre_profile_times[NALU_HYPRE_TIMER_ID_PMIS] -= hypre_MPI_Wtime();
+   nalu_hypre_profile_times[NALU_HYPRE_TIMER_ID_PMIS] -= nalu_hypre_MPI_Wtime();
 #endif
 
-   hypre_MPI_Comm_size(comm, &num_procs);
-   hypre_MPI_Comm_rank(comm, &my_id);
+   nalu_hypre_MPI_Comm_size(comm, &num_procs);
+   nalu_hypre_MPI_Comm_rank(comm, &my_id);
 
    if (!comm_pkg)
    {
-      comm_pkg = hypre_ParCSRMatrixCommPkg(A);
+      comm_pkg = nalu_hypre_ParCSRMatrixCommPkg(A);
    }
 
    if (!comm_pkg)
    {
-      hypre_MatvecCommPkgCreate(A);
-      comm_pkg = hypre_ParCSRMatrixCommPkg(A);
+      nalu_hypre_MatvecCommPkgCreate(A);
+      comm_pkg = nalu_hypre_ParCSRMatrixCommPkg(A);
    }
 
-   NALU_HYPRE_Int num_sends = hypre_ParCSRCommPkgNumSends(comm_pkg);
+   NALU_HYPRE_Int num_sends = nalu_hypre_ParCSRCommPkgNumSends(comm_pkg);
 
    /* CF marker */
    if (*CF_marker_ptr == NULL)
    {
-      *CF_marker_ptr = hypre_IntArrayCreate(num_cols_diag);
-      hypre_IntArrayInitialize(*CF_marker_ptr);
+      *CF_marker_ptr = nalu_hypre_IntArrayCreate(num_cols_diag);
+      nalu_hypre_IntArrayInitialize(*CF_marker_ptr);
    }
-   CF_marker_diag = hypre_IntArrayData(*CF_marker_ptr);
-   CF_marker_offd = hypre_CTAlloc(NALU_HYPRE_Int, num_cols_offd, NALU_HYPRE_MEMORY_DEVICE);
+   CF_marker_diag = nalu_hypre_IntArrayData(*CF_marker_ptr);
+   CF_marker_offd = nalu_hypre_CTAlloc(NALU_HYPRE_Int, num_cols_offd, NALU_HYPRE_MEMORY_DEVICE);
 
    /* arrays for global measure diag and offd parts */
-   measure_diag = hypre_TAlloc(NALU_HYPRE_Real, num_cols_diag, NALU_HYPRE_MEMORY_DEVICE);
-   measure_offd = hypre_TAlloc(NALU_HYPRE_Real, num_cols_offd, NALU_HYPRE_MEMORY_DEVICE);
+   measure_diag = nalu_hypre_TAlloc(NALU_HYPRE_Real, num_cols_diag, NALU_HYPRE_MEMORY_DEVICE);
+   measure_offd = nalu_hypre_TAlloc(NALU_HYPRE_Real, num_cols_offd, NALU_HYPRE_MEMORY_DEVICE);
 
    /* arrays for nodes that are still in the graph (undetermined nodes) */
-   graph_diag = hypre_TAlloc(NALU_HYPRE_Int, num_cols_diag, NALU_HYPRE_MEMORY_DEVICE);
+   graph_diag = nalu_hypre_TAlloc(NALU_HYPRE_Int, num_cols_diag, NALU_HYPRE_MEMORY_DEVICE);
 
-   diag_iwork = hypre_TAlloc(NALU_HYPRE_Int, num_cols_diag, NALU_HYPRE_MEMORY_DEVICE);
+   diag_iwork = nalu_hypre_TAlloc(NALU_HYPRE_Int, num_cols_diag, NALU_HYPRE_MEMORY_DEVICE);
 
    if ( sizeof(NALU_HYPRE_Real) >= sizeof(NALU_HYPRE_Int) )
    {
-      send_buf = (void *) hypre_TAlloc(NALU_HYPRE_Real, hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends),
+      send_buf = (void *) nalu_hypre_TAlloc(NALU_HYPRE_Real, nalu_hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends),
                                        NALU_HYPRE_MEMORY_DEVICE);
 
    }
    else
    {
-      send_buf = (void *) hypre_TAlloc(NALU_HYPRE_Int, hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends),
+      send_buf = (void *) nalu_hypre_TAlloc(NALU_HYPRE_Int, nalu_hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends),
                                        NALU_HYPRE_MEMORY_DEVICE);
    }
 
@@ -113,20 +113,20 @@ hypre_BoomerAMGCoarsenPMISDevice( hypre_ParCSRMatrix    *S,
    if (CF_init == 2 || CF_init == 4)
    {
       /* seq rand */
-      aug_rand = hypre_HandleUseGpuRand(hypre_handle()) ? 11 : 12;
+      aug_rand = nalu_hypre_HandleUseGpuRand(nalu_hypre_handle()) ? 11 : 12;
    }
    else
    {
       /* each proc generate rand numbers independently */
-      aug_rand = hypre_HandleUseGpuRand(hypre_handle()) ? 1 : 2;
+      aug_rand = nalu_hypre_HandleUseGpuRand(nalu_hypre_handle()) ? 1 : 2;
    }
 
-   hypre_GetGlobalMeasureDevice(S, comm_pkg, CF_init, aug_rand, measure_diag, measure_offd,
+   nalu_hypre_GetGlobalMeasureDevice(S, comm_pkg, CF_init, aug_rand, measure_diag, measure_offd,
                                 (NALU_HYPRE_Real *) send_buf);
 
    /* initialize CF marker, graph arrays and measure_diag, measure_offd is sync'ed
     * Note: CF_marker_offd is not sync'ed */
-   hypre_PMISCoarseningInitDevice(S, comm_pkg, CF_init, measure_diag, measure_offd,
+   nalu_hypre_PMISCoarseningInitDevice(S, comm_pkg, CF_init, measure_diag, measure_offd,
                                   (NALU_HYPRE_Real *) send_buf,
                                   &graph_diag_size, graph_diag, CF_marker_diag);
 
@@ -137,9 +137,9 @@ hypre_BoomerAMGCoarsenPMISDevice( hypre_ParCSRMatrix    *S,
       big_graph_size = graph_diag_size;
 
       /* stop the coarsening if nothing left to be coarsened */
-      hypre_MPI_Allreduce(&big_graph_size, &global_graph_size, 1, NALU_HYPRE_MPI_BIG_INT, hypre_MPI_SUM, comm);
+      nalu_hypre_MPI_Allreduce(&big_graph_size, &global_graph_size, 1, NALU_HYPRE_MPI_BIG_INT, nalu_hypre_MPI_SUM, comm);
 
-      /* if (my_id == 0) { hypre_printf("graph size %b\n", global_graph_size); } */
+      /* if (my_id == 0) { nalu_hypre_printf("graph size %b\n", global_graph_size); } */
 
       if (global_graph_size == 0)
       {
@@ -150,35 +150,35 @@ hypre_BoomerAMGCoarsenPMISDevice( hypre_ParCSRMatrix    *S,
       {
          /* on input CF_marker_offd does not need to be sync'ed, (but has minimal requirement on
           * the values, see comments therein), and will NOT be sync'ed on exit */
-         hypre_BoomerAMGIndepSetDevice(S, measure_diag, measure_offd, graph_diag_size, graph_diag,
+         nalu_hypre_BoomerAMGIndepSetDevice(S, measure_diag, measure_offd, graph_diag_size, graph_diag,
                                        CF_marker_diag, CF_marker_offd, comm_pkg, (NALU_HYPRE_Int *) send_buf);
 
          /* sync CF_marker_offd: so it has correct 1/0 now */
 #if defined(NALU_HYPRE_USING_SYCL)
-         hypreSycl_gather( hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg),
-                           hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg) +
-                           hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends),
+         hypreSycl_gather( nalu_hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg),
+                           nalu_hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg) +
+                           nalu_hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends),
                            CF_marker_diag,
                            (NALU_HYPRE_Int *) send_buf );
 #else
          NALU_HYPRE_THRUST_CALL( gather,
-                            hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg),
-                            hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg) +
-                            hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends),
+                            nalu_hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg),
+                            nalu_hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg) +
+                            nalu_hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends),
                             CF_marker_diag,
                             (NALU_HYPRE_Int *) send_buf );
 #endif
 
 #if defined(NALU_HYPRE_WITH_GPU_AWARE_MPI) && THRUST_CALL_BLOCKING == 0
          /* RL: make sure send_buf is ready before issuing GPU-GPU MPI */
-         hypre_ForceSyncComputeStream(hypre_handle());
+         nalu_hypre_ForceSyncComputeStream(nalu_hypre_handle());
 #endif
 
-         comm_handle = hypre_ParCSRCommHandleCreate_v2(11, comm_pkg,
+         comm_handle = nalu_hypre_ParCSRCommHandleCreate_v2(11, comm_pkg,
                                                        NALU_HYPRE_MEMORY_DEVICE, (NALU_HYPRE_Int *) send_buf,
                                                        NALU_HYPRE_MEMORY_DEVICE, CF_marker_offd);
 
-         hypre_ParCSRCommHandleDestroy(comm_handle);
+         nalu_hypre_ParCSRCommHandleDestroy(comm_handle);
       }
 
       iter ++;
@@ -186,7 +186,7 @@ hypre_BoomerAMGCoarsenPMISDevice( hypre_ParCSRMatrix    *S,
       /* From the IS, set C/F-pts in CF_marker_diag (for the nodes still in graph) and
        * clear their values in measure_diag. measure_offd is sync'ed afterwards.
        * Note: CF_marker_offd Needs to be sync'ed on entry is NOT sync'ed on exit */
-      hypre_PMISCoarseningUpdateCFDevice(S, measure_diag, measure_offd, graph_diag_size, graph_diag,
+      nalu_hypre_PMISCoarseningUpdateCFDevice(S, measure_diag, measure_offd, graph_diag_size, graph_diag,
                                          CF_marker_diag, CF_marker_offd, comm_pkg, (NALU_HYPRE_Real *) send_buf,
                                          (NALU_HYPRE_Int *)send_buf);
 
@@ -222,73 +222,73 @@ hypre_BoomerAMGCoarsenPMISDevice( hypre_ParCSRMatrix    *S,
     * Clean up and return
     *---------------------------------------------------*/
 
-   hypre_TFree(measure_diag,   NALU_HYPRE_MEMORY_DEVICE);
-   hypre_TFree(measure_offd,   NALU_HYPRE_MEMORY_DEVICE);
-   hypre_TFree(graph_diag,     NALU_HYPRE_MEMORY_DEVICE);
-   hypre_TFree(diag_iwork,     NALU_HYPRE_MEMORY_DEVICE);
-   hypre_TFree(CF_marker_offd, NALU_HYPRE_MEMORY_DEVICE);
-   hypre_TFree(send_buf,       NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(measure_diag,   NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(measure_offd,   NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(graph_diag,     NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(diag_iwork,     NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(CF_marker_offd, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(send_buf,       NALU_HYPRE_MEMORY_DEVICE);
 
 #ifdef NALU_HYPRE_PROFILE
-   hypre_profile_times[NALU_HYPRE_TIMER_ID_PMIS] += hypre_MPI_Wtime();
+   nalu_hypre_profile_times[NALU_HYPRE_TIMER_ID_PMIS] += nalu_hypre_MPI_Wtime();
 #endif
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 NALU_HYPRE_Int
-hypre_GetGlobalMeasureDevice( hypre_ParCSRMatrix  *S,
-                              hypre_ParCSRCommPkg *comm_pkg,
+nalu_hypre_GetGlobalMeasureDevice( nalu_hypre_ParCSRMatrix  *S,
+                              nalu_hypre_ParCSRCommPkg *comm_pkg,
                               NALU_HYPRE_Int            CF_init,
                               NALU_HYPRE_Int            aug_rand,
                               NALU_HYPRE_Real          *measure_diag,
                               NALU_HYPRE_Real          *measure_offd,
                               NALU_HYPRE_Real          *real_send_buf )
 {
-   hypre_ParCSRCommHandle   *comm_handle;
-   NALU_HYPRE_Int                 num_sends       = hypre_ParCSRCommPkgNumSends(comm_pkg);
-   hypre_CSRMatrix          *S_diag          = hypre_ParCSRMatrixDiag(S);
-   hypre_CSRMatrix          *S_offd          = hypre_ParCSRMatrixOffd(S);
+   nalu_hypre_ParCSRCommHandle   *comm_handle;
+   NALU_HYPRE_Int                 num_sends       = nalu_hypre_ParCSRCommPkgNumSends(comm_pkg);
+   nalu_hypre_CSRMatrix          *S_diag          = nalu_hypre_ParCSRMatrixDiag(S);
+   nalu_hypre_CSRMatrix          *S_offd          = nalu_hypre_ParCSRMatrixOffd(S);
 
    /* Compute global column nnz */
    /* compute local column nnz of the offd part */
-   hypre_CSRMatrixColNNzRealDevice(S_offd, measure_offd);
+   nalu_hypre_CSRMatrixColNNzRealDevice(S_offd, measure_offd);
 
 #if defined(NALU_HYPRE_WITH_GPU_AWARE_MPI)
    /* RL: make sure measure_offd is ready before issuing GPU-GPU MPI */
-   hypre_ForceSyncComputeStream(hypre_handle());
+   nalu_hypre_ForceSyncComputeStream(nalu_hypre_handle());
 #endif
 
    /* send local column nnz of the offd part to neighbors */
-   comm_handle = hypre_ParCSRCommHandleCreate_v2(2, comm_pkg, NALU_HYPRE_MEMORY_DEVICE, measure_offd,
+   comm_handle = nalu_hypre_ParCSRCommHandleCreate_v2(2, comm_pkg, NALU_HYPRE_MEMORY_DEVICE, measure_offd,
                                                  NALU_HYPRE_MEMORY_DEVICE, real_send_buf);
 
 
    /* compute local column nnz of the diag part */
-   hypre_CSRMatrixColNNzRealDevice(S_diag, measure_diag);
+   nalu_hypre_CSRMatrixColNNzRealDevice(S_diag, measure_diag);
 
-   hypre_ParCSRCommHandleDestroy(comm_handle);
+   nalu_hypre_ParCSRCommHandleDestroy(comm_handle);
 
    /* add to the local column nnz of the diag part */
-   hypre_ParCSRCommPkgCopySendMapElmtsToDevice(comm_pkg);
+   nalu_hypre_ParCSRCommPkgCopySendMapElmtsToDevice(comm_pkg);
 
-   hypreDevice_GenScatterAdd(measure_diag, hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends),
-                             hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg), real_send_buf, NULL);
+   hypreDevice_GenScatterAdd(measure_diag, nalu_hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends),
+                             nalu_hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg), real_send_buf, NULL);
 
    /* Augments the measures with a random number between 0 and 1 (only for the local part) */
    if (aug_rand)
    {
-      hypre_BoomerAMGIndepSetInitDevice(S, measure_diag, aug_rand);
+      nalu_hypre_BoomerAMGIndepSetInitDevice(S, measure_diag, aug_rand);
    }
 
    /* Note that measure_offd is not sync'ed (communicated) here
     * and is not set to zero as in the cpu pmis */
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 __global__ void
-hypreGPUKernel_PMISCoarseningInit(hypre_DeviceItem &item,
+hypreGPUKernel_PMISCoarseningInit(nalu_hypre_DeviceItem &item,
                                   NALU_HYPRE_Int   nrows,
                                   NALU_HYPRE_Int   CF_init,
                                   NALU_HYPRE_Int  *S_diag_i,
@@ -297,7 +297,7 @@ hypreGPUKernel_PMISCoarseningInit(hypre_DeviceItem &item,
                                   NALU_HYPRE_Int  *CF_marker_diag)
 {
    /* global_thread_id */
-   const NALU_HYPRE_Int i = hypre_gpu_get_grid_thread_id<1, 1>(item);
+   const NALU_HYPRE_Int i = nalu_hypre_gpu_get_grid_thread_id<1, 1>(item);
 
    if (i >= nrows)
    {
@@ -309,7 +309,7 @@ hypreGPUKernel_PMISCoarseningInit(hypre_DeviceItem &item,
    if (CF_init == 1)
    {
       // TODO
-      hypre_device_assert(0);
+      nalu_hypre_device_assert(0);
    }
    else
    {
@@ -338,8 +338,8 @@ hypreGPUKernel_PMISCoarseningInit(hypre_DeviceItem &item,
 }
 
 NALU_HYPRE_Int
-hypre_PMISCoarseningInitDevice( hypre_ParCSRMatrix  *S,               /* in */
-                                hypre_ParCSRCommPkg *comm_pkg,        /* in */
+nalu_hypre_PMISCoarseningInitDevice( nalu_hypre_ParCSRMatrix  *S,               /* in */
+                                nalu_hypre_ParCSRCommPkg *comm_pkg,        /* in */
                                 NALU_HYPRE_Int            CF_init,         /* in */
                                 NALU_HYPRE_Real          *measure_diag,    /* in */
                                 NALU_HYPRE_Real          *measure_offd,    /* out */
@@ -348,17 +348,17 @@ hypre_PMISCoarseningInitDevice( hypre_ParCSRMatrix  *S,               /* in */
                                 NALU_HYPRE_Int           *graph_diag,      /* out */
                                 NALU_HYPRE_Int           *CF_marker_diag   /* in/out */ )
 {
-   hypre_CSRMatrix *S_diag        = hypre_ParCSRMatrixDiag(S);
-   hypre_CSRMatrix *S_offd        = hypre_ParCSRMatrixOffd(S);
-   NALU_HYPRE_Int       *S_diag_i      = hypre_CSRMatrixI(S_diag);
-   NALU_HYPRE_Int       *S_offd_i      = hypre_CSRMatrixI(S_offd);
-   NALU_HYPRE_Int        num_rows_diag = hypre_CSRMatrixNumRows(S_diag);
-   NALU_HYPRE_Int        num_sends     = hypre_ParCSRCommPkgNumSends(comm_pkg);
+   nalu_hypre_CSRMatrix *S_diag        = nalu_hypre_ParCSRMatrixDiag(S);
+   nalu_hypre_CSRMatrix *S_offd        = nalu_hypre_ParCSRMatrixOffd(S);
+   NALU_HYPRE_Int       *S_diag_i      = nalu_hypre_CSRMatrixI(S_diag);
+   NALU_HYPRE_Int       *S_offd_i      = nalu_hypre_CSRMatrixI(S_offd);
+   NALU_HYPRE_Int        num_rows_diag = nalu_hypre_CSRMatrixNumRows(S_diag);
+   NALU_HYPRE_Int        num_sends     = nalu_hypre_ParCSRCommPkgNumSends(comm_pkg);
 
-   dim3 bDim = hypre_GetDefaultDeviceBlockDimension();
-   dim3 gDim = hypre_GetDefaultDeviceGridDimension(num_rows_diag, "thread", bDim);
+   dim3 bDim = nalu_hypre_GetDefaultDeviceBlockDimension();
+   dim3 gDim = nalu_hypre_GetDefaultDeviceGridDimension(num_rows_diag, "thread", bDim);
 
-   hypre_ParCSRCommHandle *comm_handle;
+   nalu_hypre_ParCSRCommHandle *comm_handle;
    NALU_HYPRE_Int *new_end;
 
    /* init CF_marker_diag and measure_diag: remove some special nodes */
@@ -367,30 +367,30 @@ hypre_PMISCoarseningInitDevice( hypre_ParCSRMatrix  *S,               /* in */
 
    /* communicate for measure_offd */
 #if defined(NALU_HYPRE_USING_SYCL)
-   hypreSycl_gather( hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg),
-                     hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg) +
-                     hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends),
+   hypreSycl_gather( nalu_hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg),
+                     nalu_hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg) +
+                     nalu_hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends),
                      measure_diag,
                      real_send_buf );
 #else
    NALU_HYPRE_THRUST_CALL(gather,
-                     hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg),
-                     hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg) +
-                     hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends),
+                     nalu_hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg),
+                     nalu_hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg) +
+                     nalu_hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends),
                      measure_diag,
                      real_send_buf);
 #endif
 
 #if defined(NALU_HYPRE_WITH_GPU_AWARE_MPI) && THRUST_CALL_BLOCKING == 0
    /* RL: make sure real_send_buf is ready before issuing GPU-GPU MPI */
-   hypre_ForceSyncComputeStream(hypre_handle());
+   nalu_hypre_ForceSyncComputeStream(nalu_hypre_handle());
 #endif
 
-   comm_handle = hypre_ParCSRCommHandleCreate_v2(1, comm_pkg,
+   comm_handle = nalu_hypre_ParCSRCommHandleCreate_v2(1, comm_pkg,
                                                  NALU_HYPRE_MEMORY_DEVICE, real_send_buf,
                                                  NALU_HYPRE_MEMORY_DEVICE, measure_offd);
 
-   hypre_ParCSRCommHandleDestroy(comm_handle);
+   nalu_hypre_ParCSRCommHandleDestroy(comm_handle);
 
    /* graph_diag consists points with CF_marker_diag == 0 */
 #if defined(NALU_HYPRE_USING_SYCL)
@@ -411,11 +411,11 @@ hypre_PMISCoarseningInitDevice( hypre_ParCSRMatrix  *S,               /* in */
 
    *graph_diag_size = new_end - graph_diag;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 __global__ void
-hypreGPUKernel_PMISCoarseningUpdateCF(hypre_DeviceItem &item,
+hypreGPUKernel_PMISCoarseningUpdateCF(nalu_hypre_DeviceItem &item,
                                       NALU_HYPRE_Int   graph_diag_size,
                                       NALU_HYPRE_Int  *graph_diag,
                                       NALU_HYPRE_Int  *S_diag_i,
@@ -426,14 +426,14 @@ hypreGPUKernel_PMISCoarseningUpdateCF(hypre_DeviceItem &item,
                                       NALU_HYPRE_Int  *CF_marker_diag,
                                       NALU_HYPRE_Int  *CF_marker_offd)
 {
-   NALU_HYPRE_Int warp_id = hypre_gpu_get_grid_warp_id<1, 1>(item);
+   NALU_HYPRE_Int warp_id = nalu_hypre_gpu_get_grid_warp_id<1, 1>(item);
 
    if (warp_id >= graph_diag_size)
    {
       return;
    }
 
-   NALU_HYPRE_Int lane = hypre_gpu_get_lane_id<1>(item);
+   NALU_HYPRE_Int lane = nalu_hypre_gpu_get_lane_id<1>(item);
    NALU_HYPRE_Int row = 0, i = 0, marker_row, row_start, row_end;
 
    if (lane < 2)
@@ -458,7 +458,7 @@ hypreGPUKernel_PMISCoarseningUpdateCF(hypre_DeviceItem &item,
    }
    else
    {
-      hypre_device_assert(marker_row == 0);
+      nalu_hypre_device_assert(marker_row == 0);
 
       /*-------------------------------------------------
        * Now treat the case where this node is not in the
@@ -524,27 +524,27 @@ hypreGPUKernel_PMISCoarseningUpdateCF(hypre_DeviceItem &item,
 }
 
 NALU_HYPRE_Int
-hypre_PMISCoarseningUpdateCFDevice( hypre_ParCSRMatrix  *S,               /* in */
+nalu_hypre_PMISCoarseningUpdateCFDevice( nalu_hypre_ParCSRMatrix  *S,               /* in */
                                     NALU_HYPRE_Real          *measure_diag,
                                     NALU_HYPRE_Real          *measure_offd,
                                     NALU_HYPRE_Int            graph_diag_size, /* in */
                                     NALU_HYPRE_Int           *graph_diag,      /* in */
                                     NALU_HYPRE_Int           *CF_marker_diag,  /* in/out */
                                     NALU_HYPRE_Int           *CF_marker_offd,  /* in/out */
-                                    hypre_ParCSRCommPkg *comm_pkg,
+                                    nalu_hypre_ParCSRCommPkg *comm_pkg,
                                     NALU_HYPRE_Real          *real_send_buf,
                                     NALU_HYPRE_Int           *int_send_buf )
 {
-   hypre_CSRMatrix *S_diag    = hypre_ParCSRMatrixDiag(S);
-   NALU_HYPRE_Int       *S_diag_i  = hypre_CSRMatrixI(S_diag);
-   NALU_HYPRE_Int       *S_diag_j  = hypre_CSRMatrixJ(S_diag);
-   hypre_CSRMatrix *S_offd    = hypre_ParCSRMatrixOffd(S);
-   NALU_HYPRE_Int       *S_offd_i  = hypre_CSRMatrixI(S_offd);
-   NALU_HYPRE_Int       *S_offd_j  = hypre_CSRMatrixJ(S_offd);
-   NALU_HYPRE_Int        num_sends = hypre_ParCSRCommPkgNumSends(comm_pkg);
+   nalu_hypre_CSRMatrix *S_diag    = nalu_hypre_ParCSRMatrixDiag(S);
+   NALU_HYPRE_Int       *S_diag_i  = nalu_hypre_CSRMatrixI(S_diag);
+   NALU_HYPRE_Int       *S_diag_j  = nalu_hypre_CSRMatrixJ(S_diag);
+   nalu_hypre_CSRMatrix *S_offd    = nalu_hypre_ParCSRMatrixOffd(S);
+   NALU_HYPRE_Int       *S_offd_i  = nalu_hypre_CSRMatrixI(S_offd);
+   NALU_HYPRE_Int       *S_offd_j  = nalu_hypre_CSRMatrixJ(S_offd);
+   NALU_HYPRE_Int        num_sends = nalu_hypre_ParCSRCommPkgNumSends(comm_pkg);
 
-   dim3 bDim = hypre_GetDefaultDeviceBlockDimension();
-   dim3 gDim = hypre_GetDefaultDeviceGridDimension(graph_diag_size, "warp", bDim);
+   dim3 bDim = nalu_hypre_GetDefaultDeviceBlockDimension();
+   dim3 gDim = nalu_hypre_GetDefaultDeviceGridDimension(graph_diag_size, "warp", bDim);
 
    NALU_HYPRE_GPU_LAUNCH( hypreGPUKernel_PMISCoarseningUpdateCF,
                      gDim, bDim,
@@ -558,58 +558,58 @@ hypre_PMISCoarseningUpdateCFDevice( hypre_ParCSRMatrix  *S,               /* in 
                      CF_marker_diag,
                      CF_marker_offd );
 
-   hypre_ParCSRCommHandle *comm_handle;
+   nalu_hypre_ParCSRCommHandle *comm_handle;
 
    /* communicate for measure_offd */
 #if defined(NALU_HYPRE_USING_SYCL)
-   hypreSycl_gather( hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg),
-                     hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg) +
-                     hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends),
+   hypreSycl_gather( nalu_hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg),
+                     nalu_hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg) +
+                     nalu_hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends),
                      measure_diag,
                      real_send_buf );
 #else
    NALU_HYPRE_THRUST_CALL(gather,
-                     hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg),
-                     hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg) +
-                     hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends),
+                     nalu_hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg),
+                     nalu_hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg) +
+                     nalu_hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends),
                      measure_diag,
                      real_send_buf);
 #endif
 
 #if defined(NALU_HYPRE_WITH_GPU_AWARE_MPI) && THRUST_CALL_BLOCKING == 0
    /* RL: make sure real_send_buf is ready before issuing GPU-GPU MPI */
-   hypre_ForceSyncComputeStream(hypre_handle());
+   nalu_hypre_ForceSyncComputeStream(nalu_hypre_handle());
 #endif
 
-   comm_handle = hypre_ParCSRCommHandleCreate_v2(1, comm_pkg,
+   comm_handle = nalu_hypre_ParCSRCommHandleCreate_v2(1, comm_pkg,
                                                  NALU_HYPRE_MEMORY_DEVICE, real_send_buf,
                                                  NALU_HYPRE_MEMORY_DEVICE, measure_offd);
 
-   hypre_ParCSRCommHandleDestroy(comm_handle);
+   nalu_hypre_ParCSRCommHandleDestroy(comm_handle);
 
 #if 0
    /* now communicate CF_marker to CF_marker_offd, to make
       sure that new external F points are known on this processor */
    NALU_HYPRE_THRUST_CALL(gather,
-                     hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg),
-                     hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg) +
-                     hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends),
+                     nalu_hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg),
+                     nalu_hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg) +
+                     nalu_hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends),
                      CF_marker_diag,
                      int_send_buf);
 
 #if defined(NALU_HYPRE_WITH_GPU_AWARE_MPI) && THRUST_CALL_BLOCKING == 0
    /* RL: make sure int_send_buf is ready before issuing GPU-GPU MPI */
-   hypre_ForceSyncComputeStream(hypre_handle());
+   nalu_hypre_ForceSyncComputeStream(nalu_hypre_handle());
 #endif
 
-   comm_handle = hypre_ParCSRCommHandleCreate_v2(11, comm_pkg,
+   comm_handle = nalu_hypre_ParCSRCommHandleCreate_v2(11, comm_pkg,
                                                  NALU_HYPRE_MEMORY_DEVICE, int_send_buf,
                                                  NALU_HYPRE_MEMORY_DEVICE, CF_marker_offd);
 
-   hypre_ParCSRCommHandleDestroy(comm_handle);
+   nalu_hypre_ParCSRCommHandleDestroy(comm_handle);
 #endif
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 #endif // #if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP) || defined(NALU_HYPRE_USING_SYCL)

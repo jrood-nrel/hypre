@@ -95,9 +95,9 @@ int MLI_Solver_ARPACKSuperLU::solve( MLI_Vector *f_in, MLI_Vector *u_in )
    double             *u_data, *f_data, *dRecvBufs, *dSendBufs;
    double             *permutedF, *permutedX;
    char               paramString[100];
-   hypre_ParVector    *u, *f;
-   hypre_Vector       *u_local, *f_local;
-   hypre_ParCSRMatrix *hypreA;
+   nalu_hypre_ParVector    *u, *f;
+   nalu_hypre_Vector       *u_local, *f_local;
+   nalu_hypre_ParCSRMatrix *hypreA;
    MPI_Comm           mpiComm;
    MPI_Request        *requests;
    MPI_Status         *statuses;
@@ -106,15 +106,15 @@ int MLI_Solver_ARPACKSuperLU::solve( MLI_Vector *f_in, MLI_Vector *u_in )
     * fetch matrix and vector parameters
     * -----------------------------------------------------------*/
 
-   hypreA  = (hypre_ParCSRMatrix *) Amat_->getMatrix();
-   mpiComm = hypre_ParCSRMatrixComm(hypreA);
+   hypreA  = (nalu_hypre_ParCSRMatrix *) Amat_->getMatrix();
+   mpiComm = nalu_hypre_ParCSRMatrixComm(hypreA);
    MPI_Comm_rank( mpiComm, &mypid );
-   u       = (hypre_ParVector *) u_in->getVector();
-   u_local = hypre_ParVectorLocalVector(u);
-   u_data  = hypre_VectorData(u_local);
-   f       = (hypre_ParVector *) f_in->getVector();
-   f_local = hypre_ParVectorLocalVector(f);
-   f_data  = hypre_VectorData(f_local);
+   u       = (nalu_hypre_ParVector *) u_in->getVector();
+   u_local = nalu_hypre_ParVectorLocalVector(u);
+   u_data  = nalu_hypre_VectorData(u_local);
+   f       = (nalu_hypre_ParVector *) f_in->getVector();
+   f_local = nalu_hypre_ParVectorLocalVector(f);
+   f_data  = nalu_hypre_VectorData(f_local);
 
    /* -------------------------------------------------------------
     * collect global vector and create a SuperLU dense matrix

@@ -15,7 +15,7 @@
 !-------------------------------------------------------------------------
 ! NALU_HYPRE_SStructGraphCreate
 !-------------------------------------------------------------------------
-      subroutine fhypre_sstructgraphcreate(fcomm, fgrid, fgraphptr)
+      subroutine fnalu_hypre_sstructgraphcreate(fcomm, fgrid, fgraphptr)
      
       integer ierr
       integer fcomm
@@ -25,7 +25,7 @@
       call NALU_HYPRE_SStructGraphCreate(fcomm, fgrid, fgraphptr, ierr)
 
       if (ierr .ne. 0) then
-         print *, ' fhypre_sstructgraphcreate error = ', ierr
+         print *, ' fnalu_hypre_sstructgraphcreate error = ', ierr
       endif
 
       return
@@ -35,7 +35,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_SStructGraphDestroy
 !--------------------------------------------------------------------------
-      subroutine fhypre_sstructgraphdestroy(fgraph)
+      subroutine fnalu_hypre_sstructgraphdestroy(fgraph)
       
       integer ierr
       integer*8 fgraph
@@ -43,7 +43,7 @@
       call NALU_HYPRE_SStructGraphDestroy(fgraph, ierr)
 
       if (ierr .ne. 0) then
-         print *, ' fhypre_sstructgraphdestroy error = ', ierr
+         print *, ' fnalu_hypre_sstructgraphdestroy error = ', ierr
       endif
 
       return
@@ -53,7 +53,7 @@
 !--------------------------------------------------------------------------
 ! NALU_HYPRE_SStructGraphSetStencil
 !--------------------------------------------------------------------------
-      subroutine fhypre_sstructgraphsetstencil(fgraph, fpart, fvar, 
+      subroutine fnalu_hypre_sstructgraphsetstencil(fgraph, fpart, fvar, 
      1                                         fstencil)
 
       integer ierr
@@ -66,7 +66,7 @@
      1                                  ierr)
 
       if (ierr .ne. 0) then
-         print *, ' fhypre_sstructgraphsetstencil error = ', ierr
+         print *, ' fnalu_hypre_sstructgraphsetstencil error = ', ierr
       endif
 
       return
@@ -77,7 +77,7 @@
 !  NALU_HYPRE_SStructGraphAddEntries-
 !    THIS IS FOR A NON-OVERLAPPING GRID GRAPH.
 !--------------------------------------------------------------------------
-      subroutine fhypre_sstructgraphaddentries(fgraph, fpart, findex, 
+      subroutine fnalu_hypre_sstructgraphaddentries(fgraph, fpart, findex, 
      1                                         fvar, fto_part,
      1                                         fto_index, fto_var)
 
@@ -95,7 +95,7 @@
      2                                  ierr)
 
       if (ierr .ne. 0) then
-         print *, ' fhypre_sstructgraphaddedntries error = ', ierr
+         print *, ' fnalu_hypre_sstructgraphaddedntries error = ', ierr
       endif
 
       return
@@ -105,7 +105,7 @@
 !--------------------------------------------------------------------------
 !  NALU_HYPRE_SStructGraphAssemble
 !--------------------------------------------------------------------------
-      subroutine fhypre_sstructgraphassemble(fgraph)
+      subroutine fnalu_hypre_sstructgraphassemble(fgraph)
      
       integer ierr
       integer*8 fgraph
@@ -113,7 +113,7 @@
       call NALU_HYPRE_SStructGraphAssemble(fgraph, ierr)
 
       if (ierr .ne. 0) then
-         print *, ' fhypre_sstructgraphassemble error = ', ierr
+         print *, ' fnalu_hypre_sstructgraphassemble error = ', ierr
       endif
 
       return
@@ -123,7 +123,7 @@
 !--------------------------------------------------------------------------
 !  NALU_HYPRE_SStructGraphSetObjectType
 !--------------------------------------------------------------------------
-      subroutine fhypre_sstructgraphsetobjecttyp(fgraph, ftype)
+      subroutine fnalu_hypre_sstructgraphsetobjecttyp(fgraph, ftype)
                                                  
       integer ierr
       integer ftype
@@ -132,7 +132,7 @@
       call NALU_HYPRE_SStructGraphSetObjectType(fgraph, ftype, ierr)
 
       if (ierr .ne. 0) then
-         print *, ' fhypre_sstructgraphsetobjecttype error = ', ierr
+         print *, ' fnalu_hypre_sstructgraphsetobjecttype error = ', ierr
       endif
 
       return
@@ -148,7 +148,7 @@
 !--------------------------------------------------------------------------
 !  NALU_HYPRE_SStructGridCreate
 !--------------------------------------------------------------------------
-      subroutine fhypre_sstructgridcreate(fcomm, fndim, fnparts,
+      subroutine fnalu_hypre_sstructgridcreate(fcomm, fndim, fnparts,
      1                                    fgridptr)
                                          
       integer ierr
@@ -161,7 +161,7 @@
      1                             ierr)
 
       if (ierr .ne. 0) then
-         print *, ' fhypre_sstructgridcreate error = ', ierr
+         print *, ' fnalu_hypre_sstructgridcreate error = ', ierr
       endif
 
       return
@@ -171,7 +171,7 @@
 !--------------------------------------------------------------------------
 !   NALU_HYPRE_SStructGridDestroy
 !--------------------------------------------------------------------------
-      subroutine fhypre_sstructgriddestroy(fgrid)
+      subroutine fnalu_hypre_sstructgriddestroy(fgrid)
 
       integer ierr
       integer*8 fgrid
@@ -179,7 +179,7 @@
       call NALU_HYPRE_SStructGridDestroy(fgrid, ierr)
 
       if (ierr .ne. 0) then
-         print *, ' fhypre_sstructgriddestroy error = ', ierr
+         print *, ' fnalu_hypre_sstructgriddestroy error = ', ierr
       endif
 
       return
@@ -189,7 +189,7 @@
 !--------------------------------------------------------------------------
 !   NALU_HYPRE_SStructGridSetExtents
 !--------------------------------------------------------------------------
-      subroutine fhypre_sstructgridsetextents(fgrid, fpart, filower, 
+      subroutine fnalu_hypre_sstructgridsetextents(fgrid, fpart, filower, 
      1                                        fiupper)
 
       integer ierr
@@ -202,7 +202,7 @@
      1                                 ierr)
 
       if (ierr .ne. 0) then
-         print *, ' fhypre_sstructgridsetextents error = ', ierr
+         print *, ' fnalu_hypre_sstructgridsetextents error = ', ierr
       endif
 
       return
@@ -212,7 +212,7 @@
 !--------------------------------------------------------------------------
 !   NALU_HYPRE_SStructGridSetVariables
 !--------------------------------------------------------------------------
-      subroutine fhypre_sstructgridsetvariables(fgrid, fpart, fnvars, 
+      subroutine fnalu_hypre_sstructgridsetvariables(fgrid, fpart, fnvars, 
      1                                          fvartypes)
 
       integer ierr
@@ -225,7 +225,7 @@
      1                                   fvartypes, ierr)
 
       if (ierr .ne. 0) then
-         print *, ' fhypre_sstructgridsetvariables error = ', ierr
+         print *, ' fnalu_hypre_sstructgridsetvariables error = ', ierr
       endif
 
       return
@@ -235,7 +235,7 @@
 !--------------------------------------------------------------------------
 !   NALU_HYPRE_SStructGridAddVariables
 !--------------------------------------------------------------------------
-      subroutine fhypre_sstructgridaddvariables(fgrid, fpart, findex,
+      subroutine fnalu_hypre_sstructgridaddvariables(fgrid, fpart, findex,
      1                                          fnvars, fvartypes)
 
       integer ierr
@@ -249,7 +249,7 @@
      1                                   fvartypes, ierr)
 
       if (ierr .ne. 0) then
-         print *, ' fhypre_sstructgridaddvariables error = ', ierr
+         print *, ' fnalu_hypre_sstructgridaddvariables error = ', ierr
       endif
 
       return
@@ -259,7 +259,7 @@
 !--------------------------------------------------------------------------
 !   NALU_HYPRE_SStructGridSetNeighborBox
 !--------------------------------------------------------------------------
-      subroutine fhypre_sstructgridsetneighborbo(fgrid, fpart, filower,
+      subroutine fnalu_hypre_sstructgridsetneighborbo(fgrid, fpart, filower,
      1                                            fiupper, fnbor_part,
      2                                            fnbor_ilower,
      3                                            fnbor_iupper,
@@ -281,7 +281,7 @@
      3                                     findex_map, ierr)
 
       if (ierr .ne. 0) then
-         print *, ' fhypre_sstructgridsetneighborbox error = ', ierr
+         print *, ' fnalu_hypre_sstructgridsetneighborbox error = ', ierr
       endif
 
       return
@@ -291,7 +291,7 @@
 !--------------------------------------------------------------------------
 !   NALU_HYPRE_SStructGridAssemble
 !--------------------------------------------------------------------------
-      subroutine fhypre_sstructgridassemble(fgrid)
+      subroutine fnalu_hypre_sstructgridassemble(fgrid)
 
       integer ierr
       integer*8 fgrid
@@ -299,7 +299,7 @@
       call NALU_HYPRE_SStructGridAssemble(fgrid, ierr)
 
       if (ierr .ne. 0) then
-         print *, ' fhypre_sstructgridassemble error = ', ierr
+         print *, ' fnalu_hypre_sstructgridassemble error = ', ierr
       endif
 
       return
@@ -309,7 +309,7 @@
 !--------------------------------------------------------------------------
 !   NALU_HYPRE_SStructGridSetPeriodic
 !--------------------------------------------------------------------------
-      subroutine fhypre_sstructgridsetperiodic(fgrid, fpart, fperiodic)
+      subroutine fnalu_hypre_sstructgridsetperiodic(fgrid, fpart, fperiodic)
 
       integer ierr
       integer fpart
@@ -319,7 +319,7 @@
       call NALU_HYPRE_SStructGridSetPeriodic(fgrid, fpart, fperiodic, ierr)
 
       if (ierr .ne. 0) then
-         print *, ' fhypre_sstructgridsetperiodic error = ', ierr
+         print *, ' fnalu_hypre_sstructgridsetperiodic error = ', ierr
       endif
 
       return
@@ -329,7 +329,7 @@
 !--------------------------------------------------------------------------
 !   NALU_HYPRE_SStructGridSetNumGhost
 !--------------------------------------------------------------------------
-      subroutine fhypre_sstructgridsetnumghost(fgrid, fnum_ghost)
+      subroutine fnalu_hypre_sstructgridsetnumghost(fgrid, fnum_ghost)
 
       integer ierr
       integer fnumghost
@@ -338,7 +338,7 @@
       call NALU_HYPRE_SStructGridSetNumGhost(fgrid, fnum_ghost, ierr)       
 
       if (ierr .ne. 0) then
-         print *, ' fhypre_sstructgridsetnumghost error = ', ierr
+         print *, ' fnalu_hypre_sstructgridsetnumghost error = ', ierr
       endif
 
       return
@@ -354,7 +354,7 @@
 !--------------------------------------------------------------------------
 !   NALU_HYPRE_SStructMatrixCreate
 !--------------------------------------------------------------------------
-      subroutine fhypre_sstructmatrixcreate(fcomm, fgraph, fmatrix_ptr)
+      subroutine fnalu_hypre_sstructmatrixcreate(fcomm, fgraph, fmatrix_ptr)
 
       integer ierr
       integer fcomm
@@ -364,7 +364,7 @@
       call NALU_HYPRE_SStructMatrixCreate(fcomm, fgraph, fmatrix_ptr, ierr)
 
       if (ierr .ne. 0) then
-         print *, ' fhypre_sstructmatrixcreate error = ', ierr
+         print *, ' fnalu_hypre_sstructmatrixcreate error = ', ierr
       endif
 
       return
@@ -374,7 +374,7 @@
 !--------------------------------------------------------------------------
 !   NALU_HYPRE_SStructMatrixDestroy
 !--------------------------------------------------------------------------
-      subroutine fhypre_sstructmatrixdestroy(fmatrix)
+      subroutine fnalu_hypre_sstructmatrixdestroy(fmatrix)
 
       integer ierr
       integer*8 fmatrix
@@ -382,7 +382,7 @@
       call NALU_HYPRE_SStructMatrixDestroy(fmatrix, ierr)
 
       if (ierr .ne. 0) then
-         print *, ' fhypre_sstructmatrixdestroy error = ', ierr
+         print *, ' fnalu_hypre_sstructmatrixdestroy error = ', ierr
       endif
 
       return
@@ -392,7 +392,7 @@
 !--------------------------------------------------------------------------
 !   NALU_HYPRE_SStructMatrixInitialize
 !--------------------------------------------------------------------------
-      subroutine fhypre_sstructmatrixinitialize(fmatrix)
+      subroutine fnalu_hypre_sstructmatrixinitialize(fmatrix)
 
       integer ierr
       integer*8 fmatrix
@@ -400,7 +400,7 @@
       call NALU_HYPRE_SStructMatrixInitialize(fmatrix, ierr)
 
       if (ierr .ne. 0) then
-         print *, ' fhypre_sstructmatrixinitialize error = ', ierr
+         print *, ' fnalu_hypre_sstructmatrixinitialize error = ', ierr
       endif
 
       return
@@ -410,7 +410,7 @@
 !--------------------------------------------------------------------------
 !   NALU_HYPRE_SStructMatrixSetValues
 !--------------------------------------------------------------------------
-      subroutine fhypre_sstructmatrixsetvalues(fmatrix, fpart, findex, 
+      subroutine fnalu_hypre_sstructmatrixsetvalues(fmatrix, fpart, findex, 
      1                                         fvar, fnentries, 
      2                                         fentries, fvalues)
 
@@ -428,7 +428,7 @@
      2                                  ierr)
 
       if (ierr .ne. 0) then
-         print *, ' fhypre_sstructmatrixsetvalues error = ', ierr
+         print *, ' fnalu_hypre_sstructmatrixsetvalues error = ', ierr
       endif
 
       return
@@ -438,7 +438,7 @@
 !--------------------------------------------------------------------------
 !   NALU_HYPRE_SStructMatrixSetBoxValues
 !--------------------------------------------------------------------------
-      subroutine fhypre_sstructmatrixsetboxvalue(fmatrix, fpart, 
+      subroutine fnalu_hypre_sstructmatrixsetboxvalue(fmatrix, fpart, 
      1                                            filower, fiupper, 
      2                                            fvar, fnentries, 
      3                                            fentries, fvalues)
@@ -458,7 +458,7 @@
      2                                     fentries, fvalues, ierr)
 
       if (ierr .ne. 0) then
-         print *, ' fhypre_sstructmatrixsetboxvalues error = ', ierr
+         print *, ' fnalu_hypre_sstructmatrixsetboxvalues error = ', ierr
       endif
 
       return
@@ -468,7 +468,7 @@
 !--------------------------------------------------------------------------
 !   NALU_HYPRE_SStructMatrixGetValues
 !--------------------------------------------------------------------------
-      subroutine fhypre_sstructmatrixgetvalues(fmatrix, fpart, findex, 
+      subroutine fnalu_hypre_sstructmatrixgetvalues(fmatrix, fpart, findex, 
      1                                         fvar, fnentries, 
      2                                         fentries, fvalues)
 
@@ -486,7 +486,7 @@
      2                                  ierr)
 
       if (ierr .ne. 0) then
-         print *, ' fhypre_sstructmatrixgetvalues error = ', ierr
+         print *, ' fnalu_hypre_sstructmatrixgetvalues error = ', ierr
       endif
 
       return
@@ -496,7 +496,7 @@
 !--------------------------------------------------------------------------
 !   NALU_HYPRE_SStructMatrixGetBoxValues
 !--------------------------------------------------------------------------
-      subroutine fhypre_sstructmatrixgetboxvalue(fmatrix, fpart, 
+      subroutine fnalu_hypre_sstructmatrixgetboxvalue(fmatrix, fpart, 
      1                                            filower, fiupper, 
      2                                            fvar, fnentries,
      3                                            fentries, fvalues)
@@ -515,7 +515,7 @@
      2                                     fentries, fvalues, ierr)
 
       if (ierr .ne. 0) then
-         print *, ' fhypre_sstructmatrixgetboxvalues error = ', ierr
+         print *, ' fnalu_hypre_sstructmatrixgetboxvalues error = ', ierr
       endif
 
       return
@@ -525,7 +525,7 @@
 !--------------------------------------------------------------------------
 !   NALU_HYPRE_SStructMatrixAddToValues
 !--------------------------------------------------------------------------
-      subroutine fhypre_sstructmatrixaddtovalues(fmatrix, fpart, findex,
+      subroutine fnalu_hypre_sstructmatrixaddtovalues(fmatrix, fpart, findex,
      1                                           fvar, fnentries, 
      2                                           fentries, fvalues)
 
@@ -543,7 +543,7 @@
      2                                    ierr)
 
       if (ierr .ne. 0) then
-         print *, ' fhypre_sstructmatrixaddtovalues error = ', ierr
+         print *, ' fnalu_hypre_sstructmatrixaddtovalues error = ', ierr
       endif
 
       return
@@ -553,7 +553,7 @@
 !--------------------------------------------------------------------------
 !   NALU_HYPRE_SStructMatrixAddToBoxValues
 !--------------------------------------------------------------------------
-      subroutine fhypre_sstructmatrixaddtoboxval(fmatrix, fpart, 
+      subroutine fnalu_hypre_sstructmatrixaddtoboxval(fmatrix, fpart, 
      1                                             filower, fiupper,
      2                                             fvar, fnentries, 
      3                                             fentries, fvalues)
@@ -572,7 +572,7 @@
      2                                       fentries, fvalues, ierr)
 
       if (ierr .ne. 0) then
-         print *, ' fhypre_sstructmatrixaddtoboxvalues error = ', ierr
+         print *, ' fnalu_hypre_sstructmatrixaddtoboxvalues error = ', ierr
       endif
 
       return
@@ -582,7 +582,7 @@
 !--------------------------------------------------------------------------
 !   NALU_HYPRE_SStructMatrixAssemble
 !--------------------------------------------------------------------------
-      subroutine fhypre_sstructmatrixassemble(fmatrix)
+      subroutine fnalu_hypre_sstructmatrixassemble(fmatrix)
 
       integer ierr
       integer*8 fmatrix
@@ -590,7 +590,7 @@
       call NALU_HYPRE_SStructMatrixAssemble(fmatrix, ierr)
 
       if (ierr .ne. 0) then
-         print *, ' fhypre_sstructmatrixassemble error = ', ierr
+         print *, ' fnalu_hypre_sstructmatrixassemble error = ', ierr
       endif
 
       return
@@ -600,7 +600,7 @@
 !--------------------------------------------------------------------------
 !   NALU_HYPRE_SStructMatrixSetSymmetric
 !--------------------------------------------------------------------------
-      subroutine fhypre_sstructmatrixsetsymmetri(fmatrix, fpart, fvar,
+      subroutine fnalu_hypre_sstructmatrixsetsymmetri(fmatrix, fpart, fvar,
      1                                            fto_var, fsymmetric)
 
       integer ierr
@@ -614,7 +614,7 @@
      1                                     fto_var, fsymmetric, ierr)
 
       if (ierr .ne. 0) then
-         print *, ' fhypre_sstructmatrixsetsymmetric error = ', ierr
+         print *, ' fnalu_hypre_sstructmatrixsetsymmetric error = ', ierr
       endif
 
       return
@@ -624,7 +624,7 @@
 !--------------------------------------------------------------------------
 !   NALU_HYPRE_SStructMatrixSetNSSymmetric
 !--------------------------------------------------------------------------
-      subroutine fhypre_sstructmatrixsetnssymmet(fmatrix, fsymmetric)
+      subroutine fnalu_hypre_sstructmatrixsetnssymmet(fmatrix, fsymmetric)
 
       integer ierr
       integer fsymmetric
@@ -633,7 +633,7 @@
       call NALU_HYPRE_SStructMatrixSetNSSymmetr(fmatrix, fsymmetric, ierr)
 
       if (ierr .ne. 0) then
-         print *, ' fhypre_sstructmatrixsetnssymmetric error = ', ierr
+         print *, ' fnalu_hypre_sstructmatrixsetnssymmetric error = ', ierr
       endif
 
       return
@@ -643,7 +643,7 @@
 !--------------------------------------------------------------------------
 !   NALU_HYPRE_SStructMatrixSetObjectType
 !--------------------------------------------------------------------------
-      subroutine fhypre_sstructmatrixsetobjectty(fmatrix, ftype)
+      subroutine fnalu_hypre_sstructmatrixsetobjectty(fmatrix, ftype)
 
       integer ierr
       integer ftype
@@ -652,7 +652,7 @@
       call NALU_HYPRE_SStructMatrixSetObjectTyp(fmatrix, ftype, ierr)
 
       if (ierr .ne. 0) then
-         print *, ' fhypre_sstructmatrixsetobjecttype error = ', ierr
+         print *, ' fnalu_hypre_sstructmatrixsetobjecttype error = ', ierr
       endif
 
       return
@@ -662,7 +662,7 @@
 !--------------------------------------------------------------------------
 !   NALU_HYPRE_SStructMatrixGetObject
 !--------------------------------------------------------------------------
-      subroutine fhypre_sstructmatrixgetobject(fmatrix, fobject)
+      subroutine fnalu_hypre_sstructmatrixgetobject(fmatrix, fobject)
 
       integer ierr
       integer*8 fobject
@@ -671,7 +671,7 @@
       call NALU_HYPRE_SStructMatrixGetObject(fmatrix, fobject, ierr)
 
       if (ierr .ne. 0) then
-         print *, ' fhypre_sstructmatrixgetobject error = ', ierr
+         print *, ' fnalu_hypre_sstructmatrixgetobject error = ', ierr
       endif
 
       return
@@ -681,7 +681,7 @@
 !--------------------------------------------------------------------------
 !   NALU_HYPRE_SStructMatrixGetObject2
 !--------------------------------------------------------------------------
-      subroutine fhypre_sstructmatrixgetobject2(fmatrix, fobject)
+      subroutine fnalu_hypre_sstructmatrixgetobject2(fmatrix, fobject)
 
       integer ierr
       integer*8 fobject
@@ -690,7 +690,7 @@
       call NALU_HYPRE_SStructMatrixGetObject2(fmatrix, fobject, ierr)
 
       if (ierr .ne. 0) then
-         print *, ' fhypre_sstructmatrixgetobject2 error = ', ierr
+         print *, ' fnalu_hypre_sstructmatrixgetobject2 error = ', ierr
       endif
 
       return
@@ -700,7 +700,7 @@
 !--------------------------------------------------------------------------
 !   NALU_HYPRE_SStructMatrixPrint
 !--------------------------------------------------------------------------
-      subroutine fhypre_sstructmatrixprint(ffilename, fmatrix, fall)
+      subroutine fnalu_hypre_sstructmatrixprint(ffilename, fmatrix, fall)
 
       integer ierr
       integer fall
@@ -710,7 +710,7 @@
       call NALU_HYPRE_SStructMatrixPrint(ffilename, fmatrix, fall, ierr)
 
       if (ierr .ne. 0) then
-         print *, ' fhypre_sstructmatrixprint error = ', ierr
+         print *, ' fnalu_hypre_sstructmatrixprint error = ', ierr
       endif
 
       return
@@ -720,7 +720,7 @@
 !--------------------------------------------------------------------------
 !   NALU_HYPRE_SStructMatrixMatvec
 !--------------------------------------------------------------------------
-      subroutine fhypre_sstructmatrixmatvec(falpha, fA, fx, fbeta, fy)
+      subroutine fnalu_hypre_sstructmatrixmatvec(falpha, fA, fx, fbeta, fy)
 
       integer ierr
       integer*8 fA
@@ -732,7 +732,7 @@
       call NALU_HYPRE_SStructMatrixMatvec(falpha, fA, fx, fbeta, fy, ierr)
 
       if (ierr .ne. 0) then
-         print *, ' fhypre_sstructmatrixmatvec error = ', ierr
+         print *, ' fnalu_hypre_sstructmatrixmatvec error = ', ierr
       endif
 
       return
@@ -748,7 +748,7 @@
 !--------------------------------------------------------------------------
 !  NALU_HYPRE_SStructStencilCreate
 !--------------------------------------------------------------------------
-      subroutine fhypre_sstructstencilcreate(fndim, fsize, fstencil_ptr)
+      subroutine fnalu_hypre_sstructstencilcreate(fndim, fsize, fstencil_ptr)
 
       integer ierr
       integer fndim
@@ -758,7 +758,7 @@
       call NALU_HYPRE_SStructStencilCreate(fndim, fsize, fstencil_ptr, ierr)
 
       if (ierr .ne. 0) then
-         print *, ' fhypre_sstructstencilcreate error = ', ierr
+         print *, ' fnalu_hypre_sstructstencilcreate error = ', ierr
       endif
 
       return
@@ -768,7 +768,7 @@
 !--------------------------------------------------------------------------
 !  NALU_HYPRE_SStructStencilDestroy
 !--------------------------------------------------------------------------
-      subroutine fhypre_sstructstencildestroy(fstencil)
+      subroutine fnalu_hypre_sstructstencildestroy(fstencil)
 
       integer ierr
       integer*8 fstencil
@@ -776,7 +776,7 @@
       call NALU_HYPRE_SStructStencilDestroy(fstencil, ierr)
 
       if (ierr .ne. 0) then
-         print *, ' fhypre_sstructstencildestroy error = ', ierr
+         print *, ' fnalu_hypre_sstructstencildestroy error = ', ierr
       endif
 
       return
@@ -786,7 +786,7 @@
 !--------------------------------------------------------------------------
 !  NALU_HYPRE_SStructStencilSetEntry
 !--------------------------------------------------------------------------
-      subroutine fhypre_sstructstencilsetentry(fstencil, fentry, 
+      subroutine fnalu_hypre_sstructstencilsetentry(fstencil, fentry, 
      1                                         foffset, fvar)
 
       integer ierr
@@ -799,7 +799,7 @@
      1                                  ierr)
 
       if (ierr .ne. 0) then
-         print *, ' fhypre_sstructstencilsetentry error = ', ierr
+         print *, ' fnalu_hypre_sstructstencilsetentry error = ', ierr
       endif
 
       return
@@ -815,7 +815,7 @@
 !--------------------------------------------------------------------------
 !   NALU_HYPRE_SStructVectorCreate
 !--------------------------------------------------------------------------
-      subroutine fhypre_sstructvectorcreate(fcomm, fgrid, fvector_ptr)
+      subroutine fnalu_hypre_sstructvectorcreate(fcomm, fgrid, fvector_ptr)
 
       integer ierr
       integer fcomm
@@ -825,7 +825,7 @@
       call NALU_HYPRE_SStructVectorCreate(fcomm, fgrid, fvector_ptr, ierr)
 
       if (ierr .ne. 0) then
-         print *, ' fhypre_sstructvectorcreate error = ', ierr
+         print *, ' fnalu_hypre_sstructvectorcreate error = ', ierr
       endif
 
       return
@@ -835,7 +835,7 @@
 !--------------------------------------------------------------------------
 !  NALU_HYPRE_SStructVectorDestroy
 !--------------------------------------------------------------------------
-      subroutine fhypre_sstructvectordestroy(fvector)
+      subroutine fnalu_hypre_sstructvectordestroy(fvector)
 
       integer ierr
       integer*8 fvector
@@ -843,7 +843,7 @@
       call NALU_HYPRE_SStructVectorDestroy(fvector, ierr)
 
       if (ierr .ne. 0) then
-         print *, ' fhypre_sstructvectordestroy error = ', ierr
+         print *, ' fnalu_hypre_sstructvectordestroy error = ', ierr
       endif
 
       return
@@ -853,7 +853,7 @@
 !---------------------------------------------------------
 !  NALU_HYPRE_SStructVectorInitialize
 !---------------------------------------------------------
-      subroutine fhypre_sstructvectorinitialize(fvector)
+      subroutine fnalu_hypre_sstructvectorinitialize(fvector)
 
       integer ierr
       integer*8 fvector
@@ -861,7 +861,7 @@
       call NALU_HYPRE_SStructVectorInitialize(fvector, ierr)
 
       if (ierr .ne. 0) then
-         print *, ' fhypre_sstructvectorinitialize error = ', ierr
+         print *, ' fnalu_hypre_sstructvectorinitialize error = ', ierr
       endif
 
       return
@@ -871,7 +871,7 @@
 !--------------------------------------------------------------------------
 !   NALU_HYPRE_SStructVectorSetValues
 !--------------------------------------------------------------------------
-      subroutine fhypre_sstructvectorsetvalues(fvector, fpart, findex, 
+      subroutine fnalu_hypre_sstructvectorsetvalues(fvector, fpart, findex, 
      1                                         fvar, fvalue)
 
       integer ierr
@@ -885,7 +885,7 @@
      1                                  fvalue, ierr)
 
       if (ierr .ne. 0) then
-         print *, ' fhypre_sstructvectorsetvalues error = ', ierr
+         print *, ' fnalu_hypre_sstructvectorsetvalues error = ', ierr
       endif
 
       return
@@ -895,7 +895,7 @@
 !--------------------------------------------------------------------------
 !   NALU_HYPRE_SStructVectorSetBoxValues
 !--------------------------------------------------------------------------
-      subroutine fhypre_sstructvectorsetboxvalue(fvector, fpart,
+      subroutine fnalu_hypre_sstructvectorsetboxvalue(fvector, fpart,
      1                                            filower, fiupper, 
      2                                            fvar, fvalues)
 
@@ -911,7 +911,7 @@
      1                                     fiupper, fvar, fvalues, ierr)
 
       if (ierr .ne. 0) then
-         print *, ' fhypre_sstructvectorsetboxvalues error = ', ierr
+         print *, ' fnalu_hypre_sstructvectorsetboxvalues error = ', ierr
       endif
 
       return
@@ -921,7 +921,7 @@
 !--------------------------------------------------------------------------
 !   NALU_HYPRE_SStructVectorAddToValues
 !--------------------------------------------------------------------------
-      subroutine fhypre_sstructvectoraddtovalues(fvector, fpart, findex,
+      subroutine fnalu_hypre_sstructvectoraddtovalues(fvector, fpart, findex,
      1                                           fvar, fvalue)
 
       integer ierr
@@ -935,7 +935,7 @@
      1                                    fvalue, ierr)
 
       if (ierr .ne. 0) then
-         print *, ' fhypre_sstructvectoraddtovalues error = ', ierr
+         print *, ' fnalu_hypre_sstructvectoraddtovalues error = ', ierr
       endif
 
       return
@@ -945,7 +945,7 @@
 !--------------------------------------------------------------------------
 !   NALU_HYPRE_SStructVectorAddToBoxValues
 !--------------------------------------------------------------------------
-      subroutine fhypre_sstructvectoraddtoboxval(fvector, fpart,
+      subroutine fnalu_hypre_sstructvectoraddtoboxval(fvector, fpart,
      1                                            filower, fiupper, 
      2                                            fvar, fvalues)
       integer ierr
@@ -961,7 +961,7 @@
      2                                       ierr)
 
       if (ierr .ne. 0) then
-         print *, ' fhypre_sstructvectoraddtoboxvalues error = ', ierr
+         print *, ' fnalu_hypre_sstructvectoraddtoboxvalues error = ', ierr
       endif
 
       return
@@ -971,7 +971,7 @@
 !--------------------------------------------------------------------------
 !   NALU_HYPRE_SStructVectorAssemble
 !--------------------------------------------------------------------------
-      subroutine fhypre_sstructvectorassemble(fvector)
+      subroutine fnalu_hypre_sstructvectorassemble(fvector)
 
       integer ierr
       integer*8 fvector
@@ -979,7 +979,7 @@
       call NALU_HYPRE_SStructVectorAssemble(fvector, ierr)
 
       if (ierr .ne. 0) then
-         print *, ' fhypre_sstructvectorassemble error = ', ierr
+         print *, ' fnalu_hypre_sstructvectorassemble error = ', ierr
       endif
 
       return
@@ -989,7 +989,7 @@
 !--------------------------------------------------------------------------
 !   NALU_HYPRE_SStructVectorGather
 !--------------------------------------------------------------------------
-      subroutine fhypre_sstructvectorgather(fvector)
+      subroutine fnalu_hypre_sstructvectorgather(fvector)
 
       integer ierr
       integer*8 fvector
@@ -997,7 +997,7 @@
       call NALU_HYPRE_SStructVectorGather(fvector, ierr)
 
       if (ierr .ne. 0) then
-         print *, ' fhypre_sstructvectorgather error = ', ierr
+         print *, ' fnalu_hypre_sstructvectorgather error = ', ierr
       endif
 
       return
@@ -1007,7 +1007,7 @@
 !--------------------------------------------------------------------------
 !   NALU_HYPRE_SStructVectorGetValues
 !--------------------------------------------------------------------------
-      subroutine fhypre_sstructvectorgetvalues(fvector, fpart, findex, 
+      subroutine fnalu_hypre_sstructvectorgetvalues(fvector, fpart, findex, 
      1                                         fvar, fvalue)
 
       integer ierr
@@ -1021,7 +1021,7 @@
      1                                  fvalue, ierr)
 
       if (ierr .ne. 0) then
-         print *, ' fhypre_sstructvectorgetvalues error = ', ierr
+         print *, ' fnalu_hypre_sstructvectorgetvalues error = ', ierr
       endif
 
       return
@@ -1031,7 +1031,7 @@
 !--------------------------------------------------------------------------
 !   NALU_HYPRE_SStructVectorGetBoxValues
 !--------------------------------------------------------------------------
-      subroutine fhypre_sstructvectorgetboxvalue(fvector, fpart, 
+      subroutine fnalu_hypre_sstructvectorgetboxvalue(fvector, fpart, 
      1                                            filower, fiupper, 
      2                                            fvar, fvalues)
 
@@ -1047,7 +1047,7 @@
      1                                     fiupper, fvar, fvalues, ierr)
 
       if (ierr .ne. 0) then
-         print *, ' fhypre_sstructvectorgetboxvalues error = ', ierr
+         print *, ' fnalu_hypre_sstructvectorgetboxvalues error = ', ierr
       endif
 
       return
@@ -1057,7 +1057,7 @@
 !--------------------------------------------------------------------------
 !   NALU_HYPRE_SStructVectorSetConstantValues
 !--------------------------------------------------------------------------
-      subroutine fhypre_sstructvectorsetconstant(fvector, fvalue)
+      subroutine fnalu_hypre_sstructvectorsetconstant(fvector, fvalue)
 
       integer ierr
       integer*8 fvector
@@ -1066,7 +1066,7 @@
       call NALU_HYPRE_SStructVectorSetConstantV(fvector, fvalue, ierr)
 
       if (ierr .ne. 0) then
-         print *, ' fhypre_sstructvectorsetconstantvalues error = ',
+         print *, ' fnalu_hypre_sstructvectorsetconstantvalues error = ',
      1                                       ierr
       endif
 
@@ -1077,7 +1077,7 @@
 !--------------------------------------------------------------------------
 !   NALU_HYPRE_SStructVectorSetObjectType
 !--------------------------------------------------------------------------
-      subroutine fhypre_sstructvectorsetobjectty(fvector, ftype)
+      subroutine fnalu_hypre_sstructvectorsetobjectty(fvector, ftype)
 
       integer ierr
       integer ftype
@@ -1086,7 +1086,7 @@
       call NALU_HYPRE_SStructVectorSetObjectTyp(fvector, ftype, ierr)
 
       if (ierr .ne. 0) then
-         print *, ' fhypre_sstructvectorsetobjecttype error = ', ierr
+         print *, ' fnalu_hypre_sstructvectorsetobjecttype error = ', ierr
       endif
 
       return
@@ -1096,7 +1096,7 @@
 !--------------------------------------------------------------------------
 !   NALU_HYPRE_SStructVectorGetObject
 !--------------------------------------------------------------------------
-      subroutine fhypre_sstructvectorgetobject(fvector, fobject)
+      subroutine fnalu_hypre_sstructvectorgetobject(fvector, fobject)
 
       integer ierr
       integer*8 fobject
@@ -1105,7 +1105,7 @@
       call NALU_HYPRE_SStructVectorGetObject(fvector, fobject, ierr)
 
       if (ierr .ne. 0) then
-         print *, ' fhypre_sstructvectorgetobject error = ', ierr
+         print *, ' fnalu_hypre_sstructvectorgetobject error = ', ierr
       endif
 
       return
@@ -1115,7 +1115,7 @@
 !--------------------------------------------------------------------------
 !   NALU_HYPRE_SStructVectorPrint
 !--------------------------------------------------------------------------
-      subroutine fhypre_sstructvectorprint(ffilename, fvector, fall)
+      subroutine fnalu_hypre_sstructvectorprint(ffilename, fvector, fall)
 
       integer ierr
       integer fall
@@ -1125,7 +1125,7 @@
       call NALU_HYPRE_SStructVectorPrint(ffilename, fvector, fall, ierr)
 
       if (ierr .ne. 0) then
-         print *, ' fhypre_sstructvectorprint error = ', ierr
+         print *, ' fnalu_hypre_sstructvectorprint error = ', ierr
       endif
 
       return
@@ -1135,7 +1135,7 @@
 !--------------------------------------------------------------------------
 !   NALU_HYPRE_SStructVectorCopy
 !--------------------------------------------------------------------------
-      subroutine fhypre_sstructvectorcopy(fx, fy)
+      subroutine fnalu_hypre_sstructvectorcopy(fx, fy)
 
       integer ierr
       integer*8 fx
@@ -1144,7 +1144,7 @@
       call NALU_HYPRE_SStructVectorCopy(fx, fy, ierr)
 
       if (ierr .ne. 0) then
-         print *, ' fhypre_sstructvectorcopy error = ', ierr
+         print *, ' fnalu_hypre_sstructvectorcopy error = ', ierr
       endif
 
       return
@@ -1154,7 +1154,7 @@
 !--------------------------------------------------------------------------
 !   NALU_HYPRE_SStructVectorScale
 !--------------------------------------------------------------------------
-      subroutine fhypre_sstructvectorscale(falpha, fy)
+      subroutine fnalu_hypre_sstructvectorscale(falpha, fy)
 
       integer ierr
       integer*8 fy
@@ -1163,7 +1163,7 @@
       call NALU_HYPRE_SStructVectorScale(falpha, fy, ierr)
 
       if (ierr .ne. 0) then
-         print *, ' fhypre_sstructvectorscale error = ', ierr
+         print *, ' fnalu_hypre_sstructvectorscale error = ', ierr
       endif
 
       return
@@ -1173,7 +1173,7 @@
 !--------------------------------------------------------------------------
 !   NALU_HYPRE_SStructInnerProd
 !--------------------------------------------------------------------------
-      subroutine fhypre_sstructinnerprod(fx, fy, fresult)
+      subroutine fnalu_hypre_sstructinnerprod(fx, fy, fresult)
 
       integer ierr
       integer*8 fx
@@ -1183,7 +1183,7 @@
       call NALU_HYPRE_SStructInnerProd(fx, fy, fresult, ierr)
 
       if (ierr .ne. 0) then
-         print *, ' fhypre_sstructinnerprod error = ', ierr
+         print *, ' fnalu_hypre_sstructinnerprod error = ', ierr
       endif
 
       return
@@ -1193,7 +1193,7 @@
 !--------------------------------------------------------------------------
 !   NALU_HYPRE_SStructAxpy
 !--------------------------------------------------------------------------
-      subroutine fhypre_sstructaxpy(falpha, fx, fy)
+      subroutine fnalu_hypre_sstructaxpy(falpha, fx, fy)
 
       integer ierr
       integer*8 fx
@@ -1203,7 +1203,7 @@
       call NALU_HYPRE_SStructAxpy(falpha, fx, fy, ierr)
 
       if (ierr .ne. 0) then
-         print *, ' fhypre_sstructaxpy error = ', ierr
+         print *, ' fnalu_hypre_sstructaxpy error = ', ierr
       endif
 
       return

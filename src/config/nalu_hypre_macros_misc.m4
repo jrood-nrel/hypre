@@ -68,7 +68,7 @@ AC_DEFUN([AC_NALU_HYPRE_FIND_G2C],
 [
 dnl AC_REQUIRE([AC_FC_LIBRARY_LDFLAGS])
 
-  hypre_save_LIBS="$LIBS"
+  nalu_hypre_save_LIBS="$LIBS"
   LIBS="$LIBS $FLIBS"
 
   found_g2c=no
@@ -81,9 +81,9 @@ dnl * This setting of LDFLAGS is not the right way to go (RDF)
   AC_CHECK_LIB(g2c, e_wsfe, [found_g2c=yes])
 
   if test "$found_g2c" = "yes"; then
-     LIBS="-lg2c $hypre_save_LIBS"
+     LIBS="-lg2c $nalu_hypre_save_LIBS"
   else
-     LIBS="$hypre_save_LIBS"
+     LIBS="$nalu_hypre_save_LIBS"
   fi
 
 ])
@@ -96,33 +96,33 @@ dnl **********************************************************************
 AC_DEFUN([AC_NALU_HYPRE_OPTIMIZATION_FLAGS],
 [AC_PREREQ(2.57)dnl
 
-if test "x${hypre_user_chose_cflags}" = "xno"
+if test "x${nalu_hypre_user_chose_cflags}" = "xno"
 then
    case `basename "${CC}"` in
       gcc|mpigcc|mpicc)
         CFLAGS="-O2"
-        if test "$hypre_using_openmp" = "yes" ; then
+        if test "$nalu_hypre_using_openmp" = "yes" ; then
           CFLAGS="$CFLAGS -fopenmp"
           LDFLAGS="$LDFLAGS -fopenmp"
         fi
         ;;
       icc|mpiicc|icx|mpiicx)
         CFLAGS="-O2"
-        if test "$hypre_using_openmp" = "yes" ; then
+        if test "$nalu_hypre_using_openmp" = "yes" ; then
           CFLAGS="$CFLAGS -qopenmp"
           LDFLAGS="$LDFLAGS -qopenmp"
         fi
         ;;
       pgcc|mpipgcc|mpipgicc)
         CFLAGS="-fast"
-        if test "$hypre_using_openmp" = "yes" ; then
+        if test "$nalu_hypre_using_openmp" = "yes" ; then
           CFLAGS="$CFLAGS -mp"
           LDFLAGS="$LDFLAGS -mp"
         fi
         ;;
       cc|xlc|xlc_r|mpxlc|mpixlc|mpixlc_r|mpixlc-gpu|mpcc)
         CFLAGS="-O2"
-        if test "$hypre_using_openmp" = "yes" ; then
+        if test "$nalu_hypre_using_openmp" = "yes" ; then
           CFLAGS="$CFLAGS -qsmp=omp"
           LDFLAGS="$LDFLAGS -qsmp=omp"
         fi
@@ -136,30 +136,30 @@ then
    esac
 fi
 
-if test "x${hypre_user_chose_cxxflags}" = "xno"
+if test "x${nalu_hypre_user_chose_cxxflags}" = "xno"
 then
    case `basename "${CXX}"` in
       g++|gCC|mpig++|mpicxx|mpic++|mpiCC)
         CXXFLAGS="-O2"
-        if test "$hypre_using_openmp" = "yes" ; then
+        if test "$nalu_hypre_using_openmp" = "yes" ; then
           CXXFLAGS="$CXXFLAGS -fopenmp"
         fi
         ;;
       icpc|icc|mpiicpc|mpiicc|icpx|mpiicpx)
         CXXFLAGS="-O2"
-        if test "$hypre_using_openmp" = "yes" ; then
+        if test "$nalu_hypre_using_openmp" = "yes" ; then
           CXXFLAGS="$CXXFLAGS -qopenmp"
         fi
         ;;
       pgCC|mpipgCC|pgc++|mpipgic++)
         CXXFLAGS="-fast"
-        if test "$hypre_using_openmp" = "yes" ; then
+        if test "$nalu_hypre_using_openmp" = "yes" ; then
           CXXFLAGS="$CXXFLAGS -mp"
         fi
         ;;
       CC|cxx|xlC|xlC_r|mpxlC|mpixlC|mpixlC-gpu|mpixlcxx|mpixlcxx_r|mpCC)
         CXXFLAGS="-O2"
-        if test "$hypre_using_openmp" = "yes" ; then
+        if test "$nalu_hypre_using_openmp" = "yes" ; then
           CXXFLAGS="$CXXFLAGS -qsmp=omp"
         fi
         ;;
@@ -172,30 +172,30 @@ then
    esac
 fi
 
-if test "x${hypre_user_chose_fflags}" = "xno"
+if test "x${nalu_hypre_user_chose_fflags}" = "xno"
 then
    case `basename "${FC}"` in
       g77|gfortran|mpigfortran|mpif77)
         FFLAGS="-O2"
-        if test "$hypre_using_openmp" = "yes" ; then
+        if test "$nalu_hypre_using_openmp" = "yes" ; then
           FFLAGS="$FFLAGS -fopenmp"
         fi
         ;;
       ifort|mpiifort)
         FFLAGS="-O2"
-        if test "$hypre_using_openmp" = "yes" ; then
+        if test "$nalu_hypre_using_openmp" = "yes" ; then
           FFLAGS="$FFLAGS -qopenmp"
         fi
         ;;
       pgf77|mpipgf77|pgfortran|mpipgifort)
         FFLAGS="-fast"
-        if test "$hypre_using_openmp" = "yes" ; then
+        if test "$nalu_hypre_using_openmp" = "yes" ; then
           FFLAGS="$FFLAGS -mp"
         fi
         ;;
       f77|f90|xlf|xlf_r|mpxlf|mpixlf77|mpixlf77_r)
         FFLAGS="-O2"
-        if test "$hypre_using_openmp" = "yes" ; then
+        if test "$nalu_hypre_using_openmp" = "yes" ; then
           FFLAGS="$FFLAGS -qsmp=omp"
         fi
         ;;
@@ -216,33 +216,33 @@ dnl **********************************************************************
 AC_DEFUN([AC_NALU_HYPRE_DEBUG_FLAGS],
 [AC_PREREQ(2.57)dnl
 
-if test "x${hypre_user_chose_cflags}" = "xno"
+if test "x${nalu_hypre_user_chose_cflags}" = "xno"
 then
    case `basename "${CC}"` in
       gcc|mpigcc|mpicc)
         CFLAGS="-g -Wall"
-        if test "$hypre_using_openmp" = "yes" ; then
+        if test "$nalu_hypre_using_openmp" = "yes" ; then
           CFLAGS="$CFLAGS -fopenmp"
           LDFLAGS="$LDFLAGS -fopenmp"
         fi
         ;;
       icc|mpiicc|icx|mpiicx)
         CFLAGS="-g"
-        if test "$hypre_using_openmp" = "yes" ; then
+        if test "$nalu_hypre_using_openmp" = "yes" ; then
           CFLAGS="$CFLAGS -qopenmp"
           LDFLAGS="$LDFLAGS -qopenmp"
         fi
         ;;
       pgcc|mpipgcc|mpipgicc)
         CFLAGS="-g"
-        if test "$hypre_using_openmp" = "yes" ; then
+        if test "$nalu_hypre_using_openmp" = "yes" ; then
           CFLAGS="$CFLAGS -mp"
           LDFLAGS="$LDFLAGS -mp"
         fi
         ;;
       cc|xlc|mpxlc|mpixlc|mpcc)
         CFLAGS="-g"
-        if test "$hypre_using_openmp" = "yes" ; then
+        if test "$nalu_hypre_using_openmp" = "yes" ; then
           CFLAGS="$CFLAGS -qsmp=omp"
           LDFLAGS="$LDFLAGS -qsmp=omp"
         fi
@@ -256,30 +256,30 @@ then
    esac
 fi
 
-if test "x${hypre_user_chose_cxxflags}" = "xno"
+if test "x${nalu_hypre_user_chose_cxxflags}" = "xno"
 then
    case `basename "${CXX}"` in
       g++|gCC|mpig++|mpicxx|mpic++|mpiCC)
         CXXFLAGS="-g -Wall"
-        if test "$hypre_using_openmp" = "yes" ; then
+        if test "$nalu_hypre_using_openmp" = "yes" ; then
           CXXFLAGS="$CXXFLAGS -fopenmp"
         fi
         ;;
       icpc|icc|mpiicpc|mpiicc|icpx|mpiicpx)
         CXXFLAGS="-g"
-        if test "$hypre_using_openmp" = "yes" ; then
+        if test "$nalu_hypre_using_openmp" = "yes" ; then
           CXXFLAGS="$CXXFLAGS -qopenmp"
         fi
         ;;
       pgCC|mpipgCC|pgc++|mpipgic++)
         CXXFLAGS="-g"
-        if test "$hypre_using_openmp" = "yes" ; then
+        if test "$nalu_hypre_using_openmp" = "yes" ; then
           CXXFLAGS="$CXXFLAGS -mp"
         fi
         ;;
       CC|cxx|xlC|mpxlC|mpixlcxx|mpCC)
         CXXFLAGS="-g"
-        if test "$hypre_using_openmp" = "yes" ; then
+        if test "$nalu_hypre_using_openmp" = "yes" ; then
           CXXFLAGS="$CXXFLAGS -qsmp=omp"
         fi
         ;;
@@ -292,30 +292,30 @@ then
    esac
 fi
 
-if test "x${hypre_user_chose_fflags}" = "xno"
+if test "x${nalu_hypre_user_chose_fflags}" = "xno"
 then
    case `basename "${FC}"` in
       g77|gfortran|mpigfortran|mpif77)
         FFLAGS="-g -Wall"
-        if test "$hypre_using_openmp" = "yes" ; then
+        if test "$nalu_hypre_using_openmp" = "yes" ; then
           FFLAGS="$FFLAGS -fopenmp"
         fi
         ;;
       ifort|mpiifort|ifx|mpiifx)
         FFLAGS="-g"
-        if test "$hypre_using_openmp" = "yes" ; then
+        if test "$nalu_hypre_using_openmp" = "yes" ; then
           FFLAGS="$FFLAGS -qopenmp"
         fi
         ;;
       pgf77|mpipgf77|pgfortran|mpipgifort)
         FFLAGS="-g"
-        if test "$hypre_using_openmp" = "yes" ; then
+        if test "$nalu_hypre_using_openmp" = "yes" ; then
           FFLAGS="$FFLAGS -mp"
         fi
         ;;
       f77|f90|xlf|mpxlf|mpixlf77)
         FFLAGS="-g"
-        if test "$hypre_using_openmp" = "yes" ; then
+        if test "$nalu_hypre_using_openmp" = "yes" ; then
           FFLAGS="$FFLAGS -qsmp=omp"
         fi
         ;;
@@ -352,8 +352,8 @@ AC_DEFUN([AC_NALU_HYPRE_SET_ARCH],
    then
 
       AC_MSG_CHECKING(the hostname)
-      hypre_hostname=hostname
-      HOSTNAME="`$hypre_hostname`"
+      nalu_hypre_hostname=hostname
+      HOSTNAME="`$nalu_hypre_hostname`"
 
       dnl * if $HOSTNAME is still empty, give it the value "unknown".
       if test -z "$HOSTNAME"
@@ -372,23 +372,23 @@ AC_DEFUN([AC_NALU_HYPRE_SET_ARCH],
 
          dnl * search for the tool "tarch".  It should be in the same
          dnl * directory as configure.in, but a couple of other places will
-         dnl * be checked.  hypre_tarch stores a relative path for "tarch".
-         hypre_tarch_dir=
-         for hypre_dir in $srcdir $srcdir/.. $srcdir/../.. $srcdir/config; do
-            if test -f $hypre_dir/tarch; then
-               hypre_tarch_dir=$hypre_dir
-               hypre_tarch=$hypre_tarch_dir/tarch
+         dnl * be checked.  nalu_hypre_tarch stores a relative path for "tarch".
+         nalu_hypre_tarch_dir=
+         for nalu_hypre_dir in $srcdir $srcdir/.. $srcdir/../.. $srcdir/config; do
+            if test -f $nalu_hypre_dir/tarch; then
+               nalu_hypre_tarch_dir=$nalu_hypre_dir
+               nalu_hypre_tarch=$nalu_hypre_tarch_dir/tarch
                break
             fi
          done
 
          dnl * if tarch was not found or doesn't work, try using env variable
          dnl * $HOSTTYPE
-         if test -z "$hypre_tarch_dir"; then
+         if test -z "$nalu_hypre_tarch_dir"; then
             AC_MSG_WARN(cannot find tarch, using \$HOSTTYPE as the architecture)
             NALU_HYPRE_ARCH=$HOSTTYPE
          else
-            NALU_HYPRE_ARCH="`$hypre_tarch`"
+            NALU_HYPRE_ARCH="`$nalu_hypre_tarch`"
 
             if test -z "$NALU_HYPRE_ARCH" || test "$NALU_HYPRE_ARCH" = "unknown"; then
                NALU_HYPRE_ARCH=$HOSTTYPE

@@ -7,31 +7,31 @@
 
 #include "par_csr_pmvcomm.h"
 
-#include "_hypre_parcsr_mv.h"
+#include "_nalu_hypre_parcsr_mv.h"
 
 /*==========================================================================*/
 
-hypre_ParCSRCommMultiHandle *
-hypre_ParCSRCommMultiHandleCreate (NALU_HYPRE_Int                   job,
-                                   hypre_ParCSRCommPkg *comm_pkg,
+nalu_hypre_ParCSRCommMultiHandle *
+nalu_hypre_ParCSRCommMultiHandleCreate (NALU_HYPRE_Int                   job,
+                                   nalu_hypre_ParCSRCommPkg *comm_pkg,
                                    void                *send_data,
                                    void                *recv_data,
                                    NALU_HYPRE_Int                 num_vecs )
 {
-   NALU_HYPRE_Int            num_sends = hypre_ParCSRCommPkgNumSends(comm_pkg);
-   NALU_HYPRE_Int            num_recvs = hypre_ParCSRCommPkgNumRecvs(comm_pkg);
-   MPI_Comm             comm      = hypre_ParCSRCommPkgComm(comm_pkg);
+   NALU_HYPRE_Int            num_sends = nalu_hypre_ParCSRCommPkgNumSends(comm_pkg);
+   NALU_HYPRE_Int            num_recvs = nalu_hypre_ParCSRCommPkgNumRecvs(comm_pkg);
+   MPI_Comm             comm      = nalu_hypre_ParCSRCommPkgComm(comm_pkg);
 
-   hypre_ParCSRCommMultiHandle *comm_handle;
+   nalu_hypre_ParCSRCommMultiHandle *comm_handle;
    NALU_HYPRE_Int                   num_requests;
-   hypre_MPI_Request           *requests;
+   nalu_hypre_MPI_Request           *requests;
 
    NALU_HYPRE_Int                  i, j;
    NALU_HYPRE_Int                  my_id, num_procs;
    NALU_HYPRE_Int                  ip, vec_start, vec_len;
 
    /*--------------------------------------------------------------------
-    * hypre_Initialize sets up a communication handle,
+    * nalu_hypre_Initialize sets up a communication handle,
     * posts receives and initiates sends. It always requires num_sends,
     * num_recvs, recv_procs and send_procs to be set in comm_pkg.
     * There are different options for job:
@@ -46,10 +46,10 @@ hypre_ParCSRCommMultiHandleCreate (NALU_HYPRE_Int                   job,
     *--------------------------------------------------------------------*/
 
    num_requests = num_sends + num_recvs;
-   requests = hypre_CTAlloc(hypre_MPI_Request,  num_requests, NALU_HYPRE_MEMORY_HOST);
+   requests = nalu_hypre_CTAlloc(nalu_hypre_MPI_Request,  num_requests, NALU_HYPRE_MEMORY_HOST);
 
-   hypre_MPI_Comm_size(comm, &num_procs);
-   hypre_MPI_Comm_rank(comm, &my_id);
+   nalu_hypre_MPI_Comm_size(comm, &num_procs);
+   nalu_hypre_MPI_Comm_rank(comm, &my_id);
 
    j = 0;
    switch (job)
@@ -60,18 +60,18 @@ hypre_ParCSRCommMultiHandleCreate (NALU_HYPRE_Int                   job,
          NALU_HYPRE_Complex *d_recv_data = (NALU_HYPRE_Complex *) recv_data;
          for (i = 0; i < num_recvs; i++)
          {
-            ip = hypre_ParCSRCommPkgRecvProc(comm_pkg, i);
-            vec_start = hypre_ParCSRCommPkgRecvVecStart(comm_pkg, i);
-            vec_len = hypre_ParCSRCommPkgRecvVecStart(comm_pkg, i + 1) - vec_start;
-            hypre_MPI_Irecv(&d_recv_data[vec_start * num_vecs], vec_len * num_vecs,
+            ip = nalu_hypre_ParCSRCommPkgRecvProc(comm_pkg, i);
+            vec_start = nalu_hypre_ParCSRCommPkgRecvVecStart(comm_pkg, i);
+            vec_len = nalu_hypre_ParCSRCommPkgRecvVecStart(comm_pkg, i + 1) - vec_start;
+            nalu_hypre_MPI_Irecv(&d_recv_data[vec_start * num_vecs], vec_len * num_vecs,
                             NALU_HYPRE_MPI_COMPLEX, ip, 0, comm, &requests[j++]);
          }
          for (i = 0; i < num_sends; i++)
          {
-            vec_start = hypre_ParCSRCommPkgSendMapStart(comm_pkg, i);
-            vec_len = hypre_ParCSRCommPkgSendMapStart(comm_pkg, i + 1) - vec_start;
-            ip = hypre_ParCSRCommPkgSendProc(comm_pkg, i);
-            hypre_MPI_Isend(&d_send_data[vec_start * num_vecs], vec_len * num_vecs,
+            vec_start = nalu_hypre_ParCSRCommPkgSendMapStart(comm_pkg, i);
+            vec_len = nalu_hypre_ParCSRCommPkgSendMapStart(comm_pkg, i + 1) - vec_start;
+            ip = nalu_hypre_ParCSRCommPkgSendProc(comm_pkg, i);
+            nalu_hypre_MPI_Isend(&d_send_data[vec_start * num_vecs], vec_len * num_vecs,
                             NALU_HYPRE_MPI_COMPLEX, ip, 0, comm, &requests[j++]);
          }
          break;
@@ -82,18 +82,18 @@ hypre_ParCSRCommMultiHandleCreate (NALU_HYPRE_Int                   job,
          NALU_HYPRE_Complex *d_recv_data = (NALU_HYPRE_Complex *) recv_data;
          for (i = 0; i < num_sends; i++)
          {
-            vec_start = hypre_ParCSRCommPkgSendMapStart(comm_pkg, i);
-            vec_len = hypre_ParCSRCommPkgSendMapStart(comm_pkg, i + 1) - vec_start;
-            ip = hypre_ParCSRCommPkgSendProc(comm_pkg, i);
-            hypre_MPI_Irecv(&d_recv_data[vec_start * num_vecs], vec_len * num_vecs,
+            vec_start = nalu_hypre_ParCSRCommPkgSendMapStart(comm_pkg, i);
+            vec_len = nalu_hypre_ParCSRCommPkgSendMapStart(comm_pkg, i + 1) - vec_start;
+            ip = nalu_hypre_ParCSRCommPkgSendProc(comm_pkg, i);
+            nalu_hypre_MPI_Irecv(&d_recv_data[vec_start * num_vecs], vec_len * num_vecs,
                             NALU_HYPRE_MPI_COMPLEX, ip, 0, comm, &requests[j++]);
          }
          for (i = 0; i < num_recvs; i++)
          {
-            ip = hypre_ParCSRCommPkgRecvProc(comm_pkg, i);
-            vec_start = hypre_ParCSRCommPkgRecvVecStart(comm_pkg, i);
-            vec_len = hypre_ParCSRCommPkgRecvVecStart(comm_pkg, i + 1) - vec_start;
-            hypre_MPI_Isend(&d_send_data[vec_start * num_vecs], vec_len * num_vecs,
+            ip = nalu_hypre_ParCSRCommPkgRecvProc(comm_pkg, i);
+            vec_start = nalu_hypre_ParCSRCommPkgRecvVecStart(comm_pkg, i);
+            vec_len = nalu_hypre_ParCSRCommPkgRecvVecStart(comm_pkg, i + 1) - vec_start;
+            nalu_hypre_MPI_Isend(&d_send_data[vec_start * num_vecs], vec_len * num_vecs,
                             NALU_HYPRE_MPI_COMPLEX, ip, 0, comm, &requests[j++]);
          }
          break;
@@ -104,34 +104,34 @@ hypre_ParCSRCommMultiHandleCreate (NALU_HYPRE_Int                   job,
     * set up comm_handle and return
     *--------------------------------------------------------------------*/
 
-   comm_handle = hypre_CTAlloc(hypre_ParCSRCommMultiHandle,  1, NALU_HYPRE_MEMORY_HOST);
+   comm_handle = nalu_hypre_CTAlloc(nalu_hypre_ParCSRCommMultiHandle,  1, NALU_HYPRE_MEMORY_HOST);
 
-   hypre_ParCSRCommMultiHandleCommPkg(comm_handle)     = comm_pkg;
-   hypre_ParCSRCommMultiHandleSendData(comm_handle)    = send_data;
-   hypre_ParCSRCommMultiHandleRecvData(comm_handle)    = recv_data;
-   hypre_ParCSRCommMultiHandleNumRequests(comm_handle) = num_requests;
-   hypre_ParCSRCommMultiHandleRequests(comm_handle)    = requests;
+   nalu_hypre_ParCSRCommMultiHandleCommPkg(comm_handle)     = comm_pkg;
+   nalu_hypre_ParCSRCommMultiHandleSendData(comm_handle)    = send_data;
+   nalu_hypre_ParCSRCommMultiHandleRecvData(comm_handle)    = recv_data;
+   nalu_hypre_ParCSRCommMultiHandleNumRequests(comm_handle) = num_requests;
+   nalu_hypre_ParCSRCommMultiHandleRequests(comm_handle)    = requests;
 
    return (comm_handle);
 }
 
 NALU_HYPRE_Int
-hypre_ParCSRCommMultiHandleDestroy(hypre_ParCSRCommMultiHandle *comm_handle)
+nalu_hypre_ParCSRCommMultiHandleDestroy(nalu_hypre_ParCSRCommMultiHandle *comm_handle)
 {
-   hypre_MPI_Status *status0;
+   nalu_hypre_MPI_Status *status0;
    NALU_HYPRE_Int    ierr = 0;
 
-   if (hypre_ParCSRCommMultiHandleNumRequests(comm_handle))
+   if (nalu_hypre_ParCSRCommMultiHandleNumRequests(comm_handle))
    {
-      status0 = hypre_CTAlloc(hypre_MPI_Status,
-                              hypre_ParCSRCommMultiHandleNumRequests(comm_handle), NALU_HYPRE_MEMORY_HOST);
-      hypre_MPI_Waitall(hypre_ParCSRCommMultiHandleNumRequests(comm_handle),
-                        hypre_ParCSRCommMultiHandleRequests(comm_handle), status0);
-      hypre_TFree(status0, NALU_HYPRE_MEMORY_HOST);
+      status0 = nalu_hypre_CTAlloc(nalu_hypre_MPI_Status,
+                              nalu_hypre_ParCSRCommMultiHandleNumRequests(comm_handle), NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_MPI_Waitall(nalu_hypre_ParCSRCommMultiHandleNumRequests(comm_handle),
+                        nalu_hypre_ParCSRCommMultiHandleRequests(comm_handle), status0);
+      nalu_hypre_TFree(status0, NALU_HYPRE_MEMORY_HOST);
    }
 
-   hypre_TFree(hypre_ParCSRCommMultiHandleRequests(comm_handle), NALU_HYPRE_MEMORY_HOST);
-   hypre_TFree(comm_handle, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(nalu_hypre_ParCSRCommMultiHandleRequests(comm_handle), NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(comm_handle, NALU_HYPRE_MEMORY_HOST);
 
    return ierr;
 }

@@ -46,7 +46,7 @@
 #define ASSERT_DH(ptr) \
     { \
       if (ptr == NULL) { \
-        hypre_sprintf(msgBuf_dh, "%s is NULL", ptr); \
+        nalu_hypre_sprintf(msgBuf_dh, "%s is NULL", ptr); \
         SET_V_ERROR(msgBuf_dh); \
       } \
     }
@@ -57,7 +57,7 @@
       { \
         if (errCode) { \
           NALU_HYPRE_Int len; \
-          hypre_MPI_Error_string(errCode, msgBuf_dh, &len); \
+          nalu_hypre_MPI_Error_string(errCode, msgBuf_dh, &len); \
           setError_dh(msgBuf_dh, __FUNC__, __FILE__, __LINE__); \
           return; \
         } \
@@ -67,7 +67,7 @@
       { \
         if (errCode) { \
           NALU_HYPRE_Int len; \
-          hypre_MPI_Error_string(errCode, msgBuf_dh, &len); \
+          nalu_hypre_MPI_Error_string(errCode, msgBuf_dh, &len); \
           setError_dh(msgBuf_dh, __FUNC__, __FILE__, __LINE__); \
           return(errCode); \
         } \

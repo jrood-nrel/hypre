@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_utilities.h"
+#include "_nalu_hypre_utilities.h"
 
 #if defined(NALU_HYPRE_USING_ROCTX)
 #include "hip/hip_runtime_api.h"
@@ -62,15 +62,15 @@ static const uint32_t colors[] =
    0x800080
 };
 
-static const NALU_HYPRE_Int hypre_nvtx_num_colors = sizeof(colors) / sizeof(uint32_t);
-static std::vector<std::string> hypre_nvtx_range_names;
+static const NALU_HYPRE_Int nalu_hypre_nvtx_num_colors = sizeof(colors) / sizeof(uint32_t);
+static std::vector<std::string> nalu_hypre_nvtx_range_names;
 
 #endif // defined(NALU_HYPRE_USING_NVTX)
 
-void hypre_GpuProfilingPushRangeColor(const char *name, NALU_HYPRE_Int color_id)
+void nalu_hypre_GpuProfilingPushRangeColor(const char *name, NALU_HYPRE_Int color_id)
 {
 #if defined (NALU_HYPRE_USING_NVTX)
-   color_id = color_id % hypre_nvtx_num_colors;
+   color_id = color_id % nalu_hypre_nvtx_num_colors;
    nvtxEventAttributes_t eventAttrib = {0};
    eventAttrib.version = NVTX_VERSION;
    eventAttrib.size = NVTX_EVENT_ATTRIB_STRUCT_SIZE;
@@ -86,22 +86,22 @@ void hypre_GpuProfilingPushRangeColor(const char *name, NALU_HYPRE_Int color_id)
 #endif
 }
 
-void hypre_GpuProfilingPushRange(const char *name)
+void nalu_hypre_GpuProfilingPushRange(const char *name)
 {
 #if defined (NALU_HYPRE_USING_NVTX)
-   std::vector<std::string>::iterator p = std::find(hypre_nvtx_range_names.begin(),
-                                                    hypre_nvtx_range_names.end(),
+   std::vector<std::string>::iterator p = std::find(nalu_hypre_nvtx_range_names.begin(),
+                                                    nalu_hypre_nvtx_range_names.end(),
                                                     name);
 
-   if (p == hypre_nvtx_range_names.end())
+   if (p == nalu_hypre_nvtx_range_names.end())
    {
-      hypre_nvtx_range_names.push_back(name);
-      p = hypre_nvtx_range_names.end() - 1;
+      nalu_hypre_nvtx_range_names.push_back(name);
+      p = nalu_hypre_nvtx_range_names.end() - 1;
    }
 
-   NALU_HYPRE_Int color = p - hypre_nvtx_range_names.begin();
+   NALU_HYPRE_Int color = p - nalu_hypre_nvtx_range_names.begin();
 
-   hypre_GpuProfilingPushRangeColor(name, color);
+   nalu_hypre_GpuProfilingPushRangeColor(name, color);
 
 #elif defined (NALU_HYPRE_USING_ROCTX)
    roctxRangePush(name);
@@ -109,10 +109,10 @@ void hypre_GpuProfilingPushRange(const char *name)
 #endif
 }
 
-void hypre_GpuProfilingPopRange()
+void nalu_hypre_GpuProfilingPopRange()
 {
 #if defined (NALU_HYPRE_USING_NVTX)
-   hypre_GpuProfilingPushRangeColor("StreamSync0", Red);
+   nalu_hypre_GpuProfilingPushRangeColor("StreamSync0", Red);
    cudaStreamSynchronize(0);
    nvtxRangePop();
    nvtxRangePop();

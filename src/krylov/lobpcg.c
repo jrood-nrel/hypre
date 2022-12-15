@@ -72,13 +72,13 @@ lobpcg_solveGEVP(
    ldb = utilities_FortranMatrixGlobalHeight( mtxB );
    lwork = 10 * n;
 
-   work = hypre_CTAlloc(NALU_HYPRE_Real,  lwork, NALU_HYPRE_MEMORY_HOST);
+   work = nalu_hypre_CTAlloc(NALU_HYPRE_Real,  lwork, NALU_HYPRE_MEMORY_HOST);
 
    (*dsygv)( &itype, &jobz, &uplo, &n,
              a, &lda, b, &ldb,
              lmd, &work[0], &lwork, &info );
 
-   hypre_TFree( work, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree( work, NALU_HYPRE_MEMORY_HOST);
    return info;
 
 }
@@ -199,8 +199,8 @@ lobpcg_errorMessage( NALU_HYPRE_Int verbosityLevel, const char* message )
 {
    if ( verbosityLevel )
    {
-      hypre_fprintf( stderr, "Error in LOBPCG:\n" );
-      hypre_fprintf( stderr, "%s", message );
+      nalu_hypre_fprintf( stderr, "Error in LOBPCG:\n" );
+      nalu_hypre_fprintf( stderr, "%s", message );
    }
 }
 
@@ -276,7 +276,7 @@ lobpcg_solve( mv_MultiVectorPtr blockVectorX,
    NALU_HYPRE_Int          i; /* short loop counter */
 
 #if 0
-   hypre_longint            n; /* dimension 1 of X */
+   nalu_hypre_longint            n; /* dimension 1 of X */
    /* had to remove because n is not available in some interfaces */
 #endif
 
@@ -432,7 +432,7 @@ lobpcg_solve( mv_MultiVectorPtr blockVectorX,
       {
          if ( verbosityLevel )
          {
-            hypre_printf("Cannot handle linear dependent constraints\n");
+            nalu_hypre_printf("Cannot handle linear dependent constraints\n");
          }
          utilities_FortranMatrixDestroy( gramYBY );
          utilities_FortranMatrixDestroy( gramYBX );
@@ -459,35 +459,35 @@ lobpcg_solve( mv_MultiVectorPtr blockVectorX,
 
    if ( verbosityLevel )
    {
-      hypre_printf("\nSolving ");
+      nalu_hypre_printf("\nSolving ");
       if ( noBFlag )
       {
-         hypre_printf("standard");
+         nalu_hypre_printf("standard");
       }
       else
       {
-         hypre_printf("generalized");
+         nalu_hypre_printf("generalized");
       }
-      hypre_printf(" eigenvalue problem with");
+      nalu_hypre_printf(" eigenvalue problem with");
       if ( noTFlag )
       {
-         hypre_printf("out");
+         nalu_hypre_printf("out");
       }
-      hypre_printf(" preconditioning\n\n");
-      hypre_printf("block size %d\n\n", sizeX );
+      nalu_hypre_printf(" preconditioning\n\n");
+      nalu_hypre_printf("block size %d\n\n", sizeX );
       if ( noYFlag )
       {
-         hypre_printf("No constraints\n\n");
+         nalu_hypre_printf("No constraints\n\n");
       }
       else
       {
          if ( sizeY > 1 )
          {
-            hypre_printf("%d constraints\n\n", sizeY);
+            nalu_hypre_printf("%d constraints\n\n", sizeY);
          }
          else
          {
-            hypre_printf("%d constraint\n\n", sizeY);
+            nalu_hypre_printf("%d constraint\n\n", sizeY);
          }
       }
    }
@@ -526,8 +526,8 @@ lobpcg_solve( mv_MultiVectorPtr blockVectorX,
    historyColumn = utilities_FortranMatrixCreate();
 
    /* initializing soft locking mask */
-   activeMask = hypre_CTAlloc(NALU_HYPRE_Int,  sizeX, NALU_HYPRE_MEMORY_HOST);
-   hypre_assert( activeMask != NULL );
+   activeMask = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  sizeX, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_assert( activeMask != NULL );
    for ( i = 0; i < sizeX; i++ )
    {
       activeMask[i] = 1;
@@ -585,7 +585,7 @@ lobpcg_solve( mv_MultiVectorPtr blockVectorX,
       lobpcg_errorMessage( verbosityLevel, "Bad initial vectors: orthonormalization failed\n" );
       if ( verbosityLevel )
       {
-         hypre_printf("DPOTRF INFO = %d\n", exitFlag);
+         nalu_hypre_printf("DPOTRF INFO = %d\n", exitFlag);
       }
    }
    else
@@ -617,7 +617,7 @@ lobpcg_solve( mv_MultiVectorPtr blockVectorX,
                               "Bad problem: Rayleigh-Ritz in the initial subspace failed\n" );
          if ( verbosityLevel )
          {
-            hypre_printf("DSYGV INFO = %d\n", exitFlag);
+            nalu_hypre_printf("DSYGV INFO = %d\n", exitFlag);
          }
       }
       else
@@ -672,16 +672,16 @@ lobpcg_solve( mv_MultiVectorPtr blockVectorX,
 
          if ( verbosityLevel == 2 )
          {
-            hypre_printf("\n");
+            nalu_hypre_printf("\n");
             for (i = 1; i <= sizeX; i++ )
-               hypre_printf("Initial eigenvalues lambda %22.14e\n",
+               nalu_hypre_printf("Initial eigenvalues lambda %22.14e\n",
                             utilities_FortranMatrixValue( lambda, i, 1) );
             for (i = 1; i <= sizeX; i++)
-               hypre_printf("Initial residuals %12.6e\n",
+               nalu_hypre_printf("Initial residuals %12.6e\n",
                             utilities_FortranMatrixValue( residualNorms, i, 1) );
          }
          else if ( verbosityLevel == 1 )
-            hypre_printf("\nInitial Max. Residual %22.14e\n",
+            nalu_hypre_printf("\nInitial Max. Residual %22.14e\n",
                          utilities_FortranMatrixMaxValue( residualNorms ) );
       }
    }
@@ -751,7 +751,7 @@ lobpcg_solve( mv_MultiVectorPtr blockVectorX,
          lobpcg_errorMessage( verbosityLevel, "Orthonormalization of residuals failed\n" );
          if ( verbosityLevel )
          {
-            hypre_printf("DPOTRF INFO = %d\n", exitFlag);
+            nalu_hypre_printf("DPOTRF INFO = %d\n", exitFlag);
          }
          break;
       }
@@ -781,7 +781,7 @@ lobpcg_solve( mv_MultiVectorPtr blockVectorX,
             /*
             lobpcg_errorMessage( verbosityLevel, "Orthonormalization of P failed\n" );
             if ( verbosityLevel )
-              hypre_printf("DPOTRF INFO = %d\n", exitFlag);
+              nalu_hypre_printf("DPOTRF INFO = %d\n", exitFlag);
             */
             sizeP = 0;
          }
@@ -867,7 +867,7 @@ lobpcg_solve( mv_MultiVectorPtr blockVectorX,
          lobpcg_errorMessage( verbosityLevel, "GEVP solver failure\n" );
          (*iterationNumber)--;
          /* if ( verbosityLevel )
-         hypre_printf("INFO = %d\n", exitFlag);*/
+         nalu_hypre_printf("INFO = %d\n", exitFlag);*/
          break;
       }
 
@@ -981,16 +981,16 @@ lobpcg_solve( mv_MultiVectorPtr blockVectorX,
 
       if ( verbosityLevel == 2 )
       {
-         hypre_printf( "Iteration %d \tbsize %d\n", *iterationNumber, sizeR );
+         nalu_hypre_printf( "Iteration %d \tbsize %d\n", *iterationNumber, sizeR );
          for ( i = 1; i <= sizeX; i++ )
-            hypre_printf("Eigenvalue lambda %22.14e\n",
+            nalu_hypre_printf("Eigenvalue lambda %22.14e\n",
                          utilities_FortranMatrixValue( lambda, i, 1) );
          for ( i = 1; i <= sizeX; i++ )
-            hypre_printf("Residual %12.6e\n",
+            nalu_hypre_printf("Residual %12.6e\n",
                          utilities_FortranMatrixValue( residualNorms, i, 1) );
       }
       else if ( verbosityLevel == 1 )
-         hypre_printf("Iteration %d \tbsize %d \tmaxres %22.14e\n",
+         nalu_hypre_printf("Iteration %d \tbsize %d \tmaxres %22.14e\n",
                       *iterationNumber, sizeR,
                       utilities_FortranMatrixMaxValue( residualNorms ) );
 
@@ -1012,14 +1012,14 @@ lobpcg_solve( mv_MultiVectorPtr blockVectorX,
 
    if ( verbosityLevel == 1 )
    {
-      hypre_printf("\n");
+      nalu_hypre_printf("\n");
       for ( i = 1; i <= sizeX; i++ )
-         hypre_printf("Eigenvalue lambda %22.14e\n",
+         nalu_hypre_printf("Eigenvalue lambda %22.14e\n",
                       utilities_FortranMatrixValue( lambda, i, 1) );
       for ( i = 1; i <= sizeX; i++ )
-         hypre_printf("Residual %22.14e\n",
+         nalu_hypre_printf("Residual %22.14e\n",
                       utilities_FortranMatrixValue( residualNorms, i, 1) );
-      hypre_printf("\n%d iterations\n", *iterationNumber );
+      nalu_hypre_printf("\n%d iterations\n", *iterationNumber );
    }
 
    mv_MultiVectorDestroy( blockVectorR );
@@ -1077,7 +1077,7 @@ lobpcg_solve( mv_MultiVectorPtr blockVectorX,
    utilities_FortranMatrixDestroy( residualNorms );
    utilities_FortranMatrixDestroy( residualNormsHistory );
 
-   hypre_TFree( activeMask, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree( activeMask, NALU_HYPRE_MEMORY_HOST);
 
    return exitFlag;
 }

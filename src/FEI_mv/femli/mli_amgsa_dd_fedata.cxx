@@ -20,10 +20,10 @@
 // ---------------------------------------------------------------------
 
 #include "NALU_HYPRE.h"
-#include "_hypre_utilities.h"
+#include "_nalu_hypre_utilities.h"
 #include "NALU_HYPRE_IJ_mv.h"
 #include "seq_mv.h"
-#include "_hypre_parcsr_mv.h"
+#include "_nalu_hypre_parcsr_mv.h"
 
 // *********************************************************************
 // local MLI includes
@@ -72,7 +72,7 @@ int MLI_Method_AMGSA::setupFEDataBasedNullSpaces( MLI *mli )
    MLI_FEData   *fedata;
    MLI_Mapper   *nodeEqnMap;
    MLI_Matrix   *mliAmat;
-   hypre_ParCSRMatrix *hypreA;
+   nalu_hypre_ParCSRMatrix *hypreA;
 #ifdef MLI_ARPACK
    int          info;
    double       sigmaR, sigmaI;
@@ -108,7 +108,7 @@ int MLI_Method_AMGSA::setupFEDataBasedNullSpaces( MLI *mli )
    comm = getComm();
    MPI_Comm_rank( comm, &mypid );
    mliAmat = mli->getSystemMatrix( level );
-   hypreA  = (hypre_ParCSRMatrix *) mliAmat->getMatrix();
+   hypreA  = (nalu_hypre_ParCSRMatrix *) mliAmat->getMatrix();
    NALU_HYPRE_ParCSRMatrixGetRowPartitioning((NALU_HYPRE_ParCSRMatrix) hypreA, 
                                         &partition);
    localStartRow = partition[mypid];
@@ -176,9 +176,9 @@ int MLI_Method_AMGSA::setupFEDataBasedNullSpaces( MLI *mli )
    csrNrows = newNNodes * blockSize;
    csrIA    = new int[csrNrows+1];
    csrJA    = new int[csrNrows*rowSize];
-   hypre_assert( ((long) csrJA) );
+   nalu_hypre_assert( ((long) csrJA) );
    csrAA    = new double[csrNrows*rowSize];
-   hypre_assert( ((long) csrAA) );
+   nalu_hypre_assert( ((long) csrAA) );
    csrIA[0] = 0;
    for ( i = 1; i < csrNrows; i++ ) csrIA[i] = csrIA[i-1] + rowSize;
 
@@ -297,7 +297,7 @@ int MLI_Method_AMGSA::setupFEDataBasedNullSpaces( MLI *mli )
    eigenR = new double[nullspaceDim_+1];
    eigenI = new double[nullspaceDim_+1];
    eigenV = new double[csrNrows*(nullspaceDim_+1)];
-   hypre_assert((long) eigenV);
+   nalu_hypre_assert((long) eigenV);
 
 #ifdef MLI_ARPACK
    sigmaR = 1.0e-5;
@@ -422,7 +422,7 @@ int MLI_Method_AMGSA::setupFEDataBasedAggregates( MLI *mli )
    int                nprocs;
    MPI_Comm           comm;
    MLI_Matrix         *mliAmat;
-   hypre_ParCSRMatrix *hypreA;
+   nalu_hypre_ParCSRMatrix *hypreA;
 
 #ifdef MLI_DEBUG_DETAILED
    printf("MLI_Method_AMGSA::setupFEDataBasedAggregates begins...\n");
@@ -437,7 +437,7 @@ int MLI_Method_AMGSA::setupFEDataBasedAggregates( MLI *mli )
    MPI_Comm_rank( comm, &mypid );
    MPI_Comm_size( comm, &nprocs );
    mliAmat = mli->getSystemMatrix( level );
-   hypreA  = (hypre_ParCSRMatrix *) mliAmat->getMatrix();
+   hypreA  = (nalu_hypre_ParCSRMatrix *) mliAmat->getMatrix();
    NALU_HYPRE_ParCSRMatrixGetRowPartitioning((NALU_HYPRE_ParCSRMatrix) hypreA, 
                                         &partition);
    localNRows = partition[mypid+1] - partition[mypid];
@@ -479,7 +479,7 @@ int MLI_Method_AMGSA::setupFEDataBasedSuperLUSmoother(MLI *mli, int level)
    MLI_Mapper  *nodeEqnMap;
    MLI_FEData  *fedata;
    MLI_Matrix  *mliAmat;
-   hypre_ParCSRMatrix *hypreA;
+   nalu_hypre_ParCSRMatrix *hypreA;
 
    /* --------------------------------------------------------------- */
    /* error checking                                                  */
@@ -507,7 +507,7 @@ int MLI_Method_AMGSA::setupFEDataBasedSuperLUSmoother(MLI *mli, int level)
    MPI_Comm_rank( comm, &mypid );
    MPI_Comm_size( comm, &nprocs );
    mliAmat = mli->getSystemMatrix( level );
-   hypreA  = (hypre_ParCSRMatrix *) mliAmat->getMatrix();
+   hypreA  = (nalu_hypre_ParCSRMatrix *) mliAmat->getMatrix();
    NALU_HYPRE_ParCSRMatrixGetRowPartitioning((NALU_HYPRE_ParCSRMatrix) hypreA, 
                                         &partition);
    localStartRow = partition[mypid];

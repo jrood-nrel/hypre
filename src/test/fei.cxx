@@ -19,7 +19,7 @@
 /*---------------------------------------------------------------------
  * hypre includes
  *---------------------------------------------------------------------*/
-#include "_hypre_utilities.h"
+#include "_nalu_hypre_utilities.h"
 #include "NALU_HYPRE.h"
 #include "NALU_HYPRE_parcsr_mv.h"
 #include "NALU_HYPRE_IJ_mv.h"
@@ -52,9 +52,9 @@ NALU_HYPRE_Int main(NALU_HYPRE_Int argc, char *argv[])
     * Initialize some stuff
     *-----------------------------------------------------------*/
 
-   hypre_MPI_Init(&argc, &argv);
-   hypre_MPI_Comm_size(hypre_MPI_COMM_WORLD, &nprocs);
-   hypre_MPI_Comm_rank(hypre_MPI_COMM_WORLD, &mypid);
+   nalu_hypre_MPI_Init(&argc, &argv);
+   nalu_hypre_MPI_Comm_size(nalu_hypre_MPI_COMM_WORLD, &nprocs);
+   nalu_hypre_MPI_Comm_rank(nalu_hypre_MPI_COMM_WORLD, &mypid);
 
    /*-----------------------------------------------------------
     * Parse command line
@@ -82,15 +82,15 @@ NALU_HYPRE_Int main(NALU_HYPRE_Int argc, char *argv[])
 
    if ((printUsage) && (mypid == 0))
    {
-      hypre_printf("\n");
-      hypre_printf("Usage: %s [<options>]\n", argv[0]);
-      hypre_printf("\n");
-      hypre_printf("  -solver <ID>           : solver ID\n");
-      hypre_printf("       0=DS-PCG      1=ParaSails-PCG \n");
-      hypre_printf("       2=AMG-PCG     3=AMGSA-PCG \n");
-      hypre_printf("       4=DS-GMRES    5=AMG-GMRES \n");
-      hypre_printf("       6=AMGSA-GMRES 7=LLNL_FEI-CGDiag \n");
-      hypre_printf("\n");
+      nalu_hypre_printf("\n");
+      nalu_hypre_printf("Usage: %s [<options>]\n", argv[0]);
+      nalu_hypre_printf("\n");
+      nalu_hypre_printf("  -solver <ID>           : solver ID\n");
+      nalu_hypre_printf("       0=DS-PCG      1=ParaSails-PCG \n");
+      nalu_hypre_printf("       2=AMG-PCG     3=AMGSA-PCG \n");
+      nalu_hypre_printf("       4=DS-GMRES    5=AMG-GMRES \n");
+      nalu_hypre_printf("       6=AMGSA-GMRES 7=LLNL_FEI-CGDiag \n");
+      nalu_hypre_printf("\n");
       exit(1);
    }
 
@@ -98,7 +98,7 @@ NALU_HYPRE_Int main(NALU_HYPRE_Int argc, char *argv[])
     * instantiate the finite element interface
     *-----------------------------------------------------------*/
 
-   feiPtr = new LLNL_FEI_Impl(hypre_MPI_COMM_WORLD);
+   feiPtr = new LLNL_FEI_Impl(nalu_hypre_MPI_COMM_WORLD);
    nParams = 18;
    paramStrings = new char*[nParams];
    for (i = 0; i < nParams; i++) { paramStrings[i] = new char[100]; }
@@ -168,7 +168,7 @@ NALU_HYPRE_Int main(NALU_HYPRE_Int argc, char *argv[])
     *-----------------------------------------------------------*/
 
    delete feiPtr;
-   hypre_MPI_Finalize();
+   nalu_hypre_MPI_Finalize();
 
    return (0);
 }
@@ -189,8 +189,8 @@ NALU_HYPRE_Int setupFEProblem(LLNL_FEI_Impl *feiPtr)
     * Initialize parallel machine information
     *-----------------------------------------------------------*/
 
-   hypre_MPI_Comm_size(hypre_MPI_COMM_WORLD, &nprocs);
-   hypre_MPI_Comm_rank(hypre_MPI_COMM_WORLD, &mypid);
+   nalu_hypre_MPI_Comm_size(nalu_hypre_MPI_COMM_WORLD, &nprocs);
+   nalu_hypre_MPI_Comm_rank(nalu_hypre_MPI_COMM_WORLD, &mypid);
 
    /*-----------------------------------------------------------
     * read finite element connectivities and stiffness matrices
@@ -208,7 +208,7 @@ NALU_HYPRE_Int setupFEProblem(LLNL_FEI_Impl *feiPtr)
    iArray = new NALU_HYPRE_Int[nprocs];
    for (i = 0; i < nprocs; i++) { iArray[i] = 0; }
    iArray[mypid] = endRow - startRow + 1;
-   hypre_MPI_Allreduce(iArray, partition, nprocs, NALU_HYPRE_MPI_INT, hypre_MPI_SUM, hypre_MPI_COMM_WORLD);
+   nalu_hypre_MPI_Allreduce(iArray, partition, nprocs, NALU_HYPRE_MPI_INT, nalu_hypre_MPI_SUM, nalu_hypre_MPI_COMM_WORLD);
    for (i = 1; i < nprocs; i++) { partition[i] += partition[i - 1]; }
    delete [] iArray;
 
@@ -316,29 +316,29 @@ NALU_HYPRE_Int readFEMatrix(NALU_HYPRE_Int *nElemsOut, NALU_HYPRE_Int *elemNNode
    char   *paramString;
    FILE   *fp;
 
-   hypre_MPI_Comm_rank(hypre_MPI_COMM_WORLD, &mypid);
+   nalu_hypre_MPI_Comm_rank(nalu_hypre_MPI_COMM_WORLD, &mypid);
    paramString = new char[100];
-   hypre_sprintf(paramString, "SFEI.%d", mypid);
+   nalu_hypre_sprintf(paramString, "SFEI.%d", mypid);
    fp = fopen(paramString, "r");
    if (fp == NULL)
    {
-      hypre_printf("%3d : feiTest ERROR - sfei file does not exist.\n", mypid);
+      nalu_hypre_printf("%3d : feiTest ERROR - sfei file does not exist.\n", mypid);
       exit(1);
    }
-   hypre_fscanf(fp, "%d %d %d %d", &nElems, &elemNNodes, &startRow, &endRow);
+   nalu_hypre_fscanf(fp, "%d %d %d %d", &nElems, &elemNNodes, &startRow, &endRow);
    elemConn = new NALU_HYPRE_Int*[nElems];
    elemStiff = new NALU_HYPRE_Real**[nElems];
    for (i = 0; i < nElems; i++)
    {
       elemConn[i] = new NALU_HYPRE_Int[elemNNodes];
       elemStiff[i] = new NALU_HYPRE_Real*[elemNNodes];
-      for (j = 0; j < elemNNodes; j++) { hypre_fscanf(fp, "%d", &(elemConn[i][j])); }
+      for (j = 0; j < elemNNodes; j++) { nalu_hypre_fscanf(fp, "%d", &(elemConn[i][j])); }
       for (j = 0; j < elemNNodes; j++)
       {
          elemStiff[i][j] = new NALU_HYPRE_Real[elemNNodes];
          for (k = 0; k < elemNNodes; k++)
          {
-            hypre_fscanf(fp, "%lg", &(elemStiff[i][j][k]));
+            nalu_hypre_fscanf(fp, "%lg", &(elemStiff[i][j][k]));
          }
       }
    }
@@ -362,17 +362,17 @@ NALU_HYPRE_Int readFERhs(NALU_HYPRE_Int nElems, NALU_HYPRE_Int elemNNodes, NALU_
    char   *paramString;
    FILE   *fp;
 
-   hypre_MPI_Comm_rank(hypre_MPI_COMM_WORLD, &mypid);
+   nalu_hypre_MPI_Comm_rank(nalu_hypre_MPI_COMM_WORLD, &mypid);
    paramString = new char[100];
-   hypre_sprintf(paramString, "RHS.%d", mypid);
+   nalu_hypre_sprintf(paramString, "RHS.%d", mypid);
    fp = fopen(paramString, "r");
    if (fp == NULL)
    {
-      hypre_printf("%3d : feiTest ERROR - rhs file does not exist.\n", mypid);
+      nalu_hypre_printf("%3d : feiTest ERROR - rhs file does not exist.\n", mypid);
       exit(1);
    }
    length = nElems * elemNNodes;
-   for (i = 0; i < length; i++) { hypre_fscanf(fp, "%lg", &(elemLoad[i])); }
+   for (i = 0; i < length; i++) { nalu_hypre_fscanf(fp, "%lg", &(elemLoad[i])); }
    fclose(fp);
    delete [] paramString;
    return 0;
@@ -389,16 +389,16 @@ NALU_HYPRE_Int readFEMBC(NALU_HYPRE_Int *nBCsOut, NALU_HYPRE_Int **BCEqnOut, NAL
    char   *paramString;
    FILE   *fp;
 
-   hypre_MPI_Comm_rank(hypre_MPI_COMM_WORLD, &mypid);
+   nalu_hypre_MPI_Comm_rank(nalu_hypre_MPI_COMM_WORLD, &mypid);
    paramString = new char[100];
-   hypre_sprintf(paramString, "BC.%d", mypid);
+   nalu_hypre_sprintf(paramString, "BC.%d", mypid);
    fp = fopen(paramString, "r");
    if (fp == NULL)
    {
-      hypre_printf("%3d : feiTest ERROR - BC file does not exist.\n", mypid);
+      nalu_hypre_printf("%3d : feiTest ERROR - BC file does not exist.\n", mypid);
       exit(1);
    }
-   hypre_fscanf(fp, "%d", &nBCs);
+   nalu_hypre_fscanf(fp, "%d", &nBCs);
    BCEqn = new NALU_HYPRE_Int[nBCs];
    alpha = new NALU_HYPRE_Real*[nBCs];
    beta  = new NALU_HYPRE_Real*[nBCs];
@@ -410,7 +410,7 @@ NALU_HYPRE_Int readFEMBC(NALU_HYPRE_Int *nBCsOut, NALU_HYPRE_Int **BCEqnOut, NAL
       gamma[i] = new NALU_HYPRE_Real[1];
    }
    for (i = 0; i < nBCs; i++)
-      hypre_fscanf(fp, "%d %lg %lg %lg", &(BCEqn[i]), &(alpha[i][0]),
+      nalu_hypre_fscanf(fp, "%d %lg %lg %lg", &(BCEqn[i]), &(alpha[i][0]),
                    &(beta[i][0]), &(gamma[i][0]));
    fclose(fp);
    delete [] paramString;
@@ -433,13 +433,13 @@ NALU_HYPRE_Int composeSharedNodes(NALU_HYPRE_Int nElems, NALU_HYPRE_Int elemNNod
    NALU_HYPRE_Int nShared, i, j, index, startRow, endRow, mypid, nprocs, ncnt;
    NALU_HYPRE_Int *sharedIDs, *iArray1, *iArray2, **iRecvBufs, **iSendBufs;
    NALU_HYPRE_Int nRecvs, *recvProcs, *recvLengs, nSends, *sendProcs, *sendLengs;
-   hypre_MPI_Request *mpiRequests;
-   hypre_MPI_Status  mpiStatus;
+   nalu_hypre_MPI_Request *mpiRequests;
+   nalu_hypre_MPI_Status  mpiStatus;
 
    /* --- get machine and matrix information --- */
 
-   hypre_MPI_Comm_size(hypre_MPI_COMM_WORLD, &nprocs);
-   hypre_MPI_Comm_rank(hypre_MPI_COMM_WORLD, &mypid);
+   nalu_hypre_MPI_Comm_size(nalu_hypre_MPI_COMM_WORLD, &nprocs);
+   nalu_hypre_MPI_Comm_rank(nalu_hypre_MPI_COMM_WORLD, &mypid);
    if (mypid == 0) { startRow = 0; }
    else { startRow = partition[mypid - 1]; }
    endRow = partition[mypid] - 1;
@@ -474,7 +474,7 @@ NALU_HYPRE_Int composeSharedNodes(NALU_HYPRE_Int nElems, NALU_HYPRE_Int elemNNod
             }
          }
       }
-      hypre_qsort0(sharedIDs, 0, nShared - 1);
+      nalu_hypre_qsort0(sharedIDs, 0, nShared - 1);
       ncnt = 1;
       for (i = 1; i < nShared; i++)
       {
@@ -497,7 +497,7 @@ NALU_HYPRE_Int composeSharedNodes(NALU_HYPRE_Int nElems, NALU_HYPRE_Int elemNNod
          if (sharedIDs[i] < partition[j]) { break; }
       if (j != mypid) { iArray1[j] = 1; }
    }
-   hypre_MPI_Allreduce(iArray1, iArray2, nprocs, NALU_HYPRE_MPI_INT, hypre_MPI_SUM, hypre_MPI_COMM_WORLD);
+   nalu_hypre_MPI_Allreduce(iArray1, iArray2, nprocs, NALU_HYPRE_MPI_INT, nalu_hypre_MPI_SUM, nalu_hypre_MPI_COMM_WORLD);
    for (i = 0; i < nprocs; i++) { iArray1[i] = 0; }
    for (i = 0; i < nShared; i++)
    {
@@ -528,19 +528,19 @@ NALU_HYPRE_Int composeSharedNodes(NALU_HYPRE_Int nElems, NALU_HYPRE_Int elemNNod
    {
       recvLengs = new NALU_HYPRE_Int[nRecvs];
       recvProcs = new NALU_HYPRE_Int[nRecvs];
-      mpiRequests = new hypre_MPI_Request[nRecvs];
+      mpiRequests = new nalu_hypre_MPI_Request[nRecvs];
    }
 
    for (i = 0; i < nRecvs; i++)
-      hypre_MPI_Irecv(&(recvLengs[i]), 1, NALU_HYPRE_MPI_INT, hypre_MPI_ANY_SOURCE, 12233,
-                      hypre_MPI_COMM_WORLD, &(mpiRequests[i]));
+      nalu_hypre_MPI_Irecv(&(recvLengs[i]), 1, NALU_HYPRE_MPI_INT, nalu_hypre_MPI_ANY_SOURCE, 12233,
+                      nalu_hypre_MPI_COMM_WORLD, &(mpiRequests[i]));
    for (i = 0; i < nSends; i++)
-      hypre_MPI_Send(&(sendLengs[i]), 1, NALU_HYPRE_MPI_INT, sendProcs[i], 12233,
-                     hypre_MPI_COMM_WORLD);
+      nalu_hypre_MPI_Send(&(sendLengs[i]), 1, NALU_HYPRE_MPI_INT, sendProcs[i], 12233,
+                     nalu_hypre_MPI_COMM_WORLD);
    for (i = 0; i < nRecvs; i++)
    {
-      hypre_MPI_Wait(&(mpiRequests[i]), &mpiStatus);
-      recvProcs[i] = mpiStatus.hypre_MPI_SOURCE;
+      nalu_hypre_MPI_Wait(&(mpiRequests[i]), &mpiStatus);
+      recvProcs[i] = mpiStatus.nalu_hypre_MPI_SOURCE;
    }
 
    /* get the shared nodes */
@@ -549,8 +549,8 @@ NALU_HYPRE_Int composeSharedNodes(NALU_HYPRE_Int nElems, NALU_HYPRE_Int elemNNod
    for (i = 0; i < nRecvs; i++)
    {
       iRecvBufs[i] = new NALU_HYPRE_Int[recvLengs[i]];
-      hypre_MPI_Irecv(iRecvBufs[i], recvLengs[i], NALU_HYPRE_MPI_INT, recvProcs[i], 12234,
-                      hypre_MPI_COMM_WORLD, &(mpiRequests[i]));
+      nalu_hypre_MPI_Irecv(iRecvBufs[i], recvLengs[i], NALU_HYPRE_MPI_INT, recvProcs[i], 12234,
+                      nalu_hypre_MPI_COMM_WORLD, &(mpiRequests[i]));
    }
    if (nSends > 0) { iSendBufs = new NALU_HYPRE_Int*[nSends]; }
    for (i = 0; i < nSends; i++)
@@ -565,9 +565,9 @@ NALU_HYPRE_Int composeSharedNodes(NALU_HYPRE_Int nElems, NALU_HYPRE_Int elemNNod
       iSendBufs[j][sendLengs[j]++] = sharedIDs[i];
    }
    for (i = 0; i < nSends; i++)
-      hypre_MPI_Send(iSendBufs[i], sendLengs[i], NALU_HYPRE_MPI_INT, sendProcs[i], 12234,
-                     hypre_MPI_COMM_WORLD);
-   for (i = 0; i < nRecvs; i++) { hypre_MPI_Wait(&(mpiRequests[i]), &mpiStatus); }
+      nalu_hypre_MPI_Send(iSendBufs[i], sendLengs[i], NALU_HYPRE_MPI_INT, sendProcs[i], 12234,
+                     nalu_hypre_MPI_COMM_WORLD);
+   for (i = 0; i < nRecvs; i++) { nalu_hypre_MPI_Wait(&(mpiRequests[i]), &mpiStatus); }
 
    /* --- finally construct the shared information --- */
 

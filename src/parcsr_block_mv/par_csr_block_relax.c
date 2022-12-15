@@ -5,12 +5,12 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_parcsr_block_mv.h"
+#include "_nalu_hypre_parcsr_block_mv.h"
 
 NALU_HYPRE_Int gselim_piv(NALU_HYPRE_Real *A, NALU_HYPRE_Real *x, NALU_HYPRE_Int n);
 
 /*---------------------------------------------------------------------------
- * hypre_BoomerAMGBlockRelaxIF
+ * nalu_hypre_BoomerAMGBlockRelaxIF
 
    This is the block version of the relaxation routines.
 
@@ -20,16 +20,16 @@ NALU_HYPRE_Int gselim_piv(NALU_HYPRE_Real *A, NALU_HYPRE_Real *x, NALU_HYPRE_Int
 
  *--------------------------------------------------------------------------*/
 
-NALU_HYPRE_Int  hypre_BoomerAMGBlockRelaxIF( hypre_ParCSRBlockMatrix *A,
-                                        hypre_ParVector    *f,
+NALU_HYPRE_Int  nalu_hypre_BoomerAMGBlockRelaxIF( nalu_hypre_ParCSRBlockMatrix *A,
+                                        nalu_hypre_ParVector    *f,
                                         NALU_HYPRE_Int          *cf_marker,
                                         NALU_HYPRE_Int           relax_type,
                                         NALU_HYPRE_Int           relax_order,
                                         NALU_HYPRE_Int           cycle_type,
                                         NALU_HYPRE_Real          relax_weight,
                                         NALU_HYPRE_Real          omega,
-                                        hypre_ParVector    *u,
-                                        hypre_ParVector    *Vtemp )
+                                        nalu_hypre_ParVector    *u,
+                                        nalu_hypre_ParVector    *Vtemp )
 {
    NALU_HYPRE_Int i, Solve_err_flag = 0;
    NALU_HYPRE_Int relax_points[2];
@@ -49,7 +49,7 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelaxIF( hypre_ParCSRBlockMatrix *A,
       }
       for (i = 0; i < 2; i++)
       {
-         Solve_err_flag = hypre_BoomerAMGBlockRelax(A,
+         Solve_err_flag = nalu_hypre_BoomerAMGBlockRelax(A,
                                                     f,
                                                     cf_marker,
                                                     relax_type,
@@ -62,7 +62,7 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelaxIF( hypre_ParCSRBlockMatrix *A,
    }
    else /* either on the cg or doing normal relaxation (no C/F relaxation) */
    {
-      Solve_err_flag = hypre_BoomerAMGBlockRelax(A,
+      Solve_err_flag = nalu_hypre_BoomerAMGBlockRelax(A,
                                                  f,
                                                  cf_marker,
                                                  relax_type,
@@ -77,7 +77,7 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelaxIF( hypre_ParCSRBlockMatrix *A,
 }
 
 /*---------------------------------------------------------------------------
- * hypre_BoomerAMGBlockRelax
+ * nalu_hypre_BoomerAMGBlockRelax
 
  This is the block version of the relaxation routines.
 
@@ -86,48 +86,48 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelaxIF( hypre_ParCSRBlockMatrix *A,
  CF_marker is size number of nodes.
 
  *--------------------------------------------------------------------------*/
-NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
-                                      hypre_ParVector    *f,
+NALU_HYPRE_Int  nalu_hypre_BoomerAMGBlockRelax( nalu_hypre_ParCSRBlockMatrix *A,
+                                      nalu_hypre_ParVector    *f,
                                       NALU_HYPRE_Int          *cf_marker,
                                       NALU_HYPRE_Int           relax_type,
                                       NALU_HYPRE_Int           relax_points,
                                       NALU_HYPRE_Real          relax_weight,
                                       NALU_HYPRE_Real          omega,
-                                      hypre_ParVector    *u,
-                                      hypre_ParVector    *Vtemp )
+                                      nalu_hypre_ParVector    *u,
+                                      nalu_hypre_ParVector    *Vtemp )
 
 {
-   MPI_Comm              comm = hypre_ParCSRBlockMatrixComm(A);
+   MPI_Comm              comm = nalu_hypre_ParCSRBlockMatrixComm(A);
 
-   hypre_CSRBlockMatrix *A_diag       = hypre_ParCSRBlockMatrixDiag(A);
-   NALU_HYPRE_Real           *A_diag_data  = hypre_CSRBlockMatrixData(A_diag);
-   NALU_HYPRE_Int            *A_diag_i     = hypre_CSRBlockMatrixI(A_diag);
-   NALU_HYPRE_Int            *A_diag_j     = hypre_CSRBlockMatrixJ(A_diag);
+   nalu_hypre_CSRBlockMatrix *A_diag       = nalu_hypre_ParCSRBlockMatrixDiag(A);
+   NALU_HYPRE_Real           *A_diag_data  = nalu_hypre_CSRBlockMatrixData(A_diag);
+   NALU_HYPRE_Int            *A_diag_i     = nalu_hypre_CSRBlockMatrixI(A_diag);
+   NALU_HYPRE_Int            *A_diag_j     = nalu_hypre_CSRBlockMatrixJ(A_diag);
 
-   hypre_CSRBlockMatrix *A_offd       = hypre_ParCSRBlockMatrixOffd(A);
-   NALU_HYPRE_Int            *A_offd_i     = hypre_CSRBlockMatrixI(A_offd);
-   NALU_HYPRE_Real           *A_offd_data  = hypre_CSRBlockMatrixData(A_offd);
-   NALU_HYPRE_Int            *A_offd_j     = hypre_CSRBlockMatrixJ(A_offd);
+   nalu_hypre_CSRBlockMatrix *A_offd       = nalu_hypre_ParCSRBlockMatrixOffd(A);
+   NALU_HYPRE_Int            *A_offd_i     = nalu_hypre_CSRBlockMatrixI(A_offd);
+   NALU_HYPRE_Real           *A_offd_data  = nalu_hypre_CSRBlockMatrixData(A_offd);
+   NALU_HYPRE_Int            *A_offd_j     = nalu_hypre_CSRBlockMatrixJ(A_offd);
 
-   hypre_ParCSRCommPkg    *comm_pkg = hypre_ParCSRBlockMatrixCommPkg(A);
-   hypre_ParCSRCommHandle *comm_handle;
+   nalu_hypre_ParCSRCommPkg    *comm_pkg = nalu_hypre_ParCSRBlockMatrixCommPkg(A);
+   nalu_hypre_ParCSRCommHandle *comm_handle;
 
-   NALU_HYPRE_Int             block_size = hypre_CSRBlockMatrixBlockSize(A_diag);
+   NALU_HYPRE_Int             block_size = nalu_hypre_CSRBlockMatrixBlockSize(A_diag);
    NALU_HYPRE_Int             bnnz = block_size * block_size;
 
    NALU_HYPRE_BigInt          n_global;
-   NALU_HYPRE_Int             n             = hypre_CSRBlockMatrixNumRows(A_diag);
-   NALU_HYPRE_Int             num_cols_offd = hypre_CSRBlockMatrixNumCols(A_offd);
-   NALU_HYPRE_BigInt          first_index = hypre_ParVectorFirstIndex(u);
+   NALU_HYPRE_Int             n             = nalu_hypre_CSRBlockMatrixNumRows(A_diag);
+   NALU_HYPRE_Int             num_cols_offd = nalu_hypre_CSRBlockMatrixNumCols(A_offd);
+   NALU_HYPRE_BigInt          first_index = nalu_hypre_ParVectorFirstIndex(u);
 
-   hypre_Vector   *u_local = hypre_ParVectorLocalVector(u);
-   NALU_HYPRE_Real     *u_data  = hypre_VectorData(u_local);
+   nalu_hypre_Vector   *u_local = nalu_hypre_ParVectorLocalVector(u);
+   NALU_HYPRE_Real     *u_data  = nalu_hypre_VectorData(u_local);
 
-   hypre_Vector   *f_local = hypre_ParVectorLocalVector(f);
-   NALU_HYPRE_Real     *f_data  = hypre_VectorData(f_local);
+   nalu_hypre_Vector   *f_local = nalu_hypre_ParVectorLocalVector(f);
+   NALU_HYPRE_Real     *f_data  = nalu_hypre_VectorData(f_local);
 
-   hypre_Vector   *Vtemp_local = hypre_ParVectorLocalVector(Vtemp);
-   NALU_HYPRE_Real     *Vtemp_data  = hypre_VectorData(Vtemp_local);
+   nalu_hypre_Vector   *Vtemp_local = nalu_hypre_ParVectorLocalVector(Vtemp);
+   NALU_HYPRE_Real     *Vtemp_data  = nalu_hypre_VectorData(Vtemp_local);
    NALU_HYPRE_Real     *Vext_data;
    NALU_HYPRE_Real     *v_buf_data;
 
@@ -150,15 +150,15 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
    NALU_HYPRE_Real      one_minus_omega;
    NALU_HYPRE_Real      prod;
 
-   hypre_CSRMatrix *A_CSR;
+   nalu_hypre_CSRMatrix *A_CSR;
    NALU_HYPRE_Int       *A_CSR_i;
    NALU_HYPRE_Int       *A_CSR_j;
    NALU_HYPRE_Real      *A_CSR_data;
 
-   hypre_Vector    *f_vector;
+   nalu_hypre_Vector    *f_vector;
    NALU_HYPRE_Real      *f_vector_data;
 
-   hypre_ParCSRMatrix *A_ParCSR;
+   nalu_hypre_ParCSRMatrix *A_ParCSR;
 
    NALU_HYPRE_Real     *A_mat;
    NALU_HYPRE_Real     *b_vec;
@@ -168,19 +168,19 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
    /* initialize some stuff */
    one_minus_weight = 1.0 - relax_weight;
    one_minus_omega = 1.0 - omega;
-   hypre_MPI_Comm_size(comm, &num_procs);
-   hypre_MPI_Comm_rank(comm, &my_id);
-   /* num_threads = hypre_NumThreads(); */
+   nalu_hypre_MPI_Comm_size(comm, &num_procs);
+   nalu_hypre_MPI_Comm_rank(comm, &my_id);
+   /* num_threads = nalu_hypre_NumThreads(); */
    num_threads = 1;
 
-   res_vec = hypre_CTAlloc(NALU_HYPRE_Real,  block_size, NALU_HYPRE_MEMORY_HOST);
-   out_vec = hypre_CTAlloc(NALU_HYPRE_Real,  block_size, NALU_HYPRE_MEMORY_HOST);
-   tmp_vec = hypre_CTAlloc(NALU_HYPRE_Real,  block_size, NALU_HYPRE_MEMORY_HOST);
+   res_vec = nalu_hypre_CTAlloc(NALU_HYPRE_Real,  block_size, NALU_HYPRE_MEMORY_HOST);
+   out_vec = nalu_hypre_CTAlloc(NALU_HYPRE_Real,  block_size, NALU_HYPRE_MEMORY_HOST);
+   tmp_vec = nalu_hypre_CTAlloc(NALU_HYPRE_Real,  block_size, NALU_HYPRE_MEMORY_HOST);
 
    if (!comm_pkg)
    {
-      hypre_BlockMatvecCommPkgCreate(A);
-      comm_pkg = hypre_ParCSRBlockMatrixCommPkg(A);
+      nalu_hypre_BlockMatvecCommPkgCreate(A);
+      comm_pkg = nalu_hypre_ParCSRBlockMatrixCommPkg(A);
    }
    /*-----------------------------------------------------------------------
     * Switch statement to direct control based on relax_type:
@@ -205,31 +205,31 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
 
          if (num_procs > 1)
          {
-            num_sends = hypre_ParCSRCommPkgNumSends(comm_pkg);
-            v_buf_data = hypre_CTAlloc(NALU_HYPRE_Real,
-                                       hypre_ParCSRCommPkgSendMapStart(comm_pkg,  num_sends) * block_size, NALU_HYPRE_MEMORY_HOST);
-            Vext_data = hypre_CTAlloc(NALU_HYPRE_Real,  num_cols_offd * block_size, NALU_HYPRE_MEMORY_HOST);
+            num_sends = nalu_hypre_ParCSRCommPkgNumSends(comm_pkg);
+            v_buf_data = nalu_hypre_CTAlloc(NALU_HYPRE_Real,
+                                       nalu_hypre_ParCSRCommPkgSendMapStart(comm_pkg,  num_sends) * block_size, NALU_HYPRE_MEMORY_HOST);
+            Vext_data = nalu_hypre_CTAlloc(NALU_HYPRE_Real,  num_cols_offd * block_size, NALU_HYPRE_MEMORY_HOST);
             if (num_cols_offd)
             {
-               A_offd_j = hypre_CSRBlockMatrixJ(A_offd);
-               A_offd_data = hypre_CSRBlockMatrixData(A_offd);
+               A_offd_j = nalu_hypre_CSRBlockMatrixJ(A_offd);
+               A_offd_data = nalu_hypre_CSRBlockMatrixData(A_offd);
             }
             index = 0;
             for (i = 0; i < num_sends; i++)
             {
-               start = hypre_ParCSRCommPkgSendMapStart(comm_pkg, i);
-               for (j = start; j < hypre_ParCSRCommPkgSendMapStart(comm_pkg, i + 1); j++)
+               start = nalu_hypre_ParCSRCommPkgSendMapStart(comm_pkg, i);
+               for (j = start; j < nalu_hypre_ParCSRCommPkgSendMapStart(comm_pkg, i + 1); j++)
                {
                   for (k = 0; k < block_size; k++)
                   {
                      v_buf_data[index++]
-                        = u_data[hypre_ParCSRCommPkgSendMapElmt(comm_pkg, j) * block_size + k];
+                        = u_data[nalu_hypre_ParCSRCommPkgSendMapElmt(comm_pkg, j) * block_size + k];
                   }
                }
             }
 
             /* we need to use the block comm handle here - since comm_pkg is nodal based */
-            comm_handle = hypre_ParCSRBlockCommHandleCreate(1, block_size, comm_pkg,
+            comm_handle = nalu_hypre_ParCSRBlockCommHandleCreate(1, block_size, comm_pkg,
                                                             v_buf_data, Vext_data );
 
          }
@@ -244,7 +244,7 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
          }
          if (num_procs > 1)
          {
-            hypre_ParCSRBlockCommHandleDestroy(comm_handle); /* now Vext_data is populated */
+            nalu_hypre_ParCSRBlockCommHandleDestroy(comm_handle); /* now Vext_data is populated */
             comm_handle = NULL;
          }
          /*-----------------------------------------------------------------
@@ -268,7 +268,7 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
                {
                   ii = A_diag_j[jj];
                   /* res -= A_diag_data[jj] * Vtemp_data[ii]; */
-                  hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_diag_data[jj * bnnz],
+                  nalu_hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_diag_data[jj * bnnz],
                                                   &Vtemp_data[ii * block_size],
                                                   1.0, res_vec, block_size);
                }
@@ -276,13 +276,13 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
                {
                   ii = A_offd_j[jj];
                   /* res -= A_offd_data[jj] * Vext_data[ii]; */
-                  hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_offd_data[jj * bnnz],
+                  nalu_hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_offd_data[jj * bnnz],
                                                   &Vext_data[ii * block_size],
                                                   1.0, res_vec, block_size);
                }
 
                /* if diag is singular, then skip this point */
-               if (hypre_CSRBlockMatrixBlockInvMatvec( &A_diag_data[A_diag_i[i]*bnnz], res_vec,
+               if (nalu_hypre_CSRBlockMatrixBlockInvMatvec( &A_diag_data[A_diag_i[i]*bnnz], res_vec,
                                                        out_vec, block_size) == 0)
                {
                   for (k = 0; k < block_size; k++)
@@ -320,7 +320,7 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
                   {
                      ii = A_diag_j[jj];
                      /* res -= A_diag_data[jj] * Vtemp_data[ii]; */
-                     hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_diag_data[jj * bnnz],
+                     nalu_hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_diag_data[jj * bnnz],
                                                      &Vtemp_data[ii * block_size],
                                                      1.0, res_vec, block_size);
                   }
@@ -328,13 +328,13 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
                   {
                      ii = A_offd_j[jj];
                      /* res -= A_offd_data[jj] * Vext_data[ii]; */
-                     hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_offd_data[jj * bnnz],
+                     nalu_hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_offd_data[jj * bnnz],
                                                      &Vext_data[ii * block_size],
                                                      1.0, res_vec, block_size);
                   }
 
                   /* if diag is singular, then skip this point */
-                  if (hypre_CSRBlockMatrixBlockInvMatvec( &A_diag_data[A_diag_i[i]*bnnz], res_vec,
+                  if (nalu_hypre_CSRBlockMatrixBlockInvMatvec( &A_diag_data[A_diag_i[i]*bnnz], res_vec,
                                                           out_vec, block_size) == 0)
                   {
                      for (k = 0; k < block_size; k++)
@@ -349,8 +349,8 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
          }
          if (num_procs > 1)
          {
-            hypre_TFree(Vext_data, NALU_HYPRE_MEMORY_HOST);
-            hypre_TFree(v_buf_data, NALU_HYPRE_MEMORY_HOST);
+            nalu_hypre_TFree(Vext_data, NALU_HYPRE_MEMORY_HOST);
+            nalu_hypre_TFree(v_buf_data, NALU_HYPRE_MEMORY_HOST);
          }
 
          break;
@@ -364,31 +364,31 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
       {
          if (num_procs > 1)
          {
-            num_sends = hypre_ParCSRCommPkgNumSends(comm_pkg);
-            v_buf_data = hypre_CTAlloc(NALU_HYPRE_Real,
-                                       hypre_ParCSRCommPkgSendMapStart(comm_pkg,  num_sends) * block_size, NALU_HYPRE_MEMORY_HOST);
-            Vext_data = hypre_CTAlloc(NALU_HYPRE_Real,  num_cols_offd * block_size, NALU_HYPRE_MEMORY_HOST);
+            num_sends = nalu_hypre_ParCSRCommPkgNumSends(comm_pkg);
+            v_buf_data = nalu_hypre_CTAlloc(NALU_HYPRE_Real,
+                                       nalu_hypre_ParCSRCommPkgSendMapStart(comm_pkg,  num_sends) * block_size, NALU_HYPRE_MEMORY_HOST);
+            Vext_data = nalu_hypre_CTAlloc(NALU_HYPRE_Real,  num_cols_offd * block_size, NALU_HYPRE_MEMORY_HOST);
             if (num_cols_offd)
             {
-               A_offd_j = hypre_CSRBlockMatrixJ(A_offd);
-               A_offd_data = hypre_CSRBlockMatrixData(A_offd);
+               A_offd_j = nalu_hypre_CSRBlockMatrixJ(A_offd);
+               A_offd_data = nalu_hypre_CSRBlockMatrixData(A_offd);
             }
             index = 0;
             for (i = 0; i < num_sends; i++)
             {
-               start = hypre_ParCSRCommPkgSendMapStart(comm_pkg, i);
-               for (j = start; j < hypre_ParCSRCommPkgSendMapStart(comm_pkg, i + 1); j++)
+               start = nalu_hypre_ParCSRCommPkgSendMapStart(comm_pkg, i);
+               for (j = start; j < nalu_hypre_ParCSRCommPkgSendMapStart(comm_pkg, i + 1); j++)
                {
                   for (k = 0; k < block_size; k++)
                   {
                      v_buf_data[index++]
-                        = u_data[hypre_ParCSRCommPkgSendMapElmt(comm_pkg, j) * block_size + k];
+                        = u_data[nalu_hypre_ParCSRCommPkgSendMapElmt(comm_pkg, j) * block_size + k];
                   }
                }
             }
 
             /* we need to use the block comm handle here - since comm_pkg is nodal based */
-            comm_handle = hypre_ParCSRBlockCommHandleCreate(1, block_size, comm_pkg,
+            comm_handle = nalu_hypre_ParCSRBlockCommHandleCreate(1, block_size, comm_pkg,
                                                             v_buf_data, Vext_data );
 
          }
@@ -405,7 +405,7 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
 
          if (num_procs > 1)
          {
-            hypre_ParCSRBlockCommHandleDestroy(comm_handle); /* now Vext_data is populated */
+            nalu_hypre_ParCSRBlockCommHandleDestroy(comm_handle); /* now Vext_data is populated */
             comm_handle = NULL;
          }
 
@@ -424,7 +424,7 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
             {
                if (num_threads > 1)
                {
-                  tmp_data = hypre_CTAlloc(NALU_HYPRE_Real, n, NALU_HYPRE_MEMORY_HOST);
+                  tmp_data = nalu_hypre_CTAlloc(NALU_HYPRE_Real, n, NALU_HYPRE_MEMORY_HOST);
 
                   for (i = 0; i < n; i++)
                   {
@@ -461,14 +461,14 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
                            if (ii >= ns && ii < ne)
                            {
                               /*  res -= A_diag_data[jj] * u_data[ii]; */
-                              hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_diag_data[jj * bnnz],
+                              nalu_hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_diag_data[jj * bnnz],
                                                               &u_data[ii * block_size],
                                                               1.0, res_vec, block_size);
                            }
                            else
                            {
                               /* res -= A_diag_data[jj] * tmp_data[ii]; */
-                              hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_diag_data[jj * bnnz],
+                              nalu_hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_diag_data[jj * bnnz],
                                                               &tmp_data[ii * block_size],
                                                               1.0, res_vec, block_size);
                            }
@@ -477,14 +477,14 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
                         {
                            ii = A_offd_j[jj];
                            /* res -= A_offd_data[jj] * Vext_data[ii];*/
-                           hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_offd_data[jj * bnnz],
+                           nalu_hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_offd_data[jj * bnnz],
                                                            &Vext_data[ii * block_size],
                                                            1.0, res_vec, block_size);
 
                         }
                         /* u_data[i] = res / A_diag_data[A_diag_i[i]]; */
                         /* if diag is singular, then skip this point */
-                        if (hypre_CSRBlockMatrixBlockInvMatvec( &A_diag_data[A_diag_i[i]*bnnz], res_vec,
+                        if (nalu_hypre_CSRBlockMatrixBlockInvMatvec( &A_diag_data[A_diag_i[i]*bnnz], res_vec,
                                                                 out_vec, block_size) == 0)
                         {
                            for (k = 0; k < block_size; k++)
@@ -494,7 +494,7 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
                         }
                      } /* for loop over points */
                   } /* foor loop over threads */
-                  hypre_TFree(tmp_data, NALU_HYPRE_MEMORY_HOST);
+                  nalu_hypre_TFree(tmp_data, NALU_HYPRE_MEMORY_HOST);
                }
                else /* num_threads = 1 */
                {
@@ -512,7 +512,7 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
                      {
                         ii = A_diag_j[jj];
                         /* res -= A_diag_data[jj] * u_data[ii]; */
-                        hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_diag_data[jj * bnnz],
+                        nalu_hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_diag_data[jj * bnnz],
                                                         &u_data[ii * block_size],
                                                         1.0, res_vec, block_size);
                      }
@@ -520,12 +520,12 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
                      {
                         ii = A_offd_j[jj];
                         /* res -= A_offd_data[jj] * Vext_data[ii]; */
-                        hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_offd_data[jj * bnnz],
+                        nalu_hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_offd_data[jj * bnnz],
                                                         &Vext_data[ii * block_size],
                                                         1.0, res_vec, block_size);
                      }
                      /* u_data[i] = res / A_diag_data[A_diag_i[i]]; */
-                     if (hypre_CSRBlockMatrixBlockInvMatvec( &A_diag_data[A_diag_i[i]*bnnz], res_vec,
+                     if (nalu_hypre_CSRBlockMatrixBlockInvMatvec( &A_diag_data[A_diag_i[i]*bnnz], res_vec,
                                                              out_vec, block_size) == 0)
                      {
                         for (k = 0; k < block_size; k++)
@@ -544,7 +544,7 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
             {
                if (num_threads > 1)
                {
-                  tmp_data = hypre_CTAlloc(NALU_HYPRE_Real, n, NALU_HYPRE_MEMORY_HOST);
+                  tmp_data = nalu_hypre_CTAlloc(NALU_HYPRE_Real, n, NALU_HYPRE_MEMORY_HOST);
 
                   for (i = 0; i < n; i++)
                   {
@@ -583,14 +583,14 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
                               if (ii >= ns && ii < ne)
                               {
                                  /* res -= A_diag_data[jj] * u_data[ii]; */
-                                 hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_diag_data[jj * bnnz],
+                                 nalu_hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_diag_data[jj * bnnz],
                                                                  &u_data[ii * block_size],
                                                                  1.0, res_vec, block_size);
                               }
                               else
                               {
                                  /* res -= A_diag_data[jj] * tmp_data[ii]; */
-                                 hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_diag_data[jj * bnnz],
+                                 nalu_hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_diag_data[jj * bnnz],
                                                                  &tmp_data[ii * block_size],
                                                                  1.0, res_vec, block_size);
                               }
@@ -599,14 +599,14 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
                            {
                               ii = A_offd_j[jj];
                               /* res -= A_offd_data[jj] * Vext_data[ii];*/
-                              hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_offd_data[jj * bnnz],
+                              nalu_hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_offd_data[jj * bnnz],
                                                               &Vext_data[ii * block_size],
                                                               1.0, res_vec, block_size);
 
                            }
                            /* u_data[i] = res / A_diag_data[A_diag_i[i]]; */
                            /* if diag is singular, then skip this point */
-                           if (hypre_CSRBlockMatrixBlockInvMatvec( &A_diag_data[A_diag_i[i]*bnnz], res_vec,
+                           if (nalu_hypre_CSRBlockMatrixBlockInvMatvec( &A_diag_data[A_diag_i[i]*bnnz], res_vec,
                                                                    out_vec, block_size) == 0)
                            {
                               for (k = 0; k < block_size; k++)
@@ -617,7 +617,7 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
                         }
                      } /* loop over points */
                   } /* loop over threads */
-                  hypre_TFree(tmp_data, NALU_HYPRE_MEMORY_HOST);
+                  nalu_hypre_TFree(tmp_data, NALU_HYPRE_MEMORY_HOST);
                }
                else /* num_threads = 1 */
                {
@@ -637,7 +637,7 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
                         {
                            ii = A_diag_j[jj];
                            /* res -= A_diag_data[jj] * u_data[ii]; */
-                           hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_diag_data[jj * bnnz],
+                           nalu_hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_diag_data[jj * bnnz],
                                                            &u_data[ii * block_size],
                                                            1.0, res_vec, block_size);
                         }
@@ -645,14 +645,14 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
                         {
                            ii = A_offd_j[jj];
                            /* res -= A_offd_data[jj] * Vext_data[ii];*/
-                           hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_offd_data[jj * bnnz],
+                           nalu_hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_offd_data[jj * bnnz],
                                                            &Vext_data[ii * block_size],
                                                            1.0, res_vec, block_size);
 
                         }
                         /* u_data[i] = res / A_diag_data[A_diag_i[i]]; */
                         /* if diag is singular, then skip this point */
-                        if (hypre_CSRBlockMatrixBlockInvMatvec( &A_diag_data[A_diag_i[i]*bnnz], res_vec,
+                        if (nalu_hypre_CSRBlockMatrixBlockInvMatvec( &A_diag_data[A_diag_i[i]*bnnz], res_vec,
                                                                 out_vec, block_size) == 0)
                         {
                            for (k = 0; k < block_size; k++)
@@ -671,8 +671,8 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
              * relax weight and omega do not = 1
              *-----------------------------------------------------------------*/
             prod = (1.0 - relax_weight * omega);
-            res0_vec = hypre_CTAlloc(NALU_HYPRE_Real,  block_size, NALU_HYPRE_MEMORY_HOST);
-            res2_vec = hypre_CTAlloc(NALU_HYPRE_Real,  block_size, NALU_HYPRE_MEMORY_HOST);
+            res0_vec = nalu_hypre_CTAlloc(NALU_HYPRE_Real,  block_size, NALU_HYPRE_MEMORY_HOST);
+            res2_vec = nalu_hypre_CTAlloc(NALU_HYPRE_Real,  block_size, NALU_HYPRE_MEMORY_HOST);
 
             if (relax_points == 0)
             {
@@ -682,7 +682,7 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
 
                if (num_threads > 1)
                {
-                  tmp_data = hypre_CTAlloc(NALU_HYPRE_Real, n, NALU_HYPRE_MEMORY_HOST);
+                  tmp_data = nalu_hypre_CTAlloc(NALU_HYPRE_Real, n, NALU_HYPRE_MEMORY_HOST);
                   for (i = 0; i < n; i++)
                   {
                      tmp_data[i] = u_data[i];
@@ -718,18 +718,18 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
                            if (ii >= ns && ii < ne)
                            {
                               /* res0 -= A_diag_data[jj] * u_data[ii]; */
-                              hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_diag_data[jj * bnnz],
+                              nalu_hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_diag_data[jj * bnnz],
                                                               &u_data[ii * block_size],
                                                               1.0, res0_vec, block_size);
                               /* res2 += A_diag_data[jj] * Vtemp_data[ii];*/
-                              hypre_CSRBlockMatrixBlockMatvec(1.0, &A_diag_data[jj * bnnz],
+                              nalu_hypre_CSRBlockMatrixBlockMatvec(1.0, &A_diag_data[jj * bnnz],
                                                               &Vtemp_data[ii * block_size],
                                                               1.0, res2_vec, block_size);
                            }
                            else
                            {
                               /* res -= A_diag_data[jj] * tmp_data[ii]; */
-                              hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_diag_data[jj * bnnz],
+                              nalu_hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_diag_data[jj * bnnz],
                                                               &tmp_data[ii * block_size],
                                                               1.0, res_vec, block_size);
                            }
@@ -738,7 +738,7 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
                         {
                            ii = A_offd_j[jj];
                            /* res -= A_offd_data[jj] * Vext_data[ii];*/
-                           hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_offd_data[jj * bnnz],
+                           nalu_hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_offd_data[jj * bnnz],
                                                            &Vext_data[ii * block_size],
                                                            1.0, res_vec, block_size);
                         }
@@ -749,7 +749,7 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
                         {
                            tmp_vec[k] =  omega * res_vec[k] + res0_vec[k] + one_minus_omega * res2_vec[k];
                         }
-                        if (hypre_CSRBlockMatrixBlockInvMatvec( &A_diag_data[A_diag_i[i]*bnnz], tmp_vec,
+                        if (nalu_hypre_CSRBlockMatrixBlockInvMatvec( &A_diag_data[A_diag_i[i]*bnnz], tmp_vec,
                                                                 out_vec, block_size) == 0)
                         {
                            for (k = 0; k < block_size; k++)
@@ -761,7 +761,7 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
 
                      } /* end of loop over points */
                   } /* end of loop over threads */
-                  hypre_TFree(tmp_data, NALU_HYPRE_MEMORY_HOST);
+                  nalu_hypre_TFree(tmp_data, NALU_HYPRE_MEMORY_HOST);
                }
                else /* num_threads = 1 */
                {
@@ -780,11 +780,11 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
                      {
                         ii = A_diag_j[jj];
                         /* res0 -= A_diag_data[jj] * u_data[ii]; */
-                        hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_diag_data[jj * bnnz],
+                        nalu_hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_diag_data[jj * bnnz],
                                                         &u_data[ii * block_size],
                                                         1.0, res0_vec, block_size);
                         /* res2 += A_diag_data[jj] * Vtemp_data[ii];*/
-                        hypre_CSRBlockMatrixBlockMatvec(1.0, &A_diag_data[jj * bnnz],
+                        nalu_hypre_CSRBlockMatrixBlockMatvec(1.0, &A_diag_data[jj * bnnz],
                                                         &Vtemp_data[ii * block_size],
                                                         1.0, res2_vec, block_size);
                      }
@@ -792,7 +792,7 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
                      {
                         ii = A_offd_j[jj];
                         /* res -= A_offd_data[jj] * Vext_data[ii];*/
-                        hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_offd_data[jj * bnnz],
+                        nalu_hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_offd_data[jj * bnnz],
                                                         &Vext_data[ii * block_size],
                                                         1.0, res_vec, block_size);
                      }
@@ -803,7 +803,7 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
                      {
                         tmp_vec[k] =  omega * res_vec[k] + res0_vec[k] + one_minus_omega * res2_vec[k];
                      }
-                     if (hypre_CSRBlockMatrixBlockInvMatvec( &A_diag_data[A_diag_i[i]*bnnz], tmp_vec,
+                     if (nalu_hypre_CSRBlockMatrixBlockInvMatvec( &A_diag_data[A_diag_i[i]*bnnz], tmp_vec,
                                                              out_vec, block_size) == 0)
                      {
                         for (k = 0; k < block_size; k++)
@@ -822,7 +822,7 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
             {
                if (num_threads > 1)
                {
-                  tmp_data = hypre_CTAlloc(NALU_HYPRE_Real, n, NALU_HYPRE_MEMORY_HOST);
+                  tmp_data = nalu_hypre_CTAlloc(NALU_HYPRE_Real, n, NALU_HYPRE_MEMORY_HOST);
                   for (i = 0; i < n; i++)
                   {
                      tmp_data[i] = u_data[i];
@@ -866,18 +866,18 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
                               if (ii >= ns && ii < ne)
                               {
                                  /* res0 -= A_diag_data[jj] * u_data[ii]; */
-                                 hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_diag_data[jj * bnnz],
+                                 nalu_hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_diag_data[jj * bnnz],
                                                                  &u_data[ii * block_size],
                                                                  1.0, res0_vec, block_size);
                                  /* res2 += A_diag_data[jj] * Vtemp_data[ii];*/
-                                 hypre_CSRBlockMatrixBlockMatvec(1.0, &A_diag_data[jj * bnnz],
+                                 nalu_hypre_CSRBlockMatrixBlockMatvec(1.0, &A_diag_data[jj * bnnz],
                                                                  &Vtemp_data[ii * block_size],
                                                                  1.0, res2_vec, block_size);
                               }
                               else
                               {
                                  /* res -= A_diag_data[jj] * tmp_data[ii]; */
-                                 hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_diag_data[jj * bnnz],
+                                 nalu_hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_diag_data[jj * bnnz],
                                                                  &tmp_data[ii * block_size],
                                                                  1.0, res_vec, block_size);
                               }
@@ -886,7 +886,7 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
                            {
                               ii = A_offd_j[jj];
                               /* res -= A_offd_data[jj] * Vext_data[ii];*/
-                              hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_offd_data[jj * bnnz],
+                              nalu_hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_offd_data[jj * bnnz],
                                                               &Vext_data[ii * block_size],
                                                               1.0, res_vec, block_size);
                            }
@@ -897,7 +897,7 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
                            {
                               tmp_vec[k] =  omega * res_vec[k] + res0_vec[k] + one_minus_omega * res2_vec[k];
                            }
-                           if (hypre_CSRBlockMatrixBlockInvMatvec( &A_diag_data[A_diag_i[i]*bnnz], tmp_vec,
+                           if (nalu_hypre_CSRBlockMatrixBlockInvMatvec( &A_diag_data[A_diag_i[i]*bnnz], tmp_vec,
                                                                    out_vec, block_size) == 0)
                            {
                               for (k = 0; k < block_size; k++)
@@ -909,7 +909,7 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
                         } /* end of if cf_marker */
                      } /* end loop over points */
                   } /* end loop over threads */
-                  hypre_TFree(tmp_data, NALU_HYPRE_MEMORY_HOST);
+                  nalu_hypre_TFree(tmp_data, NALU_HYPRE_MEMORY_HOST);
                }
                else /* num_threads = 1 */
                {
@@ -936,11 +936,11 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
                         {
                            ii = A_diag_j[jj];
                            /* res0 -= A_diag_data[jj] * u_data[ii]; */
-                           hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_diag_data[jj * bnnz],
+                           nalu_hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_diag_data[jj * bnnz],
                                                            &u_data[ii * block_size],
                                                            1.0, res0_vec, block_size);
                            /* res2 += A_diag_data[jj] * Vtemp_data[ii];*/
-                           hypre_CSRBlockMatrixBlockMatvec(1.0, &A_diag_data[jj * bnnz],
+                           nalu_hypre_CSRBlockMatrixBlockMatvec(1.0, &A_diag_data[jj * bnnz],
                                                            &Vtemp_data[ii * block_size],
                                                            1.0, res2_vec, block_size);
                         }
@@ -948,7 +948,7 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
                         {
                            ii = A_offd_j[jj];
                            /* res -= A_offd_data[jj] * Vext_data[ii];*/
-                           hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_offd_data[jj * bnnz],
+                           nalu_hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_offd_data[jj * bnnz],
                                                            &Vext_data[ii * block_size],
                                                            1.0, res_vec, block_size);
                         }
@@ -959,7 +959,7 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
                         {
                            tmp_vec[k] =  omega * res_vec[k] + res0_vec[k] + one_minus_omega * res2_vec[k];
                         }
-                        if (hypre_CSRBlockMatrixBlockInvMatvec( &A_diag_data[A_diag_i[i]*bnnz], tmp_vec,
+                        if (nalu_hypre_CSRBlockMatrixBlockInvMatvec( &A_diag_data[A_diag_i[i]*bnnz], tmp_vec,
                                                                 out_vec, block_size) == 0)
                         {
                            for (k = 0; k < block_size; k++)
@@ -972,14 +972,14 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
                   }  /* end loop over points */
                } /* end num_threads = 1 */
             } /* end C/F option */
-            hypre_TFree(res0_vec, NALU_HYPRE_MEMORY_HOST);
-            hypre_TFree(res2_vec, NALU_HYPRE_MEMORY_HOST);
+            nalu_hypre_TFree(res0_vec, NALU_HYPRE_MEMORY_HOST);
+            nalu_hypre_TFree(res2_vec, NALU_HYPRE_MEMORY_HOST);
          } /* end of check relax weight and omega */
 
          if (num_procs > 1)
          {
-            hypre_TFree(Vext_data, NALU_HYPRE_MEMORY_HOST);
-            hypre_TFree(v_buf_data, NALU_HYPRE_MEMORY_HOST);
+            nalu_hypre_TFree(Vext_data, NALU_HYPRE_MEMORY_HOST);
+            nalu_hypre_TFree(v_buf_data, NALU_HYPRE_MEMORY_HOST);
          }
 
 
@@ -999,40 +999,40 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
 
          if (num_procs > 1)
          {
-            num_sends = hypre_ParCSRCommPkgNumSends(comm_pkg);
+            num_sends = nalu_hypre_ParCSRCommPkgNumSends(comm_pkg);
 
-            v_buf_data = hypre_CTAlloc(NALU_HYPRE_Real,
-                                       hypre_ParCSRCommPkgSendMapStart(comm_pkg,  num_sends) * block_size, NALU_HYPRE_MEMORY_HOST);
+            v_buf_data = nalu_hypre_CTAlloc(NALU_HYPRE_Real,
+                                       nalu_hypre_ParCSRCommPkgSendMapStart(comm_pkg,  num_sends) * block_size, NALU_HYPRE_MEMORY_HOST);
 
-            Vext_data = hypre_CTAlloc(NALU_HYPRE_Real, num_cols_offd * block_size, NALU_HYPRE_MEMORY_HOST);
+            Vext_data = nalu_hypre_CTAlloc(NALU_HYPRE_Real, num_cols_offd * block_size, NALU_HYPRE_MEMORY_HOST);
 
             if (num_cols_offd)
             {
-               A_offd_j = hypre_CSRBlockMatrixJ(A_offd);
-               A_offd_data = hypre_CSRBlockMatrixData(A_offd);
+               A_offd_j = nalu_hypre_CSRBlockMatrixJ(A_offd);
+               A_offd_data = nalu_hypre_CSRBlockMatrixData(A_offd);
             }
 
             index = 0;
             for (i = 0; i < num_sends; i++)
             {
-               start = hypre_ParCSRCommPkgSendMapStart(comm_pkg, i);
-               for (j = start; j < hypre_ParCSRCommPkgSendMapStart(comm_pkg, i + 1); j++)
+               start = nalu_hypre_ParCSRCommPkgSendMapStart(comm_pkg, i);
+               for (j = start; j < nalu_hypre_ParCSRCommPkgSendMapStart(comm_pkg, i + 1); j++)
                {
                   for (k = 0; k < block_size; k++)
                   {
                      v_buf_data[index++]
-                        = u_data[hypre_ParCSRCommPkgSendMapElmt(comm_pkg, j) * block_size + k];
+                        = u_data[nalu_hypre_ParCSRCommPkgSendMapElmt(comm_pkg, j) * block_size + k];
                   }
                }
 
             }
 
             /* we need to use the block comm handle here - since comm_pkg is nodal based */
-            comm_handle = hypre_ParCSRBlockCommHandleCreate( 1, block_size, comm_pkg,
+            comm_handle = nalu_hypre_ParCSRBlockCommHandleCreate( 1, block_size, comm_pkg,
                                                              v_buf_data, Vext_data);
 
 
-            hypre_ParCSRBlockCommHandleDestroy(comm_handle);
+            nalu_hypre_ParCSRBlockCommHandleDestroy(comm_handle);
             comm_handle = NULL;
 
          }
@@ -1047,7 +1047,7 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
             {
                if (num_threads > 1)
                {
-                  tmp_data = hypre_CTAlloc(NALU_HYPRE_Real, n, NALU_HYPRE_MEMORY_HOST);
+                  tmp_data = nalu_hypre_CTAlloc(NALU_HYPRE_Real, n, NALU_HYPRE_MEMORY_HOST);
                   for (i = 0; i < n; i++)
                   {
                      tmp_data[i] = u_data[i];
@@ -1084,14 +1084,14 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
                            if (ii >= ns && ii < ne)
                            {
                               /* res -= A_diag_data[jj] * u_data[ii]; */
-                              hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_diag_data[jj * bnnz],
+                              nalu_hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_diag_data[jj * bnnz],
                                                               &u_data[ii * block_size],
                                                               1.0, res_vec, block_size);
                            }
                            else
                            {
                               /* res -= A_diag_data[jj] * tmp_data[ii]; */
-                              hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_diag_data[jj * bnnz],
+                              nalu_hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_diag_data[jj * bnnz],
                                                               &tmp_data[ii * block_size],
                                                               1.0, res_vec, block_size);
                            }
@@ -1102,13 +1102,13 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
                            ii = A_offd_j[jj];
 
                            /* res -= A_offd_data[jj] * Vext_data[ii];*/
-                           hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_offd_data[jj * bnnz],
+                           nalu_hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_offd_data[jj * bnnz],
                                                            &Vext_data[ii * block_size],
                                                            1.0, res_vec, block_size);
                         }
                         /* u_data[i] = res / A_diag_data[A_diag_i[i]]; */
                         /* if diag is singular, then skip this point */
-                        if (hypre_CSRBlockMatrixBlockInvMatvec( &A_diag_data[A_diag_i[i]*bnnz], res_vec,
+                        if (nalu_hypre_CSRBlockMatrixBlockInvMatvec( &A_diag_data[A_diag_i[i]*bnnz], res_vec,
                                                                 out_vec, block_size) == 0)
                         {
                            for (k = 0; k < block_size; k++)
@@ -1137,7 +1137,7 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
                            {
 
                               /* res -= A_diag_data[jj] * u_data[ii]; */
-                              hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_diag_data[jj * bnnz],
+                              nalu_hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_diag_data[jj * bnnz],
                                                               &u_data[ii * block_size],
                                                               1.0, res_vec, block_size);
 
@@ -1145,7 +1145,7 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
                            else
                            {
                               /* res -= A_diag_data[jj] * tmp_data[ii]; */
-                              hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_diag_data[jj * bnnz],
+                              nalu_hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_diag_data[jj * bnnz],
                                                               &tmp_data[ii * block_size],
                                                               1.0, res_vec, block_size);
 
@@ -1155,13 +1155,13 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
                         {
                            ii = A_offd_j[jj];
                            /* res -= A_offd_data[jj] * Vext_data[ii]; */
-                           hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_offd_data[jj * bnnz],
+                           nalu_hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_offd_data[jj * bnnz],
                                                            &Vext_data[ii * block_size],
                                                            1.0, res_vec, block_size);
                         }
                         /* u_data[i] = res / A_diag_data[A_diag_i[i]]; */
                         /* if diag is singular, then skip this point */
-                        if (hypre_CSRBlockMatrixBlockInvMatvec( &A_diag_data[A_diag_i[i]*bnnz], res_vec,
+                        if (nalu_hypre_CSRBlockMatrixBlockInvMatvec( &A_diag_data[A_diag_i[i]*bnnz], res_vec,
                                                                 out_vec, block_size) == 0)
                         {
                            for (k = 0; k < block_size; k++)
@@ -1171,7 +1171,7 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
                         }
                      } /* end of loop over points */
                   } /* end of loop over threads */
-                  hypre_TFree(tmp_data, NALU_HYPRE_MEMORY_HOST);
+                  nalu_hypre_TFree(tmp_data, NALU_HYPRE_MEMORY_HOST);
                }
                else /* num_thread ==1 */
                {
@@ -1189,7 +1189,7 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
                      {
                         ii = A_diag_j[jj];
                         /* res -= A_diag_data[jj] * u_data[ii]; */
-                        hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_diag_data[jj * bnnz],
+                        nalu_hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_diag_data[jj * bnnz],
                                                         &u_data[ii * block_size],
                                                         1.0, res_vec, block_size);
                      }
@@ -1198,12 +1198,12 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
                         ii = A_offd_j[jj];
 
                         /* res -= A_offd_data[jj] * Vext_data[ii]; */
-                        hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_offd_data[jj * bnnz],
+                        nalu_hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_offd_data[jj * bnnz],
                                                         &Vext_data[ii * block_size],
                                                         1.0, res_vec, block_size);
                      }
                      /* u_data[i] = res / A_diag_data[A_diag_i[i]]; */
-                     if (hypre_CSRBlockMatrixBlockInvMatvec( &A_diag_data[A_diag_i[i]*bnnz], res_vec,
+                     if (nalu_hypre_CSRBlockMatrixBlockInvMatvec( &A_diag_data[A_diag_i[i]*bnnz], res_vec,
                                                              out_vec, block_size) == 0)
                      {
                         for (k = 0; k < block_size; k++)
@@ -1227,7 +1227,7 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
                      {
                         ii = A_diag_j[jj];
                         /* res -= A_diag_data[jj] * u_data[ii]; */
-                        hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_diag_data[jj * bnnz],
+                        nalu_hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_diag_data[jj * bnnz],
                                                         &u_data[ii * block_size],
                                                         1.0, res_vec, block_size);
                      }
@@ -1235,12 +1235,12 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
                      {
                         ii = A_offd_j[jj];
                         /* res -= A_offd_data[jj] * Vext_data[ii]; */
-                        hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_offd_data[jj * bnnz],
+                        nalu_hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_offd_data[jj * bnnz],
                                                         &Vext_data[ii * block_size],
                                                         1.0, res_vec, block_size);
                      }
                      /* u_data[i] = res / A_diag_data[A_diag_i[i]]; */
-                     if (hypre_CSRBlockMatrixBlockInvMatvec( &A_diag_data[A_diag_i[i]*bnnz], res_vec,
+                     if (nalu_hypre_CSRBlockMatrixBlockInvMatvec( &A_diag_data[A_diag_i[i]*bnnz], res_vec,
                                                              out_vec, block_size) == 0)
                      {
                         for (k = 0; k < block_size; k++)
@@ -1260,7 +1260,7 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
             {
                if (num_threads > 1)
                {
-                  tmp_data = hypre_CTAlloc(NALU_HYPRE_Real, n, NALU_HYPRE_MEMORY_HOST);
+                  tmp_data = nalu_hypre_CTAlloc(NALU_HYPRE_Real, n, NALU_HYPRE_MEMORY_HOST);
                   for (i = 0; i < n; i++)
                   {
                      tmp_data[i] = u_data[i];
@@ -1299,14 +1299,14 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
                               if (ii >= ns && ii < ne)
                               {
                                  /* res -= A_diag_data[jj] * u_data[ii]; */
-                                 hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_diag_data[jj * bnnz],
+                                 nalu_hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_diag_data[jj * bnnz],
                                                                  &u_data[ii * block_size],
                                                                  1.0, res_vec, block_size);
                               }
                               else
                               {
                                  /* res -= A_diag_data[jj] * tmp_data[ii]; */
-                                 hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_diag_data[jj * bnnz],
+                                 nalu_hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_diag_data[jj * bnnz],
                                                                  &tmp_data[ii * block_size],
                                                                  1.0, res_vec, block_size);
                               }
@@ -1315,14 +1315,14 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
                            {
                               ii = A_offd_j[jj];
                               /* res -= A_offd_data[jj] * Vext_data[ii];*/
-                              hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_offd_data[jj * bnnz],
+                              nalu_hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_offd_data[jj * bnnz],
                                                               &Vext_data[ii * block_size],
                                                               1.0, res_vec, block_size);
 
                            }
                            /* u_data[i] = res / A_diag_data[A_diag_i[i]]; */
                            /* if diag is singular, then skip this point */
-                           if (hypre_CSRBlockMatrixBlockInvMatvec( &A_diag_data[A_diag_i[i]*bnnz], res_vec,
+                           if (nalu_hypre_CSRBlockMatrixBlockInvMatvec( &A_diag_data[A_diag_i[i]*bnnz], res_vec,
                                                                    out_vec, block_size) == 0)
                            {
                               for (k = 0; k < block_size; k++)
@@ -1353,14 +1353,14 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
                               if (ii >= ns && ii < ne)
                               {
                                  /* res -= A_diag_data[jj] * u_data[ii]; */
-                                 hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_diag_data[jj * bnnz],
+                                 nalu_hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_diag_data[jj * bnnz],
                                                                  &u_data[ii * block_size],
                                                                  1.0, res_vec, block_size);
                               }
                               else
                               {
                                  /* res -= A_diag_data[jj] * tmp_data[ii]; */
-                                 hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_diag_data[jj * bnnz],
+                                 nalu_hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_diag_data[jj * bnnz],
                                                                  &tmp_data[ii * block_size],
                                                                  1.0, res_vec, block_size);
                               }
@@ -1369,14 +1369,14 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
                            {
                               ii = A_offd_j[jj];
                               /* res -= A_offd_data[jj] * Vext_data[ii];*/
-                              hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_offd_data[jj * bnnz],
+                              nalu_hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_offd_data[jj * bnnz],
                                                               &Vext_data[ii * block_size],
                                                               1.0, res_vec, block_size);
 
                            }
                            /* u_data[i] = res / A_diag_data[A_diag_i[i]]; */
                            /* if diag is singular, then skip this point */
-                           if (hypre_CSRBlockMatrixBlockInvMatvec( &A_diag_data[A_diag_i[i]*bnnz], res_vec,
+                           if (nalu_hypre_CSRBlockMatrixBlockInvMatvec( &A_diag_data[A_diag_i[i]*bnnz], res_vec,
                                                                    out_vec, block_size) == 0)
                            {
                               for (k = 0; k < block_size; k++)
@@ -1387,7 +1387,7 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
                         }
                      } /* loop over pts */
                   }     /* over threads */
-                  hypre_TFree(tmp_data, NALU_HYPRE_MEMORY_HOST);
+                  nalu_hypre_TFree(tmp_data, NALU_HYPRE_MEMORY_HOST);
                }
                else /* num_threads = 1 */
                {
@@ -1410,7 +1410,7 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
                         {
                            ii = A_diag_j[jj];
                            /* res -= A_diag_data[jj] * u_data[ii]; */
-                           hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_diag_data[jj * bnnz],
+                           nalu_hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_diag_data[jj * bnnz],
                                                            &u_data[ii * block_size],
                                                            1.0, res_vec, block_size);
                         }
@@ -1418,14 +1418,14 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
                         {
                            ii = A_offd_j[jj];
                            /* res -= A_offd_data[jj] * Vext_data[ii];*/
-                           hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_offd_data[jj * bnnz],
+                           nalu_hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_offd_data[jj * bnnz],
                                                            &Vext_data[ii * block_size],
                                                            1.0, res_vec, block_size);
 
                         }
                         /* u_data[i] = res / A_diag_data[A_diag_i[i]]; */
                         /* if diag is singular, then skip this point */
-                        if (hypre_CSRBlockMatrixBlockInvMatvec( &A_diag_data[A_diag_i[i]*bnnz], res_vec,
+                        if (nalu_hypre_CSRBlockMatrixBlockInvMatvec( &A_diag_data[A_diag_i[i]*bnnz], res_vec,
                                                                 out_vec, block_size) == 0)
                         {
                            for (k = 0; k < block_size; k++)
@@ -1454,7 +1454,7 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
                         {
                            ii = A_diag_j[jj];
                            /* res -= A_diag_data[jj] * u_data[ii]; */
-                           hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_diag_data[jj * bnnz],
+                           nalu_hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_diag_data[jj * bnnz],
                                                            &u_data[ii * block_size],
                                                            1.0, res_vec, block_size);
                         }
@@ -1462,13 +1462,13 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
                         {
                            ii = A_offd_j[jj];
                            /* res -= A_offd_data[jj] * Vext_data[ii];*/
-                           hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_offd_data[jj * bnnz],
+                           nalu_hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_offd_data[jj * bnnz],
                                                            &Vext_data[ii * block_size],
                                                            1.0, res_vec, block_size);
                         }
                         /* u_data[i] = res / A_diag_data[A_diag_i[i]]; */
                         /* if diag is singular, then skip this point */
-                        if (hypre_CSRBlockMatrixBlockInvMatvec( &A_diag_data[A_diag_i[i]*bnnz], res_vec,
+                        if (nalu_hypre_CSRBlockMatrixBlockInvMatvec( &A_diag_data[A_diag_i[i]*bnnz], res_vec,
                                                                 out_vec, block_size) == 0)
                         {
                            for (k = 0; k < block_size; k++)
@@ -1487,8 +1487,8 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
              * relax weight and omega do not = 1
              *-----------------------------------------------------------------*/
             prod = (1.0 - relax_weight * omega);
-            res0_vec = hypre_CTAlloc(NALU_HYPRE_Real,  block_size, NALU_HYPRE_MEMORY_HOST);
-            res2_vec = hypre_CTAlloc(NALU_HYPRE_Real,  block_size, NALU_HYPRE_MEMORY_HOST);
+            res0_vec = nalu_hypre_CTAlloc(NALU_HYPRE_Real,  block_size, NALU_HYPRE_MEMORY_HOST);
+            res2_vec = nalu_hypre_CTAlloc(NALU_HYPRE_Real,  block_size, NALU_HYPRE_MEMORY_HOST);
             for (i = 0; i < n; i++)
             {
                Vtemp_data[i] = u_data[i];
@@ -1498,7 +1498,7 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
             {
                if (num_threads > 1)
                {
-                  tmp_data = hypre_CTAlloc(NALU_HYPRE_Real, n, NALU_HYPRE_MEMORY_HOST);
+                  tmp_data = nalu_hypre_CTAlloc(NALU_HYPRE_Real, n, NALU_HYPRE_MEMORY_HOST);
                   for (i = 0; i < n; i++)
                   {
                      tmp_data[i] = u_data[i];
@@ -1537,18 +1537,18 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
                            if (ii >= ns && ii < ne)
                            {
                               /* res0 -= A_diag_data[jj] * u_data[ii]; */
-                              hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_diag_data[jj * bnnz],
+                              nalu_hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_diag_data[jj * bnnz],
                                                               &u_data[ii * block_size],
                                                               1.0, res0_vec, block_size);
                               /* res2 += A_diag_data[jj] * Vtemp_data[ii];*/
-                              hypre_CSRBlockMatrixBlockMatvec(1.0, &A_diag_data[jj * bnnz],
+                              nalu_hypre_CSRBlockMatrixBlockMatvec(1.0, &A_diag_data[jj * bnnz],
                                                               &Vtemp_data[ii * block_size],
                                                               1.0, res2_vec, block_size);
                            }
                            else
                            {
                               /* res -= A_diag_data[jj] * tmp_data[ii]; */
-                              hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_diag_data[jj * bnnz],
+                              nalu_hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_diag_data[jj * bnnz],
                                                               &tmp_data[ii * block_size],
                                                               1.0, res_vec, block_size);
                            }
@@ -1558,7 +1558,7 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
                         {
                            ii = A_offd_j[jj];
                            /* res -= A_offd_data[jj] * Vext_data[ii]; */
-                           hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_offd_data[jj * bnnz],
+                           nalu_hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_offd_data[jj * bnnz],
                                                            &Vext_data[ii * block_size],
                                                            1.0, res_vec, block_size);
 
@@ -1571,7 +1571,7 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
                         {
                            tmp_vec[k] =  omega * res_vec[k] + res0_vec[k] + one_minus_omega * res2_vec[k];
                         }
-                        if (hypre_CSRBlockMatrixBlockInvMatvec( &A_diag_data[A_diag_i[i]*bnnz], tmp_vec,
+                        if (nalu_hypre_CSRBlockMatrixBlockInvMatvec( &A_diag_data[A_diag_i[i]*bnnz], tmp_vec,
                                                                 out_vec, block_size) == 0)
                         {
                            for (k = 0; k < block_size; k++)
@@ -1601,18 +1601,18 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
                            if (ii >= ns && ii < ne)
                            {
                               /* res0 -= A_diag_data[jj] * u_data[ii]; */
-                              hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_diag_data[jj * bnnz],
+                              nalu_hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_diag_data[jj * bnnz],
                                                               &u_data[ii * block_size],
                                                               1.0, res0_vec, block_size);
                               /* res2 += A_diag_data[jj] * Vtemp_data[ii];*/
-                              hypre_CSRBlockMatrixBlockMatvec(1.0, &A_diag_data[jj * bnnz],
+                              nalu_hypre_CSRBlockMatrixBlockMatvec(1.0, &A_diag_data[jj * bnnz],
                                                               &Vtemp_data[ii * block_size],
                                                               1.0, res2_vec, block_size);
                            }
                            else
                            {
                               /* res -= A_diag_data[jj] * tmp_data[ii]; */
-                              hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_diag_data[jj * bnnz],
+                              nalu_hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_diag_data[jj * bnnz],
                                                               &tmp_data[ii * block_size],
                                                               1.0, res_vec, block_size);
                            }
@@ -1621,7 +1621,7 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
                         {
                            ii = A_offd_j[jj];
                            /* res -= A_offd_data[jj] * Vext_data[ii];*/
-                           hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_offd_data[jj * bnnz],
+                           nalu_hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_offd_data[jj * bnnz],
                                                            &Vext_data[ii * block_size],
                                                            1.0, res_vec, block_size);
                         }
@@ -1632,7 +1632,7 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
                         {
                            tmp_vec[k] =  omega * res_vec[k] + res0_vec[k] + one_minus_omega * res2_vec[k];
                         }
-                        if (hypre_CSRBlockMatrixBlockInvMatvec( &A_diag_data[A_diag_i[i]*bnnz], tmp_vec,
+                        if (nalu_hypre_CSRBlockMatrixBlockInvMatvec( &A_diag_data[A_diag_i[i]*bnnz], tmp_vec,
                                                                 out_vec, block_size) == 0)
                         {
                            for (k = 0; k < block_size; k++)
@@ -1643,7 +1643,7 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
                         }
                      } /* end of loop over points */
                   } /* loop over threads end */
-                  hypre_TFree(tmp_data, NALU_HYPRE_MEMORY_HOST);
+                  nalu_hypre_TFree(tmp_data, NALU_HYPRE_MEMORY_HOST);
                }
                else /* num threads = 1 */
                {
@@ -1663,11 +1663,11 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
                      {
                         ii = A_diag_j[jj];
                         /* res0 -= A_diag_data[jj] * u_data[ii]; */
-                        hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_diag_data[jj * bnnz],
+                        nalu_hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_diag_data[jj * bnnz],
                                                         &u_data[ii * block_size],
                                                         1.0, res0_vec, block_size);
                         /* res2 += A_diag_data[jj] * Vtemp_data[ii];*/
-                        hypre_CSRBlockMatrixBlockMatvec(1.0, &A_diag_data[jj * bnnz],
+                        nalu_hypre_CSRBlockMatrixBlockMatvec(1.0, &A_diag_data[jj * bnnz],
                                                         &Vtemp_data[ii * block_size],
                                                         1.0, res2_vec, block_size);
                      }
@@ -1675,7 +1675,7 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
                      {
                         ii = A_offd_j[jj];
                         /* res -= A_offd_data[jj] * Vext_data[ii];*/
-                        hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_offd_data[jj * bnnz],
+                        nalu_hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_offd_data[jj * bnnz],
                                                         &Vext_data[ii * block_size],
                                                         1.0, res_vec, block_size);
                      }
@@ -1686,7 +1686,7 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
                      {
                         tmp_vec[k] =  omega * res_vec[k] + res0_vec[k] + one_minus_omega * res2_vec[k];
                      }
-                     if (hypre_CSRBlockMatrixBlockInvMatvec( &A_diag_data[A_diag_i[i]*bnnz], tmp_vec,
+                     if (nalu_hypre_CSRBlockMatrixBlockInvMatvec( &A_diag_data[A_diag_i[i]*bnnz], tmp_vec,
                                                              out_vec, block_size) == 0)
                      {
                         for (k = 0; k < block_size; k++)
@@ -1712,11 +1712,11 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
                      {
                         ii = A_diag_j[jj];
                         /* res0 -= A_diag_data[jj] * u_data[ii]; */
-                        hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_diag_data[jj * bnnz],
+                        nalu_hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_diag_data[jj * bnnz],
                                                         &u_data[ii * block_size],
                                                         1.0, res0_vec, block_size);
                         /* res2 += A_diag_data[jj] * Vtemp_data[ii];*/
-                        hypre_CSRBlockMatrixBlockMatvec(1.0, &A_diag_data[jj * bnnz],
+                        nalu_hypre_CSRBlockMatrixBlockMatvec(1.0, &A_diag_data[jj * bnnz],
                                                         &Vtemp_data[ii * block_size],
                                                         1.0, res2_vec, block_size);
                      }
@@ -1724,7 +1724,7 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
                      {
                         ii = A_offd_j[jj];
                         /* res -= A_offd_data[jj] * Vext_data[ii];*/
-                        hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_offd_data[jj * bnnz],
+                        nalu_hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_offd_data[jj * bnnz],
                                                         &Vext_data[ii * block_size],
                                                         1.0, res_vec, block_size);
                      }
@@ -1735,7 +1735,7 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
                      {
                         tmp_vec[k] =  omega * res_vec[k] + res0_vec[k] + one_minus_omega * res2_vec[k];
                      }
-                     if (hypre_CSRBlockMatrixBlockInvMatvec( &A_diag_data[A_diag_i[i]*bnnz], tmp_vec,
+                     if (nalu_hypre_CSRBlockMatrixBlockInvMatvec( &A_diag_data[A_diag_i[i]*bnnz], tmp_vec,
                                                              out_vec, block_size) == 0)
                      {
                         for (k = 0; k < block_size; k++)
@@ -1756,7 +1756,7 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
             {
                if (num_threads > 1)
                {
-                  tmp_data = hypre_CTAlloc(NALU_HYPRE_Real, n, NALU_HYPRE_MEMORY_HOST);
+                  tmp_data = nalu_hypre_CTAlloc(NALU_HYPRE_Real, n, NALU_HYPRE_MEMORY_HOST);
                   for (i = 0; i < n; i++)
                   {
                      tmp_data[i] = u_data[i];
@@ -1800,18 +1800,18 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
                               if (ii >= ns && ii < ne)
                               {
                                  /* res0 -= A_diag_data[jj] * u_data[ii]; */
-                                 hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_diag_data[jj * bnnz],
+                                 nalu_hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_diag_data[jj * bnnz],
                                                                  &u_data[ii * block_size],
                                                                  1.0, res0_vec, block_size);
                                  /* res2 += A_diag_data[jj] * Vtemp_data[ii];*/
-                                 hypre_CSRBlockMatrixBlockMatvec(1.0, &A_diag_data[jj * bnnz],
+                                 nalu_hypre_CSRBlockMatrixBlockMatvec(1.0, &A_diag_data[jj * bnnz],
                                                                  &Vtemp_data[ii * block_size],
                                                                  1.0, res2_vec, block_size);
                               }
                               else
                               {
                                  /* res -= A_diag_data[jj] * tmp_data[ii]; */
-                                 hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_diag_data[jj * bnnz],
+                                 nalu_hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_diag_data[jj * bnnz],
                                                                  &tmp_data[ii * block_size],
                                                                  1.0, res_vec, block_size);
                               }
@@ -1820,7 +1820,7 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
                            {
                               ii = A_offd_j[jj];
                               /* res -= A_offd_data[jj] * Vext_data[ii];*/
-                              hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_offd_data[jj * bnnz],
+                              nalu_hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_offd_data[jj * bnnz],
                                                               &Vext_data[ii * block_size],
                                                               1.0, res_vec, block_size);
                            }
@@ -1831,7 +1831,7 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
                            {
                               tmp_vec[k] =  omega * res_vec[k] + res0_vec[k] + one_minus_omega * res2_vec[k];
                            }
-                           if (hypre_CSRBlockMatrixBlockInvMatvec( &A_diag_data[A_diag_i[i]*bnnz], tmp_vec,
+                           if (nalu_hypre_CSRBlockMatrixBlockInvMatvec( &A_diag_data[A_diag_i[i]*bnnz], tmp_vec,
                                                                    out_vec, block_size) == 0)
                            {
                               for (k = 0; k < block_size; k++)
@@ -1866,18 +1866,18 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
                               if (ii >= ns && ii < ne)
                               {
                                  /* res0 -= A_diag_data[jj] * u_data[ii]; */
-                                 hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_diag_data[jj * bnnz],
+                                 nalu_hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_diag_data[jj * bnnz],
                                                                  &u_data[ii * block_size],
                                                                  1.0, res0_vec, block_size);
                                  /* res2 += A_diag_data[jj] * Vtemp_data[ii];*/
-                                 hypre_CSRBlockMatrixBlockMatvec(1.0, &A_diag_data[jj * bnnz],
+                                 nalu_hypre_CSRBlockMatrixBlockMatvec(1.0, &A_diag_data[jj * bnnz],
                                                                  &Vtemp_data[ii * block_size],
                                                                  1.0, res2_vec, block_size);
                               }
                               else
                               {
                                  /* res -= A_diag_data[jj] * tmp_data[ii]; */
-                                 hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_diag_data[jj * bnnz],
+                                 nalu_hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_diag_data[jj * bnnz],
                                                                  &tmp_data[ii * block_size],
                                                                  1.0, res_vec, block_size);
                               }
@@ -1886,7 +1886,7 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
                            {
                               ii = A_offd_j[jj];
                               /* res -= A_offd_data[jj] * Vext_data[ii];*/
-                              hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_offd_data[jj * bnnz],
+                              nalu_hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_offd_data[jj * bnnz],
                                                               &Vext_data[ii * block_size],
                                                               1.0, res_vec, block_size);
                            }
@@ -1897,7 +1897,7 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
                            {
                               tmp_vec[k] =  omega * res_vec[k] + res0_vec[k] + one_minus_omega * res2_vec[k];
                            }
-                           if (hypre_CSRBlockMatrixBlockInvMatvec( &A_diag_data[A_diag_i[i]*bnnz], tmp_vec,
+                           if (nalu_hypre_CSRBlockMatrixBlockInvMatvec( &A_diag_data[A_diag_i[i]*bnnz], tmp_vec,
                                                                    out_vec, block_size) == 0)
                            {
                               for (k = 0; k < block_size; k++)
@@ -1909,7 +1909,7 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
                         }
                      }  /* end loop over points */
                   }    /* end loop over threads */
-                  hypre_TFree(tmp_data, NALU_HYPRE_MEMORY_HOST);
+                  nalu_hypre_TFree(tmp_data, NALU_HYPRE_MEMORY_HOST);
                }
                else /* num_threads = 1 */
                {
@@ -1933,11 +1933,11 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
                         {
                            ii = A_diag_j[jj];
                            /* res0 -= A_diag_data[jj] * u_data[ii]; */
-                           hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_diag_data[jj * bnnz],
+                           nalu_hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_diag_data[jj * bnnz],
                                                            &u_data[ii * block_size],
                                                            1.0, res0_vec, block_size);
                            /* res2 += A_diag_data[jj] * Vtemp_data[ii];*/
-                           hypre_CSRBlockMatrixBlockMatvec(1.0, &A_diag_data[jj * bnnz],
+                           nalu_hypre_CSRBlockMatrixBlockMatvec(1.0, &A_diag_data[jj * bnnz],
                                                            &Vtemp_data[ii * block_size],
                                                            1.0, res2_vec, block_size);
                         }
@@ -1945,7 +1945,7 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
                         {
                            ii = A_offd_j[jj];
                            /* res -= A_offd_data[jj] * Vext_data[ii];*/
-                           hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_offd_data[jj * bnnz],
+                           nalu_hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_offd_data[jj * bnnz],
                                                            &Vext_data[ii * block_size],
                                                            1.0, res_vec, block_size);
                         }
@@ -1956,7 +1956,7 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
                         {
                            tmp_vec[k] =  omega * res_vec[k] + res0_vec[k] + one_minus_omega * res2_vec[k];
                         }
-                        if (hypre_CSRBlockMatrixBlockInvMatvec( &A_diag_data[A_diag_i[i]*bnnz], tmp_vec,
+                        if (nalu_hypre_CSRBlockMatrixBlockInvMatvec( &A_diag_data[A_diag_i[i]*bnnz], tmp_vec,
                                                                 out_vec, block_size) == 0)
                         {
                            for (k = 0; k < block_size; k++)
@@ -1988,11 +1988,11 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
                         {
                            ii = A_diag_j[jj];
                            /* res0 -= A_diag_data[jj] * u_data[ii]; */
-                           hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_diag_data[jj * bnnz],
+                           nalu_hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_diag_data[jj * bnnz],
                                                            &u_data[ii * block_size],
                                                            1.0, res0_vec, block_size);
                            /* res2 += A_diag_data[jj] * Vtemp_data[ii];*/
-                           hypre_CSRBlockMatrixBlockMatvec(1.0, &A_diag_data[jj * bnnz],
+                           nalu_hypre_CSRBlockMatrixBlockMatvec(1.0, &A_diag_data[jj * bnnz],
                                                            &Vtemp_data[ii * block_size],
                                                            1.0, res2_vec, block_size);
                         }
@@ -2000,7 +2000,7 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
                         {
                            ii = A_offd_j[jj];
                            /* res -= A_offd_data[jj] * Vext_data[ii];*/
-                           hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_offd_data[jj * bnnz],
+                           nalu_hypre_CSRBlockMatrixBlockMatvec(-1.0, &A_offd_data[jj * bnnz],
                                                            &Vext_data[ii * block_size],
                                                            1.0, res_vec, block_size);
                         }
@@ -2011,7 +2011,7 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
                         {
                            tmp_vec[k] =  omega * res_vec[k] + res0_vec[k] + one_minus_omega * res2_vec[k];
                         }
-                        if (hypre_CSRBlockMatrixBlockInvMatvec( &A_diag_data[A_diag_i[i]*bnnz], tmp_vec,
+                        if (nalu_hypre_CSRBlockMatrixBlockInvMatvec( &A_diag_data[A_diag_i[i]*bnnz], tmp_vec,
                                                                 out_vec, block_size) == 0)
                         {
                            for (k = 0; k < block_size; k++)
@@ -2024,13 +2024,13 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
                   }  /* loop over points */
                } /* num threads = 1 */
             } /* CF option */
-            hypre_TFree(res0_vec, NALU_HYPRE_MEMORY_HOST);
-            hypre_TFree(res2_vec, NALU_HYPRE_MEMORY_HOST);
+            nalu_hypre_TFree(res0_vec, NALU_HYPRE_MEMORY_HOST);
+            nalu_hypre_TFree(res2_vec, NALU_HYPRE_MEMORY_HOST);
          } /* end of check relax weight and omega */
          if (num_procs > 1)
          {
-            hypre_TFree(Vext_data, NALU_HYPRE_MEMORY_HOST);
-            hypre_TFree(v_buf_data, NALU_HYPRE_MEMORY_HOST);
+            nalu_hypre_TFree(Vext_data, NALU_HYPRE_MEMORY_HOST);
+            nalu_hypre_TFree(v_buf_data, NALU_HYPRE_MEMORY_HOST);
          }
          break;
       }
@@ -2046,25 +2046,25 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
             since this is a small matrix.  Would be better to just store the CSR matrix
             in the amg_data structure - esp. in the case of no global partition */
 
-         A_ParCSR =  hypre_ParCSRBlockMatrixConvertToParCSRMatrix(A);
-         n_global = hypre_ParCSRMatrixGlobalNumRows(A_ParCSR);
+         A_ParCSR =  nalu_hypre_ParCSRBlockMatrixConvertToParCSRMatrix(A);
+         n_global = nalu_hypre_ParCSRMatrixGlobalNumRows(A_ParCSR);
          NALU_HYPRE_Int n_small = (NALU_HYPRE_Int) n_global; /* we expect n_global to be small at this point */
 
          /*  Generate CSR matrix from ParCSRMatrix A */
 
          /* all processors are needed for these routines */
-         A_CSR = hypre_ParCSRMatrixToCSRMatrixAll(A_ParCSR);
-         f_vector = hypre_ParVectorToVectorAll(f);
+         A_CSR = nalu_hypre_ParCSRMatrixToCSRMatrixAll(A_ParCSR);
+         f_vector = nalu_hypre_ParVectorToVectorAll(f);
 
          if (n)
          {
-            A_CSR_i = hypre_CSRMatrixI(A_CSR);
-            A_CSR_j = hypre_CSRMatrixJ(A_CSR);
-            A_CSR_data = hypre_CSRMatrixData(A_CSR);
-            f_vector_data = hypre_VectorData(f_vector);
+            A_CSR_i = nalu_hypre_CSRMatrixI(A_CSR);
+            A_CSR_j = nalu_hypre_CSRMatrixJ(A_CSR);
+            A_CSR_data = nalu_hypre_CSRMatrixData(A_CSR);
+            f_vector_data = nalu_hypre_VectorData(f_vector);
 
-            A_mat = hypre_CTAlloc(NALU_HYPRE_Real,  n_small * n_small, NALU_HYPRE_MEMORY_HOST);
-            b_vec = hypre_CTAlloc(NALU_HYPRE_Real,  n_small, NALU_HYPRE_MEMORY_HOST);
+            A_mat = nalu_hypre_CTAlloc(NALU_HYPRE_Real,  n_small * n_small, NALU_HYPRE_MEMORY_HOST);
+            b_vec = nalu_hypre_CTAlloc(NALU_HYPRE_Real,  n_small, NALU_HYPRE_MEMORY_HOST);
 
             /*  Load CSR matrix into A_mat. */
 
@@ -2091,23 +2091,23 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
                }
             }
 
-            hypre_TFree(A_mat, NALU_HYPRE_MEMORY_HOST);
-            hypre_TFree(b_vec, NALU_HYPRE_MEMORY_HOST);
-            hypre_CSRMatrixDestroy(A_CSR);
+            nalu_hypre_TFree(A_mat, NALU_HYPRE_MEMORY_HOST);
+            nalu_hypre_TFree(b_vec, NALU_HYPRE_MEMORY_HOST);
+            nalu_hypre_CSRMatrixDestroy(A_CSR);
             A_CSR = NULL;
-            hypre_SeqVectorDestroy(f_vector);
+            nalu_hypre_SeqVectorDestroy(f_vector);
             f_vector = NULL;
 
          }
          else
          {
-            hypre_CSRMatrixDestroy(A_CSR);
+            nalu_hypre_CSRMatrixDestroy(A_CSR);
             A_CSR = NULL;
-            hypre_SeqVectorDestroy(f_vector);
+            nalu_hypre_SeqVectorDestroy(f_vector);
             f_vector = NULL;
          }
 
-         hypre_ParCSRMatrixDestroy(A_ParCSR);
+         nalu_hypre_ParCSRMatrixDestroy(A_ParCSR);
          A_ParCSR = NULL;
 
          break;
@@ -2116,9 +2116,9 @@ NALU_HYPRE_Int  hypre_BoomerAMGBlockRelax( hypre_ParCSRBlockMatrix *A,
    }
 
 
-   hypre_TFree(res_vec, NALU_HYPRE_MEMORY_HOST);
-   hypre_TFree(out_vec, NALU_HYPRE_MEMORY_HOST);
-   hypre_TFree(tmp_vec, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(res_vec, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(out_vec, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(tmp_vec, NALU_HYPRE_MEMORY_HOST);
 
    return (relax_error);
 
@@ -2199,7 +2199,7 @@ NALU_HYPRE_Int gselim_piv(NALU_HYPRE_Real *A, NALU_HYPRE_Real *x, NALU_HYPRE_Int
          }
          else
          {
-            /* hypre_printf("Matrix is nearly singular: zero pivot error\n"); */
+            /* nalu_hypre_printf("Matrix is nearly singular: zero pivot error\n"); */
             return (-1);
          }
       }
@@ -2207,7 +2207,7 @@ NALU_HYPRE_Int gselim_piv(NALU_HYPRE_Real *A, NALU_HYPRE_Real *x, NALU_HYPRE_Int
       k = n - 1; /* last row */
       if ( fabs(A[k * n + k]) < eps)
       {
-         /* hypre_printf("Block of matrix is nearly singular: zero pivot error\n"); */
+         /* nalu_hypre_printf("Block of matrix is nearly singular: zero pivot error\n"); */
          return (-1);
       }
 

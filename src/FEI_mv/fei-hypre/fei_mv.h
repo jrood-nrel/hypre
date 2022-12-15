@@ -5,14 +5,14 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_utilities.h"
+#include "_nalu_hypre_utilities.h"
 
 // NEW FEI (2.23.02)
 #include "fei_LinearSystemCore.hpp"
 #include "LLNL_FEI_Impl.h"
 
-#ifndef hypre_FE_MV_HEADER
-#define hypre_FE_MV_HEADER
+#ifndef nalu_hypre_FE_MV_HEADER
+#define nalu_hypre_FE_MV_HEADER
 
 #include "NALU_HYPRE.h"
 
@@ -22,72 +22,72 @@ extern "C" {
 
 /******************************************************************************
  *
- * Header info for the hypre_FEMesh structures
+ * Header info for the nalu_hypre_FEMesh structures
  *
  *****************************************************************************/
 
-#ifndef hypre_FE_MESH_HEADER
-#define hypre_FE_MESH_HEADER
+#ifndef nalu_hypre_FE_MESH_HEADER
+#define nalu_hypre_FE_MESH_HEADER
 
 /*--------------------------------------------------------------------------
- * hypre_FEMesh:
+ * nalu_hypre_FEMesh:
  *--------------------------------------------------------------------------*/
 
-typedef struct hypre_FEMesh_struct
+typedef struct nalu_hypre_FEMesh_struct
 {
    MPI_Comm comm_;
    void     *linSys_;
    void     *feiPtr_;
    int      objectType_;
 
-} hypre_FEMesh;
-typedef struct hypre_FEMesh_struct *NALU_HYPRE_FEMesh;
+} nalu_hypre_FEMesh;
+typedef struct nalu_hypre_FEMesh_struct *NALU_HYPRE_FEMesh;
 
 #endif
 
 /******************************************************************************
  *
- * Header info for the hypre_FEMatrix structures
+ * Header info for the nalu_hypre_FEMatrix structures
  *
  *****************************************************************************/
 
-#ifndef hypre_FE_MATRIX_HEADER
-#define hypre_FE_MATRIX_HEADER
+#ifndef nalu_hypre_FE_MATRIX_HEADER
+#define nalu_hypre_FE_MATRIX_HEADER
 
 /*--------------------------------------------------------------------------
- * hypre_FEMatrix:
+ * nalu_hypre_FEMatrix:
  *--------------------------------------------------------------------------*/
 
-typedef struct hypre_FEMatrix_struct
+typedef struct nalu_hypre_FEMatrix_struct
 {
    MPI_Comm      comm_;
-   hypre_FEMesh *mesh_;
+   nalu_hypre_FEMesh *mesh_;
 
-} hypre_FEMatrix;
-typedef struct hypre_FEMatrix_struct *NALU_HYPRE_FEMatrix;
+} nalu_hypre_FEMatrix;
+typedef struct nalu_hypre_FEMatrix_struct *NALU_HYPRE_FEMatrix;
 
 #endif
 
 /******************************************************************************
  *
- * Header info for the hypre_FEVector structures
+ * Header info for the nalu_hypre_FEVector structures
  *
  *****************************************************************************/
 
-#ifndef hypre_FE_VECTOR_HEADER
-#define hypre_FE_VECTOR_HEADER
+#ifndef nalu_hypre_FE_VECTOR_HEADER
+#define nalu_hypre_FE_VECTOR_HEADER
 
 /*--------------------------------------------------------------------------
- * hypre_FEVector:
+ * nalu_hypre_FEVector:
  *--------------------------------------------------------------------------*/
 
-typedef struct hypre_FEVector_struct
+typedef struct nalu_hypre_FEVector_struct
 {
    MPI_Comm      comm_;
-   hypre_FEMesh* mesh_;
+   nalu_hypre_FEMesh* mesh_;
 
-} hypre_FEVector;
-typedef struct hypre_FEVector_struct *NALU_HYPRE_FEVector;
+} nalu_hypre_FEVector;
+typedef struct nalu_hypre_FEVector_struct *NALU_HYPRE_FEVector;
 
 #endif
 

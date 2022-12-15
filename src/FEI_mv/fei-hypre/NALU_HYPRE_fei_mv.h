@@ -35,8 +35,8 @@ extern "C" {
  **/
 /*@{*/
 
-struct hypre_FEMesh_struct;
-typedef struct hypre_FEMesh_struct *NALU_HYPRE_FEMesh;
+struct nalu_hypre_FEMesh_struct;
+typedef struct nalu_hypre_FEMesh_struct *NALU_HYPRE_FEMesh;
 
 /**
  * Create a FE Mesh object.  
@@ -113,11 +113,11 @@ int NALU_HYPRE_FEMeshLoadNodeBCs(NALU_HYPRE_FEMesh mesh, int numNodes,
  **/
 /*@{*/
 
-struct hypre_FEMatrix_struct;
+struct nalu_hypre_FEMatrix_struct;
 /**
  * The matrix object
  **/
-typedef struct hypre_FEMatrix_struct *NALU_HYPRE_FEMatrix;
+typedef struct nalu_hypre_FEMatrix_struct *NALU_HYPRE_FEMatrix;
 
 /**
  * create a new FE matrix
@@ -168,11 +168,11 @@ int NALU_HYPRE_FEMatrixGetObject(NALU_HYPRE_FEMatrix matrix, void **object);
  **/
 /*@{*/
 
-struct hypre_FEVector_struct;
+struct nalu_hypre_FEVector_struct;
 /**
  * The vector object.
  **/
-typedef struct hypre_FEVector_struct *NALU_HYPRE_FEVector;
+typedef struct nalu_hypre_FEVector_struct *NALU_HYPRE_FEVector;
 
 /**
  * Create a vector object.

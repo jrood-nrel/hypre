@@ -6,19 +6,19 @@
  ******************************************************************************/
 
 /*--------------------------------------------------------------------------
- * hypre_SStructRecvInfo data structure
+ * nalu_hypre_SStructRecvInfo data structure
  *--------------------------------------------------------------------------*/
-#ifndef hypre_RECVINFODATA_HEADER
-#define hypre_RECVINFODATA_HEADER
+#ifndef nalu_hypre_RECVINFODATA_HEADER
+#define nalu_hypre_RECVINFODATA_HEADER
 
 
 typedef struct
 {
    NALU_HYPRE_Int             size;
 
-   hypre_BoxArrayArray  *recv_boxes;
+   nalu_hypre_BoxArrayArray  *recv_boxes;
    NALU_HYPRE_Int           **recv_procs;
 
-} hypre_SStructRecvInfoData;
+} nalu_hypre_SStructRecvInfoData;
 
 #endif

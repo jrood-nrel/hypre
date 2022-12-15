@@ -19,7 +19,7 @@
 #ifndef NALU_HYPRE_SEQUENTIAL
 #define NALU_HYPRE_SEQUENTIAL
 #endif
-#include "_hypre_utilities.h"
+#include "_nalu_hypre_utilities.h"
 #include "math.h"
 
 #if defined(NALU_HYPRE_SINGLE)

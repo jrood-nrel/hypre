@@ -21,7 +21,7 @@ NALU_HYPRE_MultiblockMatrix
 NALU_HYPRE_MultiblockMatrixCreate( )
 {
    return ( (NALU_HYPRE_MultiblockMatrix)
-            hypre_MultiblockMatrixCreate(  ));
+            nalu_hypre_MultiblockMatrixCreate(  ));
 }
 
 /*--------------------------------------------------------------------------
@@ -31,7 +31,7 @@ NALU_HYPRE_MultiblockMatrixCreate( )
 NALU_HYPRE_Int
 NALU_HYPRE_MultiblockMatrixDestroy( NALU_HYPRE_MultiblockMatrix matrix )
 {
-   return ( hypre_MultiblockMatrixDestroy( (hypre_MultiblockMatrix *) matrix ) );
+   return ( nalu_hypre_MultiblockMatrixDestroy( (nalu_hypre_MultiblockMatrix *) matrix ) );
 }
 
 /*--------------------------------------------------------------------------
@@ -41,7 +41,7 @@ NALU_HYPRE_MultiblockMatrixDestroy( NALU_HYPRE_MultiblockMatrix matrix )
 NALU_HYPRE_Int
 NALU_HYPRE_MultiblockMatrixLimitedDestroy( NALU_HYPRE_MultiblockMatrix matrix )
 {
-   return ( hypre_MultiblockMatrixLimitedDestroy( (hypre_MultiblockMatrix *) matrix ) );
+   return ( nalu_hypre_MultiblockMatrixLimitedDestroy( (nalu_hypre_MultiblockMatrix *) matrix ) );
 }
 
 /*--------------------------------------------------------------------------
@@ -51,7 +51,7 @@ NALU_HYPRE_MultiblockMatrixLimitedDestroy( NALU_HYPRE_MultiblockMatrix matrix )
 NALU_HYPRE_Int
 NALU_HYPRE_MultiblockMatrixInitialize( NALU_HYPRE_MultiblockMatrix matrix )
 {
-   return ( hypre_MultiblockMatrixInitialize( (hypre_MultiblockMatrix *) matrix ) );
+   return ( nalu_hypre_MultiblockMatrixInitialize( (nalu_hypre_MultiblockMatrix *) matrix ) );
 }
 
 
@@ -62,7 +62,7 @@ NALU_HYPRE_MultiblockMatrixInitialize( NALU_HYPRE_MultiblockMatrix matrix )
 NALU_HYPRE_Int
 NALU_HYPRE_MultiblockMatrixAssemble( NALU_HYPRE_MultiblockMatrix matrix )
 {
-   return ( hypre_MultiblockMatrixAssemble( (hypre_MultiblockMatrix *) matrix ) );
+   return ( nalu_hypre_MultiblockMatrixAssemble( (nalu_hypre_MultiblockMatrix *) matrix ) );
 }
 
 
@@ -74,7 +74,7 @@ NALU_HYPRE_MultiblockMatrixAssemble( NALU_HYPRE_MultiblockMatrix matrix )
 void
 NALU_HYPRE_MultiblockMatrixPrint( NALU_HYPRE_MultiblockMatrix matrix )
 {
-   hypre_MultiblockMatrixPrint( (hypre_MultiblockMatrix *) matrix );
+   nalu_hypre_MultiblockMatrixPrint( (nalu_hypre_MultiblockMatrix *) matrix );
 }
 
 /****************************************************************************
@@ -89,8 +89,8 @@ NALU_HYPRE_MultiblockMatrixPrint( NALU_HYPRE_MultiblockMatrix matrix )
 NALU_HYPRE_Int
 NALU_HYPRE_MultiblockMatrixSetNumSubmatrices( NALU_HYPRE_MultiblockMatrix matrix, NALU_HYPRE_Int n )
 {
-   return ( hypre_MultiblockMatrixSetNumSubmatrices(
-               (hypre_MultiblockMatrix *) matrix, n ) );
+   return ( nalu_hypre_MultiblockMatrixSetNumSubmatrices(
+               (nalu_hypre_MultiblockMatrix *) matrix, n ) );
 }
 
 /*--------------------------------------------------------------------------
@@ -102,6 +102,6 @@ NALU_HYPRE_MultiblockMatrixSetSubmatrixType( NALU_HYPRE_MultiblockMatrix matrix,
                                         NALU_HYPRE_Int j,
                                         NALU_HYPRE_Int type )
 {
-   return ( hypre_MultiblockMatrixSetSubmatrixType(
-               (hypre_MultiblockMatrix *) matrix, j, type ) );
+   return ( nalu_hypre_MultiblockMatrixSetSubmatrixType(
+               (nalu_hypre_MultiblockMatrix *) matrix, j, type ) );
 }

@@ -5,29 +5,29 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_struct_ls.h"
-#include "_hypre_struct_mv.hpp"
+#include "_nalu_hypre_struct_ls.h"
+#include "_nalu_hypre_struct_mv.hpp"
 #include "pfmg.h"
 
 #include <time.h>
 #define DEBUG 0
 
-#define hypre_PFMGSetCIndex(cdir, cindex)       \
+#define nalu_hypre_PFMGSetCIndex(cdir, cindex)       \
    {                                            \
-      hypre_SetIndex3(cindex, 0, 0, 0);         \
-      hypre_IndexD(cindex, cdir) = 0;           \
+      nalu_hypre_SetIndex3(cindex, 0, 0, 0);         \
+      nalu_hypre_IndexD(cindex, cdir) = 0;           \
    }
 
-#define hypre_PFMGSetFIndex(cdir, findex)       \
+#define nalu_hypre_PFMGSetFIndex(cdir, findex)       \
    {                                            \
-      hypre_SetIndex3(findex, 0, 0, 0);         \
-      hypre_IndexD(findex, cdir) = 1;           \
+      nalu_hypre_SetIndex3(findex, 0, 0, 0);         \
+      nalu_hypre_IndexD(findex, cdir) = 1;           \
    }
 
-#define hypre_PFMGSetStride(cdir, stride)       \
+#define nalu_hypre_PFMGSetStride(cdir, stride)       \
    {                                            \
-      hypre_SetIndex3(stride, 1, 1, 1);         \
-      hypre_IndexD(stride, cdir) = 2;           \
+      nalu_hypre_SetIndex3(stride, 1, 1, 1);         \
+      nalu_hypre_IndexD(stride, cdir) = 2;           \
    }
 
 #ifdef MAX_DEPTH
@@ -35,21 +35,21 @@
 #endif
 #define MAX_DEPTH 7
 
-NALU_HYPRE_Int hypre_StructGetNonzeroDirection(hypre_Index shape)
+NALU_HYPRE_Int nalu_hypre_StructGetNonzeroDirection(nalu_hypre_Index shape)
 {
    NALU_HYPRE_Int Astenc = 0;
    /* x-direction */
-   if (hypre_IndexD(shape, 0))
+   if (nalu_hypre_IndexD(shape, 0))
    {
       Astenc += 1;
    }
    /* y-direction */
-   else if (hypre_IndexD(shape, 1))
+   else if (nalu_hypre_IndexD(shape, 1))
    {
       Astenc += 10;
    }
    /* z-direction */
-   else if (hypre_IndexD(shape, 2))
+   else if (nalu_hypre_IndexD(shape, 2))
    {
       Astenc += 100;
    }
@@ -60,12 +60,12 @@ NALU_HYPRE_Int hypre_StructGetNonzeroDirection(hypre_Index shape)
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_PFMGSetup( void               *pfmg_vdata,
-                 hypre_StructMatrix *A,
-                 hypre_StructVector *b,
-                 hypre_StructVector *x        )
+nalu_hypre_PFMGSetup( void               *pfmg_vdata,
+                 nalu_hypre_StructMatrix *A,
+                 nalu_hypre_StructVector *b,
+                 nalu_hypre_StructVector *x        )
 {
-   hypre_PFMGData       *pfmg_data = (hypre_PFMGData *) pfmg_vdata;
+   nalu_hypre_PFMGData       *pfmg_data = (nalu_hypre_PFMGData *) pfmg_vdata;
 
    MPI_Comm              comm = (pfmg_data -> comm);
 
@@ -81,16 +81,16 @@ hypre_PFMGSetup( void               *pfmg_vdata,
 
    NALU_HYPRE_Int             num_levels;
 
-   hypre_Index           cindex;
-   hypre_Index           findex;
-   hypre_Index           stride;
+   nalu_hypre_Index           cindex;
+   nalu_hypre_Index           findex;
+   nalu_hypre_Index           stride;
 
-   hypre_Index           coarsen;
+   nalu_hypre_Index           coarsen;
 
    NALU_HYPRE_Int            *cdir_l;
    NALU_HYPRE_Int            *active_l;
-   hypre_StructGrid    **grid_l;
-   hypre_StructGrid    **P_grid_l;
+   nalu_hypre_StructGrid    **grid_l;
+   nalu_hypre_StructGrid    **P_grid_l;
 
    NALU_HYPRE_Real           *data;
    NALU_HYPRE_Real           *data_const;
@@ -100,26 +100,26 @@ hypre_PFMGSetup( void               *pfmg_vdata,
    NALU_HYPRE_Real           *mean, *deviation;
    NALU_HYPRE_Real            alpha, beta;
 
-   hypre_StructMatrix  **A_l;
-   hypre_StructMatrix  **P_l;
-   hypre_StructMatrix  **RT_l;
-   hypre_StructVector  **b_l;
-   hypre_StructVector  **x_l;
+   nalu_hypre_StructMatrix  **A_l;
+   nalu_hypre_StructMatrix  **P_l;
+   nalu_hypre_StructMatrix  **RT_l;
+   nalu_hypre_StructVector  **b_l;
+   nalu_hypre_StructVector  **x_l;
 
    /* temp vectors */
-   hypre_StructVector  **tx_l;
-   hypre_StructVector  **r_l;
-   hypre_StructVector  **e_l;
+   nalu_hypre_StructVector  **tx_l;
+   nalu_hypre_StructVector  **r_l;
+   nalu_hypre_StructVector  **e_l;
 
    void                **relax_data_l;
    void                **matvec_data_l;
    void                **restrict_data_l;
    void                **interp_data_l;
 
-   hypre_StructGrid     *grid;
+   nalu_hypre_StructGrid     *grid;
    NALU_HYPRE_Int             ndim;
 
-   hypre_Box            *cbox;
+   nalu_hypre_Box            *cbox;
 
    NALU_HYPRE_Real            min_dxyz;
    NALU_HYPRE_Int             cdir, periodic, cmaxsize;
@@ -133,7 +133,7 @@ hypre_PFMGSetup( void               *pfmg_vdata,
    char                  filename[255];
 #endif
 
-   NALU_HYPRE_MemoryLocation  memory_location = hypre_StructMatrixMemoryLocation(A);
+   NALU_HYPRE_MemoryLocation  memory_location = nalu_hypre_StructMatrixMemoryLocation(A);
 
    NALU_HYPRE_ANNOTATE_FUNC_BEGIN;
 
@@ -141,20 +141,20 @@ hypre_PFMGSetup( void               *pfmg_vdata,
     * Set up coarse grids
     *-----------------------------------------------------*/
 
-   grid  = hypre_StructMatrixGrid(A);
-   ndim  = hypre_StructGridNDim(grid);
+   grid  = nalu_hypre_StructMatrixGrid(A);
+   ndim  = nalu_hypre_StructGridNDim(grid);
 
    /* Compute a new max_levels value based on the grid */
-   cbox = hypre_BoxDuplicate(hypre_StructGridBoundingBox(grid));
+   cbox = nalu_hypre_BoxDuplicate(nalu_hypre_StructGridBoundingBox(grid));
    max_levels = 1;
    for (d = 0; d < ndim; d++)
    {
-      max_levels += hypre_Log2(hypre_BoxSizeD(cbox, d)) + 2;
+      max_levels += nalu_hypre_Log2(nalu_hypre_BoxSizeD(cbox, d)) + 2;
    }
 
    if ((pfmg_data -> max_levels) > 0)
    {
-      max_levels = hypre_min(max_levels, (pfmg_data -> max_levels));
+      max_levels = nalu_hypre_min(max_levels, (pfmg_data -> max_levels));
    }
    (pfmg_data -> max_levels) = max_levels;
 
@@ -162,9 +162,9 @@ hypre_PFMGSetup( void               *pfmg_vdata,
    dxyz_flag = 0;
    if ((dxyz[0] == 0) || (dxyz[1] == 0) || (dxyz[2] == 0))
    {
-      mean = hypre_CTAlloc(NALU_HYPRE_Real, 3, NALU_HYPRE_MEMORY_HOST);
-      deviation = hypre_CTAlloc(NALU_HYPRE_Real, 3, NALU_HYPRE_MEMORY_HOST);
-      hypre_PFMGComputeDxyz(A, dxyz, mean, deviation);
+      mean = nalu_hypre_CTAlloc(NALU_HYPRE_Real, 3, NALU_HYPRE_MEMORY_HOST);
+      deviation = nalu_hypre_CTAlloc(NALU_HYPRE_Real, 3, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_PFMGComputeDxyz(A, dxyz, mean, deviation);
 
       for (d = 0; d < ndim; d++)
       {
@@ -185,21 +185,21 @@ hypre_PFMGSetup( void               *pfmg_vdata,
          }
       }
 
-      hypre_TFree(mean,      NALU_HYPRE_MEMORY_HOST);
-      hypre_TFree(deviation, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(mean,      NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(deviation, NALU_HYPRE_MEMORY_HOST);
    }
 
-   grid_l = hypre_TAlloc(hypre_StructGrid *, max_levels, NALU_HYPRE_MEMORY_HOST);
-   hypre_StructGridRef(grid, &grid_l[0]);
-   P_grid_l = hypre_TAlloc(hypre_StructGrid *, max_levels, NALU_HYPRE_MEMORY_HOST);
+   grid_l = nalu_hypre_TAlloc(nalu_hypre_StructGrid *, max_levels, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_StructGridRef(grid, &grid_l[0]);
+   P_grid_l = nalu_hypre_TAlloc(nalu_hypre_StructGrid *, max_levels, NALU_HYPRE_MEMORY_HOST);
    P_grid_l[0] = NULL;
-   cdir_l = hypre_TAlloc(NALU_HYPRE_Int, max_levels, NALU_HYPRE_MEMORY_HOST);
-   active_l = hypre_TAlloc(NALU_HYPRE_Int, max_levels, NALU_HYPRE_MEMORY_HOST);
-   relax_weights = hypre_CTAlloc(NALU_HYPRE_Real, max_levels, NALU_HYPRE_MEMORY_HOST);
-   hypre_SetIndex3(coarsen, 1, 1, 1); /* forces relaxation on finest grid */
+   cdir_l = nalu_hypre_TAlloc(NALU_HYPRE_Int, max_levels, NALU_HYPRE_MEMORY_HOST);
+   active_l = nalu_hypre_TAlloc(NALU_HYPRE_Int, max_levels, NALU_HYPRE_MEMORY_HOST);
+   relax_weights = nalu_hypre_CTAlloc(NALU_HYPRE_Real, max_levels, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_SetIndex3(coarsen, 1, 1, 1); /* forces relaxation on finest grid */
 
 #if 0 //defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
-   data_location = hypre_StructGridDataLocation(grid);
+   data_location = nalu_hypre_StructGridDataLocation(grid);
    if (data_location != NALU_HYPRE_MEMORY_HOST)
    {
       num_level_GPU = max_levels;
@@ -219,7 +219,7 @@ hypre_PFMGSetup( void               *pfmg_vdata,
       alpha = 0.0;
       for (d = 0; d < ndim; d++)
       {
-         if ((hypre_BoxIMaxD(cbox, d) > hypre_BoxIMinD(cbox, d)) &&
+         if ((nalu_hypre_BoxIMaxD(cbox, d) > nalu_hypre_BoxIMinD(cbox, d)) &&
              (dxyz[d] < min_dxyz))
          {
             min_dxyz = dxyz[d];
@@ -271,7 +271,7 @@ hypre_PFMGSetup( void               *pfmg_vdata,
       if (cdir != -1)
       {
          /* don't coarsen if a periodic direction and not divisible by 2 */
-         periodic = hypre_IndexD(hypre_StructGridPeriodic(grid_l[l]), cdir);
+         periodic = nalu_hypre_IndexD(nalu_hypre_StructGridPeriodic(grid_l[l]), cdir);
          if ((periodic) && (periodic % 2))
          {
             cdir = -1;
@@ -291,7 +291,7 @@ hypre_PFMGSetup( void               *pfmg_vdata,
          cmaxsize = 0;
          for (d = 0; d < ndim; d++)
          {
-            cmaxsize = hypre_max(cmaxsize, hypre_BoxSizeD(cbox, d));
+            cmaxsize = nalu_hypre_max(cmaxsize, nalu_hypre_BoxSizeD(cbox, d));
          }
 
          break;
@@ -299,42 +299,42 @@ hypre_PFMGSetup( void               *pfmg_vdata,
 
       cdir_l[l] = cdir;
 
-      if (hypre_IndexD(coarsen, cdir) != 0)
+      if (nalu_hypre_IndexD(coarsen, cdir) != 0)
       {
          /* coarsened previously in this direction, relax level l */
          active_l[l] = 1;
-         hypre_SetIndex3(coarsen, 0, 0, 0);
-         hypre_IndexD(coarsen, cdir) = 1;
+         nalu_hypre_SetIndex3(coarsen, 0, 0, 0);
+         nalu_hypre_IndexD(coarsen, cdir) = 1;
       }
       else
       {
          active_l[l] = 0;
-         hypre_IndexD(coarsen, cdir) = 1;
+         nalu_hypre_IndexD(coarsen, cdir) = 1;
       }
 
       /* set cindex, findex, and stride */
-      hypre_PFMGSetCIndex(cdir, cindex);
-      hypre_PFMGSetFIndex(cdir, findex);
-      hypre_PFMGSetStride(cdir, stride);
+      nalu_hypre_PFMGSetCIndex(cdir, cindex);
+      nalu_hypre_PFMGSetFIndex(cdir, findex);
+      nalu_hypre_PFMGSetStride(cdir, stride);
 
       /* update dxyz and coarsen cbox*/
       dxyz[cdir] *= 2;
-      hypre_ProjectBox(cbox, cindex, stride);
-      hypre_StructMapFineToCoarse(hypre_BoxIMin(cbox), cindex, stride,
-                                  hypre_BoxIMin(cbox));
-      hypre_StructMapFineToCoarse(hypre_BoxIMax(cbox), cindex, stride,
-                                  hypre_BoxIMax(cbox));
+      nalu_hypre_ProjectBox(cbox, cindex, stride);
+      nalu_hypre_StructMapFineToCoarse(nalu_hypre_BoxIMin(cbox), cindex, stride,
+                                  nalu_hypre_BoxIMin(cbox));
+      nalu_hypre_StructMapFineToCoarse(nalu_hypre_BoxIMax(cbox), cindex, stride,
+                                  nalu_hypre_BoxIMax(cbox));
 
       /* build the interpolation grid */
-      hypre_StructCoarsen(grid_l[l], findex, stride, 0, &P_grid_l[l + 1]);
+      nalu_hypre_StructCoarsen(grid_l[l], findex, stride, 0, &P_grid_l[l + 1]);
 
       /* build the coarse grid */
-      hypre_StructCoarsen(grid_l[l], cindex, stride, 1, &grid_l[l + 1]);
+      nalu_hypre_StructCoarsen(grid_l[l], cindex, stride, 1, &grid_l[l + 1]);
 #if 0 //defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
-      hypre_StructGridDataLocation(P_grid_l[l + 1]) = data_location;
+      nalu_hypre_StructGridDataLocation(P_grid_l[l + 1]) = data_location;
       if (device_level == -1 && num_level_GPU > 0)
       {
-         max_box_size = hypre_StructGridGetMaxBoxSize(grid_l[l + 1]);
+         max_box_size = nalu_hypre_StructGridGetMaxBoxSize(grid_l[l + 1]);
          if (max_box_size < NALU_HYPRE_MIN_GPU_SIZE)
          {
             num_level_GPU = l + 1;
@@ -348,14 +348,14 @@ hypre_PFMGSetup( void               *pfmg_vdata,
          num_level_GPU = l + 1;
          data_location = NALU_HYPRE_MEMORY_HOST;
       }
-      hypre_StructGridDataLocation(grid_l[l + 1]) = data_location;
+      nalu_hypre_StructGridDataLocation(grid_l[l + 1]) = data_location;
 #endif
    }
 
    num_levels = l + 1;
 
    /* free up some things */
-   hypre_BoxDestroy(cbox);
+   nalu_hypre_BoxDestroy(cbox);
 
    /* set all levels active if skip_relax = 0 */
    if (!skip_relax)
@@ -386,35 +386,35 @@ hypre_PFMGSetup( void               *pfmg_vdata,
    }
    rap_type = (pfmg_data -> rap_type);
 
-   A_l  = hypre_TAlloc(hypre_StructMatrix *, num_levels, NALU_HYPRE_MEMORY_HOST);
-   P_l  = hypre_TAlloc(hypre_StructMatrix *, num_levels - 1, NALU_HYPRE_MEMORY_HOST);
-   RT_l = hypre_TAlloc(hypre_StructMatrix *, num_levels - 1, NALU_HYPRE_MEMORY_HOST);
-   b_l  = hypre_TAlloc(hypre_StructVector *, num_levels, NALU_HYPRE_MEMORY_HOST);
-   x_l  = hypre_TAlloc(hypre_StructVector *, num_levels, NALU_HYPRE_MEMORY_HOST);
-   tx_l = hypre_TAlloc(hypre_StructVector *, num_levels, NALU_HYPRE_MEMORY_HOST);
+   A_l  = nalu_hypre_TAlloc(nalu_hypre_StructMatrix *, num_levels, NALU_HYPRE_MEMORY_HOST);
+   P_l  = nalu_hypre_TAlloc(nalu_hypre_StructMatrix *, num_levels - 1, NALU_HYPRE_MEMORY_HOST);
+   RT_l = nalu_hypre_TAlloc(nalu_hypre_StructMatrix *, num_levels - 1, NALU_HYPRE_MEMORY_HOST);
+   b_l  = nalu_hypre_TAlloc(nalu_hypre_StructVector *, num_levels, NALU_HYPRE_MEMORY_HOST);
+   x_l  = nalu_hypre_TAlloc(nalu_hypre_StructVector *, num_levels, NALU_HYPRE_MEMORY_HOST);
+   tx_l = nalu_hypre_TAlloc(nalu_hypre_StructVector *, num_levels, NALU_HYPRE_MEMORY_HOST);
    r_l  = tx_l;
    e_l  = tx_l;
 
-   A_l[0] = hypre_StructMatrixRef(A);
-   b_l[0] = hypre_StructVectorRef(b);
-   x_l[0] = hypre_StructVectorRef(x);
+   A_l[0] = nalu_hypre_StructMatrixRef(A);
+   b_l[0] = nalu_hypre_StructVectorRef(b);
+   x_l[0] = nalu_hypre_StructVectorRef(x);
 
-   tx_l[0] = hypre_StructVectorCreate(comm, grid_l[0]);
-   hypre_StructVectorSetNumGhost(tx_l[0], x_num_ghost);
-   hypre_StructVectorInitializeShell(tx_l[0]);
+   tx_l[0] = nalu_hypre_StructVectorCreate(comm, grid_l[0]);
+   nalu_hypre_StructVectorSetNumGhost(tx_l[0], x_num_ghost);
+   nalu_hypre_StructVectorInitializeShell(tx_l[0]);
 
-   hypre_StructVectorSetDataSize(tx_l[0], &data_size, &data_size_const);
+   nalu_hypre_StructVectorSetDataSize(tx_l[0], &data_size, &data_size_const);
 
    for (l = 0; l < (num_levels - 1); l++)
    {
       cdir = cdir_l[l];
 
-      P_l[l]  = hypre_PFMGCreateInterpOp(A_l[l], P_grid_l[l + 1], cdir, rap_type);
-      hypre_StructMatrixInitializeShell(P_l[l]);
-      data_size += hypre_StructMatrixDataSize(P_l[l]);
-      data_size_const += hypre_StructMatrixDataConstSize(P_l[l]);
+      P_l[l]  = nalu_hypre_PFMGCreateInterpOp(A_l[l], P_grid_l[l + 1], cdir, rap_type);
+      nalu_hypre_StructMatrixInitializeShell(P_l[l]);
+      data_size += nalu_hypre_StructMatrixDataSize(P_l[l]);
+      data_size_const += nalu_hypre_StructMatrixDataConstSize(P_l[l]);
 
-      if (hypre_StructMatrixSymmetric(A))
+      if (nalu_hypre_StructMatrixSymmetric(A))
       {
          RT_l[l] = P_l[l];
       }
@@ -424,44 +424,44 @@ hypre_PFMGSetup( void               *pfmg_vdata,
 #if 0
          /* Allow RT != P for non symmetric case */
          /* NOTE: Need to create a non-pruned grid for this to work */
-         RT_l[l]   = hypre_PFMGCreateRestrictOp(A_l[l], grid_l[l + 1], cdir);
-         hypre_StructMatrixInitializeShell(RT_l[l]);
-         data_size += hypre_StructMatrixDataSize(RT_l[l]);
-         data_size_const += hypre_StructMatrixDataConstSize(RT_l[l]);
+         RT_l[l]   = nalu_hypre_PFMGCreateRestrictOp(A_l[l], grid_l[l + 1], cdir);
+         nalu_hypre_StructMatrixInitializeShell(RT_l[l]);
+         data_size += nalu_hypre_StructMatrixDataSize(RT_l[l]);
+         data_size_const += nalu_hypre_StructMatrixDataConstSize(RT_l[l]);
 #endif
       }
 
-      A_l[l + 1] = hypre_PFMGCreateRAPOp(RT_l[l], A_l[l], P_l[l],
+      A_l[l + 1] = nalu_hypre_PFMGCreateRAPOp(RT_l[l], A_l[l], P_l[l],
                                          grid_l[l + 1], cdir, rap_type);
-      hypre_StructMatrixInitializeShell(A_l[l + 1]);
-      data_size += hypre_StructMatrixDataSize(A_l[l + 1]);
-      data_size_const += hypre_StructMatrixDataConstSize(A_l[l + 1]);
+      nalu_hypre_StructMatrixInitializeShell(A_l[l + 1]);
+      data_size += nalu_hypre_StructMatrixDataSize(A_l[l + 1]);
+      data_size_const += nalu_hypre_StructMatrixDataConstSize(A_l[l + 1]);
 
-      b_l[l + 1] = hypre_StructVectorCreate(comm, grid_l[l + 1]);
-      hypre_StructVectorSetNumGhost(b_l[l + 1], b_num_ghost);
-      hypre_StructVectorInitializeShell(b_l[l + 1]);
-      hypre_StructVectorSetDataSize(b_l[l + 1], &data_size, &data_size_const);
+      b_l[l + 1] = nalu_hypre_StructVectorCreate(comm, grid_l[l + 1]);
+      nalu_hypre_StructVectorSetNumGhost(b_l[l + 1], b_num_ghost);
+      nalu_hypre_StructVectorInitializeShell(b_l[l + 1]);
+      nalu_hypre_StructVectorSetDataSize(b_l[l + 1], &data_size, &data_size_const);
 
-      x_l[l + 1] = hypre_StructVectorCreate(comm, grid_l[l + 1]);
-      hypre_StructVectorSetNumGhost(x_l[l + 1], x_num_ghost);
-      hypre_StructVectorInitializeShell(x_l[l + 1]);
-      hypre_StructVectorSetDataSize(x_l[l + 1], &data_size, &data_size_const);
+      x_l[l + 1] = nalu_hypre_StructVectorCreate(comm, grid_l[l + 1]);
+      nalu_hypre_StructVectorSetNumGhost(x_l[l + 1], x_num_ghost);
+      nalu_hypre_StructVectorInitializeShell(x_l[l + 1]);
+      nalu_hypre_StructVectorSetDataSize(x_l[l + 1], &data_size, &data_size_const);
 
-      tx_l[l + 1] = hypre_StructVectorCreate(comm, grid_l[l + 1]);
-      hypre_StructVectorSetNumGhost(tx_l[l + 1], x_num_ghost);
-      hypre_StructVectorInitializeShell(tx_l[l + 1]);
+      tx_l[l + 1] = nalu_hypre_StructVectorCreate(comm, grid_l[l + 1]);
+      nalu_hypre_StructVectorSetNumGhost(tx_l[l + 1], x_num_ghost);
+      nalu_hypre_StructVectorInitializeShell(tx_l[l + 1]);
 #if 0 //defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
       if (l + 1 == num_level_GPU)
       {
-         hypre_StructVectorSetDataSize(tx_l[l + 1], &data_size, &data_size_const);
+         nalu_hypre_StructVectorSetDataSize(tx_l[l + 1], &data_size, &data_size_const);
       }
 #endif
    }
 
-   data = hypre_CTAlloc(NALU_HYPRE_Real, data_size, memory_location);
-   data_const = hypre_CTAlloc(NALU_HYPRE_Real, data_size_const, NALU_HYPRE_MEMORY_HOST);
+   data = nalu_hypre_CTAlloc(NALU_HYPRE_Real, data_size, memory_location);
+   data_const = nalu_hypre_CTAlloc(NALU_HYPRE_Real, data_size_const, NALU_HYPRE_MEMORY_HOST);
 #if 0 //defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
-   //hypre_printf("num_level_GPU = %d,device_level = %d / %d\n",num_level_GPU,device_level,num_levels);
+   //nalu_hypre_printf("num_level_GPU = %d,device_level = %d / %d\n",num_level_GPU,device_level,num_levels);
 #endif
 
    (pfmg_data -> memory_location) = memory_location;
@@ -469,38 +469,38 @@ hypre_PFMGSetup( void               *pfmg_vdata,
    (pfmg_data -> data_const) = data_const;
 
 #if 0 //defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
-   data_location = hypre_StructGridDataLocation(grid_l[0]);
+   data_location = nalu_hypre_StructGridDataLocation(grid_l[0]);
    if (data_location != NALU_HYPRE_MEMORY_HOST)
    {
-      hypre_StructVectorInitializeData(tx_l[0], data);
-      hypre_StructVectorAssemble(tx_l[0]);
-      data += hypre_StructVectorDataSize(tx_l[0]);
+      nalu_hypre_StructVectorInitializeData(tx_l[0], data);
+      nalu_hypre_StructVectorAssemble(tx_l[0]);
+      data += nalu_hypre_StructVectorDataSize(tx_l[0]);
    }
    else
    {
-      hypre_StructVectorInitializeData(tx_l[0], data_const);
-      hypre_StructVectorAssemble(tx_l[0]);
-      data_const += hypre_StructVectorDataSize(tx_l[0]);
+      nalu_hypre_StructVectorInitializeData(tx_l[0], data_const);
+      nalu_hypre_StructVectorAssemble(tx_l[0]);
+      data_const += nalu_hypre_StructVectorDataSize(tx_l[0]);
    }
 #else
-   hypre_StructVectorInitializeData(tx_l[0], data);
-   hypre_StructVectorAssemble(tx_l[0]);
-   data += hypre_StructVectorDataSize(tx_l[0]);
+   nalu_hypre_StructVectorInitializeData(tx_l[0], data);
+   nalu_hypre_StructVectorAssemble(tx_l[0]);
+   data += nalu_hypre_StructVectorDataSize(tx_l[0]);
 #endif
 
    for (l = 0; l < (num_levels - 1); l++)
    {
-      hypre_StructMatrixInitializeData(P_l[l], data, data_const);
-      data += hypre_StructMatrixDataSize(P_l[l]);
-      data_const += hypre_StructMatrixDataConstSize(P_l[l]);
+      nalu_hypre_StructMatrixInitializeData(P_l[l], data, data_const);
+      data += nalu_hypre_StructMatrixDataSize(P_l[l]);
+      data_const += nalu_hypre_StructMatrixDataConstSize(P_l[l]);
 
 #if 0
       /* Allow R != PT for non symmetric case */
-      if (!hypre_StructMatrixSymmetric(A))
+      if (!nalu_hypre_StructMatrixSymmetric(A))
       {
-         hypre_StructMatrixInitializeData(RT_l[l], data, data_const);
-         data += hypre_StructMatrixDataSize(RT_l[l]);
-         data_const += hypre_StructMatrixDataConstSize(RT_l[l]);
+         nalu_hypre_StructMatrixInitializeData(RT_l[l], data, data_const);
+         data += nalu_hypre_StructMatrixDataSize(RT_l[l]);
+         data_const += nalu_hypre_StructMatrixDataConstSize(RT_l[l]);
       }
 #endif
 
@@ -511,54 +511,54 @@ hypre_PFMGSetup( void               *pfmg_vdata,
       }
 #endif
 
-      hypre_StructMatrixInitializeData(A_l[l + 1], data, data_const);
-      data += hypre_StructMatrixDataSize(A_l[l + 1]);
-      data_const += hypre_StructMatrixDataConstSize(A_l[l + 1]);
+      nalu_hypre_StructMatrixInitializeData(A_l[l + 1], data, data_const);
+      data += nalu_hypre_StructMatrixDataSize(A_l[l + 1]);
+      data_const += nalu_hypre_StructMatrixDataConstSize(A_l[l + 1]);
 
 #if 0 //defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
       if (data_location != NALU_HYPRE_MEMORY_HOST)
       {
-         hypre_StructVectorInitializeData(b_l[l + 1], data);
-         hypre_StructVectorAssemble(b_l[l + 1]);
-         data += hypre_StructVectorDataSize(b_l[l + 1]);
+         nalu_hypre_StructVectorInitializeData(b_l[l + 1], data);
+         nalu_hypre_StructVectorAssemble(b_l[l + 1]);
+         data += nalu_hypre_StructVectorDataSize(b_l[l + 1]);
 
-         hypre_StructVectorInitializeData(x_l[l + 1], data);
-         hypre_StructVectorAssemble(x_l[l + 1]);
-         data += hypre_StructVectorDataSize(x_l[l + 1]);
-         hypre_StructVectorInitializeData(tx_l[l + 1],
-                                          hypre_StructVectorData(tx_l[0]));
-         hypre_StructVectorAssemble(tx_l[l + 1]);
+         nalu_hypre_StructVectorInitializeData(x_l[l + 1], data);
+         nalu_hypre_StructVectorAssemble(x_l[l + 1]);
+         data += nalu_hypre_StructVectorDataSize(x_l[l + 1]);
+         nalu_hypre_StructVectorInitializeData(tx_l[l + 1],
+                                          nalu_hypre_StructVectorData(tx_l[0]));
+         nalu_hypre_StructVectorAssemble(tx_l[l + 1]);
       }
       else
       {
-         hypre_StructVectorInitializeData(b_l[l + 1], data_const);
-         hypre_StructVectorAssemble(b_l[l + 1]);
-         data_const += hypre_StructVectorDataSize(b_l[l + 1]);
+         nalu_hypre_StructVectorInitializeData(b_l[l + 1], data_const);
+         nalu_hypre_StructVectorAssemble(b_l[l + 1]);
+         data_const += nalu_hypre_StructVectorDataSize(b_l[l + 1]);
 
-         hypre_StructVectorInitializeData(x_l[l + 1], data_const);
-         hypre_StructVectorAssemble(x_l[l + 1]);
-         data_const += hypre_StructVectorDataSize(x_l[l + 1]);
+         nalu_hypre_StructVectorInitializeData(x_l[l + 1], data_const);
+         nalu_hypre_StructVectorAssemble(x_l[l + 1]);
+         data_const += nalu_hypre_StructVectorDataSize(x_l[l + 1]);
          if (l + 1 == num_level_GPU)
          {
-            hypre_StructVectorInitializeData(tx_l[l + 1], data_const);
-            hypre_StructVectorAssemble(tx_l[l + 1]);
-            data_const += hypre_StructVectorDataSize(tx_l[l + 1]);
+            nalu_hypre_StructVectorInitializeData(tx_l[l + 1], data_const);
+            nalu_hypre_StructVectorAssemble(tx_l[l + 1]);
+            data_const += nalu_hypre_StructVectorDataSize(tx_l[l + 1]);
          }
-         hypre_StructVectorInitializeData(tx_l[l + 1], hypre_StructVectorData(tx_l[num_level_GPU]));
-         hypre_StructVectorAssemble(tx_l[l + 1]);
+         nalu_hypre_StructVectorInitializeData(tx_l[l + 1], nalu_hypre_StructVectorData(tx_l[num_level_GPU]));
+         nalu_hypre_StructVectorAssemble(tx_l[l + 1]);
       }
 #else
-      hypre_StructVectorInitializeData(b_l[l + 1], data);
-      hypre_StructVectorAssemble(b_l[l + 1]);
-      data += hypre_StructVectorDataSize(b_l[l + 1]);
+      nalu_hypre_StructVectorInitializeData(b_l[l + 1], data);
+      nalu_hypre_StructVectorAssemble(b_l[l + 1]);
+      data += nalu_hypre_StructVectorDataSize(b_l[l + 1]);
 
-      hypre_StructVectorInitializeData(x_l[l + 1], data);
-      hypre_StructVectorAssemble(x_l[l + 1]);
-      data += hypre_StructVectorDataSize(x_l[l + 1]);
+      nalu_hypre_StructVectorInitializeData(x_l[l + 1], data);
+      nalu_hypre_StructVectorAssemble(x_l[l + 1]);
+      data += nalu_hypre_StructVectorDataSize(x_l[l + 1]);
 
-      hypre_StructVectorInitializeData(tx_l[l + 1],
-                                       hypre_StructVectorData(tx_l[0]));
-      hypre_StructVectorAssemble(tx_l[l + 1]);
+      nalu_hypre_StructVectorInitializeData(tx_l[l + 1],
+                                       nalu_hypre_StructVectorData(tx_l[0]));
+      nalu_hypre_StructVectorAssemble(tx_l[l + 1]);
 #endif
    }
 
@@ -575,55 +575,55 @@ hypre_PFMGSetup( void               *pfmg_vdata,
     * Set up multigrid operators and call setup routines
     *-----------------------------------------------------*/
 
-   relax_data_l    = hypre_TAlloc(void *, num_levels, NALU_HYPRE_MEMORY_HOST);
-   matvec_data_l   = hypre_TAlloc(void *, num_levels, NALU_HYPRE_MEMORY_HOST);
-   restrict_data_l = hypre_TAlloc(void *, num_levels, NALU_HYPRE_MEMORY_HOST);
-   interp_data_l   = hypre_TAlloc(void *, num_levels, NALU_HYPRE_MEMORY_HOST);
+   relax_data_l    = nalu_hypre_TAlloc(void *, num_levels, NALU_HYPRE_MEMORY_HOST);
+   matvec_data_l   = nalu_hypre_TAlloc(void *, num_levels, NALU_HYPRE_MEMORY_HOST);
+   restrict_data_l = nalu_hypre_TAlloc(void *, num_levels, NALU_HYPRE_MEMORY_HOST);
+   interp_data_l   = nalu_hypre_TAlloc(void *, num_levels, NALU_HYPRE_MEMORY_HOST);
 
    for (l = 0; l < (num_levels - 1); l++)
    {
 #if 0 //defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
       if (l == num_level_GPU)
       {
-         hypre_SetDeviceOff();
+         nalu_hypre_SetDeviceOff();
       }
 #endif
       cdir = cdir_l[l];
 
-      hypre_PFMGSetCIndex(cdir, cindex);
-      hypre_PFMGSetFIndex(cdir, findex);
-      hypre_PFMGSetStride(cdir, stride);
+      nalu_hypre_PFMGSetCIndex(cdir, cindex);
+      nalu_hypre_PFMGSetFIndex(cdir, findex);
+      nalu_hypre_PFMGSetStride(cdir, stride);
 
       /* set up interpolation operator */
-      hypre_PFMGSetupInterpOp(A_l[l], cdir, findex, stride, P_l[l], rap_type);
+      nalu_hypre_PFMGSetupInterpOp(A_l[l], cdir, findex, stride, P_l[l], rap_type);
 
       /* set up the restriction operator */
 #if 0
       /* Allow R != PT for non symmetric case */
-      if (!hypre_StructMatrixSymmetric(A))
-         hypre_PFMGSetupRestrictOp(A_l[l], tx_l[l],
+      if (!nalu_hypre_StructMatrixSymmetric(A))
+         nalu_hypre_PFMGSetupRestrictOp(A_l[l], tx_l[l],
                                    cdir, cindex, stride, RT_l[l]);
 #endif
 
       /* set up the coarse grid operator */
-      hypre_PFMGSetupRAPOp(RT_l[l], A_l[l], P_l[l],
+      nalu_hypre_PFMGSetupRAPOp(RT_l[l], A_l[l], P_l[l],
                            cdir, cindex, stride, rap_type, A_l[l + 1]);
 
       /* set up the interpolation routine */
-      interp_data_l[l] = hypre_SemiInterpCreate();
-      hypre_SemiInterpSetup(interp_data_l[l], P_l[l], 0, x_l[l + 1], e_l[l],
+      interp_data_l[l] = nalu_hypre_SemiInterpCreate();
+      nalu_hypre_SemiInterpSetup(interp_data_l[l], P_l[l], 0, x_l[l + 1], e_l[l],
                             cindex, findex, stride);
 
       /* set up the restriction routine */
-      restrict_data_l[l] = hypre_SemiRestrictCreate();
-      hypre_SemiRestrictSetup(restrict_data_l[l], RT_l[l], 1, r_l[l], b_l[l + 1],
+      restrict_data_l[l] = nalu_hypre_SemiRestrictCreate();
+      nalu_hypre_SemiRestrictSetup(restrict_data_l[l], RT_l[l], 1, r_l[l], b_l[l + 1],
                               cindex, findex, stride);
    }
 
 #if 0 //defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
    if (l == num_level_GPU)
    {
-      hypre_SetDeviceOff();
+      nalu_hypre_SetDeviceOff();
    }
 #endif
 
@@ -637,31 +637,31 @@ hypre_PFMGSetup( void               *pfmg_vdata,
     * point.
     *-----------------------------------------------------*/
 
-   if ( hypre_ZeroDiagonal(A_l[l]))
+   if ( nalu_hypre_ZeroDiagonal(A_l[l]))
    {
       active_l[l] = 0;
    }
 
 #if 0 //defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
-   if (hypre_StructGridDataLocation(grid) != NALU_HYPRE_MEMORY_HOST)
+   if (nalu_hypre_StructGridDataLocation(grid) != NALU_HYPRE_MEMORY_HOST)
    {
-      hypre_SetDeviceOn();
+      nalu_hypre_SetDeviceOn();
    }
 #endif
    /* set up fine grid relaxation */
-   relax_data_l[0] = hypre_PFMGRelaxCreate(comm);
-   hypre_PFMGRelaxSetTol(relax_data_l[0], 0.0);
+   relax_data_l[0] = nalu_hypre_PFMGRelaxCreate(comm);
+   nalu_hypre_PFMGRelaxSetTol(relax_data_l[0], 0.0);
    if (usr_jacobi_weight)
    {
-      hypre_PFMGRelaxSetJacobiWeight(relax_data_l[0], jacobi_weight);
+      nalu_hypre_PFMGRelaxSetJacobiWeight(relax_data_l[0], jacobi_weight);
    }
    else
    {
-      hypre_PFMGRelaxSetJacobiWeight(relax_data_l[0], relax_weights[0]);
+      nalu_hypre_PFMGRelaxSetJacobiWeight(relax_data_l[0], relax_weights[0]);
    }
-   hypre_PFMGRelaxSetType(relax_data_l[0], relax_type);
-   hypre_PFMGRelaxSetTempVec(relax_data_l[0], tx_l[0]);
-   hypre_PFMGRelaxSetup(relax_data_l[0], A_l[0], b_l[0], x_l[0]);
+   nalu_hypre_PFMGRelaxSetType(relax_data_l[0], relax_type);
+   nalu_hypre_PFMGRelaxSetTempVec(relax_data_l[0], tx_l[0]);
+   nalu_hypre_PFMGRelaxSetup(relax_data_l[0], A_l[0], b_l[0], x_l[0]);
    if (num_levels > 1)
    {
       for (l = 1; l < num_levels; l++)
@@ -669,18 +669,18 @@ hypre_PFMGSetup( void               *pfmg_vdata,
          /* set relaxation parameters */
          if (active_l[l])
          {
-            relax_data_l[l] = hypre_PFMGRelaxCreate(comm);
-            hypre_PFMGRelaxSetTol(relax_data_l[l], 0.0);
+            relax_data_l[l] = nalu_hypre_PFMGRelaxCreate(comm);
+            nalu_hypre_PFMGRelaxSetTol(relax_data_l[l], 0.0);
             if (usr_jacobi_weight)
             {
-               hypre_PFMGRelaxSetJacobiWeight(relax_data_l[l], jacobi_weight);
+               nalu_hypre_PFMGRelaxSetJacobiWeight(relax_data_l[l], jacobi_weight);
             }
             else
             {
-               hypre_PFMGRelaxSetJacobiWeight(relax_data_l[l], relax_weights[l]);
+               nalu_hypre_PFMGRelaxSetJacobiWeight(relax_data_l[l], relax_weights[l]);
             }
-            hypre_PFMGRelaxSetType(relax_data_l[l], relax_type);
-            hypre_PFMGRelaxSetTempVec(relax_data_l[l], tx_l[l]);
+            nalu_hypre_PFMGRelaxSetType(relax_data_l[l], relax_type);
+            nalu_hypre_PFMGRelaxSetTempVec(relax_data_l[l], tx_l[l]);
          }
       }
 
@@ -689,17 +689,17 @@ hypre_PFMGSetup( void               *pfmg_vdata,
       if (active_l[l])
       {
          NALU_HYPRE_Int maxwork, maxiter;
-         hypre_PFMGRelaxSetType(relax_data_l[l], 0);
+         nalu_hypre_PFMGRelaxSetType(relax_data_l[l], 0);
          /* do no more work on the coarsest grid than the cost of a V-cycle
           * (estimating roughly 4 communications per V-cycle level) */
          maxwork = 4 * num_levels;
          /* do sweeps proportional to the coarsest grid size */
-         maxiter = hypre_min(maxwork, cmaxsize);
+         maxiter = nalu_hypre_min(maxwork, cmaxsize);
 #if 0
-         hypre_printf("maxwork = %d, cmaxsize = %d, maxiter = %d\n",
+         nalu_hypre_printf("maxwork = %d, cmaxsize = %d, maxiter = %d\n",
                       maxwork, cmaxsize, maxiter);
 #endif
-         hypre_PFMGRelaxSetMaxIter(relax_data_l[l], maxiter);
+         nalu_hypre_PFMGRelaxSetMaxIter(relax_data_l[l], maxiter);
       }
 
       /* call relax setup */
@@ -707,17 +707,17 @@ hypre_PFMGSetup( void               *pfmg_vdata,
       {
          if (active_l[l])
          {
-            hypre_PFMGRelaxSetup(relax_data_l[l], A_l[l], b_l[l], x_l[l]);
+            nalu_hypre_PFMGRelaxSetup(relax_data_l[l], A_l[l], b_l[l], x_l[l]);
          }
       }
    }
-   hypre_TFree(relax_weights, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(relax_weights, NALU_HYPRE_MEMORY_HOST);
 
    for (l = 0; l < num_levels; l++)
    {
       /* set up the residual routine */
-      matvec_data_l[l] = hypre_StructMatvecCreate();
-      hypre_StructMatvecSetup(matvec_data_l[l], A_l[l], x_l[l]);
+      matvec_data_l[l] = nalu_hypre_StructMatvecCreate();
+      nalu_hypre_StructMatvecSetup(matvec_data_l[l], A_l[l], x_l[l]);
    }
 
    (pfmg_data -> active_l)        = active_l;
@@ -733,42 +733,42 @@ hypre_PFMGSetup( void               *pfmg_vdata,
    if ((pfmg_data -> logging) > 0)
    {
       max_iter = (pfmg_data -> max_iter);
-      (pfmg_data -> norms)     = hypre_TAlloc(NALU_HYPRE_Real, max_iter, NALU_HYPRE_MEMORY_HOST);
-      (pfmg_data -> rel_norms) = hypre_TAlloc(NALU_HYPRE_Real, max_iter, NALU_HYPRE_MEMORY_HOST);
+      (pfmg_data -> norms)     = nalu_hypre_TAlloc(NALU_HYPRE_Real, max_iter, NALU_HYPRE_MEMORY_HOST);
+      (pfmg_data -> rel_norms) = nalu_hypre_TAlloc(NALU_HYPRE_Real, max_iter, NALU_HYPRE_MEMORY_HOST);
    }
 
 #if DEBUG
    for (l = 0; l < (num_levels - 1); l++)
    {
-      hypre_sprintf(filename, "zout_A.%02d", l);
-      hypre_StructMatrixPrint(filename, A_l[l], 0);
-      hypre_sprintf(filename, "zout_P.%02d", l);
-      hypre_StructMatrixPrint(filename, P_l[l], 0);
+      nalu_hypre_sprintf(filename, "zout_A.%02d", l);
+      nalu_hypre_StructMatrixPrint(filename, A_l[l], 0);
+      nalu_hypre_sprintf(filename, "zout_P.%02d", l);
+      nalu_hypre_StructMatrixPrint(filename, P_l[l], 0);
    }
-   hypre_sprintf(filename, "zout_A.%02d", l);
-   hypre_StructMatrixPrint(filename, A_l[l], 0);
+   nalu_hypre_sprintf(filename, "zout_A.%02d", l);
+   nalu_hypre_StructMatrixPrint(filename, A_l[l], 0);
 #endif
 
    NALU_HYPRE_ANNOTATE_FUNC_END;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_PFMGComputeDxyz( hypre_StructMatrix *A,
+nalu_hypre_PFMGComputeDxyz( nalu_hypre_StructMatrix *A,
                        NALU_HYPRE_Real         *dxyz,
                        NALU_HYPRE_Real         *mean,
                        NALU_HYPRE_Real         *deviation)
 {
-   hypre_BoxArray        *compute_boxes;
+   nalu_hypre_BoxArray        *compute_boxes;
    NALU_HYPRE_Real             cxyz[3], sqcxyz[3], tcxyz[3];
    NALU_HYPRE_Real             cxyz_max;
    NALU_HYPRE_Int              tot_size;
-   hypre_StructStencil   *stencil;
-   //hypre_Index           *stencil_shape;
+   nalu_hypre_StructStencil   *stencil;
+   //nalu_hypre_Index           *stencil_shape;
    NALU_HYPRE_Int              stencil_size;
    NALU_HYPRE_Int              constant_coefficient;
    NALU_HYPRE_Int              i, d;
@@ -776,9 +776,9 @@ hypre_PFMGComputeDxyz( hypre_StructMatrix *A,
    /*----------------------------------------------------------
     * Initialize some things
     *----------------------------------------------------------*/
-   stencil       = hypre_StructMatrixStencil(A);
-   //stencil_shape = hypre_StructStencilShape(stencil);
-   stencil_size  = hypre_StructStencilSize(stencil);
+   stencil       = nalu_hypre_StructMatrixStencil(A);
+   //stencil_shape = nalu_hypre_StructStencilShape(stencil);
+   stencil_size  = nalu_hypre_StructStencilSize(stencil);
 
    /*----------------------------------------------------------
     * Compute cxyz (use arithmetic mean)
@@ -786,16 +786,16 @@ hypre_PFMGComputeDxyz( hypre_StructMatrix *A,
    cxyz[0] = cxyz[1] = cxyz[2] = 0.0;
    sqcxyz[0] = sqcxyz[1] = sqcxyz[2] = 0.0;
 
-   constant_coefficient = hypre_StructMatrixConstantCoefficient(A);
-   compute_boxes = hypre_StructGridBoxes(hypre_StructMatrixGrid(A));
-   tot_size = hypre_StructGridGlobalSize(hypre_StructMatrixGrid(A));
+   constant_coefficient = nalu_hypre_StructMatrixConstantCoefficient(A);
+   compute_boxes = nalu_hypre_StructGridBoxes(nalu_hypre_StructMatrixGrid(A));
+   tot_size = nalu_hypre_StructGridGlobalSize(nalu_hypre_StructMatrixGrid(A));
 
-   hypre_ForBoxI(i, compute_boxes)
+   nalu_hypre_ForBoxI(i, compute_boxes)
    {
       /* all coefficients constant or variable diagonal */
       if ( constant_coefficient )
       {
-         hypre_PFMGComputeDxyz_CS(i, A, cxyz, sqcxyz);
+         nalu_hypre_PFMGComputeDxyz_CS(i, A, cxyz, sqcxyz);
       }
       /* constant_coefficient==0, all coefficients vary with space */
       else
@@ -803,23 +803,23 @@ hypre_PFMGComputeDxyz( hypre_StructMatrix *A,
          switch (stencil_size)
          {
             case 5:
-               hypre_PFMGComputeDxyz_SS5 (i, A, cxyz, sqcxyz);
+               nalu_hypre_PFMGComputeDxyz_SS5 (i, A, cxyz, sqcxyz);
                break;
             case 9:
-               hypre_PFMGComputeDxyz_SS9 (i, A, cxyz, sqcxyz);
+               nalu_hypre_PFMGComputeDxyz_SS9 (i, A, cxyz, sqcxyz);
                break;
             case 7:
-               hypre_PFMGComputeDxyz_SS7 (i, A, cxyz, sqcxyz);
+               nalu_hypre_PFMGComputeDxyz_SS7 (i, A, cxyz, sqcxyz);
                break;
             case 19:
-               hypre_PFMGComputeDxyz_SS19(i, A, cxyz, sqcxyz);
+               nalu_hypre_PFMGComputeDxyz_SS19(i, A, cxyz, sqcxyz);
                break;
             case 27:
-               hypre_PFMGComputeDxyz_SS27(i, A, cxyz, sqcxyz);
+               nalu_hypre_PFMGComputeDxyz_SS27(i, A, cxyz, sqcxyz);
                break;
             default:
-               hypre_printf("hypre error: unsupported stencil size %d\n", stencil_size);
-               hypre_MPI_Abort(hypre_MPI_COMM_WORLD, 1);
+               nalu_hypre_printf("hypre error: unsupported stencil size %d\n", stencil_size);
+               nalu_hypre_MPI_Abort(nalu_hypre_MPI_COMM_WORLD, 1);
          }
       }
    }
@@ -843,14 +843,14 @@ hypre_PFMGComputeDxyz( hypre_StructMatrix *A,
       tcxyz[0] = cxyz[0];
       tcxyz[1] = cxyz[1];
       tcxyz[2] = cxyz[2];
-      hypre_MPI_Allreduce(tcxyz, cxyz, 3, NALU_HYPRE_MPI_REAL, hypre_MPI_SUM,
-                          hypre_StructMatrixComm(A));
+      nalu_hypre_MPI_Allreduce(tcxyz, cxyz, 3, NALU_HYPRE_MPI_REAL, nalu_hypre_MPI_SUM,
+                          nalu_hypre_StructMatrixComm(A));
 
       tcxyz[0] = sqcxyz[0];
       tcxyz[1] = sqcxyz[1];
       tcxyz[2] = sqcxyz[2];
-      hypre_MPI_Allreduce(tcxyz, sqcxyz, 3, NALU_HYPRE_MPI_REAL, hypre_MPI_SUM,
-                          hypre_StructMatrixComm(A));
+      nalu_hypre_MPI_Allreduce(tcxyz, sqcxyz, 3, NALU_HYPRE_MPI_REAL, nalu_hypre_MPI_SUM,
+                          nalu_hypre_StructMatrixComm(A));
 
       for (d = 0; d < 3; d++)
       {
@@ -862,7 +862,7 @@ hypre_PFMGComputeDxyz( hypre_StructMatrix *A,
    cxyz_max = 0.0;
    for (d = 0; d < 3; d++)
    {
-      cxyz_max = hypre_max(cxyz_max, cxyz[d]);
+      cxyz_max = nalu_hypre_max(cxyz_max, cxyz[d]);
    }
    if (cxyz_max == 0.0)
    {
@@ -889,20 +889,20 @@ hypre_PFMGComputeDxyz( hypre_StructMatrix *A,
       }
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_PFMGComputeDxyz_CS( NALU_HYPRE_Int           i,
-                          hypre_StructMatrix *A,
+nalu_hypre_PFMGComputeDxyz_CS( NALU_HYPRE_Int           i,
+                          nalu_hypre_StructMatrix *A,
                           NALU_HYPRE_Real         *cxyz,
                           NALU_HYPRE_Real         *sqcxyz)
 {
-   hypre_StructStencil   *stencil;
-   hypre_Index           *stencil_shape;
+   nalu_hypre_StructStencil   *stencil;
+   nalu_hypre_Index           *stencil_shape;
    NALU_HYPRE_Int              stencil_size;
    NALU_HYPRE_Int              Ai;
    NALU_HYPRE_Real            *Ap;
@@ -911,21 +911,21 @@ hypre_PFMGComputeDxyz_CS( NALU_HYPRE_Int           i,
    NALU_HYPRE_Real             Adiag = 0, diag;
    NALU_HYPRE_Int              Astenc, sdiag = 0;
    NALU_HYPRE_Int              si;
-   NALU_HYPRE_MemoryLocation   memory_location = hypre_StructMatrixMemoryLocation(A);
+   NALU_HYPRE_MemoryLocation   memory_location = nalu_hypre_StructMatrixMemoryLocation(A);
 
-   stencil       = hypre_StructMatrixStencil(A);
-   stencil_shape = hypre_StructStencilShape(stencil);
-   stencil_size  = hypre_StructStencilSize(stencil);
+   stencil       = nalu_hypre_StructMatrixStencil(A);
+   stencil_shape = nalu_hypre_StructStencilShape(stencil);
+   stencil_size  = nalu_hypre_StructStencilSize(stencil);
 
-   Ai = hypre_CCBoxIndexRank( A_dbox, start );
-   constant_coefficient = hypre_StructMatrixConstantCoefficient(A);
+   Ai = nalu_hypre_CCBoxIndexRank( A_dbox, start );
+   constant_coefficient = nalu_hypre_StructMatrixConstantCoefficient(A);
 
    /* find diagonal stencil entry */
    for (si = 0; si < stencil_size; si++)
    {
-      if ((hypre_IndexD(stencil_shape[si], 0) == 0) &&
-          (hypre_IndexD(stencil_shape[si], 1) == 0) &&
-          (hypre_IndexD(stencil_shape[si], 2) == 0))
+      if ((nalu_hypre_IndexD(stencil_shape[si], 0) == 0) &&
+          (nalu_hypre_IndexD(stencil_shape[si], 1) == 0) &&
+          (nalu_hypre_IndexD(stencil_shape[si], 2) == 0))
       {
          sdiag = si;
          break;
@@ -937,14 +937,14 @@ hypre_PFMGComputeDxyz_CS( NALU_HYPRE_Int           i,
    tcz = cxyz[2];
 
    /* get sign of diagonal */
-   Ap = hypre_StructMatrixBoxData(A, i, sdiag);
+   Ap = nalu_hypre_StructMatrixBoxData(A, i, sdiag);
    if (constant_coefficient == 1)
    {
       Adiag = Ap[Ai];
    }
    else if (constant_coefficient == 2)
    {
-      hypre_TMemcpy(&Adiag, &Ap[Ai], NALU_HYPRE_Real, 1, NALU_HYPRE_MEMORY_HOST, memory_location);
+      nalu_hypre_TMemcpy(&Adiag, &Ap[Ai], NALU_HYPRE_Real, 1, NALU_HYPRE_MEMORY_HOST, memory_location);
    }
 
    diag = 1.0;
@@ -955,24 +955,24 @@ hypre_PFMGComputeDxyz_CS( NALU_HYPRE_Int           i,
 
    for (si = 0; si < stencil_size; si++)
    {
-      Ap = hypre_StructMatrixBoxData(A, i, si);
+      Ap = nalu_hypre_StructMatrixBoxData(A, i, si);
 
       /* x-direction */
-      Astenc = hypre_IndexD(stencil_shape[si], 0);
+      Astenc = nalu_hypre_IndexD(stencil_shape[si], 0);
       if (Astenc)
       {
          tcx -= Ap[Ai] * diag;
       }
 
       /* y-direction */
-      Astenc = hypre_IndexD(stencil_shape[si], 1);
+      Astenc = nalu_hypre_IndexD(stencil_shape[si], 1);
       if (Astenc)
       {
          tcy -= Ap[Ai] * diag;
       }
 
       /* z-direction */
-      Astenc = hypre_IndexD(stencil_shape[si], 2);
+      Astenc = nalu_hypre_IndexD(stencil_shape[si], 2);
       if (Astenc)
       {
          tcz -= Ap[Ai] * diag;
@@ -987,37 +987,37 @@ hypre_PFMGComputeDxyz_CS( NALU_HYPRE_Int           i,
    sqcxyz[1] += tcy * tcy;
    sqcxyz[2] += tcz * tcz;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_PFMGComputeDxyz_SS5( NALU_HYPRE_Int           bi,
-                           hypre_StructMatrix *A,
+nalu_hypre_PFMGComputeDxyz_SS5( NALU_HYPRE_Int           bi,
+                           nalu_hypre_StructMatrix *A,
                            NALU_HYPRE_Real         *cxyz,
                            NALU_HYPRE_Real         *sqcxyz)
 {
-   hypre_BoxArray        *compute_boxes;
-   hypre_Box             *compute_box;
-   hypre_Box             *A_dbox;
-   hypre_Index            loop_size;
-   hypre_IndexRef         start;
-   hypre_Index            stride;
-   hypre_Index            index;
+   nalu_hypre_BoxArray        *compute_boxes;
+   nalu_hypre_Box             *compute_box;
+   nalu_hypre_Box             *A_dbox;
+   nalu_hypre_Index            loop_size;
+   nalu_hypre_IndexRef         start;
+   nalu_hypre_Index            stride;
+   nalu_hypre_Index            index;
    NALU_HYPRE_Real            *a_cc, *a_cw, *a_ce, *a_cs, *a_cn;
 #if 0 //defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
-   NALU_HYPRE_Int              data_location = hypre_StructGridDataLocation(
-                                             hypre_StructMatrixGrid(A) );
+   NALU_HYPRE_Int              data_location = nalu_hypre_StructGridDataLocation(
+                                             nalu_hypre_StructMatrixGrid(A) );
 #endif
 
-   hypre_SetIndex3(stride, 1, 1, 1);
-   compute_boxes = hypre_StructGridBoxes(hypre_StructMatrixGrid(A));
-   compute_box = hypre_BoxArrayBox(compute_boxes, bi);
-   A_dbox = hypre_BoxArrayBox(hypre_StructMatrixDataSpace(A), bi);
-   start  = hypre_BoxIMin(compute_box);
-   hypre_BoxGetStrideSize(compute_box, stride, loop_size);
+   nalu_hypre_SetIndex3(stride, 1, 1, 1);
+   compute_boxes = nalu_hypre_StructGridBoxes(nalu_hypre_StructMatrixGrid(A));
+   compute_box = nalu_hypre_BoxArrayBox(compute_boxes, bi);
+   A_dbox = nalu_hypre_BoxArrayBox(nalu_hypre_StructMatrixDataSpace(A), bi);
+   start  = nalu_hypre_BoxIMin(compute_box);
+   nalu_hypre_BoxGetStrideSize(compute_box, stride, loop_size);
 
    /*-----------------------------------------------------------------
     * Extract pointers for 5-point fine grid operator:
@@ -1029,68 +1029,68 @@ hypre_PFMGComputeDxyz_SS5( NALU_HYPRE_Int           bi,
     * a_cn is pointer for north coefficient
     *-----------------------------------------------------------------*/
 
-   hypre_SetIndex3(index,  0,  0, 0);
-   a_cc = hypre_StructMatrixExtractPointerByIndex(A, bi, index);
+   nalu_hypre_SetIndex3(index,  0,  0, 0);
+   a_cc = nalu_hypre_StructMatrixExtractPointerByIndex(A, bi, index);
 
-   hypre_SetIndex3(index, -1,  0, 0);
-   a_cw = hypre_StructMatrixExtractPointerByIndex(A, bi, index);
+   nalu_hypre_SetIndex3(index, -1,  0, 0);
+   a_cw = nalu_hypre_StructMatrixExtractPointerByIndex(A, bi, index);
 
-   hypre_SetIndex3(index,  1,  0, 0);
-   a_ce = hypre_StructMatrixExtractPointerByIndex(A, bi, index);
+   nalu_hypre_SetIndex3(index,  1,  0, 0);
+   a_ce = nalu_hypre_StructMatrixExtractPointerByIndex(A, bi, index);
 
-   hypre_SetIndex3(index,  0, -1, 0);
-   a_cs = hypre_StructMatrixExtractPointerByIndex(A, bi, index);
+   nalu_hypre_SetIndex3(index,  0, -1, 0);
+   a_cs = nalu_hypre_StructMatrixExtractPointerByIndex(A, bi, index);
 
-   hypre_SetIndex3(index,  0,  1, 0);
-   a_cn = hypre_StructMatrixExtractPointerByIndex(A, bi, index);
+   nalu_hypre_SetIndex3(index,  0,  1, 0);
+   a_cn = nalu_hypre_StructMatrixExtractPointerByIndex(A, bi, index);
 
    // FIXME TODO HOW TO DO KOKKOS (WM: and SYCL) IN ONE BOXLOOP ?
 #if defined(NALU_HYPRE_USING_KOKKOS) || defined(NALU_HYPRE_USING_SYCL)
 
    NALU_HYPRE_Real cxb = cxyz[0];
-   hypre_BoxLoop1ReductionBegin(hypre_StructMatrixNDim(A), loop_size,
+   nalu_hypre_BoxLoop1ReductionBegin(nalu_hypre_StructMatrixNDim(A), loop_size,
                                 A_dbox, start, stride, Ai, cxb)
    {
       NALU_HYPRE_Real diag = a_cc[Ai] < 0.0 ? -1.0 : 1.0;
       NALU_HYPRE_Real tcx = -diag * (a_cw[Ai] + a_ce[Ai]);
       cxb += tcx;
    }
-   hypre_BoxLoop1ReductionEnd(Ai, cxb)
+   nalu_hypre_BoxLoop1ReductionEnd(Ai, cxb)
 
    NALU_HYPRE_Real cyb = cxyz[1];
-   hypre_BoxLoop1ReductionBegin(hypre_StructMatrixNDim(A), loop_size,
+   nalu_hypre_BoxLoop1ReductionBegin(nalu_hypre_StructMatrixNDim(A), loop_size,
                                 A_dbox, start, stride, Ai, cyb)
    {
       NALU_HYPRE_Real diag = a_cc[Ai] < 0.0 ? -1.0 : 1.0;
       NALU_HYPRE_Real tcy = -diag * (a_cn[Ai] + a_cs[Ai]);
       cyb += tcy;
    }
-   hypre_BoxLoop1ReductionEnd(Ai, cyb)
+   nalu_hypre_BoxLoop1ReductionEnd(Ai, cyb)
 
    NALU_HYPRE_Real sqcxb = sqcxyz[0];
-   hypre_BoxLoop1ReductionBegin(hypre_StructMatrixNDim(A), loop_size,
+   nalu_hypre_BoxLoop1ReductionBegin(nalu_hypre_StructMatrixNDim(A), loop_size,
                                 A_dbox, start, stride, Ai, sqcxb)
    {
       NALU_HYPRE_Real diag = a_cc[Ai] < 0.0 ? -1.0 : 1.0;
       NALU_HYPRE_Real tcx = -diag * (a_cw[Ai] + a_ce[Ai]);
       sqcxb += tcx * tcx;
    }
-   hypre_BoxLoop1ReductionEnd(Ai, sqcxb)
+   nalu_hypre_BoxLoop1ReductionEnd(Ai, sqcxb)
 
    NALU_HYPRE_Real sqcyb = sqcxyz[1];
-   hypre_BoxLoop1ReductionBegin(hypre_StructMatrixNDim(A), loop_size,
+   nalu_hypre_BoxLoop1ReductionBegin(nalu_hypre_StructMatrixNDim(A), loop_size,
                                 A_dbox, start, stride, Ai, sqcyb)
    {
       NALU_HYPRE_Real diag = a_cc[Ai] < 0.0 ? -1.0 : 1.0;
       NALU_HYPRE_Real tcy = -diag * (a_cn[Ai] + a_cs[Ai]);
       sqcyb += tcy * tcy;
    }
-   hypre_BoxLoop1ReductionEnd(Ai, sqcyb)
+   nalu_hypre_BoxLoop1ReductionEnd(Ai, sqcyb)
 
 #else // #if defined(NALU_HYPRE_USING_KOKKOS) || defined(NALU_HYPRE_USING_SYCL)
 
 #if defined(NALU_HYPRE_USING_RAJA)
-   ReduceSum<hypre_raja_reduce_policy, NALU_HYPRE_Real> cxb(cxyz[0]), cyb(cxyz[1]), sqcxb(sqcxyz[0]),
+   ReduceSum<nalu_hypre_raja_reduce_policy, NALU_HYPRE_Real> cxb(cxyz[0]), cyb(cxyz[1]), sqcxb(sqcxyz[0]),
              sqcyb(sqcxyz[1]);
 #elif defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
    NALU_HYPRE_double4 d4(cxyz[0], cxyz[1], sqcxyz[0], sqcxyz[1]);
@@ -1114,7 +1114,7 @@ hypre_PFMGComputeDxyz_SS5( NALU_HYPRE_Int           bi,
 #endif
 
 #define DEVICE_VAR is_device_ptr(a_cc,a_cw,a_ce,a_cn,a_cs)
-   hypre_BoxLoop1ReductionBegin(hypre_StructMatrixNDim(A), loop_size,
+   nalu_hypre_BoxLoop1ReductionBegin(nalu_hypre_StructMatrixNDim(A), loop_size,
                                 A_dbox, start, stride, Ai, sum4);
    {
       NALU_HYPRE_Real tcx, tcy;
@@ -1133,7 +1133,7 @@ hypre_PFMGComputeDxyz_SS5( NALU_HYPRE_Int           bi,
       sqcyb += tcy * tcy;
 #endif
    }
-   hypre_BoxLoop1ReductionEnd(Ai, sum4)
+   nalu_hypre_BoxLoop1ReductionEnd(Ai, sum4)
 #undef DEVICE_VAR
 
 #endif /* kokkos */
@@ -1155,38 +1155,38 @@ hypre_PFMGComputeDxyz_SS5( NALU_HYPRE_Int           bi,
    cxyz[2]   = 0;
    sqcxyz[2] = 0;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_PFMGComputeDxyz_SS9( NALU_HYPRE_Int bi,
-                           hypre_StructMatrix *A,
+nalu_hypre_PFMGComputeDxyz_SS9( NALU_HYPRE_Int bi,
+                           nalu_hypre_StructMatrix *A,
                            NALU_HYPRE_Real         *cxyz,
                            NALU_HYPRE_Real         *sqcxyz)
 {
-   hypre_BoxArray        *compute_boxes;
-   hypre_Box             *compute_box;
-   hypre_Box             *A_dbox;
-   hypre_Index            loop_size;
-   hypre_IndexRef         start;
-   hypre_Index            stride;
-   hypre_Index            index;
+   nalu_hypre_BoxArray        *compute_boxes;
+   nalu_hypre_Box             *compute_box;
+   nalu_hypre_Box             *A_dbox;
+   nalu_hypre_Index            loop_size;
+   nalu_hypre_IndexRef         start;
+   nalu_hypre_Index            stride;
+   nalu_hypre_Index            index;
    NALU_HYPRE_Real            *a_cc, *a_cw, *a_ce, *a_cs, *a_cn;
    NALU_HYPRE_Real            *a_csw, *a_cse, *a_cne, *a_cnw;
 #if 0 //defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
-   NALU_HYPRE_Int              data_location = hypre_StructGridDataLocation(
-                                             hypre_StructMatrixGrid(A) );
+   NALU_HYPRE_Int              data_location = nalu_hypre_StructGridDataLocation(
+                                             nalu_hypre_StructMatrixGrid(A) );
 #endif
 
-   hypre_SetIndex3(stride, 1, 1, 1);
-   compute_boxes = hypre_StructGridBoxes(hypre_StructMatrixGrid(A));
-   compute_box = hypre_BoxArrayBox(compute_boxes, bi);
-   A_dbox = hypre_BoxArrayBox(hypre_StructMatrixDataSpace(A), bi);
-   start  = hypre_BoxIMin(compute_box);
-   hypre_BoxGetStrideSize(compute_box, stride, loop_size);
+   nalu_hypre_SetIndex3(stride, 1, 1, 1);
+   compute_boxes = nalu_hypre_StructGridBoxes(nalu_hypre_StructMatrixGrid(A));
+   compute_box = nalu_hypre_BoxArrayBox(compute_boxes, bi);
+   A_dbox = nalu_hypre_BoxArrayBox(nalu_hypre_StructMatrixDataSpace(A), bi);
+   start  = nalu_hypre_BoxIMin(compute_box);
+   nalu_hypre_BoxGetStrideSize(compute_box, stride, loop_size);
 
    /*-----------------------------------------------------------------
     * Extract pointers for 5-point grid operator:
@@ -1198,20 +1198,20 @@ hypre_PFMGComputeDxyz_SS9( NALU_HYPRE_Int bi,
     * a_cn is pointer for north coefficient
     *-----------------------------------------------------------------*/
 
-   hypre_SetIndex3(index, 0, 0, 0);
-   a_cc = hypre_StructMatrixExtractPointerByIndex(A, bi, index);
+   nalu_hypre_SetIndex3(index, 0, 0, 0);
+   a_cc = nalu_hypre_StructMatrixExtractPointerByIndex(A, bi, index);
 
-   hypre_SetIndex3(index, -1, 0, 0);
-   a_cw = hypre_StructMatrixExtractPointerByIndex(A, bi, index);
+   nalu_hypre_SetIndex3(index, -1, 0, 0);
+   a_cw = nalu_hypre_StructMatrixExtractPointerByIndex(A, bi, index);
 
-   hypre_SetIndex3(index, 1, 0, 0);
-   a_ce = hypre_StructMatrixExtractPointerByIndex(A, bi, index);
+   nalu_hypre_SetIndex3(index, 1, 0, 0);
+   a_ce = nalu_hypre_StructMatrixExtractPointerByIndex(A, bi, index);
 
-   hypre_SetIndex3(index, 0, -1, 0);
-   a_cs = hypre_StructMatrixExtractPointerByIndex(A, bi, index);
+   nalu_hypre_SetIndex3(index, 0, -1, 0);
+   a_cs = nalu_hypre_StructMatrixExtractPointerByIndex(A, bi, index);
 
-   hypre_SetIndex3(index, 0, 1, 0);
-   a_cn = hypre_StructMatrixExtractPointerByIndex(A, bi, index);
+   nalu_hypre_SetIndex3(index, 0, 1, 0);
+   a_cn = nalu_hypre_StructMatrixExtractPointerByIndex(A, bi, index);
 
    /*-----------------------------------------------------------------
     * Extract additional pointers for 9-point grid operator:
@@ -1222,65 +1222,65 @@ hypre_PFMGComputeDxyz_SS9( NALU_HYPRE_Int bi,
     * a_cne is pointer for northeast coefficient
     *-----------------------------------------------------------------*/
 
-   hypre_SetIndex3(index, -1, -1, 0);
-   a_csw = hypre_StructMatrixExtractPointerByIndex(A, bi, index);
+   nalu_hypre_SetIndex3(index, -1, -1, 0);
+   a_csw = nalu_hypre_StructMatrixExtractPointerByIndex(A, bi, index);
 
-   hypre_SetIndex3(index, 1, -1, 0);
-   a_cse = hypre_StructMatrixExtractPointerByIndex(A, bi, index);
+   nalu_hypre_SetIndex3(index, 1, -1, 0);
+   a_cse = nalu_hypre_StructMatrixExtractPointerByIndex(A, bi, index);
 
-   hypre_SetIndex3(index, -1, 1, 0);
-   a_cnw = hypre_StructMatrixExtractPointerByIndex(A, bi, index);
+   nalu_hypre_SetIndex3(index, -1, 1, 0);
+   a_cnw = nalu_hypre_StructMatrixExtractPointerByIndex(A, bi, index);
 
-   hypre_SetIndex3(index, 1, 1, 0);
-   a_cne = hypre_StructMatrixExtractPointerByIndex(A, bi, index);
+   nalu_hypre_SetIndex3(index, 1, 1, 0);
+   a_cne = nalu_hypre_StructMatrixExtractPointerByIndex(A, bi, index);
 
    // FIXME TODO HOW TO DO KOKKOS IN ONE BOXLOOP ?
 #if defined(NALU_HYPRE_USING_KOKKOS) || defined(NALU_HYPRE_USING_SYCL)
 
    NALU_HYPRE_Real cxb = cxyz[0];
-   hypre_BoxLoop1ReductionBegin(hypre_StructMatrixNDim(A), loop_size,
+   nalu_hypre_BoxLoop1ReductionBegin(nalu_hypre_StructMatrixNDim(A), loop_size,
                                 A_dbox, start, stride, Ai, cxb)
    {
       NALU_HYPRE_Real diag = a_cc[Ai] < 0.0 ? -1.0 : 1.0;
       NALU_HYPRE_Real tcx = -diag * (a_cw[Ai] + a_ce[Ai] + a_csw[Ai] + a_cse[Ai] + a_cnw[Ai] + a_cne[Ai]);
       cxb += tcx;
    }
-   hypre_BoxLoop1ReductionEnd(Ai, cxb)
+   nalu_hypre_BoxLoop1ReductionEnd(Ai, cxb)
 
    NALU_HYPRE_Real cyb = cxyz[1];
-   hypre_BoxLoop1ReductionBegin(hypre_StructMatrixNDim(A), loop_size,
+   nalu_hypre_BoxLoop1ReductionBegin(nalu_hypre_StructMatrixNDim(A), loop_size,
                                 A_dbox, start, stride, Ai, cyb)
    {
       NALU_HYPRE_Real diag = a_cc[Ai] < 0.0 ? -1.0 : 1.0;
       NALU_HYPRE_Real tcy = -diag * (a_cs[Ai] + a_cn[Ai] + a_csw[Ai] + a_cse[Ai] + a_cnw[Ai] + a_cne[Ai]);
       cyb += tcy;
    }
-   hypre_BoxLoop1ReductionEnd(Ai, cyb)
+   nalu_hypre_BoxLoop1ReductionEnd(Ai, cyb)
 
    NALU_HYPRE_Real sqcxb = sqcxyz[0];
-   hypre_BoxLoop1ReductionBegin(hypre_StructMatrixNDim(A), loop_size,
+   nalu_hypre_BoxLoop1ReductionBegin(nalu_hypre_StructMatrixNDim(A), loop_size,
                                 A_dbox, start, stride, Ai, sqcxb)
    {
       NALU_HYPRE_Real diag = a_cc[Ai] < 0.0 ? -1.0 : 1.0;
       NALU_HYPRE_Real tcx = -diag * (a_cw[Ai] + a_ce[Ai] + a_csw[Ai] + a_cse[Ai] + a_cnw[Ai] + a_cne[Ai]);
       sqcxb += tcx * tcx;
    }
-   hypre_BoxLoop1ReductionEnd(Ai, sqcxb)
+   nalu_hypre_BoxLoop1ReductionEnd(Ai, sqcxb)
 
    NALU_HYPRE_Real sqcyb = sqcxyz[1];
-   hypre_BoxLoop1ReductionBegin(hypre_StructMatrixNDim(A), loop_size,
+   nalu_hypre_BoxLoop1ReductionBegin(nalu_hypre_StructMatrixNDim(A), loop_size,
                                 A_dbox, start, stride, Ai, sqcyb)
    {
       NALU_HYPRE_Real diag = a_cc[Ai] < 0.0 ? -1.0 : 1.0;
       NALU_HYPRE_Real tcy = -diag * (a_cs[Ai] + a_cn[Ai] + a_csw[Ai] + a_cse[Ai] + a_cnw[Ai] + a_cne[Ai]);
       sqcyb += tcy * tcy;
    }
-   hypre_BoxLoop1ReductionEnd(Ai, sqcyb)
+   nalu_hypre_BoxLoop1ReductionEnd(Ai, sqcyb)
 
 #else /* kokkos */
 
 #if defined(NALU_HYPRE_USING_RAJA)
-   ReduceSum<hypre_raja_reduce_policy, NALU_HYPRE_Real> cxb(cxyz[0]), cyb(cxyz[1]), sqcxb(sqcxyz[0]),
+   ReduceSum<nalu_hypre_raja_reduce_policy, NALU_HYPRE_Real> cxb(cxyz[0]), cyb(cxyz[1]), sqcxb(sqcxyz[0]),
              sqcyb(sqcxyz[1]);
 #elif defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
    NALU_HYPRE_double4 d4(cxyz[0], cxyz[1], sqcxyz[0], sqcxyz[1]);
@@ -1305,7 +1305,7 @@ hypre_PFMGComputeDxyz_SS9( NALU_HYPRE_Int bi,
 #endif
 
 #define DEVICE_VAR is_device_ptr(a_cc,a_cw,a_ce,a_csw,a_cse,a_cnw,a_cne,a_cs,a_cn)
-   hypre_BoxLoop1ReductionBegin(hypre_StructMatrixNDim(A), loop_size,
+   nalu_hypre_BoxLoop1ReductionBegin(nalu_hypre_StructMatrixNDim(A), loop_size,
                                 A_dbox, start, stride, Ai, sum4)
    {
       NALU_HYPRE_Real tcx, tcy;
@@ -1324,7 +1324,7 @@ hypre_PFMGComputeDxyz_SS9( NALU_HYPRE_Int bi,
       sqcyb += tcy * tcy;
 #endif
    }
-   hypre_BoxLoop1ReductionEnd(Ai, sum4)
+   nalu_hypre_BoxLoop1ReductionEnd(Ai, sum4)
 #undef DEVICE_VAR
 
 #endif /* kokkos */
@@ -1345,37 +1345,37 @@ hypre_PFMGComputeDxyz_SS9( NALU_HYPRE_Int bi,
    cxyz[2]   = 0;
    sqcxyz[2] = 0;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_PFMGComputeDxyz_SS7( NALU_HYPRE_Int           bi,
-                           hypre_StructMatrix *A,
+nalu_hypre_PFMGComputeDxyz_SS7( NALU_HYPRE_Int           bi,
+                           nalu_hypre_StructMatrix *A,
                            NALU_HYPRE_Real         *cxyz,
                            NALU_HYPRE_Real         *sqcxyz)
 {
-   hypre_BoxArray        *compute_boxes;
-   hypre_Box             *compute_box;
-   hypre_Box             *A_dbox;
-   hypre_Index            loop_size;
-   hypre_IndexRef         start;
-   hypre_Index            stride;
-   hypre_Index            index;
+   nalu_hypre_BoxArray        *compute_boxes;
+   nalu_hypre_Box             *compute_box;
+   nalu_hypre_Box             *A_dbox;
+   nalu_hypre_Index            loop_size;
+   nalu_hypre_IndexRef         start;
+   nalu_hypre_Index            stride;
+   nalu_hypre_Index            index;
    NALU_HYPRE_Real            *a_cc, *a_cw, *a_ce, *a_cs, *a_cn, *a_ac, *a_bc;
 #if 0 //defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
-   NALU_HYPRE_Int              data_location = hypre_StructGridDataLocation(
-                                             hypre_StructMatrixGrid(A) );
+   NALU_HYPRE_Int              data_location = nalu_hypre_StructGridDataLocation(
+                                             nalu_hypre_StructMatrixGrid(A) );
 #endif
 
-   hypre_SetIndex3(stride, 1, 1, 1);
-   compute_boxes = hypre_StructGridBoxes(hypre_StructMatrixGrid(A));
-   compute_box = hypre_BoxArrayBox(compute_boxes, bi);
-   A_dbox = hypre_BoxArrayBox(hypre_StructMatrixDataSpace(A), bi);
-   start  = hypre_BoxIMin(compute_box);
-   hypre_BoxGetStrideSize(compute_box, stride, loop_size);
+   nalu_hypre_SetIndex3(stride, 1, 1, 1);
+   compute_boxes = nalu_hypre_StructGridBoxes(nalu_hypre_StructMatrixGrid(A));
+   compute_box = nalu_hypre_BoxArrayBox(compute_boxes, bi);
+   A_dbox = nalu_hypre_BoxArrayBox(nalu_hypre_StructMatrixDataSpace(A), bi);
+   start  = nalu_hypre_BoxIMin(compute_box);
+   nalu_hypre_BoxGetStrideSize(compute_box, stride, loop_size);
 
    /*-----------------------------------------------------------------
     * Extract pointers for 7-point grid operator:
@@ -1389,94 +1389,94 @@ hypre_PFMGComputeDxyz_SS7( NALU_HYPRE_Int           bi,
     * a_bc is pointer for center coefficient in plane below
     *-----------------------------------------------------------------*/
 
-   hypre_SetIndex3(index, 0, 0, 0);
-   a_cc = hypre_StructMatrixExtractPointerByIndex(A, bi, index);
+   nalu_hypre_SetIndex3(index, 0, 0, 0);
+   a_cc = nalu_hypre_StructMatrixExtractPointerByIndex(A, bi, index);
 
-   hypre_SetIndex3(index, -1, 0, 0);
-   a_cw = hypre_StructMatrixExtractPointerByIndex(A, bi, index);
+   nalu_hypre_SetIndex3(index, -1, 0, 0);
+   a_cw = nalu_hypre_StructMatrixExtractPointerByIndex(A, bi, index);
 
-   hypre_SetIndex3(index, 1, 0, 0);
-   a_ce = hypre_StructMatrixExtractPointerByIndex(A, bi, index);
+   nalu_hypre_SetIndex3(index, 1, 0, 0);
+   a_ce = nalu_hypre_StructMatrixExtractPointerByIndex(A, bi, index);
 
-   hypre_SetIndex3(index, 0, -1, 0);
-   a_cs = hypre_StructMatrixExtractPointerByIndex(A, bi, index);
+   nalu_hypre_SetIndex3(index, 0, -1, 0);
+   a_cs = nalu_hypre_StructMatrixExtractPointerByIndex(A, bi, index);
 
-   hypre_SetIndex3(index, 0, 1, 0);
-   a_cn = hypre_StructMatrixExtractPointerByIndex(A, bi, index);
+   nalu_hypre_SetIndex3(index, 0, 1, 0);
+   a_cn = nalu_hypre_StructMatrixExtractPointerByIndex(A, bi, index);
 
-   hypre_SetIndex3(index, 0, 0, 1);
-   a_ac = hypre_StructMatrixExtractPointerByIndex(A, bi, index);
+   nalu_hypre_SetIndex3(index, 0, 0, 1);
+   a_ac = nalu_hypre_StructMatrixExtractPointerByIndex(A, bi, index);
 
-   hypre_SetIndex3(index, 0, 0, -1);
-   a_bc = hypre_StructMatrixExtractPointerByIndex(A, bi, index);
+   nalu_hypre_SetIndex3(index, 0, 0, -1);
+   a_bc = nalu_hypre_StructMatrixExtractPointerByIndex(A, bi, index);
 
    // FIXME TODO HOW TO DO KOKKOS IN ONE BOXLOOP ?
 #if defined(NALU_HYPRE_USING_KOKKOS) || defined(NALU_HYPRE_USING_SYCL)
 
    NALU_HYPRE_Real cxb = cxyz[0];
-   hypre_BoxLoop1ReductionBegin(hypre_StructMatrixNDim(A), loop_size,
+   nalu_hypre_BoxLoop1ReductionBegin(nalu_hypre_StructMatrixNDim(A), loop_size,
                                 A_dbox, start, stride, Ai, cxb)
    {
       NALU_HYPRE_Real diag = a_cc[Ai] < 0.0 ? -1.0 : 1.0;
       NALU_HYPRE_Real tcx = -diag * (a_cw[Ai] + a_ce[Ai]);
       cxb += tcx;
    }
-   hypre_BoxLoop1ReductionEnd(Ai, cxb)
+   nalu_hypre_BoxLoop1ReductionEnd(Ai, cxb)
 
    NALU_HYPRE_Real cyb = cxyz[1];
-   hypre_BoxLoop1ReductionBegin(hypre_StructMatrixNDim(A), loop_size,
+   nalu_hypre_BoxLoop1ReductionBegin(nalu_hypre_StructMatrixNDim(A), loop_size,
                                 A_dbox, start, stride, Ai, cyb)
    {
       NALU_HYPRE_Real diag = a_cc[Ai] < 0.0 ? -1.0 : 1.0;
       NALU_HYPRE_Real tcy = -diag * (a_cs[Ai] + a_cn[Ai]);
       cyb += tcy;
    }
-   hypre_BoxLoop1ReductionEnd(Ai, cyb)
+   nalu_hypre_BoxLoop1ReductionEnd(Ai, cyb)
 
    NALU_HYPRE_Real czb = cxyz[2];
-   hypre_BoxLoop1ReductionBegin(hypre_StructMatrixNDim(A), loop_size,
+   nalu_hypre_BoxLoop1ReductionBegin(nalu_hypre_StructMatrixNDim(A), loop_size,
                                 A_dbox, start, stride, Ai, czb)
    {
       NALU_HYPRE_Real diag = a_cc[Ai] < 0.0 ? -1.0 : 1.0;
       NALU_HYPRE_Real tcz = -diag * (a_ac[Ai] + a_bc[Ai]);
       czb += tcz;
    }
-   hypre_BoxLoop1ReductionEnd(Ai, czb)
+   nalu_hypre_BoxLoop1ReductionEnd(Ai, czb)
 
    NALU_HYPRE_Real sqcxb = sqcxyz[0];
-   hypre_BoxLoop1ReductionBegin(hypre_StructMatrixNDim(A), loop_size,
+   nalu_hypre_BoxLoop1ReductionBegin(nalu_hypre_StructMatrixNDim(A), loop_size,
                                 A_dbox, start, stride, Ai, sqcxb)
    {
       NALU_HYPRE_Real diag = a_cc[Ai] < 0.0 ? -1.0 : 1.0;
       NALU_HYPRE_Real tcx = -diag * (a_cw[Ai] + a_ce[Ai]);
       sqcxb += tcx * tcx;
    }
-   hypre_BoxLoop1ReductionEnd(Ai, sqcxb)
+   nalu_hypre_BoxLoop1ReductionEnd(Ai, sqcxb)
 
    NALU_HYPRE_Real sqcyb = sqcxyz[1];
-   hypre_BoxLoop1ReductionBegin(hypre_StructMatrixNDim(A), loop_size,
+   nalu_hypre_BoxLoop1ReductionBegin(nalu_hypre_StructMatrixNDim(A), loop_size,
                                 A_dbox, start, stride, Ai, sqcyb)
    {
       NALU_HYPRE_Real diag = a_cc[Ai] < 0.0 ? -1.0 : 1.0;
       NALU_HYPRE_Real tcy = -diag * (a_cs[Ai] + a_cn[Ai]);
       sqcyb += tcy * tcy;
    }
-   hypre_BoxLoop1ReductionEnd(Ai, sqcyb)
+   nalu_hypre_BoxLoop1ReductionEnd(Ai, sqcyb)
 
    NALU_HYPRE_Real sqczb = sqcxyz[2];
-   hypre_BoxLoop1ReductionBegin(hypre_StructMatrixNDim(A), loop_size,
+   nalu_hypre_BoxLoop1ReductionBegin(nalu_hypre_StructMatrixNDim(A), loop_size,
                                 A_dbox, start, stride, Ai, sqczb)
    {
       NALU_HYPRE_Real diag = a_cc[Ai] < 0.0 ? -1.0 : 1.0;
       NALU_HYPRE_Real tcz = -diag * (a_ac[Ai] + a_bc[Ai]);
       sqczb += tcz * tcz;
    }
-   hypre_BoxLoop1ReductionEnd(Ai, sqczb)
+   nalu_hypre_BoxLoop1ReductionEnd(Ai, sqczb)
 
 #else /* kokkos */
 
 #if defined(NALU_HYPRE_USING_RAJA)
-   ReduceSum<hypre_raja_reduce_policy, NALU_HYPRE_Real> cxb(cxyz[0]), cyb(cxyz[1]), czb(cxyz[2]),
+   ReduceSum<nalu_hypre_raja_reduce_policy, NALU_HYPRE_Real> cxb(cxyz[0]), cyb(cxyz[1]), czb(cxyz[2]),
              sqcxb(sqcxyz[0]), sqcyb(sqcxyz[1]), sqczb(sqcxyz[2]);
 #elif defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
    NALU_HYPRE_double6 d6(cxyz[0], cxyz[1], cxyz[2], sqcxyz[0], sqcxyz[1], sqcxyz[2]);
@@ -1503,7 +1503,7 @@ hypre_PFMGComputeDxyz_SS7( NALU_HYPRE_Int           bi,
 #endif
 
 #define DEVICE_VAR is_device_ptr(a_cc,a_cw,a_ce,a_cs,a_cn,a_ac,a_bc)
-   hypre_BoxLoop1ReductionBegin(hypre_StructMatrixNDim(A), loop_size,
+   nalu_hypre_BoxLoop1ReductionBegin(nalu_hypre_StructMatrixNDim(A), loop_size,
                                 A_dbox, start, stride, Ai, sum6)
    {
       NALU_HYPRE_Real tcx, tcy, tcz;
@@ -1524,7 +1524,7 @@ hypre_PFMGComputeDxyz_SS7( NALU_HYPRE_Int           bi,
       sqczb += tcz * tcz;
 #endif
    }
-   hypre_BoxLoop1ReductionEnd(Ai, sum6)
+   nalu_hypre_BoxLoop1ReductionEnd(Ai, sum6)
 #undef DEVICE_VAR
 
 #endif /* kokkos */
@@ -1546,39 +1546,39 @@ hypre_PFMGComputeDxyz_SS7( NALU_HYPRE_Int           bi,
    sqcxyz[2] = (NALU_HYPRE_Real) sqczb;
 #endif
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_PFMGComputeDxyz_SS19( NALU_HYPRE_Int           bi,
-                            hypre_StructMatrix *A,
+nalu_hypre_PFMGComputeDxyz_SS19( NALU_HYPRE_Int           bi,
+                            nalu_hypre_StructMatrix *A,
                             NALU_HYPRE_Real         *cxyz,
                             NALU_HYPRE_Real         *sqcxyz)
 {
-   hypre_BoxArray        *compute_boxes;
-   hypre_Box             *compute_box;
-   hypre_Box             *A_dbox;
-   hypre_Index            loop_size;
-   hypre_IndexRef         start;
-   hypre_Index            stride;
-   hypre_Index            index;
+   nalu_hypre_BoxArray        *compute_boxes;
+   nalu_hypre_Box             *compute_box;
+   nalu_hypre_Box             *A_dbox;
+   nalu_hypre_Index            loop_size;
+   nalu_hypre_IndexRef         start;
+   nalu_hypre_Index            stride;
+   nalu_hypre_Index            index;
    NALU_HYPRE_Real            *a_cc, *a_cw, *a_ce, *a_cs, *a_cn, *a_ac, *a_bc;
    NALU_HYPRE_Real            *a_csw, *a_cse, *a_cne, *a_cnw;
    NALU_HYPRE_Real            *a_aw, *a_ae, *a_as, *a_an, *a_bw, *a_be, *a_bs, *a_bn;
 #if 0 //defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
-   NALU_HYPRE_Int              data_location = hypre_StructGridDataLocation(
-                                             hypre_StructMatrixGrid(A) );
+   NALU_HYPRE_Int              data_location = nalu_hypre_StructGridDataLocation(
+                                             nalu_hypre_StructMatrixGrid(A) );
 #endif
 
-   hypre_SetIndex3(stride, 1, 1, 1);
-   compute_boxes = hypre_StructGridBoxes(hypre_StructMatrixGrid(A));
-   compute_box = hypre_BoxArrayBox(compute_boxes, bi);
-   A_dbox = hypre_BoxArrayBox(hypre_StructMatrixDataSpace(A), bi);
-   start  = hypre_BoxIMin(compute_box);
-   hypre_BoxGetStrideSize(compute_box, stride, loop_size);
+   nalu_hypre_SetIndex3(stride, 1, 1, 1);
+   compute_boxes = nalu_hypre_StructGridBoxes(nalu_hypre_StructMatrixGrid(A));
+   compute_box = nalu_hypre_BoxArrayBox(compute_boxes, bi);
+   A_dbox = nalu_hypre_BoxArrayBox(nalu_hypre_StructMatrixDataSpace(A), bi);
+   start  = nalu_hypre_BoxIMin(compute_box);
+   nalu_hypre_BoxGetStrideSize(compute_box, stride, loop_size);
 
    /*-----------------------------------------------------------------
     * Extract pointers for 7-point grid operator:
@@ -1592,26 +1592,26 @@ hypre_PFMGComputeDxyz_SS19( NALU_HYPRE_Int           bi,
     * a_bc is pointer for center coefficient in plane below
     *-----------------------------------------------------------------*/
 
-   hypre_SetIndex3(index, 0, 0, 0);
-   a_cc = hypre_StructMatrixExtractPointerByIndex(A, bi, index);
+   nalu_hypre_SetIndex3(index, 0, 0, 0);
+   a_cc = nalu_hypre_StructMatrixExtractPointerByIndex(A, bi, index);
 
-   hypre_SetIndex3(index, -1, 0, 0);
-   a_cw = hypre_StructMatrixExtractPointerByIndex(A, bi, index);
+   nalu_hypre_SetIndex3(index, -1, 0, 0);
+   a_cw = nalu_hypre_StructMatrixExtractPointerByIndex(A, bi, index);
 
-   hypre_SetIndex3(index, 1, 0, 0);
-   a_ce = hypre_StructMatrixExtractPointerByIndex(A, bi, index);
+   nalu_hypre_SetIndex3(index, 1, 0, 0);
+   a_ce = nalu_hypre_StructMatrixExtractPointerByIndex(A, bi, index);
 
-   hypre_SetIndex3(index, 0, -1, 0);
-   a_cs = hypre_StructMatrixExtractPointerByIndex(A, bi, index);
+   nalu_hypre_SetIndex3(index, 0, -1, 0);
+   a_cs = nalu_hypre_StructMatrixExtractPointerByIndex(A, bi, index);
 
-   hypre_SetIndex3(index, 0, 1, 0);
-   a_cn = hypre_StructMatrixExtractPointerByIndex(A, bi, index);
+   nalu_hypre_SetIndex3(index, 0, 1, 0);
+   a_cn = nalu_hypre_StructMatrixExtractPointerByIndex(A, bi, index);
 
-   hypre_SetIndex3(index, 0, 0, 1);
-   a_ac = hypre_StructMatrixExtractPointerByIndex(A, bi, index);
+   nalu_hypre_SetIndex3(index, 0, 0, 1);
+   a_ac = nalu_hypre_StructMatrixExtractPointerByIndex(A, bi, index);
 
-   hypre_SetIndex3(index, 0, 0, -1);
-   a_bc = hypre_StructMatrixExtractPointerByIndex(A, bi, index);
+   nalu_hypre_SetIndex3(index, 0, 0, -1);
+   a_bc = nalu_hypre_StructMatrixExtractPointerByIndex(A, bi, index);
 
    /*-----------------------------------------------------------------
     * Extract additional pointers for 19-point fine grid operator:
@@ -1630,47 +1630,47 @@ hypre_PFMGComputeDxyz_SS19( NALU_HYPRE_Int           bi,
     * a_cne is pointer for northeast coefficient in same plane
     *-----------------------------------------------------------------*/
 
-   hypre_SetIndex3(index, -1, 0, 1);
-   a_aw = hypre_StructMatrixExtractPointerByIndex(A, bi, index);
+   nalu_hypre_SetIndex3(index, -1, 0, 1);
+   a_aw = nalu_hypre_StructMatrixExtractPointerByIndex(A, bi, index);
 
-   hypre_SetIndex3(index, 1, 0, 1);
-   a_ae = hypre_StructMatrixExtractPointerByIndex(A, bi, index);
+   nalu_hypre_SetIndex3(index, 1, 0, 1);
+   a_ae = nalu_hypre_StructMatrixExtractPointerByIndex(A, bi, index);
 
-   hypre_SetIndex3(index, 0, -1, 1);
-   a_as = hypre_StructMatrixExtractPointerByIndex(A, bi, index);
+   nalu_hypre_SetIndex3(index, 0, -1, 1);
+   a_as = nalu_hypre_StructMatrixExtractPointerByIndex(A, bi, index);
 
-   hypre_SetIndex3(index, 0, 1, 1);
-   a_an = hypre_StructMatrixExtractPointerByIndex(A, bi, index);
+   nalu_hypre_SetIndex3(index, 0, 1, 1);
+   a_an = nalu_hypre_StructMatrixExtractPointerByIndex(A, bi, index);
 
-   hypre_SetIndex3(index, -1, 0, -1);
-   a_bw = hypre_StructMatrixExtractPointerByIndex(A, bi, index);
+   nalu_hypre_SetIndex3(index, -1, 0, -1);
+   a_bw = nalu_hypre_StructMatrixExtractPointerByIndex(A, bi, index);
 
-   hypre_SetIndex3(index, 1, 0, -1);
-   a_be = hypre_StructMatrixExtractPointerByIndex(A, bi, index);
+   nalu_hypre_SetIndex3(index, 1, 0, -1);
+   a_be = nalu_hypre_StructMatrixExtractPointerByIndex(A, bi, index);
 
-   hypre_SetIndex3(index, 0, -1, -1);
-   a_bs = hypre_StructMatrixExtractPointerByIndex(A, bi, index);
+   nalu_hypre_SetIndex3(index, 0, -1, -1);
+   a_bs = nalu_hypre_StructMatrixExtractPointerByIndex(A, bi, index);
 
-   hypre_SetIndex3(index, 0, 1, -1);
-   a_bn = hypre_StructMatrixExtractPointerByIndex(A, bi, index);
+   nalu_hypre_SetIndex3(index, 0, 1, -1);
+   a_bn = nalu_hypre_StructMatrixExtractPointerByIndex(A, bi, index);
 
-   hypre_SetIndex3(index, -1, -1, 0);
-   a_csw = hypre_StructMatrixExtractPointerByIndex(A, bi, index);
+   nalu_hypre_SetIndex3(index, -1, -1, 0);
+   a_csw = nalu_hypre_StructMatrixExtractPointerByIndex(A, bi, index);
 
-   hypre_SetIndex3(index, 1, -1, 0);
-   a_cse = hypre_StructMatrixExtractPointerByIndex(A, bi, index);
+   nalu_hypre_SetIndex3(index, 1, -1, 0);
+   a_cse = nalu_hypre_StructMatrixExtractPointerByIndex(A, bi, index);
 
-   hypre_SetIndex3(index, -1, 1, 0);
-   a_cnw = hypre_StructMatrixExtractPointerByIndex(A, bi, index);
+   nalu_hypre_SetIndex3(index, -1, 1, 0);
+   a_cnw = nalu_hypre_StructMatrixExtractPointerByIndex(A, bi, index);
 
-   hypre_SetIndex3(index, 1, 1, 0);
-   a_cne = hypre_StructMatrixExtractPointerByIndex(A, bi, index);
+   nalu_hypre_SetIndex3(index, 1, 1, 0);
+   a_cne = nalu_hypre_StructMatrixExtractPointerByIndex(A, bi, index);
 
    // FIXME TODO HOW TO DO KOKKOS IN ONE BOXLOOP ?
 #if defined(NALU_HYPRE_USING_KOKKOS) || defined(NALU_HYPRE_USING_SYCL)
 
    NALU_HYPRE_Real cxb = cxyz[0];
-   hypre_BoxLoop1ReductionBegin(hypre_StructMatrixNDim(A), loop_size,
+   nalu_hypre_BoxLoop1ReductionBegin(nalu_hypre_StructMatrixNDim(A), loop_size,
                                 A_dbox, start, stride, Ai, cxb)
    {
       NALU_HYPRE_Real diag = a_cc[Ai] < 0.0 ? -1.0 : 1.0;
@@ -1678,10 +1678,10 @@ hypre_PFMGComputeDxyz_SS19( NALU_HYPRE_Int           bi,
                                 a_csw[Ai] + a_cse[Ai] + a_cnw[Ai] + a_cne[Ai]);
       cxb += tcx;
    }
-   hypre_BoxLoop1ReductionEnd(Ai, cxb)
+   nalu_hypre_BoxLoop1ReductionEnd(Ai, cxb)
 
    NALU_HYPRE_Real cyb = cxyz[1];
-   hypre_BoxLoop1ReductionBegin(hypre_StructMatrixNDim(A), loop_size,
+   nalu_hypre_BoxLoop1ReductionBegin(nalu_hypre_StructMatrixNDim(A), loop_size,
                                 A_dbox, start, stride, Ai, cyb)
    {
       NALU_HYPRE_Real diag = a_cc[Ai] < 0.0 ? -1.0 : 1.0;
@@ -1689,10 +1689,10 @@ hypre_PFMGComputeDxyz_SS19( NALU_HYPRE_Int           bi,
                                 a_csw[Ai] + a_cse[Ai] + a_cnw[Ai] + a_cne[Ai]);
       cyb += tcy;
    }
-   hypre_BoxLoop1ReductionEnd(Ai, cyb)
+   nalu_hypre_BoxLoop1ReductionEnd(Ai, cyb)
 
    NALU_HYPRE_Real czb = cxyz[2];
-   hypre_BoxLoop1ReductionBegin(hypre_StructMatrixNDim(A), loop_size,
+   nalu_hypre_BoxLoop1ReductionBegin(nalu_hypre_StructMatrixNDim(A), loop_size,
                                 A_dbox, start, stride, Ai, czb)
    {
       NALU_HYPRE_Real diag = a_cc[Ai] < 0.0 ? -1.0 : 1.0;
@@ -1700,10 +1700,10 @@ hypre_PFMGComputeDxyz_SS19( NALU_HYPRE_Int           bi,
                                 a_bw[Ai]  + a_be[Ai] +  a_bn[Ai] +  a_bs[Ai]);
       czb += tcz;
    }
-   hypre_BoxLoop1ReductionEnd(Ai, czb)
+   nalu_hypre_BoxLoop1ReductionEnd(Ai, czb)
 
    NALU_HYPRE_Real sqcxb = sqcxyz[0];
-   hypre_BoxLoop1ReductionBegin(hypre_StructMatrixNDim(A), loop_size,
+   nalu_hypre_BoxLoop1ReductionBegin(nalu_hypre_StructMatrixNDim(A), loop_size,
                                 A_dbox, start, stride, Ai, sqcxb)
    {
       NALU_HYPRE_Real diag = a_cc[Ai] < 0.0 ? -1.0 : 1.0;
@@ -1711,10 +1711,10 @@ hypre_PFMGComputeDxyz_SS19( NALU_HYPRE_Int           bi,
                                 a_csw[Ai] + a_cse[Ai] + a_cnw[Ai] + a_cne[Ai]);
       sqcxb += tcx * tcx;
    }
-   hypre_BoxLoop1ReductionEnd(Ai, sqcxb)
+   nalu_hypre_BoxLoop1ReductionEnd(Ai, sqcxb)
 
    NALU_HYPRE_Real sqcyb = sqcxyz[1];
-   hypre_BoxLoop1ReductionBegin(hypre_StructMatrixNDim(A), loop_size,
+   nalu_hypre_BoxLoop1ReductionBegin(nalu_hypre_StructMatrixNDim(A), loop_size,
                                 A_dbox, start, stride, Ai, sqcyb)
    {
       NALU_HYPRE_Real diag = a_cc[Ai] < 0.0 ? -1.0 : 1.0;
@@ -1722,10 +1722,10 @@ hypre_PFMGComputeDxyz_SS19( NALU_HYPRE_Int           bi,
                                 a_csw[Ai] + a_cse[Ai] + a_cnw[Ai] + a_cne[Ai]);
       sqcyb += tcy * tcy;
    }
-   hypre_BoxLoop1ReductionEnd(Ai, sqcyb)
+   nalu_hypre_BoxLoop1ReductionEnd(Ai, sqcyb)
 
    NALU_HYPRE_Real sqczb = sqcxyz[2];
-   hypre_BoxLoop1ReductionBegin(hypre_StructMatrixNDim(A), loop_size,
+   nalu_hypre_BoxLoop1ReductionBegin(nalu_hypre_StructMatrixNDim(A), loop_size,
                                 A_dbox, start, stride, Ai, sqczb)
    {
       NALU_HYPRE_Real diag = a_cc[Ai] < 0.0 ? -1.0 : 1.0;
@@ -1733,12 +1733,12 @@ hypre_PFMGComputeDxyz_SS19( NALU_HYPRE_Int           bi,
                                 a_bw[Ai]  + a_be[Ai] +  a_bn[Ai] +  a_bs[Ai]);
       sqczb += tcz * tcz;
    }
-   hypre_BoxLoop1ReductionEnd(Ai, sqczb)
+   nalu_hypre_BoxLoop1ReductionEnd(Ai, sqczb)
 
 #else /* kokkos */
 
 #if defined(NALU_HYPRE_USING_RAJA)
-   ReduceSum<hypre_raja_reduce_policy, NALU_HYPRE_Real> cxb(cxyz[0]), cyb(cxyz[1]), czb(cxyz[2]),
+   ReduceSum<nalu_hypre_raja_reduce_policy, NALU_HYPRE_Real> cxb(cxyz[0]), cyb(cxyz[1]), czb(cxyz[2]),
              sqcxb(sqcxyz[0]), sqcyb(sqcxyz[1]), sqczb(sqcxyz[2]);
 #elif defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
    NALU_HYPRE_double6 d6(cxyz[0], cxyz[1], cxyz[2], sqcxyz[0], sqcxyz[1], sqcxyz[2]);
@@ -1765,7 +1765,7 @@ hypre_PFMGComputeDxyz_SS19( NALU_HYPRE_Int           bi,
 #endif
 
 #define DEVICE_VAR is_device_ptr(a_cc,a_cw,a_ce,a_aw,a_ae,a_bw,a_be,a_csw,a_cse,a_cnw,a_cne,a_cs,a_cn,a_an,a_as,a_bn,a_bs,a_ac,a_bc)
-   hypre_BoxLoop1ReductionBegin(hypre_StructMatrixNDim(A), loop_size,
+   nalu_hypre_BoxLoop1ReductionBegin(nalu_hypre_StructMatrixNDim(A), loop_size,
                                 A_dbox, start, stride, Ai, sum6)
    {
       NALU_HYPRE_Real tcx, tcy, tcz;
@@ -1790,7 +1790,7 @@ hypre_PFMGComputeDxyz_SS19( NALU_HYPRE_Int           bi,
       sqczb += tcz * tcz;
 #endif
    }
-   hypre_BoxLoop1ReductionEnd(Ai, sum6)
+   nalu_hypre_BoxLoop1ReductionEnd(Ai, sum6)
 #undef DEVICE_VAR
 
 #endif /* kokkos */
@@ -1812,25 +1812,25 @@ hypre_PFMGComputeDxyz_SS19( NALU_HYPRE_Int           bi,
    sqcxyz[2] = (NALU_HYPRE_Real) sqczb;
 #endif
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_PFMGComputeDxyz_SS27( NALU_HYPRE_Int           bi,
-                            hypre_StructMatrix *A,
+nalu_hypre_PFMGComputeDxyz_SS27( NALU_HYPRE_Int           bi,
+                            nalu_hypre_StructMatrix *A,
                             NALU_HYPRE_Real         *cxyz,
                             NALU_HYPRE_Real         *sqcxyz)
 {
-   hypre_BoxArray        *compute_boxes;
-   hypre_Box             *compute_box;
-   hypre_Box             *A_dbox;
-   hypre_Index            loop_size;
-   hypre_IndexRef         start;
-   hypre_Index            stride;
-   hypre_Index            index;
+   nalu_hypre_BoxArray        *compute_boxes;
+   nalu_hypre_Box             *compute_box;
+   nalu_hypre_Box             *A_dbox;
+   nalu_hypre_Index            loop_size;
+   nalu_hypre_IndexRef         start;
+   nalu_hypre_Index            stride;
+   nalu_hypre_Index            index;
 
    NALU_HYPRE_Real            *a_cc, *a_cw, *a_ce, *a_cs, *a_cn, *a_ac, *a_bc;
    NALU_HYPRE_Real            *a_csw, *a_cse, *a_cne, *a_cnw;
@@ -1838,16 +1838,16 @@ hypre_PFMGComputeDxyz_SS27( NALU_HYPRE_Int           bi,
    NALU_HYPRE_Real            *a_asw, *a_ase, *a_ane, *a_anw, *a_bsw, *a_bse, *a_bne, *a_bnw;
 
 #if 0 //defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
-   NALU_HYPRE_Int              data_location = hypre_StructGridDataLocation(
-                                             hypre_StructMatrixGrid(A) );
+   NALU_HYPRE_Int              data_location = nalu_hypre_StructGridDataLocation(
+                                             nalu_hypre_StructMatrixGrid(A) );
 #endif
 
-   hypre_SetIndex3(stride, 1, 1, 1);
-   compute_boxes = hypre_StructGridBoxes(hypre_StructMatrixGrid(A));
-   compute_box = hypre_BoxArrayBox(compute_boxes, bi);
-   A_dbox = hypre_BoxArrayBox(hypre_StructMatrixDataSpace(A), bi);
-   start  = hypre_BoxIMin(compute_box);
-   hypre_BoxGetStrideSize(compute_box, stride, loop_size);
+   nalu_hypre_SetIndex3(stride, 1, 1, 1);
+   compute_boxes = nalu_hypre_StructGridBoxes(nalu_hypre_StructMatrixGrid(A));
+   compute_box = nalu_hypre_BoxArrayBox(compute_boxes, bi);
+   A_dbox = nalu_hypre_BoxArrayBox(nalu_hypre_StructMatrixDataSpace(A), bi);
+   start  = nalu_hypre_BoxIMin(compute_box);
+   nalu_hypre_BoxGetStrideSize(compute_box, stride, loop_size);
 
    /*-----------------------------------------------------------------
     * Extract pointers for 7-point grid operator:
@@ -1861,26 +1861,26 @@ hypre_PFMGComputeDxyz_SS27( NALU_HYPRE_Int           bi,
     * a_bc is pointer for center coefficient in plane below
     *-----------------------------------------------------------------*/
 
-   hypre_SetIndex3(index, 0, 0, 0);
-   a_cc = hypre_StructMatrixExtractPointerByIndex(A, bi, index);
+   nalu_hypre_SetIndex3(index, 0, 0, 0);
+   a_cc = nalu_hypre_StructMatrixExtractPointerByIndex(A, bi, index);
 
-   hypre_SetIndex3(index, -1, 0, 0);
-   a_cw = hypre_StructMatrixExtractPointerByIndex(A, bi, index);
+   nalu_hypre_SetIndex3(index, -1, 0, 0);
+   a_cw = nalu_hypre_StructMatrixExtractPointerByIndex(A, bi, index);
 
-   hypre_SetIndex3(index, 1, 0, 0);
-   a_ce = hypre_StructMatrixExtractPointerByIndex(A, bi, index);
+   nalu_hypre_SetIndex3(index, 1, 0, 0);
+   a_ce = nalu_hypre_StructMatrixExtractPointerByIndex(A, bi, index);
 
-   hypre_SetIndex3(index, 0, -1, 0);
-   a_cs = hypre_StructMatrixExtractPointerByIndex(A, bi, index);
+   nalu_hypre_SetIndex3(index, 0, -1, 0);
+   a_cs = nalu_hypre_StructMatrixExtractPointerByIndex(A, bi, index);
 
-   hypre_SetIndex3(index, 0, 1, 0);
-   a_cn = hypre_StructMatrixExtractPointerByIndex(A, bi, index);
+   nalu_hypre_SetIndex3(index, 0, 1, 0);
+   a_cn = nalu_hypre_StructMatrixExtractPointerByIndex(A, bi, index);
 
-   hypre_SetIndex3(index, 0, 0, 1);
-   a_ac = hypre_StructMatrixExtractPointerByIndex(A, bi, index);
+   nalu_hypre_SetIndex3(index, 0, 0, 1);
+   a_ac = nalu_hypre_StructMatrixExtractPointerByIndex(A, bi, index);
 
-   hypre_SetIndex3(index, 0, 0, -1);
-   a_bc = hypre_StructMatrixExtractPointerByIndex(A, bi, index);
+   nalu_hypre_SetIndex3(index, 0, 0, -1);
+   a_bc = nalu_hypre_StructMatrixExtractPointerByIndex(A, bi, index);
 
    /*-----------------------------------------------------------------
     * Extract additional pointers for 19-point grid operator:
@@ -1899,41 +1899,41 @@ hypre_PFMGComputeDxyz_SS27( NALU_HYPRE_Int           bi,
     * a_cne is pointer for northeast coefficient in same plane
     *-----------------------------------------------------------------*/
 
-   hypre_SetIndex3(index, -1, 0, 1);
-   a_aw = hypre_StructMatrixExtractPointerByIndex(A, bi, index);
+   nalu_hypre_SetIndex3(index, -1, 0, 1);
+   a_aw = nalu_hypre_StructMatrixExtractPointerByIndex(A, bi, index);
 
-   hypre_SetIndex3(index, 1, 0, 1);
-   a_ae = hypre_StructMatrixExtractPointerByIndex(A, bi, index);
+   nalu_hypre_SetIndex3(index, 1, 0, 1);
+   a_ae = nalu_hypre_StructMatrixExtractPointerByIndex(A, bi, index);
 
-   hypre_SetIndex3(index, 0, -1, 1);
-   a_as = hypre_StructMatrixExtractPointerByIndex(A, bi, index);
+   nalu_hypre_SetIndex3(index, 0, -1, 1);
+   a_as = nalu_hypre_StructMatrixExtractPointerByIndex(A, bi, index);
 
-   hypre_SetIndex3(index, 0, 1, 1);
-   a_an = hypre_StructMatrixExtractPointerByIndex(A, bi, index);
+   nalu_hypre_SetIndex3(index, 0, 1, 1);
+   a_an = nalu_hypre_StructMatrixExtractPointerByIndex(A, bi, index);
 
-   hypre_SetIndex3(index, -1, 0, -1);
-   a_bw = hypre_StructMatrixExtractPointerByIndex(A, bi, index);
+   nalu_hypre_SetIndex3(index, -1, 0, -1);
+   a_bw = nalu_hypre_StructMatrixExtractPointerByIndex(A, bi, index);
 
-   hypre_SetIndex3(index, 1, 0, -1);
-   a_be = hypre_StructMatrixExtractPointerByIndex(A, bi, index);
+   nalu_hypre_SetIndex3(index, 1, 0, -1);
+   a_be = nalu_hypre_StructMatrixExtractPointerByIndex(A, bi, index);
 
-   hypre_SetIndex3(index, 0, -1, -1);
-   a_bs = hypre_StructMatrixExtractPointerByIndex(A, bi, index);
+   nalu_hypre_SetIndex3(index, 0, -1, -1);
+   a_bs = nalu_hypre_StructMatrixExtractPointerByIndex(A, bi, index);
 
-   hypre_SetIndex3(index, 0, 1, -1);
-   a_bn = hypre_StructMatrixExtractPointerByIndex(A, bi, index);
+   nalu_hypre_SetIndex3(index, 0, 1, -1);
+   a_bn = nalu_hypre_StructMatrixExtractPointerByIndex(A, bi, index);
 
-   hypre_SetIndex3(index, -1, -1, 0);
-   a_csw = hypre_StructMatrixExtractPointerByIndex(A, bi, index);
+   nalu_hypre_SetIndex3(index, -1, -1, 0);
+   a_csw = nalu_hypre_StructMatrixExtractPointerByIndex(A, bi, index);
 
-   hypre_SetIndex3(index, 1, -1, 0);
-   a_cse = hypre_StructMatrixExtractPointerByIndex(A, bi, index);
+   nalu_hypre_SetIndex3(index, 1, -1, 0);
+   a_cse = nalu_hypre_StructMatrixExtractPointerByIndex(A, bi, index);
 
-   hypre_SetIndex3(index, -1, 1, 0);
-   a_cnw = hypre_StructMatrixExtractPointerByIndex(A, bi, index);
+   nalu_hypre_SetIndex3(index, -1, 1, 0);
+   a_cnw = nalu_hypre_StructMatrixExtractPointerByIndex(A, bi, index);
 
-   hypre_SetIndex3(index, 1, 1, 0);
-   a_cne = hypre_StructMatrixExtractPointerByIndex(A, bi, index);
+   nalu_hypre_SetIndex3(index, 1, 1, 0);
+   a_cne = nalu_hypre_StructMatrixExtractPointerByIndex(A, bi, index);
 
    /*-----------------------------------------------------------------
     * Extract additional pointers for 27-point fine grid operator:
@@ -1948,35 +1948,35 @@ hypre_PFMGComputeDxyz_SS27( NALU_HYPRE_Int           bi,
     * a_bne is pointer for northeast coefficient in plane below
     *-----------------------------------------------------------------*/
 
-   hypre_SetIndex3(index, -1, -1, 1);
-   a_asw = hypre_StructMatrixExtractPointerByIndex(A, bi, index);
+   nalu_hypre_SetIndex3(index, -1, -1, 1);
+   a_asw = nalu_hypre_StructMatrixExtractPointerByIndex(A, bi, index);
 
-   hypre_SetIndex3(index, 1, -1, 1);
-   a_ase = hypre_StructMatrixExtractPointerByIndex(A, bi, index);
+   nalu_hypre_SetIndex3(index, 1, -1, 1);
+   a_ase = nalu_hypre_StructMatrixExtractPointerByIndex(A, bi, index);
 
-   hypre_SetIndex3(index, -1, 1, 1);
-   a_anw = hypre_StructMatrixExtractPointerByIndex(A, bi, index);
+   nalu_hypre_SetIndex3(index, -1, 1, 1);
+   a_anw = nalu_hypre_StructMatrixExtractPointerByIndex(A, bi, index);
 
-   hypre_SetIndex3(index, 1, 1, 1);
-   a_ane = hypre_StructMatrixExtractPointerByIndex(A, bi, index);
+   nalu_hypre_SetIndex3(index, 1, 1, 1);
+   a_ane = nalu_hypre_StructMatrixExtractPointerByIndex(A, bi, index);
 
-   hypre_SetIndex3(index, -1, -1, -1);
-   a_bsw = hypre_StructMatrixExtractPointerByIndex(A, bi, index);
+   nalu_hypre_SetIndex3(index, -1, -1, -1);
+   a_bsw = nalu_hypre_StructMatrixExtractPointerByIndex(A, bi, index);
 
-   hypre_SetIndex3(index, 1, -1, -1);
-   a_bse = hypre_StructMatrixExtractPointerByIndex(A, bi, index);
+   nalu_hypre_SetIndex3(index, 1, -1, -1);
+   a_bse = nalu_hypre_StructMatrixExtractPointerByIndex(A, bi, index);
 
-   hypre_SetIndex3(index, -1, 1, -1);
-   a_bnw = hypre_StructMatrixExtractPointerByIndex(A, bi, index);
+   nalu_hypre_SetIndex3(index, -1, 1, -1);
+   a_bnw = nalu_hypre_StructMatrixExtractPointerByIndex(A, bi, index);
 
-   hypre_SetIndex3(index, 1, 1, -1);
-   a_bne = hypre_StructMatrixExtractPointerByIndex(A, bi, index);
+   nalu_hypre_SetIndex3(index, 1, 1, -1);
+   a_bne = nalu_hypre_StructMatrixExtractPointerByIndex(A, bi, index);
 
    // FIXME TODO HOW TO DO KOKKOS IN ONE BOXLOOP ?
 #if defined(NALU_HYPRE_USING_KOKKOS) || defined(NALU_HYPRE_USING_SYCL)
 
    NALU_HYPRE_Real cxb = cxyz[0];
-   hypre_BoxLoop1ReductionBegin(hypre_StructMatrixNDim(A), loop_size,
+   nalu_hypre_BoxLoop1ReductionBegin(nalu_hypre_StructMatrixNDim(A), loop_size,
                                 A_dbox, start, stride, Ai, cxb)
    {
       NALU_HYPRE_Real tcx = 0.0;
@@ -1987,10 +1987,10 @@ hypre_PFMGComputeDxyz_SS27( NALU_HYPRE_Int           bi,
                      a_bne[Ai]);
       cxb += tcx;
    }
-   hypre_BoxLoop1ReductionEnd(Ai, cxb)
+   nalu_hypre_BoxLoop1ReductionEnd(Ai, cxb)
 
    NALU_HYPRE_Real cyb = cxyz[1];
-   hypre_BoxLoop1ReductionBegin(hypre_StructMatrixNDim(A), loop_size,
+   nalu_hypre_BoxLoop1ReductionBegin(nalu_hypre_StructMatrixNDim(A), loop_size,
                                 A_dbox, start, stride, Ai, cyb)
    {
       NALU_HYPRE_Real tcy = 0.0;
@@ -2001,10 +2001,10 @@ hypre_PFMGComputeDxyz_SS27( NALU_HYPRE_Int           bi,
                      a_bne[Ai]);
       cyb += tcy;
    }
-   hypre_BoxLoop1ReductionEnd(Ai, cyb)
+   nalu_hypre_BoxLoop1ReductionEnd(Ai, cyb)
 
    NALU_HYPRE_Real czb = cxyz[2];
-   hypre_BoxLoop1ReductionBegin(hypre_StructMatrixNDim(A), loop_size,
+   nalu_hypre_BoxLoop1ReductionBegin(nalu_hypre_StructMatrixNDim(A), loop_size,
                                 A_dbox, start, stride, Ai, czb)
    {
       NALU_HYPRE_Real tcz = 0.0;
@@ -2015,10 +2015,10 @@ hypre_PFMGComputeDxyz_SS27( NALU_HYPRE_Int           bi,
                      a_bne[Ai]);
       czb += tcz;
    }
-   hypre_BoxLoop1ReductionEnd(Ai, czb)
+   nalu_hypre_BoxLoop1ReductionEnd(Ai, czb)
 
    NALU_HYPRE_Real sqcxb = sqcxyz[0];
-   hypre_BoxLoop1ReductionBegin(hypre_StructMatrixNDim(A), loop_size,
+   nalu_hypre_BoxLoop1ReductionBegin(nalu_hypre_StructMatrixNDim(A), loop_size,
                                 A_dbox, start, stride, Ai, sqcxb)
    {
       NALU_HYPRE_Real tcx = 0.0;
@@ -2029,10 +2029,10 @@ hypre_PFMGComputeDxyz_SS27( NALU_HYPRE_Int           bi,
                      a_bne[Ai]);
       sqcxb += tcx * tcx;
    }
-   hypre_BoxLoop1ReductionEnd(Ai, sqcxb)
+   nalu_hypre_BoxLoop1ReductionEnd(Ai, sqcxb)
 
    NALU_HYPRE_Real sqcyb = sqcxyz[1];
-   hypre_BoxLoop1ReductionBegin(hypre_StructMatrixNDim(A), loop_size,
+   nalu_hypre_BoxLoop1ReductionBegin(nalu_hypre_StructMatrixNDim(A), loop_size,
                                 A_dbox, start, stride, Ai, sqcyb);
    {
       NALU_HYPRE_Real tcy = 0.0;
@@ -2043,10 +2043,10 @@ hypre_PFMGComputeDxyz_SS27( NALU_HYPRE_Int           bi,
                      a_bne[Ai]);
       sqcyb += tcy * tcy;
    }
-   hypre_BoxLoop1ReductionEnd(Ai, sqcyb);
+   nalu_hypre_BoxLoop1ReductionEnd(Ai, sqcyb);
 
    NALU_HYPRE_Real sqczb = sqcxyz[2];
-   hypre_BoxLoop1ReductionBegin(hypre_StructMatrixNDim(A), loop_size,
+   nalu_hypre_BoxLoop1ReductionBegin(nalu_hypre_StructMatrixNDim(A), loop_size,
                                 A_dbox, start, stride, Ai, sqczb)
    {
       NALU_HYPRE_Real tcz = 0.0;
@@ -2057,12 +2057,12 @@ hypre_PFMGComputeDxyz_SS27( NALU_HYPRE_Int           bi,
                      a_bne[Ai]);
       sqczb += tcz * tcz;
    }
-   hypre_BoxLoop1ReductionEnd(Ai, sqczb)
+   nalu_hypre_BoxLoop1ReductionEnd(Ai, sqczb)
 
 #else /* kokkos */
 
 #if defined(NALU_HYPRE_USING_RAJA)
-   ReduceSum<hypre_raja_reduce_policy, NALU_HYPRE_Real> cxb(cxyz[0]), cyb(cxyz[1]), czb(cxyz[2]),
+   ReduceSum<nalu_hypre_raja_reduce_policy, NALU_HYPRE_Real> cxb(cxyz[0]), cyb(cxyz[1]), czb(cxyz[2]),
              sqcxb(sqcxyz[0]), sqcyb(sqcxyz[1]), sqczb(sqcxyz[2]);
 #elif defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
    NALU_HYPRE_double6 d6(cxyz[0], cxyz[1], cxyz[2], sqcxyz[0], sqcxyz[1], sqcxyz[2]);
@@ -2089,7 +2089,7 @@ hypre_PFMGComputeDxyz_SS27( NALU_HYPRE_Int           bi,
 #endif
 
 #define DEVICE_VAR is_device_ptr(a_cc,a_cw,a_ce,a_aw,a_ae,a_bw,a_be,a_csw,a_cse,a_cnw,a_cne,a_asw,a_ase,a_anw,a_ane,a_bsw,a_bse,a_bnw,a_bne,a_cs,a_cn,a_an,a_as,a_bn,a_bs,a_ac,a_bc)
-   hypre_BoxLoop1ReductionBegin(hypre_StructMatrixNDim(A), loop_size,
+   nalu_hypre_BoxLoop1ReductionBegin(nalu_hypre_StructMatrixNDim(A), loop_size,
                                 A_dbox, start, stride, Ai, sum6)
    {
       NALU_HYPRE_Real tcx = 0.0, tcy = 0.0, tcz = 0.0;
@@ -2121,7 +2121,7 @@ hypre_PFMGComputeDxyz_SS27( NALU_HYPRE_Int           bi,
       sqczb += tcz * tcz;
 #endif
    }
-   hypre_BoxLoop1ReductionEnd(Ai, sum6)
+   nalu_hypre_BoxLoop1ReductionEnd(Ai, sum6)
 #undef DEVICE_VAR
 
 #endif /* kokkos */
@@ -2143,7 +2143,7 @@ hypre_PFMGComputeDxyz_SS27( NALU_HYPRE_Int           bi,
    sqcxyz[2] = (NALU_HYPRE_Real) sqczb;
 #endif
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
@@ -2152,52 +2152,52 @@ hypre_PFMGComputeDxyz_SS27( NALU_HYPRE_Int           bi,
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_ZeroDiagonal( hypre_StructMatrix *A )
+nalu_hypre_ZeroDiagonal( nalu_hypre_StructMatrix *A )
 {
-   hypre_BoxArray        *compute_boxes;
-   hypre_Box             *compute_box;
+   nalu_hypre_BoxArray        *compute_boxes;
+   nalu_hypre_Box             *compute_box;
 
-   hypre_Index            loop_size;
-   hypre_IndexRef         start;
-   hypre_Index            stride;
+   nalu_hypre_Index            loop_size;
+   nalu_hypre_IndexRef         start;
+   nalu_hypre_Index            stride;
 
    NALU_HYPRE_Real            *Ap;
-   hypre_Box             *A_dbox;
+   nalu_hypre_Box             *A_dbox;
    NALU_HYPRE_Int              Ai;
 
    NALU_HYPRE_Int              i;
 
-   hypre_Index            diag_index;
+   nalu_hypre_Index            diag_index;
    NALU_HYPRE_Real             diag_product = 0.0;
    NALU_HYPRE_Int              zero_diag = 0;
 
    NALU_HYPRE_Int              constant_coefficient;
 #if 0 //defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
-   NALU_HYPRE_Int              data_location = hypre_StructGridDataLocation(hypre_StructMatrixGrid(A));
+   NALU_HYPRE_Int              data_location = nalu_hypre_StructGridDataLocation(nalu_hypre_StructMatrixGrid(A));
 #endif
 
    /*----------------------------------------------------------
     * Initialize some things
     *----------------------------------------------------------*/
 
-   hypre_SetIndex3(stride, 1, 1, 1);
-   hypre_SetIndex3(diag_index, 0, 0, 0);
+   nalu_hypre_SetIndex3(stride, 1, 1, 1);
+   nalu_hypre_SetIndex3(diag_index, 0, 0, 0);
 
    /* Need to modify here */
-   constant_coefficient = hypre_StructMatrixConstantCoefficient(A);
+   constant_coefficient = nalu_hypre_StructMatrixConstantCoefficient(A);
 
-   compute_boxes = hypre_StructGridBoxes(hypre_StructMatrixGrid(A));
-   hypre_ForBoxI(i, compute_boxes)
+   compute_boxes = nalu_hypre_StructGridBoxes(nalu_hypre_StructMatrixGrid(A));
+   nalu_hypre_ForBoxI(i, compute_boxes)
    {
-      compute_box = hypre_BoxArrayBox(compute_boxes, i);
-      start  = hypre_BoxIMin(compute_box);
-      A_dbox = hypre_BoxArrayBox(hypre_StructMatrixDataSpace(A), i);
-      Ap = hypre_StructMatrixExtractPointerByIndex(A, i, diag_index);
-      hypre_BoxGetStrideSize(compute_box, stride, loop_size);
+      compute_box = nalu_hypre_BoxArrayBox(compute_boxes, i);
+      start  = nalu_hypre_BoxIMin(compute_box);
+      A_dbox = nalu_hypre_BoxArrayBox(nalu_hypre_StructMatrixDataSpace(A), i);
+      Ap = nalu_hypre_StructMatrixExtractPointerByIndex(A, i, diag_index);
+      nalu_hypre_BoxGetStrideSize(compute_box, stride, loop_size);
 
       if ( constant_coefficient == 1 )
       {
-         Ai = hypre_CCBoxIndexRank( A_dbox, start );
+         Ai = nalu_hypre_CCBoxIndexRank( A_dbox, start );
          diag_product += Ap[Ai] == 0 ? 1 : 0;
       }
       else
@@ -2205,7 +2205,7 @@ hypre_ZeroDiagonal( hypre_StructMatrix *A )
 #if defined(NALU_HYPRE_USING_KOKKOS) || defined(NALU_HYPRE_USING_SYCL)
          NALU_HYPRE_Real diag_product_local = diag_product;
 #elif defined(NALU_HYPRE_USING_RAJA)
-         ReduceSum<hypre_raja_reduce_policy, NALU_HYPRE_Real> diag_product_local(diag_product);
+         ReduceSum<nalu_hypre_raja_reduce_policy, NALU_HYPRE_Real> diag_product_local(diag_product);
 #elif defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
          ReduceSum<NALU_HYPRE_Real> diag_product_local(diag_product);
 #else
@@ -2223,7 +2223,7 @@ hypre_ZeroDiagonal( hypre_StructMatrix *A )
 #endif
 
 #define DEVICE_VAR is_device_ptr(Ap)
-         hypre_BoxLoop1ReductionBegin(hypre_StructMatrixNDim(A), loop_size,
+         nalu_hypre_BoxLoop1ReductionBegin(nalu_hypre_StructMatrixNDim(A), loop_size,
                                       A_dbox, start, stride, Ai, diag_product_local);
          {
             NALU_HYPRE_Real one  = 1.0;
@@ -2237,7 +2237,7 @@ hypre_ZeroDiagonal( hypre_StructMatrix *A )
                diag_product_local += zero;
             }
          }
-         hypre_BoxLoop1ReductionEnd(Ai, diag_product_local);
+         nalu_hypre_BoxLoop1ReductionEnd(Ai, diag_product_local);
 
          diag_product += (NALU_HYPRE_Real) diag_product_local;
       }

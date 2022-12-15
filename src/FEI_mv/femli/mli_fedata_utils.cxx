@@ -682,14 +682,14 @@ void MLI_FEDataAgglomerateElemsLocal(MLI_Matrix *elemMatrix,
    int                 connects, secondChance;
    double              *vals;
    MPI_Comm            comm;
-   hypre_ParCSRMatrix  *hypreEE;
+   nalu_hypre_ParCSRMatrix  *hypreEE;
 
    /*-----------------------------------------------------------------
     * fetch machine and matrix parameters
     *-----------------------------------------------------------------*/
 
-   hypreEE = (hypre_ParCSRMatrix *) elemMatrix->getMatrix();
-   comm    = hypre_ParCSRMatrixComm(hypreEE);
+   hypreEE = (nalu_hypre_ParCSRMatrix *) elemMatrix->getMatrix();
+   comm    = nalu_hypre_ParCSRMatrixComm(hypreEE);
    MPI_Comm_rank(comm,&mypid);
    MPI_Comm_size(comm,&nprocs);
    NALU_HYPRE_ParCSRMatrixGetRowPartitioning((NALU_HYPRE_ParCSRMatrix) hypreEE, 
@@ -711,7 +711,7 @@ void MLI_FEDataAgglomerateElemsLocal(MLI_Matrix *elemMatrix,
    /* and which macroelement the current element belongs to               */
    /* ------------------------------------------------------------------- */
 
-   macroLabels = hypre_TAlloc(int,  localNElems , NALU_HYPRE_MEMORY_HOST);
+   macroLabels = nalu_hypre_TAlloc(int,  localNElems , NALU_HYPRE_MEMORY_HOST);
    for ( ii = 0; ii < localNElems; ii++ ) macroLabels[ii] = -1;
 
    /* ------------------------------------------------------------------- */
@@ -719,7 +719,7 @@ void MLI_FEDataAgglomerateElemsLocal(MLI_Matrix *elemMatrix,
    /* for agglomeration so that no duplication will be done.              */
    /* ------------------------------------------------------------------- */
 
-   noRoot = hypre_TAlloc(int,  localNElems , NALU_HYPRE_MEMORY_HOST);
+   noRoot = nalu_hypre_TAlloc(int,  localNElems , NALU_HYPRE_MEMORY_HOST);
    for ( ii = 0; ii < localNElems; ii++ ) noRoot[ii] = 0;
 
    /* ------------------------------------------------------------------- */
@@ -729,8 +729,8 @@ void MLI_FEDataAgglomerateElemsLocal(MLI_Matrix *elemMatrix,
    /* possible macroelement).                                             */
    /* ------------------------------------------------------------------- */
 
-   denseRow   = hypre_TAlloc(int,  localNElems , NALU_HYPRE_MEMORY_HOST);
-   denseRow2  = hypre_TAlloc(int,  localNElems , NALU_HYPRE_MEMORY_HOST);
+   denseRow   = nalu_hypre_TAlloc(int,  localNElems , NALU_HYPRE_MEMORY_HOST);
+   denseRow2  = nalu_hypre_TAlloc(int,  localNElems , NALU_HYPRE_MEMORY_HOST);
    for ( ii = 0; ii < localNElems; ii++ ) denseRow[ii] = denseRow2[ii] = 0;
 
    /* ------------------------------------------------------------------- */
@@ -738,9 +738,9 @@ void MLI_FEDataAgglomerateElemsLocal(MLI_Matrix *elemMatrix,
    /* that preserves nice geometric shapes                                */
    /* ------------------------------------------------------------------- */
 
-   macroIA = hypre_TAlloc(int,  (localNElems/3+1) , NALU_HYPRE_MEMORY_HOST);
-   macroJA = hypre_TAlloc(int,  (localNElems/3+1) * 216 , NALU_HYPRE_MEMORY_HOST);
-   macroAA = hypre_TAlloc(int,  (localNElems/3+1) * 216 , NALU_HYPRE_MEMORY_HOST);
+   macroIA = nalu_hypre_TAlloc(int,  (localNElems/3+1) , NALU_HYPRE_MEMORY_HOST);
+   macroJA = nalu_hypre_TAlloc(int,  (localNElems/3+1) * 216 , NALU_HYPRE_MEMORY_HOST);
+   macroAA = nalu_hypre_TAlloc(int,  (localNElems/3+1) * 216 , NALU_HYPRE_MEMORY_HOST);
 
    /* ------------------------------------------------------------------- */
    /* allocate memory for the output data (assume no more than 60 elements*/
@@ -748,7 +748,7 @@ void MLI_FEDataAgglomerateElemsLocal(MLI_Matrix *elemMatrix,
    /* ------------------------------------------------------------------- */
 
    nMacros = 0;
-   macroLists = hypre_TAlloc(int,  60 , NALU_HYPRE_MEMORY_HOST);
+   macroLists = nalu_hypre_TAlloc(int,  60 , NALU_HYPRE_MEMORY_HOST);
 
    /* ------------------------------------------------------------------- */
    /* search for initial element (one with least number of neighbors)     */
@@ -759,7 +759,7 @@ void MLI_FEDataAgglomerateElemsLocal(MLI_Matrix *elemMatrix,
    for ( ii = 0; ii < localNElems; ii++ )
    {
       rowNum = startElem + ii;
-      hypre_ParCSRMatrixGetRow(hypreEE,rowNum,&rowLeng,&cols,NULL);
+      nalu_hypre_ParCSRMatrixGetRow(hypreEE,rowNum,&rowLeng,&cols,NULL);
       neighCnt = 0;
       for ( jj = 0; jj < rowLeng; jj++ )
          if ( cols[jj] >= startElem && cols[jj] < endElem ) neighCnt++;
@@ -768,7 +768,7 @@ void MLI_FEDataAgglomerateElemsLocal(MLI_Matrix *elemMatrix,
          minNeighs = neighCnt;
          nextElem = ii;
       }
-      hypre_ParCSRMatrixRestoreRow(hypreEE,rowNum,&rowLeng,&cols,NULL);
+      nalu_hypre_ParCSRMatrixRestoreRow(hypreEE,rowNum,&rowLeng,&cols,NULL);
    }
 
    /* ------------------------------------------------------------------- */
@@ -797,7 +797,7 @@ void MLI_FEDataAgglomerateElemsLocal(MLI_Matrix *elemMatrix,
          curWeight = 0;
          curIndex  = -1;
          rowNum = nextElem + startElem;
-         hypre_ParCSRMatrixGetRow(hypreEE,rowNum,&rowLeng,&cols,&vals);
+         nalu_hypre_ParCSRMatrixGetRow(hypreEE,rowNum,&rowLeng,&cols,&vals);
          for ( ii = 0; ii < rowLeng; ii++ )
          {
             colIndex = cols[ii] - startElem;
@@ -848,7 +848,7 @@ void MLI_FEDataAgglomerateElemsLocal(MLI_Matrix *elemMatrix,
                }
             }
          }
-         hypre_ParCSRMatrixRestoreRow(hypreEE,rowNum,&rowLeng,&cols,&vals);
+         nalu_hypre_ParCSRMatrixRestoreRow(hypreEE,rowNum,&rowLeng,&cols,&vals);
 
          /* store the element on the macroelement list */
 
@@ -878,7 +878,7 @@ void MLI_FEDataAgglomerateElemsLocal(MLI_Matrix *elemMatrix,
             /* update the macroelement connectivity */
 
             rowNum = startElem + curIndex;
-            hypre_ParCSRMatrixGetRow(hypreEE,rowNum,&rowLeng,&cols,&vals);
+            nalu_hypre_ParCSRMatrixGetRow(hypreEE,rowNum,&rowLeng,&cols,&vals);
             for ( ii = 0; ii < rowLeng; ii++ )
             {
                colIndex = cols[ii] - startElem;
@@ -886,7 +886,7 @@ void MLI_FEDataAgglomerateElemsLocal(MLI_Matrix *elemMatrix,
                    denseRow2[colIndex] >= 0)
                   denseRow2[colIndex] += (int) vals[ii];
             }
-            hypre_ParCSRMatrixRestoreRow(hypreEE,rowNum,&rowLeng,&cols,&vals);
+            nalu_hypre_ParCSRMatrixRestoreRow(hypreEE,rowNum,&rowLeng,&cols,&vals);
 
             /* search for next element to agglomerate (max connectivity) */
 
@@ -1007,7 +1007,7 @@ void MLI_FEDataAgglomerateElemsLocal(MLI_Matrix *elemMatrix,
          if ( macroLabels[ii] < 0 )
          {
             rowNum = startElem + ii;
-            hypre_ParCSRMatrixGetRow(hypreEE,rowNum,&rowLeng,&cols,&vals);
+            nalu_hypre_ParCSRMatrixGetRow(hypreEE,rowNum,&rowLeng,&cols,&vals);
             for ( jj = 0; jj < rowLeng; jj++ )
             {
                colIndex = cols[jj] - startElem;
@@ -1022,7 +1022,7 @@ void MLI_FEDataAgglomerateElemsLocal(MLI_Matrix *elemMatrix,
                   }
                }
             }
-            hypre_ParCSRMatrixRestoreRow(hypreEE,rowNum,&rowLeng,&cols,&vals);
+            nalu_hypre_ParCSRMatrixRestoreRow(hypreEE,rowNum,&rowLeng,&cols,&vals);
          }
       }
       for ( ii = 0; ii < localNElems; ii++ )
@@ -1071,7 +1071,7 @@ void MLI_FEDataAgglomerateElemsLocal(MLI_Matrix *elemMatrix,
 void MLI_FEDataAgglomerateElemsLocalOld(MLI_Matrix *elemMatrix, 
                                      int **macroLabelsOut)
 {
-   hypre_ParCSRMatrix  *hypreEE;
+   nalu_hypre_ParCSRMatrix  *hypreEE;
    MPI_Comm            comm;
    int                 mypid, nprocs, *partition, startElem, endElem;
    int                 localNElems, nMacros, *macroLabels, *macroSizes;
@@ -1084,8 +1084,8 @@ void MLI_FEDataAgglomerateElemsLocalOld(MLI_Matrix *elemMatrix,
     * fetch machine and matrix parameters
     *-----------------------------------------------------------------*/
 
-   hypreEE = (hypre_ParCSRMatrix *) elemMatrix->getMatrix();
-   comm    = hypre_ParCSRMatrixComm(hypreEE);
+   hypreEE = (nalu_hypre_ParCSRMatrix *) elemMatrix->getMatrix();
+   comm    = nalu_hypre_ParCSRMatrixComm(hypreEE);
    MPI_Comm_rank(comm,&mypid);
    MPI_Comm_size(comm,&nprocs);
    NALU_HYPRE_ParCSRMatrixGetRowPartitioning((NALU_HYPRE_ParCSRMatrix) hypreEE, 
@@ -1099,14 +1099,14 @@ void MLI_FEDataAgglomerateElemsLocalOld(MLI_Matrix *elemMatrix,
     * this array is used to determine which element has been agglomerated
     *-----------------------------------------------------------------*/
 
-   macroLabels = hypre_TAlloc(int,  localNElems , NALU_HYPRE_MEMORY_HOST);
+   macroLabels = nalu_hypre_TAlloc(int,  localNElems , NALU_HYPRE_MEMORY_HOST);
    for ( ielem = 0; ielem < localNElems; ielem++ ) macroLabels[ielem] = -1;
 
    /*-----------------------------------------------------------------
     * this array is used to expand a sparse row into a full row 
     *-----------------------------------------------------------------*/
 
-   denseRow = hypre_TAlloc(int,  localNElems , NALU_HYPRE_MEMORY_HOST);
+   denseRow = nalu_hypre_TAlloc(int,  localNElems , NALU_HYPRE_MEMORY_HOST);
    for ( ielem = 0; ielem < localNElems; ielem++ ) denseRow[ielem] = 0;
 
    /*-----------------------------------------------------------------
@@ -1115,8 +1115,8 @@ void MLI_FEDataAgglomerateElemsLocalOld(MLI_Matrix *elemMatrix,
     *-----------------------------------------------------------------*/
 
    nMacros = 0;
-   macroSizes = hypre_TAlloc(int,  localNElems/2 , NALU_HYPRE_MEMORY_HOST);
-   macroList  = hypre_TAlloc(int,  100 , NALU_HYPRE_MEMORY_HOST);
+   macroSizes = nalu_hypre_TAlloc(int,  localNElems/2 , NALU_HYPRE_MEMORY_HOST);
+   macroList  = nalu_hypre_TAlloc(int,  100 , NALU_HYPRE_MEMORY_HOST);
 
    /*-----------------------------------------------------------------
     * loop through all elements for agglomeration
@@ -1133,7 +1133,7 @@ void MLI_FEDataAgglomerateElemsLocalOld(MLI_Matrix *elemMatrix,
          /* load row ielem into denseRow, keeping track of maximum weight */
 
          rowNum = startElem + ielem;
-         hypre_ParCSRMatrixGetRow(hypreEE,rowNum,&rowLeng,&cols,&vals);
+         nalu_hypre_ParCSRMatrixGetRow(hypreEE,rowNum,&rowLeng,&cols,&vals);
          for ( jj = 0; jj < rowLeng; jj++ )
          {
             colIndex = cols[jj] - startElem;
@@ -1150,7 +1150,7 @@ void MLI_FEDataAgglomerateElemsLocalOld(MLI_Matrix *elemMatrix,
                }
             }    
          }    
-         hypre_ParCSRMatrixRestoreRow(hypreEE,rowNum,&rowLeng,&cols,&vals);
+         nalu_hypre_ParCSRMatrixRestoreRow(hypreEE,rowNum,&rowLeng,&cols,&vals);
 
          /* begin agglomeration using element ielem as root */
 
@@ -1163,7 +1163,7 @@ void MLI_FEDataAgglomerateElemsLocalOld(MLI_Matrix *elemMatrix,
             macroList[elemCount++] = curIndex;
             denseRow[curIndex] = -1;
             rowNum = startElem + curIndex;
-            hypre_ParCSRMatrixGetRow(hypreEE,rowNum,&rowLeng,&cols,&vals);
+            nalu_hypre_ParCSRMatrixGetRow(hypreEE,rowNum,&rowLeng,&cols,&vals);
             for ( jj = 0; jj < rowLeng; jj++ )
             {
                colIndex = cols[jj] - startElem;
@@ -1180,7 +1180,7 @@ void MLI_FEDataAgglomerateElemsLocalOld(MLI_Matrix *elemMatrix,
                   }
                }
             }
-            hypre_ParCSRMatrixRestoreRow(hypreEE,rowNum,&rowLeng,&cols,&vals);
+            nalu_hypre_ParCSRMatrixRestoreRow(hypreEE,rowNum,&rowLeng,&cols,&vals);
          } 
 
          /* if macroelement has size > 1, register it and reset denseRow */
@@ -1212,7 +1212,7 @@ void MLI_FEDataAgglomerateElemsLocalOld(MLI_Matrix *elemMatrix,
       if ( macroLabels[ielem] < 0 ) /* not been agglomerated */
       {
          rowNum = startElem + ielem;
-         hypre_ParCSRMatrixGetRow(hypreEE,rowNum,&rowLeng,&cols,&vals);
+         nalu_hypre_ParCSRMatrixGetRow(hypreEE,rowNum,&rowLeng,&cols,&vals);
          curIndex  = -1;
          maxWeight = 3;
          for ( jj = 0; jj < rowLeng; jj++ )
@@ -1228,7 +1228,7 @@ void MLI_FEDataAgglomerateElemsLocalOld(MLI_Matrix *elemMatrix,
                }
             }
          } 
-         hypre_ParCSRMatrixRestoreRow(hypreEE,rowNum,&rowLeng,&cols,&vals);
+         nalu_hypre_ParCSRMatrixRestoreRow(hypreEE,rowNum,&rowLeng,&cols,&vals);
          if ( curIndex >= 0 ) macroLabels[ielem] = curIndex;
       } 
    } 

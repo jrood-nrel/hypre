@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_utilities.h"
+#include "_nalu_hypre_utilities.h"
 #include "../seq_mv/NALU_HYPRE_seq_mv.h"
 //#define DBG_MERGE_SORT
 #ifdef DBG_MERGE_SORT
@@ -16,23 +16,23 @@
 #define SWAP(T, a, b) do { T tmp = a; a = b; b = tmp; } while (0)
 
 /*--------------------------------------------------------------------------
- * hypre_IntArrayMergeOrdered: merge two ordered arrays
+ * nalu_hypre_IntArrayMergeOrdered: merge two ordered arrays
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_IntArrayMergeOrdered( hypre_IntArray *array1,
-                            hypre_IntArray *array2,
-                            hypre_IntArray *array3 )
+nalu_hypre_IntArrayMergeOrdered( nalu_hypre_IntArray *array1,
+                            nalu_hypre_IntArray *array2,
+                            nalu_hypre_IntArray *array3 )
 {
    NALU_HYPRE_Int i = 0, j = 0, k = 0;
-   const NALU_HYPRE_Int size1 = hypre_IntArraySize(array1);
-   const NALU_HYPRE_Int size2 = hypre_IntArraySize(array2);
+   const NALU_HYPRE_Int size1 = nalu_hypre_IntArraySize(array1);
+   const NALU_HYPRE_Int size2 = nalu_hypre_IntArraySize(array2);
 
-   NALU_HYPRE_MemoryLocation memory_location = hypre_IntArrayMemoryLocation(array3);
+   NALU_HYPRE_MemoryLocation memory_location = nalu_hypre_IntArrayMemoryLocation(array3);
 
-   NALU_HYPRE_Int *array1_data = hypre_IntArrayData(array1);
-   NALU_HYPRE_Int *array2_data = hypre_IntArrayData(array2);
-   NALU_HYPRE_Int *array3_data = hypre_TAlloc(NALU_HYPRE_Int, size1 + size2, memory_location);
+   NALU_HYPRE_Int *array1_data = nalu_hypre_IntArrayData(array1);
+   NALU_HYPRE_Int *array2_data = nalu_hypre_IntArrayData(array2);
+   NALU_HYPRE_Int *array3_data = nalu_hypre_TAlloc(NALU_HYPRE_Int, size1 + size2, memory_location);
 
    while (i < size1 && j < size2)
    {
@@ -61,17 +61,17 @@ hypre_IntArrayMergeOrdered( hypre_IntArray *array1,
       array3_data[k++] = array2_data[j++];
    }
 
-   array3_data = hypre_TReAlloc_v2(array3_data, NALU_HYPRE_Int, size1 + size2, NALU_HYPRE_Int, k,
+   array3_data = nalu_hypre_TReAlloc_v2(array3_data, NALU_HYPRE_Int, size1 + size2, NALU_HYPRE_Int, k,
                                    memory_location);
 
-   hypre_IntArraySize(array3) = k;
-   hypre_IntArrayData(array3) = array3_data;
+   nalu_hypre_IntArraySize(array3) = k;
+   nalu_hypre_IntArrayData(array3) = array3_data;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_union2
+ * nalu_hypre_union2
  *
  * Union of two sorted (in ascending order) array arr1 and arr2 into arr3
  *
@@ -81,7 +81,7 @@ hypre_IntArrayMergeOrdered( hypre_IntArray *array1,
  *              2) arr3 should have enough space on entry
  *              3) map1 and map2 map arr1 and arr2 to arr3
  *--------------------------------------------------------------------------*/
-void hypre_union2( NALU_HYPRE_Int n1,  NALU_HYPRE_BigInt *arr1,
+void nalu_hypre_union2( NALU_HYPRE_Int n1,  NALU_HYPRE_BigInt *arr1,
                    NALU_HYPRE_Int n2,  NALU_HYPRE_BigInt *arr2,
                    NALU_HYPRE_Int *n3, NALU_HYPRE_BigInt *arr3,
                    NALU_HYPRE_Int *map1, NALU_HYPRE_Int *map2 )
@@ -121,9 +121,9 @@ void hypre_union2( NALU_HYPRE_Int n1,  NALU_HYPRE_BigInt *arr1,
 }
 
 /*--------------------------------------------------------------------------
- * hypre_merge
+ * nalu_hypre_merge
  *--------------------------------------------------------------------------*/
-static void hypre_merge( NALU_HYPRE_Int *first1, NALU_HYPRE_Int *last1,
+static void nalu_hypre_merge( NALU_HYPRE_Int *first1, NALU_HYPRE_Int *last1,
                          NALU_HYPRE_Int *first2, NALU_HYPRE_Int *last2,
                          NALU_HYPRE_Int *out )
 {
@@ -155,10 +155,10 @@ static void hypre_merge( NALU_HYPRE_Int *first1, NALU_HYPRE_Int *last1,
 }
 
 /*--------------------------------------------------------------------------
- * hypre_big_merge
+ * nalu_hypre_big_merge
  *--------------------------------------------------------------------------*/
 
-static void hypre_big_merge( NALU_HYPRE_BigInt *first1, NALU_HYPRE_BigInt *last1,
+static void nalu_hypre_big_merge( NALU_HYPRE_BigInt *first1, NALU_HYPRE_BigInt *last1,
                              NALU_HYPRE_BigInt *first2, NALU_HYPRE_BigInt *last2,
                              NALU_HYPRE_BigInt *out )
 {
@@ -203,9 +203,9 @@ static void kth_element_( NALU_HYPRE_Int *out1, NALU_HYPRE_Int *out2,
       NALU_HYPRE_Int i = (left + right) / 2; // right < k -> i < k
       NALU_HYPRE_Int j = k - i - 1;
 #ifdef DBG_MERGE_SORT
-      hypre_assert(left <= right && right <= k);
-      hypre_assert(i < k); // i == k implies left == right == k that can never happen
-      hypre_assert(j >= 0 && j < n2);
+      nalu_hypre_assert(left <= right && right <= k);
+      nalu_hypre_assert(i < k); // i == k implies left == right == k that can never happen
+      nalu_hypre_assert(j >= 0 && j < n2);
 #endif
 
       if ((j == -1 || a1[i] >= a2[j]) && (j == n2 - 1 || a1[i] <= a2[j + 1]))
@@ -297,23 +297,23 @@ static void kth_element( NALU_HYPRE_Int *out1, NALU_HYPRE_Int *out2,
 
    if (k < (n1 + n2) / 2)
    {
-      kth_element_(out1, out2, a1, a2, 0, hypre_min(n1 - 1, k), n1, n2, k);
+      kth_element_(out1, out2, a1, a2, 0, nalu_hypre_min(n1 - 1, k), n1, n2, k);
    }
    else
    {
       // when k is big, faster to find (n1 + n2 - k)th biggest element
-      NALU_HYPRE_Int offset1 = hypre_max(k - n2, 0), offset2 = hypre_max(k - n1, 0);
+      NALU_HYPRE_Int offset1 = nalu_hypre_max(k - n2, 0), offset2 = nalu_hypre_max(k - n1, 0);
       NALU_HYPRE_Int new_k = k - offset1 - offset2;
 
-      NALU_HYPRE_Int new_n1 = hypre_min(n1 - offset1, new_k + 1);
-      NALU_HYPRE_Int new_n2 = hypre_min(n2 - offset2, new_k + 1);
+      NALU_HYPRE_Int new_n1 = nalu_hypre_min(n1 - offset1, new_k + 1);
+      NALU_HYPRE_Int new_n2 = nalu_hypre_min(n2 - offset2, new_k + 1);
       kth_element_(out1, out2, a1 + offset1, a2 + offset2, 0, new_n1 - 1, new_n1, new_n2, new_k);
 
       *out1 += offset1;
       *out2 += offset2;
    }
 #ifdef DBG_MERGE_SORT
-   hypre_assert(*out1 + *out2 == k);
+   nalu_hypre_assert(*out1 + *out2 == k);
 #endif
 }
 
@@ -331,9 +331,9 @@ static void big_kth_element_( NALU_HYPRE_Int *out1, NALU_HYPRE_Int *out2,
       NALU_HYPRE_Int i = (left + right) / 2; // right < k -> i < k
       NALU_HYPRE_Int j = k - i - 1;
 #ifdef DBG_MERGE_SORT
-      hypre_assert(left <= right && right <= k);
-      hypre_assert(i < k); // i == k implies left == right == k that can never happen
-      hypre_assert(j >= 0 && j < n2);
+      nalu_hypre_assert(left <= right && right <= k);
+      nalu_hypre_assert(i < k); // i == k implies left == right == k that can never happen
+      nalu_hypre_assert(j >= 0 && j < n2);
 #endif
 
       if ((j == -1 || a1[i] >= a2[j]) && (j == n2 - 1 || a1[i] <= a2[j + 1]))
@@ -420,16 +420,16 @@ static void big_kth_element( NALU_HYPRE_Int *out1, NALU_HYPRE_Int *out2,
 
    if (k < (n1 + n2) / 2)
    {
-      big_kth_element_(out1, out2, a1, a2, 0, hypre_min(n1 - 1, k), n1, n2, k);
+      big_kth_element_(out1, out2, a1, a2, 0, nalu_hypre_min(n1 - 1, k), n1, n2, k);
    }
    else
    {
       // when k is big, faster to find (n1 + n2 - k)th biggest element
-      NALU_HYPRE_Int offset1 = hypre_max(k - n2, 0), offset2 = hypre_max(k - n1, 0);
+      NALU_HYPRE_Int offset1 = nalu_hypre_max(k - n2, 0), offset2 = nalu_hypre_max(k - n1, 0);
       NALU_HYPRE_Int new_k = k - offset1 - offset2;
 
-      NALU_HYPRE_Int new_n1 = hypre_min(n1 - offset1, new_k + 1);
-      NALU_HYPRE_Int new_n2 = hypre_min(n2 - offset2, new_k + 1);
+      NALU_HYPRE_Int new_n1 = nalu_hypre_min(n1 - offset1, new_k + 1);
+      NALU_HYPRE_Int new_n2 = nalu_hypre_min(n2 - offset2, new_k + 1);
       big_kth_element_(out1, out2, a1 + (NALU_HYPRE_BigInt)offset1, a2 + (NALU_HYPRE_BigInt)offset2, 0, new_n1 - 1,
                        new_n1, new_n2, new_k);
 
@@ -437,19 +437,19 @@ static void big_kth_element( NALU_HYPRE_Int *out1, NALU_HYPRE_Int *out2,
       *out2 += offset2;
    }
 #ifdef DBG_MERGE_SORT
-   hypre_assert(*out1 + *out2 == k);
+   nalu_hypre_assert(*out1 + *out2 == k);
 #endif
 }
 
 /*--------------------------------------------------------------------------
- * hypre_parallel_merge
+ * nalu_hypre_parallel_merge
  *
  * @param num_threads number of threads that participate in this merge
  * @param my_thread_num thread id (zer0-based) among the threads that
  *                      participate in this merge
  *--------------------------------------------------------------------------*/
 
-static void hypre_parallel_merge( NALU_HYPRE_Int *first1, NALU_HYPRE_Int *last1,
+static void nalu_hypre_parallel_merge( NALU_HYPRE_Int *first1, NALU_HYPRE_Int *last1,
                                   NALU_HYPRE_Int *first2, NALU_HYPRE_Int *last2,
                                   NALU_HYPRE_Int *out, NALU_HYPRE_Int num_threads,
                                   NALU_HYPRE_Int my_thread_num )
@@ -458,12 +458,12 @@ static void hypre_parallel_merge( NALU_HYPRE_Int *first1, NALU_HYPRE_Int *last1,
    NALU_HYPRE_Int n2 = last2 - first2;
    NALU_HYPRE_Int n = n1 + n2;
    NALU_HYPRE_Int n_per_thread = (n + num_threads - 1) / num_threads;
-   NALU_HYPRE_Int begin_rank = hypre_min(n_per_thread * my_thread_num, n);
-   NALU_HYPRE_Int end_rank = hypre_min(begin_rank + n_per_thread, n);
+   NALU_HYPRE_Int begin_rank = nalu_hypre_min(n_per_thread * my_thread_num, n);
+   NALU_HYPRE_Int end_rank = nalu_hypre_min(begin_rank + n_per_thread, n);
 
 #ifdef DBG_MERGE_SORT
-   hypre_assert(std::is_sorted(first1, last1));
-   hypre_assert(std::is_sorted(first2, last2));
+   nalu_hypre_assert(std::is_sorted(first1, last1));
+   nalu_hypre_assert(std::is_sorted(first2, last2));
 #endif
 
    NALU_HYPRE_Int begin1, begin2, end1, end2;
@@ -486,29 +486,29 @@ static void hypre_parallel_merge( NALU_HYPRE_Int *first1, NALU_HYPRE_Int *last1,
    }
 
 #ifdef DBG_MERGE_SORT
-   hypre_assert(begin1 <= end1);
-   hypre_assert(begin2 <= end2);
+   nalu_hypre_assert(begin1 <= end1);
+   nalu_hypre_assert(begin2 <= end2);
 #endif
 
-   hypre_merge(
+   nalu_hypre_merge(
       first1 + begin1, first1 + end1,
       first2 + begin2, first2 + end2,
       out + begin1 + begin2);
 
 #ifdef DBG_MERGE_SORT
-   hypre_assert(std::is_sorted(out + begin1 + begin2, out + end1 + end2));
+   nalu_hypre_assert(std::is_sorted(out + begin1 + begin2, out + end1 + end2));
 #endif
 }
 
 /*--------------------------------------------------------------------------
- * hypre_big_parallel_merge
+ * nalu_hypre_big_parallel_merge
  *
  * @param num_threads number of threads that participate in this merge
  * @param my_thread_num thread id (zero-based) among the threads that
  *                      participate in this merge
  *--------------------------------------------------------------------------*/
 
-static void hypre_big_parallel_merge(
+static void nalu_hypre_big_parallel_merge(
    NALU_HYPRE_BigInt *first1, NALU_HYPRE_BigInt *last1, NALU_HYPRE_BigInt *first2, NALU_HYPRE_BigInt *last2,
    NALU_HYPRE_BigInt *out,
    NALU_HYPRE_Int num_threads, NALU_HYPRE_Int my_thread_num)
@@ -517,12 +517,12 @@ static void hypre_big_parallel_merge(
    NALU_HYPRE_Int n2 = (NALU_HYPRE_Int)(last2 - first2);
    NALU_HYPRE_Int n = n1 + n2;
    NALU_HYPRE_Int n_per_thread = (n + num_threads - 1) / num_threads;
-   NALU_HYPRE_Int begin_rank = hypre_min(n_per_thread * my_thread_num, n);
-   NALU_HYPRE_Int end_rank = hypre_min(begin_rank + n_per_thread, n);
+   NALU_HYPRE_Int begin_rank = nalu_hypre_min(n_per_thread * my_thread_num, n);
+   NALU_HYPRE_Int end_rank = nalu_hypre_min(begin_rank + n_per_thread, n);
 
 #ifdef DBG_MERGE_SORT
-   hypre_assert(std::is_sorted(first1, last1));
-   hypre_assert(std::is_sorted(first2, last2));
+   nalu_hypre_assert(std::is_sorted(first1, last1));
+   nalu_hypre_assert(std::is_sorted(first2, last2));
 #endif
 
    NALU_HYPRE_Int begin1, begin2, end1, end2;
@@ -545,30 +545,30 @@ static void hypre_big_parallel_merge(
    }
 
 #ifdef DBG_MERGE_SORT
-   hypre_assert(begin1 <= end1);
-   hypre_assert(begin2 <= end2);
+   nalu_hypre_assert(begin1 <= end1);
+   nalu_hypre_assert(begin2 <= end2);
 #endif
 
-   hypre_big_merge(
+   nalu_hypre_big_merge(
       first1 + (NALU_HYPRE_BigInt)begin1, first1 + (NALU_HYPRE_BigInt)end1,
       first2 + (NALU_HYPRE_BigInt)begin2, first2 + (NALU_HYPRE_BigInt)end2,
       out + (NALU_HYPRE_BigInt)(begin1 + begin2));
 
 #ifdef DBG_MERGE_SORT
-   hypre_assert(std::is_sorted(out + begin1 + begin2, out + end1 + end2));
+   nalu_hypre_assert(std::is_sorted(out + begin1 + begin2, out + end1 + end2));
 #endif
 }
 
 /*--------------------------------------------------------------------------
- * hypre_merge_sort
+ * nalu_hypre_merge_sort
  *--------------------------------------------------------------------------*/
 
-void hypre_merge_sort( NALU_HYPRE_Int *in, NALU_HYPRE_Int *temp, NALU_HYPRE_Int len, NALU_HYPRE_Int **out )
+void nalu_hypre_merge_sort( NALU_HYPRE_Int *in, NALU_HYPRE_Int *temp, NALU_HYPRE_Int len, NALU_HYPRE_Int **out )
 {
    if (0 == len) { return; }
 
 #ifdef NALU_HYPRE_PROFILE
-   hypre_profile_times[NALU_HYPRE_TIMER_ID_MERGE] -= hypre_MPI_Wtime();
+   nalu_hypre_profile_times[NALU_HYPRE_TIMER_ID_MERGE] -= nalu_hypre_MPI_Wtime();
 #endif
 
 #ifdef DBG_MERGE_SORT
@@ -577,22 +577,22 @@ void hypre_merge_sort( NALU_HYPRE_Int *in, NALU_HYPRE_Int *temp, NALU_HYPRE_Int 
    std::sort(dbg_buf, dbg_buf + len);
 #endif
 
-   // NALU_HYPRE_Int thread_private_len[hypre_NumThreads()];
+   // NALU_HYPRE_Int thread_private_len[nalu_hypre_NumThreads()];
    // NALU_HYPRE_Int out_len = 0;
 
 #ifdef NALU_HYPRE_USING_OPENMP
    #pragma omp parallel
 #endif
    {
-      NALU_HYPRE_Int num_threads = hypre_NumActiveThreads();
-      NALU_HYPRE_Int my_thread_num = hypre_GetThreadNum();
+      NALU_HYPRE_Int num_threads = nalu_hypre_NumActiveThreads();
+      NALU_HYPRE_Int my_thread_num = nalu_hypre_GetThreadNum();
 
       // thread-private sort
       NALU_HYPRE_Int i_per_thread = (len + num_threads - 1) / num_threads;
-      NALU_HYPRE_Int i_begin = hypre_min(i_per_thread * my_thread_num, len);
-      NALU_HYPRE_Int i_end = hypre_min(i_begin + i_per_thread, len);
+      NALU_HYPRE_Int i_begin = nalu_hypre_min(i_per_thread * my_thread_num, len);
+      NALU_HYPRE_Int i_end = nalu_hypre_min(i_begin + i_per_thread, len);
 
-      hypre_qsort0(in, i_begin, i_end - 1);
+      nalu_hypre_qsort0(in, i_begin, i_end - 1);
 
       // merge sorted sequences
       NALU_HYPRE_Int in_group_size;
@@ -607,18 +607,18 @@ void hypre_merge_sort( NALU_HYPRE_Int *in, NALU_HYPRE_Int *temp, NALU_HYPRE_Int 
          // merge 2 in-groups into 1 out-group
          NALU_HYPRE_Int out_group_size = in_group_size * 2;
          NALU_HYPRE_Int group_leader = my_thread_num / out_group_size * out_group_size;
-         // NALU_HYPRE_Int group_sub_leader = hypre_min(group_leader + in_group_size, num_threads - 1);
+         // NALU_HYPRE_Int group_sub_leader = nalu_hypre_min(group_leader + in_group_size, num_threads - 1);
          NALU_HYPRE_Int id_in_group = my_thread_num % out_group_size;
          NALU_HYPRE_Int num_threads_in_group =
-            hypre_min(group_leader + out_group_size, num_threads) - group_leader;
+            nalu_hypre_min(group_leader + out_group_size, num_threads) - group_leader;
 
-         NALU_HYPRE_Int in_group1_begin = hypre_min(i_per_thread * group_leader, len);
-         NALU_HYPRE_Int in_group1_end = hypre_min(in_group1_begin + i_per_thread * in_group_size, len);
+         NALU_HYPRE_Int in_group1_begin = nalu_hypre_min(i_per_thread * group_leader, len);
+         NALU_HYPRE_Int in_group1_end = nalu_hypre_min(in_group1_begin + i_per_thread * in_group_size, len);
 
-         NALU_HYPRE_Int in_group2_begin = hypre_min(in_group1_begin + i_per_thread * in_group_size, len);
-         NALU_HYPRE_Int in_group2_end = hypre_min(in_group2_begin + i_per_thread * in_group_size, len);
+         NALU_HYPRE_Int in_group2_begin = nalu_hypre_min(in_group1_begin + i_per_thread * in_group_size, len);
+         NALU_HYPRE_Int in_group2_end = nalu_hypre_min(in_group2_begin + i_per_thread * in_group_size, len);
 
-         hypre_parallel_merge(
+         nalu_hypre_parallel_merge(
             in_buf + in_group1_begin, in_buf + in_group1_end,
             in_buf + in_group2_begin, in_buf + in_group2_end,
             out_buf + in_group1_begin,
@@ -634,18 +634,18 @@ void hypre_merge_sort( NALU_HYPRE_Int *in, NALU_HYPRE_Int *temp, NALU_HYPRE_Int 
    } /* omp parallel */
 
 #ifdef DBG_MERGE_SORT
-   hypre_assert(std::equal(*out, *out + len, dbg_buf));
+   nalu_hypre_assert(std::equal(*out, *out + len, dbg_buf));
 
    delete[] dbg_buf;
 #endif
 
 #ifdef NALU_HYPRE_PROFILE
-   hypre_profile_times[NALU_HYPRE_TIMER_ID_MERGE] += hypre_MPI_Wtime();
+   nalu_hypre_profile_times[NALU_HYPRE_TIMER_ID_MERGE] += nalu_hypre_MPI_Wtime();
 #endif
 }
 
 /*--------------------------------------------------------------------------
- * hypre_sort_and_create_inverse_map
+ * nalu_hypre_sort_and_create_inverse_map
  *
  * Sort array "in" with length len and put result in array "out"
  *   "in" will be deallocated unless in == *out
@@ -653,8 +653,8 @@ void hypre_merge_sort( NALU_HYPRE_Int *in, NALU_HYPRE_Int *temp, NALU_HYPRE_Int 
  *      inverse_map[i] = j iff (*out)[j] = i
  *--------------------------------------------------------------------------*/
 
-void hypre_sort_and_create_inverse_map(NALU_HYPRE_Int *in, NALU_HYPRE_Int len, NALU_HYPRE_Int **out,
-                                       hypre_UnorderedIntMap *inverse_map)
+void nalu_hypre_sort_and_create_inverse_map(NALU_HYPRE_Int *in, NALU_HYPRE_Int len, NALU_HYPRE_Int **out,
+                                       nalu_hypre_UnorderedIntMap *inverse_map)
 {
    if (len == 0)
    {
@@ -662,25 +662,25 @@ void hypre_sort_and_create_inverse_map(NALU_HYPRE_Int *in, NALU_HYPRE_Int len, N
    }
 
 #ifdef NALU_HYPRE_PROFILE
-   hypre_profile_times[NALU_HYPRE_TIMER_ID_MERGE] -= hypre_MPI_Wtime();
+   nalu_hypre_profile_times[NALU_HYPRE_TIMER_ID_MERGE] -= nalu_hypre_MPI_Wtime();
 #endif
 
-   NALU_HYPRE_Int *temp = hypre_TAlloc(NALU_HYPRE_Int,  len, NALU_HYPRE_MEMORY_HOST);
-   hypre_merge_sort(in, temp, len, out);
-   hypre_UnorderedIntMapCreate(inverse_map, 2 * len, 16 * hypre_NumThreads());
+   NALU_HYPRE_Int *temp = nalu_hypre_TAlloc(NALU_HYPRE_Int,  len, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_merge_sort(in, temp, len, out);
+   nalu_hypre_UnorderedIntMapCreate(inverse_map, 2 * len, 16 * nalu_hypre_NumThreads());
    NALU_HYPRE_Int i;
 #ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
    #pragma omp parallel for NALU_HYPRE_SMP_SCHEDULE
 #endif
    for (i = 0; i < len; i++)
    {
-      NALU_HYPRE_Int old = hypre_UnorderedIntMapPutIfAbsent(inverse_map, (*out)[i], i);
-      hypre_assert(old == NALU_HYPRE_HOPSCOTCH_HASH_EMPTY);
+      NALU_HYPRE_Int old = nalu_hypre_UnorderedIntMapPutIfAbsent(inverse_map, (*out)[i], i);
+      nalu_hypre_assert(old == NALU_HYPRE_HOPSCOTCH_HASH_EMPTY);
 #ifdef DBG_MERGE_SORT
-      if (hypre_UnorderedIntMapGet(inverse_map, (*out)[i]) != i)
+      if (nalu_hypre_UnorderedIntMapGet(inverse_map, (*out)[i]) != i)
       {
          fprintf(stderr, "%d %d\n", i, (*out)[i]);
-         hypre_assert(false);
+         nalu_hypre_assert(false);
       }
 #endif
    }
@@ -690,40 +690,40 @@ void hypre_sort_and_create_inverse_map(NALU_HYPRE_Int *in, NALU_HYPRE_Int len, N
    for (NALU_HYPRE_Int i = 0; i < len; ++i)
    {
       inverse_map2[(*out)[i]] = i;
-      if (hypre_UnorderedIntMapGet(inverse_map, (*out)[i]) != i)
+      if (nalu_hypre_UnorderedIntMapGet(inverse_map, (*out)[i]) != i)
       {
          fprintf(stderr, "%d %d\n", i, (*out)[i]);
-         hypre_assert(false);
+         nalu_hypre_assert(false);
       }
    }
-   hypre_assert(hypre_UnorderedIntMapSize(inverse_map) == len);
+   nalu_hypre_assert(nalu_hypre_UnorderedIntMapSize(inverse_map) == len);
 #endif
 
    if (*out == in)
    {
-      hypre_TFree(temp, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(temp, NALU_HYPRE_MEMORY_HOST);
    }
    else
    {
-      hypre_TFree(in, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(in, NALU_HYPRE_MEMORY_HOST);
    }
 
 #ifdef NALU_HYPRE_PROFILE
-   hypre_profile_times[NALU_HYPRE_TIMER_ID_MERGE] += hypre_MPI_Wtime();
+   nalu_hypre_profile_times[NALU_HYPRE_TIMER_ID_MERGE] += nalu_hypre_MPI_Wtime();
 #endif
 }
 
 /*--------------------------------------------------------------------------
- * hypre_big_merge_sort
+ * nalu_hypre_big_merge_sort
  *--------------------------------------------------------------------------*/
 
-void hypre_big_merge_sort(NALU_HYPRE_BigInt *in, NALU_HYPRE_BigInt *temp, NALU_HYPRE_Int len,
+void nalu_hypre_big_merge_sort(NALU_HYPRE_BigInt *in, NALU_HYPRE_BigInt *temp, NALU_HYPRE_Int len,
                           NALU_HYPRE_BigInt **out)
 {
    if (0 == len) { return; }
 
 #ifdef NALU_HYPRE_PROFILE
-   hypre_profile_times[NALU_HYPRE_TIMER_ID_MERGE] -= hypre_MPI_Wtime();
+   nalu_hypre_profile_times[NALU_HYPRE_TIMER_ID_MERGE] -= nalu_hypre_MPI_Wtime();
 #endif
 
 #ifdef DBG_MERGE_SORT
@@ -732,22 +732,22 @@ void hypre_big_merge_sort(NALU_HYPRE_BigInt *in, NALU_HYPRE_BigInt *temp, NALU_H
    std::sort(dbg_buf, dbg_buf + len);
 #endif
 
-   // NALU_HYPRE_Int thread_private_len[hypre_NumThreads()];
+   // NALU_HYPRE_Int thread_private_len[nalu_hypre_NumThreads()];
    // NALU_HYPRE_Int out_len = 0;
 
 #ifdef NALU_HYPRE_USING_OPENMP
    #pragma omp parallel
 #endif
    {
-      NALU_HYPRE_Int num_threads = hypre_NumActiveThreads();
-      NALU_HYPRE_Int my_thread_num = hypre_GetThreadNum();
+      NALU_HYPRE_Int num_threads = nalu_hypre_NumActiveThreads();
+      NALU_HYPRE_Int my_thread_num = nalu_hypre_GetThreadNum();
 
       // thread-private sort
       NALU_HYPRE_Int i_per_thread = (len + num_threads - 1) / num_threads;
-      NALU_HYPRE_Int i_begin = hypre_min(i_per_thread * my_thread_num, len);
-      NALU_HYPRE_Int i_end = hypre_min(i_begin + i_per_thread, len);
+      NALU_HYPRE_Int i_begin = nalu_hypre_min(i_per_thread * my_thread_num, len);
+      NALU_HYPRE_Int i_end = nalu_hypre_min(i_begin + i_per_thread, len);
 
-      hypre_BigQsort0(in, i_begin, i_end - 1);
+      nalu_hypre_BigQsort0(in, i_begin, i_end - 1);
 
       // merge sorted sequences
       NALU_HYPRE_Int in_group_size;
@@ -762,18 +762,18 @@ void hypre_big_merge_sort(NALU_HYPRE_BigInt *in, NALU_HYPRE_BigInt *temp, NALU_H
          // merge 2 in-groups into 1 out-group
          NALU_HYPRE_Int out_group_size = in_group_size * 2;
          NALU_HYPRE_Int group_leader = my_thread_num / out_group_size * out_group_size;
-         // NALU_HYPRE_Int group_sub_leader = hypre_min(group_leader + in_group_size, num_threads - 1);
+         // NALU_HYPRE_Int group_sub_leader = nalu_hypre_min(group_leader + in_group_size, num_threads - 1);
          NALU_HYPRE_Int id_in_group = my_thread_num % out_group_size;
          NALU_HYPRE_Int num_threads_in_group =
-            hypre_min(group_leader + out_group_size, num_threads) - group_leader;
+            nalu_hypre_min(group_leader + out_group_size, num_threads) - group_leader;
 
-         NALU_HYPRE_Int in_group1_begin = hypre_min(i_per_thread * group_leader, len);
-         NALU_HYPRE_Int in_group1_end = hypre_min(in_group1_begin + i_per_thread * in_group_size, len);
+         NALU_HYPRE_Int in_group1_begin = nalu_hypre_min(i_per_thread * group_leader, len);
+         NALU_HYPRE_Int in_group1_end = nalu_hypre_min(in_group1_begin + i_per_thread * in_group_size, len);
 
-         NALU_HYPRE_Int in_group2_begin = hypre_min(in_group1_begin + i_per_thread * in_group_size, len);
-         NALU_HYPRE_Int in_group2_end = hypre_min(in_group2_begin + i_per_thread * in_group_size, len);
+         NALU_HYPRE_Int in_group2_begin = nalu_hypre_min(in_group1_begin + i_per_thread * in_group_size, len);
+         NALU_HYPRE_Int in_group2_end = nalu_hypre_min(in_group2_begin + i_per_thread * in_group_size, len);
 
-         hypre_big_parallel_merge(
+         nalu_hypre_big_parallel_merge(
             in_buf + (NALU_HYPRE_BigInt)in_group1_begin, in_buf + (NALU_HYPRE_BigInt)in_group1_end,
             in_buf + (NALU_HYPRE_BigInt)in_group2_begin, in_buf + (NALU_HYPRE_BigInt)in_group2_end,
             out_buf + (NALU_HYPRE_BigInt)in_group1_begin,
@@ -789,22 +789,22 @@ void hypre_big_merge_sort(NALU_HYPRE_BigInt *in, NALU_HYPRE_BigInt *temp, NALU_H
    } /* omp parallel */
 
 #ifdef DBG_MERGE_SORT
-   hypre_assert(std::equal(*out, *out + len, dbg_buf));
+   nalu_hypre_assert(std::equal(*out, *out + len, dbg_buf));
 
    delete[] dbg_buf;
 #endif
 
 #ifdef NALU_HYPRE_PROFILE
-   hypre_profile_times[NALU_HYPRE_TIMER_ID_MERGE] += hypre_MPI_Wtime();
+   nalu_hypre_profile_times[NALU_HYPRE_TIMER_ID_MERGE] += nalu_hypre_MPI_Wtime();
 #endif
 }
 
 /*--------------------------------------------------------------------------
- * hypre_big_sort_and_create_inverse_map
+ * nalu_hypre_big_sort_and_create_inverse_map
  *--------------------------------------------------------------------------*/
 
-void hypre_big_sort_and_create_inverse_map(NALU_HYPRE_BigInt *in, NALU_HYPRE_Int len, NALU_HYPRE_BigInt **out,
-                                           hypre_UnorderedBigIntMap *inverse_map)
+void nalu_hypre_big_sort_and_create_inverse_map(NALU_HYPRE_BigInt *in, NALU_HYPRE_Int len, NALU_HYPRE_BigInt **out,
+                                           nalu_hypre_UnorderedBigIntMap *inverse_map)
 {
    if (len == 0)
    {
@@ -812,25 +812,25 @@ void hypre_big_sort_and_create_inverse_map(NALU_HYPRE_BigInt *in, NALU_HYPRE_Int
    }
 
 #ifdef NALU_HYPRE_PROFILE
-   hypre_profile_times[NALU_HYPRE_TIMER_ID_MERGE] -= hypre_MPI_Wtime();
+   nalu_hypre_profile_times[NALU_HYPRE_TIMER_ID_MERGE] -= nalu_hypre_MPI_Wtime();
 #endif
 
-   NALU_HYPRE_BigInt *temp = hypre_TAlloc(NALU_HYPRE_BigInt,  len, NALU_HYPRE_MEMORY_HOST);
-   hypre_big_merge_sort(in, temp, len, out);
-   hypre_UnorderedBigIntMapCreate(inverse_map, 2 * len, 16 * hypre_NumThreads());
+   NALU_HYPRE_BigInt *temp = nalu_hypre_TAlloc(NALU_HYPRE_BigInt,  len, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_big_merge_sort(in, temp, len, out);
+   nalu_hypre_UnorderedBigIntMapCreate(inverse_map, 2 * len, 16 * nalu_hypre_NumThreads());
    NALU_HYPRE_Int i;
 #ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
    #pragma omp parallel for NALU_HYPRE_SMP_SCHEDULE
 #endif
    for (i = 0; i < len; i++)
    {
-      NALU_HYPRE_Int old = hypre_UnorderedBigIntMapPutIfAbsent(inverse_map, (*out)[i], i);
-      hypre_assert(old == NALU_HYPRE_HOPSCOTCH_HASH_EMPTY);
+      NALU_HYPRE_Int old = nalu_hypre_UnorderedBigIntMapPutIfAbsent(inverse_map, (*out)[i], i);
+      nalu_hypre_assert(old == NALU_HYPRE_HOPSCOTCH_HASH_EMPTY);
 #ifdef DBG_MERGE_SORT
-      if (hypre_UnorderedBigIntMapGet(inverse_map, (*out)[i]) != i)
+      if (nalu_hypre_UnorderedBigIntMapGet(inverse_map, (*out)[i]) != i)
       {
          fprintf(stderr, "%d %d\n", i, (*out)[i]);
-         hypre_assert(false);
+         nalu_hypre_assert(false);
       }
 #endif
    }
@@ -840,26 +840,26 @@ void hypre_big_sort_and_create_inverse_map(NALU_HYPRE_BigInt *in, NALU_HYPRE_Int
    for (NALU_HYPRE_Int i = 0; i < len; ++i)
    {
       inverse_map2[(*out)[i]] = i;
-      if (hypre_UnorderedBigIntMapGet(inverse_map, (*out)[i]) != i)
+      if (nalu_hypre_UnorderedBigIntMapGet(inverse_map, (*out)[i]) != i)
       {
          fprintf(stderr, "%d %d\n", i, (*out)[i]);
-         hypre_assert(false);
+         nalu_hypre_assert(false);
       }
    }
-   hypre_assert(hypre_UnorderedBigIntMapSize(inverse_map) == len);
+   nalu_hypre_assert(nalu_hypre_UnorderedBigIntMapSize(inverse_map) == len);
 #endif
 
    if (*out == in)
    {
-      hypre_TFree(temp, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(temp, NALU_HYPRE_MEMORY_HOST);
    }
    else
    {
-      hypre_TFree(in, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(in, NALU_HYPRE_MEMORY_HOST);
    }
 
 #ifdef NALU_HYPRE_PROFILE
-   hypre_profile_times[NALU_HYPRE_TIMER_ID_MERGE] += hypre_MPI_Wtime();
+   nalu_hypre_profile_times[NALU_HYPRE_TIMER_ID_MERGE] += nalu_hypre_MPI_Wtime();
 #endif
 }
 

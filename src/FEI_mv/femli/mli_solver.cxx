@@ -18,7 +18,7 @@
  *--------------------------------------------------------------------------*/
 
 #include <string.h>
-#include "_hypre_parcsr_mv.h"
+#include "_nalu_hypre_parcsr_mv.h"
 #include "seq_mv.h"
 #include "mli_solver.h"
 #include "mli_solver_jacobi.h"

@@ -5,23 +5,23 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_struct_ls.h"
-#include "_hypre_struct_mv.hpp"
+#include "_nalu_hypre_struct_ls.h"
+#include "_nalu_hypre_struct_mv.hpp"
 #include "pfmg.h"
 
-#define hypre_MapRAPMarker(indexRAP, rank)      \
+#define nalu_hypre_MapRAPMarker(indexRAP, rank)      \
    {                                            \
       NALU_HYPRE_Int imacro,jmacro,kmacro;           \
-      imacro = hypre_IndexX(indexRAP);          \
-      jmacro = hypre_IndexY(indexRAP);          \
-      kmacro = hypre_IndexZ(indexRAP);          \
+      imacro = nalu_hypre_IndexX(indexRAP);          \
+      jmacro = nalu_hypre_IndexY(indexRAP);          \
+      kmacro = nalu_hypre_IndexZ(indexRAP);          \
       if (imacro==-1) imacro=2;                 \
       if (jmacro==-1) jmacro=2;                 \
       if (kmacro==-1) kmacro=2;                 \
       rank = imacro + 3*jmacro + 9*kmacro;      \
    }
 
-#define hypre_InverseMapRAPMarker(rank, indexRAP)       \
+#define nalu_hypre_InverseMapRAPMarker(rank, indexRAP)       \
    {                                                    \
       NALU_HYPRE_Int imacro,ijmacro,jmacro,kmacro;           \
       ijmacro = (rank%9);                               \
@@ -31,37 +31,37 @@
       if (imacro==2) imacro=-1;                         \
       if (jmacro==2) jmacro=-1;                         \
       if (kmacro==2) kmacro=-1;                         \
-      hypre_SetIndex3(indexRAP,imacro,jmacro,kmacro);   \
+      nalu_hypre_SetIndex3(indexRAP,imacro,jmacro,kmacro);   \
    }
 
 /*--------------------------------------------------------------------------
  * Sets up new coarse grid operator stucture.
  *--------------------------------------------------------------------------*/
 
-hypre_StructMatrix *
-hypre_SemiCreateRAPOp( hypre_StructMatrix *R,
-                       hypre_StructMatrix *A,
-                       hypre_StructMatrix *P,
-                       hypre_StructGrid   *coarse_grid,
+nalu_hypre_StructMatrix *
+nalu_hypre_SemiCreateRAPOp( nalu_hypre_StructMatrix *R,
+                       nalu_hypre_StructMatrix *A,
+                       nalu_hypre_StructMatrix *P,
+                       nalu_hypre_StructGrid   *coarse_grid,
                        NALU_HYPRE_Int           cdir,
                        NALU_HYPRE_Int           P_stored_as_transpose )
 {
-   hypre_StructMatrix    *RAP;
+   nalu_hypre_StructMatrix    *RAP;
 
-   hypre_Index           *RAP_stencil_shape;
-   hypre_StructStencil   *RAP_stencil;
+   nalu_hypre_Index           *RAP_stencil_shape;
+   nalu_hypre_StructStencil   *RAP_stencil;
    NALU_HYPRE_Int              RAP_stencil_size;
    NALU_HYPRE_Int              dim;
    NALU_HYPRE_Int              RAP_num_ghost[] = {1, 1, 1, 1, 1, 1};
 
    NALU_HYPRE_Int             *not_cdirs;
-   hypre_StructStencil   *A_stencil;
+   nalu_hypre_StructStencil   *A_stencil;
    NALU_HYPRE_Int              A_stencil_size;
-   hypre_Index           *A_stencil_shape;
+   nalu_hypre_Index           *A_stencil_shape;
 
-   hypre_Index            indexR;
-   hypre_Index            indexRA;
-   hypre_Index            indexRAP;
+   nalu_hypre_Index            indexR;
+   nalu_hypre_Index            indexRA;
+   nalu_hypre_Index            indexRAP;
    NALU_HYPRE_Int              Rloop, Aloop;
 
    NALU_HYPRE_Int              j, i;
@@ -72,10 +72,10 @@ hypre_SemiCreateRAPOp( hypre_StructMatrix *R,
    NALU_HYPRE_Int              RAP_marker_size;
    NALU_HYPRE_Int              RAP_marker_rank;
 
-   A_stencil = hypre_StructMatrixStencil(A);
-   dim = hypre_StructStencilNDim(A_stencil);
-   A_stencil_size = hypre_StructStencilSize(A_stencil);
-   A_stencil_shape = hypre_StructStencilShape(A_stencil);
+   A_stencil = nalu_hypre_StructMatrixStencil(A);
+   dim = nalu_hypre_StructStencilNDim(A_stencil);
+   A_stencil_size = nalu_hypre_StructStencilSize(A_stencil);
+   A_stencil_shape = nalu_hypre_StructStencilShape(A_stencil);
 
    /*-----------------------------------------------------------------------
     * Allocate RAP_marker array used to deternine which offsets are
@@ -87,15 +87,15 @@ hypre_SemiCreateRAPOp( hypre_StructMatrix *R,
    {
       RAP_marker_size *= 3;
    }
-   RAP_marker = hypre_CTAlloc(NALU_HYPRE_Int,  RAP_marker_size, NALU_HYPRE_MEMORY_HOST);
+   RAP_marker = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  RAP_marker_size, NALU_HYPRE_MEMORY_HOST);
 
    /*-----------------------------------------------------------------------
     * Define RAP_stencil
     *-----------------------------------------------------------------------*/
 
-   hypre_SetIndex(indexR, 0);
-   hypre_SetIndex(indexRA, 0);
-   hypre_SetIndex(indexRAP, 0);
+   nalu_hypre_SetIndex(indexR, 0);
+   nalu_hypre_SetIndex(indexRA, 0);
+   nalu_hypre_SetIndex(indexRAP, 0);
 
    stencil_rank = 0;
 
@@ -105,24 +105,24 @@ hypre_SemiCreateRAPOp( hypre_StructMatrix *R,
     *-----------------------------------------------------------------------*/
    for (Rloop = -1; Rloop < 2; Rloop++)
    {
-      hypre_IndexD(indexR, cdir) = Rloop;
+      nalu_hypre_IndexD(indexR, cdir) = Rloop;
       for (Aloop = 0; Aloop < A_stencil_size; Aloop++)
       {
          for (d = 0; d < dim; d++)
          {
-            hypre_IndexD(indexRA, d) = hypre_IndexD(indexR, d) +
-                                       hypre_IndexD(A_stencil_shape[Aloop], d);
+            nalu_hypre_IndexD(indexRA, d) = nalu_hypre_IndexD(indexR, d) +
+                                       nalu_hypre_IndexD(A_stencil_shape[Aloop], d);
          }
 
          /*-----------------------------------------------------------------
           * If RA part of the path lands on C point, then P part of path
           * stays at the C point. Divide by 2 to yield to coarse index.
           *-----------------------------------------------------------------*/
-         if ((hypre_IndexD(indexRA, cdir) % 2) == 0)
+         if ((nalu_hypre_IndexD(indexRA, cdir) % 2) == 0)
          {
-            hypre_CopyIndex(indexRA, indexRAP);
-            hypre_IndexD(indexRAP, cdir) /= 2;
-            hypre_MapRAPMarker(indexRAP, RAP_marker_rank);
+            nalu_hypre_CopyIndex(indexRA, indexRAP);
+            nalu_hypre_IndexD(indexRAP, cdir) /= 2;
+            nalu_hypre_MapRAPMarker(indexRAP, RAP_marker_rank);
             RAP_marker[RAP_marker_rank]++;
          }
          /*-----------------------------------------------------------------
@@ -131,16 +131,16 @@ hypre_SemiCreateRAPOp( hypre_StructMatrix *R,
           *-----------------------------------------------------------------*/
          else
          {
-            hypre_CopyIndex(indexRA, indexRAP);
-            hypre_IndexD(indexRAP, cdir) += 1;
-            hypre_IndexD(indexRAP, cdir) /= 2;
-            hypre_MapRAPMarker(indexRAP, RAP_marker_rank);
+            nalu_hypre_CopyIndex(indexRA, indexRAP);
+            nalu_hypre_IndexD(indexRAP, cdir) += 1;
+            nalu_hypre_IndexD(indexRAP, cdir) /= 2;
+            nalu_hypre_MapRAPMarker(indexRAP, RAP_marker_rank);
             RAP_marker[RAP_marker_rank]++;
 
-            hypre_CopyIndex(indexRA, indexRAP);
-            hypre_IndexD(indexRAP, cdir) -= 1;
-            hypre_IndexD(indexRAP, cdir) /= 2;
-            hypre_MapRAPMarker(indexRAP, RAP_marker_rank);
+            nalu_hypre_CopyIndex(indexRA, indexRAP);
+            nalu_hypre_IndexD(indexRAP, cdir) -= 1;
+            nalu_hypre_IndexD(indexRAP, cdir) /= 2;
+            nalu_hypre_MapRAPMarker(indexRAP, RAP_marker_rank);
             RAP_marker[RAP_marker_rank]++;
          }
       }
@@ -174,11 +174,11 @@ hypre_SemiCreateRAPOp( hypre_StructMatrix *R,
     * or   i=0 & j<0,          or   k=0 & i<0,              j=0 & k<0,
     * or   i=j=0 & k<0.        or   k=i=0 & j<0.            j=k=0 & i<0.
     *-----------------------------------------------------------------------*/
-   if (hypre_StructMatrixSymmetric(A))
+   if (nalu_hypre_StructMatrixSymmetric(A))
    {
       if (dim > 1)
       {
-         not_cdirs = hypre_CTAlloc(NALU_HYPRE_Int,  dim - 1, NALU_HYPRE_MEMORY_HOST);
+         not_cdirs = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  dim - 1, NALU_HYPRE_MEMORY_HOST);
       }
 
       for (d = 1; d < dim; d++)
@@ -186,34 +186,34 @@ hypre_SemiCreateRAPOp( hypre_StructMatrix *R,
          not_cdirs[d - 1] = (dim + cdir - d) % dim;
       }
 
-      hypre_SetIndex(indexRAP, 0);
-      hypre_IndexD(indexRAP, cdir) = 1;
-      hypre_MapRAPMarker(indexRAP, RAP_marker_rank);
+      nalu_hypre_SetIndex(indexRAP, 0);
+      nalu_hypre_IndexD(indexRAP, cdir) = 1;
+      nalu_hypre_MapRAPMarker(indexRAP, RAP_marker_rank);
       RAP_marker[RAP_marker_rank] = 0;
 
       if (dim > 1)
       {
-         hypre_SetIndex(indexRAP, 0);
-         hypre_IndexD(indexRAP, not_cdirs[0]) = 1;
+         nalu_hypre_SetIndex(indexRAP, 0);
+         nalu_hypre_IndexD(indexRAP, not_cdirs[0]) = 1;
          for (i = -1; i < 2; i++)
          {
-            hypre_IndexD(indexRAP, cdir) = i;
-            hypre_MapRAPMarker(indexRAP, RAP_marker_rank);
+            nalu_hypre_IndexD(indexRAP, cdir) = i;
+            nalu_hypre_MapRAPMarker(indexRAP, RAP_marker_rank);
             RAP_marker[RAP_marker_rank] = 0;
          }
       }
 
       if (dim > 2)
       {
-         hypre_SetIndex(indexRAP, 0);
-         hypre_IndexD(indexRAP, not_cdirs[1]) = 1;
+         nalu_hypre_SetIndex(indexRAP, 0);
+         nalu_hypre_IndexD(indexRAP, not_cdirs[1]) = 1;
          for (i = -1; i < 2; i++)
          {
-            hypre_IndexD(indexRAP, not_cdirs[0]) = i;
+            nalu_hypre_IndexD(indexRAP, not_cdirs[0]) = i;
             for (j = -1; j < 2; j++)
             {
-               hypre_IndexD(indexRAP, cdir) = j;
-               hypre_MapRAPMarker(indexRAP, RAP_marker_rank);
+               nalu_hypre_IndexD(indexRAP, cdir) = j;
+               nalu_hypre_MapRAPMarker(indexRAP, RAP_marker_rank);
                RAP_marker[RAP_marker_rank] = 0;
 
             }
@@ -222,7 +222,7 @@ hypre_SemiCreateRAPOp( hypre_StructMatrix *R,
 
       if (dim > 1)
       {
-         hypre_TFree(not_cdirs, NALU_HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(not_cdirs, NALU_HYPRE_MEMORY_HOST);
       }
    }
 
@@ -236,36 +236,36 @@ hypre_SemiCreateRAPOp( hypre_StructMatrix *R,
       }
    }
 
-   RAP_stencil_shape = hypre_CTAlloc(hypre_Index,  RAP_stencil_size, NALU_HYPRE_MEMORY_HOST);
+   RAP_stencil_shape = nalu_hypre_CTAlloc(nalu_hypre_Index,  RAP_stencil_size, NALU_HYPRE_MEMORY_HOST);
 
    stencil_rank = 0;
    for (i = 0; i < RAP_marker_size; i++)
    {
       if ( RAP_marker[i] != 0 )
       {
-         hypre_InverseMapRAPMarker(i, RAP_stencil_shape[stencil_rank]);
+         nalu_hypre_InverseMapRAPMarker(i, RAP_stencil_shape[stencil_rank]);
          stencil_rank++;
       }
    }
 
-   RAP_stencil = hypre_StructStencilCreate(dim, RAP_stencil_size,
+   RAP_stencil = nalu_hypre_StructStencilCreate(dim, RAP_stencil_size,
                                            RAP_stencil_shape);
-   RAP = hypre_StructMatrixCreate(hypre_StructMatrixComm(A),
+   RAP = nalu_hypre_StructMatrixCreate(nalu_hypre_StructMatrixComm(A),
                                   coarse_grid, RAP_stencil);
 
-   hypre_StructStencilDestroy(RAP_stencil);
+   nalu_hypre_StructStencilDestroy(RAP_stencil);
 
    /*-----------------------------------------------------------------------
     * Coarse operator in symmetric iff fine operator is
     *-----------------------------------------------------------------------*/
-   hypre_StructMatrixSymmetric(RAP) = hypre_StructMatrixSymmetric(A);
+   nalu_hypre_StructMatrixSymmetric(RAP) = nalu_hypre_StructMatrixSymmetric(A);
 
    /*-----------------------------------------------------------------------
     * Set number of ghost points - one one each boundary
     *-----------------------------------------------------------------------*/
-   hypre_StructMatrixSetNumGhost(RAP, RAP_num_ghost);
+   nalu_hypre_StructMatrixSetNumGhost(RAP, RAP_num_ghost);
 
-   hypre_TFree(RAP_marker, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(RAP_marker, NALU_HYPRE_MEMORY_HOST);
 
    return RAP;
 }
@@ -274,41 +274,41 @@ hypre_SemiCreateRAPOp( hypre_StructMatrix *R,
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_SemiBuildRAP( hypre_StructMatrix *A,
-                    hypre_StructMatrix *P,
-                    hypre_StructMatrix *R,
+nalu_hypre_SemiBuildRAP( nalu_hypre_StructMatrix *A,
+                    nalu_hypre_StructMatrix *P,
+                    nalu_hypre_StructMatrix *R,
                     NALU_HYPRE_Int           cdir,
-                    hypre_Index         cindex,
-                    hypre_Index         cstride,
+                    nalu_hypre_Index         cindex,
+                    nalu_hypre_Index         cstride,
                     NALU_HYPRE_Int           P_stored_as_transpose,
-                    hypre_StructMatrix *RAP     )
+                    nalu_hypre_StructMatrix *RAP     )
 {
 
-   hypre_Index           index;
+   nalu_hypre_Index           index;
 
-   hypre_StructStencil  *coarse_stencil;
+   nalu_hypre_StructStencil  *coarse_stencil;
    NALU_HYPRE_Int             coarse_stencil_size;
-   hypre_Index          *coarse_stencil_shape;
+   nalu_hypre_Index          *coarse_stencil_shape;
    NALU_HYPRE_Int            *coarse_symm_elements;
 
-   hypre_StructGrid     *fgrid;
+   nalu_hypre_StructGrid     *fgrid;
    NALU_HYPRE_Int            *fgrid_ids;
-   hypre_StructGrid     *cgrid;
-   hypre_BoxArray       *cgrid_boxes;
+   nalu_hypre_StructGrid     *cgrid;
+   nalu_hypre_BoxArray       *cgrid_boxes;
    NALU_HYPRE_Int            *cgrid_ids;
-   hypre_Box            *cgrid_box;
-   hypre_IndexRef        cstart;
-   hypre_Index           stridec;
-   hypre_Index           fstart;
-   hypre_IndexRef        stridef;
-   hypre_Index           loop_size;
+   nalu_hypre_Box            *cgrid_box;
+   nalu_hypre_IndexRef        cstart;
+   nalu_hypre_Index           stridec;
+   nalu_hypre_Index           fstart;
+   nalu_hypre_IndexRef        stridef;
+   nalu_hypre_Index           loop_size;
 
    NALU_HYPRE_Int             fi, ci;
 
-   hypre_Box            *A_dbox;
-   hypre_Box            *P_dbox;
-   hypre_Box            *R_dbox;
-   hypre_Box            *RAP_dbox;
+   nalu_hypre_Box            *A_dbox;
+   nalu_hypre_Box            *P_dbox;
+   nalu_hypre_Box            *R_dbox;
+   nalu_hypre_Box            *RAP_dbox;
 
    NALU_HYPRE_Real           *pa, *pb;
    NALU_HYPRE_Real           *ra, *rb;
@@ -330,44 +330,44 @@ hypre_SemiBuildRAP( hypre_StructMatrix *A,
 
    NALU_HYPRE_Real            zero = 0.0;
 
-   coarse_stencil = hypre_StructMatrixStencil(RAP);
-   coarse_stencil_size = hypre_StructStencilSize(coarse_stencil);
-   coarse_symm_elements = hypre_StructMatrixSymmElements(RAP);
-   coarse_stencil_shape = hypre_StructStencilShape(coarse_stencil);
-   dim = hypre_StructStencilNDim(coarse_stencil);
+   coarse_stencil = nalu_hypre_StructMatrixStencil(RAP);
+   coarse_stencil_size = nalu_hypre_StructStencilSize(coarse_stencil);
+   coarse_symm_elements = nalu_hypre_StructMatrixSymmElements(RAP);
+   coarse_stencil_shape = nalu_hypre_StructStencilShape(coarse_stencil);
+   dim = nalu_hypre_StructStencilNDim(coarse_stencil);
 
    stridef = cstride;
-   hypre_SetIndex3(stridec, 1, 1, 1);
+   nalu_hypre_SetIndex3(stridec, 1, 1, 1);
 
-   fgrid = hypre_StructMatrixGrid(A);
-   fgrid_ids = hypre_StructGridIDs(fgrid);
+   fgrid = nalu_hypre_StructMatrixGrid(A);
+   fgrid_ids = nalu_hypre_StructGridIDs(fgrid);
 
-   cgrid = hypre_StructMatrixGrid(RAP);
-   cgrid_boxes = hypre_StructGridBoxes(cgrid);
-   cgrid_ids = hypre_StructGridIDs(cgrid);
+   cgrid = nalu_hypre_StructMatrixGrid(RAP);
+   cgrid_boxes = nalu_hypre_StructGridBoxes(cgrid);
+   cgrid_ids = nalu_hypre_StructGridIDs(cgrid);
 
    /*-----------------------------------------------------------------
     *  Loop over boxes to compute entries of RAP
     *-----------------------------------------------------------------*/
 
    fi = 0;
-   hypre_ForBoxI(ci, cgrid_boxes)
+   nalu_hypre_ForBoxI(ci, cgrid_boxes)
    {
       while (fgrid_ids[fi] != cgrid_ids[ci])
       {
          fi++;
       }
 
-      cgrid_box = hypre_BoxArrayBox(cgrid_boxes, ci);
+      cgrid_box = nalu_hypre_BoxArrayBox(cgrid_boxes, ci);
 
-      cstart = hypre_BoxIMin(cgrid_box);
-      hypre_StructMapCoarseToFine(cstart, cindex, cstride, fstart);
-      hypre_BoxGetSize(cgrid_box, loop_size);
+      cstart = nalu_hypre_BoxIMin(cgrid_box);
+      nalu_hypre_StructMapCoarseToFine(cstart, cindex, cstride, fstart);
+      nalu_hypre_BoxGetSize(cgrid_box, loop_size);
 
-      A_dbox = hypre_BoxArrayBox(hypre_StructMatrixDataSpace(A), fi);
-      P_dbox = hypre_BoxArrayBox(hypre_StructMatrixDataSpace(P), fi);
-      R_dbox = hypre_BoxArrayBox(hypre_StructMatrixDataSpace(R), fi);
-      RAP_dbox = hypre_BoxArrayBox(hypre_StructMatrixDataSpace(RAP), ci);
+      A_dbox = nalu_hypre_BoxArrayBox(nalu_hypre_StructMatrixDataSpace(A), fi);
+      P_dbox = nalu_hypre_BoxArrayBox(nalu_hypre_StructMatrixDataSpace(P), fi);
+      R_dbox = nalu_hypre_BoxArrayBox(nalu_hypre_StructMatrixDataSpace(R), fi);
+      RAP_dbox = nalu_hypre_BoxArrayBox(nalu_hypre_StructMatrixDataSpace(RAP), ci);
 
       /*-----------------------------------------------------------------
        * Extract pointers for interpolation operator:
@@ -390,25 +390,25 @@ hypre_SemiBuildRAP( hypre_StructMatrix *A,
        *
        *-----------------------------------------------------------------*/
 
-      hypre_SetIndex(index, 0);
+      nalu_hypre_SetIndex(index, 0);
       //RL:PTROFFSET
       NALU_HYPRE_Int pb_offset = 0;
       if (P_stored_as_transpose)
       {
-         hypre_IndexD(index, cdir) = 1;
-         pa = hypre_StructMatrixExtractPointerByIndex(P, fi, index);
+         nalu_hypre_IndexD(index, cdir) = 1;
+         pa = nalu_hypre_StructMatrixExtractPointerByIndex(P, fi, index);
 
-         hypre_IndexD(index, cdir) = -1;
-         pb = hypre_StructMatrixExtractPointerByIndex(P, fi, index);
+         nalu_hypre_IndexD(index, cdir) = -1;
+         pb = nalu_hypre_StructMatrixExtractPointerByIndex(P, fi, index);
       }
       else
       {
-         hypre_IndexD(index, cdir) = -1;
-         pa = hypre_StructMatrixExtractPointerByIndex(P, fi, index);
+         nalu_hypre_IndexD(index, cdir) = -1;
+         pa = nalu_hypre_StructMatrixExtractPointerByIndex(P, fi, index);
 
-         hypre_IndexD(index, cdir) = 1;
-         pb = hypre_StructMatrixExtractPointerByIndex(P, fi, index);
-         pb_offset = -hypre_BoxOffsetDistance(P_dbox, index);
+         nalu_hypre_IndexD(index, cdir) = 1;
+         pb = nalu_hypre_StructMatrixExtractPointerByIndex(P, fi, index);
+         pb_offset = -nalu_hypre_BoxOffsetDistance(P_dbox, index);
       }
 
       /*-----------------------------------------------------------------
@@ -432,24 +432,24 @@ hypre_SemiBuildRAP( hypre_StructMatrix *A,
        *
        *-----------------------------------------------------------------*/
 
-      hypre_SetIndex(index, 0);
+      nalu_hypre_SetIndex(index, 0);
       NALU_HYPRE_Int rb_offset = 0;
       if (P_stored_as_transpose)
       {
-         hypre_IndexD(index, cdir) = 1;
-         ra = hypre_StructMatrixExtractPointerByIndex(R, fi, index);
+         nalu_hypre_IndexD(index, cdir) = 1;
+         ra = nalu_hypre_StructMatrixExtractPointerByIndex(R, fi, index);
 
-         hypre_IndexD(index, cdir) = -1;
-         rb = hypre_StructMatrixExtractPointerByIndex(R, fi, index);
+         nalu_hypre_IndexD(index, cdir) = -1;
+         rb = nalu_hypre_StructMatrixExtractPointerByIndex(R, fi, index);
       }
       else
       {
-         hypre_IndexD(index, cdir) = -1;
-         ra = hypre_StructMatrixExtractPointerByIndex(R, fi, index);
+         nalu_hypre_IndexD(index, cdir) = -1;
+         ra = nalu_hypre_StructMatrixExtractPointerByIndex(R, fi, index);
 
-         hypre_IndexD(index, cdir) = 1;
-         rb = hypre_StructMatrixExtractPointerByIndex(R, fi, index);
-         rb_offset = -hypre_BoxOffsetDistance(P_dbox, index);
+         nalu_hypre_IndexD(index, cdir) = 1;
+         rb = nalu_hypre_StructMatrixExtractPointerByIndex(R, fi, index);
+         rb_offset = -nalu_hypre_BoxOffsetDistance(P_dbox, index);
       }
 
       /*-----------------------------------------------------------------
@@ -461,10 +461,10 @@ hypre_SemiBuildRAP( hypre_StructMatrix *A,
        * used in refering to data associated with other points.
        *-----------------------------------------------------------------*/
 
-      hypre_SetIndex(index, 0);
-      hypre_IndexD(index, cdir) = 1;
-      COffsetA = hypre_BoxOffsetDistance(A_dbox, index);
-      COffsetP = hypre_BoxOffsetDistance(P_dbox, index);
+      nalu_hypre_SetIndex(index, 0);
+      nalu_hypre_IndexD(index, cdir) = 1;
+      COffsetA = nalu_hypre_BoxOffsetDistance(A_dbox, index);
+      COffsetP = nalu_hypre_BoxOffsetDistance(P_dbox, index);
 
       /*-----------------------------------------------------------------
        * Entries in RAP are calculated by accumulation, must first
@@ -475,14 +475,14 @@ hypre_SemiBuildRAP( hypre_StructMatrix *A,
       {
          if (coarse_symm_elements[RAPloop] == -1)
          {
-            rap_ptrS = hypre_StructMatrixBoxData(RAP, ci, RAPloop);
+            rap_ptrS = nalu_hypre_StructMatrixBoxData(RAP, ci, RAPloop);
 #define DEVICE_VAR is_device_ptr(rap_ptrS)
-            hypre_BoxLoop1Begin(hypre_StructMatrixNDim(A), loop_size,
+            nalu_hypre_BoxLoop1Begin(nalu_hypre_StructMatrixNDim(A), loop_size,
                                 RAP_dbox, cstart, stridec, iAc);
             {
                rap_ptrS[iAc] = zero;
             }
-            hypre_BoxLoop1End(iAc);
+            nalu_hypre_BoxLoop1End(iAc);
 #undef DEVICE_VAR
          }
       }
@@ -502,11 +502,11 @@ hypre_SemiBuildRAP( hypre_StructMatrix *A,
              * If pointer is non-null, i.e. there is a corresponding entry
              * in A, compute paths.
              *-------------------------------------------------------------*/
-            hypre_CopyIndex(coarse_stencil_shape[RAPloop], index);
-            a_ptr = hypre_StructMatrixExtractPointerByIndex(A, fi, index);
+            nalu_hypre_CopyIndex(coarse_stencil_shape[RAPloop], index);
+            a_ptr = nalu_hypre_StructMatrixExtractPointerByIndex(A, fi, index);
             if (a_ptr != NULL)
             {
-               switch (hypre_IndexD(index, cdir))
+               switch (nalu_hypre_IndexD(index, cdir))
                {
                   /*-----------------------------------------------------
                    * If A stencil index is 0 in coarsened direction, need
@@ -521,23 +521,23 @@ hypre_SemiBuildRAP( hypre_StructMatrix *A,
 
                   case 0:
 
-                     hypre_IndexD(index, cdir) = 1;
-                     rap_ptrU = hypre_StructMatrixExtractPointerByIndex(RAP,
+                     nalu_hypre_IndexD(index, cdir) = 1;
+                     rap_ptrU = nalu_hypre_StructMatrixExtractPointerByIndex(RAP,
                                                                         ci, index);
-                     hypre_IndexD(index, cdir) = -1;
-                     rap_ptrD = hypre_StructMatrixExtractPointerByIndex(RAP,
+                     nalu_hypre_IndexD(index, cdir) = -1;
+                     rap_ptrD = nalu_hypre_StructMatrixExtractPointerByIndex(RAP,
                                                                         ci, index);
-                     hypre_IndexD(index, cdir) = 0;
-                     AOffsetP = hypre_BoxOffsetDistance(P_dbox, index);
-                     rap_ptrS = hypre_StructMatrixExtractPointerByIndex(RAP,
+                     nalu_hypre_IndexD(index, cdir) = 0;
+                     AOffsetP = nalu_hypre_BoxOffsetDistance(P_dbox, index);
+                     rap_ptrS = nalu_hypre_StructMatrixExtractPointerByIndex(RAP,
                                                                         ci, index);
                      diag = 0;
                      for (d = 0; d < dim; d++)
                      {
-                        diag += hypre_IndexD(index, d) * hypre_IndexD(index, d);
+                        diag += nalu_hypre_IndexD(index, d) * nalu_hypre_IndexD(index, d);
                      }
 
-                     if (diag == 0 && hypre_StructMatrixSymmetric(RAP))
+                     if (diag == 0 && nalu_hypre_StructMatrixSymmetric(RAP))
                      {
                         /*--------------------------------------------------
                          * If A stencil index is (0,0,0) and RAP is symmetric,
@@ -548,7 +548,7 @@ hypre_SemiBuildRAP( hypre_StructMatrix *A,
                          * in RAP.
                          *--------------------------------------------------*/
 #define DEVICE_VAR is_device_ptr(rap_ptrS,a_ptr,ra,pa,rb,pb,rap_ptrD)
-                        hypre_BoxLoop4Begin(hypre_StructMatrixNDim(A), loop_size,
+                        nalu_hypre_BoxLoop4Begin(nalu_hypre_StructMatrixNDim(A), loop_size,
                                             P_dbox, cstart, stridec, iP,
                                             R_dbox, cstart, stridec, iR,
                                             A_dbox, fstart, stridef, iA,
@@ -573,7 +573,7 @@ hypre_SemiBuildRAP( hypre_StructMatrix *A,
                            iPp = iP - COffsetP + AOffsetP;
                            rap_ptrD[iAc] += rb[iR + rb_offset] * a_ptr[iAp] * pa[iPp];
                         }
-                        hypre_BoxLoop4End(iP, iR, iA, iAc);
+                        nalu_hypre_BoxLoop4End(iP, iR, iA, iAc);
 #undef DEVICE_VAR
                      }
                      else
@@ -583,7 +583,7 @@ hypre_SemiBuildRAP( hypre_StructMatrix *A,
                          * nonsymmetric, all 5 paths are calculated.
                          *--------------------------------------------------*/
 #define DEVICE_VAR is_device_ptr(rap_ptrS,a_ptr,rap_ptrU,ra,pb,pa,rb,rap_ptrD)
-                        hypre_BoxLoop4Begin(hypre_StructMatrixNDim(A), loop_size,
+                        nalu_hypre_BoxLoop4Begin(nalu_hypre_StructMatrixNDim(A), loop_size,
                                             P_dbox, cstart, stridec, iP,
                                             R_dbox, cstart, stridec, iR,
                                             A_dbox, fstart, stridef, iA,
@@ -610,7 +610,7 @@ hypre_SemiBuildRAP( hypre_StructMatrix *A,
                            iPp = iP - COffsetP + AOffsetP;
                            rap_ptrD[iAc] += rb[iR + rb_offset] * a_ptr[iAp] * pa[iPp];
                         }
-                        hypre_BoxLoop4End(iP, iR, iA, iAc);
+                        nalu_hypre_BoxLoop4End(iP, iR, iA, iAc);
 #undef DEVICE_VAR
                      }
 
@@ -627,11 +627,11 @@ hypre_SemiBuildRAP( hypre_StructMatrix *A,
 
                   case -1:
 
-                     rap_ptrD = hypre_StructMatrixExtractPointerByIndex(RAP,
+                     rap_ptrD = nalu_hypre_StructMatrixExtractPointerByIndex(RAP,
                                                                         ci, index);
-                     hypre_IndexD(index, cdir) = 0;
-                     AOffsetP = hypre_BoxOffsetDistance(P_dbox, index);
-                     rap_ptrS = hypre_StructMatrixExtractPointerByIndex(RAP,
+                     nalu_hypre_IndexD(index, cdir) = 0;
+                     AOffsetP = nalu_hypre_BoxOffsetDistance(P_dbox, index);
+                     rap_ptrS = nalu_hypre_StructMatrixExtractPointerByIndex(RAP,
                                                                         ci, index);
 
                      /*--------------------------------------------------
@@ -647,15 +647,15 @@ hypre_SemiBuildRAP( hypre_StructMatrix *A,
                      diag = 0;
                      for (d = 0; d < dim; d++)
                      {
-                        diag += hypre_IndexD(index, d) * hypre_IndexD(index, d);
+                        diag += nalu_hypre_IndexD(index, d) * nalu_hypre_IndexD(index, d);
                      }
-                     if (diag == 0 && hypre_StructMatrixSymmetric(RAP))
+                     if (diag == 0 && nalu_hypre_StructMatrixSymmetric(RAP))
                      {
                         symm_path_multiplier = 2;
                      }
 
 #define DEVICE_VAR is_device_ptr(rap_ptrS,a_ptr,pb,rap_ptrD,pa,ra,rb)
-                     hypre_BoxLoop4Begin(hypre_StructMatrixNDim(A), loop_size,
+                     nalu_hypre_BoxLoop4Begin(nalu_hypre_StructMatrixNDim(A), loop_size,
                                          P_dbox, cstart, stridec, iP,
                                          R_dbox, cstart, stridec, iR,
                                          A_dbox, fstart, stridef, iA,
@@ -680,7 +680,7 @@ hypre_SemiBuildRAP( hypre_StructMatrix *A,
                         iAp = iA - COffsetA;
                         rap_ptrD[iAc] += rb[iR + rb_offset] * a_ptr[iAp]          ;
                      }
-                     hypre_BoxLoop4End(iP, iR, iA, iAc);
+                     nalu_hypre_BoxLoop4End(iP, iR, iA, iAc);
 #undef DEVICE_VAR
 
                      break;
@@ -696,11 +696,11 @@ hypre_SemiBuildRAP( hypre_StructMatrix *A,
 
                   case 1:
 
-                     rap_ptrU = hypre_StructMatrixExtractPointerByIndex(RAP,
+                     rap_ptrU = nalu_hypre_StructMatrixExtractPointerByIndex(RAP,
                                                                         ci, index);
-                     hypre_IndexD(index, cdir) = 0;
-                     AOffsetP = hypre_BoxOffsetDistance(P_dbox, index);
-                     rap_ptrS = hypre_StructMatrixExtractPointerByIndex(RAP,
+                     nalu_hypre_IndexD(index, cdir) = 0;
+                     AOffsetP = nalu_hypre_BoxOffsetDistance(P_dbox, index);
+                     rap_ptrS = nalu_hypre_StructMatrixExtractPointerByIndex(RAP,
                                                                         ci, index);
                      /*--------------------------------------------------
                       * If A stencil index is zero except in coarsened
@@ -715,15 +715,15 @@ hypre_SemiBuildRAP( hypre_StructMatrix *A,
                      diag = 0;
                      for (d = 0; d < dim; d++)
                      {
-                        diag += hypre_IndexD(index, d) * hypre_IndexD(index, d);
+                        diag += nalu_hypre_IndexD(index, d) * nalu_hypre_IndexD(index, d);
                      }
-                     if (diag == 0 && hypre_StructMatrixSymmetric(RAP))
+                     if (diag == 0 && nalu_hypre_StructMatrixSymmetric(RAP))
                      {
                         symm_path_multiplier = 2;
                      }
 
 #define DEVICE_VAR is_device_ptr(rap_ptrU,a_ptr,pb,rap_ptrS,pa,ra,rb)
-                     hypre_BoxLoop4Begin(hypre_StructMatrixNDim(A), loop_size,
+                     nalu_hypre_BoxLoop4Begin(nalu_hypre_StructMatrixNDim(A), loop_size,
                                          P_dbox, cstart, stridec, iP,
                                          R_dbox, cstart, stridec, iR,
                                          A_dbox, fstart, stridef, iA,
@@ -748,7 +748,7 @@ hypre_SemiBuildRAP( hypre_StructMatrix *A,
                         rap_ptrS[iAc] += symm_path_multiplier *
                                          (rb[iR + rb_offset] * a_ptr[iAp]          );
                      }
-                     hypre_BoxLoop4End(iP, iR, iA, iAc);
+                     nalu_hypre_BoxLoop4End(iP, iR, iA, iAc);
 #undef DEVICE_VAR
 
                      break;
@@ -767,16 +767,16 @@ hypre_SemiBuildRAP( hypre_StructMatrix *A,
     *  the coarsened direction.
     *-----------------------------------------------------------------*/
 
-   if (hypre_IndexD(hypre_StructGridPeriodic(cgrid), cdir) == 1)
+   if (nalu_hypre_IndexD(nalu_hypre_StructGridPeriodic(cgrid), cdir) == 1)
    {
-      hypre_ForBoxI(ci, cgrid_boxes)
+      nalu_hypre_ForBoxI(ci, cgrid_boxes)
       {
-         cgrid_box = hypre_BoxArrayBox(cgrid_boxes, ci);
+         cgrid_box = nalu_hypre_BoxArrayBox(cgrid_boxes, ci);
 
-         cstart = hypre_BoxIMin(cgrid_box);
-         hypre_BoxGetSize(cgrid_box, loop_size);
+         cstart = nalu_hypre_BoxIMin(cgrid_box);
+         nalu_hypre_BoxGetSize(cgrid_box, loop_size);
 
-         RAP_dbox = hypre_BoxArrayBox(hypre_StructMatrixDataSpace(RAP), ci);
+         RAP_dbox = nalu_hypre_BoxArrayBox(nalu_hypre_StructMatrixDataSpace(RAP), ci);
 
          /*--------------------------------------------------------------
           * Computational loop. A loop over stored entries of RAP.
@@ -785,8 +785,8 @@ hypre_SemiBuildRAP( hypre_StructMatrix *A,
          {
             if (coarse_symm_elements[RAPloop] == -1)
             {
-               hypre_CopyIndex(coarse_stencil_shape[RAPloop], index);
-               switch (hypre_IndexD(index, cdir))
+               nalu_hypre_CopyIndex(coarse_stencil_shape[RAPloop], index);
+               switch (nalu_hypre_IndexD(index, cdir))
                {
                   /*-----------------------------------------------------
                    * If RAP stencil index is 0 in coarsened direction,
@@ -810,10 +810,10 @@ hypre_SemiBuildRAP( hypre_StructMatrix *A,
                       * and cooresponding index with 0 in the coarsened
                       * direction (rap_ptrS).
                       *---------------------------------------------------------*/
-                     rap_ptrD = hypre_StructMatrixExtractPointerByIndex(RAP,
+                     rap_ptrD = nalu_hypre_StructMatrixExtractPointerByIndex(RAP,
                                                                         ci, index);
-                     hypre_IndexD(index, cdir) = 0;
-                     rap_ptrS = hypre_StructMatrixExtractPointerByIndex(RAP,
+                     nalu_hypre_IndexD(index, cdir) = 0;
+                     rap_ptrS = nalu_hypre_StructMatrixExtractPointerByIndex(RAP,
                                                                         ci, index);
 
                      /*--------------------------------------------------
@@ -825,14 +825,14 @@ hypre_SemiBuildRAP( hypre_StructMatrix *A,
                      diag = 0;
                      for (d = 0; d < dim; d++)
                      {
-                        diag += hypre_IndexD(index, d) * hypre_IndexD(index, d);
+                        diag += nalu_hypre_IndexD(index, d) * nalu_hypre_IndexD(index, d);
                      }
-                     if (diag == 0 && hypre_StructMatrixSymmetric(RAP))
+                     if (diag == 0 && nalu_hypre_StructMatrixSymmetric(RAP))
                      {
                         symm_path_multiplier = 2;
                      }
 #define DEVICE_VAR is_device_ptr(rap_ptrS,rap_ptrD)
-                     hypre_BoxLoop1Begin(hypre_StructMatrixNDim(A), loop_size,
+                     nalu_hypre_BoxLoop1Begin(nalu_hypre_StructMatrixNDim(A), loop_size,
                                          RAP_dbox, cstart, stridec, iAc);
                      {
                         rap_ptrS[iAc] += symm_path_multiplier *
@@ -840,7 +840,7 @@ hypre_SemiBuildRAP( hypre_StructMatrix *A,
 
                         rap_ptrD[iAc] = zero;
                      }
-                     hypre_BoxLoop1End(iAc);
+                     nalu_hypre_BoxLoop1End(iAc);
 #undef DEVICE_VAR
 
                      break;
@@ -855,5 +855,5 @@ hypre_SemiBuildRAP( hypre_StructMatrix *A,
 
    } /* if periodic */
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }

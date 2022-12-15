@@ -11,8 +11,8 @@
  *
  *****************************************************************************/
 
-#ifndef hypre_MAPPED_MATRIX_HEADER
-#define hypre_MAPPED_MATRIX_HEADER
+#ifndef nalu_hypre_MAPPED_MATRIX_HEADER
+#define nalu_hypre_MAPPED_MATRIX_HEADER
 
 /*--------------------------------------------------------------------------
  * Mapped Matrix
@@ -24,18 +24,18 @@ typedef struct
    NALU_HYPRE_Int         (*ColMap)(NALU_HYPRE_Int, void *);
    void               *MapData;
 
-} hypre_MappedMatrix;
+} nalu_hypre_MappedMatrix;
 
 /*--------------------------------------------------------------------------
  * Accessor functions for the Mapped Matrix structure
  *--------------------------------------------------------------------------*/
 
-#define hypre_MappedMatrixMatrix(matrix)           ((matrix) -> matrix)
-#define hypre_MappedMatrixColMap(matrix)           ((matrix) -> ColMap)
-#define hypre_MappedMatrixMapData(matrix)          ((matrix) -> MapData)
+#define nalu_hypre_MappedMatrixMatrix(matrix)           ((matrix) -> matrix)
+#define nalu_hypre_MappedMatrixColMap(matrix)           ((matrix) -> ColMap)
+#define nalu_hypre_MappedMatrixMapData(matrix)          ((matrix) -> MapData)
 
-#define hypre_MappedMatrixColIndex(matrix,j) \
-         (hypre_MappedMatrixColMap(matrix)(j,hypre_MappedMatrixMapData(matrix)))
+#define nalu_hypre_MappedMatrixColIndex(matrix,j) \
+         (nalu_hypre_MappedMatrixColMap(matrix)(j,nalu_hypre_MappedMatrixMapData(matrix)))
 
 #endif
 

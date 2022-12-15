@@ -5,18 +5,18 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_utilities.h"
+#include "_nalu_hypre_utilities.h"
 #include <math.h>
 
 /*--------------------------------------------------------------------------
- * hypre_DoubleQuickSplit
+ * nalu_hypre_DoubleQuickSplit
  * C version of the routine "qsplit" from SPARSKIT
  * Uses a quicksort-type algorithm to split data into
  * highest "NumberCut" values without completely sorting them.
  * Data is NALU_HYPRE_Real precision data.
  *--------------------------------------------------------------------------*/
 
-NALU_HYPRE_Int hypre_DoubleQuickSplit(NALU_HYPRE_Real *values, NALU_HYPRE_Int *indices,
+NALU_HYPRE_Int nalu_hypre_DoubleQuickSplit(NALU_HYPRE_Real *values, NALU_HYPRE_Int *indices,
                                  NALU_HYPRE_Int list_length, NALU_HYPRE_Int NumberKept )
 {
    NALU_HYPRE_Int ierr = 0;

@@ -11,8 +11,8 @@
  *
  *****************************************************************************/
 
-#ifndef hypre_KRYLOV_BiCGSTAB_HEADER
-#define hypre_KRYLOV_BiCGSTAB_HEADER
+#ifndef nalu_hypre_KRYLOV_BiCGSTAB_HEADER
+#define nalu_hypre_KRYLOV_BiCGSTAB_HEADER
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
@@ -32,7 +32,7 @@
  *--------------------------------------------------------------------------*/
 
 /*--------------------------------------------------------------------------
- * hypre_BiCGSTABData and hypre_BiCGSTABFunctions
+ * nalu_hypre_BiCGSTABData and nalu_hypre_BiCGSTABFunctions
  *--------------------------------------------------------------------------*/
 
 /**
@@ -47,25 +47,25 @@
  **/
 
 /* functions in pcg_struct.c which aren't used here:
-char *hypre_ParKrylovCAlloc( NALU_HYPRE_Int count , NALU_HYPRE_Int elt_size );
-NALU_HYPRE_Int hypre_ParKrylovFree( char *ptr );
-void *hypre_ParKrylovCreateVectorArray( NALU_HYPRE_Int n , void *vvector );
-NALU_HYPRE_Int hypre_ParKrylovMatvecT( void *matvec_data , NALU_HYPRE_Real alpha , void *A , void *x , NALU_HYPRE_Real beta , void *y );
+char *nalu_hypre_ParKrylovCAlloc( NALU_HYPRE_Int count , NALU_HYPRE_Int elt_size );
+NALU_HYPRE_Int nalu_hypre_ParKrylovFree( char *ptr );
+void *nalu_hypre_ParKrylovCreateVectorArray( NALU_HYPRE_Int n , void *vvector );
+NALU_HYPRE_Int nalu_hypre_ParKrylovMatvecT( void *matvec_data , NALU_HYPRE_Real alpha , void *A , void *x , NALU_HYPRE_Real beta , void *y );
 */
 /* functions in pcg_struct.c which are used here:
-  void *hypre_ParKrylovCreateVector( void *vvector );
-  NALU_HYPRE_Int hypre_ParKrylovDestroyVector( void *vvector );
-  void *hypre_ParKrylovMatvecCreate( void *A , void *x );
-  NALU_HYPRE_Int hypre_ParKrylovMatvec( void *matvec_data , NALU_HYPRE_Real alpha , void *A , void *x , NALU_HYPRE_Real beta , void *y );
-  NALU_HYPRE_Int hypre_ParKrylovMatvecDestroy( void *matvec_data );
-  NALU_HYPRE_Real hypre_ParKrylovInnerProd( void *x , void *y );
-  NALU_HYPRE_Int hypre_ParKrylovCopyVector( void *x , void *y );
-  NALU_HYPRE_Int hypre_ParKrylovClearVector( void *x );
-  NALU_HYPRE_Int hypre_ParKrylovScaleVector( NALU_HYPRE_Real alpha , void *x );
-  NALU_HYPRE_Int hypre_ParKrylovAxpy( NALU_HYPRE_Real alpha , void *x , void *y );
-  NALU_HYPRE_Int hypre_ParKrylovCommInfo( void *A , NALU_HYPRE_Int *my_id , NALU_HYPRE_Int *num_procs );
-  NALU_HYPRE_Int hypre_ParKrylovIdentitySetup( void *vdata , void *A , void *b , void *x );
-  NALU_HYPRE_Int hypre_ParKrylovIdentity( void *vdata , void *A , void *b , void *x );
+  void *nalu_hypre_ParKrylovCreateVector( void *vvector );
+  NALU_HYPRE_Int nalu_hypre_ParKrylovDestroyVector( void *vvector );
+  void *nalu_hypre_ParKrylovMatvecCreate( void *A , void *x );
+  NALU_HYPRE_Int nalu_hypre_ParKrylovMatvec( void *matvec_data , NALU_HYPRE_Real alpha , void *A , void *x , NALU_HYPRE_Real beta , void *y );
+  NALU_HYPRE_Int nalu_hypre_ParKrylovMatvecDestroy( void *matvec_data );
+  NALU_HYPRE_Real nalu_hypre_ParKrylovInnerProd( void *x , void *y );
+  NALU_HYPRE_Int nalu_hypre_ParKrylovCopyVector( void *x , void *y );
+  NALU_HYPRE_Int nalu_hypre_ParKrylovClearVector( void *x );
+  NALU_HYPRE_Int nalu_hypre_ParKrylovScaleVector( NALU_HYPRE_Real alpha , void *x );
+  NALU_HYPRE_Int nalu_hypre_ParKrylovAxpy( NALU_HYPRE_Real alpha , void *x , void *y );
+  NALU_HYPRE_Int nalu_hypre_ParKrylovCommInfo( void *A , NALU_HYPRE_Int *my_id , NALU_HYPRE_Int *num_procs );
+  NALU_HYPRE_Int nalu_hypre_ParKrylovIdentitySetup( void *vdata , void *A , void *b , void *x );
+  NALU_HYPRE_Int nalu_hypre_ParKrylovIdentity( void *vdata , void *A , void *b , void *x );
 */
 
 typedef struct
@@ -85,7 +85,7 @@ typedef struct
    NALU_HYPRE_Int  (*precond_setup) (void *vdata, void *A, void *b, void *x);
    NALU_HYPRE_Int  (*precond)       (void *vdata, void *A, void *b, void *x);
 
-} hypre_BiCGSTABFunctions;
+} nalu_hypre_BiCGSTABFunctions;
 
 /**
  * The {\tt hypre\_BiCGSTABData} object ...
@@ -115,7 +115,7 @@ typedef struct
    void  *matvec_data;
    void    *precond_data;
 
-   hypre_BiCGSTABFunctions * functions;
+   nalu_hypre_BiCGSTABFunctions * functions;
 
    /* log info (always logged) */
    NALU_HYPRE_Int      num_iterations;
@@ -126,7 +126,7 @@ typedef struct
    NALU_HYPRE_Real  *norms;
    char    *log_file_name;
 
-} hypre_BiCGSTABData;
+} nalu_hypre_BiCGSTABData;
 
 #ifdef __cplusplus
 extern "C" {
@@ -145,8 +145,8 @@ extern "C" {
  * @param param [IN] ...
  **/
 
-hypre_BiCGSTABFunctions *
-hypre_BiCGSTABFunctionsCreate(
+nalu_hypre_BiCGSTABFunctions *
+nalu_hypre_BiCGSTABFunctionsCreate(
    void *     (*CreateVector)  ( void *vvector ),
    NALU_HYPRE_Int  (*DestroyVector) ( void *vvector ),
    void *     (*MatvecCreate)  ( void *A, void *x ),
@@ -171,7 +171,7 @@ hypre_BiCGSTABFunctionsCreate(
  **/
 
 void *
-hypre_BiCGSTABCreate( hypre_BiCGSTABFunctions * bicgstab_functions );
+nalu_hypre_BiCGSTABCreate( nalu_hypre_BiCGSTABFunctions * bicgstab_functions );
 
 
 #ifdef __cplusplus

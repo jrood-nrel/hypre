@@ -5,14 +5,14 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_utilities.h"
+#include "_nalu_hypre_utilities.h"
 
-void hypre_prefix_sum(NALU_HYPRE_Int *in_out, NALU_HYPRE_Int *sum, NALU_HYPRE_Int *workspace)
+void nalu_hypre_prefix_sum(NALU_HYPRE_Int *in_out, NALU_HYPRE_Int *sum, NALU_HYPRE_Int *workspace)
 {
 #ifdef NALU_HYPRE_USING_OPENMP
-   NALU_HYPRE_Int my_thread_num = hypre_GetThreadNum();
-   NALU_HYPRE_Int num_threads = hypre_NumActiveThreads();
-   hypre_assert(1 == num_threads || omp_in_parallel());
+   NALU_HYPRE_Int my_thread_num = nalu_hypre_GetThreadNum();
+   NALU_HYPRE_Int num_threads = nalu_hypre_NumActiveThreads();
+   nalu_hypre_assert(1 == num_threads || omp_in_parallel());
 
    workspace[my_thread_num + 1] = *in_out;
 
@@ -39,13 +39,13 @@ void hypre_prefix_sum(NALU_HYPRE_Int *in_out, NALU_HYPRE_Int *sum, NALU_HYPRE_In
 #endif /* !NALU_HYPRE_USING_OPENMP */
 }
 
-void hypre_prefix_sum_pair(NALU_HYPRE_Int *in_out1, NALU_HYPRE_Int *sum1, NALU_HYPRE_Int *in_out2, NALU_HYPRE_Int *sum2,
+void nalu_hypre_prefix_sum_pair(NALU_HYPRE_Int *in_out1, NALU_HYPRE_Int *sum1, NALU_HYPRE_Int *in_out2, NALU_HYPRE_Int *sum2,
                            NALU_HYPRE_Int *workspace)
 {
 #ifdef NALU_HYPRE_USING_OPENMP
-   NALU_HYPRE_Int my_thread_num = hypre_GetThreadNum();
-   NALU_HYPRE_Int num_threads = hypre_NumActiveThreads();
-   hypre_assert(1 == num_threads || omp_in_parallel());
+   NALU_HYPRE_Int my_thread_num = nalu_hypre_GetThreadNum();
+   NALU_HYPRE_Int num_threads = nalu_hypre_NumActiveThreads();
+   nalu_hypre_assert(1 == num_threads || omp_in_parallel());
 
    workspace[(my_thread_num + 1) * 2] = *in_out1;
    workspace[(my_thread_num + 1) * 2 + 1] = *in_out2;
@@ -82,13 +82,13 @@ void hypre_prefix_sum_pair(NALU_HYPRE_Int *in_out1, NALU_HYPRE_Int *sum1, NALU_H
 #endif /* !NALU_HYPRE_USING_OPENMP */
 }
 
-void hypre_prefix_sum_triple(NALU_HYPRE_Int *in_out1, NALU_HYPRE_Int *sum1, NALU_HYPRE_Int *in_out2,
+void nalu_hypre_prefix_sum_triple(NALU_HYPRE_Int *in_out1, NALU_HYPRE_Int *sum1, NALU_HYPRE_Int *in_out2,
                              NALU_HYPRE_Int *sum2, NALU_HYPRE_Int *in_out3, NALU_HYPRE_Int *sum3, NALU_HYPRE_Int *workspace)
 {
 #ifdef NALU_HYPRE_USING_OPENMP
-   NALU_HYPRE_Int my_thread_num = hypre_GetThreadNum();
-   NALU_HYPRE_Int num_threads = hypre_NumActiveThreads();
-   hypre_assert(1 == num_threads || omp_in_parallel());
+   NALU_HYPRE_Int my_thread_num = nalu_hypre_GetThreadNum();
+   NALU_HYPRE_Int num_threads = nalu_hypre_NumActiveThreads();
+   nalu_hypre_assert(1 == num_threads || omp_in_parallel());
 
    workspace[(my_thread_num + 1) * 3] = *in_out1;
    workspace[(my_thread_num + 1) * 3 + 1] = *in_out2;
@@ -134,13 +134,13 @@ void hypre_prefix_sum_triple(NALU_HYPRE_Int *in_out1, NALU_HYPRE_Int *sum1, NALU
 #endif /* !NALU_HYPRE_USING_OPENMP */
 }
 
-void hypre_prefix_sum_multiple(NALU_HYPRE_Int *in_out, NALU_HYPRE_Int *sum, NALU_HYPRE_Int n, NALU_HYPRE_Int *workspace)
+void nalu_hypre_prefix_sum_multiple(NALU_HYPRE_Int *in_out, NALU_HYPRE_Int *sum, NALU_HYPRE_Int n, NALU_HYPRE_Int *workspace)
 {
    NALU_HYPRE_Int i;
 #ifdef NALU_HYPRE_USING_OPENMP
-   NALU_HYPRE_Int my_thread_num = hypre_GetThreadNum();
-   NALU_HYPRE_Int num_threads = hypre_NumActiveThreads();
-   hypre_assert(1 == num_threads || omp_in_parallel());
+   NALU_HYPRE_Int my_thread_num = nalu_hypre_GetThreadNum();
+   NALU_HYPRE_Int num_threads = nalu_hypre_NumActiveThreads();
+   nalu_hypre_assert(1 == num_threads || omp_in_parallel());
 
    for (i = 0; i < n; i++)
    {

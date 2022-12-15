@@ -125,20 +125,20 @@ NALU_HYPRE_Int NALU_HYPRE_Finalize();
 NALU_HYPRE_Int NALU_HYPRE_GetError();
 
 /* Check if the given error flag contains the given error code */
-NALU_HYPRE_Int NALU_HYPRE_CheckError(NALU_HYPRE_Int hypre_ierr, NALU_HYPRE_Int hypre_error_code);
+NALU_HYPRE_Int NALU_HYPRE_CheckError(NALU_HYPRE_Int nalu_hypre_ierr, NALU_HYPRE_Int nalu_hypre_error_code);
 
 /* Return the index of the argument (counting from 1) where
    argument error (NALU_HYPRE_ERROR_ARG) has occured */
 NALU_HYPRE_Int NALU_HYPRE_GetErrorArg();
 
 /* Describe the given error flag in the given string */
-void NALU_HYPRE_DescribeError(NALU_HYPRE_Int hypre_ierr, char *descr);
+void NALU_HYPRE_DescribeError(NALU_HYPRE_Int nalu_hypre_ierr, char *descr);
 
 /* Clears the hypre error flag */
 NALU_HYPRE_Int NALU_HYPRE_ClearAllErrors();
 
 /* Clears the given error code from the hypre error flag */
-NALU_HYPRE_Int NALU_HYPRE_ClearError(NALU_HYPRE_Int hypre_error_code);
+NALU_HYPRE_Int NALU_HYPRE_ClearError(NALU_HYPRE_Int nalu_hypre_error_code);
 
 /* Print GPU information */
 NALU_HYPRE_Int NALU_HYPRE_PrintDeviceInfo();

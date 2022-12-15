@@ -16,16 +16,16 @@
 #include "Common.h"
 #include "Matrix.h"
 #include "ParaSails.h"
-#include "_hypre_blas.h"
+#include "_nalu_hypre_blas.h"
 
 static NALU_HYPRE_Real InnerProd(NALU_HYPRE_Int n, NALU_HYPRE_Real *x, NALU_HYPRE_Real *y, MPI_Comm comm)
 {
     NALU_HYPRE_Real local_result, result;
 
     NALU_HYPRE_Int one = 1;
-    local_result = hypre_ddot(&n, x, &one, y, &one);
+    local_result = nalu_hypre_ddot(&n, x, &one, y, &one);
 
-    hypre_MPI_Allreduce(&local_result, &result, 1, hypre_MPI_REAL, hypre_MPI_SUM, comm);
+    nalu_hypre_MPI_Allreduce(&local_result, &result, 1, nalu_hypre_MPI_REAL, nalu_hypre_MPI_SUM, comm);
 
     return result;
 }
@@ -33,19 +33,19 @@ static NALU_HYPRE_Real InnerProd(NALU_HYPRE_Int n, NALU_HYPRE_Real *x, NALU_HYPR
 static void CopyVector(NALU_HYPRE_Int n, NALU_HYPRE_Real *x, NALU_HYPRE_Real *y)
 {
     NALU_HYPRE_Int one = 1;
-    hypre_F90_NAME_BLAS(dcopy, DCOPY)(&n, x, &one, y, &one);
+    nalu_hypre_F90_NAME_BLAS(dcopy, DCOPY)(&n, x, &one, y, &one);
 }
 
 static void ScaleVector(NALU_HYPRE_Int n, NALU_HYPRE_Real alpha, NALU_HYPRE_Real *x)
 {
     NALU_HYPRE_Int one = 1;
-    hypre_F90_NAME_BLAS(dscal, DSCAL)(&n, &alpha, x, &one);
+    nalu_hypre_F90_NAME_BLAS(dscal, DSCAL)(&n, &alpha, x, &one);
 }
 
 static void Axpy(NALU_HYPRE_Int n, NALU_HYPRE_Real alpha, NALU_HYPRE_Real *x, NALU_HYPRE_Real *y)
 {
     NALU_HYPRE_Int one = 1;
-    hypre_F90_NAME_BLAS(daxpy, DAXPY)(&n, &alpha, x, &one, y, &one);
+    nalu_hypre_F90_NAME_BLAS(daxpy, DAXPY)(&n, &alpha, x, &one, y, &one);
 }
 
 
@@ -70,7 +70,7 @@ void PCG_ParaSails(Matrix *mat, ParaSails *ps, NALU_HYPRE_Real *b, NALU_HYPRE_Re
    NALU_HYPRE_Int n = mat->end_row - mat->beg_row + 1;
 
    MPI_Comm comm = mat->comm;
-   hypre_MPI_Comm_rank(comm, &mype);
+   nalu_hypre_MPI_Comm_rank(comm, &mype);
 
    /* compute square of absolute stopping threshold  */
    /* bi_prod = <b,b> */
@@ -85,9 +85,9 @@ void PCG_ParaSails(Matrix *mat, ParaSails *ps, NALU_HYPRE_Real *b, NALU_HYPRE_Re
       return;
    }
 
-   p = hypre_TAlloc(NALU_HYPRE_Real, n , NALU_HYPRE_MEMORY_HOST);
-   s = hypre_TAlloc(NALU_HYPRE_Real, n , NALU_HYPRE_MEMORY_HOST);
-   r = hypre_TAlloc(NALU_HYPRE_Real, n , NALU_HYPRE_MEMORY_HOST);
+   p = nalu_hypre_TAlloc(NALU_HYPRE_Real, n , NALU_HYPRE_MEMORY_HOST);
+   s = nalu_hypre_TAlloc(NALU_HYPRE_Real, n , NALU_HYPRE_MEMORY_HOST);
+   r = nalu_hypre_TAlloc(NALU_HYPRE_Real, n , NALU_HYPRE_MEMORY_HOST);
 
    /* r = b - Ax */
    MatrixMatvec(mat, x, r);  /* r = Ax */
@@ -135,7 +135,7 @@ void PCG_ParaSails(Matrix *mat, ParaSails *ps, NALU_HYPRE_Real *b, NALU_HYPRE_Re
 
 #ifdef PARASAILS_CG_PRINT
       if (mype == 0 && i % 100 == 0)
-         hypre_printf("Iter (%d): rel. resid. norm: %e\n", i, sqrt(i_prod/bi_prod));
+         nalu_hypre_printf("Iter (%d): rel. resid. norm: %e\n", i, sqrt(i_prod/bi_prod));
 #endif
 
       /* check for convergence */
@@ -146,7 +146,7 @@ void PCG_ParaSails(Matrix *mat, ParaSails *ps, NALU_HYPRE_Real *b, NALU_HYPRE_Re
       if (i >= 1000 && i_prod/bi_prod > 0.01)
       {
          if (mype == 0)
-            hypre_printf("Aborting solve due to slow or no convergence.\n");
+            nalu_hypre_printf("Aborting solve due to slow or no convergence.\n");
          break;
       }
 
@@ -158,8 +158,8 @@ void PCG_ParaSails(Matrix *mat, ParaSails *ps, NALU_HYPRE_Real *b, NALU_HYPRE_Re
       Axpy(n, 1.0, s, p);
    }
 
-   hypre_TFree(p, NALU_HYPRE_MEMORY_HOST);
-   hypre_TFree(s, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(p, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(s, NALU_HYPRE_MEMORY_HOST);
 
    /* compute exact relative residual norm */
    MatrixMatvec(mat, x, r);  /* r = Ax */
@@ -167,8 +167,8 @@ void PCG_ParaSails(Matrix *mat, ParaSails *ps, NALU_HYPRE_Real *b, NALU_HYPRE_Re
    Axpy(n, 1.0, b, r);       /* r = r + b */
    i_prod = InnerProd(n, r, r, comm);
 
-   hypre_TFree(r, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(r, NALU_HYPRE_MEMORY_HOST);
 
    if (mype == 0)
-      hypre_printf("Iter (%4d): computed rrn    : %e\n", i, sqrt(i_prod/bi_prod));
+      nalu_hypre_printf("Iter (%4d): computed rrn    : %e\n", i, sqrt(i_prod/bi_prod));
 }

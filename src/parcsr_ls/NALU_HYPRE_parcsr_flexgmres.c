@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_parcsr_ls.h"
+#include "_nalu_hypre_parcsr_ls.h"
 
 /*--------------------------------------------------------------------------
  * NALU_HYPRE_ParCSRFlexGMRESCreate
@@ -14,27 +14,27 @@
 NALU_HYPRE_Int
 NALU_HYPRE_ParCSRFlexGMRESCreate( MPI_Comm comm, NALU_HYPRE_Solver *solver )
 {
-   hypre_FlexGMRESFunctions * fgmres_functions;
+   nalu_hypre_FlexGMRESFunctions * fgmres_functions;
 
    if (!solver)
    {
-      hypre_error_in_arg(2);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(2);
+      return nalu_hypre_error_flag;
    }
    fgmres_functions =
-      hypre_FlexGMRESFunctionsCreate(
-         hypre_ParKrylovCAlloc, hypre_ParKrylovFree, hypre_ParKrylovCommInfo,
-         hypre_ParKrylovCreateVector,
-         hypre_ParKrylovCreateVectorArray,
-         hypre_ParKrylovDestroyVector, hypre_ParKrylovMatvecCreate,
-         hypre_ParKrylovMatvec, hypre_ParKrylovMatvecDestroy,
-         hypre_ParKrylovInnerProd, hypre_ParKrylovCopyVector,
-         hypre_ParKrylovClearVector,
-         hypre_ParKrylovScaleVector, hypre_ParKrylovAxpy,
-         hypre_ParKrylovIdentitySetup, hypre_ParKrylovIdentity );
-   *solver = ( (NALU_HYPRE_Solver) hypre_FlexGMRESCreate( fgmres_functions ) );
+      nalu_hypre_FlexGMRESFunctionsCreate(
+         nalu_hypre_ParKrylovCAlloc, nalu_hypre_ParKrylovFree, nalu_hypre_ParKrylovCommInfo,
+         nalu_hypre_ParKrylovCreateVector,
+         nalu_hypre_ParKrylovCreateVectorArray,
+         nalu_hypre_ParKrylovDestroyVector, nalu_hypre_ParKrylovMatvecCreate,
+         nalu_hypre_ParKrylovMatvec, nalu_hypre_ParKrylovMatvecDestroy,
+         nalu_hypre_ParKrylovInnerProd, nalu_hypre_ParKrylovCopyVector,
+         nalu_hypre_ParKrylovClearVector,
+         nalu_hypre_ParKrylovScaleVector, nalu_hypre_ParKrylovAxpy,
+         nalu_hypre_ParKrylovIdentitySetup, nalu_hypre_ParKrylovIdentity );
+   *solver = ( (NALU_HYPRE_Solver) nalu_hypre_FlexGMRESCreate( fgmres_functions ) );
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
@@ -44,7 +44,7 @@ NALU_HYPRE_ParCSRFlexGMRESCreate( MPI_Comm comm, NALU_HYPRE_Solver *solver )
 NALU_HYPRE_Int
 NALU_HYPRE_ParCSRFlexGMRESDestroy( NALU_HYPRE_Solver solver )
 {
-   return ( hypre_FlexGMRESDestroy( (void *) solver ) );
+   return ( nalu_hypre_FlexGMRESDestroy( (void *) solver ) );
 }
 
 /*--------------------------------------------------------------------------

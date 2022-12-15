@@ -7,8 +7,8 @@
 
 #include <math.h>
 #include <string.h>
-#include "_hypre_parcsr_mv.h"
-#include "_hypre_parcsr_ls.h"
+#include "_nalu_hypre_parcsr_mv.h"
+#include "_nalu_hypre_parcsr_ls.h"
 #include "par_amg.h"
 #include "mli_solver_hschwarz.h"
 
@@ -129,28 +129,28 @@ int MLI_Solver_HSchwarz::calcOmega()
    int                relaxType=6, relaxTypes[2], level=0, numCGSweeps=10;
    int                one=1, zero=0;
    double             dOne=1.0;
-   hypre_ParCSRMatrix *A;
-   hypre_ParVector    *vTemp;
-   hypre_ParAMGData   *amgData;
+   nalu_hypre_ParCSRMatrix *A;
+   nalu_hypre_ParVector    *vTemp;
+   nalu_hypre_ParAMGData   *amgData;
    NALU_HYPRE_Solver       *smoother;
 
-   A = (hypre_ParCSRMatrix *) Amat_->getMatrix();
-   amgData = (hypre_ParAMGData *) hypre_BoomerAMGCreate();
-   amgData->A_array = new hypre_ParCSRMatrix*[1];
+   A = (nalu_hypre_ParCSRMatrix *) Amat_->getMatrix();
+   amgData = (nalu_hypre_ParAMGData *) nalu_hypre_BoomerAMGCreate();
+   amgData->A_array = new nalu_hypre_ParCSRMatrix*[1];
    amgData->A_array[0] = A;
    amgData->CF_marker_array = new int*[1];
    amgData->CF_marker_array[0] = NULL;
    relaxTypes[0] = 0;
    relaxTypes[1] = relaxType;
    amgData->grid_relax_type = relaxTypes;
-   vTemp = (hypre_ParVector *) mliVec_->getVector();
+   vTemp = (nalu_hypre_ParVector *) mliVec_->getVector();
    amgData->Vtemp = vTemp;
 
    amgData->smooth_type = relaxType;
    amgData->smooth_num_levels = 1;
    amgData->smooth_num_sweeps = one;
 
-   smoother = hypre_CTAlloc(NALU_HYPRE_Solver, one, NALU_HYPRE_MEMORY_HOST);
+   smoother = nalu_hypre_CTAlloc(NALU_HYPRE_Solver, one, NALU_HYPRE_MEMORY_HOST);
    amgData->smoother = smoother;
    NALU_HYPRE_SchwarzCreate(&smoother[0]);
    NALU_HYPRE_SchwarzSetNumFunctions(smoother[0], blkSize_);
@@ -159,13 +159,13 @@ int MLI_Solver_HSchwarz::calcOmega()
    NALU_HYPRE_SchwarzSetDomainType(smoother[0], one);
    NALU_HYPRE_SchwarzSetRelaxWeight(smoother[0], dOne);
    if (relaxWeight_ >= 1.0)
-      hypre_BoomerAMGCGRelaxWt((void *)amgData,level,numCGSweeps,&relaxWeight_);
+      nalu_hypre_BoomerAMGCGRelaxWt((void *)amgData,level,numCGSweeps,&relaxWeight_);
    //printf("HSchwarz : relaxWt = %e (%d)\n", relaxWeight_, blkSize_);
    NALU_HYPRE_SchwarzSetRelaxWeight(smoother[0], relaxWeight_);
    NALU_HYPRE_SchwarzSetup(smoother[0], (NALU_HYPRE_ParCSRMatrix) A, 
                       (NALU_HYPRE_ParVector) vTemp, (NALU_HYPRE_ParVector) vTemp);
    smoother_ = smoother[0];
-   hypre_TFree(amgData, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(amgData, NALU_HYPRE_MEMORY_HOST);
    delete [] amgData->A_array;
    delete [] amgData->CF_marker_array;
    return 0;

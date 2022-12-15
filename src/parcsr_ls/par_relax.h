@@ -10,7 +10,7 @@
 
 /* Non-Scale version */
 static inline void
-hypre_HybridGaussSeidelNS( NALU_HYPRE_Int     *A_diag_i,
+nalu_hypre_HybridGaussSeidelNS( NALU_HYPRE_Int     *A_diag_i,
                            NALU_HYPRE_Int     *A_diag_j,
                            NALU_HYPRE_Complex *A_diag_data,
                            NALU_HYPRE_Int     *A_offd_i,
@@ -104,7 +104,7 @@ hypre_HybridGaussSeidelNS( NALU_HYPRE_Int     *A_diag_i,
 
 /* Non-Scale Threaded version */
 static inline void
-hypre_HybridGaussSeidelNSThreads( NALU_HYPRE_Int     *A_diag_i,
+nalu_hypre_HybridGaussSeidelNSThreads( NALU_HYPRE_Int     *A_diag_i,
                                   NALU_HYPRE_Int     *A_diag_j,
                                   NALU_HYPRE_Complex *A_diag_data,
                                   NALU_HYPRE_Int     *A_offd_i,
@@ -220,7 +220,7 @@ hypre_HybridGaussSeidelNSThreads( NALU_HYPRE_Int     *A_diag_i,
 
 /* Scaled version */
 static inline void
-hypre_HybridGaussSeidel( NALU_HYPRE_Int     *A_diag_i,
+nalu_hypre_HybridGaussSeidel( NALU_HYPRE_Int     *A_diag_i,
                          NALU_HYPRE_Int     *A_diag_j,
                          NALU_HYPRE_Complex *A_diag_data,
                          NALU_HYPRE_Int     *A_offd_i,
@@ -329,7 +329,7 @@ hypre_HybridGaussSeidel( NALU_HYPRE_Int     *A_diag_i,
 
 /* Scaled Threaded version */
 static inline void
-hypre_HybridGaussSeidelThreads( NALU_HYPRE_Int     *A_diag_i,
+nalu_hypre_HybridGaussSeidelThreads( NALU_HYPRE_Int     *A_diag_i,
                                 NALU_HYPRE_Int     *A_diag_j,
                                 NALU_HYPRE_Complex *A_diag_data,
                                 NALU_HYPRE_Int     *A_offd_i,
@@ -454,7 +454,7 @@ hypre_HybridGaussSeidelThreads( NALU_HYPRE_Int     *A_diag_i,
 
 /* Ordered Version */
 static inline void
-hypre_HybridGaussSeidelOrderedNS( NALU_HYPRE_Int     *A_diag_i,
+nalu_hypre_HybridGaussSeidelOrderedNS( NALU_HYPRE_Int     *A_diag_i,
                                   NALU_HYPRE_Int     *A_diag_j,
                                   NALU_HYPRE_Complex *A_diag_data,
                                   NALU_HYPRE_Int     *A_offd_i,

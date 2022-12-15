@@ -11,8 +11,8 @@
  *
  *****************************************************************************/
 
-#ifndef hypre_PAR_CHORD_MATRIX_HEADER
-#define hypre_PAR_CHORD_MATRIX_HEADER
+#ifndef nalu_hypre_PAR_CHORD_MATRIX_HEADER
+#define nalu_hypre_PAR_CHORD_MATRIX_HEADER
 
 /*--------------------------------------------------------------------------
  * Parallel Chord Matrix
@@ -54,38 +54,38 @@ typedef struct
    NALU_HYPRE_Int *num_rdofs_toprocessor;
    NALU_HYPRE_Int **rdof_toprocessor;
 
-} hypre_ParChordMatrix;
+} nalu_hypre_ParChordMatrix;
 
 /*--------------------------------------------------------------------------
  * Accessor functions for the Parallel CSR Matrix structure
  *--------------------------------------------------------------------------*/
 
-#define hypre_ParChordMatrixComm(matrix)                  ((matrix) -> comm)
+#define nalu_hypre_ParChordMatrixComm(matrix)                  ((matrix) -> comm)
 
 /*  matrix structure: ----------------------------------------------------- */
 
-#define hypre_ParChordMatrixNumInprocessors(matrix)  ((matrix) -> num_inprocessors)
-#define hypre_ParChordMatrixInprocessor(matrix) ((matrix) -> inprocessor)
-#define hypre_ParChordMatrixNumIdofsInprocessor(matrix) ((matrix) -> num_idofs_inprocessor)
-#define hypre_ParChordMatrixIdofInprocessor(matrix) ((matrix) -> idof_inprocessor)
+#define nalu_hypre_ParChordMatrixNumInprocessors(matrix)  ((matrix) -> num_inprocessors)
+#define nalu_hypre_ParChordMatrixInprocessor(matrix) ((matrix) -> inprocessor)
+#define nalu_hypre_ParChordMatrixNumIdofsInprocessor(matrix) ((matrix) -> num_idofs_inprocessor)
+#define nalu_hypre_ParChordMatrixIdofInprocessor(matrix) ((matrix) -> idof_inprocessor)
 
-#define hypre_ParChordMatrixNumInchords(matrix) ((matrix) -> num_inchords)
+#define nalu_hypre_ParChordMatrixNumInchords(matrix) ((matrix) -> num_inchords)
 
-#define hypre_ParChordMatrixInchordIdof(matrix) ((matrix) -> inchord_idof)
-#define hypre_ParChordMatrixInchordRdof(matrix) ((matrix) -> inchord_rdof)
-#define hypre_ParChordMatrixInchordData(matrix) ((matrix) -> inchord_data)
-#define hypre_ParChordMatrixNumIdofs(matrix)    ((matrix) -> num_idofs)
-#define hypre_ParChordMatrixNumRdofs(matrix)    ((matrix) -> num_rdofs)
+#define nalu_hypre_ParChordMatrixInchordIdof(matrix) ((matrix) -> inchord_idof)
+#define nalu_hypre_ParChordMatrixInchordRdof(matrix) ((matrix) -> inchord_rdof)
+#define nalu_hypre_ParChordMatrixInchordData(matrix) ((matrix) -> inchord_data)
+#define nalu_hypre_ParChordMatrixNumIdofs(matrix)    ((matrix) -> num_idofs)
+#define nalu_hypre_ParChordMatrixNumRdofs(matrix)    ((matrix) -> num_rdofs)
 
-#define hypre_ParChordMatrixFirstindexIdof(matrix) ((matrix) -> firstindex_idof)
-#define hypre_ParChordMatrixFirstindexRdof(matrix) ((matrix) -> firstindex_rdof)
+#define nalu_hypre_ParChordMatrixFirstindexIdof(matrix) ((matrix) -> firstindex_idof)
+#define nalu_hypre_ParChordMatrixFirstindexRdof(matrix) ((matrix) -> firstindex_rdof)
 
 /* participation of rdof in different processors; ---------- */
 
-#define hypre_ParChordMatrixNumToprocessors(matrix) ((matrix) -> num_toprocessors)
-#define hypre_ParChordMatrixToprocessor(matrix)  ((matrix) -> toprocessor)
-#define hypre_ParChordMatrixNumRdofsToprocessor(matrix) ((matrix) -> num_rdofs_toprocessor)
-#define hypre_ParChordMatrixRdofToprocessor(matrix) ((matrix) -> rdof_toprocessor)
+#define nalu_hypre_ParChordMatrixNumToprocessors(matrix) ((matrix) -> num_toprocessors)
+#define nalu_hypre_ParChordMatrixToprocessor(matrix)  ((matrix) -> toprocessor)
+#define nalu_hypre_ParChordMatrixNumRdofsToprocessor(matrix) ((matrix) -> num_rdofs_toprocessor)
+#define nalu_hypre_ParChordMatrixRdofToprocessor(matrix) ((matrix) -> rdof_toprocessor)
 
 #endif
 

@@ -12,7 +12,7 @@
  *****************************************************************************/
 
 #include "block_tridiag.h"
-#include "_hypre_parcsr_ls.h"
+#include "_nalu_hypre_parcsr_ls.h"
 #include "fortran.h"
 
 #ifdef __cplusplus
@@ -24,12 +24,12 @@ extern "C" {
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_blocktridiagcreate, NALU_HYPRE_BLOCKTRIDIAGCREATE)
-(hypre_F90_Obj *solver,
- hypre_F90_Int *ierr)
+nalu_hypre_F90_IFACE(nalu_hypre_blocktridiagcreate, NALU_HYPRE_BLOCKTRIDIAGCREATE)
+(nalu_hypre_F90_Obj *solver,
+ nalu_hypre_F90_Int *ierr)
 {
-   *ierr = (hypre_F90_Int) NALU_HYPRE_BlockTridiagCreate(
-              hypre_F90_PassObjRef (NALU_HYPRE_Solver, solver));
+   *ierr = (nalu_hypre_F90_Int) NALU_HYPRE_BlockTridiagCreate(
+              nalu_hypre_F90_PassObjRef (NALU_HYPRE_Solver, solver));
 }
 
 /*--------------------------------------------------------------------------
@@ -37,12 +37,12 @@ hypre_F90_IFACE(hypre_blocktridiagcreate, NALU_HYPRE_BLOCKTRIDIAGCREATE)
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_blocktridiagdestroy, NALU_HYPRE_BLOCKTRIDIAGDESTROY)
-(hypre_F90_Obj *solver,
- hypre_F90_Int *ierr)
+nalu_hypre_F90_IFACE(nalu_hypre_blocktridiagdestroy, NALU_HYPRE_BLOCKTRIDIAGDESTROY)
+(nalu_hypre_F90_Obj *solver,
+ nalu_hypre_F90_Int *ierr)
 {
-   *ierr = (hypre_F90_Int) NALU_HYPRE_BlockTridiagDestroy(
-              hypre_F90_PassObj (NALU_HYPRE_Solver, solver));
+   *ierr = (nalu_hypre_F90_Int) NALU_HYPRE_BlockTridiagDestroy(
+              nalu_hypre_F90_PassObj (NALU_HYPRE_Solver, solver));
 }
 
 /*--------------------------------------------------------------------------
@@ -50,18 +50,18 @@ hypre_F90_IFACE(hypre_blocktridiagdestroy, NALU_HYPRE_BLOCKTRIDIAGDESTROY)
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_blocktridiagsetup, NALU_HYPRE_BLOCKTRIDIAGSETUP)
-(hypre_F90_Obj *solver,
- hypre_F90_Obj *A,
- hypre_F90_Obj *b,
- hypre_F90_Obj *x,
- hypre_F90_Int *ierr)
+nalu_hypre_F90_IFACE(nalu_hypre_blocktridiagsetup, NALU_HYPRE_BLOCKTRIDIAGSETUP)
+(nalu_hypre_F90_Obj *solver,
+ nalu_hypre_F90_Obj *A,
+ nalu_hypre_F90_Obj *b,
+ nalu_hypre_F90_Obj *x,
+ nalu_hypre_F90_Int *ierr)
 {
-   *ierr = (hypre_F90_Int) NALU_HYPRE_BlockTridiagSetup(
-              hypre_F90_PassObj (NALU_HYPRE_Solver, solver),
-              hypre_F90_PassObj (NALU_HYPRE_ParCSRMatrix, A),
-              hypre_F90_PassObj (NALU_HYPRE_ParVector, b),
-              hypre_F90_PassObj (NALU_HYPRE_ParVector, x));
+   *ierr = (nalu_hypre_F90_Int) NALU_HYPRE_BlockTridiagSetup(
+              nalu_hypre_F90_PassObj (NALU_HYPRE_Solver, solver),
+              nalu_hypre_F90_PassObj (NALU_HYPRE_ParCSRMatrix, A),
+              nalu_hypre_F90_PassObj (NALU_HYPRE_ParVector, b),
+              nalu_hypre_F90_PassObj (NALU_HYPRE_ParVector, x));
 }
 
 /*--------------------------------------------------------------------------
@@ -69,18 +69,18 @@ hypre_F90_IFACE(hypre_blocktridiagsetup, NALU_HYPRE_BLOCKTRIDIAGSETUP)
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_blocktridiagsolve, NALU_HYPRE_BLOCKTRIDIAGSOLVE)
-(hypre_F90_Obj *solver,
- hypre_F90_Obj *A,
- hypre_F90_Obj *b,
- hypre_F90_Obj *x,
- hypre_F90_Int *ierr)
+nalu_hypre_F90_IFACE(nalu_hypre_blocktridiagsolve, NALU_HYPRE_BLOCKTRIDIAGSOLVE)
+(nalu_hypre_F90_Obj *solver,
+ nalu_hypre_F90_Obj *A,
+ nalu_hypre_F90_Obj *b,
+ nalu_hypre_F90_Obj *x,
+ nalu_hypre_F90_Int *ierr)
 {
-   *ierr = (hypre_F90_Int) NALU_HYPRE_BlockTridiagSolve(
-              hypre_F90_PassObj (NALU_HYPRE_Solver, solver),
-              hypre_F90_PassObj (NALU_HYPRE_ParCSRMatrix, A),
-              hypre_F90_PassObj (NALU_HYPRE_ParVector, b),
-              hypre_F90_PassObj (NALU_HYPRE_ParVector, x));
+   *ierr = (nalu_hypre_F90_Int) NALU_HYPRE_BlockTridiagSolve(
+              nalu_hypre_F90_PassObj (NALU_HYPRE_Solver, solver),
+              nalu_hypre_F90_PassObj (NALU_HYPRE_ParCSRMatrix, A),
+              nalu_hypre_F90_PassObj (NALU_HYPRE_ParVector, b),
+              nalu_hypre_F90_PassObj (NALU_HYPRE_ParVector, x));
 }
 
 /*--------------------------------------------------------------------------
@@ -88,16 +88,16 @@ hypre_F90_IFACE(hypre_blocktridiagsolve, NALU_HYPRE_BLOCKTRIDIAGSOLVE)
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_blocktridiagsetindexset, NALU_HYPRE_BLOCKTRIDIAGSETINDEXSET)
-(hypre_F90_Obj *solver,
- hypre_F90_Int *n,
- hypre_F90_IntArray *inds,
- hypre_F90_Int *ierr)
+nalu_hypre_F90_IFACE(nalu_hypre_blocktridiagsetindexset, NALU_HYPRE_BLOCKTRIDIAGSETINDEXSET)
+(nalu_hypre_F90_Obj *solver,
+ nalu_hypre_F90_Int *n,
+ nalu_hypre_F90_IntArray *inds,
+ nalu_hypre_F90_Int *ierr)
 {
-   *ierr = (hypre_F90_Int) NALU_HYPRE_BlockTridiagSetIndexSet(
-              hypre_F90_PassObj (NALU_HYPRE_Solver, solver),
-              hypre_F90_PassInt (n),
-              hypre_F90_PassIntArray (inds));
+   *ierr = (nalu_hypre_F90_Int) NALU_HYPRE_BlockTridiagSetIndexSet(
+              nalu_hypre_F90_PassObj (NALU_HYPRE_Solver, solver),
+              nalu_hypre_F90_PassInt (n),
+              nalu_hypre_F90_PassIntArray (inds));
 }
 
 /*--------------------------------------------------------------------------
@@ -105,14 +105,14 @@ hypre_F90_IFACE(hypre_blocktridiagsetindexset, NALU_HYPRE_BLOCKTRIDIAGSETINDEXSE
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_blocktridiagsetamgstrengt, NALU_HYPRE_BLOCKTRIDIAGSETAMGSTRENGT)
-(hypre_F90_Obj *solver,
- hypre_F90_Real *thresh,
- hypre_F90_Int *ierr)
+nalu_hypre_F90_IFACE(nalu_hypre_blocktridiagsetamgstrengt, NALU_HYPRE_BLOCKTRIDIAGSETAMGSTRENGT)
+(nalu_hypre_F90_Obj *solver,
+ nalu_hypre_F90_Real *thresh,
+ nalu_hypre_F90_Int *ierr)
 {
-   *ierr = (hypre_F90_Int) NALU_HYPRE_BlockTridiagSetAMGStrengthThreshold(
-              hypre_F90_PassObj (NALU_HYPRE_Solver, solver),
-              hypre_F90_PassReal (thresh));
+   *ierr = (nalu_hypre_F90_Int) NALU_HYPRE_BlockTridiagSetAMGStrengthThreshold(
+              nalu_hypre_F90_PassObj (NALU_HYPRE_Solver, solver),
+              nalu_hypre_F90_PassReal (thresh));
 }
 
 /*--------------------------------------------------------------------------
@@ -120,14 +120,14 @@ hypre_F90_IFACE(hypre_blocktridiagsetamgstrengt, NALU_HYPRE_BLOCKTRIDIAGSETAMGST
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_blocktridiagsetamgnumswee, NALU_HYPRE_BLOCKTRIDIAGSETAMGNUMSWEE)
-(hypre_F90_Obj *solver,
- hypre_F90_Int *num_sweeps,
- hypre_F90_Int *ierr)
+nalu_hypre_F90_IFACE(nalu_hypre_blocktridiagsetamgnumswee, NALU_HYPRE_BLOCKTRIDIAGSETAMGNUMSWEE)
+(nalu_hypre_F90_Obj *solver,
+ nalu_hypre_F90_Int *num_sweeps,
+ nalu_hypre_F90_Int *ierr)
 {
-   *ierr = (hypre_F90_Int) NALU_HYPRE_BlockTridiagSetAMGNumSweeps(
-              hypre_F90_PassObj (NALU_HYPRE_Solver, solver),
-              hypre_F90_PassInt (num_sweeps));
+   *ierr = (nalu_hypre_F90_Int) NALU_HYPRE_BlockTridiagSetAMGNumSweeps(
+              nalu_hypre_F90_PassObj (NALU_HYPRE_Solver, solver),
+              nalu_hypre_F90_PassInt (num_sweeps));
 }
 
 /*--------------------------------------------------------------------------
@@ -135,14 +135,14 @@ hypre_F90_IFACE(hypre_blocktridiagsetamgnumswee, NALU_HYPRE_BLOCKTRIDIAGSETAMGNU
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_blocktridiagsetamgrelaxty, NALU_HYPRE_BLOCKTRIDIAGSETAMGRELAXTY)
-(hypre_F90_Obj *solver,
- hypre_F90_Int *relax_type,
- hypre_F90_Int *ierr)
+nalu_hypre_F90_IFACE(nalu_hypre_blocktridiagsetamgrelaxty, NALU_HYPRE_BLOCKTRIDIAGSETAMGRELAXTY)
+(nalu_hypre_F90_Obj *solver,
+ nalu_hypre_F90_Int *relax_type,
+ nalu_hypre_F90_Int *ierr)
 {
-   *ierr = (hypre_F90_Int) NALU_HYPRE_BlockTridiagSetAMGRelaxType(
-              hypre_F90_PassObj (NALU_HYPRE_Solver, solver),
-              hypre_F90_PassInt (relax_type));
+   *ierr = (nalu_hypre_F90_Int) NALU_HYPRE_BlockTridiagSetAMGRelaxType(
+              nalu_hypre_F90_PassObj (NALU_HYPRE_Solver, solver),
+              nalu_hypre_F90_PassInt (relax_type));
 }
 
 /*--------------------------------------------------------------------------
@@ -150,14 +150,14 @@ hypre_F90_IFACE(hypre_blocktridiagsetamgrelaxty, NALU_HYPRE_BLOCKTRIDIAGSETAMGRE
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_blocktridiagsetprintlevel, NALU_HYPRE_BLOCKTRIDIAGSETPRINTLEVEL)
-(hypre_F90_Obj *solver,
- hypre_F90_Int *print_level,
- hypre_F90_Int *ierr)
+nalu_hypre_F90_IFACE(nalu_hypre_blocktridiagsetprintlevel, NALU_HYPRE_BLOCKTRIDIAGSETPRINTLEVEL)
+(nalu_hypre_F90_Obj *solver,
+ nalu_hypre_F90_Int *print_level,
+ nalu_hypre_F90_Int *ierr)
 {
-   *ierr = (hypre_F90_Int) NALU_HYPRE_BlockTridiagSetPrintLevel(
-              hypre_F90_PassObj (NALU_HYPRE_Solver, solver),
-              hypre_F90_PassInt (print_level));
+   *ierr = (nalu_hypre_F90_Int) NALU_HYPRE_BlockTridiagSetPrintLevel(
+              nalu_hypre_F90_PassObj (NALU_HYPRE_Solver, solver),
+              nalu_hypre_F90_PassInt (print_level));
 }
 
 #ifdef __cplusplus

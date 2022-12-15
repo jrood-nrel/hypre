@@ -11,7 +11,7 @@
 
 #include <stdio.h>
 #include "NALU_HYPRE.h"
-#include "_hypre_utilities.h"
+#include "_nalu_hypre_utilities.h"
 #include "mli_matrix.h"
 #include "mli_matrix_misc.h"
 #include "IJ_mv.h"
@@ -89,7 +89,7 @@ void testRAP( NALU_HYPRE_ParCSRMatrix HYPREA )
    double       time1, time2, timeOld, timeNew;
    MLI_Function *funcPtr;
    MLI_Matrix   *mli_mat, *mli_Cmat;
-   hypre_ParCSRMatrix *hypreRAP;
+   nalu_hypre_ParCSRMatrix *hypreRAP;
 
    MPI_Comm_rank(MPI_COMM_WORLD, &mypid);
    funcPtr = new MLI_Function();
@@ -104,9 +104,9 @@ void testRAP( NALU_HYPRE_ParCSRMatrix HYPREA )
       if ( mypid == 0 ) printf("MatMatMult %d\n", i);
       MPI_Barrier(MPI_COMM_WORLD);
       time1 = MLI_Utils_WTime();
-      hypreRAP = (hypre_ParCSRMatrix *)
-                 hypre_ParMatmul( (hypre_ParCSRMatrix *) HYPREA,
-                                  (hypre_ParCSRMatrix *) HYPREA);
+      hypreRAP = (nalu_hypre_ParCSRMatrix *)
+                 nalu_hypre_ParMatmul( (nalu_hypre_ParCSRMatrix *) HYPREA,
+                                  (nalu_hypre_ParCSRMatrix *) HYPREA);
       MPI_Barrier(MPI_COMM_WORLD);
       time2 = MLI_Utils_WTime();
       timeOld += time2 - time1;
@@ -117,7 +117,7 @@ void testRAP( NALU_HYPRE_ParCSRMatrix HYPREA )
       MPI_Barrier(MPI_COMM_WORLD);
       time2 = MLI_Utils_WTime();
       timeNew += time2 - time1;
-      hypre_ParCSRMatrixDestroy( (hypre_ParCSRMatrix *) hypreRAP);
+      nalu_hypre_ParCSRMatrixDestroy( (nalu_hypre_ParCSRMatrix *) hypreRAP);
       delete mli_Cmat;
    }
    if ( mypid == 0 ) printf("Old MatMatMult time = %e\n", timeOld/10);
@@ -127,9 +127,9 @@ void testRAP( NALU_HYPRE_ParCSRMatrix HYPREA )
    if ( mypid == 0 ) printf("Old MatMatMult\n");
    MPI_Barrier(MPI_COMM_WORLD);
    time1 = MLI_Utils_WTime();
-   hypreRAP = (hypre_ParCSRMatrix *)
-              hypre_ParMatmul( (hypre_ParCSRMatrix *) HYPREA,
-                               (hypre_ParCSRMatrix *) HYPREA);
+   hypreRAP = (nalu_hypre_ParCSRMatrix *)
+              nalu_hypre_ParMatmul( (nalu_hypre_ParCSRMatrix *) HYPREA,
+                               (nalu_hypre_ParCSRMatrix *) HYPREA);
    MPI_Barrier(MPI_COMM_WORLD);
    time2 = MLI_Utils_WTime();
    if ( mypid == 0 ) printf("Old MatMatMult time = %e\n", time2-time1);

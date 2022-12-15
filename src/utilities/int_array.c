@@ -5,149 +5,149 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_utilities.h"
-#include "_hypre_utilities.hpp"
+#include "_nalu_hypre_utilities.h"
+#include "_nalu_hypre_utilities.hpp"
 
 /******************************************************************************
  *
- * Routines for hypre_IntArray struct for holding an array of integers
+ * Routines for nalu_hypre_IntArray struct for holding an array of integers
  *
  *****************************************************************************/
 
 /*--------------------------------------------------------------------------
- * hypre_IntArrayCreate
+ * nalu_hypre_IntArrayCreate
  *--------------------------------------------------------------------------*/
 
-hypre_IntArray *
-hypre_IntArrayCreate( NALU_HYPRE_Int size )
+nalu_hypre_IntArray *
+nalu_hypre_IntArrayCreate( NALU_HYPRE_Int size )
 {
-   hypre_IntArray  *array;
+   nalu_hypre_IntArray  *array;
 
-   array = hypre_CTAlloc(hypre_IntArray, 1, NALU_HYPRE_MEMORY_HOST);
+   array = nalu_hypre_CTAlloc(nalu_hypre_IntArray, 1, NALU_HYPRE_MEMORY_HOST);
 
-   hypre_IntArrayData(array) = NULL;
-   hypre_IntArraySize(array) = size;
+   nalu_hypre_IntArrayData(array) = NULL;
+   nalu_hypre_IntArraySize(array) = size;
 
-   hypre_IntArrayMemoryLocation(array) = hypre_HandleMemoryLocation(hypre_handle());
+   nalu_hypre_IntArrayMemoryLocation(array) = nalu_hypre_HandleMemoryLocation(nalu_hypre_handle());
 
    return array;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_IntArrayDestroy
+ * nalu_hypre_IntArrayDestroy
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_IntArrayDestroy( hypre_IntArray *array )
+nalu_hypre_IntArrayDestroy( nalu_hypre_IntArray *array )
 {
    NALU_HYPRE_Int ierr = 0;
 
    if (array)
    {
-      NALU_HYPRE_MemoryLocation memory_location = hypre_IntArrayMemoryLocation(array);
+      NALU_HYPRE_MemoryLocation memory_location = nalu_hypre_IntArrayMemoryLocation(array);
 
-      hypre_TFree(hypre_IntArrayData(array), memory_location);
+      nalu_hypre_TFree(nalu_hypre_IntArrayData(array), memory_location);
 
-      hypre_TFree(array, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(array, NALU_HYPRE_MEMORY_HOST);
    }
 
    return ierr;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_IntArrayInitialize
+ * nalu_hypre_IntArrayInitialize
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_IntArrayInitialize_v2( hypre_IntArray *array, NALU_HYPRE_MemoryLocation memory_location )
+nalu_hypre_IntArrayInitialize_v2( nalu_hypre_IntArray *array, NALU_HYPRE_MemoryLocation memory_location )
 {
-   NALU_HYPRE_Int  size = hypre_IntArraySize(array);
+   NALU_HYPRE_Int  size = nalu_hypre_IntArraySize(array);
    NALU_HYPRE_Int  ierr = 0;
 
-   hypre_IntArrayMemoryLocation(array) = memory_location;
+   nalu_hypre_IntArrayMemoryLocation(array) = memory_location;
 
    /* Caveat: for pre-existing data, the memory location must be guaranteed
     * to be consistent with `memory_location'
     * Otherwise, mismatches will exist and problems will be encountered
     * when being used, and freed */
-   if ( !hypre_IntArrayData(array) )
+   if ( !nalu_hypre_IntArrayData(array) )
    {
-      hypre_IntArrayData(array) = hypre_CTAlloc(NALU_HYPRE_Int, size, memory_location);
+      nalu_hypre_IntArrayData(array) = nalu_hypre_CTAlloc(NALU_HYPRE_Int, size, memory_location);
    }
 
    return ierr;
 }
 
 NALU_HYPRE_Int
-hypre_IntArrayInitialize( hypre_IntArray *array )
+nalu_hypre_IntArrayInitialize( nalu_hypre_IntArray *array )
 {
    NALU_HYPRE_Int ierr;
 
-   ierr = hypre_IntArrayInitialize_v2( array, hypre_IntArrayMemoryLocation(array) );
+   ierr = nalu_hypre_IntArrayInitialize_v2( array, nalu_hypre_IntArrayMemoryLocation(array) );
 
    return ierr;
 }
 
 
 /*--------------------------------------------------------------------------
- * hypre_IntArrayCopy
+ * nalu_hypre_IntArrayCopy
  * copies data from x to y
  * if size of x is larger than y only the first size_y elements of x are
  * copied to y
  *--------------------------------------------------------------------------*/
 NALU_HYPRE_Int
-hypre_IntArrayCopy( hypre_IntArray *x,
-                    hypre_IntArray *y )
+nalu_hypre_IntArrayCopy( nalu_hypre_IntArray *x,
+                    nalu_hypre_IntArray *y )
 {
    NALU_HYPRE_Int ierr = 0;
 
-   size_t size = hypre_min( hypre_IntArraySize(x), hypre_IntArraySize(y) );
+   size_t size = nalu_hypre_min( nalu_hypre_IntArraySize(x), nalu_hypre_IntArraySize(y) );
 
-   hypre_TMemcpy( hypre_IntArrayData(y),
-                  hypre_IntArrayData(x),
+   nalu_hypre_TMemcpy( nalu_hypre_IntArrayData(y),
+                  nalu_hypre_IntArrayData(x),
                   NALU_HYPRE_Int,
                   size,
-                  hypre_IntArrayMemoryLocation(y),
-                  hypre_IntArrayMemoryLocation(x) );
+                  nalu_hypre_IntArrayMemoryLocation(y),
+                  nalu_hypre_IntArrayMemoryLocation(x) );
 
    return ierr;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_IntArrayCloneDeep
+ * nalu_hypre_IntArrayCloneDeep
  * Returns a complete copy of x - a deep copy, with its own copy of the data.
  *--------------------------------------------------------------------------*/
 
-hypre_IntArray *
-hypre_IntArrayCloneDeep_v2( hypre_IntArray *x, NALU_HYPRE_MemoryLocation memory_location )
+nalu_hypre_IntArray *
+nalu_hypre_IntArrayCloneDeep_v2( nalu_hypre_IntArray *x, NALU_HYPRE_MemoryLocation memory_location )
 {
-   NALU_HYPRE_Int    size = hypre_IntArraySize(x);
+   NALU_HYPRE_Int    size = nalu_hypre_IntArraySize(x);
 
-   hypre_IntArray *y = hypre_IntArrayCreate( size );
+   nalu_hypre_IntArray *y = nalu_hypre_IntArrayCreate( size );
 
-   hypre_IntArrayInitialize_v2(y, memory_location);
-   hypre_IntArrayCopy( x, y );
+   nalu_hypre_IntArrayInitialize_v2(y, memory_location);
+   nalu_hypre_IntArrayCopy( x, y );
 
    return y;
 }
 
-hypre_IntArray *
-hypre_IntArrayCloneDeep( hypre_IntArray *x )
+nalu_hypre_IntArray *
+nalu_hypre_IntArrayCloneDeep( nalu_hypre_IntArray *x )
 {
-   return hypre_IntArrayCloneDeep_v2(x, hypre_IntArrayMemoryLocation(x));
+   return nalu_hypre_IntArrayCloneDeep_v2(x, nalu_hypre_IntArrayMemoryLocation(x));
 }
 
 /*--------------------------------------------------------------------------
- * hypre_IntArraySetConstantValues
+ * nalu_hypre_IntArraySetConstantValues
  *--------------------------------------------------------------------------*/
 
 #if defined(NALU_HYPRE_USING_GPU)
 NALU_HYPRE_Int
-hypre_IntArraySetConstantValuesDevice( hypre_IntArray *v,
+nalu_hypre_IntArraySetConstantValuesDevice( nalu_hypre_IntArray *v,
                                        NALU_HYPRE_Int       value )
 {
-   NALU_HYPRE_Int *array_data = hypre_IntArrayData(v);
-   NALU_HYPRE_Int  size       = hypre_IntArraySize(v);
+   NALU_HYPRE_Int *array_data = nalu_hypre_IntArrayData(v);
+   NALU_HYPRE_Int  size       = nalu_hypre_IntArraySize(v);
 
 #if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP) || defined(NALU_HYPRE_USING_SYCL)
    hypreDevice_IntFilln( array_data, size, value );
@@ -161,30 +161,30 @@ hypre_IntArraySetConstantValuesDevice( hypre_IntArray *v,
    }
 #endif
 
-   hypre_SyncComputeStream(hypre_handle());
+   nalu_hypre_SyncComputeStream(nalu_hypre_handle());
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 #endif
 
 NALU_HYPRE_Int
-hypre_IntArraySetConstantValues( hypre_IntArray *v,
+nalu_hypre_IntArraySetConstantValues( nalu_hypre_IntArray *v,
                                  NALU_HYPRE_Int       value )
 {
-   NALU_HYPRE_Int *array_data = hypre_IntArrayData(v);
-   NALU_HYPRE_Int  size       = hypre_IntArraySize(v);
+   NALU_HYPRE_Int *array_data = nalu_hypre_IntArrayData(v);
+   NALU_HYPRE_Int  size       = nalu_hypre_IntArraySize(v);
 
    if (size <= 0)
    {
-      return hypre_error_flag;
+      return nalu_hypre_error_flag;
    }
 
 #if defined(NALU_HYPRE_USING_GPU)
-   NALU_HYPRE_ExecutionPolicy exec = hypre_GetExecPolicy1(hypre_IntArrayMemoryLocation(v));
+   NALU_HYPRE_ExecutionPolicy exec = nalu_hypre_GetExecPolicy1(nalu_hypre_IntArrayMemoryLocation(v));
 
    if (exec == NALU_HYPRE_EXEC_DEVICE)
    {
-      hypre_IntArraySetConstantValuesDevice(v, value);
+      nalu_hypre_IntArraySetConstantValuesDevice(v, value);
    }
    else
 #endif
@@ -199,6 +199,6 @@ hypre_IntArraySetConstantValues( hypre_IntArray *v,
       }
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 

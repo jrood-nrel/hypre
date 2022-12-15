@@ -14,7 +14,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
-#include "_hypre_utilities.h"
+#include "_nalu_hypre_utilities.h"
 #include "NALU_HYPRE.h"
 #include "LLNL_FEI_Fei.h"
 
@@ -302,7 +302,7 @@ int LLNL_FEI_Elem_Block::loadElemRHS(int elemID, double *elemLoad)
          for ( iE = 0; iE < numElems_; iE++ ) sortedIDAux_[iE] = iE;
          LLNL_FEI_Fei::IntSort2(sortedIDs_, sortedIDAux_, 0, numElems_-1);
       }
-      currElem_ = hypre_BinarySearch(sortedIDs_,elemID,numElems_);
+      currElem_ = nalu_hypre_BinarySearch(sortedIDs_,elemID,numElems_);
    }
    if ( rhsVectors_ == NULL ) 
    {
@@ -971,7 +971,7 @@ int LLNL_FEI_Fei::loadComplete()
    for ( iB = 0; iB < numBlocks_; iB++ )
    {
       ierr = elemBlocks_[iB]->checkLoadComplete();
-      hypre_assert( !ierr );
+      nalu_hypre_assert( !ierr );
    }
 
    /* -----------------------------------------------------------------
@@ -1381,7 +1381,7 @@ int LLNL_FEI_Fei::getBlockNodeSolution(int blockID,int numNodes,
             {
                index = -1;
                if ( numLocalNodes_ > 0 )
-                  index = hypre_BinarySearch(nodeGlobalIDs_,nodeList[iN],                                                    numLocalNodes_);
+                  index = nalu_hypre_BinarySearch(nodeGlobalIDs_,nodeList[iN],                                                    numLocalNodes_);
                if ( index < 0 ) offset += numCRMult_;
             }
          }
@@ -1594,7 +1594,7 @@ void LLNL_FEI_Fei::buildGlobalMatrixVector()
          nodeID = CRNodeLists_[iD][iD2];
          index  = -1;
          if ( numLocalNodes_ > 0 )
-            index = hypre_BinarySearch(nodeGlobalIDs_,nodeID,numLocalNodes_);
+            index = nalu_hypre_BinarySearch(nodeGlobalIDs_,nodeID,numLocalNodes_);
          /* if CR nodes is in my local node collection */
          if ( index >= 0 )
          {
@@ -1613,7 +1613,7 @@ void LLNL_FEI_Fei::buildGlobalMatrixVector()
          {
             index = -1;
             if ( numExtNodes_ > 0 )
-               index = hypre_BinarySearch(&nodeGlobalIDs_[numLocalNodes_],
+               index = nalu_hypre_BinarySearch(&nodeGlobalIDs_[numLocalNodes_],
                                           nodeID, numExtNodes_);
             /* but if CR nodes is in my remote node collection */
             if ( index >= 0 )
@@ -1795,7 +1795,7 @@ void LLNL_FEI_Fei::buildGlobalMatrixVector()
       for ( iD2 = 0; iD2 < CRListLen_; iD2++ )
       {
          nodeID = CRNodeLists_[iD][iD2];
-         index = hypre_BinarySearch(nodeGlobalIDs_,nodeID,numLocalNodes_);
+         index = nalu_hypre_BinarySearch(nodeGlobalIDs_,nodeID,numLocalNodes_);
          if ( index >= 0 )
          {
             for ( iD3 = 0; iD3 < nodeDOF_; iD3++ )
@@ -1821,7 +1821,7 @@ void LLNL_FEI_Fei::buildGlobalMatrixVector()
                       mypid_);
                exit(1);
             }
-            index = hypre_BinarySearch(&nodeGlobalIDs_[numLocalNodes_],nodeID,
+            index = nalu_hypre_BinarySearch(&nodeGlobalIDs_[numLocalNodes_],nodeID,
                                        numExtNodes_);
             for ( iD3 = 0; iD3 < nodeDOF_; iD3++ )
             {
@@ -1928,7 +1928,7 @@ void LLNL_FEI_Fei::buildGlobalMatrixVector()
          nodeID = BCNodeIDs_[iN];
          index  = -1;
          if (numExtNodes_ > 0)
-            index = hypre_BinarySearch(&nodeGlobalIDs_[numLocalNodes_],nodeID,
+            index = nalu_hypre_BinarySearch(&nodeGlobalIDs_[numLocalNodes_],nodeID,
                                        numExtNodes_);
          if (index >= 0) 
             dvec[(numLocalNodes_+index)*nodeDOF_] = 1.0;
@@ -1984,7 +1984,7 @@ void LLNL_FEI_Fei::buildGlobalMatrixVector()
          nodeID = BCNodeIDs_[iN];
          index  = -1;
          if (numExtNodes_ > 0)
-            index = hypre_BinarySearch(&nodeGlobalIDs_[numLocalNodes_],nodeID,
+            index = nalu_hypre_BinarySearch(&nodeGlobalIDs_[numLocalNodes_],nodeID,
                                        numExtNodes_);
          if (index >= 0)
          {
@@ -2028,7 +2028,7 @@ void LLNL_FEI_Fei::buildGlobalMatrixVector()
       for ( iN = 0; iN < numBCNodes_; iN++ )
       {
          nodeID = BCNodeIDs_[iN];
-         index = hypre_BinarySearch(nodeGlobalIDs_,nodeID,numLocalNodes_);
+         index = nalu_hypre_BinarySearch(nodeGlobalIDs_,nodeID,numLocalNodes_);
          if (index >= 0) 
             dvec[index*nodeDOF_] = 1.0;
       }
@@ -2081,7 +2081,7 @@ void LLNL_FEI_Fei::buildGlobalMatrixVector()
       for ( iN = 0; iN < numBCNodes_; iN++ )
       {
          nodeID = BCNodeIDs_[iN];
-         index = hypre_BinarySearch(nodeGlobalIDs_,nodeID,numLocalNodes_);
+         index = nalu_hypre_BinarySearch(nodeGlobalIDs_,nodeID,numLocalNodes_);
          if (index >= 0) 
          {
             for (iD = index*nodeDOF_*3; iD < index*nodeDOF_*3+nodeDOF_; iD++)
@@ -2129,7 +2129,7 @@ void LLNL_FEI_Fei::buildGlobalMatrixVector()
       nodeID = BCNodeIDs_[iN];
       index  = -1;
       if (numLocalNodes_ > 0)
-         index = hypre_BinarySearch(nodeGlobalIDs_,nodeID,numLocalNodes_);
+         index = nalu_hypre_BinarySearch(nodeGlobalIDs_,nodeID,numLocalNodes_);
       if (index >= 0)
       {
          for (iD = index*nodeDOF_; iD < (index+1)*nodeDOF_; iD++)
@@ -2218,7 +2218,7 @@ void LLNL_FEI_Fei::buildGlobalMatrixVector()
                    mypid_);
             exit(1);
          }
-         index = hypre_BinarySearch(&nodeGlobalIDs_[numLocalNodes_],nodeID,
+         index = nalu_hypre_BinarySearch(&nodeGlobalIDs_[numLocalNodes_],nodeID,
                                     numExtNodes_);
          if (index < 0)
          {
@@ -3024,7 +3024,7 @@ void LLNL_FEI_Fei::findSharedNodeProcs(int *nodeIDs, int *nodeIDAux,
    {
       /* --- search for processor with lowest rank to be owner --- */
 
-      index = hypre_BinarySearch(nodeIDs,sharedNodeIDs_[iN],totalNNodes);
+      index = nalu_hypre_BinarySearch(nodeIDs,sharedNodeIDs_[iN],totalNNodes);
       sharedNodePInds[iN] = -1;
 #if 0
       /* Charles: 3/5/07 : sorted already, no need to do it again */
@@ -3135,7 +3135,7 @@ void LLNL_FEI_Fei::findSharedNodeOwners( int *sharedNodePInfo )
          pindex = sharedNodeProcs_[iN][iP];
          if ( pindex != mypid_ ) 
          {
-            sindex = hypre_BinarySearch(commProcs,pindex,nComm);
+            sindex = nalu_hypre_BinarySearch(commProcs,pindex,nComm);
             commLengs[sindex]++;
          } 
       } 
@@ -3158,7 +3158,7 @@ void LLNL_FEI_Fei::findSharedNodeOwners( int *sharedNodePInfo )
          pindex = sharedNodeProcs_[iN][iP];
          if ( pindex != mypid_ ) 
          {
-            sindex = hypre_BinarySearch(commProcs,pindex,nComm);
+            sindex = nalu_hypre_BinarySearch(commProcs,pindex,nComm);
             sbuffer[sindex][commLengs[sindex]++] = sharedNodePInfo[iN];
          } 
       } 
@@ -3187,7 +3187,7 @@ void LLNL_FEI_Fei::findSharedNodeOwners( int *sharedNodePInfo )
          pindex = sharedNodeProcs_[iN][iP];
          if ( pindex != mypid_ ) 
          {
-            sindex = hypre_BinarySearch(commProcs,pindex,nComm);
+            sindex = nalu_hypre_BinarySearch(commProcs,pindex,nComm);
             index = rbuffer[sindex][commLengs[sindex]++];
             if ( index < 0 ) 
                sharedNodeProcs_[iN][iP] = - sharedNodeProcs_[iN][iP] - 1;
@@ -3255,7 +3255,7 @@ void LLNL_FEI_Fei::setupCommPattern( int *sharedNodePInfo )
       nodeID = sharedNodeIDs_[iN];
       index  = -1;
       if ( numExtNodes_ > 0 )
-         index = hypre_BinarySearch(&(nodeGlobalIDs_[numLocalNodes_]),nodeID,
+         index = nalu_hypre_BinarySearch(&(nodeGlobalIDs_[numLocalNodes_]),nodeID,
                                     numExtNodes_);
       if ( index >= 0 )
       {
@@ -3265,7 +3265,7 @@ void LLNL_FEI_Fei::setupCommPattern( int *sharedNodePInfo )
       }
       else 
       {
-         index2 = hypre_BinarySearch(nodeGlobalIDs_,nodeID,numLocalNodes_);
+         index2 = nalu_hypre_BinarySearch(nodeGlobalIDs_,nodeID,numLocalNodes_);
          if ( index2 >= 0 ) sndrcvReg[iN] = 0; // send
          else               sndrcvReg[iN] = -1;
       }
@@ -3294,9 +3294,9 @@ void LLNL_FEI_Fei::setupCommPattern( int *sharedNodePInfo )
          if ( sndrcvReg[iN] == 1 ) 
          {
             nodeID = sharedNodeIDs_[iN];
-            index = hypre_BinarySearch(&(nodeGlobalIDs_[numLocalNodes_]),
+            index = nalu_hypre_BinarySearch(&(nodeGlobalIDs_[numLocalNodes_]),
                                        nodeID,numExtNodes_);
-            index = hypre_BinarySearch(recvProcs,ownerProcs[index],nRecv);
+            index = nalu_hypre_BinarySearch(recvProcs,ownerProcs[index],nRecv);
             recvLengs[index]++;
          }
       }
@@ -3350,7 +3350,7 @@ void LLNL_FEI_Fei::setupCommPattern( int *sharedNodePInfo )
                if ( pindex >= 0 && pindex != mypid_ )
                {
                   index = sharedNodeProcs_[iN][iP];
-                  index = hypre_BinarySearch(sendProcs,index,nSend);
+                  index = nalu_hypre_BinarySearch(sendProcs,index,nSend);
                   sendLengs[index]++;
                }
             }
@@ -3372,8 +3372,8 @@ void LLNL_FEI_Fei::setupCommPattern( int *sharedNodePInfo )
                pindex = sharedNodeProcs_[iN][iP];
                if ( pindex >= 0 && pindex != mypid_ )
                {
-                  index  = hypre_BinarySearch(sendProcs,pindex,nSend);
-                  index2 = hypre_BinarySearch(nodeGlobalIDs_,
+                  index  = nalu_hypre_BinarySearch(sendProcs,pindex,nSend);
+                  index2 = nalu_hypre_BinarySearch(nodeGlobalIDs_,
                                         sharedNodeIDs_[iN],numLocalNodes_);
                   sendBuf[tLengs[index]+sendLengs[index]] = nodeOffset + index2;
                   sendLengs[index]++;
@@ -3424,7 +3424,7 @@ void LLNL_FEI_Fei::setupCommPattern( int *sharedNodePInfo )
    for ( iP = 0; iP < nRecv; iP++ ) recvLengs[iP] = 0;
    for ( iN = 0; iN < numExtNodes_; iN++ )
    {
-      index = hypre_BinarySearch(recvProcs, ownerProcs[iN], nRecv);
+      index = nalu_hypre_BinarySearch(recvProcs, ownerProcs[iN], nRecv);
       iN2 = recvBuf[tLengs[index]+recvLengs[index]];
       nodeExtNewGlobalIDs_[iN] = iN2;
       recvBuf[tLengs[index]+recvLengs[index]] = iN + numLocalNodes_;

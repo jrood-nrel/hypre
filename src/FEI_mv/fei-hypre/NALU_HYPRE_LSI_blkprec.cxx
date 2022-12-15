@@ -44,7 +44,7 @@
 //------------------------------------------------------------------------------
 
 #include "NALU_HYPRE.h"
-#include "utilities/_hypre_utilities.h"
+#include "utilities/_nalu_hypre_utilities.h"
 #include "IJ_mv/NALU_HYPRE_IJ_mv.h"
 #include "parcsr_mv/NALU_HYPRE_parcsr_mv.h"
 #include "parcsr_ls/NALU_HYPRE_parcsr_ls.h"
@@ -73,10 +73,10 @@ extern "C" {
 //------------------------------------------------------------------------------
 
 extern "C" {
-   int hypre_BoomerAMGBuildCoarseOperator(hypre_ParCSRMatrix*,
-                                          hypre_ParCSRMatrix*,
-                                          hypre_ParCSRMatrix*,
-                                          hypre_ParCSRMatrix**);
+   int nalu_hypre_BoomerAMGBuildCoarseOperator(nalu_hypre_ParCSRMatrix*,
+                                          nalu_hypre_ParCSRMatrix*,
+                                          nalu_hypre_ParCSRMatrix*,
+                                          nalu_hypre_ParCSRMatrix**);
    int NALU_HYPRE_LSI_Search(int *, int, int);
 }
 
@@ -101,7 +101,7 @@ int NALU_HYPRE_LSI_BlockPrecondCreate(MPI_Comm mpi_comm, NALU_HYPRE_Solver *solv
 {
    (void) mpi_comm;
    NALU_HYPRE_LSI_BlockPrecond *cprecon = (NALU_HYPRE_LSI_BlockPrecond *)
-                                     hypre_CTAlloc(NALU_HYPRE_LSI_BlockPrecond, 1, NALU_HYPRE_MEMORY_HOST);
+                                     nalu_hypre_CTAlloc(NALU_HYPRE_LSI_BlockPrecond, 1, NALU_HYPRE_MEMORY_HOST);
    NALU_HYPRE_LSI_BlockP *precon = (NALU_HYPRE_LSI_BlockP *) new NALU_HYPRE_LSI_BlockP();
    cprecon->precon = (void *) precon;
    (*solver) = (NALU_HYPRE_Solver) cprecon;
@@ -1097,7 +1097,7 @@ int NALU_HYPRE_LSI_BlockP::setup(NALU_HYPRE_ParCSRMatrix Amat)
       newRow = MStartRow;
       for ( irow = AStart; irow <= AEnd; irow++ ) 
       {
-         searchInd = hypre_BinarySearch(P22LocalInds_, irow, P22Size_);
+         searchInd = nalu_hypre_BinarySearch(P22LocalInds_, irow, P22Size_);
          if ( searchInd < 0 )
          {
             if ( checkZeros ) dtemp = lumpedMassDiag_[irow-AStart];
@@ -1119,7 +1119,7 @@ int NALU_HYPRE_LSI_BlockP::setup(NALU_HYPRE_ParCSRMatrix Amat)
       NALU_HYPRE_IJMatrixAssemble(Mmat);
    }
    NALU_HYPRE_IJMatrixGetObject(Mmat, (void **) &Mmat_csr);
-   hypre_MatvecCommPkgCreate((hypre_ParCSRMatrix *) Mmat_csr);
+   nalu_hypre_MatvecCommPkgCreate((nalu_hypre_ParCSRMatrix *) Mmat_csr);
 
    //------------------------------------------------------------------
    // create Pressure Poisson matrix (S = C^T M^{-1} C)
@@ -1128,10 +1128,10 @@ int NALU_HYPRE_LSI_BlockP::setup(NALU_HYPRE_ParCSRMatrix Amat)
    if (outputLevel_ >= 1) printf("BlockPrecond setup: C^T M^{-1}C begins\n");
 
    NALU_HYPRE_IJMatrixGetObject(A12mat_, (void **) &Cmat_csr);
-   hypre_BoomerAMGBuildCoarseOperator((hypre_ParCSRMatrix *) Cmat_csr,
-                                      (hypre_ParCSRMatrix *) Mmat_csr,
-                                      (hypre_ParCSRMatrix *) Cmat_csr,
-                                      (hypre_ParCSRMatrix **) &Smat_csr);
+   nalu_hypre_BoomerAMGBuildCoarseOperator((nalu_hypre_ParCSRMatrix *) Cmat_csr,
+                                      (nalu_hypre_ParCSRMatrix *) Mmat_csr,
+                                      (nalu_hypre_ParCSRMatrix *) Cmat_csr,
+                                      (nalu_hypre_ParCSRMatrix **) &Smat_csr);
 
    if (outputLevel_ >= 1) printf("BlockPrecond setup: C^T M^{-1} C ends\n");
 
@@ -1181,7 +1181,7 @@ int NALU_HYPRE_LSI_BlockP::setup(NALU_HYPRE_ParCSRMatrix Amat)
          //for (j = 0; j < rowSize2; j++) newColInd[j+1] = colInd2[j];
          //==========================================
 #endif
-         hypre_qsort0(newColInd, 0, newRowSize-1);
+         nalu_hypre_qsort0(newColInd, 0, newRowSize-1);
          count = 0;
          for ( j = 1; j < newRowSize; j++ )
          {
@@ -1285,7 +1285,7 @@ int NALU_HYPRE_LSI_BlockP::setup(NALU_HYPRE_ParCSRMatrix Amat)
          //}
 #endif
 
-         hypre_qsort1(newColInd, newColVal, 0, newRowSize-1);
+         nalu_hypre_qsort1(newColInd, newColVal, 0, newRowSize-1);
          count = 0;
          for ( j = 1; j < newRowSize; j++ )
          {
@@ -1415,12 +1415,12 @@ int NALU_HYPRE_LSI_BlockP::solve(NALU_HYPRE_ParVector fvec, NALU_HYPRE_ParVector
 
    V1Start = AStart - P22Offsets_[mypid];
    V2Start = P22Offsets_[mypid];
-   fvals = hypre_VectorData(hypre_ParVectorLocalVector((hypre_ParVector*)fvec));
+   fvals = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector((nalu_hypre_ParVector*)fvec));
    V1Cnt   = V1Start;
    V2Cnt   = V2Start;
    for ( irow = AStart; irow < AEnd; irow++ ) 
    {
-      searchInd = hypre_BinarySearch( P22LocalInds_, irow, P22Size_);
+      searchInd = nalu_hypre_BinarySearch( P22LocalInds_, irow, P22Size_);
       if ( searchInd >= 0 )
       {
          ddata = fvals[irow-AStart];
@@ -1472,10 +1472,10 @@ int NALU_HYPRE_LSI_BlockP::solve(NALU_HYPRE_ParVector fvec, NALU_HYPRE_ParVector
 
    V1Cnt = V1Start;
    V2Cnt = V2Start;
-   xvals = hypre_VectorData(hypre_ParVectorLocalVector((hypre_ParVector*)xvec));
+   xvals = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector((nalu_hypre_ParVector*)xvec));
    for ( irow = AStart; irow < AEnd; irow++ ) 
    {
-      searchInd = hypre_BinarySearch( P22LocalInds_, irow, P22Size_);
+      searchInd = nalu_hypre_BinarySearch( P22LocalInds_, irow, P22Size_);
       if ( searchInd >= 0 )
       {
          NALU_HYPRE_IJVectorGetValues(X2vec_, 1, &V2Cnt, &xvals[irow-AStart]);
@@ -1900,14 +1900,14 @@ int NALU_HYPRE_LSI_BlockP::buildBlocks()
    for ( irow = AStartRow; irow < AStartRow+ANRows; irow++ ) 
    {
       NALU_HYPRE_ParCSRMatrixGetRow(Amat_, irow, &rowSize, &inds, &vals);
-      searchInd = hypre_BinarySearch(P22LocalInds_, irow, P22Size_);
+      searchInd = nalu_hypre_BinarySearch(P22LocalInds_, irow, P22Size_);
       if ( searchInd < 0 )   // A(1,1) or A(1,2) block
       {
          A11NewSize = A12NewSize = 0;
          for ( j = 0; j < rowSize; j++ ) 
          {
             index = inds[j];
-            searchInd = hypre_BinarySearch(P22GlobalInds_,index,P22GSize_);
+            searchInd = nalu_hypre_BinarySearch(P22GlobalInds_,index,P22GSize_);
             if (searchInd >= 0) A12NewSize++;
             else                A11NewSize++;
          }
@@ -1926,7 +1926,7 @@ int NALU_HYPRE_LSI_BlockP::buildBlocks()
          for ( j = 0; j < rowSize; j++ ) 
          {
             index = inds[j];
-            searchInd = hypre_BinarySearch(P22GlobalInds_,index,P22GSize_);
+            searchInd = nalu_hypre_BinarySearch(P22GlobalInds_,index,P22GSize_);
             if (searchInd >= 0) A22NewSize++;
          }
          A22RowLengs[A22RowCnt++] = A22NewSize;
@@ -1981,7 +1981,7 @@ int NALU_HYPRE_LSI_BlockP::buildBlocks()
    for ( irow = AStartRow; irow < AStartRow+ANRows; irow++ ) 
    {
       NALU_HYPRE_ParCSRMatrixGetRow(Amat_, irow, &rowSize, &inds, &vals);
-      searchInd = hypre_BinarySearch(P22LocalInds_, irow, P22Size_);
+      searchInd = nalu_hypre_BinarySearch(P22LocalInds_, irow, P22Size_);
       if ( searchInd < 0 )   // A(1,1) or A(1,2) block
       {
          A11NewSize = A12NewSize = 0;
@@ -2028,7 +2028,7 @@ int NALU_HYPRE_LSI_BlockP::buildBlocks()
          for ( j = 0; j < rowSize; j++ ) 
          {
             index = inds[j];
-            searchInd = hypre_BinarySearch(P22GlobalInds_,index,P22GSize_);
+            searchInd = nalu_hypre_BinarySearch(P22GlobalInds_,index,P22GSize_);
             if (searchInd >= 0) 
             {
                A22_inds[A22NewSize] = searchInd;
@@ -2061,15 +2061,15 @@ int NALU_HYPRE_LSI_BlockP::buildBlocks()
 
    NALU_HYPRE_IJMatrixAssemble(A11mat_);
    NALU_HYPRE_IJMatrixGetObject(A11mat_, (void **) &A11mat_csr);
-   hypre_MatvecCommPkgCreate((hypre_ParCSRMatrix *) A11mat_csr);
+   nalu_hypre_MatvecCommPkgCreate((nalu_hypre_ParCSRMatrix *) A11mat_csr);
    NALU_HYPRE_IJMatrixAssemble(A12mat_);
    NALU_HYPRE_IJMatrixGetObject(A12mat_, (void **) &A12mat_csr);
-   hypre_MatvecCommPkgCreate((hypre_ParCSRMatrix *) A12mat_csr);
+   nalu_hypre_MatvecCommPkgCreate((nalu_hypre_ParCSRMatrix *) A12mat_csr);
    if ( A22mat_ != NULL )
    {
       NALU_HYPRE_IJMatrixAssemble(A22mat_);
       NALU_HYPRE_IJMatrixGetObject(A22mat_, (void **) &A22mat_csr);
-      hypre_MatvecCommPkgCreate((hypre_ParCSRMatrix *) A22mat_csr);
+      nalu_hypre_MatvecCommPkgCreate((nalu_hypre_ParCSRMatrix *) A22mat_csr);
    }
    else A22mat_csr = NULL;
 
@@ -2163,10 +2163,10 @@ int NALU_HYPRE_LSI_BlockP::setupPrecon(NALU_HYPRE_Solver *precon, NALU_HYPRE_IJM
           NALU_HYPRE_BoomerAMGSetMeasureType(*precon, 1);
           NALU_HYPRE_BoomerAMGSetStrongThreshold(*precon,param_ptr.AMGThresh_);
           NALU_HYPRE_BoomerAMGSetNumFunctions(*precon, param_ptr.AMGSystemSize_);
-          nsweeps = hypre_CTAlloc(int,4,NALU_HYPRE_MEMORY_HOST);
+          nsweeps = nalu_hypre_CTAlloc(int,4,NALU_HYPRE_MEMORY_HOST);
           for ( i = 0; i < 4; i++ ) nsweeps[i] = param_ptr.AMGNSweeps_;
           NALU_HYPRE_BoomerAMGSetNumGridSweeps(*precon, nsweeps);
-          relaxType = hypre_CTAlloc(int,4,NALU_HYPRE_MEMORY_HOST);
+          relaxType = nalu_hypre_CTAlloc(int,4,NALU_HYPRE_MEMORY_HOST);
           for ( i = 0; i < 4; i++ ) relaxType[i] = param_ptr.AMGRelaxType_;
           NALU_HYPRE_BoomerAMGSetGridRelaxType(*precon, relaxType);
           //double relax_wt[25];
@@ -2184,8 +2184,8 @@ int NALU_HYPRE_LSI_BlockP::setupPrecon(NALU_HYPRE_Solver *precon, NALU_HYPRE_IJM
           break;
       case 5 :
           NALU_HYPRE_EuclidCreate( mpi_comm, precon );
-          targv = hypre_TAlloc(char*,  4 , NALU_HYPRE_MEMORY_HOST);
-          for ( i = 0; i < 4; i++ ) targv[i] = hypre_TAlloc(char, 50, NALU_HYPRE_MEMORY_HOST);
+          targv = nalu_hypre_TAlloc(char*,  4 , NALU_HYPRE_MEMORY_HOST);
+          for ( i = 0; i < 4; i++ ) targv[i] = nalu_hypre_TAlloc(char, 50, NALU_HYPRE_MEMORY_HOST);
           strcpy(targv[0], "-level");
           sprintf(targv[1], "%1d", param_ptr.EuclidNLevels_);
           strcpy(targv[2], "-sparseA");
@@ -2398,10 +2398,10 @@ int NALU_HYPRE_LSI_BlockP::setupSolver(NALU_HYPRE_Solver *solver, NALU_HYPRE_IJM
           NALU_HYPRE_BoomerAMGSetMeasureType(*solver, 1);
           NALU_HYPRE_BoomerAMGSetStrongThreshold(*solver,param_ptr.AMGThresh_);
           NALU_HYPRE_BoomerAMGSetNumFunctions(*solver, param_ptr.AMGSystemSize_);
-          nsweeps = hypre_CTAlloc(int,4,NALU_HYPRE_MEMORY_HOST);
+          nsweeps = nalu_hypre_CTAlloc(int,4,NALU_HYPRE_MEMORY_HOST);
           for ( i = 0; i < 4; i++ ) nsweeps[i] = param_ptr.AMGNSweeps_;
           NALU_HYPRE_BoomerAMGSetNumGridSweeps(*solver, nsweeps);
-          relaxType = hypre_CTAlloc(int,4,NALU_HYPRE_MEMORY_HOST);
+          relaxType = nalu_hypre_CTAlloc(int,4,NALU_HYPRE_MEMORY_HOST);
           for ( i = 0; i < 4; i++ ) relaxType[i] = param_ptr.AMGRelaxType_;
           NALU_HYPRE_BoomerAMGSetGridRelaxType(*solver, relaxType);
           //double relax_wt[25];
@@ -2460,8 +2460,8 @@ int NALU_HYPRE_LSI_BlockP::solveBDSolve(NALU_HYPRE_IJVector x1,NALU_HYPRE_IJVect
    else if ( A22Params_.SolverID_ == 3 )
       NALU_HYPRE_ParCSRDiagScale( A22Solver_, A22mat_csr, f2_csr, x2_csr );
    else if ( A22Params_.SolverID_ == 9 )
-      hypre_ParVectorAxpy((double) 1.0, (hypre_ParVector *) f2_csr, 
-                                        (hypre_ParVector *) x2_csr);
+      nalu_hypre_ParVectorAxpy((double) 1.0, (nalu_hypre_ParVector *) f2_csr, 
+                                        (nalu_hypre_ParVector *) x2_csr);
    else 
    {
       printf("NALU_HYPRE_LSI_BlockP ERROR : invalid A22 solver.\n");
@@ -2477,8 +2477,8 @@ int NALU_HYPRE_LSI_BlockP::solveBDSolve(NALU_HYPRE_IJVector x1,NALU_HYPRE_IJVect
    else if ( A11Params_.SolverID_ == 3 )
       NALU_HYPRE_ParCSRDiagScale( A11Solver_, A11mat_csr, f1_csr, x1_csr );
    else if ( A11Params_.SolverID_ == 9 )
-      hypre_ParVectorAxpy((double) 1.0, (hypre_ParVector *) f1_csr, 
-                                        (hypre_ParVector *) x1_csr);
+      nalu_hypre_ParVectorAxpy((double) 1.0, (nalu_hypre_ParVector *) f1_csr, 
+                                        (nalu_hypre_ParVector *) x1_csr);
    else
    {
       printf("NALU_HYPRE_LSI_BlockP ERROR : invalid A11 solver.\n");
@@ -2528,8 +2528,8 @@ int NALU_HYPRE_LSI_BlockP::solveBTSolve(NALU_HYPRE_IJVector x1,NALU_HYPRE_IJVect
    else if ( A22Params_.SolverID_ == 3 )
       NALU_HYPRE_ParCSRDiagScale( A22Solver_, A22mat_csr, f2_csr, x2_csr );
    else if ( A22Params_.SolverID_ == 9 )
-      hypre_ParVectorAxpy((double) 1.0, (hypre_ParVector *) f2_csr, 
-                                        (hypre_ParVector *) x2_csr);
+      nalu_hypre_ParVectorAxpy((double) 1.0, (nalu_hypre_ParVector *) f2_csr, 
+                                        (nalu_hypre_ParVector *) x2_csr);
    else
    {
       printf("NALU_HYPRE_LSI_BlockP ERROR : invalid A22 solver.\n");
@@ -2545,8 +2545,8 @@ int NALU_HYPRE_LSI_BlockP::solveBTSolve(NALU_HYPRE_IJVector x1,NALU_HYPRE_IJVect
    else if ( A11Params_.SolverID_ == 3 )
       NALU_HYPRE_ParCSRDiagScale( A11Solver_, A11mat_csr, f1_csr, x1_csr );
    else if ( A11Params_.SolverID_ == 9 )
-      hypre_ParVectorAxpy((double) 1.0, (hypre_ParVector *) f1_csr, 
-                                        (hypre_ParVector *) x1_csr);
+      nalu_hypre_ParVectorAxpy((double) 1.0, (nalu_hypre_ParVector *) f1_csr, 
+                                        (nalu_hypre_ParVector *) x1_csr);
    else
    {
       printf("NALU_HYPRE_LSI_BlockP ERROR : invalid A11 solver.\n");
@@ -2596,8 +2596,8 @@ int NALU_HYPRE_LSI_BlockP::solveBLUSolve(NALU_HYPRE_IJVector x1,NALU_HYPRE_IJVec
    else if ( A11Params_.SolverID_ == 3 )
       NALU_HYPRE_ParCSRDiagScale( A11Solver_, A11mat_csr, f1_csr, x1_csr );
    else if ( A11Params_.SolverID_ == 9 )
-      hypre_ParVectorAxpy((double) 1.0, (hypre_ParVector *) f1_csr, 
-                                        (hypre_ParVector *) x1_csr);
+      nalu_hypre_ParVectorAxpy((double) 1.0, (nalu_hypre_ParVector *) f1_csr, 
+                                        (nalu_hypre_ParVector *) x1_csr);
    else
    {
       printf("NALU_HYPRE_LSI_BlockP ERROR : invalid A11 solver.\n");
@@ -2613,8 +2613,8 @@ int NALU_HYPRE_LSI_BlockP::solveBLUSolve(NALU_HYPRE_IJVector x1,NALU_HYPRE_IJVec
    else if ( A22Params_.SolverID_ == 3 )
       NALU_HYPRE_ParCSRDiagScale( A22Solver_, A22mat_csr, f2_csr, x2_csr );
    else if ( A22Params_.SolverID_ == 9 )
-      hypre_ParVectorAxpy((double) 1.0, (hypre_ParVector *) f2_csr, 
-                                        (hypre_ParVector *) x2_csr);
+      nalu_hypre_ParVectorAxpy((double) 1.0, (nalu_hypre_ParVector *) f2_csr, 
+                                        (nalu_hypre_ParVector *) x2_csr);
    else
    {
       printf("NALU_HYPRE_LSI_BlockP ERROR : invalid A22 solver.\n");
@@ -2630,15 +2630,15 @@ int NALU_HYPRE_LSI_BlockP::solveBLUSolve(NALU_HYPRE_IJVector x1,NALU_HYPRE_IJVec
    else if ( A11Params_.SolverID_ == 3 )
       NALU_HYPRE_ParCSRDiagScale( A11Solver_, A11mat_csr, f1_csr, x1_csr );
    else if ( A11Params_.SolverID_ == 9 )
-      hypre_ParVectorAxpy((double) 1.0, (hypre_ParVector *) f1_csr, 
-                                        (hypre_ParVector *) x1_csr);
+      nalu_hypre_ParVectorAxpy((double) 1.0, (nalu_hypre_ParVector *) f1_csr, 
+                                        (nalu_hypre_ParVector *) x1_csr);
    else
    {
       printf("NALU_HYPRE_LSI_BlockP ERROR : invalid A11 solver.\n");
       exit(1);
    }
-   hypre_ParVectorAxpy((double) 1.0, (hypre_ParVector *) y1_csr, 
-                                     (hypre_ParVector *) x1_csr);
+   nalu_hypre_ParVectorAxpy((double) 1.0, (nalu_hypre_ParVector *) y1_csr, 
+                                     (nalu_hypre_ParVector *) x1_csr);
    return 0;
 }
 

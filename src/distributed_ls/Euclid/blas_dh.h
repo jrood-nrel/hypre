@@ -10,7 +10,7 @@
 
 /* notes: 1. all calls are threaded with OpenMP.
           2. for mpi MatVec, see "Mat_dhMatvec()" in Mat_dh.h
-          3. MPI calls use hypre_MPI_COMM_WORLD for the communicator,
+          3. MPI calls use nalu_hypre_MPI_COMM_WORLD for the communicator,
              where applicable.
 */
 

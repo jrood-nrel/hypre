@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_Euclid.h"
+#include "_nalu_hypre_Euclid.h"
 /* #include "Numbering_dh.h" */
 /* #include "Mat_dh.h" */
 /* #include "Hash_i_dh.h" */
@@ -108,9 +108,9 @@ void Numbering_dhSetup(Numbering_dh numb, Mat_dh mat)
          */
         /* RL : why ``m+num_ext'' instead of ``num_ext+1'' ??? */
         if (m+num_ext >= size) {
-          NALU_HYPRE_Int newSize = hypre_max(m+num_ext+1, size*1.5);  /* heuristic */
+          NALU_HYPRE_Int newSize = nalu_hypre_max(m+num_ext+1, size*1.5);  /* heuristic */
           NALU_HYPRE_Int *tmp = (NALU_HYPRE_Int*)MALLOC_DH(newSize*sizeof(NALU_HYPRE_Int)); CHECK_V_ERROR;
-          hypre_TMemcpy(tmp,  idx_ext, size, size, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_HOST);
+          nalu_hypre_TMemcpy(tmp,  idx_ext, size, size, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_HOST);
           FREE_DH(idx_ext); CHECK_V_ERROR;
           size = numb->size = newSize;
           numb->idx_ext = idx_ext = tmp;
@@ -167,7 +167,7 @@ void Numbering_dhGlobalToLocal(Numbering_dh numb, NALU_HYPRE_Int len,
     } else {
       data = Hash_i_dhLookup(global_to_local, idxGlobal); CHECK_V_ERROR;
       if (data == -1) {
-        hypre_sprintf(msgBuf_dh, "global index %i not found in map\n", idxGlobal);
+        nalu_hypre_sprintf(msgBuf_dh, "global index %i not found in map\n", idxGlobal);
         SET_V_ERROR(msgBuf_dh);
       } else {
         local[i] = data;

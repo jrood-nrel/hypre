@@ -5,8 +5,8 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#ifndef _cfei_hypre_h_
-#define _cfei_hypre_h_
+#ifndef _cfei_nalu_hypre_h_
+#define _cfei_nalu_hypre_h_
 
 /*
    This header defines the prototype for the HYPRE-specific functions that

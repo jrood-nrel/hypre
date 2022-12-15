@@ -10,8 +10,8 @@
 #include <stdio.h>
 #include <math.h>
 
-#include "_hypre_parcsr_ls.h"
-#include "_hypre_parcsr_mv.h"
+#include "_nalu_hypre_parcsr_ls.h"
+#include "_nalu_hypre_parcsr_mv.h"
 #include "mli_solver_amg.h"
 
 /******************************************************************************
@@ -43,10 +43,10 @@ int MLI_Solver_AMG::setup(MLI_Matrix *mat)
 {
    int                i, *nSweeps, *rTypes;
    double             *relaxWt, *relaxOmega;
-   hypre_ParCSRMatrix *hypreA;
+   nalu_hypre_ParCSRMatrix *hypreA;
 
    Amat_  = mat;
-   hypreA = (hypre_ParCSRMatrix *) Amat_->getMatrix();
+   hypreA = (nalu_hypre_ParCSRMatrix *) Amat_->getMatrix();
    NALU_HYPRE_BoomerAMGCreate(&precond_);
    NALU_HYPRE_BoomerAMGSetMaxIter(precond_, 1);
    NALU_HYPRE_BoomerAMGSetCycleType(precond_, 1);
@@ -56,15 +56,15 @@ int MLI_Solver_AMG::setup(MLI_Matrix *mat)
    NALU_HYPRE_BoomerAMGSetPrintLevel(precond_, 1);
    NALU_HYPRE_BoomerAMGSetCoarsenType(precond_, 0);
    NALU_HYPRE_BoomerAMGSetStrongThreshold(precond_, 0.8);
-   nSweeps = hypre_TAlloc(int, 4 , NALU_HYPRE_MEMORY_HOST);
+   nSweeps = nalu_hypre_TAlloc(int, 4 , NALU_HYPRE_MEMORY_HOST);
    for (i = 0; i < 4; i++) nSweeps[i] = 1;
    NALU_HYPRE_BoomerAMGSetNumGridSweeps(precond_, nSweeps);
-   rTypes = hypre_TAlloc(int, 4 , NALU_HYPRE_MEMORY_HOST);
+   rTypes = nalu_hypre_TAlloc(int, 4 , NALU_HYPRE_MEMORY_HOST);
    for (i = 0; i < 4; i++) rTypes[i] = 6;
-   relaxWt = hypre_TAlloc(double, 25 , NALU_HYPRE_MEMORY_HOST);
+   relaxWt = nalu_hypre_TAlloc(double, 25 , NALU_HYPRE_MEMORY_HOST);
    for (i = 0; i < 25; i++) relaxWt[i] = 1.0;
    NALU_HYPRE_BoomerAMGSetRelaxWeight(precond_, relaxWt);
-   relaxOmega = hypre_TAlloc(double, 25 , NALU_HYPRE_MEMORY_HOST);
+   relaxOmega = nalu_hypre_TAlloc(double, 25 , NALU_HYPRE_MEMORY_HOST);
    for (i = 0; i < 25; i++) relaxOmega[i] = 1.0;
    NALU_HYPRE_BoomerAMGSetOmega(precond_, relaxOmega);
    NALU_HYPRE_BoomerAMGSetup(precond_, (NALU_HYPRE_ParCSRMatrix) hypreA, 

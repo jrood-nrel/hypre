@@ -20,8 +20,8 @@
 #include <math.h>
 
 #include "NALU_HYPRE.h"
-#include "utilities/_hypre_utilities.h"
-#include "parcsr_mv/_hypre_parcsr_mv.h"
+#include "utilities/_nalu_hypre_utilities.h"
+#include "parcsr_mv/_nalu_hypre_parcsr_mv.h"
 
 #ifdef __cplusplus
 extern "C"

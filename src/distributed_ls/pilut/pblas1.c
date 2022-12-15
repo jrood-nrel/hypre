@@ -26,13 +26,13 @@
 * This function computes the 2 norm of a vector. The result is returned
 * at all the processors
 **************************************************************************/
-NALU_HYPRE_Real hypre_p_dnrm2(DataDistType *ddist, NALU_HYPRE_Real *x, hypre_PilutSolverGlobals *globals)
+NALU_HYPRE_Real nalu_hypre_p_dnrm2(DataDistType *ddist, NALU_HYPRE_Real *x, nalu_hypre_PilutSolverGlobals *globals)
 {
   NALU_HYPRE_Int incx=1;
   NALU_HYPRE_Real sum;
 
   sum = SNRM2(&(ddist->ddist_lnrows), x, &incx);
-  return sqrt(hypre_GlobalSESumDouble(sum*sum, pilut_comm));
+  return sqrt(nalu_hypre_GlobalSESumDouble(sum*sum, pilut_comm));
 }
 
 
@@ -40,12 +40,12 @@ NALU_HYPRE_Real hypre_p_dnrm2(DataDistType *ddist, NALU_HYPRE_Real *x, hypre_Pil
 * This function computes the dot product of 2 vectors. 
 * The result is returned at all the processors
 **************************************************************************/
-NALU_HYPRE_Real hypre_p_ddot(DataDistType *ddist, NALU_HYPRE_Real *x, NALU_HYPRE_Real *y,
-              hypre_PilutSolverGlobals *globals)
+NALU_HYPRE_Real nalu_hypre_p_ddot(DataDistType *ddist, NALU_HYPRE_Real *x, NALU_HYPRE_Real *y,
+              nalu_hypre_PilutSolverGlobals *globals)
 {
   NALU_HYPRE_Int incx=1;
 
-  return hypre_GlobalSESumDouble(SDOT(&(ddist->ddist_lnrows), x, &incx, y, &incx), 
+  return nalu_hypre_GlobalSESumDouble(SDOT(&(ddist->ddist_lnrows), x, &incx, y, &incx), 
          pilut_comm );
 }
 
@@ -53,7 +53,7 @@ NALU_HYPRE_Real hypre_p_ddot(DataDistType *ddist, NALU_HYPRE_Real *x, NALU_HYPRE
 /*************************************************************************
 * This function performs y = alpha*x, where alpha resides on pe 0
 **************************************************************************/
-void hypre_p_daxy(DataDistType *ddist, NALU_HYPRE_Real alpha, NALU_HYPRE_Real *x, NALU_HYPRE_Real *y)
+void nalu_hypre_p_daxy(DataDistType *ddist, NALU_HYPRE_Real alpha, NALU_HYPRE_Real *x, NALU_HYPRE_Real *y)
 {
   NALU_HYPRE_Int i, local_lnrows=ddist->ddist_lnrows;
 
@@ -65,7 +65,7 @@ void hypre_p_daxy(DataDistType *ddist, NALU_HYPRE_Real alpha, NALU_HYPRE_Real *x
 /*************************************************************************
 * This function performs y = alpha*x+y, where alpha resides on pe 0
 **************************************************************************/
-void hypre_p_daxpy(DataDistType *ddist, NALU_HYPRE_Real alpha, NALU_HYPRE_Real *x, NALU_HYPRE_Real *y)
+void nalu_hypre_p_daxpy(DataDistType *ddist, NALU_HYPRE_Real alpha, NALU_HYPRE_Real *x, NALU_HYPRE_Real *y)
 {
   NALU_HYPRE_Int i, local_lnrows=ddist->ddist_lnrows;
 
@@ -78,7 +78,7 @@ void hypre_p_daxpy(DataDistType *ddist, NALU_HYPRE_Real alpha, NALU_HYPRE_Real *
 /*************************************************************************
 * This function performs z = alpha*x+beta*y, where alpha resides on pe 0
 **************************************************************************/
-void hypre_p_daxbyz(DataDistType *ddist, NALU_HYPRE_Real alpha, NALU_HYPRE_Real *x, NALU_HYPRE_Real beta, 
+void nalu_hypre_p_daxbyz(DataDistType *ddist, NALU_HYPRE_Real alpha, NALU_HYPRE_Real *x, NALU_HYPRE_Real beta, 
               NALU_HYPRE_Real *y, NALU_HYPRE_Real *z)
 {
   NALU_HYPRE_Int i, local_lnrows=ddist->ddist_lnrows;
@@ -90,22 +90,22 @@ void hypre_p_daxbyz(DataDistType *ddist, NALU_HYPRE_Real alpha, NALU_HYPRE_Real 
 /*************************************************************************
 * This function prints a vector
 **************************************************************************/
-NALU_HYPRE_Int hypre_p_vprintf(DataDistType *ddist, NALU_HYPRE_Real *x,
-                    hypre_PilutSolverGlobals *globals )
+NALU_HYPRE_Int nalu_hypre_p_vprintf(DataDistType *ddist, NALU_HYPRE_Real *x,
+                    nalu_hypre_PilutSolverGlobals *globals )
 {
   NALU_HYPRE_Int pe, i;
 
   for (pe=0; pe<npes; pe++) {
     if (mype == pe) {
       for (i=0; i<ddist->ddist_lnrows; i++)
-        hypre_printf("%d:%f, ", ddist->ddist_rowdist[mype]+i, x[i]);
+        nalu_hypre_printf("%d:%f, ", ddist->ddist_rowdist[mype]+i, x[i]);
       if (pe == npes-1)
-        hypre_printf("\n");
+        nalu_hypre_printf("\n");
     }
-    hypre_MPI_Barrier( pilut_comm );
+    nalu_hypre_MPI_Barrier( pilut_comm );
   }
   fflush(stdout);
-  hypre_MPI_Barrier( pilut_comm );
+  nalu_hypre_MPI_Barrier( pilut_comm );
 
   return 0;
 }

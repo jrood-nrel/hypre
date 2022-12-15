@@ -5,10 +5,10 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#ifndef hypre_ParMGR_DATA_HEADER
-#define hypre_ParMGR_DATA_HEADER
+#ifndef nalu_hypre_ParMGR_DATA_HEADER
+#define nalu_hypre_ParMGR_DATA_HEADER
 /*--------------------------------------------------------------------------
- * hypre_ParMGRData
+ * nalu_hypre_ParMGRData
  *--------------------------------------------------------------------------*/
 typedef struct
 {
@@ -25,23 +25,23 @@ typedef struct
 
    //general data
    NALU_HYPRE_Int max_num_coarse_levels;
-   hypre_ParCSRMatrix **A_array;
+   nalu_hypre_ParCSRMatrix **A_array;
 #if defined(NALU_HYPRE_USING_GPU)
-   hypre_ParCSRMatrix **P_FF_array;
+   nalu_hypre_ParCSRMatrix **P_FF_array;
 #endif
-   hypre_ParCSRMatrix **P_array;
-   hypre_ParCSRMatrix **RT_array;
-   hypre_ParCSRMatrix *RAP;
-   hypre_IntArray    **CF_marker_array;
+   nalu_hypre_ParCSRMatrix **P_array;
+   nalu_hypre_ParCSRMatrix **RT_array;
+   nalu_hypre_ParCSRMatrix *RAP;
+   nalu_hypre_IntArray    **CF_marker_array;
    NALU_HYPRE_Int **coarse_indices_lvls;
-   hypre_ParVector    **F_array;
-   hypre_ParVector    **U_array;
-   hypre_ParVector    *residual;
+   nalu_hypre_ParVector    **F_array;
+   nalu_hypre_ParVector    **U_array;
+   nalu_hypre_ParVector    *residual;
    NALU_HYPRE_Real    *rel_res_norms;
 
-   hypre_ParCSRMatrix  **A_ff_array;
-   hypre_ParVector    **F_fine_array;
-   hypre_ParVector    **U_fine_array;
+   nalu_hypre_ParCSRMatrix  **A_ff_array;
+   nalu_hypre_ParVector    **F_fine_array;
+   nalu_hypre_ParVector    **U_fine_array;
    NALU_HYPRE_Solver **aff_solver;
    NALU_HYPRE_Int   (*fine_grid_solver_setup)(void*, void*, void*, void*);
    NALU_HYPRE_Int   (*fine_grid_solver_solve)(void*, void*, void*, void*);
@@ -58,7 +58,7 @@ typedef struct
    NALU_HYPRE_Int    P_max_elmts;
    NALU_HYPRE_Int    num_iterations;
 
-   hypre_Vector **l1_norms;
+   nalu_hypre_Vector **l1_norms;
    NALU_HYPRE_Real    final_rel_residual_norm;
    NALU_HYPRE_Real    tol;
    NALU_HYPRE_Real    relax_weight;
@@ -85,10 +85,10 @@ typedef struct
    NALU_HYPRE_Real    omega;
 
    /* temp vectors for solve phase */
-   hypre_ParVector   *Vtemp;
-   hypre_ParVector   *Ztemp;
-   hypre_ParVector   *Utemp;
-   hypre_ParVector   *Ftemp;
+   nalu_hypre_ParVector   *Vtemp;
+   nalu_hypre_ParVector   *Ztemp;
+   nalu_hypre_ParVector   *Utemp;
+   nalu_hypre_ParVector   *Ftemp;
 
    NALU_HYPRE_Real          **level_diaginv;
    NALU_HYPRE_Real          **frelax_diaginv;
@@ -121,9 +121,9 @@ typedef struct
    NALU_HYPRE_Int *mgr_coarse_grid_method;
 
    /* V-cycle F relaxation method */
-   hypre_ParAMGData    **FrelaxVcycleData;
-   hypre_ParVector   *VcycleRelaxVtemp;
-   hypre_ParVector   *VcycleRelaxZtemp;
+   nalu_hypre_ParAMGData    **FrelaxVcycleData;
+   nalu_hypre_ParVector   *VcycleRelaxVtemp;
+   nalu_hypre_ParVector   *VcycleRelaxZtemp;
 
    NALU_HYPRE_Int   max_local_lvls;
 
@@ -143,9 +143,9 @@ typedef struct
    NALU_HYPRE_Real  cg_convergence_factor;
 
    /* Data for Gaussian elimination F-relaxation */
-   hypre_ParAMGData    **GSElimData;
+   nalu_hypre_ParAMGData    **GSElimData;
 
-} hypre_ParMGRData;
+} nalu_hypre_ParMGRData;
 
 // F-relaxation struct for future refactoring of F-relaxation in MGR
 typedef struct
@@ -153,8 +153,8 @@ typedef struct
    NALU_HYPRE_Int relax_type;
    NALU_HYPRE_Int relax_nsweeps;
 
-   hypre_ParCSRMatrix *A;
-   hypre_ParVector    *b;
+   nalu_hypre_ParCSRMatrix *A;
+   nalu_hypre_ParVector    *b;
 
    // for hypre's smoother options
    NALU_HYPRE_Int *CF_marker;
@@ -165,7 +165,7 @@ typedef struct
    // for ILU option
    NALU_HYPRE_Solver frelax_solver;
 
-} hypre_MGRRelaxData;
+} nalu_hypre_MGRRelaxData;
 
 
 #define FMRK  -1

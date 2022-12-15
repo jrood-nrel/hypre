@@ -7,77 +7,77 @@
 
 /******************************************************************************
  *
- * Member functions for hypre_Box class:
+ * Member functions for nalu_hypre_Box class:
  *   Basic class functions.
  *
  *****************************************************************************/
 
-#include "_hypre_struct_mv.h"
+#include "_nalu_hypre_struct_mv.h"
 
 /*==========================================================================
- * Member functions: hypre_Index
+ * Member functions: nalu_hypre_Index
  *==========================================================================*/
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_SetIndex( hypre_Index  index,
+nalu_hypre_SetIndex( nalu_hypre_Index  index,
                 NALU_HYPRE_Int    val )
 {
    NALU_HYPRE_Int d;
 
    for (d = 0; d < NALU_HYPRE_MAXDIM; d++)
    {
-      hypre_IndexD(index, d) = val;
+      nalu_hypre_IndexD(index, d) = val;
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_CopyIndex( hypre_Index  in_index,
-                 hypre_Index  out_index )
+nalu_hypre_CopyIndex( nalu_hypre_Index  in_index,
+                 nalu_hypre_Index  out_index )
 {
    NALU_HYPRE_Int d;
 
    for (d = 0; d < NALU_HYPRE_MAXDIM; d++)
    {
-      hypre_IndexD(out_index, d) = hypre_IndexD(in_index, d);
+      nalu_hypre_IndexD(out_index, d) = nalu_hypre_IndexD(in_index, d);
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_CopyToCleanIndex( hypre_Index  in_index,
+nalu_hypre_CopyToCleanIndex( nalu_hypre_Index  in_index,
                         NALU_HYPRE_Int    ndim,
-                        hypre_Index  out_index )
+                        nalu_hypre_Index  out_index )
 {
    NALU_HYPRE_Int d;
    for (d = 0; d < ndim; d++)
    {
-      hypre_IndexD(out_index, d) = hypre_IndexD(in_index, d);
+      nalu_hypre_IndexD(out_index, d) = nalu_hypre_IndexD(in_index, d);
    }
    for (d = ndim; d < NALU_HYPRE_MAXDIM; d++)
    {
-      hypre_IndexD(out_index, d) = 0;
+      nalu_hypre_IndexD(out_index, d) = 0;
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_IndexEqual( hypre_Index  index,
+nalu_hypre_IndexEqual( nalu_hypre_Index  index,
                   NALU_HYPRE_Int    val,
                   NALU_HYPRE_Int    ndim )
 {
@@ -86,7 +86,7 @@ hypre_IndexEqual( hypre_Index  index,
    equal = 1;
    for (d = 0; d < ndim; d++)
    {
-      if (hypre_IndexD(index, d) != val)
+      if (nalu_hypre_IndexD(index, d) != val)
       {
          equal = 0;
          break;
@@ -100,17 +100,17 @@ hypre_IndexEqual( hypre_Index  index,
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_IndexMin( hypre_Index  index,
+nalu_hypre_IndexMin( nalu_hypre_Index  index,
                 NALU_HYPRE_Int    ndim )
 {
    NALU_HYPRE_Int d, min;
 
-   min = hypre_IndexD(index, 0);
+   min = nalu_hypre_IndexD(index, 0);
    for (d = 1; d < ndim; d++)
    {
-      if (hypre_IndexD(index, d) < min)
+      if (nalu_hypre_IndexD(index, d) < min)
       {
-         min = hypre_IndexD(index, d);
+         min = nalu_hypre_IndexD(index, d);
       }
    }
 
@@ -121,17 +121,17 @@ hypre_IndexMin( hypre_Index  index,
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_IndexMax( hypre_Index  index,
+nalu_hypre_IndexMax( nalu_hypre_Index  index,
                 NALU_HYPRE_Int    ndim )
 {
    NALU_HYPRE_Int d, max;
 
-   max = hypre_IndexD(index, 0);
+   max = nalu_hypre_IndexD(index, 0);
    for (d = 1; d < ndim; d++)
    {
-      if (hypre_IndexD(index, d) < max)
+      if (nalu_hypre_IndexD(index, d) < max)
       {
-         max = hypre_IndexD(index, d);
+         max = nalu_hypre_IndexD(index, d);
       }
    }
 
@@ -142,46 +142,46 @@ hypre_IndexMax( hypre_Index  index,
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_AddIndexes( hypre_Index  index1,
-                  hypre_Index  index2,
+nalu_hypre_AddIndexes( nalu_hypre_Index  index1,
+                  nalu_hypre_Index  index2,
                   NALU_HYPRE_Int    ndim,
-                  hypre_Index  result )
+                  nalu_hypre_Index  result )
 {
    NALU_HYPRE_Int d;
 
    for (d = 0; d < ndim; d++)
    {
-      hypre_IndexD(result, d) = hypre_IndexD(index1, d) + hypre_IndexD(index2, d);
+      nalu_hypre_IndexD(result, d) = nalu_hypre_IndexD(index1, d) + nalu_hypre_IndexD(index2, d);
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_SubtractIndexes( hypre_Index  index1,
-                       hypre_Index  index2,
+nalu_hypre_SubtractIndexes( nalu_hypre_Index  index1,
+                       nalu_hypre_Index  index2,
                        NALU_HYPRE_Int    ndim,
-                       hypre_Index  result )
+                       nalu_hypre_Index  result )
 {
    NALU_HYPRE_Int d;
 
    for (d = 0; d < ndim; d++)
    {
-      hypre_IndexD(result, d) = hypre_IndexD(index1, d) - hypre_IndexD(index2, d);
+      nalu_hypre_IndexD(result, d) = nalu_hypre_IndexD(index1, d) - nalu_hypre_IndexD(index2, d);
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_IndexesEqual( hypre_Index  index1,
-                    hypre_Index  index2,
+nalu_hypre_IndexesEqual( nalu_hypre_Index  index1,
+                    nalu_hypre_Index  index2,
                     NALU_HYPRE_Int    ndim )
 {
    NALU_HYPRE_Int d, equal;
@@ -189,7 +189,7 @@ hypre_IndexesEqual( hypre_Index  index1,
    equal = 1;
    for (d = 0; d < ndim; d++)
    {
-      if (hypre_IndexD(index1, d) != hypre_IndexD(index2, d))
+      if (nalu_hypre_IndexD(index1, d) != nalu_hypre_IndexD(index2, d))
       {
          equal = 0;
          break;
@@ -203,61 +203,61 @@ hypre_IndexesEqual( hypre_Index  index1,
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_IndexPrint( FILE        *file,
+nalu_hypre_IndexPrint( FILE        *file,
                   NALU_HYPRE_Int    ndim,
-                  hypre_Index  index )
+                  nalu_hypre_Index  index )
 {
    NALU_HYPRE_Int d;
 
-   hypre_fprintf(file, "[%d", hypre_IndexD(index, 0));
+   nalu_hypre_fprintf(file, "[%d", nalu_hypre_IndexD(index, 0));
    for (d = 1; d < ndim; d++)
    {
-      hypre_fprintf(file, " %d", hypre_IndexD(index, d));
+      nalu_hypre_fprintf(file, " %d", nalu_hypre_IndexD(index, d));
    }
-   hypre_fprintf(file, "]");
+   nalu_hypre_fprintf(file, "]");
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_IndexRead( FILE        *file,
+nalu_hypre_IndexRead( FILE        *file,
                  NALU_HYPRE_Int    ndim,
-                 hypre_Index  index )
+                 nalu_hypre_Index  index )
 {
    NALU_HYPRE_Int d;
 
-   hypre_fscanf(file, "[%d", &hypre_IndexD(index, 0));
+   nalu_hypre_fscanf(file, "[%d", &nalu_hypre_IndexD(index, 0));
    for (d = 1; d < ndim; d++)
    {
-      hypre_fscanf(file, " %d", &hypre_IndexD(index, d));
+      nalu_hypre_fscanf(file, " %d", &nalu_hypre_IndexD(index, d));
    }
-   hypre_fscanf(file, "]");
+   nalu_hypre_fscanf(file, "]");
 
    for (d = ndim; d < NALU_HYPRE_MAXDIM; d++)
    {
-      hypre_IndexD(index, d) = 0;
+      nalu_hypre_IndexD(index, d) = 0;
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*==========================================================================
- * Member functions: hypre_Box
+ * Member functions: nalu_hypre_Box
  *==========================================================================*/
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-hypre_Box *
-hypre_BoxCreate( NALU_HYPRE_Int  ndim )
+nalu_hypre_Box *
+nalu_hypre_BoxCreate( NALU_HYPRE_Int  ndim )
 {
-   hypre_Box *box;
+   nalu_hypre_Box *box;
 
-   box = hypre_CTAlloc(hypre_Box,  1, NALU_HYPRE_MEMORY_HOST);
-   hypre_BoxNDim(box) = ndim;
+   box = nalu_hypre_CTAlloc(nalu_hypre_Box,  1, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_BoxNDim(box) = ndim;
 
    return box;
 }
@@ -266,14 +266,14 @@ hypre_BoxCreate( NALU_HYPRE_Int  ndim )
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_BoxDestroy( hypre_Box *box )
+nalu_hypre_BoxDestroy( nalu_hypre_Box *box )
 {
    if (box)
    {
-      hypre_TFree(box, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(box, NALU_HYPRE_MEMORY_HOST);
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
@@ -281,53 +281,53 @@ hypre_BoxDestroy( hypre_Box *box )
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_BoxInit( hypre_Box *box,
+nalu_hypre_BoxInit( nalu_hypre_Box *box,
                NALU_HYPRE_Int  ndim )
 {
-   hypre_BoxNDim(box) = ndim;
+   nalu_hypre_BoxNDim(box) = ndim;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_BoxSetExtents( hypre_Box  *box,
-                     hypre_Index imin,
-                     hypre_Index imax )
+nalu_hypre_BoxSetExtents( nalu_hypre_Box  *box,
+                     nalu_hypre_Index imin,
+                     nalu_hypre_Index imax )
 {
-   hypre_CopyIndex(imin, hypre_BoxIMin(box));
-   hypre_CopyIndex(imax, hypre_BoxIMax(box));
+   nalu_hypre_CopyIndex(imin, nalu_hypre_BoxIMin(box));
+   nalu_hypre_CopyIndex(imax, nalu_hypre_BoxIMax(box));
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_CopyBox( hypre_Box  *box1,
-               hypre_Box  *box2 )
+nalu_hypre_CopyBox( nalu_hypre_Box  *box1,
+               nalu_hypre_Box  *box2 )
 {
-   hypre_CopyIndex(hypre_BoxIMin(box1), hypre_BoxIMin(box2));
-   hypre_CopyIndex(hypre_BoxIMax(box1), hypre_BoxIMax(box2));
-   hypre_BoxNDim(box2) = hypre_BoxNDim(box1);
+   nalu_hypre_CopyIndex(nalu_hypre_BoxIMin(box1), nalu_hypre_BoxIMin(box2));
+   nalu_hypre_CopyIndex(nalu_hypre_BoxIMax(box1), nalu_hypre_BoxIMax(box2));
+   nalu_hypre_BoxNDim(box2) = nalu_hypre_BoxNDim(box1);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
  * Return a duplicate box.
  *--------------------------------------------------------------------------*/
 
-hypre_Box *
-hypre_BoxDuplicate( hypre_Box *box )
+nalu_hypre_Box *
+nalu_hypre_BoxDuplicate( nalu_hypre_Box *box )
 {
-   hypre_Box  *new_box;
+   nalu_hypre_Box  *new_box;
 
-   new_box = hypre_BoxCreate(hypre_BoxNDim(box));
-   hypre_CopyBox(box, new_box);
+   new_box = nalu_hypre_BoxCreate(nalu_hypre_BoxNDim(box));
+   nalu_hypre_CopyBox(box, new_box);
 
    return new_box;
 }
@@ -336,14 +336,14 @@ hypre_BoxDuplicate( hypre_Box *box )
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_BoxVolume( hypre_Box *box )
+nalu_hypre_BoxVolume( nalu_hypre_Box *box )
 {
-   NALU_HYPRE_Int volume, d, ndim = hypre_BoxNDim(box);
+   NALU_HYPRE_Int volume, d, ndim = nalu_hypre_BoxNDim(box);
 
    volume = 1;
    for (d = 0; d < ndim; d++)
    {
-      volume *= hypre_BoxSizeD(box, d);
+      volume *= nalu_hypre_BoxSizeD(box, d);
    }
 
    return volume;
@@ -354,15 +354,15 @@ hypre_BoxVolume( hypre_Box *box )
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Real
-hypre_doubleBoxVolume( hypre_Box *box )
+nalu_hypre_doubleBoxVolume( nalu_hypre_Box *box )
 {
    NALU_HYPRE_Real    volume;
-   NALU_HYPRE_Int d, ndim = hypre_BoxNDim(box);
+   NALU_HYPRE_Int d, ndim = nalu_hypre_BoxNDim(box);
 
    volume = 1.0;
    for (d = 0; d < ndim; d++)
    {
-      volume *= hypre_BoxSizeD(box, d);
+      volume *= nalu_hypre_BoxSizeD(box, d);
    }
 
    return volume;
@@ -372,15 +372,15 @@ hypre_doubleBoxVolume( hypre_Box *box )
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_IndexInBox( hypre_Index   index,
-                  hypre_Box    *box )
+nalu_hypre_IndexInBox( nalu_hypre_Index   index,
+                  nalu_hypre_Box    *box )
 {
-   NALU_HYPRE_Int d, inbox, ndim = hypre_BoxNDim(box);
+   NALU_HYPRE_Int d, inbox, ndim = nalu_hypre_BoxNDim(box);
 
    inbox = 1;
    for (d = 0; d < ndim; d++)
    {
-      if (!hypre_IndexDInBox(index, d, box))
+      if (!nalu_hypre_IndexDInBox(index, d, box))
       {
          inbox = 0;
          break;
@@ -394,66 +394,66 @@ hypre_IndexInBox( hypre_Index   index,
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_BoxGetSize( hypre_Box   *box,
-                  hypre_Index  size )
+nalu_hypre_BoxGetSize( nalu_hypre_Box   *box,
+                  nalu_hypre_Index  size )
 {
-   NALU_HYPRE_Int d, ndim = hypre_BoxNDim(box);
+   NALU_HYPRE_Int d, ndim = nalu_hypre_BoxNDim(box);
 
    for (d = 0; d < ndim; d++)
    {
-      hypre_IndexD(size, d) = hypre_BoxSizeD(box, d);
+      nalu_hypre_IndexD(size, d) = nalu_hypre_BoxSizeD(box, d);
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_BoxGetStrideSize( hypre_Box   *box,
-                        hypre_Index  stride,
-                        hypre_Index  size   )
+nalu_hypre_BoxGetStrideSize( nalu_hypre_Box   *box,
+                        nalu_hypre_Index  stride,
+                        nalu_hypre_Index  size   )
 {
-   NALU_HYPRE_Int  d, s, ndim = hypre_BoxNDim(box);
+   NALU_HYPRE_Int  d, s, ndim = nalu_hypre_BoxNDim(box);
 
    for (d = 0; d < ndim; d++)
    {
-      s = hypre_BoxSizeD(box, d);
+      s = nalu_hypre_BoxSizeD(box, d);
       if (s > 0)
       {
-         s = (s - 1) / hypre_IndexD(stride, d) + 1;
+         s = (s - 1) / nalu_hypre_IndexD(stride, d) + 1;
       }
-      hypre_IndexD(size, d) = s;
+      nalu_hypre_IndexD(size, d) = s;
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_BoxGetStrideVolume( hypre_Box   *box,
-                          hypre_Index  stride,
+nalu_hypre_BoxGetStrideVolume( nalu_hypre_Box   *box,
+                          nalu_hypre_Index  stride,
                           NALU_HYPRE_Int   *volume_ptr )
 {
-   NALU_HYPRE_Int  volume, d, s, ndim = hypre_BoxNDim(box);
+   NALU_HYPRE_Int  volume, d, s, ndim = nalu_hypre_BoxNDim(box);
 
    volume = 1;
    for (d = 0; d < ndim; d++)
    {
-      s = hypre_BoxSizeD(box, d);
+      s = nalu_hypre_BoxSizeD(box, d);
       if (s > 0)
       {
-         s = (s - 1) / hypre_IndexD(stride, d) + 1;
+         s = (s - 1) / nalu_hypre_IndexD(stride, d) + 1;
       }
       volume *= s;
    }
 
    *volume_ptr = volume;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
@@ -462,17 +462,17 @@ hypre_BoxGetStrideVolume( hypre_Box   *box,
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_BoxIndexRank( hypre_Box   *box,
-                    hypre_Index  index )
+nalu_hypre_BoxIndexRank( nalu_hypre_Box   *box,
+                    nalu_hypre_Index  index )
 {
-   NALU_HYPRE_Int  rank, size, d, ndim = hypre_BoxNDim(box);
+   NALU_HYPRE_Int  rank, size, d, ndim = nalu_hypre_BoxNDim(box);
 
    rank = 0;
    size = 1;
    for (d = 0; d < ndim; d++)
    {
-      rank += (hypre_IndexD(index, d) - hypre_BoxIMinD(box, d)) * size;
-      size *= hypre_BoxSizeD(box, d);
+      rank += (nalu_hypre_IndexD(index, d) - nalu_hypre_BoxIMinD(box, d)) * size;
+      size *= nalu_hypre_BoxSizeD(box, d);
    }
 
    return rank;
@@ -484,23 +484,23 @@ hypre_BoxIndexRank( hypre_Box   *box,
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_BoxRankIndex( hypre_Box   *box,
+nalu_hypre_BoxRankIndex( nalu_hypre_Box   *box,
                     NALU_HYPRE_Int    rank,
-                    hypre_Index  index )
+                    nalu_hypre_Index  index )
 {
-   NALU_HYPRE_Int  d, r, s, ndim = hypre_BoxNDim(box);
+   NALU_HYPRE_Int  d, r, s, ndim = nalu_hypre_BoxNDim(box);
 
    r = rank;
-   s = hypre_BoxVolume(box);
+   s = nalu_hypre_BoxVolume(box);
    for (d = ndim - 1; d >= 0; d--)
    {
-      s = s / hypre_BoxSizeD(box, d);
-      hypre_IndexD(index, d) = r / s;
-      hypre_IndexD(index, d) += hypre_BoxIMinD(box, d);
+      s = s / nalu_hypre_BoxSizeD(box, d);
+      nalu_hypre_IndexD(index, d) = r / s;
+      nalu_hypre_IndexD(index, d) += nalu_hypre_BoxIMinD(box, d);
       r = r % s;
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
@@ -509,17 +509,17 @@ hypre_BoxRankIndex( hypre_Box   *box,
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_BoxOffsetDistance( hypre_Box   *box,
-                         hypre_Index  index )
+nalu_hypre_BoxOffsetDistance( nalu_hypre_Box   *box,
+                         nalu_hypre_Index  index )
 {
-   NALU_HYPRE_Int  dist, size, d, ndim = hypre_BoxNDim(box);
+   NALU_HYPRE_Int  dist, size, d, ndim = nalu_hypre_BoxNDim(box);
 
    dist = 0;
    size = 1;
    for (d = 0; d < ndim; d++)
    {
-      dist += hypre_IndexD(index, d) * size;
-      size *= hypre_BoxSizeD(box, d);
+      dist += nalu_hypre_IndexD(index, d) * size;
+      size *= nalu_hypre_BoxSizeD(box, d);
    }
 
    return dist;
@@ -530,18 +530,18 @@ hypre_BoxOffsetDistance( hypre_Box   *box,
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_BoxShiftPos( hypre_Box   *box,
-                   hypre_Index  shift )
+nalu_hypre_BoxShiftPos( nalu_hypre_Box   *box,
+                   nalu_hypre_Index  shift )
 {
-   NALU_HYPRE_Int  d, ndim = hypre_BoxNDim(box);
+   NALU_HYPRE_Int  d, ndim = nalu_hypre_BoxNDim(box);
 
    for (d = 0; d < ndim; d++)
    {
-      hypre_BoxIMinD(box, d) += hypre_IndexD(shift, d);
-      hypre_BoxIMaxD(box, d) += hypre_IndexD(shift, d);
+      nalu_hypre_BoxIMinD(box, d) += nalu_hypre_IndexD(shift, d);
+      nalu_hypre_BoxIMaxD(box, d) += nalu_hypre_IndexD(shift, d);
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
@@ -549,18 +549,18 @@ hypre_BoxShiftPos( hypre_Box   *box,
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_BoxShiftNeg( hypre_Box   *box,
-                   hypre_Index  shift )
+nalu_hypre_BoxShiftNeg( nalu_hypre_Box   *box,
+                   nalu_hypre_Index  shift )
 {
-   NALU_HYPRE_Int  d, ndim = hypre_BoxNDim(box);
+   NALU_HYPRE_Int  d, ndim = nalu_hypre_BoxNDim(box);
 
    for (d = 0; d < ndim; d++)
    {
-      hypre_BoxIMinD(box, d) -= hypre_IndexD(shift, d);
-      hypre_BoxIMaxD(box, d) -= hypre_IndexD(shift, d);
+      nalu_hypre_BoxIMinD(box, d) -= nalu_hypre_IndexD(shift, d);
+      nalu_hypre_BoxIMaxD(box, d) -= nalu_hypre_IndexD(shift, d);
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
@@ -568,22 +568,22 @@ hypre_BoxShiftNeg( hypre_Box   *box,
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_BoxGrowByIndex( hypre_Box   *box,
-                      hypre_Index  index )
+nalu_hypre_BoxGrowByIndex( nalu_hypre_Box   *box,
+                      nalu_hypre_Index  index )
 {
-   hypre_IndexRef  imin = hypre_BoxIMin(box);
-   hypre_IndexRef  imax = hypre_BoxIMax(box);
-   NALU_HYPRE_Int       ndim = hypre_BoxNDim(box);
+   nalu_hypre_IndexRef  imin = nalu_hypre_BoxIMin(box);
+   nalu_hypre_IndexRef  imax = nalu_hypre_BoxIMax(box);
+   NALU_HYPRE_Int       ndim = nalu_hypre_BoxNDim(box);
    NALU_HYPRE_Int       d, i;
 
    for (d = 0; d < ndim; d++)
    {
-      i = hypre_IndexD(index, d);
-      hypre_IndexD(imin, d) -= i;
-      hypre_IndexD(imax, d) += i;
+      i = nalu_hypre_IndexD(index, d);
+      nalu_hypre_IndexD(imin, d) -= i;
+      nalu_hypre_IndexD(imax, d) += i;
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
@@ -591,21 +591,21 @@ hypre_BoxGrowByIndex( hypre_Box   *box,
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_BoxGrowByValue( hypre_Box  *box,
+nalu_hypre_BoxGrowByValue( nalu_hypre_Box  *box,
                       NALU_HYPRE_Int   val )
 {
-   NALU_HYPRE_Int  *imin = hypre_BoxIMin(box);
-   NALU_HYPRE_Int  *imax = hypre_BoxIMax(box);
-   NALU_HYPRE_Int   ndim = hypre_BoxNDim(box);
+   NALU_HYPRE_Int  *imin = nalu_hypre_BoxIMin(box);
+   NALU_HYPRE_Int  *imax = nalu_hypre_BoxIMax(box);
+   NALU_HYPRE_Int   ndim = nalu_hypre_BoxNDim(box);
    NALU_HYPRE_Int  d;
 
    for (d = 0; d < ndim; d++)
    {
-      hypre_IndexD(imin, d) -= val;
-      hypre_IndexD(imax, d) += val;
+      nalu_hypre_IndexD(imin, d) -= val;
+      nalu_hypre_IndexD(imax, d) += val;
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
@@ -613,12 +613,12 @@ hypre_BoxGrowByValue( hypre_Box  *box,
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_BoxGrowByArray( hypre_Box  *box,
+nalu_hypre_BoxGrowByArray( nalu_hypre_Box  *box,
                       NALU_HYPRE_Int  *array )
 {
-   NALU_HYPRE_Int  *imin = hypre_BoxIMin(box);
-   NALU_HYPRE_Int  *imax = hypre_BoxIMax(box);
-   NALU_HYPRE_Int   ndim = hypre_BoxNDim(box);
+   NALU_HYPRE_Int  *imin = nalu_hypre_BoxIMin(box);
+   NALU_HYPRE_Int  *imax = nalu_hypre_BoxIMax(box);
+   NALU_HYPRE_Int   ndim = nalu_hypre_BoxNDim(box);
    NALU_HYPRE_Int   d;
 
    for (d = 0; d < ndim; d++)
@@ -627,7 +627,7 @@ hypre_BoxGrowByArray( hypre_Box  *box,
       imax[d] += array[2 * d + 1];
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
@@ -635,25 +635,25 @@ hypre_BoxGrowByArray( hypre_Box  *box,
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_BoxPrint( FILE      *file,
-                hypre_Box *box )
+nalu_hypre_BoxPrint( FILE      *file,
+                nalu_hypre_Box *box )
 {
-   NALU_HYPRE_Int   ndim = hypre_BoxNDim(box);
+   NALU_HYPRE_Int   ndim = nalu_hypre_BoxNDim(box);
    NALU_HYPRE_Int   d;
 
-   hypre_fprintf(file, "(%d", hypre_BoxIMinD(box, 0));
+   nalu_hypre_fprintf(file, "(%d", nalu_hypre_BoxIMinD(box, 0));
    for (d = 1; d < ndim; d++)
    {
-      hypre_fprintf(file, ", %d", hypre_BoxIMinD(box, d));
+      nalu_hypre_fprintf(file, ", %d", nalu_hypre_BoxIMinD(box, d));
    }
-   hypre_fprintf(file, ") x (%d", hypre_BoxIMaxD(box, 0));
+   nalu_hypre_fprintf(file, ") x (%d", nalu_hypre_BoxIMaxD(box, 0));
    for (d = 1; d < ndim; d++)
    {
-      hypre_fprintf(file, ", %d", hypre_BoxIMaxD(box, d));
+      nalu_hypre_fprintf(file, ", %d", nalu_hypre_BoxIMaxD(box, d));
    }
-   hypre_fprintf(file, ")");
+   nalu_hypre_fprintf(file, ")");
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
@@ -661,66 +661,66 @@ hypre_BoxPrint( FILE      *file,
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_BoxRead( FILE       *file,
+nalu_hypre_BoxRead( FILE       *file,
                NALU_HYPRE_Int   ndim,
-               hypre_Box **box_ptr )
+               nalu_hypre_Box **box_ptr )
 {
-   hypre_Box  *box;
+   nalu_hypre_Box  *box;
    NALU_HYPRE_Int   d;
 
    /* Don't create a new box if the output box already exists */
    if (*box_ptr)
    {
       box = *box_ptr;
-      hypre_BoxInit(box, ndim);
+      nalu_hypre_BoxInit(box, ndim);
    }
    else
    {
-      box = hypre_BoxCreate(ndim);
+      box = nalu_hypre_BoxCreate(ndim);
    }
 
-   hypre_fscanf(file, "(%d", &hypre_BoxIMinD(box, 0));
+   nalu_hypre_fscanf(file, "(%d", &nalu_hypre_BoxIMinD(box, 0));
    for (d = 1; d < ndim; d++)
    {
-      hypre_fscanf(file, ", %d", &hypre_BoxIMinD(box, d));
+      nalu_hypre_fscanf(file, ", %d", &nalu_hypre_BoxIMinD(box, d));
    }
-   hypre_fscanf(file, ") x (%d", &hypre_BoxIMaxD(box, 0));
+   nalu_hypre_fscanf(file, ") x (%d", &nalu_hypre_BoxIMaxD(box, 0));
    for (d = 1; d < ndim; d++)
    {
-      hypre_fscanf(file, ", %d", &hypre_BoxIMaxD(box, d));
+      nalu_hypre_fscanf(file, ", %d", &nalu_hypre_BoxIMaxD(box, d));
    }
-   hypre_fscanf(file, ")");
+   nalu_hypre_fscanf(file, ")");
 
    *box_ptr = box;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*==========================================================================
- * Member functions: hypre_BoxArray
+ * Member functions: nalu_hypre_BoxArray
  *==========================================================================*/
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-hypre_BoxArray *
-hypre_BoxArrayCreate( NALU_HYPRE_Int size,
+nalu_hypre_BoxArray *
+nalu_hypre_BoxArrayCreate( NALU_HYPRE_Int size,
                       NALU_HYPRE_Int ndim )
 {
    NALU_HYPRE_Int       i;
-   hypre_Box      *box;
-   hypre_BoxArray *box_array;
+   nalu_hypre_Box      *box;
+   nalu_hypre_BoxArray *box_array;
 
-   box_array = hypre_TAlloc(hypre_BoxArray,  1, NALU_HYPRE_MEMORY_HOST);
+   box_array = nalu_hypre_TAlloc(nalu_hypre_BoxArray,  1, NALU_HYPRE_MEMORY_HOST);
 
-   hypre_BoxArrayBoxes(box_array)     = hypre_CTAlloc(hypre_Box,  size, NALU_HYPRE_MEMORY_HOST);
-   hypre_BoxArraySize(box_array)      = size;
-   hypre_BoxArrayAllocSize(box_array) = size;
-   hypre_BoxArrayNDim(box_array)      = ndim;
+   nalu_hypre_BoxArrayBoxes(box_array)     = nalu_hypre_CTAlloc(nalu_hypre_Box,  size, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_BoxArraySize(box_array)      = size;
+   nalu_hypre_BoxArrayAllocSize(box_array) = size;
+   nalu_hypre_BoxArrayNDim(box_array)      = ndim;
    for (i = 0; i < size; i++)
    {
-      box = hypre_BoxArrayBox(box_array, i);
-      hypre_BoxNDim(box) = ndim;
+      box = nalu_hypre_BoxArrayBox(box_array, i);
+      nalu_hypre_BoxNDim(box) = ndim;
    }
 
    return box_array;
@@ -730,68 +730,68 @@ hypre_BoxArrayCreate( NALU_HYPRE_Int size,
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_BoxArrayDestroy( hypre_BoxArray *box_array )
+nalu_hypre_BoxArrayDestroy( nalu_hypre_BoxArray *box_array )
 {
    if (box_array)
    {
-      hypre_TFree(hypre_BoxArrayBoxes(box_array), NALU_HYPRE_MEMORY_HOST);
-      hypre_TFree(box_array, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(nalu_hypre_BoxArrayBoxes(box_array), NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(box_array, NALU_HYPRE_MEMORY_HOST);
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_BoxArraySetSize( hypre_BoxArray  *box_array,
+nalu_hypre_BoxArraySetSize( nalu_hypre_BoxArray  *box_array,
                        NALU_HYPRE_Int        size      )
 {
    NALU_HYPRE_Int  alloc_size;
 
-   alloc_size = hypre_BoxArrayAllocSize(box_array);
+   alloc_size = nalu_hypre_BoxArrayAllocSize(box_array);
 
    if (size > alloc_size)
    {
-      NALU_HYPRE_Int  i, old_alloc_size, ndim = hypre_BoxArrayNDim(box_array);
-      hypre_Box *box;
+      NALU_HYPRE_Int  i, old_alloc_size, ndim = nalu_hypre_BoxArrayNDim(box_array);
+      nalu_hypre_Box *box;
 
       old_alloc_size = alloc_size;
-      alloc_size = size + hypre_BoxArrayExcess;
-      hypre_BoxArrayBoxes(box_array) =
-         hypre_TReAlloc(hypre_BoxArrayBoxes(box_array),  hypre_Box,  alloc_size, NALU_HYPRE_MEMORY_HOST);
-      hypre_BoxArrayAllocSize(box_array) = alloc_size;
+      alloc_size = size + nalu_hypre_BoxArrayExcess;
+      nalu_hypre_BoxArrayBoxes(box_array) =
+         nalu_hypre_TReAlloc(nalu_hypre_BoxArrayBoxes(box_array),  nalu_hypre_Box,  alloc_size, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_BoxArrayAllocSize(box_array) = alloc_size;
 
       for (i = old_alloc_size; i < alloc_size; i++)
       {
-         box = hypre_BoxArrayBox(box_array, i);
-         hypre_BoxNDim(box) = ndim;
+         box = nalu_hypre_BoxArrayBox(box_array, i);
+         nalu_hypre_BoxNDim(box) = ndim;
       }
    }
 
-   hypre_BoxArraySize(box_array) = size;
+   nalu_hypre_BoxArraySize(box_array) = size;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
  * Return a duplicate box_array.
  *--------------------------------------------------------------------------*/
 
-hypre_BoxArray *
-hypre_BoxArrayDuplicate( hypre_BoxArray *box_array )
+nalu_hypre_BoxArray *
+nalu_hypre_BoxArrayDuplicate( nalu_hypre_BoxArray *box_array )
 {
-   hypre_BoxArray  *new_box_array;
+   nalu_hypre_BoxArray  *new_box_array;
 
    NALU_HYPRE_Int        i;
 
-   new_box_array = hypre_BoxArrayCreate(
-                      hypre_BoxArraySize(box_array), hypre_BoxArrayNDim(box_array));
-   hypre_ForBoxI(i, box_array)
+   new_box_array = nalu_hypre_BoxArrayCreate(
+                      nalu_hypre_BoxArraySize(box_array), nalu_hypre_BoxArrayNDim(box_array));
+   nalu_hypre_ForBoxI(i, box_array)
    {
-      hypre_CopyBox(hypre_BoxArrayBox(box_array, i),
-                    hypre_BoxArrayBox(new_box_array, i));
+      nalu_hypre_CopyBox(nalu_hypre_BoxArrayBox(box_array, i),
+                    nalu_hypre_BoxArrayBox(new_box_array, i));
    }
 
    return new_box_array;
@@ -803,16 +803,16 @@ hypre_BoxArrayDuplicate( hypre_BoxArray *box_array )
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_AppendBox( hypre_Box      *box,
-                 hypre_BoxArray *box_array )
+nalu_hypre_AppendBox( nalu_hypre_Box      *box,
+                 nalu_hypre_BoxArray *box_array )
 {
    NALU_HYPRE_Int  size;
 
-   size = hypre_BoxArraySize(box_array);
-   hypre_BoxArraySetSize(box_array, (size + 1));
-   hypre_CopyBox(box, hypre_BoxArrayBox(box_array, size));
+   size = nalu_hypre_BoxArraySize(box_array);
+   nalu_hypre_BoxArraySetSize(box_array, (size + 1));
+   nalu_hypre_CopyBox(box, nalu_hypre_BoxArrayBox(box_array, size));
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
@@ -820,20 +820,20 @@ hypre_AppendBox( hypre_Box      *box,
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_DeleteBox( hypre_BoxArray *box_array,
+nalu_hypre_DeleteBox( nalu_hypre_BoxArray *box_array,
                  NALU_HYPRE_Int       index     )
 {
    NALU_HYPRE_Int  i;
 
-   for (i = index; i < hypre_BoxArraySize(box_array) - 1; i++)
+   for (i = index; i < nalu_hypre_BoxArraySize(box_array) - 1; i++)
    {
-      hypre_CopyBox(hypre_BoxArrayBox(box_array, i + 1),
-                    hypre_BoxArrayBox(box_array, i));
+      nalu_hypre_CopyBox(nalu_hypre_BoxArrayBox(box_array, i + 1),
+                    nalu_hypre_BoxArrayBox(box_array, i));
    }
 
-   hypre_BoxArraySize(box_array) --;
+   nalu_hypre_BoxArraySize(box_array) --;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
@@ -842,7 +842,7 @@ hypre_DeleteBox( hypre_BoxArray *box_array,
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_DeleteMultipleBoxes( hypre_BoxArray *box_array,
+nalu_hypre_DeleteMultipleBoxes( nalu_hypre_BoxArray *box_array,
                            NALU_HYPRE_Int*  indices,
                            NALU_HYPRE_Int num )
 {
@@ -850,10 +850,10 @@ hypre_DeleteMultipleBoxes( hypre_BoxArray *box_array,
 
    if (num < 1)
    {
-      return hypre_error_flag;
+      return nalu_hypre_error_flag;
    }
 
-   array_size =  hypre_BoxArraySize(box_array);
+   array_size =  nalu_hypre_BoxArraySize(box_array);
    start = indices[0];
    j = 0;
 
@@ -870,14 +870,14 @@ hypre_DeleteMultipleBoxes( hypre_BoxArray *box_array,
 
       if ( (i + j) < array_size) /* if deleting the last item then no moving */
       {
-         hypre_CopyBox(hypre_BoxArrayBox(box_array, i + j),
-                       hypre_BoxArrayBox(box_array, i));
+         nalu_hypre_CopyBox(nalu_hypre_BoxArrayBox(box_array, i + j),
+                       nalu_hypre_BoxArrayBox(box_array, i));
       }
    }
 
-   hypre_BoxArraySize(box_array) = array_size - num;
+   nalu_hypre_BoxArraySize(box_array) = array_size - num;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
@@ -886,52 +886,52 @@ hypre_DeleteMultipleBoxes( hypre_BoxArray *box_array,
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_AppendBoxArray( hypre_BoxArray *box_array_0,
-                      hypre_BoxArray *box_array_1 )
+nalu_hypre_AppendBoxArray( nalu_hypre_BoxArray *box_array_0,
+                      nalu_hypre_BoxArray *box_array_1 )
 {
    NALU_HYPRE_Int  size, size_0;
    NALU_HYPRE_Int  i;
 
-   size   = hypre_BoxArraySize(box_array_1);
-   size_0 = hypre_BoxArraySize(box_array_0);
-   hypre_BoxArraySetSize(box_array_1, (size + size_0));
+   size   = nalu_hypre_BoxArraySize(box_array_1);
+   size_0 = nalu_hypre_BoxArraySize(box_array_0);
+   nalu_hypre_BoxArraySetSize(box_array_1, (size + size_0));
 
    /* copy box_array_0 boxes into box_array_1 */
    for (i = 0; i < size_0; i++)
    {
-      hypre_CopyBox(hypre_BoxArrayBox(box_array_0, i),
-                    hypre_BoxArrayBox(box_array_1, size + i));
+      nalu_hypre_CopyBox(nalu_hypre_BoxArrayBox(box_array_0, i),
+                    nalu_hypre_BoxArrayBox(box_array_1, size + i));
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*==========================================================================
- * Member functions: hypre_BoxArrayArray
+ * Member functions: nalu_hypre_BoxArrayArray
  *==========================================================================*/
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-hypre_BoxArrayArray *
-hypre_BoxArrayArrayCreate( NALU_HYPRE_Int size,
+nalu_hypre_BoxArrayArray *
+nalu_hypre_BoxArrayArrayCreate( NALU_HYPRE_Int size,
                            NALU_HYPRE_Int ndim )
 {
-   hypre_BoxArrayArray  *box_array_array;
+   nalu_hypre_BoxArrayArray  *box_array_array;
    NALU_HYPRE_Int             i;
 
-   box_array_array = hypre_CTAlloc(hypre_BoxArrayArray,  1, NALU_HYPRE_MEMORY_HOST);
+   box_array_array = nalu_hypre_CTAlloc(nalu_hypre_BoxArrayArray,  1, NALU_HYPRE_MEMORY_HOST);
 
-   hypre_BoxArrayArrayBoxArrays(box_array_array) =
-      hypre_CTAlloc(hypre_BoxArray *,  size, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_BoxArrayArrayBoxArrays(box_array_array) =
+      nalu_hypre_CTAlloc(nalu_hypre_BoxArray *,  size, NALU_HYPRE_MEMORY_HOST);
 
    for (i = 0; i < size; i++)
    {
-      hypre_BoxArrayArrayBoxArray(box_array_array, i) =
-         hypre_BoxArrayCreate(0, ndim);
+      nalu_hypre_BoxArrayArrayBoxArray(box_array_array, i) =
+         nalu_hypre_BoxArrayCreate(0, ndim);
    }
-   hypre_BoxArrayArraySize(box_array_array) = size;
-   hypre_BoxArrayArrayNDim(box_array_array) = ndim;
+   nalu_hypre_BoxArrayArraySize(box_array_array) = size;
+   nalu_hypre_BoxArrayArrayNDim(box_array_array) = ndim;
 
    return box_array_array;
 }
@@ -940,49 +940,49 @@ hypre_BoxArrayArrayCreate( NALU_HYPRE_Int size,
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_BoxArrayArrayDestroy( hypre_BoxArrayArray *box_array_array )
+nalu_hypre_BoxArrayArrayDestroy( nalu_hypre_BoxArrayArray *box_array_array )
 {
    NALU_HYPRE_Int  i;
 
    if (box_array_array)
    {
-      hypre_ForBoxArrayI(i, box_array_array)
-      hypre_BoxArrayDestroy(
-         hypre_BoxArrayArrayBoxArray(box_array_array, i));
+      nalu_hypre_ForBoxArrayI(i, box_array_array)
+      nalu_hypre_BoxArrayDestroy(
+         nalu_hypre_BoxArrayArrayBoxArray(box_array_array, i));
 
-      hypre_TFree(hypre_BoxArrayArrayBoxArrays(box_array_array), NALU_HYPRE_MEMORY_HOST);
-      hypre_TFree(box_array_array, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(nalu_hypre_BoxArrayArrayBoxArrays(box_array_array), NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(box_array_array, NALU_HYPRE_MEMORY_HOST);
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
  * Return a duplicate box_array_array.
  *--------------------------------------------------------------------------*/
 
-hypre_BoxArrayArray *
-hypre_BoxArrayArrayDuplicate( hypre_BoxArrayArray *box_array_array )
+nalu_hypre_BoxArrayArray *
+nalu_hypre_BoxArrayArrayDuplicate( nalu_hypre_BoxArrayArray *box_array_array )
 {
-   hypre_BoxArrayArray  *new_box_array_array;
-   hypre_BoxArray      **new_box_arrays;
+   nalu_hypre_BoxArrayArray  *new_box_array_array;
+   nalu_hypre_BoxArray      **new_box_arrays;
    NALU_HYPRE_Int             new_size;
 
-   hypre_BoxArray      **box_arrays;
+   nalu_hypre_BoxArray      **box_arrays;
    NALU_HYPRE_Int             i;
 
-   new_size = hypre_BoxArrayArraySize(box_array_array);
-   new_box_array_array = hypre_BoxArrayArrayCreate(
-                            new_size, hypre_BoxArrayArrayNDim(box_array_array));
+   new_size = nalu_hypre_BoxArrayArraySize(box_array_array);
+   new_box_array_array = nalu_hypre_BoxArrayArrayCreate(
+                            new_size, nalu_hypre_BoxArrayArrayNDim(box_array_array));
 
    if (new_size)
    {
-      new_box_arrays = hypre_BoxArrayArrayBoxArrays(new_box_array_array);
-      box_arrays     = hypre_BoxArrayArrayBoxArrays(box_array_array);
+      new_box_arrays = nalu_hypre_BoxArrayArrayBoxArrays(new_box_array_array);
+      box_arrays     = nalu_hypre_BoxArrayArrayBoxArrays(box_array_array);
 
       for (i = 0; i < new_size; i++)
       {
-         hypre_AppendBoxArray(box_arrays[i], new_box_arrays[i]);
+         nalu_hypre_AppendBoxArray(box_arrays[i], new_box_arrays[i]);
       }
    }
 

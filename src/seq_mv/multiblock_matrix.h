@@ -11,8 +11,8 @@
  *
  *****************************************************************************/
 
-#ifndef hypre_MULTIBLOCK_MATRIX_HEADER
-#define hypre_MULTIBLOCK_MATRIX_HEADER
+#ifndef nalu_hypre_MULTIBLOCK_MATRIX_HEADER
+#define nalu_hypre_MULTIBLOCK_MATRIX_HEADER
 
 /*--------------------------------------------------------------------------
  * Multiblock Matrix
@@ -24,19 +24,19 @@ typedef struct
    NALU_HYPRE_Int            *submatrix_types;
    void                **submatrices;
 
-} hypre_MultiblockMatrix;
+} nalu_hypre_MultiblockMatrix;
 
 /*--------------------------------------------------------------------------
  * Accessor functions for the Multiblock Matrix structure
  *--------------------------------------------------------------------------*/
 
-#define hypre_MultiblockMatrixSubmatrices(matrix)        ((matrix) -> submatrices)
-#define hypre_MultiblockMatrixNumSubmatrices(matrix)     ((matrix) -> num_submatrices)
-#define hypre_MultiblockMatrixSubmatrixTypes(matrix)     ((matrix) -> submatrix_types)
+#define nalu_hypre_MultiblockMatrixSubmatrices(matrix)        ((matrix) -> submatrices)
+#define nalu_hypre_MultiblockMatrixNumSubmatrices(matrix)     ((matrix) -> num_submatrices)
+#define nalu_hypre_MultiblockMatrixSubmatrixTypes(matrix)     ((matrix) -> submatrix_types)
 
-#define hypre_MultiblockMatrixSubmatrix(matrix,j) (hypre_MultiblockMatrixSubmatrices\
+#define nalu_hypre_MultiblockMatrixSubmatrix(matrix,j) (nalu_hypre_MultiblockMatrixSubmatrices\
 (matrix)[j])
-#define hypre_MultiblockMatrixSubmatrixType(matrix,j) (hypre_MultiblockMatrixSubmatrixTypes\
+#define nalu_hypre_MultiblockMatrixSubmatrixType(matrix,j) (nalu_hypre_MultiblockMatrixSubmatrixTypes\
 (matrix)[j])
 
 #endif

@@ -11,8 +11,8 @@
  *
  *****************************************************************************/
 
-#ifndef hypre_KRYLOV_PCG_HEADER
-#define hypre_KRYLOV_PCG_HEADER
+#ifndef nalu_hypre_KRYLOV_PCG_HEADER
+#define nalu_hypre_KRYLOV_PCG_HEADER
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
@@ -32,7 +32,7 @@
  *--------------------------------------------------------------------------*/
 
 /*--------------------------------------------------------------------------
- * hypre_PCGData and hypre_PCGFunctions
+ * nalu_hypre_PCGData and nalu_hypre_PCGFunctions
  *--------------------------------------------------------------------------*/
 
 /**
@@ -67,7 +67,7 @@ typedef struct
    NALU_HYPRE_Int    (*precond)();
    NALU_HYPRE_Int    (*precond_setup)();
 
-} hypre_PCGFunctions;
+} nalu_hypre_PCGFunctions;
 
 /**
  * The {\tt hypre\_PCGData} object ...
@@ -130,7 +130,7 @@ typedef struct
    void      *matvec_data;
    void      *precond_data;
 
-   hypre_PCGFunctions * functions;
+   nalu_hypre_PCGFunctions * functions;
 
    /* log info (always logged) */
    NALU_HYPRE_Int    num_iterations;
@@ -141,9 +141,9 @@ typedef struct
    NALU_HYPRE_Real  *norms;
    NALU_HYPRE_Real  *rel_norms;
 
-} hypre_PCGData;
+} nalu_hypre_PCGData;
 
-#define hypre_PCGDataOwnsMatvecData(pcgdata)  ((pcgdata) -> owns_matvec_data)
+#define nalu_hypre_PCGDataOwnsMatvecData(pcgdata)  ((pcgdata) -> owns_matvec_data)
 
 #ifdef __cplusplus
 extern "C" {
@@ -162,8 +162,8 @@ extern "C" {
  * @param param [IN] ...
  **/
 
-hypre_PCGFunctions *
-hypre_PCGFunctionsCreate(
+nalu_hypre_PCGFunctions *
+nalu_hypre_PCGFunctionsCreate(
    void *       (*CAlloc)        ( size_t count, size_t elt_size ),
    NALU_HYPRE_Int    (*Free)          ( void *ptr ),
    NALU_HYPRE_Int    (*CommInfo)      ( void  *A, NALU_HYPRE_Int   *my_id,
@@ -190,7 +190,7 @@ hypre_PCGFunctionsCreate(
  **/
 
 void *
-hypre_PCGCreate( hypre_PCGFunctions *pcg_functions );
+nalu_hypre_PCGCreate( nalu_hypre_PCGFunctions *pcg_functions );
 
 #ifdef __cplusplus
 }

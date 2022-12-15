@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_Euclid.h"
+#include "_nalu_hypre_Euclid.h"
 /* #include "Factor_dh.h" */
 /* #include "Vec_dh.h" */
 /* #include "Mat_dh.h" */
@@ -74,11 +74,11 @@ void Factor_dhCreate(Factor_dh *mat)
   /* initialize MPI request to null */
   for(i=0; i<MAX_MPI_TASKS; i++)
   {
-     tmp->recv_reqLo[i] = hypre_MPI_REQUEST_NULL;
-     tmp->recv_reqHi[i] = hypre_MPI_REQUEST_NULL;
-     tmp->send_reqLo[i] = hypre_MPI_REQUEST_NULL;
-     tmp->send_reqHi[i] = hypre_MPI_REQUEST_NULL;
-     tmp->requests[i] = hypre_MPI_REQUEST_NULL;
+     tmp->recv_reqLo[i] = nalu_hypre_MPI_REQUEST_NULL;
+     tmp->recv_reqHi[i] = nalu_hypre_MPI_REQUEST_NULL;
+     tmp->send_reqLo[i] = nalu_hypre_MPI_REQUEST_NULL;
+     tmp->send_reqHi[i] = nalu_hypre_MPI_REQUEST_NULL;
+     tmp->requests[i] = nalu_hypre_MPI_REQUEST_NULL;
   }
 /*  Factor_dhZeroTiming(tmp); CHECK_V_ERROR; */
   END_FUNC_DH
@@ -109,11 +109,11 @@ void Factor_dhDestroy(Factor_dh mat)
   /* cleanup MPI requests */
   for(i=0; i<MAX_MPI_TASKS; i++)
   {
-     if(mat->recv_reqLo[i] != hypre_MPI_REQUEST_NULL) hypre_MPI_Request_free(&(mat->recv_reqLo[i]));
-     if(mat->recv_reqHi[i] != hypre_MPI_REQUEST_NULL) hypre_MPI_Request_free(&(mat->recv_reqHi[i]));     
-     if(mat->send_reqLo[i] != hypre_MPI_REQUEST_NULL) hypre_MPI_Request_free(&(mat->send_reqLo[i]));
-     if(mat->send_reqHi[i] != hypre_MPI_REQUEST_NULL) hypre_MPI_Request_free(&(mat->send_reqHi[i]));
-     if(mat->requests[i] != hypre_MPI_REQUEST_NULL) hypre_MPI_Request_free(&(mat->requests[i]));     
+     if(mat->recv_reqLo[i] != nalu_hypre_MPI_REQUEST_NULL) nalu_hypre_MPI_Request_free(&(mat->recv_reqLo[i]));
+     if(mat->recv_reqHi[i] != nalu_hypre_MPI_REQUEST_NULL) nalu_hypre_MPI_Request_free(&(mat->recv_reqHi[i]));     
+     if(mat->send_reqLo[i] != nalu_hypre_MPI_REQUEST_NULL) nalu_hypre_MPI_Request_free(&(mat->send_reqLo[i]));
+     if(mat->send_reqHi[i] != nalu_hypre_MPI_REQUEST_NULL) nalu_hypre_MPI_Request_free(&(mat->send_reqHi[i]));
+     if(mat->requests[i] != nalu_hypre_MPI_REQUEST_NULL) nalu_hypre_MPI_Request_free(&(mat->requests[i]));     
   }
   FREE_DH(mat); CHECK_V_ERROR; 
   END_FUNC_DH
@@ -158,7 +158,7 @@ NALU_HYPRE_Int Factor_dhReadNz(Factor_dh mat)
   START_FUNC_DH
   NALU_HYPRE_Int ierr, retval = mat->rp[mat->m];
   NALU_HYPRE_Int nz = retval;
-  ierr = hypre_MPI_Allreduce(&nz, &retval, 1, NALU_HYPRE_MPI_INT, hypre_MPI_SUM, comm_dh); CHECK_MPI_ERROR(ierr);
+  ierr = nalu_hypre_MPI_Allreduce(&nz, &retval, 1, NALU_HYPRE_MPI_INT, nalu_hypre_MPI_SUM, comm_dh); CHECK_MPI_ERROR(ierr);
   END_FUNC_VAL(retval)
 }
 
@@ -178,21 +178,21 @@ void Factor_dhPrintRows(Factor_dh mat, FILE *fp)
 
   if (mat->blockJacobi) { adjust_bj_private(mat); CHECK_V_ERROR; }
 
-  hypre_fprintf(fp, "\n----------------------- Factor_dhPrintRows ------------------\n");
+  nalu_hypre_fprintf(fp, "\n----------------------- Factor_dhPrintRows ------------------\n");
   if (mat->blockJacobi) {
-    hypre_fprintf(fp, "@@@ Block Jacobi ILU; adjusted values from zero-based @@@\n");
+    nalu_hypre_fprintf(fp, "@@@ Block Jacobi ILU; adjusted values from zero-based @@@\n");
   }
 
   for (i=0; i<m; ++i) {
-    hypre_fprintf(fp, "%i :: ", 1+i+beg_row);
+    nalu_hypre_fprintf(fp, "%i :: ", 1+i+beg_row);
     for (j=mat->rp[i]; j<mat->rp[i+1]; ++j) {
       if (noValues) {
-        hypre_fprintf(fp, "%i ", 1+mat->cval[j]);
+        nalu_hypre_fprintf(fp, "%i ", 1+mat->cval[j]);
       } else {
-        hypre_fprintf(fp, "%i,%g ; ", 1+mat->cval[j], mat->aval[j]);
+        nalu_hypre_fprintf(fp, "%i,%g ; ", 1+mat->cval[j], mat->aval[j]);
       }
     }
-    hypre_fprintf(fp, "\n");
+    nalu_hypre_fprintf(fp, "\n");
   }
 
   if (mat->blockJacobi) { unadjust_bj_private(mat); CHECK_V_ERROR; }
@@ -214,15 +214,15 @@ void Factor_dhPrintDiags(Factor_dh mat, FILE *fp)
   fprintf_dh(fp, "(grep for 'ZERO')\n");
 
   for (pe=0; pe<np_dh; ++pe) {
-    hypre_MPI_Barrier(comm_dh); 
+    nalu_hypre_MPI_Barrier(comm_dh); 
     if (mat->id == pe) {
-      hypre_fprintf(fp, "----- subdomain: %i  processor: %i\n", pe, myid_dh);
+      nalu_hypre_fprintf(fp, "----- subdomain: %i  processor: %i\n", pe, myid_dh);
       for (i=0; i<m; ++i) {
         REAL_DH val = aval[diag[i]];
         if (val) {
-          hypre_fprintf(fp, "%i %g\n", i+1+beg_row, aval[diag[i]]);
+          nalu_hypre_fprintf(fp, "%i %g\n", i+1+beg_row, aval[diag[i]]);
         } else {
-          hypre_fprintf(fp, "%i %g ZERO\n", i+1+beg_row, aval[diag[i]]);
+          nalu_hypre_fprintf(fp, "%i %g ZERO\n", i+1+beg_row, aval[diag[i]]);
         }
       }
     }
@@ -251,12 +251,12 @@ void Factor_dhPrintGraph(Factor_dh mat, char *filename)
 
     for (j=0; j<m; ++j) {
       if (work[j]) {
-        hypre_fprintf(fp, " x ");
+        nalu_hypre_fprintf(fp, " x ");
       } else {
-        hypre_fprintf(fp, "   ");
+        nalu_hypre_fprintf(fp, "   ");
       }
     }
-    hypre_fprintf(fp, "\n");
+    nalu_hypre_fprintf(fp, "\n");
   }
 
   closeFile_dh(fp); CHECK_V_ERROR;
@@ -284,7 +284,7 @@ void Factor_dhPrintTriples(Factor_dh mat, char *filename)
   if (noValues) aval = NULL;
 
   for (pe=0; pe<np_dh; ++pe) {
-    hypre_MPI_Barrier(comm_dh); 
+    nalu_hypre_MPI_Barrier(comm_dh); 
     if (mat->id == pe) {
       if (pe == 0) { 
         fp=openFile_dh(filename, "w"); CHECK_V_ERROR;
@@ -296,9 +296,9 @@ void Factor_dhPrintTriples(Factor_dh mat, char *filename)
       for (i=0; i<m; ++i) {
         for (j=rp[i]; j<rp[i+1]; ++j) {
           if (noValues) {
-            hypre_fprintf(fp, "%i %i\n", 1+i+beg_row, 1+mat->cval[j]);
+            nalu_hypre_fprintf(fp, "%i %i\n", 1+i+beg_row, 1+mat->cval[j]);
           } else {
-            hypre_fprintf(fp, TRIPLES_FORMAT, 
+            nalu_hypre_fprintf(fp, TRIPLES_FORMAT, 
                         1+i+beg_row, 1+mat->cval[j], aval[j]);
           }
         }
@@ -329,17 +329,17 @@ void Factor_dhPrintTriples(Factor_dh mat, char *filename)
 #undef __FUNC__
 #define __FUNC__ "setup_receives_private"
 static NALU_HYPRE_Int setup_receives_private(Factor_dh mat, NALU_HYPRE_Int *beg_rows, NALU_HYPRE_Int *end_rows, 
-                                  NALU_HYPRE_Real *recvBuf, hypre_MPI_Request *req,
+                                  NALU_HYPRE_Real *recvBuf, nalu_hypre_MPI_Request *req,
                                   NALU_HYPRE_Int *reqind, NALU_HYPRE_Int reqlen, 
                                   NALU_HYPRE_Int *outlist, bool debug)
 {
   START_FUNC_DH
   NALU_HYPRE_Int i, j, this_pe, num_recv = 0;
-  hypre_MPI_Request request;
+  nalu_hypre_MPI_Request request;
 
   if (debug) {
-    hypre_fprintf(logFile, "\nFACT ========================================================\n");
-    hypre_fprintf(logFile, "FACT STARTING: setup_receives_private\n");
+    nalu_hypre_fprintf(logFile, "\nFACT ========================================================\n");
+    nalu_hypre_fprintf(logFile, "FACT STARTING: setup_receives_private\n");
   }
 
   for (i=0; i<reqlen; i=j) { /* j is set below */ 
@@ -356,9 +356,9 @@ static NALU_HYPRE_Int setup_receives_private(Factor_dh mat, NALU_HYPRE_Int *beg_
 
     if (debug) {
       NALU_HYPRE_Int k;
-      hypre_fprintf(logFile, "FACT need nodes from P_%i: ", this_pe);
-      for (k=i; k<j; ++k) hypre_fprintf(logFile, "%i ", 1+reqind[k]);
-      hypre_fprintf(logFile,"\n");
+      nalu_hypre_fprintf(logFile, "FACT need nodes from P_%i: ", this_pe);
+      for (k=i; k<j; ++k) nalu_hypre_fprintf(logFile, "%i ", 1+reqind[k]);
+      nalu_hypre_fprintf(logFile,"\n");
     }
 
     /* Record the number of number of indices needed from this_pe */
@@ -370,11 +370,11 @@ static NALU_HYPRE_Int setup_receives_private(Factor_dh mat, NALU_HYPRE_Int *beg_
        receive; this matching receive will be started later,
        in setup_sends_private.
     */
-    hypre_MPI_Isend(reqind+i, j-i, NALU_HYPRE_MPI_INT, this_pe, 444, comm_dh, &request); 
-    hypre_MPI_Request_free(&request); 
+    nalu_hypre_MPI_Isend(reqind+i, j-i, NALU_HYPRE_MPI_INT, this_pe, 444, comm_dh, &request); 
+    nalu_hypre_MPI_Request_free(&request); 
 
     /* set up persistent comms for receiving the values from this_pe */
-    hypre_MPI_Recv_init(recvBuf+i, j-i, hypre_MPI_REAL, this_pe, 555,
+    nalu_hypre_MPI_Recv_init(recvBuf+i, j-i, nalu_hypre_MPI_REAL, this_pe, 555,
                         comm_dh, req+num_recv); 
     ++num_recv;
   }
@@ -394,8 +394,8 @@ static void setup_sends_private(Factor_dh mat, NALU_HYPRE_Int *inlist,
 {
   START_FUNC_DH
   NALU_HYPRE_Int         i, jLo, jHi, sendlenLo, sendlenHi, first = mat->beg_row;
-  hypre_MPI_Request *requests = mat->requests, *sendReq;
-  hypre_MPI_Status  *statuses = mat->status;
+  nalu_hypre_MPI_Request *requests = mat->requests, *sendReq;
+  nalu_hypre_MPI_Status  *statuses = mat->status;
   bool        isHigher;
   NALU_HYPRE_Int         *rcvBuf;
   NALU_HYPRE_Real  *sendBuf;
@@ -403,7 +403,7 @@ static void setup_sends_private(Factor_dh mat, NALU_HYPRE_Int *inlist,
   NALU_HYPRE_Int         count;
 
   if (debug) {
-    hypre_fprintf(logFile, "FACT \nSTARTING: setup_sends_private\n");
+    nalu_hypre_fprintf(logFile, "FACT \nSTARTING: setup_sends_private\n");
   }
 
   /* Determine size of and allocate sendbuf and sendind */
@@ -422,7 +422,7 @@ static void setup_sends_private(Factor_dh mat, NALU_HYPRE_Int *inlist,
   mat->sendindLo = (NALU_HYPRE_Int *)MALLOC_DH(sendlenLo * sizeof(NALU_HYPRE_Int)); CHECK_V_ERROR;
   mat->sendindHi = (NALU_HYPRE_Int *)MALLOC_DH(sendlenHi * sizeof(NALU_HYPRE_Int)); CHECK_V_ERROR;
 
-  count = 0;  /* number of calls to hypre_MPI_Irecv() */
+  count = 0;  /* number of calls to nalu_hypre_MPI_Irecv() */
   jLo = jHi = 0;
   mat->num_sendLo = 0;
   mat->num_sendHi = 0;
@@ -448,22 +448,22 @@ static void setup_sends_private(Factor_dh mat, NALU_HYPRE_Int *inlist,
       /* matching receive, for list of unknowns that will be sent,
          during the triangular solves, from ourselves to P_i
        */
-      hypre_MPI_Irecv(rcvBuf, inlist[i], NALU_HYPRE_MPI_INT, i, 444, comm_dh, requests+count); 
+      nalu_hypre_MPI_Irecv(rcvBuf, inlist[i], NALU_HYPRE_MPI_INT, i, 444, comm_dh, requests+count); 
       ++count;
 
       /* Set up the send */
-      hypre_MPI_Send_init(sendBuf, inlist[i], hypre_MPI_REAL, i, 555, comm_dh, sendReq); 
+      nalu_hypre_MPI_Send_init(sendBuf, inlist[i], nalu_hypre_MPI_REAL, i, 555, comm_dh, sendReq); 
     }
   }
 
   /* note: count = mat->num_sendLo = mat->num_sendHi */
-  hypre_MPI_Waitall(count, requests, statuses); 
+  nalu_hypre_MPI_Waitall(count, requests, statuses); 
 
   if (debug) {
     NALU_HYPRE_Int j;
     jLo = jHi = 0;
 
-    hypre_fprintf(logFile, "\nFACT columns that I must send to other subdomains:\n");
+    nalu_hypre_fprintf(logFile, "\nFACT columns that I must send to other subdomains:\n");
     for (i=0; i<np_dh; i++) {
       if (inlist[i]) {
         isHigher = (o2n_subdomain[i] < myidNEW) ? false : true;
@@ -475,9 +475,9 @@ static void setup_sends_private(Factor_dh mat, NALU_HYPRE_Int *inlist,
           jLo += inlist[i];
         }
 
-        hypre_fprintf(logFile, "FACT  send to P_%i: ", i);
-        for (j=0; j<inlist[i]; ++j) hypre_fprintf(logFile, "%i ", rcvBuf[j]+1);
-        hypre_fprintf(logFile, "\n");
+        nalu_hypre_fprintf(logFile, "FACT  send to P_%i: ", i);
+        for (j=0; j<inlist[i]; ++j) nalu_hypre_fprintf(logFile, "%i ", rcvBuf[j]+1);
+        nalu_hypre_fprintf(logFile, "\n");
       }
     }
   }
@@ -525,7 +525,7 @@ void Factor_dhSolveSetup(Factor_dh mat, SubdomainGraph_dh sg)
   destroy_fake_mat_private(matFake); CHECK_V_ERROR;
 
   if (debug) {
-    hypre_fprintf(stderr, "Numbering_dhSetup completed\n");
+    nalu_hypre_fprintf(stderr, "Numbering_dhSetup completed\n");
   }
 
   /* Allocate recvbuf; recvbuf has numlocal entries saved for local part of x */
@@ -533,7 +533,7 @@ void Factor_dhSolveSetup(Factor_dh mat, SubdomainGraph_dh sg)
   mat->work_y_lo = (NALU_HYPRE_Real*)MALLOC_DH(i*sizeof(NALU_HYPRE_Real)); CHECK_V_ERROR;
   mat->work_x_hi = (NALU_HYPRE_Real*)MALLOC_DH(i*sizeof(NALU_HYPRE_Real)); CHECK_V_ERROR;
   if (debug) {
-    hypre_fprintf(logFile, "FACT num_extLo= %i  num_extHi= %i\n", numb->num_extLo, numb->num_extHi);
+    nalu_hypre_fprintf(logFile, "FACT num_extLo= %i  num_extHi= %i\n", numb->num_extLo, numb->num_extHi);
   }
 
   mat->num_recvLo = 0;
@@ -555,7 +555,7 @@ void Factor_dhSolveSetup(Factor_dh mat, SubdomainGraph_dh sg)
                             outlist, debug); CHECK_V_ERROR;
   }
 
-  hypre_MPI_Alltoall(outlist, 1, NALU_HYPRE_MPI_INT, inlist, 1, NALU_HYPRE_MPI_INT, comm_dh); 
+  nalu_hypre_MPI_Alltoall(outlist, 1, NALU_HYPRE_MPI_INT, inlist, 1, NALU_HYPRE_MPI_INT, comm_dh); 
   /* At this point, inlist[j] contains the number of indices 
      that this processor must send to P_j.  Processors next need
      to exchange the actual lists of required indices; this is done
@@ -578,15 +578,15 @@ void Factor_dhSolveSetup(Factor_dh mat, SubdomainGraph_dh sg)
   if (debug) {
     NALU_HYPRE_Int ii, jj;
 
-    hypre_fprintf(logFile, "\n--------- row/col structure, after global to local renumbering\n");
+    nalu_hypre_fprintf(logFile, "\n--------- row/col structure, after global to local renumbering\n");
     for (ii=0; ii<mat->m; ++ii) {
-      hypre_fprintf(logFile, "local row %i :: ", ii+1);
+      nalu_hypre_fprintf(logFile, "local row %i :: ", ii+1);
       for (jj=mat->rp[ii]; jj<mat->rp[ii+1]; ++jj) {
-        hypre_fprintf(logFile, "%i ", 1+mat->cval[jj]);
+        nalu_hypre_fprintf(logFile, "%i ", 1+mat->cval[jj]);
       }
-      hypre_fprintf(logFile, "\n");
+      nalu_hypre_fprintf(logFile, "\n");
     }
-    hypre_fprintf(logFile, "\n");
+    nalu_hypre_fprintf(logFile, "\n");
     fflush(logFile);
   }
   END_FUNC_DH
@@ -637,17 +637,17 @@ for (i=0; i<m+offsetLo+offsetHi; ++i) {
 */
 
   if (debug) {
-    hypre_fprintf(logFile, "\n=====================================================\n");
-    hypre_fprintf(logFile, "FACT Factor_dhSolve: num_recvLo= %i num_recvHi = %i\n",
+    nalu_hypre_fprintf(logFile, "\n=====================================================\n");
+    nalu_hypre_fprintf(logFile, "FACT Factor_dhSolve: num_recvLo= %i num_recvHi = %i\n",
                                          mat->num_recvLo, mat->num_recvHi);
   }
 
   /* start receives from higher and lower ordered subdomains */
   if (mat->num_recvLo) {
-    hypre_MPI_Startall(mat->num_recvLo, mat->recv_reqLo); 
+    nalu_hypre_MPI_Startall(mat->num_recvLo, mat->recv_reqLo); 
   }
   if (mat->num_recvHi) {
-    hypre_MPI_Startall(mat->num_recvHi, mat->recv_reqHi); 
+    nalu_hypre_MPI_Startall(mat->num_recvHi, mat->recv_reqHi); 
   }
 
   /*-------------------------------------------------------------
@@ -665,13 +665,13 @@ for (i=0; i<m+offsetLo+offsetHi; ++i) {
      complete forward solve on boundary nodes.
   */
   if (mat->num_recvLo) {
-    hypre_MPI_Waitall(mat->num_recvLo, mat->recv_reqLo, mat->status);
+    nalu_hypre_MPI_Waitall(mat->num_recvLo, mat->recv_reqLo, mat->status);
 
     /* debug block */
     if (debug) {
-      hypre_fprintf(logFile, "FACT got 'y' values from lower neighbors; work buffer:\n  ");
+      nalu_hypre_fprintf(logFile, "FACT got 'y' values from lower neighbors; work buffer:\n  ");
       for (i=0; i<offsetLo; ++i) {
-        hypre_fprintf(logFile, "%g ", work_y[m+i]);
+        nalu_hypre_fprintf(logFile, "%g ", work_y[m+i]);
       }
     }
   }
@@ -693,15 +693,15 @@ for (i=0; i<m+offsetLo+offsetHi; ++i) {
     }
 
     /* start the sends */
-    hypre_MPI_Startall(mat->num_sendHi, mat->send_reqHi); 
+    nalu_hypre_MPI_Startall(mat->num_sendHi, mat->send_reqHi); 
 
     /* debug block */
     if (debug) {
-      hypre_fprintf(logFile, "\nFACT sending 'y' values to higher neighbor:\nFACT   ");
+      nalu_hypre_fprintf(logFile, "\nFACT sending 'y' values to higher neighbor:\nFACT   ");
       for (i=0; i<sendlenHi; i++) {
-        hypre_fprintf(logFile, "%g ", sendbufHi[i]);
+        nalu_hypre_fprintf(logFile, "%g ", sendbufHi[i]);
       }
-      hypre_fprintf(logFile, "\n");
+      nalu_hypre_fprintf(logFile, "\n");
     }
   }
 
@@ -710,15 +710,15 @@ for (i=0; i<m+offsetLo+offsetHi; ++i) {
    *----------------------------------------------------------*/
   /* wait for bdry nodes 'x' from higher-ordered processsors */
   if (mat->num_recvHi) {
-    ierr = hypre_MPI_Waitall(mat->num_recvHi, mat->recv_reqHi, mat->status); CHECK_MPI_V_ERROR(ierr);
+    ierr = nalu_hypre_MPI_Waitall(mat->num_recvHi, mat->recv_reqHi, mat->status); CHECK_MPI_V_ERROR(ierr);
 
     /* debug block */
     if (debug) {
-      hypre_fprintf(logFile, "FACT got 'x' values from higher neighbors:\n  ");
+      nalu_hypre_fprintf(logFile, "FACT got 'x' values from higher neighbors:\n  ");
       for (i=m+offsetLo; i<m+offsetLo+offsetHi; ++i) {
-        hypre_fprintf(logFile, "%g ", work_x[i]);
+        nalu_hypre_fprintf(logFile, "%g ", work_x[i]);
       }
-      hypre_fprintf(logFile, "\n");
+      nalu_hypre_fprintf(logFile, "\n");
     }
   }
 
@@ -739,15 +739,15 @@ for (i=0; i<m+offsetLo+offsetHi; ++i) {
     }
 
     /* start the sends */
-    ierr = hypre_MPI_Startall(mat->num_sendLo, mat->send_reqLo); CHECK_MPI_V_ERROR(ierr);
+    ierr = nalu_hypre_MPI_Startall(mat->num_sendLo, mat->send_reqLo); CHECK_MPI_V_ERROR(ierr);
 
     /* debug block */
     if (debug) {
-      hypre_fprintf(logFile, "\nFACT sending 'x' values to lower neighbor:\nFACT   ");
+      nalu_hypre_fprintf(logFile, "\nFACT sending 'x' values to lower neighbor:\nFACT   ");
       for (i=0; i<sendlenLo; i++) {
-        hypre_fprintf(logFile, "%g ", sendbufLo[i]);
+        nalu_hypre_fprintf(logFile, "%g ", sendbufLo[i]);
       }
-      hypre_fprintf(logFile, "\n");
+      nalu_hypre_fprintf(logFile, "\n");
     }
   }
 
@@ -760,23 +760,23 @@ for (i=0; i<m+offsetLo+offsetHi; ++i) {
   }
 
   /* copy solution from work vector lhs vector */
-  hypre_TMemcpy(lhs,  work_x, NALU_HYPRE_Real, m, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_HOST);
+  nalu_hypre_TMemcpy(lhs,  work_x, NALU_HYPRE_Real, m, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_HOST);
 
   if (debug) {
-    hypre_fprintf(logFile, "\nFACT solution: ");
+    nalu_hypre_fprintf(logFile, "\nFACT solution: ");
     for (i=0; i<m; ++i) {
-      hypre_fprintf(logFile, "%g ", lhs[i]);
+      nalu_hypre_fprintf(logFile, "%g ", lhs[i]);
     }
-    hypre_fprintf(logFile, "\n");
+    nalu_hypre_fprintf(logFile, "\n");
   }
 
   /* wait for sends to go through */
   if (mat->num_sendLo) {
-    ierr = hypre_MPI_Waitall(mat->num_sendLo, mat->send_reqLo, mat->status); CHECK_MPI_V_ERROR(ierr);
+    ierr = nalu_hypre_MPI_Waitall(mat->num_sendLo, mat->send_reqLo, mat->status); CHECK_MPI_V_ERROR(ierr);
   }
 
   if (mat->num_sendHi) {
-    ierr = hypre_MPI_Waitall(mat->num_sendHi, mat->send_reqHi, mat->status); CHECK_MPI_V_ERROR(ierr);
+    ierr = nalu_hypre_MPI_Waitall(mat->num_sendHi, mat->send_reqHi, mat->status); CHECK_MPI_V_ERROR(ierr);
   }
   END_FUNC_DH
 }
@@ -793,7 +793,7 @@ void forward_solve_private(NALU_HYPRE_Int m, NALU_HYPRE_Int from, NALU_HYPRE_Int
   NALU_HYPRE_Int i, j, idx;
 
   if (debug) {  
-    hypre_fprintf(logFile, "\nFACT starting forward_solve_private; from= %i; to= %i, m= %i\n",
+    nalu_hypre_fprintf(logFile, "\nFACT starting forward_solve_private; from= %i; to= %i, m= %i\n",
                                        1+from, 1+to, m);
   }
 
@@ -801,7 +801,7 @@ void forward_solve_private(NALU_HYPRE_Int m, NALU_HYPRE_Int from, NALU_HYPRE_Int
   if (from == 0) {
     work_y[0] = rhs[0];  
     if (debug) {
-      hypre_fprintf(logFile, "FACT   work_y[%i] = %g\n------------\n", 1+beg_rowG, work_y[0]);
+      nalu_hypre_fprintf(logFile, "FACT   work_y[%i] = %g\n------------\n", 1+beg_rowG, work_y[0]);
     }
   } else {
     --from; 
@@ -815,21 +815,21 @@ void forward_solve_private(NALU_HYPRE_Int m, NALU_HYPRE_Int from, NALU_HYPRE_Int
     NALU_HYPRE_Real  *val  = aval + rp[i];
     NALU_HYPRE_Real  sum = rhs[i];
 
-    hypre_fprintf(logFile, "FACT   solving for work_y[%i] (global)\n", i+1+beg_rowG);
-    hypre_fprintf(logFile, "FACT        sum = %g\n", sum);
+    nalu_hypre_fprintf(logFile, "FACT   solving for work_y[%i] (global)\n", i+1+beg_rowG);
+    nalu_hypre_fprintf(logFile, "FACT        sum = %g\n", sum);
     for (j=0; j<len; ++j) {
       idx = col[j];
       sum -= ( val[j] * work_y[idx] );
-      hypre_fprintf(logFile, "FACT        sum(%g) -= val[j] (%g) * work_y[%i] (%g)\n",
+      nalu_hypre_fprintf(logFile, "FACT        sum(%g) -= val[j] (%g) * work_y[%i] (%g)\n",
                                   sum, val[j], 1+idx, work_y[idx]);
     }
     work_y[i] = sum;
-    hypre_fprintf(logFile, "FACT  work_y[%i] = %g\n", 1+i+beg_rowG, work_y[i]);
-    hypre_fprintf(logFile, "-----------\n");
+    nalu_hypre_fprintf(logFile, "FACT  work_y[%i] = %g\n", 1+i+beg_rowG, work_y[i]);
+    nalu_hypre_fprintf(logFile, "-----------\n");
   }
 
-  hypre_fprintf(logFile, "\nFACT   work vector at end of forward solve:\n");
-  for ( i=0; i<to; i++ ) hypre_fprintf(logFile, "    %i %g\n", i+1+beg_rowG, work_y[i]);
+  nalu_hypre_fprintf(logFile, "\nFACT   work vector at end of forward solve:\n");
+  for ( i=0; i<to; i++ ) nalu_hypre_fprintf(logFile, "    %i %g\n", i+1+beg_rowG, work_y[i]);
 
  } else {
   for (i=from; i<to; ++i) {
@@ -858,24 +858,24 @@ void backward_solve_private(NALU_HYPRE_Int m, NALU_HYPRE_Int from, NALU_HYPRE_In
   NALU_HYPRE_Int i, j, idx;
 
  if (debug) {  
-  hypre_fprintf(logFile, "\nFACT starting backward_solve_private; from= %i; to= %i, m= %i\n",
+  nalu_hypre_fprintf(logFile, "\nFACT starting backward_solve_private; from= %i; to= %i, m= %i\n",
                                        1+from, 1+to, m);
   for (i=from-1; i>=to; --i) {
     NALU_HYPRE_Int     len = rp[i+1] - diag[i] - 1;
     NALU_HYPRE_Int     *col = cval + diag[i] + 1;
     NALU_HYPRE_Real  *val  = aval + diag[i] + 1;
     NALU_HYPRE_Real  sum = work_y[i];
-    hypre_fprintf(logFile, "FACT   solving for work_x[%i]\n", i+1+beg_rowG);
+    nalu_hypre_fprintf(logFile, "FACT   solving for work_x[%i]\n", i+1+beg_rowG);
 
     for (j=0; j<len; ++j) {
       idx = col[j];
       sum -= (val[j] * work_x[idx]);
-      hypre_fprintf(logFile, "FACT        sum(%g) -= val[j] (%g) * work_x[idx] (%g)\n",
+      nalu_hypre_fprintf(logFile, "FACT        sum(%g) -= val[j] (%g) * work_x[idx] (%g)\n",
                                   sum, val[j], work_x[idx]);
     }
     work_x[i] = sum*aval[diag[i]];
-    hypre_fprintf(logFile, "FACT   work_x[%i] = %g\n", 1+i, work_x[i]);
-    hypre_fprintf(logFile, "----------\n");
+    nalu_hypre_fprintf(logFile, "FACT   work_x[%i] = %g\n", 1+i, work_x[i]);
+    nalu_hypre_fprintf(logFile, "----------\n");
   }
 
  } else {
@@ -941,18 +941,18 @@ void Factor_dhReallocate(Factor_dh F, NALU_HYPRE_Int used, NALU_HYPRE_Int additi
     F->alloc = alloc;
     tmpI = F->cval;
     F->cval = (NALU_HYPRE_Int*)MALLOC_DH(alloc*sizeof(NALU_HYPRE_Int)); CHECK_V_ERROR;
-    hypre_TMemcpy(F->cval,  tmpI, NALU_HYPRE_Int, used, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_HOST);
+    nalu_hypre_TMemcpy(F->cval,  tmpI, NALU_HYPRE_Int, used, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_HOST);
     FREE_DH(tmpI); CHECK_V_ERROR;
     if (F->fill != NULL) {
       tmpI = F->fill;
       F->fill = (NALU_HYPRE_Int*)MALLOC_DH(alloc*sizeof(NALU_HYPRE_Int)); CHECK_V_ERROR;
-      hypre_TMemcpy(F->fill,  tmpI, NALU_HYPRE_Int, used, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TMemcpy(F->fill,  tmpI, NALU_HYPRE_Int, used, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_HOST);
       FREE_DH(tmpI); CHECK_V_ERROR;
     }
     if (F->aval != NULL) {
       REAL_DH *tmpF = F->aval;
       F->aval = (REAL_DH*)MALLOC_DH(alloc*sizeof(REAL_DH)); CHECK_V_ERROR;
-      hypre_TMemcpy(F->aval,  tmpF, REAL_DH, used, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TMemcpy(F->aval,  tmpF, REAL_DH, used, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_HOST);
       FREE_DH(tmpF); CHECK_V_ERROR;
     }
   }
@@ -1006,54 +1006,54 @@ void Factor_dhSolveSeq(NALU_HYPRE_Real *rhs, NALU_HYPRE_Real *lhs, Euclid_dh ctx
   work = ctx->work;
 
  if (debug) {
-    hypre_fprintf(logFile, "\nFACT ============================================================\n");
-    hypre_fprintf(logFile, "FACT starting Factor_dhSolveSeq\n");
+    nalu_hypre_fprintf(logFile, "\nFACT ============================================================\n");
+    nalu_hypre_fprintf(logFile, "FACT starting Factor_dhSolveSeq\n");
 
   /* forward solve lower triangle */
-  hypre_fprintf(logFile, "\nFACT   STARTING FORWARD SOLVE\n------------\n");
+  nalu_hypre_fprintf(logFile, "\nFACT   STARTING FORWARD SOLVE\n------------\n");
   work[0] = rhs[0];
-  hypre_fprintf(logFile, "FACT   work[0] = %g\n------------\n", work[0]);
+  nalu_hypre_fprintf(logFile, "FACT   work[0] = %g\n------------\n", work[0]);
   for ( i=1; i<m; i++ ) {
     v   = aval + rp[i];
     vi  = cval + rp[i];
     nz  = diag[i] - rp[i];
-    hypre_fprintf(logFile, "FACT   solving for work[%i]\n", i+1);
+    nalu_hypre_fprintf(logFile, "FACT   solving for work[%i]\n", i+1);
     sum = rhs[i];
     for (j=0; j<nz; ++j) {
       sum -= (v[j] * work[vi[j]]);
-      hypre_fprintf(logFile, "FACT         sum (%g) -= v[j] (%g) * work[vi[j]] (%g)\n",
+      nalu_hypre_fprintf(logFile, "FACT         sum (%g) -= v[j] (%g) * work[vi[j]] (%g)\n",
                                             sum, v[j], work[vi[j]]);
     }
     work[i] = sum;
-    hypre_fprintf(logFile, "FACT   work[%i] = %g\n------------\n", 1+i, work[i]);
+    nalu_hypre_fprintf(logFile, "FACT   work[%i] = %g\n------------\n", 1+i, work[i]);
   }
 
 
-  hypre_fprintf(logFile, "\nFACT   work vector at end of forward solve:\n");
-  for ( i=0; i<m; i++ ) hypre_fprintf(logFile, "    %i %g\n", i+1, work[i]);
+  nalu_hypre_fprintf(logFile, "\nFACT   work vector at end of forward solve:\n");
+  for ( i=0; i<m; i++ ) nalu_hypre_fprintf(logFile, "    %i %g\n", i+1, work[i]);
 
 
   /* backward solve upper triangular boundaries (sequential) */
-  hypre_fprintf(logFile, "\nFACT   STARTING BACKWARD SOLVE\n--------------\n");
+  nalu_hypre_fprintf(logFile, "\nFACT   STARTING BACKWARD SOLVE\n--------------\n");
   for ( i=m-1; i>=0; i-- ){
     v   = aval + diag[i] + 1;
     vi  = cval + diag[i] + 1;
     nz  = rp[i+1] - diag[i] - 1;
-    hypre_fprintf(logFile, "FACT   solving for lhs[%i]\n", i+1);
+    nalu_hypre_fprintf(logFile, "FACT   solving for lhs[%i]\n", i+1);
     sum = work[i];
     for (j=0; j<nz; ++j) {
       sum -= (v[j] * work[vi[j]]);
-      hypre_fprintf(logFile, "FACT         sum (%g) -= v[j] (%g) * work[vi[j]] (%g)\n",
+      nalu_hypre_fprintf(logFile, "FACT         sum (%g) -= v[j] (%g) * work[vi[j]] (%g)\n",
                                             sum, v[j], work[vi[j]]);
     }
     lhs[i] = work[i] = sum*aval[diag[i]];
-    hypre_fprintf(logFile, "FACT   lhs[%i] = %g\n------------\n", 1+i, lhs[i]);
-    hypre_fprintf(logFile, "FACT   solving for lhs[%i]\n", i+1);
+    nalu_hypre_fprintf(logFile, "FACT   lhs[%i] = %g\n------------\n", 1+i, lhs[i]);
+    nalu_hypre_fprintf(logFile, "FACT   solving for lhs[%i]\n", i+1);
   }
 
-  hypre_fprintf(logFile, "\nFACT solution: ");
-  for (i=0; i<m; ++i) hypre_fprintf(logFile, "%g ", lhs[i]);
-  hypre_fprintf(logFile, "\n");
+  nalu_hypre_fprintf(logFile, "\nFACT solution: ");
+  for (i=0; i<m; ++i) nalu_hypre_fprintf(logFile, "%g ", lhs[i]);
+  nalu_hypre_fprintf(logFile, "\n");
 
 
  } else {
@@ -1123,7 +1123,7 @@ NALU_HYPRE_Real Factor_dhMaxPivotInverse(Factor_dh mat)
   if (np_dh == 1) {
     minGlobal = min;
   } else {
-    hypre_MPI_Reduce(&min, &minGlobal, 1, hypre_MPI_REAL, hypre_MPI_MIN, 0, comm_dh);
+    nalu_hypre_MPI_Reduce(&min, &minGlobal, 1, nalu_hypre_MPI_REAL, nalu_hypre_MPI_MIN, 0, comm_dh);
   }
 
   if (minGlobal == 0) {
@@ -1150,7 +1150,7 @@ NALU_HYPRE_Real Factor_dhMaxValue(Factor_dh mat)
   if (np_dh == 1) {
     maxGlobal = max;
   } else {
-    hypre_MPI_Reduce(&max, &maxGlobal, 1, hypre_MPI_REAL, hypre_MPI_MAX, 0, comm_dh);
+    nalu_hypre_MPI_Reduce(&max, &maxGlobal, 1, nalu_hypre_MPI_REAL, nalu_hypre_MPI_MAX, 0, comm_dh);
   }
   END_FUNC_VAL(maxGlobal)
 }
@@ -1180,7 +1180,7 @@ NALU_HYPRE_Real Factor_dhCondEst(Factor_dh mat, Euclid_dh ctx)
   if (np_dh == 1) {
     maxGlobal = max;
   } else {
-    hypre_MPI_Reduce(&max, &maxGlobal, 1, hypre_MPI_REAL, hypre_MPI_MAX, 0, comm_dh);
+    nalu_hypre_MPI_Reduce(&max, &maxGlobal, 1, nalu_hypre_MPI_REAL, nalu_hypre_MPI_MAX, 0, comm_dh);
   }
   END_FUNC_VAL(maxGlobal)
 }

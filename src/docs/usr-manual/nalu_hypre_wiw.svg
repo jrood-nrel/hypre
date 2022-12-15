@@ -15,7 +15,7 @@
    width="525.80347"
    height="184.66798"
    viewBox="0 0 525.80347 184.66799"
-   sodipodi:docname="hypre_wiw.svg"
+   sodipodi:docname="nalu_hypre_wiw.svg"
    inkscape:version="0.92.2 (5c3e80d, 2017-08-06)"><metadata
      id="metadata7832"><rdf:RDF><cc:Work
          rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
@@ -42,7 +42,7 @@
      inkscape:current-layer="g7834" /><g
      id="g7834"
      inkscape:groupmode="layer"
-     inkscape:label="hypre_wiw"
+     inkscape:label="nalu_hypre_wiw"
      transform="matrix(1.3333333,0,0,-1.3333333,-0.44986932,184.94666)"><g
        id="g7836"
        transform="scale(0.1)"><g

@@ -7,7 +7,7 @@
 
 /******************************************************************************
  *
- * Member functions for hypre_DistributedMatrix class for par_csr storage scheme.
+ * Member functions for nalu_hypre_DistributedMatrix class for par_csr storage scheme.
  *
  *****************************************************************************/
 
@@ -16,25 +16,25 @@
 #include "NALU_HYPRE_parcsr_mv.h"
 
 /*--------------------------------------------------------------------------
- * hypre_DistributedMatrixDestroyParCSR
+ * nalu_hypre_DistributedMatrixDestroyParCSR
  *   Internal routine for freeing a matrix stored in Parcsr form.
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_DistributedMatrixDestroyParCSR( hypre_DistributedMatrix *distributed_matrix )
+nalu_hypre_DistributedMatrixDestroyParCSR( nalu_hypre_DistributedMatrix *distributed_matrix )
 {
 
    return(0);
 }
 
 /*--------------------------------------------------------------------------
- * hypre_DistributedMatrixInitializeParCSR
+ * nalu_hypre_DistributedMatrixInitializeParCSR
  *--------------------------------------------------------------------------*/
 
   /* matrix must be set before calling this function*/
 
 NALU_HYPRE_Int
-hypre_DistributedMatrixInitializeParCSR(hypre_DistributedMatrix *matrix)
+nalu_hypre_DistributedMatrixInitializeParCSR(nalu_hypre_DistributedMatrix *matrix)
 {
 
    return 0;
@@ -45,33 +45,33 @@ hypre_DistributedMatrixInitializeParCSR(hypre_DistributedMatrix *matrix)
  *--------------------------------------------------------------------------*/
 
 /*--------------------------------------------------------------------------
- * hypre_DistributedMatrixPrintParCSR
+ * nalu_hypre_DistributedMatrixPrintParCSR
  *   Internal routine for printing a matrix stored in Parcsr form.
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_DistributedMatrixPrintParCSR( hypre_DistributedMatrix *matrix )
+nalu_hypre_DistributedMatrixPrintParCSR( nalu_hypre_DistributedMatrix *matrix )
 {
    NALU_HYPRE_Int  ierr=0;
-   NALU_HYPRE_ParCSRMatrix Parcsr_matrix = (NALU_HYPRE_ParCSRMatrix) hypre_DistributedMatrixLocalStorage(matrix);
+   NALU_HYPRE_ParCSRMatrix Parcsr_matrix = (NALU_HYPRE_ParCSRMatrix) nalu_hypre_DistributedMatrixLocalStorage(matrix);
 
    NALU_HYPRE_ParCSRMatrixPrint( Parcsr_matrix, "STDOUT" );
    return(ierr);
 }
 
 /*--------------------------------------------------------------------------
- * hypre_DistributedMatrixGetLocalRangeParCSR
+ * nalu_hypre_DistributedMatrixGetLocalRangeParCSR
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_DistributedMatrixGetLocalRangeParCSR( hypre_DistributedMatrix *matrix,
+nalu_hypre_DistributedMatrixGetLocalRangeParCSR( nalu_hypre_DistributedMatrix *matrix,
                              NALU_HYPRE_BigInt *row_start,
                              NALU_HYPRE_BigInt *row_end,
                              NALU_HYPRE_BigInt *col_start,
                              NALU_HYPRE_BigInt *col_end )
 {
    NALU_HYPRE_Int ierr=0;
-   NALU_HYPRE_ParCSRMatrix Parcsr_matrix = (NALU_HYPRE_ParCSRMatrix) hypre_DistributedMatrixLocalStorage(matrix);
+   NALU_HYPRE_ParCSRMatrix Parcsr_matrix = (NALU_HYPRE_ParCSRMatrix) nalu_hypre_DistributedMatrixLocalStorage(matrix);
 
    if (!Parcsr_matrix) return(-1);
 
@@ -83,18 +83,18 @@ hypre_DistributedMatrixGetLocalRangeParCSR( hypre_DistributedMatrix *matrix,
 }
 
 /*--------------------------------------------------------------------------
- * hypre_DistributedMatrixGetRowParCSR
+ * nalu_hypre_DistributedMatrixGetRowParCSR
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_DistributedMatrixGetRowParCSR( hypre_DistributedMatrix *matrix,
+nalu_hypre_DistributedMatrixGetRowParCSR( nalu_hypre_DistributedMatrix *matrix,
                              NALU_HYPRE_BigInt row,
                              NALU_HYPRE_Int *size,
                              NALU_HYPRE_BigInt **col_ind,
                              NALU_HYPRE_Real **values )
 {
    NALU_HYPRE_Int ierr = 0;
-   NALU_HYPRE_ParCSRMatrix Parcsr_matrix = (NALU_HYPRE_ParCSRMatrix) hypre_DistributedMatrixLocalStorage(matrix);
+   NALU_HYPRE_ParCSRMatrix Parcsr_matrix = (NALU_HYPRE_ParCSRMatrix) nalu_hypre_DistributedMatrixLocalStorage(matrix);
 
    if (!Parcsr_matrix) return(-1);
 
@@ -102,25 +102,25 @@ hypre_DistributedMatrixGetRowParCSR( hypre_DistributedMatrix *matrix,
 
    // RL: if NALU_HYPRE_ParCSRMatrixGetRow was on device, need the next line to guarantee it's done
 #if defined(NALU_HYPRE_USING_GPU)
-   hypre_SyncComputeStream(hypre_handle());
+   nalu_hypre_SyncComputeStream(nalu_hypre_handle());
 #endif
 
    return(ierr);
 }
 
 /*--------------------------------------------------------------------------
- * hypre_DistributedMatrixRestoreRowParCSR
+ * nalu_hypre_DistributedMatrixRestoreRowParCSR
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_DistributedMatrixRestoreRowParCSR( hypre_DistributedMatrix *matrix,
+nalu_hypre_DistributedMatrixRestoreRowParCSR( nalu_hypre_DistributedMatrix *matrix,
                              NALU_HYPRE_BigInt row,
                              NALU_HYPRE_Int *size,
                              NALU_HYPRE_BigInt **col_ind,
                              NALU_HYPRE_Real **values )
 {
    NALU_HYPRE_Int ierr;
-   NALU_HYPRE_ParCSRMatrix Parcsr_matrix = (NALU_HYPRE_ParCSRMatrix) hypre_DistributedMatrixLocalStorage(matrix);
+   NALU_HYPRE_ParCSRMatrix Parcsr_matrix = (NALU_HYPRE_ParCSRMatrix) nalu_hypre_DistributedMatrixLocalStorage(matrix);
 
    if (Parcsr_matrix == NULL) return(-1);
 

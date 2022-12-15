@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_Euclid.h"
+#include "_nalu_hypre_Euclid.h"
 /* #include "SortedSet_dh.h" */
 /* #include "shellSort_dh.h" */
 /* #include "Mem_dh.h" */
@@ -60,7 +60,7 @@ void SortedSet_dhInsert(SortedSet_dh ss, NALU_HYPRE_Int idx)
   if (! isInserted) {
     if (ct == n) {
       NALU_HYPRE_Int *tmp = (NALU_HYPRE_Int*)MALLOC_DH(n*2*sizeof(NALU_HYPRE_Int)); CHECK_V_ERROR;
-      hypre_TMemcpy(tmp,  list, NALU_HYPRE_Int, n, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TMemcpy(tmp,  list, NALU_HYPRE_Int, n, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_HOST);
       FREE_DH(list); CHECK_V_ERROR;
       list = ss->list = tmp;
       ss->n *= 2;

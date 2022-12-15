@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_parcsr_ls.h"
+#include "_nalu_hypre_parcsr_ls.h"
 
 /*--------------------------------------------------------------------------
  * NALU_HYPRE_ParCSRBiCGSTABCreate
@@ -14,26 +14,26 @@
 NALU_HYPRE_Int
 NALU_HYPRE_ParCSRBiCGSTABCreate( MPI_Comm comm, NALU_HYPRE_Solver *solver )
 {
-   hypre_BiCGSTABFunctions * bicgstab_functions;
+   nalu_hypre_BiCGSTABFunctions * bicgstab_functions;
 
    if (!solver)
    {
-      hypre_error_in_arg(2);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(2);
+      return nalu_hypre_error_flag;
    }
    bicgstab_functions =
-      hypre_BiCGSTABFunctionsCreate(
-         hypre_ParKrylovCreateVector,
-         hypre_ParKrylovDestroyVector, hypre_ParKrylovMatvecCreate,
-         hypre_ParKrylovMatvec, hypre_ParKrylovMatvecDestroy,
-         hypre_ParKrylovInnerProd, hypre_ParKrylovCopyVector,
-         hypre_ParKrylovClearVector,
-         hypre_ParKrylovScaleVector, hypre_ParKrylovAxpy,
-         hypre_ParKrylovCommInfo,
-         hypre_ParKrylovIdentitySetup, hypre_ParKrylovIdentity );
-   *solver = ( (NALU_HYPRE_Solver) hypre_BiCGSTABCreate( bicgstab_functions) );
+      nalu_hypre_BiCGSTABFunctionsCreate(
+         nalu_hypre_ParKrylovCreateVector,
+         nalu_hypre_ParKrylovDestroyVector, nalu_hypre_ParKrylovMatvecCreate,
+         nalu_hypre_ParKrylovMatvec, nalu_hypre_ParKrylovMatvecDestroy,
+         nalu_hypre_ParKrylovInnerProd, nalu_hypre_ParKrylovCopyVector,
+         nalu_hypre_ParKrylovClearVector,
+         nalu_hypre_ParKrylovScaleVector, nalu_hypre_ParKrylovAxpy,
+         nalu_hypre_ParKrylovCommInfo,
+         nalu_hypre_ParKrylovIdentitySetup, nalu_hypre_ParKrylovIdentity );
+   *solver = ( (NALU_HYPRE_Solver) nalu_hypre_BiCGSTABCreate( bicgstab_functions) );
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
@@ -43,7 +43,7 @@ NALU_HYPRE_ParCSRBiCGSTABCreate( MPI_Comm comm, NALU_HYPRE_Solver *solver )
 NALU_HYPRE_Int
 NALU_HYPRE_ParCSRBiCGSTABDestroy( NALU_HYPRE_Solver solver )
 {
-   return ( hypre_BiCGSTABDestroy( (void *) solver ) );
+   return ( nalu_hypre_BiCGSTABDestroy( (void *) solver ) );
 }
 
 /*--------------------------------------------------------------------------

@@ -5,13 +5,13 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_parcsr_ls.h"
+#include "_nalu_hypre_parcsr_ls.h"
 #include "interpreter.h"
 #include "NALU_HYPRE_MatvecFunctions.h"
 #include "temp_multivector.h"
 
 NALU_HYPRE_Int
-hypre_ParSetRandomValues( void* v, NALU_HYPRE_Int seed )
+nalu_hypre_ParSetRandomValues( void* v, NALU_HYPRE_Int seed )
 {
 
    NALU_HYPRE_ParVectorSetRandomValues( (NALU_HYPRE_ParVector)v, seed );
@@ -19,20 +19,20 @@ hypre_ParSetRandomValues( void* v, NALU_HYPRE_Int seed )
 }
 
 NALU_HYPRE_Int
-hypre_ParPrintVector( void* v, const char* file )
+nalu_hypre_ParPrintVector( void* v, const char* file )
 {
 
-   return hypre_ParVectorPrint( (hypre_ParVector*)v, file );
+   return nalu_hypre_ParVectorPrint( (nalu_hypre_ParVector*)v, file );
 }
 
 void*
-hypre_ParReadVector( MPI_Comm comm, const char* file )
+nalu_hypre_ParReadVector( MPI_Comm comm, const char* file )
 {
 
-   return (void*)hypre_ParVectorRead( comm, file );
+   return (void*)nalu_hypre_ParVectorRead( comm, file );
 }
 
-NALU_HYPRE_Int hypre_ParVectorSize(void * x)
+NALU_HYPRE_Int nalu_hypre_ParVectorSize(void * x)
 {
    return 0;
 }
@@ -46,14 +46,14 @@ NALU_HYPRE_ParCSRMultiVectorPrint( void* x_, const char* fileName )
    char fullName[128];
 
    x = (mv_TempMultiVector*)x_;
-   hypre_assert( x != NULL );
+   nalu_hypre_assert( x != NULL );
 
    ierr = 0;
    for ( i = 0; i < x->numVectors; i++ )
    {
-      hypre_sprintf( fullName, "%s.%d", fileName, i );
+      nalu_hypre_sprintf( fullName, "%s.%d", fileName, i );
       ierr = ierr ||
-             hypre_ParPrintVector( x->vector[i], fullName );
+             nalu_hypre_ParPrintVector( x->vector[i], fullName );
    }
    return ierr;
 }
@@ -68,12 +68,12 @@ NALU_HYPRE_ParCSRMultiVectorRead( MPI_Comm comm, void* ii_, const char* fileName
    mv_TempMultiVector* x;
    mv_InterfaceInterpreter* ii = (mv_InterfaceInterpreter*)ii_;
 
-   hypre_MPI_Comm_rank( comm, &id );
+   nalu_hypre_MPI_Comm_rank( comm, &id );
 
    n = 0;
    do
    {
-      hypre_sprintf( fullName, "%s.%d.%d", fileName, n, id );
+      nalu_hypre_sprintf( fullName, "%s.%d.%d", fileName, n, id );
       if ( (fp = fopen(fullName, "r")) )
       {
          n++;
@@ -87,22 +87,22 @@ NALU_HYPRE_ParCSRMultiVectorRead( MPI_Comm comm, void* ii_, const char* fileName
       return NULL;
    }
 
-   x = hypre_TAlloc(mv_TempMultiVector, 1, NALU_HYPRE_MEMORY_HOST);
-   hypre_assert( x != NULL );
+   x = nalu_hypre_TAlloc(mv_TempMultiVector, 1, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_assert( x != NULL );
 
    x->interpreter = ii;
 
    x->numVectors = n;
 
-   x->vector = hypre_CTAlloc(void*,  n, NALU_HYPRE_MEMORY_HOST);
-   hypre_assert( x->vector != NULL );
+   x->vector = nalu_hypre_CTAlloc(void*,  n, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_assert( x->vector != NULL );
 
    x->ownsVectors = 1;
 
    for ( i = 0; i < n; i++ )
    {
-      hypre_sprintf( fullName, "%s.%d", fileName, i );
-      x->vector[i] = hypre_ParReadVector( comm, fullName );
+      nalu_hypre_sprintf( fullName, "%s.%d", fileName, i );
+      x->vector[i] = nalu_hypre_ParReadVector( comm, fullName );
    }
 
    x->mask = NULL;
@@ -167,14 +167,14 @@ NALU_HYPRE_TempParCSRSetupInterpreter( mv_InterfaceInterpreter *i )
 {
    /* Vector part */
 
-   i->CreateVector = hypre_ParKrylovCreateVector;
-   i->DestroyVector = hypre_ParKrylovDestroyVector;
-   i->InnerProd = hypre_ParKrylovInnerProd;
-   i->CopyVector = hypre_ParKrylovCopyVector;
-   i->ClearVector = hypre_ParKrylovClearVector;
-   i->SetRandomValues = hypre_ParSetRandomValues;
-   i->ScaleVector = hypre_ParKrylovScaleVector;
-   i->Axpy = hypre_ParKrylovAxpy;
+   i->CreateVector = nalu_hypre_ParKrylovCreateVector;
+   i->DestroyVector = nalu_hypre_ParKrylovDestroyVector;
+   i->InnerProd = nalu_hypre_ParKrylovInnerProd;
+   i->CopyVector = nalu_hypre_ParKrylovCopyVector;
+   i->ClearVector = nalu_hypre_ParKrylovClearVector;
+   i->SetRandomValues = nalu_hypre_ParSetRandomValues;
+   i->ScaleVector = nalu_hypre_ParKrylovScaleVector;
+   i->Axpy = nalu_hypre_ParKrylovAxpy;
 
    /* Multivector part */
 
@@ -208,9 +208,9 @@ NALU_HYPRE_ParCSRSetupInterpreter( mv_InterfaceInterpreter *i )
 NALU_HYPRE_Int
 NALU_HYPRE_ParCSRSetupMatvec(NALU_HYPRE_MatvecFunctions * mv)
 {
-   mv->MatvecCreate = hypre_ParKrylovMatvecCreate;
-   mv->Matvec = hypre_ParKrylovMatvec;
-   mv->MatvecDestroy = hypre_ParKrylovMatvecDestroy;
+   mv->MatvecCreate = nalu_hypre_ParKrylovMatvecCreate;
+   mv->Matvec = nalu_hypre_ParKrylovMatvec;
+   mv->MatvecDestroy = nalu_hypre_ParKrylovMatvecDestroy;
 
    mv->MatMultiVecCreate = NULL;
    mv->MatMultiVec = NULL;

@@ -21,14 +21,14 @@
 */
 
 #include "krylov.h"
-#include "_hypre_utilities.h"
+#include "_nalu_hypre_utilities.h"
 
 /*--------------------------------------------------------------------------
- * hypre_PCGFunctionsCreate
+ * nalu_hypre_PCGFunctionsCreate
  *--------------------------------------------------------------------------*/
 
-hypre_PCGFunctions *
-hypre_PCGFunctionsCreate(
+nalu_hypre_PCGFunctions *
+nalu_hypre_PCGFunctionsCreate(
    void *       (*CAlloc)        ( size_t count, size_t elt_size, NALU_HYPRE_MemoryLocation location ),
    NALU_HYPRE_Int    (*Free)          ( void *ptr ),
    NALU_HYPRE_Int    (*CommInfo)      ( void  *A, NALU_HYPRE_Int   *my_id,
@@ -48,9 +48,9 @@ hypre_PCGFunctionsCreate(
    NALU_HYPRE_Int    (*Precond)       ( void *vdata, void *A, void *b, void *x )
 )
 {
-   hypre_PCGFunctions * pcg_functions;
-   pcg_functions = (hypre_PCGFunctions *)
-                   CAlloc( 1, sizeof(hypre_PCGFunctions), NALU_HYPRE_MEMORY_HOST );
+   nalu_hypre_PCGFunctions * pcg_functions;
+   pcg_functions = (nalu_hypre_PCGFunctions *)
+                   CAlloc( 1, sizeof(nalu_hypre_PCGFunctions), NALU_HYPRE_MEMORY_HOST );
 
    pcg_functions->CAlloc = CAlloc;
    pcg_functions->Free = Free;
@@ -73,17 +73,17 @@ hypre_PCGFunctionsCreate(
 }
 
 /*--------------------------------------------------------------------------
- * hypre_PCGCreate
+ * nalu_hypre_PCGCreate
  *--------------------------------------------------------------------------*/
 
 void *
-hypre_PCGCreate( hypre_PCGFunctions *pcg_functions )
+nalu_hypre_PCGCreate( nalu_hypre_PCGFunctions *pcg_functions )
 {
-   hypre_PCGData *pcg_data;
+   nalu_hypre_PCGData *pcg_data;
 
    NALU_HYPRE_ANNOTATE_FUNC_BEGIN;
 
-   pcg_data = hypre_CTAllocF(hypre_PCGData, 1, pcg_functions, NALU_HYPRE_MEMORY_HOST);
+   pcg_data = nalu_hypre_CTAllocF(nalu_hypre_PCGData, 1, pcg_functions, NALU_HYPRE_MEMORY_HOST);
 
    pcg_data -> functions = pcg_functions;
 
@@ -118,27 +118,27 @@ hypre_PCGCreate( hypre_PCGFunctions *pcg_functions )
 }
 
 /*--------------------------------------------------------------------------
- * hypre_PCGDestroy
+ * nalu_hypre_PCGDestroy
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_PCGDestroy( void *pcg_vdata )
+nalu_hypre_PCGDestroy( void *pcg_vdata )
 {
-   hypre_PCGData *pcg_data = (hypre_PCGData *)pcg_vdata;
+   nalu_hypre_PCGData *pcg_data = (nalu_hypre_PCGData *)pcg_vdata;
 
    NALU_HYPRE_ANNOTATE_FUNC_BEGIN;
 
    if (pcg_data)
    {
-      hypre_PCGFunctions *pcg_functions = pcg_data->functions;
+      nalu_hypre_PCGFunctions *pcg_functions = pcg_data->functions;
       if ( (pcg_data -> norms) != NULL )
       {
-         hypre_TFreeF( pcg_data -> norms, pcg_functions );
+         nalu_hypre_TFreeF( pcg_data -> norms, pcg_functions );
          pcg_data -> norms = NULL;
       }
       if ( (pcg_data -> rel_norms) != NULL )
       {
-         hypre_TFreeF( pcg_data -> rel_norms, pcg_functions );
+         nalu_hypre_TFreeF( pcg_data -> rel_norms, pcg_functions );
          pcg_data -> rel_norms = NULL;
       }
       if ( pcg_data -> matvec_data != NULL && pcg_data->owns_matvec_data )
@@ -161,40 +161,40 @@ hypre_PCGDestroy( void *pcg_vdata )
          (*(pcg_functions->DestroyVector))(pcg_data -> r);
          pcg_data -> r = NULL;
       }
-      hypre_TFreeF( pcg_data, pcg_functions );
-      hypre_TFreeF( pcg_functions, pcg_functions );
+      nalu_hypre_TFreeF( pcg_data, pcg_functions );
+      nalu_hypre_TFreeF( pcg_functions, pcg_functions );
    }
 
    NALU_HYPRE_ANNOTATE_FUNC_END;
 
-   return (hypre_error_flag);
+   return (nalu_hypre_error_flag);
 }
 
 /*--------------------------------------------------------------------------
- * hypre_PCGGetResidual
+ * nalu_hypre_PCGGetResidual
  *--------------------------------------------------------------------------*/
 
-NALU_HYPRE_Int hypre_PCGGetResidual( void *pcg_vdata, void **residual )
+NALU_HYPRE_Int nalu_hypre_PCGGetResidual( void *pcg_vdata, void **residual )
 {
    /* returns a pointer to the residual vector */
 
-   hypre_PCGData  *pcg_data     =  (hypre_PCGData *)pcg_vdata;
+   nalu_hypre_PCGData  *pcg_data     =  (nalu_hypre_PCGData *)pcg_vdata;
    *residual = pcg_data->r;
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_PCGSetup
+ * nalu_hypre_PCGSetup
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_PCGSetup( void *pcg_vdata,
+nalu_hypre_PCGSetup( void *pcg_vdata,
                 void *A,
                 void *b,
                 void *x         )
 {
-   hypre_PCGData *pcg_data =  (hypre_PCGData *)pcg_vdata;
-   hypre_PCGFunctions *pcg_functions = pcg_data->functions;
+   nalu_hypre_PCGData *pcg_data =  (nalu_hypre_PCGData *)pcg_vdata;
+   nalu_hypre_PCGFunctions *pcg_functions = pcg_data->functions;
    NALU_HYPRE_Int            max_iter         = (pcg_data -> max_iter);
    NALU_HYPRE_Int          (*precond_setup)(void*, void*, void*, void*) = (pcg_functions -> precond_setup);
    void          *precond_data     = (pcg_data -> precond_data);
@@ -243,26 +243,26 @@ hypre_PCGSetup( void *pcg_vdata,
    {
       if ( (pcg_data -> norms) != NULL )
       {
-         hypre_TFreeF( pcg_data -> norms, pcg_functions );
+         nalu_hypre_TFreeF( pcg_data -> norms, pcg_functions );
       }
-      (pcg_data -> norms)     = hypre_CTAllocF( NALU_HYPRE_Real, max_iter + 1,
+      (pcg_data -> norms)     = nalu_hypre_CTAllocF( NALU_HYPRE_Real, max_iter + 1,
                                                 pcg_functions, NALU_HYPRE_MEMORY_HOST);
 
       if ( (pcg_data -> rel_norms) != NULL )
       {
-         hypre_TFreeF( pcg_data -> rel_norms, pcg_functions );
+         nalu_hypre_TFreeF( pcg_data -> rel_norms, pcg_functions );
       }
-      (pcg_data -> rel_norms) = hypre_CTAllocF( NALU_HYPRE_Real, max_iter + 1,
+      (pcg_data -> rel_norms) = nalu_hypre_CTAllocF( NALU_HYPRE_Real, max_iter + 1,
                                                 pcg_functions, NALU_HYPRE_MEMORY_HOST );
    }
 
    NALU_HYPRE_ANNOTATE_FUNC_END;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_PCGSolve
+ * nalu_hypre_PCGSolve
  *--------------------------------------------------------------------------
  *
  * We use the following convergence test as the default (see Ashby, Holst,
@@ -280,13 +280,13 @@ hypre_PCGSetup( void *pcg_vdata,
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_PCGSolve( void *pcg_vdata,
+nalu_hypre_PCGSolve( void *pcg_vdata,
                 void *A,
                 void *b,
                 void *x         )
 {
-   hypre_PCGData  *pcg_data     =  (hypre_PCGData *)pcg_vdata;
-   hypre_PCGFunctions *pcg_functions = pcg_data->functions;
+   nalu_hypre_PCGData  *pcg_data     =  (nalu_hypre_PCGData *)pcg_vdata;
+   nalu_hypre_PCGFunctions *pcg_functions = pcg_data->functions;
 
    NALU_HYPRE_Real      r_tol        = (pcg_data -> tol);
    NALU_HYPRE_Real      a_tol        = (pcg_data -> a_tol);
@@ -360,7 +360,7 @@ hypre_PCGSolve( void *pcg_vdata,
       bi_prod = (*(pcg_functions->InnerProd))(b, b);
       if (print_level > 1 && my_id == 0)
       {
-         hypre_printf("<b,b>: %e\n", bi_prod);
+         nalu_hypre_printf("<b,b>: %e\n", bi_prod);
       }
    }
    else
@@ -371,7 +371,7 @@ hypre_PCGSolve( void *pcg_vdata,
       bi_prod = (*(pcg_functions->InnerProd))(p, b);
       if (print_level > 1 && my_id == 0)
       {
-         hypre_printf("<C*b,b>: %e\n", bi_prod);
+         nalu_hypre_printf("<C*b,b>: %e\n", bi_prod);
       }
    };
 
@@ -387,16 +387,16 @@ hypre_PCGSolve( void *pcg_vdata,
          found at http://HTTP.CS.Berkeley.EDU/~wkahan/ieee754status/IEEE754.PDF */
       if (print_level > 0 || logging > 0)
       {
-         hypre_printf("\n\nERROR detected by Hypre ...  BEGIN\n");
-         hypre_printf("ERROR -- hypre_PCGSolve: INFs and/or NaNs detected in input.\n");
-         hypre_printf("User probably placed non-numerics in supplied b.\n");
-         hypre_printf("Returning error flag += 101.  Program not terminated.\n");
-         hypre_printf("ERROR detected by Hypre ...  END\n\n\n");
+         nalu_hypre_printf("\n\nERROR detected by Hypre ...  BEGIN\n");
+         nalu_hypre_printf("ERROR -- nalu_hypre_PCGSolve: INFs and/or NaNs detected in input.\n");
+         nalu_hypre_printf("User probably placed non-numerics in supplied b.\n");
+         nalu_hypre_printf("Returning error flag += 101.  Program not terminated.\n");
+         nalu_hypre_printf("ERROR detected by Hypre ...  END\n\n\n");
       }
-      hypre_error(NALU_HYPRE_ERROR_GENERIC);
+      nalu_hypre_error(NALU_HYPRE_ERROR_GENERIC);
       NALU_HYPRE_ANNOTATE_FUNC_END;
 
-      return hypre_error_flag;
+      return nalu_hypre_error_flag;
    }
 
    eps = r_tol * r_tol; /* note: this may be re-assigned below */
@@ -420,7 +420,7 @@ hypre_PCGSolve( void *pcg_vdata,
              note: default for a_tol is 0.0, so relative residual criteria is used unless
              user specifies a_tol, or sets r_tol = 0.0, which means absolute
              tol only is checked  */
-         eps = hypre_max(r_tol * r_tol, a_tol * a_tol / bi_prod);
+         eps = nalu_hypre_max(r_tol * r_tol, a_tol * a_tol / bi_prod);
 
       }
    }
@@ -435,7 +435,7 @@ hypre_PCGSolve( void *pcg_vdata,
       }
       NALU_HYPRE_ANNOTATE_FUNC_END;
 
-      return hypre_error_flag;
+      return nalu_hypre_error_flag;
       /* In this case, for the original parcsr pcg, the code would take special
          action to force iterations even though the exact value was known. */
    };
@@ -445,7 +445,7 @@ hypre_PCGSolve( void *pcg_vdata,
 
    (*(pcg_functions->Matvec))(matvec_data, -1.0, A, x, 1.0, r);
 
-   //hypre_ParVectorUpdateHost(r);
+   //nalu_hypre_ParVectorUpdateHost(r);
    /* p = C*r */
    (*(pcg_functions->ClearVector))(p);
    precond(precond_data, A, r, p);
@@ -465,16 +465,16 @@ hypre_PCGSolve( void *pcg_vdata,
          found at http://HTTP.CS.Berkeley.EDU/~wkahan/ieee754status/IEEE754.PDF */
       if (print_level > 0 || logging > 0)
       {
-         hypre_printf("\n\nERROR detected by Hypre ...  BEGIN\n");
-         hypre_printf("ERROR -- hypre_PCGSolve: INFs and/or NaNs detected in input.\n");
-         hypre_printf("User probably placed non-numerics in supplied A or x_0.\n");
-         hypre_printf("Returning error flag += 101.  Program not terminated.\n");
-         hypre_printf("ERROR detected by Hypre ...  END\n\n\n");
+         nalu_hypre_printf("\n\nERROR detected by Hypre ...  BEGIN\n");
+         nalu_hypre_printf("ERROR -- nalu_hypre_PCGSolve: INFs and/or NaNs detected in input.\n");
+         nalu_hypre_printf("User probably placed non-numerics in supplied A or x_0.\n");
+         nalu_hypre_printf("Returning error flag += 101.  Program not terminated.\n");
+         nalu_hypre_printf("ERROR detected by Hypre ...  END\n\n\n");
       }
-      hypre_error(NALU_HYPRE_ERROR_GENERIC);
+      nalu_hypre_error(NALU_HYPRE_ERROR_GENERIC);
       NALU_HYPRE_ANNOTATE_FUNC_END;
 
-      return hypre_error_flag;
+      return nalu_hypre_error_flag;
    }
 
    /* Set initial residual norm */
@@ -493,26 +493,26 @@ hypre_PCGSolve( void *pcg_vdata,
    }
    if ( print_level > 1 && my_id == 0 )
    {
-      hypre_printf("\n\n");
+      nalu_hypre_printf("\n\n");
       if (two_norm)
       {
          if ( stop_crit && !rel_change && atolf == 0 ) /* pure absolute tolerance */
          {
-            hypre_printf("Iters       ||r||_2     conv.rate\n");
-            hypre_printf("-----    ------------   ---------\n");
+            nalu_hypre_printf("Iters       ||r||_2     conv.rate\n");
+            nalu_hypre_printf("-----    ------------   ---------\n");
          }
          else
          {
-            hypre_printf("Iters       ||r||_2     conv.rate  ||r||_2/||b||_2\n");
-            hypre_printf("-----    ------------   ---------  ------------ \n");
+            nalu_hypre_printf("Iters       ||r||_2     conv.rate  ||r||_2/||b||_2\n");
+            nalu_hypre_printf("-----    ------------   ---------  ------------ \n");
          }
       }
       else  /* !two_norm */
       {
-         hypre_printf("Iters       ||r||_C     conv.rate  ||r||_C/||b||_C\n");
-         hypre_printf("-----    ------------    ---------  ------------ \n");
+         nalu_hypre_printf("Iters       ||r||_C     conv.rate  ||r||_C/||b||_C\n");
+         nalu_hypre_printf("-----    ------------    ---------  ------------ \n");
       }
-      /* hypre_printf("% 5d    %e\n", i, norms[i]); */
+      /* nalu_hypre_printf("% 5d    %e\n", i, norms[i]); */
    }
 
    while ((i + 1) <= max_iter)
@@ -535,14 +535,14 @@ hypre_PCGSolve( void *pcg_vdata,
       sdotp = (*(pcg_functions->InnerProd))(s, p);
       if ( sdotp == 0.0 )
       {
-         hypre_error_w_msg(NALU_HYPRE_ERROR_CONV, "Zero sdotp value in PCG");
+         nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_CONV, "Zero sdotp value in PCG");
          if (i == 1) { i_prod = i_prod_0; }
          break;
       }
       alpha = gamma / sdotp;
       if (! (alpha > NALU_HYPRE_REAL_MIN) )
       {
-         hypre_error_w_msg(NALU_HYPRE_ERROR_CONV, "Subnormal alpha value in PCG");
+         nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_CONV, "Subnormal alpha value in PCG");
          if (i == 1) { i_prod = i_prod_0; }
          break;
       }
@@ -561,7 +561,7 @@ hypre_PCGSolve( void *pcg_vdata,
       {
          if (print_level > 1 && my_id == 0)
          {
-            hypre_printf("Recomputing the residual...\n");
+            nalu_hypre_printf("Recomputing the residual...\n");
          }
          (*(pcg_functions->CopyVector))(b, r);
          (*(pcg_functions->Matvec))(matvec_data, -1.0, A, x, 1.0, r);
@@ -576,7 +576,7 @@ hypre_PCGSolve( void *pcg_vdata,
          {
             if (print_level > 1 && my_id == 0)
             {
-               hypre_printf("\n\n||r_old-r_new||/||b||: %e\n", sqrt(drob2));
+               nalu_hypre_printf("\n\n||r_old-r_new||/||b||: %e\n", sqrt(drob2));
             }
             break;
          }
@@ -598,7 +598,7 @@ hypre_PCGSolve( void *pcg_vdata,
          {
             if (print_level > 1 && my_id == 0)
             {
-               hypre_printf("\n\n||r_old-r_new||_C/||b||_C: %e\n", sqrt(r2ob2));
+               nalu_hypre_printf("\n\n||r_old-r_new||_C/||b||_C: %e\n", sqrt(r2ob2));
             }
             break;
          }
@@ -619,10 +619,10 @@ hypre_PCGSolve( void *pcg_vdata,
        *--------------------------------------------------------------------*/
 #if 0
       if (two_norm)
-         hypre_printf("Iter (%d): ||r||_2 = %e, ||r||_2/||b||_2 = %e\n",
+         nalu_hypre_printf("Iter (%d): ||r||_2 = %e, ||r||_2/||b||_2 = %e\n",
                       i, sqrt(i_prod), (bi_prod ? sqrt(i_prod / bi_prod) : 0));
       else
-         hypre_printf("Iter (%d): ||r||_C = %e, ||r||_C/||b||_C = %e\n",
+         nalu_hypre_printf("Iter (%d): ||r||_C = %e, ||r||_C/||b||_C = %e\n",
                       i, sqrt(i_prod), (bi_prod ? sqrt(i_prod / bi_prod) : 0));
 #endif
 
@@ -638,18 +638,18 @@ hypre_PCGSolve( void *pcg_vdata,
          {
             if ( stop_crit && !rel_change && atolf == 0 )  /* pure absolute tolerance */
             {
-               hypre_printf("% 5d    %e    %f\n", i, norms[i],
+               nalu_hypre_printf("% 5d    %e    %f\n", i, norms[i],
                             norms[i] / norms[i - 1] );
             }
             else
             {
-               hypre_printf("% 5d    %e    %f    %e\n", i, norms[i],
+               nalu_hypre_printf("% 5d    %e    %f    %e\n", i, norms[i],
                             norms[i] / norms[i - 1], rel_norms[i] );
             }
          }
          else
          {
-            hypre_printf("% 5d    %e    %f    %e\n", i, norms[i],
+            nalu_hypre_printf("% 5d    %e    %f    %e\n", i, norms[i],
                          norms[i] / norms[i - 1], rel_norms[i] );
          }
       }
@@ -706,7 +706,7 @@ hypre_PCGSolve( void *pcg_vdata,
 
       if (! (gamma > NALU_HYPRE_REAL_MIN) )
       {
-         hypre_error_w_msg(NALU_HYPRE_ERROR_CONV, "Subnormal gamma value in PCG");
+         nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_CONV, "Subnormal gamma value in PCG");
 
          break;
       }
@@ -733,17 +733,17 @@ hypre_PCGSolve( void *pcg_vdata,
                enough to pass the convergence test.  Therefore initial guess was good,
                and we're just calculating garbage - time to bail out before the
                next step, which will be a divide by zero (or close to it). */
-            hypre_error_w_msg(NALU_HYPRE_ERROR_CONV, "Subnormal i_prod value in PCG");
+            nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_CONV, "Subnormal i_prod value in PCG");
 
             break;
          }
          cf_ave_1 = pow( i_prod / i_prod_0, 1.0 / (2.0 * i) );
 
          weight   = fabs(cf_ave_1 - cf_ave_0);
-         weight   = weight / hypre_max(cf_ave_1, cf_ave_0);
+         weight   = weight / nalu_hypre_max(cf_ave_1, cf_ave_0);
          weight   = 1.0 - weight;
 #if 0
-         hypre_printf("I = %d: cf_new = %e, cf_old = %e, weight = %e\n",
+         nalu_hypre_printf("I = %d: cf_new = %e, cf_old = %e, weight = %e\n",
                       i, cf_ave_1, cf_ave_0, weight );
 #endif
          if (weight * cf_ave_1 > cf_tol) { break; }
@@ -774,12 +774,12 @@ hypre_PCGSolve( void *pcg_vdata,
 
    if ( print_level > 1 && my_id == 0 )
    {
-      hypre_printf("\n\n");
+      nalu_hypre_printf("\n\n");
    }
 
    if (i >= max_iter && (i_prod / bi_prod) >= eps && eps > 0 && hybrid != -1)
    {
-      hypre_error_w_msg(NALU_HYPRE_ERROR_CONV, "Reached max iterations in PCG before convergence");
+      nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_CONV, "Reached max iterations in PCG before convergence");
    }
 
    (pcg_data -> num_iterations) = i;
@@ -794,444 +794,444 @@ hypre_PCGSolve( void *pcg_vdata,
 
    NALU_HYPRE_ANNOTATE_FUNC_END;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_PCGSetTol, hypre_PCGGetTol
+ * nalu_hypre_PCGSetTol, nalu_hypre_PCGGetTol
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_PCGSetTol( void   *pcg_vdata,
+nalu_hypre_PCGSetTol( void   *pcg_vdata,
                  NALU_HYPRE_Real  tol       )
 {
-   hypre_PCGData *pcg_data = (hypre_PCGData *)pcg_vdata;
+   nalu_hypre_PCGData *pcg_data = (nalu_hypre_PCGData *)pcg_vdata;
 
    (pcg_data -> tol) = tol;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 NALU_HYPRE_Int
-hypre_PCGGetTol( void   *pcg_vdata,
+nalu_hypre_PCGGetTol( void   *pcg_vdata,
                  NALU_HYPRE_Real * tol       )
 {
-   hypre_PCGData *pcg_data = (hypre_PCGData *)pcg_vdata;
+   nalu_hypre_PCGData *pcg_data = (nalu_hypre_PCGData *)pcg_vdata;
 
    *tol = (pcg_data -> tol);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 /*--------------------------------------------------------------------------
- * hypre_PCGSetAbsoluteTol, hypre_PCGGetAbsoluteTol
+ * nalu_hypre_PCGSetAbsoluteTol, nalu_hypre_PCGGetAbsoluteTol
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_PCGSetAbsoluteTol( void   *pcg_vdata,
+nalu_hypre_PCGSetAbsoluteTol( void   *pcg_vdata,
                          NALU_HYPRE_Real  a_tol       )
 {
-   hypre_PCGData *pcg_data = (hypre_PCGData *)pcg_vdata;
+   nalu_hypre_PCGData *pcg_data = (nalu_hypre_PCGData *)pcg_vdata;
 
    (pcg_data -> a_tol) = a_tol;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 NALU_HYPRE_Int
-hypre_PCGGetAbsoluteTol( void   *pcg_vdata,
+nalu_hypre_PCGGetAbsoluteTol( void   *pcg_vdata,
                          NALU_HYPRE_Real * a_tol       )
 {
-   hypre_PCGData *pcg_data = (hypre_PCGData *)pcg_vdata;
+   nalu_hypre_PCGData *pcg_data = (nalu_hypre_PCGData *)pcg_vdata;
 
    *a_tol = (pcg_data -> a_tol);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_PCGSetAbsoluteTolFactor, hypre_PCGGetAbsoluteTolFactor
+ * nalu_hypre_PCGSetAbsoluteTolFactor, nalu_hypre_PCGGetAbsoluteTolFactor
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_PCGSetAbsoluteTolFactor( void   *pcg_vdata,
+nalu_hypre_PCGSetAbsoluteTolFactor( void   *pcg_vdata,
                                NALU_HYPRE_Real  atolf   )
 {
-   hypre_PCGData *pcg_data = (hypre_PCGData *)pcg_vdata;
+   nalu_hypre_PCGData *pcg_data = (nalu_hypre_PCGData *)pcg_vdata;
 
    (pcg_data -> atolf) = atolf;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 NALU_HYPRE_Int
-hypre_PCGGetAbsoluteTolFactor( void   *pcg_vdata,
+nalu_hypre_PCGGetAbsoluteTolFactor( void   *pcg_vdata,
                                NALU_HYPRE_Real  * atolf   )
 {
-   hypre_PCGData *pcg_data = (hypre_PCGData *)pcg_vdata;
+   nalu_hypre_PCGData *pcg_data = (nalu_hypre_PCGData *)pcg_vdata;
 
    *atolf = (pcg_data -> atolf);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_PCGSetResidualTol, hypre_PCGGetResidualTol
+ * nalu_hypre_PCGSetResidualTol, nalu_hypre_PCGGetResidualTol
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_PCGSetResidualTol( void   *pcg_vdata,
+nalu_hypre_PCGSetResidualTol( void   *pcg_vdata,
                          NALU_HYPRE_Real  rtol   )
 {
-   hypre_PCGData *pcg_data = (hypre_PCGData *)pcg_vdata;
+   nalu_hypre_PCGData *pcg_data = (nalu_hypre_PCGData *)pcg_vdata;
 
    (pcg_data -> rtol) = rtol;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 NALU_HYPRE_Int
-hypre_PCGGetResidualTol( void   *pcg_vdata,
+nalu_hypre_PCGGetResidualTol( void   *pcg_vdata,
                          NALU_HYPRE_Real  * rtol   )
 {
-   hypre_PCGData *pcg_data = (hypre_PCGData *)pcg_vdata;
+   nalu_hypre_PCGData *pcg_data = (nalu_hypre_PCGData *)pcg_vdata;
 
    *rtol = (pcg_data -> rtol);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_PCGSetConvergenceFactorTol, hypre_PCGGetConvergenceFactorTol
+ * nalu_hypre_PCGSetConvergenceFactorTol, nalu_hypre_PCGGetConvergenceFactorTol
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_PCGSetConvergenceFactorTol( void   *pcg_vdata,
+nalu_hypre_PCGSetConvergenceFactorTol( void   *pcg_vdata,
                                   NALU_HYPRE_Real  cf_tol   )
 {
-   hypre_PCGData *pcg_data = (hypre_PCGData *)pcg_vdata;
+   nalu_hypre_PCGData *pcg_data = (nalu_hypre_PCGData *)pcg_vdata;
 
    (pcg_data -> cf_tol) = cf_tol;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 NALU_HYPRE_Int
-hypre_PCGGetConvergenceFactorTol( void   *pcg_vdata,
+nalu_hypre_PCGGetConvergenceFactorTol( void   *pcg_vdata,
                                   NALU_HYPRE_Real * cf_tol   )
 {
-   hypre_PCGData *pcg_data = (hypre_PCGData *)pcg_vdata;
+   nalu_hypre_PCGData *pcg_data = (nalu_hypre_PCGData *)pcg_vdata;
 
    *cf_tol = (pcg_data -> cf_tol);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_PCGSetMaxIter, hypre_PCGGetMaxIter
+ * nalu_hypre_PCGSetMaxIter, nalu_hypre_PCGGetMaxIter
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_PCGSetMaxIter( void *pcg_vdata,
+nalu_hypre_PCGSetMaxIter( void *pcg_vdata,
                      NALU_HYPRE_Int   max_iter  )
 {
-   hypre_PCGData *pcg_data = (hypre_PCGData *)pcg_vdata;
+   nalu_hypre_PCGData *pcg_data = (nalu_hypre_PCGData *)pcg_vdata;
 
    (pcg_data -> max_iter) = max_iter;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 NALU_HYPRE_Int
-hypre_PCGGetMaxIter( void *pcg_vdata,
+nalu_hypre_PCGGetMaxIter( void *pcg_vdata,
                      NALU_HYPRE_Int * max_iter  )
 {
-   hypre_PCGData *pcg_data = (hypre_PCGData *)pcg_vdata;
+   nalu_hypre_PCGData *pcg_data = (nalu_hypre_PCGData *)pcg_vdata;
 
 
    *max_iter = (pcg_data -> max_iter);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_PCGSetTwoNorm, hypre_PCGGetTwoNorm
+ * nalu_hypre_PCGSetTwoNorm, nalu_hypre_PCGGetTwoNorm
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_PCGSetTwoNorm( void *pcg_vdata,
+nalu_hypre_PCGSetTwoNorm( void *pcg_vdata,
                      NALU_HYPRE_Int   two_norm  )
 {
-   hypre_PCGData *pcg_data = (hypre_PCGData *)pcg_vdata;
+   nalu_hypre_PCGData *pcg_data = (nalu_hypre_PCGData *)pcg_vdata;
 
 
    (pcg_data -> two_norm) = two_norm;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 NALU_HYPRE_Int
-hypre_PCGGetTwoNorm( void *pcg_vdata,
+nalu_hypre_PCGGetTwoNorm( void *pcg_vdata,
                      NALU_HYPRE_Int * two_norm  )
 {
-   hypre_PCGData *pcg_data = (hypre_PCGData *)pcg_vdata;
+   nalu_hypre_PCGData *pcg_data = (nalu_hypre_PCGData *)pcg_vdata;
 
 
    *two_norm = (pcg_data -> two_norm);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_PCGSetRelChange, hypre_PCGGetRelChange
+ * nalu_hypre_PCGSetRelChange, nalu_hypre_PCGGetRelChange
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_PCGSetRelChange( void *pcg_vdata,
+nalu_hypre_PCGSetRelChange( void *pcg_vdata,
                        NALU_HYPRE_Int   rel_change  )
 {
-   hypre_PCGData *pcg_data = (hypre_PCGData *)pcg_vdata;
+   nalu_hypre_PCGData *pcg_data = (nalu_hypre_PCGData *)pcg_vdata;
 
 
    (pcg_data -> rel_change) = rel_change;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 NALU_HYPRE_Int
-hypre_PCGGetRelChange( void *pcg_vdata,
+nalu_hypre_PCGGetRelChange( void *pcg_vdata,
                        NALU_HYPRE_Int * rel_change  )
 {
-   hypre_PCGData *pcg_data = (hypre_PCGData *)pcg_vdata;
+   nalu_hypre_PCGData *pcg_data = (nalu_hypre_PCGData *)pcg_vdata;
 
 
    *rel_change = (pcg_data -> rel_change);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_PCGSetRecomputeResidual, hypre_PCGGetRecomputeResidual
+ * nalu_hypre_PCGSetRecomputeResidual, nalu_hypre_PCGGetRecomputeResidual
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_PCGSetRecomputeResidual( void *pcg_vdata,
+nalu_hypre_PCGSetRecomputeResidual( void *pcg_vdata,
                                NALU_HYPRE_Int   recompute_residual  )
 {
-   hypre_PCGData *pcg_data = (hypre_PCGData *)pcg_vdata;
+   nalu_hypre_PCGData *pcg_data = (nalu_hypre_PCGData *)pcg_vdata;
 
 
    (pcg_data -> recompute_residual) = recompute_residual;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 NALU_HYPRE_Int
-hypre_PCGGetRecomputeResidual( void *pcg_vdata,
+nalu_hypre_PCGGetRecomputeResidual( void *pcg_vdata,
                                NALU_HYPRE_Int * recompute_residual  )
 {
-   hypre_PCGData *pcg_data = (hypre_PCGData *)pcg_vdata;
+   nalu_hypre_PCGData *pcg_data = (nalu_hypre_PCGData *)pcg_vdata;
 
 
    *recompute_residual = (pcg_data -> recompute_residual);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_PCGSetRecomputeResidualP, hypre_PCGGetRecomputeResidualP
+ * nalu_hypre_PCGSetRecomputeResidualP, nalu_hypre_PCGGetRecomputeResidualP
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_PCGSetRecomputeResidualP( void *pcg_vdata,
+nalu_hypre_PCGSetRecomputeResidualP( void *pcg_vdata,
                                 NALU_HYPRE_Int   recompute_residual_p  )
 {
-   hypre_PCGData *pcg_data = (hypre_PCGData *)pcg_vdata;
+   nalu_hypre_PCGData *pcg_data = (nalu_hypre_PCGData *)pcg_vdata;
 
    (pcg_data -> recompute_residual_p) = recompute_residual_p;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 NALU_HYPRE_Int
-hypre_PCGGetRecomputeResidualP( void *pcg_vdata,
+nalu_hypre_PCGGetRecomputeResidualP( void *pcg_vdata,
                                 NALU_HYPRE_Int * recompute_residual_p  )
 {
-   hypre_PCGData *pcg_data = (hypre_PCGData *)pcg_vdata;
+   nalu_hypre_PCGData *pcg_data = (nalu_hypre_PCGData *)pcg_vdata;
 
    *recompute_residual_p = (pcg_data -> recompute_residual_p);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_PCGSetStopCrit, hypre_PCGGetStopCrit
+ * nalu_hypre_PCGSetStopCrit, nalu_hypre_PCGGetStopCrit
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_PCGSetStopCrit( void *pcg_vdata,
+nalu_hypre_PCGSetStopCrit( void *pcg_vdata,
                       NALU_HYPRE_Int   stop_crit  )
 {
-   hypre_PCGData *pcg_data = (hypre_PCGData *)pcg_vdata;
+   nalu_hypre_PCGData *pcg_data = (nalu_hypre_PCGData *)pcg_vdata;
 
 
    (pcg_data -> stop_crit) = stop_crit;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 NALU_HYPRE_Int
-hypre_PCGGetStopCrit( void *pcg_vdata,
+nalu_hypre_PCGGetStopCrit( void *pcg_vdata,
                       NALU_HYPRE_Int * stop_crit  )
 {
-   hypre_PCGData *pcg_data = (hypre_PCGData *)pcg_vdata;
+   nalu_hypre_PCGData *pcg_data = (nalu_hypre_PCGData *)pcg_vdata;
 
 
    *stop_crit = (pcg_data -> stop_crit);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_PCGGetPrecond
+ * nalu_hypre_PCGGetPrecond
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_PCGGetPrecond( void         *pcg_vdata,
+nalu_hypre_PCGGetPrecond( void         *pcg_vdata,
                      NALU_HYPRE_Solver *precond_data_ptr )
 {
-   hypre_PCGData *pcg_data = (hypre_PCGData *)pcg_vdata;
+   nalu_hypre_PCGData *pcg_data = (nalu_hypre_PCGData *)pcg_vdata;
 
 
    *precond_data_ptr = (NALU_HYPRE_Solver)(pcg_data -> precond_data);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_PCGSetPrecond
+ * nalu_hypre_PCGSetPrecond
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_PCGSetPrecond( void  *pcg_vdata,
+nalu_hypre_PCGSetPrecond( void  *pcg_vdata,
                      NALU_HYPRE_Int  (*precond)(void*, void*, void*, void*),
                      NALU_HYPRE_Int  (*precond_setup)(void*, void*, void*, void*),
                      void  *precond_data )
 {
-   hypre_PCGData *pcg_data = (hypre_PCGData *)pcg_vdata;
-   hypre_PCGFunctions *pcg_functions = pcg_data->functions;
+   nalu_hypre_PCGData *pcg_data = (nalu_hypre_PCGData *)pcg_vdata;
+   nalu_hypre_PCGFunctions *pcg_functions = pcg_data->functions;
 
 
    (pcg_functions -> precond)       = precond;
    (pcg_functions -> precond_setup) = precond_setup;
    (pcg_data -> precond_data)  = precond_data;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_PCGSetPrintLevel, hypre_PCGGetPrintLevel
+ * nalu_hypre_PCGSetPrintLevel, nalu_hypre_PCGGetPrintLevel
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_PCGSetPrintLevel( void *pcg_vdata,
+nalu_hypre_PCGSetPrintLevel( void *pcg_vdata,
                         NALU_HYPRE_Int   level)
 {
-   hypre_PCGData *pcg_data = (hypre_PCGData *)pcg_vdata;
+   nalu_hypre_PCGData *pcg_data = (nalu_hypre_PCGData *)pcg_vdata;
 
 
    (pcg_data -> print_level) = level;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 NALU_HYPRE_Int
-hypre_PCGGetPrintLevel( void *pcg_vdata,
+nalu_hypre_PCGGetPrintLevel( void *pcg_vdata,
                         NALU_HYPRE_Int * level)
 {
-   hypre_PCGData *pcg_data = (hypre_PCGData *)pcg_vdata;
+   nalu_hypre_PCGData *pcg_data = (nalu_hypre_PCGData *)pcg_vdata;
 
 
    *level = (pcg_data -> print_level);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_PCGSetLogging, hypre_PCGGetLogging
+ * nalu_hypre_PCGSetLogging, nalu_hypre_PCGGetLogging
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_PCGSetLogging( void *pcg_vdata,
+nalu_hypre_PCGSetLogging( void *pcg_vdata,
                      NALU_HYPRE_Int   level)
 {
-   hypre_PCGData *pcg_data = (hypre_PCGData *)pcg_vdata;
+   nalu_hypre_PCGData *pcg_data = (nalu_hypre_PCGData *)pcg_vdata;
 
    (pcg_data -> logging) = level;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 NALU_HYPRE_Int
-hypre_PCGGetLogging( void *pcg_vdata,
+nalu_hypre_PCGGetLogging( void *pcg_vdata,
                      NALU_HYPRE_Int * level)
 {
-   hypre_PCGData *pcg_data = (hypre_PCGData *)pcg_vdata;
+   nalu_hypre_PCGData *pcg_data = (nalu_hypre_PCGData *)pcg_vdata;
 
    *level = (pcg_data -> logging);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 NALU_HYPRE_Int
-hypre_PCGSetHybrid( void *pcg_vdata,
+nalu_hypre_PCGSetHybrid( void *pcg_vdata,
                     NALU_HYPRE_Int   level)
 {
-   hypre_PCGData *pcg_data = (hypre_PCGData *)pcg_vdata;
+   nalu_hypre_PCGData *pcg_data = (nalu_hypre_PCGData *)pcg_vdata;
 
    (pcg_data -> hybrid) = level;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_PCGGetNumIterations
+ * nalu_hypre_PCGGetNumIterations
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_PCGGetNumIterations( void *pcg_vdata,
+nalu_hypre_PCGGetNumIterations( void *pcg_vdata,
                            NALU_HYPRE_Int  *num_iterations )
 {
-   hypre_PCGData *pcg_data = (hypre_PCGData *)pcg_vdata;
+   nalu_hypre_PCGData *pcg_data = (nalu_hypre_PCGData *)pcg_vdata;
 
    *num_iterations = (pcg_data -> num_iterations);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_PCGGetConverged
+ * nalu_hypre_PCGGetConverged
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_PCGGetConverged( void *pcg_vdata,
+nalu_hypre_PCGGetConverged( void *pcg_vdata,
                        NALU_HYPRE_Int  *converged)
 {
-   hypre_PCGData *pcg_data = (hypre_PCGData *)pcg_vdata;
+   nalu_hypre_PCGData *pcg_data = (nalu_hypre_PCGData *)pcg_vdata;
 
    *converged = (pcg_data -> converged);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_PCGPrintLogging
+ * nalu_hypre_PCGPrintLogging
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_PCGPrintLogging( void *pcg_vdata,
+nalu_hypre_PCGPrintLogging( void *pcg_vdata,
                        NALU_HYPRE_Int   myid)
 {
-   hypre_PCGData *pcg_data = (hypre_PCGData *)pcg_vdata;
+   nalu_hypre_PCGData *pcg_data = (nalu_hypre_PCGData *)pcg_vdata;
 
    NALU_HYPRE_Int            num_iterations  = (pcg_data -> num_iterations);
    NALU_HYPRE_Int            print_level     = (pcg_data -> print_level);
@@ -1246,28 +1246,28 @@ hypre_PCGPrintLogging( void *pcg_vdata,
       {
          for (i = 0; i < num_iterations; i++)
          {
-            hypre_printf("Residual norm[%d] = %e   ", i, norms[i]);
-            hypre_printf("Relative residual norm[%d] = %e\n", i, rel_norms[i]);
+            nalu_hypre_printf("Residual norm[%d] = %e   ", i, norms[i]);
+            nalu_hypre_printf("Relative residual norm[%d] = %e\n", i, rel_norms[i]);
          }
       }
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_PCGGetFinalRelativeResidualNorm
+ * nalu_hypre_PCGGetFinalRelativeResidualNorm
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_PCGGetFinalRelativeResidualNorm( void   *pcg_vdata,
+nalu_hypre_PCGGetFinalRelativeResidualNorm( void   *pcg_vdata,
                                        NALU_HYPRE_Real *relative_residual_norm )
 {
-   hypre_PCGData *pcg_data = (hypre_PCGData *)pcg_vdata;
+   nalu_hypre_PCGData *pcg_data = (nalu_hypre_PCGData *)pcg_vdata;
 
    NALU_HYPRE_Real     rel_residual_norm = (pcg_data -> rel_residual_norm);
 
    *relative_residual_norm = rel_residual_norm;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }

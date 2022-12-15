@@ -8,7 +8,7 @@
 #ifndef CSR_SPGEMM_DEVICE_H
 #define CSR_SPGEMM_DEVICE_H
 
-#include "_hypre_utilities.hpp"
+#include "_nalu_hypre_utilities.hpp"
 
 #if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
 
@@ -52,29 +52,29 @@ constexpr NALU_HYPRE_Int T_GROUP_SIZE[11]    = { 0,  2,  4,   8,  16,  32,   64,
 
 /* the number of groups in block */
 static __device__ __forceinline__
-hypre_int get_num_groups()
+nalu_hypre_int get_num_groups()
 {
    return blockDim.z;
 }
 
 /* the group id in the block */
 static __device__ __forceinline__
-hypre_int get_group_id()
+nalu_hypre_int get_group_id()
 {
    return threadIdx.z;
 }
 
 /* the thread id (lane) in the group */
 static __device__ __forceinline__
-hypre_int get_group_lane_id(hypre_DeviceItem &item)
+nalu_hypre_int get_group_lane_id(nalu_hypre_DeviceItem &item)
 {
-   return hypre_gpu_get_thread_id<2>(item);
+   return nalu_hypre_gpu_get_thread_id<2>(item);
 }
 
 /* the warp id in the group */
 template <NALU_HYPRE_Int GROUP_SIZE>
 static __device__ __forceinline__
-hypre_int get_warp_in_group_id(hypre_DeviceItem &item)
+nalu_hypre_int get_warp_in_group_id(nalu_hypre_DeviceItem &item)
 {
    if (GROUP_SIZE <= NALU_HYPRE_WARP_SIZE)
    {
@@ -82,7 +82,7 @@ hypre_int get_warp_in_group_id(hypre_DeviceItem &item)
    }
    else
    {
-      return hypre_gpu_get_warp_id<2>(item);
+      return nalu_hypre_gpu_get_warp_id<2>(item);
    }
 }
 
@@ -91,14 +91,14 @@ hypre_int get_warp_in_group_id(hypre_DeviceItem &item)
  */
 template <NALU_HYPRE_Int GROUP_SIZE>
 static __device__ __forceinline__
-void group_read(hypre_DeviceItem &item, const NALU_HYPRE_Int *ptr, bool valid_ptr, NALU_HYPRE_Int &v1,
+void group_read(nalu_hypre_DeviceItem &item, const NALU_HYPRE_Int *ptr, bool valid_ptr, NALU_HYPRE_Int &v1,
                 NALU_HYPRE_Int &v2)
 {
    if (GROUP_SIZE >= NALU_HYPRE_WARP_SIZE)
    {
       /* lane = warp_lane
        * Note: use "2" since assume NALU_HYPRE_WARP_SIZE divides (blockDim.x * blockDim.y) */
-      const NALU_HYPRE_Int lane = hypre_gpu_get_lane_id<2>(item);
+      const NALU_HYPRE_Int lane = nalu_hypre_gpu_get_lane_id<2>(item);
 
       if (lane < 2)
       {
@@ -126,13 +126,13 @@ void group_read(hypre_DeviceItem &item, const NALU_HYPRE_Int *ptr, bool valid_pt
  */
 template <NALU_HYPRE_Int GROUP_SIZE>
 static __device__ __forceinline__
-void group_read(hypre_DeviceItem &item, const NALU_HYPRE_Int *ptr, bool valid_ptr, NALU_HYPRE_Int &v1)
+void group_read(nalu_hypre_DeviceItem &item, const NALU_HYPRE_Int *ptr, bool valid_ptr, NALU_HYPRE_Int &v1)
 {
    if (GROUP_SIZE >= NALU_HYPRE_WARP_SIZE)
    {
       /* lane = warp_lane
        * Note: use "2" since assume NALU_HYPRE_WARP_SIZE divides (blockDim.x * blockDim.y) */
-      const NALU_HYPRE_Int lane = hypre_gpu_get_lane_id<2>(item);
+      const NALU_HYPRE_Int lane = nalu_hypre_gpu_get_lane_id<2>(item);
 
       if (!lane)
       {
@@ -155,14 +155,14 @@ void group_read(hypre_DeviceItem &item, const NALU_HYPRE_Int *ptr, bool valid_pt
 
 template <typename T, NALU_HYPRE_Int NUM_GROUPS_PER_BLOCK, NALU_HYPRE_Int GROUP_SIZE>
 static __device__ __forceinline__
-T group_reduce_sum(hypre_DeviceItem &item, T in)
+T group_reduce_sum(nalu_hypre_DeviceItem &item, T in)
 {
 #if defined(NALU_HYPRE_DEBUG)
-   hypre_device_assert(GROUP_SIZE <= NALU_HYPRE_WARP_SIZE);
+   nalu_hypre_device_assert(GROUP_SIZE <= NALU_HYPRE_WARP_SIZE);
 #endif
 
 #pragma unroll
-   for (hypre_int d = GROUP_SIZE / 2; d > 0; d >>= 1)
+   for (nalu_hypre_int d = GROUP_SIZE / 2; d > 0; d >>= 1)
    {
       in += __shfl_down_sync(NALU_HYPRE_WARP_FULL_MASK, in, d);
    }
@@ -173,16 +173,16 @@ T group_reduce_sum(hypre_DeviceItem &item, T in)
 /* s_WarpData[NUM_GROUPS_PER_BLOCK * GROUP_SIZE / NALU_HYPRE_WARP_SIZE] */
 template <typename T, NALU_HYPRE_Int NUM_GROUPS_PER_BLOCK, NALU_HYPRE_Int GROUP_SIZE>
 static __device__ __forceinline__
-T group_reduce_sum(hypre_DeviceItem &item, T in, volatile T *s_WarpData)
+T group_reduce_sum(nalu_hypre_DeviceItem &item, T in, volatile T *s_WarpData)
 {
 #if defined(NALU_HYPRE_DEBUG)
-   hypre_device_assert(GROUP_SIZE > NALU_HYPRE_WARP_SIZE);
+   nalu_hypre_device_assert(GROUP_SIZE > NALU_HYPRE_WARP_SIZE);
 #endif
 
    T out = warp_reduce_sum(item, in);
 
-   const NALU_HYPRE_Int warp_lane_id = hypre_gpu_get_lane_id<2>(item);
-   const NALU_HYPRE_Int warp_id = hypre_gpu_get_warp_id<3>(item);
+   const NALU_HYPRE_Int warp_lane_id = nalu_hypre_gpu_get_lane_id<2>(item);
+   const NALU_HYPRE_Int warp_id = nalu_hypre_gpu_get_warp_id<3>(item);
 
    if (warp_lane_id == 0)
    {
@@ -205,10 +205,10 @@ T group_reduce_sum(hypre_DeviceItem &item, T in, volatile T *s_WarpData)
 /* GROUP_SIZE must <= NALU_HYPRE_WARP_SIZE */
 template <typename T, NALU_HYPRE_Int GROUP_SIZE>
 static __device__ __forceinline__
-T group_prefix_sum(hypre_int lane_id, T in, T &all_sum)
+T group_prefix_sum(nalu_hypre_int lane_id, T in, T &all_sum)
 {
 #pragma unroll
-   for (hypre_int d = 2; d <= GROUP_SIZE; d <<= 1)
+   for (nalu_hypre_int d = 2; d <= GROUP_SIZE; d <<= 1)
    {
       T t = __shfl_up_sync(NALU_HYPRE_WARP_FULL_MASK, in, d >> 1, GROUP_SIZE);
       if ( (lane_id & (d - 1)) == (d - 1) )
@@ -225,7 +225,7 @@ T group_prefix_sum(hypre_int lane_id, T in, T &all_sum)
    }
 
 #pragma unroll
-   for (hypre_int d = GROUP_SIZE >> 1; d > 0; d >>= 1)
+   for (nalu_hypre_int d = GROUP_SIZE >> 1; d > 0; d >>= 1)
    {
       T t = __shfl_xor_sync(NALU_HYPRE_WARP_FULL_MASK, in, d, GROUP_SIZE);
 
@@ -352,13 +352,13 @@ struct spgemm_bin_op : public thrust::unary_function<T, char>
    }
 };
 
-void hypre_create_ija(NALU_HYPRE_Int m, NALU_HYPRE_Int *row_id, NALU_HYPRE_Int *d_c, NALU_HYPRE_Int *d_i,
+void nalu_hypre_create_ija(NALU_HYPRE_Int m, NALU_HYPRE_Int *row_id, NALU_HYPRE_Int *d_c, NALU_HYPRE_Int *d_i,
                       NALU_HYPRE_Int **d_j, NALU_HYPRE_Complex **d_a, NALU_HYPRE_Int *nnz_ptr );
 
-void hypre_create_ija(NALU_HYPRE_Int SHMEM_HASH_SIZE, NALU_HYPRE_Int m, NALU_HYPRE_Int *row_id, NALU_HYPRE_Int *d_c,
+void nalu_hypre_create_ija(NALU_HYPRE_Int SHMEM_HASH_SIZE, NALU_HYPRE_Int m, NALU_HYPRE_Int *row_id, NALU_HYPRE_Int *d_c,
                       NALU_HYPRE_Int *d_i, NALU_HYPRE_Int **d_j, NALU_HYPRE_Complex **d_a, NALU_HYPRE_Int *nnz_ptr );
 
-NALU_HYPRE_Int hypre_SpGemmCreateGlobalHashTable( NALU_HYPRE_Int num_rows, NALU_HYPRE_Int *row_id,
+NALU_HYPRE_Int nalu_hypre_SpGemmCreateGlobalHashTable( NALU_HYPRE_Int num_rows, NALU_HYPRE_Int *row_id,
                                              NALU_HYPRE_Int num_ghash, NALU_HYPRE_Int *row_sizes, NALU_HYPRE_Int SHMEM_HASH_SIZE, NALU_HYPRE_Int **ghash_i_ptr,
                                              NALU_HYPRE_Int **ghash_j_ptr, NALU_HYPRE_Complex **ghash_a_ptr, NALU_HYPRE_Int *ghash_size_ptr);
 
@@ -379,27 +379,27 @@ NALU_HYPRE_Int hypreDevice_CSRSpGemmNumerWithRownnzUpperbound(NALU_HYPRE_Int m, 
                                                          NALU_HYPRE_Complex *d_b, NALU_HYPRE_Int *d_rc, NALU_HYPRE_Int exact_rownnz, NALU_HYPRE_Int **d_ic_out,
                                                          NALU_HYPRE_Int **d_jc_out, NALU_HYPRE_Complex **d_c_out, NALU_HYPRE_Int *nnzC);
 
-NALU_HYPRE_Int hypre_SpGemmCreateBins( NALU_HYPRE_Int m, char s, char t, char u, NALU_HYPRE_Int *d_rc,
+NALU_HYPRE_Int nalu_hypre_SpGemmCreateBins( NALU_HYPRE_Int m, char s, char t, char u, NALU_HYPRE_Int *d_rc,
                                   bool d_rc_indice_in, NALU_HYPRE_Int *d_rc_indice, NALU_HYPRE_Int *h_bin_ptr );
 
 template <NALU_HYPRE_Int BIN, NALU_HYPRE_Int SHMEM_HASH_SIZE, NALU_HYPRE_Int GROUP_SIZE, bool HAS_RIND>
-NALU_HYPRE_Int hypre_spgemm_symbolic_rownnz( NALU_HYPRE_Int m, NALU_HYPRE_Int *row_ind, NALU_HYPRE_Int k, NALU_HYPRE_Int n,
+NALU_HYPRE_Int nalu_hypre_spgemm_symbolic_rownnz( NALU_HYPRE_Int m, NALU_HYPRE_Int *row_ind, NALU_HYPRE_Int k, NALU_HYPRE_Int n,
                                         bool need_ghash, NALU_HYPRE_Int *d_ia, NALU_HYPRE_Int *d_ja, NALU_HYPRE_Int *d_ib, NALU_HYPRE_Int *d_jb,
                                         NALU_HYPRE_Int *d_rc, bool can_fail, char *d_rf );
 
 template <NALU_HYPRE_Int BIN, NALU_HYPRE_Int SHMEM_HASH_SIZE, NALU_HYPRE_Int GROUP_SIZE, bool HAS_RIND>
-NALU_HYPRE_Int hypre_spgemm_numerical_with_rownnz( NALU_HYPRE_Int m, NALU_HYPRE_Int *row_ind, NALU_HYPRE_Int k,
+NALU_HYPRE_Int nalu_hypre_spgemm_numerical_with_rownnz( NALU_HYPRE_Int m, NALU_HYPRE_Int *row_ind, NALU_HYPRE_Int k,
                                               NALU_HYPRE_Int n, bool need_ghash,
                                               NALU_HYPRE_Int exact_rownnz, NALU_HYPRE_Int *d_ia, NALU_HYPRE_Int *d_ja, NALU_HYPRE_Complex *d_a,
                                               NALU_HYPRE_Int *d_ib, NALU_HYPRE_Int *d_jb, NALU_HYPRE_Complex *d_b, NALU_HYPRE_Int *d_rc, NALU_HYPRE_Int *d_ic,
                                               NALU_HYPRE_Int *d_jc, NALU_HYPRE_Complex *d_c );
 
 template <NALU_HYPRE_Int SHMEM_HASH_SIZE, NALU_HYPRE_Int GROUP_SIZE>
-NALU_HYPRE_Int hypre_spgemm_symbolic_max_num_blocks( NALU_HYPRE_Int multiProcessorCount,
+NALU_HYPRE_Int nalu_hypre_spgemm_symbolic_max_num_blocks( NALU_HYPRE_Int multiProcessorCount,
                                                 NALU_HYPRE_Int *num_blocks_ptr, NALU_HYPRE_Int *block_size_ptr );
 
 template <NALU_HYPRE_Int SHMEM_HASH_SIZE, NALU_HYPRE_Int GROUP_SIZE>
-NALU_HYPRE_Int hypre_spgemm_numerical_max_num_blocks( NALU_HYPRE_Int multiProcessorCount,
+NALU_HYPRE_Int nalu_hypre_spgemm_numerical_max_num_blocks( NALU_HYPRE_Int multiProcessorCount,
                                                  NALU_HYPRE_Int *num_blocks_ptr, NALU_HYPRE_Int *block_size_ptr );
 
 NALU_HYPRE_Int hypreDevice_CSRSpGemmBinnedGetBlockNumDim();
@@ -410,17 +410,17 @@ NALU_HYPRE_Int hypreDevice_CSRSpGemmNumerPostCopy( NALU_HYPRE_Int m, NALU_HYPRE_
 
 template <NALU_HYPRE_Int GROUP_SIZE>
 static constexpr NALU_HYPRE_Int
-hypre_spgemm_get_num_groups_per_block()
+nalu_hypre_spgemm_get_num_groups_per_block()
 {
 #if defined(NALU_HYPRE_USING_CUDA)
-   return hypre_min(hypre_max(512 / GROUP_SIZE, 1), 64);
+   return nalu_hypre_min(nalu_hypre_max(512 / GROUP_SIZE, 1), 64);
 #elif defined(NALU_HYPRE_USING_HIP)
-   return hypre_max(512 / GROUP_SIZE, 1);
+   return nalu_hypre_max(512 / GROUP_SIZE, 1);
 #endif
 }
 
 #if defined(NALU_HYPRE_SPGEMM_PRINTF) || defined(NALU_HYPRE_SPGEMM_TIMING)
-#define NALU_HYPRE_SPGEMM_PRINT(...) hypre_ParPrintf(hypre_MPI_COMM_WORLD, __VA_ARGS__)
+#define NALU_HYPRE_SPGEMM_PRINT(...) nalu_hypre_ParPrintf(nalu_hypre_MPI_COMM_WORLD, __VA_ARGS__)
 #else
 #define NALU_HYPRE_SPGEMM_PRINT(...)
 #endif

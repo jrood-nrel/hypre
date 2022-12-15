@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_Euclid.h"
+#include "_nalu_hypre_Euclid.h"
 /* #include "Parser_dh.h" */
 /* #include "Mem_dh.h" */
  
@@ -77,15 +77,15 @@ void Parser_dhUpdateFromFile(Parser_dh p,const char *filename)
   FILE *fp;
 
   if ((fp = fopen(filename, "r")) == NULL) {
-    hypre_sprintf(msgBuf_dh, "can't open >>%s<< for reading", filename);
+    nalu_hypre_sprintf(msgBuf_dh, "can't open >>%s<< for reading", filename);
     SET_INFO(msgBuf_dh);
   } else {
-    hypre_sprintf(msgBuf_dh, "updating parser from file: >>%s<<", filename);
+    nalu_hypre_sprintf(msgBuf_dh, "updating parser from file: >>%s<<", filename);
     SET_INFO(msgBuf_dh);
     while (!feof(fp)) {
       if (fgets(line, 80, fp) == NULL) break;
       if (line[0] != '#') { 
-        if (hypre_sscanf(line, "%s %s", name, value) != 2) break;
+        if (nalu_hypre_sscanf(line, "%s %s", name, value) != 2) break;
         Parser_dhInsert(p, name, value);   
       }
     }
@@ -232,18 +232,18 @@ void Parser_dhPrint(Parser_dh p, FILE *fp, bool allPrint)
   if (fp == NULL) SET_V_ERROR("fp == NULL");
 
   if (myid_dh == 0 || allPrint) {
-    hypre_fprintf(fp, "------------------------ registered options:\n");
+    nalu_hypre_fprintf(fp, "------------------------ registered options:\n");
     if (ptr == NULL) {
-      hypre_fprintf(fp, "Parser object is invalid; nothing to print!\n");
+      nalu_hypre_fprintf(fp, "Parser object is invalid; nothing to print!\n");
     } else {
       ptr = ptr->next;
       while (ptr != NULL) {
-        hypre_fprintf(fp, "   %s  %s\n", ptr->name, ptr->value);
+        nalu_hypre_fprintf(fp, "   %s  %s\n", ptr->name, ptr->value);
         fflush(fp);
         ptr = ptr->next;
       } 
     } 
-    hypre_fprintf(fp, "\n");
+    nalu_hypre_fprintf(fp, "\n");
     fflush(fp);
   }
   END_FUNC_DH_2

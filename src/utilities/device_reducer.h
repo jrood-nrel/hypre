@@ -177,7 +177,7 @@ T blockReduceSum(T val)
 
 template<typename T>
 __global__ void
-OneBlockReduceKernel(hypre_DeviceItem &item,
+OneBlockReduceKernel(nalu_hypre_DeviceItem &item,
                      T                *arr,
                      NALU_HYPRE_Int         N)
 {
@@ -231,14 +231,14 @@ struct ReduceSum
    __host__ void
    Allocate2ndPhaseBuffer()
    {
-      if (hypre_HandleReduceBuffer(hypre_handle()) == NULL)
+      if (nalu_hypre_HandleReduceBuffer(nalu_hypre_handle()) == NULL)
       {
          /* allocate for the max size for reducing double6 type */
-         hypre_HandleReduceBuffer(hypre_handle()) =
-            hypre_TAlloc(NALU_HYPRE_double6, NALU_HYPRE_MAX_NTHREADS_BLOCK, NALU_HYPRE_MEMORY_DEVICE);
+         nalu_hypre_HandleReduceBuffer(nalu_hypre_handle()) =
+            nalu_hypre_TAlloc(NALU_HYPRE_double6, NALU_HYPRE_MAX_NTHREADS_BLOCK, NALU_HYPRE_MEMORY_DEVICE);
       }
 
-      d_buf = (T*) hypre_HandleReduceBuffer(hypre_handle());
+      d_buf = (T*) nalu_hypre_HandleReduceBuffer(nalu_hypre_handle());
    }
 
    /* reduction within blocks */
@@ -266,8 +266,8 @@ struct ReduceSum
    {
       T val;
 
-      const NALU_HYPRE_MemoryLocation memory_location = hypre_HandleMemoryLocation(hypre_handle());
-      const NALU_HYPRE_ExecutionPolicy exec_policy = hypre_GetExecPolicy1(memory_location);
+      const NALU_HYPRE_MemoryLocation memory_location = nalu_hypre_HandleMemoryLocation(nalu_hypre_handle());
+      const NALU_HYPRE_ExecutionPolicy exec_policy = nalu_hypre_GetExecPolicy1(memory_location);
 
       if (exec_policy == NALU_HYPRE_EXEC_HOST)
       {
@@ -277,10 +277,10 @@ struct ReduceSum
       else
       {
          /* 2nd reduction with only *one* block */
-         hypre_assert(nblocks >= 0 && nblocks <= NALU_HYPRE_MAX_NTHREADS_BLOCK);
+         nalu_hypre_assert(nblocks >= 0 && nblocks <= NALU_HYPRE_MAX_NTHREADS_BLOCK);
          const dim3 gDim(1), bDim(NALU_HYPRE_MAX_NTHREADS_BLOCK);
          NALU_HYPRE_GPU_LAUNCH( OneBlockReduceKernel, gDim, bDim, d_buf, nblocks );
-         hypre_TMemcpy(&val, d_buf, T, 1, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_DEVICE);
+         nalu_hypre_TMemcpy(&val, d_buf, T, 1, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_DEVICE);
          val += init;
       }
 

@@ -7,165 +7,165 @@
 
 /******************************************************************************
  *
- * Member functions for hypre_Vector class.
+ * Member functions for nalu_hypre_Vector class.
  *
  *****************************************************************************/
 
 #include "seq_mv.h"
 
 /*--------------------------------------------------------------------------
- * hypre_SeqVectorCreate
+ * nalu_hypre_SeqVectorCreate
  *--------------------------------------------------------------------------*/
 
-hypre_Vector *
-hypre_SeqVectorCreate( NALU_HYPRE_Int size )
+nalu_hypre_Vector *
+nalu_hypre_SeqVectorCreate( NALU_HYPRE_Int size )
 {
-   hypre_Vector  *vector;
+   nalu_hypre_Vector  *vector;
 
-   vector = hypre_CTAlloc(hypre_Vector, 1, NALU_HYPRE_MEMORY_HOST);
+   vector = nalu_hypre_CTAlloc(nalu_hypre_Vector, 1, NALU_HYPRE_MEMORY_HOST);
 
-   hypre_VectorData(vector) = NULL;
-   hypre_VectorSize(vector) = size;
+   nalu_hypre_VectorData(vector) = NULL;
+   nalu_hypre_VectorSize(vector) = size;
 
-   hypre_VectorNumVectors(vector) = 1;
-   hypre_VectorMultiVecStorageMethod(vector) = 0;
+   nalu_hypre_VectorNumVectors(vector) = 1;
+   nalu_hypre_VectorMultiVecStorageMethod(vector) = 0;
 
    /* set defaults */
-   hypre_VectorOwnsData(vector) = 1;
+   nalu_hypre_VectorOwnsData(vector) = 1;
 
-   hypre_VectorMemoryLocation(vector) = hypre_HandleMemoryLocation(hypre_handle());
+   nalu_hypre_VectorMemoryLocation(vector) = nalu_hypre_HandleMemoryLocation(nalu_hypre_handle());
 
    return vector;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_SeqMultiVectorCreate
+ * nalu_hypre_SeqMultiVectorCreate
  *--------------------------------------------------------------------------*/
 
-hypre_Vector *
-hypre_SeqMultiVectorCreate( NALU_HYPRE_Int size, NALU_HYPRE_Int num_vectors )
+nalu_hypre_Vector *
+nalu_hypre_SeqMultiVectorCreate( NALU_HYPRE_Int size, NALU_HYPRE_Int num_vectors )
 {
-   hypre_Vector *vector = hypre_SeqVectorCreate(size);
-   hypre_VectorNumVectors(vector) = num_vectors;
+   nalu_hypre_Vector *vector = nalu_hypre_SeqVectorCreate(size);
+   nalu_hypre_VectorNumVectors(vector) = num_vectors;
 
    return vector;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_SeqVectorDestroy
+ * nalu_hypre_SeqVectorDestroy
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_SeqVectorDestroy( hypre_Vector *vector )
+nalu_hypre_SeqVectorDestroy( nalu_hypre_Vector *vector )
 {
    if (vector)
    {
-      NALU_HYPRE_MemoryLocation memory_location = hypre_VectorMemoryLocation(vector);
+      NALU_HYPRE_MemoryLocation memory_location = nalu_hypre_VectorMemoryLocation(vector);
 
-      if (hypre_VectorOwnsData(vector))
+      if (nalu_hypre_VectorOwnsData(vector))
       {
-         hypre_TFree(hypre_VectorData(vector), memory_location);
+         nalu_hypre_TFree(nalu_hypre_VectorData(vector), memory_location);
       }
 
-      hypre_TFree(vector, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(vector, NALU_HYPRE_MEMORY_HOST);
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_SeqVectorInitialize_v2
+ * nalu_hypre_SeqVectorInitialize_v2
  *
  * Initialize a vector at a given memory location
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_SeqVectorInitialize_v2( hypre_Vector *vector, NALU_HYPRE_MemoryLocation memory_location )
+nalu_hypre_SeqVectorInitialize_v2( nalu_hypre_Vector *vector, NALU_HYPRE_MemoryLocation memory_location )
 {
-   NALU_HYPRE_Int  size = hypre_VectorSize(vector);
-   NALU_HYPRE_Int  num_vectors = hypre_VectorNumVectors(vector);
-   NALU_HYPRE_Int  multivec_storage_method = hypre_VectorMultiVecStorageMethod(vector);
+   NALU_HYPRE_Int  size = nalu_hypre_VectorSize(vector);
+   NALU_HYPRE_Int  num_vectors = nalu_hypre_VectorNumVectors(vector);
+   NALU_HYPRE_Int  multivec_storage_method = nalu_hypre_VectorMultiVecStorageMethod(vector);
 
-   hypre_VectorMemoryLocation(vector) = memory_location;
+   nalu_hypre_VectorMemoryLocation(vector) = memory_location;
 
    /* Caveat: for pre-existing data, the memory location must be guaranteed
     * to be consistent with `memory_location'
     * Otherwise, mismatches will exist and problems will be encountered
     * when being used, and freed */
-   if (!hypre_VectorData(vector))
+   if (!nalu_hypre_VectorData(vector))
    {
-      hypre_VectorData(vector) = hypre_CTAlloc(NALU_HYPRE_Complex, num_vectors * size, memory_location);
+      nalu_hypre_VectorData(vector) = nalu_hypre_CTAlloc(NALU_HYPRE_Complex, num_vectors * size, memory_location);
    }
 
    if (multivec_storage_method == 0)
    {
-      hypre_VectorVectorStride(vector) = size;
-      hypre_VectorIndexStride(vector)  = 1;
+      nalu_hypre_VectorVectorStride(vector) = size;
+      nalu_hypre_VectorIndexStride(vector)  = 1;
    }
    else if (multivec_storage_method == 1)
    {
-      hypre_VectorVectorStride(vector) = 1;
-      hypre_VectorIndexStride(vector)  = num_vectors;
+      nalu_hypre_VectorVectorStride(vector) = 1;
+      nalu_hypre_VectorIndexStride(vector)  = num_vectors;
    }
    else
    {
-      hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "Invalid multivec storage method!\n");
-      return hypre_error_flag;
+      nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "Invalid multivec storage method!\n");
+      return nalu_hypre_error_flag;
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_SeqVectorInitialize
+ * nalu_hypre_SeqVectorInitialize
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_SeqVectorInitialize( hypre_Vector *vector )
+nalu_hypre_SeqVectorInitialize( nalu_hypre_Vector *vector )
 {
-   return hypre_SeqVectorInitialize_v2(vector, hypre_VectorMemoryLocation(vector));
+   return nalu_hypre_SeqVectorInitialize_v2(vector, nalu_hypre_VectorMemoryLocation(vector));
 }
 
 /*--------------------------------------------------------------------------
- * hypre_SeqVectorSetDataOwner
+ * nalu_hypre_SeqVectorSetDataOwner
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_SeqVectorSetDataOwner( hypre_Vector *vector,
+nalu_hypre_SeqVectorSetDataOwner( nalu_hypre_Vector *vector,
                              NALU_HYPRE_Int     owns_data   )
 {
-   hypre_VectorOwnsData(vector) = owns_data;
+   nalu_hypre_VectorOwnsData(vector) = owns_data;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_SeqVectorSetSize
+ * nalu_hypre_SeqVectorSetSize
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_SeqVectorSetSize( hypre_Vector *vector,
+nalu_hypre_SeqVectorSetSize( nalu_hypre_Vector *vector,
                         NALU_HYPRE_Int     size   )
 {
-   NALU_HYPRE_Int  multivec_storage_method = hypre_VectorMultiVecStorageMethod(vector);
+   NALU_HYPRE_Int  multivec_storage_method = nalu_hypre_VectorMultiVecStorageMethod(vector);
 
-   hypre_VectorSize(vector) = size;
+   nalu_hypre_VectorSize(vector) = size;
    if (multivec_storage_method == 0)
    {
-      hypre_VectorVectorStride(vector) = size;
+      nalu_hypre_VectorVectorStride(vector) = size;
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
  * ReadVector
  *--------------------------------------------------------------------------*/
 
-hypre_Vector *
-hypre_SeqVectorRead( char *file_name )
+nalu_hypre_Vector *
+nalu_hypre_SeqVectorRead( char *file_name )
 {
-   hypre_Vector  *vector;
+   nalu_hypre_Vector  *vector;
 
    FILE    *fp;
 
@@ -180,34 +180,34 @@ hypre_SeqVectorRead( char *file_name )
 
    fp = fopen(file_name, "r");
 
-   hypre_fscanf(fp, "%d", &size);
+   nalu_hypre_fscanf(fp, "%d", &size);
 
-   vector = hypre_SeqVectorCreate(size);
+   vector = nalu_hypre_SeqVectorCreate(size);
 
-   hypre_VectorMemoryLocation(vector) = NALU_HYPRE_MEMORY_HOST;
+   nalu_hypre_VectorMemoryLocation(vector) = NALU_HYPRE_MEMORY_HOST;
 
-   hypre_SeqVectorInitialize(vector);
+   nalu_hypre_SeqVectorInitialize(vector);
 
-   data = hypre_VectorData(vector);
+   data = nalu_hypre_VectorData(vector);
    for (j = 0; j < size; j++)
    {
-      hypre_fscanf(fp, "%le", &data[j]);
+      nalu_hypre_fscanf(fp, "%le", &data[j]);
    }
 
    fclose(fp);
 
    /* multivector code not written yet */
-   hypre_assert( hypre_VectorNumVectors(vector) == 1 );
+   nalu_hypre_assert( nalu_hypre_VectorNumVectors(vector) == 1 );
 
    return vector;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_SeqVectorPrint
+ * nalu_hypre_SeqVectorPrint
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_SeqVectorPrint( hypre_Vector *vector,
+nalu_hypre_SeqVectorPrint( nalu_hypre_Vector *vector,
                       char         *file_name )
 {
    FILE          *fp;
@@ -218,41 +218,41 @@ hypre_SeqVectorPrint( hypre_Vector *vector,
    NALU_HYPRE_Int      i, j;
    NALU_HYPRE_Complex  value;
 
-   num_vectors = hypre_VectorNumVectors(vector);
-   vecstride = hypre_VectorVectorStride(vector);
-   idxstride = hypre_VectorIndexStride(vector);
+   num_vectors = nalu_hypre_VectorNumVectors(vector);
+   vecstride = nalu_hypre_VectorVectorStride(vector);
+   idxstride = nalu_hypre_VectorIndexStride(vector);
 
    /*----------------------------------------------------------
     * Print in the data
     *----------------------------------------------------------*/
 
-   data = hypre_VectorData(vector);
-   size = hypre_VectorSize(vector);
+   data = nalu_hypre_VectorData(vector);
+   size = nalu_hypre_VectorSize(vector);
 
    fp = fopen(file_name, "w");
 
-   if ( hypre_VectorNumVectors(vector) == 1 )
+   if ( nalu_hypre_VectorNumVectors(vector) == 1 )
    {
-      hypre_fprintf(fp, "%d\n", size);
+      nalu_hypre_fprintf(fp, "%d\n", size);
    }
    else
    {
-      hypre_fprintf(fp, "%d vectors of size %d\n", num_vectors, size );
+      nalu_hypre_fprintf(fp, "%d vectors of size %d\n", num_vectors, size );
    }
 
    if ( num_vectors > 1 )
    {
       for ( j = 0; j < num_vectors; ++j )
       {
-         hypre_fprintf(fp, "vector %d\n", j );
+         nalu_hypre_fprintf(fp, "vector %d\n", j );
          for (i = 0; i < size; i++)
          {
             value = data[ j * vecstride + i * idxstride ];
 #ifdef NALU_HYPRE_COMPLEX
-            hypre_fprintf(fp, "%.14e , %.14e\n",
-                          hypre_creal(value), hypre_cimag(value));
+            nalu_hypre_fprintf(fp, "%.14e , %.14e\n",
+                          nalu_hypre_creal(value), nalu_hypre_cimag(value));
 #else
-            hypre_fprintf(fp, "%.14e\n", value);
+            nalu_hypre_fprintf(fp, "%.14e\n", value);
 #endif
          }
       }
@@ -262,30 +262,30 @@ hypre_SeqVectorPrint( hypre_Vector *vector,
       for (i = 0; i < size; i++)
       {
 #ifdef NALU_HYPRE_COMPLEX
-         hypre_fprintf(fp, "%.14e , %.14e\n",
-                       hypre_creal(data[i]), hypre_cimag(data[i]));
+         nalu_hypre_fprintf(fp, "%.14e , %.14e\n",
+                       nalu_hypre_creal(data[i]), nalu_hypre_cimag(data[i]));
 #else
-         hypre_fprintf(fp, "%.14e\n", data[i]);
+         nalu_hypre_fprintf(fp, "%.14e\n", data[i]);
 #endif
       }
    }
 
    fclose(fp);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_SeqVectorSetConstantValuesHost
+ * nalu_hypre_SeqVectorSetConstantValuesHost
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_SeqVectorSetConstantValuesHost( hypre_Vector *v,
+nalu_hypre_SeqVectorSetConstantValuesHost( nalu_hypre_Vector *v,
                                       NALU_HYPRE_Complex value )
 {
-   NALU_HYPRE_Complex *vector_data = hypre_VectorData(v);
-   NALU_HYPRE_Int      num_vectors = hypre_VectorNumVectors(v);
-   NALU_HYPRE_Int      size        = hypre_VectorSize(v);
+   NALU_HYPRE_Complex *vector_data = nalu_hypre_VectorData(v);
+   NALU_HYPRE_Int      num_vectors = nalu_hypre_VectorNumVectors(v);
+   NALU_HYPRE_Int      size        = nalu_hypre_VectorSize(v);
    NALU_HYPRE_Int      total_size  = size * num_vectors;
    NALU_HYPRE_Int      i;
 
@@ -297,193 +297,193 @@ hypre_SeqVectorSetConstantValuesHost( hypre_Vector *v,
       vector_data[i] = value;
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_SeqVectorSetConstantValues
+ * nalu_hypre_SeqVectorSetConstantValues
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_SeqVectorSetConstantValues( hypre_Vector *v,
+nalu_hypre_SeqVectorSetConstantValues( nalu_hypre_Vector *v,
                                   NALU_HYPRE_Complex value )
 {
 #ifdef NALU_HYPRE_PROFILE
-   hypre_profile_times[NALU_HYPRE_TIMER_ID_BLAS1] -= hypre_MPI_Wtime();
+   nalu_hypre_profile_times[NALU_HYPRE_TIMER_ID_BLAS1] -= nalu_hypre_MPI_Wtime();
 #endif
 
-   NALU_HYPRE_Int   num_vectors = hypre_VectorNumVectors(v);
-   NALU_HYPRE_Int   size        = hypre_VectorSize(v);
+   NALU_HYPRE_Int   num_vectors = nalu_hypre_VectorNumVectors(v);
+   NALU_HYPRE_Int   size        = nalu_hypre_VectorSize(v);
    NALU_HYPRE_Int   total_size  = size * num_vectors;
 
    /* Trivial case */
    if (total_size <= 0)
    {
-      return hypre_error_flag;
+      return nalu_hypre_error_flag;
    }
 
 #if defined(NALU_HYPRE_USING_GPU)
-   NALU_HYPRE_ExecutionPolicy exec = hypre_GetExecPolicy1(hypre_VectorMemoryLocation(v));
+   NALU_HYPRE_ExecutionPolicy exec = nalu_hypre_GetExecPolicy1(nalu_hypre_VectorMemoryLocation(v));
 
    if (exec == NALU_HYPRE_EXEC_DEVICE)
    {
-      hypre_SeqVectorSetConstantValuesDevice(v, value);
+      nalu_hypre_SeqVectorSetConstantValuesDevice(v, value);
    }
    else
 #endif
    {
-      hypre_SeqVectorSetConstantValuesHost(v, value);
+      nalu_hypre_SeqVectorSetConstantValuesHost(v, value);
    }
 
 #ifdef NALU_HYPRE_PROFILE
-   hypre_profile_times[NALU_HYPRE_TIMER_ID_BLAS1] += hypre_MPI_Wtime();
+   nalu_hypre_profile_times[NALU_HYPRE_TIMER_ID_BLAS1] += nalu_hypre_MPI_Wtime();
 #endif
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_SeqVectorSetRandomValues
+ * nalu_hypre_SeqVectorSetRandomValues
  *
  * returns vector of values randomly distributed between -1.0 and +1.0
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_SeqVectorSetRandomValues( hypre_Vector *v,
+nalu_hypre_SeqVectorSetRandomValues( nalu_hypre_Vector *v,
                                 NALU_HYPRE_Int     seed )
 {
-   NALU_HYPRE_Complex *vector_data = hypre_VectorData(v);
-   NALU_HYPRE_Int      size        = hypre_VectorSize(v);
+   NALU_HYPRE_Complex *vector_data = nalu_hypre_VectorData(v);
+   NALU_HYPRE_Int      size        = nalu_hypre_VectorSize(v);
    NALU_HYPRE_Int      i;
 
-   hypre_SeedRand(seed);
-   size *= hypre_VectorNumVectors(v);
+   nalu_hypre_SeedRand(seed);
+   size *= nalu_hypre_VectorNumVectors(v);
 
-   if (hypre_GetActualMemLocation(hypre_VectorMemoryLocation(v)) == hypre_MEMORY_HOST)
+   if (nalu_hypre_GetActualMemLocation(nalu_hypre_VectorMemoryLocation(v)) == nalu_hypre_MEMORY_HOST)
    {
-      /* RDF: threading this loop may cause problems because of hypre_Rand() */
+      /* RDF: threading this loop may cause problems because of nalu_hypre_Rand() */
       for (i = 0; i < size; i++)
       {
-         vector_data[i] = 2.0 * hypre_Rand() - 1.0;
+         vector_data[i] = 2.0 * nalu_hypre_Rand() - 1.0;
       }
    }
    else
    {
-      NALU_HYPRE_Complex *h_data = hypre_TAlloc(NALU_HYPRE_Complex, size, NALU_HYPRE_MEMORY_HOST);
+      NALU_HYPRE_Complex *h_data = nalu_hypre_TAlloc(NALU_HYPRE_Complex, size, NALU_HYPRE_MEMORY_HOST);
       for (i = 0; i < size; i++)
       {
-         h_data[i] = 2.0 * hypre_Rand() - 1.0;
+         h_data[i] = 2.0 * nalu_hypre_Rand() - 1.0;
       }
-      hypre_TMemcpy(vector_data, h_data, NALU_HYPRE_Complex, size, hypre_VectorMemoryLocation(v),
+      nalu_hypre_TMemcpy(vector_data, h_data, NALU_HYPRE_Complex, size, nalu_hypre_VectorMemoryLocation(v),
                     NALU_HYPRE_MEMORY_HOST);
-      hypre_TFree(h_data, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(h_data, NALU_HYPRE_MEMORY_HOST);
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_SeqVectorCopy
+ * nalu_hypre_SeqVectorCopy
  * copies data from x to y
  * if size of x is larger than y only the first size_y elements of x are
  * copied to y
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_SeqVectorCopy( hypre_Vector *x,
-                     hypre_Vector *y )
+nalu_hypre_SeqVectorCopy( nalu_hypre_Vector *x,
+                     nalu_hypre_Vector *y )
 {
 #ifdef NALU_HYPRE_PROFILE
-   hypre_profile_times[NALU_HYPRE_TIMER_ID_BLAS1] -= hypre_MPI_Wtime();
+   nalu_hypre_profile_times[NALU_HYPRE_TIMER_ID_BLAS1] -= nalu_hypre_MPI_Wtime();
 #endif
 
-   size_t size = hypre_min(hypre_VectorSize(x), hypre_VectorSize(y)) * hypre_VectorNumVectors(x);
+   size_t size = nalu_hypre_min(nalu_hypre_VectorSize(x), nalu_hypre_VectorSize(y)) * nalu_hypre_VectorNumVectors(x);
 
-   hypre_TMemcpy( hypre_VectorData(y),
-                  hypre_VectorData(x),
+   nalu_hypre_TMemcpy( nalu_hypre_VectorData(y),
+                  nalu_hypre_VectorData(x),
                   NALU_HYPRE_Complex,
                   size,
-                  hypre_VectorMemoryLocation(y),
-                  hypre_VectorMemoryLocation(x) );
+                  nalu_hypre_VectorMemoryLocation(y),
+                  nalu_hypre_VectorMemoryLocation(x) );
 
 #ifdef NALU_HYPRE_PROFILE
-   hypre_profile_times[NALU_HYPRE_TIMER_ID_BLAS1] += hypre_MPI_Wtime();
+   nalu_hypre_profile_times[NALU_HYPRE_TIMER_ID_BLAS1] += nalu_hypre_MPI_Wtime();
 #endif
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_SeqVectorCloneDeep_v2
+ * nalu_hypre_SeqVectorCloneDeep_v2
  *--------------------------------------------------------------------------*/
 
-hypre_Vector*
-hypre_SeqVectorCloneDeep_v2( hypre_Vector *x, NALU_HYPRE_MemoryLocation memory_location )
+nalu_hypre_Vector*
+nalu_hypre_SeqVectorCloneDeep_v2( nalu_hypre_Vector *x, NALU_HYPRE_MemoryLocation memory_location )
 {
-   NALU_HYPRE_Int      size          = hypre_VectorSize(x);
-   NALU_HYPRE_Int      num_vectors   = hypre_VectorNumVectors(x);
+   NALU_HYPRE_Int      size          = nalu_hypre_VectorSize(x);
+   NALU_HYPRE_Int      num_vectors   = nalu_hypre_VectorNumVectors(x);
 
-   hypre_Vector *y = hypre_SeqMultiVectorCreate( size, num_vectors );
+   nalu_hypre_Vector *y = nalu_hypre_SeqMultiVectorCreate( size, num_vectors );
 
-   hypre_VectorMultiVecStorageMethod(y) = hypre_VectorMultiVecStorageMethod(x);
-   hypre_VectorVectorStride(y) = hypre_VectorVectorStride(x);
-   hypre_VectorIndexStride(y) = hypre_VectorIndexStride(x);
+   nalu_hypre_VectorMultiVecStorageMethod(y) = nalu_hypre_VectorMultiVecStorageMethod(x);
+   nalu_hypre_VectorVectorStride(y) = nalu_hypre_VectorVectorStride(x);
+   nalu_hypre_VectorIndexStride(y) = nalu_hypre_VectorIndexStride(x);
 
-   hypre_SeqVectorInitialize_v2(y, memory_location);
-   hypre_SeqVectorCopy( x, y );
+   nalu_hypre_SeqVectorInitialize_v2(y, memory_location);
+   nalu_hypre_SeqVectorCopy( x, y );
 
    return y;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_SeqVectorCloneDeep
+ * nalu_hypre_SeqVectorCloneDeep
  *
  * Returns a complete copy of x - a deep copy, with its own copy of the data.
  *--------------------------------------------------------------------------*/
 
-hypre_Vector*
-hypre_SeqVectorCloneDeep( hypre_Vector *x )
+nalu_hypre_Vector*
+nalu_hypre_SeqVectorCloneDeep( nalu_hypre_Vector *x )
 {
-   return hypre_SeqVectorCloneDeep_v2(x, hypre_VectorMemoryLocation(x));
+   return nalu_hypre_SeqVectorCloneDeep_v2(x, nalu_hypre_VectorMemoryLocation(x));
 }
 
 /*--------------------------------------------------------------------------
- * hypre_SeqVectorCloneShallow
+ * nalu_hypre_SeqVectorCloneShallow
  *
  * Returns a complete copy of x - a shallow copy, pointing the data of x
  *--------------------------------------------------------------------------*/
 
-hypre_Vector *
-hypre_SeqVectorCloneShallow( hypre_Vector *x )
+nalu_hypre_Vector *
+nalu_hypre_SeqVectorCloneShallow( nalu_hypre_Vector *x )
 {
-   NALU_HYPRE_Int     size         = hypre_VectorSize(x);
-   NALU_HYPRE_Int     num_vectors  = hypre_VectorNumVectors(x);
-   hypre_Vector *y            = hypre_SeqMultiVectorCreate(size, num_vectors);
+   NALU_HYPRE_Int     size         = nalu_hypre_VectorSize(x);
+   NALU_HYPRE_Int     num_vectors  = nalu_hypre_VectorNumVectors(x);
+   nalu_hypre_Vector *y            = nalu_hypre_SeqMultiVectorCreate(size, num_vectors);
 
-   hypre_VectorMultiVecStorageMethod(y) = hypre_VectorMultiVecStorageMethod(x);
-   hypre_VectorVectorStride(y) = hypre_VectorVectorStride(x);
-   hypre_VectorIndexStride(y) = hypre_VectorIndexStride(x);
+   nalu_hypre_VectorMultiVecStorageMethod(y) = nalu_hypre_VectorMultiVecStorageMethod(x);
+   nalu_hypre_VectorVectorStride(y) = nalu_hypre_VectorVectorStride(x);
+   nalu_hypre_VectorIndexStride(y) = nalu_hypre_VectorIndexStride(x);
 
-   hypre_VectorMemoryLocation(y) = hypre_VectorMemoryLocation(x);
+   nalu_hypre_VectorMemoryLocation(y) = nalu_hypre_VectorMemoryLocation(x);
 
-   hypre_VectorData(y) = hypre_VectorData(x);
-   hypre_SeqVectorSetDataOwner(y, 0);
-   hypre_SeqVectorInitialize(y);
+   nalu_hypre_VectorData(y) = nalu_hypre_VectorData(x);
+   nalu_hypre_SeqVectorSetDataOwner(y, 0);
+   nalu_hypre_SeqVectorInitialize(y);
 
    return y;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_SeqVectorScaleHost
+ * nalu_hypre_SeqVectorScaleHost
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_SeqVectorScaleHost( NALU_HYPRE_Complex alpha,
-                          hypre_Vector *y )
+nalu_hypre_SeqVectorScaleHost( NALU_HYPRE_Complex alpha,
+                          nalu_hypre_Vector *y )
 {
-   NALU_HYPRE_Complex *y_data      = hypre_VectorData(y);
-   NALU_HYPRE_Int      num_vectors = hypre_VectorNumVectors(y);
-   NALU_HYPRE_Int      size        = hypre_VectorSize(y);
+   NALU_HYPRE_Complex *y_data      = nalu_hypre_VectorData(y);
+   NALU_HYPRE_Int      num_vectors = nalu_hypre_VectorNumVectors(y);
+   NALU_HYPRE_Int      size        = nalu_hypre_VectorSize(y);
    NALU_HYPRE_Int      total_size  = size * num_vectors;
    NALU_HYPRE_Int      i;
 
@@ -495,65 +495,65 @@ hypre_SeqVectorScaleHost( NALU_HYPRE_Complex alpha,
       y_data[i] *= alpha;
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_SeqVectorScale
+ * nalu_hypre_SeqVectorScale
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_SeqVectorScale( NALU_HYPRE_Complex alpha,
-                      hypre_Vector *y )
+nalu_hypre_SeqVectorScale( NALU_HYPRE_Complex alpha,
+                      nalu_hypre_Vector *y )
 {
 #ifdef NALU_HYPRE_PROFILE
-   hypre_profile_times[NALU_HYPRE_TIMER_ID_BLAS1] -= hypre_MPI_Wtime();
+   nalu_hypre_profile_times[NALU_HYPRE_TIMER_ID_BLAS1] -= nalu_hypre_MPI_Wtime();
 #endif
 
    /* special cases */
    if (alpha == 1.0)
    {
-      return hypre_error_flag;
+      return nalu_hypre_error_flag;
    }
 
    if (alpha == 0.0)
    {
-      return hypre_SeqVectorSetConstantValues(y, 0.0);
+      return nalu_hypre_SeqVectorSetConstantValues(y, 0.0);
    }
 
 #if defined(NALU_HYPRE_USING_GPU)
-   NALU_HYPRE_ExecutionPolicy exec = hypre_GetExecPolicy1(hypre_VectorMemoryLocation(y));
+   NALU_HYPRE_ExecutionPolicy exec = nalu_hypre_GetExecPolicy1(nalu_hypre_VectorMemoryLocation(y));
 
    if (exec == NALU_HYPRE_EXEC_DEVICE)
    {
-      hypre_SeqVectorScaleDevice(alpha, y);
+      nalu_hypre_SeqVectorScaleDevice(alpha, y);
    }
    else
 #endif
    {
-      hypre_SeqVectorScaleHost(alpha, y);
+      nalu_hypre_SeqVectorScaleHost(alpha, y);
    }
 
 #ifdef NALU_HYPRE_PROFILE
-   hypre_profile_times[NALU_HYPRE_TIMER_ID_BLAS1] += hypre_MPI_Wtime();
+   nalu_hypre_profile_times[NALU_HYPRE_TIMER_ID_BLAS1] += nalu_hypre_MPI_Wtime();
 #endif
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_SeqVectorAxpyHost
+ * nalu_hypre_SeqVectorAxpyHost
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_SeqVectorAxpyHost( NALU_HYPRE_Complex alpha,
-                         hypre_Vector *x,
-                         hypre_Vector *y )
+nalu_hypre_SeqVectorAxpyHost( NALU_HYPRE_Complex alpha,
+                         nalu_hypre_Vector *x,
+                         nalu_hypre_Vector *y )
 {
-   NALU_HYPRE_Complex *x_data      = hypre_VectorData(x);
-   NALU_HYPRE_Complex *y_data      = hypre_VectorData(y);
-   NALU_HYPRE_Int      num_vectors = hypre_VectorNumVectors(x);
-   NALU_HYPRE_Int      size        = hypre_VectorSize(x);
+   NALU_HYPRE_Complex *x_data      = nalu_hypre_VectorData(x);
+   NALU_HYPRE_Complex *y_data      = nalu_hypre_VectorData(y);
+   NALU_HYPRE_Int      num_vectors = nalu_hypre_VectorNumVectors(x);
+   NALU_HYPRE_Int      size        = nalu_hypre_VectorSize(x);
    NALU_HYPRE_Int      total_size  = size * num_vectors;
    NALU_HYPRE_Int      i;
 
@@ -565,66 +565,66 @@ hypre_SeqVectorAxpyHost( NALU_HYPRE_Complex alpha,
       y_data[i] += alpha * x_data[i];
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_SeqVectorAxpy
+ * nalu_hypre_SeqVectorAxpy
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_SeqVectorAxpy( NALU_HYPRE_Complex alpha,
-                     hypre_Vector *x,
-                     hypre_Vector *y )
+nalu_hypre_SeqVectorAxpy( NALU_HYPRE_Complex alpha,
+                     nalu_hypre_Vector *x,
+                     nalu_hypre_Vector *y )
 {
 #ifdef NALU_HYPRE_PROFILE
-   hypre_profile_times[NALU_HYPRE_TIMER_ID_BLAS1] -= hypre_MPI_Wtime();
+   nalu_hypre_profile_times[NALU_HYPRE_TIMER_ID_BLAS1] -= nalu_hypre_MPI_Wtime();
 #endif
 
 #if defined(NALU_HYPRE_USING_GPU)
-   NALU_HYPRE_ExecutionPolicy exec = hypre_GetExecPolicy2( hypre_VectorMemoryLocation(x),
-                                                      hypre_VectorMemoryLocation(y) );
+   NALU_HYPRE_ExecutionPolicy exec = nalu_hypre_GetExecPolicy2( nalu_hypre_VectorMemoryLocation(x),
+                                                      nalu_hypre_VectorMemoryLocation(y) );
    if (exec == NALU_HYPRE_EXEC_DEVICE)
    {
-      hypre_SeqVectorAxpyDevice(alpha, x, y);
+      nalu_hypre_SeqVectorAxpyDevice(alpha, x, y);
    }
    else
 #endif
    {
-      hypre_SeqVectorAxpyHost(alpha, x, y);
+      nalu_hypre_SeqVectorAxpyHost(alpha, x, y);
    }
 
 #ifdef NALU_HYPRE_PROFILE
-   hypre_profile_times[NALU_HYPRE_TIMER_ID_BLAS1] += hypre_MPI_Wtime();
+   nalu_hypre_profile_times[NALU_HYPRE_TIMER_ID_BLAS1] += nalu_hypre_MPI_Wtime();
 #endif
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_SeqVectorElmdivpyHost
+ * nalu_hypre_SeqVectorElmdivpyHost
  *
  * if marker != NULL: only for marker[i] == marker_val
  *
  * TODO:
- *        1) Change to hypre_SeqVectorElmdivpyMarkedHost?
+ *        1) Change to nalu_hypre_SeqVectorElmdivpyMarkedHost?
  *        2) Add vecstride/idxstride variables
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_SeqVectorElmdivpyHost( hypre_Vector *x,
-                             hypre_Vector *b,
-                             hypre_Vector *y,
+nalu_hypre_SeqVectorElmdivpyHost( nalu_hypre_Vector *x,
+                             nalu_hypre_Vector *b,
+                             nalu_hypre_Vector *y,
                              NALU_HYPRE_Int    *marker,
                              NALU_HYPRE_Int     marker_val )
 {
-   NALU_HYPRE_Complex   *x_data        = hypre_VectorData(x);
-   NALU_HYPRE_Complex   *b_data        = hypre_VectorData(b);
-   NALU_HYPRE_Complex   *y_data        = hypre_VectorData(y);
-   NALU_HYPRE_Int        num_vectors_x = hypre_VectorNumVectors(x);
-   NALU_HYPRE_Int        num_vectors_y = hypre_VectorNumVectors(y);
-   NALU_HYPRE_Int        num_vectors_b = hypre_VectorNumVectors(b);
-   NALU_HYPRE_Int        size          = hypre_VectorSize(b);
+   NALU_HYPRE_Complex   *x_data        = nalu_hypre_VectorData(x);
+   NALU_HYPRE_Complex   *b_data        = nalu_hypre_VectorData(b);
+   NALU_HYPRE_Complex   *y_data        = nalu_hypre_VectorData(y);
+   NALU_HYPRE_Int        num_vectors_x = nalu_hypre_VectorNumVectors(x);
+   NALU_HYPRE_Int        num_vectors_y = nalu_hypre_VectorNumVectors(y);
+   NALU_HYPRE_Int        num_vectors_b = nalu_hypre_VectorNumVectors(b);
+   NALU_HYPRE_Int        size          = nalu_hypre_VectorSize(b);
    NALU_HYPRE_Int        i, j;
    NALU_HYPRE_Complex    val;
 
@@ -725,74 +725,74 @@ hypre_SeqVectorElmdivpyHost( hypre_Vector *x,
       }
       else
       {
-         hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "Unsupported combination of num_vectors!\n");
+         nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "Unsupported combination of num_vectors!\n");
       }
    }
    else
    {
-      hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "num_vectors_b != 1 not supported!\n");
+      nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "num_vectors_b != 1 not supported!\n");
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_SeqVectorElmdivpyMarked
+ * nalu_hypre_SeqVectorElmdivpyMarked
  *
  * Computes: y[i] = y[i] + x[i] / b[i] for marker[i] = marker_val
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_SeqVectorElmdivpyMarked( hypre_Vector *x,
-                               hypre_Vector *b,
-                               hypre_Vector *y,
+nalu_hypre_SeqVectorElmdivpyMarked( nalu_hypre_Vector *x,
+                               nalu_hypre_Vector *b,
+                               nalu_hypre_Vector *y,
                                NALU_HYPRE_Int    *marker,
                                NALU_HYPRE_Int     marker_val)
 {
 #ifdef NALU_HYPRE_PROFILE
-   hypre_profile_times[NALU_HYPRE_TIMER_ID_BLAS1] -= hypre_MPI_Wtime();
+   nalu_hypre_profile_times[NALU_HYPRE_TIMER_ID_BLAS1] -= nalu_hypre_MPI_Wtime();
 #endif
 
    /* Sanity checks */
-   if (hypre_VectorSize(y) != hypre_VectorSize(b))
+   if (nalu_hypre_VectorSize(y) != nalu_hypre_VectorSize(b))
    {
-      hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "Error: sizes of y and b do not match!\n");
-      return hypre_error_flag;
+      nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "Error: sizes of y and b do not match!\n");
+      return nalu_hypre_error_flag;
    }
 
-   if (hypre_VectorSize(x) < hypre_VectorSize(y))
+   if (nalu_hypre_VectorSize(x) < nalu_hypre_VectorSize(y))
    {
-      hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "Error: x_size is smaller than y_size!\n");
-      return hypre_error_flag;
+      nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "Error: x_size is smaller than y_size!\n");
+      return nalu_hypre_error_flag;
    }
 
    /* row-wise multivec is not supported */
-   hypre_assert(hypre_VectorMultiVecStorageMethod(x) == 0);
-   hypre_assert(hypre_VectorMultiVecStorageMethod(b) == 0);
-   hypre_assert(hypre_VectorMultiVecStorageMethod(y) == 0);
+   nalu_hypre_assert(nalu_hypre_VectorMultiVecStorageMethod(x) == 0);
+   nalu_hypre_assert(nalu_hypre_VectorMultiVecStorageMethod(b) == 0);
+   nalu_hypre_assert(nalu_hypre_VectorMultiVecStorageMethod(y) == 0);
 
 #if defined(NALU_HYPRE_USING_GPU)
-   NALU_HYPRE_ExecutionPolicy exec = hypre_GetExecPolicy2( hypre_VectorMemoryLocation(x),
-                                                      hypre_VectorMemoryLocation(b) );
+   NALU_HYPRE_ExecutionPolicy exec = nalu_hypre_GetExecPolicy2( nalu_hypre_VectorMemoryLocation(x),
+                                                      nalu_hypre_VectorMemoryLocation(b) );
    if (exec == NALU_HYPRE_EXEC_DEVICE)
    {
-      hypre_SeqVectorElmdivpyDevice(x, b, y, marker, marker_val);
+      nalu_hypre_SeqVectorElmdivpyDevice(x, b, y, marker, marker_val);
    }
    else
 #endif
    {
-      hypre_SeqVectorElmdivpyHost(x, b, y, marker, marker_val);
+      nalu_hypre_SeqVectorElmdivpyHost(x, b, y, marker, marker_val);
    }
 
 #ifdef NALU_HYPRE_PROFILE
-   hypre_profile_times[NALU_HYPRE_TIMER_ID_BLAS1] += hypre_MPI_Wtime();
+   nalu_hypre_profile_times[NALU_HYPRE_TIMER_ID_BLAS1] += nalu_hypre_MPI_Wtime();
 #endif
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_SeqVectorElmdivpy
+ * nalu_hypre_SeqVectorElmdivpy
  *
  * Computes: y = y + x ./ b
  *
@@ -802,25 +802,25 @@ hypre_SeqVectorElmdivpyMarked( hypre_Vector *x,
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_SeqVectorElmdivpy( hypre_Vector *x,
-                         hypre_Vector *b,
-                         hypre_Vector *y )
+nalu_hypre_SeqVectorElmdivpy( nalu_hypre_Vector *x,
+                         nalu_hypre_Vector *b,
+                         nalu_hypre_Vector *y )
 {
-   return hypre_SeqVectorElmdivpyMarked(x, b, y, NULL, -1);
+   return nalu_hypre_SeqVectorElmdivpyMarked(x, b, y, NULL, -1);
 }
 
 /*--------------------------------------------------------------------------
- * hypre_SeqVectorInnerProdHost
+ * nalu_hypre_SeqVectorInnerProdHost
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Real
-hypre_SeqVectorInnerProdHost( hypre_Vector *x,
-                              hypre_Vector *y )
+nalu_hypre_SeqVectorInnerProdHost( nalu_hypre_Vector *x,
+                              nalu_hypre_Vector *y )
 {
-   NALU_HYPRE_Complex *x_data      = hypre_VectorData(x);
-   NALU_HYPRE_Complex *y_data      = hypre_VectorData(y);
-   NALU_HYPRE_Int      num_vectors = hypre_VectorNumVectors(x);
-   NALU_HYPRE_Int      size        = hypre_VectorSize(x);
+   NALU_HYPRE_Complex *x_data      = nalu_hypre_VectorData(x);
+   NALU_HYPRE_Complex *y_data      = nalu_hypre_VectorData(y);
+   NALU_HYPRE_Int      num_vectors = nalu_hypre_VectorNumVectors(x);
+   NALU_HYPRE_Int      size        = nalu_hypre_VectorSize(x);
    NALU_HYPRE_Int      total_size  = size * num_vectors;
 
    NALU_HYPRE_Real     result      = 0.0;
@@ -831,56 +831,56 @@ hypre_SeqVectorInnerProdHost( hypre_Vector *x,
 #endif
    for (i = 0; i < total_size; i++)
    {
-      result += hypre_conj(y_data[i]) * x_data[i];
+      result += nalu_hypre_conj(y_data[i]) * x_data[i];
    }
 
    return result;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_SeqVectorInnerProd
+ * nalu_hypre_SeqVectorInnerProd
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Real
-hypre_SeqVectorInnerProd( hypre_Vector *x,
-                          hypre_Vector *y )
+nalu_hypre_SeqVectorInnerProd( nalu_hypre_Vector *x,
+                          nalu_hypre_Vector *y )
 {
 #ifdef NALU_HYPRE_PROFILE
-   hypre_profile_times[NALU_HYPRE_TIMER_ID_BLAS1] -= hypre_MPI_Wtime();
+   nalu_hypre_profile_times[NALU_HYPRE_TIMER_ID_BLAS1] -= nalu_hypre_MPI_Wtime();
 #endif
 
    NALU_HYPRE_Real result;
 
 #if defined(NALU_HYPRE_USING_GPU)
-   NALU_HYPRE_ExecutionPolicy exec = hypre_GetExecPolicy2( hypre_VectorMemoryLocation(x),
-                                                      hypre_VectorMemoryLocation(y) );
+   NALU_HYPRE_ExecutionPolicy exec = nalu_hypre_GetExecPolicy2( nalu_hypre_VectorMemoryLocation(x),
+                                                      nalu_hypre_VectorMemoryLocation(y) );
    if (exec == NALU_HYPRE_EXEC_DEVICE)
    {
-      result = hypre_SeqVectorInnerProdDevice(x, y);
+      result = nalu_hypre_SeqVectorInnerProdDevice(x, y);
    }
    else
 #endif
    {
-      result = hypre_SeqVectorInnerProdHost(x, y);
+      result = nalu_hypre_SeqVectorInnerProdHost(x, y);
    }
 
 #ifdef NALU_HYPRE_PROFILE
-   hypre_profile_times[NALU_HYPRE_TIMER_ID_BLAS1] += hypre_MPI_Wtime();
+   nalu_hypre_profile_times[NALU_HYPRE_TIMER_ID_BLAS1] += nalu_hypre_MPI_Wtime();
 #endif
 
    return result;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_SeqVectorSumEltsHost
+ * nalu_hypre_SeqVectorSumEltsHost
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Complex
-hypre_SeqVectorSumEltsHost( hypre_Vector *vector )
+nalu_hypre_SeqVectorSumEltsHost( nalu_hypre_Vector *vector )
 {
-   NALU_HYPRE_Complex  *data        = hypre_VectorData( vector );
-   NALU_HYPRE_Int       num_vectors = hypre_VectorNumVectors(vector);
-   NALU_HYPRE_Int       size        = hypre_VectorSize(vector);
+   NALU_HYPRE_Complex  *data        = nalu_hypre_VectorData( vector );
+   NALU_HYPRE_Int       num_vectors = nalu_hypre_VectorNumVectors(vector);
+   NALU_HYPRE_Int       size        = nalu_hypre_VectorSize(vector);
    NALU_HYPRE_Int       total_size  = size * num_vectors;
 
    NALU_HYPRE_Complex   sum  = 0;
@@ -898,35 +898,35 @@ hypre_SeqVectorSumEltsHost( hypre_Vector *vector )
 }
 
 /*--------------------------------------------------------------------------
- * hypre_SeqVectorSumElts:
+ * nalu_hypre_SeqVectorSumElts:
  *
  * Returns the sum of all vector elements.
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Complex
-hypre_SeqVectorSumElts( hypre_Vector *v )
+nalu_hypre_SeqVectorSumElts( nalu_hypre_Vector *v )
 {
 #ifdef NALU_HYPRE_PROFILE
-   hypre_profile_times[NALU_HYPRE_TIMER_ID_BLAS1] -= hypre_MPI_Wtime();
+   nalu_hypre_profile_times[NALU_HYPRE_TIMER_ID_BLAS1] -= nalu_hypre_MPI_Wtime();
 #endif
 
    NALU_HYPRE_Complex sum;
 
 #if defined(NALU_HYPRE_USING_GPU)
-   NALU_HYPRE_ExecutionPolicy exec = hypre_GetExecPolicy1(hypre_VectorMemoryLocation(v));
+   NALU_HYPRE_ExecutionPolicy exec = nalu_hypre_GetExecPolicy1(nalu_hypre_VectorMemoryLocation(v));
 
    if (exec == NALU_HYPRE_EXEC_DEVICE)
    {
-      sum = hypre_SeqVectorSumEltsDevice(v);
+      sum = nalu_hypre_SeqVectorSumEltsDevice(v);
    }
    else
 #endif
    {
-      sum = hypre_SeqVectorSumEltsHost(v);
+      sum = nalu_hypre_SeqVectorSumEltsHost(v);
    }
 
 #ifdef NALU_HYPRE_PROFILE
-   hypre_profile_times[NALU_HYPRE_TIMER_ID_BLAS1] += hypre_MPI_Wtime();
+   nalu_hypre_profile_times[NALU_HYPRE_TIMER_ID_BLAS1] += nalu_hypre_MPI_Wtime();
 #endif
 
    return sum;
@@ -953,23 +953,23 @@ hypre_SeqVectorSumElts( hypre_Vector *v )
 #if 0
 /* y[i] = max(alpha*x[i], beta*y[i]) */
 NALU_HYPRE_Int
-hypre_SeqVectorMax( NALU_HYPRE_Complex alpha,
-                    hypre_Vector *x,
+nalu_hypre_SeqVectorMax( NALU_HYPRE_Complex alpha,
+                    nalu_hypre_Vector *x,
                     NALU_HYPRE_Complex beta,
-                    hypre_Vector *y     )
+                    nalu_hypre_Vector *y     )
 {
 #ifdef NALU_HYPRE_PROFILE
-   hypre_profile_times[NALU_HYPRE_TIMER_ID_BLAS1] -= hypre_MPI_Wtime();
+   nalu_hypre_profile_times[NALU_HYPRE_TIMER_ID_BLAS1] -= nalu_hypre_MPI_Wtime();
 #endif
 
-   NALU_HYPRE_Complex *x_data = hypre_VectorData(x);
-   NALU_HYPRE_Complex *y_data = hypre_VectorData(y);
-   NALU_HYPRE_Int      size   = hypre_VectorSize(x);
+   NALU_HYPRE_Complex *x_data = nalu_hypre_VectorData(x);
+   NALU_HYPRE_Complex *y_data = nalu_hypre_VectorData(y);
+   NALU_HYPRE_Int      size   = nalu_hypre_VectorSize(x);
 
-   size *= hypre_VectorNumVectors(x);
+   size *= nalu_hypre_VectorNumVectors(x);
 
-   //hypre_SeqVectorPrefetch(x, NALU_HYPRE_MEMORY_DEVICE);
-   //hypre_SeqVectorPrefetch(y, NALU_HYPRE_MEMORY_DEVICE);
+   //nalu_hypre_SeqVectorPrefetch(x, NALU_HYPRE_MEMORY_DEVICE);
+   //nalu_hypre_SeqVectorPrefetch(y, NALU_HYPRE_MEMORY_DEVICE);
 
    thrust::maximum<NALU_HYPRE_Complex> mx;
 
@@ -989,17 +989,17 @@ hypre_SeqVectorMax( NALU_HYPRE_Complex alpha,
 #endif
    for (i = 0; i < size; i++)
    {
-      y_data[i] += hypre_max(alpha * x_data[i], beta * y_data[i]);
+      y_data[i] += nalu_hypre_max(alpha * x_data[i], beta * y_data[i]);
    }
 
 #endif /* defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP) */
 
-   hypre_SyncComputeStream(hypre_handle());
+   nalu_hypre_SyncComputeStream(nalu_hypre_handle());
 
 #ifdef NALU_HYPRE_PROFILE
-   hypre_profile_times[NALU_HYPRE_TIMER_ID_BLAS1] += hypre_MPI_Wtime();
+   nalu_hypre_profile_times[NALU_HYPRE_TIMER_ID_BLAS1] += nalu_hypre_MPI_Wtime();
 #endif
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 #endif

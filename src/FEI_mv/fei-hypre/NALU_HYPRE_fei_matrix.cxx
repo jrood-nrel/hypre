@@ -29,7 +29,7 @@ extern "C" int
 NALU_HYPRE_FEMatrixCreate(MPI_Comm comm, NALU_HYPRE_FEMesh mesh, NALU_HYPRE_FEMatrix *matrix)
 {
    NALU_HYPRE_FEMatrix myMatrix;
-   myMatrix = (NALU_HYPRE_FEMatrix) hypre_TAlloc(NALU_HYPRE_FEMatrix, 1, NALU_HYPRE_MEMORY_HOST);
+   myMatrix = (NALU_HYPRE_FEMatrix) nalu_hypre_TAlloc(NALU_HYPRE_FEMatrix, 1, NALU_HYPRE_MEMORY_HOST);
    myMatrix->comm_ = comm;
    myMatrix->mesh_ = mesh;
    (*matrix) = myMatrix;

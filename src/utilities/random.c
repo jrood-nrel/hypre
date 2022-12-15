@@ -31,7 +31,7 @@
  *
  *****************************************************************************/
 
-#include "_hypre_utilities.h"
+#include "_nalu_hypre_utilities.h"
 
 static NALU_HYPRE_Int Seed = 13579;
 
@@ -50,7 +50,7 @@ static NALU_HYPRE_Int Seed = 13579;
  *
  * @param seed an NALU_HYPRE_Int containing the seed for the RNG.
  *--------------------------------------------------------------------------*/
-void hypre_SeedRand( NALU_HYPRE_Int seed )
+void nalu_hypre_SeedRand( NALU_HYPRE_Int seed )
 {
    /* RL: seed must be between 1 and 2^31-2 */
    if (seed < 1)
@@ -71,7 +71,7 @@ void hypre_SeedRand( NALU_HYPRE_Int seed )
  *
  * @return a NALU_HYPRE_Int between (0, 2147483647]
  *--------------------------------------------------------------------------*/
-NALU_HYPRE_Int hypre_RandI()
+NALU_HYPRE_Int nalu_hypre_RandI()
 {
    NALU_HYPRE_Int  low, high, test;
    high = Seed / q;
@@ -96,8 +96,8 @@ NALU_HYPRE_Int hypre_RandI()
  * @return a NALU_HYPRE_Real containing the next number in the sequence divided by
  * 2147483647 so that the numbers are in (0, 1].
  *--------------------------------------------------------------------------*/
-NALU_HYPRE_Real hypre_Rand()
+NALU_HYPRE_Real nalu_hypre_Rand()
 {
-   return ((NALU_HYPRE_Real)(hypre_RandI()) / (NALU_HYPRE_Real)m);
+   return ((NALU_HYPRE_Real)(nalu_hypre_RandI()) / (NALU_HYPRE_Real)m);
 }
 

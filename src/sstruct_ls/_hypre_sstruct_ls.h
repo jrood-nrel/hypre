@@ -5,8 +5,8 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#ifndef hypre_SSTRUCT_LS_HEADER
-#define hypre_SSTRUCT_LS_HEADER
+#ifndef nalu_hypre_SSTRUCT_LS_HEADER
+#define nalu_hypre_SSTRUCT_LS_HEADER
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -16,11 +16,11 @@
 
 #include "NALU_HYPRE_sstruct_ls.h"
 
-#include "_hypre_utilities.h"
+#include "_nalu_hypre_utilities.h"
 #include "krylov.h"
-#include "_hypre_struct_ls.h"
-#include "_hypre_sstruct_mv.h"
-#include "_hypre_parcsr_ls.h"
+#include "_nalu_hypre_struct_ls.h"
+#include "_nalu_hypre_sstruct_mv.h"
+#include "_nalu_hypre_parcsr_ls.h"
 #include "multivector.h"
 
 #ifdef __cplusplus
@@ -28,87 +28,87 @@ extern "C" {
 #endif
 
 /*--------------------------------------------------------------------------
- * hypre_SStructOwnInfo data structure
+ * nalu_hypre_SStructOwnInfo data structure
  * This structure is for the coarsen fboxes that are on this processor,
  * and the cboxes of cgrid/(all coarsened fboxes) on this processor (i.e.,
  * the coarse boxes of the composite cgrid (no underlying) on this processor).
  *--------------------------------------------------------------------------*/
-#ifndef hypre_OWNINFODATA_HEADER
-#define hypre_OWNINFODATA_HEADER
+#ifndef nalu_hypre_OWNINFODATA_HEADER
+#define nalu_hypre_OWNINFODATA_HEADER
 
 
 typedef struct
 {
    NALU_HYPRE_Int             size;
 
-   hypre_BoxArrayArray  *own_boxes;    /* size of fgrid */
+   nalu_hypre_BoxArrayArray  *own_boxes;    /* size of fgrid */
    NALU_HYPRE_Int           **own_cboxnums; /* local cbox number- each fbox
                                           leads to an array of cboxes */
 
-   hypre_BoxArrayArray  *own_composite_cboxes;  /* size of cgrid */
+   nalu_hypre_BoxArrayArray  *own_composite_cboxes;  /* size of cgrid */
    NALU_HYPRE_Int             own_composite_size;
-} hypre_SStructOwnInfoData;
+} nalu_hypre_SStructOwnInfoData;
 
 
 /*--------------------------------------------------------------------------
- * Accessor macros: hypre_SStructOwnInfoData;
+ * Accessor macros: nalu_hypre_SStructOwnInfoData;
  *--------------------------------------------------------------------------*/
 
-#define hypre_SStructOwnInfoDataSize(own_data)       ((own_data) -> size)
-#define hypre_SStructOwnInfoDataOwnBoxes(own_data)   ((own_data) -> own_boxes)
-#define hypre_SStructOwnInfoDataOwnBoxNums(own_data) \
+#define nalu_hypre_SStructOwnInfoDataSize(own_data)       ((own_data) -> size)
+#define nalu_hypre_SStructOwnInfoDataOwnBoxes(own_data)   ((own_data) -> own_boxes)
+#define nalu_hypre_SStructOwnInfoDataOwnBoxNums(own_data) \
 ((own_data) -> own_cboxnums)
-#define hypre_SStructOwnInfoDataCompositeCBoxes(own_data) \
+#define nalu_hypre_SStructOwnInfoDataCompositeCBoxes(own_data) \
 ((own_data) -> own_composite_cboxes)
-#define hypre_SStructOwnInfoDataCompositeSize(own_data) \
+#define nalu_hypre_SStructOwnInfoDataCompositeSize(own_data) \
 ((own_data) -> own_composite_size)
 
 #endif
 /*--------------------------------------------------------------------------
- * hypre_SStructRecvInfo data structure
+ * nalu_hypre_SStructRecvInfo data structure
  *--------------------------------------------------------------------------*/
-#ifndef hypre_RECVINFODATA_HEADER
-#define hypre_RECVINFODATA_HEADER
+#ifndef nalu_hypre_RECVINFODATA_HEADER
+#define nalu_hypre_RECVINFODATA_HEADER
 
 
 typedef struct
 {
    NALU_HYPRE_Int             size;
 
-   hypre_BoxArrayArray  *recv_boxes;
+   nalu_hypre_BoxArrayArray  *recv_boxes;
    NALU_HYPRE_Int           **recv_procs;
 
-} hypre_SStructRecvInfoData;
+} nalu_hypre_SStructRecvInfoData;
 
 #endif
 /*--------------------------------------------------------------------------
- * hypre_SStructSendInfo data structure
+ * nalu_hypre_SStructSendInfo data structure
  *--------------------------------------------------------------------------*/
-#ifndef hypre_SENDINFODATA_HEADER
-#define hypre_SENDINFODATA_HEADER
+#ifndef nalu_hypre_SENDINFODATA_HEADER
+#define nalu_hypre_SENDINFODATA_HEADER
 
 
 typedef struct
 {
    NALU_HYPRE_Int             size;
 
-   hypre_BoxArrayArray  *send_boxes;
+   nalu_hypre_BoxArrayArray  *send_boxes;
    NALU_HYPRE_Int           **send_procs;
    NALU_HYPRE_Int           **send_remote_boxnums;
 
-} hypre_SStructSendInfoData;
+} nalu_hypre_SStructSendInfoData;
 
 #endif
 typedef struct
 {
-   hypre_IJMatrix    *Face_iedge;
-   hypre_IJMatrix    *Element_iedge;
-   hypre_IJMatrix    *Edge_iedge;
+   nalu_hypre_IJMatrix    *Face_iedge;
+   nalu_hypre_IJMatrix    *Element_iedge;
+   nalu_hypre_IJMatrix    *Edge_iedge;
 
-   hypre_IJMatrix    *Element_Face;
-   hypre_IJMatrix    *Element_Edge;
+   nalu_hypre_IJMatrix    *Element_Face;
+   nalu_hypre_IJMatrix    *Element_Edge;
 
-} hypre_PTopology;
+} nalu_hypre_PTopology;
 
 /******************************************************************************
  *
@@ -116,11 +116,11 @@ typedef struct
  *
  *****************************************************************************/
 
-#ifndef hypre_MAXWELL_HEADER
-#define hypre_MAXWELL_HEADER
+#ifndef nalu_hypre_MAXWELL_HEADER
+#define nalu_hypre_MAXWELL_HEADER
 
 /*--------------------------------------------------------------------------
- * hypre_MaxwellData:
+ * nalu_hypre_MaxwellData:
  *--------------------------------------------------------------------------*/
 
 typedef struct
@@ -138,58 +138,58 @@ typedef struct
 
    NALU_HYPRE_Int               constant_coef;
 
-   hypre_Index            *rfactor;
+   nalu_hypre_Index            *rfactor;
 
-   hypre_SStructGrid     **egrid_l;
+   nalu_hypre_SStructGrid     **egrid_l;
 
    NALU_HYPRE_IJMatrix          Aen;
-   hypre_ParCSRMatrix    **Aen_l;
+   nalu_hypre_ParCSRMatrix    **Aen_l;
 
    /* these will be extracted from the amg_data structure. Note that there is no grid
       underlying these matrices and vectors if they are generated by the amg_setup.
       So, will be stored as Parcsr_matrices and Par_vectors. */
-   hypre_SStructMatrix    *Ann;
-   hypre_SStructVector    *bn;
-   hypre_SStructVector    *xn;
+   nalu_hypre_SStructMatrix    *Ann;
+   nalu_hypre_SStructVector    *bn;
+   nalu_hypre_SStructVector    *xn;
 
    void                   *amg_vdata;
-   hypre_ParCSRMatrix    **Ann_l;
-   hypre_SStructStencil  **Ann_stencils;
-   hypre_ParCSRMatrix    **Pn_l;
-   hypre_ParCSRMatrix    **RnT_l;
-   hypre_ParVector       **bn_l;
-   hypre_ParVector       **xn_l;
-   hypre_ParVector       **resn_l;
-   hypre_ParVector       **en_l;
-   hypre_ParVector       **nVtemp_l;
-   hypre_ParVector       **nVtemp2_l;
+   nalu_hypre_ParCSRMatrix    **Ann_l;
+   nalu_hypre_SStructStencil  **Ann_stencils;
+   nalu_hypre_ParCSRMatrix    **Pn_l;
+   nalu_hypre_ParCSRMatrix    **RnT_l;
+   nalu_hypre_ParVector       **bn_l;
+   nalu_hypre_ParVector       **xn_l;
+   nalu_hypre_ParVector       **resn_l;
+   nalu_hypre_ParVector       **en_l;
+   nalu_hypre_ParVector       **nVtemp_l;
+   nalu_hypre_ParVector       **nVtemp2_l;
    NALU_HYPRE_Int             **nCF_marker_l;
    NALU_HYPRE_Real             *nrelax_weight;
    NALU_HYPRE_Real             *nomega;
    NALU_HYPRE_Int               nrelax_type;
    NALU_HYPRE_Int               node_numlevels;
 
-   hypre_ParCSRMatrix     *Tgrad;
-   hypre_ParCSRMatrix     *T_transpose;
+   nalu_hypre_ParCSRMatrix     *Tgrad;
+   nalu_hypre_ParCSRMatrix     *T_transpose;
 
    /* edge data structure. These will have grids. */
    NALU_HYPRE_Int               edge_maxlevels;
    NALU_HYPRE_Int               edge_numlevels;
-   hypre_ParCSRMatrix    **Aee_l;
-   hypre_ParVector       **be_l;
-   hypre_ParVector       **xe_l;
-   hypre_ParVector       **rese_l;
-   hypre_ParVector       **ee_l;
-   hypre_ParVector       **eVtemp_l;
-   hypre_ParVector       **eVtemp2_l;
+   nalu_hypre_ParCSRMatrix    **Aee_l;
+   nalu_hypre_ParVector       **be_l;
+   nalu_hypre_ParVector       **xe_l;
+   nalu_hypre_ParVector       **rese_l;
+   nalu_hypre_ParVector       **ee_l;
+   nalu_hypre_ParVector       **eVtemp_l;
+   nalu_hypre_ParVector       **eVtemp2_l;
    NALU_HYPRE_Int             **eCF_marker_l;
    NALU_HYPRE_Real             *erelax_weight;
    NALU_HYPRE_Real             *eomega;
    NALU_HYPRE_Int               erelax_type;
 
    /* edge data structure. These will have no grid. */
-   hypre_IJMatrix        **Pe_l;
-   hypre_IJMatrix        **ReT_l;
+   nalu_hypre_IJMatrix        **Pe_l;
+   nalu_hypre_IJMatrix        **ReT_l;
    NALU_HYPRE_Int             **BdryRanks_l;
    NALU_HYPRE_Int              *BdryRanksCnts_l;
 
@@ -206,7 +206,7 @@ typedef struct
    NALU_HYPRE_Real             *norms;
    NALU_HYPRE_Real             *rel_norms;
 
-} hypre_MaxwellData;
+} nalu_hypre_MaxwellData;
 
 #endif
 typedef struct
@@ -217,118 +217,118 @@ typedef struct
    NALU_HYPRE_BigInt *cols;
    NALU_HYPRE_Real   *data;
 
-} hypre_MaxwellOffProcRow;
+} nalu_hypre_MaxwellOffProcRow;
 
 
 /* eliminate_rowscols.c */
-NALU_HYPRE_Int hypre_ParCSRMatrixEliminateRowsCols ( hypre_ParCSRMatrix *A, NALU_HYPRE_Int nrows_to_eliminate,
+NALU_HYPRE_Int nalu_hypre_ParCSRMatrixEliminateRowsCols ( nalu_hypre_ParCSRMatrix *A, NALU_HYPRE_Int nrows_to_eliminate,
                                                 NALU_HYPRE_Int *rows_to_eliminate );
-NALU_HYPRE_Int hypre_CSRMatrixEliminateRowsColsDiag ( hypre_ParCSRMatrix *A,
+NALU_HYPRE_Int nalu_hypre_CSRMatrixEliminateRowsColsDiag ( nalu_hypre_ParCSRMatrix *A,
                                                  NALU_HYPRE_Int nrows_to_eliminate, NALU_HYPRE_Int *rows_to_eliminate );
-NALU_HYPRE_Int hypre_CSRMatrixEliminateRowsOffd ( hypre_ParCSRMatrix *A, NALU_HYPRE_Int nrows_to_eliminate,
+NALU_HYPRE_Int nalu_hypre_CSRMatrixEliminateRowsOffd ( nalu_hypre_ParCSRMatrix *A, NALU_HYPRE_Int nrows_to_eliminate,
                                              NALU_HYPRE_Int *rows_to_eliminate );
-NALU_HYPRE_Int hypre_CSRMatrixEliminateColsOffd ( hypre_CSRMatrix *Aoffd, NALU_HYPRE_Int ncols_to_eliminate,
+NALU_HYPRE_Int nalu_hypre_CSRMatrixEliminateColsOffd ( nalu_hypre_CSRMatrix *Aoffd, NALU_HYPRE_Int ncols_to_eliminate,
                                              NALU_HYPRE_Int *cols_to_eliminate );
 
 /* fac_amr_fcoarsen.c */
-NALU_HYPRE_Int hypre_AMR_FCoarsen ( hypre_SStructMatrix *A, hypre_SStructMatrix *fac_A,
-                               hypre_SStructPMatrix *A_crse, hypre_Index refine_factors, NALU_HYPRE_Int level );
+NALU_HYPRE_Int nalu_hypre_AMR_FCoarsen ( nalu_hypre_SStructMatrix *A, nalu_hypre_SStructMatrix *fac_A,
+                               nalu_hypre_SStructPMatrix *A_crse, nalu_hypre_Index refine_factors, NALU_HYPRE_Int level );
 
 /* fac_amr_rap.c */
-NALU_HYPRE_Int hypre_AMR_RAP ( hypre_SStructMatrix *A, hypre_Index *rfactors,
-                          hypre_SStructMatrix **fac_A_ptr );
+NALU_HYPRE_Int nalu_hypre_AMR_RAP ( nalu_hypre_SStructMatrix *A, nalu_hypre_Index *rfactors,
+                          nalu_hypre_SStructMatrix **fac_A_ptr );
 
 /* fac_amr_zero_data.c */
-NALU_HYPRE_Int hypre_ZeroAMRVectorData ( hypre_SStructVector *b, NALU_HYPRE_Int *plevels,
-                                    hypre_Index *rfactors );
-NALU_HYPRE_Int hypre_ZeroAMRMatrixData ( hypre_SStructMatrix *A, NALU_HYPRE_Int part_crse,
-                                    hypre_Index rfactors );
+NALU_HYPRE_Int nalu_hypre_ZeroAMRVectorData ( nalu_hypre_SStructVector *b, NALU_HYPRE_Int *plevels,
+                                    nalu_hypre_Index *rfactors );
+NALU_HYPRE_Int nalu_hypre_ZeroAMRMatrixData ( nalu_hypre_SStructMatrix *A, NALU_HYPRE_Int part_crse,
+                                    nalu_hypre_Index rfactors );
 
 /* fac.c */
-void *hypre_FACCreate ( MPI_Comm comm );
-NALU_HYPRE_Int hypre_FACDestroy2 ( void *fac_vdata );
-NALU_HYPRE_Int hypre_FACSetTol ( void *fac_vdata, NALU_HYPRE_Real tol );
-NALU_HYPRE_Int hypre_FACSetPLevels ( void *fac_vdata, NALU_HYPRE_Int nparts, NALU_HYPRE_Int *plevels );
-NALU_HYPRE_Int hypre_FACSetPRefinements ( void *fac_vdata, NALU_HYPRE_Int nparts, hypre_Index *prefinements);
-NALU_HYPRE_Int hypre_FACSetMaxLevels ( void *fac_vdata, NALU_HYPRE_Int nparts );
-NALU_HYPRE_Int hypre_FACSetMaxIter ( void *fac_vdata, NALU_HYPRE_Int max_iter );
-NALU_HYPRE_Int hypre_FACSetRelChange ( void *fac_vdata, NALU_HYPRE_Int rel_change );
-NALU_HYPRE_Int hypre_FACSetZeroGuess ( void *fac_vdata, NALU_HYPRE_Int zero_guess );
-NALU_HYPRE_Int hypre_FACSetRelaxType ( void *fac_vdata, NALU_HYPRE_Int relax_type );
-NALU_HYPRE_Int hypre_FACSetJacobiWeight ( void *fac_vdata, NALU_HYPRE_Real weight );
-NALU_HYPRE_Int hypre_FACSetNumPreSmooth ( void *fac_vdata, NALU_HYPRE_Int num_pre_smooth );
-NALU_HYPRE_Int hypre_FACSetNumPostSmooth ( void *fac_vdata, NALU_HYPRE_Int num_post_smooth );
-NALU_HYPRE_Int hypre_FACSetCoarseSolverType ( void *fac_vdata, NALU_HYPRE_Int csolver_type );
-NALU_HYPRE_Int hypre_FACSetLogging ( void *fac_vdata, NALU_HYPRE_Int logging );
-NALU_HYPRE_Int hypre_FACGetNumIterations ( void *fac_vdata, NALU_HYPRE_Int *num_iterations );
-NALU_HYPRE_Int hypre_FACPrintLogging ( void *fac_vdata, NALU_HYPRE_Int myid );
-NALU_HYPRE_Int hypre_FACGetFinalRelativeResidualNorm ( void *fac_vdata,
+void *nalu_hypre_FACCreate ( MPI_Comm comm );
+NALU_HYPRE_Int nalu_hypre_FACDestroy2 ( void *fac_vdata );
+NALU_HYPRE_Int nalu_hypre_FACSetTol ( void *fac_vdata, NALU_HYPRE_Real tol );
+NALU_HYPRE_Int nalu_hypre_FACSetPLevels ( void *fac_vdata, NALU_HYPRE_Int nparts, NALU_HYPRE_Int *plevels );
+NALU_HYPRE_Int nalu_hypre_FACSetPRefinements ( void *fac_vdata, NALU_HYPRE_Int nparts, nalu_hypre_Index *prefinements);
+NALU_HYPRE_Int nalu_hypre_FACSetMaxLevels ( void *fac_vdata, NALU_HYPRE_Int nparts );
+NALU_HYPRE_Int nalu_hypre_FACSetMaxIter ( void *fac_vdata, NALU_HYPRE_Int max_iter );
+NALU_HYPRE_Int nalu_hypre_FACSetRelChange ( void *fac_vdata, NALU_HYPRE_Int rel_change );
+NALU_HYPRE_Int nalu_hypre_FACSetZeroGuess ( void *fac_vdata, NALU_HYPRE_Int zero_guess );
+NALU_HYPRE_Int nalu_hypre_FACSetRelaxType ( void *fac_vdata, NALU_HYPRE_Int relax_type );
+NALU_HYPRE_Int nalu_hypre_FACSetJacobiWeight ( void *fac_vdata, NALU_HYPRE_Real weight );
+NALU_HYPRE_Int nalu_hypre_FACSetNumPreSmooth ( void *fac_vdata, NALU_HYPRE_Int num_pre_smooth );
+NALU_HYPRE_Int nalu_hypre_FACSetNumPostSmooth ( void *fac_vdata, NALU_HYPRE_Int num_post_smooth );
+NALU_HYPRE_Int nalu_hypre_FACSetCoarseSolverType ( void *fac_vdata, NALU_HYPRE_Int csolver_type );
+NALU_HYPRE_Int nalu_hypre_FACSetLogging ( void *fac_vdata, NALU_HYPRE_Int logging );
+NALU_HYPRE_Int nalu_hypre_FACGetNumIterations ( void *fac_vdata, NALU_HYPRE_Int *num_iterations );
+NALU_HYPRE_Int nalu_hypre_FACPrintLogging ( void *fac_vdata, NALU_HYPRE_Int myid );
+NALU_HYPRE_Int nalu_hypre_FACGetFinalRelativeResidualNorm ( void *fac_vdata,
                                                   NALU_HYPRE_Real *relative_residual_norm );
 
 /* fac_cf_coarsen.c */
-NALU_HYPRE_Int hypre_AMR_CFCoarsen ( hypre_SStructMatrix *A, hypre_SStructMatrix *fac_A,
-                                hypre_Index refine_factors, NALU_HYPRE_Int level );
+NALU_HYPRE_Int nalu_hypre_AMR_CFCoarsen ( nalu_hypre_SStructMatrix *A, nalu_hypre_SStructMatrix *fac_A,
+                                nalu_hypre_Index refine_factors, NALU_HYPRE_Int level );
 
 /* fac_CFInterfaceExtents.c */
-hypre_BoxArray *hypre_CFInterfaceExtents ( hypre_Box *fgrid_box, hypre_Box *cgrid_box,
-                                           hypre_StructStencil *stencils, hypre_Index rfactors );
-NALU_HYPRE_Int hypre_CFInterfaceExtents2 ( hypre_Box *fgrid_box, hypre_Box *cgrid_box,
-                                      hypre_StructStencil *stencils, hypre_Index rfactors, hypre_BoxArray *cf_interface );
+nalu_hypre_BoxArray *nalu_hypre_CFInterfaceExtents ( nalu_hypre_Box *fgrid_box, nalu_hypre_Box *cgrid_box,
+                                           nalu_hypre_StructStencil *stencils, nalu_hypre_Index rfactors );
+NALU_HYPRE_Int nalu_hypre_CFInterfaceExtents2 ( nalu_hypre_Box *fgrid_box, nalu_hypre_Box *cgrid_box,
+                                      nalu_hypre_StructStencil *stencils, nalu_hypre_Index rfactors, nalu_hypre_BoxArray *cf_interface );
 
 /* fac_cfstencil_box.c */
-hypre_Box *hypre_CF_StenBox ( hypre_Box *fgrid_box, hypre_Box *cgrid_box, hypre_Index stencil_shape,
-                              hypre_Index rfactors, NALU_HYPRE_Int ndim );
+nalu_hypre_Box *nalu_hypre_CF_StenBox ( nalu_hypre_Box *fgrid_box, nalu_hypre_Box *cgrid_box, nalu_hypre_Index stencil_shape,
+                              nalu_hypre_Index rfactors, NALU_HYPRE_Int ndim );
 
 /* fac_interp2.c */
-NALU_HYPRE_Int hypre_FacSemiInterpCreate2 ( void **fac_interp_vdata_ptr );
-NALU_HYPRE_Int hypre_FacSemiInterpDestroy2 ( void *fac_interp_vdata );
-NALU_HYPRE_Int hypre_FacSemiInterpSetup2 ( void *fac_interp_vdata, hypre_SStructVector *e,
-                                      hypre_SStructPVector *ec, hypre_Index rfactors );
-NALU_HYPRE_Int hypre_FAC_IdentityInterp2 ( void *fac_interp_vdata, hypre_SStructPVector *xc,
-                                      hypre_SStructVector *e );
-NALU_HYPRE_Int hypre_FAC_WeightedInterp2 ( void *fac_interp_vdata, hypre_SStructPVector *xc,
-                                      hypre_SStructVector *e_parts );
+NALU_HYPRE_Int nalu_hypre_FacSemiInterpCreate2 ( void **fac_interp_vdata_ptr );
+NALU_HYPRE_Int nalu_hypre_FacSemiInterpDestroy2 ( void *fac_interp_vdata );
+NALU_HYPRE_Int nalu_hypre_FacSemiInterpSetup2 ( void *fac_interp_vdata, nalu_hypre_SStructVector *e,
+                                      nalu_hypre_SStructPVector *ec, nalu_hypre_Index rfactors );
+NALU_HYPRE_Int nalu_hypre_FAC_IdentityInterp2 ( void *fac_interp_vdata, nalu_hypre_SStructPVector *xc,
+                                      nalu_hypre_SStructVector *e );
+NALU_HYPRE_Int nalu_hypre_FAC_WeightedInterp2 ( void *fac_interp_vdata, nalu_hypre_SStructPVector *xc,
+                                      nalu_hypre_SStructVector *e_parts );
 
 /* fac_relax.c */
-NALU_HYPRE_Int hypre_FacLocalRelax ( void *relax_vdata, hypre_SStructPMatrix *A, hypre_SStructPVector *x,
-                                hypre_SStructPVector *b, NALU_HYPRE_Int num_relax, NALU_HYPRE_Int *zero_guess );
+NALU_HYPRE_Int nalu_hypre_FacLocalRelax ( void *relax_vdata, nalu_hypre_SStructPMatrix *A, nalu_hypre_SStructPVector *x,
+                                nalu_hypre_SStructPVector *b, NALU_HYPRE_Int num_relax, NALU_HYPRE_Int *zero_guess );
 
 /* fac_restrict2.c */
-NALU_HYPRE_Int hypre_FacSemiRestrictCreate2 ( void **fac_restrict_vdata_ptr );
-NALU_HYPRE_Int hypre_FacSemiRestrictSetup2 ( void *fac_restrict_vdata, hypre_SStructVector *r,
-                                        NALU_HYPRE_Int part_crse, NALU_HYPRE_Int part_fine, hypre_SStructPVector *rc, hypre_Index rfactors );
-NALU_HYPRE_Int hypre_FACRestrict2 ( void *fac_restrict_vdata, hypre_SStructVector *xf,
-                               hypre_SStructPVector *xc );
-NALU_HYPRE_Int hypre_FacSemiRestrictDestroy2 ( void *fac_restrict_vdata );
+NALU_HYPRE_Int nalu_hypre_FacSemiRestrictCreate2 ( void **fac_restrict_vdata_ptr );
+NALU_HYPRE_Int nalu_hypre_FacSemiRestrictSetup2 ( void *fac_restrict_vdata, nalu_hypre_SStructVector *r,
+                                        NALU_HYPRE_Int part_crse, NALU_HYPRE_Int part_fine, nalu_hypre_SStructPVector *rc, nalu_hypre_Index rfactors );
+NALU_HYPRE_Int nalu_hypre_FACRestrict2 ( void *fac_restrict_vdata, nalu_hypre_SStructVector *xf,
+                               nalu_hypre_SStructPVector *xc );
+NALU_HYPRE_Int nalu_hypre_FacSemiRestrictDestroy2 ( void *fac_restrict_vdata );
 
 /* fac_setup2.c */
-NALU_HYPRE_Int hypre_FacSetup2 ( void *fac_vdata, hypre_SStructMatrix *A_in, hypre_SStructVector *b,
-                            hypre_SStructVector *x );
+NALU_HYPRE_Int nalu_hypre_FacSetup2 ( void *fac_vdata, nalu_hypre_SStructMatrix *A_in, nalu_hypre_SStructVector *b,
+                            nalu_hypre_SStructVector *x );
 
 /* fac_solve3.c */
-NALU_HYPRE_Int hypre_FACSolve3 ( void *fac_vdata, hypre_SStructMatrix *A_user, hypre_SStructVector *b_in,
-                            hypre_SStructVector *x_in );
+NALU_HYPRE_Int nalu_hypre_FACSolve3 ( void *fac_vdata, nalu_hypre_SStructMatrix *A_user, nalu_hypre_SStructVector *b_in,
+                            nalu_hypre_SStructVector *x_in );
 
 /* fac_zero_cdata.c */
-NALU_HYPRE_Int hypre_FacZeroCData ( void *fac_vdata, hypre_SStructMatrix *A );
+NALU_HYPRE_Int nalu_hypre_FacZeroCData ( void *fac_vdata, nalu_hypre_SStructMatrix *A );
 
 /* fac_zero_stencilcoef.c */
-NALU_HYPRE_Int hypre_FacZeroCFSten ( hypre_SStructPMatrix *Af, hypre_SStructPMatrix *Ac,
-                                hypre_SStructGrid *grid, NALU_HYPRE_Int fine_part, hypre_Index rfactors );
-NALU_HYPRE_Int hypre_FacZeroFCSten ( hypre_SStructPMatrix *A, hypre_SStructGrid *grid,
+NALU_HYPRE_Int nalu_hypre_FacZeroCFSten ( nalu_hypre_SStructPMatrix *Af, nalu_hypre_SStructPMatrix *Ac,
+                                nalu_hypre_SStructGrid *grid, NALU_HYPRE_Int fine_part, nalu_hypre_Index rfactors );
+NALU_HYPRE_Int nalu_hypre_FacZeroFCSten ( nalu_hypre_SStructPMatrix *A, nalu_hypre_SStructGrid *grid,
                                 NALU_HYPRE_Int fine_part );
 
 /* bsearch.c */
-NALU_HYPRE_Int hypre_LowerBinarySearch ( NALU_HYPRE_Int *list, NALU_HYPRE_Int value, NALU_HYPRE_Int list_length );
-NALU_HYPRE_Int hypre_UpperBinarySearch ( NALU_HYPRE_Int *list, NALU_HYPRE_Int value, NALU_HYPRE_Int list_length );
+NALU_HYPRE_Int nalu_hypre_LowerBinarySearch ( NALU_HYPRE_Int *list, NALU_HYPRE_Int value, NALU_HYPRE_Int list_length );
+NALU_HYPRE_Int nalu_hypre_UpperBinarySearch ( NALU_HYPRE_Int *list, NALU_HYPRE_Int value, NALU_HYPRE_Int list_length );
 
 /* maxwell_solve2.c */
-NALU_HYPRE_Int hypre_MaxwellSolve2 ( void *maxwell_vdata, hypre_SStructMatrix *A_in,
-                                hypre_SStructVector *f, hypre_SStructVector *u );
+NALU_HYPRE_Int nalu_hypre_MaxwellSolve2 ( void *maxwell_vdata, nalu_hypre_SStructMatrix *A_in,
+                                nalu_hypre_SStructVector *f, nalu_hypre_SStructVector *u );
 
 /* maxwell_solve.c */
-NALU_HYPRE_Int hypre_MaxwellSolve ( void *maxwell_vdata, hypre_SStructMatrix *A_in,
-                               hypre_SStructVector *f, hypre_SStructVector *u );
+NALU_HYPRE_Int nalu_hypre_MaxwellSolve ( void *maxwell_vdata, nalu_hypre_SStructMatrix *A_in,
+                               nalu_hypre_SStructVector *f, nalu_hypre_SStructVector *u );
 
 /* NALU_HYPRE_sstruct_bicgstab.c */
 NALU_HYPRE_Int NALU_HYPRE_SStructBiCGSTABCreate ( MPI_Comm comm, NALU_HYPRE_SStructSolver *solver );
@@ -403,9 +403,9 @@ NALU_HYPRE_Int NALU_HYPRE_SStructGMRESGetFinalRelativeResidualNorm ( NALU_HYPRE_
 NALU_HYPRE_Int NALU_HYPRE_SStructGMRESGetResidual ( NALU_HYPRE_SStructSolver solver, void **residual );
 
 /* NALU_HYPRE_sstruct_int.c */
-NALU_HYPRE_Int hypre_SStructPVectorSetRandomValues ( hypre_SStructPVector *pvector, NALU_HYPRE_Int seed );
-NALU_HYPRE_Int hypre_SStructVectorSetRandomValues ( hypre_SStructVector *vector, NALU_HYPRE_Int seed );
-NALU_HYPRE_Int hypre_SStructSetRandomValues ( void *v, NALU_HYPRE_Int seed );
+NALU_HYPRE_Int nalu_hypre_SStructPVectorSetRandomValues ( nalu_hypre_SStructPVector *pvector, NALU_HYPRE_Int seed );
+NALU_HYPRE_Int nalu_hypre_SStructVectorSetRandomValues ( nalu_hypre_SStructVector *vector, NALU_HYPRE_Int seed );
+NALU_HYPRE_Int nalu_hypre_SStructSetRandomValues ( void *v, NALU_HYPRE_Int seed );
 NALU_HYPRE_Int NALU_HYPRE_SStructSetupInterpreter ( mv_InterfaceInterpreter *i );
 NALU_HYPRE_Int NALU_HYPRE_SStructSetupMatvec ( NALU_HYPRE_MatvecFunctions *mv );
 
@@ -579,217 +579,217 @@ NALU_HYPRE_Int NALU_HYPRE_SStructSysPFMGGetFinalRelativeResidualNorm ( NALU_HYPR
                                                              NALU_HYPRE_Real *norm );
 
 /* krylov.c */
-NALU_HYPRE_Int hypre_SStructKrylovIdentitySetup ( void *vdata, void *A, void *b, void *x );
-NALU_HYPRE_Int hypre_SStructKrylovIdentity ( void *vdata, void *A, void *b, void *x );
+NALU_HYPRE_Int nalu_hypre_SStructKrylovIdentitySetup ( void *vdata, void *A, void *b, void *x );
+NALU_HYPRE_Int nalu_hypre_SStructKrylovIdentity ( void *vdata, void *A, void *b, void *x );
 
 /* krylov_sstruct.c */
-void *hypre_SStructKrylovCAlloc ( size_t count, size_t elt_size, NALU_HYPRE_MemoryLocation location );
-NALU_HYPRE_Int hypre_SStructKrylovFree ( void *ptr );
-void *hypre_SStructKrylovCreateVector ( void *vvector );
-void *hypre_SStructKrylovCreateVectorArray ( NALU_HYPRE_Int n, void *vvector );
-NALU_HYPRE_Int hypre_SStructKrylovDestroyVector ( void *vvector );
-void *hypre_SStructKrylovMatvecCreate ( void *A, void *x );
-NALU_HYPRE_Int hypre_SStructKrylovMatvec ( void *matvec_data, NALU_HYPRE_Complex alpha, void *A, void *x,
+void *nalu_hypre_SStructKrylovCAlloc ( size_t count, size_t elt_size, NALU_HYPRE_MemoryLocation location );
+NALU_HYPRE_Int nalu_hypre_SStructKrylovFree ( void *ptr );
+void *nalu_hypre_SStructKrylovCreateVector ( void *vvector );
+void *nalu_hypre_SStructKrylovCreateVectorArray ( NALU_HYPRE_Int n, void *vvector );
+NALU_HYPRE_Int nalu_hypre_SStructKrylovDestroyVector ( void *vvector );
+void *nalu_hypre_SStructKrylovMatvecCreate ( void *A, void *x );
+NALU_HYPRE_Int nalu_hypre_SStructKrylovMatvec ( void *matvec_data, NALU_HYPRE_Complex alpha, void *A, void *x,
                                       NALU_HYPRE_Complex beta, void *y );
-NALU_HYPRE_Int hypre_SStructKrylovMatvecDestroy ( void *matvec_data );
-NALU_HYPRE_Real hypre_SStructKrylovInnerProd ( void *x, void *y );
-NALU_HYPRE_Int hypre_SStructKrylovCopyVector ( void *x, void *y );
-NALU_HYPRE_Int hypre_SStructKrylovClearVector ( void *x );
-NALU_HYPRE_Int hypre_SStructKrylovScaleVector ( NALU_HYPRE_Complex alpha, void *x );
-NALU_HYPRE_Int hypre_SStructKrylovAxpy ( NALU_HYPRE_Complex alpha, void *x, void *y );
-NALU_HYPRE_Int hypre_SStructKrylovCommInfo ( void *A, NALU_HYPRE_Int *my_id, NALU_HYPRE_Int *num_procs );
+NALU_HYPRE_Int nalu_hypre_SStructKrylovMatvecDestroy ( void *matvec_data );
+NALU_HYPRE_Real nalu_hypre_SStructKrylovInnerProd ( void *x, void *y );
+NALU_HYPRE_Int nalu_hypre_SStructKrylovCopyVector ( void *x, void *y );
+NALU_HYPRE_Int nalu_hypre_SStructKrylovClearVector ( void *x );
+NALU_HYPRE_Int nalu_hypre_SStructKrylovScaleVector ( NALU_HYPRE_Complex alpha, void *x );
+NALU_HYPRE_Int nalu_hypre_SStructKrylovAxpy ( NALU_HYPRE_Complex alpha, void *x, void *y );
+NALU_HYPRE_Int nalu_hypre_SStructKrylovCommInfo ( void *A, NALU_HYPRE_Int *my_id, NALU_HYPRE_Int *num_procs );
 
 /* maxwell_grad.c */
-hypre_ParCSRMatrix *hypre_Maxwell_Grad ( hypre_SStructGrid *grid );
+nalu_hypre_ParCSRMatrix *nalu_hypre_Maxwell_Grad ( nalu_hypre_SStructGrid *grid );
 
 /* maxwell_physbdy.c */
-NALU_HYPRE_Int hypre_Maxwell_PhysBdy ( hypre_SStructGrid **grid_l, NALU_HYPRE_Int num_levels,
-                                  hypre_Index rfactors, NALU_HYPRE_Int ***BdryRanksl_ptr, NALU_HYPRE_Int **BdryRanksCntsl_ptr );
-NALU_HYPRE_Int hypre_Maxwell_VarBdy ( hypre_SStructPGrid *pgrid, hypre_BoxArrayArray **bdry );
+NALU_HYPRE_Int nalu_hypre_Maxwell_PhysBdy ( nalu_hypre_SStructGrid **grid_l, NALU_HYPRE_Int num_levels,
+                                  nalu_hypre_Index rfactors, NALU_HYPRE_Int ***BdryRanksl_ptr, NALU_HYPRE_Int **BdryRanksCntsl_ptr );
+NALU_HYPRE_Int nalu_hypre_Maxwell_VarBdy ( nalu_hypre_SStructPGrid *pgrid, nalu_hypre_BoxArrayArray **bdry );
 
 /* maxwell_PNedelec_bdy.c */
-NALU_HYPRE_Int hypre_Maxwell_PNedelec_Bdy ( hypre_StructGrid *cell_grid, hypre_SStructPGrid *pgrid,
-                                       hypre_BoxArrayArray ****bdry_ptr );
+NALU_HYPRE_Int nalu_hypre_Maxwell_PNedelec_Bdy ( nalu_hypre_StructGrid *cell_grid, nalu_hypre_SStructPGrid *pgrid,
+                                       nalu_hypre_BoxArrayArray ****bdry_ptr );
 
 /* maxwell_PNedelec.c */
-hypre_IJMatrix *hypre_Maxwell_PNedelec ( hypre_SStructGrid *fgrid_edge,
-                                         hypre_SStructGrid *cgrid_edge, hypre_Index rfactor );
+nalu_hypre_IJMatrix *nalu_hypre_Maxwell_PNedelec ( nalu_hypre_SStructGrid *fgrid_edge,
+                                         nalu_hypre_SStructGrid *cgrid_edge, nalu_hypre_Index rfactor );
 
 /* maxwell_semi_interp.c */
-NALU_HYPRE_Int hypre_CreatePTopology ( void **PTopology_vdata_ptr );
-NALU_HYPRE_Int hypre_DestroyPTopology ( void *PTopology_vdata );
-hypre_IJMatrix *hypre_Maxwell_PTopology ( hypre_SStructGrid *fgrid_edge,
-                                          hypre_SStructGrid *cgrid_edge, hypre_SStructGrid *fgrid_face, hypre_SStructGrid *cgrid_face,
-                                          hypre_SStructGrid *fgrid_element, hypre_SStructGrid *cgrid_element, hypre_ParCSRMatrix *Aee,
-                                          hypre_Index rfactor, void *PTopology_vdata );
-NALU_HYPRE_Int hypre_CollapseStencilToStencil ( hypre_ParCSRMatrix *Aee, hypre_SStructGrid *grid,
-                                           NALU_HYPRE_Int part, NALU_HYPRE_Int var, hypre_Index pt_location, NALU_HYPRE_Int collapse_dir,
+NALU_HYPRE_Int nalu_hypre_CreatePTopology ( void **PTopology_vdata_ptr );
+NALU_HYPRE_Int nalu_hypre_DestroyPTopology ( void *PTopology_vdata );
+nalu_hypre_IJMatrix *nalu_hypre_Maxwell_PTopology ( nalu_hypre_SStructGrid *fgrid_edge,
+                                          nalu_hypre_SStructGrid *cgrid_edge, nalu_hypre_SStructGrid *fgrid_face, nalu_hypre_SStructGrid *cgrid_face,
+                                          nalu_hypre_SStructGrid *fgrid_element, nalu_hypre_SStructGrid *cgrid_element, nalu_hypre_ParCSRMatrix *Aee,
+                                          nalu_hypre_Index rfactor, void *PTopology_vdata );
+NALU_HYPRE_Int nalu_hypre_CollapseStencilToStencil ( nalu_hypre_ParCSRMatrix *Aee, nalu_hypre_SStructGrid *grid,
+                                           NALU_HYPRE_Int part, NALU_HYPRE_Int var, nalu_hypre_Index pt_location, NALU_HYPRE_Int collapse_dir,
                                            NALU_HYPRE_Int new_stencil_dir, NALU_HYPRE_Real **collapsed_vals_ptr );
-NALU_HYPRE_Int hypre_TriDiagSolve ( NALU_HYPRE_Real *diag, NALU_HYPRE_Real *upper, NALU_HYPRE_Real *lower,
+NALU_HYPRE_Int nalu_hypre_TriDiagSolve ( NALU_HYPRE_Real *diag, NALU_HYPRE_Real *upper, NALU_HYPRE_Real *lower,
                                NALU_HYPRE_Real *rhs, NALU_HYPRE_Int size );
 
 /* maxwell_TV.c */
-void *hypre_MaxwellTVCreate ( MPI_Comm comm );
-NALU_HYPRE_Int hypre_MaxwellTVDestroy ( void *maxwell_vdata );
-NALU_HYPRE_Int hypre_MaxwellSetRfactors ( void *maxwell_vdata, NALU_HYPRE_Int rfactor [NALU_HYPRE_MAXDIM]);
-NALU_HYPRE_Int hypre_MaxwellSetGrad ( void *maxwell_vdata, hypre_ParCSRMatrix *T );
-NALU_HYPRE_Int hypre_MaxwellSetConstantCoef ( void *maxwell_vdata, NALU_HYPRE_Int constant_coef );
-NALU_HYPRE_Int hypre_MaxwellSetTol ( void *maxwell_vdata, NALU_HYPRE_Real tol );
-NALU_HYPRE_Int hypre_MaxwellSetMaxIter ( void *maxwell_vdata, NALU_HYPRE_Int max_iter );
-NALU_HYPRE_Int hypre_MaxwellSetRelChange ( void *maxwell_vdata, NALU_HYPRE_Int rel_change );
-NALU_HYPRE_Int hypre_MaxwellSetNumPreRelax ( void *maxwell_vdata, NALU_HYPRE_Int num_pre_relax );
-NALU_HYPRE_Int hypre_MaxwellSetNumPostRelax ( void *maxwell_vdata, NALU_HYPRE_Int num_post_relax );
-NALU_HYPRE_Int hypre_MaxwellGetNumIterations ( void *maxwell_vdata, NALU_HYPRE_Int *num_iterations );
-NALU_HYPRE_Int hypre_MaxwellSetPrintLevel ( void *maxwell_vdata, NALU_HYPRE_Int print_level );
-NALU_HYPRE_Int hypre_MaxwellSetLogging ( void *maxwell_vdata, NALU_HYPRE_Int logging );
-NALU_HYPRE_Int hypre_MaxwellPrintLogging ( void *maxwell_vdata, NALU_HYPRE_Int myid );
-NALU_HYPRE_Int hypre_MaxwellGetFinalRelativeResidualNorm ( void *maxwell_vdata,
+void *nalu_hypre_MaxwellTVCreate ( MPI_Comm comm );
+NALU_HYPRE_Int nalu_hypre_MaxwellTVDestroy ( void *maxwell_vdata );
+NALU_HYPRE_Int nalu_hypre_MaxwellSetRfactors ( void *maxwell_vdata, NALU_HYPRE_Int rfactor [NALU_HYPRE_MAXDIM]);
+NALU_HYPRE_Int nalu_hypre_MaxwellSetGrad ( void *maxwell_vdata, nalu_hypre_ParCSRMatrix *T );
+NALU_HYPRE_Int nalu_hypre_MaxwellSetConstantCoef ( void *maxwell_vdata, NALU_HYPRE_Int constant_coef );
+NALU_HYPRE_Int nalu_hypre_MaxwellSetTol ( void *maxwell_vdata, NALU_HYPRE_Real tol );
+NALU_HYPRE_Int nalu_hypre_MaxwellSetMaxIter ( void *maxwell_vdata, NALU_HYPRE_Int max_iter );
+NALU_HYPRE_Int nalu_hypre_MaxwellSetRelChange ( void *maxwell_vdata, NALU_HYPRE_Int rel_change );
+NALU_HYPRE_Int nalu_hypre_MaxwellSetNumPreRelax ( void *maxwell_vdata, NALU_HYPRE_Int num_pre_relax );
+NALU_HYPRE_Int nalu_hypre_MaxwellSetNumPostRelax ( void *maxwell_vdata, NALU_HYPRE_Int num_post_relax );
+NALU_HYPRE_Int nalu_hypre_MaxwellGetNumIterations ( void *maxwell_vdata, NALU_HYPRE_Int *num_iterations );
+NALU_HYPRE_Int nalu_hypre_MaxwellSetPrintLevel ( void *maxwell_vdata, NALU_HYPRE_Int print_level );
+NALU_HYPRE_Int nalu_hypre_MaxwellSetLogging ( void *maxwell_vdata, NALU_HYPRE_Int logging );
+NALU_HYPRE_Int nalu_hypre_MaxwellPrintLogging ( void *maxwell_vdata, NALU_HYPRE_Int myid );
+NALU_HYPRE_Int nalu_hypre_MaxwellGetFinalRelativeResidualNorm ( void *maxwell_vdata,
                                                       NALU_HYPRE_Real *relative_residual_norm );
 
 /* maxwell_TV_setup.c */
-NALU_HYPRE_Int hypre_MaxwellTV_Setup ( void *maxwell_vdata, hypre_SStructMatrix *Aee_in,
-                                  hypre_SStructVector *b_in, hypre_SStructVector *x_in );
-NALU_HYPRE_Int hypre_CoarsenPGrid ( hypre_SStructGrid *fgrid, hypre_Index index, hypre_Index stride,
-                               NALU_HYPRE_Int part, hypre_SStructGrid *cgrid, NALU_HYPRE_Int *nboxes );
-hypre_Box *hypre_BoxContraction ( hypre_Box *box, hypre_StructGrid *sgrid, hypre_Index rfactor );
+NALU_HYPRE_Int nalu_hypre_MaxwellTV_Setup ( void *maxwell_vdata, nalu_hypre_SStructMatrix *Aee_in,
+                                  nalu_hypre_SStructVector *b_in, nalu_hypre_SStructVector *x_in );
+NALU_HYPRE_Int nalu_hypre_CoarsenPGrid ( nalu_hypre_SStructGrid *fgrid, nalu_hypre_Index index, nalu_hypre_Index stride,
+                               NALU_HYPRE_Int part, nalu_hypre_SStructGrid *cgrid, NALU_HYPRE_Int *nboxes );
+nalu_hypre_Box *nalu_hypre_BoxContraction ( nalu_hypre_Box *box, nalu_hypre_StructGrid *sgrid, nalu_hypre_Index rfactor );
 
 /* maxwell_zeroBC.c */
-NALU_HYPRE_Int hypre_ParVectorZeroBCValues ( hypre_ParVector *v, NALU_HYPRE_Int *rows, NALU_HYPRE_Int nrows );
-NALU_HYPRE_Int hypre_SeqVectorZeroBCValues ( hypre_Vector *v, NALU_HYPRE_Int *rows, NALU_HYPRE_Int nrows );
+NALU_HYPRE_Int nalu_hypre_ParVectorZeroBCValues ( nalu_hypre_ParVector *v, NALU_HYPRE_Int *rows, NALU_HYPRE_Int nrows );
+NALU_HYPRE_Int nalu_hypre_SeqVectorZeroBCValues ( nalu_hypre_Vector *v, NALU_HYPRE_Int *rows, NALU_HYPRE_Int nrows );
 
 /* nd1_amge_interpolation.c */
-NALU_HYPRE_Int hypre_ND1AMGeInterpolation ( hypre_ParCSRMatrix *Aee, hypre_ParCSRMatrix *ELEM_idof,
-                                       hypre_ParCSRMatrix *FACE_idof, hypre_ParCSRMatrix *EDGE_idof, hypre_ParCSRMatrix *ELEM_FACE,
-                                       hypre_ParCSRMatrix *ELEM_EDGE, NALU_HYPRE_Int num_OffProcRows, hypre_MaxwellOffProcRow **OffProcRows,
-                                       hypre_IJMatrix *IJ_dof_DOF );
-NALU_HYPRE_Int hypre_HarmonicExtension ( hypre_CSRMatrix *A, hypre_CSRMatrix *P, NALU_HYPRE_Int num_DOF,
+NALU_HYPRE_Int nalu_hypre_ND1AMGeInterpolation ( nalu_hypre_ParCSRMatrix *Aee, nalu_hypre_ParCSRMatrix *ELEM_idof,
+                                       nalu_hypre_ParCSRMatrix *FACE_idof, nalu_hypre_ParCSRMatrix *EDGE_idof, nalu_hypre_ParCSRMatrix *ELEM_FACE,
+                                       nalu_hypre_ParCSRMatrix *ELEM_EDGE, NALU_HYPRE_Int num_OffProcRows, nalu_hypre_MaxwellOffProcRow **OffProcRows,
+                                       nalu_hypre_IJMatrix *IJ_dof_DOF );
+NALU_HYPRE_Int nalu_hypre_HarmonicExtension ( nalu_hypre_CSRMatrix *A, nalu_hypre_CSRMatrix *P, NALU_HYPRE_Int num_DOF,
                                     NALU_HYPRE_BigInt *DOF, NALU_HYPRE_Int num_idof, NALU_HYPRE_BigInt *idof, NALU_HYPRE_Int num_bdof, NALU_HYPRE_BigInt *bdof );
 
 /* node_relax.c */
-void *hypre_NodeRelaxCreate ( MPI_Comm comm );
-NALU_HYPRE_Int hypre_NodeRelaxDestroy ( void *relax_vdata );
-NALU_HYPRE_Int hypre_NodeRelaxSetup ( void *relax_vdata, hypre_SStructPMatrix *A,
-                                 hypre_SStructPVector *b, hypre_SStructPVector *x );
-NALU_HYPRE_Int hypre_NodeRelax ( void *relax_vdata, hypre_SStructPMatrix *A, hypre_SStructPVector *b,
-                            hypre_SStructPVector *x );
-NALU_HYPRE_Int hypre_NodeRelaxSetTol ( void *relax_vdata, NALU_HYPRE_Real tol );
-NALU_HYPRE_Int hypre_NodeRelaxSetMaxIter ( void *relax_vdata, NALU_HYPRE_Int max_iter );
-NALU_HYPRE_Int hypre_NodeRelaxSetZeroGuess ( void *relax_vdata, NALU_HYPRE_Int zero_guess );
-NALU_HYPRE_Int hypre_NodeRelaxSetWeight ( void *relax_vdata, NALU_HYPRE_Real weight );
-NALU_HYPRE_Int hypre_NodeRelaxSetNumNodesets ( void *relax_vdata, NALU_HYPRE_Int num_nodesets );
-NALU_HYPRE_Int hypre_NodeRelaxSetNodeset ( void *relax_vdata, NALU_HYPRE_Int nodeset, NALU_HYPRE_Int nodeset_size,
-                                      hypre_Index nodeset_stride, hypre_Index *nodeset_indices );
-NALU_HYPRE_Int hypre_NodeRelaxSetNodesetRank ( void *relax_vdata, NALU_HYPRE_Int nodeset,
+void *nalu_hypre_NodeRelaxCreate ( MPI_Comm comm );
+NALU_HYPRE_Int nalu_hypre_NodeRelaxDestroy ( void *relax_vdata );
+NALU_HYPRE_Int nalu_hypre_NodeRelaxSetup ( void *relax_vdata, nalu_hypre_SStructPMatrix *A,
+                                 nalu_hypre_SStructPVector *b, nalu_hypre_SStructPVector *x );
+NALU_HYPRE_Int nalu_hypre_NodeRelax ( void *relax_vdata, nalu_hypre_SStructPMatrix *A, nalu_hypre_SStructPVector *b,
+                            nalu_hypre_SStructPVector *x );
+NALU_HYPRE_Int nalu_hypre_NodeRelaxSetTol ( void *relax_vdata, NALU_HYPRE_Real tol );
+NALU_HYPRE_Int nalu_hypre_NodeRelaxSetMaxIter ( void *relax_vdata, NALU_HYPRE_Int max_iter );
+NALU_HYPRE_Int nalu_hypre_NodeRelaxSetZeroGuess ( void *relax_vdata, NALU_HYPRE_Int zero_guess );
+NALU_HYPRE_Int nalu_hypre_NodeRelaxSetWeight ( void *relax_vdata, NALU_HYPRE_Real weight );
+NALU_HYPRE_Int nalu_hypre_NodeRelaxSetNumNodesets ( void *relax_vdata, NALU_HYPRE_Int num_nodesets );
+NALU_HYPRE_Int nalu_hypre_NodeRelaxSetNodeset ( void *relax_vdata, NALU_HYPRE_Int nodeset, NALU_HYPRE_Int nodeset_size,
+                                      nalu_hypre_Index nodeset_stride, nalu_hypre_Index *nodeset_indices );
+NALU_HYPRE_Int nalu_hypre_NodeRelaxSetNodesetRank ( void *relax_vdata, NALU_HYPRE_Int nodeset,
                                           NALU_HYPRE_Int nodeset_rank );
-NALU_HYPRE_Int hypre_NodeRelaxSetTempVec ( void *relax_vdata, hypre_SStructPVector *t );
+NALU_HYPRE_Int nalu_hypre_NodeRelaxSetTempVec ( void *relax_vdata, nalu_hypre_SStructPVector *t );
 
 /* sstruct_amr_intercommunication.c */
-NALU_HYPRE_Int hypre_SStructAMRInterCommunication ( hypre_SStructSendInfoData *sendinfo,
-                                               hypre_SStructRecvInfoData *recvinfo, hypre_BoxArray *send_data_space,
-                                               hypre_BoxArray *recv_data_space, NALU_HYPRE_Int num_values, MPI_Comm comm,
-                                               hypre_CommPkg **comm_pkg_ptr );
+NALU_HYPRE_Int nalu_hypre_SStructAMRInterCommunication ( nalu_hypre_SStructSendInfoData *sendinfo,
+                                               nalu_hypre_SStructRecvInfoData *recvinfo, nalu_hypre_BoxArray *send_data_space,
+                                               nalu_hypre_BoxArray *recv_data_space, NALU_HYPRE_Int num_values, MPI_Comm comm,
+                                               nalu_hypre_CommPkg **comm_pkg_ptr );
 
 /* sstruct_owninfo.c */
-NALU_HYPRE_Int hypre_SStructIndexScaleF_C ( hypre_Index findex, hypre_Index index, hypre_Index stride,
-                                       hypre_Index cindex );
-NALU_HYPRE_Int hypre_SStructIndexScaleC_F ( hypre_Index cindex, hypre_Index index, hypre_Index stride,
-                                       hypre_Index findex );
-hypre_SStructOwnInfoData *hypre_SStructOwnInfo ( hypre_StructGrid *fgrid, hypre_StructGrid *cgrid,
-                                                 hypre_BoxManager *cboxman, hypre_BoxManager *fboxman, hypre_Index rfactor );
-NALU_HYPRE_Int hypre_SStructOwnInfoDataDestroy ( hypre_SStructOwnInfoData *owninfo_data );
+NALU_HYPRE_Int nalu_hypre_SStructIndexScaleF_C ( nalu_hypre_Index findex, nalu_hypre_Index index, nalu_hypre_Index stride,
+                                       nalu_hypre_Index cindex );
+NALU_HYPRE_Int nalu_hypre_SStructIndexScaleC_F ( nalu_hypre_Index cindex, nalu_hypre_Index index, nalu_hypre_Index stride,
+                                       nalu_hypre_Index findex );
+nalu_hypre_SStructOwnInfoData *nalu_hypre_SStructOwnInfo ( nalu_hypre_StructGrid *fgrid, nalu_hypre_StructGrid *cgrid,
+                                                 nalu_hypre_BoxManager *cboxman, nalu_hypre_BoxManager *fboxman, nalu_hypre_Index rfactor );
+NALU_HYPRE_Int nalu_hypre_SStructOwnInfoDataDestroy ( nalu_hypre_SStructOwnInfoData *owninfo_data );
 
 /* sstruct_recvinfo.c */
-hypre_SStructRecvInfoData *hypre_SStructRecvInfo ( hypre_StructGrid *cgrid,
-                                                   hypre_BoxManager *fboxman, hypre_Index rfactor );
-NALU_HYPRE_Int hypre_SStructRecvInfoDataDestroy ( hypre_SStructRecvInfoData *recvinfo_data );
+nalu_hypre_SStructRecvInfoData *nalu_hypre_SStructRecvInfo ( nalu_hypre_StructGrid *cgrid,
+                                                   nalu_hypre_BoxManager *fboxman, nalu_hypre_Index rfactor );
+NALU_HYPRE_Int nalu_hypre_SStructRecvInfoDataDestroy ( nalu_hypre_SStructRecvInfoData *recvinfo_data );
 
 /* sstruct_sendinfo.c */
-hypre_SStructSendInfoData *hypre_SStructSendInfo ( hypre_StructGrid *fgrid,
-                                                   hypre_BoxManager *cboxman, hypre_Index rfactor );
-NALU_HYPRE_Int hypre_SStructSendInfoDataDestroy ( hypre_SStructSendInfoData *sendinfo_data );
+nalu_hypre_SStructSendInfoData *nalu_hypre_SStructSendInfo ( nalu_hypre_StructGrid *fgrid,
+                                                   nalu_hypre_BoxManager *cboxman, nalu_hypre_Index rfactor );
+NALU_HYPRE_Int nalu_hypre_SStructSendInfoDataDestroy ( nalu_hypre_SStructSendInfoData *sendinfo_data );
 
 /* sstruct_sharedDOFComm.c */
-hypre_MaxwellOffProcRow *hypre_MaxwellOffProcRowCreate ( NALU_HYPRE_Int ncols );
-NALU_HYPRE_Int hypre_MaxwellOffProcRowDestroy ( void *OffProcRow_vdata );
-NALU_HYPRE_Int hypre_SStructSharedDOF_ParcsrMatRowsComm ( hypre_SStructGrid *grid, hypre_ParCSRMatrix *A,
-                                                     NALU_HYPRE_Int *num_offprocrows_ptr, hypre_MaxwellOffProcRow ***OffProcRows_ptr );
+nalu_hypre_MaxwellOffProcRow *nalu_hypre_MaxwellOffProcRowCreate ( NALU_HYPRE_Int ncols );
+NALU_HYPRE_Int nalu_hypre_MaxwellOffProcRowDestroy ( void *OffProcRow_vdata );
+NALU_HYPRE_Int nalu_hypre_SStructSharedDOF_ParcsrMatRowsComm ( nalu_hypre_SStructGrid *grid, nalu_hypre_ParCSRMatrix *A,
+                                                     NALU_HYPRE_Int *num_offprocrows_ptr, nalu_hypre_MaxwellOffProcRow ***OffProcRows_ptr );
 
 /* sys_pfmg.c */
-void *hypre_SysPFMGCreate ( MPI_Comm comm );
-NALU_HYPRE_Int hypre_SysPFMGDestroy ( void *sys_pfmg_vdata );
-NALU_HYPRE_Int hypre_SysPFMGSetTol ( void *sys_pfmg_vdata, NALU_HYPRE_Real tol );
-NALU_HYPRE_Int hypre_SysPFMGSetMaxIter ( void *sys_pfmg_vdata, NALU_HYPRE_Int max_iter );
-NALU_HYPRE_Int hypre_SysPFMGSetRelChange ( void *sys_pfmg_vdata, NALU_HYPRE_Int rel_change );
-NALU_HYPRE_Int hypre_SysPFMGSetZeroGuess ( void *sys_pfmg_vdata, NALU_HYPRE_Int zero_guess );
-NALU_HYPRE_Int hypre_SysPFMGSetRelaxType ( void *sys_pfmg_vdata, NALU_HYPRE_Int relax_type );
-NALU_HYPRE_Int hypre_SysPFMGSetJacobiWeight ( void *sys_pfmg_vdata, NALU_HYPRE_Real weight );
-NALU_HYPRE_Int hypre_SysPFMGSetNumPreRelax ( void *sys_pfmg_vdata, NALU_HYPRE_Int num_pre_relax );
-NALU_HYPRE_Int hypre_SysPFMGSetNumPostRelax ( void *sys_pfmg_vdata, NALU_HYPRE_Int num_post_relax );
-NALU_HYPRE_Int hypre_SysPFMGSetSkipRelax ( void *sys_pfmg_vdata, NALU_HYPRE_Int skip_relax );
-NALU_HYPRE_Int hypre_SysPFMGSetDxyz ( void *sys_pfmg_vdata, NALU_HYPRE_Real *dxyz );
-NALU_HYPRE_Int hypre_SysPFMGSetLogging ( void *sys_pfmg_vdata, NALU_HYPRE_Int logging );
-NALU_HYPRE_Int hypre_SysPFMGSetPrintLevel ( void *sys_pfmg_vdata, NALU_HYPRE_Int print_level );
-NALU_HYPRE_Int hypre_SysPFMGGetNumIterations ( void *sys_pfmg_vdata, NALU_HYPRE_Int *num_iterations );
-NALU_HYPRE_Int hypre_SysPFMGPrintLogging ( void *sys_pfmg_vdata, NALU_HYPRE_Int myid );
-NALU_HYPRE_Int hypre_SysPFMGGetFinalRelativeResidualNorm ( void *sys_pfmg_vdata,
+void *nalu_hypre_SysPFMGCreate ( MPI_Comm comm );
+NALU_HYPRE_Int nalu_hypre_SysPFMGDestroy ( void *sys_pfmg_vdata );
+NALU_HYPRE_Int nalu_hypre_SysPFMGSetTol ( void *sys_pfmg_vdata, NALU_HYPRE_Real tol );
+NALU_HYPRE_Int nalu_hypre_SysPFMGSetMaxIter ( void *sys_pfmg_vdata, NALU_HYPRE_Int max_iter );
+NALU_HYPRE_Int nalu_hypre_SysPFMGSetRelChange ( void *sys_pfmg_vdata, NALU_HYPRE_Int rel_change );
+NALU_HYPRE_Int nalu_hypre_SysPFMGSetZeroGuess ( void *sys_pfmg_vdata, NALU_HYPRE_Int zero_guess );
+NALU_HYPRE_Int nalu_hypre_SysPFMGSetRelaxType ( void *sys_pfmg_vdata, NALU_HYPRE_Int relax_type );
+NALU_HYPRE_Int nalu_hypre_SysPFMGSetJacobiWeight ( void *sys_pfmg_vdata, NALU_HYPRE_Real weight );
+NALU_HYPRE_Int nalu_hypre_SysPFMGSetNumPreRelax ( void *sys_pfmg_vdata, NALU_HYPRE_Int num_pre_relax );
+NALU_HYPRE_Int nalu_hypre_SysPFMGSetNumPostRelax ( void *sys_pfmg_vdata, NALU_HYPRE_Int num_post_relax );
+NALU_HYPRE_Int nalu_hypre_SysPFMGSetSkipRelax ( void *sys_pfmg_vdata, NALU_HYPRE_Int skip_relax );
+NALU_HYPRE_Int nalu_hypre_SysPFMGSetDxyz ( void *sys_pfmg_vdata, NALU_HYPRE_Real *dxyz );
+NALU_HYPRE_Int nalu_hypre_SysPFMGSetLogging ( void *sys_pfmg_vdata, NALU_HYPRE_Int logging );
+NALU_HYPRE_Int nalu_hypre_SysPFMGSetPrintLevel ( void *sys_pfmg_vdata, NALU_HYPRE_Int print_level );
+NALU_HYPRE_Int nalu_hypre_SysPFMGGetNumIterations ( void *sys_pfmg_vdata, NALU_HYPRE_Int *num_iterations );
+NALU_HYPRE_Int nalu_hypre_SysPFMGPrintLogging ( void *sys_pfmg_vdata, NALU_HYPRE_Int myid );
+NALU_HYPRE_Int nalu_hypre_SysPFMGGetFinalRelativeResidualNorm ( void *sys_pfmg_vdata,
                                                       NALU_HYPRE_Real *relative_residual_norm );
 
 /* sys_pfmg_relax.c */
-void *hypre_SysPFMGRelaxCreate ( MPI_Comm comm );
-NALU_HYPRE_Int hypre_SysPFMGRelaxDestroy ( void *sys_pfmg_relax_vdata );
-NALU_HYPRE_Int hypre_SysPFMGRelax ( void *sys_pfmg_relax_vdata, hypre_SStructPMatrix *A,
-                               hypre_SStructPVector *b, hypre_SStructPVector *x );
-NALU_HYPRE_Int hypre_SysPFMGRelaxSetup ( void *sys_pfmg_relax_vdata, hypre_SStructPMatrix *A,
-                                    hypre_SStructPVector *b, hypre_SStructPVector *x );
-NALU_HYPRE_Int hypre_SysPFMGRelaxSetType ( void *sys_pfmg_relax_vdata, NALU_HYPRE_Int relax_type );
-NALU_HYPRE_Int hypre_SysPFMGRelaxSetJacobiWeight ( void *sys_pfmg_relax_vdata, NALU_HYPRE_Real weight );
-NALU_HYPRE_Int hypre_SysPFMGRelaxSetPreRelax ( void *sys_pfmg_relax_vdata );
-NALU_HYPRE_Int hypre_SysPFMGRelaxSetPostRelax ( void *sys_pfmg_relax_vdata );
-NALU_HYPRE_Int hypre_SysPFMGRelaxSetTol ( void *sys_pfmg_relax_vdata, NALU_HYPRE_Real tol );
-NALU_HYPRE_Int hypre_SysPFMGRelaxSetMaxIter ( void *sys_pfmg_relax_vdata, NALU_HYPRE_Int max_iter );
-NALU_HYPRE_Int hypre_SysPFMGRelaxSetZeroGuess ( void *sys_pfmg_relax_vdata, NALU_HYPRE_Int zero_guess );
-NALU_HYPRE_Int hypre_SysPFMGRelaxSetTempVec ( void *sys_pfmg_relax_vdata, hypre_SStructPVector *t );
+void *nalu_hypre_SysPFMGRelaxCreate ( MPI_Comm comm );
+NALU_HYPRE_Int nalu_hypre_SysPFMGRelaxDestroy ( void *sys_pfmg_relax_vdata );
+NALU_HYPRE_Int nalu_hypre_SysPFMGRelax ( void *sys_pfmg_relax_vdata, nalu_hypre_SStructPMatrix *A,
+                               nalu_hypre_SStructPVector *b, nalu_hypre_SStructPVector *x );
+NALU_HYPRE_Int nalu_hypre_SysPFMGRelaxSetup ( void *sys_pfmg_relax_vdata, nalu_hypre_SStructPMatrix *A,
+                                    nalu_hypre_SStructPVector *b, nalu_hypre_SStructPVector *x );
+NALU_HYPRE_Int nalu_hypre_SysPFMGRelaxSetType ( void *sys_pfmg_relax_vdata, NALU_HYPRE_Int relax_type );
+NALU_HYPRE_Int nalu_hypre_SysPFMGRelaxSetJacobiWeight ( void *sys_pfmg_relax_vdata, NALU_HYPRE_Real weight );
+NALU_HYPRE_Int nalu_hypre_SysPFMGRelaxSetPreRelax ( void *sys_pfmg_relax_vdata );
+NALU_HYPRE_Int nalu_hypre_SysPFMGRelaxSetPostRelax ( void *sys_pfmg_relax_vdata );
+NALU_HYPRE_Int nalu_hypre_SysPFMGRelaxSetTol ( void *sys_pfmg_relax_vdata, NALU_HYPRE_Real tol );
+NALU_HYPRE_Int nalu_hypre_SysPFMGRelaxSetMaxIter ( void *sys_pfmg_relax_vdata, NALU_HYPRE_Int max_iter );
+NALU_HYPRE_Int nalu_hypre_SysPFMGRelaxSetZeroGuess ( void *sys_pfmg_relax_vdata, NALU_HYPRE_Int zero_guess );
+NALU_HYPRE_Int nalu_hypre_SysPFMGRelaxSetTempVec ( void *sys_pfmg_relax_vdata, nalu_hypre_SStructPVector *t );
 
 /* sys_pfmg_setup.c */
-NALU_HYPRE_Int hypre_SysPFMGSetup ( void *sys_pfmg_vdata, hypre_SStructMatrix *A_in,
-                               hypre_SStructVector *b_in, hypre_SStructVector *x_in );
-NALU_HYPRE_Int hypre_SysStructCoarsen ( hypre_SStructPGrid *fgrid, hypre_Index index, hypre_Index stride,
-                                   NALU_HYPRE_Int prune, hypre_SStructPGrid **cgrid_ptr );
+NALU_HYPRE_Int nalu_hypre_SysPFMGSetup ( void *sys_pfmg_vdata, nalu_hypre_SStructMatrix *A_in,
+                               nalu_hypre_SStructVector *b_in, nalu_hypre_SStructVector *x_in );
+NALU_HYPRE_Int nalu_hypre_SysStructCoarsen ( nalu_hypre_SStructPGrid *fgrid, nalu_hypre_Index index, nalu_hypre_Index stride,
+                                   NALU_HYPRE_Int prune, nalu_hypre_SStructPGrid **cgrid_ptr );
 
 /* sys_pfmg_setup_interp.c */
-hypre_SStructPMatrix *hypre_SysPFMGCreateInterpOp ( hypre_SStructPMatrix *A,
-                                                    hypre_SStructPGrid *cgrid, NALU_HYPRE_Int cdir );
-NALU_HYPRE_Int hypre_SysPFMGSetupInterpOp ( hypre_SStructPMatrix *A, NALU_HYPRE_Int cdir, hypre_Index findex,
-                                       hypre_Index stride, hypre_SStructPMatrix *P );
+nalu_hypre_SStructPMatrix *nalu_hypre_SysPFMGCreateInterpOp ( nalu_hypre_SStructPMatrix *A,
+                                                    nalu_hypre_SStructPGrid *cgrid, NALU_HYPRE_Int cdir );
+NALU_HYPRE_Int nalu_hypre_SysPFMGSetupInterpOp ( nalu_hypre_SStructPMatrix *A, NALU_HYPRE_Int cdir, nalu_hypre_Index findex,
+                                       nalu_hypre_Index stride, nalu_hypre_SStructPMatrix *P );
 
 /* sys_pfmg_setup_rap.c */
-hypre_SStructPMatrix *hypre_SysPFMGCreateRAPOp ( hypre_SStructPMatrix *R, hypre_SStructPMatrix *A,
-                                                 hypre_SStructPMatrix *P, hypre_SStructPGrid *coarse_grid, NALU_HYPRE_Int cdir );
-NALU_HYPRE_Int hypre_SysPFMGSetupRAPOp ( hypre_SStructPMatrix *R, hypre_SStructPMatrix *A,
-                                    hypre_SStructPMatrix *P, NALU_HYPRE_Int cdir, hypre_Index cindex, hypre_Index cstride,
-                                    hypre_SStructPMatrix *Ac );
+nalu_hypre_SStructPMatrix *nalu_hypre_SysPFMGCreateRAPOp ( nalu_hypre_SStructPMatrix *R, nalu_hypre_SStructPMatrix *A,
+                                                 nalu_hypre_SStructPMatrix *P, nalu_hypre_SStructPGrid *coarse_grid, NALU_HYPRE_Int cdir );
+NALU_HYPRE_Int nalu_hypre_SysPFMGSetupRAPOp ( nalu_hypre_SStructPMatrix *R, nalu_hypre_SStructPMatrix *A,
+                                    nalu_hypre_SStructPMatrix *P, NALU_HYPRE_Int cdir, nalu_hypre_Index cindex, nalu_hypre_Index cstride,
+                                    nalu_hypre_SStructPMatrix *Ac );
 
 /* sys_pfmg_solve.c */
-NALU_HYPRE_Int hypre_SysPFMGSolve ( void *sys_pfmg_vdata, hypre_SStructMatrix *A_in,
-                               hypre_SStructVector *b_in, hypre_SStructVector *x_in );
+NALU_HYPRE_Int nalu_hypre_SysPFMGSolve ( void *sys_pfmg_vdata, nalu_hypre_SStructMatrix *A_in,
+                               nalu_hypre_SStructVector *b_in, nalu_hypre_SStructVector *x_in );
 
 /* sys_semi_interp.c */
-NALU_HYPRE_Int hypre_SysSemiInterpCreate ( void **sys_interp_vdata_ptr );
-NALU_HYPRE_Int hypre_SysSemiInterpSetup ( void *sys_interp_vdata, hypre_SStructPMatrix *P,
-                                     NALU_HYPRE_Int P_stored_as_transpose, hypre_SStructPVector *xc, hypre_SStructPVector *e,
-                                     hypre_Index cindex, hypre_Index findex, hypre_Index stride );
-NALU_HYPRE_Int hypre_SysSemiInterp ( void *sys_interp_vdata, hypre_SStructPMatrix *P,
-                                hypre_SStructPVector *xc, hypre_SStructPVector *e );
-NALU_HYPRE_Int hypre_SysSemiInterpDestroy ( void *sys_interp_vdata );
+NALU_HYPRE_Int nalu_hypre_SysSemiInterpCreate ( void **sys_interp_vdata_ptr );
+NALU_HYPRE_Int nalu_hypre_SysSemiInterpSetup ( void *sys_interp_vdata, nalu_hypre_SStructPMatrix *P,
+                                     NALU_HYPRE_Int P_stored_as_transpose, nalu_hypre_SStructPVector *xc, nalu_hypre_SStructPVector *e,
+                                     nalu_hypre_Index cindex, nalu_hypre_Index findex, nalu_hypre_Index stride );
+NALU_HYPRE_Int nalu_hypre_SysSemiInterp ( void *sys_interp_vdata, nalu_hypre_SStructPMatrix *P,
+                                nalu_hypre_SStructPVector *xc, nalu_hypre_SStructPVector *e );
+NALU_HYPRE_Int nalu_hypre_SysSemiInterpDestroy ( void *sys_interp_vdata );
 
 /* sys_semi_restrict.c */
-NALU_HYPRE_Int hypre_SysSemiRestrictCreate ( void **sys_restrict_vdata_ptr );
-NALU_HYPRE_Int hypre_SysSemiRestrictSetup ( void *sys_restrict_vdata, hypre_SStructPMatrix *R,
-                                       NALU_HYPRE_Int R_stored_as_transpose, hypre_SStructPVector *r, hypre_SStructPVector *rc,
-                                       hypre_Index cindex, hypre_Index findex, hypre_Index stride );
-NALU_HYPRE_Int hypre_SysSemiRestrict ( void *sys_restrict_vdata, hypre_SStructPMatrix *R,
-                                  hypre_SStructPVector *r, hypre_SStructPVector *rc );
-NALU_HYPRE_Int hypre_SysSemiRestrictDestroy ( void *sys_restrict_vdata );
+NALU_HYPRE_Int nalu_hypre_SysSemiRestrictCreate ( void **sys_restrict_vdata_ptr );
+NALU_HYPRE_Int nalu_hypre_SysSemiRestrictSetup ( void *sys_restrict_vdata, nalu_hypre_SStructPMatrix *R,
+                                       NALU_HYPRE_Int R_stored_as_transpose, nalu_hypre_SStructPVector *r, nalu_hypre_SStructPVector *rc,
+                                       nalu_hypre_Index cindex, nalu_hypre_Index findex, nalu_hypre_Index stride );
+NALU_HYPRE_Int nalu_hypre_SysSemiRestrict ( void *sys_restrict_vdata, nalu_hypre_SStructPMatrix *R,
+                                  nalu_hypre_SStructPVector *r, nalu_hypre_SStructPVector *rc );
+NALU_HYPRE_Int nalu_hypre_SysSemiRestrictDestroy ( void *sys_restrict_vdata );
 
 #ifdef __cplusplus
 }

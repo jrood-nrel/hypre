@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_Euclid.h"
+#include "_nalu_hypre_Euclid.h"
 
 /* to do: re-integrate fix-smalll-pivots */
 
@@ -145,7 +145,7 @@ if (ctx->F->rp == NULL) {
 
     /* check for zero diagonal */
     if (! aval[diag[i]]) {
-      hypre_sprintf(msgBuf_dh, "zero diagonal in local row %i", i+1);
+      nalu_hypre_sprintf(msgBuf_dh, "zero diagonal in local row %i", i+1);
       SET_V_ERROR(msgBuf_dh);
     }
   }

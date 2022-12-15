@@ -74,15 +74,15 @@
 #endif
 #else
 #ifdef MACHINE_IS_SOLARIS
-#include "_hypre_blas.h"
+#include "_nalu_hypre_blas.h"
 #ifdef USE_SHORT
-#define SNRM2 hypre_snrm2
-#define SDOT hypre_sdot
-#define SCOPY hypre_scopy
+#define SNRM2 nalu_hypre_snrm2
+#define SDOT nalu_hypre_sdot
+#define SCOPY nalu_hypre_scopy
 #else
-#define SNRM2 hypre_dnrm2
-#define SDOT hypre_ddot
-#define SCOPY hypre_dcopy
+#define SNRM2 nalu_hypre_dnrm2
+#define SDOT nalu_hypre_ddot
+#define SCOPY nalu_hypre_dcopy
 #endif
 #else
 #ifdef USE_SHORT
@@ -106,11 +106,11 @@
 # define starttimer(tmr) (tmr -= rtclock())
 # define stoptimer(tmr)  (tmr += rtclock())
 # define gettimer(tmr)   ((NALU_HYPRE_Real) tmr*_secpertick)
-  typedef hypre_longint timer ;
+  typedef nalu_hypre_longint timer ;
 #else
 # define cleartimer(tmr) (tmr = 0.0)
-# define starttimer(tmr) (tmr -= hypre_MPI_Wtime())
-# define stoptimer(tmr)  (tmr += hypre_MPI_Wtime())
+# define starttimer(tmr) (tmr -= nalu_hypre_MPI_Wtime())
+# define stoptimer(tmr)  (tmr += nalu_hypre_MPI_Wtime())
 # define gettimer(tmr)   (tmr)
   typedef NALU_HYPRE_Real timer ;
 #endif

@@ -24,7 +24,7 @@ NALU_HYPRE_DistributedMatrixCreate( MPI_Comm context, NALU_HYPRE_DistributedMatr
    NALU_HYPRE_Int ierr = 0;
 
    *matrix = (NALU_HYPRE_DistributedMatrix)
-	    hypre_DistributedMatrixCreate( context );
+	    nalu_hypre_DistributedMatrixCreate( context );
 
    return ( ierr );
 }
@@ -36,7 +36,7 @@ NALU_HYPRE_DistributedMatrixCreate( MPI_Comm context, NALU_HYPRE_DistributedMatr
 NALU_HYPRE_Int 
 NALU_HYPRE_DistributedMatrixDestroy( NALU_HYPRE_DistributedMatrix matrix )
 {
-   return( hypre_DistributedMatrixDestroy( (hypre_DistributedMatrix *) matrix ) );
+   return( nalu_hypre_DistributedMatrixDestroy( (nalu_hypre_DistributedMatrix *) matrix ) );
 }
 
 
@@ -47,7 +47,7 @@ NALU_HYPRE_DistributedMatrixDestroy( NALU_HYPRE_DistributedMatrix matrix )
 NALU_HYPRE_Int 
 NALU_HYPRE_DistributedMatrixLimitedDestroy( NALU_HYPRE_DistributedMatrix matrix )
 {
-   return( hypre_DistributedMatrixLimitedDestroy( (hypre_DistributedMatrix *) matrix ) );
+   return( nalu_hypre_DistributedMatrixLimitedDestroy( (nalu_hypre_DistributedMatrix *) matrix ) );
 }
 
 
@@ -58,7 +58,7 @@ NALU_HYPRE_DistributedMatrixLimitedDestroy( NALU_HYPRE_DistributedMatrix matrix 
 NALU_HYPRE_Int 
 NALU_HYPRE_DistributedMatrixInitialize( NALU_HYPRE_DistributedMatrix matrix )
 {
-   return( hypre_DistributedMatrixInitialize( (hypre_DistributedMatrix *) matrix ) );
+   return( nalu_hypre_DistributedMatrixInitialize( (nalu_hypre_DistributedMatrix *) matrix ) );
 }
 
 /*--------------------------------------------------------------------------
@@ -68,7 +68,7 @@ NALU_HYPRE_DistributedMatrixInitialize( NALU_HYPRE_DistributedMatrix matrix )
 NALU_HYPRE_Int 
 NALU_HYPRE_DistributedMatrixAssemble( NALU_HYPRE_DistributedMatrix matrix )
 {
-   return( hypre_DistributedMatrixAssemble( (hypre_DistributedMatrix *) matrix ) );
+   return( nalu_hypre_DistributedMatrixAssemble( (nalu_hypre_DistributedMatrix *) matrix ) );
 }
 
 /*--------------------------------------------------------------------------
@@ -79,8 +79,8 @@ NALU_HYPRE_Int
 NALU_HYPRE_DistributedMatrixSetLocalStorageType( NALU_HYPRE_DistributedMatrix matrix,
 				 NALU_HYPRE_Int               type           )
 {
-   return( hypre_DistributedMatrixSetLocalStorageType(
-      (hypre_DistributedMatrix *) matrix, type ) );
+   return( nalu_hypre_DistributedMatrixSetLocalStorageType(
+      (nalu_hypre_DistributedMatrix *) matrix, type ) );
 }
 
 /*--------------------------------------------------------------------------
@@ -90,8 +90,8 @@ NALU_HYPRE_DistributedMatrixSetLocalStorageType( NALU_HYPRE_DistributedMatrix ma
 NALU_HYPRE_Int
 NALU_HYPRE_DistributedMatrixGetLocalStorageType( NALU_HYPRE_DistributedMatrix matrix )
 {
-   return( hypre_DistributedMatrixGetLocalStorageType(
-      (hypre_DistributedMatrix *) matrix ) );
+   return( nalu_hypre_DistributedMatrixGetLocalStorageType(
+      (nalu_hypre_DistributedMatrix *) matrix ) );
 }
 
 /*--------------------------------------------------------------------------
@@ -102,8 +102,8 @@ NALU_HYPRE_Int
 NALU_HYPRE_DistributedMatrixSetLocalStorage( NALU_HYPRE_DistributedMatrix matrix,
 				      void                 *LocalStorage )
 {
-   return( hypre_DistributedMatrixSetLocalStorage(
-      (hypre_DistributedMatrix *) matrix, LocalStorage ) );
+   return( nalu_hypre_DistributedMatrixSetLocalStorage(
+      (nalu_hypre_DistributedMatrix *) matrix, LocalStorage ) );
 }
 
 /*--------------------------------------------------------------------------
@@ -113,8 +113,8 @@ NALU_HYPRE_DistributedMatrixSetLocalStorage( NALU_HYPRE_DistributedMatrix matrix
 void *
 NALU_HYPRE_DistributedMatrixGetLocalStorage( NALU_HYPRE_DistributedMatrix matrix )
 {
-   return( hypre_DistributedMatrixGetLocalStorage(
-      (hypre_DistributedMatrix *) matrix ) );
+   return( nalu_hypre_DistributedMatrixGetLocalStorage(
+      (nalu_hypre_DistributedMatrix *) matrix ) );
 }
 
 /*--------------------------------------------------------------------------
@@ -125,8 +125,8 @@ NALU_HYPRE_Int
 NALU_HYPRE_DistributedMatrixSetTranslator( NALU_HYPRE_DistributedMatrix matrix,
 				      void                 *Translator )
 {
-   return( hypre_DistributedMatrixSetTranslator(
-      (hypre_DistributedMatrix *) matrix, Translator ) );
+   return( nalu_hypre_DistributedMatrixSetTranslator(
+      (nalu_hypre_DistributedMatrix *) matrix, Translator ) );
 }
 
 /*--------------------------------------------------------------------------
@@ -136,8 +136,8 @@ NALU_HYPRE_DistributedMatrixSetTranslator( NALU_HYPRE_DistributedMatrix matrix,
 void *
 NALU_HYPRE_DistributedMatrixGetTranslator( NALU_HYPRE_DistributedMatrix matrix )
 {
-   return( hypre_DistributedMatrixGetTranslator(
-      (hypre_DistributedMatrix *) matrix ) );
+   return( nalu_hypre_DistributedMatrixGetTranslator(
+      (nalu_hypre_DistributedMatrix *) matrix ) );
 }
 
 /*--------------------------------------------------------------------------
@@ -148,8 +148,8 @@ NALU_HYPRE_Int
 NALU_HYPRE_DistributedMatrixSetAuxiliaryData( NALU_HYPRE_DistributedMatrix matrix,
 				      void                 *AuxiliaryData )
 {
-   return( hypre_DistributedMatrixSetAuxiliaryData(
-      (hypre_DistributedMatrix *) matrix, AuxiliaryData ) );
+   return( nalu_hypre_DistributedMatrixSetAuxiliaryData(
+      (nalu_hypre_DistributedMatrix *) matrix, AuxiliaryData ) );
 }
 
 /*--------------------------------------------------------------------------
@@ -159,8 +159,8 @@ NALU_HYPRE_DistributedMatrixSetAuxiliaryData( NALU_HYPRE_DistributedMatrix matri
 void *
 NALU_HYPRE_DistributedMatrixGetAuxiliaryData( NALU_HYPRE_DistributedMatrix matrix )
 {
-   return( hypre_DistributedMatrixAuxiliaryData(
-      (hypre_DistributedMatrix *) matrix ) );
+   return( nalu_hypre_DistributedMatrixAuxiliaryData(
+      (nalu_hypre_DistributedMatrix *) matrix ) );
 }
 
 /*--------------------------------------------------------------------------
@@ -170,8 +170,8 @@ NALU_HYPRE_DistributedMatrixGetAuxiliaryData( NALU_HYPRE_DistributedMatrix matri
 MPI_Comm
 NALU_HYPRE_DistributedMatrixGetContext( NALU_HYPRE_DistributedMatrix matrix )
 {
-   return( hypre_DistributedMatrixContext(
-      (hypre_DistributedMatrix *) matrix ) );
+   return( nalu_hypre_DistributedMatrixContext(
+      (nalu_hypre_DistributedMatrix *) matrix ) );
 }
 
 /*--------------------------------------------------------------------------
@@ -184,8 +184,8 @@ NALU_HYPRE_DistributedMatrixGetDims( NALU_HYPRE_DistributedMatrix matrix,
 {
    NALU_HYPRE_Int ierr=0;
 
-   *M = hypre_DistributedMatrixM( (hypre_DistributedMatrix *) matrix );
-   *N = hypre_DistributedMatrixN( (hypre_DistributedMatrix *) matrix );
+   *M = nalu_hypre_DistributedMatrixM( (nalu_hypre_DistributedMatrix *) matrix );
+   *N = nalu_hypre_DistributedMatrixN( (nalu_hypre_DistributedMatrix *) matrix );
 
    return(ierr);
 }
@@ -200,8 +200,8 @@ NALU_HYPRE_DistributedMatrixSetDims( NALU_HYPRE_DistributedMatrix matrix,
 {
    NALU_HYPRE_Int ierr=0;
 
-   hypre_DistributedMatrixM( (hypre_DistributedMatrix *) matrix ) = M;
-   hypre_DistributedMatrixN( (hypre_DistributedMatrix *) matrix ) = N;
+   nalu_hypre_DistributedMatrixM( (nalu_hypre_DistributedMatrix *) matrix ) = M;
+   nalu_hypre_DistributedMatrixN( (nalu_hypre_DistributedMatrix *) matrix ) = N;
 
    return(ierr);
 }
@@ -217,7 +217,7 @@ NALU_HYPRE_DistributedMatrixSetDims( NALU_HYPRE_DistributedMatrix matrix,
 NALU_HYPRE_Int 
 NALU_HYPRE_DistributedMatrixPrint( NALU_HYPRE_DistributedMatrix matrix )
 {
-   return( hypre_DistributedMatrixPrint( (hypre_DistributedMatrix *) matrix ) );
+   return( nalu_hypre_DistributedMatrixPrint( (nalu_hypre_DistributedMatrix *) matrix ) );
 }
 
 /*--------------------------------------------------------------------------
@@ -229,7 +229,7 @@ NALU_HYPRE_DistributedMatrixGetLocalRange( NALU_HYPRE_DistributedMatrix matrix,
                                NALU_HYPRE_BigInt *row_start, NALU_HYPRE_BigInt *row_end ,
                                NALU_HYPRE_BigInt *col_start, NALU_HYPRE_BigInt *col_end )
 {
-   return( hypre_DistributedMatrixGetLocalRange( (hypre_DistributedMatrix *) matrix,
+   return( nalu_hypre_DistributedMatrixGetLocalRange( (nalu_hypre_DistributedMatrix *) matrix,
                              row_start, row_end, col_start, col_end ) );
 }
 
@@ -244,7 +244,7 @@ NALU_HYPRE_DistributedMatrixGetRow( NALU_HYPRE_DistributedMatrix matrix,
                              NALU_HYPRE_BigInt **col_ind,
                              NALU_HYPRE_Real **values )
 {
-   return( hypre_DistributedMatrixGetRow( (hypre_DistributedMatrix *) matrix,
+   return( nalu_hypre_DistributedMatrixGetRow( (nalu_hypre_DistributedMatrix *) matrix,
                              row,
                              size,
                              col_ind,
@@ -262,7 +262,7 @@ NALU_HYPRE_DistributedMatrixRestoreRow( NALU_HYPRE_DistributedMatrix matrix,
                              NALU_HYPRE_BigInt **col_ind,
                              NALU_HYPRE_Real **values )
 {
-   return( hypre_DistributedMatrixRestoreRow( (hypre_DistributedMatrix *) matrix,
+   return( nalu_hypre_DistributedMatrixRestoreRow( (nalu_hypre_DistributedMatrix *) matrix,
                              row,
                              size,
                              col_ind,

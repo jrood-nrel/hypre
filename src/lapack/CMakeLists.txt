@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 set(HDRS
-  _hypre_lapack.h
+  _nalu_hypre_lapack.h
 )
 
 set(SRCS

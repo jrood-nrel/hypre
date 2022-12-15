@@ -11,81 +11,81 @@
  *
  *****************************************************************************/
 
-#include "_hypre_struct_mv.h"
+#include "_nalu_hypre_struct_mv.h"
 
 /*--------------------------------------------------------------------------
- * hypre_StructStencilCreate
+ * nalu_hypre_StructStencilCreate
  *--------------------------------------------------------------------------*/
 
-hypre_StructStencil *
-hypre_StructStencilCreate( NALU_HYPRE_Int     dim,
+nalu_hypre_StructStencil *
+nalu_hypre_StructStencilCreate( NALU_HYPRE_Int     dim,
                            NALU_HYPRE_Int     size,
-                           hypre_Index  *shape )
+                           nalu_hypre_Index  *shape )
 {
-   hypre_StructStencil   *stencil;
+   nalu_hypre_StructStencil   *stencil;
 
-   stencil = hypre_TAlloc(hypre_StructStencil, 1, NALU_HYPRE_MEMORY_HOST);
+   stencil = nalu_hypre_TAlloc(nalu_hypre_StructStencil, 1, NALU_HYPRE_MEMORY_HOST);
 
-   hypre_StructStencilShape(stencil)    = shape;
-   hypre_StructStencilSize(stencil)     = size;
-   hypre_StructStencilNDim(stencil)      = dim;
-   hypre_StructStencilRefCount(stencil) = 1;
+   nalu_hypre_StructStencilShape(stencil)    = shape;
+   nalu_hypre_StructStencilSize(stencil)     = size;
+   nalu_hypre_StructStencilNDim(stencil)      = dim;
+   nalu_hypre_StructStencilRefCount(stencil) = 1;
 
    return stencil;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_StructStencilRef
+ * nalu_hypre_StructStencilRef
  *--------------------------------------------------------------------------*/
 
-hypre_StructStencil *
-hypre_StructStencilRef( hypre_StructStencil *stencil )
+nalu_hypre_StructStencil *
+nalu_hypre_StructStencilRef( nalu_hypre_StructStencil *stencil )
 {
-   hypre_StructStencilRefCount(stencil) ++;
+   nalu_hypre_StructStencilRefCount(stencil) ++;
 
    return stencil;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_StructStencilDestroy
+ * nalu_hypre_StructStencilDestroy
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_StructStencilDestroy( hypre_StructStencil *stencil )
+nalu_hypre_StructStencilDestroy( nalu_hypre_StructStencil *stencil )
 {
    if (stencil)
    {
-      hypre_StructStencilRefCount(stencil) --;
-      if (hypre_StructStencilRefCount(stencil) == 0)
+      nalu_hypre_StructStencilRefCount(stencil) --;
+      if (nalu_hypre_StructStencilRefCount(stencil) == 0)
       {
-         hypre_TFree(hypre_StructStencilShape(stencil), NALU_HYPRE_MEMORY_HOST);
-         hypre_TFree(stencil, NALU_HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(nalu_hypre_StructStencilShape(stencil), NALU_HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(stencil, NALU_HYPRE_MEMORY_HOST);
       }
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_StructStencilElementRank
+ * nalu_hypre_StructStencilElementRank
  *    Returns the rank of the `stencil_element' in `stencil'.
  *    If the element is not found, a -1 is returned.
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_StructStencilElementRank( hypre_StructStencil *stencil,
-                                hypre_Index          stencil_element )
+nalu_hypre_StructStencilElementRank( nalu_hypre_StructStencil *stencil,
+                                nalu_hypre_Index          stencil_element )
 {
-   hypre_Index  *stencil_shape;
+   nalu_hypre_Index  *stencil_shape;
    NALU_HYPRE_Int     rank;
    NALU_HYPRE_Int     i, ndim;
 
    rank = -1;
-   ndim = hypre_StructStencilNDim(stencil);
-   stencil_shape = hypre_StructStencilShape(stencil);
-   for (i = 0; i < hypre_StructStencilSize(stencil); i++)
+   ndim = nalu_hypre_StructStencilNDim(stencil);
+   stencil_shape = nalu_hypre_StructStencilShape(stencil);
+   for (i = 0; i < nalu_hypre_StructStencilSize(stencil); i++)
    {
-      if (hypre_IndexesEqual(stencil_shape[i], stencil_element, ndim))
+      if (nalu_hypre_IndexesEqual(stencil_shape[i], stencil_element, ndim))
       {
          rank = i;
          break;
@@ -96,7 +96,7 @@ hypre_StructStencilElementRank( hypre_StructStencil *stencil,
 }
 
 /*--------------------------------------------------------------------------
- * hypre_StructStencilSymmetrize:
+ * nalu_hypre_StructStencilSymmetrize:
  *    Computes a new "symmetrized" stencil.
  *
  *    An integer array called `symm_elements' is also set up.  A non-negative
@@ -106,15 +106,15 @@ hypre_StructStencilElementRank( hypre_StructStencil *stencil,
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_StructStencilSymmetrize( hypre_StructStencil  *stencil,
-                               hypre_StructStencil **symm_stencil_ptr,
+nalu_hypre_StructStencilSymmetrize( nalu_hypre_StructStencil  *stencil,
+                               nalu_hypre_StructStencil **symm_stencil_ptr,
                                NALU_HYPRE_Int           **symm_elements_ptr )
 {
-   hypre_Index          *stencil_shape = hypre_StructStencilShape(stencil);
-   NALU_HYPRE_Int             stencil_size  = hypre_StructStencilSize(stencil);
+   nalu_hypre_Index          *stencil_shape = nalu_hypre_StructStencilShape(stencil);
+   NALU_HYPRE_Int             stencil_size  = nalu_hypre_StructStencilSize(stencil);
 
-   hypre_StructStencil  *symm_stencil;
-   hypre_Index          *symm_stencil_shape;
+   nalu_hypre_StructStencil  *symm_stencil;
+   nalu_hypre_Index          *symm_stencil_shape;
    NALU_HYPRE_Int             symm_stencil_size;
    NALU_HYPRE_Int            *symm_elements;
 
@@ -125,18 +125,18 @@ hypre_StructStencilSymmetrize( hypre_StructStencil  *stencil,
     * Copy stencil elements into `symm_stencil_shape'
     *------------------------------------------------------*/
 
-   ndim = hypre_StructStencilNDim(stencil);
-   symm_stencil_shape = hypre_CTAlloc(hypre_Index,  2 * stencil_size, NALU_HYPRE_MEMORY_HOST);
+   ndim = nalu_hypre_StructStencilNDim(stencil);
+   symm_stencil_shape = nalu_hypre_CTAlloc(nalu_hypre_Index,  2 * stencil_size, NALU_HYPRE_MEMORY_HOST);
    for (i = 0; i < stencil_size; i++)
    {
-      hypre_CopyIndex(stencil_shape[i], symm_stencil_shape[i]);
+      nalu_hypre_CopyIndex(stencil_shape[i], symm_stencil_shape[i]);
    }
 
    /*------------------------------------------------------
     * Create symmetric stencil elements and `symm_elements'
     *------------------------------------------------------*/
 
-   symm_elements = hypre_CTAlloc(NALU_HYPRE_Int,  2 * stencil_size, NALU_HYPRE_MEMORY_HOST);
+   symm_elements = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  2 * stencil_size, NALU_HYPRE_MEMORY_HOST);
    for (i = 0; i < 2 * stencil_size; i++)
    {
       symm_elements[i] = -1;
@@ -154,8 +154,8 @@ hypre_StructStencilSymmetrize( hypre_StructStencil  *stencil,
             symmetric = 1;
             for (d = 0; d < ndim; d++)
             {
-               if (hypre_IndexD(symm_stencil_shape[j], d) !=
-                   -hypre_IndexD(symm_stencil_shape[i], d))
+               if (nalu_hypre_IndexD(symm_stencil_shape[j], d) !=
+                   -nalu_hypre_IndexD(symm_stencil_shape[i], d))
                {
                   symmetric = 0;
                   break;
@@ -177,8 +177,8 @@ hypre_StructStencilSymmetrize( hypre_StructStencil  *stencil,
             /* add symmetric stencil element to `symm_stencil' */
             for (d = 0; d < ndim; d++)
             {
-               hypre_IndexD(symm_stencil_shape[symm_stencil_size], d) =
-                  -hypre_IndexD(symm_stencil_shape[i], d);
+               nalu_hypre_IndexD(symm_stencil_shape[symm_stencil_size], d) =
+                  -nalu_hypre_IndexD(symm_stencil_shape[i], d);
             }
 
             symm_elements[symm_stencil_size] = i;
@@ -187,13 +187,13 @@ hypre_StructStencilSymmetrize( hypre_StructStencil  *stencil,
       }
    }
 
-   symm_stencil = hypre_StructStencilCreate(hypre_StructStencilNDim(stencil),
+   symm_stencil = nalu_hypre_StructStencilCreate(nalu_hypre_StructStencilNDim(stencil),
                                             symm_stencil_size,
                                             symm_stencil_shape);
 
    *symm_stencil_ptr  = symm_stencil;
    *symm_elements_ptr = symm_elements;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 

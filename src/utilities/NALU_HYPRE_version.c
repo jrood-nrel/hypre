@@ -11,7 +11,7 @@
  *
  *****************************************************************************/
 
-#include "_hypre_utilities.h"
+#include "_nalu_hypre_utilities.h"
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
@@ -25,13 +25,13 @@ NALU_HYPRE_Version( char **version_ptr )
    /* compute string length */
    len += strlen(NALU_HYPRE_RELEASE_VERSION);
 
-   version = hypre_CTAlloc(char, len, NALU_HYPRE_MEMORY_HOST);
+   version = nalu_hypre_CTAlloc(char, len, NALU_HYPRE_MEMORY_HOST);
 
-   hypre_sprintf(version, "HYPRE Release Version %s", NALU_HYPRE_RELEASE_VERSION);
+   nalu_hypre_sprintf(version, "HYPRE Release Version %s", NALU_HYPRE_RELEASE_VERSION);
 
    *version_ptr = version;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
@@ -72,6 +72,6 @@ NALU_HYPRE_VersionNumber( NALU_HYPRE_Int  *major_ptr,
    if (patch_ptr)   {*patch_ptr   = patch;}
    if (single_ptr)  {*single_ptr  = single;}
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 

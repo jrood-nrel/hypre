@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_parcsr_ls.h"
+#include "_nalu_hypre_parcsr_ls.h"
 
 #ifndef M_PI
 #define M_PI 3.14159265358979
@@ -16,7 +16,7 @@ static NALU_HYPRE_Int rs_example = 1;
 static NALU_HYPRE_Real rs_l = 3.0;
 
 /*--------------------------------------------------------------------------
- * hypre_GenerateVarDifConv: with the FD discretization and examples
+ * nalu_hypre_GenerateVarDifConv: with the FD discretization and examples
  *                           in Ruge-Stuben's paper ``Algebraic Multigrid''
  *--------------------------------------------------------------------------*/
 
@@ -35,11 +35,11 @@ GenerateRSVarDifConv( MPI_Comm         comm,
                       NALU_HYPRE_ParVector *rhs_ptr,
                       NALU_HYPRE_Int        type)
 {
-   hypre_ParCSRMatrix *A;
-   hypre_CSRMatrix *diag;
-   hypre_CSRMatrix *offd;
-   hypre_ParVector *par_rhs;
-   hypre_Vector *rhs;
+   nalu_hypre_ParCSRMatrix *A;
+   nalu_hypre_CSRMatrix *diag;
+   nalu_hypre_CSRMatrix *offd;
+   nalu_hypre_ParVector *par_rhs;
+   nalu_hypre_Vector *rhs;
    NALU_HYPRE_Real *rhs_data;
 
    NALU_HYPRE_Int    *diag_i;
@@ -76,8 +76,8 @@ GenerateRSVarDifConv( MPI_Comm         comm,
    NALU_HYPRE_Real afp, afm, bfp, bfm, cfp, cfm, di, ai, mux, ei, bi,
               muy, fi, ci, muz, dfm, dfp, efm, efp, ffm, ffp, gi;
 
-   hypre_MPI_Comm_size(comm, &num_procs);
-   hypre_MPI_Comm_rank(comm, &my_id);
+   nalu_hypre_MPI_Comm_size(comm, &num_procs);
+   nalu_hypre_MPI_Comm_rank(comm, &my_id);
 
    if (type >= 1 && type <= 3)
    {
@@ -86,9 +86,9 @@ GenerateRSVarDifConv( MPI_Comm         comm,
 
    grid_size = nx * ny * nz;
 
-   hypre_GeneratePartitioning(nx, P, &nx_part);
-   hypre_GeneratePartitioning(ny, Q, &ny_part);
-   hypre_GeneratePartitioning(nz, R, &nz_part);
+   nalu_hypre_GeneratePartitioning(nx, P, &nx_part);
+   nalu_hypre_GeneratePartitioning(ny, Q, &ny_part);
+   nalu_hypre_GeneratePartitioning(nz, R, &nz_part);
 
    nx_local = (NALU_HYPRE_Int)(nx_part[p + 1] - nx_part[p]);
    ny_local = (NALU_HYPRE_Int)(ny_part[q + 1] - ny_part[q]);
@@ -99,13 +99,13 @@ GenerateRSVarDifConv( MPI_Comm         comm,
    global_part[0] = nz_part[r] * nx * ny + (ny_part[q] * nx + nx_part[p] * ny_local) * nz_local;
    global_part[1] = global_part[0] + (NALU_HYPRE_BigInt)local_num_rows;
 
-   diag_i = hypre_CTAlloc(NALU_HYPRE_Int,  local_num_rows + 1, NALU_HYPRE_MEMORY_HOST);
-   offd_i = hypre_CTAlloc(NALU_HYPRE_Int,  local_num_rows + 1, NALU_HYPRE_MEMORY_HOST);
-   rhs_data = hypre_CTAlloc(NALU_HYPRE_Real,  local_num_rows, NALU_HYPRE_MEMORY_HOST);
+   diag_i = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  local_num_rows + 1, NALU_HYPRE_MEMORY_HOST);
+   offd_i = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  local_num_rows + 1, NALU_HYPRE_MEMORY_HOST);
+   rhs_data = nalu_hypre_CTAlloc(NALU_HYPRE_Real,  local_num_rows, NALU_HYPRE_MEMORY_HOST);
 
-   P_busy = hypre_min(nx, P);
-   Q_busy = hypre_min(ny, Q);
-   R_busy = hypre_min(nz, R);
+   P_busy = nalu_hypre_min(nx, P);
+   Q_busy = nalu_hypre_min(ny, Q);
+   R_busy = nalu_hypre_min(nz, R);
 
    num_cols_offd = 0;
    if (p) { num_cols_offd += ny_local * nz_local; }
@@ -117,7 +117,7 @@ GenerateRSVarDifConv( MPI_Comm         comm,
 
    if (!local_num_rows) { num_cols_offd = 0; }
 
-   col_map_offd = hypre_CTAlloc(NALU_HYPRE_BigInt,  num_cols_offd, NALU_HYPRE_MEMORY_HOST);
+   col_map_offd = nalu_hypre_CTAlloc(NALU_HYPRE_BigInt,  num_cols_offd, NALU_HYPRE_MEMORY_HOST);
 
    hhx = 1.0 / (NALU_HYPRE_Real)(nx + 1);
    hhy = 1.0 / (NALU_HYPRE_Real)(ny + 1);
@@ -208,14 +208,14 @@ GenerateRSVarDifConv( MPI_Comm         comm,
       }
    }
 
-   diag_j = hypre_CTAlloc(NALU_HYPRE_Int,  diag_i[local_num_rows], NALU_HYPRE_MEMORY_HOST);
-   diag_data = hypre_CTAlloc(NALU_HYPRE_Real,  diag_i[local_num_rows], NALU_HYPRE_MEMORY_HOST);
+   diag_j = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  diag_i[local_num_rows], NALU_HYPRE_MEMORY_HOST);
+   diag_data = nalu_hypre_CTAlloc(NALU_HYPRE_Real,  diag_i[local_num_rows], NALU_HYPRE_MEMORY_HOST);
 
    if (num_procs > 1)
    {
-      big_offd_j = hypre_CTAlloc(NALU_HYPRE_BigInt,  offd_i[local_num_rows], NALU_HYPRE_MEMORY_HOST);
-      offd_j = hypre_CTAlloc(NALU_HYPRE_Int,  offd_i[local_num_rows], NALU_HYPRE_MEMORY_HOST);
-      offd_data = hypre_CTAlloc(NALU_HYPRE_Real,  offd_i[local_num_rows], NALU_HYPRE_MEMORY_HOST);
+      big_offd_j = nalu_hypre_CTAlloc(NALU_HYPRE_BigInt,  offd_i[local_num_rows], NALU_HYPRE_MEMORY_HOST);
+      offd_j = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  offd_i[local_num_rows], NALU_HYPRE_MEMORY_HOST);
+      offd_data = nalu_hypre_CTAlloc(NALU_HYPRE_Real,  offd_i[local_num_rows], NALU_HYPRE_MEMORY_HOST);
    }
 
    row_index = 0;
@@ -313,7 +313,7 @@ GenerateRSVarDifConv( MPI_Comm         comm,
             {
                if (iz)
                {
-                  big_offd_j[o_cnt] = hypre_map(ix, iy, iz - 1, p, q, r - 1, nx, ny,
+                  big_offd_j[o_cnt] = nalu_hypre_map(ix, iy, iz - 1, p, q, r - 1, nx, ny,
                                                 nx_part, ny_part, nz_part);
                   offd_data[o_cnt++] = cfm + ffm;
                }
@@ -328,7 +328,7 @@ GenerateRSVarDifConv( MPI_Comm         comm,
             {
                if (iy)
                {
-                  big_offd_j[o_cnt] = hypre_map(ix, iy - 1, iz, p, q - 1, r, nx, ny,
+                  big_offd_j[o_cnt] = nalu_hypre_map(ix, iy - 1, iz, p, q - 1, r, nx, ny,
                                                 nx_part, ny_part, nz_part);
                   offd_data[o_cnt++] = bfm + efm;
                }
@@ -343,7 +343,7 @@ GenerateRSVarDifConv( MPI_Comm         comm,
             {
                if (ix)
                {
-                  big_offd_j[o_cnt] = hypre_map(ix - 1, iy, iz, p - 1, q, r, nx, ny,
+                  big_offd_j[o_cnt] = nalu_hypre_map(ix - 1, iy, iz, p - 1, q, r, nx, ny,
                                                 nx_part, ny_part, nz_part);
                   offd_data[o_cnt++] = afm + dfm;
                }
@@ -358,7 +358,7 @@ GenerateRSVarDifConv( MPI_Comm         comm,
             {
                if (ix + 1 < nx)
                {
-                  big_offd_j[o_cnt] = hypre_map(ix + 1, iy, iz, p + 1, q, r, nx, ny,
+                  big_offd_j[o_cnt] = nalu_hypre_map(ix + 1, iy, iz, p + 1, q, r, nx, ny,
                                                 nx_part, ny_part, nz_part);
                   offd_data[o_cnt++] = afp + dfp;
                }
@@ -373,7 +373,7 @@ GenerateRSVarDifConv( MPI_Comm         comm,
             {
                if (iy + 1 < ny)
                {
-                  big_offd_j[o_cnt] = hypre_map(ix, iy + 1, iz, p, q + 1, r, nx, ny,
+                  big_offd_j[o_cnt] = nalu_hypre_map(ix, iy + 1, iz, p, q + 1, r, nx, ny,
                                                 nx_part, ny_part, nz_part);
                   offd_data[o_cnt++] = bfp + efp;
                }
@@ -388,7 +388,7 @@ GenerateRSVarDifConv( MPI_Comm         comm,
             {
                if (iz + 1 < nz)
                {
-                  big_offd_j[o_cnt] = hypre_map(ix, iy, iz + 1, p, q, r + 1, nx, ny,
+                  big_offd_j[o_cnt] = nalu_hypre_map(ix, iy, iz + 1, p, q, r + 1, nx, ny,
                                                 nx_part, ny_part, nz_part);
                   offd_data[o_cnt++] = cfp + ffp;
                }
@@ -406,7 +406,7 @@ GenerateRSVarDifConv( MPI_Comm         comm,
          col_map_offd[i] = big_offd_j[i];
       }
 
-      hypre_BigQsort0(col_map_offd, 0, num_cols_offd - 1);
+      nalu_hypre_BigQsort0(col_map_offd, 0, num_cols_offd - 1);
 
       for (i = 0; i < num_cols_offd; i++)
          for (j = 0; j < num_cols_offd; j++)
@@ -415,36 +415,36 @@ GenerateRSVarDifConv( MPI_Comm         comm,
                offd_j[i] = j;
                break;
             }
-      hypre_TFree(big_offd_j, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(big_offd_j, NALU_HYPRE_MEMORY_HOST);
    }
 
-   par_rhs = hypre_ParVectorCreate(comm, grid_size, global_part);
-   rhs = hypre_ParVectorLocalVector(par_rhs);
-   hypre_VectorData(rhs) = rhs_data;
+   par_rhs = nalu_hypre_ParVectorCreate(comm, grid_size, global_part);
+   rhs = nalu_hypre_ParVectorLocalVector(par_rhs);
+   nalu_hypre_VectorData(rhs) = rhs_data;
 
-   A = hypre_ParCSRMatrixCreate(comm, grid_size, grid_size,
+   A = nalu_hypre_ParCSRMatrixCreate(comm, grid_size, grid_size,
                                 global_part, global_part, num_cols_offd,
                                 diag_i[local_num_rows],
                                 offd_i[local_num_rows]);
 
-   hypre_ParCSRMatrixColMapOffd(A) = col_map_offd;
+   nalu_hypre_ParCSRMatrixColMapOffd(A) = col_map_offd;
 
-   diag = hypre_ParCSRMatrixDiag(A);
-   hypre_CSRMatrixI(diag) = diag_i;
-   hypre_CSRMatrixJ(diag) = diag_j;
-   hypre_CSRMatrixData(diag) = diag_data;
+   diag = nalu_hypre_ParCSRMatrixDiag(A);
+   nalu_hypre_CSRMatrixI(diag) = diag_i;
+   nalu_hypre_CSRMatrixJ(diag) = diag_j;
+   nalu_hypre_CSRMatrixData(diag) = diag_data;
 
-   offd = hypre_ParCSRMatrixOffd(A);
-   hypre_CSRMatrixI(offd) = offd_i;
+   offd = nalu_hypre_ParCSRMatrixOffd(A);
+   nalu_hypre_CSRMatrixI(offd) = offd_i;
    if (num_cols_offd)
    {
-      hypre_CSRMatrixJ(offd) = offd_j;
-      hypre_CSRMatrixData(offd) = offd_data;
+      nalu_hypre_CSRMatrixJ(offd) = offd_j;
+      nalu_hypre_CSRMatrixData(offd) = offd_data;
    }
 
-   hypre_TFree(nx_part, NALU_HYPRE_MEMORY_HOST);
-   hypre_TFree(ny_part, NALU_HYPRE_MEMORY_HOST);
-   hypre_TFree(nz_part, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(nx_part, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(ny_part, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(nz_part, NALU_HYPRE_MEMORY_HOST);
 
    *rhs_ptr = (NALU_HYPRE_ParVector) par_rhs;
 

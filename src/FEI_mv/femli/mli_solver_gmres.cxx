@@ -156,8 +156,8 @@ int MLI_Solver_GMRES::setup(MLI_Matrix *Amat_in)
 
 int MLI_Solver_GMRES::solve(MLI_Vector *b_in, MLI_Vector *u_in)
 {
-   hypre_ParCSRMatrix *A;
-   hypre_ParVector    *b, *u, *r, **p, **z;
+   nalu_hypre_ParCSRMatrix *A;
+   nalu_hypre_ParVector    *b, *u, *r, **p, **z;
    int	              i, j, k, ierr = 0, iter, mypid;
    double             *rs, **hh, *c, *s, t, zero=0.0;
    double             epsilon, gamma1, rnorm, epsmac = 1.e-16; 
@@ -168,9 +168,9 @@ int MLI_Solver_GMRES::solve(MLI_Vector *b_in, MLI_Vector *u_in)
     * fetch machine and matrix/vector parameters
     *-----------------------------------------------------------------*/
 
-   A = (hypre_ParCSRMatrix *) Amat_->getMatrix();
-   b = (hypre_ParVector *) b_in->getVector();
-   u = (hypre_ParVector *) u_in->getVector();
+   A = (nalu_hypre_ParCSRMatrix *) Amat_->getMatrix();
+   b = (nalu_hypre_ParVector *) b_in->getVector();
+   u = (nalu_hypre_ParVector *) u_in->getVector();
    NALU_HYPRE_ParCSRMatrixGetComm((NALU_HYPRE_ParCSRMatrix) A, &comm);
    MPI_Comm_rank(comm, &mypid);
    
@@ -178,13 +178,13 @@ int MLI_Solver_GMRES::solve(MLI_Vector *b_in, MLI_Vector *u_in)
     * fetch other auxiliary vectors
     *-----------------------------------------------------------------*/
 
-   r  = (hypre_ParVector *) rVec_->getVector();
-   p  = hypre_TAlloc(hypre_ParVector *,  (KDim_+1), NALU_HYPRE_MEMORY_HOST); 
-   z  = hypre_TAlloc(hypre_ParVector *,  (KDim_+1), NALU_HYPRE_MEMORY_HOST); 
+   r  = (nalu_hypre_ParVector *) rVec_->getVector();
+   p  = nalu_hypre_TAlloc(nalu_hypre_ParVector *,  (KDim_+1), NALU_HYPRE_MEMORY_HOST); 
+   z  = nalu_hypre_TAlloc(nalu_hypre_ParVector *,  (KDim_+1), NALU_HYPRE_MEMORY_HOST); 
    for ( i = 0; i <= KDim_; i++ )
-      p[i] = (hypre_ParVector *) pVec_[i]->getVector();
+      p[i] = (nalu_hypre_ParVector *) pVec_[i]->getVector();
    for ( i = 0; i <= KDim_; i++ )
-      z[i] = (hypre_ParVector *) zVec_[i]->getVector();
+      z[i] = (nalu_hypre_ParVector *) zVec_[i]->getVector();
 
    rs = new double[KDim_+1]; 
    c  = new double[KDim_]; 
@@ -196,11 +196,11 @@ int MLI_Solver_GMRES::solve(MLI_Vector *b_in, MLI_Vector *u_in)
     * compute initial rnorm
     *-----------------------------------------------------------------*/
 
-   hypre_ParVectorSetConstantValues(u, zero);
-   hypre_ParVectorCopy(b, r);
-   //hypre_ParCSRMatrixMatvec(-1.0,A,u,1.0,r);
+   nalu_hypre_ParVectorSetConstantValues(u, zero);
+   nalu_hypre_ParVectorCopy(b, r);
+   //nalu_hypre_ParCSRMatrixMatvec(-1.0,A,u,1.0,r);
 
-   rnorm = sqrt(hypre_ParVectorInnerProd(r, r));
+   rnorm = sqrt(nalu_hypre_ParVectorInnerProd(r, r));
    if ( tolerance_ != 0.0 ) epsilon = rnorm * tolerance_;
    else                     epsilon = 1.0;
 
@@ -208,7 +208,7 @@ int MLI_Solver_GMRES::solve(MLI_Vector *b_in, MLI_Vector *u_in)
     * Perform iterations
     *-----------------------------------------------------------------*/
  
-   hypre_ParVectorCopy(r,p[0]);
+   nalu_hypre_ParVectorCopy(r,p[0]);
    iter = 0;
    strcpy( paramString, "zeroInitialGuess" );
 
@@ -222,37 +222,37 @@ int MLI_Solver_GMRES::solve(MLI_Vector *b_in, MLI_Vector *u_in)
       }
       if (rnorm <= epsilon && iter > 0) 
       {
-         hypre_ParVectorCopy(b,r);
-         hypre_ParCSRMatrixMatvec(-1.0, A, u, 1.0, r);
-         rnorm = sqrt(hypre_ParVectorInnerProd(r,r));
+         nalu_hypre_ParVectorCopy(b,r);
+         nalu_hypre_ParCSRMatrixMatvec(-1.0, A, u, 1.0, r);
+         rnorm = sqrt(nalu_hypre_ParVectorInnerProd(r,r));
          if (rnorm <= epsilon) break;
       }
       t = 1.0 / rnorm;
-      hypre_ParVectorScale(t,p[0]);
+      nalu_hypre_ParVectorScale(t,p[0]);
       i = 0;
       while (i < KDim_ && rnorm > epsilon && iter < maxIterations_)
       {
          i++;
          iter++;
-         hypre_ParVectorSetConstantValues(z[i-1], zero);
+         nalu_hypre_ParVectorSetConstantValues(z[i-1], zero);
 
          baseSolver_->setParams( paramString, 0, NULL );
          baseSolver_->solve( pVec_[i-1], zVec_[i-1] );
-         hypre_ParCSRMatrixMatvec(1.0, A, z[i-1], 0.0, p[i]);
+         nalu_hypre_ParCSRMatrixMatvec(1.0, A, z[i-1], 0.0, p[i]);
 
          /* modified Gram_Schmidt */
 
          for (j=0; j < i; j++)
          {
-            hh[j][i-1] = hypre_ParVectorInnerProd(p[j],p[i]);
-            hypre_ParVectorAxpy(-hh[j][i-1],p[j],p[i]);
+            hh[j][i-1] = nalu_hypre_ParVectorInnerProd(p[j],p[i]);
+            nalu_hypre_ParVectorAxpy(-hh[j][i-1],p[j],p[i]);
          }
-         t = sqrt(hypre_ParVectorInnerProd(p[i],p[i]));
+         t = sqrt(nalu_hypre_ParVectorInnerProd(p[i],p[i]));
          hh[i][i-1] = t;	
          if (t != 0.0)
          {
             t = 1.0/t;
-            hypre_ParVectorScale(t, p[i]);
+            nalu_hypre_ParVectorScale(t, p[i]);
          }
 
          /* done with modified Gram_schmidt. update factorization of hh */
@@ -287,13 +287,13 @@ int MLI_Solver_GMRES::solve(MLI_Vector *b_in, MLI_Vector *u_in)
       }
 
 	
-      for (j = 0; j < i; j++) hypre_ParVectorAxpy(rs[j], z[j], u);
+      for (j = 0; j < i; j++) nalu_hypre_ParVectorAxpy(rs[j], z[j], u);
 
       /* check for convergence, evaluate actual residual */
 
-      hypre_ParVectorCopy(b,p[0]);
-      hypre_ParCSRMatrixMatvec(-1.0, A, u, 1.0, p[0]);
-      rnorm = sqrt(hypre_ParVectorInnerProd(p[0],p[0]));
+      nalu_hypre_ParVectorCopy(b,p[0]);
+      nalu_hypre_ParCSRMatrixMatvec(-1.0, A, u, 1.0, p[0]);
+      rnorm = sqrt(nalu_hypre_ParVectorInnerProd(p[0],p[0]));
       if (mypid == -1) printf("GMRES iter = %d, rnorm = %e\n", iter, rnorm);
       if (rnorm <= epsilon) break;
    }

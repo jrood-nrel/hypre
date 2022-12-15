@@ -15,10 +15,10 @@
 #include <stdio.h>
 #include <math.h>
 
-#include "utilities/_hypre_utilities.h"
+#include "utilities/_nalu_hypre_utilities.h"
 #include "NALU_HYPRE.h"
 #include "IJ_mv/NALU_HYPRE_IJ_mv.h"
-#include "parcsr_mv/_hypre_parcsr_mv.h"
+#include "parcsr_mv/_nalu_hypre_parcsr_mv.h"
 #include "parcsr_ls/NALU_HYPRE_parcsr_ls.h"
 
 /*---------------------------------------------------------------------------
@@ -57,8 +57,8 @@ int NALU_HYPRE_LSI_DSuperLUGenMatrix(NALU_HYPRE_Solver solver);
 
 int NALU_HYPRE_LSI_DSuperLUCreate( MPI_Comm comm, NALU_HYPRE_Solver *solver )
 {
-   hypre_DSLUData *dslu_data = NULL;
-   dslu_data = hypre_CTAlloc(hypre_DSLUData, 1, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_DSLUData *dslu_data = NULL;
+   dslu_data = nalu_hypre_CTAlloc(nalu_hypre_DSLUData, 1, NALU_HYPRE_MEMORY_HOST);
    *solver = (NALU_HYPRE_Solver) dslu_data;
    return 0;
 }
@@ -69,7 +69,7 @@ int NALU_HYPRE_LSI_DSuperLUCreate( MPI_Comm comm, NALU_HYPRE_Solver *solver )
 
 int NALU_HYPRE_LSI_DSuperLUDestroy( NALU_HYPRE_Solver solver )
 {
-   hypre_DSLUData *dslu_data = (hypre_DSLUData *) solver;
+   nalu_hypre_DSLUData *dslu_data = (nalu_hypre_DSLUData *) solver;
 
    PStatFree(&(dslu_data->dslu_data_stat));
    Destroy_CompRowLoc_Matrix_dist(&(dslu_data->A_dslu));
@@ -81,9 +81,9 @@ int NALU_HYPRE_LSI_DSuperLUDestroy( NALU_HYPRE_Solver solver )
       dSolveFinalize(&(dslu_data->dslu_options), &(dslu_data->dslu_solve));
    }
    superlu_gridexit(&(dslu_data->dslu_data_grid));
-   hypre_TFree(dslu_data->berr, NALU_HYPRE_MEMORY_HOST);
-   hypre_TFree(dslu_data, NALU_HYPRE_MEMORY_HOST);
-   return hypre_error_flag;
+   nalu_hypre_TFree(dslu_data->berr, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(dslu_data, NALU_HYPRE_MEMORY_HOST);
+   return nalu_hypre_error_flag;
 }
 
 /***************************************************************************
@@ -105,58 +105,58 @@ int NALU_HYPRE_LSI_DSuperLUSetup(NALU_HYPRE_Solver solver, NALU_HYPRE_ParCSRMatr
                             NALU_HYPRE_ParVector b, NALU_HYPRE_ParVector x )
 {
    /* Par Data Structure variables */
-   NALU_HYPRE_BigInt global_num_rows = hypre_ParCSRMatrixGlobalNumRows(A_csr);
-   MPI_Comm comm = hypre_ParCSRMatrixComm(A_csr);
-   hypre_CSRMatrix *A_local;
+   NALU_HYPRE_BigInt global_num_rows = nalu_hypre_ParCSRMatrixGlobalNumRows(A_csr);
+   MPI_Comm comm = nalu_hypre_ParCSRMatrixComm(A_csr);
+   nalu_hypre_CSRMatrix *A_local;
    NALU_HYPRE_Int num_rows;
    NALU_HYPRE_Int num_procs, my_id;
    NALU_HYPRE_Int pcols = 1, prows = 1;
    NALU_HYPRE_BigInt *big_rowptr = NULL;
-   hypre_DSLUData *dslu_data = (hypre_DSLUData *) solver;
+   nalu_hypre_DSLUData *dslu_data = (nalu_hypre_DSLUData *) solver;
 
    NALU_HYPRE_Int info = 0;
    NALU_HYPRE_Int nrhs = 0;
 
-   hypre_MPI_Comm_size(comm, &num_procs);
-   hypre_MPI_Comm_rank(comm, &my_id);
+   nalu_hypre_MPI_Comm_size(comm, &num_procs);
+   nalu_hypre_MPI_Comm_rank(comm, &my_id);
 
    /* Merge diag and offd into one matrix (global ids) */
-   A_local = hypre_MergeDiagAndOffd(A_csr);
+   A_local = nalu_hypre_MergeDiagAndOffd(A_csr);
 
-   num_rows = hypre_CSRMatrixNumRows(A_local);
+   num_rows = nalu_hypre_CSRMatrixNumRows(A_local);
    /* Now convert hypre matrix to a SuperMatrix */
 #ifdef NALU_HYPRE_MIXEDINT
    {
       NALU_HYPRE_Int *rowptr = NULL;
       NALU_HYPRE_Int  i;
-      rowptr = hypre_CSRMatrixI(A_local);
-      big_rowptr = hypre_CTAlloc(NALU_HYPRE_BigInt, (num_rows + 1), NALU_HYPRE_MEMORY_HOST);
+      rowptr = nalu_hypre_CSRMatrixI(A_local);
+      big_rowptr = nalu_hypre_CTAlloc(NALU_HYPRE_BigInt, (num_rows + 1), NALU_HYPRE_MEMORY_HOST);
       for (i = 0; i < (num_rows + 1); i++)
       {
          big_rowptr[i] = (NALU_HYPRE_BigInt)rowptr[i];
       }
    }
 #else
-   big_rowptr = hypre_CSRMatrixI(A_local);
+   big_rowptr = nalu_hypre_CSRMatrixI(A_local);
 #endif
    dCreate_CompRowLoc_Matrix_dist(
       &(dslu_data->A_dslu), global_num_rows, global_num_rows,
-      hypre_CSRMatrixNumNonzeros(A_local),
+      nalu_hypre_CSRMatrixNumNonzeros(A_local),
       num_rows,
-      hypre_ParCSRMatrixFirstRowIndex(A_csr),
-      hypre_CSRMatrixData(A_local),
-      hypre_CSRMatrixBigJ(A_local), big_rowptr,
+      nalu_hypre_ParCSRMatrixFirstRowIndex(A_csr),
+      nalu_hypre_CSRMatrixData(A_local),
+      nalu_hypre_CSRMatrixBigJ(A_local), big_rowptr,
       SLU_NR_loc, SLU_D, SLU_GE);
 
    /* DOK: SuperLU frees assigned data, so set them to null before
-    * calling hypre_CSRMatrixdestroy on A_local to avoid memory errors.
+    * calling nalu_hypre_CSRMatrixdestroy on A_local to avoid memory errors.
    */
 #ifndef NALU_HYPRE_MIXEDINT
-   hypre_CSRMatrixI(A_local) = NULL;
+   nalu_hypre_CSRMatrixI(A_local) = NULL;
 #endif
-   hypre_CSRMatrixData(A_local) = NULL;
-   hypre_CSRMatrixBigJ(A_local) = NULL;
-   hypre_CSRMatrixDestroy(A_local);
+   nalu_hypre_CSRMatrixData(A_local) = NULL;
+   nalu_hypre_CSRMatrixBigJ(A_local) = NULL;
+   nalu_hypre_CSRMatrixDestroy(A_local);
 
    /*Create process grid */
    while (prows * pcols <= num_procs) { ++prows; }
@@ -167,7 +167,7 @@ int NALU_HYPRE_LSI_DSuperLUSetup(NALU_HYPRE_Solver solver, NALU_HYPRE_ParCSRMatr
       prows -= 1;
       pcols = num_procs / prows;
    }
-   //hypre_printf(" prows %d pcols %d\n", prows, pcols);
+   //nalu_hypre_printf(" prows %d pcols %d\n", prows, pcols);
 
    superlu_gridinit(comm, prows, pcols, &(dslu_data->dslu_data_grid));
 
@@ -188,7 +188,7 @@ int NALU_HYPRE_LSI_DSuperLUSetup(NALU_HYPRE_Solver solver, NALU_HYPRE_ParCSRMatr
 
    dslu_data->global_num_rows = global_num_rows;
 
-   dslu_data->berr = hypre_CTAlloc(NALU_HYPRE_Real, 1, NALU_HYPRE_MEMORY_HOST);
+   dslu_data->berr = nalu_hypre_CTAlloc(NALU_HYPRE_Real, 1, NALU_HYPRE_MEMORY_HOST);
    dslu_data->berr[0] = 0.0;
 
    pdgssvx(&(dslu_data->dslu_options), &(dslu_data->A_dslu),
@@ -197,7 +197,7 @@ int NALU_HYPRE_LSI_DSuperLUSetup(NALU_HYPRE_Solver solver, NALU_HYPRE_ParCSRMatr
            &(dslu_data->dslu_solve), dslu_data->berr, &(dslu_data->dslu_data_stat), &info);
 
    dslu_data->dslu_options.Fact = FACTORED;
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /***************************************************************************
@@ -207,20 +207,20 @@ int NALU_HYPRE_LSI_DSuperLUSetup(NALU_HYPRE_Solver solver, NALU_HYPRE_ParCSRMatr
 int NALU_HYPRE_LSI_DSuperLUSolve( NALU_HYPRE_Solver solver, NALU_HYPRE_ParCSRMatrix A,
                              NALU_HYPRE_ParVector b, NALU_HYPRE_ParVector x )
 {
-   hypre_DSLUData *dslu_data = (hypre_DSLUData *) solver;
+   nalu_hypre_DSLUData *dslu_data = (nalu_hypre_DSLUData *) solver;
    NALU_HYPRE_Int info = 0;
-   NALU_HYPRE_Real *B = hypre_VectorData(hypre_ParVectorLocalVector(x));
-   NALU_HYPRE_Int size = hypre_VectorSize(hypre_ParVectorLocalVector(x));
+   NALU_HYPRE_Real *B = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(x));
+   NALU_HYPRE_Int size = nalu_hypre_VectorSize(nalu_hypre_ParVectorLocalVector(x));
    NALU_HYPRE_Int nrhs = 1;
 
-   hypre_ParVectorCopy(b, x);
+   nalu_hypre_ParVectorCopy(b, x);
 
    pdgssvx(&(dslu_data->dslu_options), &(dslu_data->A_dslu),
            &(dslu_data->dslu_ScalePermstruct), B, size, nrhs,
            &(dslu_data->dslu_data_grid), &(dslu_data->dslu_data_LU),
            &(dslu_data->dslu_solve), dslu_data->berr, &(dslu_data->dslu_data_stat), &info);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /****************************************************************************
@@ -290,7 +290,7 @@ int NALU_HYPRE_LSI_DSuperLUGenMatrix(NALU_HYPRE_Solver solver)
    dCreate_CompRowLoc_Matrix_dist(&(sluPtr->sluAmat_), sluPtr->globalNRows_,
             sluPtr->globalNRows_, localNNZ, localNRows, startRow, csrAA,
             csrJA, csrIA, SLU_NR_loc, SLU_D, SLU_GE);
-   hypre_TFree(procNRows, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(procNRows, NALU_HYPRE_MEMORY_HOST);
    return 0;
 }
 #else

@@ -11,8 +11,8 @@
  *
  *****************************************************************************/
 
-#ifndef hypre_KRYLOV_GMRES_HEADER
-#define hypre_KRYLOV_GMRES_HEADER
+#ifndef nalu_hypre_KRYLOV_GMRES_HEADER
+#define nalu_hypre_KRYLOV_GMRES_HEADER
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
@@ -32,7 +32,7 @@
  *--------------------------------------------------------------------------*/
 
 /*--------------------------------------------------------------------------
- * hypre_GMRESData and hypre_GMRESFunctions
+ * nalu_hypre_GMRESData and nalu_hypre_GMRESFunctions
  *--------------------------------------------------------------------------*/
 
 /**
@@ -68,7 +68,7 @@ typedef struct
    NALU_HYPRE_Int    (*precond)       ();
    NALU_HYPRE_Int    (*precond_setup) ();
 
-} hypre_GMRESFunctions;
+} nalu_hypre_GMRESFunctions;
 
 /**
  * The {\tt hypre\_GMRESData} object ...
@@ -98,7 +98,7 @@ typedef struct
    void    *matvec_data;
    void    *precond_data;
 
-   hypre_GMRESFunctions * functions;
+   nalu_hypre_GMRESFunctions * functions;
 
    /* log info (always logged) */
    NALU_HYPRE_Int      num_iterations;
@@ -108,7 +108,7 @@ typedef struct
    NALU_HYPRE_Real  *norms;
    char    *log_file_name;
 
-} hypre_GMRESData;
+} nalu_hypre_GMRESData;
 
 #ifdef __cplusplus
 extern "C" {
@@ -127,8 +127,8 @@ extern "C" {
  * @param param [IN] ...
  **/
 
-hypre_GMRESFunctions *
-hypre_GMRESFunctionsCreate(
+nalu_hypre_GMRESFunctions *
+nalu_hypre_GMRESFunctionsCreate(
    void *       (*CAlloc)        ( size_t count, size_t elt_size ),
    NALU_HYPRE_Int    (*Free)          ( void *ptr ),
    NALU_HYPRE_Int    (*CommInfo)      ( void  *A, NALU_HYPRE_Int   *my_id,
@@ -156,7 +156,7 @@ hypre_GMRESFunctionsCreate(
  **/
 
 void *
-hypre_GMRESCreate( hypre_GMRESFunctions *gmres_functions );
+nalu_hypre_GMRESCreate( nalu_hypre_GMRESFunctions *gmres_functions );
 
 #ifdef __cplusplus
 }

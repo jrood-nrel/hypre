@@ -17,7 +17,7 @@
 #include <csr_spgemm_device_numer.h>
 
 template NALU_HYPRE_Int
-hypre_spgemm_numerical_with_rownnz
+nalu_hypre_spgemm_numerical_with_rownnz
 < NALU_HYPRE_SPGEMM_BIN, NUMER_HASH_SIZE[NALU_HYPRE_SPGEMM_BIN], T_GROUP_SIZE[NALU_HYPRE_SPGEMM_BIN], true >
 ( NALU_HYPRE_Int m, NALU_HYPRE_Int *row_ind, NALU_HYPRE_Int k, NALU_HYPRE_Int n, bool need_ghash,
   NALU_HYPRE_Int exact_rownnz,
@@ -27,7 +27,7 @@ hypre_spgemm_numerical_with_rownnz
 
 #if NALU_HYPRE_SPGEMM_BIN == NALU_HYPRE_SPGEMM_DEFAULT_BIN
 template NALU_HYPRE_Int
-hypre_spgemm_numerical_with_rownnz
+nalu_hypre_spgemm_numerical_with_rownnz
 < NALU_HYPRE_SPGEMM_BIN, NUMER_HASH_SIZE[NALU_HYPRE_SPGEMM_BIN], T_GROUP_SIZE[NALU_HYPRE_SPGEMM_BIN], false >
 ( NALU_HYPRE_Int m, NALU_HYPRE_Int *row_ind, NALU_HYPRE_Int k, NALU_HYPRE_Int n, bool need_ghash,
   NALU_HYPRE_Int exact_rownnz,
@@ -37,7 +37,7 @@ hypre_spgemm_numerical_with_rownnz
 #endif
 
 template NALU_HYPRE_Int
-hypre_spgemm_numerical_max_num_blocks
+nalu_hypre_spgemm_numerical_max_num_blocks
 < NUMER_HASH_SIZE[NALU_HYPRE_SPGEMM_BIN], T_GROUP_SIZE[NALU_HYPRE_SPGEMM_BIN] >
 ( NALU_HYPRE_Int multiProcessorCount, NALU_HYPRE_Int *num_blocks_ptr, NALU_HYPRE_Int *block_size_ptr );
 

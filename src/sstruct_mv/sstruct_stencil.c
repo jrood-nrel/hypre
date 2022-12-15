@@ -5,18 +5,18 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_sstruct_mv.h"
+#include "_nalu_hypre_sstruct_mv.h"
 
 /*--------------------------------------------------------------------------
- * hypre_SStructStencilRef
+ * nalu_hypre_SStructStencilRef
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_SStructStencilRef( hypre_SStructStencil  *stencil,
-                         hypre_SStructStencil **stencil_ref )
+nalu_hypre_SStructStencilRef( nalu_hypre_SStructStencil  *stencil,
+                         nalu_hypre_SStructStencil **stencil_ref )
 {
-   hypre_SStructStencilRefCount(stencil) ++;
+   nalu_hypre_SStructStencilRefCount(stencil) ++;
    *stencil_ref = stencil;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }

@@ -4,8 +4,8 @@
  *
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
-#ifndef hypre_NEW_COMMPKG
-#define hypre_NEW_COMMPKG
+#ifndef nalu_hypre_NEW_COMMPKG
+#define nalu_hypre_NEW_COMMPKG
 
 typedef struct
 {
@@ -17,7 +17,7 @@ typedef struct
    NALU_HYPRE_BigInt   *elements;
    NALU_HYPRE_Real     *d_elements; /* Is this used anywhere? */
    void           *v_elements;
-}  hypre_ProcListElements;
+}  nalu_hypre_ProcListElements;
 
-#endif /* hypre_NEW_COMMPKG */
+#endif /* nalu_hypre_NEW_COMMPKG */
 

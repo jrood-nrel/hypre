@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_Euclid.h"
+#include "_nalu_hypre_Euclid.h"
 /* #include "SortedList_dh.h" */
 /* #include "Mem_dh.h" */
 /* #include "Parser_dh.h" */
@@ -189,7 +189,7 @@ bool SortedList_dhPermuteAndInsert(SortedList_dh sList, SRecord *sr, NALU_HYPRE_
     } else {
       col = -1;
 /*
-hypre_fprintf(logFile, "local row: %i  DROPPED: col= %i  val= %g (thresh= %g)\n",
+nalu_hypre_fprintf(logFile, "local row: %i  DROPPED: col= %i  val= %g (thresh= %g)\n",
                            sList->row+1, sr->col+1, testVal, thresh);
 */
     }
@@ -313,7 +313,7 @@ void lengthen_list_private(SortedList_dh sList)
   SET_INFO("lengthening list");
 
   sList->list = (SRecord*)MALLOC_DH(size * sizeof(SRecord));
-  hypre_TMemcpy(sList->list,  tmp, SRecord, sList->countMax, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_HOST); 
+  nalu_hypre_TMemcpy(sList->list,  tmp, SRecord, sList->countMax, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_HOST); 
   SET_INFO("doubling size of sList->list");
   FREE_DH(tmp); CHECK_V_ERROR;
   END_FUNC_DH
@@ -343,15 +343,15 @@ void SortedList_dhEnforceConstraint(SortedList_dh sList, SubdomainGraph_dh sg)
   if (Parser_dhHasSwitch(parser_dh, "-debug_SortedList")) debug = true;
 
   if (debug) {
-    hypre_fprintf(logFile, "SLIST ======= enforcing constraint for row= %i\n", 1+sList->row);
+    nalu_hypre_fprintf(logFile, "SLIST ======= enforcing constraint for row= %i\n", 1+sList->row);
 
-    hypre_fprintf(logFile, "\nSLIST ---- before checking: ");
+    nalu_hypre_fprintf(logFile, "\nSLIST ---- before checking: ");
     count = SortedList_dhReadCount(sList); CHECK_V_ERROR;
     while (count--) {
       SRecord *sr = SortedList_dhGetSmallest(sList); CHECK_V_ERROR;
-      hypre_fprintf(logFile, "%i ", sr->col+1);
+      nalu_hypre_fprintf(logFile, "%i ", sr->col+1);
     }
-    hypre_fprintf(logFile, "\n");
+    nalu_hypre_fprintf(logFile, "\n");
     sList->get = 0;
   }
 
@@ -363,7 +363,7 @@ void SortedList_dhEnforceConstraint(SortedList_dh sList, SubdomainGraph_dh sg)
     col = sr->col;
 
     if (debug) {
-      hypre_fprintf(logFile, "SLIST  next col= %i\n", col+1);
+      nalu_hypre_fprintf(logFile, "SLIST  next col= %i\n", col+1);
     }
 
 
@@ -371,7 +371,7 @@ void SortedList_dhEnforceConstraint(SortedList_dh sList, SubdomainGraph_dh sg)
     if (col < beg_rowP || col >= end_rowP) {
 
       if (debug) {
-        hypre_fprintf(logFile, "SLIST     external col: %i ; ", 1+col);
+        nalu_hypre_fprintf(logFile, "SLIST     external col: %i ; ", 1+col);
       }
 
       /* if entry would violate subdomain constraint, discard it
@@ -382,11 +382,11 @@ void SortedList_dhEnforceConstraint(SortedList_dh sList, SubdomainGraph_dh sg)
         sList->count -= 1;
 
         if (debug) {
-          hypre_fprintf(logFile, " deleted\n");
+          nalu_hypre_fprintf(logFile, " deleted\n");
         }
       } else {
         if (debug) {
-          hypre_fprintf(logFile, " kept\n");
+          nalu_hypre_fprintf(logFile, " kept\n");
         }
       }
     }
@@ -394,13 +394,13 @@ void SortedList_dhEnforceConstraint(SortedList_dh sList, SubdomainGraph_dh sg)
   sList->get = 0;
 
   if (debug) {
-    hypre_fprintf(logFile, "SLIST---- after checking: ");
+    nalu_hypre_fprintf(logFile, "SLIST---- after checking: ");
     count = SortedList_dhReadCount(sList); CHECK_V_ERROR;
     while (count--) {
       SRecord *sr = SortedList_dhGetSmallest(sList); CHECK_V_ERROR;
-      hypre_fprintf(logFile, "%i ", sr->col+1);
+      nalu_hypre_fprintf(logFile, "%i ", sr->col+1);
     }
-    hypre_fprintf(logFile, "\n");
+    nalu_hypre_fprintf(logFile, "\n");
     fflush(logFile);
     sList->get = 0;
   }

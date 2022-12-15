@@ -21,7 +21,7 @@ NALU_HYPRE_MappedMatrix
 NALU_HYPRE_MappedMatrixCreate( )
 {
    return ( (NALU_HYPRE_MappedMatrix)
-            hypre_MappedMatrixCreate(  ));
+            nalu_hypre_MappedMatrixCreate(  ));
 }
 
 /*--------------------------------------------------------------------------
@@ -31,7 +31,7 @@ NALU_HYPRE_MappedMatrixCreate( )
 NALU_HYPRE_Int
 NALU_HYPRE_MappedMatrixDestroy( NALU_HYPRE_MappedMatrix matrix )
 {
-   return ( hypre_MappedMatrixDestroy( (hypre_MappedMatrix *) matrix ) );
+   return ( nalu_hypre_MappedMatrixDestroy( (nalu_hypre_MappedMatrix *) matrix ) );
 }
 
 /*--------------------------------------------------------------------------
@@ -41,7 +41,7 @@ NALU_HYPRE_MappedMatrixDestroy( NALU_HYPRE_MappedMatrix matrix )
 NALU_HYPRE_Int
 NALU_HYPRE_MappedMatrixLimitedDestroy( NALU_HYPRE_MappedMatrix matrix )
 {
-   return ( hypre_MappedMatrixLimitedDestroy( (hypre_MappedMatrix *) matrix ) );
+   return ( nalu_hypre_MappedMatrixLimitedDestroy( (nalu_hypre_MappedMatrix *) matrix ) );
 }
 
 /*--------------------------------------------------------------------------
@@ -51,7 +51,7 @@ NALU_HYPRE_MappedMatrixLimitedDestroy( NALU_HYPRE_MappedMatrix matrix )
 NALU_HYPRE_Int
 NALU_HYPRE_MappedMatrixInitialize( NALU_HYPRE_MappedMatrix matrix )
 {
-   return ( hypre_MappedMatrixInitialize( (hypre_MappedMatrix *) matrix ) );
+   return ( nalu_hypre_MappedMatrixInitialize( (nalu_hypre_MappedMatrix *) matrix ) );
 }
 
 
@@ -62,7 +62,7 @@ NALU_HYPRE_MappedMatrixInitialize( NALU_HYPRE_MappedMatrix matrix )
 NALU_HYPRE_Int
 NALU_HYPRE_MappedMatrixAssemble( NALU_HYPRE_MappedMatrix matrix )
 {
-   return ( hypre_MappedMatrixAssemble( (hypre_MappedMatrix *) matrix ) );
+   return ( nalu_hypre_MappedMatrixAssemble( (nalu_hypre_MappedMatrix *) matrix ) );
 }
 
 
@@ -74,7 +74,7 @@ NALU_HYPRE_MappedMatrixAssemble( NALU_HYPRE_MappedMatrix matrix )
 void
 NALU_HYPRE_MappedMatrixPrint( NALU_HYPRE_MappedMatrix matrix )
 {
-   hypre_MappedMatrixPrint( (hypre_MappedMatrix *) matrix );
+   nalu_hypre_MappedMatrixPrint( (nalu_hypre_MappedMatrix *) matrix );
 }
 
 /****************************************************************************
@@ -89,7 +89,7 @@ NALU_HYPRE_MappedMatrixPrint( NALU_HYPRE_MappedMatrix matrix )
 NALU_HYPRE_Int
 NALU_HYPRE_MappedMatrixGetColIndex( NALU_HYPRE_MappedMatrix matrix, NALU_HYPRE_Int j )
 {
-   return ( hypre_MappedMatrixGetColIndex( (hypre_MappedMatrix *) matrix, j ));
+   return ( nalu_hypre_MappedMatrixGetColIndex( (nalu_hypre_MappedMatrix *) matrix, j ));
 }
 
 /*--------------------------------------------------------------------------
@@ -99,7 +99,7 @@ NALU_HYPRE_MappedMatrixGetColIndex( NALU_HYPRE_MappedMatrix matrix, NALU_HYPRE_I
 void *
 NALU_HYPRE_MappedMatrixGetMatrix( NALU_HYPRE_MappedMatrix matrix )
 {
-   return ( hypre_MappedMatrixGetMatrix( (hypre_MappedMatrix *) matrix ));
+   return ( nalu_hypre_MappedMatrixGetMatrix( (nalu_hypre_MappedMatrix *) matrix ));
 }
 
 /*--------------------------------------------------------------------------
@@ -109,7 +109,7 @@ NALU_HYPRE_MappedMatrixGetMatrix( NALU_HYPRE_MappedMatrix matrix )
 NALU_HYPRE_Int
 NALU_HYPRE_MappedMatrixSetMatrix( NALU_HYPRE_MappedMatrix matrix, void *matrix_data )
 {
-   return ( hypre_MappedMatrixSetMatrix( (hypre_MappedMatrix *) matrix, matrix_data ) );
+   return ( nalu_hypre_MappedMatrixSetMatrix( (nalu_hypre_MappedMatrix *) matrix, matrix_data ) );
 }
 
 /*--------------------------------------------------------------------------
@@ -119,7 +119,7 @@ NALU_HYPRE_MappedMatrixSetMatrix( NALU_HYPRE_MappedMatrix matrix, void *matrix_d
 NALU_HYPRE_Int
 NALU_HYPRE_MappedMatrixSetColMap( NALU_HYPRE_MappedMatrix matrix, NALU_HYPRE_Int (*ColMap)(NALU_HYPRE_Int, void *) )
 {
-   return ( hypre_MappedMatrixSetColMap( (hypre_MappedMatrix *) matrix, ColMap ) );
+   return ( nalu_hypre_MappedMatrixSetColMap( (nalu_hypre_MappedMatrix *) matrix, ColMap ) );
 }
 
 /*--------------------------------------------------------------------------
@@ -129,5 +129,5 @@ NALU_HYPRE_MappedMatrixSetColMap( NALU_HYPRE_MappedMatrix matrix, NALU_HYPRE_Int
 NALU_HYPRE_Int
 NALU_HYPRE_MappedMatrixSetMapData( NALU_HYPRE_MappedMatrix matrix, void *MapData )
 {
-   return ( hypre_MappedMatrixSetMapData( (hypre_MappedMatrix *) matrix, MapData ) );
+   return ( nalu_hypre_MappedMatrixSetMapData( (nalu_hypre_MappedMatrix *) matrix, MapData ) );
 }

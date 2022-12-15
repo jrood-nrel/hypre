@@ -11,7 +11,7 @@
  *
  *****************************************************************************/
 
-#include "_hypre_parcsr_mv.h"
+#include "_nalu_hypre_parcsr_mv.h"
 #include "fortran.h"
 
 #ifdef __cplusplus
@@ -19,35 +19,35 @@ extern "C" {
 #endif
 
 /*--------------------------------------------------------------------------
- * hypre_ParCSRMatrixGlobalNumRows
+ * nalu_hypre_ParCSRMatrixGlobalNumRows
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_parcsrmatrixglobalnumrows, NALU_HYPRE_PARCSRMATRIXGLOBALNUMROWS)
-( hypre_F90_Obj *matrix,
-  hypre_F90_BigInt *num_rows,
-  hypre_F90_Int *ierr      )
+nalu_hypre_F90_IFACE(nalu_hypre_parcsrmatrixglobalnumrows, NALU_HYPRE_PARCSRMATRIXGLOBALNUMROWS)
+( nalu_hypre_F90_Obj *matrix,
+  nalu_hypre_F90_BigInt *num_rows,
+  nalu_hypre_F90_Int *ierr      )
 {
-   *num_rows = (hypre_F90_BigInt)
-               ( hypre_ParCSRMatrixGlobalNumRows(
-                    (hypre_ParCSRMatrix *) *matrix ) );
+   *num_rows = (nalu_hypre_F90_BigInt)
+               ( nalu_hypre_ParCSRMatrixGlobalNumRows(
+                    (nalu_hypre_ParCSRMatrix *) *matrix ) );
 
    *ierr = 0;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_ParCSRMatrixRowStarts
+ * nalu_hypre_ParCSRMatrixRowStarts
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_parcsrmatrixrowstarts, NALU_HYPRE_PARCSRMATRIXROWSTARTS)
-( hypre_F90_Obj *matrix,
-  hypre_F90_Obj *row_starts,
-  hypre_F90_Int *ierr      )
+nalu_hypre_F90_IFACE(nalu_hypre_parcsrmatrixrowstarts, NALU_HYPRE_PARCSRMATRIXROWSTARTS)
+( nalu_hypre_F90_Obj *matrix,
+  nalu_hypre_F90_Obj *row_starts,
+  nalu_hypre_F90_Int *ierr      )
 {
-   *row_starts = (hypre_F90_Obj)
-                 ( hypre_ParCSRMatrixRowStarts(
-                      (hypre_ParCSRMatrix *) *matrix ) );
+   *row_starts = (nalu_hypre_F90_Obj)
+                 ( nalu_hypre_ParCSRMatrixRowStarts(
+                      (nalu_hypre_ParCSRMatrix *) *matrix ) );
 
    *ierr = 0;
 }

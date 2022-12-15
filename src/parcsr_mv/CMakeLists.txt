@@ -5,7 +5,7 @@
 
 set(HDRS
   NALU_HYPRE_parcsr_mv.h
-  _hypre_parcsr_mv.h
+  _nalu_hypre_parcsr_mv.h
 )
 
 set(SRCS

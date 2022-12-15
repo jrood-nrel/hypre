@@ -6,7 +6,7 @@
  ******************************************************************************/
 
 #include <string.h>
-#include "_hypre_utilities.h"
+#include "_nalu_hypre_utilities.h"
 #include "NALU_HYPRE.h"
 #include "mli_mapper.h"
 #include "mli_utils.h"

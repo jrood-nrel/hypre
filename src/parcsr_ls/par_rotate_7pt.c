@@ -5,10 +5,10 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_parcsr_ls.h"
+#include "_nalu_hypre_parcsr_ls.h"
 
 /*--------------------------------------------------------------------------
- * hypre_GenerateLaplacian9pt
+ * nalu_hypre_GenerateLaplacian9pt
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_ParCSRMatrix
@@ -22,9 +22,9 @@ GenerateRotate7pt( MPI_Comm       comm,
                    NALU_HYPRE_Real     alpha,
                    NALU_HYPRE_Real     eps )
 {
-   hypre_ParCSRMatrix *A;
-   hypre_CSRMatrix *diag;
-   hypre_CSRMatrix *offd;
+   nalu_hypre_ParCSRMatrix *A;
+   nalu_hypre_CSRMatrix *diag;
+   nalu_hypre_CSRMatrix *offd;
 
    NALU_HYPRE_Int    *diag_i;
    NALU_HYPRE_Int    *diag_j;
@@ -55,11 +55,11 @@ GenerateRotate7pt( MPI_Comm       comm,
    NALU_HYPRE_Int num_procs;
    NALU_HYPRE_Int P_busy, Q_busy;
 
-   hypre_MPI_Comm_size(comm, &num_procs);
+   nalu_hypre_MPI_Comm_size(comm, &num_procs);
 
    grid_size = nx * ny;
 
-   value = hypre_CTAlloc(NALU_HYPRE_Real, 4, NALU_HYPRE_MEMORY_HOST);
+   value = nalu_hypre_CTAlloc(NALU_HYPRE_Real, 4, NALU_HYPRE_MEMORY_HOST);
    pi = 4.0 * atan(1.0);
    x = pi * alpha / 180.0;
    s = sin(x);
@@ -72,8 +72,8 @@ GenerateRotate7pt( MPI_Comm       comm,
    value[2] = bc + 2 * cc;
    value[3] = -bc;
 
-   hypre_GeneratePartitioning(nx, P, &nx_part);
-   hypre_GeneratePartitioning(ny, Q, &ny_part);
+   nalu_hypre_GeneratePartitioning(nx, P, &nx_part);
+   nalu_hypre_GeneratePartitioning(ny, Q, &ny_part);
 
    nx_local = (NALU_HYPRE_Int)(nx_part[p + 1] - nx_part[p]);
    ny_local = (NALU_HYPRE_Int)(ny_part[q + 1] - ny_part[q]);
@@ -83,11 +83,11 @@ GenerateRotate7pt( MPI_Comm       comm,
    global_part[0] = ny_part[q] * nx + nx_part[p] * ny_local;
    global_part[1] = global_part[0] + (NALU_HYPRE_BigInt)local_num_rows;
 
-   diag_i = hypre_CTAlloc(NALU_HYPRE_Int,  local_num_rows + 1, NALU_HYPRE_MEMORY_HOST);
-   offd_i = hypre_CTAlloc(NALU_HYPRE_Int,  local_num_rows + 1, NALU_HYPRE_MEMORY_HOST);
+   diag_i = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  local_num_rows + 1, NALU_HYPRE_MEMORY_HOST);
+   offd_i = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  local_num_rows + 1, NALU_HYPRE_MEMORY_HOST);
 
-   P_busy = hypre_min(nx, P);
-   Q_busy = hypre_min(ny, Q);
+   P_busy = nalu_hypre_min(nx, P);
+   Q_busy = nalu_hypre_min(ny, Q);
 
    num_cols_offd = 0;
    if (p) { num_cols_offd += ny_local; }
@@ -101,7 +101,7 @@ GenerateRotate7pt( MPI_Comm       comm,
 
    if (!local_num_rows) { num_cols_offd = 0; }
 
-   col_map_offd = hypre_CTAlloc(NALU_HYPRE_BigInt,  num_cols_offd, NALU_HYPRE_MEMORY_HOST);
+   col_map_offd = nalu_hypre_CTAlloc(NALU_HYPRE_BigInt,  num_cols_offd, NALU_HYPRE_MEMORY_HOST);
 
    cnt = 0;
    o_cnt = 0;
@@ -201,14 +201,14 @@ GenerateRotate7pt( MPI_Comm       comm,
       }
    }
 
-   diag_j    = hypre_CTAlloc(NALU_HYPRE_Int,  diag_i[local_num_rows], NALU_HYPRE_MEMORY_HOST);
-   diag_data = hypre_CTAlloc(NALU_HYPRE_Real, diag_i[local_num_rows], NALU_HYPRE_MEMORY_HOST);
+   diag_j    = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  diag_i[local_num_rows], NALU_HYPRE_MEMORY_HOST);
+   diag_data = nalu_hypre_CTAlloc(NALU_HYPRE_Real, diag_i[local_num_rows], NALU_HYPRE_MEMORY_HOST);
 
    if (num_procs > 1)
    {
-      big_offd_j = hypre_CTAlloc(NALU_HYPRE_BigInt, offd_i[local_num_rows], NALU_HYPRE_MEMORY_HOST);
-      offd_j     = hypre_CTAlloc(NALU_HYPRE_Int,    offd_i[local_num_rows], NALU_HYPRE_MEMORY_HOST);
-      offd_data  = hypre_CTAlloc(NALU_HYPRE_Real,   offd_i[local_num_rows], NALU_HYPRE_MEMORY_HOST);
+      big_offd_j = nalu_hypre_CTAlloc(NALU_HYPRE_BigInt, offd_i[local_num_rows], NALU_HYPRE_MEMORY_HOST);
+      offd_j     = nalu_hypre_CTAlloc(NALU_HYPRE_Int,    offd_i[local_num_rows], NALU_HYPRE_MEMORY_HOST);
+      offd_data  = nalu_hypre_CTAlloc(NALU_HYPRE_Real,   offd_i[local_num_rows], NALU_HYPRE_MEMORY_HOST);
    }
 
    row_index = 0;
@@ -231,7 +231,7 @@ GenerateRotate7pt( MPI_Comm       comm,
             {
                if (ix)
                {
-                  big_offd_j[o_cnt] = hypre_map2(ix - 1, iy - 1, p - 1, q, nx,
+                  big_offd_j[o_cnt] = nalu_hypre_map2(ix - 1, iy - 1, p - 1, q, nx,
                                                  nx_part, ny_part);
                   offd_data[o_cnt++] = value[3];
                }
@@ -245,17 +245,17 @@ GenerateRotate7pt( MPI_Comm       comm,
             {
                if (ix > nx_part[p])
                {
-                  big_offd_j[o_cnt] = hypre_map2(ix - 1, iy - 1, p, q - 1, nx,
+                  big_offd_j[o_cnt] = nalu_hypre_map2(ix - 1, iy - 1, p, q - 1, nx,
                                                  nx_part, ny_part);
                   offd_data[o_cnt++] = value[3];
                }
                else if (ix)
                {
-                  big_offd_j[o_cnt] = hypre_map2(ix - 1, iy - 1, p - 1, q - 1, nx,
+                  big_offd_j[o_cnt] = nalu_hypre_map2(ix - 1, iy - 1, p - 1, q - 1, nx,
                                                  nx_part, ny_part);
                   offd_data[o_cnt++] = value[3];
                }
-               big_offd_j[o_cnt] = hypre_map2(ix, iy - 1, p, q - 1, nx,
+               big_offd_j[o_cnt] = nalu_hypre_map2(ix, iy - 1, p, q - 1, nx,
                                               nx_part, ny_part);
                offd_data[o_cnt++] = value[2];
             }
@@ -269,7 +269,7 @@ GenerateRotate7pt( MPI_Comm       comm,
          {
             if (ix)
             {
-               big_offd_j[o_cnt] = hypre_map2(ix - 1, iy, p - 1, q, nx,
+               big_offd_j[o_cnt] = nalu_hypre_map2(ix - 1, iy, p - 1, q, nx,
                                               nx_part, ny_part);
                offd_data[o_cnt++] = value[1];
             }
@@ -283,7 +283,7 @@ GenerateRotate7pt( MPI_Comm       comm,
          {
             if (ix + 1 < nx)
             {
-               big_offd_j[o_cnt] = hypre_map2(ix + 1, iy, p + 1, q, nx,
+               big_offd_j[o_cnt] = nalu_hypre_map2(ix + 1, iy, p + 1, q, nx,
                                               nx_part, ny_part);
                offd_data[o_cnt++] = value[1];
             }
@@ -301,7 +301,7 @@ GenerateRotate7pt( MPI_Comm       comm,
             {
                if (ix + 1 < nx)
                {
-                  big_offd_j[o_cnt] = hypre_map2(ix + 1, iy + 1, p + 1, q, nx,
+                  big_offd_j[o_cnt] = nalu_hypre_map2(ix + 1, iy + 1, p + 1, q, nx,
                                                  nx_part, ny_part);
                   offd_data[o_cnt++] = value[3];
                }
@@ -311,18 +311,18 @@ GenerateRotate7pt( MPI_Comm       comm,
          {
             if (iy + 1 < ny)
             {
-               big_offd_j[o_cnt] = hypre_map2(ix, iy + 1, p, q + 1, nx,
+               big_offd_j[o_cnt] = nalu_hypre_map2(ix, iy + 1, p, q + 1, nx,
                                               nx_part, ny_part);
                offd_data[o_cnt++] = value[2];
                if (ix < nx_part[p + 1] - 1)
                {
-                  big_offd_j[o_cnt] = hypre_map2(ix + 1, iy + 1, p, q + 1, nx,
+                  big_offd_j[o_cnt] = nalu_hypre_map2(ix + 1, iy + 1, p, q + 1, nx,
                                                  nx_part, ny_part);
                   offd_data[o_cnt++] = value[3];
                }
                else if (ix < nx - 1)
                {
-                  big_offd_j[o_cnt] = hypre_map2(ix + 1, iy + 1, p + 1, q + 1, nx,
+                  big_offd_j[o_cnt] = nalu_hypre_map2(ix + 1, iy + 1, p + 1, q + 1, nx,
                                                  nx_part, ny_part);
                   offd_data[o_cnt++] = value[3];
                }
@@ -334,14 +334,14 @@ GenerateRotate7pt( MPI_Comm       comm,
 
    if (num_procs > 1)
    {
-      NALU_HYPRE_BigInt *work = hypre_CTAlloc(NALU_HYPRE_BigInt, o_cnt, NALU_HYPRE_MEMORY_HOST);
+      NALU_HYPRE_BigInt *work = nalu_hypre_CTAlloc(NALU_HYPRE_BigInt, o_cnt, NALU_HYPRE_MEMORY_HOST);
 
       for (i = 0; i < o_cnt; i++)
       {
          work[i] = big_offd_j[i];
       }
 
-      hypre_BigQsort0(work, 0, o_cnt - 1);
+      nalu_hypre_BigQsort0(work, 0, o_cnt - 1);
 
       col_map_offd[0] = work[0];
       cnt = 0;
@@ -357,41 +357,41 @@ GenerateRotate7pt( MPI_Comm       comm,
       num_cols_offd = cnt + 1;
       for (i = 0; i < o_cnt; i++)
       {
-         offd_j[i] = hypre_BigBinarySearch(col_map_offd, big_offd_j[i], num_cols_offd);
+         offd_j[i] = nalu_hypre_BigBinarySearch(col_map_offd, big_offd_j[i], num_cols_offd);
       }
 
-      hypre_TFree(work, NALU_HYPRE_MEMORY_HOST);
-      hypre_TFree(big_offd_j, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(work, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(big_offd_j, NALU_HYPRE_MEMORY_HOST);
    }
 
-   A = hypre_ParCSRMatrixCreate(comm, grid_size, grid_size,
+   A = nalu_hypre_ParCSRMatrixCreate(comm, grid_size, grid_size,
                                 global_part, global_part, num_cols_offd,
                                 diag_i[local_num_rows],
                                 offd_i[local_num_rows]);
 
-   hypre_ParCSRMatrixColMapOffd(A) = col_map_offd;
+   nalu_hypre_ParCSRMatrixColMapOffd(A) = col_map_offd;
 
-   diag = hypre_ParCSRMatrixDiag(A);
-   hypre_CSRMatrixI(diag) = diag_i;
-   hypre_CSRMatrixJ(diag) = diag_j;
-   hypre_CSRMatrixData(diag) = diag_data;
+   diag = nalu_hypre_ParCSRMatrixDiag(A);
+   nalu_hypre_CSRMatrixI(diag) = diag_i;
+   nalu_hypre_CSRMatrixJ(diag) = diag_j;
+   nalu_hypre_CSRMatrixData(diag) = diag_data;
 
-   offd = hypre_ParCSRMatrixOffd(A);
-   hypre_CSRMatrixI(offd) = offd_i;
+   offd = nalu_hypre_ParCSRMatrixOffd(A);
+   nalu_hypre_CSRMatrixI(offd) = offd_i;
    if (num_cols_offd)
    {
-      hypre_CSRMatrixJ(offd) = offd_j;
-      hypre_CSRMatrixData(offd) = offd_data;
+      nalu_hypre_CSRMatrixJ(offd) = offd_j;
+      nalu_hypre_CSRMatrixData(offd) = offd_data;
    }
 
-   hypre_CSRMatrixMemoryLocation(diag) = NALU_HYPRE_MEMORY_HOST;
-   hypre_CSRMatrixMemoryLocation(offd) = NALU_HYPRE_MEMORY_HOST;
+   nalu_hypre_CSRMatrixMemoryLocation(diag) = NALU_HYPRE_MEMORY_HOST;
+   nalu_hypre_CSRMatrixMemoryLocation(offd) = NALU_HYPRE_MEMORY_HOST;
 
-   hypre_ParCSRMatrixMigrate(A, hypre_HandleMemoryLocation(hypre_handle()));
+   nalu_hypre_ParCSRMatrixMigrate(A, nalu_hypre_HandleMemoryLocation(nalu_hypre_handle()));
 
-   hypre_TFree(nx_part, NALU_HYPRE_MEMORY_HOST);
-   hypre_TFree(ny_part, NALU_HYPRE_MEMORY_HOST);
-   hypre_TFree(value,   NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(nx_part, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(ny_part, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(value,   NALU_HYPRE_MEMORY_HOST);
 
    return (NALU_HYPRE_ParCSRMatrix) A;
 }

@@ -4,35 +4,35 @@
  *
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
-#include "_hypre_parcsr_mv.h"
-#include "_hypre_utilities.hpp"
+#include "_nalu_hypre_parcsr_mv.h"
+#include "_nalu_hypre_utilities.hpp"
 
 #if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
 
 NALU_HYPRE_Int
-hypre_ParVectorGetValuesDevice(hypre_ParVector *vector,
+nalu_hypre_ParVectorGetValuesDevice(nalu_hypre_ParVector *vector,
                                NALU_HYPRE_Int        num_values,
                                NALU_HYPRE_BigInt    *indices,
                                NALU_HYPRE_BigInt     base,
                                NALU_HYPRE_Complex   *values)
 {
-   NALU_HYPRE_BigInt    first_index  = hypre_ParVectorFirstIndex(vector);
-   NALU_HYPRE_BigInt    last_index   = hypre_ParVectorLastIndex(vector);
-   hypre_Vector   *local_vector = hypre_ParVectorLocalVector(vector);
+   NALU_HYPRE_BigInt    first_index  = nalu_hypre_ParVectorFirstIndex(vector);
+   NALU_HYPRE_BigInt    last_index   = nalu_hypre_ParVectorLastIndex(vector);
+   nalu_hypre_Vector   *local_vector = nalu_hypre_ParVectorLocalVector(vector);
 
-   NALU_HYPRE_Int       component    = hypre_VectorComponent(local_vector);
-   NALU_HYPRE_Int       vecstride    = hypre_VectorVectorStride(local_vector);
-   NALU_HYPRE_Int       idxstride    = hypre_VectorIndexStride(local_vector);
-   NALU_HYPRE_Complex  *data         = hypre_VectorData(local_vector);
+   NALU_HYPRE_Int       component    = nalu_hypre_VectorComponent(local_vector);
+   NALU_HYPRE_Int       vecstride    = nalu_hypre_VectorVectorStride(local_vector);
+   NALU_HYPRE_Int       idxstride    = nalu_hypre_VectorIndexStride(local_vector);
+   NALU_HYPRE_Complex  *data         = nalu_hypre_VectorData(local_vector);
    NALU_HYPRE_Int       vecoffset    = component * vecstride;
 
    NALU_HYPRE_Int       ierr = 0;
 
    if (idxstride != 1)
    {
-      hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC,
-                        "hypre_ParVectorGetValuesDevice not implemented for non-columnwise vector storage\n");
-      return hypre_error_flag;
+      nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC,
+                        "nalu_hypre_ParVectorGetValuesDevice not implemented for non-columnwise vector storage\n");
+      return nalu_hypre_error_flag;
    }
 
    /* If indices == NULL, assume that num_values components
@@ -45,9 +45,9 @@ hypre_ParVectorGetValuesDevice(hypre_ParVector *vector,
                                 out_of_range<NALU_HYPRE_BigInt>(first_index + base, last_index + base) );
       if (ierr)
       {
-         hypre_error_in_arg(3);
-         hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "Index out of range! -- hypre_ParVectorGetValues.");
-         hypre_printf(" error: %d indices out of range! -- hypre_ParVectorGetValues\n", ierr);
+         nalu_hypre_error_in_arg(3);
+         nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "Index out of range! -- nalu_hypre_ParVectorGetValues.");
+         nalu_hypre_printf(" error: %d indices out of range! -- nalu_hypre_ParVectorGetValues\n", ierr);
 
          NALU_HYPRE_THRUST_CALL( gather_if,
                             thrust::make_transform_iterator(indices, _1 - base - first_index),
@@ -68,17 +68,17 @@ hypre_ParVectorGetValuesDevice(hypre_ParVector *vector,
    }
    else
    {
-      if (num_values > hypre_VectorSize(local_vector))
+      if (num_values > nalu_hypre_VectorSize(local_vector))
       {
-         hypre_error_in_arg(3);
-         return hypre_error_flag;
+         nalu_hypre_error_in_arg(3);
+         return nalu_hypre_error_flag;
       }
 
-      hypre_TMemcpy(values, data + vecoffset, NALU_HYPRE_Complex, num_values,
+      nalu_hypre_TMemcpy(values, data + vecoffset, NALU_HYPRE_Complex, num_values,
                     NALU_HYPRE_MEMORY_DEVICE, NALU_HYPRE_MEMORY_DEVICE);
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 #endif // #if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)

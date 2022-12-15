@@ -7,19 +7,19 @@
 
 #include "NALU_HYPRE_krylov.h"
 
-#ifndef hypre_KRYLOV_HEADER
-#define hypre_KRYLOV_HEADER
+#ifndef nalu_hypre_KRYLOV_HEADER
+#define nalu_hypre_KRYLOV_HEADER
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
 
-#include "_hypre_utilities.h"
+#include "_nalu_hypre_utilities.h"
 
-#define hypre_CTAllocF(type, count, funcs, location) \
+#define nalu_hypre_CTAllocF(type, count, funcs, location) \
   ( (type *)(*(funcs->CAlloc))((size_t)(count), (size_t)sizeof(type), location) )
 
-#define hypre_TFreeF( ptr, funcs ) ( (*(funcs->Free))((void *)ptr), ptr = NULL )
+#define nalu_hypre_TFreeF( ptr, funcs ) ( (*(funcs->Free))((void *)ptr), ptr = NULL )
 
 #ifdef __cplusplus
 extern "C" {
@@ -31,8 +31,8 @@ extern "C" {
  *
  *****************************************************************************/
 
-#ifndef hypre_KRYLOV_BiCGSTAB_HEADER
-#define hypre_KRYLOV_BiCGSTAB_HEADER
+#ifndef nalu_hypre_KRYLOV_BiCGSTAB_HEADER
+#define nalu_hypre_KRYLOV_BiCGSTAB_HEADER
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
@@ -52,7 +52,7 @@ extern "C" {
  *--------------------------------------------------------------------------*/
 
 /*--------------------------------------------------------------------------
- * hypre_BiCGSTABData and hypre_BiCGSTABFunctions
+ * nalu_hypre_BiCGSTABData and nalu_hypre_BiCGSTABFunctions
  *--------------------------------------------------------------------------*/
 
 /**
@@ -67,25 +67,25 @@ extern "C" {
  **/
 
 /* functions in pcg_struct.c which aren't used here:
-   void *hypre_ParKrylovCAlloc( NALU_HYPRE_Int count , NALU_HYPRE_Int elt_size );
-   NALU_HYPRE_Int hypre_ParKrylovFree( void *ptr );
-   void *hypre_ParKrylovCreateVectorArray( NALU_HYPRE_Int n , void *vvector );
-   NALU_HYPRE_Int hypre_ParKrylovMatvecT( void *matvec_data , NALU_HYPRE_Real alpha , void *A , void *x , NALU_HYPRE_Real beta , void *y );
+   void *nalu_hypre_ParKrylovCAlloc( NALU_HYPRE_Int count , NALU_HYPRE_Int elt_size );
+   NALU_HYPRE_Int nalu_hypre_ParKrylovFree( void *ptr );
+   void *nalu_hypre_ParKrylovCreateVectorArray( NALU_HYPRE_Int n , void *vvector );
+   NALU_HYPRE_Int nalu_hypre_ParKrylovMatvecT( void *matvec_data , NALU_HYPRE_Real alpha , void *A , void *x , NALU_HYPRE_Real beta , void *y );
    */
 /* functions in pcg_struct.c which are used here:
-   void *hypre_ParKrylovCreateVector( void *vvector );
-   NALU_HYPRE_Int hypre_ParKrylovDestroyVector( void *vvector );
-   void *hypre_ParKrylovMatvecCreate( void *A , void *x );
-   NALU_HYPRE_Int hypre_ParKrylovMatvec( void *matvec_data , NALU_HYPRE_Real alpha , void *A , void *x , NALU_HYPRE_Real beta , void *y );
-   NALU_HYPRE_Int hypre_ParKrylovMatvecDestroy( void *matvec_data );
-   NALU_HYPRE_Real hypre_ParKrylovInnerProd( void *x , void *y );
-   NALU_HYPRE_Int hypre_ParKrylovCopyVector( void *x , void *y );
-   NALU_HYPRE_Int hypre_ParKrylovClearVector( void *x );
-   NALU_HYPRE_Int hypre_ParKrylovScaleVector( NALU_HYPRE_Real alpha , void *x );
-   NALU_HYPRE_Int hypre_ParKrylovAxpy( NALU_HYPRE_Real alpha , void *x , void *y );
-   NALU_HYPRE_Int hypre_ParKrylovCommInfo( void *A , NALU_HYPRE_Int *my_id , NALU_HYPRE_Int *num_procs );
-   NALU_HYPRE_Int hypre_ParKrylovIdentitySetup( void *vdata , void *A , void *b , void *x );
-   NALU_HYPRE_Int hypre_ParKrylovIdentity( void *vdata , void *A , void *b , void *x );
+   void *nalu_hypre_ParKrylovCreateVector( void *vvector );
+   NALU_HYPRE_Int nalu_hypre_ParKrylovDestroyVector( void *vvector );
+   void *nalu_hypre_ParKrylovMatvecCreate( void *A , void *x );
+   NALU_HYPRE_Int nalu_hypre_ParKrylovMatvec( void *matvec_data , NALU_HYPRE_Real alpha , void *A , void *x , NALU_HYPRE_Real beta , void *y );
+   NALU_HYPRE_Int nalu_hypre_ParKrylovMatvecDestroy( void *matvec_data );
+   NALU_HYPRE_Real nalu_hypre_ParKrylovInnerProd( void *x , void *y );
+   NALU_HYPRE_Int nalu_hypre_ParKrylovCopyVector( void *x , void *y );
+   NALU_HYPRE_Int nalu_hypre_ParKrylovClearVector( void *x );
+   NALU_HYPRE_Int nalu_hypre_ParKrylovScaleVector( NALU_HYPRE_Real alpha , void *x );
+   NALU_HYPRE_Int nalu_hypre_ParKrylovAxpy( NALU_HYPRE_Real alpha , void *x , void *y );
+   NALU_HYPRE_Int nalu_hypre_ParKrylovCommInfo( void *A , NALU_HYPRE_Int *my_id , NALU_HYPRE_Int *num_procs );
+   NALU_HYPRE_Int nalu_hypre_ParKrylovIdentitySetup( void *vdata , void *A , void *b , void *x );
+   NALU_HYPRE_Int nalu_hypre_ParKrylovIdentity( void *vdata , void *A , void *b , void *x );
    */
 
 typedef struct
@@ -105,7 +105,7 @@ typedef struct
    NALU_HYPRE_Int  (*precond_setup) (void *vdata, void *A, void *b, void *x);
    NALU_HYPRE_Int  (*precond)       (void *vdata, void *A, void *b, void *x);
 
-} hypre_BiCGSTABFunctions;
+} nalu_hypre_BiCGSTABFunctions;
 
 /**
  * The {\tt hypre\_BiCGSTABData} object ...
@@ -135,7 +135,7 @@ typedef struct
    void  *matvec_data;
    void    *precond_data;
 
-   hypre_BiCGSTABFunctions * functions;
+   nalu_hypre_BiCGSTABFunctions * functions;
 
    /* log info (always logged) */
    NALU_HYPRE_Int      num_iterations;
@@ -146,9 +146,9 @@ typedef struct
    NALU_HYPRE_Real  *norms;
    char    *log_file_name;
 
-} hypre_BiCGSTABData;
+} nalu_hypre_BiCGSTABData;
 
-#define hypre_BiCGSTABDataHybrid(pcgdata)  ((pcgdata) -> hybrid)
+#define nalu_hypre_BiCGSTABDataHybrid(pcgdata)  ((pcgdata) -> hybrid)
 
 #ifdef __cplusplus
 extern "C" {
@@ -167,8 +167,8 @@ extern "C" {
     * @param param [IN] ...
     **/
 
-   hypre_BiCGSTABFunctions *
-   hypre_BiCGSTABFunctionsCreate(
+   nalu_hypre_BiCGSTABFunctions *
+   nalu_hypre_BiCGSTABFunctionsCreate(
       void *     (*CreateVector)  ( void *vvector ),
       NALU_HYPRE_Int  (*DestroyVector) ( void *vvector ),
       void *     (*MatvecCreate)  ( void *A, void *x ),
@@ -193,7 +193,7 @@ extern "C" {
     **/
 
    void *
-   hypre_BiCGSTABCreate( hypre_BiCGSTABFunctions * bicgstab_functions );
+   nalu_hypre_BiCGSTABCreate( nalu_hypre_BiCGSTABFunctions * bicgstab_functions );
 
 #ifdef __cplusplus
 }
@@ -207,8 +207,8 @@ extern "C" {
  *
  *****************************************************************************/
 
-#ifndef hypre_KRYLOV_CGNR_HEADER
-#define hypre_KRYLOV_CGNR_HEADER
+#ifndef nalu_hypre_KRYLOV_CGNR_HEADER
+#define nalu_hypre_KRYLOV_CGNR_HEADER
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
@@ -228,7 +228,7 @@ extern "C" {
  *--------------------------------------------------------------------------*/
 
 /*--------------------------------------------------------------------------
- * hypre_CGNRData and hypre_CGNRFunctions
+ * nalu_hypre_CGNRData and nalu_hypre_CGNRFunctions
  *--------------------------------------------------------------------------*/
 
 /**
@@ -263,7 +263,7 @@ typedef struct
    NALU_HYPRE_Int    (*precond)       ( void *vdata, void *A, void *b, void *x );
    NALU_HYPRE_Int    (*precondT)      ( void *vdata, void *A, void *b, void *x );
 
-} hypre_CGNRFunctions;
+} nalu_hypre_CGNRFunctions;
 
 /**
  * The {\tt hypre\_CGNRData} object ...
@@ -286,7 +286,7 @@ typedef struct
    void    *matvec_data;
    void    *precond_data;
 
-   hypre_CGNRFunctions * functions;
+   nalu_hypre_CGNRFunctions * functions;
 
    /* log info (always logged) */
    NALU_HYPRE_Int      num_iterations;
@@ -296,7 +296,7 @@ typedef struct
    NALU_HYPRE_Real  *norms;
    char    *log_file_name;
 
-} hypre_CGNRData;
+} nalu_hypre_CGNRData;
 
 
 #ifdef __cplusplus
@@ -315,8 +315,8 @@ extern "C" {
     *
     * @param param [IN] ...
     **/
-   hypre_CGNRFunctions *
-   hypre_CGNRFunctionsCreate(
+   nalu_hypre_CGNRFunctions *
+   nalu_hypre_CGNRFunctionsCreate(
       NALU_HYPRE_Int    (*CommInfo)      ( void  *A, NALU_HYPRE_Int   *my_id,
                                       NALU_HYPRE_Int   *num_procs ),
       void *       (*CreateVector)  ( void *vector ),
@@ -344,7 +344,7 @@ extern "C" {
     **/
 
    void *
-   hypre_CGNRCreate( hypre_CGNRFunctions *cgnr_functions );
+   nalu_hypre_CGNRCreate( nalu_hypre_CGNRFunctions *cgnr_functions );
 
 #ifdef __cplusplus
 }
@@ -358,8 +358,8 @@ extern "C" {
  *
  *****************************************************************************/
 
-#ifndef hypre_KRYLOV_GMRES_HEADER
-#define hypre_KRYLOV_GMRES_HEADER
+#ifndef nalu_hypre_KRYLOV_GMRES_HEADER
+#define nalu_hypre_KRYLOV_GMRES_HEADER
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
@@ -379,7 +379,7 @@ extern "C" {
  *--------------------------------------------------------------------------*/
 
 /*--------------------------------------------------------------------------
- * hypre_GMRESData and hypre_GMRESFunctions
+ * nalu_hypre_GMRESData and nalu_hypre_GMRESFunctions
  *--------------------------------------------------------------------------*/
 
 /**
@@ -415,7 +415,7 @@ typedef struct
    NALU_HYPRE_Int    (*precond)       (void *vdata, void *A, void *b, void *x);
    NALU_HYPRE_Int    (*precond_setup) (void *vdata, void *A, void *b, void *x);
 
-} hypre_GMRESFunctions;
+} nalu_hypre_GMRESFunctions;
 
 /**
  * The {\tt hypre\_GMRESData} object ...
@@ -445,7 +445,7 @@ typedef struct
    void    *matvec_data;
    void    *precond_data;
 
-   hypre_GMRESFunctions * functions;
+   nalu_hypre_GMRESFunctions * functions;
 
    /* log info (always logged) */
    NALU_HYPRE_Int      num_iterations;
@@ -455,9 +455,9 @@ typedef struct
    NALU_HYPRE_Real  *norms;
    char    *log_file_name;
 
-} hypre_GMRESData;
+} nalu_hypre_GMRESData;
 
-#define hypre_GMRESDataHybrid(pcgdata)  ((pcgdata) -> hybrid)
+#define nalu_hypre_GMRESDataHybrid(pcgdata)  ((pcgdata) -> hybrid)
 
 #ifdef __cplusplus
 extern "C" {
@@ -476,8 +476,8 @@ extern "C" {
     * @param param [IN] ...
     **/
 
-   hypre_GMRESFunctions *
-   hypre_GMRESFunctionsCreate(
+   nalu_hypre_GMRESFunctions *
+   nalu_hypre_GMRESFunctionsCreate(
       void *       (*CAlloc)        ( size_t count, size_t elt_size, NALU_HYPRE_MemoryLocation location ),
       NALU_HYPRE_Int    (*Free)          ( void *ptr ),
       NALU_HYPRE_Int    (*CommInfo)      ( void  *A, NALU_HYPRE_Int   *my_id,
@@ -505,7 +505,7 @@ extern "C" {
     **/
 
    void *
-   hypre_GMRESCreate( hypre_GMRESFunctions *gmres_functions );
+   nalu_hypre_GMRESCreate( nalu_hypre_GMRESFunctions *gmres_functions );
 
 #ifdef __cplusplus
 }
@@ -519,8 +519,8 @@ extern "C" {
  *
  *****************************************************************************/
 
-#ifndef hypre_KRYLOV_COGMRES_HEADER
-#define hypre_KRYLOV_COGMRES_HEADER
+#ifndef nalu_hypre_KRYLOV_COGMRES_HEADER
+#define nalu_hypre_KRYLOV_COGMRES_HEADER
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
@@ -540,7 +540,7 @@ extern "C" {
  *--------------------------------------------------------------------------*/
 
 /*--------------------------------------------------------------------------
- * hypre_COGMRESData and hypre_COGMRESFunctions
+ * nalu_hypre_COGMRESData and nalu_hypre_COGMRESFunctions
  *--------------------------------------------------------------------------*/
 
 /**
@@ -583,7 +583,7 @@ typedef struct
    NALU_HYPRE_Int    (*modify_pc)( void *precond_data, NALU_HYPRE_Int iteration, NALU_HYPRE_Real rel_residual_norm);
 
 
-} hypre_COGMRESFunctions;
+} nalu_hypre_COGMRESFunctions;
 
 /**
  * The {\tt hypre\_GMRESData} object ...
@@ -614,7 +614,7 @@ typedef struct
    void    *matvec_data;
    void    *precond_data;
 
-   hypre_COGMRESFunctions * functions;
+   nalu_hypre_COGMRESFunctions * functions;
 
    /* log info (always logged) */
    NALU_HYPRE_Int      num_iterations;
@@ -624,7 +624,7 @@ typedef struct
    NALU_HYPRE_Real  *norms;
    char    *log_file_name;
 
-} hypre_COGMRESData;
+} nalu_hypre_COGMRESData;
 
 #ifdef __cplusplus
 extern "C" {
@@ -643,8 +643,8 @@ extern "C" {
     * @param param [IN] ...
     **/
 
-   hypre_COGMRESFunctions *
-   hypre_COGMRESFunctionsCreate(
+   nalu_hypre_COGMRESFunctions *
+   nalu_hypre_COGMRESFunctionsCreate(
       void *       (*CAlloc)        ( size_t count, size_t elt_size, NALU_HYPRE_MemoryLocation location ),
       NALU_HYPRE_Int    (*Free)          ( void *ptr ),
       NALU_HYPRE_Int    (*CommInfo)      ( void  *A, NALU_HYPRE_Int   *my_id,
@@ -677,7 +677,7 @@ extern "C" {
     **/
 
    void *
-   hypre_COGMRESCreate( hypre_COGMRESFunctions *gmres_functions );
+   nalu_hypre_COGMRESCreate( nalu_hypre_COGMRESFunctions *gmres_functions );
 
 #ifdef __cplusplus
 }
@@ -696,8 +696,8 @@ extern "C" {
  *
  *****************************************************************************/
 
-#ifndef hypre_KRYLOV_LGMRES_HEADER
-#define hypre_KRYLOV_LGMRES_HEADER
+#ifndef nalu_hypre_KRYLOV_LGMRES_HEADER
+#define nalu_hypre_KRYLOV_LGMRES_HEADER
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
@@ -714,7 +714,7 @@ extern "C" {
  *--------------------------------------------------------------------------*/
 
 /*--------------------------------------------------------------------------
- * hypre_LGMRESData and hypre_LGMRESFunctions
+ * nalu_hypre_LGMRESData and nalu_hypre_LGMRESFunctions
  *--------------------------------------------------------------------------*/
 
 /**
@@ -750,7 +750,7 @@ typedef struct
    NALU_HYPRE_Int    (*precond)       (void *vdata, void *A, void *b, void *x);
    NALU_HYPRE_Int    (*precond_setup) (void *vdata, void *A, void *b, void *x);
 
-} hypre_LGMRESFunctions;
+} nalu_hypre_LGMRESFunctions;
 
 /**
  * The {\tt hypre\_LGMRESData} object ...
@@ -786,7 +786,7 @@ typedef struct
    void    *matvec_data;
    void    *precond_data;
 
-   hypre_LGMRESFunctions * functions;
+   nalu_hypre_LGMRESFunctions * functions;
 
    /* log info (always logged) */
    NALU_HYPRE_Int      num_iterations;
@@ -796,7 +796,7 @@ typedef struct
    NALU_HYPRE_Real  *norms;
    char    *log_file_name;
 
-} hypre_LGMRESData;
+} nalu_hypre_LGMRESData;
 
 #ifdef __cplusplus
 extern "C" {
@@ -815,8 +815,8 @@ extern "C" {
     * @param param [IN] ...
     **/
 
-   hypre_LGMRESFunctions *
-   hypre_LGMRESFunctionsCreate(
+   nalu_hypre_LGMRESFunctions *
+   nalu_hypre_LGMRESFunctionsCreate(
       void *       (*CAlloc)        ( size_t count, size_t elt_size, NALU_HYPRE_MemoryLocation location),
       NALU_HYPRE_Int    (*Free)          ( void *ptr ),
       NALU_HYPRE_Int    (*CommInfo)      ( void  *A, NALU_HYPRE_Int   *my_id,
@@ -844,7 +844,7 @@ extern "C" {
     **/
 
    void *
-   hypre_LGMRESCreate( hypre_LGMRESFunctions *lgmres_functions );
+   nalu_hypre_LGMRESCreate( nalu_hypre_LGMRESFunctions *lgmres_functions );
 
 #ifdef __cplusplus
 }
@@ -857,8 +857,8 @@ extern "C" {
  *
  *****************************************************************************/
 
-#ifndef hypre_KRYLOV_FLEXGMRES_HEADER
-#define hypre_KRYLOV_FLEXGMRES_HEADER
+#ifndef nalu_hypre_KRYLOV_FLEXGMRES_HEADER
+#define nalu_hypre_KRYLOV_FLEXGMRES_HEADER
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
@@ -875,7 +875,7 @@ extern "C" {
  *--------------------------------------------------------------------------*/
 
 /*--------------------------------------------------------------------------
- * hypre_FlexGMRESData and hypre_FlexGMRESFunctions
+ * nalu_hypre_FlexGMRESData and nalu_hypre_FlexGMRESFunctions
  *--------------------------------------------------------------------------*/
 
 /**
@@ -913,7 +913,7 @@ typedef struct
 
    NALU_HYPRE_Int    (*modify_pc)( void *precond_data, NALU_HYPRE_Int iteration, NALU_HYPRE_Real rel_residual_norm);
 
-} hypre_FlexGMRESFunctions;
+} nalu_hypre_FlexGMRESFunctions;
 
 /**
  * The {\tt hypre\_FlexGMRESData} object ...
@@ -943,7 +943,7 @@ typedef struct
    void    *matvec_data;
    void    *precond_data;
 
-   hypre_FlexGMRESFunctions * functions;
+   nalu_hypre_FlexGMRESFunctions * functions;
 
    /* log info (always logged) */
    NALU_HYPRE_Int      num_iterations;
@@ -953,7 +953,7 @@ typedef struct
    NALU_HYPRE_Real  *norms;
    char    *log_file_name;
 
-} hypre_FlexGMRESData;
+} nalu_hypre_FlexGMRESData;
 
 #ifdef __cplusplus
 extern "C" {
@@ -972,8 +972,8 @@ extern "C" {
     * @param param [IN] ...
     **/
 
-   hypre_FlexGMRESFunctions *
-   hypre_FlexGMRESFunctionsCreate(
+   nalu_hypre_FlexGMRESFunctions *
+   nalu_hypre_FlexGMRESFunctionsCreate(
       void *       (*CAlloc)        ( size_t count, size_t elt_size, NALU_HYPRE_MemoryLocation location ),
       NALU_HYPRE_Int    (*Free)          ( void *ptr ),
       NALU_HYPRE_Int    (*CommInfo)      ( void  *A, NALU_HYPRE_Int   *my_id,
@@ -1001,7 +1001,7 @@ extern "C" {
     **/
 
    void *
-   hypre_FlexGMRESCreate( hypre_FlexGMRESFunctions *fgmres_functions );
+   nalu_hypre_FlexGMRESCreate( nalu_hypre_FlexGMRESFunctions *fgmres_functions );
 
 #ifdef __cplusplus
 }
@@ -1014,8 +1014,8 @@ extern "C" {
  *
  *****************************************************************************/
 
-#ifndef hypre_KRYLOV_PCG_HEADER
-#define hypre_KRYLOV_PCG_HEADER
+#ifndef nalu_hypre_KRYLOV_PCG_HEADER
+#define nalu_hypre_KRYLOV_PCG_HEADER
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
@@ -1035,7 +1035,7 @@ extern "C" {
  *--------------------------------------------------------------------------*/
 
 /*--------------------------------------------------------------------------
- * hypre_PCGData and hypre_PCGFunctions
+ * nalu_hypre_PCGData and nalu_hypre_PCGFunctions
  *--------------------------------------------------------------------------*/
 
 /**
@@ -1070,7 +1070,7 @@ typedef struct
    NALU_HYPRE_Int    (*precond)(void *vdata, void *A, void *b, void *x);
    NALU_HYPRE_Int    (*precond_setup)(void *vdata, void *A, void *b, void *x);
 
-} hypre_PCGFunctions;
+} nalu_hypre_PCGFunctions;
 
 /**
  * The {\tt hypre\_PCGData} object ...
@@ -1133,7 +1133,7 @@ typedef struct
    void    *matvec_data;
    void    *precond_data;
 
-   hypre_PCGFunctions * functions;
+   nalu_hypre_PCGFunctions * functions;
 
    /* log info (always logged) */
    NALU_HYPRE_Int      num_iterations;
@@ -1144,10 +1144,10 @@ typedef struct
    NALU_HYPRE_Real  *norms;
    NALU_HYPRE_Real  *rel_norms;
 
-} hypre_PCGData;
+} nalu_hypre_PCGData;
 
-#define hypre_PCGDataOwnsMatvecData(pcgdata)  ((pcgdata) -> owns_matvec_data)
-#define hypre_PCGDataHybrid(pcgdata)  ((pcgdata) -> hybrid)
+#define nalu_hypre_PCGDataOwnsMatvecData(pcgdata)  ((pcgdata) -> owns_matvec_data)
+#define nalu_hypre_PCGDataHybrid(pcgdata)  ((pcgdata) -> hybrid)
 
 #ifdef __cplusplus
 extern "C" {
@@ -1166,8 +1166,8 @@ extern "C" {
     * @param param [IN] ...
     **/
 
-   hypre_PCGFunctions *
-   hypre_PCGFunctionsCreate(
+   nalu_hypre_PCGFunctions *
+   nalu_hypre_PCGFunctionsCreate(
       void *       (*CAlloc)        ( size_t count, size_t elt_size, NALU_HYPRE_MemoryLocation location ),
       NALU_HYPRE_Int    (*Free)          ( void *ptr ),
       NALU_HYPRE_Int    (*CommInfo)      ( void  *A, NALU_HYPRE_Int   *my_id,
@@ -1194,7 +1194,7 @@ extern "C" {
     **/
 
    void *
-   hypre_PCGCreate( hypre_PCGFunctions *pcg_functions );
+   nalu_hypre_PCGCreate( nalu_hypre_PCGFunctions *pcg_functions );
 
 #ifdef __cplusplus
 }
@@ -1203,196 +1203,196 @@ extern "C" {
 #endif
 
 /* bicgstab.c */
-void *hypre_BiCGSTABCreate ( hypre_BiCGSTABFunctions *bicgstab_functions );
-NALU_HYPRE_Int hypre_BiCGSTABDestroy ( void *bicgstab_vdata );
-NALU_HYPRE_Int hypre_BiCGSTABSetup ( void *bicgstab_vdata, void *A, void *b, void *x );
-NALU_HYPRE_Int hypre_BiCGSTABSolve ( void *bicgstab_vdata, void *A, void *b, void *x );
-NALU_HYPRE_Int hypre_BiCGSTABSetTol ( void *bicgstab_vdata, NALU_HYPRE_Real tol );
-NALU_HYPRE_Int hypre_BiCGSTABSetAbsoluteTol ( void *bicgstab_vdata, NALU_HYPRE_Real a_tol );
-NALU_HYPRE_Int hypre_BiCGSTABSetConvergenceFactorTol ( void *bicgstab_vdata, NALU_HYPRE_Real cf_tol );
-NALU_HYPRE_Int hypre_BiCGSTABSetMinIter ( void *bicgstab_vdata, NALU_HYPRE_Int min_iter );
-NALU_HYPRE_Int hypre_BiCGSTABSetMaxIter ( void *bicgstab_vdata, NALU_HYPRE_Int max_iter );
-NALU_HYPRE_Int hypre_BiCGSTABSetStopCrit ( void *bicgstab_vdata, NALU_HYPRE_Int stop_crit );
-NALU_HYPRE_Int hypre_BiCGSTABSetPrecond ( void *bicgstab_vdata, NALU_HYPRE_Int (*precond )(void*, void*,
+void *nalu_hypre_BiCGSTABCreate ( nalu_hypre_BiCGSTABFunctions *bicgstab_functions );
+NALU_HYPRE_Int nalu_hypre_BiCGSTABDestroy ( void *bicgstab_vdata );
+NALU_HYPRE_Int nalu_hypre_BiCGSTABSetup ( void *bicgstab_vdata, void *A, void *b, void *x );
+NALU_HYPRE_Int nalu_hypre_BiCGSTABSolve ( void *bicgstab_vdata, void *A, void *b, void *x );
+NALU_HYPRE_Int nalu_hypre_BiCGSTABSetTol ( void *bicgstab_vdata, NALU_HYPRE_Real tol );
+NALU_HYPRE_Int nalu_hypre_BiCGSTABSetAbsoluteTol ( void *bicgstab_vdata, NALU_HYPRE_Real a_tol );
+NALU_HYPRE_Int nalu_hypre_BiCGSTABSetConvergenceFactorTol ( void *bicgstab_vdata, NALU_HYPRE_Real cf_tol );
+NALU_HYPRE_Int nalu_hypre_BiCGSTABSetMinIter ( void *bicgstab_vdata, NALU_HYPRE_Int min_iter );
+NALU_HYPRE_Int nalu_hypre_BiCGSTABSetMaxIter ( void *bicgstab_vdata, NALU_HYPRE_Int max_iter );
+NALU_HYPRE_Int nalu_hypre_BiCGSTABSetStopCrit ( void *bicgstab_vdata, NALU_HYPRE_Int stop_crit );
+NALU_HYPRE_Int nalu_hypre_BiCGSTABSetPrecond ( void *bicgstab_vdata, NALU_HYPRE_Int (*precond )(void*, void*,
                                                                                  void*,
                                                                                  void*), NALU_HYPRE_Int (*precond_setup )(void*, void*, void*, void*), void *precond_data );
-NALU_HYPRE_Int hypre_BiCGSTABGetPrecond ( void *bicgstab_vdata, NALU_HYPRE_Solver *precond_data_ptr );
-NALU_HYPRE_Int hypre_BiCGSTABSetLogging ( void *bicgstab_vdata, NALU_HYPRE_Int logging );
-NALU_HYPRE_Int hypre_BiCGSTABSetHybrid ( void *bicgstab_vdata, NALU_HYPRE_Int logging );
-NALU_HYPRE_Int hypre_BiCGSTABSetPrintLevel ( void *bicgstab_vdata, NALU_HYPRE_Int print_level );
-NALU_HYPRE_Int hypre_BiCGSTABGetConverged ( void *bicgstab_vdata, NALU_HYPRE_Int *converged );
-NALU_HYPRE_Int hypre_BiCGSTABGetNumIterations ( void *bicgstab_vdata, NALU_HYPRE_Int *num_iterations );
-NALU_HYPRE_Int hypre_BiCGSTABGetFinalRelativeResidualNorm ( void *bicgstab_vdata,
+NALU_HYPRE_Int nalu_hypre_BiCGSTABGetPrecond ( void *bicgstab_vdata, NALU_HYPRE_Solver *precond_data_ptr );
+NALU_HYPRE_Int nalu_hypre_BiCGSTABSetLogging ( void *bicgstab_vdata, NALU_HYPRE_Int logging );
+NALU_HYPRE_Int nalu_hypre_BiCGSTABSetHybrid ( void *bicgstab_vdata, NALU_HYPRE_Int logging );
+NALU_HYPRE_Int nalu_hypre_BiCGSTABSetPrintLevel ( void *bicgstab_vdata, NALU_HYPRE_Int print_level );
+NALU_HYPRE_Int nalu_hypre_BiCGSTABGetConverged ( void *bicgstab_vdata, NALU_HYPRE_Int *converged );
+NALU_HYPRE_Int nalu_hypre_BiCGSTABGetNumIterations ( void *bicgstab_vdata, NALU_HYPRE_Int *num_iterations );
+NALU_HYPRE_Int nalu_hypre_BiCGSTABGetFinalRelativeResidualNorm ( void *bicgstab_vdata,
                                                        NALU_HYPRE_Real *relative_residual_norm );
-NALU_HYPRE_Int hypre_BiCGSTABGetResidual ( void *bicgstab_vdata, void **residual );
+NALU_HYPRE_Int nalu_hypre_BiCGSTABGetResidual ( void *bicgstab_vdata, void **residual );
 
 /* cgnr.c */
-void *hypre_CGNRCreate ( hypre_CGNRFunctions *cgnr_functions );
-NALU_HYPRE_Int hypre_CGNRDestroy ( void *cgnr_vdata );
-NALU_HYPRE_Int hypre_CGNRSetup ( void *cgnr_vdata, void *A, void *b, void *x );
-NALU_HYPRE_Int hypre_CGNRSolve ( void *cgnr_vdata, void *A, void *b, void *x );
-NALU_HYPRE_Int hypre_CGNRSetTol ( void *cgnr_vdata, NALU_HYPRE_Real tol );
-NALU_HYPRE_Int hypre_CGNRSetMinIter ( void *cgnr_vdata, NALU_HYPRE_Int min_iter );
-NALU_HYPRE_Int hypre_CGNRSetMaxIter ( void *cgnr_vdata, NALU_HYPRE_Int max_iter );
-NALU_HYPRE_Int hypre_CGNRSetStopCrit ( void *cgnr_vdata, NALU_HYPRE_Int stop_crit );
-NALU_HYPRE_Int hypre_CGNRSetPrecond ( void *cgnr_vdata, NALU_HYPRE_Int (*precond )(void*, void*, void*,
+void *nalu_hypre_CGNRCreate ( nalu_hypre_CGNRFunctions *cgnr_functions );
+NALU_HYPRE_Int nalu_hypre_CGNRDestroy ( void *cgnr_vdata );
+NALU_HYPRE_Int nalu_hypre_CGNRSetup ( void *cgnr_vdata, void *A, void *b, void *x );
+NALU_HYPRE_Int nalu_hypre_CGNRSolve ( void *cgnr_vdata, void *A, void *b, void *x );
+NALU_HYPRE_Int nalu_hypre_CGNRSetTol ( void *cgnr_vdata, NALU_HYPRE_Real tol );
+NALU_HYPRE_Int nalu_hypre_CGNRSetMinIter ( void *cgnr_vdata, NALU_HYPRE_Int min_iter );
+NALU_HYPRE_Int nalu_hypre_CGNRSetMaxIter ( void *cgnr_vdata, NALU_HYPRE_Int max_iter );
+NALU_HYPRE_Int nalu_hypre_CGNRSetStopCrit ( void *cgnr_vdata, NALU_HYPRE_Int stop_crit );
+NALU_HYPRE_Int nalu_hypre_CGNRSetPrecond ( void *cgnr_vdata, NALU_HYPRE_Int (*precond )(void*, void*, void*,
                                                                          void*),
                                  NALU_HYPRE_Int (*precondT )(void*, void*, void*, void*), NALU_HYPRE_Int (*precond_setup )(void*, void*, void*,
                                        void*), void *precond_data );
-NALU_HYPRE_Int hypre_CGNRGetPrecond ( void *cgnr_vdata, NALU_HYPRE_Solver *precond_data_ptr );
-NALU_HYPRE_Int hypre_CGNRSetLogging ( void *cgnr_vdata, NALU_HYPRE_Int logging );
-NALU_HYPRE_Int hypre_CGNRGetNumIterations ( void *cgnr_vdata, NALU_HYPRE_Int *num_iterations );
-NALU_HYPRE_Int hypre_CGNRGetFinalRelativeResidualNorm ( void *cgnr_vdata,
+NALU_HYPRE_Int nalu_hypre_CGNRGetPrecond ( void *cgnr_vdata, NALU_HYPRE_Solver *precond_data_ptr );
+NALU_HYPRE_Int nalu_hypre_CGNRSetLogging ( void *cgnr_vdata, NALU_HYPRE_Int logging );
+NALU_HYPRE_Int nalu_hypre_CGNRGetNumIterations ( void *cgnr_vdata, NALU_HYPRE_Int *num_iterations );
+NALU_HYPRE_Int nalu_hypre_CGNRGetFinalRelativeResidualNorm ( void *cgnr_vdata,
                                                    NALU_HYPRE_Real *relative_residual_norm );
 
 /* gmres.c */
-void *hypre_GMRESCreate ( hypre_GMRESFunctions *gmres_functions );
-NALU_HYPRE_Int hypre_GMRESDestroy ( void *gmres_vdata );
-NALU_HYPRE_Int hypre_GMRESGetResidual ( void *gmres_vdata, void **residual );
-NALU_HYPRE_Int hypre_GMRESSetup ( void *gmres_vdata, void *A, void *b, void *x );
-NALU_HYPRE_Int hypre_GMRESSolve ( void *gmres_vdata, void *A, void *b, void *x );
-NALU_HYPRE_Int hypre_GMRESSetKDim ( void *gmres_vdata, NALU_HYPRE_Int k_dim );
-NALU_HYPRE_Int hypre_GMRESGetKDim ( void *gmres_vdata, NALU_HYPRE_Int *k_dim );
-NALU_HYPRE_Int hypre_GMRESSetTol ( void *gmres_vdata, NALU_HYPRE_Real tol );
-NALU_HYPRE_Int hypre_GMRESGetTol ( void *gmres_vdata, NALU_HYPRE_Real *tol );
-NALU_HYPRE_Int hypre_GMRESSetAbsoluteTol ( void *gmres_vdata, NALU_HYPRE_Real a_tol );
-NALU_HYPRE_Int hypre_GMRESGetAbsoluteTol ( void *gmres_vdata, NALU_HYPRE_Real *a_tol );
-NALU_HYPRE_Int hypre_GMRESSetConvergenceFactorTol ( void *gmres_vdata, NALU_HYPRE_Real cf_tol );
-NALU_HYPRE_Int hypre_GMRESGetConvergenceFactorTol ( void *gmres_vdata, NALU_HYPRE_Real *cf_tol );
-NALU_HYPRE_Int hypre_GMRESSetMinIter ( void *gmres_vdata, NALU_HYPRE_Int min_iter );
-NALU_HYPRE_Int hypre_GMRESGetMinIter ( void *gmres_vdata, NALU_HYPRE_Int *min_iter );
-NALU_HYPRE_Int hypre_GMRESSetMaxIter ( void *gmres_vdata, NALU_HYPRE_Int max_iter );
-NALU_HYPRE_Int hypre_GMRESGetMaxIter ( void *gmres_vdata, NALU_HYPRE_Int *max_iter );
-NALU_HYPRE_Int hypre_GMRESSetRelChange ( void *gmres_vdata, NALU_HYPRE_Int rel_change );
-NALU_HYPRE_Int hypre_GMRESGetRelChange ( void *gmres_vdata, NALU_HYPRE_Int *rel_change );
-NALU_HYPRE_Int hypre_GMRESSetSkipRealResidualCheck ( void *gmres_vdata, NALU_HYPRE_Int skip_real_r_check );
-NALU_HYPRE_Int hypre_GMRESGetSkipRealResidualCheck ( void *gmres_vdata, NALU_HYPRE_Int *skip_real_r_check );
-NALU_HYPRE_Int hypre_GMRESSetStopCrit ( void *gmres_vdata, NALU_HYPRE_Int stop_crit );
-NALU_HYPRE_Int hypre_GMRESGetStopCrit ( void *gmres_vdata, NALU_HYPRE_Int *stop_crit );
-NALU_HYPRE_Int hypre_GMRESSetPrecond ( void *gmres_vdata, NALU_HYPRE_Int (*precond )(void*, void*, void*,
+void *nalu_hypre_GMRESCreate ( nalu_hypre_GMRESFunctions *gmres_functions );
+NALU_HYPRE_Int nalu_hypre_GMRESDestroy ( void *gmres_vdata );
+NALU_HYPRE_Int nalu_hypre_GMRESGetResidual ( void *gmres_vdata, void **residual );
+NALU_HYPRE_Int nalu_hypre_GMRESSetup ( void *gmres_vdata, void *A, void *b, void *x );
+NALU_HYPRE_Int nalu_hypre_GMRESSolve ( void *gmres_vdata, void *A, void *b, void *x );
+NALU_HYPRE_Int nalu_hypre_GMRESSetKDim ( void *gmres_vdata, NALU_HYPRE_Int k_dim );
+NALU_HYPRE_Int nalu_hypre_GMRESGetKDim ( void *gmres_vdata, NALU_HYPRE_Int *k_dim );
+NALU_HYPRE_Int nalu_hypre_GMRESSetTol ( void *gmres_vdata, NALU_HYPRE_Real tol );
+NALU_HYPRE_Int nalu_hypre_GMRESGetTol ( void *gmres_vdata, NALU_HYPRE_Real *tol );
+NALU_HYPRE_Int nalu_hypre_GMRESSetAbsoluteTol ( void *gmres_vdata, NALU_HYPRE_Real a_tol );
+NALU_HYPRE_Int nalu_hypre_GMRESGetAbsoluteTol ( void *gmres_vdata, NALU_HYPRE_Real *a_tol );
+NALU_HYPRE_Int nalu_hypre_GMRESSetConvergenceFactorTol ( void *gmres_vdata, NALU_HYPRE_Real cf_tol );
+NALU_HYPRE_Int nalu_hypre_GMRESGetConvergenceFactorTol ( void *gmres_vdata, NALU_HYPRE_Real *cf_tol );
+NALU_HYPRE_Int nalu_hypre_GMRESSetMinIter ( void *gmres_vdata, NALU_HYPRE_Int min_iter );
+NALU_HYPRE_Int nalu_hypre_GMRESGetMinIter ( void *gmres_vdata, NALU_HYPRE_Int *min_iter );
+NALU_HYPRE_Int nalu_hypre_GMRESSetMaxIter ( void *gmres_vdata, NALU_HYPRE_Int max_iter );
+NALU_HYPRE_Int nalu_hypre_GMRESGetMaxIter ( void *gmres_vdata, NALU_HYPRE_Int *max_iter );
+NALU_HYPRE_Int nalu_hypre_GMRESSetRelChange ( void *gmres_vdata, NALU_HYPRE_Int rel_change );
+NALU_HYPRE_Int nalu_hypre_GMRESGetRelChange ( void *gmres_vdata, NALU_HYPRE_Int *rel_change );
+NALU_HYPRE_Int nalu_hypre_GMRESSetSkipRealResidualCheck ( void *gmres_vdata, NALU_HYPRE_Int skip_real_r_check );
+NALU_HYPRE_Int nalu_hypre_GMRESGetSkipRealResidualCheck ( void *gmres_vdata, NALU_HYPRE_Int *skip_real_r_check );
+NALU_HYPRE_Int nalu_hypre_GMRESSetStopCrit ( void *gmres_vdata, NALU_HYPRE_Int stop_crit );
+NALU_HYPRE_Int nalu_hypre_GMRESGetStopCrit ( void *gmres_vdata, NALU_HYPRE_Int *stop_crit );
+NALU_HYPRE_Int nalu_hypre_GMRESSetPrecond ( void *gmres_vdata, NALU_HYPRE_Int (*precond )(void*, void*, void*,
                                                                            void*),
                                   NALU_HYPRE_Int (*precond_setup )(void*, void*, void*, void*), void *precond_data );
-NALU_HYPRE_Int hypre_GMRESGetPrecond ( void *gmres_vdata, NALU_HYPRE_Solver *precond_data_ptr );
-NALU_HYPRE_Int hypre_GMRESSetPrintLevel ( void *gmres_vdata, NALU_HYPRE_Int level );
-NALU_HYPRE_Int hypre_GMRESGetPrintLevel ( void *gmres_vdata, NALU_HYPRE_Int *level );
-NALU_HYPRE_Int hypre_GMRESSetLogging ( void *gmres_vdata, NALU_HYPRE_Int level );
-NALU_HYPRE_Int hypre_GMRESGetLogging ( void *gmres_vdata, NALU_HYPRE_Int *level );
-NALU_HYPRE_Int hypre_GMRESSetHybrid ( void *gmres_vdata, NALU_HYPRE_Int level );
-NALU_HYPRE_Int hypre_GMRESGetNumIterations ( void *gmres_vdata, NALU_HYPRE_Int *num_iterations );
-NALU_HYPRE_Int hypre_GMRESGetConverged ( void *gmres_vdata, NALU_HYPRE_Int *converged );
-NALU_HYPRE_Int hypre_GMRESGetFinalRelativeResidualNorm ( void *gmres_vdata,
+NALU_HYPRE_Int nalu_hypre_GMRESGetPrecond ( void *gmres_vdata, NALU_HYPRE_Solver *precond_data_ptr );
+NALU_HYPRE_Int nalu_hypre_GMRESSetPrintLevel ( void *gmres_vdata, NALU_HYPRE_Int level );
+NALU_HYPRE_Int nalu_hypre_GMRESGetPrintLevel ( void *gmres_vdata, NALU_HYPRE_Int *level );
+NALU_HYPRE_Int nalu_hypre_GMRESSetLogging ( void *gmres_vdata, NALU_HYPRE_Int level );
+NALU_HYPRE_Int nalu_hypre_GMRESGetLogging ( void *gmres_vdata, NALU_HYPRE_Int *level );
+NALU_HYPRE_Int nalu_hypre_GMRESSetHybrid ( void *gmres_vdata, NALU_HYPRE_Int level );
+NALU_HYPRE_Int nalu_hypre_GMRESGetNumIterations ( void *gmres_vdata, NALU_HYPRE_Int *num_iterations );
+NALU_HYPRE_Int nalu_hypre_GMRESGetConverged ( void *gmres_vdata, NALU_HYPRE_Int *converged );
+NALU_HYPRE_Int nalu_hypre_GMRESGetFinalRelativeResidualNorm ( void *gmres_vdata,
                                                     NALU_HYPRE_Real *relative_residual_norm );
 
 /* cogmres.c */
-void *hypre_COGMRESCreate ( hypre_COGMRESFunctions *gmres_functions );
-NALU_HYPRE_Int hypre_COGMRESDestroy ( void *gmres_vdata );
-NALU_HYPRE_Int hypre_COGMRESGetResidual ( void *gmres_vdata, void **residual );
-NALU_HYPRE_Int hypre_COGMRESSetup ( void *gmres_vdata, void *A, void *b, void *x );
-NALU_HYPRE_Int hypre_COGMRESSolve ( void *gmres_vdata, void *A, void *b, void *x );
-NALU_HYPRE_Int hypre_COGMRESSetKDim ( void *gmres_vdata, NALU_HYPRE_Int k_dim );
-NALU_HYPRE_Int hypre_COGMRESGetKDim ( void *gmres_vdata, NALU_HYPRE_Int *k_dim );
-NALU_HYPRE_Int hypre_COGMRESSetUnroll ( void *gmres_vdata, NALU_HYPRE_Int unroll );
-NALU_HYPRE_Int hypre_COGMRESGetUnroll ( void *gmres_vdata, NALU_HYPRE_Int *unroll );
-NALU_HYPRE_Int hypre_COGMRESSetCGS ( void *gmres_vdata, NALU_HYPRE_Int cgs );
-NALU_HYPRE_Int hypre_COGMRESGetCGS ( void *gmres_vdata, NALU_HYPRE_Int *cgs );
-NALU_HYPRE_Int hypre_COGMRESSetTol ( void *gmres_vdata, NALU_HYPRE_Real tol );
-NALU_HYPRE_Int hypre_COGMRESGetTol ( void *gmres_vdata, NALU_HYPRE_Real *tol );
-NALU_HYPRE_Int hypre_COGMRESSetAbsoluteTol ( void *gmres_vdata, NALU_HYPRE_Real a_tol );
-NALU_HYPRE_Int hypre_COGMRESGetAbsoluteTol ( void *gmres_vdata, NALU_HYPRE_Real *a_tol );
-NALU_HYPRE_Int hypre_COGMRESSetConvergenceFactorTol ( void *gmres_vdata, NALU_HYPRE_Real cf_tol );
-NALU_HYPRE_Int hypre_COGMRESGetConvergenceFactorTol ( void *gmres_vdata, NALU_HYPRE_Real *cf_tol );
-NALU_HYPRE_Int hypre_COGMRESSetMinIter ( void *gmres_vdata, NALU_HYPRE_Int min_iter );
-NALU_HYPRE_Int hypre_COGMRESGetMinIter ( void *gmres_vdata, NALU_HYPRE_Int *min_iter );
-NALU_HYPRE_Int hypre_COGMRESSetMaxIter ( void *gmres_vdata, NALU_HYPRE_Int max_iter );
-NALU_HYPRE_Int hypre_COGMRESGetMaxIter ( void *gmres_vdata, NALU_HYPRE_Int *max_iter );
-NALU_HYPRE_Int hypre_COGMRESSetRelChange ( void *gmres_vdata, NALU_HYPRE_Int rel_change );
-NALU_HYPRE_Int hypre_COGMRESGetRelChange ( void *gmres_vdata, NALU_HYPRE_Int *rel_change );
-NALU_HYPRE_Int hypre_COGMRESSetSkipRealResidualCheck ( void *gmres_vdata, NALU_HYPRE_Int skip_real_r_check );
-NALU_HYPRE_Int hypre_COGMRESGetSkipRealResidualCheck ( void *gmres_vdata, NALU_HYPRE_Int *skip_real_r_check );
-NALU_HYPRE_Int hypre_COGMRESSetPrecond ( void *gmres_vdata, NALU_HYPRE_Int (*precond )(void*, void*, void*,
+void *nalu_hypre_COGMRESCreate ( nalu_hypre_COGMRESFunctions *gmres_functions );
+NALU_HYPRE_Int nalu_hypre_COGMRESDestroy ( void *gmres_vdata );
+NALU_HYPRE_Int nalu_hypre_COGMRESGetResidual ( void *gmres_vdata, void **residual );
+NALU_HYPRE_Int nalu_hypre_COGMRESSetup ( void *gmres_vdata, void *A, void *b, void *x );
+NALU_HYPRE_Int nalu_hypre_COGMRESSolve ( void *gmres_vdata, void *A, void *b, void *x );
+NALU_HYPRE_Int nalu_hypre_COGMRESSetKDim ( void *gmres_vdata, NALU_HYPRE_Int k_dim );
+NALU_HYPRE_Int nalu_hypre_COGMRESGetKDim ( void *gmres_vdata, NALU_HYPRE_Int *k_dim );
+NALU_HYPRE_Int nalu_hypre_COGMRESSetUnroll ( void *gmres_vdata, NALU_HYPRE_Int unroll );
+NALU_HYPRE_Int nalu_hypre_COGMRESGetUnroll ( void *gmres_vdata, NALU_HYPRE_Int *unroll );
+NALU_HYPRE_Int nalu_hypre_COGMRESSetCGS ( void *gmres_vdata, NALU_HYPRE_Int cgs );
+NALU_HYPRE_Int nalu_hypre_COGMRESGetCGS ( void *gmres_vdata, NALU_HYPRE_Int *cgs );
+NALU_HYPRE_Int nalu_hypre_COGMRESSetTol ( void *gmres_vdata, NALU_HYPRE_Real tol );
+NALU_HYPRE_Int nalu_hypre_COGMRESGetTol ( void *gmres_vdata, NALU_HYPRE_Real *tol );
+NALU_HYPRE_Int nalu_hypre_COGMRESSetAbsoluteTol ( void *gmres_vdata, NALU_HYPRE_Real a_tol );
+NALU_HYPRE_Int nalu_hypre_COGMRESGetAbsoluteTol ( void *gmres_vdata, NALU_HYPRE_Real *a_tol );
+NALU_HYPRE_Int nalu_hypre_COGMRESSetConvergenceFactorTol ( void *gmres_vdata, NALU_HYPRE_Real cf_tol );
+NALU_HYPRE_Int nalu_hypre_COGMRESGetConvergenceFactorTol ( void *gmres_vdata, NALU_HYPRE_Real *cf_tol );
+NALU_HYPRE_Int nalu_hypre_COGMRESSetMinIter ( void *gmres_vdata, NALU_HYPRE_Int min_iter );
+NALU_HYPRE_Int nalu_hypre_COGMRESGetMinIter ( void *gmres_vdata, NALU_HYPRE_Int *min_iter );
+NALU_HYPRE_Int nalu_hypre_COGMRESSetMaxIter ( void *gmres_vdata, NALU_HYPRE_Int max_iter );
+NALU_HYPRE_Int nalu_hypre_COGMRESGetMaxIter ( void *gmres_vdata, NALU_HYPRE_Int *max_iter );
+NALU_HYPRE_Int nalu_hypre_COGMRESSetRelChange ( void *gmres_vdata, NALU_HYPRE_Int rel_change );
+NALU_HYPRE_Int nalu_hypre_COGMRESGetRelChange ( void *gmres_vdata, NALU_HYPRE_Int *rel_change );
+NALU_HYPRE_Int nalu_hypre_COGMRESSetSkipRealResidualCheck ( void *gmres_vdata, NALU_HYPRE_Int skip_real_r_check );
+NALU_HYPRE_Int nalu_hypre_COGMRESGetSkipRealResidualCheck ( void *gmres_vdata, NALU_HYPRE_Int *skip_real_r_check );
+NALU_HYPRE_Int nalu_hypre_COGMRESSetPrecond ( void *gmres_vdata, NALU_HYPRE_Int (*precond )(void*, void*, void*,
                                                                              void*), NALU_HYPRE_Int (*precond_setup )(void*, void*, void*, void*), void *precond_data );
-NALU_HYPRE_Int hypre_COGMRESGetPrecond ( void *gmres_vdata, NALU_HYPRE_Solver *precond_data_ptr );
-NALU_HYPRE_Int hypre_COGMRESSetPrintLevel ( void *gmres_vdata, NALU_HYPRE_Int level );
-NALU_HYPRE_Int hypre_COGMRESGetPrintLevel ( void *gmres_vdata, NALU_HYPRE_Int *level );
-NALU_HYPRE_Int hypre_COGMRESSetLogging ( void *gmres_vdata, NALU_HYPRE_Int level );
-NALU_HYPRE_Int hypre_COGMRESGetLogging ( void *gmres_vdata, NALU_HYPRE_Int *level );
-NALU_HYPRE_Int hypre_COGMRESGetNumIterations ( void *gmres_vdata, NALU_HYPRE_Int *num_iterations );
-NALU_HYPRE_Int hypre_COGMRESGetConverged ( void *gmres_vdata, NALU_HYPRE_Int *converged );
-NALU_HYPRE_Int hypre_COGMRESGetFinalRelativeResidualNorm ( void *gmres_vdata,
+NALU_HYPRE_Int nalu_hypre_COGMRESGetPrecond ( void *gmres_vdata, NALU_HYPRE_Solver *precond_data_ptr );
+NALU_HYPRE_Int nalu_hypre_COGMRESSetPrintLevel ( void *gmres_vdata, NALU_HYPRE_Int level );
+NALU_HYPRE_Int nalu_hypre_COGMRESGetPrintLevel ( void *gmres_vdata, NALU_HYPRE_Int *level );
+NALU_HYPRE_Int nalu_hypre_COGMRESSetLogging ( void *gmres_vdata, NALU_HYPRE_Int level );
+NALU_HYPRE_Int nalu_hypre_COGMRESGetLogging ( void *gmres_vdata, NALU_HYPRE_Int *level );
+NALU_HYPRE_Int nalu_hypre_COGMRESGetNumIterations ( void *gmres_vdata, NALU_HYPRE_Int *num_iterations );
+NALU_HYPRE_Int nalu_hypre_COGMRESGetConverged ( void *gmres_vdata, NALU_HYPRE_Int *converged );
+NALU_HYPRE_Int nalu_hypre_COGMRESGetFinalRelativeResidualNorm ( void *gmres_vdata,
                                                       NALU_HYPRE_Real *relative_residual_norm );
-NALU_HYPRE_Int hypre_COGMRESSetModifyPC ( void *fgmres_vdata, NALU_HYPRE_Int (*modify_pc )(void *precond_data,
+NALU_HYPRE_Int nalu_hypre_COGMRESSetModifyPC ( void *fgmres_vdata, NALU_HYPRE_Int (*modify_pc )(void *precond_data,
                                                                                  NALU_HYPRE_Int iteration, NALU_HYPRE_Real rel_residual_norm));
 
 
 
 /* flexgmres.c */
-void *hypre_FlexGMRESCreate ( hypre_FlexGMRESFunctions *fgmres_functions );
-NALU_HYPRE_Int hypre_FlexGMRESDestroy ( void *fgmres_vdata );
-NALU_HYPRE_Int hypre_FlexGMRESGetResidual ( void *fgmres_vdata, void **residual );
-NALU_HYPRE_Int hypre_FlexGMRESSetup ( void *fgmres_vdata, void *A, void *b, void *x );
-NALU_HYPRE_Int hypre_FlexGMRESSolve ( void *fgmres_vdata, void *A, void *b, void *x );
-NALU_HYPRE_Int hypre_FlexGMRESSetKDim ( void *fgmres_vdata, NALU_HYPRE_Int k_dim );
-NALU_HYPRE_Int hypre_FlexGMRESGetKDim ( void *fgmres_vdata, NALU_HYPRE_Int *k_dim );
-NALU_HYPRE_Int hypre_FlexGMRESSetTol ( void *fgmres_vdata, NALU_HYPRE_Real tol );
-NALU_HYPRE_Int hypre_FlexGMRESGetTol ( void *fgmres_vdata, NALU_HYPRE_Real *tol );
-NALU_HYPRE_Int hypre_FlexGMRESSetAbsoluteTol ( void *fgmres_vdata, NALU_HYPRE_Real a_tol );
-NALU_HYPRE_Int hypre_FlexGMRESGetAbsoluteTol ( void *fgmres_vdata, NALU_HYPRE_Real *a_tol );
-NALU_HYPRE_Int hypre_FlexGMRESSetConvergenceFactorTol ( void *fgmres_vdata, NALU_HYPRE_Real cf_tol );
-NALU_HYPRE_Int hypre_FlexGMRESGetConvergenceFactorTol ( void *fgmres_vdata, NALU_HYPRE_Real *cf_tol );
-NALU_HYPRE_Int hypre_FlexGMRESSetMinIter ( void *fgmres_vdata, NALU_HYPRE_Int min_iter );
-NALU_HYPRE_Int hypre_FlexGMRESGetMinIter ( void *fgmres_vdata, NALU_HYPRE_Int *min_iter );
-NALU_HYPRE_Int hypre_FlexGMRESSetMaxIter ( void *fgmres_vdata, NALU_HYPRE_Int max_iter );
-NALU_HYPRE_Int hypre_FlexGMRESGetMaxIter ( void *fgmres_vdata, NALU_HYPRE_Int *max_iter );
-NALU_HYPRE_Int hypre_FlexGMRESSetStopCrit ( void *fgmres_vdata, NALU_HYPRE_Int stop_crit );
-NALU_HYPRE_Int hypre_FlexGMRESGetStopCrit ( void *fgmres_vdata, NALU_HYPRE_Int *stop_crit );
-NALU_HYPRE_Int hypre_FlexGMRESSetPrecond ( void *fgmres_vdata, NALU_HYPRE_Int (*precond )(void*, void*, void*,
+void *nalu_hypre_FlexGMRESCreate ( nalu_hypre_FlexGMRESFunctions *fgmres_functions );
+NALU_HYPRE_Int nalu_hypre_FlexGMRESDestroy ( void *fgmres_vdata );
+NALU_HYPRE_Int nalu_hypre_FlexGMRESGetResidual ( void *fgmres_vdata, void **residual );
+NALU_HYPRE_Int nalu_hypre_FlexGMRESSetup ( void *fgmres_vdata, void *A, void *b, void *x );
+NALU_HYPRE_Int nalu_hypre_FlexGMRESSolve ( void *fgmres_vdata, void *A, void *b, void *x );
+NALU_HYPRE_Int nalu_hypre_FlexGMRESSetKDim ( void *fgmres_vdata, NALU_HYPRE_Int k_dim );
+NALU_HYPRE_Int nalu_hypre_FlexGMRESGetKDim ( void *fgmres_vdata, NALU_HYPRE_Int *k_dim );
+NALU_HYPRE_Int nalu_hypre_FlexGMRESSetTol ( void *fgmres_vdata, NALU_HYPRE_Real tol );
+NALU_HYPRE_Int nalu_hypre_FlexGMRESGetTol ( void *fgmres_vdata, NALU_HYPRE_Real *tol );
+NALU_HYPRE_Int nalu_hypre_FlexGMRESSetAbsoluteTol ( void *fgmres_vdata, NALU_HYPRE_Real a_tol );
+NALU_HYPRE_Int nalu_hypre_FlexGMRESGetAbsoluteTol ( void *fgmres_vdata, NALU_HYPRE_Real *a_tol );
+NALU_HYPRE_Int nalu_hypre_FlexGMRESSetConvergenceFactorTol ( void *fgmres_vdata, NALU_HYPRE_Real cf_tol );
+NALU_HYPRE_Int nalu_hypre_FlexGMRESGetConvergenceFactorTol ( void *fgmres_vdata, NALU_HYPRE_Real *cf_tol );
+NALU_HYPRE_Int nalu_hypre_FlexGMRESSetMinIter ( void *fgmres_vdata, NALU_HYPRE_Int min_iter );
+NALU_HYPRE_Int nalu_hypre_FlexGMRESGetMinIter ( void *fgmres_vdata, NALU_HYPRE_Int *min_iter );
+NALU_HYPRE_Int nalu_hypre_FlexGMRESSetMaxIter ( void *fgmres_vdata, NALU_HYPRE_Int max_iter );
+NALU_HYPRE_Int nalu_hypre_FlexGMRESGetMaxIter ( void *fgmres_vdata, NALU_HYPRE_Int *max_iter );
+NALU_HYPRE_Int nalu_hypre_FlexGMRESSetStopCrit ( void *fgmres_vdata, NALU_HYPRE_Int stop_crit );
+NALU_HYPRE_Int nalu_hypre_FlexGMRESGetStopCrit ( void *fgmres_vdata, NALU_HYPRE_Int *stop_crit );
+NALU_HYPRE_Int nalu_hypre_FlexGMRESSetPrecond ( void *fgmres_vdata, NALU_HYPRE_Int (*precond )(void*, void*, void*,
                                                                                 void*), NALU_HYPRE_Int (*precond_setup )(void*, void*, void*, void*), void *precond_data );
-NALU_HYPRE_Int hypre_FlexGMRESGetPrecond ( void *fgmres_vdata, NALU_HYPRE_Solver *precond_data_ptr );
-NALU_HYPRE_Int hypre_FlexGMRESSetPrintLevel ( void *fgmres_vdata, NALU_HYPRE_Int level );
-NALU_HYPRE_Int hypre_FlexGMRESGetPrintLevel ( void *fgmres_vdata, NALU_HYPRE_Int *level );
-NALU_HYPRE_Int hypre_FlexGMRESSetLogging ( void *fgmres_vdata, NALU_HYPRE_Int level );
-NALU_HYPRE_Int hypre_FlexGMRESGetLogging ( void *fgmres_vdata, NALU_HYPRE_Int *level );
-NALU_HYPRE_Int hypre_FlexGMRESGetNumIterations ( void *fgmres_vdata, NALU_HYPRE_Int *num_iterations );
-NALU_HYPRE_Int hypre_FlexGMRESGetConverged ( void *fgmres_vdata, NALU_HYPRE_Int *converged );
-NALU_HYPRE_Int hypre_FlexGMRESGetFinalRelativeResidualNorm ( void *fgmres_vdata,
+NALU_HYPRE_Int nalu_hypre_FlexGMRESGetPrecond ( void *fgmres_vdata, NALU_HYPRE_Solver *precond_data_ptr );
+NALU_HYPRE_Int nalu_hypre_FlexGMRESSetPrintLevel ( void *fgmres_vdata, NALU_HYPRE_Int level );
+NALU_HYPRE_Int nalu_hypre_FlexGMRESGetPrintLevel ( void *fgmres_vdata, NALU_HYPRE_Int *level );
+NALU_HYPRE_Int nalu_hypre_FlexGMRESSetLogging ( void *fgmres_vdata, NALU_HYPRE_Int level );
+NALU_HYPRE_Int nalu_hypre_FlexGMRESGetLogging ( void *fgmres_vdata, NALU_HYPRE_Int *level );
+NALU_HYPRE_Int nalu_hypre_FlexGMRESGetNumIterations ( void *fgmres_vdata, NALU_HYPRE_Int *num_iterations );
+NALU_HYPRE_Int nalu_hypre_FlexGMRESGetConverged ( void *fgmres_vdata, NALU_HYPRE_Int *converged );
+NALU_HYPRE_Int nalu_hypre_FlexGMRESGetFinalRelativeResidualNorm ( void *fgmres_vdata,
                                                         NALU_HYPRE_Real *relative_residual_norm );
-NALU_HYPRE_Int hypre_FlexGMRESSetModifyPC ( void *fgmres_vdata,
+NALU_HYPRE_Int nalu_hypre_FlexGMRESSetModifyPC ( void *fgmres_vdata,
                                        NALU_HYPRE_Int (*modify_pc )(void *precond_data, NALU_HYPRE_Int iteration, NALU_HYPRE_Real rel_residual_norm));
-NALU_HYPRE_Int hypre_FlexGMRESModifyPCDefault ( void *precond_data, NALU_HYPRE_Int iteration,
+NALU_HYPRE_Int nalu_hypre_FlexGMRESModifyPCDefault ( void *precond_data, NALU_HYPRE_Int iteration,
                                            NALU_HYPRE_Real rel_residual_norm );
 
 /* lgmres.c */
-void *hypre_LGMRESCreate ( hypre_LGMRESFunctions *lgmres_functions );
-NALU_HYPRE_Int hypre_LGMRESDestroy ( void *lgmres_vdata );
-NALU_HYPRE_Int hypre_LGMRESGetResidual ( void *lgmres_vdata, void **residual );
-NALU_HYPRE_Int hypre_LGMRESSetup ( void *lgmres_vdata, void *A, void *b, void *x );
-NALU_HYPRE_Int hypre_LGMRESSolve ( void *lgmres_vdata, void *A, void *b, void *x );
-NALU_HYPRE_Int hypre_LGMRESSetKDim ( void *lgmres_vdata, NALU_HYPRE_Int k_dim );
-NALU_HYPRE_Int hypre_LGMRESGetKDim ( void *lgmres_vdata, NALU_HYPRE_Int *k_dim );
-NALU_HYPRE_Int hypre_LGMRESSetAugDim ( void *lgmres_vdata, NALU_HYPRE_Int aug_dim );
-NALU_HYPRE_Int hypre_LGMRESGetAugDim ( void *lgmres_vdata, NALU_HYPRE_Int *aug_dim );
-NALU_HYPRE_Int hypre_LGMRESSetTol ( void *lgmres_vdata, NALU_HYPRE_Real tol );
-NALU_HYPRE_Int hypre_LGMRESGetTol ( void *lgmres_vdata, NALU_HYPRE_Real *tol );
-NALU_HYPRE_Int hypre_LGMRESSetAbsoluteTol ( void *lgmres_vdata, NALU_HYPRE_Real a_tol );
-NALU_HYPRE_Int hypre_LGMRESGetAbsoluteTol ( void *lgmres_vdata, NALU_HYPRE_Real *a_tol );
-NALU_HYPRE_Int hypre_LGMRESSetConvergenceFactorTol ( void *lgmres_vdata, NALU_HYPRE_Real cf_tol );
-NALU_HYPRE_Int hypre_LGMRESGetConvergenceFactorTol ( void *lgmres_vdata, NALU_HYPRE_Real *cf_tol );
-NALU_HYPRE_Int hypre_LGMRESSetMinIter ( void *lgmres_vdata, NALU_HYPRE_Int min_iter );
-NALU_HYPRE_Int hypre_LGMRESGetMinIter ( void *lgmres_vdata, NALU_HYPRE_Int *min_iter );
-NALU_HYPRE_Int hypre_LGMRESSetMaxIter ( void *lgmres_vdata, NALU_HYPRE_Int max_iter );
-NALU_HYPRE_Int hypre_LGMRESGetMaxIter ( void *lgmres_vdata, NALU_HYPRE_Int *max_iter );
-NALU_HYPRE_Int hypre_LGMRESSetStopCrit ( void *lgmres_vdata, NALU_HYPRE_Int stop_crit );
-NALU_HYPRE_Int hypre_LGMRESGetStopCrit ( void *lgmres_vdata, NALU_HYPRE_Int *stop_crit );
-NALU_HYPRE_Int hypre_LGMRESSetPrecond ( void *lgmres_vdata, NALU_HYPRE_Int (*precond )(void*, void*, void*,
+void *nalu_hypre_LGMRESCreate ( nalu_hypre_LGMRESFunctions *lgmres_functions );
+NALU_HYPRE_Int nalu_hypre_LGMRESDestroy ( void *lgmres_vdata );
+NALU_HYPRE_Int nalu_hypre_LGMRESGetResidual ( void *lgmres_vdata, void **residual );
+NALU_HYPRE_Int nalu_hypre_LGMRESSetup ( void *lgmres_vdata, void *A, void *b, void *x );
+NALU_HYPRE_Int nalu_hypre_LGMRESSolve ( void *lgmres_vdata, void *A, void *b, void *x );
+NALU_HYPRE_Int nalu_hypre_LGMRESSetKDim ( void *lgmres_vdata, NALU_HYPRE_Int k_dim );
+NALU_HYPRE_Int nalu_hypre_LGMRESGetKDim ( void *lgmres_vdata, NALU_HYPRE_Int *k_dim );
+NALU_HYPRE_Int nalu_hypre_LGMRESSetAugDim ( void *lgmres_vdata, NALU_HYPRE_Int aug_dim );
+NALU_HYPRE_Int nalu_hypre_LGMRESGetAugDim ( void *lgmres_vdata, NALU_HYPRE_Int *aug_dim );
+NALU_HYPRE_Int nalu_hypre_LGMRESSetTol ( void *lgmres_vdata, NALU_HYPRE_Real tol );
+NALU_HYPRE_Int nalu_hypre_LGMRESGetTol ( void *lgmres_vdata, NALU_HYPRE_Real *tol );
+NALU_HYPRE_Int nalu_hypre_LGMRESSetAbsoluteTol ( void *lgmres_vdata, NALU_HYPRE_Real a_tol );
+NALU_HYPRE_Int nalu_hypre_LGMRESGetAbsoluteTol ( void *lgmres_vdata, NALU_HYPRE_Real *a_tol );
+NALU_HYPRE_Int nalu_hypre_LGMRESSetConvergenceFactorTol ( void *lgmres_vdata, NALU_HYPRE_Real cf_tol );
+NALU_HYPRE_Int nalu_hypre_LGMRESGetConvergenceFactorTol ( void *lgmres_vdata, NALU_HYPRE_Real *cf_tol );
+NALU_HYPRE_Int nalu_hypre_LGMRESSetMinIter ( void *lgmres_vdata, NALU_HYPRE_Int min_iter );
+NALU_HYPRE_Int nalu_hypre_LGMRESGetMinIter ( void *lgmres_vdata, NALU_HYPRE_Int *min_iter );
+NALU_HYPRE_Int nalu_hypre_LGMRESSetMaxIter ( void *lgmres_vdata, NALU_HYPRE_Int max_iter );
+NALU_HYPRE_Int nalu_hypre_LGMRESGetMaxIter ( void *lgmres_vdata, NALU_HYPRE_Int *max_iter );
+NALU_HYPRE_Int nalu_hypre_LGMRESSetStopCrit ( void *lgmres_vdata, NALU_HYPRE_Int stop_crit );
+NALU_HYPRE_Int nalu_hypre_LGMRESGetStopCrit ( void *lgmres_vdata, NALU_HYPRE_Int *stop_crit );
+NALU_HYPRE_Int nalu_hypre_LGMRESSetPrecond ( void *lgmres_vdata, NALU_HYPRE_Int (*precond )(void*, void*, void*,
                                                                              void*), NALU_HYPRE_Int (*precond_setup )(void*, void*, void*, void*), void *precond_data );
-NALU_HYPRE_Int hypre_LGMRESGetPrecond ( void *lgmres_vdata, NALU_HYPRE_Solver *precond_data_ptr );
-NALU_HYPRE_Int hypre_LGMRESSetPrintLevel ( void *lgmres_vdata, NALU_HYPRE_Int level );
-NALU_HYPRE_Int hypre_LGMRESGetPrintLevel ( void *lgmres_vdata, NALU_HYPRE_Int *level );
-NALU_HYPRE_Int hypre_LGMRESSetLogging ( void *lgmres_vdata, NALU_HYPRE_Int level );
-NALU_HYPRE_Int hypre_LGMRESGetLogging ( void *lgmres_vdata, NALU_HYPRE_Int *level );
-NALU_HYPRE_Int hypre_LGMRESGetNumIterations ( void *lgmres_vdata, NALU_HYPRE_Int *num_iterations );
-NALU_HYPRE_Int hypre_LGMRESGetConverged ( void *lgmres_vdata, NALU_HYPRE_Int *converged );
-NALU_HYPRE_Int hypre_LGMRESGetFinalRelativeResidualNorm ( void *lgmres_vdata,
+NALU_HYPRE_Int nalu_hypre_LGMRESGetPrecond ( void *lgmres_vdata, NALU_HYPRE_Solver *precond_data_ptr );
+NALU_HYPRE_Int nalu_hypre_LGMRESSetPrintLevel ( void *lgmres_vdata, NALU_HYPRE_Int level );
+NALU_HYPRE_Int nalu_hypre_LGMRESGetPrintLevel ( void *lgmres_vdata, NALU_HYPRE_Int *level );
+NALU_HYPRE_Int nalu_hypre_LGMRESSetLogging ( void *lgmres_vdata, NALU_HYPRE_Int level );
+NALU_HYPRE_Int nalu_hypre_LGMRESGetLogging ( void *lgmres_vdata, NALU_HYPRE_Int *level );
+NALU_HYPRE_Int nalu_hypre_LGMRESGetNumIterations ( void *lgmres_vdata, NALU_HYPRE_Int *num_iterations );
+NALU_HYPRE_Int nalu_hypre_LGMRESGetConverged ( void *lgmres_vdata, NALU_HYPRE_Int *converged );
+NALU_HYPRE_Int nalu_hypre_LGMRESGetFinalRelativeResidualNorm ( void *lgmres_vdata,
                                                      NALU_HYPRE_Real *relative_residual_norm );
 
 /* NALU_HYPRE_bicgstab.c */
@@ -1601,45 +1601,45 @@ NALU_HYPRE_Int NALU_HYPRE_PCGGetFinalRelativeResidualNorm ( NALU_HYPRE_Solver so
 NALU_HYPRE_Int NALU_HYPRE_PCGGetResidual ( NALU_HYPRE_Solver solver, void *residual );
 
 /* pcg.c */
-void *hypre_PCGCreate ( hypre_PCGFunctions *pcg_functions );
-NALU_HYPRE_Int hypre_PCGDestroy ( void *pcg_vdata );
-NALU_HYPRE_Int hypre_PCGGetResidual ( void *pcg_vdata, void **residual );
-NALU_HYPRE_Int hypre_PCGSetup ( void *pcg_vdata, void *A, void *b, void *x );
-NALU_HYPRE_Int hypre_PCGSolve ( void *pcg_vdata, void *A, void *b, void *x );
-NALU_HYPRE_Int hypre_PCGSetTol ( void *pcg_vdata, NALU_HYPRE_Real tol );
-NALU_HYPRE_Int hypre_PCGGetTol ( void *pcg_vdata, NALU_HYPRE_Real *tol );
-NALU_HYPRE_Int hypre_PCGSetAbsoluteTol ( void *pcg_vdata, NALU_HYPRE_Real a_tol );
-NALU_HYPRE_Int hypre_PCGGetAbsoluteTol ( void *pcg_vdata, NALU_HYPRE_Real *a_tol );
-NALU_HYPRE_Int hypre_PCGSetAbsoluteTolFactor ( void *pcg_vdata, NALU_HYPRE_Real atolf );
-NALU_HYPRE_Int hypre_PCGGetAbsoluteTolFactor ( void *pcg_vdata, NALU_HYPRE_Real *atolf );
-NALU_HYPRE_Int hypre_PCGSetResidualTol ( void *pcg_vdata, NALU_HYPRE_Real rtol );
-NALU_HYPRE_Int hypre_PCGGetResidualTol ( void *pcg_vdata, NALU_HYPRE_Real *rtol );
-NALU_HYPRE_Int hypre_PCGSetConvergenceFactorTol ( void *pcg_vdata, NALU_HYPRE_Real cf_tol );
-NALU_HYPRE_Int hypre_PCGGetConvergenceFactorTol ( void *pcg_vdata, NALU_HYPRE_Real *cf_tol );
-NALU_HYPRE_Int hypre_PCGSetMaxIter ( void *pcg_vdata, NALU_HYPRE_Int max_iter );
-NALU_HYPRE_Int hypre_PCGGetMaxIter ( void *pcg_vdata, NALU_HYPRE_Int *max_iter );
-NALU_HYPRE_Int hypre_PCGSetTwoNorm ( void *pcg_vdata, NALU_HYPRE_Int two_norm );
-NALU_HYPRE_Int hypre_PCGGetTwoNorm ( void *pcg_vdata, NALU_HYPRE_Int *two_norm );
-NALU_HYPRE_Int hypre_PCGSetRelChange ( void *pcg_vdata, NALU_HYPRE_Int rel_change );
-NALU_HYPRE_Int hypre_PCGGetRelChange ( void *pcg_vdata, NALU_HYPRE_Int *rel_change );
-NALU_HYPRE_Int hypre_PCGSetRecomputeResidual ( void *pcg_vdata, NALU_HYPRE_Int recompute_residual );
-NALU_HYPRE_Int hypre_PCGGetRecomputeResidual ( void *pcg_vdata, NALU_HYPRE_Int *recompute_residual );
-NALU_HYPRE_Int hypre_PCGSetRecomputeResidualP ( void *pcg_vdata, NALU_HYPRE_Int recompute_residual_p );
-NALU_HYPRE_Int hypre_PCGGetRecomputeResidualP ( void *pcg_vdata, NALU_HYPRE_Int *recompute_residual_p );
-NALU_HYPRE_Int hypre_PCGSetStopCrit ( void *pcg_vdata, NALU_HYPRE_Int stop_crit );
-NALU_HYPRE_Int hypre_PCGGetStopCrit ( void *pcg_vdata, NALU_HYPRE_Int *stop_crit );
-NALU_HYPRE_Int hypre_PCGGetPrecond ( void *pcg_vdata, NALU_HYPRE_Solver *precond_data_ptr );
-NALU_HYPRE_Int hypre_PCGSetPrecond ( void *pcg_vdata, NALU_HYPRE_Int (*precond )(void*, void*, void*, void*),
+void *nalu_hypre_PCGCreate ( nalu_hypre_PCGFunctions *pcg_functions );
+NALU_HYPRE_Int nalu_hypre_PCGDestroy ( void *pcg_vdata );
+NALU_HYPRE_Int nalu_hypre_PCGGetResidual ( void *pcg_vdata, void **residual );
+NALU_HYPRE_Int nalu_hypre_PCGSetup ( void *pcg_vdata, void *A, void *b, void *x );
+NALU_HYPRE_Int nalu_hypre_PCGSolve ( void *pcg_vdata, void *A, void *b, void *x );
+NALU_HYPRE_Int nalu_hypre_PCGSetTol ( void *pcg_vdata, NALU_HYPRE_Real tol );
+NALU_HYPRE_Int nalu_hypre_PCGGetTol ( void *pcg_vdata, NALU_HYPRE_Real *tol );
+NALU_HYPRE_Int nalu_hypre_PCGSetAbsoluteTol ( void *pcg_vdata, NALU_HYPRE_Real a_tol );
+NALU_HYPRE_Int nalu_hypre_PCGGetAbsoluteTol ( void *pcg_vdata, NALU_HYPRE_Real *a_tol );
+NALU_HYPRE_Int nalu_hypre_PCGSetAbsoluteTolFactor ( void *pcg_vdata, NALU_HYPRE_Real atolf );
+NALU_HYPRE_Int nalu_hypre_PCGGetAbsoluteTolFactor ( void *pcg_vdata, NALU_HYPRE_Real *atolf );
+NALU_HYPRE_Int nalu_hypre_PCGSetResidualTol ( void *pcg_vdata, NALU_HYPRE_Real rtol );
+NALU_HYPRE_Int nalu_hypre_PCGGetResidualTol ( void *pcg_vdata, NALU_HYPRE_Real *rtol );
+NALU_HYPRE_Int nalu_hypre_PCGSetConvergenceFactorTol ( void *pcg_vdata, NALU_HYPRE_Real cf_tol );
+NALU_HYPRE_Int nalu_hypre_PCGGetConvergenceFactorTol ( void *pcg_vdata, NALU_HYPRE_Real *cf_tol );
+NALU_HYPRE_Int nalu_hypre_PCGSetMaxIter ( void *pcg_vdata, NALU_HYPRE_Int max_iter );
+NALU_HYPRE_Int nalu_hypre_PCGGetMaxIter ( void *pcg_vdata, NALU_HYPRE_Int *max_iter );
+NALU_HYPRE_Int nalu_hypre_PCGSetTwoNorm ( void *pcg_vdata, NALU_HYPRE_Int two_norm );
+NALU_HYPRE_Int nalu_hypre_PCGGetTwoNorm ( void *pcg_vdata, NALU_HYPRE_Int *two_norm );
+NALU_HYPRE_Int nalu_hypre_PCGSetRelChange ( void *pcg_vdata, NALU_HYPRE_Int rel_change );
+NALU_HYPRE_Int nalu_hypre_PCGGetRelChange ( void *pcg_vdata, NALU_HYPRE_Int *rel_change );
+NALU_HYPRE_Int nalu_hypre_PCGSetRecomputeResidual ( void *pcg_vdata, NALU_HYPRE_Int recompute_residual );
+NALU_HYPRE_Int nalu_hypre_PCGGetRecomputeResidual ( void *pcg_vdata, NALU_HYPRE_Int *recompute_residual );
+NALU_HYPRE_Int nalu_hypre_PCGSetRecomputeResidualP ( void *pcg_vdata, NALU_HYPRE_Int recompute_residual_p );
+NALU_HYPRE_Int nalu_hypre_PCGGetRecomputeResidualP ( void *pcg_vdata, NALU_HYPRE_Int *recompute_residual_p );
+NALU_HYPRE_Int nalu_hypre_PCGSetStopCrit ( void *pcg_vdata, NALU_HYPRE_Int stop_crit );
+NALU_HYPRE_Int nalu_hypre_PCGGetStopCrit ( void *pcg_vdata, NALU_HYPRE_Int *stop_crit );
+NALU_HYPRE_Int nalu_hypre_PCGGetPrecond ( void *pcg_vdata, NALU_HYPRE_Solver *precond_data_ptr );
+NALU_HYPRE_Int nalu_hypre_PCGSetPrecond ( void *pcg_vdata, NALU_HYPRE_Int (*precond )(void*, void*, void*, void*),
                                 NALU_HYPRE_Int (*precond_setup )(void*, void*, void*, void*), void *precond_data );
-NALU_HYPRE_Int hypre_PCGSetPrintLevel ( void *pcg_vdata, NALU_HYPRE_Int level );
-NALU_HYPRE_Int hypre_PCGGetPrintLevel ( void *pcg_vdata, NALU_HYPRE_Int *level );
-NALU_HYPRE_Int hypre_PCGSetLogging ( void *pcg_vdata, NALU_HYPRE_Int level );
-NALU_HYPRE_Int hypre_PCGGetLogging ( void *pcg_vdata, NALU_HYPRE_Int *level );
-NALU_HYPRE_Int hypre_PCGSetHybrid ( void *pcg_vdata, NALU_HYPRE_Int level );
-NALU_HYPRE_Int hypre_PCGGetNumIterations ( void *pcg_vdata, NALU_HYPRE_Int *num_iterations );
-NALU_HYPRE_Int hypre_PCGGetConverged ( void *pcg_vdata, NALU_HYPRE_Int *converged );
-NALU_HYPRE_Int hypre_PCGPrintLogging ( void *pcg_vdata, NALU_HYPRE_Int myid );
-NALU_HYPRE_Int hypre_PCGGetFinalRelativeResidualNorm ( void *pcg_vdata,
+NALU_HYPRE_Int nalu_hypre_PCGSetPrintLevel ( void *pcg_vdata, NALU_HYPRE_Int level );
+NALU_HYPRE_Int nalu_hypre_PCGGetPrintLevel ( void *pcg_vdata, NALU_HYPRE_Int *level );
+NALU_HYPRE_Int nalu_hypre_PCGSetLogging ( void *pcg_vdata, NALU_HYPRE_Int level );
+NALU_HYPRE_Int nalu_hypre_PCGGetLogging ( void *pcg_vdata, NALU_HYPRE_Int *level );
+NALU_HYPRE_Int nalu_hypre_PCGSetHybrid ( void *pcg_vdata, NALU_HYPRE_Int level );
+NALU_HYPRE_Int nalu_hypre_PCGGetNumIterations ( void *pcg_vdata, NALU_HYPRE_Int *num_iterations );
+NALU_HYPRE_Int nalu_hypre_PCGGetConverged ( void *pcg_vdata, NALU_HYPRE_Int *converged );
+NALU_HYPRE_Int nalu_hypre_PCGPrintLogging ( void *pcg_vdata, NALU_HYPRE_Int myid );
+NALU_HYPRE_Int nalu_hypre_PCGGetFinalRelativeResidualNorm ( void *pcg_vdata,
                                                   NALU_HYPRE_Real *relative_residual_norm );
 
 #ifdef __cplusplus

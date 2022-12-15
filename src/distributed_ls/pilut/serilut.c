@@ -8,7 +8,7 @@
 /*
  * serilut.c
  *
- * This file implements hypre_ILUT in the local part of the matrix
+ * This file implements nalu_hypre_ILUT in the local part of the matrix
  *
  * Started 10/18/95
  * George
@@ -16,8 +16,8 @@
  * 7/8 MRG
  * - added rrowlen and verified
  * 7/22 MRG
- * - removed hypre_SelectInterior function form hypre_SerILUT code
- * - changed FindMinGreater to hypre_ExtractMinLR
+ * - removed nalu_hypre_SelectInterior function form nalu_hypre_SerILUT code
+ * - changed FindMinGreater to nalu_hypre_ExtractMinLR
  * - changed lr to using permutation; this allows reorderings like RCM.
  *
  * 12/4 AJC
@@ -35,12 +35,12 @@
 
 
 /*************************************************************************
-* This function takes a matrix and performs an hypre_ILUT of the internal nodes
+* This function takes a matrix and performs an nalu_hypre_ILUT of the internal nodes
 **************************************************************************/
-NALU_HYPRE_Int hypre_SerILUT(DataDistType *ddist, NALU_HYPRE_DistributedMatrix matrix,
+NALU_HYPRE_Int nalu_hypre_SerILUT(DataDistType *ddist, NALU_HYPRE_DistributedMatrix matrix,
              FactorMatType *ldu,
              ReduceMatType *rmat, NALU_HYPRE_Int maxnz, NALU_HYPRE_Real tol,
-             hypre_PilutSolverGlobals *globals)
+             nalu_hypre_PilutSolverGlobals *globals)
 {
   NALU_HYPRE_Int i, ii, j, k, kk, l, m, ierr, diag_present;
   NALU_HYPRE_Int *perm, *iperm,
@@ -67,55 +67,55 @@ NALU_HYPRE_Int hypre_SerILUT(DataDistType *ddist, NALU_HYPRE_DistributedMatrix m
   iperm    = ldu->iperm;
 
   /* Allocate work space */
-  hypre_TFree(jr, NALU_HYPRE_MEMORY_HOST);
-  jr = hypre_idx_malloc_init(nrows, -1, "hypre_SerILUT: jr");
-  hypre_TFree(hypre_lr, NALU_HYPRE_MEMORY_HOST);
-  hypre_lr = hypre_idx_malloc_init(nrows, -1, "hypre_SerILUT: lr");
-  hypre_TFree(jw, NALU_HYPRE_MEMORY_HOST);
-  jw = hypre_idx_malloc(nrows, "hypre_SerILUT: jw");
-  hypre_TFree(w, NALU_HYPRE_MEMORY_HOST);
-  w  =  hypre_fp_malloc(nrows, "hypre_SerILUT: w" );
+  nalu_hypre_TFree(jr, NALU_HYPRE_MEMORY_HOST);
+  jr = nalu_hypre_idx_malloc_init(nrows, -1, "nalu_hypre_SerILUT: jr");
+  nalu_hypre_TFree(nalu_hypre_lr, NALU_HYPRE_MEMORY_HOST);
+  nalu_hypre_lr = nalu_hypre_idx_malloc_init(nrows, -1, "nalu_hypre_SerILUT: lr");
+  nalu_hypre_TFree(jw, NALU_HYPRE_MEMORY_HOST);
+  jw = nalu_hypre_idx_malloc(nrows, "nalu_hypre_SerILUT: jw");
+  nalu_hypre_TFree(w, NALU_HYPRE_MEMORY_HOST);
+  w  =  nalu_hypre_fp_malloc(nrows, "nalu_hypre_SerILUT: w" );
 
   /* Find structural union of local rows */
 
 #ifdef NALU_HYPRE_TIMING
 {
    NALU_HYPRE_Int           FSUtimer;
-   FSUtimer = hypre_InitializeTiming( "hypre_FindStructuralUnion");
-   hypre_BeginTiming( FSUtimer );
+   FSUtimer = nalu_hypre_InitializeTiming( "nalu_hypre_FindStructuralUnion");
+   nalu_hypre_BeginTiming( FSUtimer );
 #endif
 
-  ierr = hypre_FindStructuralUnion( matrix, &structural_union, globals );
+  ierr = nalu_hypre_FindStructuralUnion( matrix, &structural_union, globals );
 
 #ifdef NALU_HYPRE_TIMING
-   hypre_EndTiming( FSUtimer );
-   /* hypre_FinalizeTiming( FSUtimer ); */
+   nalu_hypre_EndTiming( FSUtimer );
+   /* nalu_hypre_FinalizeTiming( FSUtimer ); */
 }
 #endif
 
 /* if(ierr) return(ierr);*/
 
   /* Exchange structural unions with other processors */
-  ierr = hypre_ExchangeStructuralUnions( ddist, &structural_union, globals );
+  ierr = nalu_hypre_ExchangeStructuralUnions( ddist, &structural_union, globals );
   /* if(ierr) return(ierr); */
 
   /* Select the rows to be factored */
 #ifdef NALU_HYPRE_TIMING
   {
    NALU_HYPRE_Int           SItimer;
-   SItimer = hypre_InitializeTiming( "hypre_SelectInterior");
-   hypre_BeginTiming( SItimer );
+   SItimer = nalu_hypre_InitializeTiming( "nalu_hypre_SelectInterior");
+   nalu_hypre_BeginTiming( SItimer );
 #endif
-  nlocal = hypre_SelectInterior( lnrows, matrix, structural_union,
+  nlocal = nalu_hypre_SelectInterior( lnrows, matrix, structural_union,
                            perm, iperm, globals );
 #ifdef NALU_HYPRE_TIMING
-   hypre_EndTiming( SItimer );
-   /* hypre_FinalizeTiming( SItimer ); */
+   nalu_hypre_EndTiming( SItimer );
+   /* nalu_hypre_FinalizeTiming( SItimer ); */
   }
 #endif
 
   /* Structural Union no longer required */
-  hypre_TFree( structural_union , NALU_HYPRE_MEMORY_HOST);
+  nalu_hypre_TFree( structural_union , NALU_HYPRE_MEMORY_HOST);
 
   nbnd = lnrows - nlocal ;
 #ifdef NALU_HYPRE_DEBUG
@@ -123,24 +123,24 @@ NALU_HYPRE_Int hypre_SerILUT(DataDistType *ddist, NALU_HYPRE_DistributedMatrix m
 
   if (logging)
   {
-     hypre_printf("nbnd = %d, lnrows=%d, nlocal=%d\n", nbnd, lnrows, nlocal );
+     nalu_hypre_printf("nbnd = %d, lnrows=%d, nlocal=%d\n", nbnd, lnrows, nlocal );
   }
 #endif
 
   ldu->nnodes[0] = nlocal;
 
 #ifdef NALU_HYPRE_TIMING
-   globals->SDSeptimer = hypre_InitializeTiming("hypre_SecondDrop Separation");
-   globals->SDKeeptimer = hypre_InitializeTiming("hypre_SecondDrop extraction of kept elements");
-   globals->SDUSeptimer = hypre_InitializeTiming("hypre_SecondDropUpdate Separation");
-   globals->SDUKeeptimer = hypre_InitializeTiming("hypre_SecondDropUpdate extraction of kept elements");
+   globals->SDSeptimer = nalu_hypre_InitializeTiming("nalu_hypre_SecondDrop Separation");
+   globals->SDKeeptimer = nalu_hypre_InitializeTiming("nalu_hypre_SecondDrop extraction of kept elements");
+   globals->SDUSeptimer = nalu_hypre_InitializeTiming("nalu_hypre_SecondDropUpdate Separation");
+   globals->SDUKeeptimer = nalu_hypre_InitializeTiming("nalu_hypre_SecondDropUpdate extraction of kept elements");
 #endif
 
 #ifdef NALU_HYPRE_TIMING
   {
    NALU_HYPRE_Int           LFtimer;
-   LFtimer = hypre_InitializeTiming( "Local factorization computational stage");
-   hypre_BeginTiming( LFtimer );
+   LFtimer = nalu_hypre_InitializeTiming( "Local factorization computational stage");
+   nalu_hypre_BeginTiming( LFtimer );
 #endif
 
   /* myprintf("Nlocal: %d, Nbnd: %d\n", nlocal, nbnd); */
@@ -159,7 +159,7 @@ NALU_HYPRE_Int hypre_SerILUT(DataDistType *ddist, NALU_HYPRE_DistributedMatrix m
 
     for (lastjr=1, lastlr=0, j=0, diag_present=0; j<row_size; j++) {
       if (iperm[ col_ind[j] - firstrow ] < iperm[i])
-        hypre_lr[lastlr++] = iperm[ col_ind[j]-firstrow]; /* Copy the L elements separately */
+        nalu_hypre_lr[lastlr++] = iperm[ col_ind[j]-firstrow]; /* Copy the L elements separately */
 
       if (col_ind[j] != i+firstrow) { /* Off-diagonal element */
         jr[col_ind[j]] = lastjr;
@@ -191,7 +191,7 @@ NALU_HYPRE_Int hypre_SerILUT(DataDistType *ddist, NALU_HYPRE_DistributedMatrix m
        * of the permutation, search for the min each time.
        * Note that we depend on the permutation order following natural index
        * order for the interior rows. */
-      kk = perm[hypre_ExtractMinLR( globals )];
+      kk = perm[nalu_hypre_ExtractMinLR( globals )];
       k  = kk+firstrow;
 
       mult = w[jr[k]]*dvalues[kk];
@@ -208,7 +208,7 @@ NALU_HYPRE_Int hypre_SerILUT(DataDistType *ddist, NALU_HYPRE_DistributedMatrix m
 
         if (m == -1) {  /* Create fill */
           if (iperm[ucolind[l]-firstrow] < iperm[i])
-            hypre_lr[lastlr++] = iperm[ucolind[l]-firstrow]; /* Copy the L elements separately */
+            nalu_hypre_lr[lastlr++] = iperm[ucolind[l]-firstrow]; /* Copy the L elements separately */
 
           jr[ucolind[l]] = lastjr;
           jw[lastjr] = ucolind[l];
@@ -220,29 +220,29 @@ NALU_HYPRE_Int hypre_SerILUT(DataDistType *ddist, NALU_HYPRE_DistributedMatrix m
     }
 
     /* Apply 2nd dropping rule -- forms L and U */
-    hypre_SecondDrop(maxnz, rtol, i+firstrow, perm, iperm, ldu, globals );
+    nalu_hypre_SecondDrop(maxnz, rtol, i+firstrow, perm, iperm, ldu, globals );
   }
 
 #ifdef NALU_HYPRE_TIMING
-   hypre_EndTiming( LFtimer );
-   /* hypre_FinalizeTiming( LFtimer ); */
+   nalu_hypre_EndTiming( LFtimer );
+   /* nalu_hypre_FinalizeTiming( LFtimer ); */
   }
 #endif
 #ifdef NALU_HYPRE_TIMING
   {
    NALU_HYPRE_Int           FRtimer;
-   FRtimer = hypre_InitializeTiming( "Local factorization Schur complement stage");
-   hypre_BeginTiming( FRtimer );
+   FRtimer = nalu_hypre_InitializeTiming( "Local factorization Schur complement stage");
+   nalu_hypre_BeginTiming( FRtimer );
 #endif
 
   /******************************************************************/
   /* Form the reduced matrix                                        */
   /******************************************************************/
   /* Allocate memory for the reduced matrix */
-    rmat->rmat_rnz     = hypre_idx_malloc(nbnd, "hypre_SerILUT: rmat->rmat_rnz"    );
-  rmat->rmat_rrowlen   = hypre_idx_malloc(nbnd, "hypre_SerILUT: rmat->rmat_rrowlen");
-    rmat->rmat_rcolind = (NALU_HYPRE_Int **)hypre_mymalloc(sizeof(NALU_HYPRE_Int *)*nbnd, "hypre_SerILUT: rmat->rmat_rcolind");
-    rmat->rmat_rvalues =  (NALU_HYPRE_Real **)hypre_mymalloc(sizeof(NALU_HYPRE_Real *)*nbnd, "hypre_SerILUT: rmat->rmat_rvalues");
+    rmat->rmat_rnz     = nalu_hypre_idx_malloc(nbnd, "nalu_hypre_SerILUT: rmat->rmat_rnz"    );
+  rmat->rmat_rrowlen   = nalu_hypre_idx_malloc(nbnd, "nalu_hypre_SerILUT: rmat->rmat_rrowlen");
+    rmat->rmat_rcolind = (NALU_HYPRE_Int **)nalu_hypre_mymalloc(sizeof(NALU_HYPRE_Int *)*nbnd, "nalu_hypre_SerILUT: rmat->rmat_rcolind");
+    rmat->rmat_rvalues =  (NALU_HYPRE_Real **)nalu_hypre_mymalloc(sizeof(NALU_HYPRE_Real *)*nbnd, "nalu_hypre_SerILUT: rmat->rmat_rvalues");
   rmat->rmat_ndone = nlocal;
   rmat->rmat_ntogo = nbnd;
 
@@ -259,7 +259,7 @@ NALU_HYPRE_Int hypre_SerILUT(DataDistType *ddist, NALU_HYPRE_DistributedMatrix m
       if (col_ind[j] >= firstrow  &&
             col_ind[j] < lastrow    &&
             iperm[col_ind[j]-firstrow] < nlocal)
-        hypre_lr[lastlr++] = iperm[col_ind[j]-firstrow]; /* Copy the L elements separately */
+        nalu_hypre_lr[lastlr++] = iperm[col_ind[j]-firstrow]; /* Copy the L elements separately */
 
       if (col_ind[j] != i+firstrow) { /* Off-diagonal element */
         jr[col_ind[j]] = lastjr;
@@ -287,7 +287,7 @@ NALU_HYPRE_Int hypre_SerILUT(DataDistType *ddist, NALU_HYPRE_DistributedMatrix m
 
     k = -1;
     while (lastlr != 0) {
-      kk = perm[hypre_ExtractMinLR(globals)];
+      kk = perm[nalu_hypre_ExtractMinLR(globals)];
       k  = kk+firstrow;
 
       mult = w[jr[k]]*dvalues[kk];
@@ -303,9 +303,9 @@ NALU_HYPRE_Int hypre_SerILUT(DataDistType *ddist, NALU_HYPRE_DistributedMatrix m
           continue;  /* Don't add fill if the element is too small */
 
         if (m == -1) {  /* Create fill */
-           hypre_CheckBounds(firstrow, ucolind[l], lastrow, globals);
+           nalu_hypre_CheckBounds(firstrow, ucolind[l], lastrow, globals);
           if (iperm[ucolind[l]-firstrow] < nlocal)
-            hypre_lr[lastlr++] = iperm[ucolind[l]-firstrow]; /* Copy the L elements separately */
+            nalu_hypre_lr[lastlr++] = iperm[ucolind[l]-firstrow]; /* Copy the L elements separately */
 
           jr[ucolind[l]] = lastjr;
           jw[lastjr] = ucolind[l];
@@ -317,25 +317,25 @@ NALU_HYPRE_Int hypre_SerILUT(DataDistType *ddist, NALU_HYPRE_DistributedMatrix m
     }
 
     /* Apply 2nd dropping rule -- forms partial L and rmat */
-    hypre_SecondDropUpdate(maxnz, MAX(3*maxnz, row_size),
+    nalu_hypre_SecondDropUpdate(maxnz, MAX(3*maxnz, row_size),
           rtol, i+firstrow,
           nlocal, perm, iperm, ldu, rmat, globals);
   }
 
 #ifdef NALU_HYPRE_TIMING
-   hypre_EndTiming( FRtimer );
-   /* hypre_FinalizeTiming( FRtimer ); */
+   nalu_hypre_EndTiming( FRtimer );
+   /* nalu_hypre_FinalizeTiming( FRtimer ); */
   }
 #endif
 
-  /*hypre_free_multi(jr, jw, lr, w, -1);*/
-  hypre_TFree(jr, NALU_HYPRE_MEMORY_HOST);
-  hypre_TFree(jw, NALU_HYPRE_MEMORY_HOST);
-  hypre_TFree(hypre_lr, NALU_HYPRE_MEMORY_HOST);
-  hypre_TFree(w, NALU_HYPRE_MEMORY_HOST);
+  /*nalu_hypre_free_multi(jr, jw, lr, w, -1);*/
+  nalu_hypre_TFree(jr, NALU_HYPRE_MEMORY_HOST);
+  nalu_hypre_TFree(jw, NALU_HYPRE_MEMORY_HOST);
+  nalu_hypre_TFree(nalu_hypre_lr, NALU_HYPRE_MEMORY_HOST);
+  nalu_hypre_TFree(w, NALU_HYPRE_MEMORY_HOST);
   jr = NULL;
   jw = NULL;
-  hypre_lr = NULL;
+  nalu_hypre_lr = NULL;
   w = NULL;
 
   return(ierr);
@@ -348,11 +348,11 @@ NALU_HYPRE_Int hypre_SerILUT(DataDistType *ddist, NALU_HYPRE_DistributedMatrix m
 * It takes a vector that marks rows as being forced to not be in the interior.
 * For full generality this would also mark them in the map, but it doesn't.
 **************************************************************************/
-NALU_HYPRE_Int hypre_SelectInterior( NALU_HYPRE_Int local_num_rows,
+NALU_HYPRE_Int nalu_hypre_SelectInterior( NALU_HYPRE_Int local_num_rows,
                     NALU_HYPRE_DistributedMatrix matrix,
                     NALU_HYPRE_Int *external_rows,
                     NALU_HYPRE_Int *newperm, NALU_HYPRE_Int *newiperm,
-                    hypre_PilutSolverGlobals *globals )
+                    nalu_hypre_PilutSolverGlobals *globals )
 {
   NALU_HYPRE_Int nbnd, nlocal, i, j;
   NALU_HYPRE_Int break_loop; /* marks finding an element making this row exterior. -AC */
@@ -404,18 +404,18 @@ NALU_HYPRE_Int hypre_SelectInterior( NALU_HYPRE_Int local_num_rows,
 
 
 /*************************************************************************
-* hypre_FindStructuralUnion
+* nalu_hypre_FindStructuralUnion
 *   Produces a vector of length n that marks the union of the nonzero
 *   structure of all locally stored rows, not including locally stored columns.
 **************************************************************************/
-NALU_HYPRE_Int hypre_FindStructuralUnion( NALU_HYPRE_DistributedMatrix matrix,
+NALU_HYPRE_Int nalu_hypre_FindStructuralUnion( NALU_HYPRE_DistributedMatrix matrix,
                     NALU_HYPRE_Int **structural_union,
-                    hypre_PilutSolverGlobals *globals )
+                    nalu_hypre_PilutSolverGlobals *globals )
 {
   NALU_HYPRE_Int ierr=0, i, j, row_size, *col_ind;
 
   /* Allocate and clear structural_union vector */
-  *structural_union = hypre_CTAlloc( NALU_HYPRE_Int,  nrows , NALU_HYPRE_MEMORY_HOST);
+  *structural_union = nalu_hypre_CTAlloc( NALU_HYPRE_Int,  nrows , NALU_HYPRE_MEMORY_HOST);
 
   /* Loop through rows */
   for ( i=0; i< lnrows; i++ )
@@ -446,33 +446,33 @@ NALU_HYPRE_Int hypre_FindStructuralUnion( NALU_HYPRE_DistributedMatrix matrix,
 
 
 /*************************************************************************
-* hypre_ExchangeStructuralUnions
+* nalu_hypre_ExchangeStructuralUnions
 *   Exchanges structural union vectors with other processors and produces
 *   a vector the size of the number of locally stored rows that marks
 *   whether any exterior processor has a nonzero in the column corresponding
 *   to each row. This is used to determine if a local row might have to
 *   update an off-processor row.
 **************************************************************************/
-NALU_HYPRE_Int hypre_ExchangeStructuralUnions( DataDistType *ddist,
+NALU_HYPRE_Int nalu_hypre_ExchangeStructuralUnions( DataDistType *ddist,
                     NALU_HYPRE_Int **structural_union,
-                    hypre_PilutSolverGlobals *globals )
+                    nalu_hypre_PilutSolverGlobals *globals )
 {
   NALU_HYPRE_Int ierr=0, *recv_unions;
 
   /* allocate space for receiving unions */
-  recv_unions = hypre_CTAlloc( NALU_HYPRE_Int,  nrows , NALU_HYPRE_MEMORY_HOST);
+  recv_unions = nalu_hypre_CTAlloc( NALU_HYPRE_Int,  nrows , NALU_HYPRE_MEMORY_HOST);
 
-  hypre_MPI_Allreduce( *structural_union, recv_unions, nrows,
-                 NALU_HYPRE_MPI_INT, hypre_MPI_LOR, pilut_comm );
+  nalu_hypre_MPI_Allreduce( *structural_union, recv_unions, nrows,
+                 NALU_HYPRE_MPI_INT, nalu_hypre_MPI_LOR, pilut_comm );
 
   /* free and reallocate structural union so that is of local size */
-  hypre_TFree( *structural_union , NALU_HYPRE_MEMORY_HOST);
-  *structural_union = hypre_TAlloc( NALU_HYPRE_Int,  lnrows , NALU_HYPRE_MEMORY_HOST);
+  nalu_hypre_TFree( *structural_union , NALU_HYPRE_MEMORY_HOST);
+  *structural_union = nalu_hypre_TAlloc( NALU_HYPRE_Int,  lnrows , NALU_HYPRE_MEMORY_HOST);
 
-  hypre_memcpy_int( *structural_union, &recv_unions[firstrow], lnrows );
+  nalu_hypre_memcpy_int( *structural_union, &recv_unions[firstrow], lnrows );
 
   /* deallocate recv_unions */
-  hypre_TFree( recv_unions , NALU_HYPRE_MEMORY_HOST);
+  nalu_hypre_TFree( recv_unions , NALU_HYPRE_MEMORY_HOST);
 
   return(ierr);
 }
@@ -482,9 +482,9 @@ NALU_HYPRE_Int hypre_ExchangeStructuralUnions( DataDistType *ddist,
 * This function applies the second droping rule where maxnz elements
 * greater than tol are kept. The elements are stored into LDU.
 **************************************************************************/
-void hypre_SecondDrop(NALU_HYPRE_Int maxnz, NALU_HYPRE_Real tol, NALU_HYPRE_Int row,
+void nalu_hypre_SecondDrop(NALU_HYPRE_Int maxnz, NALU_HYPRE_Real tol, NALU_HYPRE_Int row,
                 NALU_HYPRE_Int *perm, NALU_HYPRE_Int *iperm,
-                FactorMatType *ldu, hypre_PilutSolverGlobals *globals)
+                FactorMatType *ldu, nalu_hypre_PilutSolverGlobals *globals)
 {
   NALU_HYPRE_Int i, j;
   NALU_HYPRE_Int diag, lrow;
@@ -499,11 +499,11 @@ void hypre_SecondDrop(NALU_HYPRE_Int maxnz, NALU_HYPRE_Real tol, NALU_HYPRE_Int 
   diag = iperm[lrow];
 
   /* Deal with the diagonal element first */
-  hypre_assert(jw[0] == row);
+  nalu_hypre_assert(jw[0] == row);
   if (w[0] != 0.0)
     ldu->dvalues[lrow] = 1.0/w[0];
   else { /* zero pivot */
-    hypre_printf("Zero pivot in row %d, adding e to proceed!\n", row);
+    nalu_hypre_printf("Zero pivot in row %d, adding e to proceed!\n", row);
     ldu->dvalues[lrow] = 1.0/tol;
   }
   jw[0] = jw[--lastjr];
@@ -521,7 +521,7 @@ void hypre_SecondDrop(NALU_HYPRE_Int maxnz, NALU_HYPRE_Real tol, NALU_HYPRE_Int 
   }
 
 #ifdef NALU_HYPRE_TIMING
-  hypre_BeginTiming( globals->SDSeptimer );
+  nalu_hypre_BeginTiming( globals->SDSeptimer );
 #endif
 
   if (lastjr == 0)
@@ -554,7 +554,7 @@ void hypre_SecondDrop(NALU_HYPRE_Int maxnz, NALU_HYPRE_Real tol, NALU_HYPRE_Int 
     }
   }
 #ifdef NALU_HYPRE_TIMING
-  hypre_EndTiming( globals->SDSeptimer );
+  nalu_hypre_EndTiming( globals->SDSeptimer );
 #endif
 
   /*****************************************************************
@@ -563,14 +563,14 @@ void hypre_SecondDrop(NALU_HYPRE_Int maxnz, NALU_HYPRE_Real tol, NALU_HYPRE_Int 
   ******************************************************************/
 
 #ifdef NALU_HYPRE_TIMING
-  hypre_BeginTiming(globals-> SDKeeptimer );
+  nalu_hypre_BeginTiming(globals-> SDKeeptimer );
 #endif
 
   /* Now, I want to keep maxnz elements of L. Go and extract them */
 
-  hypre_DoubleQuickSplit( w, jw, last, maxnz );
+  nalu_hypre_DoubleQuickSplit( w, jw, last, maxnz );
   /* if (ierr) return; */
-  for ( j= hypre_max(0,last-maxnz); j< last; j++ )
+  for ( j= nalu_hypre_max(0,last-maxnz); j< last; j++ )
   {
      ldu->lcolind[ldu->lerowptr[lrow]] = jw[ j ];
      ldu->lvalues[ldu->lerowptr[lrow]++] = w[ j ];
@@ -596,9 +596,9 @@ void hypre_SecondDrop(NALU_HYPRE_Int maxnz, NALU_HYPRE_Real tol, NALU_HYPRE_Int 
 
 
   /* Now, I want to keep maxnz elements of U. Go and extract them */
-  hypre_DoubleQuickSplit( w+first, jw+first, lastjr-first, maxnz );
+  nalu_hypre_DoubleQuickSplit( w+first, jw+first, lastjr-first, maxnz );
   /* if (ierr) return; */
-  for ( j=hypre_max(first, lastjr-maxnz); j< lastjr; j++ )
+  for ( j=nalu_hypre_max(first, lastjr-maxnz); j< lastjr; j++ )
   {
      ldu->ucolind[ldu->uerowptr[lrow]] = jw[ j ];
      ldu->uvalues[ldu->uerowptr[lrow]++] = w[ j ];
@@ -624,7 +624,7 @@ void hypre_SecondDrop(NALU_HYPRE_Int maxnz, NALU_HYPRE_Real tol, NALU_HYPRE_Int 
 
 
 #ifdef NALU_HYPRE_TIMING
-  hypre_EndTiming( globals->SDKeeptimer );
+  nalu_hypre_EndTiming( globals->SDKeeptimer );
 #endif
 
 
@@ -636,10 +636,10 @@ void hypre_SecondDrop(NALU_HYPRE_Int maxnz, NALU_HYPRE_Real tol, NALU_HYPRE_Int 
 * greater than tol are kept. The elements are stored into L and the Rmat.
 * This version keeps only maxnzkeep
 **************************************************************************/
-void hypre_SecondDropUpdate(NALU_HYPRE_Int maxnz, NALU_HYPRE_Int maxnzkeep, NALU_HYPRE_Real tol, NALU_HYPRE_Int row,
+void nalu_hypre_SecondDropUpdate(NALU_HYPRE_Int maxnz, NALU_HYPRE_Int maxnzkeep, NALU_HYPRE_Real tol, NALU_HYPRE_Int row,
       NALU_HYPRE_Int nlocal, NALU_HYPRE_Int *perm, NALU_HYPRE_Int *iperm,
       FactorMatType *ldu, ReduceMatType *rmat,
-                      hypre_PilutSolverGlobals *globals )
+                      nalu_hypre_PilutSolverGlobals *globals )
 {
   NALU_HYPRE_Int i, j, nl;
   NALU_HYPRE_Int max, nz, lrow, rrow;
@@ -666,7 +666,7 @@ void hypre_SecondDropUpdate(NALU_HYPRE_Int maxnz, NALU_HYPRE_Int maxnzkeep, NALU
 
 
 #ifdef NALU_HYPRE_TIMING
-  hypre_BeginTiming( globals->SDUSeptimer );
+  nalu_hypre_BeginTiming( globals->SDUSeptimer );
 #endif
 
    if (lastjr == 1)
@@ -707,7 +707,7 @@ void hypre_SecondDropUpdate(NALU_HYPRE_Int maxnz, NALU_HYPRE_Int maxnzkeep, NALU
     }
   }
 #ifdef NALU_HYPRE_TIMING
-  hypre_EndTiming( globals->SDUSeptimer );
+  nalu_hypre_EndTiming( globals->SDUSeptimer );
 #endif
 
   /*****************************************************************
@@ -716,14 +716,14 @@ void hypre_SecondDropUpdate(NALU_HYPRE_Int maxnz, NALU_HYPRE_Int maxnzkeep, NALU
   ******************************************************************/
 
 #ifdef NALU_HYPRE_TIMING
-  hypre_BeginTiming( globals->SDUKeeptimer );
+  nalu_hypre_BeginTiming( globals->SDUKeeptimer );
 #endif
 
 
   /* Keep large maxnz elements of L */
-  hypre_DoubleQuickSplit( w+1, jw+1, last-1, maxnz );
+  nalu_hypre_DoubleQuickSplit( w+1, jw+1, last-1, maxnz );
   /* if (ierr) return; */
-  for ( j= hypre_max(1,last-maxnz); j< last; j++ )
+  for ( j= nalu_hypre_max(1,last-maxnz); j< last; j++ )
   {
      ldu->lcolind[ldu->lerowptr[lrow]] = jw[ j ];
      ldu->lvalues[ldu->lerowptr[lrow]++] = w[ j ];
@@ -750,8 +750,8 @@ void hypre_SecondDropUpdate(NALU_HYPRE_Int maxnz, NALU_HYPRE_Int maxnzkeep, NALU
   /* Allocate appropriate amount of memory for the reduced row */
   nl = MIN(lastjr-first+1, maxnzkeep);
   rmat->rmat_rnz[rrow] = nl;
-  rmat->rmat_rcolind[rrow] = hypre_idx_malloc(nl, "hypre_SecondDropUpdate: rmat->rmat_rcolind[rrow]");
-  rmat->rmat_rvalues[rrow] =  hypre_fp_malloc(nl, "hypre_SecondDropUpdate: rmat->rmat_rvalues[rrow]");
+  rmat->rmat_rcolind[rrow] = nalu_hypre_idx_malloc(nl, "nalu_hypre_SecondDropUpdate: rmat->rmat_rcolind[rrow]");
+  rmat->rmat_rvalues[rrow] =  nalu_hypre_fp_malloc(nl, "nalu_hypre_SecondDropUpdate: rmat->rmat_rvalues[rrow]");
 
   rmat->rmat_rrowlen[rrow]    = nl;
   rmat->rmat_rcolind[rrow][0] = row;  /* Put the diagonal at the begining */
@@ -778,7 +778,7 @@ void hypre_SecondDropUpdate(NALU_HYPRE_Int maxnz, NALU_HYPRE_Int maxnzkeep, NALU
     }
   }
 #ifdef NALU_HYPRE_TIMING
-  hypre_EndTiming( globals->SDUKeeptimer );
+  nalu_hypre_EndTiming( globals->SDUKeeptimer );
 #endif
 
 }

@@ -11,38 +11,38 @@
  *
  *****************************************************************************/
 
-#include "_hypre_parcsr_ls.h"
+#include "_nalu_hypre_parcsr_ls.h"
 #include "par_amg.h"
 
 /*--------------------------------------------------------------------------
- * hypre_BoomerAMGCycle
+ * nalu_hypre_BoomerAMGCycle
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_BoomerAMGCGRelaxWt( void       *amg_vdata,
+nalu_hypre_BoomerAMGCGRelaxWt( void       *amg_vdata,
                           NALU_HYPRE_Int   level,
                           NALU_HYPRE_Int   num_cg_sweeps,
                           NALU_HYPRE_Real *rlx_wt_ptr)
 {
-   hypre_ParAMGData *amg_data = (hypre_ParAMGData*) amg_vdata;
+   nalu_hypre_ParAMGData *amg_data = (nalu_hypre_ParAMGData*) amg_vdata;
 
    MPI_Comm comm;
    NALU_HYPRE_Solver *smoother;
    /* Data Structure variables */
 
-   /* hypre_ParCSRMatrix **A_array = hypre_ParAMGDataAArray(amg_data); */
-   /* hypre_ParCSRMatrix **R_array = hypre_ParAMGDataRArray(amg_data); */
-   hypre_ParCSRMatrix *A = hypre_ParAMGDataAArray(amg_data)[level];
-   /* hypre_ParVector    **F_array = hypre_ParAMGDataFArray(amg_data); */
-   /* hypre_ParVector    **U_array = hypre_ParAMGDataUArray(amg_data); */
-   hypre_ParVector    *Utemp;
-   hypre_ParVector    *Vtemp;
-   hypre_ParVector    *Ptemp;
-   hypre_ParVector    *Rtemp;
-   hypre_ParVector    *Ztemp;
-   hypre_ParVector    *Qtemp = NULL;
+   /* nalu_hypre_ParCSRMatrix **A_array = nalu_hypre_ParAMGDataAArray(amg_data); */
+   /* nalu_hypre_ParCSRMatrix **R_array = nalu_hypre_ParAMGDataRArray(amg_data); */
+   nalu_hypre_ParCSRMatrix *A = nalu_hypre_ParAMGDataAArray(amg_data)[level];
+   /* nalu_hypre_ParVector    **F_array = nalu_hypre_ParAMGDataFArray(amg_data); */
+   /* nalu_hypre_ParVector    **U_array = nalu_hypre_ParAMGDataUArray(amg_data); */
+   nalu_hypre_ParVector    *Utemp;
+   nalu_hypre_ParVector    *Vtemp;
+   nalu_hypre_ParVector    *Ptemp;
+   nalu_hypre_ParVector    *Rtemp;
+   nalu_hypre_ParVector    *Ztemp;
+   nalu_hypre_ParVector    *Qtemp = NULL;
 
-   NALU_HYPRE_Int    *CF_marker = hypre_IntArrayData(hypre_ParAMGDataCFMarkerArray(amg_data)[level]);
+   NALU_HYPRE_Int    *CF_marker = nalu_hypre_IntArrayData(nalu_hypre_ParAMGDataCFMarkerArray(amg_data)[level]);
    NALU_HYPRE_Real   *Ptemp_data;
    NALU_HYPRE_Real   *Ztemp_data;
 
@@ -66,7 +66,7 @@ hypre_BoomerAMGCGRelaxWt( void       *amg_vdata,
    NALU_HYPRE_Int       smooth_option = 0;
    NALU_HYPRE_Int       needQ = 0;
 
-   hypre_Vector *l1_norms = NULL;
+   nalu_hypre_Vector *l1_norms = NULL;
 
    NALU_HYPRE_Real    alpha;
    NALU_HYPRE_Real    beta;
@@ -88,39 +88,39 @@ hypre_BoomerAMGCGRelaxWt( void       *amg_vdata,
 #endif
 
 #if !defined(NALU_HYPRE_USING_CUDA) && !defined(NALU_HYPRE_USING_HIP)
-   NALU_HYPRE_Int num_threads = hypre_NumThreads();
+   NALU_HYPRE_Int num_threads = nalu_hypre_NumThreads();
 #endif
 
    /* Acquire data and allocate storage */
 
-   tridiag  = hypre_CTAlloc(NALU_HYPRE_Real,  num_cg_sweeps + 1, NALU_HYPRE_MEMORY_HOST);
-   trioffd  = hypre_CTAlloc(NALU_HYPRE_Real,  num_cg_sweeps + 1, NALU_HYPRE_MEMORY_HOST);
+   tridiag  = nalu_hypre_CTAlloc(NALU_HYPRE_Real,  num_cg_sweeps + 1, NALU_HYPRE_MEMORY_HOST);
+   trioffd  = nalu_hypre_CTAlloc(NALU_HYPRE_Real,  num_cg_sweeps + 1, NALU_HYPRE_MEMORY_HOST);
    for (i = 0; i < num_cg_sweeps + 1; i++)
    {
       tridiag[i] = 0;
       trioffd[i] = 0;
    }
 
-   Vtemp = hypre_ParAMGDataVtemp(amg_data);
+   Vtemp = nalu_hypre_ParAMGDataVtemp(amg_data);
 
-   Rtemp = hypre_ParVectorCreate(hypre_ParCSRMatrixComm(A),
-                                 hypre_ParCSRMatrixGlobalNumRows(A),
-                                 hypre_ParCSRMatrixRowStarts(A));
-   hypre_ParVectorInitialize(Rtemp);
+   Rtemp = nalu_hypre_ParVectorCreate(nalu_hypre_ParCSRMatrixComm(A),
+                                 nalu_hypre_ParCSRMatrixGlobalNumRows(A),
+                                 nalu_hypre_ParCSRMatrixRowStarts(A));
+   nalu_hypre_ParVectorInitialize(Rtemp);
 
-   Ptemp = hypre_ParVectorCreate(hypre_ParCSRMatrixComm(A),
-                                 hypre_ParCSRMatrixGlobalNumRows(A),
-                                 hypre_ParCSRMatrixRowStarts(A));
-   hypre_ParVectorInitialize(Ptemp);
+   Ptemp = nalu_hypre_ParVectorCreate(nalu_hypre_ParCSRMatrixComm(A),
+                                 nalu_hypre_ParCSRMatrixGlobalNumRows(A),
+                                 nalu_hypre_ParCSRMatrixRowStarts(A));
+   nalu_hypre_ParVectorInitialize(Ptemp);
 
-   Ztemp = hypre_ParVectorCreate(hypre_ParCSRMatrixComm(A),
-                                 hypre_ParCSRMatrixGlobalNumRows(A),
-                                 hypre_ParCSRMatrixRowStarts(A));
-   hypre_ParVectorInitialize(Ztemp);
+   Ztemp = nalu_hypre_ParVectorCreate(nalu_hypre_ParCSRMatrixComm(A),
+                                 nalu_hypre_ParCSRMatrixGlobalNumRows(A),
+                                 nalu_hypre_ParCSRMatrixRowStarts(A));
+   nalu_hypre_ParVectorInitialize(Ztemp);
 
-   if (hypre_ParAMGDataL1Norms(amg_data) != NULL)
+   if (nalu_hypre_ParAMGDataL1Norms(amg_data) != NULL)
    {
-      l1_norms = hypre_ParAMGDataL1Norms(amg_data)[level];
+      l1_norms = nalu_hypre_ParAMGDataL1Norms(amg_data)[level];
    }
 
 #if !defined(NALU_HYPRE_USING_CUDA) && !defined(NALU_HYPRE_USING_HIP)
@@ -130,27 +130,27 @@ hypre_BoomerAMGCGRelaxWt( void       *amg_vdata,
       needQ = 1;
    }
 
-   grid_relax_type     = hypre_ParAMGDataGridRelaxType(amg_data);
-   smooth_type         = hypre_ParAMGDataSmoothType(amg_data);
-   smooth_num_levels   = hypre_ParAMGDataSmoothNumLevels(amg_data);
+   grid_relax_type     = nalu_hypre_ParAMGDataGridRelaxType(amg_data);
+   smooth_type         = nalu_hypre_ParAMGDataSmoothType(amg_data);
+   smooth_num_levels   = nalu_hypre_ParAMGDataSmoothNumLevels(amg_data);
 
    /* Initialize */
 
    Solve_err_flag = 0;
 
-   comm = hypre_ParCSRMatrixComm(A);
-   hypre_MPI_Comm_rank(comm, &my_id);
+   comm = nalu_hypre_ParCSRMatrixComm(A);
+   nalu_hypre_MPI_Comm_rank(comm, &my_id);
 
    if (smooth_num_levels > level)
    {
-      smoother = hypre_ParAMGDataSmoother(amg_data);
+      smoother = nalu_hypre_ParAMGDataSmoother(amg_data);
       smooth_option = smooth_type;
       if (smooth_type > 6 && smooth_type < 10)
       {
-         Utemp = hypre_ParVectorCreate(hypre_ParCSRMatrixComm(A),
-                                       hypre_ParCSRMatrixGlobalNumRows(A),
-                                       hypre_ParCSRMatrixRowStarts(A));
-         hypre_ParVectorInitialize(Utemp);
+         Utemp = nalu_hypre_ParVectorCreate(nalu_hypre_ParCSRMatrixComm(A),
+                                       nalu_hypre_ParCSRMatrixGlobalNumRows(A),
+                                       nalu_hypre_ParCSRMatrixRowStarts(A));
+         nalu_hypre_ParVectorInitialize(Utemp);
       }
    }
 
@@ -161,38 +161,38 @@ hypre_BoomerAMGCGRelaxWt( void       *amg_vdata,
    relax_type = grid_relax_type[1];
    num_sweeps = 1;
 
-   local_size = hypre_CSRMatrixNumRows(hypre_ParCSRMatrixDiag(A));
-   old_size = hypre_VectorSize(hypre_ParVectorLocalVector(Vtemp));
-   hypre_VectorSize(hypre_ParVectorLocalVector(Vtemp)) =
-      hypre_CSRMatrixNumRows(hypre_ParCSRMatrixDiag(A));
-   Ptemp_data = hypre_VectorData(hypre_ParVectorLocalVector(Ptemp));
-   Ztemp_data = hypre_VectorData(hypre_ParVectorLocalVector(Ztemp));
+   local_size = nalu_hypre_CSRMatrixNumRows(nalu_hypre_ParCSRMatrixDiag(A));
+   old_size = nalu_hypre_VectorSize(nalu_hypre_ParVectorLocalVector(Vtemp));
+   nalu_hypre_VectorSize(nalu_hypre_ParVectorLocalVector(Vtemp)) =
+      nalu_hypre_CSRMatrixNumRows(nalu_hypre_ParCSRMatrixDiag(A));
+   Ptemp_data = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(Ptemp));
+   Ztemp_data = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(Ztemp));
    /* if (level == 0)
-      hypre_ParVectorCopy(hypre_ParAMGDataFArray(amg_data)[0],Rtemp);
+      nalu_hypre_ParVectorCopy(nalu_hypre_ParAMGDataFArray(amg_data)[0],Rtemp);
    else
    {
-      hypre_ParVectorCopy(F_array[level-1],Vtemp);
+      nalu_hypre_ParVectorCopy(F_array[level-1],Vtemp);
       alpha = -1.0;
       beta = 1.0;
-      hypre_ParCSRMatrixMatvec(alpha, A_array[level-1], U_array[level-1],
+      nalu_hypre_ParCSRMatrixMatvec(alpha, A_array[level-1], U_array[level-1],
                          beta, Vtemp);
       alpha = 1.0;
       beta = 0.0;
 
-      hypre_ParCSRMatrixMatvecT(alpha,R_array[level-1],Vtemp,
+      nalu_hypre_ParCSRMatrixMatvecT(alpha,R_array[level-1],Vtemp,
                           beta,F_array[level]);
-      hypre_ParVectorCopy(F_array[level],Rtemp);
+      nalu_hypre_ParVectorCopy(F_array[level],Rtemp);
    } */
 
-   hypre_ParVectorSetRandomValues(Rtemp, 5128);
+   nalu_hypre_ParVectorSetRandomValues(Rtemp, 5128);
 
    if (needQ)
    {
-      Qtemp = hypre_ParMultiVectorCreate(hypre_ParCSRMatrixComm(A),
-                                         hypre_ParCSRMatrixGlobalNumRows(A),
-                                         hypre_ParCSRMatrixRowStarts(A),
+      Qtemp = nalu_hypre_ParMultiVectorCreate(nalu_hypre_ParCSRMatrixComm(A),
+                                         nalu_hypre_ParCSRMatrixGlobalNumRows(A),
+                                         nalu_hypre_ParCSRMatrixRowStarts(A),
                                          needQ);
-      hypre_ParVectorInitialize(Qtemp);
+      nalu_hypre_ParVectorInitialize(Qtemp);
    }
 
    /*------------------------------------------------------------------
@@ -201,16 +201,16 @@ hypre_BoomerAMGCGRelaxWt( void       *amg_vdata,
 
    for (jj = 0; jj < num_cg_sweeps; jj++)
    {
-      hypre_ParVectorSetConstantValues(Ztemp, 0.0);
+      nalu_hypre_ParVectorSetConstantValues(Ztemp, 0.0);
 
       for (j = 0; j < num_sweeps; j++)
       {
          if (smooth_option > 6)
          {
-            hypre_ParVectorCopy(Rtemp, Vtemp);
+            nalu_hypre_ParVectorCopy(Rtemp, Vtemp);
             alpha = -1.0;
             beta = 1.0;
-            hypre_ParCSRMatrixMatvec(alpha, A,
+            nalu_hypre_ParCSRMatrixMatvec(alpha, A,
                                      Ztemp, beta, Vtemp);
             if (smooth_option == 8)
             {
@@ -225,7 +225,7 @@ hypre_BoomerAMGCGRelaxWt( void       *amg_vdata,
                                       (NALU_HYPRE_ParCSRMatrix) A,
                                       (NALU_HYPRE_ParVector) Vtemp,
                                       (NALU_HYPRE_ParVector) Utemp);
-               hypre_ParVectorAxpy(1.0, Utemp, Ztemp);
+               nalu_hypre_ParVectorAxpy(1.0, Utemp, Ztemp);
             }
             else if (smooth_option == 9)
             {
@@ -233,7 +233,7 @@ hypre_BoomerAMGCGRelaxWt( void       *amg_vdata,
                                  (NALU_HYPRE_ParCSRMatrix) A,
                                  (NALU_HYPRE_ParVector) Vtemp,
                                  (NALU_HYPRE_ParVector) Utemp);
-               hypre_ParVectorAxpy(1.0, Utemp, Ztemp);
+               nalu_hypre_ParVectorAxpy(1.0, Utemp, Ztemp);
             }
          }
          else if (smooth_option == 6)
@@ -245,14 +245,14 @@ hypre_BoomerAMGCGRelaxWt( void       *amg_vdata,
          }
          else
          {
-            Solve_err_flag = hypre_BoomerAMGRelax(A,
+            Solve_err_flag = nalu_hypre_BoomerAMGRelax(A,
                                                   Rtemp,
                                                   CF_marker,
                                                   relax_type,
                                                   0,
                                                   1.0,
                                                   1.0,
-                                                  l1_norms ? hypre_VectorData(l1_norms) : NULL,
+                                                  l1_norms ? nalu_hypre_VectorData(l1_norms) : NULL,
                                                   Ztemp,
                                                   Vtemp,
                                                   Qtemp);
@@ -260,18 +260,18 @@ hypre_BoomerAMGCGRelaxWt( void       *amg_vdata,
 
          if (Solve_err_flag != 0)
          {
-            hypre_ParVectorDestroy(Ptemp);
-            hypre_TFree(tridiag, NALU_HYPRE_MEMORY_HOST);
-            hypre_TFree(trioffd, NALU_HYPRE_MEMORY_HOST);
+            nalu_hypre_ParVectorDestroy(Ptemp);
+            nalu_hypre_TFree(tridiag, NALU_HYPRE_MEMORY_HOST);
+            nalu_hypre_TFree(trioffd, NALU_HYPRE_MEMORY_HOST);
             return (Solve_err_flag);
          }
       }
 
       gammaold = gamma;
-      gamma = hypre_ParVectorInnerProd(Rtemp, Ztemp);
+      gamma = nalu_hypre_ParVectorInnerProd(Rtemp, Ztemp);
       if (jj == 0)
       {
-         hypre_ParVectorCopy(Ztemp, Ptemp);
+         nalu_hypre_ParVectorCopy(Ztemp, Ptemp);
          beta = 1.0;
       }
       else
@@ -282,8 +282,8 @@ hypre_BoomerAMGCGRelaxWt( void       *amg_vdata,
             Ptemp_data[i] = Ztemp_data[i] + beta * Ptemp_data[i];
          }
       }
-      hypre_ParCSRMatrixMatvec(1.0, A, Ptemp, 0.0, Vtemp);
-      alpha = gamma / (hypre_ParVectorInnerProd(Ptemp, Vtemp) + 1.e-80);
+      nalu_hypre_ParCSRMatrixMatvec(1.0, A, Ptemp, 0.0, Vtemp);
+      alpha = gamma / (nalu_hypre_ParVectorInnerProd(Ptemp, Vtemp) + 1.e-80);
       alphinv = 1.0 / (alpha + 1.e-80);
       tridiag[jj + 1] = alphinv;
       tridiag[jj] *= beta;
@@ -300,15 +300,15 @@ hypre_BoomerAMGCGRelaxWt( void       *amg_vdata,
          /* lambda_min_old = lambda_min; */
          lambda_max_old = lambda_max;
          rlx_wt_old = rlx_wt;
-         hypre_Bisection(jj + 1, tridiag, trioffd, lambda_max_old,
+         nalu_hypre_Bisection(jj + 1, tridiag, trioffd, lambda_max_old,
                          max_row_sum, 1.e-3, jj + 1, &lambda_max);
          rlx_wt = 1.0 / lambda_max;
-         /* hypre_Bisection(jj+1, tridiag, trioffd, 0.0, lambda_min_old,
+         /* nalu_hypre_Bisection(jj+1, tridiag, trioffd, 0.0, lambda_min_old,
             1.e-3, 1, &lambda_min);
          rlx_wt = 2.0/(lambda_min+lambda_max); */
          if (fabs(rlx_wt - rlx_wt_old) < 1.e-3 )
          {
-            /* if (my_id == 0) hypre_printf (" cg sweeps : %d\n", (jj+1)); */
+            /* if (my_id == 0) nalu_hypre_printf (" cg sweeps : %d\n", (jj+1)); */
             break;
          }
       }
@@ -318,10 +318,10 @@ hypre_BoomerAMGCGRelaxWt( void       *amg_vdata,
          lambda_max = tridiag[0];
       }
 
-      hypre_ParVectorAxpy(-alpha, Vtemp, Rtemp);
+      nalu_hypre_ParVectorAxpy(-alpha, Vtemp, Rtemp);
    }
    /*if (my_id == 0)
-     hypre_printf (" lambda-min: %f  lambda-max: %f\n", lambda_min, lambda_max);
+     nalu_hypre_printf (" lambda-min: %f  lambda-max: %f\n", lambda_min, lambda_max);
 
    rlx_wt = fabs(tridiag[0])+fabs(trioffd[1]);
 
@@ -333,30 +333,30 @@ hypre_BoomerAMGCGRelaxWt( void       *amg_vdata,
    row_sum = fabs(tridiag[num_cg_sweeps-1]) + fabs(trioffd[num_cg_sweeps-1]);
    if (row_sum > rlx_wt) rlx_wt = row_sum;
 
-   hypre_Bisection(num_cg_sweeps, tridiag, trioffd, 0.0, rlx_wt, 1.e-3, 1,
+   nalu_hypre_Bisection(num_cg_sweeps, tridiag, trioffd, 0.0, rlx_wt, 1.e-3, 1,
    &lambda_min);
-   hypre_Bisection(num_cg_sweeps, tridiag, trioffd, 0.0, rlx_wt, 1.e-3,
+   nalu_hypre_Bisection(num_cg_sweeps, tridiag, trioffd, 0.0, rlx_wt, 1.e-3,
    num_cg_sweeps, &lambda_max);
    */
 
 
-   hypre_VectorSize(hypre_ParVectorLocalVector(Vtemp)) = old_size;
+   nalu_hypre_VectorSize(nalu_hypre_ParVectorLocalVector(Vtemp)) = old_size;
 
-   hypre_ParVectorDestroy(Ztemp);
-   hypre_ParVectorDestroy(Ptemp);
-   hypre_ParVectorDestroy(Rtemp);
+   nalu_hypre_ParVectorDestroy(Ztemp);
+   nalu_hypre_ParVectorDestroy(Ptemp);
+   nalu_hypre_ParVectorDestroy(Rtemp);
 
    if (Qtemp)
    {
-      hypre_ParVectorDestroy(Qtemp);
+      nalu_hypre_ParVectorDestroy(Qtemp);
    }
 
-   hypre_TFree(tridiag, NALU_HYPRE_MEMORY_HOST);
-   hypre_TFree(trioffd, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(tridiag, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(trioffd, NALU_HYPRE_MEMORY_HOST);
 
    if (smooth_option > 6 && smooth_option < 10)
    {
-      hypre_ParVectorDestroy(Utemp);
+      nalu_hypre_ParVectorDestroy(Utemp);
    }
 
    *rlx_wt_ptr = rlx_wt;
@@ -365,11 +365,11 @@ hypre_BoomerAMGCGRelaxWt( void       *amg_vdata,
 }
 
 /*--------------------------------------------------------------------------
- * hypre_Bisection
+ * nalu_hypre_Bisection
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int
-hypre_Bisection(NALU_HYPRE_Int n, NALU_HYPRE_Real *diag, NALU_HYPRE_Real *offd,
+nalu_hypre_Bisection(NALU_HYPRE_Int n, NALU_HYPRE_Real *diag, NALU_HYPRE_Real *offd,
                 NALU_HYPRE_Real y, NALU_HYPRE_Real z,
                 NALU_HYPRE_Real tol, NALU_HYPRE_Int k, NALU_HYPRE_Real *ev_ptr)
 {

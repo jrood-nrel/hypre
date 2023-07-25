@@ -12,7 +12,7 @@ include ../config/Makefile.config
 
 C_COMPILE_FLAGS = ${INCLUDES} -I.. -I../utilities
 
-BLAS_HEADERS =  f2c.h  hypre_blas.h
+BLAS_HEADERS =  f2c.h  nalu_hypre_blas.h
 BLAS_FILES = \
  dasum.c\
  daxpy.c\
@@ -48,7 +48,7 @@ OBJS = ${BLAS_FILES:.c=.o}
 all: ${OBJS}
 
 install: all
-	cp -fR $(srcdir)/_hypre_blas.h $(HYPRE_INC_INSTALL)
+	cp -fR $(srcdir)/_nalu_hypre_blas.h $(NALU_HYPRE_INC_INSTALL)
 
 clean:
 	rm -rf *.o

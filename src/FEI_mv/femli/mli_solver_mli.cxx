@@ -10,7 +10,7 @@
 #include <stdio.h>
 #include <math.h>
 
-#include "_hypre_parcsr_mv.h"
+#include "_nalu_hypre_parcsr_mv.h"
 #include "mli_solver_mli.h"
 #include "mli_method_amgsa.h"
 
@@ -45,11 +45,11 @@ int MLI_Solver_MLI::setup(MLI_Matrix *mat)
    char               *targv[2], paramString[100];
    MPI_Comm           comm;
    MLI_Method         *method;
-   hypre_ParCSRMatrix *hypreA;
+   nalu_hypre_ParCSRMatrix *hypreA;
 
    Amat_  = mat;
-   hypreA = (hypre_ParCSRMatrix *) Amat_->getMatrix();
-   comm   = hypre_ParCSRMatrixComm( hypreA );
+   hypreA = (nalu_hypre_ParCSRMatrix *) Amat_->getMatrix();
+   comm   = nalu_hypre_ParCSRMatrixComm( hypreA );
    if ( mli_ != NULL ) delete mli_;
    mli_ = new MLI(comm);
    method = new MLI_Method_AMGSA(comm);

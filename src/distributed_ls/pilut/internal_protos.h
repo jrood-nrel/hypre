@@ -5,109 +5,109 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-/* HYPRE_DistributedMatrixPilutSolver.c */
-HYPRE_Int HYPRE_NewDistributedMatrixPilutSolver( MPI_Comm comm , HYPRE_DistributedMatrix matrix , HYPRE_DistributedMatrixPilutSolver *new_solver );
-HYPRE_Int HYPRE_FreeDistributedMatrixPilutSolver( HYPRE_DistributedMatrixPilutSolver in_ptr );
-HYPRE_Int HYPRE_DistributedMatrixPilutSolverInitialize( HYPRE_DistributedMatrixPilutSolver solver );
-HYPRE_Int HYPRE_DistributedMatrixPilutSolverSetMatrix( HYPRE_DistributedMatrixPilutSolver in_ptr , HYPRE_DistributedMatrix matrix );
-HYPRE_DistributedMatrix HYPRE_DistributedMatrixPilutSolverGetMatrix( HYPRE_DistributedMatrixPilutSolver in_ptr );
-HYPRE_Int HYPRE_DistributedMatrixPilutSolverSetNumLocalRow( HYPRE_DistributedMatrixPilutSolver in_ptr , HYPRE_Int FirstLocalRow );
-HYPRE_Int HYPRE_DistributedMatrixPilutSolverSetFactorRowSize( HYPRE_DistributedMatrixPilutSolver in_ptr , HYPRE_Int size );
-HYPRE_Int HYPRE_DistributedMatrixPilutSolverSetDropTolerance( HYPRE_DistributedMatrixPilutSolver in_ptr , HYPRE_Real tolerance );
-HYPRE_Int HYPRE_DistributedMatrixPilutSolverSetMaxIts( HYPRE_DistributedMatrixPilutSolver in_ptr , HYPRE_Int its );
-HYPRE_Int HYPRE_DistributedMatrixPilutSolverSetup( HYPRE_DistributedMatrixPilutSolver in_ptr );
-HYPRE_Int HYPRE_DistributedMatrixPilutSolverSolve( HYPRE_DistributedMatrixPilutSolver in_ptr , HYPRE_Real *x , HYPRE_Real *b );
+/* NALU_HYPRE_DistributedMatrixPilutSolver.c */
+NALU_HYPRE_Int NALU_HYPRE_NewDistributedMatrixPilutSolver( MPI_Comm comm , NALU_HYPRE_DistributedMatrix matrix , NALU_HYPRE_DistributedMatrixPilutSolver *new_solver );
+NALU_HYPRE_Int NALU_HYPRE_FreeDistributedMatrixPilutSolver( NALU_HYPRE_DistributedMatrixPilutSolver in_ptr );
+NALU_HYPRE_Int NALU_HYPRE_DistributedMatrixPilutSolverInitialize( NALU_HYPRE_DistributedMatrixPilutSolver solver );
+NALU_HYPRE_Int NALU_HYPRE_DistributedMatrixPilutSolverSetMatrix( NALU_HYPRE_DistributedMatrixPilutSolver in_ptr , NALU_HYPRE_DistributedMatrix matrix );
+NALU_HYPRE_DistributedMatrix NALU_HYPRE_DistributedMatrixPilutSolverGetMatrix( NALU_HYPRE_DistributedMatrixPilutSolver in_ptr );
+NALU_HYPRE_Int NALU_HYPRE_DistributedMatrixPilutSolverSetNumLocalRow( NALU_HYPRE_DistributedMatrixPilutSolver in_ptr , NALU_HYPRE_Int FirstLocalRow );
+NALU_HYPRE_Int NALU_HYPRE_DistributedMatrixPilutSolverSetFactorRowSize( NALU_HYPRE_DistributedMatrixPilutSolver in_ptr , NALU_HYPRE_Int size );
+NALU_HYPRE_Int NALU_HYPRE_DistributedMatrixPilutSolverSetDropTolerance( NALU_HYPRE_DistributedMatrixPilutSolver in_ptr , NALU_HYPRE_Real tolerance );
+NALU_HYPRE_Int NALU_HYPRE_DistributedMatrixPilutSolverSetMaxIts( NALU_HYPRE_DistributedMatrixPilutSolver in_ptr , NALU_HYPRE_Int its );
+NALU_HYPRE_Int NALU_HYPRE_DistributedMatrixPilutSolverSetup( NALU_HYPRE_DistributedMatrixPilutSolver in_ptr );
+NALU_HYPRE_Int NALU_HYPRE_DistributedMatrixPilutSolverSolve( NALU_HYPRE_DistributedMatrixPilutSolver in_ptr , NALU_HYPRE_Real *x , NALU_HYPRE_Real *b );
 
 /* comm.c */
-HYPRE_Int hypre_GlobalSEMax( HYPRE_Int value , MPI_Comm hypre_MPI_Context );
-HYPRE_Int hypre_GlobalSEMin( HYPRE_Int value , MPI_Comm hypre_MPI_Context );
-HYPRE_Int hypre_GlobalSESum( HYPRE_Int value , MPI_Comm hypre_MPI_Context );
-HYPRE_Real hypre_GlobalSEMaxDouble( HYPRE_Real value , MPI_Comm hypre_MPI_Context );
-HYPRE_Real hypre_GlobalSEMinDouble( HYPRE_Real value , MPI_Comm hypre_MPI_Context );
-HYPRE_Real hypre_GlobalSESumDouble( HYPRE_Real value , MPI_Comm hypre_MPI_Context );
+NALU_HYPRE_Int nalu_hypre_GlobalSEMax( NALU_HYPRE_Int value , MPI_Comm nalu_hypre_MPI_Context );
+NALU_HYPRE_Int nalu_hypre_GlobalSEMin( NALU_HYPRE_Int value , MPI_Comm nalu_hypre_MPI_Context );
+NALU_HYPRE_Int nalu_hypre_GlobalSESum( NALU_HYPRE_Int value , MPI_Comm nalu_hypre_MPI_Context );
+NALU_HYPRE_Real nalu_hypre_GlobalSEMaxDouble( NALU_HYPRE_Real value , MPI_Comm nalu_hypre_MPI_Context );
+NALU_HYPRE_Real nalu_hypre_GlobalSEMinDouble( NALU_HYPRE_Real value , MPI_Comm nalu_hypre_MPI_Context );
+NALU_HYPRE_Real nalu_hypre_GlobalSESumDouble( NALU_HYPRE_Real value , MPI_Comm nalu_hypre_MPI_Context );
 
 /* debug.c */
-void hypre_PrintLine( const char *str , hypre_PilutSolverGlobals *globals );
-void hypre_CheckBounds( HYPRE_Int low , HYPRE_Int i , HYPRE_Int up , hypre_PilutSolverGlobals *globals );
-hypre_longint hypre_IDX_Checksum( const HYPRE_Int *v , HYPRE_Int len , const char *msg , HYPRE_Int tag , hypre_PilutSolverGlobals *globals );
-hypre_longint hypre_INT_Checksum( const HYPRE_Int *v , HYPRE_Int len , const char *msg , HYPRE_Int tag , hypre_PilutSolverGlobals *globals );
-hypre_longint hypre_FP_Checksum( const HYPRE_Real *v , HYPRE_Int len , const char *msg , HYPRE_Int tag , hypre_PilutSolverGlobals *globals );
-hypre_longint hypre_RMat_Checksum( const ReduceMatType *rmat , hypre_PilutSolverGlobals *globals );
-hypre_longint hypre_LDU_Checksum( const FactorMatType *ldu , hypre_PilutSolverGlobals *globals );
-void hypre_PrintVector( HYPRE_Int *v , HYPRE_Int n , char *msg , hypre_PilutSolverGlobals *globals );
+void nalu_hypre_PrintLine( const char *str , nalu_hypre_PilutSolverGlobals *globals );
+void nalu_hypre_CheckBounds( NALU_HYPRE_Int low , NALU_HYPRE_Int i , NALU_HYPRE_Int up , nalu_hypre_PilutSolverGlobals *globals );
+nalu_hypre_longint nalu_hypre_IDX_Checksum( const NALU_HYPRE_Int *v , NALU_HYPRE_Int len , const char *msg , NALU_HYPRE_Int tag , nalu_hypre_PilutSolverGlobals *globals );
+nalu_hypre_longint nalu_hypre_INT_Checksum( const NALU_HYPRE_Int *v , NALU_HYPRE_Int len , const char *msg , NALU_HYPRE_Int tag , nalu_hypre_PilutSolverGlobals *globals );
+nalu_hypre_longint nalu_hypre_FP_Checksum( const NALU_HYPRE_Real *v , NALU_HYPRE_Int len , const char *msg , NALU_HYPRE_Int tag , nalu_hypre_PilutSolverGlobals *globals );
+nalu_hypre_longint nalu_hypre_RMat_Checksum( const ReduceMatType *rmat , nalu_hypre_PilutSolverGlobals *globals );
+nalu_hypre_longint nalu_hypre_LDU_Checksum( const FactorMatType *ldu , nalu_hypre_PilutSolverGlobals *globals );
+void nalu_hypre_PrintVector( NALU_HYPRE_Int *v , NALU_HYPRE_Int n , char *msg , nalu_hypre_PilutSolverGlobals *globals );
 
 /* hypre.c */
 
 /* ilut.c */
-HYPRE_Int hypre_ILUT( DataDistType *ddist , HYPRE_DistributedMatrix matrix , FactorMatType *ldu , HYPRE_Int maxnz , HYPRE_Real tol , hypre_PilutSolverGlobals *globals );
-void hypre_ComputeAdd2Nrms( HYPRE_Int num_rows , HYPRE_Int *rowptr , HYPRE_Real *values , HYPRE_Real *nrm2s );
+NALU_HYPRE_Int nalu_hypre_ILUT( DataDistType *ddist , NALU_HYPRE_DistributedMatrix matrix , FactorMatType *ldu , NALU_HYPRE_Int maxnz , NALU_HYPRE_Real tol , nalu_hypre_PilutSolverGlobals *globals );
+void nalu_hypre_ComputeAdd2Nrms( NALU_HYPRE_Int num_rows , NALU_HYPRE_Int *rowptr , NALU_HYPRE_Real *values , NALU_HYPRE_Real *nrm2s );
 
 /* parilut.c */
-void hypre_ParILUT( DataDistType *ddist , FactorMatType *ldu , ReduceMatType *rmat , HYPRE_Int gmaxnz , HYPRE_Real tol , hypre_PilutSolverGlobals *globals );
-void hypre_ComputeCommInfo( ReduceMatType *rmat , CommInfoType *cinfo , HYPRE_Int *rowdist , hypre_PilutSolverGlobals *globals );
-HYPRE_Int hypre_Idx2PE( HYPRE_Int idx , hypre_PilutSolverGlobals *globals );
-HYPRE_Int hypre_SelectSet( ReduceMatType *rmat , CommInfoType *cinfo , HYPRE_Int *perm , HYPRE_Int *iperm , HYPRE_Int *newperm , HYPRE_Int *newiperm , hypre_PilutSolverGlobals *globals );
-void hypre_SendFactoredRows( FactorMatType *ldu , CommInfoType *cinfo , HYPRE_Int *newperm , HYPRE_Int nmis , hypre_PilutSolverGlobals *globals );
-void hypre_ComputeRmat( FactorMatType *ldu , ReduceMatType *rmat , ReduceMatType *nrmat , CommInfoType *cinfo , HYPRE_Int *perm , HYPRE_Int *iperm , HYPRE_Int *newperm , HYPRE_Int *newiperm , HYPRE_Int nmis , HYPRE_Real tol , hypre_PilutSolverGlobals *globals );
-void hypre_FactorLocal( FactorMatType *ldu , ReduceMatType *rmat , ReduceMatType *nrmat , CommInfoType *cinfo , HYPRE_Int *perm , HYPRE_Int *iperm , HYPRE_Int *newperm , HYPRE_Int *newiperm , HYPRE_Int nmis , HYPRE_Real tol , hypre_PilutSolverGlobals *globals );
-void hypre_SecondDropSmall( HYPRE_Real rtol , hypre_PilutSolverGlobals *globals );
-HYPRE_Int hypre_SeperateLU_byDIAG( HYPRE_Int diag , HYPRE_Int *newiperm , hypre_PilutSolverGlobals *globals );
-HYPRE_Int hypre_SeperateLU_byMIS( hypre_PilutSolverGlobals *globals );
-void hypre_UpdateL( HYPRE_Int lrow , HYPRE_Int last , FactorMatType *ldu , hypre_PilutSolverGlobals *globals );
-void hypre_FormNRmat( HYPRE_Int rrow , HYPRE_Int first , ReduceMatType *nrmat , HYPRE_Int max_rowlen , HYPRE_Int in_rowlen , HYPRE_Int *in_colind , HYPRE_Real *in_values , hypre_PilutSolverGlobals *globals );
-void hypre_FormDU( HYPRE_Int lrow , HYPRE_Int first , FactorMatType *ldu , HYPRE_Int *rcolind , HYPRE_Real *rvalues , HYPRE_Real tol , hypre_PilutSolverGlobals *globals );
-void hypre_EraseMap( CommInfoType *cinfo , HYPRE_Int *newperm , HYPRE_Int nmis , hypre_PilutSolverGlobals *globals );
-void hypre_ParINIT( ReduceMatType *nrmat , CommInfoType *cinfo , HYPRE_Int *rowdist , hypre_PilutSolverGlobals *globals );
+void nalu_hypre_ParILUT( DataDistType *ddist , FactorMatType *ldu , ReduceMatType *rmat , NALU_HYPRE_Int gmaxnz , NALU_HYPRE_Real tol , nalu_hypre_PilutSolverGlobals *globals );
+void nalu_hypre_ComputeCommInfo( ReduceMatType *rmat , CommInfoType *cinfo , NALU_HYPRE_Int *rowdist , nalu_hypre_PilutSolverGlobals *globals );
+NALU_HYPRE_Int nalu_hypre_Idx2PE( NALU_HYPRE_Int idx , nalu_hypre_PilutSolverGlobals *globals );
+NALU_HYPRE_Int nalu_hypre_SelectSet( ReduceMatType *rmat , CommInfoType *cinfo , NALU_HYPRE_Int *perm , NALU_HYPRE_Int *iperm , NALU_HYPRE_Int *newperm , NALU_HYPRE_Int *newiperm , nalu_hypre_PilutSolverGlobals *globals );
+void nalu_hypre_SendFactoredRows( FactorMatType *ldu , CommInfoType *cinfo , NALU_HYPRE_Int *newperm , NALU_HYPRE_Int nmis , nalu_hypre_PilutSolverGlobals *globals );
+void nalu_hypre_ComputeRmat( FactorMatType *ldu , ReduceMatType *rmat , ReduceMatType *nrmat , CommInfoType *cinfo , NALU_HYPRE_Int *perm , NALU_HYPRE_Int *iperm , NALU_HYPRE_Int *newperm , NALU_HYPRE_Int *newiperm , NALU_HYPRE_Int nmis , NALU_HYPRE_Real tol , nalu_hypre_PilutSolverGlobals *globals );
+void nalu_hypre_FactorLocal( FactorMatType *ldu , ReduceMatType *rmat , ReduceMatType *nrmat , CommInfoType *cinfo , NALU_HYPRE_Int *perm , NALU_HYPRE_Int *iperm , NALU_HYPRE_Int *newperm , NALU_HYPRE_Int *newiperm , NALU_HYPRE_Int nmis , NALU_HYPRE_Real tol , nalu_hypre_PilutSolverGlobals *globals );
+void nalu_hypre_SecondDropSmall( NALU_HYPRE_Real rtol , nalu_hypre_PilutSolverGlobals *globals );
+NALU_HYPRE_Int nalu_hypre_SeperateLU_byDIAG( NALU_HYPRE_Int diag , NALU_HYPRE_Int *newiperm , nalu_hypre_PilutSolverGlobals *globals );
+NALU_HYPRE_Int nalu_hypre_SeperateLU_byMIS( nalu_hypre_PilutSolverGlobals *globals );
+void nalu_hypre_UpdateL( NALU_HYPRE_Int lrow , NALU_HYPRE_Int last , FactorMatType *ldu , nalu_hypre_PilutSolverGlobals *globals );
+void nalu_hypre_FormNRmat( NALU_HYPRE_Int rrow , NALU_HYPRE_Int first , ReduceMatType *nrmat , NALU_HYPRE_Int max_rowlen , NALU_HYPRE_Int in_rowlen , NALU_HYPRE_Int *in_colind , NALU_HYPRE_Real *in_values , nalu_hypre_PilutSolverGlobals *globals );
+void nalu_hypre_FormDU( NALU_HYPRE_Int lrow , NALU_HYPRE_Int first , FactorMatType *ldu , NALU_HYPRE_Int *rcolind , NALU_HYPRE_Real *rvalues , NALU_HYPRE_Real tol , nalu_hypre_PilutSolverGlobals *globals );
+void nalu_hypre_EraseMap( CommInfoType *cinfo , NALU_HYPRE_Int *newperm , NALU_HYPRE_Int nmis , nalu_hypre_PilutSolverGlobals *globals );
+void nalu_hypre_ParINIT( ReduceMatType *nrmat , CommInfoType *cinfo , NALU_HYPRE_Int *rowdist , nalu_hypre_PilutSolverGlobals *globals );
 
 /* parutil.c */
-void hypre_errexit(const char *f_str , ...);
-void hypre_my_abort( HYPRE_Int inSignal , hypre_PilutSolverGlobals *globals );
-HYPRE_Int *hypre_idx_malloc( HYPRE_Int n ,const char *msg );
-HYPRE_Int *hypre_idx_malloc_init( HYPRE_Int n , HYPRE_Int ival ,const char *msg );
-HYPRE_Real *hypre_fp_malloc( HYPRE_Int n ,const char *msg );
-HYPRE_Real *hypre_fp_malloc_init( HYPRE_Int n , HYPRE_Real ival ,const char *msg );
-void *hypre_mymalloc( HYPRE_Int nbytes ,const char *msg );
-void hypre_free_multi( void *ptr1 , ...);
-void hypre_memcpy_int( HYPRE_Int *dest , const HYPRE_Int *src , size_t n );
-void hypre_memcpy_idx( HYPRE_Int *dest , const HYPRE_Int *src , size_t n );
-void hypre_memcpy_fp( HYPRE_Real *dest , const HYPRE_Real *src , size_t n );
+void nalu_hypre_errexit(const char *f_str , ...);
+void nalu_hypre_my_abort( NALU_HYPRE_Int inSignal , nalu_hypre_PilutSolverGlobals *globals );
+NALU_HYPRE_Int *nalu_hypre_idx_malloc( NALU_HYPRE_Int n ,const char *msg );
+NALU_HYPRE_Int *nalu_hypre_idx_malloc_init( NALU_HYPRE_Int n , NALU_HYPRE_Int ival ,const char *msg );
+NALU_HYPRE_Real *nalu_hypre_fp_malloc( NALU_HYPRE_Int n ,const char *msg );
+NALU_HYPRE_Real *nalu_hypre_fp_malloc_init( NALU_HYPRE_Int n , NALU_HYPRE_Real ival ,const char *msg );
+void *nalu_hypre_mymalloc( NALU_HYPRE_Int nbytes ,const char *msg );
+void nalu_hypre_free_multi( void *ptr1 , ...);
+void nalu_hypre_memcpy_int( NALU_HYPRE_Int *dest , const NALU_HYPRE_Int *src , size_t n );
+void nalu_hypre_memcpy_idx( NALU_HYPRE_Int *dest , const NALU_HYPRE_Int *src , size_t n );
+void nalu_hypre_memcpy_fp( NALU_HYPRE_Real *dest , const NALU_HYPRE_Real *src , size_t n );
 
 /* pblas1.c */
-HYPRE_Real hypre_p_dnrm2( DataDistType *ddist , HYPRE_Real *x , hypre_PilutSolverGlobals *globals );
-HYPRE_Real hypre_p_ddot( DataDistType *ddist , HYPRE_Real *x , HYPRE_Real *y , hypre_PilutSolverGlobals *globals );
-void hypre_p_daxy( DataDistType *ddist , HYPRE_Real alpha , HYPRE_Real *x , HYPRE_Real *y );
-void hypre_p_daxpy( DataDistType *ddist , HYPRE_Real alpha , HYPRE_Real *x , HYPRE_Real *y );
-void hypre_p_daxbyz( DataDistType *ddist , HYPRE_Real alpha , HYPRE_Real *x , HYPRE_Real beta , HYPRE_Real *y , HYPRE_Real *z );
-HYPRE_Int hypre_p_vprintf( DataDistType *ddist , HYPRE_Real *x , hypre_PilutSolverGlobals *globals );
+NALU_HYPRE_Real nalu_hypre_p_dnrm2( DataDistType *ddist , NALU_HYPRE_Real *x , nalu_hypre_PilutSolverGlobals *globals );
+NALU_HYPRE_Real nalu_hypre_p_ddot( DataDistType *ddist , NALU_HYPRE_Real *x , NALU_HYPRE_Real *y , nalu_hypre_PilutSolverGlobals *globals );
+void nalu_hypre_p_daxy( DataDistType *ddist , NALU_HYPRE_Real alpha , NALU_HYPRE_Real *x , NALU_HYPRE_Real *y );
+void nalu_hypre_p_daxpy( DataDistType *ddist , NALU_HYPRE_Real alpha , NALU_HYPRE_Real *x , NALU_HYPRE_Real *y );
+void nalu_hypre_p_daxbyz( DataDistType *ddist , NALU_HYPRE_Real alpha , NALU_HYPRE_Real *x , NALU_HYPRE_Real beta , NALU_HYPRE_Real *y , NALU_HYPRE_Real *z );
+NALU_HYPRE_Int nalu_hypre_p_vprintf( DataDistType *ddist , NALU_HYPRE_Real *x , nalu_hypre_PilutSolverGlobals *globals );
 
 /* distributed_qsort.c */
-void hypre_tex_qsort(char *base, HYPRE_Int n, HYPRE_Int size, HYPRE_Int (*compar) (char*,char*));
+void nalu_hypre_tex_qsort(char *base, NALU_HYPRE_Int n, NALU_HYPRE_Int size, NALU_HYPRE_Int (*compar) (char*,char*));
 /* distributed_qsort_si.c */
-void hypre_sincsort_fast( HYPRE_Int n , HYPRE_Int *base );
-void hypre_sdecsort_fast( HYPRE_Int n , HYPRE_Int *base );
+void nalu_hypre_sincsort_fast( NALU_HYPRE_Int n , NALU_HYPRE_Int *base );
+void nalu_hypre_sdecsort_fast( NALU_HYPRE_Int n , NALU_HYPRE_Int *base );
 
 /* serilut.c */
-HYPRE_Int hypre_SerILUT( DataDistType *ddist , HYPRE_DistributedMatrix matrix , FactorMatType *ldu , ReduceMatType *rmat , HYPRE_Int maxnz , HYPRE_Real tol , hypre_PilutSolverGlobals *globals );
-HYPRE_Int hypre_SelectInterior( HYPRE_Int local_num_rows , HYPRE_DistributedMatrix matrix , HYPRE_Int *external_rows , HYPRE_Int *newperm , HYPRE_Int *newiperm , hypre_PilutSolverGlobals *globals );
-HYPRE_Int hypre_FindStructuralUnion( HYPRE_DistributedMatrix matrix , HYPRE_Int **structural_union , hypre_PilutSolverGlobals *globals );
-HYPRE_Int hypre_ExchangeStructuralUnions( DataDistType *ddist , HYPRE_Int **structural_union , hypre_PilutSolverGlobals *globals );
-void hypre_SecondDrop( HYPRE_Int maxnz , HYPRE_Real tol , HYPRE_Int row , HYPRE_Int *perm , HYPRE_Int *iperm , FactorMatType *ldu , hypre_PilutSolverGlobals *globals );
-void hypre_SecondDropUpdate( HYPRE_Int maxnz , HYPRE_Int maxnzkeep , HYPRE_Real tol , HYPRE_Int row , HYPRE_Int nlocal , HYPRE_Int *perm , HYPRE_Int *iperm , FactorMatType *ldu , ReduceMatType *rmat , hypre_PilutSolverGlobals *globals );
+NALU_HYPRE_Int nalu_hypre_SerILUT( DataDistType *ddist , NALU_HYPRE_DistributedMatrix matrix , FactorMatType *ldu , ReduceMatType *rmat , NALU_HYPRE_Int maxnz , NALU_HYPRE_Real tol , nalu_hypre_PilutSolverGlobals *globals );
+NALU_HYPRE_Int nalu_hypre_SelectInterior( NALU_HYPRE_Int local_num_rows , NALU_HYPRE_DistributedMatrix matrix , NALU_HYPRE_Int *external_rows , NALU_HYPRE_Int *newperm , NALU_HYPRE_Int *newiperm , nalu_hypre_PilutSolverGlobals *globals );
+NALU_HYPRE_Int nalu_hypre_FindStructuralUnion( NALU_HYPRE_DistributedMatrix matrix , NALU_HYPRE_Int **structural_union , nalu_hypre_PilutSolverGlobals *globals );
+NALU_HYPRE_Int nalu_hypre_ExchangeStructuralUnions( DataDistType *ddist , NALU_HYPRE_Int **structural_union , nalu_hypre_PilutSolverGlobals *globals );
+void nalu_hypre_SecondDrop( NALU_HYPRE_Int maxnz , NALU_HYPRE_Real tol , NALU_HYPRE_Int row , NALU_HYPRE_Int *perm , NALU_HYPRE_Int *iperm , FactorMatType *ldu , nalu_hypre_PilutSolverGlobals *globals );
+void nalu_hypre_SecondDropUpdate( NALU_HYPRE_Int maxnz , NALU_HYPRE_Int maxnzkeep , NALU_HYPRE_Real tol , NALU_HYPRE_Int row , NALU_HYPRE_Int nlocal , NALU_HYPRE_Int *perm , NALU_HYPRE_Int *iperm , FactorMatType *ldu , ReduceMatType *rmat , nalu_hypre_PilutSolverGlobals *globals );
 
 /* trifactor.c */
-void hypre_LDUSolve( DataDistType *ddist , FactorMatType *ldu , HYPRE_Real *x , HYPRE_Real *b , hypre_PilutSolverGlobals *globals );
-HYPRE_Int hypre_SetUpLUFactor( DataDistType *ddist , FactorMatType *ldu , HYPRE_Int maxnz , hypre_PilutSolverGlobals *globals );
-void hypre_SetUpFactor( DataDistType *ddist , FactorMatType *ldu , HYPRE_Int maxnz , HYPRE_Int *petotal , HYPRE_Int *rind , HYPRE_Int *imap , HYPRE_Int *maxsendP , HYPRE_Int DoingL , hypre_PilutSolverGlobals *globals );
+void nalu_hypre_LDUSolve( DataDistType *ddist , FactorMatType *ldu , NALU_HYPRE_Real *x , NALU_HYPRE_Real *b , nalu_hypre_PilutSolverGlobals *globals );
+NALU_HYPRE_Int nalu_hypre_SetUpLUFactor( DataDistType *ddist , FactorMatType *ldu , NALU_HYPRE_Int maxnz , nalu_hypre_PilutSolverGlobals *globals );
+void nalu_hypre_SetUpFactor( DataDistType *ddist , FactorMatType *ldu , NALU_HYPRE_Int maxnz , NALU_HYPRE_Int *petotal , NALU_HYPRE_Int *rind , NALU_HYPRE_Int *imap , NALU_HYPRE_Int *maxsendP , NALU_HYPRE_Int DoingL , nalu_hypre_PilutSolverGlobals *globals );
 
 /* util.c */
-HYPRE_Int hypre_ExtractMinLR( hypre_PilutSolverGlobals *globals );
-void hypre_IdxIncSort( HYPRE_Int n , HYPRE_Int *idx , HYPRE_Real *val );
-void hypre_ValDecSort( HYPRE_Int n , HYPRE_Int *idx , HYPRE_Real *val );
-HYPRE_Int hypre_CompactIdx( HYPRE_Int n , HYPRE_Int *idx , HYPRE_Real *val );
-void hypre_PrintIdxVal( HYPRE_Int n , HYPRE_Int *idx , HYPRE_Real *val );
-HYPRE_Int hypre_DecKeyValueCmp( const void *v1 , const void *v2 );
-void hypre_SortKeyValueNodesDec( KeyValueType *nodes , HYPRE_Int n );
-HYPRE_Int hypre_sasum( HYPRE_Int n , HYPRE_Int *x );
-void hypre_sincsort( HYPRE_Int n , HYPRE_Int *a );
-void hypre_sdecsort( HYPRE_Int n , HYPRE_Int *a );
+NALU_HYPRE_Int nalu_hypre_ExtractMinLR( nalu_hypre_PilutSolverGlobals *globals );
+void nalu_hypre_IdxIncSort( NALU_HYPRE_Int n , NALU_HYPRE_Int *idx , NALU_HYPRE_Real *val );
+void nalu_hypre_ValDecSort( NALU_HYPRE_Int n , NALU_HYPRE_Int *idx , NALU_HYPRE_Real *val );
+NALU_HYPRE_Int nalu_hypre_CompactIdx( NALU_HYPRE_Int n , NALU_HYPRE_Int *idx , NALU_HYPRE_Real *val );
+void nalu_hypre_PrintIdxVal( NALU_HYPRE_Int n , NALU_HYPRE_Int *idx , NALU_HYPRE_Real *val );
+NALU_HYPRE_Int nalu_hypre_DecKeyValueCmp( const void *v1 , const void *v2 );
+void nalu_hypre_SortKeyValueNodesDec( KeyValueType *nodes , NALU_HYPRE_Int n );
+NALU_HYPRE_Int nalu_hypre_sasum( NALU_HYPRE_Int n , NALU_HYPRE_Int *x );
+void nalu_hypre_sincsort( NALU_HYPRE_Int n , NALU_HYPRE_Int *a );
+void nalu_hypre_sdecsort( NALU_HYPRE_Int n , NALU_HYPRE_Int *a );
 

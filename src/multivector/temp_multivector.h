@@ -12,11 +12,11 @@
 
 typedef struct
 {
-   HYPRE_Int    numVectors;
-   HYPRE_Int*   mask;
+   NALU_HYPRE_Int    numVectors;
+   NALU_HYPRE_Int*   mask;
    void**       vector;
-   HYPRE_Int    ownsVectors;
-   HYPRE_Int    ownsMask;
+   NALU_HYPRE_Int    ownsVectors;
+   NALU_HYPRE_Int    ownsMask;
 
    mv_InterfaceInterpreter* interpreter;
 
@@ -27,16 +27,16 @@ typedef  mv_TempMultiVector* mv_TempMultiVectorPtr;
 
 /*******************************************************************/
 /*
-The above is a temporary implementation of the hypre_MultiVector
+The above is a temporary implementation of the nalu_hypre_MultiVector
 data type, just to get things going with LOBPCG eigensolver.
 
-A more proper implementation would be to define hypre_MultiParVector,
-hypre_MultiStructVector and hypre_MultiSStructVector by adding a new
+A more proper implementation would be to define nalu_hypre_MultiParVector,
+nalu_hypre_MultiStructVector and nalu_hypre_MultiSStructVector by adding a new
 record
 
-HYPRE_Int numVectors;
+NALU_HYPRE_Int numVectors;
 
-in hypre_ParVector, hypre_StructVector and hypre_SStructVector,
+in nalu_hypre_ParVector, nalu_hypre_StructVector and nalu_hypre_SStructVector,
 and increasing the size of data numVectors times. Respective
 modifications of most vector operations are straightforward
 (it is strongly suggested that BLAS routines are used wherever
@@ -44,28 +44,28 @@ possible), efficient implementation of matrix-by-multivector
 multiplication may be more difficult.
 
 With the above implementation of hypre vectors, the definition
-of hypre_MultiVector becomes simply (cf. multivector.h)
+of nalu_hypre_MultiVector becomes simply (cf. multivector.h)
 
 typedef struct
 {
   void* multiVector;
-  HYPRE_InterfaceInterpreter* interpreter;
-} hypre_MultiVector;
+  NALU_HYPRE_InterfaceInterpreter* interpreter;
+} nalu_hypre_MultiVector;
 
 with pointers to abstract multivector functions added to the structure
-HYPRE_InterfaceInterpreter (cf. HYPRE_interpreter.h; particular values
+NALU_HYPRE_InterfaceInterpreter (cf. NALU_HYPRE_interpreter.h; particular values
 are assigned to these pointers by functions
-HYPRE_ParCSRSetupInterpreter, HYPRE_StructSetupInterpreter and
-HYPRE_Int HYPRE_SStructSetupInterpreter),
+NALU_HYPRE_ParCSRSetupInterpreter, NALU_HYPRE_StructSetupInterpreter and
+NALU_HYPRE_Int NALU_HYPRE_SStructSetupInterpreter),
 and the abstract multivector functions become simply interfaces
 to the actual multivector functions of the form (cf. multivector.c):
 
 void
-hypre_MultiVectorCopy( hypre_MultiVectorPtr src_, hypre_MultiVectorPtr dest_ ) {
+nalu_hypre_MultiVectorCopy( nalu_hypre_MultiVectorPtr src_, nalu_hypre_MultiVectorPtr dest_ ) {
 
-  hypre_MultiVector* src = (hypre_MultiVector*)src_;
-  hypre_MultiVector* dest = (hypre_MultiVector*)dest_;
-  hypre_assert( src != NULL && dest != NULL );
+  nalu_hypre_MultiVector* src = (nalu_hypre_MultiVector*)src_;
+  nalu_hypre_MultiVector* dest = (nalu_hypre_MultiVector*)dest_;
+  nalu_hypre_assert( src != NULL && dest != NULL );
   (src->interpreter->CopyMultiVector)( src->data, dest->data );
 }
 
@@ -78,55 +78,55 @@ extern "C" {
 #endif
 
 void*
-mv_TempMultiVectorCreateFromSampleVector( void*, HYPRE_Int n, void* sample );
+mv_TempMultiVectorCreateFromSampleVector( void*, NALU_HYPRE_Int n, void* sample );
 
 void*
-mv_TempMultiVectorCreateCopy( void*, HYPRE_Int copyValues );
+mv_TempMultiVectorCreateCopy( void*, NALU_HYPRE_Int copyValues );
 
 void
 mv_TempMultiVectorDestroy( void* );
 
-HYPRE_Int
+NALU_HYPRE_Int
 mv_TempMultiVectorWidth( void* v );
 
-HYPRE_Int
+NALU_HYPRE_Int
 mv_TempMultiVectorHeight( void* v );
 
 void
-mv_TempMultiVectorSetMask( void* v, HYPRE_Int* mask );
+mv_TempMultiVectorSetMask( void* v, NALU_HYPRE_Int* mask );
 
 void
 mv_TempMultiVectorClear( void* );
 
 void
-mv_TempMultiVectorSetRandom( void* v, HYPRE_Int seed );
+mv_TempMultiVectorSetRandom( void* v, NALU_HYPRE_Int seed );
 
 void
 mv_TempMultiVectorCopy( void* src, void* dest );
 
 void
-mv_TempMultiVectorAxpy( HYPRE_Complex, void*, void* );
+mv_TempMultiVectorAxpy( NALU_HYPRE_Complex, void*, void* );
 
 void
 mv_TempMultiVectorByMultiVector( void*, void*,
-                                 HYPRE_Int gh, HYPRE_Int h, HYPRE_Int w, HYPRE_Complex* v );
+                                 NALU_HYPRE_Int gh, NALU_HYPRE_Int h, NALU_HYPRE_Int w, NALU_HYPRE_Complex* v );
 
 void
 mv_TempMultiVectorByMultiVectorDiag( void* x, void* y,
-                                     HYPRE_Int* mask, HYPRE_Int n, HYPRE_Complex* diag );
+                                     NALU_HYPRE_Int* mask, NALU_HYPRE_Int n, NALU_HYPRE_Complex* diag );
 
 void
 mv_TempMultiVectorByMatrix( void*,
-                            HYPRE_Int gh, HYPRE_Int h, HYPRE_Int w, HYPRE_Complex* v,
+                            NALU_HYPRE_Int gh, NALU_HYPRE_Int h, NALU_HYPRE_Int w, NALU_HYPRE_Complex* v,
                             void* );
 
 void
 mv_TempMultiVectorXapy( void* x,
-                        HYPRE_Int gh, HYPRE_Int h, HYPRE_Int w, HYPRE_Complex* v,
+                        NALU_HYPRE_Int gh, NALU_HYPRE_Int h, NALU_HYPRE_Int w, NALU_HYPRE_Complex* v,
                         void* y );
 
 void mv_TempMultiVectorByDiagonal( void* x,
-                                   HYPRE_Int* mask, HYPRE_Int n, HYPRE_Complex* diag,
+                                   NALU_HYPRE_Int* mask, NALU_HYPRE_Int n, NALU_HYPRE_Complex* diag,
                                    void* y );
 
 void

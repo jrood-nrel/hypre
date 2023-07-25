@@ -6,7 +6,7 @@ extern "C" {
 #endif
 
 #include "f2c.h"
-#include "hypre_lapack.h"
+#include "nalu_hypre_lapack.h"
 
 /* Subroutine */ integer dlasrt_(const char *id, integer *n, doublereal *d__, integer *
 	info)

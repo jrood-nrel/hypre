@@ -25,7 +25,7 @@
 #define MLI_METHOD_AMGRS_ID     705
 #define MLI_METHOD_AMGCR_ID     706
 
-#include "_hypre_utilities.h"
+#include "_nalu_hypre_utilities.h"
 #include "mli.h"
 
 class MLI;

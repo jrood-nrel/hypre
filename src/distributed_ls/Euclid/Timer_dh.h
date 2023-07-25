@@ -15,7 +15,7 @@
  * runs, since recording CPU time probably isn't useful.
  * if EUCLID_TIMING is defined in $PCPACK_DIR/bmake_XXX/common,
  * the times() function is used;
- * then hypre_MPI_Wtime() is used in preference to times().
+ * then nalu_hypre_MPI_Wtime() is used in preference to times().
  *
  * You may need to fiddle with some of these includes, depending
  * on your system.  Make sure and check the logFile to ensure
@@ -26,7 +26,7 @@
  * either do nothing, or return -1.0; this is primarily for debugging.
  */
 
-#include "HYPRE_config.h"
+#include "NALU_HYPRE_config.h"
 
 #ifdef EUCLID_TIMING
 #include <sys/times.h>
@@ -53,9 +53,9 @@
 
 struct _timer_dh {
   bool isRunning;
-  hypre_longint sc_clk_tck;
-  HYPRE_Real begin_wall; 
-  HYPRE_Real end_wall;
+  nalu_hypre_longint sc_clk_tck;
+  NALU_HYPRE_Real begin_wall; 
+  NALU_HYPRE_Real end_wall;
 
 #ifdef EUCLID_TIMING
   struct tms  begin_cpu;
@@ -68,9 +68,9 @@ extern void Timer_dhCreate(Timer_dh *t);
 extern void Timer_dhDestroy(Timer_dh t);
 extern void Timer_dhStart(Timer_dh t);
 extern void Timer_dhStop(Timer_dh t);
-extern HYPRE_Real Timer_dhReadCPU(Timer_dh t);
-extern HYPRE_Real Timer_dhReadWall(Timer_dh t);
-extern HYPRE_Real Timer_dhReadUsage(Timer_dh t);
+extern NALU_HYPRE_Real Timer_dhReadCPU(Timer_dh t);
+extern NALU_HYPRE_Real Timer_dhReadWall(Timer_dh t);
+extern NALU_HYPRE_Real Timer_dhReadUsage(Timer_dh t);
 
 /* notes:
     (1)  unless compiled with EUCLID_TIMING defined, readCPU 

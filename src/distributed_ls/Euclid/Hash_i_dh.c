@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_Euclid.h"
+#include "_nalu_hypre_Euclid.h"
 /* #include "Hash_i_dh.h" */
 /* #include "Parser_dh.h" */
 /* #include "Mem_dh.h" */
@@ -16,14 +16,14 @@ static void rehash_private(Hash_i_dh h);
 
 
 /*--------------------------------------------------------------
- * hash functions (HYPRE_Real hashing is used)
+ * hash functions (NALU_HYPRE_Real hashing is used)
  *--------------------------------------------------------------*/
 #define HASH_1(k,size,idxOut)    \
          {  *idxOut = k % size;  }
 
 #define HASH_2(k,size,idxOut)      \
           {  \
-            HYPRE_Int r = k % (size-13); \
+            NALU_HYPRE_Int r = k % (size-13); \
             r = (r % 2) ? r : r+1; \
             *idxOut = r;           \
           }
@@ -35,16 +35,16 @@ static void rehash_private(Hash_i_dh h);
 typedef struct _hash_i_node_private Hash_i_Record;
 
 struct _hash_i_node_private {
-  HYPRE_Int  key;
-  HYPRE_Int  mark;
-  HYPRE_Int  data;
+  NALU_HYPRE_Int  key;
+  NALU_HYPRE_Int  mark;
+  NALU_HYPRE_Int  data;
 };
 
 
 struct _hash_i_dh {
-  HYPRE_Int         size;   /* total slots in table */
-  HYPRE_Int         count;  /* number of items inserted in table */
-  HYPRE_Int         curMark;/* used by Reset */
+  NALU_HYPRE_Int         size;   /* total slots in table */
+  NALU_HYPRE_Int         count;  /* number of items inserted in table */
+  NALU_HYPRE_Int         curMark;/* used by Reset */
   Hash_i_Record *data;
 };
 
@@ -55,10 +55,10 @@ struct _hash_i_dh {
 
 #undef __FUNC__
 #define __FUNC__ "Hash_i_dhCreate"
-void Hash_i_dhCreate(Hash_i_dh *h, HYPRE_Int sizeIN)
+void Hash_i_dhCreate(Hash_i_dh *h, NALU_HYPRE_Int sizeIN)
 {
   START_FUNC_DH
-  HYPRE_Int i, size;
+  NALU_HYPRE_Int i, size;
   Hash_i_Record *tmp2;
   struct _hash_i_dh* tmp;
 
@@ -76,7 +76,7 @@ void Hash_i_dhCreate(Hash_i_dh *h, HYPRE_Int sizeIN)
   /*
      determine initial hash table size.  If this is too small,
      it will be dynamically enlarged as needed by Hash_i_dhInsert()
-     See "HYPRE_Real hashing," p. 255, "Algorithms," Cormen, et. al.
+     See "NALU_HYPRE_Real hashing," p. 255, "Algorithms," Cormen, et. al.
    */
   while (size < sizeIN) size *= 2;  /* want table size to be a power of 2: */
   /* rule-of-thumb: ensure there's at least 10% padding */
@@ -119,26 +119,26 @@ void Hash_i_dhReset(Hash_i_dh h)
 
 #undef __FUNC__
 #define __FUNC__ "Hash_i_dhLookup"
-HYPRE_Int Hash_i_dhLookup(Hash_i_dh h, HYPRE_Int key)
+NALU_HYPRE_Int Hash_i_dhLookup(Hash_i_dh h, NALU_HYPRE_Int key)
 {
   START_FUNC_DH
-  HYPRE_Int idx, inc, i, start;
-  HYPRE_Int curMark = h->curMark;
-  HYPRE_Int size = h->size;
-  HYPRE_Int retval = -1;
+  NALU_HYPRE_Int idx, inc, i, start;
+  NALU_HYPRE_Int curMark = h->curMark;
+  NALU_HYPRE_Int size = h->size;
+  NALU_HYPRE_Int retval = -1;
   Hash_i_Record *data = h->data;
 
   HASH_1(key, size, &start)
   HASH_2(key, size, &inc)
 
-/*hypre_printf("Hash_i_dhLookup:: key: %i  tableSize: %i start: %i  inc: %i\n", key, size, start, inc);
+/*nalu_hypre_printf("Hash_i_dhLookup:: key: %i  tableSize: %i start: %i  inc: %i\n", key, size, start, inc);
 */
 
   for (i=0; i<size; ++i) {
     /* idx = (start + i*inc) % size; */
-    idx = (start + hypre_multmod(i, inc, size)) % size;
+    idx = (start + nalu_hypre_multmod(i, inc, size)) % size;
 
-/* hypre_printf("   idx= %i\n", idx); */
+/* nalu_hypre_printf("   idx= %i\n", idx); */
 
     if (data[idx].mark != curMark) {
       break;  /* key wasn't found */
@@ -155,16 +155,16 @@ HYPRE_Int Hash_i_dhLookup(Hash_i_dh h, HYPRE_Int key)
 
 #undef __FUNC__
 #define __FUNC__ "Hash_i_dhInsert"
-void Hash_i_dhInsert(Hash_i_dh h, HYPRE_Int key, HYPRE_Int dataIN)
+void Hash_i_dhInsert(Hash_i_dh h, NALU_HYPRE_Int key, NALU_HYPRE_Int dataIN)
 {
   START_FUNC_DH
-  HYPRE_Int i, idx, inc, start, size;
-  HYPRE_Int curMark = h->curMark;
+  NALU_HYPRE_Int i, idx, inc, start, size;
+  NALU_HYPRE_Int curMark = h->curMark;
   Hash_i_Record *data;
   bool success = false;
 
   if (dataIN < 0) {
-    hypre_sprintf(msgBuf_dh, "data = %i must be >= 0", dataIN);
+    nalu_hypre_sprintf(msgBuf_dh, "data = %i must be >= 0", dataIN);
     SET_V_ERROR(msgBuf_dh);
   }
 
@@ -182,18 +182,18 @@ void Hash_i_dhInsert(Hash_i_dh h, HYPRE_Int key, HYPRE_Int dataIN)
 
 
 
-/*hypre_printf("Hash_i_dhInsert::  tableSize= %i  start= %i  inc= %i\n", size, start, inc);
+/*nalu_hypre_printf("Hash_i_dhInsert::  tableSize= %i  start= %i  inc= %i\n", size, start, inc);
 */
   for (i=0; i<size; ++i) {
     /* idx = (start + i*inc) % size; */
-    idx = (start + hypre_multmod(i, inc, size)) % size;
+    idx = (start + nalu_hypre_multmod(i, inc, size)) % size;
 
-/* hypre_printf("   idx= %i\n", idx);
+/* nalu_hypre_printf("   idx= %i\n", idx);
 */
 
     /* check for previous insertion */
     if (data[idx].mark == curMark  &&  data[idx].key == key) {
-      hypre_sprintf(msgBuf_dh, "key,data= <%i, %i> already inserted", key, dataIN);
+      nalu_hypre_sprintf(msgBuf_dh, "key,data= <%i, %i> already inserted", key, dataIN);
       SET_V_ERROR(msgBuf_dh);
     }
 
@@ -207,7 +207,7 @@ void Hash_i_dhInsert(Hash_i_dh h, HYPRE_Int key, HYPRE_Int dataIN)
   }
 
   if (! success) {  /* should be impossible to be here, I think . . . */
-    hypre_sprintf(msgBuf_dh, "Failed to insert key= %i, data= %i", key, dataIN);
+    nalu_hypre_sprintf(msgBuf_dh, "Failed to insert key= %i, data= %i", key, dataIN);
   }
   END_FUNC_DH
 }
@@ -218,14 +218,14 @@ void Hash_i_dhInsert(Hash_i_dh h, HYPRE_Int key, HYPRE_Int dataIN)
 void rehash_private(Hash_i_dh h)
 {
   START_FUNC_DH
-  HYPRE_Int i,
+  NALU_HYPRE_Int i,
       old_size = h->size,
       new_size = old_size*2,
       oldCurMark = h->curMark;
   Hash_i_Record *oldData = h->data,
                  *newData;
 
-  hypre_sprintf(msgBuf_dh, "rehashing; old_size= %i, new_size= %i", old_size, new_size);
+  nalu_hypre_sprintf(msgBuf_dh, "rehashing; old_size= %i, new_size= %i", old_size, new_size);
   SET_INFO(msgBuf_dh);
 
   /* allocate new data table, and install it in the Hash_i_dh object;

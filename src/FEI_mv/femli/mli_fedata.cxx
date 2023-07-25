@@ -21,7 +21,7 @@
 #endif
 #endif
 
-#include "_hypre_utilities.h"
+#include "_nalu_hypre_utilities.h"
 #include "mli_fedata.h"
 #include "mli_utils.h"
 
@@ -758,7 +758,7 @@ int MLI_FEData::initComplete()
    // -------------------------------------------------------------
 
    nElems = currBlock->numLocalElems_;
-   hypre_assert( nElems > 0 );
+   nalu_hypre_assert( nElems > 0 );
    elemList = currBlock->elemGlobalIDs_;
    if ( elemList == NULL )
    {
@@ -800,7 +800,7 @@ int MLI_FEData::initComplete()
 
    for ( i = 1; i < nElems; i++ )
    {
-      hypre_assert( currBlock->elemGlobalIDs_[i] >= 0 );
+      nalu_hypre_assert( currBlock->elemGlobalIDs_[i] >= 0 );
       if ( currBlock->elemGlobalIDs_[i] == currBlock->elemGlobalIDs_[i-1] )
       {
          printf("initComplete ERROR : duplicate elemIDs.\n");

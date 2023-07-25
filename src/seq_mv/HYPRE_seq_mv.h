@@ -7,14 +7,14 @@
 
 /******************************************************************************
  *
- * Header file for HYPRE_mv library
+ * Header file for NALU_HYPRE_mv library
  *
  *****************************************************************************/
 
-#ifndef HYPRE_SEQ_MV_HEADER
-#define HYPRE_SEQ_MV_HEADER
+#ifndef NALU_HYPRE_SEQ_MV_HEADER
+#define NALU_HYPRE_SEQ_MV_HEADER
 
-#include "HYPRE_utilities.h"
+#include "NALU_HYPRE_utilities.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -24,120 +24,120 @@ extern "C" {
  * Structures
  *--------------------------------------------------------------------------*/
 
-struct hypre_CSRMatrix_struct;
-typedef struct hypre_CSRMatrix_struct *HYPRE_CSRMatrix;
-struct hypre_MappedMatrix_struct;
-typedef struct hypre_MappedMatrix_struct *HYPRE_MappedMatrix;
-struct hypre_MultiblockMatrix_struct;
-typedef struct hypre_MultiblockMatrix_struct *HYPRE_MultiblockMatrix;
-#ifndef HYPRE_VECTOR_STRUCT
-#define HYPRE_VECTOR_STRUCT
-struct hypre_Vector_struct;
-typedef struct hypre_Vector_struct *HYPRE_Vector;
+struct nalu_hypre_CSRMatrix_struct;
+typedef struct nalu_hypre_CSRMatrix_struct *NALU_HYPRE_CSRMatrix;
+struct nalu_hypre_MappedMatrix_struct;
+typedef struct nalu_hypre_MappedMatrix_struct *NALU_HYPRE_MappedMatrix;
+struct nalu_hypre_MultiblockMatrix_struct;
+typedef struct nalu_hypre_MultiblockMatrix_struct *NALU_HYPRE_MultiblockMatrix;
+#ifndef NALU_HYPRE_VECTOR_STRUCT
+#define NALU_HYPRE_VECTOR_STRUCT
+struct nalu_hypre_Vector_struct;
+typedef struct nalu_hypre_Vector_struct *NALU_HYPRE_Vector;
 #endif
 
 /*--------------------------------------------------------------------------
  * Prototypes
  *--------------------------------------------------------------------------*/
 
-/* HYPRE_csr_matrix.c */
-HYPRE_CSRMatrix HYPRE_CSRMatrixCreate( HYPRE_Int num_rows, HYPRE_Int num_cols,
-                                       HYPRE_Int *row_sizes );
-HYPRE_Int HYPRE_CSRMatrixDestroy( HYPRE_CSRMatrix matrix );
-HYPRE_Int HYPRE_CSRMatrixInitialize( HYPRE_CSRMatrix matrix );
-HYPRE_CSRMatrix HYPRE_CSRMatrixRead( char *file_name );
-void HYPRE_CSRMatrixPrint( HYPRE_CSRMatrix matrix, char *file_name );
-HYPRE_Int HYPRE_CSRMatrixGetNumRows( HYPRE_CSRMatrix matrix, HYPRE_Int *num_rows );
+/* NALU_HYPRE_csr_matrix.c */
+NALU_HYPRE_CSRMatrix NALU_HYPRE_CSRMatrixCreate( NALU_HYPRE_Int num_rows, NALU_HYPRE_Int num_cols,
+                                       NALU_HYPRE_Int *row_sizes );
+NALU_HYPRE_Int NALU_HYPRE_CSRMatrixDestroy( NALU_HYPRE_CSRMatrix matrix );
+NALU_HYPRE_Int NALU_HYPRE_CSRMatrixInitialize( NALU_HYPRE_CSRMatrix matrix );
+NALU_HYPRE_CSRMatrix NALU_HYPRE_CSRMatrixRead( char *file_name );
+void NALU_HYPRE_CSRMatrixPrint( NALU_HYPRE_CSRMatrix matrix, char *file_name );
+NALU_HYPRE_Int NALU_HYPRE_CSRMatrixGetNumRows( NALU_HYPRE_CSRMatrix matrix, NALU_HYPRE_Int *num_rows );
 
-/* HYPRE_mapped_matrix.c */
-HYPRE_MappedMatrix HYPRE_MappedMatrixCreate( void );
-HYPRE_Int HYPRE_MappedMatrixDestroy( HYPRE_MappedMatrix matrix );
-HYPRE_Int HYPRE_MappedMatrixLimitedDestroy( HYPRE_MappedMatrix matrix );
-HYPRE_Int HYPRE_MappedMatrixInitialize( HYPRE_MappedMatrix matrix );
-HYPRE_Int HYPRE_MappedMatrixAssemble( HYPRE_MappedMatrix matrix );
-void HYPRE_MappedMatrixPrint( HYPRE_MappedMatrix matrix );
-HYPRE_Int HYPRE_MappedMatrixGetColIndex( HYPRE_MappedMatrix matrix, HYPRE_Int j );
-void *HYPRE_MappedMatrixGetMatrix( HYPRE_MappedMatrix matrix );
-HYPRE_Int HYPRE_MappedMatrixSetMatrix( HYPRE_MappedMatrix matrix, void *matrix_data );
-HYPRE_Int HYPRE_MappedMatrixSetColMap( HYPRE_MappedMatrix matrix, HYPRE_Int (*ColMap )(HYPRE_Int,
+/* NALU_HYPRE_mapped_matrix.c */
+NALU_HYPRE_MappedMatrix NALU_HYPRE_MappedMatrixCreate( void );
+NALU_HYPRE_Int NALU_HYPRE_MappedMatrixDestroy( NALU_HYPRE_MappedMatrix matrix );
+NALU_HYPRE_Int NALU_HYPRE_MappedMatrixLimitedDestroy( NALU_HYPRE_MappedMatrix matrix );
+NALU_HYPRE_Int NALU_HYPRE_MappedMatrixInitialize( NALU_HYPRE_MappedMatrix matrix );
+NALU_HYPRE_Int NALU_HYPRE_MappedMatrixAssemble( NALU_HYPRE_MappedMatrix matrix );
+void NALU_HYPRE_MappedMatrixPrint( NALU_HYPRE_MappedMatrix matrix );
+NALU_HYPRE_Int NALU_HYPRE_MappedMatrixGetColIndex( NALU_HYPRE_MappedMatrix matrix, NALU_HYPRE_Int j );
+void *NALU_HYPRE_MappedMatrixGetMatrix( NALU_HYPRE_MappedMatrix matrix );
+NALU_HYPRE_Int NALU_HYPRE_MappedMatrixSetMatrix( NALU_HYPRE_MappedMatrix matrix, void *matrix_data );
+NALU_HYPRE_Int NALU_HYPRE_MappedMatrixSetColMap( NALU_HYPRE_MappedMatrix matrix, NALU_HYPRE_Int (*ColMap )(NALU_HYPRE_Int,
                                                                                        void *));
-HYPRE_Int HYPRE_MappedMatrixSetMapData( HYPRE_MappedMatrix matrix, void *MapData );
+NALU_HYPRE_Int NALU_HYPRE_MappedMatrixSetMapData( NALU_HYPRE_MappedMatrix matrix, void *MapData );
 
-/* HYPRE_multiblock_matrix.c */
-HYPRE_MultiblockMatrix HYPRE_MultiblockMatrixCreate( void );
-HYPRE_Int HYPRE_MultiblockMatrixDestroy( HYPRE_MultiblockMatrix matrix );
-HYPRE_Int HYPRE_MultiblockMatrixLimitedDestroy( HYPRE_MultiblockMatrix matrix );
-HYPRE_Int HYPRE_MultiblockMatrixInitialize( HYPRE_MultiblockMatrix matrix );
-HYPRE_Int HYPRE_MultiblockMatrixAssemble( HYPRE_MultiblockMatrix matrix );
-void HYPRE_MultiblockMatrixPrint( HYPRE_MultiblockMatrix matrix );
-HYPRE_Int HYPRE_MultiblockMatrixSetNumSubmatrices( HYPRE_MultiblockMatrix matrix, HYPRE_Int n );
-HYPRE_Int HYPRE_MultiblockMatrixSetSubmatrixType( HYPRE_MultiblockMatrix matrix, HYPRE_Int j,
-                                                  HYPRE_Int type );
+/* NALU_HYPRE_multiblock_matrix.c */
+NALU_HYPRE_MultiblockMatrix NALU_HYPRE_MultiblockMatrixCreate( void );
+NALU_HYPRE_Int NALU_HYPRE_MultiblockMatrixDestroy( NALU_HYPRE_MultiblockMatrix matrix );
+NALU_HYPRE_Int NALU_HYPRE_MultiblockMatrixLimitedDestroy( NALU_HYPRE_MultiblockMatrix matrix );
+NALU_HYPRE_Int NALU_HYPRE_MultiblockMatrixInitialize( NALU_HYPRE_MultiblockMatrix matrix );
+NALU_HYPRE_Int NALU_HYPRE_MultiblockMatrixAssemble( NALU_HYPRE_MultiblockMatrix matrix );
+void NALU_HYPRE_MultiblockMatrixPrint( NALU_HYPRE_MultiblockMatrix matrix );
+NALU_HYPRE_Int NALU_HYPRE_MultiblockMatrixSetNumSubmatrices( NALU_HYPRE_MultiblockMatrix matrix, NALU_HYPRE_Int n );
+NALU_HYPRE_Int NALU_HYPRE_MultiblockMatrixSetSubmatrixType( NALU_HYPRE_MultiblockMatrix matrix, NALU_HYPRE_Int j,
+                                                  NALU_HYPRE_Int type );
 
-/* HYPRE_vector.c */
-HYPRE_Vector HYPRE_VectorCreate( HYPRE_Int size );
-HYPRE_Int HYPRE_VectorDestroy( HYPRE_Vector vector );
-HYPRE_Int HYPRE_VectorInitialize( HYPRE_Vector vector );
-HYPRE_Int HYPRE_VectorPrint( HYPRE_Vector vector, char *file_name );
-HYPRE_Vector HYPRE_VectorRead( char *file_name );
+/* NALU_HYPRE_vector.c */
+NALU_HYPRE_Vector NALU_HYPRE_VectorCreate( NALU_HYPRE_Int size );
+NALU_HYPRE_Int NALU_HYPRE_VectorDestroy( NALU_HYPRE_Vector vector );
+NALU_HYPRE_Int NALU_HYPRE_VectorInitialize( NALU_HYPRE_Vector vector );
+NALU_HYPRE_Int NALU_HYPRE_VectorPrint( NALU_HYPRE_Vector vector, char *file_name );
+NALU_HYPRE_Vector NALU_HYPRE_VectorRead( char *file_name );
 
-typedef enum HYPRE_TimerID
+typedef enum NALU_HYPRE_TimerID
 {
    // timers for solver phase
-   HYPRE_TIMER_ID_MATVEC = 0,
-   HYPRE_TIMER_ID_BLAS1,
-   HYPRE_TIMER_ID_RELAX,
-   HYPRE_TIMER_ID_GS_ELIM_SOLVE,
+   NALU_HYPRE_TIMER_ID_MATVEC = 0,
+   NALU_HYPRE_TIMER_ID_BLAS1,
+   NALU_HYPRE_TIMER_ID_RELAX,
+   NALU_HYPRE_TIMER_ID_GS_ELIM_SOLVE,
 
    // timers for solve MPI
-   HYPRE_TIMER_ID_PACK_UNPACK, // copying data to/from send/recv buf
-   HYPRE_TIMER_ID_HALO_EXCHANGE, // halo exchange in matvec and relax
-   HYPRE_TIMER_ID_ALL_REDUCE,
+   NALU_HYPRE_TIMER_ID_PACK_UNPACK, // copying data to/from send/recv buf
+   NALU_HYPRE_TIMER_ID_HALO_EXCHANGE, // halo exchange in matvec and relax
+   NALU_HYPRE_TIMER_ID_ALL_REDUCE,
 
    // timers for setup phase
    // coarsening
-   HYPRE_TIMER_ID_CREATES,
-   HYPRE_TIMER_ID_CREATE_2NDS,
-   HYPRE_TIMER_ID_PMIS,
+   NALU_HYPRE_TIMER_ID_CREATES,
+   NALU_HYPRE_TIMER_ID_CREATE_2NDS,
+   NALU_HYPRE_TIMER_ID_PMIS,
 
    // interpolation
-   HYPRE_TIMER_ID_EXTENDED_I_INTERP,
-   HYPRE_TIMER_ID_PARTIAL_INTERP,
-   HYPRE_TIMER_ID_MULTIPASS_INTERP,
-   HYPRE_TIMER_ID_INTERP_TRUNC,
-   HYPRE_TIMER_ID_MATMUL, // matrix-matrix multiplication
-   HYPRE_TIMER_ID_COARSE_PARAMS,
+   NALU_HYPRE_TIMER_ID_EXTENDED_I_INTERP,
+   NALU_HYPRE_TIMER_ID_PARTIAL_INTERP,
+   NALU_HYPRE_TIMER_ID_MULTIPASS_INTERP,
+   NALU_HYPRE_TIMER_ID_INTERP_TRUNC,
+   NALU_HYPRE_TIMER_ID_MATMUL, // matrix-matrix multiplication
+   NALU_HYPRE_TIMER_ID_COARSE_PARAMS,
 
    // rap
-   HYPRE_TIMER_ID_RAP,
+   NALU_HYPRE_TIMER_ID_RAP,
 
    // timers for setup MPI
-   HYPRE_TIMER_ID_RENUMBER_COLIDX,
-   HYPRE_TIMER_ID_EXCHANGE_INTERP_DATA,
+   NALU_HYPRE_TIMER_ID_RENUMBER_COLIDX,
+   NALU_HYPRE_TIMER_ID_EXCHANGE_INTERP_DATA,
 
    // setup etc
-   HYPRE_TIMER_ID_GS_ELIM_SETUP,
+   NALU_HYPRE_TIMER_ID_GS_ELIM_SETUP,
 
    // temporaries
-   HYPRE_TIMER_ID_BEXT_A,
-   HYPRE_TIMER_ID_BEXT_S,
-   HYPRE_TIMER_ID_RENUMBER_COLIDX_RAP,
-   HYPRE_TIMER_ID_MERGE,
+   NALU_HYPRE_TIMER_ID_BEXT_A,
+   NALU_HYPRE_TIMER_ID_BEXT_S,
+   NALU_HYPRE_TIMER_ID_RENUMBER_COLIDX_RAP,
+   NALU_HYPRE_TIMER_ID_MERGE,
 
    // csr matop
-   HYPRE_TIMER_ID_SPGEMM_ROWNNZ,
-   HYPRE_TIMER_ID_SPGEMM_ATTEMPT1,
-   HYPRE_TIMER_ID_SPGEMM_ATTEMPT2,
-   HYPRE_TIMER_ID_SPGEMM_SYMBOLIC,
-   HYPRE_TIMER_ID_SPGEMM_NUMERIC,
-   HYPRE_TIMER_ID_SPGEMM,
-   HYPRE_TIMER_ID_SPADD,
-   HYPRE_TIMER_ID_SPTRANS,
+   NALU_HYPRE_TIMER_ID_SPGEMM_ROWNNZ,
+   NALU_HYPRE_TIMER_ID_SPGEMM_ATTEMPT1,
+   NALU_HYPRE_TIMER_ID_SPGEMM_ATTEMPT2,
+   NALU_HYPRE_TIMER_ID_SPGEMM_SYMBOLIC,
+   NALU_HYPRE_TIMER_ID_SPGEMM_NUMERIC,
+   NALU_HYPRE_TIMER_ID_SPGEMM,
+   NALU_HYPRE_TIMER_ID_SPADD,
+   NALU_HYPRE_TIMER_ID_SPTRANS,
 
-   HYPRE_TIMER_ID_COUNT
-} HYPRE_TimerID;
+   NALU_HYPRE_TIMER_ID_COUNT
+} NALU_HYPRE_TimerID;
 
-extern HYPRE_Real hypre_profile_times[HYPRE_TIMER_ID_COUNT];
+extern NALU_HYPRE_Real nalu_hypre_profile_times[NALU_HYPRE_TIMER_ID_COUNT];
 
 #ifdef __cplusplus
 }

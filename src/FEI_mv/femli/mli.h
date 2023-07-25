@@ -21,7 +21,7 @@
  * include files 
  *--------------------------------------------------------------------------*/
 
-#include "_hypre_utilities.h"
+#include "_nalu_hypre_utilities.h"
 
 #include "mli_defs.h"
 #include "mli_solver.h"

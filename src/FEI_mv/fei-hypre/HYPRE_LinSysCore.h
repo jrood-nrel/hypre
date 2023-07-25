@@ -9,10 +9,10 @@
 // This is the HYPRE implementation of LinearSystemCore.
 // *************************************************************************
 
-#ifndef _HYPRE_LinSysCore_h_
-#define _HYPRE_LinSysCore_h_
+#ifndef _NALU_HYPRE_LinSysCore_h_
+#define _NALU_HYPRE_LinSysCore_h_
 
-#define HYPRE_FEI_Version() "FEI/HYPRE 2.7.0R1"
+#define NALU_HYPRE_FEI_Version() "FEI/HYPRE 2.7.0R1"
 
 // *************************************************************************
 // system libraries used
@@ -31,7 +31,7 @@
 // FEI-specific include files
 // -------------------------------------------------------------------------
 
-#include "HYPRE_FEI_includes.h"
+#include "NALU_HYPRE_FEI_includes.h"
 
 // *************************************************************************
 // local enumerations and defines
@@ -68,26 +68,26 @@ enum HYpreconID {HYIDENTITY,HYDIAGONAL,HYPILUT,HYPARASAILS,HYBOOMERAMG,HYML,
 
 typedef struct 
 {
-   HYPRE_BigInt *EdgeNodeList_;
-   HYPRE_BigInt *NodeNumbers_;
-   HYPRE_Int    numEdges_;
-   HYPRE_Int    numLocalNodes_;
-   HYPRE_Int    numNodes_;
-   HYPRE_Real   *NodalCoord_;
-} HYPRE_FEI_AMSData;
+   NALU_HYPRE_BigInt *EdgeNodeList_;
+   NALU_HYPRE_BigInt *NodeNumbers_;
+   NALU_HYPRE_Int    numEdges_;
+   NALU_HYPRE_Int    numLocalNodes_;
+   NALU_HYPRE_Int    numNodes_;
+   NALU_HYPRE_Real   *NodalCoord_;
+} NALU_HYPRE_FEI_AMSData;
 
 // *************************************************************************
 // class definition
 // -------------------------------------------------------------------------
 
-class HYPRE_LinSysCore
+class NALU_HYPRE_LinSysCore
 #ifndef NOFEI
            : public LinearSystemCore 
 #endif
 {
  public:
-   HYPRE_LinSysCore(MPI_Comm comm);
-   virtual ~HYPRE_LinSysCore();
+   NALU_HYPRE_LinSysCore(MPI_Comm comm);
+   virtual ~NALU_HYPRE_LinSysCore();
 
    // ----------------------------------------------------------------------
    // for creating another one, w/o knowing the run-time type of 'this' one.
@@ -366,7 +366,7 @@ class HYPRE_LinSysCore
    // ----------------------------------------------------------------------
 
    int    formResidual(double* values, int len);
-   double HYPRE_LSC_GetRNorm();
+   double NALU_HYPRE_LSC_GetRNorm();
 
    // ----------------------------------------------------------------------
    // function for launching the linear solver
@@ -403,13 +403,13 @@ class HYPRE_LinSysCore
    void   putIntoMappedMatrix(int row, int numValues, const double* values,
                               const int* scatterIndices);
    void   getFEDataObject(void **object) { (*object) = feData_; }
-   int    HYPRE_LSC_Matvec(void *x, void *y);
-   int    HYPRE_LSC_Axpby(double, void *, double, void *);
-   void   *HYPRE_LSC_GetRHSVector();
-   void   *HYPRE_LSC_GetSolVector();
-   void   *HYPRE_LSC_GetMatrix();
-   void   *HYPRE_LSC_SetColMap(int, int);
-   void   *HYPRE_LSC_MatMatMult(void *);
+   int    NALU_HYPRE_LSC_Matvec(void *x, void *y);
+   int    NALU_HYPRE_LSC_Axpby(double, void *, double, void *);
+   void   *NALU_HYPRE_LSC_GetRHSVector();
+   void   *NALU_HYPRE_LSC_GetSolVector();
+   void   *NALU_HYPRE_LSC_GetMatrix();
+   void   *NALU_HYPRE_LSC_SetColMap(int, int);
+   void   *NALU_HYPRE_LSC_MatMatMult(void *);
 
    // ----------------------------------------------------------------------
    // MLI-specific public functions
@@ -467,20 +467,20 @@ class HYPRE_LinSysCore
    void   buildSchurReducedSystem2();
    void   buildSlideReducedSystemPartA(int*,int*,int,int,int*,int*);
    void   buildSlideReducedSystemPartB(int*,int*,int,int,int*,int*,
-                                       HYPRE_ParCSRMatrix *);
+                                       NALU_HYPRE_ParCSRMatrix *);
    void   buildSlideReducedSystemPartC(int*,int*,int,int,int*,int*,
-                                       HYPRE_ParCSRMatrix);
+                                       NALU_HYPRE_ParCSRMatrix);
    void   buildSchurReducedRHS();
    void   buildSchurInitialGuess();
    double buildSchurReducedSoln();
-   void   computeAConjProjection(HYPRE_ParCSRMatrix A_csr, HYPRE_ParVector x, 
-                                 HYPRE_ParVector b);
-   void   computeMinResProjection(HYPRE_ParCSRMatrix A_csr, HYPRE_ParVector x, 
-                                  HYPRE_ParVector b);
-   void   addToAConjProjectionSpace(HYPRE_IJVector x, HYPRE_IJVector b);
-   void   addToMinResProjectionSpace(HYPRE_IJVector x, HYPRE_IJVector b);
-   int    HYPRE_Schur_Search(int,int,int*,int*,int,int);
-   void   HYPRE_LSI_BuildNodalCoordinates();
+   void   computeAConjProjection(NALU_HYPRE_ParCSRMatrix A_csr, NALU_HYPRE_ParVector x, 
+                                 NALU_HYPRE_ParVector b);
+   void   computeMinResProjection(NALU_HYPRE_ParCSRMatrix A_csr, NALU_HYPRE_ParVector x, 
+                                  NALU_HYPRE_ParVector b);
+   void   addToAConjProjectionSpace(NALU_HYPRE_IJVector x, NALU_HYPRE_IJVector b);
+   void   addToMinResProjectionSpace(NALU_HYPRE_IJVector x, NALU_HYPRE_IJVector b);
+   int    NALU_HYPRE_Schur_Search(int,int,int*,int*,int,int);
+   void   NALU_HYPRE_LSI_BuildNodalCoordinates();
 
    // ----------------------------------------------------------------------
    // private functions for selecting solver/preconditioner
@@ -515,15 +515,15 @@ class HYPRE_LinSysCore
    // matrix and vectors
    // ----------------------------------------------------------------------
 
-   HYPRE_IJMatrix  HYA_;                // the system matrix
-   HYPRE_IJMatrix  HYnormalA_;          // normalized system matrix
-   HYPRE_IJVector  HYb_;                // the current RHS
-   HYPRE_IJVector  HYnormalB_;          // normalized system rhs
-   HYPRE_IJVector  *HYbs_;              // an array of RHSs
-   HYPRE_IJVector  HYx_;                // the solution vector
-   HYPRE_IJVector  HYr_;                // temporary vector for residual
-   HYPRE_IJVector  *HYpxs_;             // an array of previous solutions
-   HYPRE_IJVector  *HYpbs_;             // an array of previous rhs
+   NALU_HYPRE_IJMatrix  HYA_;                // the system matrix
+   NALU_HYPRE_IJMatrix  HYnormalA_;          // normalized system matrix
+   NALU_HYPRE_IJVector  HYb_;                // the current RHS
+   NALU_HYPRE_IJVector  HYnormalB_;          // normalized system rhs
+   NALU_HYPRE_IJVector  *HYbs_;              // an array of RHSs
+   NALU_HYPRE_IJVector  HYx_;                // the solution vector
+   NALU_HYPRE_IJVector  HYr_;                // temporary vector for residual
+   NALU_HYPRE_IJVector  *HYpxs_;             // an array of previous solutions
+   NALU_HYPRE_IJVector  *HYpbs_;             // an array of previous rhs
    int             numGlobalRows_;
    int             localStartRow_;
    int             localEndRow_;
@@ -539,25 +539,25 @@ class HYPRE_LinSysCore
    // matrix and vectors for reduction
    // ----------------------------------------------------------------------
 
-   HYPRE_IJMatrix  reducedA_;           // matrix for reduction
-   HYPRE_IJVector  reducedB_;           // RHS vector for reduction
-   HYPRE_IJVector  reducedX_;           // solution vector for reduction
-   HYPRE_IJVector  reducedR_;           // temporary vector for reduction
-   HYPRE_IJMatrix  HYA21_;              // (2,1) block in reduction
-   HYPRE_IJMatrix  HYA12_;              // (1,2) block in reduction
+   NALU_HYPRE_IJMatrix  reducedA_;           // matrix for reduction
+   NALU_HYPRE_IJVector  reducedB_;           // RHS vector for reduction
+   NALU_HYPRE_IJVector  reducedX_;           // solution vector for reduction
+   NALU_HYPRE_IJVector  reducedR_;           // temporary vector for reduction
+   NALU_HYPRE_IJMatrix  HYA21_;              // (2,1) block in reduction
+   NALU_HYPRE_IJMatrix  HYA12_;              // (1,2) block in reduction
    int             A21NRows_;           // number of rows in (2,1) block
    int             A21NCols_;           // number of cols in (2,1) block
    int             reducedAStartRow_;   // Nrows in reduced system
-   HYPRE_IJMatrix  HYinvA22_;           // inv(A22) in slide reduction
+   NALU_HYPRE_IJMatrix  HYinvA22_;           // inv(A22) in slide reduction
 
    // ----------------------------------------------------------------------
    // pointers to current matrix and vectors for solver
    // ----------------------------------------------------------------------
 
-   HYPRE_IJMatrix  currA_;
-   HYPRE_IJVector  currB_;
-   HYPRE_IJVector  currX_;
-   HYPRE_IJVector  currR_;
+   NALU_HYPRE_IJMatrix  currA_;
+   NALU_HYPRE_IJVector  currB_;
+   NALU_HYPRE_IJVector  currX_;
+   NALU_HYPRE_IJVector  currR_;
    int             currentRHS_;
    int             *rhsIDs_;
    int             numRHSs_;
@@ -605,7 +605,7 @@ class HYPRE_LinSysCore
    // ----------------------------------------------------------------------
 
    char            *HYSolverName_;
-   HYPRE_Solver    HYSolver_;
+   NALU_HYPRE_Solver    HYSolver_;
    HYsolverID      HYSolverID_;
    int             gmresDim_;
    int             fgmresUpdateTol_;
@@ -615,7 +615,7 @@ class HYPRE_LinSysCore
    int             pcgRecomputeRes_;
 
    char            *HYPreconName_;
-   HYPRE_Solver    HYPrecon_;
+   NALU_HYPRE_Solver    HYPrecon_;
    HYpreconID      HYPreconID_;
    int             HYPreconReuse_;
    int             HYPreconSetup_;
@@ -681,19 +681,19 @@ class HYPRE_LinSysCore
    int             polyOrder_;
    int             euclidargc_;
    char            **euclidargv_;
-   HYPRE_IJVector  amsX_;
-   HYPRE_IJVector  amsY_;
-   HYPRE_IJVector  amsZ_;
+   NALU_HYPRE_IJVector  amsX_;
+   NALU_HYPRE_IJVector  amsY_;
+   NALU_HYPRE_IJVector  amsZ_;
    int             localStartRowAMSV_;
    int             localEndRowAMSV_;
-   HYPRE_IJMatrix  amsG_;
-   HYPRE_IJMatrix  amsD0_;
-   HYPRE_IJMatrix  amsD1_;
+   NALU_HYPRE_IJMatrix  amsG_;
+   NALU_HYPRE_IJMatrix  amsD0_;
+   NALU_HYPRE_IJMatrix  amsD1_;
    int             localStartRowAMSG_;
    int             localEndRowAMSG_;
    int             localStartColAMSG_;
    int             localEndColAMSG_;
-   HYPRE_ParCSRMatrix  amsBetaPoisson_;
+   NALU_HYPRE_ParCSRMatrix  amsBetaPoisson_;
    int             amsNumPDEs_;
    int             amsMaxIter_;
    double          amsTol_;
@@ -740,7 +740,7 @@ class HYPRE_LinSysCore
    int             MLI_Hybrid_MaxIter_;
    double          MLI_Hybrid_ConvRate_;
    int             MLI_Hybrid_NTrials_;
-   HYPRE_FEI_AMSData AMSData_;
+   NALU_HYPRE_FEI_AMSData AMSData_;
    int             FEI_mixedDiagFlag_;
    double          *FEI_mixedDiag_;
 
@@ -748,15 +748,15 @@ class HYPRE_LinSysCore
    // ML Maxwell variables
    // ----------------------------------------------------------------------
 
-   HYPRE_ParCSRMatrix  maxwellANN_;           // Maxwell nodal matrix 
-   HYPRE_ParCSRMatrix  maxwellGEN_;           // Maxwell gradient matrix 
+   NALU_HYPRE_ParCSRMatrix  maxwellANN_;           // Maxwell nodal matrix 
+   NALU_HYPRE_ParCSRMatrix  maxwellGEN_;           // Maxwell gradient matrix 
 
    // ----------------------------------------------------------------------
    // temporary functions for testing purposes
    // ----------------------------------------------------------------------
 
-   friend void fei_hypre_test(int argc, char *argv[]);
-   friend void fei_hypre_domaindecomposition(int argc, char *argv[]);
+   friend void fei_nalu_hypre_test(int argc, char *argv[]);
+   friend void fei_nalu_hypre_domaindecomposition(int argc, char *argv[]);
 
 };
 

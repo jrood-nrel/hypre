@@ -19,27 +19,27 @@ C_COMPILE_FLAGS = \
 EXTRA_FILES =\
  internal_protos.h
 
-HEADERS = HYPRE_matrix_matrix_protos.h
+HEADERS = NALU_HYPRE_matrix_matrix_protos.h
  
 FILES =\
- HYPRE_ConvertParCSRMatrixToDistributedMatrix.c\
- HYPRE_ConvertPETScMatrixToDistributedMatrix.c
+ NALU_HYPRE_ConvertParCSRMatrixToDistributedMatrix.c\
+ NALU_HYPRE_ConvertPETScMatrixToDistributedMatrix.c
 
 OBJS = ${FILES:.c=.o}
 
-SONAME = libHYPRE_MatrixMatrix-${HYPRE_RELEASE_VERSION}${HYPRE_LIB_SUFFIX}
+SONAME = libNALU_HYPRE_MatrixMatrix-${NALU_HYPRE_RELEASE_VERSION}${NALU_HYPRE_LIB_SUFFIX}
 
 ##################################################################
 # Targets
 ##################################################################
 
-all: libHYPRE_MatrixMatrix${HYPRE_LIB_SUFFIX}
-	cp -fR $(srcdir)/HYPRE_*.h $(HYPRE_BUILD_DIR)/include
-#	cp -fR libHYPRE* $(HYPRE_BUILD_DIR)/lib
+all: libNALU_HYPRE_MatrixMatrix${NALU_HYPRE_LIB_SUFFIX}
+	cp -fR $(srcdir)/NALU_HYPRE_*.h $(NALU_HYPRE_BUILD_DIR)/include
+#	cp -fR libHYPRE* $(NALU_HYPRE_BUILD_DIR)/lib
 
-install: libHYPRE_MatrixMatrix${HYPRE_LIB_SUFFIX}
-	cp -fR $(srcdir)/HYPRE_*.h $(HYPRE_INC_INSTALL)
-#	cp -fR libHYPRE* $(HYPRE_LIB_INSTALL)
+install: libNALU_HYPRE_MatrixMatrix${NALU_HYPRE_LIB_SUFFIX}
+	cp -fR $(srcdir)/NALU_HYPRE_*.h $(NALU_HYPRE_INC_INSTALL)
+#	cp -fR libHYPRE* $(NALU_HYPRE_LIB_INSTALL)
 
 clean:
 	rm -f *.o lib*
@@ -51,12 +51,12 @@ distclean: clean
 # Rules
 ##################################################################
 
-libHYPRE_MatrixMatrix.a: ${OBJS}
+libNALU_HYPRE_MatrixMatrix.a: ${OBJS}
 	@echo  "Building $@ ... "
 	${AR} $@ ${OBJS}
 	${RANLIB} $@
 
-libHYPRE_MatrixMatrix.so libHYPRE_MatrixMatrix.dylib: ${OBJS}
+libNALU_HYPRE_MatrixMatrix.so libNALU_HYPRE_MatrixMatrix.dylib: ${OBJS}
 	@echo  "Building $@ ... "
 	${BUILD_CC_SHARED} -o ${SONAME} ${OBJS} ${SHARED_SET_SONAME}${SONAME}
 	ln -s -f ${SONAME} $@

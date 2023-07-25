@@ -7,42 +7,42 @@
 
 /******************************************************************************
  *
- * Header info for hypre_SStructStencil data structures
+ * Header info for nalu_hypre_SStructStencil data structures
  *
  *****************************************************************************/
 
-#ifndef hypre_SSTRUCT_STENCIL_HEADER
-#define hypre_SSTRUCT_STENCIL_HEADER
+#ifndef nalu_hypre_SSTRUCT_STENCIL_HEADER
+#define nalu_hypre_SSTRUCT_STENCIL_HEADER
 
 /*--------------------------------------------------------------------------
- * hypre_SStructStencil
+ * nalu_hypre_SStructStencil
  *--------------------------------------------------------------------------*/
 
-typedef struct hypre_SStructStencil_struct
+typedef struct nalu_hypre_SStructStencil_struct
 {
-   hypre_StructStencil  *sstencil;
-   HYPRE_Int            *vars;
+   nalu_hypre_StructStencil  *sstencil;
+   NALU_HYPRE_Int            *vars;
 
-   HYPRE_Int             ref_count;
+   NALU_HYPRE_Int             ref_count;
 
-} hypre_SStructStencil;
+} nalu_hypre_SStructStencil;
 
 /*--------------------------------------------------------------------------
- * Accessor functions for the hypre_SStructStencil structure
+ * Accessor functions for the nalu_hypre_SStructStencil structure
  *--------------------------------------------------------------------------*/
 
-#define hypre_SStructStencilSStencil(stencil)     ((stencil) -> sstencil)
-#define hypre_SStructStencilVars(stencil)         ((stencil) -> vars)
-#define hypre_SStructStencilVar(stencil, i)       ((stencil) -> vars[i])
-#define hypre_SStructStencilRefCount(stencil)     ((stencil) -> ref_count)
+#define nalu_hypre_SStructStencilSStencil(stencil)     ((stencil) -> sstencil)
+#define nalu_hypre_SStructStencilVars(stencil)         ((stencil) -> vars)
+#define nalu_hypre_SStructStencilVar(stencil, i)       ((stencil) -> vars[i])
+#define nalu_hypre_SStructStencilRefCount(stencil)     ((stencil) -> ref_count)
 
-#define hypre_SStructStencilShape(stencil) \
-hypre_StructStencilShape( hypre_SStructStencilSStencil(stencil) )
-#define hypre_SStructStencilSize(stencil) \
-hypre_StructStencilSize( hypre_SStructStencilSStencil(stencil) )
-#define hypre_SStructStencilNDim(stencil) \
-hypre_StructStencilNDim( hypre_SStructStencilSStencil(stencil) )
-#define hypre_SStructStencilEntry(stencil, i) \
-hypre_StructStencilElement( hypre_SStructStencilSStencil(stencil), i )
+#define nalu_hypre_SStructStencilShape(stencil) \
+nalu_hypre_StructStencilShape( nalu_hypre_SStructStencilSStencil(stencil) )
+#define nalu_hypre_SStructStencilSize(stencil) \
+nalu_hypre_StructStencilSize( nalu_hypre_SStructStencilSStencil(stencil) )
+#define nalu_hypre_SStructStencilNDim(stencil) \
+nalu_hypre_StructStencilNDim( nalu_hypre_SStructStencilSStencil(stencil) )
+#define nalu_hypre_SStructStencilEntry(stencil, i) \
+nalu_hypre_StructStencilElement( nalu_hypre_SStructStencilSStencil(stencil), i )
 
 #endif

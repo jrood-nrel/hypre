@@ -9,12 +9,12 @@ include ../config/Makefile.config
 
 CINCLUDES = ${INCLUDES} ${MPIINCLUDE}
 
-CDEFS = -DHYPRE_TIMING -DHYPRE_FORTRAN
-CXXDEFS = -DNOFEI -DHYPRE_TIMING -DMPICH_SKIP_MPICXX
+CDEFS = -DNALU_HYPRE_TIMING -DNALU_HYPRE_FORTRAN
+CXXDEFS = -DNOFEI -DNALU_HYPRE_TIMING -DMPICH_SKIP_MPICXX
 
 C_COMPILE_FLAGS = \
  -I$(srcdir)\
- -I${HYPRE_BUILD_DIR}/include\
+ -I${NALU_HYPRE_BUILD_DIR}/include\
  $(SUPERLU_INCLUDE)\
  $(DSUPERLU_INCLUDE)\
  ${CINCLUDES}\
@@ -23,7 +23,7 @@ C_COMPILE_FLAGS = \
 CXX_COMPILE_FLAGS = \
  -I$(srcdir)\
  -I$(srcdir)/../FEI_mv/fei-base\
- -I${HYPRE_BUILD_DIR}/include\
+ -I${NALU_HYPRE_BUILD_DIR}/include\
  $(SUPERLU_INCLUDE)\
  $(DSUPERLU_INCLUDE)\
  ${CINCLUDES}\
@@ -31,19 +31,19 @@ CXX_COMPILE_FLAGS = \
 
 F77_COMPILE_FLAGS = \
  -I$(srcdir)\
- -I${HYPRE_BUILD_DIR}/include\
+ -I${NALU_HYPRE_BUILD_DIR}/include\
  ${CINCLUDES}
 
 MPILIBFLAGS = ${MPILIBDIRS} ${MPILIBS} ${MPIFLAGS}
 LAPACKLIBFLAGS = ${LAPACKLIBDIRS} ${LAPACKLIBS}
 BLASLIBFLAGS = ${BLASLIBDIRS} ${BLASLIBS}
 LIBFLAGS = ${LDFLAGS} ${LIBS}
-LIBHYPRE = -L${HYPRE_BUILD_DIR}/lib -lHYPRE
+LIBHYPRE = -L${NALU_HYPRE_BUILD_DIR}/lib -lHYPRE
 
 ifeq ($(notdir $(firstword ${LINK_CC})), nvcc)
-   XLINK = -Xlinker=-rpath,${HYPRE_BUILD_DIR}/lib
+   XLINK = -Xlinker=-rpath,${NALU_HYPRE_BUILD_DIR}/lib
 else
-   XLINK = -Wl,-rpath,${HYPRE_BUILD_DIR}/lib
+   XLINK = -Wl,-rpath,${NALU_HYPRE_BUILD_DIR}/lib
 endif
 
 LFLAGS =\
@@ -60,7 +60,7 @@ LFLAGS =\
 # Targets
 ##################################################################
 
-HYPRE_DRIVERS =\
+NALU_HYPRE_DRIVERS =\
  ij.c\
  ij_assembly.c\
  sstruct.c\
@@ -73,33 +73,33 @@ HYPRE_DRIVERS =\
  ij_mm.c\
  zboxloop.c
 
-HYPRE_DRIVERS_CXX =\
+NALU_HYPRE_DRIVERS_CXX =\
  cxx_ij.cxx\
  cxx_sstruct.cxx\
  cxx_struct.cxx
 
-HYPRE_F77_EXAMPLES_DRIVERS =\
+NALU_HYPRE_F77_EXAMPLES_DRIVERS =\
  ex1_for.c\
  ex3_for.c\
  ex5_for.c\
  ex6_for.c\
  ex7_for.c
 
-HYPRE_DRIVERS_F77 =\
+NALU_HYPRE_DRIVERS_F77 =\
  f77_ij.f\
  f77_ij_mv.f\
  f77_struct.f
 
-HYPRE_DRIVER_EXECS=${HYPRE_DRIVERS:.c=}
-HYPRE_F77_EXAMPLES_DRIVER_EXECS=${HYPRE_F77_EXAMPLES_DRIVERS:.c=}
-HYPRE_DRIVER_F77_EXECS=${HYPRE_DRIVERS_F77:.f=}
-HYPRE_DRIVER_CXX_EXECS=${HYPRE_DRIVERS_CXX:.cxx=}
+NALU_HYPRE_DRIVER_EXECS=${NALU_HYPRE_DRIVERS:.c=}
+NALU_HYPRE_F77_EXAMPLES_DRIVER_EXECS=${NALU_HYPRE_F77_EXAMPLES_DRIVERS:.c=}
+NALU_HYPRE_DRIVER_F77_EXECS=${NALU_HYPRE_DRIVERS_F77:.f=}
+NALU_HYPRE_DRIVER_CXX_EXECS=${NALU_HYPRE_DRIVERS_CXX:.cxx=}
 
-all: ${HYPRE_DRIVER_EXECS}
+all: ${NALU_HYPRE_DRIVER_EXECS}
 
-all77: ${HYPRE_DRIVER_F77_EXECS}
+all77: ${NALU_HYPRE_DRIVER_F77_EXECS}
 
-all++: ${HYPRE_DRIVER_CXX_EXECS}
+all++: ${NALU_HYPRE_DRIVER_CXX_EXECS}
 
 install:
 
@@ -108,10 +108,10 @@ clean:
 	rm -rf pchdir tca.map *inslog*
 
 distclean: clean
-	rm -f ${HYPRE_DRIVER_EXECS}
-	rm -f ${HYPRE_F77_EXAMPLES_DRIVER_EXECS}
-	rm -f ${HYPRE_DRIVER_F77_EXECS}
-	rm -f ${HYPRE_DRIVER_CXX_EXECS} cxx_*
+	rm -f ${NALU_HYPRE_DRIVER_EXECS}
+	rm -f ${NALU_HYPRE_F77_EXAMPLES_DRIVER_EXECS}
+	rm -f ${NALU_HYPRE_DRIVER_F77_EXECS}
+	rm -f ${NALU_HYPRE_DRIVER_CXX_EXECS} cxx_*
 	rm -f TEST_examples/*.out*
 	rm -f TEST_examples/*.err*
 	rm -f TEST_fac/*.out*
@@ -194,13 +194,13 @@ test_mgr_gpu: test_mgr_gpu.o
 
 # RDF: Keep these for now
 
-hypre_set_precond: hypre_set_precond.o
+nalu_hypre_set_precond: nalu_hypre_set_precond.o
 	@echo  "Building" $@ "... "
 	${LINK_CC} -o $@ $@.o ${LFLAGS}
 
-test_ij: hypre_set_precond.o test_ij.o
+test_ij: nalu_hypre_set_precond.o test_ij.o
 	@echo  "Building" $@ "... "
-	${LINK_CC} -o $@ hypre_set_precond.o $@.o ${LFLAGS}
+	${LINK_CC} -o $@ nalu_hypre_set_precond.o $@.o ${LFLAGS}
 
 driver_commpkg: driver_commpkg.o
 	@echo  "Building" $@ "... "

@@ -5,45 +5,45 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_struct_ls.h"
+#include "_nalu_hypre_struct_ls.h"
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
 void *
-hypre_StructKrylovCAlloc( size_t               count,
+nalu_hypre_StructKrylovCAlloc( size_t               count,
                           size_t               elt_size,
-                          HYPRE_MemoryLocation location)
+                          NALU_HYPRE_MemoryLocation location)
 {
-   return ( (void*) hypre_CTAlloc(char, count * elt_size, location) );
+   return ( (void*) nalu_hypre_CTAlloc(char, count * elt_size, location) );
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_StructKrylovFree( void *ptr )
+NALU_HYPRE_Int
+nalu_hypre_StructKrylovFree( void *ptr )
 {
-   hypre_TFree( ptr, HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree( ptr, NALU_HYPRE_MEMORY_HOST);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
 void *
-hypre_StructKrylovCreateVector( void *vvector )
+nalu_hypre_StructKrylovCreateVector( void *vvector )
 {
-   hypre_StructVector *vector = (hypre_StructVector *)vvector;
-   hypre_StructVector *new_vector;
-   HYPRE_Int          *num_ghost = hypre_StructVectorNumGhost(vector);
+   nalu_hypre_StructVector *vector = (nalu_hypre_StructVector *)vvector;
+   nalu_hypre_StructVector *new_vector;
+   NALU_HYPRE_Int          *num_ghost = nalu_hypre_StructVectorNumGhost(vector);
 
-   new_vector = hypre_StructVectorCreate( hypre_StructVectorComm(vector),
-                                          hypre_StructVectorGrid(vector) );
-   hypre_StructVectorSetNumGhost(new_vector, num_ghost);
-   hypre_StructVectorInitialize(new_vector);
-   hypre_StructVectorAssemble(new_vector);
+   new_vector = nalu_hypre_StructVectorCreate( nalu_hypre_StructVectorComm(vector),
+                                          nalu_hypre_StructVectorGrid(vector) );
+   nalu_hypre_StructVectorSetNumGhost(new_vector, num_ghost);
+   nalu_hypre_StructVectorInitialize(new_vector);
+   nalu_hypre_StructVectorAssemble(new_vector);
 
    return ( (void *) new_vector );
 }
@@ -52,22 +52,22 @@ hypre_StructKrylovCreateVector( void *vvector )
  *--------------------------------------------------------------------------*/
 
 void *
-hypre_StructKrylovCreateVectorArray(HYPRE_Int n, void *vvector )
+nalu_hypre_StructKrylovCreateVectorArray(NALU_HYPRE_Int n, void *vvector )
 {
-   hypre_StructVector *vector = (hypre_StructVector *)vvector;
-   hypre_StructVector **new_vector;
-   HYPRE_Int          *num_ghost = hypre_StructVectorNumGhost(vector);
-   HYPRE_Int i;
+   nalu_hypre_StructVector *vector = (nalu_hypre_StructVector *)vvector;
+   nalu_hypre_StructVector **new_vector;
+   NALU_HYPRE_Int          *num_ghost = nalu_hypre_StructVectorNumGhost(vector);
+   NALU_HYPRE_Int i;
 
-   new_vector = hypre_CTAlloc(hypre_StructVector*, n, HYPRE_MEMORY_HOST);
+   new_vector = nalu_hypre_CTAlloc(nalu_hypre_StructVector*, n, NALU_HYPRE_MEMORY_HOST);
    for (i = 0; i < n; i++)
    {
-      HYPRE_StructVectorCreate(hypre_StructVectorComm(vector),
-                               hypre_StructVectorGrid(vector),
-                               (HYPRE_StructVector *) &new_vector[i] );
-      hypre_StructVectorSetNumGhost(new_vector[i], num_ghost);
-      HYPRE_StructVectorInitialize((HYPRE_StructVector) new_vector[i]);
-      HYPRE_StructVectorAssemble((HYPRE_StructVector) new_vector[i]);
+      NALU_HYPRE_StructVectorCreate(nalu_hypre_StructVectorComm(vector),
+                               nalu_hypre_StructVectorGrid(vector),
+                               (NALU_HYPRE_StructVector *) &new_vector[i] );
+      nalu_hypre_StructVectorSetNumGhost(new_vector[i], num_ghost);
+      NALU_HYPRE_StructVectorInitialize((NALU_HYPRE_StructVector) new_vector[i]);
+      NALU_HYPRE_StructVectorAssemble((NALU_HYPRE_StructVector) new_vector[i]);
    }
 
    return ( (void *) new_vector );
@@ -76,25 +76,25 @@ hypre_StructKrylovCreateVectorArray(HYPRE_Int n, void *vvector )
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_StructKrylovDestroyVector( void *vvector )
+NALU_HYPRE_Int
+nalu_hypre_StructKrylovDestroyVector( void *vvector )
 {
-   hypre_StructVector *vector = (hypre_StructVector *)vvector;
+   nalu_hypre_StructVector *vector = (nalu_hypre_StructVector *)vvector;
 
-   return ( hypre_StructVectorDestroy( vector ) );
+   return ( nalu_hypre_StructVectorDestroy( vector ) );
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
 void *
-hypre_StructKrylovMatvecCreate( void   *A,
+nalu_hypre_StructKrylovMatvecCreate( void   *A,
                                 void   *x )
 {
    void *matvec_data;
 
-   matvec_data = hypre_StructMatvecCreate();
-   hypre_StructMatvecSetup(matvec_data, (hypre_StructMatrix *)A, (hypre_StructVector *)x);
+   matvec_data = nalu_hypre_StructMatvecCreate();
+   nalu_hypre_StructMatvecSetup(matvec_data, (nalu_hypre_StructMatrix *)A, (nalu_hypre_StructVector *)x);
 
    return ( matvec_data );
 }
@@ -102,123 +102,123 @@ hypre_StructKrylovMatvecCreate( void   *A,
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_StructKrylovMatvec( void   *matvec_data,
-                          HYPRE_Complex  alpha,
+NALU_HYPRE_Int
+nalu_hypre_StructKrylovMatvec( void   *matvec_data,
+                          NALU_HYPRE_Complex  alpha,
                           void   *A,
                           void   *x,
-                          HYPRE_Complex  beta,
+                          NALU_HYPRE_Complex  beta,
                           void   *y           )
 {
-   return ( hypre_StructMatvecCompute( matvec_data,
+   return ( nalu_hypre_StructMatvecCompute( matvec_data,
                                        alpha,
-                                       (hypre_StructMatrix *) A,
-                                       (hypre_StructVector *) x,
+                                       (nalu_hypre_StructMatrix *) A,
+                                       (nalu_hypre_StructVector *) x,
                                        beta,
-                                       (hypre_StructVector *) y ) );
+                                       (nalu_hypre_StructVector *) y ) );
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_StructKrylovMatvecDestroy( void *matvec_data )
+NALU_HYPRE_Int
+nalu_hypre_StructKrylovMatvecDestroy( void *matvec_data )
 {
-   return ( hypre_StructMatvecDestroy( matvec_data ) );
+   return ( nalu_hypre_StructMatvecDestroy( matvec_data ) );
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Real
-hypre_StructKrylovInnerProd( void *x,
+NALU_HYPRE_Real
+nalu_hypre_StructKrylovInnerProd( void *x,
                              void *y )
 {
-   return ( hypre_StructInnerProd( (hypre_StructVector *) x,
-                                   (hypre_StructVector *) y ) );
+   return ( nalu_hypre_StructInnerProd( (nalu_hypre_StructVector *) x,
+                                   (nalu_hypre_StructVector *) y ) );
 }
 
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_StructKrylovCopyVector( void *x,
+NALU_HYPRE_Int
+nalu_hypre_StructKrylovCopyVector( void *x,
                               void *y )
 {
-   return ( hypre_StructCopy( (hypre_StructVector *) x,
-                              (hypre_StructVector *) y ) );
+   return ( nalu_hypre_StructCopy( (nalu_hypre_StructVector *) x,
+                              (nalu_hypre_StructVector *) y ) );
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_StructKrylovClearVector( void *x )
+NALU_HYPRE_Int
+nalu_hypre_StructKrylovClearVector( void *x )
 {
-   return ( hypre_StructVectorSetConstantValues( (hypre_StructVector *) x,
+   return ( nalu_hypre_StructVectorSetConstantValues( (nalu_hypre_StructVector *) x,
                                                  0.0 ) );
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_StructKrylovScaleVector( HYPRE_Complex  alpha,
+NALU_HYPRE_Int
+nalu_hypre_StructKrylovScaleVector( NALU_HYPRE_Complex  alpha,
                                void   *x     )
 {
-   return ( hypre_StructScale( alpha, (hypre_StructVector *) x ) );
+   return ( nalu_hypre_StructScale( alpha, (nalu_hypre_StructVector *) x ) );
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_StructKrylovAxpy( HYPRE_Complex alpha,
+NALU_HYPRE_Int
+nalu_hypre_StructKrylovAxpy( NALU_HYPRE_Complex alpha,
                         void   *x,
                         void   *y )
 {
-   return ( hypre_StructAxpy( alpha, (hypre_StructVector *) x,
-                              (hypre_StructVector *) y ) );
+   return ( nalu_hypre_StructAxpy( alpha, (nalu_hypre_StructVector *) x,
+                              (nalu_hypre_StructVector *) y ) );
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_StructKrylovIdentitySetup( void *vdata,
+NALU_HYPRE_Int
+nalu_hypre_StructKrylovIdentitySetup( void *vdata,
                                  void *A,
                                  void *b,
                                  void *x     )
 
 {
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_StructKrylovIdentity( void *vdata,
+NALU_HYPRE_Int
+nalu_hypre_StructKrylovIdentity( void *vdata,
                             void *A,
                             void *b,
                             void *x     )
 
 {
-   return ( hypre_StructKrylovCopyVector( b, x ) );
+   return ( nalu_hypre_StructKrylovCopyVector( b, x ) );
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_StructKrylovCommInfo( void  *A,
-                            HYPRE_Int   *my_id,
-                            HYPRE_Int   *num_procs )
+NALU_HYPRE_Int
+nalu_hypre_StructKrylovCommInfo( void  *A,
+                            NALU_HYPRE_Int   *my_id,
+                            NALU_HYPRE_Int   *num_procs )
 {
-   MPI_Comm comm = hypre_StructMatrixComm((hypre_StructMatrix *) A);
-   hypre_MPI_Comm_size(comm, num_procs);
-   hypre_MPI_Comm_rank(comm, my_id);
-   return hypre_error_flag;
+   MPI_Comm comm = nalu_hypre_StructMatrixComm((nalu_hypre_StructMatrix *) A);
+   nalu_hypre_MPI_Comm_size(comm, num_procs);
+   nalu_hypre_MPI_Comm_rank(comm, my_id);
+   return nalu_hypre_error_flag;
 }
 

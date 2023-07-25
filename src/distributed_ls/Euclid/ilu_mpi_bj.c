@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_Euclid.h"
+#include "_nalu_hypre_Euclid.h"
 
 /* to do: re-integrate fix-smalll-pivots */
 
@@ -17,14 +17,14 @@
 /* #include "Factor_dh.h" */
 /* #include "SubdomainGraph_dh.h" */
 
-HYPRE_Int symbolic_row_private(HYPRE_Int localRow, HYPRE_Int beg_row, HYPRE_Int end_row,
-                 HYPRE_Int *list, HYPRE_Int *marker, HYPRE_Int *tmpFill,
-                 HYPRE_Int len, HYPRE_Int *CVAL, HYPRE_Real *AVAL,
-                 HYPRE_Int *o2n_col, Euclid_dh ctx);
+NALU_HYPRE_Int symbolic_row_private(NALU_HYPRE_Int localRow, NALU_HYPRE_Int beg_row, NALU_HYPRE_Int end_row,
+                 NALU_HYPRE_Int *list, NALU_HYPRE_Int *marker, NALU_HYPRE_Int *tmpFill,
+                 NALU_HYPRE_Int len, NALU_HYPRE_Int *CVAL, NALU_HYPRE_Real *AVAL,
+                 NALU_HYPRE_Int *o2n_col, Euclid_dh ctx);
 
-static HYPRE_Int numeric_row_private(HYPRE_Int localRow, HYPRE_Int beg_row, HYPRE_Int end_row,
-                        HYPRE_Int len, HYPRE_Int *CVAL, HYPRE_Real *AVAL,
-                        REAL_DH *work, HYPRE_Int *o2n_col, Euclid_dh ctx);
+static NALU_HYPRE_Int numeric_row_private(NALU_HYPRE_Int localRow, NALU_HYPRE_Int beg_row, NALU_HYPRE_Int end_row,
+                        NALU_HYPRE_Int len, NALU_HYPRE_Int *CVAL, NALU_HYPRE_Real *AVAL,
+                        REAL_DH *work, NALU_HYPRE_Int *o2n_col, Euclid_dh ctx);
 
 
 /* all non-local column indices are discarded in symbolic_row_private() */
@@ -33,14 +33,14 @@ static HYPRE_Int numeric_row_private(HYPRE_Int localRow, HYPRE_Int beg_row, HYPR
 void iluk_mpi_bj(Euclid_dh ctx)
 {
   START_FUNC_DH
-  HYPRE_Int      *rp, *cval, *diag;
-  HYPRE_Int      *CVAL;
-  HYPRE_Int      i, j, len, count, col, idx = 0;
-  HYPRE_Int      *list, *marker, *fill, *tmpFill;
-  HYPRE_Int      temp, m, from = ctx->from, to = ctx->to;
-  HYPRE_Int      *n2o_row, *o2n_col;
-  HYPRE_Int      first_row, last_row;
-  HYPRE_Real   *AVAL;
+  NALU_HYPRE_Int      *rp, *cval, *diag;
+  NALU_HYPRE_Int      *CVAL;
+  NALU_HYPRE_Int      i, j, len, count, col, idx = 0;
+  NALU_HYPRE_Int      *list, *marker, *fill, *tmpFill;
+  NALU_HYPRE_Int      temp, m, from = ctx->from, to = ctx->to;
+  NALU_HYPRE_Int      *n2o_row, *o2n_col;
+  NALU_HYPRE_Int      first_row, last_row;
+  NALU_HYPRE_Real   *AVAL;
   REAL_DH  *work, *aval;
   Factor_dh F = ctx->F;
   SubdomainGraph_dh sg = ctx->sg;
@@ -67,9 +67,9 @@ if (ctx->F->rp == NULL) {
   o2n_col = sg->o2n_col;
 
   /* allocate and initialize working space */
-  list   = (HYPRE_Int*)MALLOC_DH((m+1)*sizeof(HYPRE_Int)); CHECK_V_ERROR;
-  marker = (HYPRE_Int*)MALLOC_DH(m*sizeof(HYPRE_Int)); CHECK_V_ERROR;
-  tmpFill = (HYPRE_Int*)MALLOC_DH(m*sizeof(HYPRE_Int)); CHECK_V_ERROR;
+  list   = (NALU_HYPRE_Int*)MALLOC_DH((m+1)*sizeof(NALU_HYPRE_Int)); CHECK_V_ERROR;
+  marker = (NALU_HYPRE_Int*)MALLOC_DH(m*sizeof(NALU_HYPRE_Int)); CHECK_V_ERROR;
+  tmpFill = (NALU_HYPRE_Int*)MALLOC_DH(m*sizeof(NALU_HYPRE_Int)); CHECK_V_ERROR;
   for (i=0; i<m; ++i) {
     marker[i] = -1;
     work[i] = 0.0;
@@ -84,8 +84,8 @@ if (ctx->F->rp == NULL) {
   last_row  = first_row + sg->row_count[myid_dh];
   for (i=from; i<to; ++i) {
 
-    HYPRE_Int row = n2o_row[i];            /* local row number */
-    HYPRE_Int globalRow = row + first_row; /* global row number */
+    NALU_HYPRE_Int row = n2o_row[i];            /* local row number */
+    NALU_HYPRE_Int globalRow = row + first_row; /* global row number */
 
     EuclidGetRow(ctx->A, globalRow, &len, &CVAL, &AVAL); CHECK_V_ERROR;
 
@@ -145,7 +145,7 @@ if (ctx->F->rp == NULL) {
 
     /* check for zero diagonal */
     if (! aval[diag[i]]) {
-      hypre_sprintf(msgBuf_dh, "zero diagonal in local row %i", i+1);
+      nalu_hypre_sprintf(msgBuf_dh, "zero diagonal in local row %i", i+1);
       SET_V_ERROR(msgBuf_dh);
     }
   }
@@ -166,24 +166,24 @@ if (ctx->F->rp == NULL) {
 */
 #undef __FUNC__
 #define __FUNC__ "symbolic_row_private"
-HYPRE_Int symbolic_row_private(HYPRE_Int localRow, HYPRE_Int beg_row, HYPRE_Int end_row,
-                 HYPRE_Int *list, HYPRE_Int *marker, HYPRE_Int *tmpFill,
-                 HYPRE_Int len, HYPRE_Int *CVAL, HYPRE_Real *AVAL,
-                 HYPRE_Int *o2n_col, Euclid_dh ctx)
+NALU_HYPRE_Int symbolic_row_private(NALU_HYPRE_Int localRow, NALU_HYPRE_Int beg_row, NALU_HYPRE_Int end_row,
+                 NALU_HYPRE_Int *list, NALU_HYPRE_Int *marker, NALU_HYPRE_Int *tmpFill,
+                 NALU_HYPRE_Int len, NALU_HYPRE_Int *CVAL, NALU_HYPRE_Real *AVAL,
+                 NALU_HYPRE_Int *o2n_col, Euclid_dh ctx)
 {
   START_FUNC_DH
-  HYPRE_Int level = ctx->level, m = ctx->F->m;
-  HYPRE_Int *cval = ctx->F->cval, *diag = ctx->F->diag, *rp = ctx->F->rp;
-  HYPRE_Int *fill = ctx->F->fill;
-  HYPRE_Int count = 0;
-  HYPRE_Int j, node, tmp, col, head;
-  HYPRE_Int fill1, fill2;
-  HYPRE_Real val;
-  HYPRE_Real thresh = ctx->sparseTolA;
+  NALU_HYPRE_Int level = ctx->level, m = ctx->F->m;
+  NALU_HYPRE_Int *cval = ctx->F->cval, *diag = ctx->F->diag, *rp = ctx->F->rp;
+  NALU_HYPRE_Int *fill = ctx->F->fill;
+  NALU_HYPRE_Int count = 0;
+  NALU_HYPRE_Int j, node, tmp, col, head;
+  NALU_HYPRE_Int fill1, fill2;
+  NALU_HYPRE_Real val;
+  NALU_HYPRE_Real thresh = ctx->sparseTolA;
   REAL_DH scale;
 
   scale = ctx->scale[localRow];
-  ctx->stats[NZA_STATS] += (HYPRE_Real)len;
+  ctx->stats[NZA_STATS] += (NALU_HYPRE_Real)len;
 
   /* Insert col indices in linked list, and values in work vector.
    * List[m] points to the first (smallest) col in the linked list.
@@ -199,7 +199,7 @@ HYPRE_Int symbolic_row_private(HYPRE_Int localRow, HYPRE_Int beg_row, HYPRE_Int 
     if (col >= beg_row && col < end_row) {
         col -= beg_row;        /* adjust column to local zero-based */
         col = o2n_col[col];    /* permute column */
-      if (hypre_abs(scale*val) > thresh || col == localRow) {  /* sparsification */
+      if (nalu_hypre_abs(scale*val) > thresh || col == localRow) {  /* sparsification */
         ++count;
         while (col > list[tmp]) tmp = list[tmp];
         list[col]   = list[tmp];
@@ -221,7 +221,7 @@ HYPRE_Int symbolic_row_private(HYPRE_Int localRow, HYPRE_Int beg_row, HYPRE_Int 
     marker[localRow]  = localRow;
     ++count;
   }
-  ctx->stats[NZA_USED_STATS] += (HYPRE_Real)count;
+  ctx->stats[NZA_USED_STATS] += (NALU_HYPRE_Real)count;
 
   /* update row from previously factored rows */
   head = m;
@@ -265,16 +265,16 @@ HYPRE_Int symbolic_row_private(HYPRE_Int localRow, HYPRE_Int beg_row, HYPRE_Int 
 
 #undef __FUNC__
 #define __FUNC__ "numeric_row_private"
-HYPRE_Int numeric_row_private(HYPRE_Int localRow, HYPRE_Int beg_row, HYPRE_Int end_row,
-                        HYPRE_Int len, HYPRE_Int *CVAL, HYPRE_Real *AVAL,
-                        REAL_DH *work, HYPRE_Int *o2n_col, Euclid_dh ctx)
+NALU_HYPRE_Int numeric_row_private(NALU_HYPRE_Int localRow, NALU_HYPRE_Int beg_row, NALU_HYPRE_Int end_row,
+                        NALU_HYPRE_Int len, NALU_HYPRE_Int *CVAL, NALU_HYPRE_Real *AVAL,
+                        REAL_DH *work, NALU_HYPRE_Int *o2n_col, Euclid_dh ctx)
 {
   START_FUNC_DH
-  HYPRE_Real  pc, pv, multiplier;
-  HYPRE_Int     j, k, col, row;
-  HYPRE_Int     *rp = ctx->F->rp, *cval = ctx->F->cval;
-  HYPRE_Int     *diag = ctx->F->diag;
-  HYPRE_Real  val;
+  NALU_HYPRE_Real  pc, pv, multiplier;
+  NALU_HYPRE_Int     j, k, col, row;
+  NALU_HYPRE_Int     *rp = ctx->F->rp, *cval = ctx->F->cval;
+  NALU_HYPRE_Int     *diag = ctx->F->diag;
+  NALU_HYPRE_Real  val;
   REAL_DH *aval = ctx->F->aval, scale;
 
   scale = ctx->scale[localRow];
@@ -319,7 +319,7 @@ HYPRE_Int numeric_row_private(HYPRE_Int localRow, HYPRE_Int beg_row, HYPRE_Int e
 
   /* check for zero or too small of a pivot */
 #if 0
-  if (hypre_abs(work[i]) <= pivotTol) {
+  if (nalu_hypre_abs(work[i]) <= pivotTol) {
     /* yuck! assume row scaling, and just stick in a value */
     aval[diag[i]] = pivotFix;
   }

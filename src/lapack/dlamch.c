@@ -6,7 +6,7 @@ extern "C" {
 #endif
 
 #include "f2c.h"
-#include "hypre_lapack.h"
+#include "nalu_hypre_lapack.h"
 
 doublereal dlamch_(const char *cmach)
 {
@@ -594,12 +594,12 @@ w;
    Comment out this if block if EMIN is ok */
 	if (iwarn) {
 	    first = TRUE_;
-	    hypre_printf("\n\n WARNING. The value EMIN may be incorrect:- ");
-	    hypre_printf("EMIN = %8i\n",(integer)lemin);
-	    hypre_printf("If, after inspection, the value EMIN looks acceptable");
-            hypre_printf("please comment out \n the IF block as marked within the");
-            hypre_printf("code of routine DLAMC2, \n otherwise supply EMIN");
-            hypre_printf("explicitly.\n");
+	    nalu_hypre_printf("\n\n WARNING. The value EMIN may be incorrect:- ");
+	    nalu_hypre_printf("EMIN = %8i\n",(integer)lemin);
+	    nalu_hypre_printf("If, after inspection, the value EMIN looks acceptable");
+            nalu_hypre_printf("please comment out \n the IF block as marked within the");
+            nalu_hypre_printf("code of routine DLAMC2, \n otherwise supply EMIN");
+            nalu_hypre_printf("explicitly.\n");
 	}
 /* **
 

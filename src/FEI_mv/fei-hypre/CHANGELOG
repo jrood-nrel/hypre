@@ -51,7 +51,7 @@
             - make preconditioner reuse more usable
             - make A-conjugate projection restart instead of truncation
 04/26/01    2.0.0R9
-            - split HYPRE_LinSysCore.C into 2 files and shorten subroutines
+            - split NALU_HYPRE_LinSysCore.C into 2 files and shorten subroutines
             - add system AMG
 05/02/01    2.0.0R9
             - take out iostream.h because it creates problem on solaris
@@ -59,7 +59,7 @@
             - re-work launchSolver parameter setting for preconditioners.
             - add diagnostic information to SuperLUX
 06/14/01    2.0.0R11
-            - re-work hypre_slide_reduce.C to give smaller subroutines
+            - re-work nalu_hypre_slide_reduce.C to give smaller subroutines
             - output matrices to file in longer precision
 06/25/01    2.0.1R1
             - change to the new IJ interface
@@ -76,7 +76,7 @@
             - a few more changes to new IJMatrix/Vectors in SuperLU/AMGe
               part of the code
 09/14/01    2.0.1R5
-            - get rid of the HYPRE_LSI_Sort function
+            - get rid of the NALU_HYPRE_LSI_Sort function
             - add identity preconditioner
             - add incompressible flow block preconditioners
 09/21/01    2.0.1R6
@@ -126,7 +126,7 @@
             - fix resetInitialGuess for Schur reduction
             - take out diagnostic messages in SuperLU
 10/22/02    2.0.0R21
-            - fix a bug in HYPRE_SlideReduction.C
+            - fix a bug in NALU_HYPRE_SlideReduction.C
             - implement null space correction in slide reduction
             - incorporate LOBPCG for null space correction
             - take out the last iostream.h from fei-base
@@ -156,7 +156,7 @@
             - put null detection in gmres
 01/08/03    2.5.0R2
             - take out strings.h include file from fei-hypre and femli
-            - move HYPRE_LSI_Uzawa.h to HYPRE_LSI_Uzawa_c.h to avoid
+            - move NALU_HYPRE_LSI_Uzawa.h to NALU_HYPRE_LSI_Uzawa_c.h to avoid
               compile problems on Microsoft windows.
             - fix SGS problem with relaxation parameter
             - add diagnostics (print rnorm) tool to SGS
@@ -186,7 +186,7 @@
 09/19/03    2.5.2R1
             - add slide reduction option 4 to handle ALE3D's constraint
               problems
-            - clean up a little bit for HYPRE_SlideReduction
+            - clean up a little bit for NALU_HYPRE_SlideReduction
 10/30/03    2.5.2R2
             - add compatible relaxation to femli/amgrs
             - clean up some compiler complaints
@@ -204,19 +204,19 @@
             - add gmres smoother
             - add one more coarsening in AMGSA
 12/17/03    2.5.4R2
-            - add a few more options in HYPRE_LSI_mli.cxx
+            - add a few more options in NALU_HYPRE_LSI_mli.cxx
             - perfect the global coarsening in AMGSA
             - smooth vector AMGSA capability by Edmond
 04/21/04    2.5.4R3
-            - take out MPI functions from FEI_HYPRE_Impl.cxx
-            - take out MPI reference from FEI_HYPRE_include.h
+            - take out MPI functions from FEI_NALU_HYPRE_Impl.cxx
+            - take out MPI reference from FEI_NALU_HYPRE_include.h
             - add Edmond's smooth vector capabilites via the FEI
-            - MLI now default (HYPRE_LinSycCore.cxx, HYPRE_LSC_aux.cxx, etc.)
+            - MLI now default (NALU_HYPRE_LinSycCore.cxx, NALU_HYPRE_LSC_aux.cxx, etc.)
 04/27/04    2.5.5R1
             - correct autotest complaints
             - add new fei implementation
 07/01/04    2.5.5R2
-            - separate superlu and blas and lapack from HYPRE_LSI
+            - separate superlu and blas and lapack from NALU_HYPRE_LSI
             - better amgsa coarsening
             - deal with lsame and xerbla multiply defined problems
 07/31/04    2.5.5R3
@@ -232,7 +232,7 @@
             - add up to 24 null space vector to AMGSA
 03/30/06    2.7.1R1
             - add ML Maxwell 
-            - to use: turn on define in HYPRE_MLMaxwell.h, compile hypre 
+            - to use: turn on define in NALU_HYPRE_MLMaxwell.h, compile hypre 
                       and ml, copy libml.a to hypre/lib, copy ml_maxwell.cxx
                       to test directory, modify Makefile in test directory
                       to compile ml_maxwell.cxx (link with ml), and run

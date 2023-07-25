@@ -56,7 +56,7 @@ int MLI_Solver_SuperLU::setup( MLI_Matrix *Amat )
    int      *etree, permcSpec, lwork, panel_size, relax, info, mypid, nprocs;
    double   *vals, *csrAA, *gcsrAA, *gcscAA, diagPivotThresh;
    MPI_Comm mpiComm;
-   hypre_ParCSRMatrix *hypreA;
+   nalu_hypre_ParCSRMatrix *hypreA;
    SuperMatrix        AC;
    superlu_options_t  slu_options;
    SuperLUStat_t      slu_stat;
@@ -67,30 +67,30 @@ int MLI_Solver_SuperLU::setup( MLI_Matrix *Amat )
     * -------------------------------------------------------------*/
 
    mliAmat_ = Amat;
-   if ( strcmp( mliAmat_->getName(), "HYPRE_ParCSR" ) )
+   if ( strcmp( mliAmat_->getName(), "NALU_HYPRE_ParCSR" ) )
    {
-      printf("MLI_Solver_SuperLU::setup ERROR - not HYPRE_ParCSR.\n");
+      printf("MLI_Solver_SuperLU::setup ERROR - not NALU_HYPRE_ParCSR.\n");
       exit(1);
    }
-   hypreA = (hypre_ParCSRMatrix *) mliAmat_->getMatrix();
+   hypreA = (nalu_hypre_ParCSRMatrix *) mliAmat_->getMatrix();
 
    /* ---------------------------------------------------------------
     * fetch matrix
     * -------------------------------------------------------------*/
  
-   mpiComm     = hypre_ParCSRMatrixComm( hypreA );
+   mpiComm     = nalu_hypre_ParCSRMatrixComm( hypreA );
    MPI_Comm_rank( mpiComm, &mypid );
    MPI_Comm_size( mpiComm, &nprocs );
-   globalNRows = hypre_ParCSRMatrixGlobalNumRows( hypreA );
-   localNRows  = hypre_ParCSRMatrixNumRows( hypreA );
-   startRow    = hypre_ParCSRMatrixFirstRowIndex( hypreA );
+   globalNRows = nalu_hypre_ParCSRMatrixGlobalNumRows( hypreA );
+   localNRows  = nalu_hypre_ParCSRMatrixNumRows( hypreA );
+   startRow    = nalu_hypre_ParCSRMatrixFirstRowIndex( hypreA );
    localNnz    = 0;
    for ( irow = 0; irow < localNRows; irow++ )
    {
       row_num = startRow + irow;
-      hypre_ParCSRMatrixGetRow(hypreA, row_num, &rowSize, &cols, NULL);
+      nalu_hypre_ParCSRMatrixGetRow(hypreA, row_num, &rowSize, &cols, NULL);
       localNnz += rowSize;
-      hypre_ParCSRMatrixRestoreRow(hypreA, row_num, &rowSize, &cols, NULL);
+      nalu_hypre_ParCSRMatrixRestoreRow(hypreA, row_num, &rowSize, &cols, NULL);
    }
    MPI_Allreduce(&localNnz, &globalNnz, 1, MPI_INT, MPI_SUM, mpiComm );
    csrIA    = new int[localNRows+1];
@@ -103,13 +103,13 @@ int MLI_Solver_SuperLU::setup( MLI_Matrix *Amat )
    for ( irow = 0; irow < localNRows; irow++ )
    {
       row_num = startRow + irow;
-      hypre_ParCSRMatrixGetRow(hypreA, row_num, &rowSize, &cols, &vals);
+      nalu_hypre_ParCSRMatrixGetRow(hypreA, row_num, &rowSize, &cols, &vals);
       for ( i = 0; i < rowSize; i++ )
       {
          csrJA[nnz] = cols[i];
          csrAA[nnz++] = vals[i];
       }
-      hypre_ParCSRMatrixRestoreRow(hypreA, row_num, &rowSize, &cols, &vals);
+      nalu_hypre_ParCSRMatrixRestoreRow(hypreA, row_num, &rowSize, &cols, &vals);
       csrIA[irow+1] = nnz;
    }
 
@@ -180,9 +180,9 @@ int MLI_Solver_SuperLU::setup( MLI_Matrix *Amat )
             exit(1);
          }
    }
-   gcscJA = hypre_TAlloc(int,  (globalNRows+1) , HYPRE_MEMORY_HOST);
-   gcscIA = hypre_TAlloc(int,  globalNnz , HYPRE_MEMORY_HOST);
-   gcscAA = hypre_TAlloc(double,  globalNnz , HYPRE_MEMORY_HOST);
+   gcscJA = nalu_hypre_TAlloc(int,  (globalNRows+1) , NALU_HYPRE_MEMORY_HOST);
+   gcscIA = nalu_hypre_TAlloc(int,  globalNnz , NALU_HYPRE_MEMORY_HOST);
+   gcscAA = nalu_hypre_TAlloc(double,  globalNnz , NALU_HYPRE_MEMORY_HOST);
    gcscJA[0] = 0;
    nnz = 0;
    for ( icol = 1; icol <= globalNRows; icol++ ) 
@@ -259,11 +259,11 @@ int MLI_Solver_SuperLU::solve( MLI_Vector *f_in, MLI_Vector *u_in )
    int             globalNRows, localNRows, startRow, *recvCntArray;
    int             i, irow, nprocs, *dispArray, info;
    double          *fGlobal;
-   hypre_ParVector *f, *u;
+   nalu_hypre_ParVector *f, *u;
    double          *uData, *fData;
    SuperMatrix     B;
    MPI_Comm        mpiComm;
-   hypre_ParCSRMatrix *hypreA;
+   nalu_hypre_ParCSRMatrix *hypreA;
    SuperLUStat_t      slu_stat;
    trans_t            trans;
 
@@ -281,15 +281,15 @@ int MLI_Solver_SuperLU::solve( MLI_Vector *f_in, MLI_Vector *u_in )
     * fetch matrix and vector parameters
     * -----------------------------------------------------------*/
 
-   hypreA      = (hypre_ParCSRMatrix *) mliAmat_->getMatrix();
-   mpiComm     = hypre_ParCSRMatrixComm( hypreA );
-   globalNRows = hypre_ParCSRMatrixGlobalNumRows( hypreA );
-   localNRows  = hypre_ParCSRMatrixNumRows( hypreA );
-   startRow    = hypre_ParCSRMatrixFirstRowIndex( hypreA );
-   u           = (hypre_ParVector *) u_in->getVector();
-   uData       = hypre_VectorData(hypre_ParVectorLocalVector(u));
-   f           = (hypre_ParVector *) f_in->getVector();
-   fData       = hypre_VectorData(hypre_ParVectorLocalVector(f));
+   hypreA      = (nalu_hypre_ParCSRMatrix *) mliAmat_->getMatrix();
+   mpiComm     = nalu_hypre_ParCSRMatrixComm( hypreA );
+   globalNRows = nalu_hypre_ParCSRMatrixGlobalNumRows( hypreA );
+   localNRows  = nalu_hypre_ParCSRMatrixNumRows( hypreA );
+   startRow    = nalu_hypre_ParCSRMatrixFirstRowIndex( hypreA );
+   u           = (nalu_hypre_ParVector *) u_in->getVector();
+   uData       = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(u));
+   f           = (nalu_hypre_ParVector *) f_in->getVector();
+   fData       = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(f));
 
    /* -------------------------------------------------------------
     * collect global vector and create a SuperLU dense matrix

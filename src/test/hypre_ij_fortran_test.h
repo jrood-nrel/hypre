@@ -13,141 +13,141 @@ extern "C" {
  * Definitions of IJMatrix Fortran interface routines
  *****************************************************************************/
 
-#define HYPRE_IJMatrixCreate \
-        hypre_F90_NAME(fhypre_ijmatrixcreate, FHYPRE_IJMATRIXCREATE)
-extern void hypre_F90_NAME(fhypre_ijmatrixcreate, FHYPRE_IJMATRIXCREATE)
-(hypre_F90_Obj *, HYPRE_Int *, HYPRE_Int *, HYPRE_Int *, HYPRE_Int *, hypre_F90_Obj*);
+#define NALU_HYPRE_IJMatrixCreate \
+        nalu_hypre_F90_NAME(fnalu_hypre_ijmatrixcreate, FNALU_HYPRE_IJMATRIXCREATE)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_ijmatrixcreate, FNALU_HYPRE_IJMATRIXCREATE)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Int *, NALU_HYPRE_Int *, NALU_HYPRE_Int *, NALU_HYPRE_Int *, nalu_hypre_F90_Obj*);
 
-#define HYPRE_IJMatrixDestroy \
-        hypre_F90_NAME(fhypre_ijmatrixdestroy, FHYPRE_IJMATRIXDESTROY)
-extern void hypre_F90_NAME(fhypre_ijmatrixdestroy, FHYPRE_IJMATRIXDESTROY)
-(hypre_F90_Obj *);
+#define NALU_HYPRE_IJMatrixDestroy \
+        nalu_hypre_F90_NAME(fnalu_hypre_ijmatrixdestroy, FNALU_HYPRE_IJMATRIXDESTROY)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_ijmatrixdestroy, FNALU_HYPRE_IJMATRIXDESTROY)
+(nalu_hypre_F90_Obj *);
 
-#define HYPRE_IJMatrixInitialize \
-        hypre_F90_NAME(fhypre_ijmatrixinitialize, FHYPRE_IJMATRIXINITIALIZE)
-extern void hypre_F90_NAME(fhypre_ijmatrixinitialize, FHYPRE_IJMATRIXINITIALIZE)
-(hypre_F90_Obj *);
+#define NALU_HYPRE_IJMatrixInitialize \
+        nalu_hypre_F90_NAME(fnalu_hypre_ijmatrixinitialize, FNALU_HYPRE_IJMATRIXINITIALIZE)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_ijmatrixinitialize, FNALU_HYPRE_IJMATRIXINITIALIZE)
+(nalu_hypre_F90_Obj *);
 
-#define HYPRE_IJMatrixAssemble \
-        hypre_F90_NAME(fhypre_ijmatrixassemble, FHYPRE_IJMATRIXASSEMBLE)
-extern void hypre_F90_NAME(fhypre_ijmatrixassemble, FHYPRE_IJMATRIXASSEMBLE)
-(hypre_F90_Obj *);
+#define NALU_HYPRE_IJMatrixAssemble \
+        nalu_hypre_F90_NAME(fnalu_hypre_ijmatrixassemble, FNALU_HYPRE_IJMATRIXASSEMBLE)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_ijmatrixassemble, FNALU_HYPRE_IJMATRIXASSEMBLE)
+(nalu_hypre_F90_Obj *);
 
-#define HYPRE_IJMatrixSetRowSizes \
-        hypre_F90_NAME(fhypre_ijmatrixsetrowsizes, FHYPRE_IJMATRIXSETROWSIZES)
-extern void hypre_F90_NAME(fhypre_ijmatrixsetrowsizes, FHYPRE_IJMATRIXSETROWSIZES)
-(hypre_F90_Obj *, const HYPRE_Int *);
+#define NALU_HYPRE_IJMatrixSetRowSizes \
+        nalu_hypre_F90_NAME(fnalu_hypre_ijmatrixsetrowsizes, FNALU_HYPRE_IJMATRIXSETROWSIZES)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_ijmatrixsetrowsizes, FNALU_HYPRE_IJMATRIXSETROWSIZES)
+(nalu_hypre_F90_Obj *, const NALU_HYPRE_Int *);
 
-#define HYPRE_IJMatrixSetDiagOffdSizes \
-        hypre_F90_NAME(fhypre_ijmatrixsetdiagoffdsizes, FHYPRE_IJMATRIXSETDIAGOFFDSIZES)
-extern void hypre_F90_NAME(fhypre_ijmatrixsetdiagoffdsizes, FHYPRE_IJMATRIXSETDIAGOFFDSIZES)
-(hypre_F90_Obj *, const HYPRE_Int *, const HYPRE_Int *);
+#define NALU_HYPRE_IJMatrixSetDiagOffdSizes \
+        nalu_hypre_F90_NAME(fnalu_hypre_ijmatrixsetdiagoffdsizes, FNALU_HYPRE_IJMATRIXSETDIAGOFFDSIZES)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_ijmatrixsetdiagoffdsizes, FNALU_HYPRE_IJMATRIXSETDIAGOFFDSIZES)
+(nalu_hypre_F90_Obj *, const NALU_HYPRE_Int *, const NALU_HYPRE_Int *);
 
-#define HYPRE_IJMatrixSetValues \
-        hypre_F90_NAME(fhypre_ijmatrixsetvalues, FHYPRE_IJMATRIXSETVALUES)
-extern void hypre_F90_NAME(fhypre_ijmatrixsetvalues, FHYPRE_IJMATRIXSETVALUES)
-(hypre_F90_Obj *, HYPRE_Int *, HYPRE_Int *, const HYPRE_Int *, const HYPRE_Int *,
- const HYPRE_Real *);
+#define NALU_HYPRE_IJMatrixSetValues \
+        nalu_hypre_F90_NAME(fnalu_hypre_ijmatrixsetvalues, FNALU_HYPRE_IJMATRIXSETVALUES)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_ijmatrixsetvalues, FNALU_HYPRE_IJMATRIXSETVALUES)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Int *, NALU_HYPRE_Int *, const NALU_HYPRE_Int *, const NALU_HYPRE_Int *,
+ const NALU_HYPRE_Real *);
 
-#define HYPRE_IJMatrixAddToValues \
-        hypre_F90_NAME(fhypre_ijmatrixaddtovalues, FHYPRE_IJMATRIXADDTOVALUES)
-extern void hypre_F90_NAME(fhypre_ijmatrixaddtovalues, FHYPRE_IJMATRIXADDTOVALUES)
-(hypre_F90_Obj *, HYPRE_Int *, HYPRE_Int *, const HYPRE_Int *, const HYPRE_Int *,
- const HYPRE_Real *);
+#define NALU_HYPRE_IJMatrixAddToValues \
+        nalu_hypre_F90_NAME(fnalu_hypre_ijmatrixaddtovalues, FNALU_HYPRE_IJMATRIXADDTOVALUES)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_ijmatrixaddtovalues, FNALU_HYPRE_IJMATRIXADDTOVALUES)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Int *, NALU_HYPRE_Int *, const NALU_HYPRE_Int *, const NALU_HYPRE_Int *,
+ const NALU_HYPRE_Real *);
 
-#define HYPRE_IJMatrixSetObjectType \
-        hypre_F90_NAME(fhypre_ijmatrixsetobjecttype, FHYPRE_IJMATRIXSETOBJECTTYPE)
-extern void hypre_F90_NAME(fhypre_ijmatrixsetobjecttype, FHYPRE_IJMATRIXSETOBJECTTYPE)
-(hypre_F90_Obj *, const HYPRE_Int *);
+#define NALU_HYPRE_IJMatrixSetObjectType \
+        nalu_hypre_F90_NAME(fnalu_hypre_ijmatrixsetobjecttype, FNALU_HYPRE_IJMATRIXSETOBJECTTYPE)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_ijmatrixsetobjecttype, FNALU_HYPRE_IJMATRIXSETOBJECTTYPE)
+(nalu_hypre_F90_Obj *, const NALU_HYPRE_Int *);
 
-#define HYPRE_IJMatrixGetObjectType \
-        hypre_F90_NAME(fhypre_ijmatrixgetobjecttype, FHYPRE_IJMATRIXGETOBJECTTYPE)
-extern void hypre_F90_NAME(fhypre_ijmatrixgetobjecttype, FHYPRE_IJMATRIXGETOBJECTTYPE)
-(hypre_F90_Obj *, HYPRE_Int *);
+#define NALU_HYPRE_IJMatrixGetObjectType \
+        nalu_hypre_F90_NAME(fnalu_hypre_ijmatrixgetobjecttype, FNALU_HYPRE_IJMATRIXGETOBJECTTYPE)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_ijmatrixgetobjecttype, FNALU_HYPRE_IJMATRIXGETOBJECTTYPE)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Int *);
 
-#define HYPRE_IJMatrixGetObject \
-        hypre_F90_NAME(fhypre_ijmatrixgetobject, FHYPRE_IJMATRIXGETOBJECT)
-extern void hypre_F90_NAME(fhypre_ijmatrixgetobject, FHYPRE_IJMATRIXGETOBJECT)
-(hypre_F90_Obj *, hypre_F90_Obj *);
+#define NALU_HYPRE_IJMatrixGetObject \
+        nalu_hypre_F90_NAME(fnalu_hypre_ijmatrixgetobject, FNALU_HYPRE_IJMATRIXGETOBJECT)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_ijmatrixgetobject, FNALU_HYPRE_IJMATRIXGETOBJECT)
+(nalu_hypre_F90_Obj *, nalu_hypre_F90_Obj *);
 
-#define HYPRE_IJMatrixRead \
-        hypre_F90_NAME(fhypre_ijmatrixread, FHYPRE_IJMATRIXREAD)
-extern void hypre_F90_NAME(fhypre_ijmatrixread, FHYPRE_IJMATRIXREAD)
-(char *, hypre_F90_Obj *, HYPRE_Int *, hypre_F90_Obj *);
+#define NALU_HYPRE_IJMatrixRead \
+        nalu_hypre_F90_NAME(fnalu_hypre_ijmatrixread, FNALU_HYPRE_IJMATRIXREAD)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_ijmatrixread, FNALU_HYPRE_IJMATRIXREAD)
+(char *, nalu_hypre_F90_Obj *, NALU_HYPRE_Int *, nalu_hypre_F90_Obj *);
 
-#define HYPRE_IJMatrixPrint \
-        hypre_F90_NAME(fhypre_ijmatrixprint, FHYPRE_IJMATRIXPRINT)
-extern void hypre_F90_NAME(fhypre_ijmatrixprint, FHYPRE_IJMATRIXPRINT)
-(hypre_F90_Obj *, char *);
-
-
-
-#define hypre_IJMatrixSetObject \
-        hypre_F90_NAME(fhypre_ijmatrixsetobject, FHYPRE_IJMATRIXSETOBJECT)
-extern void hypre_F90_NAME(fhypre_ijmatrixsetobject, FHYPRE_IJMATRIXSETOBJECT)
-(hypre_F90_Obj *, hypre_F90_Obj *);
+#define NALU_HYPRE_IJMatrixPrint \
+        nalu_hypre_F90_NAME(fnalu_hypre_ijmatrixprint, FNALU_HYPRE_IJMATRIXPRINT)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_ijmatrixprint, FNALU_HYPRE_IJMATRIXPRINT)
+(nalu_hypre_F90_Obj *, char *);
 
 
 
-#define HYPRE_IJVectorCreate \
-        hypre_F90_NAME(fhypre_ijvectorcreate, FHYPRE_IJVECTORCREATE)
-extern void hypre_F90_NAME(fhypre_ijvectorcreate, FHYPRE_IJVECTORCREATE)
-(HYPRE_Int *, HYPRE_Int *, HYPRE_Int *, hypre_F90_Obj *);
+#define nalu_hypre_IJMatrixSetObject \
+        nalu_hypre_F90_NAME(fnalu_hypre_ijmatrixsetobject, FNALU_HYPRE_IJMATRIXSETOBJECT)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_ijmatrixsetobject, FNALU_HYPRE_IJMATRIXSETOBJECT)
+(nalu_hypre_F90_Obj *, nalu_hypre_F90_Obj *);
 
-#define HYPRE_IJVectorDestroy \
-        hypre_F90_NAME(fhypre_ijvectordestroy, FHYPRE_IJVECTORDESTROY)
-extern void hypre_F90_NAME(fhypre_ijvectordestroy, FHYPRE_IJVECTORDESTROY)
-(hypre_F90_Obj *);
 
-#define HYPRE_IJVectorInitialize \
-        hypre_F90_NAME(fhypre_ijvectorinitialize, FHYPRE_IJVECTORINITIALIZE)
-extern void hypre_F90_NAME(fhypre_ijvectorinitialize, FHYPRE_IJVECTORINITIALIZE)
-(hypre_F90_Obj *);
 
-#define HYPRE_IJVectorSetValues \
-        hypre_F90_NAME(fhypre_ijvectorsetvalues, FHYPRE_IJVECTORSETVALUES)
-extern void hypre_F90_NAME(fhypre_ijvectorsetvalues, FHYPRE_IJVECTORSETVALUES)
-(hypre_F90_Obj *, HYPRE_Int *, HYPRE_Int *, HYPRE_Real *);
+#define NALU_HYPRE_IJVectorCreate \
+        nalu_hypre_F90_NAME(fnalu_hypre_ijvectorcreate, FNALU_HYPRE_IJVECTORCREATE)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_ijvectorcreate, FNALU_HYPRE_IJVECTORCREATE)
+(NALU_HYPRE_Int *, NALU_HYPRE_Int *, NALU_HYPRE_Int *, nalu_hypre_F90_Obj *);
 
-#define HYPRE_IJVectorAddToValues \
-        hypre_F90_NAME(fhypre_ijvectoraddtovalues, FHYPRE_IJVECTORADDTOVALUES)
-extern void hypre_F90_NAME(fhypre_ijvectoraddtovalues, FHYPRE_IJVECTORADDTOVALUES)
-(hypre_F90_Obj *, HYPRE_Int *, HYPRE_Int *, HYPRE_Real *);
+#define NALU_HYPRE_IJVectorDestroy \
+        nalu_hypre_F90_NAME(fnalu_hypre_ijvectordestroy, FNALU_HYPRE_IJVECTORDESTROY)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_ijvectordestroy, FNALU_HYPRE_IJVECTORDESTROY)
+(nalu_hypre_F90_Obj *);
 
-#define HYPRE_IJVectorAssemble \
-        hypre_F90_NAME(fhypre_ijvectorassemble, FHYPRE_IJVECTORASSEMBLE)
-extern void hypre_F90_NAME(fhypre_ijvectorassemble, FHYPRE_IJVECTORASSEMBLE)
-(hypre_F90_Obj *);
+#define NALU_HYPRE_IJVectorInitialize \
+        nalu_hypre_F90_NAME(fnalu_hypre_ijvectorinitialize, FNALU_HYPRE_IJVECTORINITIALIZE)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_ijvectorinitialize, FNALU_HYPRE_IJVECTORINITIALIZE)
+(nalu_hypre_F90_Obj *);
 
-#define HYPRE_IJVectorGetValues \
-        hypre_F90_NAME(fhypre_ijvectorgetvalues, FHYPRE_IJVECTORGETVALUES)
-extern void hypre_F90_NAME(fhypre_ijvectorgetvalues, FHYPRE_IJVECTORGETVALUES)
-(hypre_F90_Obj *, const HYPRE_Int *, const HYPRE_Int *, HYPRE_Real *);
+#define NALU_HYPRE_IJVectorSetValues \
+        nalu_hypre_F90_NAME(fnalu_hypre_ijvectorsetvalues, FNALU_HYPRE_IJVECTORSETVALUES)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_ijvectorsetvalues, FNALU_HYPRE_IJVECTORSETVALUES)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Int *, NALU_HYPRE_Int *, NALU_HYPRE_Real *);
 
-#define HYPRE_IJVectorSetObjectType \
-        hypre_F90_NAME(fhypre_ijvectorsetobjecttype, FHYPRE_IJVECTORSETOBJECTTYPE)
-extern void hypre_F90_NAME(fhypre_ijvectorsetobjecttype, FHYPRE_IJVECTORSETOBJECTTYPE)
-(hypre_F90_Obj *, const HYPRE_Int *);
+#define NALU_HYPRE_IJVectorAddToValues \
+        nalu_hypre_F90_NAME(fnalu_hypre_ijvectoraddtovalues, FNALU_HYPRE_IJVECTORADDTOVALUES)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_ijvectoraddtovalues, FNALU_HYPRE_IJVECTORADDTOVALUES)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Int *, NALU_HYPRE_Int *, NALU_HYPRE_Real *);
 
-#define HYPRE_IJVectorGetObjectType \
-        hypre_F90_NAME(fhypre_ijvectorgetobjecttype, FHYPRE_IJVECTORGETOBJECTTYPE)
-extern void hypre_F90_NAME(fhypre_ijvectorgetobjecttype, FHYPRE_IJVECTORGETOBJECTTYPE)
-(hypre_F90_Obj *, HYPRE_Int *);
+#define NALU_HYPRE_IJVectorAssemble \
+        nalu_hypre_F90_NAME(fnalu_hypre_ijvectorassemble, FNALU_HYPRE_IJVECTORASSEMBLE)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_ijvectorassemble, FNALU_HYPRE_IJVECTORASSEMBLE)
+(nalu_hypre_F90_Obj *);
 
-#define HYPRE_IJVectorGetObject \
-        hypre_F90_NAME(fhypre_ijvectorgetobject, FHYPRE_IJVECTORGETOBJECT)
-extern void hypre_F90_NAME(fhypre_ijvectorgetobject, FHYPRE_IJVECTORGETOBJECT)
-(hypre_F90_Obj *, hypre_F90_Obj *);
+#define NALU_HYPRE_IJVectorGetValues \
+        nalu_hypre_F90_NAME(fnalu_hypre_ijvectorgetvalues, FNALU_HYPRE_IJVECTORGETVALUES)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_ijvectorgetvalues, FNALU_HYPRE_IJVECTORGETVALUES)
+(nalu_hypre_F90_Obj *, const NALU_HYPRE_Int *, const NALU_HYPRE_Int *, NALU_HYPRE_Real *);
 
-#define HYPRE_IJVectorRead \
-        hypre_F90_NAME(fhypre_ijvectorread, FHYPRE_IJVECTORREAD)
-extern void hypre_F90_NAME(fhypre_ijvectorread, FHYPRE_IJVECTORREAD)
-(char *, hypre_F90_Obj *, HYPRE_Int *, hypre_F90_Obj *);
+#define NALU_HYPRE_IJVectorSetObjectType \
+        nalu_hypre_F90_NAME(fnalu_hypre_ijvectorsetobjecttype, FNALU_HYPRE_IJVECTORSETOBJECTTYPE)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_ijvectorsetobjecttype, FNALU_HYPRE_IJVECTORSETOBJECTTYPE)
+(nalu_hypre_F90_Obj *, const NALU_HYPRE_Int *);
 
-#define HYPRE_IJVectorPrint \
-        hypre_F90_NAME(fhypre_ijvectorprint, FHYPRE_IJVECTORPRINT)
-extern void hypre_F90_NAME(fhypre_ijvectorprint, FHYPRE_IJVECTORPRINT)
-(hypre_F90_Obj *, const char *);
+#define NALU_HYPRE_IJVectorGetObjectType \
+        nalu_hypre_F90_NAME(fnalu_hypre_ijvectorgetobjecttype, FNALU_HYPRE_IJVECTORGETOBJECTTYPE)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_ijvectorgetobjecttype, FNALU_HYPRE_IJVECTORGETOBJECTTYPE)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Int *);
+
+#define NALU_HYPRE_IJVectorGetObject \
+        nalu_hypre_F90_NAME(fnalu_hypre_ijvectorgetobject, FNALU_HYPRE_IJVECTORGETOBJECT)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_ijvectorgetobject, FNALU_HYPRE_IJVECTORGETOBJECT)
+(nalu_hypre_F90_Obj *, nalu_hypre_F90_Obj *);
+
+#define NALU_HYPRE_IJVectorRead \
+        nalu_hypre_F90_NAME(fnalu_hypre_ijvectorread, FNALU_HYPRE_IJVECTORREAD)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_ijvectorread, FNALU_HYPRE_IJVECTORREAD)
+(char *, nalu_hypre_F90_Obj *, NALU_HYPRE_Int *, nalu_hypre_F90_Obj *);
+
+#define NALU_HYPRE_IJVectorPrint \
+        nalu_hypre_F90_NAME(fnalu_hypre_ijvectorprint, FNALU_HYPRE_IJVECTORPRINT)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_ijvectorprint, FNALU_HYPRE_IJVECTORPRINT)
+(nalu_hypre_F90_Obj *, const char *);
 
 #ifdef __cplusplus
 }

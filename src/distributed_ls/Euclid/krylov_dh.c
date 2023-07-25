@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_Euclid.h"
+#include "_nalu_hypre_Euclid.h"
 /* #include "Euclid_dh.h" */
 /* #include "krylov_dh.h" */
 /* #include "Mem_dh.h" */
@@ -14,16 +14,16 @@
 
 #undef __FUNC__
 #define __FUNC__ "bicgstab_euclid"
-void bicgstab_euclid(Mat_dh A, Euclid_dh ctx, HYPRE_Real *x, HYPRE_Real *b, HYPRE_Int *itsOUT)
+void bicgstab_euclid(Mat_dh A, Euclid_dh ctx, NALU_HYPRE_Real *x, NALU_HYPRE_Real *b, NALU_HYPRE_Int *itsOUT)
 {
   START_FUNC_DH
-  HYPRE_Int its, m = ctx->m;
+  NALU_HYPRE_Int its, m = ctx->m;
   bool monitor;
-  HYPRE_Int maxIts = ctx->maxIts;
-  HYPRE_Real atol = ctx->atol, rtol = ctx->rtol;
+  NALU_HYPRE_Int maxIts = ctx->maxIts;
+  NALU_HYPRE_Real atol = ctx->atol, rtol = ctx->rtol;
 
   /* scalars */
-  HYPRE_Real alpha, alpha_1,
+  NALU_HYPRE_Real alpha, alpha_1,
          beta_1,
          widget, widget_1,
          rho_1, rho_2,
@@ -31,19 +31,19 @@ void bicgstab_euclid(Mat_dh A, Euclid_dh ctx, HYPRE_Real *x, HYPRE_Real *b, HYPR
          exit_a, b_iprod, r_iprod;
 
   /* vectors */
-  HYPRE_Real *t, *s, *s_hat, *v, *p, *p_hat, *r, *r_hat;
+  NALU_HYPRE_Real *t, *s, *s_hat, *v, *p, *p_hat, *r, *r_hat;
 
   monitor = Parser_dhHasSwitch(parser_dh, "-monitor");
 
   /* allocate working space */
-  t = (HYPRE_Real*)MALLOC_DH(m*sizeof(HYPRE_Real));
-  s = (HYPRE_Real*)MALLOC_DH(m*sizeof(HYPRE_Real));
-  s_hat = (HYPRE_Real*)MALLOC_DH(m*sizeof(HYPRE_Real));
-  v = (HYPRE_Real*)MALLOC_DH(m*sizeof(HYPRE_Real));
-  p = (HYPRE_Real*)MALLOC_DH(m*sizeof(HYPRE_Real));
-  p_hat = (HYPRE_Real*)MALLOC_DH(m*sizeof(HYPRE_Real));
-  r = (HYPRE_Real*)MALLOC_DH(m*sizeof(HYPRE_Real));
-  r_hat = (HYPRE_Real*)MALLOC_DH(m*sizeof(HYPRE_Real));
+  t = (NALU_HYPRE_Real*)MALLOC_DH(m*sizeof(NALU_HYPRE_Real));
+  s = (NALU_HYPRE_Real*)MALLOC_DH(m*sizeof(NALU_HYPRE_Real));
+  s_hat = (NALU_HYPRE_Real*)MALLOC_DH(m*sizeof(NALU_HYPRE_Real));
+  v = (NALU_HYPRE_Real*)MALLOC_DH(m*sizeof(NALU_HYPRE_Real));
+  p = (NALU_HYPRE_Real*)MALLOC_DH(m*sizeof(NALU_HYPRE_Real));
+  p_hat = (NALU_HYPRE_Real*)MALLOC_DH(m*sizeof(NALU_HYPRE_Real));
+  r = (NALU_HYPRE_Real*)MALLOC_DH(m*sizeof(NALU_HYPRE_Real));
+  r_hat = (NALU_HYPRE_Real*)MALLOC_DH(m*sizeof(NALU_HYPRE_Real));
 
   /* r = b - Ax */
   Mat_dhMatVec(A, x, s); /* s = Ax */
@@ -82,7 +82,7 @@ void bicgstab_euclid(Mat_dh A, Euclid_dh ctx, HYPRE_Real *x, HYPRE_Real *b, HYPR
     Mat_dhMatVec(A, p_hat, v); CHECK_V_ERROR;
 
     /* alpha_i = rho_(i-1) / (r_hat^T . v_i ) */
-    { HYPRE_Real tmp = InnerProd(m, r_hat, v); CHECK_V_ERROR;
+    { NALU_HYPRE_Real tmp = InnerProd(m, r_hat, v); CHECK_V_ERROR;
       alpha = rho_1/tmp;
     }
 
@@ -107,7 +107,7 @@ void bicgstab_euclid(Mat_dh A, Euclid_dh ctx, HYPRE_Real *x, HYPRE_Real *b, HYPR
     Mat_dhMatVec(A, s_hat, t); CHECK_V_ERROR;
 
     /* w_i = (t . s)/(t . t) */
-    { HYPRE_Real tmp1, tmp2;
+    { NALU_HYPRE_Real tmp1, tmp2;
       tmp1 = InnerProd(m, t, s); CHECK_V_ERROR;
       tmp2 = InnerProd(m, t, t); CHECK_V_ERROR;
       widget = tmp1/tmp2;
@@ -132,7 +132,7 @@ void bicgstab_euclid(Mat_dh A, Euclid_dh ctx, HYPRE_Real *x, HYPRE_Real *b, HYPR
 
     /* monitor convergence */
     if (monitor && myid_dh == 0) {
-      hypre_fprintf(stderr, "[it = %i] %e\n", its, hypre_sqrt(r_iprod/b_iprod));
+      nalu_hypre_fprintf(stderr, "[it = %i] %e\n", its, nalu_hypre_sqrt(r_iprod/b_iprod));
     }
 
     /* prepare for next iteration */
@@ -161,16 +161,16 @@ void bicgstab_euclid(Mat_dh A, Euclid_dh ctx, HYPRE_Real *x, HYPRE_Real *b, HYPR
 
 #undef __FUNC__
 #define __FUNC__ "cg_euclid"
-void cg_euclid(Mat_dh A, Euclid_dh ctx, HYPRE_Real *x, HYPRE_Real *b, HYPRE_Int *itsOUT)
+void cg_euclid(Mat_dh A, Euclid_dh ctx, NALU_HYPRE_Real *x, NALU_HYPRE_Real *b, NALU_HYPRE_Int *itsOUT)
 {
   START_FUNC_DH
-  HYPRE_Int its, m = A->m;
-  HYPRE_Real *p, *r, *s;
-  HYPRE_Real alpha, beta, gamma, gamma_old, eps, bi_prod, i_prod;
+  NALU_HYPRE_Int its, m = A->m;
+  NALU_HYPRE_Real *p, *r, *s;
+  NALU_HYPRE_Real alpha, beta, gamma, gamma_old, eps, bi_prod, i_prod;
   bool monitor;
-  HYPRE_Int maxIts = ctx->maxIts;
-  /* HYPRE_Real atol = ctx->atol */
-  HYPRE_Real  rtol = ctx->rtol;
+  NALU_HYPRE_Int maxIts = ctx->maxIts;
+  /* NALU_HYPRE_Real atol = ctx->atol */
+  NALU_HYPRE_Real  rtol = ctx->rtol;
 
   monitor = Parser_dhHasSwitch(parser_dh, "-monitor");
 
@@ -179,9 +179,9 @@ void cg_euclid(Mat_dh A, Euclid_dh ctx, HYPRE_Real *x, HYPRE_Real *b, HYPRE_Int 
   bi_prod = InnerProd(m, b, b); CHECK_V_ERROR;
   eps = (rtol*rtol)*bi_prod;
 
-  p = (HYPRE_Real *) MALLOC_DH(m * sizeof(HYPRE_Real));
-  s = (HYPRE_Real *) MALLOC_DH(m * sizeof(HYPRE_Real));
-  r = (HYPRE_Real *) MALLOC_DH(m * sizeof(HYPRE_Real));
+  p = (NALU_HYPRE_Real *) MALLOC_DH(m * sizeof(NALU_HYPRE_Real));
+  s = (NALU_HYPRE_Real *) MALLOC_DH(m * sizeof(NALU_HYPRE_Real));
+  r = (NALU_HYPRE_Real *) MALLOC_DH(m * sizeof(NALU_HYPRE_Real));
 
   /* r = b - Ax */
   Mat_dhMatVec(A, x, r);       /* r = Ax */ CHECK_V_ERROR;
@@ -202,7 +202,7 @@ void cg_euclid(Mat_dh A, Euclid_dh ctx, HYPRE_Real *x, HYPRE_Real *b, HYPRE_Int 
     Mat_dhMatVec(A, p, s);  CHECK_V_ERROR;
 
     /* alpha = gamma / <s,p> */
-    { HYPRE_Real tmp = InnerProd(m, s, p); CHECK_V_ERROR;
+    { NALU_HYPRE_Real tmp = InnerProd(m, s, p); CHECK_V_ERROR;
       alpha = gamma / tmp;
       gamma_old = gamma;
     }
@@ -223,7 +223,7 @@ void cg_euclid(Mat_dh A, Euclid_dh ctx, HYPRE_Real *x, HYPRE_Real *b, HYPRE_Int 
     i_prod = InnerProd(m, r, r); CHECK_V_ERROR;
 
     if (monitor && myid_dh == 0) {
-      hypre_fprintf(stderr, "iter = %i  rel. resid. norm: %e\n", its, hypre_sqrt(i_prod/bi_prod));
+      nalu_hypre_fprintf(stderr, "iter = %i  rel. resid. norm: %e\n", its, nalu_hypre_sqrt(i_prod/bi_prod));
     }
 
     /* check for convergence */

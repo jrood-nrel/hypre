@@ -11,11 +11,11 @@
 
 /* following should be in a header file */
 
-#include "_hypre_onedpl.hpp"
-#include "_hypre_parcsr_ls.h"
-#include "_hypre_utilities.hpp"
+#include "_nalu_hypre_onedpl.hpp"
+#include "_nalu_hypre_parcsr_ls.h"
+#include "_nalu_hypre_utilities.hpp"
 
-#if defined(HYPRE_USING_GPU)
+#if defined(NALU_HYPRE_USING_GPU)
 
 /**
   Generates global coarse_size and dof_func for next coarser level
@@ -31,7 +31,7 @@
   \end{itemize}
 
   {\bf Input files:}
-  _hypre_parcsr_ls.h
+  _nalu_hypre_parcsr_ls.h
 
   @return Error code.
 
@@ -51,61 +51,61 @@
   @see */
 /*--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_BoomerAMGCoarseParmsDevice(MPI_Comm          comm,
-                                 HYPRE_Int         local_num_variables,
-                                 HYPRE_Int         num_functions,
-                                 hypre_IntArray   *dof_func,
-                                 hypre_IntArray   *CF_marker,
-                                 hypre_IntArray  **coarse_dof_func_ptr,
-                                 HYPRE_BigInt     *coarse_pnts_global)
+NALU_HYPRE_Int
+nalu_hypre_BoomerAMGCoarseParmsDevice(MPI_Comm          comm,
+                                 NALU_HYPRE_Int         local_num_variables,
+                                 NALU_HYPRE_Int         num_functions,
+                                 nalu_hypre_IntArray   *dof_func,
+                                 nalu_hypre_IntArray   *CF_marker,
+                                 nalu_hypre_IntArray  **coarse_dof_func_ptr,
+                                 NALU_HYPRE_BigInt     *coarse_pnts_global)
 {
-#ifdef HYPRE_PROFILE
-   hypre_profile_times[HYPRE_TIMER_ID_COARSE_PARAMS] -= hypre_MPI_Wtime();
+#ifdef NALU_HYPRE_PROFILE
+   nalu_hypre_profile_times[NALU_HYPRE_TIMER_ID_COARSE_PARAMS] -= nalu_hypre_MPI_Wtime();
 #endif
 
-   HYPRE_Int      ierr = 0;
-   HYPRE_BigInt   local_coarse_size = 0;
+   NALU_HYPRE_Int      ierr = 0;
+   NALU_HYPRE_BigInt   local_coarse_size = 0;
 
    /*--------------------------------------------------------------
     *----------------------------------------------------------------*/
 
-#if defined(HYPRE_USING_SYCL)
-   local_coarse_size = HYPRE_ONEDPL_CALL( std::count_if,
-                                          hypre_IntArrayData(CF_marker),
-                                          hypre_IntArrayData(CF_marker) + local_num_variables,
-                                          equal<HYPRE_Int>(1) );
+#if defined(NALU_HYPRE_USING_SYCL)
+   local_coarse_size = NALU_HYPRE_ONEDPL_CALL( std::count_if,
+                                          nalu_hypre_IntArrayData(CF_marker),
+                                          nalu_hypre_IntArrayData(CF_marker) + local_num_variables,
+                                          equal<NALU_HYPRE_Int>(1) );
 #else
-   local_coarse_size = HYPRE_THRUST_CALL( count_if,
-                                          hypre_IntArrayData(CF_marker),
-                                          hypre_IntArrayData(CF_marker) + local_num_variables,
-                                          equal<HYPRE_Int>(1) );
+   local_coarse_size = NALU_HYPRE_THRUST_CALL( count_if,
+                                          nalu_hypre_IntArrayData(CF_marker),
+                                          nalu_hypre_IntArrayData(CF_marker) + local_num_variables,
+                                          equal<NALU_HYPRE_Int>(1) );
 #endif
 
    if (num_functions > 1)
    {
-      *coarse_dof_func_ptr = hypre_IntArrayCreate(local_coarse_size);
-      hypre_IntArrayInitialize_v2(*coarse_dof_func_ptr, HYPRE_MEMORY_DEVICE);
+      *coarse_dof_func_ptr = nalu_hypre_IntArrayCreate(local_coarse_size);
+      nalu_hypre_IntArrayInitialize_v2(*coarse_dof_func_ptr, NALU_HYPRE_MEMORY_DEVICE);
 
-#if defined(HYPRE_USING_SYCL)
-      hypreSycl_copy_if( hypre_IntArrayData(dof_func),
-                         hypre_IntArrayData(dof_func) + local_num_variables,
-                         hypre_IntArrayData(CF_marker),
-                         hypre_IntArrayData(*coarse_dof_func_ptr),
-                         equal<HYPRE_Int>(1) );
+#if defined(NALU_HYPRE_USING_SYCL)
+      hypreSycl_copy_if( nalu_hypre_IntArrayData(dof_func),
+                         nalu_hypre_IntArrayData(dof_func) + local_num_variables,
+                         nalu_hypre_IntArrayData(CF_marker),
+                         nalu_hypre_IntArrayData(*coarse_dof_func_ptr),
+                         equal<NALU_HYPRE_Int>(1) );
 #else
-      HYPRE_THRUST_CALL( copy_if,
-                         hypre_IntArrayData(dof_func),
-                         hypre_IntArrayData(dof_func) + local_num_variables,
-                         hypre_IntArrayData(CF_marker),
-                         hypre_IntArrayData(*coarse_dof_func_ptr),
-                         equal<HYPRE_Int>(1) );
+      NALU_HYPRE_THRUST_CALL( copy_if,
+                         nalu_hypre_IntArrayData(dof_func),
+                         nalu_hypre_IntArrayData(dof_func) + local_num_variables,
+                         nalu_hypre_IntArrayData(CF_marker),
+                         nalu_hypre_IntArrayData(*coarse_dof_func_ptr),
+                         equal<NALU_HYPRE_Int>(1) );
 #endif
    }
 
    {
-      HYPRE_BigInt scan_recv;
-      hypre_MPI_Scan(&local_coarse_size, &scan_recv, 1, HYPRE_MPI_BIG_INT, hypre_MPI_SUM, comm);
+      NALU_HYPRE_BigInt scan_recv;
+      nalu_hypre_MPI_Scan(&local_coarse_size, &scan_recv, 1, NALU_HYPRE_MPI_BIG_INT, nalu_hypre_MPI_SUM, comm);
 
       /* first point in my range */
       coarse_pnts_global[0] = scan_recv - local_coarse_size;
@@ -114,45 +114,45 @@ hypre_BoomerAMGCoarseParmsDevice(MPI_Comm          comm,
       coarse_pnts_global[1] = scan_recv;
    }
 
-#ifdef HYPRE_PROFILE
-   hypre_profile_times[HYPRE_TIMER_ID_COARSE_PARAMS] += hypre_MPI_Wtime();
+#ifdef NALU_HYPRE_PROFILE
+   nalu_hypre_profile_times[NALU_HYPRE_TIMER_ID_COARSE_PARAMS] += nalu_hypre_MPI_Wtime();
 #endif
 
    return (ierr);
 }
 
-HYPRE_Int
-hypre_BoomerAMGInitDofFuncDevice( HYPRE_Int *dof_func,
-                                  HYPRE_Int  local_size,
-                                  HYPRE_Int  offset,
-                                  HYPRE_Int  num_functions )
+NALU_HYPRE_Int
+nalu_hypre_BoomerAMGInitDofFuncDevice( NALU_HYPRE_Int *dof_func,
+                                  NALU_HYPRE_Int  local_size,
+                                  NALU_HYPRE_Int  offset,
+                                  NALU_HYPRE_Int  num_functions )
 {
-#if defined(HYPRE_USING_SYCL)
+#if defined(NALU_HYPRE_USING_SYCL)
    hypreSycl_sequence(dof_func,
                       dof_func + local_size,
                       offset);
 
-   HYPRE_ONEDPL_CALL( std::transform,
+   NALU_HYPRE_ONEDPL_CALL( std::transform,
                       dof_func,
                       dof_func + local_size,
                       dof_func,
-                      modulo<HYPRE_Int>(num_functions) );
+                      modulo<NALU_HYPRE_Int>(num_functions) );
 #else
-   HYPRE_THRUST_CALL( sequence,
+   NALU_HYPRE_THRUST_CALL( sequence,
                       dof_func,
                       dof_func + local_size,
                       offset,
                       1 );
 
-   HYPRE_THRUST_CALL( transform,
+   NALU_HYPRE_THRUST_CALL( transform,
                       dof_func,
                       dof_func + local_size,
                       dof_func,
-                      modulo<HYPRE_Int>(num_functions) );
+                      modulo<NALU_HYPRE_Int>(num_functions) );
 #endif
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
-#endif // #if defined(HYPRE_USING_GPU)
+#endif // #if defined(NALU_HYPRE_USING_GPU)
 

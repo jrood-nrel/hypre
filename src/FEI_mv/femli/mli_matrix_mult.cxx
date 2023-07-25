@@ -7,10 +7,10 @@
 
 #include <string.h>
 #include <stdio.h>
-#include "_hypre_utilities.h"
-#include "HYPRE.h"
-#include "_hypre_parcsr_mv.h"
-#include "HYPRE_IJ_mv.h"
+#include "_nalu_hypre_utilities.h"
+#include "NALU_HYPRE.h"
+#include "_nalu_hypre_parcsr_mv.h"
+#include "NALU_HYPRE_IJ_mv.h"
 #include "mli_matrix.h"
 #include "mli_matrix_misc.h"
 #include "mli_utils.h"
@@ -42,22 +42,22 @@ void MLI_Matrix_MatMatMult( MLI_Matrix *Amat, MLI_Matrix *Bmat,
    char   paramString[50];
    MPI_Comm            mpiComm;
    MLI_Function        *funcPtr;
-   hypre_CSRMatrix     *BDiag, *BOffd, *ADiag, *AOffd, *CDiag, *COffd;
-   hypre_ParCSRMatrix  *hypreA, *hypreB, *hypreC;
+   nalu_hypre_CSRMatrix     *BDiag, *BOffd, *ADiag, *AOffd, *CDiag, *COffd;
+   nalu_hypre_ParCSRMatrix  *hypreA, *hypreB, *hypreC;
 
    /* -----------------------------------------------------------------------
     * check to make sure both matrices are ParCSR matrices
     * ----------------------------------------------------------------------*/
 
-   if ( strcmp(Amat->getName(),"HYPRE_ParCSR") ||
-        strcmp(Bmat->getName(),"HYPRE_ParCSR") )
+   if ( strcmp(Amat->getName(),"NALU_HYPRE_ParCSR") ||
+        strcmp(Bmat->getName(),"NALU_HYPRE_ParCSR") )
    {
       printf("MLI_Matrix_MatMatMult ERROR - matrix has invalid type.\n");
       exit(1);
    }
-   hypreA  = (hypre_ParCSRMatrix *) Amat->getMatrix();
-   hypreB  = (hypre_ParCSRMatrix *) Bmat->getMatrix();
-   mpiComm = hypre_ParCSRMatrixComm(hypreA);
+   hypreA  = (nalu_hypre_ParCSRMatrix *) Amat->getMatrix();
+   hypreB  = (nalu_hypre_ParCSRMatrix *) Bmat->getMatrix();
+   mpiComm = nalu_hypre_ParCSRMatrixComm(hypreA);
    MPI_Comm_size(mpiComm, &nprocs);
    MPI_Comm_rank(mpiComm, &mypid);
 
@@ -167,7 +167,7 @@ void MLI_Matrix_MatMatMult( MLI_Matrix *Amat, MLI_Matrix *Bmat,
     * included elsewhere
     * ----------------------------------------------------------------------*/
 
-   BColStarts = hypre_ParCSRMatrixColStarts(hypreB);
+   BColStarts = nalu_hypre_ParCSRMatrixColStarts(hypreB);
    BStartCol  = BColStarts[mypid];
    BEndCol    = BColStarts[mypid+1] - 1;
    for ( ir = 0; ir < BExtNumUniqueCols; ir++ )
@@ -181,8 +181,8 @@ void MLI_Matrix_MatMatMult( MLI_Matrix *Amat, MLI_Matrix *Bmat,
     * present in the BColMap list, which is assumed ordered
     * ----------------------------------------------------------------------*/
 
-   BOffd      = hypre_ParCSRMatrixOffd(hypreB);
-   BColMap    = hypre_ParCSRMatrixColMapOffd(hypreB);
+   BOffd      = nalu_hypre_ParCSRMatrixOffd(hypreB);
+   BColMap    = nalu_hypre_ParCSRMatrixColMapOffd(hypreB);
    BColMapInd = 0;
    BNCols     = BColStarts[mypid+1] - BColStarts[mypid];
    for ( ir = 0; ir < BExtNumUniqueCols; ir++ )
@@ -233,29 +233,29 @@ void MLI_Matrix_MatMatMult( MLI_Matrix *Amat, MLI_Matrix *Bmat,
     * fetch information about matrix A and B
     * ----------------------------------------------------------------------*/
 
-   if (!hypre_ParCSRMatrixCommPkg(hypreA)) hypre_MatvecCommPkgCreate(hypreA);
-   ADiag      = hypre_ParCSRMatrixDiag(hypreA);
-   ADiagIA    = hypre_CSRMatrixI(ADiag);
-   ADiagJA    = hypre_CSRMatrixJ(ADiag);
-   ADiagAA    = hypre_CSRMatrixData(ADiag);
-   AOffd      = hypre_ParCSRMatrixOffd(hypreA);
-   AOffdIA    = hypre_CSRMatrixI(AOffd);
-   AOffdJA    = hypre_CSRMatrixJ(AOffd);
-   AOffdAA    = hypre_CSRMatrixData(AOffd);
-   ARowStarts = hypre_ParCSRMatrixRowStarts(hypreA);
-   AColStarts = hypre_ParCSRMatrixColStarts(hypreA);
+   if (!nalu_hypre_ParCSRMatrixCommPkg(hypreA)) nalu_hypre_MatvecCommPkgCreate(hypreA);
+   ADiag      = nalu_hypre_ParCSRMatrixDiag(hypreA);
+   ADiagIA    = nalu_hypre_CSRMatrixI(ADiag);
+   ADiagJA    = nalu_hypre_CSRMatrixJ(ADiag);
+   ADiagAA    = nalu_hypre_CSRMatrixData(ADiag);
+   AOffd      = nalu_hypre_ParCSRMatrixOffd(hypreA);
+   AOffdIA    = nalu_hypre_CSRMatrixI(AOffd);
+   AOffdJA    = nalu_hypre_CSRMatrixJ(AOffd);
+   AOffdAA    = nalu_hypre_CSRMatrixData(AOffd);
+   ARowStarts = nalu_hypre_ParCSRMatrixRowStarts(hypreA);
+   AColStarts = nalu_hypre_ParCSRMatrixColStarts(hypreA);
    ANRows     = ARowStarts[mypid+1] - ARowStarts[mypid];
    ANCols     = AColStarts[mypid+1] - AColStarts[mypid];
-   if (!hypre_ParCSRMatrixCommPkg(hypreB)) hypre_MatvecCommPkgCreate(hypreB);
-   BDiag      = hypre_ParCSRMatrixDiag(hypreB);
-   BDiagIA    = hypre_CSRMatrixI(BDiag);
-   BDiagJA    = hypre_CSRMatrixJ(BDiag);
-   BDiagAA    = hypre_CSRMatrixData(BDiag);
-   BOffd      = hypre_ParCSRMatrixOffd(hypreB);
-   BOffdIA    = hypre_CSRMatrixI(BOffd);
-   BOffdJA    = hypre_CSRMatrixJ(BOffd);
-   BOffdAA    = hypre_CSRMatrixData(BOffd);
-   BRowStarts = hypre_ParCSRMatrixRowStarts(hypreB);
+   if (!nalu_hypre_ParCSRMatrixCommPkg(hypreB)) nalu_hypre_MatvecCommPkgCreate(hypreB);
+   BDiag      = nalu_hypre_ParCSRMatrixDiag(hypreB);
+   BDiagIA    = nalu_hypre_CSRMatrixI(BDiag);
+   BDiagJA    = nalu_hypre_CSRMatrixJ(BDiag);
+   BDiagAA    = nalu_hypre_CSRMatrixData(BDiag);
+   BOffd      = nalu_hypre_ParCSRMatrixOffd(hypreB);
+   BOffdIA    = nalu_hypre_CSRMatrixI(BOffd);
+   BOffdJA    = nalu_hypre_CSRMatrixJ(BOffd);
+   BOffdAA    = nalu_hypre_CSRMatrixData(BOffd);
+   BRowStarts = nalu_hypre_ParCSRMatrixRowStarts(hypreB);
    BNRows     = BRowStarts[mypid+1] - BRowStarts[mypid];
 
    /* -----------------------------------------------------------------------
@@ -359,14 +359,14 @@ void MLI_Matrix_MatMatMult( MLI_Matrix *Amat, MLI_Matrix *Bmat,
     * matrix matrix multiply - perform the actual multiplication
     * ----------------------------------------------------------------------*/
 
-   CDiagIA = hypre_TAlloc(int,  (CNRows+1) , HYPRE_MEMORY_HOST);
-   CDiagJA = hypre_TAlloc(int,  CDiagNnz , HYPRE_MEMORY_HOST);
-   CDiagAA = hypre_TAlloc(double,  CDiagNnz , HYPRE_MEMORY_HOST);
-   COffdIA = hypre_TAlloc(int,  (CNRows+1) , HYPRE_MEMORY_HOST);
+   CDiagIA = nalu_hypre_TAlloc(int,  (CNRows+1) , NALU_HYPRE_MEMORY_HOST);
+   CDiagJA = nalu_hypre_TAlloc(int,  CDiagNnz , NALU_HYPRE_MEMORY_HOST);
+   CDiagAA = nalu_hypre_TAlloc(double,  CDiagNnz , NALU_HYPRE_MEMORY_HOST);
+   COffdIA = nalu_hypre_TAlloc(int,  (CNRows+1) , NALU_HYPRE_MEMORY_HOST);
    if ( COffdNnz > 0 )
    {
-      COffdJA = hypre_TAlloc(int,  COffdNnz , HYPRE_MEMORY_HOST);
-      COffdAA = hypre_TAlloc(double,  COffdNnz , HYPRE_MEMORY_HOST);
+      COffdJA = nalu_hypre_TAlloc(int,  COffdNnz , NALU_HYPRE_MEMORY_HOST);
+      COffdAA = nalu_hypre_TAlloc(double,  COffdNnz , NALU_HYPRE_MEMORY_HOST);
    }
    else
    {
@@ -378,7 +378,7 @@ void MLI_Matrix_MatMatMult( MLI_Matrix *Amat, MLI_Matrix *Bmat,
    for ( ib = 0; ib < CNRows; ib++ ) CDiagReg[ib] = -1;
    for ( ib = 0; ib < CExtNCols; ib++ ) COffdReg[ib] = -1;
    CColMap = NULL;
-   if (COffdNCols > 0) CColMap = hypre_TAlloc(int, COffdNCols , HYPRE_MEMORY_HOST);
+   if (COffdNCols > 0) CColMap = nalu_hypre_TAlloc(int, COffdNCols , NALU_HYPRE_MEMORY_HOST);
    for ( ia = 0; ia < BExtNRows; ia++ ) CColMap[ia] = BColMap[ia];
    for ( ia = BExtNRows; ia < COffdNCols; ia++ )
       CColMap[ia] = extColList[ia-BExtNRows];
@@ -562,7 +562,7 @@ void MLI_Matrix_MatMatMult( MLI_Matrix *Amat, MLI_Matrix *Bmat,
    }
 
    /* -----------------------------------------------------------------------
-    * finally form HYPRE_ParCSRMatrix for the product
+    * finally form NALU_HYPRE_ParCSRMatrix for the product
     * ----------------------------------------------------------------------*/
 
 #if 0
@@ -580,27 +580,27 @@ void MLI_Matrix_MatMatMult( MLI_Matrix *Amat, MLI_Matrix *Bmat,
    }
 #endif
 
-   CRowStarts = hypre_TAlloc(int,  (nprocs+1) , HYPRE_MEMORY_HOST);
-   CColStarts = hypre_TAlloc(int,  (nprocs+1) , HYPRE_MEMORY_HOST);
+   CRowStarts = nalu_hypre_TAlloc(int,  (nprocs+1) , NALU_HYPRE_MEMORY_HOST);
+   CColStarts = nalu_hypre_TAlloc(int,  (nprocs+1) , NALU_HYPRE_MEMORY_HOST);
    for ( ia = 0; ia <= nprocs; ia++ ) CRowStarts[ia] = ARowStarts[ia];
    for ( ia = 0; ia <= nprocs; ia++ ) CColStarts[ia] = BColStarts[ia];
-   hypreC = hypre_ParCSRMatrixCreate(mpiComm, CNRows, CNCols, CRowStarts,
+   hypreC = nalu_hypre_ParCSRMatrixCreate(mpiComm, CNRows, CNCols, CRowStarts,
                    CColStarts, COffdNCols, CDiagNnz, COffdNnz);
-   CDiag = hypre_ParCSRMatrixDiag(hypreC);
-   hypre_CSRMatrixData(CDiag) = CDiagAA;
-   hypre_CSRMatrixI(CDiag) = CDiagIA;
-   hypre_CSRMatrixJ(CDiag) = CDiagJA;
+   CDiag = nalu_hypre_ParCSRMatrixDiag(hypreC);
+   nalu_hypre_CSRMatrixData(CDiag) = CDiagAA;
+   nalu_hypre_CSRMatrixI(CDiag) = CDiagIA;
+   nalu_hypre_CSRMatrixJ(CDiag) = CDiagJA;
 
-   COffd = hypre_ParCSRMatrixOffd(hypreC);
-   hypre_CSRMatrixI(COffd) = COffdIA;
+   COffd = nalu_hypre_ParCSRMatrixOffd(hypreC);
+   nalu_hypre_CSRMatrixI(COffd) = COffdIA;
    if ( COffdNCols > 0 )
    {
-      hypre_CSRMatrixJ(COffd) = COffdJA;
-      hypre_CSRMatrixData(COffd) = COffdAA;
-      hypre_ParCSRMatrixColMapOffd(hypreC) = CColMap;
+      nalu_hypre_CSRMatrixJ(COffd) = COffdJA;
+      nalu_hypre_CSRMatrixData(COffd) = COffdAA;
+      nalu_hypre_ParCSRMatrixColMapOffd(hypreC) = CColMap;
    }
 
-   sprintf(paramString, "HYPRE_ParCSR");
+   sprintf(paramString, "NALU_HYPRE_ParCSR");
    funcPtr = new MLI_Function();
    MLI_Utils_HypreParCSRMatrixGetDestroyFunc(funcPtr);
    (*Cmat) = new MLI_Matrix((void *) hypreC, paramString, funcPtr);
@@ -617,9 +617,9 @@ void MLI_Matrix_MatMatMult( MLI_Matrix *Amat, MLI_Matrix *Bmat,
 void MLI_Matrix_GetExtRows( MLI_Matrix *Amat, MLI_Matrix *Bmat, int *extNRowsP,
                        int **extRowLengsP, int **extColsP, double **extValsP)
 {
-   hypre_ParCSRMatrix  *hypreA, *hypreB;
-   hypre_ParCSRCommPkg *commPkg;
-   hypre_CSRMatrix     *BDiag, *BOffd;
+   nalu_hypre_ParCSRMatrix  *hypreA, *hypreB;
+   nalu_hypre_ParCSRCommPkg *commPkg;
+   nalu_hypre_CSRMatrix     *BDiag, *BOffd;
    int                 nprocs, mypid, nSends, *sendProcs, *sendStarts;
    int                 *sendMap, nRecvs, *recvProcs, *recvStarts;
    int                 ip, jp, kp, rowIndex, length;
@@ -645,15 +645,15 @@ void MLI_Matrix_GetExtRows( MLI_Matrix *Amat, MLI_Matrix *Bmat, int *extNRowsP,
     * fetch HYPRE matrices and machine information
     * ----------------------------------------------------------------------*/
 
-   hypreA     = (hypre_ParCSRMatrix *) Amat->getMatrix();
-   hypreB     = (hypre_ParCSRMatrix *) Bmat->getMatrix();
-   mpiComm    = hypre_ParCSRMatrixComm(hypreA);
+   hypreA     = (nalu_hypre_ParCSRMatrix *) Amat->getMatrix();
+   hypreB     = (nalu_hypre_ParCSRMatrix *) Bmat->getMatrix();
+   mpiComm    = nalu_hypre_ParCSRMatrixComm(hypreA);
    MPI_Comm_size(mpiComm, &nprocs);
    MPI_Comm_rank(mpiComm, &mypid);
 #if 0
-   BRowStarts = hypre_ParCSRMatrixRowStarts(hypreB);
+   BRowStarts = nalu_hypre_ParCSRMatrixRowStarts(hypreB);
 #endif
-   BColStarts = hypre_ParCSRMatrixColStarts(hypreB);
+   BColStarts = nalu_hypre_ParCSRMatrixColStarts(hypreB);
    BStartCol  = BColStarts[mypid];
    if ( nprocs == 1 )
    {
@@ -668,16 +668,16 @@ void MLI_Matrix_GetExtRows( MLI_Matrix *Amat, MLI_Matrix *Bmat, int *extNRowsP,
     * fetch communication information
     * ----------------------------------------------------------------------*/
 
-   commPkg = hypre_ParCSRMatrixCommPkg(hypreA);
-   if ( !commPkg ) hypre_MatvecCommPkgCreate(hypreA);
-   commPkg    = hypre_ParCSRMatrixCommPkg(hypreA);
-   nSends     = hypre_ParCSRCommPkgNumSends(commPkg);
-   sendProcs  = hypre_ParCSRCommPkgSendProcs(commPkg);
-   sendStarts = hypre_ParCSRCommPkgSendMapStarts(commPkg);
-   sendMap    = hypre_ParCSRCommPkgSendMapElmts(commPkg);
-   nRecvs     = hypre_ParCSRCommPkgNumRecvs(commPkg);
-   recvProcs  = hypre_ParCSRCommPkgRecvProcs(commPkg);
-   recvStarts = hypre_ParCSRCommPkgRecvVecStarts(commPkg);
+   commPkg = nalu_hypre_ParCSRMatrixCommPkg(hypreA);
+   if ( !commPkg ) nalu_hypre_MatvecCommPkgCreate(hypreA);
+   commPkg    = nalu_hypre_ParCSRMatrixCommPkg(hypreA);
+   nSends     = nalu_hypre_ParCSRCommPkgNumSends(commPkg);
+   sendProcs  = nalu_hypre_ParCSRCommPkgSendProcs(commPkg);
+   sendStarts = nalu_hypre_ParCSRCommPkgSendMapStarts(commPkg);
+   sendMap    = nalu_hypre_ParCSRCommPkgSendMapElmts(commPkg);
+   nRecvs     = nalu_hypre_ParCSRCommPkgNumRecvs(commPkg);
+   recvProcs  = nalu_hypre_ParCSRCommPkgRecvProcs(commPkg);
+   recvStarts = nalu_hypre_ParCSRCommPkgRecvVecStarts(commPkg);
    recvNRows  = recvStarts[nRecvs];
    sendNRows  = sendStarts[nSends];
    if ( nRecvs + nSends > 0 ) requests = new MPI_Request[nRecvs+nSends];
@@ -686,15 +686,15 @@ void MLI_Matrix_GetExtRows( MLI_Matrix *Amat, MLI_Matrix *Bmat, int *extNRowsP,
     * fetch the local B matrix
     * ----------------------------------------------------------------------*/
 
-   colMapOffd = hypre_ParCSRMatrixColMapOffd(hypreB);
-   BDiag   = hypre_ParCSRMatrixDiag(hypreB);
-   BDiagIA = hypre_CSRMatrixI(BDiag);
-   BDiagJA = hypre_CSRMatrixJ(BDiag);
-   BDiagAA = hypre_CSRMatrixData(BDiag);
-   BOffd   = hypre_ParCSRMatrixOffd(hypreB);
-   BOffdIA = hypre_CSRMatrixI(BOffd);
-   BOffdJA = hypre_CSRMatrixJ(BOffd);
-   BOffdAA = hypre_CSRMatrixData(BOffd);
+   colMapOffd = nalu_hypre_ParCSRMatrixColMapOffd(hypreB);
+   BDiag   = nalu_hypre_ParCSRMatrixDiag(hypreB);
+   BDiagIA = nalu_hypre_CSRMatrixI(BDiag);
+   BDiagJA = nalu_hypre_CSRMatrixJ(BDiag);
+   BDiagAA = nalu_hypre_CSRMatrixData(BDiag);
+   BOffd   = nalu_hypre_ParCSRMatrixOffd(hypreB);
+   BOffdIA = nalu_hypre_CSRMatrixI(BOffd);
+   BOffdJA = nalu_hypre_CSRMatrixJ(BOffd);
+   BOffdAA = nalu_hypre_CSRMatrixData(BOffd);
 
    /* -----------------------------------------------------------------------
     * construct external row lengths (recvRowLengs)
@@ -722,12 +722,12 @@ void MLI_Matrix_GetExtRows( MLI_Matrix *Amat, MLI_Matrix *Bmat, int *extNRowsP,
       for ( jp = offset; jp < upper; jp++ )
       {
          //rowIndex = sendMap[jp] + BStartRow;
-         //hypre_ParCSRMatrixGetRow(hypreB,rowIndex,&rowLeng,NULL,NULL);
+         //nalu_hypre_ParCSRMatrixGetRow(hypreB,rowIndex,&rowLeng,NULL,NULL);
          rowIndex = sendMap[jp];
          iSendBuf[sendIndex++] = BDiagIA[rowIndex+1] - BDiagIA[rowIndex];
          iSendBuf[sendIndex++] = BOffdIA[rowIndex+1] - BOffdIA[rowIndex];
          totalSendNnz += iSendBuf[sendIndex-1] + iSendBuf[sendIndex-2];
-         //hypre_ParCSRMatrixRestoreRow(hypreB,rowIndex,&rowLeng,NULL,NULL);
+         //nalu_hypre_ParCSRMatrixRestoreRow(hypreB,rowIndex,&rowLeng,NULL,NULL);
       }
       MPI_Isend(&iSendBuf[offset*2], length*2, MPI_INT, proc, 27027, mpiComm,
                 &requests[requestCnt++]);
@@ -771,10 +771,10 @@ void MLI_Matrix_GetExtRows( MLI_Matrix *Amat, MLI_Matrix *Bmat, int *extNRowsP,
       for ( jp = offset; jp < upper; jp++ )
       {
          //rowIndex = sendMap[jp] + BStartRow;
-         //hypre_ParCSRMatrixGetRow(hypreB,rowIndex,&rowLeng,&cols,NULL);
+         //nalu_hypre_ParCSRMatrixGetRow(hypreB,rowIndex,&rowLeng,&cols,NULL);
          //for ( kp = 0;  kp < rowLeng;  kp++ )
          //   iSendBuf[curNnz++] = cols[kp];
-         //hypre_ParCSRMatrixRestoreRow(hypreB,rowIndex,&rowLeng,&cols,NULL);
+         //nalu_hypre_ParCSRMatrixRestoreRow(hypreB,rowIndex,&rowLeng,&cols,NULL);
          rowIndex = sendMap[jp];
          for ( kp = BDiagIA[rowIndex];  kp < BDiagIA[rowIndex+1]; kp++ )
             iSendBuf[curNnz++] = BDiagJA[kp] + BStartCol;
@@ -817,10 +817,10 @@ void MLI_Matrix_GetExtRows( MLI_Matrix *Amat, MLI_Matrix *Bmat, int *extNRowsP,
       for ( jp = offset; jp < upper; jp++ )
       {
          //rowIndex = sendMap[jp] + BStartRow;
-         //hypre_ParCSRMatrixGetRow(hypreB,rowIndex,&rowLeng,NULL,&vals);
+         //nalu_hypre_ParCSRMatrixGetRow(hypreB,rowIndex,&rowLeng,NULL,&vals);
          //for ( kp = 0;  kp < rowLeng;  kp++ )
          //   dSendBuf[curNnz++] = vals[kp];
-         //hypre_ParCSRMatrixRestoreRow(hypreB,rowIndex,&rowLeng,NULL,&vals);
+         //nalu_hypre_ParCSRMatrixRestoreRow(hypreB,rowIndex,&rowLeng,NULL,&vals);
          rowIndex = sendMap[jp];
          for ( kp = BDiagIA[rowIndex];  kp < BDiagIA[rowIndex+1]; kp++ )
             dSendBuf[curNnz++] = BDiagAA[kp];
@@ -847,7 +847,7 @@ void MLI_Matrix_GetExtRows( MLI_Matrix *Amat, MLI_Matrix *Bmat, int *extNRowsP,
    (*extNRowsP)    = recvNRows;
 
 #if 0
-   BRowStarts = hypre_ParCSRMatrixRowStarts(hypreB);
+   BRowStarts = nalu_hypre_ParCSRMatrixRowStarts(hypreB);
    totalRecvNnz = 0;
    if ( mypid == 0 )
    {

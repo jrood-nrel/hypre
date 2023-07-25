@@ -10,35 +10,35 @@
  *
  *****************************************************************************/
 
-#include "_hypre_struct_ls.h"
+#include "_nalu_hypre_struct_ls.h"
 
 /*--------------------------------------------------------------------------
- * hypre_SparseMSGCreateRAPOp
+ * nalu_hypre_SparseMSGCreateRAPOp
  *
  *   Wrapper for 2 and 3d CreateRAPOp routines which set up new coarse
  *   grid structures.
  *--------------------------------------------------------------------------*/
 
-hypre_StructMatrix *
-hypre_SparseMSGCreateRAPOp( hypre_StructMatrix *R,
-                            hypre_StructMatrix *A,
-                            hypre_StructMatrix *P,
-                            hypre_StructGrid   *coarse_grid,
-                            HYPRE_Int           cdir        )
+nalu_hypre_StructMatrix *
+nalu_hypre_SparseMSGCreateRAPOp( nalu_hypre_StructMatrix *R,
+                            nalu_hypre_StructMatrix *A,
+                            nalu_hypre_StructMatrix *P,
+                            nalu_hypre_StructGrid   *coarse_grid,
+                            NALU_HYPRE_Int           cdir        )
 {
-   hypre_StructMatrix    *RAP;
-   hypre_StructStencil   *stencil;
+   nalu_hypre_StructMatrix    *RAP;
+   nalu_hypre_StructStencil   *stencil;
 
-   stencil = hypre_StructMatrixStencil(A);
+   stencil = nalu_hypre_StructMatrixStencil(A);
 
-   switch (hypre_StructStencilNDim(stencil))
+   switch (nalu_hypre_StructStencilNDim(stencil))
    {
       case 2:
-         RAP = hypre_SparseMSG2CreateRAPOp(R, A, P, coarse_grid, cdir);
+         RAP = nalu_hypre_SparseMSG2CreateRAPOp(R, A, P, coarse_grid, cdir);
          break;
 
       case 3:
-         RAP = hypre_SparseMSG3CreateRAPOp(R, A, P, coarse_grid, cdir);
+         RAP = nalu_hypre_SparseMSG3CreateRAPOp(R, A, P, coarse_grid, cdir);
          break;
    }
 
@@ -46,29 +46,29 @@ hypre_SparseMSGCreateRAPOp( hypre_StructMatrix *R,
 }
 
 /*--------------------------------------------------------------------------
- * hypre_SparseMSGSetupRAPOp
+ * nalu_hypre_SparseMSGSetupRAPOp
  *
  * Wrapper for 2 and 3d, symmetric and non-symmetric routines to calculate
  * entries in RAP. Incomplete error handling at the moment.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_SparseMSGSetupRAPOp( hypre_StructMatrix *R,
-                           hypre_StructMatrix *A,
-                           hypre_StructMatrix *P,
-                           HYPRE_Int           cdir,
-                           hypre_Index         cindex,
-                           hypre_Index         cstride,
-                           hypre_Index         stridePR,
-                           hypre_StructMatrix *Ac       )
+NALU_HYPRE_Int
+nalu_hypre_SparseMSGSetupRAPOp( nalu_hypre_StructMatrix *R,
+                           nalu_hypre_StructMatrix *A,
+                           nalu_hypre_StructMatrix *P,
+                           NALU_HYPRE_Int           cdir,
+                           nalu_hypre_Index         cindex,
+                           nalu_hypre_Index         cstride,
+                           nalu_hypre_Index         stridePR,
+                           nalu_hypre_StructMatrix *Ac       )
 {
-   HYPRE_Int ierr = 0;
+   NALU_HYPRE_Int ierr = 0;
 
-   hypre_StructStencil   *stencil;
+   nalu_hypre_StructStencil   *stencil;
 
-   stencil = hypre_StructMatrixStencil(A);
+   stencil = nalu_hypre_StructMatrixStencil(A);
 
-   switch (hypre_StructStencilNDim(stencil))
+   switch (nalu_hypre_StructStencilNDim(stencil))
    {
 
       case 2:
@@ -76,14 +76,14 @@ hypre_SparseMSGSetupRAPOp( hypre_StructMatrix *R,
          /*--------------------------------------------------------------------
           *    Set lower triangular (+ diagonal) coefficients
           *--------------------------------------------------------------------*/
-         ierr = hypre_SparseMSG2BuildRAPSym(A, P, R, cdir,
+         ierr = nalu_hypre_SparseMSG2BuildRAPSym(A, P, R, cdir,
                                             cindex, cstride, stridePR, Ac);
 
          /*--------------------------------------------------------------------
           *    For non-symmetric A, set upper triangular coefficients as well
           *--------------------------------------------------------------------*/
-         if (!hypre_StructMatrixSymmetric(A))
-            ierr += hypre_SparseMSG2BuildRAPNoSym(A, P, R, cdir,
+         if (!nalu_hypre_StructMatrixSymmetric(A))
+            ierr += nalu_hypre_SparseMSG2BuildRAPNoSym(A, P, R, cdir,
                                                   cindex, cstride, stridePR, Ac);
 
          break;
@@ -93,21 +93,21 @@ hypre_SparseMSGSetupRAPOp( hypre_StructMatrix *R,
          /*--------------------------------------------------------------------
           *    Set lower triangular (+ diagonal) coefficients
           *--------------------------------------------------------------------*/
-         ierr = hypre_SparseMSG3BuildRAPSym(A, P, R, cdir,
+         ierr = nalu_hypre_SparseMSG3BuildRAPSym(A, P, R, cdir,
                                             cindex, cstride, stridePR, Ac);
 
          /*--------------------------------------------------------------------
           *    For non-symmetric A, set upper triangular coefficients as well
           *--------------------------------------------------------------------*/
-         if (!hypre_StructMatrixSymmetric(A))
-            ierr += hypre_SparseMSG3BuildRAPNoSym(A, P, R, cdir,
+         if (!nalu_hypre_StructMatrixSymmetric(A))
+            ierr += nalu_hypre_SparseMSG3BuildRAPNoSym(A, P, R, cdir,
                                                   cindex, cstride, stridePR, Ac);
 
          break;
 
    }
 
-   hypre_StructMatrixAssemble(Ac);
+   nalu_hypre_StructMatrixAssemble(Ac);
 
    return ierr;
 }

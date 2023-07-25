@@ -6,7 +6,7 @@ extern "C" {
 #endif
 
 #include "f2c.h"
-#include "hypre_blas.h"
+#include "nalu_hypre_blas.h"
 
 /* Subroutine */ integer dsyr2k_(const char *uplo,const char *trans, integer *n, integer *k,
 	doublereal *alpha, doublereal *a, integer *lda, doublereal *b,

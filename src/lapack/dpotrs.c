@@ -6,7 +6,7 @@ extern "C" {
 #endif
 
 #include "f2c.h"
-#include "hypre_lapack.h"
+#include "nalu_hypre_lapack.h"
 
 /* Subroutine */ integer dpotrs_(char *uplo, integer *n, integer *nrhs,
 	doublereal *a, integer *lda, doublereal *b, integer *ldb, integer *

@@ -14,8 +14,8 @@
 #ifndef __MLIMETHODAMGRSH__
 #define __MLIMETHODAMGRSH__
 
-#include "_hypre_utilities.h"
-#include "_hypre_parcsr_mv.h"
+#include "_nalu_hypre_utilities.h"
+#include "_nalu_hypre_parcsr_mv.h"
 #include "mli.h"
 #include "mli_matrix.h"
 #include "mli_method.h"
@@ -75,7 +75,7 @@ public :
    int    print();
    int    printStatistics(MLI *mli);
    MLI_Matrix *performCR(MLI_Matrix *, int *, MLI_Matrix **,int,
-                         hypre_ParCSRMatrix *);
+                         nalu_hypre_ParCSRMatrix *);
    MLI_Matrix *createPmat(int *, MLI_Matrix *, MLI_Matrix *, MLI_Matrix *);
 };
 

@@ -17,7 +17,7 @@ C_COMPILE_FLAGS = \
  ${CINCLUDES}
 
 HEADERS =\
- HYPRE_krylov.h\
+ NALU_HYPRE_krylov.h\
  krylov.h\
  bicgstab.h\
  cgnr.h\
@@ -26,8 +26,8 @@ HEADERS =\
  flexgmres.h\
  lgmres.h\
  pcg.h\
- HYPRE_lobpcg.h\
- HYPRE_MatvecFunctions.h\
+ NALU_HYPRE_lobpcg.h\
+ NALU_HYPRE_MatvecFunctions.h\
  lobpcg.h
 
 FILES =\
@@ -37,36 +37,36 @@ FILES =\
  cogmres.c\
  flexgmres.c\
  lgmres.c\
- HYPRE_bicgstab.c\
- HYPRE_cgnr.c\
- HYPRE_gmres.c\
- HYPRE_cogmres.c\
- HYPRE_lgmres.c\
- HYPRE_flexgmres.c\
- HYPRE_pcg.c\
+ NALU_HYPRE_bicgstab.c\
+ NALU_HYPRE_cgnr.c\
+ NALU_HYPRE_gmres.c\
+ NALU_HYPRE_cogmres.c\
+ NALU_HYPRE_lgmres.c\
+ NALU_HYPRE_flexgmres.c\
+ NALU_HYPRE_pcg.c\
  pcg.c\
- HYPRE_lobpcg.c\
+ NALU_HYPRE_lobpcg.c\
  lobpcg.c
 
 OBJS = ${FILES:.c=.o}
 
-SONAME = libHYPRE_krylov-${HYPRE_RELEASE_VERSION}${HYPRE_LIB_SUFFIX}
+SONAME = libNALU_HYPRE_krylov-${NALU_HYPRE_RELEASE_VERSION}${NALU_HYPRE_LIB_SUFFIX}
 
 ##################################################################
 # Targets
 ##################################################################
 
-all: libHYPRE_krylov${HYPRE_LIB_SUFFIX}
-	cp -fR $(srcdir)/HYPRE_*.h $(HYPRE_BUILD_DIR)/include
-	cp -fR $(srcdir)/krylov.h $(HYPRE_BUILD_DIR)/include
-	cp -fR $(srcdir)/lobpcg.h $(HYPRE_BUILD_DIR)/include
-#	cp -fR libHYPRE* $(HYPRE_BUILD_DIR)/lib
+all: libNALU_HYPRE_krylov${NALU_HYPRE_LIB_SUFFIX}
+	cp -fR $(srcdir)/NALU_HYPRE_*.h $(NALU_HYPRE_BUILD_DIR)/include
+	cp -fR $(srcdir)/krylov.h $(NALU_HYPRE_BUILD_DIR)/include
+	cp -fR $(srcdir)/lobpcg.h $(NALU_HYPRE_BUILD_DIR)/include
+#	cp -fR libHYPRE* $(NALU_HYPRE_BUILD_DIR)/lib
 
 install: all
-	cp -fR $(srcdir)/HYPRE_*.h $(HYPRE_INC_INSTALL)
-	cp -fR $(srcdir)/krylov.h $(HYPRE_INC_INSTALL)
-	cp -fR $(srcdir)/lobpcg.h $(HYPRE_INC_INSTALL)
-#	cp -fR libHYPRE* $(HYPRE_LIB_INSTALL)
+	cp -fR $(srcdir)/NALU_HYPRE_*.h $(NALU_HYPRE_INC_INSTALL)
+	cp -fR $(srcdir)/krylov.h $(NALU_HYPRE_INC_INSTALL)
+	cp -fR $(srcdir)/lobpcg.h $(NALU_HYPRE_INC_INSTALL)
+#	cp -fR libHYPRE* $(NALU_HYPRE_LIB_INSTALL)
 
 clean:
 	rm -f *.o libHYPRE*
@@ -78,12 +78,12 @@ distclean: clean
 # Rules
 ##################################################################
 
-libHYPRE_krylov.a: ${OBJS}
+libNALU_HYPRE_krylov.a: ${OBJS}
 	@echo  "Building $@ ... "
 	${AR} $@ ${OBJS}
 	${RANLIB} $@
 
-libHYPRE_krylov.so libHYPRE_krylov.dylib: ${OBJS}
+libNALU_HYPRE_krylov.so libNALU_HYPRE_krylov.dylib: ${OBJS}
 	@echo  "Building $@ ... "
 	${BUILD_CC_SHARED} -o ${SONAME} ${OBJS} ${SHARED_SET_SONAME}${SONAME}
 	ln -s -f ${SONAME} $@

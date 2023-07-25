@@ -8,20 +8,20 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include "HYPRE.h"
+#include "NALU_HYPRE.h"
 #include "LLNL_FEI_Impl.h"
-#include "utilities/_hypre_utilities.h"
-#include "hypre_cfei.h"
+#include "utilities/_nalu_hypre_utilities.h"
+#include "nalu_hypre_cfei.h"
 
 /******************************************************************************/
 /* constructor                                                                */
 /*----------------------------------------------------------------------------*/
 
-extern "C" HYPRE_FEI_Impl *HYPRE_FEI_create( MPI_Comm comm ) 
+extern "C" NALU_HYPRE_FEI_Impl *NALU_HYPRE_FEI_create( MPI_Comm comm ) 
 {
-   HYPRE_FEI_Impl *cfei;
+   NALU_HYPRE_FEI_Impl *cfei;
    LLNL_FEI_Impl  *lfei;
-   cfei = hypre_TAlloc(HYPRE_FEI_Impl, 1, HYPRE_MEMORY_HOST);
+   cfei = nalu_hypre_TAlloc(NALU_HYPRE_FEI_Impl, 1, NALU_HYPRE_MEMORY_HOST);
    lfei = new LLNL_FEI_Impl(comm);
    cfei->fei_ = (void *) lfei;
    return (cfei);
@@ -31,7 +31,7 @@ extern "C" HYPRE_FEI_Impl *HYPRE_FEI_create( MPI_Comm comm )
 /* Destroy function                                                           */
 /*----------------------------------------------------------------------------*/
 
-extern "C" int HYPRE_FEI_destroy(HYPRE_FEI_Impl *fei) 
+extern "C" int NALU_HYPRE_FEI_destroy(NALU_HYPRE_FEI_Impl *fei) 
 {
    LLNL_FEI_Impl *lfei;
    if (fei == NULL) return 1;
@@ -45,7 +45,7 @@ extern "C" int HYPRE_FEI_destroy(HYPRE_FEI_Impl *fei)
 /*----------------------------------------------------------------------------*/
 
 extern "C"
-int HYPRE_FEI_parameters(HYPRE_FEI_Impl *fei, int numParams, char **paramString)
+int NALU_HYPRE_FEI_parameters(NALU_HYPRE_FEI_Impl *fei, int numParams, char **paramString)
 {
    LLNL_FEI_Impl *lfei;
    if (fei == NULL) return 1;
@@ -60,7 +60,7 @@ int HYPRE_FEI_parameters(HYPRE_FEI_Impl *fei, int numParams, char **paramString)
 /*----------------------------------------------------------------------------*/
 
 extern "C"
-int HYPRE_FEI_setSolveType(HYPRE_FEI_Impl *fei, int solveType)
+int NALU_HYPRE_FEI_setSolveType(NALU_HYPRE_FEI_Impl *fei, int solveType)
 {
    LLNL_FEI_Impl *lfei;
    if (fei == NULL) return 1;
@@ -75,7 +75,7 @@ int HYPRE_FEI_setSolveType(HYPRE_FEI_Impl *fei, int solveType)
 /*----------------------------------------------------------------------------*/
 
 extern "C"
-int HYPRE_FEI_initFields(HYPRE_FEI_Impl *fei, int numFields, int *fieldSizes,
+int NALU_HYPRE_FEI_initFields(NALU_HYPRE_FEI_Impl *fei, int numFields, int *fieldSizes,
                          int *fieldIDs)
 {
    LLNL_FEI_Impl *lfei;
@@ -91,7 +91,7 @@ int HYPRE_FEI_initFields(HYPRE_FEI_Impl *fei, int numFields, int *fieldSizes,
 /*----------------------------------------------------------------------------*/
 
 extern "C"
-int HYPRE_FEI_initElemBlock(HYPRE_FEI_Impl *fei, int elemBlockID, int numElements,
+int NALU_HYPRE_FEI_initElemBlock(NALU_HYPRE_FEI_Impl *fei, int elemBlockID, int numElements,
                             int numNodesPerElement, int *numFieldsPerNode,
                             int **nodalFieldIDs, int numElemDOFFieldsPerElement,
                             int *elemDOFFieldIDs, int interleaveStrategy)
@@ -112,7 +112,7 @@ int HYPRE_FEI_initElemBlock(HYPRE_FEI_Impl *fei, int elemBlockID, int numElement
 /*----------------------------------------------------------------------------*/
 
 extern "C"
-int HYPRE_FEI_initElem(HYPRE_FEI_Impl *fei, int elemBlockID, int elemID,
+int NALU_HYPRE_FEI_initElem(NALU_HYPRE_FEI_Impl *fei, int elemBlockID, int elemID,
                        int *elemConn)
 {
    LLNL_FEI_Impl *lfei;
@@ -128,7 +128,7 @@ int HYPRE_FEI_initElem(HYPRE_FEI_Impl *fei, int elemBlockID, int elemID,
 /*----------------------------------------------------------------------------*/
 
 extern "C"
-int HYPRE_FEI_initSharedNodes(HYPRE_FEI_Impl *fei, int nShared, int *sharedIDs,
+int NALU_HYPRE_FEI_initSharedNodes(NALU_HYPRE_FEI_Impl *fei, int nShared, int *sharedIDs,
                               int *sharedLeng, int **sharedProcs)
 {
    LLNL_FEI_Impl *lfei;
@@ -144,7 +144,7 @@ int HYPRE_FEI_initSharedNodes(HYPRE_FEI_Impl *fei, int nShared, int *sharedIDs,
 /*----------------------------------------------------------------------------*/
 
 extern "C"
-int HYPRE_FEI_initComplete(HYPRE_FEI_Impl *fei)
+int NALU_HYPRE_FEI_initComplete(NALU_HYPRE_FEI_Impl *fei)
 {
    LLNL_FEI_Impl *lfei;
    if (fei == NULL) return 1;
@@ -159,7 +159,7 @@ int HYPRE_FEI_initComplete(HYPRE_FEI_Impl *fei)
 /*----------------------------------------------------------------------------*/
 
 extern "C"
-int HYPRE_FEI_resetSystem(HYPRE_FEI_Impl *fei, double s)
+int NALU_HYPRE_FEI_resetSystem(NALU_HYPRE_FEI_Impl *fei, double s)
 {
    LLNL_FEI_Impl *lfei;
    if (fei == NULL) return 1;
@@ -174,7 +174,7 @@ int HYPRE_FEI_resetSystem(HYPRE_FEI_Impl *fei, double s)
 /*----------------------------------------------------------------------------*/
 
 extern "C"
-int HYPRE_FEI_resetMatrix(HYPRE_FEI_Impl *fei, double s)
+int NALU_HYPRE_FEI_resetMatrix(NALU_HYPRE_FEI_Impl *fei, double s)
 {
    LLNL_FEI_Impl *lfei;
    if (fei == NULL) return 1;
@@ -189,7 +189,7 @@ int HYPRE_FEI_resetMatrix(HYPRE_FEI_Impl *fei, double s)
 /*----------------------------------------------------------------------------*/
 
 extern "C"
-int HYPRE_FEI_resetRHSVector(HYPRE_FEI_Impl *fei, double s)
+int NALU_HYPRE_FEI_resetRHSVector(NALU_HYPRE_FEI_Impl *fei, double s)
 {
    LLNL_FEI_Impl *lfei;
    if (fei == NULL) return 1;
@@ -204,7 +204,7 @@ int HYPRE_FEI_resetRHSVector(HYPRE_FEI_Impl *fei, double s)
 /*----------------------------------------------------------------------------*/
 
 extern "C"
-int HYPRE_FEI_resetInitialGuess(HYPRE_FEI_Impl *fei, double s)
+int NALU_HYPRE_FEI_resetInitialGuess(NALU_HYPRE_FEI_Impl *fei, double s)
 {
    LLNL_FEI_Impl *lfei;
    if (fei == NULL) return 1;
@@ -219,7 +219,7 @@ int HYPRE_FEI_resetInitialGuess(HYPRE_FEI_Impl *fei, double s)
 /*----------------------------------------------------------------------------*/
 
 extern "C"
-int HYPRE_FEI_loadNodeBCs(HYPRE_FEI_Impl *fei, int nNodes, int *nodeIDs,
+int NALU_HYPRE_FEI_loadNodeBCs(NALU_HYPRE_FEI_Impl *fei, int nNodes, int *nodeIDs,
                           int fieldID, double **alpha, double **beta, 
                           double **gamma)
 {
@@ -236,7 +236,7 @@ int HYPRE_FEI_loadNodeBCs(HYPRE_FEI_Impl *fei, int nNodes, int *nodeIDs,
 /*----------------------------------------------------------------------------*/
 
 extern "C"
-int HYPRE_FEI_sumInElem(HYPRE_FEI_Impl *fei, int elemBlock, int elemID, 
+int NALU_HYPRE_FEI_sumInElem(NALU_HYPRE_FEI_Impl *fei, int elemBlock, int elemID, 
                         int *elemConn, double **elemStiff, double *elemLoad, 
                         int elemFormat)
 {
@@ -254,7 +254,7 @@ int HYPRE_FEI_sumInElem(HYPRE_FEI_Impl *fei, int elemBlock, int elemID,
 /*----------------------------------------------------------------------------*/
 
 extern "C"
-int HYPRE_FEI_sumInElemMatrix(HYPRE_FEI_Impl *fei, int elemBlock, int elemID, 
+int NALU_HYPRE_FEI_sumInElemMatrix(NALU_HYPRE_FEI_Impl *fei, int elemBlock, int elemID, 
                               int *elemConn, double **elemStiff, int elemFormat)
 {
    LLNL_FEI_Impl *lfei;
@@ -270,7 +270,7 @@ int HYPRE_FEI_sumInElemMatrix(HYPRE_FEI_Impl *fei, int elemBlock, int elemID,
 /*----------------------------------------------------------------------------*/
 
 extern "C"
-int HYPRE_FEI_sumInElemRHS(HYPRE_FEI_Impl *fei, int elemBlock, int elemID,
+int NALU_HYPRE_FEI_sumInElemRHS(NALU_HYPRE_FEI_Impl *fei, int elemBlock, int elemID,
                            int *elemConn, double *elemLoad)
 {
    LLNL_FEI_Impl *lfei;
@@ -286,7 +286,7 @@ int HYPRE_FEI_sumInElemRHS(HYPRE_FEI_Impl *fei, int elemBlock, int elemID,
 /*----------------------------------------------------------------------------*/
 
 extern "C"
-int HYPRE_FEI_loadComplete(HYPRE_FEI_Impl *fei)
+int NALU_HYPRE_FEI_loadComplete(NALU_HYPRE_FEI_Impl *fei)
 {
    LLNL_FEI_Impl *lfei;
    if (fei == NULL) return 1;
@@ -301,7 +301,7 @@ int HYPRE_FEI_loadComplete(HYPRE_FEI_Impl *fei)
 /*----------------------------------------------------------------------------*/
 
 extern "C"
-int HYPRE_FEI_solve(HYPRE_FEI_Impl *fei, int *status)
+int NALU_HYPRE_FEI_solve(NALU_HYPRE_FEI_Impl *fei, int *status)
 {
    LLNL_FEI_Impl *lfei;
    if (fei == NULL) return 1;
@@ -316,7 +316,7 @@ int HYPRE_FEI_solve(HYPRE_FEI_Impl *fei, int *status)
 /*----------------------------------------------------------------------------*/
 
 extern "C"
-int HYPRE_FEI_iterations(HYPRE_FEI_Impl *fei, int *iterTaken)
+int NALU_HYPRE_FEI_iterations(NALU_HYPRE_FEI_Impl *fei, int *iterTaken)
 {
    LLNL_FEI_Impl *lfei;
    if (fei == NULL) return 1;
@@ -331,7 +331,7 @@ int HYPRE_FEI_iterations(HYPRE_FEI_Impl *fei, int *iterTaken)
 /*----------------------------------------------------------------------------*/
 
 extern "C"
-int HYPRE_FEI_residualNorm(HYPRE_FEI_Impl *fei, int whichNorm, int numFields,
+int NALU_HYPRE_FEI_residualNorm(NALU_HYPRE_FEI_Impl *fei, int whichNorm, int numFields,
                            int* fieldIDs, double* norms)
 {
    LLNL_FEI_Impl *lfei;
@@ -347,7 +347,7 @@ int HYPRE_FEI_residualNorm(HYPRE_FEI_Impl *fei, int whichNorm, int numFields,
 /*----------------------------------------------------------------------------*/
 
 extern "C"
-int HYPRE_FEI_getNumBlockActNodes(HYPRE_FEI_Impl *fei, int blockID, int *nNodes)
+int NALU_HYPRE_FEI_getNumBlockActNodes(NALU_HYPRE_FEI_Impl *fei, int blockID, int *nNodes)
 {
    LLNL_FEI_Impl *lfei;
    if (fei == NULL) return 1;
@@ -362,7 +362,7 @@ int HYPRE_FEI_getNumBlockActNodes(HYPRE_FEI_Impl *fei, int blockID, int *nNodes)
 /*----------------------------------------------------------------------------*/
 
 extern "C"
-int HYPRE_FEI_getNumBlockActEqns(HYPRE_FEI_Impl *fei, int blockID, int *nEqns)
+int NALU_HYPRE_FEI_getNumBlockActEqns(NALU_HYPRE_FEI_Impl *fei, int blockID, int *nEqns)
 {
    LLNL_FEI_Impl *lfei;
    if (fei == NULL) return 1;
@@ -377,7 +377,7 @@ int HYPRE_FEI_getNumBlockActEqns(HYPRE_FEI_Impl *fei, int blockID, int *nEqns)
 /*----------------------------------------------------------------------------*/
 
 extern "C"
-int HYPRE_FEI_getBlockNodeIDList(HYPRE_FEI_Impl *fei, int blockID, int numNodes,
+int NALU_HYPRE_FEI_getBlockNodeIDList(NALU_HYPRE_FEI_Impl *fei, int blockID, int numNodes,
                                  int *nodeIDList)
 {
    LLNL_FEI_Impl *lfei;
@@ -393,7 +393,7 @@ int HYPRE_FEI_getBlockNodeIDList(HYPRE_FEI_Impl *fei, int blockID, int numNodes,
 /*----------------------------------------------------------------------------*/
 
 extern "C"
-int HYPRE_FEI_getBlockNodeSolution(HYPRE_FEI_Impl *fei, int blockID, int numNodes,
+int NALU_HYPRE_FEI_getBlockNodeSolution(NALU_HYPRE_FEI_Impl *fei, int blockID, int numNodes,
                                    int *nodeIDList, int *solnOffsets, 
                                    double *solnValues)
 {
@@ -411,7 +411,7 @@ int HYPRE_FEI_getBlockNodeSolution(HYPRE_FEI_Impl *fei, int blockID, int numNode
 /*----------------------------------------------------------------------------*/
 
 extern "C"
-int HYPRE_FEI_initCRMult(HYPRE_FEI_Impl *fei, int CRListLen, int *CRNodeList,
+int NALU_HYPRE_FEI_initCRMult(NALU_HYPRE_FEI_Impl *fei, int CRListLen, int *CRNodeList,
                          int *CRFieldList, int *CRID)
 {
    LLNL_FEI_Impl *lfei;
@@ -427,7 +427,7 @@ int HYPRE_FEI_initCRMult(HYPRE_FEI_Impl *fei, int CRListLen, int *CRNodeList,
 /*----------------------------------------------------------------------------*/
 
 extern "C"
-int HYPRE_FEI_loadCRMult(HYPRE_FEI_Impl *fei, int CRID, int CRListLen, 
+int NALU_HYPRE_FEI_loadCRMult(NALU_HYPRE_FEI_Impl *fei, int CRID, int CRListLen, 
                          int *CRNodeList, int *CRFieldList, double *CRWeightList, 
                          double CRValue)
 {

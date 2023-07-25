@@ -45,7 +45,7 @@ void testEigen()
    double *matrix, *evalues, *evectors, *daux1, *daux2;
    FILE   *fp;
 
-   matrix = hypre_TAlloc(double,  mDim * mDim , HYPRE_MEMORY_HOST);
+   matrix = nalu_hypre_TAlloc(double,  mDim * mDim , NALU_HYPRE_MEMORY_HOST);
    fp = fopen("test.m", "r");
    if ( fp == NULL )
    {
@@ -53,18 +53,18 @@ void testEigen()
       exit(1);
    }
    for ( i = 0; i < mDim*mDim; i++ ) fscanf(fp, "%lg", &(matrix[i]));
-   evectors = hypre_TAlloc(double,  mDim * mDim , HYPRE_MEMORY_HOST);
-   evalues  = hypre_TAlloc(double,  mDim , HYPRE_MEMORY_HOST);
-   daux1    = hypre_TAlloc(double,  mDim , HYPRE_MEMORY_HOST);
-   daux2    = hypre_TAlloc(double,  mDim , HYPRE_MEMORY_HOST);
+   evectors = nalu_hypre_TAlloc(double,  mDim * mDim , NALU_HYPRE_MEMORY_HOST);
+   evalues  = nalu_hypre_TAlloc(double,  mDim , NALU_HYPRE_MEMORY_HOST);
+   daux1    = nalu_hypre_TAlloc(double,  mDim , NALU_HYPRE_MEMORY_HOST);
+   daux2    = nalu_hypre_TAlloc(double,  mDim , NALU_HYPRE_MEMORY_HOST);
    mli_computespectrum_(&mDim, &mDim, matrix, evalues, &matz, evectors,
                         daux1, daux2, &ierr);
    for ( i = 0; i < mDim; i++ ) printf("eigenvalue = %e\n", evalues[i]);
-   hypre_TFree(matrix, HYPRE_MEMORY_HOST);
-   hypre_TFree(evectors, HYPRE_MEMORY_HOST);
-   hypre_TFree(evalues, HYPRE_MEMORY_HOST);
-   hypre_TFree(daux1, HYPRE_MEMORY_HOST);
-   hypre_TFree(daux2, HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(matrix, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(evectors, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(evalues, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(daux1, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(daux2, NALU_HYPRE_MEMORY_HOST);
 }
 
 /******************************************************************************
@@ -76,13 +76,13 @@ void testMergeSort()
    int i, j, nlist=7, maxLeng=20, **list, **list2, *listLengs;
    int newNList, *newList, *checkList, checkN, checkFlag;
 
-   listLengs = hypre_TAlloc(int,  nlist , HYPRE_MEMORY_HOST);
-   list  = hypre_TAlloc(int*,  nlist , HYPRE_MEMORY_HOST);
-   list2 = hypre_TAlloc(int*,  nlist , HYPRE_MEMORY_HOST);
+   listLengs = nalu_hypre_TAlloc(int,  nlist , NALU_HYPRE_MEMORY_HOST);
+   list  = nalu_hypre_TAlloc(int*,  nlist , NALU_HYPRE_MEMORY_HOST);
+   list2 = nalu_hypre_TAlloc(int*,  nlist , NALU_HYPRE_MEMORY_HOST);
    for ( i = 0; i < nlist; i++ )
    {
-      list[i] = hypre_TAlloc(int,  maxLeng , HYPRE_MEMORY_HOST);
-      list2[i] = hypre_TAlloc(int,  maxLeng , HYPRE_MEMORY_HOST);
+      list[i] = nalu_hypre_TAlloc(int,  maxLeng , NALU_HYPRE_MEMORY_HOST);
+      list2[i] = nalu_hypre_TAlloc(int,  maxLeng , NALU_HYPRE_MEMORY_HOST);
    }
    listLengs[0] = 5;
    list[0][0] = 4;
@@ -129,7 +129,7 @@ void testMergeSort()
 /*
    for ( i = 0; i < newNList; i++ )
       printf("Merge List %5d = %d\n", i, newList[i]);
-   checkList = hypre_TAlloc(int,  nlist * maxLeng , HYPRE_MEMORY_HOST);
+   checkList = nalu_hypre_TAlloc(int,  nlist * maxLeng , NALU_HYPRE_MEMORY_HOST);
    for ( i = 0; i < nlist; i++ )
       for ( j = 0; j < maxLeng; j++ ) checkList[i*maxLeng+j] = list[i][j];
    printf("QSort begins...\n");
@@ -157,14 +157,14 @@ void testMergeSort()
 
    for ( i = 0; i < nlist; i++ )
    {
-      hypre_TFree(list[i], HYPRE_MEMORY_HOST);
-      hypre_TFree(list2[i], HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(list[i], NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(list2[i], NALU_HYPRE_MEMORY_HOST);
    }
-   hypre_TFree(checkList , HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(checkList , NALU_HYPRE_MEMORY_HOST);
 */
-   hypre_TFree(listLengs, HYPRE_MEMORY_HOST);
-   hypre_TFree(list, HYPRE_MEMORY_HOST);
-   hypre_TFree(list2, HYPRE_MEMORY_HOST);
-   hypre_TFree(newList, HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(listLengs, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(list, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(list2, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(newList, NALU_HYPRE_MEMORY_HOST);
 }
 

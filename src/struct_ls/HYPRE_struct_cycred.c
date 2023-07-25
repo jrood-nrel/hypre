@@ -5,91 +5,91 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_struct_ls.h"
+#include "_nalu_hypre_struct_ls.h"
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_StructCycRedCreate( MPI_Comm comm, HYPRE_StructSolver *solver )
+NALU_HYPRE_Int
+NALU_HYPRE_StructCycRedCreate( MPI_Comm comm, NALU_HYPRE_StructSolver *solver )
 {
-   *solver = ( (HYPRE_StructSolver) hypre_CyclicReductionCreate( comm ) );
+   *solver = ( (NALU_HYPRE_StructSolver) nalu_hypre_CyclicReductionCreate( comm ) );
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_StructCycRedDestroy( HYPRE_StructSolver solver )
+NALU_HYPRE_Int
+NALU_HYPRE_StructCycRedDestroy( NALU_HYPRE_StructSolver solver )
 {
-   return ( hypre_CyclicReductionDestroy( (void *) solver ) );
+   return ( nalu_hypre_CyclicReductionDestroy( (void *) solver ) );
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_StructCycRedSetup( HYPRE_StructSolver solver,
-                         HYPRE_StructMatrix A,
-                         HYPRE_StructVector b,
-                         HYPRE_StructVector x      )
+NALU_HYPRE_Int
+NALU_HYPRE_StructCycRedSetup( NALU_HYPRE_StructSolver solver,
+                         NALU_HYPRE_StructMatrix A,
+                         NALU_HYPRE_StructVector b,
+                         NALU_HYPRE_StructVector x      )
 {
-   return ( hypre_CyclicReductionSetup( (void *) solver,
-                                        (hypre_StructMatrix *) A,
-                                        (hypre_StructVector *) b,
-                                        (hypre_StructVector *) x ) );
+   return ( nalu_hypre_CyclicReductionSetup( (void *) solver,
+                                        (nalu_hypre_StructMatrix *) A,
+                                        (nalu_hypre_StructVector *) b,
+                                        (nalu_hypre_StructVector *) x ) );
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_StructCycRedSolve( HYPRE_StructSolver solver,
-                         HYPRE_StructMatrix A,
-                         HYPRE_StructVector b,
-                         HYPRE_StructVector x      )
+NALU_HYPRE_Int
+NALU_HYPRE_StructCycRedSolve( NALU_HYPRE_StructSolver solver,
+                         NALU_HYPRE_StructMatrix A,
+                         NALU_HYPRE_StructVector b,
+                         NALU_HYPRE_StructVector x      )
 {
-   return ( hypre_CyclicReduction( (void *) solver,
-                                   (hypre_StructMatrix *) A,
-                                   (hypre_StructVector *) b,
-                                   (hypre_StructVector *) x ) );
+   return ( nalu_hypre_CyclicReduction( (void *) solver,
+                                   (nalu_hypre_StructMatrix *) A,
+                                   (nalu_hypre_StructVector *) b,
+                                   (nalu_hypre_StructVector *) x ) );
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_StructCycRedSetTDim( HYPRE_StructSolver solver,
-                           HYPRE_Int          tdim )
+NALU_HYPRE_Int
+NALU_HYPRE_StructCycRedSetTDim( NALU_HYPRE_StructSolver solver,
+                           NALU_HYPRE_Int          tdim )
 {
-   return ( hypre_CyclicReductionSetCDir( (void *) solver, tdim ) );
+   return ( nalu_hypre_CyclicReductionSetCDir( (void *) solver, tdim ) );
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_StructCycRedSetBase( HYPRE_StructSolver solver,
-                           HYPRE_Int          ndim,
-                           HYPRE_Int         *base_index,
-                           HYPRE_Int         *base_stride )
+NALU_HYPRE_Int
+NALU_HYPRE_StructCycRedSetBase( NALU_HYPRE_StructSolver solver,
+                           NALU_HYPRE_Int          ndim,
+                           NALU_HYPRE_Int         *base_index,
+                           NALU_HYPRE_Int         *base_stride )
 {
-   hypre_Index  new_base_index;
-   hypre_Index  new_base_stride;
+   nalu_hypre_Index  new_base_index;
+   nalu_hypre_Index  new_base_stride;
 
-   HYPRE_Int    d;
+   NALU_HYPRE_Int    d;
 
-   hypre_SetIndex(new_base_index, 0);
-   hypre_SetIndex(new_base_stride, 1);
+   nalu_hypre_SetIndex(new_base_index, 0);
+   nalu_hypre_SetIndex(new_base_stride, 1);
    for (d = 0; d < ndim; d++)
    {
-      hypre_IndexD(new_base_index, d)  = base_index[d];
-      hypre_IndexD(new_base_stride, d) = base_stride[d];
+      nalu_hypre_IndexD(new_base_index, d)  = base_index[d];
+      nalu_hypre_IndexD(new_base_stride, d) = base_stride[d];
    }
 
-   return ( hypre_CyclicReductionSetBase( (void *) solver,
+   return ( nalu_hypre_CyclicReductionSetBase( (void *) solver,
                                           new_base_index, new_base_stride ) );
 }
 

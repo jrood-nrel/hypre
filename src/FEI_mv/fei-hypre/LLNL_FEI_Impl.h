@@ -13,8 +13,8 @@
 #ifndef _LLNL_FEI_IMPL_H_
 #define _LLNL_FEI_IMPL_H_
 
-#include "HYPRE.h"
-#include "_hypre_utilities.h"
+#include "NALU_HYPRE.h"
+#include "_nalu_hypre_utilities.h"
 #include "LLNL_FEI_LSCore.h"
 #include "LLNL_FEI_Fei.h"
 #include "LLNL_FEI_Solver.h"

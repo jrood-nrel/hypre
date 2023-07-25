@@ -28,16 +28,16 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-#include "HYPRE.h"
-#include "HYPRE_parcsr_ls.h"
-#include "HYPRE_krylov.h"
+#include "NALU_HYPRE.h"
+#include "NALU_HYPRE_parcsr_ls.h"
+#include "NALU_HYPRE_krylov.h"
 #include "ex.h"
 
 /* lobpcg stuff */
-#include "HYPRE_lobpcg.h"
+#include "NALU_HYPRE_lobpcg.h"
 
-#ifdef HYPRE_EXVIS
-#include "_hypre_utilities.h"
+#ifdef NALU_HYPRE_EXVIS
+#include "_nalu_hypre_utilities.h"
 #include "vis.c"
 #endif
 
@@ -55,18 +55,18 @@ int main (int argc, char *argv[])
 
    int vis;
 
-   HYPRE_IJMatrix A;
-   HYPRE_ParCSRMatrix parcsr_A;
-   HYPRE_IJVector b;
-   HYPRE_ParVector par_b;
-   HYPRE_IJVector x;
-   HYPRE_ParVector par_x;
+   NALU_HYPRE_IJMatrix A;
+   NALU_HYPRE_ParCSRMatrix parcsr_A;
+   NALU_HYPRE_IJVector b;
+   NALU_HYPRE_ParVector par_b;
+   NALU_HYPRE_IJVector x;
+   NALU_HYPRE_ParVector par_x;
 
-   HYPRE_Solver precond, lobpcg_solver;
+   NALU_HYPRE_Solver precond, lobpcg_solver;
    mv_InterfaceInterpreter* interpreter;
    mv_MultiVectorPtr eigenvectors = NULL;
    mv_MultiVectorPtr constraints = NULL;
-   HYPRE_MatvecFunctions matvec_fn;
+   NALU_HYPRE_MatvecFunctions matvec_fn;
 
    /* Initialize MPI */
    MPI_Init(&argc, &argv);
@@ -74,10 +74,10 @@ int main (int argc, char *argv[])
    MPI_Comm_size(MPI_COMM_WORLD, &num_procs);
 
    /* Initialize HYPRE */
-   HYPRE_Initialize();
+   NALU_HYPRE_Initialize();
 
    /* Print GPU info */
-   /* HYPRE_PrintDeviceInfo(); */
+   /* NALU_HYPRE_PrintDeviceInfo(); */
 
    /* Default problem parameters */
    n = 33;
@@ -158,13 +158,13 @@ int main (int argc, char *argv[])
    /* Create the matrix.
       Note that this is a square matrix, so we indicate the row partition
       size twice (since number of rows = number of cols) */
-   HYPRE_IJMatrixCreate(MPI_COMM_WORLD, ilower, iupper, ilower, iupper, &A);
+   NALU_HYPRE_IJMatrixCreate(MPI_COMM_WORLD, ilower, iupper, ilower, iupper, &A);
 
    /* Choose a parallel csr format storage (see the User's Manual) */
-   HYPRE_IJMatrixSetObjectType(A, HYPRE_PARCSR);
+   NALU_HYPRE_IJMatrixSetObjectType(A, NALU_HYPRE_PARCSR);
 
    /* Initialize before setting coefficients */
-   HYPRE_IJMatrixInitialize(A);
+   NALU_HYPRE_IJMatrixInitialize(A);
 
    /* Now go through my local rows and set the matrix entries.
       Each row has at most 5 entries. For example, if n=3:
@@ -224,7 +224,7 @@ int main (int argc, char *argv[])
          }
 
          /* Set the values for row i */
-         HYPRE_IJMatrixSetValues(A, 1, &nnz, &i, cols, values);
+         NALU_HYPRE_IJMatrixSetValues(A, 1, &nnz, &i, cols, values);
       }
 
       free(values);
@@ -232,32 +232,32 @@ int main (int argc, char *argv[])
    }
 
    /* Assemble after setting the coefficients */
-   HYPRE_IJMatrixAssemble(A);
+   NALU_HYPRE_IJMatrixAssemble(A);
    /* Get the parcsr matrix object to use */
-   HYPRE_IJMatrixGetObject(A, (void**) &parcsr_A);
+   NALU_HYPRE_IJMatrixGetObject(A, (void**) &parcsr_A);
 
    /* Create sample rhs and solution vectors */
-   HYPRE_IJVectorCreate(MPI_COMM_WORLD, ilower, iupper, &b);
-   HYPRE_IJVectorSetObjectType(b, HYPRE_PARCSR);
-   HYPRE_IJVectorInitialize(b);
-   HYPRE_IJVectorAssemble(b);
-   HYPRE_IJVectorGetObject(b, (void **) &par_b);
+   NALU_HYPRE_IJVectorCreate(MPI_COMM_WORLD, ilower, iupper, &b);
+   NALU_HYPRE_IJVectorSetObjectType(b, NALU_HYPRE_PARCSR);
+   NALU_HYPRE_IJVectorInitialize(b);
+   NALU_HYPRE_IJVectorAssemble(b);
+   NALU_HYPRE_IJVectorGetObject(b, (void **) &par_b);
 
-   HYPRE_IJVectorCreate(MPI_COMM_WORLD, ilower, iupper, &x);
-   HYPRE_IJVectorSetObjectType(x, HYPRE_PARCSR);
-   HYPRE_IJVectorInitialize(x);
-   HYPRE_IJVectorAssemble(x);
-   HYPRE_IJVectorGetObject(x, (void **) &par_x);
+   NALU_HYPRE_IJVectorCreate(MPI_COMM_WORLD, ilower, iupper, &x);
+   NALU_HYPRE_IJVectorSetObjectType(x, NALU_HYPRE_PARCSR);
+   NALU_HYPRE_IJVectorInitialize(x);
+   NALU_HYPRE_IJVectorAssemble(x);
+   NALU_HYPRE_IJVectorGetObject(x, (void **) &par_x);
 
    /* Create a preconditioner and solve the eigenproblem */
 
    /* AMG preconditioner */
    {
-      HYPRE_BoomerAMGCreate(&precond);
-      HYPRE_BoomerAMGSetPrintLevel(precond, 1); /* print amg solution info */
-      HYPRE_BoomerAMGSetNumSweeps(precond, 2); /* 2 sweeps of smoothing */
-      HYPRE_BoomerAMGSetTol(precond, 0.0); /* conv. tolerance zero */
-      HYPRE_BoomerAMGSetMaxIter(precond, 1); /* do only one iteration! */
+      NALU_HYPRE_BoomerAMGCreate(&precond);
+      NALU_HYPRE_BoomerAMGSetPrintLevel(precond, 1); /* print amg solution info */
+      NALU_HYPRE_BoomerAMGSetNumSweeps(precond, 2); /* 2 sweeps of smoothing */
+      NALU_HYPRE_BoomerAMGSetTol(precond, 0.0); /* conv. tolerance zero */
+      NALU_HYPRE_BoomerAMGSetMaxIter(precond, 1); /* do only one iteration! */
    }
 
    /* LOBPCG eigensolver */
@@ -280,8 +280,8 @@ int main (int argc, char *argv[])
 
       /* define an interpreter for the ParCSR interface */
       interpreter = (mv_InterfaceInterpreter *) calloc(1, sizeof(mv_InterfaceInterpreter));
-      HYPRE_ParCSRSetupInterpreter(interpreter);
-      HYPRE_ParCSRSetupMatvec(&matvec_fn);
+      NALU_HYPRE_ParCSRSetupInterpreter(interpreter);
+      NALU_HYPRE_ParCSRSetupMatvec(&matvec_fn);
 
       /* eigenvectors - create a multivector */
       eigenvectors =
@@ -291,24 +291,24 @@ int main (int argc, char *argv[])
       /* eigenvalues - allocate space */
       eigenvalues = (double*) calloc( blockSize, sizeof(double) );
 
-      HYPRE_LOBPCGCreate(interpreter, &matvec_fn, &lobpcg_solver);
-      HYPRE_LOBPCGSetMaxIter(lobpcg_solver, maxIterations);
-      HYPRE_LOBPCGSetPrecondUsageMode(lobpcg_solver, pcgMode);
-      HYPRE_LOBPCGSetTol(lobpcg_solver, tol);
-      HYPRE_LOBPCGSetPrintLevel(lobpcg_solver, verbosity);
+      NALU_HYPRE_LOBPCGCreate(interpreter, &matvec_fn, &lobpcg_solver);
+      NALU_HYPRE_LOBPCGSetMaxIter(lobpcg_solver, maxIterations);
+      NALU_HYPRE_LOBPCGSetPrecondUsageMode(lobpcg_solver, pcgMode);
+      NALU_HYPRE_LOBPCGSetTol(lobpcg_solver, tol);
+      NALU_HYPRE_LOBPCGSetPrintLevel(lobpcg_solver, verbosity);
 
       /* use a preconditioner */
-      HYPRE_LOBPCGSetPrecond(lobpcg_solver,
-                             (HYPRE_PtrToSolverFcn) HYPRE_BoomerAMGSolve,
-                             (HYPRE_PtrToSolverFcn) HYPRE_BoomerAMGSetup,
+      NALU_HYPRE_LOBPCGSetPrecond(lobpcg_solver,
+                             (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_BoomerAMGSolve,
+                             (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_BoomerAMGSetup,
                              precond);
 
-      HYPRE_LOBPCGSetup(lobpcg_solver, (HYPRE_Matrix)parcsr_A,
-                        (HYPRE_Vector)par_b, (HYPRE_Vector)par_x);
+      NALU_HYPRE_LOBPCGSetup(lobpcg_solver, (NALU_HYPRE_Matrix)parcsr_A,
+                        (NALU_HYPRE_Vector)par_b, (NALU_HYPRE_Vector)par_x);
 
       mytime -= MPI_Wtime();
 
-      HYPRE_LOBPCGSolve(lobpcg_solver, constraints, eigenvectors, eigenvalues );
+      NALU_HYPRE_LOBPCGSolve(lobpcg_solver, constraints, eigenvectors, eigenvalues );
 
       mytime += MPI_Wtime();
       MPI_Allreduce(&mytime, &walltime, 1, MPI_DOUBLE, MPI_MAX, MPI_COMM_WORLD);
@@ -318,8 +318,8 @@ int main (int argc, char *argv[])
       }
 
       /* clean-up */
-      HYPRE_BoomerAMGDestroy(precond);
-      HYPRE_LOBPCGDestroy(lobpcg_solver);
+      NALU_HYPRE_BoomerAMGDestroy(precond);
+      NALU_HYPRE_LOBPCGDestroy(lobpcg_solver);
       free(eigenvalues);
       free(interpreter);
    }
@@ -327,7 +327,7 @@ int main (int argc, char *argv[])
    /* Save the solution for GLVis visualization, see vis/glvis-ex11.sh */
    if (vis)
    {
-#ifdef HYPRE_EXVIS
+#ifdef NALU_HYPRE_EXVIS
       FILE *file;
       char filename[255];
 
@@ -336,11 +336,11 @@ int main (int argc, char *argv[])
 
       /* eigenvectors - get a pointer */
       mv_TempMultiVector* tmp = (mv_TempMultiVector*) mv_MultiVectorGetData(eigenvectors);
-      HYPRE_ParVector*    pvx = (HYPRE_ParVector*)(tmp -> vector);
+      NALU_HYPRE_ParVector*    pvx = (NALU_HYPRE_ParVector*)(tmp -> vector);
 
       /* get the local solution */
-      values = hypre_VectorData(hypre_ParVectorLocalVector(
-                                   (hypre_ParVector*)pvx[blockSize - 1]));
+      values = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(
+                                   (nalu_hypre_ParVector*)pvx[blockSize - 1]));
 
       sprintf(filename, "%s.%06d", "vis/ex11.sol", myid);
       if ((file = fopen(filename, "w")) == NULL)
@@ -368,12 +368,12 @@ int main (int argc, char *argv[])
    }
 
    /* Clean up */
-   HYPRE_IJMatrixDestroy(A);
-   HYPRE_IJVectorDestroy(b);
-   HYPRE_IJVectorDestroy(x);
+   NALU_HYPRE_IJMatrixDestroy(A);
+   NALU_HYPRE_IJVectorDestroy(b);
+   NALU_HYPRE_IJVectorDestroy(x);
 
    /* Finalize HYPRE */
-   HYPRE_Finalize();
+   NALU_HYPRE_Finalize();
 
    /* Finalize MPI*/
    MPI_Finalize();

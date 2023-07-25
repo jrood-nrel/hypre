@@ -7,7 +7,7 @@
 
 /******************************************************************************
  *
- * Matvec functions for hypre_CSRMatrix class.
+ * Matvec functions for nalu_hypre_CSRMatrix class.
  *
  *****************************************************************************/
 
@@ -16,29 +16,29 @@
 #include "seq_multivector.h"
 
 /*--------------------------------------------------------------------------
- * hypre_CSRMatrixMultiMatvec
+ * nalu_hypre_CSRMatrixMultiMatvec
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_CSRMatrixMatMultivec(HYPRE_Complex alpha, hypre_CSRMatrix *A,
-                           hypre_Multivector *x, HYPRE_Complex beta,
-                           hypre_Multivector *y)
+NALU_HYPRE_Int
+nalu_hypre_CSRMatrixMatMultivec(NALU_HYPRE_Complex alpha, nalu_hypre_CSRMatrix *A,
+                           nalu_hypre_Multivector *x, NALU_HYPRE_Complex beta,
+                           nalu_hypre_Multivector *y)
 {
-   HYPRE_Complex *A_data   = hypre_CSRMatrixData(A);
-   HYPRE_Int    *A_i      = hypre_CSRMatrixI(A);
-   HYPRE_Int    *A_j      = hypre_CSRMatrixJ(A);
-   HYPRE_Int    num_rows = hypre_CSRMatrixNumRows(A);
-   HYPRE_Int    num_cols = hypre_CSRMatrixNumCols(A);
-   HYPRE_Complex *x_data = hypre_MultivectorData(x);
-   HYPRE_Complex *y_data = hypre_MultivectorData(y);
-   HYPRE_Int    x_size = hypre_MultivectorSize(x);
-   HYPRE_Int    y_size = hypre_MultivectorSize(y);
-   HYPRE_Int    num_vectors = hypre_MultivectorNumVectors(x);
-   HYPRE_Int    *x_active_ind = x->active_indices;
-   HYPRE_Int    *y_active_ind = y->active_indices;
-   HYPRE_Int    num_active_vectors = x->num_active_vectors;
-   HYPRE_Int    i, j, jj, m, ierr = 0, optimize;
-   HYPRE_Complex temp, tempx, xpar = 0.7, *xptr, *yptr;
+   NALU_HYPRE_Complex *A_data   = nalu_hypre_CSRMatrixData(A);
+   NALU_HYPRE_Int    *A_i      = nalu_hypre_CSRMatrixI(A);
+   NALU_HYPRE_Int    *A_j      = nalu_hypre_CSRMatrixJ(A);
+   NALU_HYPRE_Int    num_rows = nalu_hypre_CSRMatrixNumRows(A);
+   NALU_HYPRE_Int    num_cols = nalu_hypre_CSRMatrixNumCols(A);
+   NALU_HYPRE_Complex *x_data = nalu_hypre_MultivectorData(x);
+   NALU_HYPRE_Complex *y_data = nalu_hypre_MultivectorData(y);
+   NALU_HYPRE_Int    x_size = nalu_hypre_MultivectorSize(x);
+   NALU_HYPRE_Int    y_size = nalu_hypre_MultivectorSize(y);
+   NALU_HYPRE_Int    num_vectors = nalu_hypre_MultivectorNumVectors(x);
+   NALU_HYPRE_Int    *x_active_ind = x->active_indices;
+   NALU_HYPRE_Int    *y_active_ind = y->active_indices;
+   NALU_HYPRE_Int    num_active_vectors = x->num_active_vectors;
+   NALU_HYPRE_Int    i, j, jj, m, ierr = 0, optimize;
+   NALU_HYPRE_Complex temp, tempx, xpar = 0.7, *xptr, *yptr;
 
    /*---------------------------------------------------------------------
     *  Check for size compatibility.  Matvec returns ierr = 1 if
@@ -51,7 +51,7 @@ hypre_CSRMatrixMatMultivec(HYPRE_Complex alpha, hypre_CSRMatrix *A,
     *  is informational only.
     *--------------------------------------------------------------------*/
 
-   hypre_assert(num_active_vectors == y->num_active_vectors);
+   nalu_hypre_assert(num_active_vectors == y->num_active_vectors);
    if (num_cols != x_size) { ierr = 1; }
    if (num_rows != y_size) { ierr = 2; }
    if (num_cols != x_size && num_rows != y_size) { ierr = 3; }
@@ -67,8 +67,8 @@ hypre_CSRMatrixMatMultivec(HYPRE_Complex alpha, hypre_CSRMatrix *A,
 
    if (alpha == 0.0)
    {
-#ifdef HYPRE_USING_OPENMP
-      #pragma omp parallel for private(i) HYPRE_SMP_SCHEDULE
+#ifdef NALU_HYPRE_USING_OPENMP
+      #pragma omp parallel for private(i) NALU_HYPRE_SMP_SCHEDULE
 #endif
       for (i = 0; i < num_rows * num_vectors; i++) { y_data[i] *= beta; }
 
@@ -85,15 +85,15 @@ hypre_CSRMatrixMatMultivec(HYPRE_Complex alpha, hypre_CSRMatrix *A,
    {
       if (temp == 0.0)
       {
-#ifdef HYPRE_USING_OPENMP
-         #pragma omp parallel for private(i) HYPRE_SMP_SCHEDULE
+#ifdef NALU_HYPRE_USING_OPENMP
+         #pragma omp parallel for private(i) NALU_HYPRE_SMP_SCHEDULE
 #endif
          for (i = 0; i < num_rows * num_vectors; i++) { y_data[i] = 0.0; }
       }
       else
       {
-#ifdef HYPRE_USING_OPENMP
-         #pragma omp parallel for private(i) HYPRE_SMP_SCHEDULE
+#ifdef NALU_HYPRE_USING_OPENMP
+         #pragma omp parallel for private(i) NALU_HYPRE_SMP_SCHEDULE
 #endif
          for (i = 0; i < num_rows * num_vectors; i++) { y_data[i] *= temp; }
       }
@@ -170,8 +170,8 @@ hypre_CSRMatrixMatMultivec(HYPRE_Complex alpha, hypre_CSRMatrix *A,
 
    if (alpha != 1.0)
    {
-#ifdef HYPRE_USING_OPENMP
-      #pragma omp parallel for private(i) HYPRE_SMP_SCHEDULE
+#ifdef NALU_HYPRE_USING_OPENMP
+      #pragma omp parallel for private(i) NALU_HYPRE_SMP_SCHEDULE
 #endif
       for (i = 0; i < num_rows * num_vectors; i++)
       {
@@ -182,33 +182,33 @@ hypre_CSRMatrixMatMultivec(HYPRE_Complex alpha, hypre_CSRMatrix *A,
 }
 
 /*--------------------------------------------------------------------------
- * hypre_CSRMatrixMultiMatvecT
+ * nalu_hypre_CSRMatrixMultiMatvecT
  *
  *   Performs y <- alpha * A^T * x + beta * y
  *
- *   From Van Henson's modification of hypre_CSRMatrixMatvec.
+ *   From Van Henson's modification of nalu_hypre_CSRMatrixMatvec.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_CSRMatrixMatMultivecT(HYPRE_Complex alpha, hypre_CSRMatrix *A,
-                            hypre_Multivector *x, HYPRE_Complex beta,
-                            hypre_Multivector *y)
+NALU_HYPRE_Int
+nalu_hypre_CSRMatrixMatMultivecT(NALU_HYPRE_Complex alpha, nalu_hypre_CSRMatrix *A,
+                            nalu_hypre_Multivector *x, NALU_HYPRE_Complex beta,
+                            nalu_hypre_Multivector *y)
 {
-   HYPRE_Complex *A_data    = hypre_CSRMatrixData(A);
-   HYPRE_Int    *A_i       = hypre_CSRMatrixI(A);
-   HYPRE_Int    *A_j       = hypre_CSRMatrixJ(A);
-   HYPRE_Int    num_rows  = hypre_CSRMatrixNumRows(A);
-   HYPRE_Int    num_cols  = hypre_CSRMatrixNumCols(A);
-   HYPRE_Complex *x_data = hypre_MultivectorData(x);
-   HYPRE_Complex *y_data = hypre_MultivectorData(y);
-   HYPRE_Int    x_size = hypre_MultivectorSize(x);
-   HYPRE_Int    y_size = hypre_MultivectorSize(y);
-   HYPRE_Int    num_vectors = hypre_MultivectorNumVectors(x);
-   HYPRE_Int    *x_active_ind = x->active_indices;
-   HYPRE_Int    *y_active_ind = y->active_indices;
-   HYPRE_Int    num_active_vectors = x->num_active_vectors;
-   HYPRE_Complex temp;
-   HYPRE_Int    i, jv, jj, size, ierr = 0;
+   NALU_HYPRE_Complex *A_data    = nalu_hypre_CSRMatrixData(A);
+   NALU_HYPRE_Int    *A_i       = nalu_hypre_CSRMatrixI(A);
+   NALU_HYPRE_Int    *A_j       = nalu_hypre_CSRMatrixJ(A);
+   NALU_HYPRE_Int    num_rows  = nalu_hypre_CSRMatrixNumRows(A);
+   NALU_HYPRE_Int    num_cols  = nalu_hypre_CSRMatrixNumCols(A);
+   NALU_HYPRE_Complex *x_data = nalu_hypre_MultivectorData(x);
+   NALU_HYPRE_Complex *y_data = nalu_hypre_MultivectorData(y);
+   NALU_HYPRE_Int    x_size = nalu_hypre_MultivectorSize(x);
+   NALU_HYPRE_Int    y_size = nalu_hypre_MultivectorSize(y);
+   NALU_HYPRE_Int    num_vectors = nalu_hypre_MultivectorNumVectors(x);
+   NALU_HYPRE_Int    *x_active_ind = x->active_indices;
+   NALU_HYPRE_Int    *y_active_ind = y->active_indices;
+   NALU_HYPRE_Int    num_active_vectors = x->num_active_vectors;
+   NALU_HYPRE_Complex temp;
+   NALU_HYPRE_Int    i, jv, jj, size, ierr = 0;
 
    /*---------------------------------------------------------------------
     *  Check for size compatibility.  MatvecT returns ierr = 1 if
@@ -221,7 +221,7 @@ hypre_CSRMatrixMatMultivecT(HYPRE_Complex alpha, hypre_CSRMatrix *A,
     *  is informational only.
     *--------------------------------------------------------------------*/
 
-   hypre_assert(num_active_vectors == y->num_active_vectors);
+   nalu_hypre_assert(num_active_vectors == y->num_active_vectors);
    if (num_rows != x_size) { ierr = 1; }
    if (num_cols != y_size) { ierr = 2; }
    if (num_rows != x_size && num_cols != y_size) { ierr = 3; }
@@ -232,8 +232,8 @@ hypre_CSRMatrixMatMultivecT(HYPRE_Complex alpha, hypre_CSRMatrix *A,
 
    if (alpha == 0.0)
    {
-#ifdef HYPRE_USING_OPENMP
-      #pragma omp parallel for private(i) HYPRE_SMP_SCHEDULE
+#ifdef NALU_HYPRE_USING_OPENMP
+      #pragma omp parallel for private(i) NALU_HYPRE_SMP_SCHEDULE
 #endif
       for (i = 0; i < num_cols * num_vectors; i++) { y_data[i] *= beta; }
       return ierr;
@@ -249,15 +249,15 @@ hypre_CSRMatrixMatMultivecT(HYPRE_Complex alpha, hypre_CSRMatrix *A,
    {
       if (temp == 0.0)
       {
-#ifdef HYPRE_USING_OPENMP
-         #pragma omp parallel for private(i) HYPRE_SMP_SCHEDULE
+#ifdef NALU_HYPRE_USING_OPENMP
+         #pragma omp parallel for private(i) NALU_HYPRE_SMP_SCHEDULE
 #endif
          for (i = 0; i < num_cols * num_vectors; i++) { y_data[i] = 0.0; }
       }
       else
       {
-#ifdef HYPRE_USING_OPENMP
-         #pragma omp parallel for private(i) HYPRE_SMP_SCHEDULE
+#ifdef NALU_HYPRE_USING_OPENMP
+         #pragma omp parallel for private(i) NALU_HYPRE_SMP_SCHEDULE
 #endif
          for (i = 0; i < num_cols * num_vectors; i++) { y_data[i] *= temp; }
       }
@@ -294,8 +294,8 @@ hypre_CSRMatrixMatMultivecT(HYPRE_Complex alpha, hypre_CSRMatrix *A,
 
    if (alpha != 1.0)
    {
-#ifdef HYPRE_USING_OPENMP
-      #pragma omp parallel for private(i) HYPRE_SMP_SCHEDULE
+#ifdef NALU_HYPRE_USING_OPENMP
+      #pragma omp parallel for private(i) NALU_HYPRE_SMP_SCHEDULE
 #endif
       for (i = 0; i < num_cols * num_vectors; i++)
       {

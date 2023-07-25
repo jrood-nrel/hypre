@@ -31,9 +31,9 @@
  *
  *****************************************************************************/
 
-#include "_hypre_utilities.h"
+#include "_nalu_hypre_utilities.h"
 
-static HYPRE_Int Seed = 13579;
+static NALU_HYPRE_Int Seed = 13579;
 
 /*-------------------------------------------------------------------------------
  * Static global variable: Seed
@@ -48,9 +48,9 @@ static HYPRE_Int Seed = 13579;
 /*--------------------------------------------------------------------------
  * Initializes the pseudo-random number generator to a place in the sequence.
  *
- * @param seed an HYPRE_Int containing the seed for the RNG.
+ * @param seed an NALU_HYPRE_Int containing the seed for the RNG.
  *--------------------------------------------------------------------------*/
-void hypre_SeedRand( HYPRE_Int seed )
+void nalu_hypre_SeedRand( NALU_HYPRE_Int seed )
 {
    /* RL: seed must be between 1 and 2^31-2 */
    if (seed < 1)
@@ -69,11 +69,11 @@ void hypre_SeedRand( HYPRE_Int seed )
  * Computes the next pseudo-random number in the sequence using the global
  * variable Seed.
  *
- * @return a HYPRE_Int between (0, 2147483647]
+ * @return a NALU_HYPRE_Int between (0, 2147483647]
  *--------------------------------------------------------------------------*/
-HYPRE_Int hypre_RandI( void )
+NALU_HYPRE_Int nalu_hypre_RandI( void )
 {
-   HYPRE_Int  low, high, test;
+   NALU_HYPRE_Int  low, high, test;
    high = Seed / q;
    low = Seed % q;
    test = a * low - r * high;
@@ -93,11 +93,11 @@ HYPRE_Int hypre_RandI( void )
  * Computes the next pseudo-random number in the sequence using the global
  * variable Seed.
  *
- * @return a HYPRE_Real containing the next number in the sequence divided by
+ * @return a NALU_HYPRE_Real containing the next number in the sequence divided by
  * 2147483647 so that the numbers are in (0, 1].
  *--------------------------------------------------------------------------*/
-HYPRE_Real hypre_Rand( void )
+NALU_HYPRE_Real nalu_hypre_Rand( void )
 {
-   return ((HYPRE_Real)(hypre_RandI()) / (HYPRE_Real)m);
+   return ((NALU_HYPRE_Real)(nalu_hypre_RandI()) / (NALU_HYPRE_Real)m);
 }
 

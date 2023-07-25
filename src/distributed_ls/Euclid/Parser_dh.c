@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_Euclid.h"
+#include "_nalu_hypre_Euclid.h"
 /* #include "Parser_dh.h" */
 /* #include "Mem_dh.h" */
  
@@ -77,15 +77,15 @@ void Parser_dhUpdateFromFile(Parser_dh p,const char *filename)
   FILE *fp;
 
   if ((fp = fopen(filename, "r")) == NULL) {
-    hypre_sprintf(msgBuf_dh, "can't open >>%s<< for reading", filename);
+    nalu_hypre_sprintf(msgBuf_dh, "can't open >>%s<< for reading", filename);
     SET_INFO(msgBuf_dh);
   } else {
-    hypre_sprintf(msgBuf_dh, "updating parser from file: >>%s<<", filename);
+    nalu_hypre_sprintf(msgBuf_dh, "updating parser from file: >>%s<<", filename);
     SET_INFO(msgBuf_dh);
     while (!feof(fp)) {
       if (fgets(line, 80, fp) == NULL) break;
       if (line[0] != '#') { 
-        if (hypre_sscanf(line, "%s %s", name, value) != 2) break;
+        if (nalu_hypre_sscanf(line, "%s %s", name, value) != 2) break;
         Parser_dhInsert(p, name, value);   
       }
     }
@@ -96,10 +96,10 @@ void Parser_dhUpdateFromFile(Parser_dh p,const char *filename)
 
 #undef __FUNC__
 #define __FUNC__ "Parser_dhInit"
-void Parser_dhInit(Parser_dh p, HYPRE_Int argc, char *argv[])
+void Parser_dhInit(Parser_dh p, NALU_HYPRE_Int argc, char *argv[])
 {
   START_FUNC_DH_2
-  HYPRE_Int j;
+  NALU_HYPRE_Int j;
 
   /* read option names and values from default database */
 /*  Parser_dhUpdateFromFile(p, MASTER_OPTIONS_LIST); CHECK_V_ERROR;
@@ -121,7 +121,7 @@ void Parser_dhInit(Parser_dh p, HYPRE_Int argc, char *argv[])
 
   /* update from command-line options and values */
   {
-  HYPRE_Int i = 0;
+  NALU_HYPRE_Int i = 0;
   while (i < argc) {
     if (argv[i][0] == '-') {
       char value[] = { "1" };  /* option's default value */
@@ -173,7 +173,7 @@ bool Parser_dhHasSwitch(Parser_dh p,const char* s)
  */
 #undef __FUNC__
 #define __FUNC__ "Parser_dhReadInt"
-bool Parser_dhReadInt(Parser_dh p,const char* in, HYPRE_Int* out)
+bool Parser_dhReadInt(Parser_dh p,const char* in, NALU_HYPRE_Int* out)
 {
   START_FUNC_DH_2
   bool has_switch = false;
@@ -193,14 +193,14 @@ bool Parser_dhReadInt(Parser_dh p,const char* in, HYPRE_Int* out)
 
 #undef __FUNC__
 #define __FUNC__ "Parser_dhReadDouble"
-bool Parser_dhReadDouble(Parser_dh p,const char* in, HYPRE_Real *out)
+bool Parser_dhReadDouble(Parser_dh p,const char* in, NALU_HYPRE_Real *out)
 {
   START_FUNC_DH_2
   bool optionExists = false;
   OptionsNode *node;
 
   if (p != NULL && find(p,in,&node)) {
-    *out = (HYPRE_Real)atof(node->value);
+    *out = (NALU_HYPRE_Real)atof(node->value);
     optionExists = true;
   }
   END_FUNC_VAL_2(optionExists)
@@ -232,18 +232,18 @@ void Parser_dhPrint(Parser_dh p, FILE *fp, bool allPrint)
   if (fp == NULL) SET_V_ERROR("fp == NULL");
 
   if (myid_dh == 0 || allPrint) {
-    hypre_fprintf(fp, "------------------------ registered options:\n");
+    nalu_hypre_fprintf(fp, "------------------------ registered options:\n");
     if (ptr == NULL) {
-      hypre_fprintf(fp, "Parser object is invalid; nothing to print!\n");
+      nalu_hypre_fprintf(fp, "Parser object is invalid; nothing to print!\n");
     } else {
       ptr = ptr->next;
       while (ptr != NULL) {
-        hypre_fprintf(fp, "   %s  %s\n", ptr->name, ptr->value);
+        nalu_hypre_fprintf(fp, "   %s  %s\n", ptr->name, ptr->value);
         fflush(fp);
         ptr = ptr->next;
       } 
     } 
-    hypre_fprintf(fp, "\n");
+    nalu_hypre_fprintf(fp, "\n");
     fflush(fp);
   }
   END_FUNC_DH_2
@@ -255,13 +255,13 @@ void Parser_dhInsert(Parser_dh p,const char *option,const char *value)
 {
   START_FUNC_DH_2
   OptionsNode *node;
-  HYPRE_Int length;
+  NALU_HYPRE_Int length;
 
   if (p == NULL) goto PARSER_NOT_INITED;
 
   /* if option is already in the list, update its value */
   if (find(p, option,&node)) {
-    HYPRE_Int length2 = strlen(node->value)+1;
+    NALU_HYPRE_Int length2 = strlen(node->value)+1;
     length = strlen(value)+1;
     if (length2 < length) {
       FREE_DH(node->value);

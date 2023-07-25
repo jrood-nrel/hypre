@@ -7,38 +7,38 @@
 
 /******************************************************************************
  *
- * hypre_IJVector interface
+ * nalu_hypre_IJVector interface
  *
  *****************************************************************************/
 
-#include "./_hypre_IJ_mv.h"
+#include "./_nalu_hypre_IJ_mv.h"
 
-#include "../HYPRE.h"
+#include "../NALU_HYPRE.h"
 
 /*--------------------------------------------------------------------------
- * hypre_IJVectorDistribute
+ * nalu_hypre_IJVectorDistribute
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_IJVectorDistribute( HYPRE_IJVector vector, const HYPRE_Int *vec_starts )
+NALU_HYPRE_Int
+nalu_hypre_IJVectorDistribute( NALU_HYPRE_IJVector vector, const NALU_HYPRE_Int *vec_starts )
 {
-   hypre_IJVector *vec = (hypre_IJVector *) vector;
+   nalu_hypre_IJVector *vec = (nalu_hypre_IJVector *) vector;
 
    if (vec == NULL)
    {
-      hypre_printf("Vector variable is NULL -- hypre_IJVectorDistribute\n");
+      nalu_hypre_printf("Vector variable is NULL -- nalu_hypre_IJVectorDistribute\n");
       exit(1);
    }
 
-   if ( hypre_IJVectorObjectType(vec) == HYPRE_PARCSR )
+   if ( nalu_hypre_IJVectorObjectType(vec) == NALU_HYPRE_PARCSR )
 
    {
-      return ( hypre_IJVectorDistributePar(vec, vec_starts) );
+      return ( nalu_hypre_IJVectorDistributePar(vec, vec_starts) );
    }
 
    else
    {
-      hypre_printf("Unrecognized object type -- hypre_IJVectorDistribute\n");
+      nalu_hypre_printf("Unrecognized object type -- nalu_hypre_IJVectorDistribute\n");
       exit(1);
    }
 
@@ -46,37 +46,37 @@ hypre_IJVectorDistribute( HYPRE_IJVector vector, const HYPRE_Int *vec_starts )
 }
 
 /*--------------------------------------------------------------------------
- * hypre_IJVectorZeroValues
+ * nalu_hypre_IJVectorZeroValues
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_IJVectorZeroValues( HYPRE_IJVector vector )
+NALU_HYPRE_Int
+nalu_hypre_IJVectorZeroValues( NALU_HYPRE_IJVector vector )
 {
-   hypre_IJVector *vec = (hypre_IJVector *) vector;
+   nalu_hypre_IJVector *vec = (nalu_hypre_IJVector *) vector;
 
    if (vec == NULL)
    {
-      hypre_printf("Vector variable is NULL -- hypre_IJVectorZeroValues\n");
+      nalu_hypre_printf("Vector variable is NULL -- nalu_hypre_IJVectorZeroValues\n");
       exit(1);
    }
 
-   /*  if ( hypre_IJVectorObjectType(vec) == HYPRE_PETSC )
+   /*  if ( nalu_hypre_IJVectorObjectType(vec) == NALU_HYPRE_PETSC )
 
-      return( hypre_IJVectorZeroValuesPETSc(vec) );
+      return( nalu_hypre_IJVectorZeroValuesPETSc(vec) );
 
-   else if ( hypre_IJVectorObjectType(vec) == HYPRE_ISIS )
+   else if ( nalu_hypre_IJVectorObjectType(vec) == NALU_HYPRE_ISIS )
 
-      return( hypre_IJVectorZeroValuesISIS(vec) );
+      return( nalu_hypre_IJVectorZeroValuesISIS(vec) );
 
    else */
 
-   if ( hypre_IJVectorObjectType(vec) == HYPRE_PARCSR )
+   if ( nalu_hypre_IJVectorObjectType(vec) == NALU_HYPRE_PARCSR )
    {
-      return ( hypre_IJVectorZeroValuesPar(vec) );
+      return ( nalu_hypre_IJVectorZeroValuesPar(vec) );
    }
    else
    {
-      hypre_printf("Unrecognized object type -- hypre_IJVectorZeroValues\n");
+      nalu_hypre_printf("Unrecognized object type -- nalu_hypre_IJVectorZeroValues\n");
       exit(1);
    }
 

@@ -18,7 +18,7 @@ extern "C" {
 */
 
 #include "f2c.h"
-#include "hypre_blas.h"
+#include "nalu_hypre_blas.h"
 
 /* Table of constant values */
 
@@ -74,7 +74,7 @@ extern "C" {
 /*     .. */
 /*     .. Executable Statements .. */
 
-        hypre_printf("** On entry to %6s, parameter number %2i had an illegal value\n",
+        nalu_hypre_printf("** On entry to %6s, parameter number %2i had an illegal value\n",
                 srname, *info);
 
 

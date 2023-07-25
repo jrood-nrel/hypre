@@ -5,242 +5,242 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_parcsr_ls.h"
+#include "_nalu_hypre_parcsr_ls.h"
 
 /*--------------------------------------------------------------------------
- * HYPRE_ILUCreate
+ * NALU_HYPRE_ILUCreate
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ILUCreate( HYPRE_Solver *solver )
+NALU_HYPRE_Int
+NALU_HYPRE_ILUCreate( NALU_HYPRE_Solver *solver )
 {
    if (!solver)
    {
-      hypre_error_in_arg(2);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(2);
+      return nalu_hypre_error_flag;
    }
-   *solver = ( (HYPRE_Solver) hypre_ILUCreate( ) );
-   return hypre_error_flag;
+   *solver = ( (NALU_HYPRE_Solver) nalu_hypre_ILUCreate( ) );
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ILUDestroy
+ * NALU_HYPRE_ILUDestroy
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ILUDestroy( HYPRE_Solver solver )
+NALU_HYPRE_Int
+NALU_HYPRE_ILUDestroy( NALU_HYPRE_Solver solver )
 {
-   return ( hypre_ILUDestroy( (void *) solver ) );
+   return ( nalu_hypre_ILUDestroy( (void *) solver ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ILUSetup
+ * NALU_HYPRE_ILUSetup
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ILUSetup( HYPRE_Solver solver,
-                HYPRE_ParCSRMatrix A,
-                HYPRE_ParVector b,
-                HYPRE_ParVector x      )
+NALU_HYPRE_Int
+NALU_HYPRE_ILUSetup( NALU_HYPRE_Solver solver,
+                NALU_HYPRE_ParCSRMatrix A,
+                NALU_HYPRE_ParVector b,
+                NALU_HYPRE_ParVector x      )
 {
-   return ( hypre_ILUSetup( (void *) solver,
-                            (hypre_ParCSRMatrix *) A,
-                            (hypre_ParVector *) b,
-                            (hypre_ParVector *) x ) );
+   return ( nalu_hypre_ILUSetup( (void *) solver,
+                            (nalu_hypre_ParCSRMatrix *) A,
+                            (nalu_hypre_ParVector *) b,
+                            (nalu_hypre_ParVector *) x ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ILUSolve
+ * NALU_HYPRE_ILUSolve
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ILUSolve( HYPRE_Solver solver,
-                HYPRE_ParCSRMatrix A,
-                HYPRE_ParVector b,
-                HYPRE_ParVector x      )
+NALU_HYPRE_Int
+NALU_HYPRE_ILUSolve( NALU_HYPRE_Solver solver,
+                NALU_HYPRE_ParCSRMatrix A,
+                NALU_HYPRE_ParVector b,
+                NALU_HYPRE_ParVector x      )
 {
-   return ( hypre_ILUSolve( (void *) solver,
-                            (hypre_ParCSRMatrix *) A,
-                            (hypre_ParVector *) b,
-                            (hypre_ParVector *) x ) );
+   return ( nalu_hypre_ILUSolve( (void *) solver,
+                            (nalu_hypre_ParCSRMatrix *) A,
+                            (nalu_hypre_ParVector *) b,
+                            (nalu_hypre_ParVector *) x ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ILUSetPrintLevel
+ * NALU_HYPRE_ILUSetPrintLevel
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ILUSetPrintLevel( HYPRE_Solver solver, HYPRE_Int print_level )
+NALU_HYPRE_Int
+NALU_HYPRE_ILUSetPrintLevel( NALU_HYPRE_Solver solver, NALU_HYPRE_Int print_level )
 {
-   return hypre_ILUSetPrintLevel( solver, print_level );
+   return nalu_hypre_ILUSetPrintLevel( solver, print_level );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ILUSetLogging
+ * NALU_HYPRE_ILUSetLogging
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ILUSetLogging( HYPRE_Solver solver, HYPRE_Int logging )
+NALU_HYPRE_Int
+NALU_HYPRE_ILUSetLogging( NALU_HYPRE_Solver solver, NALU_HYPRE_Int logging )
 {
-   return hypre_ILUSetLogging(solver, logging );
+   return nalu_hypre_ILUSetLogging(solver, logging );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ILUSetMaxIter
+ * NALU_HYPRE_ILUSetMaxIter
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ILUSetMaxIter( HYPRE_Solver solver, HYPRE_Int max_iter )
+NALU_HYPRE_Int
+NALU_HYPRE_ILUSetMaxIter( NALU_HYPRE_Solver solver, NALU_HYPRE_Int max_iter )
 {
-   return hypre_ILUSetMaxIter( solver, max_iter );
+   return nalu_hypre_ILUSetMaxIter( solver, max_iter );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ILUSetTriSolve
+ * NALU_HYPRE_ILUSetTriSolve
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ILUSetTriSolve( HYPRE_Solver solver, HYPRE_Int tri_solve )
+NALU_HYPRE_Int
+NALU_HYPRE_ILUSetTriSolve( NALU_HYPRE_Solver solver, NALU_HYPRE_Int tri_solve )
 {
-   return hypre_ILUSetTriSolve( solver, tri_solve );
+   return nalu_hypre_ILUSetTriSolve( solver, tri_solve );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ILUSetLowerJacobiIters
+ * NALU_HYPRE_ILUSetLowerJacobiIters
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ILUSetLowerJacobiIters( HYPRE_Solver solver, HYPRE_Int lower_jacobi_iters )
+NALU_HYPRE_Int
+NALU_HYPRE_ILUSetLowerJacobiIters( NALU_HYPRE_Solver solver, NALU_HYPRE_Int lower_jacobi_iters )
 {
-   return hypre_ILUSetLowerJacobiIters( solver, lower_jacobi_iters );
+   return nalu_hypre_ILUSetLowerJacobiIters( solver, lower_jacobi_iters );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ILUSetUpperJacobiIters
+ * NALU_HYPRE_ILUSetUpperJacobiIters
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ILUSetUpperJacobiIters( HYPRE_Solver solver, HYPRE_Int upper_jacobi_iters )
+NALU_HYPRE_Int
+NALU_HYPRE_ILUSetUpperJacobiIters( NALU_HYPRE_Solver solver, NALU_HYPRE_Int upper_jacobi_iters )
 {
-   return hypre_ILUSetUpperJacobiIters( solver, upper_jacobi_iters );
+   return nalu_hypre_ILUSetUpperJacobiIters( solver, upper_jacobi_iters );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ILUSetTol
+ * NALU_HYPRE_ILUSetTol
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ILUSetTol( HYPRE_Solver solver, HYPRE_Real tol )
+NALU_HYPRE_Int
+NALU_HYPRE_ILUSetTol( NALU_HYPRE_Solver solver, NALU_HYPRE_Real tol )
 {
-   return hypre_ILUSetTol( solver, tol );
+   return nalu_hypre_ILUSetTol( solver, tol );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ILUSetDropThreshold
+ * NALU_HYPRE_ILUSetDropThreshold
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ILUSetDropThreshold( HYPRE_Solver solver, HYPRE_Real threshold )
+NALU_HYPRE_Int
+NALU_HYPRE_ILUSetDropThreshold( NALU_HYPRE_Solver solver, NALU_HYPRE_Real threshold )
 {
-   return hypre_ILUSetDropThreshold( solver, threshold );
+   return nalu_hypre_ILUSetDropThreshold( solver, threshold );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ILUSetDropThresholdArray
+ * NALU_HYPRE_ILUSetDropThresholdArray
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ILUSetDropThresholdArray( HYPRE_Solver solver, HYPRE_Real *threshold )
+NALU_HYPRE_Int
+NALU_HYPRE_ILUSetDropThresholdArray( NALU_HYPRE_Solver solver, NALU_HYPRE_Real *threshold )
 {
-   return hypre_ILUSetDropThresholdArray( solver, threshold );
+   return nalu_hypre_ILUSetDropThresholdArray( solver, threshold );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ILUSetNSHDropThreshold
+ * NALU_HYPRE_ILUSetNSHDropThreshold
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ILUSetNSHDropThreshold( HYPRE_Solver solver, HYPRE_Real threshold )
+NALU_HYPRE_Int
+NALU_HYPRE_ILUSetNSHDropThreshold( NALU_HYPRE_Solver solver, NALU_HYPRE_Real threshold )
 {
-   return hypre_ILUSetSchurNSHDropThreshold( solver, threshold );
+   return nalu_hypre_ILUSetSchurNSHDropThreshold( solver, threshold );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ILUSetNSHDropThresholdArray
+ * NALU_HYPRE_ILUSetNSHDropThresholdArray
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ILUSetNSHDropThresholdArray( HYPRE_Solver solver, HYPRE_Real *threshold )
+NALU_HYPRE_Int
+NALU_HYPRE_ILUSetNSHDropThresholdArray( NALU_HYPRE_Solver solver, NALU_HYPRE_Real *threshold )
 {
-   return hypre_ILUSetSchurNSHDropThresholdArray( solver, threshold );
+   return nalu_hypre_ILUSetSchurNSHDropThresholdArray( solver, threshold );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ILUSetSchurMaxIter
+ * NALU_HYPRE_ILUSetSchurMaxIter
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ILUSetSchurMaxIter( HYPRE_Solver solver, HYPRE_Int ss_max_iter )
+NALU_HYPRE_Int
+NALU_HYPRE_ILUSetSchurMaxIter( NALU_HYPRE_Solver solver, NALU_HYPRE_Int ss_max_iter )
 {
-   return hypre_ILUSetSchurSolverMaxIter( solver, ss_max_iter );
+   return nalu_hypre_ILUSetSchurSolverMaxIter( solver, ss_max_iter );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ILUSetMaxNnzPerRow
+ * NALU_HYPRE_ILUSetMaxNnzPerRow
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ILUSetMaxNnzPerRow( HYPRE_Solver solver, HYPRE_Int nzmax )
+NALU_HYPRE_Int
+NALU_HYPRE_ILUSetMaxNnzPerRow( NALU_HYPRE_Solver solver, NALU_HYPRE_Int nzmax )
 {
-   return hypre_ILUSetMaxNnzPerRow( solver, nzmax );
+   return nalu_hypre_ILUSetMaxNnzPerRow( solver, nzmax );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ILUSetLevelOfFill
+ * NALU_HYPRE_ILUSetLevelOfFill
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ILUSetLevelOfFill( HYPRE_Solver solver, HYPRE_Int lfil )
+NALU_HYPRE_Int
+NALU_HYPRE_ILUSetLevelOfFill( NALU_HYPRE_Solver solver, NALU_HYPRE_Int lfil )
 {
-   return hypre_ILUSetLevelOfFill( solver, lfil );
+   return nalu_hypre_ILUSetLevelOfFill( solver, lfil );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ILUSetType
+ * NALU_HYPRE_ILUSetType
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ILUSetType( HYPRE_Solver solver, HYPRE_Int ilu_type )
+NALU_HYPRE_Int
+NALU_HYPRE_ILUSetType( NALU_HYPRE_Solver solver, NALU_HYPRE_Int ilu_type )
 {
-   return hypre_ILUSetType( solver, ilu_type );
+   return nalu_hypre_ILUSetType( solver, ilu_type );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ILUSetLocalReordering
+ * NALU_HYPRE_ILUSetLocalReordering
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ILUSetLocalReordering(  HYPRE_Solver solver, HYPRE_Int ordering_type )
+NALU_HYPRE_Int
+NALU_HYPRE_ILUSetLocalReordering(  NALU_HYPRE_Solver solver, NALU_HYPRE_Int ordering_type )
 {
-   return hypre_ILUSetLocalReordering(solver, ordering_type);
+   return nalu_hypre_ILUSetLocalReordering(solver, ordering_type);
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ILUGetNumIterations
+ * NALU_HYPRE_ILUGetNumIterations
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ILUGetNumIterations( HYPRE_Solver solver, HYPRE_Int *num_iterations )
+NALU_HYPRE_Int
+NALU_HYPRE_ILUGetNumIterations( NALU_HYPRE_Solver solver, NALU_HYPRE_Int *num_iterations )
 {
-   return hypre_ILUGetNumIterations( solver, num_iterations );
+   return nalu_hypre_ILUGetNumIterations( solver, num_iterations );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ILUGetFinalRelativeResidualNorm
+ * NALU_HYPRE_ILUGetFinalRelativeResidualNorm
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ILUGetFinalRelativeResidualNorm(  HYPRE_Solver solver, HYPRE_Real *res_norm )
+NALU_HYPRE_Int
+NALU_HYPRE_ILUGetFinalRelativeResidualNorm(  NALU_HYPRE_Solver solver, NALU_HYPRE_Real *res_norm )
 {
-   return hypre_ILUGetFinalRelativeResidualNorm(solver, res_norm);
+   return nalu_hypre_ILUGetFinalRelativeResidualNorm(solver, res_norm);
 }

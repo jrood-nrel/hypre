@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 #
-# hypre_ILU tests
+# nalu_hypre_ILU tests
 # Tests ILU(0), ILUK and ILUK solvers sequentially
 # Tests Parallel combination of ILU solvers
 # Tests ILU-(Flex)GMRES

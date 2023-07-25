@@ -4,9 +4,9 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 set(HDRS
-  _hypre_blas.h
+  _nalu_hypre_blas.h
   f2c.h
-  hypre_blas.h
+  nalu_hypre_blas.h
 )
 
 set(SRCS
@@ -42,5 +42,5 @@ target_sources(${PROJECT_NAME}
 )
 
 convert_filenames_to_full_paths(HDRS)
-set(HYPRE_HEADERS ${HYPRE_HEADERS} ${HDRS} PARENT_SCOPE)
+set(NALU_HYPRE_HEADERS ${NALU_HYPRE_HEADERS} ${HDRS} PARENT_SCOPE)
 

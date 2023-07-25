@@ -6,7 +6,7 @@ extern "C" {
 #endif
 
 #include "f2c.h"
-#include "hypre_lapack.h"
+#include "nalu_hypre_lapack.h"
 
 integer ieeeck_(integer *ispec, real *zero, real *one)
 {

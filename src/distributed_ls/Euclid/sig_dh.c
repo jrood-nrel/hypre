@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_Euclid.h"
+#include "_nalu_hypre_Euclid.h"
 /* #include "sig_dh.h" */
 /* #include "Parser_dh.h" */
 /* #include "euclid_common.h" */
@@ -18,17 +18,17 @@
 #include <signal.h>
 
 extern void sigRegister_dh(void);
-extern void sigHandler_dh(hypre_int sig);
+extern void sigHandler_dh(nalu_hypre_int sig);
 
 /* 
   list of signals the Euclid will handle
 */
 #ifdef WIN32
-hypre_int euclid_signals_len = 2;
-hypre_int euclid_signals[] = { SIGSEGV, SIGFPE };
+nalu_hypre_int euclid_signals_len = 2;
+nalu_hypre_int euclid_signals[] = { SIGSEGV, SIGFPE };
 #else
-hypre_int euclid_signals_len = 3;
-hypre_int euclid_signals[] = { SIGSEGV, SIGFPE, SIGBUS };
+nalu_hypre_int euclid_signals_len = 3;
+nalu_hypre_int euclid_signals[] = { SIGSEGV, SIGFPE, SIGBUS };
 #endif
 
 /* 
@@ -62,22 +62,22 @@ static const char *SIGNAME[] = {
 
 #undef __FUNC__
 #define __FUNC__ "sigHandler_dh"
-void sigHandler_dh(hypre_int sig)
+void sigHandler_dh(nalu_hypre_int sig)
 {
-  hypre_fprintf(stderr, "\n[%i] Euclid Signal Handler got: %s\n", myid_dh, SIGNAME[sig]);
-  hypre_fprintf(stderr, "[%i] ========================================================\n", myid_dh);
-  hypre_fprintf(stderr, "[%i] function calling sequence that led to the exception:\n", myid_dh);
-  hypre_fprintf(stderr, "[%i] ========================================================\n", myid_dh);
+  nalu_hypre_fprintf(stderr, "\n[%i] Euclid Signal Handler got: %s\n", myid_dh, SIGNAME[sig]);
+  nalu_hypre_fprintf(stderr, "[%i] ========================================================\n", myid_dh);
+  nalu_hypre_fprintf(stderr, "[%i] function calling sequence that led to the exception:\n", myid_dh);
+  nalu_hypre_fprintf(stderr, "[%i] ========================================================\n", myid_dh);
   printFunctionStack(stderr);
-  hypre_fprintf(stderr, "\n\n");
+  nalu_hypre_fprintf(stderr, "\n\n");
 
   if (logFile != NULL) {
-    hypre_fprintf(logFile, "\n[%i] Euclid Signal Handler got: %s\n", myid_dh, SIGNAME[sig]);
-    hypre_fprintf(logFile, "[%i] ========================================================\n", myid_dh);
-    hypre_fprintf(logFile, "[%i] function calling sequence that led to the exception:\n", myid_dh);
-    hypre_fprintf(logFile, "[%i] ========================================================\n", myid_dh);
+    nalu_hypre_fprintf(logFile, "\n[%i] Euclid Signal Handler got: %s\n", myid_dh, SIGNAME[sig]);
+    nalu_hypre_fprintf(logFile, "[%i] ========================================================\n", myid_dh);
+    nalu_hypre_fprintf(logFile, "[%i] function calling sequence that led to the exception:\n", myid_dh);
+    nalu_hypre_fprintf(logFile, "[%i] ========================================================\n", myid_dh);
     printFunctionStack(logFile);
-    hypre_fprintf(logFile, "\n\n");
+    nalu_hypre_fprintf(logFile, "\n\n");
   }
 
   EUCLID_EXIT;
@@ -88,7 +88,7 @@ void sigHandler_dh(hypre_int sig)
 void sigRegister_dh(void)
 {
   if (Parser_dhHasSwitch(parser_dh, "-sig_dh")) {
-    hypre_int i;
+    nalu_hypre_int i;
     for (i=0; i<euclid_signals_len; ++i) {
       signal(euclid_signals[i], sigHandler_dh);
     }

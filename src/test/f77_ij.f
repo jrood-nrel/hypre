@@ -19,13 +19,13 @@
       include 'mpif.h'
 
       integer MAXZONS, MAXBLKS, MAXDIM, MAXLEVELS
-      integer HYPRE_PARCSR
+      integer NALU_HYPRE_PARCSR
 
       parameter (MAXZONS=4194304)
       parameter (MAXBLKS=32)
       parameter (MAXDIM=3)
       parameter (MAXLEVELS=25)
-      parameter (HYPRE_PARCSR=5555)
+      parameter (NALU_HYPRE_PARCSR=5555)
 
       integer             num_procs, myid
 
@@ -285,32 +285,32 @@
 ! Generate a Dirichlet Laplacian
       if (generate_matrix .eq. 0) then
 
-        call HYPRE_IJMatrixRead(matfile, MPI_COMM_WORLD,
-     &                          HYPRE_PARCSR, A, ierr)
+        call NALU_HYPRE_IJMatrixRead(matfile, MPI_COMM_WORLD,
+     &                          NALU_HYPRE_PARCSR, A, ierr)
 
-        call HYPRE_IJMatrixGetObject(A, A_storage, ierr)
+        call NALU_HYPRE_IJMatrixGetObject(A, A_storage, ierr)
 
-        call HYPRE_ParCSRMatrixGetLocalRange(A_storage,
+        call NALU_HYPRE_ParCSRMatrixGetLocalRange(A_storage,
      &            first_local_row, last_local_row,
      &            first_local_col, last_local_col, ierr)
 
       else
 
-        call HYPRE_GenerateLaplacian(MPI_COMM_WORLD, nx, ny, nz,
+        call NALU_HYPRE_GenerateLaplacian(MPI_COMM_WORLD, nx, ny, nz,
      &                               Px, Py, Pz, p, q, r, values,
      &                               A_storage, ierr)
 
-        call HYPRE_ParCSRMatrixGetLocalRange(A_storage,
+        call NALU_HYPRE_ParCSRMatrixGetLocalRange(A_storage,
      &            first_local_row, last_local_row,
      &            first_local_col, last_local_col, ierr)
 
-        call HYPRE_IJMatrixCreate(MPI_COMM_WORLD,
+        call NALU_HYPRE_IJMatrixCreate(MPI_COMM_WORLD,
      &            first_local_row, last_local_row,
      &            first_local_col, last_local_col, A, ierr)
 
-        call HYPRE_IJMatrixSetObject(A, A_storage, ierr)
+        call NALU_HYPRE_IJMatrixSetObject(A, A_storage, ierr)
 
-        call HYPRE_IJMatrixSetObjectType(A, HYPRE_PARCSR, ierr)
+        call NALU_HYPRE_IJMatrixSetObjectType(A, NALU_HYPRE_PARCSR, ierr)
 
       endif
 
@@ -328,9 +328,9 @@
       matfile(12) = 'A'
       matfile(13) = char(0)
    
-      call HYPRE_IJMatrixPrint(A, matfile, ierr)
+      call NALU_HYPRE_IJMatrixPrint(A, matfile, ierr)
 
-      call hypre_ParCSRMatrixRowStarts(A_storage, row_starts, ierr)
+      call nalu_hypre_ParCSRMatrixRowStarts(A_storage, row_starts, ierr)
 
 !-----------------------------------------------------------------------
 !     Set up the rhs and initial guess
@@ -338,17 +338,17 @@
 
       if (generate_rhs .eq. 0) then
 
-        call HYPRE_IJVectorRead(vecfile, MPI_COMM_WORLD,
-     &                          HYPRE_PARCSR, b, ierr)
+        call NALU_HYPRE_IJVectorRead(vecfile, MPI_COMM_WORLD,
+     &                          NALU_HYPRE_PARCSR, b, ierr)
 
-        call HYPRE_IJVectorGetObject(b, b_storage, ierr)
+        call NALU_HYPRE_IJVectorGetObject(b, b_storage, ierr)
 
       else
 
-        call HYPRE_IJVectorCreate(MPI_COMM_WORLD, first_local_col,
+        call NALU_HYPRE_IJVectorCreate(MPI_COMM_WORLD, first_local_col,
      &                            last_local_col, b, ierr)
-        call HYPRE_IJVectorSetObjectType(b, HYPRE_PARCSR, ierr)
-        call HYPRE_IJVectorInitialize(b, ierr)
+        call NALU_HYPRE_IJVectorSetObjectType(b, NALU_HYPRE_PARCSR, ierr)
+        call NALU_HYPRE_IJVectorInitialize(b, ierr)
 
 ! Set up a Dirichlet 0 problem
         do i = 1, last_local_col - first_local_col + 1
@@ -356,10 +356,10 @@
           vals(i) = 1.
         enddo
 
-        call HYPRE_IJVectorSetValues(b,
+        call NALU_HYPRE_IJVectorSetValues(b,
      &    last_local_col - first_local_col + 1, indices, vals, ierr)
 
-        call HYPRE_IJVectorGetObject(b, b_storage, ierr)
+        call NALU_HYPRE_IJVectorGetObject(b, b_storage, ierr)
 
         vecfile(1)  = 'd'
         vecfile(2)  = 'r'
@@ -375,23 +375,23 @@
         vecfile(12) = 'b'
         vecfile(13) = char(0)
    
-        call HYPRE_IJVectorPrint(b, vecfile, ierr)
+        call NALU_HYPRE_IJVectorPrint(b, vecfile, ierr)
 
       endif
 
-      call HYPRE_IJVectorCreate(MPI_COMM_WORLD, first_local_col,
+      call NALU_HYPRE_IJVectorCreate(MPI_COMM_WORLD, first_local_col,
      &                          last_local_col, x, ierr)
-      call HYPRE_IJVectorSetObjectType(x, HYPRE_PARCSR, ierr)
-      call HYPRE_IJVectorInitialize(x, ierr)
+      call NALU_HYPRE_IJVectorSetObjectType(x, NALU_HYPRE_PARCSR, ierr)
+      call NALU_HYPRE_IJVectorInitialize(x, ierr)
       do i = 1, last_local_col - first_local_col + 1
           indices(i) = first_local_col - 1 + i
           vals(i) = 0.
       enddo
-      call HYPRE_IJVectorSetValues(x,
+      call NALU_HYPRE_IJVectorSetValues(x,
      &  last_local_col - first_local_col + 1, indices, vals, ierr)
 
 ! Choose a nonzero initial guess
-      call HYPRE_IJVectorGetObject(x, x_storage, ierr)
+      call NALU_HYPRE_IJVectorGetObject(x, x_storage, ierr)
 
       vecfile(1)  = 'd'
       vecfile(2)  = 'r'
@@ -408,7 +408,7 @@
       vecfile(13) = '0'
       vecfile(14) = char(0)
    
-      call HYPRE_IJVectorPrint(x, vecfile, ierr)
+      call NALU_HYPRE_IJVectorPrint(x, vecfile, ierr)
 
 !-----------------------------------------------------------------------
 !     Solve the linear system
@@ -436,18 +436,18 @@
 
         print *, 'Solver: AMG'
 
-        call HYPRE_BoomerAMGCreate(solver, ierr)
-        call HYPRE_BoomerAMGSetCoarsenType(solver,
+        call NALU_HYPRE_BoomerAMGCreate(solver, ierr)
+        call NALU_HYPRE_BoomerAMGSetCoarsenType(solver,
      &                                  (hybrid*coarsen_type), ierr)
-        call HYPRE_BoomerAMGSetMeasureType(solver, measure_type, ierr)
-        call HYPRE_BoomerAMGSetTol(solver, tol, ierr)
-        call HYPRE_BoomerAMGSetStrongThrshld(solver,
+        call NALU_HYPRE_BoomerAMGSetMeasureType(solver, measure_type, ierr)
+        call NALU_HYPRE_BoomerAMGSetTol(solver, tol, ierr)
+        call NALU_HYPRE_BoomerAMGSetStrongThrshld(solver,
      &                                      strong_threshold, ierr)
-        call HYPRE_BoomerAMGSetTruncFactor(solver, trunc_factor, ierr)
-        call HYPRE_BoomerAMGSetPrintLevel(solver, ioutdat,ierr)
-        call HYPRE_BoomerAMGSetPrintFileName(solver,"test.out.log",ierr)
-        call HYPRE_BoomerAMGSetMaxIter(solver, maxiter, ierr)
-        call HYPRE_BoomerAMGSetCycleType(solver, cycle_type, ierr)
+        call NALU_HYPRE_BoomerAMGSetTruncFactor(solver, trunc_factor, ierr)
+        call NALU_HYPRE_BoomerAMGSetPrintLevel(solver, ioutdat,ierr)
+        call NALU_HYPRE_BoomerAMGSetPrintFileName(solver,"test.out.log",ierr)
+        call NALU_HYPRE_BoomerAMGSetMaxIter(solver, maxiter, ierr)
+        call NALU_HYPRE_BoomerAMGSetCycleType(solver, cycle_type, ierr)
 
 ! RDF: Used this to test the fortran interface for SetDofFunc
 !        do i = 1, 1000/2
@@ -456,10 +456,10 @@
 !           j = j + 1
 !           dof_func(j) = 1
 !        enddo
-!        call HYPRE_BoomerAMGSetNumFunctions(solver, 2, ierr)
-!        call HYPRE_BoomerAMGSetDofFunc(solver, dof_func, ierr)
+!        call NALU_HYPRE_BoomerAMGSetNumFunctions(solver, 2, ierr)
+!        call NALU_HYPRE_BoomerAMGSetDofFunc(solver, dof_func, ierr)
 
-!        call HYPRE_BoomerAMGInitGridRelaxatn(num_grid_sweeps,
+!        call NALU_HYPRE_BoomerAMGInitGridRelaxatn(num_grid_sweeps,
 !     &                                      grid_relax_type,
 !     &                                      grid_relax_points,
 !     &                                      coarsen_type,
@@ -469,32 +469,32 @@
 !        num_grid_sweeps2(2) = 1
 !        num_grid_sweeps2(3) = 1
 !        num_grid_sweeps2(4) = 1
-!        call HYPRE_BoomerAMGSetNumGridSweeps(solver,
+!        call NALU_HYPRE_BoomerAMGSetNumGridSweeps(solver,
 !     &                                       num_grid_sweeps2, ierr)
-!        call HYPRE_BoomerAMGSetGridRelaxType(solver,
+!        call NALU_HYPRE_BoomerAMGSetGridRelaxType(solver,
 !     &                                       grid_relax_type, ierr)
-!        call HYPRE_BoomerAMGSetRelaxWeight(solver,
+!        call NALU_HYPRE_BoomerAMGSetRelaxWeight(solver,
 !     &                                     relax_weights, ierr)
-!       call HYPRE_BoomerAMGSetSmoothOption(solver, smooth_option,
+!       call NALU_HYPRE_BoomerAMGSetSmoothOption(solver, smooth_option,
 !    &                                      ierr)
-!       call HYPRE_BoomerAMGSetSmoothNumSwp(solver, smooth_num_sweep,
+!       call NALU_HYPRE_BoomerAMGSetSmoothNumSwp(solver, smooth_num_sweep,
 !    &                                      ierr)
-!        call HYPRE_BoomerAMGSetGridRelaxPnts(solver,
+!        call NALU_HYPRE_BoomerAMGSetGridRelaxPnts(solver,
 !     &                                       grid_relax_points,
 !     &                                       ierr)
-        call HYPRE_BoomerAMGSetMaxLevels(solver, MAXLEVELS, ierr)
-        call HYPRE_BoomerAMGSetMaxRowSum(solver, max_row_sum,
+        call NALU_HYPRE_BoomerAMGSetMaxLevels(solver, MAXLEVELS, ierr)
+        call NALU_HYPRE_BoomerAMGSetMaxRowSum(solver, max_row_sum,
      &                                   ierr)
-        call HYPRE_BoomerAMGSetDebugFlag(solver, debug_flag, ierr)
-        call HYPRE_BoomerAMGSetup(solver, A_storage, b_storage,
+        call NALU_HYPRE_BoomerAMGSetDebugFlag(solver, debug_flag, ierr)
+        call NALU_HYPRE_BoomerAMGSetup(solver, A_storage, b_storage,
      &                         x_storage, ierr)
-        call HYPRE_BoomerAMGSolve(solver, A_storage, b_storage,
+        call NALU_HYPRE_BoomerAMGSolve(solver, A_storage, b_storage,
      &                         x_storage, ierr)
-        call HYPRE_BoomerAMGGetNumIterations(solver, num_iterations, 
+        call NALU_HYPRE_BoomerAMGGetNumIterations(solver, num_iterations, 
      &						ierr)
-        call HYPRE_BoomerAMGGetFinalReltvRes(solver, final_res_norm,
+        call NALU_HYPRE_BoomerAMGGetFinalReltvRes(solver, final_res_norm,
      &                                       ierr)
-        call HYPRE_BoomerAMGDestroy(solver, ierr)
+        call NALU_HYPRE_BoomerAMGDestroy(solver, ierr)
 
       endif
 
@@ -506,11 +506,11 @@
 
 !       Solve the system using preconditioned GMRES
 
-        call HYPRE_ParCSRGMRESCreate(MPI_COMM_WORLD, solver, ierr)
-        call HYPRE_ParCSRGMRESSetKDim(solver, k_dim, ierr)
-        call HYPRE_ParCSRGMRESSetMaxIter(solver, maxiter, ierr)
-        call HYPRE_ParCSRGMRESSetTol(solver, tol, ierr)
-        call HYPRE_ParCSRGMRESSetLogging(solver, one, ierr)
+        call NALU_HYPRE_ParCSRGMRESCreate(MPI_COMM_WORLD, solver, ierr)
+        call NALU_HYPRE_ParCSRGMRESSetKDim(solver, k_dim, ierr)
+        call NALU_HYPRE_ParCSRGMRESSetMaxIter(solver, maxiter, ierr)
+        call NALU_HYPRE_ParCSRGMRESSetTol(solver, tol, ierr)
+        call NALU_HYPRE_ParCSRGMRESSetLogging(solver, one, ierr)
 
         if (solver_id .eq. 4) then
 
@@ -519,7 +519,7 @@
           precond_id = 1
           precond = 0
 
-          call HYPRE_ParCSRGMRESSetPrecond(solver, precond_id,
+          call NALU_HYPRE_ParCSRGMRESSetPrecond(solver, precond_id,
      &                                     precond, ierr)
 
         else if (solver_id .eq. 3) then
@@ -539,47 +539,47 @@
           cycle_type = 1
           smooth_num_sweep = 1
 
-          call HYPRE_BoomerAMGCreate(precond, ierr)
-          call HYPRE_BoomerAMGSetTol(precond, pc_tol, ierr)
-          call HYPRE_BoomerAMGSetCoarsenType(precond,
+          call NALU_HYPRE_BoomerAMGCreate(precond, ierr)
+          call NALU_HYPRE_BoomerAMGSetTol(precond, pc_tol, ierr)
+          call NALU_HYPRE_BoomerAMGSetCoarsenType(precond,
      &                                    (hybrid*coarsen_type), ierr)
-          call HYPRE_BoomerAMGSetMeasureType(precond, measure_type, 
+          call NALU_HYPRE_BoomerAMGSetMeasureType(precond, measure_type, 
      &						ierr)
-          call HYPRE_BoomerAMGSetStrongThrshld(precond,
+          call NALU_HYPRE_BoomerAMGSetStrongThrshld(precond,
      &                                        strong_threshold, ierr)
-          call HYPRE_BoomerAMGSetTruncFactor(precond, trunc_factor,
+          call NALU_HYPRE_BoomerAMGSetTruncFactor(precond, trunc_factor,
      &                                       ierr)
-          call HYPRE_BoomerAMGSetPrintLevel(precond, ioutdat, ierr)
-          call HYPRE_BoomerAMGSetPrintFileName(precond, "test.out.log",
+          call NALU_HYPRE_BoomerAMGSetPrintLevel(precond, ioutdat, ierr)
+          call NALU_HYPRE_BoomerAMGSetPrintFileName(precond, "test.out.log",
      &                                         ierr)
-          call HYPRE_BoomerAMGSetMaxIter(precond, maxiter, ierr)
-          call HYPRE_BoomerAMGSetCycleType(precond, cycle_type, ierr)
-          call HYPRE_BoomerAMGInitGridRelaxatn(num_grid_sweeps,
+          call NALU_HYPRE_BoomerAMGSetMaxIter(precond, maxiter, ierr)
+          call NALU_HYPRE_BoomerAMGSetCycleType(precond, cycle_type, ierr)
+          call NALU_HYPRE_BoomerAMGInitGridRelaxatn(num_grid_sweeps,
      &                                        grid_relax_type,
      &                                        grid_relax_points,
      &                                        coarsen_type,
      &                                        relax_weights,
      &                                        MAXLEVELS,ierr)
-          call HYPRE_BoomerAMGSetNumGridSweeps(precond,
+          call NALU_HYPRE_BoomerAMGSetNumGridSweeps(precond,
      &                                         num_grid_sweeps, ierr)
-          call HYPRE_BoomerAMGSetGridRelaxType(precond,
+          call NALU_HYPRE_BoomerAMGSetGridRelaxType(precond,
      &                                         grid_relax_type, ierr)
-          call HYPRE_BoomerAMGSetRelaxWeight(precond,
+          call NALU_HYPRE_BoomerAMGSetRelaxWeight(precond,
      &                                       relax_weights, ierr)
-!         call HYPRE_BoomerAMGSetSmoothOption(precond, smooth_option,
+!         call NALU_HYPRE_BoomerAMGSetSmoothOption(precond, smooth_option,
 !    &                                        ierr)
-!         call HYPRE_BoomerAMGSetSmoothNumSwp(precond, smooth_num_sweep,
+!         call NALU_HYPRE_BoomerAMGSetSmoothNumSwp(precond, smooth_num_sweep,
 !    &                                        ierr)
-          call HYPRE_BoomerAMGSetGridRelaxPnts(precond,
+          call NALU_HYPRE_BoomerAMGSetGridRelaxPnts(precond,
      &                                        grid_relax_points, ierr)
-          call HYPRE_BoomerAMGSetMaxLevels(precond,
+          call NALU_HYPRE_BoomerAMGSetMaxLevels(precond,
      &                                  MAXLEVELS, ierr)
-          call HYPRE_BoomerAMGSetMaxRowSum(precond, max_row_sum,
+          call NALU_HYPRE_BoomerAMGSetMaxRowSum(precond, max_row_sum,
      &                                     ierr)
-          call HYPRE_ParCSRGMRESSetPrecond(solver, precond_id,
+          call NALU_HYPRE_ParCSRGMRESSetPrecond(solver, precond_id,
      &                                     precond, ierr)
 
-          call HYPRE_BoomerAMGSetSetupType(precond,setup_type,ierr)
+          call NALU_HYPRE_BoomerAMGSetSetupType(precond,setup_type,ierr)
           
         else if (solver_id .eq. 7) then
 
@@ -587,16 +587,16 @@
 
           precond_id = 3
 
-          call HYPRE_ParCSRPilutCreate(MPI_COMM_WORLD,
+          call NALU_HYPRE_ParCSRPilutCreate(MPI_COMM_WORLD,
      &                                 precond, ierr) 
 
           if (ierr .ne. 0) write(6,*) 'ParCSRPilutCreate error'
 
-          call HYPRE_ParCSRGMRESSetPrecond(solver, precond_id,
+          call NALU_HYPRE_ParCSRGMRESSetPrecond(solver, precond_id,
      &                                     precond, ierr)
 
           if (drop_tol .ge. 0.)
-     &        call HYPRE_ParCSRPilutSetDropToleran(precond,
+     &        call NALU_HYPRE_ParCSRPilutSetDropToleran(precond,
      &                                              drop_tol, ierr)
 
         else if (solver_id .eq. 8) then
@@ -605,50 +605,50 @@
 
           precond_id = 4
 
-          call HYPRE_ParaSailsCreate(MPI_COMM_WORLD, precond,
+          call NALU_HYPRE_ParaSailsCreate(MPI_COMM_WORLD, precond,
      &                               ierr)
-          call HYPRE_ParCSRGMRESSetPrecond(solver, precond_id,
+          call NALU_HYPRE_ParCSRGMRESSetPrecond(solver, precond_id,
      &                                     precond, ierr)
 
           sai_threshold = 0.1
           nlevels       = 1
           sai_filter    = 0.1
 
-          call HYPRE_ParaSailsSetParams(precond, sai_threshold,
+          call NALU_HYPRE_ParaSailsSetParams(precond, sai_threshold,
      &                                  nlevels, ierr)
-          call HYPRE_ParaSailsSetFilter(precond, sai_filter, ierr)
-          call HYPRE_ParaSailsSetLogging(precond, ioutdat, ierr)
+          call NALU_HYPRE_ParaSailsSetFilter(precond, sai_filter, ierr)
+          call NALU_HYPRE_ParaSailsSetLogging(precond, ioutdat, ierr)
 
         endif
 
-        call HYPRE_ParCSRGMRESGetPrecond(solver, precond_gotten,
+        call NALU_HYPRE_ParCSRGMRESGetPrecond(solver, precond_gotten,
      &                                   ierr)
 
         if (precond_gotten .ne. precond) then
-          print *, 'HYPRE_ParCSRGMRESGetPrecond got bad precond'
+          print *, 'NALU_HYPRE_ParCSRGMRESGetPrecond got bad precond'
           stop
         else
-          print *, 'HYPRE_ParCSRGMRESGetPrecond got good precond'
+          print *, 'NALU_HYPRE_ParCSRGMRESGetPrecond got good precond'
         endif
 
-        call HYPRE_ParCSRGMRESSetup(solver, A_storage, b_storage,
+        call NALU_HYPRE_ParCSRGMRESSetup(solver, A_storage, b_storage,
      &                              x_storage, ierr)
-        call HYPRE_ParCSRGMRESSolve(solver, A_storage, b_storage,
+        call NALU_HYPRE_ParCSRGMRESSolve(solver, A_storage, b_storage,
      &                              x_storage, ierr)
-        call HYPRE_ParCSRGMRESGetNumIteratio(solver,
+        call NALU_HYPRE_ParCSRGMRESGetNumIteratio(solver,
      &                                       num_iterations, ierr)
-        call HYPRE_ParCSRGMRESGetFinalRelati(solver,
+        call NALU_HYPRE_ParCSRGMRESGetFinalRelati(solver,
      &                                       final_res_norm, ierr)
 
         if (solver_id .eq. 3) then
-           call HYPRE_BoomerAMGDestroy(precond, ierr)
+           call NALU_HYPRE_BoomerAMGDestroy(precond, ierr)
         else if (solver_id .eq. 7) then
-           call HYPRE_ParCSRPilutDestroy(precond, ierr)
+           call NALU_HYPRE_ParCSRPilutDestroy(precond, ierr)
         else if (solver_id .eq. 8) then
-           call HYPRE_ParaSailsDestroy(precond, ierr)
+           call NALU_HYPRE_ParaSailsDestroy(precond, ierr)
         endif
 
-        call HYPRE_ParCSRGMRESDestroy(solver, ierr)
+        call NALU_HYPRE_ParCSRGMRESDestroy(solver, ierr)
 
       endif
 
@@ -656,12 +656,12 @@
 
         maxiter = 500
 
-        call HYPRE_ParCSRPCGCreate(MPI_COMM_WORLD, solver, ierr)
-        call HYPRE_ParCSRPCGSetMaxIter(solver, maxiter, ierr)
-        call HYPRE_ParCSRPCGSetTol(solver, tol, ierr)
-        call HYPRE_ParCSRPCGSetTwoNorm(solver, one, ierr)
-        call HYPRE_ParCSRPCGSetRelChange(solver, zero, ierr)
-        call HYPRE_ParCSRPCGSetPrintLevel(solver, one, ierr)
+        call NALU_HYPRE_ParCSRPCGCreate(MPI_COMM_WORLD, solver, ierr)
+        call NALU_HYPRE_ParCSRPCGSetMaxIter(solver, maxiter, ierr)
+        call NALU_HYPRE_ParCSRPCGSetTol(solver, tol, ierr)
+        call NALU_HYPRE_ParCSRPCGSetTwoNorm(solver, one, ierr)
+        call NALU_HYPRE_ParCSRPCGSetRelChange(solver, zero, ierr)
+        call NALU_HYPRE_ParCSRPCGSetPrintLevel(solver, one, ierr)
   
         if (solver_id .eq. 2) then
 
@@ -670,7 +670,7 @@
           precond_id = 1
           precond = 0
 
-          call HYPRE_ParCSRPCGSetPrecond(solver, precond_id,
+          call NALU_HYPRE_ParCSRPCGSetPrecond(solver, precond_id,
      &                                   precond, ierr)
 
         else if (solver_id .eq. 1) then
@@ -690,74 +690,74 @@
           cycle_type = 1
           smooth_num_sweep = 1
 
-          call HYPRE_BoomerAMGCreate(precond, ierr)
-          call HYPRE_BoomerAMGSetTol(precond, pc_tol, ierr)
-          call HYPRE_BoomerAMGSetCoarsenType(precond,
+          call NALU_HYPRE_BoomerAMGCreate(precond, ierr)
+          call NALU_HYPRE_BoomerAMGSetTol(precond, pc_tol, ierr)
+          call NALU_HYPRE_BoomerAMGSetCoarsenType(precond,
      &                                       (hybrid*coarsen_type),
      &                                       ierr)
-          call HYPRE_BoomerAMGSetMeasureType(precond, measure_type, 
+          call NALU_HYPRE_BoomerAMGSetMeasureType(precond, measure_type, 
      &                                       ierr)
-          call HYPRE_BoomerAMGSetStrongThrshld(precond,
+          call NALU_HYPRE_BoomerAMGSetStrongThrshld(precond,
      &                                         strong_threshold,
      &                                         ierr)
-          call HYPRE_BoomerAMGSetTruncFactor(precond, trunc_factor,
+          call NALU_HYPRE_BoomerAMGSetTruncFactor(precond, trunc_factor,
      &                                       ierr)
-          call HYPRE_BoomerAMGSetPrintLevel(precond, ioutdat,ierr)
-          call HYPRE_BoomerAMGSetPrintFileName(precond, "test.out.log",
+          call NALU_HYPRE_BoomerAMGSetPrintLevel(precond, ioutdat,ierr)
+          call NALU_HYPRE_BoomerAMGSetPrintFileName(precond, "test.out.log",
      &                                         ierr)
-          call HYPRE_BoomerAMGSetMaxIter(precond, maxiter, ierr)
-          call HYPRE_BoomerAMGSetCycleType(precond, cycle_type, ierr)
-          call HYPRE_BoomerAMGInitGridRelaxatn(num_grid_sweeps,
+          call NALU_HYPRE_BoomerAMGSetMaxIter(precond, maxiter, ierr)
+          call NALU_HYPRE_BoomerAMGSetCycleType(precond, cycle_type, ierr)
+          call NALU_HYPRE_BoomerAMGInitGridRelaxatn(num_grid_sweeps,
      &                                         grid_relax_type,
      &                                         grid_relax_points,
      &                                         coarsen_type,
      &                                         relax_weights,
      &                                         MAXLEVELS, ierr)
-          call HYPRE_BoomerAMGSetNumGridSweeps(precond,
+          call NALU_HYPRE_BoomerAMGSetNumGridSweeps(precond,
      &                                         num_grid_sweeps, ierr)
-          call HYPRE_BoomerAMGSetGridRelaxType(precond,
+          call NALU_HYPRE_BoomerAMGSetGridRelaxType(precond,
      &                                         grid_relax_type, ierr)
-          call HYPRE_BoomerAMGSetRelaxWeight(precond,
+          call NALU_HYPRE_BoomerAMGSetRelaxWeight(precond,
      &                                       relax_weights, ierr)
-!         call HYPRE_BoomerAMGSetSmoothOption(precond, smooth_option,
+!         call NALU_HYPRE_BoomerAMGSetSmoothOption(precond, smooth_option,
 !    &                                        ierr)
-!         call HYPRE_BoomerAMGSetSmoothNumSwp(precond,
+!         call NALU_HYPRE_BoomerAMGSetSmoothNumSwp(precond,
 !    &                                        smooth_num_sweep,
 !    &                                        ierr)
-          call HYPRE_BoomerAMGSetGridRelaxPnts(precond,
+          call NALU_HYPRE_BoomerAMGSetGridRelaxPnts(precond,
      &                                         grid_relax_points, ierr)
-          call HYPRE_BoomerAMGSetMaxLevels(precond, MAXLEVELS, ierr)
-          call HYPRE_BoomerAMGSetMaxRowSum(precond, max_row_sum,
+          call NALU_HYPRE_BoomerAMGSetMaxLevels(precond, MAXLEVELS, ierr)
+          call NALU_HYPRE_BoomerAMGSetMaxRowSum(precond, max_row_sum,
      &                                     ierr)
 
-          call HYPRE_ParCSRPCGSetPrecond(solver, precond_id,
+          call NALU_HYPRE_ParCSRPCGSetPrecond(solver, precond_id,
      &                                   precond, ierr)
 
         endif
 
-        call HYPRE_ParCSRPCGGetPrecond(solver,precond_gotten,ierr)
+        call NALU_HYPRE_ParCSRPCGGetPrecond(solver,precond_gotten,ierr)
 
         if (precond_gotten .ne. precond) then
-          print *, 'HYPRE_ParCSRPCGGetPrecond got bad precond'
+          print *, 'NALU_HYPRE_ParCSRPCGGetPrecond got bad precond'
           stop
         else
-          print *, 'HYPRE_ParCSRPCGGetPrecond got good precond'
+          print *, 'NALU_HYPRE_ParCSRPCGGetPrecond got good precond'
         endif
 
-        call HYPRE_ParCSRPCGSetup(solver, A_storage, b_storage,
+        call NALU_HYPRE_ParCSRPCGSetup(solver, A_storage, b_storage,
      &                            x_storage, ierr)
-        call HYPRE_ParCSRPCGSolve(solver, A_storage, b_storage,
+        call NALU_HYPRE_ParCSRPCGSolve(solver, A_storage, b_storage,
      &                            x_storage, ierr)
-        call HYPRE_ParCSRPCGGetNumIterations(solver, num_iterations,
+        call NALU_HYPRE_ParCSRPCGGetNumIterations(solver, num_iterations,
      &                                       ierr)
-        call HYPRE_ParCSRPCGGetFinalRelative(solver, final_res_norm,
+        call NALU_HYPRE_ParCSRPCGGetFinalRelative(solver, final_res_norm,
      &                                       ierr)
 
         if (solver_id .eq. 1) then
-          call HYPRE_BoomerAMGDestroy(precond, ierr)
+          call NALU_HYPRE_BoomerAMGDestroy(precond, ierr)
         endif
 
-        call HYPRE_ParCSRPCGDestroy(solver, ierr)
+        call NALU_HYPRE_ParCSRPCGDestroy(solver, ierr)
 
       endif
 
@@ -765,10 +765,10 @@
 
         maxiter = 1000
 
-        call HYPRE_ParCSRCGNRCreate(MPI_COMM_WORLD, solver, ierr)
-        call HYPRE_ParCSRCGNRSetMaxIter(solver, maxiter, ierr)
-        call HYPRE_ParCSRCGNRSetTol(solver, tol, ierr)
-        call HYPRE_ParCSRCGNRSetLogging(solver, one, ierr)
+        call NALU_HYPRE_ParCSRCGNRCreate(MPI_COMM_WORLD, solver, ierr)
+        call NALU_HYPRE_ParCSRCGNRSetMaxIter(solver, maxiter, ierr)
+        call NALU_HYPRE_ParCSRCGNRSetTol(solver, tol, ierr)
+        call NALU_HYPRE_ParCSRCGNRSetLogging(solver, one, ierr)
 
         if (solver_id .eq. 6) then
 
@@ -777,7 +777,7 @@
           precond_id = 1
           precond = 0
 
-          call HYPRE_ParCSRCGNRSetPrecond(solver, precond_id,
+          call NALU_HYPRE_ParCSRCGNRSetPrecond(solver, precond_id,
      &                                    precond, ierr)
 
         else if (solver_id .eq. 5) then 
@@ -797,72 +797,72 @@
           cycle_type = 1
           smooth_num_sweep = 1
 
-          call HYPRE_BoomerAMGCreate(precond, ierr)
-          call HYPRE_BoomerAMGSetTol(precond, pc_tol, ierr)
-          call HYPRE_BoomerAMGSetCoarsenType(precond,
+          call NALU_HYPRE_BoomerAMGCreate(precond, ierr)
+          call NALU_HYPRE_BoomerAMGSetTol(precond, pc_tol, ierr)
+          call NALU_HYPRE_BoomerAMGSetCoarsenType(precond,
      &                                       (hybrid*coarsen_type),
      &                                       ierr)
-          call HYPRE_BoomerAMGSetMeasureType(precond, measure_type, 
+          call NALU_HYPRE_BoomerAMGSetMeasureType(precond, measure_type, 
      &                                       ierr)
-          call HYPRE_BoomerAMGSetStrongThrshld(precond,
+          call NALU_HYPRE_BoomerAMGSetStrongThrshld(precond,
      &                                         strong_threshold, ierr)
-          call HYPRE_BoomerAMGSetTruncFactor(precond, trunc_factor,
+          call NALU_HYPRE_BoomerAMGSetTruncFactor(precond, trunc_factor,
      &                                       ierr)
-          call HYPRE_BoomerAMGSetPrintLevel(precond, ioutdat,ierr)
-          call HYPRE_BoomerAMGSetPrintFileName(precond, "test.out.log",
+          call NALU_HYPRE_BoomerAMGSetPrintLevel(precond, ioutdat,ierr)
+          call NALU_HYPRE_BoomerAMGSetPrintFileName(precond, "test.out.log",
      &                                         ierr)
-          call HYPRE_BoomerAMGSetMaxIter(precond, maxiter, ierr)
-          call HYPRE_BoomerAMGSetCycleType(precond, cycle_type, ierr)
-          call HYPRE_BoomerAMGInitGridRelaxatn(num_grid_sweeps,
+          call NALU_HYPRE_BoomerAMGSetMaxIter(precond, maxiter, ierr)
+          call NALU_HYPRE_BoomerAMGSetCycleType(precond, cycle_type, ierr)
+          call NALU_HYPRE_BoomerAMGInitGridRelaxatn(num_grid_sweeps,
      &                                         grid_relax_type,
      &                                         grid_relax_points,
      &                                         coarsen_type,
      &                                         relax_weights,
      &                                         MAXLEVELS,ierr)
-          call HYPRE_BoomerAMGSetNumGridSweeps(precond,
+          call NALU_HYPRE_BoomerAMGSetNumGridSweeps(precond,
      &                                         num_grid_sweeps, ierr)
-          call HYPRE_BoomerAMGSetGridRelaxType(precond,
+          call NALU_HYPRE_BoomerAMGSetGridRelaxType(precond,
      &                                         grid_relax_type, ierr)
-          call HYPRE_BoomerAMGSetRelaxWeight(precond,
+          call NALU_HYPRE_BoomerAMGSetRelaxWeight(precond,
      &                                       relax_weights, ierr)
-!         call HYPRE_BoomerAMGSetSmoothOption(precond, smooth_option,
+!         call NALU_HYPRE_BoomerAMGSetSmoothOption(precond, smooth_option,
 !    &                                        ierr)
-!         call HYPRE_BoomerAMGSetSmoothNumSwp(precond, smooth_num_sweep,
+!         call NALU_HYPRE_BoomerAMGSetSmoothNumSwp(precond, smooth_num_sweep,
 !    &                                        ierr)
-          call HYPRE_BoomerAMGSetGridRelaxPnts(precond,
+          call NALU_HYPRE_BoomerAMGSetGridRelaxPnts(precond,
      &                                         grid_relax_points,
      &                                         ierr)
-          call HYPRE_BoomerAMGSetMaxLevels(precond, MAXLEVELS, ierr)
-          call HYPRE_BoomerAMGSetMaxRowSum(precond, max_row_sum,
+          call NALU_HYPRE_BoomerAMGSetMaxLevels(precond, MAXLEVELS, ierr)
+          call NALU_HYPRE_BoomerAMGSetMaxRowSum(precond, max_row_sum,
      &                                     ierr)
 
-          call HYPRE_ParCSRCGNRSetPrecond(solver, precond_id, precond,
+          call NALU_HYPRE_ParCSRCGNRSetPrecond(solver, precond_id, precond,
      &                                    ierr)
         endif
 
-        call HYPRE_ParCSRCGNRGetPrecond(solver,precond_gotten,ierr)
+        call NALU_HYPRE_ParCSRCGNRGetPrecond(solver,precond_gotten,ierr)
 
         if (precond_gotten .ne. precond) then
-          print *, 'HYPRE_ParCSRCGNRGetPrecond got bad precond'
+          print *, 'NALU_HYPRE_ParCSRCGNRGetPrecond got bad precond'
           stop
         else
-          print *, 'HYPRE_ParCSRCGNRGetPrecond got good precond'
+          print *, 'NALU_HYPRE_ParCSRCGNRGetPrecond got good precond'
         endif
 
-        call HYPRE_ParCSRCGNRSetup(solver, A_storage, b_storage,
+        call NALU_HYPRE_ParCSRCGNRSetup(solver, A_storage, b_storage,
      &                             x_storage, ierr)
-        call HYPRE_ParCSRCGNRSolve(solver, A_storage, b_storage,
+        call NALU_HYPRE_ParCSRCGNRSolve(solver, A_storage, b_storage,
      &                             x_storage, ierr)
-        call HYPRE_ParCSRCGNRGetNumIteration(solver, num_iterations,
+        call NALU_HYPRE_ParCSRCGNRGetNumIteration(solver, num_iterations,
      &                                      ierr)
-        call HYPRE_ParCSRCGNRGetFinalRelativ(solver, final_res_norm,
+        call NALU_HYPRE_ParCSRCGNRGetFinalRelativ(solver, final_res_norm,
      &                                       ierr)
 
         if (solver_id .eq. 5) then
-          call HYPRE_BoomerAMGDestroy(precond, ierr)
+          call NALU_HYPRE_BoomerAMGDestroy(precond, ierr)
         endif 
 
-        call HYPRE_ParCSRCGNRDestroy(solver, ierr)
+        call NALU_HYPRE_ParCSRCGNRDestroy(solver, ierr)
 
       endif
 
@@ -870,10 +870,10 @@
 
         maxiter = 1000
 
-        call HYPRE_ParCSRBiCGSTABCreate(MPI_COMM_WORLD, solver, ierr)
-        call HYPRE_ParCSRBiCGSTABSetMaxIter(solver, maxiter, ierr)
-        call HYPRE_ParCSRBiCGSTABSetTol(solver, tol, ierr)
-        call HYPRE_ParCSRBiCGSTABSetLogging(solver, one, ierr)
+        call NALU_HYPRE_ParCSRBiCGSTABCreate(MPI_COMM_WORLD, solver, ierr)
+        call NALU_HYPRE_ParCSRBiCGSTABSetMaxIter(solver, maxiter, ierr)
+        call NALU_HYPRE_ParCSRBiCGSTABSetTol(solver, tol, ierr)
+        call NALU_HYPRE_ParCSRBiCGSTABSetLogging(solver, one, ierr)
 
         if (solver_id .eq. 10) then
 
@@ -882,7 +882,7 @@
           precond_id = 1
           precond = 0
 
-          call HYPRE_ParCSRBiCGSTABSetPrecond(solver, precond_id,
+          call NALU_HYPRE_ParCSRBiCGSTABSetPrecond(solver, precond_id,
      &                                        precond, ierr)
 
         else if (solver_id .eq. 9) then
@@ -902,76 +902,76 @@
           cycle_type = 1
           smooth_num_sweep = 1
 
-          call HYPRE_BoomerAMGCreate(precond, ierr)
-          call HYPRE_BoomerAMGSetTol(precond, pc_tol, ierr)
-          call HYPRE_BoomerAMGSetCoarsenType(precond,
+          call NALU_HYPRE_BoomerAMGCreate(precond, ierr)
+          call NALU_HYPRE_BoomerAMGSetTol(precond, pc_tol, ierr)
+          call NALU_HYPRE_BoomerAMGSetCoarsenType(precond,
      &                                       (hybrid*coarsen_type),
      &                                       ierr)
-          call HYPRE_BoomerAMGSetMeasureType(precond, measure_type, 
+          call NALU_HYPRE_BoomerAMGSetMeasureType(precond, measure_type, 
      &                                       ierr)
-          call HYPRE_BoomerAMGSetStrongThrshld(precond,
+          call NALU_HYPRE_BoomerAMGSetStrongThrshld(precond,
      &                                         strong_threshold,
      &                                         ierr)
-          call HYPRE_BoomerAMGSetTruncFactor(precond, trunc_factor,
+          call NALU_HYPRE_BoomerAMGSetTruncFactor(precond, trunc_factor,
      &                                       ierr)
-          call HYPRE_BoomerAMGSetPrintLevel(precond, ioutdat,ierr)
-          call HYPRE_BoomerAMGSetPrintFileName(precond, "test.out.log",
+          call NALU_HYPRE_BoomerAMGSetPrintLevel(precond, ioutdat,ierr)
+          call NALU_HYPRE_BoomerAMGSetPrintFileName(precond, "test.out.log",
      &                                         ierr)
-          call HYPRE_BoomerAMGSetMaxIter(precond, maxiter, ierr)
-          call HYPRE_BoomerAMGSetCycleType(precond, cycle_type, ierr)
-          call HYPRE_BoomerAMGInitGridRelaxatn(num_grid_sweeps,
+          call NALU_HYPRE_BoomerAMGSetMaxIter(precond, maxiter, ierr)
+          call NALU_HYPRE_BoomerAMGSetCycleType(precond, cycle_type, ierr)
+          call NALU_HYPRE_BoomerAMGInitGridRelaxatn(num_grid_sweeps,
      &                                         grid_relax_type,
      &                                         grid_relax_points,
      &                                         coarsen_type,
      &                                         relax_weights,
      &                                         MAXLEVELS, ierr)
-          call HYPRE_BoomerAMGSetNumGridSweeps(precond,
+          call NALU_HYPRE_BoomerAMGSetNumGridSweeps(precond,
      &                                         num_grid_sweeps, ierr)
-          call HYPRE_BoomerAMGSetGridRelaxType(precond,
+          call NALU_HYPRE_BoomerAMGSetGridRelaxType(precond,
      &                                         grid_relax_type, ierr)
-          call HYPRE_BoomerAMGSetRelaxWeight(precond,
+          call NALU_HYPRE_BoomerAMGSetRelaxWeight(precond,
      &                                       relax_weights, ierr)
-!         call HYPRE_BoomerAMGSetSmoothOption(precond, smooth_option,
+!         call NALU_HYPRE_BoomerAMGSetSmoothOption(precond, smooth_option,
 !    &                                        ierr)
-!         call HYPRE_BoomerAMGSetSmoothNumSwp(precond, smooth_num_sweep,
+!         call NALU_HYPRE_BoomerAMGSetSmoothNumSwp(precond, smooth_num_sweep,
 !    &                                        ierr)
-          call HYPRE_BoomerAMGSetGridRelaxPnts(precond,
+          call NALU_HYPRE_BoomerAMGSetGridRelaxPnts(precond,
      &                                         grid_relax_points, ierr)
-          call HYPRE_BoomerAMGSetMaxLevels(precond, MAXLEVELS, ierr)
-          call HYPRE_BoomerAMGSetMaxRowSum(precond, max_row_sum,
+          call NALU_HYPRE_BoomerAMGSetMaxLevels(precond, MAXLEVELS, ierr)
+          call NALU_HYPRE_BoomerAMGSetMaxRowSum(precond, max_row_sum,
      &                                     ierr)
 
-          call HYPRE_ParCSRBiCGSTABSetPrecond(solver, precond_id,
+          call NALU_HYPRE_ParCSRBiCGSTABSetPrecond(solver, precond_id,
      &                                        precond,
      &                                        ierr)
 
         endif
 
-        call HYPRE_ParCSRBiCGSTABGetPrecond(solver,precond_gotten,ierr)
+        call NALU_HYPRE_ParCSRBiCGSTABGetPrecond(solver,precond_gotten,ierr)
 
         if (precond_gotten .ne. precond) then
-          print *, 'HYPRE_ParCSRBiCGSTABGetPrecond got bad precond'
+          print *, 'NALU_HYPRE_ParCSRBiCGSTABGetPrecond got bad precond'
           stop
         else
-          print *, 'HYPRE_ParCSRBiCGSTABGetPrecond got good precond'
+          print *, 'NALU_HYPRE_ParCSRBiCGSTABGetPrecond got good precond'
         endif
 
-        call HYPRE_ParCSRBiCGSTABSetup(solver, A_storage, b_storage,
+        call NALU_HYPRE_ParCSRBiCGSTABSetup(solver, A_storage, b_storage,
      &                                 x_storage, ierr)
-        call HYPRE_ParCSRBiCGSTABSolve(solver, A_storage, b_storage,
+        call NALU_HYPRE_ParCSRBiCGSTABSolve(solver, A_storage, b_storage,
      &                                 x_storage, ierr)
-        call HYPRE_ParCSRBiCGSTABGetNumIter(solver,
+        call NALU_HYPRE_ParCSRBiCGSTABGetNumIter(solver,
      &                                      num_iterations,
      &                                      ierr)
-        call HYPRE_ParCSRBiCGSTABGetFinalRel(solver,
+        call NALU_HYPRE_ParCSRBiCGSTABGetFinalRel(solver,
      &                                       final_res_norm,
      &                                       ierr)
 
         if (solver_id .eq. 9) then
-          call HYPRE_BoomerAMGDestroy(precond, ierr)
+          call NALU_HYPRE_BoomerAMGDestroy(precond, ierr)
         endif
 
-        call HYPRE_ParCSRBiCGSTABDestroy(solver, ierr)
+        call NALU_HYPRE_ParCSRBiCGSTABDestroy(solver, ierr)
 
       endif
 
@@ -993,7 +993,7 @@
       vecfile(12) = 'x'
       vecfile(13) = char(0)
    
-      call HYPRE_IJVectorPrint(x, vecfile, ierr)
+      call NALU_HYPRE_IJVectorPrint(x, vecfile, ierr)
 
       if (myid .eq. 0) then
          print *, 'Iterations = ', num_iterations
@@ -1004,9 +1004,9 @@
 !     Finalize things
 !-----------------------------------------------------------------------
 
-      call HYPRE_ParCSRMatrixDestroy(A_storage, ierr)
-      call HYPRE_IJVectorDestroy(b, ierr)
-      call HYPRE_IJVectorDestroy(x, ierr)
+      call NALU_HYPRE_ParCSRMatrixDestroy(A_storage, ierr)
+      call NALU_HYPRE_IJVectorDestroy(b, ierr)
+      call NALU_HYPRE_IJVectorDestroy(x, ierr)
 
 !     Finalize MPI
 

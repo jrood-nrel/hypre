@@ -6,48 +6,48 @@
  ******************************************************************************/
 
 /*--------------------------------------------------------------------------
- * hypre_RedBlackGSData data structure
+ * nalu_hypre_RedBlackGSData data structure
  *--------------------------------------------------------------------------*/
 
 typedef struct
 {
    MPI_Comm                comm;
 
-   HYPRE_Real              tol;                /* not yet used */
-   HYPRE_Int               max_iter;
-   HYPRE_Int               rel_change;         /* not yet used */
-   HYPRE_Int               zero_guess;
-   HYPRE_Int               rb_start;
+   NALU_HYPRE_Real              tol;                /* not yet used */
+   NALU_HYPRE_Int               max_iter;
+   NALU_HYPRE_Int               rel_change;         /* not yet used */
+   NALU_HYPRE_Int               zero_guess;
+   NALU_HYPRE_Int               rb_start;
 
-   hypre_StructMatrix     *A;
-   hypre_StructVector     *b;
-   hypre_StructVector     *x;
+   nalu_hypre_StructMatrix     *A;
+   nalu_hypre_StructVector     *b;
+   nalu_hypre_StructVector     *x;
 
-   HYPRE_Int               diag_rank;
+   NALU_HYPRE_Int               diag_rank;
 
-   hypre_ComputePkg       *compute_pkg;
+   nalu_hypre_ComputePkg       *compute_pkg;
 
    /* log info (always logged) */
-   HYPRE_Int               num_iterations;
-   HYPRE_Int               time_index;
-   HYPRE_Int               flops;
+   NALU_HYPRE_Int               num_iterations;
+   NALU_HYPRE_Int               time_index;
+   NALU_HYPRE_Int               flops;
 
-} hypre_RedBlackGSData;
+} nalu_hypre_RedBlackGSData;
 
-#ifdef HYPRE_USING_RAJA
+#ifdef NALU_HYPRE_USING_RAJA
 
-#define hypre_RedBlackLoopInit()
-#define hypre_RedBlackLoopBegin(ni,nj,nk,redblack,     \
+#define nalu_hypre_RedBlackLoopInit()
+#define nalu_hypre_RedBlackLoopBegin(ni,nj,nk,redblack,     \
                                 Astart,Ani,Anj,Ai,     \
                                 bstart,bni,bnj,bi,     \
                                 xstart,xni,xnj,xi)     \
 {                                                      \
-   HYPRE_Int hypre__tot = nk*nj*((ni+1)/2);            \
-   forall< hypre_raja_exec_policy >(RangeSegment(0, hypre__tot), [=] hypre_RAJA_DEVICE (HYPRE_Int idx) \
+   NALU_HYPRE_Int nalu_hypre__tot = nk*nj*((ni+1)/2);            \
+   forall< nalu_hypre_raja_exec_policy >(RangeSegment(0, nalu_hypre__tot), [=] nalu_hypre_RAJA_DEVICE (NALU_HYPRE_Int idx) \
    {                                                   \
-      HYPRE_Int idx_local = idx;                       \
-      HYPRE_Int ii,jj,kk,Ai,bi,xi;                     \
-      HYPRE_Int local_ii;                              \
+      NALU_HYPRE_Int idx_local = idx;                       \
+      NALU_HYPRE_Int ii,jj,kk,Ai,bi,xi;                     \
+      NALU_HYPRE_Int local_ii;                              \
       kk = idx_local % nk;                             \
       idx_local = idx_local / nk;                      \
       jj = idx_local % nj;                             \
@@ -60,22 +60,22 @@ typedef struct
          bi = bstart + kk*bnj*bni + jj*bni + ii;       \
          xi = xstart + kk*xnj*xni + jj*xni + ii;       \
 
-#define hypre_RedBlackLoopEnd()                        \
+#define nalu_hypre_RedBlackLoopEnd()                        \
       }                                                \
    });                                                 \
-   hypre_fence();                                      \
+   nalu_hypre_fence();                                      \
 }
 
-#define hypre_RedBlackConstantcoefLoopBegin(ni,nj,nk,redblack, \
+#define nalu_hypre_RedBlackConstantcoefLoopBegin(ni,nj,nk,redblack, \
                                             bstart,bni,bnj,bi, \
                                             xstart,xni,xnj,xi) \
 {                                                              \
-   HYPRE_Int hypre__tot = nk*nj*((ni+1)/2);                    \
-   forall< hypre_raja_exec_policy >(RangeSegment(0, hypre__tot), [=] hypre_RAJA_DEVICE (HYPRE_Int idx) \
+   NALU_HYPRE_Int nalu_hypre__tot = nk*nj*((ni+1)/2);                    \
+   forall< nalu_hypre_raja_exec_policy >(RangeSegment(0, nalu_hypre__tot), [=] nalu_hypre_RAJA_DEVICE (NALU_HYPRE_Int idx) \
    {                                                           \
-      HYPRE_Int idx_local = idx;                               \
-      HYPRE_Int ii,jj,kk,bi,xi;                                \
-      HYPRE_Int local_ii;                                      \
+      NALU_HYPRE_Int idx_local = idx;                               \
+      NALU_HYPRE_Int ii,jj,kk,bi,xi;                                \
+      NALU_HYPRE_Int local_ii;                                      \
       kk = idx_local % nk;                                     \
       idx_local = idx_local / nk;                              \
       jj = idx_local % nj;                                     \
@@ -87,26 +87,26 @@ typedef struct
           bi = bstart + kk*bnj*bni + jj*bni + ii;              \
           xi = xstart + kk*xnj*xni + jj*xni + ii;              \
 
-#define hypre_RedBlackConstantcoefLoopEnd()                    \
+#define nalu_hypre_RedBlackConstantcoefLoopEnd()                    \
       }                                                        \
    });                                                         \
-   hypre_fence();                                              \
+   nalu_hypre_fence();                                              \
 }
 
-#elif defined(HYPRE_USING_KOKKOS)
+#elif defined(NALU_HYPRE_USING_KOKKOS)
 
-#define hypre_RedBlackLoopInit()
-#define hypre_RedBlackLoopBegin(ni,nj,nk,redblack,                  \
+#define nalu_hypre_RedBlackLoopInit()
+#define nalu_hypre_RedBlackLoopBegin(ni,nj,nk,redblack,                  \
                                 Astart,Ani,Anj,Ai,                  \
                                 bstart,bni,bnj,bi,                  \
                                 xstart,xni,xnj,xi)                  \
 {                                                                   \
-   HYPRE_Int hypre__tot = nk*nj*((ni+1)/2);                         \
-   Kokkos::parallel_for (hypre__tot, KOKKOS_LAMBDA (HYPRE_Int idx)  \
+   NALU_HYPRE_Int nalu_hypre__tot = nk*nj*((ni+1)/2);                         \
+   Kokkos::parallel_for (nalu_hypre__tot, KOKKOS_LAMBDA (NALU_HYPRE_Int idx)  \
    {                                                                \
-      HYPRE_Int idx_local = idx;                                    \
-      HYPRE_Int ii,jj,kk,Ai,bi,xi;                                  \
-      HYPRE_Int local_ii;                                           \
+      NALU_HYPRE_Int idx_local = idx;                                    \
+      NALU_HYPRE_Int ii,jj,kk,Ai,bi,xi;                                  \
+      NALU_HYPRE_Int local_ii;                                           \
       kk = idx_local % nk;                                          \
       idx_local = idx_local / nk;                                   \
       jj = idx_local % nj;                                          \
@@ -119,22 +119,22 @@ typedef struct
          bi = bstart + kk*bnj*bni + jj*bni + ii;                    \
          xi = xstart + kk*xnj*xni + jj*xni + ii;                    \
 
-#define hypre_RedBlackLoopEnd()                                     \
+#define nalu_hypre_RedBlackLoopEnd()                                     \
       }                                                             \
    });                                                              \
-   hypre_fence();                                                   \
+   nalu_hypre_fence();                                                   \
 }
 
-#define hypre_RedBlackConstantcoefLoopBegin(ni,nj,nk,redblack,      \
+#define nalu_hypre_RedBlackConstantcoefLoopBegin(ni,nj,nk,redblack,      \
                                             bstart,bni,bnj,bi,      \
                                             xstart,xni,xnj,xi)      \
 {                                                                   \
-   HYPRE_Int hypre__tot = nk*nj*((ni+1)/2);                         \
-   Kokkos::parallel_for (hypre__tot, KOKKOS_LAMBDA (HYPRE_Int idx)  \
+   NALU_HYPRE_Int nalu_hypre__tot = nk*nj*((ni+1)/2);                         \
+   Kokkos::parallel_for (nalu_hypre__tot, KOKKOS_LAMBDA (NALU_HYPRE_Int idx)  \
    {                                                                \
-      HYPRE_Int idx_local = idx;                                    \
-      HYPRE_Int ii,jj,kk,bi,xi;                                     \
-      HYPRE_Int local_ii;                                           \
+      NALU_HYPRE_Int idx_local = idx;                                    \
+      NALU_HYPRE_Int ii,jj,kk,bi,xi;                                     \
+      NALU_HYPRE_Int local_ii;                                           \
       kk = idx_local % nk;                                          \
       idx_local = idx_local / nk;                                   \
       jj = idx_local % nj;                                          \
@@ -146,26 +146,26 @@ typedef struct
          bi = bstart + kk*bnj*bni + jj*bni + ii;                    \
          xi = xstart + kk*xnj*xni + jj*xni + ii;                    \
 
-#define hypre_RedBlackConstantcoefLoopEnd()                         \
+#define nalu_hypre_RedBlackConstantcoefLoopEnd()                         \
       }                                                             \
    });                                                              \
-   hypre_fence();                                                   \
+   nalu_hypre_fence();                                                   \
 }
 
-#elif defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP)
+#elif defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
 
-#define hypre_RedBlackLoopInit()
-#define hypre_RedBlackLoopBegin(ni,nj,nk,redblack,        \
+#define nalu_hypre_RedBlackLoopInit()
+#define nalu_hypre_RedBlackLoopBegin(ni,nj,nk,redblack,        \
                                 Astart,Ani,Anj,Ai,        \
                                 bstart,bni,bnj,bi,        \
                                 xstart,xni,xnj,xi)        \
 {                                                         \
-   HYPRE_Int hypre__tot = nk*nj*((ni+1)/2);               \
-   BoxLoopforall(hypre__tot, HYPRE_LAMBDA (HYPRE_Int idx) \
+   NALU_HYPRE_Int nalu_hypre__tot = nk*nj*((ni+1)/2);               \
+   BoxLoopforall(nalu_hypre__tot, NALU_HYPRE_LAMBDA (NALU_HYPRE_Int idx) \
    {                                                      \
-      HYPRE_Int idx_local = idx;                          \
-      HYPRE_Int ii,jj,kk,Ai,bi,xi;                        \
-      HYPRE_Int local_ii;                                 \
+      NALU_HYPRE_Int idx_local = idx;                          \
+      NALU_HYPRE_Int ii,jj,kk,Ai,bi,xi;                        \
+      NALU_HYPRE_Int local_ii;                                 \
       kk = idx_local % nk;                                \
       idx_local = idx_local / nk;                         \
       jj = idx_local % nj;                                \
@@ -178,21 +178,21 @@ typedef struct
          bi = bstart + kk*bnj*bni + jj*bni + ii;          \
          xi = xstart + kk*xnj*xni + jj*xni + ii;          \
 
-#define hypre_RedBlackLoopEnd()                           \
+#define nalu_hypre_RedBlackLoopEnd()                           \
       }                                                   \
    });                                                    \
 }
 
-#define hypre_RedBlackConstantcoefLoopBegin(ni,nj,nk,redblack,      \
+#define nalu_hypre_RedBlackConstantcoefLoopBegin(ni,nj,nk,redblack,      \
                                             bstart,bni,bnj,bi,      \
                                             xstart,xni,xnj,xi)      \
 {                                                                   \
-   HYPRE_Int hypre__tot = nk*nj*((ni+1)/2);                         \
-   BoxLoopforall(hypre__tot, HYPRE_LAMBDA (HYPRE_Int idx)           \
+   NALU_HYPRE_Int nalu_hypre__tot = nk*nj*((ni+1)/2);                         \
+   BoxLoopforall(nalu_hypre__tot, NALU_HYPRE_LAMBDA (NALU_HYPRE_Int idx)           \
    {                                                                \
-      HYPRE_Int idx_local = idx;                                    \
-      HYPRE_Int ii,jj,kk,bi,xi;                                     \
-      HYPRE_Int local_ii;                                           \
+      NALU_HYPRE_Int idx_local = idx;                                    \
+      NALU_HYPRE_Int ii,jj,kk,bi,xi;                                     \
+      NALU_HYPRE_Int local_ii;                                           \
       kk = idx_local % nk;                                          \
       idx_local = idx_local / nk;                                   \
       jj = idx_local % nj;                                          \
@@ -204,26 +204,26 @@ typedef struct
          bi = bstart + kk*bnj*bni + jj*bni + ii;                    \
          xi = xstart + kk*xnj*xni + jj*xni + ii;                    \
 
-#define hypre_RedBlackConstantcoefLoopEnd()                         \
+#define nalu_hypre_RedBlackConstantcoefLoopEnd()                         \
       }                                                             \
    });                                                              \
 }
 
-#elif defined(HYPRE_USING_SYCL)
+#elif defined(NALU_HYPRE_USING_SYCL)
 
-#define hypre_RedBlackLoopInit()
-#define hypre_RedBlackLoopBegin(ni,nj,nk,redblack,                  \
+#define nalu_hypre_RedBlackLoopInit()
+#define nalu_hypre_RedBlackLoopBegin(ni,nj,nk,redblack,                  \
                                 Astart,Ani,Anj,Ai,                  \
                                 bstart,bni,bnj,bi,                  \
                                 xstart,xni,xnj,xi)                  \
 {                                                                   \
-   HYPRE_Int hypre__tot = nk*nj*((ni+1)/2);                         \
-   BoxLoopforall(hypre__tot, [=] (sycl::nd_item<3> item)            \
+   NALU_HYPRE_Int nalu_hypre__tot = nk*nj*((ni+1)/2);                         \
+   BoxLoopforall(nalu_hypre__tot, [=] (sycl::nd_item<3> item)            \
    {                                                                \
-      HYPRE_Int idx = (HYPRE_Int) item.get_global_linear_id();      \
-      HYPRE_Int idx_local = idx;                                    \
-      HYPRE_Int ii,jj,kk,Ai,bi,xi;                                  \
-      HYPRE_Int local_ii;                                           \
+      NALU_HYPRE_Int idx = (NALU_HYPRE_Int) item.get_global_linear_id();      \
+      NALU_HYPRE_Int idx_local = idx;                                    \
+      NALU_HYPRE_Int ii,jj,kk,Ai,bi,xi;                                  \
+      NALU_HYPRE_Int local_ii;                                           \
       kk = idx_local % nk;                                          \
       idx_local = idx_local / nk;                                   \
       jj = idx_local % nj;                                          \
@@ -236,22 +236,22 @@ typedef struct
          bi = bstart + kk*bnj*bni + jj*bni + ii;                    \
          xi = xstart + kk*xnj*xni + jj*xni + ii;                    \
 
-#define hypre_RedBlackLoopEnd()                                     \
+#define nalu_hypre_RedBlackLoopEnd()                                     \
       }                                                             \
    });                                                              \
 }
 
-#define hypre_RedBlackConstantcoefLoopBegin(ni,nj,nk,redblack,      \
+#define nalu_hypre_RedBlackConstantcoefLoopBegin(ni,nj,nk,redblack,      \
                                             bstart,bni,bnj,bi,      \
                                             xstart,xni,xnj,xi)      \
 {                                                                   \
-   HYPRE_Int hypre__tot = nk*nj*((ni+1)/2);                         \
-   BoxLoopforall(hypre__tot, [=] (sycl::nd_item<3> item)            \
+   NALU_HYPRE_Int nalu_hypre__tot = nk*nj*((ni+1)/2);                         \
+   BoxLoopforall(nalu_hypre__tot, [=] (sycl::nd_item<3> item)            \
    {                                                                \
-      HYPRE_Int idx = (HYPRE_Int) item.get_global_linear_id();      \
-      HYPRE_Int idx_local = idx;                                    \
-      HYPRE_Int ii,jj,kk,bi,xi;                                     \
-      HYPRE_Int local_ii;                                           \
+      NALU_HYPRE_Int idx = (NALU_HYPRE_Int) item.get_global_linear_id();      \
+      NALU_HYPRE_Int idx_local = idx;                                    \
+      NALU_HYPRE_Int ii,jj,kk,bi,xi;                                     \
+      NALU_HYPRE_Int local_ii;                                           \
       kk = idx_local % nk;                                          \
       idx_local = idx_local / nk;                                   \
       jj = idx_local % nj;                                          \
@@ -263,40 +263,40 @@ typedef struct
          bi = bstart + kk*bnj*bni + jj*bni + ii;                    \
          xi = xstart + kk*xnj*xni + jj*xni + ii;                    \
 
-#define hypre_RedBlackConstantcoefLoopEnd()                         \
+#define nalu_hypre_RedBlackConstantcoefLoopEnd()                         \
       }                                                             \
    });                                                              \
 }
 
-#elif defined(HYPRE_USING_DEVICE_OPENMP)
+#elif defined(NALU_HYPRE_USING_DEVICE_OPENMP)
 
 /* BEGIN OF OMP 4.5 */
-/* #define IF_CLAUSE if (hypre__global_offload) */
+/* #define IF_CLAUSE if (nalu_hypre__global_offload) */
 
 /* stringification:
  * _Pragma(string-literal), so we need to cast argument to a string
  * The three dots as last argument of the macro tells compiler that this is a variadic macro.
  * I.e. this is a macro that receives variable number of arguments.
  */
-//#define HYPRE_STR(s...) #s
-//#define HYPRE_XSTR(s...) HYPRE_STR(s)
+//#define NALU_HYPRE_STR(s...) #s
+//#define NALU_HYPRE_XSTR(s...) NALU_HYPRE_STR(s)
 
-#define hypre_RedBlackLoopInit()
+#define nalu_hypre_RedBlackLoopInit()
 
-#define hypre_RedBlackLoopBegin(ni,nj,nk,redblack,                      \
+#define nalu_hypre_RedBlackLoopBegin(ni,nj,nk,redblack,                      \
                                 Astart,Ani,Anj,Ai,                      \
                                 bstart,bni,bnj,bi,                      \
                                 xstart,xni,xnj,xi)                      \
 {                                                                       \
-   HYPRE_Int hypre__thread, hypre__tot = nk*nj*((ni+1)/2);              \
-   HYPRE_BOXLOOP_ENTRY_PRINT                                            \
+   NALU_HYPRE_Int nalu_hypre__thread, nalu_hypre__tot = nk*nj*((ni+1)/2);              \
+   NALU_HYPRE_BOXLOOP_ENTRY_PRINT                                            \
    /* device code: */                                                   \
-   _Pragma (HYPRE_XSTR(omp target teams distribute parallel for IF_CLAUSE IS_DEVICE_CLAUSE)) \
-   for (hypre__thread=0; hypre__thread<hypre__tot; hypre__thread++)     \
+   _Pragma (NALU_HYPRE_XSTR(omp target teams distribute parallel for IF_CLAUSE IS_DEVICE_CLAUSE)) \
+   for (nalu_hypre__thread=0; nalu_hypre__thread<nalu_hypre__tot; nalu_hypre__thread++)     \
    {                                                                    \
-        HYPRE_Int idx_local = hypre__thread;                            \
-        HYPRE_Int ii,jj,kk,Ai,bi,xi;                                    \
-        HYPRE_Int local_ii;                                             \
+        NALU_HYPRE_Int idx_local = nalu_hypre__thread;                            \
+        NALU_HYPRE_Int ii,jj,kk,Ai,bi,xi;                                    \
+        NALU_HYPRE_Int local_ii;                                             \
         kk = idx_local % nk;                                            \
         idx_local = idx_local / nk;                                     \
         jj = idx_local % nj;                                            \
@@ -309,26 +309,26 @@ typedef struct
             bi = bstart + kk*bnj*bni + jj*bni + ii;                     \
             xi = xstart + kk*xnj*xni + jj*xni + ii;                     \
 
-#define hypre_RedBlackLoopEnd()                                         \
+#define nalu_hypre_RedBlackLoopEnd()                                         \
         }                                                               \
      }                                                                  \
 }
 
 
 
-#define hypre_RedBlackConstantcoefLoopBegin(ni,nj,nk,redblack,        \
+#define nalu_hypre_RedBlackConstantcoefLoopBegin(ni,nj,nk,redblack,        \
                                             bstart,bni,bnj,bi,        \
                                             xstart,xni,xnj,xi)        \
 {                                                                     \
-   HYPRE_Int hypre__thread, hypre__tot = nk*nj*((ni+1)/2);            \
-   HYPRE_BOXLOOP_ENTRY_PRINT                                          \
+   NALU_HYPRE_Int nalu_hypre__thread, nalu_hypre__tot = nk*nj*((ni+1)/2);            \
+   NALU_HYPRE_BOXLOOP_ENTRY_PRINT                                          \
    /* device code: */                                                 \
-   _Pragma (HYPRE_XSTR(omp target teams distribute parallel for IF_CLAUSE IS_DEVICE_CLAUSE)) \
-   for (hypre__thread=0; hypre__thread<hypre__tot; hypre__thread++)   \
+   _Pragma (NALU_HYPRE_XSTR(omp target teams distribute parallel for IF_CLAUSE IS_DEVICE_CLAUSE)) \
+   for (nalu_hypre__thread=0; nalu_hypre__thread<nalu_hypre__tot; nalu_hypre__thread++)   \
    {                                                                  \
-        HYPRE_Int idx_local = hypre__thread;                          \
-        HYPRE_Int ii,jj,kk,bi,xi;                                     \
-        HYPRE_Int local_ii;                                           \
+        NALU_HYPRE_Int idx_local = nalu_hypre__thread;                          \
+        NALU_HYPRE_Int ii,jj,kk,bi,xi;                                     \
+        NALU_HYPRE_Int local_ii;                                           \
         kk = idx_local % nk;                                          \
         idx_local = idx_local / nk;                                   \
         jj = idx_local % nj;                                          \
@@ -340,7 +340,7 @@ typedef struct
             bi = bstart + kk*bnj*bni + jj*bni + ii;                   \
             xi = xstart + kk*xnj*xni + jj*xni + ii;                   \
 
-#define hypre_RedBlackConstantcoefLoopEnd()                           \
+#define nalu_hypre_RedBlackConstantcoefLoopEnd()                           \
          }                                                            \
      }                                                                \
 }
@@ -349,63 +349,63 @@ typedef struct
 #else
 
 /* CPU */
-#define HYPRE_REDBLACK_PRIVATE hypre__kk
+#define NALU_HYPRE_REDBLACK_PRIVATE nalu_hypre__kk
 
-#define hypre_RedBlackLoopInit()\
+#define nalu_hypre_RedBlackLoopInit()\
 {\
-   HYPRE_Int hypre__kk;
+   NALU_HYPRE_Int nalu_hypre__kk;
 
-#ifdef HYPRE_USING_OPENMP
-#define HYPRE_BOX_REDUCTION
+#ifdef NALU_HYPRE_USING_OPENMP
+#define NALU_HYPRE_BOX_REDUCTION
 #if defined(WIN32) && defined(_MSC_VER)
-#define Pragma(x) __pragma(HYPRE_XSTR(x))
+#define Pragma(x) __pragma(NALU_HYPRE_XSTR(x))
 #else
-#define Pragma(x) _Pragma(HYPRE_XSTR(x))
+#define Pragma(x) _Pragma(NALU_HYPRE_XSTR(x))
 #endif
-#define OMPRB1 Pragma(omp parallel for private(HYPRE_REDBLACK_PRIVATE) HYPRE_BOX_REDUCTION HYPRE_SMP_SCHEDULE)
+#define OMPRB1 Pragma(omp parallel for private(NALU_HYPRE_REDBLACK_PRIVATE) NALU_HYPRE_BOX_REDUCTION NALU_HYPRE_SMP_SCHEDULE)
 #else
 #define OMPRB1
 #endif
 
-#define hypre_RedBlackLoopBegin(ni,nj,nk,redblack,  \
+#define nalu_hypre_RedBlackLoopBegin(ni,nj,nk,redblack,  \
                                 Astart,Ani,Anj,Ai,  \
                                 bstart,bni,bnj,bi,  \
                                 xstart,xni,xnj,xi)  \
    OMPRB1 \
-   for (hypre__kk = 0; hypre__kk < nk; hypre__kk++) \
+   for (nalu_hypre__kk = 0; nalu_hypre__kk < nk; nalu_hypre__kk++) \
    {\
-      HYPRE_Int ii,jj,Ai,bi,xi;\
+      NALU_HYPRE_Int ii,jj,Ai,bi,xi;\
       for (jj = 0; jj < nj; jj++)\
       {\
-         ii = (hypre__kk + jj + redblack) % 2;\
-         Ai = Astart + hypre__kk*Anj*Ani + jj*Ani + ii; \
-         bi = bstart + hypre__kk*bnj*bni + jj*bni + ii; \
-         xi = xstart + hypre__kk*xnj*xni + jj*xni + ii; \
+         ii = (nalu_hypre__kk + jj + redblack) % 2;\
+         Ai = Astart + nalu_hypre__kk*Anj*Ani + jj*Ani + ii; \
+         bi = bstart + nalu_hypre__kk*bnj*bni + jj*bni + ii; \
+         xi = xstart + nalu_hypre__kk*xnj*xni + jj*xni + ii; \
          for (; ii < ni; ii+=2, Ai+=2, bi+=2, xi+=2)\
          {
 
-#define hypre_RedBlackLoopEnd()\
+#define nalu_hypre_RedBlackLoopEnd()\
          }\
       }\
    }\
 }
 
-#define hypre_RedBlackConstantcoefLoopBegin(ni,nj,nk,redblack, \
+#define nalu_hypre_RedBlackConstantcoefLoopBegin(ni,nj,nk,redblack, \
                                             bstart,bni,bnj,bi, \
                                             xstart,xni,xnj,xi) \
    OMPRB1 \
-   for (hypre__kk = 0; hypre__kk < nk; hypre__kk++)\
+   for (nalu_hypre__kk = 0; nalu_hypre__kk < nk; nalu_hypre__kk++)\
    {\
-      HYPRE_Int ii,jj,bi,xi;\
+      NALU_HYPRE_Int ii,jj,bi,xi;\
       for (jj = 0; jj < nj; jj++)\
       {\
-         ii = (hypre__kk + jj + redblack) % 2;\
-         bi = bstart + hypre__kk*bnj*bni + jj*bni + ii;\
-         xi = xstart + hypre__kk*xnj*xni + jj*xni + ii;\
+         ii = (nalu_hypre__kk + jj + redblack) % 2;\
+         bi = bstart + nalu_hypre__kk*bnj*bni + jj*bni + ii;\
+         xi = xstart + nalu_hypre__kk*xnj*xni + jj*xni + ii;\
          for (; ii < ni; ii+=2, Ai+=2, bi+=2, xi+=2)\
          {
 
-#define hypre_RedBlackConstantcoefLoopEnd()\
+#define nalu_hypre_RedBlackConstantcoefLoopEnd()\
          }\
       }\
    }\

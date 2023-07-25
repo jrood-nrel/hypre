@@ -5,32 +5,32 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#ifndef hypre_BOX_MANAGER_HEADER
-#define hypre_BOX_MANAGER_HEADER
+#ifndef nalu_hypre_BOX_MANAGER_HEADER
+#define nalu_hypre_BOX_MANAGER_HEADER
 
 /*--------------------------------------------------------------------------
  * BoxManEntry
  *--------------------------------------------------------------------------*/
 
-typedef struct hypre_BoxManEntry_struct
+typedef struct nalu_hypre_BoxManEntry_struct
 {
-   hypre_Index imin; /* Extents of box */
-   hypre_Index imax;
-   HYPRE_Int   ndim; /* Number of dimensions */
+   nalu_hypre_Index imin; /* Extents of box */
+   nalu_hypre_Index imax;
+   NALU_HYPRE_Int   ndim; /* Number of dimensions */
 
-   HYPRE_Int proc; /* This is a two-part unique id: (proc, id) */
-   HYPRE_Int id;
-   HYPRE_Int num_ghost[2 * HYPRE_MAXDIM];
+   NALU_HYPRE_Int proc; /* This is a two-part unique id: (proc, id) */
+   NALU_HYPRE_Int id;
+   NALU_HYPRE_Int num_ghost[2 * NALU_HYPRE_MAXDIM];
 
-   HYPRE_Int position; /* This indicates the location of the entry in the the
+   NALU_HYPRE_Int position; /* This indicates the location of the entry in the the
                         * box manager entries array and is used for pairing with
                         * the info object (populated in addentry) */
 
    void *boxman; /* The owning manager (populated in addentry) */
 
-   struct hypre_BoxManEntry_struct  *next;
+   struct nalu_hypre_BoxManEntry_struct  *next;
 
-} hypre_BoxManEntry;
+} nalu_hypre_BoxManEntry;
 
 /*---------------------------------------------------------------------------
  * Box Manager: organizes arbitrary information in a spatial way
@@ -40,153 +40,153 @@ typedef struct
 {
    MPI_Comm            comm;
 
-   HYPRE_Int           max_nentries; /* storage allocated for entries */
+   NALU_HYPRE_Int           max_nentries; /* storage allocated for entries */
 
-   HYPRE_Int           is_gather_called; /* Boolean to indicate whether
+   NALU_HYPRE_Int           is_gather_called; /* Boolean to indicate whether
                                             GatherEntries function has been
                                             called (prior to assemble) - may not
                                             want this (can tell by the size of
                                             gather_regions array) */
 
-   hypre_BoxArray     *gather_regions; /* This is where we collect boxes input
+   nalu_hypre_BoxArray     *gather_regions; /* This is where we collect boxes input
                                           by calls to BoxManGatherEntries - to
                                           be gathered in the assemble.  These
                                           are then deleted after the assemble */
 
 
-   HYPRE_Int           all_global_known; /* Boolean to say that every processor
+   NALU_HYPRE_Int           all_global_known; /* Boolean to say that every processor
                                             already has all of the global data
                                             for this manager (this could be
                                             accessed by a coarsening routine,
                                             for example) */
 
-   HYPRE_Int           is_entries_sort; /* Boolean to say that entries were
+   NALU_HYPRE_Int           is_entries_sort; /* Boolean to say that entries were
                                            added in sorted order (id, proc)
                                            (this could be accessed by a
                                            coarsening routine, for example) */
 
-   HYPRE_Int           entry_info_size; /* In bytes, the (max) size of the info
+   NALU_HYPRE_Int           entry_info_size; /* In bytes, the (max) size of the info
                                            object for the entries */
 
-   HYPRE_Int           is_assembled; /* Flag to indicate if the box manager has
+   NALU_HYPRE_Int           is_assembled; /* Flag to indicate if the box manager has
                                         been assembled (used to control whether
                                         or not functions can be used prior to
                                         assemble) */
 
    /* Storing the entries */
-   HYPRE_Int          nentries; /* Number of entries stored */
-   hypre_BoxManEntry *entries;  /* Actual box manager entries - sorted by
+   NALU_HYPRE_Int          nentries; /* Number of entries stored */
+   nalu_hypre_BoxManEntry *entries;  /* Actual box manager entries - sorted by
                                    (proc, id) at the end of the assemble) */
 
-   HYPRE_Int         *procs_sort; /* The sorted procs corresponding to entries */
-   HYPRE_Int         *ids_sort; /* Sorted ids corresponding to the entries */
+   NALU_HYPRE_Int         *procs_sort; /* The sorted procs corresponding to entries */
+   NALU_HYPRE_Int         *ids_sort; /* Sorted ids corresponding to the entries */
 
-   HYPRE_Int          num_procs_sort; /* Number of distinct procs in entries */
-   HYPRE_Int         *procs_sort_offsets; /* Offsets for procs into the
+   NALU_HYPRE_Int          num_procs_sort; /* Number of distinct procs in entries */
+   NALU_HYPRE_Int         *procs_sort_offsets; /* Offsets for procs into the
                                              entry_sort array */
-   HYPRE_Int          first_local; /* Position of local infomation in entries */
-   HYPRE_Int          local_proc_offset; /* Position of local information in
+   NALU_HYPRE_Int          first_local; /* Position of local infomation in entries */
+   NALU_HYPRE_Int          local_proc_offset; /* Position of local information in
                                             offsets */
 
    /* Here is the table  that organizes the entries spatially (by index) */
-   hypre_BoxManEntry **index_table; /* This points into 'entries' array and
+   nalu_hypre_BoxManEntry **index_table; /* This points into 'entries' array and
                                        corresponds to the index arays */
 
-   HYPRE_Int          *indexes[HYPRE_MAXDIM]; /* Indexes (ordered) for imin and
+   NALU_HYPRE_Int          *indexes[NALU_HYPRE_MAXDIM]; /* Indexes (ordered) for imin and
                                                  imax of each box in the entries
                                                  array */
-   HYPRE_Int           size[HYPRE_MAXDIM]; /* How many indexes in each
+   NALU_HYPRE_Int           size[NALU_HYPRE_MAXDIM]; /* How many indexes in each
                                               direction */
 
-   HYPRE_Int           last_index[HYPRE_MAXDIM]; /* Last index used in the
+   NALU_HYPRE_Int           last_index[NALU_HYPRE_MAXDIM]; /* Last index used in the
                                                     indexes map */
 
-   HYPRE_Int           num_my_entries; /* Num entries with proc_id = myid */
-   HYPRE_Int          *my_ids; /* Array of ids corresponding to my entries */
-   hypre_BoxManEntry **my_entries; /* Points into entries that are mine and
+   NALU_HYPRE_Int           num_my_entries; /* Num entries with proc_id = myid */
+   NALU_HYPRE_Int          *my_ids; /* Array of ids corresponding to my entries */
+   nalu_hypre_BoxManEntry **my_entries; /* Points into entries that are mine and
                                       corresponds to my_ids array.  This is
                                       destroyed in the assemble. */
 
    void               *info_objects; /* Array of info objects (each of size
                                         entry_info_size), managed byte-wise */
 
-   hypre_StructAssumedPart *assumed_partition; /* The assumed partition object.
+   nalu_hypre_StructAssumedPart *assumed_partition; /* The assumed partition object.
                                                   For now this is only used
                                                   during the assemble (where it
                                                   is created). */
-   HYPRE_Int           ndim; /* Problem dimension (known in the grid) */
+   NALU_HYPRE_Int           ndim; /* Problem dimension (known in the grid) */
 
-   hypre_Box          *bounding_box; /* Bounding box from associated grid */
+   nalu_hypre_Box          *bounding_box; /* Bounding box from associated grid */
 
-   HYPRE_Int           next_id; /* Counter to indicate the next id that would be
+   NALU_HYPRE_Int           next_id; /* Counter to indicate the next id that would be
                                    unique (regardless of proc id) */
 
    /* Ghost stuff  */
-   HYPRE_Int           num_ghost[2 * HYPRE_MAXDIM];
+   NALU_HYPRE_Int           num_ghost[2 * NALU_HYPRE_MAXDIM];
 
-} hypre_BoxManager;
-
-/*--------------------------------------------------------------------------
- * Accessor macros: hypre_BoxMan
- *--------------------------------------------------------------------------*/
-
-#define hypre_BoxManComm(manager)               ((manager) -> comm)
-
-#define hypre_BoxManMaxNEntries(manager)        ((manager) -> max_nentries)
-
-#define hypre_BoxManIsGatherCalled(manager)     ((manager) -> is_gather_called)
-#define hypre_BoxManIsEntriesSort(manager)      ((manager) -> is_entries_sort)
-#define hypre_BoxManGatherRegions(manager)      ((manager) -> gather_regions)
-#define hypre_BoxManAllGlobalKnown(manager)     ((manager) -> all_global_known)
-#define hypre_BoxManEntryInfoSize(manager)      ((manager) -> entry_info_size)
-#define hypre_BoxManNEntries(manager)           ((manager) -> nentries)
-#define hypre_BoxManEntries(manager)            ((manager) -> entries)
-#define hypre_BoxManInfoObjects(manager)        ((manager) -> info_objects)
-#define hypre_BoxManIsAssembled(manager)        ((manager) -> is_assembled)
-
-#define hypre_BoxManProcsSort(manager)          ((manager) -> procs_sort)
-#define hypre_BoxManIdsSort(manager)            ((manager) -> ids_sort)
-#define hypre_BoxManNumProcsSort(manager)       ((manager) -> num_procs_sort)
-#define hypre_BoxManProcsSortOffsets(manager)   ((manager) -> procs_sort_offsets)
-#define hypre_BoxManLocalProcOffset(manager)    ((manager) -> local_proc_offset)
-
-#define hypre_BoxManFirstLocal(manager)         ((manager) -> first_local)
-
-#define hypre_BoxManIndexTable(manager)         ((manager) -> index_table)
-#define hypre_BoxManIndexes(manager)            ((manager) -> indexes)
-#define hypre_BoxManSize(manager)               ((manager) -> size)
-#define hypre_BoxManLastIndex(manager)          ((manager) -> last_index)
-
-#define hypre_BoxManNumMyEntries(manager)       ((manager) -> num_my_entries)
-#define hypre_BoxManMyIds(manager)              ((manager) -> my_ids)
-#define hypre_BoxManMyEntries(manager)          ((manager) -> my_entries)
-#define hypre_BoxManAssumedPartition(manager)   ((manager) -> assumed_partition)
-#define hypre_BoxManNDim(manager)               ((manager) -> ndim)
-#define hypre_BoxManBoundingBox(manager)        ((manager) -> bounding_box)
-
-#define hypre_BoxManNextId(manager)             ((manager) -> next_id)
-
-#define hypre_BoxManNumGhost(manager)           ((manager) -> num_ghost)
-
-#define hypre_BoxManIndexesD(manager, d)    hypre_BoxManIndexes(manager)[d]
-#define hypre_BoxManSizeD(manager, d)       hypre_BoxManSize(manager)[d]
-#define hypre_BoxManLastIndexD(manager, d)  hypre_BoxManLastIndex(manager)[d]
-
-#define hypre_BoxManInfoObject(manager, i) \
-(void *) ((char *)hypre_BoxManInfoObjects(manager) + i* hypre_BoxManEntryInfoSize(manager))
+} nalu_hypre_BoxManager;
 
 /*--------------------------------------------------------------------------
- * Accessor macros: hypre_BoxManEntry
+ * Accessor macros: nalu_hypre_BoxMan
  *--------------------------------------------------------------------------*/
 
-#define hypre_BoxManEntryIMin(entry)     ((entry) -> imin)
-#define hypre_BoxManEntryIMax(entry)     ((entry) -> imax)
-#define hypre_BoxManEntryNDim(entry)     ((entry) -> ndim)
-#define hypre_BoxManEntryProc(entry)     ((entry) -> proc)
-#define hypre_BoxManEntryId(entry)       ((entry) -> id)
-#define hypre_BoxManEntryPosition(entry) ((entry) -> position)
-#define hypre_BoxManEntryNumGhost(entry) ((entry) -> num_ghost)
-#define hypre_BoxManEntryNext(entry)     ((entry) -> next)
-#define hypre_BoxManEntryBoxMan(entry)   ((entry) -> boxman)
+#define nalu_hypre_BoxManComm(manager)               ((manager) -> comm)
+
+#define nalu_hypre_BoxManMaxNEntries(manager)        ((manager) -> max_nentries)
+
+#define nalu_hypre_BoxManIsGatherCalled(manager)     ((manager) -> is_gather_called)
+#define nalu_hypre_BoxManIsEntriesSort(manager)      ((manager) -> is_entries_sort)
+#define nalu_hypre_BoxManGatherRegions(manager)      ((manager) -> gather_regions)
+#define nalu_hypre_BoxManAllGlobalKnown(manager)     ((manager) -> all_global_known)
+#define nalu_hypre_BoxManEntryInfoSize(manager)      ((manager) -> entry_info_size)
+#define nalu_hypre_BoxManNEntries(manager)           ((manager) -> nentries)
+#define nalu_hypre_BoxManEntries(manager)            ((manager) -> entries)
+#define nalu_hypre_BoxManInfoObjects(manager)        ((manager) -> info_objects)
+#define nalu_hypre_BoxManIsAssembled(manager)        ((manager) -> is_assembled)
+
+#define nalu_hypre_BoxManProcsSort(manager)          ((manager) -> procs_sort)
+#define nalu_hypre_BoxManIdsSort(manager)            ((manager) -> ids_sort)
+#define nalu_hypre_BoxManNumProcsSort(manager)       ((manager) -> num_procs_sort)
+#define nalu_hypre_BoxManProcsSortOffsets(manager)   ((manager) -> procs_sort_offsets)
+#define nalu_hypre_BoxManLocalProcOffset(manager)    ((manager) -> local_proc_offset)
+
+#define nalu_hypre_BoxManFirstLocal(manager)         ((manager) -> first_local)
+
+#define nalu_hypre_BoxManIndexTable(manager)         ((manager) -> index_table)
+#define nalu_hypre_BoxManIndexes(manager)            ((manager) -> indexes)
+#define nalu_hypre_BoxManSize(manager)               ((manager) -> size)
+#define nalu_hypre_BoxManLastIndex(manager)          ((manager) -> last_index)
+
+#define nalu_hypre_BoxManNumMyEntries(manager)       ((manager) -> num_my_entries)
+#define nalu_hypre_BoxManMyIds(manager)              ((manager) -> my_ids)
+#define nalu_hypre_BoxManMyEntries(manager)          ((manager) -> my_entries)
+#define nalu_hypre_BoxManAssumedPartition(manager)   ((manager) -> assumed_partition)
+#define nalu_hypre_BoxManNDim(manager)               ((manager) -> ndim)
+#define nalu_hypre_BoxManBoundingBox(manager)        ((manager) -> bounding_box)
+
+#define nalu_hypre_BoxManNextId(manager)             ((manager) -> next_id)
+
+#define nalu_hypre_BoxManNumGhost(manager)           ((manager) -> num_ghost)
+
+#define nalu_hypre_BoxManIndexesD(manager, d)    nalu_hypre_BoxManIndexes(manager)[d]
+#define nalu_hypre_BoxManSizeD(manager, d)       nalu_hypre_BoxManSize(manager)[d]
+#define nalu_hypre_BoxManLastIndexD(manager, d)  nalu_hypre_BoxManLastIndex(manager)[d]
+
+#define nalu_hypre_BoxManInfoObject(manager, i) \
+(void *) ((char *)nalu_hypre_BoxManInfoObjects(manager) + i* nalu_hypre_BoxManEntryInfoSize(manager))
+
+/*--------------------------------------------------------------------------
+ * Accessor macros: nalu_hypre_BoxManEntry
+ *--------------------------------------------------------------------------*/
+
+#define nalu_hypre_BoxManEntryIMin(entry)     ((entry) -> imin)
+#define nalu_hypre_BoxManEntryIMax(entry)     ((entry) -> imax)
+#define nalu_hypre_BoxManEntryNDim(entry)     ((entry) -> ndim)
+#define nalu_hypre_BoxManEntryProc(entry)     ((entry) -> proc)
+#define nalu_hypre_BoxManEntryId(entry)       ((entry) -> id)
+#define nalu_hypre_BoxManEntryPosition(entry) ((entry) -> position)
+#define nalu_hypre_BoxManEntryNumGhost(entry) ((entry) -> num_ghost)
+#define nalu_hypre_BoxManEntryNext(entry)     ((entry) -> next)
+#define nalu_hypre_BoxManEntryBoxMan(entry)   ((entry) -> boxman)
 
 #endif

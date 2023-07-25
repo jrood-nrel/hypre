@@ -45,8 +45,8 @@ for building matrices:
 .. code-block:: c
    
    MPI_Comm            comm;
-   HYPRE_IJMatrix      ij_matrix;
-   HYPRE_ParCSRMatrix  parcsr_matrix;
+   NALU_HYPRE_IJMatrix      ij_matrix;
+   NALU_HYPRE_ParCSRMatrix  parcsr_matrix;
    int                 ilower, iupper;
    int                 jlower, jupper;
    int                 nrows;
@@ -55,19 +55,19 @@ for building matrices:
    int                *cols;
    double             *values;
    
-   HYPRE_IJMatrixCreate(comm, ilower, iupper, jlower, jupper, &ij_matrix);
-   HYPRE_IJMatrixSetObjectType(ij_matrix, HYPRE_PARCSR);
-   HYPRE_IJMatrixInitialize(ij_matrix);
+   NALU_HYPRE_IJMatrixCreate(comm, ilower, iupper, jlower, jupper, &ij_matrix);
+   NALU_HYPRE_IJMatrixSetObjectType(ij_matrix, NALU_HYPRE_PARCSR);
+   NALU_HYPRE_IJMatrixInitialize(ij_matrix);
    
    /* set matrix coefficients */
-   HYPRE_IJMatrixSetValues(ij_matrix, nrows, ncols, rows, cols, values);
+   NALU_HYPRE_IJMatrixSetValues(ij_matrix, nrows, ncols, rows, cols, values);
    ...
    /* add-to matrix cofficients, if desired */
-   HYPRE_IJMatrixAddToValues(ij_matrix, nrows, ncols, rows, cols, values);
+   NALU_HYPRE_IJMatrixAddToValues(ij_matrix, nrows, ncols, rows, cols, values);
    ...
    
-   HYPRE_IJMatrixAssemble(ij_matrix);
-   HYPRE_IJMatrixGetObject(ij_matrix, (void **) &parcsr_matrix);
+   NALU_HYPRE_IJMatrixAssemble(ij_matrix);
+   NALU_HYPRE_IJMatrixGetObject(ij_matrix, (void **) &parcsr_matrix);
 
 The ``Create()`` routine creates an empty matrix object that lives on the
 ``comm`` communicator.  This is a collective call (i.e., must be called on all
@@ -80,7 +80,7 @@ partitioning, and should match ``ilower`` and ``iupper`` when solving square
 linear systems.  See Chapter :ref:`ch-API` for more information.
 
 The ``SetObjectType()`` routine sets the underlying matrix object type to
-``HYPRE_PARCSR`` (this is the only object type currently supported).  The
+``NALU_HYPRE_PARCSR`` (this is the only object type currently supported).  The
 ``Initialize()`` routine indicates that the matrix coefficients (or values) are
 ready to be set.  This routine may or may not involve the allocation of memory
 for the coefficient data, depending on the implementation.  The optional
@@ -118,8 +118,8 @@ in other processor domains:
 
 .. code-block:: c
    
-   HYPRE_IJMatrixSetRowSizes(ij_matrix, sizes);
-   HYPRE_IJMatrixSetDiagOffdSizes(matrix, diag_sizes, offdiag_sizes);
+   NALU_HYPRE_IJMatrixSetRowSizes(ij_matrix, sizes);
+   NALU_HYPRE_IJMatrixSetDiagOffdSizes(matrix, diag_sizes, offdiag_sizes);
 
 Once the matrix has been assembled, the sparsity pattern cannot be altered
 without completely destroying the matrix object and starting from scratch.
@@ -138,23 +138,23 @@ for building vectors:
 .. code-block:: c
    
    MPI_Comm         comm;
-   HYPRE_IJVector   ij_vector;
-   HYPRE_ParVector  par_vector;
+   NALU_HYPRE_IJVector   ij_vector;
+   NALU_HYPRE_ParVector  par_vector;
    int              jlower, jupper;
    int              nvalues;
    int             *indices;
    double          *values;
    
-   HYPRE_IJVectorCreate(comm, jlower, jupper, &ij_vector);
-   HYPRE_IJVectorSetObjectType(ij_vector, HYPRE_PARCSR);
-   HYPRE_IJVectorInitialize(ij_vector);
+   NALU_HYPRE_IJVectorCreate(comm, jlower, jupper, &ij_vector);
+   NALU_HYPRE_IJVectorSetObjectType(ij_vector, NALU_HYPRE_PARCSR);
+   NALU_HYPRE_IJVectorInitialize(ij_vector);
    
    /* set vector values */
-   HYPRE_IJVectorSetValues(ij_vector, nvalues, indices, values);
+   NALU_HYPRE_IJVectorSetValues(ij_vector, nvalues, indices, values);
    ...
    
-   HYPRE_IJVectorAssemble(ij_vector);
-   HYPRE_IJVectorGetObject(ij_vector, (void **) &par_vector);
+   NALU_HYPRE_IJVectorAssemble(ij_vector);
+   NALU_HYPRE_IJVectorGetObject(ij_vector, (void **) &par_vector);
 
 The ``Create()`` routine creates an empty vector object that lives on the
 ``comm`` communicator.  This is a collective call, with each process passing its
@@ -167,7 +167,7 @@ system solves, these extents will typically match the row partitioning of the
 matrix as well.
 
 The ``SetObjectType()`` routine sets the underlying vector storage type to
-``HYPRE_PARCSR`` (this is the only storage type currently supported).  The
+``NALU_HYPRE_PARCSR`` (this is the only storage type currently supported).  The
 ``Initialize()`` routine indicates that the vector coefficients (or values) are
 ready to be set.  This routine may or may not involve the allocation of memory
 for the coefficient data, depending on the implementation.

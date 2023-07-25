@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_Euclid.h"
+#include "_nalu_hypre_Euclid.h"
 /* #include "io_dh.h" */
 /* #include "Mat_dh.h" */
 /* #include "Vec_dh.h" */
@@ -23,7 +23,7 @@ FILE * openFile_dh(const char *filenameIN, const char *modeIN)
   FILE *fp = NULL;
 
   if ((fp = fopen(filenameIN, modeIN)) == NULL) {
-    hypre_sprintf(msgBuf_dh, "can't open file: %s for mode %s\n", filenameIN, modeIN);
+    nalu_hypre_sprintf(msgBuf_dh, "can't open file: %s for mode %s\n", filenameIN, modeIN);
     SET_ERROR(NULL, msgBuf_dh);
   }
   END_FUNC_VAL(fp)
@@ -39,18 +39,18 @@ void closeFile_dh(FILE *fpIN)
 }
 
 /*----------------------------------------------------------------*/
-void io_dh_print_ebin_mat_private(HYPRE_Int m, HYPRE_Int beg_row,
-                                HYPRE_Int *rp, HYPRE_Int *cval, HYPRE_Real *aval, 
-                           HYPRE_Int *n2o, HYPRE_Int *o2n, Hash_i_dh hash, char *filename)
+void io_dh_print_ebin_mat_private(NALU_HYPRE_Int m, NALU_HYPRE_Int beg_row,
+                                NALU_HYPRE_Int *rp, NALU_HYPRE_Int *cval, NALU_HYPRE_Real *aval, 
+                           NALU_HYPRE_Int *n2o, NALU_HYPRE_Int *o2n, Hash_i_dh hash, char *filename)
 {}
 
-extern void io_dh_read_ebin_mat_private(HYPRE_Int *m, HYPRE_Int **rp, HYPRE_Int **cval,
-                                     HYPRE_Real **aval, char *filename)
+extern void io_dh_read_ebin_mat_private(NALU_HYPRE_Int *m, NALU_HYPRE_Int **rp, NALU_HYPRE_Int **cval,
+                                     NALU_HYPRE_Real **aval, char *filename)
 {}
 
-void io_dh_print_ebin_vec_private(HYPRE_Int n, HYPRE_Int beg_row, HYPRE_Real *vals,
-                           HYPRE_Int *n2o, HYPRE_Int *o2n, Hash_i_dh hash, char *filename)
+void io_dh_print_ebin_vec_private(NALU_HYPRE_Int n, NALU_HYPRE_Int beg_row, NALU_HYPRE_Real *vals,
+                           NALU_HYPRE_Int *n2o, NALU_HYPRE_Int *o2n, Hash_i_dh hash, char *filename)
 {}
 
-void io_dh_read_ebin_vec_private(HYPRE_Int *n, HYPRE_Real **vals, char *filename)
+void io_dh_read_ebin_vec_private(NALU_HYPRE_Int *n, NALU_HYPRE_Real **vals, char *filename)
 {}

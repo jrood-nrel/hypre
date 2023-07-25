@@ -38,12 +38,12 @@
  * are contiguous.  This is required by the mat-vec routine.
  *--------------------------------------------------------------------------*/
 
-Numbering *NumberingCreate(Matrix *mat, HYPRE_Int size)
+Numbering *NumberingCreate(Matrix *mat, NALU_HYPRE_Int size)
 {
-   Numbering *numb = hypre_TAlloc(Numbering, 1, HYPRE_MEMORY_HOST);
-   HYPRE_Int row, i, len, *ind;
-   HYPRE_Real *val;
-   HYPRE_Int num_external = 0;
+   Numbering *numb = nalu_hypre_TAlloc(Numbering, 1, NALU_HYPRE_MEMORY_HOST);
+   NALU_HYPRE_Int row, i, len, *ind;
+   NALU_HYPRE_Real *val;
+   NALU_HYPRE_Int num_external = 0;
 
    numb->size    = size;
    numb->beg_row = mat->beg_row;
@@ -51,7 +51,7 @@ Numbering *NumberingCreate(Matrix *mat, HYPRE_Int size)
    numb->num_loc = mat->end_row - mat->beg_row + 1;
    numb->num_ind = mat->end_row - mat->beg_row + 1;
 
-   numb->local_to_global = hypre_TAlloc(HYPRE_Int, (numb->num_loc+size) , HYPRE_MEMORY_HOST);
+   numb->local_to_global = nalu_hypre_TAlloc(NALU_HYPRE_Int, (numb->num_loc+size) , NALU_HYPRE_MEMORY_HOST);
    numb->hash            = HashCreate(2*size+1);
 
    /* Set up the local part of local_to_global */
@@ -76,9 +76,9 @@ Numbering *NumberingCreate(Matrix *mat, HYPRE_Int size)
 
                   /* allocate more space for numbering */
                   numb->size *= 2;
-                  numb->local_to_global = (HYPRE_Int *)
-                     hypre_TReAlloc(numb->local_to_global,HYPRE_Int,
-                           (numb->num_loc+numb->size), HYPRE_MEMORY_HOST);
+                  numb->local_to_global = (NALU_HYPRE_Int *)
+                     nalu_hypre_TReAlloc(numb->local_to_global,NALU_HYPRE_Int,
+                           (numb->num_loc+numb->size), NALU_HYPRE_MEMORY_HOST);
                   newHash = HashCreate(2*numb->size+1);
                   HashRehash(numb->hash, newHash);
                   HashDestroy(numb->hash);
@@ -94,7 +94,7 @@ Numbering *NumberingCreate(Matrix *mat, HYPRE_Int size)
    }
 
    /* Sort the indices */
-   hypre_shell_sort(num_external, &numb->local_to_global[numb->num_loc]);
+   nalu_hypre_shell_sort(num_external, &numb->local_to_global[numb->num_loc]);
 
    /* Redo the hash table for the sorted indices */
    HashReset(numb->hash);
@@ -115,7 +115,7 @@ Numbering *NumberingCreate(Matrix *mat, HYPRE_Int size)
 
 Numbering *NumberingCreateCopy(Numbering *orig)
 {
-   Numbering *numb = hypre_TAlloc(Numbering, 1, HYPRE_MEMORY_HOST);
+   Numbering *numb = nalu_hypre_TAlloc(Numbering, 1, NALU_HYPRE_MEMORY_HOST);
 
    numb->size    = orig->size;
    numb->beg_row = orig->beg_row;
@@ -124,9 +124,9 @@ Numbering *NumberingCreateCopy(Numbering *orig)
    numb->num_ind = orig->num_ind;
 
    numb->local_to_global =
-      hypre_TAlloc(HYPRE_Int, (numb->num_loc+numb->size) , HYPRE_MEMORY_HOST);
-   hypre_TMemcpy(numb->local_to_global,  orig->local_to_global,
-         HYPRE_Int, numb->num_ind, HYPRE_MEMORY_HOST, HYPRE_MEMORY_HOST);
+      nalu_hypre_TAlloc(NALU_HYPRE_Int, (numb->num_loc+numb->size) , NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TMemcpy(numb->local_to_global,  orig->local_to_global,
+         NALU_HYPRE_Int, numb->num_ind, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_HOST);
 
    numb->hash = HashCreate(2*numb->size+1);
    HashRehash(orig->hash, numb->hash);
@@ -140,10 +140,10 @@ Numbering *NumberingCreateCopy(Numbering *orig)
 
 void NumberingDestroy(Numbering *numb)
 {
-   hypre_TFree(numb->local_to_global,HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(numb->local_to_global,NALU_HYPRE_MEMORY_HOST);
    HashDestroy(numb->hash);
 
-   hypre_TFree(numb,HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(numb,NALU_HYPRE_MEMORY_HOST);
 }
 
 /*--------------------------------------------------------------------------
@@ -151,9 +151,9 @@ void NumberingDestroy(Numbering *numb)
  * numbering.  May be done in place.
  *--------------------------------------------------------------------------*/
 
-void NumberingLocalToGlobal(Numbering *numb, HYPRE_Int len, HYPRE_Int *local, HYPRE_Int *global)
+void NumberingLocalToGlobal(Numbering *numb, NALU_HYPRE_Int len, NALU_HYPRE_Int *local, NALU_HYPRE_Int *global)
 {
-   HYPRE_Int i;
+   NALU_HYPRE_Int i;
 
    for (i=0; i<len; i++)
       global[i] = numb->local_to_global[local[i]];
@@ -165,9 +165,9 @@ void NumberingLocalToGlobal(Numbering *numb, HYPRE_Int len, HYPRE_Int *local, HY
  * to the numbering object.  May be done in place.
  *--------------------------------------------------------------------------*/
 
-void NumberingGlobalToLocal(Numbering *numb, HYPRE_Int len, HYPRE_Int *global, HYPRE_Int *local)
+void NumberingGlobalToLocal(Numbering *numb, NALU_HYPRE_Int len, NALU_HYPRE_Int *global, NALU_HYPRE_Int *local)
 {
-   HYPRE_Int i, l;
+   NALU_HYPRE_Int i, l;
 
    for (i=0; i<len; i++)
    {
@@ -184,12 +184,12 @@ void NumberingGlobalToLocal(Numbering *numb, HYPRE_Int len, HYPRE_Int *global, H
                /* allocate more space for numbering */
                numb->size *= 2;
 #ifdef PARASAILS_DEBUG
-               hypre_printf("Numbering resize %d\n", numb->size);
+               nalu_hypre_printf("Numbering resize %d\n", numb->size);
 #endif
-               numb->local_to_global = hypre_TReAlloc(numb->local_to_global,
-                                                      HYPRE_Int,
+               numb->local_to_global = nalu_hypre_TReAlloc(numb->local_to_global,
+                                                      NALU_HYPRE_Int,
                                                       numb->num_loc + numb->size,
-                                                      HYPRE_MEMORY_HOST);
+                                                      NALU_HYPRE_MEMORY_HOST);
 
                newHash = HashCreate(2*numb->size+1);
                HashRehash(numb->hash, newHash);

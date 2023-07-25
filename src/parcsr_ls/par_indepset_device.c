@@ -9,36 +9,36 @@
  *
  *****************************************************************************/
 
-#include "_hypre_parcsr_ls.h"
-#include "_hypre_utilities.hpp"
+#include "_nalu_hypre_parcsr_ls.h"
+#include "_nalu_hypre_utilities.hpp"
 
-#if defined(HYPRE_USING_GPU)
+#if defined(NALU_HYPRE_USING_GPU)
 __global__ void
-hypreGPUKernel_IndepSetMain(hypre_DeviceItem &item,
-                            HYPRE_Int   graph_diag_size,
-                            HYPRE_Int  *graph_diag,
-                            HYPRE_Real *measure_diag,
-                            HYPRE_Real *measure_offd,
-                            HYPRE_Int  *S_diag_i,
-                            HYPRE_Int  *S_diag_j,
-                            HYPRE_Int  *S_offd_i,
-                            HYPRE_Int  *S_offd_j,
-                            HYPRE_Int  *IS_marker_diag,
-                            HYPRE_Int  *IS_marker_offd,
-                            HYPRE_Int   IS_offd_temp_mark)
+hypreGPUKernel_IndepSetMain(nalu_hypre_DeviceItem &item,
+                            NALU_HYPRE_Int   graph_diag_size,
+                            NALU_HYPRE_Int  *graph_diag,
+                            NALU_HYPRE_Real *measure_diag,
+                            NALU_HYPRE_Real *measure_offd,
+                            NALU_HYPRE_Int  *S_diag_i,
+                            NALU_HYPRE_Int  *S_diag_j,
+                            NALU_HYPRE_Int  *S_offd_i,
+                            NALU_HYPRE_Int  *S_offd_j,
+                            NALU_HYPRE_Int  *IS_marker_diag,
+                            NALU_HYPRE_Int  *IS_marker_offd,
+                            NALU_HYPRE_Int   IS_offd_temp_mark)
 {
-   HYPRE_Int warp_id = hypre_gpu_get_grid_warp_id<1, 1>(item);
+   NALU_HYPRE_Int warp_id = nalu_hypre_gpu_get_grid_warp_id<1, 1>(item);
 
    if (warp_id >= graph_diag_size)
    {
       return;
    }
 
-   HYPRE_Int lane = hypre_gpu_get_lane_id<1>(item);
-   HYPRE_Int row, row_start, row_end;
-   HYPRE_Int i = 0, j;
-   HYPRE_Real t = 0.0, measure_row;
-   HYPRE_Int marker_row = 1;
+   NALU_HYPRE_Int lane = nalu_hypre_gpu_get_lane_id<1>(item);
+   NALU_HYPRE_Int row, row_start, row_end;
+   NALU_HYPRE_Int i = 0, j;
+   NALU_HYPRE_Real t = 0.0, measure_row;
+   NALU_HYPRE_Int marker_row = 1;
 
    if (lane < 2)
    {
@@ -46,17 +46,17 @@ hypreGPUKernel_IndepSetMain(hypre_DeviceItem &item,
       i   = read_only_load(S_diag_i + row + lane);
    }
 
-   row_start = warp_shuffle_sync(item, HYPRE_WARP_FULL_MASK, i, 0);
-   row_end   = warp_shuffle_sync(item, HYPRE_WARP_FULL_MASK, i, 1);
+   row_start = warp_shuffle_sync(item, NALU_HYPRE_WARP_FULL_MASK, i, 0);
+   row_end   = warp_shuffle_sync(item, NALU_HYPRE_WARP_FULL_MASK, i, 1);
 
    if (lane == 0)
    {
       t = read_only_load(measure_diag + row);
    }
 
-   measure_row = warp_shuffle_sync(item, HYPRE_WARP_FULL_MASK, t, 0);
+   measure_row = warp_shuffle_sync(item, NALU_HYPRE_WARP_FULL_MASK, t, 0);
 
-   for (i = row_start + lane; i < row_end; i += HYPRE_WARP_SIZE)
+   for (i = row_start + lane; i < row_end; i += NALU_HYPRE_WARP_SIZE)
    {
       j = read_only_load(S_diag_j + i);
       t = read_only_load(measure_diag + j);
@@ -78,10 +78,10 @@ hypreGPUKernel_IndepSetMain(hypre_DeviceItem &item,
       i = read_only_load(S_offd_i + row + lane);
    }
 
-   row_start = warp_shuffle_sync(item, HYPRE_WARP_FULL_MASK, i, 0);
-   row_end   = warp_shuffle_sync(item, HYPRE_WARP_FULL_MASK, i, 1);
+   row_start = warp_shuffle_sync(item, NALU_HYPRE_WARP_FULL_MASK, i, 0);
+   row_end   = warp_shuffle_sync(item, NALU_HYPRE_WARP_FULL_MASK, i, 1);
 
-   for (i = row_start + lane; i < row_end; i += HYPRE_WARP_SIZE)
+   for (i = row_start + lane; i < row_end; i += NALU_HYPRE_WARP_SIZE)
    {
       j = read_only_load(S_offd_j + i);
       t = read_only_load(measure_offd + j);
@@ -107,14 +107,14 @@ hypreGPUKernel_IndepSetMain(hypre_DeviceItem &item,
 }
 
 __global__ void
-hypreGPUKernel_IndepSetFixMarker(hypre_DeviceItem &item,
-                                 HYPRE_Int  *IS_marker_diag,
-                                 HYPRE_Int   num_elmts_send,
-                                 HYPRE_Int  *send_map_elmts,
-                                 HYPRE_Int  *int_send_buf,
-                                 HYPRE_Int   IS_offd_temp_mark)
+hypreGPUKernel_IndepSetFixMarker(nalu_hypre_DeviceItem &item,
+                                 NALU_HYPRE_Int  *IS_marker_diag,
+                                 NALU_HYPRE_Int   num_elmts_send,
+                                 NALU_HYPRE_Int  *send_map_elmts,
+                                 NALU_HYPRE_Int  *int_send_buf,
+                                 NALU_HYPRE_Int   IS_offd_temp_mark)
 {
-   HYPRE_Int thread_id = hypre_gpu_get_grid_thread_id<1, 1>(item);
+   NALU_HYPRE_Int thread_id = nalu_hypre_gpu_get_grid_thread_id<1, 1>(item);
 
    if (thread_id >= num_elmts_send)
    {
@@ -130,48 +130,48 @@ hypreGPUKernel_IndepSetFixMarker(hypre_DeviceItem &item,
 /* Find IS in the graph whose vertices are in graph_diag, on exit
  * mark the vertices in IS by 1 and those not in IS by 0 in IS_marker_diag
  * Note: IS_marker_offd will not be sync'ed on exit */
-HYPRE_Int
-hypre_BoomerAMGIndepSetDevice( hypre_ParCSRMatrix  *S,
-                               HYPRE_Real          *measure_diag,
-                               HYPRE_Real          *measure_offd,
-                               HYPRE_Int            graph_diag_size,
-                               HYPRE_Int           *graph_diag,
-                               HYPRE_Int           *IS_marker_diag,
-                               HYPRE_Int           *IS_marker_offd,
-                               hypre_ParCSRCommPkg *comm_pkg,
-                               HYPRE_Int           *int_send_buf )
+NALU_HYPRE_Int
+nalu_hypre_BoomerAMGIndepSetDevice( nalu_hypre_ParCSRMatrix  *S,
+                               NALU_HYPRE_Real          *measure_diag,
+                               NALU_HYPRE_Real          *measure_offd,
+                               NALU_HYPRE_Int            graph_diag_size,
+                               NALU_HYPRE_Int           *graph_diag,
+                               NALU_HYPRE_Int           *IS_marker_diag,
+                               NALU_HYPRE_Int           *IS_marker_offd,
+                               nalu_hypre_ParCSRCommPkg *comm_pkg,
+                               NALU_HYPRE_Int           *int_send_buf )
 {
    /* This a temporary mark used in PMIS alg. to mark the *offd* nodes that
     * should not be in the final IS
     * Must make sure that this number does NOT exist in IS_marker_offd on input
     */
-   HYPRE_Int IS_offd_temp_mark = 9999;
+   NALU_HYPRE_Int IS_offd_temp_mark = 9999;
 
-   hypre_CSRMatrix *S_diag   = hypre_ParCSRMatrixDiag(S);
-   HYPRE_Int       *S_diag_i = hypre_CSRMatrixI(S_diag);
-   HYPRE_Int       *S_diag_j = hypre_CSRMatrixJ(S_diag);
-   hypre_CSRMatrix *S_offd   = hypre_ParCSRMatrixOffd(S);
-   HYPRE_Int       *S_offd_i = hypre_CSRMatrixI(S_offd);
-   HYPRE_Int       *S_offd_j = hypre_CSRMatrixJ(S_offd);
+   nalu_hypre_CSRMatrix *S_diag   = nalu_hypre_ParCSRMatrixDiag(S);
+   NALU_HYPRE_Int       *S_diag_i = nalu_hypre_CSRMatrixI(S_diag);
+   NALU_HYPRE_Int       *S_diag_j = nalu_hypre_CSRMatrixJ(S_diag);
+   nalu_hypre_CSRMatrix *S_offd   = nalu_hypre_ParCSRMatrixOffd(S);
+   NALU_HYPRE_Int       *S_offd_i = nalu_hypre_CSRMatrixI(S_offd);
+   NALU_HYPRE_Int       *S_offd_j = nalu_hypre_CSRMatrixJ(S_offd);
 
-   HYPRE_Int  num_sends      = hypre_ParCSRCommPkgNumSends(comm_pkg);
-   HYPRE_Int  num_elmts_send = hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends);
-   HYPRE_Int *send_map_elmts = hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg);
+   NALU_HYPRE_Int  num_sends      = nalu_hypre_ParCSRCommPkgNumSends(comm_pkg);
+   NALU_HYPRE_Int  num_elmts_send = nalu_hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends);
+   NALU_HYPRE_Int *send_map_elmts = nalu_hypre_ParCSRCommPkgDeviceSendMapElmts(comm_pkg);
 
-   hypre_ParCSRCommHandle *comm_handle;
+   nalu_hypre_ParCSRCommHandle *comm_handle;
 
    /*------------------------------------------------------------------
     * Initialize IS_marker by putting all nodes in the IS (marked by 1)
     *------------------------------------------------------------------*/
-   hypreDevice_ScatterConstant(IS_marker_diag, graph_diag_size, graph_diag, (HYPRE_Int) 1);
+   hypreDevice_ScatterConstant(IS_marker_diag, graph_diag_size, graph_diag, (NALU_HYPRE_Int) 1);
 
    /*-------------------------------------------------------
     * Remove nodes from the initial independent set
     *-------------------------------------------------------*/
-   dim3 bDim = hypre_GetDefaultDeviceBlockDimension();
-   dim3 gDim = hypre_GetDefaultDeviceGridDimension(graph_diag_size, "warp", bDim);
+   dim3 bDim = nalu_hypre_GetDefaultDeviceBlockDimension();
+   dim3 gDim = nalu_hypre_GetDefaultDeviceGridDimension(graph_diag_size, "warp", bDim);
 
-   HYPRE_GPU_LAUNCH( hypreGPUKernel_IndepSetMain, gDim, bDim,
+   NALU_HYPRE_GPU_LAUNCH( hypreGPUKernel_IndepSetMain, gDim, bDim,
                      graph_diag_size, graph_diag, measure_diag, measure_offd,
                      S_diag_i, S_diag_j, S_offd_i, S_offd_j,
                      IS_marker_diag, IS_marker_offd, IS_offd_temp_mark );
@@ -179,77 +179,77 @@ hypre_BoomerAMGIndepSetDevice( hypre_ParCSRMatrix  *S,
    /*--------------------------------------------------------------------
     * Exchange boundary data for IS_marker: send external IS to internal
     *-------------------------------------------------------------------*/
-#if defined(HYPRE_WITH_GPU_AWARE_MPI)
+#if defined(NALU_HYPRE_WITH_GPU_AWARE_MPI)
    /* RL: make sure IS_marker_offd is ready before issuing GPU-GPU MPI */
-   hypre_ForceSyncComputeStream(hypre_handle());
+   nalu_hypre_ForceSyncComputeStream(nalu_hypre_handle());
 #endif
 
-   comm_handle = hypre_ParCSRCommHandleCreate_v2(12, comm_pkg,
-                                                 HYPRE_MEMORY_DEVICE, IS_marker_offd,
-                                                 HYPRE_MEMORY_DEVICE, int_send_buf);
-   hypre_ParCSRCommHandleDestroy(comm_handle);
+   comm_handle = nalu_hypre_ParCSRCommHandleCreate_v2(12, comm_pkg,
+                                                 NALU_HYPRE_MEMORY_DEVICE, IS_marker_offd,
+                                                 NALU_HYPRE_MEMORY_DEVICE, int_send_buf);
+   nalu_hypre_ParCSRCommHandleDestroy(comm_handle);
 
    /* adjust IS_marker_diag from the received */
-   gDim = hypre_GetDefaultDeviceGridDimension(num_elmts_send, "thread", bDim);
+   gDim = nalu_hypre_GetDefaultDeviceGridDimension(num_elmts_send, "thread", bDim);
 
-   HYPRE_GPU_LAUNCH( hypreGPUKernel_IndepSetFixMarker, gDim, bDim,
+   NALU_HYPRE_GPU_LAUNCH( hypreGPUKernel_IndepSetFixMarker, gDim, bDim,
                      IS_marker_diag, num_elmts_send, send_map_elmts,
                      int_send_buf, IS_offd_temp_mark );
 
    /* Note that IS_marker_offd is not sync'ed (communicated) here */
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /* Augments measures by some random value between 0 and 1
  * aug_rand: 1: GPU RAND; 11: GPU SEQ RAND
  *           2: CPU RAND; 12: CPU SEQ RAND
  */
-HYPRE_Int
-hypre_BoomerAMGIndepSetInitDevice( hypre_ParCSRMatrix *S,
-                                   HYPRE_Real         *measure_array,
-                                   HYPRE_Int           aug_rand)
+NALU_HYPRE_Int
+nalu_hypre_BoomerAMGIndepSetInitDevice( nalu_hypre_ParCSRMatrix *S,
+                                   NALU_HYPRE_Real         *measure_array,
+                                   NALU_HYPRE_Int           aug_rand)
 {
-   MPI_Comm         comm          = hypre_ParCSRMatrixComm(S);
-   hypre_CSRMatrix *S_diag        = hypre_ParCSRMatrixDiag(S);
-   HYPRE_Int        num_rows_diag = hypre_CSRMatrixNumRows(S_diag);
-   HYPRE_Int        my_id;
-   HYPRE_Real      *urand;
+   MPI_Comm         comm          = nalu_hypre_ParCSRMatrixComm(S);
+   nalu_hypre_CSRMatrix *S_diag        = nalu_hypre_ParCSRMatrixDiag(S);
+   NALU_HYPRE_Int        num_rows_diag = nalu_hypre_CSRMatrixNumRows(S_diag);
+   NALU_HYPRE_Int        my_id;
+   NALU_HYPRE_Real      *urand;
 
-   hypre_MPI_Comm_rank(comm, &my_id);
+   nalu_hypre_MPI_Comm_rank(comm, &my_id);
 
-   urand = hypre_TAlloc(HYPRE_Real, num_rows_diag, HYPRE_MEMORY_DEVICE);
+   urand = nalu_hypre_TAlloc(NALU_HYPRE_Real, num_rows_diag, NALU_HYPRE_MEMORY_DEVICE);
 
    if (aug_rand == 2 || aug_rand == 12)
    {
-      HYPRE_Real *h_urand;
-      h_urand = hypre_CTAlloc(HYPRE_Real, num_rows_diag, HYPRE_MEMORY_HOST);
-      hypre_BoomerAMGIndepSetInit(S, h_urand, aug_rand == 12);
-      hypre_TMemcpy(urand, h_urand, HYPRE_Real, num_rows_diag, HYPRE_MEMORY_DEVICE, HYPRE_MEMORY_HOST);
-      hypre_TFree(h_urand, HYPRE_MEMORY_HOST);
+      NALU_HYPRE_Real *h_urand;
+      h_urand = nalu_hypre_CTAlloc(NALU_HYPRE_Real, num_rows_diag, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_BoomerAMGIndepSetInit(S, h_urand, aug_rand == 12);
+      nalu_hypre_TMemcpy(urand, h_urand, NALU_HYPRE_Real, num_rows_diag, NALU_HYPRE_MEMORY_DEVICE, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(h_urand, NALU_HYPRE_MEMORY_HOST);
    }
    else if (aug_rand == 11)
    {
-      HYPRE_BigInt n_global     = hypre_ParCSRMatrixGlobalNumRows(S);
-      HYPRE_BigInt n_first      = hypre_ParCSRMatrixFirstRowIndex(S);
-      HYPRE_Real  *urand_global = hypre_TAlloc(HYPRE_Real, n_global, HYPRE_MEMORY_DEVICE);
+      NALU_HYPRE_BigInt n_global     = nalu_hypre_ParCSRMatrixGlobalNumRows(S);
+      NALU_HYPRE_BigInt n_first      = nalu_hypre_ParCSRMatrixFirstRowIndex(S);
+      NALU_HYPRE_Real  *urand_global = nalu_hypre_TAlloc(NALU_HYPRE_Real, n_global, NALU_HYPRE_MEMORY_DEVICE);
       // To make sure all rank generate the same sequence
-      hypre_CurandUniform(n_global, urand_global, 0, 0, 1, 0);
-      hypre_TMemcpy(urand, urand_global + n_first, HYPRE_Real, num_rows_diag, HYPRE_MEMORY_DEVICE,
-                    HYPRE_MEMORY_DEVICE);
-      hypre_TFree(urand_global, HYPRE_MEMORY_DEVICE);
+      nalu_hypre_CurandUniform(n_global, urand_global, 0, 0, 1, 0);
+      nalu_hypre_TMemcpy(urand, urand_global + n_first, NALU_HYPRE_Real, num_rows_diag, NALU_HYPRE_MEMORY_DEVICE,
+                    NALU_HYPRE_MEMORY_DEVICE);
+      nalu_hypre_TFree(urand_global, NALU_HYPRE_MEMORY_DEVICE);
    }
    else
    {
-      hypre_assert(aug_rand == 1);
-      hypre_CurandUniform(num_rows_diag, urand, 0, 0, 0, 0);
+      nalu_hypre_assert(aug_rand == 1);
+      nalu_hypre_CurandUniform(num_rows_diag, urand, 0, 0, 0, 0);
    }
 
    hypreDevice_ComplexAxpyn(measure_array, num_rows_diag, urand, measure_array, 1.0);
 
-   hypre_TFree(urand, HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(urand, NALU_HYPRE_MEMORY_DEVICE);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
-#endif // #if defined(HYPRE_USING_GPU)
+#endif // #if defined(NALU_HYPRE_USING_GPU)

@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_Euclid.h"
+#include "_nalu_hypre_Euclid.h"
 
 /* shell sort adopted from Edmond Chow */
 
@@ -13,10 +13,10 @@
 
 #undef __FUNC__
 #define __FUNC__ "shellSort_int"
-void shellSort_int(const HYPRE_Int n, HYPRE_Int *x)
+void shellSort_int(const NALU_HYPRE_Int n, NALU_HYPRE_Int *x)
 {
   START_FUNC_DH
-  HYPRE_Int m, max, j, k, itemp;
+  NALU_HYPRE_Int m, max, j, k, itemp;
 
   m = n/2;
   while (m > 0) {
@@ -36,11 +36,11 @@ void shellSort_int(const HYPRE_Int n, HYPRE_Int *x)
 
 #undef __FUNC__
 #define __FUNC__ "shellSort_float"
-void shellSort_float(const HYPRE_Int n, HYPRE_Real *x)
+void shellSort_float(const NALU_HYPRE_Int n, NALU_HYPRE_Real *x)
 {
   START_FUNC_DH
-  HYPRE_Int m, max, j, k;
-  HYPRE_Real itemp;
+  NALU_HYPRE_Int m, max, j, k;
+  NALU_HYPRE_Real itemp;
 
   m = n/2;
   while (m > 0) {
@@ -62,10 +62,10 @@ void shellSort_float(const HYPRE_Int n, HYPRE_Real *x)
 #if 0
 #undef __FUNC__
 #define __FUNC__ "shellSort_int_float"
-void shellSort_int_float(HYPRE_Int n, HYPRE_Int *x, VAL_DH *xVals)
+void shellSort_int_float(NALU_HYPRE_Int n, NALU_HYPRE_Int *x, VAL_DH *xVals)
 {
   START_FUNC_DH
-  HYPRE_Int m, max, j, k, itemp;
+  NALU_HYPRE_Int m, max, j, k, itemp;
   VAL_DH atemp;
 
   m = n/2;

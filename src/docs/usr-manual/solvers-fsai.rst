@@ -51,9 +51,9 @@ parameters of FSAI can be set via the following calls:
 
 .. code-block:: c
 
-   HYPRE_FSAISetMaxSteps(HYPRE_Solver solver, HYPRE_Int max_steps);
-   HYPRE_FSAISetMaxStepSize(HYPRE_Solver solver, HYPRE_Int max_step_size);
-   HYPRE_FSAISetKapTolerance(HYPRE_Solver solver, HYPRE_Real kap_tolerance);
+   NALU_HYPRE_FSAISetMaxSteps(NALU_HYPRE_Solver solver, NALU_HYPRE_Int max_steps);
+   NALU_HYPRE_FSAISetMaxStepSize(NALU_HYPRE_Solver solver, NALU_HYPRE_Int max_step_size);
+   NALU_HYPRE_FSAISetKapTolerance(NALU_HYPRE_Solver solver, NALU_HYPRE_Real kap_tolerance);
 
 .. _fsai-amg-smoother:
 
@@ -67,17 +67,17 @@ hypre, FSAI can be used as a complex smoother to BoomerAMG by calling the functi
 
 .. code-block:: c
 
-   HYPRE_BoomerAMGSetSmoothType(HYPRE_Solver solver, 4);
-   HYPRE_BoomerAMGSetSmoothNumLevels(HYPRE_Solver solver, HYPRE_Int num_levels);
+   NALU_HYPRE_BoomerAMGSetSmoothType(NALU_HYPRE_Solver solver, 4);
+   NALU_HYPRE_BoomerAMGSetSmoothNumLevels(NALU_HYPRE_Solver solver, NALU_HYPRE_Int num_levels);
 
 where ``num_levels`` is the last multigrid level where FSAI is used. The configuration
 parameters of the FSAI smoother, as described above, can be set via the following calls:
 
 .. code-block:: c
 
-   HYPRE_BoomerAMGSetFSAIMaxSteps(HYPRE_Solver solver, HYPRE_Int max_steps);
-   HYPRE_BoomerAMGSetFSAIMaxStepSize(HYPRE_Solver solver, HYPRE_Int max_step_size);
-   HYPRE_BoomerAMGSetFSAIKapTolerance(HYPRE_Solver solver, HYPRE_Real kap_tolerance);
+   NALU_HYPRE_BoomerAMGSetFSAIMaxSteps(NALU_HYPRE_Solver solver, NALU_HYPRE_Int max_steps);
+   NALU_HYPRE_BoomerAMGSetFSAIMaxStepSize(NALU_HYPRE_Solver solver, NALU_HYPRE_Int max_step_size);
+   NALU_HYPRE_BoomerAMGSetFSAIKapTolerance(NALU_HYPRE_Solver solver, NALU_HYPRE_Real kap_tolerance);
 
 Implementation Notes
 ------------------------------------------------------------------------------

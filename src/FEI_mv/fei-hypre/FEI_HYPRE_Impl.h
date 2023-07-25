@@ -6,18 +6,18 @@
  ******************************************************************************/
 
 /***************************************************************************
-  Module:  FEI_HYPRE_impl.h
+  Module:  FEI_NALU_HYPRE_impl.h
   Purpose: local implementation of the FEI/LSC 
  ***************************************************************************/
 
-#ifndef __FEI_HYPRE_IMPL_H__
-#define __FEI_HYPRE_IMPL_H__
+#ifndef __FEI_NALU_HYPRE_IMPL_H__
+#define __FEI_NALU_HYPRE_IMPL_H__
 
 /**************************************************************************
  definition of the class to capture the FEI information 
 ---------------------------------------------------------------------------*/
 
-class FEI_HYPRE_Elem_Block {
+class FEI_NALU_HYPRE_Elem_Block {
  
    int    blockID_;
    int    numElems_;
@@ -36,8 +36,8 @@ class FEI_HYPRE_Elem_Block {
 
 public :
 
-   FEI_HYPRE_Elem_Block(int blockID);
-   ~FEI_HYPRE_Elem_Block();
+   FEI_NALU_HYPRE_Elem_Block(int blockID);
+   ~FEI_NALU_HYPRE_Elem_Block();
    int    getElemBlockID()     {return blockID_;}
    int    getNumElems()        {return numElems_;}
    int    getElemNumNodes()    {return nodesPerElem_;}
@@ -64,13 +64,13 @@ public :
  definition of the class to capture the FEI information 
 ---------------------------------------------------------------------------*/
 
-class FEI_HYPRE_Impl 
+class FEI_NALU_HYPRE_Impl 
 {
    MPI_Comm mpiComm_;
    int      mypid_;
    int      outputLevel_;
    int      numBlocks_;
-   FEI_HYPRE_Elem_Block **elemBlocks_;
+   FEI_NALU_HYPRE_Elem_Block **elemBlocks_;
 
    int    numLocalNodes_;
    int    numExtNodes_;
@@ -128,8 +128,8 @@ class FEI_HYPRE_Impl
 
 public :
 
-   FEI_HYPRE_Impl(MPI_Comm comm);
-   ~FEI_HYPRE_Impl();
+   FEI_NALU_HYPRE_Impl(MPI_Comm comm);
+   ~FEI_NALU_HYPRE_Impl();
    int  parameters(int numParams, char **paramString);
 
    int  setSolveType(int solveType) {(void) solveType; return 0;}
@@ -206,5 +206,5 @@ public:
    static void IntSort2(int *, int *, int, int);
 };
 
-#endif /* endif for __FEI_HYPRE_IMPL_H__ */
+#endif /* endif for __FEI_NALU_HYPRE_IMPL_H__ */
 

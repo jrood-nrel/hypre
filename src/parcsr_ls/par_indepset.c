@@ -9,7 +9,7 @@
  *
  *****************************************************************************/
 
-#include "_hypre_parcsr_ls.h"
+#include "_nalu_hypre_parcsr_ls.h"
 
 /*==========================================================================*/
 /*==========================================================================*/
@@ -17,7 +17,7 @@
   Augments measures by some random value between 0 and 1.
 
   {\bf Input files:}
-  _hypre_parcsr_ls.h
+  _nalu_hypre_parcsr_ls.h
 
   @return Error code.
 
@@ -26,38 +26,38 @@
   @param measure_array [IN/OUT]
   measures assigned to each node of the parent graph
 
-  @see hypre_AMGIndepSet */
+  @see nalu_hypre_AMGIndepSet */
 /*--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_BoomerAMGIndepSetInit( hypre_ParCSRMatrix *S,
-                             HYPRE_Real         *measure_array,
-                             HYPRE_Int           seq_rand)
+NALU_HYPRE_Int
+nalu_hypre_BoomerAMGIndepSetInit( nalu_hypre_ParCSRMatrix *S,
+                             NALU_HYPRE_Real         *measure_array,
+                             NALU_HYPRE_Int           seq_rand)
 {
-   hypre_CSRMatrix *S_diag = hypre_ParCSRMatrixDiag(S);
-   MPI_Comm         comm = hypre_ParCSRMatrixComm(S);
-   HYPRE_Int        S_num_nodes = hypre_CSRMatrixNumRows(S_diag);
-   HYPRE_BigInt     big_i;
-   HYPRE_Int        i, my_id;
-   HYPRE_Int        ierr = 0;
+   nalu_hypre_CSRMatrix *S_diag = nalu_hypre_ParCSRMatrixDiag(S);
+   MPI_Comm         comm = nalu_hypre_ParCSRMatrixComm(S);
+   NALU_HYPRE_Int        S_num_nodes = nalu_hypre_CSRMatrixNumRows(S_diag);
+   NALU_HYPRE_BigInt     big_i;
+   NALU_HYPRE_Int        i, my_id;
+   NALU_HYPRE_Int        ierr = 0;
 
-   hypre_MPI_Comm_rank(comm, &my_id);
+   nalu_hypre_MPI_Comm_rank(comm, &my_id);
    i = 2747 + my_id;
    if (seq_rand)
    {
       i = 2747;
    }
-   hypre_SeedRand(i);
+   nalu_hypre_SeedRand(i);
    if (seq_rand)
    {
-      for (big_i = 0; big_i < hypre_ParCSRMatrixFirstRowIndex(S); big_i++)
+      for (big_i = 0; big_i < nalu_hypre_ParCSRMatrixFirstRowIndex(S); big_i++)
       {
-         hypre_Rand();
+         nalu_hypre_Rand();
       }
    }
    for (i = 0; i < S_num_nodes; i++)
    {
-      measure_array[i] += hypre_Rand();
+      measure_array[i] += nalu_hypre_Rand();
    }
 
    return (ierr);
@@ -83,7 +83,7 @@ hypre_BoomerAMGIndepSetInit( hypre_ParCSRMatrix *S,
   independent set by simply comparing the measures of adjacent nodes.
 
   {\bf Input files:}
-  _hypre_parcsr_ls.h
+  _nalu_hypre_parcsr_ls.h
 
   @return Error code.
 
@@ -98,37 +98,37 @@ hypre_BoomerAMGIndepSetInit( hypre_ParCSRMatrix *S,
   @param IS_marker [IN/OUT]
   marker array for independent set
 
-  @see hypre_InitAMGIndepSet */
+  @see nalu_hypre_InitAMGIndepSet */
 /*--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_BoomerAMGIndepSet( hypre_ParCSRMatrix *S,
-                         HYPRE_Real         *measure_array,
-                         HYPRE_Int          *graph_array,
-                         HYPRE_Int           graph_array_size,
-                         HYPRE_Int          *graph_array_offd,
-                         HYPRE_Int           graph_array_offd_size,
-                         HYPRE_Int          *IS_marker,
-                         HYPRE_Int          *IS_marker_offd     )
+NALU_HYPRE_Int
+nalu_hypre_BoomerAMGIndepSet( nalu_hypre_ParCSRMatrix *S,
+                         NALU_HYPRE_Real         *measure_array,
+                         NALU_HYPRE_Int          *graph_array,
+                         NALU_HYPRE_Int           graph_array_size,
+                         NALU_HYPRE_Int          *graph_array_offd,
+                         NALU_HYPRE_Int           graph_array_offd_size,
+                         NALU_HYPRE_Int          *IS_marker,
+                         NALU_HYPRE_Int          *IS_marker_offd     )
 {
-   hypre_CSRMatrix *S_diag   = hypre_ParCSRMatrixDiag(S);
-   HYPRE_Int       *S_diag_i = hypre_CSRMatrixI(S_diag);
-   HYPRE_Int       *S_diag_j = hypre_CSRMatrixJ(S_diag);
-   hypre_CSRMatrix *S_offd   = hypre_ParCSRMatrixOffd(S);
-   HYPRE_Int       *S_offd_i = hypre_CSRMatrixI(S_offd);
-   HYPRE_Int       *S_offd_j = NULL;
+   nalu_hypre_CSRMatrix *S_diag   = nalu_hypre_ParCSRMatrixDiag(S);
+   NALU_HYPRE_Int       *S_diag_i = nalu_hypre_CSRMatrixI(S_diag);
+   NALU_HYPRE_Int       *S_diag_j = nalu_hypre_CSRMatrixJ(S_diag);
+   nalu_hypre_CSRMatrix *S_offd   = nalu_hypre_ParCSRMatrixOffd(S);
+   NALU_HYPRE_Int       *S_offd_i = nalu_hypre_CSRMatrixI(S_offd);
+   NALU_HYPRE_Int       *S_offd_j = NULL;
 
-   HYPRE_Int        local_num_vars = hypre_CSRMatrixNumRows(S_diag);
-   HYPRE_Int        i, j, ig, jS, jj;
+   NALU_HYPRE_Int        local_num_vars = nalu_hypre_CSRMatrixNumRows(S_diag);
+   NALU_HYPRE_Int        i, j, ig, jS, jj;
 
    /*-------------------------------------------------------
     * Initialize IS_marker by putting all nodes in
     * the independent set.
     *-------------------------------------------------------*/
 
-   if (hypre_CSRMatrixNumCols(S_offd))
+   if (nalu_hypre_CSRMatrixNumCols(S_offd))
    {
-      S_offd_j = hypre_CSRMatrixJ(S_offd);
+      S_offd_j = nalu_hypre_CSRMatrixJ(S_offd);
    }
 
    for (ig = 0; ig < graph_array_size; ig++)
@@ -205,6 +205,6 @@ hypre_BoomerAMGIndepSet( hypre_ParCSRMatrix *S,
       }
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 

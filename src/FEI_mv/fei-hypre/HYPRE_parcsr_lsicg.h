@@ -7,7 +7,7 @@
 
 /******************************************************************************
  *
- * HYPRE_ParCSRLSICG interface
+ * NALU_HYPRE_ParCSRLSICG interface
  *
  *****************************************************************************/
 
@@ -18,35 +18,35 @@
 extern "C" {
 #endif
 
-extern int HYPRE_ParCSRLSICGCreate(MPI_Comm comm, HYPRE_Solver *solver);
+extern int NALU_HYPRE_ParCSRLSICGCreate(MPI_Comm comm, NALU_HYPRE_Solver *solver);
 
-extern int HYPRE_ParCSRLSICGDestroy(HYPRE_Solver solver);
+extern int NALU_HYPRE_ParCSRLSICGDestroy(NALU_HYPRE_Solver solver);
 
-extern int HYPRE_ParCSRLSICGSetup(HYPRE_Solver solver,HYPRE_ParCSRMatrix A,
-                                  HYPRE_ParVector b, HYPRE_ParVector x );
+extern int NALU_HYPRE_ParCSRLSICGSetup(NALU_HYPRE_Solver solver,NALU_HYPRE_ParCSRMatrix A,
+                                  NALU_HYPRE_ParVector b, NALU_HYPRE_ParVector x );
 
-extern int HYPRE_ParCSRLSICGSolve(HYPRE_Solver solver,HYPRE_ParCSRMatrix A,
-                                  HYPRE_ParVector b, HYPRE_ParVector x );
+extern int NALU_HYPRE_ParCSRLSICGSolve(NALU_HYPRE_Solver solver,NALU_HYPRE_ParCSRMatrix A,
+                                  NALU_HYPRE_ParVector b, NALU_HYPRE_ParVector x );
 
-extern int HYPRE_ParCSRLSICGSetTol(HYPRE_Solver solver, double tol);
+extern int NALU_HYPRE_ParCSRLSICGSetTol(NALU_HYPRE_Solver solver, double tol);
 
-extern int HYPRE_ParCSRLSICGSetMaxIter(HYPRE_Solver solver, int max_iter);
+extern int NALU_HYPRE_ParCSRLSICGSetMaxIter(NALU_HYPRE_Solver solver, int max_iter);
 
-extern int HYPRE_ParCSRLSICGSetStopCrit(HYPRE_Solver solver, int stop_crit);
+extern int NALU_HYPRE_ParCSRLSICGSetStopCrit(NALU_HYPRE_Solver solver, int stop_crit);
 
-extern int HYPRE_ParCSRLSICGSetPrecond(HYPRE_Solver  solver,
-          int (*precond)      (HYPRE_Solver sol, HYPRE_ParCSRMatrix matrix,
-			       HYPRE_ParVector b, HYPRE_ParVector x),
-          int (*precond_setup)(HYPRE_Solver sol, HYPRE_ParCSRMatrix matrix,
-			       HYPRE_ParVector b, HYPRE_ParVector x),
+extern int NALU_HYPRE_ParCSRLSICGSetPrecond(NALU_HYPRE_Solver  solver,
+          int (*precond)      (NALU_HYPRE_Solver sol, NALU_HYPRE_ParCSRMatrix matrix,
+			       NALU_HYPRE_ParVector b, NALU_HYPRE_ParVector x),
+          int (*precond_setup)(NALU_HYPRE_Solver sol, NALU_HYPRE_ParCSRMatrix matrix,
+			       NALU_HYPRE_ParVector b, NALU_HYPRE_ParVector x),
           void *precond_data );
 
-extern int HYPRE_ParCSRLSICGSetLogging(HYPRE_Solver solver, int logging);
+extern int NALU_HYPRE_ParCSRLSICGSetLogging(NALU_HYPRE_Solver solver, int logging);
 
-extern int HYPRE_ParCSRLSICGGetNumIterations(HYPRE_Solver solver,
+extern int NALU_HYPRE_ParCSRLSICGGetNumIterations(NALU_HYPRE_Solver solver,
                                              int *num_iterations);
 
-extern int HYPRE_ParCSRLSICGGetFinalRelativeResidualNorm(HYPRE_Solver solver,
+extern int NALU_HYPRE_ParCSRLSICGGetFinalRelativeResidualNorm(NALU_HYPRE_Solver solver,
                                                          double *norm );
 
 #ifdef __cplusplus

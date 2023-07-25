@@ -8,22 +8,22 @@
 /******************************************************************************
  *
  * NOTE: The following routines are currently only used as follows in hypre, and
- * also appear in '_hypre_struct_mv.h':
+ * also appear in '_nalu_hypre_struct_mv.h':
  *
- * hypre_BoxBoundaryG
+ * nalu_hypre_BoxBoundaryG
  * struct_mv/box_boundary.c
  * struct_mv/struct_vector.c
  * sstruct_ls/maxwell_grad.c
  * sstruct_ls/maxwell_TV_setup.c
  *
- * hypre_BoxBoundaryDG
+ * nalu_hypre_BoxBoundaryDG
  * struct_mv/box_boundary.c
  * sstruct_ls/maxwell_grad.c
  * sstruct_ls/maxwell_PNedelec_bdy.c
  *
  *****************************************************************************/
 
-#include "_hypre_struct_mv.h"
+#include "_nalu_hypre_struct_mv.h"
 
 /*--------------------------------------------------------------------------
  * Intersect a surface of 'box' with the physical boundary.  The surface is
@@ -33,60 +33,60 @@
  * in 'boundary' will be overwritten.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_BoxBoundaryIntersect( hypre_Box *box,
-                            hypre_StructGrid *grid,
-                            HYPRE_Int d,
-                            HYPRE_Int dir,
-                            hypre_BoxArray *boundary )
+NALU_HYPRE_Int
+nalu_hypre_BoxBoundaryIntersect( nalu_hypre_Box *box,
+                            nalu_hypre_StructGrid *grid,
+                            NALU_HYPRE_Int d,
+                            NALU_HYPRE_Int dir,
+                            nalu_hypre_BoxArray *boundary )
 {
-   HYPRE_Int           ndim = hypre_BoxNDim(box);
-   hypre_BoxManager   *boxman;
-   hypre_BoxManEntry **entries;
-   hypre_BoxArray     *int_boxes, *tmp_boxes;
-   hypre_Box          *bbox, *ibox;
-   HYPRE_Int           nentries, i;
+   NALU_HYPRE_Int           ndim = nalu_hypre_BoxNDim(box);
+   nalu_hypre_BoxManager   *boxman;
+   nalu_hypre_BoxManEntry **entries;
+   nalu_hypre_BoxArray     *int_boxes, *tmp_boxes;
+   nalu_hypre_Box          *bbox, *ibox;
+   NALU_HYPRE_Int           nentries, i;
 
    /* set bbox to the box surface of interest */
-   hypre_BoxArraySetSize(boundary, 1);
-   bbox = hypre_BoxArrayBox(boundary, 0);
-   hypre_CopyBox(box, bbox);
+   nalu_hypre_BoxArraySetSize(boundary, 1);
+   bbox = nalu_hypre_BoxArrayBox(boundary, 0);
+   nalu_hypre_CopyBox(box, bbox);
    if (dir > 0)
    {
-      hypre_BoxIMinD(bbox, d) = hypre_BoxIMaxD(bbox, d);
+      nalu_hypre_BoxIMinD(bbox, d) = nalu_hypre_BoxIMaxD(bbox, d);
    }
    else if (dir < 0)
    {
-      hypre_BoxIMaxD(bbox, d) = hypre_BoxIMinD(bbox, d);
+      nalu_hypre_BoxIMaxD(bbox, d) = nalu_hypre_BoxIMinD(bbox, d);
    }
 
    /* temporarily shift bbox in direction dir and intersect with the grid */
-   hypre_BoxIMinD(bbox, d) += dir;
-   hypre_BoxIMaxD(bbox, d) += dir;
-   boxman = hypre_StructGridBoxMan(grid);
-   hypre_BoxManIntersect(boxman, hypre_BoxIMin(bbox), hypre_BoxIMax(bbox),
+   nalu_hypre_BoxIMinD(bbox, d) += dir;
+   nalu_hypre_BoxIMaxD(bbox, d) += dir;
+   boxman = nalu_hypre_StructGridBoxMan(grid);
+   nalu_hypre_BoxManIntersect(boxman, nalu_hypre_BoxIMin(bbox), nalu_hypre_BoxIMax(bbox),
                          &entries, &nentries);
-   hypre_BoxIMinD(bbox, d) -= dir;
-   hypre_BoxIMaxD(bbox, d) -= dir;
+   nalu_hypre_BoxIMinD(bbox, d) -= dir;
+   nalu_hypre_BoxIMaxD(bbox, d) -= dir;
 
    /* shift intersected boxes in direction -dir and subtract from bbox */
-   int_boxes  = hypre_BoxArrayCreate(nentries, ndim);
-   tmp_boxes  = hypre_BoxArrayCreate(0, ndim);
+   int_boxes  = nalu_hypre_BoxArrayCreate(nentries, ndim);
+   tmp_boxes  = nalu_hypre_BoxArrayCreate(0, ndim);
    for (i = 0; i < nentries; i++)
    {
-      ibox = hypre_BoxArrayBox(int_boxes, i);
-      hypre_BoxManEntryGetExtents(
-         entries[i], hypre_BoxIMin(ibox), hypre_BoxIMax(ibox));
-      hypre_BoxIMinD(ibox, d) -= dir;
-      hypre_BoxIMaxD(ibox, d) -= dir;
+      ibox = nalu_hypre_BoxArrayBox(int_boxes, i);
+      nalu_hypre_BoxManEntryGetExtents(
+         entries[i], nalu_hypre_BoxIMin(ibox), nalu_hypre_BoxIMax(ibox));
+      nalu_hypre_BoxIMinD(ibox, d) -= dir;
+      nalu_hypre_BoxIMaxD(ibox, d) -= dir;
    }
-   hypre_SubtractBoxArrays(boundary, int_boxes, tmp_boxes);
+   nalu_hypre_SubtractBoxArrays(boundary, int_boxes, tmp_boxes);
 
-   hypre_BoxArrayDestroy(int_boxes);
-   hypre_BoxArrayDestroy(tmp_boxes);
-   hypre_TFree(entries, HYPRE_MEMORY_HOST);
+   nalu_hypre_BoxArrayDestroy(int_boxes);
+   nalu_hypre_BoxArrayDestroy(tmp_boxes);
+   nalu_hypre_TFree(entries, NALU_HYPRE_MEMORY_HOST);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
@@ -95,26 +95,26 @@ hypre_BoxBoundaryIntersect( hypre_Box *box,
  * this box array will get overwritten.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_BoxBoundaryG( hypre_Box *box,
-                    hypre_StructGrid *g,
-                    hypre_BoxArray *boundary )
+NALU_HYPRE_Int
+nalu_hypre_BoxBoundaryG( nalu_hypre_Box *box,
+                    nalu_hypre_StructGrid *g,
+                    nalu_hypre_BoxArray *boundary )
 {
-   HYPRE_Int       ndim = hypre_BoxNDim(box);
-   hypre_BoxArray *boundary_d;
-   HYPRE_Int       d;
+   NALU_HYPRE_Int       ndim = nalu_hypre_BoxNDim(box);
+   nalu_hypre_BoxArray *boundary_d;
+   NALU_HYPRE_Int       d;
 
-   boundary_d = hypre_BoxArrayCreate(0, ndim);
+   boundary_d = nalu_hypre_BoxArrayCreate(0, ndim);
    for (d = 0; d < ndim; d++)
    {
-      hypre_BoxBoundaryIntersect(box, g, d, -1, boundary_d);
-      hypre_AppendBoxArray(boundary_d, boundary);
-      hypre_BoxBoundaryIntersect(box, g, d,  1, boundary_d);
-      hypre_AppendBoxArray(boundary_d, boundary);
+      nalu_hypre_BoxBoundaryIntersect(box, g, d, -1, boundary_d);
+      nalu_hypre_AppendBoxArray(boundary_d, boundary);
+      nalu_hypre_BoxBoundaryIntersect(box, g, d,  1, boundary_d);
+      nalu_hypre_AppendBoxArray(boundary_d, boundary);
    }
-   hypre_BoxArrayDestroy(boundary_d);
+   nalu_hypre_BoxArrayDestroy(boundary_d);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
@@ -124,17 +124,17 @@ hypre_BoxBoundaryG( hypre_Box *box,
  * direction).  Any input contents of these box arrays will get overwritten.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_BoxBoundaryDG( hypre_Box *box,
-                     hypre_StructGrid *g,
-                     hypre_BoxArray *boundarym,
-                     hypre_BoxArray *boundaryp,
-                     HYPRE_Int d )
+NALU_HYPRE_Int
+nalu_hypre_BoxBoundaryDG( nalu_hypre_Box *box,
+                     nalu_hypre_StructGrid *g,
+                     nalu_hypre_BoxArray *boundarym,
+                     nalu_hypre_BoxArray *boundaryp,
+                     NALU_HYPRE_Int d )
 {
-   hypre_BoxBoundaryIntersect(box, g, d, -1, boundarym);
-   hypre_BoxBoundaryIntersect(box, g, d,  1, boundaryp);
+   nalu_hypre_BoxBoundaryIntersect(box, g, d, -1, boundarym);
+   nalu_hypre_BoxBoundaryIntersect(box, g, d,  1, boundaryp);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 
@@ -146,70 +146,70 @@ hypre_BoxBoundaryDG( hypre_Box *box,
  * in 'boundary' will be overwritten.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_GeneralBoxBoundaryIntersect( hypre_Box *box,
-                                   hypre_StructGrid *grid,
-                                   hypre_Index stencil_element,
-                                   hypre_BoxArray *boundary )
+NALU_HYPRE_Int
+nalu_hypre_GeneralBoxBoundaryIntersect( nalu_hypre_Box *box,
+                                   nalu_hypre_StructGrid *grid,
+                                   nalu_hypre_Index stencil_element,
+                                   nalu_hypre_BoxArray *boundary )
 {
-   hypre_BoxManager   *boxman;
-   hypre_BoxManEntry **entries;
-   hypre_BoxArray     *int_boxes, *tmp_boxes;
-   hypre_Box          *bbox, *ibox;
-   HYPRE_Int           nentries, i, j;
-   HYPRE_Int          *dd;
-   HYPRE_Int           ndim;
+   nalu_hypre_BoxManager   *boxman;
+   nalu_hypre_BoxManEntry **entries;
+   nalu_hypre_BoxArray     *int_boxes, *tmp_boxes;
+   nalu_hypre_Box          *bbox, *ibox;
+   NALU_HYPRE_Int           nentries, i, j;
+   NALU_HYPRE_Int          *dd;
+   NALU_HYPRE_Int           ndim;
 
-   ndim = hypre_StructGridNDim(grid);
-   dd = hypre_CTAlloc(HYPRE_Int,  ndim, HYPRE_MEMORY_HOST);
+   ndim = nalu_hypre_StructGridNDim(grid);
+   dd = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  ndim, NALU_HYPRE_MEMORY_HOST);
 
    for (i = 0; i < ndim; i++)
    {
-      dd[i] = hypre_IndexD(stencil_element, i);
+      dd[i] = nalu_hypre_IndexD(stencil_element, i);
    }
 
    /* set bbox to the box surface of interest */
-   hypre_BoxArraySetSize(boundary, 1);
-   bbox = hypre_BoxArrayBox(boundary, 0);
-   hypre_CopyBox(box, bbox);
+   nalu_hypre_BoxArraySetSize(boundary, 1);
+   bbox = nalu_hypre_BoxArrayBox(boundary, 0);
+   nalu_hypre_CopyBox(box, bbox);
 
    /* temporarily shift bbox in direction dir and intersect with the grid */
    for (i = 0; i < ndim; i++)
    {
-      hypre_BoxIMinD(bbox, i) += dd[i];
-      hypre_BoxIMaxD(bbox, i) += dd[i];
+      nalu_hypre_BoxIMinD(bbox, i) += dd[i];
+      nalu_hypre_BoxIMaxD(bbox, i) += dd[i];
    }
 
-   boxman = hypre_StructGridBoxMan(grid);
-   hypre_BoxManIntersect(boxman, hypre_BoxIMin(bbox), hypre_BoxIMax(bbox),
+   boxman = nalu_hypre_StructGridBoxMan(grid);
+   nalu_hypre_BoxManIntersect(boxman, nalu_hypre_BoxIMin(bbox), nalu_hypre_BoxIMax(bbox),
                          &entries, &nentries);
    for (i = 0; i < ndim; i++)
    {
-      hypre_BoxIMinD(bbox, i) -= dd[i];
-      hypre_BoxIMaxD(bbox, i) -= dd[i];
+      nalu_hypre_BoxIMinD(bbox, i) -= dd[i];
+      nalu_hypre_BoxIMaxD(bbox, i) -= dd[i];
    }
 
    /* shift intersected boxes in direction -dir and subtract from bbox */
-   int_boxes  = hypre_BoxArrayCreate(nentries, ndim);
-   tmp_boxes  = hypre_BoxArrayCreate(0, ndim);
+   int_boxes  = nalu_hypre_BoxArrayCreate(nentries, ndim);
+   tmp_boxes  = nalu_hypre_BoxArrayCreate(0, ndim);
    for (i = 0; i < nentries; i++)
    {
-      ibox = hypre_BoxArrayBox(int_boxes, i);
-      hypre_BoxManEntryGetExtents(
-         entries[i], hypre_BoxIMin(ibox), hypre_BoxIMax(ibox));
+      ibox = nalu_hypre_BoxArrayBox(int_boxes, i);
+      nalu_hypre_BoxManEntryGetExtents(
+         entries[i], nalu_hypre_BoxIMin(ibox), nalu_hypre_BoxIMax(ibox));
       for (j = 0; j < ndim; j++)
       {
-         hypre_BoxIMinD(ibox, j) -= dd[j];
-         hypre_BoxIMaxD(ibox, j) -= dd[j];
+         nalu_hypre_BoxIMinD(ibox, j) -= dd[j];
+         nalu_hypre_BoxIMaxD(ibox, j) -= dd[j];
       }
    }
-   hypre_SubtractBoxArrays(boundary, int_boxes, tmp_boxes);
+   nalu_hypre_SubtractBoxArrays(boundary, int_boxes, tmp_boxes);
 
-   hypre_BoxArrayDestroy(int_boxes);
-   hypre_BoxArrayDestroy(tmp_boxes);
-   hypre_TFree(entries, HYPRE_MEMORY_HOST);
-   hypre_TFree(dd, HYPRE_MEMORY_HOST);
+   nalu_hypre_BoxArrayDestroy(int_boxes);
+   nalu_hypre_BoxArrayDestroy(tmp_boxes);
+   nalu_hypre_TFree(entries, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(dd, NALU_HYPRE_MEMORY_HOST);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 

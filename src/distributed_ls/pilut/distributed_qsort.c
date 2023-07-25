@@ -21,29 +21,29 @@
  */
 
 #include <stdlib.h>			/* only for type declarations */
-#include "_hypre_utilities.h"
+#include "_nalu_hypre_utilities.h"
 
 #define		THRESH		4	/* threshold for insertion */
 #define		MTHRESH		6	/* threshold for median */
 
-static HYPRE_Int (*qcmp) (char*,char*);		/* the comparison routine */
-static HYPRE_Int qsz;			/* size of each record */
+static NALU_HYPRE_Int (*qcmp) (char*,char*);		/* the comparison routine */
+static NALU_HYPRE_Int qsz;			/* size of each record */
 static void qst(char *, char *);
 
-static HYPRE_Int thresh;		/* THRESHold in chars */
-static HYPRE_Int mthresh;		/* MTHRESHold in chars */
+static NALU_HYPRE_Int thresh;		/* THRESHold in chars */
+static NALU_HYPRE_Int mthresh;		/* MTHRESHold in chars */
 
 
 
 /*
- * hypre_tex_qsort:
+ * nalu_hypre_tex_qsort:
  * First, set up some global parameters for qst to share.  Then, quicksort
  * with qst(), and then a cleanup insertion sort ourselves.  Sound simple?
  * It's not...
  */
 
 void
-hypre_tex_qsort(char* base,HYPRE_Int n,HYPRE_Int size, HYPRE_Int (*compar) (char*,char*))
+nalu_hypre_tex_qsort(char* base,NALU_HYPRE_Int n,NALU_HYPRE_Int size, NALU_HYPRE_Int (*compar) (char*,char*))
 {
     REGISTER char *i;
     REGISTER char *j;
@@ -131,11 +131,11 @@ static void qst(char *base, char *max)
     REGISTER char *j;
     REGISTER char *jj;
     REGISTER char *mid;
-    REGISTER HYPRE_Int ii;
+    REGISTER NALU_HYPRE_Int ii;
     REGISTER char c;
     char *tmp;
-    HYPRE_Int lo;
-    HYPRE_Int hi;
+    NALU_HYPRE_Int lo;
+    NALU_HYPRE_Int hi;
 
     lo = max - base;		/* number of elements as chars */
     do

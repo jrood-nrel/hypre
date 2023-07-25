@@ -11,8 +11,8 @@
  *
  *****************************************************************************/
 
-#ifndef HYPRE_HEADER
-#define HYPRE_HEADER
+#ifndef NALU_HYPRE_HEADER
+#define NALU_HYPRE_HEADER
 
 
 /*--------------------------------------------------------------------------
@@ -23,20 +23,20 @@
  * Constants
  *--------------------------------------------------------------------------*/
 
-#define HYPRE_UNITIALIZED -999
+#define NALU_HYPRE_UNITIALIZED -999
 
-#define HYPRE_PETSC_MAT_PARILUT_SOLVER 222
-#define HYPRE_PARILUT                  333
+#define NALU_HYPRE_PETSC_MAT_PARILUT_SOLVER 222
+#define NALU_HYPRE_PARILUT                  333
 
-#define HYPRE_STRUCT  1111
-#define HYPRE_SSTRUCT 3333
-#define HYPRE_PARCSR  5555
+#define NALU_HYPRE_STRUCT  1111
+#define NALU_HYPRE_SSTRUCT 3333
+#define NALU_HYPRE_PARCSR  5555
 
-#define HYPRE_ISIS    9911
-#define HYPRE_PETSC   9933
+#define NALU_HYPRE_ISIS    9911
+#define NALU_HYPRE_PETSC   9933
 
-#define HYPRE_PFMG    10
-#define HYPRE_SMG     11
-#define HYPRE_Jacobi  17
+#define NALU_HYPRE_PFMG    10
+#define NALU_HYPRE_SMG     11
+#define NALU_HYPRE_Jacobi  17
 
 #endif

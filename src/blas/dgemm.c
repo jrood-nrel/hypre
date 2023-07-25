@@ -11,7 +11,7 @@ extern "C" {
 */
 
 #include "f2c.h"
-#include "hypre_blas.h"
+#include "nalu_hypre_blas.h"
 
 /* Subroutine */ integer dgemm_(const char *transa,const char *transb, integer *m, integer *
 	n, integer *k, doublereal *alpha, doublereal *a, integer *lda,

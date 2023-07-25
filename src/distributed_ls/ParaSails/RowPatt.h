@@ -18,22 +18,22 @@
 
 typedef struct
 {
-    HYPRE_Int  maxlen;
-    HYPRE_Int  len;
-    HYPRE_Int  prev_len;
-    HYPRE_Int *ind;
-    HYPRE_Int *mark;
-    HYPRE_Int *buffer; /* buffer used for outputting indices */
-    HYPRE_Int  buflen; /* length of this buffer */
+    NALU_HYPRE_Int  maxlen;
+    NALU_HYPRE_Int  len;
+    NALU_HYPRE_Int  prev_len;
+    NALU_HYPRE_Int *ind;
+    NALU_HYPRE_Int *mark;
+    NALU_HYPRE_Int *buffer; /* buffer used for outputting indices */
+    NALU_HYPRE_Int  buflen; /* length of this buffer */
 }
 RowPatt;
 
-RowPatt *RowPattCreate(HYPRE_Int maxlen);
+RowPatt *RowPattCreate(NALU_HYPRE_Int maxlen);
 void RowPattDestroy(RowPatt *p);
 void RowPattReset(RowPatt *p);
-void RowPattMerge(RowPatt *p, HYPRE_Int len, HYPRE_Int *ind);
-void RowPattMergeExt(RowPatt *p, HYPRE_Int len, HYPRE_Int *ind, HYPRE_Int num_loc);
-void RowPattGet(RowPatt *p, HYPRE_Int *lenp, HYPRE_Int **indp);
-void RowPattPrevLevel(RowPatt *p, HYPRE_Int *lenp, HYPRE_Int **indp);
+void RowPattMerge(RowPatt *p, NALU_HYPRE_Int len, NALU_HYPRE_Int *ind);
+void RowPattMergeExt(RowPatt *p, NALU_HYPRE_Int len, NALU_HYPRE_Int *ind, NALU_HYPRE_Int num_loc);
+void RowPattGet(RowPatt *p, NALU_HYPRE_Int *lenp, NALU_HYPRE_Int **indp);
+void RowPattPrevLevel(RowPatt *p, NALU_HYPRE_Int *lenp, NALU_HYPRE_Int **indp);
 
 #endif /* _ROWPATT_H */

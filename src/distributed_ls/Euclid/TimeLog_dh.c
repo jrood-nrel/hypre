@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_Euclid.h"
+#include "_nalu_hypre_Euclid.h"
 /* #include "TimeLog_dh.h" */
 /* #include "Timer_dh.h" */
 /* #include "Mem_dh.h" */
@@ -14,9 +14,9 @@
 #define MAX_DESC_LENGTH 60
 
 struct _timeLog_dh {
-  HYPRE_Int first;
-  HYPRE_Int last; 
-  HYPRE_Real time[MAX_TIME_MARKS];
+  NALU_HYPRE_Int first;
+  NALU_HYPRE_Int last; 
+  NALU_HYPRE_Real time[MAX_TIME_MARKS];
   char   desc[MAX_TIME_MARKS][MAX_DESC_LENGTH];
   Timer_dh timer; 
 };
@@ -26,7 +26,7 @@ struct _timeLog_dh {
 void TimeLog_dhCreate(TimeLog_dh *t)
 {
   START_FUNC_DH
-  HYPRE_Int i;
+  NALU_HYPRE_Int i;
   struct _timeLog_dh* tmp = (struct _timeLog_dh*)MALLOC_DH(sizeof(struct _timeLog_dh)); CHECK_V_ERROR;
   *t = tmp;
   tmp->first = tmp->last = 0;
@@ -74,7 +74,7 @@ void TimeLog_dhMark(TimeLog_dh t, const char *desc)
     Timer_dhStop(t->timer);
     t->time[t->last] = Timer_dhReadWall(t->timer);
     Timer_dhStart(t->timer);
-    hypre_sprintf(t->desc[t->last], "%s", desc);
+    nalu_hypre_sprintf(t->desc[t->last], "%s", desc);
     t->last += 1;
   }
   END_FUNC_DH
@@ -86,11 +86,11 @@ void TimeLog_dhReset(TimeLog_dh t)
 {
   START_FUNC_DH
   if (t->last < MAX_TIME_MARKS - 2) {
-    HYPRE_Real total = 0.0;
-    HYPRE_Int i, first = t->first, last = t->last;
+    NALU_HYPRE_Real total = 0.0;
+    NALU_HYPRE_Int i, first = t->first, last = t->last;
     for (i=first; i<last; ++i) total += t->time[i];
     t->time[last] = total;
-    hypre_sprintf(t->desc[last], "========== totals, and reset ==========\n");
+    nalu_hypre_sprintf(t->desc[last], "========== totals, and reset ==========\n");
     t->last += 1;
     t->first = t->last;
     Timer_dhStart(t->timer);
@@ -104,29 +104,29 @@ void TimeLog_dhReset(TimeLog_dh t)
 void TimeLog_dhPrint(TimeLog_dh t, FILE *fp, bool allPrint)
 {
   START_FUNC_DH
-  HYPRE_Int i;
-  HYPRE_Real total = 0.0;
-  HYPRE_Real timeMax[MAX_TIME_MARKS]; HYPRE_Real timeMin[MAX_TIME_MARKS];
+  NALU_HYPRE_Int i;
+  NALU_HYPRE_Real total = 0.0;
+  NALU_HYPRE_Real timeMax[MAX_TIME_MARKS]; NALU_HYPRE_Real timeMin[MAX_TIME_MARKS];
   static bool wasSummed = false;
 
 
   if (! wasSummed) {
     for (i=t->first; i<t->last; ++i) total += t->time[i];
     t->time[t->last] = total;
-    hypre_sprintf(t->desc[t->last], "========== totals, and reset ==========\n");
+    nalu_hypre_sprintf(t->desc[t->last], "========== totals, and reset ==========\n");
     t->last += 1;
 
-    hypre_MPI_Allreduce(t->time, timeMax, t->last, hypre_MPI_REAL, hypre_MPI_MAX, comm_dh);
-    hypre_MPI_Allreduce(t->time, timeMin, t->last, hypre_MPI_REAL, hypre_MPI_MIN, comm_dh);
+    nalu_hypre_MPI_Allreduce(t->time, timeMax, t->last, nalu_hypre_MPI_REAL, nalu_hypre_MPI_MAX, comm_dh);
+    nalu_hypre_MPI_Allreduce(t->time, timeMin, t->last, nalu_hypre_MPI_REAL, nalu_hypre_MPI_MIN, comm_dh);
     wasSummed = true;
   }
 
   if (fp != NULL) {
     if (myid_dh == 0 || allPrint) {
-      hypre_fprintf(fp,"\n----------------------------------------- timing report\n");
-      hypre_fprintf(fp, "\n   self     max     min\n");
+      nalu_hypre_fprintf(fp,"\n----------------------------------------- timing report\n");
+      nalu_hypre_fprintf(fp, "\n   self     max     min\n");
       for (i=0; i<t->last; ++i) {
-        hypre_fprintf(fp, "%7.3f %7.3f %7.3f   #%s\n", t->time[i],
+        nalu_hypre_fprintf(fp, "%7.3f %7.3f %7.3f   #%s\n", t->time[i],
                                 timeMax[i], timeMin[i], 
                                 t->desc[i]);
       }

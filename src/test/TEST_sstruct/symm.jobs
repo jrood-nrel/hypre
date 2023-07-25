@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 #=============================================================================
-# sstruct: Check SetSymmetric for HYPRE_SSTRUCT data type (2D)
+# sstruct: Check SetSymmetric for NALU_HYPRE_SSTRUCT data type (2D)
 #=============================================================================
 
 mpirun -np 1  ./sstruct -in sstruct.in.symm0.2D -r 10 10 10 -solver 18 \
@@ -18,7 +18,7 @@ mpirun -np 1  ./sstruct -in sstruct.in.symm3.2D -r 10 10 10 -solver 18 \
 > symm.out.23
 
 #=============================================================================
-# sstruct: Check SetSymmetric for HYPRE_PARCSR data type (2D)
+# sstruct: Check SetSymmetric for NALU_HYPRE_PARCSR data type (2D)
 #=============================================================================
 
 mpirun -np 1  ./sstruct -in sstruct.in.symm0.2D -r 10 10 10 -solver 28 \
@@ -27,7 +27,7 @@ mpirun -np 1  ./sstruct -in sstruct.in.symm1.2D -r 10 10 10 -solver 28 \
 > symm.out.25
 
 #=============================================================================
-# sstruct: Check SetSymmetric for HYPRE_SSTRUCT data type (3D)
+# sstruct: Check SetSymmetric for NALU_HYPRE_SSTRUCT data type (3D)
 #=============================================================================
 
 mpirun -np 1  ./sstruct -in sstruct.in.symm0 -r 10 10 10 -solver 18 \
@@ -40,7 +40,7 @@ mpirun -np 1  ./sstruct -in sstruct.in.symm3 -r 10 10 10 -solver 18 \
 > symm.out.33
 
 #=============================================================================
-# sstruct: Check SetSymmetric for HYPRE_PARCSR data type (3D)
+# sstruct: Check SetSymmetric for NALU_HYPRE_PARCSR data type (3D)
 #=============================================================================
 
 mpirun -np 1  ./sstruct -in sstruct.in.symm0 -r 10 10 10 -solver 28 \

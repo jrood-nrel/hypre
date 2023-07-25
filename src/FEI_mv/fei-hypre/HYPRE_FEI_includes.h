@@ -9,8 +9,8 @@
 // Different definitions for FEI and NOFEI options
 // *************************************************************************
 
-#ifndef __HYPRE_FEI_INCLUDES__
-#define __HYPRE_FEI_INCLUDES__
+#ifndef __NALU_HYPRE_FEI_INCLUDES__
+#define __NALU_HYPRE_FEI_INCLUDES__
 
 #ifndef NOFEI
 

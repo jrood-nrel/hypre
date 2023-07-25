@@ -5,198 +5,198 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_sstruct_ls.h"
+#include "_nalu_hypre_sstruct_ls.h"
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructFlexGMRESCreate( MPI_Comm             comm,
-                              HYPRE_SStructSolver *solver )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructFlexGMRESCreate( MPI_Comm             comm,
+                              NALU_HYPRE_SStructSolver *solver )
 {
-   hypre_FlexGMRESFunctions * fgmres_functions =
-      hypre_FlexGMRESFunctionsCreate(
-         hypre_SStructKrylovCAlloc, hypre_SStructKrylovFree, hypre_SStructKrylovCommInfo,
-         hypre_SStructKrylovCreateVector,
-         hypre_SStructKrylovCreateVectorArray,
-         hypre_SStructKrylovDestroyVector, hypre_SStructKrylovMatvecCreate,
-         hypre_SStructKrylovMatvec, hypre_SStructKrylovMatvecDestroy,
-         hypre_SStructKrylovInnerProd, hypre_SStructKrylovCopyVector,
-         hypre_SStructKrylovClearVector,
-         hypre_SStructKrylovScaleVector, hypre_SStructKrylovAxpy,
-         hypre_SStructKrylovIdentitySetup, hypre_SStructKrylovIdentity );
+   nalu_hypre_FlexGMRESFunctions * fgmres_functions =
+      nalu_hypre_FlexGMRESFunctionsCreate(
+         nalu_hypre_SStructKrylovCAlloc, nalu_hypre_SStructKrylovFree, nalu_hypre_SStructKrylovCommInfo,
+         nalu_hypre_SStructKrylovCreateVector,
+         nalu_hypre_SStructKrylovCreateVectorArray,
+         nalu_hypre_SStructKrylovDestroyVector, nalu_hypre_SStructKrylovMatvecCreate,
+         nalu_hypre_SStructKrylovMatvec, nalu_hypre_SStructKrylovMatvecDestroy,
+         nalu_hypre_SStructKrylovInnerProd, nalu_hypre_SStructKrylovCopyVector,
+         nalu_hypre_SStructKrylovClearVector,
+         nalu_hypre_SStructKrylovScaleVector, nalu_hypre_SStructKrylovAxpy,
+         nalu_hypre_SStructKrylovIdentitySetup, nalu_hypre_SStructKrylovIdentity );
 
-   *solver = ( (HYPRE_SStructSolver) hypre_FlexGMRESCreate( fgmres_functions ) );
+   *solver = ( (NALU_HYPRE_SStructSolver) nalu_hypre_FlexGMRESCreate( fgmres_functions ) );
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructFlexGMRESDestroy( HYPRE_SStructSolver solver )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructFlexGMRESDestroy( NALU_HYPRE_SStructSolver solver )
 {
-   return ( hypre_FlexGMRESDestroy( (void *) solver ) );
+   return ( nalu_hypre_FlexGMRESDestroy( (void *) solver ) );
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructFlexGMRESSetup( HYPRE_SStructSolver solver,
-                             HYPRE_SStructMatrix A,
-                             HYPRE_SStructVector b,
-                             HYPRE_SStructVector x )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructFlexGMRESSetup( NALU_HYPRE_SStructSolver solver,
+                             NALU_HYPRE_SStructMatrix A,
+                             NALU_HYPRE_SStructVector b,
+                             NALU_HYPRE_SStructVector x )
 {
-   return ( HYPRE_FlexGMRESSetup( (HYPRE_Solver) solver,
-                                  (HYPRE_Matrix) A,
-                                  (HYPRE_Vector) b,
-                                  (HYPRE_Vector) x ) );
+   return ( NALU_HYPRE_FlexGMRESSetup( (NALU_HYPRE_Solver) solver,
+                                  (NALU_HYPRE_Matrix) A,
+                                  (NALU_HYPRE_Vector) b,
+                                  (NALU_HYPRE_Vector) x ) );
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructFlexGMRESSolve( HYPRE_SStructSolver solver,
-                             HYPRE_SStructMatrix A,
-                             HYPRE_SStructVector b,
-                             HYPRE_SStructVector x )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructFlexGMRESSolve( NALU_HYPRE_SStructSolver solver,
+                             NALU_HYPRE_SStructMatrix A,
+                             NALU_HYPRE_SStructVector b,
+                             NALU_HYPRE_SStructVector x )
 {
-   return ( HYPRE_FlexGMRESSolve( (HYPRE_Solver) solver,
-                                  (HYPRE_Matrix) A,
-                                  (HYPRE_Vector) b,
-                                  (HYPRE_Vector) x ) );
+   return ( NALU_HYPRE_FlexGMRESSolve( (NALU_HYPRE_Solver) solver,
+                                  (NALU_HYPRE_Matrix) A,
+                                  (NALU_HYPRE_Vector) b,
+                                  (NALU_HYPRE_Vector) x ) );
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructFlexGMRESSetKDim( HYPRE_SStructSolver solver,
-                               HYPRE_Int           k_dim )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructFlexGMRESSetKDim( NALU_HYPRE_SStructSolver solver,
+                               NALU_HYPRE_Int           k_dim )
 {
-   return ( HYPRE_FlexGMRESSetKDim( (HYPRE_Solver) solver, k_dim ) );
+   return ( NALU_HYPRE_FlexGMRESSetKDim( (NALU_HYPRE_Solver) solver, k_dim ) );
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructFlexGMRESSetTol( HYPRE_SStructSolver solver,
-                              HYPRE_Real          tol )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructFlexGMRESSetTol( NALU_HYPRE_SStructSolver solver,
+                              NALU_HYPRE_Real          tol )
 {
-   return ( HYPRE_FlexGMRESSetTol( (HYPRE_Solver) solver, tol ) );
+   return ( NALU_HYPRE_FlexGMRESSetTol( (NALU_HYPRE_Solver) solver, tol ) );
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructFlexGMRESSetAbsoluteTol( HYPRE_SStructSolver solver,
-                                      HYPRE_Real          tol )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructFlexGMRESSetAbsoluteTol( NALU_HYPRE_SStructSolver solver,
+                                      NALU_HYPRE_Real          tol )
 {
-   return ( HYPRE_FlexGMRESSetAbsoluteTol( (HYPRE_Solver) solver, tol ) );
+   return ( NALU_HYPRE_FlexGMRESSetAbsoluteTol( (NALU_HYPRE_Solver) solver, tol ) );
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructFlexGMRESSetMinIter( HYPRE_SStructSolver solver,
-                                  HYPRE_Int           min_iter )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructFlexGMRESSetMinIter( NALU_HYPRE_SStructSolver solver,
+                                  NALU_HYPRE_Int           min_iter )
 {
-   return ( HYPRE_FlexGMRESSetMinIter( (HYPRE_Solver) solver, min_iter ) );
+   return ( NALU_HYPRE_FlexGMRESSetMinIter( (NALU_HYPRE_Solver) solver, min_iter ) );
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructFlexGMRESSetMaxIter( HYPRE_SStructSolver solver,
-                                  HYPRE_Int           max_iter )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructFlexGMRESSetMaxIter( NALU_HYPRE_SStructSolver solver,
+                                  NALU_HYPRE_Int           max_iter )
 {
-   return ( HYPRE_FlexGMRESSetMaxIter( (HYPRE_Solver) solver, max_iter ) );
+   return ( NALU_HYPRE_FlexGMRESSetMaxIter( (NALU_HYPRE_Solver) solver, max_iter ) );
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructFlexGMRESSetPrecond( HYPRE_SStructSolver          solver,
-                                  HYPRE_PtrToSStructSolverFcn  precond,
-                                  HYPRE_PtrToSStructSolverFcn  precond_setup,
+NALU_HYPRE_Int
+NALU_HYPRE_SStructFlexGMRESSetPrecond( NALU_HYPRE_SStructSolver          solver,
+                                  NALU_HYPRE_PtrToSStructSolverFcn  precond,
+                                  NALU_HYPRE_PtrToSStructSolverFcn  precond_setup,
                                   void *          precond_data )
 {
-   return ( HYPRE_FlexGMRESSetPrecond( (HYPRE_Solver) solver,
-                                       (HYPRE_PtrToSolverFcn) precond,
-                                       (HYPRE_PtrToSolverFcn) precond_setup,
-                                       (HYPRE_Solver) precond_data ) );
+   return ( NALU_HYPRE_FlexGMRESSetPrecond( (NALU_HYPRE_Solver) solver,
+                                       (NALU_HYPRE_PtrToSolverFcn) precond,
+                                       (NALU_HYPRE_PtrToSolverFcn) precond_setup,
+                                       (NALU_HYPRE_Solver) precond_data ) );
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructFlexGMRESSetLogging( HYPRE_SStructSolver solver,
-                                  HYPRE_Int           logging )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructFlexGMRESSetLogging( NALU_HYPRE_SStructSolver solver,
+                                  NALU_HYPRE_Int           logging )
 {
-   return ( HYPRE_FlexGMRESSetLogging( (HYPRE_Solver) solver, logging ) );
+   return ( NALU_HYPRE_FlexGMRESSetLogging( (NALU_HYPRE_Solver) solver, logging ) );
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructFlexGMRESSetPrintLevel( HYPRE_SStructSolver solver,
-                                     HYPRE_Int           level )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructFlexGMRESSetPrintLevel( NALU_HYPRE_SStructSolver solver,
+                                     NALU_HYPRE_Int           level )
 {
-   return ( HYPRE_FlexGMRESSetPrintLevel( (HYPRE_Solver) solver, level ) );
+   return ( NALU_HYPRE_FlexGMRESSetPrintLevel( (NALU_HYPRE_Solver) solver, level ) );
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructFlexGMRESGetNumIterations( HYPRE_SStructSolver  solver,
-                                        HYPRE_Int           *num_iterations )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructFlexGMRESGetNumIterations( NALU_HYPRE_SStructSolver  solver,
+                                        NALU_HYPRE_Int           *num_iterations )
 {
-   return ( HYPRE_FlexGMRESGetNumIterations( (HYPRE_Solver) solver,
+   return ( NALU_HYPRE_FlexGMRESGetNumIterations( (NALU_HYPRE_Solver) solver,
                                              num_iterations ) );
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructFlexGMRESGetFinalRelativeResidualNorm( HYPRE_SStructSolver  solver,
-                                                    HYPRE_Real          *norm )
+NALU_HYPRE_Int
+NALU_HYPRE_SStructFlexGMRESGetFinalRelativeResidualNorm( NALU_HYPRE_SStructSolver  solver,
+                                                    NALU_HYPRE_Real          *norm )
 {
-   return ( HYPRE_FlexGMRESGetFinalRelativeResidualNorm( (HYPRE_Solver) solver,
+   return ( NALU_HYPRE_FlexGMRESGetFinalRelativeResidualNorm( (NALU_HYPRE_Solver) solver,
                                                          norm ) );
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_SStructFlexGMRESGetResidual( HYPRE_SStructSolver  solver,
+NALU_HYPRE_Int
+NALU_HYPRE_SStructFlexGMRESGetResidual( NALU_HYPRE_SStructSolver  solver,
                                    void              **residual )
 {
-   return ( HYPRE_FlexGMRESGetResidual( (HYPRE_Solver) solver, residual ) );
+   return ( NALU_HYPRE_FlexGMRESGetResidual( (NALU_HYPRE_Solver) solver, residual ) );
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
 
-HYPRE_Int HYPRE_SStructFlexGMRESSetModifyPC( HYPRE_SStructSolver  solver,
-                                             HYPRE_PtrToModifyPCFcn modify_pc)
+NALU_HYPRE_Int NALU_HYPRE_SStructFlexGMRESSetModifyPC( NALU_HYPRE_SStructSolver  solver,
+                                             NALU_HYPRE_PtrToModifyPCFcn modify_pc)
 
 {
-   return ( HYPRE_FlexGMRESSetModifyPC( (HYPRE_Solver) solver,
-                                        (HYPRE_PtrToModifyPCFcn) modify_pc));
+   return ( NALU_HYPRE_FlexGMRESSetModifyPC( (NALU_HYPRE_Solver) solver,
+                                        (NALU_HYPRE_PtrToModifyPCFcn) modify_pc));
 
 }
 

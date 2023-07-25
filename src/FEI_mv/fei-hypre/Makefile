@@ -5,7 +5,7 @@
 
 include ../../config/Makefile.config
 
-BASE_DIR = ${HYPRE_FEI_BASE_DIR}
+BASE_DIR = ${NALU_HYPRE_FEI_BASE_DIR}
 
 #SUPERLU_INCLUDE = -I$(srcdir)/../SuperLU/SRC
 #SUPERLU_LIB     = -L$(srcdir)/../SuperLU
@@ -62,9 +62,9 @@ CXX_COMPILE_FLAGS = \
 HEADERS =\
  cfei-hypre.h\
  cfei_hypre.h\
- hypre_cfei.h\
- HYPRE_LinSysCore.h\
- HYPRE_FEI_includes.h \
+ nalu_hypre_cfei.h\
+ NALU_HYPRE_LinSysCore.h\
+ NALU_HYPRE_FEI_includes.h \
  $(BASE_DIR)/fei_Data.hpp  \
  $(BASE_DIR)/fei_Lookup.hpp  \
  $(BASE_DIR)/fei_LinearSystemCore.hpp \
@@ -74,111 +74,111 @@ HEADERS =\
  LLNL_FEI_LSCore.h\
  LLNL_FEI_Solver.h\
  LLNL_FEI_Matrix.h\
- FEI_HYPRE_Impl.h\
- FEI_HYPRE_include.h\
- HYPRE_Builder.h\
- HYPRE_LSI_Dsuperlu.h\
- HYPRE_LSI_UZAWA.h\
- HYPRE_LSI_Uzawa_c.h\
- HYPRE_LSI_blkprec.h\
- HYPRE_LSI_block.h\
- HYPRE_LSI_ddict.h\
- HYPRE_LSI_ddilut.h\
- HYPRE_LSI_mli.h\
- HYPRE_LSI_poly.h\
- HYPRE_LSI_schur.h\
- HYPRE_LSI_schwarz.h\
- HYPRE_MHMatrix.h\
- HYPRE_MLMatrix.h\
- HYPRE_MLMaxwell.h\
- HYPRE_SlideReduction.h\
- HYPRE_parcsr_TFQmr.h\
- HYPRE_parcsr_bicgs.h\
- HYPRE_parcsr_bicgstabl.h\
- HYPRE_parcsr_fgmres.h\
- HYPRE_parcsr_lsicg.h\
- HYPRE_parcsr_symqmr.h\
+ FEI_NALU_HYPRE_Impl.h\
+ FEI_NALU_HYPRE_include.h\
+ NALU_HYPRE_Builder.h\
+ NALU_HYPRE_LSI_Dsuperlu.h\
+ NALU_HYPRE_LSI_UZAWA.h\
+ NALU_HYPRE_LSI_Uzawa_c.h\
+ NALU_HYPRE_LSI_blkprec.h\
+ NALU_HYPRE_LSI_block.h\
+ NALU_HYPRE_LSI_ddict.h\
+ NALU_HYPRE_LSI_ddilut.h\
+ NALU_HYPRE_LSI_mli.h\
+ NALU_HYPRE_LSI_poly.h\
+ NALU_HYPRE_LSI_schur.h\
+ NALU_HYPRE_LSI_schwarz.h\
+ NALU_HYPRE_MHMatrix.h\
+ NALU_HYPRE_MLMatrix.h\
+ NALU_HYPRE_MLMaxwell.h\
+ NALU_HYPRE_SlideReduction.h\
+ NALU_HYPRE_parcsr_TFQmr.h\
+ NALU_HYPRE_parcsr_bicgs.h\
+ NALU_HYPRE_parcsr_bicgstabl.h\
+ NALU_HYPRE_parcsr_fgmres.h\
+ NALU_HYPRE_parcsr_lsicg.h\
+ NALU_HYPRE_parcsr_symqmr.h\
  fei_mv.h
 
 FILESC = \
- HYPRE_LSI_Dsuperlu.c\
- HYPRE_LSI_ddict.c\
- HYPRE_LSI_ddilut.c\
- HYPRE_LSI_ml.c\
- HYPRE_LSI_mlmaxwell.c\
- HYPRE_LSI_poly.c\
- HYPRE_LSI_schwarz.c\
- HYPRE_parcsr_TFQmr.c\
- HYPRE_parcsr_bicgs.c\
- HYPRE_parcsr_bicgstabl.c\
- HYPRE_parcsr_fgmres.c\
- HYPRE_parcsr_lsicg.c\
- HYPRE_parcsr_symqmr.c\
- HYPRE_parcsr_maxwell.c\
+ NALU_HYPRE_LSI_Dsuperlu.c\
+ NALU_HYPRE_LSI_ddict.c\
+ NALU_HYPRE_LSI_ddilut.c\
+ NALU_HYPRE_LSI_ml.c\
+ NALU_HYPRE_LSI_mlmaxwell.c\
+ NALU_HYPRE_LSI_poly.c\
+ NALU_HYPRE_LSI_schwarz.c\
+ NALU_HYPRE_parcsr_TFQmr.c\
+ NALU_HYPRE_parcsr_bicgs.c\
+ NALU_HYPRE_parcsr_bicgstabl.c\
+ NALU_HYPRE_parcsr_fgmres.c\
+ NALU_HYPRE_parcsr_lsicg.c\
+ NALU_HYPRE_parcsr_symqmr.c\
+ NALU_HYPRE_parcsr_maxwell.c\
  SymQMR.c\
  TFQmr.c\
  bicgs.c\
  bicgstabl.c\
  fgmres.c\
- hypre_lsi_amge.c\
- hypre_lsi_ddamg.c\
- hypre_lsi_misc.c\
+ nalu_hypre_lsi_amge.c\
+ nalu_hypre_lsi_ddamg.c\
+ nalu_hypre_lsi_misc.c\
  lsicg.c
 
 FILESCXX = \
- FEI_HYPRE_Impl.cxx\
+ FEI_NALU_HYPRE_Impl.cxx\
  LLNL_FEI_Impl.cxx\
  LLNL_FEI_Fei.cxx\
  LLNL_FEI_LSCore.cxx\
  LLNL_FEI_Solver.cxx\
  LLNL_FEI_Matrix.cxx\
- HYPRE_LSC_aux.cxx\
- HYPRE_LSI_UZAWA.cxx\
- HYPRE_LSI_blkprec.cxx\
- HYPRE_LSI_mli.cxx\
- HYPRE_LinSysCore.cxx\
- HYPRE_SlideReduction.cxx\
+ NALU_HYPRE_LSC_aux.cxx\
+ NALU_HYPRE_LSI_UZAWA.cxx\
+ NALU_HYPRE_LSI_blkprec.cxx\
+ NALU_HYPRE_LSI_mli.cxx\
+ NALU_HYPRE_LinSysCore.cxx\
+ NALU_HYPRE_SlideReduction.cxx\
  cfei_hypre.cxx\
- hypre_cfei.cxx\
- hypre_schur_reduce.cxx\
- hypre_slide_reduce.cxx\
- HYPRE_fei_mesh.cxx\
- HYPRE_fei_matrix.cxx\
- HYPRE_fei_vector.cxx
+ nalu_hypre_cfei.cxx\
+ nalu_hypre_schur_reduce.cxx\
+ nalu_hypre_slide_reduce.cxx\
+ NALU_HYPRE_fei_mesh.cxx\
+ NALU_HYPRE_fei_matrix.cxx\
+ NALU_HYPRE_fei_vector.cxx
 
 OBJSC = ${FILESC:.c=.o}
 OBJSCXX = ${FILESCXX:.cxx=.o}
 OBJS = ${OBJSC} ${OBJSCXX}
 
-SONAME = libHYPRE_FEI-${HYPRE_RELEASE_VERSION}${HYPRE_LIB_SUFFIX}
+SONAME = libNALU_HYPRE_FEI-${NALU_HYPRE_RELEASE_VERSION}${NALU_HYPRE_LIB_SUFFIX}
 
 ##################################################################
 # Targets
 ##################################################################
 
-all: libHYPRE_FEI${HYPRE_LIB_SUFFIX}
-	cp -fR $(srcdir)/cfei-hypre.h $(HYPRE_BUILD_DIR)/include
-	cp -fR $(srcdir)/cfei_hypre.h $(HYPRE_BUILD_DIR)/include
-	cp -fR $(srcdir)/hypre_cfei.h $(HYPRE_BUILD_DIR)/include
-	cp -fR $(srcdir)/HYPRE_LinSysCore.h $(HYPRE_BUILD_DIR)/include
-	cp -fR $(srcdir)/HYPRE_FEI*.h $(HYPRE_BUILD_DIR)/include
-	cp -fR $(srcdir)/LLNL_FEI*.h $(HYPRE_BUILD_DIR)/include
-	cp -fR $(BASE_DIR)/fei_Data.hpp $(HYPRE_BUILD_DIR)/include
-	cp -fR $(BASE_DIR)/fei_Lookup.hpp $(HYPRE_BUILD_DIR)/include
-	cp -fR $(BASE_DIR)/fei_LinearSystemCore.hpp $(HYPRE_BUILD_DIR)/include
-	cp -fR $(BASE_DIR)/fei_defs.h $(HYPRE_BUILD_DIR)/include
+all: libNALU_HYPRE_FEI${NALU_HYPRE_LIB_SUFFIX}
+	cp -fR $(srcdir)/cfei-hypre.h $(NALU_HYPRE_BUILD_DIR)/include
+	cp -fR $(srcdir)/cfei_hypre.h $(NALU_HYPRE_BUILD_DIR)/include
+	cp -fR $(srcdir)/nalu_hypre_cfei.h $(NALU_HYPRE_BUILD_DIR)/include
+	cp -fR $(srcdir)/NALU_HYPRE_LinSysCore.h $(NALU_HYPRE_BUILD_DIR)/include
+	cp -fR $(srcdir)/NALU_HYPRE_FEI*.h $(NALU_HYPRE_BUILD_DIR)/include
+	cp -fR $(srcdir)/LLNL_FEI*.h $(NALU_HYPRE_BUILD_DIR)/include
+	cp -fR $(BASE_DIR)/fei_Data.hpp $(NALU_HYPRE_BUILD_DIR)/include
+	cp -fR $(BASE_DIR)/fei_Lookup.hpp $(NALU_HYPRE_BUILD_DIR)/include
+	cp -fR $(BASE_DIR)/fei_LinearSystemCore.hpp $(NALU_HYPRE_BUILD_DIR)/include
+	cp -fR $(BASE_DIR)/fei_defs.h $(NALU_HYPRE_BUILD_DIR)/include
 
-install: libHYPRE_FEI${HYPRE_LIB_SUFFIX}
-	cp -fR $(srcdir)/cfei-hypre.h $(HYPRE_INC_INSTALL)
-	cp -fR $(srcdir)/cfei_hypre.h $(HYPRE_INC_INSTALL)
-	cp -fR $(srcdir)/hypre_cfei.h $(HYPRE_BUILD_DIR)/include
-	cp -fR $(srcdir)/HYPRE_LinSysCore.h $(HYPRE_INC_INSTALL)
-	cp -fR $(srcdir)/HYPRE_FEI*.h $(HYPRE_INC_INSTALL)
-	cp -fR $(srcdir)/LLNL_FEI*.h $(HYPRE_INC_INSTALL)
-	cp -fR $(BASE_DIR)/fei_Data.hpp $(HYPRE_BUILD_DIR)/include
-	cp -fR $(BASE_DIR)/fei_Lookup.hpp $(HYPRE_BUILD_DIR)/include
-	cp -fR $(BASE_DIR)/fei_LinearSystemCore.hpp $(HYPRE_BUILD_DIR)/include
-	cp -fR $(BASE_DIR)/fei_defs.h $(HYPRE_BUILD_DIR)/include
+install: libNALU_HYPRE_FEI${NALU_HYPRE_LIB_SUFFIX}
+	cp -fR $(srcdir)/cfei-hypre.h $(NALU_HYPRE_INC_INSTALL)
+	cp -fR $(srcdir)/cfei_hypre.h $(NALU_HYPRE_INC_INSTALL)
+	cp -fR $(srcdir)/nalu_hypre_cfei.h $(NALU_HYPRE_BUILD_DIR)/include
+	cp -fR $(srcdir)/NALU_HYPRE_LinSysCore.h $(NALU_HYPRE_INC_INSTALL)
+	cp -fR $(srcdir)/NALU_HYPRE_FEI*.h $(NALU_HYPRE_INC_INSTALL)
+	cp -fR $(srcdir)/LLNL_FEI*.h $(NALU_HYPRE_INC_INSTALL)
+	cp -fR $(BASE_DIR)/fei_Data.hpp $(NALU_HYPRE_BUILD_DIR)/include
+	cp -fR $(BASE_DIR)/fei_Lookup.hpp $(NALU_HYPRE_BUILD_DIR)/include
+	cp -fR $(BASE_DIR)/fei_LinearSystemCore.hpp $(NALU_HYPRE_BUILD_DIR)/include
+	cp -fR $(BASE_DIR)/fei_defs.h $(NALU_HYPRE_BUILD_DIR)/include
 	@echo  ""
 
 clean:
@@ -191,12 +191,12 @@ distclean: clean
 # Rules
 ##################################################################
 
-libHYPRE_FEI.a: ${OBJS}
+libNALU_HYPRE_FEI.a: ${OBJS}
 	@echo  "Building $@ ... "
 	${AR} $@ ${OBJS}
 	${RANLIB} $@
 
-libHYPRE_FEI.so libHYPRE_FEI.dylib: ${OBJS}
+libNALU_HYPRE_FEI.so libNALU_HYPRE_FEI.dylib: ${OBJS}
 	@echo  "Building $@ ... "
 	${BUILD_CC_SHARED} -o ${SONAME} ${OBJS} ${SHARED_SET_SONAME}${SONAME}
 	ln -s -f ${SONAME} $@

@@ -19,8 +19,8 @@ C_COMPILE_FLAGS = \
  ${CINCLUDES}
 
 HEADERS =\
- HYPRE_sstruct_mv.h\
- _hypre_sstruct_mv.h\
+ NALU_HYPRE_sstruct_mv.h\
+ _nalu_hypre_sstruct_mv.h\
  sstruct_graph.h\
  sstruct_grid.h\
  sstruct_matrix.h\
@@ -28,16 +28,16 @@ HEADERS =\
  sstruct_vector.h
 
 FILES =\
- F90_HYPRE_sstruct_graph.c\
- F90_HYPRE_sstruct_grid.c\
- F90_HYPRE_sstruct_matrix.c\
- F90_HYPRE_sstruct_stencil.c\
- F90_HYPRE_sstruct_vector.c\
- HYPRE_sstruct_graph.c\
- HYPRE_sstruct_grid.c\
- HYPRE_sstruct_matrix.c\
- HYPRE_sstruct_stencil.c\
- HYPRE_sstruct_vector.c\
+ F90_NALU_HYPRE_sstruct_graph.c\
+ F90_NALU_HYPRE_sstruct_grid.c\
+ F90_NALU_HYPRE_sstruct_matrix.c\
+ F90_NALU_HYPRE_sstruct_stencil.c\
+ F90_NALU_HYPRE_sstruct_vector.c\
+ NALU_HYPRE_sstruct_graph.c\
+ NALU_HYPRE_sstruct_grid.c\
+ NALU_HYPRE_sstruct_matrix.c\
+ NALU_HYPRE_sstruct_stencil.c\
+ NALU_HYPRE_sstruct_vector.c\
  sstruct_axpy.c\
  sstruct_copy.c\
  sstruct_graph.c\
@@ -55,21 +55,21 @@ COBJS = ${FILES:.c=.o}
 CUOBJS = ${CUFILES:.c=.obj}
 OBJS = ${COBJS} ${CUOBJS}
 
-SONAME = libHYPRE_sstruct_mv-${HYPRE_RELEASE_VERSION}${HYPRE_LIB_SUFFIX}
+SONAME = libNALU_HYPRE_sstruct_mv-${NALU_HYPRE_RELEASE_VERSION}${NALU_HYPRE_LIB_SUFFIX}
 
 ##################################################################
 # Targets
 ##################################################################
 
-all: libHYPRE_sstruct_mv${HYPRE_LIB_SUFFIX}
-	cp -fR $(srcdir)/HYPRE_*.h $(HYPRE_BUILD_DIR)/include
-	cp -fR $(srcdir)/_hypre_sstruct_mv.h $(HYPRE_BUILD_DIR)/include
-#	cp -fR libHYPRE* $(HYPRE_BUILD_DIR)/lib
+all: libNALU_HYPRE_sstruct_mv${NALU_HYPRE_LIB_SUFFIX}
+	cp -fR $(srcdir)/NALU_HYPRE_*.h $(NALU_HYPRE_BUILD_DIR)/include
+	cp -fR $(srcdir)/_nalu_hypre_sstruct_mv.h $(NALU_HYPRE_BUILD_DIR)/include
+#	cp -fR libHYPRE* $(NALU_HYPRE_BUILD_DIR)/lib
 
-install: libHYPRE_sstruct_mv${HYPRE_LIB_SUFFIX}
-	cp -fR $(srcdir)/HYPRE_*.h $(HYPRE_INC_INSTALL)
-	cp -fR $(srcdir)/_hypre_sstruct_mv.h $(HYPRE_INC_INSTALL)
-#	cp -fR libHYPRE* $(HYPRE_LIB_INSTALL)
+install: libNALU_HYPRE_sstruct_mv${NALU_HYPRE_LIB_SUFFIX}
+	cp -fR $(srcdir)/NALU_HYPRE_*.h $(NALU_HYPRE_INC_INSTALL)
+	cp -fR $(srcdir)/_nalu_hypre_sstruct_mv.h $(NALU_HYPRE_INC_INSTALL)
+#	cp -fR libHYPRE* $(NALU_HYPRE_LIB_INSTALL)
 
 clean:
 	rm -f *.o *.obj libHYPRE*
@@ -81,12 +81,12 @@ distclean: clean
 # Rules
 ##################################################################
 
-libHYPRE_sstruct_mv.a: ${OBJS}
+libNALU_HYPRE_sstruct_mv.a: ${OBJS}
 	@echo  "Building $@ ... "
 	${AR} $@ ${OBJS}
 	${RANLIB} $@
 
-libHYPRE_sstruct_mv.so libHYPRE_sstruct_mv.dylib: ${OBJS}
+libNALU_HYPRE_sstruct_mv.so libNALU_HYPRE_sstruct_mv.dylib: ${OBJS}
 	@echo  "Building $@ ... "
 	${BUILD_CC_SHARED} -o ${SONAME} ${OBJS} ${SHARED_SET_SONAME}${SONAME}
 	ln -s -f ${SONAME} $@

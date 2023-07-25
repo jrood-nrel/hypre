@@ -5,144 +5,144 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_parcsr_ls.h"
+#include "_nalu_hypre_parcsr_ls.h"
 
 /*--------------------------------------------------------------------------
- * HYPRE_AMECreate
+ * NALU_HYPRE_AMECreate
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int HYPRE_AMECreate(HYPRE_Solver *esolver)
+NALU_HYPRE_Int NALU_HYPRE_AMECreate(NALU_HYPRE_Solver *esolver)
 {
-   *esolver = (HYPRE_Solver) hypre_AMECreate();
-   return hypre_error_flag;
+   *esolver = (NALU_HYPRE_Solver) nalu_hypre_AMECreate();
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_AMEDestroy
+ * NALU_HYPRE_AMEDestroy
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int HYPRE_AMEDestroy(HYPRE_Solver esolver)
+NALU_HYPRE_Int NALU_HYPRE_AMEDestroy(NALU_HYPRE_Solver esolver)
 {
-   return hypre_AMEDestroy((void *) esolver);
+   return nalu_hypre_AMEDestroy((void *) esolver);
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_AMESetup
+ * NALU_HYPRE_AMESetup
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int HYPRE_AMESetup (HYPRE_Solver esolver)
+NALU_HYPRE_Int NALU_HYPRE_AMESetup (NALU_HYPRE_Solver esolver)
 {
-   return hypre_AMESetup((void *) esolver);
+   return nalu_hypre_AMESetup((void *) esolver);
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_AMESolve
+ * NALU_HYPRE_AMESolve
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int HYPRE_AMESolve (HYPRE_Solver esolver)
+NALU_HYPRE_Int NALU_HYPRE_AMESolve (NALU_HYPRE_Solver esolver)
 {
-   return hypre_AMESolve((void *) esolver);
+   return nalu_hypre_AMESolve((void *) esolver);
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_AMESetAMSSolver
+ * NALU_HYPRE_AMESetAMSSolver
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int HYPRE_AMESetAMSSolver(HYPRE_Solver esolver,
-                                HYPRE_Solver ams_solver)
+NALU_HYPRE_Int NALU_HYPRE_AMESetAMSSolver(NALU_HYPRE_Solver esolver,
+                                NALU_HYPRE_Solver ams_solver)
 {
-   return hypre_AMESetAMSSolver((void *) esolver,
+   return nalu_hypre_AMESetAMSSolver((void *) esolver,
                                 (void *) ams_solver);
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_AMESetMassMatrix
+ * NALU_HYPRE_AMESetMassMatrix
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int HYPRE_AMESetMassMatrix(HYPRE_Solver esolver,
-                                 HYPRE_ParCSRMatrix M)
+NALU_HYPRE_Int NALU_HYPRE_AMESetMassMatrix(NALU_HYPRE_Solver esolver,
+                                 NALU_HYPRE_ParCSRMatrix M)
 {
-   return hypre_AMESetMassMatrix((void *) esolver,
-                                 (hypre_ParCSRMatrix *) M);
+   return nalu_hypre_AMESetMassMatrix((void *) esolver,
+                                 (nalu_hypre_ParCSRMatrix *) M);
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_AMESetBlockSize
+ * NALU_HYPRE_AMESetBlockSize
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int HYPRE_AMESetBlockSize(HYPRE_Solver esolver,
-                                HYPRE_Int block_size)
+NALU_HYPRE_Int NALU_HYPRE_AMESetBlockSize(NALU_HYPRE_Solver esolver,
+                                NALU_HYPRE_Int block_size)
 {
-   return hypre_AMESetBlockSize((void *) esolver, block_size);
+   return nalu_hypre_AMESetBlockSize((void *) esolver, block_size);
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_AMESetMaxIter
+ * NALU_HYPRE_AMESetMaxIter
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int HYPRE_AMESetMaxIter(HYPRE_Solver esolver,
-                              HYPRE_Int maxit)
+NALU_HYPRE_Int NALU_HYPRE_AMESetMaxIter(NALU_HYPRE_Solver esolver,
+                              NALU_HYPRE_Int maxit)
 {
-   return hypre_AMESetMaxIter((void *) esolver, maxit);
+   return nalu_hypre_AMESetMaxIter((void *) esolver, maxit);
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_AMESetMaxPCGIter
+ * NALU_HYPRE_AMESetMaxPCGIter
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int HYPRE_AMESetMaxPCGIter(HYPRE_Solver esolver,
-                                 HYPRE_Int maxit)
+NALU_HYPRE_Int NALU_HYPRE_AMESetMaxPCGIter(NALU_HYPRE_Solver esolver,
+                                 NALU_HYPRE_Int maxit)
 {
-   return hypre_AMESetMaxPCGIter((void *) esolver, maxit);
+   return nalu_hypre_AMESetMaxPCGIter((void *) esolver, maxit);
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_AMESetTol
+ * NALU_HYPRE_AMESetTol
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int HYPRE_AMESetTol(HYPRE_Solver esolver,
-                          HYPRE_Real tol)
+NALU_HYPRE_Int NALU_HYPRE_AMESetTol(NALU_HYPRE_Solver esolver,
+                          NALU_HYPRE_Real tol)
 {
-   return hypre_AMESetTol((void *) esolver, tol);
+   return nalu_hypre_AMESetTol((void *) esolver, tol);
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_AMESetRTol
+ * NALU_HYPRE_AMESetRTol
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int HYPRE_AMESetRTol(HYPRE_Solver esolver,
-                           HYPRE_Real tol)
+NALU_HYPRE_Int NALU_HYPRE_AMESetRTol(NALU_HYPRE_Solver esolver,
+                           NALU_HYPRE_Real tol)
 {
-   return hypre_AMESetRTol((void *) esolver, tol);
+   return nalu_hypre_AMESetRTol((void *) esolver, tol);
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_AMESetPrintLevel
+ * NALU_HYPRE_AMESetPrintLevel
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int HYPRE_AMESetPrintLevel(HYPRE_Solver esolver,
-                                 HYPRE_Int print_level)
+NALU_HYPRE_Int NALU_HYPRE_AMESetPrintLevel(NALU_HYPRE_Solver esolver,
+                                 NALU_HYPRE_Int print_level)
 {
-   return hypre_AMESetPrintLevel((void *) esolver, print_level);
+   return nalu_hypre_AMESetPrintLevel((void *) esolver, print_level);
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_AMEGetEigenvalues
+ * NALU_HYPRE_AMEGetEigenvalues
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int HYPRE_AMEGetEigenvalues(HYPRE_Solver esolver,
-                                  HYPRE_Real **eigenvalues)
+NALU_HYPRE_Int NALU_HYPRE_AMEGetEigenvalues(NALU_HYPRE_Solver esolver,
+                                  NALU_HYPRE_Real **eigenvalues)
 {
-   return hypre_AMEGetEigenvalues((void *) esolver, eigenvalues);
+   return nalu_hypre_AMEGetEigenvalues((void *) esolver, eigenvalues);
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_AMEGetEigenvectors
+ * NALU_HYPRE_AMEGetEigenvectors
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int HYPRE_AMEGetEigenvectors(HYPRE_Solver esolver,
-                                   HYPRE_ParVector **eigenvectors)
+NALU_HYPRE_Int NALU_HYPRE_AMEGetEigenvectors(NALU_HYPRE_Solver esolver,
+                                   NALU_HYPRE_ParVector **eigenvectors)
 {
-   return hypre_AMEGetEigenvectors((void *) esolver,
+   return nalu_hypre_AMEGetEigenvectors((void *) esolver,
                                    eigenvectors);
 }

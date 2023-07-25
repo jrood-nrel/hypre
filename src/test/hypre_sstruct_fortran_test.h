@@ -14,748 +14,748 @@ extern "C" {
  *  Definitions of sstruct fortran interface routines
  *****************************************************************************/
 
-#define HYPRE_SStructGraphCreate \
-        hypre_F90_NAME(fhypre_sstructgraphcreate, FHYPRE_SSTRUCTGRAPHCREATE)
-extern void hypre_F90_NAME(fhypre_sstructgraphcreate, FHYPRE_SSTRUCTGRAPHCREATE)
-(HYPRE_Int *, hypre_F90_Obj *, hypre_F90_Obj *);
-
-#define HYPRE_SStructGraphDestroy \
-        hypre_F90_NAME(fhypre_sstructgraphdestroy, FHYPRE_SSTRUCTGRAPHDESTROY)
-extern void hypre_F90_NAME(fhypre_sstructgraphdestroy, FHYPRE_SSTRUCTGRAPHDESTROY)
-(hypre_F90_Obj *);
-
-#define HYPRE_SStructGraphSetStencil \
-        hypre_F90_NAME(fhypre_sstructgraphsetstencil, FHYPRE_SSTRUCTGRAPHSETSTENCIL)
-extern void hypre_F90_NAME(fhypre_sstructgraphsetstencil, FHYPRE_SSTRUCTGRAPHSETSTENCIL)
-(hypre_F90_Obj *, HYPRE_Int *, HYPRE_Int *, hypre_F90_Obj *);
-
-#define HYPRE_SStructGraphAddEntries \
-        hypre_F90_NAME(fhypre_sstructgraphaddentries, FHYPRE_SSTRUCTGRAPHADDENTRIES)
-extern void hypre_F90_NAME(fhypre_sstructgraphaddentries, FHYPRE_SSTRUCTGRAPHADDENTRIES)
-(hypre_F90_Obj *, HYPRE_Int *, HYPRE_Int *, HYPRE_Int *, HYPRE_Int *, HYPRE_Int *, HYPRE_Int *);
-
-#define HYPRE_SStructGraphAssemble \
-        hypre_F90_NAME(fhypre_sstructgraphassemble, FHYPRE_SSTRUCTGRAPHASSEMBLE)
-extern void hypre_F90_NAME(fhypre_sstructgraphassemble, FHYPRE_SSTRUCTGRAPHASSEMBLE)
-(hypre_F90_Obj *);
-
-#define HYPRE_SStructGraphSetObjectType \
-        hypre_F90_NAME(fhypre_sstructgraphsetobjecttyp, FHYPRE_SSTRUCTGRAPHSETOBJECTTYP)
-
-extern void hypre_F90_NAME(fhypre_sstructgraphsetobjecttyp, FHYPRE_SSTRUCTGRAPHSETOBJECTTYP)
-(hypre_F90_Obj *, HYPRE_Int *);
-
-
-
-#define HYPRE_SStructGridCreate \
-        hypre_F90_NAME(fhypre_sstructgridcreate, FHYPRE_SSTRUCTGRIDCREATE)
-extern void hypre_F90_NAME(fhypre_sstructgridcreate, FHYPRE_SSTRUCTGRIDCREATE)
-(HYPRE_Int *, HYPRE_Int *, HYPRE_Int *, hypre_F90_Obj *);
-
-#define HYPRE_SStructGridDestroy \
-        hypre_F90_NAME(fhypre_sstructgriddestroy, FHYPRE_SSTRUCTGRIDDESTROY)
-extern void hypre_F90_NAME(fhypre_sstructgriddestroy, FHYPRE_SSTRUCTGRIDDESTROY)
-(hypre_F90_Obj *);
-
-#define HYPRE_SStructGridSetExtents \
-        hypre_F90_NAME(fhypre_sstructgridsetextents, FHYPRE_SSTRUCTGRIDSETEXTENTS)
-extern void hypre_F90_NAME(fhypre_sstructgridsetextents, FHYPRE_SSTRUCTGRIDSETEXTENTS)
-(hypre_F90_Obj *, HYPRE_Int *, HYPRE_Int *, HYPRE_Int *);
-
-#define HYPRE_SStructGridSetVariables \
-        hypre_F90_NAME(fhypre_sstructgridsetvariables, FHYPRE_SSTRUCTGRIDSETVARIABLES)
-extern void hypre_F90_NAME(fhypre_sstructgridsetvariables, FHYPRE_SSTRUCTGRIDSETVARIABLES)
-(hypre_F90_Obj *, HYPRE_Int *, HYPRE_Int *, hypre_F90_Obj *);
-
-#define HYPRE_SStructGridAddVariables \
-        hypre_F90_NAME(fhypre_sstructgridaddvariables, FHYPRE_SSTRUCTGRIDADDVARIABLES)
-extern void hypre_F90_NAME(fhypre_sstructgridaddvariables, FHYPRE_SSTRUCTGRIDADDVARIABLES)
-(hypre_F90_Obj  *, HYPRE_Int *, HYPRE_Int *, HYPRE_Int *, hypre_F90_Obj *);
-
-#define HYPRE_SStructGridSetNeighborBox \
-        hypre_F90_NAME(fhypre_sstructgridsetneighborbo, FHYPRE_SSTRUCTGRIDSETNEIGHBORBO)
-extern void hypre_F90_NAME(fhypre_sstructgridsetneighborbo, FHYPRE_SSTRUCTGRIDSETNEIGHBORBO)
-(hypre_F90_Obj *, HYPRE_Int *, HYPRE_Int *, HYPRE_Int *, HYPRE_Int *, HYPRE_Int *, HYPRE_Int *,
- HYPRE_Int *);
-
-#define HYPRE_SStructGridAssemble \
-        hypre_F90_NAME(fhypre_sstructgridassemble, FHYPRE_SSTRUCTGRIDASSEMBLE)
-extern void hypre_F90_NAME(fhypre_sstructgridassemble, FHYPRE_SSTRUCTGRIDASSEMBLE)
-(hypre_F90_Obj *);
-
-#define HYPRE_SStructGridSetPeriodic \
-        hypre_F90_NAME(fhypre_sstructgridsetperiodic, FHYPRE_SSTRUCTGRIDSETPERIODIC)
-extern void hypre_F90_NAME(fhypre_sstructgridsetperiodic, FHYPRE_SSTRUCTGRIDSETPERIODIC)
-(hypre_F90_Obj *, HYPRE_Int *, HYPRE_Int *);
-
-#define HYPRE_SStructGridSetNumGhost \
-        hypre_F90_NAME(fhypre_sstructgridsetnumghost, FHYPRE_SSTRUCTGRIDSETNUMGHOST)
-extern void hypre_F90_NAME(fhypre_sstructgridsetnumghost, FHYPRE_SSTRUCTGRIDSETNUMGHOST)
-(hypre_F90_Obj *, HYPRE_Int *);
-
-
-
-#define HYPRE_SStructMatrixCreate \
-        hypre_F90_NAME(fhypre_sstructmatrixcreate, FHYPRE_SSTRUCTMATRIXCREATE)
-extern void hypre_F90_NAME(fhypre_sstructmatrixcreate, FHYPRE_SSTRUCTMATRIXCREATE)
-(HYPRE_Int *, hypre_F90_Obj *, hypre_F90_Obj *);
-
-#define HYPRE_SStructMatrixDestroy \
-        hypre_F90_NAME(fhypre_sstructmatrixdestroy, FHYPRE_SSTRUCTMATRIXDESTROY)
-extern void hypre_F90_NAME(fhypre_sstructmatrixdestroy, FHYPRE_SSTRUCTMATRIXDESTROY)
-(hypre_F90_Obj *);
-
-#define HYPRE_SStructMatrixInitialize \
-        hypre_F90_NAME(fhypre_sstructmatrixinitialize, FHYPRE_SSTRUCTMATRIXINITIALIZE)
-extern void hypre_F90_NAME(fhypre_sstructmatrixinitialize, FHYPRE_SSTRUCTMATRIXINITIALIZE)
-(hypre_F90_Obj *);
-
-#define HYPRE_SStructMatrixSetValues \
-        hypre_F90_NAME(fhypre_sstructmatrixsetvalues, FHYPRE_SSTRUCTMATRIXSETVALUES)
-extern void hypre_F90_NAME(fhypre_sstructmatrixsetvalues, FHYPRE_SSTRUCTMATRIXSETVALUES)
-(hypre_F90_Obj *, HYPRE_Int *, HYPRE_Int *, HYPRE_Int *, HYPRE_Int *, HYPRE_Int *, HYPRE_Real *);
-
-#define HYPRE_SStructMatrixSetBoxValues \
-        hypre_F90_NAME(fhypre_sstructmatrixsetboxvalue, FHYPRE_SSTRUCTMATRIXSETBOXVALUE)
-extern void hypre_F90_NAME(fhypre_sstructmatrixsetboxvalue, FHYPRE_SSTRUCTMATRIXSETBOXVALUE)
-(hypre_F90_Obj *, HYPRE_Int *, HYPRE_Int *, HYPRE_Int *, HYPRE_Int *, HYPRE_Int *, HYPRE_Int *,
- HYPRE_Real *);
-
-#define HYPRE_SStructMatrixGetValues \
-        hypre_F90_NAME(fhypre_sstructmatrixgetvalues, FHYPRE_SSTRUCTMATRIXGETVALUES)
-extern void hypre_F90_NAME(fhypre_sstructmatrixgetvalues, FHYPRE_SSTRUCTMATRIXGETVALUES)
-(hypre_F90_Obj *, HYPRE_Int *, HYPRE_Int *, HYPRE_Int *, HYPRE_Int *, HYPRE_Int *, HYPRE_Real *);
-
-#define HYPRE_SStructMatrixGetBoxValues \
-        hypre_F90_NAME(fhypre_sstructmatrixgetboxvalue, FHYPRE_SSTRUCTMATRIXGETBOXVALUE)
-extern void hypre_F90_NAME(fhypre_sstructmatrixgetboxvalue, FHYPRE_SSTRUCTMATRIXGETBOXVALUE)
-(hypre_F90_Obj *, HYPRE_Int *, HYPRE_Int *, HYPRE_Int *, HYPRE_Int *, HYPRE_Int *, HYPRE_Int *,
- HYPRE_Real *);
-
-#define HYPRE_SStructMatrixAddToValues \
-        hypre_F90_NAME(fhypre_sstructmatrixaddtovalues, FHYPRE_SSTRUCTMATRIXADDTOVALUES)
-extern void hypre_F90_NAME(fhypre_sstructmatrixaddtovalues, FHYPRE_SSTRUCTMATRIXADDTOVALUES)
-(hypre_F90_Obj *, HYPRE_Int *, HYPRE_Int *, HYPRE_Int *, HYPRE_Int *, HYPRE_Int *, HYPRE_Real *);
-
-#define HYPRE_SStructMatrixAddToBoxValues \
-        hypre_F90_NAME(fhypre_sstructmatrixaddtoboxval, FHYPRE_SSTRUCTMATRIXADDTOBOXVAL)
-extern void hypre_F90_NAME(fhypre_sstructmatrixaddtoboxval, FHYPRE_SSTRUCTMATRIXADDTOBOXVAL)
-(hypre_F90_Obj *, HYPRE_Int *, HYPRE_Int *, HYPRE_Int *, HYPRE_Int *, HYPRE_Int *, HYPRE_Int *,
- HYPRE_Real *);
-
-#define HYPRE_SStructMatrixAssemble \
-        hypre_F90_NAME(fhypre_sstructmatrixassemble, FHYPRE_SSTRUCTMATRIXASSEMBLE)
-extern void hypre_F90_NAME(fhypre_sstructmatrixassemble, FHYPRE_SSTRUCTMATRIXASSEMBLE)
-(hypre_F90_Obj *);
-
-#define HYPRE_SStructMatrixSetSymmetric \
-        hypre_F90_NAME(fhypre_sstructmatrixsetsymmetri, FHYPRE_SSTRUCTMATRIXSETSYMMETRI)
-extern void hypre_F90_NAME(fhypre_sstructmatrixsetsymmetri, FHYPRE_SSTRUCTMATRIXSETSYMMETRI)
-(hypre_F90_Obj *, HYPRE_Int *, HYPRE_Int *, HYPRE_Int *, HYPRE_Int *);
-
-#define HYPRE_SStructMatrixSetNSSymmetric \
-        hypre_F90_NAME(fhypre_sstructmatrixsetnssymmet, FHYPRE_SSTRUCTMATRIXSETNSSYMMET)
-extern void hypre_F90_NAME(fhypre_sstructmatrixsetnssymmet, FHYPRE_SSTRUCTMATRIXSETNSSYMMET)
-(hypre_F90_Obj *, HYPRE_Int *);
-
-#define HYPRE_SStructMatrixSetObjectType \
-        hypre_F90_NAME(fhypre_sstructmatrixsetobjectty, FHYPRE_SSTRUCTMATRIXSETOBJECTTY)
-extern void hypre_F90_NAME(fhypre_sstructmatrixsetobjectty, FHYPRE_SSTRUCTMATRIXSETOBJECTTY)
-(hypre_F90_Obj *, HYPRE_Int *);
-
-#define HYPRE_SStructMatrixGetObject \
-        hypre_F90_NAME(fhypre_sstructmatrixgetobject, FHYPRE_SSTRUCTMATRIXGETOBJECT)
-extern void hypre_F90_NAME(fhypre_sstructmatrixgetobject, FHYPRE_SSTRUCTMATRIXGETOBJECT)
-(hypre_F90_Obj *, hypre_F90_Obj *);
-
-#define HYPRE_SStructMatrixPrint \
-        hypre_F90_NAME(fhypre_sstructmatrixprint, FHYPRE_SSTRUCTMATRIXPRINT)
-extern void hypre_F90_NAME(fhypre_sstructmatrixprint, FHYPRE_SSTRUCTMATRIXPRINT)
-(const char *, hypre_F90_Obj *, HYPRE_Int *);
-
-
-
-#define HYPRE_SStructStencilCreate \
-        hypre_F90_NAME(fhypre_sstructstencilcreate, FHYPRE_SSTRUCTSTENCILCREATE)
-extern void hypre_F90_NAME(fhypre_sstructstencilcreate, FHYPRE_SSTRUCTSTENCILCREATE)
-(HYPRE_Int *, HYPRE_Int *, hypre_F90_Obj *);
-
-#define HYPRE_SStructStencilDestroy \
-        hypre_F90_NAME(fhypre_sstructstencildestroy, FHYPRE_SSTRUCTSTENCILDESTROY)
-extern void hypre_F90_NAME(fhypre_sstructstencildestroy, FHYPRE_SSTRUCTSTENCILDESTROY)
-(hypre_F90_Obj *);
-
-#define HYPRE_SStructStencilSetEntry \
-        hypre_F90_NAME(fhypre_sstructstencilsetentry, FHYPRE_SSTRUCTSTENCILSETENTRY)
-extern void hypre_F90_NAME(fhypre_sstructstencilsetentry, FHYPRE_SSTRUCTSTENCILSETENTRY)
-(hypre_F90_Obj *, HYPRE_Int *, HYPRE_Int *, HYPRE_Int *);
-
-
-
-#define HYPRE_SStructVectorCreate \
-        hypre_F90_NAME(fhypre_sstructvectorcreate, FHYPRE_SSTRUCTVECTORCREATE)
-extern void hypre_F90_NAME(fhypre_sstructvectorcreate, FHYPRE_SSTRUCTVECTORCREATE)
-(HYPRE_Int *, hypre_F90_Obj *, hypre_F90_Obj *);
-
-#define HYPRE_SStructVectorDestroy \
-        hypre_F90_NAME(fhypre_sstructvectordestroy, FHYPRE_SSTRUCTVECTORDESTROY)
-extern void hypre_F90_NAME(fhypre_sstructvectordestroy, FHYPRE_SSTRUCTVECTORDESTROY)
-(hypre_F90_Obj *);
-
-#define HYPRE_SStructVectorInitialize \
-        hypre_F90_NAME(fhypre_sstructvectorinitialize, FHYPRE_SSTRUCTVECTORINITIALIZE)
-extern void hypre_F90_NAME(fhypre_sstructvectorinitialize, FHYPRE_SSTRUCTVECTORINITIALIZE)
-(hypre_F90_Obj *);
-
-#define HYPRE_SStructVectorSetValues \
-        hypre_F90_NAME(fhypre_sstructvectorsetvalues, FHYPRE_SSTRUCTVECTORSETVALUES)
-extern void hypre_F90_NAME(fhypre_sstructvectorsetvalues, FHYPRE_SSTRUCTVECTORSETVALUES)
-(hypre_F90_Obj *, HYPRE_Int *, HYPRE_Int *, HYPRE_Int *, HYPRE_Real *);
-
-#define HYPRE_SStructVectorSetBoxValues \
-        hypre_F90_NAME(fhypre_sstructvectorsetboxvalue, FHYPRE_SSTRUCTVECTORSETBOXVALUE)
-extern void hypre_F90_NAME(fhypre_sstructvectorsetboxvalue, FHYPRE_SSTRUCTVECTORSETBOXVALUE)
-(hypre_F90_Obj *, HYPRE_Int *, HYPRE_Int *, HYPRE_Int *, HYPRE_Int *, HYPRE_Real *);
-
-#define HYPRE_SStructVectorAddToValues \
-        hypre_F90_NAME(fhypre_sstructvectoraddtovalues, FHYPRE_SSTRUCTVECTORADDTOVALUES)
-extern void hypre_F90_NAME(fhypre_sstructvectoraddtovalues, FHYPRE_SSTRUCTVECTORADDTOVALUES)
-(hypre_F90_Obj *, HYPRE_Int *, HYPRE_Int *, HYPRE_Int *, HYPRE_Real *);
-
-#define HYPRE_SStructVectorAddToBoxValues \
-        hypre_F90_NAME(fhypre_sstructvectoraddtoboxval, FHYPRE_SSTRUCTVECTORADDTOBOXVAL)
-extern void hypre_F90_NAME(fhypre_sstructvectoraddtoboxval, FHYPRE_SSTRUCTVECTORADDTOBOXVAL)
-(hypre_F90_Obj *, HYPRE_Int *, HYPRE_Int *, HYPRE_Int *, HYPRE_Int *, HYPRE_Real *);
-
-#define HYPRE_SStructVectorAssemble \
-        hypre_F90_NAME(fhypre_sstructvectorassemble, FHYPRE_SSTRUCTVECTORASSEMBLE)
-extern void hypre_F90_NAME(fhypre_sstructvectorassemble, FHYPRE_SSTRUCTVECTORASSEMBLE)
-(hypre_F90_Obj *);
-
-#define HYPRE_SStructVectorGather \
-        hypre_F90_NAME(fhypre_sstructvectorgather, FHYPRE_SSTRUCTVECTORGATHER)
-extern void hypre_F90_NAME(fhypre_sstructvectorgather, FHYPRE_SSTRUCTVECTORGATHER)
-(hypre_F90_Obj *);
-
-#define HYPRE_SStructVectorGetValues \
-        hypre_F90_NAME(fhypre_sstructvectorgetvalues, FHYPRE_SSTRUCTVECTORGETVALUES)
-extern void hypre_F90_NAME(fhypre_sstructvectorgetvalues, FHYPRE_SSTRUCTVECTORGETVALUES)
-(hypre_F90_Obj *, HYPRE_Int *, HYPRE_Int *, HYPRE_Int *, HYPRE_Real *);
-
-#define HYPRE_SStructVectorGetBoxValues \
-        hypre_F90_NAME(fhypre_sstructvectorgetboxvalue, FHYPRE_SSTRUCTVECTORGETBOXVALUE)
-extern void hypre_F90_NAME(fhypre_sstructvectorgetboxvalue, FHYPRE_SSTRUCTVECTORGETBOXVALUE)
-(hypre_F90_Obj *, HYPRE_Int *, HYPRE_Int *, HYPRE_Int *, HYPRE_Int *, HYPRE_Real *);
-
-#define HYPRE_SStructVectorSetObjectType \
-        hypre_F90_NAME(fhypre_sstructvectorsetobjectty, FHYPRE_SSTRUCTVECTORSETOBJECTTY)
-extern void hypre_F90_NAME(fhypre_sstructvectorsetobjectty, FHYPRE_SSTRUCTVECTORSETOBJECTTY)
-(hypre_F90_Obj *, HYPRE_Int *);
-
-#define HYPRE_SStructVectorGetObject \
-        hypre_F90_NAME(fhypre_sstructvectorgetobject, FHYPRE_SSTRUCTVECTORGETOBJECT)
-extern void hypre_F90_NAME(fhypre_sstructvectorgetobject, FHYPRE_SSTRUCTVECTORGETOBJECT)
-(hypre_F90_Obj *, void *);
-
-#define HYPRE_SStructVectorPrint \
-        hypre_F90_NAME(fhypre_sstructvectorprint, FHYPRE_SSTRUCTVECTORPRINT)
-extern void hypre_F90_NAME(fhypre_sstructvectorprint, FHYPRE_SSTRUCTVECTORPRINT)
-(const char *, hypre_F90_Obj *, HYPRE_Int *);
-
-
-
-#define HYPRE_SStructBiCGSTABCreate \
-        hypre_F90_NAME(fhypre_sstructbicgstabcreate, FHYPRE_SSTRUCTBICGSTABCREATE)
-extern void hypre_F90_NAME(fhypre_sstructbicgstabcreate, FHYPRE_SSTRUCTBICGSTABCREATE)
-(HYPRE_Int *, hypre_F90_Obj *);
-
-#define HYPRE_SStructBiCGSTABDestroy \
-        hypre_F90_NAME(fhypre_sstructbicgstabdestroy, FHYPRE_SSTRUCTBICGSTABDESTROY)
-extern void hypre_F90_NAME(fhypre_sstructbicgstabdestroy, FHYPRE_SSTRUCTBICGSTABDESTROY)
-(hypre_F90_Obj *);
-
-#define HYPRE_SStructBiCGSTABSetup \
-        hypre_F90_NAME(fhypre_sstructbicgstabsetup, FHYPRE_SSTRUCTBICGSTABSETUP)
-extern void hypre_F90_NAME(fhypre_sstructbicgstabsetup, FHYPRE_SSTRUCTBICGSTABSETUP)
-(hypre_F90_Obj *, hypre_F90_Obj *, hypre_F90_Obj *, hypre_F90_Obj *);
-
-#define HYPRE_SStructBiCGSTABSolve \
-        hypre_F90_NAME(fhypre_sstructbicgstabsolve, FHYPRE_SSTRUCTBICGSTABSOLVE)
-extern void hypre_F90_NAME(fhypre_sstructbicgstabsolve, FHYPRE_SSTRUCTBICGSTABSOLVE)
-(hypre_F90_Obj *, hypre_F90_Obj *, hypre_F90_Obj *, hypre_F90_Obj *);
-
-#define HYPRE_SStructBiCGSTABSetTol \
-        hypre_F90_NAME(fhypre_sstructbicgstabsettol, FHYPRE_SSTRUCTBICGSTABSETTOL)
-extern void hypre_F90_NAME(fhypre_sstructbicgstabsettol, FHYPRE_SSTRUCTBICGSTABSETTOL)
-(hypre_F90_Obj *, HYPRE_Real *);
-
-#define HYPRE_SStructBiCGSTABSetMinIter \
-        hypre_F90_NAME(fhypre_sstructbicgstabsetminite, FHYPRE_SSTRUCTBICGSTABSETMINITE)
-extern void hypre_F90_NAME(fhypre_sstructbicgstabsetminite, FHYPRE_SSTRUCTBICGSTABSETMINITE)
-(hypre_F90_Obj *, HYPRE_Int *);
-
-#define HYPRE_SStructBiCGSTABSetMaxIter \
-        hypre_F90_NAME(fhypre_sstructbicgstabsetmaxite, FHYPRE_SSTRUCTBICGSTABSETMAXITE)
-extern void hypre_F90_NAME(fhypre_sstructbicgstabsetmaxite, FHYPRE_SSTRUCTBICGSTABSETMAXITE)
-(hypre_F90_Obj *, HYPRE_Int *);
-
-#define HYPRE_SStructBiCGSTABSetStopCrit \
-        hypre_F90_NAME(fhypre_sstructbicgstabsetstopcr, FHYPRE_SSTRUCTBICGSTABSETSTOPCR)
-extern void hypre_F90_NAME(fhypre_sstructbicgstabsetstopcr, FHYPRE_SSTRUCTBICGSTABSETSTOPCR)
-(hypre_F90_Obj *, HYPRE_Int *);
-
-#define HYPRE_SStructBiCGSTABSetPrecond \
-        hypre_F90_NAME(fhypre_sstructbicgstabsetprecon, FHYPRE_SSTRUCTBICGSTABSETPRECON)
-extern void hypre_F90_NAME(fhypre_sstructbicgstabsetprecon, FHYPRE_SSTRUCTBICGSTABSETPRECON)
-(hypre_F90_Obj *, HYPRE_Int *, hypre_F90_Obj *);
-
-#define HYPRE_SStructBiCGSTABSetLogging \
-        hypre_F90_NAME(fhypre_sstructbicgstabsetloggin, FHYPRE_SSTRUCTBICGSTABSETLOGGIN)
-extern void hypre_F90_NAME(fhypre_sstructbicgstabsetloggin, FHYPRE_SSTRUCTBICGSTABSETLOGGIN)
-(hypre_F90_Obj *, HYPRE_Int *);
-
-#define HYPRE_SStructBiCGSTABSetPrintLevel \
-        hypre_F90_NAME(fhypre_sstructbicgstabsetprintl, FHYPRE_SSTRUCTBICGSTABSETPRINTL)
-extern void hypre_F90_NAME(fhypre_sstructbicgstabsetprintl, FHYPRE_SSTRUCTBICGSTABSETPRINTL)
-(hypre_F90_Obj *, HYPRE_Int *);
-
-#define HYPRE_SStructBiCGSTABGetNumIterations \
-        hypre_F90_NAME(fhypre_sstructbicgstabgetnumite, FHYPRE_SSTRUCTBICGSTABGETNUMITE)
-extern void hypre_F90_NAME(fhypre_sstructbicgstabgetnumite, FHYPRE_SSTRUCTBICGSTABGETNUMITE)
-(hypre_F90_Obj *, HYPRE_Int *);
-
-#define HYPRE_SStructBiCGSTABGetFinalRelativeResidualNorm \
-        hypre_F90_NAME(fhypre_sstructbicgstabgetfinalr, FHYPRE_SSTRUCTBICGSTABGETFINALR)
-extern void hypre_F90_NAME(fhypre_sstructbicgstabgetfinalr, FHYPRE_SSTRUCTBICGSTABGETFINALR)
-(hypre_F90_Obj *, HYPRE_Real *);
-
-#define HYPRE_SStructBiCGSTABGetResidual \
-        hypre_F90_NAME(fhypre_sstructbicgstabgetresidu, FHYPRE_SSTRUCTBICGSTABGETRESIDU)
-extern void hypre_F90_NAME(fhypre_sstructbicgstabgetresidu, FHYPRE_SSTRUCTBICGSTABGETRESIDU)
-(hypre_F90_Obj *, hypre_F90_Obj *);
-
-
-
-#define HYPRE_SStructGMRESCreate \
-        hypre_F90_NAME(fhypre_sstructgmrescreate, FHYPRE_SSTRUCTGMRESCREATE)
-extern void hypre_F90_NAME(fhypre_sstructgmrescreate, FHYPRE_SSTRUCTGMRESCREATE)
-(hypre_F90_Obj *, hypre_F90_Obj *);
-
-#define HYPRE_SStructGMRESDestroy \
-        hypre_F90_NAME(fhypre_sstructgmresdestroy, FHYPRE_SSTRUCTGMRESDESTROY)
-extern void hypre_F90_NAME(fhypre_sstructgmresdestroy, FHYPRE_SSTRUCTGMRESDESTROY)
-(hypre_F90_Obj *);
-
-#define HYPRE_SStructGMRESSetup \
-        hypre_F90_NAME(fhypre_sstructgmressetup, FHYPRE_SSTRUCTGMRESSETUP)
-extern void hypre_F90_NAME(fhypre_sstructgmressetup, FHYPRE_SSTRUCTGMRESSETUP)
-(hypre_F90_Obj *, hypre_F90_Obj *, hypre_F90_Obj *, hypre_F90_Obj *);
-
-#define HYPRE_SStructGMRESSolve \
-        hypre_F90_NAME(fhypre_sstructgmressolve, FHYPRE_SSTRUCTGMRESSOLVE)
-extern void hypre_F90_NAME(fhypre_sstructgmressolve, FHYPRE_SSTRUCTGMRESSOLVE)
-(hypre_F90_Obj *, hypre_F90_Obj *, hypre_F90_Obj *, hypre_F90_Obj *);
-
-#define HYPRE_SStructGMRESSetKDim \
-        hypre_F90_NAME(fhypre_sstructgmressetkdim, FHYPRE_SSTRUCTGMRESSETKDIM)
-extern void hypre_F90_NAME(fhypre_sstructgmressetkdim, FHYPRE_SSTRUCTGMRESSETKDIM)
-(hypre_F90_Obj *, HYPRE_Int *);
-
-#define HYPRE_SStructGMRESSetTol \
-        hypre_F90_NAME(fhypre_sstructgmressettol, FHYPRE_SSTRUCTGMRESSETTOL)
-extern void hypre_F90_NAME(fhypre_sstructgmressettol, FHYPRE_SSTRUCTGMRESSETTOL)
-(hypre_F90_Obj *, HYPRE_Real *);
-
-#define HYPRE_SStructGMRESSetMinIter \
-        hypre_F90_NAME(fhypre_sstructgmressetminiter, FHYPRE_SSTRUCTGMRESSETMINITER)
-extern void hypre_F90_NAME(fhypre_sstructgmressetminiter, FHYPRE_SSTRUCTGMRESSETMINITER)
-(hypre_F90_Obj *, HYPRE_Int *);
-
-#define HYPRE_SStructGMRESSetMaxIter \
-        hypre_F90_NAME(fhypre_sstructgmressetmaxiter, FHYPRE_SSTRUCTGMRESSETMAXITER)
-extern void hypre_F90_NAME(fhypre_sstructgmressetmaxiter, FHYPRE_SSTRUCTGMRESSETMAXITER)
-(hypre_F90_Obj *, HYPRE_Int *);
-
-#define HYPRE_SStructGMRESSetStopCrit \
-        hypre_F90_NAME(fhypre_sstructgmressetstopcrit, FHYPRE_SSTRUCTGMRESSETSTOPCRIT)
-extern void hypre_F90_NAME(fhypre_sstructgmressetstopcrit, FHYPRE_SSTRUCTGMRESSETSTOPCRIT)
-(hypre_F90_Obj *, HYPRE_Int *);
-
-#define HYPRE_SStructGMRESSetPrecond \
-        hypre_F90_NAME(fhypre_sstructgmressetprecond, FHYPRE_SSTRUCTGMRESSETPRECOND)
-extern void hypre_F90_NAME(fhypre_sstructgmressetprecond, FHYPRE_SSTRUCTGMRESSETPRECOND)
-(hypre_F90_Obj *, HYPRE_Int *, hypre_F90_Obj *);
-
-
-#define HYPRE_SStructGMRESSetLogging \
-        hypre_F90_NAME(fhypre_sstructgmressetlogging, FHYPRE_SSTRUCTGMRESSETLOGGING)
-extern void hypre_F90_NAME(fhypre_sstructgmressetlogging, FHYPRE_SSTRUCTGMRESSETLOGGING)
-(hypre_F90_Obj *, HYPRE_Int *);
-
-#define HYPRE_SStructGMRESSetPrintLevel \
-        hypre_F90_NAME(fhypre_sstructgmressetprintleve, FHYPRE_SSTRUCTGMRESSETPRINTLEVE)
-extern void hypre_F90_NAME(fhypre_sstructgmressetprintleve, FHYPRE_SSTRUCTGMRESSETPRINTLEVE)
-(hypre_F90_Obj *, HYPRE_Int *);
-
-#define HYPRE_SStructGMRESGetNumIterations \
-      hypre_F90_NAME(fhypre_sstructgmresgetnumiterati, FHYPRE_SSTRUCTGMRESGETNUMITERATI)
-extern void hypre_F90_NAME(fhypre_sstructgmresgetnumiterati, FHYPRE_SSTRUCTGMRESGETNUMITERATI)
-(hypre_F90_Obj *, HYPRE_Int *);
-
-#define HYPRE_SStructGMRESGetFinalRelativeResidualNorm \
-        hypre_F90_NAME(fhypre_sstructgmresgetfinalrela, FHYPRE_SSTRUCTGMRESGETFINALRELA)
-extern void hypre_F90_NAME(fhypre_sstructgmresgetfinalrela, FHYPRE_SSTRUCTGMRESGETFINALRELA)
-(hypre_F90_Obj *, HYPRE_Real  *);
-
-#define HYPRE_SStructGMRESGetResidual \
-        hypre_F90_NAME(fhypre_sstructgmresgetresidual, FHYPRE_SSTRUCTGMRESGETRESIDUAL)
-extern void hypre_F90_NAME(fhypre_sstructgmresgetresidual, FHYPRE_SSTRUCTGMRESGETRESIDUAL)
-(hypre_F90_Obj *, hypre_F90_Obj *);
-
-
-
-#define HYPRE_SStructPCGCreate \
-        hypre_F90_NAME(fhypre_sstructpcgcreate, FHYPRE_SSTRUCTPCGCREATE)
-extern void hypre_F90_NAME(fhypre_sstructpcgcreate, FHYPRE_SSTRUCTPCGCREATE)
-(hypre_F90_Obj *, hypre_F90_Obj *);
-
-#define HYPRE_SStructPCGDestroy \
-        hypre_F90_NAME(fhypre_sstructpcgdestroy, FHYPRE_SSTRUCTPCGDESTROY)
-extern void hypre_F90_NAME(fhypre_sstructpcgdestroy, FHYPRE_SSTRUCTPCGDESTROY)
-(hypre_F90_Obj *);
-
-#define HYPRE_SStructPCGSetup \
-        hypre_F90_NAME(fhypre_sstructpcgsetup, FHYPRE_SSTRUCTPCGDESTROY)
-extern void hypre_F90_NAME(fhypre_sstructpcgsetup, FHYPRE_SSTRUCTPCGDESTROY)
-(hypre_F90_Obj *, hypre_F90_Obj *, hypre_F90_Obj *, hypre_F90_Obj *);
-
-#define HYPRE_SStructPCGSolve \
-        hypre_F90_NAME(fhypre_sstructpcgsolve, FHYPRE_SSTRUCTPCGSOLVE)
-extern void hypre_F90_NAME(fhypre_sstructpcgsolve, FHYPRE_SSTRUCTPCGSOLVE)
-(hypre_F90_Obj *, hypre_F90_Obj *, hypre_F90_Obj *, hypre_F90_Obj *);
-
-#define HYPRE_SStructPCGSetTol \
-        hypre_F90_NAME(fhypre_sstructpcgsettol, FHYPRE_SSTRUCTPCGSETTOL)
-extern void hypre_F90_NAME(fhypre_sstructpcgsettol, FHYPRE_SSTRUCTPCGSETTOL)
-(hypre_F90_Obj *, HYPRE_Real *);
-
-#define HYPRE_SStructPCGSetMaxIter \
-        hypre_F90_NAME(fhypre_sstructpcgsetmaxiter, FHYPRE_SSTRUCTPCGSETMAXITER)
-extern void hypre_F90_NAME(fhypre_sstructpcgsetmaxiter, FHYPRE_SSTRUCTPCGSETMAXITER)
-(hypre_F90_Obj *, HYPRE_Int  *);
-
-#define HYPRE_SStructPCGSetTwoNorm \
-        hypre_F90_NAME(fhypre_sstructpcgsettwonorm, FHYPRE_SSTRUCTPCGSETTWONORM)
-extern void hypre_F90_NAME(fhypre_sstructpcgsettwonorm, FHYPRE_SSTRUCTPCGSETTWONORM)
-(hypre_F90_Obj *, HYPRE_Int  *);
-
-#define HYPRE_SStructPCGSetRelChange \
-        hypre_F90_NAME(fhypre_sstructpcgsetrelchange, FHYPRE_SSTRUCTPCGSETRELCHANGE)
-extern void hypre_F90_NAME(fhypre_sstructpcgsetrelchange, FHYPRE_SSTRUCTPCGSETRELCHANGE)
-(hypre_F90_Obj *, HYPRE_Int  *);
-
-#define HYPRE_SStructPCGSetPrecond \
-        hypre_F90_NAME(fhypre_sstructpcgsetprecond, FHYPRE_SSTRUCTPCGSETPRECOND)
-extern void hypre_F90_NAME(fhypre_sstructpcgsetprecond, FHYPRE_SSTRUCTPCGSETPRECOND)
-(hypre_F90_Obj *, HYPRE_Int  *, hypre_F90_Obj *);
-
-
-#define HYPRE_SStructPCGSetLogging \
-        hypre_F90_NAME(fhypre_sstructpcgsetlogging, FHYPRE_SSTRUCTPCGSETLOGGING)
-extern void hypre_F90_NAME(fhypre_sstructpcgsetlogging, FHYPRE_SSTRUCTPCGSETLOGGING)
-(hypre_F90_Obj *, HYPRE_Int  *);
-
-#define HYPRE_SStructPCGSetPrintLevel \
-        hypre_F90_NAME(fhypre_sstructpcgsetprintlevel, FHYPRE_SSTRUCTPCGSETPRINTLEVEL)
-extern void hypre_F90_NAME(fhypre_sstructpcgsetprintlevel, FHYPRE_SSTRUCTPCGSETPRINTLEVEL)
-(hypre_F90_Obj *, HYPRE_Int  *);
-
-#define HYPRE_SStructPCGGetNumIterations \
-        hypre_F90_NAME(fhypre_sstructpcggetnumiteratio, FHYPRE_SSTRUCTPCGGETNUMITERATIO)
-extern void hypre_F90_NAME(fhypre_sstructpcggetnumiteratio, FHYPRE_SSTRUCTPCGGETNUMITERATIO)
-(hypre_F90_Obj *, HYPRE_Int  *);
-
-#define HYPRE_SStructPCGGetFinalRelativeResidualNorm \
-        hypre_F90_NAME(fhypre_sstructpcggetfinalrelati, FHYPRE_SSTRUCTPCGGETFINALRELATI)
-extern void hypre_F90_NAME(fhypre_sstructpcggetfinalrelati, FHYPRE_SSTRUCTPCGGETFINALRELATI)
-(hypre_F90_Obj *, HYPRE_Real *);
-
-#define HYPRE_SStructPCGGetResidual \
-        hypre_F90_NAME(fhypre_sstructpcggetresidual, FHYPRE_SSTRUCTPCGGETRESIDUAL)
-extern void hypre_F90_NAME(fhypre_sstructpcggetresidual, FHYPRE_SSTRUCTPCGGETRESIDUAL)
-(hypre_F90_Obj *, hypre_F90_Obj *);
-
-#define HYPRE_SStructDiagScaleSetup \
-        hypre_F90_NAME(fhypre_sstructdiagscalesetup, FHYPRE_SSTRUCTDIAGSCALESETUP)
-extern void hypre_F90_NAME(fhypre_sstructdiagscalesetup, FHYPRE_SSTRUCTDIAGSCALESETUP)
-(hypre_F90_Obj *, hypre_F90_Obj *, hypre_F90_Obj *, hypre_F90_Obj *);
-
-#define HYPRE_SStructDiagScale \
-        hypre_F90_NAME(fhypre_sstructdiagscale, FHYPRE_SSTRUCTDIAGSCALE)
-extern void hypre_F90_NAME(fhypre_sstructdiagscale, FHYPRE_SSTRUCTDIAGSCALE)
-(hypre_F90_Obj *, hypre_F90_Obj *, hypre_F90_Obj *, hypre_F90_Obj *);
-
-
-#define HYPRE_SStructSplitCreate \
-        hypre_F90_NAME(fhypre_sstructsplitcreate, FHYPRE_SSTRUCTSPLITCREATE)
-extern void hypre_F90_NAME(fhypre_sstructsplitcreate, FHYPRE_SSTRUCTSPLITCREATE)
-(hypre_F90_Obj *, hypre_F90_Obj *);
-
-#define HYPRE_SStructSplitDestroy \
-        hypre_F90_NAME(fhypre_sstructsplitdestroy, FHYPRE_SSTRUCTSPLITDESTROY)
-extern void hypre_F90_NAME(fhypre_sstructsplitdestroy, FHYPRE_SSTRUCTSPLITDESTROY)
-(hypre_F90_Obj *);
-
-#define HYPRE_SStructSplitSetup \
-        hypre_F90_NAME(fhypre_sstructsplitsetup, FHYPRE_SSTRUCTSPLITSETUP)
-extern void hypre_F90_NAME(fhypre_sstructsplitsetup, FHYPRE_SSTRUCTSPLITSETUP)
-(hypre_F90_Obj *, hypre_F90_Obj *, hypre_F90_Obj *, hypre_F90_Obj *);
-
-#define HYPRE_SStructSplitSolve \
-        hypre_F90_NAME(fhypre_sstructsplitsolve, FHYPRE_SSTRUCTSPLITSOLVE)
-extern void hypre_F90_NAME(fhypre_sstructsplitsolve, FHYPRE_SSTRUCTSPLITSOLVE)
-(hypre_F90_Obj *, hypre_F90_Obj *, hypre_F90_Obj *, hypre_F90_Obj *);
-
-#define HYPRE_SStructSplitSetTol \
-        hypre_F90_NAME(fhypre_sstructsplitsettol, FHYPRE_SSTRUCTSPLITSETTOL)
-extern void hypre_F90_NAME(fhypre_sstructsplitsettol, FHYPRE_SSTRUCTSPLITSETTOL)
-(hypre_F90_Obj *, HYPRE_Real *);
-
-#define HYPRE_SStructSplitSetMaxIter \
-        hypre_F90_NAME(fhypre_sstructsplitsetmaxiter, FHYPRE_SSTRUCTSPLITSETMAXITER)
-extern void hypre_F90_NAME(fhypre_sstructsplitsetmaxiter, FHYPRE_SSTRUCTSPLITSETMAXITER)
-(hypre_F90_Obj *, HYPRE_Int  *);
-
-#define HYPRE_SStructSplitSetZeroGuess \
-        hypre_F90_NAME(fhypre_sstructsplitsetzeroguess, FHYPRE_SSTRUCTSPLITSETZEROGUESS)
-extern void hypre_F90_NAME(fhypre_sstructsplitsetzeroguess, FHYPRE_SSTRUCTSPLITSETZEROGUESS)
-(hypre_F90_Obj *);
-
-#define HYPRE_SStructSplitSetNonZeroGuess \
-        hypre_F90_NAME(fhypre_sstructsplitsetnonzerogu, FHYPRE_SSTRUCTSPLITSETNONZEROGU)
-extern void hypre_F90_NAME(fhypre_sstructsplitsetnonzerogu, FHYPRE_SSTRUCTSPLITSETNONZEROGU)
-(hypre_F90_Obj *);
-
-#define HYPRE_SStructSplitSetStructSolver \
-        hypre_F90_NAME(fhypre_sstructsplitsetstructsol, FHYPRE_SSTRUCTSPLITSETSTRUCTSOL)
-extern void hypre_F90_NAME(fhypre_sstructsplitsetstructsol, FHYPRE_SSTRUCTSPLITSETSTRUCTSOL)
-(hypre_F90_Obj *, HYPRE_Int  *);
-
-#define HYPRE_SStructSplitGetNumIterations \
-        hypre_F90_NAME(fhypre_sstructsplitgetnumiterat, FHYPRE_SSTRUCTSPLITGETNUMITERAT)
-extern void hypre_F90_NAME(fhypre_sstructsplitgetnumiterat, FHYPRE_SSTRUCTSPLITGETNUMITERAT)
-(hypre_F90_Obj *, HYPRE_Int  *);
-
-#define HYPRE_SStructSplitGetFinalRelativeResidualNorm \
-        hypre_F90_NAME(fhypre_sstructsplitgetfinalrela, FHYPRE_SSTRUCTSPLITGETFINALRELA)
-extern void hypre_F90_NAME(fhypre_sstructsplitgetfinalrela, FHYPRE_SSTRUCTSPLITGETFINALRELA)
-(hypre_F90_Obj *, HYPRE_Real *);
-
-
-
-#define HYPRE_SStructSysPFMGCreate \
-        hypre_F90_NAME(fhypre_sstructsyspfmgcreate, FHYPRE_SSTRUCTSYSPFMGCREATE)
-extern void hypre_F90_NAME(fhypre_sstructsyspfmgcreate, FHYPRE_SSTRUCTSYSPFMGCREATE)
-(hypre_F90_Obj *, hypre_F90_Obj *);
-
-#define HYPRE_SStructSysPFMGDestroy \
-        hypre_F90_NAME(fhypre_sstructsyspfmgdestroy, FHYPRE_SSTRUCTSYSPFMGDESTROY)
-extern void hypre_F90_NAME(fhypre_sstructsyspfmgdestroy, FHYPRE_SSTRUCTSYSPFMGDESTROY)
-(hypre_F90_Obj *);
-
-#define HYPRE_SStructSysPFMGSetup \
-        hypre_F90_NAME(fhypre_sstructsyspfmgsetup, FHYPRE_SSTRUCTSYSPFMGSETUP)
-extern void hypre_F90_NAME(fhypre_sstructsyspfmgsetup, FHYPRE_SSTRUCTSYSPFMGSETUP)
-(hypre_F90_Obj *, hypre_F90_Obj *, hypre_F90_Obj *, hypre_F90_Obj *);
-
-#define HYPRE_SStructSysPFMGSolve \
-        hypre_F90_NAME(fhypre_sstructsyspfmgsolve, FHYPRE_SSTRUCTSYSPFMGSOLVE)
-extern void hypre_F90_NAME(fhypre_sstructsyspfmgsolve, FHYPRE_SSTRUCTSYSPFMGSOLVE)
-(hypre_F90_Obj *, hypre_F90_Obj *, hypre_F90_Obj *, hypre_F90_Obj *);
-
-#define HYPRE_SStructSysPFMGSetTol \
-        hypre_F90_NAME(fhypre_sstructsyspfmgsettol, FHYPRE_SSTRUCTSYSPFMGSETTOL)
-extern void hypre_F90_NAME(fhypre_sstructsyspfmgsettol, FHYPRE_SSTRUCTSYSPFMGSETTOL)
-(hypre_F90_Obj *, HYPRE_Real *);
-
-#define HYPRE_SStructSysPFMGSetMaxIter \
-        hypre_F90_NAME(fhypre_sstructsyspfmgsetmaxiter, FHYPRE_SSTRUCTSYSPFMGSETMAXITER)
-extern void hypre_F90_NAME(fhypre_sstructsyspfmgsetmaxiter, FHYPRE_SSTRUCTSYSPFMGSETMAXITER)
-(hypre_F90_Obj *, HYPRE_Int *);
-
-#define HYPRE_SStructSysPFMGSetRelChange \
-        hypre_F90_NAME(fhypre_sstructsyspfmgsetrelchan, FHYPRE_SSTRUCTSYSPFMGSETRELCHAN)
-extern void hypre_F90_NAME(fhypre_sstructsyspfmgsetrelchan, FHYPRE_SSTRUCTSYSPFMGSETRELCHAN)
-(hypre_F90_Obj *, HYPRE_Int *);
-
-#define HYPRE_SStructSysPFMGSetZeroGuess \
-        hypre_F90_NAME(fhypre_sstructsyspfmgsetzerogue, FHYPRE_SSTRUCTSYSPFMGSETZEROGUE)
-extern void hypre_F90_NAME(fhypre_sstructsyspfmgsetzerogue, FHYPRE_SSTRUCTSYSPFMGSETZEROGUE)
-(hypre_F90_Obj *);
-
-#define HYPRE_SStructSysPFMGSetNonZeroGuess \
-        hypre_F90_NAME(fhypre_sstructsyspfmgsetnonzero, FHYPRE_SSTRUCTSYSPFMGSETNONZERO)
-extern void hypre_F90_NAME(fhypre_sstructsyspfmgsetnonzero, FHYPRE_SSTRUCTSYSPFMGSETNONZERO)
-(hypre_F90_Obj *);
-
-#define HYPRE_SStructSysPFMGSetRelaxType \
-        hypre_F90_NAME(fhypre_sstructsyspfmgsetrelaxty, FHYPRE_SSTRUCTSYSPFMGSETRELAXTY)
-extern void hypre_F90_NAME(fhypre_sstructsyspfmgsetrelaxty, FHYPRE_SSTRUCTSYSPFMGSETRELAXTY)
-(hypre_F90_Obj *, HYPRE_Int *);
-
-#define HYPRE_SStructSysPFMGSetNumPreRelax \
-        hypre_F90_NAME(fhypre_sstructsyspfmgsetnumprer, FHYPRE_SSTRUCTSYSPFMGSETNUMPRER)
-extern void hypre_F90_NAME(fhypre_sstructsyspfmgsetnumprer, FHYPRE_SSTRUCTSYSPFMGSETNUMPRER)
-(hypre_F90_Obj *, HYPRE_Int *);
-
-#define HYPRE_SStructSysPFMGSetNumPostRelax \
-        hypre_F90_NAME(fhypre_sstructsyspfmgsetnumpost, FHYPRE_SSTRUCTSYSPFMGSETNUMPOST)
-extern void hypre_F90_NAME(fhypre_sstructsyspfmgsetnumpost, FHYPRE_SSTRUCTSYSPFMGSETNUMPOST)
-(hypre_F90_Obj *, HYPRE_Int *);
-
-
-#define HYPRE_SStructSysPFMGSetSkipRelax \
-        hypre_F90_NAME(fhypre_sstructsyspfmgsetskiprel, FHYPRE_SSTRUCTSYSPFMGSETSKIPREL)
-extern void hypre_F90_NAME(fhypre_sstructsyspfmgsetskiprel, FHYPRE_SSTRUCTSYSPFMGSETSKIPREL)
-(hypre_F90_Obj *, HYPRE_Int *);
-
-#define HYPRE_SStructSysPFMGSetDxyz \
-        hypre_F90_NAME(fhypre_sstructsyspfmgsetdxyz, FHYPRE_SSTRUCTSYSPFMGSETDXYZ)
-extern void hypre_F90_NAME(fhypre_sstructsyspfmgsetdxyz, FHYPRE_SSTRUCTSYSPFMGSETDXYZ)
-(hypre_F90_Obj *, HYPRE_Real *);
-
-#define HYPRE_SStructSysPFMGSetLogging \
-        hypre_F90_NAME(fhypre_sstructsyspfmgsetlogging, FHYPRE_SSTRUCTSYSPFMGSETLOGGING)
-extern void hypre_F90_NAME(fhypre_sstructsyspfmgsetlogging, FHYPRE_SSTRUCTSYSPFMGSETLOGGING)
-(hypre_F90_Obj *, HYPRE_Int *);
-
-#define HYPRE_SStructSysPFMGSetPrintLevel \
-        hypre_F90_NAME(fhypre_sstructsyspfmgsetprintle, FHYPRE_SSTRUCTSYSPFMGSETPRINTLE)
-extern void hypre_F90_NAME(fhypre_sstructsyspfmgsetprintle, FHYPRE_SSTRUCTSYSPFMGSETPRINTLE)
-(hypre_F90_Obj *, HYPRE_Int *);
-
-#define HYPRE_SStructSysPFMGGetNumIterations \
-        hypre_F90_NAME(fhypre_sstructsyspfmggetnumiter, FHYPRE_SSTRUCTSYSPFMGGETNUMITER)
-extern void hypre_F90_NAME(fhypre_sstructsyspfmggetnumiter, FHYPRE_SSTRUCTSYSPFMGGETNUMITER)
-(hypre_F90_Obj *, HYPRE_Int *);
-
-
-#define HYPRE_SStructSysPFMGGetFinalRelativeResidualNorm \
-        hypre_F90_NAME(fhypre_sstructsyspfmggetfinalre, FHYPRE_SSTRUCTSYSPFMGGETFINALRE)
-extern void hypre_F90_NAME(fhypre_sstructsyspfmggetfinalre, FHYPRE_SSTRUCTSYSPFMGGETFINALRE)
-(hypre_F90_Obj *, HYPRE_Real *);
-
-
-
-#define HYPRE_SStructMaxwellCreate \
-        hypre_F90_NAME(fhypre_sstructmaxwellcreate, FHYPRE_SSTRUCTMAXWELLCREATE)
-extern void hypre_F90_NAME(fhypre_sstructmaxwellcreate, FHYPRE_SSTRUCTMAXWELLCREATE)
-(hypre_F90_Obj *, hypre_F90_Obj *);
-
-#define HYPRE_SStructMaxwellDestroy \
-        hypre_F90_NAME(fhypre_sstructmaxwelldestroy, FHYPRE_SSTRUCTMAXWELLDESTROY)
-extern void hypre_F90_NAME(fhypre_sstructmaxwelldestroy, FHYPRE_SSTRUCTMAXWELLDESTROY)
-(hypre_F90_Obj *);
-
-#define HYPRE_SStructMaxwellSetup \
-        hypre_F90_NAME(fhypre_sstructmaxwellsetup, FHYPRE_SSTRUCTMAXWELLSETUP)
-extern void hypre_F90_NAME(fhypre_sstructmaxwellsetup, FHYPRE_SSTRUCTMAXWELLSETUP)
-(hypre_F90_Obj *, hypre_F90_Obj *, hypre_F90_Obj *, hypre_F90_Obj *);
-
-#define HYPRE_SStructMaxwellSolve \
-        hypre_F90_NAME(fhypre_sstructmaxwellsolve, FHYPRE_SSTRUCTMAXWELLSOLVE)
-extern void hypre_F90_NAME(fhypre_sstructmaxwellsolve, FHYPRE_SSTRUCTMAXWELLSOLVE)
-(hypre_F90_Obj *, hypre_F90_Obj *, hypre_F90_Obj *, hypre_F90_Obj *);
-
-#define HYPRE_SStructMaxwellSolve2 \
-        hypre_F90_NAME(fhypre_sstructmaxwellsolve2, FHYPRE_SSTRUCTMAXWELLSOLVE2)
-extern void hypre_F90_NAME(fhypre_sstructmaxwellsolve2, FHYPRE_SSTRUCTMAXWELLSOLVE2)
-(hypre_F90_Obj *, hypre_F90_Obj *, hypre_F90_Obj *, hypre_F90_Obj *);
-
-#define HYPRE_MaxwellGrad \
-        hypre_F90_NAME(fhypre_maxwellgrad, FHYPRE_MAXWELLGRAD)
-extern void hypre_F90_NAME(fhypre_maxwellgrad, FHYPRE_MAXWELLGRAD)
-(hypre_F90_Obj *, hypre_F90_Obj *);
-
-#define HYPRE_SStructMaxwellSetGrad \
-        hypre_F90_NAME(fhypre_sstructmaxwellsetgrad, FHYPRE_SSTRUCTMAXWELLSETGRAD)
-extern void hypre_F90_NAME(fhypre_sstructmaxwellsetgrad, FHYPRE_SSTRUCTMAXWELLSETGRAD)
-(hypre_F90_Obj *, hypre_F90_Obj *);
-
-#define HYPRE_SStructMaxwellSetRfactors \
-        hypre_F90_NAME(fhypre_sstructmaxwellsetrfactor, FHYPRE_SSTRUCTMAXWELLSETRFACTOR)
-extern void hypre_F90_NAME(fhypre_sstructmaxwellsetrfactor, FHYPRE_SSTRUCTMAXWELLSETRFACTOR)
-(hypre_F90_Obj *, HYPRE_Int *);
-
-#define HYPRE_SStructMaxwellSetTol \
-        hypre_F90_NAME(fhypre_sstructmaxwellsettol, FHYPRE_SSTRUCTMAXWELLSETTOL)
-extern void hypre_F90_NAME(fhypre_sstructmaxwellsettol, FHYPRE_SSTRUCTMAXWELLSETTOL)
-(hypre_F90_Obj *, HYPRE_Real *);
-
-#define HYPRE_SStructMaxwellSetConstantCoef \
-        hypre_F90_NAME(fhypre_sstructmaxwellsetconstan, FHYPRE_SSTRUCTMAXWELLSETCONSTAN)
-extern void hypre_F90_NAME(fhypre_sstructmaxwellsetconstan, FHYPRE_SSTRUCTMAXWELLSETCONSTAN)
-(hypre_F90_Obj *, HYPRE_Int *);
-
-#define HYPRE_SStructMaxwellSetMaxIter \
-        hypre_F90_NAME(fhypre_sstructmaxwellsetmaxiter, FHYPRE_SSTRUCTMAXWELLSETMAXITER)
-extern void hypre_F90_NAME(fhypre_sstructmaxwellsetmaxiter, FHYPRE_SSTRUCTMAXWELLSETMAXITER)
-(hypre_F90_Obj *, HYPRE_Int *);
-
-#define HYPRE_SStructMaxwellSetRelChange \
-        hypre_F90_NAME(fhypre_sstructmaxwellsetrelchan, FHYPRE_SSTRUCTMAXWELLSETRELCHAN)
-extern void hypre_F90_NAME(fhypre_sstructmaxwellsetrelchan, FHYPRE_SSTRUCTMAXWELLSETRELCHAN)
-(hypre_F90_Obj *, HYPRE_Int *);
-
-#define HYPRE_SStructMaxwellSetNumPreRelax \
-        hypre_F90_NAME(fhypre_sstructmaxwellsetnumprer, FHYPRE_SSTRUCTMAXWELLSETNUMPRER)
-extern void hypre_F90_NAME(fhypre_sstructmaxwellsetnumprer, FHYPRE_SSTRUCTMAXWELLSETNUMPRER)
-(hypre_F90_Obj *, HYPRE_Int *);
-
-#define HYPRE_SStructMaxwellSetNumPostRelax \
-        hypre_F90_NAME(fhypre_sstructmaxwellsetnumpost, FHYPRE_SSTRUCTMAXWELLSETNUMPOST)
-extern void hypre_F90_NAME(fhypre_sstructmaxwellsetnumpost, FHYPRE_SSTRUCTMAXWELLSETNUMPOST)
-(hypre_F90_Obj *, HYPRE_Int *);
-
-#define HYPRE_SStructMaxwellSetLogging \
-        hypre_F90_NAME(fhypre_sstructmaxwellsetlogging, FHYPRE_SSTRUCTMAXWELLSETLOGGING)
-extern void hypre_F90_NAME(fhypre_sstructmaxwellsetlogging, FHYPRE_SSTRUCTMAXWELLSETLOGGING)
-(hypre_F90_Obj *, HYPRE_Int *);
-
-#define HYPRE_SStructMaxwellSetPrintLevel \
-        hypre_F90_NAME(fhypre_sstructmaxwellsetprintle, FHYPRE_SSTRUCTMAXWELLSETPRINTLE)
-extern void hypre_F90_NAME(fhypre_sstructmaxwellsetprintle, FHYPRE_SSTRUCTMAXWELLSETPRINTLE)
-(hypre_F90_Obj *, HYPRE_Int *);
-
-#define HYPRE_SStructMaxwellPrintLogging \
-        hypre_F90_NAME(fhypre_sstructmaxwellprintloggi, FHYPRE_SSTRUCTMAXWELLPRINTLOGGI)
-extern void hypre_F90_NAME(fhypre_sstructmaxwellprintloggi, FHYPRE_SSTRUCTMAXWELLPRINTLOGGI)
-(hypre_F90_Obj *, HYPRE_Int *);
-
-#define HYPRE_SStructMaxwellGetNumIterations \
-        hypre_F90_NAME(fhypre_sstructmaxwellgetnumiter, FHYPRE_SSTRUCTMAXWELLGETNUMITER)
-extern void hypre_F90_NAME(fhypre_sstructmaxwellgetnumiter, FHYPRE_SSTRUCTMAXWELLGETNUMITER)
-(hypre_F90_Obj *, HYPRE_Int *);
-
-#define HYPRE_SStructMaxwellGetFinalRelativeResidualNorm \
-        hypre_F90_NAME(fhypre_sstructmaxwellgetfinalre, FHYPRE_SSTRUCTMAXWELLGETFINALRE)
-extern void hypre_F90_NAME(fhypre_sstructmaxwellgetfinalre, FHYPRE_SSTRUCTMAXWELLGETFINALRE)
-(hypre_F90_Obj *, HYPRE_Real *);
-
-#define HYPRE_SStructMaxwellPhysBdy \
-        hypre_F90_NAME(fhypre_sstructmaxwellphysbdy, FHYPRE_SSTRUCTMAXWELLPHYSBDY)
-extern void hypre_F90_NAME(fhypre_sstructmaxwellphysbdy, FHYPRE_SSTRUCTMAXWELLPHYSBDY)
-(hypre_F90_Obj *, HYPRE_Int *, HYPRE_Int *, HYPRE_Int *, HYPRE_Int *);
-
-#define HYPRE_SStructMaxwellEliminateRowsCols \
-        hypre_F90_NAME(fhypre_sstructmaxwelleliminater, FHYPRE_SSTRUCTMAXWELLELIMINATER)
-extern void hypre_F90_NAME(fhypre_sstructmaxwelleliminater, FHYPRE_SSTRUCTMAXWELLELIMINATER)
-(hypre_F90_Obj *, HYPRE_Int *, HYPRE_Int *);
-
-#define HYPRE_SStructMaxwellZeroVector \
-        hypre_F90_NAME(fhypre_sstructmaxwellzerovector, FHYPRE_SSTRUCTMAXWELLZEROVECTOR)
-extern void hypre_F90_NAME(fhypre_sstructmaxwellzerovector, FHYPRE_SSTRUCTMAXWELLZEROVECTOR)
-(hypre_F90_Obj *, HYPRE_Int *, HYPRE_Int *);
+#define NALU_HYPRE_SStructGraphCreate \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructgraphcreate, FNALU_HYPRE_SSTRUCTGRAPHCREATE)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructgraphcreate, FNALU_HYPRE_SSTRUCTGRAPHCREATE)
+(NALU_HYPRE_Int *, nalu_hypre_F90_Obj *, nalu_hypre_F90_Obj *);
+
+#define NALU_HYPRE_SStructGraphDestroy \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructgraphdestroy, FNALU_HYPRE_SSTRUCTGRAPHDESTROY)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructgraphdestroy, FNALU_HYPRE_SSTRUCTGRAPHDESTROY)
+(nalu_hypre_F90_Obj *);
+
+#define NALU_HYPRE_SStructGraphSetStencil \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructgraphsetstencil, FNALU_HYPRE_SSTRUCTGRAPHSETSTENCIL)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructgraphsetstencil, FNALU_HYPRE_SSTRUCTGRAPHSETSTENCIL)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Int *, NALU_HYPRE_Int *, nalu_hypre_F90_Obj *);
+
+#define NALU_HYPRE_SStructGraphAddEntries \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructgraphaddentries, FNALU_HYPRE_SSTRUCTGRAPHADDENTRIES)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructgraphaddentries, FNALU_HYPRE_SSTRUCTGRAPHADDENTRIES)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Int *, NALU_HYPRE_Int *, NALU_HYPRE_Int *, NALU_HYPRE_Int *, NALU_HYPRE_Int *, NALU_HYPRE_Int *);
+
+#define NALU_HYPRE_SStructGraphAssemble \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructgraphassemble, FNALU_HYPRE_SSTRUCTGRAPHASSEMBLE)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructgraphassemble, FNALU_HYPRE_SSTRUCTGRAPHASSEMBLE)
+(nalu_hypre_F90_Obj *);
+
+#define NALU_HYPRE_SStructGraphSetObjectType \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructgraphsetobjecttyp, FNALU_HYPRE_SSTRUCTGRAPHSETOBJECTTYP)
+
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructgraphsetobjecttyp, FNALU_HYPRE_SSTRUCTGRAPHSETOBJECTTYP)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Int *);
+
+
+
+#define NALU_HYPRE_SStructGridCreate \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructgridcreate, FNALU_HYPRE_SSTRUCTGRIDCREATE)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructgridcreate, FNALU_HYPRE_SSTRUCTGRIDCREATE)
+(NALU_HYPRE_Int *, NALU_HYPRE_Int *, NALU_HYPRE_Int *, nalu_hypre_F90_Obj *);
+
+#define NALU_HYPRE_SStructGridDestroy \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructgriddestroy, FNALU_HYPRE_SSTRUCTGRIDDESTROY)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructgriddestroy, FNALU_HYPRE_SSTRUCTGRIDDESTROY)
+(nalu_hypre_F90_Obj *);
+
+#define NALU_HYPRE_SStructGridSetExtents \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructgridsetextents, FNALU_HYPRE_SSTRUCTGRIDSETEXTENTS)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructgridsetextents, FNALU_HYPRE_SSTRUCTGRIDSETEXTENTS)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Int *, NALU_HYPRE_Int *, NALU_HYPRE_Int *);
+
+#define NALU_HYPRE_SStructGridSetVariables \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructgridsetvariables, FNALU_HYPRE_SSTRUCTGRIDSETVARIABLES)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructgridsetvariables, FNALU_HYPRE_SSTRUCTGRIDSETVARIABLES)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Int *, NALU_HYPRE_Int *, nalu_hypre_F90_Obj *);
+
+#define NALU_HYPRE_SStructGridAddVariables \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructgridaddvariables, FNALU_HYPRE_SSTRUCTGRIDADDVARIABLES)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructgridaddvariables, FNALU_HYPRE_SSTRUCTGRIDADDVARIABLES)
+(nalu_hypre_F90_Obj  *, NALU_HYPRE_Int *, NALU_HYPRE_Int *, NALU_HYPRE_Int *, nalu_hypre_F90_Obj *);
+
+#define NALU_HYPRE_SStructGridSetNeighborBox \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructgridsetneighborbo, FNALU_HYPRE_SSTRUCTGRIDSETNEIGHBORBO)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructgridsetneighborbo, FNALU_HYPRE_SSTRUCTGRIDSETNEIGHBORBO)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Int *, NALU_HYPRE_Int *, NALU_HYPRE_Int *, NALU_HYPRE_Int *, NALU_HYPRE_Int *, NALU_HYPRE_Int *,
+ NALU_HYPRE_Int *);
+
+#define NALU_HYPRE_SStructGridAssemble \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructgridassemble, FNALU_HYPRE_SSTRUCTGRIDASSEMBLE)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructgridassemble, FNALU_HYPRE_SSTRUCTGRIDASSEMBLE)
+(nalu_hypre_F90_Obj *);
+
+#define NALU_HYPRE_SStructGridSetPeriodic \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructgridsetperiodic, FNALU_HYPRE_SSTRUCTGRIDSETPERIODIC)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructgridsetperiodic, FNALU_HYPRE_SSTRUCTGRIDSETPERIODIC)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Int *, NALU_HYPRE_Int *);
+
+#define NALU_HYPRE_SStructGridSetNumGhost \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructgridsetnumghost, FNALU_HYPRE_SSTRUCTGRIDSETNUMGHOST)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructgridsetnumghost, FNALU_HYPRE_SSTRUCTGRIDSETNUMGHOST)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Int *);
+
+
+
+#define NALU_HYPRE_SStructMatrixCreate \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructmatrixcreate, FNALU_HYPRE_SSTRUCTMATRIXCREATE)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructmatrixcreate, FNALU_HYPRE_SSTRUCTMATRIXCREATE)
+(NALU_HYPRE_Int *, nalu_hypre_F90_Obj *, nalu_hypre_F90_Obj *);
+
+#define NALU_HYPRE_SStructMatrixDestroy \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructmatrixdestroy, FNALU_HYPRE_SSTRUCTMATRIXDESTROY)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructmatrixdestroy, FNALU_HYPRE_SSTRUCTMATRIXDESTROY)
+(nalu_hypre_F90_Obj *);
+
+#define NALU_HYPRE_SStructMatrixInitialize \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructmatrixinitialize, FNALU_HYPRE_SSTRUCTMATRIXINITIALIZE)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructmatrixinitialize, FNALU_HYPRE_SSTRUCTMATRIXINITIALIZE)
+(nalu_hypre_F90_Obj *);
+
+#define NALU_HYPRE_SStructMatrixSetValues \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructmatrixsetvalues, FNALU_HYPRE_SSTRUCTMATRIXSETVALUES)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructmatrixsetvalues, FNALU_HYPRE_SSTRUCTMATRIXSETVALUES)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Int *, NALU_HYPRE_Int *, NALU_HYPRE_Int *, NALU_HYPRE_Int *, NALU_HYPRE_Int *, NALU_HYPRE_Real *);
+
+#define NALU_HYPRE_SStructMatrixSetBoxValues \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructmatrixsetboxvalue, FNALU_HYPRE_SSTRUCTMATRIXSETBOXVALUE)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructmatrixsetboxvalue, FNALU_HYPRE_SSTRUCTMATRIXSETBOXVALUE)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Int *, NALU_HYPRE_Int *, NALU_HYPRE_Int *, NALU_HYPRE_Int *, NALU_HYPRE_Int *, NALU_HYPRE_Int *,
+ NALU_HYPRE_Real *);
+
+#define NALU_HYPRE_SStructMatrixGetValues \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructmatrixgetvalues, FNALU_HYPRE_SSTRUCTMATRIXGETVALUES)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructmatrixgetvalues, FNALU_HYPRE_SSTRUCTMATRIXGETVALUES)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Int *, NALU_HYPRE_Int *, NALU_HYPRE_Int *, NALU_HYPRE_Int *, NALU_HYPRE_Int *, NALU_HYPRE_Real *);
+
+#define NALU_HYPRE_SStructMatrixGetBoxValues \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructmatrixgetboxvalue, FNALU_HYPRE_SSTRUCTMATRIXGETBOXVALUE)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructmatrixgetboxvalue, FNALU_HYPRE_SSTRUCTMATRIXGETBOXVALUE)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Int *, NALU_HYPRE_Int *, NALU_HYPRE_Int *, NALU_HYPRE_Int *, NALU_HYPRE_Int *, NALU_HYPRE_Int *,
+ NALU_HYPRE_Real *);
+
+#define NALU_HYPRE_SStructMatrixAddToValues \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructmatrixaddtovalues, FNALU_HYPRE_SSTRUCTMATRIXADDTOVALUES)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructmatrixaddtovalues, FNALU_HYPRE_SSTRUCTMATRIXADDTOVALUES)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Int *, NALU_HYPRE_Int *, NALU_HYPRE_Int *, NALU_HYPRE_Int *, NALU_HYPRE_Int *, NALU_HYPRE_Real *);
+
+#define NALU_HYPRE_SStructMatrixAddToBoxValues \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructmatrixaddtoboxval, FNALU_HYPRE_SSTRUCTMATRIXADDTOBOXVAL)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructmatrixaddtoboxval, FNALU_HYPRE_SSTRUCTMATRIXADDTOBOXVAL)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Int *, NALU_HYPRE_Int *, NALU_HYPRE_Int *, NALU_HYPRE_Int *, NALU_HYPRE_Int *, NALU_HYPRE_Int *,
+ NALU_HYPRE_Real *);
+
+#define NALU_HYPRE_SStructMatrixAssemble \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructmatrixassemble, FNALU_HYPRE_SSTRUCTMATRIXASSEMBLE)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructmatrixassemble, FNALU_HYPRE_SSTRUCTMATRIXASSEMBLE)
+(nalu_hypre_F90_Obj *);
+
+#define NALU_HYPRE_SStructMatrixSetSymmetric \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructmatrixsetsymmetri, FNALU_HYPRE_SSTRUCTMATRIXSETSYMMETRI)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructmatrixsetsymmetri, FNALU_HYPRE_SSTRUCTMATRIXSETSYMMETRI)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Int *, NALU_HYPRE_Int *, NALU_HYPRE_Int *, NALU_HYPRE_Int *);
+
+#define NALU_HYPRE_SStructMatrixSetNSSymmetric \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructmatrixsetnssymmet, FNALU_HYPRE_SSTRUCTMATRIXSETNSSYMMET)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructmatrixsetnssymmet, FNALU_HYPRE_SSTRUCTMATRIXSETNSSYMMET)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Int *);
+
+#define NALU_HYPRE_SStructMatrixSetObjectType \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructmatrixsetobjectty, FNALU_HYPRE_SSTRUCTMATRIXSETOBJECTTY)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructmatrixsetobjectty, FNALU_HYPRE_SSTRUCTMATRIXSETOBJECTTY)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Int *);
+
+#define NALU_HYPRE_SStructMatrixGetObject \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructmatrixgetobject, FNALU_HYPRE_SSTRUCTMATRIXGETOBJECT)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructmatrixgetobject, FNALU_HYPRE_SSTRUCTMATRIXGETOBJECT)
+(nalu_hypre_F90_Obj *, nalu_hypre_F90_Obj *);
+
+#define NALU_HYPRE_SStructMatrixPrint \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructmatrixprint, FNALU_HYPRE_SSTRUCTMATRIXPRINT)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructmatrixprint, FNALU_HYPRE_SSTRUCTMATRIXPRINT)
+(const char *, nalu_hypre_F90_Obj *, NALU_HYPRE_Int *);
+
+
+
+#define NALU_HYPRE_SStructStencilCreate \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructstencilcreate, FNALU_HYPRE_SSTRUCTSTENCILCREATE)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructstencilcreate, FNALU_HYPRE_SSTRUCTSTENCILCREATE)
+(NALU_HYPRE_Int *, NALU_HYPRE_Int *, nalu_hypre_F90_Obj *);
+
+#define NALU_HYPRE_SStructStencilDestroy \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructstencildestroy, FNALU_HYPRE_SSTRUCTSTENCILDESTROY)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructstencildestroy, FNALU_HYPRE_SSTRUCTSTENCILDESTROY)
+(nalu_hypre_F90_Obj *);
+
+#define NALU_HYPRE_SStructStencilSetEntry \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructstencilsetentry, FNALU_HYPRE_SSTRUCTSTENCILSETENTRY)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructstencilsetentry, FNALU_HYPRE_SSTRUCTSTENCILSETENTRY)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Int *, NALU_HYPRE_Int *, NALU_HYPRE_Int *);
+
+
+
+#define NALU_HYPRE_SStructVectorCreate \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructvectorcreate, FNALU_HYPRE_SSTRUCTVECTORCREATE)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructvectorcreate, FNALU_HYPRE_SSTRUCTVECTORCREATE)
+(NALU_HYPRE_Int *, nalu_hypre_F90_Obj *, nalu_hypre_F90_Obj *);
+
+#define NALU_HYPRE_SStructVectorDestroy \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructvectordestroy, FNALU_HYPRE_SSTRUCTVECTORDESTROY)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructvectordestroy, FNALU_HYPRE_SSTRUCTVECTORDESTROY)
+(nalu_hypre_F90_Obj *);
+
+#define NALU_HYPRE_SStructVectorInitialize \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructvectorinitialize, FNALU_HYPRE_SSTRUCTVECTORINITIALIZE)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructvectorinitialize, FNALU_HYPRE_SSTRUCTVECTORINITIALIZE)
+(nalu_hypre_F90_Obj *);
+
+#define NALU_HYPRE_SStructVectorSetValues \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructvectorsetvalues, FNALU_HYPRE_SSTRUCTVECTORSETVALUES)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructvectorsetvalues, FNALU_HYPRE_SSTRUCTVECTORSETVALUES)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Int *, NALU_HYPRE_Int *, NALU_HYPRE_Int *, NALU_HYPRE_Real *);
+
+#define NALU_HYPRE_SStructVectorSetBoxValues \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructvectorsetboxvalue, FNALU_HYPRE_SSTRUCTVECTORSETBOXVALUE)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructvectorsetboxvalue, FNALU_HYPRE_SSTRUCTVECTORSETBOXVALUE)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Int *, NALU_HYPRE_Int *, NALU_HYPRE_Int *, NALU_HYPRE_Int *, NALU_HYPRE_Real *);
+
+#define NALU_HYPRE_SStructVectorAddToValues \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructvectoraddtovalues, FNALU_HYPRE_SSTRUCTVECTORADDTOVALUES)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructvectoraddtovalues, FNALU_HYPRE_SSTRUCTVECTORADDTOVALUES)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Int *, NALU_HYPRE_Int *, NALU_HYPRE_Int *, NALU_HYPRE_Real *);
+
+#define NALU_HYPRE_SStructVectorAddToBoxValues \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructvectoraddtoboxval, FNALU_HYPRE_SSTRUCTVECTORADDTOBOXVAL)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructvectoraddtoboxval, FNALU_HYPRE_SSTRUCTVECTORADDTOBOXVAL)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Int *, NALU_HYPRE_Int *, NALU_HYPRE_Int *, NALU_HYPRE_Int *, NALU_HYPRE_Real *);
+
+#define NALU_HYPRE_SStructVectorAssemble \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructvectorassemble, FNALU_HYPRE_SSTRUCTVECTORASSEMBLE)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructvectorassemble, FNALU_HYPRE_SSTRUCTVECTORASSEMBLE)
+(nalu_hypre_F90_Obj *);
+
+#define NALU_HYPRE_SStructVectorGather \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructvectorgather, FNALU_HYPRE_SSTRUCTVECTORGATHER)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructvectorgather, FNALU_HYPRE_SSTRUCTVECTORGATHER)
+(nalu_hypre_F90_Obj *);
+
+#define NALU_HYPRE_SStructVectorGetValues \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructvectorgetvalues, FNALU_HYPRE_SSTRUCTVECTORGETVALUES)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructvectorgetvalues, FNALU_HYPRE_SSTRUCTVECTORGETVALUES)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Int *, NALU_HYPRE_Int *, NALU_HYPRE_Int *, NALU_HYPRE_Real *);
+
+#define NALU_HYPRE_SStructVectorGetBoxValues \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructvectorgetboxvalue, FNALU_HYPRE_SSTRUCTVECTORGETBOXVALUE)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructvectorgetboxvalue, FNALU_HYPRE_SSTRUCTVECTORGETBOXVALUE)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Int *, NALU_HYPRE_Int *, NALU_HYPRE_Int *, NALU_HYPRE_Int *, NALU_HYPRE_Real *);
+
+#define NALU_HYPRE_SStructVectorSetObjectType \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructvectorsetobjectty, FNALU_HYPRE_SSTRUCTVECTORSETOBJECTTY)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructvectorsetobjectty, FNALU_HYPRE_SSTRUCTVECTORSETOBJECTTY)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Int *);
+
+#define NALU_HYPRE_SStructVectorGetObject \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructvectorgetobject, FNALU_HYPRE_SSTRUCTVECTORGETOBJECT)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructvectorgetobject, FNALU_HYPRE_SSTRUCTVECTORGETOBJECT)
+(nalu_hypre_F90_Obj *, void *);
+
+#define NALU_HYPRE_SStructVectorPrint \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructvectorprint, FNALU_HYPRE_SSTRUCTVECTORPRINT)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructvectorprint, FNALU_HYPRE_SSTRUCTVECTORPRINT)
+(const char *, nalu_hypre_F90_Obj *, NALU_HYPRE_Int *);
+
+
+
+#define NALU_HYPRE_SStructBiCGSTABCreate \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructbicgstabcreate, FNALU_HYPRE_SSTRUCTBICGSTABCREATE)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructbicgstabcreate, FNALU_HYPRE_SSTRUCTBICGSTABCREATE)
+(NALU_HYPRE_Int *, nalu_hypre_F90_Obj *);
+
+#define NALU_HYPRE_SStructBiCGSTABDestroy \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructbicgstabdestroy, FNALU_HYPRE_SSTRUCTBICGSTABDESTROY)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructbicgstabdestroy, FNALU_HYPRE_SSTRUCTBICGSTABDESTROY)
+(nalu_hypre_F90_Obj *);
+
+#define NALU_HYPRE_SStructBiCGSTABSetup \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructbicgstabsetup, FNALU_HYPRE_SSTRUCTBICGSTABSETUP)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructbicgstabsetup, FNALU_HYPRE_SSTRUCTBICGSTABSETUP)
+(nalu_hypre_F90_Obj *, nalu_hypre_F90_Obj *, nalu_hypre_F90_Obj *, nalu_hypre_F90_Obj *);
+
+#define NALU_HYPRE_SStructBiCGSTABSolve \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructbicgstabsolve, FNALU_HYPRE_SSTRUCTBICGSTABSOLVE)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructbicgstabsolve, FNALU_HYPRE_SSTRUCTBICGSTABSOLVE)
+(nalu_hypre_F90_Obj *, nalu_hypre_F90_Obj *, nalu_hypre_F90_Obj *, nalu_hypre_F90_Obj *);
+
+#define NALU_HYPRE_SStructBiCGSTABSetTol \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructbicgstabsettol, FNALU_HYPRE_SSTRUCTBICGSTABSETTOL)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructbicgstabsettol, FNALU_HYPRE_SSTRUCTBICGSTABSETTOL)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Real *);
+
+#define NALU_HYPRE_SStructBiCGSTABSetMinIter \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructbicgstabsetminite, FNALU_HYPRE_SSTRUCTBICGSTABSETMINITE)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructbicgstabsetminite, FNALU_HYPRE_SSTRUCTBICGSTABSETMINITE)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Int *);
+
+#define NALU_HYPRE_SStructBiCGSTABSetMaxIter \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructbicgstabsetmaxite, FNALU_HYPRE_SSTRUCTBICGSTABSETMAXITE)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructbicgstabsetmaxite, FNALU_HYPRE_SSTRUCTBICGSTABSETMAXITE)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Int *);
+
+#define NALU_HYPRE_SStructBiCGSTABSetStopCrit \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructbicgstabsetstopcr, FNALU_HYPRE_SSTRUCTBICGSTABSETSTOPCR)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructbicgstabsetstopcr, FNALU_HYPRE_SSTRUCTBICGSTABSETSTOPCR)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Int *);
+
+#define NALU_HYPRE_SStructBiCGSTABSetPrecond \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructbicgstabsetprecon, FNALU_HYPRE_SSTRUCTBICGSTABSETPRECON)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructbicgstabsetprecon, FNALU_HYPRE_SSTRUCTBICGSTABSETPRECON)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Int *, nalu_hypre_F90_Obj *);
+
+#define NALU_HYPRE_SStructBiCGSTABSetLogging \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructbicgstabsetloggin, FNALU_HYPRE_SSTRUCTBICGSTABSETLOGGIN)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructbicgstabsetloggin, FNALU_HYPRE_SSTRUCTBICGSTABSETLOGGIN)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Int *);
+
+#define NALU_HYPRE_SStructBiCGSTABSetPrintLevel \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructbicgstabsetprintl, FNALU_HYPRE_SSTRUCTBICGSTABSETPRINTL)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructbicgstabsetprintl, FNALU_HYPRE_SSTRUCTBICGSTABSETPRINTL)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Int *);
+
+#define NALU_HYPRE_SStructBiCGSTABGetNumIterations \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructbicgstabgetnumite, FNALU_HYPRE_SSTRUCTBICGSTABGETNUMITE)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructbicgstabgetnumite, FNALU_HYPRE_SSTRUCTBICGSTABGETNUMITE)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Int *);
+
+#define NALU_HYPRE_SStructBiCGSTABGetFinalRelativeResidualNorm \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructbicgstabgetfinalr, FNALU_HYPRE_SSTRUCTBICGSTABGETFINALR)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructbicgstabgetfinalr, FNALU_HYPRE_SSTRUCTBICGSTABGETFINALR)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Real *);
+
+#define NALU_HYPRE_SStructBiCGSTABGetResidual \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructbicgstabgetresidu, FNALU_HYPRE_SSTRUCTBICGSTABGETRESIDU)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructbicgstabgetresidu, FNALU_HYPRE_SSTRUCTBICGSTABGETRESIDU)
+(nalu_hypre_F90_Obj *, nalu_hypre_F90_Obj *);
+
+
+
+#define NALU_HYPRE_SStructGMRESCreate \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructgmrescreate, FNALU_HYPRE_SSTRUCTGMRESCREATE)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructgmrescreate, FNALU_HYPRE_SSTRUCTGMRESCREATE)
+(nalu_hypre_F90_Obj *, nalu_hypre_F90_Obj *);
+
+#define NALU_HYPRE_SStructGMRESDestroy \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructgmresdestroy, FNALU_HYPRE_SSTRUCTGMRESDESTROY)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructgmresdestroy, FNALU_HYPRE_SSTRUCTGMRESDESTROY)
+(nalu_hypre_F90_Obj *);
+
+#define NALU_HYPRE_SStructGMRESSetup \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructgmressetup, FNALU_HYPRE_SSTRUCTGMRESSETUP)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructgmressetup, FNALU_HYPRE_SSTRUCTGMRESSETUP)
+(nalu_hypre_F90_Obj *, nalu_hypre_F90_Obj *, nalu_hypre_F90_Obj *, nalu_hypre_F90_Obj *);
+
+#define NALU_HYPRE_SStructGMRESSolve \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructgmressolve, FNALU_HYPRE_SSTRUCTGMRESSOLVE)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructgmressolve, FNALU_HYPRE_SSTRUCTGMRESSOLVE)
+(nalu_hypre_F90_Obj *, nalu_hypre_F90_Obj *, nalu_hypre_F90_Obj *, nalu_hypre_F90_Obj *);
+
+#define NALU_HYPRE_SStructGMRESSetKDim \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructgmressetkdim, FNALU_HYPRE_SSTRUCTGMRESSETKDIM)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructgmressetkdim, FNALU_HYPRE_SSTRUCTGMRESSETKDIM)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Int *);
+
+#define NALU_HYPRE_SStructGMRESSetTol \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructgmressettol, FNALU_HYPRE_SSTRUCTGMRESSETTOL)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructgmressettol, FNALU_HYPRE_SSTRUCTGMRESSETTOL)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Real *);
+
+#define NALU_HYPRE_SStructGMRESSetMinIter \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructgmressetminiter, FNALU_HYPRE_SSTRUCTGMRESSETMINITER)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructgmressetminiter, FNALU_HYPRE_SSTRUCTGMRESSETMINITER)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Int *);
+
+#define NALU_HYPRE_SStructGMRESSetMaxIter \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructgmressetmaxiter, FNALU_HYPRE_SSTRUCTGMRESSETMAXITER)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructgmressetmaxiter, FNALU_HYPRE_SSTRUCTGMRESSETMAXITER)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Int *);
+
+#define NALU_HYPRE_SStructGMRESSetStopCrit \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructgmressetstopcrit, FNALU_HYPRE_SSTRUCTGMRESSETSTOPCRIT)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructgmressetstopcrit, FNALU_HYPRE_SSTRUCTGMRESSETSTOPCRIT)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Int *);
+
+#define NALU_HYPRE_SStructGMRESSetPrecond \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructgmressetprecond, FNALU_HYPRE_SSTRUCTGMRESSETPRECOND)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructgmressetprecond, FNALU_HYPRE_SSTRUCTGMRESSETPRECOND)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Int *, nalu_hypre_F90_Obj *);
+
+
+#define NALU_HYPRE_SStructGMRESSetLogging \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructgmressetlogging, FNALU_HYPRE_SSTRUCTGMRESSETLOGGING)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructgmressetlogging, FNALU_HYPRE_SSTRUCTGMRESSETLOGGING)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Int *);
+
+#define NALU_HYPRE_SStructGMRESSetPrintLevel \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructgmressetprintleve, FNALU_HYPRE_SSTRUCTGMRESSETPRINTLEVE)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructgmressetprintleve, FNALU_HYPRE_SSTRUCTGMRESSETPRINTLEVE)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Int *);
+
+#define NALU_HYPRE_SStructGMRESGetNumIterations \
+      nalu_hypre_F90_NAME(fnalu_hypre_sstructgmresgetnumiterati, FNALU_HYPRE_SSTRUCTGMRESGETNUMITERATI)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructgmresgetnumiterati, FNALU_HYPRE_SSTRUCTGMRESGETNUMITERATI)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Int *);
+
+#define NALU_HYPRE_SStructGMRESGetFinalRelativeResidualNorm \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructgmresgetfinalrela, FNALU_HYPRE_SSTRUCTGMRESGETFINALRELA)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructgmresgetfinalrela, FNALU_HYPRE_SSTRUCTGMRESGETFINALRELA)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Real  *);
+
+#define NALU_HYPRE_SStructGMRESGetResidual \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructgmresgetresidual, FNALU_HYPRE_SSTRUCTGMRESGETRESIDUAL)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructgmresgetresidual, FNALU_HYPRE_SSTRUCTGMRESGETRESIDUAL)
+(nalu_hypre_F90_Obj *, nalu_hypre_F90_Obj *);
+
+
+
+#define NALU_HYPRE_SStructPCGCreate \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructpcgcreate, FNALU_HYPRE_SSTRUCTPCGCREATE)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructpcgcreate, FNALU_HYPRE_SSTRUCTPCGCREATE)
+(nalu_hypre_F90_Obj *, nalu_hypre_F90_Obj *);
+
+#define NALU_HYPRE_SStructPCGDestroy \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructpcgdestroy, FNALU_HYPRE_SSTRUCTPCGDESTROY)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructpcgdestroy, FNALU_HYPRE_SSTRUCTPCGDESTROY)
+(nalu_hypre_F90_Obj *);
+
+#define NALU_HYPRE_SStructPCGSetup \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructpcgsetup, FNALU_HYPRE_SSTRUCTPCGDESTROY)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructpcgsetup, FNALU_HYPRE_SSTRUCTPCGDESTROY)
+(nalu_hypre_F90_Obj *, nalu_hypre_F90_Obj *, nalu_hypre_F90_Obj *, nalu_hypre_F90_Obj *);
+
+#define NALU_HYPRE_SStructPCGSolve \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructpcgsolve, FNALU_HYPRE_SSTRUCTPCGSOLVE)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructpcgsolve, FNALU_HYPRE_SSTRUCTPCGSOLVE)
+(nalu_hypre_F90_Obj *, nalu_hypre_F90_Obj *, nalu_hypre_F90_Obj *, nalu_hypre_F90_Obj *);
+
+#define NALU_HYPRE_SStructPCGSetTol \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructpcgsettol, FNALU_HYPRE_SSTRUCTPCGSETTOL)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructpcgsettol, FNALU_HYPRE_SSTRUCTPCGSETTOL)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Real *);
+
+#define NALU_HYPRE_SStructPCGSetMaxIter \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructpcgsetmaxiter, FNALU_HYPRE_SSTRUCTPCGSETMAXITER)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructpcgsetmaxiter, FNALU_HYPRE_SSTRUCTPCGSETMAXITER)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Int  *);
+
+#define NALU_HYPRE_SStructPCGSetTwoNorm \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructpcgsettwonorm, FNALU_HYPRE_SSTRUCTPCGSETTWONORM)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructpcgsettwonorm, FNALU_HYPRE_SSTRUCTPCGSETTWONORM)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Int  *);
+
+#define NALU_HYPRE_SStructPCGSetRelChange \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructpcgsetrelchange, FNALU_HYPRE_SSTRUCTPCGSETRELCHANGE)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructpcgsetrelchange, FNALU_HYPRE_SSTRUCTPCGSETRELCHANGE)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Int  *);
+
+#define NALU_HYPRE_SStructPCGSetPrecond \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructpcgsetprecond, FNALU_HYPRE_SSTRUCTPCGSETPRECOND)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructpcgsetprecond, FNALU_HYPRE_SSTRUCTPCGSETPRECOND)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Int  *, nalu_hypre_F90_Obj *);
+
+
+#define NALU_HYPRE_SStructPCGSetLogging \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructpcgsetlogging, FNALU_HYPRE_SSTRUCTPCGSETLOGGING)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructpcgsetlogging, FNALU_HYPRE_SSTRUCTPCGSETLOGGING)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Int  *);
+
+#define NALU_HYPRE_SStructPCGSetPrintLevel \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructpcgsetprintlevel, FNALU_HYPRE_SSTRUCTPCGSETPRINTLEVEL)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructpcgsetprintlevel, FNALU_HYPRE_SSTRUCTPCGSETPRINTLEVEL)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Int  *);
+
+#define NALU_HYPRE_SStructPCGGetNumIterations \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructpcggetnumiteratio, FNALU_HYPRE_SSTRUCTPCGGETNUMITERATIO)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructpcggetnumiteratio, FNALU_HYPRE_SSTRUCTPCGGETNUMITERATIO)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Int  *);
+
+#define NALU_HYPRE_SStructPCGGetFinalRelativeResidualNorm \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructpcggetfinalrelati, FNALU_HYPRE_SSTRUCTPCGGETFINALRELATI)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructpcggetfinalrelati, FNALU_HYPRE_SSTRUCTPCGGETFINALRELATI)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Real *);
+
+#define NALU_HYPRE_SStructPCGGetResidual \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructpcggetresidual, FNALU_HYPRE_SSTRUCTPCGGETRESIDUAL)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructpcggetresidual, FNALU_HYPRE_SSTRUCTPCGGETRESIDUAL)
+(nalu_hypre_F90_Obj *, nalu_hypre_F90_Obj *);
+
+#define NALU_HYPRE_SStructDiagScaleSetup \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructdiagscalesetup, FNALU_HYPRE_SSTRUCTDIAGSCALESETUP)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructdiagscalesetup, FNALU_HYPRE_SSTRUCTDIAGSCALESETUP)
+(nalu_hypre_F90_Obj *, nalu_hypre_F90_Obj *, nalu_hypre_F90_Obj *, nalu_hypre_F90_Obj *);
+
+#define NALU_HYPRE_SStructDiagScale \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructdiagscale, FNALU_HYPRE_SSTRUCTDIAGSCALE)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructdiagscale, FNALU_HYPRE_SSTRUCTDIAGSCALE)
+(nalu_hypre_F90_Obj *, nalu_hypre_F90_Obj *, nalu_hypre_F90_Obj *, nalu_hypre_F90_Obj *);
+
+
+#define NALU_HYPRE_SStructSplitCreate \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructsplitcreate, FNALU_HYPRE_SSTRUCTSPLITCREATE)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructsplitcreate, FNALU_HYPRE_SSTRUCTSPLITCREATE)
+(nalu_hypre_F90_Obj *, nalu_hypre_F90_Obj *);
+
+#define NALU_HYPRE_SStructSplitDestroy \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructsplitdestroy, FNALU_HYPRE_SSTRUCTSPLITDESTROY)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructsplitdestroy, FNALU_HYPRE_SSTRUCTSPLITDESTROY)
+(nalu_hypre_F90_Obj *);
+
+#define NALU_HYPRE_SStructSplitSetup \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructsplitsetup, FNALU_HYPRE_SSTRUCTSPLITSETUP)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructsplitsetup, FNALU_HYPRE_SSTRUCTSPLITSETUP)
+(nalu_hypre_F90_Obj *, nalu_hypre_F90_Obj *, nalu_hypre_F90_Obj *, nalu_hypre_F90_Obj *);
+
+#define NALU_HYPRE_SStructSplitSolve \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructsplitsolve, FNALU_HYPRE_SSTRUCTSPLITSOLVE)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructsplitsolve, FNALU_HYPRE_SSTRUCTSPLITSOLVE)
+(nalu_hypre_F90_Obj *, nalu_hypre_F90_Obj *, nalu_hypre_F90_Obj *, nalu_hypre_F90_Obj *);
+
+#define NALU_HYPRE_SStructSplitSetTol \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructsplitsettol, FNALU_HYPRE_SSTRUCTSPLITSETTOL)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructsplitsettol, FNALU_HYPRE_SSTRUCTSPLITSETTOL)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Real *);
+
+#define NALU_HYPRE_SStructSplitSetMaxIter \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructsplitsetmaxiter, FNALU_HYPRE_SSTRUCTSPLITSETMAXITER)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructsplitsetmaxiter, FNALU_HYPRE_SSTRUCTSPLITSETMAXITER)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Int  *);
+
+#define NALU_HYPRE_SStructSplitSetZeroGuess \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructsplitsetzeroguess, FNALU_HYPRE_SSTRUCTSPLITSETZEROGUESS)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructsplitsetzeroguess, FNALU_HYPRE_SSTRUCTSPLITSETZEROGUESS)
+(nalu_hypre_F90_Obj *);
+
+#define NALU_HYPRE_SStructSplitSetNonZeroGuess \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructsplitsetnonzerogu, FNALU_HYPRE_SSTRUCTSPLITSETNONZEROGU)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructsplitsetnonzerogu, FNALU_HYPRE_SSTRUCTSPLITSETNONZEROGU)
+(nalu_hypre_F90_Obj *);
+
+#define NALU_HYPRE_SStructSplitSetStructSolver \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructsplitsetstructsol, FNALU_HYPRE_SSTRUCTSPLITSETSTRUCTSOL)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructsplitsetstructsol, FNALU_HYPRE_SSTRUCTSPLITSETSTRUCTSOL)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Int  *);
+
+#define NALU_HYPRE_SStructSplitGetNumIterations \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructsplitgetnumiterat, FNALU_HYPRE_SSTRUCTSPLITGETNUMITERAT)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructsplitgetnumiterat, FNALU_HYPRE_SSTRUCTSPLITGETNUMITERAT)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Int  *);
+
+#define NALU_HYPRE_SStructSplitGetFinalRelativeResidualNorm \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructsplitgetfinalrela, FNALU_HYPRE_SSTRUCTSPLITGETFINALRELA)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructsplitgetfinalrela, FNALU_HYPRE_SSTRUCTSPLITGETFINALRELA)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Real *);
+
+
+
+#define NALU_HYPRE_SStructSysPFMGCreate \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructsyspfmgcreate, FNALU_HYPRE_SSTRUCTSYSPFMGCREATE)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructsyspfmgcreate, FNALU_HYPRE_SSTRUCTSYSPFMGCREATE)
+(nalu_hypre_F90_Obj *, nalu_hypre_F90_Obj *);
+
+#define NALU_HYPRE_SStructSysPFMGDestroy \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructsyspfmgdestroy, FNALU_HYPRE_SSTRUCTSYSPFMGDESTROY)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructsyspfmgdestroy, FNALU_HYPRE_SSTRUCTSYSPFMGDESTROY)
+(nalu_hypre_F90_Obj *);
+
+#define NALU_HYPRE_SStructSysPFMGSetup \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructsyspfmgsetup, FNALU_HYPRE_SSTRUCTSYSPFMGSETUP)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructsyspfmgsetup, FNALU_HYPRE_SSTRUCTSYSPFMGSETUP)
+(nalu_hypre_F90_Obj *, nalu_hypre_F90_Obj *, nalu_hypre_F90_Obj *, nalu_hypre_F90_Obj *);
+
+#define NALU_HYPRE_SStructSysPFMGSolve \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructsyspfmgsolve, FNALU_HYPRE_SSTRUCTSYSPFMGSOLVE)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructsyspfmgsolve, FNALU_HYPRE_SSTRUCTSYSPFMGSOLVE)
+(nalu_hypre_F90_Obj *, nalu_hypre_F90_Obj *, nalu_hypre_F90_Obj *, nalu_hypre_F90_Obj *);
+
+#define NALU_HYPRE_SStructSysPFMGSetTol \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructsyspfmgsettol, FNALU_HYPRE_SSTRUCTSYSPFMGSETTOL)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructsyspfmgsettol, FNALU_HYPRE_SSTRUCTSYSPFMGSETTOL)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Real *);
+
+#define NALU_HYPRE_SStructSysPFMGSetMaxIter \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructsyspfmgsetmaxiter, FNALU_HYPRE_SSTRUCTSYSPFMGSETMAXITER)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructsyspfmgsetmaxiter, FNALU_HYPRE_SSTRUCTSYSPFMGSETMAXITER)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Int *);
+
+#define NALU_HYPRE_SStructSysPFMGSetRelChange \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructsyspfmgsetrelchan, FNALU_HYPRE_SSTRUCTSYSPFMGSETRELCHAN)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructsyspfmgsetrelchan, FNALU_HYPRE_SSTRUCTSYSPFMGSETRELCHAN)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Int *);
+
+#define NALU_HYPRE_SStructSysPFMGSetZeroGuess \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructsyspfmgsetzerogue, FNALU_HYPRE_SSTRUCTSYSPFMGSETZEROGUE)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructsyspfmgsetzerogue, FNALU_HYPRE_SSTRUCTSYSPFMGSETZEROGUE)
+(nalu_hypre_F90_Obj *);
+
+#define NALU_HYPRE_SStructSysPFMGSetNonZeroGuess \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructsyspfmgsetnonzero, FNALU_HYPRE_SSTRUCTSYSPFMGSETNONZERO)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructsyspfmgsetnonzero, FNALU_HYPRE_SSTRUCTSYSPFMGSETNONZERO)
+(nalu_hypre_F90_Obj *);
+
+#define NALU_HYPRE_SStructSysPFMGSetRelaxType \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructsyspfmgsetrelaxty, FNALU_HYPRE_SSTRUCTSYSPFMGSETRELAXTY)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructsyspfmgsetrelaxty, FNALU_HYPRE_SSTRUCTSYSPFMGSETRELAXTY)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Int *);
+
+#define NALU_HYPRE_SStructSysPFMGSetNumPreRelax \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructsyspfmgsetnumprer, FNALU_HYPRE_SSTRUCTSYSPFMGSETNUMPRER)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructsyspfmgsetnumprer, FNALU_HYPRE_SSTRUCTSYSPFMGSETNUMPRER)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Int *);
+
+#define NALU_HYPRE_SStructSysPFMGSetNumPostRelax \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructsyspfmgsetnumpost, FNALU_HYPRE_SSTRUCTSYSPFMGSETNUMPOST)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructsyspfmgsetnumpost, FNALU_HYPRE_SSTRUCTSYSPFMGSETNUMPOST)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Int *);
+
+
+#define NALU_HYPRE_SStructSysPFMGSetSkipRelax \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructsyspfmgsetskiprel, FNALU_HYPRE_SSTRUCTSYSPFMGSETSKIPREL)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructsyspfmgsetskiprel, FNALU_HYPRE_SSTRUCTSYSPFMGSETSKIPREL)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Int *);
+
+#define NALU_HYPRE_SStructSysPFMGSetDxyz \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructsyspfmgsetdxyz, FNALU_HYPRE_SSTRUCTSYSPFMGSETDXYZ)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructsyspfmgsetdxyz, FNALU_HYPRE_SSTRUCTSYSPFMGSETDXYZ)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Real *);
+
+#define NALU_HYPRE_SStructSysPFMGSetLogging \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructsyspfmgsetlogging, FNALU_HYPRE_SSTRUCTSYSPFMGSETLOGGING)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructsyspfmgsetlogging, FNALU_HYPRE_SSTRUCTSYSPFMGSETLOGGING)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Int *);
+
+#define NALU_HYPRE_SStructSysPFMGSetPrintLevel \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructsyspfmgsetprintle, FNALU_HYPRE_SSTRUCTSYSPFMGSETPRINTLE)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructsyspfmgsetprintle, FNALU_HYPRE_SSTRUCTSYSPFMGSETPRINTLE)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Int *);
+
+#define NALU_HYPRE_SStructSysPFMGGetNumIterations \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructsyspfmggetnumiter, FNALU_HYPRE_SSTRUCTSYSPFMGGETNUMITER)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructsyspfmggetnumiter, FNALU_HYPRE_SSTRUCTSYSPFMGGETNUMITER)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Int *);
+
+
+#define NALU_HYPRE_SStructSysPFMGGetFinalRelativeResidualNorm \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructsyspfmggetfinalre, FNALU_HYPRE_SSTRUCTSYSPFMGGETFINALRE)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructsyspfmggetfinalre, FNALU_HYPRE_SSTRUCTSYSPFMGGETFINALRE)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Real *);
+
+
+
+#define NALU_HYPRE_SStructMaxwellCreate \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructmaxwellcreate, FNALU_HYPRE_SSTRUCTMAXWELLCREATE)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructmaxwellcreate, FNALU_HYPRE_SSTRUCTMAXWELLCREATE)
+(nalu_hypre_F90_Obj *, nalu_hypre_F90_Obj *);
+
+#define NALU_HYPRE_SStructMaxwellDestroy \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructmaxwelldestroy, FNALU_HYPRE_SSTRUCTMAXWELLDESTROY)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructmaxwelldestroy, FNALU_HYPRE_SSTRUCTMAXWELLDESTROY)
+(nalu_hypre_F90_Obj *);
+
+#define NALU_HYPRE_SStructMaxwellSetup \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructmaxwellsetup, FNALU_HYPRE_SSTRUCTMAXWELLSETUP)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructmaxwellsetup, FNALU_HYPRE_SSTRUCTMAXWELLSETUP)
+(nalu_hypre_F90_Obj *, nalu_hypre_F90_Obj *, nalu_hypre_F90_Obj *, nalu_hypre_F90_Obj *);
+
+#define NALU_HYPRE_SStructMaxwellSolve \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructmaxwellsolve, FNALU_HYPRE_SSTRUCTMAXWELLSOLVE)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructmaxwellsolve, FNALU_HYPRE_SSTRUCTMAXWELLSOLVE)
+(nalu_hypre_F90_Obj *, nalu_hypre_F90_Obj *, nalu_hypre_F90_Obj *, nalu_hypre_F90_Obj *);
+
+#define NALU_HYPRE_SStructMaxwellSolve2 \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructmaxwellsolve2, FNALU_HYPRE_SSTRUCTMAXWELLSOLVE2)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructmaxwellsolve2, FNALU_HYPRE_SSTRUCTMAXWELLSOLVE2)
+(nalu_hypre_F90_Obj *, nalu_hypre_F90_Obj *, nalu_hypre_F90_Obj *, nalu_hypre_F90_Obj *);
+
+#define NALU_HYPRE_MaxwellGrad \
+        nalu_hypre_F90_NAME(fnalu_hypre_maxwellgrad, FNALU_HYPRE_MAXWELLGRAD)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_maxwellgrad, FNALU_HYPRE_MAXWELLGRAD)
+(nalu_hypre_F90_Obj *, nalu_hypre_F90_Obj *);
+
+#define NALU_HYPRE_SStructMaxwellSetGrad \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructmaxwellsetgrad, FNALU_HYPRE_SSTRUCTMAXWELLSETGRAD)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructmaxwellsetgrad, FNALU_HYPRE_SSTRUCTMAXWELLSETGRAD)
+(nalu_hypre_F90_Obj *, nalu_hypre_F90_Obj *);
+
+#define NALU_HYPRE_SStructMaxwellSetRfactors \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructmaxwellsetrfactor, FNALU_HYPRE_SSTRUCTMAXWELLSETRFACTOR)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructmaxwellsetrfactor, FNALU_HYPRE_SSTRUCTMAXWELLSETRFACTOR)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Int *);
+
+#define NALU_HYPRE_SStructMaxwellSetTol \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructmaxwellsettol, FNALU_HYPRE_SSTRUCTMAXWELLSETTOL)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructmaxwellsettol, FNALU_HYPRE_SSTRUCTMAXWELLSETTOL)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Real *);
+
+#define NALU_HYPRE_SStructMaxwellSetConstantCoef \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructmaxwellsetconstan, FNALU_HYPRE_SSTRUCTMAXWELLSETCONSTAN)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructmaxwellsetconstan, FNALU_HYPRE_SSTRUCTMAXWELLSETCONSTAN)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Int *);
+
+#define NALU_HYPRE_SStructMaxwellSetMaxIter \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructmaxwellsetmaxiter, FNALU_HYPRE_SSTRUCTMAXWELLSETMAXITER)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructmaxwellsetmaxiter, FNALU_HYPRE_SSTRUCTMAXWELLSETMAXITER)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Int *);
+
+#define NALU_HYPRE_SStructMaxwellSetRelChange \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructmaxwellsetrelchan, FNALU_HYPRE_SSTRUCTMAXWELLSETRELCHAN)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructmaxwellsetrelchan, FNALU_HYPRE_SSTRUCTMAXWELLSETRELCHAN)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Int *);
+
+#define NALU_HYPRE_SStructMaxwellSetNumPreRelax \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructmaxwellsetnumprer, FNALU_HYPRE_SSTRUCTMAXWELLSETNUMPRER)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructmaxwellsetnumprer, FNALU_HYPRE_SSTRUCTMAXWELLSETNUMPRER)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Int *);
+
+#define NALU_HYPRE_SStructMaxwellSetNumPostRelax \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructmaxwellsetnumpost, FNALU_HYPRE_SSTRUCTMAXWELLSETNUMPOST)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructmaxwellsetnumpost, FNALU_HYPRE_SSTRUCTMAXWELLSETNUMPOST)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Int *);
+
+#define NALU_HYPRE_SStructMaxwellSetLogging \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructmaxwellsetlogging, FNALU_HYPRE_SSTRUCTMAXWELLSETLOGGING)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructmaxwellsetlogging, FNALU_HYPRE_SSTRUCTMAXWELLSETLOGGING)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Int *);
+
+#define NALU_HYPRE_SStructMaxwellSetPrintLevel \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructmaxwellsetprintle, FNALU_HYPRE_SSTRUCTMAXWELLSETPRINTLE)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructmaxwellsetprintle, FNALU_HYPRE_SSTRUCTMAXWELLSETPRINTLE)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Int *);
+
+#define NALU_HYPRE_SStructMaxwellPrintLogging \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructmaxwellprintloggi, FNALU_HYPRE_SSTRUCTMAXWELLPRINTLOGGI)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructmaxwellprintloggi, FNALU_HYPRE_SSTRUCTMAXWELLPRINTLOGGI)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Int *);
+
+#define NALU_HYPRE_SStructMaxwellGetNumIterations \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructmaxwellgetnumiter, FNALU_HYPRE_SSTRUCTMAXWELLGETNUMITER)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructmaxwellgetnumiter, FNALU_HYPRE_SSTRUCTMAXWELLGETNUMITER)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Int *);
+
+#define NALU_HYPRE_SStructMaxwellGetFinalRelativeResidualNorm \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructmaxwellgetfinalre, FNALU_HYPRE_SSTRUCTMAXWELLGETFINALRE)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructmaxwellgetfinalre, FNALU_HYPRE_SSTRUCTMAXWELLGETFINALRE)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Real *);
+
+#define NALU_HYPRE_SStructMaxwellPhysBdy \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructmaxwellphysbdy, FNALU_HYPRE_SSTRUCTMAXWELLPHYSBDY)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructmaxwellphysbdy, FNALU_HYPRE_SSTRUCTMAXWELLPHYSBDY)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Int *, NALU_HYPRE_Int *, NALU_HYPRE_Int *, NALU_HYPRE_Int *);
+
+#define NALU_HYPRE_SStructMaxwellEliminateRowsCols \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructmaxwelleliminater, FNALU_HYPRE_SSTRUCTMAXWELLELIMINATER)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructmaxwelleliminater, FNALU_HYPRE_SSTRUCTMAXWELLELIMINATER)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Int *, NALU_HYPRE_Int *);
+
+#define NALU_HYPRE_SStructMaxwellZeroVector \
+        nalu_hypre_F90_NAME(fnalu_hypre_sstructmaxwellzerovector, FNALU_HYPRE_SSTRUCTMAXWELLZEROVECTOR)
+extern void nalu_hypre_F90_NAME(fnalu_hypre_sstructmaxwellzerovector, FNALU_HYPRE_SSTRUCTMAXWELLZEROVECTOR)
+(nalu_hypre_F90_Obj *, NALU_HYPRE_Int *, NALU_HYPRE_Int *);
 
 #ifdef __cplusplus
 }

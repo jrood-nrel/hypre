@@ -18,8 +18,8 @@ C_COMPILE_FLAGS = \
  ${CINCLUDES}
 
 HEADERS =\
- HYPRE_struct_ls.h\
- _hypre_struct_ls.h\
+ NALU_HYPRE_struct_ls.h\
+ _nalu_hypre_struct_ls.h\
  pfmg.h\
  red_black_gs.h\
  smg.h\
@@ -27,29 +27,29 @@ HEADERS =\
 
 FILES =\
  coarsen.c\
- F90_HYPRE_struct_bicgstab.c\
- F90_HYPRE_struct_cycred.c\
- F90_HYPRE_struct_flexgmres.c\
- F90_HYPRE_struct_gmres.c\
- F90_HYPRE_struct_lgmres.c\
- F90_HYPRE_struct_hybrid.c\
- F90_HYPRE_struct_int.c\
- F90_HYPRE_struct_jacobi.c\
- F90_HYPRE_struct_pcg.c\
- F90_HYPRE_struct_pfmg.c\
- F90_HYPRE_struct_smg.c\
- F90_HYPRE_struct_sparse_msg.c\
+ F90_NALU_HYPRE_struct_bicgstab.c\
+ F90_NALU_HYPRE_struct_cycred.c\
+ F90_NALU_HYPRE_struct_flexgmres.c\
+ F90_NALU_HYPRE_struct_gmres.c\
+ F90_NALU_HYPRE_struct_lgmres.c\
+ F90_NALU_HYPRE_struct_hybrid.c\
+ F90_NALU_HYPRE_struct_int.c\
+ F90_NALU_HYPRE_struct_jacobi.c\
+ F90_NALU_HYPRE_struct_pcg.c\
+ F90_NALU_HYPRE_struct_pfmg.c\
+ F90_NALU_HYPRE_struct_smg.c\
+ F90_NALU_HYPRE_struct_sparse_msg.c\
  hybrid.c\
- HYPRE_struct_bicgstab.c\
- HYPRE_struct_cycred.c\
- HYPRE_struct_flexgmres.c\
- HYPRE_struct_gmres.c\
- HYPRE_struct_hybrid.c\
- HYPRE_struct_jacobi.c\
- HYPRE_struct_lgmres.c\
- HYPRE_struct_pfmg.c\
- HYPRE_struct_smg.c\
- HYPRE_struct_sparse_msg.c\
+ NALU_HYPRE_struct_bicgstab.c\
+ NALU_HYPRE_struct_cycred.c\
+ NALU_HYPRE_struct_flexgmres.c\
+ NALU_HYPRE_struct_gmres.c\
+ NALU_HYPRE_struct_hybrid.c\
+ NALU_HYPRE_struct_jacobi.c\
+ NALU_HYPRE_struct_lgmres.c\
+ NALU_HYPRE_struct_pfmg.c\
+ NALU_HYPRE_struct_smg.c\
+ NALU_HYPRE_struct_sparse_msg.c\
  jacobi.c\
  pcg_struct.c\
  pfmg.c\
@@ -69,8 +69,8 @@ FILES =\
 
 CUFILES =\
  cyclic_reduction.c\
- HYPRE_struct_int.c\
- HYPRE_struct_pcg.c\
+ NALU_HYPRE_struct_int.c\
+ NALU_HYPRE_struct_pcg.c\
  pfmg2_setup_rap.c\
  pfmg3_setup_rap.c\
  pfmg_setup.c\
@@ -99,21 +99,21 @@ COBJS = ${FILES:.c=.o}
 CUOBJS = ${CUFILES:.c=.obj}
 OBJS = ${COBJS} ${CUOBJS}
 
-SONAME = libHYPRE_struct_ls-${HYPRE_RELEASE_VERSION}${HYPRE_LIB_SUFFIX}
+SONAME = libNALU_HYPRE_struct_ls-${NALU_HYPRE_RELEASE_VERSION}${NALU_HYPRE_LIB_SUFFIX}
 
 ##################################################################
 # Targets
 ##################################################################
 
-all: libHYPRE_struct_ls${HYPRE_LIB_SUFFIX}
-	cp -fR $(srcdir)/HYPRE_*.h $(HYPRE_BUILD_DIR)/include
-	cp -fR $(srcdir)/_hypre_struct_ls.h $(HYPRE_BUILD_DIR)/include
-#	cp -fR libHYPRE* $(HYPRE_BUILD_DIR)/lib
+all: libNALU_HYPRE_struct_ls${NALU_HYPRE_LIB_SUFFIX}
+	cp -fR $(srcdir)/NALU_HYPRE_*.h $(NALU_HYPRE_BUILD_DIR)/include
+	cp -fR $(srcdir)/_nalu_hypre_struct_ls.h $(NALU_HYPRE_BUILD_DIR)/include
+#	cp -fR libHYPRE* $(NALU_HYPRE_BUILD_DIR)/lib
 
-install: libHYPRE_struct_ls${HYPRE_LIB_SUFFIX}
-	cp -fR $(srcdir)/HYPRE_*.h $(HYPRE_INC_INSTALL)
-	cp -fR $(srcdir)/_hypre_struct_ls.h $(HYPRE_INC_INSTALL)
-#	cp -fR libHYPRE* $(HYPRE_LIB_INSTALL)
+install: libNALU_HYPRE_struct_ls${NALU_HYPRE_LIB_SUFFIX}
+	cp -fR $(srcdir)/NALU_HYPRE_*.h $(NALU_HYPRE_INC_INSTALL)
+	cp -fR $(srcdir)/_nalu_hypre_struct_ls.h $(NALU_HYPRE_INC_INSTALL)
+#	cp -fR libHYPRE* $(NALU_HYPRE_LIB_INSTALL)
 
 clean:
 	rm -f *.o *.obj libHYPRE*
@@ -125,12 +125,12 @@ distclean: clean
 # Rules
 ##################################################################
 
-libHYPRE_struct_ls.a: ${OBJS}
+libNALU_HYPRE_struct_ls.a: ${OBJS}
 	@echo  "Building $@ ... "
 	${AR} $@ ${OBJS}
 	${RANLIB} $@
 
-libHYPRE_struct_ls.so libHYPRE_struct_ls.dylib: ${OBJS}
+libNALU_HYPRE_struct_ls.so libNALU_HYPRE_struct_ls.dylib: ${OBJS}
 	@echo  "Building $@ ... "
 	${BUILD_CC_SHARED} -o ${SONAME} ${OBJS} ${SHARED_SET_SONAME}${SONAME}
 	ln -s -f ${SONAME} $@

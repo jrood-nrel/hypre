@@ -18,11 +18,11 @@
 #include "ml_include.h"
 #endif
 
-#include "HYPRE_MLMatrix.h"
+#include "NALU_HYPRE_MLMatrix.h"
 
 typedef struct
 {
-    HYPRE_ML_Matrix *Amat;
+    NALU_HYPRE_ML_Matrix *Amat;
     MPI_Comm comm;
     int globalEqns;
     int *partition;
@@ -41,8 +41,8 @@ typedef struct
     double   ag_threshold;
     void     *edge_smoother;
     void     *node_smoother;
-    HYPRE_ParCSRMatrix hypreG;
-    HYPRE_ParCSRMatrix hypreAnn;
+    NALU_HYPRE_ParCSRMatrix hypreG;
+    NALU_HYPRE_ParCSRMatrix hypreAnn;
 #ifdef HAVE_MLMAXWELL
     ML_Aggregate *ml_ag;
     ML_Operator  *Annmat;

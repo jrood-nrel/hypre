@@ -6,14 +6,14 @@
  ******************************************************************************/
 
 
-#include "_hypre_utilities.h"
+#include "_nalu_hypre_utilities.h"
 
 /* This file will eventually contain functions needed to support
    a runtime decision of whether to use the assumed partition */
 
 
 /* returns 1 if the assumed partition is in use */
-HYPRE_Int HYPRE_AssumedPartitionCheck(void)
+NALU_HYPRE_Int NALU_HYPRE_AssumedPartitionCheck(void)
 {
    return 1;
 }

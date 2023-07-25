@@ -49,22 +49,22 @@
       integer             num_iterations
       double precision    final_res_norm
 
-!     HYPRE_StructMatrix  A
-!     HYPRE_StructVector  b
-!     HYPRE_StructVector  x
+!     NALU_HYPRE_StructMatrix  A
+!     NALU_HYPRE_StructVector  b
+!     NALU_HYPRE_StructVector  x
 
       integer*8           A
       integer*8           b
       integer*8           x
 
-!     HYPRE_StructSolver  solver
-!     HYPRE_StructSolver  precond
+!     NALU_HYPRE_StructSolver  solver
+!     NALU_HYPRE_StructSolver  precond
 
       integer*8           solver
       integer*8           precond
 
-!     HYPRE_StructGrid    grid
-!     HYPRE_StructStencil stencil
+!     NALU_HYPRE_StructGrid    grid
+!     NALU_HYPRE_StructStencil stencil
 
       integer*8           grid
       integer*8           stencil
@@ -285,12 +285,12 @@
          enddo
       endif
 
-      call HYPRE_StructGridCreate(MPI_COMM_WORLD, dim, grid, ierr)
+      call NALU_HYPRE_StructGridCreate(MPI_COMM_WORLD, dim, grid, ierr)
       do ib=1,nblocks
-         call HYPRE_StructGridSetExtents(grid, ilower(1,ib),
+         call NALU_HYPRE_StructGridSetExtents(grid, ilower(1,ib),
      & iupper(1,ib), ierr)
       enddo
-      call HYPRE_StructGridAssemble(grid, ierr)
+      call NALU_HYPRE_StructGridAssemble(grid, ierr)
 
 !----------------------------------------------------------------------
 !     Compute the offsets and set up the stencil structure.
@@ -321,9 +321,9 @@
          offsets(3,4) =  0
       endif
 
-      call HYPRE_StructStencilCreate(dim, (dim+1), stencil, ierr)
+      call NALU_HYPRE_StructStencilCreate(dim, (dim+1), stencil, ierr)
       do s=1,dim+1
-         call HYPRE_StructStencilSetElement(stencil, (s - 1),
+         call NALU_HYPRE_StructStencilSetElement(stencil, (s - 1),
      & offsets(1,s), ierr)
       enddo
 
@@ -336,11 +336,11 @@
          A_num_ghost(2*i) = 1
       enddo
 
-      call HYPRE_StructMatrixCreate(MPI_COMM_WORLD, grid, stencil,
+      call NALU_HYPRE_StructMatrixCreate(MPI_COMM_WORLD, grid, stencil,
      & A, ierr)
-      call HYPRE_StructMatrixSetSymmetric(A, 1, ierr)
-      call HYPRE_StructMatrixSetNumGhost(A, A_num_ghost, ierr)
-      call HYPRE_StructMatrixInitialize(A, ierr)
+      call NALU_HYPRE_StructMatrixSetSymmetric(A, 1, ierr)
+      call NALU_HYPRE_StructMatrixSetNumGhost(A, A_num_ghost, ierr)
+      call NALU_HYPRE_StructMatrixInitialize(A, ierr)
 
 !-----------------------------------------------------------------------
 !     Set the coefficients for the grid
@@ -367,7 +367,7 @@
       enddo
 
       do ib=1,nblocks
-         call HYPRE_StructMatrixSetBoxValues(A, ilower(1,ib),
+         call NALU_HYPRE_StructMatrixSetBoxValues(A, ilower(1,ib),
      & iupper(1,ib), (dim+1), stencil_indices, values, ierr)
       enddo
 
@@ -384,45 +384,45 @@
                i = iupper(d,ib)
                iupper(d,ib) = istart(d)
                stencil_indices(1) = d - 1
-               call HYPRE_StructMatrixSetBoxValues(A, ilower(1,ib),
+               call NALU_HYPRE_StructMatrixSetBoxValues(A, ilower(1,ib),
      & iupper(1,ib), 1, stencil_indices, values, ierr)
                iupper(d,ib) = i
             endif
          enddo
       enddo
 
-      call HYPRE_StructMatrixAssemble(A, ierr)
-!     call HYPRE_StructMatrixPrint(A, zero, ierr)
-!     call HYPRE_StructMatrixPrint("driver.out.A", A, zero, ierr)
+      call NALU_HYPRE_StructMatrixAssemble(A, ierr)
+!     call NALU_HYPRE_StructMatrixPrint(A, zero, ierr)
+!     call NALU_HYPRE_StructMatrixPrint("driver.out.A", A, zero, ierr)
 
 !-----------------------------------------------------------------------
 !     Set up the rhs and initial guess
 !-----------------------------------------------------------------------
 
-      call HYPRE_StructVectorCreate(MPI_COMM_WORLD, grid, b, ierr)
-      call HYPRE_StructVectorInitialize(b, ierr)
+      call NALU_HYPRE_StructVectorCreate(MPI_COMM_WORLD, grid, b, ierr)
+      call NALU_HYPRE_StructVectorInitialize(b, ierr)
       do i=1,volume
          values(i) = 1.0
       enddo
       do ib=1,nblocks
-         call HYPRE_StructVectorSetBoxValues(b, ilower(1,ib),
+         call NALU_HYPRE_StructVectorSetBoxValues(b, ilower(1,ib),
      & iupper(1,ib), values, ierr)
       enddo
-      call HYPRE_StructVectorAssemble(b, ierr)
-!     call HYPRE_StructVectorPrint("driver.out.b", b, zero, ierr)
+      call NALU_HYPRE_StructVectorAssemble(b, ierr)
+!     call NALU_HYPRE_StructVectorPrint("driver.out.b", b, zero, ierr)
 
-      call HYPRE_StructVectorCreate(MPI_COMM_WORLD, grid, x, ierr)
-      call HYPRE_StructVectorInitialize(x, ierr)
+      call NALU_HYPRE_StructVectorCreate(MPI_COMM_WORLD, grid, x, ierr)
+      call NALU_HYPRE_StructVectorInitialize(x, ierr)
       do i=1,volume
          values(i) = 0.0
       enddo
       do ib=1,nblocks
-         call HYPRE_StructVectorSetBoxValues(x, ilower(1,ib),
+         call NALU_HYPRE_StructVectorSetBoxValues(x, ilower(1,ib),
      & iupper(1,ib), values, ierr)
       enddo
-      call HYPRE_StructVectorAssemble(x, ierr)
-!     call HYPRE_StructVectorPrint(x, zero, ierr)
-!     call HYPRE_StructVectorPrint("driver.out.x0", x, zero, ierr)
+      call NALU_HYPRE_StructVectorAssemble(x, ierr)
+!     call NALU_HYPRE_StructVectorPrint(x, zero, ierr)
+!     call NALU_HYPRE_StructVectorPrint("driver.out.x0", x, zero, ierr)
 
 !-----------------------------------------------------------------------
 !     Solve the linear system
@@ -441,92 +441,92 @@
       if (slvr_id .eq. 0) then
 !        Solve the system using SMG
 
-         call HYPRE_StructSMGCreate(MPI_COMM_WORLD, solver, ierr)
-         call HYPRE_StructSMGSetMemoryUse(solver, zero, ierr)
-         call HYPRE_StructSMGSetMaxIter(solver, slvr_iter, ierr)
-         call HYPRE_StructSMGSetTol(solver, slvr_tol, ierr)
-         call HYPRE_StructSMGSetRelChange(solver, zero, ierr)
-         call HYPRE_StructSMGSetNumPreRelax(solver, n_pre, ierr)
-         call HYPRE_StructSMGSetNumPostRelax(solver, n_post, ierr)
-         call HYPRE_StructSMGSetLogging(solver, one, ierr)
-         call HYPRE_StructSMGSetup(solver, A, b, x, ierr)
+         call NALU_HYPRE_StructSMGCreate(MPI_COMM_WORLD, solver, ierr)
+         call NALU_HYPRE_StructSMGSetMemoryUse(solver, zero, ierr)
+         call NALU_HYPRE_StructSMGSetMaxIter(solver, slvr_iter, ierr)
+         call NALU_HYPRE_StructSMGSetTol(solver, slvr_tol, ierr)
+         call NALU_HYPRE_StructSMGSetRelChange(solver, zero, ierr)
+         call NALU_HYPRE_StructSMGSetNumPreRelax(solver, n_pre, ierr)
+         call NALU_HYPRE_StructSMGSetNumPostRelax(solver, n_post, ierr)
+         call NALU_HYPRE_StructSMGSetLogging(solver, one, ierr)
+         call NALU_HYPRE_StructSMGSetup(solver, A, b, x, ierr)
 
-         call HYPRE_StructSMGSolve(solver, A, b, x, ierr)
-         call HYPRE_StructSMGGetNumIterations(solver, num_iterations,
+         call NALU_HYPRE_StructSMGSolve(solver, A, b, x, ierr)
+         call NALU_HYPRE_StructSMGGetNumIterations(solver, num_iterations,
      & ierr)
-         call HYPRE_StructSMGGetFinalRelative(solver, final_res_norm,
+         call NALU_HYPRE_StructSMGGetFinalRelative(solver, final_res_norm,
      & ierr)
-         call HYPRE_StructSMGDestroy(solver, ierr)
+         call NALU_HYPRE_StructSMGDestroy(solver, ierr)
 
       elseif (slvr_id .eq. 1) then
 !        Solve the system using PFMG
 
-         call HYPRE_StructPFMGCreate(MPI_COMM_WORLD, solver, ierr)
-         call HYPRE_StructPFMGSetMaxIter(solver, slvr_iter, ierr)
-         call HYPRE_StructPFMGSetTol(solver, slvr_tol, ierr)
-         call HYPRE_StructPFMGSetRelChange(solver, zero, ierr)
+         call NALU_HYPRE_StructPFMGCreate(MPI_COMM_WORLD, solver, ierr)
+         call NALU_HYPRE_StructPFMGSetMaxIter(solver, slvr_iter, ierr)
+         call NALU_HYPRE_StructPFMGSetTol(solver, slvr_tol, ierr)
+         call NALU_HYPRE_StructPFMGSetRelChange(solver, zero, ierr)
 !        weighted Jacobi = 1; red-black GS = 2
-         call HYPRE_StructPFMGSetRelaxType(solver, one, ierr)
-         call HYPRE_StructPFMGSetNumPreRelax(solver, n_pre, ierr)
-         call HYPRE_StructPFMGSetNumPostRelax(solver, n_post, ierr)
-!        call HYPRE_StructPFMGSetDxyz(solver, dxyz, ierr)
-         call HYPRE_StructPFMGSetLogging(solver, one, ierr)
-         call HYPRE_StructPFMGSetPrintLevel(solver, one, ierr)
-         call HYPRE_StructPFMGSetup(solver, A, b, x, ierr)
+         call NALU_HYPRE_StructPFMGSetRelaxType(solver, one, ierr)
+         call NALU_HYPRE_StructPFMGSetNumPreRelax(solver, n_pre, ierr)
+         call NALU_HYPRE_StructPFMGSetNumPostRelax(solver, n_post, ierr)
+!        call NALU_HYPRE_StructPFMGSetDxyz(solver, dxyz, ierr)
+         call NALU_HYPRE_StructPFMGSetLogging(solver, one, ierr)
+         call NALU_HYPRE_StructPFMGSetPrintLevel(solver, one, ierr)
+         call NALU_HYPRE_StructPFMGSetup(solver, A, b, x, ierr)
 
-         call HYPRE_StructPFMGSolve(solver, A, b, x, ierr)
-         call HYPRE_StructPFMGGetNumIteration(solver, num_iterations,
+         call NALU_HYPRE_StructPFMGSolve(solver, A, b, x, ierr)
+         call NALU_HYPRE_StructPFMGGetNumIteration(solver, num_iterations,
      & ierr)
-         call HYPRE_StructPFMGGetFinalRelativ(solver, final_res_norm,
+         call NALU_HYPRE_StructPFMGGetFinalRelativ(solver, final_res_norm,
      & ierr)
-         call HYPRE_StructPFMGDestroy(solver, ierr)
+         call NALU_HYPRE_StructPFMGDestroy(solver, ierr)
 
       elseif ((slvr_id .gt. 9) .and. (slvr_id .lt. 20)) then
 !        Solve the system using CG
 
-         call HYPRE_StructPCGCreate(MPI_COMM_WORLD, solver, ierr)
-         call HYPRE_StructPCGSetMaxIter(solver, slvr_iter, ierr)
-         call HYPRE_StructPCGSetTol(solver, slvr_tol, ierr)
-         call HYPRE_StructPCGSetTwoNorm(solver, one, ierr)
-         call HYPRE_StructPCGSetRelChange(solver, zero, ierr)
-         call HYPRE_StructPCGSetLogging(solver, one, ierr)
+         call NALU_HYPRE_StructPCGCreate(MPI_COMM_WORLD, solver, ierr)
+         call NALU_HYPRE_StructPCGSetMaxIter(solver, slvr_iter, ierr)
+         call NALU_HYPRE_StructPCGSetTol(solver, slvr_tol, ierr)
+         call NALU_HYPRE_StructPCGSetTwoNorm(solver, one, ierr)
+         call NALU_HYPRE_StructPCGSetRelChange(solver, zero, ierr)
+         call NALU_HYPRE_StructPCGSetLogging(solver, one, ierr)
 
          if (slvr_id .eq. 10) then
 !           use symmetric SMG as preconditioner
             prec_id = 0
 
-            call HYPRE_StructSMGCreate(MPI_COMM_WORLD, precond,
+            call NALU_HYPRE_StructSMGCreate(MPI_COMM_WORLD, precond,
      & ierr)
-            call HYPRE_StructSMGSetMemoryUse(precond, zero, ierr)
-            call HYPRE_StructSMGSetMaxIter(precond, prec_iter, ierr)
-            call HYPRE_StructSMGSetTol(precond, prec_tol, ierr)
-            call HYPRE_StructSMGSetNumPreRelax(precond, n_pre, ierr)
-            call HYPRE_StructSMGSetNumPostRelax(precond, n_post, ierr)
-            call HYPRE_StructSMGSetLogging(precond, zero, ierr)
+            call NALU_HYPRE_StructSMGSetMemoryUse(precond, zero, ierr)
+            call NALU_HYPRE_StructSMGSetMaxIter(precond, prec_iter, ierr)
+            call NALU_HYPRE_StructSMGSetTol(precond, prec_tol, ierr)
+            call NALU_HYPRE_StructSMGSetNumPreRelax(precond, n_pre, ierr)
+            call NALU_HYPRE_StructSMGSetNumPostRelax(precond, n_post, ierr)
+            call NALU_HYPRE_StructSMGSetLogging(precond, zero, ierr)
 
          elseif (slvr_id .eq. 11) then
 !           use symmetric PFMG as preconditioner
             prec_id = 1
 
-            call HYPRE_StructPFMGCreate(MPI_COMM_WORLD, precond,
+            call NALU_HYPRE_StructPFMGCreate(MPI_COMM_WORLD, precond,
      & ierr)
-            call HYPRE_StructPFMGSetMaxIter(precond, prec_iter, ierr)
-            call HYPRE_StructPFMGSetTol(precond, prec_tol, ierr)
+            call NALU_HYPRE_StructPFMGSetMaxIter(precond, prec_iter, ierr)
+            call NALU_HYPRE_StructPFMGSetTol(precond, prec_tol, ierr)
 !           weighted Jacobi = 1; red-black GS = 2
-            call HYPRE_StructPFMGSetRelaxType(precond, one, ierr)
-            call HYPRE_StructPFMGSetNumPreRelax(precond, n_pre, ierr)
-            call HYPRE_StructPFMGSetNumPostRelax(precond, n_post, ierr)
-!           call HYPRE_StructPFMGSetDxyz(precond, dxyz, ierr)
-            call HYPRE_StructPFMGSetLogging(precond, zero, ierr)
+            call NALU_HYPRE_StructPFMGSetRelaxType(precond, one, ierr)
+            call NALU_HYPRE_StructPFMGSetNumPreRelax(precond, n_pre, ierr)
+            call NALU_HYPRE_StructPFMGSetNumPostRelax(precond, n_post, ierr)
+!           call NALU_HYPRE_StructPFMGSetDxyz(precond, dxyz, ierr)
+            call NALU_HYPRE_StructPFMGSetLogging(precond, zero, ierr)
 
          elseif (slvr_id .eq. 17) then
 !           use 2-step jacobi as preconditioner
             prec_id = 7
             prec_iter  = 2
 
-            call HYPRE_StructJacobiCreate(MPI_COMM_WORLD, precond, ierr)
-            call HYPRE_StructJacobiSetMaxIter(precond, prec_iter, ierr)
-            call HYPRE_StructJacobiSetTol(precond, prec_tol, ierr)
+            call NALU_HYPRE_StructJacobiCreate(MPI_COMM_WORLD, precond, ierr)
+            call NALU_HYPRE_StructJacobiSetMaxIter(precond, prec_iter, ierr)
+            call NALU_HYPRE_StructJacobiSetTol(precond, prec_tol, ierr)
 
          elseif (slvr_id .eq. 18) then
 !           use diagonal scaling as preconditioner
@@ -545,64 +545,64 @@
             call MPI_ABORT(MPI_COMM_WORLD, -2, ierr)
          endif
 
-         call HYPRE_StructPCGSetPrecond(solver, prec_id, precond,
+         call NALU_HYPRE_StructPCGSetPrecond(solver, prec_id, precond,
      & ierr)
-         call HYPRE_StructPCGSetup(solver, A, b, x, ierr)
-         call HYPRE_StructPCGSolve(solver, A, b, x, ierr)
-         call HYPRE_StructPCGGetNumIterations(solver, num_iterations,
+         call NALU_HYPRE_StructPCGSetup(solver, A, b, x, ierr)
+         call NALU_HYPRE_StructPCGSolve(solver, A, b, x, ierr)
+         call NALU_HYPRE_StructPCGGetNumIterations(solver, num_iterations,
      & ierr)
-         call HYPRE_StructPCGGetFinalRelative(solver, final_res_norm,
+         call NALU_HYPRE_StructPCGGetFinalRelative(solver, final_res_norm,
      & ierr)
-         call HYPRE_StructPCGDestroy(solver, ierr)
+         call NALU_HYPRE_StructPCGDestroy(solver, ierr)
 
       elseif ((slvr_id .gt. 19) .and. (slvr_id .lt. 30)) then
 !        Solve the system using Hybrid
 
-         call HYPRE_StructHybridCreate(MPI_COMM_WORLD, solver, ierr)
-         call HYPRE_StructHybridSetDSCGMaxIte(solver, dscg_iter, ierr)
-         call HYPRE_StructHybridSetPCGMaxIter(solver, slvr_iter, ierr)
-         call HYPRE_StructHybridSetTol(solver, slvr_tol, ierr)
-         call HYPRE_StructHybridSetConvergenc(solver, convtol, ierr)
-         call HYPRE_StructHybridSetTwoNorm(solver, one, ierr)
-         call HYPRE_StructHybridSetRelChange(solver, zero, ierr)
-         call HYPRE_StructHybridSetLogging(solver, one, ierr)
+         call NALU_HYPRE_StructHybridCreate(MPI_COMM_WORLD, solver, ierr)
+         call NALU_HYPRE_StructHybridSetDSCGMaxIte(solver, dscg_iter, ierr)
+         call NALU_HYPRE_StructHybridSetPCGMaxIter(solver, slvr_iter, ierr)
+         call NALU_HYPRE_StructHybridSetTol(solver, slvr_tol, ierr)
+         call NALU_HYPRE_StructHybridSetConvergenc(solver, convtol, ierr)
+         call NALU_HYPRE_StructHybridSetTwoNorm(solver, one, ierr)
+         call NALU_HYPRE_StructHybridSetRelChange(solver, zero, ierr)
+         call NALU_HYPRE_StructHybridSetLogging(solver, one, ierr)
 
          if (slvr_id .eq. 20) then
 !           use symmetric SMG as preconditioner
             prec_id = 0
 
-            call HYPRE_StructSMGCreate(MPI_COMM_WORLD, precond,
+            call NALU_HYPRE_StructSMGCreate(MPI_COMM_WORLD, precond,
      & ierr)
-            call HYPRE_StructSMGSetMemoryUse(precond, zero, ierr)
-            call HYPRE_StructSMGSetMaxIter(precond, prec_iter, ierr)
-            call HYPRE_StructSMGSetTol(precond, prec_tol, ierr)
-            call HYPRE_StructSMGSetNumPreRelax(precond, n_pre, ierr)
-            call HYPRE_StructSMGSetNumPostRelax(precond, n_post, ierr)
-            call HYPRE_StructSMGSetLogging(precond, zero, ierr)
+            call NALU_HYPRE_StructSMGSetMemoryUse(precond, zero, ierr)
+            call NALU_HYPRE_StructSMGSetMaxIter(precond, prec_iter, ierr)
+            call NALU_HYPRE_StructSMGSetTol(precond, prec_tol, ierr)
+            call NALU_HYPRE_StructSMGSetNumPreRelax(precond, n_pre, ierr)
+            call NALU_HYPRE_StructSMGSetNumPostRelax(precond, n_post, ierr)
+            call NALU_HYPRE_StructSMGSetLogging(precond, zero, ierr)
 
          elseif (slvr_id .eq. 21) then
 !           use symmetric PFMG as preconditioner
             prec_id = 1
 
-            call HYPRE_StructPFMGCreate(MPI_COMM_WORLD, precond,
+            call NALU_HYPRE_StructPFMGCreate(MPI_COMM_WORLD, precond,
      & ierr)
-            call HYPRE_StructPFMGSetMaxIter(precond, prec_iter, ierr)
-            call HYPRE_StructPFMGSetTol(precond, prec_tol, ierr)
+            call NALU_HYPRE_StructPFMGSetMaxIter(precond, prec_iter, ierr)
+            call NALU_HYPRE_StructPFMGSetTol(precond, prec_tol, ierr)
 !           weighted Jacobi = 1; red-black GS = 2
-            call HYPRE_StructPFMGSetRelaxType(precond, one, ierr)
-            call HYPRE_StructPFMGSetNumPreRelax(precond, n_pre, ierr)
-            call HYPRE_StructPFMGSetNumPostRelax(precond, n_post, ierr)
-!           call HYPRE_StructPFMGSetDxyz(precond, dxyz, ierr)
-            call HYPRE_StructPFMGSetLogging(precond, zero, ierr)
+            call NALU_HYPRE_StructPFMGSetRelaxType(precond, one, ierr)
+            call NALU_HYPRE_StructPFMGSetNumPreRelax(precond, n_pre, ierr)
+            call NALU_HYPRE_StructPFMGSetNumPostRelax(precond, n_post, ierr)
+!           call NALU_HYPRE_StructPFMGSetDxyz(precond, dxyz, ierr)
+            call NALU_HYPRE_StructPFMGSetLogging(precond, zero, ierr)
 
          elseif (slvr_id .eq. 27) then
 !           use 2-step jacobi as preconditioner
             prec_id = 7
             prec_iter  = 2
 
-            call HYPRE_StructJacobiCreate(MPI_COMM_WORLD, precond, ierr)
-            call HYPRE_StructJacobiSetMaxIter(precond, prec_iter, ierr)
-            call HYPRE_StructJacobiSetTol(precond, prec_tol, ierr)
+            call NALU_HYPRE_StructJacobiCreate(MPI_COMM_WORLD, precond, ierr)
+            call NALU_HYPRE_StructJacobiSetMaxIter(precond, prec_iter, ierr)
+            call NALU_HYPRE_StructJacobiSetTol(precond, prec_tol, ierr)
 
          elseif (slvr_id .eq. 28) then
 !           use diagonal scaling as preconditioner
@@ -621,62 +621,62 @@
             call MPI_ABORT(MPI_COMM_WORLD, -2, ierr)
          endif
 
-         call HYPRE_StructHybridSetPrecond(solver, prec_id, precond,
+         call NALU_HYPRE_StructHybridSetPrecond(solver, prec_id, precond,
      & ierr)
-         call HYPRE_StructHybridSetup(solver, A, b, x, ierr)
-         call HYPRE_StructHybridSolve(solver, A, b, x, ierr)
-         call HYPRE_StructHybridGetNumIterati(solver, num_iterations,
+         call NALU_HYPRE_StructHybridSetup(solver, A, b, x, ierr)
+         call NALU_HYPRE_StructHybridSolve(solver, A, b, x, ierr)
+         call NALU_HYPRE_StructHybridGetNumIterati(solver, num_iterations,
      & ierr)
-         call HYPRE_StructHybridGetFinalRelat(solver, final_res_norm,
+         call NALU_HYPRE_StructHybridGetFinalRelat(solver, final_res_norm,
      & ierr)
-         call HYPRE_StructHybridDestroy(solver, ierr)
+         call NALU_HYPRE_StructHybridDestroy(solver, ierr)
 
       elseif ((slvr_id .gt. 29) .and. (slvr_id .lt. 40)) then
 !        Solve the system using GMRes
 
-         call HYPRE_StructGMResCreate(MPI_COMM_WORLD, solver, ierr)
-         call HYPRE_StructGMResSetMaxIter(solver, slvr_iter, ierr)
-         call HYPRE_StructGMResSetKDim(solver, slvr_iter, ierr)
-         call HYPRE_StructGMResSetTol(solver, slvr_tol, ierr)
-         call HYPRE_StructGMResSetPrintLevel(solver, one);
-         call HYPRE_StructGMResSetLogging(solver, one, ierr)
+         call NALU_HYPRE_StructGMResCreate(MPI_COMM_WORLD, solver, ierr)
+         call NALU_HYPRE_StructGMResSetMaxIter(solver, slvr_iter, ierr)
+         call NALU_HYPRE_StructGMResSetKDim(solver, slvr_iter, ierr)
+         call NALU_HYPRE_StructGMResSetTol(solver, slvr_tol, ierr)
+         call NALU_HYPRE_StructGMResSetPrintLevel(solver, one);
+         call NALU_HYPRE_StructGMResSetLogging(solver, one, ierr)
 
          if (slvr_id .eq. 30) then
 !           use symmetric SMG as preconditioner
             prec_id = 0
 
-            call HYPRE_StructSMGCreate(MPI_COMM_WORLD, precond,
+            call NALU_HYPRE_StructSMGCreate(MPI_COMM_WORLD, precond,
      & ierr)
-            call HYPRE_StructSMGSetMemoryUse(precond, zero, ierr)
-            call HYPRE_StructSMGSetMaxIter(precond, prec_iter, ierr)
-            call HYPRE_StructSMGSetTol(precond, prec_tol, ierr)
-            call HYPRE_StructSMGSetNumPreRelax(precond, n_pre, ierr)
-            call HYPRE_StructSMGSetNumPostRelax(precond, n_post, ierr)
-            call HYPRE_StructSMGSetLogging(precond, zero, ierr)
+            call NALU_HYPRE_StructSMGSetMemoryUse(precond, zero, ierr)
+            call NALU_HYPRE_StructSMGSetMaxIter(precond, prec_iter, ierr)
+            call NALU_HYPRE_StructSMGSetTol(precond, prec_tol, ierr)
+            call NALU_HYPRE_StructSMGSetNumPreRelax(precond, n_pre, ierr)
+            call NALU_HYPRE_StructSMGSetNumPostRelax(precond, n_post, ierr)
+            call NALU_HYPRE_StructSMGSetLogging(precond, zero, ierr)
 
          elseif (slvr_id .eq. 31) then
 !           use symmetric PFMG as preconditioner
             prec_id = 1
 
-            call HYPRE_StructPFMGCreate(MPI_COMM_WORLD, precond,
+            call NALU_HYPRE_StructPFMGCreate(MPI_COMM_WORLD, precond,
      & ierr)
-            call HYPRE_StructPFMGSetMaxIter(precond, prec_iter, ierr)
-            call HYPRE_StructPFMGSetTol(precond, prec_tol, ierr)
+            call NALU_HYPRE_StructPFMGSetMaxIter(precond, prec_iter, ierr)
+            call NALU_HYPRE_StructPFMGSetTol(precond, prec_tol, ierr)
 !           weighted Jacobi = 1; red-black GS = 2
-            call HYPRE_StructPFMGSetRelaxType(precond, one, ierr)
-            call HYPRE_StructPFMGSetNumPreRelax(precond, n_pre, ierr)
-            call HYPRE_StructPFMGSetNumPostRelax(precond, n_post, ierr)
-!           call HYPRE_StructPFMGSetDxyz(precond, dxyz, ierr)
-            call HYPRE_StructPFMGSetLogging(precond, zero, ierr)
+            call NALU_HYPRE_StructPFMGSetRelaxType(precond, one, ierr)
+            call NALU_HYPRE_StructPFMGSetNumPreRelax(precond, n_pre, ierr)
+            call NALU_HYPRE_StructPFMGSetNumPostRelax(precond, n_post, ierr)
+!           call NALU_HYPRE_StructPFMGSetDxyz(precond, dxyz, ierr)
+            call NALU_HYPRE_StructPFMGSetLogging(precond, zero, ierr)
 
          elseif (slvr_id .eq. 36) then
 !           use 2-step jacobi as preconditioner
             prec_id   = 6
             prec_iter = 2
 
-            call HYPRE_StructJacobiCreate(MPI_COMM_WORLD, precond, ierr)
-            call HYPRE_StructJacobiSetMaxIter(precond, prec_iter, ierr)
-            call HYPRE_StructJacobiSetTol(precond, prec_tol, ierr)
+            call NALU_HYPRE_StructJacobiCreate(MPI_COMM_WORLD, precond, ierr)
+            call NALU_HYPRE_StructJacobiSetMaxIter(precond, prec_iter, ierr)
+            call NALU_HYPRE_StructJacobiSetTol(precond, prec_tol, ierr)
             prec_id = 7
 
          elseif (slvr_id .eq. 38) then
@@ -696,61 +696,61 @@
             call MPI_ABORT(MPI_COMM_WORLD, -2, ierr)
          endif
 
-         call HYPRE_StructGMResSetPrecond(solver, prec_id, precond,
+         call NALU_HYPRE_StructGMResSetPrecond(solver, prec_id, precond,
      & ierr)
-         call HYPRE_StructGMResSetup(solver, A, b, x, ierr)
-         call HYPRE_StructGMResSolve(solver, A, b, x, ierr)
-         call HYPRE_StructGMResGetNumIteratio(solver, num_iterations,
+         call NALU_HYPRE_StructGMResSetup(solver, A, b, x, ierr)
+         call NALU_HYPRE_StructGMResSolve(solver, A, b, x, ierr)
+         call NALU_HYPRE_StructGMResGetNumIteratio(solver, num_iterations,
      & ierr)
-         call HYPRE_StructGMResGetFinalRelati(solver, final_res_norm,
+         call NALU_HYPRE_StructGMResGetFinalRelati(solver, final_res_norm,
      & ierr)
-         call HYPRE_StructGMResDestroy(solver, ierr)
+         call NALU_HYPRE_StructGMResDestroy(solver, ierr)
 
       elseif ((slvr_id .gt. 39) .and. (slvr_id .lt. 50)) then
 !        Solve the system using BiCGStab
 
-         call HYPRE_StructBiCGStabCreate(MPI_COMM_WORLD, solver, ierr)
-         call HYPRE_StructBiCGStabSetMaxIter(solver, slvr_iter, ierr)
-         call HYPRE_StructBiCGStabSetTol(solver, slvr_tol, ierr)
-         call HYPRE_StructBiCGStabSetPrintLev(solver, one);
-         call HYPRE_StructBiCGStabSetLogging(solver, one, ierr)
+         call NALU_HYPRE_StructBiCGStabCreate(MPI_COMM_WORLD, solver, ierr)
+         call NALU_HYPRE_StructBiCGStabSetMaxIter(solver, slvr_iter, ierr)
+         call NALU_HYPRE_StructBiCGStabSetTol(solver, slvr_tol, ierr)
+         call NALU_HYPRE_StructBiCGStabSetPrintLev(solver, one);
+         call NALU_HYPRE_StructBiCGStabSetLogging(solver, one, ierr)
 
          if (slvr_id .eq. 40) then
 !           use symmetric SMG as preconditioner
             prec_id = 0
 
-            call HYPRE_StructSMGCreate(MPI_COMM_WORLD, precond,
+            call NALU_HYPRE_StructSMGCreate(MPI_COMM_WORLD, precond,
      & ierr)
-            call HYPRE_StructSMGSetMemoryUse(precond, zero, ierr)
-            call HYPRE_StructSMGSetMaxIter(precond, prec_iter, ierr)
-            call HYPRE_StructSMGSetTol(precond, prec_tol, ierr)
-            call HYPRE_StructSMGSetNumPreRelax(precond, n_pre, ierr)
-            call HYPRE_StructSMGSetNumPostRelax(precond, n_post, ierr)
-            call HYPRE_StructSMGSetLogging(precond, zero, ierr)
+            call NALU_HYPRE_StructSMGSetMemoryUse(precond, zero, ierr)
+            call NALU_HYPRE_StructSMGSetMaxIter(precond, prec_iter, ierr)
+            call NALU_HYPRE_StructSMGSetTol(precond, prec_tol, ierr)
+            call NALU_HYPRE_StructSMGSetNumPreRelax(precond, n_pre, ierr)
+            call NALU_HYPRE_StructSMGSetNumPostRelax(precond, n_post, ierr)
+            call NALU_HYPRE_StructSMGSetLogging(precond, zero, ierr)
 
          elseif (slvr_id .eq. 41) then
 !           use symmetric PFMG as preconditioner
             prec_id = 1
 
-            call HYPRE_StructPFMGCreate(MPI_COMM_WORLD, precond,
+            call NALU_HYPRE_StructPFMGCreate(MPI_COMM_WORLD, precond,
      & ierr)
-            call HYPRE_StructPFMGSetMaxIter(precond, prec_iter, ierr)
-            call HYPRE_StructPFMGSetTol(precond, prec_tol, ierr)
+            call NALU_HYPRE_StructPFMGSetMaxIter(precond, prec_iter, ierr)
+            call NALU_HYPRE_StructPFMGSetTol(precond, prec_tol, ierr)
 !           weighted Jacobi = 1; red-black GS = 2
-            call HYPRE_StructPFMGSetRelaxType(precond, one, ierr)
-            call HYPRE_StructPFMGSetNumPreRelax(precond, n_pre, ierr)
-            call HYPRE_StructPFMGSetNumPostRelax(precond, n_post, ierr)
-!           call HYPRE_StructPFMGSetDxyz(precond, dxyz, ierr)
-            call HYPRE_StructPFMGSetLogging(precond, zero, ierr)
+            call NALU_HYPRE_StructPFMGSetRelaxType(precond, one, ierr)
+            call NALU_HYPRE_StructPFMGSetNumPreRelax(precond, n_pre, ierr)
+            call NALU_HYPRE_StructPFMGSetNumPostRelax(precond, n_post, ierr)
+!           call NALU_HYPRE_StructPFMGSetDxyz(precond, dxyz, ierr)
+            call NALU_HYPRE_StructPFMGSetLogging(precond, zero, ierr)
 
          elseif (slvr_id .eq. 47) then
 !           use 2-step jacobi as preconditioner
             prec_id   = 7
             prec_iter = 2
 
-            call HYPRE_StructJacobiCreate(MPI_COMM_WORLD, precond, ierr)
-            call HYPRE_StructJacobiSetMaxIter(precond, prec_iter, ierr)
-            call HYPRE_StructJacobiSetTol(precond, prec_tol, ierr)
+            call NALU_HYPRE_StructJacobiCreate(MPI_COMM_WORLD, precond, ierr)
+            call NALU_HYPRE_StructJacobiSetMaxIter(precond, prec_iter, ierr)
+            call NALU_HYPRE_StructJacobiSetTol(precond, prec_tol, ierr)
 
          elseif (slvr_id .eq. 38) then
 !           use diagonal scaling as preconditioner
@@ -769,62 +769,62 @@
             call MPI_ABORT(MPI_COMM_WORLD, -2, ierr)
          endif
 
-         call HYPRE_StructBiCGStabSetPrecond(solver, prec_id, precond,
+         call NALU_HYPRE_StructBiCGStabSetPrecond(solver, prec_id, precond,
      & ierr)
-         call HYPRE_StructBiCGStabSetup(solver, A, b, x, ierr)
-         call HYPRE_StructBiCGStabSolve(solver, A, b, x, ierr)
-         call HYPRE_StructBiCGStabGetNumItera(solver, num_iterations,
+         call NALU_HYPRE_StructBiCGStabSetup(solver, A, b, x, ierr)
+         call NALU_HYPRE_StructBiCGStabSolve(solver, A, b, x, ierr)
+         call NALU_HYPRE_StructBiCGStabGetNumItera(solver, num_iterations,
      & ierr)
-         call HYPRE_StructBiCGStabGetFinalRel(solver, final_res_norm,
+         call NALU_HYPRE_StructBiCGStabGetFinalRel(solver, final_res_norm,
      & ierr)
-         call HYPRE_StructBiCGStabDestroy(solver, ierr)
+         call NALU_HYPRE_StructBiCGStabDestroy(solver, ierr)
 
       elseif ((slvr_id .gt. 49) .and. (slvr_id .lt. 60)) then
 !        Solve the system using LGMRes
 
-         call HYPRE_StructLGMResCreate(MPI_COMM_WORLD, solver, ierr)
-         call HYPRE_StructLGMResSetMaxIter(solver, slvr_iter, ierr)
-         call HYPRE_StructLGMResSetKDim(solver, slvr_iter, ierr)
-         call HYPRE_StructLGMResSetTol(solver, slvr_tol, ierr)
-         call HYPRE_StructLGMResSetPrintLevel(solver, one);
-         call HYPRE_StructLGMResSetLogging(solver, one, ierr)
+         call NALU_HYPRE_StructLGMResCreate(MPI_COMM_WORLD, solver, ierr)
+         call NALU_HYPRE_StructLGMResSetMaxIter(solver, slvr_iter, ierr)
+         call NALU_HYPRE_StructLGMResSetKDim(solver, slvr_iter, ierr)
+         call NALU_HYPRE_StructLGMResSetTol(solver, slvr_tol, ierr)
+         call NALU_HYPRE_StructLGMResSetPrintLevel(solver, one);
+         call NALU_HYPRE_StructLGMResSetLogging(solver, one, ierr)
 
          if (slvr_id .eq. 50) then
 !           use symmetric SMG as preconditioner
             prec_id = 0
 
-            call HYPRE_StructSMGCreate(MPI_COMM_WORLD, precond,
+            call NALU_HYPRE_StructSMGCreate(MPI_COMM_WORLD, precond,
      & ierr)
-            call HYPRE_StructSMGSetMemoryUse(precond, zero, ierr)
-            call HYPRE_StructSMGSetMaxIter(precond, prec_iter, ierr)
-            call HYPRE_StructSMGSetTol(precond, prec_tol, ierr)
-            call HYPRE_StructSMGSetNumPreRelax(precond, n_pre, ierr)
-            call HYPRE_StructSMGSetNumPostRelax(precond, n_post, ierr)
-            call HYPRE_StructSMGSetLogging(precond, zero, ierr)
+            call NALU_HYPRE_StructSMGSetMemoryUse(precond, zero, ierr)
+            call NALU_HYPRE_StructSMGSetMaxIter(precond, prec_iter, ierr)
+            call NALU_HYPRE_StructSMGSetTol(precond, prec_tol, ierr)
+            call NALU_HYPRE_StructSMGSetNumPreRelax(precond, n_pre, ierr)
+            call NALU_HYPRE_StructSMGSetNumPostRelax(precond, n_post, ierr)
+            call NALU_HYPRE_StructSMGSetLogging(precond, zero, ierr)
 
          elseif (slvr_id .eq. 51) then
 !           use symmetric PFMG as preconditioner
             prec_id = 1
 
-            call HYPRE_StructPFMGCreate(MPI_COMM_WORLD, precond,
+            call NALU_HYPRE_StructPFMGCreate(MPI_COMM_WORLD, precond,
      & ierr)
-            call HYPRE_StructPFMGSetMaxIter(precond, prec_iter, ierr)
-            call HYPRE_StructPFMGSetTol(precond, prec_tol, ierr)
+            call NALU_HYPRE_StructPFMGSetMaxIter(precond, prec_iter, ierr)
+            call NALU_HYPRE_StructPFMGSetTol(precond, prec_tol, ierr)
 !           weighted Jacobi = 1; red-black GS = 2
-            call HYPRE_StructPFMGSetRelaxType(precond, one, ierr)
-            call HYPRE_StructPFMGSetNumPreRelax(precond, n_pre, ierr)
-            call HYPRE_StructPFMGSetNumPostRelax(precond, n_post, ierr)
-!           call HYPRE_StructPFMGSetDxyz(precond, dxyz, ierr)
-            call HYPRE_StructPFMGSetLogging(precond, zero, ierr)
+            call NALU_HYPRE_StructPFMGSetRelaxType(precond, one, ierr)
+            call NALU_HYPRE_StructPFMGSetNumPreRelax(precond, n_pre, ierr)
+            call NALU_HYPRE_StructPFMGSetNumPostRelax(precond, n_post, ierr)
+!           call NALU_HYPRE_StructPFMGSetDxyz(precond, dxyz, ierr)
+            call NALU_HYPRE_StructPFMGSetLogging(precond, zero, ierr)
 
          elseif (slvr_id .eq. 56) then
 !           use 2-step jacobi as preconditioner
             prec_id   = 6
             prec_iter = 2
 
-            call HYPRE_StructJacobiCreate(MPI_COMM_WORLD, precond, ierr)
-            call HYPRE_StructJacobiSetMaxIter(precond, prec_iter, ierr)
-            call HYPRE_StructJacobiSetTol(precond, prec_tol, ierr)
+            call NALU_HYPRE_StructJacobiCreate(MPI_COMM_WORLD, precond, ierr)
+            call NALU_HYPRE_StructJacobiSetMaxIter(precond, prec_iter, ierr)
+            call NALU_HYPRE_StructJacobiSetTol(precond, prec_tol, ierr)
             prec_id = 7
 
          elseif (slvr_id .eq. 58) then
@@ -844,62 +844,62 @@
             call MPI_ABORT(MPI_COMM_WORLD, -2, ierr)
          endif
 
-         call HYPRE_StructLGMResSetPrecond(solver, prec_id, precond,
+         call NALU_HYPRE_StructLGMResSetPrecond(solver, prec_id, precond,
      & ierr)
-         call HYPRE_StructLGMResSetup(solver, A, b, x, ierr)
-         call HYPRE_StructLGMResSolve(solver, A, b, x, ierr)
-         call HYPRE_StructLGMResGetNumIter(solver, num_iterations,
+         call NALU_HYPRE_StructLGMResSetup(solver, A, b, x, ierr)
+         call NALU_HYPRE_StructLGMResSolve(solver, A, b, x, ierr)
+         call NALU_HYPRE_StructLGMResGetNumIter(solver, num_iterations,
      & ierr)
-         call HYPRE_StructLGMResGetFinalRel(solver, final_res_norm,
+         call NALU_HYPRE_StructLGMResGetFinalRel(solver, final_res_norm,
      & ierr)
-         call HYPRE_StructLGMResDestroy(solver, ierr)
+         call NALU_HYPRE_StructLGMResDestroy(solver, ierr)
 
       elseif ((slvr_id .gt. 59) .and. (slvr_id .lt. 70)) then
 !        Solve the system using FlexGMRes
 
-         call HYPRE_StructFGMResCreate(MPI_COMM_WORLD, solver, ierr)
-         call HYPRE_StructFGMResSetMaxIter(solver, slvr_iter, ierr)
-         call HYPRE_StructFGMResSetKDim(solver, slvr_iter, ierr)
-         call HYPRE_StructFGMResSetTol(solver, slvr_tol, ierr)
-         call HYPRE_StructFGMResSetPrintLevel(solver, one);
-         call HYPRE_StructFGMResSetLogging(solver, one, ierr)
+         call NALU_HYPRE_StructFGMResCreate(MPI_COMM_WORLD, solver, ierr)
+         call NALU_HYPRE_StructFGMResSetMaxIter(solver, slvr_iter, ierr)
+         call NALU_HYPRE_StructFGMResSetKDim(solver, slvr_iter, ierr)
+         call NALU_HYPRE_StructFGMResSetTol(solver, slvr_tol, ierr)
+         call NALU_HYPRE_StructFGMResSetPrintLevel(solver, one);
+         call NALU_HYPRE_StructFGMResSetLogging(solver, one, ierr)
 
          if (slvr_id .eq. 60) then
 !           use symmetric SMG as preconditioner
             prec_id = 0
 
-            call HYPRE_StructSMGCreate(MPI_COMM_WORLD, precond,
+            call NALU_HYPRE_StructSMGCreate(MPI_COMM_WORLD, precond,
      & ierr)
-            call HYPRE_StructSMGSetMemoryUse(precond, zero, ierr)
-            call HYPRE_StructSMGSetMaxIter(precond, prec_iter, ierr)
-            call HYPRE_StructSMGSetTol(precond, prec_tol, ierr)
-            call HYPRE_StructSMGSetNumPreRelax(precond, n_pre, ierr)
-            call HYPRE_StructSMGSetNumPostRelax(precond, n_post, ierr)
-            call HYPRE_StructSMGSetLogging(precond, zero, ierr)
+            call NALU_HYPRE_StructSMGSetMemoryUse(precond, zero, ierr)
+            call NALU_HYPRE_StructSMGSetMaxIter(precond, prec_iter, ierr)
+            call NALU_HYPRE_StructSMGSetTol(precond, prec_tol, ierr)
+            call NALU_HYPRE_StructSMGSetNumPreRelax(precond, n_pre, ierr)
+            call NALU_HYPRE_StructSMGSetNumPostRelax(precond, n_post, ierr)
+            call NALU_HYPRE_StructSMGSetLogging(precond, zero, ierr)
 
          elseif (slvr_id .eq. 61) then
 !           use symmetric PFMG as preconditioner
             prec_id = 1
 
-            call HYPRE_StructPFMGCreate(MPI_COMM_WORLD, precond,
+            call NALU_HYPRE_StructPFMGCreate(MPI_COMM_WORLD, precond,
      & ierr)
-            call HYPRE_StructPFMGSetMaxIter(precond, prec_iter, ierr)
-            call HYPRE_StructPFMGSetTol(precond, prec_tol, ierr)
+            call NALU_HYPRE_StructPFMGSetMaxIter(precond, prec_iter, ierr)
+            call NALU_HYPRE_StructPFMGSetTol(precond, prec_tol, ierr)
 !           weighted Jacobi = 1; red-black GS = 2
-            call HYPRE_StructPFMGSetRelaxType(precond, one, ierr)
-            call HYPRE_StructPFMGSetNumPreRelax(precond, n_pre, ierr)
-            call HYPRE_StructPFMGSetNumPostRelax(precond, n_post, ierr)
-!           call HYPRE_StructPFMGSetDxyz(precond, dxyz, ierr)
-            call HYPRE_StructPFMGSetLogging(precond, zero, ierr)
+            call NALU_HYPRE_StructPFMGSetRelaxType(precond, one, ierr)
+            call NALU_HYPRE_StructPFMGSetNumPreRelax(precond, n_pre, ierr)
+            call NALU_HYPRE_StructPFMGSetNumPostRelax(precond, n_post, ierr)
+!           call NALU_HYPRE_StructPFMGSetDxyz(precond, dxyz, ierr)
+            call NALU_HYPRE_StructPFMGSetLogging(precond, zero, ierr)
 
          elseif (slvr_id .eq. 66) then
 !           use 2-step jacobi as preconditioner
             prec_id   = 6
             prec_iter = 2
 
-            call HYPRE_StructJacobiCreate(MPI_COMM_WORLD, precond, ierr)
-            call HYPRE_StructJacobiSetMaxIter(precond, prec_iter, ierr)
-            call HYPRE_StructJacobiSetTol(precond, prec_tol, ierr)
+            call NALU_HYPRE_StructJacobiCreate(MPI_COMM_WORLD, precond, ierr)
+            call NALU_HYPRE_StructJacobiSetMaxIter(precond, prec_iter, ierr)
+            call NALU_HYPRE_StructJacobiSetTol(precond, prec_tol, ierr)
             prec_id = 7
 
          elseif (slvr_id .eq. 68) then
@@ -919,15 +919,15 @@
             call MPI_ABORT(MPI_COMM_WORLD, -2, ierr)
          endif
 
-         call HYPRE_StructFGMResSetPrecond(solver, prec_id, precond,
+         call NALU_HYPRE_StructFGMResSetPrecond(solver, prec_id, precond,
      & ierr)
-         call HYPRE_StructFGMResSetup(solver, A, b, x, ierr)
-         call HYPRE_StructFGMResSolve(solver, A, b, x, ierr)
-         call HYPRE_StructFGMResGetNumIter(solver, num_iterations,
+         call NALU_HYPRE_StructFGMResSetup(solver, A, b, x, ierr)
+         call NALU_HYPRE_StructFGMResSolve(solver, A, b, x, ierr)
+         call NALU_HYPRE_StructFGMResGetNumIter(solver, num_iterations,
      & ierr)
-         call HYPRE_StructFGMResGetFinalRel(solver, final_res_norm,
+         call NALU_HYPRE_StructFGMResGetFinalRel(solver, final_res_norm,
      & ierr)
-         call HYPRE_StructFGMResDestroy(solver, ierr)
+         call NALU_HYPRE_StructFGMResDestroy(solver, ierr)
 
       else
          if (myid .eq. 0) then
@@ -937,20 +937,20 @@
       endif
 
       if (prec_id .eq. 0) then
-         call HYPRE_StructSMGDestroy(precond, ierr)
+         call NALU_HYPRE_StructSMGDestroy(precond, ierr)
 
       elseif (prec_id .eq. 1) then
-         call HYPRE_StructPFMGDestroy(precond, ierr)
+         call NALU_HYPRE_StructPFMGDestroy(precond, ierr)
 
       elseif (prec_id .eq. 7) then
-         call HYPRE_StructJacobiDestroy(precond, ierr)
+         call NALU_HYPRE_StructJacobiDestroy(precond, ierr)
       endif
 
 !-----------------------------------------------------------------------
 !     Print the solution and other info
 !-----------------------------------------------------------------------
 
-!  call HYPRE_StructVectorPrint("driver.out.x", x, zero, ierr)
+!  call NALU_HYPRE_StructVectorPrint("driver.out.x", x, zero, ierr)
 
       if (myid .eq. 0) then
          write(*,'(a, i0)') 'Number of iterations = ', num_iterations
@@ -962,11 +962,11 @@
 !     Finalize things
 !-----------------------------------------------------------------------
 
-      call HYPRE_StructGridDestroy(grid, ierr)
-      call HYPRE_StructStencilDestroy(stencil, ierr)
-      call HYPRE_StructMatrixDestroy(A, ierr)
-      call HYPRE_StructVectorDestroy(b, ierr)
-      call HYPRE_StructVectorDestroy(x, ierr)
+      call NALU_HYPRE_StructGridDestroy(grid, ierr)
+      call NALU_HYPRE_StructStencilDestroy(stencil, ierr)
+      call NALU_HYPRE_StructMatrixDestroy(A, ierr)
+      call NALU_HYPRE_StructVectorDestroy(b, ierr)
+      call NALU_HYPRE_StructVectorDestroy(x, ierr)
 
 !     Finalize MPI
 

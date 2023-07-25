@@ -9,31 +9,31 @@
 // This is the class that handles slide surface reduction
 // **************************************************************************
 
-#ifndef __HYPRE_SLIDEREDUCTION__
-#define __HYPRE_SLIDEREDUCTION__
+#ifndef __NALU_HYPRE_SLIDEREDUCTION__
+#define __NALU_HYPRE_SLIDEREDUCTION__
 
 // **************************************************************************
 // system libraries used
 // --------------------------------------------------------------------------
 
-#include "utilities/_hypre_utilities.h"
-#include "IJ_mv/_hypre_IJ_mv.h"
-#include "parcsr_mv/_hypre_parcsr_mv.h"
+#include "utilities/_nalu_hypre_utilities.h"
+#include "IJ_mv/_nalu_hypre_IJ_mv.h"
+#include "parcsr_mv/_nalu_hypre_parcsr_mv.h"
 
 // **************************************************************************
 // class definition
 // --------------------------------------------------------------------------
 
-class HYPRE_SlideReduction
+class NALU_HYPRE_SlideReduction
 {
    MPI_Comm       mpiComm_;
-   HYPRE_IJMatrix Amat_;
-   HYPRE_IJMatrix A21mat_;
-   HYPRE_IJMatrix invA22mat_;
-   HYPRE_IJMatrix reducedAmat_;
-   HYPRE_IJVector reducedBvec_;
-   HYPRE_IJVector reducedXvec_;
-   HYPRE_IJVector reducedRvec_;
+   NALU_HYPRE_IJMatrix Amat_;
+   NALU_HYPRE_IJMatrix A21mat_;
+   NALU_HYPRE_IJMatrix invA22mat_;
+   NALU_HYPRE_IJMatrix reducedAmat_;
+   NALU_HYPRE_IJVector reducedBvec_;
+   NALU_HYPRE_IJVector reducedXvec_;
+   NALU_HYPRE_IJVector reducedRvec_;
    int            outputLevel_;
    int            *procNConstr_;
    int            *slaveEqnList_;
@@ -44,7 +44,7 @@ class HYPRE_SlideReduction
    int            *constrBlkSizes_;
    int            *eqnStatuses_;
    double         blockMinNorm_;
-   HYPRE_ParCSRMatrix hypreRAP_;
+   NALU_HYPRE_ParCSRMatrix hypreRAP_;
    double         truncTol_;
    double         *ADiagISqrts_;
    int            scaleMatrixFlag_;
@@ -52,8 +52,8 @@ class HYPRE_SlideReduction
 
  public:
 
-   HYPRE_SlideReduction(MPI_Comm);
-   virtual ~HYPRE_SlideReduction();
+   NALU_HYPRE_SlideReduction(MPI_Comm);
+   virtual ~NALU_HYPRE_SlideReduction();
    int    setOutputLevel(int level);
    int    setUseSimpleScheme();
    int    setTruncationThreshold(double trunc);
@@ -62,16 +62,16 @@ class HYPRE_SlideReduction
 
    int    getMatrixNumRows(); 
    double *getMatrixDiagonal();
-   int    getReducedMatrix(HYPRE_IJMatrix *mat); 
-   int    getReducedRHSVector(HYPRE_IJVector *rhs);
-   int    getReducedSolnVector(HYPRE_IJVector *sol);
-   int    getReducedAuxVector(HYPRE_IJVector *auxV);
+   int    getReducedMatrix(NALU_HYPRE_IJMatrix *mat); 
+   int    getReducedRHSVector(NALU_HYPRE_IJVector *rhs);
+   int    getReducedSolnVector(NALU_HYPRE_IJVector *sol);
+   int    getReducedAuxVector(NALU_HYPRE_IJVector *auxV);
    int    getProcConstraintMap(int **map);
    int    getSlaveEqnList(int **slist);
-   int    getPerturbationMatrix(HYPRE_ParCSRMatrix *matrix);
-   int    setup(HYPRE_IJMatrix , HYPRE_IJVector , HYPRE_IJVector );
-   int    buildReducedSolnVector(HYPRE_IJVector x, HYPRE_IJVector b);
-   int    buildModifiedSolnVector(HYPRE_IJVector x);
+   int    getPerturbationMatrix(NALU_HYPRE_ParCSRMatrix *matrix);
+   int    setup(NALU_HYPRE_IJMatrix , NALU_HYPRE_IJVector , NALU_HYPRE_IJVector );
+   int    buildReducedSolnVector(NALU_HYPRE_IJVector x, NALU_HYPRE_IJVector b);
+   int    buildModifiedSolnVector(NALU_HYPRE_IJVector x);
 
  private:
 
@@ -80,9 +80,9 @@ class HYPRE_SlideReduction
    int    findSlaveEqnsBlock(int blkSize);
    int    composeGlobalList();
    int    buildSubMatrices();
-   int    buildModifiedRHSVector(HYPRE_IJVector, HYPRE_IJVector);
+   int    buildModifiedRHSVector(NALU_HYPRE_IJVector, NALU_HYPRE_IJVector);
    int    buildReducedMatrix();
-   int    buildReducedRHSVector(HYPRE_IJVector);
+   int    buildReducedRHSVector(NALU_HYPRE_IJVector);
    int    buildA21Mat();
    int    buildInvA22Mat();
    int    scaleMatrixVector();

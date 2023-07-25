@@ -11,7 +11,7 @@ extern "C" {
 */
 
 #include "f2c.h"
-#include "hypre_blas.h"
+#include "nalu_hypre_blas.h"
 
 /* Subroutine */ integer dsyr2_(const char *uplo, integer *n, doublereal *alpha,
 	doublereal *x, integer *incx, doublereal *y, integer *incy,

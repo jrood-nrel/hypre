@@ -3,7 +3,7 @@ dnl HYPRE Project Developers. See the top-level COPYRIGHT file for details.
 dnl
 dnl SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-dnl @synopsis AC_HYPRE_FIND_BLAS([ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
+dnl @synopsis AC_NALU_HYPRE_FIND_BLAS([ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
 dnl
 dnl This macro looks for a library that implements the BLAS
 dnl linear-algebra interface (see http://www.netlib.org/blas/).
@@ -34,7 +34,7 @@ dnl
 dnl @version $Id$
 dnl @author Steven G. Johnson <stevenj@alum.mit.edu>
 
-AC_DEFUN([AC_HYPRE_FIND_BLAS],
+AC_DEFUN([AC_NALU_HYPRE_FIND_BLAS],
 [
   AC_REQUIRE([AC_FC_LIBRARY_LDFLAGS])
 
@@ -55,8 +55,8 @@ AC_DEFUN([AC_HYPRE_FIND_BLAS],
 #***************************************************************
 #   Save incoming LIBS and LDFLAGS values to be restored 
 #***************************************************************
-  hypre_save_LIBS="$LIBS"
-  hypre_save_LDFLGS="$LDFLAGS"
+  nalu_hypre_save_LIBS="$LIBS"
+  nalu_hypre_save_LDFLGS="$LDFLAGS"
   LIBS="$LIBS $FLIBS"
 
 #***************************************************************
@@ -101,11 +101,11 @@ AC_DEFUN([AC_HYPRE_FIND_BLAS],
 #   Set variables if ATLAS or DXML libraries are used 
 #***************************************************************
   if test "$BLASLIBS" = "dxml"; then
-     AC_DEFINE(HYPRE_USING_DXML, 1, [Using dxml for Blas])
+     AC_DEFINE(NALU_HYPRE_USING_DXML, 1, [Using dxml for Blas])
   fi
 
   if test "$BLASLIBS" = "essl"; then
-     AC_DEFINE(HYPRE_USING_ESSL, 1, [Using essl for Blas])
+     AC_DEFINE(NALU_HYPRE_USING_ESSL, 1, [Using essl for Blas])
   fi
 
 #***************************************************************
@@ -122,12 +122,12 @@ AC_DEFUN([AC_HYPRE_FIND_BLAS],
 #***************************************************************
 #   Restore incoming LIBS and LDFLAGS values
 #***************************************************************
-  LIBS="$hypre_save_LIBS"
-  LDFLAGS="$hypre_save_LDFLGS"
+  LIBS="$nalu_hypre_save_LIBS"
+  LDFLAGS="$nalu_hypre_save_LDFLGS"
 
-])dnl AC_HYPRE_FIND_BLAS
+])dnl AC_NALU_HYPRE_FIND_BLAS
 
-dnl @synopsis AC_HYPRE_CHECK_USER_BLASLIBS
+dnl @synopsis AC_NALU_HYPRE_CHECK_USER_BLASLIBS
 dnl
 dnl This macro checks that the user-provided blas library is 
 dnl linkable. Configure fails with an error message if this 
@@ -149,33 +149,33 @@ dnl the BLAS library.
 dnl
 dnl @author Daniel Osei-Kuffuor  <oseikuffuor1@llnl.gov>
 
-AC_DEFUN([AC_HYPRE_CHECK_USER_BLASLIBS],
+AC_DEFUN([AC_NALU_HYPRE_CHECK_USER_BLASLIBS],
 [
   AC_REQUIRE([AC_FC_LIBRARY_LDFLAGS])
 dnl **************************************************************
 dnl Define some variables
 dnl **************************************************************
-  hypre_blas_link_ok=""
+  nalu_hypre_blas_link_ok=""
 dnl **************************************************************
 dnl Get fortran linker name for test function (dgemm in this case)
 dnl **************************************************************
 dnl  AC_FC_FUNC(dgemm)
 
-  if test $hypre_fmangle_blas = 1
+  if test $nalu_hypre_fmangle_blas = 1
   then
      BLASFUNC="dgemm"
-  elif test $hypre_fmangle_blas = 2
+  elif test $nalu_hypre_fmangle_blas = 2
   then
      BLASFUNC="dgemm_"
-  elif test $hypre_fmangle_blas = 3
+  elif test $nalu_hypre_fmangle_blas = 3
   then
      BLASFUNC="dgemm__"
-  elif test $hypre_fmangle_blas = 4
+  elif test $nalu_hypre_fmangle_blas = 4
   then
      BLASFUNC="DGEMM"          
   else
      BLASFUNC="dgemm dgemm_ dgemm__ DGEMM"
-     hypre_fmangle_blas=0
+     nalu_hypre_fmangle_blas=0
   fi
   
 dnl **************************************************************
@@ -246,8 +246,8 @@ dnl            fi
 dnl **************************************************************
 dnl Save current LIBS and LDFLAGS to be restored later 
 dnl **************************************************************
-    hypre_saved_LIBS="$LIBS"
-    hypre_saved_LDFLAGS="$LDFLAGS"
+    nalu_hypre_saved_LIBS="$LIBS"
+    nalu_hypre_saved_LDFLAGS="$LDFLAGS"
     LIBS="$LIBS $FCLIBS"
     LDFLAGS="$BLASLIBPATHS $LDFLAGS"
 
@@ -258,21 +258,21 @@ dnl **************************************************************
 dnl Check for dgemm in linkable list of libraries
 dnl **************************************************************
     if test "x$BLASLIBNAMES" != "x"; then
-       hypre_blas_link_ok=no
+       nalu_hypre_blas_link_ok=no
     fi
     for blas_lib in $BLASLIBNAMES; do
 dnl **************************************************************
 dnl Check if library works and print result
 dnl **************************************************************   
         for func in $BLASFUNC; do                
-           AC_CHECK_LIB($blas_lib, $func, [hypre_blas_link_ok=yes])
-           if test "$hypre_blas_link_ok" = "yes"; then
+           AC_CHECK_LIB($blas_lib, $func, [nalu_hypre_blas_link_ok=yes])
+           if test "$nalu_hypre_blas_link_ok" = "yes"; then
               break 2
            fi
        done
     done
 
-    if test "$hypre_blas_link_ok" = "no"; then
+    if test "$nalu_hypre_blas_link_ok" = "no"; then
       AC_MSG_ERROR([**************** Non-linkable blas library error: ***************************
       User set BLAS library path using either --with-blas-lib=<lib>, or 
       --with-blas-libs=<blas_lib_base_name> and --with-blas_dirs=<path-to-blas-lib>, 
@@ -281,30 +281,30 @@ dnl **************************************************************
     fi
 
 dnl **************************************************************
-dnl set HYPRE_FMANGLE_BLAS flag if not set
+dnl set NALU_HYPRE_FMANGLE_BLAS flag if not set
 dnl **************************************************************
-    if test "$hypre_blas_link_ok" = "yes" -a "$hypre_fmangle_blas" = "0"
+    if test "$nalu_hypre_blas_link_ok" = "yes" -a "$nalu_hypre_fmangle_blas" = "0"
     then
        if test "$func" = "dgemm"
        then
-          hypre_fmangle_blas=1
+          nalu_hypre_fmangle_blas=1
        elif test "$func" = "dgemm_"
        then
-          hypre_fmangle_blas=2
+          nalu_hypre_fmangle_blas=2
        elif test "$func" = "dgemm__"
        then
-          hypre_fmangle_blas=3
+          nalu_hypre_fmangle_blas=3
        else
-          hypre_fmangle_blas=4
+          nalu_hypre_fmangle_blas=4
        fi
-       AC_DEFINE_UNQUOTED(HYPRE_FMANGLE_BLAS, [$hypre_fmangle_blas], [Define as in HYPRE_FMANGLE to set the BLAS name mangling scheme])
+       AC_DEFINE_UNQUOTED(NALU_HYPRE_FMANGLE_BLAS, [$nalu_hypre_fmangle_blas], [Define as in NALU_HYPRE_FMANGLE to set the BLAS name mangling scheme])
     fi 
 dnl **************************************************************
 dnl Restore LIBS and LDFLAGS
 dnl **************************************************************
-    LIBS="$hypre_saved_LIBS"
-    LDFLAGS="$hypre_saved_LDFLAGS" 
+    LIBS="$nalu_hypre_saved_LIBS"
+    LDFLAGS="$nalu_hypre_saved_LDFLAGS" 
 dnl  fi
 ])
-dnl Done with macro AC_HYPRE_CHECK_USER_BLASLIBS
+dnl Done with macro AC_NALU_HYPRE_CHECK_USER_BLASLIBS
   

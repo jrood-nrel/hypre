@@ -7,7 +7,7 @@
 
 /******************************************************************************
  *
- * HYPRE_ParCSRPilut interface
+ * NALU_HYPRE_ParCSRPilut interface
  *
  *****************************************************************************/
 
@@ -15,15 +15,15 @@
 #include <stdio.h>
 #include <math.h>
 
-#include "./HYPRE_parcsr_ls.h"
+#include "./NALU_HYPRE_parcsr_ls.h"
 
-#include "../distributed_matrix/HYPRE_distributed_matrix_types.h"
-#include "../distributed_matrix/HYPRE_distributed_matrix_protos.h"
+#include "../distributed_matrix/NALU_HYPRE_distributed_matrix_types.h"
+#include "../distributed_matrix/NALU_HYPRE_distributed_matrix_protos.h"
 
-#include "../matrix_matrix/HYPRE_matrix_matrix_protos.h"
+#include "../matrix_matrix/NALU_HYPRE_matrix_matrix_protos.h"
 
-#include "../distributed_ls/pilut/HYPRE_DistributedMatrixPilutSolver_types.h"
-#include "../distributed_ls/pilut/HYPRE_DistributedMatrixPilutSolver_protos.h"
+#include "../distributed_ls/pilut/NALU_HYPRE_DistributedMatrixPilutSolver_types.h"
+#include "../distributed_ls/pilut/NALU_HYPRE_DistributedMatrixPilutSolver_protos.h"
 
 /* Must include implementation definition for ParVector since no data access
   functions are publically provided. AJC, 5/99 */
@@ -32,185 +32,185 @@
 
 /* AB 8/06 - replace header file */
 /* #include "../parcsr_mv/par_vector.h" */
-#include "../parcsr_mv/_hypre_parcsr_mv.h"
+#include "../parcsr_mv/_nalu_hypre_parcsr_mv.h"
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRPilutCreate
+ * NALU_HYPRE_ParCSRPilutCreate
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ParCSRPilutCreate( MPI_Comm comm, HYPRE_Solver *solver )
+NALU_HYPRE_Int
+NALU_HYPRE_ParCSRPilutCreate( MPI_Comm comm, NALU_HYPRE_Solver *solver )
 {
-#ifdef HYPRE_MIXEDINT
-   hypre_error_w_msg(HYPRE_ERROR_GENERIC, "Pilut cannot be used in mixedint mode!");
-   return hypre_error_flag;
+#ifdef NALU_HYPRE_MIXEDINT
+   nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "Pilut cannot be used in mixedint mode!");
+   return nalu_hypre_error_flag;
 #else
 
-   HYPRE_NewDistributedMatrixPilutSolver( comm, NULL,
-                                          (HYPRE_DistributedMatrixPilutSolver *) solver);
+   NALU_HYPRE_NewDistributedMatrixPilutSolver( comm, NULL,
+                                          (NALU_HYPRE_DistributedMatrixPilutSolver *) solver);
 
-   HYPRE_DistributedMatrixPilutSolverInitialize(
-      (HYPRE_DistributedMatrixPilutSolver) solver );
+   NALU_HYPRE_DistributedMatrixPilutSolverInitialize(
+      (NALU_HYPRE_DistributedMatrixPilutSolver) solver );
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 #endif
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRPilutDestroy
+ * NALU_HYPRE_ParCSRPilutDestroy
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ParCSRPilutDestroy( HYPRE_Solver solver )
+NALU_HYPRE_Int
+NALU_HYPRE_ParCSRPilutDestroy( NALU_HYPRE_Solver solver )
 {
-#ifdef HYPRE_MIXEDINT
-   hypre_error_w_msg(HYPRE_ERROR_GENERIC, "Pilut cannot be used in mixedint mode!");
-   return hypre_error_flag;
+#ifdef NALU_HYPRE_MIXEDINT
+   nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "Pilut cannot be used in mixedint mode!");
+   return nalu_hypre_error_flag;
 #else
 
-   HYPRE_DistributedMatrix mat = HYPRE_DistributedMatrixPilutSolverGetMatrix(
-                                    (HYPRE_DistributedMatrixPilutSolver) solver );
-   if ( mat ) { HYPRE_DistributedMatrixDestroy( mat ); }
+   NALU_HYPRE_DistributedMatrix mat = NALU_HYPRE_DistributedMatrixPilutSolverGetMatrix(
+                                    (NALU_HYPRE_DistributedMatrixPilutSolver) solver );
+   if ( mat ) { NALU_HYPRE_DistributedMatrixDestroy( mat ); }
 
-   HYPRE_FreeDistributedMatrixPilutSolver(
-      (HYPRE_DistributedMatrixPilutSolver) solver );
+   NALU_HYPRE_FreeDistributedMatrixPilutSolver(
+      (NALU_HYPRE_DistributedMatrixPilutSolver) solver );
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 #endif
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRPilutSetup
+ * NALU_HYPRE_ParCSRPilutSetup
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ParCSRPilutSetup( HYPRE_Solver solver,
-                        HYPRE_ParCSRMatrix A,
-                        HYPRE_ParVector b,
-                        HYPRE_ParVector x      )
+NALU_HYPRE_Int
+NALU_HYPRE_ParCSRPilutSetup( NALU_HYPRE_Solver solver,
+                        NALU_HYPRE_ParCSRMatrix A,
+                        NALU_HYPRE_ParVector b,
+                        NALU_HYPRE_ParVector x      )
 {
-#ifdef HYPRE_MIXEDINT
-   hypre_error_w_msg(HYPRE_ERROR_GENERIC, "Pilut cannot be used in mixedint mode!");
-   return hypre_error_flag;
+#ifdef NALU_HYPRE_MIXEDINT
+   nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "Pilut cannot be used in mixedint mode!");
+   return nalu_hypre_error_flag;
 #else
 
-   HYPRE_DistributedMatrix matrix;
-   HYPRE_DistributedMatrixPilutSolver distributed_solver =
-      (HYPRE_DistributedMatrixPilutSolver) solver;
+   NALU_HYPRE_DistributedMatrix matrix;
+   NALU_HYPRE_DistributedMatrixPilutSolver distributed_solver =
+      (NALU_HYPRE_DistributedMatrixPilutSolver) solver;
 
-   HYPRE_ConvertParCSRMatrixToDistributedMatrix(
+   NALU_HYPRE_ConvertParCSRMatrixToDistributedMatrix(
       A, &matrix );
 
-   HYPRE_DistributedMatrixPilutSolverSetMatrix( distributed_solver, matrix );
+   NALU_HYPRE_DistributedMatrixPilutSolverSetMatrix( distributed_solver, matrix );
 
-   HYPRE_DistributedMatrixPilutSolverSetup( distributed_solver );
+   NALU_HYPRE_DistributedMatrixPilutSolverSetup( distributed_solver );
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 #endif
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRPilutSolve
+ * NALU_HYPRE_ParCSRPilutSolve
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ParCSRPilutSolve( HYPRE_Solver solver,
-                        HYPRE_ParCSRMatrix A,
-                        HYPRE_ParVector b,
-                        HYPRE_ParVector x      )
+NALU_HYPRE_Int
+NALU_HYPRE_ParCSRPilutSolve( NALU_HYPRE_Solver solver,
+                        NALU_HYPRE_ParCSRMatrix A,
+                        NALU_HYPRE_ParVector b,
+                        NALU_HYPRE_ParVector x      )
 {
-#ifdef HYPRE_MIXEDINT
-   hypre_error_w_msg(HYPRE_ERROR_GENERIC, "Pilut cannot be used in mixedint mode!");
-   return hypre_error_flag;
+#ifdef NALU_HYPRE_MIXEDINT
+   nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "Pilut cannot be used in mixedint mode!");
+   return nalu_hypre_error_flag;
 #else
 
-   HYPRE_Real *rhs, *soln;
+   NALU_HYPRE_Real *rhs, *soln;
 
-   rhs = hypre_VectorData( hypre_ParVectorLocalVector( (hypre_ParVector *)b ) );
-   soln = hypre_VectorData( hypre_ParVectorLocalVector( (hypre_ParVector *)x ) );
+   rhs = nalu_hypre_VectorData( nalu_hypre_ParVectorLocalVector( (nalu_hypre_ParVector *)b ) );
+   soln = nalu_hypre_VectorData( nalu_hypre_ParVectorLocalVector( (nalu_hypre_ParVector *)x ) );
 
-   HYPRE_DistributedMatrixPilutSolverSolve(
-      (HYPRE_DistributedMatrixPilutSolver) solver,
+   NALU_HYPRE_DistributedMatrixPilutSolverSolve(
+      (NALU_HYPRE_DistributedMatrixPilutSolver) solver,
       soln, rhs );
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 #endif
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRPilutSetMaxIter
+ * NALU_HYPRE_ParCSRPilutSetMaxIter
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ParCSRPilutSetMaxIter( HYPRE_Solver solver,
-                             HYPRE_Int          max_iter  )
+NALU_HYPRE_Int
+NALU_HYPRE_ParCSRPilutSetMaxIter( NALU_HYPRE_Solver solver,
+                             NALU_HYPRE_Int          max_iter  )
 {
-#ifdef HYPRE_MIXEDINT
-   hypre_error_w_msg(HYPRE_ERROR_GENERIC, "Pilut cannot be used in mixedint mode!");
-   return hypre_error_flag;
+#ifdef NALU_HYPRE_MIXEDINT
+   nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "Pilut cannot be used in mixedint mode!");
+   return nalu_hypre_error_flag;
 #else
 
 
-   HYPRE_DistributedMatrixPilutSolverSetMaxIts(
-      (HYPRE_DistributedMatrixPilutSolver) solver, max_iter );
+   NALU_HYPRE_DistributedMatrixPilutSolverSetMaxIts(
+      (NALU_HYPRE_DistributedMatrixPilutSolver) solver, max_iter );
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 #endif
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRPilutSetDropTolerance
+ * NALU_HYPRE_ParCSRPilutSetDropTolerance
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ParCSRPilutSetDropTolerance( HYPRE_Solver solver,
-                                   HYPRE_Real   tol    )
+NALU_HYPRE_Int
+NALU_HYPRE_ParCSRPilutSetDropTolerance( NALU_HYPRE_Solver solver,
+                                   NALU_HYPRE_Real   tol    )
 {
-#ifdef HYPRE_MIXEDINT
-   hypre_error_w_msg(HYPRE_ERROR_GENERIC, "Pilut cannot be used in mixedint mode!");
-   return hypre_error_flag;
+#ifdef NALU_HYPRE_MIXEDINT
+   nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "Pilut cannot be used in mixedint mode!");
+   return nalu_hypre_error_flag;
 #else
 
-   HYPRE_DistributedMatrixPilutSolverSetDropTolerance(
-      (HYPRE_DistributedMatrixPilutSolver) solver, tol );
+   NALU_HYPRE_DistributedMatrixPilutSolverSetDropTolerance(
+      (NALU_HYPRE_DistributedMatrixPilutSolver) solver, tol );
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 #endif
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRPilutSetFactorRowSize
+ * NALU_HYPRE_ParCSRPilutSetFactorRowSize
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ParCSRPilutSetFactorRowSize( HYPRE_Solver solver,
-                                   HYPRE_Int       size    )
+NALU_HYPRE_Int
+NALU_HYPRE_ParCSRPilutSetFactorRowSize( NALU_HYPRE_Solver solver,
+                                   NALU_HYPRE_Int       size    )
 {
-#ifdef HYPRE_MIXEDINT
-   hypre_error_w_msg(HYPRE_ERROR_GENERIC, "Pilut cannot be used in mixedint mode!");
-   return hypre_error_flag;
+#ifdef NALU_HYPRE_MIXEDINT
+   nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "Pilut cannot be used in mixedint mode!");
+   return nalu_hypre_error_flag;
 #else
 
-   HYPRE_DistributedMatrixPilutSolverSetFactorRowSize(
-      (HYPRE_DistributedMatrixPilutSolver) solver, size );
+   NALU_HYPRE_DistributedMatrixPilutSolverSetFactorRowSize(
+      (NALU_HYPRE_DistributedMatrixPilutSolver) solver, size );
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 #endif
 }
 
-HYPRE_Int
-HYPRE_ParCSRPilutSetLogging( HYPRE_Solver solver,
-                             HYPRE_Int    logging    )
+NALU_HYPRE_Int
+NALU_HYPRE_ParCSRPilutSetLogging( NALU_HYPRE_Solver solver,
+                             NALU_HYPRE_Int    logging    )
 {
-#ifdef HYPRE_MIXEDINT
-   hypre_error_w_msg(HYPRE_ERROR_GENERIC, "Pilut cannot be used in mixedint mode!");
-   return hypre_error_flag;
+#ifdef NALU_HYPRE_MIXEDINT
+   nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "Pilut cannot be used in mixedint mode!");
+   return nalu_hypre_error_flag;
 #else
 
-   HYPRE_DistributedMatrixPilutSolverSetLogging(
-      (HYPRE_DistributedMatrixPilutSolver) solver, logging );
+   NALU_HYPRE_DistributedMatrixPilutSolverSetLogging(
+      (NALU_HYPRE_DistributedMatrixPilutSolver) solver, logging );
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 #endif
 }
 

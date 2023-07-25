@@ -11,13 +11,13 @@
 /* #include "euclid_common.h" */
 
 struct _vec_dh {
-  HYPRE_Int n;
-  HYPRE_Real *vals;
+  NALU_HYPRE_Int n;
+  NALU_HYPRE_Real *vals;
 };
 
 extern void Vec_dhCreate(Vec_dh *v);
 extern void Vec_dhDestroy(Vec_dh v);
-extern void Vec_dhInit(Vec_dh v, HYPRE_Int size);
+extern void Vec_dhInit(Vec_dh v, NALU_HYPRE_Int size);
         /* allocates storage, but does not initialize values */
 
 extern void Vec_dhDuplicate(Vec_dh v, Vec_dh *out);
@@ -32,10 +32,10 @@ extern void Vec_dhCopy(Vec_dh x, Vec_dh y);
          * or Vec_dhCreate and Vec_dhInit.
          */
 
-extern void Vec_dhSet(Vec_dh v, HYPRE_Real value);
+extern void Vec_dhSet(Vec_dh v, NALU_HYPRE_Real value);
 extern void Vec_dhSetRand(Vec_dh v);
 
-extern void Vec_dhRead(Vec_dh *v, HYPRE_Int ignore, char *filename);
+extern void Vec_dhRead(Vec_dh *v, NALU_HYPRE_Int ignore, char *filename);
 extern void Vec_dhReadBIN(Vec_dh *v, char *filename);
 extern void Vec_dhPrint(Vec_dh v, SubdomainGraph_dh sg, char *filename);
 extern void Vec_dhPrintBIN(Vec_dh v, SubdomainGraph_dh sg, char *filename); 

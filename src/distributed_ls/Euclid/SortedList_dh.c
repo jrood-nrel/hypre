@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_Euclid.h"
+#include "_nalu_hypre_Euclid.h"
 /* #include "SortedList_dh.h" */
 /* #include "Mem_dh.h" */
 /* #include "Parser_dh.h" */
@@ -13,23 +13,23 @@
 /* #include "SubdomainGraph_dh.h" */
 
 struct _sortedList_dh {
-  HYPRE_Int m;          /* number of local rows */
-  HYPRE_Int row;        /* local number of row being factored */
-  HYPRE_Int beg_row;    /* global number of first locally owned row, wrt A */
-  HYPRE_Int beg_rowP;   /* global number of first locally owned row, wrt F */
-  HYPRE_Int count;      /* number of items entered in the list, 
+  NALU_HYPRE_Int m;          /* number of local rows */
+  NALU_HYPRE_Int row;        /* local number of row being factored */
+  NALU_HYPRE_Int beg_row;    /* global number of first locally owned row, wrt A */
+  NALU_HYPRE_Int beg_rowP;   /* global number of first locally owned row, wrt F */
+  NALU_HYPRE_Int count;      /* number of items entered in the list, 
                      plus 1 (for header node) 
                    */
-  HYPRE_Int countMax;    /* same as count, but includes number of items that my have
+  NALU_HYPRE_Int countMax;    /* same as count, but includes number of items that my have
                       been deleted from calling SortedList_dhEnforceConstraint()
                    */
-  HYPRE_Int *o2n_local;          /* not owned! */
+  NALU_HYPRE_Int *o2n_local;          /* not owned! */
   Hash_i_dh o2n_external;  /* not owned! */
 
   SRecord *list;  /* the sorted list */
-  HYPRE_Int alloc;      /* allocated length of list */
-  HYPRE_Int getLower;   /* index used for returning lower tri elts */
-  HYPRE_Int get;        /* index of returning all elts; */
+  NALU_HYPRE_Int alloc;      /* allocated length of list */
+  NALU_HYPRE_Int getLower;   /* index used for returning lower tri elts */
+  NALU_HYPRE_Int get;        /* index of returning all elts; */
   
   bool debug;
 };
@@ -97,7 +97,7 @@ void SortedList_dhInit(SortedList_dh sList, SubdomainGraph_dh sg)
 
 #undef __FUNC__
 #define __FUNC__ "SortedList_dhReset"
-void SortedList_dhReset(SortedList_dh sList, HYPRE_Int row)
+void SortedList_dhReset(SortedList_dh sList, NALU_HYPRE_Int row)
 {
   START_FUNC_DH
   sList->row = row;
@@ -112,7 +112,7 @@ void SortedList_dhReset(SortedList_dh sList, HYPRE_Int row)
 
 #undef __FUNC__
 #define __FUNC__ "SortedList_dhReadCount"
-HYPRE_Int SortedList_dhReadCount(SortedList_dh sList)
+NALU_HYPRE_Int SortedList_dhReadCount(SortedList_dh sList)
 {
   START_FUNC_DH
   END_FUNC_VAL(sList->count-1)
@@ -135,7 +135,7 @@ SRecord * SortedList_dhGetSmallest(SortedList_dh sList)
   START_FUNC_DH
   SRecord *node = NULL;
   SRecord *list = sList->list;
-  HYPRE_Int get = sList->get;
+  NALU_HYPRE_Int get = sList->get;
 
   get = list[get].next;
 
@@ -153,8 +153,8 @@ SRecord * SortedList_dhGetSmallestLowerTri(SortedList_dh sList)
   START_FUNC_DH
   SRecord *node = NULL;
   SRecord *list = sList->list;
-  HYPRE_Int getLower = sList->getLower;
-  HYPRE_Int globalRow = sList->row + sList->beg_rowP;
+  NALU_HYPRE_Int getLower = sList->getLower;
+  NALU_HYPRE_Int globalRow = sList->row + sList->beg_rowP;
 
   getLower = list[getLower].next;
 
@@ -168,14 +168,14 @@ SRecord * SortedList_dhGetSmallestLowerTri(SortedList_dh sList)
 
 #undef __FUNC__
 #define __FUNC__ "SortedList_dhPermuteAndInsert"
-bool SortedList_dhPermuteAndInsert(SortedList_dh sList, SRecord *sr, HYPRE_Real thresh)
+bool SortedList_dhPermuteAndInsert(SortedList_dh sList, SRecord *sr, NALU_HYPRE_Real thresh)
 {
   START_FUNC_DH
   bool wasInserted = false;
-  HYPRE_Int col = sr->col;
-  HYPRE_Real testVal = hypre_abs(sr->val);
-  HYPRE_Int beg_row = sList->beg_row, end_row = beg_row + sList->m;
-  HYPRE_Int beg_rowP = sList->beg_rowP;
+  NALU_HYPRE_Int col = sr->col;
+  NALU_HYPRE_Real testVal = nalu_hypre_abs(sr->val);
+  NALU_HYPRE_Int beg_row = sList->beg_row, end_row = beg_row + sList->m;
+  NALU_HYPRE_Int beg_rowP = sList->beg_rowP;
 
   /* insertion of local indices */
   if (col >= beg_row && col < end_row) {
@@ -189,7 +189,7 @@ bool SortedList_dhPermuteAndInsert(SortedList_dh sList, SRecord *sr, HYPRE_Real 
     } else {
       col = -1;
 /*
-hypre_fprintf(logFile, "local row: %i  DROPPED: col= %i  val= %g (thresh= %g)\n",
+nalu_hypre_fprintf(logFile, "local row: %i  DROPPED: col= %i  val= %g (thresh= %g)\n",
                            sList->row+1, sr->col+1, testVal, thresh);
 */
     }
@@ -205,7 +205,7 @@ hypre_fprintf(logFile, "local row: %i  DROPPED: col= %i  val= %g (thresh= %g)\n"
     if (sList->o2n_external == NULL) {
       col = -1;
     } else {
-      HYPRE_Int tmp = Hash_i_dhLookup(sList->o2n_external, col); CHECK_ERROR(-1);
+      NALU_HYPRE_Int tmp = Hash_i_dhLookup(sList->o2n_external, col); CHECK_ERROR(-1);
       if (tmp == -1) {
         col = -1;
       } else {
@@ -248,8 +248,8 @@ void SortedList_dhInsertOrUpdate(SortedList_dh sList, SRecord *sr)
 void SortedList_dhInsert(SortedList_dh sList, SRecord *sr)
 {
   START_FUNC_DH
-  HYPRE_Int prev, next;
-  HYPRE_Int ct, col = sr->col;
+  NALU_HYPRE_Int prev, next;
+  NALU_HYPRE_Int ct, col = sr->col;
   SRecord *list = sList->list;
 
   /* lengthen list if out of space */
@@ -285,8 +285,8 @@ void SortedList_dhInsert(SortedList_dh sList, SRecord *sr)
 SRecord * SortedList_dhFind(SortedList_dh sList, SRecord *sr)
 {
   START_FUNC_DH
-  HYPRE_Int i, count = sList->countMax;
-  HYPRE_Int c = sr->col;
+  NALU_HYPRE_Int i, count = sList->countMax;
+  NALU_HYPRE_Int c = sr->col;
   SRecord *s = sList->list;
   SRecord *node = NULL;
 
@@ -308,12 +308,12 @@ void lengthen_list_private(SortedList_dh sList)
 {
   START_FUNC_DH
   SRecord *tmp = sList->list;
-  HYPRE_Int size = sList->alloc = 2*sList->alloc;
+  NALU_HYPRE_Int size = sList->alloc = 2*sList->alloc;
 
   SET_INFO("lengthening list");
 
   sList->list = (SRecord*)MALLOC_DH(size * sizeof(SRecord));
-  hypre_TMemcpy(sList->list,  tmp, SRecord, sList->countMax, HYPRE_MEMORY_HOST, HYPRE_MEMORY_HOST); 
+  nalu_hypre_TMemcpy(sList->list,  tmp, SRecord, sList->countMax, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_HOST); 
   SET_INFO("doubling size of sList->list");
   FREE_DH(tmp); CHECK_V_ERROR;
   END_FUNC_DH
@@ -326,32 +326,32 @@ void lengthen_list_private(SortedList_dh sList)
 
 
 static bool check_constraint_private(SubdomainGraph_dh sg, 
-                                     HYPRE_Int thisSubdomain, HYPRE_Int col);
-void delete_private(SortedList_dh sList, HYPRE_Int col);
+                                     NALU_HYPRE_Int thisSubdomain, NALU_HYPRE_Int col);
+void delete_private(SortedList_dh sList, NALU_HYPRE_Int col);
 
 #undef __FUNC__
 #define __FUNC__ "SortedList_dhEnforceConstraint"
 void SortedList_dhEnforceConstraint(SortedList_dh sList, SubdomainGraph_dh sg)
 {
   START_FUNC_DH
-  HYPRE_Int thisSubdomain = myid_dh;
-  HYPRE_Int col, count;
-  HYPRE_Int beg_rowP = sList->beg_rowP;
-  HYPRE_Int end_rowP = beg_rowP + sList->m;
+  NALU_HYPRE_Int thisSubdomain = myid_dh;
+  NALU_HYPRE_Int col, count;
+  NALU_HYPRE_Int beg_rowP = sList->beg_rowP;
+  NALU_HYPRE_Int end_rowP = beg_rowP + sList->m;
   bool debug = false;
 
   if (Parser_dhHasSwitch(parser_dh, "-debug_SortedList")) debug = true;
 
   if (debug) {
-    hypre_fprintf(logFile, "SLIST ======= enforcing constraint for row= %i\n", 1+sList->row);
+    nalu_hypre_fprintf(logFile, "SLIST ======= enforcing constraint for row= %i\n", 1+sList->row);
 
-    hypre_fprintf(logFile, "\nSLIST ---- before checking: ");
+    nalu_hypre_fprintf(logFile, "\nSLIST ---- before checking: ");
     count = SortedList_dhReadCount(sList); CHECK_V_ERROR;
     while (count--) {
       SRecord *sr = SortedList_dhGetSmallest(sList); CHECK_V_ERROR;
-      hypre_fprintf(logFile, "%i ", sr->col+1);
+      nalu_hypre_fprintf(logFile, "%i ", sr->col+1);
     }
-    hypre_fprintf(logFile, "\n");
+    nalu_hypre_fprintf(logFile, "\n");
     sList->get = 0;
   }
 
@@ -363,7 +363,7 @@ void SortedList_dhEnforceConstraint(SortedList_dh sList, SubdomainGraph_dh sg)
     col = sr->col;
 
     if (debug) {
-      hypre_fprintf(logFile, "SLIST  next col= %i\n", col+1);
+      nalu_hypre_fprintf(logFile, "SLIST  next col= %i\n", col+1);
     }
 
 
@@ -371,7 +371,7 @@ void SortedList_dhEnforceConstraint(SortedList_dh sList, SubdomainGraph_dh sg)
     if (col < beg_rowP || col >= end_rowP) {
 
       if (debug) {
-        hypre_fprintf(logFile, "SLIST     external col: %i ; ", 1+col);
+        nalu_hypre_fprintf(logFile, "SLIST     external col: %i ; ", 1+col);
       }
 
       /* if entry would violate subdomain constraint, discard it
@@ -382,11 +382,11 @@ void SortedList_dhEnforceConstraint(SortedList_dh sList, SubdomainGraph_dh sg)
         sList->count -= 1;
 
         if (debug) {
-          hypre_fprintf(logFile, " deleted\n");
+          nalu_hypre_fprintf(logFile, " deleted\n");
         }
       } else {
         if (debug) {
-          hypre_fprintf(logFile, " kept\n");
+          nalu_hypre_fprintf(logFile, " kept\n");
         }
       }
     }
@@ -394,13 +394,13 @@ void SortedList_dhEnforceConstraint(SortedList_dh sList, SubdomainGraph_dh sg)
   sList->get = 0;
 
   if (debug) {
-    hypre_fprintf(logFile, "SLIST---- after checking: ");
+    nalu_hypre_fprintf(logFile, "SLIST---- after checking: ");
     count = SortedList_dhReadCount(sList); CHECK_V_ERROR;
     while (count--) {
       SRecord *sr = SortedList_dhGetSmallest(sList); CHECK_V_ERROR;
-      hypre_fprintf(logFile, "%i ", sr->col+1);
+      nalu_hypre_fprintf(logFile, "%i ", sr->col+1);
     }
-    hypre_fprintf(logFile, "\n");
+    nalu_hypre_fprintf(logFile, "\n");
     fflush(logFile);
     sList->get = 0;
   }
@@ -412,12 +412,12 @@ void SortedList_dhEnforceConstraint(SortedList_dh sList, SubdomainGraph_dh sg)
 /* this is similar to a function in ilu_seq.c */
 #undef __FUNC__
 #define __FUNC__ "check_constraint_private"
-bool check_constraint_private(SubdomainGraph_dh sg, HYPRE_Int p1, HYPRE_Int j)
+bool check_constraint_private(SubdomainGraph_dh sg, NALU_HYPRE_Int p1, NALU_HYPRE_Int j)
 {
   START_FUNC_DH
   bool retval = false;
-  HYPRE_Int i, p2;
-  HYPRE_Int *nabors, count;
+  NALU_HYPRE_Int i, p2;
+  NALU_HYPRE_Int *nabors, count;
 
   p2 = SubdomainGraph_dhFindOwner(sg, j, true);
 
@@ -436,12 +436,12 @@ bool check_constraint_private(SubdomainGraph_dh sg, HYPRE_Int p1, HYPRE_Int j)
 
 #undef __FUNC__
 #define __FUNC__ "delete_private"
-void delete_private(SortedList_dh sList, HYPRE_Int col)
+void delete_private(SortedList_dh sList, NALU_HYPRE_Int col)
 {
   START_FUNC_DH
-  HYPRE_Int curNode = 0;
+  NALU_HYPRE_Int curNode = 0;
   SRecord *list = sList->list;
-  HYPRE_Int next;
+  NALU_HYPRE_Int next;
 
   /* find node preceeding the node to be snipped out */
   /* 'list[curNode].next' is array index of the next node in the list */

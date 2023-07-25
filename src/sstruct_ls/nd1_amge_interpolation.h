@@ -5,11 +5,11 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#ifndef hypre_ND1_AMGE_INTERPOLATION
-#define hypre_ND1_AMGE_INTERPOLATION
+#ifndef nalu_hypre_ND1_AMGE_INTERPOLATION
+#define nalu_hypre_ND1_AMGE_INTERPOLATION
 
 /*
-  Function:  hypre_ND1AMGeInterpolation
+  Function:  nalu_hypre_ND1AMGeInterpolation
 
   Defines an operator-dependent (AMGe) interpolation for the fine interior
   edges, given the (e.g. geometric) interpolation for the fine edges on the
@@ -31,18 +31,18 @@
 
   Note: If FACE_iedge == EDGE_iedge the input should describe a 2D problem.
 */
-HYPRE_Int hypre_ND1AMGeInterpolation (hypre_ParCSRMatrix * Aee,
-                                      hypre_ParCSRMatrix * ELEM_iedge,
-                                      hypre_ParCSRMatrix * FACE_iedge,
-                                      hypre_ParCSRMatrix * EDGE_iedge,
-                                      hypre_ParCSRMatrix * ELEM_FACE,
-                                      hypre_ParCSRMatrix * ELEM_EDGE,
-                                      HYPRE_Int            num_OffProcRows,
-                                      hypre_MaxwellOffProcRow ** OffProcRows,
-                                      hypre_IJMatrix     * edge_EDGE);
+NALU_HYPRE_Int nalu_hypre_ND1AMGeInterpolation (nalu_hypre_ParCSRMatrix * Aee,
+                                      nalu_hypre_ParCSRMatrix * ELEM_iedge,
+                                      nalu_hypre_ParCSRMatrix * FACE_iedge,
+                                      nalu_hypre_ParCSRMatrix * EDGE_iedge,
+                                      nalu_hypre_ParCSRMatrix * ELEM_FACE,
+                                      nalu_hypre_ParCSRMatrix * ELEM_EDGE,
+                                      NALU_HYPRE_Int            num_OffProcRows,
+                                      nalu_hypre_MaxwellOffProcRow ** OffProcRows,
+                                      nalu_hypre_IJMatrix     * edge_EDGE);
 
 /*
-  Function: hypre_HarmonicExtension
+  Function: nalu_hypre_HarmonicExtension
 
   Defines the interpolation operator Pi:DOF->idof by harmonically extending
   Pb:DOF->bdof based on the operator A. Specifically,
@@ -53,10 +53,10 @@ HYPRE_Int hypre_ND1AMGeInterpolation (hypre_ParCSRMatrix * Aee,
   The columns in A and P use global numbering, while the rows are numbered
   according to the arrays idof and bdof. The only output parameter is Pi.
 */
-HYPRE_Int hypre_HarmonicExtension (hypre_CSRMatrix *A,
-                                   hypre_CSRMatrix *P,
-                                   HYPRE_Int num_DOF, HYPRE_BigInt *DOF,
-                                   HYPRE_Int num_idof, HYPRE_BigInt *idof,
-                                   HYPRE_Int num_bdof, HYPRE_BigInt *bdof);
+NALU_HYPRE_Int nalu_hypre_HarmonicExtension (nalu_hypre_CSRMatrix *A,
+                                   nalu_hypre_CSRMatrix *P,
+                                   NALU_HYPRE_Int num_DOF, NALU_HYPRE_BigInt *DOF,
+                                   NALU_HYPRE_Int num_idof, NALU_HYPRE_BigInt *idof,
+                                   NALU_HYPRE_Int num_bdof, NALU_HYPRE_BigInt *bdof);
 
 #endif

@@ -6,45 +6,45 @@
  ******************************************************************************/
 
 /****************************************************************************/ 
-/* HYPRE_LSI_MLI interface                                                  */
+/* NALU_HYPRE_LSI_MLI interface                                                  */
 /*--------------------------------------------------------------------------*/
 /*  local functions :
  * 
- *        HYPRE_LSI_MLICreate
- *        HYPRE_LSI_MLIDestroy
- *        HYPRE_LSI_MLISetup
- *        HYPRE_LSI_MLISolve
- *        HYPRE_LSI_MLISetParams
+ *        NALU_HYPRE_LSI_MLICreate
+ *        NALU_HYPRE_LSI_MLIDestroy
+ *        NALU_HYPRE_LSI_MLISetup
+ *        NALU_HYPRE_LSI_MLISolve
+ *        NALU_HYPRE_LSI_MLISetParams
  *--------------------------------------------------------------------------
- *        HYPRE_LSI_MLICreateNodeEqnMap
- *        HYPRE_LSI_MLIAdjustNodeEqnMap
- *        HYPRE_LSI_MLIAdjustNullSpace
- *        HYPRE_LSI_MLISetFEData
- *        HYPRE_LSI_MLILoadNodalCoordinates
- *        HYPRE_LSI_MLILoadMatrixScalings
- *        HYPRE_LSI_MLILoadMaterialLabels
+ *        NALU_HYPRE_LSI_MLICreateNodeEqnMap
+ *        NALU_HYPRE_LSI_MLIAdjustNodeEqnMap
+ *        NALU_HYPRE_LSI_MLIAdjustNullSpace
+ *        NALU_HYPRE_LSI_MLISetFEData
+ *        NALU_HYPRE_LSI_MLILoadNodalCoordinates
+ *        NALU_HYPRE_LSI_MLILoadMatrixScalings
+ *        NALU_HYPRE_LSI_MLILoadMaterialLabels
  *--------------------------------------------------------------------------
- *        HYPRE_LSI_MLIFEDataCreate
- *        HYPRE_LSI_MLIFEDataDestroy
- *        HYPRE_LSI_MLIFEDataInitFields
- *        HYPRE_LSI_MLIFEDataInitElemBlock
- *        HYPRE_LSI_MLIFEDataInitElemNodeList
- *        HYPRE_LSI_MLIFEDataInitSharedNodes
- *        HYPRE_LSI_MLIFEDataInitComplete
- *        HYPRE_LSI_MLIFEDataLoadElemMatrix
- *        HYPRE_LSI_MLIFEDataWriteToFile
+ *        NALU_HYPRE_LSI_MLIFEDataCreate
+ *        NALU_HYPRE_LSI_MLIFEDataDestroy
+ *        NALU_HYPRE_LSI_MLIFEDataInitFields
+ *        NALU_HYPRE_LSI_MLIFEDataInitElemBlock
+ *        NALU_HYPRE_LSI_MLIFEDataInitElemNodeList
+ *        NALU_HYPRE_LSI_MLIFEDataInitSharedNodes
+ *        NALU_HYPRE_LSI_MLIFEDataInitComplete
+ *        NALU_HYPRE_LSI_MLIFEDataLoadElemMatrix
+ *        NALU_HYPRE_LSI_MLIFEDataWriteToFile
  *--------------------------------------------------------------------------
- *        HYPRE_LSI_MLISFEICreate
- *        HYPRE_LSI_MLISFEIDestroy
- *        HYPRE_LSI_MLISFEILoadElemMatrices
- *        HYPRE_LSI_MLISFEIAddNumElems
+ *        NALU_HYPRE_LSI_MLISFEICreate
+ *        NALU_HYPRE_LSI_MLISFEIDestroy
+ *        NALU_HYPRE_LSI_MLISFEILoadElemMatrices
+ *        NALU_HYPRE_LSI_MLISFEIAddNumElems
  ****************************************************************************/
 
 /****************************************************************************/ 
 /* system include files                                                     */
 /*--------------------------------------------------------------------------*/
 
-#include "HYPRE_utilities.h"
+#include "NALU_HYPRE_utilities.h"
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -65,13 +65,13 @@
 #include "mli_utils.h"
 #include "mli_method.h"
 #endif
-#include "HYPRE_LSI_mli.h"
+#include "NALU_HYPRE_LSI_mli.h"
 
 /****************************************************************************/ 
-/* HYPRE_LSI_MLI data structure                                             */
+/* NALU_HYPRE_LSI_MLI data structure                                             */
 /*--------------------------------------------------------------------------*/
 
-typedef struct HYPRE_LSI_MLI_Struct
+typedef struct NALU_HYPRE_LSI_MLI_Struct
 {
 #ifdef HAVE_MLI
    MLI        *mli_;
@@ -119,18 +119,18 @@ typedef struct HYPRE_LSI_MLI_Struct
    int      printNullSpace_;
    int      symmetric_;
    int      injectionForR_;
-   HYPRE_ParCSRMatrix correctionMatrix_; /* for nullspace correction */
+   NALU_HYPRE_ParCSRMatrix correctionMatrix_; /* for nullspace correction */
    int      numSmoothVecs_;
    int      smoothVecSteps_;
    double   arpackTol_;
 } 
-HYPRE_LSI_MLI;
+NALU_HYPRE_LSI_MLI;
 
 /****************************************************************************/ 
-/* HYPRE_MLI_FEData data structure                                          */
+/* NALU_HYPRE_MLI_FEData data structure                                          */
 /*--------------------------------------------------------------------------*/
 
-typedef struct HYPRE_MLI_FEData_Struct
+typedef struct NALU_HYPRE_MLI_FEData_Struct
 {
 #ifdef HAVE_MLI
    MPI_Comm   comm_;              /* MPI communicator */
@@ -140,13 +140,13 @@ typedef struct HYPRE_MLI_FEData_Struct
    int        nullDim_;           /* number of null space vectors */
 #endif
 }
-HYPRE_MLI_FEData;
+NALU_HYPRE_MLI_FEData;
 
 /****************************************************************************/ 
-/* HYPRE_MLI_SFEI data structure                                            */
+/* NALU_HYPRE_MLI_SFEI data structure                                            */
 /*--------------------------------------------------------------------------*/
 
-typedef struct HYPRE_MLI_SFEI_Struct
+typedef struct NALU_HYPRE_MLI_SFEI_Struct
 {
 #ifdef HAVE_MLI
    MPI_Comm   comm_;            /* MPI communicator */
@@ -154,17 +154,17 @@ typedef struct HYPRE_MLI_SFEI_Struct
    int        sfeiOwn_;         /* flag to indicate ownership */
 #endif
 }
-HYPRE_MLI_SFEI;
+NALU_HYPRE_MLI_SFEI;
 
 /****************************************************************************/
-/* HYPRE_LSI_MLICreate                                                      */
+/* NALU_HYPRE_LSI_MLICreate                                                      */
 /*--------------------------------------------------------------------------*/
 
 extern "C"
-int HYPRE_LSI_MLICreate( MPI_Comm comm, HYPRE_Solver *solver )
+int NALU_HYPRE_LSI_MLICreate( MPI_Comm comm, NALU_HYPRE_Solver *solver )
 {
-   HYPRE_LSI_MLI *mli_object = hypre_TAlloc(HYPRE_LSI_MLI, 1, HYPRE_MEMORY_HOST);
-   *solver = (HYPRE_Solver) mli_object;
+   NALU_HYPRE_LSI_MLI *mli_object = nalu_hypre_TAlloc(NALU_HYPRE_LSI_MLI, 1, NALU_HYPRE_MEMORY_HOST);
+   *solver = (NALU_HYPRE_Solver) mli_object;
    mli_object->mpiComm_             = comm;
    mli_object->outputLevel_         = 0;
    mli_object->nLevels_             = 0;
@@ -223,13 +223,13 @@ int HYPRE_LSI_MLICreate( MPI_Comm comm, HYPRE_Solver *solver )
 }
 
 /****************************************************************************/
-/* HYPRE_LSI_MLIDestroy                                                     */
+/* NALU_HYPRE_LSI_MLIDestroy                                                     */
 /*--------------------------------------------------------------------------*/
 
 extern "C"
-int HYPRE_LSI_MLIDestroy( HYPRE_Solver solver )
+int NALU_HYPRE_LSI_MLIDestroy( NALU_HYPRE_Solver solver )
 {
-   HYPRE_LSI_MLI *mli_object = (HYPRE_LSI_MLI *) solver;
+   NALU_HYPRE_LSI_MLI *mli_object = (NALU_HYPRE_LSI_MLI *) solver;
 
    if ( mli_object->preSmootherWts_ != NULL ) 
       delete [] mli_object->preSmootherWts_;
@@ -244,7 +244,7 @@ int HYPRE_LSI_MLIDestroy( HYPRE_Solver solver )
    if ( mli_object->resetNullIndices_ != NULL ) 
       delete [] mli_object->resetNullIndices_;
    if ( mli_object->correctionMatrix_ != NULL ) 
-      HYPRE_ParCSRMatrixDestroy(mli_object->correctionMatrix_); 
+      NALU_HYPRE_ParCSRMatrixDestroy(mli_object->correctionMatrix_); 
    if ( mli_object->matLabels_ != NULL ) delete [] mli_object->matLabels_; 
 #ifdef HAVE_MLI
    if ( mli_object->feData_ != NULL ) delete mli_object->feData_;
@@ -259,18 +259,18 @@ int HYPRE_LSI_MLIDestroy( HYPRE_Solver solver )
 }
 
 /****************************************************************************/
-/* HYPRE_LSI_MLISetup                                                       */
+/* NALU_HYPRE_LSI_MLISetup                                                       */
 /*--------------------------------------------------------------------------*/
 
 extern "C"
-int HYPRE_LSI_MLISetup( HYPRE_Solver solver, HYPRE_ParCSRMatrix A,
-                        HYPRE_ParVector b,   HYPRE_ParVector x )
+int NALU_HYPRE_LSI_MLISetup( NALU_HYPRE_Solver solver, NALU_HYPRE_ParCSRMatrix A,
+                        NALU_HYPRE_ParVector b,   NALU_HYPRE_ParVector x )
 {
 #ifdef HAVE_MLI
    int           targc, nNodes, iZero=0;
    double        tol=1.0e-8;
    char          *targv[6], paramString[100];;
-   HYPRE_LSI_MLI *mli_object;
+   NALU_HYPRE_LSI_MLI *mli_object;
    MLI_Matrix    *mli_mat;   
    MLI_Method    *method;   
    MPI_Comm      mpiComm;
@@ -280,7 +280,7 @@ int HYPRE_LSI_MLISetup( HYPRE_Solver solver, HYPRE_ParCSRMatrix A,
    /* create object                                            */
    /* -------------------------------------------------------- */ 
 
-   mli_object = (HYPRE_LSI_MLI *) solver;
+   mli_object = (NALU_HYPRE_LSI_MLI *) solver;
    mpiComm    = mli_object->mpiComm_;
    mli        = new MLI( mpiComm );
    if ( mli_object->mli_ != NULL ) delete mli_object->mli_;
@@ -480,10 +480,10 @@ int HYPRE_LSI_MLISetup( HYPRE_Solver solver, HYPRE_ParCSRMatrix A,
       {   
          int                iV, irow, numNS, length, *partition, mypid;
          double             *NSpace, *vecInData, *vecOutData, *nullCorrection;
-         HYPRE_IJVector     IJVecIn, IJVecOut;
-         HYPRE_ParCSRMatrix hypreA;
-         hypre_ParVector    *hypreVecIn, *hypreVecOut;
-         HYPRE_Solver       solver;
+         NALU_HYPRE_IJVector     IJVecIn, IJVecOut;
+         NALU_HYPRE_ParCSRMatrix hypreA;
+         nalu_hypre_ParVector    *hypreVecIn, *hypreVecOut;
+         NALU_HYPRE_Solver       solver;
 
          strcpy( paramString, "getNullSpace" );
          method->getParams( paramString, &targc, targv );
@@ -491,42 +491,42 @@ int HYPRE_LSI_MLISetup( HYPRE_Solver solver, HYPRE_ParCSRMatrix A,
          NSpace = (double *) targv[2]; 
          length = *(int *)   targv[3]; 
          hypreA = mli_object->correctionMatrix_;
-         HYPRE_ParCSRMatrixGetRowPartitioning( hypreA, &partition );
+         NALU_HYPRE_ParCSRMatrixGetRowPartitioning( hypreA, &partition );
          MPI_Comm_rank( mpiComm , &mypid );
-         HYPRE_IJVectorCreate(mpiComm, partition[mypid], 
+         NALU_HYPRE_IJVectorCreate(mpiComm, partition[mypid], 
                               partition[mypid+1]-1, &IJVecIn);
-         HYPRE_IJVectorSetObjectType(IJVecIn, HYPRE_PARCSR);
-         HYPRE_IJVectorInitialize(IJVecIn);
-         HYPRE_IJVectorAssemble(IJVecIn);
-         HYPRE_IJVectorCreate(mpiComm, partition[mypid], 
+         NALU_HYPRE_IJVectorSetObjectType(IJVecIn, NALU_HYPRE_PARCSR);
+         NALU_HYPRE_IJVectorInitialize(IJVecIn);
+         NALU_HYPRE_IJVectorAssemble(IJVecIn);
+         NALU_HYPRE_IJVectorCreate(mpiComm, partition[mypid], 
                               partition[mypid+1]-1, &IJVecOut);
-         HYPRE_IJVectorSetObjectType(IJVecOut, HYPRE_PARCSR);
-         HYPRE_IJVectorInitialize(IJVecOut);
-         HYPRE_IJVectorAssemble(IJVecOut);
-         HYPRE_IJVectorGetObject(IJVecIn, (void **) &hypreVecIn);
-         HYPRE_IJVectorGetObject(IJVecOut, (void **) &hypreVecOut);
-         vecInData = hypre_VectorData(hypre_ParVectorLocalVector(hypreVecIn));
-         vecOutData = hypre_VectorData(hypre_ParVectorLocalVector(hypreVecOut));
+         NALU_HYPRE_IJVectorSetObjectType(IJVecOut, NALU_HYPRE_PARCSR);
+         NALU_HYPRE_IJVectorInitialize(IJVecOut);
+         NALU_HYPRE_IJVectorAssemble(IJVecOut);
+         NALU_HYPRE_IJVectorGetObject(IJVecIn, (void **) &hypreVecIn);
+         NALU_HYPRE_IJVectorGetObject(IJVecOut, (void **) &hypreVecOut);
+         vecInData = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(hypreVecIn));
+         vecOutData = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(hypreVecOut));
          nullCorrection = new double[numNS*length];
-         HYPRE_ParCSRGMRESCreate(mpiComm, &solver);
-         HYPRE_ParCSRGMRESSetKDim(solver, 100);
-         HYPRE_ParCSRGMRESSetMaxIter(solver, 100);
-         HYPRE_ParCSRGMRESSetTol(solver, 1.0e-8);
-         HYPRE_ParCSRGMRESSetPrecond(solver, HYPRE_ParCSRDiagScale,
-                                     HYPRE_ParCSRDiagScaleSetup,NULL);
-         HYPRE_ParCSRGMRESSetLogging(solver, mli_object->outputLevel_);
-         HYPRE_ParCSRGMRESSetup(solver, hypreA, (HYPRE_ParVector) hypreVecIn, 
-                                (HYPRE_ParVector) hypreVecOut);
+         NALU_HYPRE_ParCSRGMRESCreate(mpiComm, &solver);
+         NALU_HYPRE_ParCSRGMRESSetKDim(solver, 100);
+         NALU_HYPRE_ParCSRGMRESSetMaxIter(solver, 100);
+         NALU_HYPRE_ParCSRGMRESSetTol(solver, 1.0e-8);
+         NALU_HYPRE_ParCSRGMRESSetPrecond(solver, NALU_HYPRE_ParCSRDiagScale,
+                                     NALU_HYPRE_ParCSRDiagScaleSetup,NULL);
+         NALU_HYPRE_ParCSRGMRESSetLogging(solver, mli_object->outputLevel_);
+         NALU_HYPRE_ParCSRGMRESSetup(solver, hypreA, (NALU_HYPRE_ParVector) hypreVecIn, 
+                                (NALU_HYPRE_ParVector) hypreVecOut);
 
          for ( iV = 0; iV < numNS; iV++ )
          {
             for ( irow = 0; irow < length; irow++ )
                vecOutData[irow] = NSpace[length*iV+irow];
-            HYPRE_ParCSRMatrixMatvec(1.0,hypreA,(HYPRE_ParVector) hypreVecOut, 
-                                     0.0, (HYPRE_ParVector) hypreVecIn);
+            NALU_HYPRE_ParCSRMatrixMatvec(1.0,hypreA,(NALU_HYPRE_ParVector) hypreVecOut, 
+                                     0.0, (NALU_HYPRE_ParVector) hypreVecIn);
             for ( irow = 0; irow < length; irow++ ) vecOutData[irow] = 0.0;
-            HYPRE_ParCSRGMRESSolve(solver,A,(HYPRE_ParVector) hypreVecIn, 
-                                   (HYPRE_ParVector) hypreVecOut);
+            NALU_HYPRE_ParCSRGMRESSolve(solver,A,(NALU_HYPRE_ParVector) hypreVecIn, 
+                                   (NALU_HYPRE_ParVector) hypreVecOut);
             for ( irow = 0; irow < length; irow++ )
                nullCorrection[length*iV+irow] = - vecOutData[irow];
          }
@@ -534,9 +534,9 @@ int HYPRE_LSI_MLISetup( HYPRE_Solver solver, HYPRE_ParCSRMatrix A,
          targc = 1;
          targv[0] = (char *) nullCorrection;
          method->setParams( paramString, targc, targv );
-         HYPRE_ParCSRGMRESDestroy(solver);
-         HYPRE_IJVectorDestroy( IJVecIn );
-         HYPRE_IJVectorDestroy( IJVecOut );
+         NALU_HYPRE_ParCSRGMRESDestroy(solver);
+         NALU_HYPRE_IJVectorDestroy( IJVecIn );
+         NALU_HYPRE_IJVectorDestroy( IJVecOut );
          delete [] nullCorrection;
          free( partition );
       }
@@ -544,7 +544,7 @@ int HYPRE_LSI_MLISetup( HYPRE_Solver solver, HYPRE_ParCSRMatrix A,
            mli_object->resetNullIndices_ != NULL )
       {
          int *rowPartition, my_id;
-         HYPRE_ParCSRMatrixGetRowPartitioning( A, &rowPartition );
+         NALU_HYPRE_ParCSRMatrixGetRowPartitioning( A, &rowPartition );
          MPI_Comm_rank( mpiComm , &my_id );
          targc = 3;
          targv[0] = (char *) &(mli_object->numResetNull_);
@@ -570,7 +570,7 @@ int HYPRE_LSI_MLISetup( HYPRE_Solver solver, HYPRE_ParCSRMatrix A,
    }
    if ( mli_object->correctionMatrix_ != NULL )
    {
-      HYPRE_ParCSRMatrixDestroy( mli_object->correctionMatrix_ );
+      NALU_HYPRE_ParCSRMatrixDestroy( mli_object->correctionMatrix_ );
       mli_object->correctionMatrix_ = NULL;
    }
    if (!strcmp(mli_object->method_,"AMGRS") )
@@ -614,7 +614,7 @@ int HYPRE_LSI_MLISetup( HYPRE_Solver solver, HYPRE_ParCSRMatrix A,
    /* finally, set up                                          */
    /* -------------------------------------------------------- */ 
 
-   strcpy( paramString, "HYPRE_ParCSR" );
+   strcpy( paramString, "NALU_HYPRE_ParCSR" );
    mli_mat = new MLI_Matrix((void*) A, paramString, NULL);
    mli->setMethod( method );
    mli->setSystemMatrix( 0, mli_mat );
@@ -630,26 +630,26 @@ int HYPRE_LSI_MLISetup( HYPRE_Solver solver, HYPRE_ParCSRMatrix A,
 }
 
 /****************************************************************************/
-/* HYPRE_LSI_MLISolve                                                       */
+/* NALU_HYPRE_LSI_MLISolve                                                       */
 /*--------------------------------------------------------------------------*/
 
 extern "C"
-int HYPRE_LSI_MLISolve( HYPRE_Solver solver, HYPRE_ParCSRMatrix A,
-                        HYPRE_ParVector b, HYPRE_ParVector x )
+int NALU_HYPRE_LSI_MLISolve( NALU_HYPRE_Solver solver, NALU_HYPRE_ParCSRMatrix A,
+                        NALU_HYPRE_ParVector b, NALU_HYPRE_ParVector x )
 {
 #ifdef HAVE_MLI
-   HYPRE_LSI_MLI *mli_object;
+   NALU_HYPRE_LSI_MLI *mli_object;
    MLI_Vector    *sol, *rhs;
    char          paramString[100];
 
-   strcpy(paramString, "HYPRE_ParVector");
+   strcpy(paramString, "NALU_HYPRE_ParVector");
    sol = new MLI_Vector( (void *) x, paramString, NULL);
    rhs = new MLI_Vector( (void *) b, paramString, NULL);
 
-   mli_object = (HYPRE_LSI_MLI *) solver;
+   mli_object = (NALU_HYPRE_LSI_MLI *) solver;
    if ( mli_object->mli_ == NULL )
    {
-      printf("HYPRE_LSI_MLISolve ERROR : mli not instantiated.\n");
+      printf("NALU_HYPRE_LSI_MLISolve ERROR : mli not instantiated.\n");
       exit(1);
    }
    mli_object->mli_->solve( sol, rhs);
@@ -662,22 +662,22 @@ int HYPRE_LSI_MLISolve( HYPRE_Solver solver, HYPRE_ParCSRMatrix A,
 }
 
 /****************************************************************************/
-/* HYPRE_LSI_MLISetParams                                                   */
+/* NALU_HYPRE_LSI_MLISetParams                                                   */
 /*--------------------------------------------------------------------------*/
 
 extern "C"
-int HYPRE_LSI_MLISetParams( HYPRE_Solver solver, char *paramString )
+int NALU_HYPRE_LSI_MLISetParams( NALU_HYPRE_Solver solver, char *paramString )
 {
    int           i, mypid;
    double        weight;
-   HYPRE_LSI_MLI *mli_object;
+   NALU_HYPRE_LSI_MLI *mli_object;
    char          param1[256], param2[256], param3[256];
 
-   mli_object = (HYPRE_LSI_MLI *) solver;
+   mli_object = (NALU_HYPRE_LSI_MLI *) solver;
    sscanf(paramString,"%s", param1);
    if ( strcmp(param1, "MLI") )
    {
-      printf("HYPRE_LSI_MLI::parameters not for me.\n");
+      printf("NALU_HYPRE_LSI_MLI::parameters not for me.\n");
       return 1;
    }
    MPI_Comm_rank( mli_object->mpiComm_, &mypid );
@@ -919,7 +919,7 @@ int HYPRE_LSI_MLISetParams( HYPRE_Solver solver, char *paramString )
    {
       if ( mypid == 0 )
       {
-         printf("%4d : HYPRE_LSI_MLISetParams ERROR : unrecognized request.\n",
+         printf("%4d : NALU_HYPRE_LSI_MLISetParams ERROR : unrecognized request.\n",
                 mypid);
          printf("\t    offending request = %s.\n", paramString);
          printf("\tAvailable options for MLI are : \n");
@@ -958,11 +958,11 @@ int HYPRE_LSI_MLISetParams( HYPRE_Solver solver, char *paramString )
 }
 
 /****************************************************************************/
-/* HYPRE_LSI_MLICreateNodeEqnMap                                            */
+/* NALU_HYPRE_LSI_MLICreateNodeEqnMap                                            */
 /*--------------------------------------------------------------------------*/
 
 extern "C"
-int HYPRE_LSI_MLICreateNodeEqnMap(HYPRE_Solver solver, int nNodes, 
+int NALU_HYPRE_LSI_MLICreateNodeEqnMap(NALU_HYPRE_Solver solver, int nNodes, 
                                   int *nodeNumbers, int *eqnNumbers,
                                   int *procNRows)
 {
@@ -975,7 +975,7 @@ int HYPRE_LSI_MLICreateNodeEqnMap(HYPRE_Solver solver, int nNodes,
    MPI_Request   *mpiRequests;
    MPI_Status    mpiStatus;
    MLI_Mapper    *mapper;
-   HYPRE_LSI_MLI *mli_object = (HYPRE_LSI_MLI *) solver;
+   NALU_HYPRE_LSI_MLI *mli_object = (NALU_HYPRE_LSI_MLI *) solver;
 
    /* -------------------------------------------------------- */ 
    /* fetch processor information                              */
@@ -1153,15 +1153,15 @@ int HYPRE_LSI_MLICreateNodeEqnMap(HYPRE_Solver solver, int nNodes,
 }
 
 /****************************************************************************/
-/* HYPRE_LSI_MLIAdjustNodeEqnMap                                            */
+/* NALU_HYPRE_LSI_MLIAdjustNodeEqnMap                                            */
 /*--------------------------------------------------------------------------*/
 
 extern "C"
-int HYPRE_LSI_MLIAdjustNodeEqnMap(HYPRE_Solver solver, int *procNRows,
+int NALU_HYPRE_LSI_MLIAdjustNodeEqnMap(NALU_HYPRE_Solver solver, int *procNRows,
                                   int *procOffsets)
 {
 #ifdef HAVE_MLI
-   HYPRE_LSI_MLI *mli_object = (HYPRE_LSI_MLI *) solver;
+   NALU_HYPRE_LSI_MLI *mli_object = (NALU_HYPRE_LSI_MLI *) solver;
    if ( mli_object == NULL ) return 1;
    if ( mli_object->mapper_ == NULL ) return 1;
    mli_object->mapper_->adjustMapOffset( mli_object->mpiComm_, procNRows, 
@@ -1176,16 +1176,16 @@ int HYPRE_LSI_MLIAdjustNodeEqnMap(HYPRE_Solver solver, int *procNRows,
 }
 
 /****************************************************************************/
-/* HYPRE_LSI_MLIAdjustNullSpace                                             */
+/* NALU_HYPRE_LSI_MLIAdjustNullSpace                                             */
 /*--------------------------------------------------------------------------*/
 
 extern "C"
-int HYPRE_LSI_MLIAdjustNullSpace(HYPRE_Solver solver, int nConstraints,
+int NALU_HYPRE_LSI_MLIAdjustNullSpace(NALU_HYPRE_Solver solver, int nConstraints,
                                  int *slaveIndices, 
-                                 HYPRE_ParCSRMatrix hypreA)
+                                 NALU_HYPRE_ParCSRMatrix hypreA)
 {
 #ifdef HAVE_MLI
-   HYPRE_LSI_MLI *mli_object = (HYPRE_LSI_MLI *) solver;
+   NALU_HYPRE_LSI_MLI *mli_object = (NALU_HYPRE_LSI_MLI *) solver;
    if ( mli_object == NULL ) return 1;
    mli_object->adjustNullSpace_ = 1;
    mli_object->numResetNull_    = nConstraints;
@@ -1205,18 +1205,18 @@ int HYPRE_LSI_MLIAdjustNullSpace(HYPRE_Solver solver, int nConstraints,
 }
 
 /****************************************************************************/
-/* HYPRE_LSI_MLISetFEData                                                   */
+/* NALU_HYPRE_LSI_MLISetFEData                                                   */
 /*--------------------------------------------------------------------------*/
 
 extern "C"
-int HYPRE_LSI_MLISetFEData(HYPRE_Solver solver, void *object)
+int NALU_HYPRE_LSI_MLISetFEData(NALU_HYPRE_Solver solver, void *object)
 {
 #ifdef HAVE_MLI
-   HYPRE_LSI_MLI *mli_object = (HYPRE_LSI_MLI *) solver;
-   HYPRE_MLI_FEData *hypre_fedata = (HYPRE_MLI_FEData *) object;
-   mli_object->feData_      = hypre_fedata->fedata_; 
-   hypre_fedata->fedata_    = NULL; 
-   hypre_fedata->fedataOwn_ = 0;
+   NALU_HYPRE_LSI_MLI *mli_object = (NALU_HYPRE_LSI_MLI *) solver;
+   NALU_HYPRE_MLI_FEData *nalu_hypre_fedata = (NALU_HYPRE_MLI_FEData *) object;
+   mli_object->feData_      = nalu_hypre_fedata->fedata_; 
+   nalu_hypre_fedata->fedata_    = NULL; 
+   nalu_hypre_fedata->fedataOwn_ = 0;
    return 0;
 #else
    (void) solver;
@@ -1226,18 +1226,18 @@ int HYPRE_LSI_MLISetFEData(HYPRE_Solver solver, void *object)
 }
 
 /****************************************************************************/
-/* HYPRE_LSI_MLISetSFEI                                                   */
+/* NALU_HYPRE_LSI_MLISetSFEI                                                   */
 /*--------------------------------------------------------------------------*/
 
 extern "C"
-int HYPRE_LSI_MLISetSFEI(HYPRE_Solver solver, void *object)
+int NALU_HYPRE_LSI_MLISetSFEI(NALU_HYPRE_Solver solver, void *object)
 {
 #ifdef HAVE_MLI
-   HYPRE_LSI_MLI *mli_object = (HYPRE_LSI_MLI *) solver;
-   HYPRE_MLI_SFEI *hypre_sfei = (HYPRE_MLI_SFEI *) object;
-   mli_object->sfei_    = hypre_sfei->sfei_; 
-   hypre_sfei->sfei_    = NULL; 
-   hypre_sfei->sfeiOwn_ = 0;
+   NALU_HYPRE_LSI_MLI *mli_object = (NALU_HYPRE_LSI_MLI *) solver;
+   NALU_HYPRE_MLI_SFEI *nalu_hypre_sfei = (NALU_HYPRE_MLI_SFEI *) object;
+   mli_object->sfei_    = nalu_hypre_sfei->sfei_; 
+   nalu_hypre_sfei->sfei_    = NULL; 
+   nalu_hypre_sfei->sfeiOwn_ = 0;
    return 0;
 #else
    (void) solver;
@@ -1247,7 +1247,7 @@ int HYPRE_LSI_MLISetSFEI(HYPRE_Solver solver, void *object)
 }
 
 /****************************************************************************/
-/* HYPRE_LSI_MLILoadNodalCoordinates                                        */
+/* NALU_HYPRE_LSI_MLILoadNodalCoordinates                                        */
 /* (The nodal coordinates loaded in here conforms to the nodal labeling in  */
 /* FEI, so the lookup object can be used to find the equation number.       */
 /* In addition, node numbers and coordinates need to be shuffled between    */
@@ -1259,7 +1259,7 @@ int HYPRE_LSI_MLISetSFEI(HYPRE_Solver solver, void *object)
 */
 
 extern "C"
-int HYPRE_LSI_MLILoadNodalCoordinates(HYPRE_Solver solver, int nNodes,
+int NALU_HYPRE_LSI_MLILoadNodalCoordinates(NALU_HYPRE_Solver solver, int nNodes,
               int nodeDOF, int *eqnNumbers, int nDim, double *coords,
               int localNRows)
 {
@@ -1277,7 +1277,7 @@ int HYPRE_LSI_MLILoadNodalCoordinates(HYPRE_Solver solver, int nNodes,
    MPI_Request   *mpiRequests;
    MPI_Status    mpiStatus;
 #endif
-   HYPRE_LSI_MLI *mli_object = (HYPRE_LSI_MLI *) solver;
+   NALU_HYPRE_LSI_MLI *mli_object = (NALU_HYPRE_LSI_MLI *) solver;
 
    /* -------------------------------------------------------- */ 
    /* if nodal coordinates flag off, do not take coordinates   */
@@ -1320,7 +1320,7 @@ int HYPRE_LSI_MLILoadNodalCoordinates(HYPRE_Solver solver, int nNodes,
    if ( offFlag != 0 )
    {
       if ( mypid == 0 )
-         printf("HYPRE_LSI_MLILoadNodalCoordinates - turned off.\n");
+         printf("NALU_HYPRE_LSI_MLILoadNodalCoordinates - turned off.\n");
       mli_object->nCoordAccept_ = 0;
       mli_object->localNEqns_ = 0;
       return 1;
@@ -1506,7 +1506,7 @@ int HYPRE_LSI_MLILoadNodalCoordinates(HYPRE_Solver solver, int nNodes,
          eqnInd = (eqnNumbers[iN] - procNRows[mypid]) / nodeDOF;
          if ( eqnInd >= arrayLeng )
          {
-            printf("%d : HYPRE_LSI_MLILoadNodalCoordinates - ERROR(1).\n",
+            printf("%d : NALU_HYPRE_LSI_MLILoadNodalCoordinates - ERROR(1).\n",
                    mypid);
             exit(1);
          }
@@ -1520,7 +1520,7 @@ int HYPRE_LSI_MLILoadNodalCoordinates(HYPRE_Solver solver, int nNodes,
          eqnInd = (iRecvBufs[iP][iR] - procNRows[mypid]) / nodeDOF;
          if ( eqnInd >= arrayLeng )
          {
-            printf("%d : HYPRE_LSI_MLILoadNodalCoordinates - ERROR(2).\n",
+            printf("%d : NALU_HYPRE_LSI_MLILoadNodalCoordinates - ERROR(2).\n",
                    mypid);
             exit(1);
          }
@@ -1600,14 +1600,14 @@ int HYPRE_LSI_MLILoadNodalCoordinates(HYPRE_Solver solver, int nNodes,
 } 
 
 /****************************************************************************/
-/* HYPRE_LSI_MLILoadMatrixScalings                                          */
+/* NALU_HYPRE_LSI_MLILoadMatrixScalings                                          */
 /*--------------------------------------------------------------------------*/
 
 extern "C"
-int HYPRE_LSI_MLILoadMatrixScalings(HYPRE_Solver solver, int nEqns,
+int NALU_HYPRE_LSI_MLILoadMatrixScalings(NALU_HYPRE_Solver solver, int nEqns,
                                     double *scalings)
 {
-   HYPRE_LSI_MLI *mli_object = (HYPRE_LSI_MLI *) solver;
+   NALU_HYPRE_LSI_MLI *mli_object = (NALU_HYPRE_LSI_MLI *) solver;
    if ( scalings != NULL )
    {
       mli_object->nullScales_ = new double[nEqns];
@@ -1618,14 +1618,14 @@ int HYPRE_LSI_MLILoadMatrixScalings(HYPRE_Solver solver, int nEqns,
 }
 
 /****************************************************************************/
-/* HYPRE_LSI_MLILoadMaterialLabels                                          */
+/* NALU_HYPRE_LSI_MLILoadMaterialLabels                                          */
 /*--------------------------------------------------------------------------*/
 
 extern "C"
-int HYPRE_LSI_MLILoadMaterialLabels(HYPRE_Solver solver, int nLabels,
+int NALU_HYPRE_LSI_MLILoadMaterialLabels(NALU_HYPRE_Solver solver, int nLabels,
                                     int *labels)
 {
-   HYPRE_LSI_MLI *mli_object = (HYPRE_LSI_MLI *) solver;
+   NALU_HYPRE_LSI_MLI *mli_object = (NALU_HYPRE_LSI_MLI *) solver;
    if ( labels != NULL )
    {
       mli_object->matLabels_ = new int[nLabels];
@@ -1637,40 +1637,40 @@ int HYPRE_LSI_MLILoadMaterialLabels(HYPRE_Solver solver, int nLabels,
 }
 
 /****************************************************************************/
-/* HYPRE_LSI_MLIFEDataCreate                                                */
+/* NALU_HYPRE_LSI_MLIFEDataCreate                                                */
 /*--------------------------------------------------------------------------*/
 
 extern "C"
-void *HYPRE_LSI_MLIFEDataCreate( MPI_Comm mpi_comm )
+void *NALU_HYPRE_LSI_MLIFEDataCreate( MPI_Comm mpi_comm )
 {
 #ifdef HAVE_MLI
-   HYPRE_MLI_FEData *hypre_fedata;
-   hypre_fedata = hypre_TAlloc(HYPRE_MLI_FEData, 1, HYPRE_MEMORY_HOST);  
-   hypre_fedata->comm_          = mpi_comm;
-   hypre_fedata->fedata_        = NULL;
-   hypre_fedata->fedataOwn_     = 0;
-   hypre_fedata->computeNull_   = 0;
-   hypre_fedata->nullDim_       = 1;
-   return ((void *) hypre_fedata);
+   NALU_HYPRE_MLI_FEData *nalu_hypre_fedata;
+   nalu_hypre_fedata = nalu_hypre_TAlloc(NALU_HYPRE_MLI_FEData, 1, NALU_HYPRE_MEMORY_HOST);  
+   nalu_hypre_fedata->comm_          = mpi_comm;
+   nalu_hypre_fedata->fedata_        = NULL;
+   nalu_hypre_fedata->fedataOwn_     = 0;
+   nalu_hypre_fedata->computeNull_   = 0;
+   nalu_hypre_fedata->nullDim_       = 1;
+   return ((void *) nalu_hypre_fedata);
 #else
    return NULL;
 #endif 
 }
 
 /****************************************************************************/
-/* HYPRE_LSI_MLIFEDataDestroy                                               */
+/* NALU_HYPRE_LSI_MLIFEDataDestroy                                               */
 /*--------------------------------------------------------------------------*/
 
 extern "C"
-int HYPRE_LSI_MLIFEDataDestroy( void *object )
+int NALU_HYPRE_LSI_MLIFEDataDestroy( void *object )
 {
 #ifdef HAVE_MLI
-   HYPRE_MLI_FEData *hypre_fedata = (HYPRE_MLI_FEData *) object;
-   if ( hypre_fedata == NULL ) return 1;
-   if ( hypre_fedata->fedataOwn_ && hypre_fedata->fedata_ != NULL ) 
-      delete hypre_fedata->fedata_;
-   hypre_fedata->fedata_        = NULL;
-   free( hypre_fedata );
+   NALU_HYPRE_MLI_FEData *nalu_hypre_fedata = (NALU_HYPRE_MLI_FEData *) object;
+   if ( nalu_hypre_fedata == NULL ) return 1;
+   if ( nalu_hypre_fedata->fedataOwn_ && nalu_hypre_fedata->fedata_ != NULL ) 
+      delete nalu_hypre_fedata->fedata_;
+   nalu_hypre_fedata->fedata_        = NULL;
+   free( nalu_hypre_fedata );
    return 0;
 #else
    return 1;
@@ -1678,22 +1678,22 @@ int HYPRE_LSI_MLIFEDataDestroy( void *object )
 }
 
 /****************************************************************************/
-/* HYPRE_LSI_MLIFEDataInitFields                                            */
+/* NALU_HYPRE_LSI_MLIFEDataInitFields                                            */
 /*--------------------------------------------------------------------------*/
 
 extern "C"
-int HYPRE_LSI_MLIFEDataInitFields( void *object, int nFields, int *fieldSizes,
+int NALU_HYPRE_LSI_MLIFEDataInitFields( void *object, int nFields, int *fieldSizes,
                                    int *fieldIDs )
 {
 #ifdef HAVE_MLI
-   HYPRE_MLI_FEData *hypre_fedata = (HYPRE_MLI_FEData *) object;
+   NALU_HYPRE_MLI_FEData *nalu_hypre_fedata = (NALU_HYPRE_MLI_FEData *) object;
    MLI_FEData       *fedata;
 
-   if ( hypre_fedata == NULL ) return 1;
-   if ( hypre_fedata->fedata_ != NULL ) delete hypre_fedata->fedata_;
-   hypre_fedata->fedata_    = new MLI_FEData(hypre_fedata->comm_);
-   hypre_fedata->fedataOwn_ = 1;
-   fedata = (MLI_FEData *) hypre_fedata->fedata_;
+   if ( nalu_hypre_fedata == NULL ) return 1;
+   if ( nalu_hypre_fedata->fedata_ != NULL ) delete nalu_hypre_fedata->fedata_;
+   nalu_hypre_fedata->fedata_    = new MLI_FEData(nalu_hypre_fedata->comm_);
+   nalu_hypre_fedata->fedataOwn_ = 1;
+   fedata = (MLI_FEData *) nalu_hypre_fedata->fedata_;
    fedata->initFields( nFields, fieldSizes, fieldIDs );
    return 0;
 #else
@@ -1706,23 +1706,23 @@ int HYPRE_LSI_MLIFEDataInitFields( void *object, int nFields, int *fieldSizes,
 }
 
 /****************************************************************************/
-/* HYPRE_LSI_MLIFEDataInitElemBlock                                         */
+/* NALU_HYPRE_LSI_MLIFEDataInitElemBlock                                         */
 /*--------------------------------------------------------------------------*/
 
 extern "C"
-int HYPRE_LSI_MLIFEDataInitElemBlock(void *object, int nElems, 
+int NALU_HYPRE_LSI_MLIFEDataInitElemBlock(void *object, int nElems, 
                                      int nNodesPerElem, int numNodeFields,
                                      int *nodeFieldIDs) 
 {
 #ifdef HAVE_MLI
-   HYPRE_MLI_FEData *hypre_fedata = (HYPRE_MLI_FEData *) object;
+   NALU_HYPRE_MLI_FEData *nalu_hypre_fedata = (NALU_HYPRE_MLI_FEData *) object;
    MLI_FEData       *fedata;
 
-   if ( hypre_fedata == NULL ) return 1;
-   fedata = (MLI_FEData *) hypre_fedata->fedata_;
+   if ( nalu_hypre_fedata == NULL ) return 1;
+   fedata = (MLI_FEData *) nalu_hypre_fedata->fedata_;
    if ( fedata == NULL ) return 1;
    if ( numNodeFields != 1 ) return 1;
-   hypre_fedata->fedata_->initElemBlock(nElems,nNodesPerElem,numNodeFields,
+   nalu_hypre_fedata->fedata_->initElemBlock(nElems,nNodesPerElem,numNodeFields,
                                         nodeFieldIDs,0,NULL);
    return 0;
 #else
@@ -1736,19 +1736,19 @@ int HYPRE_LSI_MLIFEDataInitElemBlock(void *object, int nElems,
 }
 
 /****************************************************************************/
-/* HYPRE_LSI_MLIFEDataInitElemNodeList                                      */
+/* NALU_HYPRE_LSI_MLIFEDataInitElemNodeList                                      */
 /*--------------------------------------------------------------------------*/
 
 extern "C"
-int HYPRE_LSI_MLIFEDataInitElemNodeList( void *object, int elemID, 
+int NALU_HYPRE_LSI_MLIFEDataInitElemNodeList( void *object, int elemID, 
                        int nNodesPerElem, int *elemNodeList)
 {
 #ifdef HAVE_MLI
-   HYPRE_MLI_FEData *hypre_fedata = (HYPRE_MLI_FEData *) object;
+   NALU_HYPRE_MLI_FEData *nalu_hypre_fedata = (NALU_HYPRE_MLI_FEData *) object;
    MLI_FEData       *fedata;
 
-   if ( hypre_fedata == NULL ) return 1;
-   fedata = (MLI_FEData *) hypre_fedata->fedata_;
+   if ( nalu_hypre_fedata == NULL ) return 1;
+   fedata = (MLI_FEData *) nalu_hypre_fedata->fedata_;
    if ( fedata == NULL ) return 1;
    fedata->initElemNodeList(elemID,nNodesPerElem,elemNodeList,3,NULL);
    return 0;
@@ -1758,20 +1758,20 @@ int HYPRE_LSI_MLIFEDataInitElemNodeList( void *object, int elemID,
 }
 
 /****************************************************************************/
-/* HYPRE_LSI_MLIFEDataInitSharedNodes                                       */
+/* NALU_HYPRE_LSI_MLIFEDataInitSharedNodes                                       */
 /*--------------------------------------------------------------------------*/
 
 extern "C"
-int HYPRE_LSI_MLIFEDataInitSharedNodes(void *object, int nSharedNodes,
+int NALU_HYPRE_LSI_MLIFEDataInitSharedNodes(void *object, int nSharedNodes,
                   int *sharedNodeIDs, int *sharedProcLengs,
                   int **sharedProcIDs) 
 {
 #ifdef HAVE_MLI
-   HYPRE_MLI_FEData *hypre_fedata = (HYPRE_MLI_FEData *) object;
+   NALU_HYPRE_MLI_FEData *nalu_hypre_fedata = (NALU_HYPRE_MLI_FEData *) object;
    MLI_FEData       *fedata;
 
-   if ( hypre_fedata == NULL ) return 1;
-   fedata = (MLI_FEData *) hypre_fedata->fedata_;
+   if ( nalu_hypre_fedata == NULL ) return 1;
+   fedata = (MLI_FEData *) nalu_hypre_fedata->fedata_;
    if ( fedata == NULL ) return 1;
    if ( nSharedNodes > 0 )
       fedata->initSharedNodes(nSharedNodes, sharedNodeIDs, sharedProcLengs, 
@@ -1788,18 +1788,18 @@ int HYPRE_LSI_MLIFEDataInitSharedNodes(void *object, int nSharedNodes,
 }
 
 /****************************************************************************/
-/* HYPRE_LSI_MLIFEDataInitComplete                                          */
+/* NALU_HYPRE_LSI_MLIFEDataInitComplete                                          */
 /*--------------------------------------------------------------------------*/
 
 extern "C"
-int HYPRE_LSI_MLIFEDataInitComplete( void *object )
+int NALU_HYPRE_LSI_MLIFEDataInitComplete( void *object )
 {
 #ifdef HAVE_MLI
-   HYPRE_MLI_FEData *hypre_fedata = (HYPRE_MLI_FEData *) object;
+   NALU_HYPRE_MLI_FEData *nalu_hypre_fedata = (NALU_HYPRE_MLI_FEData *) object;
    MLI_FEData       *fedata;
 
-   if ( hypre_fedata == NULL ) return 1;
-   fedata = (MLI_FEData *) hypre_fedata->fedata_;
+   if ( nalu_hypre_fedata == NULL ) return 1;
+   fedata = (MLI_FEData *) nalu_hypre_fedata->fedata_;
    if ( fedata == NULL ) return 1;
    fedata->initComplete();
    return 0;
@@ -1810,11 +1810,11 @@ int HYPRE_LSI_MLIFEDataInitComplete( void *object )
 }
 
 /****************************************************************************/
-/* HYPRE_LSI_MLIFEDataLoadElemMatrix                                        */
+/* NALU_HYPRE_LSI_MLIFEDataLoadElemMatrix                                        */
 /*--------------------------------------------------------------------------*/
 
 extern "C"
-int HYPRE_LSI_MLIFEDataLoadElemMatrix(void *object, int elemID, int nNodes,
+int NALU_HYPRE_LSI_MLIFEDataLoadElemMatrix(void *object, int elemID, int nNodes,
                             int *nodeList, int matDim, double **inMat)
 {
    (void) nNodes;
@@ -1822,15 +1822,15 @@ int HYPRE_LSI_MLIFEDataLoadElemMatrix(void *object, int elemID, int nNodes,
 #ifdef HAVE_MLI
    int              i, j;
    double           *elemMat;
-   HYPRE_MLI_FEData *hypre_fedata = (HYPRE_MLI_FEData *) object;
+   NALU_HYPRE_MLI_FEData *nalu_hypre_fedata = (NALU_HYPRE_MLI_FEData *) object;
    MLI_FEData       *fedata;
 
    /* -------------------------------------------------------- */ 
    /* error checking                                           */
    /* -------------------------------------------------------- */ 
 
-   if ( hypre_fedata == NULL ) return 1;
-   fedata = (MLI_FEData *) hypre_fedata->fedata_;
+   if ( nalu_hypre_fedata == NULL ) return 1;
+   fedata = (MLI_FEData *) nalu_hypre_fedata->fedata_;
    if ( fedata == NULL ) return 1;
 
    /* -------------------------------------------------------- */ 
@@ -1855,22 +1855,22 @@ int HYPRE_LSI_MLIFEDataLoadElemMatrix(void *object, int elemID, int nNodes,
 }
 
 /****************************************************************************/
-/* HYPRE_LSI_MLIFEDataWriteToFile                                           */
+/* NALU_HYPRE_LSI_MLIFEDataWriteToFile                                           */
 /*--------------------------------------------------------------------------*/
 
 extern "C"
-int HYPRE_LSI_MLIFEDataWriteToFile( void *object, char *filename )
+int NALU_HYPRE_LSI_MLIFEDataWriteToFile( void *object, char *filename )
 {
 #ifdef HAVE_MLI
    MLI_FEData       *fedata;
-   HYPRE_MLI_FEData *hypre_fedata = (HYPRE_MLI_FEData *) object;
+   NALU_HYPRE_MLI_FEData *nalu_hypre_fedata = (NALU_HYPRE_MLI_FEData *) object;
 
    /* -------------------------------------------------------- */ 
    /* error checking                                           */
    /* -------------------------------------------------------- */ 
 
-   if ( hypre_fedata == NULL ) return 1;
-   fedata = (MLI_FEData *) hypre_fedata->fedata_;
+   if ( nalu_hypre_fedata == NULL ) return 1;
+   fedata = (MLI_FEData *) nalu_hypre_fedata->fedata_;
    if ( fedata == NULL ) return 1;
 
    /* -------------------------------------------------------- */ 
@@ -1887,38 +1887,38 @@ int HYPRE_LSI_MLIFEDataWriteToFile( void *object, char *filename )
 }
 
 /****************************************************************************/
-/* HYPRE_LSI_MLISFEICreate                                                  */
+/* NALU_HYPRE_LSI_MLISFEICreate                                                  */
 /*--------------------------------------------------------------------------*/
 
 extern "C"
-void *HYPRE_LSI_MLISFEICreate( MPI_Comm mpiComm )
+void *NALU_HYPRE_LSI_MLISFEICreate( MPI_Comm mpiComm )
 {
 #ifdef HAVE_MLI
-   HYPRE_MLI_SFEI *hypre_sfei;
-   hypre_sfei = hypre_TAlloc(HYPRE_MLI_SFEI, 1, HYPRE_MEMORY_HOST);  
-   hypre_sfei->comm_    = mpiComm;
-   hypre_sfei->sfei_    = new MLI_SFEI(mpiComm);;
-   hypre_sfei->sfeiOwn_ = 1;
-   return ((void *) hypre_sfei);
+   NALU_HYPRE_MLI_SFEI *nalu_hypre_sfei;
+   nalu_hypre_sfei = nalu_hypre_TAlloc(NALU_HYPRE_MLI_SFEI, 1, NALU_HYPRE_MEMORY_HOST);  
+   nalu_hypre_sfei->comm_    = mpiComm;
+   nalu_hypre_sfei->sfei_    = new MLI_SFEI(mpiComm);;
+   nalu_hypre_sfei->sfeiOwn_ = 1;
+   return ((void *) nalu_hypre_sfei);
 #else
    return NULL;
 #endif 
 }
 
 /****************************************************************************/
-/* HYPRE_LSI_MLISFEIDestroy                                                 */
+/* NALU_HYPRE_LSI_MLISFEIDestroy                                                 */
 /*--------------------------------------------------------------------------*/
 
 extern "C"
-int HYPRE_LSI_MLISFEIDestroy( void *object )
+int NALU_HYPRE_LSI_MLISFEIDestroy( void *object )
 {
 #ifdef HAVE_MLI
-   HYPRE_MLI_SFEI *hypre_sfei = (HYPRE_MLI_SFEI *) object;
-   if ( hypre_sfei == NULL ) return 1;
-   if ( hypre_sfei->sfeiOwn_ && hypre_sfei->sfei_ != NULL ) 
-      delete hypre_sfei->sfei_;
-   hypre_sfei->sfei_ = NULL;
-   free( hypre_sfei );
+   NALU_HYPRE_MLI_SFEI *nalu_hypre_sfei = (NALU_HYPRE_MLI_SFEI *) object;
+   if ( nalu_hypre_sfei == NULL ) return 1;
+   if ( nalu_hypre_sfei->sfeiOwn_ && nalu_hypre_sfei->sfei_ != NULL ) 
+      delete nalu_hypre_sfei->sfei_;
+   nalu_hypre_sfei->sfei_ = NULL;
+   free( nalu_hypre_sfei );
    return 0;
 #else
    return 1;
@@ -1926,23 +1926,23 @@ int HYPRE_LSI_MLISFEIDestroy( void *object )
 }
 
 /****************************************************************************/
-/* HYPRE_LSI_MLISFEILoadElemMatrices                                      */
+/* NALU_HYPRE_LSI_MLISFEILoadElemMatrices                                      */
 /*--------------------------------------------------------------------------*/
 
 extern "C"
-int HYPRE_LSI_MLISFEILoadElemMatrices(void *object, int elemBlk, int nElems,
+int NALU_HYPRE_LSI_MLISFEILoadElemMatrices(void *object, int elemBlk, int nElems,
               int *elemIDs, double ***inMat, int elemNNodes, int **nodeLists)
 {
 #ifdef HAVE_MLI
-   HYPRE_MLI_SFEI *hypre_sfei = (HYPRE_MLI_SFEI *) object;
+   NALU_HYPRE_MLI_SFEI *nalu_hypre_sfei = (NALU_HYPRE_MLI_SFEI *) object;
    MLI_SFEI       *sfei;
 
    /* -------------------------------------------------------- */ 
    /* error checking                                           */
    /* -------------------------------------------------------- */ 
 
-   if ( hypre_sfei == NULL ) return 1;
-   sfei = (MLI_SFEI *) hypre_sfei->sfei_;
+   if ( nalu_hypre_sfei == NULL ) return 1;
+   sfei = (MLI_SFEI *) nalu_hypre_sfei->sfei_;
    if ( sfei == NULL ) return 1;
 
    /* -------------------------------------------------------- */ 
@@ -1964,23 +1964,23 @@ int HYPRE_LSI_MLISFEILoadElemMatrices(void *object, int elemBlk, int nElems,
 }
 
 /****************************************************************************/
-/* HYPRE_LSI_MLISFEIAddNumElems                                             */
+/* NALU_HYPRE_LSI_MLISFEIAddNumElems                                             */
 /*--------------------------------------------------------------------------*/
 
 extern "C"
-int HYPRE_LSI_MLISFEIAddNumElems(void *object, int elemBlk, int nElems,
+int NALU_HYPRE_LSI_MLISFEIAddNumElems(void *object, int elemBlk, int nElems,
                                  int elemNNodes)
 {
 #ifdef HAVE_MLI
-   HYPRE_MLI_SFEI *hypre_sfei = (HYPRE_MLI_SFEI *) object;
+   NALU_HYPRE_MLI_SFEI *nalu_hypre_sfei = (NALU_HYPRE_MLI_SFEI *) object;
    MLI_SFEI       *sfei;
 
    /* -------------------------------------------------------- */ 
    /* error checking                                           */
    /* -------------------------------------------------------- */ 
 
-   if ( hypre_sfei == NULL ) return 1;
-   sfei = (MLI_SFEI *) hypre_sfei->sfei_;
+   if ( nalu_hypre_sfei == NULL ) return 1;
+   sfei = (MLI_SFEI *) nalu_hypre_sfei->sfei_;
    if ( sfei == NULL ) return 1;
 
    /* -------------------------------------------------------- */ 

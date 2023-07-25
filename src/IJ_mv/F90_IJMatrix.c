@@ -7,11 +7,11 @@
 
 /******************************************************************************
  *
- * hypre_IJMatrix Fortran interface
+ * nalu_hypre_IJMatrix Fortran interface
  *
  *****************************************************************************/
 
-#include "./_hypre_IJ_mv.h"
+#include "./_nalu_hypre_IJ_mv.h"
 #include "fortran.h"
 
 #ifdef __cplusplus
@@ -19,18 +19,18 @@ extern "C" {
 #endif
 
 /*--------------------------------------------------------------------------
- * hypre_IJMatrixSetObject
+ * nalu_hypre_IJMatrixSetObject
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_ijmatrixsetobject, HYPRE_IJMATRIXSETOBJECT)
-( hypre_F90_Obj *matrix,
-  hypre_F90_Obj *object,
-  hypre_F90_Int *ierr    )
+nalu_hypre_F90_IFACE(nalu_hypre_ijmatrixsetobject, NALU_HYPRE_IJMATRIXSETOBJECT)
+( nalu_hypre_F90_Obj *matrix,
+  nalu_hypre_F90_Obj *object,
+  nalu_hypre_F90_Int *ierr    )
 {
-   *ierr = (hypre_F90_Int)
-           ( hypre_IJMatrixSetObject(
-                hypre_F90_PassObj (HYPRE_IJMatrix, matrix),
+   *ierr = (nalu_hypre_F90_Int)
+           ( nalu_hypre_IJMatrixSetObject(
+                nalu_hypre_F90_PassObj (NALU_HYPRE_IJMatrix, matrix),
                 (void *)         *object  ) );
 }
 

@@ -6,7 +6,7 @@ extern "C" {
 #endif
 
 #include "f2c.h"
-#include "hypre_lapack.h"
+#include "nalu_hypre_lapack.h"
 
 /* Subroutine */ integer dlartg_(doublereal *f, doublereal *g, doublereal *cs,
 	doublereal *sn, doublereal *r__)
@@ -79,7 +79,7 @@ extern "C" {
 	d__1 = dlamch_("B");
 //	i__1 = (integer) (log(safmin / eps) / log(dlamch_("B")) /
 //		2.);
-        i__1 = HYPRE_REAL_MIN_EXP>>1;
+        i__1 = NALU_HYPRE_REAL_MIN_EXP>>1;
 	safmn2 = pow_di(&d__1, &i__1);
 	safmx2 = 1. / safmn2;
     }

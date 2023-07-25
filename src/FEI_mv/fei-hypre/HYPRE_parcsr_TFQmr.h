@@ -7,7 +7,7 @@
 
 /******************************************************************************
  *
- * HYPRE_ParCSRTFQmr interface
+ * NALU_HYPRE_ParCSRTFQmr interface
  *
  *****************************************************************************/
 
@@ -18,35 +18,35 @@
 extern "C" {
 #endif
 
-extern int HYPRE_ParCSRTFQmrCreate( MPI_Comm comm, HYPRE_Solver *solver );
+extern int NALU_HYPRE_ParCSRTFQmrCreate( MPI_Comm comm, NALU_HYPRE_Solver *solver );
 
-extern int HYPRE_ParCSRTFQmrDestroy( HYPRE_Solver solver );
+extern int NALU_HYPRE_ParCSRTFQmrDestroy( NALU_HYPRE_Solver solver );
 
-extern int HYPRE_ParCSRTFQmrSetup(HYPRE_Solver solver,HYPRE_ParCSRMatrix A,
-                               HYPRE_ParVector b, HYPRE_ParVector x );
+extern int NALU_HYPRE_ParCSRTFQmrSetup(NALU_HYPRE_Solver solver,NALU_HYPRE_ParCSRMatrix A,
+                               NALU_HYPRE_ParVector b, NALU_HYPRE_ParVector x );
 
-extern int HYPRE_ParCSRTFQmrSolve(HYPRE_Solver solver,HYPRE_ParCSRMatrix A,
-                                HYPRE_ParVector b, HYPRE_ParVector x );
+extern int NALU_HYPRE_ParCSRTFQmrSolve(NALU_HYPRE_Solver solver,NALU_HYPRE_ParCSRMatrix A,
+                                NALU_HYPRE_ParVector b, NALU_HYPRE_ParVector x );
 
-extern int HYPRE_ParCSRTFQmrSetTol( HYPRE_Solver solver, double tol );
+extern int NALU_HYPRE_ParCSRTFQmrSetTol( NALU_HYPRE_Solver solver, double tol );
 
-extern int HYPRE_ParCSRTFQmrSetMaxIter( HYPRE_Solver solver, int max_iter );
+extern int NALU_HYPRE_ParCSRTFQmrSetMaxIter( NALU_HYPRE_Solver solver, int max_iter );
 
-extern int HYPRE_ParCSRTFQmrSetStopCrit( HYPRE_Solver solver, int stop_crit );
+extern int NALU_HYPRE_ParCSRTFQmrSetStopCrit( NALU_HYPRE_Solver solver, int stop_crit );
 
-extern int HYPRE_ParCSRTFQmrSetPrecond( HYPRE_Solver  solver,
-          int (*precond)      (HYPRE_Solver sol, HYPRE_ParCSRMatrix matrix,
-			       HYPRE_ParVector b, HYPRE_ParVector x),
-          int (*precond_setup)(HYPRE_Solver sol, HYPRE_ParCSRMatrix matrix,
-			       HYPRE_ParVector b, HYPRE_ParVector x),
+extern int NALU_HYPRE_ParCSRTFQmrSetPrecond( NALU_HYPRE_Solver  solver,
+          int (*precond)      (NALU_HYPRE_Solver sol, NALU_HYPRE_ParCSRMatrix matrix,
+			       NALU_HYPRE_ParVector b, NALU_HYPRE_ParVector x),
+          int (*precond_setup)(NALU_HYPRE_Solver sol, NALU_HYPRE_ParCSRMatrix matrix,
+			       NALU_HYPRE_ParVector b, NALU_HYPRE_ParVector x),
           void               *precond_data );
 
-extern int HYPRE_ParCSRTFQmrSetLogging( HYPRE_Solver solver, int logging);
+extern int NALU_HYPRE_ParCSRTFQmrSetLogging( NALU_HYPRE_Solver solver, int logging);
 
-extern int HYPRE_ParCSRTFQmrGetNumIterations(HYPRE_Solver solver,
+extern int NALU_HYPRE_ParCSRTFQmrGetNumIterations(NALU_HYPRE_Solver solver,
                                                  int *num_iterations);
 
-extern int HYPRE_ParCSRTFQmrGetFinalRelativeResidualNorm(HYPRE_Solver solver,
+extern int NALU_HYPRE_ParCSRTFQmrGetFinalRelativeResidualNorm(NALU_HYPRE_Solver solver,
                                                        double *norm );
 
 #ifdef __cplusplus

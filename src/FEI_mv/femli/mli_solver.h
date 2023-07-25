@@ -41,7 +41,7 @@
  *--------------------------------------------------------------------------*/
 
 #include <string.h>
-#include "_hypre_utilities.h"
+#include "_nalu_hypre_utilities.h"
 
 #include "mli_matrix.h"
 #include "mli_vector.h"

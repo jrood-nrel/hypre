@@ -34,13 +34,13 @@
  *
  *****************************************************************************/
 
-#ifndef hypre_NUMBERS_HEADER
-#define hypre_NUMBERS_HEADER
+#ifndef nalu_hypre_NUMBERS_HEADER
+#define nalu_hypre_NUMBERS_HEADER
 
-typedef struct hypre_NumbersNode
+typedef struct nalu_hypre_NumbersNode
 {
-   struct hypre_NumbersNode * digit[11];
-} hypre_NumbersNode;
+   struct nalu_hypre_NumbersNode * digit[11];
+} nalu_hypre_NumbersNode;
 
 #endif
 

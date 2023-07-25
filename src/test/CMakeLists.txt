@@ -3,7 +3,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-add_definitions (-DHYPRE_TIMING)
+add_definitions (-DNALU_HYPRE_TIMING)
 
 if (MSVC)
   add_definitions(-D_CRT_SECURE_NO_WARNINGS)
@@ -20,5 +20,5 @@ set(TEST_SRCS
   ij_mv.c
 )
 
-add_hypre_executables(TEST_SRCS)
+add_nalu_hypre_executables(TEST_SRCS)
  

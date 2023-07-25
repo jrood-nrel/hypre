@@ -5,20 +5,20 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#ifndef hypre_STATE_HEADER
-#define hypre_STATE_HEADER
+#ifndef nalu_hypre_STATE_HEADER
+#define nalu_hypre_STATE_HEADER
 
 /*--------------------------------------------------------------------------
  * hypre library state
  *--------------------------------------------------------------------------*/
 
-typedef enum hypre_State_enum
+typedef enum nalu_hypre_State_enum
 {
-   HYPRE_STATE_NONE        = 0,
-   HYPRE_STATE_INITIALIZED = 1,
-   HYPRE_STATE_FINALIZED   = 2
-} hypre_State;
+   NALU_HYPRE_STATE_NONE        = 0,
+   NALU_HYPRE_STATE_INITIALIZED = 1,
+   NALU_HYPRE_STATE_FINALIZED   = 2
+} nalu_hypre_State;
 
-extern hypre_State hypre__global_state;
+extern nalu_hypre_State nalu_hypre__global_state;
 
-#endif /* hypre_STATE_HEADER */
+#endif /* nalu_hypre_STATE_HEADER */

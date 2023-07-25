@@ -5,9 +5,9 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#ifndef HYPRE_SMP_HEADER
-#define HYPRE_SMP_HEADER
+#ifndef NALU_HYPRE_SMP_HEADER
+#define NALU_HYPRE_SMP_HEADER
 #endif
 
-#define HYPRE_SMP_SCHEDULE schedule(static)
+#define NALU_HYPRE_SMP_SCHEDULE schedule(static)
 

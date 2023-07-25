@@ -7,60 +7,60 @@
 
 /******************************************************************************
  *
- * HYPRE_Vector interface
+ * NALU_HYPRE_Vector interface
  *
  *****************************************************************************/
 
 #include "seq_mv.h"
 
 /*--------------------------------------------------------------------------
- * HYPRE_VectorCreate
+ * NALU_HYPRE_VectorCreate
  *--------------------------------------------------------------------------*/
 
-HYPRE_Vector
-HYPRE_VectorCreate( HYPRE_Int size )
+NALU_HYPRE_Vector
+NALU_HYPRE_VectorCreate( NALU_HYPRE_Int size )
 {
-   return ( (HYPRE_Vector) hypre_SeqVectorCreate(size) );
+   return ( (NALU_HYPRE_Vector) nalu_hypre_SeqVectorCreate(size) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_VectorDestroy
+ * NALU_HYPRE_VectorDestroy
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_VectorDestroy( HYPRE_Vector vector )
+NALU_HYPRE_Int
+NALU_HYPRE_VectorDestroy( NALU_HYPRE_Vector vector )
 {
-   return ( hypre_SeqVectorDestroy( (hypre_Vector *) vector ) );
+   return ( nalu_hypre_SeqVectorDestroy( (nalu_hypre_Vector *) vector ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_VectorInitialize
+ * NALU_HYPRE_VectorInitialize
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_VectorInitialize( HYPRE_Vector vector )
+NALU_HYPRE_Int
+NALU_HYPRE_VectorInitialize( NALU_HYPRE_Vector vector )
 {
-   return ( hypre_SeqVectorInitialize( (hypre_Vector *) vector ) );
+   return ( nalu_hypre_SeqVectorInitialize( (nalu_hypre_Vector *) vector ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_VectorPrint
+ * NALU_HYPRE_VectorPrint
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_VectorPrint( HYPRE_Vector  vector,
+NALU_HYPRE_Int
+NALU_HYPRE_VectorPrint( NALU_HYPRE_Vector  vector,
                    char         *file_name )
 {
-   return ( hypre_SeqVectorPrint( (hypre_Vector *) vector,
+   return ( nalu_hypre_SeqVectorPrint( (nalu_hypre_Vector *) vector,
                                   file_name ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_VectorRead
+ * NALU_HYPRE_VectorRead
  *--------------------------------------------------------------------------*/
 
-HYPRE_Vector
-HYPRE_VectorRead( char         *file_name )
+NALU_HYPRE_Vector
+NALU_HYPRE_VectorRead( char         *file_name )
 {
-   return ( (HYPRE_Vector) hypre_SeqVectorRead( file_name ) );
+   return ( (NALU_HYPRE_Vector) nalu_hypre_SeqVectorRead( file_name ) );
 }

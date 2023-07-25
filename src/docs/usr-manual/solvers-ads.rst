@@ -87,12 +87,12 @@ Sample Usage
 
 ADS can be used either as a solver or as a preconditioner.  Below we list the
 sequence of hypre calls needed to create and use it as a solver. We start with
-the allocation of the ``HYPRE_Solver`` object:
+the allocation of the ``NALU_HYPRE_Solver`` object:
 
 .. code-block:: c
    
-   HYPRE_Solver solver;
-   HYPRE_ADSCreate(&solver);
+   NALU_HYPRE_Solver solver;
+   NALU_HYPRE_ADSCreate(&solver);
 
 Next, we set a number of solver parameters. Some of them are optional, while
 others are necessary in order to perform the solver setup.
@@ -106,22 +106,22 @@ ParCSR version of them. This is the expected format in the following functions.
 
 .. code-block:: c
    
-   HYPRE_ADSSetDiscreteCurl(solver, C);
-   HYPRE_ADSSetDiscreteGradient(solver, G);
+   NALU_HYPRE_ADSSetDiscreteCurl(solver, C);
+   NALU_HYPRE_ADSSetDiscreteGradient(solver, G);
 
 Next, ADS requires the coordinates of the vertices in the mesh as three hypre
 parallel vectors.  The corresponding function call reads:
 
 .. code-block:: c
    
-   HYPRE_ADSSetCoordinateVectors(solver, x, y, z);
+   NALU_HYPRE_ADSSetCoordinateVectors(solver, x, y, z);
 
 The remaining solver parameters are optional.  For example, the user can choose
 a different cycle type by calling
 
 .. code-block:: c
    
-   HYPRE_ADSSetCycleType(solver, cycle_type); /* default value: 1 */
+   NALU_HYPRE_ADSSetCycleType(solver, cycle_type); /* default value: 1 */
 
 The available cycle types in ADS are:
 
@@ -159,22 +159,22 @@ convergence tolerance and the output level, can be set with
 
 .. code-block:: c
    
-   HYPRE_ADSSetMaxIter(solver, maxit);     /* default value: 20 */
-   HYPRE_ADSSetTol(solver, tol);           /* default value: 1e-6 */
-   HYPRE_ADSSetPrintLevel(solver, print);  /* default value: 1 */
+   NALU_HYPRE_ADSSetMaxIter(solver, maxit);     /* default value: 20 */
+   NALU_HYPRE_ADSSetTol(solver, tol);           /* default value: 1e-6 */
+   NALU_HYPRE_ADSSetPrintLevel(solver, print);  /* default value: 1 */
 
 More advanced parameters, affecting the smoothing and the internal AMS and AMG
 solvers, can be set with the following three functions:
 
 .. code-block:: c
    
-   HYPRE_ADSSetSmoothingOptions(solver, 2, 1, 1.0, 1.0);
-   HYPRE_ADSSetAMSOptions(solver, 11, 10, 1, 3, 0.25, 0, 0);
-   HYPRE_ADSSetAMGOptions(solver, 10, 1, 3, 0.25, 0, 0);
+   NALU_HYPRE_ADSSetSmoothingOptions(solver, 2, 1, 1.0, 1.0);
+   NALU_HYPRE_ADSSetAMSOptions(solver, 11, 10, 1, 3, 0.25, 0, 0);
+   NALU_HYPRE_ADSSetAMGOptions(solver, 10, 1, 3, 0.25, 0, 0);
 
 We note that the AMS cycle type, which is the second parameter of
-``HYPRE_ADSSetAMSOptions`` should be greater than 10, unless the high-order
-interface of ``HYPRE_ADSSetInterpolations`` described in the next subsection is
+``NALU_HYPRE_ADSSetAMSOptions`` should be greater than 10, unless the high-order
+interface of ``NALU_HYPRE_ADSSetInterpolations`` described in the next subsection is
 being used.
 
 After the above calls, the solver is ready to be constructed.  The user has to
@@ -184,24 +184,24 @@ are actually not used in the current ADS setup.) The setup call reads,
 
 .. code-block:: c
    
-   HYPRE_ADSSetup(solver, A, b, x);
+   NALU_HYPRE_ADSSetup(solver, A, b, x);
 
 It is important to note the order of the calling sequence. For example, do
-**not** call ``HYPRE_ADSSetup`` before calling each of the functions
-``HYPRE_ADSSetDiscreteCurl``, ``HYPRE_ADSSetDiscreteGradient`` and
-``HYPRE_ADSSetCoordinateVectors``.
+**not** call ``NALU_HYPRE_ADSSetup`` before calling each of the functions
+``NALU_HYPRE_ADSSetDiscreteCurl``, ``NALU_HYPRE_ADSSetDiscreteGradient`` and
+``NALU_HYPRE_ADSSetCoordinateVectors``.
 
 Once the setup has completed, we can solve the linear system by calling
 
 .. code-block:: c
    
-   HYPRE_ADSSolve(solver, A, b, x);
+   NALU_HYPRE_ADSSolve(solver, A, b, x);
 
 Finally, the solver can be destroyed with
 
 .. code-block:: c
    
-   HYPRE_ADSDestroy(&solver);
+   NALU_HYPRE_ADSDestroy(&solver);
 
 More details can be found in the files ``ads.h`` and ``ads.c`` located in the
 ``parcsr_ls`` directory.
@@ -231,7 +231,7 @@ as on the geometry of the mesh elements. The columns of the :math:`{\mathbf
 :math:`x`/:math:`y`/:math:`z` components of the first node (vertex or high-order
 degree of freedom) should be listed first, followed by the
 :math:`x`/:math:`y`/:math:`z` components of the second node and so on (see the
-documentation of ``HYPRE_BoomerAMGSetDofFunc``). Furthermore, each interpolation
+documentation of ``NALU_HYPRE_BoomerAMGSetDofFunc``). Furthermore, each interpolation
 matrix can be split into :math:`x`, :math:`y` and :math:`z` components by
 defining :math:`{\mathbf \Pi}^x \varphi = {\mathbf \Pi} (\varphi,0,0)`, and
 similarly for :math:`{\mathbf \Pi}^y` and :math:`{\mathbf \Pi}^z`.
@@ -248,14 +248,14 @@ With these matrices, the high-order setup procedure is simply
 
 .. code-block:: c
    
-   HYPRE_ADSSetDiscreteCurl(solver, C);
-   HYPRE_ADSSetDiscreteGradient(solver, G);
-   HYPRE_ADSSetInterpolations(solver, RT_Pi, NULL, NULL, NULL,
+   NALU_HYPRE_ADSSetDiscreteCurl(solver, C);
+   NALU_HYPRE_ADSSetDiscreteGradient(solver, G);
+   NALU_HYPRE_ADSSetInterpolations(solver, RT_Pi, NULL, NULL, NULL,
                                       ND_Pi, NULL, NULL, NULL);
 
 We remark that the above interface calls can also be used in the lowest-order
 case (or even other types of discretizations), but we recommend calling the
-previously described ``HYPRE_ADSSetCoordinateVectors`` instead, since this
+previously described ``NALU_HYPRE_ADSSetCoordinateVectors`` instead, since this
 allows ADS to handle the construction and use of the interpolations internally.
 
 
@@ -265,7 +265,7 @@ options to those less than 10. Alternatively one can separately specify the
 
 .. code-block:: c
    
-   HYPRE_ADSSetInterpolations(solver, NULL, RT_Pix, RT_Piy, RT_Piz,
+   NALU_HYPRE_ADSSetInterpolations(solver, NULL, RT_Pix, RT_Piy, RT_Piz,
                                       ND_Pi, NULL, NULL, NULL);
 
 which enables the use of ADS cycle types with index greater than 10. The same
@@ -274,14 +274,14 @@ subspace AMS cycle type greater then 10 we need to call
 
 .. code-block:: c
    
-   HYPRE_ADSSetInterpolations(solver, NULL, RT_Pix, RT_Piy, RT_Piz,
+   NALU_HYPRE_ADSSetInterpolations(solver, NULL, RT_Pix, RT_Piy, RT_Piz,
                                       NULL, ND_Pix, ND_Piy, ND_Piz);
 
 Finally, both :math:`{\mathbf \Pi}` and their components can be passed to the solver:
 
 .. code-block:: c
    
-   HYPRE_ADSSetInterpolations(solver, RT_Pi, RT_Pix, RT_Piy, RT_Piz
+   NALU_HYPRE_ADSSetInterpolations(solver, RT_Pi, RT_Pix, RT_Piy, RT_Piz
                                       ND_Pi, ND_Pix, ND_Piy, ND_Piz);
 
 which will duplicate some memory, but allows for experimentation with all

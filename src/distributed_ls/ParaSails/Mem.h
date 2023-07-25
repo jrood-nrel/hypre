@@ -21,12 +21,12 @@
 
 typedef struct
 {
-    HYPRE_Int   num_blocks;
-    HYPRE_Int   bytes_left;
+    NALU_HYPRE_Int   num_blocks;
+    NALU_HYPRE_Int   bytes_left;
 
-    hypre_longint  total_bytes;
-    hypre_longint  bytes_alloc;
-    HYPRE_Int   num_over;
+    nalu_hypre_longint  total_bytes;
+    nalu_hypre_longint  bytes_alloc;
+    NALU_HYPRE_Int   num_over;
 
     char *avail;
     char *blocks[MEM_MAXBLOCKS];
@@ -35,7 +35,7 @@ Mem;
 
 Mem  *MemCreate(void);
 void  MemDestroy(Mem *m);
-char *MemAlloc(Mem *m, HYPRE_Int size);
+char *MemAlloc(Mem *m, NALU_HYPRE_Int size);
 void  MemStat(Mem *m, FILE *stream, char *msg);
 
 #endif /* _MEM_H */

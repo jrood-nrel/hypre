@@ -5,104 +5,104 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_sstruct_ls.h"
+#include "_nalu_hypre_sstruct_ls.h"
 #include "sys_pfmg.h"
 
 #define DEBUG 0
 
-#define hypre_PFMGSetCIndex(cdir, cindex)       \
+#define nalu_hypre_PFMGSetCIndex(cdir, cindex)       \
    {                                            \
-      hypre_SetIndex3(cindex, 0, 0, 0);          \
-      hypre_IndexD(cindex, cdir) = 0;           \
+      nalu_hypre_SetIndex3(cindex, 0, 0, 0);          \
+      nalu_hypre_IndexD(cindex, cdir) = 0;           \
    }
 
-#define hypre_PFMGSetFIndex(cdir, findex)       \
+#define nalu_hypre_PFMGSetFIndex(cdir, findex)       \
    {                                            \
-      hypre_SetIndex3(findex, 0, 0, 0);          \
-      hypre_IndexD(findex, cdir) = 1;           \
+      nalu_hypre_SetIndex3(findex, 0, 0, 0);          \
+      nalu_hypre_IndexD(findex, cdir) = 1;           \
    }
 
-#define hypre_PFMGSetStride(cdir, stride)       \
+#define nalu_hypre_PFMGSetStride(cdir, stride)       \
    {                                            \
-      hypre_SetIndex3(stride, 1, 1, 1);          \
-      hypre_IndexD(stride, cdir) = 2;           \
+      nalu_hypre_SetIndex3(stride, 1, 1, 1);          \
+      nalu_hypre_IndexD(stride, cdir) = 2;           \
    }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_SysPFMGSetup( void                 *sys_pfmg_vdata,
-                    hypre_SStructMatrix  *A_in,
-                    hypre_SStructVector  *b_in,
-                    hypre_SStructVector  *x_in        )
+NALU_HYPRE_Int
+nalu_hypre_SysPFMGSetup( void                 *sys_pfmg_vdata,
+                    nalu_hypre_SStructMatrix  *A_in,
+                    nalu_hypre_SStructVector  *b_in,
+                    nalu_hypre_SStructVector  *x_in        )
 {
-   hypre_SysPFMGData    *sys_pfmg_data = (hypre_SysPFMGData    *)sys_pfmg_vdata;
+   nalu_hypre_SysPFMGData    *sys_pfmg_data = (nalu_hypre_SysPFMGData    *)sys_pfmg_vdata;
 
    MPI_Comm              comm = (sys_pfmg_data -> comm);
 
-   hypre_SStructPMatrix *A;
-   hypre_SStructPVector *b;
-   hypre_SStructPVector *x;
+   nalu_hypre_SStructPMatrix *A;
+   nalu_hypre_SStructPVector *b;
+   nalu_hypre_SStructPVector *x;
 
-   HYPRE_Int             relax_type = (sys_pfmg_data -> relax_type);
-   HYPRE_Int             usr_jacobi_weight = (sys_pfmg_data -> usr_jacobi_weight);
-   HYPRE_Real            jacobi_weight    = (sys_pfmg_data -> jacobi_weight);
-   HYPRE_Int             skip_relax = (sys_pfmg_data -> skip_relax);
-   HYPRE_Real           *dxyz       = (sys_pfmg_data -> dxyz);
+   NALU_HYPRE_Int             relax_type = (sys_pfmg_data -> relax_type);
+   NALU_HYPRE_Int             usr_jacobi_weight = (sys_pfmg_data -> usr_jacobi_weight);
+   NALU_HYPRE_Real            jacobi_weight    = (sys_pfmg_data -> jacobi_weight);
+   NALU_HYPRE_Int             skip_relax = (sys_pfmg_data -> skip_relax);
+   NALU_HYPRE_Real           *dxyz       = (sys_pfmg_data -> dxyz);
 
-   HYPRE_Int             max_iter;
-   HYPRE_Int             max_levels;
+   NALU_HYPRE_Int             max_iter;
+   NALU_HYPRE_Int             max_levels;
 
-   HYPRE_Int             num_levels;
+   NALU_HYPRE_Int             num_levels;
 
-   hypre_Index           cindex;
-   hypre_Index           findex;
-   hypre_Index           stride;
+   nalu_hypre_Index           cindex;
+   nalu_hypre_Index           findex;
+   nalu_hypre_Index           stride;
 
-   hypre_Index           coarsen;
+   nalu_hypre_Index           coarsen;
 
-   HYPRE_Int              *cdir_l;
-   HYPRE_Int              *active_l;
-   hypre_SStructPGrid    **grid_l;
-   hypre_SStructPGrid    **P_grid_l;
+   NALU_HYPRE_Int              *cdir_l;
+   NALU_HYPRE_Int              *active_l;
+   nalu_hypre_SStructPGrid    **grid_l;
+   nalu_hypre_SStructPGrid    **P_grid_l;
 
-   hypre_SStructPMatrix  **A_l;
-   hypre_SStructPMatrix  **P_l;
-   hypre_SStructPMatrix  **RT_l;
-   hypre_SStructPVector  **b_l;
-   hypre_SStructPVector  **x_l;
+   nalu_hypre_SStructPMatrix  **A_l;
+   nalu_hypre_SStructPMatrix  **P_l;
+   nalu_hypre_SStructPMatrix  **RT_l;
+   nalu_hypre_SStructPVector  **b_l;
+   nalu_hypre_SStructPVector  **x_l;
 
    /* temp vectors */
-   hypre_SStructPVector  **tx_l;
-   hypre_SStructPVector  **r_l;
-   hypre_SStructPVector  **e_l;
+   nalu_hypre_SStructPVector  **tx_l;
+   nalu_hypre_SStructPVector  **r_l;
+   nalu_hypre_SStructPVector  **e_l;
 
    void                **relax_data_l;
    void                **matvec_data_l;
    void                **restrict_data_l;
    void                **interp_data_l;
 
-   hypre_SStructPGrid     *grid;
-   hypre_StructGrid       *sgrid;
-   HYPRE_Int               dim;
-   HYPRE_Int               full_periodic;
+   nalu_hypre_SStructPGrid     *grid;
+   nalu_hypre_StructGrid       *sgrid;
+   NALU_HYPRE_Int               dim;
+   NALU_HYPRE_Int               full_periodic;
 
-   hypre_Box            *cbox;
+   nalu_hypre_Box            *cbox;
 
-   HYPRE_Real           *relax_weights;
-   HYPRE_Real           *mean, *deviation;
-   HYPRE_Real            alpha, beta;
-   HYPRE_Int             dxyz_flag;
+   NALU_HYPRE_Real           *relax_weights;
+   NALU_HYPRE_Real           *mean, *deviation;
+   NALU_HYPRE_Real            alpha, beta;
+   NALU_HYPRE_Int             dxyz_flag;
 
-   HYPRE_Real            min_dxyz;
-   HYPRE_Int             cdir, periodic, cmaxsize;
-   HYPRE_Int             d, l;
-   HYPRE_Int             i;
+   NALU_HYPRE_Real            min_dxyz;
+   NALU_HYPRE_Int             cdir, periodic, cmaxsize;
+   NALU_HYPRE_Int             d, l;
+   NALU_HYPRE_Int             i;
 
-   HYPRE_Real**              sys_dxyz;
+   NALU_HYPRE_Real**              sys_dxyz;
 
-   HYPRE_Int             nvars;
+   NALU_HYPRE_Int             nvars;
 
 #if DEBUG
    char                  filename[255];
@@ -112,37 +112,37 @@ hypre_SysPFMGSetup( void                 *sys_pfmg_vdata,
     * Refs to A,x,b (the PMatrix & PVectors within
     * the input SStructMatrix & SStructVectors)
     *-----------------------------------------------------*/
-   hypre_SStructPMatrixRef(hypre_SStructMatrixPMatrix(A_in, 0), &A);
-   hypre_SStructPVectorRef(hypre_SStructVectorPVector(b_in, 0), &b);
-   hypre_SStructPVectorRef(hypre_SStructVectorPVector(x_in, 0), &x);
+   nalu_hypre_SStructPMatrixRef(nalu_hypre_SStructMatrixPMatrix(A_in, 0), &A);
+   nalu_hypre_SStructPVectorRef(nalu_hypre_SStructVectorPVector(b_in, 0), &b);
+   nalu_hypre_SStructPVectorRef(nalu_hypre_SStructVectorPVector(x_in, 0), &x);
 
    /*--------------------------------------------------------
     * Allocate arrays for mesh sizes for each diagonal block
     *--------------------------------------------------------*/
-   nvars    = hypre_SStructPMatrixNVars(A);
-   sys_dxyz = hypre_TAlloc(HYPRE_Real *, nvars, HYPRE_MEMORY_HOST);
+   nvars    = nalu_hypre_SStructPMatrixNVars(A);
+   sys_dxyz = nalu_hypre_TAlloc(NALU_HYPRE_Real *, nvars, NALU_HYPRE_MEMORY_HOST);
    for ( i = 0; i < nvars; i++)
    {
-      sys_dxyz[i] = hypre_TAlloc(HYPRE_Real, 3, HYPRE_MEMORY_HOST);
+      sys_dxyz[i] = nalu_hypre_TAlloc(NALU_HYPRE_Real, 3, NALU_HYPRE_MEMORY_HOST);
    }
 
    /*-----------------------------------------------------
     * Set up coarse grids
     *-----------------------------------------------------*/
 
-   grid  = hypre_SStructPMatrixPGrid(A);
-   sgrid = hypre_SStructPGridSGrid(grid, 0);
-   dim   = hypre_StructGridNDim(sgrid);
+   grid  = nalu_hypre_SStructPMatrixPGrid(A);
+   sgrid = nalu_hypre_SStructPGridSGrid(grid, 0);
+   dim   = nalu_hypre_StructGridNDim(sgrid);
 
    /* Compute a new max_levels value based on the grid */
-   cbox = hypre_BoxDuplicate(hypre_StructGridBoundingBox(sgrid));
+   cbox = nalu_hypre_BoxDuplicate(nalu_hypre_StructGridBoundingBox(sgrid));
    max_levels =
-      hypre_Log2(hypre_BoxSizeD(cbox, 0)) + 2 +
-      hypre_Log2(hypre_BoxSizeD(cbox, 1)) + 2 +
-      hypre_Log2(hypre_BoxSizeD(cbox, 2)) + 2;
+      nalu_hypre_Log2(nalu_hypre_BoxSizeD(cbox, 0)) + 2 +
+      nalu_hypre_Log2(nalu_hypre_BoxSizeD(cbox, 1)) + 2 +
+      nalu_hypre_Log2(nalu_hypre_BoxSizeD(cbox, 2)) + 2;
    if ((sys_pfmg_data -> max_levels) > 0)
    {
-      max_levels = hypre_min(max_levels, (sys_pfmg_data -> max_levels));
+      max_levels = nalu_hypre_min(max_levels, (sys_pfmg_data -> max_levels));
    }
    (sys_pfmg_data -> max_levels) = max_levels;
 
@@ -150,13 +150,13 @@ hypre_SysPFMGSetup( void                 *sys_pfmg_vdata,
    dxyz_flag = 0;
    if ((dxyz[0] == 0) || (dxyz[1] == 0) || (dxyz[2] == 0))
    {
-      mean      = hypre_CTAlloc(HYPRE_Real, 3, HYPRE_MEMORY_HOST);
-      deviation = hypre_CTAlloc(HYPRE_Real, 3, HYPRE_MEMORY_HOST);
+      mean      = nalu_hypre_CTAlloc(NALU_HYPRE_Real, 3, NALU_HYPRE_MEMORY_HOST);
+      deviation = nalu_hypre_CTAlloc(NALU_HYPRE_Real, 3, NALU_HYPRE_MEMORY_HOST);
 
       dxyz_flag = 0;
       for (i = 0; i < nvars; i++)
       {
-         hypre_PFMGComputeDxyz(hypre_SStructPMatrixSMatrix(A, i, i), sys_dxyz[i],
+         nalu_hypre_PFMGComputeDxyz(nalu_hypre_SStructPMatrixSMatrix(A, i, i), sys_dxyz[i],
                                mean, deviation);
 
          /* signal flag if any of the flag has a large (square) coeff. of
@@ -180,18 +180,18 @@ hypre_SysPFMGSetup( void                 *sys_pfmg_vdata,
             dxyz[d] += sys_dxyz[i][d];
          }
       }
-      hypre_TFree(mean, HYPRE_MEMORY_HOST);
-      hypre_TFree(deviation, HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(mean, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(deviation, NALU_HYPRE_MEMORY_HOST);
    }
 
-   grid_l = hypre_TAlloc(hypre_SStructPGrid *, max_levels, HYPRE_MEMORY_HOST);
+   grid_l = nalu_hypre_TAlloc(nalu_hypre_SStructPGrid *, max_levels, NALU_HYPRE_MEMORY_HOST);
    grid_l[0] = grid;
-   P_grid_l = hypre_TAlloc(hypre_SStructPGrid *, max_levels, HYPRE_MEMORY_HOST);
+   P_grid_l = nalu_hypre_TAlloc(nalu_hypre_SStructPGrid *, max_levels, NALU_HYPRE_MEMORY_HOST);
    P_grid_l[0] = NULL;
-   cdir_l = hypre_TAlloc(HYPRE_Int, max_levels, HYPRE_MEMORY_HOST);
-   active_l = hypre_TAlloc(HYPRE_Int, max_levels, HYPRE_MEMORY_HOST);
-   relax_weights = hypre_CTAlloc(HYPRE_Real, max_levels, HYPRE_MEMORY_HOST);
-   hypre_SetIndex3(coarsen, 1, 1, 1); /* forces relaxation on finest grid */
+   cdir_l = nalu_hypre_TAlloc(NALU_HYPRE_Int, max_levels, NALU_HYPRE_MEMORY_HOST);
+   active_l = nalu_hypre_TAlloc(NALU_HYPRE_Int, max_levels, NALU_HYPRE_MEMORY_HOST);
+   relax_weights = nalu_hypre_CTAlloc(NALU_HYPRE_Real, max_levels, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_SetIndex3(coarsen, 1, 1, 1); /* forces relaxation on finest grid */
    for (l = 0; ; l++)
    {
       /* determine cdir */
@@ -200,7 +200,7 @@ hypre_SysPFMGSetup( void                 *sys_pfmg_vdata,
       alpha = 0.0;
       for (d = 0; d < dim; d++)
       {
-         if ((hypre_BoxIMaxD(cbox, d) > hypre_BoxIMinD(cbox, d)) &&
+         if ((nalu_hypre_BoxIMaxD(cbox, d) > nalu_hypre_BoxIMinD(cbox, d)) &&
              (dxyz[d] < min_dxyz))
          {
             min_dxyz = dxyz[d];
@@ -252,7 +252,7 @@ hypre_SysPFMGSetup( void                 *sys_pfmg_vdata,
       if (cdir != -1)
       {
          /* don't coarsen if a periodic direction and not divisible by 2 */
-         periodic = hypre_IndexD(hypre_StructGridPeriodic(grid_l[l]), cdir);
+         periodic = nalu_hypre_IndexD(nalu_hypre_StructGridPeriodic(grid_l[l]), cdir);
          if ((periodic) && (periodic % 2))
          {
             cdir = -1;
@@ -272,7 +272,7 @@ hypre_SysPFMGSetup( void                 *sys_pfmg_vdata,
          cmaxsize = 0;
          for (d = 0; d < dim; d++)
          {
-            cmaxsize = hypre_max(cmaxsize, hypre_BoxSizeD(cbox, d));
+            cmaxsize = nalu_hypre_max(cmaxsize, nalu_hypre_BoxSizeD(cbox, d));
          }
 
          break;
@@ -280,37 +280,37 @@ hypre_SysPFMGSetup( void                 *sys_pfmg_vdata,
 
       cdir_l[l] = cdir;
 
-      if (hypre_IndexD(coarsen, cdir) != 0)
+      if (nalu_hypre_IndexD(coarsen, cdir) != 0)
       {
          /* coarsened previously in this direction, relax level l */
          active_l[l] = 1;
-         hypre_SetIndex3(coarsen, 0, 0, 0);
-         hypre_IndexD(coarsen, cdir) = 1;
+         nalu_hypre_SetIndex3(coarsen, 0, 0, 0);
+         nalu_hypre_IndexD(coarsen, cdir) = 1;
       }
       else
       {
          active_l[l] = 0;
-         hypre_IndexD(coarsen, cdir) = 1;
+         nalu_hypre_IndexD(coarsen, cdir) = 1;
       }
 
       /* set cindex, findex, and stride */
-      hypre_PFMGSetCIndex(cdir, cindex);
-      hypre_PFMGSetFIndex(cdir, findex);
-      hypre_PFMGSetStride(cdir, stride);
+      nalu_hypre_PFMGSetCIndex(cdir, cindex);
+      nalu_hypre_PFMGSetFIndex(cdir, findex);
+      nalu_hypre_PFMGSetStride(cdir, stride);
 
       /* update dxyz and coarsen cbox*/
       dxyz[cdir] *= 2;
-      hypre_ProjectBox(cbox, cindex, stride);
-      hypre_StructMapFineToCoarse(hypre_BoxIMin(cbox), cindex, stride,
-                                  hypre_BoxIMin(cbox));
-      hypre_StructMapFineToCoarse(hypre_BoxIMax(cbox), cindex, stride,
-                                  hypre_BoxIMax(cbox));
+      nalu_hypre_ProjectBox(cbox, cindex, stride);
+      nalu_hypre_StructMapFineToCoarse(nalu_hypre_BoxIMin(cbox), cindex, stride,
+                                  nalu_hypre_BoxIMin(cbox));
+      nalu_hypre_StructMapFineToCoarse(nalu_hypre_BoxIMax(cbox), cindex, stride,
+                                  nalu_hypre_BoxIMax(cbox));
 
       /* build the interpolation grid */
-      hypre_SysStructCoarsen(grid_l[l], findex, stride, 0, &P_grid_l[l + 1]);
+      nalu_hypre_SysStructCoarsen(grid_l[l], findex, stride, 0, &P_grid_l[l + 1]);
 
       /* build the coarse grid */
-      hypre_SysStructCoarsen(grid_l[l], cindex, stride, 1, &grid_l[l + 1]);
+      nalu_hypre_SysStructCoarsen(grid_l[l], cindex, stride, 1, &grid_l[l + 1]);
    }
    num_levels = l + 1;
 
@@ -325,22 +325,22 @@ hypre_SysPFMGSetup( void                 *sys_pfmg_vdata,
    full_periodic = 1;
    for (d = 0; d < dim; d++)
    {
-      full_periodic *= hypre_IndexD(hypre_SStructPGridPeriodic(grid), d);
+      full_periodic *= nalu_hypre_IndexD(nalu_hypre_SStructPGridPeriodic(grid), d);
    }
    if ( full_periodic != 0)
    {
-      hypre_SStructPGridDestroy(grid_l[num_levels - 1]);
-      hypre_SStructPGridDestroy(P_grid_l[num_levels - 1]);
+      nalu_hypre_SStructPGridDestroy(grid_l[num_levels - 1]);
+      nalu_hypre_SStructPGridDestroy(P_grid_l[num_levels - 1]);
       num_levels -= 1;
    }
 
    /* free up some things */
-   hypre_BoxDestroy(cbox);
+   nalu_hypre_BoxDestroy(cbox);
    for ( i = 0; i < nvars; i++)
    {
-      hypre_TFree(sys_dxyz[i], HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(sys_dxyz[i], NALU_HYPRE_MEMORY_HOST);
    }
-   hypre_TFree(sys_dxyz, HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(sys_dxyz, NALU_HYPRE_MEMORY_HOST);
 
 
    /* set all levels active if skip_relax = 0 */
@@ -362,51 +362,51 @@ hypre_SysPFMGSetup( void                 *sys_pfmg_vdata,
     * Set up matrix and vector structures
     *-----------------------------------------------------*/
 
-   A_l  = hypre_TAlloc(hypre_SStructPMatrix *, num_levels, HYPRE_MEMORY_HOST);
-   P_l  = hypre_TAlloc(hypre_SStructPMatrix *, num_levels - 1, HYPRE_MEMORY_HOST);
-   RT_l = hypre_TAlloc(hypre_SStructPMatrix *, num_levels - 1, HYPRE_MEMORY_HOST);
-   b_l  = hypre_TAlloc(hypre_SStructPVector *, num_levels, HYPRE_MEMORY_HOST);
-   x_l  = hypre_TAlloc(hypre_SStructPVector *, num_levels, HYPRE_MEMORY_HOST);
-   tx_l = hypre_TAlloc(hypre_SStructPVector *, num_levels, HYPRE_MEMORY_HOST);
+   A_l  = nalu_hypre_TAlloc(nalu_hypre_SStructPMatrix *, num_levels, NALU_HYPRE_MEMORY_HOST);
+   P_l  = nalu_hypre_TAlloc(nalu_hypre_SStructPMatrix *, num_levels - 1, NALU_HYPRE_MEMORY_HOST);
+   RT_l = nalu_hypre_TAlloc(nalu_hypre_SStructPMatrix *, num_levels - 1, NALU_HYPRE_MEMORY_HOST);
+   b_l  = nalu_hypre_TAlloc(nalu_hypre_SStructPVector *, num_levels, NALU_HYPRE_MEMORY_HOST);
+   x_l  = nalu_hypre_TAlloc(nalu_hypre_SStructPVector *, num_levels, NALU_HYPRE_MEMORY_HOST);
+   tx_l = nalu_hypre_TAlloc(nalu_hypre_SStructPVector *, num_levels, NALU_HYPRE_MEMORY_HOST);
    r_l  = tx_l;
    e_l  = tx_l;
 
-   hypre_SStructPMatrixRef(A, &A_l[0]);
-   hypre_SStructPVectorRef(b, &b_l[0]);
-   hypre_SStructPVectorRef(x, &x_l[0]);
+   nalu_hypre_SStructPMatrixRef(A, &A_l[0]);
+   nalu_hypre_SStructPVectorRef(b, &b_l[0]);
+   nalu_hypre_SStructPVectorRef(x, &x_l[0]);
 
-   hypre_SStructPVectorCreate(comm, grid_l[0], &tx_l[0]);
-   hypre_SStructPVectorInitialize(tx_l[0]);
+   nalu_hypre_SStructPVectorCreate(comm, grid_l[0], &tx_l[0]);
+   nalu_hypre_SStructPVectorInitialize(tx_l[0]);
 
    for (l = 0; l < (num_levels - 1); l++)
    {
       cdir = cdir_l[l];
 
-      P_l[l]  = hypre_SysPFMGCreateInterpOp(A_l[l], P_grid_l[l + 1], cdir);
-      hypre_SStructPMatrixInitialize(P_l[l]);
+      P_l[l]  = nalu_hypre_SysPFMGCreateInterpOp(A_l[l], P_grid_l[l + 1], cdir);
+      nalu_hypre_SStructPMatrixInitialize(P_l[l]);
 
       RT_l[l] = P_l[l];
 
-      A_l[l + 1] = hypre_SysPFMGCreateRAPOp(RT_l[l], A_l[l], P_l[l],
+      A_l[l + 1] = nalu_hypre_SysPFMGCreateRAPOp(RT_l[l], A_l[l], P_l[l],
                                             grid_l[l + 1], cdir);
-      hypre_SStructPMatrixInitialize(A_l[l + 1]);
+      nalu_hypre_SStructPMatrixInitialize(A_l[l + 1]);
 
-      hypre_SStructPVectorCreate(comm, grid_l[l + 1], &b_l[l + 1]);
-      hypre_SStructPVectorInitialize(b_l[l + 1]);
+      nalu_hypre_SStructPVectorCreate(comm, grid_l[l + 1], &b_l[l + 1]);
+      nalu_hypre_SStructPVectorInitialize(b_l[l + 1]);
 
-      hypre_SStructPVectorCreate(comm, grid_l[l + 1], &x_l[l + 1]);
-      hypre_SStructPVectorInitialize(x_l[l + 1]);
+      nalu_hypre_SStructPVectorCreate(comm, grid_l[l + 1], &x_l[l + 1]);
+      nalu_hypre_SStructPVectorInitialize(x_l[l + 1]);
 
-      hypre_SStructPVectorCreate(comm, grid_l[l + 1], &tx_l[l + 1]);
-      hypre_SStructPVectorInitialize(tx_l[l + 1]);
+      nalu_hypre_SStructPVectorCreate(comm, grid_l[l + 1], &tx_l[l + 1]);
+      nalu_hypre_SStructPVectorInitialize(tx_l[l + 1]);
    }
 
-   hypre_SStructPVectorAssemble(tx_l[0]);
+   nalu_hypre_SStructPVectorAssemble(tx_l[0]);
    for (l = 0; l < (num_levels - 1); l++)
    {
-      hypre_SStructPVectorAssemble(b_l[l + 1]);
-      hypre_SStructPVectorAssemble(x_l[l + 1]);
-      hypre_SStructPVectorAssemble(tx_l[l + 1]);
+      nalu_hypre_SStructPVectorAssemble(b_l[l + 1]);
+      nalu_hypre_SStructPVectorAssemble(x_l[l + 1]);
+      nalu_hypre_SStructPVectorAssemble(tx_l[l + 1]);
    }
 
    (sys_pfmg_data -> A_l)  = A_l;
@@ -422,100 +422,100 @@ hypre_SysPFMGSetup( void                 *sys_pfmg_vdata,
     * Set up multigrid operators and call setup routines
     *-----------------------------------------------------*/
 
-   relax_data_l    = hypre_TAlloc(void *, num_levels, HYPRE_MEMORY_HOST);
-   matvec_data_l   = hypre_TAlloc(void *, num_levels, HYPRE_MEMORY_HOST);
-   restrict_data_l = hypre_TAlloc(void *, num_levels, HYPRE_MEMORY_HOST);
-   interp_data_l   = hypre_TAlloc(void *, num_levels, HYPRE_MEMORY_HOST);
+   relax_data_l    = nalu_hypre_TAlloc(void *, num_levels, NALU_HYPRE_MEMORY_HOST);
+   matvec_data_l   = nalu_hypre_TAlloc(void *, num_levels, NALU_HYPRE_MEMORY_HOST);
+   restrict_data_l = nalu_hypre_TAlloc(void *, num_levels, NALU_HYPRE_MEMORY_HOST);
+   interp_data_l   = nalu_hypre_TAlloc(void *, num_levels, NALU_HYPRE_MEMORY_HOST);
 
    for (l = 0; l < (num_levels - 1); l++)
    {
       cdir = cdir_l[l];
 
-      hypre_PFMGSetCIndex(cdir, cindex);
-      hypre_PFMGSetFIndex(cdir, findex);
-      hypre_PFMGSetStride(cdir, stride);
+      nalu_hypre_PFMGSetCIndex(cdir, cindex);
+      nalu_hypre_PFMGSetFIndex(cdir, findex);
+      nalu_hypre_PFMGSetStride(cdir, stride);
 
       /* set up interpolation operator */
-      hypre_SysPFMGSetupInterpOp(A_l[l], cdir, findex, stride, P_l[l]);
+      nalu_hypre_SysPFMGSetupInterpOp(A_l[l], cdir, findex, stride, P_l[l]);
 
       /* set up the coarse grid operator */
-      hypre_SysPFMGSetupRAPOp(RT_l[l], A_l[l], P_l[l],
+      nalu_hypre_SysPFMGSetupRAPOp(RT_l[l], A_l[l], P_l[l],
                               cdir, cindex, stride, A_l[l + 1]);
 
       /* set up the interpolation routine */
-      hypre_SysSemiInterpCreate(&interp_data_l[l]);
-      hypre_SysSemiInterpSetup(interp_data_l[l], P_l[l], 0, x_l[l + 1], e_l[l],
+      nalu_hypre_SysSemiInterpCreate(&interp_data_l[l]);
+      nalu_hypre_SysSemiInterpSetup(interp_data_l[l], P_l[l], 0, x_l[l + 1], e_l[l],
                                cindex, findex, stride);
 
       /* set up the restriction routine */
-      hypre_SysSemiRestrictCreate(&restrict_data_l[l]);
-      hypre_SysSemiRestrictSetup(restrict_data_l[l], RT_l[l], 1, r_l[l], b_l[l + 1],
+      nalu_hypre_SysSemiRestrictCreate(&restrict_data_l[l]);
+      nalu_hypre_SysSemiRestrictSetup(restrict_data_l[l], RT_l[l], 1, r_l[l], b_l[l + 1],
                                  cindex, findex, stride);
    }
 
    /* set up fine grid relaxation */
-   relax_data_l[0] = hypre_SysPFMGRelaxCreate(comm);
-   hypre_SysPFMGRelaxSetTol(relax_data_l[0], 0.0);
+   relax_data_l[0] = nalu_hypre_SysPFMGRelaxCreate(comm);
+   nalu_hypre_SysPFMGRelaxSetTol(relax_data_l[0], 0.0);
    if (usr_jacobi_weight)
    {
-      hypre_SysPFMGRelaxSetJacobiWeight(relax_data_l[0], jacobi_weight);
+      nalu_hypre_SysPFMGRelaxSetJacobiWeight(relax_data_l[0], jacobi_weight);
    }
    else
    {
-      hypre_SysPFMGRelaxSetJacobiWeight(relax_data_l[0], relax_weights[0]);
+      nalu_hypre_SysPFMGRelaxSetJacobiWeight(relax_data_l[0], relax_weights[0]);
    }
-   hypre_SysPFMGRelaxSetType(relax_data_l[0], relax_type);
-   hypre_SysPFMGRelaxSetTempVec(relax_data_l[0], tx_l[0]);
-   hypre_SysPFMGRelaxSetup(relax_data_l[0], A_l[0], b_l[0], x_l[0]);
+   nalu_hypre_SysPFMGRelaxSetType(relax_data_l[0], relax_type);
+   nalu_hypre_SysPFMGRelaxSetTempVec(relax_data_l[0], tx_l[0]);
+   nalu_hypre_SysPFMGRelaxSetup(relax_data_l[0], A_l[0], b_l[0], x_l[0]);
    if (num_levels > 1)
    {
       for (l = 1; l < num_levels; l++)
       {
          /* set relaxation parameters */
-         relax_data_l[l] = hypre_SysPFMGRelaxCreate(comm);
-         hypre_SysPFMGRelaxSetTol(relax_data_l[l], 0.0);
+         relax_data_l[l] = nalu_hypre_SysPFMGRelaxCreate(comm);
+         nalu_hypre_SysPFMGRelaxSetTol(relax_data_l[l], 0.0);
          if (usr_jacobi_weight)
          {
-            hypre_SysPFMGRelaxSetJacobiWeight(relax_data_l[l], jacobi_weight);
+            nalu_hypre_SysPFMGRelaxSetJacobiWeight(relax_data_l[l], jacobi_weight);
          }
          else
          {
-            hypre_SysPFMGRelaxSetJacobiWeight(relax_data_l[l], relax_weights[l]);
+            nalu_hypre_SysPFMGRelaxSetJacobiWeight(relax_data_l[l], relax_weights[l]);
          }
-         hypre_SysPFMGRelaxSetType(relax_data_l[l], relax_type);
-         hypre_SysPFMGRelaxSetTempVec(relax_data_l[l], tx_l[l]);
+         nalu_hypre_SysPFMGRelaxSetType(relax_data_l[l], relax_type);
+         nalu_hypre_SysPFMGRelaxSetTempVec(relax_data_l[l], tx_l[l]);
       }
 
       /* change coarsest grid relaxation parameters */
       l = num_levels - 1;
       {
-         HYPRE_Int maxwork, maxiter;
-         hypre_SysPFMGRelaxSetType(relax_data_l[l], 0);
+         NALU_HYPRE_Int maxwork, maxiter;
+         nalu_hypre_SysPFMGRelaxSetType(relax_data_l[l], 0);
          /* do no more work on the coarsest grid than the cost of a V-cycle
           * (estimating roughly 4 communications per V-cycle level) */
          maxwork = 4 * num_levels;
          /* do sweeps proportional to the coarsest grid size */
-         maxiter = hypre_min(maxwork, cmaxsize);
+         maxiter = nalu_hypre_min(maxwork, cmaxsize);
 #if 0
-         hypre_printf("maxwork = %d, cmaxsize = %d, maxiter = %d\n",
+         nalu_hypre_printf("maxwork = %d, cmaxsize = %d, maxiter = %d\n",
                       maxwork, cmaxsize, maxiter);
 #endif
-         hypre_SysPFMGRelaxSetMaxIter(relax_data_l[l], maxiter);
+         nalu_hypre_SysPFMGRelaxSetMaxIter(relax_data_l[l], maxiter);
       }
 
       /* call relax setup */
       for (l = 1; l < num_levels; l++)
       {
-         hypre_SysPFMGRelaxSetup(relax_data_l[l], A_l[l], b_l[l], x_l[l]);
+         nalu_hypre_SysPFMGRelaxSetup(relax_data_l[l], A_l[l], b_l[l], x_l[l]);
       }
    }
-   hypre_TFree(relax_weights, HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(relax_weights, NALU_HYPRE_MEMORY_HOST);
 
    for (l = 0; l < num_levels; l++)
    {
       /* set up the residual routine */
-      hypre_SStructPMatvecCreate(&matvec_data_l[l]);
-      hypre_SStructPMatvecSetup(matvec_data_l[l], A_l[l], x_l[l]);
+      nalu_hypre_SStructPMatvecCreate(&matvec_data_l[l]);
+      nalu_hypre_SStructPMatvecSetup(matvec_data_l[l], A_l[l], x_l[l]);
    }
 
    (sys_pfmg_data -> relax_data_l)    = relax_data_l;
@@ -530,106 +530,106 @@ hypre_SysPFMGSetup( void                 *sys_pfmg_vdata,
    if ((sys_pfmg_data -> logging) > 0)
    {
       max_iter = (sys_pfmg_data -> max_iter);
-      (sys_pfmg_data -> norms)     = hypre_TAlloc(HYPRE_Real, max_iter, HYPRE_MEMORY_HOST);
-      (sys_pfmg_data -> rel_norms) = hypre_TAlloc(HYPRE_Real, max_iter, HYPRE_MEMORY_HOST);
+      (sys_pfmg_data -> norms)     = nalu_hypre_TAlloc(NALU_HYPRE_Real, max_iter, NALU_HYPRE_MEMORY_HOST);
+      (sys_pfmg_data -> rel_norms) = nalu_hypre_TAlloc(NALU_HYPRE_Real, max_iter, NALU_HYPRE_MEMORY_HOST);
    }
 
 #if DEBUG
    for (l = 0; l < (num_levels - 1); l++)
    {
-      hypre_sprintf(filename, "zout_A.%02d", l);
-      hypre_SStructPMatrixPrint(filename, A_l[l], 0);
-      hypre_sprintf(filename, "zout_P.%02d", l);
-      hypre_SStructPMatrixPrint(filename, P_l[l], 0);
+      nalu_hypre_sprintf(filename, "zout_A.%02d", l);
+      nalu_hypre_SStructPMatrixPrint(filename, A_l[l], 0);
+      nalu_hypre_sprintf(filename, "zout_P.%02d", l);
+      nalu_hypre_SStructPMatrixPrint(filename, P_l[l], 0);
    }
-   hypre_sprintf(filename, "zout_A.%02d", l);
-   hypre_SStructPMatrixPrint(filename, A_l[l], 0);
+   nalu_hypre_sprintf(filename, "zout_A.%02d", l);
+   nalu_hypre_SStructPMatrixPrint(filename, A_l[l], 0);
 #endif
 
    /*-----------------------------------------------------
     * Destroy Refs to A,x,b (the PMatrix & PVectors within
     * the input SStructMatrix & SStructVectors).
     *-----------------------------------------------------*/
-   hypre_SStructPMatrixDestroy(A);
-   hypre_SStructPVectorDestroy(x);
-   hypre_SStructPVectorDestroy(b);
+   nalu_hypre_SStructPMatrixDestroy(A);
+   nalu_hypre_SStructPVectorDestroy(x);
+   nalu_hypre_SStructPVectorDestroy(b);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_SysStructCoarsen( hypre_SStructPGrid  *fgrid,
-                        hypre_Index          index,
-                        hypre_Index          stride,
-                        HYPRE_Int            prune,
-                        hypre_SStructPGrid **cgrid_ptr )
+NALU_HYPRE_Int
+nalu_hypre_SysStructCoarsen( nalu_hypre_SStructPGrid  *fgrid,
+                        nalu_hypre_Index          index,
+                        nalu_hypre_Index          stride,
+                        NALU_HYPRE_Int            prune,
+                        nalu_hypre_SStructPGrid **cgrid_ptr )
 {
-   hypre_SStructPGrid   *cgrid;
+   nalu_hypre_SStructPGrid   *cgrid;
 
-   hypre_StructGrid     *sfgrid;
-   hypre_StructGrid     *scgrid;
+   nalu_hypre_StructGrid     *sfgrid;
+   nalu_hypre_StructGrid     *scgrid;
 
    MPI_Comm               comm;
-   HYPRE_Int              ndim;
-   HYPRE_Int              nvars;
-   hypre_SStructVariable *vartypes;
-   hypre_SStructVariable *new_vartypes;
-   HYPRE_Int              i;
-   HYPRE_Int              t;
+   NALU_HYPRE_Int              ndim;
+   NALU_HYPRE_Int              nvars;
+   nalu_hypre_SStructVariable *vartypes;
+   nalu_hypre_SStructVariable *new_vartypes;
+   NALU_HYPRE_Int              i;
+   NALU_HYPRE_Int              t;
 
    /*-----------------------------------------
     * Copy information from fine grid
     *-----------------------------------------*/
 
-   comm      = hypre_SStructPGridComm(fgrid);
-   ndim      = hypre_SStructPGridNDim(fgrid);
-   nvars     = hypre_SStructPGridNVars(fgrid);
-   vartypes  = hypre_SStructPGridVarTypes(fgrid);
+   comm      = nalu_hypre_SStructPGridComm(fgrid);
+   ndim      = nalu_hypre_SStructPGridNDim(fgrid);
+   nvars     = nalu_hypre_SStructPGridNVars(fgrid);
+   vartypes  = nalu_hypre_SStructPGridVarTypes(fgrid);
 
-   cgrid = hypre_TAlloc(hypre_SStructPGrid, 1, HYPRE_MEMORY_HOST);
+   cgrid = nalu_hypre_TAlloc(nalu_hypre_SStructPGrid, 1, NALU_HYPRE_MEMORY_HOST);
 
-   hypre_SStructPGridComm(cgrid)     = comm;
-   hypre_SStructPGridNDim(cgrid)     = ndim;
-   hypre_SStructPGridNVars(cgrid)    = nvars;
-   new_vartypes = hypre_TAlloc(hypre_SStructVariable, nvars, HYPRE_MEMORY_HOST);
+   nalu_hypre_SStructPGridComm(cgrid)     = comm;
+   nalu_hypre_SStructPGridNDim(cgrid)     = ndim;
+   nalu_hypre_SStructPGridNVars(cgrid)    = nvars;
+   new_vartypes = nalu_hypre_TAlloc(nalu_hypre_SStructVariable, nvars, NALU_HYPRE_MEMORY_HOST);
    for (i = 0; i < nvars; i++)
    {
       new_vartypes[i] = vartypes[i];
    }
-   hypre_SStructPGridVarTypes(cgrid) = new_vartypes;
+   nalu_hypre_SStructPGridVarTypes(cgrid) = new_vartypes;
 
    for (t = 0; t < 8; t++)
    {
-      hypre_SStructPGridVTSGrid(cgrid, t)     = NULL;
-      hypre_SStructPGridVTIBoxArray(cgrid, t) = NULL;
+      nalu_hypre_SStructPGridVTSGrid(cgrid, t)     = NULL;
+      nalu_hypre_SStructPGridVTIBoxArray(cgrid, t) = NULL;
    }
 
    /*-----------------------------------------
     * Set the coarse sgrid
     *-----------------------------------------*/
 
-   sfgrid = hypre_SStructPGridCellSGrid(fgrid);
-   hypre_StructCoarsen(sfgrid, index, stride, prune, &scgrid);
+   sfgrid = nalu_hypre_SStructPGridCellSGrid(fgrid);
+   nalu_hypre_StructCoarsen(sfgrid, index, stride, prune, &scgrid);
 
-   hypre_CopyIndex(hypre_StructGridPeriodic(scgrid),
-                   hypre_SStructPGridPeriodic(cgrid));
+   nalu_hypre_CopyIndex(nalu_hypre_StructGridPeriodic(scgrid),
+                   nalu_hypre_SStructPGridPeriodic(cgrid));
 
-   hypre_SStructPGridSetCellSGrid(cgrid, scgrid);
+   nalu_hypre_SStructPGridSetCellSGrid(cgrid, scgrid);
 
-   hypre_SStructPGridPNeighbors(cgrid) = hypre_BoxArrayCreate(0, ndim);
-   hypre_SStructPGridPNborOffsets(cgrid) = NULL;
+   nalu_hypre_SStructPGridPNeighbors(cgrid) = nalu_hypre_BoxArrayCreate(0, ndim);
+   nalu_hypre_SStructPGridPNborOffsets(cgrid) = NULL;
 
-   hypre_SStructPGridLocalSize(cgrid)  = 0;
-   hypre_SStructPGridGlobalSize(cgrid) = 0;
-   hypre_SStructPGridGhlocalSize(cgrid) = 0;
+   nalu_hypre_SStructPGridLocalSize(cgrid)  = 0;
+   nalu_hypre_SStructPGridGlobalSize(cgrid) = 0;
+   nalu_hypre_SStructPGridGhlocalSize(cgrid) = 0;
 
-   hypre_SStructPGridAssemble(cgrid);
+   nalu_hypre_SStructPGridAssemble(cgrid);
 
    *cgrid_ptr = cgrid;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 

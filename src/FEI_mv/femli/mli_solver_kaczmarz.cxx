@@ -7,7 +7,7 @@
 
 #include <string.h>
 #include "mli_solver_kaczmarz.h"
-#include "_hypre_parcsr_mv.h"
+#include "_nalu_hypre_parcsr_mv.h"
 
 /******************************************************************************
  * Kaczmarz relaxation scheme
@@ -43,19 +43,19 @@ int MLI_Solver_Kaczmarz::setup(MLI_Matrix *mat)
 {
    int                irow, jcol, localNRows, *ADiagI, *AOffdI;
    double             *ADiagA, *AOffdA, rowNorm;
-   hypre_ParCSRMatrix *A;
-   hypre_CSRMatrix    *ADiag, *AOffd;
+   nalu_hypre_ParCSRMatrix *A;
+   nalu_hypre_CSRMatrix    *ADiag, *AOffd;
 
    Amat_ = mat;
 
-   A          = (hypre_ParCSRMatrix *) Amat_->getMatrix();
-   ADiag      = hypre_ParCSRMatrixDiag(A);
-   AOffd      = hypre_ParCSRMatrixOffd(A);
-   localNRows = hypre_CSRMatrixNumRows(ADiag);
-   ADiagI     = hypre_CSRMatrixI(ADiag);
-   ADiagA     = hypre_CSRMatrixData(ADiag);
-   AOffdI     = hypre_CSRMatrixI(AOffd);
-   AOffdA     = hypre_CSRMatrixData(AOffd);
+   A          = (nalu_hypre_ParCSRMatrix *) Amat_->getMatrix();
+   ADiag      = nalu_hypre_ParCSRMatrixDiag(A);
+   AOffd      = nalu_hypre_ParCSRMatrixOffd(A);
+   localNRows = nalu_hypre_CSRMatrixNumRows(ADiag);
+   ADiagI     = nalu_hypre_CSRMatrixI(ADiag);
+   ADiagA     = nalu_hypre_CSRMatrixData(ADiag);
+   AOffdI     = nalu_hypre_CSRMatrixI(AOffd);
+   AOffdA     = nalu_hypre_CSRMatrixData(AOffd);
 
    if ( AsqDiag_ != NULL ) delete [] AsqDiag_;
    AsqDiag_ = new double[localNRows];
@@ -78,39 +78,39 @@ int MLI_Solver_Kaczmarz::setup(MLI_Matrix *mat)
 
 int MLI_Solver_Kaczmarz::solve(MLI_Vector *fIn, MLI_Vector *uIn)
 {
-   hypre_ParCSRMatrix  *A;
-   hypre_CSRMatrix     *ADiag, *AOffd;
+   nalu_hypre_ParCSRMatrix  *A;
+   nalu_hypre_CSRMatrix     *ADiag, *AOffd;
    int                 *ADiagI, *ADiagJ, *AOffdI, *AOffdJ;
    double              *ADiagA, *AOffdA, *uData, *fData;
    int                 irow, jcol, is, localNRows, retFlag=0, nprocs, start;
    int                 nSends, extNRows, index, endp1;
    double              *vBufData, *vExtData, res;
    MPI_Comm            comm;
-   hypre_ParCSRCommPkg    *commPkg;
-   hypre_ParVector        *f, *u;
-   hypre_ParCSRCommHandle *commHandle;
+   nalu_hypre_ParCSRCommPkg    *commPkg;
+   nalu_hypre_ParVector        *f, *u;
+   nalu_hypre_ParCSRCommHandle *commHandle;
 
    /*-----------------------------------------------------------------
     * fetch machine and smoother parameters
     *-----------------------------------------------------------------*/
 
-   A          = (hypre_ParCSRMatrix *) Amat_->getMatrix();
-   comm       = hypre_ParCSRMatrixComm(A);
-   commPkg    = hypre_ParCSRMatrixCommPkg(A);
-   ADiag      = hypre_ParCSRMatrixDiag(A);
-   localNRows = hypre_CSRMatrixNumRows(ADiag);
-   ADiagI     = hypre_CSRMatrixI(ADiag);
-   ADiagJ     = hypre_CSRMatrixJ(ADiag);
-   ADiagA     = hypre_CSRMatrixData(ADiag);
-   AOffd      = hypre_ParCSRMatrixOffd(A);
-   extNRows   = hypre_CSRMatrixNumCols(AOffd);
-   AOffdI     = hypre_CSRMatrixI(AOffd);
-   AOffdJ     = hypre_CSRMatrixJ(AOffd);
-   AOffdA     = hypre_CSRMatrixData(AOffd);
-   u          = (hypre_ParVector *) uIn->getVector();
-   f          = (hypre_ParVector *) fIn->getVector();
-   uData      = hypre_VectorData(hypre_ParVectorLocalVector(u));
-   fData      = hypre_VectorData(hypre_ParVectorLocalVector(f));
+   A          = (nalu_hypre_ParCSRMatrix *) Amat_->getMatrix();
+   comm       = nalu_hypre_ParCSRMatrixComm(A);
+   commPkg    = nalu_hypre_ParCSRMatrixCommPkg(A);
+   ADiag      = nalu_hypre_ParCSRMatrixDiag(A);
+   localNRows = nalu_hypre_CSRMatrixNumRows(ADiag);
+   ADiagI     = nalu_hypre_CSRMatrixI(ADiag);
+   ADiagJ     = nalu_hypre_CSRMatrixJ(ADiag);
+   ADiagA     = nalu_hypre_CSRMatrixData(ADiag);
+   AOffd      = nalu_hypre_ParCSRMatrixOffd(A);
+   extNRows   = nalu_hypre_CSRMatrixNumCols(AOffd);
+   AOffdI     = nalu_hypre_CSRMatrixI(AOffd);
+   AOffdJ     = nalu_hypre_CSRMatrixJ(AOffd);
+   AOffdA     = nalu_hypre_CSRMatrixData(AOffd);
+   u          = (nalu_hypre_ParVector *) uIn->getVector();
+   f          = (nalu_hypre_ParVector *) fIn->getVector();
+   uData      = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(u));
+   fData      = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(f));
    MPI_Comm_size(comm,&nprocs);  
 
    /*-----------------------------------------------------------------
@@ -119,8 +119,8 @@ int MLI_Solver_Kaczmarz::solve(MLI_Vector *fIn, MLI_Vector *uIn)
 
    if (nprocs > 1)
    {
-      nSends = hypre_ParCSRCommPkgNumSends(commPkg);
-      vBufData = new double[hypre_ParCSRCommPkgSendMapStart(commPkg,nSends)];
+      nSends = nalu_hypre_ParCSRCommPkgNumSends(commPkg);
+      vBufData = new double[nalu_hypre_ParCSRCommPkgSendMapStart(commPkg,nSends)];
       vExtData = new double[extNRows];
       for ( irow = 0; irow < extNRows; irow++ ) vExtData[irow] = 0.0;
    }
@@ -136,15 +136,15 @@ int MLI_Solver_Kaczmarz::solve(MLI_Vector *fIn, MLI_Vector *uIn)
          index = 0;
          for (irow = 0; irow < nSends; irow++)
          {
-            start = hypre_ParCSRCommPkgSendMapStart(commPkg, irow);
-            endp1 = hypre_ParCSRCommPkgSendMapStart(commPkg,irow+1);
+            start = nalu_hypre_ParCSRCommPkgSendMapStart(commPkg, irow);
+            endp1 = nalu_hypre_ParCSRCommPkgSendMapStart(commPkg,irow+1);
             for ( jcol = start; jcol < endp1; jcol++ )
                vBufData[index++]
-                      = uData[hypre_ParCSRCommPkgSendMapElmt(commPkg,jcol)];
+                      = uData[nalu_hypre_ParCSRCommPkgSendMapElmt(commPkg,jcol)];
          }
-         commHandle = hypre_ParCSRCommHandleCreate(1,commPkg,vBufData,
+         commHandle = nalu_hypre_ParCSRCommHandleCreate(1,commPkg,vBufData,
                                                    vExtData);
-         hypre_ParCSRCommHandleDestroy(commHandle);
+         nalu_hypre_ParCSRCommHandleDestroy(commHandle);
          commHandle = NULL;
       }
 

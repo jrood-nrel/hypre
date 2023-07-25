@@ -27,28 +27,28 @@ parameters here, and refer the reader to the reference manual for more details
 on the parameters and their defaults.
 
 
-* ``HYPRE_MGRCreate:`` Create the MGR solver object.
-* ``HYPRE_MGRSetCpointsByBlock:`` Set up block data with information about
+* ``NALU_HYPRE_MGRCreate:`` Create the MGR solver object.
+* ``NALU_HYPRE_MGRSetCpointsByBlock:`` Set up block data with information about
   coarse indexes for reduction. Here, the user specifies the number of reduction
   levels, as well as the the coarse nodes for each level of the reduction. These
   coarse nodes are indexed by their index in the block of unknowns.  This is
   used internally to tag the appropriate indexes of the linear system matrix as
   coarse nodes.
-* (Optional) ``HYPRE_MGRSetReservedCoarseNodes:`` Prescribe a subset of nodes to
+* (Optional) ``NALU_HYPRE_MGRSetReservedCoarseNodes:`` Prescribe a subset of nodes to
   be kept as coarse nodes until the coarsest level. These nodes are transferred
   onto the coarsest grid of the BoomerAMG coarse grid solver.
-* (Optional) ``HYPRE_MGRSetNonCpointsToFpoints:`` Set points not prescribed as C
+* (Optional) ``NALU_HYPRE_MGRSetNonCpointsToFpoints:`` Set points not prescribed as C
   points to be fixed as F points for intermediate levels. Setting this to 1 uses
   the user input to define the C/F splitting.  Otherwise, a BoomerAMG coarsening
   routine is used to determine the C/F splitting for intermediate levels.
-* (Optional) ``HYPRE_MGRSetCoarseSolver:`` This function sets the BoomerAMG
+* (Optional) ``NALU_HYPRE_MGRSetCoarseSolver:`` This function sets the BoomerAMG
   solver to be used for the solve on the coarse grid. The user can define their
   own BoomerAMG solver with their preferred options and pass this to the MGR
   solver. Otherwise, an internal BoomerAMG solver is used as the coarse grid
   solver instead.
-* ``HYPRE_MGRSetup:`` Setup and MGR solver object.
-* ``HYPRE_MGRSolve:`` Solve the linear system.
-* ``HYPRE_MGRDestroy:`` Destroy the MGR solver object
+* ``NALU_HYPRE_MGRSetup:`` Setup and MGR solver object.
+* ``NALU_HYPRE_MGRSolve:`` Solve the linear system.
+* ``NALU_HYPRE_MGRDestroy:`` Destroy the MGR solver object
 
 For more details about additional solver options and parameters, please refer to
 the reference manual.  NOTE: The MGR solver is currently only supported by the

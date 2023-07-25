@@ -5,264 +5,264 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_struct_ls.h"
+#include "_nalu_hypre_struct_ls.h"
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_StructHybridCreate( MPI_Comm comm, HYPRE_StructSolver *solver )
+NALU_HYPRE_Int
+NALU_HYPRE_StructHybridCreate( MPI_Comm comm, NALU_HYPRE_StructSolver *solver )
 {
-   *solver = ( (HYPRE_StructSolver) hypre_HybridCreate( comm ) );
+   *solver = ( (NALU_HYPRE_StructSolver) nalu_hypre_HybridCreate( comm ) );
 
-   return hypre_error_flag;
-}
-
-/*--------------------------------------------------------------------------
- *--------------------------------------------------------------------------*/
-
-HYPRE_Int
-HYPRE_StructHybridDestroy( HYPRE_StructSolver solver )
-{
-   return ( hypre_HybridDestroy( (void *) solver ) );
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_StructHybridSetup( HYPRE_StructSolver solver,
-                         HYPRE_StructMatrix A,
-                         HYPRE_StructVector b,
-                         HYPRE_StructVector x      )
+NALU_HYPRE_Int
+NALU_HYPRE_StructHybridDestroy( NALU_HYPRE_StructSolver solver )
 {
-   return ( hypre_HybridSetup( (void *) solver,
-                               (hypre_StructMatrix *) A,
-                               (hypre_StructVector *) b,
-                               (hypre_StructVector *) x ) );
+   return ( nalu_hypre_HybridDestroy( (void *) solver ) );
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_StructHybridSolve( HYPRE_StructSolver solver,
-                         HYPRE_StructMatrix A,
-                         HYPRE_StructVector b,
-                         HYPRE_StructVector x      )
+NALU_HYPRE_Int
+NALU_HYPRE_StructHybridSetup( NALU_HYPRE_StructSolver solver,
+                         NALU_HYPRE_StructMatrix A,
+                         NALU_HYPRE_StructVector b,
+                         NALU_HYPRE_StructVector x      )
 {
-   return ( hypre_HybridSolve( (void *) solver,
-                               (hypre_StructMatrix *) A,
-                               (hypre_StructVector *) b,
-                               (hypre_StructVector *) x ) );
+   return ( nalu_hypre_HybridSetup( (void *) solver,
+                               (nalu_hypre_StructMatrix *) A,
+                               (nalu_hypre_StructVector *) b,
+                               (nalu_hypre_StructVector *) x ) );
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_StructHybridSetTol( HYPRE_StructSolver solver,
-                          HYPRE_Real         tol    )
+NALU_HYPRE_Int
+NALU_HYPRE_StructHybridSolve( NALU_HYPRE_StructSolver solver,
+                         NALU_HYPRE_StructMatrix A,
+                         NALU_HYPRE_StructVector b,
+                         NALU_HYPRE_StructVector x      )
 {
-   return ( hypre_HybridSetTol( (void *) solver, tol ) );
+   return ( nalu_hypre_HybridSolve( (void *) solver,
+                               (nalu_hypre_StructMatrix *) A,
+                               (nalu_hypre_StructVector *) b,
+                               (nalu_hypre_StructVector *) x ) );
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_StructHybridSetConvergenceTol( HYPRE_StructSolver solver,
-                                     HYPRE_Real         cf_tol    )
+NALU_HYPRE_Int
+NALU_HYPRE_StructHybridSetTol( NALU_HYPRE_StructSolver solver,
+                          NALU_HYPRE_Real         tol    )
 {
-   return ( hypre_HybridSetConvergenceTol( (void *) solver, cf_tol ) );
+   return ( nalu_hypre_HybridSetTol( (void *) solver, tol ) );
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_StructHybridSetDSCGMaxIter( HYPRE_StructSolver solver,
-                                  HYPRE_Int          dscg_max_its )
+NALU_HYPRE_Int
+NALU_HYPRE_StructHybridSetConvergenceTol( NALU_HYPRE_StructSolver solver,
+                                     NALU_HYPRE_Real         cf_tol    )
 {
-   return ( hypre_HybridSetDSCGMaxIter( (void *) solver, dscg_max_its ) );
+   return ( nalu_hypre_HybridSetConvergenceTol( (void *) solver, cf_tol ) );
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_StructHybridSetPCGMaxIter( HYPRE_StructSolver solver,
-                                 HYPRE_Int          pcg_max_its )
+NALU_HYPRE_Int
+NALU_HYPRE_StructHybridSetDSCGMaxIter( NALU_HYPRE_StructSolver solver,
+                                  NALU_HYPRE_Int          dscg_max_its )
 {
-   return ( hypre_HybridSetPCGMaxIter( (void *) solver, pcg_max_its ) );
+   return ( nalu_hypre_HybridSetDSCGMaxIter( (void *) solver, dscg_max_its ) );
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_StructHybridSetPCGAbsoluteTolFactor( HYPRE_StructSolver solver,
-                                           HYPRE_Real  pcg_atolf )
+NALU_HYPRE_Int
+NALU_HYPRE_StructHybridSetPCGMaxIter( NALU_HYPRE_StructSolver solver,
+                                 NALU_HYPRE_Int          pcg_max_its )
 {
-   return ( hypre_HybridSetPCGAbsoluteTolFactor( (void *) solver, pcg_atolf ) );
+   return ( nalu_hypre_HybridSetPCGMaxIter( (void *) solver, pcg_max_its ) );
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_StructHybridSetTwoNorm( HYPRE_StructSolver solver,
-                              HYPRE_Int          two_norm    )
+NALU_HYPRE_Int
+NALU_HYPRE_StructHybridSetPCGAbsoluteTolFactor( NALU_HYPRE_StructSolver solver,
+                                           NALU_HYPRE_Real  pcg_atolf )
 {
-   return ( hypre_HybridSetTwoNorm( (void *) solver, two_norm ) );
+   return ( nalu_hypre_HybridSetPCGAbsoluteTolFactor( (void *) solver, pcg_atolf ) );
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_StructHybridSetStopCrit( HYPRE_StructSolver solver,
-                               HYPRE_Int          stop_crit    )
+NALU_HYPRE_Int
+NALU_HYPRE_StructHybridSetTwoNorm( NALU_HYPRE_StructSolver solver,
+                              NALU_HYPRE_Int          two_norm    )
 {
-   return ( hypre_HybridSetStopCrit( (void *) solver, stop_crit ) );
+   return ( nalu_hypre_HybridSetTwoNorm( (void *) solver, two_norm ) );
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_StructHybridSetRelChange( HYPRE_StructSolver solver,
-                                HYPRE_Int          rel_change    )
+NALU_HYPRE_Int
+NALU_HYPRE_StructHybridSetStopCrit( NALU_HYPRE_StructSolver solver,
+                               NALU_HYPRE_Int          stop_crit    )
 {
-   return ( hypre_HybridSetRelChange( (void *) solver, rel_change ) );
+   return ( nalu_hypre_HybridSetStopCrit( (void *) solver, stop_crit ) );
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_StructHybridSetSolverType( HYPRE_StructSolver solver,
-                                 HYPRE_Int          solver_type    )
+NALU_HYPRE_Int
+NALU_HYPRE_StructHybridSetRelChange( NALU_HYPRE_StructSolver solver,
+                                NALU_HYPRE_Int          rel_change    )
 {
-   return ( hypre_HybridSetSolverType( (void *) solver, solver_type ) );
+   return ( nalu_hypre_HybridSetRelChange( (void *) solver, rel_change ) );
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_StructHybridSetRecomputeResidual( HYPRE_StructSolver  solver,
-                                        HYPRE_Int           recompute_residual )
+NALU_HYPRE_Int
+NALU_HYPRE_StructHybridSetSolverType( NALU_HYPRE_StructSolver solver,
+                                 NALU_HYPRE_Int          solver_type    )
 {
-   return ( hypre_HybridSetRecomputeResidual( (void *) solver, recompute_residual ) );
-}
-
-HYPRE_Int
-HYPRE_StructHybridGetRecomputeResidual( HYPRE_StructSolver  solver,
-                                        HYPRE_Int          *recompute_residual )
-{
-   return ( hypre_HybridGetRecomputeResidual( (void *) solver, recompute_residual ) );
+   return ( nalu_hypre_HybridSetSolverType( (void *) solver, solver_type ) );
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_StructHybridSetRecomputeResidualP( HYPRE_StructSolver  solver,
-                                         HYPRE_Int           recompute_residual_p )
+NALU_HYPRE_Int
+NALU_HYPRE_StructHybridSetRecomputeResidual( NALU_HYPRE_StructSolver  solver,
+                                        NALU_HYPRE_Int           recompute_residual )
 {
-   return ( hypre_HybridSetRecomputeResidualP( (void *) solver, recompute_residual_p ) );
+   return ( nalu_hypre_HybridSetRecomputeResidual( (void *) solver, recompute_residual ) );
 }
 
-HYPRE_Int
-HYPRE_StructHybridGetRecomputeResidualP( HYPRE_StructSolver  solver,
-                                         HYPRE_Int          *recompute_residual_p )
+NALU_HYPRE_Int
+NALU_HYPRE_StructHybridGetRecomputeResidual( NALU_HYPRE_StructSolver  solver,
+                                        NALU_HYPRE_Int          *recompute_residual )
 {
-   return ( hypre_HybridGetRecomputeResidualP( (void *) solver, recompute_residual_p ) );
-}
-
-/*--------------------------------------------------------------------------
- *--------------------------------------------------------------------------*/
-
-HYPRE_Int
-HYPRE_StructHybridSetKDim( HYPRE_StructSolver solver,
-                           HYPRE_Int          k_dim    )
-{
-   return ( hypre_HybridSetKDim( (void *) solver, k_dim ) );
+   return ( nalu_hypre_HybridGetRecomputeResidual( (void *) solver, recompute_residual ) );
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_StructHybridSetPrecond( HYPRE_StructSolver         solver,
-                              HYPRE_PtrToStructSolverFcn precond,
-                              HYPRE_PtrToStructSolverFcn precond_setup,
-                              HYPRE_StructSolver         precond_solver )
+NALU_HYPRE_Int
+NALU_HYPRE_StructHybridSetRecomputeResidualP( NALU_HYPRE_StructSolver  solver,
+                                         NALU_HYPRE_Int           recompute_residual_p )
 {
-   return ( hypre_HybridSetPrecond( (void *) solver,
-                                    (HYPRE_Int (*)(void*, void*, void*, void*)) precond,
-                                    (HYPRE_Int (*)(void*, void*, void*, void*)) precond_setup,
+   return ( nalu_hypre_HybridSetRecomputeResidualP( (void *) solver, recompute_residual_p ) );
+}
+
+NALU_HYPRE_Int
+NALU_HYPRE_StructHybridGetRecomputeResidualP( NALU_HYPRE_StructSolver  solver,
+                                         NALU_HYPRE_Int          *recompute_residual_p )
+{
+   return ( nalu_hypre_HybridGetRecomputeResidualP( (void *) solver, recompute_residual_p ) );
+}
+
+/*--------------------------------------------------------------------------
+ *--------------------------------------------------------------------------*/
+
+NALU_HYPRE_Int
+NALU_HYPRE_StructHybridSetKDim( NALU_HYPRE_StructSolver solver,
+                           NALU_HYPRE_Int          k_dim    )
+{
+   return ( nalu_hypre_HybridSetKDim( (void *) solver, k_dim ) );
+}
+
+/*--------------------------------------------------------------------------
+ *--------------------------------------------------------------------------*/
+
+NALU_HYPRE_Int
+NALU_HYPRE_StructHybridSetPrecond( NALU_HYPRE_StructSolver         solver,
+                              NALU_HYPRE_PtrToStructSolverFcn precond,
+                              NALU_HYPRE_PtrToStructSolverFcn precond_setup,
+                              NALU_HYPRE_StructSolver         precond_solver )
+{
+   return ( nalu_hypre_HybridSetPrecond( (void *) solver,
+                                    (NALU_HYPRE_Int (*)(void*, void*, void*, void*)) precond,
+                                    (NALU_HYPRE_Int (*)(void*, void*, void*, void*)) precond_setup,
                                     (void *) precond_solver ) );
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_StructHybridSetLogging( HYPRE_StructSolver solver,
-                              HYPRE_Int          logging    )
+NALU_HYPRE_Int
+NALU_HYPRE_StructHybridSetLogging( NALU_HYPRE_StructSolver solver,
+                              NALU_HYPRE_Int          logging    )
 {
-   return ( hypre_HybridSetLogging( (void *) solver, logging ) );
+   return ( nalu_hypre_HybridSetLogging( (void *) solver, logging ) );
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_StructHybridSetPrintLevel( HYPRE_StructSolver solver,
-                                 HYPRE_Int          print_level    )
+NALU_HYPRE_Int
+NALU_HYPRE_StructHybridSetPrintLevel( NALU_HYPRE_StructSolver solver,
+                                 NALU_HYPRE_Int          print_level    )
 {
-   return ( hypre_HybridSetPrintLevel( (void *) solver, print_level ) );
+   return ( nalu_hypre_HybridSetPrintLevel( (void *) solver, print_level ) );
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_StructHybridGetNumIterations( HYPRE_StructSolver solver,
-                                    HYPRE_Int         *num_its    )
+NALU_HYPRE_Int
+NALU_HYPRE_StructHybridGetNumIterations( NALU_HYPRE_StructSolver solver,
+                                    NALU_HYPRE_Int         *num_its    )
 {
-   return ( hypre_HybridGetNumIterations( (void *) solver, num_its ) );
+   return ( nalu_hypre_HybridGetNumIterations( (void *) solver, num_its ) );
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_StructHybridGetDSCGNumIterations( HYPRE_StructSolver solver,
-                                        HYPRE_Int         *dscg_num_its )
+NALU_HYPRE_Int
+NALU_HYPRE_StructHybridGetDSCGNumIterations( NALU_HYPRE_StructSolver solver,
+                                        NALU_HYPRE_Int         *dscg_num_its )
 {
-   return ( hypre_HybridGetDSCGNumIterations( (void *) solver, dscg_num_its ) );
+   return ( nalu_hypre_HybridGetDSCGNumIterations( (void *) solver, dscg_num_its ) );
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_StructHybridGetPCGNumIterations( HYPRE_StructSolver solver,
-                                       HYPRE_Int         *pcg_num_its )
+NALU_HYPRE_Int
+NALU_HYPRE_StructHybridGetPCGNumIterations( NALU_HYPRE_StructSolver solver,
+                                       NALU_HYPRE_Int         *pcg_num_its )
 {
-   return ( hypre_HybridGetPCGNumIterations( (void *) solver, pcg_num_its ) );
+   return ( nalu_hypre_HybridGetPCGNumIterations( (void *) solver, pcg_num_its ) );
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_StructHybridGetFinalRelativeResidualNorm( HYPRE_StructSolver solver,
-                                                HYPRE_Real        *norm    )
+NALU_HYPRE_Int
+NALU_HYPRE_StructHybridGetFinalRelativeResidualNorm( NALU_HYPRE_StructSolver solver,
+                                                NALU_HYPRE_Real        *norm    )
 {
-   return ( hypre_HybridGetFinalRelativeResidualNorm( (void *) solver, norm ) );
+   return ( nalu_hypre_HybridGetFinalRelativeResidualNorm( (void *) solver, norm ) );
 }
 

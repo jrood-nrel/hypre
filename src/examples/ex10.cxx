@@ -31,7 +31,7 @@
 #include <math.h>
 #include <iostream>
 #include <fstream>
-#include "_hypre_utilities.h"
+#include "_nalu_hypre_utilities.h"
 #include "LLNL_FEI_Impl.h"
 #include "ex.h"
 
@@ -57,10 +57,10 @@ int main(int argc, char *argv[])
    MPI_Comm_rank(MPI_COMM_WORLD, &mypid);
 
    /* Initialize HYPRE */
-   HYPRE_Initialize();
+   NALU_HYPRE_Initialize();
 
    /* Print GPU info */
-   /* HYPRE_PrintDeviceInfo(); */
+   /* NALU_HYPRE_PrintDeviceInfo(); */
 
    // Set default parameters
    n = 4 * nprocs;
@@ -573,7 +573,7 @@ int main(int argc, char *argv[])
    delete feiPtr;
 
    /* Finalize HYPRE */
-   HYPRE_Finalize();
+   NALU_HYPRE_Finalize();
 
    // Finalize MPI
    MPI_Finalize();

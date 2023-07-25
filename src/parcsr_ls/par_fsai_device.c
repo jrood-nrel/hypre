@@ -5,17 +5,17 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_parcsr_ls.h"
-#include "_hypre_utilities.hpp"
+#include "_nalu_hypre_parcsr_ls.h"
+#include "_nalu_hypre_utilities.hpp"
 #include "par_fsai.h"
 
-#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP)
+#if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
 
 #define mat_(ldim, k, i, j) mat_data[ldim * (ldim * k + i) + j]
 #define rhs_(ldim, i, j)    rhs_data[ldim * i + j]
 #define sol_(ldim, i, j)    sol_data[ldim * i + j]
 
-#define HYPRE_THRUST_ZIP3(A, B, C) thrust::make_zip_iterator(thrust::make_tuple(A, B, C))
+#define NALU_HYPRE_THRUST_ZIP3(A, B, C) thrust::make_zip_iterator(thrust::make_tuple(A, B, C))
 
 /*--------------------------------------------------------------------
  * hypreGPUKernel_FSAIExtractSubSystems
@@ -30,34 +30,34 @@
  *--------------------------------------------------------------------*/
 
 __global__ void
-hypreGPUKernel_FSAIExtractSubSystems( hypre_DeviceItem &item,
-                                      HYPRE_Int         num_rows,
-                                      HYPRE_Int        *A_i,
-                                      HYPRE_Int        *A_j,
-                                      HYPRE_Complex    *A_a,
-                                      HYPRE_Int        *P_i,
-                                      HYPRE_Int        *P_e,
-                                      HYPRE_Int        *P_j,
-                                      HYPRE_Int         ldim,
-                                      HYPRE_Complex    *mat_data,
-                                      HYPRE_Complex    *rhs_data,
-                                      HYPRE_Int        *G_r )
+hypreGPUKernel_FSAIExtractSubSystems( nalu_hypre_DeviceItem &item,
+                                      NALU_HYPRE_Int         num_rows,
+                                      NALU_HYPRE_Int        *A_i,
+                                      NALU_HYPRE_Int        *A_j,
+                                      NALU_HYPRE_Complex    *A_a,
+                                      NALU_HYPRE_Int        *P_i,
+                                      NALU_HYPRE_Int        *P_e,
+                                      NALU_HYPRE_Int        *P_j,
+                                      NALU_HYPRE_Int         ldim,
+                                      NALU_HYPRE_Complex    *mat_data,
+                                      NALU_HYPRE_Complex    *rhs_data,
+                                      NALU_HYPRE_Int        *G_r )
 {
-   HYPRE_Int      lane = hypre_gpu_get_lane_id<1>(item);
-   HYPRE_Int      i, j, jj, k;
-   HYPRE_Int      pj, qj;
-   HYPRE_Int      pk, qk;
-   HYPRE_Int      A_col, P_col;
-   HYPRE_Complex  val;
-   hypre_mask     bitmask;
+   NALU_HYPRE_Int      lane = nalu_hypre_gpu_get_lane_id<1>(item);
+   NALU_HYPRE_Int      i, j, jj, k;
+   NALU_HYPRE_Int      pj, qj;
+   NALU_HYPRE_Int      pk, qk;
+   NALU_HYPRE_Int      A_col, P_col;
+   NALU_HYPRE_Complex  val;
+   nalu_hypre_mask     bitmask;
 
    /* Grid-stride loop over matrix rows */
-   for (i = hypre_gpu_get_grid_warp_id<1, 1>(item);
+   for (i = nalu_hypre_gpu_get_grid_warp_id<1, 1>(item);
         i < num_rows;
-        i += hypre_gpu_get_grid_num_warps<1, 1>(item))
+        i += nalu_hypre_gpu_get_grid_num_warps<1, 1>(item))
    {
       /* Set identity matrix */
-      for (j = lane; j < ldim; j += HYPRE_WARP_SIZE)
+      for (j = lane; j < ldim; j += NALU_HYPRE_WARP_SIZE)
       {
          mat_(ldim, i, j, j) = 1.0;
       }
@@ -67,15 +67,15 @@ hypreGPUKernel_FSAIExtractSubSystems( hypre_DeviceItem &item,
          pj = read_only_load(P_i + i);
          qj = read_only_load(P_e + i);
       }
-      qj = warp_shuffle_sync(item, HYPRE_WARP_FULL_MASK, qj, 0, HYPRE_WARP_SIZE);
-      pj = warp_shuffle_sync(item, HYPRE_WARP_FULL_MASK, pj, 0, HYPRE_WARP_SIZE);
+      qj = warp_shuffle_sync(item, NALU_HYPRE_WARP_FULL_MASK, qj, 0, NALU_HYPRE_WARP_SIZE);
+      pj = warp_shuffle_sync(item, NALU_HYPRE_WARP_FULL_MASK, pj, 0, NALU_HYPRE_WARP_SIZE);
 
       if (lane < 2)
       {
          pk = read_only_load(A_i + i + lane);
       }
-      qk = warp_shuffle_sync(item, HYPRE_WARP_FULL_MASK, pk, 1, HYPRE_WARP_SIZE);
-      pk = warp_shuffle_sync(item, HYPRE_WARP_FULL_MASK, pk, 0, HYPRE_WARP_SIZE);
+      qk = warp_shuffle_sync(item, NALU_HYPRE_WARP_FULL_MASK, pk, 1, NALU_HYPRE_WARP_SIZE);
+      pk = warp_shuffle_sync(item, NALU_HYPRE_WARP_FULL_MASK, pk, 0, NALU_HYPRE_WARP_SIZE);
 
       /* Set right hand side vector */
       for (j = pj; j < qj; j++)
@@ -84,11 +84,11 @@ hypreGPUKernel_FSAIExtractSubSystems( hypre_DeviceItem &item,
          {
             P_col = read_only_load(P_j + j);
          }
-         P_col = warp_shuffle_sync(item, HYPRE_WARP_FULL_MASK, P_col, 0, HYPRE_WARP_SIZE);
+         P_col = warp_shuffle_sync(item, NALU_HYPRE_WARP_FULL_MASK, P_col, 0, NALU_HYPRE_WARP_SIZE);
 
          for (k = pk + lane;
-              warp_any_sync(item, HYPRE_WARP_FULL_MASK, k < qk);
-              k += HYPRE_WARP_SIZE)
+              warp_any_sync(item, NALU_HYPRE_WARP_FULL_MASK, k < qk);
+              k += NALU_HYPRE_WARP_SIZE)
          {
             if (k < qk)
             {
@@ -99,10 +99,10 @@ hypreGPUKernel_FSAIExtractSubSystems( hypre_DeviceItem &item,
                A_col = -1;
             }
 
-            bitmask = hypre_ballot_sync(HYPRE_WARP_FULL_MASK, A_col == P_col);
+            bitmask = nalu_hypre_ballot_sync(NALU_HYPRE_WARP_FULL_MASK, A_col == P_col);
             if (bitmask > 0)
             {
-               if (lane == (hypre_ffs(bitmask) - 1))
+               if (lane == (nalu_hypre_ffs(bitmask) - 1))
                {
                   rhs_(ldim, i, j - pj) = - read_only_load(A_a + k);
                }
@@ -118,8 +118,8 @@ hypreGPUKernel_FSAIExtractSubSystems( hypre_DeviceItem &item,
          {
             pk = read_only_load(A_i + P_j[j] + lane);
          }
-         qk = warp_shuffle_sync(item, HYPRE_WARP_FULL_MASK, pk, 1, HYPRE_WARP_SIZE);
-         pk = warp_shuffle_sync(item, HYPRE_WARP_FULL_MASK, pk, 0, HYPRE_WARP_SIZE);
+         qk = warp_shuffle_sync(item, NALU_HYPRE_WARP_FULL_MASK, pk, 1, NALU_HYPRE_WARP_SIZE);
+         pk = warp_shuffle_sync(item, NALU_HYPRE_WARP_FULL_MASK, pk, 0, NALU_HYPRE_WARP_SIZE);
 
          /* Visit only the lower triangular part */
          for (jj = pj; jj <= j; jj++)
@@ -128,11 +128,11 @@ hypreGPUKernel_FSAIExtractSubSystems( hypre_DeviceItem &item,
             {
                P_col = read_only_load(P_j + jj);
             }
-            P_col = warp_shuffle_sync(item, HYPRE_WARP_FULL_MASK, P_col, 0, HYPRE_WARP_SIZE);
+            P_col = warp_shuffle_sync(item, NALU_HYPRE_WARP_FULL_MASK, P_col, 0, NALU_HYPRE_WARP_SIZE);
 
             for (k = pk + lane;
-                 warp_any_sync(item, HYPRE_WARP_FULL_MASK, k < qk);
-                 k += HYPRE_WARP_SIZE)
+                 warp_any_sync(item, NALU_HYPRE_WARP_FULL_MASK, k < qk);
+                 k += NALU_HYPRE_WARP_SIZE)
             {
                if (k < qk)
                {
@@ -143,10 +143,10 @@ hypreGPUKernel_FSAIExtractSubSystems( hypre_DeviceItem &item,
                   A_col = -1;
                }
 
-               bitmask = hypre_ballot_sync(HYPRE_WARP_FULL_MASK, A_col == P_col);
+               bitmask = nalu_hypre_ballot_sync(NALU_HYPRE_WARP_FULL_MASK, A_col == P_col);
                if (bitmask > 0)
                {
-                  if (lane == (hypre_ffs(bitmask) - 1))
+                  if (lane == (nalu_hypre_ffs(bitmask) - 1))
                   {
                      val = read_only_load(A_a + k);
                      mat_(ldim, i, j - pj, jj - pj) = val;
@@ -174,21 +174,21 @@ hypreGPUKernel_FSAIExtractSubSystems( hypre_DeviceItem &item,
  *--------------------------------------------------------------------*/
 
 __global__ void
-hypreGPUKernel_FSAIScaling( hypre_DeviceItem &item,
-                            HYPRE_Int         num_rows,
-                            HYPRE_Int         ldim,
-                            HYPRE_Complex    *sol_data,
-                            HYPRE_Complex    *rhs_data,
-                            HYPRE_Complex    *scaling,
-                            HYPRE_Int        *info )
+hypreGPUKernel_FSAIScaling( nalu_hypre_DeviceItem &item,
+                            NALU_HYPRE_Int         num_rows,
+                            NALU_HYPRE_Int         ldim,
+                            NALU_HYPRE_Complex    *sol_data,
+                            NALU_HYPRE_Complex    *rhs_data,
+                            NALU_HYPRE_Complex    *scaling,
+                            NALU_HYPRE_Int        *info )
 {
-   HYPRE_Int      i, j;
-   HYPRE_Complex  val;
+   NALU_HYPRE_Int      i, j;
+   NALU_HYPRE_Complex  val;
 
    /* Grid-stride loop over matrix rows */
-   for (i = hypre_gpu_get_grid_thread_id<1, 1>(item);
+   for (i = nalu_hypre_gpu_get_grid_thread_id<1, 1>(item);
         i < num_rows;
-        i += hypre_gpu_get_grid_num_threads<1, 1>(item))
+        i += nalu_hypre_gpu_get_grid_num_threads<1, 1>(item))
    {
       val = scaling[i];
       for (j = 0; j < ldim; j++)
@@ -220,27 +220,27 @@ hypreGPUKernel_FSAIScaling( hypre_DeviceItem &item,
  *--------------------------------------------------------------------*/
 
 __global__ void
-hypreGPUKernel_FSAIGatherEntries( hypre_DeviceItem &item,
-                                  HYPRE_Int         num_rows,
-                                  HYPRE_Int         ldim,
-                                  HYPRE_Complex    *sol_data,
-                                  HYPRE_Complex    *scaling,
-                                  HYPRE_Int        *K_i,
-                                  HYPRE_Int        *K_e,
-                                  HYPRE_Int        *K_j,
-                                  HYPRE_Int        *G_i,
-                                  HYPRE_Int        *G_j,
-                                  HYPRE_Complex    *G_a )
+hypreGPUKernel_FSAIGatherEntries( nalu_hypre_DeviceItem &item,
+                                  NALU_HYPRE_Int         num_rows,
+                                  NALU_HYPRE_Int         ldim,
+                                  NALU_HYPRE_Complex    *sol_data,
+                                  NALU_HYPRE_Complex    *scaling,
+                                  NALU_HYPRE_Int        *K_i,
+                                  NALU_HYPRE_Int        *K_e,
+                                  NALU_HYPRE_Int        *K_j,
+                                  NALU_HYPRE_Int        *G_i,
+                                  NALU_HYPRE_Int        *G_j,
+                                  NALU_HYPRE_Complex    *G_a )
 {
-   HYPRE_Int      i, j;
-   HYPRE_Int      cnt, il;
-   HYPRE_Int      col;
-   HYPRE_Complex  val;
+   NALU_HYPRE_Int      i, j;
+   NALU_HYPRE_Int      cnt, il;
+   NALU_HYPRE_Int      col;
+   NALU_HYPRE_Complex  val;
 
    /* Grid-stride loop over matrix rows */
-   for (i = hypre_gpu_get_grid_thread_id<1, 1>(item);
+   for (i = nalu_hypre_gpu_get_grid_thread_id<1, 1>(item);
         i < num_rows;
-        i += hypre_gpu_get_grid_num_threads<1, 1>(item))
+        i += nalu_hypre_gpu_get_grid_num_threads<1, 1>(item))
    {
       /* Set scaling factor */
       val = scaling[i];
@@ -281,36 +281,36 @@ hypreGPUKernel_FSAIGatherEntries( hypre_DeviceItem &item,
  *--------------------------------------------------------------------*/
 
 __global__ void
-hypreGPUKernel_FSAITruncateCandidateOrdered( hypre_DeviceItem &item,
-                                             HYPRE_Int         max_nonzeros_row,
-                                             HYPRE_Int         num_rows,
-                                             HYPRE_Int        *K_i,
-                                             HYPRE_Int        *K_j,
-                                             HYPRE_Complex    *K_a )
+hypreGPUKernel_FSAITruncateCandidateOrdered( nalu_hypre_DeviceItem &item,
+                                             NALU_HYPRE_Int         max_nonzeros_row,
+                                             NALU_HYPRE_Int         num_rows,
+                                             NALU_HYPRE_Int        *K_i,
+                                             NALU_HYPRE_Int        *K_j,
+                                             NALU_HYPRE_Complex    *K_a )
 {
-   HYPRE_Int      lane = hypre_gpu_get_lane_id<1>(item);
-   HYPRE_Int      p = 0;
-   HYPRE_Int      q = 0;
-   HYPRE_Int      i, j, k, kk, cnt;
-   HYPRE_Int      col;
-   hypre_mask     bitmask;
-   HYPRE_Complex  val;
-   HYPRE_Int      max_lane;
-   HYPRE_Int      max_idx;
-   HYPRE_Complex  max_val;
-   HYPRE_Complex  warp_max_val;
+   NALU_HYPRE_Int      lane = nalu_hypre_gpu_get_lane_id<1>(item);
+   NALU_HYPRE_Int      p = 0;
+   NALU_HYPRE_Int      q = 0;
+   NALU_HYPRE_Int      i, j, k, kk, cnt;
+   NALU_HYPRE_Int      col;
+   nalu_hypre_mask     bitmask;
+   NALU_HYPRE_Complex  val;
+   NALU_HYPRE_Int      max_lane;
+   NALU_HYPRE_Int      max_idx;
+   NALU_HYPRE_Complex  max_val;
+   NALU_HYPRE_Complex  warp_max_val;
 
    /* Grid-stride loop over matrix rows */
-   for (i = hypre_gpu_get_grid_warp_id<1, 1>(item);
+   for (i = nalu_hypre_gpu_get_grid_warp_id<1, 1>(item);
         i < num_rows;
-        i += hypre_gpu_get_grid_num_warps<1, 1>(item))
+        i += nalu_hypre_gpu_get_grid_num_warps<1, 1>(item))
    {
       if (lane < 2)
       {
          p = read_only_load(K_i + i + lane);
       }
-      q = warp_shuffle_sync(item, HYPRE_WARP_FULL_MASK, p, 1, HYPRE_WARP_SIZE);
-      p = warp_shuffle_sync(item, HYPRE_WARP_FULL_MASK, p, 0, HYPRE_WARP_SIZE);
+      q = warp_shuffle_sync(item, NALU_HYPRE_WARP_FULL_MASK, p, 1, NALU_HYPRE_WARP_SIZE);
+      p = warp_shuffle_sync(item, NALU_HYPRE_WARP_FULL_MASK, p, 0, NALU_HYPRE_WARP_SIZE);
 
       k = 0;
       while (k < max_nonzeros_row)
@@ -330,7 +330,7 @@ hypreGPUKernel_FSAITruncateCandidateOrdered( hypre_DeviceItem &item,
             }
          }
 
-         for (j += HYPRE_WARP_SIZE; j < q; j += HYPRE_WARP_SIZE)
+         for (j += NALU_HYPRE_WARP_SIZE; j < q; j += NALU_HYPRE_WARP_SIZE)
          {
             if (K_j[j] < i)
             {
@@ -347,15 +347,15 @@ hypreGPUKernel_FSAITruncateCandidateOrdered( hypre_DeviceItem &item,
          warp_max_val = warp_allreduce_max(item, max_val);
 
          /* Reorder col/val entries associated with warp_max_val */
-         bitmask = hypre_ballot_sync(HYPRE_WARP_FULL_MASK, warp_max_val == max_val);
+         bitmask = nalu_hypre_ballot_sync(NALU_HYPRE_WARP_FULL_MASK, warp_max_val == max_val);
          if (warp_max_val > 0.0)
          {
-            cnt = min(hypre_popc(bitmask), max_nonzeros_row - k);
+            cnt = min(nalu_hypre_popc(bitmask), max_nonzeros_row - k);
 
             for (kk = 0; kk < cnt; kk++)
             {
                /* warp_sync(item); */
-               max_lane = hypre_ffs(bitmask) - 1;
+               max_lane = nalu_hypre_ffs(bitmask) - 1;
                if (lane == max_lane)
                {
                   col = K_j[p + k + kk];
@@ -369,7 +369,7 @@ hypreGPUKernel_FSAITruncateCandidateOrdered( hypre_DeviceItem &item,
                }
 
                /* Update bitmask */
-               bitmask = hypre_mask_flip_at(bitmask, max_lane);
+               bitmask = nalu_hypre_mask_flip_at(bitmask, max_lane);
             }
 
             /* Update number of nonzeros per row */
@@ -382,7 +382,7 @@ hypreGPUKernel_FSAITruncateCandidateOrdered( hypre_DeviceItem &item,
       }
 
       /* Exclude remaining columns */
-      for (j = p + k + lane; j < q; j += HYPRE_WARP_SIZE)
+      for (j = p + k + lane; j < q; j += NALU_HYPRE_WARP_SIZE)
       {
          K_j[j] = -1;
       }
@@ -404,39 +404,39 @@ hypreGPUKernel_FSAITruncateCandidateOrdered( hypre_DeviceItem &item,
  *--------------------------------------------------------------------*/
 
 __global__ void
-hypreGPUKernel_FSAITruncateCandidateUnordered( hypre_DeviceItem &item,
-                                               HYPRE_Int         max_nonzeros_row,
-                                               HYPRE_Int         num_rows,
-                                               HYPRE_Int        *K_i,
-                                               HYPRE_Int        *K_e,
-                                               HYPRE_Int        *K_j,
-                                               HYPRE_Complex    *K_a )
+hypreGPUKernel_FSAITruncateCandidateUnordered( nalu_hypre_DeviceItem &item,
+                                               NALU_HYPRE_Int         max_nonzeros_row,
+                                               NALU_HYPRE_Int         num_rows,
+                                               NALU_HYPRE_Int        *K_i,
+                                               NALU_HYPRE_Int        *K_e,
+                                               NALU_HYPRE_Int        *K_j,
+                                               NALU_HYPRE_Complex    *K_a )
 {
-   HYPRE_Int      lane = hypre_gpu_get_lane_id<1>(item);
-   HYPRE_Int      p = 0;
-   HYPRE_Int      q = 0;
-   HYPRE_Int      ee, e, i, j, k, kk, cnt;
-   hypre_mask     bitmask;
-   HYPRE_Complex  val;
-   HYPRE_Int      max_lane;
-   HYPRE_Int      max_idx;
-   HYPRE_Int      max_col;
-   HYPRE_Int      colK;
-   HYPRE_Complex  valK;
-   HYPRE_Complex  max_val;
-   HYPRE_Complex  warp_max_val;
+   NALU_HYPRE_Int      lane = nalu_hypre_gpu_get_lane_id<1>(item);
+   NALU_HYPRE_Int      p = 0;
+   NALU_HYPRE_Int      q = 0;
+   NALU_HYPRE_Int      ee, e, i, j, k, kk, cnt;
+   nalu_hypre_mask     bitmask;
+   NALU_HYPRE_Complex  val;
+   NALU_HYPRE_Int      max_lane;
+   NALU_HYPRE_Int      max_idx;
+   NALU_HYPRE_Int      max_col;
+   NALU_HYPRE_Int      colK;
+   NALU_HYPRE_Complex  valK;
+   NALU_HYPRE_Complex  max_val;
+   NALU_HYPRE_Complex  warp_max_val;
 
    /* Grid-stride loop over matrix rows */
-   for (i = hypre_gpu_get_grid_warp_id<1, 1>(item);
+   for (i = nalu_hypre_gpu_get_grid_warp_id<1, 1>(item);
         i < num_rows;
-        i += hypre_gpu_get_grid_num_warps<1, 1>(item))
+        i += nalu_hypre_gpu_get_grid_num_warps<1, 1>(item))
    {
       if (lane < 2)
       {
          p = read_only_load(K_i + i + lane);
       }
-      q = warp_shuffle_sync(item, HYPRE_WARP_FULL_MASK, p, 1, HYPRE_WARP_SIZE);
-      p = warp_shuffle_sync(item, HYPRE_WARP_FULL_MASK, p, 0, HYPRE_WARP_SIZE);
+      q = warp_shuffle_sync(item, NALU_HYPRE_WARP_FULL_MASK, p, 1, NALU_HYPRE_WARP_SIZE);
+      p = warp_shuffle_sync(item, NALU_HYPRE_WARP_FULL_MASK, p, 0, NALU_HYPRE_WARP_SIZE);
 
       k = 0;
       while (k < max_nonzeros_row)
@@ -456,7 +456,7 @@ hypreGPUKernel_FSAITruncateCandidateUnordered( hypre_DeviceItem &item,
             }
          }
 
-         for (j += HYPRE_WARP_SIZE; j < q; j += HYPRE_WARP_SIZE)
+         for (j += NALU_HYPRE_WARP_SIZE; j < q; j += NALU_HYPRE_WARP_SIZE)
          {
             if (K_j[j] < i)
             {
@@ -473,15 +473,15 @@ hypreGPUKernel_FSAITruncateCandidateUnordered( hypre_DeviceItem &item,
          warp_max_val = warp_allreduce_max(item, max_val);
 
          /* Reorder col/val entries associated with warp_max_val */
-         bitmask = hypre_ballot_sync(HYPRE_WARP_FULL_MASK, warp_max_val == max_val);
+         bitmask = nalu_hypre_ballot_sync(NALU_HYPRE_WARP_FULL_MASK, warp_max_val == max_val);
          if (warp_max_val > 0.0)
          {
-            cnt = min(hypre_popc(bitmask), max_nonzeros_row - k);
+            cnt = min(nalu_hypre_popc(bitmask), max_nonzeros_row - k);
 
             for (kk = 0; kk < cnt; kk++)
             {
                /* warp_sync(item); */
-               max_lane = hypre_ffs(bitmask) - 1;
+               max_lane = nalu_hypre_ffs(bitmask) - 1;
                if (lane == max_lane)
                {
                   colK = K_j[p + k + kk];
@@ -555,7 +555,7 @@ hypreGPUKernel_FSAITruncateCandidateUnordered( hypre_DeviceItem &item,
                }
 
                /* Update bitmask */
-               bitmask = hypre_mask_flip_at(bitmask, max_lane);
+               bitmask = nalu_hypre_mask_flip_at(bitmask, max_lane);
             }
 
             /* Update number of nonzeros per row */
@@ -576,119 +576,119 @@ hypreGPUKernel_FSAITruncateCandidateUnordered( hypre_DeviceItem &item,
 }
 
 /*--------------------------------------------------------------------------
- * hypre_FSAIExtractSubSystemsDevice
+ * nalu_hypre_FSAIExtractSubSystemsDevice
  *
- * TODO (VPM): This could be a hypre_CSRMatrix routine
+ * TODO (VPM): This could be a nalu_hypre_CSRMatrix routine
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_FSAIExtractSubSystemsDevice( HYPRE_Int       num_rows,
-                                   HYPRE_Int       num_nonzeros,
-                                   HYPRE_Int      *A_i,
-                                   HYPRE_Int      *A_j,
-                                   HYPRE_Complex  *A_a,
-                                   HYPRE_Int      *P_i,
-                                   HYPRE_Int      *P_e,
-                                   HYPRE_Int      *P_j,
-                                   HYPRE_Int       ldim,
-                                   HYPRE_Complex  *mat_data,
-                                   HYPRE_Complex  *rhs_data,
-                                   HYPRE_Int      *G_r )
+NALU_HYPRE_Int
+nalu_hypre_FSAIExtractSubSystemsDevice( NALU_HYPRE_Int       num_rows,
+                                   NALU_HYPRE_Int       num_nonzeros,
+                                   NALU_HYPRE_Int      *A_i,
+                                   NALU_HYPRE_Int      *A_j,
+                                   NALU_HYPRE_Complex  *A_a,
+                                   NALU_HYPRE_Int      *P_i,
+                                   NALU_HYPRE_Int      *P_e,
+                                   NALU_HYPRE_Int      *P_j,
+                                   NALU_HYPRE_Int       ldim,
+                                   NALU_HYPRE_Complex  *mat_data,
+                                   NALU_HYPRE_Complex  *rhs_data,
+                                   NALU_HYPRE_Int      *G_r )
 {
    /* trivial case */
    if (num_rows <= 0)
    {
-      return hypre_error_flag;
+      return nalu_hypre_error_flag;
    }
 
-   dim3 bDim = hypre_GetDefaultDeviceBlockDimension();
-   dim3 gDim = hypre_GetDefaultDeviceGridDimension(num_rows, "warp", bDim);
+   dim3 bDim = nalu_hypre_GetDefaultDeviceBlockDimension();
+   dim3 gDim = nalu_hypre_GetDefaultDeviceGridDimension(num_rows, "warp", bDim);
 
-   HYPRE_GPU_LAUNCH( hypreGPUKernel_FSAIExtractSubSystems, gDim, bDim, num_rows,
+   NALU_HYPRE_GPU_LAUNCH( hypreGPUKernel_FSAIExtractSubSystems, gDim, bDim, num_rows,
                      A_i, A_j, A_a, P_i, P_e, P_j, ldim, mat_data, rhs_data, G_r );
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_FSAIScalingDevice
+ * nalu_hypre_FSAIScalingDevice
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_FSAIScalingDevice( HYPRE_Int       num_rows,
-                         HYPRE_Int       ldim,
-                         HYPRE_Complex  *sol_data,
-                         HYPRE_Complex  *rhs_data,
-                         HYPRE_Complex  *scaling,
-                         HYPRE_Int      *info )
+NALU_HYPRE_Int
+nalu_hypre_FSAIScalingDevice( NALU_HYPRE_Int       num_rows,
+                         NALU_HYPRE_Int       ldim,
+                         NALU_HYPRE_Complex  *sol_data,
+                         NALU_HYPRE_Complex  *rhs_data,
+                         NALU_HYPRE_Complex  *scaling,
+                         NALU_HYPRE_Int      *info )
 {
    /* trivial case */
    if (num_rows <= 0)
    {
-      return hypre_error_flag;
+      return nalu_hypre_error_flag;
    }
 
-   dim3 bDim = hypre_GetDefaultDeviceBlockDimension();
-   dim3 gDim = hypre_GetDefaultDeviceGridDimension(num_rows, "thread", bDim);
+   dim3 bDim = nalu_hypre_GetDefaultDeviceBlockDimension();
+   dim3 gDim = nalu_hypre_GetDefaultDeviceGridDimension(num_rows, "thread", bDim);
 
-   HYPRE_GPU_LAUNCH( hypreGPUKernel_FSAIScaling, gDim, bDim,
+   NALU_HYPRE_GPU_LAUNCH( hypreGPUKernel_FSAIScaling, gDim, bDim,
                      num_rows, ldim, sol_data, rhs_data, scaling, info );
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_FSAIGatherEntriesDevice
+ * nalu_hypre_FSAIGatherEntriesDevice
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_FSAIGatherEntriesDevice( HYPRE_Int       num_rows,
-                               HYPRE_Int       ldim,
-                               HYPRE_Complex  *sol_data,
-                               HYPRE_Complex  *scaling,
-                               HYPRE_Int      *K_i,
-                               HYPRE_Int      *K_e,
-                               HYPRE_Int      *K_j,
-                               HYPRE_Int      *G_i,
-                               HYPRE_Int      *G_j,
-                               HYPRE_Complex  *G_a )
+NALU_HYPRE_Int
+nalu_hypre_FSAIGatherEntriesDevice( NALU_HYPRE_Int       num_rows,
+                               NALU_HYPRE_Int       ldim,
+                               NALU_HYPRE_Complex  *sol_data,
+                               NALU_HYPRE_Complex  *scaling,
+                               NALU_HYPRE_Int      *K_i,
+                               NALU_HYPRE_Int      *K_e,
+                               NALU_HYPRE_Int      *K_j,
+                               NALU_HYPRE_Int      *G_i,
+                               NALU_HYPRE_Int      *G_j,
+                               NALU_HYPRE_Complex  *G_a )
 {
    /* trivial case */
    if (num_rows <= 0)
    {
-      return hypre_error_flag;
+      return nalu_hypre_error_flag;
    }
 
-   dim3 bDim = hypre_GetDefaultDeviceBlockDimension();
-   dim3 gDim = hypre_GetDefaultDeviceGridDimension(num_rows, "thread", bDim);
+   dim3 bDim = nalu_hypre_GetDefaultDeviceBlockDimension();
+   dim3 gDim = nalu_hypre_GetDefaultDeviceGridDimension(num_rows, "thread", bDim);
 
-   HYPRE_GPU_LAUNCH( hypreGPUKernel_FSAIGatherEntries, gDim, bDim,
+   NALU_HYPRE_GPU_LAUNCH( hypreGPUKernel_FSAIGatherEntries, gDim, bDim,
                      num_rows, ldim, sol_data, scaling, K_i, K_e, K_j, G_i, G_j, G_a );
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_FSAITruncateCandidateDevice
+ * nalu_hypre_FSAITruncateCandidateDevice
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_FSAITruncateCandidateDevice( hypre_CSRMatrix *matrix,
-                                   HYPRE_Int      **matrix_e,
-                                   HYPRE_Int        max_nonzeros_row )
+NALU_HYPRE_Int
+nalu_hypre_FSAITruncateCandidateDevice( nalu_hypre_CSRMatrix *matrix,
+                                   NALU_HYPRE_Int      **matrix_e,
+                                   NALU_HYPRE_Int        max_nonzeros_row )
 {
-   HYPRE_Int      num_rows  = hypre_CSRMatrixNumRows(matrix);
-   HYPRE_Int     *mat_i     = hypre_CSRMatrixI(matrix);
-   HYPRE_Int     *mat_j     = hypre_CSRMatrixJ(matrix);
-   HYPRE_Complex *mat_a     = hypre_CSRMatrixData(matrix);
+   NALU_HYPRE_Int      num_rows  = nalu_hypre_CSRMatrixNumRows(matrix);
+   NALU_HYPRE_Int     *mat_i     = nalu_hypre_CSRMatrixI(matrix);
+   NALU_HYPRE_Int     *mat_j     = nalu_hypre_CSRMatrixJ(matrix);
+   NALU_HYPRE_Complex *mat_a     = nalu_hypre_CSRMatrixData(matrix);
 
-   HYPRE_Int     *mat_e;
+   NALU_HYPRE_Int     *mat_e;
 
    /* Sanity check */
    if (num_rows <= 0)
    {
       *matrix_e = NULL;
-      return hypre_error_flag;
+      return nalu_hypre_error_flag;
    }
 
    /*-----------------------------------------------------
@@ -696,71 +696,71 @@ hypre_FSAITruncateCandidateDevice( hypre_CSRMatrix *matrix,
     *-----------------------------------------------------*/
 
    /* Allocate memory for row indices array */
-   hypre_GpuProfilingPushRange("Storage1");
-   mat_e = hypre_TAlloc(HYPRE_Int, num_rows, HYPRE_MEMORY_DEVICE);
-   hypre_GpuProfilingPopRange();
+   nalu_hypre_GpuProfilingPushRange("Storage1");
+   mat_e = nalu_hypre_TAlloc(NALU_HYPRE_Int, num_rows, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_GpuProfilingPopRange();
 
    /* Mark unwanted entries with -1 */
-   dim3 bDim = hypre_GetDefaultDeviceBlockDimension();
-   dim3 gDim = hypre_GetDefaultDeviceGridDimension(num_rows, "warp", bDim);
+   dim3 bDim = nalu_hypre_GetDefaultDeviceBlockDimension();
+   dim3 gDim = nalu_hypre_GetDefaultDeviceGridDimension(num_rows, "warp", bDim);
 
-   hypre_GpuProfilingPushRange("TruncCand");
-   HYPRE_GPU_LAUNCH(hypreGPUKernel_FSAITruncateCandidateUnordered, gDim, bDim,
+   nalu_hypre_GpuProfilingPushRange("TruncCand");
+   NALU_HYPRE_GPU_LAUNCH(hypreGPUKernel_FSAITruncateCandidateUnordered, gDim, bDim,
                     max_nonzeros_row, num_rows, mat_i, mat_e, mat_j, mat_a );
-   hypre_GpuProfilingPopRange();
+   nalu_hypre_GpuProfilingPopRange();
 
    *matrix_e = mat_e;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_FSAISetupStaticPowerDevice
+ * nalu_hypre_FSAISetupStaticPowerDevice
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_FSAISetupStaticPowerDevice( void               *fsai_vdata,
-                                  hypre_ParCSRMatrix *A,
-                                  hypre_ParVector    *f,
-                                  hypre_ParVector    *u )
+NALU_HYPRE_Int
+nalu_hypre_FSAISetupStaticPowerDevice( void               *fsai_vdata,
+                                  nalu_hypre_ParCSRMatrix *A,
+                                  nalu_hypre_ParVector    *f,
+                                  nalu_hypre_ParVector    *u )
 {
-   hypre_ParFSAIData      *fsai_data        = (hypre_ParFSAIData*) fsai_vdata;
-   hypre_ParCSRMatrix     *G                = hypre_ParFSAIDataGmat(fsai_data);
-   hypre_CSRMatrix        *G_diag           = hypre_ParCSRMatrixDiag(G);
-   HYPRE_Int               local_solve_type = hypre_ParFSAIDataLocalSolveType(fsai_data);
-   HYPRE_Int               max_nnz_row      = hypre_ParFSAIDataMaxNnzRow(fsai_data);
-   HYPRE_Int               num_levels       = hypre_ParFSAIDataNumLevels(fsai_data);
-   HYPRE_Real              threshold        = hypre_ParFSAIDataThreshold(fsai_data);
+   nalu_hypre_ParFSAIData      *fsai_data        = (nalu_hypre_ParFSAIData*) fsai_vdata;
+   nalu_hypre_ParCSRMatrix     *G                = nalu_hypre_ParFSAIDataGmat(fsai_data);
+   nalu_hypre_CSRMatrix        *G_diag           = nalu_hypre_ParCSRMatrixDiag(G);
+   NALU_HYPRE_Int               local_solve_type = nalu_hypre_ParFSAIDataLocalSolveType(fsai_data);
+   NALU_HYPRE_Int               max_nnz_row      = nalu_hypre_ParFSAIDataMaxNnzRow(fsai_data);
+   NALU_HYPRE_Int               num_levels       = nalu_hypre_ParFSAIDataNumLevels(fsai_data);
+   NALU_HYPRE_Real              threshold        = nalu_hypre_ParFSAIDataThreshold(fsai_data);
 
-   hypre_CSRMatrix        *A_diag           = hypre_ParCSRMatrixDiag(A);
-   HYPRE_Int               num_rows         = hypre_CSRMatrixNumRows(A_diag);
-   HYPRE_Int               block_size       = max_nnz_row * max_nnz_row;
-   HYPRE_Int               num_nonzeros_G;
+   nalu_hypre_CSRMatrix        *A_diag           = nalu_hypre_ParCSRMatrixDiag(A);
+   NALU_HYPRE_Int               num_rows         = nalu_hypre_CSRMatrixNumRows(A_diag);
+   NALU_HYPRE_Int               block_size       = max_nnz_row * max_nnz_row;
+   NALU_HYPRE_Int               num_nonzeros_G;
 
-   hypre_ParCSRMatrix     *Atilde;
-   hypre_ParCSRMatrix     *B;
-   hypre_ParCSRMatrix     *Ktilde;
-   hypre_CSRMatrix        *K_diag;
-   HYPRE_Int              *K_e = NULL;
-   HYPRE_Int               i;
+   nalu_hypre_ParCSRMatrix     *Atilde;
+   nalu_hypre_ParCSRMatrix     *B;
+   nalu_hypre_ParCSRMatrix     *Ktilde;
+   nalu_hypre_CSRMatrix        *K_diag;
+   NALU_HYPRE_Int              *K_e = NULL;
+   NALU_HYPRE_Int               i;
 
    /* Local linear solve data */
-#if defined (HYPRE_USING_MAGMA)
-    magma_queue_t          queue     = hypre_HandleMagmaQueue(hypre_handle());
+#if defined (NALU_HYPRE_USING_MAGMA)
+    magma_queue_t          queue     = nalu_hypre_HandleMagmaQueue(nalu_hypre_handle());
 #endif
 
-#if defined (HYPRE_USING_CUSOLVER) || defined (HYPRE_USING_ROCSOLVER)
-    vendorSolverHandle_t   vs_handle = hypre_HandleVendorSolverHandle(hypre_handle());
+#if defined (NALU_HYPRE_USING_CUSOLVER) || defined (NALU_HYPRE_USING_ROCSOLVER)
+    vendorSolverHandle_t   vs_handle = nalu_hypre_HandleVendorSolverHandle(nalu_hypre_handle());
 #endif
 
    /* TODO: Move to fsai_data? */
-   HYPRE_Complex          *scaling;
-   HYPRE_Int              *info;
-   HYPRE_Int              *h_info;
+   NALU_HYPRE_Complex          *scaling;
+   NALU_HYPRE_Int              *info;
+   NALU_HYPRE_Int              *h_info;
 
    /* Error code array for FSAI */
-   info   = hypre_CTAlloc(HYPRE_Int, num_rows, HYPRE_MEMORY_DEVICE);
-   h_info = hypre_TAlloc(HYPRE_Int, num_rows, HYPRE_MEMORY_HOST);
+   info   = nalu_hypre_CTAlloc(NALU_HYPRE_Int, num_rows, NALU_HYPRE_MEMORY_DEVICE);
+   h_info = nalu_hypre_TAlloc(NALU_HYPRE_Int, num_rows, NALU_HYPRE_MEMORY_HOST);
 
    /*-----------------------------------------------------
     *  Sanity checks
@@ -769,37 +769,37 @@ hypre_FSAISetupStaticPowerDevice( void               *fsai_vdata,
    /* Check local linear solve algorithm */
    if (local_solve_type == 1)
    {
-#if !(defined (HYPRE_USING_CUSOLVER) || defined(HYPRE_USING_ROCSOLVER))
-      hypre_error_w_msg(HYPRE_ERROR_GENERIC, "local_solve_type == 1 requires cuSOLVER (CUDA) or rocSOLVER (HIP)\n");
-      return hypre_error_flag;
+#if !(defined (NALU_HYPRE_USING_CUSOLVER) || defined(NALU_HYPRE_USING_ROCSOLVER))
+      nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "local_solve_type == 1 requires cuSOLVER (CUDA) or rocSOLVER (HIP)\n");
+      return nalu_hypre_error_flag;
 #endif
    }
    else if (local_solve_type == 2)
    {
-#if !defined (HYPRE_USING_MAGMA)
-      hypre_error_w_msg(HYPRE_ERROR_GENERIC, "local_solve_type == 2 requires MAGMA\n");
-      return hypre_error_flag;
+#if !defined (NALU_HYPRE_USING_MAGMA)
+      nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "local_solve_type == 2 requires MAGMA\n");
+      return nalu_hypre_error_flag;
 #endif
    }
    else
    {
-      hypre_error_w_msg(HYPRE_ERROR_GENERIC, "Unknown local linear solve type!\n");
-      return hypre_error_flag;
+      nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "Unknown local linear solve type!\n");
+      return nalu_hypre_error_flag;
    }
 
    /*-----------------------------------------------------
     *  Compute candidate pattern
     *-----------------------------------------------------*/
 
-   hypre_GpuProfilingPushRange("CandPat");
+   nalu_hypre_GpuProfilingPushRange("CandPat");
 
    /* Compute filtered version of A */
-   Atilde = hypre_ParCSRMatrixClone(A, 1);
+   Atilde = nalu_hypre_ParCSRMatrixClone(A, 1);
 
    /* Pre-filter to reduce SpGEMM cost */
    if (num_levels > 1)
    {
-      hypre_ParCSRMatrixDropSmallEntriesDevice(Atilde, threshold, 2);
+      nalu_hypre_ParCSRMatrixDropSmallEntriesDevice(Atilde, threshold, 2);
    }
 
    /* TODO: Check if Atilde is diagonal */
@@ -812,142 +812,142 @@ hypre_FSAISetupStaticPowerDevice( void               *fsai_vdata,
          break;
 
       case 2:
-         Ktilde = hypre_ParCSRMatMatDevice(Atilde, Atilde);
+         Ktilde = nalu_hypre_ParCSRMatMatDevice(Atilde, Atilde);
          break;
 
       case 3:
          /* First pass */
-         B = hypre_ParCSRMatMatDevice(Atilde, Atilde);
+         B = nalu_hypre_ParCSRMatMatDevice(Atilde, Atilde);
 
          /* Second pass */
-         Ktilde = hypre_ParCSRMatMatDevice(Atilde, B);
-         hypre_ParCSRMatrixDestroy(B);
+         Ktilde = nalu_hypre_ParCSRMatMatDevice(Atilde, B);
+         nalu_hypre_ParCSRMatrixDestroy(B);
          break;
 
       case 4:
          /* First pass */
-         B = hypre_ParCSRMatMatDevice(Atilde, Atilde);
-         hypre_ParCSRMatrixDropSmallEntriesDevice(B, threshold, 2);
+         B = nalu_hypre_ParCSRMatMatDevice(Atilde, Atilde);
+         nalu_hypre_ParCSRMatrixDropSmallEntriesDevice(B, threshold, 2);
 
          /* Second pass */
-         Ktilde = hypre_ParCSRMatMatDevice(B, B);
-         hypre_ParCSRMatrixDestroy(B);
+         Ktilde = nalu_hypre_ParCSRMatMatDevice(B, B);
+         nalu_hypre_ParCSRMatrixDestroy(B);
          break;
 
       default:
-         Ktilde = hypre_ParCSRMatrixClone(Atilde, 1);
+         Ktilde = nalu_hypre_ParCSRMatrixClone(Atilde, 1);
          for (i = 1; i < num_levels; i++)
          {
             /* Compute temporary matrix */
-            B = hypre_ParCSRMatMatDevice(Atilde, Ktilde);
+            B = nalu_hypre_ParCSRMatMatDevice(Atilde, Ktilde);
 
             /* Update resulting matrix */
-            hypre_ParCSRMatrixDestroy(Ktilde);
-            Ktilde = hypre_ParCSRMatrixClone(B, 1);
+            nalu_hypre_ParCSRMatrixDestroy(Ktilde);
+            Ktilde = nalu_hypre_ParCSRMatrixClone(B, 1);
          }
    }
 
-   hypre_GpuProfilingPopRange();
+   nalu_hypre_GpuProfilingPopRange();
 
    /*-----------------------------------------------------
     *  Filter candidate pattern
     *-----------------------------------------------------*/
 
-   hypre_GpuProfilingPushRange("FilterPat");
+   nalu_hypre_GpuProfilingPushRange("FilterPat");
 
 #if defined (DEBUG_FSAI)
    {
-      hypre_ParCSRMatrixPrintIJ(Ktilde, 0, 0, "FSAI.out.H.ij");
+      nalu_hypre_ParCSRMatrixPrintIJ(Ktilde, 0, 0, "FSAI.out.H.ij");
    }
 #endif
 
    /* Set pattern matrix diagonal matrix */
-   K_diag = hypre_ParCSRMatrixDiag(Ktilde);
+   K_diag = nalu_hypre_ParCSRMatrixDiag(Ktilde);
 
    /* Filter candidate pattern */
-   hypre_FSAITruncateCandidateDevice(K_diag, &K_e, max_nnz_row);
+   nalu_hypre_FSAITruncateCandidateDevice(K_diag, &K_e, max_nnz_row);
 
 #if defined (DEBUG_FSAI)
    {
-      hypre_ParCSRMatrixPrintIJ(Ktilde, 0, 0, "FSAI.out.K.ij");
+      nalu_hypre_ParCSRMatrixPrintIJ(Ktilde, 0, 0, "FSAI.out.K.ij");
    }
 #endif
 
-   hypre_GpuProfilingPopRange();
+   nalu_hypre_GpuProfilingPopRange();
 
    /*-----------------------------------------------------
     *  Preprocess input matrix
     *-----------------------------------------------------*/
 
-   hypre_GpuProfilingPushRange("PreProcessA");
+   nalu_hypre_GpuProfilingPushRange("PreProcessA");
 
    /* TODO: implement faster diagonal extraction (use "i == A_j[A_i[i]]")*/
-   scaling = hypre_TAlloc(HYPRE_Complex, num_rows, HYPRE_MEMORY_DEVICE);
-   hypre_CSRMatrixExtractDiagonalDevice(A_diag, scaling, 0);
+   scaling = nalu_hypre_TAlloc(NALU_HYPRE_Complex, num_rows, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_CSRMatrixExtractDiagonalDevice(A_diag, scaling, 0);
 
-   hypre_GpuProfilingPopRange();
+   nalu_hypre_GpuProfilingPopRange();
 
    /*-----------------------------------------------------
     *  Extract local linear systems
     *-----------------------------------------------------*/
 
    /* Allocate storage */
-   hypre_GpuProfilingPushRange("Storage1");
-   HYPRE_Complex  *mat_data = hypre_CTAlloc(HYPRE_Complex,
+   nalu_hypre_GpuProfilingPushRange("Storage1");
+   NALU_HYPRE_Complex  *mat_data = nalu_hypre_CTAlloc(NALU_HYPRE_Complex,
                                             block_size * num_rows,
-                                            HYPRE_MEMORY_DEVICE);
-   HYPRE_Complex  *rhs_data = hypre_CTAlloc(HYPRE_Complex, max_nnz_row * num_rows,
-                                            HYPRE_MEMORY_DEVICE);
-   HYPRE_Complex  *sol_data = hypre_CTAlloc(HYPRE_Complex, max_nnz_row * num_rows,
-                                            HYPRE_MEMORY_DEVICE);
-   hypre_GpuProfilingPopRange();
+                                            NALU_HYPRE_MEMORY_DEVICE);
+   NALU_HYPRE_Complex  *rhs_data = nalu_hypre_CTAlloc(NALU_HYPRE_Complex, max_nnz_row * num_rows,
+                                            NALU_HYPRE_MEMORY_DEVICE);
+   NALU_HYPRE_Complex  *sol_data = nalu_hypre_CTAlloc(NALU_HYPRE_Complex, max_nnz_row * num_rows,
+                                            NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_GpuProfilingPopRange();
 
    /* Gather dense linear subsystems */
-   hypre_GpuProfilingPushRange("ExtractLS");
-   hypre_FSAIExtractSubSystemsDevice(num_rows,
-                                     hypre_CSRMatrixNumNonzeros(A_diag),
-                                     hypre_CSRMatrixI(A_diag),
-                                     hypre_CSRMatrixJ(A_diag),
-                                     hypre_CSRMatrixData(A_diag),
-                                     hypre_CSRMatrixI(K_diag),
+   nalu_hypre_GpuProfilingPushRange("ExtractLS");
+   nalu_hypre_FSAIExtractSubSystemsDevice(num_rows,
+                                     nalu_hypre_CSRMatrixNumNonzeros(A_diag),
+                                     nalu_hypre_CSRMatrixI(A_diag),
+                                     nalu_hypre_CSRMatrixJ(A_diag),
+                                     nalu_hypre_CSRMatrixData(A_diag),
+                                     nalu_hypre_CSRMatrixI(K_diag),
                                      K_e,
-                                     hypre_CSRMatrixJ(K_diag),
+                                     nalu_hypre_CSRMatrixJ(K_diag),
                                      max_nnz_row,
                                      mat_data,
                                      rhs_data,
-                                     hypre_CSRMatrixI(G_diag) + 1);
-   hypre_GpuProfilingPopRange();
+                                     nalu_hypre_CSRMatrixI(G_diag) + 1);
+   nalu_hypre_GpuProfilingPopRange();
 
    /* Copy rhs to solution vector */
-   hypre_GpuProfilingPushRange("CopyRHS");
-   hypre_TMemcpy(sol_data, rhs_data, HYPRE_Complex, max_nnz_row * num_rows,
-                 HYPRE_MEMORY_DEVICE, HYPRE_MEMORY_DEVICE);
-   hypre_GpuProfilingPopRange();
+   nalu_hypre_GpuProfilingPushRange("CopyRHS");
+   nalu_hypre_TMemcpy(sol_data, rhs_data, NALU_HYPRE_Complex, max_nnz_row * num_rows,
+                 NALU_HYPRE_MEMORY_DEVICE, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_GpuProfilingPopRange();
 
    /* Build array of pointers */
-   hypre_GpuProfilingPushRange("Storage2");
-   HYPRE_Complex **sol_aop = hypre_TAlloc(HYPRE_Complex *, num_rows, HYPRE_MEMORY_DEVICE);
-   HYPRE_Complex **mat_aop = hypre_TAlloc(HYPRE_Complex *, num_rows, HYPRE_MEMORY_DEVICE);
-   hypre_GpuProfilingPopRange();
+   nalu_hypre_GpuProfilingPushRange("Storage2");
+   NALU_HYPRE_Complex **sol_aop = nalu_hypre_TAlloc(NALU_HYPRE_Complex *, num_rows, NALU_HYPRE_MEMORY_DEVICE);
+   NALU_HYPRE_Complex **mat_aop = nalu_hypre_TAlloc(NALU_HYPRE_Complex *, num_rows, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_GpuProfilingPopRange();
 
-   hypre_GpuProfilingPushRange("FormAOP");
+   nalu_hypre_GpuProfilingPushRange("FormAOP");
    hypreDevice_ComplexArrayToArrayOfPtrs(num_rows, block_size, mat_data, mat_aop);
    hypreDevice_ComplexArrayToArrayOfPtrs(num_rows, max_nnz_row, sol_data, sol_aop);
-   hypre_GpuProfilingPopRange();
+   nalu_hypre_GpuProfilingPopRange();
 
    /*-----------------------------------------------------
     *  Solve local linear systems
     *-----------------------------------------------------*/
 
-   hypre_GpuProfilingPushRange("BatchedSolve");
+   nalu_hypre_GpuProfilingPushRange("BatchedSolve");
    if (num_rows)
    {
-      hypre_GpuProfilingPushRange("Factorization");
+      nalu_hypre_GpuProfilingPushRange("Factorization");
 
       if (local_solve_type == 1)
       {
-#if defined (HYPRE_USING_CUSOLVER)
-         HYPRE_CUSOLVER_CALL(cusolverDnDpotrfBatched(vs_handle,
+#if defined (NALU_HYPRE_USING_CUSOLVER)
+         NALU_HYPRE_CUSOLVER_CALL(cusolverDnDpotrfBatched(vs_handle,
                                                      CUBLAS_FILL_MODE_LOWER,
                                                      max_nnz_row,
                                                      mat_aop,
@@ -955,8 +955,8 @@ hypre_FSAISetupStaticPowerDevice( void               *fsai_vdata,
                                                      info,
                                                      num_rows));
 
-#elif defined (HYPRE_USING_ROCSOLVER)
-         HYPRE_ROCSOLVER_CALL(rocsolver_dpotrf_batched(vs_handle,
+#elif defined (NALU_HYPRE_USING_ROCSOLVER)
+         NALU_HYPRE_ROCSOLVER_CALL(rocsolver_dpotrf_batched(vs_handle,
                                                        rocblas_fill_lower,
                                                        max_nnz_row,
                                                        mat_aop,
@@ -967,8 +967,8 @@ hypre_FSAISetupStaticPowerDevice( void               *fsai_vdata,
       }
       else if (local_solve_type == 2)
       {
-#if defined (HYPRE_USING_MAGMA)
-         HYPRE_MAGMA_CALL(magma_dpotrf_batched(MagmaLower,
+#if defined (NALU_HYPRE_USING_MAGMA)
+         NALU_HYPRE_MAGMA_CALL(magma_dpotrf_batched(MagmaLower,
                                                max_nnz_row,
                                                mat_aop,
                                                max_nnz_row,
@@ -977,27 +977,27 @@ hypre_FSAISetupStaticPowerDevice( void               *fsai_vdata,
                                                queue));
 #endif
       }
-      hypre_GpuProfilingPopRange(); /* Factorization */
+      nalu_hypre_GpuProfilingPopRange(); /* Factorization */
 
-#if defined (HYPRE_DEBUG)
-      hypre_TMemcpy(h_info, info, HYPRE_Int, num_rows,
-                    HYPRE_MEMORY_HOST, HYPRE_MEMORY_DEVICE);
-      for (HYPRE_Int k = 0; k < num_rows; k++)
+#if defined (NALU_HYPRE_DEBUG)
+      nalu_hypre_TMemcpy(h_info, info, NALU_HYPRE_Int, num_rows,
+                    NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_DEVICE);
+      for (NALU_HYPRE_Int k = 0; k < num_rows; k++)
       {
          if (h_info[k] != 0)
          {
-            hypre_printf("Cholesky factorization failed at system #%d, subrow %d\n",
+            nalu_hypre_printf("Cholesky factorization failed at system #%d, subrow %d\n",
                          k, h_info[k]);
          }
       }
 #endif
 
-      hypre_GpuProfilingPushRange("Solve");
+      nalu_hypre_GpuProfilingPushRange("Solve");
 
       if (local_solve_type == 1)
       {
-#if defined (HYPRE_USING_CUSOLVER)
-         HYPRE_CUSOLVER_CALL(cusolverDnDpotrsBatched(vs_handle,
+#if defined (NALU_HYPRE_USING_CUSOLVER)
+         NALU_HYPRE_CUSOLVER_CALL(cusolverDnDpotrsBatched(vs_handle,
                                                      CUBLAS_FILL_MODE_LOWER,
                                                      max_nnz_row,
                                                      1,
@@ -1007,8 +1007,8 @@ hypre_FSAISetupStaticPowerDevice( void               *fsai_vdata,
                                                      max_nnz_row,
                                                      info,
                                                      num_rows));
-#elif defined (HYPRE_USING_ROCSOLVER)
-         HYPRE_ROCSOLVER_CALL(rocsolver_dpotrs_batched(vs_handle,
+#elif defined (NALU_HYPRE_USING_ROCSOLVER)
+         NALU_HYPRE_ROCSOLVER_CALL(rocsolver_dpotrs_batched(vs_handle,
                                                        rocblas_fill_lower,
                                                        max_nnz_row,
                                                        1,
@@ -1021,8 +1021,8 @@ hypre_FSAISetupStaticPowerDevice( void               *fsai_vdata,
       }
       else if (local_solve_type == 2)
       {
-#if defined (HYPRE_USING_MAGMA)
-         HYPRE_MAGMA_CALL(magma_dpotrs_batched(MagmaLower,
+#if defined (NALU_HYPRE_USING_MAGMA)
+         NALU_HYPRE_MAGMA_CALL(magma_dpotrs_batched(MagmaLower,
                                                max_nnz_row,
                                                1,
                                                mat_aop,
@@ -1033,145 +1033,145 @@ hypre_FSAISetupStaticPowerDevice( void               *fsai_vdata,
                                                queue));
 #endif
       }
-      hypre_GpuProfilingPopRange(); /* Solve */
+      nalu_hypre_GpuProfilingPopRange(); /* Solve */
 
-#if defined (HYPRE_DEBUG)
-      hypre_TMemcpy(h_info, info, HYPRE_Int, num_rows,
-                    HYPRE_MEMORY_HOST, HYPRE_MEMORY_DEVICE);
-      for (HYPRE_Int k = 0; k < num_rows; k++)
+#if defined (NALU_HYPRE_DEBUG)
+      nalu_hypre_TMemcpy(h_info, info, NALU_HYPRE_Int, num_rows,
+                    NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_DEVICE);
+      for (NALU_HYPRE_Int k = 0; k < num_rows; k++)
       {
          if (h_info[k] != 0)
          {
-            hypre_printf("Cholesky solution failed at system #%d with code %d\n",
+            nalu_hypre_printf("Cholesky solution failed at system #%d with code %d\n",
                          k, h_info[k]);
          }
       }
 #endif
    }
-   hypre_GpuProfilingPopRange(); /* BatchedSolve */
+   nalu_hypre_GpuProfilingPopRange(); /* BatchedSolve */
 
    /*-----------------------------------------------------
     *  Finalize construction of the triangular factor
     *-----------------------------------------------------*/
 
-   hypre_GpuProfilingPushRange("BuildFSAI");
+   nalu_hypre_GpuProfilingPushRange("BuildFSAI");
 
    /* Update scaling factor */
-   hypre_FSAIScalingDevice(num_rows, max_nnz_row, sol_data, rhs_data, scaling, info);
+   nalu_hypre_FSAIScalingDevice(num_rows, max_nnz_row, sol_data, rhs_data, scaling, info);
 
    /* Compute the row pointer G_i */
-   hypreDevice_IntegerInclusiveScan(num_rows + 1, hypre_CSRMatrixI(G_diag));
+   hypreDevice_IntegerInclusiveScan(num_rows + 1, nalu_hypre_CSRMatrixI(G_diag));
 
    /* Get the actual number of nonzero coefficients of G_diag */
-   hypre_TMemcpy(&num_nonzeros_G, hypre_CSRMatrixI(G_diag) + num_rows,
-                 HYPRE_Int, 1, HYPRE_MEMORY_HOST, HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TMemcpy(&num_nonzeros_G, nalu_hypre_CSRMatrixI(G_diag) + num_rows,
+                 NALU_HYPRE_Int, 1, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_DEVICE);
 
    /* Update the nonzero count of matrix G */
-   hypre_CSRMatrixNumNonzeros(G_diag) = num_nonzeros_G;
+   nalu_hypre_CSRMatrixNumNonzeros(G_diag) = num_nonzeros_G;
 
    /* Set column indices and coefficients of G */
-   hypre_FSAIGatherEntriesDevice(num_rows,
+   nalu_hypre_FSAIGatherEntriesDevice(num_rows,
                                  max_nnz_row,
                                  sol_data,
                                  scaling,
-                                 hypre_CSRMatrixI(K_diag),
+                                 nalu_hypre_CSRMatrixI(K_diag),
                                  K_e,
-                                 hypre_CSRMatrixJ(K_diag),
-                                 hypre_CSRMatrixI(G_diag),
-                                 hypre_CSRMatrixJ(G_diag),
-                                 hypre_CSRMatrixData(G_diag));
+                                 nalu_hypre_CSRMatrixJ(K_diag),
+                                 nalu_hypre_CSRMatrixI(G_diag),
+                                 nalu_hypre_CSRMatrixJ(G_diag),
+                                 nalu_hypre_CSRMatrixData(G_diag));
 
-   hypre_GpuProfilingPopRange();
+   nalu_hypre_GpuProfilingPopRange();
    /* TODO: Reallocate memory for G_j/G_a? */
 
    /*-----------------------------------------------------
     *  Free memory
     *-----------------------------------------------------*/
 
-   hypre_ParCSRMatrixDestroy(Ktilde);
+   nalu_hypre_ParCSRMatrixDestroy(Ktilde);
    if (num_levels > 1)
    {
-      hypre_ParCSRMatrixDestroy(Atilde);
+      nalu_hypre_ParCSRMatrixDestroy(Atilde);
    }
 
    /* TODO: can we free some of these earlier? */
-   hypre_TFree(K_e, HYPRE_MEMORY_DEVICE);
-   hypre_TFree(rhs_data, HYPRE_MEMORY_DEVICE);
-   hypre_TFree(sol_data, HYPRE_MEMORY_DEVICE);
-   hypre_TFree(mat_data, HYPRE_MEMORY_DEVICE);
-   hypre_TFree(sol_aop, HYPRE_MEMORY_DEVICE);
-   hypre_TFree(mat_aop, HYPRE_MEMORY_DEVICE);
-   hypre_TFree(scaling, HYPRE_MEMORY_DEVICE);
-   hypre_TFree(info, HYPRE_MEMORY_DEVICE);
-   hypre_TFree(h_info, HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(K_e, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(rhs_data, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(sol_data, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(mat_data, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(sol_aop, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(mat_aop, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(scaling, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(info, NALU_HYPRE_MEMORY_DEVICE);
+   nalu_hypre_TFree(h_info, NALU_HYPRE_MEMORY_HOST);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
-#endif /* if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP) */
-#if defined(HYPRE_USING_GPU)
+#endif /* if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP) */
+#if defined(NALU_HYPRE_USING_GPU)
 
 /*--------------------------------------------------------------------------
- * hypre_FSAISetupDevice
+ * nalu_hypre_FSAISetupDevice
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_FSAISetupDevice( void               *fsai_vdata,
-                       hypre_ParCSRMatrix *A,
-                       hypre_ParVector    *f,
-                       hypre_ParVector    *u )
+NALU_HYPRE_Int
+nalu_hypre_FSAISetupDevice( void               *fsai_vdata,
+                       nalu_hypre_ParCSRMatrix *A,
+                       nalu_hypre_ParVector    *f,
+                       nalu_hypre_ParVector    *u )
 {
-   hypre_ParFSAIData       *fsai_data     = (hypre_ParFSAIData*) fsai_vdata;
-   HYPRE_Int                algo_type     = hypre_ParFSAIDataAlgoType(fsai_data);
-   hypre_ParCSRMatrix      *G             = hypre_ParFSAIDataGmat(fsai_data);
-   hypre_ParCSRMatrix      *h_A;
+   nalu_hypre_ParFSAIData       *fsai_data     = (nalu_hypre_ParFSAIData*) fsai_vdata;
+   NALU_HYPRE_Int                algo_type     = nalu_hypre_ParFSAIDataAlgoType(fsai_data);
+   nalu_hypre_ParCSRMatrix      *G             = nalu_hypre_ParFSAIDataGmat(fsai_data);
+   nalu_hypre_ParCSRMatrix      *h_A;
 
-   hypre_GpuProfilingPushRange("FSAISetup");
+   nalu_hypre_GpuProfilingPushRange("FSAISetup");
 
    if (algo_type == 1 || algo_type == 2)
    {
       /* Initialize matrix G on host */
-      hypre_ParCSRMatrixInitialize_v2(G, HYPRE_MEMORY_HOST);
+      nalu_hypre_ParCSRMatrixInitialize_v2(G, NALU_HYPRE_MEMORY_HOST);
 
       /* Clone input matrix on host */
-      h_A = hypre_ParCSRMatrixClone_v2(A, 1, HYPRE_MEMORY_HOST);
+      h_A = nalu_hypre_ParCSRMatrixClone_v2(A, 1, NALU_HYPRE_MEMORY_HOST);
 
       /* Compute FSAI factor on host */
       switch (algo_type)
       {
          case 2:
-            hypre_FSAISetupOMPDyn(fsai_vdata, h_A, f, u);
+            nalu_hypre_FSAISetupOMPDyn(fsai_vdata, h_A, f, u);
             break;
 
          default:
-            hypre_FSAISetupNative(fsai_vdata, h_A, f, u);
+            nalu_hypre_FSAISetupNative(fsai_vdata, h_A, f, u);
             break;
       }
 
       /* Move FSAI factor G to device */
-      hypre_ParCSRMatrixMigrate(G, HYPRE_MEMORY_DEVICE);
+      nalu_hypre_ParCSRMatrixMigrate(G, NALU_HYPRE_MEMORY_DEVICE);
 
       /* Destroy temporary data on host */
-      HYPRE_ParCSRMatrixDestroy(h_A);
+      NALU_HYPRE_ParCSRMatrixDestroy(h_A);
    }
    else
    {
-#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP)
+#if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
       /* Initialize matrix G on device */
-      hypre_ParCSRMatrixInitialize_v2(G, HYPRE_MEMORY_DEVICE);
+      nalu_hypre_ParCSRMatrixInitialize_v2(G, NALU_HYPRE_MEMORY_DEVICE);
 
       if (algo_type == 3)
       {
-         hypre_FSAISetupStaticPowerDevice(fsai_vdata, A, f, u);
+         nalu_hypre_FSAISetupStaticPowerDevice(fsai_vdata, A, f, u);
       }
 #else
-      hypre_error_w_msg(HYPRE_ERROR_GENERIC, "Device FSAI not implemented for SYCL!\n");
+      nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "Device FSAI not implemented for SYCL!\n");
 #endif
    }
 
-   hypre_GpuProfilingPopRange();
+   nalu_hypre_GpuProfilingPopRange();
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
-#endif /* if defined(HYPRE_USING_GPU) */
+#endif /* if defined(NALU_HYPRE_USING_GPU) */

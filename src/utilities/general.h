@@ -11,8 +11,8 @@
  *
  *****************************************************************************/
 
-#ifndef hypre_GENERAL_HEADER
-#define hypre_GENERAL_HEADER
+#ifndef nalu_hypre_GENERAL_HEADER
+#define nalu_hypre_GENERAL_HEADER
 
 #include <math.h>
 
@@ -21,136 +21,136 @@
  *--------------------------------------------------------------------------*/
 
 /* This allows us to consistently avoid 'int' throughout hypre */
-typedef int                    hypre_int;
-typedef long int               hypre_longint;
-typedef unsigned int           hypre_uint;
-typedef unsigned long int      hypre_ulongint;
-typedef unsigned long long int hypre_ulonglongint;
+typedef int                    nalu_hypre_int;
+typedef long int               nalu_hypre_longint;
+typedef unsigned int           nalu_hypre_uint;
+typedef unsigned long int      nalu_hypre_ulongint;
+typedef unsigned long long int nalu_hypre_ulonglongint;
 
 /* This allows us to consistently avoid 'double' throughout hypre */
-typedef double                 hypre_double;
+typedef double                 nalu_hypre_double;
 
 /*--------------------------------------------------------------------------
  * Define various functions
  *--------------------------------------------------------------------------*/
 
-#ifndef hypre_max
-#define hypre_max(a,b)  (((a)<(b)) ? (b) : (a))
+#ifndef nalu_hypre_max
+#define nalu_hypre_max(a,b)  (((a)<(b)) ? (b) : (a))
 #endif
-#ifndef hypre_min
-#define hypre_min(a,b)  (((a)<(b)) ? (a) : (b))
-#endif
-
-#ifndef hypre_abs
-#define hypre_abs(a)  (((a)>0) ? (a) : -(a))
+#ifndef nalu_hypre_min
+#define nalu_hypre_min(a,b)  (((a)<(b)) ? (a) : (b))
 #endif
 
-#ifndef hypre_round
-#define hypre_round(x)  ( ((x) < 0.0) ? ((HYPRE_Int)(x - 0.5)) : ((HYPRE_Int)(x + 0.5)) )
+#ifndef nalu_hypre_abs
+#define nalu_hypre_abs(a)  (((a)>0) ? (a) : -(a))
 #endif
 
-#ifndef hypre_pow2
-#define hypre_pow2(i)  ( 1 << (i) )
+#ifndef nalu_hypre_round
+#define nalu_hypre_round(x)  ( ((x) < 0.0) ? ((NALU_HYPRE_Int)(x - 0.5)) : ((NALU_HYPRE_Int)(x + 0.5)) )
 #endif
 
-#ifndef hypre_sqrt
-#if defined(HYPRE_SINGLE)
-#define hypre_sqrt sqrtf
-#elif defined(HYPRE_LONG_DOUBLE)
-#define hypre_sqrt sqrtl
+#ifndef nalu_hypre_pow2
+#define nalu_hypre_pow2(i)  ( 1 << (i) )
+#endif
+
+#ifndef nalu_hypre_sqrt
+#if defined(NALU_HYPRE_SINGLE)
+#define nalu_hypre_sqrt sqrtf
+#elif defined(NALU_HYPRE_LONG_DOUBLE)
+#define nalu_hypre_sqrt sqrtl
 #else
-#define hypre_sqrt sqrt
+#define nalu_hypre_sqrt sqrt
 #endif
 #endif
 
-#ifndef hypre_pow
-#if defined(HYPRE_SINGLE)
-#define hypre_pow powf
-#elif defined(HYPRE_LONG_DOUBLE)
-#define hypre_pow powl
+#ifndef nalu_hypre_pow
+#if defined(NALU_HYPRE_SINGLE)
+#define nalu_hypre_pow powf
+#elif defined(NALU_HYPRE_LONG_DOUBLE)
+#define nalu_hypre_pow powl
 #else
-#define hypre_pow pow
+#define nalu_hypre_pow pow
 #endif
 #endif
 
-#ifndef hypre_ceil
-#if defined(HYPRE_SINGLE)
-#define hypre_ceil ceilf
-#elif defined(HYPRE_LONG_DOUBLE)
-#define hypre_ceil ceill
+#ifndef nalu_hypre_ceil
+#if defined(NALU_HYPRE_SINGLE)
+#define nalu_hypre_ceil ceilf
+#elif defined(NALU_HYPRE_LONG_DOUBLE)
+#define nalu_hypre_ceil ceill
 #else
-#define hypre_ceil ceil
+#define nalu_hypre_ceil ceil
 #endif
 #endif
 
-#ifndef hypre_floor
-#if defined(HYPRE_SINGLE)
-#define hypre_floor floorf
-#elif defined(HYPRE_LONG_DOUBLE)
-#define hypre_floor floorl
+#ifndef nalu_hypre_floor
+#if defined(NALU_HYPRE_SINGLE)
+#define nalu_hypre_floor floorf
+#elif defined(NALU_HYPRE_LONG_DOUBLE)
+#define nalu_hypre_floor floorl
 #else
-#define hypre_floor floor
+#define nalu_hypre_floor floor
 #endif
 #endif
 
-#ifndef hypre_log
-#if defined(HYPRE_SINGLE)
-#define hypre_log logf
-#elif defined(HYPRE_LONG_DOUBLE)
-#define hypre_log logl
+#ifndef nalu_hypre_log
+#if defined(NALU_HYPRE_SINGLE)
+#define nalu_hypre_log logf
+#elif defined(NALU_HYPRE_LONG_DOUBLE)
+#define nalu_hypre_log logl
 #else
-#define hypre_log log
+#define nalu_hypre_log log
 #endif
 #endif
 
-#ifndef hypre_exp
-#if defined(HYPRE_SINGLE)
-#define hypre_exp expf
-#elif defined(HYPRE_LONG_DOUBLE)
-#define hypre_exp expl
+#ifndef nalu_hypre_exp
+#if defined(NALU_HYPRE_SINGLE)
+#define nalu_hypre_exp expf
+#elif defined(NALU_HYPRE_LONG_DOUBLE)
+#define nalu_hypre_exp expl
 #else
-#define hypre_exp exp
+#define nalu_hypre_exp exp
 #endif
 #endif
 
-#ifndef hypre_sin
-#if defined(HYPRE_SINGLE)
-#define hypre_sin sinf
-#elif defined(HYPRE_LONG_DOUBLE)
-#define hypre_sin sinl
+#ifndef nalu_hypre_sin
+#if defined(NALU_HYPRE_SINGLE)
+#define nalu_hypre_sin sinf
+#elif defined(NALU_HYPRE_LONG_DOUBLE)
+#define nalu_hypre_sin sinl
 #else
-#define hypre_sin sin
+#define nalu_hypre_sin sin
 #endif
 #endif
 
-#ifndef hypre_cos
-#if defined(HYPRE_SINGLE)
-#define hypre_cos cosf
-#elif defined(HYPRE_LONG_DOUBLE)
-#define hypre_cos cosl
+#ifndef nalu_hypre_cos
+#if defined(NALU_HYPRE_SINGLE)
+#define nalu_hypre_cos cosf
+#elif defined(NALU_HYPRE_LONG_DOUBLE)
+#define nalu_hypre_cos cosl
 #else
-#define hypre_cos cos
+#define nalu_hypre_cos cos
 #endif
 #endif
 
-#ifndef hypre_atan
-#if defined(HYPRE_SINGLE)
-#define hypre_atan atanf
-#elif defined(HYPRE_LONG_DOUBLE)
-#define hypre_atan atanl
+#ifndef nalu_hypre_atan
+#if defined(NALU_HYPRE_SINGLE)
+#define nalu_hypre_atan atanf
+#elif defined(NALU_HYPRE_LONG_DOUBLE)
+#define nalu_hypre_atan atanl
 #else
-#define hypre_atan atan
+#define nalu_hypre_atan atan
 #endif
 #endif
 
-#ifndef hypre_fmod
-#if defined(HYPRE_SINGLE)
-#define hypre_fmod fmodf
-#elif defined(HYPRE_LONG_DOUBLE)
-#define hypre_fmod fmodl
+#ifndef nalu_hypre_fmod
+#if defined(NALU_HYPRE_SINGLE)
+#define nalu_hypre_fmod fmodf
+#elif defined(NALU_HYPRE_LONG_DOUBLE)
+#define nalu_hypre_fmod fmodl
 #else
-#define hypre_fmod fmod
+#define nalu_hypre_fmod fmod
 #endif
 #endif
 
-#endif /* hypre_GENERAL_HEADER */
+#endif /* nalu_hypre_GENERAL_HEADER */

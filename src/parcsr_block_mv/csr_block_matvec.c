@@ -7,7 +7,7 @@
 
 /******************************************************************************
  *
- * Matvec functions for hypre_CSRBlockMatrix class.
+ * Matvec functions for nalu_hypre_CSRBlockMatrix class.
  *
  *****************************************************************************/
 
@@ -15,28 +15,28 @@
 #include "../seq_mv/seq_mv.h"
 
 /*--------------------------------------------------------------------------
- * hypre_CSRBlockMatrixMatvec
+ * nalu_hypre_CSRBlockMatrixMatvec
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_CSRBlockMatrixMatvec(HYPRE_Complex alpha, hypre_CSRBlockMatrix *A,
-                           hypre_Vector *x, HYPRE_Complex beta, hypre_Vector *y)
+NALU_HYPRE_Int
+nalu_hypre_CSRBlockMatrixMatvec(NALU_HYPRE_Complex alpha, nalu_hypre_CSRBlockMatrix *A,
+                           nalu_hypre_Vector *x, NALU_HYPRE_Complex beta, nalu_hypre_Vector *y)
 {
-   HYPRE_Complex    *A_data   = hypre_CSRBlockMatrixData(A);
-   HYPRE_Int        *A_i      = hypre_CSRBlockMatrixI(A);
-   HYPRE_Int        *A_j      = hypre_CSRBlockMatrixJ(A);
-   HYPRE_Int         num_rows = hypre_CSRBlockMatrixNumRows(A);
-   HYPRE_Int         num_cols = hypre_CSRBlockMatrixNumCols(A);
-   HYPRE_Int         blk_size = hypre_CSRBlockMatrixBlockSize(A);
+   NALU_HYPRE_Complex    *A_data   = nalu_hypre_CSRBlockMatrixData(A);
+   NALU_HYPRE_Int        *A_i      = nalu_hypre_CSRBlockMatrixI(A);
+   NALU_HYPRE_Int        *A_j      = nalu_hypre_CSRBlockMatrixJ(A);
+   NALU_HYPRE_Int         num_rows = nalu_hypre_CSRBlockMatrixNumRows(A);
+   NALU_HYPRE_Int         num_cols = nalu_hypre_CSRBlockMatrixNumCols(A);
+   NALU_HYPRE_Int         blk_size = nalu_hypre_CSRBlockMatrixBlockSize(A);
 
-   HYPRE_Complex    *x_data = hypre_VectorData(x);
-   HYPRE_Complex    *y_data = hypre_VectorData(y);
-   HYPRE_Int         x_size = hypre_VectorSize(x);
-   HYPRE_Int         y_size = hypre_VectorSize(y);
+   NALU_HYPRE_Complex    *x_data = nalu_hypre_VectorData(x);
+   NALU_HYPRE_Complex    *y_data = nalu_hypre_VectorData(y);
+   NALU_HYPRE_Int         x_size = nalu_hypre_VectorSize(x);
+   NALU_HYPRE_Int         y_size = nalu_hypre_VectorSize(y);
 
-   HYPRE_Int         i, b1, b2, jj, bnnz = blk_size * blk_size;
-   HYPRE_Int         ierr = 0;
-   HYPRE_Complex     temp;
+   NALU_HYPRE_Int         i, b1, b2, jj, bnnz = blk_size * blk_size;
+   NALU_HYPRE_Int         ierr = 0;
+   NALU_HYPRE_Complex     temp;
 
    /*---------------------------------------------------------------------
     *  Check for size compatibility.  Matvec returns ierr = 1 if
@@ -59,8 +59,8 @@ hypre_CSRBlockMatrixMatvec(HYPRE_Complex alpha, hypre_CSRBlockMatrix *A,
 
    if (alpha == 0.0)
    {
-#ifdef HYPRE_USING_OPENMP
-      #pragma omp parallel for private(i) HYPRE_SMP_SCHEDULE
+#ifdef NALU_HYPRE_USING_OPENMP
+      #pragma omp parallel for private(i) NALU_HYPRE_SMP_SCHEDULE
 #endif
       for (i = 0; i < num_rows * blk_size; i++) { y_data[i] *= beta; }
 
@@ -77,8 +77,8 @@ hypre_CSRBlockMatrixMatvec(HYPRE_Complex alpha, hypre_CSRBlockMatrix *A,
    {
       if (temp == 0.0)
       {
-#ifdef HYPRE_USING_OPENMP
-         #pragma omp parallel for private(i) HYPRE_SMP_SCHEDULE
+#ifdef NALU_HYPRE_USING_OPENMP
+         #pragma omp parallel for private(i) NALU_HYPRE_SMP_SCHEDULE
 #endif
          for (i = 0; i < num_rows * blk_size; i++)
          {
@@ -87,8 +87,8 @@ hypre_CSRBlockMatrixMatvec(HYPRE_Complex alpha, hypre_CSRBlockMatrix *A,
       }
       else
       {
-#ifdef HYPRE_USING_OPENMP
-         #pragma omp parallel for private(i) HYPRE_SMP_SCHEDULE
+#ifdef NALU_HYPRE_USING_OPENMP
+         #pragma omp parallel for private(i) NALU_HYPRE_SMP_SCHEDULE
 #endif
          for (i = 0; i < num_rows * blk_size; i++)
          {
@@ -101,8 +101,8 @@ hypre_CSRBlockMatrixMatvec(HYPRE_Complex alpha, hypre_CSRBlockMatrix *A,
     * y += A*x
     *-----------------------------------------------------------------*/
 
-#ifdef HYPRE_USING_OPENMP
-   #pragma omp parallel for private(i,jj,b1,b2,temp) HYPRE_SMP_SCHEDULE
+#ifdef NALU_HYPRE_USING_OPENMP
+   #pragma omp parallel for private(i,jj,b1,b2,temp) NALU_HYPRE_SMP_SCHEDULE
 #endif
 
    for (i = 0; i < num_rows; i++)
@@ -127,8 +127,8 @@ hypre_CSRBlockMatrixMatvec(HYPRE_Complex alpha, hypre_CSRBlockMatrix *A,
 
    if (alpha != 1.0)
    {
-#ifdef HYPRE_USING_OPENMP
-      #pragma omp parallel for private(i) HYPRE_SMP_SCHEDULE
+#ifdef NALU_HYPRE_USING_OPENMP
+      #pragma omp parallel for private(i) NALU_HYPRE_SMP_SCHEDULE
 #endif
       for (i = 0; i < num_rows * blk_size; i++)
       {
@@ -141,39 +141,39 @@ hypre_CSRBlockMatrixMatvec(HYPRE_Complex alpha, hypre_CSRBlockMatrix *A,
 
 
 /*--------------------------------------------------------------------------
- * hypre_CSRBlockMatrixMatvecT
+ * nalu_hypre_CSRBlockMatrixMatvecT
  *
  *   Performs y <- alpha * A^T * x + beta * y
  *
- *   From Van Henson's modification of hypre_CSRMatrixMatvec.
+ *   From Van Henson's modification of nalu_hypre_CSRMatrixMatvec.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_CSRBlockMatrixMatvecT( HYPRE_Complex         alpha,
-                             hypre_CSRBlockMatrix *A,
-                             hypre_Vector         *x,
-                             HYPRE_Complex         beta,
-                             hypre_Vector          *y     )
+NALU_HYPRE_Int
+nalu_hypre_CSRBlockMatrixMatvecT( NALU_HYPRE_Complex         alpha,
+                             nalu_hypre_CSRBlockMatrix *A,
+                             nalu_hypre_Vector         *x,
+                             NALU_HYPRE_Complex         beta,
+                             nalu_hypre_Vector          *y     )
 {
-   HYPRE_Complex    *A_data    = hypre_CSRBlockMatrixData(A);
-   HYPRE_Int        *A_i       = hypre_CSRBlockMatrixI(A);
-   HYPRE_Int        *A_j       = hypre_CSRBlockMatrixJ(A);
-   HYPRE_Int         num_rows  = hypre_CSRBlockMatrixNumRows(A);
-   HYPRE_Int         num_cols  = hypre_CSRBlockMatrixNumCols(A);
+   NALU_HYPRE_Complex    *A_data    = nalu_hypre_CSRBlockMatrixData(A);
+   NALU_HYPRE_Int        *A_i       = nalu_hypre_CSRBlockMatrixI(A);
+   NALU_HYPRE_Int        *A_j       = nalu_hypre_CSRBlockMatrixJ(A);
+   NALU_HYPRE_Int         num_rows  = nalu_hypre_CSRBlockMatrixNumRows(A);
+   NALU_HYPRE_Int         num_cols  = nalu_hypre_CSRBlockMatrixNumCols(A);
 
-   HYPRE_Complex    *x_data = hypre_VectorData(x);
-   HYPRE_Complex    *y_data = hypre_VectorData(y);
-   HYPRE_Int         x_size = hypre_VectorSize(x);
-   HYPRE_Int         y_size = hypre_VectorSize(y);
+   NALU_HYPRE_Complex    *x_data = nalu_hypre_VectorData(x);
+   NALU_HYPRE_Complex    *y_data = nalu_hypre_VectorData(y);
+   NALU_HYPRE_Int         x_size = nalu_hypre_VectorSize(x);
+   NALU_HYPRE_Int         y_size = nalu_hypre_VectorSize(y);
 
-   HYPRE_Complex     temp;
+   NALU_HYPRE_Complex     temp;
 
-   HYPRE_Int         i, j, jj;
-   HYPRE_Int         ierr  = 0;
-   HYPRE_Int         b1, b2;
+   NALU_HYPRE_Int         i, j, jj;
+   NALU_HYPRE_Int         ierr  = 0;
+   NALU_HYPRE_Int         b1, b2;
 
-   HYPRE_Int         blk_size = hypre_CSRBlockMatrixBlockSize(A);
-   HYPRE_Int         bnnz = blk_size * blk_size;
+   NALU_HYPRE_Int         blk_size = nalu_hypre_CSRBlockMatrixBlockSize(A);
+   NALU_HYPRE_Int         bnnz = blk_size * blk_size;
 
    /*---------------------------------------------------------------------
     *  Check for size compatibility.  MatvecT returns ierr = 1 if
@@ -206,8 +206,8 @@ hypre_CSRBlockMatrixMatvecT( HYPRE_Complex         alpha,
 
    if (alpha == 0.0)
    {
-#ifdef HYPRE_USING_OPENMP
-      #pragma omp parallel for private(i) HYPRE_SMP_SCHEDULE
+#ifdef NALU_HYPRE_USING_OPENMP
+      #pragma omp parallel for private(i) NALU_HYPRE_SMP_SCHEDULE
 #endif
       for (i = 0; i < num_cols * blk_size; i++)
       {
@@ -227,8 +227,8 @@ hypre_CSRBlockMatrixMatvecT( HYPRE_Complex         alpha,
    {
       if (temp == 0.0)
       {
-#ifdef HYPRE_USING_OPENMP
-         #pragma omp parallel for private(i) HYPRE_SMP_SCHEDULE
+#ifdef NALU_HYPRE_USING_OPENMP
+         #pragma omp parallel for private(i) NALU_HYPRE_SMP_SCHEDULE
 #endif
          for (i = 0; i < num_cols * blk_size; i++)
          {
@@ -237,8 +237,8 @@ hypre_CSRBlockMatrixMatvecT( HYPRE_Complex         alpha,
       }
       else
       {
-#ifdef HYPRE_USING_OPENMP
-         #pragma omp parallel for private(i) HYPRE_SMP_SCHEDULE
+#ifdef NALU_HYPRE_USING_OPENMP
+         #pragma omp parallel for private(i) NALU_HYPRE_SMP_SCHEDULE
 #endif
          for (i = 0; i < num_cols * blk_size; i++)
          {
@@ -251,8 +251,8 @@ hypre_CSRBlockMatrixMatvecT( HYPRE_Complex         alpha,
     * y += A^T*x
     *-----------------------------------------------------------------*/
 
-#ifdef HYPRE_USING_OPENMP
-   #pragma omp parallel for private(i, jj,j, b1, b2) HYPRE_SMP_SCHEDULE
+#ifdef NALU_HYPRE_USING_OPENMP
+   #pragma omp parallel for private(i, jj,j, b1, b2) NALU_HYPRE_SMP_SCHEDULE
 #endif
 
    for (i = 0; i < num_rows; i++)
@@ -277,8 +277,8 @@ hypre_CSRBlockMatrixMatvecT( HYPRE_Complex         alpha,
 
    if (alpha != 1.0)
    {
-#ifdef HYPRE_USING_OPENMP
-      #pragma omp parallel for private(i) HYPRE_SMP_SCHEDULE
+#ifdef NALU_HYPRE_USING_OPENMP
+      #pragma omp parallel for private(i) NALU_HYPRE_SMP_SCHEDULE
 #endif
       for (i = 0; i < num_cols * blk_size; i++)
       {

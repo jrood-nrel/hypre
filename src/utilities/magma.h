@@ -5,12 +5,12 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#ifndef HYPRE_MAGMA_HEADER
-#define HYPRE_MAGMA_HEADER
+#ifndef NALU_HYPRE_MAGMA_HEADER
+#define NALU_HYPRE_MAGMA_HEADER
 
-#include "HYPRE_config.h"
+#include "NALU_HYPRE_config.h"
 
-#if defined(HYPRE_USING_MAGMA)
+#if defined(NALU_HYPRE_USING_MAGMA)
 
 #include "error.h"
 
@@ -28,13 +28,13 @@ extern "C++"
 }
 #endif
 
-#define HYPRE_MAGMA_CALL(call) do {                   \
+#define NALU_HYPRE_MAGMA_CALL(call) do {                   \
    magma_int_t err = call;                            \
    if (MAGMA_SUCCESS != err) {                        \
       printf("MAGMA ERROR (code = %d) at %s:%d\n",    \
             err, __FILE__, __LINE__);                 \
-      hypre_assert(0);                                \
+      nalu_hypre_assert(0);                                \
    } } while(0)
 
-#endif /* HYPRE_USING_MAGMA */
-#endif /* HYPRE_MAGMA_HEADER */
+#endif /* NALU_HYPRE_USING_MAGMA */
+#endif /* NALU_HYPRE_MAGMA_HEADER */

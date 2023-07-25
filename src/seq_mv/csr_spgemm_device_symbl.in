@@ -8,33 +8,33 @@
 
 #include "seq_mv.h"
 
-#if defined(HYPRE_USING_GPU)
+#if defined(NALU_HYPRE_USING_GPU)
 
-#if defined(HYPRE_USING_CUDA) && HYPRE_SPGEMM_BIN >= 10
-#define HYPRE_SPGEMM_DEVICE_USE_DSHMEM
+#if defined(NALU_HYPRE_USING_CUDA) && NALU_HYPRE_SPGEMM_BIN >= 10
+#define NALU_HYPRE_SPGEMM_DEVICE_USE_DSHMEM
 #endif
 
 #include <csr_spgemm_device_symbl.h>
 
-template HYPRE_Int
-hypre_spgemm_symbolic_rownnz
-< HYPRE_SPGEMM_BIN, SYMBL_HASH_SIZE[HYPRE_SPGEMM_BIN], T_GROUP_SIZE[HYPRE_SPGEMM_BIN], true >
-( HYPRE_Int m, HYPRE_Int *row_ind, HYPRE_Int k, HYPRE_Int n, bool need_ghash, HYPRE_Int *d_ia,
-  HYPRE_Int *d_ja,
-  HYPRE_Int *d_ib, HYPRE_Int *d_jb, HYPRE_Int *d_rc, bool can_fail, char *d_rf );
+template NALU_HYPRE_Int
+nalu_hypre_spgemm_symbolic_rownnz
+< NALU_HYPRE_SPGEMM_BIN, SYMBL_HASH_SIZE[NALU_HYPRE_SPGEMM_BIN], T_GROUP_SIZE[NALU_HYPRE_SPGEMM_BIN], true >
+( NALU_HYPRE_Int m, NALU_HYPRE_Int *row_ind, NALU_HYPRE_Int k, NALU_HYPRE_Int n, bool need_ghash, NALU_HYPRE_Int *d_ia,
+  NALU_HYPRE_Int *d_ja,
+  NALU_HYPRE_Int *d_ib, NALU_HYPRE_Int *d_jb, NALU_HYPRE_Int *d_rc, bool can_fail, char *d_rf );
 
-#if HYPRE_SPGEMM_BIN == 5
-template HYPRE_Int
-hypre_spgemm_symbolic_rownnz
-< HYPRE_SPGEMM_BIN, SYMBL_HASH_SIZE[HYPRE_SPGEMM_BIN], T_GROUP_SIZE[HYPRE_SPGEMM_BIN], false >
-( HYPRE_Int m, HYPRE_Int *row_ind, HYPRE_Int k, HYPRE_Int n, bool need_ghash, HYPRE_Int *d_ia,
-  HYPRE_Int *d_ja,
-  HYPRE_Int *d_ib, HYPRE_Int *d_jb, HYPRE_Int *d_rc, bool can_fail, char *d_rf );
+#if NALU_HYPRE_SPGEMM_BIN == 5
+template NALU_HYPRE_Int
+nalu_hypre_spgemm_symbolic_rownnz
+< NALU_HYPRE_SPGEMM_BIN, SYMBL_HASH_SIZE[NALU_HYPRE_SPGEMM_BIN], T_GROUP_SIZE[NALU_HYPRE_SPGEMM_BIN], false >
+( NALU_HYPRE_Int m, NALU_HYPRE_Int *row_ind, NALU_HYPRE_Int k, NALU_HYPRE_Int n, bool need_ghash, NALU_HYPRE_Int *d_ia,
+  NALU_HYPRE_Int *d_ja,
+  NALU_HYPRE_Int *d_ib, NALU_HYPRE_Int *d_jb, NALU_HYPRE_Int *d_rc, bool can_fail, char *d_rf );
 #endif
 
-template HYPRE_Int
-hypre_spgemm_symbolic_max_num_blocks
-< SYMBL_HASH_SIZE[HYPRE_SPGEMM_BIN], T_GROUP_SIZE[HYPRE_SPGEMM_BIN] >
-( HYPRE_Int multiProcessorCount, HYPRE_Int *num_blocks_ptr, HYPRE_Int *block_size_ptr );
+template NALU_HYPRE_Int
+nalu_hypre_spgemm_symbolic_max_num_blocks
+< SYMBL_HASH_SIZE[NALU_HYPRE_SPGEMM_BIN], T_GROUP_SIZE[NALU_HYPRE_SPGEMM_BIN] >
+( NALU_HYPRE_Int multiProcessorCount, NALU_HYPRE_Int *num_blocks_ptr, NALU_HYPRE_Int *block_size_ptr );
 
-#endif /* defined(HYPRE_USING_GPU) */
+#endif /* defined(NALU_HYPRE_USING_GPU) */

@@ -4,8 +4,8 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 set(HDRS
-  HYPRE_struct_mv.h
-  _hypre_struct_mv.h
+  NALU_HYPRE_struct_mv.h
+  _nalu_hypre_struct_mv.h
 )
 
 set(SRCS
@@ -16,14 +16,14 @@ set(SRCS
   box_manager.c
   communication_info.c
   computation.c
-  F90_HYPRE_struct_grid.c
-  F90_HYPRE_struct_matrix.c
-  F90_HYPRE_struct_stencil.c
-  F90_HYPRE_struct_vector.c
-  HYPRE_struct_grid.c
-  HYPRE_struct_matrix.c
-  HYPRE_struct_stencil.c
-  HYPRE_struct_vector.c
+  F90_NALU_HYPRE_struct_grid.c
+  F90_NALU_HYPRE_struct_matrix.c
+  F90_NALU_HYPRE_struct_stencil.c
+  F90_NALU_HYPRE_struct_vector.c
+  NALU_HYPRE_struct_grid.c
+  NALU_HYPRE_struct_matrix.c
+  NALU_HYPRE_struct_stencil.c
+  NALU_HYPRE_struct_vector.c
   project.c
   struct_axpy.c
   struct_communication.c
@@ -44,7 +44,7 @@ target_sources(${PROJECT_NAME}
           ${HDRS}
 )
 
-if (HYPRE_USING_CUDA OR HYPRE_USING_SYCL)
+if (NALU_HYPRE_USING_CUDA OR NALU_HYPRE_USING_SYCL)
   set(GPU_SRCS
     struct_axpy.c
     struct_communication.c
@@ -56,8 +56,8 @@ if (HYPRE_USING_CUDA OR HYPRE_USING_SYCL)
     struct_vector.c
   )
   convert_filenames_to_full_paths(GPU_SRCS)
-  set(HYPRE_GPU_SOURCES ${HYPRE_GPU_SOURCES} ${GPU_SRCS} PARENT_SCOPE)
+  set(NALU_HYPRE_GPU_SOURCES ${NALU_HYPRE_GPU_SOURCES} ${GPU_SRCS} PARENT_SCOPE)
 endif ()
 
 convert_filenames_to_full_paths(HDRS)
-set(HYPRE_HEADERS ${HYPRE_HEADERS} ${HDRS} PARENT_SCOPE)
+set(NALU_HYPRE_HEADERS ${NALU_HYPRE_HEADERS} ${HDRS} PARENT_SCOPE)

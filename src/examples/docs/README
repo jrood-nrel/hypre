@@ -5,7 +5,7 @@
 
 - The user should be able to download and build the examples
   independently of hypre (i.e. assuming only that hypre was
-  installed in some directory $HYPRE_DIR). In particular, no
+  installed in some directory $NALU_HYPRE_DIR). In particular, no
   assumptions for the locations of the examples or hypre
   directories should be made.
 

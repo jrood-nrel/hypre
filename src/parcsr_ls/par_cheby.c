@@ -11,8 +11,8 @@
  *
  *****************************************************************************/
 
-#include "_hypre_parcsr_ls.h"
-#include "_hypre_parcsr_mv.h"
+#include "_nalu_hypre_parcsr_ls.h"
+#include "_nalu_hypre_parcsr_mv.h"
 #include "float.h"
 
 
@@ -54,25 +54,25 @@ means half, and .1 means 10percent)
  * @param[out] coefs_ptr *coefs_ptr will be allocated to contain coefficients of the polynomial
  * @param[out] ds_ptr *ds_ptr will be allocated to allow scaling by the diagonal
  */
-HYPRE_Int
-hypre_ParCSRRelax_Cheby_Setup(hypre_ParCSRMatrix *A,         /* matrix to relax with */
-                              HYPRE_Real          max_eig,
-                              HYPRE_Real          min_eig,
-                              HYPRE_Real          fraction,
-                              HYPRE_Int           order,     /* polynomial order */
-                              HYPRE_Int           scale,     /* scale by diagonal?*/
-                              HYPRE_Int           variant,
-                              HYPRE_Real        **coefs_ptr,
-                              HYPRE_Real        **ds_ptr)    /* initial/updated approximation */
+NALU_HYPRE_Int
+nalu_hypre_ParCSRRelax_Cheby_Setup(nalu_hypre_ParCSRMatrix *A,         /* matrix to relax with */
+                              NALU_HYPRE_Real          max_eig,
+                              NALU_HYPRE_Real          min_eig,
+                              NALU_HYPRE_Real          fraction,
+                              NALU_HYPRE_Int           order,     /* polynomial order */
+                              NALU_HYPRE_Int           scale,     /* scale by diagonal?*/
+                              NALU_HYPRE_Int           variant,
+                              NALU_HYPRE_Real        **coefs_ptr,
+                              NALU_HYPRE_Real        **ds_ptr)    /* initial/updated approximation */
 {
-   hypre_CSRMatrix *A_diag       = hypre_ParCSRMatrixDiag(A);
-   HYPRE_Real       theta, delta;
-   HYPRE_Real       den;
-   HYPRE_Real       upper_bound, lower_bound;
-   HYPRE_Int        num_rows     = hypre_CSRMatrixNumRows(A_diag);
-   HYPRE_Real      *coefs        = NULL;
-   HYPRE_Int        cheby_order;
-   HYPRE_Real      *ds_data = NULL;
+   nalu_hypre_CSRMatrix *A_diag       = nalu_hypre_ParCSRMatrixDiag(A);
+   NALU_HYPRE_Real       theta, delta;
+   NALU_HYPRE_Real       den;
+   NALU_HYPRE_Real       upper_bound, lower_bound;
+   NALU_HYPRE_Int        num_rows     = nalu_hypre_CSRMatrixNumRows(A_diag);
+   NALU_HYPRE_Real      *coefs        = NULL;
+   NALU_HYPRE_Int        cheby_order;
+   NALU_HYPRE_Real      *ds_data = NULL;
 
    /* u = u + p(A)r */
    if (order > 4)
@@ -85,7 +85,7 @@ hypre_ParCSRRelax_Cheby_Setup(hypre_ParCSRMatrix *A,         /* matrix to relax 
       order = 1;
    }
 
-   coefs = hypre_CTAlloc(HYPRE_Real, order + 1, HYPRE_MEMORY_HOST);
+   coefs = nalu_hypre_CTAlloc(NALU_HYPRE_Real, order + 1, NALU_HYPRE_MEMORY_HOST);
    /* we are using the order of p(A) */
    cheby_order = order - 1;
 
@@ -126,27 +126,27 @@ hypre_ParCSRRelax_Cheby_Setup(hypre_ParCSRMatrix *A,         /* matrix to relax 
 
          case 2:  /* (4*del*th - del^2 - t*(2*del + 6*th) + 2*t^2 + 6*th^2)/(2*del*th^2 - del^2*th - del^3 + 2*th^3)*/
             den = 2 * delta * theta * theta - delta * delta * theta -
-                  hypre_pow(delta, 3) + 2 * hypre_pow(theta, 3);
+                  nalu_hypre_pow(delta, 3) + 2 * nalu_hypre_pow(theta, 3);
 
-            coefs[0] = (4 * delta * theta - hypre_pow(delta, 2) + 6 * hypre_pow(theta, 2)) / den;
+            coefs[0] = (4 * delta * theta - nalu_hypre_pow(delta, 2) + 6 * nalu_hypre_pow(theta, 2)) / den;
             coefs[1] = -(2 * delta + 6 * theta) / den;
             coefs[2] =  2 / den;
 
             break;
 
          case 3: /* -(6*del^2*th - 12*del*th^2 - t^2*(4*del + 16*th) + t*(12*del*th - 3*del^2 + 24*th^2) + 3*del^3 + 4*t^3 - 16*th^3)/(4*del*th^3 - 3*del^2*th^2 - 3*del^3*th + 4*th^4)*/
-            den = - 4 * delta * hypre_pow(theta, 3) +
-                  3 * hypre_pow(delta, 2) * hypre_pow(theta, 2) +
-                  3 * hypre_pow(delta, 3) * theta -
-                  4 * hypre_pow(theta, 4);
+            den = - 4 * delta * nalu_hypre_pow(theta, 3) +
+                  3 * nalu_hypre_pow(delta, 2) * nalu_hypre_pow(theta, 2) +
+                  3 * nalu_hypre_pow(delta, 3) * theta -
+                  4 * nalu_hypre_pow(theta, 4);
 
-            coefs[0] = (6 * hypre_pow(delta, 2) * theta -
-                        12 * delta * hypre_pow(theta, 2) +
-                        3 * hypre_pow(delta, 3) -
-                        16 * hypre_pow(theta, 3) ) / den;
+            coefs[0] = (6 * nalu_hypre_pow(delta, 2) * theta -
+                        12 * delta * nalu_hypre_pow(theta, 2) +
+                        3 * nalu_hypre_pow(delta, 3) -
+                        16 * nalu_hypre_pow(theta, 3) ) / den;
             coefs[1] = (12 * delta * theta -
-                        3 * hypre_pow(delta, 2) +
-                        24 * hypre_pow(theta, 2)) / den;
+                        3 * nalu_hypre_pow(delta, 2) +
+                        24 * nalu_hypre_pow(theta, 2)) / den;
             coefs[2] =  -( 4 * delta + 16 * theta) / den;
             coefs[3] = 4 / den;
 
@@ -182,9 +182,9 @@ hypre_ParCSRRelax_Cheby_Setup(hypre_ParCSRMatrix *A,         /* matrix to relax 
             break;
 
          case 3: /*(t*(8*del^2 - 48*th^2) - 16*del^2*th + 32*t^2*th - 8*t^3 + 32*th^3)/(del^4 - 8*del^2*th^2 + 8*th^4)*/
-            den = hypre_pow(delta, 4) - 8 * delta * delta * theta * theta + 8 * hypre_pow(theta, 4);
+            den = nalu_hypre_pow(delta, 4) - 8 * delta * delta * theta * theta + 8 * nalu_hypre_pow(theta, 4);
 
-            coefs[0] = (32 * hypre_pow(theta, 3) - 16 * delta * delta * theta) / den;
+            coefs[0] = (32 * nalu_hypre_pow(theta, 3) - 16 * delta * delta * theta) / den;
             coefs[1] = (8 * delta * delta - 48 * theta * theta) / den;
             coefs[2] = 32 * theta / den;
             coefs[3] = -8 / den;
@@ -196,13 +196,13 @@ hypre_ParCSRRelax_Cheby_Setup(hypre_ParCSRMatrix *A,         /* matrix to relax 
 
    if (scale)
    {
-      /*grab 1/hypre_sqrt(abs(diagonal)) */
-      ds_data = hypre_CTAlloc(HYPRE_Real, num_rows, hypre_ParCSRMatrixMemoryLocation(A));
-      hypre_CSRMatrixExtractDiagonal(hypre_ParCSRMatrixDiag(A), ds_data, 4);
+      /*grab 1/nalu_hypre_sqrt(abs(diagonal)) */
+      ds_data = nalu_hypre_CTAlloc(NALU_HYPRE_Real, num_rows, nalu_hypre_ParCSRMatrixMemoryLocation(A));
+      nalu_hypre_CSRMatrixExtractDiagonal(nalu_hypre_ParCSRMatrixDiag(A), ds_data, 4);
    } /* end of scaling code */
    *ds_ptr = ds_data;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /**
@@ -221,36 +221,36 @@ hypre_ParCSRRelax_Cheby_Setup(hypre_ParCSRMatrix *A,         /* matrix to relax 
  * @param[in] orig_u_vec Temp Vector
  * @param[in] tmp Temp Vector
  */
-HYPRE_Int
-hypre_ParCSRRelax_Cheby_SolveHost(hypre_ParCSRMatrix *A, /* matrix to relax with */
-                                  hypre_ParVector    *f, /* right-hand side */
-                                  HYPRE_Real         *ds_data,
-                                  HYPRE_Real         *coefs,
-                                  HYPRE_Int           order, /* polynomial order */
-                                  HYPRE_Int           scale, /* scale by diagonal?*/
-                                  HYPRE_Int           variant,
-                                  hypre_ParVector    *u, /* initial/updated approximation */
-                                  hypre_ParVector    *v, /* temporary vector */
-                                  hypre_ParVector    *r, /* another vector */
-                                  hypre_ParVector    *orig_u_vec, /*another temp vector */
-                                  hypre_ParVector    *tmp_vec) /*a potential temp vector */
+NALU_HYPRE_Int
+nalu_hypre_ParCSRRelax_Cheby_SolveHost(nalu_hypre_ParCSRMatrix *A, /* matrix to relax with */
+                                  nalu_hypre_ParVector    *f, /* right-hand side */
+                                  NALU_HYPRE_Real         *ds_data,
+                                  NALU_HYPRE_Real         *coefs,
+                                  NALU_HYPRE_Int           order, /* polynomial order */
+                                  NALU_HYPRE_Int           scale, /* scale by diagonal?*/
+                                  NALU_HYPRE_Int           variant,
+                                  nalu_hypre_ParVector    *u, /* initial/updated approximation */
+                                  nalu_hypre_ParVector    *v, /* temporary vector */
+                                  nalu_hypre_ParVector    *r, /* another vector */
+                                  nalu_hypre_ParVector    *orig_u_vec, /*another temp vector */
+                                  nalu_hypre_ParVector    *tmp_vec) /*a potential temp vector */
 {
-   hypre_CSRMatrix *A_diag = hypre_ParCSRMatrixDiag(A);
-   HYPRE_Real *u_data = hypre_VectorData(hypre_ParVectorLocalVector(u));
-   HYPRE_Real *f_data = hypre_VectorData(hypre_ParVectorLocalVector(f));
-   HYPRE_Real *v_data = hypre_VectorData(hypre_ParVectorLocalVector(v));
+   nalu_hypre_CSRMatrix *A_diag = nalu_hypre_ParCSRMatrixDiag(A);
+   NALU_HYPRE_Real *u_data = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(u));
+   NALU_HYPRE_Real *f_data = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(f));
+   NALU_HYPRE_Real *v_data = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(v));
 
-   HYPRE_Real  *r_data = hypre_VectorData(hypre_ParVectorLocalVector(r));
+   NALU_HYPRE_Real  *r_data = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(r));
 
-   HYPRE_Int i, j;
-   HYPRE_Int num_rows = hypre_CSRMatrixNumRows(A_diag);
+   NALU_HYPRE_Int i, j;
+   NALU_HYPRE_Int num_rows = nalu_hypre_CSRMatrixNumRows(A_diag);
 
-   HYPRE_Real mult;
-   HYPRE_Real *orig_u;
+   NALU_HYPRE_Real mult;
+   NALU_HYPRE_Real *orig_u;
 
-   HYPRE_Int cheby_order;
+   NALU_HYPRE_Int cheby_order;
 
-   HYPRE_Real  *tmp_data;
+   NALU_HYPRE_Real  *tmp_data;
 
 
    /* u = u + p(A)r */
@@ -267,14 +267,14 @@ hypre_ParCSRRelax_Cheby_SolveHost(hypre_ParCSRMatrix *A, /* matrix to relax with
    /* we are using the order of p(A) */
    cheby_order = order - 1;
 
-   hypre_assert(hypre_VectorSize(hypre_ParVectorLocalVector(orig_u_vec)) >= num_rows);
-   orig_u = hypre_VectorData(hypre_ParVectorLocalVector(orig_u_vec));
+   nalu_hypre_assert(nalu_hypre_VectorSize(nalu_hypre_ParVectorLocalVector(orig_u_vec)) >= num_rows);
+   orig_u = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(orig_u_vec));
 
    if (!scale)
    {
       /* get residual: r = f - A*u */
-      hypre_ParVectorCopy(f, r);
-      hypre_ParCSRMatrixMatvec(-1.0, A, u, 1.0, r);
+      nalu_hypre_ParVectorCopy(f, r);
+      nalu_hypre_ParCSRMatrixMatvec(-1.0, A, u, 1.0, r);
 
       /* o = u; u = r .* coef */
       for ( i = 0; i < num_rows; i++ )
@@ -284,11 +284,11 @@ hypre_ParCSRRelax_Cheby_SolveHost(hypre_ParCSRMatrix *A, /* matrix to relax with
       }
       for (i = cheby_order - 1; i >= 0; i-- )
       {
-         hypre_ParCSRMatrixMatvec(1.0, A, u, 0.0, v);
+         nalu_hypre_ParCSRMatrixMatvec(1.0, A, u, 0.0, v);
          mult = coefs[i];
          /* u = mult * r + v */
-#ifdef HYPRE_USING_OPENMP
-         #pragma omp parallel for private(j) HYPRE_SMP_SCHEDULE
+#ifdef NALU_HYPRE_USING_OPENMP
+         #pragma omp parallel for private(j) NALU_HYPRE_SMP_SCHEDULE
 #endif
          for ( j = 0; j < num_rows; j++ )
          {
@@ -297,8 +297,8 @@ hypre_ParCSRRelax_Cheby_SolveHost(hypre_ParCSRMatrix *A, /* matrix to relax with
       }
 
       /* u = o + u */
-#ifdef HYPRE_USING_OPENMP
-      #pragma omp parallel for private(i) HYPRE_SMP_SCHEDULE
+#ifdef NALU_HYPRE_USING_OPENMP
+      #pragma omp parallel for private(i) NALU_HYPRE_SMP_SCHEDULE
 #endif
       for ( i = 0; i < num_rows; i++ )
       {
@@ -308,16 +308,16 @@ hypre_ParCSRRelax_Cheby_SolveHost(hypre_ParCSRMatrix *A, /* matrix to relax with
    else /* scaling! */
    {
 
-      /*grab 1/hypre_sqrt(diagonal) */
-      tmp_data = hypre_VectorData(hypre_ParVectorLocalVector(tmp_vec));
+      /*grab 1/nalu_hypre_sqrt(diagonal) */
+      tmp_data = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(tmp_vec));
 
       /* get ds_data and get scaled residual: r = D^(-1/2)f -
          * D^(-1/2)A*u */
 
-      hypre_ParCSRMatrixMatvec(-1.0, A, u, 0.0, tmp_vec);
+      nalu_hypre_ParCSRMatrixMatvec(-1.0, A, u, 0.0, tmp_vec);
       /* r = ds .* (f + tmp) */
-#ifdef HYPRE_USING_OPENMP
-      #pragma omp parallel for private(j) HYPRE_SMP_SCHEDULE
+#ifdef NALU_HYPRE_USING_OPENMP
+      #pragma omp parallel for private(j) NALU_HYPRE_SMP_SCHEDULE
 #endif
       for ( j = 0; j < num_rows; j++ )
       {
@@ -328,8 +328,8 @@ hypre_ParCSRRelax_Cheby_SolveHost(hypre_ParCSRMatrix *A, /* matrix to relax with
          the iteration by multiplying r by the cheby coef.*/
 
       /* o = u;  u = r * coef */
-#ifdef HYPRE_USING_OPENMP
-      #pragma omp parallel for private(j) HYPRE_SMP_SCHEDULE
+#ifdef NALU_HYPRE_USING_OPENMP
+      #pragma omp parallel for private(j) NALU_HYPRE_SMP_SCHEDULE
 #endif
       for ( j = 0; j < num_rows; j++ )
       {
@@ -343,21 +343,21 @@ hypre_ParCSRRelax_Cheby_SolveHost(hypre_ParCSRMatrix *A, /* matrix to relax with
       {
          /* v = D^(-1/2)AD^(-1/2)u */
          /* tmp = ds .* u */
-#ifdef HYPRE_USING_OPENMP
-         #pragma omp parallel for private(j) HYPRE_SMP_SCHEDULE
+#ifdef NALU_HYPRE_USING_OPENMP
+         #pragma omp parallel for private(j) NALU_HYPRE_SMP_SCHEDULE
 #endif
          for ( j = 0; j < num_rows; j++ )
          {
             tmp_data[j]  =  ds_data[j] * u_data[j];
          }
-         hypre_ParCSRMatrixMatvec(1.0, A, tmp_vec, 0.0, v);
+         nalu_hypre_ParCSRMatrixMatvec(1.0, A, tmp_vec, 0.0, v);
 
          /* u_new = coef*r + v*/
          mult = coefs[i];
 
          /* u = coef * r + ds .* v */
-#ifdef HYPRE_USING_OPENMP
-         #pragma omp parallel for private(j) HYPRE_SMP_SCHEDULE
+#ifdef NALU_HYPRE_USING_OPENMP
+         #pragma omp parallel for private(j) NALU_HYPRE_SMP_SCHEDULE
 #endif
          for ( j = 0; j < num_rows; j++ )
          {
@@ -369,8 +369,8 @@ hypre_ParCSRRelax_Cheby_SolveHost(hypre_ParCSRMatrix *A, /* matrix to relax with
       /* now we have to scale u_data before adding it to u_orig*/
 
       /* u = orig_u + ds .* u */
-#ifdef HYPRE_USING_OPENMP
-      #pragma omp parallel for private(j) HYPRE_SMP_SCHEDULE
+#ifdef NALU_HYPRE_USING_OPENMP
+      #pragma omp parallel for private(j) NALU_HYPRE_SMP_SCHEDULE
 #endif
       for ( j = 0; j < num_rows; j++ )
       {
@@ -379,7 +379,7 @@ hypre_ParCSRRelax_Cheby_SolveHost(hypre_ParCSRMatrix *A, /* matrix to relax with
 
    }/* end of scaling code */
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /**
@@ -400,45 +400,45 @@ hypre_ParCSRRelax_Cheby_SolveHost(hypre_ParCSRMatrix *A, /* matrix to relax with
  * @param[out] orig_u_vec Temp Vector
  * @param[out] tmp_vec Temp Vector
  */
-HYPRE_Int
-hypre_ParCSRRelax_Cheby_Solve(hypre_ParCSRMatrix *A, /* matrix to relax with */
-                              hypre_ParVector    *f, /* right-hand side */
-                              HYPRE_Real         *ds_data,
-                              HYPRE_Real         *coefs,
-                              HYPRE_Int           order, /* polynomial order */
-                              HYPRE_Int           scale, /* scale by diagonal?*/
-                              HYPRE_Int           variant,
-                              hypre_ParVector    *u, /* initial/updated approximation */
-                              hypre_ParVector    *v, /* temporary vector */
-                              hypre_ParVector    *r, /*another temp vector */
-                              hypre_ParVector    *orig_u_vec, /*another temp vector */
-                              hypre_ParVector    *tmp_vec) /*another temp vector */
+NALU_HYPRE_Int
+nalu_hypre_ParCSRRelax_Cheby_Solve(nalu_hypre_ParCSRMatrix *A, /* matrix to relax with */
+                              nalu_hypre_ParVector    *f, /* right-hand side */
+                              NALU_HYPRE_Real         *ds_data,
+                              NALU_HYPRE_Real         *coefs,
+                              NALU_HYPRE_Int           order, /* polynomial order */
+                              NALU_HYPRE_Int           scale, /* scale by diagonal?*/
+                              NALU_HYPRE_Int           variant,
+                              nalu_hypre_ParVector    *u, /* initial/updated approximation */
+                              nalu_hypre_ParVector    *v, /* temporary vector */
+                              nalu_hypre_ParVector    *r, /*another temp vector */
+                              nalu_hypre_ParVector    *orig_u_vec, /*another temp vector */
+                              nalu_hypre_ParVector    *tmp_vec) /*another temp vector */
 {
-   hypre_GpuProfilingPushRange("ParCSRRelaxChebySolve");
-   HYPRE_Int             ierr = 0;
+   nalu_hypre_GpuProfilingPushRange("ParCSRRelaxChebySolve");
+   NALU_HYPRE_Int             ierr = 0;
 
    /* Sanity check */
-   if (hypre_ParVectorNumVectors(f) > 1)
+   if (nalu_hypre_ParVectorNumVectors(f) > 1)
    {
-      hypre_error_w_msg(HYPRE_ERROR_GENERIC,
+      nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC,
                         "Requested relaxation type doesn't support multicomponent vectors");
-      return hypre_error_flag;
+      return nalu_hypre_error_flag;
    }
 
-#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP)
-   HYPRE_ExecutionPolicy exec = hypre_GetExecPolicy1(hypre_ParCSRMatrixMemoryLocation(A));
-   if (exec == HYPRE_EXEC_DEVICE)
+#if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
+   NALU_HYPRE_ExecutionPolicy exec = nalu_hypre_GetExecPolicy1(nalu_hypre_ParCSRMatrixMemoryLocation(A));
+   if (exec == NALU_HYPRE_EXEC_DEVICE)
    {
-      ierr = hypre_ParCSRRelax_Cheby_SolveDevice(A, f, ds_data, coefs, order, scale, variant, u, v, r,
+      ierr = nalu_hypre_ParCSRRelax_Cheby_SolveDevice(A, f, ds_data, coefs, order, scale, variant, u, v, r,
                                                  orig_u_vec, tmp_vec);
    }
    else
 #endif
    {
-      ierr = hypre_ParCSRRelax_Cheby_SolveHost(A, f, ds_data, coefs, order, scale, variant, u, v, r,
+      ierr = nalu_hypre_ParCSRRelax_Cheby_SolveHost(A, f, ds_data, coefs, order, scale, variant, u, v, r,
                                                orig_u_vec, tmp_vec);
    }
 
-   hypre_GpuProfilingPopRange();
+   nalu_hypre_GpuProfilingPopRange();
    return ierr;
 }

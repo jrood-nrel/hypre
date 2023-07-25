@@ -6,7 +6,7 @@ extern "C" {
 #endif
 
 #include "f2c.h"
-#include "hypre_lapack.h"
+#include "nalu_hypre_lapack.h"
 
 doublereal dlansy_(const char *norm,const char *uplo, integer *n, doublereal *a, integer
 	*lda, doublereal *work)

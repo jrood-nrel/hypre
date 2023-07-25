@@ -5,11 +5,11 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_utilities.h"
+#include "_nalu_hypre_utilities.h"
 
-static HYPRE_Int NearestPowerOfTwo( HYPRE_Int value )
+static NALU_HYPRE_Int NearestPowerOfTwo( NALU_HYPRE_Int value )
 {
-   HYPRE_Int rc = 1;
+   NALU_HYPRE_Int rc = 1;
    while (rc < value)
    {
       rc <<= 1;
@@ -17,34 +17,34 @@ static HYPRE_Int NearestPowerOfTwo( HYPRE_Int value )
    return rc;
 }
 
-static void InitBucket(hypre_HopscotchBucket *b)
+static void InitBucket(nalu_hypre_HopscotchBucket *b)
 {
    b->hopInfo = 0;
-   b->hash = HYPRE_HOPSCOTCH_HASH_EMPTY;
+   b->hash = NALU_HYPRE_HOPSCOTCH_HASH_EMPTY;
 }
 
-static void InitBigBucket(hypre_BigHopscotchBucket *b)
+static void InitBigBucket(nalu_hypre_BigHopscotchBucket *b)
 {
    b->hopInfo = 0;
-   b->hash = HYPRE_HOPSCOTCH_HASH_EMPTY;
+   b->hash = NALU_HYPRE_HOPSCOTCH_HASH_EMPTY;
 }
 
-#ifdef HYPRE_CONCURRENT_HOPSCOTCH
-static void InitSegment(hypre_HopscotchSegment *s)
+#ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
+static void InitSegment(nalu_hypre_HopscotchSegment *s)
 {
    s->timestamp = 0;
    omp_init_lock(&s->lock);
 }
 
-static void DestroySegment(hypre_HopscotchSegment *s)
+static void DestroySegment(nalu_hypre_HopscotchSegment *s)
 {
    omp_destroy_lock(&s->lock);
 }
 #endif
 
-void hypre_UnorderedIntSetCreate( hypre_UnorderedIntSet *s,
-                                  HYPRE_Int inCapacity,
-                                  HYPRE_Int concurrencyLevel)
+void nalu_hypre_UnorderedIntSetCreate( nalu_hypre_UnorderedIntSet *s,
+                                  NALU_HYPRE_Int inCapacity,
+                                  NALU_HYPRE_Int concurrencyLevel)
 {
    s->segmentMask = NearestPowerOfTwo(concurrencyLevel) - 1;
    if (inCapacity < s->segmentMask + 1)
@@ -53,38 +53,38 @@ void hypre_UnorderedIntSetCreate( hypre_UnorderedIntSet *s,
    }
 
    //ADJUST INPUT ............................
-   HYPRE_Int adjInitCap = NearestPowerOfTwo(inCapacity + 4096);
-   HYPRE_Int num_buckets = adjInitCap + HYPRE_HOPSCOTCH_HASH_INSERT_RANGE + 1;
+   NALU_HYPRE_Int adjInitCap = NearestPowerOfTwo(inCapacity + 4096);
+   NALU_HYPRE_Int num_buckets = adjInitCap + NALU_HYPRE_HOPSCOTCH_HASH_INSERT_RANGE + 1;
    s->bucketMask = adjInitCap - 1;
 
-   HYPRE_Int i;
+   NALU_HYPRE_Int i;
 
    //ALLOCATE THE SEGMENTS ...................
-#ifdef HYPRE_CONCURRENT_HOPSCOTCH
-   s->segments = hypre_TAlloc(hypre_HopscotchSegment,  s->segmentMask + 1, HYPRE_MEMORY_HOST);
+#ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
+   s->segments = nalu_hypre_TAlloc(nalu_hypre_HopscotchSegment,  s->segmentMask + 1, NALU_HYPRE_MEMORY_HOST);
    for (i = 0; i <= s->segmentMask; ++i)
    {
       InitSegment(&s->segments[i]);
    }
 #endif
 
-   s->hopInfo = hypre_TAlloc(hypre_uint,  num_buckets, HYPRE_MEMORY_HOST);
-   s->key = hypre_TAlloc(HYPRE_Int,  num_buckets, HYPRE_MEMORY_HOST);
-   s->hash = hypre_TAlloc(HYPRE_Int,  num_buckets, HYPRE_MEMORY_HOST);
+   s->hopInfo = nalu_hypre_TAlloc(nalu_hypre_uint,  num_buckets, NALU_HYPRE_MEMORY_HOST);
+   s->key = nalu_hypre_TAlloc(NALU_HYPRE_Int,  num_buckets, NALU_HYPRE_MEMORY_HOST);
+   s->hash = nalu_hypre_TAlloc(NALU_HYPRE_Int,  num_buckets, NALU_HYPRE_MEMORY_HOST);
 
-#ifdef HYPRE_CONCURRENT_HOPSCOTCH
+#ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
    #pragma omp parallel for
 #endif
    for (i = 0; i < num_buckets; ++i)
    {
       s->hopInfo[i] = 0;
-      s->hash[i] = HYPRE_HOPSCOTCH_HASH_EMPTY;
+      s->hash[i] = NALU_HYPRE_HOPSCOTCH_HASH_EMPTY;
    }
 }
 
-void hypre_UnorderedBigIntSetCreate( hypre_UnorderedBigIntSet *s,
-                                     HYPRE_Int inCapacity,
-                                     HYPRE_Int concurrencyLevel)
+void nalu_hypre_UnorderedBigIntSetCreate( nalu_hypre_UnorderedBigIntSet *s,
+                                     NALU_HYPRE_Int inCapacity,
+                                     NALU_HYPRE_Int concurrencyLevel)
 {
    s->segmentMask = NearestPowerOfTwo(concurrencyLevel) - 1;
    if (inCapacity < s->segmentMask + 1)
@@ -93,38 +93,38 @@ void hypre_UnorderedBigIntSetCreate( hypre_UnorderedBigIntSet *s,
    }
 
    //ADJUST INPUT ............................
-   HYPRE_Int adjInitCap = NearestPowerOfTwo(inCapacity + 4096);
-   HYPRE_Int num_buckets = adjInitCap + HYPRE_HOPSCOTCH_HASH_INSERT_RANGE + 1;
+   NALU_HYPRE_Int adjInitCap = NearestPowerOfTwo(inCapacity + 4096);
+   NALU_HYPRE_Int num_buckets = adjInitCap + NALU_HYPRE_HOPSCOTCH_HASH_INSERT_RANGE + 1;
    s->bucketMask = adjInitCap - 1;
 
-   HYPRE_Int i;
+   NALU_HYPRE_Int i;
 
    //ALLOCATE THE SEGMENTS ...................
-#ifdef HYPRE_CONCURRENT_HOPSCOTCH
-   s->segments = hypre_TAlloc(hypre_HopscotchSegment,  s->segmentMask + 1, HYPRE_MEMORY_HOST);
+#ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
+   s->segments = nalu_hypre_TAlloc(nalu_hypre_HopscotchSegment,  s->segmentMask + 1, NALU_HYPRE_MEMORY_HOST);
    for (i = 0; i <= s->segmentMask; ++i)
    {
       InitSegment(&s->segments[i]);
    }
 #endif
 
-   s->hopInfo = hypre_TAlloc(hypre_uint,  num_buckets, HYPRE_MEMORY_HOST);
-   s->key = hypre_TAlloc(HYPRE_BigInt,  num_buckets, HYPRE_MEMORY_HOST);
-   s->hash = hypre_TAlloc(HYPRE_BigInt,  num_buckets, HYPRE_MEMORY_HOST);
+   s->hopInfo = nalu_hypre_TAlloc(nalu_hypre_uint,  num_buckets, NALU_HYPRE_MEMORY_HOST);
+   s->key = nalu_hypre_TAlloc(NALU_HYPRE_BigInt,  num_buckets, NALU_HYPRE_MEMORY_HOST);
+   s->hash = nalu_hypre_TAlloc(NALU_HYPRE_BigInt,  num_buckets, NALU_HYPRE_MEMORY_HOST);
 
-#ifdef HYPRE_CONCURRENT_HOPSCOTCH
+#ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
    #pragma omp parallel for
 #endif
    for (i = 0; i < num_buckets; ++i)
    {
       s->hopInfo[i] = 0;
-      s->hash[i] = HYPRE_HOPSCOTCH_HASH_EMPTY;
+      s->hash[i] = NALU_HYPRE_HOPSCOTCH_HASH_EMPTY;
    }
 }
 
-void hypre_UnorderedIntMapCreate( hypre_UnorderedIntMap *m,
-                                  HYPRE_Int inCapacity,
-                                  HYPRE_Int concurrencyLevel)
+void nalu_hypre_UnorderedIntMapCreate( nalu_hypre_UnorderedIntMap *m,
+                                  NALU_HYPRE_Int inCapacity,
+                                  NALU_HYPRE_Int concurrencyLevel)
 {
    m->segmentMask = NearestPowerOfTwo(concurrencyLevel) - 1;
    if (inCapacity < m->segmentMask + 1)
@@ -133,24 +133,24 @@ void hypre_UnorderedIntMapCreate( hypre_UnorderedIntMap *m,
    }
 
    //ADJUST INPUT ............................
-   HYPRE_Int adjInitCap = NearestPowerOfTwo(inCapacity + 4096);
-   HYPRE_Int num_buckets = adjInitCap + HYPRE_HOPSCOTCH_HASH_INSERT_RANGE + 1;
+   NALU_HYPRE_Int adjInitCap = NearestPowerOfTwo(inCapacity + 4096);
+   NALU_HYPRE_Int num_buckets = adjInitCap + NALU_HYPRE_HOPSCOTCH_HASH_INSERT_RANGE + 1;
    m->bucketMask = adjInitCap - 1;
 
-   HYPRE_Int i;
+   NALU_HYPRE_Int i;
 
    //ALLOCATE THE SEGMENTS ...................
-#ifdef HYPRE_CONCURRENT_HOPSCOTCH
-   m->segments = hypre_TAlloc(hypre_HopscotchSegment,  m->segmentMask + 1, HYPRE_MEMORY_HOST);
+#ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
+   m->segments = nalu_hypre_TAlloc(nalu_hypre_HopscotchSegment,  m->segmentMask + 1, NALU_HYPRE_MEMORY_HOST);
    for (i = 0; i <= m->segmentMask; i++)
    {
       InitSegment(&m->segments[i]);
    }
 #endif
 
-   m->table = hypre_TAlloc(hypre_HopscotchBucket,  num_buckets, HYPRE_MEMORY_HOST);
+   m->table = nalu_hypre_TAlloc(nalu_hypre_HopscotchBucket,  num_buckets, NALU_HYPRE_MEMORY_HOST);
 
-#ifdef HYPRE_CONCURRENT_HOPSCOTCH
+#ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
    #pragma omp parallel for
 #endif
    for (i = 0; i < num_buckets; i++)
@@ -159,9 +159,9 @@ void hypre_UnorderedIntMapCreate( hypre_UnorderedIntMap *m,
    }
 }
 
-void hypre_UnorderedBigIntMapCreate( hypre_UnorderedBigIntMap *m,
-                                     HYPRE_Int inCapacity,
-                                     HYPRE_Int concurrencyLevel)
+void nalu_hypre_UnorderedBigIntMapCreate( nalu_hypre_UnorderedBigIntMap *m,
+                                     NALU_HYPRE_Int inCapacity,
+                                     NALU_HYPRE_Int concurrencyLevel)
 {
    m->segmentMask = NearestPowerOfTwo(concurrencyLevel) - 1;
    if (inCapacity < m->segmentMask + 1)
@@ -170,24 +170,24 @@ void hypre_UnorderedBigIntMapCreate( hypre_UnorderedBigIntMap *m,
    }
 
    //ADJUST INPUT ............................
-   HYPRE_Int adjInitCap = NearestPowerOfTwo(inCapacity + 4096);
-   HYPRE_Int num_buckets = adjInitCap + HYPRE_HOPSCOTCH_HASH_INSERT_RANGE + 1;
+   NALU_HYPRE_Int adjInitCap = NearestPowerOfTwo(inCapacity + 4096);
+   NALU_HYPRE_Int num_buckets = adjInitCap + NALU_HYPRE_HOPSCOTCH_HASH_INSERT_RANGE + 1;
    m->bucketMask = adjInitCap - 1;
 
-   HYPRE_Int i;
+   NALU_HYPRE_Int i;
 
    //ALLOCATE THE SEGMENTS ...................
-#ifdef HYPRE_CONCURRENT_HOPSCOTCH
-   m->segments = hypre_TAlloc(hypre_HopscotchSegment,  m->segmentMask + 1, HYPRE_MEMORY_HOST);
+#ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
+   m->segments = nalu_hypre_TAlloc(nalu_hypre_HopscotchSegment,  m->segmentMask + 1, NALU_HYPRE_MEMORY_HOST);
    for (i = 0; i <= m->segmentMask; i++)
    {
       InitSegment(&m->segments[i]);
    }
 #endif
 
-   m->table = hypre_TAlloc(hypre_BigHopscotchBucket,  num_buckets, HYPRE_MEMORY_HOST);
+   m->table = nalu_hypre_TAlloc(nalu_hypre_BigHopscotchBucket,  num_buckets, NALU_HYPRE_MEMORY_HOST);
 
-#ifdef HYPRE_CONCURRENT_HOPSCOTCH
+#ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
    #pragma omp parallel for
 #endif
    for (i = 0; i < num_buckets; i++)
@@ -196,156 +196,156 @@ void hypre_UnorderedBigIntMapCreate( hypre_UnorderedBigIntMap *m,
    }
 }
 
-void hypre_UnorderedIntSetDestroy( hypre_UnorderedIntSet *s )
+void nalu_hypre_UnorderedIntSetDestroy( nalu_hypre_UnorderedIntSet *s )
 {
-   hypre_TFree(s->hopInfo, HYPRE_MEMORY_HOST);
-   hypre_TFree(s->key, HYPRE_MEMORY_HOST);
-   hypre_TFree(s->hash, HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(s->hopInfo, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(s->key, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(s->hash, NALU_HYPRE_MEMORY_HOST);
 
-#ifdef HYPRE_CONCURRENT_HOPSCOTCH
-   HYPRE_Int i;
+#ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
+   NALU_HYPRE_Int i;
    for (i = 0; i <= s->segmentMask; i++)
    {
       DestroySegment(&s->segments[i]);
    }
-   hypre_TFree(s->segments, HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(s->segments, NALU_HYPRE_MEMORY_HOST);
 #endif
 }
 
-void hypre_UnorderedBigIntSetDestroy( hypre_UnorderedBigIntSet *s )
+void nalu_hypre_UnorderedBigIntSetDestroy( nalu_hypre_UnorderedBigIntSet *s )
 {
-   hypre_TFree(s->hopInfo, HYPRE_MEMORY_HOST);
-   hypre_TFree(s->key, HYPRE_MEMORY_HOST);
-   hypre_TFree(s->hash, HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(s->hopInfo, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(s->key, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(s->hash, NALU_HYPRE_MEMORY_HOST);
 
-#ifdef HYPRE_CONCURRENT_HOPSCOTCH
-   HYPRE_Int i;
+#ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
+   NALU_HYPRE_Int i;
    for (i = 0; i <= s->segmentMask; i++)
    {
       DestroySegment(&s->segments[i]);
    }
-   hypre_TFree(s->segments, HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(s->segments, NALU_HYPRE_MEMORY_HOST);
 #endif
 }
 
-void hypre_UnorderedIntMapDestroy( hypre_UnorderedIntMap *m)
+void nalu_hypre_UnorderedIntMapDestroy( nalu_hypre_UnorderedIntMap *m)
 {
-   hypre_TFree(m->table, HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(m->table, NALU_HYPRE_MEMORY_HOST);
 
-#ifdef HYPRE_CONCURRENT_HOPSCOTCH
-   HYPRE_Int i;
+#ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
+   NALU_HYPRE_Int i;
    for (i = 0; i <= m->segmentMask; i++)
    {
       DestroySegment(&m->segments[i]);
    }
-   hypre_TFree(m->segments, HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(m->segments, NALU_HYPRE_MEMORY_HOST);
 #endif
 }
 
-void hypre_UnorderedBigIntMapDestroy( hypre_UnorderedBigIntMap *m)
+void nalu_hypre_UnorderedBigIntMapDestroy( nalu_hypre_UnorderedBigIntMap *m)
 {
-   hypre_TFree(m->table, HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(m->table, NALU_HYPRE_MEMORY_HOST);
 
-#ifdef HYPRE_CONCURRENT_HOPSCOTCH
-   HYPRE_Int i;
+#ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
+   NALU_HYPRE_Int i;
    for (i = 0; i <= m->segmentMask; i++)
    {
       DestroySegment(&m->segments[i]);
    }
-   hypre_TFree(m->segments, HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(m->segments, NALU_HYPRE_MEMORY_HOST);
 #endif
 }
 
-HYPRE_Int *hypre_UnorderedIntSetCopyToArray( hypre_UnorderedIntSet *s, HYPRE_Int *len )
+NALU_HYPRE_Int *nalu_hypre_UnorderedIntSetCopyToArray( nalu_hypre_UnorderedIntSet *s, NALU_HYPRE_Int *len )
 {
-   /*HYPRE_Int prefix_sum_workspace[hypre_NumThreads() + 1];*/
-   HYPRE_Int *prefix_sum_workspace;
-   HYPRE_Int *ret_array = NULL;
+   /*NALU_HYPRE_Int prefix_sum_workspace[nalu_hypre_NumThreads() + 1];*/
+   NALU_HYPRE_Int *prefix_sum_workspace;
+   NALU_HYPRE_Int *ret_array = NULL;
 
-   prefix_sum_workspace = hypre_TAlloc(HYPRE_Int,  hypre_NumThreads() + 1, HYPRE_MEMORY_HOST);
+   prefix_sum_workspace = nalu_hypre_TAlloc(NALU_HYPRE_Int,  nalu_hypre_NumThreads() + 1, NALU_HYPRE_MEMORY_HOST);
 
-#ifdef HYPRE_CONCURRENT_HOPSCOTCH
+#ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
    #pragma omp parallel
 #endif
    {
-      HYPRE_Int n = s->bucketMask + HYPRE_HOPSCOTCH_HASH_INSERT_RANGE;
-      HYPRE_Int i_begin, i_end;
-      hypre_GetSimpleThreadPartition(&i_begin, &i_end, n);
+      NALU_HYPRE_Int n = s->bucketMask + NALU_HYPRE_HOPSCOTCH_HASH_INSERT_RANGE;
+      NALU_HYPRE_Int i_begin, i_end;
+      nalu_hypre_GetSimpleThreadPartition(&i_begin, &i_end, n);
 
-      HYPRE_Int cnt = 0;
-      HYPRE_Int i;
+      NALU_HYPRE_Int cnt = 0;
+      NALU_HYPRE_Int i;
       for (i = i_begin; i < i_end; i++)
       {
-         if (HYPRE_HOPSCOTCH_HASH_EMPTY != s->hash[i]) { cnt++; }
+         if (NALU_HYPRE_HOPSCOTCH_HASH_EMPTY != s->hash[i]) { cnt++; }
       }
 
-      hypre_prefix_sum(&cnt, len, prefix_sum_workspace);
+      nalu_hypre_prefix_sum(&cnt, len, prefix_sum_workspace);
 
-#ifdef HYPRE_CONCURRENT_HOPSCOTCH
+#ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
       #pragma omp barrier
       #pragma omp master
 #endif
       {
-         ret_array = hypre_TAlloc(HYPRE_Int,  *len, HYPRE_MEMORY_HOST);
+         ret_array = nalu_hypre_TAlloc(NALU_HYPRE_Int,  *len, NALU_HYPRE_MEMORY_HOST);
       }
-#ifdef HYPRE_CONCURRENT_HOPSCOTCH
+#ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
       #pragma omp barrier
 #endif
 
       for (i = i_begin; i < i_end; i++)
       {
-         if (HYPRE_HOPSCOTCH_HASH_EMPTY != s->hash[i]) { ret_array[cnt++] = s->key[i]; }
+         if (NALU_HYPRE_HOPSCOTCH_HASH_EMPTY != s->hash[i]) { ret_array[cnt++] = s->key[i]; }
       }
    }
 
-   hypre_TFree(prefix_sum_workspace, HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(prefix_sum_workspace, NALU_HYPRE_MEMORY_HOST);
 
    return ret_array;
 }
 
-HYPRE_BigInt *hypre_UnorderedBigIntSetCopyToArray( hypre_UnorderedBigIntSet *s, HYPRE_Int *len )
+NALU_HYPRE_BigInt *nalu_hypre_UnorderedBigIntSetCopyToArray( nalu_hypre_UnorderedBigIntSet *s, NALU_HYPRE_Int *len )
 {
-   /*HYPRE_Int prefix_sum_workspace[hypre_NumThreads() + 1];*/
-   HYPRE_Int *prefix_sum_workspace;
-   HYPRE_BigInt *ret_array = NULL;
+   /*NALU_HYPRE_Int prefix_sum_workspace[nalu_hypre_NumThreads() + 1];*/
+   NALU_HYPRE_Int *prefix_sum_workspace;
+   NALU_HYPRE_BigInt *ret_array = NULL;
 
-   prefix_sum_workspace = hypre_TAlloc(HYPRE_Int,  hypre_NumThreads() + 1, HYPRE_MEMORY_HOST);
+   prefix_sum_workspace = nalu_hypre_TAlloc(NALU_HYPRE_Int,  nalu_hypre_NumThreads() + 1, NALU_HYPRE_MEMORY_HOST);
 
-#ifdef HYPRE_CONCURRENT_HOPSCOTCH
+#ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
    #pragma omp parallel
 #endif
    {
-      HYPRE_Int n = s->bucketMask + HYPRE_HOPSCOTCH_HASH_INSERT_RANGE;
-      HYPRE_Int i_begin, i_end;
-      hypre_GetSimpleThreadPartition(&i_begin, &i_end, n);
+      NALU_HYPRE_Int n = s->bucketMask + NALU_HYPRE_HOPSCOTCH_HASH_INSERT_RANGE;
+      NALU_HYPRE_Int i_begin, i_end;
+      nalu_hypre_GetSimpleThreadPartition(&i_begin, &i_end, n);
 
-      HYPRE_Int cnt = 0;
-      HYPRE_Int i;
+      NALU_HYPRE_Int cnt = 0;
+      NALU_HYPRE_Int i;
       for (i = i_begin; i < i_end; i++)
       {
-         if (HYPRE_HOPSCOTCH_HASH_EMPTY != s->hash[i]) { cnt++; }
+         if (NALU_HYPRE_HOPSCOTCH_HASH_EMPTY != s->hash[i]) { cnt++; }
       }
 
-      hypre_prefix_sum(&cnt, len, prefix_sum_workspace);
+      nalu_hypre_prefix_sum(&cnt, len, prefix_sum_workspace);
 
-#ifdef HYPRE_CONCURRENT_HOPSCOTCH
+#ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
       #pragma omp barrier
       #pragma omp master
 #endif
       {
-         ret_array = hypre_TAlloc(HYPRE_BigInt,  *len, HYPRE_MEMORY_HOST);
+         ret_array = nalu_hypre_TAlloc(NALU_HYPRE_BigInt,  *len, NALU_HYPRE_MEMORY_HOST);
       }
-#ifdef HYPRE_CONCURRENT_HOPSCOTCH
+#ifdef NALU_HYPRE_CONCURRENT_HOPSCOTCH
       #pragma omp barrier
 #endif
 
       for (i = i_begin; i < i_end; i++)
       {
-         if (HYPRE_HOPSCOTCH_HASH_EMPTY != s->hash[i]) { ret_array[cnt++] = s->key[i]; }
+         if (NALU_HYPRE_HOPSCOTCH_HASH_EMPTY != s->hash[i]) { ret_array[cnt++] = s->key[i]; }
       }
    }
 
-   hypre_TFree(prefix_sum_workspace, HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(prefix_sum_workspace, NALU_HYPRE_MEMORY_HOST);
 
    return ret_array;
 }

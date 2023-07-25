@@ -9,202 +9,202 @@
 
 
 !***********************************************************************
-!             HYPRE_StructBiCGSTAB routines
+!             NALU_HYPRE_StructBiCGSTAB routines
 !***********************************************************************
 
 !***********************************************************************
-!     fhypre_structbicgstabcreate
+!     fnalu_hypre_structbicgstabcreate
 !***********************************************************************
-      subroutine fhypre_structbicgstabcreate(fcomm, fsolver)
+      subroutine fnalu_hypre_structbicgstabcreate(fcomm, fsolver)
       integer ierr
       integer fcomm
       integer*8 fsolver
 
-      call HYPRE_StructBiCGSTABCreate(fcomm, fsolver, ierr)
+      call NALU_HYPRE_StructBiCGSTABCreate(fcomm, fsolver, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structbicgstabcreate: err = ', ierr
+         print *, 'fnalu_hypre_structbicgstabcreate: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structbicgstabdestroy
+!     fnalu_hypre_structbicgstabdestroy
 !***********************************************************************
-      subroutine fhypre_structbicgstabdestroy(fsolver)
+      subroutine fnalu_hypre_structbicgstabdestroy(fsolver)
       integer ierr
       integer*8 fsolver
 
-      call HYPRE_StructBiCGSTABDestroy(fsolver, ierr)
+      call NALU_HYPRE_StructBiCGSTABDestroy(fsolver, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structbicgstabdestroy: err = ', ierr
+         print *, 'fnalu_hypre_structbicgstabdestroy: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structbicgstabsetup
+!     fnalu_hypre_structbicgstabsetup
 !***********************************************************************
-      subroutine fhypre_structbicgstabsetup(fsolver, fA, fb, fx)
-      integer ierr
-      integer*8 fsolver
-      integer*8 fA
-      integer*8 fb
-      integer*8 fx
-
-      call HYPRE_StructBiCGSTABSetup(fsolver, fA, fb, fx, ierr)
-      if (ierr .ne. 0) then
-         print *, 'fhypre_structbicgstabsetup: err = ', ierr
-      endif
-
-      return
-      end
-
-!***********************************************************************
-!     fhypre_structbicgstabsolve
-!***********************************************************************
-      subroutine fhypre_structbicgstabsolve(fsolver, fA, fb, fx)
+      subroutine fnalu_hypre_structbicgstabsetup(fsolver, fA, fb, fx)
       integer ierr
       integer*8 fsolver
       integer*8 fA
       integer*8 fb
       integer*8 fx
 
-      call HYPRE_StructBiCGSTABSolve(fsolver, fA, fb, fx, ierr)
+      call NALU_HYPRE_StructBiCGSTABSetup(fsolver, fA, fb, fx, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structbicgstabsolve: err = ', ierr
+         print *, 'fnalu_hypre_structbicgstabsetup: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structbicgstabsettol
+!     fnalu_hypre_structbicgstabsolve
 !***********************************************************************
-      subroutine fhypre_structbicgstabsettol(fsolver, ftol)
+      subroutine fnalu_hypre_structbicgstabsolve(fsolver, fA, fb, fx)
+      integer ierr
+      integer*8 fsolver
+      integer*8 fA
+      integer*8 fb
+      integer*8 fx
+
+      call NALU_HYPRE_StructBiCGSTABSolve(fsolver, fA, fb, fx, ierr)
+      if (ierr .ne. 0) then
+         print *, 'fnalu_hypre_structbicgstabsolve: err = ', ierr
+      endif
+
+      return
+      end
+
+!***********************************************************************
+!     fnalu_hypre_structbicgstabsettol
+!***********************************************************************
+      subroutine fnalu_hypre_structbicgstabsettol(fsolver, ftol)
       integer ierr
       integer*8 fsolver
       double precision ftol
 
-      call HYPRE_StructBiCGSTABSetTol(fsolver, ftol, ierr)
+      call NALU_HYPRE_StructBiCGSTABSetTol(fsolver, ftol, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structbicgstabsettol: err = ', ierr
+         print *, 'fnalu_hypre_structbicgstabsettol: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structbicgstabsetmaxiter
+!     fnalu_hypre_structbicgstabsetmaxiter
 !***********************************************************************
-      subroutine fhypre_structbicgstabsetmaxiter(fsolver, fmaxiter)
+      subroutine fnalu_hypre_structbicgstabsetmaxiter(fsolver, fmaxiter)
       integer ierr
       integer fmaxiter
       integer*8 fsolver
 
-      call HYPRE_StructBiCGSTABSetMaxIter(fsolver, fmaxiter, ierr)
+      call NALU_HYPRE_StructBiCGSTABSetMaxIter(fsolver, fmaxiter, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structbicgstabsetmaxiter: err = ', ierr
+         print *, 'fnalu_hypre_structbicgstabsetmaxiter: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structbicgstabsetprecond
+!     fnalu_hypre_structbicgstabsetprecond
 !***********************************************************************
-      subroutine fhypre_structbicgstabsetprecond(fsolver, fprecond_id,
+      subroutine fnalu_hypre_structbicgstabsetprecond(fsolver, fprecond_id,
      1                                           fprecond_solver)
       integer ierr
       integer*8 fsolver
       integer*8 fprecond_id
       integer*8 fprecond_solver
 
-      call HYPRE_StructBiCGSTABSetPrecond(fsolver, fprecond_id,
+      call NALU_HYPRE_StructBiCGSTABSetPrecond(fsolver, fprecond_id,
      1                                    fprecond_solver, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structbicgstabsetprecond: err = ', ierr
+         print *, 'fnalu_hypre_structbicgstabsetprecond: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structbicgstabsetlogging
+!     fnalu_hypre_structbicgstabsetlogging
 !***********************************************************************
-      subroutine fhypre_structbicgstabsetlogging(fsolver, flogging)
+      subroutine fnalu_hypre_structbicgstabsetlogging(fsolver, flogging)
       integer ierr
       integer flogging
       integer*8 fsolver
 
-      call HYPRE_StructBiCGSTABSetLogging(fsolver, flogging, ierr)
+      call NALU_HYPRE_StructBiCGSTABSetLogging(fsolver, flogging, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structbicgstabsetlogging: err = ', ierr
+         print *, 'fnalu_hypre_structbicgstabsetlogging: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structbicgstabsetprintlevel
+!     fnalu_hypre_structbicgstabsetprintlevel
 !***********************************************************************
-      subroutine fhypre_structbicgstabsetprintle(fsolver, fprintlev)
+      subroutine fnalu_hypre_structbicgstabsetprintle(fsolver, fprintlev)
       integer ierr
       integer fprintlev
       integer*8 fsolver
 
-      call HYPRE_StructBiCGSTABSetPrintLev(fsolver, fprintlev, ierr)
+      call NALU_HYPRE_StructBiCGSTABSetPrintLev(fsolver, fprintlev, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structbicgstabsetprintle: err = ', ierr
+         print *, 'fnalu_hypre_structbicgstabsetprintle: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structbicgstabgetnumiterations
+!     fnalu_hypre_structbicgstabgetnumiterations
 !***********************************************************************
-      subroutine fhypre_structbicgstabgetnumiter(fsolver, fnumiter)
+      subroutine fnalu_hypre_structbicgstabgetnumiter(fsolver, fnumiter)
       integer ierr
       integer fnumiter
       integer*8 fsolver
 
-      call HYPRE_StructBiCGSTABGetNumItera(fsolver, fnumiter, ierr)
+      call NALU_HYPRE_StructBiCGSTABGetNumItera(fsolver, fnumiter, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structbicgstabgetnumiter: err = ', ierr
+         print *, 'fnalu_hypre_structbicgstabgetnumiter: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structbicgstabgetresidual
+!     fnalu_hypre_structbicgstabgetresidual
 !***********************************************************************
-      subroutine fhypre_structbicgstabgetresidua(fsolver, fresidual)
+      subroutine fnalu_hypre_structbicgstabgetresidua(fsolver, fresidual)
       integer ierr
       integer*8 fsolver
       double precision fresidual
 
-      call HYPRE_StructBiCGSTABGetResidual(fsolver, fresidual, ierr)
+      call NALU_HYPRE_StructBiCGSTABGetResidual(fsolver, fresidual, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structbicgstabgetresidua: err = ', ierr
+         print *, 'fnalu_hypre_structbicgstabgetresidua: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structbicgstabgetfinalrelativeresidualnorm
+!     fnalu_hypre_structbicgstabgetfinalrelativeresidualnorm
 !***********************************************************************
-      subroutine fhypre_structbicgstabgetfinalre(fsolver, fnorm)
+      subroutine fnalu_hypre_structbicgstabgetfinalre(fsolver, fnorm)
       integer ierr
       integer*8 fsolver
       double precision fnorm
 
-      call HYPRE_StructBiCGSTABGetFinalRel(fsolver, fnorm)
+      call NALU_HYPRE_StructBiCGSTABGetFinalRel(fsolver, fnorm)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structbicgstabgetfinalre: err = ', ierr
+         print *, 'fnalu_hypre_structbicgstabgetfinalre: err = ', ierr
       endif
 
       return
@@ -215,186 +215,186 @@
 
 
 !***********************************************************************
-!             HYPRE_StructGMRES routines
+!             NALU_HYPRE_StructGMRES routines
 !***********************************************************************
 
 !***********************************************************************
-!     fhypre_structgmrescreate
+!     fnalu_hypre_structgmrescreate
 !***********************************************************************
-      subroutine fhypre_structgmrescreate(fcomm, fsolver)
+      subroutine fnalu_hypre_structgmrescreate(fcomm, fsolver)
       integer ierr
       integer fcomm
       integer*8 fsolver
 
-      call HYPRE_StructGMRESCreate(fcomm, fsolver, ierr)
+      call NALU_HYPRE_StructGMRESCreate(fcomm, fsolver, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structgmrescreate: err = ', ierr
+         print *, 'fnalu_hypre_structgmrescreate: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structgmresdestroy
+!     fnalu_hypre_structgmresdestroy
 !***********************************************************************
-      subroutine fhypre_structgmresdestroy(fsolver)
+      subroutine fnalu_hypre_structgmresdestroy(fsolver)
       integer ierr
       integer*8 fsolver
 
-      call HYPRE_StructGMRESDestroy(fsolver, ierr)
+      call NALU_HYPRE_StructGMRESDestroy(fsolver, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structgmresdestroy: err = ', ierr
+         print *, 'fnalu_hypre_structgmresdestroy: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structgmressetup
+!     fnalu_hypre_structgmressetup
 !***********************************************************************
-      subroutine fhypre_structgmressetup(fsolver, fA, fb, fx)
-      integer ierr
-      integer*8 fsolver
-      integer*8 fA
-      integer*8 fb
-      integer*8 fx
-
-      call HYPRE_StructGMRESSetup(fsolver, fA, fb, fx, ierr)
-      if (ierr .ne. 0) then
-         print *, 'fhypre_structgmressetup: err = ', ierr
-      endif
-
-      return
-      end
-
-!***********************************************************************
-!     fhypre_structgmressolve
-!***********************************************************************
-      subroutine fhypre_structgmressolve(fsolver, fA, fb, fx)
+      subroutine fnalu_hypre_structgmressetup(fsolver, fA, fb, fx)
       integer ierr
       integer*8 fsolver
       integer*8 fA
       integer*8 fb
       integer*8 fx
 
-      call HYPRE_StructGMRESSolve(fsolver, fA, fb, fx, ierr)
+      call NALU_HYPRE_StructGMRESSetup(fsolver, fA, fb, fx, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structgmressolve: err = ', ierr
+         print *, 'fnalu_hypre_structgmressetup: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structgmressettol
+!     fnalu_hypre_structgmressolve
 !***********************************************************************
-      subroutine fhypre_structgmressettol(fsolver, ftol)
+      subroutine fnalu_hypre_structgmressolve(fsolver, fA, fb, fx)
+      integer ierr
+      integer*8 fsolver
+      integer*8 fA
+      integer*8 fb
+      integer*8 fx
+
+      call NALU_HYPRE_StructGMRESSolve(fsolver, fA, fb, fx, ierr)
+      if (ierr .ne. 0) then
+         print *, 'fnalu_hypre_structgmressolve: err = ', ierr
+      endif
+
+      return
+      end
+
+!***********************************************************************
+!     fnalu_hypre_structgmressettol
+!***********************************************************************
+      subroutine fnalu_hypre_structgmressettol(fsolver, ftol)
       integer ierr
       integer*8 fsolver
       double precision ftol
 
-      call HYPRE_StructGMRESSetTol(fsolver, ftol, ierr)
+      call NALU_HYPRE_StructGMRESSetTol(fsolver, ftol, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structgmressettol: err = ', ierr
+         print *, 'fnalu_hypre_structgmressettol: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structgmressetmaxiter
+!     fnalu_hypre_structgmressetmaxiter
 !***********************************************************************
-      subroutine fhypre_structgmressetmaxiter(fsolver, fmaxiter)
+      subroutine fnalu_hypre_structgmressetmaxiter(fsolver, fmaxiter)
       integer ierr
       integer fmaxiter
       integer*8 fsolver
 
-      call HYPRE_StructGMRESSetMaxIter(fsolver, fmaxiter, ierr)
+      call NALU_HYPRE_StructGMRESSetMaxIter(fsolver, fmaxiter, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structgmressetmaxiter: err = ', ierr
+         print *, 'fnalu_hypre_structgmressetmaxiter: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structgmressetprecond
+!     fnalu_hypre_structgmressetprecond
 !***********************************************************************
-      subroutine fhypre_structgmressetprecond(fsolver, fprecond_id,
+      subroutine fnalu_hypre_structgmressetprecond(fsolver, fprecond_id,
      1                                        fprecond_solver)
       integer ierr
       integer fprecond_id
       integer*8 fsolver
       integer*8 fprecond_solver
 
-      call HYPRE_StructGMRESSetPrecond(fsolver, fprecond_id,
+      call NALU_HYPRE_StructGMRESSetPrecond(fsolver, fprecond_id,
      1                                 fprecond_solver, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structgmressetprecond: err = ', ierr
+         print *, 'fnalu_hypre_structgmressetprecond: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structgmressetlogging
+!     fnalu_hypre_structgmressetlogging
 !***********************************************************************
-      subroutine fhypre_structgmressetlogging(fsolver, flogging)
+      subroutine fnalu_hypre_structgmressetlogging(fsolver, flogging)
       integer ierr
       integer flogging
       integer*8 fsolver
 
-      call HYPRE_StructGMRESSetLogging(fsolver, flogging, ierr)
+      call NALU_HYPRE_StructGMRESSetLogging(fsolver, flogging, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structgmressetlogging: err = ', ierr
+         print *, 'fnalu_hypre_structgmressetlogging: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structgmressetprintlevel
+!     fnalu_hypre_structgmressetprintlevel
 !***********************************************************************
-      subroutine fhypre_structgmressetprintlevel(fsolver, fprintlevel)
+      subroutine fnalu_hypre_structgmressetprintlevel(fsolver, fprintlevel)
       integer ierr
       integer fprintlevel
       integer*8 fsolver
 
-      call HYPRE_StructGMRESSetPrintLevel(fsolver, fprint_level, ierr)
+      call NALU_HYPRE_StructGMRESSetPrintLevel(fsolver, fprint_level, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structgmressetprintlevel: err = ', ierr
+         print *, 'fnalu_hypre_structgmressetprintlevel: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structgmresgetnumiterations
+!     fnalu_hypre_structgmresgetnumiterations
 !***********************************************************************
-      subroutine fhypre_structgmresgetnumiterati(fsolver, fnumiters)
+      subroutine fnalu_hypre_structgmresgetnumiterati(fsolver, fnumiters)
       integer ierr
       integer fnumiters
       integer*8 fsolver
 
-      call HYPRE_StructGMRESGetNumIteratio(fsolver, fnumiters, ierr)
+      call NALU_HYPRE_StructGMRESGetNumIteratio(fsolver, fnumiters, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structgmresgetnumiterati: err = ', ierr
+         print *, 'fnalu_hypre_structgmresgetnumiterati: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structgmresgetfinalrelativeresidualnorm
+!     fnalu_hypre_structgmresgetfinalrelativeresidualnorm
 !***********************************************************************
-      subroutine fhypre_structgmresgetfinalrelat(fsolver, fnorm)
+      subroutine fnalu_hypre_structgmresgetfinalrelat(fsolver, fnorm)
       integer ierr
       integer*8 fsolver
       double precision fnorm
 
-      call HYPRE_StructGMRESGetFinalRelati(fsolver, fnorm, ierr)
+      call NALU_HYPRE_StructGMRESGetFinalRelati(fsolver, fnorm, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structgmresgetfinalrelat: err = ', ierr
+         print *, 'fnalu_hypre_structgmresgetfinalrelat: err = ', ierr
       endif
 
       return
@@ -405,346 +405,346 @@
 
 
 !***********************************************************************
-!             HYPRE_StructHybrid routines
+!             NALU_HYPRE_StructHybrid routines
 !***********************************************************************
 
 !***********************************************************************
-!     fhypre_structhybridcreate
+!     fnalu_hypre_structhybridcreate
 !***********************************************************************
-      subroutine fhypre_structhybridcreate(fcomm, fsolver)
+      subroutine fnalu_hypre_structhybridcreate(fcomm, fsolver)
       integer ierr
       integer fcomm
       integer*8 fsolver
 
-      call HYPRE_StructHybridCreate(fcomm, fsolver, ierr)
+      call NALU_HYPRE_StructHybridCreate(fcomm, fsolver, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structhybridcreate: err = ', ierr
+         print *, 'fnalu_hypre_structhybridcreate: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structhybriddestroy
+!     fnalu_hypre_structhybriddestroy
 !***********************************************************************
-      subroutine fhypre_structhybriddestroy(fsolver)
+      subroutine fnalu_hypre_structhybriddestroy(fsolver)
       integer ierr
       integer*8 fsolver
 
-      call HYPRE_StructHybridDestroy(fsolver, ierr)
+      call NALU_HYPRE_StructHybridDestroy(fsolver, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structhybriddestroy: err = ', ierr
+         print *, 'fnalu_hypre_structhybriddestroy: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structhybridsetup
+!     fnalu_hypre_structhybridsetup
 !***********************************************************************
-      subroutine fhypre_structhybridsetup(fsolver, fA, fb, fx)
-      integer ierr
-      integer*8 fsolver
-      integer*8 fA
-      integer*8 fb
-      integer*8 fx
-
-      call HYPRE_StructHybridSetup(fsolver, fA, fb, fx, ierr)
-      if (ierr .ne. 0) then
-         print *, 'fhypre_structhybridsetup: err = ', ierr
-      endif
-
-      return
-      end
-
-!***********************************************************************
-!     fhypre_structhybridsolve
-!***********************************************************************
-      subroutine fhypre_structhybridsolve(fsolver, fA, fb, fx)
+      subroutine fnalu_hypre_structhybridsetup(fsolver, fA, fb, fx)
       integer ierr
       integer*8 fsolver
       integer*8 fA
       integer*8 fb
       integer*8 fx
 
-      call HYPRE_StructHybridSolve(fsolver, fA, fb, fx, ierr)
+      call NALU_HYPRE_StructHybridSetup(fsolver, fA, fb, fx, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structhybridsolve: err = ', ierr
+         print *, 'fnalu_hypre_structhybridsetup: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structhybridsetsolvertype
+!     fnalu_hypre_structhybridsolve
 !***********************************************************************
-      subroutine fhypre_structhybridsetsolvertyp(fsolver, fsolver_typ)
+      subroutine fnalu_hypre_structhybridsolve(fsolver, fA, fb, fx)
+      integer ierr
+      integer*8 fsolver
+      integer*8 fA
+      integer*8 fb
+      integer*8 fx
+
+      call NALU_HYPRE_StructHybridSolve(fsolver, fA, fb, fx, ierr)
+      if (ierr .ne. 0) then
+         print *, 'fnalu_hypre_structhybridsolve: err = ', ierr
+      endif
+
+      return
+      end
+
+!***********************************************************************
+!     fnalu_hypre_structhybridsetsolvertype
+!***********************************************************************
+      subroutine fnalu_hypre_structhybridsetsolvertyp(fsolver, fsolver_typ)
       integer ierr
       integer fsolver_typ
       integer*8 fsolver
 
-      call HYPRE_StructHybridSetSolverType(fsolver, fsolver_typ, ierr)
+      call NALU_HYPRE_StructHybridSetSolverType(fsolver, fsolver_typ, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structhybridsetsolvertyp: err = ', ierr
+         print *, 'fnalu_hypre_structhybridsetsolvertyp: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structhybridsetstopcrit
+!     fnalu_hypre_structhybridsetstopcrit
 !***********************************************************************
-      subroutine fhypre_structhybridsetstopcrit(fsolver, fstop_crit)
+      subroutine fnalu_hypre_structhybridsetstopcrit(fsolver, fstop_crit)
       integer ierr
       integer fstop_crit
       integer*8 fsolver
 
-      call HYPRE_StructHybridSetStopCrit(fsolver, fstop_crit, ierr)
+      call NALU_HYPRE_StructHybridSetStopCrit(fsolver, fstop_crit, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structhybridsetstopcrit: err = ', ierr
+         print *, 'fnalu_hypre_structhybridsetstopcrit: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structhybridsetkdim
+!     fnalu_hypre_structhybridsetkdim
 !***********************************************************************
-      subroutine fhypre_structhybridsetkdim(fsolver, fkdim)
+      subroutine fnalu_hypre_structhybridsetkdim(fsolver, fkdim)
       integer ierr
       integer fkdim
       integer*8 fsolver
 
-      call HYPRE_StructHybridSetKDim(fsolver, fkdim, ierr)
+      call NALU_HYPRE_StructHybridSetKDim(fsolver, fkdim, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structhybridsetkdim: err = ', ierr
+         print *, 'fnalu_hypre_structhybridsetkdim: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structhybridsettol
+!     fnalu_hypre_structhybridsettol
 !***********************************************************************
-      subroutine fhypre_structhybridsettol(fsolver, ftol)
+      subroutine fnalu_hypre_structhybridsettol(fsolver, ftol)
       integer ierr
       integer*8 fsolver
       double precision ftol
 
-      call HYPRE_StructHybridSetTol(fsolver, ftol, ierr)
+      call NALU_HYPRE_StructHybridSetTol(fsolver, ftol, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structhybridsettol: err = ', ierr
+         print *, 'fnalu_hypre_structhybridsettol: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structhybridsetconvergencetol
+!     fnalu_hypre_structhybridsetconvergencetol
 !***********************************************************************
-      subroutine fhypre_structhybridsetconvergen(fsolver, fcftol)
+      subroutine fnalu_hypre_structhybridsetconvergen(fsolver, fcftol)
       integer ierr
       integer*8 fsolver
       double precision fcftol
 
-      call HYPRE_StructHybridSetConvergenc(fsolver, fcftol, ierr)
+      call NALU_HYPRE_StructHybridSetConvergenc(fsolver, fcftol, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structhybridsetconvergen: err = ', ierr
+         print *, 'fnalu_hypre_structhybridsetconvergen: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structhybridsetpcgabsolutetolfactor
+!     fnalu_hypre_structhybridsetpcgabsolutetolfactor
 !***********************************************************************
-      subroutine fhypre_structhybridsetpcgabsolu(fsolver, fpcgtol)
+      subroutine fnalu_hypre_structhybridsetpcgabsolu(fsolver, fpcgtol)
       integer ierr
       integer*8 fsolver
       double precision fpcgtol
 
-      call HYPRE_StructHybridSetPCGAbsolut(fsolver, fpcgtol, ierr)
+      call NALU_HYPRE_StructHybridSetPCGAbsolut(fsolver, fpcgtol, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structhybridsetpcgabsolu: err = ', ierr
+         print *, 'fnalu_hypre_structhybridsetpcgabsolu: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structhybridsetdscgmaxiter
+!     fnalu_hypre_structhybridsetdscgmaxiter
 !***********************************************************************
-      subroutine fhypre_structhybridsetdscgmaxit(fsolver, fdscgmaxitr)
+      subroutine fnalu_hypre_structhybridsetdscgmaxit(fsolver, fdscgmaxitr)
       integer ierr
       integer fdscgmaxitr
       integer*8 fsolver
 
-      call HYPRE_StructHybridSetDSCGMaxIte(fsolver, fdscgmaxitr, ierr)
+      call NALU_HYPRE_StructHybridSetDSCGMaxIte(fsolver, fdscgmaxitr, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structhybridsetdscgmaxit: err = ', ierr
+         print *, 'fnalu_hypre_structhybridsetdscgmaxit: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structhybridsetpcgmaxiter
+!     fnalu_hypre_structhybridsetpcgmaxiter
 !***********************************************************************
-      subroutine fhypre_structhybridsetpcgmaxite(fsolver, fpcgmaxitr)
+      subroutine fnalu_hypre_structhybridsetpcgmaxite(fsolver, fpcgmaxitr)
       integer ierr
       integer fpcgmaxitr
       integer*8 fsolver
 
-      call HYPRE_StructHybridSetPCGMaxIter(fsolver, fpcgmaxitr, ierr)
+      call NALU_HYPRE_StructHybridSetPCGMaxIter(fsolver, fpcgmaxitr, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structhybridsetpcgmaxite: err = ', ierr
+         print *, 'fnalu_hypre_structhybridsetpcgmaxite: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structhybridsettwonorm
+!     fnalu_hypre_structhybridsettwonorm
 !***********************************************************************
-      subroutine fhypre_structhybridsettwonorm(fsolver, ftwonorm)
+      subroutine fnalu_hypre_structhybridsettwonorm(fsolver, ftwonorm)
       integer ierr
       integer ftwonorm
       integer*8 fsolver
 
-      call HYPRE_StructHybridSetTwoNorm(fsolver, ftwonorm, ierr)
+      call NALU_HYPRE_StructHybridSetTwoNorm(fsolver, ftwonorm, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structhybridsettwonorm: err = ', ierr
+         print *, 'fnalu_hypre_structhybridsettwonorm: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structhybridsetrelchange
+!     fnalu_hypre_structhybridsetrelchange
 !***********************************************************************
-      subroutine fhypre_structhybridsetrelchange(fsolver, frelchng)
+      subroutine fnalu_hypre_structhybridsetrelchange(fsolver, frelchng)
       integer ierr
       integer frelchng
       integer*8 fsolver
 
-      call HYPRE_StructHybridSetRelChange(fsolver, frelchng, ierr)
+      call NALU_HYPRE_StructHybridSetRelChange(fsolver, frelchng, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structhybridsetrelchange: err = ', ierr
+         print *, 'fnalu_hypre_structhybridsetrelchange: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structhybridsetprecond
+!     fnalu_hypre_structhybridsetprecond
 !***********************************************************************
-      subroutine fhypre_structhybridsetprecond(fsolver, fprecond_id,
+      subroutine fnalu_hypre_structhybridsetprecond(fsolver, fprecond_id,
      1                                         fprecond)
       integer ierr
       integer fprecond_id
       integer*8 fsolver
       integer*8 fprecond
 
-      call HYPRE_StructHybridSetPrecond(fsolver, fprecond_id, fprecond,
+      call NALU_HYPRE_StructHybridSetPrecond(fsolver, fprecond_id, fprecond,
      1                                  ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structhybridsetprecond: err = ', ierr
+         print *, 'fnalu_hypre_structhybridsetprecond: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structhybridsetlogging
+!     fnalu_hypre_structhybridsetlogging
 !***********************************************************************
-      subroutine fhypre_structhybridsetlogging(fsolver, flogging)
+      subroutine fnalu_hypre_structhybridsetlogging(fsolver, flogging)
       integer ierr
       integer flogging
       integer*8 fsolver
 
-      call HYPRE_StructHybridSetLogging(fsolver, flogging, ierr)
+      call NALU_HYPRE_StructHybridSetLogging(fsolver, flogging, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structhybridsetlogging: err = ', ierr
+         print *, 'fnalu_hypre_structhybridsetlogging: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structhybridsetprintlevel
+!     fnalu_hypre_structhybridsetprintlevel
 !***********************************************************************
-      subroutine fhypre_structhybridsetprintleve(fsolver, fprntlvl)
+      subroutine fnalu_hypre_structhybridsetprintleve(fsolver, fprntlvl)
       integer ierr
       integer fprntlvl
       integer*8 fsolver
 
-      call HYPRE_StructHybridSetPrintLevel(fsolver, fprntlvl, ierr)
+      call NALU_HYPRE_StructHybridSetPrintLevel(fsolver, fprntlvl, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structhybridsetprintleve: err = ', ierr
+         print *, 'fnalu_hypre_structhybridsetprintleve: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structhybridgetnumiterations
+!     fnalu_hypre_structhybridgetnumiterations
 !***********************************************************************
-      subroutine fhypre_structhybridgetnumiterat(fsolver, fnumits)
+      subroutine fnalu_hypre_structhybridgetnumiterat(fsolver, fnumits)
       integer ierr
       integer fnumits
       integer*8 fsolver
 
-      call HYPRE_StructHybridGetNumIterati(fsolver, fnumits, ierr)
+      call NALU_HYPRE_StructHybridGetNumIterati(fsolver, fnumits, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structhybridgetnumiterat: err = ', ierr
+         print *, 'fnalu_hypre_structhybridgetnumiterat: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structhybridgetdscgnumiterations
+!     fnalu_hypre_structhybridgetdscgnumiterations
 !***********************************************************************
-      subroutine fhypre_structhybridgetdscgnumit(fsolver, fdscgnumits)
+      subroutine fnalu_hypre_structhybridgetdscgnumit(fsolver, fdscgnumits)
       integer ierr
       integer fdscgnumits
       integer*8 fsolver
 
-      call HYPRE_StructHybridGetDSCGNumIte(fsolver, fdscgnumits, ierr)
+      call NALU_HYPRE_StructHybridGetDSCGNumIte(fsolver, fdscgnumits, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structhybridgetdscgnumit: err = ', ierr
+         print *, 'fnalu_hypre_structhybridgetdscgnumit: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structhybridgetpcgnumiterations
+!     fnalu_hypre_structhybridgetpcgnumiterations
 !***********************************************************************
-      subroutine fhypre_structhybridgetpcgnumite(fsolver, fpcgnumits)
+      subroutine fnalu_hypre_structhybridgetpcgnumite(fsolver, fpcgnumits)
       integer ierr
       integer fpcgnumits
       integer*8 fsolver
 
-      call HYPRE_StructHybridGetPCGNumIter(fsolver, fpcgnumits, ierr)
+      call NALU_HYPRE_StructHybridGetPCGNumIter(fsolver, fpcgnumits, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structhybridgetpcgnumite: err = ', ierr
+         print *, 'fnalu_hypre_structhybridgetpcgnumite: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structhybridgetfinalrelativeresidualnorm
+!     fnalu_hypre_structhybridgetfinalrelativeresidualnorm
 !***********************************************************************
-      subroutine fhypre_structhybridgetfinalrela(fsolver, fnorm)
+      subroutine fnalu_hypre_structhybridgetfinalrela(fsolver, fnorm)
       integer ierr
       integer*8 fsolver
       double precision fnorm
 
-      call HYPRE_StructHybridGetFinalRelat(fsolver, fnorm, ierr)
+      call NALU_HYPRE_StructHybridGetFinalRelat(fsolver, fnorm, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structhybridgetfinalrela: err = ', ierr
+         print *, 'fnalu_hypre_structhybridgetfinalrela: err = ', ierr
       endif
 
       return
@@ -755,20 +755,20 @@
 
 
 !***********************************************************************
-!             HYPRE_StructInterpreter routines
+!             NALU_HYPRE_StructInterpreter routines
 !***********************************************************************
 
 !***********************************************************************
-!     fhypre_structvectorsetrandomvalues
+!     fnalu_hypre_structvectorsetrandomvalues
 !***********************************************************************
-      subroutine fhypre_structvectorsetrandomvalu(fvector, fseed)
+      subroutine fnalu_hypre_structvectorsetrandomvalu(fvector, fseed)
       integer ierr
       integer fseed
       integer*8 fvector
 
-      call hypre_StructVectorSetRandomValu(fvector, fseed, ierr)
+      call nalu_hypre_StructVectorSetRandomValu(fvector, fseed, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structvectorsetrandomvalues: err = ', ierr
+         print *, 'fnalu_hypre_structvectorsetrandomvalues: err = ', ierr
       endif
 
       return
@@ -776,16 +776,16 @@
 
 
 !***********************************************************************
-!     fhypre_structsetrandomvalues
+!     fnalu_hypre_structsetrandomvalues
 !***********************************************************************
-      subroutine fhypre_structsetrandomvalues(fvector, fseed)
+      subroutine fnalu_hypre_structsetrandomvalues(fvector, fseed)
       integer ierr
       integer fseed
       integer*8 fvector
 
-      call hypre_StructSetRandomValues(fvector, fseed, ierr)
+      call nalu_hypre_StructSetRandomValues(fvector, fseed, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structsetrandomvalues: err = ', ierr
+         print *, 'fnalu_hypre_structsetrandomvalues: err = ', ierr
       endif
 
       return
@@ -793,15 +793,15 @@
 
 
 !***********************************************************************
-!     fhypre_structsetupinterpreter
+!     fnalu_hypre_structsetupinterpreter
 !***********************************************************************
-      subroutine fhypre_structsetupinterpreter(fi)
+      subroutine fnalu_hypre_structsetupinterpreter(fi)
       integer ierr
       integer*8 fi
 
-      call HYPRE_StructSetupInterpreter(fi, ierr)
+      call NALU_HYPRE_StructSetupInterpreter(fi, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structsetupinterpreter: err = ', ierr
+         print *, 'fnalu_hypre_structsetupinterpreter: err = ', ierr
       endif
 
       return
@@ -809,15 +809,15 @@
 
 
 !***********************************************************************
-!     fhypre_structsetupmatvec
+!     fnalu_hypre_structsetupmatvec
 !***********************************************************************
-      subroutine fhypre_structsetupmatvec(fmv)
+      subroutine fnalu_hypre_structsetupmatvec(fmv)
       integer ierr
       integer*8 fmv
 
-      call HYPRE_StructSetupMatvec(fmv, ierr)
+      call NALU_HYPRE_StructSetupMatvec(fmv, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structsetupmatvec: err = ', ierr
+         print *, 'fnalu_hypre_structsetupmatvec: err = ', ierr
       endif
 
       return
@@ -827,212 +827,212 @@
 
 
 !***********************************************************************
-!             HYPRE_StructJacobi routines
+!             NALU_HYPRE_StructJacobi routines
 !***********************************************************************
 
 !***********************************************************************
-!     fhypre_structjacobicreate
+!     fnalu_hypre_structjacobicreate
 !***********************************************************************
-      subroutine fhypre_structjacobicreate(fcomm, fsolver)
+      subroutine fnalu_hypre_structjacobicreate(fcomm, fsolver)
       integer ierr
       integer fcomm
       integer*8 fsolver
 
-      call HYPRE_StructJacobiCreate(fcomm, fsolver, ierr)
+      call NALU_HYPRE_StructJacobiCreate(fcomm, fsolver, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structjacobicreate: err = ', ierr
+         print *, 'fnalu_hypre_structjacobicreate: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structjacobidestroy
+!     fnalu_hypre_structjacobidestroy
 !***********************************************************************
-      subroutine fhypre_structjacobidestroy(fsolver)
+      subroutine fnalu_hypre_structjacobidestroy(fsolver)
       integer ierr
       integer*8 fsolver
 
-      call HYPRE_StructJacobiDestroy(fsolver, ierr)
+      call NALU_HYPRE_StructJacobiDestroy(fsolver, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structjacobidestroy: err = ', ierr
+         print *, 'fnalu_hypre_structjacobidestroy: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structjacobisetup
+!     fnalu_hypre_structjacobisetup
 !***********************************************************************
-      subroutine fhypre_structjacobisetup(fsolver, fA, fb, fx)
-      integer ierr
-      integer*8 fsolver
-      integer*8 fA
-      integer*8 fb
-      integer*8 fx
-
-      call HYPRE_StructJacobiSetup(fsolver, fA, fb, fx, ierr)
-      if (ierr .ne. 0) then
-         print *, 'fhypre_structjacobisetup: err = ', ierr
-      endif
-
-      return
-      end
-
-!***********************************************************************
-!     fhypre_structjacobisolve
-!***********************************************************************
-      subroutine fhypre_structjacobisolve(fsolver, fA, fb, fx)
+      subroutine fnalu_hypre_structjacobisetup(fsolver, fA, fb, fx)
       integer ierr
       integer*8 fsolver
       integer*8 fA
       integer*8 fb
       integer*8 fx
 
-      call HYPRE_StructJacobiSolve(fsolver, fA, fb, fx, ierr)
+      call NALU_HYPRE_StructJacobiSetup(fsolver, fA, fb, fx, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structjacobisolve: err = ', ierr
+         print *, 'fnalu_hypre_structjacobisetup: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structjacobisettol
+!     fnalu_hypre_structjacobisolve
 !***********************************************************************
-      subroutine fhypre_structjacobisettol(fsolver, ftol)
+      subroutine fnalu_hypre_structjacobisolve(fsolver, fA, fb, fx)
+      integer ierr
+      integer*8 fsolver
+      integer*8 fA
+      integer*8 fb
+      integer*8 fx
+
+      call NALU_HYPRE_StructJacobiSolve(fsolver, fA, fb, fx, ierr)
+      if (ierr .ne. 0) then
+         print *, 'fnalu_hypre_structjacobisolve: err = ', ierr
+      endif
+
+      return
+      end
+
+!***********************************************************************
+!     fnalu_hypre_structjacobisettol
+!***********************************************************************
+      subroutine fnalu_hypre_structjacobisettol(fsolver, ftol)
       integer ierr
       integer*8 fsolver
       double precision ftol
 
-      call HYPRE_StructJacobiSetTol(fsolver, ftol, ierr)
+      call NALU_HYPRE_StructJacobiSetTol(fsolver, ftol, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structjacobisettol: err = ', ierr
+         print *, 'fnalu_hypre_structjacobisettol: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structjacobigettol
+!     fnalu_hypre_structjacobigettol
 !***********************************************************************
-      subroutine fhypre_structjacobigettol(fsolver, ftol)
+      subroutine fnalu_hypre_structjacobigettol(fsolver, ftol)
       integer ierr
       integer*8 fsolver
       double precision ftol
 
-      call HYPRE_StructJacobiGetTol(fsolver, ftol, ierr)
+      call NALU_HYPRE_StructJacobiGetTol(fsolver, ftol, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structjacobigettol: err = ', ierr
+         print *, 'fnalu_hypre_structjacobigettol: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structjacobisetmaxiter
+!     fnalu_hypre_structjacobisetmaxiter
 !***********************************************************************
-      subroutine fhypre_structjacobisetmaxiter(fsolver, fmaxiter)
+      subroutine fnalu_hypre_structjacobisetmaxiter(fsolver, fmaxiter)
       integer ierr
       integer fmaxiter
       integer*8 fsolver
 
-      call HYPRE_StructJacobiSetMaxIter(fsolver, fmaxiter, ierr)
+      call NALU_HYPRE_StructJacobiSetMaxIter(fsolver, fmaxiter, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structjacobisetmaxiter: err = ', ierr
+         print *, 'fnalu_hypre_structjacobisetmaxiter: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structjacobigetmaxiter
+!     fnalu_hypre_structjacobigetmaxiter
 !***********************************************************************
-      subroutine fhypre_structjacobigetmaxiter(fsolver, fmaxiter)
+      subroutine fnalu_hypre_structjacobigetmaxiter(fsolver, fmaxiter)
       integer ierr
       integer fmaxiter
       integer*8 fsolver
 
-      call HYPRE_StructJacobiGetMaxIter(fsolver, fmaxiter, ierr)
+      call NALU_HYPRE_StructJacobiGetMaxIter(fsolver, fmaxiter, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structjacobigetmaxiter: err = ', ierr
+         print *, 'fnalu_hypre_structjacobigetmaxiter: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structjacobisetzeroguess
+!     fnalu_hypre_structjacobisetzeroguess
 !***********************************************************************
-      subroutine fhypre_structjacobisetzeroguess(fsolver)
+      subroutine fnalu_hypre_structjacobisetzeroguess(fsolver)
       integer ierr
       integer*8 fsolver
 
-      call HYPRE_StructJacobiSetZeroGuess(fsolver, ierr)
+      call NALU_HYPRE_StructJacobiSetZeroGuess(fsolver, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structjacobisetzeroguess: err = ', ierr
+         print *, 'fnalu_hypre_structjacobisetzeroguess: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structjacobigetzeroguess
+!     fnalu_hypre_structjacobigetzeroguess
 !***********************************************************************
-      subroutine fhypre_structjacobigetzeroguess(fsolver)
+      subroutine fnalu_hypre_structjacobigetzeroguess(fsolver)
       integer ierr
       integer*8 fsolver
 
-      call HYPRE_StructJacobiGetZeroGuess(fsolver, ierr)
+      call NALU_HYPRE_StructJacobiGetZeroGuess(fsolver, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structjacobigetzeroguess: err = ', ierr
+         print *, 'fnalu_hypre_structjacobigetzeroguess: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structjacobisetnonzeroguess
+!     fnalu_hypre_structjacobisetnonzeroguess
 !***********************************************************************
-      subroutine fhypre_structjacobisetnonzerogu(fsolver)
+      subroutine fnalu_hypre_structjacobisetnonzerogu(fsolver)
       integer ierr
       integer*8 fsolver
 
-      call HYPRE_StructJacobiSetNonZeroGue(fsolver, ierr)
+      call NALU_HYPRE_StructJacobiSetNonZeroGue(fsolver, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structjacobisetnonzerogu: err = ', ierr
+         print *, 'fnalu_hypre_structjacobisetnonzerogu: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structjacobigetnumiterations
+!     fnalu_hypre_structjacobigetnumiterations
 !***********************************************************************
-      subroutine fhypre_structjacobigetnumiterat(fsolver, fnumiters)
+      subroutine fnalu_hypre_structjacobigetnumiterat(fsolver, fnumiters)
       integer ierr
       integer fnumiters
       integer*8 fsolver
 
-      call HYPRE_StructJacobiGetNumIterati(fsolver, fnumiters, ierr)
+      call NALU_HYPRE_StructJacobiGetNumIterati(fsolver, fnumiters, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structjacobigetnumiterat: err = ', ierr
+         print *, 'fnalu_hypre_structjacobigetnumiterat: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structjacobigetfinalrelativeresidualnorm
+!     fnalu_hypre_structjacobigetfinalrelativeresidualnorm
 !***********************************************************************
-      subroutine fhypre_structjacobigetfinalrela(fsolver, fnorm)
+      subroutine fnalu_hypre_structjacobigetfinalrela(fsolver, fnorm)
       integer ierr
       integer*8 fsolver
       double precision fnorm
 
-      call HYPRE_StructJacobiGetFinalRelat(fsolver, fnorm, ierr)
+      call NALU_HYPRE_StructJacobiGetFinalRelat(fsolver, fnorm, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structjacobigetfinalrela: err = ', ierr
+         print *, 'fnalu_hypre_structjacobigetfinalrela: err = ', ierr
       endif
 
       return
@@ -1043,218 +1043,218 @@
 
 
 !***********************************************************************
-!             HYPRE_StructPCG routines
+!             NALU_HYPRE_StructPCG routines
 !***********************************************************************
 
 !***********************************************************************
-!     fhypre_structpcgcreate
+!     fnalu_hypre_structpcgcreate
 !***********************************************************************
-      subroutine fhypre_structpcgcreate(fcomm, fsolver)
+      subroutine fnalu_hypre_structpcgcreate(fcomm, fsolver)
       integer ierr
       integer fcomm
       integer*8 fsolver
 
-      call HYPRE_StructPCGCreate(fcomm, fsolver, ierr)
+      call NALU_HYPRE_StructPCGCreate(fcomm, fsolver, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structpcgcreate: err = ', ierr
+         print *, 'fnalu_hypre_structpcgcreate: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structpcgdestroy
+!     fnalu_hypre_structpcgdestroy
 !***********************************************************************
-      subroutine fhypre_structpcgdestroy(fsolver)
+      subroutine fnalu_hypre_structpcgdestroy(fsolver)
       integer ierr
       integer*8 fsolver
 
-      call HYPRE_StructPCGDestroy(fsolver, ierr)
+      call NALU_HYPRE_StructPCGDestroy(fsolver, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structpcgdestroy: err = ', ierr
+         print *, 'fnalu_hypre_structpcgdestroy: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structpcgsetup
+!     fnalu_hypre_structpcgsetup
 !***********************************************************************
-      subroutine fhypre_structpcgsetup(fsolver, fA, fb, fx)
-      integer ierr
-      integer*8 fsolver
-      integer*8 fA
-      integer*8 fb
-      integer*8 fx
-
-      call HYPRE_StructPCGSetup(fsolver, fA, fb, fx, ierr)
-      if (ierr .ne. 0) then
-         print *, 'fhypre_structpcgsetup: err = ', ierr
-      endif
-
-      return
-      end
-
-!***********************************************************************
-!     fhypre_structpcgsolve
-!***********************************************************************
-      subroutine fhypre_structpcgsolve(fsolver, fA, fb, fx)
+      subroutine fnalu_hypre_structpcgsetup(fsolver, fA, fb, fx)
       integer ierr
       integer*8 fsolver
       integer*8 fA
       integer*8 fb
       integer*8 fx
 
-      call HYPRE_StructPCGSolve(fsolver, fA, fb, fx, ierr)
+      call NALU_HYPRE_StructPCGSetup(fsolver, fA, fb, fx, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structpcgsolve: err = ', ierr
+         print *, 'fnalu_hypre_structpcgsetup: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structpcgsettol
+!     fnalu_hypre_structpcgsolve
 !***********************************************************************
-      subroutine fhypre_structpcgsettol(fsolver, ftol)
+      subroutine fnalu_hypre_structpcgsolve(fsolver, fA, fb, fx)
+      integer ierr
+      integer*8 fsolver
+      integer*8 fA
+      integer*8 fb
+      integer*8 fx
+
+      call NALU_HYPRE_StructPCGSolve(fsolver, fA, fb, fx, ierr)
+      if (ierr .ne. 0) then
+         print *, 'fnalu_hypre_structpcgsolve: err = ', ierr
+      endif
+
+      return
+      end
+
+!***********************************************************************
+!     fnalu_hypre_structpcgsettol
+!***********************************************************************
+      subroutine fnalu_hypre_structpcgsettol(fsolver, ftol)
       integer ierr
       integer*8 fsolver
       double precision ftol
 
-      call HYPRE_StructPCGSetTol(fsolver, ftol, ierr)
+      call NALU_HYPRE_StructPCGSetTol(fsolver, ftol, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structpcgsettol: err = ', ierr
+         print *, 'fnalu_hypre_structpcgsettol: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structpcgsetmaxiter
+!     fnalu_hypre_structpcgsetmaxiter
 !***********************************************************************
-      subroutine fhypre_structpcgsetmaxiter(fsolver, fmaxiter)
+      subroutine fnalu_hypre_structpcgsetmaxiter(fsolver, fmaxiter)
       integer ierr
       integer fmaxiter
       integer*8 fsolver
 
-      call HYPRE_StructPCGSetMaxIter(fsolver, fmaxiter, ierr)
+      call NALU_HYPRE_StructPCGSetMaxIter(fsolver, fmaxiter, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structpcgsetmaxiter: err = ', ierr
+         print *, 'fnalu_hypre_structpcgsetmaxiter: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structpcgsettwonorm
+!     fnalu_hypre_structpcgsettwonorm
 !***********************************************************************
-      subroutine fhypre_structpcgsettwonorm(fsolver, ftwonorm)
+      subroutine fnalu_hypre_structpcgsettwonorm(fsolver, ftwonorm)
       integer ierr
       integer ftwonorm
       integer*8 fsolver
 
-      call HYPRE_StructPCGSetTwoNorm(fsolver, ftwonorm, ierr)
+      call NALU_HYPRE_StructPCGSetTwoNorm(fsolver, ftwonorm, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structpcgsettwonorm: err = ', ierr
+         print *, 'fnalu_hypre_structpcgsettwonorm: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structpcgsetrelchange
+!     fnalu_hypre_structpcgsetrelchange
 !***********************************************************************
-      subroutine fhypre_structpcgsetrelchange(fsolver, frelchng)
+      subroutine fnalu_hypre_structpcgsetrelchange(fsolver, frelchng)
       integer ierr
       integer frelchng
       integer*8 fsolver
 
-      call HYPRE_StructPCGSetRelChange(fsolver, frelchng, ierr)
+      call NALU_HYPRE_StructPCGSetRelChange(fsolver, frelchng, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structpcgsetrelchange: err = ', ierr
+         print *, 'fnalu_hypre_structpcgsetrelchange: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structpcgsetprecond
+!     fnalu_hypre_structpcgsetprecond
 !***********************************************************************
-      subroutine fhypre_structpcgsetprecond(fsolver, fprecond_id, 
+      subroutine fnalu_hypre_structpcgsetprecond(fsolver, fprecond_id, 
      1                                      fprecond)
       integer ierr
       integer fprecond_id
       integer*8 fsolver
       integer*8 fprecond
 
-      call HYPRE_StructPCGSetPrecond(fsolver, fprecond_id, fprecond,
+      call NALU_HYPRE_StructPCGSetPrecond(fsolver, fprecond_id, fprecond,
      1                               ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structpcgsetprecond: err = ', ierr
+         print *, 'fnalu_hypre_structpcgsetprecond: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structpcgsetlogging
+!     fnalu_hypre_structpcgsetlogging
 !***********************************************************************
-      subroutine fhypre_structpcgsetlogging(fsolver, flogging) 
+      subroutine fnalu_hypre_structpcgsetlogging(fsolver, flogging) 
       integer ierr
       integer flogging
       integer*8 fsolver
 
-      call HYPRE_StructPCGSetLogging(fsolver, flogging, ierr)
+      call NALU_HYPRE_StructPCGSetLogging(fsolver, flogging, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structpcgsetlogging: err = ', ierr
+         print *, 'fnalu_hypre_structpcgsetlogging: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structpcgsetprintlevel
+!     fnalu_hypre_structpcgsetprintlevel
 !***********************************************************************
-      subroutine fhypre_structpcgsetprintlevel(fsolver, fprntlvl) 
+      subroutine fnalu_hypre_structpcgsetprintlevel(fsolver, fprntlvl) 
       integer ierr
       integer fprntlvl
       integer*8 fsolver
 
-      call HYPRE_StructPCGSetPrintLevel(fsolver, fprntlvl, ierr)
+      call NALU_HYPRE_StructPCGSetPrintLevel(fsolver, fprntlvl, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structpcgsetprintlevel: err = ', ierr
+         print *, 'fnalu_hypre_structpcgsetprintlevel: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structpcggetnumiterations
+!     fnalu_hypre_structpcggetnumiterations
 !***********************************************************************
-      subroutine fhypre_structpcggetnumiteration(fsolver, fnumiters)
+      subroutine fnalu_hypre_structpcggetnumiteration(fsolver, fnumiters)
       integer ierr
       integer fnumiters
       integer*8 fsolver
 
-      call HYPRE_StructPCGGetNumIterations(fsolver, fnumiters, ierr)
+      call NALU_HYPRE_StructPCGGetNumIterations(fsolver, fnumiters, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structpcggetnumiteration: err = ', ierr
+         print *, 'fnalu_hypre_structpcggetnumiteration: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structpcggetfinalrelativeresidualnorm
+!     fnalu_hypre_structpcggetfinalrelativeresidualnorm
 !***********************************************************************
-      subroutine fhypre_structpcggetfinalrelativ(fsolver, fnorm)
+      subroutine fnalu_hypre_structpcggetfinalrelativ(fsolver, fnorm)
       integer ierr
       integer*8 fsolver
       double precision fnorm
 
-      call HYPRE_StructPCGGetFinalRelative(fsolver, fnorm, ierr)
+      call NALU_HYPRE_StructPCGGetFinalRelative(fsolver, fnorm, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structjacobigetfinalrelativ: err = ', ierr
+         print *, 'fnalu_hypre_structjacobigetfinalrelativ: err = ', ierr
       endif
 
       return
@@ -1263,36 +1263,36 @@
 
 
 !***********************************************************************
-!     fhypre_structdiagscalesetup
+!     fnalu_hypre_structdiagscalesetup
 !***********************************************************************
-      subroutine fhypre_structdiagscalesetup(fsolver, fA, fb, fx)
+      subroutine fnalu_hypre_structdiagscalesetup(fsolver, fA, fb, fx)
       integer ierr
       integer*8 fsolver
       integer*8 fA
       integer*8 fb
       integer*8 fx
 
-      call HYPRE_StructDiagScaleSetup(fsolver, fA, fb, fx, ierr)
+      call NALU_HYPRE_StructDiagScaleSetup(fsolver, fA, fb, fx, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structdiagscalesetup: err = ', ierr
+         print *, 'fnalu_hypre_structdiagscalesetup: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structdiagscale
+!     fnalu_hypre_structdiagscale
 !***********************************************************************
-      subroutine fhypre_structdiagscale(fsolver, fA, fb, fx)
+      subroutine fnalu_hypre_structdiagscale(fsolver, fA, fb, fx)
       integer ierr
       integer*8 fsolver
       integer*8 fA
       integer*8 fb
       integer*8 fx
 
-      call HYPRE_StructDiagScale(fsolver, fA, fb, fx, ierr)
+      call NALU_HYPRE_StructDiagScale(fsolver, fA, fb, fx, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structdiagscale: err = ', ierr
+         print *, 'fnalu_hypre_structdiagscale: err = ', ierr
       endif
 
       return
@@ -1303,520 +1303,520 @@
 
 
 !***********************************************************************
-!             HYPRE_StructPFMG routines
+!             NALU_HYPRE_StructPFMG routines
 !***********************************************************************
 
 !***********************************************************************
-!     fhypre_structpfmgcreate
+!     fnalu_hypre_structpfmgcreate
 !***********************************************************************
-      subroutine fhypre_structpfmgcreate(fcomm, fsolver)
+      subroutine fnalu_hypre_structpfmgcreate(fcomm, fsolver)
       integer ierr
       integer fcomm
       integer*8 fsolver
 
-      call HYPRE_StructPFMGCreate(fcomm, fsolver, ierr)
+      call NALU_HYPRE_StructPFMGCreate(fcomm, fsolver, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structpfmgcreate: err = ', ierr
+         print *, 'fnalu_hypre_structpfmgcreate: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structpfmgdestroy
+!     fnalu_hypre_structpfmgdestroy
 !***********************************************************************
-      subroutine fhypre_structpfmgdestroy(fsolver)
+      subroutine fnalu_hypre_structpfmgdestroy(fsolver)
       integer ierr
       integer*8 fsolver
 
-      call HYPRE_StructPFMGDestroy(fsolver, ierr)
+      call NALU_HYPRE_StructPFMGDestroy(fsolver, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structpfmgdestroy: err = ', ierr
+         print *, 'fnalu_hypre_structpfmgdestroy: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structpfmgsetup
+!     fnalu_hypre_structpfmgsetup
 !***********************************************************************
-      subroutine fhypre_structpfmgsetup(fsolver, fA, fb, fx)
-      integer ierr
-      integer*8 fsolver
-      integer*8 fA
-      integer*8 fb
-      integer*8 fx
-
-      call HYPRE_StructPFMGSetup(fsolver, fA, fb, fx, ierr)
-      if (ierr .ne. 0) then
-         print *, 'fhypre_structpfmgsetup: err = ', ierr
-      endif
-
-      return
-      end
-
-!***********************************************************************
-!     fhypre_structpfmgsolve
-!***********************************************************************
-      subroutine fhypre_structpfmgsolve(fsolver, fA, fb, fx)
+      subroutine fnalu_hypre_structpfmgsetup(fsolver, fA, fb, fx)
       integer ierr
       integer*8 fsolver
       integer*8 fA
       integer*8 fb
       integer*8 fx
 
-      call HYPRE_StructPFMGSolve(fsolver, fA, fb, fx, ierr)
+      call NALU_HYPRE_StructPFMGSetup(fsolver, fA, fb, fx, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structpfmgsolve: err = ', ierr
+         print *, 'fnalu_hypre_structpfmgsetup: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structpfmgsettol
+!     fnalu_hypre_structpfmgsolve
 !***********************************************************************
-      subroutine fhypre_structpfmgsettol(fsolver, ftol)
+      subroutine fnalu_hypre_structpfmgsolve(fsolver, fA, fb, fx)
+      integer ierr
+      integer*8 fsolver
+      integer*8 fA
+      integer*8 fb
+      integer*8 fx
+
+      call NALU_HYPRE_StructPFMGSolve(fsolver, fA, fb, fx, ierr)
+      if (ierr .ne. 0) then
+         print *, 'fnalu_hypre_structpfmgsolve: err = ', ierr
+      endif
+
+      return
+      end
+
+!***********************************************************************
+!     fnalu_hypre_structpfmgsettol
+!***********************************************************************
+      subroutine fnalu_hypre_structpfmgsettol(fsolver, ftol)
       integer ierr
       integer*8 fsolver
       double precision ftol
 
-      call HYPRE_StructPFMGSetTol(fsolver, ftol, ierr)
+      call NALU_HYPRE_StructPFMGSetTol(fsolver, ftol, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structpfmgsettol: err = ', ierr
+         print *, 'fnalu_hypre_structpfmgsettol: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structpfmggettol
+!     fnalu_hypre_structpfmggettol
 !***********************************************************************
-      subroutine fhypre_structpfmggettol(fsolver, ftol)
+      subroutine fnalu_hypre_structpfmggettol(fsolver, ftol)
       integer ierr
       integer*8 fsolver
       double precision ftol
 
-      call HYPRE_StructPFMGGetTol(fsolver, ftol, ierr)
+      call NALU_HYPRE_StructPFMGGetTol(fsolver, ftol, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structpfmggettol: err = ', ierr
+         print *, 'fnalu_hypre_structpfmggettol: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structpfmgsetmaxiter
+!     fnalu_hypre_structpfmgsetmaxiter
 !***********************************************************************
-      subroutine fhypre_structpfmgsetmaxiter(fsolver, fmaxiter)
+      subroutine fnalu_hypre_structpfmgsetmaxiter(fsolver, fmaxiter)
       integer ierr
       integer fmaxiter
       integer*8 fsolver
 
-      call HYPRE_StructPFMGSetMaxIter(fsolver, fmaxiter, ierr)
+      call NALU_HYPRE_StructPFMGSetMaxIter(fsolver, fmaxiter, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structpfmgsetmaxiter: err = ', ierr
+         print *, 'fnalu_hypre_structpfmgsetmaxiter: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structpfmggetmaxiter
+!     fnalu_hypre_structpfmggetmaxiter
 !***********************************************************************
-      subroutine fhypre_structpfmggetmaxiter(fsolver, fmaxiter)
+      subroutine fnalu_hypre_structpfmggetmaxiter(fsolver, fmaxiter)
       integer ierr
       integer fmaxiter
       integer*8 fsolver
 
-      call HYPRE_StructPFMGGetMaxIter(fsolver, fmaxiter, ierr)
+      call NALU_HYPRE_StructPFMGGetMaxIter(fsolver, fmaxiter, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structpfmggetmaxiter: err = ', ierr
+         print *, 'fnalu_hypre_structpfmggetmaxiter: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structpfmgsetmaxlevels
+!     fnalu_hypre_structpfmgsetmaxlevels
 !***********************************************************************
-      subroutine fhypre_structpfmgsetmaxlevels(fsolver, fmaxlevels)
+      subroutine fnalu_hypre_structpfmgsetmaxlevels(fsolver, fmaxlevels)
       integer ierr
       integer fmaxlevels
       integer*8 fsolver
 
-      call HYPRE_StructPFMGSetMaxLevels(fsolver, fmaxlevels, ierr)
+      call NALU_HYPRE_StructPFMGSetMaxLevels(fsolver, fmaxlevels, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structpfmgsetmaxlevels: err = ', ierr
+         print *, 'fnalu_hypre_structpfmgsetmaxlevels: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structpfmggetmaxlevels
+!     fnalu_hypre_structpfmggetmaxlevels
 !***********************************************************************
-      subroutine fhypre_structpfmggetmaxlevels(fsolver, fmaxlevels)
+      subroutine fnalu_hypre_structpfmggetmaxlevels(fsolver, fmaxlevels)
       integer ierr
       integer fmaxlevels
       integer*8 fsolver
 
-      call HYPRE_StructPFMGGetMaxLevels(fsolver, fmaxlevels, ierr)
+      call NALU_HYPRE_StructPFMGGetMaxLevels(fsolver, fmaxlevels, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structpfmggetmaxlevels: err = ', ierr
+         print *, 'fnalu_hypre_structpfmggetmaxlevels: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structpfmgsetrelchange
+!     fnalu_hypre_structpfmgsetrelchange
 !***********************************************************************
-      subroutine fhypre_structpfmgsetrelchange(fsolver, frelchange)
+      subroutine fnalu_hypre_structpfmgsetrelchange(fsolver, frelchange)
       integer ierr
       integer frelchange
       integer*8 fsolver
 
-      call HYPRE_StructPFMGSetRelChange(fsolver, frelchange, ierr)
+      call NALU_HYPRE_StructPFMGSetRelChange(fsolver, frelchange, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structpfmgsetrelchange: err = ', ierr
+         print *, 'fnalu_hypre_structpfmgsetrelchange: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structpfmggetrelchange
+!     fnalu_hypre_structpfmggetrelchange
 !***********************************************************************
-      subroutine fhypre_structpfmggetrelchange(fsolver, frelchange)
+      subroutine fnalu_hypre_structpfmggetrelchange(fsolver, frelchange)
       integer ierr
       integer frelchange
       integer*8 fsolver
 
-      call HYPRE_StructPFMGGetRelChange(fsolver, frelchange, ierr)
+      call NALU_HYPRE_StructPFMGGetRelChange(fsolver, frelchange, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structpfmggetrelchange: err = ', ierr
+         print *, 'fnalu_hypre_structpfmggetrelchange: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structpfmgsetzeroguess
+!     fnalu_hypre_structpfmgsetzeroguess
 !***********************************************************************
-      subroutine fhypre_structpfmgsetzeroguess(fsolver)
+      subroutine fnalu_hypre_structpfmgsetzeroguess(fsolver)
       integer ierr
       integer*8 fsolver
 
-      call HYPRE_StructPFMGSetZeroGuess(fsolver, ierr)
+      call NALU_HYPRE_StructPFMGSetZeroGuess(fsolver, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structpfmgsetzeroguess: err = ', ierr
+         print *, 'fnalu_hypre_structpfmgsetzeroguess: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structpfmggetzeroguess
+!     fnalu_hypre_structpfmggetzeroguess
 !***********************************************************************
-      subroutine fhypre_structpfmggetzeroguess(fsolver)
+      subroutine fnalu_hypre_structpfmggetzeroguess(fsolver)
       integer ierr
       integer*8 fsolver
 
-      call HYPRE_StructPFMGGetZeroGuess(fsolver, ierr)
+      call NALU_HYPRE_StructPFMGGetZeroGuess(fsolver, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structpfmggetzeroguess: err = ', ierr
+         print *, 'fnalu_hypre_structpfmggetzeroguess: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structpfmgsetnonzeroguess
+!     fnalu_hypre_structpfmgsetnonzeroguess
 !***********************************************************************
-      subroutine fhypre_structpfmgsetnonzerogues(fsolver)
+      subroutine fnalu_hypre_structpfmgsetnonzerogues(fsolver)
       integer ierr
       integer*8 fsolver
 
-      call HYPRE_StructPFMGSetNonZeroGuess(fsolver, ierr)
+      call NALU_HYPRE_StructPFMGSetNonZeroGuess(fsolver, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structpfmgsetnonzerogues: err = ', ierr
+         print *, 'fnalu_hypre_structpfmgsetnonzerogues: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structpfmggetnumiterations
+!     fnalu_hypre_structpfmggetnumiterations
 !***********************************************************************
-      subroutine fhypre_structpfmggetnumiteratio(fsolver, fnumiters)
+      subroutine fnalu_hypre_structpfmggetnumiteratio(fsolver, fnumiters)
       integer ierr
       integer fnumiters
       integer*8 fsolver
 
-      call HYPRE_StructPFMGGetNumIteration(fsolver, fnumiters, ierr)
+      call NALU_HYPRE_StructPFMGGetNumIteration(fsolver, fnumiters, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structpfmggetnumiteratio: err = ', ierr
+         print *, 'fnalu_hypre_structpfmggetnumiteratio: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structpfmggetfinalrelativeresidualnorm
+!     fnalu_hypre_structpfmggetfinalrelativeresidualnorm
 !***********************************************************************
-      subroutine fhypre_structpfmggetfinalrelati(fsolver, fnorm)
+      subroutine fnalu_hypre_structpfmggetfinalrelati(fsolver, fnorm)
       integer ierr
       integer*8 fsolver
       double precision fnorm
 
-      call HYPRE_StructPFMGGetFinalRelativ(fsolver, fnorm, ierr)
+      call NALU_HYPRE_StructPFMGGetFinalRelativ(fsolver, fnorm, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structpfmggetfinalrelati: err = ', ierr
+         print *, 'fnalu_hypre_structpfmggetfinalrelati: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structpfmgsetskiprelax
+!     fnalu_hypre_structpfmgsetskiprelax
 !***********************************************************************
-      subroutine fhypre_structpfmgsetskiprelax(fsolver, fskiprelax)
+      subroutine fnalu_hypre_structpfmgsetskiprelax(fsolver, fskiprelax)
       integer ierr
       integer fskiprelax
       integer*8 fsolver
 
-      call HYPRE_StructPFMGSetSkipRelax(fsolver, fskiprelax, ierr)
+      call NALU_HYPRE_StructPFMGSetSkipRelax(fsolver, fskiprelax, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structpfmgsetskiprelax: err = ', ierr
+         print *, 'fnalu_hypre_structpfmgsetskiprelax: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structpfmggetskiprelax
+!     fnalu_hypre_structpfmggetskiprelax
 !***********************************************************************
-      subroutine fhypre_structpfmggetskiprelax(fsolver, fskiprelax)
+      subroutine fnalu_hypre_structpfmggetskiprelax(fsolver, fskiprelax)
       integer ierr
       integer fskiprelax
       integer*8 fsolver
 
-      call HYPRE_StructPFMGGetSkipRelax(fsolver, fskiprelax, ierr)
+      call NALU_HYPRE_StructPFMGGetSkipRelax(fsolver, fskiprelax, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structpfmggetskiprelax: err = ', ierr
+         print *, 'fnalu_hypre_structpfmggetskiprelax: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structpfmgsetrelaxtype
+!     fnalu_hypre_structpfmgsetrelaxtype
 !***********************************************************************
-      subroutine fhypre_structpfmgsetrelaxtype(fsolver, frelaxtype)
+      subroutine fnalu_hypre_structpfmgsetrelaxtype(fsolver, frelaxtype)
       integer ierr
       integer frelaxtype
       integer*8 fsolver
 
-      call HYPRE_StructPFMGSetRelaxType(fsolver, frelaxtype, ierr)
+      call NALU_HYPRE_StructPFMGSetRelaxType(fsolver, frelaxtype, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structpfmgsetrelaxtype: err = ', ierr
+         print *, 'fnalu_hypre_structpfmgsetrelaxtype: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structpfmggetrelaxtype
+!     fnalu_hypre_structpfmggetrelaxtype
 !***********************************************************************
-      subroutine fhypre_structpfmggetrelaxtype(fsolver, frelaxtype)
+      subroutine fnalu_hypre_structpfmggetrelaxtype(fsolver, frelaxtype)
       integer ierr
       integer frelaxtype
       integer*8 fsolver
 
-      call HYPRE_StructPFMGGetRelaxType(fsolver, frelaxtype, ierr)
+      call NALU_HYPRE_StructPFMGGetRelaxType(fsolver, frelaxtype, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structpfmggetrelaxtype: err = ', ierr
+         print *, 'fnalu_hypre_structpfmggetrelaxtype: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structpfmgsetraptype
+!     fnalu_hypre_structpfmgsetraptype
 !***********************************************************************
-      subroutine fhypre_structpfmgsetraptype(fsolver, fraptype)
+      subroutine fnalu_hypre_structpfmgsetraptype(fsolver, fraptype)
       integer ierr
       integer fraptype
       integer*8 fsolver
 
-      call HYPRE_StructPFMGSetRAPType(fsolver, fraptype, ierr)
+      call NALU_HYPRE_StructPFMGSetRAPType(fsolver, fraptype, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structpfmgsetraptype: err = ', ierr
+         print *, 'fnalu_hypre_structpfmgsetraptype: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structpfmggetraptype
+!     fnalu_hypre_structpfmggetraptype
 !***********************************************************************
-      subroutine fhypre_structpfmggetraptype(fsolver, fraptype)
+      subroutine fnalu_hypre_structpfmggetraptype(fsolver, fraptype)
       integer ierr
       integer fraptype
       integer*8 fsolver
 
-      call HYPRE_StructPFMGGetRAPType(fsolver, fraptype, ierr)
+      call NALU_HYPRE_StructPFMGGetRAPType(fsolver, fraptype, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structpfmggetraptype: err = ', ierr
+         print *, 'fnalu_hypre_structpfmggetraptype: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structpfmgsetnumprerelax
+!     fnalu_hypre_structpfmgsetnumprerelax
 !***********************************************************************
-      subroutine fhypre_structpfmgsetnumprerelax(fsolver,
+      subroutine fnalu_hypre_structpfmgsetnumprerelax(fsolver,
      1                                             fnumprerelax)
       integer ierr
       integer fnumprerelax
       integer*8 fsolver
 
-      call HYPRE_StructPFMGSetNumPreRelax(fsolver, fnumprerelax, ierr)
+      call NALU_HYPRE_StructPFMGSetNumPreRelax(fsolver, fnumprerelax, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structpfmgsetnumprerelax: err = ', ierr
+         print *, 'fnalu_hypre_structpfmgsetnumprerelax: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structpfmggetnumprerelax
+!     fnalu_hypre_structpfmggetnumprerelax
 !***********************************************************************
-      subroutine fhypre_structpfmggetnumprerelax(fsolver,
+      subroutine fnalu_hypre_structpfmggetnumprerelax(fsolver,
      1                                             fnumprerelax)
       integer ierr
       integer fnumprerelax
       integer*8 fsolver
 
-      call HYPRE_StructPFMGGetNumPreRelax(fsolver, fnumprerelax, ierr)
+      call NALU_HYPRE_StructPFMGGetNumPreRelax(fsolver, fnumprerelax, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structpfmggetnumprerelax: err = ', ierr
+         print *, 'fnalu_hypre_structpfmggetnumprerelax: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structpfmgsetnumpostrelax
+!     fnalu_hypre_structpfmgsetnumpostrelax
 !***********************************************************************
-      subroutine fhypre_structpfmgsetnumpostrela(fsolver,
+      subroutine fnalu_hypre_structpfmgsetnumpostrela(fsolver,
      1                                             fnumpostrelax)
       integer ierr
       integer fnumpostrelax
       integer*8 fsolver
 
-      call HYPRE_StructPFMGSetNumPostRelax(fsolver, fnumpostrelax, ierr)
+      call NALU_HYPRE_StructPFMGSetNumPostRelax(fsolver, fnumpostrelax, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structpfmgsetnumpostrela: err = ', ierr
+         print *, 'fnalu_hypre_structpfmgsetnumpostrela: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structpfmggetnumpostrelax
+!     fnalu_hypre_structpfmggetnumpostrelax
 !***********************************************************************
-      subroutine fhypre_structpfmggetnumpostrela(fsolver,
+      subroutine fnalu_hypre_structpfmggetnumpostrela(fsolver,
      1                                             fnumpostrelax)
       integer ierr
       integer fnumpostrelax
       integer*8 fsolver
 
-      call HYPRE_StructPFMGGetNumPostRelax(fsolver, fnumpostrelax, ierr)
+      call NALU_HYPRE_StructPFMGGetNumPostRelax(fsolver, fnumpostrelax, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structpfmggetnumpostrela: err = ', ierr
+         print *, 'fnalu_hypre_structpfmggetnumpostrela: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structpfmgsetdxyz
+!     fnalu_hypre_structpfmgsetdxyz
 !***********************************************************************
-      subroutine fhypre_structpfmgsetdxyz(fsolver, fdxyz)
+      subroutine fnalu_hypre_structpfmgsetdxyz(fsolver, fdxyz)
       integer ierr
       integer*8 fsolver
       double precision fdxyz
 
-      call HYPRE_StructPFMGSetDxyz(fsolver, fdxyz, ierr)
+      call NALU_HYPRE_StructPFMGSetDxyz(fsolver, fdxyz, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structpfmgsetdxyz: err = ', ierr
+         print *, 'fnalu_hypre_structpfmgsetdxyz: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structpfmgsetlogging
+!     fnalu_hypre_structpfmgsetlogging
 !***********************************************************************
-      subroutine fhypre_structpfmgsetlogging(fsolver, flogging)
+      subroutine fnalu_hypre_structpfmgsetlogging(fsolver, flogging)
       integer ierr
       integer flogging
       integer*8 fsolver
 
-      call HYPRE_StructPFMGSetLogging(fsolver, flogging, ierr)
+      call NALU_HYPRE_StructPFMGSetLogging(fsolver, flogging, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structpfmgsetlogging: err = ', ierr
+         print *, 'fnalu_hypre_structpfmgsetlogging: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structpfmggetlogging
+!     fnalu_hypre_structpfmggetlogging
 !***********************************************************************
-      subroutine fhypre_structpfmggetlogging(fsolver, flogging)
+      subroutine fnalu_hypre_structpfmggetlogging(fsolver, flogging)
       integer ierr
       integer flogging
       integer*8 fsolver
 
-      call HYPRE_StructPFMGGetLogging(fsolver, flogging, ierr)
+      call NALU_HYPRE_StructPFMGGetLogging(fsolver, flogging, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structpfmggetlogging: err = ', ierr
+         print *, 'fnalu_hypre_structpfmggetlogging: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structpfmgsetprintlevel
+!     fnalu_hypre_structpfmgsetprintlevel
 !***********************************************************************
-      subroutine fhypre_structpfmgsetprintlevel(fsolver, fprintlevel)
+      subroutine fnalu_hypre_structpfmgsetprintlevel(fsolver, fprintlevel)
       integer ierr
       integer fprintlevel
       integer*8 fsolver
 
-      call HYPRE_StructPFMGSetPrintLevel(fsolver, fprintlevel, ierr)
+      call NALU_HYPRE_StructPFMGSetPrintLevel(fsolver, fprintlevel, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structpfmgsetprintlevel: err = ', ierr
+         print *, 'fnalu_hypre_structpfmgsetprintlevel: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structpfmggetprintlevel
+!     fnalu_hypre_structpfmggetprintlevel
 !***********************************************************************
-      subroutine fhypre_structpfmggetprintlevel(fsolver, fprintlevel)
+      subroutine fnalu_hypre_structpfmggetprintlevel(fsolver, fprintlevel)
       integer ierr
       integer fprintlevel
       integer*8 fsolver
 
-      call HYPRE_StructPFMGGetPrintLevel(fsolver, fprintlevel, ierr)
+      call NALU_HYPRE_StructPFMGGetPrintLevel(fsolver, fprintlevel, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structpfmggetprintlevel: err = ', ierr
+         print *, 'fnalu_hypre_structpfmggetprintlevel: err = ', ierr
       endif
 
       return
@@ -1827,404 +1827,404 @@
 
 
 !***********************************************************************
-!             HYPRE_StructSMG routines
+!             NALU_HYPRE_StructSMG routines
 !***********************************************************************
 
 !***********************************************************************
-!     fhypre_structsmgcreate
+!     fnalu_hypre_structsmgcreate
 !***********************************************************************
-      subroutine fhypre_structsmgcreate(fcomm, fsolver)
+      subroutine fnalu_hypre_structsmgcreate(fcomm, fsolver)
       integer ierr
       integer fcomm
       integer*8 fsolver
 
-      call HYPRE_StructSMGCreate(fcomm, fsolver, ierr)
+      call NALU_HYPRE_StructSMGCreate(fcomm, fsolver, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structsmgcreate: err = ', ierr
+         print *, 'fnalu_hypre_structsmgcreate: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structsmgdestroy
+!     fnalu_hypre_structsmgdestroy
 !***********************************************************************
-      subroutine fhypre_structsmgdestroy(fsolver)
+      subroutine fnalu_hypre_structsmgdestroy(fsolver)
       integer ierr
       integer*8 fsolver
 
-      call HYPRE_StructSMGDestroy(fsolver, ierr)
+      call NALU_HYPRE_StructSMGDestroy(fsolver, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structsmgdestroy: err = ', ierr
+         print *, 'fnalu_hypre_structsmgdestroy: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structsmgsetup
+!     fnalu_hypre_structsmgsetup
 !***********************************************************************
-      subroutine fhypre_structsmgsetup(fsolver, fA, fb, fx)
-      integer ierr
-      integer*8 fsolver
-      integer*8 fA
-      integer*8 fb
-      integer*8 fx
-
-      call HYPRE_StructSMGSetup(fsolver, fA, fb, fx, ierr)
-      if (ierr .ne. 0) then
-         print *, 'fhypre_structsmgsetup: err = ', ierr
-      endif
-
-      return
-      end
-
-!***********************************************************************
-!     fhypre_structsmgsolve
-!***********************************************************************
-      subroutine fhypre_structsmgsolve(fsolver, fA, fb, fx)
+      subroutine fnalu_hypre_structsmgsetup(fsolver, fA, fb, fx)
       integer ierr
       integer*8 fsolver
       integer*8 fA
       integer*8 fb
       integer*8 fx
 
-      call HYPRE_StructSMGSolve(fsolver, fA, fb, fx, ierr)
+      call NALU_HYPRE_StructSMGSetup(fsolver, fA, fb, fx, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structsmgsolve: err = ', ierr
+         print *, 'fnalu_hypre_structsmgsetup: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structsmgsetmemoryuse
+!     fnalu_hypre_structsmgsolve
 !***********************************************************************
-      subroutine fhypre_structsmgsetmemoryuse(fsolver, fmemuse)
+      subroutine fnalu_hypre_structsmgsolve(fsolver, fA, fb, fx)
+      integer ierr
+      integer*8 fsolver
+      integer*8 fA
+      integer*8 fb
+      integer*8 fx
+
+      call NALU_HYPRE_StructSMGSolve(fsolver, fA, fb, fx, ierr)
+      if (ierr .ne. 0) then
+         print *, 'fnalu_hypre_structsmgsolve: err = ', ierr
+      endif
+
+      return
+      end
+
+!***********************************************************************
+!     fnalu_hypre_structsmgsetmemoryuse
+!***********************************************************************
+      subroutine fnalu_hypre_structsmgsetmemoryuse(fsolver, fmemuse)
       integer ierr
       integer fmemuse
       integer*8 fsolver
 
-      call HYPRE_StructSMGSetMemoryUse(fsolver, fmemuse, ierr)
+      call NALU_HYPRE_StructSMGSetMemoryUse(fsolver, fmemuse, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structsmgsetmemoryuse: err = ', ierr
+         print *, 'fnalu_hypre_structsmgsetmemoryuse: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structsmggetmemoryuse
+!     fnalu_hypre_structsmggetmemoryuse
 !***********************************************************************
-      subroutine fhypre_structsmggetmemoryuse(fsolver, fmemuse)
+      subroutine fnalu_hypre_structsmggetmemoryuse(fsolver, fmemuse)
       integer ierr
       integer fmemuse
       integer*8 fsolver
 
-      call HYPRE_StructSMGGetMemoryUse(fsolver, fmemuse, ierr)
+      call NALU_HYPRE_StructSMGGetMemoryUse(fsolver, fmemuse, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structsmggetmemoryuse: err = ', ierr
+         print *, 'fnalu_hypre_structsmggetmemoryuse: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structsmgsettol
+!     fnalu_hypre_structsmgsettol
 !***********************************************************************
-      subroutine fhypre_structsmgsettol(fsolver, ftol)
+      subroutine fnalu_hypre_structsmgsettol(fsolver, ftol)
       integer ierr
       integer*8 fsolver
       double precision ftol
 
-      call HYPRE_StructSMGSetTol(fsolver, ftol, ierr)
+      call NALU_HYPRE_StructSMGSetTol(fsolver, ftol, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structsmgsettol: err = ', ierr
+         print *, 'fnalu_hypre_structsmgsettol: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structsmggettol
+!     fnalu_hypre_structsmggettol
 !***********************************************************************
-      subroutine fhypre_structsmggettol(fsolver, ftol)
+      subroutine fnalu_hypre_structsmggettol(fsolver, ftol)
       integer ierr
       integer*8 fsolver
       double precision ftol
 
-      call HYPRE_StructSMGGetTol(fsolver, ftol, ierr)
+      call NALU_HYPRE_StructSMGGetTol(fsolver, ftol, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structsmggettol: err = ', ierr
+         print *, 'fnalu_hypre_structsmggettol: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structsmgsetmaxiter
+!     fnalu_hypre_structsmgsetmaxiter
 !***********************************************************************
-      subroutine fhypre_structsmgsetmaxiter(fsolver, fmaxiter)
+      subroutine fnalu_hypre_structsmgsetmaxiter(fsolver, fmaxiter)
       integer ierr
       integer fmaxiter
       integer*8 fsolver
 
-      call HYPRE_StructSMGSetMaxIter(fsolver, fmaxiter, ierr)
+      call NALU_HYPRE_StructSMGSetMaxIter(fsolver, fmaxiter, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structsmgsetmaxiter: err = ', ierr
+         print *, 'fnalu_hypre_structsmgsetmaxiter: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structsmggetmaxiter
+!     fnalu_hypre_structsmggetmaxiter
 !***********************************************************************
-      subroutine fhypre_structsmggetmaxiter(fsolver, fmaxiter)
+      subroutine fnalu_hypre_structsmggetmaxiter(fsolver, fmaxiter)
       integer ierr
       integer fmaxiter
       integer*8 fsolver
 
-      call HYPRE_StructSMGGetMaxIter(fsolver, fmaxiter, ierr)
+      call NALU_HYPRE_StructSMGGetMaxIter(fsolver, fmaxiter, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structsmggetmaxiter: err = ', ierr
+         print *, 'fnalu_hypre_structsmggetmaxiter: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structsmgsetrelchange
+!     fnalu_hypre_structsmgsetrelchange
 !***********************************************************************
-      subroutine fhypre_structsmgsetrelchange(fsolver, frelchange)
+      subroutine fnalu_hypre_structsmgsetrelchange(fsolver, frelchange)
       integer ierr
       integer frelchange
       integer*8 fsolver
 
-      call HYPRE_StructSMGSetRelChange(fsolver, frelchange, ierr)
+      call NALU_HYPRE_StructSMGSetRelChange(fsolver, frelchange, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structsmgsetrelchange: err = ', ierr
+         print *, 'fnalu_hypre_structsmgsetrelchange: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structsmggetrelchange
+!     fnalu_hypre_structsmggetrelchange
 !***********************************************************************
-      subroutine fhypre_structsmggetrelchange(fsolver, frelchange)
+      subroutine fnalu_hypre_structsmggetrelchange(fsolver, frelchange)
       integer ierr
       integer frelchange
       integer*8 fsolver
 
-      call HYPRE_StructSMGGetRelChange(fsolver, frelchange, ierr)
+      call NALU_HYPRE_StructSMGGetRelChange(fsolver, frelchange, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structsmggetrelchange: err = ', ierr
+         print *, 'fnalu_hypre_structsmggetrelchange: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structsmgsetzeroguess
+!     fnalu_hypre_structsmgsetzeroguess
 !***********************************************************************
-      subroutine fhypre_structsmgsetzeroguess(fsolver)
+      subroutine fnalu_hypre_structsmgsetzeroguess(fsolver)
       integer ierr
       integer*8 fsolver
 
-      call HYPRE_StructSMGSetZeroGuess(fsolver, ierr)
+      call NALU_HYPRE_StructSMGSetZeroGuess(fsolver, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structsmgsetzeroguess: err = ', ierr
+         print *, 'fnalu_hypre_structsmgsetzeroguess: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structsmggetzeroguess
+!     fnalu_hypre_structsmggetzeroguess
 !***********************************************************************
-      subroutine fhypre_structsmggetzeroguess(fsolver)
+      subroutine fnalu_hypre_structsmggetzeroguess(fsolver)
       integer ierr
       integer*8 fsolver
 
-      call HYPRE_StructSMGGetZeroGuess(fsolver, ierr)
+      call NALU_HYPRE_StructSMGGetZeroGuess(fsolver, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structsmggetzeroguess: err = ', ierr
+         print *, 'fnalu_hypre_structsmggetzeroguess: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structsmgsetnonzeroguess
+!     fnalu_hypre_structsmgsetnonzeroguess
 !***********************************************************************
-      subroutine fhypre_structsmgsetnonzeroguess(fsolver)
+      subroutine fnalu_hypre_structsmgsetnonzeroguess(fsolver)
       integer ierr
       integer*8 fsolver
 
-      call HYPRE_StructSMGSetNonZeroGuess(fsolver, ierr)
+      call NALU_HYPRE_StructSMGSetNonZeroGuess(fsolver, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structsmgsetnonzeroguess: err = ', ierr
+         print *, 'fnalu_hypre_structsmgsetnonzeroguess: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structsmggetnumiterations
+!     fnalu_hypre_structsmggetnumiterations
 !***********************************************************************
-      subroutine fhypre_structsmggetnumiteration(fsolver, fnumiters)
+      subroutine fnalu_hypre_structsmggetnumiteration(fsolver, fnumiters)
       integer ierr
       integer fnumiters
       integer*8 fsolver
 
-      call HYPRE_StructSMGGetNumIterations(fsolver, fnumiters, ierr)
+      call NALU_HYPRE_StructSMGGetNumIterations(fsolver, fnumiters, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structsmggetnumiteration: err = ', ierr
+         print *, 'fnalu_hypre_structsmggetnumiteration: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structsmggetfinalrelativeresidualnorm
+!     fnalu_hypre_structsmggetfinalrelativeresidualnorm
 !***********************************************************************
-      subroutine fhypre_structsmggetfinalrelativ(fsolver, fnorm)
+      subroutine fnalu_hypre_structsmggetfinalrelativ(fsolver, fnorm)
       integer ierr
       integer*8 fsolver
       double precision fnorm
 
-      call HYPRE_StructSMGGetFinalRelative(fsolver, fnorm, ierr)
+      call NALU_HYPRE_StructSMGGetFinalRelative(fsolver, fnorm, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structsmggetfinalrelativ: err = ', ierr
+         print *, 'fnalu_hypre_structsmggetfinalrelativ: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structsmgsetnumprerelax
+!     fnalu_hypre_structsmgsetnumprerelax
 !***********************************************************************
-      subroutine fhypre_structsmgsetnumprerelax(fsolver, fnumprerelax)
+      subroutine fnalu_hypre_structsmgsetnumprerelax(fsolver, fnumprerelax)
       integer ierr
       integer fnumprerelax
       integer*8 fsolver
 
-      call HYPRE_StructSMGSetNumPreRelax(fsolver, fnumprerelax, ierr)
+      call NALU_HYPRE_StructSMGSetNumPreRelax(fsolver, fnumprerelax, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structsmgsetnumprerelax: err = ', ierr
+         print *, 'fnalu_hypre_structsmgsetnumprerelax: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structsmggetnumprerelax
+!     fnalu_hypre_structsmggetnumprerelax
 !***********************************************************************
-      subroutine fhypre_structsmggetnumprerelax(fsolver, fnumprerelax)
+      subroutine fnalu_hypre_structsmggetnumprerelax(fsolver, fnumprerelax)
       integer ierr
       integer fnumprerelax
       integer*8 fsolver
 
-      call HYPRE_StructSMGGetNumPreRelax(fsolver, fnumprerelax, ierr)
+      call NALU_HYPRE_StructSMGGetNumPreRelax(fsolver, fnumprerelax, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structsmggetnumprerelax: err = ', ierr
+         print *, 'fnalu_hypre_structsmggetnumprerelax: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structsmgsetnumpostrelax
+!     fnalu_hypre_structsmgsetnumpostrelax
 !***********************************************************************
-      subroutine fhypre_structsmgsetnumpostrelax(fsolver, fnumpstrlx)
+      subroutine fnalu_hypre_structsmgsetnumpostrelax(fsolver, fnumpstrlx)
       integer ierr
       integer fnumpstrlx
       integer*8 fsolver
 
-      call HYPRE_StructSMGSetNumPostRelax(fsolver, fnumpstrlx, ierr)
+      call NALU_HYPRE_StructSMGSetNumPostRelax(fsolver, fnumpstrlx, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structsmgsetnumpostrelax: err = ', ierr
+         print *, 'fnalu_hypre_structsmgsetnumpostrelax: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structsmggetnumpostrelax
+!     fnalu_hypre_structsmggetnumpostrelax
 !***********************************************************************
-      subroutine fhypre_structsmggetnumpostrelax(fsolver, fnumpstrlx)
+      subroutine fnalu_hypre_structsmggetnumpostrelax(fsolver, fnumpstrlx)
       integer ierr
       integer fnumpstrlx
       integer*8 fsolver
 
-      call HYPRE_StructSMGGetNumPostRelax(fsolver, fnumpstrlx, ierr)
+      call NALU_HYPRE_StructSMGGetNumPostRelax(fsolver, fnumpstrlx, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structsmggetnumpostrelax: err = ', ierr
+         print *, 'fnalu_hypre_structsmggetnumpostrelax: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structsmgsetlogging
+!     fnalu_hypre_structsmgsetlogging
 !***********************************************************************
-      subroutine fhypre_structsmgsetlogging(fsolver, flogging)
+      subroutine fnalu_hypre_structsmgsetlogging(fsolver, flogging)
       integer ierr
       integer flogging
       integer*8 fsolver
 
-      call HYPRE_StructSMGSetLogging(fsolver, flogging, ierr)
+      call NALU_HYPRE_StructSMGSetLogging(fsolver, flogging, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structsmgsetlogging: err = ', ierr
+         print *, 'fnalu_hypre_structsmgsetlogging: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structsmggetlogging
+!     fnalu_hypre_structsmggetlogging
 !***********************************************************************
-      subroutine fhypre_structsmggetlogging(fsolver, flogging)
+      subroutine fnalu_hypre_structsmggetlogging(fsolver, flogging)
       integer ierr
       integer flogging
       integer*8 fsolver
 
-      call HYPRE_StructSMGGetLogging(fsolver, flogging, ierr)
+      call NALU_HYPRE_StructSMGGetLogging(fsolver, flogging, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structsmggetlogging: err = ', ierr
+         print *, 'fnalu_hypre_structsmggetlogging: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structsmgsetprintlevel
+!     fnalu_hypre_structsmgsetprintlevel
 !***********************************************************************
-      subroutine fhypre_structsmgsetprintlevel(fsolver, fprintlevel)
+      subroutine fnalu_hypre_structsmgsetprintlevel(fsolver, fprintlevel)
       integer ierr
       integer fprintlevel
       integer*8 fsolver
 
-      call HYPRE_StructSMGSetPrintLevel(fsolver, fprintlevel, ierr)
+      call NALU_HYPRE_StructSMGSetPrintLevel(fsolver, fprintlevel, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structsmgsetprintlevel: err = ', ierr
+         print *, 'fnalu_hypre_structsmgsetprintlevel: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structsmggetprintlevel
+!     fnalu_hypre_structsmggetprintlevel
 !***********************************************************************
-      subroutine fhypre_structsmggetprintlevel(fsolver, fprintlevel)
+      subroutine fnalu_hypre_structsmggetprintlevel(fsolver, fprintlevel)
       integer ierr
       integer fprintlevel
       integer*8 fsolver
 
-      call HYPRE_StructSMGGetPrintLevel(fsolver, fprintlevel, ierr)
+      call NALU_HYPRE_StructSMGGetPrintLevel(fsolver, fprintlevel, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structsmggetprintlevel: err = ', ierr
+         print *, 'fnalu_hypre_structsmggetprintlevel: err = ', ierr
       endif
 
       return
@@ -2235,293 +2235,293 @@
 
 
 !***********************************************************************
-!             HYPRE_StructSparseMSG routines
+!             NALU_HYPRE_StructSparseMSG routines
 !***********************************************************************
 
 !***********************************************************************
-!     fhypre_structsparsemsgcreate
+!     fnalu_hypre_structsparsemsgcreate
 !***********************************************************************
-      subroutine fhypre_structsparsemsgcreate(fcomm, fsolver)
+      subroutine fnalu_hypre_structsparsemsgcreate(fcomm, fsolver)
       integer ierr
       integer fcomm
       integer*8 fsolver
 
-      call HYPRE_StructSparseMSGCreate(fcomm, fsolver, ierr)
+      call NALU_HYPRE_StructSparseMSGCreate(fcomm, fsolver, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structsparsemsgcreate: err = ', ierr
+         print *, 'fnalu_hypre_structsparsemsgcreate: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structsparsemsgdestroy
+!     fnalu_hypre_structsparsemsgdestroy
 !***********************************************************************
-      subroutine fhypre_structsparsemsgdestroy(fsolver)
+      subroutine fnalu_hypre_structsparsemsgdestroy(fsolver)
       integer ierr
       integer*8 fsolver
 
-      call HYPRE_StructSparseMSGDestroy(fsolver, ierr)
+      call NALU_HYPRE_StructSparseMSGDestroy(fsolver, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structsparsemsgdestroy: err = ', ierr
+         print *, 'fnalu_hypre_structsparsemsgdestroy: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structsparsemsgsetup
+!     fnalu_hypre_structsparsemsgsetup
 !***********************************************************************
-      subroutine fhypre_structsparsemsgsetup(fsolver, fA, fb, fx)
-      integer ierr
-      integer*8 fsolver
-      integer*8 fA
-      integer*8 fb
-      integer*8 fx
-
-      call HYPRE_StructSparseMSGSetup(fsolver, fA, fb, fx, ierr)
-      if (ierr .ne. 0) then
-         print *, 'fhypre_structsparsemsgsetup: err = ', ierr
-      endif
-
-      return
-      end
-
-!***********************************************************************
-!     fhypre_structsparsemsgsolve
-!***********************************************************************
-      subroutine fhypre_structsparsemsgsolve(fsolver, fA, fb, fx)
+      subroutine fnalu_hypre_structsparsemsgsetup(fsolver, fA, fb, fx)
       integer ierr
       integer*8 fsolver
       integer*8 fA
       integer*8 fb
       integer*8 fx
 
-      call HYPRE_StructSparseMSGSolve(fsolver, fA, fb, fx, ierr)
+      call NALU_HYPRE_StructSparseMSGSetup(fsolver, fA, fb, fx, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structsparsemsgsolve: err = ', ierr
+         print *, 'fnalu_hypre_structsparsemsgsetup: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structsparsemsgsetjump
+!     fnalu_hypre_structsparsemsgsolve
 !***********************************************************************
-      subroutine fhypre_structsparsemsgsetjump(fsolver, fjump)
+      subroutine fnalu_hypre_structsparsemsgsolve(fsolver, fA, fb, fx)
+      integer ierr
+      integer*8 fsolver
+      integer*8 fA
+      integer*8 fb
+      integer*8 fx
+
+      call NALU_HYPRE_StructSparseMSGSolve(fsolver, fA, fb, fx, ierr)
+      if (ierr .ne. 0) then
+         print *, 'fnalu_hypre_structsparsemsgsolve: err = ', ierr
+      endif
+
+      return
+      end
+
+!***********************************************************************
+!     fnalu_hypre_structsparsemsgsetjump
+!***********************************************************************
+      subroutine fnalu_hypre_structsparsemsgsetjump(fsolver, fjump)
       integer ierr
       integer fjump
       integer*8 fsolver
 
-      call HYPRE_StructSparseMSGSetJump(fsolver, fjump, ierr)
+      call NALU_HYPRE_StructSparseMSGSetJump(fsolver, fjump, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structsparsemsgsetjump: err = ', ierr
+         print *, 'fnalu_hypre_structsparsemsgsetjump: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structsparsemsgsettol
+!     fnalu_hypre_structsparsemsgsettol
 !***********************************************************************
-      subroutine fhypre_structsparsemsgsettol(fsolver, ftol)
+      subroutine fnalu_hypre_structsparsemsgsettol(fsolver, ftol)
       integer ierr
       integer*8 fsolver
       double precision ftol
 
-      call HYPRE_StructSparseMSGSetTol(fsolver, ftol, ierr)
+      call NALU_HYPRE_StructSparseMSGSetTol(fsolver, ftol, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structsparsemsgsettol: err = ', ierr
+         print *, 'fnalu_hypre_structsparsemsgsettol: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structsparsemsgsetmaxiter
+!     fnalu_hypre_structsparsemsgsetmaxiter
 !***********************************************************************
-      subroutine fhypre_structsparsemsgsetmaxite(fsolver, fmaxiter)
+      subroutine fnalu_hypre_structsparsemsgsetmaxite(fsolver, fmaxiter)
       integer ierr
       integer fmaxiter
       integer*8 fsolver
 
-      call HYPRE_StructSparseMSGSetMaxIter(fsolver, fmaxiter, ierr)
+      call NALU_HYPRE_StructSparseMSGSetMaxIter(fsolver, fmaxiter, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structsparsemsgsetmaxite: err = ', ierr
+         print *, 'fnalu_hypre_structsparsemsgsetmaxite: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structsparsemsgsetrelchange
+!     fnalu_hypre_structsparsemsgsetrelchange
 !***********************************************************************
-      subroutine fhypre_structsparsemsgsetrelcha(fsolver, frelchange)
+      subroutine fnalu_hypre_structsparsemsgsetrelcha(fsolver, frelchange)
       integer ierr
       integer frelchange
       integer*8 fsolver
 
-      call HYPRE_StructSparseMSGSetRelChan(fsolver, frelchange, ierr)
+      call NALU_HYPRE_StructSparseMSGSetRelChan(fsolver, frelchange, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structsparsemsgsetrelcha: err = ', ierr
+         print *, 'fnalu_hypre_structsparsemsgsetrelcha: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structsparsemsgsetzeroguess
+!     fnalu_hypre_structsparsemsgsetzeroguess
 !***********************************************************************
-      subroutine fhypre_structsparsemsgsetzerogu(fsolver)
+      subroutine fnalu_hypre_structsparsemsgsetzerogu(fsolver)
       integer ierr
       integer*8 fsolver
 
-      call HYPRE_StructSparseMSGSetZeroGue(fsolver, ierr)
+      call NALU_HYPRE_StructSparseMSGSetZeroGue(fsolver, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structsparsemsgsetzerogu: err = ', ierr
+         print *, 'fnalu_hypre_structsparsemsgsetzerogu: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structsparsemsgsetnonzeroguess
+!     fnalu_hypre_structsparsemsgsetnonzeroguess
 !***********************************************************************
-      subroutine fhypre_structsparsemsgsetnonzer(fsolver)
+      subroutine fnalu_hypre_structsparsemsgsetnonzer(fsolver)
       integer ierr
       integer*8 fsolver
 
-      call HYPRE_StructSparseMSGSetNonZero(fsolver, ierr)
+      call NALU_HYPRE_StructSparseMSGSetNonZero(fsolver, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structsparsemsgsetnonzer: err = ', ierr
+         print *, 'fnalu_hypre_structsparsemsgsetnonzer: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structsparsemsggetnumiterations
+!     fnalu_hypre_structsparsemsggetnumiterations
 !***********************************************************************
-      subroutine fhypre_structsparsemsggetnumite(fsolver, fniters)
+      subroutine fnalu_hypre_structsparsemsggetnumite(fsolver, fniters)
       integer ierr
       integer fniters
       integer*8 fsolver
 
-      call HYPRE_StructSparseMSGGetNumIter(fsolver, fniters, ierr)
+      call NALU_HYPRE_StructSparseMSGGetNumIter(fsolver, fniters, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structsparsemsggetnumite: err = ', ierr
+         print *, 'fnalu_hypre_structsparsemsggetnumite: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structsparsemsggetfinalrelativeresidualnorm
+!     fnalu_hypre_structsparsemsggetfinalrelativeresidualnorm
 !***********************************************************************
-      subroutine fhypre_structsparsemsggetfinalr(fsolver, fnorm)
+      subroutine fnalu_hypre_structsparsemsggetfinalr(fsolver, fnorm)
       integer ierr
       integer*8 fsolver
       double precision fnorm
 
-      call HYPRE_StructSparseMSGGetFinalRe(fsolver, fnorm, ierr)
+      call NALU_HYPRE_StructSparseMSGGetFinalRe(fsolver, fnorm, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structsparsemsggetfinalr: err = ', ierr
+         print *, 'fnalu_hypre_structsparsemsggetfinalr: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structsparsemsgsetrelaxtype
+!     fnalu_hypre_structsparsemsgsetrelaxtype
 !***********************************************************************
-      subroutine fhypre_structsparsemsgsetrelaxt(fsolver, frelaxtype)
+      subroutine fnalu_hypre_structsparsemsgsetrelaxt(fsolver, frelaxtype)
       integer ierr
       integer frelaxtype
       integer*8 fsolver
 
-      call HYPRE_StructSparseMSGSetRelaxTy(fsolver, frelaxtype, ierr)
+      call NALU_HYPRE_StructSparseMSGSetRelaxTy(fsolver, frelaxtype, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structsparsemsgsetrelaxt: err = ', ierr
+         print *, 'fnalu_hypre_structsparsemsgsetrelaxt: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structsparsemsgsetnumprerelax
+!     fnalu_hypre_structsparsemsgsetnumprerelax
 !***********************************************************************
-      subroutine fhypre_structsparsemsgsetnumpre(fsolver, fnprelax)
+      subroutine fnalu_hypre_structsparsemsgsetnumpre(fsolver, fnprelax)
       integer ierr
       integer fnprelax
       integer*8 fsolver
 
-      call HYPRE_StructSparseMSGSetNumPreR(fsolver, fnprelax, ierr)
+      call NALU_HYPRE_StructSparseMSGSetNumPreR(fsolver, fnprelax, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structsparsemsgsetnumpre: err = ', ierr
+         print *, 'fnalu_hypre_structsparsemsgsetnumpre: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structsparsemsgsetnumpostrelax
+!     fnalu_hypre_structsparsemsgsetnumpostrelax
 !***********************************************************************
-      subroutine fhypre_structsparsemsgsetnumpos(fsolver, fnpstrlx)
+      subroutine fnalu_hypre_structsparsemsgsetnumpos(fsolver, fnpstrlx)
       integer ierr
       integer fnpstrlx
       integer*8 fsolver
 
-      call HYPRE_StructSparseMSGSetNumPost(fsolver, fnpstrlx, ierr)
+      call NALU_HYPRE_StructSparseMSGSetNumPost(fsolver, fnpstrlx, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structsparsemsgsetnumpos: err = ', ierr
+         print *, 'fnalu_hypre_structsparsemsgsetnumpos: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structsparsemsgsetnumfinerelax
+!     fnalu_hypre_structsparsemsgsetnumfinerelax
 !***********************************************************************
-      subroutine fhypre_structsparsemsgsetnumfin(fsolver, fnfine)
+      subroutine fnalu_hypre_structsparsemsgsetnumfin(fsolver, fnfine)
       integer ierr
       integer fnfine
       integer*8 fsolver
 
-      call HYPRE_StructSparseMSGSetNumFine(fsolver, fnfine, ierr)
+      call NALU_HYPRE_StructSparseMSGSetNumFine(fsolver, fnfine, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structsparsemsgsetnumfin: err = ', ierr
+         print *, 'fnalu_hypre_structsparsemsgsetnumfin: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structsparsemsgsetlogging
+!     fnalu_hypre_structsparsemsgsetlogging
 !***********************************************************************
-      subroutine fhypre_structsparsemsgsetloggin(fsolver, flogging)
+      subroutine fnalu_hypre_structsparsemsgsetloggin(fsolver, flogging)
       integer ierr
       integer flogging
       integer*8 fsolver
 
-      call HYPRE_StructSparseMSGSetLogging(fsolver, flogging, ierr)
+      call NALU_HYPRE_StructSparseMSGSetLogging(fsolver, flogging, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structsparsemsgsetloggin: err = ', ierr
+         print *, 'fnalu_hypre_structsparsemsgsetloggin: err = ', ierr
       endif
 
       return
       end
 
 !***********************************************************************
-!     fhypre_structsparsemsgsetprintlevel
+!     fnalu_hypre_structsparsemsgsetprintlevel
 !***********************************************************************
-      subroutine fhypre_structsparsemsgsetprintl(fsolver, fprntlvl)
+      subroutine fnalu_hypre_structsparsemsgsetprintl(fsolver, fprntlvl)
       integer ierr
       integer fprntlvl
       integer*8 fsolver
 
-      call HYPRE_StructSparseMSGSetPrintLe(fsolver, fprntlvl, ierr)
+      call NALU_HYPRE_StructSparseMSGSetPrintLe(fsolver, fprntlvl, ierr)
       if (ierr .ne. 0) then
-         print *, 'fhypre_structsparsemsgsetprintl: err = ', ierr
+         print *, 'fnalu_hypre_structsparsemsgsetprintl: err = ', ierr
       endif
 
       return

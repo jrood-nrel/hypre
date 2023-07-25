@@ -7,11 +7,11 @@
 
 /******************************************************************************
  *
- * HYPRE_SStructGrid interface
+ * NALU_HYPRE_SStructGrid interface
  *
  *****************************************************************************/
 
-#include "_hypre_sstruct_mv.h"
+#include "_nalu_hypre_sstruct_mv.h"
 #include "fortran.h"
 
 #ifdef __cplusplus
@@ -19,239 +19,239 @@ extern "C" {
 #endif
 
 /*--------------------------------------------------------------------------
- * HYPRE_SStructGridCreate
+ * NALU_HYPRE_SStructGridCreate
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_sstructgridcreate, HYPRE_SSTRUCTGRIDCREATE)
-(hypre_F90_Comm   *comm,
- hypre_F90_Int    *ndim,
- hypre_F90_Int    *nparts,
- hypre_F90_ObjRef *grid_ptr,
- hypre_F90_Int    *ierr)
+nalu_hypre_F90_IFACE(nalu_hypre_sstructgridcreate, NALU_HYPRE_SSTRUCTGRIDCREATE)
+(nalu_hypre_F90_Comm   *comm,
+ nalu_hypre_F90_Int    *ndim,
+ nalu_hypre_F90_Int    *nparts,
+ nalu_hypre_F90_ObjRef *grid_ptr,
+ nalu_hypre_F90_Int    *ierr)
 {
-   *ierr = (hypre_F90_Int) HYPRE_SStructGridCreate(
-              hypre_F90_PassComm   (comm),
-              hypre_F90_PassInt    (ndim),
-              hypre_F90_PassInt    (nparts),
-              hypre_F90_PassObjRef (HYPRE_SStructGrid, grid_ptr) );
+   *ierr = (nalu_hypre_F90_Int) NALU_HYPRE_SStructGridCreate(
+              nalu_hypre_F90_PassComm   (comm),
+              nalu_hypre_F90_PassInt    (ndim),
+              nalu_hypre_F90_PassInt    (nparts),
+              nalu_hypre_F90_PassObjRef (NALU_HYPRE_SStructGrid, grid_ptr) );
 }
 
 /*--------------------------------------------------------------------------
- *  HYPRE_SStructGridDestroy
+ *  NALU_HYPRE_SStructGridDestroy
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_sstructgriddestroy, HYPRE_SSTRUCTGRIDDESTROY)
-(hypre_F90_Obj *grid,
- hypre_F90_Int *ierr)
+nalu_hypre_F90_IFACE(nalu_hypre_sstructgriddestroy, NALU_HYPRE_SSTRUCTGRIDDESTROY)
+(nalu_hypre_F90_Obj *grid,
+ nalu_hypre_F90_Int *ierr)
 {
-   *ierr = (hypre_F90_Int) HYPRE_SStructGridDestroy(
-              hypre_F90_PassObj (HYPRE_SStructGrid, grid) );
+   *ierr = (nalu_hypre_F90_Int) NALU_HYPRE_SStructGridDestroy(
+              nalu_hypre_F90_PassObj (NALU_HYPRE_SStructGrid, grid) );
 }
 
 /*--------------------------------------------------------------------------
- *  HYPRE_SStructGridSetExtents
+ *  NALU_HYPRE_SStructGridSetExtents
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_sstructgridsetextents, HYPRE_SSTRUCTGRIDSETEXTENTS)
-(hypre_F90_Obj      *grid,
- hypre_F90_Int      *part,
- hypre_F90_IntArray *ilower,
- hypre_F90_IntArray *iupper,
- hypre_F90_Int      *ierr)
+nalu_hypre_F90_IFACE(nalu_hypre_sstructgridsetextents, NALU_HYPRE_SSTRUCTGRIDSETEXTENTS)
+(nalu_hypre_F90_Obj      *grid,
+ nalu_hypre_F90_Int      *part,
+ nalu_hypre_F90_IntArray *ilower,
+ nalu_hypre_F90_IntArray *iupper,
+ nalu_hypre_F90_Int      *ierr)
 {
-   *ierr = (hypre_F90_Int) HYPRE_SStructGridSetExtents(
-              hypre_F90_PassObj      (HYPRE_SStructGrid, grid),
-              hypre_F90_PassInt      (part),
-              hypre_F90_PassIntArray (ilower),
-              hypre_F90_PassIntArray (iupper) );
+   *ierr = (nalu_hypre_F90_Int) NALU_HYPRE_SStructGridSetExtents(
+              nalu_hypre_F90_PassObj      (NALU_HYPRE_SStructGrid, grid),
+              nalu_hypre_F90_PassInt      (part),
+              nalu_hypre_F90_PassIntArray (ilower),
+              nalu_hypre_F90_PassIntArray (iupper) );
 }
 
 /*--------------------------------------------------------------------------
- *  HYPRE_SStructGridSetVariables
+ *  NALU_HYPRE_SStructGridSetVariables
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_sstructgridsetvariables, HYPRE_SSTRUCTGRIDSETVARIABLES)
-(hypre_F90_Obj      *grid,
- hypre_F90_Int      *part,
- hypre_F90_Int      *nvars,
- hypre_F90_IntArray *vartypes,
- hypre_F90_Int      *ierr)
+nalu_hypre_F90_IFACE(nalu_hypre_sstructgridsetvariables, NALU_HYPRE_SSTRUCTGRIDSETVARIABLES)
+(nalu_hypre_F90_Obj      *grid,
+ nalu_hypre_F90_Int      *part,
+ nalu_hypre_F90_Int      *nvars,
+ nalu_hypre_F90_IntArray *vartypes,
+ nalu_hypre_F90_Int      *ierr)
 {
-   *ierr = (hypre_F90_Int) HYPRE_SStructGridSetVariables(
-              hypre_F90_PassObj      (HYPRE_SStructGrid, grid),
-              hypre_F90_PassInt      (part),
-              hypre_F90_PassInt      (nvars),
-              hypre_F90_PassIntArray (vartypes) );
+   *ierr = (nalu_hypre_F90_Int) NALU_HYPRE_SStructGridSetVariables(
+              nalu_hypre_F90_PassObj      (NALU_HYPRE_SStructGrid, grid),
+              nalu_hypre_F90_PassInt      (part),
+              nalu_hypre_F90_PassInt      (nvars),
+              nalu_hypre_F90_PassIntArray (vartypes) );
 }
 
 /*--------------------------------------------------------------------------
- *  HYPRE_SStructGridAddVariables
+ *  NALU_HYPRE_SStructGridAddVariables
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_sstructgridaddvariables, HYPRE_SSTRUCTGRIDADDVARIABLES)
-(hypre_F90_Obj      *grid,
- hypre_F90_Int      *part,
- hypre_F90_IntArray *index,
- hypre_F90_Int      *nvars,
- hypre_F90_IntArray *vartypes,
- hypre_F90_Int      *ierr)
+nalu_hypre_F90_IFACE(nalu_hypre_sstructgridaddvariables, NALU_HYPRE_SSTRUCTGRIDADDVARIABLES)
+(nalu_hypre_F90_Obj      *grid,
+ nalu_hypre_F90_Int      *part,
+ nalu_hypre_F90_IntArray *index,
+ nalu_hypre_F90_Int      *nvars,
+ nalu_hypre_F90_IntArray *vartypes,
+ nalu_hypre_F90_Int      *ierr)
 {
-   *ierr = (hypre_F90_Int) HYPRE_SStructGridAddVariables(
-              hypre_F90_PassObj(HYPRE_SStructGrid, grid),
-              hypre_F90_PassInt(part),
-              hypre_F90_PassIntArray(index),
-              hypre_F90_PassInt(nvars),
-              hypre_F90_PassIntArray(vartypes));
+   *ierr = (nalu_hypre_F90_Int) NALU_HYPRE_SStructGridAddVariables(
+              nalu_hypre_F90_PassObj(NALU_HYPRE_SStructGrid, grid),
+              nalu_hypre_F90_PassInt(part),
+              nalu_hypre_F90_PassIntArray(index),
+              nalu_hypre_F90_PassInt(nvars),
+              nalu_hypre_F90_PassIntArray(vartypes));
 }
 
 /*--------------------------------------------------------------------------
- *  HYPRE_SStructGridSetFEMOrdering
+ *  NALU_HYPRE_SStructGridSetFEMOrdering
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_sstructgridsetfemordering, HYPRE_SSTRUCTGRIDSETFEMORDERING)
-(hypre_F90_Obj      *grid,
- hypre_F90_Int      *part,
- hypre_F90_IntArray *ordering,
- hypre_F90_Int      *ierr)
+nalu_hypre_F90_IFACE(nalu_hypre_sstructgridsetfemordering, NALU_HYPRE_SSTRUCTGRIDSETFEMORDERING)
+(nalu_hypre_F90_Obj      *grid,
+ nalu_hypre_F90_Int      *part,
+ nalu_hypre_F90_IntArray *ordering,
+ nalu_hypre_F90_Int      *ierr)
 {
-   *ierr = (hypre_F90_Int) HYPRE_SStructGridSetFEMOrdering(
-              hypre_F90_PassObj      (HYPRE_SStructGrid, grid),
-              hypre_F90_PassInt      (part),
-              hypre_F90_PassIntArray (ordering) );
+   *ierr = (nalu_hypre_F90_Int) NALU_HYPRE_SStructGridSetFEMOrdering(
+              nalu_hypre_F90_PassObj      (NALU_HYPRE_SStructGrid, grid),
+              nalu_hypre_F90_PassInt      (part),
+              nalu_hypre_F90_PassIntArray (ordering) );
 }
 
 /*--------------------------------------------------------------------------
- *  HYPRE_SStructGridSetNeighborPart
+ *  NALU_HYPRE_SStructGridSetNeighborPart
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_sstructgridsetneighborpart, HYPRE_SSTRUCTGRIDSETNEIGHBORPART)
-(hypre_F90_Obj      *grid,
- hypre_F90_Int      *part,
- hypre_F90_IntArray *ilower,
- hypre_F90_IntArray *iupper,
- hypre_F90_Int      *nbor_part,
- hypre_F90_IntArray *nbor_ilower,
- hypre_F90_IntArray *nbor_iupper,
- hypre_F90_IntArray *index_map,
- hypre_F90_IntArray *index_dir,
- hypre_F90_Int      *ierr)
+nalu_hypre_F90_IFACE(nalu_hypre_sstructgridsetneighborpart, NALU_HYPRE_SSTRUCTGRIDSETNEIGHBORPART)
+(nalu_hypre_F90_Obj      *grid,
+ nalu_hypre_F90_Int      *part,
+ nalu_hypre_F90_IntArray *ilower,
+ nalu_hypre_F90_IntArray *iupper,
+ nalu_hypre_F90_Int      *nbor_part,
+ nalu_hypre_F90_IntArray *nbor_ilower,
+ nalu_hypre_F90_IntArray *nbor_iupper,
+ nalu_hypre_F90_IntArray *index_map,
+ nalu_hypre_F90_IntArray *index_dir,
+ nalu_hypre_F90_Int      *ierr)
 {
-   *ierr = (hypre_F90_Int) HYPRE_SStructGridSetNeighborPart(
-              hypre_F90_PassObj      (HYPRE_SStructGrid, grid),
-              hypre_F90_PassInt      (part),
-              hypre_F90_PassIntArray (ilower),
-              hypre_F90_PassIntArray (iupper),
-              hypre_F90_PassInt      (nbor_part),
-              hypre_F90_PassIntArray (nbor_ilower),
-              hypre_F90_PassIntArray (nbor_iupper),
-              hypre_F90_PassIntArray (index_map),
-              hypre_F90_PassIntArray (index_dir) );
+   *ierr = (nalu_hypre_F90_Int) NALU_HYPRE_SStructGridSetNeighborPart(
+              nalu_hypre_F90_PassObj      (NALU_HYPRE_SStructGrid, grid),
+              nalu_hypre_F90_PassInt      (part),
+              nalu_hypre_F90_PassIntArray (ilower),
+              nalu_hypre_F90_PassIntArray (iupper),
+              nalu_hypre_F90_PassInt      (nbor_part),
+              nalu_hypre_F90_PassIntArray (nbor_ilower),
+              nalu_hypre_F90_PassIntArray (nbor_iupper),
+              nalu_hypre_F90_PassIntArray (index_map),
+              nalu_hypre_F90_PassIntArray (index_dir) );
 }
 
 /*--------------------------------------------------------------------------
- *  HYPRE_SStructGridSetSharedPart
+ *  NALU_HYPRE_SStructGridSetSharedPart
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_sstructgridsetsharedpart, HYPRE_SSTRUCTGRIDSETSHAREDPART)
-(hypre_F90_Obj      *grid,
- hypre_F90_Int      *part,
- hypre_F90_IntArray *ilower,
- hypre_F90_IntArray *iupper,
- hypre_F90_IntArray *offset,
- hypre_F90_Int      *shared_part,
- hypre_F90_IntArray *shared_ilower,
- hypre_F90_IntArray *shared_iupper,
- hypre_F90_IntArray *shared_offset,
- hypre_F90_IntArray *index_map,
- hypre_F90_IntArray *index_dir,
- hypre_F90_Int      *ierr)
+nalu_hypre_F90_IFACE(nalu_hypre_sstructgridsetsharedpart, NALU_HYPRE_SSTRUCTGRIDSETSHAREDPART)
+(nalu_hypre_F90_Obj      *grid,
+ nalu_hypre_F90_Int      *part,
+ nalu_hypre_F90_IntArray *ilower,
+ nalu_hypre_F90_IntArray *iupper,
+ nalu_hypre_F90_IntArray *offset,
+ nalu_hypre_F90_Int      *shared_part,
+ nalu_hypre_F90_IntArray *shared_ilower,
+ nalu_hypre_F90_IntArray *shared_iupper,
+ nalu_hypre_F90_IntArray *shared_offset,
+ nalu_hypre_F90_IntArray *index_map,
+ nalu_hypre_F90_IntArray *index_dir,
+ nalu_hypre_F90_Int      *ierr)
 {
-   *ierr = (hypre_F90_Int) HYPRE_SStructGridSetSharedPart(
-              hypre_F90_PassObj      (HYPRE_SStructGrid, grid),
-              hypre_F90_PassInt      (part),
-              hypre_F90_PassIntArray (ilower),
-              hypre_F90_PassIntArray (iupper),
-              hypre_F90_PassIntArray (offset),
-              hypre_F90_PassInt      (shared_part),
-              hypre_F90_PassIntArray (shared_ilower),
-              hypre_F90_PassIntArray (shared_iupper),
-              hypre_F90_PassIntArray (shared_offset),
-              hypre_F90_PassIntArray (index_map),
-              hypre_F90_PassIntArray (index_dir) );
+   *ierr = (nalu_hypre_F90_Int) NALU_HYPRE_SStructGridSetSharedPart(
+              nalu_hypre_F90_PassObj      (NALU_HYPRE_SStructGrid, grid),
+              nalu_hypre_F90_PassInt      (part),
+              nalu_hypre_F90_PassIntArray (ilower),
+              nalu_hypre_F90_PassIntArray (iupper),
+              nalu_hypre_F90_PassIntArray (offset),
+              nalu_hypre_F90_PassInt      (shared_part),
+              nalu_hypre_F90_PassIntArray (shared_ilower),
+              nalu_hypre_F90_PassIntArray (shared_iupper),
+              nalu_hypre_F90_PassIntArray (shared_offset),
+              nalu_hypre_F90_PassIntArray (index_map),
+              nalu_hypre_F90_PassIntArray (index_dir) );
 }
 
 /*--------------------------------------------------------------------------
  * *** placeholder ***
- *  HYPRE_SStructGridAddUnstructuredPart
+ *  NALU_HYPRE_SStructGridAddUnstructuredPart
  *--------------------------------------------------------------------------*/
 
 #if 0
 
 void
-hypre_F90_IFACE(hypre_sstructgridaddunstructure, HYPRE_SSTRUCTGRIDADDUNSTRUCTURE)
-(hypre_F90_Obj *grid,
- hypre_F90_Int *ilower,
- hypre_F90_Int *iupper,
- hypre_F90_Int *ierr)
+nalu_hypre_F90_IFACE(nalu_hypre_sstructgridaddunstructure, NALU_HYPRE_SSTRUCTGRIDADDUNSTRUCTURE)
+(nalu_hypre_F90_Obj *grid,
+ nalu_hypre_F90_Int *ilower,
+ nalu_hypre_F90_Int *iupper,
+ nalu_hypre_F90_Int *ierr)
 {
-   *ierr = (hypre_F90_Int) HYPRE_SStructGridAddUnstructuredPart(
-              hypre_F90_PassObj (HYPRE_SStructGrid, grid),
-              hypre_F90_PassInt (ilower),
-              hypre_F90_PassInt (iupper) );
+   *ierr = (nalu_hypre_F90_Int) NALU_HYPRE_SStructGridAddUnstructuredPart(
+              nalu_hypre_F90_PassObj (NALU_HYPRE_SStructGrid, grid),
+              nalu_hypre_F90_PassInt (ilower),
+              nalu_hypre_F90_PassInt (iupper) );
 }
 #endif
 
 /*--------------------------------------------------------------------------
- *  HYPRE_SStructGridAssemble
+ *  NALU_HYPRE_SStructGridAssemble
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_sstructgridassemble, HYPRE_SSTRUCTGRIDASSEMBLE)
-(hypre_F90_Obj *grid,
- hypre_F90_Int *ierr)
+nalu_hypre_F90_IFACE(nalu_hypre_sstructgridassemble, NALU_HYPRE_SSTRUCTGRIDASSEMBLE)
+(nalu_hypre_F90_Obj *grid,
+ nalu_hypre_F90_Int *ierr)
 {
-   *ierr = (hypre_F90_Int) HYPRE_SStructGridAssemble(
-              hypre_F90_PassObj (HYPRE_SStructGrid, grid) );
+   *ierr = (nalu_hypre_F90_Int) NALU_HYPRE_SStructGridAssemble(
+              nalu_hypre_F90_PassObj (NALU_HYPRE_SStructGrid, grid) );
 }
 
 /*--------------------------------------------------------------------------
- *  HYPRE_SStructGridSetPeriodic
+ *  NALU_HYPRE_SStructGridSetPeriodic
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_sstructgridsetperiodic, HYPRE_SSTRUCTGRIDSETPERIODIC)
-(hypre_F90_Obj      *grid,
- hypre_F90_Int      *part,
- hypre_F90_IntArray *periodic,
- hypre_F90_Int      *ierr)
+nalu_hypre_F90_IFACE(nalu_hypre_sstructgridsetperiodic, NALU_HYPRE_SSTRUCTGRIDSETPERIODIC)
+(nalu_hypre_F90_Obj      *grid,
+ nalu_hypre_F90_Int      *part,
+ nalu_hypre_F90_IntArray *periodic,
+ nalu_hypre_F90_Int      *ierr)
 {
-   *ierr = (hypre_F90_Int) HYPRE_SStructGridSetPeriodic(
-              hypre_F90_PassObj      (HYPRE_SStructGrid, grid),
-              hypre_F90_PassInt      (part),
-              hypre_F90_PassIntArray (periodic) );
+   *ierr = (nalu_hypre_F90_Int) NALU_HYPRE_SStructGridSetPeriodic(
+              nalu_hypre_F90_PassObj      (NALU_HYPRE_SStructGrid, grid),
+              nalu_hypre_F90_PassInt      (part),
+              nalu_hypre_F90_PassIntArray (periodic) );
 }
 
 /*--------------------------------------------------------------------------
- *  HYPRE_SStructGridSetNumGhost
+ *  NALU_HYPRE_SStructGridSetNumGhost
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_sstructgridsetnumghost, HYPRE_SSTRUCTGRIDSETNUMGHOST)
-(hypre_F90_Obj      *grid,
- hypre_F90_IntArray *num_ghost,
- hypre_F90_Int      *ierr)
+nalu_hypre_F90_IFACE(nalu_hypre_sstructgridsetnumghost, NALU_HYPRE_SSTRUCTGRIDSETNUMGHOST)
+(nalu_hypre_F90_Obj      *grid,
+ nalu_hypre_F90_IntArray *num_ghost,
+ nalu_hypre_F90_Int      *ierr)
 {
-   *ierr = (hypre_F90_Int) HYPRE_SStructGridSetNumGhost(
-              hypre_F90_PassObj      (HYPRE_SStructGrid, grid),
-              hypre_F90_PassIntArray (num_ghost) );
+   *ierr = (nalu_hypre_F90_Int) NALU_HYPRE_SStructGridSetNumGhost(
+              nalu_hypre_F90_PassObj      (NALU_HYPRE_SStructGrid, grid),
+              nalu_hypre_F90_PassIntArray (num_ghost) );
 }
 
 #ifdef __cplusplus

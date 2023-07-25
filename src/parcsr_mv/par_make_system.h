@@ -5,15 +5,15 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#ifndef hypre_PAR_MAKE_SYSTEM
-#define hypre_PAR_MAKE_SYSTEM
+#ifndef nalu_hypre_PAR_MAKE_SYSTEM
+#define nalu_hypre_PAR_MAKE_SYSTEM
 
 typedef struct
 {
-   hypre_ParCSRMatrix *A;
-   hypre_ParVector    *x;
-   hypre_ParVector    *b;
-} HYPRE_ParCSR_System_Problem;
+   nalu_hypre_ParCSRMatrix *A;
+   nalu_hypre_ParVector    *x;
+   nalu_hypre_ParVector    *b;
+} NALU_HYPRE_ParCSR_System_Problem;
 
-#endif /* hypre_PAR_MAKE_SYSTEM */
+#endif /* nalu_hypre_PAR_MAKE_SYSTEM */
 

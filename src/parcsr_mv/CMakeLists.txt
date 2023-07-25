@@ -4,19 +4,19 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 set(HDRS
-  HYPRE_parcsr_mv.h
-  _hypre_parcsr_mv.h
+  NALU_HYPRE_parcsr_mv.h
+  _nalu_hypre_parcsr_mv.h
 )
 
 set(SRCS
   communicationT.c
-  F90_HYPRE_parcsr_matrix.c
-  F90_HYPRE_parcsr_vector.c
+  F90_NALU_HYPRE_parcsr_matrix.c
+  F90_NALU_HYPRE_parcsr_vector.c
   F90_parcsr_matrix.c
   F90_par_vector.c
   gen_fffc.c
-  HYPRE_parcsr_matrix.c
-  HYPRE_parcsr_vector.c
+  NALU_HYPRE_parcsr_matrix.c
+  NALU_HYPRE_parcsr_vector.c
   new_commpkg.c
   numbers.c
   par_csr_aat.c
@@ -44,7 +44,7 @@ target_sources(${PROJECT_NAME}
           ${HDRS}
 )
 
-if (HYPRE_USING_CUDA OR HYPRE_USING_SYCL)
+if (NALU_HYPRE_USING_CUDA OR NALU_HYPRE_USING_SYCL)
   set(GPU_SRCS
     par_csr_matvec_device.c
     par_csr_fffc_device.c
@@ -53,8 +53,8 @@ if (HYPRE_USING_CUDA OR HYPRE_USING_SYCL)
     par_vector_device.c
   )
   convert_filenames_to_full_paths(GPU_SRCS)
-  set(HYPRE_GPU_SOURCES ${HYPRE_GPU_SOURCES} ${GPU_SRCS} PARENT_SCOPE)
+  set(NALU_HYPRE_GPU_SOURCES ${NALU_HYPRE_GPU_SOURCES} ${GPU_SRCS} PARENT_SCOPE)
 endif ()
 
 convert_filenames_to_full_paths(HDRS)
-set(HYPRE_HEADERS ${HYPRE_HEADERS} ${HDRS} PARENT_SCOPE)
+set(NALU_HYPRE_HEADERS ${NALU_HYPRE_HEADERS} ${HDRS} PARENT_SCOPE)

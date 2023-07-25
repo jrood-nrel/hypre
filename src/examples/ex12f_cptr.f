@@ -8,7 +8,7 @@
 !
 !     Interface:    Semi-Structured interface (SStruct)
 !
-!     Compile with: make ex12f (may need to edit HYPRE_DIR in Makefile)
+!     Compile with: make ex12f (may need to edit NALU_HYPRE_DIR in Makefile)
 !
 !     Sample runs:  mpirun -np 2 ex12f
 !
@@ -65,9 +65,9 @@
 
       integer :: stat
 
-!     This comes from 'sstruct_mv/HYPRE_sstruct_mv.h'
-      integer    HYPRE_SSTRUCT_VARIABLE_NODE
-      parameter( HYPRE_SSTRUCT_VARIABLE_NODE = 1 )
+!     This comes from 'sstruct_mv/NALU_HYPRE_sstruct_mv.h'
+      integer    NALU_HYPRE_SSTRUCT_VARIABLE_NODE
+      parameter( NALU_HYPRE_SSTRUCT_VARIABLE_NODE = 1 )
 
       integer*8  sA
       integer*8  sb
@@ -95,7 +95,7 @@
       call MPI_Comm_rank(MPI_COMM_WORLD, myid, ierr)
       call MPI_Comm_size(MPI_COMM_WORLD, num_procs, ierr)
 
-      call HYPRE_Initialize(ierr)
+      call NALU_HYPRE_Initialize(ierr)
 
       if (num_procs .ne. 2) then
          if (myid .eq. 0) then
@@ -108,9 +108,9 @@
       precond_id = 1
 
       if (precond_id .eq. 1) then
-         object_type = HYPRE_STRUCT
+         object_type = NALU_HYPRE_STRUCT
       else if (precond_id .eq. 2) then
-         object_type = HYPRE_PARCSR
+         object_type = NALU_HYPRE_PARCSR
       else
          if (myid .eq. 0) then
             print *, "Invalid solver!"
@@ -124,7 +124,7 @@
 !-----------------------------------------------------------------------
 
 !     Create an empty 2D grid object
-      call HYPRE_SStructGridCreate(MPI_COMM_WORLD, 2, nparts, grid,
+      call NALU_HYPRE_SStructGridCreate(MPI_COMM_WORLD, 2, nparts, grid,
      +     ierr)
 
 !     Add boxes to the grid
@@ -133,31 +133,31 @@
          ilower(2) =  1
          iupper(1) = -1
          iupper(2) =  2
-         call HYPRE_SStructGridSetExtents(grid, part, ilower, iupper,
+         call NALU_HYPRE_SStructGridSetExtents(grid, part, ilower, iupper,
      +        ierr)
       else if (myid .eq. 1) then
          ilower(1) =  0
          ilower(2) =  1
          iupper(1) =  2
          iupper(2) =  4
-         call HYPRE_SStructGridSetExtents(grid, part, ilower, iupper,
+         call NALU_HYPRE_SStructGridSetExtents(grid, part, ilower, iupper,
      +        ierr)
       endif
 
 !     Set the variable type and number of variables on each part
-      vartypes(1) = HYPRE_SSTRUCT_VARIABLE_NODE
-      call HYPRE_SStructGridSetVariables(grid, part, nvars, vartypes,
+      vartypes(1) = NALU_HYPRE_SSTRUCT_VARIABLE_NODE
+      call NALU_HYPRE_SStructGridSetVariables(grid, part, nvars, vartypes,
      +     ierr)
 
 !     This is a collective call finalizing the grid assembly
-      call HYPRE_SStructGridAssemble(grid, ierr)
+      call NALU_HYPRE_SStructGridAssemble(grid, ierr)
 
 !-----------------------------------------------------------------------
 !     2. Define the discretization stencil
 !-----------------------------------------------------------------------
 
 !     Create an empty 2D, 5-pt stencil object
-      call HYPRE_SStructStencilCreate(2, 5, stencil, ierr)
+      call NALU_HYPRE_SStructStencilCreate(2, 5, stencil, ierr)
 
 !     Define the geometry of the stencil.  Each represents a relative
 !     offset (in the index space).
@@ -176,7 +176,7 @@
 !     to them - the last argument indicates the variable for which we
 !     are assigning this stencil
       do ent = 1, 5
-         call HYPRE_SStructStencilSetEntry(stencil,
+         call NALU_HYPRE_SStructStencilSetEntry(stencil,
      +        ent-1, offsets(1,ent), var, ierr)
       enddo
 
@@ -186,36 +186,36 @@
 !-----------------------------------------------------------------------
 
 !     Create the graph object
-      call HYPRE_SStructGraphCreate(MPI_COMM_WORLD, grid, graph, ierr)
+      call NALU_HYPRE_SStructGraphCreate(MPI_COMM_WORLD, grid, graph, ierr)
 
 !     See MatrixSetObjectType below
-      call HYPRE_SStructGraphSetObjectType(graph, object_type, ierr)
+      call NALU_HYPRE_SStructGraphSetObjectType(graph, object_type, ierr)
 
 !     Now we need to tell the graph which stencil to use for each
 !     variable on each part (we only have one variable and one part)
-      call HYPRE_SStructGraphSetStencil(graph, part, var, stencil, ierr)
+      call NALU_HYPRE_SStructGraphSetStencil(graph, part, var, stencil, ierr)
 
 !     Here we could establish connections between parts if we had more
 !     than one part using the graph. For example, we could use
-!     HYPRE_GraphAddEntries() routine or HYPRE_GridSetNeighborPart()
+!     NALU_HYPRE_GraphAddEntries() routine or NALU_HYPRE_GridSetNeighborPart()
 
 !     Assemble the graph
-      call HYPRE_SStructGraphAssemble(graph, ierr)
+      call NALU_HYPRE_SStructGraphAssemble(graph, ierr)
 
 !-----------------------------------------------------------------------
 !     4. Set up a SStruct Matrix
 !-----------------------------------------------------------------------
 
 !     Create an empty matrix object
-      call HYPRE_SStructMatrixCreate(MPI_COMM_WORLD, graph, A, ierr)
+      call NALU_HYPRE_SStructMatrixCreate(MPI_COMM_WORLD, graph, A, ierr)
 
-!     Set the object type (by default HYPRE_SSTRUCT). This determines
+!     Set the object type (by default NALU_HYPRE_SSTRUCT). This determines
 !     the data structure used to store the matrix.  For PFMG we use
-!     HYPRE_STRUCT, and for BoomerAMG we use HYPRE_PARCSR (set above).
-      call HYPRE_SStructMatrixSetObjectTyp(A, object_type, ierr)
+!     NALU_HYPRE_STRUCT, and for BoomerAMG we use NALU_HYPRE_PARCSR (set above).
+      call NALU_HYPRE_SStructMatrixSetObjectTyp(A, object_type, ierr)
 
 !     Get ready to set values
-      call HYPRE_SStructMatrixInitialize(A, ierr)
+      call NALU_HYPRE_SStructMatrixInitialize(A, ierr)
 
 !     Set the matrix coefficients.  Each processor assigns coefficients
 !     for the boxes in the grid that it owns.  Note that the
@@ -257,7 +257,7 @@
          enddo
       enddo
 
-      call HYPRE_SStructMatrixSetBoxValues(A, part, ilower, iupper,
+      call NALU_HYPRE_SStructMatrixSetBoxValues(A, part, ilower, iupper,
      +     var, nentries, stencil_indices, values, ierr)
 
 !     Set the coefficients reaching outside of the boundary to 0.  Note
@@ -275,7 +275,7 @@
          iupper(1) = -1
          iupper(2) =  0
          stencil_indices(1) = 3
-         call HYPRE_SStructMatrixSetBoxValues(A, part, ilower, iupper,
+         call NALU_HYPRE_SStructMatrixSetBoxValues(A, part, ilower, iupper,
      +        var, 1, stencil_indices, values, ierr)
 !        values to the left of our box
          ilower(1) = -4
@@ -283,7 +283,7 @@
          iupper(1) = -4
          iupper(2) =  2
          stencil_indices(1) = 1
-         call HYPRE_SStructMatrixSetBoxValues(A, part, ilower, iupper,
+         call NALU_HYPRE_SStructMatrixSetBoxValues(A, part, ilower, iupper,
      +        var, 1, stencil_indices, values, ierr)
 !        values above our box
          ilower(1) = -4
@@ -291,7 +291,7 @@
          iupper(1) = -2
          iupper(2) =  2
          stencil_indices(1) = 4
-         call HYPRE_SStructMatrixSetBoxValues(A, part, ilower, iupper,
+         call NALU_HYPRE_SStructMatrixSetBoxValues(A, part, ilower, iupper,
      +        var, 1, stencil_indices, values, ierr)
 
       else if (myid .eq. 1) then
@@ -302,7 +302,7 @@
          iupper(1) =  2
          iupper(2) =  0
          stencil_indices(1) = 3
-         call HYPRE_SStructMatrixSetBoxValues(A, part, ilower, iupper,
+         call NALU_HYPRE_SStructMatrixSetBoxValues(A, part, ilower, iupper,
      +        var, 1, stencil_indices, values, ierr)
 !        values to the right of our box
          ilower(1) =  2
@@ -310,7 +310,7 @@
          iupper(1) =  2
          iupper(2) =  4
          stencil_indices(1) = 2
-         call HYPRE_SStructMatrixSetBoxValues(A, part, ilower, iupper,
+         call NALU_HYPRE_SStructMatrixSetBoxValues(A, part, ilower, iupper,
      +        var, 1, stencil_indices, values, ierr)
 !        values above our box
          ilower(1) = -1
@@ -318,7 +318,7 @@
          iupper(1) =  2
          iupper(2) =  4
          stencil_indices(1) = 4
-         call HYPRE_SStructMatrixSetBoxValues(A, part, ilower, iupper,
+         call NALU_HYPRE_SStructMatrixSetBoxValues(A, part, ilower, iupper,
      +        var, 1, stencil_indices, values, ierr)
 !        values to the left of our box
 !        (that do not border the other box on proc. 0)
@@ -327,29 +327,29 @@
          iupper(1) = -1
          iupper(2) =  4
          stencil_indices(1) = 1
-         call HYPRE_SStructMatrixSetBoxValues(A, part, ilower, iupper,
+         call NALU_HYPRE_SStructMatrixSetBoxValues(A, part, ilower, iupper,
      +        var, 1, stencil_indices, values, ierr)
 
       endif
 
 !     This is a collective call finalizing the matrix assembly
-      call HYPRE_SStructMatrixAssemble(A, ierr)
+      call NALU_HYPRE_SStructMatrixAssemble(A, ierr)
 
 !      matfile = 'ex12f.out'
 !      matfile(10:10) = char(0)
-!      call HYPRE_SStructMatrixPrint(matfile, A, 0, ierr)
+!      call NALU_HYPRE_SStructMatrixPrint(matfile, A, 0, ierr)
 
 !     Create an empty vector object
-      call HYPRE_SStructVectorCreate(MPI_COMM_WORLD, grid, b, ierr)
-      call HYPRE_SStructVectorCreate(MPI_COMM_WORLD, grid, x, ierr)
+      call NALU_HYPRE_SStructVectorCreate(MPI_COMM_WORLD, grid, b, ierr)
+      call NALU_HYPRE_SStructVectorCreate(MPI_COMM_WORLD, grid, x, ierr)
 
 !     As with the matrix, set the appropriate object type for the vectors
-      call HYPRE_SStructVectorSetObjectTyp(b, object_type, ierr)
-      call HYPRE_SStructVectorSetObjectTyp(x, object_type, ierr)
+      call NALU_HYPRE_SStructVectorSetObjectTyp(b, object_type, ierr)
+      call NALU_HYPRE_SStructVectorSetObjectTyp(x, object_type, ierr)
 
 !     Indicate that the vector coefficients are ready to be set
-      call HYPRE_SStructVectorInitialize(b, ierr)
-      call HYPRE_SStructVectorInitialize(x, ierr)
+      call NALU_HYPRE_SStructVectorInitialize(b, ierr)
+      call NALU_HYPRE_SStructVectorInitialize(x, ierr)
 
 !     Set the vector coefficients.  Again, note that the ilower values
 !     are different from those used in ex1, and some of the values are
@@ -365,12 +365,12 @@
          do i = 1, 12
             values(i) = 1.0
          enddo
-         call HYPRE_SStructVectorSetBoxValues(b, part, ilower, iupper,
+         call NALU_HYPRE_SStructVectorSetBoxValues(b, part, ilower, iupper,
      +        var, values, ierr)
          do i = 1, 12
             values(i) = 0.0
          enddo
-         call HYPRE_SStructVectorSetBoxValues(x, part, ilower, iupper,
+         call NALU_HYPRE_SStructVectorSetBoxValues(x, part, ilower, iupper,
      +        var, values, ierr)
 
       else if (myid .eq. 1) then
@@ -383,19 +383,19 @@
          do i = 1, 20
             values(i) = 1.0
          enddo
-         call HYPRE_SStructVectorSetBoxValues(b, part, ilower, iupper,
+         call NALU_HYPRE_SStructVectorSetBoxValues(b, part, ilower, iupper,
      +        var, values, ierr)
          do i = 1, 20
             values(i) = 0.0
          enddo
-         call HYPRE_SStructVectorSetBoxValues(x, part, ilower, iupper,
+         call NALU_HYPRE_SStructVectorSetBoxValues(x, part, ilower, iupper,
      +        var, values, ierr)
 
       endif
 
 !     This is a collective call finalizing the vector assembly
-      call HYPRE_SStructVectorAssemble(b, ierr)
-      call HYPRE_SStructVectorAssemble(x, ierr)
+      call NALU_HYPRE_SStructVectorAssemble(b, ierr)
+      call NALU_HYPRE_SStructVectorAssemble(x, ierr)
 
 !-----------------------------------------------------------------------
 !     6. Set up and use a solver (See the Reference Manual for
@@ -410,39 +410,39 @@
 
 !        Because we are using a struct solver, we need to get the object
 !        of the matrix and vectors to pass in to the struct solvers
-         call HYPRE_SStructMatrixGetObject(A, sA, ierr)
-         call HYPRE_SStructVectorGetObject(b, sb, ierr)
-         call HYPRE_SStructVectorGetObject(x, sx, ierr)
+         call NALU_HYPRE_SStructMatrixGetObject(A, sA, ierr)
+         call NALU_HYPRE_SStructVectorGetObject(b, sb, ierr)
+         call NALU_HYPRE_SStructVectorGetObject(x, sx, ierr)
 
 !        Create an empty PCG Struct solver
-         call HYPRE_StructPCGCreate(MPI_COMM_WORLD, solver, ierr)
+         call NALU_HYPRE_StructPCGCreate(MPI_COMM_WORLD, solver, ierr)
 !        Set PCG parameters
-         call HYPRE_StructPCGSetTol(solver, tol, ierr)
-         call HYPRE_StructPCGSetPrintLevel(solver, 2, ierr)
-         call HYPRE_StructPCGSetMaxIter(solver, 50, ierr)
+         call NALU_HYPRE_StructPCGSetTol(solver, tol, ierr)
+         call NALU_HYPRE_StructPCGSetPrintLevel(solver, 2, ierr)
+         call NALU_HYPRE_StructPCGSetMaxIter(solver, 50, ierr)
 
 !        Create the Struct PFMG solver for use as a preconditioner
-         call HYPRE_StructPFMGCreate(MPI_COMM_WORLD, precond, ierr)
+         call NALU_HYPRE_StructPFMGCreate(MPI_COMM_WORLD, precond, ierr)
 !        Set PFMG parameters
-         call HYPRE_StructPFMGSetMaxIter(precond, 1, ierr)
-         call HYPRE_StructPFMGSetTol(precond, 0.0d0, ierr)
-         call HYPRE_StructPFMGSetZeroGuess(precond, ierr)
-         call HYPRE_StructPFMGSetNumPreRelax(precond, 2, ierr)
-         call HYPRE_StructPFMGSetNumPostRelax(precond, 2, ierr)
+         call NALU_HYPRE_StructPFMGSetMaxIter(precond, 1, ierr)
+         call NALU_HYPRE_StructPFMGSetTol(precond, 0.0d0, ierr)
+         call NALU_HYPRE_StructPFMGSetZeroGuess(precond, ierr)
+         call NALU_HYPRE_StructPFMGSetNumPreRelax(precond, 2, ierr)
+         call NALU_HYPRE_StructPFMGSetNumPostRelax(precond, 2, ierr)
 !        Non-Galerkin coarse grid (more efficient for this problem)
-         call HYPRE_StructPFMGSetRAPType(precond, 1, ierr)
+         call NALU_HYPRE_StructPFMGSetRAPType(precond, 1, ierr)
 !        R/B Gauss-Seidel
-         call HYPRE_StructPFMGSetRelaxType(precond, 2, ierr)
+         call NALU_HYPRE_StructPFMGSetRelaxType(precond, 2, ierr)
 !        Skip relaxation on some levels (more efficient for this problem)
-         call HYPRE_StructPFMGSetSkipRelax(precond, 1, ierr)
+         call NALU_HYPRE_StructPFMGSetSkipRelax(precond, 1, ierr)
 !        Set preconditioner (PFMG = 1) and solve
-         call HYPRE_StructPCGSetPrecond(solver, 1, precond, ierr)
-         call HYPRE_StructPCGSetup(solver, sA, sb, sx, ierr)
-         call HYPRE_StructPCGSolve(solver, sA, sb, sx, ierr)
+         call NALU_HYPRE_StructPCGSetPrecond(solver, 1, precond, ierr)
+         call NALU_HYPRE_StructPCGSetup(solver, sA, sb, sx, ierr)
+         call NALU_HYPRE_StructPCGSolve(solver, sA, sb, sx, ierr)
 
 !        Free memory
-         call HYPRE_StructPCGDestroy(solver, ierr)
-         call HYPRE_StructPFMGDestroy(precond, ierr)
+         call NALU_HYPRE_StructPCGDestroy(solver, ierr)
+         call NALU_HYPRE_StructPFMGDestroy(precond, ierr)
 
       else if (precond_id .eq. 2) then
 
@@ -450,49 +450,49 @@
 
 !        Because we are using a struct solver, we need to get the object
 !        of the matrix and vectors to pass in to the struct solvers
-         call HYPRE_SStructMatrixGetObject(A, parA, ierr)
-         call HYPRE_SStructVectorGetObject(b, parb, ierr)
-         call HYPRE_SStructVectorGetObject(x, parx, ierr)
+         call NALU_HYPRE_SStructMatrixGetObject(A, parA, ierr)
+         call NALU_HYPRE_SStructVectorGetObject(b, parb, ierr)
+         call NALU_HYPRE_SStructVectorGetObject(x, parx, ierr)
 
 !        Create an empty PCG Struct solver
-         call HYPRE_ParCSRPCGCreate(MPI_COMM_WORLD, solver, ierr)
+         call NALU_HYPRE_ParCSRPCGCreate(MPI_COMM_WORLD, solver, ierr)
 !        Set PCG parameters
-         call HYPRE_ParCSRPCGSetTol(solver, tol, ierr)
-         call HYPRE_ParCSRPCGSetPrintLevel(solver, 2, ierr)
-         call HYPRE_ParCSRPCGSetMaxIter(solver, 50, ierr)
+         call NALU_HYPRE_ParCSRPCGSetTol(solver, tol, ierr)
+         call NALU_HYPRE_ParCSRPCGSetPrintLevel(solver, 2, ierr)
+         call NALU_HYPRE_ParCSRPCGSetMaxIter(solver, 50, ierr)
 
 !        Create the BoomerAMG solver for use as a preconditioner
-         call HYPRE_BoomerAMGCreate(precond, ierr)
+         call NALU_HYPRE_BoomerAMGCreate(precond, ierr)
 !        Set BoomerAMG parameters
-         call HYPRE_BoomerAMGSetMaxIter(precond, 1, ierr)
-         call HYPRE_BoomerAMGSetTol(precond, 0.0, ierr)
+         call NALU_HYPRE_BoomerAMGSetMaxIter(precond, 1, ierr)
+         call NALU_HYPRE_BoomerAMGSetTol(precond, 0.0, ierr)
 !        Print amg solution info
-         call HYPRE_BoomerAMGSetPrintLevel(precond, 1, ierr)
-         call HYPRE_BoomerAMGSetCoarsenType(precond, 6, ierr)
-         call HYPRE_BoomerAMGSetOldDefault(precond, ierr)
+         call NALU_HYPRE_BoomerAMGSetPrintLevel(precond, 1, ierr)
+         call NALU_HYPRE_BoomerAMGSetCoarsenType(precond, 6, ierr)
+         call NALU_HYPRE_BoomerAMGSetOldDefault(precond, ierr)
 !        Sym G.S./Jacobi hybrid
-         call HYPRE_BoomerAMGSetRelaxType(precond, 6, ierr)
-         call HYPRE_BoomerAMGSetNumSweeps(precond, 1, ierr)
+         call NALU_HYPRE_BoomerAMGSetRelaxType(precond, 6, ierr)
+         call NALU_HYPRE_BoomerAMGSetNumSweeps(precond, 1, ierr)
 !        Set preconditioner (BoomerAMG = 2) and solve
-         call HYPRE_ParCSRPCGSetPrecond(solver, 2, precond, ierr)
-         call HYPRE_ParCSRPCGSetup(solver, parA, parb, parx, ierr)
-         call HYPRE_ParCSRPCGSolve(solver, parA, parb, parx, ierr)
+         call NALU_HYPRE_ParCSRPCGSetPrecond(solver, 2, precond, ierr)
+         call NALU_HYPRE_ParCSRPCGSetup(solver, parA, parb, parx, ierr)
+         call NALU_HYPRE_ParCSRPCGSolve(solver, parA, parb, parx, ierr)
 
 !        Free memory
-         call HYPRE_ParCSRPCGDestroy(solver, ierr)
-         call HYPRE_BoomerAMGDestroy(precond, ierr)
+         call NALU_HYPRE_ParCSRPCGDestroy(solver, ierr)
+         call NALU_HYPRE_BoomerAMGDestroy(precond, ierr)
 
       endif
 
 !     Free memory
-      call HYPRE_SStructGridDestroy(grid, ierr)
-      call HYPRE_SStructStencilDestroy(stencil, ierr)
-      call HYPRE_SStructGraphDestroy(graph, ierr)
-      call HYPRE_SStructMatrixDestroy(A, ierr)
-      call HYPRE_SStructVectorDestroy(b, ierr)
-      call HYPRE_SStructVectorDestroy(x, ierr)
+      call NALU_HYPRE_SStructGridDestroy(grid, ierr)
+      call NALU_HYPRE_SStructStencilDestroy(stencil, ierr)
+      call NALU_HYPRE_SStructGraphDestroy(graph, ierr)
+      call NALU_HYPRE_SStructMatrixDestroy(A, ierr)
+      call NALU_HYPRE_SStructVectorDestroy(b, ierr)
+      call NALU_HYPRE_SStructVectorDestroy(x, ierr)
 
-      call HYPRE_Finalize(ierr)
+      call NALU_HYPRE_Finalize(ierr)
 
 !     Finalize MPI
       call MPI_Finalize(ierr)

@@ -5,294 +5,294 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_parcsr_ls.h"
+#include "_nalu_hypre_parcsr_ls.h"
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRPCGCreate
+ * NALU_HYPRE_ParCSRPCGCreate
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ParCSRPCGCreate( MPI_Comm comm, HYPRE_Solver *solver )
+NALU_HYPRE_Int
+NALU_HYPRE_ParCSRPCGCreate( MPI_Comm comm, NALU_HYPRE_Solver *solver )
 {
-   hypre_PCGFunctions * pcg_functions;
+   nalu_hypre_PCGFunctions * pcg_functions;
 
    if (!solver)
    {
-      hypre_error_in_arg(2);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(2);
+      return nalu_hypre_error_flag;
    }
    pcg_functions =
-      hypre_PCGFunctionsCreate(
-         hypre_ParKrylovCAlloc, hypre_ParKrylovFree, hypre_ParKrylovCommInfo,
-         hypre_ParKrylovCreateVector,
-         hypre_ParKrylovDestroyVector, hypre_ParKrylovMatvecCreate,
-         hypre_ParKrylovMatvec, hypre_ParKrylovMatvecDestroy,
-         hypre_ParKrylovInnerProd, hypre_ParKrylovCopyVector,
-         hypre_ParKrylovClearVector,
-         hypre_ParKrylovScaleVector, hypre_ParKrylovAxpy,
-         hypre_ParKrylovIdentitySetup, hypre_ParKrylovIdentity );
-   *solver = ( (HYPRE_Solver) hypre_PCGCreate( pcg_functions ) );
+      nalu_hypre_PCGFunctionsCreate(
+         nalu_hypre_ParKrylovCAlloc, nalu_hypre_ParKrylovFree, nalu_hypre_ParKrylovCommInfo,
+         nalu_hypre_ParKrylovCreateVector,
+         nalu_hypre_ParKrylovDestroyVector, nalu_hypre_ParKrylovMatvecCreate,
+         nalu_hypre_ParKrylovMatvec, nalu_hypre_ParKrylovMatvecDestroy,
+         nalu_hypre_ParKrylovInnerProd, nalu_hypre_ParKrylovCopyVector,
+         nalu_hypre_ParKrylovClearVector,
+         nalu_hypre_ParKrylovScaleVector, nalu_hypre_ParKrylovAxpy,
+         nalu_hypre_ParKrylovIdentitySetup, nalu_hypre_ParKrylovIdentity );
+   *solver = ( (NALU_HYPRE_Solver) nalu_hypre_PCGCreate( pcg_functions ) );
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRPCGDestroy
+ * NALU_HYPRE_ParCSRPCGDestroy
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ParCSRPCGDestroy( HYPRE_Solver solver )
+NALU_HYPRE_Int
+NALU_HYPRE_ParCSRPCGDestroy( NALU_HYPRE_Solver solver )
 {
-   return ( hypre_PCGDestroy( (void *) solver ) );
+   return ( nalu_hypre_PCGDestroy( (void *) solver ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRPCGSetup
+ * NALU_HYPRE_ParCSRPCGSetup
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ParCSRPCGSetup( HYPRE_Solver solver,
-                      HYPRE_ParCSRMatrix A,
-                      HYPRE_ParVector b,
-                      HYPRE_ParVector x      )
+NALU_HYPRE_Int
+NALU_HYPRE_ParCSRPCGSetup( NALU_HYPRE_Solver solver,
+                      NALU_HYPRE_ParCSRMatrix A,
+                      NALU_HYPRE_ParVector b,
+                      NALU_HYPRE_ParVector x      )
 {
-   return ( HYPRE_PCGSetup( solver,
-                            (HYPRE_Matrix) A,
-                            (HYPRE_Vector) b,
-                            (HYPRE_Vector) x ) );
+   return ( NALU_HYPRE_PCGSetup( solver,
+                            (NALU_HYPRE_Matrix) A,
+                            (NALU_HYPRE_Vector) b,
+                            (NALU_HYPRE_Vector) x ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRPCGSolve
+ * NALU_HYPRE_ParCSRPCGSolve
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ParCSRPCGSolve( HYPRE_Solver solver,
-                      HYPRE_ParCSRMatrix A,
-                      HYPRE_ParVector b,
-                      HYPRE_ParVector x      )
+NALU_HYPRE_Int
+NALU_HYPRE_ParCSRPCGSolve( NALU_HYPRE_Solver solver,
+                      NALU_HYPRE_ParCSRMatrix A,
+                      NALU_HYPRE_ParVector b,
+                      NALU_HYPRE_ParVector x      )
 {
-   return ( HYPRE_PCGSolve( solver,
-                            (HYPRE_Matrix) A,
-                            (HYPRE_Vector) b,
-                            (HYPRE_Vector) x ) );
+   return ( NALU_HYPRE_PCGSolve( solver,
+                            (NALU_HYPRE_Matrix) A,
+                            (NALU_HYPRE_Vector) b,
+                            (NALU_HYPRE_Vector) x ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRPCGSetTol
+ * NALU_HYPRE_ParCSRPCGSetTol
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ParCSRPCGSetTol( HYPRE_Solver solver,
-                       HYPRE_Real   tol    )
+NALU_HYPRE_Int
+NALU_HYPRE_ParCSRPCGSetTol( NALU_HYPRE_Solver solver,
+                       NALU_HYPRE_Real   tol    )
 {
-   return ( HYPRE_PCGSetTol( solver, tol ) );
+   return ( NALU_HYPRE_PCGSetTol( solver, tol ) );
 }
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRPCGSetAbsoluteTol
+ * NALU_HYPRE_ParCSRPCGSetAbsoluteTol
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ParCSRPCGSetAbsoluteTol( HYPRE_Solver solver,
-                               HYPRE_Real   a_tol    )
+NALU_HYPRE_Int
+NALU_HYPRE_ParCSRPCGSetAbsoluteTol( NALU_HYPRE_Solver solver,
+                               NALU_HYPRE_Real   a_tol    )
 {
-   return ( HYPRE_PCGSetAbsoluteTol( solver, a_tol ) );
-}
-
-/*--------------------------------------------------------------------------
- * HYPRE_ParCSRPCGSetMaxIter
- *--------------------------------------------------------------------------*/
-
-HYPRE_Int
-HYPRE_ParCSRPCGSetMaxIter( HYPRE_Solver solver,
-                           HYPRE_Int    max_iter )
-{
-   return ( HYPRE_PCGSetMaxIter( solver, max_iter ) );
+   return ( NALU_HYPRE_PCGSetAbsoluteTol( solver, a_tol ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRPCGSetStopCrit
+ * NALU_HYPRE_ParCSRPCGSetMaxIter
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ParCSRPCGSetStopCrit( HYPRE_Solver solver,
-                            HYPRE_Int    stop_crit )
+NALU_HYPRE_Int
+NALU_HYPRE_ParCSRPCGSetMaxIter( NALU_HYPRE_Solver solver,
+                           NALU_HYPRE_Int    max_iter )
 {
-   return ( HYPRE_PCGSetStopCrit( solver, stop_crit ) );
+   return ( NALU_HYPRE_PCGSetMaxIter( solver, max_iter ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRPCGSetTwoNorm
+ * NALU_HYPRE_ParCSRPCGSetStopCrit
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ParCSRPCGSetTwoNorm( HYPRE_Solver solver,
-                           HYPRE_Int    two_norm )
+NALU_HYPRE_Int
+NALU_HYPRE_ParCSRPCGSetStopCrit( NALU_HYPRE_Solver solver,
+                            NALU_HYPRE_Int    stop_crit )
 {
-   return ( HYPRE_PCGSetTwoNorm( solver, two_norm ) );
+   return ( NALU_HYPRE_PCGSetStopCrit( solver, stop_crit ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRPCGSetRelChange
+ * NALU_HYPRE_ParCSRPCGSetTwoNorm
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ParCSRPCGSetRelChange( HYPRE_Solver solver,
-                             HYPRE_Int    rel_change )
+NALU_HYPRE_Int
+NALU_HYPRE_ParCSRPCGSetTwoNorm( NALU_HYPRE_Solver solver,
+                           NALU_HYPRE_Int    two_norm )
 {
-   return ( HYPRE_PCGSetRelChange( solver, rel_change ) );
+   return ( NALU_HYPRE_PCGSetTwoNorm( solver, two_norm ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRPCGSetPrecond
+ * NALU_HYPRE_ParCSRPCGSetRelChange
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ParCSRPCGSetPrecond( HYPRE_Solver         solver,
-                           HYPRE_PtrToParSolverFcn precond,
-                           HYPRE_PtrToParSolverFcn precond_setup,
-                           HYPRE_Solver         precond_solver )
+NALU_HYPRE_Int
+NALU_HYPRE_ParCSRPCGSetRelChange( NALU_HYPRE_Solver solver,
+                             NALU_HYPRE_Int    rel_change )
 {
-   return ( HYPRE_PCGSetPrecond( solver,
-                                 (HYPRE_PtrToSolverFcn) precond,
-                                 (HYPRE_PtrToSolverFcn) precond_setup,
+   return ( NALU_HYPRE_PCGSetRelChange( solver, rel_change ) );
+}
+
+/*--------------------------------------------------------------------------
+ * NALU_HYPRE_ParCSRPCGSetPrecond
+ *--------------------------------------------------------------------------*/
+
+NALU_HYPRE_Int
+NALU_HYPRE_ParCSRPCGSetPrecond( NALU_HYPRE_Solver         solver,
+                           NALU_HYPRE_PtrToParSolverFcn precond,
+                           NALU_HYPRE_PtrToParSolverFcn precond_setup,
+                           NALU_HYPRE_Solver         precond_solver )
+{
+   return ( NALU_HYPRE_PCGSetPrecond( solver,
+                                 (NALU_HYPRE_PtrToSolverFcn) precond,
+                                 (NALU_HYPRE_PtrToSolverFcn) precond_setup,
                                  precond_solver ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRPCGGetPrecond
+ * NALU_HYPRE_ParCSRPCGGetPrecond
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ParCSRPCGGetPrecond( HYPRE_Solver  solver,
-                           HYPRE_Solver *precond_data_ptr )
+NALU_HYPRE_Int
+NALU_HYPRE_ParCSRPCGGetPrecond( NALU_HYPRE_Solver  solver,
+                           NALU_HYPRE_Solver *precond_data_ptr )
 {
-   return ( HYPRE_PCGGetPrecond( solver, precond_data_ptr ) );
+   return ( NALU_HYPRE_PCGGetPrecond( solver, precond_data_ptr ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRPCGSetPrintLevel
- * an obsolete function; use HYPRE_PCG* functions instead
+ * NALU_HYPRE_ParCSRPCGSetPrintLevel
+ * an obsolete function; use NALU_HYPRE_PCG* functions instead
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ParCSRPCGSetPrintLevel( HYPRE_Solver solver,
-                              HYPRE_Int level )
+NALU_HYPRE_Int
+NALU_HYPRE_ParCSRPCGSetPrintLevel( NALU_HYPRE_Solver solver,
+                              NALU_HYPRE_Int level )
 {
-   return ( HYPRE_PCGSetPrintLevel( solver, level ) );
+   return ( NALU_HYPRE_PCGSetPrintLevel( solver, level ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRPCGSetLogging
- * an obsolete function; use HYPRE_PCG* functions instead
+ * NALU_HYPRE_ParCSRPCGSetLogging
+ * an obsolete function; use NALU_HYPRE_PCG* functions instead
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ParCSRPCGSetLogging( HYPRE_Solver solver,
-                           HYPRE_Int level )
+NALU_HYPRE_Int
+NALU_HYPRE_ParCSRPCGSetLogging( NALU_HYPRE_Solver solver,
+                           NALU_HYPRE_Int level )
 {
-   return ( HYPRE_PCGSetLogging( solver, level ) );
+   return ( NALU_HYPRE_PCGSetLogging( solver, level ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRPCGGetNumIterations
+ * NALU_HYPRE_ParCSRPCGGetNumIterations
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ParCSRPCGGetNumIterations( HYPRE_Solver  solver,
-                                 HYPRE_Int    *num_iterations )
+NALU_HYPRE_Int
+NALU_HYPRE_ParCSRPCGGetNumIterations( NALU_HYPRE_Solver  solver,
+                                 NALU_HYPRE_Int    *num_iterations )
 {
-   return ( HYPRE_PCGGetNumIterations( solver, num_iterations ) );
+   return ( NALU_HYPRE_PCGGetNumIterations( solver, num_iterations ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRPCGGetFinalRelativeResidualNorm
+ * NALU_HYPRE_ParCSRPCGGetFinalRelativeResidualNorm
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ParCSRPCGGetFinalRelativeResidualNorm( HYPRE_Solver  solver,
-                                             HYPRE_Real   *norm   )
+NALU_HYPRE_Int
+NALU_HYPRE_ParCSRPCGGetFinalRelativeResidualNorm( NALU_HYPRE_Solver  solver,
+                                             NALU_HYPRE_Real   *norm   )
 {
-   return ( HYPRE_PCGGetFinalRelativeResidualNorm( solver, norm ) );
+   return ( NALU_HYPRE_PCGGetFinalRelativeResidualNorm( solver, norm ) );
 }
 
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRPCGGetResidual
+ * NALU_HYPRE_ParCSRPCGGetResidual
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ParCSRPCGGetResidual( HYPRE_Solver  solver,
-                            HYPRE_ParVector *residual   )
+NALU_HYPRE_Int
+NALU_HYPRE_ParCSRPCGGetResidual( NALU_HYPRE_Solver  solver,
+                            NALU_HYPRE_ParVector *residual   )
 {
-   return ( HYPRE_PCGGetResidual( solver, (void *) residual ) );
+   return ( NALU_HYPRE_PCGGetResidual( solver, (void *) residual ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRDiagScaleSetup
+ * NALU_HYPRE_ParCSRDiagScaleSetup
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ParCSRDiagScaleSetup( HYPRE_Solver solver,
-                            HYPRE_ParCSRMatrix A,
-                            HYPRE_ParVector y,
-                            HYPRE_ParVector x      )
+NALU_HYPRE_Int
+NALU_HYPRE_ParCSRDiagScaleSetup( NALU_HYPRE_Solver solver,
+                            NALU_HYPRE_ParCSRMatrix A,
+                            NALU_HYPRE_ParVector y,
+                            NALU_HYPRE_ParVector x      )
 {
    return 0;
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRDiagScale
+ * NALU_HYPRE_ParCSRDiagScale
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ParCSRDiagScale( HYPRE_Solver solver,
-                       HYPRE_ParCSRMatrix HA,
-                       HYPRE_ParVector Hy,
-                       HYPRE_ParVector Hx      )
+NALU_HYPRE_Int
+NALU_HYPRE_ParCSRDiagScale( NALU_HYPRE_Solver solver,
+                       NALU_HYPRE_ParCSRMatrix HA,
+                       NALU_HYPRE_ParVector Hy,
+                       NALU_HYPRE_ParVector Hx      )
 {
-   return hypre_ParCSRDiagScaleVector((hypre_ParCSRMatrix *) HA,
-                                      (hypre_ParVector *)    Hy,
-                                      (hypre_ParVector *)    Hx);
+   return nalu_hypre_ParCSRDiagScaleVector((nalu_hypre_ParCSRMatrix *) HA,
+                                      (nalu_hypre_ParVector *)    Hy,
+                                      (nalu_hypre_ParVector *)    Hx);
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRSymPrecondSetup
+ * NALU_HYPRE_ParCSRSymPrecondSetup
  *--------------------------------------------------------------------------*/
 
 /*
 
-HYPRE_Int
-HYPRE_ParCSRSymPrecondSetup( HYPRE_Solver solver,
-                             HYPRE_ParCSRMatrix A,
-                             HYPRE_ParVector b,
-                             HYPRE_ParVector x      )
+NALU_HYPRE_Int
+NALU_HYPRE_ParCSRSymPrecondSetup( NALU_HYPRE_Solver solver,
+                             NALU_HYPRE_ParCSRMatrix A,
+                             NALU_HYPRE_ParVector b,
+                             NALU_HYPRE_ParVector x      )
 {
-   hypre_ParCSRMatrix *A = (hypre_ParCSRMatrix *) A;
-   hypre_ParVector    *y = (hypre_ParVector *) b;
-   hypre_ParVector    *x = (hypre_ParVector *) x;
+   nalu_hypre_ParCSRMatrix *A = (nalu_hypre_ParCSRMatrix *) A;
+   nalu_hypre_ParVector    *y = (nalu_hypre_ParVector *) b;
+   nalu_hypre_ParVector    *x = (nalu_hypre_ParVector *) x;
 
-   HYPRE_Real *x_data = hypre_VectorData(hypre_ParVectorLocalVector(x));
-   HYPRE_Real *y_data = hypre_VectorData(hypre_ParVectorLocalVector(y));
-   HYPRE_Real *A_diag = hypre_CSRMatrixData(hypre_ParCSRMatrixDiag(A));
-   HYPRE_Real *A_offd = hypre_CSRMatrixData(hypre_ParCSRMatrixOffD(A));
+   NALU_HYPRE_Real *x_data = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(x));
+   NALU_HYPRE_Real *y_data = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(y));
+   NALU_HYPRE_Real *A_diag = nalu_hypre_CSRMatrixData(nalu_hypre_ParCSRMatrixDiag(A));
+   NALU_HYPRE_Real *A_offd = nalu_hypre_CSRMatrixData(nalu_hypre_ParCSRMatrixOffD(A));
 
-   HYPRE_Int i, ierr = 0;
-   hypre_ParCSRMatrix *Asym;
+   NALU_HYPRE_Int i, ierr = 0;
+   nalu_hypre_ParCSRMatrix *Asym;
    MPI_Comm comm;
-   HYPRE_Int global_num_rows;
-   HYPRE_Int global_num_cols;
-   HYPRE_Int *row_starts;
-   HYPRE_Int *col_starts;
-   HYPRE_Int num_cols_offd;
-   HYPRE_Int num_nonzeros_diag;
-   HYPRE_Int num_nonzeros_offd;
+   NALU_HYPRE_Int global_num_rows;
+   NALU_HYPRE_Int global_num_cols;
+   NALU_HYPRE_Int *row_starts;
+   NALU_HYPRE_Int *col_starts;
+   NALU_HYPRE_Int num_cols_offd;
+   NALU_HYPRE_Int num_nonzeros_diag;
+   NALU_HYPRE_Int num_nonzeros_offd;
 
-   Asym = hypre_ParCSRMatrixCreate(comm, global_num_rows, global_num_cols,
+   Asym = nalu_hypre_ParCSRMatrixCreate(comm, global_num_rows, global_num_cols,
                                    row_starts, col_starts, num_cols_offd,
                                    num_nonzeros_diag, num_nonzeros_offd);
 
-   for (i=0; i < hypre_VectorSize(hypre_ParVectorLocalVector(x)); i++)
+   for (i=0; i < nalu_hypre_VectorSize(nalu_hypre_ParVectorLocalVector(x)); i++)
    {
       x_data[i] = y_data[i]/A_data[A_i[i]];
    }

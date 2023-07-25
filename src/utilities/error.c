@@ -5,40 +5,40 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_utilities.h"
+#include "_nalu_hypre_utilities.h"
 
 /* Global variable for error handling */
-hypre_Error hypre__global_error = {0, 0, NULL, 0, 0};
+nalu_hypre_Error nalu_hypre__global_error = {0, 0, NULL, 0, 0};
 
 /*--------------------------------------------------------------------------
  * Process the error raised on the given line of the given source file
  *--------------------------------------------------------------------------*/
 
-void hypre_error_handler(const char *filename, HYPRE_Int line, HYPRE_Int ierr, const char *msg)
+void nalu_hypre_error_handler(const char *filename, NALU_HYPRE_Int line, NALU_HYPRE_Int ierr, const char *msg)
 {
    /* Copy global struct into a short name and copy changes back before exiting */
-   hypre_Error err = hypre__global_error;
+   nalu_hypre_Error err = nalu_hypre__global_error;
 
    /* Store the error code */
    err.error_flag |= ierr;
 
-#ifdef HYPRE_PRINT_ERRORS
+#ifdef NALU_HYPRE_PRINT_ERRORS
 
    /* Error format strings without and with a message */
    const char fmt_wo[] = "hypre error in file \"%s\", line %d, error code = %d\n";
    const char fmt_wm[] = "hypre error in file \"%s\", line %d, error code = %d - %s\n";
 
-   HYPRE_Int bufsz = 0;
+   NALU_HYPRE_Int bufsz = 0;
 
    /* Print error message to local buffer first */
 
    if (msg)
    {
-      bufsz = hypre_snprintf(NULL, 0, fmt_wm, filename, line, ierr, msg);
+      bufsz = nalu_hypre_snprintf(NULL, 0, fmt_wm, filename, line, ierr, msg);
    }
    else
    {
-      bufsz = hypre_snprintf(NULL, 0, fmt_wo, filename, line, ierr);
+      bufsz = nalu_hypre_snprintf(NULL, 0, fmt_wo, filename, line, ierr);
    }
 
    bufsz += 1;
@@ -46,162 +46,162 @@ void hypre_error_handler(const char *filename, HYPRE_Int line, HYPRE_Int ierr, c
 
    if (msg)
    {
-      hypre_snprintf(buffer, bufsz, fmt_wm, filename, line, ierr, msg);
+      nalu_hypre_snprintf(buffer, bufsz, fmt_wm, filename, line, ierr, msg);
    }
    else
    {
-      hypre_snprintf(buffer, bufsz, fmt_wo, filename, line, ierr);
+      nalu_hypre_snprintf(buffer, bufsz, fmt_wo, filename, line, ierr);
    }
 
    /* Now print buffer to either memory or stderr */
 
    if (err.print_to_memory)
    {
-      HYPRE_Int  msg_sz = err.msg_sz; /* Store msg_sz for snprintf below */
+      NALU_HYPRE_Int  msg_sz = err.msg_sz; /* Store msg_sz for snprintf below */
 
       /* Make sure there is enough memory for the new message */
       err.msg_sz += bufsz;
       if ( err.msg_sz > err.mem_sz )
       {
          err.mem_sz = err.msg_sz + 1024; /* Add some excess */
-         err.memory = hypre_TReAlloc(err.memory, char, err.mem_sz, HYPRE_MEMORY_HOST);
+         err.memory = nalu_hypre_TReAlloc(err.memory, char, err.mem_sz, NALU_HYPRE_MEMORY_HOST);
       }
 
-      hypre_snprintf((err.memory + msg_sz), bufsz, "%s", buffer);
+      nalu_hypre_snprintf((err.memory + msg_sz), bufsz, "%s", buffer);
    }
    else
    {
-      hypre_fprintf(stderr, "%s", buffer);
+      nalu_hypre_fprintf(stderr, "%s", buffer);
    }
 
 #endif
 
-   hypre__global_error = err;
+   nalu_hypre__global_error = err;
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int HYPRE_GetError(void)
+NALU_HYPRE_Int NALU_HYPRE_GetError(void)
 {
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int HYPRE_CheckError(HYPRE_Int ierr, HYPRE_Int hypre_error_code)
+NALU_HYPRE_Int NALU_HYPRE_CheckError(NALU_HYPRE_Int ierr, NALU_HYPRE_Int nalu_hypre_error_code)
 {
-   return ierr & hypre_error_code;
+   return ierr & nalu_hypre_error_code;
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-void HYPRE_DescribeError(HYPRE_Int ierr, char *msg)
+void NALU_HYPRE_DescribeError(NALU_HYPRE_Int ierr, char *msg)
 {
    if (ierr == 0)
    {
-      hypre_sprintf(msg, "[No error] ");
+      nalu_hypre_sprintf(msg, "[No error] ");
    }
 
-   if (ierr & HYPRE_ERROR_GENERIC)
+   if (ierr & NALU_HYPRE_ERROR_GENERIC)
    {
-      hypre_sprintf(msg, "[Generic error] ");
+      nalu_hypre_sprintf(msg, "[Generic error] ");
    }
 
-   if (ierr & HYPRE_ERROR_MEMORY)
+   if (ierr & NALU_HYPRE_ERROR_MEMORY)
    {
-      hypre_sprintf(msg, "[Memory error] ");
+      nalu_hypre_sprintf(msg, "[Memory error] ");
    }
 
-   if (ierr & HYPRE_ERROR_ARG)
+   if (ierr & NALU_HYPRE_ERROR_ARG)
    {
-      hypre_sprintf(msg, "[Error in argument %d] ", HYPRE_GetErrorArg());
+      nalu_hypre_sprintf(msg, "[Error in argument %d] ", NALU_HYPRE_GetErrorArg());
    }
 
-   if (ierr & HYPRE_ERROR_CONV)
+   if (ierr & NALU_HYPRE_ERROR_CONV)
    {
-      hypre_sprintf(msg, "[Method did not converge] ");
+      nalu_hypre_sprintf(msg, "[Method did not converge] ");
    }
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int HYPRE_GetErrorArg(void)
+NALU_HYPRE_Int NALU_HYPRE_GetErrorArg(void)
 {
-   return (hypre_error_flag >> 3 & 31);
+   return (nalu_hypre_error_flag >> 3 & 31);
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int HYPRE_ClearAllErrors(void)
+NALU_HYPRE_Int NALU_HYPRE_ClearAllErrors(void)
 {
-   hypre_error_flag = 0;
-   return (hypre_error_flag != 0);
+   nalu_hypre_error_flag = 0;
+   return (nalu_hypre_error_flag != 0);
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int HYPRE_ClearError(HYPRE_Int hypre_error_code)
+NALU_HYPRE_Int NALU_HYPRE_ClearError(NALU_HYPRE_Int nalu_hypre_error_code)
 {
-   hypre_error_flag &= ~hypre_error_code;
-   return (hypre_error_flag & hypre_error_code);
+   nalu_hypre_error_flag &= ~nalu_hypre_error_code;
+   return (nalu_hypre_error_flag & nalu_hypre_error_code);
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int HYPRE_SetPrintErrorMode(HYPRE_Int mode)
+NALU_HYPRE_Int NALU_HYPRE_SetPrintErrorMode(NALU_HYPRE_Int mode)
 {
-   hypre__global_error.print_to_memory = mode;
-   return hypre_error_flag;
+   nalu_hypre__global_error.print_to_memory = mode;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int HYPRE_GetErrorMessages(char **buffer, HYPRE_Int *bufsz)
+NALU_HYPRE_Int NALU_HYPRE_GetErrorMessages(char **buffer, NALU_HYPRE_Int *bufsz)
 {
-   hypre_Error err = hypre__global_error;
+   nalu_hypre_Error err = nalu_hypre__global_error;
 
    *bufsz  = err.msg_sz;
-   *buffer = hypre_CTAlloc(char, *bufsz, HYPRE_MEMORY_HOST);
-   hypre_TMemcpy(*buffer, err.memory, char, *bufsz, HYPRE_MEMORY_HOST, HYPRE_MEMORY_HOST);
+   *buffer = nalu_hypre_CTAlloc(char, *bufsz, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TMemcpy(*buffer, err.memory, char, *bufsz, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_HOST);
 
-   hypre_TFree(err.memory, HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(err.memory, NALU_HYPRE_MEMORY_HOST);
    err.mem_sz = 0;
    err.msg_sz = 0;
 
-   hypre__global_error = err;
-   return hypre_error_flag;
+   nalu_hypre__global_error = err;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int HYPRE_PrintErrorMessages(MPI_Comm comm)
+NALU_HYPRE_Int NALU_HYPRE_PrintErrorMessages(MPI_Comm comm)
 {
-   hypre_Error err = hypre__global_error;
+   nalu_hypre_Error err = nalu_hypre__global_error;
 
-   HYPRE_Int myid;
+   NALU_HYPRE_Int myid;
    char *msg;
 
-   hypre_MPI_Barrier(comm);
+   nalu_hypre_MPI_Barrier(comm);
 
-   hypre_MPI_Comm_rank(comm, &myid);
+   nalu_hypre_MPI_Comm_rank(comm, &myid);
    for (msg = err.memory; msg < (err.memory + err.msg_sz); msg += strlen(msg) + 1)
    {
-      hypre_fprintf(stderr, "%d: %s", myid, msg);
+      nalu_hypre_fprintf(stderr, "%d: %s", myid, msg);
    }
 
-   hypre_TFree(err.memory, HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(err.memory, NALU_HYPRE_MEMORY_HOST);
    err.mem_sz = 0;
    err.msg_sz = 0;
 
-   hypre__global_error = err;
-   return hypre_error_flag;
+   nalu_hypre__global_error = err;
+   return nalu_hypre_error_flag;
 }

@@ -7,8 +7,8 @@
 
 #include <math.h>
 #include <string.h>
-#include "_hypre_parcsr_mv.h"
-#include "_hypre_parcsr_ls.h"
+#include "_nalu_hypre_parcsr_mv.h"
+#include "_nalu_hypre_parcsr_ls.h"
 #include "par_amg.h"
 #include "mli_solver_hsgs.h"
 
@@ -60,9 +60,9 @@ int MLI_Solver_HSGS::setup(MLI_Matrix *mat)
 int MLI_Solver_HSGS::solve(MLI_Vector *fIn, MLI_Vector *uIn)
 {
    int                relaxType=6, relaxPts=0, iS;
-   hypre_ParCSRMatrix *A;
-   hypre_ParVector    *f, *u, *vTemp;
-   hypre_ParVector    *zTemp = NULL;
+   nalu_hypre_ParCSRMatrix *A;
+   nalu_hypre_ParVector    *f, *u, *vTemp;
+   nalu_hypre_ParVector    *zTemp = NULL;
 
    //int              mypid;
    //double           rnorm;
@@ -72,36 +72,36 @@ int MLI_Solver_HSGS::solve(MLI_Vector *fIn, MLI_Vector *uIn)
     * fetch machine and smoother parameters
     *-----------------------------------------------------------------*/
 
-   A     = (hypre_ParCSRMatrix *) Amat_->getMatrix();
-   u     = (hypre_ParVector *) uIn->getVector();
-   f     = (hypre_ParVector *) fIn->getVector();
-   vTemp = (hypre_ParVector *) mliVec_->getVector();
+   A     = (nalu_hypre_ParCSRMatrix *) Amat_->getMatrix();
+   u     = (nalu_hypre_ParVector *) uIn->getVector();
+   f     = (nalu_hypre_ParVector *) fIn->getVector();
+   vTemp = (nalu_hypre_ParVector *) mliVec_->getVector();
 
    /* AB: need an extra vector for threading */
-   if (hypre_NumThreads() > 1)
+   if (nalu_hypre_NumThreads() > 1)
    {
-      zTemp = hypre_ParVectorCreate(hypre_ParCSRMatrixComm(A),
-                                    hypre_ParCSRMatrixGlobalNumRows(A),
-                                    hypre_ParCSRMatrixRowStarts(A));
-      hypre_ParVectorInitialize(zTemp);
+      zTemp = nalu_hypre_ParVectorCreate(nalu_hypre_ParCSRMatrixComm(A),
+                                    nalu_hypre_ParCSRMatrixGlobalNumRows(A),
+                                    nalu_hypre_ParCSRMatrixRowStarts(A));
+      nalu_hypre_ParVectorInitialize(zTemp);
    }
 
-   //comm  = hypre_ParCSRMatrixComm(A);
+   //comm  = nalu_hypre_ParCSRMatrixComm(A);
    //MPI_Comm_rank(comm, &mypid);
    for (iS = 0; iS < nSweeps_; iS++)
    {
-      hypre_BoomerAMGRelax(A,f,NULL,relaxType,relaxPts,relaxWeights_,
+      nalu_hypre_BoomerAMGRelax(A,f,NULL,relaxType,relaxPts,relaxWeights_,
                            relaxOmega_,NULL,u,vTemp, zTemp);
-      //hypre_ParVectorCopy( f, vTemp );
-      //hypre_ParCSRMatrixMatvec( -1.0, A, u, 1.0, vTemp );
-      //rnorm = sqrt(hypre_ParVectorInnerProd( vTemp, vTemp ));
+      //nalu_hypre_ParVectorCopy( f, vTemp );
+      //nalu_hypre_ParCSRMatrixMatvec( -1.0, A, u, 1.0, vTemp );
+      //rnorm = sqrt(nalu_hypre_ParVectorInnerProd( vTemp, vTemp ));
       //if ( mypid == 0 )
       //   printf("\tMLI_Solver_HSGS iter = %4d, rnorm = %e (omega=%e)\n",
       //             iS, rnorm, relaxWeights_);
    }
 
    if (zTemp)
-      hypre_ParVectorDestroy(zTemp);
+      nalu_hypre_ParVectorDestroy(zTemp);
 
    return 0;
 }
@@ -154,27 +154,27 @@ int MLI_Solver_HSGS::setParams(char *paramString, int argc, char **argv)
 int MLI_Solver_HSGS::calcOmega()
 {
    int                relaxType=6, relaxTypes[2], level=0, numCGSweeps=10;
-   hypre_ParCSRMatrix *A;
-   hypre_ParVector    *vTemp;
-   hypre_ParAMGData   *amgData;
+   nalu_hypre_ParCSRMatrix *A;
+   nalu_hypre_ParVector    *vTemp;
+   nalu_hypre_ParAMGData   *amgData;
 
-   A = (hypre_ParCSRMatrix *) Amat_->getMatrix();
-   amgData = (hypre_ParAMGData *) hypre_BoomerAMGCreate();
+   A = (nalu_hypre_ParCSRMatrix *) Amat_->getMatrix();
+   amgData = (nalu_hypre_ParAMGData *) nalu_hypre_BoomerAMGCreate();
    amgData->CF_marker_array = new int*[1];
    amgData->CF_marker_array[0] = NULL;
-   amgData->A_array = new hypre_ParCSRMatrix*[1];
+   amgData->A_array = new nalu_hypre_ParCSRMatrix*[1];
    amgData->A_array[0] = A;
-   vTemp = (hypre_ParVector *) mliVec_->getVector();
+   vTemp = (nalu_hypre_ParVector *) mliVec_->getVector();
    amgData->Vtemp = vTemp;
    relaxTypes[0] = 0;
    relaxTypes[1] = relaxType;
    amgData->grid_relax_type = relaxTypes;
    amgData->smooth_num_levels = 0;
    amgData->smooth_type = 0;
-   hypre_BoomerAMGCGRelaxWt((void *) amgData,level,numCGSweeps,&relaxOmega_);
+   nalu_hypre_BoomerAMGCGRelaxWt((void *) amgData,level,numCGSweeps,&relaxOmega_);
    //printf("HYPRE/FEI/MLI HSGS : relaxOmega = %e\n", relaxOmega_);
    delete [] amgData->A_array;
    delete [] amgData->CF_marker_array;
-   hypre_TFree(amgData, HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(amgData, NALU_HYPRE_MEMORY_HOST);
    return 0;
 }

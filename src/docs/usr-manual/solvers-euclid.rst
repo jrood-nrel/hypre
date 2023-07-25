@@ -53,44 +53,44 @@ our experience) will likely prove effective for minimizing execution time.
 
 .. code-block:: c
 
-   #include "HYPRE_parcsr_ls.h"
+   #include "NALU_HYPRE_parcsr_ls.h"
 
-   HYPRE_Solver eu;
-   HYPRE_Solver pcg_solver;
-   HYPRE_ParVector b, x;
-   HYPRE_ParCSRMatrix A;
+   NALU_HYPRE_Solver eu;
+   NALU_HYPRE_Solver pcg_solver;
+   NALU_HYPRE_ParVector b, x;
+   NALU_HYPRE_ParCSRMatrix A;
 
    //Instantiate the preconditioner.
-   HYPRE_EuclidCreate(comm, &eu);
+   NALU_HYPRE_EuclidCreate(comm, &eu);
 
    //Optionally use the following three methods to set runtime options.
    // 1. pass options from command line or string array.
-   HYPRE_EuclidSetParams(eu, argc, argv);
+   NALU_HYPRE_EuclidSetParams(eu, argc, argv);
 
    // 2. pass options from a configuration file.
-   HYPRE_EuclidSetParamsFromFile(eu, "filename");
+   NALU_HYPRE_EuclidSetParamsFromFile(eu, "filename");
 
    // 3. pass options using interface functions.
-   HYPRE_EuclidSetLevel(eu, 3);
+   NALU_HYPRE_EuclidSetLevel(eu, 3);
    ...
 
    //Set Euclid as the preconditioning method for some
-   //other solver, using the function calls HYPRE_EuclidSetup
-   //and HYPRE_EuclidSolve.  We assume that the pcg_solver
+   //other solver, using the function calls NALU_HYPRE_EuclidSetup
+   //and NALU_HYPRE_EuclidSolve.  We assume that the pcg_solver
    //has been properly initialized.
-   HYPRE_PCGSetPrecond(pcg_solver,
-                       (HYPRE_PtrToSolverFcn) HYPRE_EuclidSolve,
-                       (HYPRE_PtrToSolverFcn) HYPRE_EuclidSetup,
+   NALU_HYPRE_PCGSetPrecond(pcg_solver,
+                       (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_EuclidSolve,
+                       (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_EuclidSetup,
                        eu);
 
    //Solve the system by calling the Setup and Solve methods for,
-   //in this case, the HYPRE_PCG solver.  We assume that A, b, and x
+   //in this case, the NALU_HYPRE_PCG solver.  We assume that A, b, and x
    //have been properly initialized.
-   HYPRE_PCGSetup(pcg_solver, (HYPRE_Matrix)A, (HYPRE_Vector)b, (HYPRE_Vector)x);
-   HYPRE_PCGSolve(pcg_solver, (HYPRE_Matrix)parcsr_A, (HYPRE_Vector)b, (HYPRE_Vector)x);
+   NALU_HYPRE_PCGSetup(pcg_solver, (NALU_HYPRE_Matrix)A, (NALU_HYPRE_Vector)b, (NALU_HYPRE_Vector)x);
+   NALU_HYPRE_PCGSolve(pcg_solver, (NALU_HYPRE_Matrix)parcsr_A, (NALU_HYPRE_Vector)b, (NALU_HYPRE_Vector)x);
 
    //Destroy the Euclid preconditioning object.
-   HYPRE_EuclidDestroy(eu);
+   NALU_HYPRE_EuclidDestroy(eu);
 
 
 Setting Options: Examples
@@ -126,7 +126,7 @@ recognized by Euclid, no harm should ensue.
 
 .. code-block:: c
 
-   HYPRE_EuclidSetParams(HYPRE_Solver solver, int argc, char *argv[]);
+   NALU_HYPRE_EuclidSetParams(NALU_HYPRE_Solver solver, int argc, char *argv[]);
 
 where ``argc`` and ``argv`` carry the usual connotation: ``main(int argc, char
 *argv[])``.  If your hypre application is called ``phoo``, you can then pass
@@ -136,8 +136,8 @@ options on the command line per the following example.
 
    mpirun -np 2 phoo -level 3
 
-Since Euclid looks for the ``database`` file when ``HYPRE_EuclidCreate`` is
-called, and parses the command line when ``HYPRE_EuclidSetParams`` is called,
+Since Euclid looks for the ``database`` file when ``NALU_HYPRE_EuclidCreate`` is
+called, and parses the command line when ``NALU_HYPRE_EuclidSetParams`` is called,
 option values passed on the command line will override any similar settings that
 may be contained in the ``database`` file.  Also, if same option name appears
 more than once on the command line, the final appearance determines the setting.
@@ -150,7 +150,7 @@ in a configuration file, either the ``1`` or ``0`` must stated explicitly.
 
 **Method 3.** There are two ways in which you can read in options from a file
 whose name is other than ``database``.  First, you can call
-``HYPRE_EuclidSetParamsFromFile`` to specify a configuration filename.  Second,
+``NALU_HYPRE_EuclidSetParamsFromFile`` to specify a configuration filename.  Second,
 if you have passed the command line arguments as described above in Method 2,
 you can then specify the configuration filename on the command line using the
 ``-db_filename filename`` option, e.g.,
@@ -163,7 +163,7 @@ you can then specify the configuration filename on the command line using the
 
 .. code-block:: c
 
-   int HYPRE_EuclidSetLevel(HYPRE_Solver solver, int level);
+   int NALU_HYPRE_EuclidSetLevel(NALU_HYPRE_Solver solver, int level);
 
 For a full set of functions, see the reference manual.
 

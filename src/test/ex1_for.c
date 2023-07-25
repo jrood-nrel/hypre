@@ -10,7 +10,7 @@
 
    Interface:    Structured interface (Struct)
 
-   Compile with: make ex1 (may need to edit HYPRE_DIR in Makefile)
+   Compile with: make ex1 (may need to edit NALU_HYPRE_DIR in Makefile)
 
    Sample run:   mpirun -np 2 ex1
 
@@ -27,107 +27,107 @@
 */
 
 /* Struct linear solvers header */
-#include "HYPRE_struct_ls.h"
+#include "NALU_HYPRE_struct_ls.h"
 
-#ifdef HYPRE_FORTRAN
+#ifdef NALU_HYPRE_FORTRAN
 #include "fortran.h"
-#include "hypre_struct_fortran_test.h"
+#include "nalu_hypre_struct_fortran_test.h"
 #endif
 
-HYPRE_Int main (HYPRE_Int argc, char *argv[])
+NALU_HYPRE_Int main (NALU_HYPRE_Int argc, char *argv[])
 {
-   HYPRE_Int i, j, myid;
+   NALU_HYPRE_Int i, j, myid;
 
-#ifdef HYPRE_FORTRAN
-   hypre_F90_Obj grid;
-   hypre_F90_Obj stencil;
-   hypre_F90_Obj A;
-   hypre_F90_Obj b;
-   hypre_F90_Obj x;
-   hypre_F90_Obj solver;
-   HYPRE_Int temp_COMM;
-   HYPRE_Int one = 1;
-   HYPRE_Int two = 2;
-   HYPRE_Int five = 5;
-   HYPRE_Real tol = 1.e-6;
+#ifdef NALU_HYPRE_FORTRAN
+   nalu_hypre_F90_Obj grid;
+   nalu_hypre_F90_Obj stencil;
+   nalu_hypre_F90_Obj A;
+   nalu_hypre_F90_Obj b;
+   nalu_hypre_F90_Obj x;
+   nalu_hypre_F90_Obj solver;
+   NALU_HYPRE_Int temp_COMM;
+   NALU_HYPRE_Int one = 1;
+   NALU_HYPRE_Int two = 2;
+   NALU_HYPRE_Int five = 5;
+   NALU_HYPRE_Real tol = 1.e-6;
 #else
-   HYPRE_StructGrid     grid;
-   HYPRE_StructStencil  stencil;
-   HYPRE_StructMatrix   A;
-   HYPRE_StructVector   b;
-   HYPRE_StructVector   x;
-   HYPRE_StructSolver   solver;
+   NALU_HYPRE_StructGrid     grid;
+   NALU_HYPRE_StructStencil  stencil;
+   NALU_HYPRE_StructMatrix   A;
+   NALU_HYPRE_StructVector   b;
+   NALU_HYPRE_StructVector   x;
+   NALU_HYPRE_StructSolver   solver;
 #endif
 
    /* Initialize MPI */
-   hypre_MPI_Init(&argc, &argv);
-   hypre_MPI_Comm_rank(hypre_MPI_COMM_WORLD, &myid);
+   nalu_hypre_MPI_Init(&argc, &argv);
+   nalu_hypre_MPI_Comm_rank(nalu_hypre_MPI_COMM_WORLD, &myid);
 
    /* 1. Set up a grid. Each processor describes the piece
       of the grid that it owns. */
    {
       /* Create an empty 2D grid object */
-#ifdef HYPRE_FORTRAN
-      temp_COMM = (HYPRE_Int) hypre_MPI_COMM_WORLD;
-      HYPRE_StructGridCreate(&temp_COMM, &two, &grid);
+#ifdef NALU_HYPRE_FORTRAN
+      temp_COMM = (NALU_HYPRE_Int) nalu_hypre_MPI_COMM_WORLD;
+      NALU_HYPRE_StructGridCreate(&temp_COMM, &two, &grid);
 #else
-      HYPRE_StructGridCreate(hypre_MPI_COMM_WORLD, 2, &grid);
+      NALU_HYPRE_StructGridCreate(nalu_hypre_MPI_COMM_WORLD, 2, &grid);
 #endif
 
       /* Add boxes to the grid */
       if (myid == 0)
       {
-         HYPRE_Int ilower[2] = {-3, 1}, iupper[2] = {-1, 2};
-#ifdef HYPRE_FORTRAN
-         HYPRE_StructGridSetExtents(&grid, &ilower[0], &iupper[0]);
+         NALU_HYPRE_Int ilower[2] = {-3, 1}, iupper[2] = {-1, 2};
+#ifdef NALU_HYPRE_FORTRAN
+         NALU_HYPRE_StructGridSetExtents(&grid, &ilower[0], &iupper[0]);
 #else
-         HYPRE_StructGridSetExtents(grid, ilower, iupper);
+         NALU_HYPRE_StructGridSetExtents(grid, ilower, iupper);
 #endif
       }
       else if (myid == 1)
       {
-         HYPRE_Int ilower[2] = {0, 1}, iupper[2] = {2, 4};
-#ifdef HYPRE_FORTRAN
-         HYPRE_StructGridSetExtents(&grid, &ilower[0], &iupper[0]);
+         NALU_HYPRE_Int ilower[2] = {0, 1}, iupper[2] = {2, 4};
+#ifdef NALU_HYPRE_FORTRAN
+         NALU_HYPRE_StructGridSetExtents(&grid, &ilower[0], &iupper[0]);
 #else
-         HYPRE_StructGridSetExtents(grid, ilower, iupper);
+         NALU_HYPRE_StructGridSetExtents(grid, ilower, iupper);
 #endif
       }
 
       /* This is a collective call finalizing the grid assembly.
          The grid is now ``ready to be used'' */
-#ifdef HYPRE_FORTRAN
-      HYPRE_StructGridAssemble(&grid);
+#ifdef NALU_HYPRE_FORTRAN
+      NALU_HYPRE_StructGridAssemble(&grid);
 #else
-      HYPRE_StructGridAssemble(grid);
+      NALU_HYPRE_StructGridAssemble(grid);
 #endif
    }
 
    /* 2. Define the discretization stencil */
    {
       /* Create an empty 2D, 5-pt stencil object */
-#ifdef HYPRE_FORTRAN
-      HYPRE_StructStencilCreate(&two, &five, &stencil);
+#ifdef NALU_HYPRE_FORTRAN
+      NALU_HYPRE_StructStencilCreate(&two, &five, &stencil);
 #else
-      HYPRE_StructStencilCreate(2, 5, &stencil);
+      NALU_HYPRE_StructStencilCreate(2, 5, &stencil);
 #endif
 
       /* Define the geometry of the stencil. Each represents a
          relative offset (in the index space). */
       {
-         HYPRE_Int entry;
-         HYPRE_Int offsets[5][2] = {{0, 0}, {-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+         NALU_HYPRE_Int entry;
+         NALU_HYPRE_Int offsets[5][2] = {{0, 0}, {-1, 0}, {1, 0}, {0, -1}, {0, 1}};
 
          /* Assign each of the 5 stencil entries */
-#ifdef HYPRE_FORTRAN
+#ifdef NALU_HYPRE_FORTRAN
          for (entry = 0; entry < 5; entry++)
          {
-            HYPRE_StructStencilSetElement(&stencil, &entry, offsets[entry]);
+            NALU_HYPRE_StructStencilSetElement(&stencil, &entry, offsets[entry]);
          }
 #else
          for (entry = 0; entry < 5; entry++)
          {
-            HYPRE_StructStencilSetElement(stencil, entry, offsets[entry]);
+            NALU_HYPRE_StructStencilSetElement(stencil, entry, offsets[entry]);
          }
 #endif
       }
@@ -136,17 +136,17 @@ HYPRE_Int main (HYPRE_Int argc, char *argv[])
    /* 3. Set up a Struct Matrix */
    {
       /* Create an empty matrix object */
-#ifdef HYPRE_FORTRAN
-      HYPRE_StructMatrixCreate(&temp_COMM, &grid, &stencil, &A);
+#ifdef NALU_HYPRE_FORTRAN
+      NALU_HYPRE_StructMatrixCreate(&temp_COMM, &grid, &stencil, &A);
 #else
-      HYPRE_StructMatrixCreate(hypre_MPI_COMM_WORLD, grid, stencil, &A);
+      NALU_HYPRE_StructMatrixCreate(nalu_hypre_MPI_COMM_WORLD, grid, stencil, &A);
 #endif
 
       /* Indicate that the matrix coefficients are ready to be set */
-#ifdef HYPRE_FORTRAN
-      HYPRE_StructMatrixInitialize(&A);
+#ifdef NALU_HYPRE_FORTRAN
+      NALU_HYPRE_StructMatrixInitialize(&A);
 #else
-      HYPRE_StructMatrixInitialize(A);
+      NALU_HYPRE_StructMatrixInitialize(A);
 #endif
 
       /* Set the matrix coefficients.  Each processor assigns coefficients
@@ -157,13 +157,13 @@ HYPRE_Int main (HYPRE_Int argc, char *argv[])
          the boundary. */
       if (myid == 0)
       {
-         HYPRE_Int ilower[2] = {-3, 1}, iupper[2] = {-1, 2};
-         HYPRE_Int stencil_indices[5] = {0, 1, 2, 3, 4}; /* labels for the stencil entries -
+         NALU_HYPRE_Int ilower[2] = {-3, 1}, iupper[2] = {-1, 2};
+         NALU_HYPRE_Int stencil_indices[5] = {0, 1, 2, 3, 4}; /* labels for the stencil entries -
                                                   these correspond to the offsets
                                                   defined above */
-         HYPRE_Int nentries = 5;
-         HYPRE_Int nvalues  = 30; /* 6 grid points, each with 5 stencil entries */
-         HYPRE_Real values[30];
+         NALU_HYPRE_Int nentries = 5;
+         NALU_HYPRE_Int nvalues  = 30; /* 6 grid points, each with 5 stencil entries */
+         NALU_HYPRE_Real values[30];
 
          /* We have 6 grid points, each with 5 stencil entries */
          for (i = 0; i < nvalues; i += nentries)
@@ -175,21 +175,21 @@ HYPRE_Int main (HYPRE_Int argc, char *argv[])
             }
          }
 
-#ifdef HYPRE_FORTRAN
-         HYPRE_StructMatrixSetBoxValues(&A, &ilower[0], &iupper[0], &nentries,
+#ifdef NALU_HYPRE_FORTRAN
+         NALU_HYPRE_StructMatrixSetBoxValues(&A, &ilower[0], &iupper[0], &nentries,
                                         &stencil_indices[0], &values[0]);
 #else
-         HYPRE_StructMatrixSetBoxValues(A, ilower, iupper, nentries,
+         NALU_HYPRE_StructMatrixSetBoxValues(A, ilower, iupper, nentries,
                                         stencil_indices, values);
 #endif
       }
       else if (myid == 1)
       {
-         HYPRE_Int ilower[2] = {0, 1}, iupper[2] = {2, 4};
-         HYPRE_Int stencil_indices[5] = {0, 1, 2, 3, 4};
-         HYPRE_Int nentries = 5;
-         HYPRE_Int nvalues  = 60; /* 12 grid points, each with 5 stencil entries */
-         HYPRE_Real values[60];
+         NALU_HYPRE_Int ilower[2] = {0, 1}, iupper[2] = {2, 4};
+         NALU_HYPRE_Int stencil_indices[5] = {0, 1, 2, 3, 4};
+         NALU_HYPRE_Int nentries = 5;
+         NALU_HYPRE_Int nvalues  = 60; /* 12 grid points, each with 5 stencil entries */
+         NALU_HYPRE_Real values[60];
 
          for (i = 0; i < nvalues; i += nentries)
          {
@@ -200,11 +200,11 @@ HYPRE_Int main (HYPRE_Int argc, char *argv[])
             }
          }
 
-#ifdef HYPRE_FORTRAN
-         HYPRE_StructMatrixSetBoxValues(&A, &ilower[0], &iupper[0], &nentries,
+#ifdef NALU_HYPRE_FORTRAN
+         NALU_HYPRE_StructMatrixSetBoxValues(&A, &ilower[0], &iupper[0], &nentries,
                                         &stencil_indices[0], &values[0]);
 #else
-         HYPRE_StructMatrixSetBoxValues(A, ilower, iupper, nentries,
+         NALU_HYPRE_StructMatrixSetBoxValues(A, ilower, iupper, nentries,
                                         stencil_indices, values);
 #endif
       }
@@ -212,101 +212,101 @@ HYPRE_Int main (HYPRE_Int argc, char *argv[])
       /* Set the coefficients reaching outside of the boundary to 0 */
       if (myid == 0)
       {
-         HYPRE_Real values[3];
+         NALU_HYPRE_Real values[3];
          for (i = 0; i < 3; i++)
          {
             values[i] = 0.0;
          }
          {
             /* values below our box */
-            HYPRE_Int ilower[2] = {-3, 1}, iupper[2] = {-1, 1};
-            HYPRE_Int stencil_indices[1] = {3};
-#ifdef HYPRE_FORTRAN
-            HYPRE_StructMatrixSetBoxValues(&A, &ilower[0], &iupper[0], &one,
+            NALU_HYPRE_Int ilower[2] = {-3, 1}, iupper[2] = {-1, 1};
+            NALU_HYPRE_Int stencil_indices[1] = {3};
+#ifdef NALU_HYPRE_FORTRAN
+            NALU_HYPRE_StructMatrixSetBoxValues(&A, &ilower[0], &iupper[0], &one,
                                            &stencil_indices[0], &values[0]);
 #else
-            HYPRE_StructMatrixSetBoxValues(A, ilower, iupper, 1,
+            NALU_HYPRE_StructMatrixSetBoxValues(A, ilower, iupper, 1,
                                            stencil_indices, values);
 #endif
          }
          {
             /* values to the left of our box */
-            HYPRE_Int ilower[2] = {-3, 1}, iupper[2] = {-3, 2};
-            HYPRE_Int stencil_indices[1] = {1};
-#ifdef HYPRE_FORTRAN
-            HYPRE_StructMatrixSetBoxValues(&A, &ilower[0], &iupper[0], &one,
+            NALU_HYPRE_Int ilower[2] = {-3, 1}, iupper[2] = {-3, 2};
+            NALU_HYPRE_Int stencil_indices[1] = {1};
+#ifdef NALU_HYPRE_FORTRAN
+            NALU_HYPRE_StructMatrixSetBoxValues(&A, &ilower[0], &iupper[0], &one,
                                            &stencil_indices[0], &values[0]);
 #else
-            HYPRE_StructMatrixSetBoxValues(A, ilower, iupper, 1,
+            NALU_HYPRE_StructMatrixSetBoxValues(A, ilower, iupper, 1,
                                            stencil_indices, values);
 #endif
          }
          {
             /* values above our box */
-            HYPRE_Int ilower[2] = {-3, 2}, iupper[2] = {-1, 2};
-            HYPRE_Int stencil_indices[1] = {4};
-#ifdef HYPRE_FORTRAN
-            HYPRE_StructMatrixSetBoxValues(&A, &ilower[0], &iupper[0], &one,
+            NALU_HYPRE_Int ilower[2] = {-3, 2}, iupper[2] = {-1, 2};
+            NALU_HYPRE_Int stencil_indices[1] = {4};
+#ifdef NALU_HYPRE_FORTRAN
+            NALU_HYPRE_StructMatrixSetBoxValues(&A, &ilower[0], &iupper[0], &one,
                                            &stencil_indices[0], &values[0]);
 #else
-            HYPRE_StructMatrixSetBoxValues(A, ilower, iupper, 1,
+            NALU_HYPRE_StructMatrixSetBoxValues(A, ilower, iupper, 1,
                                            stencil_indices, values);
 #endif
          }
       }
       else if (myid == 1)
       {
-         HYPRE_Real values[4];
+         NALU_HYPRE_Real values[4];
          for (i = 0; i < 4; i++)
          {
             values[i] = 0.0;
          }
          {
             /* values below our box */
-            HYPRE_Int ilower[2] = {0, 1}, iupper[2] = {2, 1};
-            HYPRE_Int stencil_indices[1] = {3};
-#ifdef HYPRE_FORTRAN
-            HYPRE_StructMatrixSetBoxValues(&A, &ilower[0], &iupper[0], &one,
+            NALU_HYPRE_Int ilower[2] = {0, 1}, iupper[2] = {2, 1};
+            NALU_HYPRE_Int stencil_indices[1] = {3};
+#ifdef NALU_HYPRE_FORTRAN
+            NALU_HYPRE_StructMatrixSetBoxValues(&A, &ilower[0], &iupper[0], &one,
                                            &stencil_indices[0], &values[0]);
 #else
-            HYPRE_StructMatrixSetBoxValues(A, ilower, iupper, 1,
+            NALU_HYPRE_StructMatrixSetBoxValues(A, ilower, iupper, 1,
                                            stencil_indices, values);
 #endif
          }
          {
             /* values to the right of our box
                (that do not border the other box on proc. 0) */
-            HYPRE_Int ilower[2] = {2, 1}, iupper[2] = {2, 4};
-            HYPRE_Int stencil_indices[1] = {2};
-#ifdef HYPRE_FORTRAN
-            HYPRE_StructMatrixSetBoxValues(&A, &ilower[0], &iupper[0], &one,
+            NALU_HYPRE_Int ilower[2] = {2, 1}, iupper[2] = {2, 4};
+            NALU_HYPRE_Int stencil_indices[1] = {2};
+#ifdef NALU_HYPRE_FORTRAN
+            NALU_HYPRE_StructMatrixSetBoxValues(&A, &ilower[0], &iupper[0], &one,
                                            &stencil_indices[0], &values[0]);
 #else
-            HYPRE_StructMatrixSetBoxValues(A, ilower, iupper, 1,
+            NALU_HYPRE_StructMatrixSetBoxValues(A, ilower, iupper, 1,
                                            stencil_indices, values);
 #endif
          }
          {
             /* values above our box */
-            HYPRE_Int ilower[2] = {0, 4}, iupper[2] = {2, 4};
-            HYPRE_Int stencil_indices[1] = {4};
-#ifdef HYPRE_FORTRAN
-            HYPRE_StructMatrixSetBoxValues(&A, &ilower[0], &iupper[0], &one,
+            NALU_HYPRE_Int ilower[2] = {0, 4}, iupper[2] = {2, 4};
+            NALU_HYPRE_Int stencil_indices[1] = {4};
+#ifdef NALU_HYPRE_FORTRAN
+            NALU_HYPRE_StructMatrixSetBoxValues(&A, &ilower[0], &iupper[0], &one,
                                            &stencil_indices[0], &values[0]);
 #else
-            HYPRE_StructMatrixSetBoxValues(A, ilower, iupper, 1,
+            NALU_HYPRE_StructMatrixSetBoxValues(A, ilower, iupper, 1,
                                            stencil_indices, values);
 #endif
          }
          {
             /* values to the left of our box */
-            HYPRE_Int ilower[2] = {0, 3}, iupper[2] = {0, 4};
-            HYPRE_Int stencil_indices[1] = {1};
-#ifdef HYPRE_FORTRAN
-            HYPRE_StructMatrixSetBoxValues(&A, &ilower[0], &iupper[0], &one,
+            NALU_HYPRE_Int ilower[2] = {0, 3}, iupper[2] = {0, 4};
+            NALU_HYPRE_Int stencil_indices[1] = {1};
+#ifdef NALU_HYPRE_FORTRAN
+            NALU_HYPRE_StructMatrixSetBoxValues(&A, &ilower[0], &iupper[0], &one,
                                            &stencil_indices[0], &values[0]);
 #else
-            HYPRE_StructMatrixSetBoxValues(A, ilower, iupper, 1,
+            NALU_HYPRE_StructMatrixSetBoxValues(A, ilower, iupper, 1,
                                            stencil_indices, values);
 #endif
          }
@@ -314,10 +314,10 @@ HYPRE_Int main (HYPRE_Int argc, char *argv[])
 
       /* This is a collective call finalizing the matrix assembly.
          The matrix is now ``ready to be used'' */
-#ifdef HYPRE_FORTRAN
-      HYPRE_StructMatrixAssemble(&A);
+#ifdef NALU_HYPRE_FORTRAN
+      NALU_HYPRE_StructMatrixAssemble(&A);
 #else
-      HYPRE_StructMatrixAssemble(A);
+      NALU_HYPRE_StructMatrixAssemble(A);
 #endif
    }
 
@@ -325,83 +325,83 @@ HYPRE_Int main (HYPRE_Int argc, char *argv[])
       corresponding to its boxes. */
    {
       /* Create an empty vector object */
-#ifdef HYPRE_FORTRAN
-      HYPRE_StructVectorCreate(&temp_COMM, &grid, &b);
-      HYPRE_StructVectorCreate(&temp_COMM, &grid, &x);
+#ifdef NALU_HYPRE_FORTRAN
+      NALU_HYPRE_StructVectorCreate(&temp_COMM, &grid, &b);
+      NALU_HYPRE_StructVectorCreate(&temp_COMM, &grid, &x);
 #else
-      HYPRE_StructVectorCreate(hypre_MPI_COMM_WORLD, grid, &b);
-      HYPRE_StructVectorCreate(hypre_MPI_COMM_WORLD, grid, &x);
+      NALU_HYPRE_StructVectorCreate(nalu_hypre_MPI_COMM_WORLD, grid, &b);
+      NALU_HYPRE_StructVectorCreate(nalu_hypre_MPI_COMM_WORLD, grid, &x);
 #endif
 
       /* Indicate that the vector coefficients are ready to be set */
-#ifdef HYPRE_FORTRAN
-      HYPRE_StructVectorInitialize(&b);
-      HYPRE_StructVectorInitialize(&x);
+#ifdef NALU_HYPRE_FORTRAN
+      NALU_HYPRE_StructVectorInitialize(&b);
+      NALU_HYPRE_StructVectorInitialize(&x);
 #else
-      HYPRE_StructVectorInitialize(b);
-      HYPRE_StructVectorInitialize(x);
+      NALU_HYPRE_StructVectorInitialize(b);
+      NALU_HYPRE_StructVectorInitialize(x);
 #endif
 
       /* Set the vector coefficients */
       if (myid == 0)
       {
-         HYPRE_Int ilower[2] = {-3, 1}, iupper[2] = {-1, 2};
-         HYPRE_Real values[6]; /* 6 grid points */
+         NALU_HYPRE_Int ilower[2] = {-3, 1}, iupper[2] = {-1, 2};
+         NALU_HYPRE_Real values[6]; /* 6 grid points */
 
          for (i = 0; i < 6; i ++)
          {
             values[i] = 1.0;
          }
-#ifdef HYPRE_FORTRAN
-         HYPRE_StructVectorSetBoxValues(&b, &ilower[0], &iupper[0], &values[0]);
+#ifdef NALU_HYPRE_FORTRAN
+         NALU_HYPRE_StructVectorSetBoxValues(&b, &ilower[0], &iupper[0], &values[0]);
 #else
-         HYPRE_StructVectorSetBoxValues(b, ilower, iupper, values);
+         NALU_HYPRE_StructVectorSetBoxValues(b, ilower, iupper, values);
 #endif
 
          for (i = 0; i < 6; i ++)
          {
             values[i] = 0.0;
          }
-#ifdef HYPRE_FORTRAN
-         HYPRE_StructVectorSetBoxValues(&x, &ilower[0], &iupper[0], &values[0]);
+#ifdef NALU_HYPRE_FORTRAN
+         NALU_HYPRE_StructVectorSetBoxValues(&x, &ilower[0], &iupper[0], &values[0]);
 #else
-         HYPRE_StructVectorSetBoxValues(x, ilower, iupper, values);
+         NALU_HYPRE_StructVectorSetBoxValues(x, ilower, iupper, values);
 #endif
       }
       else if (myid == 1)
       {
-         HYPRE_Int ilower[2] = {0, 1}, iupper[2] = {2, 4};
-         HYPRE_Real values[12]; /* 12 grid points */
+         NALU_HYPRE_Int ilower[2] = {0, 1}, iupper[2] = {2, 4};
+         NALU_HYPRE_Real values[12]; /* 12 grid points */
 
          for (i = 0; i < 12; i ++)
          {
             values[i] = 1.0;
          }
-#ifdef HYPRE_FORTRAN
-         HYPRE_StructVectorSetBoxValues(&b, &ilower[0], &iupper[0], &values[0]);
+#ifdef NALU_HYPRE_FORTRAN
+         NALU_HYPRE_StructVectorSetBoxValues(&b, &ilower[0], &iupper[0], &values[0]);
 #else
-         HYPRE_StructVectorSetBoxValues(b, ilower, iupper, values);
+         NALU_HYPRE_StructVectorSetBoxValues(b, ilower, iupper, values);
 #endif
 
          for (i = 0; i < 12; i ++)
          {
             values[i] = 0.0;
          }
-#ifdef HYPRE_FORTRAN
-         HYPRE_StructVectorSetBoxValues(&x, &ilower[0], &iupper[0], &values[0]);
+#ifdef NALU_HYPRE_FORTRAN
+         NALU_HYPRE_StructVectorSetBoxValues(&x, &ilower[0], &iupper[0], &values[0]);
 #else
-         HYPRE_StructVectorSetBoxValues(x, ilower, iupper, values);
+         NALU_HYPRE_StructVectorSetBoxValues(x, ilower, iupper, values);
 #endif
       }
 
       /* This is a collective call finalizing the vector assembly.
          The vectors are now ``ready to be used'' */
-#ifdef HYPRE_FORTRAN
-      HYPRE_StructVectorAssemble(&b);
-      HYPRE_StructVectorAssemble(&x);
+#ifdef NALU_HYPRE_FORTRAN
+      NALU_HYPRE_StructVectorAssemble(&b);
+      NALU_HYPRE_StructVectorAssemble(&x);
 #else
-      HYPRE_StructVectorAssemble(b);
-      HYPRE_StructVectorAssemble(x);
+      NALU_HYPRE_StructVectorAssemble(b);
+      NALU_HYPRE_StructVectorAssemble(x);
 #endif
    }
 
@@ -409,50 +409,50 @@ HYPRE_Int main (HYPRE_Int argc, char *argv[])
       of all of the options.) */
    {
       /* Create an empty PCG Struct solver */
-#ifdef HYPRE_FORTRAN
-      HYPRE_StructPCGCreate(&temp_COMM, &solver);
+#ifdef NALU_HYPRE_FORTRAN
+      NALU_HYPRE_StructPCGCreate(&temp_COMM, &solver);
 #else
-      HYPRE_StructPCGCreate(hypre_MPI_COMM_WORLD, &solver);
+      NALU_HYPRE_StructPCGCreate(nalu_hypre_MPI_COMM_WORLD, &solver);
 #endif
 
       /* Set some parameters */
-#ifdef HYPRE_FORTRAN
-      HYPRE_StructPCGSetTol(&solver, &tol); /* convergence tolerance */
-      HYPRE_StructPCGSetPrintLevel(&solver, &two); /* amount of info. printed */
+#ifdef NALU_HYPRE_FORTRAN
+      NALU_HYPRE_StructPCGSetTol(&solver, &tol); /* convergence tolerance */
+      NALU_HYPRE_StructPCGSetPrintLevel(&solver, &two); /* amount of info. printed */
 #else
-      HYPRE_StructPCGSetTol(solver, 1.0e-06); /* convergence tolerance */
-      HYPRE_StructPCGSetPrintLevel(solver, 2); /* amount of info. printed */
+      NALU_HYPRE_StructPCGSetTol(solver, 1.0e-06); /* convergence tolerance */
+      NALU_HYPRE_StructPCGSetPrintLevel(solver, 2); /* amount of info. printed */
 #endif
 
       /* Setup and solve */
-#ifdef HYPRE_FORTRAN
-      HYPRE_StructPCGSetup(&solver, &A, &b, &x);
-      HYPRE_StructPCGSolve(&solver, &A, &b, &x);
+#ifdef NALU_HYPRE_FORTRAN
+      NALU_HYPRE_StructPCGSetup(&solver, &A, &b, &x);
+      NALU_HYPRE_StructPCGSolve(&solver, &A, &b, &x);
 #else
-      HYPRE_StructPCGSetup(solver, A, b, x);
-      HYPRE_StructPCGSolve(solver, A, b, x);
+      NALU_HYPRE_StructPCGSetup(solver, A, b, x);
+      NALU_HYPRE_StructPCGSolve(solver, A, b, x);
 #endif
    }
 
    /* Free memory */
-#ifdef HYPRE_FORTRAN
-   HYPRE_StructGridDestroy(&grid);
-   HYPRE_StructStencilDestroy(&stencil);
-   HYPRE_StructMatrixDestroy(&A);
-   HYPRE_StructVectorDestroy(&b);
-   HYPRE_StructVectorDestroy(&x);
-   HYPRE_StructPCGDestroy(&solver);
+#ifdef NALU_HYPRE_FORTRAN
+   NALU_HYPRE_StructGridDestroy(&grid);
+   NALU_HYPRE_StructStencilDestroy(&stencil);
+   NALU_HYPRE_StructMatrixDestroy(&A);
+   NALU_HYPRE_StructVectorDestroy(&b);
+   NALU_HYPRE_StructVectorDestroy(&x);
+   NALU_HYPRE_StructPCGDestroy(&solver);
 #else
-   HYPRE_StructGridDestroy(grid);
-   HYPRE_StructStencilDestroy(stencil);
-   HYPRE_StructMatrixDestroy(A);
-   HYPRE_StructVectorDestroy(b);
-   HYPRE_StructVectorDestroy(x);
-   HYPRE_StructPCGDestroy(solver);
+   NALU_HYPRE_StructGridDestroy(grid);
+   NALU_HYPRE_StructStencilDestroy(stencil);
+   NALU_HYPRE_StructMatrixDestroy(A);
+   NALU_HYPRE_StructVectorDestroy(b);
+   NALU_HYPRE_StructVectorDestroy(x);
+   NALU_HYPRE_StructPCGDestroy(solver);
 #endif
 
    /* Finalize MPI */
-   hypre_MPI_Finalize();
+   nalu_hypre_MPI_Finalize();
 
    return (0);
 }

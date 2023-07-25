@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_Euclid.h"
+#include "_nalu_hypre_Euclid.h"
 /* #include "Euclid_dh.h" */
 /* #include "Mat_dh.h" */
 /* #include "Factor_dh.h" */
@@ -13,19 +13,19 @@
 /* #include "TimeLog_dh.h" */
 /* #include "SubdomainGraph_dh.h" */
 
-static void scale_rhs_private(Euclid_dh ctx, HYPRE_Real *rhs);
-static void permute_vec_n2o_private(Euclid_dh ctx, HYPRE_Real *xIN, HYPRE_Real *xOUT);
-static void permute_vec_o2n_private(Euclid_dh ctx, HYPRE_Real *xIN, HYPRE_Real *xOUT);
+static void scale_rhs_private(Euclid_dh ctx, NALU_HYPRE_Real *rhs);
+static void permute_vec_n2o_private(Euclid_dh ctx, NALU_HYPRE_Real *xIN, NALU_HYPRE_Real *xOUT);
+static void permute_vec_o2n_private(Euclid_dh ctx, NALU_HYPRE_Real *xIN, NALU_HYPRE_Real *xOUT);
 
 #undef __FUNC__ 
 #define __FUNC__ "Euclid_dhApply"
-void Euclid_dhApply(Euclid_dh ctx, HYPRE_Real *rhs, HYPRE_Real *lhs)
+void Euclid_dhApply(Euclid_dh ctx, NALU_HYPRE_Real *rhs, NALU_HYPRE_Real *lhs)
 {
   START_FUNC_DH
-  HYPRE_Real *rhs_, *lhs_;
-  HYPRE_Real t1, t2;
+  NALU_HYPRE_Real *rhs_, *lhs_;
+  NALU_HYPRE_Real t1, t2;
 
-  t1 = hypre_MPI_Wtime();
+  t1 = nalu_hypre_MPI_Wtime();
 
   /* default settings; for everything except PILU */
   ctx->from = 0;
@@ -33,7 +33,7 @@ void Euclid_dhApply(Euclid_dh ctx, HYPRE_Real *rhs, HYPRE_Real *lhs)
 
   /* case 1: no preconditioning */
   if (! strcmp(ctx->algo_ilu, "none") || ! strcmp(ctx->algo_par, "none")) {
-    HYPRE_Int i, m = ctx->m;
+    NALU_HYPRE_Int i, m = ctx->m;
     for (i=0; i<m; ++i) lhs[i] = rhs[i];
     goto END_OF_FUNCTION;
   } 
@@ -44,7 +44,7 @@ void Euclid_dhApply(Euclid_dh ctx, HYPRE_Real *rhs, HYPRE_Real *lhs)
   /* permute rhs vector */
   if (ctx->sg != NULL) {
 
-/* hypre_printf("@@@@@@@@@@@@@@@@@ permute_vec_n2o_private\n"); */
+/* nalu_hypre_printf("@@@@@@@@@@@@@@@@@ permute_vec_n2o_private\n"); */
 
     permute_vec_n2o_private(ctx, rhs, lhs); CHECK_V_ERROR;
     rhs_ = lhs;
@@ -57,7 +57,7 @@ void Euclid_dhApply(Euclid_dh ctx, HYPRE_Real *rhs, HYPRE_Real *lhs)
   /* scale rhs vector */
   if (ctx->isScaled) {
 
-/* hypre_printf("@@@@@@@@@@@@@@@@@ scale_rhs_private\n"); */
+/* nalu_hypre_printf("@@@@@@@@@@@@@@@@@ scale_rhs_private\n"); */
 
     scale_rhs_private(ctx, rhs_); CHECK_V_ERROR;
   }
@@ -92,7 +92,7 @@ void Euclid_dhApply(Euclid_dh ctx, HYPRE_Real *rhs, HYPRE_Real *lhs)
 
 END_OF_FUNCTION: ;
 
-  t2 = hypre_MPI_Wtime();
+  t2 = nalu_hypre_MPI_Wtime();
   /* collective timing for triangular solves */
   ctx->timing[TRI_SOLVE_T] += (t2 - t1); 
 
@@ -112,10 +112,10 @@ END_OF_FUNCTION: ;
 
 #undef __FUNC__ 
 #define __FUNC__ "scale_rhs_private"
-void scale_rhs_private(Euclid_dh ctx, HYPRE_Real *rhs)
+void scale_rhs_private(Euclid_dh ctx, NALU_HYPRE_Real *rhs)
 {
   START_FUNC_DH
-  HYPRE_Int i, m = ctx->m;
+  NALU_HYPRE_Int i, m = ctx->m;
   REAL_DH *scale = ctx->scale;
 
   /* if matrix was scaled, must scale the rhs */
@@ -131,11 +131,11 @@ void scale_rhs_private(Euclid_dh ctx, HYPRE_Real *rhs)
 
 #undef __FUNC__ 
 #define __FUNC__ "permute_vec_o2n_private"
-void permute_vec_o2n_private(Euclid_dh ctx, HYPRE_Real *xIN, HYPRE_Real *xOUT)
+void permute_vec_o2n_private(Euclid_dh ctx, NALU_HYPRE_Real *xIN, NALU_HYPRE_Real *xOUT)
 {
   START_FUNC_DH
-  HYPRE_Int i, m = ctx->m;
-  HYPRE_Int *o2n = ctx->sg->o2n_col;
+  NALU_HYPRE_Int i, m = ctx->m;
+  NALU_HYPRE_Int *o2n = ctx->sg->o2n_col;
   for (i=0; i<m; ++i) xOUT[i] = xIN[o2n[i]];
   END_FUNC_DH
 }
@@ -143,11 +143,11 @@ void permute_vec_o2n_private(Euclid_dh ctx, HYPRE_Real *xIN, HYPRE_Real *xOUT)
 
 #undef __FUNC__ 
 #define __FUNC__ "permute_vec_n2o_private"
-void permute_vec_n2o_private(Euclid_dh ctx, HYPRE_Real *xIN, HYPRE_Real *xOUT)
+void permute_vec_n2o_private(Euclid_dh ctx, NALU_HYPRE_Real *xIN, NALU_HYPRE_Real *xOUT)
 {
   START_FUNC_DH
-  HYPRE_Int i, m = ctx->m;
-  HYPRE_Int *n2o = ctx->sg->n2o_row;
+  NALU_HYPRE_Int i, m = ctx->m;
+  NALU_HYPRE_Int *n2o = ctx->sg->n2o_row;
   for (i=0; i<m; ++i) xOUT[i] = xIN[n2o[i]];
   END_FUNC_DH
 }

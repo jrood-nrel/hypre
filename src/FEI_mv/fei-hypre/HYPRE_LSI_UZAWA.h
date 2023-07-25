@@ -9,24 +9,24 @@
 // This is the class that handles slide surface reduction
 // **************************************************************************
 
-#ifndef __HYPRE_UZAWA__
-#define __HYPRE_UZAWA__
+#ifndef __NALU_HYPRE_UZAWA__
+#define __NALU_HYPRE_UZAWA__
 
 // **************************************************************************
 // system libraries used
 // --------------------------------------------------------------------------
 
-#include "utilities/_hypre_utilities.h"
-#include "IJ_mv/_hypre_IJ_mv.h"
-#include "parcsr_mv/_hypre_parcsr_mv.h"
-#include "parcsr_ls/_hypre_parcsr_ls.h"
+#include "utilities/_nalu_hypre_utilities.h"
+#include "IJ_mv/_nalu_hypre_IJ_mv.h"
+#include "parcsr_mv/_nalu_hypre_parcsr_mv.h"
+#include "parcsr_ls/_nalu_hypre_parcsr_ls.h"
 
 
 // *************************************************************************
 // Solver-Preconditioner parameter data structure
 // -------------------------------------------------------------------------
 
-typedef struct HYPRE_Uzawa_PARAMS_Struct
+typedef struct NALU_HYPRE_Uzawa_PARAMS_Struct
 {
    int            SolverID_;      // solver ID
    int            PrecondID_;     // preconditioner ID
@@ -48,13 +48,13 @@ typedef struct HYPRE_Uzawa_PARAMS_Struct
    int            MLINodeDOF_;    // system size for BoomerAMG
    int            MLINullDim_;    // null space dimension for MLI SA
 }
-HYPRE_Uzawa_PARAMS;
+NALU_HYPRE_Uzawa_PARAMS;
 
 // **************************************************************************
 // class definition
 // --------------------------------------------------------------------------
 
-class HYPRE_LSI_Uzawa
+class NALU_HYPRE_LSI_Uzawa
 {
    MPI_Comm           mpiComm_;
    int                outputLevel_;
@@ -64,38 +64,38 @@ class HYPRE_LSI_Uzawa
    double             tolerance_;
    double             S22SolverDampFactor_;
    int                numIterations_;
-   HYPRE_ParCSRMatrix Amat_;
-   HYPRE_ParCSRMatrix A11mat_;
-   HYPRE_ParCSRMatrix A12mat_;
-   HYPRE_ParCSRMatrix S22mat_;
+   NALU_HYPRE_ParCSRMatrix Amat_;
+   NALU_HYPRE_ParCSRMatrix A11mat_;
+   NALU_HYPRE_ParCSRMatrix A12mat_;
+   NALU_HYPRE_ParCSRMatrix S22mat_;
    int                *procA22Sizes_;
-   HYPRE_Solver       A11Solver_;        // solver for A11 matrix
-   HYPRE_Solver       A11Precond_;       // preconditioner for A11 matrix
-   HYPRE_Solver       S22Solver_;        // solver for S12 
-   HYPRE_Solver       S22Precond_;       // preconditioner for S12 
-   HYPRE_Uzawa_PARAMS A11Params_;
-   HYPRE_Uzawa_PARAMS S22Params_;
+   NALU_HYPRE_Solver       A11Solver_;        // solver for A11 matrix
+   NALU_HYPRE_Solver       A11Precond_;       // preconditioner for A11 matrix
+   NALU_HYPRE_Solver       S22Solver_;        // solver for S12 
+   NALU_HYPRE_Solver       S22Precond_;       // preconditioner for S12 
+   NALU_HYPRE_Uzawa_PARAMS A11Params_;
+   NALU_HYPRE_Uzawa_PARAMS S22Params_;
 
  public:
 
-   HYPRE_LSI_Uzawa(MPI_Comm);
-   virtual ~HYPRE_LSI_Uzawa();
+   NALU_HYPRE_LSI_Uzawa(MPI_Comm);
+   virtual ~NALU_HYPRE_LSI_Uzawa();
    int    setOutputLevel(int level) {outputLevel_ = level; return 0;}
    int    setParams(char *paramString);
    int    setMaxIterations(int);
    int    setTolerance(double);
    int    getNumIterations(int&);
-   int    setup(HYPRE_ParCSRMatrix , HYPRE_ParVector , HYPRE_ParVector );
-   int    solve(HYPRE_ParVector , HYPRE_ParVector );
+   int    setup(NALU_HYPRE_ParCSRMatrix , NALU_HYPRE_ParVector , NALU_HYPRE_ParVector );
+   int    solve(NALU_HYPRE_ParVector , NALU_HYPRE_ParVector );
 
  private:
    int    findA22BlockSize();
    int    buildBlockMatrices();
    int    buildA11A12Mat();
    int    buildS22Mat();
-   int    setupSolver(HYPRE_Solver *,HYPRE_ParCSRMatrix, HYPRE_ParVector, 
-                      HYPRE_ParVector, HYPRE_Solver, HYPRE_Uzawa_PARAMS);
-   int    setupPrecon(HYPRE_Solver *,HYPRE_ParCSRMatrix,HYPRE_Uzawa_PARAMS);
+   int    setupSolver(NALU_HYPRE_Solver *,NALU_HYPRE_ParCSRMatrix, NALU_HYPRE_ParVector, 
+                      NALU_HYPRE_ParVector, NALU_HYPRE_Solver, NALU_HYPRE_Uzawa_PARAMS);
+   int    setupPrecon(NALU_HYPRE_Solver *,NALU_HYPRE_ParCSRMatrix,NALU_HYPRE_Uzawa_PARAMS);
 };
 
 #endif

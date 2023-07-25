@@ -7,11 +7,11 @@
 
 /******************************************************************************
  *
- * HYPRE_StructStencil interface
+ * NALU_HYPRE_StructStencil interface
  *
  *****************************************************************************/
 
-#include "_hypre_struct_mv.h"
+#include "_nalu_hypre_struct_mv.h"
 #include "fortran.h"
 
 #ifdef __cplusplus
@@ -19,50 +19,50 @@ extern "C" {
 #endif
 
 /*--------------------------------------------------------------------------
- * HYPRE_StructStencilCreate
+ * NALU_HYPRE_StructStencilCreate
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_structstencilcreate, HYPRE_STRUCTSTENCILCREATE)
-( hypre_F90_Int *dim,
-  hypre_F90_Int *size,
-  hypre_F90_Obj *stencil,
-  hypre_F90_Int *ierr    )
+nalu_hypre_F90_IFACE(nalu_hypre_structstencilcreate, NALU_HYPRE_STRUCTSTENCILCREATE)
+( nalu_hypre_F90_Int *dim,
+  nalu_hypre_F90_Int *size,
+  nalu_hypre_F90_Obj *stencil,
+  nalu_hypre_F90_Int *ierr    )
 {
-   *ierr = (hypre_F90_Int) HYPRE_StructStencilCreate(
-              hypre_F90_PassInt (dim),
-              hypre_F90_PassInt (size),
-              hypre_F90_PassObjRef (HYPRE_StructStencil, stencil) );
+   *ierr = (nalu_hypre_F90_Int) NALU_HYPRE_StructStencilCreate(
+              nalu_hypre_F90_PassInt (dim),
+              nalu_hypre_F90_PassInt (size),
+              nalu_hypre_F90_PassObjRef (NALU_HYPRE_StructStencil, stencil) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_StructStencilSetElement
+ * NALU_HYPRE_StructStencilSetElement
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_structstencilsetelement, HYPRE_STRUCTSTENCILSETELEMENT)
-( hypre_F90_Obj *stencil,
-  hypre_F90_Int *element_index,
-  hypre_F90_IntArray *offset,
-  hypre_F90_Int *ierr          )
+nalu_hypre_F90_IFACE(nalu_hypre_structstencilsetelement, NALU_HYPRE_STRUCTSTENCILSETELEMENT)
+( nalu_hypre_F90_Obj *stencil,
+  nalu_hypre_F90_Int *element_index,
+  nalu_hypre_F90_IntArray *offset,
+  nalu_hypre_F90_Int *ierr          )
 {
-   *ierr = (hypre_F90_Int) HYPRE_StructStencilSetElement(
-              hypre_F90_PassObj (HYPRE_StructStencil, stencil),
-              hypre_F90_PassInt (element_index),
-              hypre_F90_PassIntArray (offset)       );
+   *ierr = (nalu_hypre_F90_Int) NALU_HYPRE_StructStencilSetElement(
+              nalu_hypre_F90_PassObj (NALU_HYPRE_StructStencil, stencil),
+              nalu_hypre_F90_PassInt (element_index),
+              nalu_hypre_F90_PassIntArray (offset)       );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_StructStencilDestroy
+ * NALU_HYPRE_StructStencilDestroy
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_structstencildestroy, HYPRE_STRUCTSTENCILDESTROY)
-( hypre_F90_Obj *stencil,
-  hypre_F90_Int *ierr    )
+nalu_hypre_F90_IFACE(nalu_hypre_structstencildestroy, NALU_HYPRE_STRUCTSTENCILDESTROY)
+( nalu_hypre_F90_Obj *stencil,
+  nalu_hypre_F90_Int *ierr    )
 {
-   *ierr = (hypre_F90_Int) HYPRE_StructStencilDestroy(
-              hypre_F90_PassObj (HYPRE_StructStencil, stencil) );
+   *ierr = (nalu_hypre_F90_Int) NALU_HYPRE_StructStencilDestroy(
+              nalu_hypre_F90_PassObj (NALU_HYPRE_StructStencil, stencil) );
 }
 
 #ifdef __cplusplus

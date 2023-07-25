@@ -16,84 +16,84 @@
 #include <stdio.h>
 #include <math.h>
 
-#include "_hypre_utilities.h"
-#include "HYPRE.h"
-#include "HYPRE_parcsr_mv.h"
+#include "_nalu_hypre_utilities.h"
+#include "NALU_HYPRE.h"
+#include "NALU_HYPRE_parcsr_mv.h"
 
-#include "HYPRE_IJ_mv.h"
-#include "HYPRE_parcsr_ls.h"
-#include "HYPRE_krylov.h"
+#include "NALU_HYPRE_IJ_mv.h"
+#include "NALU_HYPRE_parcsr_ls.h"
+#include "NALU_HYPRE_krylov.h"
 
-HYPRE_Int BuildParFromFile (HYPRE_Int argc, char *argv [], HYPRE_Int arg_index,
-                            HYPRE_ParCSRMatrix *A_ptr );
-HYPRE_Int BuildParLaplacian (HYPRE_Int argc, char *argv [], HYPRE_Int arg_index,
-                             HYPRE_ParCSRMatrix *A_ptr );
-HYPRE_Int BuildParDifConv (HYPRE_Int argc, char *argv [], HYPRE_Int arg_index,
-                           HYPRE_ParCSRMatrix *A_ptr );
-HYPRE_Int BuildParFromOneFile (HYPRE_Int argc, char *argv [], HYPRE_Int arg_index,
-                               HYPRE_ParCSRMatrix *A_ptr );
-HYPRE_Int BuildRhsParFromOneFile (HYPRE_Int argc, char *argv [], HYPRE_Int arg_index,
-                                  HYPRE_BigInt *partitioning, HYPRE_ParVector *b_ptr );
-HYPRE_Int BuildParLaplacian9pt (HYPRE_Int argc, char *argv [], HYPRE_Int arg_index,
-                                HYPRE_ParCSRMatrix *A_ptr );
-HYPRE_Int BuildParLaplacian27pt (HYPRE_Int argc, char *argv [], HYPRE_Int arg_index,
-                                 HYPRE_ParCSRMatrix *A_ptr );
+NALU_HYPRE_Int BuildParFromFile (NALU_HYPRE_Int argc, char *argv [], NALU_HYPRE_Int arg_index,
+                            NALU_HYPRE_ParCSRMatrix *A_ptr );
+NALU_HYPRE_Int BuildParLaplacian (NALU_HYPRE_Int argc, char *argv [], NALU_HYPRE_Int arg_index,
+                             NALU_HYPRE_ParCSRMatrix *A_ptr );
+NALU_HYPRE_Int BuildParDifConv (NALU_HYPRE_Int argc, char *argv [], NALU_HYPRE_Int arg_index,
+                           NALU_HYPRE_ParCSRMatrix *A_ptr );
+NALU_HYPRE_Int BuildParFromOneFile (NALU_HYPRE_Int argc, char *argv [], NALU_HYPRE_Int arg_index,
+                               NALU_HYPRE_ParCSRMatrix *A_ptr );
+NALU_HYPRE_Int BuildRhsParFromOneFile (NALU_HYPRE_Int argc, char *argv [], NALU_HYPRE_Int arg_index,
+                                  NALU_HYPRE_BigInt *partitioning, NALU_HYPRE_ParVector *b_ptr );
+NALU_HYPRE_Int BuildParLaplacian9pt (NALU_HYPRE_Int argc, char *argv [], NALU_HYPRE_Int arg_index,
+                                NALU_HYPRE_ParCSRMatrix *A_ptr );
+NALU_HYPRE_Int BuildParLaplacian27pt (NALU_HYPRE_Int argc, char *argv [], NALU_HYPRE_Int arg_index,
+                                 NALU_HYPRE_ParCSRMatrix *A_ptr );
 
 #define SECOND_TIME 0
 
-hypre_int
-main( hypre_int argc,
+nalu_hypre_int
+main( nalu_hypre_int argc,
       char *argv[] )
 {
-   HYPRE_Int           arg_index;
-   HYPRE_Int           print_usage;
-   HYPRE_Int           sparsity_known = 0;
-   HYPRE_Int           build_matrix_type;
-   HYPRE_Int           build_matrix_arg_index;
-   HYPRE_Int           build_rhs_type;
-   HYPRE_Int           build_rhs_arg_index;
-   HYPRE_Real          norm;
+   NALU_HYPRE_Int           arg_index;
+   NALU_HYPRE_Int           print_usage;
+   NALU_HYPRE_Int           sparsity_known = 0;
+   NALU_HYPRE_Int           build_matrix_type;
+   NALU_HYPRE_Int           build_matrix_arg_index;
+   NALU_HYPRE_Int           build_rhs_type;
+   NALU_HYPRE_Int           build_rhs_arg_index;
+   NALU_HYPRE_Real          norm;
    void               *object;
 
-   HYPRE_IJMatrix      ij_A;
-   HYPRE_IJVector      ij_b = NULL;
-   HYPRE_IJVector      ij_x = NULL;
-   HYPRE_IJVector      ij_v;
+   NALU_HYPRE_IJMatrix      ij_A;
+   NALU_HYPRE_IJVector      ij_b = NULL;
+   NALU_HYPRE_IJVector      ij_x = NULL;
+   NALU_HYPRE_IJVector      ij_v;
 
-   HYPRE_ParCSRMatrix  parcsr_A;
-   HYPRE_ParVector     b;
-   HYPRE_ParVector     x;
+   NALU_HYPRE_ParCSRMatrix  parcsr_A;
+   NALU_HYPRE_ParVector     b;
+   NALU_HYPRE_ParVector     x;
 
-   HYPRE_Int           num_procs, myid;
-   HYPRE_Int           local_row;
-   HYPRE_BigInt       *indices;
-   HYPRE_Int          *row_sizes;
-   HYPRE_Int          *diag_sizes;
-   HYPRE_Int          *offdiag_sizes;
-   HYPRE_BigInt       *rows;
-   HYPRE_Int           size;
-   HYPRE_Int          *ncols;
-   HYPRE_BigInt       *col_inds;
+   NALU_HYPRE_Int           num_procs, myid;
+   NALU_HYPRE_Int           local_row;
+   NALU_HYPRE_BigInt       *indices;
+   NALU_HYPRE_Int          *row_sizes;
+   NALU_HYPRE_Int          *diag_sizes;
+   NALU_HYPRE_Int          *offdiag_sizes;
+   NALU_HYPRE_BigInt       *rows;
+   NALU_HYPRE_Int           size;
+   NALU_HYPRE_Int          *ncols;
+   NALU_HYPRE_BigInt       *col_inds;
 
-   MPI_Comm            comm = hypre_MPI_COMM_WORLD;
-   HYPRE_Int           time_index;
-   HYPRE_Int           ierr = 0;
-   HYPRE_BigInt        M, N, big_i;
-   HYPRE_Int           i, j;
-   HYPRE_Int           local_num_rows, local_num_cols;
-   HYPRE_BigInt        first_local_row, last_local_row;
-   HYPRE_BigInt        first_local_col, last_local_col;
-   HYPRE_Real         *values;
+   MPI_Comm            comm = nalu_hypre_MPI_COMM_WORLD;
+   NALU_HYPRE_Int           time_index;
+   NALU_HYPRE_Int           ierr = 0;
+   NALU_HYPRE_BigInt        M, N, big_i;
+   NALU_HYPRE_Int           i, j;
+   NALU_HYPRE_Int           local_num_rows, local_num_cols;
+   NALU_HYPRE_BigInt        first_local_row, last_local_row;
+   NALU_HYPRE_BigInt        first_local_col, last_local_col;
+   NALU_HYPRE_Real         *values;
 
    /*-----------------------------------------------------------
     * Initialize some stuff
     *-----------------------------------------------------------*/
 
    /* Initialize MPI */
-   hypre_MPI_Init(&argc, &argv);
+   nalu_hypre_MPI_Init(&argc, &argv);
 
-   hypre_MPI_Comm_size(hypre_MPI_COMM_WORLD, &num_procs );
-   hypre_MPI_Comm_rank(hypre_MPI_COMM_WORLD, &myid );
+   nalu_hypre_MPI_Comm_size(nalu_hypre_MPI_COMM_WORLD, &num_procs );
+   nalu_hypre_MPI_Comm_rank(nalu_hypre_MPI_COMM_WORLD, &myid );
 
    /*-----------------------------------------------------------
     * Set defaults
@@ -222,35 +222,35 @@ main( hypre_int argc,
 
    if ( (print_usage) && (myid == 0) )
    {
-      hypre_printf("\n");
-      hypre_printf("Usage: %s [<options>]\n", argv[0]);
-      hypre_printf("\n");
-      hypre_printf("  -fromijfile <filename>     : ");
-      hypre_printf("matrix read in IJ format from distributed files\n");
-      hypre_printf("  -fromparcsrfile <filename> : ");
-      hypre_printf("matrix read in ParCSR format from distributed files\n");
-      hypre_printf("  -fromonecsrfile <filename> : ");
-      hypre_printf("matrix read in CSR format from a file on one processor\n");
-      hypre_printf("\n");
-      hypre_printf("  -laplacian [<options>] : build laplacian problem\n");
-      hypre_printf("  -9pt [<opts>] : build 9pt 2D laplacian problem\n");
-      hypre_printf("  -27pt [<opts>] : build 27pt 3D laplacian problem\n");
-      hypre_printf("  -difconv [<opts>]      : build convection-diffusion problem\n");
-      hypre_printf("    -n <nx> <ny> <nz>    : total problem size \n");
-      hypre_printf("    -P <Px> <Py> <Pz>    : processor topology\n");
-      hypre_printf("    -c <cx> <cy> <cz>    : diffusion coefficients\n");
-      hypre_printf("    -a <ax> <ay> <az>    : convection coefficients\n");
-      hypre_printf("\n");
-      hypre_printf("  -exact_size           : inserts immediately into ParCSR structure\n");
-      hypre_printf("  -storage_low          : allocates not enough storage for aux struct\n");
-      hypre_printf("  -concrete_parcsr      : use parcsr matrix type as concrete type\n");
-      hypre_printf("\n");
-      hypre_printf("  -rhsfromfile           : rhs read in IJ form from distributed files\n");
-      hypre_printf("  -rhsfromonefile        : rhs read from a file one one processor\n");
-      hypre_printf("  -rhsrand               : rhs is random vector\n");
-      hypre_printf("  -rhsisone              : rhs is vector with unit components (default)\n");
-      hypre_printf("  -xisone                : solution of all ones\n");
-      hypre_printf("  -rhszero               : rhs is zero vector\n");
+      nalu_hypre_printf("\n");
+      nalu_hypre_printf("Usage: %s [<options>]\n", argv[0]);
+      nalu_hypre_printf("\n");
+      nalu_hypre_printf("  -fromijfile <filename>     : ");
+      nalu_hypre_printf("matrix read in IJ format from distributed files\n");
+      nalu_hypre_printf("  -fromparcsrfile <filename> : ");
+      nalu_hypre_printf("matrix read in ParCSR format from distributed files\n");
+      nalu_hypre_printf("  -fromonecsrfile <filename> : ");
+      nalu_hypre_printf("matrix read in CSR format from a file on one processor\n");
+      nalu_hypre_printf("\n");
+      nalu_hypre_printf("  -laplacian [<options>] : build laplacian problem\n");
+      nalu_hypre_printf("  -9pt [<opts>] : build 9pt 2D laplacian problem\n");
+      nalu_hypre_printf("  -27pt [<opts>] : build 27pt 3D laplacian problem\n");
+      nalu_hypre_printf("  -difconv [<opts>]      : build convection-diffusion problem\n");
+      nalu_hypre_printf("    -n <nx> <ny> <nz>    : total problem size \n");
+      nalu_hypre_printf("    -P <Px> <Py> <Pz>    : processor topology\n");
+      nalu_hypre_printf("    -c <cx> <cy> <cz>    : diffusion coefficients\n");
+      nalu_hypre_printf("    -a <ax> <ay> <az>    : convection coefficients\n");
+      nalu_hypre_printf("\n");
+      nalu_hypre_printf("  -exact_size           : inserts immediately into ParCSR structure\n");
+      nalu_hypre_printf("  -storage_low          : allocates not enough storage for aux struct\n");
+      nalu_hypre_printf("  -concrete_parcsr      : use parcsr matrix type as concrete type\n");
+      nalu_hypre_printf("\n");
+      nalu_hypre_printf("  -rhsfromfile           : rhs read in IJ form from distributed files\n");
+      nalu_hypre_printf("  -rhsfromonefile        : rhs read from a file one one processor\n");
+      nalu_hypre_printf("  -rhsrand               : rhs is random vector\n");
+      nalu_hypre_printf("  -rhsisone              : rhs is vector with unit components (default)\n");
+      nalu_hypre_printf("  -xisone                : solution of all ones\n");
+      nalu_hypre_printf("  -rhszero               : rhs is zero vector\n");
       exit(1);
    }
 
@@ -260,7 +260,7 @@ main( hypre_int argc,
 
    if (myid == 0)
    {
-      hypre_printf("Running with these driver parameters:\n");
+      nalu_hypre_printf("Running with these driver parameters:\n");
    }
 
    /*-----------------------------------------------------------
@@ -269,8 +269,8 @@ main( hypre_int argc,
 
    if ( build_matrix_type == -1 )
    {
-      HYPRE_IJMatrixRead( argv[build_matrix_arg_index], comm,
-                          HYPRE_PARCSR, &ij_A );
+      NALU_HYPRE_IJMatrixRead( argv[build_matrix_arg_index], comm,
+                          NALU_HYPRE_PARCSR, &ij_A );
    }
    else if ( build_matrix_type == 0 )
    {
@@ -298,27 +298,27 @@ main( hypre_int argc,
    }
    else
    {
-      hypre_printf("You have asked for an unsupported test with\n");
-      hypre_printf("build_matrix_type = %d.\n", build_matrix_type);
+      nalu_hypre_printf("You have asked for an unsupported test with\n");
+      nalu_hypre_printf("build_matrix_type = %d.\n", build_matrix_type);
       return (-1);
    }
 
-   time_index = hypre_InitializeTiming("Spatial Operator");
-   hypre_BeginTiming(time_index);
+   time_index = nalu_hypre_InitializeTiming("Spatial Operator");
+   nalu_hypre_BeginTiming(time_index);
 
    if (build_matrix_type < 2)
    {
-      ierr += HYPRE_IJMatrixGetObject( ij_A, &object);
-      parcsr_A = (HYPRE_ParCSRMatrix) object;
+      ierr += NALU_HYPRE_IJMatrixGetObject( ij_A, &object);
+      parcsr_A = (NALU_HYPRE_ParCSRMatrix) object;
 
-      ierr = HYPRE_ParCSRMatrixGetLocalRange( parcsr_A,
+      ierr = NALU_HYPRE_ParCSRMatrixGetLocalRange( parcsr_A,
                                               &first_local_row, &last_local_row,
                                               &first_local_col, &last_local_col );
 
       local_num_rows = last_local_row - first_local_row + 1;
       local_num_cols = last_local_col - first_local_col + 1;
 
-      ierr = HYPRE_IJMatrixInitialize( ij_A );
+      ierr = NALU_HYPRE_IJMatrixInitialize( ij_A );
    }
    else
    {
@@ -326,20 +326,20 @@ main( hypre_int argc,
        * Copy the parcsr matrix into the IJMatrix through interface calls
        *--------------------------------------------------------------------*/
 
-      ierr = HYPRE_ParCSRMatrixGetLocalRange( parcsr_A,
+      ierr = NALU_HYPRE_ParCSRMatrixGetLocalRange( parcsr_A,
                                               &first_local_row, &last_local_row,
                                               &first_local_col, &last_local_col );
 
-      local_num_rows = (HYPRE_Int)(last_local_row - first_local_row + 1);
-      local_num_cols = (HYPRE_Int)(last_local_col - first_local_col + 1);
+      local_num_rows = (NALU_HYPRE_Int)(last_local_row - first_local_row + 1);
+      local_num_cols = (NALU_HYPRE_Int)(last_local_col - first_local_col + 1);
 
-      ierr += HYPRE_ParCSRMatrixGetDims( parcsr_A, &M, &N );
+      ierr += NALU_HYPRE_ParCSRMatrixGetDims( parcsr_A, &M, &N );
 
-      ierr += HYPRE_IJMatrixCreate( comm, first_local_row, last_local_row,
+      ierr += NALU_HYPRE_IJMatrixCreate( comm, first_local_row, last_local_row,
                                     first_local_col, last_local_col,
                                     &ij_A );
 
-      ierr += HYPRE_IJMatrixSetObjectType( ij_A, HYPRE_PARCSR );
+      ierr += NALU_HYPRE_IJMatrixSetObjectType( ij_A, NALU_HYPRE_PARCSR );
 
 
       /* the following shows how to build an IJMatrix if one has only an
@@ -348,12 +348,12 @@ main( hypre_int argc,
       {
          /*  build IJMatrix using exact row_sizes for diag and offdiag */
 
-         diag_sizes = hypre_CTAlloc(HYPRE_Int,  local_num_rows, HYPRE_MEMORY_HOST);
-         offdiag_sizes = hypre_CTAlloc(HYPRE_Int,  local_num_rows, HYPRE_MEMORY_HOST);
+         diag_sizes = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  local_num_rows, NALU_HYPRE_MEMORY_HOST);
+         offdiag_sizes = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  local_num_rows, NALU_HYPRE_MEMORY_HOST);
          local_row = 0;
          for (big_i = first_local_row; big_i <= last_local_row; big_i++)
          {
-            ierr += HYPRE_ParCSRMatrixGetRow( parcsr_A, big_i, &size,
+            ierr += NALU_HYPRE_ParCSRMatrixGetRow( parcsr_A, big_i, &size,
                                               &col_inds, &values );
 
             for (j = 0; j < size; j++)
@@ -368,33 +368,33 @@ main( hypre_int argc,
                }
             }
             local_row++;
-            ierr += HYPRE_ParCSRMatrixRestoreRow( parcsr_A, big_i, &size,
+            ierr += NALU_HYPRE_ParCSRMatrixRestoreRow( parcsr_A, big_i, &size,
                                                   &col_inds, &values );
          }
-         ierr += HYPRE_IJMatrixSetDiagOffdSizes( ij_A,
-                                                 (const HYPRE_Int *) diag_sizes,
-                                                 (const HYPRE_Int *) offdiag_sizes );
-         hypre_TFree(diag_sizes, HYPRE_MEMORY_HOST);
-         hypre_TFree(offdiag_sizes, HYPRE_MEMORY_HOST);
+         ierr += NALU_HYPRE_IJMatrixSetDiagOffdSizes( ij_A,
+                                                 (const NALU_HYPRE_Int *) diag_sizes,
+                                                 (const NALU_HYPRE_Int *) offdiag_sizes );
+         nalu_hypre_TFree(diag_sizes, NALU_HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(offdiag_sizes, NALU_HYPRE_MEMORY_HOST);
 
-         ierr = HYPRE_IJMatrixInitialize( ij_A );
+         ierr = NALU_HYPRE_IJMatrixInitialize( ij_A );
 
          for (big_i = first_local_row; big_i <= last_local_row; big_i++)
          {
-            ierr += HYPRE_ParCSRMatrixGetRow( parcsr_A, big_i, &size,
+            ierr += NALU_HYPRE_ParCSRMatrixGetRow( parcsr_A, big_i, &size,
                                               &col_inds, &values );
 
-            ierr += HYPRE_IJMatrixSetValues( ij_A, 1, &size, &big_i,
-                                             (const HYPRE_BigInt *) col_inds,
-                                             (const HYPRE_Real *) values );
+            ierr += NALU_HYPRE_IJMatrixSetValues( ij_A, 1, &size, &big_i,
+                                             (const NALU_HYPRE_BigInt *) col_inds,
+                                             (const NALU_HYPRE_Real *) values );
 
-            ierr += HYPRE_ParCSRMatrixRestoreRow( parcsr_A, big_i, &size,
+            ierr += NALU_HYPRE_ParCSRMatrixRestoreRow( parcsr_A, big_i, &size,
                                                   &col_inds, &values );
          }
       }
       else
       {
-         row_sizes = hypre_CTAlloc(HYPRE_Int,  local_num_rows, HYPRE_MEMORY_HOST);
+         row_sizes = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  local_num_rows, NALU_HYPRE_MEMORY_HOST);
 
          size = 5; /* this is in general too low, and supposed to test
                       the capability of the reallocation of the interface */
@@ -412,44 +412,44 @@ main( hypre_int argc,
             row_sizes[i] = size;
          }
 
-         ierr = HYPRE_IJMatrixSetRowSizes ( ij_A, (const HYPRE_Int *) row_sizes );
+         ierr = NALU_HYPRE_IJMatrixSetRowSizes ( ij_A, (const NALU_HYPRE_Int *) row_sizes );
 
-         hypre_TFree(row_sizes, HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(row_sizes, NALU_HYPRE_MEMORY_HOST);
 
-         ierr = HYPRE_IJMatrixInitialize( ij_A );
+         ierr = NALU_HYPRE_IJMatrixInitialize( ij_A );
 
          /* Loop through all locally stored rows and insert them into ij_matrix */
          for (big_i = first_local_row; big_i <= last_local_row; big_i++)
          {
-            ierr += HYPRE_ParCSRMatrixGetRow( parcsr_A, big_i, &size,
+            ierr += NALU_HYPRE_ParCSRMatrixGetRow( parcsr_A, big_i, &size,
                                               &col_inds, &values );
 
-            ierr += HYPRE_IJMatrixSetValues( ij_A, 1, &size, &big_i,
-                                             (const HYPRE_BigInt *) col_inds,
-                                             (const HYPRE_Real *) values );
+            ierr += NALU_HYPRE_IJMatrixSetValues( ij_A, 1, &size, &big_i,
+                                             (const NALU_HYPRE_BigInt *) col_inds,
+                                             (const NALU_HYPRE_Real *) values );
 
-            ierr += HYPRE_ParCSRMatrixRestoreRow( parcsr_A, big_i, &size,
+            ierr += NALU_HYPRE_ParCSRMatrixRestoreRow( parcsr_A, big_i, &size,
                                                   &col_inds, &values );
          }
       }
 
-      ierr += HYPRE_IJMatrixAssemble( ij_A );
+      ierr += NALU_HYPRE_IJMatrixAssemble( ij_A );
 
    }
 
-   hypre_EndTiming(time_index);
-   hypre_PrintTiming("Initial IJ Matrix Setup", hypre_MPI_COMM_WORLD);
-   hypre_FinalizeTiming(time_index);
-   hypre_ClearTiming();
+   nalu_hypre_EndTiming(time_index);
+   nalu_hypre_PrintTiming("Initial IJ Matrix Setup", nalu_hypre_MPI_COMM_WORLD);
+   nalu_hypre_FinalizeTiming(time_index);
+   nalu_hypre_ClearTiming();
 
    if (ierr)
    {
-      hypre_printf("Error in driver building IJMatrix from parcsr matrix. \n");
+      nalu_hypre_printf("Error in driver building IJMatrix from parcsr matrix. \n");
       return (-1);
    }
 
-   time_index = hypre_InitializeTiming("Backward Euler Time Step");
-   hypre_BeginTiming(time_index);
+   time_index = nalu_hypre_InitializeTiming("Backward Euler Time Step");
+   nalu_hypre_BeginTiming(time_index);
 
    /* This is to emphasize that one can IJMatrixAddToValues after an
       IJMatrixRead or an IJMatrixAssemble.  After an IJMatrixRead,
@@ -457,40 +457,40 @@ main( hypre_int argc,
       not changed somehow.  If one has not used IJMatrixRead, one has
       the opportunity to IJMatrixAddTo before a IJMatrixAssemble. */
 
-   ncols    = hypre_CTAlloc(HYPRE_Int,  last_local_row - first_local_row + 1, HYPRE_MEMORY_HOST);
-   rows     = hypre_CTAlloc(HYPRE_BigInt,  last_local_row - first_local_row + 1, HYPRE_MEMORY_HOST);
-   col_inds = hypre_CTAlloc(HYPRE_BigInt,  last_local_row - first_local_row + 1, HYPRE_MEMORY_HOST);
-   values   = hypre_CTAlloc(HYPRE_Real,  last_local_row - first_local_row + 1, HYPRE_MEMORY_HOST);
+   ncols    = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  last_local_row - first_local_row + 1, NALU_HYPRE_MEMORY_HOST);
+   rows     = nalu_hypre_CTAlloc(NALU_HYPRE_BigInt,  last_local_row - first_local_row + 1, NALU_HYPRE_MEMORY_HOST);
+   col_inds = nalu_hypre_CTAlloc(NALU_HYPRE_BigInt,  last_local_row - first_local_row + 1, NALU_HYPRE_MEMORY_HOST);
+   values   = nalu_hypre_CTAlloc(NALU_HYPRE_Real,  last_local_row - first_local_row + 1, NALU_HYPRE_MEMORY_HOST);
 
    for (big_i = first_local_row; big_i <= last_local_row; big_i++)
    {
-      j = (HYPRE_Int)(big_i - first_local_row);
+      j = (NALU_HYPRE_Int)(big_i - first_local_row);
       rows[j] = big_i;
       ncols[j] = 1;
       col_inds[j] = big_i;
       values[j] = -27.8;
    }
 
-   ierr += HYPRE_IJMatrixAddToValues( ij_A,
+   ierr += NALU_HYPRE_IJMatrixAddToValues( ij_A,
                                       local_num_rows,
                                       ncols, rows,
-                                      (const HYPRE_BigInt *) col_inds,
-                                      (const HYPRE_Real *) values );
+                                      (const NALU_HYPRE_BigInt *) col_inds,
+                                      (const NALU_HYPRE_Real *) values );
 
-   hypre_TFree(values, HYPRE_MEMORY_HOST);
-   hypre_TFree(col_inds, HYPRE_MEMORY_HOST);
-   hypre_TFree(rows, HYPRE_MEMORY_HOST);
-   hypre_TFree(ncols, HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(col_inds, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(rows, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(ncols, NALU_HYPRE_MEMORY_HOST);
 
    /* If sparsity pattern is not changed since last IJMatrixAssemble call,
       this should be a no-op */
 
-   ierr += HYPRE_IJMatrixAssemble( ij_A );
+   ierr += NALU_HYPRE_IJMatrixAssemble( ij_A );
 
-   hypre_EndTiming(time_index);
-   hypre_PrintTiming("IJ Matrix Diagonal Augmentation", hypre_MPI_COMM_WORLD);
-   hypre_FinalizeTiming(time_index);
-   hypre_ClearTiming();
+   nalu_hypre_EndTiming(time_index);
+   nalu_hypre_PrintTiming("IJ Matrix Diagonal Augmentation", nalu_hypre_MPI_COMM_WORLD);
+   nalu_hypre_FinalizeTiming(time_index);
+   nalu_hypre_ClearTiming();
 
    /*-----------------------------------------------------------
     * Fetch the resulting underlying matrix out
@@ -498,20 +498,20 @@ main( hypre_int argc,
 
    if (build_matrix_type > 1)
    {
-      ierr += HYPRE_ParCSRMatrixDestroy(parcsr_A);
+      ierr += NALU_HYPRE_ParCSRMatrixDestroy(parcsr_A);
    }
 
-   ierr += HYPRE_IJMatrixGetObject( ij_A, &object);
-   parcsr_A = (HYPRE_ParCSRMatrix) object;
+   ierr += NALU_HYPRE_IJMatrixGetObject( ij_A, &object);
+   parcsr_A = (NALU_HYPRE_ParCSRMatrix) object;
 
-   HYPRE_IJVectorCreate(hypre_MPI_COMM_WORLD, first_local_col, last_local_col, &ij_v);
-   HYPRE_IJVectorSetObjectType(ij_v, HYPRE_PARCSR );
-   HYPRE_IJVectorInitialize(ij_v);
+   NALU_HYPRE_IJVectorCreate(nalu_hypre_MPI_COMM_WORLD, first_local_col, last_local_col, &ij_v);
+   NALU_HYPRE_IJVectorSetObjectType(ij_v, NALU_HYPRE_PARCSR );
+   NALU_HYPRE_IJVectorInitialize(ij_v);
 
-   values  = hypre_CTAlloc(HYPRE_Real,  local_num_cols, HYPRE_MEMORY_HOST);
+   values  = nalu_hypre_CTAlloc(NALU_HYPRE_Real,  local_num_cols, NALU_HYPRE_MEMORY_HOST);
 
    /*-------------------------------------------------------------------
-    * Check HYPRE_IJVectorSet(Get)Values calls
+    * Check NALU_HYPRE_IJVectorSet(Get)Values calls
     *
     * All local components changed -- NULL indices
     *-------------------------------------------------------------------*/
@@ -521,27 +521,27 @@ main( hypre_int argc,
       values[i] = 1.;
    }
 
-   HYPRE_IJVectorSetValues(ij_v, local_num_cols, NULL, values);
+   NALU_HYPRE_IJVectorSetValues(ij_v, local_num_cols, NULL, values);
 
    for (i = 0; i < local_num_cols; i++)
    {
-      values[i] = (HYPRE_Real)i;
+      values[i] = (NALU_HYPRE_Real)i;
    }
 
-   HYPRE_IJVectorAddToValues(ij_v, local_num_cols / 2, NULL, values);
+   NALU_HYPRE_IJVectorAddToValues(ij_v, local_num_cols / 2, NULL, values);
 
-   HYPRE_IJVectorGetValues(ij_v, local_num_cols, NULL, values);
+   NALU_HYPRE_IJVectorGetValues(ij_v, local_num_cols, NULL, values);
 
    ierr = 0;
    for (i = 0; i < local_num_cols / 2; i++)
-      if (values[i] != (HYPRE_Real)i + 1.) { ++ierr; }
+      if (values[i] != (NALU_HYPRE_Real)i + 1.) { ++ierr; }
    for (i = local_num_cols / 2; i < local_num_cols; i++)
       if (values[i] != 1.) { ++ierr; }
    if (ierr)
    {
-      hypre_printf("One of HYPRE_IJVectorSet(AddTo,Get)Values\n");
-      hypre_printf("calls with NULL indices bad\n");
-      hypre_printf("IJVector Error 1 with ierr = %d\n", ierr);
+      nalu_hypre_printf("One of NALU_HYPRE_IJVectorSet(AddTo,Get)Values\n");
+      nalu_hypre_printf("calls with NULL indices bad\n");
+      nalu_hypre_printf("IJVector Error 1 with ierr = %d\n", ierr);
       exit(1);
    }
 
@@ -550,86 +550,86 @@ main( hypre_int argc,
     *   as specified by indices
     *-------------------------------------------------------------------*/
 
-   indices = hypre_CTAlloc(HYPRE_BigInt,  local_num_cols, HYPRE_MEMORY_HOST);
+   indices = nalu_hypre_CTAlloc(NALU_HYPRE_BigInt,  local_num_cols, NALU_HYPRE_MEMORY_HOST);
 
    for (big_i = first_local_col; big_i <= last_local_col; big_i++)
    {
-      j = (HYPRE_Int)(big_i - first_local_col);
-      values[j] = (HYPRE_Real)big_i;
+      j = (NALU_HYPRE_Int)(big_i - first_local_col);
+      values[j] = (NALU_HYPRE_Real)big_i;
       indices[j] = last_local_col - big_i;
    }
 
-   HYPRE_IJVectorSetValues(ij_v, local_num_cols, indices, values);
+   NALU_HYPRE_IJVectorSetValues(ij_v, local_num_cols, indices, values);
 
    for (big_i = first_local_col; big_i <= last_local_col; big_i++)
    {
-      j = (HYPRE_Int)(big_i - first_local_col);
-      values[j] = (HYPRE_Real)big_i * big_i;
+      j = (NALU_HYPRE_Int)(big_i - first_local_col);
+      values[j] = (NALU_HYPRE_Real)big_i * big_i;
    }
 
-   HYPRE_IJVectorAddToValues(ij_v, local_num_cols, indices, values);
+   NALU_HYPRE_IJVectorAddToValues(ij_v, local_num_cols, indices, values);
 
-   HYPRE_IJVectorGetValues(ij_v, local_num_cols, indices, values);
+   NALU_HYPRE_IJVectorGetValues(ij_v, local_num_cols, indices, values);
 
-   hypre_TFree(indices, HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(indices, NALU_HYPRE_MEMORY_HOST);
 
    ierr = 0;
    for (big_i = first_local_col; big_i <= last_local_col; big_i++)
    {
-      j = (HYPRE_Int)(big_i - first_local_col);
-      if (values[j] != (HYPRE_Real)(big_i * big_i + big_i)) { ++ierr; }
+      j = (NALU_HYPRE_Int)(big_i - first_local_col);
+      if (values[j] != (NALU_HYPRE_Real)(big_i * big_i + big_i)) { ++ierr; }
    }
 
    if (ierr)
    {
-      hypre_printf("One of HYPRE_IJVectorSet(Get)Values\n");
-      hypre_printf("calls bad\n");
-      hypre_printf("IJVector Error 2 with ierr = %d\n", ierr);
+      nalu_hypre_printf("One of NALU_HYPRE_IJVectorSet(Get)Values\n");
+      nalu_hypre_printf("calls bad\n");
+      nalu_hypre_printf("IJVector Error 2 with ierr = %d\n", ierr);
       exit(1);
    }
 
-   HYPRE_IJVectorDestroy(ij_v);
+   NALU_HYPRE_IJVectorDestroy(ij_v);
 
    /*-----------------------------------------------------------
     * Set up the RHS and initial guess
     *-----------------------------------------------------------*/
 
-   time_index = hypre_InitializeTiming("RHS and Initial Guess");
-   hypre_BeginTiming(time_index);
+   time_index = nalu_hypre_InitializeTiming("RHS and Initial Guess");
+   nalu_hypre_BeginTiming(time_index);
 
    if ( build_rhs_type == 0 )
    {
       if (myid == 0)
       {
-         hypre_printf("  RHS vector read from file %s\n", argv[build_rhs_arg_index]);
-         hypre_printf("  Initial guess is 0\n");
+         nalu_hypre_printf("  RHS vector read from file %s\n", argv[build_rhs_arg_index]);
+         nalu_hypre_printf("  Initial guess is 0\n");
       }
 
       /* RHS */
-      ierr = HYPRE_IJVectorRead( argv[build_rhs_arg_index], hypre_MPI_COMM_WORLD,
-                                 HYPRE_PARCSR, &ij_b );
-      ierr = HYPRE_IJVectorGetObject( ij_b, &object );
-      b = (HYPRE_ParVector) object;
+      ierr = NALU_HYPRE_IJVectorRead( argv[build_rhs_arg_index], nalu_hypre_MPI_COMM_WORLD,
+                                 NALU_HYPRE_PARCSR, &ij_b );
+      ierr = NALU_HYPRE_IJVectorGetObject( ij_b, &object );
+      b = (NALU_HYPRE_ParVector) object;
 
       /* Initial guess */
-      HYPRE_IJVectorCreate(hypre_MPI_COMM_WORLD, first_local_col, last_local_col, &ij_x);
-      HYPRE_IJVectorSetObjectType(ij_x, HYPRE_PARCSR);
-      HYPRE_IJVectorInitialize(ij_x);
+      NALU_HYPRE_IJVectorCreate(nalu_hypre_MPI_COMM_WORLD, first_local_col, last_local_col, &ij_x);
+      NALU_HYPRE_IJVectorSetObjectType(ij_x, NALU_HYPRE_PARCSR);
+      NALU_HYPRE_IJVectorInitialize(ij_x);
 
-      values = hypre_CTAlloc(HYPRE_Real,  local_num_cols, HYPRE_MEMORY_HOST);
+      values = nalu_hypre_CTAlloc(NALU_HYPRE_Real,  local_num_cols, NALU_HYPRE_MEMORY_HOST);
       for (i = 0; i < local_num_cols; i++)
       {
          values[i] = 0.;
       }
-      HYPRE_IJVectorSetValues(ij_x, local_num_cols, NULL, values);
-      hypre_TFree(values, HYPRE_MEMORY_HOST);
+      NALU_HYPRE_IJVectorSetValues(ij_x, local_num_cols, NULL, values);
+      nalu_hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
 
-      ierr = HYPRE_IJVectorGetObject( ij_x, &object );
-      x = (HYPRE_ParVector) object;
+      ierr = NALU_HYPRE_IJVectorGetObject( ij_x, &object );
+      x = (NALU_HYPRE_ParVector) object;
    }
    else if ( build_rhs_type == 1 )
    {
-      hypre_printf("build_rhs_type == 1 not currently implemented\n");
+      nalu_hypre_printf("build_rhs_type == 1 not currently implemented\n");
       return (-1);
 
 #if 0
@@ -641,187 +641,187 @@ main( hypre_int argc,
    {
       if (myid == 0)
       {
-         hypre_printf("  RHS vector has unit components\n");
-         hypre_printf("  Initial guess is 0\n");
+         nalu_hypre_printf("  RHS vector has unit components\n");
+         nalu_hypre_printf("  Initial guess is 0\n");
       }
 
       /* RHS */
-      HYPRE_IJVectorCreate(hypre_MPI_COMM_WORLD, first_local_row, last_local_row, &ij_b);
-      HYPRE_IJVectorSetObjectType(ij_b, HYPRE_PARCSR);
-      HYPRE_IJVectorInitialize(ij_b);
+      NALU_HYPRE_IJVectorCreate(nalu_hypre_MPI_COMM_WORLD, first_local_row, last_local_row, &ij_b);
+      NALU_HYPRE_IJVectorSetObjectType(ij_b, NALU_HYPRE_PARCSR);
+      NALU_HYPRE_IJVectorInitialize(ij_b);
 
-      values = hypre_CTAlloc(HYPRE_Real,  local_num_rows, HYPRE_MEMORY_HOST);
+      values = nalu_hypre_CTAlloc(NALU_HYPRE_Real,  local_num_rows, NALU_HYPRE_MEMORY_HOST);
       for (i = 0; i < local_num_rows; i++)
       {
          values[i] = 1.;
       }
-      HYPRE_IJVectorSetValues(ij_b, local_num_rows, NULL, values);
-      hypre_TFree(values, HYPRE_MEMORY_HOST);
-      ierr = HYPRE_IJVectorGetObject( ij_b, &object );
-      b = (HYPRE_ParVector) object;
+      NALU_HYPRE_IJVectorSetValues(ij_b, local_num_rows, NULL, values);
+      nalu_hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
+      ierr = NALU_HYPRE_IJVectorGetObject( ij_b, &object );
+      b = (NALU_HYPRE_ParVector) object;
 
       /* Initial guess */
-      HYPRE_IJVectorCreate(hypre_MPI_COMM_WORLD, first_local_col, last_local_col, &ij_x);
-      HYPRE_IJVectorSetObjectType(ij_x, HYPRE_PARCSR);
-      HYPRE_IJVectorInitialize(ij_x);
+      NALU_HYPRE_IJVectorCreate(nalu_hypre_MPI_COMM_WORLD, first_local_col, last_local_col, &ij_x);
+      NALU_HYPRE_IJVectorSetObjectType(ij_x, NALU_HYPRE_PARCSR);
+      NALU_HYPRE_IJVectorInitialize(ij_x);
 
-      values = hypre_CTAlloc(HYPRE_Real,  local_num_cols, HYPRE_MEMORY_HOST);
+      values = nalu_hypre_CTAlloc(NALU_HYPRE_Real,  local_num_cols, NALU_HYPRE_MEMORY_HOST);
       for (i = 0; i < local_num_cols; i++)
       {
          values[i] = 0.;
       }
-      HYPRE_IJVectorSetValues(ij_x, local_num_cols, NULL, values);
-      hypre_TFree(values, HYPRE_MEMORY_HOST);
+      NALU_HYPRE_IJVectorSetValues(ij_x, local_num_cols, NULL, values);
+      nalu_hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
 
-      ierr = HYPRE_IJVectorGetObject( ij_x, &object );
-      x = (HYPRE_ParVector) object;
+      ierr = NALU_HYPRE_IJVectorGetObject( ij_x, &object );
+      x = (NALU_HYPRE_ParVector) object;
    }
    else if ( build_rhs_type == 3 )
    {
       if (myid == 0)
       {
-         hypre_printf("  RHS vector has random components and unit 2-norm\n");
-         hypre_printf("  Initial guess is 0\n");
+         nalu_hypre_printf("  RHS vector has random components and unit 2-norm\n");
+         nalu_hypre_printf("  Initial guess is 0\n");
       }
 
       /* RHS */
-      HYPRE_IJVectorCreate(hypre_MPI_COMM_WORLD, first_local_row, last_local_row, &ij_b);
-      HYPRE_IJVectorSetObjectType(ij_b, HYPRE_PARCSR);
-      HYPRE_IJVectorInitialize(ij_b);
-      ierr = HYPRE_IJVectorGetObject( ij_b, &object );
-      b = (HYPRE_ParVector) object;
+      NALU_HYPRE_IJVectorCreate(nalu_hypre_MPI_COMM_WORLD, first_local_row, last_local_row, &ij_b);
+      NALU_HYPRE_IJVectorSetObjectType(ij_b, NALU_HYPRE_PARCSR);
+      NALU_HYPRE_IJVectorInitialize(ij_b);
+      ierr = NALU_HYPRE_IJVectorGetObject( ij_b, &object );
+      b = (NALU_HYPRE_ParVector) object;
 
-      /* For purposes of this test, HYPRE_ParVector functions are used, but these are
+      /* For purposes of this test, NALU_HYPRE_ParVector functions are used, but these are
          not necessary.  For a clean use of the interface, the user "should"
-         modify components of ij_x by using functions HYPRE_IJVectorSetValues or
-         HYPRE_IJVectorAddToValues */
+         modify components of ij_x by using functions NALU_HYPRE_IJVectorSetValues or
+         NALU_HYPRE_IJVectorAddToValues */
 
-      HYPRE_ParVectorSetRandomValues(b, 22775);
-      HYPRE_ParVectorInnerProd(b, b, &norm);
-      norm = 1. / hypre_sqrt(norm);
-      ierr = HYPRE_ParVectorScale(norm, b);
+      NALU_HYPRE_ParVectorSetRandomValues(b, 22775);
+      NALU_HYPRE_ParVectorInnerProd(b, b, &norm);
+      norm = 1. / nalu_hypre_sqrt(norm);
+      ierr = NALU_HYPRE_ParVectorScale(norm, b);
 
       /* Initial guess */
-      HYPRE_IJVectorCreate(hypre_MPI_COMM_WORLD, first_local_col, last_local_col, &ij_x);
-      HYPRE_IJVectorSetObjectType(ij_x, HYPRE_PARCSR);
-      HYPRE_IJVectorInitialize(ij_x);
+      NALU_HYPRE_IJVectorCreate(nalu_hypre_MPI_COMM_WORLD, first_local_col, last_local_col, &ij_x);
+      NALU_HYPRE_IJVectorSetObjectType(ij_x, NALU_HYPRE_PARCSR);
+      NALU_HYPRE_IJVectorInitialize(ij_x);
 
-      values = hypre_CTAlloc(HYPRE_Real,  local_num_cols, HYPRE_MEMORY_HOST);
+      values = nalu_hypre_CTAlloc(NALU_HYPRE_Real,  local_num_cols, NALU_HYPRE_MEMORY_HOST);
       for (i = 0; i < local_num_cols; i++)
       {
          values[i] = 0.;
       }
-      HYPRE_IJVectorSetValues(ij_x, local_num_cols, NULL, values);
-      hypre_TFree(values, HYPRE_MEMORY_HOST);
+      NALU_HYPRE_IJVectorSetValues(ij_x, local_num_cols, NULL, values);
+      nalu_hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
 
-      ierr = HYPRE_IJVectorGetObject( ij_x, &object );
-      x = (HYPRE_ParVector) object;
+      ierr = NALU_HYPRE_IJVectorGetObject( ij_x, &object );
+      x = (NALU_HYPRE_ParVector) object;
    }
    else if ( build_rhs_type == 4 )
    {
       if (myid == 0)
       {
-         hypre_printf("  RHS vector set for solution with unit components\n");
-         hypre_printf("  Initial guess is 0\n");
+         nalu_hypre_printf("  RHS vector set for solution with unit components\n");
+         nalu_hypre_printf("  Initial guess is 0\n");
       }
 
       /* Temporary use of solution vector */
-      HYPRE_IJVectorCreate(hypre_MPI_COMM_WORLD, first_local_col, last_local_col, &ij_x);
-      HYPRE_IJVectorSetObjectType(ij_x, HYPRE_PARCSR);
-      HYPRE_IJVectorInitialize(ij_x);
+      NALU_HYPRE_IJVectorCreate(nalu_hypre_MPI_COMM_WORLD, first_local_col, last_local_col, &ij_x);
+      NALU_HYPRE_IJVectorSetObjectType(ij_x, NALU_HYPRE_PARCSR);
+      NALU_HYPRE_IJVectorInitialize(ij_x);
 
-      values = hypre_CTAlloc(HYPRE_Real,  local_num_cols, HYPRE_MEMORY_HOST);
+      values = nalu_hypre_CTAlloc(NALU_HYPRE_Real,  local_num_cols, NALU_HYPRE_MEMORY_HOST);
       for (i = 0; i < local_num_cols; i++)
       {
          values[i] = 1.;
       }
-      HYPRE_IJVectorSetValues(ij_x, local_num_cols, NULL, values);
-      hypre_TFree(values, HYPRE_MEMORY_HOST);
+      NALU_HYPRE_IJVectorSetValues(ij_x, local_num_cols, NULL, values);
+      nalu_hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
 
-      ierr = HYPRE_IJVectorGetObject( ij_x, &object );
-      x = (HYPRE_ParVector) object;
+      ierr = NALU_HYPRE_IJVectorGetObject( ij_x, &object );
+      x = (NALU_HYPRE_ParVector) object;
 
       /* RHS */
-      HYPRE_IJVectorCreate(hypre_MPI_COMM_WORLD, first_local_row, last_local_row, &ij_b);
-      HYPRE_IJVectorSetObjectType(ij_b, HYPRE_PARCSR);
-      HYPRE_IJVectorInitialize(ij_b);
-      ierr = HYPRE_IJVectorGetObject( ij_b, &object );
-      b = (HYPRE_ParVector) object;
+      NALU_HYPRE_IJVectorCreate(nalu_hypre_MPI_COMM_WORLD, first_local_row, last_local_row, &ij_b);
+      NALU_HYPRE_IJVectorSetObjectType(ij_b, NALU_HYPRE_PARCSR);
+      NALU_HYPRE_IJVectorInitialize(ij_b);
+      ierr = NALU_HYPRE_IJVectorGetObject( ij_b, &object );
+      b = (NALU_HYPRE_ParVector) object;
 
-      HYPRE_ParCSRMatrixMatvec(1., parcsr_A, x, 0., b);
+      NALU_HYPRE_ParCSRMatrixMatvec(1., parcsr_A, x, 0., b);
 
       /* Initial guess */
-      values = hypre_CTAlloc(HYPRE_Real,  local_num_cols, HYPRE_MEMORY_HOST);
+      values = nalu_hypre_CTAlloc(NALU_HYPRE_Real,  local_num_cols, NALU_HYPRE_MEMORY_HOST);
       for (i = 0; i < local_num_cols; i++)
       {
          values[i] = 0.;
       }
-      HYPRE_IJVectorSetValues(ij_x, local_num_cols, NULL, values);
-      hypre_TFree(values, HYPRE_MEMORY_HOST);
+      NALU_HYPRE_IJVectorSetValues(ij_x, local_num_cols, NULL, values);
+      nalu_hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
    }
    else if ( build_rhs_type == 5 )
    {
       if (myid == 0)
       {
-         hypre_printf("  RHS vector is 0\n");
-         hypre_printf("  Initial guess has unit components\n");
+         nalu_hypre_printf("  RHS vector is 0\n");
+         nalu_hypre_printf("  Initial guess has unit components\n");
       }
 
       /* RHS */
-      HYPRE_IJVectorCreate(hypre_MPI_COMM_WORLD, first_local_row, last_local_row, &ij_b);
-      HYPRE_IJVectorSetObjectType(ij_b, HYPRE_PARCSR);
-      HYPRE_IJVectorInitialize(ij_b);
+      NALU_HYPRE_IJVectorCreate(nalu_hypre_MPI_COMM_WORLD, first_local_row, last_local_row, &ij_b);
+      NALU_HYPRE_IJVectorSetObjectType(ij_b, NALU_HYPRE_PARCSR);
+      NALU_HYPRE_IJVectorInitialize(ij_b);
 
-      values = hypre_CTAlloc(HYPRE_Real,  local_num_rows, HYPRE_MEMORY_HOST);
+      values = nalu_hypre_CTAlloc(NALU_HYPRE_Real,  local_num_rows, NALU_HYPRE_MEMORY_HOST);
       for (i = 0; i < local_num_rows; i++)
       {
          values[i] = 0.;
       }
-      HYPRE_IJVectorSetValues(ij_b, local_num_rows, NULL, values);
-      hypre_TFree(values, HYPRE_MEMORY_HOST);
+      NALU_HYPRE_IJVectorSetValues(ij_b, local_num_rows, NULL, values);
+      nalu_hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
 
-      ierr = HYPRE_IJVectorGetObject( ij_b, &object );
-      b = (HYPRE_ParVector) object;
+      ierr = NALU_HYPRE_IJVectorGetObject( ij_b, &object );
+      b = (NALU_HYPRE_ParVector) object;
 
       /* Initial guess */
-      HYPRE_IJVectorCreate(hypre_MPI_COMM_WORLD, first_local_col, last_local_col, &ij_x);
-      HYPRE_IJVectorSetObjectType(ij_x, HYPRE_PARCSR);
-      HYPRE_IJVectorInitialize(ij_x);
+      NALU_HYPRE_IJVectorCreate(nalu_hypre_MPI_COMM_WORLD, first_local_col, last_local_col, &ij_x);
+      NALU_HYPRE_IJVectorSetObjectType(ij_x, NALU_HYPRE_PARCSR);
+      NALU_HYPRE_IJVectorInitialize(ij_x);
 
-      values = hypre_CTAlloc(HYPRE_Real,  local_num_cols, HYPRE_MEMORY_HOST);
+      values = nalu_hypre_CTAlloc(NALU_HYPRE_Real,  local_num_cols, NALU_HYPRE_MEMORY_HOST);
       for (i = 0; i < local_num_cols; i++)
       {
          values[i] = 1.;
       }
-      HYPRE_IJVectorSetValues(ij_x, local_num_cols, NULL, values);
-      hypre_TFree(values, HYPRE_MEMORY_HOST);
+      NALU_HYPRE_IJVectorSetValues(ij_x, local_num_cols, NULL, values);
+      nalu_hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
 
-      ierr = HYPRE_IJVectorGetObject( ij_x, &object );
-      x = (HYPRE_ParVector) object;
+      ierr = NALU_HYPRE_IJVectorGetObject( ij_x, &object );
+      x = (NALU_HYPRE_ParVector) object;
    }
 
-   hypre_EndTiming(time_index);
-   hypre_PrintTiming("IJ Vector Setup", hypre_MPI_COMM_WORLD);
-   hypre_FinalizeTiming(time_index);
-   hypre_ClearTiming();
+   nalu_hypre_EndTiming(time_index);
+   nalu_hypre_PrintTiming("IJ Vector Setup", nalu_hypre_MPI_COMM_WORLD);
+   nalu_hypre_FinalizeTiming(time_index);
+   nalu_hypre_ClearTiming();
 
    /*-----------------------------------------------------------
     * Print the solution and other info
     *-----------------------------------------------------------*/
 
-   HYPRE_IJVectorGetObjectType(ij_b, &j);
-   HYPRE_IJVectorPrint(ij_b, "driver.out.b");
-   HYPRE_IJVectorPrint(ij_x, "driver.out.x");
+   NALU_HYPRE_IJVectorGetObjectType(ij_b, &j);
+   NALU_HYPRE_IJVectorPrint(ij_b, "driver.out.b");
+   NALU_HYPRE_IJVectorPrint(ij_x, "driver.out.x");
 
    /*-----------------------------------------------------------
     * Finalize things
     *-----------------------------------------------------------*/
 
-   HYPRE_IJMatrixDestroy(ij_A);
-   HYPRE_IJVectorDestroy(ij_b);
-   HYPRE_IJVectorDestroy(ij_x);
+   NALU_HYPRE_IJMatrixDestroy(ij_A);
+   NALU_HYPRE_IJVectorDestroy(ij_b);
+   NALU_HYPRE_IJVectorDestroy(ij_x);
 
-   hypre_MPI_Finalize();
+   nalu_hypre_MPI_Finalize();
 
    return (0);
 }
@@ -835,23 +835,23 @@ main( hypre_int argc,
  * Parameters given in command line.
  *----------------------------------------------------------------------*/
 
-HYPRE_Int
-BuildParFromFile( HYPRE_Int                  argc,
+NALU_HYPRE_Int
+BuildParFromFile( NALU_HYPRE_Int                  argc,
                   char                *argv[],
-                  HYPRE_Int                  arg_index,
-                  HYPRE_ParCSRMatrix  *A_ptr     )
+                  NALU_HYPRE_Int                  arg_index,
+                  NALU_HYPRE_ParCSRMatrix  *A_ptr     )
 {
    char               *filename;
 
-   HYPRE_ParCSRMatrix A;
+   NALU_HYPRE_ParCSRMatrix A;
 
-   HYPRE_Int                 myid;
+   NALU_HYPRE_Int                 myid;
 
    /*-----------------------------------------------------------
     * Initialize some stuff
     *-----------------------------------------------------------*/
 
-   hypre_MPI_Comm_rank(hypre_MPI_COMM_WORLD, &myid );
+   nalu_hypre_MPI_Comm_rank(nalu_hypre_MPI_COMM_WORLD, &myid );
 
    /*-----------------------------------------------------------
     * Parse command line
@@ -863,7 +863,7 @@ BuildParFromFile( HYPRE_Int                  argc,
    }
    else
    {
-      hypre_printf("Error: No filename specified \n");
+      nalu_hypre_printf("Error: No filename specified \n");
       exit(1);
    }
 
@@ -873,14 +873,14 @@ BuildParFromFile( HYPRE_Int                  argc,
 
    if (myid == 0)
    {
-      hypre_printf("  FromFile: %s\n", filename);
+      nalu_hypre_printf("  FromFile: %s\n", filename);
    }
 
    /*-----------------------------------------------------------
     * Generate the matrix
     *-----------------------------------------------------------*/
 
-   HYPRE_ParCSRMatrixRead(hypre_MPI_COMM_WORLD, filename, &A);
+   NALU_HYPRE_ParCSRMatrixRead(nalu_hypre_MPI_COMM_WORLD, filename, &A);
 
    *A_ptr = A;
 
@@ -892,28 +892,28 @@ BuildParFromFile( HYPRE_Int                  argc,
  * Parameters given in command line.
  *----------------------------------------------------------------------*/
 
-HYPRE_Int
-BuildParLaplacian( HYPRE_Int                  argc,
+NALU_HYPRE_Int
+BuildParLaplacian( NALU_HYPRE_Int                  argc,
                    char                *argv[],
-                   HYPRE_Int                  arg_index,
-                   HYPRE_ParCSRMatrix  *A_ptr     )
+                   NALU_HYPRE_Int                  arg_index,
+                   NALU_HYPRE_ParCSRMatrix  *A_ptr     )
 {
-   HYPRE_BigInt              nx, ny, nz;
-   HYPRE_Int                 P, Q, R;
-   HYPRE_Real          cx, cy, cz;
+   NALU_HYPRE_BigInt              nx, ny, nz;
+   NALU_HYPRE_Int                 P, Q, R;
+   NALU_HYPRE_Real          cx, cy, cz;
 
-   HYPRE_ParCSRMatrix  A;
+   NALU_HYPRE_ParCSRMatrix  A;
 
-   HYPRE_Int                 num_procs, myid;
-   HYPRE_Int                 p, q, r;
-   HYPRE_Real         *values;
+   NALU_HYPRE_Int                 num_procs, myid;
+   NALU_HYPRE_Int                 p, q, r;
+   NALU_HYPRE_Real         *values;
 
    /*-----------------------------------------------------------
     * Initialize some stuff
     *-----------------------------------------------------------*/
 
-   hypre_MPI_Comm_size(hypre_MPI_COMM_WORLD, &num_procs );
-   hypre_MPI_Comm_rank(hypre_MPI_COMM_WORLD, &myid );
+   nalu_hypre_MPI_Comm_size(nalu_hypre_MPI_COMM_WORLD, &num_procs );
+   nalu_hypre_MPI_Comm_rank(nalu_hypre_MPI_COMM_WORLD, &myid );
 
    /*-----------------------------------------------------------
     * Set defaults
@@ -954,9 +954,9 @@ BuildParLaplacian( HYPRE_Int                  argc,
       else if ( strcmp(argv[arg_index], "-c") == 0 )
       {
          arg_index++;
-         cx = (HYPRE_Real)atof(argv[arg_index++]);
-         cy = (HYPRE_Real)atof(argv[arg_index++]);
-         cz = (HYPRE_Real)atof(argv[arg_index++]);
+         cx = (NALU_HYPRE_Real)atof(argv[arg_index++]);
+         cy = (NALU_HYPRE_Real)atof(argv[arg_index++]);
+         cz = (NALU_HYPRE_Real)atof(argv[arg_index++]);
       }
       else
       {
@@ -970,7 +970,7 @@ BuildParLaplacian( HYPRE_Int                  argc,
 
    if ((P * Q * R) != num_procs)
    {
-      hypre_printf("Error: Invalid number of processors or processor topology \n");
+      nalu_hypre_printf("Error: Invalid number of processors or processor topology \n");
       exit(1);
    }
 
@@ -980,10 +980,10 @@ BuildParLaplacian( HYPRE_Int                  argc,
 
    if (myid == 0)
    {
-      hypre_printf("  Laplacian:\n");
-      hypre_printf("    (nx, ny, nz) = (%b, %b, %b)\n", nx, ny, nz);
-      hypre_printf("    (Px, Py, Pz) = (%d, %d, %d)\n", P,  Q,  R);
-      hypre_printf("    (cx, cy, cz) = (%f, %f, %f)\n\n", cx, cy, cz);
+      nalu_hypre_printf("  Laplacian:\n");
+      nalu_hypre_printf("    (nx, ny, nz) = (%b, %b, %b)\n", nx, ny, nz);
+      nalu_hypre_printf("    (Px, Py, Pz) = (%d, %d, %d)\n", P,  Q,  R);
+      nalu_hypre_printf("    (cx, cy, cz) = (%f, %f, %f)\n\n", cx, cy, cz);
    }
 
    /*-----------------------------------------------------------
@@ -999,7 +999,7 @@ BuildParLaplacian( HYPRE_Int                  argc,
     * Generate the matrix
     *-----------------------------------------------------------*/
 
-   values = hypre_CTAlloc(HYPRE_Real,  4, HYPRE_MEMORY_HOST);
+   values = nalu_hypre_CTAlloc(NALU_HYPRE_Real,  4, NALU_HYPRE_MEMORY_HOST);
 
    values[1] = -cx;
    values[2] = -cy;
@@ -1019,10 +1019,10 @@ BuildParLaplacian( HYPRE_Int                  argc,
       values[0] += 2.0 * cz;
    }
 
-   A = (HYPRE_ParCSRMatrix) GenerateLaplacian(hypre_MPI_COMM_WORLD,
+   A = (NALU_HYPRE_ParCSRMatrix) GenerateLaplacian(nalu_hypre_MPI_COMM_WORLD,
                                               nx, ny, nz, P, Q, R, p, q, r, values);
 
-   hypre_TFree(values, HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
 
    *A_ptr = A;
 
@@ -1038,30 +1038,30 @@ BuildParLaplacian( HYPRE_Int                  argc,
  *
  *----------------------------------------------------------------------*/
 
-HYPRE_Int
-BuildParDifConv( HYPRE_Int                  argc,
+NALU_HYPRE_Int
+BuildParDifConv( NALU_HYPRE_Int                  argc,
                  char                *argv[],
-                 HYPRE_Int                  arg_index,
-                 HYPRE_ParCSRMatrix  *A_ptr     )
+                 NALU_HYPRE_Int                  arg_index,
+                 NALU_HYPRE_ParCSRMatrix  *A_ptr     )
 {
-   HYPRE_BigInt              nx, ny, nz;
-   HYPRE_Int                 P, Q, R;
-   HYPRE_Real          cx, cy, cz;
-   HYPRE_Real          ax, ay, az;
-   HYPRE_Real          hinx, hiny, hinz;
+   NALU_HYPRE_BigInt              nx, ny, nz;
+   NALU_HYPRE_Int                 P, Q, R;
+   NALU_HYPRE_Real          cx, cy, cz;
+   NALU_HYPRE_Real          ax, ay, az;
+   NALU_HYPRE_Real          hinx, hiny, hinz;
 
-   HYPRE_ParCSRMatrix  A;
+   NALU_HYPRE_ParCSRMatrix  A;
 
-   HYPRE_Int                 num_procs, myid;
-   HYPRE_Int                 p, q, r;
-   HYPRE_Real         *values;
+   NALU_HYPRE_Int                 num_procs, myid;
+   NALU_HYPRE_Int                 p, q, r;
+   NALU_HYPRE_Real         *values;
 
    /*-----------------------------------------------------------
     * Initialize some stuff
     *-----------------------------------------------------------*/
 
-   hypre_MPI_Comm_size(hypre_MPI_COMM_WORLD, &num_procs );
-   hypre_MPI_Comm_rank(hypre_MPI_COMM_WORLD, &myid );
+   nalu_hypre_MPI_Comm_size(nalu_hypre_MPI_COMM_WORLD, &num_procs );
+   nalu_hypre_MPI_Comm_rank(nalu_hypre_MPI_COMM_WORLD, &myid );
 
    /*-----------------------------------------------------------
     * Set defaults
@@ -1110,16 +1110,16 @@ BuildParDifConv( HYPRE_Int                  argc,
       else if ( strcmp(argv[arg_index], "-c") == 0 )
       {
          arg_index++;
-         cx = (HYPRE_Real)atof(argv[arg_index++]);
-         cy = (HYPRE_Real)atof(argv[arg_index++]);
-         cz = (HYPRE_Real)atof(argv[arg_index++]);
+         cx = (NALU_HYPRE_Real)atof(argv[arg_index++]);
+         cy = (NALU_HYPRE_Real)atof(argv[arg_index++]);
+         cz = (NALU_HYPRE_Real)atof(argv[arg_index++]);
       }
       else if ( strcmp(argv[arg_index], "-a") == 0 )
       {
          arg_index++;
-         ax = (HYPRE_Real)atof(argv[arg_index++]);
-         ay = (HYPRE_Real)atof(argv[arg_index++]);
-         az = (HYPRE_Real)atof(argv[arg_index++]);
+         ax = (NALU_HYPRE_Real)atof(argv[arg_index++]);
+         ay = (NALU_HYPRE_Real)atof(argv[arg_index++]);
+         az = (NALU_HYPRE_Real)atof(argv[arg_index++]);
       }
       else
       {
@@ -1133,7 +1133,7 @@ BuildParDifConv( HYPRE_Int                  argc,
 
    if ((P * Q * R) != num_procs)
    {
-      hypre_printf("Error: Invalid number of processors or processor topology \n");
+      nalu_hypre_printf("Error: Invalid number of processors or processor topology \n");
       exit(1);
    }
 
@@ -1143,12 +1143,12 @@ BuildParDifConv( HYPRE_Int                  argc,
 
    if (myid == 0)
    {
-      hypre_printf("  Convection-Diffusion: \n");
-      hypre_printf("    -cx Dxx - cy Dyy - cz Dzz + ax Dx + ay Dy + az Dz = f\n");
-      hypre_printf("    (nx, ny, nz) = (%b, %b, %b)\n", nx, ny, nz);
-      hypre_printf("    (Px, Py, Pz) = (%d, %d, %d)\n", P,  Q,  R);
-      hypre_printf("    (cx, cy, cz) = (%f, %f, %f)\n", cx, cy, cz);
-      hypre_printf("    (ax, ay, az) = (%f, %f, %f)\n\n", ax, ay, az);
+      nalu_hypre_printf("  Convection-Diffusion: \n");
+      nalu_hypre_printf("    -cx Dxx - cy Dyy - cz Dzz + ax Dx + ay Dy + az Dz = f\n");
+      nalu_hypre_printf("    (nx, ny, nz) = (%b, %b, %b)\n", nx, ny, nz);
+      nalu_hypre_printf("    (Px, Py, Pz) = (%d, %d, %d)\n", P,  Q,  R);
+      nalu_hypre_printf("    (cx, cy, cz) = (%f, %f, %f)\n", cx, cy, cz);
+      nalu_hypre_printf("    (ax, ay, az) = (%f, %f, %f)\n\n", ax, ay, az);
    }
 
    /*-----------------------------------------------------------
@@ -1164,7 +1164,7 @@ BuildParDifConv( HYPRE_Int                  argc,
     * Generate the matrix
     *-----------------------------------------------------------*/
 
-   values = hypre_CTAlloc(HYPRE_Real,  7, HYPRE_MEMORY_HOST);
+   values = nalu_hypre_CTAlloc(NALU_HYPRE_Real,  7, NALU_HYPRE_MEMORY_HOST);
 
    values[1] = -cx / (hinx * hinx);
    values[2] = -cy / (hiny * hiny);
@@ -1187,10 +1187,10 @@ BuildParDifConv( HYPRE_Int                  argc,
       values[0] += 2.0 * cz / (hinz * hinz) - 1.0 * az / hinz;
    }
 
-   A = (HYPRE_ParCSRMatrix) GenerateDifConv(hypre_MPI_COMM_WORLD,
+   A = (NALU_HYPRE_ParCSRMatrix) GenerateDifConv(nalu_hypre_MPI_COMM_WORLD,
                                             nx, ny, nz, P, Q, R, p, q, r, values);
 
-   hypre_TFree(values, HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
 
    *A_ptr = A;
 
@@ -1204,24 +1204,24 @@ BuildParDifConv( HYPRE_Int                  argc,
  * Parameters given in command line.
  *----------------------------------------------------------------------*/
 
-HYPRE_Int
-BuildParFromOneFile( HYPRE_Int                  argc,
+NALU_HYPRE_Int
+BuildParFromOneFile( NALU_HYPRE_Int                  argc,
                      char                *argv[],
-                     HYPRE_Int                  arg_index,
-                     HYPRE_ParCSRMatrix  *A_ptr     )
+                     NALU_HYPRE_Int                  arg_index,
+                     NALU_HYPRE_ParCSRMatrix  *A_ptr     )
 {
    char               *filename;
 
-   HYPRE_ParCSRMatrix  A;
-   HYPRE_CSRMatrix  A_CSR = NULL;
+   NALU_HYPRE_ParCSRMatrix  A;
+   NALU_HYPRE_CSRMatrix  A_CSR = NULL;
 
-   HYPRE_Int                 myid;
+   NALU_HYPRE_Int                 myid;
 
    /*-----------------------------------------------------------
     * Initialize some stuff
     *-----------------------------------------------------------*/
 
-   hypre_MPI_Comm_rank(hypre_MPI_COMM_WORLD, &myid );
+   nalu_hypre_MPI_Comm_rank(nalu_hypre_MPI_COMM_WORLD, &myid );
 
    /*-----------------------------------------------------------
     * Parse command line
@@ -1233,7 +1233,7 @@ BuildParFromOneFile( HYPRE_Int                  argc,
    }
    else
    {
-      hypre_printf("Error: No filename specified \n");
+      nalu_hypre_printf("Error: No filename specified \n");
       exit(1);
    }
 
@@ -1243,19 +1243,19 @@ BuildParFromOneFile( HYPRE_Int                  argc,
 
    if (myid == 0)
    {
-      hypre_printf("  FromFile: %s\n", filename);
+      nalu_hypre_printf("  FromFile: %s\n", filename);
 
       /*-----------------------------------------------------------
        * Generate the matrix
        *-----------------------------------------------------------*/
 
-      A_CSR = HYPRE_CSRMatrixRead(filename);
+      A_CSR = NALU_HYPRE_CSRMatrixRead(filename);
    }
-   HYPRE_CSRMatrixToParCSRMatrix(hypre_MPI_COMM_WORLD, A_CSR, NULL, NULL, &A);
+   NALU_HYPRE_CSRMatrixToParCSRMatrix(nalu_hypre_MPI_COMM_WORLD, A_CSR, NULL, NULL, &A);
 
    *A_ptr = A;
 
-   if (myid == 0) { HYPRE_CSRMatrixDestroy(A_CSR); }
+   if (myid == 0) { NALU_HYPRE_CSRMatrixDestroy(A_CSR); }
 
    return (0);
 }
@@ -1265,25 +1265,25 @@ BuildParFromOneFile( HYPRE_Int                  argc,
  * giving each about using the distribution of the matrix A.
  *----------------------------------------------------------------------*/
 
-HYPRE_Int
-BuildRhsParFromOneFile( HYPRE_Int            argc,
+NALU_HYPRE_Int
+BuildRhsParFromOneFile( NALU_HYPRE_Int            argc,
                         char                *argv[],
-                        HYPRE_Int            arg_index,
-                        HYPRE_BigInt        *partitioning,
-                        HYPRE_ParVector     *b_ptr     )
+                        NALU_HYPRE_Int            arg_index,
+                        NALU_HYPRE_BigInt        *partitioning,
+                        NALU_HYPRE_ParVector     *b_ptr     )
 {
    char           *filename;
 
-   HYPRE_ParVector b;
-   HYPRE_Vector    b_CSR = NULL;
+   NALU_HYPRE_ParVector b;
+   NALU_HYPRE_Vector    b_CSR = NULL;
 
-   HYPRE_Int             myid;
+   NALU_HYPRE_Int             myid;
 
    /*-----------------------------------------------------------
     * Initialize some stuff
     *-----------------------------------------------------------*/
 
-   hypre_MPI_Comm_rank(hypre_MPI_COMM_WORLD, &myid );
+   nalu_hypre_MPI_Comm_rank(nalu_hypre_MPI_COMM_WORLD, &myid );
 
    /*-----------------------------------------------------------
     * Parse command line
@@ -1295,7 +1295,7 @@ BuildRhsParFromOneFile( HYPRE_Int            argc,
    }
    else
    {
-      hypre_printf("Error: No filename specified \n");
+      nalu_hypre_printf("Error: No filename specified \n");
       exit(1);
    }
 
@@ -1305,19 +1305,19 @@ BuildRhsParFromOneFile( HYPRE_Int            argc,
 
    if (myid == 0)
    {
-      hypre_printf("  Rhs FromFile: %s\n", filename);
+      nalu_hypre_printf("  Rhs FromFile: %s\n", filename);
 
       /*-----------------------------------------------------------
        * Generate the matrix
        *-----------------------------------------------------------*/
 
-      b_CSR = HYPRE_VectorRead(filename);
+      b_CSR = NALU_HYPRE_VectorRead(filename);
    }
-   HYPRE_VectorToParVector(hypre_MPI_COMM_WORLD, b_CSR, partitioning, &b);
+   NALU_HYPRE_VectorToParVector(nalu_hypre_MPI_COMM_WORLD, b_CSR, partitioning, &b);
 
    *b_ptr = b;
 
-   HYPRE_VectorDestroy(b_CSR);
+   NALU_HYPRE_VectorDestroy(b_CSR);
 
    return (0);
 }
@@ -1327,27 +1327,27 @@ BuildRhsParFromOneFile( HYPRE_Int            argc,
  * Parameters given in command line.
  *----------------------------------------------------------------------*/
 
-HYPRE_Int
-BuildParLaplacian9pt( HYPRE_Int            argc,
+NALU_HYPRE_Int
+BuildParLaplacian9pt( NALU_HYPRE_Int            argc,
                       char                *argv[],
-                      HYPRE_Int            arg_index,
-                      HYPRE_ParCSRMatrix  *A_ptr     )
+                      NALU_HYPRE_Int            arg_index,
+                      NALU_HYPRE_ParCSRMatrix  *A_ptr     )
 {
-   HYPRE_BigInt              nx, ny;
-   HYPRE_Int                 P, Q;
+   NALU_HYPRE_BigInt              nx, ny;
+   NALU_HYPRE_Int                 P, Q;
 
-   HYPRE_ParCSRMatrix  A;
+   NALU_HYPRE_ParCSRMatrix  A;
 
-   HYPRE_Int                 num_procs, myid;
-   HYPRE_Int                 p, q;
-   HYPRE_Real         *values;
+   NALU_HYPRE_Int                 num_procs, myid;
+   NALU_HYPRE_Int                 p, q;
+   NALU_HYPRE_Real         *values;
 
    /*-----------------------------------------------------------
     * Initialize some stuff
     *-----------------------------------------------------------*/
 
-   hypre_MPI_Comm_size(hypre_MPI_COMM_WORLD, &num_procs );
-   hypre_MPI_Comm_rank(hypre_MPI_COMM_WORLD, &myid );
+   nalu_hypre_MPI_Comm_size(nalu_hypre_MPI_COMM_WORLD, &num_procs );
+   nalu_hypre_MPI_Comm_rank(nalu_hypre_MPI_COMM_WORLD, &myid );
 
    /*-----------------------------------------------------------
     * Set defaults
@@ -1389,7 +1389,7 @@ BuildParLaplacian9pt( HYPRE_Int            argc,
 
    if ((P * Q) != num_procs)
    {
-      hypre_printf("Error: Invalid number of processors or processor topology \n");
+      nalu_hypre_printf("Error: Invalid number of processors or processor topology \n");
       exit(1);
    }
 
@@ -1399,9 +1399,9 @@ BuildParLaplacian9pt( HYPRE_Int            argc,
 
    if (myid == 0)
    {
-      hypre_printf("  Laplacian 9pt:\n");
-      hypre_printf("    (nx, ny) = (%b, %b)\n", nx, ny);
-      hypre_printf("    (Px, Py) = (%d, %d)\n", P,  Q);
+      nalu_hypre_printf("  Laplacian 9pt:\n");
+      nalu_hypre_printf("    (nx, ny) = (%b, %b)\n", nx, ny);
+      nalu_hypre_printf("    (Px, Py) = (%d, %d)\n", P,  Q);
    }
 
    /*-----------------------------------------------------------
@@ -1416,7 +1416,7 @@ BuildParLaplacian9pt( HYPRE_Int            argc,
     * Generate the matrix
     *-----------------------------------------------------------*/
 
-   values = hypre_CTAlloc(HYPRE_Real,  2, HYPRE_MEMORY_HOST);
+   values = nalu_hypre_CTAlloc(NALU_HYPRE_Real,  2, NALU_HYPRE_MEMORY_HOST);
 
    values[1] = -1.0;
 
@@ -1434,10 +1434,10 @@ BuildParLaplacian9pt( HYPRE_Int            argc,
       values[0] += 4.0;
    }
 
-   A = (HYPRE_ParCSRMatrix) GenerateLaplacian9pt(hypre_MPI_COMM_WORLD,
+   A = (NALU_HYPRE_ParCSRMatrix) GenerateLaplacian9pt(nalu_hypre_MPI_COMM_WORLD,
                                                  nx, ny, P, Q, p, q, values);
 
-   hypre_TFree(values, HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
 
    *A_ptr = A;
 
@@ -1448,27 +1448,27 @@ BuildParLaplacian9pt( HYPRE_Int            argc,
  * Parameters given in command line.
  *----------------------------------------------------------------------*/
 
-HYPRE_Int
-BuildParLaplacian27pt( HYPRE_Int                  argc,
+NALU_HYPRE_Int
+BuildParLaplacian27pt( NALU_HYPRE_Int                  argc,
                        char                *argv[],
-                       HYPRE_Int                  arg_index,
-                       HYPRE_ParCSRMatrix  *A_ptr     )
+                       NALU_HYPRE_Int                  arg_index,
+                       NALU_HYPRE_ParCSRMatrix  *A_ptr     )
 {
-   HYPRE_Int                 nx, ny, nz;
-   HYPRE_Int                 P, Q, R;
+   NALU_HYPRE_Int                 nx, ny, nz;
+   NALU_HYPRE_Int                 P, Q, R;
 
-   HYPRE_ParCSRMatrix  A;
+   NALU_HYPRE_ParCSRMatrix  A;
 
-   HYPRE_Int                 num_procs, myid;
-   HYPRE_Int                 p, q, r;
-   HYPRE_Real         *values;
+   NALU_HYPRE_Int                 num_procs, myid;
+   NALU_HYPRE_Int                 p, q, r;
+   NALU_HYPRE_Real         *values;
 
    /*-----------------------------------------------------------
     * Initialize some stuff
     *-----------------------------------------------------------*/
 
-   hypre_MPI_Comm_size(hypre_MPI_COMM_WORLD, &num_procs );
-   hypre_MPI_Comm_rank(hypre_MPI_COMM_WORLD, &myid );
+   nalu_hypre_MPI_Comm_size(nalu_hypre_MPI_COMM_WORLD, &num_procs );
+   nalu_hypre_MPI_Comm_rank(nalu_hypre_MPI_COMM_WORLD, &myid );
 
    /*-----------------------------------------------------------
     * Set defaults
@@ -1514,7 +1514,7 @@ BuildParLaplacian27pt( HYPRE_Int                  argc,
 
    if ((P * Q * R) != num_procs)
    {
-      hypre_printf("Error: Invalid number of processors or processor topology \n");
+      nalu_hypre_printf("Error: Invalid number of processors or processor topology \n");
       exit(1);
    }
 
@@ -1524,9 +1524,9 @@ BuildParLaplacian27pt( HYPRE_Int                  argc,
 
    if (myid == 0)
    {
-      hypre_printf("  Laplacian_27pt:\n");
-      hypre_printf("    (nx, ny, nz) = (%b, %b, %b)\n", nx, ny, nz);
-      hypre_printf("    (Px, Py, Pz) = (%d, %d, %d)\n\n", P,  Q,  R);
+      nalu_hypre_printf("  Laplacian_27pt:\n");
+      nalu_hypre_printf("    (nx, ny, nz) = (%b, %b, %b)\n", nx, ny, nz);
+      nalu_hypre_printf("    (Px, Py, Pz) = (%d, %d, %d)\n\n", P,  Q,  R);
    }
 
    /*-----------------------------------------------------------
@@ -1542,7 +1542,7 @@ BuildParLaplacian27pt( HYPRE_Int                  argc,
     * Generate the matrix
     *-----------------------------------------------------------*/
 
-   values = hypre_CTAlloc(HYPRE_Real,  2, HYPRE_MEMORY_HOST);
+   values = nalu_hypre_CTAlloc(NALU_HYPRE_Real,  2, NALU_HYPRE_MEMORY_HOST);
 
    values[0] = 26.0;
    if (nx == 1 || ny == 1 || nz == 1)
@@ -1555,10 +1555,10 @@ BuildParLaplacian27pt( HYPRE_Int                  argc,
    }
    values[1] = -1.0;
 
-   A = (HYPRE_ParCSRMatrix) GenerateLaplacian27pt(hypre_MPI_COMM_WORLD,
+   A = (NALU_HYPRE_ParCSRMatrix) GenerateLaplacian27pt(nalu_hypre_MPI_COMM_WORLD,
                                                   nx, ny, nz, P, Q, R, p, q, r, values);
 
-   hypre_TFree(values, HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(values, NALU_HYPRE_MEMORY_HOST);
 
    *A_ptr = A;
 

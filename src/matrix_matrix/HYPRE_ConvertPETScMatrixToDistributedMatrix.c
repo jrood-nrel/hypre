@@ -11,64 +11,64 @@
  *
  *****************************************************************************/
 
-#ifdef HYPRE_DEBUG
+#ifdef NALU_HYPRE_DEBUG
 #include <gmalloc.h>
 #endif
 
-#include <HYPRE_config.h>
+#include <NALU_HYPRE_config.h>
 
 #include "general.h"
 
-#include "HYPRE.h"
-#include "HYPRE_utilities.h"
+#include "NALU_HYPRE.h"
+#include "NALU_HYPRE_utilities.h"
 
 /* Prototypes for DistributedMatrix */
-#include "HYPRE_distributed_matrix_types.h"
-#include "HYPRE_distributed_matrix_protos.h"
+#include "NALU_HYPRE_distributed_matrix_types.h"
+#include "NALU_HYPRE_distributed_matrix_protos.h"
 
 #ifdef PETSC_AVAILABLE
 
 /* Matrix structure from PETSc */
 #include "sles.h"
 /*--------------------------------------------------------------------------
- * HYPRE_ConvertPETScMatrixToDistributedMatrix
+ * NALU_HYPRE_ConvertPETScMatrixToDistributedMatrix
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_ConvertPETScMatrixToDistributedMatrix(
+NALU_HYPRE_Int
+NALU_HYPRE_ConvertPETScMatrixToDistributedMatrix(
    Mat PETSc_matrix,
-   HYPRE_DistributedMatrix *DistributedMatrix )
+   NALU_HYPRE_DistributedMatrix *DistributedMatrix )
 {
-   HYPRE_Int ierr;
-   MPI_Comm hypre_MPI_Comm;
-   HYPRE_BigInt M, N;
-#ifdef HYPRE_TIMING
-   HYPRE_Int           timer;
+   NALU_HYPRE_Int ierr;
+   MPI_Comm nalu_hypre_MPI_Comm;
+   NALU_HYPRE_BigInt M, N;
+#ifdef NALU_HYPRE_TIMING
+   NALU_HYPRE_Int           timer;
 #endif
 
 
 
    if (!PETSc_matrix) { return (-1); }
 
-#ifdef HYPRE_TIMING
-   timer = hypre_InitializeTiming( "ConvertPETScMatrixToDistributedMatrix");
-   hypre_BeginTiming( timer );
+#ifdef NALU_HYPRE_TIMING
+   timer = nalu_hypre_InitializeTiming( "ConvertPETScMatrixToDistributedMatrix");
+   nalu_hypre_BeginTiming( timer );
 #endif
 
 
    ierr = PetscObjectGetComm( (PetscObject) PETSc_matrix, &MPI_Comm); CHKERRA(ierr);
 
-   ierr = HYPRE_DistributedMatrixCreate( MPI_Comm, DistributedMatrix );
+   ierr = NALU_HYPRE_DistributedMatrixCreate( MPI_Comm, DistributedMatrix );
    /* if(ierr) return(ierr); */
 
-   ierr = HYPRE_DistributedMatrixSetLocalStorageType( *DistributedMatrix,
-                                                      HYPRE_PETSC );
+   ierr = NALU_HYPRE_DistributedMatrixSetLocalStorageType( *DistributedMatrix,
+                                                      NALU_HYPRE_PETSC );
    /* if(ierr) return(ierr);*/
 
-   ierr = HYPRE_DistributedMatrixInitialize( *DistributedMatrix );
+   ierr = NALU_HYPRE_DistributedMatrixInitialize( *DistributedMatrix );
    /* if(ierr) return(ierr);*/
 
-   ierr = HYPRE_DistributedMatrixSetLocalStorage( *DistributedMatrix, PETSc_matrix );
+   ierr = NALU_HYPRE_DistributedMatrixSetLocalStorage( *DistributedMatrix, PETSc_matrix );
    /* if(ierr) return(ierr); */
    /* Note that this is kind of cheating, since the Mat structure contains more
       than local information... the alternative is to extract the global info
@@ -78,14 +78,14 @@ HYPRE_ConvertPETScMatrixToDistributedMatrix(
 
    ierr = MatGetSize( PETSc_matrix, &M, &N);
    if (ierr) { return (ierr); }
-   ierr = HYPRE_DistributedMatrixSetDims( *DistributedMatrix, M, N);
+   ierr = NALU_HYPRE_DistributedMatrixSetDims( *DistributedMatrix, M, N);
 
-   ierr = HYPRE_DistributedMatrixAssemble( *DistributedMatrix );
+   ierr = NALU_HYPRE_DistributedMatrixAssemble( *DistributedMatrix );
    /* if(ierr) return(ierr);*/
 
-#ifdef HYPRE_TIMING
-   hypre_EndTiming( timer );
-   /* hypre_FinalizeTiming( timer ); */
+#ifdef NALU_HYPRE_TIMING
+   nalu_hypre_EndTiming( timer );
+   /* nalu_hypre_FinalizeTiming( timer ); */
 #endif
 
    return (0);

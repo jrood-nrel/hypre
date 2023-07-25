@@ -7,11 +7,11 @@
 
 /******************************************************************************
  *
- * HYPRE_ParVector Fortran interface
+ * NALU_HYPRE_ParVector Fortran interface
  *
  *****************************************************************************/
 
-#include "_hypre_parcsr_mv.h"
+#include "_nalu_hypre_parcsr_mv.h"
 #include "fortran.h"
 
 #ifdef __cplusplus
@@ -19,238 +19,238 @@ extern "C" {
 #endif
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParVectorCreate
+ * NALU_HYPRE_ParVectorCreate
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_parvectorcreate, HYPRE_PARVECTORCREATE)
-( hypre_F90_Comm *comm,
-  hypre_F90_BigInt *global_size,
-  hypre_F90_BigIntArray *partitioning,
-  hypre_F90_Obj *vector,
-  hypre_F90_Int *ierr )
+nalu_hypre_F90_IFACE(nalu_hypre_parvectorcreate, NALU_HYPRE_PARVECTORCREATE)
+( nalu_hypre_F90_Comm *comm,
+  nalu_hypre_F90_BigInt *global_size,
+  nalu_hypre_F90_BigIntArray *partitioning,
+  nalu_hypre_F90_Obj *vector,
+  nalu_hypre_F90_Int *ierr )
 {
-   *ierr = (hypre_F90_Int) HYPRE_ParVectorCreate(
-              hypre_F90_PassComm (comm),
-              hypre_F90_PassBigInt (global_size),
-              hypre_F90_PassBigIntArray (partitioning),
-              hypre_F90_PassObjRef (HYPRE_ParVector, vector) );
+   *ierr = (nalu_hypre_F90_Int) NALU_HYPRE_ParVectorCreate(
+              nalu_hypre_F90_PassComm (comm),
+              nalu_hypre_F90_PassBigInt (global_size),
+              nalu_hypre_F90_PassBigIntArray (partitioning),
+              nalu_hypre_F90_PassObjRef (NALU_HYPRE_ParVector, vector) );
 
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParMultiVectorCreate
+ * NALU_HYPRE_ParMultiVectorCreate
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_parmultivectorcreate, HYPRE_PARMULTIVECTORCREATE)
-( hypre_F90_Comm *comm,
-  hypre_F90_BigInt *global_size,
-  hypre_F90_BigIntArray *partitioning,
-  hypre_F90_Int *number_vectors,
-  hypre_F90_Obj *vector,
-  hypre_F90_Int *ierr          )
+nalu_hypre_F90_IFACE(nalu_hypre_parmultivectorcreate, NALU_HYPRE_PARMULTIVECTORCREATE)
+( nalu_hypre_F90_Comm *comm,
+  nalu_hypre_F90_BigInt *global_size,
+  nalu_hypre_F90_BigIntArray *partitioning,
+  nalu_hypre_F90_Int *number_vectors,
+  nalu_hypre_F90_Obj *vector,
+  nalu_hypre_F90_Int *ierr          )
 {
-   *ierr = (hypre_F90_Int) HYPRE_ParMultiVectorCreate(
-              hypre_F90_PassComm (comm),
-              hypre_F90_PassBigInt (global_size),
-              hypre_F90_PassBigIntArray (partitioning),
-              hypre_F90_PassInt (number_vectors),
-              hypre_F90_PassObjRef (HYPRE_ParVector, vector) );
+   *ierr = (nalu_hypre_F90_Int) NALU_HYPRE_ParMultiVectorCreate(
+              nalu_hypre_F90_PassComm (comm),
+              nalu_hypre_F90_PassBigInt (global_size),
+              nalu_hypre_F90_PassBigIntArray (partitioning),
+              nalu_hypre_F90_PassInt (number_vectors),
+              nalu_hypre_F90_PassObjRef (NALU_HYPRE_ParVector, vector) );
 
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParVectorDestroy
+ * NALU_HYPRE_ParVectorDestroy
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_parvectordestroy, HYPRE_PARVECTORDESTROY)
-( hypre_F90_Obj *vector,
-  hypre_F90_Int *ierr    )
+nalu_hypre_F90_IFACE(nalu_hypre_parvectordestroy, NALU_HYPRE_PARVECTORDESTROY)
+( nalu_hypre_F90_Obj *vector,
+  nalu_hypre_F90_Int *ierr    )
 {
-   *ierr = (hypre_F90_Int)
-           ( HYPRE_ParVectorDestroy(
-                hypre_F90_PassObj (HYPRE_ParVector, vector) ) );
+   *ierr = (nalu_hypre_F90_Int)
+           ( NALU_HYPRE_ParVectorDestroy(
+                nalu_hypre_F90_PassObj (NALU_HYPRE_ParVector, vector) ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParVectorInitialize
+ * NALU_HYPRE_ParVectorInitialize
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_parvectorinitialize, HYPRE_PARVECTORINITIALIZE)
-( hypre_F90_Obj *vector,
-  hypre_F90_Int *ierr    )
+nalu_hypre_F90_IFACE(nalu_hypre_parvectorinitialize, NALU_HYPRE_PARVECTORINITIALIZE)
+( nalu_hypre_F90_Obj *vector,
+  nalu_hypre_F90_Int *ierr    )
 {
-   *ierr = (hypre_F90_Int)
-           ( HYPRE_ParVectorInitialize(
-                hypre_F90_PassObj (HYPRE_ParVector, vector) ) );
+   *ierr = (nalu_hypre_F90_Int)
+           ( NALU_HYPRE_ParVectorInitialize(
+                nalu_hypre_F90_PassObj (NALU_HYPRE_ParVector, vector) ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParVectorRead
+ * NALU_HYPRE_ParVectorRead
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_parvectorread, HYPRE_PARVECTORREAD)
-( hypre_F90_Comm *comm,
-  hypre_F90_Obj *vector,
+nalu_hypre_F90_IFACE(nalu_hypre_parvectorread, NALU_HYPRE_PARVECTORREAD)
+( nalu_hypre_F90_Comm *comm,
+  nalu_hypre_F90_Obj *vector,
   char     *file_name,
-  hypre_F90_Int *ierr       )
+  nalu_hypre_F90_Int *ierr       )
 {
-   *ierr = (hypre_F90_Int)
-           ( HYPRE_ParVectorRead(
-                hypre_F90_PassComm (comm),
+   *ierr = (nalu_hypre_F90_Int)
+           ( NALU_HYPRE_ParVectorRead(
+                nalu_hypre_F90_PassComm (comm),
                 (char *)    file_name,
-                hypre_F90_PassObjRef (HYPRE_ParVector, vector) ) );
+                nalu_hypre_F90_PassObjRef (NALU_HYPRE_ParVector, vector) ) );
 
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParVectorPrint
+ * NALU_HYPRE_ParVectorPrint
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_parvectorprint, HYPRE_PARVECTORPRINT)
-( hypre_F90_Obj *vector,
+nalu_hypre_F90_IFACE(nalu_hypre_parvectorprint, NALU_HYPRE_PARVECTORPRINT)
+( nalu_hypre_F90_Obj *vector,
   char     *fort_file_name,
-  hypre_F90_Int *fort_file_name_size,
-  hypre_F90_Int *ierr       )
+  nalu_hypre_F90_Int *fort_file_name_size,
+  nalu_hypre_F90_Int *ierr       )
 {
-   HYPRE_Int i;
+   NALU_HYPRE_Int i;
    char *c_file_name;
 
-   c_file_name = hypre_CTAlloc(char,  *fort_file_name_size, HYPRE_MEMORY_HOST);
+   c_file_name = nalu_hypre_CTAlloc(char,  *fort_file_name_size, NALU_HYPRE_MEMORY_HOST);
 
    for (i = 0; i < *fort_file_name_size; i++)
    {
       c_file_name[i] = fort_file_name[i];
    }
 
-   *ierr = (hypre_F90_Int)
-           ( HYPRE_ParVectorPrint(
-                hypre_F90_PassObj (HYPRE_ParVector, vector),
+   *ierr = (nalu_hypre_F90_Int)
+           ( NALU_HYPRE_ParVectorPrint(
+                nalu_hypre_F90_PassObj (NALU_HYPRE_ParVector, vector),
                 (char *)           c_file_name ) );
 
-   hypre_TFree(c_file_name, HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(c_file_name, NALU_HYPRE_MEMORY_HOST);
 
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParVectorSetConstantValues
+ * NALU_HYPRE_ParVectorSetConstantValues
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_parvectorsetconstantvalue, HYPRE_PARVECTORSETCONSTANTVALUE)
-( hypre_F90_Obj *vector,
-  hypre_F90_Complex *value,
-  hypre_F90_Int *ierr    )
+nalu_hypre_F90_IFACE(nalu_hypre_parvectorsetconstantvalue, NALU_HYPRE_PARVECTORSETCONSTANTVALUE)
+( nalu_hypre_F90_Obj *vector,
+  nalu_hypre_F90_Complex *value,
+  nalu_hypre_F90_Int *ierr    )
 {
-   *ierr = (hypre_F90_Int)
-           ( HYPRE_ParVectorSetConstantValues(
-                hypre_F90_PassObj (HYPRE_ParVector, vector),
-                hypre_F90_PassComplex (value)) );
+   *ierr = (nalu_hypre_F90_Int)
+           ( NALU_HYPRE_ParVectorSetConstantValues(
+                nalu_hypre_F90_PassObj (NALU_HYPRE_ParVector, vector),
+                nalu_hypre_F90_PassComplex (value)) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParVectorSetRandomValues
+ * NALU_HYPRE_ParVectorSetRandomValues
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_parvectorsetrandomvalues, HYPRE_PARVECTORSETRANDOMVALUES)
-( hypre_F90_Obj *vector,
-  hypre_F90_Int *seed,
-  hypre_F90_Int *ierr    )
+nalu_hypre_F90_IFACE(nalu_hypre_parvectorsetrandomvalues, NALU_HYPRE_PARVECTORSETRANDOMVALUES)
+( nalu_hypre_F90_Obj *vector,
+  nalu_hypre_F90_Int *seed,
+  nalu_hypre_F90_Int *ierr    )
 {
-   *ierr = (hypre_F90_Int)
-           ( HYPRE_ParVectorSetRandomValues(
-                hypre_F90_PassObj (HYPRE_ParVector, vector),
-                hypre_F90_PassInt (seed)) );
+   *ierr = (nalu_hypre_F90_Int)
+           ( NALU_HYPRE_ParVectorSetRandomValues(
+                nalu_hypre_F90_PassObj (NALU_HYPRE_ParVector, vector),
+                nalu_hypre_F90_PassInt (seed)) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParVectorCopy
+ * NALU_HYPRE_ParVectorCopy
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_parvectorcopy, HYPRE_PARVECTORCOPY)
-( hypre_F90_Obj *x,
-  hypre_F90_Obj *y,
-  hypre_F90_Int *ierr    )
+nalu_hypre_F90_IFACE(nalu_hypre_parvectorcopy, NALU_HYPRE_PARVECTORCOPY)
+( nalu_hypre_F90_Obj *x,
+  nalu_hypre_F90_Obj *y,
+  nalu_hypre_F90_Int *ierr    )
 {
-   *ierr = (hypre_F90_Int)
-           ( HYPRE_ParVectorCopy(
-                hypre_F90_PassObj (HYPRE_ParVector, x),
-                hypre_F90_PassObj (HYPRE_ParVector, y)) );
+   *ierr = (nalu_hypre_F90_Int)
+           ( NALU_HYPRE_ParVectorCopy(
+                nalu_hypre_F90_PassObj (NALU_HYPRE_ParVector, x),
+                nalu_hypre_F90_PassObj (NALU_HYPRE_ParVector, y)) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParVectorCloneShallow
+ * NALU_HYPRE_ParVectorCloneShallow
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_parvectorcloneshallow, HYPRE_PARVECTORCLONESHALLOW)
-( hypre_F90_Obj *x,
-  hypre_F90_Obj *xclone,
-  hypre_F90_Int *ierr    )
+nalu_hypre_F90_IFACE(nalu_hypre_parvectorcloneshallow, NALU_HYPRE_PARVECTORCLONESHALLOW)
+( nalu_hypre_F90_Obj *x,
+  nalu_hypre_F90_Obj *xclone,
+  nalu_hypre_F90_Int *ierr    )
 {
-   *xclone = (hypre_F90_Obj)
-             ( HYPRE_ParVectorCloneShallow(
-                  hypre_F90_PassObj (HYPRE_ParVector, x) ) );
+   *xclone = (nalu_hypre_F90_Obj)
+             ( NALU_HYPRE_ParVectorCloneShallow(
+                  nalu_hypre_F90_PassObj (NALU_HYPRE_ParVector, x) ) );
    *ierr = 0;
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParVectorScale
+ * NALU_HYPRE_ParVectorScale
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_parvectorscale, HYPRE_PARVECTORSCALE)
-( hypre_F90_Complex *value,
-  hypre_F90_Obj *x,
-  hypre_F90_Int *ierr    )
+nalu_hypre_F90_IFACE(nalu_hypre_parvectorscale, NALU_HYPRE_PARVECTORSCALE)
+( nalu_hypre_F90_Complex *value,
+  nalu_hypre_F90_Obj *x,
+  nalu_hypre_F90_Int *ierr    )
 {
-   *ierr = (hypre_F90_Int)
-           ( HYPRE_ParVectorScale(
-                hypre_F90_PassComplex (value),
-                hypre_F90_PassObj (HYPRE_ParVector, x) ) );
+   *ierr = (nalu_hypre_F90_Int)
+           ( NALU_HYPRE_ParVectorScale(
+                nalu_hypre_F90_PassComplex (value),
+                nalu_hypre_F90_PassObj (NALU_HYPRE_ParVector, x) ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParVectorAxpy
+ * NALU_HYPRE_ParVectorAxpy
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_parvectoraxpy, HYPRE_PARVECTORAXPY)
-( hypre_F90_Complex *value,
-  hypre_F90_Obj *x,
-  hypre_F90_Obj *y,
-  hypre_F90_Int *ierr    )
+nalu_hypre_F90_IFACE(nalu_hypre_parvectoraxpy, NALU_HYPRE_PARVECTORAXPY)
+( nalu_hypre_F90_Complex *value,
+  nalu_hypre_F90_Obj *x,
+  nalu_hypre_F90_Obj *y,
+  nalu_hypre_F90_Int *ierr    )
 {
-   *ierr = (hypre_F90_Int)
-           ( HYPRE_ParVectorAxpy(
-                hypre_F90_PassComplex (value),
-                hypre_F90_PassObj (HYPRE_ParVector, x),
-                hypre_F90_PassObj (HYPRE_ParVector, y) ) );
+   *ierr = (nalu_hypre_F90_Int)
+           ( NALU_HYPRE_ParVectorAxpy(
+                nalu_hypre_F90_PassComplex (value),
+                nalu_hypre_F90_PassObj (NALU_HYPRE_ParVector, x),
+                nalu_hypre_F90_PassObj (NALU_HYPRE_ParVector, y) ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParVectorInnerProd
+ * NALU_HYPRE_ParVectorInnerProd
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_parvectorinnerprod, HYPRE_PARVECTORINNERPROD)
-(hypre_F90_Obj *x,
- hypre_F90_Obj *y,
- hypre_F90_Complex *prod,
- hypre_F90_Int *ierr    )
+nalu_hypre_F90_IFACE(nalu_hypre_parvectorinnerprod, NALU_HYPRE_PARVECTORINNERPROD)
+(nalu_hypre_F90_Obj *x,
+ nalu_hypre_F90_Obj *y,
+ nalu_hypre_F90_Complex *prod,
+ nalu_hypre_F90_Int *ierr    )
 {
-   *ierr = (hypre_F90_Int)
-           ( HYPRE_ParVectorInnerProd(
-                hypre_F90_PassObj (HYPRE_ParVector, x),
-                hypre_F90_PassObj (HYPRE_ParVector, y),
-                hypre_F90_PassRealRef (prod) ) );
+   *ierr = (nalu_hypre_F90_Int)
+           ( NALU_HYPRE_ParVectorInnerProd(
+                nalu_hypre_F90_PassObj (NALU_HYPRE_ParVector, x),
+                nalu_hypre_F90_PassObj (NALU_HYPRE_ParVector, y),
+                nalu_hypre_F90_PassRealRef (prod) ) );
 }
 
 #ifdef __cplusplus

@@ -5,14 +5,14 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#ifndef HYPRE_GSELIM_H
-#define HYPRE_GSELIM_H
+#ifndef NALU_HYPRE_GSELIM_H
+#define NALU_HYPRE_GSELIM_H
 
-#define hypre_gselim(A,x,n,error)                      \
+#define nalu_hypre_gselim(A,x,n,error)                      \
 {                                                      \
-   HYPRE_Int    j,k,m;                                 \
-   HYPRE_Real factor;                                  \
-   HYPRE_Real divA;                                    \
+   NALU_HYPRE_Int    j,k,m;                                 \
+   NALU_HYPRE_Real factor;                                  \
+   NALU_HYPRE_Real divA;                                    \
    error = 0;                                          \
    if (n == 1)  /* A is 1x1 */                         \
    {                                                   \
@@ -65,5 +65,5 @@
    }                                                   \
 }
 
-#endif /* #ifndef HYPRE_GSELIM_H */
+#endif /* #ifndef NALU_HYPRE_GSELIM_H */
 

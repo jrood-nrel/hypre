@@ -6,7 +6,7 @@
  ******************************************************************************/
 
 // *************************************************************************
-// test program for HYPRE_LinSysCore
+// test program for NALU_HYPRE_LinSysCore
 // *************************************************************************
 
 //***************************************************************************
@@ -21,12 +21,12 @@
 // HYPRE includes
 //---------------------------------------------------------------------------
 
-#include "HYPRE.h"
-#include "utilities/_hypre_utilities.h"
-#include "IJ_mv/HYPRE_IJ_mv.h"
-#include "parcsr_mv/HYPRE_parcsr_mv.h"
-#include "parcsr_ls/HYPRE_parcsr_ls.h"
-#include "HYPRE_LinSysCore.h"
+#include "NALU_HYPRE.h"
+#include "utilities/_nalu_hypre_utilities.h"
+#include "IJ_mv/NALU_HYPRE_IJ_mv.h"
+#include "parcsr_mv/NALU_HYPRE_parcsr_mv.h"
+#include "parcsr_ls/NALU_HYPRE_parcsr_ls.h"
+#include "NALU_HYPRE_LinSysCore.h"
 
 #define HABS(x) ((x) > 0 ? (x) : -(x))
 
@@ -34,10 +34,10 @@
 // local defines and local and external functions
 //---------------------------------------------------------------------------
 
-void fei_hypre_test(int, char **);
-void hypre_read_matrix(double **val, int **ia, int **ja, int *N, int *M,
+void fei_nalu_hypre_test(int, char **);
+void nalu_hypre_read_matrix(double **val, int **ia, int **ja, int *N, int *M,
                        char *matfile);
-void hypre_read_rhs(double **val, int *N, char *rhsfile);
+void nalu_hypre_read_rhs(double **val, int *N, char *rhsfile);
 
 //***************************************************************************
 // main program
@@ -45,21 +45,21 @@ void hypre_read_rhs(double **val, int *N, char *rhsfile);
 
 int main(int argc, char *argv[])
 {
-    fei_hypre_test(argc, argv);
+    fei_nalu_hypre_test(argc, argv);
 }
 
 //***************************************************************************
 // a test program
 //***************************************************************************
 
-void fei_hypre_test(int argc, char *argv[])
+void fei_nalu_hypre_test(int argc, char *argv[])
 {
     int    i, j, k, my_rank, num_procs, nrows, status;
     int    *ia, *ja, ncnt, index, ncols, iterations;
     int    *rowLengths, **colIndices;
     double *val, *rhs, *sol;
     char   tname[20], *paramString = new char[100];
-    HYPRE_ParCSRMatrix G_csr;
+    NALU_HYPRE_ParCSRMatrix G_csr;
     Data               data;
 
     //------------------------------------------------------------------
@@ -70,13 +70,13 @@ void fei_hypre_test(int argc, char *argv[])
     MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
     MPI_Comm_size(MPI_COMM_WORLD, &num_procs);
 
-    HYPRE_LinSysCore H(MPI_COMM_WORLD);
+    NALU_HYPRE_LinSysCore H(MPI_COMM_WORLD);
 
     //------------------------------------------------------------------
     // read edge matrix
     //------------------------------------------------------------------
 
-    hypre_read_matrix(&val,&ia,&ja,&nrows,&ncols,"Edge.ij");
+    nalu_hypre_read_matrix(&val,&ia,&ja,&nrows,&ncols,"Edge.ij");
     H.createMatricesAndVectors(nrows, 1, nrows);
     rowLengths = new int[nrows];
     colIndices = new int*[nrows];
@@ -107,9 +107,9 @@ void fei_hypre_test(int argc, char *argv[])
     // read gradient matrix
     //------------------------------------------------------------------
 
-    HYPRE_LinSysCore G(MPI_COMM_WORLD);
-    hypre_read_matrix(&val, &ia, &ja, &nrows, &ncols, "Grad.ij");
-    if (nrows != ncols) G.HYPRE_LSC_SetColMap(0, ncols-1);
+    NALU_HYPRE_LinSysCore G(MPI_COMM_WORLD);
+    nalu_hypre_read_matrix(&val, &ia, &ja, &nrows, &ncols, "Grad.ij");
+    if (nrows != ncols) G.NALU_HYPRE_LSC_SetColMap(0, ncols-1);
     G.createMatricesAndVectors(nrows, 1, nrows);
     rowLengths = new int[nrows];
     colIndices = new int*[nrows];
@@ -135,7 +135,7 @@ void fei_hypre_test(int argc, char *argv[])
     delete [] ia;
     delete [] ja;
     delete [] val;
-    HYPRE_IJMatrixGetObject(G.HYA_, (void**) &G_csr);
+    NALU_HYPRE_IJMatrixGetObject(G.HYA_, (void**) &G_csr);
     data.setDataPtr((void *) G_csr);
     strcpy(tname, "GEN");
     data.setTypeName(tname);
@@ -146,7 +146,7 @@ void fei_hypre_test(int argc, char *argv[])
     // load the right hand side
     //------------------------------------------------------------------
 
-    hypre_read_rhs(&rhs, &i, "rhs.ij");
+    nalu_hypre_read_rhs(&rhs, &i, "rhs.ij");
     if (i < 0)
     {
        rhs = new double[nrows];
@@ -197,16 +197,16 @@ void fei_hypre_test(int argc, char *argv[])
 }
 
 #if 0
-    HYPRE_IJVectorGetObject(H.HYx_, (void**) &x_csr);
-    HYPRE_IJVectorGetObject(H.HYb_, (void**) &b_csr);
-    HYPRE_IJMatrixGetObject(H.HYA_, (void**) &A_csr);
+    NALU_HYPRE_IJVectorGetObject(H.HYx_, (void**) &x_csr);
+    NALU_HYPRE_IJVectorGetObject(H.HYb_, (void**) &b_csr);
+    NALU_HYPRE_IJMatrixGetObject(H.HYA_, (void**) &A_csr);
 #endif
 
 //***************************************************************************
 // read a matrix
 //***************************************************************************
 
-void hypre_read_matrix(double **val, int **ia, int **ja, int *N, int *M,
+void nalu_hypre_read_matrix(double **val, int **ia, int **ja, int *N, int *M,
                        char *matfile)
 {
     int    i, nrows, ncols, nnz, icount, rowindex, colindex, curr_row;
@@ -262,7 +262,7 @@ void hypre_read_matrix(double **val, int **ia, int **ja, int *N, int *M,
 // read a right hand side
 //***************************************************************************
 
-void hypre_read_rhs(double **val, int *N, char *rhsfile)
+void nalu_hypre_read_rhs(double **val, int *N, char *rhsfile)
 {
     int    i, nrows, rowindex;
     double *rhs, value;

@@ -16,9 +16,9 @@
 #include <string.h>
 #include <stdlib.h>
 #include "mli_solver_seqsuperlu.h"
-#include "HYPRE.h"
-#include "_hypre_parcsr_mv.h"
-#include "_hypre_IJ_mv.h"
+#include "NALU_HYPRE.h"
+#include "_nalu_hypre_parcsr_mv.h"
+#include "_nalu_hypre_IJ_mv.h"
 
 /* ****************************************************************************
  * constructor 
@@ -105,8 +105,8 @@ int MLI_Solver_SeqSuperLU::setup( MLI_Matrix *Amat )
    int      irow, icol, *rowArray, *countArray, colNum, index, nSubRows;
    int      *etree, permcSpec, lwork, panelSize, relax, info, rowCnt;
    double   *csrAA, *cscAA;
-   hypre_ParCSRMatrix  *hypreA;
-   hypre_CSRMatrix     *ADiag;
+   nalu_hypre_ParCSRMatrix  *hypreA;
+   nalu_hypre_CSRMatrix     *ADiag;
    SuperMatrix         AC, superLU_Amat;
    superlu_options_t   slu_options;
    SuperLUStat_t       slu_stat;
@@ -122,14 +122,14 @@ int MLI_Solver_SeqSuperLU::setup( MLI_Matrix *Amat )
       exit(1);
    }
    mliAmat_ = Amat;
-   if ( !strcmp( mliAmat_->getName(), "HYPRE_ParCSR" ) )
+   if ( !strcmp( mliAmat_->getName(), "NALU_HYPRE_ParCSR" ) )
    {
-      hypreA = (hypre_ParCSRMatrix *) mliAmat_->getMatrix();
-      ADiag = hypre_ParCSRMatrixDiag(hypreA);
+      hypreA = (nalu_hypre_ParCSRMatrix *) mliAmat_->getMatrix();
+      ADiag = nalu_hypre_ParCSRMatrixDiag(hypreA);
    }
-   else if ( !strcmp( mliAmat_->getName(), "HYPRE_CSR" ) )
+   else if ( !strcmp( mliAmat_->getName(), "NALU_HYPRE_CSR" ) )
    {
-      ADiag = (hypre_CSRMatrix *) mliAmat_->getMatrix();
+      ADiag = (nalu_hypre_CSRMatrix *) mliAmat_->getMatrix();
    }
    else
    {
@@ -142,11 +142,11 @@ int MLI_Solver_SeqSuperLU::setup( MLI_Matrix *Amat )
     * fetch matrix
     * -------------------------------------------------------------*/
  
-   csrAA = hypre_CSRMatrixData(ADiag);
-   csrIA = hypre_CSRMatrixI(ADiag);
-   csrJA = hypre_CSRMatrixJ(ADiag);
-   nrows = hypre_CSRMatrixNumRows(ADiag);
-   nnz   = hypre_CSRMatrixNumNonzeros(ADiag);
+   csrAA = nalu_hypre_CSRMatrixData(ADiag);
+   csrIA = nalu_hypre_CSRMatrixI(ADiag);
+   csrJA = nalu_hypre_CSRMatrixJ(ADiag);
+   nrows = nalu_hypre_CSRMatrixNumRows(ADiag);
+   nnz   = nalu_hypre_CSRMatrixNumNonzeros(ADiag);
    startRow = 0;
    localNRows_ = nrows;
 
@@ -233,9 +233,9 @@ fclose(fp);
          }
          nnz = 0;
          for ( irow = 0; irow < nSubRows; irow++ ) nnz += countArray[irow];
-         cscJA = hypre_TAlloc(int,  (nSubRows+1) , HYPRE_MEMORY_HOST);
-         cscIA = hypre_TAlloc(int,  nnz , HYPRE_MEMORY_HOST);
-         cscAA = hypre_TAlloc(double,  nnz , HYPRE_MEMORY_HOST);
+         cscJA = nalu_hypre_TAlloc(int,  (nSubRows+1) , NALU_HYPRE_MEMORY_HOST);
+         cscIA = nalu_hypre_TAlloc(int,  nnz , NALU_HYPRE_MEMORY_HOST);
+         cscAA = nalu_hypre_TAlloc(double,  nnz , NALU_HYPRE_MEMORY_HOST);
          cscJA[0] = 0;
          nnz = 0;
          for ( icol = 1; icol <= nSubRows; icol++ ) 
@@ -303,9 +303,9 @@ fclose(fp);
                countArray[csrJA[icol]]++;
             }
          }
-         cscJA = hypre_TAlloc(int,  (nrows+1) , HYPRE_MEMORY_HOST);
-         cscAA = hypre_TAlloc(double,  nnz , HYPRE_MEMORY_HOST);
-         cscIA = hypre_TAlloc(int,  nnz , HYPRE_MEMORY_HOST);
+         cscJA = nalu_hypre_TAlloc(int,  (nrows+1) , NALU_HYPRE_MEMORY_HOST);
+         cscAA = nalu_hypre_TAlloc(double,  nnz , NALU_HYPRE_MEMORY_HOST);
+         cscIA = nalu_hypre_TAlloc(int,  nnz , NALU_HYPRE_MEMORY_HOST);
          cscJA[0] = 0;
          nnz = 0;
          for ( icol = 1; icol <= nrows; icol++ ) 
@@ -386,11 +386,11 @@ int MLI_Solver_SeqSuperLU::solve(MLI_Vector *fIn, MLI_Vector *uIn)
    SuperMatrix B;
    trans_t     trans;
    SuperLUStat_t   slu_stat;
-   hypre_ParVector *f, *u, *f2;
-   hypre_CSRMatrix *ADiag, *AOffd;
-   hypre_ParCSRMatrix  *A, *P;
-   hypre_ParCSRCommPkg *commPkg;
-   hypre_ParCSRCommHandle *commHandle;
+   nalu_hypre_ParVector *f, *u, *f2;
+   nalu_hypre_CSRMatrix *ADiag, *AOffd;
+   nalu_hypre_ParCSRMatrix  *A, *P;
+   nalu_hypre_ParCSRCommPkg *commPkg;
+   nalu_hypre_ParCSRCommHandle *commHandle;
    MPI_Request *mpiRequests;
    MPI_Status  mpiStatus;
 
@@ -408,30 +408,30 @@ int MLI_Solver_SeqSuperLU::solve(MLI_Vector *fIn, MLI_Vector *uIn)
     * fetch matrix and vector parameters
     * -----------------------------------------------------------*/
 
-   A       = (hypre_ParCSRMatrix *) mliAmat_->getMatrix();
-   comm    = hypre_ParCSRMatrixComm(A);
-   commPkg = hypre_ParCSRMatrixCommPkg(A);
+   A       = (nalu_hypre_ParCSRMatrix *) mliAmat_->getMatrix();
+   comm    = nalu_hypre_ParCSRMatrixComm(A);
+   commPkg = nalu_hypre_ParCSRMatrixCommPkg(A);
    if ( commPkg == NULL )
    {
-      hypre_MatvecCommPkgCreate((hypre_ParCSRMatrix *) A);
-      commPkg = hypre_ParCSRMatrixCommPkg(A);
+      nalu_hypre_MatvecCommPkgCreate((nalu_hypre_ParCSRMatrix *) A);
+      commPkg = nalu_hypre_ParCSRMatrixCommPkg(A);
    }
    MPI_Comm_size(comm, &nprocs);
-   ADiag    = hypre_ParCSRMatrixDiag(A);
-   ADiagI   = hypre_CSRMatrixI(ADiag);
-   ADiagJ   = hypre_CSRMatrixJ(ADiag);
-   ADiagA   = hypre_CSRMatrixData(ADiag);
-   AOffd    = hypre_ParCSRMatrixOffd(A);
-   AOffdI   = hypre_CSRMatrixI(AOffd);
-   AOffdJ   = hypre_CSRMatrixJ(AOffd);
-   AOffdA   = hypre_CSRMatrixData(AOffd);
-   extNCols = hypre_CSRMatrixNumCols(AOffd);
+   ADiag    = nalu_hypre_ParCSRMatrixDiag(A);
+   ADiagI   = nalu_hypre_CSRMatrixI(ADiag);
+   ADiagJ   = nalu_hypre_CSRMatrixJ(ADiag);
+   ADiagA   = nalu_hypre_CSRMatrixData(ADiag);
+   AOffd    = nalu_hypre_ParCSRMatrixOffd(A);
+   AOffdI   = nalu_hypre_CSRMatrixI(AOffd);
+   AOffdJ   = nalu_hypre_CSRMatrixJ(AOffd);
+   AOffdA   = nalu_hypre_CSRMatrixData(AOffd);
+   extNCols = nalu_hypre_CSRMatrixNumCols(AOffd);
 
    nrows  = localNRows_;
-   u      = (hypre_ParVector *) uIn->getVector();
-   uData  = hypre_VectorData(hypre_ParVectorLocalVector(u));
-   f      = (hypre_ParVector *) fIn->getVector();
-   fData  = hypre_VectorData(hypre_ParVectorLocalVector(f));
+   u      = (nalu_hypre_ParVector *) uIn->getVector();
+   uData  = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(u));
+   f      = (nalu_hypre_ParVector *) fIn->getVector();
+   fData  = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(f));
 
    /* -------------------------------------------------------------
     * allocate communication buffers if overlap but not DD
@@ -442,8 +442,8 @@ int MLI_Solver_SeqSuperLU::solve(MLI_Vector *fIn, MLI_Vector *uIn)
    { 
       rlength = 0;
       for ( iP = 0; iP < nRecvs_; iP++ ) rlength += recvLengs_[iP]; 
-      f2      = (hypre_ParVector *) PSvec_->getVector();
-      f2Data  = hypre_VectorData(hypre_ParVectorLocalVector(f2));
+      f2      = (nalu_hypre_ParVector *) PSvec_->getVector();
+      f2Data  = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(f2));
       u2Data  = new double[localNRows_];
       if ( nRecvs_ > 0 ) mpiRequests = new MPI_Request[nRecvs_];
    }
@@ -451,10 +451,10 @@ int MLI_Solver_SeqSuperLU::solve(MLI_Vector *fIn, MLI_Vector *uIn)
    {
       if (nprocs > 1)
       {
-         nSends = hypre_ParCSRCommPkgNumSends(commPkg);
+         nSends = nalu_hypre_ParCSRCommPkgNumSends(commPkg);
          if ( nSends > 0 )
          {
-            length = hypre_ParCSRCommPkgSendMapStart(commPkg,nSends);
+            length = nalu_hypre_ParCSRCommPkgSendMapStart(commPkg,nSends);
             sBuffer = new double[length];
          }
          else sBuffer = NULL;
@@ -472,8 +472,8 @@ int MLI_Solver_SeqSuperLU::solve(MLI_Vector *fIn, MLI_Vector *uIn)
    {
       if ( PSmat_ != NULL )
       {
-         P = (hypre_ParCSRMatrix *) PSmat_->getMatrix();
-         hypre_ParCSRMatrixMatvecT(one, P, f, zero, f2); 
+         P = (nalu_hypre_ParCSRMatrix *) PSmat_->getMatrix();
+         nalu_hypre_ParCSRMatrixMatvecT(one, P, f, zero, f2); 
          offset = nrows - rlength;
          for ( iP = 0; iP < nRecvs_; iP++ )
          {
@@ -527,14 +527,14 @@ int MLI_Solver_SeqSuperLU::solve(MLI_Vector *fIn, MLI_Vector *uIn)
          index = 0;
          for (iP = 0; iP < nSends; iP++)
          {
-            start = hypre_ParCSRCommPkgSendMapStart(commPkg, iP);
-            endp1 = hypre_ParCSRCommPkgSendMapStart(commPkg, iP+1);
+            start = nalu_hypre_ParCSRCommPkgSendMapStart(commPkg, iP);
+            endp1 = nalu_hypre_ParCSRCommPkgSendMapStart(commPkg, iP+1);
             for (jP = start; jP < endp1; jP++)
                sBuffer[index++]
-                      = uData[hypre_ParCSRCommPkgSendMapElmt(commPkg,jP)];
+                      = uData[nalu_hypre_ParCSRCommPkgSendMapElmt(commPkg,jP)];
          }
-         commHandle = hypre_ParCSRCommHandleCreate(1,commPkg,sBuffer,rBuffer);
-         hypre_ParCSRCommHandleDestroy(commHandle);
+         commHandle = nalu_hypre_ParCSRCommHandleCreate(1,commPkg,sBuffer,rBuffer);
+         nalu_hypre_ParCSRCommHandleDestroy(commHandle);
          commHandle = NULL;
       }
       for ( iP = 0; iP < nSubProblems_; iP++ ) 
@@ -617,21 +617,21 @@ int MLI_Solver_SeqSuperLU::setParams(char *paramString, int argc, char **argv)
          printf("MLI_Solver_SeqSuperLU::setParams ERROR : needs 1 arg.\n");
          return 1;
       }
-      HYPRE_IJVector auxVec;
+      NALU_HYPRE_IJVector auxVec;
       PSmat_ = (MLI_Matrix *) argv[0];
-      hypre_ParCSRMatrix *hypreAux;
-      hypre_ParCSRMatrix *ps = (hypre_ParCSRMatrix *) PSmat_->getMatrix();
-      int nCols = hypre_ParCSRMatrixNumCols(ps);
-      int start = hypre_ParCSRMatrixFirstColDiag(ps);
-      MPI_Comm vComm = hypre_ParCSRMatrixComm(ps);
-      HYPRE_IJVectorCreate(vComm, start, start+nCols-1, &auxVec);
-      HYPRE_IJVectorSetObjectType(auxVec, HYPRE_PARCSR);
-      HYPRE_IJVectorInitialize(auxVec);
-      HYPRE_IJVectorAssemble(auxVec);
-      HYPRE_IJVectorGetObject(auxVec, (void **) &hypreAux);
-      HYPRE_IJVectorSetObjectType(auxVec, -1);
-      HYPRE_IJVectorDestroy(auxVec);
-      strcpy( paramString, "HYPRE_ParVector" );
+      nalu_hypre_ParCSRMatrix *hypreAux;
+      nalu_hypre_ParCSRMatrix *ps = (nalu_hypre_ParCSRMatrix *) PSmat_->getMatrix();
+      int nCols = nalu_hypre_ParCSRMatrixNumCols(ps);
+      int start = nalu_hypre_ParCSRMatrixFirstColDiag(ps);
+      MPI_Comm vComm = nalu_hypre_ParCSRMatrixComm(ps);
+      NALU_HYPRE_IJVectorCreate(vComm, start, start+nCols-1, &auxVec);
+      NALU_HYPRE_IJVectorSetObjectType(auxVec, NALU_HYPRE_PARCSR);
+      NALU_HYPRE_IJVectorInitialize(auxVec);
+      NALU_HYPRE_IJVectorAssemble(auxVec);
+      NALU_HYPRE_IJVectorGetObject(auxVec, (void **) &hypreAux);
+      NALU_HYPRE_IJVectorSetObjectType(auxVec, -1);
+      NALU_HYPRE_IJVectorDestroy(auxVec);
+      strcpy( paramString, "NALU_HYPRE_ParVector" );
       MLI_Function *funcPtr = new MLI_Function();
       MLI_Utils_HypreParVectorGetDestroyFunc(funcPtr);
       PSvec_ = new MLI_Vector( (void*) hypreAux, paramString, funcPtr );
@@ -686,22 +686,22 @@ int MLI_Solver_SeqSuperLU::setupBlockColoring()
    int                 *localGI, *localGJ, *offsets, globalOffset, gRowCnt; 
    int                 searchIndex, searchStatus;
    MPI_Comm            comm;
-   hypre_ParCSRMatrix     *A;
-   hypre_ParCSRCommPkg    *commPkg;
-   hypre_ParCSRCommHandle *commHandle;
-   hypre_CSRMatrix        *AOffd;
+   nalu_hypre_ParCSRMatrix     *A;
+   nalu_hypre_ParCSRCommPkg    *commPkg;
+   nalu_hypre_ParCSRCommHandle *commHandle;
+   nalu_hypre_CSRMatrix        *AOffd;
 
    /*---------------------------------------------------------------*/
    /* fetch matrix                                                  */
    /*---------------------------------------------------------------*/
 
-   A       = (hypre_ParCSRMatrix *) mliAmat_->getMatrix();
-   comm    = hypre_ParCSRMatrixComm(A);
-   commPkg = hypre_ParCSRMatrixCommPkg(A);
+   A       = (nalu_hypre_ParCSRMatrix *) mliAmat_->getMatrix();
+   comm    = nalu_hypre_ParCSRMatrixComm(A);
+   commPkg = nalu_hypre_ParCSRMatrixCommPkg(A);
    if ( commPkg == NULL )
    {
-      hypre_MatvecCommPkgCreate((hypre_ParCSRMatrix *) A);
-      commPkg = hypre_ParCSRMatrixCommPkg(A);
+      nalu_hypre_MatvecCommPkgCreate((nalu_hypre_ParCSRMatrix *) A);
+      commPkg = nalu_hypre_ParCSRMatrixCommPkg(A);
    }
    MPI_Comm_rank(comm, &mypid);
    MPI_Comm_size(comm, &nprocs);
@@ -774,23 +774,23 @@ int MLI_Solver_SeqSuperLU::setupBlockColoring()
    int    localNRows;
    double *sBuffer=NULL, *rBuffer=NULL;
 
-   localNRows = hypre_CSRMatrixNumRows(hypre_ParCSRMatrixDiag(A));
-   AOffd    = hypre_ParCSRMatrixOffd(A);
-   AOffdI   = hypre_CSRMatrixI(AOffd);
-   AOffdJ   = hypre_CSRMatrixJ(AOffd);
-   extNCols = hypre_CSRMatrixNumCols(AOffd);
-   nSends   = hypre_ParCSRCommPkgNumSends(commPkg);
+   localNRows = nalu_hypre_CSRMatrixNumRows(nalu_hypre_ParCSRMatrixDiag(A));
+   AOffd    = nalu_hypre_ParCSRMatrixOffd(A);
+   AOffdI   = nalu_hypre_CSRMatrixI(AOffd);
+   AOffdJ   = nalu_hypre_CSRMatrixJ(AOffd);
+   extNCols = nalu_hypre_CSRMatrixNumCols(AOffd);
+   nSends   = nalu_hypre_ParCSRCommPkgNumSends(commPkg);
    if (extNCols > 0) rBuffer = new double[extNCols];
    if (nSends > 0)
-      sBuffer = new double[hypre_ParCSRCommPkgSendMapStart(commPkg,nSends)];
+      sBuffer = new double[nalu_hypre_ParCSRCommPkgSendMapStart(commPkg,nSends)];
    mapIndex  = 0;
    for (i = 0; i < nSends; i++)
    {
-      mapStart = hypre_ParCSRCommPkgSendMapStart(commPkg, i);
-      mapEnd   = hypre_ParCSRCommPkgSendMapStart(commPkg, i+1);
+      mapStart = nalu_hypre_ParCSRCommPkgSendMapStart(commPkg, i);
+      mapEnd   = nalu_hypre_ParCSRCommPkgSendMapStart(commPkg, i+1);
       for (j=mapStart; j<mapEnd; j++)
       {
-         searchIndex = hypre_ParCSRCommPkgSendMapElmt(commPkg,j);
+         searchIndex = nalu_hypre_ParCSRCommPkgSendMapElmt(commPkg,j);
          for (k = 0; k < nSubProblems_; k++)
          {
             searchStatus = MLI_Utils_BinarySearch(searchIndex,
@@ -805,8 +805,8 @@ int MLI_Solver_SeqSuperLU::setupBlockColoring()
    }
    if ( nSends > 0 || extNCols > 0 )
    {
-      commHandle = hypre_ParCSRCommHandleCreate(1,commPkg,sBuffer,rBuffer);
-      hypre_ParCSRCommHandleDestroy(commHandle);
+      commHandle = nalu_hypre_ParCSRCommHandleCreate(1,commPkg,sBuffer,rBuffer);
+      nalu_hypre_ParCSRCommHandleDestroy(commHandle);
       commHandle = NULL;
    }
    if ( extNCols > 0 )

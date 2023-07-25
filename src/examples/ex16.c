@@ -28,12 +28,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-#include "HYPRE_sstruct_mv.h"
-#include "HYPRE_sstruct_ls.h"
-#include "HYPRE.h"
+#include "NALU_HYPRE_sstruct_mv.h"
+#include "NALU_HYPRE_sstruct_ls.h"
+#include "NALU_HYPRE.h"
 #include "ex.h"
 
-#ifdef HYPRE_EXVIS
+#ifdef NALU_HYPRE_EXVIS
 #include "vis.c"
 #endif
 
@@ -241,13 +241,13 @@ int main (int argc, char *argv[])
    double h;
    int vis;
 
-   HYPRE_SStructGrid     grid;
-   HYPRE_SStructGraph    graph;
-   HYPRE_SStructMatrix   A;
-   HYPRE_SStructVector   b;
-   HYPRE_SStructVector   x;
+   NALU_HYPRE_SStructGrid     grid;
+   NALU_HYPRE_SStructGraph    graph;
+   NALU_HYPRE_SStructMatrix   A;
+   NALU_HYPRE_SStructVector   b;
+   NALU_HYPRE_SStructVector   x;
 
-   HYPRE_Solver          solver;
+   NALU_HYPRE_Solver          solver;
 
    /* Initialize MPI */
    MPI_Init(&argc, &argv);
@@ -255,10 +255,10 @@ int main (int argc, char *argv[])
    MPI_Comm_size(MPI_COMM_WORLD, &num_procs);
 
    /* Initialize HYPRE */
-   HYPRE_Initialize();
+   NALU_HYPRE_Initialize();
 
    /* Print GPU info */
-   /* HYPRE_PrintDeviceInfo(); */
+   /* NALU_HYPRE_PrintDeviceInfo(); */
 
    /* Set default parameters */
    n = 10;
@@ -332,7 +332,7 @@ int main (int argc, char *argv[])
       int nparts = 1;
 
       /* Create an empty 2D grid object */
-      HYPRE_SStructGridCreate(MPI_COMM_WORLD, ndim, nparts, &grid);
+      NALU_HYPRE_SStructGridCreate(MPI_COMM_WORLD, ndim, nparts, &grid);
 
       /* Set the extents of the grid - each processor sets its grid boxes. */
       {
@@ -340,7 +340,7 @@ int main (int argc, char *argv[])
          int ilower[2] = {1 + pi * n, 1 + pj * n};
          int iupper[2] = {n + pi * n, n + pj * n};
 
-         HYPRE_SStructGridSetExtents(grid, part, ilower, iupper);
+         NALU_HYPRE_SStructGridSetExtents(grid, part, ilower, iupper);
       }
 
       /* Set the variable type and number of variables on each part.  There is
@@ -350,19 +350,19 @@ int main (int argc, char *argv[])
          int i;
          int nvars = 9;
 
-         HYPRE_SStructVariable vars[9] = {HYPRE_SSTRUCT_VARIABLE_NODE,
-                                          HYPRE_SSTRUCT_VARIABLE_XFACE,
-                                          HYPRE_SSTRUCT_VARIABLE_XFACE,
-                                          HYPRE_SSTRUCT_VARIABLE_YFACE,
-                                          HYPRE_SSTRUCT_VARIABLE_YFACE,
-                                          HYPRE_SSTRUCT_VARIABLE_CELL,
-                                          HYPRE_SSTRUCT_VARIABLE_CELL,
-                                          HYPRE_SSTRUCT_VARIABLE_CELL,
-                                          HYPRE_SSTRUCT_VARIABLE_CELL
+         NALU_HYPRE_SStructVariable vars[9] = {NALU_HYPRE_SSTRUCT_VARIABLE_NODE,
+                                          NALU_HYPRE_SSTRUCT_VARIABLE_XFACE,
+                                          NALU_HYPRE_SSTRUCT_VARIABLE_XFACE,
+                                          NALU_HYPRE_SSTRUCT_VARIABLE_YFACE,
+                                          NALU_HYPRE_SSTRUCT_VARIABLE_YFACE,
+                                          NALU_HYPRE_SSTRUCT_VARIABLE_CELL,
+                                          NALU_HYPRE_SSTRUCT_VARIABLE_CELL,
+                                          NALU_HYPRE_SSTRUCT_VARIABLE_CELL,
+                                          NALU_HYPRE_SSTRUCT_VARIABLE_CELL
                                          };
          for (i = 0; i < nparts; i++)
          {
-            HYPRE_SStructGridSetVariables(grid, i, nvars, vars);
+            NALU_HYPRE_SStructGridSetVariables(grid, i, nvars, vars);
          }
       }
 
@@ -391,11 +391,11 @@ int main (int argc, char *argv[])
                               0, -1, +1,    3,  0, +1,    4,  0, +1,    0, +1, +1
                             };
 
-         HYPRE_SStructGridSetFEMOrdering(grid, part, ordering);
+         NALU_HYPRE_SStructGridSetFEMOrdering(grid, part, ordering);
       }
 
       /* Now the grid is ready to be used */
-      HYPRE_SStructGridAssemble(grid);
+      NALU_HYPRE_SStructGridAssemble(grid);
    }
 
    /* 2. Set up the Graph - this determines the non-zero structure of the
@@ -404,20 +404,20 @@ int main (int argc, char *argv[])
       int part = 0;
 
       /* Create the graph object */
-      HYPRE_SStructGraphCreate(MPI_COMM_WORLD, grid, &graph);
+      NALU_HYPRE_SStructGraphCreate(MPI_COMM_WORLD, grid, &graph);
 
       /* See MatrixSetObjectType below */
-      HYPRE_SStructGraphSetObjectType(graph, HYPRE_PARCSR);
+      NALU_HYPRE_SStructGraphSetObjectType(graph, NALU_HYPRE_PARCSR);
 
       /* Indicate that this problem uses finite element stiffness matrices and
          load vectors, instead of stencils. */
-      HYPRE_SStructGraphSetFEM(graph, part);
+      NALU_HYPRE_SStructGraphSetFEM(graph, part);
 
       /* The local stiffness matrix is full, so there is no need to call
-         HYPRE_SStructGraphSetFEMSparsity() to set its sparsity pattern. */
+         NALU_HYPRE_SStructGraphSetFEMSparsity() to set its sparsity pattern. */
 
       /* Assemble the graph */
-      HYPRE_SStructGraphAssemble(graph);
+      NALU_HYPRE_SStructGraphAssemble(graph);
    }
 
    /* 3. Set up the SStruct Matrix and right-hand side vector */
@@ -425,18 +425,18 @@ int main (int argc, char *argv[])
       int part = 0;
 
       /* Create the matrix object */
-      HYPRE_SStructMatrixCreate(MPI_COMM_WORLD, graph, &A);
+      NALU_HYPRE_SStructMatrixCreate(MPI_COMM_WORLD, graph, &A);
       /* Use a ParCSR storage */
-      HYPRE_SStructMatrixSetObjectType(A, HYPRE_PARCSR);
+      NALU_HYPRE_SStructMatrixSetObjectType(A, NALU_HYPRE_PARCSR);
       /* Indicate that the matrix coefficients are ready to be set */
-      HYPRE_SStructMatrixInitialize(A);
+      NALU_HYPRE_SStructMatrixInitialize(A);
 
       /* Create an empty vector object */
-      HYPRE_SStructVectorCreate(MPI_COMM_WORLD, grid, &b);
+      NALU_HYPRE_SStructVectorCreate(MPI_COMM_WORLD, grid, &b);
       /* Use a ParCSR storage */
-      HYPRE_SStructVectorSetObjectType(b, HYPRE_PARCSR);
+      NALU_HYPRE_SStructVectorSetObjectType(b, NALU_HYPRE_PARCSR);
       /* Indicate that the vector coefficients are ready to be set */
-      HYPRE_SStructVectorInitialize(b);
+      NALU_HYPRE_SStructVectorInitialize(b);
 
       /* Set the matrix and vector entries by finite element assembly */
       {
@@ -497,18 +497,18 @@ int main (int argc, char *argv[])
                }
 
                /* Add this elements contribution to the matrix */
-               HYPRE_SStructMatrixAddFEMValues(A, part, index, &S[0][0]);
+               NALU_HYPRE_SStructMatrixAddFEMValues(A, part, index, &S[0][0]);
 
                /* Add this elements contribution to the rhs */
-               HYPRE_SStructVectorAddFEMValues(b, part, index, F);
+               NALU_HYPRE_SStructVectorAddFEMValues(b, part, index, F);
             }
          }
       }
    }
 
    /* Collective calls finalizing the matrix and vector assembly */
-   HYPRE_SStructMatrixAssemble(A);
-   HYPRE_SStructVectorAssemble(b);
+   NALU_HYPRE_SStructMatrixAssemble(A);
+   NALU_HYPRE_SStructVectorAssemble(b);
 
    /* 4. Set up SStruct Vector for the solution vector x */
    {
@@ -520,11 +520,11 @@ int main (int argc, char *argv[])
       values = (double*) calloc(nvalues, sizeof(double));
 
       /* Create an empty vector object */
-      HYPRE_SStructVectorCreate(MPI_COMM_WORLD, grid, &x);
+      NALU_HYPRE_SStructVectorCreate(MPI_COMM_WORLD, grid, &x);
       /* Set the object type to ParCSR */
-      HYPRE_SStructVectorSetObjectType(x, HYPRE_PARCSR);
+      NALU_HYPRE_SStructVectorSetObjectType(x, NALU_HYPRE_PARCSR);
       /* Indicate that the vector coefficients are ready to be set */
-      HYPRE_SStructVectorInitialize(x);
+      NALU_HYPRE_SStructVectorInitialize(x);
 
       /* Set the values for the initial guess one variable at a time.  Since the
          SetBoxValues() calls below set the values to the right and up from the
@@ -548,13 +548,13 @@ int main (int argc, char *argv[])
                break;
          }
 
-         HYPRE_SStructVectorSetBoxValues(x, part, ilower, iupper, var, values);
+         NALU_HYPRE_SStructVectorSetBoxValues(x, part, ilower, iupper, var, values);
       }
 
       free(values);
 
       /* Finalize the vector assembly */
-      HYPRE_SStructVectorAssemble(x);
+      NALU_HYPRE_SStructVectorAssemble(x);
    }
 
    /* 5. Set up and call the solver (Solver options can be found in the
@@ -563,44 +563,44 @@ int main (int argc, char *argv[])
       double final_res_norm;
       int its;
 
-      HYPRE_ParCSRMatrix    par_A;
-      HYPRE_ParVector       par_b;
-      HYPRE_ParVector       par_x;
+      NALU_HYPRE_ParCSRMatrix    par_A;
+      NALU_HYPRE_ParVector       par_b;
+      NALU_HYPRE_ParVector       par_x;
 
       /* Extract the ParCSR objects needed in the solver */
-      HYPRE_SStructMatrixGetObject(A, (void **) &par_A);
-      HYPRE_SStructVectorGetObject(b, (void **) &par_b);
-      HYPRE_SStructVectorGetObject(x, (void **) &par_x);
+      NALU_HYPRE_SStructMatrixGetObject(A, (void **) &par_A);
+      NALU_HYPRE_SStructVectorGetObject(b, (void **) &par_b);
+      NALU_HYPRE_SStructVectorGetObject(x, (void **) &par_x);
 
       /* Here we construct a BoomerAMG solver.  See the other SStruct examples
          as well as the Reference manual for additional solver choices. */
-      HYPRE_BoomerAMGCreate(&solver);
-      HYPRE_BoomerAMGSetCoarsenType(solver, 6);
-      HYPRE_BoomerAMGSetStrongThreshold(solver, 0.25);
-      HYPRE_BoomerAMGSetTol(solver, 1e-6);
-      HYPRE_BoomerAMGSetPrintLevel(solver, 2);
-      HYPRE_BoomerAMGSetMaxIter(solver, 50);
+      NALU_HYPRE_BoomerAMGCreate(&solver);
+      NALU_HYPRE_BoomerAMGSetCoarsenType(solver, 6);
+      NALU_HYPRE_BoomerAMGSetStrongThreshold(solver, 0.25);
+      NALU_HYPRE_BoomerAMGSetTol(solver, 1e-6);
+      NALU_HYPRE_BoomerAMGSetPrintLevel(solver, 2);
+      NALU_HYPRE_BoomerAMGSetMaxIter(solver, 50);
 
       /* call the setup */
-      HYPRE_BoomerAMGSetup(solver, par_A, par_b, par_x);
+      NALU_HYPRE_BoomerAMGSetup(solver, par_A, par_b, par_x);
 
       /* call the solve */
-      HYPRE_BoomerAMGSolve(solver, par_A, par_b, par_x);
+      NALU_HYPRE_BoomerAMGSolve(solver, par_A, par_b, par_x);
 
       /* get some info */
-      HYPRE_BoomerAMGGetNumIterations(solver, &its);
-      HYPRE_BoomerAMGGetFinalRelativeResidualNorm(solver,
+      NALU_HYPRE_BoomerAMGGetNumIterations(solver, &its);
+      NALU_HYPRE_BoomerAMGGetFinalRelativeResidualNorm(solver,
                                                   &final_res_norm);
       /* clean up */
-      HYPRE_BoomerAMGDestroy(solver);
+      NALU_HYPRE_BoomerAMGDestroy(solver);
 
       /* Gather the solution vector */
-      HYPRE_SStructVectorGather(x);
+      NALU_HYPRE_SStructVectorGather(x);
 
       /* Save the solution for GLVis visualization, see vis/glvis-ex16.sh */
       if (vis)
       {
-#ifdef HYPRE_EXVIS
+#ifdef NALU_HYPRE_EXVIS
          FILE *file;
          char  filename[255];
 
@@ -623,7 +623,7 @@ int main (int argc, char *argv[])
                index[1] = j + pj * n;
 
                /* Get local element solution values X */
-               HYPRE_SStructVectorGetFEMValues(x, part, index, X);
+               NALU_HYPRE_SStructVectorGetFEMValues(x, part, index, X);
 
                /* Copy local solution X into values array */
                for (k = 0; k < 16; k++)
@@ -677,14 +677,14 @@ int main (int argc, char *argv[])
    }
 
    /* Free memory */
-   HYPRE_SStructGridDestroy(grid);
-   HYPRE_SStructGraphDestroy(graph);
-   HYPRE_SStructMatrixDestroy(A);
-   HYPRE_SStructVectorDestroy(b);
-   HYPRE_SStructVectorDestroy(x);
+   NALU_HYPRE_SStructGridDestroy(grid);
+   NALU_HYPRE_SStructGraphDestroy(graph);
+   NALU_HYPRE_SStructMatrixDestroy(A);
+   NALU_HYPRE_SStructVectorDestroy(b);
+   NALU_HYPRE_SStructVectorDestroy(x);
 
    /* Finalize HYPRE */
-   HYPRE_Finalize();
+   NALU_HYPRE_Finalize();
 
    /* Finalize MPI */
    MPI_Finalize();

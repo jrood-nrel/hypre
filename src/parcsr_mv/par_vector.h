@@ -11,60 +11,60 @@
  *
  *****************************************************************************/
 
-#ifndef hypre_PAR_VECTOR_HEADER
-#define hypre_PAR_VECTOR_HEADER
+#ifndef nalu_hypre_PAR_VECTOR_HEADER
+#define nalu_hypre_PAR_VECTOR_HEADER
 
 /*--------------------------------------------------------------------------
- * hypre_ParVector
+ * nalu_hypre_ParVector
  *--------------------------------------------------------------------------*/
 
-#ifndef HYPRE_PAR_VECTOR_STRUCT
-#define HYPRE_PAR_VECTOR_STRUCT
+#ifndef NALU_HYPRE_PAR_VECTOR_STRUCT
+#define NALU_HYPRE_PAR_VECTOR_STRUCT
 #endif
 
-typedef struct hypre_ParVector_struct
+typedef struct nalu_hypre_ParVector_struct
 {
    MPI_Comm              comm;
 
-   HYPRE_BigInt          global_size;
-   HYPRE_BigInt          first_index;
-   HYPRE_BigInt          last_index;
-   HYPRE_BigInt          partitioning[2];
+   NALU_HYPRE_BigInt          global_size;
+   NALU_HYPRE_BigInt          first_index;
+   NALU_HYPRE_BigInt          last_index;
+   NALU_HYPRE_BigInt          partitioning[2];
    /* stores actual length of data in local vector to allow memory
     * manipulations for temporary vectors*/
-   HYPRE_Int             actual_local_size;
-   hypre_Vector         *local_vector;
+   NALU_HYPRE_Int             actual_local_size;
+   nalu_hypre_Vector         *local_vector;
 
    /* Does the Vector create/destroy `data'? */
-   HYPRE_Int             owns_data;
+   NALU_HYPRE_Int             owns_data;
    /* If the vector is all zeros */
-   HYPRE_Int             all_zeros;
+   NALU_HYPRE_Int             all_zeros;
 
-   hypre_IJAssumedPart  *assumed_partition; /* only populated if this partition needed
+   nalu_hypre_IJAssumedPart  *assumed_partition; /* only populated if this partition needed
                                               (for setting off-proc elements, for example)*/
-} hypre_ParVector;
+} nalu_hypre_ParVector;
 
 /*--------------------------------------------------------------------------
  * Accessor functions for the Vector structure
  *--------------------------------------------------------------------------*/
 
-#define hypre_ParVectorComm(vector)             ((vector) -> comm)
-#define hypre_ParVectorGlobalSize(vector)       ((vector) -> global_size)
-#define hypre_ParVectorFirstIndex(vector)       ((vector) -> first_index)
-#define hypre_ParVectorLastIndex(vector)        ((vector) -> last_index)
-#define hypre_ParVectorPartitioning(vector)     ((vector) -> partitioning)
-#define hypre_ParVectorActualLocalSize(vector)  ((vector) -> actual_local_size)
-#define hypre_ParVectorLocalVector(vector)      ((vector) -> local_vector)
-#define hypre_ParVectorOwnsData(vector)         ((vector) -> owns_data)
-#define hypre_ParVectorAllZeros(vector)         ((vector) -> all_zeros)
-#define hypre_ParVectorNumVectors(vector)       (hypre_VectorNumVectors(hypre_ParVectorLocalVector(vector)))
+#define nalu_hypre_ParVectorComm(vector)             ((vector) -> comm)
+#define nalu_hypre_ParVectorGlobalSize(vector)       ((vector) -> global_size)
+#define nalu_hypre_ParVectorFirstIndex(vector)       ((vector) -> first_index)
+#define nalu_hypre_ParVectorLastIndex(vector)        ((vector) -> last_index)
+#define nalu_hypre_ParVectorPartitioning(vector)     ((vector) -> partitioning)
+#define nalu_hypre_ParVectorActualLocalSize(vector)  ((vector) -> actual_local_size)
+#define nalu_hypre_ParVectorLocalVector(vector)      ((vector) -> local_vector)
+#define nalu_hypre_ParVectorOwnsData(vector)         ((vector) -> owns_data)
+#define nalu_hypre_ParVectorAllZeros(vector)         ((vector) -> all_zeros)
+#define nalu_hypre_ParVectorNumVectors(vector)       (nalu_hypre_VectorNumVectors(nalu_hypre_ParVectorLocalVector(vector)))
 
-#define hypre_ParVectorAssumedPartition(vector) ((vector) -> assumed_partition)
+#define nalu_hypre_ParVectorAssumedPartition(vector) ((vector) -> assumed_partition)
 
-static inline HYPRE_MemoryLocation
-hypre_ParVectorMemoryLocation(hypre_ParVector *vector)
+static inline NALU_HYPRE_MemoryLocation
+nalu_hypre_ParVectorMemoryLocation(nalu_hypre_ParVector *vector)
 {
-   return hypre_VectorMemoryLocation(hypre_ParVectorLocalVector(vector));
+   return nalu_hypre_VectorMemoryLocation(nalu_hypre_ParVectorLocalVector(vector));
 }
 
 #endif

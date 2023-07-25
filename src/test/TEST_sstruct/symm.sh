@@ -9,7 +9,7 @@ RTOL=$1
 ATOL=$2
 
 #=============================================================================
-# sstruct: Check SetSymmetric for HYPRE_SSTRUCT data type (2D)
+# sstruct: Check SetSymmetric for NALU_HYPRE_SSTRUCT data type (2D)
 #=============================================================================
 
 tail -3 ${TNAME}.out.20 > ${TNAME}.testdata
@@ -27,7 +27,7 @@ tail -3 ${TNAME}.out.23 > ${TNAME}.testdata.temp
 diff ${TNAME}.testdata ${TNAME}.testdata.temp >&2
 
 #=============================================================================
-# sstruct: Check SetSymmetric for HYPRE_PARCSR data type (2D)
+# sstruct: Check SetSymmetric for NALU_HYPRE_PARCSR data type (2D)
 #=============================================================================
 
 tail -3 ${TNAME}.out.24 > ${TNAME}.testdata
@@ -35,7 +35,7 @@ tail -3 ${TNAME}.out.25 > ${TNAME}.testdata.temp
 diff ${TNAME}.testdata ${TNAME}.testdata.temp >&2
 
 #=============================================================================
-# sstruct: Check SetSymmetric for HYPRE_SSTRUCT data type (3D)
+# sstruct: Check SetSymmetric for NALU_HYPRE_SSTRUCT data type (3D)
 #=============================================================================
 
 tail -3 ${TNAME}.out.30 > ${TNAME}.testdata
@@ -53,7 +53,7 @@ tail -3 ${TNAME}.out.33 > ${TNAME}.testdata.temp
 diff ${TNAME}.testdata ${TNAME}.testdata.temp >&2
 
 #=============================================================================
-# sstruct: Check SetSymmetric for HYPRE_PARCSR data type (3D)
+# sstruct: Check SetSymmetric for NALU_HYPRE_PARCSR data type (3D)
 #=============================================================================
 
 tail -3 ${TNAME}.out.34 > ${TNAME}.testdata

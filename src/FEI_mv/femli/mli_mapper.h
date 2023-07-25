@@ -19,7 +19,7 @@
  *--------------------------------------------------------------------------*/
 
 #include <string.h>
-#include "_hypre_utilities.h"
+#include "_nalu_hypre_utilities.h"
 
 /*--------------------------------------------------------------------------
  * MLI_Mapper data structure declaration

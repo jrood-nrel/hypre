@@ -10,8 +10,8 @@
  *****************************************************************************/
 
 #include <stdio.h>
-#include "HYPRE.h"
-#include "_hypre_utilities.h"
+#include "NALU_HYPRE.h"
+#include "_nalu_hypre_utilities.h"
 #include "mli_matrix.h"
 #include "mli_matrix_misc.h"
 #include "IJ_mv.h"
@@ -24,10 +24,10 @@
  test program
  ----------------------------------------------------------------------------*/
 
-extern void testOverLapped( HYPRE_ParCSRMatrix );
-extern void testRAP( HYPRE_ParCSRMatrix );
-extern void GenTridiagMatrix( HYPRE_ParCSRMatrix *Amat );
-extern void GenLaplacian9pt( HYPRE_ParCSRMatrix *Amat );
+extern void testOverLapped( NALU_HYPRE_ParCSRMatrix );
+extern void testRAP( NALU_HYPRE_ParCSRMatrix );
+extern void GenTridiagMatrix( NALU_HYPRE_ParCSRMatrix *Amat );
+extern void GenLaplacian9pt( NALU_HYPRE_ParCSRMatrix *Amat );
 
 /******************************************************************************
  main program 
@@ -36,7 +36,7 @@ extern void GenLaplacian9pt( HYPRE_ParCSRMatrix *Amat );
 main(int argc, char **argv)
 {
    int                problem=2, test=2;
-   HYPRE_ParCSRMatrix Amat;
+   NALU_HYPRE_ParCSRMatrix Amat;
 
    MPI_Init(&argc, &argv);
    switch (problem)
@@ -49,7 +49,7 @@ main(int argc, char **argv)
       case 1 : testOverLapped(Amat); break;
       case 2 : testRAP(Amat); break;
    }
-   HYPRE_ParCSRMatrixDestroy( Amat );
+   NALU_HYPRE_ParCSRMatrixDestroy( Amat );
    MPI_Finalize();
 }
 
@@ -57,7 +57,7 @@ main(int argc, char **argv)
  test the overlapped matrix
  ----------------------------------------------------------------------------*/
 
-void testOverLapped( HYPRE_ParCSRMatrix HYPREA )
+void testOverLapped( NALU_HYPRE_ParCSRMatrix HYPREA )
 {
    int          extNRows, *extRowLengs, *extCols;
    double       *extVals;
@@ -67,7 +67,7 @@ void testOverLapped( HYPRE_ParCSRMatrix HYPREA )
 
    funcPtr = new MLI_Function();
    MLI_Utils_HypreParCSRMatrixGetDestroyFunc(funcPtr);
-   sprintf(paramString, "HYPRE_ParCSR" );
+   sprintf(paramString, "NALU_HYPRE_ParCSR" );
    mli_mat = new MLI_Matrix( HYPREA, paramString, funcPtr );
    MLI_Matrix_GetOverlappedMatrix(mli_mat, &extNRows, &extRowLengs,
                                   &extCols, &extVals);
@@ -82,19 +82,19 @@ void testOverLapped( HYPRE_ParCSRMatrix HYPREA )
  test matrix matrix product
  ----------------------------------------------------------------------------*/
 
-void testRAP( HYPRE_ParCSRMatrix HYPREA )
+void testRAP( NALU_HYPRE_ParCSRMatrix HYPREA )
 {
    int          i, mypid;
    char         paramString[100];
    double       time1, time2, timeOld, timeNew;
    MLI_Function *funcPtr;
    MLI_Matrix   *mli_mat, *mli_Cmat;
-   hypre_ParCSRMatrix *hypreRAP;
+   nalu_hypre_ParCSRMatrix *hypreRAP;
 
    MPI_Comm_rank(MPI_COMM_WORLD, &mypid);
    funcPtr = new MLI_Function();
    MLI_Utils_HypreParCSRMatrixGetDestroyFunc(funcPtr);
-   sprintf(paramString, "HYPRE_ParCSR" );
+   sprintf(paramString, "NALU_HYPRE_ParCSR" );
    mli_mat = new MLI_Matrix( HYPREA, paramString, funcPtr );
 
    timeOld = timeNew = 0.0;
@@ -104,9 +104,9 @@ void testRAP( HYPRE_ParCSRMatrix HYPREA )
       if ( mypid == 0 ) printf("MatMatMult %d\n", i);
       MPI_Barrier(MPI_COMM_WORLD);
       time1 = MLI_Utils_WTime();
-      hypreRAP = (hypre_ParCSRMatrix *)
-                 hypre_ParMatmul( (hypre_ParCSRMatrix *) HYPREA,
-                                  (hypre_ParCSRMatrix *) HYPREA);
+      hypreRAP = (nalu_hypre_ParCSRMatrix *)
+                 nalu_hypre_ParMatmul( (nalu_hypre_ParCSRMatrix *) HYPREA,
+                                  (nalu_hypre_ParCSRMatrix *) HYPREA);
       MPI_Barrier(MPI_COMM_WORLD);
       time2 = MLI_Utils_WTime();
       timeOld += time2 - time1;
@@ -117,7 +117,7 @@ void testRAP( HYPRE_ParCSRMatrix HYPREA )
       MPI_Barrier(MPI_COMM_WORLD);
       time2 = MLI_Utils_WTime();
       timeNew += time2 - time1;
-      hypre_ParCSRMatrixDestroy( (hypre_ParCSRMatrix *) hypreRAP);
+      nalu_hypre_ParCSRMatrixDestroy( (nalu_hypre_ParCSRMatrix *) hypreRAP);
       delete mli_Cmat;
    }
    if ( mypid == 0 ) printf("Old MatMatMult time = %e\n", timeOld/10);
@@ -127,14 +127,14 @@ void testRAP( HYPRE_ParCSRMatrix HYPREA )
    if ( mypid == 0 ) printf("Old MatMatMult\n");
    MPI_Barrier(MPI_COMM_WORLD);
    time1 = MLI_Utils_WTime();
-   hypreRAP = (hypre_ParCSRMatrix *)
-              hypre_ParMatmul( (hypre_ParCSRMatrix *) HYPREA,
-                               (hypre_ParCSRMatrix *) HYPREA);
+   hypreRAP = (nalu_hypre_ParCSRMatrix *)
+              nalu_hypre_ParMatmul( (nalu_hypre_ParCSRMatrix *) HYPREA,
+                               (nalu_hypre_ParCSRMatrix *) HYPREA);
    MPI_Barrier(MPI_COMM_WORLD);
    time2 = MLI_Utils_WTime();
    if ( mypid == 0 ) printf("Old MatMatMult time = %e\n", time2-time1);
 
-   sprintf(paramString, "HYPRE_ParCSR" );
+   sprintf(paramString, "NALU_HYPRE_ParCSR" );
    funcPtr = new MLI_Function();
    mli_Cmat = new MLI_Matrix( hypreRAP, paramString, funcPtr );
    mli_Cmat->print("OldAA");
@@ -155,13 +155,13 @@ void testRAP( HYPRE_ParCSRMatrix HYPREA )
  set up a matrix from 9-point 2D Laplacian
  ----------------------------------------------------------------------------*/
 
-void GenTridiagMatrix( HYPRE_ParCSRMatrix *Amat )
+void GenTridiagMatrix( NALU_HYPRE_ParCSRMatrix *Amat )
 {
    int    mypid, nprocs, localNRows=10, length=7, *rowSizes, *colInd;
    int    ii, irow, irow2, rowIndex, ierr, globalNRows;
    int    firstRow, firstCol, lastRow, lastCol;
    double *colVal;
-   HYPRE_IJMatrix IJA;
+   NALU_HYPRE_IJMatrix IJA;
 
    MPI_Comm_size(MPI_COMM_WORLD, &nprocs);
    MPI_Comm_rank(MPI_COMM_WORLD, &mypid);
@@ -170,13 +170,13 @@ void GenTridiagMatrix( HYPRE_ParCSRMatrix *Amat )
    firstCol    = firstRow;
    lastCol     = lastRow;
    globalNRows = localNRows * nprocs;
-   ierr = HYPRE_IJMatrixCreate( MPI_COMM_WORLD, firstRow, lastRow,
+   ierr = NALU_HYPRE_IJMatrixCreate( MPI_COMM_WORLD, firstRow, lastRow,
                                 firstCol, lastCol, &IJA );
-   ierr += HYPRE_IJMatrixSetObjectType( IJA, HYPRE_PARCSR );
+   ierr += NALU_HYPRE_IJMatrixSetObjectType( IJA, NALU_HYPRE_PARCSR );
    rowSizes = new int[localNRows];
    for ( ii = 0; ii < localNRows; ii++ ) rowSizes[ii] = length;
-   ierr = HYPRE_IJMatrixSetRowSizes ( IJA, (const int *) rowSizes );
-   ierr = HYPRE_IJMatrixInitialize( IJA );
+   ierr = NALU_HYPRE_IJMatrixSetRowSizes ( IJA, (const int *) rowSizes );
+   ierr = NALU_HYPRE_IJMatrixInitialize( IJA );
    delete [] rowSizes;
    colInd = new int[length];
    colVal = new double[length];
@@ -191,24 +191,24 @@ void GenTridiagMatrix( HYPRE_ParCSRMatrix *Amat )
          if ( colInd[irow2] == rowIndex ) colVal[irow2] = 10.0;
          if ( colInd[irow2] >= 0 && colInd[irow2] < globalNRows ) irow2++;
       }
-      ierr += HYPRE_IJMatrixSetValues( IJA, 1, &irow2, &rowIndex,
+      ierr += NALU_HYPRE_IJMatrixSetValues( IJA, 1, &irow2, &rowIndex,
                      (const int *) colInd, (const double *) colVal );
    }
-   ierr += HYPRE_IJMatrixAssemble( IJA );
+   ierr += NALU_HYPRE_IJMatrixAssemble( IJA );
    delete [] colInd;
    delete [] colVal;
-   ierr += HYPRE_IJMatrixGetObject( IJA, (void **) Amat);
+   ierr += NALU_HYPRE_IJMatrixGetObject( IJA, (void **) Amat);
 }
 
 /******************************************************************************
  set up a matrix from 9-point 2D Laplacian
  ----------------------------------------------------------------------------*/
 
-void GenLaplacian9pt( HYPRE_ParCSRMatrix *Amat )
+void GenLaplacian9pt( NALU_HYPRE_ParCSRMatrix *Amat )
 {
    int                nx, ny, px, py, mypx, mypy, mypid, nprocs;
    double             *values;
-   HYPRE_ParCSRMatrix  A;
+   NALU_HYPRE_ParCSRMatrix  A;
 
    /*-----------------------------------------------------------
     * get machine information
@@ -250,7 +250,7 @@ void GenLaplacian9pt( HYPRE_ParCSRMatrix *Amat )
    if ( nx > 1 ) values[0] += 2.0;
    if ( ny > 1 ) values[0] += 2.0;
    if ( nx > 1 && ny > 1 ) values[0] += 4.0;
-   A = (HYPRE_ParCSRMatrix) GenerateLaplacian9pt(MPI_COMM_WORLD,
+   A = (NALU_HYPRE_ParCSRMatrix) GenerateLaplacian9pt(MPI_COMM_WORLD,
                                   nx, ny, px, py, mypx, mypy, values);
    delete [] values;
 

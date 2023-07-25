@@ -6,20 +6,20 @@
  ******************************************************************************/
 
 /*--------------------------------------------------------------------------
- * hypre_SStructSendInfo data structure
+ * nalu_hypre_SStructSendInfo data structure
  *--------------------------------------------------------------------------*/
-#ifndef hypre_SENDINFODATA_HEADER
-#define hypre_SENDINFODATA_HEADER
+#ifndef nalu_hypre_SENDINFODATA_HEADER
+#define nalu_hypre_SENDINFODATA_HEADER
 
 
 typedef struct
 {
-   HYPRE_Int             size;
+   NALU_HYPRE_Int             size;
 
-   hypre_BoxArrayArray  *send_boxes;
-   HYPRE_Int           **send_procs;
-   HYPRE_Int           **send_remote_boxnums;
+   nalu_hypre_BoxArrayArray  *send_boxes;
+   NALU_HYPRE_Int           **send_procs;
+   NALU_HYPRE_Int           **send_remote_boxnums;
 
-} hypre_SStructSendInfoData;
+} nalu_hypre_SStructSendInfoData;
 
 #endif

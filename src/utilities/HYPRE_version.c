@@ -7,45 +7,45 @@
 
 /******************************************************************************
  *
- * HYPRE_Version utility functions
+ * NALU_HYPRE_Version utility functions
  *
  *****************************************************************************/
 
-#include "_hypre_utilities.h"
+#include "_nalu_hypre_utilities.h"
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_Version( char **version_ptr )
+NALU_HYPRE_Int
+NALU_HYPRE_Version( char **version_ptr )
 {
-   HYPRE_Int  len = 30;
+   NALU_HYPRE_Int  len = 30;
    char      *version;
 
    /* compute string length */
-   len += strlen(HYPRE_RELEASE_VERSION);
+   len += strlen(NALU_HYPRE_RELEASE_VERSION);
 
-   version = hypre_CTAlloc(char, len, HYPRE_MEMORY_HOST);
+   version = nalu_hypre_CTAlloc(char, len, NALU_HYPRE_MEMORY_HOST);
 
-   hypre_sprintf(version, "HYPRE Release Version %s", HYPRE_RELEASE_VERSION);
+   nalu_hypre_sprintf(version, "HYPRE Release Version %s", NALU_HYPRE_RELEASE_VERSION);
 
    *version_ptr = version;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_VersionNumber( HYPRE_Int  *major_ptr,
-                     HYPRE_Int  *minor_ptr,
-                     HYPRE_Int  *patch_ptr,
-                     HYPRE_Int  *single_ptr )
+NALU_HYPRE_Int
+NALU_HYPRE_VersionNumber( NALU_HYPRE_Int  *major_ptr,
+                     NALU_HYPRE_Int  *minor_ptr,
+                     NALU_HYPRE_Int  *patch_ptr,
+                     NALU_HYPRE_Int  *single_ptr )
 {
-   HYPRE_Int  major, minor, patch, single;
-   HYPRE_Int  nums[3], i, j;
-   char      *ptr = (char *) HYPRE_RELEASE_VERSION;
+   NALU_HYPRE_Int  major, minor, patch, single;
+   NALU_HYPRE_Int  nums[3], i, j;
+   char      *ptr = (char *) NALU_HYPRE_RELEASE_VERSION;
 
    /* get major/minor/patch numbers */
    for (i = 0; i < 3; i++)
@@ -65,13 +65,13 @@ HYPRE_VersionNumber( HYPRE_Int  *major_ptr,
    minor = nums[1];
    patch = nums[2];
 
-   single = (HYPRE_Int) HYPRE_RELEASE_NUMBER;
+   single = (NALU_HYPRE_Int) NALU_HYPRE_RELEASE_NUMBER;
 
    if (major_ptr)   {*major_ptr   = major;}
    if (minor_ptr)   {*minor_ptr   = minor;}
    if (patch_ptr)   {*patch_ptr   = patch;}
    if (single_ptr)  {*single_ptr  = single;}
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 

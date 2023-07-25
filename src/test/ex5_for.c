@@ -26,70 +26,70 @@
 */
 
 #include <math.h>
-#include "_hypre_utilities.h"
-#include "HYPRE_krylov.h"
-#include "HYPRE.h"
-#include "HYPRE_parcsr_ls.h"
+#include "_nalu_hypre_utilities.h"
+#include "NALU_HYPRE_krylov.h"
+#include "NALU_HYPRE.h"
+#include "NALU_HYPRE_parcsr_ls.h"
 
-#ifdef HYPRE_FORTRAN
+#ifdef NALU_HYPRE_FORTRAN
 #include "fortran.h"
-#include "hypre_ij_fortran_test.h"
-#include "hypre_parcsr_fortran_test.h"
+#include "nalu_hypre_ij_fortran_test.h"
+#include "nalu_hypre_parcsr_fortran_test.h"
 #endif
 
-HYPRE_Int main (HYPRE_Int argc, char *argv[])
+NALU_HYPRE_Int main (NALU_HYPRE_Int argc, char *argv[])
 {
-   HYPRE_Int i;
-   HYPRE_Int myid, num_procs;
-   HYPRE_Int N, n;
+   NALU_HYPRE_Int i;
+   NALU_HYPRE_Int myid, num_procs;
+   NALU_HYPRE_Int N, n;
 
-   HYPRE_Int ilower, iupper;
-   HYPRE_Int local_size, extra;
+   NALU_HYPRE_Int ilower, iupper;
+   NALU_HYPRE_Int local_size, extra;
 
-   HYPRE_Int solver_id;
-   HYPRE_Int print_solution;
+   NALU_HYPRE_Int solver_id;
+   NALU_HYPRE_Int print_solution;
 
-   HYPRE_Real h, h2;
+   NALU_HYPRE_Real h, h2;
 
-#ifdef HYPRE_FORTRAN
-   hypre_F90_Obj A;
-   hypre_F90_Obj parcsr_A;
-   hypre_F90_Obj b;
-   hypre_F90_Obj par_b;
-   hypre_F90_Obj x;
-   hypre_F90_Obj par_x;
+#ifdef NALU_HYPRE_FORTRAN
+   nalu_hypre_F90_Obj A;
+   nalu_hypre_F90_Obj parcsr_A;
+   nalu_hypre_F90_Obj b;
+   nalu_hypre_F90_Obj par_b;
+   nalu_hypre_F90_Obj x;
+   nalu_hypre_F90_Obj par_x;
 
-   hypre_F90_Obj solver, precond;
+   nalu_hypre_F90_Obj solver, precond;
 
-   hypre_F90_Obj long_temp_COMM;
-   HYPRE_Int temp_COMM;
-   HYPRE_Int precond_id;
+   nalu_hypre_F90_Obj long_temp_COMM;
+   NALU_HYPRE_Int temp_COMM;
+   NALU_HYPRE_Int precond_id;
 
-   HYPRE_Int one = 1;
-   HYPRE_Int two = 2;
-   HYPRE_Int three = 3;
-   HYPRE_Int six = 6;
-   HYPRE_Int twenty = 20;
-   HYPRE_Int thousand = 1000;
-   HYPRE_Int hypre_type = HYPRE_PARCSR;
+   NALU_HYPRE_Int one = 1;
+   NALU_HYPRE_Int two = 2;
+   NALU_HYPRE_Int three = 3;
+   NALU_HYPRE_Int six = 6;
+   NALU_HYPRE_Int twenty = 20;
+   NALU_HYPRE_Int thousand = 1000;
+   NALU_HYPRE_Int nalu_hypre_type = NALU_HYPRE_PARCSR;
 
-   HYPRE_Real oo1 = 1.e-3;
-   HYPRE_Real tol = 1.e-7;
+   NALU_HYPRE_Real oo1 = 1.e-3;
+   NALU_HYPRE_Real tol = 1.e-7;
 #else
-   HYPRE_IJMatrix A;
-   HYPRE_ParCSRMatrix parcsr_A;
-   HYPRE_IJVector b;
-   HYPRE_ParVector par_b;
-   HYPRE_IJVector x;
-   HYPRE_ParVector par_x;
+   NALU_HYPRE_IJMatrix A;
+   NALU_HYPRE_ParCSRMatrix parcsr_A;
+   NALU_HYPRE_IJVector b;
+   NALU_HYPRE_ParVector par_b;
+   NALU_HYPRE_IJVector x;
+   NALU_HYPRE_ParVector par_x;
 
-   HYPRE_Solver solver, precond;
+   NALU_HYPRE_Solver solver, precond;
 #endif
 
    /* Initialize MPI */
-   hypre_MPI_Init(&argc, &argv);
-   hypre_MPI_Comm_rank(hypre_MPI_COMM_WORLD, &myid);
-   hypre_MPI_Comm_size(hypre_MPI_COMM_WORLD, &num_procs);
+   nalu_hypre_MPI_Init(&argc, &argv);
+   nalu_hypre_MPI_Comm_rank(nalu_hypre_MPI_COMM_WORLD, &myid);
+   nalu_hypre_MPI_Comm_size(nalu_hypre_MPI_COMM_WORLD, &num_procs);
 
    /* Default problem parameters */
    n = 33;
@@ -98,8 +98,8 @@ HYPRE_Int main (HYPRE_Int argc, char *argv[])
 
    /* Parse command line */
    {
-      HYPRE_Int arg_index = 0;
-      HYPRE_Int print_usage = 0;
+      NALU_HYPRE_Int arg_index = 0;
+      NALU_HYPRE_Int print_usage = 0;
 
       while (arg_index < argc)
       {
@@ -131,28 +131,28 @@ HYPRE_Int main (HYPRE_Int argc, char *argv[])
 
       if ((print_usage) && (myid == 0))
       {
-         hypre_printf("\n");
-         hypre_printf("Usage: %s [<options>]\n", argv[0]);
-         hypre_printf("\n");
-         hypre_printf("  -n <n>              : problem size in each direction (default: 33)\n");
-         hypre_printf("  -solver <ID>        : solver ID\n");
-         hypre_printf("                        0  - AMG (default) \n");
-         hypre_printf("                        1  - AMG-PCG\n");
-         hypre_printf("                        8  - ParaSails-PCG\n");
-         hypre_printf("                        50 - PCG\n");
-         hypre_printf("  -print_solution     : print the solution vector\n");
-         hypre_printf("\n");
+         nalu_hypre_printf("\n");
+         nalu_hypre_printf("Usage: %s [<options>]\n", argv[0]);
+         nalu_hypre_printf("\n");
+         nalu_hypre_printf("  -n <n>              : problem size in each direction (default: 33)\n");
+         nalu_hypre_printf("  -solver <ID>        : solver ID\n");
+         nalu_hypre_printf("                        0  - AMG (default) \n");
+         nalu_hypre_printf("                        1  - AMG-PCG\n");
+         nalu_hypre_printf("                        8  - ParaSails-PCG\n");
+         nalu_hypre_printf("                        50 - PCG\n");
+         nalu_hypre_printf("  -print_solution     : print the solution vector\n");
+         nalu_hypre_printf("\n");
       }
 
       if (print_usage)
       {
-         hypre_MPI_Finalize();
+         nalu_hypre_MPI_Finalize();
          return (0);
       }
    }
 
    /* Preliminaries: want at least one processor per row */
-   if (n * n < num_procs) { n = hypre_sqrt(num_procs) + 1; }
+   if (n * n < num_procs) { n = nalu_hypre_sqrt(num_procs) + 1; }
    N = n * n; /* global number of rows */
    h = 1.0 / (n + 1); /* mesh size*/
    h2 = h * h;
@@ -164,10 +164,10 @@ HYPRE_Int main (HYPRE_Int argc, char *argv[])
    extra = N - local_size * num_procs;
 
    ilower = local_size * myid;
-   ilower += hypre_min(myid, extra);
+   ilower += nalu_hypre_min(myid, extra);
 
    iupper = local_size * (myid + 1);
-   iupper += hypre_min(myid + 1, extra);
+   iupper += nalu_hypre_min(myid + 1, extra);
    iupper = iupper - 1;
 
    /* How many rows do I have? */
@@ -176,26 +176,26 @@ HYPRE_Int main (HYPRE_Int argc, char *argv[])
    /* Create the matrix.
       Note that this is a square matrix, so we indicate the row partition
       size twice (since number of rows = number of cols) */
-#ifdef HYPRE_FORTRAN
-   long_temp_COMM = (hypre_F90_Obj) hypre_MPI_COMM_WORLD;
-   temp_COMM = (HYPRE_Int) hypre_MPI_COMM_WORLD;
-   HYPRE_IJMatrixCreate(&long_temp_COMM, &ilower, &iupper, &ilower, &iupper, &A);
+#ifdef NALU_HYPRE_FORTRAN
+   long_temp_COMM = (nalu_hypre_F90_Obj) nalu_hypre_MPI_COMM_WORLD;
+   temp_COMM = (NALU_HYPRE_Int) nalu_hypre_MPI_COMM_WORLD;
+   NALU_HYPRE_IJMatrixCreate(&long_temp_COMM, &ilower, &iupper, &ilower, &iupper, &A);
 #else
-   HYPRE_IJMatrixCreate(hypre_MPI_COMM_WORLD, ilower, iupper, ilower, iupper, &A);
+   NALU_HYPRE_IJMatrixCreate(nalu_hypre_MPI_COMM_WORLD, ilower, iupper, ilower, iupper, &A);
 #endif
 
    /* Choose a parallel csr format storage (see the User's Manual) */
-#ifdef HYPRE_FORTRAN
-   HYPRE_IJMatrixSetObjectType(&A, &hypre_type);
+#ifdef NALU_HYPRE_FORTRAN
+   NALU_HYPRE_IJMatrixSetObjectType(&A, &nalu_hypre_type);
 #else
-   HYPRE_IJMatrixSetObjectType(A, HYPRE_PARCSR);
+   NALU_HYPRE_IJMatrixSetObjectType(A, NALU_HYPRE_PARCSR);
 #endif
 
    /* Initialize before setting coefficients */
-#ifdef HYPRE_FORTRAN
-   HYPRE_IJMatrixInitialize(&A);
+#ifdef NALU_HYPRE_FORTRAN
+   NALU_HYPRE_IJMatrixInitialize(&A);
 #else
-   HYPRE_IJMatrixInitialize(A);
+   NALU_HYPRE_IJMatrixInitialize(A);
 #endif
 
    /* Now go through my local rows and set the matrix entries.
@@ -208,9 +208,9 @@ HYPRE_Int main (HYPRE_Int argc, char *argv[])
       one could set all the rows together (see the User's Manual).
    */
    {
-      HYPRE_Int nnz;
-      HYPRE_Real values[5];
-      HYPRE_Int cols[5];
+      NALU_HYPRE_Int nnz;
+      NALU_HYPRE_Real values[5];
+      NALU_HYPRE_Int cols[5];
 
       for (i = ilower; i <= iupper; i++)
       {
@@ -254,58 +254,58 @@ HYPRE_Int main (HYPRE_Int argc, char *argv[])
          }
 
          /* Set the values for row i */
-#ifdef HYPRE_FORTRAN
-         HYPRE_IJMatrixSetValues(&A, &one, &nnz, &i, &cols[0], &values[0]);
+#ifdef NALU_HYPRE_FORTRAN
+         NALU_HYPRE_IJMatrixSetValues(&A, &one, &nnz, &i, &cols[0], &values[0]);
 #else
-         HYPRE_IJMatrixSetValues(A, 1, &nnz, &i, cols, values);
+         NALU_HYPRE_IJMatrixSetValues(A, 1, &nnz, &i, cols, values);
 #endif
       }
    }
 
    /* Assemble after setting the coefficients */
-#ifdef HYPRE_FORTRAN
-   HYPRE_IJMatrixAssemble(&A);
+#ifdef NALU_HYPRE_FORTRAN
+   NALU_HYPRE_IJMatrixAssemble(&A);
 #else
-   HYPRE_IJMatrixAssemble(A);
+   NALU_HYPRE_IJMatrixAssemble(A);
 #endif
    /* Get the parcsr matrix object to use */
-#ifdef HYPRE_FORTRAN
-   HYPRE_IJMatrixGetObject(&A, &parcsr_A);
-   HYPRE_IJMatrixGetObject(&A, &parcsr_A);
+#ifdef NALU_HYPRE_FORTRAN
+   NALU_HYPRE_IJMatrixGetObject(&A, &parcsr_A);
+   NALU_HYPRE_IJMatrixGetObject(&A, &parcsr_A);
 #else
-   HYPRE_IJMatrixGetObject(A, (void**) &parcsr_A);
-   HYPRE_IJMatrixGetObject(A, (void**) &parcsr_A);
+   NALU_HYPRE_IJMatrixGetObject(A, (void**) &parcsr_A);
+   NALU_HYPRE_IJMatrixGetObject(A, (void**) &parcsr_A);
 #endif
 
    /* Create the rhs and solution */
-#ifdef HYPRE_FORTRAN
-   HYPRE_IJVectorCreate(&temp_COMM, &ilower, &iupper, &b);
-   HYPRE_IJVectorSetObjectType(&b, &hypre_type);
-   HYPRE_IJVectorInitialize(&b);
+#ifdef NALU_HYPRE_FORTRAN
+   NALU_HYPRE_IJVectorCreate(&temp_COMM, &ilower, &iupper, &b);
+   NALU_HYPRE_IJVectorSetObjectType(&b, &nalu_hypre_type);
+   NALU_HYPRE_IJVectorInitialize(&b);
 #else
-   HYPRE_IJVectorCreate(hypre_MPI_COMM_WORLD, ilower, iupper, &b);
-   HYPRE_IJVectorSetObjectType(b, HYPRE_PARCSR);
-   HYPRE_IJVectorInitialize(b);
+   NALU_HYPRE_IJVectorCreate(nalu_hypre_MPI_COMM_WORLD, ilower, iupper, &b);
+   NALU_HYPRE_IJVectorSetObjectType(b, NALU_HYPRE_PARCSR);
+   NALU_HYPRE_IJVectorInitialize(b);
 #endif
 
-#ifdef HYPRE_FORTRAN
-   HYPRE_IJVectorCreate(&temp_COMM, &ilower, &iupper, &x);
-   HYPRE_IJVectorSetObjectType(&x, &hypre_type);
-   HYPRE_IJVectorInitialize(&x);
+#ifdef NALU_HYPRE_FORTRAN
+   NALU_HYPRE_IJVectorCreate(&temp_COMM, &ilower, &iupper, &x);
+   NALU_HYPRE_IJVectorSetObjectType(&x, &nalu_hypre_type);
+   NALU_HYPRE_IJVectorInitialize(&x);
 #else
-   HYPRE_IJVectorCreate(hypre_MPI_COMM_WORLD, ilower, iupper, &x);
-   HYPRE_IJVectorSetObjectType(x, HYPRE_PARCSR);
-   HYPRE_IJVectorInitialize(x);
+   NALU_HYPRE_IJVectorCreate(nalu_hypre_MPI_COMM_WORLD, ilower, iupper, &x);
+   NALU_HYPRE_IJVectorSetObjectType(x, NALU_HYPRE_PARCSR);
+   NALU_HYPRE_IJVectorInitialize(x);
 #endif
 
    /* Set the rhs values to h^2 and the solution to zero */
    {
-      HYPRE_Real *rhs_values, *x_values;
-      HYPRE_Int    *rows;
+      NALU_HYPRE_Real *rhs_values, *x_values;
+      NALU_HYPRE_Int    *rows;
 
-      rhs_values = hypre_CTAlloc(HYPRE_Real, local_size, HYPRE_MEMORY_HOST);
-      x_values = hypre_CTAlloc(HYPRE_Real, local_size, HYPRE_MEMORY_HOST);
-      rows = hypre_CTAlloc(HYPRE_Int, local_size, HYPRE_MEMORY_HOST);
+      rhs_values = nalu_hypre_CTAlloc(NALU_HYPRE_Real, local_size, NALU_HYPRE_MEMORY_HOST);
+      x_values = nalu_hypre_CTAlloc(NALU_HYPRE_Real, local_size, NALU_HYPRE_MEMORY_HOST);
+      rows = nalu_hypre_CTAlloc(NALU_HYPRE_Int, local_size, NALU_HYPRE_MEMORY_HOST);
 
       for (i = 0; i < local_size; i++)
       {
@@ -313,33 +313,33 @@ HYPRE_Int main (HYPRE_Int argc, char *argv[])
          x_values[i] = 0.0;
          rows[i] = ilower + i;
       }
-#ifdef HYPRE_FORTRAN
-      HYPRE_IJVectorSetValues(&b, &local_size, &rows[0], &rhs_values[0]);
-      HYPRE_IJVectorSetValues(&x, &local_size, &rows[0], &x_values[0]);
+#ifdef NALU_HYPRE_FORTRAN
+      NALU_HYPRE_IJVectorSetValues(&b, &local_size, &rows[0], &rhs_values[0]);
+      NALU_HYPRE_IJVectorSetValues(&x, &local_size, &rows[0], &x_values[0]);
 #else
-      HYPRE_IJVectorSetValues(b, local_size, rows, rhs_values);
-      HYPRE_IJVectorSetValues(x, local_size, rows, x_values);
+      NALU_HYPRE_IJVectorSetValues(b, local_size, rows, rhs_values);
+      NALU_HYPRE_IJVectorSetValues(x, local_size, rows, x_values);
 #endif
 
-      hypre_TFree(x_values, HYPRE_MEMORY_HOST);
-      hypre_TFree(rhs_values, HYPRE_MEMORY_HOST);
-      hypre_TFree(rows, HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(x_values, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(rhs_values, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(rows, NALU_HYPRE_MEMORY_HOST);
    }
 
-#ifdef HYPRE_FORTRAN
-   HYPRE_IJVectorAssemble(&b);
-   HYPRE_IJVectorGetObject(&b, &par_b);
+#ifdef NALU_HYPRE_FORTRAN
+   NALU_HYPRE_IJVectorAssemble(&b);
+   NALU_HYPRE_IJVectorGetObject(&b, &par_b);
 #else
-   HYPRE_IJVectorAssemble(b);
-   HYPRE_IJVectorGetObject(b, (void **) &par_b);
+   NALU_HYPRE_IJVectorAssemble(b);
+   NALU_HYPRE_IJVectorGetObject(b, (void **) &par_b);
 #endif
 
-#ifdef HYPRE_FORTRAN
-   HYPRE_IJVectorAssemble(&x);
-   HYPRE_IJVectorGetObject(&x, &par_x);
+#ifdef NALU_HYPRE_FORTRAN
+   NALU_HYPRE_IJVectorAssemble(&x);
+   NALU_HYPRE_IJVectorGetObject(&x, &par_x);
 #else
-   HYPRE_IJVectorAssemble(x);
-   HYPRE_IJVectorGetObject(x, (void **) &par_x);
+   NALU_HYPRE_IJVectorAssemble(x);
+   NALU_HYPRE_IJVectorGetObject(x, (void **) &par_x);
 #endif
 
    /* Choose a solver and solve the system */
@@ -347,338 +347,338 @@ HYPRE_Int main (HYPRE_Int argc, char *argv[])
    /* AMG */
    if (solver_id == 0)
    {
-      HYPRE_Int num_iterations;
-      HYPRE_Real final_res_norm;
+      NALU_HYPRE_Int num_iterations;
+      NALU_HYPRE_Real final_res_norm;
 
       /* Create solver */
-#ifdef HYPRE_FORTRAN
-      HYPRE_BoomerAMGCreate(&solver);
+#ifdef NALU_HYPRE_FORTRAN
+      NALU_HYPRE_BoomerAMGCreate(&solver);
 #else
-      HYPRE_BoomerAMGCreate(&solver);
+      NALU_HYPRE_BoomerAMGCreate(&solver);
 #endif
 
       /* Set some parameters (See Reference Manual for more parameters) */
-#ifdef HYPRE_FORTRAN
-      HYPRE_BoomerAMGSetPrintLevel(&solver, &three);  /* print solve info + parameters */
-      HYPRE_BoomerAMGSetCoarsenType(&solver, &six); /* Falgout coarsening */
-      HYPRE_BoomerAMGSetRelaxType(&solver, &three);   /* G-S/Jacobi hybrid relaxation */
-      HYPRE_BoomerAMGSetNumSweeps(&solver, &one);   /* Sweeeps on each level */
-      HYPRE_BoomerAMGSetMaxLevels(&solver, &twenty);  /* maximum number of levels */
-      HYPRE_BoomerAMGSetTol(&solver, &tol);      /* conv. tolerance */
+#ifdef NALU_HYPRE_FORTRAN
+      NALU_HYPRE_BoomerAMGSetPrintLevel(&solver, &three);  /* print solve info + parameters */
+      NALU_HYPRE_BoomerAMGSetCoarsenType(&solver, &six); /* Falgout coarsening */
+      NALU_HYPRE_BoomerAMGSetRelaxType(&solver, &three);   /* G-S/Jacobi hybrid relaxation */
+      NALU_HYPRE_BoomerAMGSetNumSweeps(&solver, &one);   /* Sweeeps on each level */
+      NALU_HYPRE_BoomerAMGSetMaxLevels(&solver, &twenty);  /* maximum number of levels */
+      NALU_HYPRE_BoomerAMGSetTol(&solver, &tol);      /* conv. tolerance */
 #else
-      HYPRE_BoomerAMGSetPrintLevel(solver, 3);  /* print solve info + parameters */
-      HYPRE_BoomerAMGSetCoarsenType(solver, 6); /* Falgout coarsening */
-      HYPRE_BoomerAMGSetRelaxType(solver, 3);   /* G-S/Jacobi hybrid relaxation */
-      HYPRE_BoomerAMGSetNumSweeps(solver, 1);   /* Sweeeps on each level */
-      HYPRE_BoomerAMGSetMaxLevels(solver, 20);  /* maximum number of levels */
-      HYPRE_BoomerAMGSetTol(solver, 1e-7);      /* conv. tolerance */
+      NALU_HYPRE_BoomerAMGSetPrintLevel(solver, 3);  /* print solve info + parameters */
+      NALU_HYPRE_BoomerAMGSetCoarsenType(solver, 6); /* Falgout coarsening */
+      NALU_HYPRE_BoomerAMGSetRelaxType(solver, 3);   /* G-S/Jacobi hybrid relaxation */
+      NALU_HYPRE_BoomerAMGSetNumSweeps(solver, 1);   /* Sweeeps on each level */
+      NALU_HYPRE_BoomerAMGSetMaxLevels(solver, 20);  /* maximum number of levels */
+      NALU_HYPRE_BoomerAMGSetTol(solver, 1e-7);      /* conv. tolerance */
 #endif
 
       /* Now setup and solve! */
-#ifdef HYPRE_FORTRAN
-      HYPRE_BoomerAMGSetup(&solver, &parcsr_A, &par_b, &par_x);
-      HYPRE_BoomerAMGSolve(&solver, &parcsr_A, &par_b, &par_x);
+#ifdef NALU_HYPRE_FORTRAN
+      NALU_HYPRE_BoomerAMGSetup(&solver, &parcsr_A, &par_b, &par_x);
+      NALU_HYPRE_BoomerAMGSolve(&solver, &parcsr_A, &par_b, &par_x);
 #else
-      HYPRE_BoomerAMGSetup(solver, parcsr_A, par_b, par_x);
-      HYPRE_BoomerAMGSolve(solver, parcsr_A, par_b, par_x);
+      NALU_HYPRE_BoomerAMGSetup(solver, parcsr_A, par_b, par_x);
+      NALU_HYPRE_BoomerAMGSolve(solver, parcsr_A, par_b, par_x);
 #endif
 
       /* Run info - needed logging turned on */
-#ifdef HYPRE_FORTRAN
-      HYPRE_BoomerAMGGetNumIterations(&solver, &num_iterations);
-      HYPRE_BoomerAMGGetFinalRelativeResidualNorm(&solver, &final_res_norm);
+#ifdef NALU_HYPRE_FORTRAN
+      NALU_HYPRE_BoomerAMGGetNumIterations(&solver, &num_iterations);
+      NALU_HYPRE_BoomerAMGGetFinalRelativeResidualNorm(&solver, &final_res_norm);
 #else
-      HYPRE_BoomerAMGGetNumIterations(solver, &num_iterations);
-      HYPRE_BoomerAMGGetFinalRelativeResidualNorm(solver, &final_res_norm);
+      NALU_HYPRE_BoomerAMGGetNumIterations(solver, &num_iterations);
+      NALU_HYPRE_BoomerAMGGetFinalRelativeResidualNorm(solver, &final_res_norm);
 #endif
       if (myid == 0)
       {
-         hypre_printf("\n");
-         hypre_printf("Iterations = %d\n", num_iterations);
-         hypre_printf("Final Relative Residual Norm = %e\n", final_res_norm);
-         hypre_printf("\n");
+         nalu_hypre_printf("\n");
+         nalu_hypre_printf("Iterations = %d\n", num_iterations);
+         nalu_hypre_printf("Final Relative Residual Norm = %e\n", final_res_norm);
+         nalu_hypre_printf("\n");
       }
 
       /* Destroy solver */
-#ifdef HYPRE_FORTRAN
-      HYPRE_BoomerAMGDestroy(&solver);
+#ifdef NALU_HYPRE_FORTRAN
+      NALU_HYPRE_BoomerAMGDestroy(&solver);
 #else
-      HYPRE_BoomerAMGDestroy(solver);
+      NALU_HYPRE_BoomerAMGDestroy(solver);
 #endif
    }
    /* PCG */
    else if (solver_id == 50)
    {
-      HYPRE_Int num_iterations;
-      HYPRE_Real final_res_norm;
+      NALU_HYPRE_Int num_iterations;
+      NALU_HYPRE_Real final_res_norm;
 
       /* Create solver */
-#ifdef HYPRE_FORTRAN
-      HYPRE_ParCSRPCGCreate(&temp_COMM, &solver);
+#ifdef NALU_HYPRE_FORTRAN
+      NALU_HYPRE_ParCSRPCGCreate(&temp_COMM, &solver);
 #else
-      HYPRE_ParCSRPCGCreate(hypre_MPI_COMM_WORLD, &solver);
+      NALU_HYPRE_ParCSRPCGCreate(nalu_hypre_MPI_COMM_WORLD, &solver);
 #endif
 
       /* Set some parameters (See Reference Manual for more parameters) */
-#ifdef HYPRE_FORTRAN
-      HYPRE_ParCSRPCGSetMaxIter(&solver, &thousand); /* max iterations */
-      HYPRE_ParCSRPCGSetTol(&solver, &tol); /* conv. tolerance */
-      HYPRE_ParCSRPCGSetTwoNorm(&solver, &one); /* use the two norm as the stopping criteria */
-      HYPRE_ParCSRPCGSetPrintLevel(&solver, &two); /* prints out the iteration info */
+#ifdef NALU_HYPRE_FORTRAN
+      NALU_HYPRE_ParCSRPCGSetMaxIter(&solver, &thousand); /* max iterations */
+      NALU_HYPRE_ParCSRPCGSetTol(&solver, &tol); /* conv. tolerance */
+      NALU_HYPRE_ParCSRPCGSetTwoNorm(&solver, &one); /* use the two norm as the stopping criteria */
+      NALU_HYPRE_ParCSRPCGSetPrintLevel(&solver, &two); /* prints out the iteration info */
 #else
-      HYPRE_PCGSetMaxIter(solver, 1000); /* max iterations */
-      HYPRE_PCGSetTol(solver, 1e-7); /* conv. tolerance */
-      HYPRE_PCGSetTwoNorm(solver, 1); /* use the two norm as the stopping criteria */
-      HYPRE_PCGSetPrintLevel(solver, 2); /* prints out the iteration info */
-      HYPRE_PCGSetLogging(solver, 1); /* needed to get run info later */
+      NALU_HYPRE_PCGSetMaxIter(solver, 1000); /* max iterations */
+      NALU_HYPRE_PCGSetTol(solver, 1e-7); /* conv. tolerance */
+      NALU_HYPRE_PCGSetTwoNorm(solver, 1); /* use the two norm as the stopping criteria */
+      NALU_HYPRE_PCGSetPrintLevel(solver, 2); /* prints out the iteration info */
+      NALU_HYPRE_PCGSetLogging(solver, 1); /* needed to get run info later */
 #endif
 
       /* Now setup and solve! */
-#ifdef HYPRE_FORTRAN
-      HYPRE_ParCSRPCGSetup(&solver, &parcsr_A, &par_b, &par_x);
-      HYPRE_ParCSRPCGSolve(&solver, &parcsr_A, &par_b, &par_x);
+#ifdef NALU_HYPRE_FORTRAN
+      NALU_HYPRE_ParCSRPCGSetup(&solver, &parcsr_A, &par_b, &par_x);
+      NALU_HYPRE_ParCSRPCGSolve(&solver, &parcsr_A, &par_b, &par_x);
 #else
-      HYPRE_ParCSRPCGSetup(solver, parcsr_A, par_b, par_x);
-      HYPRE_ParCSRPCGSolve(solver, parcsr_A, par_b, par_x);
+      NALU_HYPRE_ParCSRPCGSetup(solver, parcsr_A, par_b, par_x);
+      NALU_HYPRE_ParCSRPCGSolve(solver, parcsr_A, par_b, par_x);
 #endif
 
       /* Run info - needed logging turned on */
-#ifdef HYPRE_FORTRAN
-      HYPRE_ParCSRPCGGetNumIterations(&solver, &num_iterations);
-      HYPRE_ParCSRPCGGetFinalRelativeResidualNorm(&solver, &final_res_norm);
+#ifdef NALU_HYPRE_FORTRAN
+      NALU_HYPRE_ParCSRPCGGetNumIterations(&solver, &num_iterations);
+      NALU_HYPRE_ParCSRPCGGetFinalRelativeResidualNorm(&solver, &final_res_norm);
 #else
-      HYPRE_PCGGetNumIterations(solver, &num_iterations);
-      HYPRE_PCGGetFinalRelativeResidualNorm(solver, &final_res_norm);
+      NALU_HYPRE_PCGGetNumIterations(solver, &num_iterations);
+      NALU_HYPRE_PCGGetFinalRelativeResidualNorm(solver, &final_res_norm);
 #endif
       if (myid == 0)
       {
-         hypre_printf("\n");
-         hypre_printf("Iterations = %d\n", num_iterations);
-         hypre_printf("Final Relative Residual Norm = %e\n", final_res_norm);
-         hypre_printf("\n");
+         nalu_hypre_printf("\n");
+         nalu_hypre_printf("Iterations = %d\n", num_iterations);
+         nalu_hypre_printf("Final Relative Residual Norm = %e\n", final_res_norm);
+         nalu_hypre_printf("\n");
       }
 
       /* Destroy solver */
-#ifdef HYPRE_FORTRAN
-      HYPRE_ParCSRPCGDestroy(&solver);
+#ifdef NALU_HYPRE_FORTRAN
+      NALU_HYPRE_ParCSRPCGDestroy(&solver);
 #else
-      HYPRE_ParCSRPCGDestroy(solver);
+      NALU_HYPRE_ParCSRPCGDestroy(solver);
 #endif
    }
    /* PCG with AMG preconditioner */
    else if (solver_id == 1)
    {
-      HYPRE_Int num_iterations;
-      HYPRE_Real final_res_norm;
+      NALU_HYPRE_Int num_iterations;
+      NALU_HYPRE_Real final_res_norm;
 
       /* Create solver */
-#ifdef HYPRE_FORTRAN
-      HYPRE_ParCSRPCGCreate(&temp_COMM, &solver);
+#ifdef NALU_HYPRE_FORTRAN
+      NALU_HYPRE_ParCSRPCGCreate(&temp_COMM, &solver);
 #else
-      HYPRE_ParCSRPCGCreate(hypre_MPI_COMM_WORLD, &solver);
+      NALU_HYPRE_ParCSRPCGCreate(nalu_hypre_MPI_COMM_WORLD, &solver);
 #endif
 
       /* Set some parameters (See Reference Manual for more parameters) */
-#ifdef HYPRE_FORTRAN
-      HYPRE_ParCSRPCGSetMaxIter(&solver, &thousand); /* max iterations */
-      HYPRE_ParCSRPCGSetTol(&solver, &tol); /* conv. tolerance */
-      HYPRE_ParCSRPCGSetTwoNorm(&solver, &one); /* use the two norm as the stopping criteria */
-      HYPRE_ParCSRPCGSetPrintLevel(&solver, &two); /* print solve info */
+#ifdef NALU_HYPRE_FORTRAN
+      NALU_HYPRE_ParCSRPCGSetMaxIter(&solver, &thousand); /* max iterations */
+      NALU_HYPRE_ParCSRPCGSetTol(&solver, &tol); /* conv. tolerance */
+      NALU_HYPRE_ParCSRPCGSetTwoNorm(&solver, &one); /* use the two norm as the stopping criteria */
+      NALU_HYPRE_ParCSRPCGSetPrintLevel(&solver, &two); /* print solve info */
 #else
-      HYPRE_PCGSetMaxIter(solver, 1000); /* max iterations */
-      HYPRE_PCGSetTol(solver, 1e-7); /* conv. tolerance */
-      HYPRE_PCGSetTwoNorm(solver, 1); /* use the two norm as the stopping criteria */
-      HYPRE_PCGSetPrintLevel(solver, 2); /* print solve info */
-      HYPRE_PCGSetLogging(solver, 1); /* needed to get run info later */
+      NALU_HYPRE_PCGSetMaxIter(solver, 1000); /* max iterations */
+      NALU_HYPRE_PCGSetTol(solver, 1e-7); /* conv. tolerance */
+      NALU_HYPRE_PCGSetTwoNorm(solver, 1); /* use the two norm as the stopping criteria */
+      NALU_HYPRE_PCGSetPrintLevel(solver, 2); /* print solve info */
+      NALU_HYPRE_PCGSetLogging(solver, 1); /* needed to get run info later */
 #endif
 
       /* Now set up the AMG preconditioner and specify any parameters */
-#ifdef HYPRE_FORTRAN
-      HYPRE_BoomerAMGCreate(&precond);
-      HYPRE_BoomerAMGSetPrintLevel(&precond, &one); /* print amg solution info*/
-      HYPRE_BoomerAMGSetCoarsenType(&precond, &six);
-      HYPRE_BoomerAMGSetRelaxType(&precond, &three);
-      HYPRE_BoomerAMGSetNumSweeps(&precond, &one);
-      HYPRE_BoomerAMGSetTol(&precond, &oo1);
+#ifdef NALU_HYPRE_FORTRAN
+      NALU_HYPRE_BoomerAMGCreate(&precond);
+      NALU_HYPRE_BoomerAMGSetPrintLevel(&precond, &one); /* print amg solution info*/
+      NALU_HYPRE_BoomerAMGSetCoarsenType(&precond, &six);
+      NALU_HYPRE_BoomerAMGSetRelaxType(&precond, &three);
+      NALU_HYPRE_BoomerAMGSetNumSweeps(&precond, &one);
+      NALU_HYPRE_BoomerAMGSetTol(&precond, &oo1);
 #else
-      HYPRE_BoomerAMGCreate(&precond);
-      HYPRE_BoomerAMGSetPrintLevel(precond, 1); /* print amg solution info*/
-      HYPRE_BoomerAMGSetCoarsenType(precond, 6);
-      HYPRE_BoomerAMGSetRelaxType(precond, 3);
-      HYPRE_BoomerAMGSetNumSweeps(precond, 1);
-      HYPRE_BoomerAMGSetTol(precond, 1e-3);
+      NALU_HYPRE_BoomerAMGCreate(&precond);
+      NALU_HYPRE_BoomerAMGSetPrintLevel(precond, 1); /* print amg solution info*/
+      NALU_HYPRE_BoomerAMGSetCoarsenType(precond, 6);
+      NALU_HYPRE_BoomerAMGSetRelaxType(precond, 3);
+      NALU_HYPRE_BoomerAMGSetNumSweeps(precond, 1);
+      NALU_HYPRE_BoomerAMGSetTol(precond, 1e-3);
 #endif
 
       /* Set the PCG preconditioner */
-#ifdef HYPRE_FORTRAN
+#ifdef NALU_HYPRE_FORTRAN
       precond_id = 2;
-      HYPRE_ParCSRPCGSetPrecond(&solver, &precond_id, &precond);
+      NALU_HYPRE_ParCSRPCGSetPrecond(&solver, &precond_id, &precond);
 #else
-      HYPRE_PCGSetPrecond(solver, (HYPRE_PtrToSolverFcn) HYPRE_BoomerAMGSolve,
-                          (HYPRE_PtrToSolverFcn) HYPRE_BoomerAMGSetup, precond);
+      NALU_HYPRE_PCGSetPrecond(solver, (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_BoomerAMGSolve,
+                          (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_BoomerAMGSetup, precond);
 #endif
 
       /* Now setup and solve! */
-#ifdef HYPRE_FORTRAN
-      HYPRE_ParCSRPCGSetup(&solver, &parcsr_A, &par_b, &par_x);
-      HYPRE_ParCSRPCGSolve(&solver, &parcsr_A, &par_b, &par_x);
+#ifdef NALU_HYPRE_FORTRAN
+      NALU_HYPRE_ParCSRPCGSetup(&solver, &parcsr_A, &par_b, &par_x);
+      NALU_HYPRE_ParCSRPCGSolve(&solver, &parcsr_A, &par_b, &par_x);
 #else
-      HYPRE_ParCSRPCGSetup(solver, parcsr_A, par_b, par_x);
-      HYPRE_ParCSRPCGSolve(solver, parcsr_A, par_b, par_x);
+      NALU_HYPRE_ParCSRPCGSetup(solver, parcsr_A, par_b, par_x);
+      NALU_HYPRE_ParCSRPCGSolve(solver, parcsr_A, par_b, par_x);
 #endif
 
       /* Run info - needed logging turned on */
-#ifdef HYPRE_FORTRAN
-      HYPRE_ParCSRPCGGetNumIterations(&solver, &num_iterations);
-      HYPRE_ParCSRPCGGetFinalRelativeResidualNorm(&solver, &final_res_norm);
+#ifdef NALU_HYPRE_FORTRAN
+      NALU_HYPRE_ParCSRPCGGetNumIterations(&solver, &num_iterations);
+      NALU_HYPRE_ParCSRPCGGetFinalRelativeResidualNorm(&solver, &final_res_norm);
 #else
-      HYPRE_PCGGetNumIterations(solver, &num_iterations);
-      HYPRE_PCGGetFinalRelativeResidualNorm(solver, &final_res_norm);
+      NALU_HYPRE_PCGGetNumIterations(solver, &num_iterations);
+      NALU_HYPRE_PCGGetFinalRelativeResidualNorm(solver, &final_res_norm);
 #endif
       if (myid == 0)
       {
-         hypre_printf("\n");
-         hypre_printf("Iterations = %d\n", num_iterations);
-         hypre_printf("Final Relative Residual Norm = %e\n", final_res_norm);
-         hypre_printf("\n");
+         nalu_hypre_printf("\n");
+         nalu_hypre_printf("Iterations = %d\n", num_iterations);
+         nalu_hypre_printf("Final Relative Residual Norm = %e\n", final_res_norm);
+         nalu_hypre_printf("\n");
       }
 
       /* Destroy solver and preconditioner */
-#ifdef HYPRE_FORTRAN
-      HYPRE_ParCSRPCGDestroy(&solver);
-      HYPRE_BoomerAMGDestroy(&precond);
+#ifdef NALU_HYPRE_FORTRAN
+      NALU_HYPRE_ParCSRPCGDestroy(&solver);
+      NALU_HYPRE_BoomerAMGDestroy(&precond);
 #else
-      HYPRE_ParCSRPCGDestroy(solver);
-      HYPRE_BoomerAMGDestroy(precond);
+      NALU_HYPRE_ParCSRPCGDestroy(solver);
+      NALU_HYPRE_BoomerAMGDestroy(precond);
 #endif
    }
    /* PCG with Parasails Preconditioner */
    else if (solver_id == 8)
    {
-      HYPRE_Int    num_iterations;
-      HYPRE_Real final_res_norm;
+      NALU_HYPRE_Int    num_iterations;
+      NALU_HYPRE_Real final_res_norm;
 
-      HYPRE_Int      sai_max_levels = 1;
-      HYPRE_Real   sai_threshold = 0.1;
-      HYPRE_Real   sai_filter = 0.05;
-      HYPRE_Int      sai_sym = 1;
+      NALU_HYPRE_Int      sai_max_levels = 1;
+      NALU_HYPRE_Real   sai_threshold = 0.1;
+      NALU_HYPRE_Real   sai_filter = 0.05;
+      NALU_HYPRE_Int      sai_sym = 1;
 
       /* Create solver */
-#ifdef HYPRE_FORTRAN
-      HYPRE_ParCSRPCGCreate(&temp_COMM, &solver);
+#ifdef NALU_HYPRE_FORTRAN
+      NALU_HYPRE_ParCSRPCGCreate(&temp_COMM, &solver);
 #else
-      HYPRE_ParCSRPCGCreate(hypre_MPI_COMM_WORLD, &solver);
+      NALU_HYPRE_ParCSRPCGCreate(nalu_hypre_MPI_COMM_WORLD, &solver);
 #endif
 
       /* Set some parameters (See Reference Manual for more parameters) */
-#ifdef HYPRE_FORTRAN
-      HYPRE_ParCSRPCGSetMaxIter(&solver, &thousand); /* max iterations */
-      HYPRE_ParCSRPCGSetTol(&solver, &tol); /* conv. tolerance */
-      HYPRE_ParCSRPCGSetTwoNorm(&solver, &one); /* use the two norm as the stopping criteria */
-      HYPRE_ParCSRPCGSetPrintLevel(&solver, &two); /* print solve info */
+#ifdef NALU_HYPRE_FORTRAN
+      NALU_HYPRE_ParCSRPCGSetMaxIter(&solver, &thousand); /* max iterations */
+      NALU_HYPRE_ParCSRPCGSetTol(&solver, &tol); /* conv. tolerance */
+      NALU_HYPRE_ParCSRPCGSetTwoNorm(&solver, &one); /* use the two norm as the stopping criteria */
+      NALU_HYPRE_ParCSRPCGSetPrintLevel(&solver, &two); /* print solve info */
 #else
-      HYPRE_PCGSetMaxIter(solver, 1000); /* max iterations */
-      HYPRE_PCGSetTol(solver, 1e-7); /* conv. tolerance */
-      HYPRE_PCGSetTwoNorm(solver, 1); /* use the two norm as the stopping criteria */
-      HYPRE_PCGSetPrintLevel(solver, 2); /* print solve info */
-      HYPRE_PCGSetLogging(solver, 1); /* needed to get run info later */
+      NALU_HYPRE_PCGSetMaxIter(solver, 1000); /* max iterations */
+      NALU_HYPRE_PCGSetTol(solver, 1e-7); /* conv. tolerance */
+      NALU_HYPRE_PCGSetTwoNorm(solver, 1); /* use the two norm as the stopping criteria */
+      NALU_HYPRE_PCGSetPrintLevel(solver, 2); /* print solve info */
+      NALU_HYPRE_PCGSetLogging(solver, 1); /* needed to get run info later */
 #endif
 
       /* Now set up the ParaSails preconditioner and specify any parameters */
-#ifdef HYPRE_FORTRAN
-      HYPRE_ParaSailsCreate(&temp_COMM, &precond);
+#ifdef NALU_HYPRE_FORTRAN
+      NALU_HYPRE_ParaSailsCreate(&temp_COMM, &precond);
 #else
-      HYPRE_ParaSailsCreate(hypre_MPI_COMM_WORLD, &precond);
+      NALU_HYPRE_ParaSailsCreate(nalu_hypre_MPI_COMM_WORLD, &precond);
 #endif
 
       /* Set some parameters (See Reference Manual for more parameters) */
-#ifdef HYPRE_FORTRAN
-      HYPRE_ParaSailsSetParams(&precond, &sai_threshold, &sai_max_levels);
-      HYPRE_ParaSailsSetFilter(&precond, &sai_filter);
-      HYPRE_ParaSailsSetSym(&precond, &sai_sym);
-      HYPRE_ParaSailsSetLogging(&precond, &three);
+#ifdef NALU_HYPRE_FORTRAN
+      NALU_HYPRE_ParaSailsSetParams(&precond, &sai_threshold, &sai_max_levels);
+      NALU_HYPRE_ParaSailsSetFilter(&precond, &sai_filter);
+      NALU_HYPRE_ParaSailsSetSym(&precond, &sai_sym);
+      NALU_HYPRE_ParaSailsSetLogging(&precond, &three);
 #else
-      HYPRE_ParaSailsSetParams(precond, sai_threshold, sai_max_levels);
-      HYPRE_ParaSailsSetFilter(precond, sai_filter);
-      HYPRE_ParaSailsSetSym(precond, sai_sym);
-      HYPRE_ParaSailsSetLogging(precond, 3);
+      NALU_HYPRE_ParaSailsSetParams(precond, sai_threshold, sai_max_levels);
+      NALU_HYPRE_ParaSailsSetFilter(precond, sai_filter);
+      NALU_HYPRE_ParaSailsSetSym(precond, sai_sym);
+      NALU_HYPRE_ParaSailsSetLogging(precond, 3);
 #endif
 
       /* Set the PCG preconditioner */
-#ifdef HYPRE_FORTRAN
+#ifdef NALU_HYPRE_FORTRAN
       precond_id = 4;
-      HYPRE_ParCSRPCGSetPrecond(&solver, &precond_id, &precond);
+      NALU_HYPRE_ParCSRPCGSetPrecond(&solver, &precond_id, &precond);
 #else
-      HYPRE_PCGSetPrecond(solver, (HYPRE_PtrToSolverFcn) HYPRE_ParaSailsSolve,
-                          (HYPRE_PtrToSolverFcn) HYPRE_ParaSailsSetup, precond);
+      NALU_HYPRE_PCGSetPrecond(solver, (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_ParaSailsSolve,
+                          (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_ParaSailsSetup, precond);
 #endif
 
       /* Now setup and solve! */
-#ifdef HYPRE_FORTRAN
-      HYPRE_ParCSRPCGSetup(&solver, &parcsr_A, &par_b, &par_x);
-      HYPRE_ParCSRPCGSolve(&solver, &parcsr_A, &par_b, &par_x);
+#ifdef NALU_HYPRE_FORTRAN
+      NALU_HYPRE_ParCSRPCGSetup(&solver, &parcsr_A, &par_b, &par_x);
+      NALU_HYPRE_ParCSRPCGSolve(&solver, &parcsr_A, &par_b, &par_x);
 #else
-      HYPRE_ParCSRPCGSetup(solver, parcsr_A, par_b, par_x);
-      HYPRE_ParCSRPCGSolve(solver, parcsr_A, par_b, par_x);
+      NALU_HYPRE_ParCSRPCGSetup(solver, parcsr_A, par_b, par_x);
+      NALU_HYPRE_ParCSRPCGSolve(solver, parcsr_A, par_b, par_x);
 #endif
 
 
       /* Run info - needed logging turned on */
-#ifdef HYPRE_FORTRAN
-      HYPRE_ParCSRPCGGetNumIterations(&solver, &num_iterations);
-      HYPRE_ParCSRPCGGetFinalRelativeResidualNorm(&solver, &final_res_norm);
+#ifdef NALU_HYPRE_FORTRAN
+      NALU_HYPRE_ParCSRPCGGetNumIterations(&solver, &num_iterations);
+      NALU_HYPRE_ParCSRPCGGetFinalRelativeResidualNorm(&solver, &final_res_norm);
 #else
-      HYPRE_PCGGetNumIterations(solver, &num_iterations);
-      HYPRE_PCGGetFinalRelativeResidualNorm(solver, &final_res_norm);
+      NALU_HYPRE_PCGGetNumIterations(solver, &num_iterations);
+      NALU_HYPRE_PCGGetFinalRelativeResidualNorm(solver, &final_res_norm);
 #endif
       if (myid == 0)
       {
-         hypre_printf("\n");
-         hypre_printf("Iterations = %d\n", num_iterations);
-         hypre_printf("Final Relative Residual Norm = %e\n", final_res_norm);
-         hypre_printf("\n");
+         nalu_hypre_printf("\n");
+         nalu_hypre_printf("Iterations = %d\n", num_iterations);
+         nalu_hypre_printf("Final Relative Residual Norm = %e\n", final_res_norm);
+         nalu_hypre_printf("\n");
       }
 
       /* Destory solver and preconditioner */
-#ifdef HYPRE_FORTRAN
-      HYPRE_ParCSRPCGDestroy(&solver);
-      HYPRE_ParaSailsDestroy(&precond);
+#ifdef NALU_HYPRE_FORTRAN
+      NALU_HYPRE_ParCSRPCGDestroy(&solver);
+      NALU_HYPRE_ParaSailsDestroy(&precond);
 #else
-      HYPRE_ParCSRPCGDestroy(solver);
-      HYPRE_ParaSailsDestroy(precond);
+      NALU_HYPRE_ParCSRPCGDestroy(solver);
+      NALU_HYPRE_ParaSailsDestroy(precond);
 #endif
    }
    else
    {
-      if (myid == 0) { hypre_printf("Invalid solver id specified.\n"); }
+      if (myid == 0) { nalu_hypre_printf("Invalid solver id specified.\n"); }
    }
 
    /* Print the solution */
-#ifdef HYPRE_FORTRAN
+#ifdef NALU_HYPRE_FORTRAN
    if (print_solution)
    {
-      HYPRE_IJVectorPrint(&x, "ij.out.x");
+      NALU_HYPRE_IJVectorPrint(&x, "ij.out.x");
    }
 #else
    if (print_solution)
    {
-      HYPRE_IJVectorPrint(x, "ij.out.x");
+      NALU_HYPRE_IJVectorPrint(x, "ij.out.x");
    }
 #endif
 
    /* Clean up */
-#ifdef HYPRE_FORTRAN
-   HYPRE_IJMatrixDestroy(&A);
-   HYPRE_IJVectorDestroy(&b);
-   HYPRE_IJVectorDestroy(&x);
+#ifdef NALU_HYPRE_FORTRAN
+   NALU_HYPRE_IJMatrixDestroy(&A);
+   NALU_HYPRE_IJVectorDestroy(&b);
+   NALU_HYPRE_IJVectorDestroy(&x);
 #else
-   HYPRE_IJMatrixDestroy(A);
-   HYPRE_IJVectorDestroy(b);
-   HYPRE_IJVectorDestroy(x);
+   NALU_HYPRE_IJMatrixDestroy(A);
+   NALU_HYPRE_IJVectorDestroy(b);
+   NALU_HYPRE_IJVectorDestroy(x);
 #endif
 
    /* Finalize MPI*/
-   hypre_MPI_Finalize();
+   nalu_hypre_MPI_Finalize();
 
    return (0);
 }

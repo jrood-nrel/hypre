@@ -20,37 +20,37 @@
 !  Constants
 ! --------------------------------------------------------------------------
 
-      integer HYPRE_UNITIALIZED
-      parameter( HYPRE_UNITIALIZED = -999 )
+      integer NALU_HYPRE_UNITIALIZED
+      parameter( NALU_HYPRE_UNITIALIZED = -999 )
 
-      integer HYPRE_PETSC_MAT_PARILUT_SOLVER
-      parameter( HYPRE_PETSC_MAT_PARILUT_SOLVER = 222 )
-      integer HYPRE_PARILUT
-      parameter( HYPRE_PARILUT =                  333 )
+      integer NALU_HYPRE_PETSC_MAT_PARILUT_SOLVER
+      parameter( NALU_HYPRE_PETSC_MAT_PARILUT_SOLVER = 222 )
+      integer NALU_HYPRE_PARILUT
+      parameter( NALU_HYPRE_PARILUT =                  333 )
 
-      integer HYPRE_STRUCT
-      parameter( HYPRE_STRUCT =  1111 )
-      integer HYPRE_SSTRUCT
-      parameter( HYPRE_SSTRUCT = 3333 )
-      integer HYPRE_PARCSR
-      parameter( HYPRE_PARCSR =  5555 )
+      integer NALU_HYPRE_STRUCT
+      parameter( NALU_HYPRE_STRUCT =  1111 )
+      integer NALU_HYPRE_SSTRUCT
+      parameter( NALU_HYPRE_SSTRUCT = 3333 )
+      integer NALU_HYPRE_PARCSR
+      parameter( NALU_HYPRE_PARCSR =  5555 )
 
-      integer HYPRE_ISIS
-      parameter( HYPRE_ISIS =    9911 )
-      integer HYPRE_PETSC
-      parameter( HYPRE_PETSC =   9933 )
+      integer NALU_HYPRE_ISIS
+      parameter( NALU_HYPRE_ISIS =    9911 )
+      integer NALU_HYPRE_PETSC
+      parameter( NALU_HYPRE_PETSC =   9933 )
 
-      integer HYPRE_PFMG
-      parameter( HYPRE_PFMG =    10 )
-      integer HYPRE_SMG
-      parameter( HYPRE_SMG =     11 )
+      integer NALU_HYPRE_PFMG
+      parameter( NALU_HYPRE_PFMG =    10 )
+      integer NALU_HYPRE_SMG
+      parameter( NALU_HYPRE_SMG =     11 )
 
-      integer HYPRE_MEMORY_HOST
-      parameter( HYPRE_MEMORY_HOST =   0 )
-      integer HYPRE_MEMORY_DEVICE
-      parameter( HYPRE_MEMORY_DEVICE = 1 )
+      integer NALU_HYPRE_MEMORY_HOST
+      parameter( NALU_HYPRE_MEMORY_HOST =   0 )
+      integer NALU_HYPRE_MEMORY_DEVICE
+      parameter( NALU_HYPRE_MEMORY_DEVICE = 1 )
 
-      integer HYPRE_EXEC_HOST
-      parameter( HYPRE_EXEC_HOST =   0 )
-      integer HYPRE_EXEC_DEVICE
-      parameter( HYPRE_EXEC_DEVICE = 1 )
+      integer NALU_HYPRE_EXEC_HOST
+      parameter( NALU_HYPRE_EXEC_HOST =   0 )
+      integer NALU_HYPRE_EXEC_DEVICE
+      parameter( NALU_HYPRE_EXEC_DEVICE = 1 )

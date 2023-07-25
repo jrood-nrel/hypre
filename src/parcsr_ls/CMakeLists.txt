@@ -4,53 +4,53 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 set(HDRS
-  HYPRE_parcsr_ls.h
-  _hypre_parcsr_ls.h
+  NALU_HYPRE_parcsr_ls.h
+  _nalu_hypre_parcsr_ls.h
 )
 
 set(SRCS
   amg_hybrid.c
   aux_interp.c
-  F90_hypre_laplace.c
-  F90_HYPRE_parcsr_amg.c
-  F90_HYPRE_parcsr_bicgstab.c
-  F90_HYPRE_parcsr_block.c
-  F90_HYPRE_parcsr_cgnr.c
-  F90_HYPRE_parcsr_Euclid.c
-  F90_HYPRE_parcsr_gmres.c
-  F90_HYPRE_parcsr_cogmres.c
-  F90_HYPRE_parcsr_flexgmres.c
-  F90_HYPRE_parcsr_lgmres.c
-  F90_HYPRE_parcsr_hybrid.c
-  F90_HYPRE_parcsr_int.c
-  F90_HYPRE_parcsr_ParaSails.c
-  F90_HYPRE_parcsr_pcg.c
-  F90_HYPRE_parcsr_pilut.c
-  F90_HYPRE_parcsr_schwarz.c
-  F90_HYPRE_ams.c
+  F90_nalu_hypre_laplace.c
+  F90_NALU_HYPRE_parcsr_amg.c
+  F90_NALU_HYPRE_parcsr_bicgstab.c
+  F90_NALU_HYPRE_parcsr_block.c
+  F90_NALU_HYPRE_parcsr_cgnr.c
+  F90_NALU_HYPRE_parcsr_Euclid.c
+  F90_NALU_HYPRE_parcsr_gmres.c
+  F90_NALU_HYPRE_parcsr_cogmres.c
+  F90_NALU_HYPRE_parcsr_flexgmres.c
+  F90_NALU_HYPRE_parcsr_lgmres.c
+  F90_NALU_HYPRE_parcsr_hybrid.c
+  F90_NALU_HYPRE_parcsr_int.c
+  F90_NALU_HYPRE_parcsr_ParaSails.c
+  F90_NALU_HYPRE_parcsr_pcg.c
+  F90_NALU_HYPRE_parcsr_pilut.c
+  F90_NALU_HYPRE_parcsr_schwarz.c
+  F90_NALU_HYPRE_ams.c
   gen_redcs_mat.c
-  HYPRE_parcsr_amg.c
-  HYPRE_parcsr_amgdd.c
-  HYPRE_parcsr_bicgstab.c
-  HYPRE_parcsr_block.c
-  HYPRE_parcsr_cgnr.c
-  HYPRE_parcsr_Euclid.c
-  HYPRE_parcsr_gmres.c
-  HYPRE_parcsr_cogmres.c
-  HYPRE_parcsr_flexgmres.c
-  HYPRE_parcsr_lgmres.c
-  HYPRE_parcsr_hybrid.c
-  HYPRE_parcsr_int.c
-  HYPRE_parcsr_ilu.c
-  HYPRE_parcsr_mgr.c
-  HYPRE_parcsr_ParaSails.c
-  HYPRE_parcsr_pcg.c
-  HYPRE_parcsr_pilut.c
-  HYPRE_parcsr_schwarz.c
-  HYPRE_parcsr_fsai.c
-  HYPRE_ams.c
-  HYPRE_ads.c
-  HYPRE_ame.c
+  NALU_HYPRE_parcsr_amg.c
+  NALU_HYPRE_parcsr_amgdd.c
+  NALU_HYPRE_parcsr_bicgstab.c
+  NALU_HYPRE_parcsr_block.c
+  NALU_HYPRE_parcsr_cgnr.c
+  NALU_HYPRE_parcsr_Euclid.c
+  NALU_HYPRE_parcsr_gmres.c
+  NALU_HYPRE_parcsr_cogmres.c
+  NALU_HYPRE_parcsr_flexgmres.c
+  NALU_HYPRE_parcsr_lgmres.c
+  NALU_HYPRE_parcsr_hybrid.c
+  NALU_HYPRE_parcsr_int.c
+  NALU_HYPRE_parcsr_ilu.c
+  NALU_HYPRE_parcsr_mgr.c
+  NALU_HYPRE_parcsr_ParaSails.c
+  NALU_HYPRE_parcsr_pcg.c
+  NALU_HYPRE_parcsr_pilut.c
+  NALU_HYPRE_parcsr_schwarz.c
+  NALU_HYPRE_parcsr_fsai.c
+  NALU_HYPRE_ams.c
+  NALU_HYPRE_ads.c
+  NALU_HYPRE_ame.c
   par_2s_interp.c
   par_amg.c
   par_amgdd.c
@@ -144,7 +144,7 @@ set(SRCS
   par_mgr_device.c
 )
 
-if (HYPRE_USING_DSUPERLU)
+if (NALU_HYPRE_USING_DSUPERLU)
   list(APPEND SRCS dsuperlu.c)
 endif()
 
@@ -153,7 +153,7 @@ target_sources(${PROJECT_NAME}
           ${HDRS}
 )
 
-if (HYPRE_USING_CUDA OR HYPRE_USING_SYCL)
+if (NALU_HYPRE_USING_CUDA OR NALU_HYPRE_USING_SYCL)
   set(GPU_SRCS
     ams.c
     ads.c
@@ -183,8 +183,8 @@ if (HYPRE_USING_CUDA OR HYPRE_USING_SYCL)
     par_fsai_device.c
   )
   convert_filenames_to_full_paths(GPU_SRCS)
-  set(HYPRE_GPU_SOURCES ${HYPRE_GPU_SOURCES} ${GPU_SRCS} PARENT_SCOPE)
+  set(NALU_HYPRE_GPU_SOURCES ${NALU_HYPRE_GPU_SOURCES} ${GPU_SRCS} PARENT_SCOPE)
 endif ()
 
 convert_filenames_to_full_paths(HDRS)
-set(HYPRE_HEADERS ${HYPRE_HEADERS} ${HDRS} PARENT_SCOPE)
+set(NALU_HYPRE_HEADERS ${NALU_HYPRE_HEADERS} ${HDRS} PARENT_SCOPE)

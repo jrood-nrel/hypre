@@ -21,18 +21,18 @@
 typedef struct
 {
     Mem      *mem;   /* storage for arrays, indices, and values */
-    HYPRE_Int      size;
+    NALU_HYPRE_Int      size;
 
-    HYPRE_Int     *len;
-    HYPRE_Int    **ind;
+    NALU_HYPRE_Int     *len;
+    NALU_HYPRE_Int    **ind;
 }
 PrunedRows;
 
-PrunedRows *PrunedRowsCreate(Matrix *mat, HYPRE_Int size, DiagScale *diag_scale,
-  HYPRE_Real thresh);
+PrunedRows *PrunedRowsCreate(Matrix *mat, NALU_HYPRE_Int size, DiagScale *diag_scale,
+  NALU_HYPRE_Real thresh);
 void PrunedRowsDestroy(PrunedRows *p);
-HYPRE_Int *PrunedRowsAlloc(PrunedRows *p, HYPRE_Int len);
-void PrunedRowsPut(PrunedRows *p, HYPRE_Int index, HYPRE_Int len, HYPRE_Int *ind);
-void PrunedRowsGet(PrunedRows *p, HYPRE_Int index, HYPRE_Int *lenp, HYPRE_Int **indp);
+NALU_HYPRE_Int *PrunedRowsAlloc(PrunedRows *p, NALU_HYPRE_Int len);
+void PrunedRowsPut(PrunedRows *p, NALU_HYPRE_Int index, NALU_HYPRE_Int len, NALU_HYPRE_Int *ind);
+void PrunedRowsGet(PrunedRows *p, NALU_HYPRE_Int index, NALU_HYPRE_Int *lenp, NALU_HYPRE_Int **indp);
 
 #endif /* _PRUNEDROWS_H */

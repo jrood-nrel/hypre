@@ -5,16 +5,16 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_utilities.h"
+#include "_nalu_hypre_utilities.h"
 
 // NEW FEI (2.23.02)
 #include "fei_LinearSystemCore.hpp"
 #include "LLNL_FEI_Impl.h"
 
-#ifndef hypre_FE_MV_HEADER
-#define hypre_FE_MV_HEADER
+#ifndef nalu_hypre_FE_MV_HEADER
+#define nalu_hypre_FE_MV_HEADER
 
-#include "HYPRE.h"
+#include "NALU_HYPRE.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -22,72 +22,72 @@ extern "C" {
 
 /******************************************************************************
  *
- * Header info for the hypre_FEMesh structures
+ * Header info for the nalu_hypre_FEMesh structures
  *
  *****************************************************************************/
 
-#ifndef hypre_FE_MESH_HEADER
-#define hypre_FE_MESH_HEADER
+#ifndef nalu_hypre_FE_MESH_HEADER
+#define nalu_hypre_FE_MESH_HEADER
 
 /*--------------------------------------------------------------------------
- * hypre_FEMesh:
+ * nalu_hypre_FEMesh:
  *--------------------------------------------------------------------------*/
 
-typedef struct hypre_FEMesh_struct
+typedef struct nalu_hypre_FEMesh_struct
 {
    MPI_Comm comm_;
    void     *linSys_;
    void     *feiPtr_;
    int      objectType_;
 
-} hypre_FEMesh;
-typedef struct hypre_FEMesh_struct *HYPRE_FEMesh;
+} nalu_hypre_FEMesh;
+typedef struct nalu_hypre_FEMesh_struct *NALU_HYPRE_FEMesh;
 
 #endif
 
 /******************************************************************************
  *
- * Header info for the hypre_FEMatrix structures
+ * Header info for the nalu_hypre_FEMatrix structures
  *
  *****************************************************************************/
 
-#ifndef hypre_FE_MATRIX_HEADER
-#define hypre_FE_MATRIX_HEADER
+#ifndef nalu_hypre_FE_MATRIX_HEADER
+#define nalu_hypre_FE_MATRIX_HEADER
 
 /*--------------------------------------------------------------------------
- * hypre_FEMatrix:
+ * nalu_hypre_FEMatrix:
  *--------------------------------------------------------------------------*/
 
-typedef struct hypre_FEMatrix_struct
+typedef struct nalu_hypre_FEMatrix_struct
 {
    MPI_Comm      comm_;
-   hypre_FEMesh *mesh_;
+   nalu_hypre_FEMesh *mesh_;
 
-} hypre_FEMatrix;
-typedef struct hypre_FEMatrix_struct *HYPRE_FEMatrix;
+} nalu_hypre_FEMatrix;
+typedef struct nalu_hypre_FEMatrix_struct *NALU_HYPRE_FEMatrix;
 
 #endif
 
 /******************************************************************************
  *
- * Header info for the hypre_FEVector structures
+ * Header info for the nalu_hypre_FEVector structures
  *
  *****************************************************************************/
 
-#ifndef hypre_FE_VECTOR_HEADER
-#define hypre_FE_VECTOR_HEADER
+#ifndef nalu_hypre_FE_VECTOR_HEADER
+#define nalu_hypre_FE_VECTOR_HEADER
 
 /*--------------------------------------------------------------------------
- * hypre_FEVector:
+ * nalu_hypre_FEVector:
  *--------------------------------------------------------------------------*/
 
-typedef struct hypre_FEVector_struct
+typedef struct nalu_hypre_FEVector_struct
 {
    MPI_Comm      comm_;
-   hypre_FEMesh* mesh_;
+   nalu_hypre_FEMesh* mesh_;
 
-} hypre_FEVector;
-typedef struct hypre_FEVector_struct *HYPRE_FEVector;
+} nalu_hypre_FEVector;
+typedef struct nalu_hypre_FEVector_struct *NALU_HYPRE_FEVector;
 
 #endif
 
@@ -104,7 +104,7 @@ typedef struct hypre_FEVector_struct *HYPRE_FEVector;
 /*@{*/
                                                                                 
 /*--------------------------------------------------------------------------
- * HYPRE_fei_mesh.cxx 
+ * NALU_HYPRE_fei_mesh.cxx 
  *--------------------------------------------------------------------------*/
 
 /**
@@ -114,7 +114,7 @@ typedef struct hypre_FEVector_struct *HYPRE_FEVector;
   * @param mesh - upon return, contains a pointer to the finite element mesh
  **/
 
-int HYPRE_FEMeshCreate( MPI_Comm comm, HYPRE_FEMesh *mesh );
+int NALU_HYPRE_FEMeshCreate( MPI_Comm comm, NALU_HYPRE_FEMesh *mesh );
 
 /**
   * Finite element interface destructor: this function destroys
@@ -122,7 +122,7 @@ int HYPRE_FEMeshCreate( MPI_Comm comm, HYPRE_FEMesh *mesh );
   * @param mesh - a pointer to the finite element mesh 
  **/
 
-int HYPRE_FEMeshDestroy( HYPRE_FEMesh mesh );
+int NALU_HYPRE_FEMeshDestroy( NALU_HYPRE_FEMesh mesh );
 
 /**
   * This function passes the externally-built FEI object (for example,
@@ -134,7 +134,7 @@ int HYPRE_FEMeshDestroy( HYPRE_FEMesh mesh );
   *                 using the HYPRE\_base\_create function.
  **/
 
-int HYPRE_FEMeshSetFEObject(HYPRE_FEMesh mesh, void *externFEI, void *linSys);
+int NALU_HYPRE_FEMeshSetFEObject(NALU_HYPRE_FEMesh mesh, void *externFEI, void *linSys);
 
 /**
   * The parameters function is the single most important function
@@ -144,7 +144,7 @@ int HYPRE_FEMeshSetFEObject(HYPRE_FEMesh mesh, void *externFEI, void *linSys);
   * @param numParams - number of command strings
   * @param paramStrings - the command strings
  **/
-int HYPRE_FEMeshParameters(HYPRE_FEMesh mesh, int numParams, char **paramStrings);
+int NALU_HYPRE_FEMeshParameters(NALU_HYPRE_FEMesh mesh, int numParams, char **paramStrings);
 
 /**
   * Each node or element variable has one or more fields. The field
@@ -155,7 +155,7 @@ int HYPRE_FEMeshParameters(HYPRE_FEMesh mesh, int numParams, char **paramStrings
   * @param fieldIDs - a list of field identifiers
  **/
 
-int HYPRE_FEMeshInitFields( HYPRE_FEMesh mesh, int numFields,
+int NALU_HYPRE_FEMeshInitFields( NALU_HYPRE_FEMesh mesh, int numFields,
                             int *fieldSizes, int *fieldIDs );
 
 /**
@@ -174,7 +174,7 @@ int HYPRE_FEMeshInitFields( HYPRE_FEMesh mesh, int numFields,
   * @param interleaveStratety - indicates how unknowns are ordered
   */
 
-int HYPRE_FEMeshInitElemBlock( HYPRE_FEMesh mesh, int blockID, 
+int NALU_HYPRE_FEMeshInitElemBlock( NALU_HYPRE_FEMesh mesh, int blockID, 
                                int nElements, int numNodesPerElement,
                                int *numFieldsPerNode, int **nodalFieldIDs,
                                int numElemDOFFieldsPerElement,
@@ -190,7 +190,7 @@ int HYPRE_FEMeshInitElemBlock( HYPRE_FEMesh mesh, int blockID,
   * @param elemConn - a list of node identifiers for this element
  **/
 
-int HYPRE_FEMeshInitElem( HYPRE_FEMesh mesh, int blockID, int elemID,
+int NALU_HYPRE_FEMeshInitElem( NALU_HYPRE_FEMesh mesh, int blockID, int elemID,
                           int *elemConn );
 
 /**
@@ -204,7 +204,7 @@ int HYPRE_FEMeshInitElem( HYPRE_FEMesh mesh, int blockID, int elemID,
   * @param sharedProcs - the processor identifiers each node shares with
  **/
 
-int HYPRE_FEMeshInitSharedNodes( HYPRE_FEMesh mesh, int nShared,
+int NALU_HYPRE_FEMeshInitSharedNodes( NALU_HYPRE_FEMesh mesh, int nShared,
                                  int *sharedIDs, int *sharedLeng,
                                  int **sharedProcs );
 
@@ -214,7 +214,7 @@ int HYPRE_FEMeshInitSharedNodes( HYPRE_FEMesh mesh, int nShared,
   * @param mesh - a pointer to the finite element mesh 
  **/
 
-int HYPRE_FEMeshInitComplete( HYPRE_FEMesh mesh );
+int NALU_HYPRE_FEMeshInitComplete( NALU_HYPRE_FEMesh mesh );
 
 /**
   * This function loads the nodal boundary conditions. The boundary conditions
@@ -227,7 +227,7 @@ int HYPRE_FEMeshInitComplete( HYPRE_FEMesh mesh );
   * @param gamma - the boundary values on the right hand side of the equations
  **/
 
-int HYPRE_FEMeshLoadNodeBCs( HYPRE_FEMesh mesh, int numNodes,
+int NALU_HYPRE_FEMeshLoadNodeBCs( NALU_HYPRE_FEMesh mesh, int numNodes,
                              int *nodeIDs, int fieldID, double **alpha,
                              double **beta, double **gamma );
 
@@ -243,7 +243,7 @@ int HYPRE_FEMeshLoadNodeBCs( HYPRE_FEMesh mesh, int numNodes,
   * @param elemFormat - the format the unknowns are passed in
  **/
 
-int HYPRE_FEMeshSumInElem( HYPRE_FEMesh mesh, int blockID, int elemID, 
+int NALU_HYPRE_FEMeshSumInElem( NALU_HYPRE_FEMesh mesh, int blockID, int elemID, 
                            int* elemConn, double** elemStiffness, 
                            double *elemLoad, int elemFormat );
 
@@ -258,7 +258,7 @@ int HYPRE_FEMeshSumInElem( HYPRE_FEMesh mesh, int blockID, int elemID,
   * @param elemFormat - the format the unknowns are passed in
  **/
 
-int HYPRE_FEMeshSumInElemMatrix( HYPRE_FEMesh mesh, int blockID, int elemID, 
+int NALU_HYPRE_FEMeshSumInElemMatrix( NALU_HYPRE_FEMesh mesh, int blockID, int elemID, 
                                  int* elemConn, double** elemStiffness, 
                                  int elemFormat );
 
@@ -271,7 +271,7 @@ int HYPRE_FEMeshSumInElemMatrix( HYPRE_FEMesh mesh, int blockID, int elemID,
   * @param elemLoad - right hand side (load) for this element
  **/
 
-int HYPRE_FEMeshSumInElemRHS( HYPRE_FEMesh mesh, int blockID, int elemID, 
+int NALU_HYPRE_FEMeshSumInElemRHS( NALU_HYPRE_FEMesh mesh, int blockID, int elemID, 
                               int* elemConn, double* elemLoad );
 
 /**
@@ -280,14 +280,14 @@ int HYPRE_FEMeshSumInElemRHS( HYPRE_FEMesh mesh, int blockID, int elemID,
   * @param mesh - a pointer to the finite element mesh 
  **/
 
-int HYPRE_FEMeshLoadComplete( HYPRE_FEMesh mesh );
+int NALU_HYPRE_FEMeshLoadComplete( NALU_HYPRE_FEMesh mesh );
 
 /**
   * This function tells the FEI to solve the linear system
   * @param mesh - a pointer to the finite element mesh
  **/
 
-int HYPRE_FEMeshSolve( HYPRE_FEMesh mesh );
+int NALU_HYPRE_FEMeshSolve( NALU_HYPRE_FEMesh mesh );
 
 /**
   * This function sends a solution vector to the FEI 
@@ -295,7 +295,7 @@ int HYPRE_FEMeshSolve( HYPRE_FEMesh mesh );
   * @param sol - solution vector 
  **/
 
-int HYPRE_FEMeshSetSolution( HYPRE_FEMesh mesh, void *sol );
+int NALU_HYPRE_FEMeshSetSolution( NALU_HYPRE_FEMesh mesh, void *sol );
 
 /**
   * This function returns the node identifiers given the element block.
@@ -305,7 +305,7 @@ int HYPRE_FEMeshSetSolution( HYPRE_FEMesh mesh, void *sol );
   * @param nodeIDList - the node identifiers
  **/
 
-int HYPRE_FEMeshGetBlockNodeIDList( HYPRE_FEMesh mesh, int blockID, 
+int NALU_HYPRE_FEMeshGetBlockNodeIDList( NALU_HYPRE_FEMesh mesh, int blockID, 
                                     int numNodes, int *nodeIDList );
 
 /**
@@ -318,7 +318,7 @@ int HYPRE_FEMeshGetBlockNodeIDList( HYPRE_FEMesh mesh, int blockID,
   * @param solnValues - the nodal solution values
  **/
 
-int HYPRE_FEMeshGetBlockNodeSolution( HYPRE_FEMesh mesh, int blockID,
+int NALU_HYPRE_FEMeshGetBlockNodeSolution( NALU_HYPRE_FEMesh mesh, int blockID,
                                       int numNodes, int *nodeIDList, 
                                       int *solnOffsets, double *solnValues );
 
@@ -330,7 +330,7 @@ int HYPRE_FEMeshGetBlockNodeSolution( HYPRE_FEMesh mesh, int blockID,
 /*@{*/
                                                                                 
 /*--------------------------------------------------------------------------
- * HYPRE_fei_matrix.cxx 
+ * NALU_HYPRE_fei_matrix.cxx 
  *--------------------------------------------------------------------------*/
 /**
   * Finite element matrix constructor
@@ -339,14 +339,14 @@ int HYPRE_FEMeshGetBlockNodeSolution( HYPRE_FEMesh mesh, int blockID,
   * @param matrix - upon return, contains a pointer to the FE matrix
  **/
 
-int HYPRE_FEMatrixCreate( MPI_Comm comm, HYPRE_FEMesh mesh, 
-                          HYPRE_FEMatrix *matrix );
+int NALU_HYPRE_FEMatrixCreate( MPI_Comm comm, NALU_HYPRE_FEMesh mesh, 
+                          NALU_HYPRE_FEMatrix *matrix );
 /**
   * Finite element matrix destructor
   * @param matrix - a pointer to the FE matrix
  **/
 
-int HYPRE_FEMatrixDestroy( HYPRE_FEMatrix matrix );
+int NALU_HYPRE_FEMatrixDestroy( NALU_HYPRE_FEMatrix matrix );
 
 /**
   * This function gets the underlying HYPRE parcsr matrix from the FE mesh
@@ -354,7 +354,7 @@ int HYPRE_FEMatrixDestroy( HYPRE_FEMatrix matrix );
   * @param object - a pointer to the HYPRE parcsr matrix
  **/
 
-int HYPRE_FEMatrixGetObject( HYPRE_FEMatrix matrix, void **object );
+int NALU_HYPRE_FEMatrixGetObject( NALU_HYPRE_FEMatrix matrix, void **object );
 
 /*@}*/
 
@@ -364,7 +364,7 @@ int HYPRE_FEMatrixGetObject( HYPRE_FEMatrix matrix, void **object );
 /*@{*/
                                                                                 
 /*--------------------------------------------------------------------------
- * HYPRE_fei_vector.cxx 
+ * NALU_HYPRE_fei_vector.cxx 
  *--------------------------------------------------------------------------*/
 /**
   * Finite element vector constructor
@@ -372,14 +372,14 @@ int HYPRE_FEMatrixGetObject( HYPRE_FEMatrix matrix, void **object );
   * @param mesh - a pointer to the finite element mesh
   * @param vector - upon return, contains a pointer to the FE vector
  **/
-int HYPRE_FEVectorCreate( MPI_Comm comm , HYPRE_FEMesh mesh, 
-                          HYPRE_FEVector *vector);
+int NALU_HYPRE_FEVectorCreate( MPI_Comm comm , NALU_HYPRE_FEMesh mesh, 
+                          NALU_HYPRE_FEVector *vector);
 
 /**
   * Finite element vector destructor
   * @param vector - a pointer to the FE vector
  **/
-int HYPRE_FEVectorDestroy( HYPRE_FEVector vector );
+int NALU_HYPRE_FEVectorDestroy( NALU_HYPRE_FEVector vector );
 
 /**
   * This function gets the underlying RHS vector from the FE mesh
@@ -387,7 +387,7 @@ int HYPRE_FEVectorDestroy( HYPRE_FEVector vector );
   * @param object - upon return, points to the RHS vector
  **/
 
-int HYPRE_FEVectorGetRHS( HYPRE_FEVector vector, void **object );
+int NALU_HYPRE_FEVectorGetRHS( NALU_HYPRE_FEVector vector, void **object );
 
 /**
   * This function gives the solution vector to the FE mesh
@@ -395,7 +395,7 @@ int HYPRE_FEVectorGetRHS( HYPRE_FEVector vector, void **object );
   * @param object - points to the solution vector
  **/
 
-int HYPRE_FEVectorSetSol( HYPRE_FEVector vector, void *object );
+int NALU_HYPRE_FEVectorSetSol( NALU_HYPRE_FEVector vector, void *object );
 
 /*@}*/
 /*@}*/

@@ -80,17 +80,17 @@ FILES =\
 
 OBJS = ${FILES:.c=.o}
 
-SONAME = libHYPRE_Euclid-${HYPRE_RELEASE_VERSION}${HYPRE_LIB_SUFFIX}
+SONAME = libNALU_HYPRE_Euclid-${NALU_HYPRE_RELEASE_VERSION}${NALU_HYPRE_LIB_SUFFIX}
 
 ##################################################################
 # Targets
 ##################################################################
 
-all: libHYPRE_Euclid${HYPRE_LIB_SUFFIX}
-#	cp -fR libHYPRE* $(HYPRE_BUILD_DIR)/lib
+all: libNALU_HYPRE_Euclid${NALU_HYPRE_LIB_SUFFIX}
+#	cp -fR libHYPRE* $(NALU_HYPRE_BUILD_DIR)/lib
 
-install: libHYPRE_Euclid${HYPRE_LIB_SUFFIX}
-#	cp -fR libHYPRE* $(HYPRE_LIB_INSTALL)
+install: libNALU_HYPRE_Euclid${NALU_HYPRE_LIB_SUFFIX}
+#	cp -fR libHYPRE* $(NALU_HYPRE_LIB_INSTALL)
 
 clean:
 	rm -f *.o libHYPRE*
@@ -102,12 +102,12 @@ distclean: clean
 # Rules
 ##################################################################
 
-libHYPRE_Euclid.a: ${OBJS}
+libNALU_HYPRE_Euclid.a: ${OBJS}
 	@echo  "Building $@ ... "
 	${AR} $@ ${OBJS}
 	${RANLIB} $@
 
-libHYPRE_Euclid.so libHYPRE_Euclid.dylib: ${OBJS}
+libNALU_HYPRE_Euclid.so libNALU_HYPRE_Euclid.dylib: ${OBJS}
 	@echo  "Building $@ ... "
 	${BUILD_CC_SHARED} -o ${SONAME} ${OBJS} ${SHARED_SET_SONAME}${SONAME}
 	ln -s -f ${SONAME} $@

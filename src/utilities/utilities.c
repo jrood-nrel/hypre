@@ -5,19 +5,19 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_utilities.h"
+#include "_nalu_hypre_utilities.h"
 
 /*--------------------------------------------------------------------------
- * hypre_multmod
+ * nalu_hypre_multmod
  *--------------------------------------------------------------------------*/
 
 /* This function computes (a*b) % mod, which can avoid overflow in large value of (a*b) */
-HYPRE_Int
-hypre_multmod(HYPRE_Int a,
-              HYPRE_Int b,
-              HYPRE_Int mod)
+NALU_HYPRE_Int
+nalu_hypre_multmod(NALU_HYPRE_Int a,
+              NALU_HYPRE_Int b,
+              NALU_HYPRE_Int mod)
 {
-   HYPRE_Int res = 0; // Initialize result
+   NALU_HYPRE_Int res = 0; // Initialize result
    a %= mod;
    while (b)
    {
@@ -35,14 +35,14 @@ hypre_multmod(HYPRE_Int a,
 }
 
 /*--------------------------------------------------------------------------
- * hypre_partition1D
+ * nalu_hypre_partition1D
  *--------------------------------------------------------------------------*/
 void
-hypre_partition1D(HYPRE_Int  n, /* total number of elements */
-                  HYPRE_Int  p, /* number of partitions */
-                  HYPRE_Int  j, /* index of this partition */
-                  HYPRE_Int *s, /* first element in this partition */
-                  HYPRE_Int *e  /* past-the-end element */ )
+nalu_hypre_partition1D(NALU_HYPRE_Int  n, /* total number of elements */
+                  NALU_HYPRE_Int  p, /* number of partitions */
+                  NALU_HYPRE_Int  j, /* index of this partition */
+                  NALU_HYPRE_Int *s, /* first element in this partition */
+                  NALU_HYPRE_Int *e  /* past-the-end element */ )
 
 {
    if (1 == p)
@@ -52,8 +52,8 @@ hypre_partition1D(HYPRE_Int  n, /* total number of elements */
       return;
    }
 
-   HYPRE_Int size = n / p;
-   HYPRE_Int rest = n - size * p;
+   NALU_HYPRE_Int size = n / p;
+   NALU_HYPRE_Int rest = n - size * p;
    if (j < rest)
    {
       *s = j * (size + 1);
@@ -67,13 +67,13 @@ hypre_partition1D(HYPRE_Int  n, /* total number of elements */
 }
 
 /*--------------------------------------------------------------------------
- * hypre_strcpy
+ * nalu_hypre_strcpy
  *
  * Note: strcpy that allows overlapping in memory
  *--------------------------------------------------------------------------*/
 
 char *
-hypre_strcpy(char *destination, const char *source)
+nalu_hypre_strcpy(char *destination, const char *source)
 {
    size_t len = strlen(source);
 

@@ -5,30 +5,30 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_utilities.h"
-#include "_hypre_utilities.hpp"
-#include "_hypre_onedpl.hpp"
+#include "_nalu_hypre_utilities.h"
+#include "_nalu_hypre_utilities.hpp"
+#include "_nalu_hypre_onedpl.hpp"
 
-#if defined(HYPRE_USING_GPU) || defined(HYPRE_USING_DEVICE_OPENMP)
+#if defined(NALU_HYPRE_USING_GPU) || defined(NALU_HYPRE_USING_DEVICE_OPENMP)
 
 /*--------------------------------------------------------------------------
- * hypre_IntArraySetConstantValuesDevice
+ * nalu_hypre_IntArraySetConstantValuesDevice
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_IntArraySetConstantValuesDevice( hypre_IntArray *v,
-                                       HYPRE_Int       value )
+NALU_HYPRE_Int
+nalu_hypre_IntArraySetConstantValuesDevice( nalu_hypre_IntArray *v,
+                                       NALU_HYPRE_Int       value )
 {
-   HYPRE_Int *array_data = hypre_IntArrayData(v);
-   HYPRE_Int  size       = hypre_IntArraySize(v);
+   NALU_HYPRE_Int *array_data = nalu_hypre_IntArrayData(v);
+   NALU_HYPRE_Int  size       = nalu_hypre_IntArraySize(v);
 
-#if defined(HYPRE_USING_GPU)
+#if defined(NALU_HYPRE_USING_GPU)
    hypreDevice_IntFilln( array_data, size, value );
 
-   hypre_SyncComputeStream(hypre_handle());
+   nalu_hypre_SyncComputeStream(nalu_hypre_handle());
 
-#elif defined(HYPRE_USING_DEVICE_OPENMP)
-   HYPRE_Int i;
+#elif defined(NALU_HYPRE_USING_DEVICE_OPENMP)
+   NALU_HYPRE_Int i;
    #pragma omp target teams distribute parallel for private(i) is_device_ptr(array_data)
    for (i = 0; i < size; i++)
    {
@@ -36,21 +36,21 @@ hypre_IntArraySetConstantValuesDevice( hypre_IntArray *v,
    }
 #endif
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
-#if defined(HYPRE_USING_GPU)
+#if defined(NALU_HYPRE_USING_GPU)
 /*--------------------------------------------------------------------------
  * hypreGPUKernel_IntArrayInverseMapping
  *--------------------------------------------------------------------------*/
 
 __global__ void
-hypreGPUKernel_IntArrayInverseMapping( hypre_DeviceItem  &item,
-                                       HYPRE_Int          size,
-                                       HYPRE_Int         *v_data,
-                                       HYPRE_Int         *w_data )
+hypreGPUKernel_IntArrayInverseMapping( nalu_hypre_DeviceItem  &item,
+                                       NALU_HYPRE_Int          size,
+                                       NALU_HYPRE_Int         *v_data,
+                                       NALU_HYPRE_Int         *w_data )
 {
-   HYPRE_Int i = hypre_gpu_get_grid_thread_id<1, 1>(item);
+   NALU_HYPRE_Int i = nalu_hypre_gpu_get_grid_thread_id<1, 1>(item);
 
    if (i < size)
    {
@@ -60,25 +60,25 @@ hypreGPUKernel_IntArrayInverseMapping( hypre_DeviceItem  &item,
 #endif
 
 /*--------------------------------------------------------------------------
- * hypre_IntArrayInverseMappingDevice
+ * nalu_hypre_IntArrayInverseMappingDevice
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_IntArrayInverseMappingDevice( hypre_IntArray  *v,
-                                    hypre_IntArray  *w )
+NALU_HYPRE_Int
+nalu_hypre_IntArrayInverseMappingDevice( nalu_hypre_IntArray  *v,
+                                    nalu_hypre_IntArray  *w )
 {
-   HYPRE_Int   size    = hypre_IntArraySize(v);
-   HYPRE_Int  *v_data  = hypre_IntArrayData(v);
-   HYPRE_Int  *w_data  = hypre_IntArrayData(w);
+   NALU_HYPRE_Int   size    = nalu_hypre_IntArraySize(v);
+   NALU_HYPRE_Int  *v_data  = nalu_hypre_IntArrayData(v);
+   NALU_HYPRE_Int  *w_data  = nalu_hypre_IntArrayData(w);
 
-#if defined(HYPRE_USING_GPU)
-   dim3 bDim = hypre_GetDefaultDeviceBlockDimension();
-   dim3 gDim = hypre_GetDefaultDeviceGridDimension(size, "thread", bDim);
+#if defined(NALU_HYPRE_USING_GPU)
+   dim3 bDim = nalu_hypre_GetDefaultDeviceBlockDimension();
+   dim3 gDim = nalu_hypre_GetDefaultDeviceGridDimension(size, "thread", bDim);
 
-   HYPRE_GPU_LAUNCH( hypreGPUKernel_IntArrayInverseMapping, gDim, bDim, size, v_data, w_data );
+   NALU_HYPRE_GPU_LAUNCH( hypreGPUKernel_IntArrayInverseMapping, gDim, bDim, size, v_data, w_data );
 
-#elif defined(HYPRE_USING_DEVICE_OPENMP)
-   HYPRE_Int i;
+#elif defined(NALU_HYPRE_USING_DEVICE_OPENMP)
+   NALU_HYPRE_Int i;
 
    #pragma omp target teams distribute parallel for private(i) is_device_ptr(v_data, w_data)
    for (i = 0; i < size; i++)
@@ -87,65 +87,65 @@ hypre_IntArrayInverseMappingDevice( hypre_IntArray  *v,
    }
 #endif
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_IntArrayCountDevice
+ * nalu_hypre_IntArrayCountDevice
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_IntArrayCountDevice( hypre_IntArray *v,
-                           HYPRE_Int       value,
-                           HYPRE_Int      *num_values_ptr )
+NALU_HYPRE_Int
+nalu_hypre_IntArrayCountDevice( nalu_hypre_IntArray *v,
+                           NALU_HYPRE_Int       value,
+                           NALU_HYPRE_Int      *num_values_ptr )
 {
-   HYPRE_Int  *array_data  = hypre_IntArrayData(v);
-   HYPRE_Int   size        = hypre_IntArraySize(v);
+   NALU_HYPRE_Int  *array_data  = nalu_hypre_IntArrayData(v);
+   NALU_HYPRE_Int   size        = nalu_hypre_IntArraySize(v);
 
-#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP)
-   *num_values_ptr = HYPRE_THRUST_CALL( count,
+#if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
+   *num_values_ptr = NALU_HYPRE_THRUST_CALL( count,
                                         array_data,
                                         array_data + size,
                                         value );
 
-#elif defined(HYPRE_USING_SYCL)
-   *num_values_ptr = HYPRE_ONEDPL_CALL( std::count,
+#elif defined(NALU_HYPRE_USING_SYCL)
+   *num_values_ptr = NALU_HYPRE_ONEDPL_CALL( std::count,
                                         array_data,
                                         array_data + size,
                                         value );
 
-#elif defined (HYPRE_USING_DEVICE_OPENMP)
-   hypre_error_w_msg(HYPRE_ERROR_GENERIC, "Function not implemented for Device OpenMP");
+#elif defined (NALU_HYPRE_USING_DEVICE_OPENMP)
+   nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "Function not implemented for Device OpenMP");
    *num_values_ptr = 0;
 #endif
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_IntArrayNegateDevice
+ * nalu_hypre_IntArrayNegateDevice
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_IntArrayNegateDevice( hypre_IntArray *v )
+NALU_HYPRE_Int
+nalu_hypre_IntArrayNegateDevice( nalu_hypre_IntArray *v )
 {
-#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP)
-   HYPRE_THRUST_CALL( transform,
-                      hypre_IntArrayData(v),
-                      hypre_IntArrayData(v) + hypre_IntArraySize(v),
-                      hypre_IntArrayData(v),
-                      thrust::negate<HYPRE_Int>() );
-#elif defined(HYPRE_USING_SYCL)
-   HYPRE_ONEDPL_CALL( std::transform,
-                      hypre_IntArrayData(v),
-                      hypre_IntArrayData(v) + hypre_IntArraySize(v),
-                      hypre_IntArrayData(v),
-                      std::negate<HYPRE_Int>() );
+#if defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
+   NALU_HYPRE_THRUST_CALL( transform,
+                      nalu_hypre_IntArrayData(v),
+                      nalu_hypre_IntArrayData(v) + nalu_hypre_IntArraySize(v),
+                      nalu_hypre_IntArrayData(v),
+                      thrust::negate<NALU_HYPRE_Int>() );
+#elif defined(NALU_HYPRE_USING_SYCL)
+   NALU_HYPRE_ONEDPL_CALL( std::transform,
+                      nalu_hypre_IntArrayData(v),
+                      nalu_hypre_IntArrayData(v) + nalu_hypre_IntArraySize(v),
+                      nalu_hypre_IntArrayData(v),
+                      std::negate<NALU_HYPRE_Int>() );
 #else
-   hypre_error_w_msg(HYPRE_ERROR_GENERIC, "Not implemented yet!");
+   nalu_hypre_error_w_msg(NALU_HYPRE_ERROR_GENERIC, "Not implemented yet!");
 #endif
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 #endif

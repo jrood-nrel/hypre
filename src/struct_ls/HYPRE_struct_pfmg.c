@@ -5,149 +5,149 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_struct_ls.h"
+#include "_nalu_hypre_struct_ls.h"
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_StructPFMGCreate( MPI_Comm comm, HYPRE_StructSolver *solver )
+NALU_HYPRE_Int
+NALU_HYPRE_StructPFMGCreate( MPI_Comm comm, NALU_HYPRE_StructSolver *solver )
 {
-   *solver = ( (HYPRE_StructSolver) hypre_PFMGCreate( comm ) );
+   *solver = ( (NALU_HYPRE_StructSolver) nalu_hypre_PFMGCreate( comm ) );
 
-   return hypre_error_flag;
-}
-
-/*--------------------------------------------------------------------------
- *--------------------------------------------------------------------------*/
-
-HYPRE_Int
-HYPRE_StructPFMGDestroy( HYPRE_StructSolver solver )
-{
-   return ( hypre_PFMGDestroy( (void *) solver ) );
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_StructPFMGSetup( HYPRE_StructSolver solver,
-                       HYPRE_StructMatrix A,
-                       HYPRE_StructVector b,
-                       HYPRE_StructVector x      )
+NALU_HYPRE_Int
+NALU_HYPRE_StructPFMGDestroy( NALU_HYPRE_StructSolver solver )
 {
-   return ( hypre_PFMGSetup( (void *) solver,
-                             (hypre_StructMatrix *) A,
-                             (hypre_StructVector *) b,
-                             (hypre_StructVector *) x ) );
+   return ( nalu_hypre_PFMGDestroy( (void *) solver ) );
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_StructPFMGSolve( HYPRE_StructSolver solver,
-                       HYPRE_StructMatrix A,
-                       HYPRE_StructVector b,
-                       HYPRE_StructVector x      )
+NALU_HYPRE_Int
+NALU_HYPRE_StructPFMGSetup( NALU_HYPRE_StructSolver solver,
+                       NALU_HYPRE_StructMatrix A,
+                       NALU_HYPRE_StructVector b,
+                       NALU_HYPRE_StructVector x      )
 {
-   return ( hypre_PFMGSolve( (void *) solver,
-                             (hypre_StructMatrix *) A,
-                             (hypre_StructVector *) b,
-                             (hypre_StructVector *) x ) );
+   return ( nalu_hypre_PFMGSetup( (void *) solver,
+                             (nalu_hypre_StructMatrix *) A,
+                             (nalu_hypre_StructVector *) b,
+                             (nalu_hypre_StructVector *) x ) );
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_StructPFMGSetTol( HYPRE_StructSolver solver,
-                        HYPRE_Real         tol    )
+NALU_HYPRE_Int
+NALU_HYPRE_StructPFMGSolve( NALU_HYPRE_StructSolver solver,
+                       NALU_HYPRE_StructMatrix A,
+                       NALU_HYPRE_StructVector b,
+                       NALU_HYPRE_StructVector x      )
 {
-   return ( hypre_PFMGSetTol( (void *) solver, tol ) );
-}
-
-HYPRE_Int
-HYPRE_StructPFMGGetTol( HYPRE_StructSolver solver,
-                        HYPRE_Real       * tol    )
-{
-   return ( hypre_PFMGGetTol( (void *) solver, tol ) );
-}
-
-/*--------------------------------------------------------------------------
- *--------------------------------------------------------------------------*/
-
-HYPRE_Int
-HYPRE_StructPFMGSetMaxIter( HYPRE_StructSolver solver,
-                            HYPRE_Int          max_iter  )
-{
-   return ( hypre_PFMGSetMaxIter( (void *) solver, max_iter ) );
-}
-
-HYPRE_Int
-HYPRE_StructPFMGGetMaxIter( HYPRE_StructSolver solver,
-                            HYPRE_Int        * max_iter  )
-{
-   return ( hypre_PFMGGetMaxIter( (void *) solver, max_iter ) );
+   return ( nalu_hypre_PFMGSolve( (void *) solver,
+                             (nalu_hypre_StructMatrix *) A,
+                             (nalu_hypre_StructVector *) b,
+                             (nalu_hypre_StructVector *) x ) );
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_StructPFMGSetMaxLevels( HYPRE_StructSolver solver,
-                              HYPRE_Int          max_levels  )
+NALU_HYPRE_Int
+NALU_HYPRE_StructPFMGSetTol( NALU_HYPRE_StructSolver solver,
+                        NALU_HYPRE_Real         tol    )
 {
-   return ( hypre_PFMGSetMaxLevels( (void *) solver, max_levels ) );
+   return ( nalu_hypre_PFMGSetTol( (void *) solver, tol ) );
 }
 
-HYPRE_Int
-HYPRE_StructPFMGGetMaxLevels( HYPRE_StructSolver solver,
-                              HYPRE_Int        * max_levels  )
+NALU_HYPRE_Int
+NALU_HYPRE_StructPFMGGetTol( NALU_HYPRE_StructSolver solver,
+                        NALU_HYPRE_Real       * tol    )
 {
-   return ( hypre_PFMGGetMaxLevels( (void *) solver, max_levels ) );
-}
-
-/*--------------------------------------------------------------------------
- *--------------------------------------------------------------------------*/
-
-HYPRE_Int
-HYPRE_StructPFMGSetRelChange( HYPRE_StructSolver solver,
-                              HYPRE_Int          rel_change  )
-{
-   return ( hypre_PFMGSetRelChange( (void *) solver, rel_change ) );
-}
-
-HYPRE_Int
-HYPRE_StructPFMGGetRelChange( HYPRE_StructSolver solver,
-                              HYPRE_Int        * rel_change  )
-{
-   return ( hypre_PFMGGetRelChange( (void *) solver, rel_change ) );
+   return ( nalu_hypre_PFMGGetTol( (void *) solver, tol ) );
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_StructPFMGSetZeroGuess( HYPRE_StructSolver solver )
+NALU_HYPRE_Int
+NALU_HYPRE_StructPFMGSetMaxIter( NALU_HYPRE_StructSolver solver,
+                            NALU_HYPRE_Int          max_iter  )
 {
-   return ( hypre_PFMGSetZeroGuess( (void *) solver, 1 ) );
+   return ( nalu_hypre_PFMGSetMaxIter( (void *) solver, max_iter ) );
 }
 
-HYPRE_Int
-HYPRE_StructPFMGGetZeroGuess( HYPRE_StructSolver solver,
-                              HYPRE_Int * zeroguess )
+NALU_HYPRE_Int
+NALU_HYPRE_StructPFMGGetMaxIter( NALU_HYPRE_StructSolver solver,
+                            NALU_HYPRE_Int        * max_iter  )
 {
-   return ( hypre_PFMGGetZeroGuess( (void *) solver, zeroguess ) );
+   return ( nalu_hypre_PFMGGetMaxIter( (void *) solver, max_iter ) );
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_StructPFMGSetNonZeroGuess( HYPRE_StructSolver solver )
+NALU_HYPRE_Int
+NALU_HYPRE_StructPFMGSetMaxLevels( NALU_HYPRE_StructSolver solver,
+                              NALU_HYPRE_Int          max_levels  )
 {
-   return ( hypre_PFMGSetZeroGuess( (void *) solver, 0 ) );
+   return ( nalu_hypre_PFMGSetMaxLevels( (void *) solver, max_levels ) );
+}
+
+NALU_HYPRE_Int
+NALU_HYPRE_StructPFMGGetMaxLevels( NALU_HYPRE_StructSolver solver,
+                              NALU_HYPRE_Int        * max_levels  )
+{
+   return ( nalu_hypre_PFMGGetMaxLevels( (void *) solver, max_levels ) );
+}
+
+/*--------------------------------------------------------------------------
+ *--------------------------------------------------------------------------*/
+
+NALU_HYPRE_Int
+NALU_HYPRE_StructPFMGSetRelChange( NALU_HYPRE_StructSolver solver,
+                              NALU_HYPRE_Int          rel_change  )
+{
+   return ( nalu_hypre_PFMGSetRelChange( (void *) solver, rel_change ) );
+}
+
+NALU_HYPRE_Int
+NALU_HYPRE_StructPFMGGetRelChange( NALU_HYPRE_StructSolver solver,
+                              NALU_HYPRE_Int        * rel_change  )
+{
+   return ( nalu_hypre_PFMGGetRelChange( (void *) solver, rel_change ) );
+}
+
+/*--------------------------------------------------------------------------
+ *--------------------------------------------------------------------------*/
+
+NALU_HYPRE_Int
+NALU_HYPRE_StructPFMGSetZeroGuess( NALU_HYPRE_StructSolver solver )
+{
+   return ( nalu_hypre_PFMGSetZeroGuess( (void *) solver, 1 ) );
+}
+
+NALU_HYPRE_Int
+NALU_HYPRE_StructPFMGGetZeroGuess( NALU_HYPRE_StructSolver solver,
+                              NALU_HYPRE_Int * zeroguess )
+{
+   return ( nalu_hypre_PFMGGetZeroGuess( (void *) solver, zeroguess ) );
+}
+
+/*--------------------------------------------------------------------------
+ *--------------------------------------------------------------------------*/
+
+NALU_HYPRE_Int
+NALU_HYPRE_StructPFMGSetNonZeroGuess( NALU_HYPRE_StructSolver solver )
+{
+   return ( nalu_hypre_PFMGSetZeroGuess( (void *) solver, 0 ) );
 }
 
 /*--------------------------------------------------------------------------
@@ -155,170 +155,170 @@ HYPRE_StructPFMGSetNonZeroGuess( HYPRE_StructSolver solver )
  * if SetJacobiWeight has not been called.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_StructPFMGSetRelaxType( HYPRE_StructSolver solver,
-                              HYPRE_Int          relax_type )
+NALU_HYPRE_Int
+NALU_HYPRE_StructPFMGSetRelaxType( NALU_HYPRE_StructSolver solver,
+                              NALU_HYPRE_Int          relax_type )
 {
-   return ( hypre_PFMGSetRelaxType( (void *) solver, relax_type) );
+   return ( nalu_hypre_PFMGSetRelaxType( (void *) solver, relax_type) );
 }
 
-HYPRE_Int
-HYPRE_StructPFMGGetRelaxType( HYPRE_StructSolver solver,
-                              HYPRE_Int        * relax_type )
+NALU_HYPRE_Int
+NALU_HYPRE_StructPFMGGetRelaxType( NALU_HYPRE_StructSolver solver,
+                              NALU_HYPRE_Int        * relax_type )
 {
-   return ( hypre_PFMGGetRelaxType( (void *) solver, relax_type) );
+   return ( nalu_hypre_PFMGGetRelaxType( (void *) solver, relax_type) );
 }
 
-HYPRE_Int
-HYPRE_StructPFMGSetJacobiWeight(HYPRE_StructSolver solver,
-                                HYPRE_Real         weight)
+NALU_HYPRE_Int
+NALU_HYPRE_StructPFMGSetJacobiWeight(NALU_HYPRE_StructSolver solver,
+                                NALU_HYPRE_Real         weight)
 {
-   return ( hypre_PFMGSetJacobiWeight( (void *) solver, weight) );
+   return ( nalu_hypre_PFMGSetJacobiWeight( (void *) solver, weight) );
 }
-HYPRE_Int
-HYPRE_StructPFMGGetJacobiWeight(HYPRE_StructSolver solver,
-                                HYPRE_Real        *weight)
+NALU_HYPRE_Int
+NALU_HYPRE_StructPFMGGetJacobiWeight(NALU_HYPRE_StructSolver solver,
+                                NALU_HYPRE_Real        *weight)
 {
-   return ( hypre_PFMGGetJacobiWeight( (void *) solver, weight) );
-}
-
-/*--------------------------------------------------------------------------
- *--------------------------------------------------------------------------*/
-
-HYPRE_Int
-HYPRE_StructPFMGSetRAPType( HYPRE_StructSolver solver,
-                            HYPRE_Int          rap_type )
-{
-   return ( hypre_PFMGSetRAPType( (void *) solver, rap_type) );
-}
-
-HYPRE_Int
-HYPRE_StructPFMGGetRAPType( HYPRE_StructSolver solver,
-                            HYPRE_Int        * rap_type )
-{
-   return ( hypre_PFMGGetRAPType( (void *) solver, rap_type) );
+   return ( nalu_hypre_PFMGGetJacobiWeight( (void *) solver, weight) );
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_StructPFMGSetNumPreRelax( HYPRE_StructSolver solver,
-                                HYPRE_Int          num_pre_relax )
+NALU_HYPRE_Int
+NALU_HYPRE_StructPFMGSetRAPType( NALU_HYPRE_StructSolver solver,
+                            NALU_HYPRE_Int          rap_type )
 {
-   return ( hypre_PFMGSetNumPreRelax( (void *) solver, num_pre_relax) );
+   return ( nalu_hypre_PFMGSetRAPType( (void *) solver, rap_type) );
 }
 
-HYPRE_Int
-HYPRE_StructPFMGGetNumPreRelax( HYPRE_StructSolver solver,
-                                HYPRE_Int        * num_pre_relax )
+NALU_HYPRE_Int
+NALU_HYPRE_StructPFMGGetRAPType( NALU_HYPRE_StructSolver solver,
+                            NALU_HYPRE_Int        * rap_type )
 {
-   return ( hypre_PFMGGetNumPreRelax( (void *) solver, num_pre_relax) );
-}
-
-/*--------------------------------------------------------------------------
- *--------------------------------------------------------------------------*/
-
-HYPRE_Int
-HYPRE_StructPFMGSetNumPostRelax( HYPRE_StructSolver solver,
-                                 HYPRE_Int          num_post_relax )
-{
-   return ( hypre_PFMGSetNumPostRelax( (void *) solver, num_post_relax) );
-}
-
-HYPRE_Int
-HYPRE_StructPFMGGetNumPostRelax( HYPRE_StructSolver solver,
-                                 HYPRE_Int        * num_post_relax )
-{
-   return ( hypre_PFMGGetNumPostRelax( (void *) solver, num_post_relax) );
+   return ( nalu_hypre_PFMGGetRAPType( (void *) solver, rap_type) );
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_StructPFMGSetSkipRelax( HYPRE_StructSolver solver,
-                              HYPRE_Int          skip_relax )
+NALU_HYPRE_Int
+NALU_HYPRE_StructPFMGSetNumPreRelax( NALU_HYPRE_StructSolver solver,
+                                NALU_HYPRE_Int          num_pre_relax )
 {
-   return ( hypre_PFMGSetSkipRelax( (void *) solver, skip_relax) );
+   return ( nalu_hypre_PFMGSetNumPreRelax( (void *) solver, num_pre_relax) );
 }
 
-HYPRE_Int
-HYPRE_StructPFMGGetSkipRelax( HYPRE_StructSolver solver,
-                              HYPRE_Int        * skip_relax )
+NALU_HYPRE_Int
+NALU_HYPRE_StructPFMGGetNumPreRelax( NALU_HYPRE_StructSolver solver,
+                                NALU_HYPRE_Int        * num_pre_relax )
 {
-   return ( hypre_PFMGGetSkipRelax( (void *) solver, skip_relax) );
-}
-
-/*--------------------------------------------------------------------------
- *--------------------------------------------------------------------------*/
-
-HYPRE_Int
-HYPRE_StructPFMGSetDxyz( HYPRE_StructSolver  solver,
-                         HYPRE_Real         *dxyz   )
-{
-   return ( hypre_PFMGSetDxyz( (void *) solver, dxyz) );
+   return ( nalu_hypre_PFMGGetNumPreRelax( (void *) solver, num_pre_relax) );
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_StructPFMGSetLogging( HYPRE_StructSolver solver,
-                            HYPRE_Int          logging )
+NALU_HYPRE_Int
+NALU_HYPRE_StructPFMGSetNumPostRelax( NALU_HYPRE_StructSolver solver,
+                                 NALU_HYPRE_Int          num_post_relax )
 {
-   return ( hypre_PFMGSetLogging( (void *) solver, logging) );
+   return ( nalu_hypre_PFMGSetNumPostRelax( (void *) solver, num_post_relax) );
 }
 
-HYPRE_Int
-HYPRE_StructPFMGGetLogging( HYPRE_StructSolver solver,
-                            HYPRE_Int        * logging )
+NALU_HYPRE_Int
+NALU_HYPRE_StructPFMGGetNumPostRelax( NALU_HYPRE_StructSolver solver,
+                                 NALU_HYPRE_Int        * num_post_relax )
 {
-   return ( hypre_PFMGGetLogging( (void *) solver, logging) );
-}
-
-/*--------------------------------------------------------------------------
- *--------------------------------------------------------------------------*/
-
-HYPRE_Int
-HYPRE_StructPFMGSetPrintLevel( HYPRE_StructSolver solver,
-                               HYPRE_Int            print_level )
-{
-   return ( hypre_PFMGSetPrintLevel( (void *) solver, print_level) );
-}
-
-HYPRE_Int
-HYPRE_StructPFMGGetPrintLevel( HYPRE_StructSolver solver,
-                               HYPRE_Int          * print_level )
-{
-   return ( hypre_PFMGGetPrintLevel( (void *) solver, print_level) );
+   return ( nalu_hypre_PFMGGetNumPostRelax( (void *) solver, num_post_relax) );
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_StructPFMGGetNumIterations( HYPRE_StructSolver  solver,
-                                  HYPRE_Int          *num_iterations )
+NALU_HYPRE_Int
+NALU_HYPRE_StructPFMGSetSkipRelax( NALU_HYPRE_StructSolver solver,
+                              NALU_HYPRE_Int          skip_relax )
 {
-   return ( hypre_PFMGGetNumIterations( (void *) solver, num_iterations ) );
+   return ( nalu_hypre_PFMGSetSkipRelax( (void *) solver, skip_relax) );
+}
+
+NALU_HYPRE_Int
+NALU_HYPRE_StructPFMGGetSkipRelax( NALU_HYPRE_StructSolver solver,
+                              NALU_HYPRE_Int        * skip_relax )
+{
+   return ( nalu_hypre_PFMGGetSkipRelax( (void *) solver, skip_relax) );
 }
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_StructPFMGGetFinalRelativeResidualNorm( HYPRE_StructSolver  solver,
-                                              HYPRE_Real         *norm   )
+NALU_HYPRE_Int
+NALU_HYPRE_StructPFMGSetDxyz( NALU_HYPRE_StructSolver  solver,
+                         NALU_HYPRE_Real         *dxyz   )
 {
-   return ( hypre_PFMGGetFinalRelativeResidualNorm( (void *) solver, norm ) );
+   return ( nalu_hypre_PFMGSetDxyz( (void *) solver, dxyz) );
 }
 
-#if 0 //defined(HYPRE_USING_GPU)
-HYPRE_Int
-HYPRE_StructPFMGSetDeviceLevel( HYPRE_StructSolver  solver,
-                                HYPRE_Int   device_level  )
+/*--------------------------------------------------------------------------
+ *--------------------------------------------------------------------------*/
+
+NALU_HYPRE_Int
+NALU_HYPRE_StructPFMGSetLogging( NALU_HYPRE_StructSolver solver,
+                            NALU_HYPRE_Int          logging )
 {
-   return ( hypre_PFMGSetDeviceLevel( (void *) solver, device_level ) );
+   return ( nalu_hypre_PFMGSetLogging( (void *) solver, logging) );
+}
+
+NALU_HYPRE_Int
+NALU_HYPRE_StructPFMGGetLogging( NALU_HYPRE_StructSolver solver,
+                            NALU_HYPRE_Int        * logging )
+{
+   return ( nalu_hypre_PFMGGetLogging( (void *) solver, logging) );
+}
+
+/*--------------------------------------------------------------------------
+ *--------------------------------------------------------------------------*/
+
+NALU_HYPRE_Int
+NALU_HYPRE_StructPFMGSetPrintLevel( NALU_HYPRE_StructSolver solver,
+                               NALU_HYPRE_Int            print_level )
+{
+   return ( nalu_hypre_PFMGSetPrintLevel( (void *) solver, print_level) );
+}
+
+NALU_HYPRE_Int
+NALU_HYPRE_StructPFMGGetPrintLevel( NALU_HYPRE_StructSolver solver,
+                               NALU_HYPRE_Int          * print_level )
+{
+   return ( nalu_hypre_PFMGGetPrintLevel( (void *) solver, print_level) );
+}
+
+/*--------------------------------------------------------------------------
+ *--------------------------------------------------------------------------*/
+
+NALU_HYPRE_Int
+NALU_HYPRE_StructPFMGGetNumIterations( NALU_HYPRE_StructSolver  solver,
+                                  NALU_HYPRE_Int          *num_iterations )
+{
+   return ( nalu_hypre_PFMGGetNumIterations( (void *) solver, num_iterations ) );
+}
+
+/*--------------------------------------------------------------------------
+ *--------------------------------------------------------------------------*/
+
+NALU_HYPRE_Int
+NALU_HYPRE_StructPFMGGetFinalRelativeResidualNorm( NALU_HYPRE_StructSolver  solver,
+                                              NALU_HYPRE_Real         *norm   )
+{
+   return ( nalu_hypre_PFMGGetFinalRelativeResidualNorm( (void *) solver, norm ) );
+}
+
+#if 0 //defined(NALU_HYPRE_USING_GPU)
+NALU_HYPRE_Int
+NALU_HYPRE_StructPFMGSetDeviceLevel( NALU_HYPRE_StructSolver  solver,
+                                NALU_HYPRE_Int   device_level  )
+{
+   return ( nalu_hypre_PFMGSetDeviceLevel( (void *) solver, device_level ) );
 }
 #endif

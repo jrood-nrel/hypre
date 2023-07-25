@@ -7,35 +7,35 @@
 
 /******************************************************************************
  *
- * Header info for hypre_StructStencil data structures
+ * Header info for nalu_hypre_StructStencil data structures
  *
  *****************************************************************************/
 
-#ifndef hypre_STRUCT_STENCIL_HEADER
-#define hypre_STRUCT_STENCIL_HEADER
+#ifndef nalu_hypre_STRUCT_STENCIL_HEADER
+#define nalu_hypre_STRUCT_STENCIL_HEADER
 
 /*--------------------------------------------------------------------------
- * hypre_StructStencil
+ * nalu_hypre_StructStencil
  *--------------------------------------------------------------------------*/
 
-typedef struct hypre_StructStencil_struct
+typedef struct nalu_hypre_StructStencil_struct
 {
-   hypre_Index   *shape;   /* Description of a stencil's shape */
-   HYPRE_Int      size;    /* Number of stencil coefficients */
+   nalu_hypre_Index   *shape;   /* Description of a stencil's shape */
+   NALU_HYPRE_Int      size;    /* Number of stencil coefficients */
 
-   HYPRE_Int      ndim;    /* Number of dimensions */
+   NALU_HYPRE_Int      ndim;    /* Number of dimensions */
 
-   HYPRE_Int      ref_count;
-} hypre_StructStencil;
+   NALU_HYPRE_Int      ref_count;
+} nalu_hypre_StructStencil;
 
 /*--------------------------------------------------------------------------
- * Accessor functions for the hypre_StructStencil structure
+ * Accessor functions for the nalu_hypre_StructStencil structure
  *--------------------------------------------------------------------------*/
 
-#define hypre_StructStencilShape(stencil)      ((stencil) -> shape)
-#define hypre_StructStencilSize(stencil)       ((stencil) -> size)
-#define hypre_StructStencilNDim(stencil)       ((stencil) -> ndim)
-#define hypre_StructStencilRefCount(stencil)   ((stencil) -> ref_count)
-#define hypre_StructStencilElement(stencil, i) hypre_StructStencilShape(stencil)[i]
+#define nalu_hypre_StructStencilShape(stencil)      ((stencil) -> shape)
+#define nalu_hypre_StructStencilSize(stencil)       ((stencil) -> size)
+#define nalu_hypre_StructStencilNDim(stencil)       ((stencil) -> ndim)
+#define nalu_hypre_StructStencilRefCount(stencil)   ((stencil) -> ref_count)
+#define nalu_hypre_StructStencilElement(stencil, i) nalu_hypre_StructStencilShape(stencil)[i]
 
 #endif

@@ -5,20 +5,20 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_utilities.h"
-#include "_hypre_sstruct_ls.h"
+#include "_nalu_hypre_utilities.h"
+#include "_nalu_hypre_sstruct_ls.h"
 
 /*--------------------------------------------------------------------------
- * hypre_LowerBinarySearch
+ * nalu_hypre_LowerBinarySearch
  * integers such that
  *      list[m-1] < value <= list[m].
  * The routine returns location m or -1.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int hypre_LowerBinarySearch(HYPRE_Int *list, HYPRE_Int value, HYPRE_Int list_length)
+NALU_HYPRE_Int nalu_hypre_LowerBinarySearch(NALU_HYPRE_Int *list, NALU_HYPRE_Int value, NALU_HYPRE_Int list_length)
 {
-   HYPRE_Int low, high, m;
-   HYPRE_Int not_found = 1;
+   NALU_HYPRE_Int low, high, m;
+   NALU_HYPRE_Int not_found = 1;
 
    /* special case, list is size zero. */
    if (list_length < 1)
@@ -60,15 +60,15 @@ HYPRE_Int hypre_LowerBinarySearch(HYPRE_Int *list, HYPRE_Int value, HYPRE_Int li
 }
 
 /*--------------------------------------------------------------------------
- * hypre_UpperBinarySearch
+ * nalu_hypre_UpperBinarySearch
  * integers such that
  *      list[m] <= value < list[m+1].
  * The routine returns location m or -1.
  *--------------------------------------------------------------------------*/
-HYPRE_Int hypre_UpperBinarySearch(HYPRE_Int *list, HYPRE_Int value, HYPRE_Int list_length)
+NALU_HYPRE_Int nalu_hypre_UpperBinarySearch(NALU_HYPRE_Int *list, NALU_HYPRE_Int value, NALU_HYPRE_Int list_length)
 {
-   HYPRE_Int low, high, m;
-   HYPRE_Int not_found = 1;
+   NALU_HYPRE_Int low, high, m;
+   NALU_HYPRE_Int not_found = 1;
 
    /* special case, list is size zero. */
    if (list_length < 1)

@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 
-set(HYPRE_mli_SRCS 
+set(NALU_HYPRE_mli_SRCS 
   mli_utils.c
   mli_amgsa_calib.cxx
   mli_amgsa_coarsen1.cxx
@@ -47,4 +47,4 @@ set(HYPRE_mli_SRCS
   mli_vector.cxx
 )
 
-add_library(HYPRE_mli OBJECT ${HYPRE_mli_SRCS})
+add_library(NALU_HYPRE_mli OBJECT ${NALU_HYPRE_mli_SRCS})

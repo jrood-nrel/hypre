@@ -7,7 +7,7 @@
 
 /******************************************************************************
  *
- * HYPRE_LSI_POLY interface
+ * NALU_HYPRE_LSI_POLY interface
  *
  *****************************************************************************/
 
@@ -15,16 +15,16 @@
 #include <stdio.h>
 #include <math.h>
 
-#include "utilities/_hypre_utilities.h"
-#include "HYPRE.h"
-#include "IJ_mv/HYPRE_IJ_mv.h"
-#include "parcsr_mv/HYPRE_parcsr_mv.h"
-#include "parcsr_mv/_hypre_parcsr_mv.h"
-#include "parcsr_ls/HYPRE_parcsr_ls.h"
-#include "HYPRE_MHMatrix.h"
-#include "HYPRE_FEI.h"
+#include "utilities/_nalu_hypre_utilities.h"
+#include "NALU_HYPRE.h"
+#include "IJ_mv/NALU_HYPRE_IJ_mv.h"
+#include "parcsr_mv/NALU_HYPRE_parcsr_mv.h"
+#include "parcsr_mv/_nalu_hypre_parcsr_mv.h"
+#include "parcsr_ls/NALU_HYPRE_parcsr_ls.h"
+#include "NALU_HYPRE_MHMatrix.h"
+#include "NALU_HYPRE_FEI.h"
 
-typedef struct HYPRE_LSI_Poly_Struct
+typedef struct NALU_HYPRE_LSI_Poly_Struct
 {
    MPI_Comm  comm;
    int       order;
@@ -32,19 +32,19 @@ typedef struct HYPRE_LSI_Poly_Struct
    int       Nrows;
    int       outputLevel;
 }
-HYPRE_LSI_Poly;
+NALU_HYPRE_LSI_Poly;
 
 #define habs(x) ((x > 0) ? (x) : -(x))
 
 /*--------------------------------------------------------------------------
- * HYPRE_LSI_PolyCreate - Return a polynomial preconditioner object "solver".
+ * NALU_HYPRE_LSI_PolyCreate - Return a polynomial preconditioner object "solver".
  *--------------------------------------------------------------------------*/
 
-int HYPRE_LSI_PolyCreate( MPI_Comm comm, HYPRE_Solver *solver )
+int NALU_HYPRE_LSI_PolyCreate( MPI_Comm comm, NALU_HYPRE_Solver *solver )
 {
-   HYPRE_LSI_Poly *poly_ptr;
+   NALU_HYPRE_LSI_Poly *poly_ptr;
 
-   poly_ptr = hypre_TAlloc(HYPRE_LSI_Poly, 1, HYPRE_MEMORY_HOST);
+   poly_ptr = nalu_hypre_TAlloc(NALU_HYPRE_LSI_Poly, 1, NALU_HYPRE_MEMORY_HOST);
 
    if (poly_ptr == NULL) return 1;
 
@@ -54,50 +54,50 @@ int HYPRE_LSI_PolyCreate( MPI_Comm comm, HYPRE_Solver *solver )
    poly_ptr->Nrows        = 0;
    poly_ptr->outputLevel  = 0;
 
-   *solver = (HYPRE_Solver) poly_ptr;
+   *solver = (NALU_HYPRE_Solver) poly_ptr;
 
    return 0;
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_LSI_PolyDestroy - Destroy a Poly object.
+ * NALU_HYPRE_LSI_PolyDestroy - Destroy a Poly object.
  *--------------------------------------------------------------------------*/
 
-int HYPRE_LSI_PolyDestroy( HYPRE_Solver solver )
+int NALU_HYPRE_LSI_PolyDestroy( NALU_HYPRE_Solver solver )
 {
-   HYPRE_LSI_Poly *poly_ptr;
+   NALU_HYPRE_LSI_Poly *poly_ptr;
 
-   poly_ptr = (HYPRE_LSI_Poly *) solver;
-   hypre_TFree(poly_ptr->coefficients, HYPRE_MEMORY_HOST);
-   hypre_TFree(poly_ptr, HYPRE_MEMORY_HOST);
+   poly_ptr = (NALU_HYPRE_LSI_Poly *) solver;
+   nalu_hypre_TFree(poly_ptr->coefficients, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(poly_ptr, NALU_HYPRE_MEMORY_HOST);
 
    return 0;
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_LSI_PolySetOrder - Set the order of the polynomial.
+ * NALU_HYPRE_LSI_PolySetOrder - Set the order of the polynomial.
  *--------------------------------------------------------------------------*/
 
-int HYPRE_LSI_PolySetOrder(HYPRE_Solver solver, int order )
+int NALU_HYPRE_LSI_PolySetOrder(NALU_HYPRE_Solver solver, int order )
 {
-   HYPRE_LSI_Poly *poly_ptr = (HYPRE_LSI_Poly *) solver;
+   NALU_HYPRE_LSI_Poly *poly_ptr = (NALU_HYPRE_LSI_Poly *) solver;
 
    poly_ptr->order = order;
    if ( poly_ptr->order < 0 ) poly_ptr->order = 0;
    if ( poly_ptr->order > 8 ) poly_ptr->order = 8;
-   hypre_TFree(poly_ptr->coefficients, HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(poly_ptr->coefficients, NALU_HYPRE_MEMORY_HOST);
    poly_ptr->coefficients = NULL;
 
    return 0;
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_LSI_PolySetOutputLevel - Set debug level
+ * NALU_HYPRE_LSI_PolySetOutputLevel - Set debug level
  *--------------------------------------------------------------------------*/
 
-int HYPRE_LSI_PolySetOutputLevel(HYPRE_Solver solver, int level)
+int NALU_HYPRE_LSI_PolySetOutputLevel(NALU_HYPRE_Solver solver, int level)
 {
-   HYPRE_LSI_Poly *poly_ptr = (HYPRE_LSI_Poly *) solver;
+   NALU_HYPRE_LSI_Poly *poly_ptr = (NALU_HYPRE_LSI_Poly *) solver;
 
    poly_ptr->outputLevel = level;
 
@@ -105,28 +105,28 @@ int HYPRE_LSI_PolySetOutputLevel(HYPRE_Solver solver, int level)
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_LSI_PolySolve - Solve function for Polynomial.
+ * NALU_HYPRE_LSI_PolySolve - Solve function for Polynomial.
  *--------------------------------------------------------------------------*/
 
-int HYPRE_LSI_PolySolve( HYPRE_Solver solver, HYPRE_ParCSRMatrix A,
-                         HYPRE_ParVector b,   HYPRE_ParVector x )
+int NALU_HYPRE_LSI_PolySolve( NALU_HYPRE_Solver solver, NALU_HYPRE_ParCSRMatrix A,
+                         NALU_HYPRE_ParVector b,   NALU_HYPRE_ParVector x )
 {
    int            i, j, order, Nrows;
    double         *rhs, *soln, *orig_rhs, mult, *coefs;
-   HYPRE_LSI_Poly *poly_ptr = (HYPRE_LSI_Poly *) solver;
+   NALU_HYPRE_LSI_Poly *poly_ptr = (NALU_HYPRE_LSI_Poly *) solver;
 
-   rhs  = hypre_VectorData(hypre_ParVectorLocalVector((hypre_ParVector *) b));
-   soln = hypre_VectorData(hypre_ParVectorLocalVector((hypre_ParVector *) x));
+   rhs  = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector((nalu_hypre_ParVector *) b));
+   soln = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector((nalu_hypre_ParVector *) x));
 
    order = poly_ptr->order;
    Nrows = poly_ptr->Nrows;
    coefs = poly_ptr->coefficients;
    if ( coefs == NULL )
    {
-      printf("HYPRE_LSI_PolySolve ERROR : PolySetup not called.\n");
+      printf("NALU_HYPRE_LSI_PolySolve ERROR : PolySetup not called.\n");
       exit(1);
    }
-   orig_rhs = hypre_TAlloc(double,  Nrows , HYPRE_MEMORY_HOST);
+   orig_rhs = nalu_hypre_TAlloc(double,  Nrows , NALU_HYPRE_MEMORY_HOST);
    for ( i = 0; i < Nrows; i++ )
    {
       orig_rhs[i] = rhs[i];
@@ -134,31 +134,31 @@ int HYPRE_LSI_PolySolve( HYPRE_Solver solver, HYPRE_ParCSRMatrix A,
    }
    for (i = order - 1; i >= 0; i-- )
    {
-      HYPRE_ParCSRMatrixMatvec(1.0, A, x, 0.0, b);
+      NALU_HYPRE_ParCSRMatrixMatvec(1.0, A, x, 0.0, b);
       mult = coefs[i];
       for ( j = 0; j < Nrows; j++ )
          soln[j] = mult * orig_rhs[j] + rhs[j];
    }
    for ( i = 0; i < Nrows; i++ ) rhs[i] = orig_rhs[i];
-   hypre_TFree(orig_rhs, HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(orig_rhs, NALU_HYPRE_MEMORY_HOST);
 
    return 0;
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_LSI_PolySetup - Set up function for LSI_Poly.                      *
+ * NALU_HYPRE_LSI_PolySetup - Set up function for LSI_Poly.                      *
  * abridged from AZTEC                                                      *
  *--------------------------------------------------------------------------*/
 
-int HYPRE_LSI_PolySetup(HYPRE_Solver solver, HYPRE_ParCSRMatrix A_csr,
-                        HYPRE_ParVector b,   HYPRE_ParVector x )
+int NALU_HYPRE_LSI_PolySetup(NALU_HYPRE_Solver solver, NALU_HYPRE_ParCSRMatrix A_csr,
+                        NALU_HYPRE_ParVector b,   NALU_HYPRE_ParVector x )
 {
    int            i, j, my_id, startRow, endRow, order;
    int            pos_diag, neg_diag;
    int            rowLeng, *colInd, *row_partition;
    double         *coefs=NULL, rowsum, max_norm, *colVal;
-   HYPRE_LSI_Poly *poly_ptr = (HYPRE_LSI_Poly *) solver;
-#ifndef HYPRE_SEQUENTIAL
+   NALU_HYPRE_LSI_Poly *poly_ptr = (NALU_HYPRE_LSI_Poly *) solver;
+#ifndef NALU_HYPRE_SEQUENTIAL
    double         dtemp;
 #endif
 
@@ -167,15 +167,15 @@ int HYPRE_LSI_PolySetup(HYPRE_Solver solver, HYPRE_ParCSRMatrix A_csr,
    /* ---------------------------------------------------------------- */
 
    order = poly_ptr->order;
-   coefs = hypre_TAlloc(double, (order+1) , HYPRE_MEMORY_HOST);
+   coefs = nalu_hypre_TAlloc(double, (order+1) , NALU_HYPRE_MEMORY_HOST);
    poly_ptr->coefficients = coefs;
 
    /* ---------------------------------------------------------------- */
    /* compute matrix norm                                              */
    /* ---------------------------------------------------------------- */
 
-   HYPRE_ParCSRMatrixGetRowPartitioning( A_csr, &row_partition );
-#ifdef HYPRE_SEQUENTIAL
+   NALU_HYPRE_ParCSRMatrixGetRowPartitioning( A_csr, &row_partition );
+#ifdef NALU_HYPRE_SEQUENTIAL
    my_id = 0;
 #else
    MPI_Comm_rank(poly_ptr->comm, &my_id);
@@ -183,14 +183,14 @@ int HYPRE_LSI_PolySetup(HYPRE_Solver solver, HYPRE_ParCSRMatrix A_csr,
 
    startRow  = row_partition[my_id];
    endRow    = row_partition[my_id+1] - 1;
-   hypre_TFree( row_partition , HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree( row_partition , NALU_HYPRE_MEMORY_HOST);
    poly_ptr->Nrows = endRow - startRow + 1;
 
    max_norm = 0.0;
    pos_diag = neg_diag = 0;
    for ( i = startRow; i <= endRow; i++ )
    {
-      HYPRE_ParCSRMatrixGetRow(A_csr, i, &rowLeng, &colInd, &colVal);
+      NALU_HYPRE_ParCSRMatrixGetRow(A_csr, i, &rowLeng, &colInd, &colVal);
       rowsum = 0.0;
       for (j = 0; j < rowLeng; j++)
       {
@@ -199,9 +199,9 @@ int HYPRE_LSI_PolySetup(HYPRE_Solver solver, HYPRE_ParCSRMatrix A_csr,
          if ( colInd[j] == i && colVal[j] < 0.0 ) neg_diag++;
       }
       if ( rowsum > max_norm ) max_norm = rowsum;
-      HYPRE_ParCSRMatrixRestoreRow(A_csr, i, &rowLeng, &colInd, &colVal);
+      NALU_HYPRE_ParCSRMatrixRestoreRow(A_csr, i, &rowLeng, &colInd, &colVal);
    }
-#ifndef HYPRE_SEQUENTIAL
+#ifndef NALU_HYPRE_SEQUENTIAL
    MPI_Allreduce(&max_norm, &dtemp, 1, MPI_DOUBLE, MPI_MAX, poly_ptr->comm);
 #endif
    if ( pos_diag == 0 && neg_diag > 0 ) max_norm = - max_norm;

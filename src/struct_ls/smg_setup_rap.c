@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_struct_ls.h"
+#include "_nalu_hypre_struct_ls.h"
 #include "smg.h"
 
 #define OLDRAP 1
@@ -16,47 +16,47 @@
  * grid structures.
  *--------------------------------------------------------------------------*/
 
-hypre_StructMatrix *
-hypre_SMGCreateRAPOp( hypre_StructMatrix *R,
-                      hypre_StructMatrix *A,
-                      hypre_StructMatrix *PT,
-                      hypre_StructGrid   *coarse_grid )
+nalu_hypre_StructMatrix *
+nalu_hypre_SMGCreateRAPOp( nalu_hypre_StructMatrix *R,
+                      nalu_hypre_StructMatrix *A,
+                      nalu_hypre_StructMatrix *PT,
+                      nalu_hypre_StructGrid   *coarse_grid )
 {
-   hypre_StructMatrix    *RAP;
-   hypre_StructStencil   *stencil;
+   nalu_hypre_StructMatrix    *RAP;
+   nalu_hypre_StructStencil   *stencil;
 
 #if NEWRAP
-   HYPRE_Int              cdir;
-   HYPRE_Int              P_stored_as_transpose = 1;
+   NALU_HYPRE_Int              cdir;
+   NALU_HYPRE_Int              P_stored_as_transpose = 1;
 #endif
 
-   stencil = hypre_StructMatrixStencil(A);
+   stencil = nalu_hypre_StructMatrixStencil(A);
 
 #if OLDRAP
-   switch (hypre_StructStencilNDim(stencil))
+   switch (nalu_hypre_StructStencilNDim(stencil))
    {
       case 2:
-         RAP = hypre_SMG2CreateRAPOp(R, A, PT, coarse_grid);
+         RAP = nalu_hypre_SMG2CreateRAPOp(R, A, PT, coarse_grid);
          break;
 
       case 3:
-         RAP = hypre_SMG3CreateRAPOp(R, A, PT, coarse_grid);
+         RAP = nalu_hypre_SMG3CreateRAPOp(R, A, PT, coarse_grid);
          break;
    }
 #endif
 
 #if NEWRAP
-   switch (hypre_StructStencilNDim(stencil))
+   switch (nalu_hypre_StructStencilNDim(stencil))
    {
       case 2:
          cdir = 1;
-         RAP = hypre_SemiCreateRAPOp(R, A, PT, coarse_grid, cdir,
+         RAP = nalu_hypre_SemiCreateRAPOp(R, A, PT, coarse_grid, cdir,
                                      P_stored_as_transpose);
          break;
 
       case 3:
          cdir = 2;
-         RAP = hypre_SemiCreateRAPOp(R, A, PT, coarse_grid, cdir,
+         RAP = nalu_hypre_SemiCreateRAPOp(R, A, PT, coarse_grid, cdir,
                                      P_stored_as_transpose);
          break;
    }
@@ -70,31 +70,31 @@ hypre_SMGCreateRAPOp( hypre_StructMatrix *R,
  * entries in RAP. Incomplete error handling at the moment.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_SMGSetupRAPOp( hypre_StructMatrix *R,
-                     hypre_StructMatrix *A,
-                     hypre_StructMatrix *PT,
-                     hypre_StructMatrix *Ac,
-                     hypre_Index         cindex,
-                     hypre_Index         cstride )
+NALU_HYPRE_Int
+nalu_hypre_SMGSetupRAPOp( nalu_hypre_StructMatrix *R,
+                     nalu_hypre_StructMatrix *A,
+                     nalu_hypre_StructMatrix *PT,
+                     nalu_hypre_StructMatrix *Ac,
+                     nalu_hypre_Index         cindex,
+                     nalu_hypre_Index         cstride )
 {
 #if NEWRAP
-   HYPRE_Int              cdir;
-   HYPRE_Int              P_stored_as_transpose = 1;
+   NALU_HYPRE_Int              cdir;
+   NALU_HYPRE_Int              P_stored_as_transpose = 1;
 #endif
 
-   hypre_StructStencil   *stencil;
-   hypre_StructMatrix    *Ac_tmp;
-#if 0 //defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP)
-   HYPRE_MemoryLocation data_location_A = hypre_StructGridDataLocation(hypre_StructMatrixGrid(A));
-   HYPRE_MemoryLocation data_location_Ac = hypre_StructGridDataLocation(hypre_StructMatrixGrid(Ac));
+   nalu_hypre_StructStencil   *stencil;
+   nalu_hypre_StructMatrix    *Ac_tmp;
+#if 0 //defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
+   NALU_HYPRE_MemoryLocation data_location_A = nalu_hypre_StructGridDataLocation(nalu_hypre_StructMatrixGrid(A));
+   NALU_HYPRE_MemoryLocation data_location_Ac = nalu_hypre_StructGridDataLocation(nalu_hypre_StructMatrixGrid(Ac));
    if (data_location_A != data_location_Ac)
    {
-      Ac_tmp = hypre_SMGCreateRAPOp(R, A, PT, hypre_StructMatrixGrid(Ac));
-      hypre_StructMatrixSymmetric(Ac_tmp) = hypre_StructMatrixSymmetric(Ac);
-      hypre_StructMatrixConstantCoefficient(Ac_tmp) = hypre_StructMatrixConstantCoefficient(Ac);
-      hypre_StructGridDataLocation(hypre_StructMatrixGrid(Ac)) = data_location_A;
-      HYPRE_StructMatrixInitialize(Ac_tmp);
+      Ac_tmp = nalu_hypre_SMGCreateRAPOp(R, A, PT, nalu_hypre_StructMatrixGrid(Ac));
+      nalu_hypre_StructMatrixSymmetric(Ac_tmp) = nalu_hypre_StructMatrixSymmetric(Ac);
+      nalu_hypre_StructMatrixConstantCoefficient(Ac_tmp) = nalu_hypre_StructMatrixConstantCoefficient(Ac);
+      nalu_hypre_StructGridDataLocation(nalu_hypre_StructMatrixGrid(Ac)) = data_location_A;
+      NALU_HYPRE_StructMatrixInitialize(Ac_tmp);
    }
    else
    {
@@ -104,9 +104,9 @@ hypre_SMGSetupRAPOp( hypre_StructMatrix *R,
    Ac_tmp = Ac;
 #endif
 
-   stencil = hypre_StructMatrixStencil(A);
+   stencil = nalu_hypre_StructMatrixStencil(A);
 #if OLDRAP
-   switch (hypre_StructStencilNDim(stencil))
+   switch (nalu_hypre_StructStencilNDim(stencil))
    {
 
       case 2:
@@ -114,25 +114,25 @@ hypre_SMGSetupRAPOp( hypre_StructMatrix *R,
          /*--------------------------------------------------------------------
           *    Set lower triangular (+ diagonal) coefficients
           *--------------------------------------------------------------------*/
-         hypre_SMG2BuildRAPSym(A, PT, R, Ac_tmp, cindex, cstride);
+         nalu_hypre_SMG2BuildRAPSym(A, PT, R, Ac_tmp, cindex, cstride);
 
          /*--------------------------------------------------------------------
           *    For non-symmetric A, set upper triangular coefficients as well
           *--------------------------------------------------------------------*/
-         if (!hypre_StructMatrixSymmetric(A))
+         if (!nalu_hypre_StructMatrixSymmetric(A))
          {
-            hypre_SMG2BuildRAPNoSym(A, PT, R, Ac_tmp, cindex, cstride);
+            nalu_hypre_SMG2BuildRAPNoSym(A, PT, R, Ac_tmp, cindex, cstride);
             /*-----------------------------------------------------------------
              *    Collapse stencil for periodic probems on coarsest grid.
              *-----------------------------------------------------------------*/
-            hypre_SMG2RAPPeriodicNoSym(Ac_tmp, cindex, cstride);
+            nalu_hypre_SMG2RAPPeriodicNoSym(Ac_tmp, cindex, cstride);
          }
          else
          {
             /*-----------------------------------------------------------------
              *    Collapse stencil for periodic problems on coarsest grid.
              *-----------------------------------------------------------------*/
-            hypre_SMG2RAPPeriodicSym(Ac_tmp, cindex, cstride);
+            nalu_hypre_SMG2RAPPeriodicSym(Ac_tmp, cindex, cstride);
          }
 
          break;
@@ -142,25 +142,25 @@ hypre_SMGSetupRAPOp( hypre_StructMatrix *R,
          /*--------------------------------------------------------------------
           *    Set lower triangular (+ diagonal) coefficients
           *--------------------------------------------------------------------*/
-         hypre_SMG3BuildRAPSym(A, PT, R, Ac_tmp, cindex, cstride);
+         nalu_hypre_SMG3BuildRAPSym(A, PT, R, Ac_tmp, cindex, cstride);
 
          /*--------------------------------------------------------------------
           *    For non-symmetric A, set upper triangular coefficients as well
           *--------------------------------------------------------------------*/
-         if (!hypre_StructMatrixSymmetric(A))
+         if (!nalu_hypre_StructMatrixSymmetric(A))
          {
-            hypre_SMG3BuildRAPNoSym(A, PT, R, Ac_tmp, cindex, cstride);
+            nalu_hypre_SMG3BuildRAPNoSym(A, PT, R, Ac_tmp, cindex, cstride);
             /*-----------------------------------------------------------------
              *    Collapse stencil for periodic probems on coarsest grid.
              *-----------------------------------------------------------------*/
-            hypre_SMG3RAPPeriodicNoSym(Ac_tmp, cindex, cstride);
+            nalu_hypre_SMG3RAPPeriodicNoSym(Ac_tmp, cindex, cstride);
          }
          else
          {
             /*-----------------------------------------------------------------
              *    Collapse stencil for periodic problems on coarsest grid.
              *-----------------------------------------------------------------*/
-            hypre_SMG3RAPPeriodicSym(Ac_tmp, cindex, cstride);
+            nalu_hypre_SMG3RAPPeriodicSym(Ac_tmp, cindex, cstride);
          }
 
          break;
@@ -169,39 +169,39 @@ hypre_SMGSetupRAPOp( hypre_StructMatrix *R,
 #endif
 
 #if NEWRAP
-   switch (hypre_StructStencilNDim(stencil))
+   switch (nalu_hypre_StructStencilNDim(stencil))
    {
 
       case 2:
          cdir = 1;
-         hypre_SemiBuildRAP(A, PT, R, cdir, cindex, cstride,
+         nalu_hypre_SemiBuildRAP(A, PT, R, cdir, cindex, cstride,
                             P_stored_as_transpose, Ac_tmp);
          break;
 
       case 3:
          cdir = 2;
-         hypre_SemiBuildRAP(A, PT, R, cdir, cindex, cstride,
+         nalu_hypre_SemiBuildRAP(A, PT, R, cdir, cindex, cstride,
                             P_stored_as_transpose, Ac_tmp);
          break;
 
    }
 #endif
 
-   hypre_StructMatrixAssemble(Ac_tmp);
+   nalu_hypre_StructMatrixAssemble(Ac_tmp);
 
-#if 0 //defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP)
+#if 0 //defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
    if (data_location_A != data_location_Ac)
    {
 
-      hypre_TMemcpy(hypre_StructMatrixDataConst(Ac), hypre_StructMatrixData(Ac_tmp), HYPRE_Complex,
-                    hypre_StructMatrixDataSize(Ac_tmp), HYPRE_MEMORY_HOST, HYPRE_MEMORY_DEVICE);
-      hypre_SetDeviceOff();
-      hypre_StructGridDataLocation(hypre_StructMatrixGrid(Ac)) = data_location_Ac;
-      hypre_StructMatrixAssemble(Ac);
-      hypre_SetDeviceOn();
-      hypre_StructMatrixDestroy(Ac_tmp);
+      nalu_hypre_TMemcpy(nalu_hypre_StructMatrixDataConst(Ac), nalu_hypre_StructMatrixData(Ac_tmp), NALU_HYPRE_Complex,
+                    nalu_hypre_StructMatrixDataSize(Ac_tmp), NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_DEVICE);
+      nalu_hypre_SetDeviceOff();
+      nalu_hypre_StructGridDataLocation(nalu_hypre_StructMatrixGrid(Ac)) = data_location_Ac;
+      nalu_hypre_StructMatrixAssemble(Ac);
+      nalu_hypre_SetDeviceOn();
+      nalu_hypre_StructMatrixDestroy(Ac_tmp);
    }
 #endif
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 

@@ -30,10 +30,10 @@
 #include <string.h>
 
 /* SStruct linear solvers headers */
-#include "HYPRE_sstruct_ls.h"
+#include "NALU_HYPRE_sstruct_ls.h"
 #include "ex.h"
 
-#ifdef HYPRE_EXVIS
+#ifdef NALU_HYPRE_EXVIS
 #include "vis.c"
 #endif
 
@@ -43,15 +43,15 @@ int main (int argc, char *argv[])
 
    int vis = 0;
 
-   HYPRE_SStructGrid     grid;
-   HYPRE_SStructGraph    graph;
-   HYPRE_SStructStencil  stencil_5pt;
-   HYPRE_SStructStencil  stencil_9pt;
-   HYPRE_SStructMatrix   A;
-   HYPRE_SStructVector   b;
-   HYPRE_SStructVector   x;
-   HYPRE_SStructSolver   solver;
-   HYPRE_SStructSolver   precond;
+   NALU_HYPRE_SStructGrid     grid;
+   NALU_HYPRE_SStructGraph    graph;
+   NALU_HYPRE_SStructStencil  stencil_5pt;
+   NALU_HYPRE_SStructStencil  stencil_9pt;
+   NALU_HYPRE_SStructMatrix   A;
+   NALU_HYPRE_SStructVector   b;
+   NALU_HYPRE_SStructVector   x;
+   NALU_HYPRE_SStructSolver   solver;
+   NALU_HYPRE_SStructSolver   precond;
 
    int object_type;
 
@@ -61,10 +61,10 @@ int main (int argc, char *argv[])
    MPI_Comm_size(MPI_COMM_WORLD, &num_procs);
 
    /* Initialize HYPRE */
-   HYPRE_Initialize();
+   NALU_HYPRE_Initialize();
 
    /* Print GPU info */
-   /* HYPRE_PrintDeviceInfo(); */
+   /* NALU_HYPRE_PrintDeviceInfo(); */
 
    if (num_procs != 2)
    {
@@ -121,7 +121,7 @@ int main (int argc, char *argv[])
       int part;
 
       /* Create an empty 2D grid object */
-      HYPRE_SStructGridCreate(MPI_COMM_WORLD, ndim, nparts, &grid);
+      NALU_HYPRE_SStructGridCreate(MPI_COMM_WORLD, ndim, nparts, &grid);
 
       /* Set the extents of the grid - each processor sets its grid
          boxes.  Each part has its own relative index space numbering. */
@@ -135,7 +135,7 @@ int main (int argc, char *argv[])
             int iupper[2] = {-1, 2};
 
             part = 0;
-            HYPRE_SStructGridSetExtents(grid, part, ilower, iupper);
+            NALU_HYPRE_SStructGridSetExtents(grid, part, ilower, iupper);
          }
 
          /* Add the second box to the grid in part 1 */
@@ -147,7 +147,7 @@ int main (int argc, char *argv[])
             int iupper[2] = {2, 4};
 
             part = 1;
-            HYPRE_SStructGridSetExtents(grid, part, ilower, iupper);
+            NALU_HYPRE_SStructGridSetExtents(grid, part, ilower, iupper);
          }
       }
 
@@ -160,7 +160,7 @@ int main (int argc, char *argv[])
             int iupper[2] = {6, 4};
 
             part = 2;
-            HYPRE_SStructGridSetExtents(grid, part, ilower, iupper);
+            NALU_HYPRE_SStructGridSetExtents(grid, part, ilower, iupper);
          }
       }
 
@@ -168,17 +168,17 @@ int main (int argc, char *argv[])
       {
          int i;
          int nvars = 1;
-         HYPRE_SStructVariable vartypes[1] = {HYPRE_SSTRUCT_VARIABLE_CELL};
+         NALU_HYPRE_SStructVariable vartypes[1] = {NALU_HYPRE_SSTRUCT_VARIABLE_CELL};
 
          for (i = 0; i < nparts; i++)
          {
-            HYPRE_SStructGridSetVariables(grid, i, nvars, vartypes);
+            NALU_HYPRE_SStructGridSetVariables(grid, i, nvars, vartypes);
          }
       }
 
       /* Now we need to set the spatial relation between each of the parts.
          Since we have the same types of variables on both parts, we can
-         use HYPRE_GridSetNeighborPart().  Each processor calls this function
+         use NALU_HYPRE_GridSetNeighborPart().  Each processor calls this function
          for each part on which it owns boxes that border a different part. */
 
       if (myid == 0)
@@ -200,7 +200,7 @@ int main (int argc, char *argv[])
                for both variables (note: if decreasing maps to increasing, use -1)*/
             int index_dir[2] = {1, 1};
 
-            HYPRE_SStructGridSetNeighborPart(grid, part, b_ilower, b_iupper,
+            NALU_HYPRE_SStructGridSetNeighborPart(grid, part, b_ilower, b_iupper,
                                              nbor_part, nbor_ilower, nbor_iupper,
                                              index_map, index_dir);
          }
@@ -222,7 +222,7 @@ int main (int argc, char *argv[])
                for both variables (note: if decreasing maps to increasing, use -1)*/
             int index_dir[2] = {1, 1};
 
-            HYPRE_SStructGridSetNeighborPart(grid, part, b_ilower, b_iupper,
+            NALU_HYPRE_SStructGridSetNeighborPart(grid, part, b_ilower, b_iupper,
                                              nbor_part, nbor_ilower, nbor_iupper,
                                              index_map, index_dir);
          }
@@ -244,7 +244,7 @@ int main (int argc, char *argv[])
                for both variables (note: if decreasing maps to increasing, use -1)*/
             int index_dir[2] = {1, 1};
 
-            HYPRE_SStructGridSetNeighborPart(grid, part, b_ilower, b_iupper,
+            NALU_HYPRE_SStructGridSetNeighborPart(grid, part, b_ilower, b_iupper,
                                              nbor_part, nbor_ilower, nbor_iupper,
                                              index_map, index_dir);
          }
@@ -268,14 +268,14 @@ int main (int argc, char *argv[])
               for both variables (note: if decreasing maps to increasing, use -1)*/
             int index_dir[2] = {1, 1};
 
-            HYPRE_SStructGridSetNeighborPart(grid, part, b_ilower, b_iupper,
+            NALU_HYPRE_SStructGridSetNeighborPart(grid, part, b_ilower, b_iupper,
                                              nbor_part, nbor_ilower, nbor_iupper,
                                              index_map, index_dir);
          }
       }
 
       /* Now the grid is ready to use */
-      HYPRE_SStructGridAssemble(grid);
+      NALU_HYPRE_SStructGridAssemble(grid);
    }
 
    /* 2. Define the discretization stencils */
@@ -289,11 +289,11 @@ int main (int argc, char *argv[])
          int offsets[5][2] = {{0, 0}, {-1, 0}, {1, 0}, {0, -1}, {0, 1}};
          int stencil_size = 5;
 
-         HYPRE_SStructStencilCreate(ndim, stencil_size, &stencil_5pt);
+         NALU_HYPRE_SStructStencilCreate(ndim, stencil_size, &stencil_5pt);
 
          for (entry = 0; entry < 5; entry++)
          {
-            HYPRE_SStructStencilSetEntry(stencil_5pt, entry, offsets[entry], var);
+            NALU_HYPRE_SStructStencilSetEntry(stencil_5pt, entry, offsets[entry], var);
          }
       }
 
@@ -303,11 +303,11 @@ int main (int argc, char *argv[])
             {-1, -1}, {1, -1}, {1, 1}, {-1, 1}
          };
          int stencil_size = 9;
-         HYPRE_SStructStencilCreate(ndim, stencil_size, &stencil_9pt);
+         NALU_HYPRE_SStructStencilCreate(ndim, stencil_size, &stencil_9pt);
 
          for (entry = 0; entry < stencil_size; entry++)
          {
-            HYPRE_SStructStencilSetEntry(stencil_9pt, entry, offsets[entry], var);
+            NALU_HYPRE_SStructStencilSetEntry(stencil_9pt, entry, offsets[entry], var);
          }
       }
    }
@@ -319,29 +319,29 @@ int main (int argc, char *argv[])
       int part;
 
       /* Create the graph object */
-      HYPRE_SStructGraphCreate(MPI_COMM_WORLD, grid, &graph);
+      NALU_HYPRE_SStructGraphCreate(MPI_COMM_WORLD, grid, &graph);
 
       /* See MatrixSetObjectType below */
-      object_type = HYPRE_SSTRUCT;
-      HYPRE_SStructGraphSetObjectType(graph, object_type);
+      object_type = NALU_HYPRE_SSTRUCT;
+      NALU_HYPRE_SStructGraphSetObjectType(graph, object_type);
 
       /* Use the 5-pt stencil on part 0 */
       part = 0;
-      HYPRE_SStructGraphSetStencil(graph, part, var, stencil_5pt);
+      NALU_HYPRE_SStructGraphSetStencil(graph, part, var, stencil_5pt);
 
       /* Use the 9-pt stencil on part 1 */
       part = 1;
-      HYPRE_SStructGraphSetStencil(graph, part, var, stencil_9pt);
+      NALU_HYPRE_SStructGraphSetStencil(graph, part, var, stencil_9pt);
 
       /* Use the 5-pt stencil on part 2 */
       part = 2;
-      HYPRE_SStructGraphSetStencil(graph, part, var, stencil_5pt);
+      NALU_HYPRE_SStructGraphSetStencil(graph, part, var, stencil_5pt);
 
       /*  Since we have only stencil connections between parts, we don't need to
-          call HYPRE_SStructGraphAddEntries. */
+          call NALU_HYPRE_SStructGraphAddEntries. */
 
       /* Assemble the graph */
-      HYPRE_SStructGraphAssemble(graph);
+      NALU_HYPRE_SStructGraphAssemble(graph);
    }
 
    /* 4. Set up a SStruct Matrix */
@@ -351,24 +351,24 @@ int main (int argc, char *argv[])
       int var = 0;
 
       /* Create the empty matrix object */
-      HYPRE_SStructMatrixCreate(MPI_COMM_WORLD, graph, &A);
+      NALU_HYPRE_SStructMatrixCreate(MPI_COMM_WORLD, graph, &A);
 
-      /* Set the object type (by default HYPRE_SSTRUCT). This determines the
+      /* Set the object type (by default NALU_HYPRE_SSTRUCT). This determines the
          data structure used to store the matrix.  If you want to use unstructured
-         solvers, e.g. BoomerAMG, the object type should be HYPRE_PARCSR.
+         solvers, e.g. BoomerAMG, the object type should be NALU_HYPRE_PARCSR.
          If the problem is purely structured (with one part), you may want to use
-         HYPRE_STRUCT to access the structured solvers.  Since we have two parts
-         with different stencils, we set the object type to HYPRE_SSTRUCT. */
-      object_type = HYPRE_SSTRUCT;
-      HYPRE_SStructMatrixSetObjectType(A, object_type);
+         NALU_HYPRE_STRUCT to access the structured solvers.  Since we have two parts
+         with different stencils, we set the object type to NALU_HYPRE_SSTRUCT. */
+      object_type = NALU_HYPRE_SSTRUCT;
+      NALU_HYPRE_SStructMatrixSetObjectType(A, object_type);
 
       /* Get ready to set values */
-      HYPRE_SStructMatrixInitialize(A);
+      NALU_HYPRE_SStructMatrixInitialize(A);
 
       /* Each processor must set the stencil values for their boxes on each part.
          In this example, we only set stencil entries and therefore use
-         HYPRE_SStructMatrixSetBoxValues.  If we need to set non-stencil entries,
-         we have to use HYPRE_SStructMatrixSetValues. */
+         NALU_HYPRE_SStructMatrixSetBoxValues.  If we need to set non-stencil entries,
+         we have to use NALU_HYPRE_SStructMatrixSetValues. */
 
       if (myid == 0)
       {
@@ -402,7 +402,7 @@ int main (int argc, char *argv[])
             }
 
             part = 0;
-            HYPRE_SStructMatrixSetBoxValues(A, part, ilower, iupper,
+            NALU_HYPRE_SStructMatrixSetBoxValues(A, part, ilower, iupper,
                                             var, nentries,
                                             stencil_indices, values);
 
@@ -436,7 +436,7 @@ int main (int argc, char *argv[])
             }
 
             part = 1;
-            HYPRE_SStructMatrixSetBoxValues(A, part, ilower, iupper,
+            NALU_HYPRE_SStructMatrixSetBoxValues(A, part, ilower, iupper,
                                             var, nentries,
                                             stencil_indices, values);
 
@@ -472,7 +472,7 @@ int main (int argc, char *argv[])
             }
 
             part = 2;
-            HYPRE_SStructMatrixSetBoxValues(A, part, ilower, iupper,
+            NALU_HYPRE_SStructMatrixSetBoxValues(A, part, ilower, iupper,
                                             var, nentries,
                                             stencil_indices, values);
 
@@ -508,7 +508,7 @@ int main (int argc, char *argv[])
 
             int stencil_indices[6] = {0, 2, 3, 4, 6, 7};
 
-            HYPRE_SStructMatrixSetBoxValues(A, part, ilower, iupper,
+            NALU_HYPRE_SStructMatrixSetBoxValues(A, part, ilower, iupper,
                                             var, nentries,
                                             stencil_indices, values);
          }
@@ -520,7 +520,7 @@ int main (int argc, char *argv[])
 
             int stencil_indices[6] = {0, 1, 3, 4, 5, 8};
 
-            HYPRE_SStructMatrixSetBoxValues(A, part, ilower, iupper,
+            NALU_HYPRE_SStructMatrixSetBoxValues(A, part, ilower, iupper,
                                             var, nentries,
                                             stencil_indices, values);
          }
@@ -550,7 +550,7 @@ int main (int argc, char *argv[])
 
             int stencil_indices[1] = {3};
 
-            HYPRE_SStructMatrixSetBoxValues(A, part, ilower, iupper,
+            NALU_HYPRE_SStructMatrixSetBoxValues(A, part, ilower, iupper,
                                             var, 1,
                                             stencil_indices, values);
          }
@@ -562,7 +562,7 @@ int main (int argc, char *argv[])
 
             int stencil_indices[1] = {1};
 
-            HYPRE_SStructMatrixSetBoxValues(A, part, ilower, iupper,
+            NALU_HYPRE_SStructMatrixSetBoxValues(A, part, ilower, iupper,
                                             var, 1,
                                             stencil_indices, values);
          }
@@ -574,7 +574,7 @@ int main (int argc, char *argv[])
 
             int stencil_indices[1] = {4};
 
-            HYPRE_SStructMatrixSetBoxValues(A, part, ilower, iupper,
+            NALU_HYPRE_SStructMatrixSetBoxValues(A, part, ilower, iupper,
                                             var, 1,
                                             stencil_indices, values);
          }
@@ -588,7 +588,7 @@ int main (int argc, char *argv[])
 
             int stencil_indices[3] = {3, 5, 6};
 
-            HYPRE_SStructMatrixSetBoxValues(A, part, ilower, iupper,
+            NALU_HYPRE_SStructMatrixSetBoxValues(A, part, ilower, iupper,
                                             var, 3,
                                             stencil_indices, values);
          }
@@ -601,7 +601,7 @@ int main (int argc, char *argv[])
 
             int stencil_indices[3] = {1, 5, 8};
 
-            HYPRE_SStructMatrixSetBoxValues(A, part, ilower, iupper,
+            NALU_HYPRE_SStructMatrixSetBoxValues(A, part, ilower, iupper,
                                             var, 3,
                                             stencil_indices, values);
          }
@@ -613,7 +613,7 @@ int main (int argc, char *argv[])
 
             int stencil_indices[3] = {4, 7, 8};
 
-            HYPRE_SStructMatrixSetBoxValues(A, part, ilower, iupper,
+            NALU_HYPRE_SStructMatrixSetBoxValues(A, part, ilower, iupper,
                                             var, 3,
                                             stencil_indices, values);
          }
@@ -640,7 +640,7 @@ int main (int argc, char *argv[])
 
             int stencil_indices[1] = {3};
 
-            HYPRE_SStructMatrixSetBoxValues(A, part, ilower, iupper,
+            NALU_HYPRE_SStructMatrixSetBoxValues(A, part, ilower, iupper,
                                             var, 1,
                                             stencil_indices, values);
          }
@@ -652,7 +652,7 @@ int main (int argc, char *argv[])
 
             int stencil_indices[1] = {2};
 
-            HYPRE_SStructMatrixSetBoxValues(A, part, ilower, iupper,
+            NALU_HYPRE_SStructMatrixSetBoxValues(A, part, ilower, iupper,
                                             var, 1,
                                             stencil_indices, values);
          }
@@ -664,7 +664,7 @@ int main (int argc, char *argv[])
 
             int stencil_indices[1] = {4};
 
-            HYPRE_SStructMatrixSetBoxValues(A, part, ilower, iupper,
+            NALU_HYPRE_SStructMatrixSetBoxValues(A, part, ilower, iupper,
                                             var, 1,
                                             stencil_indices, values);
          }
@@ -674,7 +674,7 @@ int main (int argc, char *argv[])
 
       /* This is a collective call finalizing the matrix assembly.
          The matrix is now ``ready to be used'' */
-      HYPRE_SStructMatrixAssemble(A);
+      NALU_HYPRE_SStructMatrixAssemble(A);
    }
 
    /* 5. Set up SStruct Vectors for b and x */
@@ -684,18 +684,18 @@ int main (int argc, char *argv[])
       int var = 0;
 
       /* Create an empty vector object */
-      HYPRE_SStructVectorCreate(MPI_COMM_WORLD, grid, &b);
-      HYPRE_SStructVectorCreate(MPI_COMM_WORLD, grid, &x);
+      NALU_HYPRE_SStructVectorCreate(MPI_COMM_WORLD, grid, &b);
+      NALU_HYPRE_SStructVectorCreate(MPI_COMM_WORLD, grid, &x);
 
       /* As with the matrix,  set the object type for the vectors
          to be the sstruct type */
-      object_type = HYPRE_SSTRUCT;
-      HYPRE_SStructVectorSetObjectType(b, object_type);
-      HYPRE_SStructVectorSetObjectType(x, object_type);
+      object_type = NALU_HYPRE_SSTRUCT;
+      NALU_HYPRE_SStructVectorSetObjectType(b, object_type);
+      NALU_HYPRE_SStructVectorSetObjectType(x, object_type);
 
       /* Indicate that the vector coefficients are ready to be set */
-      HYPRE_SStructVectorInitialize(b);
-      HYPRE_SStructVectorInitialize(x);
+      NALU_HYPRE_SStructVectorInitialize(b);
+      NALU_HYPRE_SStructVectorInitialize(x);
 
       if (myid == 0)
       {
@@ -714,13 +714,13 @@ int main (int argc, char *argv[])
             {
                values[i] = 1.0;
             }
-            HYPRE_SStructVectorSetBoxValues(b, part, ilower, iupper, var, values);
+            NALU_HYPRE_SStructVectorSetBoxValues(b, part, ilower, iupper, var, values);
 
             for (i = 0; i < nvalues; i ++)
             {
                values[i] = 0.0;
             }
-            HYPRE_SStructVectorSetBoxValues(x, part, ilower, iupper, var, values);
+            NALU_HYPRE_SStructVectorSetBoxValues(x, part, ilower, iupper, var, values);
 
             free(values);
          }
@@ -740,13 +740,13 @@ int main (int argc, char *argv[])
             {
                values[i] = 1.0;
             }
-            HYPRE_SStructVectorSetBoxValues(b, part, ilower, iupper, var, values);
+            NALU_HYPRE_SStructVectorSetBoxValues(b, part, ilower, iupper, var, values);
 
             for (i = 0; i < nvalues; i ++)
             {
                values[i] = 0.0;
             }
-            HYPRE_SStructVectorSetBoxValues(x, part, ilower, iupper, var, values);
+            NALU_HYPRE_SStructVectorSetBoxValues(x, part, ilower, iupper, var, values);
 
             free(values);
          }
@@ -768,13 +768,13 @@ int main (int argc, char *argv[])
             {
                values[i] = 1.0;
             }
-            HYPRE_SStructVectorSetBoxValues(b, part, ilower, iupper, var, values);
+            NALU_HYPRE_SStructVectorSetBoxValues(b, part, ilower, iupper, var, values);
 
             for (i = 0; i < nvalues; i ++)
             {
                values[i] = 0.0;
             }
-            HYPRE_SStructVectorSetBoxValues(x, part, ilower, iupper, var, values);
+            NALU_HYPRE_SStructVectorSetBoxValues(x, part, ilower, iupper, var, values);
 
             free(values);
          }
@@ -782,41 +782,41 @@ int main (int argc, char *argv[])
 
       /* This is a collective call finalizing the vector assembly.
          The vectors are now ``ready to be used'' */
-      HYPRE_SStructVectorAssemble(b);
-      HYPRE_SStructVectorAssemble(x);
+      NALU_HYPRE_SStructVectorAssemble(b);
+      NALU_HYPRE_SStructVectorAssemble(x);
    }
 
    /* 6. Set up and use a solver (See the Reference Manual for descriptions
       of all of the options.) */
    {
       /* Create an empty PCG Struct solver */
-      HYPRE_SStructPCGCreate(MPI_COMM_WORLD, &solver);
+      NALU_HYPRE_SStructPCGCreate(MPI_COMM_WORLD, &solver);
 
       /* Set PCG parameters */
-      HYPRE_SStructPCGSetTol(solver, 1.0e-6 );
-      HYPRE_SStructPCGSetPrintLevel(solver, 2);
-      HYPRE_SStructPCGSetMaxIter(solver, 50);
+      NALU_HYPRE_SStructPCGSetTol(solver, 1.0e-6 );
+      NALU_HYPRE_SStructPCGSetPrintLevel(solver, 2);
+      NALU_HYPRE_SStructPCGSetMaxIter(solver, 50);
 
       /* Create a split SStruct solver for use as a preconditioner */
-      HYPRE_SStructSplitCreate(MPI_COMM_WORLD, &precond);
-      HYPRE_SStructSplitSetMaxIter(precond, 1);
-      HYPRE_SStructSplitSetTol(precond, 0.0);
-      HYPRE_SStructSplitSetZeroGuess(precond);
+      NALU_HYPRE_SStructSplitCreate(MPI_COMM_WORLD, &precond);
+      NALU_HYPRE_SStructSplitSetMaxIter(precond, 1);
+      NALU_HYPRE_SStructSplitSetTol(precond, 0.0);
+      NALU_HYPRE_SStructSplitSetZeroGuess(precond);
 
       /* Set the preconditioner type to split-SMG */
-      HYPRE_SStructSplitSetStructSolver(precond, HYPRE_SMG);
+      NALU_HYPRE_SStructSplitSetStructSolver(precond, NALU_HYPRE_SMG);
 
       /* Set preconditioner and solve */
-      HYPRE_SStructPCGSetPrecond(solver, HYPRE_SStructSplitSolve,
-                                 HYPRE_SStructSplitSetup, precond);
-      HYPRE_SStructPCGSetup(solver, A, b, x);
-      HYPRE_SStructPCGSolve(solver, A, b, x);
+      NALU_HYPRE_SStructPCGSetPrecond(solver, NALU_HYPRE_SStructSplitSolve,
+                                 NALU_HYPRE_SStructSplitSetup, precond);
+      NALU_HYPRE_SStructPCGSetup(solver, A, b, x);
+      NALU_HYPRE_SStructPCGSolve(solver, A, b, x);
    }
 
    /* Save the solution for GLVis visualization, see vis/glvis-ex8.sh */
    if (vis)
    {
-#ifdef HYPRE_EXVIS
+#ifdef NALU_HYPRE_EXVIS
       GLVis_PrintSStructGrid(grid, "vis/ex8.mesh", myid, NULL, NULL);
       GLVis_PrintSStructVector(x, 0, "vis/ex8.sol", myid);
       GLVis_PrintData("vis/ex8.data", myid, num_procs);
@@ -824,19 +824,19 @@ int main (int argc, char *argv[])
    }
 
    /* Free memory */
-   HYPRE_SStructGridDestroy(grid);
-   HYPRE_SStructStencilDestroy(stencil_5pt);
-   HYPRE_SStructStencilDestroy(stencil_9pt);
-   HYPRE_SStructGraphDestroy(graph);
-   HYPRE_SStructMatrixDestroy(A);
-   HYPRE_SStructVectorDestroy(b);
-   HYPRE_SStructVectorDestroy(x);
+   NALU_HYPRE_SStructGridDestroy(grid);
+   NALU_HYPRE_SStructStencilDestroy(stencil_5pt);
+   NALU_HYPRE_SStructStencilDestroy(stencil_9pt);
+   NALU_HYPRE_SStructGraphDestroy(graph);
+   NALU_HYPRE_SStructMatrixDestroy(A);
+   NALU_HYPRE_SStructVectorDestroy(b);
+   NALU_HYPRE_SStructVectorDestroy(x);
 
-   HYPRE_SStructPCGDestroy(solver);
-   HYPRE_SStructSplitDestroy(precond);
+   NALU_HYPRE_SStructPCGDestroy(solver);
+   NALU_HYPRE_SStructSplitDestroy(precond);
 
    /* Finalize HYPRE */
-   HYPRE_Finalize();
+   NALU_HYPRE_Finalize();
 
    /* Finalize MPI */
    MPI_Finalize();

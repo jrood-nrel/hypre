@@ -14,8 +14,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
-#include "_hypre_utilities.h"
-#include "HYPRE.h"
+#include "_nalu_hypre_utilities.h"
+#include "NALU_HYPRE.h"
 #include "LLNL_FEI_Solver.h"
 
 #ifdef HAVE_SUPERLU_20
@@ -1122,9 +1122,9 @@ int LLNL_FEI_Solver::solveUsingSuperLU()
       for ( jcol = diagIA[irow]; jcol < diagIA[irow+1]; jcol++ )
          countArray[diagJA[jcol]]++;
    localNnz = diagIA[localNRows];
-   cscJA = hypre_TAlloc(int,  (localNRows+1) , HYPRE_MEMORY_HOST);
-   cscIA = hypre_TAlloc(int,  localNnz , HYPRE_MEMORY_HOST);
-   cscAA = hypre_TAlloc(double,  localNnz , HYPRE_MEMORY_HOST);
+   cscJA = nalu_hypre_TAlloc(int,  (localNRows+1) , NALU_HYPRE_MEMORY_HOST);
+   cscIA = nalu_hypre_TAlloc(int,  localNnz , NALU_HYPRE_MEMORY_HOST);
+   cscAA = nalu_hypre_TAlloc(double,  localNnz , NALU_HYPRE_MEMORY_HOST);
    cscJA[0] = 0;
    localNnz = 0;
    for ( jcol = 1; jcol <= localNRows; jcol++ )

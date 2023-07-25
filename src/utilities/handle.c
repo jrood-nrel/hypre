@@ -7,142 +7,142 @@
 
 /******************************************************************************
  *
- * HYPRE_handle utility functions
+ * NALU_NALU_HYPRE.handle utility functions
  *
  *****************************************************************************/
 
-#include "_hypre_utilities.h"
-#include "_hypre_utilities.hpp"
+#include "_nalu_hypre_utilities.h"
+#include "_nalu_hypre_utilities.hpp"
 
 /* GPU SpTrans */
-HYPRE_Int
-hypre_SetSpTransUseVendor( HYPRE_Int use_vendor )
+NALU_HYPRE_Int
+nalu_hypre_SetSpTransUseVendor( NALU_HYPRE_Int use_vendor )
 {
-#if defined(HYPRE_USING_GPU)
-   hypre_HandleSpTransUseVendor(hypre_handle()) = use_vendor;
+#if defined(NALU_HYPRE_USING_GPU)
+   nalu_hypre_HandleSpTransUseVendor(nalu_hypre_handle()) = use_vendor;
 #endif
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /* GPU SpMV */
-HYPRE_Int
-hypre_SetSpMVUseVendor( HYPRE_Int use_vendor )
+NALU_HYPRE_Int
+nalu_hypre_SetSpMVUseVendor( NALU_HYPRE_Int use_vendor )
 {
-#if defined(HYPRE_USING_GPU)
-   hypre_HandleSpMVUseVendor(hypre_handle()) = use_vendor;
+#if defined(NALU_HYPRE_USING_GPU)
+   nalu_hypre_HandleSpMVUseVendor(nalu_hypre_handle()) = use_vendor;
 #endif
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /* GPU SpGemm */
-HYPRE_Int
-hypre_SetSpGemmUseVendor( HYPRE_Int use_vendor )
+NALU_HYPRE_Int
+nalu_hypre_SetSpGemmUseVendor( NALU_HYPRE_Int use_vendor )
 {
-#if defined(HYPRE_USING_GPU)
-   hypre_HandleSpgemmUseVendor(hypre_handle()) = use_vendor;
+#if defined(NALU_HYPRE_USING_GPU)
+   nalu_hypre_HandleSpgemmUseVendor(nalu_hypre_handle()) = use_vendor;
 #endif
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
-HYPRE_Int
-hypre_SetSpGemmAlgorithm( HYPRE_Int value )
+NALU_HYPRE_Int
+nalu_hypre_SetSpGemmAlgorithm( NALU_HYPRE_Int value )
 {
-#if defined(HYPRE_USING_GPU)
+#if defined(NALU_HYPRE_USING_GPU)
    if (value >= 1 && value <= 3)
    {
-      hypre_HandleSpgemmAlgorithm(hypre_handle()) = value;
+      nalu_hypre_HandleSpgemmAlgorithm(nalu_hypre_handle()) = value;
    }
    else
    {
-      hypre_error_in_arg(1);
+      nalu_hypre_error_in_arg(1);
    }
 #endif
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
-HYPRE_Int
-hypre_SetSpGemmBinned( HYPRE_Int value )
+NALU_HYPRE_Int
+nalu_hypre_SetSpGemmBinned( NALU_HYPRE_Int value )
 {
-#if defined(HYPRE_USING_GPU)
-   hypre_HandleSpgemmBinned(hypre_handle()) = value;
+#if defined(NALU_HYPRE_USING_GPU)
+   nalu_hypre_HandleSpgemmBinned(nalu_hypre_handle()) = value;
 #endif
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
-HYPRE_Int
-hypre_SetSpGemmRownnzEstimateMethod( HYPRE_Int value )
+NALU_HYPRE_Int
+nalu_hypre_SetSpGemmRownnzEstimateMethod( NALU_HYPRE_Int value )
 {
-#if defined(HYPRE_USING_GPU)
+#if defined(NALU_HYPRE_USING_GPU)
    if (value >= 1 && value <= 3)
    {
-      hypre_HandleSpgemmRownnzEstimateMethod(hypre_handle()) = value;
+      nalu_hypre_HandleSpgemmRownnzEstimateMethod(nalu_hypre_handle()) = value;
    }
    else
    {
-      hypre_error_in_arg(1);
+      nalu_hypre_error_in_arg(1);
    }
 #endif
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
-HYPRE_Int
-hypre_SetSpGemmRownnzEstimateNSamples( HYPRE_Int value )
+NALU_HYPRE_Int
+nalu_hypre_SetSpGemmRownnzEstimateNSamples( NALU_HYPRE_Int value )
 {
-#if defined(HYPRE_USING_GPU)
-   hypre_HandleSpgemmRownnzEstimateNsamples(hypre_handle()) = value;
+#if defined(NALU_HYPRE_USING_GPU)
+   nalu_hypre_HandleSpgemmRownnzEstimateNsamples(nalu_hypre_handle()) = value;
 #endif
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
-HYPRE_Int
-hypre_SetSpGemmRownnzEstimateMultFactor( HYPRE_Real value )
+NALU_HYPRE_Int
+nalu_hypre_SetSpGemmRownnzEstimateMultFactor( NALU_HYPRE_Real value )
 {
-#if defined(HYPRE_USING_GPU)
+#if defined(NALU_HYPRE_USING_GPU)
    if (value > 0.0)
    {
-      hypre_HandleSpgemmRownnzEstimateMultFactor(hypre_handle()) = value;
+      nalu_hypre_HandleSpgemmRownnzEstimateMultFactor(nalu_hypre_handle()) = value;
    }
    else
    {
-      hypre_error_in_arg(1);
+      nalu_hypre_error_in_arg(1);
    }
 #endif
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /* GPU Rand */
-HYPRE_Int
-hypre_SetUseGpuRand( HYPRE_Int use_gpurand )
+NALU_HYPRE_Int
+nalu_hypre_SetUseGpuRand( NALU_HYPRE_Int use_gpurand )
 {
-#if defined(HYPRE_USING_GPU)
-   hypre_HandleUseGpuRand(hypre_handle()) = use_gpurand;
+#if defined(NALU_HYPRE_USING_GPU)
+   nalu_hypre_HandleUseGpuRand(nalu_hypre_handle()) = use_gpurand;
 #endif
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
-HYPRE_Int
-hypre_SetGaussSeidelMethod( HYPRE_Int gs_method )
+NALU_HYPRE_Int
+nalu_hypre_SetGaussSeidelMethod( NALU_HYPRE_Int gs_method )
 {
-#if defined(HYPRE_USING_GPU)
-   hypre_HandleDeviceGSMethod(hypre_handle()) = gs_method;
+#if defined(NALU_HYPRE_USING_GPU)
+   nalu_hypre_HandleDeviceGSMethod(nalu_hypre_handle()) = gs_method;
 #endif
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
-HYPRE_Int
-hypre_SetUserDeviceMalloc(GPUMallocFunc func)
+NALU_HYPRE_Int
+nalu_hypre_SetUserDeviceMalloc(GPUMallocFunc func)
 {
-#if defined(HYPRE_USING_GPU)
-   hypre_HandleUserDeviceMalloc(hypre_handle()) = func;
+#if defined(NALU_HYPRE_USING_GPU)
+   nalu_hypre_HandleUserDeviceMalloc(nalu_hypre_handle()) = func;
 #endif
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
-HYPRE_Int
-hypre_SetUserDeviceMfree(GPUMfreeFunc func)
+NALU_HYPRE_Int
+nalu_hypre_SetUserDeviceMfree(GPUMfreeFunc func)
 {
-#if defined(HYPRE_USING_GPU)
-   hypre_HandleUserDeviceMfree(hypre_handle()) = func;
+#if defined(NALU_HYPRE_USING_GPU)
+   nalu_hypre_HandleUserDeviceMfree(nalu_hypre_handle()) = func;
 #endif
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }

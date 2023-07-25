@@ -5,24 +5,24 @@
 
 include_directories(fei-hypre)
 
-# option(HYPRE_USING_SUPERLU "Use internal SuperLU routines" ON)
-# option(HYPRE_USING_MLI     "Use MLI" ON)
+# option(NALU_HYPRE_USING_SUPERLU "Use internal SuperLU routines" ON)
+# option(NALU_HYPRE_USING_MLI     "Use MLI" ON)
 # 
-# if(HYPRE_USING_SUPERLU)
+# if(NALU_HYPRE_USING_SUPERLU)
 #   include_directories(SuperLU/SRC)
 #   add_definitions(-DHAVE_SUPERLU)
 #   add_subdirectory(SuperLU)
-#   set(FEI_LIBS ${FEI_LIBS} $<TARGET_OBJECTS:HYPRE_superlu>)
+#   set(FEI_LIBS ${FEI_LIBS} $<TARGET_OBJECTS:NALU_HYPRE_superlu>)
 # endif()
 # 
-# if(HYPRE_USING_MLI)
+# if(NALU_HYPRE_USING_MLI)
 #   include_directories(femli)
 #   add_definitions(-DHAVE_MLI)
-#   if(HYPRE_USING_SUPERLU)
+#   if(NALU_HYPRE_USING_SUPERLU)
 #     add_definitions(-DMLI_SUPERLU)
 #   endif()
 #   add_subdirectory(femli)
-#   set(FEI_LIBS ${FEI_LIBS} $<TARGET_OBJECTS:HYPRE_mli>)
+#   set(FEI_LIBS ${FEI_LIBS} $<TARGET_OBJECTS:NALU_HYPRE_mli>)
 # endif()
 
 add_subdirectory(fei-hypre)

@@ -5,17 +5,17 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_Euclid.h"
+#include "_nalu_hypre_Euclid.h"
 /* #include "blas_dh.h" */
 
 #undef __FUNC__
 #define __FUNC__ "matvec_euclid_seq"
-void matvec_euclid_seq(HYPRE_Int n, HYPRE_Int *rp, HYPRE_Int *cval, HYPRE_Real *aval, HYPRE_Real *x, HYPRE_Real *y)
+void matvec_euclid_seq(NALU_HYPRE_Int n, NALU_HYPRE_Int *rp, NALU_HYPRE_Int *cval, NALU_HYPRE_Real *aval, NALU_HYPRE_Real *x, NALU_HYPRE_Real *y)
 {
   START_FUNC_DH
-  HYPRE_Int i, j;
-  HYPRE_Int from, to, col;
-  HYPRE_Real sum;
+  NALU_HYPRE_Int i, j;
+  NALU_HYPRE_Int from, to, col;
+  NALU_HYPRE_Real sum;
  
   if (np_dh > 1) SET_V_ERROR("only for sequential case!\n");
 
@@ -44,10 +44,10 @@ void matvec_euclid_seq(HYPRE_Int n, HYPRE_Int *rp, HYPRE_Int *cval, HYPRE_Real *
 
 #undef __FUNC__
 #define __FUNC__ "Axpy"
-void Axpy(HYPRE_Int n, HYPRE_Real alpha, HYPRE_Real *x, HYPRE_Real *y)
+void Axpy(NALU_HYPRE_Int n, NALU_HYPRE_Real alpha, NALU_HYPRE_Real *x, NALU_HYPRE_Real *y)
 {
   START_FUNC_DH
-  HYPRE_Int i;
+  NALU_HYPRE_Int i;
 
 #ifdef USING_OPENMP_DH
 #pragma omp parallel for schedule(static) firstprivate(alpha, x, y) \
@@ -62,10 +62,10 @@ void Axpy(HYPRE_Int n, HYPRE_Real alpha, HYPRE_Real *x, HYPRE_Real *y)
 
 #undef __FUNC__
 #define __FUNC__ "CopyVec"
-void CopyVec(HYPRE_Int n, HYPRE_Real *xIN, HYPRE_Real *yOUT)
+void CopyVec(NALU_HYPRE_Int n, NALU_HYPRE_Real *xIN, NALU_HYPRE_Real *yOUT)
 {
   START_FUNC_DH
-  HYPRE_Int i;
+  NALU_HYPRE_Int i;
 
 #ifdef USING_OPENMP_DH
 #pragma omp parallel for schedule(static) firstprivate(yOUT, xIN) \
@@ -80,10 +80,10 @@ void CopyVec(HYPRE_Int n, HYPRE_Real *xIN, HYPRE_Real *yOUT)
 
 #undef __FUNC__
 #define __FUNC__ "ScaleVec"
-void ScaleVec(HYPRE_Int n, HYPRE_Real alpha, HYPRE_Real *x)
+void ScaleVec(NALU_HYPRE_Int n, NALU_HYPRE_Real alpha, NALU_HYPRE_Real *x)
 {
   START_FUNC_DH
-  HYPRE_Int i;
+  NALU_HYPRE_Int i;
 
 #ifdef USING_OPENMP_DH
 #pragma omp parallel for schedule(static) firstprivate(alpha, x) \
@@ -97,12 +97,12 @@ void ScaleVec(HYPRE_Int n, HYPRE_Real alpha, HYPRE_Real *x)
 
 #undef __FUNC__
 #define __FUNC__ "InnerProd"
-HYPRE_Real InnerProd(HYPRE_Int n, HYPRE_Real *x, HYPRE_Real *y)
+NALU_HYPRE_Real InnerProd(NALU_HYPRE_Int n, NALU_HYPRE_Real *x, NALU_HYPRE_Real *y)
 {
   START_FUNC_DH
-  HYPRE_Real result, local_result = 0.0;
+  NALU_HYPRE_Real result, local_result = 0.0;
 
-  HYPRE_Int i;
+  NALU_HYPRE_Int i;
 
 #ifdef USING_OPENMP_DH
 #pragma omp parallel for schedule(static) firstprivate(x, y) \
@@ -114,7 +114,7 @@ HYPRE_Real InnerProd(HYPRE_Int n, HYPRE_Real *x, HYPRE_Real *y)
     }
 
     if (np_dh > 1) {
-      hypre_MPI_Allreduce(&local_result, &result, 1, hypre_MPI_REAL, hypre_MPI_SUM, comm_dh);
+      nalu_hypre_MPI_Allreduce(&local_result, &result, 1, nalu_hypre_MPI_REAL, nalu_hypre_MPI_SUM, comm_dh);
     } else {
       result = local_result;
     }
@@ -124,11 +124,11 @@ HYPRE_Real InnerProd(HYPRE_Int n, HYPRE_Real *x, HYPRE_Real *y)
 
 #undef __FUNC__
 #define __FUNC__ "Norm2"
-HYPRE_Real Norm2(HYPRE_Int n, HYPRE_Real *x)
+NALU_HYPRE_Real Norm2(NALU_HYPRE_Int n, NALU_HYPRE_Real *x)
 {
   START_FUNC_DH
-  HYPRE_Real result, local_result = 0.0;
-  HYPRE_Int i;
+  NALU_HYPRE_Real result, local_result = 0.0;
+  NALU_HYPRE_Int i;
 
 #ifdef USING_OPENMP_DH
 #pragma omp parallel for schedule(static) firstprivate(x) \
@@ -140,10 +140,10 @@ HYPRE_Real Norm2(HYPRE_Int n, HYPRE_Real *x)
   }
 
   if (np_dh > 1) {
-    hypre_MPI_Allreduce(&local_result, &result, 1, hypre_MPI_REAL, hypre_MPI_SUM, comm_dh);
+    nalu_hypre_MPI_Allreduce(&local_result, &result, 1, nalu_hypre_MPI_REAL, nalu_hypre_MPI_SUM, comm_dh);
   } else {
     result = local_result;
   }
-  result = hypre_sqrt(result);
+  result = nalu_hypre_sqrt(result);
   END_FUNC_VAL(result)
 }

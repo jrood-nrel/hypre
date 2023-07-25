@@ -11,83 +11,83 @@
  *
  *****************************************************************************/
 
-#include "_hypre_sstruct_mv.h"
+#include "_nalu_hypre_sstruct_mv.h"
 
 /*--------------------------------------------------------------------------
- * hypre_SStructPInnerProd
+ * nalu_hypre_SStructPInnerProd
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_SStructPInnerProd( hypre_SStructPVector *px,
-                         hypre_SStructPVector *py,
-                         HYPRE_Real           *presult_ptr )
+NALU_HYPRE_Int
+nalu_hypre_SStructPInnerProd( nalu_hypre_SStructPVector *px,
+                         nalu_hypre_SStructPVector *py,
+                         NALU_HYPRE_Real           *presult_ptr )
 {
-   HYPRE_Int    nvars = hypre_SStructPVectorNVars(px);
-   HYPRE_Real   presult;
-   HYPRE_Real   sresult;
-   HYPRE_Int    var;
+   NALU_HYPRE_Int    nvars = nalu_hypre_SStructPVectorNVars(px);
+   NALU_HYPRE_Real   presult;
+   NALU_HYPRE_Real   sresult;
+   NALU_HYPRE_Int    var;
 
    presult = 0.0;
    for (var = 0; var < nvars; var++)
    {
-      sresult = hypre_StructInnerProd(hypre_SStructPVectorSVector(px, var),
-                                      hypre_SStructPVectorSVector(py, var));
+      sresult = nalu_hypre_StructInnerProd(nalu_hypre_SStructPVectorSVector(px, var),
+                                      nalu_hypre_SStructPVectorSVector(py, var));
       presult += sresult;
    }
 
    *presult_ptr = presult;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_SStructInnerProd
+ * nalu_hypre_SStructInnerProd
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_SStructInnerProd( hypre_SStructVector *x,
-                        hypre_SStructVector *y,
-                        HYPRE_Real          *result_ptr )
+NALU_HYPRE_Int
+nalu_hypre_SStructInnerProd( nalu_hypre_SStructVector *x,
+                        nalu_hypre_SStructVector *y,
+                        NALU_HYPRE_Real          *result_ptr )
 {
-   HYPRE_Int    nparts = hypre_SStructVectorNParts(x);
-   HYPRE_Real   result;
-   HYPRE_Real   presult;
-   HYPRE_Int    part;
+   NALU_HYPRE_Int    nparts = nalu_hypre_SStructVectorNParts(x);
+   NALU_HYPRE_Real   result;
+   NALU_HYPRE_Real   presult;
+   NALU_HYPRE_Int    part;
 
-   HYPRE_Int    x_object_type = hypre_SStructVectorObjectType(x);
-   HYPRE_Int    y_object_type = hypre_SStructVectorObjectType(y);
+   NALU_HYPRE_Int    x_object_type = nalu_hypre_SStructVectorObjectType(x);
+   NALU_HYPRE_Int    y_object_type = nalu_hypre_SStructVectorObjectType(y);
 
    if (x_object_type != y_object_type)
    {
-      hypre_error_in_arg(2);
-      hypre_error_in_arg(3);
-      return hypre_error_flag;
+      nalu_hypre_error_in_arg(2);
+      nalu_hypre_error_in_arg(3);
+      return nalu_hypre_error_flag;
    }
 
    result = 0.0;
 
-   if ( (x_object_type == HYPRE_SSTRUCT) || (x_object_type == HYPRE_STRUCT) )
+   if ( (x_object_type == NALU_HYPRE_SSTRUCT) || (x_object_type == NALU_HYPRE_STRUCT) )
    {
       for (part = 0; part < nparts; part++)
       {
-         hypre_SStructPInnerProd(hypre_SStructVectorPVector(x, part),
-                                 hypre_SStructVectorPVector(y, part), &presult);
+         nalu_hypre_SStructPInnerProd(nalu_hypre_SStructVectorPVector(x, part),
+                                 nalu_hypre_SStructVectorPVector(y, part), &presult);
          result += presult;
       }
    }
 
-   else if (x_object_type == HYPRE_PARCSR)
+   else if (x_object_type == NALU_HYPRE_PARCSR)
    {
-      hypre_ParVector  *x_par;
-      hypre_ParVector  *y_par;
+      nalu_hypre_ParVector  *x_par;
+      nalu_hypre_ParVector  *y_par;
 
-      hypre_SStructVectorConvert(x, &x_par);
-      hypre_SStructVectorConvert(y, &y_par);
+      nalu_hypre_SStructVectorConvert(x, &x_par);
+      nalu_hypre_SStructVectorConvert(y, &y_par);
 
-      result = hypre_ParVectorInnerProd(x_par, y_par);
+      result = nalu_hypre_ParVectorInnerProd(x_par, y_par);
    }
 
    *result_ptr = result;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }

@@ -7,33 +7,33 @@
 
 /******************************************************************************
  *
- * Header file for hypre_IntArray struct for holding an array of integers
+ * Header file for nalu_hypre_IntArray struct for holding an array of integers
  *
  *****************************************************************************/
 
-#ifndef hypre_INTARRAY_HEADER
-#define hypre_INTARRAY_HEADER
+#ifndef nalu_hypre_INTARRAY_HEADER
+#define nalu_hypre_INTARRAY_HEADER
 
 /*--------------------------------------------------------------------------
- * hypre_IntArray
+ * nalu_hypre_IntArray
  *--------------------------------------------------------------------------*/
 
 typedef struct
 {
    /* pointer to data and size of data */
-   HYPRE_Int            *data;
-   HYPRE_Int             size;
+   NALU_HYPRE_Int            *data;
+   NALU_HYPRE_Int             size;
 
    /* memory location of array data */
-   HYPRE_MemoryLocation  memory_location;
-} hypre_IntArray;
+   NALU_HYPRE_MemoryLocation  memory_location;
+} nalu_hypre_IntArray;
 
 /*--------------------------------------------------------------------------
  * Accessor functions for the IntArray structure
  *--------------------------------------------------------------------------*/
 
-#define hypre_IntArrayData(array)                  ((array) -> data)
-#define hypre_IntArraySize(array)                  ((array) -> size)
-#define hypre_IntArrayMemoryLocation(array)        ((array) -> memory_location)
+#define nalu_hypre_IntArrayData(array)                  ((array) -> data)
+#define nalu_hypre_IntArraySize(array)                  ((array) -> size)
+#define nalu_hypre_IntArrayMemoryLocation(array)        ((array) -> memory_location)
 
 #endif

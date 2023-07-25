@@ -11,51 +11,51 @@
  *
  *****************************************************************************/
 
-#include "_hypre_struct_mv.h"
-#include "_hypre_struct_mv.hpp"
+#include "_nalu_hypre_struct_mv.h"
+#include "_nalu_hypre_struct_mv.hpp"
 
 /*--------------------------------------------------------------------------
- * hypre_StructScale
+ * nalu_hypre_StructScale
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_StructScale( HYPRE_Complex       alpha,
-                   hypre_StructVector *y     )
+NALU_HYPRE_Int
+nalu_hypre_StructScale( NALU_HYPRE_Complex       alpha,
+                   nalu_hypre_StructVector *y     )
 {
-   hypre_Box       *y_data_box;
+   nalu_hypre_Box       *y_data_box;
 
-   HYPRE_Complex   *yp;
+   NALU_HYPRE_Complex   *yp;
 
-   hypre_BoxArray  *boxes;
-   hypre_Box       *box;
-   hypre_Index      loop_size;
-   hypre_IndexRef   start;
-   hypre_Index      unit_stride;
+   nalu_hypre_BoxArray  *boxes;
+   nalu_hypre_Box       *box;
+   nalu_hypre_Index      loop_size;
+   nalu_hypre_IndexRef   start;
+   nalu_hypre_Index      unit_stride;
 
-   HYPRE_Int        i;
+   NALU_HYPRE_Int        i;
 
-   hypre_SetIndex(unit_stride, 1);
+   nalu_hypre_SetIndex(unit_stride, 1);
 
-   boxes = hypre_StructGridBoxes(hypre_StructVectorGrid(y));
-   hypre_ForBoxI(i, boxes)
+   boxes = nalu_hypre_StructGridBoxes(nalu_hypre_StructVectorGrid(y));
+   nalu_hypre_ForBoxI(i, boxes)
    {
-      box   = hypre_BoxArrayBox(boxes, i);
-      start = hypre_BoxIMin(box);
+      box   = nalu_hypre_BoxArrayBox(boxes, i);
+      start = nalu_hypre_BoxIMin(box);
 
-      y_data_box = hypre_BoxArrayBox(hypre_StructVectorDataSpace(y), i);
-      yp = hypre_StructVectorBoxData(y, i);
+      y_data_box = nalu_hypre_BoxArrayBox(nalu_hypre_StructVectorDataSpace(y), i);
+      yp = nalu_hypre_StructVectorBoxData(y, i);
 
-      hypre_BoxGetSize(box, loop_size);
+      nalu_hypre_BoxGetSize(box, loop_size);
 
 #define DEVICE_VAR is_device_ptr(yp)
-      hypre_BoxLoop1Begin(hypre_StructVectorNDim(y), loop_size,
+      nalu_hypre_BoxLoop1Begin(nalu_hypre_StructVectorNDim(y), loop_size,
                           y_data_box, start, unit_stride, yi);
       {
          yp[yi] *= alpha;
       }
-      hypre_BoxLoop1End(yi);
+      nalu_hypre_BoxLoop1End(yi);
 #undef DEVICE_VAR
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }

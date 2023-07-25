@@ -22,11 +22,11 @@
 
 #include <string.h>
 
-#include "HYPRE.h"
-#include "_hypre_utilities.h"
-#include "HYPRE_IJ_mv.h"
+#include "NALU_HYPRE.h"
+#include "_nalu_hypre_utilities.h"
+#include "NALU_HYPRE_IJ_mv.h"
 #include "seq_mv.h"
-#include "_hypre_parcsr_mv.h"
+#include "_nalu_hypre_parcsr_mv.h"
 
 #include "mli_method_amgsa.h"
 #include "mli_utils.h"
@@ -47,9 +47,9 @@ int MLI_Method_AMGSA::setupCalibration( MLI *mli )
    MLI          *new_mli;
    MPI_Comm     comm;
    MLI_Method         *new_amgsa;
-   hypre_Vector       *sol_local;
-   hypre_ParVector    *trial_sol, *zero_rhs;
-   hypre_ParCSRMatrix *hypreA;
+   nalu_hypre_Vector       *sol_local;
+   nalu_hypre_ParVector    *trial_sol, *zero_rhs;
+   nalu_hypre_ParCSRMatrix *hypreA;
 
 #ifdef MLI_DEBUG_DETAILED
    printf("MLI_Method_AMGSA::setupCalibration begins...\n");
@@ -63,25 +63,25 @@ int MLI_Method_AMGSA::setupCalibration( MLI *mli )
    MPI_Comm_rank( comm, &mypid );
    MPI_Comm_size( comm, &nprocs );
    mli_Amat = mli->getSystemMatrix( 0 );
-   hypreA   = (hypre_ParCSRMatrix *) mli_Amat->getMatrix();
+   hypreA   = (nalu_hypre_ParCSRMatrix *) mli_Amat->getMatrix();
    targv    = new char*[4];
 
    /* --------------------------------------------------------------- */
    /* create trial vectors for calibration (trial_sol, zero_rhs)      */
    /* --------------------------------------------------------------- */
 
-   HYPRE_ParCSRMatrixGetRowPartitioning((HYPRE_ParCSRMatrix) hypreA,
+   NALU_HYPRE_ParCSRMatrixGetRowPartitioning((NALU_HYPRE_ParCSRMatrix) hypreA,
                                         &partition);
-   trial_sol = hypre_ParVectorCreate(comm, partition[nprocs], partition);
-   hypre_ParVectorInitialize( trial_sol );
-   HYPRE_ParCSRMatrixGetRowPartitioning((HYPRE_ParCSRMatrix) hypreA,
+   trial_sol = nalu_hypre_ParVectorCreate(comm, partition[nprocs], partition);
+   nalu_hypre_ParVectorInitialize( trial_sol );
+   NALU_HYPRE_ParCSRMatrixGetRowPartitioning((NALU_HYPRE_ParCSRMatrix) hypreA,
                                         &partition);
    local_nrows = partition[mypid+1] - partition[mypid];
-   zero_rhs = hypre_ParVectorCreate(comm, partition[nprocs], partition);
-   hypre_ParVectorInitialize( zero_rhs );
-   hypre_ParVectorSetConstantValues( zero_rhs, 0.0 );
-   sol_local = hypre_ParVectorLocalVector(trial_sol);
-   sol_data  = hypre_VectorData(sol_local);
+   zero_rhs = nalu_hypre_ParVectorCreate(comm, partition[nprocs], partition);
+   nalu_hypre_ParVectorInitialize( zero_rhs );
+   nalu_hypre_ParVectorSetConstantValues( zero_rhs, 0.0 );
+   sol_local = nalu_hypre_ParVectorLocalVector(trial_sol);
+   sol_data  = nalu_hypre_VectorData(sol_local);
 
    /* --------------------------------------------------------------- */
    /* fetch initial set of null space                                 */
@@ -155,7 +155,7 @@ int MLI_Method_AMGSA::setupCalibration( MLI *mli )
       /* use random initial vectors for now and then call setup       */
       /* ------------------------------------------------------------ */
 
-      hypre_ParVectorSetRandomValues( trial_sol, (int) dtime );
+      nalu_hypre_ParVectorSetRandomValues( trial_sol, (int) dtime );
 
       new_mli->setup();
 
@@ -163,7 +163,7 @@ int MLI_Method_AMGSA::setupCalibration( MLI *mli )
       /* solve using a random initial vector and a zero rhs           */
       /* ------------------------------------------------------------ */
 
-      sprintf(param_string, "HYPRE_ParVector");
+      sprintf(param_string, "NALU_HYPRE_ParVector");
       mli_sol = new MLI_Vector( (void*) trial_sol, param_string, NULL );
       mli_rhs = new MLI_Vector( (void*) zero_rhs, param_string, NULL );
       new_mli->cycle( mli_sol, mli_rhs );
@@ -206,8 +206,8 @@ int MLI_Method_AMGSA::setupCalibration( MLI *mli )
    delete [] relax_wts;
    delete [] targv;
    delete [] nullspace_store;
-   hypre_ParVectorDestroy( trial_sol );
-   hypre_ParVectorDestroy( zero_rhs );
+   nalu_hypre_ParVectorDestroy( trial_sol );
+   nalu_hypre_ParVectorDestroy( zero_rhs );
 
 #ifdef MLI_DEBUG_DETAILED
    printf("MLI_Method_AMGSA::setupCalibration ends.\n");
@@ -231,9 +231,9 @@ int MLI_Method_AMGSA::setupCalibration( MLI *mli )
    MLI          *new_mli;
    MPI_Comm     comm;
    MLI_Method         *new_amgsa;
-   hypre_Vector       *sol_local;
-   hypre_ParVector    *trial_sol, *zero_rhs;
-   hypre_ParCSRMatrix *hypreA;
+   nalu_hypre_Vector       *sol_local;
+   nalu_hypre_ParVector    *trial_sol, *zero_rhs;
+   nalu_hypre_ParCSRMatrix *hypreA;
 
 #ifdef MLI_DEBUG_DETAILED
    printf("MLI_Method_AMGSA::setupCalibration begins...\n");
@@ -247,9 +247,9 @@ int MLI_Method_AMGSA::setupCalibration( MLI *mli )
    MPI_Comm_rank( comm, &mypid );
    MPI_Comm_size( comm, &nprocs );
    mli_Amat = mli->getSystemMatrix( 0 );
-   hypreA   = (hypre_ParCSRMatrix *) mli_Amat->getMatrix();
+   hypreA   = (nalu_hypre_ParCSRMatrix *) mli_Amat->getMatrix();
    targv    = new char*[4];
-   HYPRE_ParCSRMatrixGetRowPartitioning((HYPRE_ParCSRMatrix) hypreA,
+   NALU_HYPRE_ParCSRMatrixGetRowPartitioning((NALU_HYPRE_ParCSRMatrix) hypreA,
                                         &partition);
    local_nrows = partition[mypid+1] - partition[mypid];
    free( partition );
@@ -267,21 +267,21 @@ int MLI_Method_AMGSA::setupCalibration( MLI *mli )
    /* create trial vectors for calibration (trial_sol, zero_rhs)      */
    /* --------------------------------------------------------------- */
 
-   HYPRE_ParCSRMatrixGetRowPartitioning((HYPRE_ParCSRMatrix) hypreA,
+   NALU_HYPRE_ParCSRMatrixGetRowPartitioning((NALU_HYPRE_ParCSRMatrix) hypreA,
                                         &partition);
-   trial_sol = hypre_ParVectorCreate(comm, partition[nprocs], partition);
-   hypre_ParVectorInitialize( trial_sol );
-   hypre_ParVectorSetRandomValues( trial_sol, (int) dtime );
+   trial_sol = nalu_hypre_ParVectorCreate(comm, partition[nprocs], partition);
+   nalu_hypre_ParVectorInitialize( trial_sol );
+   nalu_hypre_ParVectorSetRandomValues( trial_sol, (int) dtime );
 
-   HYPRE_ParCSRMatrixGetRowPartitioning((HYPRE_ParCSRMatrix) hypreA,
+   NALU_HYPRE_ParCSRMatrixGetRowPartitioning((NALU_HYPRE_ParCSRMatrix) hypreA,
                                         &partition);
-   zero_rhs = hypre_ParVectorCreate(comm, partition[nprocs], partition);
-   hypre_ParVectorInitialize( zero_rhs );
-   hypre_ParVectorSetConstantValues( zero_rhs, 0.0 );
+   zero_rhs = nalu_hypre_ParVectorCreate(comm, partition[nprocs], partition);
+   nalu_hypre_ParVectorInitialize( zero_rhs );
+   nalu_hypre_ParVectorSetConstantValues( zero_rhs, 0.0 );
 
-   sol_data  = hypre_VectorData(hypre_ParVectorLocalVector(trial_sol));
+   sol_data  = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(trial_sol));
 
-   sprintf(param_string, "HYPRE_ParVector");
+   sprintf(param_string, "NALU_HYPRE_ParVector");
    mli_sol = new MLI_Vector( (void*) trial_sol, param_string, NULL );
    mli_rhs = new MLI_Vector( (void*) zero_rhs, param_string, NULL );
 
@@ -296,7 +296,7 @@ int MLI_Method_AMGSA::setupCalibration( MLI *mli )
    for ( i = 0; i < calibrationSize_; i++ )
    {
       dtime = time_getWallclockSeconds();
-      hypre_ParVectorSetRandomValues( trial_sol, (int) dtime );
+      nalu_hypre_ParVectorSetRandomValues( trial_sol, (int) dtime );
 
       if ( i ==  0 )
       {
@@ -368,8 +368,8 @@ int MLI_Method_AMGSA::setupCalibration( MLI *mli )
    delete [] relax_wts;
    delete [] targv;
    delete [] nullspace_store;
-   hypre_ParVectorDestroy( trial_sol );
-   hypre_ParVectorDestroy( zero_rhs );
+   nalu_hypre_ParVectorDestroy( trial_sol );
+   nalu_hypre_ParVectorDestroy( zero_rhs );
 
 #ifdef MLI_DEBUG_DETAILED
    printf("MLI_Method_AMGSA::setupCalibration ends.\n");

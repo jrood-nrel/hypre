@@ -12,14 +12,14 @@
 
 /* "row" refers to global row number */
 
-extern void EuclidGetDimensions(void *A, HYPRE_Int *beg_row, HYPRE_Int *rowsLocal, HYPRE_Int *rowsGlobal);
-extern void EuclidGetRow(void *A, HYPRE_Int row, HYPRE_Int *len, HYPRE_Int **ind, HYPRE_Real **val);
-extern void EuclidRestoreRow(void *A, HYPRE_Int row, HYPRE_Int *len, HYPRE_Int **ind, HYPRE_Real **val);
+extern void EuclidGetDimensions(void *A, NALU_HYPRE_Int *beg_row, NALU_HYPRE_Int *rowsLocal, NALU_HYPRE_Int *rowsGlobal);
+extern void EuclidGetRow(void *A, NALU_HYPRE_Int row, NALU_HYPRE_Int *len, NALU_HYPRE_Int **ind, NALU_HYPRE_Real **val);
+extern void EuclidRestoreRow(void *A, NALU_HYPRE_Int row, NALU_HYPRE_Int *len, NALU_HYPRE_Int **ind, NALU_HYPRE_Real **val);
 
-extern HYPRE_Int EuclidReadLocalNz(void *A);
+extern NALU_HYPRE_Int EuclidReadLocalNz(void *A);
 
-extern void PrintMatUsingGetRow(void* A, HYPRE_Int beg_row, HYPRE_Int m,
-                          HYPRE_Int *n2o_row, HYPRE_Int *n2o_col, char *filename);
+extern void PrintMatUsingGetRow(void* A, NALU_HYPRE_Int beg_row, NALU_HYPRE_Int m,
+                          NALU_HYPRE_Int *n2o_row, NALU_HYPRE_Int *n2o_col, char *filename);
 
 
 #endif

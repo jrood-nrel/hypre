@@ -14,11 +14,11 @@ fi
 source config/version.sh
 
 # Check that the version number is not smaller than before
-currentnum=`grep "HYPRE_NUMBER=" configure | cut -d= -f 2`
-if [ $hypre_number -lt $currentnum ]; then
+currentnum=`grep "NALU_HYPRE_NUMBER=" configure | cut -d= -f 2`
+if [ $nalu_hypre_number -lt $currentnum ]; then
   echo "ERROR: HYPRE version number is smaller than the current version!"
   exit
-elif [ $hypre_number -gt $currentnum ]; then
+elif [ $nalu_hypre_number -gt $currentnum ]; then
   echo "HYPRE version number is greater than the current version"
 else
   echo "HYPRE version number is the same as the current version"
@@ -28,9 +28,9 @@ fi
 
 # NOTE: Using '#' as delimiter in sed to allow for '/' in reldate
 cat config/configure.in |
-sed -e 's#m4_define.*HYPRE_VERS[^)]*#m4_define([M4_HYPRE_VERSION], ['$hypre_version']#' |
-sed -e 's#m4_define.*HYPRE_NUMB[^)]*#m4_define([M4_HYPRE_NUMBER],  ['$hypre_number']#'  |
-sed -e 's#m4_define.*HYPRE_DATE[^)]*#m4_define([M4_HYPRE_DATE],    ['$hypre_reldate']#' \
+sed -e 's#m4_define.*NALU_HYPRE_VERS[^)]*#m4_define([M4_NALU_HYPRE_VERSION], ['$nalu_hypre_version']#' |
+sed -e 's#m4_define.*NALU_HYPRE_NUMB[^)]*#m4_define([M4_NALU_HYPRE_NUMBER],  ['$nalu_hypre_number']#'  |
+sed -e 's#m4_define.*NALU_HYPRE_DATE[^)]*#m4_define([M4_NALU_HYPRE_DATE],    ['$nalu_hypre_reldate']#' \
 > config/configure.in.tmp
 mv config/configure.in.tmp config/configure.in
 
@@ -42,9 +42,9 @@ rm configure.in
 
 cat >> configure <<EOF
 
-mv HYPRE_config.h HYPRE_config.h.tmp
-sed 's/FC_FUNC/HYPRE_FC_FUNC/g' < HYPRE_config.h.tmp > HYPRE_config.h
-rm -f HYPRE_config.h.tmp
+mv NALU_HYPRE_config.h NALU_HYPRE_config.h.tmp
+sed 's/FC_FUNC/NALU_HYPRE_FC_FUNC/g' < NALU_HYPRE_config.h.tmp > NALU_HYPRE_config.h
+rm -f NALU_HYPRE_config.h.tmp
 
 EOF
 
@@ -52,9 +52,9 @@ EOF
 
 # NOTE: Using '#' as delimiter in sed to allow for '/' in reldate
 cat CMakeLists.txt |
-sed -e 's#set(HYPRE_VERS[^)]*#set(HYPRE_VERSION '$hypre_version'#' |
-sed -e 's#set(HYPRE_NUMB[^)]*#set(HYPRE_NUMBER  '$hypre_number'#' |
-sed -e 's#set(HYPRE_DATE[^)]*#set(HYPRE_DATE    '$hypre_reldate'#' \
+sed -e 's#set(NALU_HYPRE_VERS[^)]*#set(NALU_HYPRE_VERSION '$nalu_hypre_version'#' |
+sed -e 's#set(NALU_HYPRE_NUMB[^)]*#set(NALU_HYPRE_NUMBER  '$nalu_hypre_number'#' |
+sed -e 's#set(NALU_HYPRE_DATE[^)]*#set(NALU_HYPRE_DATE    '$nalu_hypre_reldate'#' \
 > CMakeLists.txt.tmp
 mv CMakeLists.txt.tmp CMakeLists.txt
 

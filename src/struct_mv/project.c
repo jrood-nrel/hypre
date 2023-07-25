@@ -11,22 +11,22 @@
  *
  *****************************************************************************/
 
-#include "_hypre_struct_mv.h"
+#include "_nalu_hypre_struct_mv.h"
 
 /*--------------------------------------------------------------------------
- * hypre_ProjectBox:
+ * nalu_hypre_ProjectBox:
  *   Projects a box onto a strided index space that contains the
  *   index `index' and has stride `stride'.
  *
  *   Note: An "empty" projection is represented by a box with volume 0.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_ProjectBox( hypre_Box    *box,
-                  hypre_Index   index,
-                  hypre_Index   stride )
+NALU_HYPRE_Int
+nalu_hypre_ProjectBox( nalu_hypre_Box    *box,
+                  nalu_hypre_Index   index,
+                  nalu_hypre_Index   stride )
 {
-   HYPRE_Int  i, s, d, hl, hu, kl, ku, ndim = hypre_BoxNDim(box);
+   NALU_HYPRE_Int  i, s, d, hl, hu, kl, ku, ndim = nalu_hypre_BoxNDim(box);
 
    /*------------------------------------------------------
     * project in all ndim dimensions
@@ -35,88 +35,88 @@ hypre_ProjectBox( hypre_Box    *box,
    for (d = 0; d < ndim; d++)
    {
 
-      i = hypre_IndexD(index, d);
-      s = hypre_IndexD(stride, d);
+      i = nalu_hypre_IndexD(index, d);
+      s = nalu_hypre_IndexD(stride, d);
 
-      hl = hypre_BoxIMinD(box, d) - i;
-      hu = hypre_BoxIMaxD(box, d) - i;
+      hl = nalu_hypre_BoxIMinD(box, d) - i;
+      hu = nalu_hypre_BoxIMaxD(box, d) - i;
 
       if ( hl <= 0 )
       {
-         kl = (HYPRE_Int) (hl / s);
+         kl = (NALU_HYPRE_Int) (hl / s);
       }
       else
       {
-         kl = (HYPRE_Int) ((hl + (s - 1)) / s);
+         kl = (NALU_HYPRE_Int) ((hl + (s - 1)) / s);
       }
 
       if ( hu >= 0 )
       {
-         ku = (HYPRE_Int) (hu / s);
+         ku = (NALU_HYPRE_Int) (hu / s);
       }
       else
       {
-         ku = (HYPRE_Int) ((hu - (s - 1)) / s);
+         ku = (NALU_HYPRE_Int) ((hu - (s - 1)) / s);
       }
 
-      hypre_BoxIMinD(box, d) = i + kl * s;
-      hypre_BoxIMaxD(box, d) = i + ku * s;
+      nalu_hypre_BoxIMinD(box, d) = i + kl * s;
+      nalu_hypre_BoxIMaxD(box, d) = i + ku * s;
 
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_ProjectBoxArray:
+ * nalu_hypre_ProjectBoxArray:
  *
  *   Note: The dimensions of the modified box array are not changed.
  *   So, it is possible to have boxes with volume 0.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_ProjectBoxArray( hypre_BoxArray  *box_array,
-                       hypre_Index      index,
-                       hypre_Index      stride    )
+NALU_HYPRE_Int
+nalu_hypre_ProjectBoxArray( nalu_hypre_BoxArray  *box_array,
+                       nalu_hypre_Index      index,
+                       nalu_hypre_Index      stride    )
 {
-   hypre_Box  *box;
-   HYPRE_Int   i;
+   nalu_hypre_Box  *box;
+   NALU_HYPRE_Int   i;
 
-   hypre_ForBoxI(i, box_array)
+   nalu_hypre_ForBoxI(i, box_array)
    {
-      box = hypre_BoxArrayBox(box_array, i);
-      hypre_ProjectBox(box, index, stride);
+      box = nalu_hypre_BoxArrayBox(box_array, i);
+      nalu_hypre_ProjectBox(box, index, stride);
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_ProjectBoxArrayArray:
+ * nalu_hypre_ProjectBoxArrayArray:
  *
  *   Note: The dimensions of the modified box array-array are not changed.
  *   So, it is possible to have boxes with volume 0.
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_ProjectBoxArrayArray( hypre_BoxArrayArray  *box_array_array,
-                            hypre_Index           index,
-                            hypre_Index           stride          )
+NALU_HYPRE_Int
+nalu_hypre_ProjectBoxArrayArray( nalu_hypre_BoxArrayArray  *box_array_array,
+                            nalu_hypre_Index           index,
+                            nalu_hypre_Index           stride          )
 {
-   hypre_BoxArray  *box_array;
-   hypre_Box       *box;
-   HYPRE_Int        i, j;
+   nalu_hypre_BoxArray  *box_array;
+   nalu_hypre_Box       *box;
+   NALU_HYPRE_Int        i, j;
 
-   hypre_ForBoxArrayI(i, box_array_array)
+   nalu_hypre_ForBoxArrayI(i, box_array_array)
    {
-      box_array = hypre_BoxArrayArrayBoxArray(box_array_array, i);
-      hypre_ForBoxI(j, box_array)
+      box_array = nalu_hypre_BoxArrayArrayBoxArray(box_array_array, i);
+      nalu_hypre_ForBoxI(j, box_array)
       {
-         box = hypre_BoxArrayBox(box_array, j);
-         hypre_ProjectBox(box, index, stride);
+         box = nalu_hypre_BoxArrayBox(box_array, j);
+         nalu_hypre_ProjectBox(box, index, stride);
       }
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 

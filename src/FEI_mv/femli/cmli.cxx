@@ -31,7 +31,7 @@
 extern "C" CMLI *MLI_Create( MPI_Comm comm )
 {
    MLI  *mli  = new MLI( comm );
-   CMLI *cmli = hypre_CTAlloc(CMLI,  1, HYPRE_MEMORY_HOST); 
+   CMLI *cmli = nalu_hypre_CTAlloc(CMLI,  1, NALU_HYPRE_MEMORY_HOST); 
    cmli->mli_ = mli;
    return cmli;
 }
@@ -445,7 +445,7 @@ extern "C" CMLI_FEData *MLI_FEDataCreate(MPI_Comm comm, void *fedata, char *name
 
    MPI_Comm_rank(comm, &mypid);
    mli_fedata  = new MLI_FEData( comm );
-   cmli_fedata = hypre_CTAlloc(CMLI_FEData,  1, HYPRE_MEMORY_HOST); 
+   cmli_fedata = nalu_hypre_CTAlloc(CMLI_FEData,  1, NALU_HYPRE_MEMORY_HOST); 
    cmli_fedata->fedata_ = (void *) mli_fedata;
    cmli_fedata->owner_  = 1;
    return cmli_fedata;
@@ -632,7 +632,7 @@ extern "C" CMLI_Matrix *MLI_MatrixCreate(void *matrix, char *name,
    CMLI_Matrix *cmli_matrix;
 
    mli_matrix  = new MLI_Matrix( matrix, name, func );
-   cmli_matrix = hypre_CTAlloc(CMLI_Matrix,  1, HYPRE_MEMORY_HOST);
+   cmli_matrix = nalu_hypre_CTAlloc(CMLI_Matrix,  1, NALU_HYPRE_MEMORY_HOST);
    cmli_matrix->matrix_ = (void *) mli_matrix;
    cmli_matrix->owner_ = 1;
    return cmli_matrix;
@@ -666,7 +666,7 @@ CMLI_Vector *MLI_VectorCreate(void *vector,const char *name,
                               MLI_Function *func)
 {
    MLI_Vector  *mli_vector  = new MLI_Vector( vector, name, func );
-   CMLI_Vector *cmli_vector = hypre_CTAlloc(CMLI_Vector,  1, HYPRE_MEMORY_HOST);
+   CMLI_Vector *cmli_vector = nalu_hypre_CTAlloc(CMLI_Vector,  1, NALU_HYPRE_MEMORY_HOST);
    cmli_vector->vector_ = (void *) mli_vector;
    cmli_vector->owner_ = 1;
    return cmli_vector;
@@ -699,7 +699,7 @@ extern "C" int MLI_VectorDestroy( CMLI_Vector *cvector )
 extern "C" CMLI_Solver *MLI_SolverCreate(char *name)
 {
    MLI_Solver  *mli_solver;
-   CMLI_Solver *cmli_solver = hypre_CTAlloc(CMLI_Solver, 1, HYPRE_MEMORY_HOST);
+   CMLI_Solver *cmli_solver = nalu_hypre_CTAlloc(CMLI_Solver, 1, NALU_HYPRE_MEMORY_HOST);
 
    mli_solver = MLI_Solver_CreateFromName( name );
    cmli_solver->solver_ = (void *) mli_solver;
@@ -755,7 +755,7 @@ extern "C" int MLI_SolverSetParams(CMLI_Solver *solver, char *param_string,
 extern "C" CMLI_Mapper *MLI_MapperCreate()
 {
    MLI_Mapper  *mli_mapper;
-   CMLI_Mapper *cmli_mapper = hypre_CTAlloc(CMLI_Mapper, 1, HYPRE_MEMORY_HOST);
+   CMLI_Mapper *cmli_mapper = nalu_hypre_CTAlloc(CMLI_Mapper, 1, NALU_HYPRE_MEMORY_HOST);
 
    mli_mapper = new MLI_Mapper();
    cmli_mapper->mapper_ = (void *) mli_mapper;
@@ -815,7 +815,7 @@ extern "C" CMLI_Method *MLI_MethodCreate(char *name, MPI_Comm comm)
    CMLI_Method *cmli_method;
 
    mli_method = MLI_Method_CreateFromName(name, comm);
-   cmli_method = hypre_CTAlloc(CMLI_Method,  1, HYPRE_MEMORY_HOST);
+   cmli_method = nalu_hypre_CTAlloc(CMLI_Method,  1, NALU_HYPRE_MEMORY_HOST);
    if ( mli_method == NULL || cmli_method == NULL ) err = 1;
    else
    {

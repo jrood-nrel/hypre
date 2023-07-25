@@ -410,7 +410,7 @@ function ExecuteTest
    cd $WorkingDir
    (cat $TestName.err.* > $TestName.err)
    (./$TestName.sh $RTOL $ATOL >> $TestName.err 2>&1)
-   if [ -z $HYPRE_NO_SAVED ]; then
+   if [ -z $NALU_HYPRE_NO_SAVED ]; then
       if [ -f $SaveName ]; then
          # diff -U3 -bI"time" ${TestName}.saved ${TestName}.out   # old way of diffing
          (../runcheck.sh $TestName.out $SaveName $RTOL $ATOL >> $TestName.err 2>&1)
@@ -438,14 +438,14 @@ function PostProcess
    if [ "$BatchMode" -eq 0 ] ; then
       if [ -f purify.log ] ; then
          mv purify.log $TestName.purify.log
-         grep -i hypre_ $TestName.purify.log >> $TestName.err
+         grep -i nalu_hypre_ $TestName.purify.log >> $TestName.err
       elif [ -f insure.log ] ; then
          if [ -f ~/insure.log ] ; then
             cat ~/insure.log >> insure.log
             rm -f ~/insure.log*
          fi
          mv insure.log $TestName.insure.log
-         grep -i hypre_ $TestName.insure.log >> $TestName.err
+         grep -i nalu_hypre_ $TestName.insure.log >> $TestName.err
       fi
    fi
    cd $SavePWD
@@ -608,7 +608,7 @@ CleanUp $TestDirNames $ExecFileNames
 cat > runtest.filters <<EOF
 lrun warning: default mapping forced to idle
 srun: Warning: can't run 1 processes on 2 nodes, setting nnodes to 1
-hypre_MPI_Init
+nalu_hypre_MPI_Init
 job [0-9]* queued and waiting for resources
 job [0-9]* has been allocated resources
 SLURMINFO: Job [0-9]* is pending allocation of resources.

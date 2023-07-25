@@ -7,182 +7,182 @@
 
 /******************************************************************************
  *
- * Member functions for hypre_CSRBlockMatrix class.
+ * Member functions for nalu_hypre_CSRBlockMatrix class.
  *
  *****************************************************************************/
 
-#include "_hypre_parcsr_block_mv.h"
+#include "_nalu_hypre_parcsr_block_mv.h"
 
 #define LB_VERSION 0
 
 /*--------------------------------------------------------------------------
- * hypre_CSRBlockMatrixCreate
+ * nalu_hypre_CSRBlockMatrixCreate
  *--------------------------------------------------------------------------*/
 
-hypre_CSRBlockMatrix *
-hypre_CSRBlockMatrixCreate(HYPRE_Int block_size,
-                           HYPRE_Int num_rows,
-                           HYPRE_Int num_cols,
-                           HYPRE_Int num_nonzeros)
+nalu_hypre_CSRBlockMatrix *
+nalu_hypre_CSRBlockMatrixCreate(NALU_HYPRE_Int block_size,
+                           NALU_HYPRE_Int num_rows,
+                           NALU_HYPRE_Int num_cols,
+                           NALU_HYPRE_Int num_nonzeros)
 {
-   hypre_CSRBlockMatrix  *matrix;
+   nalu_hypre_CSRBlockMatrix  *matrix;
 
-   matrix = hypre_CTAlloc(hypre_CSRBlockMatrix,  1, HYPRE_MEMORY_HOST);
+   matrix = nalu_hypre_CTAlloc(nalu_hypre_CSRBlockMatrix,  1, NALU_HYPRE_MEMORY_HOST);
 
-   hypre_CSRBlockMatrixData(matrix) = NULL;
-   hypre_CSRBlockMatrixI(matrix)    = NULL;
-   hypre_CSRBlockMatrixJ(matrix)    = NULL;
-   hypre_CSRBlockMatrixBigJ(matrix)    = NULL;
-   hypre_CSRBlockMatrixBlockSize(matrix) = block_size;
-   hypre_CSRBlockMatrixNumRows(matrix) = num_rows;
-   hypre_CSRBlockMatrixNumCols(matrix) = num_cols;
-   hypre_CSRBlockMatrixNumNonzeros(matrix) = num_nonzeros;
+   nalu_hypre_CSRBlockMatrixData(matrix) = NULL;
+   nalu_hypre_CSRBlockMatrixI(matrix)    = NULL;
+   nalu_hypre_CSRBlockMatrixJ(matrix)    = NULL;
+   nalu_hypre_CSRBlockMatrixBigJ(matrix)    = NULL;
+   nalu_hypre_CSRBlockMatrixBlockSize(matrix) = block_size;
+   nalu_hypre_CSRBlockMatrixNumRows(matrix) = num_rows;
+   nalu_hypre_CSRBlockMatrixNumCols(matrix) = num_cols;
+   nalu_hypre_CSRBlockMatrixNumNonzeros(matrix) = num_nonzeros;
 
    /* set defaults */
-   hypre_CSRBlockMatrixOwnsData(matrix) = 1;
+   nalu_hypre_CSRBlockMatrixOwnsData(matrix) = 1;
 
    return matrix;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_CSRBlockMatrixDestroy
+ * nalu_hypre_CSRBlockMatrixDestroy
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_CSRBlockMatrixDestroy(hypre_CSRBlockMatrix *matrix)
+NALU_HYPRE_Int
+nalu_hypre_CSRBlockMatrixDestroy(nalu_hypre_CSRBlockMatrix *matrix)
 {
-   HYPRE_Int  ierr = 0;
+   NALU_HYPRE_Int  ierr = 0;
 
    if (matrix)
    {
-      hypre_TFree(hypre_CSRBlockMatrixI(matrix), HYPRE_MEMORY_HOST);
-      if ( hypre_CSRBlockMatrixOwnsData(matrix) )
+      nalu_hypre_TFree(nalu_hypre_CSRBlockMatrixI(matrix), NALU_HYPRE_MEMORY_HOST);
+      if ( nalu_hypre_CSRBlockMatrixOwnsData(matrix) )
       {
-         hypre_TFree(hypre_CSRBlockMatrixData(matrix), HYPRE_MEMORY_HOST);
-         hypre_TFree(hypre_CSRBlockMatrixJ(matrix), HYPRE_MEMORY_HOST);
-         hypre_TFree(hypre_CSRBlockMatrixBigJ(matrix), HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(nalu_hypre_CSRBlockMatrixData(matrix), NALU_HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(nalu_hypre_CSRBlockMatrixJ(matrix), NALU_HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(nalu_hypre_CSRBlockMatrixBigJ(matrix), NALU_HYPRE_MEMORY_HOST);
       }
-      hypre_TFree(matrix, HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(matrix, NALU_HYPRE_MEMORY_HOST);
    }
 
    return ierr;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_CSRBlockMatrixInitialize
+ * nalu_hypre_CSRBlockMatrixInitialize
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_CSRBlockMatrixInitialize(hypre_CSRBlockMatrix *matrix)
+NALU_HYPRE_Int
+nalu_hypre_CSRBlockMatrixInitialize(nalu_hypre_CSRBlockMatrix *matrix)
 {
-   HYPRE_Int block_size   = hypre_CSRBlockMatrixBlockSize(matrix);
-   HYPRE_Int num_rows     = hypre_CSRBlockMatrixNumRows(matrix);
-   HYPRE_Int num_nonzeros = hypre_CSRBlockMatrixNumNonzeros(matrix);
-   HYPRE_Int ierr = 0, nnz;
+   NALU_HYPRE_Int block_size   = nalu_hypre_CSRBlockMatrixBlockSize(matrix);
+   NALU_HYPRE_Int num_rows     = nalu_hypre_CSRBlockMatrixNumRows(matrix);
+   NALU_HYPRE_Int num_nonzeros = nalu_hypre_CSRBlockMatrixNumNonzeros(matrix);
+   NALU_HYPRE_Int ierr = 0, nnz;
 
-   if ( ! hypre_CSRBlockMatrixI(matrix) )
+   if ( ! nalu_hypre_CSRBlockMatrixI(matrix) )
    {
-      hypre_TFree(hypre_CSRBlockMatrixI(matrix), HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(nalu_hypre_CSRBlockMatrixI(matrix), NALU_HYPRE_MEMORY_HOST);
    }
-   if ( ! hypre_CSRBlockMatrixJ(matrix) )
+   if ( ! nalu_hypre_CSRBlockMatrixJ(matrix) )
    {
-      hypre_TFree(hypre_CSRBlockMatrixJ(matrix), HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(nalu_hypre_CSRBlockMatrixJ(matrix), NALU_HYPRE_MEMORY_HOST);
    }
-   if ( ! hypre_CSRBlockMatrixBigJ(matrix) )
+   if ( ! nalu_hypre_CSRBlockMatrixBigJ(matrix) )
    {
-      hypre_TFree(hypre_CSRBlockMatrixBigJ(matrix), HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(nalu_hypre_CSRBlockMatrixBigJ(matrix), NALU_HYPRE_MEMORY_HOST);
    }
-   if ( ! hypre_CSRBlockMatrixData(matrix) )
+   if ( ! nalu_hypre_CSRBlockMatrixData(matrix) )
    {
-      hypre_TFree(hypre_CSRBlockMatrixData(matrix), HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(nalu_hypre_CSRBlockMatrixData(matrix), NALU_HYPRE_MEMORY_HOST);
    }
 
    nnz = num_nonzeros * block_size * block_size;
-   hypre_CSRBlockMatrixI(matrix) = hypre_CTAlloc(HYPRE_Int,  num_rows + 1, HYPRE_MEMORY_HOST);
-   if (nnz) { hypre_CSRBlockMatrixData(matrix) = hypre_CTAlloc(HYPRE_Complex,  nnz, HYPRE_MEMORY_HOST); }
-   else { hypre_CSRBlockMatrixData(matrix) = NULL; }
-   if (nnz) { hypre_CSRBlockMatrixJ(matrix) = hypre_CTAlloc(HYPRE_Int, num_nonzeros, HYPRE_MEMORY_HOST); }
-   else { hypre_CSRBlockMatrixJ(matrix) = NULL; }
+   nalu_hypre_CSRBlockMatrixI(matrix) = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  num_rows + 1, NALU_HYPRE_MEMORY_HOST);
+   if (nnz) { nalu_hypre_CSRBlockMatrixData(matrix) = nalu_hypre_CTAlloc(NALU_HYPRE_Complex,  nnz, NALU_HYPRE_MEMORY_HOST); }
+   else { nalu_hypre_CSRBlockMatrixData(matrix) = NULL; }
+   if (nnz) { nalu_hypre_CSRBlockMatrixJ(matrix) = nalu_hypre_CTAlloc(NALU_HYPRE_Int, num_nonzeros, NALU_HYPRE_MEMORY_HOST); }
+   else { nalu_hypre_CSRBlockMatrixJ(matrix) = NULL; }
 
    return ierr;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_CSRBlockMatrixBigInitialize
+ * nalu_hypre_CSRBlockMatrixBigInitialize
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_CSRBlockMatrixBigInitialize(hypre_CSRBlockMatrix *matrix)
+NALU_HYPRE_Int
+nalu_hypre_CSRBlockMatrixBigInitialize(nalu_hypre_CSRBlockMatrix *matrix)
 {
-   HYPRE_Int block_size   = hypre_CSRBlockMatrixBlockSize(matrix);
-   HYPRE_Int num_rows     = hypre_CSRBlockMatrixNumRows(matrix);
-   HYPRE_Int num_nonzeros = hypre_CSRBlockMatrixNumNonzeros(matrix);
-   HYPRE_Int ierr = 0, nnz;
+   NALU_HYPRE_Int block_size   = nalu_hypre_CSRBlockMatrixBlockSize(matrix);
+   NALU_HYPRE_Int num_rows     = nalu_hypre_CSRBlockMatrixNumRows(matrix);
+   NALU_HYPRE_Int num_nonzeros = nalu_hypre_CSRBlockMatrixNumNonzeros(matrix);
+   NALU_HYPRE_Int ierr = 0, nnz;
 
-   if ( ! hypre_CSRBlockMatrixI(matrix) )
+   if ( ! nalu_hypre_CSRBlockMatrixI(matrix) )
    {
-      hypre_TFree(hypre_CSRBlockMatrixI(matrix), HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(nalu_hypre_CSRBlockMatrixI(matrix), NALU_HYPRE_MEMORY_HOST);
    }
-   if ( ! hypre_CSRBlockMatrixJ(matrix) )
+   if ( ! nalu_hypre_CSRBlockMatrixJ(matrix) )
    {
-      hypre_TFree(hypre_CSRBlockMatrixJ(matrix), HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(nalu_hypre_CSRBlockMatrixJ(matrix), NALU_HYPRE_MEMORY_HOST);
    }
-   if ( ! hypre_CSRBlockMatrixBigJ(matrix) )
+   if ( ! nalu_hypre_CSRBlockMatrixBigJ(matrix) )
    {
-      hypre_TFree(hypre_CSRBlockMatrixBigJ(matrix), HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(nalu_hypre_CSRBlockMatrixBigJ(matrix), NALU_HYPRE_MEMORY_HOST);
    }
-   if ( ! hypre_CSRBlockMatrixData(matrix) )
+   if ( ! nalu_hypre_CSRBlockMatrixData(matrix) )
    {
-      hypre_TFree(hypre_CSRBlockMatrixData(matrix), HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(nalu_hypre_CSRBlockMatrixData(matrix), NALU_HYPRE_MEMORY_HOST);
    }
 
    nnz = num_nonzeros * block_size * block_size;
-   hypre_CSRBlockMatrixI(matrix) = hypre_CTAlloc(HYPRE_Int,  num_rows + 1, HYPRE_MEMORY_HOST);
-   if (nnz) { hypre_CSRBlockMatrixData(matrix) = hypre_CTAlloc(HYPRE_Complex,  nnz, HYPRE_MEMORY_HOST); }
-   else { hypre_CSRBlockMatrixData(matrix) = NULL; }
-   if (nnz) { hypre_CSRBlockMatrixBigJ(matrix) = hypre_CTAlloc(HYPRE_BigInt, num_nonzeros, HYPRE_MEMORY_HOST); }
-   else { hypre_CSRBlockMatrixJ(matrix) = NULL; }
+   nalu_hypre_CSRBlockMatrixI(matrix) = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  num_rows + 1, NALU_HYPRE_MEMORY_HOST);
+   if (nnz) { nalu_hypre_CSRBlockMatrixData(matrix) = nalu_hypre_CTAlloc(NALU_HYPRE_Complex,  nnz, NALU_HYPRE_MEMORY_HOST); }
+   else { nalu_hypre_CSRBlockMatrixData(matrix) = NULL; }
+   if (nnz) { nalu_hypre_CSRBlockMatrixBigJ(matrix) = nalu_hypre_CTAlloc(NALU_HYPRE_BigInt, num_nonzeros, NALU_HYPRE_MEMORY_HOST); }
+   else { nalu_hypre_CSRBlockMatrixJ(matrix) = NULL; }
 
    return ierr;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_CSRBlockMatrixSetDataOwner
+ * nalu_hypre_CSRBlockMatrixSetDataOwner
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_CSRBlockMatrixSetDataOwner(hypre_CSRBlockMatrix *matrix, HYPRE_Int owns_data)
+NALU_HYPRE_Int
+nalu_hypre_CSRBlockMatrixSetDataOwner(nalu_hypre_CSRBlockMatrix *matrix, NALU_HYPRE_Int owns_data)
 {
-   HYPRE_Int    ierr = 0;
+   NALU_HYPRE_Int    ierr = 0;
 
-   hypre_CSRBlockMatrixOwnsData(matrix) = owns_data;
+   nalu_hypre_CSRBlockMatrixOwnsData(matrix) = owns_data;
 
    return ierr;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_CSRBlockMatrixCompress
+ * nalu_hypre_CSRBlockMatrixCompress
  *--------------------------------------------------------------------------*/
 
-hypre_CSRMatrix *
-hypre_CSRBlockMatrixCompress(hypre_CSRBlockMatrix *matrix)
+nalu_hypre_CSRMatrix *
+nalu_hypre_CSRBlockMatrixCompress(nalu_hypre_CSRBlockMatrix *matrix)
 {
-   HYPRE_Int      block_size = hypre_CSRBlockMatrixBlockSize(matrix);
-   HYPRE_Int      num_rows = hypre_CSRBlockMatrixNumRows(matrix);
-   HYPRE_Int      num_cols = hypre_CSRBlockMatrixNumCols(matrix);
-   HYPRE_Int      num_nonzeros = hypre_CSRBlockMatrixNumNonzeros(matrix);
-   HYPRE_Int     *matrix_i = hypre_CSRBlockMatrixI(matrix);
-   HYPRE_Int     *matrix_j = hypre_CSRBlockMatrixJ(matrix);
-   HYPRE_Complex *matrix_data = hypre_CSRBlockMatrixData(matrix);
-   hypre_CSRMatrix* matrix_C;
-   HYPRE_Int     *matrix_C_i, *matrix_C_j, i, j, bnnz;
-   HYPRE_Complex *matrix_C_data, ddata;
+   NALU_HYPRE_Int      block_size = nalu_hypre_CSRBlockMatrixBlockSize(matrix);
+   NALU_HYPRE_Int      num_rows = nalu_hypre_CSRBlockMatrixNumRows(matrix);
+   NALU_HYPRE_Int      num_cols = nalu_hypre_CSRBlockMatrixNumCols(matrix);
+   NALU_HYPRE_Int      num_nonzeros = nalu_hypre_CSRBlockMatrixNumNonzeros(matrix);
+   NALU_HYPRE_Int     *matrix_i = nalu_hypre_CSRBlockMatrixI(matrix);
+   NALU_HYPRE_Int     *matrix_j = nalu_hypre_CSRBlockMatrixJ(matrix);
+   NALU_HYPRE_Complex *matrix_data = nalu_hypre_CSRBlockMatrixData(matrix);
+   nalu_hypre_CSRMatrix* matrix_C;
+   NALU_HYPRE_Int     *matrix_C_i, *matrix_C_j, i, j, bnnz;
+   NALU_HYPRE_Complex *matrix_C_data, ddata;
 
-   matrix_C = hypre_CSRMatrixCreate(num_rows, num_cols, num_nonzeros);
-   hypre_CSRMatrixInitialize(matrix_C);
-   matrix_C_i = hypre_CSRMatrixI(matrix_C);
-   matrix_C_j = hypre_CSRMatrixJ(matrix_C);
-   matrix_C_data = hypre_CSRMatrixData(matrix_C);
+   matrix_C = nalu_hypre_CSRMatrixCreate(num_rows, num_cols, num_nonzeros);
+   nalu_hypre_CSRMatrixInitialize(matrix_C);
+   matrix_C_i = nalu_hypre_CSRMatrixI(matrix_C);
+   matrix_C_j = nalu_hypre_CSRMatrixJ(matrix_C);
+   matrix_C_data = nalu_hypre_CSRMatrixData(matrix_C);
 
    bnnz = block_size * block_size;
    for (i = 0; i < num_rows + 1; i++) { matrix_C_i[i] = matrix_i[i]; }
@@ -194,40 +194,40 @@ hypre_CSRBlockMatrixCompress(hypre_CSRBlockMatrix *matrix)
       {
          ddata += matrix_data[i * bnnz + j] * matrix_data[i * bnnz + j];
       }
-      matrix_C_data[i] = hypre_sqrt(ddata);
+      matrix_C_data[i] = nalu_hypre_sqrt(ddata);
    }
    return matrix_C;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_CSRBlockMatrixConvertToCSRMatrix
+ * nalu_hypre_CSRBlockMatrixConvertToCSRMatrix
  *--------------------------------------------------------------------------*/
 
-hypre_CSRMatrix *
-hypre_CSRBlockMatrixConvertToCSRMatrix( hypre_CSRBlockMatrix *matrix )
+nalu_hypre_CSRMatrix *
+nalu_hypre_CSRBlockMatrixConvertToCSRMatrix( nalu_hypre_CSRBlockMatrix *matrix )
 {
-   HYPRE_Int block_size = hypre_CSRBlockMatrixBlockSize(matrix);
-   HYPRE_Int num_rows = hypre_CSRBlockMatrixNumRows(matrix);
-   HYPRE_Int num_cols = hypre_CSRBlockMatrixNumCols(matrix);
-   HYPRE_Int num_nonzeros = hypre_CSRBlockMatrixNumNonzeros(matrix);
-   HYPRE_Int *matrix_i = hypre_CSRBlockMatrixI(matrix);
-   HYPRE_Int *matrix_j = hypre_CSRBlockMatrixJ(matrix);
-   HYPRE_Complex* matrix_data = hypre_CSRBlockMatrixData(matrix);
+   NALU_HYPRE_Int block_size = nalu_hypre_CSRBlockMatrixBlockSize(matrix);
+   NALU_HYPRE_Int num_rows = nalu_hypre_CSRBlockMatrixNumRows(matrix);
+   NALU_HYPRE_Int num_cols = nalu_hypre_CSRBlockMatrixNumCols(matrix);
+   NALU_HYPRE_Int num_nonzeros = nalu_hypre_CSRBlockMatrixNumNonzeros(matrix);
+   NALU_HYPRE_Int *matrix_i = nalu_hypre_CSRBlockMatrixI(matrix);
+   NALU_HYPRE_Int *matrix_j = nalu_hypre_CSRBlockMatrixJ(matrix);
+   NALU_HYPRE_Complex* matrix_data = nalu_hypre_CSRBlockMatrixData(matrix);
 
-   hypre_CSRMatrix* matrix_C;
-   HYPRE_Int    i, j, k, ii, C_ii, bnnz, new_nrows, new_ncols, new_num_nonzeros;
-   HYPRE_Int    *matrix_C_i, *matrix_C_j;
-   HYPRE_Complex *matrix_C_data;
+   nalu_hypre_CSRMatrix* matrix_C;
+   NALU_HYPRE_Int    i, j, k, ii, C_ii, bnnz, new_nrows, new_ncols, new_num_nonzeros;
+   NALU_HYPRE_Int    *matrix_C_i, *matrix_C_j;
+   NALU_HYPRE_Complex *matrix_C_data;
 
    bnnz      = block_size * block_size;
    new_nrows = num_rows * block_size;
    new_ncols = num_cols * block_size;
    new_num_nonzeros = block_size * block_size * num_nonzeros;
-   matrix_C = hypre_CSRMatrixCreate(new_nrows, new_ncols, new_num_nonzeros);
-   hypre_CSRMatrixInitialize(matrix_C);
-   matrix_C_i    = hypre_CSRMatrixI(matrix_C);
-   matrix_C_j    = hypre_CSRMatrixJ(matrix_C);
-   matrix_C_data = hypre_CSRMatrixData(matrix_C);
+   matrix_C = nalu_hypre_CSRMatrixCreate(new_nrows, new_ncols, new_num_nonzeros);
+   nalu_hypre_CSRMatrixInitialize(matrix_C);
+   matrix_C_i    = nalu_hypre_CSRMatrixI(matrix_C);
+   matrix_C_j    = nalu_hypre_CSRMatrixJ(matrix_C);
+   matrix_C_data = nalu_hypre_CSRMatrixData(matrix_C);
    for (i = 0; i < num_rows; i++)
    {
       for (j = 0; j < block_size; j++)
@@ -263,33 +263,33 @@ hypre_CSRBlockMatrixConvertToCSRMatrix( hypre_CSRBlockMatrix *matrix )
 }
 
 /*--------------------------------------------------------------------------
- * hypre_CSRBlockMatrixConvertFromCSRMatrix
+ * nalu_hypre_CSRBlockMatrixConvertFromCSRMatrix
 
  * this doesn't properly convert the parcsr off_diag matrices - AB 12/7/05
    (because here we assume the matrix is square - we don't check what the
     number of columns should be ) - it can only be used for the diag part
  *--------------------------------------------------------------------------*/
 
-hypre_CSRBlockMatrix *
-hypre_CSRBlockMatrixConvertFromCSRMatrix(hypre_CSRMatrix *matrix,
-                                         HYPRE_Int matrix_C_block_size )
+nalu_hypre_CSRBlockMatrix *
+nalu_hypre_CSRBlockMatrixConvertFromCSRMatrix(nalu_hypre_CSRMatrix *matrix,
+                                         NALU_HYPRE_Int matrix_C_block_size )
 {
-   HYPRE_Int num_rows = hypre_CSRMatrixNumRows(matrix);
-   HYPRE_Int num_cols = hypre_CSRMatrixNumCols(matrix);
-   HYPRE_Int *matrix_i = hypre_CSRMatrixI(matrix);
-   HYPRE_Int *matrix_j = hypre_CSRMatrixJ(matrix);
-   HYPRE_Complex* matrix_data = hypre_CSRMatrixData(matrix);
+   NALU_HYPRE_Int num_rows = nalu_hypre_CSRMatrixNumRows(matrix);
+   NALU_HYPRE_Int num_cols = nalu_hypre_CSRMatrixNumCols(matrix);
+   NALU_HYPRE_Int *matrix_i = nalu_hypre_CSRMatrixI(matrix);
+   NALU_HYPRE_Int *matrix_j = nalu_hypre_CSRMatrixJ(matrix);
+   NALU_HYPRE_Complex* matrix_data = nalu_hypre_CSRMatrixData(matrix);
 
-   hypre_CSRBlockMatrix* matrix_C;
-   HYPRE_Int    *matrix_C_i, *matrix_C_j;
-   HYPRE_Complex *matrix_C_data;
-   HYPRE_Int    matrix_C_num_rows, matrix_C_num_cols, matrix_C_num_nonzeros;
-   HYPRE_Int    i, j, ii, jj, s_jj, index, *counter;
+   nalu_hypre_CSRBlockMatrix* matrix_C;
+   NALU_HYPRE_Int    *matrix_C_i, *matrix_C_j;
+   NALU_HYPRE_Complex *matrix_C_data;
+   NALU_HYPRE_Int    matrix_C_num_rows, matrix_C_num_cols, matrix_C_num_nonzeros;
+   NALU_HYPRE_Int    i, j, ii, jj, s_jj, index, *counter;
 
    matrix_C_num_rows = num_rows / matrix_C_block_size;
    matrix_C_num_cols = num_cols / matrix_C_block_size;
 
-   counter = hypre_CTAlloc(HYPRE_Int,  matrix_C_num_cols, HYPRE_MEMORY_HOST);
+   counter = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  matrix_C_num_cols, NALU_HYPRE_MEMORY_HOST);
    for (i = 0; i < matrix_C_num_cols; i++) { counter[i] = -1; }
    matrix_C_num_nonzeros = 0;
    for (i = 0; i < matrix_C_num_rows; i++)
@@ -307,12 +307,12 @@ hypre_CSRBlockMatrixConvertFromCSRMatrix(hypre_CSRMatrix *matrix,
          }
       }
    }
-   matrix_C = hypre_CSRBlockMatrixCreate(matrix_C_block_size, matrix_C_num_rows,
+   matrix_C = nalu_hypre_CSRBlockMatrixCreate(matrix_C_block_size, matrix_C_num_rows,
                                          matrix_C_num_cols, matrix_C_num_nonzeros);
-   hypre_CSRBlockMatrixInitialize(matrix_C);
-   matrix_C_i = hypre_CSRBlockMatrixI(matrix_C);
-   matrix_C_j = hypre_CSRBlockMatrixJ(matrix_C);
-   matrix_C_data = hypre_CSRBlockMatrixData(matrix_C);
+   nalu_hypre_CSRBlockMatrixInitialize(matrix_C);
+   matrix_C_i = nalu_hypre_CSRBlockMatrixI(matrix_C);
+   matrix_C_j = nalu_hypre_CSRBlockMatrixJ(matrix_C);
+   matrix_C_data = nalu_hypre_CSRBlockMatrixData(matrix_C);
 
    for (i = 0; i < matrix_C_num_cols; i++) { counter[i] = -1; }
    jj = s_jj = 0;
@@ -340,24 +340,24 @@ hypre_CSRBlockMatrixConvertFromCSRMatrix(hypre_CSRMatrix *matrix,
    }
    matrix_C_i[matrix_C_num_rows] = matrix_C_num_nonzeros;
 
-   hypre_TFree(counter, HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(counter, NALU_HYPRE_MEMORY_HOST);
 
 
    return matrix_C;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_CSRBlockMatrixBlockAdd
+ * nalu_hypre_CSRBlockMatrixBlockAdd
  * (o = i1 + i2)
  *--------------------------------------------------------------------------*/
-HYPRE_Int
-hypre_CSRBlockMatrixBlockAdd(HYPRE_Complex* i1,
-                             HYPRE_Complex* i2,
-                             HYPRE_Complex* o,
-                             HYPRE_Int block_size)
+NALU_HYPRE_Int
+nalu_hypre_CSRBlockMatrixBlockAdd(NALU_HYPRE_Complex* i1,
+                             NALU_HYPRE_Complex* i2,
+                             NALU_HYPRE_Complex* o,
+                             NALU_HYPRE_Int block_size)
 {
-   HYPRE_Int i;
-   HYPRE_Int sz = block_size * block_size;
+   NALU_HYPRE_Int i;
+   NALU_HYPRE_Int sz = block_size * block_size;
 
    for (i = 0; i < sz; i++)
    {
@@ -369,16 +369,16 @@ hypre_CSRBlockMatrixBlockAdd(HYPRE_Complex* i1,
 
 
 /*--------------------------------------------------------------------------
- * hypre_CSRBlockMatrixBlockAddAccumulate
+ * nalu_hypre_CSRBlockMatrixBlockAddAccumulate
  * (o = i1 + o)
  *--------------------------------------------------------------------------*/
-HYPRE_Int
-hypre_CSRBlockMatrixBlockAddAccumulate(HYPRE_Complex* i1,
-                                       HYPRE_Complex* o,
-                                       HYPRE_Int block_size)
+NALU_HYPRE_Int
+nalu_hypre_CSRBlockMatrixBlockAddAccumulate(NALU_HYPRE_Complex* i1,
+                                       NALU_HYPRE_Complex* o,
+                                       NALU_HYPRE_Int block_size)
 {
-   HYPRE_Int i;
-   HYPRE_Int sz = block_size * block_size;
+   NALU_HYPRE_Int i;
+   NALU_HYPRE_Int sz = block_size * block_size;
 
    for (i = 0; i < sz; i++)
    {
@@ -389,15 +389,15 @@ hypre_CSRBlockMatrixBlockAddAccumulate(HYPRE_Complex* i1,
 }
 
 /*--------------------------------------------------------------------------
- * hypre_CSRBlockMatrixBlockAddAccumulateDiag
+ * nalu_hypre_CSRBlockMatrixBlockAddAccumulateDiag
  * (diag(o) = diag(i1) + diag(o))
  *--------------------------------------------------------------------------*/
-HYPRE_Int
-hypre_CSRBlockMatrixBlockAddAccumulateDiag(HYPRE_Complex* i1,
-                                           HYPRE_Complex* o,
-                                           HYPRE_Int block_size)
+NALU_HYPRE_Int
+nalu_hypre_CSRBlockMatrixBlockAddAccumulateDiag(NALU_HYPRE_Complex* i1,
+                                           NALU_HYPRE_Complex* o,
+                                           NALU_HYPRE_Int block_size)
 {
-   HYPRE_Int i;
+   NALU_HYPRE_Int i;
 
    for (i = 0; i < block_size; i++)
    {
@@ -407,22 +407,22 @@ hypre_CSRBlockMatrixBlockAddAccumulateDiag(HYPRE_Complex* i1,
 }
 
 /*--------------------------------------------------------------------------
- * hypre_CSRBlockMatrixBlockAddAccumulateDiagCheckSign
+ * nalu_hypre_CSRBlockMatrixBlockAddAccumulateDiagCheckSign
  * only add elements of sign*i1 that are negative (sign is size block_size)
  * (diag(o) = diag(i1) + diag(o))
  *--------------------------------------------------------------------------*/
-HYPRE_Int
-hypre_CSRBlockMatrixBlockAddAccumulateDiagCheckSign(HYPRE_Complex* i1,
-                                                    HYPRE_Complex* o,
-                                                    HYPRE_Int block_size,
-                                                    HYPRE_Real *sign)
+NALU_HYPRE_Int
+nalu_hypre_CSRBlockMatrixBlockAddAccumulateDiagCheckSign(NALU_HYPRE_Complex* i1,
+                                                    NALU_HYPRE_Complex* o,
+                                                    NALU_HYPRE_Int block_size,
+                                                    NALU_HYPRE_Real *sign)
 {
-   HYPRE_Int i;
-   HYPRE_Real tmp;
+   NALU_HYPRE_Int i;
+   NALU_HYPRE_Real tmp;
 
    for (i = 0; i < block_size; i++)
    {
-      tmp = (HYPRE_Real) i1[i * block_size + i] * sign[i];
+      tmp = (NALU_HYPRE_Real) i1[i * block_size + i] * sign[i];
       if (tmp < 0)
       {
          o[i * block_size + i] += i1[i * block_size + i];
@@ -433,20 +433,20 @@ hypre_CSRBlockMatrixBlockAddAccumulateDiagCheckSign(HYPRE_Complex* i1,
 }
 
 /*--------------------------------------------------------------------------
- *  hypre_CSRBlockMatrixComputeSign
+ *  nalu_hypre_CSRBlockMatrixComputeSign
 
  * o = sign(diag(i1))
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int hypre_CSRBlockMatrixComputeSign(HYPRE_Complex *i1,
-                                          HYPRE_Complex *o,
-                                          HYPRE_Int block_size)
+NALU_HYPRE_Int nalu_hypre_CSRBlockMatrixComputeSign(NALU_HYPRE_Complex *i1,
+                                          NALU_HYPRE_Complex *o,
+                                          NALU_HYPRE_Int block_size)
 {
-   HYPRE_Int i;
+   NALU_HYPRE_Int i;
 
    for (i = 0; i < block_size; i++)
    {
-      if ((HYPRE_Real) i1[i * block_size + i] < 0)
+      if ((NALU_HYPRE_Real) i1[i * block_size + i] < 0)
       {
          o[i] = -1;
       }
@@ -461,16 +461,16 @@ HYPRE_Int hypre_CSRBlockMatrixComputeSign(HYPRE_Complex *i1,
 
 
 /*--------------------------------------------------------------------------
- * hypre_CSRBlockMatrixBlockSetScalar
+ * nalu_hypre_CSRBlockMatrixBlockSetScalar
  * (each entry in block o is set to beta )
  *--------------------------------------------------------------------------*/
-HYPRE_Int
-hypre_CSRBlockMatrixBlockSetScalar(HYPRE_Complex* o,
-                                   HYPRE_Complex beta,
-                                   HYPRE_Int block_size)
+NALU_HYPRE_Int
+nalu_hypre_CSRBlockMatrixBlockSetScalar(NALU_HYPRE_Complex* o,
+                                   NALU_HYPRE_Complex beta,
+                                   NALU_HYPRE_Int block_size)
 {
-   HYPRE_Int i;
-   HYPRE_Int sz = block_size * block_size;
+   NALU_HYPRE_Int i;
+   NALU_HYPRE_Int sz = block_size * block_size;
 
    for (i = 0; i < sz; i++)
    {
@@ -482,17 +482,17 @@ hypre_CSRBlockMatrixBlockSetScalar(HYPRE_Complex* o,
 
 
 /*--------------------------------------------------------------------------
- * hypre_CSRBlockMatrixBlockCopyData
+ * nalu_hypre_CSRBlockMatrixBlockCopyData
  * (o = beta*i1 )
  *--------------------------------------------------------------------------*/
-HYPRE_Int
-hypre_CSRBlockMatrixBlockCopyData(HYPRE_Complex* i1,
-                                  HYPRE_Complex* o,
-                                  HYPRE_Complex beta,
-                                  HYPRE_Int block_size)
+NALU_HYPRE_Int
+nalu_hypre_CSRBlockMatrixBlockCopyData(NALU_HYPRE_Complex* i1,
+                                  NALU_HYPRE_Complex* o,
+                                  NALU_HYPRE_Complex beta,
+                                  NALU_HYPRE_Int block_size)
 {
-   HYPRE_Int i;
-   HYPRE_Int sz = block_size * block_size;
+   NALU_HYPRE_Int i;
+   NALU_HYPRE_Int sz = block_size * block_size;
 
    for (i = 0; i < sz; i++)
    {
@@ -503,18 +503,18 @@ hypre_CSRBlockMatrixBlockCopyData(HYPRE_Complex* i1,
 }
 
 /*--------------------------------------------------------------------------
- * hypre_CSRBlockMatrixBlockCopyDataDiag - zeros off-diag entries
+ * nalu_hypre_CSRBlockMatrixBlockCopyDataDiag - zeros off-diag entries
  * (o = beta*diag(i1))
  *--------------------------------------------------------------------------*/
-HYPRE_Int
-hypre_CSRBlockMatrixBlockCopyDataDiag(HYPRE_Complex* i1,
-                                      HYPRE_Complex* o,
-                                      HYPRE_Complex beta,
-                                      HYPRE_Int block_size)
+NALU_HYPRE_Int
+nalu_hypre_CSRBlockMatrixBlockCopyDataDiag(NALU_HYPRE_Complex* i1,
+                                      NALU_HYPRE_Complex* o,
+                                      NALU_HYPRE_Complex beta,
+                                      NALU_HYPRE_Int block_size)
 {
-   HYPRE_Int i;
+   NALU_HYPRE_Int i;
 
-   HYPRE_Int sz = block_size * block_size;
+   NALU_HYPRE_Int sz = block_size * block_size;
 
    for (i = 0; i < sz; i++)
    {
@@ -530,15 +530,15 @@ hypre_CSRBlockMatrixBlockCopyDataDiag(HYPRE_Complex* i1,
 }
 
 /*--------------------------------------------------------------------------
- * hypre_CSRBlockMatrixBlockTranspose
+ * nalu_hypre_CSRBlockMatrixBlockTranspose
  * (o = i1' )
  *--------------------------------------------------------------------------*/
-HYPRE_Int
-hypre_CSRBlockMatrixBlockTranspose(HYPRE_Complex* i1,
-                                   HYPRE_Complex* o,
-                                   HYPRE_Int block_size)
+NALU_HYPRE_Int
+nalu_hypre_CSRBlockMatrixBlockTranspose(NALU_HYPRE_Complex* i1,
+                                   NALU_HYPRE_Complex* o,
+                                   NALU_HYPRE_Int block_size)
 {
-   HYPRE_Int i, j;
+   NALU_HYPRE_Int i, j;
 
    for (i = 0; i < block_size; i++)
       for (j = 0; j < block_size; j++)
@@ -549,21 +549,21 @@ hypre_CSRBlockMatrixBlockTranspose(HYPRE_Complex* i1,
 }
 
 /*--------------------------------------------------------------------------
- * hypre_CSRBlockMatrixBlockNorm
+ * nalu_hypre_CSRBlockMatrixBlockNorm
  * (out = norm(data) )
  *
  *  (note: these are not all actually "norms")
  *
  *--------------------------------------------------------------------------*/
-HYPRE_Int
-hypre_CSRBlockMatrixBlockNorm(HYPRE_Int norm_type, HYPRE_Complex* data, HYPRE_Real* out,
-                              HYPRE_Int block_size)
+NALU_HYPRE_Int
+nalu_hypre_CSRBlockMatrixBlockNorm(NALU_HYPRE_Int norm_type, NALU_HYPRE_Complex* data, NALU_HYPRE_Real* out,
+                              NALU_HYPRE_Int block_size)
 {
-   HYPRE_Int ierr = 0;
-   HYPRE_Int i, j;
-   HYPRE_Real sum = 0.0;
-   HYPRE_Real *totals;
-   HYPRE_Int sz = block_size * block_size;
+   NALU_HYPRE_Int ierr = 0;
+   NALU_HYPRE_Int i, j;
+   NALU_HYPRE_Real sum = 0.0;
+   NALU_HYPRE_Real *totals;
+   NALU_HYPRE_Int sz = block_size * block_size;
 
    switch (norm_type)
    {
@@ -571,19 +571,19 @@ hypre_CSRBlockMatrixBlockNorm(HYPRE_Int norm_type, HYPRE_Complex* data, HYPRE_Re
       {
          for (i = 0; i < sz; i++)
          {
-            sum += (HYPRE_Real)(data[i]);
+            sum += (NALU_HYPRE_Real)(data[i]);
          }
          break;
       }
       case 5: /* one norm  - max col sum*/
       {
 
-         totals = hypre_CTAlloc(HYPRE_Real,  block_size, HYPRE_MEMORY_HOST);
+         totals = nalu_hypre_CTAlloc(NALU_HYPRE_Real,  block_size, NALU_HYPRE_MEMORY_HOST);
          for (i = 0; i < block_size; i++) /* row */
          {
             for (j = 0; j < block_size; j++) /* col */
             {
-               totals[j] += hypre_cabs(data[i * block_size + j]);
+               totals[j] += nalu_hypre_cabs(data[i * block_size + j]);
             }
          }
 
@@ -592,7 +592,7 @@ hypre_CSRBlockMatrixBlockNorm(HYPRE_Int norm_type, HYPRE_Complex* data, HYPRE_Re
          {
             if (totals[j] > sum) { sum = totals[j]; }
          }
-         hypre_TFree(totals, HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(totals, NALU_HYPRE_MEMORY_HOST);
 
          break;
 
@@ -600,12 +600,12 @@ hypre_CSRBlockMatrixBlockNorm(HYPRE_Int norm_type, HYPRE_Complex* data, HYPRE_Re
       case 4: /* inf norm - max row sum */
       {
 
-         totals = hypre_CTAlloc(HYPRE_Real,  block_size, HYPRE_MEMORY_HOST);
+         totals = nalu_hypre_CTAlloc(NALU_HYPRE_Real,  block_size, NALU_HYPRE_MEMORY_HOST);
          for (i = 0; i < block_size; i++) /* row */
          {
             for (j = 0; j < block_size; j++) /* col */
             {
-               totals[i] += hypre_cabs(data[i * block_size + j]);
+               totals[i] += nalu_hypre_cabs(data[i * block_size + j]);
             }
          }
 
@@ -614,7 +614,7 @@ hypre_CSRBlockMatrixBlockNorm(HYPRE_Int norm_type, HYPRE_Complex* data, HYPRE_Re
          {
             if (totals[i] > sum) { sum = totals[i]; }
          }
-         hypre_TFree(totals, HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(totals, NALU_HYPRE_MEMORY_HOST);
 
          break;
       }
@@ -622,11 +622,11 @@ hypre_CSRBlockMatrixBlockNorm(HYPRE_Int norm_type, HYPRE_Complex* data, HYPRE_Re
       case 3: /* largest element of block (return value includes sign) */
       {
 
-         sum = (HYPRE_Real)data[0];
+         sum = (NALU_HYPRE_Real)data[0];
 
          for (i = 0; i < sz; i++)
          {
-            if (hypre_cabs(data[i]) > hypre_cabs(sum)) { sum = (HYPRE_Real)data[i]; }
+            if (nalu_hypre_cabs(data[i]) > nalu_hypre_cabs(sum)) { sum = (NALU_HYPRE_Real)data[i]; }
          }
 
          break;
@@ -635,7 +635,7 @@ hypre_CSRBlockMatrixBlockNorm(HYPRE_Int norm_type, HYPRE_Complex* data, HYPRE_Re
       {
          for (i = 0; i < sz; i++)
          {
-            sum += hypre_cabs(data[i]);
+            sum += nalu_hypre_cabs(data[i]);
          }
          break;
       }
@@ -645,9 +645,9 @@ hypre_CSRBlockMatrixBlockNorm(HYPRE_Int norm_type, HYPRE_Complex* data, HYPRE_Re
       {
          for (i = 0; i < sz; i++)
          {
-            sum += ((HYPRE_Real)data[i]) * ((HYPRE_Real)data[i]);
+            sum += ((NALU_HYPRE_Real)data[i]) * ((NALU_HYPRE_Real)data[i]);
          }
-         sum = hypre_sqrt(sum);
+         sum = nalu_hypre_sqrt(sum);
       }
    }
 
@@ -657,27 +657,27 @@ hypre_CSRBlockMatrixBlockNorm(HYPRE_Int norm_type, HYPRE_Complex* data, HYPRE_Re
 }
 
 /*--------------------------------------------------------------------------
- * hypre_CSRBlockMatrixBlockMultAdd
+ * nalu_hypre_CSRBlockMatrixBlockMultAdd
  * (o = i1 * i2 + beta * o)
  *--------------------------------------------------------------------------*/
-HYPRE_Int
-hypre_CSRBlockMatrixBlockMultAdd(HYPRE_Complex* i1,
-                                 HYPRE_Complex* i2,
-                                 HYPRE_Complex beta,
-                                 HYPRE_Complex* o,
-                                 HYPRE_Int block_size)
+NALU_HYPRE_Int
+nalu_hypre_CSRBlockMatrixBlockMultAdd(NALU_HYPRE_Complex* i1,
+                                 NALU_HYPRE_Complex* i2,
+                                 NALU_HYPRE_Complex beta,
+                                 NALU_HYPRE_Complex* o,
+                                 NALU_HYPRE_Int block_size)
 {
 
 #if LB_VERSION
    {
-      HYPRE_Complex alp = 1.0;
+      NALU_HYPRE_Complex alp = 1.0;
       dgemm_("N", "N", &block_size, &block_size, &block_size, &alp, i2, &block_size, i1,
              &block_size, &beta, o, &block_size);
    }
 #else
    {
-      HYPRE_Int    i, j, k;
-      HYPRE_Complex ddata;
+      NALU_HYPRE_Int    i, j, k;
+      NALU_HYPRE_Complex ddata;
 
       if (beta == 0.0)
       {
@@ -733,17 +733,17 @@ hypre_CSRBlockMatrixBlockMultAdd(HYPRE_Complex* i1,
 
 
 /*--------------------------------------------------------------------------
- * hypre_CSRBlockMatrixBlockMultAddDiag
+ * nalu_hypre_CSRBlockMatrixBlockMultAddDiag
  * (diag(o) = diag(i1) * diag(i2) + beta * diag(o))
  *--------------------------------------------------------------------------*/
-HYPRE_Int
-hypre_CSRBlockMatrixBlockMultAddDiag(HYPRE_Complex* i1,
-                                     HYPRE_Complex* i2,
-                                     HYPRE_Complex beta,
-                                     HYPRE_Complex* o,
-                                     HYPRE_Int block_size)
+NALU_HYPRE_Int
+nalu_hypre_CSRBlockMatrixBlockMultAddDiag(NALU_HYPRE_Complex* i1,
+                                     NALU_HYPRE_Complex* i2,
+                                     NALU_HYPRE_Complex beta,
+                                     NALU_HYPRE_Complex* o,
+                                     NALU_HYPRE_Int block_size)
 {
-   HYPRE_Int    i;
+   NALU_HYPRE_Int    i;
 
    if (beta == 0.0)
    {
@@ -771,27 +771,27 @@ hypre_CSRBlockMatrixBlockMultAddDiag(HYPRE_Complex* i1,
 }
 
 /*--------------------------------------------------------------------------
- * hypre_CSRBlockMatrixBlockMultAddDiagCheckSign
+ * nalu_hypre_CSRBlockMatrixBlockMultAddDiagCheckSign
  *
  *  only mult elements if sign*diag(i2) is negative
  *(diag(o) = diag(i1) * diag(i2) + beta * diag(o))
  *--------------------------------------------------------------------------*/
-HYPRE_Int
-hypre_CSRBlockMatrixBlockMultAddDiagCheckSign(HYPRE_Complex *i1,
-                                              HYPRE_Complex *i2,
-                                              HYPRE_Complex  beta,
-                                              HYPRE_Complex *o,
-                                              HYPRE_Int      block_size,
-                                              HYPRE_Real    *sign)
+NALU_HYPRE_Int
+nalu_hypre_CSRBlockMatrixBlockMultAddDiagCheckSign(NALU_HYPRE_Complex *i1,
+                                              NALU_HYPRE_Complex *i2,
+                                              NALU_HYPRE_Complex  beta,
+                                              NALU_HYPRE_Complex *o,
+                                              NALU_HYPRE_Int      block_size,
+                                              NALU_HYPRE_Real    *sign)
 {
-   HYPRE_Int    i;
-   HYPRE_Real tmp;
+   NALU_HYPRE_Int    i;
+   NALU_HYPRE_Real tmp;
 
    if (beta == 0.0)
    {
       for (i = 0; i < block_size; i++)
       {
-         tmp = (HYPRE_Real) i2[i * block_size + i] * sign[i];
+         tmp = (NALU_HYPRE_Real) i2[i * block_size + i] * sign[i];
          if (tmp < 0)
          {
             o[i * block_size + i] = i1[i * block_size + i] * i2[i * block_size + i];
@@ -802,7 +802,7 @@ hypre_CSRBlockMatrixBlockMultAddDiagCheckSign(HYPRE_Complex *i1,
    {
       for (i = 0; i < block_size; i++)
       {
-         tmp = (HYPRE_Real) i2[i * block_size + i] * sign[i];
+         tmp = (NALU_HYPRE_Real) i2[i * block_size + i] * sign[i];
          if (tmp < 0)
          {
             o[i * block_size + i] = o[i * block_size + i] + i1[i * block_size + i] * i2[i * block_size + i];
@@ -825,17 +825,17 @@ hypre_CSRBlockMatrixBlockMultAddDiagCheckSign(HYPRE_Complex *i1,
 }
 
 /*--------------------------------------------------------------------------
- * hypre_CSRBlockMatrixBlockMultAddDiag2 (scales cols of il by diag of i2)
+ * nalu_hypre_CSRBlockMatrixBlockMultAddDiag2 (scales cols of il by diag of i2)
  * ((o) = (i1) * diag(i2) + beta * (o))
  *--------------------------------------------------------------------------*/
-HYPRE_Int
-hypre_CSRBlockMatrixBlockMultAddDiag2(HYPRE_Complex* i1,
-                                      HYPRE_Complex* i2,
-                                      HYPRE_Complex beta,
-                                      HYPRE_Complex* o,
-                                      HYPRE_Int block_size)
+NALU_HYPRE_Int
+nalu_hypre_CSRBlockMatrixBlockMultAddDiag2(NALU_HYPRE_Complex* i1,
+                                      NALU_HYPRE_Complex* i2,
+                                      NALU_HYPRE_Complex beta,
+                                      NALU_HYPRE_Complex* o,
+                                      NALU_HYPRE_Int block_size)
 {
-   HYPRE_Int    i, j;
+   NALU_HYPRE_Int    i, j;
 
    if (beta == 0.0)
    {
@@ -877,22 +877,22 @@ hypre_CSRBlockMatrixBlockMultAddDiag2(HYPRE_Complex* i1,
 }
 
 /*--------------------------------------------------------------------------
- * hypre_CSRBlockMatrixBlockMultAddDiag3 (scales cols of il by i2 -
+ * nalu_hypre_CSRBlockMatrixBlockMultAddDiag3 (scales cols of il by i2 -
                                           whose diag elements are row sums)
  * ((o) = (i1) * diag(i2) + beta * (o))
  *--------------------------------------------------------------------------*/
-HYPRE_Int
-hypre_CSRBlockMatrixBlockMultAddDiag3(HYPRE_Complex* i1,
-                                      HYPRE_Complex* i2,
-                                      HYPRE_Complex beta,
-                                      HYPRE_Complex* o,
-                                      HYPRE_Int block_size)
+NALU_HYPRE_Int
+nalu_hypre_CSRBlockMatrixBlockMultAddDiag3(NALU_HYPRE_Complex* i1,
+                                      NALU_HYPRE_Complex* i2,
+                                      NALU_HYPRE_Complex beta,
+                                      NALU_HYPRE_Complex* o,
+                                      NALU_HYPRE_Int block_size)
 {
-   HYPRE_Int    i, j;
+   NALU_HYPRE_Int    i, j;
 
-   HYPRE_Complex *row_sum;
+   NALU_HYPRE_Complex *row_sum;
 
-   row_sum = hypre_CTAlloc(HYPRE_Complex,  block_size, HYPRE_MEMORY_HOST);
+   row_sum = nalu_hypre_CTAlloc(NALU_HYPRE_Complex,  block_size, NALU_HYPRE_MEMORY_HOST);
    for (i = 0; i < block_size; i++)
    {
       for (j = 0; j < block_size; j++)
@@ -935,30 +935,30 @@ hypre_CSRBlockMatrixBlockMultAddDiag3(HYPRE_Complex* i1,
       }
    }
 
-   hypre_TFree(row_sum, HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(row_sum, NALU_HYPRE_MEMORY_HOST);
 
    return 0;
 }
 /*--------------------------------------------------------------------------
- * hypre_CSRBlockMatrixBlockMatvec
+ * nalu_hypre_CSRBlockMatrixBlockMatvec
  * (ov = alpha* mat * v + beta * ov)
  * mat is the matrix - size is block_size^2
  * alpha and beta are scalars
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_CSRBlockMatrixBlockMatvec(HYPRE_Complex alpha,
-                                HYPRE_Complex* mat,
-                                HYPRE_Complex* v,
-                                HYPRE_Complex beta,
-                                HYPRE_Complex* ov,
-                                HYPRE_Int block_size)
+NALU_HYPRE_Int
+nalu_hypre_CSRBlockMatrixBlockMatvec(NALU_HYPRE_Complex alpha,
+                                NALU_HYPRE_Complex* mat,
+                                NALU_HYPRE_Complex* v,
+                                NALU_HYPRE_Complex beta,
+                                NALU_HYPRE_Complex* ov,
+                                NALU_HYPRE_Int block_size)
 {
-   HYPRE_Int ierr = 0;
+   NALU_HYPRE_Int ierr = 0;
 
 #if LB_VERSION
    {
-      HYPRE_Int one = 1;
+      NALU_HYPRE_Int one = 1;
 
       dgemv_("T",  &block_size, &block_size, &alpha, mat, &block_size, v,
              &one, &beta, ov, &one);
@@ -966,8 +966,8 @@ hypre_CSRBlockMatrixBlockMatvec(HYPRE_Complex alpha,
 
 #else
    {
-      HYPRE_Int    i, j;
-      HYPRE_Complex ddata;
+      NALU_HYPRE_Int    i, j;
+      NALU_HYPRE_Complex ddata;
 
       /* if alpha = 0, then no matvec */
       if (alpha == 0.0)
@@ -1028,30 +1028,30 @@ hypre_CSRBlockMatrixBlockMatvec(HYPRE_Complex alpha,
 
 
 /*--------------------------------------------------------------------------
- * hypre_CSRBlockMatrixBlockInvMatvec
+ * nalu_hypre_CSRBlockMatrixBlockInvMatvec
  * (ov = mat^{-1} * v)
  * o and v are vectors
  * mat is the matrix - size is block_size^2
  *--------------------------------------------------------------------------*/
-HYPRE_Int
-hypre_CSRBlockMatrixBlockInvMatvec(HYPRE_Complex* mat, HYPRE_Complex* v,
-                                   HYPRE_Complex* ov, HYPRE_Int block_size)
+NALU_HYPRE_Int
+nalu_hypre_CSRBlockMatrixBlockInvMatvec(NALU_HYPRE_Complex* mat, NALU_HYPRE_Complex* v,
+                                   NALU_HYPRE_Complex* ov, NALU_HYPRE_Int block_size)
 {
-   HYPRE_Int ierr = 0;
-   HYPRE_Complex *mat_i;
+   NALU_HYPRE_Int ierr = 0;
+   NALU_HYPRE_Complex *mat_i;
 
-   mat_i = hypre_CTAlloc(HYPRE_Complex,  block_size * block_size, HYPRE_MEMORY_HOST);
+   mat_i = nalu_hypre_CTAlloc(NALU_HYPRE_Complex,  block_size * block_size, NALU_HYPRE_MEMORY_HOST);
 
 #if LB_VERSION
    {
 
-      HYPRE_Int one, info;
-      HYPRE_Int *piv;
-      HYPRE_Int sz;
+      NALU_HYPRE_Int one, info;
+      NALU_HYPRE_Int *piv;
+      NALU_HYPRE_Int sz;
 
 
       one = 1;
-      piv = hypre_CTAlloc(HYPRE_Int,  block_size, HYPRE_MEMORY_HOST);
+      piv = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  block_size, NALU_HYPRE_MEMORY_HOST);
       sz = block_size * block_size;
 
 
@@ -1064,8 +1064,8 @@ hypre_CSRBlockMatrixBlockInvMatvec(HYPRE_Complex* mat, HYPRE_Complex* v,
       dgetrf_(&block_size, &block_size, mat_i, &block_size, piv, &info);
       if (info)
       {
-         hypre_TFree(mat_i, HYPRE_MEMORY_HOST);
-         hypre_TFree(piv, HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(mat_i, NALU_HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(piv, NALU_HYPRE_MEMORY_HOST);
          return (-1);
       }
 
@@ -1074,36 +1074,36 @@ hypre_CSRBlockMatrixBlockInvMatvec(HYPRE_Complex* mat, HYPRE_Complex* v,
               mat_i, &block_size, piv, ov, &block_size, &info);
       if (info)
       {
-         hypre_TFree(mat_i, HYPRE_MEMORY_HOST);
-         hypre_TFree(piv, HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(mat_i, NALU_HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(piv, NALU_HYPRE_MEMORY_HOST);
          return (-1);
       }
 
-      hypre_TFree(piv, HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(piv, NALU_HYPRE_MEMORY_HOST);
 
    }
 
 #else
    {
-      HYPRE_Int m, j, k;
-      HYPRE_Int piv_row;
-      HYPRE_Real eps;
-      HYPRE_Complex factor;
-      HYPRE_Complex piv, tmp;
+      NALU_HYPRE_Int m, j, k;
+      NALU_HYPRE_Int piv_row;
+      NALU_HYPRE_Real eps;
+      NALU_HYPRE_Complex factor;
+      NALU_HYPRE_Complex piv, tmp;
       eps = 1.0e-6;
 
       if (block_size == 1 )
       {
-         if (hypre_cabs(mat[0]) > 1e-10)
+         if (nalu_hypre_cabs(mat[0]) > 1e-10)
          {
             ov[0] = v[0] / mat[0];
-            hypre_TFree(mat_i, HYPRE_MEMORY_HOST);
+            nalu_hypre_TFree(mat_i, NALU_HYPRE_MEMORY_HOST);
             return (ierr);
          }
          else
          {
-            /* hypre_printf("GE zero pivot error\n"); */
-            hypre_TFree(mat_i, HYPRE_MEMORY_HOST);
+            /* nalu_hypre_printf("GE zero pivot error\n"); */
+            nalu_hypre_TFree(mat_i, NALU_HYPRE_MEMORY_HOST);
             return (-1);
          }
       }
@@ -1131,7 +1131,7 @@ hypre_CSRBlockMatrixBlockInvMatvec(HYPRE_Complex* mat, HYPRE_Complex* v,
             /* find the largest pivot in position k*/
             for (j = k + 1; j < block_size; j++)
             {
-               if (hypre_cabs(mat_i[j * block_size + k]) > hypre_cabs(piv))
+               if (nalu_hypre_cabs(mat_i[j * block_size + k]) > nalu_hypre_cabs(piv))
                {
                   piv =  mat_i[j * block_size + k];
                   piv_row = j;
@@ -1152,7 +1152,7 @@ hypre_CSRBlockMatrixBlockInvMatvec(HYPRE_Complex* mat, HYPRE_Complex* v,
             }
             /* end of pivoting */
 
-            if (hypre_cabs(piv) > eps)
+            if (nalu_hypre_cabs(piv) > eps)
             {
                /* now we can factor into U */
                for (j = k + 1; j < block_size; j++)
@@ -1168,18 +1168,18 @@ hypre_CSRBlockMatrixBlockInvMatvec(HYPRE_Complex* mat, HYPRE_Complex* v,
             }
             else
             {
-               /* hypre_printf("Block of matrix is nearly singular: zero pivot error\n");  */
-               hypre_TFree(mat_i, HYPRE_MEMORY_HOST);
+               /* nalu_hypre_printf("Block of matrix is nearly singular: zero pivot error\n");  */
+               nalu_hypre_TFree(mat_i, NALU_HYPRE_MEMORY_HOST);
                return (-1);
             }
          }
 
          /* we also need to check the pivot in the last row to see if it is zero */
          k = block_size - 1; /* last row */
-         if ( hypre_cabs(mat_i[k * block_size + k]) < eps)
+         if ( nalu_hypre_cabs(mat_i[k * block_size + k]) < eps)
          {
-            /* hypre_printf("Block of matrix is nearly singular: zero pivot error\n");  */
-            hypre_TFree(mat_i, HYPRE_MEMORY_HOST);
+            /* nalu_hypre_printf("Block of matrix is nearly singular: zero pivot error\n");  */
+            nalu_hypre_TFree(mat_i, NALU_HYPRE_MEMORY_HOST);
             return (-1);
          }
 
@@ -1203,7 +1203,7 @@ hypre_CSRBlockMatrixBlockInvMatvec(HYPRE_Complex* mat, HYPRE_Complex* v,
 #endif
 
 
-   hypre_TFree(mat_i, HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(mat_i, NALU_HYPRE_MEMORY_HOST);
 
    return (ierr);
 }
@@ -1211,32 +1211,32 @@ hypre_CSRBlockMatrixBlockInvMatvec(HYPRE_Complex* mat, HYPRE_Complex* v,
 
 
 /*--------------------------------------------------------------------------
- * hypre_CSRBlockMatrixBlockInvMult
+ * nalu_hypre_CSRBlockMatrixBlockInvMult
  * (o = i1^{-1} * i2)
  *--------------------------------------------------------------------------*/
-HYPRE_Int
-hypre_CSRBlockMatrixBlockInvMult(HYPRE_Complex* i1, HYPRE_Complex* i2, HYPRE_Complex* o,
-                                 HYPRE_Int block_size)
+NALU_HYPRE_Int
+nalu_hypre_CSRBlockMatrixBlockInvMult(NALU_HYPRE_Complex* i1, NALU_HYPRE_Complex* i2, NALU_HYPRE_Complex* o,
+                                 NALU_HYPRE_Int block_size)
 {
 
-   HYPRE_Int ierr = 0;
-   HYPRE_Int i, j;
-   HYPRE_Complex *m_i1;
+   NALU_HYPRE_Int ierr = 0;
+   NALU_HYPRE_Int i, j;
+   NALU_HYPRE_Complex *m_i1;
 
-   m_i1 = hypre_CTAlloc(HYPRE_Complex,  block_size * block_size, HYPRE_MEMORY_HOST);
+   m_i1 = nalu_hypre_CTAlloc(NALU_HYPRE_Complex,  block_size * block_size, NALU_HYPRE_MEMORY_HOST);
 
 #if LB_VERSION
    {
 
-      HYPRE_Int one, info;
-      HYPRE_Int *piv;
-      HYPRE_Int sz;
+      NALU_HYPRE_Int one, info;
+      NALU_HYPRE_Int *piv;
+      NALU_HYPRE_Int sz;
 
-      HYPRE_Complex *i2_t;
+      NALU_HYPRE_Complex *i2_t;
 
       one = 1;
-      i2_t = hypre_CTAlloc(HYPRE_Complex,  block_size * block_size, HYPRE_MEMORY_HOST);
-      piv = hypre_CTAlloc(HYPRE_Int,  block_size, HYPRE_MEMORY_HOST);
+      i2_t = nalu_hypre_CTAlloc(NALU_HYPRE_Complex,  block_size * block_size, NALU_HYPRE_MEMORY_HOST);
+      piv = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  block_size, NALU_HYPRE_MEMORY_HOST);
 
 
       /* copy i1 to m_i1*/
@@ -1248,9 +1248,9 @@ hypre_CSRBlockMatrixBlockInvMult(HYPRE_Complex* i1, HYPRE_Complex* i2, HYPRE_Com
       dgetrf_(&block_size, &block_size, m_i1, &block_size, piv, &info);
       if (info)
       {
-         hypre_TFree(m_i1, HYPRE_MEMORY_HOST);
-         hypre_TFree(i2_t, HYPRE_MEMORY_HOST);
-         hypre_TFree(piv, HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(m_i1, NALU_HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(i2_t, NALU_HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(piv, NALU_HYPRE_MEMORY_HOST);
          return (-1);
       }
 
@@ -1268,9 +1268,9 @@ hypre_CSRBlockMatrixBlockInvMult(HYPRE_Complex* i1, HYPRE_Complex* i2, HYPRE_Com
               m_i1, &block_size, piv, i2_t, &block_size, &info);
       if (info)
       {
-         hypre_TFree(m_i1, HYPRE_MEMORY_HOST);
-         hypre_TFree(i2_t, HYPRE_MEMORY_HOST);
-         hypre_TFree(piv, HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(m_i1, NALU_HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(i2_t, NALU_HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(piv, NALU_HYPRE_MEMORY_HOST);
          return (-1);
       }
 
@@ -1283,33 +1283,33 @@ hypre_CSRBlockMatrixBlockInvMult(HYPRE_Complex* i1, HYPRE_Complex* i2, HYPRE_Com
          }
       }
 
-      hypre_TFree(i2_t, HYPRE_MEMORY_HOST);
-      hypre_TFree(piv, HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(i2_t, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(piv, NALU_HYPRE_MEMORY_HOST);
 
    }
 
 #else
    {
-      HYPRE_Int m, k;
-      HYPRE_Int piv_row;
-      HYPRE_Real eps;
-      HYPRE_Complex factor;
-      HYPRE_Complex piv, tmp;
+      NALU_HYPRE_Int m, k;
+      NALU_HYPRE_Int piv_row;
+      NALU_HYPRE_Real eps;
+      NALU_HYPRE_Complex factor;
+      NALU_HYPRE_Complex piv, tmp;
 
       eps = 1.0e-6;
 
       if (block_size == 1 )
       {
-         if (hypre_cabs(m_i1[0]) > 1e-10)
+         if (nalu_hypre_cabs(m_i1[0]) > 1e-10)
          {
             o[0] = i2[0] / i1[0];
-            hypre_TFree(m_i1, HYPRE_MEMORY_HOST);
+            nalu_hypre_TFree(m_i1, NALU_HYPRE_MEMORY_HOST);
             return (ierr);
          }
          else
          {
-            /* hypre_printf("GE zero pivot error\n"); */
-            hypre_TFree(m_i1, HYPRE_MEMORY_HOST);
+            /* nalu_hypre_printf("GE zero pivot error\n"); */
+            nalu_hypre_TFree(m_i1, NALU_HYPRE_MEMORY_HOST);
             return (-1);
          }
       }
@@ -1336,7 +1336,7 @@ hypre_CSRBlockMatrixBlockInvMult(HYPRE_Complex* i1, HYPRE_Complex* i2, HYPRE_Com
             /* find the largest pivot in position k*/
             for (j = k + 1; j < block_size; j++)
             {
-               if (hypre_cabs(m_i1[j * block_size + k]) > hypre_cabs(piv))
+               if (nalu_hypre_cabs(m_i1[j * block_size + k]) > nalu_hypre_cabs(piv))
                {
                   piv =  m_i1[j * block_size + k];
                   piv_row = j;
@@ -1360,7 +1360,7 @@ hypre_CSRBlockMatrixBlockInvMult(HYPRE_Complex* i1, HYPRE_Complex* i2, HYPRE_Com
             /* end of pivoting */
 
 
-            if (hypre_cabs(piv) > eps)
+            if (nalu_hypre_cabs(piv) > eps)
             {
                /* now we can factor into U */
                for (j = k + 1; j < block_size; j++)
@@ -1381,8 +1381,8 @@ hypre_CSRBlockMatrixBlockInvMult(HYPRE_Complex* i1, HYPRE_Complex* i2, HYPRE_Com
             }
             else
             {
-               /* hypre_printf("Block of matrix is nearly singular: zero pivot error\n"); */
-               hypre_TFree(m_i1, HYPRE_MEMORY_HOST);
+               /* nalu_hypre_printf("Block of matrix is nearly singular: zero pivot error\n"); */
+               nalu_hypre_TFree(m_i1, NALU_HYPRE_MEMORY_HOST);
                return (-1);
             }
          }
@@ -1390,10 +1390,10 @@ hypre_CSRBlockMatrixBlockInvMult(HYPRE_Complex* i1, HYPRE_Complex* i2, HYPRE_Com
 
          /* we also need to check the pivot in the last row to see if it is zero */
          k = block_size - 1; /* last row */
-         if ( hypre_cabs(m_i1[k * block_size + k]) < eps)
+         if ( nalu_hypre_cabs(m_i1[k * block_size + k]) < eps)
          {
-            /* hypre_printf("Block of matrix is nearly singular: zero pivot error\n"); */
-            hypre_TFree(m_i1, HYPRE_MEMORY_HOST);
+            /* nalu_hypre_printf("Block of matrix is nearly singular: zero pivot error\n"); */
+            nalu_hypre_TFree(m_i1, NALU_HYPRE_MEMORY_HOST);
             return (-1);
          }
 
@@ -1418,36 +1418,36 @@ hypre_CSRBlockMatrixBlockInvMult(HYPRE_Complex* i1, HYPRE_Complex* i2, HYPRE_Com
    }
 
 #endif
-   hypre_TFree(m_i1, HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(m_i1, NALU_HYPRE_MEMORY_HOST);
 
    return ierr;
 }
 
 
 /*--------------------------------------------------------------------------
- * hypre_CSRBlockMatrixBlockMultInv
+ * nalu_hypre_CSRBlockMatrixBlockMultInv
  * (o = i2*il^(-1))
  *--------------------------------------------------------------------------*/
-HYPRE_Int
-hypre_CSRBlockMatrixBlockMultInv(HYPRE_Complex* i1, HYPRE_Complex* i2, HYPRE_Complex* o,
-                                 HYPRE_Int block_size)
+NALU_HYPRE_Int
+nalu_hypre_CSRBlockMatrixBlockMultInv(NALU_HYPRE_Complex* i1, NALU_HYPRE_Complex* i2, NALU_HYPRE_Complex* o,
+                                 NALU_HYPRE_Int block_size)
 {
 
-   HYPRE_Int ierr = 0;
+   NALU_HYPRE_Int ierr = 0;
 
 
 #if LB_VERSION
 
    {
       /* same as solving A^T C^T = B^T */
-      HYPRE_Complex *m_i1;
-      HYPRE_Int info;
-      HYPRE_Int *piv;
-      HYPRE_Int sz, one;
+      NALU_HYPRE_Complex *m_i1;
+      NALU_HYPRE_Int info;
+      NALU_HYPRE_Int *piv;
+      NALU_HYPRE_Int sz, one;
 
 
-      piv = hypre_CTAlloc(HYPRE_Int,  block_size, HYPRE_MEMORY_HOST);
-      m_i1 = hypre_CTAlloc(HYPRE_Complex,  block_size * block_size, HYPRE_MEMORY_HOST);
+      piv = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  block_size, NALU_HYPRE_MEMORY_HOST);
+      m_i1 = nalu_hypre_CTAlloc(NALU_HYPRE_Complex,  block_size * block_size, NALU_HYPRE_MEMORY_HOST);
       one = 1;
       sz = block_size * block_size;
 
@@ -1460,8 +1460,8 @@ hypre_CSRBlockMatrixBlockMultInv(HYPRE_Complex* i1, HYPRE_Complex* i2, HYPRE_Com
       dgetrf_(&block_size, &block_size, m_i1, &block_size, piv, &info);
       if (info)
       {
-         hypre_TFree(m_i1, HYPRE_MEMORY_HOST);
-         hypre_TFree(piv, HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(m_i1, NALU_HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(piv, NALU_HYPRE_MEMORY_HOST);
          return (-1);
       }
       /* writes over B */
@@ -1469,52 +1469,52 @@ hypre_CSRBlockMatrixBlockMultInv(HYPRE_Complex* i1, HYPRE_Complex* i2, HYPRE_Com
               m_i1, &block_size, piv, o, &block_size, &info);
       if (info)
       {
-         hypre_TFree(m_i1, HYPRE_MEMORY_HOST);
-         hypre_TFree(piv, HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(m_i1, NALU_HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(piv, NALU_HYPRE_MEMORY_HOST);
          return (-1);
       }
 
-      hypre_TFree(m_i1, HYPRE_MEMORY_HOST);
-      hypre_TFree(piv, HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(m_i1, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(piv, NALU_HYPRE_MEMORY_HOST);
    }
 
 #else
    {
-      HYPRE_Real     eps;
-      HYPRE_Complex *i1_t, *i2_t, *o_t;
+      NALU_HYPRE_Real     eps;
+      NALU_HYPRE_Complex *i1_t, *i2_t, *o_t;
 
       eps = 1.0e-12;
 
       if (block_size == 1 )
       {
-         if (hypre_cabs(i1[0]) > eps)
+         if (nalu_hypre_cabs(i1[0]) > eps)
          {
             o[0] = i2[0] / i1[0];
             return (ierr);
          }
          else
          {
-            /* hypre_printf("GE zero pivot error\n"); */
+            /* nalu_hypre_printf("GE zero pivot error\n"); */
             return (-1);
          }
       }
       else
       {
 
-         i1_t = hypre_CTAlloc(HYPRE_Complex,  block_size * block_size, HYPRE_MEMORY_HOST);
-         i2_t = hypre_CTAlloc(HYPRE_Complex,  block_size * block_size, HYPRE_MEMORY_HOST);
-         o_t = hypre_CTAlloc(HYPRE_Complex,  block_size * block_size, HYPRE_MEMORY_HOST);
+         i1_t = nalu_hypre_CTAlloc(NALU_HYPRE_Complex,  block_size * block_size, NALU_HYPRE_MEMORY_HOST);
+         i2_t = nalu_hypre_CTAlloc(NALU_HYPRE_Complex,  block_size * block_size, NALU_HYPRE_MEMORY_HOST);
+         o_t = nalu_hypre_CTAlloc(NALU_HYPRE_Complex,  block_size * block_size, NALU_HYPRE_MEMORY_HOST);
 
          /* TO DO:: this could be done more efficiently! */
-         hypre_CSRBlockMatrixBlockTranspose(i1, i1_t, block_size);
-         hypre_CSRBlockMatrixBlockTranspose(i2, i2_t, block_size);
-         ierr = hypre_CSRBlockMatrixBlockInvMult(i1_t, i2_t, o_t, block_size);
+         nalu_hypre_CSRBlockMatrixBlockTranspose(i1, i1_t, block_size);
+         nalu_hypre_CSRBlockMatrixBlockTranspose(i2, i2_t, block_size);
+         ierr = nalu_hypre_CSRBlockMatrixBlockInvMult(i1_t, i2_t, o_t, block_size);
 
-         if (!ierr) { hypre_CSRBlockMatrixBlockTranspose(o_t, o, block_size); }
+         if (!ierr) { nalu_hypre_CSRBlockMatrixBlockTranspose(o_t, o, block_size); }
 
-         hypre_TFree(i1_t, HYPRE_MEMORY_HOST);
-         hypre_TFree(i2_t, HYPRE_MEMORY_HOST);
-         hypre_TFree(o_t, HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(i1_t, NALU_HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(i2_t, NALU_HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(o_t, NALU_HYPRE_MEMORY_HOST);
 
       }
    }
@@ -1526,18 +1526,18 @@ hypre_CSRBlockMatrixBlockMultInv(HYPRE_Complex* i1, HYPRE_Complex* i2, HYPRE_Com
 
 
 /*--------------------------------------------------------------------------
- * hypre_CSRBlockMatrixBlockInvMultDiag - zeros off-d entires
+ * nalu_hypre_CSRBlockMatrixBlockInvMultDiag - zeros off-d entires
  * (o = diag(i1)^{-1} * diag(i2))
  *--------------------------------------------------------------------------*/
-HYPRE_Int
-hypre_CSRBlockMatrixBlockInvMultDiag(HYPRE_Complex* i1, HYPRE_Complex* i2, HYPRE_Complex* o,
-                                     HYPRE_Int block_size)
+NALU_HYPRE_Int
+nalu_hypre_CSRBlockMatrixBlockInvMultDiag(NALU_HYPRE_Complex* i1, NALU_HYPRE_Complex* i2, NALU_HYPRE_Complex* o,
+                                     NALU_HYPRE_Int block_size)
 {
 
-   HYPRE_Int  ierr = 0;
-   HYPRE_Int  i;
-   HYPRE_Int  sz = block_size * block_size;
-   HYPRE_Real eps = 1.0e-8;
+   NALU_HYPRE_Int  ierr = 0;
+   NALU_HYPRE_Int  i;
+   NALU_HYPRE_Int  sz = block_size * block_size;
+   NALU_HYPRE_Real eps = 1.0e-8;
 
    for (i = 0; i < sz; i++)
    {
@@ -1546,13 +1546,13 @@ hypre_CSRBlockMatrixBlockInvMultDiag(HYPRE_Complex* i1, HYPRE_Complex* i2, HYPRE
 
    for (i = 0; i < block_size; i++)
    {
-      if (hypre_cabs(i1[i * block_size + i]) > eps)
+      if (nalu_hypre_cabs(i1[i * block_size + i]) > eps)
       {
          o[i * block_size + i] = i2[i * block_size + i] / i1[i * block_size + i];
       }
       else
       {
-         /* hypre_printf("GE zero pivot error\n"); */
+         /* nalu_hypre_printf("GE zero pivot error\n"); */
          return (-1);
       }
    }
@@ -1561,24 +1561,24 @@ hypre_CSRBlockMatrixBlockInvMultDiag(HYPRE_Complex* i1, HYPRE_Complex* i2, HYPRE
 }
 
 /*--------------------------------------------------------------------------
- * hypre_CSRBlockMatrixBlockInvMultDiag2
+ * nalu_hypre_CSRBlockMatrixBlockInvMultDiag2
  * (o = (i1)* diag(i2)^-1) - so this scales the cols of il by
                              the diag entries in i2
  *--------------------------------------------------------------------------*/
-HYPRE_Int
-hypre_CSRBlockMatrixBlockInvMultDiag2(HYPRE_Complex* i1, HYPRE_Complex* i2, HYPRE_Complex* o,
-                                      HYPRE_Int block_size)
+NALU_HYPRE_Int
+nalu_hypre_CSRBlockMatrixBlockInvMultDiag2(NALU_HYPRE_Complex* i1, NALU_HYPRE_Complex* i2, NALU_HYPRE_Complex* o,
+                                      NALU_HYPRE_Int block_size)
 {
 
-   HYPRE_Int ierr = 0;
-   HYPRE_Int i, j;
+   NALU_HYPRE_Int ierr = 0;
+   NALU_HYPRE_Int i, j;
 
-   HYPRE_Real    eps = 1.0e-8;
-   HYPRE_Complex tmp;
+   NALU_HYPRE_Real    eps = 1.0e-8;
+   NALU_HYPRE_Complex tmp;
 
    for (i = 0; i < block_size; i++)
    {
-      if (hypre_cabs(i2[i * block_size + i]) > eps)
+      if (nalu_hypre_cabs(i2[i * block_size + i]) > eps)
       {
          tmp = 1 / i2[i * block_size + i];
       }
@@ -1597,19 +1597,19 @@ hypre_CSRBlockMatrixBlockInvMultDiag2(HYPRE_Complex* i1, HYPRE_Complex* i2, HYPR
 
 
 /*--------------------------------------------------------------------------
- * hypre_CSRBlockMatrixBlockInvMultDiag3
+ * nalu_hypre_CSRBlockMatrixBlockInvMultDiag3
  * (o = (i1)* diag(i2)^-1) - so this scales the cols of il by
                              the i2 whose diags are row sums
  *--------------------------------------------------------------------------*/
-HYPRE_Int
-hypre_CSRBlockMatrixBlockInvMultDiag3(HYPRE_Complex* i1, HYPRE_Complex* i2, HYPRE_Complex* o,
-                                      HYPRE_Int block_size)
+NALU_HYPRE_Int
+nalu_hypre_CSRBlockMatrixBlockInvMultDiag3(NALU_HYPRE_Complex* i1, NALU_HYPRE_Complex* i2, NALU_HYPRE_Complex* o,
+                                      NALU_HYPRE_Int block_size)
 {
 
-   HYPRE_Int ierr = 0;
-   HYPRE_Int i, j;
-   HYPRE_Real    eps = 1.0e-8;
-   HYPRE_Complex tmp, row_sum;
+   NALU_HYPRE_Int ierr = 0;
+   NALU_HYPRE_Int i, j;
+   NALU_HYPRE_Real    eps = 1.0e-8;
+   NALU_HYPRE_Complex tmp, row_sum;
 
    for (i = 0; i < block_size; i++)
    {
@@ -1621,7 +1621,7 @@ hypre_CSRBlockMatrixBlockInvMultDiag3(HYPRE_Complex* i1, HYPRE_Complex* i2, HYPR
       }
 
       /* invert */
-      if (hypre_cabs(row_sum) > eps)
+      if (nalu_hypre_cabs(row_sum) > eps)
       {
          tmp = 1 / row_sum;
       }
@@ -1643,30 +1643,30 @@ hypre_CSRBlockMatrixBlockInvMultDiag3(HYPRE_Complex* i1, HYPRE_Complex* i2, HYPR
 
 
 /*--------------------------------------------------------------------------
- * hypre_CSRBlockMatrixTranspose
+ * nalu_hypre_CSRBlockMatrixTranspose
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int hypre_CSRBlockMatrixTranspose(hypre_CSRBlockMatrix *A,
-                                        hypre_CSRBlockMatrix **AT, HYPRE_Int data)
+NALU_HYPRE_Int nalu_hypre_CSRBlockMatrixTranspose(nalu_hypre_CSRBlockMatrix *A,
+                                        nalu_hypre_CSRBlockMatrix **AT, NALU_HYPRE_Int data)
 
 {
-   HYPRE_Complex       *A_data = hypre_CSRBlockMatrixData(A);
-   HYPRE_Int          *A_i = hypre_CSRBlockMatrixI(A);
-   HYPRE_Int          *A_j = hypre_CSRBlockMatrixJ(A);
-   HYPRE_Int           num_rowsA = hypre_CSRBlockMatrixNumRows(A);
-   HYPRE_Int           num_colsA = hypre_CSRBlockMatrixNumCols(A);
-   HYPRE_Int           num_nonzerosA = hypre_CSRBlockMatrixNumNonzeros(A);
-   HYPRE_Int           block_size = hypre_CSRBlockMatrixBlockSize(A);
+   NALU_HYPRE_Complex       *A_data = nalu_hypre_CSRBlockMatrixData(A);
+   NALU_HYPRE_Int          *A_i = nalu_hypre_CSRBlockMatrixI(A);
+   NALU_HYPRE_Int          *A_j = nalu_hypre_CSRBlockMatrixJ(A);
+   NALU_HYPRE_Int           num_rowsA = nalu_hypre_CSRBlockMatrixNumRows(A);
+   NALU_HYPRE_Int           num_colsA = nalu_hypre_CSRBlockMatrixNumCols(A);
+   NALU_HYPRE_Int           num_nonzerosA = nalu_hypre_CSRBlockMatrixNumNonzeros(A);
+   NALU_HYPRE_Int           block_size = nalu_hypre_CSRBlockMatrixBlockSize(A);
 
-   HYPRE_Complex       *AT_data;
-   HYPRE_Int          *AT_i;
-   HYPRE_Int          *AT_j;
-   HYPRE_Int           num_rowsAT;
-   HYPRE_Int           num_colsAT;
-   HYPRE_Int           num_nonzerosAT;
+   NALU_HYPRE_Complex       *AT_data;
+   NALU_HYPRE_Int          *AT_i;
+   NALU_HYPRE_Int          *AT_j;
+   NALU_HYPRE_Int           num_rowsAT;
+   NALU_HYPRE_Int           num_colsAT;
+   NALU_HYPRE_Int           num_nonzerosAT;
 
-   HYPRE_Int           max_col;
-   HYPRE_Int           i, j, k, m, offset, bnnz;
+   NALU_HYPRE_Int           max_col;
+   NALU_HYPRE_Int           i, j, k, m, offset, bnnz;
 
    /*--------------------------------------------------------------
     * First, ascertain that num_cols and num_nonzeros has been set.
@@ -1687,17 +1687,17 @@ HYPRE_Int hypre_CSRBlockMatrixTranspose(hypre_CSRBlockMatrix *A,
    num_nonzerosAT = num_nonzerosA;
    bnnz = block_size * block_size;
 
-   *AT = hypre_CSRBlockMatrixCreate(block_size, num_rowsAT, num_colsAT,
+   *AT = nalu_hypre_CSRBlockMatrixCreate(block_size, num_rowsAT, num_colsAT,
                                     num_nonzerosAT);
 
-   AT_i = hypre_CTAlloc(HYPRE_Int,  num_rowsAT + 1, HYPRE_MEMORY_HOST);
-   AT_j = hypre_CTAlloc(HYPRE_Int,  num_nonzerosAT, HYPRE_MEMORY_HOST);
-   hypre_CSRBlockMatrixI(*AT) = AT_i;
-   hypre_CSRBlockMatrixJ(*AT) = AT_j;
+   AT_i = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  num_rowsAT + 1, NALU_HYPRE_MEMORY_HOST);
+   AT_j = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  num_nonzerosAT, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_CSRBlockMatrixI(*AT) = AT_i;
+   nalu_hypre_CSRBlockMatrixJ(*AT) = AT_j;
    if (data)
    {
-      AT_data = hypre_CTAlloc(HYPRE_Complex,  num_nonzerosAT * bnnz, HYPRE_MEMORY_HOST);
-      hypre_CSRBlockMatrixData(*AT) = AT_data;
+      AT_data = nalu_hypre_CTAlloc(NALU_HYPRE_Complex,  num_nonzerosAT * bnnz, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_CSRBlockMatrixData(*AT) = AT_data;
    }
 
    /*-----------------------------------------------------------------

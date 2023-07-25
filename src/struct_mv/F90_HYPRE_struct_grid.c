@@ -7,11 +7,11 @@
 
 /******************************************************************************
  *
- * HYPRE_StructGrid interface
+ * NALU_HYPRE_StructGrid interface
  *
  *****************************************************************************/
 
-#include "_hypre_struct_mv.h"
+#include "_nalu_hypre_struct_mv.h"
 #include "fortran.h"
 
 #ifdef __cplusplus
@@ -19,99 +19,99 @@ extern "C" {
 #endif
 
 /*--------------------------------------------------------------------------
- * HYPRE_StructGridCreate
+ * NALU_HYPRE_StructGridCreate
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_structgridcreate, HYPRE_STRUCTGRIDCREATE)
-( hypre_F90_Comm *comm,
-  hypre_F90_Int *dim,
-  hypre_F90_Obj *grid,
-  hypre_F90_Int *ierr )
+nalu_hypre_F90_IFACE(nalu_hypre_structgridcreate, NALU_HYPRE_STRUCTGRIDCREATE)
+( nalu_hypre_F90_Comm *comm,
+  nalu_hypre_F90_Int *dim,
+  nalu_hypre_F90_Obj *grid,
+  nalu_hypre_F90_Int *ierr )
 {
-   *ierr = (hypre_F90_Int)
-           ( HYPRE_StructGridCreate(
-                hypre_F90_PassComm (comm),
-                hypre_F90_PassInt (dim),
-                hypre_F90_PassObjRef (HYPRE_StructGrid, grid) ) );
+   *ierr = (nalu_hypre_F90_Int)
+           ( NALU_HYPRE_StructGridCreate(
+                nalu_hypre_F90_PassComm (comm),
+                nalu_hypre_F90_PassInt (dim),
+                nalu_hypre_F90_PassObjRef (NALU_HYPRE_StructGrid, grid) ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_StructGridDestroy
+ * NALU_HYPRE_StructGridDestroy
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_structgriddestroy, HYPRE_STRUCTGRIDDESTROY)
-( hypre_F90_Obj *grid,
-  hypre_F90_Int *ierr )
+nalu_hypre_F90_IFACE(nalu_hypre_structgriddestroy, NALU_HYPRE_STRUCTGRIDDESTROY)
+( nalu_hypre_F90_Obj *grid,
+  nalu_hypre_F90_Int *ierr )
 {
-   *ierr = (hypre_F90_Int)
-           ( HYPRE_StructGridDestroy(
-                hypre_F90_PassObj (HYPRE_StructGrid, grid) ) );
+   *ierr = (nalu_hypre_F90_Int)
+           ( NALU_HYPRE_StructGridDestroy(
+                nalu_hypre_F90_PassObj (NALU_HYPRE_StructGrid, grid) ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_StructGridSetExtents
+ * NALU_HYPRE_StructGridSetExtents
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_structgridsetextents, HYPRE_STRUCTGRIDSETEXTENTS)
-( hypre_F90_Obj *grid,
-  hypre_F90_IntArray *ilower,
-  hypre_F90_IntArray *iupper,
-  hypre_F90_Int *ierr )
+nalu_hypre_F90_IFACE(nalu_hypre_structgridsetextents, NALU_HYPRE_STRUCTGRIDSETEXTENTS)
+( nalu_hypre_F90_Obj *grid,
+  nalu_hypre_F90_IntArray *ilower,
+  nalu_hypre_F90_IntArray *iupper,
+  nalu_hypre_F90_Int *ierr )
 {
-   *ierr = (hypre_F90_Int)
-           ( HYPRE_StructGridSetExtents(
-                hypre_F90_PassObj (HYPRE_StructGrid, grid),
-                hypre_F90_PassIntArray (ilower),
-                hypre_F90_PassIntArray (iupper) ) );
+   *ierr = (nalu_hypre_F90_Int)
+           ( NALU_HYPRE_StructGridSetExtents(
+                nalu_hypre_F90_PassObj (NALU_HYPRE_StructGrid, grid),
+                nalu_hypre_F90_PassIntArray (ilower),
+                nalu_hypre_F90_PassIntArray (iupper) ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_SetStructGridPeriodicity
+ * NALU_HYPRE_SetStructGridPeriodicity
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_structgridsetperiodic, HYPRE_STRUCTGRIDSETPERIODIC)
-( hypre_F90_Obj *grid,
-  hypre_F90_IntArray *periodic,
-  hypre_F90_Int *ierr)
+nalu_hypre_F90_IFACE(nalu_hypre_structgridsetperiodic, NALU_HYPRE_STRUCTGRIDSETPERIODIC)
+( nalu_hypre_F90_Obj *grid,
+  nalu_hypre_F90_IntArray *periodic,
+  nalu_hypre_F90_Int *ierr)
 {
-   *ierr = (hypre_F90_Int)
-           ( HYPRE_StructGridSetPeriodic(
-                hypre_F90_PassObj (HYPRE_StructGrid, grid),
-                hypre_F90_PassIntArray (periodic)) );
+   *ierr = (nalu_hypre_F90_Int)
+           ( NALU_HYPRE_StructGridSetPeriodic(
+                nalu_hypre_F90_PassObj (NALU_HYPRE_StructGrid, grid),
+                nalu_hypre_F90_PassIntArray (periodic)) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_StructGridAssemble
+ * NALU_HYPRE_StructGridAssemble
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_structgridassemble, HYPRE_STRUCTGRIDASSEMBLE)
-( hypre_F90_Obj *grid,
-  hypre_F90_Int *ierr )
+nalu_hypre_F90_IFACE(nalu_hypre_structgridassemble, NALU_HYPRE_STRUCTGRIDASSEMBLE)
+( nalu_hypre_F90_Obj *grid,
+  nalu_hypre_F90_Int *ierr )
 {
-   *ierr = (hypre_F90_Int)
-           ( HYPRE_StructGridAssemble(
-                hypre_F90_PassObj (HYPRE_StructGrid, grid)) );
+   *ierr = (nalu_hypre_F90_Int)
+           ( NALU_HYPRE_StructGridAssemble(
+                nalu_hypre_F90_PassObj (NALU_HYPRE_StructGrid, grid)) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_StructGridSetNumGhost
+ * NALU_HYPRE_StructGridSetNumGhost
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_structgridsetnumghost, HYPRE_STRUCTGRIDSETNUMGHOST)
-( hypre_F90_Obj *grid,
-  hypre_F90_IntArray *num_ghost,
-  hypre_F90_Int *ierr )
+nalu_hypre_F90_IFACE(nalu_hypre_structgridsetnumghost, NALU_HYPRE_STRUCTGRIDSETNUMGHOST)
+( nalu_hypre_F90_Obj *grid,
+  nalu_hypre_F90_IntArray *num_ghost,
+  nalu_hypre_F90_Int *ierr )
 {
-   *ierr = (hypre_F90_Int)
-           ( HYPRE_StructGridSetNumGhost(
-                hypre_F90_PassObj (HYPRE_StructGrid, grid),
-                hypre_F90_PassIntArray (num_ghost)) );
+   *ierr = (nalu_hypre_F90_Int)
+           ( NALU_HYPRE_StructGridSetNumGhost(
+                nalu_hypre_F90_PassObj (NALU_HYPRE_StructGrid, grid),
+                nalu_hypre_F90_PassIntArray (num_ghost)) );
 }
 
 #ifdef __cplusplus

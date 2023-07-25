@@ -7,59 +7,59 @@
 
 /******************************************************************************
  *
- * HYPRE_StructStencil interface
+ * NALU_HYPRE_StructStencil interface
  *
  *****************************************************************************/
 
-#include "_hypre_struct_mv.h"
+#include "_nalu_hypre_struct_mv.h"
 
 /*--------------------------------------------------------------------------
- * HYPRE_StructStencilCreate
+ * NALU_HYPRE_StructStencilCreate
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_StructStencilCreate( HYPRE_Int            dim,
-                           HYPRE_Int            size,
-                           HYPRE_StructStencil *stencil )
+NALU_HYPRE_Int
+NALU_HYPRE_StructStencilCreate( NALU_HYPRE_Int            dim,
+                           NALU_HYPRE_Int            size,
+                           NALU_HYPRE_StructStencil *stencil )
 {
-   hypre_Index  *shape;
+   nalu_hypre_Index  *shape;
 
-   shape = hypre_CTAlloc(hypre_Index,  size, HYPRE_MEMORY_HOST);
+   shape = nalu_hypre_CTAlloc(nalu_hypre_Index,  size, NALU_HYPRE_MEMORY_HOST);
 
-   *stencil = hypre_StructStencilCreate(dim, size, shape);
+   *stencil = nalu_hypre_StructStencilCreate(dim, size, shape);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_StructStencilSetElement
+ * NALU_HYPRE_StructStencilSetElement
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_StructStencilSetElement( HYPRE_StructStencil  stencil,
-                               HYPRE_Int            element_index,
-                               HYPRE_Int           *offset )
+NALU_HYPRE_Int
+NALU_HYPRE_StructStencilSetElement( NALU_HYPRE_StructStencil  stencil,
+                               NALU_HYPRE_Int            element_index,
+                               NALU_HYPRE_Int           *offset )
 {
-   hypre_Index  *shape;
-   HYPRE_Int     d;
+   nalu_hypre_Index  *shape;
+   NALU_HYPRE_Int     d;
 
-   shape = hypre_StructStencilShape(stencil);
-   hypre_SetIndex(shape[element_index], 0);
-   for (d = 0; d < hypre_StructStencilNDim(stencil); d++)
+   shape = nalu_hypre_StructStencilShape(stencil);
+   nalu_hypre_SetIndex(shape[element_index], 0);
+   for (d = 0; d < nalu_hypre_StructStencilNDim(stencil); d++)
    {
-      hypre_IndexD(shape[element_index], d) = offset[d];
+      nalu_hypre_IndexD(shape[element_index], d) = offset[d];
    }
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_StructStencilDestroy
+ * NALU_HYPRE_StructStencilDestroy
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-HYPRE_StructStencilDestroy( HYPRE_StructStencil stencil )
+NALU_HYPRE_Int
+NALU_HYPRE_StructStencilDestroy( NALU_HYPRE_StructStencil stencil )
 {
-   return ( hypre_StructStencilDestroy(stencil) );
+   return ( nalu_hypre_StructStencilDestroy(stencil) );
 }
 

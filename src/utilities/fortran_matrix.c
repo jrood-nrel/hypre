@@ -10,7 +10,7 @@
 #include <stdio.h>
 
 #include "fortran_matrix.h"
-#include "_hypre_utilities.h"
+#include "_nalu_hypre_utilities.h"
 
 utilities_FortranMatrix*
 utilities_FortranMatrixCreate(void)
@@ -18,8 +18,8 @@ utilities_FortranMatrixCreate(void)
 
    utilities_FortranMatrix* mtx;
 
-   mtx = hypre_TAlloc(utilities_FortranMatrix, 1, HYPRE_MEMORY_HOST);
-   hypre_assert( mtx != NULL );
+   mtx = nalu_hypre_TAlloc(utilities_FortranMatrix, 1, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_assert( mtx != NULL );
 
    mtx->globalHeight = 0;
    mtx->height = 0;
@@ -31,20 +31,20 @@ utilities_FortranMatrixCreate(void)
 }
 
 void
-utilities_FortranMatrixAllocateData( HYPRE_BigInt  h, HYPRE_BigInt w,
+utilities_FortranMatrixAllocateData( NALU_HYPRE_BigInt  h, NALU_HYPRE_BigInt w,
                                      utilities_FortranMatrix* mtx )
 {
 
-   hypre_assert( h > 0 && w > 0 );
-   hypre_assert( mtx != NULL );
+   nalu_hypre_assert( h > 0 && w > 0 );
+   nalu_hypre_assert( mtx != NULL );
 
    if ( mtx->value != NULL && mtx->ownsValues )
    {
-      hypre_TFree( mtx->value, HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree( mtx->value, NALU_HYPRE_MEMORY_HOST);
    }
 
-   mtx->value = hypre_CTAlloc(HYPRE_Real,  h * w, HYPRE_MEMORY_HOST);
-   hypre_assert ( mtx->value != NULL );
+   mtx->value = nalu_hypre_CTAlloc(NALU_HYPRE_Real,  h * w, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_assert ( mtx->value != NULL );
 
    mtx->globalHeight = h;
    mtx->height = h;
@@ -54,20 +54,20 @@ utilities_FortranMatrixAllocateData( HYPRE_BigInt  h, HYPRE_BigInt w,
 
 
 void
-utilities_FortranMatrixWrap( HYPRE_Real* v, HYPRE_BigInt gh, HYPRE_BigInt  h, HYPRE_BigInt w,
+utilities_FortranMatrixWrap( NALU_HYPRE_Real* v, NALU_HYPRE_BigInt gh, NALU_HYPRE_BigInt  h, NALU_HYPRE_BigInt w,
                              utilities_FortranMatrix* mtx )
 {
 
-   hypre_assert( h > 0 && w > 0 );
-   hypre_assert( mtx != NULL );
+   nalu_hypre_assert( h > 0 && w > 0 );
+   nalu_hypre_assert( mtx != NULL );
 
    if ( mtx->value != NULL && mtx->ownsValues )
    {
-      hypre_TFree( mtx->value, HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree( mtx->value, NALU_HYPRE_MEMORY_HOST);
    }
 
    mtx->value = v;
-   hypre_assert ( mtx->value != NULL );
+   nalu_hypre_assert ( mtx->value != NULL );
 
    mtx->globalHeight = gh;
    mtx->height = h;
@@ -87,44 +87,44 @@ utilities_FortranMatrixDestroy( utilities_FortranMatrix* mtx )
 
    if ( mtx->ownsValues && mtx->value != NULL )
    {
-      hypre_TFree(mtx->value, HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(mtx->value, NALU_HYPRE_MEMORY_HOST);
    }
 
-   hypre_TFree(mtx, HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(mtx, NALU_HYPRE_MEMORY_HOST);
 }
 
-HYPRE_BigInt
+NALU_HYPRE_BigInt
 utilities_FortranMatrixGlobalHeight( utilities_FortranMatrix* mtx )
 {
 
-   hypre_assert( mtx != NULL );
+   nalu_hypre_assert( mtx != NULL );
 
    return mtx->globalHeight;
 }
 
-HYPRE_BigInt
+NALU_HYPRE_BigInt
 utilities_FortranMatrixHeight( utilities_FortranMatrix* mtx )
 {
 
-   hypre_assert( mtx != NULL );
+   nalu_hypre_assert( mtx != NULL );
 
    return mtx->height;
 }
 
-HYPRE_BigInt
+NALU_HYPRE_BigInt
 utilities_FortranMatrixWidth( utilities_FortranMatrix* mtx )
 {
 
-   hypre_assert( mtx != NULL );
+   nalu_hypre_assert( mtx != NULL );
 
    return mtx->width;
 }
 
-HYPRE_Real*
+NALU_HYPRE_Real*
 utilities_FortranMatrixValues( utilities_FortranMatrix* mtx )
 {
 
-   hypre_assert( mtx != NULL );
+   nalu_hypre_assert( mtx != NULL );
 
    return mtx->value;
 }
@@ -133,10 +133,10 @@ void
 utilities_FortranMatrixClear( utilities_FortranMatrix* mtx )
 {
 
-   HYPRE_BigInt i, j, h, w, jump;
-   HYPRE_Real* p;
+   NALU_HYPRE_BigInt i, j, h, w, jump;
+   NALU_HYPRE_Real* p;
 
-   hypre_assert( mtx != NULL );
+   nalu_hypre_assert( mtx != NULL );
 
    h = mtx->height;
    w = mtx->width;
@@ -157,10 +157,10 @@ void
 utilities_FortranMatrixClearL( utilities_FortranMatrix* mtx )
 {
 
-   HYPRE_BigInt i, j, k, h, w, jump;
-   HYPRE_Real* p;
+   NALU_HYPRE_BigInt i, j, k, h, w, jump;
+   NALU_HYPRE_Real* p;
 
-   hypre_assert( mtx != NULL );
+   nalu_hypre_assert( mtx != NULL );
 
    h = mtx->height;
    w = mtx->width;
@@ -189,10 +189,10 @@ void
 utilities_FortranMatrixSetToIdentity( utilities_FortranMatrix* mtx )
 {
 
-   HYPRE_BigInt j, h, w, jump;
-   HYPRE_Real* p;
+   NALU_HYPRE_BigInt j, h, w, jump;
+   NALU_HYPRE_Real* p;
 
-   hypre_assert( mtx != NULL );
+   nalu_hypre_assert( mtx != NULL );
 
    utilities_FortranMatrixClear( mtx );
 
@@ -212,18 +212,18 @@ void
 utilities_FortranMatrixTransposeSquare( utilities_FortranMatrix* mtx )
 {
 
-   HYPRE_BigInt i, j, g, h, w, jump;
-   HYPRE_Real* p;
-   HYPRE_Real* q;
-   HYPRE_Real tmp;
+   NALU_HYPRE_BigInt i, j, g, h, w, jump;
+   NALU_HYPRE_Real* p;
+   NALU_HYPRE_Real* q;
+   NALU_HYPRE_Real tmp;
 
-   hypre_assert( mtx != NULL );
+   nalu_hypre_assert( mtx != NULL );
 
    g = mtx->globalHeight;
    h = mtx->height;
    w = mtx->width;
 
-   hypre_assert( h == w );
+   nalu_hypre_assert( h == w );
 
    jump = mtx->globalHeight - h;
 
@@ -246,17 +246,17 @@ void
 utilities_FortranMatrixSymmetrize( utilities_FortranMatrix* mtx )
 {
 
-   HYPRE_BigInt i, j, g, h, w, jump;
-   HYPRE_Real* p;
-   HYPRE_Real* q;
+   NALU_HYPRE_BigInt i, j, g, h, w, jump;
+   NALU_HYPRE_Real* p;
+   NALU_HYPRE_Real* q;
 
-   hypre_assert( mtx != NULL );
+   nalu_hypre_assert( mtx != NULL );
 
    g = mtx->globalHeight;
    h = mtx->height;
    w = mtx->width;
 
-   hypre_assert( h == w );
+   nalu_hypre_assert( h == w );
 
    jump = mtx->globalHeight - h;
 
@@ -274,17 +274,17 @@ utilities_FortranMatrixSymmetrize( utilities_FortranMatrix* mtx )
 }
 
 void
-utilities_FortranMatrixCopy( utilities_FortranMatrix* src, HYPRE_Int t,
+utilities_FortranMatrixCopy( utilities_FortranMatrix* src, NALU_HYPRE_Int t,
                              utilities_FortranMatrix* dest )
 {
 
-   HYPRE_BigInt i, j, h, w;
-   HYPRE_BigInt jp, jq, jr;
-   HYPRE_Real* p;
-   HYPRE_Real* q;
-   HYPRE_Real* r;
+   NALU_HYPRE_BigInt i, j, h, w;
+   NALU_HYPRE_BigInt jp, jq, jr;
+   NALU_HYPRE_Real* p;
+   NALU_HYPRE_Real* q;
+   NALU_HYPRE_Real* r;
 
-   hypre_assert( src != NULL && dest != NULL );
+   nalu_hypre_assert( src != NULL && dest != NULL );
 
    h = dest->height;
    w = dest->width;
@@ -293,13 +293,13 @@ utilities_FortranMatrixCopy( utilities_FortranMatrix* src, HYPRE_Int t,
 
    if ( t == 0 )
    {
-      hypre_assert( src->height == h && src->width == w );
+      nalu_hypre_assert( src->height == h && src->width == w );
       jq = 1;
       jr = src->globalHeight;
    }
    else
    {
-      hypre_assert( src->height == w && src->width == h );
+      nalu_hypre_assert( src->height == w && src->width == h );
       jr = 1;
       jq = src->globalHeight;
    }
@@ -312,18 +312,18 @@ utilities_FortranMatrixCopy( utilities_FortranMatrix* src, HYPRE_Int t,
 }
 
 void
-utilities_FortranMatrixIndexCopy( HYPRE_Int* index,
-                                  utilities_FortranMatrix* src, HYPRE_Int t,
+utilities_FortranMatrixIndexCopy( NALU_HYPRE_Int* index,
+                                  utilities_FortranMatrix* src, NALU_HYPRE_Int t,
                                   utilities_FortranMatrix* dest )
 {
 
-   HYPRE_BigInt i, j, h, w;
-   HYPRE_BigInt jp, jq, jr;
-   HYPRE_Real* p;
-   HYPRE_Real* q;
-   HYPRE_Real* r;
+   NALU_HYPRE_BigInt i, j, h, w;
+   NALU_HYPRE_BigInt jp, jq, jr;
+   NALU_HYPRE_Real* p;
+   NALU_HYPRE_Real* q;
+   NALU_HYPRE_Real* r;
 
-   hypre_assert( src != NULL && dest != NULL );
+   nalu_hypre_assert( src != NULL && dest != NULL );
 
    h = dest->height;
    w = dest->width;
@@ -332,13 +332,13 @@ utilities_FortranMatrixIndexCopy( HYPRE_Int* index,
 
    if ( t == 0 )
    {
-      hypre_assert( src->height == h && src->width == w );
+      nalu_hypre_assert( src->height == h && src->width == w );
       jq = 1;
       jr = src->globalHeight;
    }
    else
    {
-      hypre_assert( src->height == w && src->width == h );
+      nalu_hypre_assert( src->height == w && src->width == h );
       jr = 1;
       jq = src->globalHeight;
    }
@@ -358,16 +358,16 @@ utilities_FortranMatrixSetDiagonal( utilities_FortranMatrix* mtx,
                                     utilities_FortranMatrix* vec )
 {
 
-   HYPRE_BigInt j, h, w, jump;
-   HYPRE_Real* p;
-   HYPRE_Real* q;
+   NALU_HYPRE_BigInt j, h, w, jump;
+   NALU_HYPRE_Real* p;
+   NALU_HYPRE_Real* q;
 
-   hypre_assert( mtx != NULL && vec != NULL );
+   nalu_hypre_assert( mtx != NULL && vec != NULL );
 
    h = mtx->height;
    w = mtx->width;
 
-   hypre_assert( vec->height >= h );
+   nalu_hypre_assert( vec->height >= h );
 
    jump = mtx->globalHeight + 1;
 
@@ -384,16 +384,16 @@ utilities_FortranMatrixGetDiagonal( utilities_FortranMatrix* mtx,
                                     utilities_FortranMatrix* vec )
 {
 
-   HYPRE_BigInt j, h, w, jump;
-   HYPRE_Real* p;
-   HYPRE_Real* q;
+   NALU_HYPRE_BigInt j, h, w, jump;
+   NALU_HYPRE_Real* p;
+   NALU_HYPRE_Real* q;
 
-   hypre_assert( mtx != NULL && vec != NULL );
+   nalu_hypre_assert( mtx != NULL && vec != NULL );
 
    h = mtx->height;
    w = mtx->width;
 
-   hypre_assert( vec->height >= h );
+   nalu_hypre_assert( vec->height >= h );
 
    jump = mtx->globalHeight + 1;
 
@@ -406,24 +406,24 @@ utilities_FortranMatrixGetDiagonal( utilities_FortranMatrix* mtx,
 }
 
 void
-utilities_FortranMatrixAdd( HYPRE_Real a,
+utilities_FortranMatrixAdd( NALU_HYPRE_Real a,
                             utilities_FortranMatrix* mtxA,
                             utilities_FortranMatrix* mtxB,
                             utilities_FortranMatrix* mtxC )
 {
 
-   HYPRE_BigInt i, j, h, w, jA, jB, jC;
-   HYPRE_Real *pA;
-   HYPRE_Real *pB;
-   HYPRE_Real *pC;
+   NALU_HYPRE_BigInt i, j, h, w, jA, jB, jC;
+   NALU_HYPRE_Real *pA;
+   NALU_HYPRE_Real *pB;
+   NALU_HYPRE_Real *pC;
 
-   hypre_assert( mtxA != NULL && mtxB != NULL && mtxC != NULL );
+   nalu_hypre_assert( mtxA != NULL && mtxB != NULL && mtxC != NULL );
 
    h = mtxA->height;
    w = mtxA->width;
 
-   hypre_assert( mtxB->height == h && mtxB->width == w );
-   hypre_assert( mtxC->height == h && mtxC->width == w );
+   nalu_hypre_assert( mtxB->height == h && mtxB->width == w );
+   nalu_hypre_assert( mtxC->height == h && mtxC->width == w );
 
    jA = mtxA->globalHeight - h;
    jB = mtxB->globalHeight - h;
@@ -492,16 +492,16 @@ utilities_FortranMatrixDMultiply( utilities_FortranMatrix* vec,
                                   utilities_FortranMatrix* mtx )
 {
 
-   HYPRE_BigInt i, j, h, w, jump;
-   HYPRE_Real* p;
-   HYPRE_Real* q;
+   NALU_HYPRE_BigInt i, j, h, w, jump;
+   NALU_HYPRE_Real* p;
+   NALU_HYPRE_Real* q;
 
-   hypre_assert( mtx != NULL && vec != NULL );
+   nalu_hypre_assert( mtx != NULL && vec != NULL );
 
    h = mtx->height;
    w = mtx->width;
 
-   hypre_assert( vec->height == h );
+   nalu_hypre_assert( vec->height == h );
 
    jump = mtx->globalHeight - h;
 
@@ -521,16 +521,16 @@ utilities_FortranMatrixMultiplyD( utilities_FortranMatrix* mtx,
                                   utilities_FortranMatrix* vec )
 {
 
-   HYPRE_BigInt i, j, h, w, jump;
-   HYPRE_Real* p;
-   HYPRE_Real* q;
+   NALU_HYPRE_BigInt i, j, h, w, jump;
+   NALU_HYPRE_Real* p;
+   NALU_HYPRE_Real* q;
 
-   hypre_assert( mtx != NULL && vec != NULL );
+   nalu_hypre_assert( mtx != NULL && vec != NULL );
 
    h = mtx->height;
    w = mtx->width;
 
-   hypre_assert( vec->height == w );
+   nalu_hypre_assert( vec->height == w );
 
    jump = mtx->globalHeight - h;
 
@@ -546,26 +546,26 @@ utilities_FortranMatrixMultiplyD( utilities_FortranMatrix* mtx,
 }
 
 void
-utilities_FortranMatrixMultiply( utilities_FortranMatrix* mtxA, HYPRE_Int tA,
-                                 utilities_FortranMatrix* mtxB, HYPRE_Int tB,
+utilities_FortranMatrixMultiply( utilities_FortranMatrix* mtxA, NALU_HYPRE_Int tA,
+                                 utilities_FortranMatrix* mtxB, NALU_HYPRE_Int tB,
                                  utilities_FortranMatrix* mtxC )
 {
-   HYPRE_BigInt h, w;
-   HYPRE_BigInt i, j, k, l;
-   HYPRE_BigInt iA, kA;
-   HYPRE_BigInt kB, jB;
-   HYPRE_BigInt iC, jC;
+   NALU_HYPRE_BigInt h, w;
+   NALU_HYPRE_BigInt i, j, k, l;
+   NALU_HYPRE_BigInt iA, kA;
+   NALU_HYPRE_BigInt kB, jB;
+   NALU_HYPRE_BigInt iC, jC;
 
-   HYPRE_Real* pAi0;
-   HYPRE_Real* pAik;
-   HYPRE_Real* pB0j;
-   HYPRE_Real* pBkj;
-   HYPRE_Real* pC0j;
-   HYPRE_Real* pCij;
+   NALU_HYPRE_Real* pAi0;
+   NALU_HYPRE_Real* pAik;
+   NALU_HYPRE_Real* pB0j;
+   NALU_HYPRE_Real* pBkj;
+   NALU_HYPRE_Real* pC0j;
+   NALU_HYPRE_Real* pCij;
 
-   HYPRE_Real s;
+   NALU_HYPRE_Real s;
 
-   hypre_assert( mtxA != NULL && mtxB != NULL && mtxC != NULL );
+   nalu_hypre_assert( mtxA != NULL && mtxB != NULL && mtxC != NULL );
 
    h = mtxC->height;
    w = mtxC->width;
@@ -574,7 +574,7 @@ utilities_FortranMatrixMultiply( utilities_FortranMatrix* mtxA, HYPRE_Int tA,
 
    if ( tA == 0 )
    {
-      hypre_assert( mtxA->height == h );
+      nalu_hypre_assert( mtxA->height == h );
       l = mtxA->width;
       iA = 1;
       kA = mtxA->globalHeight;
@@ -582,22 +582,22 @@ utilities_FortranMatrixMultiply( utilities_FortranMatrix* mtxA, HYPRE_Int tA,
    else
    {
       l = mtxA->height;
-      hypre_assert( mtxA->width == h );
+      nalu_hypre_assert( mtxA->width == h );
       kA = 1;
       iA = mtxA->globalHeight;
    }
 
    if ( tB == 0 )
    {
-      hypre_assert( mtxB->height == l );
-      hypre_assert( mtxB->width == w );
+      nalu_hypre_assert( mtxB->height == l );
+      nalu_hypre_assert( mtxB->width == w );
       kB = 1;
       jB = mtxB->globalHeight;
    }
    else
    {
-      hypre_assert( mtxB->width == l );
-      hypre_assert( mtxB->height == w );
+      nalu_hypre_assert( mtxB->width == l );
+      nalu_hypre_assert( mtxB->height == w );
       jB = 1;
       kB = mtxB->globalHeight;
    }
@@ -617,16 +617,16 @@ utilities_FortranMatrixMultiply( utilities_FortranMatrix* mtxA, HYPRE_Int tA,
       }
 }
 
-HYPRE_Real
+NALU_HYPRE_Real
 utilities_FortranMatrixFNorm( utilities_FortranMatrix* mtx )
 {
 
-   HYPRE_BigInt i, j, h, w, jump;
-   HYPRE_Real* p;
+   NALU_HYPRE_BigInt i, j, h, w, jump;
+   NALU_HYPRE_Real* p;
 
-   HYPRE_Real norm;
+   NALU_HYPRE_Real norm;
 
-   hypre_assert( mtx != NULL );
+   nalu_hypre_assert( mtx != NULL );
 
    h = mtx->height;
    w = mtx->width;
@@ -644,52 +644,52 @@ utilities_FortranMatrixFNorm( utilities_FortranMatrix* mtx )
       p += jump;
    }
 
-   norm = hypre_sqrt(norm);
+   norm = nalu_hypre_sqrt(norm);
    return norm;
 }
 
-HYPRE_Real
+NALU_HYPRE_Real
 utilities_FortranMatrixValue( utilities_FortranMatrix* mtx,
-                              HYPRE_BigInt i, HYPRE_BigInt j )
+                              NALU_HYPRE_BigInt i, NALU_HYPRE_BigInt j )
 {
 
-   HYPRE_BigInt k;
+   NALU_HYPRE_BigInt k;
 
-   hypre_assert( mtx != NULL );
+   nalu_hypre_assert( mtx != NULL );
 
-   hypre_assert( 1 <= i && i <= mtx->height );
-   hypre_assert( 1 <= j && j <= mtx->width );
+   nalu_hypre_assert( 1 <= i && i <= mtx->height );
+   nalu_hypre_assert( 1 <= j && j <= mtx->width );
 
    k = i - 1 + (j - 1) * mtx->globalHeight;
    return mtx->value[k];
 }
 
-HYPRE_Real*
+NALU_HYPRE_Real*
 utilities_FortranMatrixValuePtr( utilities_FortranMatrix* mtx,
-                                 HYPRE_BigInt i, HYPRE_BigInt j )
+                                 NALU_HYPRE_BigInt i, NALU_HYPRE_BigInt j )
 {
 
-   HYPRE_BigInt k;
+   NALU_HYPRE_BigInt k;
 
-   hypre_assert( mtx != NULL );
+   nalu_hypre_assert( mtx != NULL );
 
-   hypre_assert( 1 <= i && i <= mtx->height );
-   hypre_assert( 1 <= j && j <= mtx->width );
+   nalu_hypre_assert( 1 <= i && i <= mtx->height );
+   nalu_hypre_assert( 1 <= j && j <= mtx->width );
 
    k = i - 1 + (j - 1) * mtx->globalHeight;
    return mtx->value + k;
 }
 
-HYPRE_Real
+NALU_HYPRE_Real
 utilities_FortranMatrixMaxValue( utilities_FortranMatrix* mtx )
 {
 
-   HYPRE_BigInt i, j, jump;
-   HYPRE_BigInt h, w;
-   HYPRE_Real* p;
-   HYPRE_Real maxVal;
+   NALU_HYPRE_BigInt i, j, jump;
+   NALU_HYPRE_BigInt h, w;
+   NALU_HYPRE_Real* p;
+   NALU_HYPRE_Real maxVal;
 
-   hypre_assert( mtx != NULL );
+   nalu_hypre_assert( mtx != NULL );
 
    h = mtx->height;
    w = mtx->width;
@@ -713,14 +713,14 @@ utilities_FortranMatrixMaxValue( utilities_FortranMatrix* mtx )
 
 void
 utilities_FortranMatrixSelectBlock( utilities_FortranMatrix* mtx,
-                                    HYPRE_BigInt iFrom, HYPRE_BigInt iTo,
-                                    HYPRE_BigInt jFrom, HYPRE_BigInt jTo,
+                                    NALU_HYPRE_BigInt iFrom, NALU_HYPRE_BigInt iTo,
+                                    NALU_HYPRE_BigInt jFrom, NALU_HYPRE_BigInt jTo,
                                     utilities_FortranMatrix* block )
 {
 
    if ( block->value != NULL && block->ownsValues )
    {
-      hypre_TFree( block->value, HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree( block->value, NALU_HYPRE_MEMORY_HOST);
    }
 
    block->globalHeight = mtx->globalHeight;
@@ -741,22 +741,22 @@ void
 utilities_FortranMatrixUpperInv( utilities_FortranMatrix* u )
 {
 
-   HYPRE_BigInt i, j, k;
-   HYPRE_BigInt n, jc, jd;
-   HYPRE_Real v;
-   HYPRE_Real* diag;    /* diag(i) = u(i,i)_original */
-   HYPRE_Real* pin;     /* &u(i-1,n) */
-   HYPRE_Real* pii;     /* &u(i,i) */
-   HYPRE_Real* pij;     /* &u(i,j) */
-   HYPRE_Real* pik;     /* &u(i,k) */
-   HYPRE_Real* pkj;     /* &u(k,j) */
-   HYPRE_Real* pd;      /* &diag(i) */
+   NALU_HYPRE_BigInt i, j, k;
+   NALU_HYPRE_BigInt n, jc, jd;
+   NALU_HYPRE_Real v;
+   NALU_HYPRE_Real* diag;    /* diag(i) = u(i,i)_original */
+   NALU_HYPRE_Real* pin;     /* &u(i-1,n) */
+   NALU_HYPRE_Real* pii;     /* &u(i,i) */
+   NALU_HYPRE_Real* pij;     /* &u(i,j) */
+   NALU_HYPRE_Real* pik;     /* &u(i,k) */
+   NALU_HYPRE_Real* pkj;     /* &u(k,j) */
+   NALU_HYPRE_Real* pd;      /* &diag(i) */
 
    n = u->height;
-   hypre_assert( u->width == n );
+   nalu_hypre_assert( u->width == n );
 
-   diag = hypre_CTAlloc(HYPRE_Real,  n, HYPRE_MEMORY_HOST);
-   hypre_assert( diag != NULL );
+   diag = nalu_hypre_CTAlloc(NALU_HYPRE_Real,  n, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_assert( diag != NULL );
 
    jc = u->globalHeight;
    jd = jc + 1;
@@ -789,19 +789,19 @@ utilities_FortranMatrixUpperInv( utilities_FortranMatrix* u )
       }
    }
 
-   hypre_TFree( diag, HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree( diag, NALU_HYPRE_MEMORY_HOST);
 
 }
 
-HYPRE_Int
+NALU_HYPRE_Int
 utilities_FortranMatrixPrint( utilities_FortranMatrix* mtx, const char *fileName)
 {
 
-   HYPRE_BigInt i, j, h, w, jump;
-   HYPRE_Real* p;
+   NALU_HYPRE_BigInt i, j, h, w, jump;
+   NALU_HYPRE_Real* p;
    FILE* fp;
 
-   hypre_assert( mtx != NULL );
+   nalu_hypre_assert( mtx != NULL );
 
    if ( !(fp = fopen(fileName, "w")) )
    {
@@ -811,8 +811,8 @@ utilities_FortranMatrixPrint( utilities_FortranMatrix* mtx, const char *fileName
    h = mtx->height;
    w = mtx->width;
 
-   hypre_fprintf(fp, "%ld\n", h);
-   hypre_fprintf(fp, "%ld\n", w);
+   nalu_hypre_fprintf(fp, "%ld\n", h);
+   nalu_hypre_fprintf(fp, "%ld\n", w);
 
    jump = mtx->globalHeight - h;
 
@@ -820,7 +820,7 @@ utilities_FortranMatrixPrint( utilities_FortranMatrix* mtx, const char *fileName
    {
       for ( i = 0; i < h; i++, p++ )
       {
-         hypre_fprintf(fp, "%.14e\n", *p);
+         nalu_hypre_fprintf(fp, "%.14e\n", *p);
       }
       p += jump;
    }

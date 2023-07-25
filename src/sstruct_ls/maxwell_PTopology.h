@@ -7,12 +7,12 @@
 
 typedef struct
 {
-   hypre_IJMatrix    *Face_iedge;
-   hypre_IJMatrix    *Element_iedge;
-   hypre_IJMatrix    *Edge_iedge;
+   nalu_hypre_IJMatrix    *Face_iedge;
+   nalu_hypre_IJMatrix    *Element_iedge;
+   nalu_hypre_IJMatrix    *Edge_iedge;
 
-   hypre_IJMatrix    *Element_Face;
-   hypre_IJMatrix    *Element_Edge;
+   nalu_hypre_IJMatrix    *Element_Face;
+   nalu_hypre_IJMatrix    *Element_Edge;
 
-} hypre_PTopology;
+} nalu_hypre_PTopology;
 

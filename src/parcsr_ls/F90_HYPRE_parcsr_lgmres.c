@@ -7,11 +7,11 @@
 
 /******************************************************************************
  *
- * HYPRE_ParCSRLGMRES Fortran interface
+ * NALU_HYPRE_ParCSRLGMRES Fortran interface
  *
  *****************************************************************************/
 
-#include "_hypre_parcsr_ls.h"
+#include "_nalu_hypre_parcsr_ls.h"
 #include "fortran.h"
 
 #ifdef __cplusplus
@@ -19,165 +19,165 @@ extern "C" {
 #endif
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRLGMRESCreate
+ * NALU_HYPRE_ParCSRLGMRESCreate
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_parcsrlgmrescreate, HYPRE_PARCSRLGMRESCREATE)
-( hypre_F90_Comm *comm,
-  hypre_F90_Obj *solver,
-  hypre_F90_Int *ierr    )
+nalu_hypre_F90_IFACE(nalu_hypre_parcsrlgmrescreate, NALU_HYPRE_PARCSRLGMRESCREATE)
+( nalu_hypre_F90_Comm *comm,
+  nalu_hypre_F90_Obj *solver,
+  nalu_hypre_F90_Int *ierr    )
 {
-   *ierr = (hypre_F90_Int)
-           ( HYPRE_ParCSRLGMRESCreate(
-                hypre_F90_PassComm (comm),
-                hypre_F90_PassObjRef (HYPRE_Solver, solver) ) );
+   *ierr = (nalu_hypre_F90_Int)
+           ( NALU_HYPRE_ParCSRLGMRESCreate(
+                nalu_hypre_F90_PassComm (comm),
+                nalu_hypre_F90_PassObjRef (NALU_HYPRE_Solver, solver) ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRLGMRESDestroy
+ * NALU_HYPRE_ParCSRLGMRESDestroy
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_parcsrlgmresdestroy, HYPRE_PARCSRLGMRESDESTROY)
-( hypre_F90_Obj *solver,
-  hypre_F90_Int *ierr    )
+nalu_hypre_F90_IFACE(nalu_hypre_parcsrlgmresdestroy, NALU_HYPRE_PARCSRLGMRESDESTROY)
+( nalu_hypre_F90_Obj *solver,
+  nalu_hypre_F90_Int *ierr    )
 {
-   *ierr = (hypre_F90_Int)
-           ( HYPRE_ParCSRLGMRESDestroy(
-                hypre_F90_PassObj (HYPRE_Solver, solver) ) );
+   *ierr = (nalu_hypre_F90_Int)
+           ( NALU_HYPRE_ParCSRLGMRESDestroy(
+                nalu_hypre_F90_PassObj (NALU_HYPRE_Solver, solver) ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRLGMRESSetup
+ * NALU_HYPRE_ParCSRLGMRESSetup
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_parcsrlgmressetup, HYPRE_PARCSRLGMRESSETUP)
-( hypre_F90_Obj *solver,
-  hypre_F90_Obj *A,
-  hypre_F90_Obj *b,
-  hypre_F90_Obj *x,
-  hypre_F90_Int *ierr    )
+nalu_hypre_F90_IFACE(nalu_hypre_parcsrlgmressetup, NALU_HYPRE_PARCSRLGMRESSETUP)
+( nalu_hypre_F90_Obj *solver,
+  nalu_hypre_F90_Obj *A,
+  nalu_hypre_F90_Obj *b,
+  nalu_hypre_F90_Obj *x,
+  nalu_hypre_F90_Int *ierr    )
 {
-   *ierr = (hypre_F90_Int)
-           ( HYPRE_ParCSRLGMRESSetup(
-                hypre_F90_PassObj (HYPRE_Solver, solver),
-                hypre_F90_PassObj (HYPRE_ParCSRMatrix, A),
-                hypre_F90_PassObj (HYPRE_ParVector, b),
-                hypre_F90_PassObj (HYPRE_ParVector, x)       ) );
+   *ierr = (nalu_hypre_F90_Int)
+           ( NALU_HYPRE_ParCSRLGMRESSetup(
+                nalu_hypre_F90_PassObj (NALU_HYPRE_Solver, solver),
+                nalu_hypre_F90_PassObj (NALU_HYPRE_ParCSRMatrix, A),
+                nalu_hypre_F90_PassObj (NALU_HYPRE_ParVector, b),
+                nalu_hypre_F90_PassObj (NALU_HYPRE_ParVector, x)       ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRLGMRESSolve
+ * NALU_HYPRE_ParCSRLGMRESSolve
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_parcsrlgmressolve, HYPRE_PARCSRLGMRESSOLVE)
-( hypre_F90_Obj *solver,
-  hypre_F90_Obj *A,
-  hypre_F90_Obj *b,
-  hypre_F90_Obj *x,
-  hypre_F90_Int *ierr    )
+nalu_hypre_F90_IFACE(nalu_hypre_parcsrlgmressolve, NALU_HYPRE_PARCSRLGMRESSOLVE)
+( nalu_hypre_F90_Obj *solver,
+  nalu_hypre_F90_Obj *A,
+  nalu_hypre_F90_Obj *b,
+  nalu_hypre_F90_Obj *x,
+  nalu_hypre_F90_Int *ierr    )
 {
-   *ierr = (hypre_F90_Int)
-           ( HYPRE_ParCSRLGMRESSolve(
-                hypre_F90_PassObj (HYPRE_Solver, solver),
-                hypre_F90_PassObj (HYPRE_ParCSRMatrix, A),
-                hypre_F90_PassObj (HYPRE_ParVector, b),
-                hypre_F90_PassObj (HYPRE_ParVector, x)       ) );
+   *ierr = (nalu_hypre_F90_Int)
+           ( NALU_HYPRE_ParCSRLGMRESSolve(
+                nalu_hypre_F90_PassObj (NALU_HYPRE_Solver, solver),
+                nalu_hypre_F90_PassObj (NALU_HYPRE_ParCSRMatrix, A),
+                nalu_hypre_F90_PassObj (NALU_HYPRE_ParVector, b),
+                nalu_hypre_F90_PassObj (NALU_HYPRE_ParVector, x)       ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRLGMRESSetKDim
+ * NALU_HYPRE_ParCSRLGMRESSetKDim
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_parcsrlgmressetkdim, HYPRE_PARCSRLGMRESSETKDIM)
-( hypre_F90_Obj *solver,
-  hypre_F90_Int *kdim,
-  hypre_F90_Int *ierr    )
+nalu_hypre_F90_IFACE(nalu_hypre_parcsrlgmressetkdim, NALU_HYPRE_PARCSRLGMRESSETKDIM)
+( nalu_hypre_F90_Obj *solver,
+  nalu_hypre_F90_Int *kdim,
+  nalu_hypre_F90_Int *ierr    )
 {
-   *ierr = (hypre_F90_Int)
-           ( HYPRE_ParCSRLGMRESSetKDim(
-                hypre_F90_PassObj (HYPRE_Solver, solver),
-                hypre_F90_PassInt (kdim)    ) );
+   *ierr = (nalu_hypre_F90_Int)
+           ( NALU_HYPRE_ParCSRLGMRESSetKDim(
+                nalu_hypre_F90_PassObj (NALU_HYPRE_Solver, solver),
+                nalu_hypre_F90_PassInt (kdim)    ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRLGMRESSetTol
+ * NALU_HYPRE_ParCSRLGMRESSetTol
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_parcsrlgmressettol, HYPRE_PARCSRLGMRESSETTOL)
-( hypre_F90_Obj *solver,
-  hypre_F90_Real *tol,
-  hypre_F90_Int *ierr    )
+nalu_hypre_F90_IFACE(nalu_hypre_parcsrlgmressettol, NALU_HYPRE_PARCSRLGMRESSETTOL)
+( nalu_hypre_F90_Obj *solver,
+  nalu_hypre_F90_Real *tol,
+  nalu_hypre_F90_Int *ierr    )
 {
-   *ierr = (hypre_F90_Int)
-           ( HYPRE_ParCSRLGMRESSetTol(
-                hypre_F90_PassObj (HYPRE_Solver, solver),
-                hypre_F90_PassReal (tol)     ) );
+   *ierr = (nalu_hypre_F90_Int)
+           ( NALU_HYPRE_ParCSRLGMRESSetTol(
+                nalu_hypre_F90_PassObj (NALU_HYPRE_Solver, solver),
+                nalu_hypre_F90_PassReal (tol)     ) );
 }
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRLGMRESSetAbsoluteTol
+ * NALU_HYPRE_ParCSRLGMRESSetAbsoluteTol
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_parcsrlgmressetabsolutetol, HYPRE_PARCSRLGMRESSETABSOLUTETOL)
-( hypre_F90_Obj *solver,
-  hypre_F90_Real *tol,
-  hypre_F90_Int *ierr    )
+nalu_hypre_F90_IFACE(nalu_hypre_parcsrlgmressetabsolutetol, NALU_HYPRE_PARCSRLGMRESSETABSOLUTETOL)
+( nalu_hypre_F90_Obj *solver,
+  nalu_hypre_F90_Real *tol,
+  nalu_hypre_F90_Int *ierr    )
 {
-   *ierr = (hypre_F90_Int)
-           ( HYPRE_ParCSRLGMRESSetAbsoluteTol(
-                hypre_F90_PassObj (HYPRE_Solver, solver),
-                hypre_F90_PassReal (tol)     ) );
-}
-
-/*--------------------------------------------------------------------------
- * HYPRE_ParCSRLGMRESSetMinIter
- *--------------------------------------------------------------------------*/
-
-void
-hypre_F90_IFACE(hypre_parcsrlgmressetminiter, HYPRE_PARCSRLGMRESSETMINITER)
-( hypre_F90_Obj *solver,
-  hypre_F90_Int *min_iter,
-  hypre_F90_Int *ierr      )
-{
-   *ierr = (hypre_F90_Int)
-           ( HYPRE_ParCSRLGMRESSetMinIter(
-                hypre_F90_PassObj (HYPRE_Solver, solver),
-                hypre_F90_PassInt (min_iter) ) );
+   *ierr = (nalu_hypre_F90_Int)
+           ( NALU_HYPRE_ParCSRLGMRESSetAbsoluteTol(
+                nalu_hypre_F90_PassObj (NALU_HYPRE_Solver, solver),
+                nalu_hypre_F90_PassReal (tol)     ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRLGMRESSetMaxIter
+ * NALU_HYPRE_ParCSRLGMRESSetMinIter
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_parcsrlgmressetmaxiter, HYPRE_PARCSRLGMRESSETMAXITER)
-( hypre_F90_Obj *solver,
-  hypre_F90_Int *max_iter,
-  hypre_F90_Int *ierr      )
+nalu_hypre_F90_IFACE(nalu_hypre_parcsrlgmressetminiter, NALU_HYPRE_PARCSRLGMRESSETMINITER)
+( nalu_hypre_F90_Obj *solver,
+  nalu_hypre_F90_Int *min_iter,
+  nalu_hypre_F90_Int *ierr      )
 {
-   *ierr = (hypre_F90_Int)
-           ( HYPRE_ParCSRLGMRESSetMaxIter(
-                hypre_F90_PassObj (HYPRE_Solver, solver),
-                hypre_F90_PassInt (max_iter) ) );
+   *ierr = (nalu_hypre_F90_Int)
+           ( NALU_HYPRE_ParCSRLGMRESSetMinIter(
+                nalu_hypre_F90_PassObj (NALU_HYPRE_Solver, solver),
+                nalu_hypre_F90_PassInt (min_iter) ) );
+}
+
+/*--------------------------------------------------------------------------
+ * NALU_HYPRE_ParCSRLGMRESSetMaxIter
+ *--------------------------------------------------------------------------*/
+
+void
+nalu_hypre_F90_IFACE(nalu_hypre_parcsrlgmressetmaxiter, NALU_HYPRE_PARCSRLGMRESSETMAXITER)
+( nalu_hypre_F90_Obj *solver,
+  nalu_hypre_F90_Int *max_iter,
+  nalu_hypre_F90_Int *ierr      )
+{
+   *ierr = (nalu_hypre_F90_Int)
+           ( NALU_HYPRE_ParCSRLGMRESSetMaxIter(
+                nalu_hypre_F90_PassObj (NALU_HYPRE_Solver, solver),
+                nalu_hypre_F90_PassInt (max_iter) ) );
 }
 
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRLGMRESSetPrecond
+ * NALU_HYPRE_ParCSRLGMRESSetPrecond
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_parcsrlgmressetprecond, HYPRE_PARCSRLGMRESSETPRECOND)
-( hypre_F90_Obj *solver,
-  hypre_F90_Int *precond_id,
-  hypre_F90_Obj *precond_solver,
-  hypre_F90_Int *ierr          )
+nalu_hypre_F90_IFACE(nalu_hypre_parcsrlgmressetprecond, NALU_HYPRE_PARCSRLGMRESSETPRECOND)
+( nalu_hypre_F90_Obj *solver,
+  nalu_hypre_F90_Int *precond_id,
+  nalu_hypre_F90_Obj *precond_solver,
+  nalu_hypre_F90_Int *ierr          )
 {
    /*------------------------------------------------------------
     * The precond_id flags mean :
@@ -197,67 +197,67 @@ hypre_F90_IFACE(hypre_parcsrlgmressetprecond, HYPRE_PARCSRLGMRESSETPRECOND)
    }
    else if (*precond_id == 1)
    {
-      *ierr = (hypre_F90_Int)
-              ( HYPRE_ParCSRLGMRESSetPrecond(
-                   hypre_F90_PassObj (HYPRE_Solver, solver),
-                   HYPRE_ParCSRDiagScale,
-                   HYPRE_ParCSRDiagScaleSetup,
+      *ierr = (nalu_hypre_F90_Int)
+              ( NALU_HYPRE_ParCSRLGMRESSetPrecond(
+                   nalu_hypre_F90_PassObj (NALU_HYPRE_Solver, solver),
+                   NALU_HYPRE_ParCSRDiagScale,
+                   NALU_HYPRE_ParCSRDiagScaleSetup,
                    NULL                        ) );
    }
    else if (*precond_id == 2)
    {
 
-      *ierr = (hypre_F90_Int)
-              ( HYPRE_ParCSRLGMRESSetPrecond(
-                   hypre_F90_PassObj (HYPRE_Solver, solver),
-                   HYPRE_BoomerAMGSolve,
-                   HYPRE_BoomerAMGSetup,
-                   (HYPRE_Solver)       * precond_solver ) );
+      *ierr = (nalu_hypre_F90_Int)
+              ( NALU_HYPRE_ParCSRLGMRESSetPrecond(
+                   nalu_hypre_F90_PassObj (NALU_HYPRE_Solver, solver),
+                   NALU_HYPRE_BoomerAMGSolve,
+                   NALU_HYPRE_BoomerAMGSetup,
+                   (NALU_HYPRE_Solver)       * precond_solver ) );
    }
    else if (*precond_id == 3)
    {
-      *ierr = (hypre_F90_Int)
-              ( HYPRE_ParCSRLGMRESSetPrecond(
-                   hypre_F90_PassObj (HYPRE_Solver, solver),
-                   HYPRE_ParCSRPilutSolve,
-                   HYPRE_ParCSRPilutSetup,
-                   (HYPRE_Solver)       * precond_solver ) );
+      *ierr = (nalu_hypre_F90_Int)
+              ( NALU_HYPRE_ParCSRLGMRESSetPrecond(
+                   nalu_hypre_F90_PassObj (NALU_HYPRE_Solver, solver),
+                   NALU_HYPRE_ParCSRPilutSolve,
+                   NALU_HYPRE_ParCSRPilutSetup,
+                   (NALU_HYPRE_Solver)       * precond_solver ) );
    }
    else if (*precond_id == 4)
    {
-      *ierr = (hypre_F90_Int)
-              ( HYPRE_ParCSRLGMRESSetPrecond(
-                   hypre_F90_PassObj (HYPRE_Solver, solver),
-                   HYPRE_ParCSRParaSailsSolve,
-                   HYPRE_ParCSRParaSailsSetup,
-                   (HYPRE_Solver)       * precond_solver ) );
+      *ierr = (nalu_hypre_F90_Int)
+              ( NALU_HYPRE_ParCSRLGMRESSetPrecond(
+                   nalu_hypre_F90_PassObj (NALU_HYPRE_Solver, solver),
+                   NALU_HYPRE_ParCSRParaSailsSolve,
+                   NALU_HYPRE_ParCSRParaSailsSetup,
+                   (NALU_HYPRE_Solver)       * precond_solver ) );
    }
    else if (*precond_id == 5)
    {
-      *ierr = (hypre_F90_Int)
-              ( HYPRE_ParCSRLGMRESSetPrecond(
-                   hypre_F90_PassObj (HYPRE_Solver, solver),
-                   HYPRE_EuclidSolve,
-                   HYPRE_EuclidSetup,
-                   (HYPRE_Solver)       * precond_solver ) );
+      *ierr = (nalu_hypre_F90_Int)
+              ( NALU_HYPRE_ParCSRLGMRESSetPrecond(
+                   nalu_hypre_F90_PassObj (NALU_HYPRE_Solver, solver),
+                   NALU_HYPRE_EuclidSolve,
+                   NALU_HYPRE_EuclidSetup,
+                   (NALU_HYPRE_Solver)       * precond_solver ) );
    }
    else if (*precond_id == 6)
    {
-      *ierr = (hypre_F90_Int)
-              ( HYPRE_ParCSRLGMRESSetPrecond(
-                   hypre_F90_PassObj (HYPRE_Solver, solver),
-                   HYPRE_ILUSolve,
-                   HYPRE_ILUSetup,
-                   (HYPRE_Solver)       * precond_solver ) );
+      *ierr = (nalu_hypre_F90_Int)
+              ( NALU_HYPRE_ParCSRLGMRESSetPrecond(
+                   nalu_hypre_F90_PassObj (NALU_HYPRE_Solver, solver),
+                   NALU_HYPRE_ILUSolve,
+                   NALU_HYPRE_ILUSetup,
+                   (NALU_HYPRE_Solver)       * precond_solver ) );
    }
    else if (*precond_id == 7)
    {
-      *ierr = (hypre_F90_Int)
-              ( HYPRE_ParCSRLGMRESSetPrecond(
-                   hypre_F90_PassObj (HYPRE_Solver, solver),
-                   HYPRE_MGRSolve,
-                   HYPRE_MGRSetup,
-                   (HYPRE_Solver)       * precond_solver ) );
+      *ierr = (nalu_hypre_F90_Int)
+              ( NALU_HYPRE_ParCSRLGMRESSetPrecond(
+                   nalu_hypre_F90_PassObj (NALU_HYPRE_Solver, solver),
+                   NALU_HYPRE_MGRSolve,
+                   NALU_HYPRE_MGRSetup,
+                   (NALU_HYPRE_Solver)       * precond_solver ) );
    }
    else
    {
@@ -266,84 +266,84 @@ hypre_F90_IFACE(hypre_parcsrlgmressetprecond, HYPRE_PARCSRLGMRESSETPRECOND)
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRLGMRESGetPrecond
+ * NALU_HYPRE_ParCSRLGMRESGetPrecond
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_parcsrlgmresgetprecond, HYPRE_PARCSRLGMRESGETPRECOND)
-( hypre_F90_Obj *solver,
-  hypre_F90_Obj *precond_solver_ptr,
-  hypre_F90_Int *ierr                )
+nalu_hypre_F90_IFACE(nalu_hypre_parcsrlgmresgetprecond, NALU_HYPRE_PARCSRLGMRESGETPRECOND)
+( nalu_hypre_F90_Obj *solver,
+  nalu_hypre_F90_Obj *precond_solver_ptr,
+  nalu_hypre_F90_Int *ierr                )
 {
-   *ierr = (hypre_F90_Int)
-           ( HYPRE_ParCSRLGMRESGetPrecond(
-                hypre_F90_PassObj (HYPRE_Solver, solver),
-                hypre_F90_PassObjRef (HYPRE_Solver, precond_solver_ptr) ) );
+   *ierr = (nalu_hypre_F90_Int)
+           ( NALU_HYPRE_ParCSRLGMRESGetPrecond(
+                nalu_hypre_F90_PassObj (NALU_HYPRE_Solver, solver),
+                nalu_hypre_F90_PassObjRef (NALU_HYPRE_Solver, precond_solver_ptr) ) );
 
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRLGMRESSetLogging
+ * NALU_HYPRE_ParCSRLGMRESSetLogging
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_parcsrlgmressetlogging, HYPRE_PARCSRLGMRESSETLOGGING)
-( hypre_F90_Obj *solver,
-  hypre_F90_Int *logging,
-  hypre_F90_Int *ierr     )
+nalu_hypre_F90_IFACE(nalu_hypre_parcsrlgmressetlogging, NALU_HYPRE_PARCSRLGMRESSETLOGGING)
+( nalu_hypre_F90_Obj *solver,
+  nalu_hypre_F90_Int *logging,
+  nalu_hypre_F90_Int *ierr     )
 {
-   *ierr = (hypre_F90_Int)
-           ( HYPRE_ParCSRLGMRESSetLogging(
-                hypre_F90_PassObj (HYPRE_Solver, solver),
-                hypre_F90_PassInt (logging) ) );
+   *ierr = (nalu_hypre_F90_Int)
+           ( NALU_HYPRE_ParCSRLGMRESSetLogging(
+                nalu_hypre_F90_PassObj (NALU_HYPRE_Solver, solver),
+                nalu_hypre_F90_PassInt (logging) ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRLGMRESSetPrintLevel
+ * NALU_HYPRE_ParCSRLGMRESSetPrintLevel
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_parcsrlgmressetprintlevel, HYPRE_PARCSRLGMRESSETPRINTLEVEL)
-( hypre_F90_Obj *solver,
-  hypre_F90_Int *print_level,
-  hypre_F90_Int *ierr     )
+nalu_hypre_F90_IFACE(nalu_hypre_parcsrlgmressetprintlevel, NALU_HYPRE_PARCSRLGMRESSETPRINTLEVEL)
+( nalu_hypre_F90_Obj *solver,
+  nalu_hypre_F90_Int *print_level,
+  nalu_hypre_F90_Int *ierr     )
 {
-   *ierr = (hypre_F90_Int)
-           ( HYPRE_ParCSRLGMRESSetPrintLevel(
-                hypre_F90_PassObj (HYPRE_Solver, solver),
-                hypre_F90_PassInt (print_level) ) );
+   *ierr = (nalu_hypre_F90_Int)
+           ( NALU_HYPRE_ParCSRLGMRESSetPrintLevel(
+                nalu_hypre_F90_PassObj (NALU_HYPRE_Solver, solver),
+                nalu_hypre_F90_PassInt (print_level) ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRLGMRESGetNumIterations
+ * NALU_HYPRE_ParCSRLGMRESGetNumIterations
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_parcsrlgmresgetnumiteratio, HYPRE_PARCSRLGMRESGETNUMITERATIO)
-( hypre_F90_Obj *solver,
-  hypre_F90_Int *num_iterations,
-  hypre_F90_Int *ierr            )
+nalu_hypre_F90_IFACE(nalu_hypre_parcsrlgmresgetnumiteratio, NALU_HYPRE_PARCSRLGMRESGETNUMITERATIO)
+( nalu_hypre_F90_Obj *solver,
+  nalu_hypre_F90_Int *num_iterations,
+  nalu_hypre_F90_Int *ierr            )
 {
-   *ierr = (hypre_F90_Int)
-           ( HYPRE_ParCSRLGMRESGetNumIterations(
-                hypre_F90_PassObj (HYPRE_Solver, solver),
-                hypre_F90_PassIntRef (num_iterations) ) );
+   *ierr = (nalu_hypre_F90_Int)
+           ( NALU_HYPRE_ParCSRLGMRESGetNumIterations(
+                nalu_hypre_F90_PassObj (NALU_HYPRE_Solver, solver),
+                nalu_hypre_F90_PassIntRef (num_iterations) ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_ParCSRLGMRESGetFinalRelativeResidualNorm
+ * NALU_HYPRE_ParCSRLGMRESGetFinalRelativeResidualNorm
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_parcsrlgmresgetfinalrelati, HYPRE_PARCSRLGMRESGETFINALRELATI)
-( hypre_F90_Obj *solver,
-  hypre_F90_Real *norm,
-  hypre_F90_Int *ierr    )
+nalu_hypre_F90_IFACE(nalu_hypre_parcsrlgmresgetfinalrelati, NALU_HYPRE_PARCSRLGMRESGETFINALRELATI)
+( nalu_hypre_F90_Obj *solver,
+  nalu_hypre_F90_Real *norm,
+  nalu_hypre_F90_Int *ierr    )
 {
-   *ierr = (hypre_F90_Int)
-           ( HYPRE_ParCSRLGMRESGetFinalRelativeResidualNorm(
-                hypre_F90_PassObj (HYPRE_Solver, solver),
-                hypre_F90_PassRealRef (norm)    ) );
+   *ierr = (nalu_hypre_F90_Int)
+           ( NALU_HYPRE_ParCSRLGMRESGetFinalRelativeResidualNorm(
+                nalu_hypre_F90_PassObj (NALU_HYPRE_Solver, solver),
+                nalu_hypre_F90_PassRealRef (norm)    ) );
 }
 
 #ifdef __cplusplus

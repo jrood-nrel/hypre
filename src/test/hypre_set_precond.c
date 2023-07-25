@@ -9,168 +9,168 @@
  * Routines to set up preconditioners for use in test codes.
  * June 16, 2005
  *--------------------------------------------------------------------------*/
-#include "hypre_test.h"
+#include "nalu_hypre_test.h"
 
 
-HYPRE_Int hypre_set_precond(HYPRE_Int matrix_id, HYPRE_Int solver_id, HYPRE_Int precond_id,
+NALU_HYPRE_Int nalu_hypre_set_precond(NALU_HYPRE_Int matrix_id, NALU_HYPRE_Int solver_id, NALU_HYPRE_Int precond_id,
                             void *solver,
                             void *precond)
 {
-   hypre_set_precond_params(precond_id, precond);
+   nalu_hypre_set_precond_params(precond_id, precond);
 
 
    /************************************************************************
     * PARCSR MATRIX
     ***********************************************************************/
-   if (matrix_id == HYPRE_PARCSR)
+   if (matrix_id == NALU_HYPRE_PARCSR)
    {
 
       /************************************************************************
        *     PCG Solver
        ***********************************************************************/
-      if (solver_id == HYPRE_PCG)
+      if (solver_id == NALU_HYPRE_PCG)
       {
-         if (precond_id == HYPRE_BOOMERAMG)
+         if (precond_id == NALU_HYPRE_BOOMERAMG)
          {
-            HYPRE_PCGSetPrecond( (HYPRE_Solver) solver,
-                                 (HYPRE_PtrToSolverFcn) HYPRE_BoomerAMGSolve,
-                                 (HYPRE_PtrToSolverFcn) HYPRE_BoomerAMGSetup,
-                                 (HYPRE_Solver) precond);
+            NALU_HYPRE_PCGSetPrecond( (NALU_HYPRE_Solver) solver,
+                                 (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_BoomerAMGSolve,
+                                 (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_BoomerAMGSetup,
+                                 (NALU_HYPRE_Solver) precond);
          }
-         else if (precond_id == HYPRE_DIAGSCALE)
+         else if (precond_id == NALU_HYPRE_DIAGSCALE)
          {
-            HYPRE_PCGSetPrecond( (HYPRE_Solver) solver,
-                                 (HYPRE_PtrToSolverFcn) HYPRE_ParCSRDiagScale,
-                                 (HYPRE_PtrToSolverFcn) HYPRE_ParCSRDiagScaleSetup,
-                                 (HYPRE_Solver) precond);
+            NALU_HYPRE_PCGSetPrecond( (NALU_HYPRE_Solver) solver,
+                                 (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_ParCSRDiagScale,
+                                 (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_ParCSRDiagScaleSetup,
+                                 (NALU_HYPRE_Solver) precond);
          }
-         else if (precond_id == HYPRE_EUCLID)
+         else if (precond_id == NALU_HYPRE_EUCLID)
          {
-            HYPRE_PCGSetPrecond( (HYPRE_Solver) solver,
-                                 (HYPRE_PtrToSolverFcn) HYPRE_EuclidSolve,
-                                 (HYPRE_PtrToSolverFcn) HYPRE_EuclidSetup,
-                                 (HYPRE_Solver) precond);
+            NALU_HYPRE_PCGSetPrecond( (NALU_HYPRE_Solver) solver,
+                                 (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_EuclidSolve,
+                                 (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_EuclidSetup,
+                                 (NALU_HYPRE_Solver) precond);
          }
-         else if (precond_id == HYPRE_PARASAILS)
+         else if (precond_id == NALU_HYPRE_PARASAILS)
          {
-            HYPRE_PCGSetPrecond( (HYPRE_Solver) solver,
-                                 (HYPRE_PtrToSolverFcn) HYPRE_ParCSRParaSailsSolve,
-                                 (HYPRE_PtrToSolverFcn) HYPRE_ParCSRParaSailsSetup,
-                                 (HYPRE_Solver) precond);
+            NALU_HYPRE_PCGSetPrecond( (NALU_HYPRE_Solver) solver,
+                                 (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_ParCSRParaSailsSolve,
+                                 (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_ParCSRParaSailsSetup,
+                                 (NALU_HYPRE_Solver) precond);
          }
-         else if (precond_id == HYPRE_SCHWARZ)
+         else if (precond_id == NALU_HYPRE_SCHWARZ)
          {
-            HYPRE_PCGSetPrecond( (HYPRE_Solver) solver,
-                                 (HYPRE_PtrToSolverFcn) HYPRE_SchwarzSolve,
-                                 (HYPRE_PtrToSolverFcn) HYPRE_SchwarzSetup,
-                                 (HYPRE_Solver) precond);
+            NALU_HYPRE_PCGSetPrecond( (NALU_HYPRE_Solver) solver,
+                                 (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_SchwarzSolve,
+                                 (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_SchwarzSetup,
+                                 (NALU_HYPRE_Solver) precond);
          }
       }
 
       /************************************************************************
        *     GMRES Solver
        ***********************************************************************/
-      if (solver_id == HYPRE_GMRES)
+      if (solver_id == NALU_HYPRE_GMRES)
       {
-         if (precond_id == HYPRE_BOOMERAMG)
+         if (precond_id == NALU_HYPRE_BOOMERAMG)
          {
-            HYPRE_GMRESSetPrecond( (HYPRE_Solver) solver,
-                                   (HYPRE_PtrToSolverFcn) HYPRE_BoomerAMGSolve,
-                                   (HYPRE_PtrToSolverFcn) HYPRE_BoomerAMGSetup,
-                                   (HYPRE_Solver) precond);
+            NALU_HYPRE_GMRESSetPrecond( (NALU_HYPRE_Solver) solver,
+                                   (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_BoomerAMGSolve,
+                                   (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_BoomerAMGSetup,
+                                   (NALU_HYPRE_Solver) precond);
          }
-         else if (precond_id == HYPRE_DIAGSCALE)
+         else if (precond_id == NALU_HYPRE_DIAGSCALE)
          {
-            HYPRE_GMRESSetPrecond( (HYPRE_Solver) solver,
-                                   (HYPRE_PtrToSolverFcn) HYPRE_ParCSRDiagScale,
-                                   (HYPRE_PtrToSolverFcn) HYPRE_ParCSRDiagScaleSetup,
-                                   (HYPRE_Solver) precond);
+            NALU_HYPRE_GMRESSetPrecond( (NALU_HYPRE_Solver) solver,
+                                   (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_ParCSRDiagScale,
+                                   (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_ParCSRDiagScaleSetup,
+                                   (NALU_HYPRE_Solver) precond);
          }
-         else if (precond_id == HYPRE_EUCLID)
+         else if (precond_id == NALU_HYPRE_EUCLID)
          {
-            HYPRE_GMRESSetPrecond( (HYPRE_Solver) solver,
-                                   (HYPRE_PtrToSolverFcn) HYPRE_EuclidSolve,
-                                   (HYPRE_PtrToSolverFcn) HYPRE_EuclidSetup,
-                                   (HYPRE_Solver) precond);
+            NALU_HYPRE_GMRESSetPrecond( (NALU_HYPRE_Solver) solver,
+                                   (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_EuclidSolve,
+                                   (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_EuclidSetup,
+                                   (NALU_HYPRE_Solver) precond);
          }
-         else if (precond_id == HYPRE_PARASAILS)
+         else if (precond_id == NALU_HYPRE_PARASAILS)
          {
-            HYPRE_GMRESSetPrecond( (HYPRE_Solver) solver,
-                                   (HYPRE_PtrToSolverFcn) HYPRE_ParCSRParaSailsSolve,
-                                   (HYPRE_PtrToSolverFcn) HYPRE_ParCSRParaSailsSetup,
-                                   (HYPRE_Solver) precond);
+            NALU_HYPRE_GMRESSetPrecond( (NALU_HYPRE_Solver) solver,
+                                   (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_ParCSRParaSailsSolve,
+                                   (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_ParCSRParaSailsSetup,
+                                   (NALU_HYPRE_Solver) precond);
          }
-         else if (precond_id == HYPRE_PILUT)
+         else if (precond_id == NALU_HYPRE_PILUT)
          {
-            HYPRE_GMRESSetPrecond( (HYPRE_Solver) solver,
-                                   (HYPRE_PtrToSolverFcn) HYPRE_ParCSRPilutSolve,
-                                   (HYPRE_PtrToSolverFcn) HYPRE_ParCSRPilutSetup,
-                                   (HYPRE_Solver) precond);
+            NALU_HYPRE_GMRESSetPrecond( (NALU_HYPRE_Solver) solver,
+                                   (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_ParCSRPilutSolve,
+                                   (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_ParCSRPilutSetup,
+                                   (NALU_HYPRE_Solver) precond);
          }
-         else if (precond_id == HYPRE_SCHWARZ)
+         else if (precond_id == NALU_HYPRE_SCHWARZ)
          {
-            HYPRE_GMRESSetPrecond( (HYPRE_Solver) solver,
-                                   (HYPRE_PtrToSolverFcn) HYPRE_SchwarzSolve,
-                                   (HYPRE_PtrToSolverFcn) HYPRE_SchwarzSetup,
-                                   (HYPRE_Solver) precond);
+            NALU_HYPRE_GMRESSetPrecond( (NALU_HYPRE_Solver) solver,
+                                   (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_SchwarzSolve,
+                                   (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_SchwarzSetup,
+                                   (NALU_HYPRE_Solver) precond);
          }
       }
 
       /************************************************************************
        *     BiCGSTAB Solver
        ***********************************************************************/
-      if (solver_id == HYPRE_BICGSTAB)
+      if (solver_id == NALU_HYPRE_BICGSTAB)
       {
-         if (precond_id == HYPRE_BOOMERAMG)
+         if (precond_id == NALU_HYPRE_BOOMERAMG)
          {
-            HYPRE_BiCGSTABSetPrecond( (HYPRE_Solver) solver,
-                                      (HYPRE_PtrToSolverFcn) HYPRE_BoomerAMGSolve,
-                                      (HYPRE_PtrToSolverFcn) HYPRE_BoomerAMGSetup,
-                                      (HYPRE_Solver) precond);
+            NALU_HYPRE_BiCGSTABSetPrecond( (NALU_HYPRE_Solver) solver,
+                                      (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_BoomerAMGSolve,
+                                      (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_BoomerAMGSetup,
+                                      (NALU_HYPRE_Solver) precond);
          }
-         else if (precond_id == HYPRE_DIAGSCALE)
+         else if (precond_id == NALU_HYPRE_DIAGSCALE)
          {
-            HYPRE_BiCGSTABSetPrecond( (HYPRE_Solver) solver,
-                                      (HYPRE_PtrToSolverFcn) HYPRE_ParCSRDiagScale,
-                                      (HYPRE_PtrToSolverFcn) HYPRE_ParCSRDiagScaleSetup,
-                                      (HYPRE_Solver) precond);
+            NALU_HYPRE_BiCGSTABSetPrecond( (NALU_HYPRE_Solver) solver,
+                                      (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_ParCSRDiagScale,
+                                      (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_ParCSRDiagScaleSetup,
+                                      (NALU_HYPRE_Solver) precond);
          }
-         else if (precond_id == HYPRE_EUCLID)
+         else if (precond_id == NALU_HYPRE_EUCLID)
          {
-            HYPRE_BiCGSTABSetPrecond( (HYPRE_Solver) solver,
-                                      (HYPRE_PtrToSolverFcn) HYPRE_EuclidSolve,
-                                      (HYPRE_PtrToSolverFcn) HYPRE_EuclidSetup,
-                                      (HYPRE_Solver) precond);
+            NALU_HYPRE_BiCGSTABSetPrecond( (NALU_HYPRE_Solver) solver,
+                                      (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_EuclidSolve,
+                                      (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_EuclidSetup,
+                                      (NALU_HYPRE_Solver) precond);
          }
-         else if (precond_id == HYPRE_PILUT)
+         else if (precond_id == NALU_HYPRE_PILUT)
          {
-            HYPRE_BiCGSTABSetPrecond( (HYPRE_Solver) solver,
-                                      (HYPRE_PtrToSolverFcn) HYPRE_ParCSRPilutSolve,
-                                      (HYPRE_PtrToSolverFcn) HYPRE_ParCSRPilutSetup,
-                                      (HYPRE_Solver) precond);
+            NALU_HYPRE_BiCGSTABSetPrecond( (NALU_HYPRE_Solver) solver,
+                                      (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_ParCSRPilutSolve,
+                                      (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_ParCSRPilutSetup,
+                                      (NALU_HYPRE_Solver) precond);
          }
       }
 
       /************************************************************************
        *     CGNR Solver
        ***********************************************************************/
-      if (solver_id == HYPRE_CGNR)
+      if (solver_id == NALU_HYPRE_CGNR)
       {
-         if (precond_id == HYPRE_BOOMERAMG)
+         if (precond_id == NALU_HYPRE_BOOMERAMG)
          {
-            HYPRE_CGNRSetPrecond( (HYPRE_Solver) solver,
-                                  (HYPRE_PtrToSolverFcn) HYPRE_BoomerAMGSolve,
-                                  (HYPRE_PtrToSolverFcn) HYPRE_BoomerAMGSolveT,
-                                  (HYPRE_PtrToSolverFcn) HYPRE_BoomerAMGSetup,
-                                  (HYPRE_Solver) precond);
+            NALU_HYPRE_CGNRSetPrecond( (NALU_HYPRE_Solver) solver,
+                                  (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_BoomerAMGSolve,
+                                  (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_BoomerAMGSolveT,
+                                  (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_BoomerAMGSetup,
+                                  (NALU_HYPRE_Solver) precond);
          }
-         else if (precond_id == HYPRE_DIAGSCALE)
+         else if (precond_id == NALU_HYPRE_DIAGSCALE)
          {
-            HYPRE_CGNRSetPrecond( (HYPRE_Solver) solver,
-                                  (HYPRE_PtrToSolverFcn) HYPRE_ParCSRDiagScale,
-                                  (HYPRE_PtrToSolverFcn) HYPRE_ParCSRDiagScale,
-                                  (HYPRE_PtrToSolverFcn) HYPRE_ParCSRDiagScaleSetup,
-                                  (HYPRE_Solver) precond);
+            NALU_HYPRE_CGNRSetPrecond( (NALU_HYPRE_Solver) solver,
+                                  (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_ParCSRDiagScale,
+                                  (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_ParCSRDiagScale,
+                                  (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_ParCSRDiagScaleSetup,
+                                  (NALU_HYPRE_Solver) precond);
          }
       }
 
@@ -180,99 +180,99 @@ HYPRE_Int hypre_set_precond(HYPRE_Int matrix_id, HYPRE_Int solver_id, HYPRE_Int 
    /************************************************************************
     * SSTRUCT MATRIX
     ***********************************************************************/
-   if (matrix_id == HYPRE_SSTRUCT)
+   if (matrix_id == NALU_HYPRE_SSTRUCT)
    {
 
       /************************************************************************
        *     PCG Solver
        ***********************************************************************/
-      if (solver_id == HYPRE_PCG)
+      if (solver_id == NALU_HYPRE_PCG)
       {
-         if (precond_id == HYPRE_SPLIT)
+         if (precond_id == NALU_HYPRE_SPLIT)
          {
-            HYPRE_PCGSetPrecond( (HYPRE_Solver) solver,
-                                 (HYPRE_PtrToSolverFcn) HYPRE_SStructSplitSolve,
-                                 (HYPRE_PtrToSolverFcn) HYPRE_SStructSplitSetup,
-                                 (HYPRE_Solver) precond);
+            NALU_HYPRE_PCGSetPrecond( (NALU_HYPRE_Solver) solver,
+                                 (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_SStructSplitSolve,
+                                 (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_SStructSplitSetup,
+                                 (NALU_HYPRE_Solver) precond);
          }
-         else if (precond_id == HYPRE_SYSPFMG)
+         else if (precond_id == NALU_HYPRE_SYSPFMG)
          {
-            HYPRE_PCGSetPrecond( (HYPRE_Solver) solver,
-                                 (HYPRE_PtrToSolverFcn) HYPRE_SStructSysPFMGSolve,
-                                 (HYPRE_PtrToSolverFcn) HYPRE_SStructSysPFMGSetup,
-                                 (HYPRE_Solver) precond);
+            NALU_HYPRE_PCGSetPrecond( (NALU_HYPRE_Solver) solver,
+                                 (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_SStructSysPFMGSolve,
+                                 (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_SStructSysPFMGSetup,
+                                 (NALU_HYPRE_Solver) precond);
          }
-         else if (precond_id == HYPRE_DIAGSCALE)
+         else if (precond_id == NALU_HYPRE_DIAGSCALE)
          {
-            HYPRE_PCGSetPrecond( (HYPRE_Solver) solver,
-                                 (HYPRE_PtrToSolverFcn) HYPRE_SStructDiagScale,
-                                 (HYPRE_PtrToSolverFcn) HYPRE_SStructDiagScaleSetup,
-                                 (HYPRE_Solver) precond);
+            NALU_HYPRE_PCGSetPrecond( (NALU_HYPRE_Solver) solver,
+                                 (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_SStructDiagScale,
+                                 (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_SStructDiagScaleSetup,
+                                 (NALU_HYPRE_Solver) precond);
          }
       }
 
       /************************************************************************
        * GMRES Solver
        ***********************************************************************/
-      if (solver_id == HYPRE_GMRES)
+      if (solver_id == NALU_HYPRE_GMRES)
       {
-         if (precond_id == HYPRE_DIAGSCALE)
+         if (precond_id == NALU_HYPRE_DIAGSCALE)
          {
-            HYPRE_GMRESSetPrecond( (HYPRE_Solver) solver,
-                                   (HYPRE_PtrToSolverFcn) HYPRE_SStructDiagScale,
-                                   (HYPRE_PtrToSolverFcn) HYPRE_SStructDiagScaleSetup,
-                                   (HYPRE_Solver) precond);
+            NALU_HYPRE_GMRESSetPrecond( (NALU_HYPRE_Solver) solver,
+                                   (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_SStructDiagScale,
+                                   (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_SStructDiagScaleSetup,
+                                   (NALU_HYPRE_Solver) precond);
          }
-         else if (precond_id == HYPRE_SPLIT)
+         else if (precond_id == NALU_HYPRE_SPLIT)
          {
-            HYPRE_GMRESSetPrecond( (HYPRE_Solver) solver,
-                                   (HYPRE_PtrToSolverFcn) HYPRE_SStructSplitSolve,
-                                   (HYPRE_PtrToSolverFcn) HYPRE_SStructSplitSetup,
-                                   (HYPRE_Solver) precond);
+            NALU_HYPRE_GMRESSetPrecond( (NALU_HYPRE_Solver) solver,
+                                   (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_SStructSplitSolve,
+                                   (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_SStructSplitSetup,
+                                   (NALU_HYPRE_Solver) precond);
          }
       }
 
       /************************************************************************
        * BiCGSTAB Solver
        ***********************************************************************/
-      if (solver_id == HYPRE_BICGSTAB)
+      if (solver_id == NALU_HYPRE_BICGSTAB)
       {
-         if (precond_id == HYPRE_DIAGSCALE)
+         if (precond_id == NALU_HYPRE_DIAGSCALE)
          {
-            HYPRE_BiCGSTABSetPrecond( (HYPRE_Solver) solver,
-                                      (HYPRE_PtrToSolverFcn) HYPRE_SStructDiagScale,
-                                      (HYPRE_PtrToSolverFcn) HYPRE_SStructDiagScaleSetup,
-                                      (HYPRE_Solver) precond);
+            NALU_HYPRE_BiCGSTABSetPrecond( (NALU_HYPRE_Solver) solver,
+                                      (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_SStructDiagScale,
+                                      (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_SStructDiagScaleSetup,
+                                      (NALU_HYPRE_Solver) precond);
          }
-         else if (precond_id == HYPRE_SPLIT)
+         else if (precond_id == NALU_HYPRE_SPLIT)
          {
-            HYPRE_BiCGSTABSetPrecond( (HYPRE_Solver) solver,
-                                      (HYPRE_PtrToSolverFcn) HYPRE_SStructSplitSolve,
-                                      (HYPRE_PtrToSolverFcn) HYPRE_SStructSplitSetup,
-                                      (HYPRE_Solver) precond);
+            NALU_HYPRE_BiCGSTABSetPrecond( (NALU_HYPRE_Solver) solver,
+                                      (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_SStructSplitSolve,
+                                      (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_SStructSplitSetup,
+                                      (NALU_HYPRE_Solver) precond);
          }
       }
 
       /************************************************************************
        * CGNR Solver
        ***********************************************************************/
-      if (solver_id == HYPRE_CGNR)
+      if (solver_id == NALU_HYPRE_CGNR)
       {
-         if (precond_id == HYPRE_BOOMERAMG)
+         if (precond_id == NALU_HYPRE_BOOMERAMG)
          {
-            HYPRE_CGNRSetPrecond( (HYPRE_Solver) solver,
-                                  (HYPRE_PtrToSolverFcn) HYPRE_BoomerAMGSolve,
-                                  (HYPRE_PtrToSolverFcn) HYPRE_BoomerAMGSolveT,
-                                  (HYPRE_PtrToSolverFcn) HYPRE_BoomerAMGSetup,
-                                  (HYPRE_Solver) precond);
+            NALU_HYPRE_CGNRSetPrecond( (NALU_HYPRE_Solver) solver,
+                                  (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_BoomerAMGSolve,
+                                  (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_BoomerAMGSolveT,
+                                  (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_BoomerAMGSetup,
+                                  (NALU_HYPRE_Solver) precond);
          }
-         else if (precond_id == HYPRE_DIAGSCALE)
+         else if (precond_id == NALU_HYPRE_DIAGSCALE)
          {
-            HYPRE_CGNRSetPrecond( (HYPRE_Solver) solver,
-                                  (HYPRE_PtrToSolverFcn) HYPRE_ParCSRDiagScale,
-                                  (HYPRE_PtrToSolverFcn) HYPRE_ParCSRDiagScale,
-                                  (HYPRE_PtrToSolverFcn) HYPRE_ParCSRDiagScaleSetup,
-                                  (HYPRE_Solver) precond);
+            NALU_HYPRE_CGNRSetPrecond( (NALU_HYPRE_Solver) solver,
+                                  (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_ParCSRDiagScale,
+                                  (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_ParCSRDiagScale,
+                                  (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_ParCSRDiagScaleSetup,
+                                  (NALU_HYPRE_Solver) precond);
          }
       }
 
@@ -281,236 +281,236 @@ HYPRE_Int hypre_set_precond(HYPRE_Int matrix_id, HYPRE_Int solver_id, HYPRE_Int 
    /************************************************************************
     * STRUCT MATRIX
     ***********************************************************************/
-   if (matrix_id == HYPRE_STRUCT)
+   if (matrix_id == NALU_HYPRE_STRUCT)
    {
 
       /************************************************************************
        *     PCG Solver
        ***********************************************************************/
-      if (solver_id == HYPRE_PCG)
+      if (solver_id == NALU_HYPRE_PCG)
       {
-         if (precond_id == HYPRE_SMG)
+         if (precond_id == NALU_HYPRE_SMG)
          {
-            HYPRE_PCGSetPrecond( (HYPRE_Solver) solver,
-                                 (HYPRE_PtrToSolverFcn) HYPRE_StructSMGSolve,
-                                 (HYPRE_PtrToSolverFcn) HYPRE_StructSMGSetup,
-                                 (HYPRE_Solver) precond);
+            NALU_HYPRE_PCGSetPrecond( (NALU_HYPRE_Solver) solver,
+                                 (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_StructSMGSolve,
+                                 (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_StructSMGSetup,
+                                 (NALU_HYPRE_Solver) precond);
          }
-         else if (precond_id == HYPRE_PFMG)
+         else if (precond_id == NALU_HYPRE_PFMG)
          {
-            HYPRE_PCGSetPrecond( (HYPRE_Solver) solver,
-                                 (HYPRE_PtrToSolverFcn) HYPRE_StructPFMGSolve,
-                                 (HYPRE_PtrToSolverFcn) HYPRE_StructPFMGSetup,
-                                 (HYPRE_Solver) precond);
+            NALU_HYPRE_PCGSetPrecond( (NALU_HYPRE_Solver) solver,
+                                 (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_StructPFMGSolve,
+                                 (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_StructPFMGSetup,
+                                 (NALU_HYPRE_Solver) precond);
          }
-         else if (precond_id == HYPRE_SPARSEMSG)
+         else if (precond_id == NALU_HYPRE_SPARSEMSG)
          {
-            HYPRE_PCGSetPrecond( (HYPRE_Solver) solver,
-                                 (HYPRE_PtrToSolverFcn) HYPRE_StructSparseMSGSolve,
-                                 (HYPRE_PtrToSolverFcn) HYPRE_StructSparseMSGSetup,
-                                 (HYPRE_Solver) precond);
+            NALU_HYPRE_PCGSetPrecond( (NALU_HYPRE_Solver) solver,
+                                 (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_StructSparseMSGSolve,
+                                 (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_StructSparseMSGSetup,
+                                 (NALU_HYPRE_Solver) precond);
          }
-         else if (precond_id == HYPRE_JACOBI)
+         else if (precond_id == NALU_HYPRE_JACOBI)
          {
-            HYPRE_PCGSetPrecond( (HYPRE_Solver) solver,
-                                 (HYPRE_PtrToSolverFcn) HYPRE_StructJacobiSolve,
-                                 (HYPRE_PtrToSolverFcn) HYPRE_StructJacobiSetup,
-                                 (HYPRE_Solver) precond);
+            NALU_HYPRE_PCGSetPrecond( (NALU_HYPRE_Solver) solver,
+                                 (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_StructJacobiSolve,
+                                 (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_StructJacobiSetup,
+                                 (NALU_HYPRE_Solver) precond);
          }
-         else if (precond_id == HYPRE_DIAGSCALE)
+         else if (precond_id == NALU_HYPRE_DIAGSCALE)
          {
-            HYPRE_PCGSetPrecond( (HYPRE_Solver) solver,
-                                 (HYPRE_PtrToSolverFcn) HYPRE_StructDiagScale,
-                                 (HYPRE_PtrToSolverFcn) HYPRE_StructDiagScaleSetup,
-                                 (HYPRE_Solver) precond);
+            NALU_HYPRE_PCGSetPrecond( (NALU_HYPRE_Solver) solver,
+                                 (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_StructDiagScale,
+                                 (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_StructDiagScaleSetup,
+                                 (NALU_HYPRE_Solver) precond);
          }
       }
 
       /************************************************************************
        *     HYBRID Solver
        ***********************************************************************/
-      if (solver_id == HYPRE_HYBRID)
+      if (solver_id == NALU_HYPRE_HYBRID)
       {
-         if (precond_id == HYPRE_SMG)
+         if (precond_id == NALU_HYPRE_SMG)
          {
-            HYPRE_StructHybridSetPrecond( (HYPRE_StructSolver) solver,
-                                          (HYPRE_PtrToStructSolverFcn) HYPRE_StructSMGSolve,
-                                          (HYPRE_PtrToStructSolverFcn) HYPRE_StructSMGSetup,
-                                          (HYPRE_StructSolver) precond);
+            NALU_HYPRE_StructHybridSetPrecond( (NALU_HYPRE_StructSolver) solver,
+                                          (NALU_HYPRE_PtrToStructSolverFcn) NALU_HYPRE_StructSMGSolve,
+                                          (NALU_HYPRE_PtrToStructSolverFcn) NALU_HYPRE_StructSMGSetup,
+                                          (NALU_HYPRE_StructSolver) precond);
          }
-         else if (precond_id == HYPRE_PFMG)
+         else if (precond_id == NALU_HYPRE_PFMG)
          {
-            HYPRE_StructHybridSetPrecond( (HYPRE_StructSolver) solver,
-                                          (HYPRE_PtrToStructSolverFcn) HYPRE_StructPFMGSolve,
-                                          (HYPRE_PtrToStructSolverFcn) HYPRE_StructPFMGSetup,
-                                          (HYPRE_StructSolver) precond);
+            NALU_HYPRE_StructHybridSetPrecond( (NALU_HYPRE_StructSolver) solver,
+                                          (NALU_HYPRE_PtrToStructSolverFcn) NALU_HYPRE_StructPFMGSolve,
+                                          (NALU_HYPRE_PtrToStructSolverFcn) NALU_HYPRE_StructPFMGSetup,
+                                          (NALU_HYPRE_StructSolver) precond);
          }
-         else if (precond_id == HYPRE_SPARSEMSG)
+         else if (precond_id == NALU_HYPRE_SPARSEMSG)
          {
-            HYPRE_StructHybridSetPrecond( (HYPRE_StructSolver) solver,
-                                          (HYPRE_PtrToStructSolverFcn) HYPRE_StructSparseMSGSolve,
-                                          (HYPRE_PtrToStructSolverFcn) HYPRE_StructSparseMSGSetup,
-                                          (HYPRE_StructSolver) precond);
+            NALU_HYPRE_StructHybridSetPrecond( (NALU_HYPRE_StructSolver) solver,
+                                          (NALU_HYPRE_PtrToStructSolverFcn) NALU_HYPRE_StructSparseMSGSolve,
+                                          (NALU_HYPRE_PtrToStructSolverFcn) NALU_HYPRE_StructSparseMSGSetup,
+                                          (NALU_HYPRE_StructSolver) precond);
          }
       }
 
       /************************************************************************
        *     GMRES Solver
        ***********************************************************************/
-      if (solver_id == HYPRE_GMRES)
+      if (solver_id == NALU_HYPRE_GMRES)
       {
-         if (precond_id == HYPRE_SMG)
+         if (precond_id == NALU_HYPRE_SMG)
          {
-            HYPRE_GMRESSetPrecond( (HYPRE_Solver) solver,
-                                   (HYPRE_PtrToSolverFcn) HYPRE_StructSMGSolve,
-                                   (HYPRE_PtrToSolverFcn) HYPRE_StructSMGSetup,
-                                   (HYPRE_Solver) precond);
+            NALU_HYPRE_GMRESSetPrecond( (NALU_HYPRE_Solver) solver,
+                                   (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_StructSMGSolve,
+                                   (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_StructSMGSetup,
+                                   (NALU_HYPRE_Solver) precond);
          }
-         else if (precond_id == HYPRE_PFMG)
+         else if (precond_id == NALU_HYPRE_PFMG)
          {
-            HYPRE_GMRESSetPrecond( (HYPRE_Solver) solver,
-                                   (HYPRE_PtrToSolverFcn) HYPRE_StructPFMGSolve,
-                                   (HYPRE_PtrToSolverFcn) HYPRE_StructPFMGSetup,
-                                   (HYPRE_Solver) precond);
+            NALU_HYPRE_GMRESSetPrecond( (NALU_HYPRE_Solver) solver,
+                                   (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_StructPFMGSolve,
+                                   (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_StructPFMGSetup,
+                                   (NALU_HYPRE_Solver) precond);
          }
-         else if (precond_id == HYPRE_SPARSEMSG)
+         else if (precond_id == NALU_HYPRE_SPARSEMSG)
          {
-            HYPRE_GMRESSetPrecond( (HYPRE_Solver) solver,
-                                   (HYPRE_PtrToSolverFcn) HYPRE_StructSparseMSGSolve,
-                                   (HYPRE_PtrToSolverFcn) HYPRE_StructSparseMSGSetup,
-                                   (HYPRE_Solver) precond);
+            NALU_HYPRE_GMRESSetPrecond( (NALU_HYPRE_Solver) solver,
+                                   (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_StructSparseMSGSolve,
+                                   (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_StructSparseMSGSetup,
+                                   (NALU_HYPRE_Solver) precond);
          }
-         else if (precond_id == HYPRE_JACOBI)
+         else if (precond_id == NALU_HYPRE_JACOBI)
          {
-            HYPRE_GMRESSetPrecond( (HYPRE_Solver) solver,
-                                   (HYPRE_PtrToSolverFcn) HYPRE_StructJacobiSolve,
-                                   (HYPRE_PtrToSolverFcn) HYPRE_StructJacobiSetup,
-                                   (HYPRE_Solver) precond);
+            NALU_HYPRE_GMRESSetPrecond( (NALU_HYPRE_Solver) solver,
+                                   (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_StructJacobiSolve,
+                                   (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_StructJacobiSetup,
+                                   (NALU_HYPRE_Solver) precond);
          }
-         else if (precond_id == HYPRE_DIAGSCALE)
+         else if (precond_id == NALU_HYPRE_DIAGSCALE)
          {
-            HYPRE_GMRESSetPrecond( (HYPRE_Solver) solver,
-                                   (HYPRE_PtrToSolverFcn) HYPRE_StructDiagScale,
-                                   (HYPRE_PtrToSolverFcn) HYPRE_StructDiagScaleSetup,
-                                   (HYPRE_Solver) precond);
+            NALU_HYPRE_GMRESSetPrecond( (NALU_HYPRE_Solver) solver,
+                                   (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_StructDiagScale,
+                                   (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_StructDiagScaleSetup,
+                                   (NALU_HYPRE_Solver) precond);
          }
       }
 
       /************************************************************************
        *     BICGSTAB Solver
        ***********************************************************************/
-      if (solver_id == HYPRE_BICGSTAB)
+      if (solver_id == NALU_HYPRE_BICGSTAB)
       {
-         if (precond_id == HYPRE_SMG)
+         if (precond_id == NALU_HYPRE_SMG)
          {
-            HYPRE_BiCGSTABSetPrecond( (HYPRE_Solver) solver,
-                                      (HYPRE_PtrToSolverFcn) HYPRE_StructSMGSolve,
-                                      (HYPRE_PtrToSolverFcn) HYPRE_StructSMGSetup,
-                                      (HYPRE_Solver) precond);
+            NALU_HYPRE_BiCGSTABSetPrecond( (NALU_HYPRE_Solver) solver,
+                                      (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_StructSMGSolve,
+                                      (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_StructSMGSetup,
+                                      (NALU_HYPRE_Solver) precond);
          }
-         else if (precond_id == HYPRE_PFMG)
+         else if (precond_id == NALU_HYPRE_PFMG)
          {
-            HYPRE_BiCGSTABSetPrecond( (HYPRE_Solver) solver,
-                                      (HYPRE_PtrToSolverFcn) HYPRE_StructPFMGSolve,
-                                      (HYPRE_PtrToSolverFcn) HYPRE_StructPFMGSetup,
-                                      (HYPRE_Solver) precond);
+            NALU_HYPRE_BiCGSTABSetPrecond( (NALU_HYPRE_Solver) solver,
+                                      (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_StructPFMGSolve,
+                                      (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_StructPFMGSetup,
+                                      (NALU_HYPRE_Solver) precond);
          }
-         else if (precond_id == HYPRE_SPARSEMSG)
+         else if (precond_id == NALU_HYPRE_SPARSEMSG)
          {
-            HYPRE_BiCGSTABSetPrecond( (HYPRE_Solver) solver,
-                                      (HYPRE_PtrToSolverFcn) HYPRE_StructSparseMSGSolve,
-                                      (HYPRE_PtrToSolverFcn) HYPRE_StructSparseMSGSetup,
-                                      (HYPRE_Solver) precond);
+            NALU_HYPRE_BiCGSTABSetPrecond( (NALU_HYPRE_Solver) solver,
+                                      (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_StructSparseMSGSolve,
+                                      (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_StructSparseMSGSetup,
+                                      (NALU_HYPRE_Solver) precond);
          }
-         else if (precond_id == HYPRE_JACOBI)
+         else if (precond_id == NALU_HYPRE_JACOBI)
          {
-            HYPRE_BiCGSTABSetPrecond( (HYPRE_Solver) solver,
-                                      (HYPRE_PtrToSolverFcn) HYPRE_StructJacobiSolve,
-                                      (HYPRE_PtrToSolverFcn) HYPRE_StructJacobiSetup,
-                                      (HYPRE_Solver) precond);
+            NALU_HYPRE_BiCGSTABSetPrecond( (NALU_HYPRE_Solver) solver,
+                                      (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_StructJacobiSolve,
+                                      (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_StructJacobiSetup,
+                                      (NALU_HYPRE_Solver) precond);
          }
-         else if (precond_id == HYPRE_DIAGSCALE)
+         else if (precond_id == NALU_HYPRE_DIAGSCALE)
          {
-            HYPRE_BiCGSTABSetPrecond( (HYPRE_Solver) solver,
-                                      (HYPRE_PtrToSolverFcn) HYPRE_StructDiagScale,
-                                      (HYPRE_PtrToSolverFcn) HYPRE_StructDiagScaleSetup,
-                                      (HYPRE_Solver) precond);
+            NALU_HYPRE_BiCGSTABSetPrecond( (NALU_HYPRE_Solver) solver,
+                                      (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_StructDiagScale,
+                                      (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_StructDiagScaleSetup,
+                                      (NALU_HYPRE_Solver) precond);
          }
       }
    }
 }
 
 
-HYPRE_Int hypre_set_precond_params(HYPRE_Int precond_id, void *precond)
+NALU_HYPRE_Int nalu_hypre_set_precond_params(NALU_HYPRE_Int precond_id, void *precond)
 {
-   HYPRE_Int i;
-   HYPRE_Int ierr;
+   NALU_HYPRE_Int i;
+   NALU_HYPRE_Int ierr;
 
    /* use BoomerAMG preconditioner */
-   if (precond_id == HYPRE_BOOMERAMG)
+   if (precond_id == NALU_HYPRE_BOOMERAMG)
    {
-      HYPRE_BoomerAMGCreate(precond);
-      HYPRE_BoomerAMGSetInterpType(precond, interp_type);
-      HYPRE_BoomerAMGSetNumSamples(precond, gsmg_samples);
-      HYPRE_BoomerAMGSetTol(precond, pc_tol);
-      HYPRE_BoomerAMGSetCoarsenType(precond, (hybrid * coarsen_type));
-      HYPRE_BoomerAMGSetMeasureType(precond, measure_type);
-      HYPRE_BoomerAMGSetStrongThreshold(precond, strong_threshold);
-      HYPRE_BoomerAMGSetTruncFactor(precond, trunc_factor);
-      HYPRE_BoomerAMGSetPrintLevel(precond, poutdat);
-      HYPRE_BoomerAMGSetPrintFileName(precond, "driver.out.log");
-      HYPRE_BoomerAMGSetMaxIter(precond, 1);
-      HYPRE_BoomerAMGSetCycleType(precond, cycle_type);
-      HYPRE_BoomerAMGSetNumGridSweeps(precond, num_grid_sweeps);
-      HYPRE_BoomerAMGSetGridRelaxType(precond, grid_relax_type);
-      HYPRE_BoomerAMGSetRelaxWeight(precond, relax_weight);
-      HYPRE_BoomerAMGSetOmega(precond, omega);
-      HYPRE_BoomerAMGSetSmoothType(precond, smooth_type);
-      HYPRE_BoomerAMGSetSmoothNumLevels(precond, smooth_num_levels);
-      HYPRE_BoomerAMGSetSmoothNumSweeps(precond, smooth_num_sweeps);
-      HYPRE_BoomerAMGSetGridRelaxPoints(precond, grid_relax_points);
-      HYPRE_BoomerAMGSetMaxLevels(precond, max_levels);
-      HYPRE_BoomerAMGSetMaxRowSum(precond, max_row_sum);
-      HYPRE_BoomerAMGSetNumFunctions(precond, num_functions);
-      HYPRE_BoomerAMGSetVariant(precond, variant);
-      HYPRE_BoomerAMGSetOverlap(precond, overlap);
-      HYPRE_BoomerAMGSetDomainType(precond, domain_type);
-      HYPRE_BoomerAMGSetSchwarzRlxWeight(precond, schwarz_rlx_weight);
+      NALU_HYPRE_BoomerAMGCreate(precond);
+      NALU_HYPRE_BoomerAMGSetInterpType(precond, interp_type);
+      NALU_HYPRE_BoomerAMGSetNumSamples(precond, gsmg_samples);
+      NALU_HYPRE_BoomerAMGSetTol(precond, pc_tol);
+      NALU_HYPRE_BoomerAMGSetCoarsenType(precond, (hybrid * coarsen_type));
+      NALU_HYPRE_BoomerAMGSetMeasureType(precond, measure_type);
+      NALU_HYPRE_BoomerAMGSetStrongThreshold(precond, strong_threshold);
+      NALU_HYPRE_BoomerAMGSetTruncFactor(precond, trunc_factor);
+      NALU_HYPRE_BoomerAMGSetPrintLevel(precond, poutdat);
+      NALU_HYPRE_BoomerAMGSetPrintFileName(precond, "driver.out.log");
+      NALU_HYPRE_BoomerAMGSetMaxIter(precond, 1);
+      NALU_HYPRE_BoomerAMGSetCycleType(precond, cycle_type);
+      NALU_HYPRE_BoomerAMGSetNumGridSweeps(precond, num_grid_sweeps);
+      NALU_HYPRE_BoomerAMGSetGridRelaxType(precond, grid_relax_type);
+      NALU_HYPRE_BoomerAMGSetRelaxWeight(precond, relax_weight);
+      NALU_HYPRE_BoomerAMGSetOmega(precond, omega);
+      NALU_HYPRE_BoomerAMGSetSmoothType(precond, smooth_type);
+      NALU_HYPRE_BoomerAMGSetSmoothNumLevels(precond, smooth_num_levels);
+      NALU_HYPRE_BoomerAMGSetSmoothNumSweeps(precond, smooth_num_sweeps);
+      NALU_HYPRE_BoomerAMGSetGridRelaxPoints(precond, grid_relax_points);
+      NALU_HYPRE_BoomerAMGSetMaxLevels(precond, max_levels);
+      NALU_HYPRE_BoomerAMGSetMaxRowSum(precond, max_row_sum);
+      NALU_HYPRE_BoomerAMGSetNumFunctions(precond, num_functions);
+      NALU_HYPRE_BoomerAMGSetVariant(precond, variant);
+      NALU_HYPRE_BoomerAMGSetOverlap(precond, overlap);
+      NALU_HYPRE_BoomerAMGSetDomainType(precond, domain_type);
+      NALU_HYPRE_BoomerAMGSetSchwarzRlxWeight(precond, schwarz_rlx_weight);
       if (num_functions > 1)
       {
-         HYPRE_BoomerAMGSetDofFunc(precond, dof_func);
+         NALU_HYPRE_BoomerAMGSetDofFunc(precond, dof_func);
       }
    }
    /* use DiagScale preconditioner */
-   else if (precond_id == HYPRE_DIAGSCALE)
+   else if (precond_id == NALU_HYPRE_DIAGSCALE)
    {
       precond = NULL;
    }
    /* use ParaSails preconditioner */
-   else if (precond_id == HYPRE_PARASAILS)
+   else if (precond_id == NALU_HYPRE_PARASAILS)
    {
-      HYPRE_ParaSailsCreate(hypre_MPI_COMM_WORLD, precond);
-      HYPRE_ParaSailsSetParams(precond, sai_threshold, max_levels);
-      HYPRE_ParaSailsSetFilter(precond, sai_filter);
-      HYPRE_ParaSailsSetLogging(precond, poutdat);
+      NALU_HYPRE_ParaSailsCreate(nalu_hypre_MPI_COMM_WORLD, precond);
+      NALU_HYPRE_ParaSailsSetParams(precond, sai_threshold, max_levels);
+      NALU_HYPRE_ParaSailsSetFilter(precond, sai_filter);
+      NALU_HYPRE_ParaSailsSetLogging(precond, poutdat);
    }
    /* use Schwarz preconditioner */
-   else if (precond_id == HYPRE_SCHWARZ)
+   else if (precond_id == NALU_HYPRE_SCHWARZ)
    {
-      HYPRE_SchwarzCreate(precond);
-      HYPRE_SchwarzSetVariant(precond, variant);
-      HYPRE_SchwarzSetOverlap(precond, overlap);
-      HYPRE_SchwarzSetDomainType(precond, domain_type);
-      HYPRE_SchwarzSetRelaxWeight(precond, schwarz_rlx_weight);
+      NALU_HYPRE_SchwarzCreate(precond);
+      NALU_HYPRE_SchwarzSetVariant(precond, variant);
+      NALU_HYPRE_SchwarzSetOverlap(precond, overlap);
+      NALU_HYPRE_SchwarzSetDomainType(precond, domain_type);
+      NALU_HYPRE_SchwarzSetRelaxWeight(precond, schwarz_rlx_weight);
    }
    /* use GSMG as preconditioner */
-   else if (precond_id == HYPRE_GSMG)
+   else if (precond_id == NALU_HYPRE_GSMG)
    {
       /* fine grid */
       num_grid_sweeps[0] = num_sweep;
       grid_relax_type[0] = relax_default;
-      hypre_TFree(grid_relax_points[0], HYPRE_MEMORY_HOST);
-      grid_relax_points[0] = hypre_CTAlloc(HYPRE_Int,  num_sweep, HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(grid_relax_points[0], NALU_HYPRE_MEMORY_HOST);
+      grid_relax_points[0] = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  num_sweep, NALU_HYPRE_MEMORY_HOST);
       for (i = 0; i < num_sweep; i++)
       {
          grid_relax_points[0][i] = 0;
@@ -519,8 +519,8 @@ HYPRE_Int hypre_set_precond_params(HYPRE_Int precond_id, void *precond)
       /* down cycle */
       num_grid_sweeps[1] = num_sweep;
       grid_relax_type[1] = relax_default;
-      hypre_TFree(grid_relax_points[1], HYPRE_MEMORY_HOST);
-      grid_relax_points[1] = hypre_CTAlloc(HYPRE_Int,  num_sweep, HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(grid_relax_points[1], NALU_HYPRE_MEMORY_HOST);
+      grid_relax_points[1] = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  num_sweep, NALU_HYPRE_MEMORY_HOST);
       for (i = 0; i < num_sweep; i++)
       {
          grid_relax_points[1][i] = 0;
@@ -529,8 +529,8 @@ HYPRE_Int hypre_set_precond_params(HYPRE_Int precond_id, void *precond)
       /* up cycle */
       num_grid_sweeps[2] = num_sweep;
       grid_relax_type[2] = relax_default;
-      hypre_TFree(grid_relax_points[2], HYPRE_MEMORY_HOST);
-      grid_relax_points[2] = hypre_CTAlloc(HYPRE_Int,  num_sweep, HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(grid_relax_points[2], NALU_HYPRE_MEMORY_HOST);
+      grid_relax_points[2] = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  num_sweep, NALU_HYPRE_MEMORY_HOST);
       for (i = 0; i < num_sweep; i++)
       {
          grid_relax_points[2][i] = 0;
@@ -539,152 +539,152 @@ HYPRE_Int hypre_set_precond_params(HYPRE_Int precond_id, void *precond)
       /* coarsest grid */
       num_grid_sweeps[3] = 1;
       grid_relax_type[3] = 9;
-      hypre_TFree(grid_relax_points[3], HYPRE_MEMORY_HOST);
-      grid_relax_points[3] = hypre_CTAlloc(HYPRE_Int,  1, HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(grid_relax_points[3], NALU_HYPRE_MEMORY_HOST);
+      grid_relax_points[3] = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  1, NALU_HYPRE_MEMORY_HOST);
       grid_relax_points[3][0] = 0;
 
-      HYPRE_BoomerAMGCreate(precond);
-      HYPRE_BoomerAMGSetGSMG(precond, 4);
-      HYPRE_BoomerAMGSetInterpType(precond, interp_type);
-      HYPRE_BoomerAMGSetNumSamples(precond, gsmg_samples);
-      HYPRE_BoomerAMGSetTol(precond, pc_tol);
-      HYPRE_BoomerAMGSetCoarsenType(precond, (hybrid * coarsen_type));
-      HYPRE_BoomerAMGSetMeasureType(precond, measure_type);
-      HYPRE_BoomerAMGSetStrongThreshold(precond, strong_threshold);
-      HYPRE_BoomerAMGSetTruncFactor(precond, trunc_factor);
-      HYPRE_BoomerAMGSetPrintLevel(precond, poutdat);
-      HYPRE_BoomerAMGSetPrintFileName(precond, "driver.out.log");
-      HYPRE_BoomerAMGSetMaxIter(precond, 1);
-      HYPRE_BoomerAMGSetCycleType(precond, cycle_type);
-      HYPRE_BoomerAMGSetNumGridSweeps(precond, num_grid_sweeps);
-      HYPRE_BoomerAMGSetGridRelaxType(precond, grid_relax_type);
-      HYPRE_BoomerAMGSetRelaxWeight(precond, relax_weight);
-      HYPRE_BoomerAMGSetOmega(precond, omega);
-      HYPRE_BoomerAMGSetSmoothType(precond, smooth_type);
-      HYPRE_BoomerAMGSetSmoothNumLevels(precond, smooth_num_levels);
-      HYPRE_BoomerAMGSetSmoothNumSweeps(precond, smooth_num_sweeps);
-      HYPRE_BoomerAMGSetVariant(precond, variant);
-      HYPRE_BoomerAMGSetOverlap(precond, overlap);
-      HYPRE_BoomerAMGSetDomainType(precond, domain_type);
-      HYPRE_BoomerAMGSetSchwarzRlxWeight(precond, schwarz_rlx_weight);
-      HYPRE_BoomerAMGSetGridRelaxPoints(precond, grid_relax_points);
-      HYPRE_BoomerAMGSetMaxLevels(precond, max_levels);
-      HYPRE_BoomerAMGSetMaxRowSum(precond, max_row_sum);
-      HYPRE_BoomerAMGSetNumFunctions(precond, num_functions);
+      NALU_HYPRE_BoomerAMGCreate(precond);
+      NALU_HYPRE_BoomerAMGSetGSMG(precond, 4);
+      NALU_HYPRE_BoomerAMGSetInterpType(precond, interp_type);
+      NALU_HYPRE_BoomerAMGSetNumSamples(precond, gsmg_samples);
+      NALU_HYPRE_BoomerAMGSetTol(precond, pc_tol);
+      NALU_HYPRE_BoomerAMGSetCoarsenType(precond, (hybrid * coarsen_type));
+      NALU_HYPRE_BoomerAMGSetMeasureType(precond, measure_type);
+      NALU_HYPRE_BoomerAMGSetStrongThreshold(precond, strong_threshold);
+      NALU_HYPRE_BoomerAMGSetTruncFactor(precond, trunc_factor);
+      NALU_HYPRE_BoomerAMGSetPrintLevel(precond, poutdat);
+      NALU_HYPRE_BoomerAMGSetPrintFileName(precond, "driver.out.log");
+      NALU_HYPRE_BoomerAMGSetMaxIter(precond, 1);
+      NALU_HYPRE_BoomerAMGSetCycleType(precond, cycle_type);
+      NALU_HYPRE_BoomerAMGSetNumGridSweeps(precond, num_grid_sweeps);
+      NALU_HYPRE_BoomerAMGSetGridRelaxType(precond, grid_relax_type);
+      NALU_HYPRE_BoomerAMGSetRelaxWeight(precond, relax_weight);
+      NALU_HYPRE_BoomerAMGSetOmega(precond, omega);
+      NALU_HYPRE_BoomerAMGSetSmoothType(precond, smooth_type);
+      NALU_HYPRE_BoomerAMGSetSmoothNumLevels(precond, smooth_num_levels);
+      NALU_HYPRE_BoomerAMGSetSmoothNumSweeps(precond, smooth_num_sweeps);
+      NALU_HYPRE_BoomerAMGSetVariant(precond, variant);
+      NALU_HYPRE_BoomerAMGSetOverlap(precond, overlap);
+      NALU_HYPRE_BoomerAMGSetDomainType(precond, domain_type);
+      NALU_HYPRE_BoomerAMGSetSchwarzRlxWeight(precond, schwarz_rlx_weight);
+      NALU_HYPRE_BoomerAMGSetGridRelaxPoints(precond, grid_relax_points);
+      NALU_HYPRE_BoomerAMGSetMaxLevels(precond, max_levels);
+      NALU_HYPRE_BoomerAMGSetMaxRowSum(precond, max_row_sum);
+      NALU_HYPRE_BoomerAMGSetNumFunctions(precond, num_functions);
       if (num_functions > 1)
       {
-         HYPRE_BoomerAMGSetDofFunc(precond, dof_func);
+         NALU_HYPRE_BoomerAMGSetDofFunc(precond, dof_func);
       }
    }
 
    /* use PILUT as preconditioner */
-   else if (precond_id == HYPRE_PILUT)
+   else if (precond_id == NALU_HYPRE_PILUT)
    {
-      ierr = HYPRE_ParCSRPilutCreate( hypre_MPI_COMM_WORLD, precond );
+      ierr = NALU_HYPRE_ParCSRPilutCreate( nalu_hypre_MPI_COMM_WORLD, precond );
    }
 }
 
 
-HYPRE_Int hypre_destroy_precond(HYPRE_Int precond_id, void *precond)
+NALU_HYPRE_Int nalu_hypre_destroy_precond(NALU_HYPRE_Int precond_id, void *precond)
 {
 
-   if (precond_id == HYPRE_BICGSTAB)
+   if (precond_id == NALU_HYPRE_BICGSTAB)
    {
-      HYPRE_BiCGSTABDestroy(precond);
+      NALU_HYPRE_BiCGSTABDestroy(precond);
    }
 
-   else if (precond_id == HYPRE_BOOMERAMG)
+   else if (precond_id == NALU_HYPRE_BOOMERAMG)
    {
-      HYPRE_BoomerAMGDestroy(precond);
+      NALU_HYPRE_BoomerAMGDestroy(precond);
    }
 
-   else if (precond_id == HYPRE_CGNR)
+   else if (precond_id == NALU_HYPRE_CGNR)
    {
-      HYPRE_CGNRDestroy(precond);
+      NALU_HYPRE_CGNRDestroy(precond);
    }
 
-   else if (precond_id == HYPRE_DIAGSCALE)
+   else if (precond_id == NALU_HYPRE_DIAGSCALE)
    {
-      HYPRE_Destroy(precond);
+      NALU_HYPRE_Destroy(precond);
    }
 
-   else if (precond_id == HYPRE_EUCLID)
+   else if (precond_id == NALU_HYPRE_EUCLID)
    {
-      HYPRE_EuclidDestroy(precond);
+      NALU_HYPRE_EuclidDestroy(precond);
    }
 
-   else if (precond_id == HYPRE_GMRES)
+   else if (precond_id == NALU_HYPRE_GMRES)
    {
-      HYPRE_GMRESDestroy(precond);
+      NALU_HYPRE_GMRESDestroy(precond);
    }
 
-   else if (precond_id == HYPRE_GSMG)
+   else if (precond_id == NALU_HYPRE_GSMG)
    {
-      HYPRE_BoomerAMGDestroy(precond);
+      NALU_HYPRE_BoomerAMGDestroy(precond);
    }
 
-   else if (precond_id == HYPRE_HYBRID)
+   else if (precond_id == NALU_HYPRE_HYBRID)
    {
-      HYPRE_HybridDestroy(precond);
+      NALU_HYPRE_HybridDestroy(precond);
    }
 
-   else if (precond_id == HYPRE_JACOBI)
+   else if (precond_id == NALU_HYPRE_JACOBI)
    {
-      HYPRE_JacobiDestroy(precond);
+      NALU_HYPRE_JacobiDestroy(precond);
    }
 
-   else if (precond_id == HYPRE_PARASAILS)
+   else if (precond_id == NALU_HYPRE_PARASAILS)
    {
-      HYPRE_ParaSailsDestroy(precond);
+      NALU_HYPRE_ParaSailsDestroy(precond);
    }
 
-   else if (precond_id == HYPRE_PCG)
+   else if (precond_id == NALU_HYPRE_PCG)
    {
-      HYPRE_PCGDestroy(precond);
+      NALU_HYPRE_PCGDestroy(precond);
    }
 
-   else if (precond_id == HYPRE_PFMG)
+   else if (precond_id == NALU_HYPRE_PFMG)
    {
-      HYPRE_PFMGDestroy(precond);
+      NALU_HYPRE_PFMGDestroy(precond);
    }
 
-   else if (precond_id == HYPRE_PILUT)
+   else if (precond_id == NALU_HYPRE_PILUT)
    {
-      HYPRE_PilutDestroy(precond);
+      NALU_HYPRE_PilutDestroy(precond);
    }
 
-   else if (precond_id == HYPRE_SCHWARZ)
+   else if (precond_id == NALU_HYPRE_SCHWARZ)
    {
-      HYPRE_SchwarzDestroy(precond);
+      NALU_HYPRE_SchwarzDestroy(precond);
    }
 
-   else if (precond_id == HYPRE_SMG)
+   else if (precond_id == NALU_HYPRE_SMG)
    {
-      HYPRE_SMGDestroy(precond);
+      NALU_HYPRE_SMGDestroy(precond);
    }
 
-   else if (precond_id == HYPRE_SPARSEMSG)
+   else if (precond_id == NALU_HYPRE_SPARSEMSG)
    {
-      HYPRE_SparseMSGDestroy(precond);
+      NALU_HYPRE_SparseMSGDestroy(precond);
    }
 
-   else if (precond_id == HYPRE_SPLIT)
+   else if (precond_id == NALU_HYPRE_SPLIT)
    {
-      HYPRE_SplitDestroy(precond);
+      NALU_HYPRE_SplitDestroy(precond);
    }
 
-   else if (precond_id == HYPRE_SPLITPFMG)
+   else if (precond_id == NALU_HYPRE_SPLITPFMG)
    {
-      HYPRE_SplitDestroy(precond);
+      NALU_HYPRE_SplitDestroy(precond);
    }
 
-   else if (precond_id == HYPRE_SPLITSMG)
+   else if (precond_id == NALU_HYPRE_SPLITSMG)
    {
-      HYPRE_SplitDestroy(precond);
+      NALU_HYPRE_SplitDestroy(precond);
    }
 
-   else if (precond_id == HYPRE_SYSPFMG)
+   else if (precond_id == NALU_HYPRE_SYSPFMG)
    {
-      HYPRE_SysPFMGDestroy(precond);
+      NALU_HYPRE_SysPFMGDestroy(precond);
    }
 }

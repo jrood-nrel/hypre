@@ -10,22 +10,22 @@
  *
  *****************************************************************************/
 
-#include "_hypre_struct_ls.h"
+#include "_nalu_hypre_struct_ls.h"
 #include "sparse_msg.h"
 
 /*--------------------------------------------------------------------------
- * hypre_SparseMSGCreate
+ * nalu_hypre_SparseMSGCreate
  *--------------------------------------------------------------------------*/
 
 void *
-hypre_SparseMSGCreate( MPI_Comm  comm )
+nalu_hypre_SparseMSGCreate( MPI_Comm  comm )
 {
-   hypre_SparseMSGData *smsg_data;
+   nalu_hypre_SparseMSGData *smsg_data;
 
-   smsg_data = hypre_CTAlloc(hypre_SparseMSGData,  1, HYPRE_MEMORY_HOST);
+   smsg_data = nalu_hypre_CTAlloc(nalu_hypre_SparseMSGData,  1, NALU_HYPRE_MEMORY_HOST);
 
    (smsg_data -> comm)       = comm;
-   (smsg_data -> time_index) = hypre_InitializeTiming("SparseMSG");
+   (smsg_data -> time_index) = nalu_hypre_InitializeTiming("SparseMSG");
 
    /* set defaults */
    (smsg_data -> tol)              = 1.0e-06;
@@ -47,102 +47,102 @@ hypre_SparseMSGCreate( MPI_Comm  comm )
    (smsg_data -> num_grids[1])     = 1;
    (smsg_data -> num_grids[2])     = 1;
 
-   (smsg_data -> memory_location)  = hypre_HandleMemoryLocation(hypre_handle());
+   (smsg_data -> memory_location)  = nalu_hypre_HandleMemoryLocation(nalu_hypre_handle());
 
    return (void *) smsg_data;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_SparseMSGDestroy
+ * nalu_hypre_SparseMSGDestroy
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_SparseMSGDestroy( void *smsg_vdata )
+NALU_HYPRE_Int
+nalu_hypre_SparseMSGDestroy( void *smsg_vdata )
 {
-   HYPRE_Int ierr = 0;
+   NALU_HYPRE_Int ierr = 0;
 
    /* RDF */
 #if 0
-   hypre_SparseMSGData *smsg_data = smsg_vdata;
+   nalu_hypre_SparseMSGData *smsg_data = smsg_vdata;
 
-   HYPRE_Int fi, l;
+   NALU_HYPRE_Int fi, l;
 
    if (smsg_data)
    {
       if ((smsg_data -> logging) > 0)
       {
-         hypre_TFree(smsg_data -> norms, HYPRE_MEMORY_HOST);
-         hypre_TFree(smsg_data -> rel_norms, HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(smsg_data -> norms, NALU_HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(smsg_data -> rel_norms, NALU_HYPRE_MEMORY_HOST);
       }
 
       if ((smsg_data -> num_levels) > 1)
       {
          for (fi = 0; fi < (smsg_data -> num_all_grids); fi++)
          {
-            hypre_PFMGRelaxDestroy(smsg_data -> relax_array[fi]);
-            hypre_StructMatvecDestroy(smsg_data -> matvec_array[fi]);
-            hypre_SemiRestrictDestroy(smsg_data -> restrictx_array[fi]);
-            hypre_SemiRestrictDestroy(smsg_data -> restricty_array[fi]);
-            hypre_SemiRestrictDestroy(smsg_data -> restrictz_array[fi]);
-            hypre_SemiInterpDestroy(smsg_data -> interpx_array[fi]);
-            hypre_SemiInterpDestroy(smsg_data -> interpy_array[fi]);
-            hypre_SemiInterpDestroy(smsg_data -> interpz_array[fi]);
-            hypre_StructMatrixDestroy(smsg_data -> A_array[fi]);
-            hypre_StructVectorDestroy(smsg_data -> b_array[fi]);
-            hypre_StructVectorDestroy(smsg_data -> x_array[fi]);
-            hypre_StructVectorDestroy(smsg_data -> t_array[fi]);
-            hypre_StructVectorDestroy(smsg_data -> r_array[fi]);
-            hypre_StructVectorDestroy(smsg_data -> visitx_array[fi]);
-            hypre_StructVectorDestroy(smsg_data -> visity_array[fi]);
-            hypre_StructVectorDestroy(smsg_data -> visitz_array[fi]);
-            hypre_StructGridDestroy(smsg_data -> grid_array[fi]);
+            nalu_hypre_PFMGRelaxDestroy(smsg_data -> relax_array[fi]);
+            nalu_hypre_StructMatvecDestroy(smsg_data -> matvec_array[fi]);
+            nalu_hypre_SemiRestrictDestroy(smsg_data -> restrictx_array[fi]);
+            nalu_hypre_SemiRestrictDestroy(smsg_data -> restricty_array[fi]);
+            nalu_hypre_SemiRestrictDestroy(smsg_data -> restrictz_array[fi]);
+            nalu_hypre_SemiInterpDestroy(smsg_data -> interpx_array[fi]);
+            nalu_hypre_SemiInterpDestroy(smsg_data -> interpy_array[fi]);
+            nalu_hypre_SemiInterpDestroy(smsg_data -> interpz_array[fi]);
+            nalu_hypre_StructMatrixDestroy(smsg_data -> A_array[fi]);
+            nalu_hypre_StructVectorDestroy(smsg_data -> b_array[fi]);
+            nalu_hypre_StructVectorDestroy(smsg_data -> x_array[fi]);
+            nalu_hypre_StructVectorDestroy(smsg_data -> t_array[fi]);
+            nalu_hypre_StructVectorDestroy(smsg_data -> r_array[fi]);
+            nalu_hypre_StructVectorDestroy(smsg_data -> visitx_array[fi]);
+            nalu_hypre_StructVectorDestroy(smsg_data -> visity_array[fi]);
+            nalu_hypre_StructVectorDestroy(smsg_data -> visitz_array[fi]);
+            nalu_hypre_StructGridDestroy(smsg_data -> grid_array[fi]);
          }
 
          for (l = 0; l < (smsg_data -> num_grids[0]) - 1; l++)
          {
-            hypre_StructMatrixDestroy(smsg_data -> Px_array[l]);
-            hypre_StructGridDestroy(smsg_data -> Px_grid_array[l]);
+            nalu_hypre_StructMatrixDestroy(smsg_data -> Px_array[l]);
+            nalu_hypre_StructGridDestroy(smsg_data -> Px_grid_array[l]);
          }
          for (l = 0; l < (smsg_data -> num_grids[1]) - 1; l++)
          {
-            hypre_StructMatrixDestroy(smsg_data -> Py_array[l]);
-            hypre_StructGridDestroy(smsg_data -> Py_grid_array[l]);
+            nalu_hypre_StructMatrixDestroy(smsg_data -> Py_array[l]);
+            nalu_hypre_StructGridDestroy(smsg_data -> Py_grid_array[l]);
          }
          for (l = 0; l < (smsg_data -> num_grids[2]) - 1; l++)
          {
-            hypre_StructMatrixDestroy(smsg_data -> Pz_array[l]);
-            hypre_StructGridDestroy(smsg_data -> Pz_grid_array[l]);
+            nalu_hypre_StructMatrixDestroy(smsg_data -> Pz_array[l]);
+            nalu_hypre_StructGridDestroy(smsg_data -> Pz_grid_array[l]);
          }
 
-         hypre_TFree(smsg_data -> data, HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(smsg_data -> data, NALU_HYPRE_MEMORY_HOST);
 
-         hypre_TFree(smsg_data -> relax_array, HYPRE_MEMORY_HOST);
-         hypre_TFree(smsg_data -> matvec_array, HYPRE_MEMORY_HOST);
-         hypre_TFree(smsg_data -> restrictx_array, HYPRE_MEMORY_HOST);
-         hypre_TFree(smsg_data -> restricty_array, HYPRE_MEMORY_HOST);
-         hypre_TFree(smsg_data -> restrictz_array, HYPRE_MEMORY_HOST);
-         hypre_TFree(smsg_data -> interpx_array, HYPRE_MEMORY_HOST);
-         hypre_TFree(smsg_data -> interpy_array, HYPRE_MEMORY_HOST);
-         hypre_TFree(smsg_data -> interpz_array, HYPRE_MEMORY_HOST);
-         hypre_TFree(smsg_data -> A_array, HYPRE_MEMORY_HOST);
-         hypre_TFree(smsg_data -> Px_array, HYPRE_MEMORY_HOST);
-         hypre_TFree(smsg_data -> Py_array, HYPRE_MEMORY_HOST);
-         hypre_TFree(smsg_data -> Pz_array, HYPRE_MEMORY_HOST);
-         hypre_TFree(smsg_data -> RTx_array, HYPRE_MEMORY_HOST);
-         hypre_TFree(smsg_data -> RTy_array, HYPRE_MEMORY_HOST);
-         hypre_TFree(smsg_data -> RTz_array, HYPRE_MEMORY_HOST);
-         hypre_TFree(smsg_data -> b_array, HYPRE_MEMORY_HOST);
-         hypre_TFree(smsg_data -> x_array, HYPRE_MEMORY_HOST);
-         hypre_TFree(smsg_data -> t_array, HYPRE_MEMORY_HOST);
-         hypre_TFree(smsg_data -> r_array, HYPRE_MEMORY_HOST);
-         hypre_TFree(smsg_data -> grid_array, HYPRE_MEMORY_HOST);
-         hypre_TFree(smsg_data -> Px_grid_array, HYPRE_MEMORY_HOST);
-         hypre_TFree(smsg_data -> Py_grid_array, HYPRE_MEMORY_HOST);
-         hypre_TFree(smsg_data -> Pz_grid_array, HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(smsg_data -> relax_array, NALU_HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(smsg_data -> matvec_array, NALU_HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(smsg_data -> restrictx_array, NALU_HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(smsg_data -> restricty_array, NALU_HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(smsg_data -> restrictz_array, NALU_HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(smsg_data -> interpx_array, NALU_HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(smsg_data -> interpy_array, NALU_HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(smsg_data -> interpz_array, NALU_HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(smsg_data -> A_array, NALU_HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(smsg_data -> Px_array, NALU_HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(smsg_data -> Py_array, NALU_HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(smsg_data -> Pz_array, NALU_HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(smsg_data -> RTx_array, NALU_HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(smsg_data -> RTy_array, NALU_HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(smsg_data -> RTz_array, NALU_HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(smsg_data -> b_array, NALU_HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(smsg_data -> x_array, NALU_HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(smsg_data -> t_array, NALU_HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(smsg_data -> r_array, NALU_HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(smsg_data -> grid_array, NALU_HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(smsg_data -> Px_grid_array, NALU_HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(smsg_data -> Py_grid_array, NALU_HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(smsg_data -> Pz_grid_array, NALU_HYPRE_MEMORY_HOST);
       }
 
-      hypre_FinalizeTiming(smsg_data -> time_index);
-      hypre_TFree(smsg_data, HYPRE_MEMORY_HOST);
+      nalu_hypre_FinalizeTiming(smsg_data -> time_index);
+      nalu_hypre_TFree(smsg_data, NALU_HYPRE_MEMORY_HOST);
    }
 #endif
    /* RDF */
@@ -151,15 +151,15 @@ hypre_SparseMSGDestroy( void *smsg_vdata )
 }
 
 /*--------------------------------------------------------------------------
- * hypre_SparseMSGSetTol
+ * nalu_hypre_SparseMSGSetTol
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_SparseMSGSetTol( void   *smsg_vdata,
-                       HYPRE_Real  tol        )
+NALU_HYPRE_Int
+nalu_hypre_SparseMSGSetTol( void   *smsg_vdata,
+                       NALU_HYPRE_Real  tol        )
 {
-   hypre_SparseMSGData *smsg_data = (hypre_SparseMSGData *)smsg_vdata;
-   HYPRE_Int       ierr = 0;
+   nalu_hypre_SparseMSGData *smsg_data = (nalu_hypre_SparseMSGData *)smsg_vdata;
+   NALU_HYPRE_Int       ierr = 0;
 
    (smsg_data -> tol) = tol;
 
@@ -167,15 +167,15 @@ hypre_SparseMSGSetTol( void   *smsg_vdata,
 }
 
 /*--------------------------------------------------------------------------
- * hypre_SparseMSGSetMaxIter
+ * nalu_hypre_SparseMSGSetMaxIter
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_SparseMSGSetMaxIter( void *smsg_vdata,
-                           HYPRE_Int   max_iter   )
+NALU_HYPRE_Int
+nalu_hypre_SparseMSGSetMaxIter( void *smsg_vdata,
+                           NALU_HYPRE_Int   max_iter   )
 {
-   hypre_SparseMSGData *smsg_data = (hypre_SparseMSGData *)smsg_vdata;
-   HYPRE_Int       ierr = 0;
+   nalu_hypre_SparseMSGData *smsg_data = (nalu_hypre_SparseMSGData *)smsg_vdata;
+   NALU_HYPRE_Int       ierr = 0;
 
    (smsg_data -> max_iter) = max_iter;
 
@@ -183,16 +183,16 @@ hypre_SparseMSGSetMaxIter( void *smsg_vdata,
 }
 
 /*--------------------------------------------------------------------------
- * hypre_SparseMSGSetJump
+ * nalu_hypre_SparseMSGSetJump
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_SparseMSGSetJump(  void *smsg_vdata,
-                         HYPRE_Int   jump       )
+NALU_HYPRE_Int
+nalu_hypre_SparseMSGSetJump(  void *smsg_vdata,
+                         NALU_HYPRE_Int   jump       )
 
 {
-   hypre_SparseMSGData *smsg_data = (hypre_SparseMSGData *)smsg_vdata;
-   HYPRE_Int            ierr = 0;
+   nalu_hypre_SparseMSGData *smsg_data = (nalu_hypre_SparseMSGData *)smsg_vdata;
+   NALU_HYPRE_Int            ierr = 0;
 
    (smsg_data -> jump) = jump;
 
@@ -200,15 +200,15 @@ hypre_SparseMSGSetJump(  void *smsg_vdata,
 }
 
 /*--------------------------------------------------------------------------
- * hypre_SparseMSGSetRelChange
+ * nalu_hypre_SparseMSGSetRelChange
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_SparseMSGSetRelChange( void *smsg_vdata,
-                             HYPRE_Int   rel_change )
+NALU_HYPRE_Int
+nalu_hypre_SparseMSGSetRelChange( void *smsg_vdata,
+                             NALU_HYPRE_Int   rel_change )
 {
-   hypre_SparseMSGData *smsg_data = (hypre_SparseMSGData *)smsg_vdata;
-   HYPRE_Int       ierr = 0;
+   nalu_hypre_SparseMSGData *smsg_data = (nalu_hypre_SparseMSGData *)smsg_vdata;
+   NALU_HYPRE_Int       ierr = 0;
 
    (smsg_data -> rel_change) = rel_change;
 
@@ -216,15 +216,15 @@ hypre_SparseMSGSetRelChange( void *smsg_vdata,
 }
 
 /*--------------------------------------------------------------------------
- * hypre_SparseMSGSetZeroGuess
+ * nalu_hypre_SparseMSGSetZeroGuess
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_SparseMSGSetZeroGuess( void *smsg_vdata,
-                             HYPRE_Int   zero_guess )
+NALU_HYPRE_Int
+nalu_hypre_SparseMSGSetZeroGuess( void *smsg_vdata,
+                             NALU_HYPRE_Int   zero_guess )
 {
-   hypre_SparseMSGData *smsg_data = (hypre_SparseMSGData *)smsg_vdata;
-   HYPRE_Int       ierr = 0;
+   nalu_hypre_SparseMSGData *smsg_data = (nalu_hypre_SparseMSGData *)smsg_vdata;
+   NALU_HYPRE_Int       ierr = 0;
 
    (smsg_data -> zero_guess) = zero_guess;
 
@@ -232,15 +232,15 @@ hypre_SparseMSGSetZeroGuess( void *smsg_vdata,
 }
 
 /*--------------------------------------------------------------------------
- * hypre_SparseMSGSetRelaxType
+ * nalu_hypre_SparseMSGSetRelaxType
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_SparseMSGSetRelaxType( void *smsg_vdata,
-                             HYPRE_Int   relax_type )
+NALU_HYPRE_Int
+nalu_hypre_SparseMSGSetRelaxType( void *smsg_vdata,
+                             NALU_HYPRE_Int   relax_type )
 {
-   hypre_SparseMSGData *smsg_data = (hypre_SparseMSGData *)smsg_vdata;
-   HYPRE_Int       ierr = 0;
+   nalu_hypre_SparseMSGData *smsg_data = (nalu_hypre_SparseMSGData *)smsg_vdata;
+   NALU_HYPRE_Int       ierr = 0;
 
    (smsg_data -> relax_type) = relax_type;
 
@@ -248,30 +248,30 @@ hypre_SparseMSGSetRelaxType( void *smsg_vdata,
 }
 
 /*--------------------------------------------------------------------------
- * hypre_SparseMSGSetJacobiWeight
+ * nalu_hypre_SparseMSGSetJacobiWeight
  *--------------------------------------------------------------------------*/
-HYPRE_Int
-hypre_SparseMSGSetJacobiWeight( void  *smsg_vdata,
-                                HYPRE_Real weight )
+NALU_HYPRE_Int
+nalu_hypre_SparseMSGSetJacobiWeight( void  *smsg_vdata,
+                                NALU_HYPRE_Real weight )
 {
-   hypre_SparseMSGData *smsg_data = (hypre_SparseMSGData *)smsg_vdata;
+   nalu_hypre_SparseMSGData *smsg_data = (nalu_hypre_SparseMSGData *)smsg_vdata;
 
    (smsg_data -> jacobi_weight)    = weight;
    (smsg_data -> usr_jacobi_weight) = 1;
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 /*--------------------------------------------------------------------------
- * hypre_SparseMSGSetNumPreRelax
+ * nalu_hypre_SparseMSGSetNumPreRelax
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_SparseMSGSetNumPreRelax( void *smsg_vdata,
-                               HYPRE_Int   num_pre_relax )
+NALU_HYPRE_Int
+nalu_hypre_SparseMSGSetNumPreRelax( void *smsg_vdata,
+                               NALU_HYPRE_Int   num_pre_relax )
 {
-   hypre_SparseMSGData *smsg_data = (hypre_SparseMSGData *)smsg_vdata;
-   HYPRE_Int       ierr = 0;
+   nalu_hypre_SparseMSGData *smsg_data = (nalu_hypre_SparseMSGData *)smsg_vdata;
+   NALU_HYPRE_Int       ierr = 0;
 
    (smsg_data -> num_pre_relax) = num_pre_relax;
 
@@ -279,15 +279,15 @@ hypre_SparseMSGSetNumPreRelax( void *smsg_vdata,
 }
 
 /*--------------------------------------------------------------------------
- * hypre_SparseMSGSetNumPostRelax
+ * nalu_hypre_SparseMSGSetNumPostRelax
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_SparseMSGSetNumPostRelax( void *smsg_vdata,
-                                HYPRE_Int   num_post_relax )
+NALU_HYPRE_Int
+nalu_hypre_SparseMSGSetNumPostRelax( void *smsg_vdata,
+                                NALU_HYPRE_Int   num_post_relax )
 {
-   hypre_SparseMSGData *smsg_data = (hypre_SparseMSGData *)smsg_vdata;
-   HYPRE_Int       ierr = 0;
+   nalu_hypre_SparseMSGData *smsg_data = (nalu_hypre_SparseMSGData *)smsg_vdata;
+   NALU_HYPRE_Int       ierr = 0;
 
    (smsg_data -> num_post_relax) = num_post_relax;
 
@@ -295,15 +295,15 @@ hypre_SparseMSGSetNumPostRelax( void *smsg_vdata,
 }
 
 /*--------------------------------------------------------------------------
- * hypre_SparseMSGSetNumFineRelax
+ * nalu_hypre_SparseMSGSetNumFineRelax
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_SparseMSGSetNumFineRelax( void *smsg_vdata,
-                                HYPRE_Int   num_fine_relax )
+NALU_HYPRE_Int
+nalu_hypre_SparseMSGSetNumFineRelax( void *smsg_vdata,
+                                NALU_HYPRE_Int   num_fine_relax )
 {
-   hypre_SparseMSGData *smsg_data = (hypre_SparseMSGData *)smsg_vdata;
-   HYPRE_Int       ierr = 0;
+   nalu_hypre_SparseMSGData *smsg_data = (nalu_hypre_SparseMSGData *)smsg_vdata;
+   NALU_HYPRE_Int       ierr = 0;
 
    (smsg_data -> num_fine_relax) = num_fine_relax;
 
@@ -311,15 +311,15 @@ hypre_SparseMSGSetNumFineRelax( void *smsg_vdata,
 }
 
 /*--------------------------------------------------------------------------
- * hypre_SparseMSGSetLogging
+ * nalu_hypre_SparseMSGSetLogging
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_SparseMSGSetLogging( void *smsg_vdata,
-                           HYPRE_Int   logging    )
+NALU_HYPRE_Int
+nalu_hypre_SparseMSGSetLogging( void *smsg_vdata,
+                           NALU_HYPRE_Int   logging    )
 {
-   hypre_SparseMSGData *smsg_data = (hypre_SparseMSGData *)smsg_vdata;
-   HYPRE_Int       ierr = 0;
+   nalu_hypre_SparseMSGData *smsg_data = (nalu_hypre_SparseMSGData *)smsg_vdata;
+   NALU_HYPRE_Int       ierr = 0;
 
    (smsg_data -> logging) = logging;
 
@@ -327,15 +327,15 @@ hypre_SparseMSGSetLogging( void *smsg_vdata,
 }
 
 /*--------------------------------------------------------------------------
- * hypre_SparseMSGSetPrintLevel
+ * nalu_hypre_SparseMSGSetPrintLevel
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_SparseMSGSetPrintLevel( void *smsg_vdata,
-                              HYPRE_Int   print_level    )
+NALU_HYPRE_Int
+nalu_hypre_SparseMSGSetPrintLevel( void *smsg_vdata,
+                              NALU_HYPRE_Int   print_level    )
 {
-   hypre_SparseMSGData *smsg_data = (hypre_SparseMSGData *)smsg_vdata;
-   HYPRE_Int       ierr = 0;
+   nalu_hypre_SparseMSGData *smsg_data = (nalu_hypre_SparseMSGData *)smsg_vdata;
+   NALU_HYPRE_Int       ierr = 0;
 
    (smsg_data -> print_level) = print_level;
 
@@ -343,15 +343,15 @@ hypre_SparseMSGSetPrintLevel( void *smsg_vdata,
 }
 
 /*--------------------------------------------------------------------------
- * hypre_SparseMSGGetNumIterations
+ * nalu_hypre_SparseMSGGetNumIterations
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_SparseMSGGetNumIterations( void *smsg_vdata,
-                                 HYPRE_Int  *num_iterations )
+NALU_HYPRE_Int
+nalu_hypre_SparseMSGGetNumIterations( void *smsg_vdata,
+                                 NALU_HYPRE_Int  *num_iterations )
 {
-   hypre_SparseMSGData *smsg_data = (hypre_SparseMSGData *)smsg_vdata;
-   HYPRE_Int       ierr = 0;
+   nalu_hypre_SparseMSGData *smsg_data = (nalu_hypre_SparseMSGData *)smsg_vdata;
+   NALU_HYPRE_Int       ierr = 0;
 
    *num_iterations = (smsg_data -> num_iterations);
 
@@ -359,21 +359,21 @@ hypre_SparseMSGGetNumIterations( void *smsg_vdata,
 }
 
 /*--------------------------------------------------------------------------
- * hypre_SparseMSGPrintLogging
+ * nalu_hypre_SparseMSGPrintLogging
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_SparseMSGPrintLogging( void *smsg_vdata,
-                             HYPRE_Int   myid       )
+NALU_HYPRE_Int
+nalu_hypre_SparseMSGPrintLogging( void *smsg_vdata,
+                             NALU_HYPRE_Int   myid       )
 {
-   hypre_SparseMSGData *smsg_data = (hypre_SparseMSGData *)smsg_vdata;
-   HYPRE_Int       ierr = 0;
-   HYPRE_Int       i;
-   HYPRE_Int       num_iterations  = (smsg_data -> num_iterations);
-   HYPRE_Int       logging   = (smsg_data -> logging);
-   HYPRE_Int     print_level = (smsg_data -> print_level);
-   HYPRE_Real     *norms     = (smsg_data -> norms);
-   HYPRE_Real     *rel_norms = (smsg_data -> rel_norms);
+   nalu_hypre_SparseMSGData *smsg_data = (nalu_hypre_SparseMSGData *)smsg_vdata;
+   NALU_HYPRE_Int       ierr = 0;
+   NALU_HYPRE_Int       i;
+   NALU_HYPRE_Int       num_iterations  = (smsg_data -> num_iterations);
+   NALU_HYPRE_Int       logging   = (smsg_data -> logging);
+   NALU_HYPRE_Int     print_level = (smsg_data -> print_level);
+   NALU_HYPRE_Real     *norms     = (smsg_data -> norms);
+   NALU_HYPRE_Real     *rel_norms = (smsg_data -> rel_norms);
 
    if (myid == 0)
    {
@@ -383,8 +383,8 @@ hypre_SparseMSGPrintLogging( void *smsg_vdata,
          {
             for (i = 0; i < num_iterations; i++)
             {
-               hypre_printf("Residual norm[%d] = %e   ", i, norms[i]);
-               hypre_printf("Relative residual norm[%d] = %e\n", i, rel_norms[i]);
+               nalu_hypre_printf("Residual norm[%d] = %e   ", i, norms[i]);
+               nalu_hypre_printf("Relative residual norm[%d] = %e\n", i, rel_norms[i]);
             }
          }
       }
@@ -394,21 +394,21 @@ hypre_SparseMSGPrintLogging( void *smsg_vdata,
 }
 
 /*--------------------------------------------------------------------------
- * hypre_SparseMSGGetFinalRelativeResidualNorm
+ * nalu_hypre_SparseMSGGetFinalRelativeResidualNorm
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_SparseMSGGetFinalRelativeResidualNorm( void   *smsg_vdata,
-                                             HYPRE_Real *relative_residual_norm )
+NALU_HYPRE_Int
+nalu_hypre_SparseMSGGetFinalRelativeResidualNorm( void   *smsg_vdata,
+                                             NALU_HYPRE_Real *relative_residual_norm )
 {
-   hypre_SparseMSGData *smsg_data = (hypre_SparseMSGData *)smsg_vdata;
+   nalu_hypre_SparseMSGData *smsg_data = (nalu_hypre_SparseMSGData *)smsg_vdata;
 
-   HYPRE_Int       max_iter        = (smsg_data -> max_iter);
-   HYPRE_Int       num_iterations  = (smsg_data -> num_iterations);
-   HYPRE_Int       logging         = (smsg_data -> logging);
-   HYPRE_Real     *rel_norms       = (smsg_data -> rel_norms);
+   NALU_HYPRE_Int       max_iter        = (smsg_data -> max_iter);
+   NALU_HYPRE_Int       num_iterations  = (smsg_data -> num_iterations);
+   NALU_HYPRE_Int       logging         = (smsg_data -> logging);
+   NALU_HYPRE_Real     *rel_norms       = (smsg_data -> rel_norms);
 
-   HYPRE_Int       ierr = 0;
+   NALU_HYPRE_Int       ierr = 0;
 
 
    if (logging > 0)

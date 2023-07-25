@@ -4,36 +4,36 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 set(HDRS
-  HYPRE_struct_ls.h
-  _hypre_struct_ls.h
+  NALU_HYPRE_struct_ls.h
+  _nalu_hypre_struct_ls.h
 )
 
 set(SRCS
   coarsen.c
   cyclic_reduction.c
-  F90_HYPRE_struct_bicgstab.c
-  F90_HYPRE_struct_cycred.c
-  F90_HYPRE_struct_gmres.c
-  F90_HYPRE_struct_hybrid.c
-  F90_HYPRE_struct_int.c
-  F90_HYPRE_struct_jacobi.c
-  F90_HYPRE_struct_pcg.c
-  F90_HYPRE_struct_pfmg.c
-  F90_HYPRE_struct_smg.c
-  F90_HYPRE_struct_sparse_msg.c
+  F90_NALU_HYPRE_struct_bicgstab.c
+  F90_NALU_HYPRE_struct_cycred.c
+  F90_NALU_HYPRE_struct_gmres.c
+  F90_NALU_HYPRE_struct_hybrid.c
+  F90_NALU_HYPRE_struct_int.c
+  F90_NALU_HYPRE_struct_jacobi.c
+  F90_NALU_HYPRE_struct_pcg.c
+  F90_NALU_HYPRE_struct_pfmg.c
+  F90_NALU_HYPRE_struct_smg.c
+  F90_NALU_HYPRE_struct_sparse_msg.c
   hybrid.c
-  HYPRE_struct_bicgstab.c
-  HYPRE_struct_cycred.c
-  HYPRE_struct_hybrid.c
-  HYPRE_struct_int.c
-  HYPRE_struct_jacobi.c
-  HYPRE_struct_pfmg.c
-  HYPRE_struct_smg.c
-  HYPRE_struct_sparse_msg.c
-  HYPRE_struct_pcg.c
-  HYPRE_struct_gmres.c
-  HYPRE_struct_flexgmres.c
-  HYPRE_struct_lgmres.c
+  NALU_HYPRE_struct_bicgstab.c
+  NALU_HYPRE_struct_cycred.c
+  NALU_HYPRE_struct_hybrid.c
+  NALU_HYPRE_struct_int.c
+  NALU_HYPRE_struct_jacobi.c
+  NALU_HYPRE_struct_pfmg.c
+  NALU_HYPRE_struct_smg.c
+  NALU_HYPRE_struct_sparse_msg.c
+  NALU_HYPRE_struct_pcg.c
+  NALU_HYPRE_struct_gmres.c
+  NALU_HYPRE_struct_flexgmres.c
+  NALU_HYPRE_struct_lgmres.c
   jacobi.c
   pcg_struct.c
   pfmg2_setup_rap.c
@@ -79,11 +79,11 @@ target_sources(${PROJECT_NAME}
           ${HDRS}
 )
 
-if (HYPRE_USING_CUDA OR HYPRE_USING_SYCL)
+if (NALU_HYPRE_USING_CUDA OR NALU_HYPRE_USING_SYCL)
   set(GPU_SRCS
     cyclic_reduction.c
-    HYPRE_struct_int.c
-    HYPRE_struct_pcg.c
+    NALU_HYPRE_struct_int.c
+    NALU_HYPRE_struct_pcg.c
     pfmg2_setup_rap.c
     pfmg3_setup_rap.c
     pfmg_setup.c
@@ -109,8 +109,8 @@ if (HYPRE_USING_CUDA OR HYPRE_USING_SYCL)
     sparse_msg_restrict.c
   )
   convert_filenames_to_full_paths(GPU_SRCS)
-  set(HYPRE_GPU_SOURCES ${HYPRE_GPU_SOURCES} ${GPU_SRCS} PARENT_SCOPE)
+  set(NALU_HYPRE_GPU_SOURCES ${NALU_HYPRE_GPU_SOURCES} ${GPU_SRCS} PARENT_SCOPE)
 endif ()
 
 convert_filenames_to_full_paths(HDRS)
-set(HYPRE_HEADERS ${HYPRE_HEADERS} ${HDRS} PARENT_SCOPE)
+set(NALU_HYPRE_HEADERS ${NALU_HYPRE_HEADERS} ${HDRS} PARENT_SCOPE)

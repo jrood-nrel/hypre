@@ -6,7 +6,7 @@ extern "C" {
 #endif
 
 #include "f2c.h"
-#include "hypre_lapack.h"
+#include "nalu_hypre_lapack.h"
 
 /* Subroutine */ integer dlasq3_(integer *i0, integer *n0, doublereal *z__,
 	integer *pp, doublereal *dmin__, doublereal *sigma, doublereal *desig,

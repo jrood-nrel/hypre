@@ -29,7 +29,7 @@
 #endif
 
 /* used in Mat_SEQ_PrintTriples, so matlab won't discard zeros (yuck!) */
-#define _MATLAB_ZERO_  HYPRE_REAL_MIN
+#define _MATLAB_ZERO_  NALU_HYPRE_REAL_MIN
 
 
 
@@ -43,7 +43,7 @@
 #define ASSERT_DH(ptr) \
     { \
       if (ptr == NULL) { \
-        hypre_sprintf(msgBuf_dh, "%s is NULL", ptr); \
+        nalu_hypre_sprintf(msgBuf_dh, "%s is NULL", ptr); \
         SET_V_ERROR(msgBuf_dh); \
       } \
     }
@@ -53,8 +53,8 @@
 #define CHECK_MPI_V_ERROR(errCode)  \
       { \
         if (errCode) { \
-          HYPRE_Int len; \
-          hypre_MPI_Error_string(errCode, msgBuf_dh, &len); \
+          NALU_HYPRE_Int len; \
+          nalu_hypre_MPI_Error_string(errCode, msgBuf_dh, &len); \
           setError_dh(msgBuf_dh, __FUNC__, __FILE__, __LINE__); \
           return; \
         } \
@@ -63,8 +63,8 @@
 #define CHECK_MPI_ERROR(errCode)  \
       { \
         if (errCode) { \
-          HYPRE_Int len; \
-          hypre_MPI_Error_string(errCode, msgBuf_dh, &len); \
+          NALU_HYPRE_Int len; \
+          nalu_hypre_MPI_Error_string(errCode, msgBuf_dh, &len); \
           setError_dh(msgBuf_dh, __FUNC__, __FILE__, __LINE__); \
           return(errCode); \
         } \

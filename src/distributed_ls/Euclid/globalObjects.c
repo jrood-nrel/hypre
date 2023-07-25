@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_Euclid.h"
+#include "_nalu_hypre_Euclid.h"
 
 /* Contains definitions of globally scoped  objects;
  * Also, functions for error handling and message logging.
@@ -26,8 +26,8 @@ TimeLog_dh  tlog_dh = NULL;     /* internal timing  functionality */
 Mem_dh      mem_dh = NULL;      /* memory management */
 FILE        *logFile = NULL;
 char        msgBuf_dh[MSG_BUF_SIZE_DH]; /* for internal use */
-HYPRE_Int         np_dh = 1;     /* number of processors and subdomains */
-HYPRE_Int         myid_dh = 0;   /* rank of this processor (and subdomain) */
+NALU_HYPRE_Int         np_dh = 1;     /* number of processors and subdomains */
+NALU_HYPRE_Int         myid_dh = 0;   /* rank of this processor (and subdomain) */
 MPI_Comm    comm_dh = 0;
 
 
@@ -37,7 +37,7 @@ MPI_Comm    comm_dh = 0;
    * when compiled with the debugging (-g) option.
    */
 
-void openLogfile_dh(HYPRE_Int argc, char *argv[]);
+void openLogfile_dh(NALU_HYPRE_Int argc, char *argv[]);
 void closeLogfile_dh(void);
 bool logInfoToStderr  = false;
 bool logInfoToFile    = true;
@@ -45,7 +45,7 @@ bool logFuncsToStderr = false;
 bool logFuncsToFile   = false;
 
 bool ignoreMe = true;
-HYPRE_Int  ref_counter = 0;
+NALU_HYPRE_Int  ref_counter = 0;
 
 
 /*-------------------------------------------------------------------------
@@ -57,15 +57,15 @@ HYPRE_Int  ref_counter = 0;
 #define MAX_STACK_SIZE 20
 
 static  char errMsg_private[MAX_STACK_SIZE][MAX_MSG_SIZE];
-static  HYPRE_Int errCount_private = 0;
+static  NALU_HYPRE_Int errCount_private = 0;
 
 static  char calling_stack[MAX_STACK_SIZE][MAX_MSG_SIZE];
-/* static  HYPRE_Int  priority_private[MAX_STACK_SIZE]; */
-static  HYPRE_Int calling_stack_count = 0;
+/* static  NALU_HYPRE_Int  priority_private[MAX_STACK_SIZE]; */
+static  NALU_HYPRE_Int calling_stack_count = 0;
 
 /* static  char errMsg[MAX_MSG_SIZE];    */
 
-void  openLogfile_dh(HYPRE_Int argc, char *argv[])
+void  openLogfile_dh(NALU_HYPRE_Int argc, char *argv[])
 {
   char buf[1024];
 
@@ -75,15 +75,15 @@ void  openLogfile_dh(HYPRE_Int argc, char *argv[])
   if (logFile != NULL) return;
 
   /* set default logging filename */
-  hypre_sprintf(buf, "logFile");
+  nalu_hypre_sprintf(buf, "logFile");
 
   /* set user supplied logging filename, if one was specified */
   if (argc && argv != NULL) {
-    HYPRE_Int j;
+    NALU_HYPRE_Int j;
     for (j=1; j<argc; ++j) {
       if (strcmp(argv[j],"-logFile") == 0) {
         if (j+1 < argc) {
-          hypre_sprintf(buf, "%s", argv[j+1]);
+          nalu_hypre_sprintf(buf, "%s", argv[j+1]);
           break;
         }
       }
@@ -93,11 +93,11 @@ void  openLogfile_dh(HYPRE_Int argc, char *argv[])
   /* attempt to open logfile, unless the user entered "-logFile none" */
   if (strcmp(buf, "none")) {
     char a[5];
-    hypre_sprintf(a, ".%i", myid_dh);
+    nalu_hypre_sprintf(a, ".%i", myid_dh);
     strcat(buf, a);
 
     if ((logFile = fopen(buf, "w")) == NULL ) {
-      hypre_fprintf(stderr, "can't open >%s< for writing; continuing anyway\n", buf);
+      nalu_hypre_fprintf(stderr, "can't open >%s< for writing; continuing anyway\n", buf);
     }
   }
 }
@@ -106,21 +106,21 @@ void  closeLogfile_dh(void)
 {
   if (logFile != NULL) {
     if (fclose(logFile)) {
-      hypre_fprintf(stderr, "Error closing logFile\n");
+      nalu_hypre_fprintf(stderr, "Error closing logFile\n");
     }
     logFile = NULL;
   }
 }
 
-void  setInfo_dh(const char *msg,const char *function,const char *file, HYPRE_Int line)
+void  setInfo_dh(const char *msg,const char *function,const char *file, NALU_HYPRE_Int line)
 {
   if (logInfoToFile && logFile != NULL) {
-    hypre_fprintf(logFile, "INFO: %s;\n       function= %s  file=%s  line=%i\n",
+    nalu_hypre_fprintf(logFile, "INFO: %s;\n       function= %s  file=%s  line=%i\n",
                                           msg, function, file, line);
     fflush(logFile);
   }
   if (logInfoToStderr) {
-    hypre_fprintf(stderr, "INFO: %s;\n       function= %s  file=%s  line=%i\n",
+    nalu_hypre_fprintf(stderr, "INFO: %s;\n       function= %s  file=%s  line=%i\n",
                                           msg, function, file, line);
   }
 }
@@ -129,49 +129,49 @@ void  setInfo_dh(const char *msg,const char *function,const char *file, HYPRE_In
  *  Error handling stuph follows
  *----------------------------------------------------------------------*/
 
-void dh_StartFunc(const char *function,const char *file, HYPRE_Int line, HYPRE_Int priority)
+void dh_StartFunc(const char *function,const char *file, NALU_HYPRE_Int line, NALU_HYPRE_Int priority)
 {
   if (priority == 1) {
-    hypre_sprintf(calling_stack[calling_stack_count],
+    nalu_hypre_sprintf(calling_stack[calling_stack_count],
           "[%i]   %s  file= %s  line= %i", myid_dh, function, file, line);
     /* priority_private[calling_stack_count] = priority; */
     ++calling_stack_count;
 
     if (calling_stack_count == MAX_STACK_SIZE) {
-      hypre_fprintf(stderr, "_____________ dh_StartFunc: OVERFLOW _____________________\n");
+      nalu_hypre_fprintf(stderr, "_____________ dh_StartFunc: OVERFLOW _____________________\n");
       if (logFile != NULL) {
-        hypre_fprintf(logFile, "_____________ dh_StartFunc: OVERFLOW _____________________\n");
+        nalu_hypre_fprintf(logFile, "_____________ dh_StartFunc: OVERFLOW _____________________\n");
       }
       --calling_stack_count;
     }
   }
 }
 
-void dh_EndFunc(const char *function, HYPRE_Int priority)
+void dh_EndFunc(const char *function, NALU_HYPRE_Int priority)
 {
   if (priority == 1) {
     --calling_stack_count;
 
     if (calling_stack_count < 0) {
       calling_stack_count = 0;
-      hypre_fprintf(stderr, "_____________ dh_EndFunc: UNDERFLOW _____________________\n");
+      nalu_hypre_fprintf(stderr, "_____________ dh_EndFunc: UNDERFLOW _____________________\n");
       if (logFile != NULL) {
-        hypre_fprintf(logFile, "_____________ dh_EndFunc: UNDERFLOW _____________________\n");
+        nalu_hypre_fprintf(logFile, "_____________ dh_EndFunc: UNDERFLOW _____________________\n");
       }
     }
   }
 }
 
 
-void  setError_dh(const char *msg,const char *function,const char *file, HYPRE_Int line)
+void  setError_dh(const char *msg,const char *function,const char *file, NALU_HYPRE_Int line)
 {
   errFlag_dh = true;
   if (! strcmp(msg, "")) {
-    hypre_sprintf(errMsg_private[errCount_private],
+    nalu_hypre_sprintf(errMsg_private[errCount_private],
         "[%i] called from: %s  file= %s  line= %i",
                                         myid_dh, function, file, line);
   } else {
-    hypre_sprintf(errMsg_private[errCount_private],
+    nalu_hypre_sprintf(errMsg_private[errCount_private],
         "[%i] ERROR: %s\n       %s  file= %s  line= %i\n",
                                            myid_dh, msg, function, file, line);
   }
@@ -187,26 +187,26 @@ void  setError_dh(const char *msg,const char *function,const char *file, HYPRE_I
 void  printErrorMsg(FILE *fp)
 {
   if (! errFlag_dh) {
-    hypre_fprintf(fp, "errFlag_dh is not set; nothing to print!\n");
+    nalu_hypre_fprintf(fp, "errFlag_dh is not set; nothing to print!\n");
     fflush(fp);
   } else {
-    HYPRE_Int i;
-    hypre_fprintf(fp, "\n============= error stack trace ====================\n");
+    NALU_HYPRE_Int i;
+    nalu_hypre_fprintf(fp, "\n============= error stack trace ====================\n");
     for (i=0; i<errCount_private; ++i) {
-      hypre_fprintf(fp, "%s\n", errMsg_private[i]);
+      nalu_hypre_fprintf(fp, "%s\n", errMsg_private[i]);
     }
-    hypre_fprintf(fp, "\n");
+    nalu_hypre_fprintf(fp, "\n");
     fflush(fp);
   }
 }
 
 void  printFunctionStack(FILE *fp)
 {
-  HYPRE_Int i;
+  NALU_HYPRE_Int i;
   for (i=0; i<calling_stack_count; ++i) {
-    hypre_fprintf(fp, "%s\n", calling_stack[i]);
+    nalu_hypre_fprintf(fp, "%s\n", calling_stack[i]);
   }
-  hypre_fprintf(fp, "\n");
+  nalu_hypre_fprintf(fp, "\n");
   fflush(fp);
 }
 
@@ -217,11 +217,11 @@ void  printFunctionStack(FILE *fp)
 
 #define MAX_ERROR_SPACES   200
 static char spaces[MAX_ERROR_SPACES];
-static HYPRE_Int nesting = 0;
+static NALU_HYPRE_Int nesting = 0;
 static bool initSpaces = true;
 #define INDENT_DH 3
 
-void Error_dhStartFunc(char *function, char *file, HYPRE_Int line)
+void Error_dhStartFunc(char *function, char *file, NALU_HYPRE_Int line)
 {
   if (initSpaces) {
     memset(spaces, ' ', MAX_ERROR_SPACES*sizeof(char));
@@ -239,11 +239,11 @@ void Error_dhStartFunc(char *function, char *file, HYPRE_Int line)
   spaces[INDENT_DH*nesting] = '\0';
 
   if (logFuncsToStderr) {
-    hypre_fprintf(stderr, "%s(%i) %s  [file= %s  line= %i]\n",
+    nalu_hypre_fprintf(stderr, "%s(%i) %s  [file= %s  line= %i]\n",
                             spaces, nesting, function, file, line);
   }
   if (logFuncsToFile && logFile != NULL) {
-    hypre_fprintf(logFile, "%s(%i) %s  [file= %s  line= %i]\n",
+    nalu_hypre_fprintf(logFile, "%s(%i) %s  [file= %s  line= %i]\n",
                             spaces, nesting, function, file, line);
     fflush(logFile);
   }
@@ -271,11 +271,11 @@ bool EuclidIsInitialized(void)
 
 #undef __FUNC__
 #define __FUNC__ "EuclidInitialize"
-void EuclidInitialize(HYPRE_Int argc, char *argv[], char *help)
+void EuclidInitialize(NALU_HYPRE_Int argc, char *argv[], char *help)
 {
   if (! EuclidIsActive) {
-    hypre_MPI_Comm_size(comm_dh, &np_dh);
-    hypre_MPI_Comm_rank(comm_dh, &myid_dh);
+    nalu_hypre_MPI_Comm_size(comm_dh, &np_dh);
+    nalu_hypre_MPI_Comm_rank(comm_dh, &myid_dh);
     openLogfile_dh(argc, argv);
     if (mem_dh == NULL) { Mem_dhCreate(&mem_dh); CHECK_V_ERROR; }
     if (tlog_dh == NULL) { TimeLog_dhCreate(&tlog_dh); CHECK_V_ERROR; }
@@ -285,7 +285,7 @@ void EuclidInitialize(HYPRE_Int argc, char *argv[], char *help)
       sigRegister_dh(); CHECK_V_ERROR;
     }
     if (Parser_dhHasSwitch(parser_dh, "-help")) {
-      if (myid_dh == 0) hypre_printf("%s\n\n", help);
+      if (myid_dh == 0) nalu_hypre_printf("%s\n\n", help);
       EUCLID_EXIT;
     }
     if (Parser_dhHasSwitch(parser_dh, "-logFuncsToFile")) {
@@ -335,7 +335,7 @@ void printf_dh(const char *fmt, ...)
   va_start(args, fmt);
   vsprintf(buf, fmt, args);
   if (myid_dh == 0) {
-    hypre_fprintf(stdout, "%s", buf);
+    nalu_hypre_fprintf(stdout, "%s", buf);
   }
   va_end(args);
   END_FUNC_DH
@@ -352,7 +352,7 @@ void fprintf_dh(FILE *fp,const char *fmt, ...)
   va_start(args, fmt);
   vsprintf(buf, fmt, args);
   if (myid_dh == 0) {
-    hypre_fprintf(fp, "%s", buf);
+    nalu_hypre_fprintf(fp, "%s", buf);
   }
   va_end(args);
   END_FUNC_DH
@@ -361,12 +361,12 @@ void fprintf_dh(FILE *fp,const char *fmt, ...)
 
 #undef __FUNC__
 #define __FUNC__ "echoInvocation_dh"
-void echoInvocation_dh(MPI_Comm comm, char *prefix, HYPRE_Int argc, char *argv[])
+void echoInvocation_dh(MPI_Comm comm, char *prefix, NALU_HYPRE_Int argc, char *argv[])
 {
   START_FUNC_DH
-  HYPRE_Int i, id;
+  NALU_HYPRE_Int i, id;
 
-  hypre_MPI_Comm_rank(comm, &id);
+  nalu_hypre_MPI_Comm_rank(comm, &id);
 
   if (prefix != NULL) {
     printf_dh("\n%s ", prefix);

@@ -14,8 +14,8 @@
 #ifndef __MLIMETHODAMGSAH__
 #define __MLIMETHODAMGSAH__
 
-#include "_hypre_utilities.h"
-#include "_hypre_parcsr_mv.h"
+#include "_nalu_hypre_utilities.h"
+#include "_nalu_hypre_parcsr_mv.h"
 #include "mli.h"
 #include "mli_matrix.h"
 #include "mli_method.h"
@@ -143,20 +143,20 @@ public :
 private :
 
    double genP( MLI_Matrix *, MLI_Matrix **, int, int * );
-   double genPGlobal(hypre_ParCSRMatrix *, MLI_Matrix **, int, int *);
+   double genPGlobal(nalu_hypre_ParCSRMatrix *, MLI_Matrix **, int, int *);
    int    formSmoothVec(MLI_Matrix *);
    int    formSmoothVecLanczos(MLI_Matrix *);
    int    smoothTwice(MLI_Matrix *mli_Amat);
-   int    formLocalGraph( hypre_ParCSRMatrix *, hypre_ParCSRMatrix **, int *);
-   int    formGlobalGraph(hypre_ParCSRMatrix *, hypre_ParCSRMatrix **);
-   int    coarsenLocal( hypre_ParCSRMatrix *, int *, int **);
-   int    coarsenGlobal(hypre_ParCSRMatrix *, int *, int **);
+   int    formLocalGraph( nalu_hypre_ParCSRMatrix *, nalu_hypre_ParCSRMatrix **, int *);
+   int    formGlobalGraph(nalu_hypre_ParCSRMatrix *, nalu_hypre_ParCSRMatrix **);
+   int    coarsenLocal( nalu_hypre_ParCSRMatrix *, int *, int **);
+   int    coarsenGlobal(nalu_hypre_ParCSRMatrix *, int *, int **);
    double genP_DD(MLI_Matrix *, MLI_Matrix **, int **, int **);
    double genP_Selective(MLI_Matrix *, MLI_Matrix **, int, int *);
-   int    coarsenGraded(hypre_ParCSRMatrix *graph, int *, int **, int **);
-   int    coarsenSelective(hypre_ParCSRMatrix *graph, int *, int **, int *);
+   int    coarsenGraded(nalu_hypre_ParCSRMatrix *graph, int *, int **, int **);
+   int    coarsenSelective(nalu_hypre_ParCSRMatrix *graph, int *, int **, int *);
    double genP_AExt(MLI_Matrix *, MLI_Matrix **, int);
-   int    coarsenAExt(hypre_ParCSRMatrix *graph, int *, int **, int);
+   int    coarsenAExt(nalu_hypre_ParCSRMatrix *graph, int *, int **, int);
 };
 
 #endif

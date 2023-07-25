@@ -7,11 +7,11 @@
 
 /******************************************************************************
  *
- * HYPRE_IJMatrix Fortran interface
+ * NALU_HYPRE_IJMatrix Fortran interface
  *
  *****************************************************************************/
 
-#include "./_hypre_IJ_mv.h"
+#include "./_nalu_hypre_IJ_mv.h"
 #include "fortran.h"
 
 #ifdef __cplusplus
@@ -19,337 +19,337 @@ extern "C" {
 #endif
 
 /*--------------------------------------------------------------------------
- * HYPRE_IJMatrixCreate
+ * NALU_HYPRE_IJMatrixCreate
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_ijmatrixcreate, HYPRE_IJMATRIXCREATE)
-( hypre_F90_Comm *comm,
-  hypre_F90_BigInt *ilower,
-  hypre_F90_BigInt *iupper,
-  hypre_F90_BigInt *jlower,
-  hypre_F90_BigInt *jupper,
-  hypre_F90_Obj *matrix,
-  hypre_F90_Int *ierr    )
+nalu_hypre_F90_IFACE(nalu_hypre_ijmatrixcreate, NALU_HYPRE_IJMATRIXCREATE)
+( nalu_hypre_F90_Comm *comm,
+  nalu_hypre_F90_BigInt *ilower,
+  nalu_hypre_F90_BigInt *iupper,
+  nalu_hypre_F90_BigInt *jlower,
+  nalu_hypre_F90_BigInt *jupper,
+  nalu_hypre_F90_Obj *matrix,
+  nalu_hypre_F90_Int *ierr    )
 {
-   *ierr = (hypre_F90_Int)
-           ( HYPRE_IJMatrixCreate(
-                hypre_F90_PassComm (comm),
-                hypre_F90_PassBigInt (ilower),
-                hypre_F90_PassBigInt (iupper),
-                hypre_F90_PassBigInt (jlower),
-                hypre_F90_PassBigInt (jupper),
-                hypre_F90_PassObjRef (HYPRE_IJMatrix, matrix) ) );
+   *ierr = (nalu_hypre_F90_Int)
+           ( NALU_HYPRE_IJMatrixCreate(
+                nalu_hypre_F90_PassComm (comm),
+                nalu_hypre_F90_PassBigInt (ilower),
+                nalu_hypre_F90_PassBigInt (iupper),
+                nalu_hypre_F90_PassBigInt (jlower),
+                nalu_hypre_F90_PassBigInt (jupper),
+                nalu_hypre_F90_PassObjRef (NALU_HYPRE_IJMatrix, matrix) ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_IJMatrixDestroy
+ * NALU_HYPRE_IJMatrixDestroy
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_ijmatrixdestroy, HYPRE_IJMATRIXDESTROY)
-( hypre_F90_Obj *matrix,
-  hypre_F90_Int *ierr    )
+nalu_hypre_F90_IFACE(nalu_hypre_ijmatrixdestroy, NALU_HYPRE_IJMATRIXDESTROY)
+( nalu_hypre_F90_Obj *matrix,
+  nalu_hypre_F90_Int *ierr    )
 {
-   *ierr = (hypre_F90_Int)
-           ( HYPRE_IJMatrixDestroy(
-                hypre_F90_PassObj (HYPRE_IJMatrix, matrix) ) );
+   *ierr = (nalu_hypre_F90_Int)
+           ( NALU_HYPRE_IJMatrixDestroy(
+                nalu_hypre_F90_PassObj (NALU_HYPRE_IJMatrix, matrix) ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_IJMatrixInitialize
+ * NALU_HYPRE_IJMatrixInitialize
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_ijmatrixinitialize, HYPRE_IJMATRIXINITIALIZE)
-( hypre_F90_Obj *matrix,
-  hypre_F90_Int *ierr    )
+nalu_hypre_F90_IFACE(nalu_hypre_ijmatrixinitialize, NALU_HYPRE_IJMATRIXINITIALIZE)
+( nalu_hypre_F90_Obj *matrix,
+  nalu_hypre_F90_Int *ierr    )
 {
-   *ierr = (hypre_F90_Int)
-           ( HYPRE_IJMatrixInitialize(
-                hypre_F90_PassObj (HYPRE_IJMatrix, matrix) ) );
+   *ierr = (nalu_hypre_F90_Int)
+           ( NALU_HYPRE_IJMatrixInitialize(
+                nalu_hypre_F90_PassObj (NALU_HYPRE_IJMatrix, matrix) ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_IJMatrixSetValues
+ * NALU_HYPRE_IJMatrixSetValues
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_ijmatrixsetvalues, HYPRE_IJMATRIXSETVALUES)
-( hypre_F90_Obj *matrix,
-  hypre_F90_Int *nrows,
-  hypre_F90_IntArray *ncols,
-  hypre_F90_BigIntArray *rows,
-  hypre_F90_BigIntArray *cols,
-  hypre_F90_ComplexArray *values,
-  hypre_F90_Int *ierr    )
+nalu_hypre_F90_IFACE(nalu_hypre_ijmatrixsetvalues, NALU_HYPRE_IJMATRIXSETVALUES)
+( nalu_hypre_F90_Obj *matrix,
+  nalu_hypre_F90_Int *nrows,
+  nalu_hypre_F90_IntArray *ncols,
+  nalu_hypre_F90_BigIntArray *rows,
+  nalu_hypre_F90_BigIntArray *cols,
+  nalu_hypre_F90_ComplexArray *values,
+  nalu_hypre_F90_Int *ierr    )
 {
-   *ierr = (hypre_F90_Int)
-           ( HYPRE_IJMatrixSetValues(
-                hypre_F90_PassObj (HYPRE_IJMatrix, matrix),
-                hypre_F90_PassInt (nrows),
-                hypre_F90_PassIntArray (ncols),
-                hypre_F90_PassBigIntArray (rows),
-                hypre_F90_PassBigIntArray (cols),
-                hypre_F90_PassComplexArray (values)  ) );
-
-}
-
-/*--------------------------------------------------------------------------
- * HYPRE_IJMatrixSetConstantValues
- *--------------------------------------------------------------------------*/
-
-void
-hypre_F90_IFACE(hypre_ijmatrixsetconstantvalues, HYPRE_IJMATRIXSETCONSTANTVALUES)
-( hypre_F90_Obj *matrix,
-  hypre_F90_Complex *value,
-  hypre_F90_Int *ierr    )
-{
-   *ierr = (hypre_F90_Int)
-           ( HYPRE_IJMatrixSetConstantValues(
-                hypre_F90_PassObj (HYPRE_IJMatrix, matrix),
-                hypre_F90_PassComplex (value)  ) );
+   *ierr = (nalu_hypre_F90_Int)
+           ( NALU_HYPRE_IJMatrixSetValues(
+                nalu_hypre_F90_PassObj (NALU_HYPRE_IJMatrix, matrix),
+                nalu_hypre_F90_PassInt (nrows),
+                nalu_hypre_F90_PassIntArray (ncols),
+                nalu_hypre_F90_PassBigIntArray (rows),
+                nalu_hypre_F90_PassBigIntArray (cols),
+                nalu_hypre_F90_PassComplexArray (values)  ) );
 
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_IJMatrixAddToValues
+ * NALU_HYPRE_IJMatrixSetConstantValues
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_ijmatrixaddtovalues, HYPRE_IJMATRIXADDTOVALUES)
-( hypre_F90_Obj *matrix,
-  hypre_F90_Int *nrows,
-  hypre_F90_IntArray *ncols,
-  hypre_F90_BigIntArray *rows,
-  hypre_F90_BigIntArray *cols,
-  hypre_F90_ComplexArray *values,
-  hypre_F90_Int *ierr    )
+nalu_hypre_F90_IFACE(nalu_hypre_ijmatrixsetconstantvalues, NALU_HYPRE_IJMATRIXSETCONSTANTVALUES)
+( nalu_hypre_F90_Obj *matrix,
+  nalu_hypre_F90_Complex *value,
+  nalu_hypre_F90_Int *ierr    )
 {
-   *ierr = (hypre_F90_Int)
-           ( HYPRE_IJMatrixAddToValues(
-                hypre_F90_PassObj (HYPRE_IJMatrix, matrix),
-                hypre_F90_PassInt (nrows),
-                hypre_F90_PassIntArray (ncols),
-                hypre_F90_PassBigIntArray (rows),
-                hypre_F90_PassBigIntArray (cols),
-                hypre_F90_PassComplexArray (values)  ) );
+   *ierr = (nalu_hypre_F90_Int)
+           ( NALU_HYPRE_IJMatrixSetConstantValues(
+                nalu_hypre_F90_PassObj (NALU_HYPRE_IJMatrix, matrix),
+                nalu_hypre_F90_PassComplex (value)  ) );
 
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_IJMatrixAssemble
+ * NALU_HYPRE_IJMatrixAddToValues
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_ijmatrixassemble, HYPRE_IJMATRIXASSEMBLE)
-( hypre_F90_Obj *matrix,
-  hypre_F90_Int *ierr    )
+nalu_hypre_F90_IFACE(nalu_hypre_ijmatrixaddtovalues, NALU_HYPRE_IJMATRIXADDTOVALUES)
+( nalu_hypre_F90_Obj *matrix,
+  nalu_hypre_F90_Int *nrows,
+  nalu_hypre_F90_IntArray *ncols,
+  nalu_hypre_F90_BigIntArray *rows,
+  nalu_hypre_F90_BigIntArray *cols,
+  nalu_hypre_F90_ComplexArray *values,
+  nalu_hypre_F90_Int *ierr    )
 {
-   *ierr = (hypre_F90_Int)
-           ( HYPRE_IJMatrixAssemble(
-                hypre_F90_PassObj (HYPRE_IJMatrix, matrix) ) );
-}
-
-/*--------------------------------------------------------------------------
- * HYPRE_IJMatrixGetRowCounts
- *--------------------------------------------------------------------------*/
-
-void
-hypre_F90_IFACE(hypre_ijmatrixgetrowcounts, HYPRE_IJMATRIXGETROWCOUNTS)
-( hypre_F90_Obj *matrix,
-  hypre_F90_Int *nrows,
-  hypre_F90_BigIntArray *rows,
-  hypre_F90_IntArray *ncols,
-  hypre_F90_Int *ierr    )
-{
-   *ierr = (hypre_F90_Int)
-           ( HYPRE_IJMatrixGetRowCounts(
-                hypre_F90_PassObj (HYPRE_IJMatrix, matrix),
-                hypre_F90_PassInt (nrows),
-                hypre_F90_PassBigIntArray (rows),
-                hypre_F90_PassIntArray (ncols) ) );
-}
-
-/*--------------------------------------------------------------------------
- * HYPRE_IJMatrixGetValues
- *--------------------------------------------------------------------------*/
-
-void
-hypre_F90_IFACE(hypre_ijmatrixgetvalues, HYPRE_IJMATRIXGETVALUES)
-( hypre_F90_Obj *matrix,
-  hypre_F90_Int *nrows,
-  hypre_F90_IntArray *ncols,
-  hypre_F90_BigIntArray *rows,
-  hypre_F90_BigIntArray *cols,
-  hypre_F90_ComplexArray *values,
-  hypre_F90_Int *ierr    )
-{
-   *ierr = (hypre_F90_Int)
-           ( HYPRE_IJMatrixGetValues(
-                hypre_F90_PassObj (HYPRE_IJMatrix, matrix),
-                hypre_F90_PassInt (nrows),
-                hypre_F90_PassIntArray (ncols),
-                hypre_F90_PassBigIntArray (rows),
-                hypre_F90_PassBigIntArray (cols),
-                hypre_F90_PassComplexArray (values)  ) );
+   *ierr = (nalu_hypre_F90_Int)
+           ( NALU_HYPRE_IJMatrixAddToValues(
+                nalu_hypre_F90_PassObj (NALU_HYPRE_IJMatrix, matrix),
+                nalu_hypre_F90_PassInt (nrows),
+                nalu_hypre_F90_PassIntArray (ncols),
+                nalu_hypre_F90_PassBigIntArray (rows),
+                nalu_hypre_F90_PassBigIntArray (cols),
+                nalu_hypre_F90_PassComplexArray (values)  ) );
 
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_IJMatrixSetObjectType
+ * NALU_HYPRE_IJMatrixAssemble
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_ijmatrixsetobjecttype, HYPRE_IJMATRIXSETOBJECTTYPE)
-( hypre_F90_Obj *matrix,
-  hypre_F90_Int *type,
-  hypre_F90_Int *ierr    )
+nalu_hypre_F90_IFACE(nalu_hypre_ijmatrixassemble, NALU_HYPRE_IJMATRIXASSEMBLE)
+( nalu_hypre_F90_Obj *matrix,
+  nalu_hypre_F90_Int *ierr    )
 {
-   *ierr = (hypre_F90_Int)
-           ( HYPRE_IJMatrixSetObjectType(
-                hypre_F90_PassObj (HYPRE_IJMatrix, matrix),
-                hypre_F90_PassInt (type)    ) );
+   *ierr = (nalu_hypre_F90_Int)
+           ( NALU_HYPRE_IJMatrixAssemble(
+                nalu_hypre_F90_PassObj (NALU_HYPRE_IJMatrix, matrix) ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_IJMatrixGetObjectType
+ * NALU_HYPRE_IJMatrixGetRowCounts
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_ijmatrixgetobjecttype, HYPRE_IJMATRIXGETOBJECTTYPE)
-( hypre_F90_Obj *matrix,
-  hypre_F90_Int *type,
-  hypre_F90_Int *ierr    )
+nalu_hypre_F90_IFACE(nalu_hypre_ijmatrixgetrowcounts, NALU_HYPRE_IJMATRIXGETROWCOUNTS)
+( nalu_hypre_F90_Obj *matrix,
+  nalu_hypre_F90_Int *nrows,
+  nalu_hypre_F90_BigIntArray *rows,
+  nalu_hypre_F90_IntArray *ncols,
+  nalu_hypre_F90_Int *ierr    )
 {
-   *ierr = (hypre_F90_Int)
-           ( HYPRE_IJMatrixGetObjectType(
-                hypre_F90_PassObj (HYPRE_IJMatrix, matrix),
-                hypre_F90_PassIntRef (type)    ) );
+   *ierr = (nalu_hypre_F90_Int)
+           ( NALU_HYPRE_IJMatrixGetRowCounts(
+                nalu_hypre_F90_PassObj (NALU_HYPRE_IJMatrix, matrix),
+                nalu_hypre_F90_PassInt (nrows),
+                nalu_hypre_F90_PassBigIntArray (rows),
+                nalu_hypre_F90_PassIntArray (ncols) ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_IJMatrixGetLocalRange
+ * NALU_HYPRE_IJMatrixGetValues
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_ijmatrixgetlocalrange, HYPRE_IJMATRIXGETLOCALRANGE)
-( hypre_F90_Obj *matrix,
-  hypre_F90_BigInt *ilower,
-  hypre_F90_BigInt *iupper,
-  hypre_F90_BigInt *jlower,
-  hypre_F90_BigInt *jupper,
-  hypre_F90_Int *ierr    )
+nalu_hypre_F90_IFACE(nalu_hypre_ijmatrixgetvalues, NALU_HYPRE_IJMATRIXGETVALUES)
+( nalu_hypre_F90_Obj *matrix,
+  nalu_hypre_F90_Int *nrows,
+  nalu_hypre_F90_IntArray *ncols,
+  nalu_hypre_F90_BigIntArray *rows,
+  nalu_hypre_F90_BigIntArray *cols,
+  nalu_hypre_F90_ComplexArray *values,
+  nalu_hypre_F90_Int *ierr    )
 {
-   *ierr = (hypre_F90_Int)
-           ( HYPRE_IJMatrixGetLocalRange(
-                hypre_F90_PassObj (HYPRE_IJMatrix, matrix),
-                hypre_F90_PassBigIntRef (ilower),
-                hypre_F90_PassBigIntRef (iupper),
-                hypre_F90_PassBigIntRef (jlower),
-                hypre_F90_PassBigIntRef (jupper) ) );
+   *ierr = (nalu_hypre_F90_Int)
+           ( NALU_HYPRE_IJMatrixGetValues(
+                nalu_hypre_F90_PassObj (NALU_HYPRE_IJMatrix, matrix),
+                nalu_hypre_F90_PassInt (nrows),
+                nalu_hypre_F90_PassIntArray (ncols),
+                nalu_hypre_F90_PassBigIntArray (rows),
+                nalu_hypre_F90_PassBigIntArray (cols),
+                nalu_hypre_F90_PassComplexArray (values)  ) );
+
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_IJMatrixGetObject
+ * NALU_HYPRE_IJMatrixSetObjectType
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_ijmatrixgetobject, HYPRE_IJMATRIXGETOBJECT)
-( hypre_F90_Obj *matrix,
-  hypre_F90_Obj *object,
-  hypre_F90_Int *ierr    )
+nalu_hypre_F90_IFACE(nalu_hypre_ijmatrixsetobjecttype, NALU_HYPRE_IJMATRIXSETOBJECTTYPE)
+( nalu_hypre_F90_Obj *matrix,
+  nalu_hypre_F90_Int *type,
+  nalu_hypre_F90_Int *ierr    )
 {
-   *ierr = (hypre_F90_Int)
-           ( HYPRE_IJMatrixGetObject(
-                hypre_F90_PassObj (HYPRE_IJMatrix, matrix),
+   *ierr = (nalu_hypre_F90_Int)
+           ( NALU_HYPRE_IJMatrixSetObjectType(
+                nalu_hypre_F90_PassObj (NALU_HYPRE_IJMatrix, matrix),
+                nalu_hypre_F90_PassInt (type)    ) );
+}
+
+/*--------------------------------------------------------------------------
+ * NALU_HYPRE_IJMatrixGetObjectType
+ *--------------------------------------------------------------------------*/
+
+void
+nalu_hypre_F90_IFACE(nalu_hypre_ijmatrixgetobjecttype, NALU_HYPRE_IJMATRIXGETOBJECTTYPE)
+( nalu_hypre_F90_Obj *matrix,
+  nalu_hypre_F90_Int *type,
+  nalu_hypre_F90_Int *ierr    )
+{
+   *ierr = (nalu_hypre_F90_Int)
+           ( NALU_HYPRE_IJMatrixGetObjectType(
+                nalu_hypre_F90_PassObj (NALU_HYPRE_IJMatrix, matrix),
+                nalu_hypre_F90_PassIntRef (type)    ) );
+}
+
+/*--------------------------------------------------------------------------
+ * NALU_HYPRE_IJMatrixGetLocalRange
+ *--------------------------------------------------------------------------*/
+
+void
+nalu_hypre_F90_IFACE(nalu_hypre_ijmatrixgetlocalrange, NALU_HYPRE_IJMATRIXGETLOCALRANGE)
+( nalu_hypre_F90_Obj *matrix,
+  nalu_hypre_F90_BigInt *ilower,
+  nalu_hypre_F90_BigInt *iupper,
+  nalu_hypre_F90_BigInt *jlower,
+  nalu_hypre_F90_BigInt *jupper,
+  nalu_hypre_F90_Int *ierr    )
+{
+   *ierr = (nalu_hypre_F90_Int)
+           ( NALU_HYPRE_IJMatrixGetLocalRange(
+                nalu_hypre_F90_PassObj (NALU_HYPRE_IJMatrix, matrix),
+                nalu_hypre_F90_PassBigIntRef (ilower),
+                nalu_hypre_F90_PassBigIntRef (iupper),
+                nalu_hypre_F90_PassBigIntRef (jlower),
+                nalu_hypre_F90_PassBigIntRef (jupper) ) );
+}
+
+/*--------------------------------------------------------------------------
+ * NALU_HYPRE_IJMatrixGetObject
+ *--------------------------------------------------------------------------*/
+
+void
+nalu_hypre_F90_IFACE(nalu_hypre_ijmatrixgetobject, NALU_HYPRE_IJMATRIXGETOBJECT)
+( nalu_hypre_F90_Obj *matrix,
+  nalu_hypre_F90_Obj *object,
+  nalu_hypre_F90_Int *ierr    )
+{
+   *ierr = (nalu_hypre_F90_Int)
+           ( NALU_HYPRE_IJMatrixGetObject(
+                nalu_hypre_F90_PassObj (NALU_HYPRE_IJMatrix, matrix),
                 (void **)         object  ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_IJMatrixSetRowSizes
+ * NALU_HYPRE_IJMatrixSetRowSizes
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_ijmatrixsetrowsizes, HYPRE_IJMATRIXSETROWSIZES)
-( hypre_F90_Obj *matrix,
-  hypre_F90_IntArray *sizes,
-  hypre_F90_Int *ierr    )
+nalu_hypre_F90_IFACE(nalu_hypre_ijmatrixsetrowsizes, NALU_HYPRE_IJMATRIXSETROWSIZES)
+( nalu_hypre_F90_Obj *matrix,
+  nalu_hypre_F90_IntArray *sizes,
+  nalu_hypre_F90_Int *ierr    )
 {
-   *ierr = (hypre_F90_Int)
-           ( HYPRE_IJMatrixSetRowSizes(
-                hypre_F90_PassObj (HYPRE_IJMatrix, matrix),
-                hypre_F90_PassIntArray (sizes)   ) );
+   *ierr = (nalu_hypre_F90_Int)
+           ( NALU_HYPRE_IJMatrixSetRowSizes(
+                nalu_hypre_F90_PassObj (NALU_HYPRE_IJMatrix, matrix),
+                nalu_hypre_F90_PassIntArray (sizes)   ) );
 
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_IJMatrixSetDiagOffdSizes
+ * NALU_HYPRE_IJMatrixSetDiagOffdSizes
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_ijmatrixsetdiagoffdsizes, HYPRE_IJMATRIXSETDIAGOFFDSIZES)
-( hypre_F90_Obj *matrix,
-  hypre_F90_IntArray *diag_sizes,
-  hypre_F90_IntArray *offd_sizes,
-  hypre_F90_Int *ierr        )
+nalu_hypre_F90_IFACE(nalu_hypre_ijmatrixsetdiagoffdsizes, NALU_HYPRE_IJMATRIXSETDIAGOFFDSIZES)
+( nalu_hypre_F90_Obj *matrix,
+  nalu_hypre_F90_IntArray *diag_sizes,
+  nalu_hypre_F90_IntArray *offd_sizes,
+  nalu_hypre_F90_Int *ierr        )
 {
-   *ierr = (hypre_F90_Int)
-           ( HYPRE_IJMatrixSetDiagOffdSizes(
-                hypre_F90_PassObj (HYPRE_IJMatrix, matrix),
-                hypre_F90_PassIntArray (diag_sizes),
-                hypre_F90_PassIntArray (offd_sizes) ) );
+   *ierr = (nalu_hypre_F90_Int)
+           ( NALU_HYPRE_IJMatrixSetDiagOffdSizes(
+                nalu_hypre_F90_PassObj (NALU_HYPRE_IJMatrix, matrix),
+                nalu_hypre_F90_PassIntArray (diag_sizes),
+                nalu_hypre_F90_PassIntArray (offd_sizes) ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_IJMatrixSetMaxOffProcElmts
+ * NALU_HYPRE_IJMatrixSetMaxOffProcElmts
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_ijmatrixsetmaxoffprocelmt, HYPRE_IJMATRIXSETMAXOFFPROCELMT)
-( hypre_F90_Obj *matrix,
-  hypre_F90_Int *max_off_proc_elmts,
-  hypre_F90_Int *ierr        )
+nalu_hypre_F90_IFACE(nalu_hypre_ijmatrixsetmaxoffprocelmt, NALU_HYPRE_IJMATRIXSETMAXOFFPROCELMT)
+( nalu_hypre_F90_Obj *matrix,
+  nalu_hypre_F90_Int *max_off_proc_elmts,
+  nalu_hypre_F90_Int *ierr        )
 {
-   *ierr = (hypre_F90_Int)
-           ( HYPRE_IJMatrixSetMaxOffProcElmts(
-                hypre_F90_PassObj (HYPRE_IJMatrix, matrix),
-                hypre_F90_PassInt (max_off_proc_elmts) ) );
+   *ierr = (nalu_hypre_F90_Int)
+           ( NALU_HYPRE_IJMatrixSetMaxOffProcElmts(
+                nalu_hypre_F90_PassObj (NALU_HYPRE_IJMatrix, matrix),
+                nalu_hypre_F90_PassInt (max_off_proc_elmts) ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_IJMatrixRead
+ * NALU_HYPRE_IJMatrixRead
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_ijmatrixread, HYPRE_IJMATRIXREAD)
+nalu_hypre_F90_IFACE(nalu_hypre_ijmatrixread, NALU_HYPRE_IJMATRIXREAD)
 ( char     *filename,
-  hypre_F90_Comm *comm,
-  hypre_F90_Int *object_type,
-  hypre_F90_Obj *matrix,
-  hypre_F90_Int *ierr      )
+  nalu_hypre_F90_Comm *comm,
+  nalu_hypre_F90_Int *object_type,
+  nalu_hypre_F90_Obj *matrix,
+  nalu_hypre_F90_Int *ierr      )
 {
-   *ierr = (hypre_F90_Int)
-           ( HYPRE_IJMatrixRead(
+   *ierr = (nalu_hypre_F90_Int)
+           ( NALU_HYPRE_IJMatrixRead(
                 (char *)            filename,
-                hypre_F90_PassComm (comm),
-                hypre_F90_PassInt (object_type),
-                hypre_F90_PassObjRef (HYPRE_IJMatrix, matrix)    ) );
+                nalu_hypre_F90_PassComm (comm),
+                nalu_hypre_F90_PassInt (object_type),
+                nalu_hypre_F90_PassObjRef (NALU_HYPRE_IJMatrix, matrix)    ) );
 }
 
 /*--------------------------------------------------------------------------
- * HYPRE_IJMatrixPrint
+ * NALU_HYPRE_IJMatrixPrint
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_ijmatrixprint, HYPRE_IJMATRIXPRINT)
-( hypre_F90_Obj *matrix,
+nalu_hypre_F90_IFACE(nalu_hypre_ijmatrixprint, NALU_HYPRE_IJMATRIXPRINT)
+( nalu_hypre_F90_Obj *matrix,
   char     *filename,
-  hypre_F90_Int *ierr      )
+  nalu_hypre_F90_Int *ierr      )
 {
-   *ierr = (hypre_F90_Int)
-           ( HYPRE_IJMatrixPrint(
-                hypre_F90_PassObj (HYPRE_IJMatrix, matrix),
+   *ierr = (nalu_hypre_F90_Int)
+           ( NALU_HYPRE_IJMatrixPrint(
+                nalu_hypre_F90_PassObj (NALU_HYPRE_IJMatrix, matrix),
                 (char *)          filename ) );
 }
 

@@ -5,15 +5,15 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_parcsr_ls.h"
+#include "_nalu_hypre_parcsr_ls.h"
 #include "Common.h"
-#include "_hypre_blas.h"
-#include "_hypre_lapack.h"
+#include "_nalu_hypre_blas.h"
+#include "_nalu_hypre_lapack.h"
 
 #define ADJUST(a,b)  (adjust_list[(a)*(num_functions-1)+(b)])
 
 /******************************************************************************
- * hypre_BoomerAMGFitInterpVectors
+ * nalu_hypre_BoomerAMGFitInterpVectors
  *
   This routine for updating the interp operator to interpolate the
   supplied smooth vectors with a L.S. fitting.  This code (varient 0)
@@ -41,85 +41,85 @@
   future.
 
  ******************************************************************************/
-HYPRE_Int hypre_BoomerAMGFitInterpVectors( hypre_ParCSRMatrix *A,
-                                           hypre_ParCSRMatrix **P,
-                                           HYPRE_Int num_smooth_vecs,
-                                           hypre_ParVector **smooth_vecs,
-                                           hypre_ParVector **coarse_smooth_vecs,
-                                           HYPRE_Real delta,
-                                           HYPRE_Int num_functions,
-                                           HYPRE_Int *dof_func,
-                                           HYPRE_Int *CF_marker,
-                                           HYPRE_Int max_elmts,
-                                           HYPRE_Real trunc_factor,
-                                           HYPRE_Int variant, HYPRE_Int level)
+NALU_HYPRE_Int nalu_hypre_BoomerAMGFitInterpVectors( nalu_hypre_ParCSRMatrix *A,
+                                           nalu_hypre_ParCSRMatrix **P,
+                                           NALU_HYPRE_Int num_smooth_vecs,
+                                           nalu_hypre_ParVector **smooth_vecs,
+                                           nalu_hypre_ParVector **coarse_smooth_vecs,
+                                           NALU_HYPRE_Real delta,
+                                           NALU_HYPRE_Int num_functions,
+                                           NALU_HYPRE_Int *dof_func,
+                                           NALU_HYPRE_Int *CF_marker,
+                                           NALU_HYPRE_Int max_elmts,
+                                           NALU_HYPRE_Real trunc_factor,
+                                           NALU_HYPRE_Int variant, NALU_HYPRE_Int level)
 {
 
-   HYPRE_Int  i, j, k;
+   NALU_HYPRE_Int  i, j, k;
 
-   HYPRE_Int  one_i = 1;
-   HYPRE_Int  info;
-   HYPRE_Int  coarse_index;;
-   HYPRE_Int  num_coarse_diag;
-   HYPRE_Int  num_coarse_offd;
-   HYPRE_Int  num_nonzeros = 0;
-   HYPRE_Int  coarse_point = 0;
-   HYPRE_Int  k_size;
-   HYPRE_Int  k_alloc;
-   HYPRE_Int  counter;
-   HYPRE_Int  *piv;
-   HYPRE_Int  tmp_int;
-   HYPRE_Int  num_sends;
+   NALU_HYPRE_Int  one_i = 1;
+   NALU_HYPRE_Int  info;
+   NALU_HYPRE_Int  coarse_index;;
+   NALU_HYPRE_Int  num_coarse_diag;
+   NALU_HYPRE_Int  num_coarse_offd;
+   NALU_HYPRE_Int  num_nonzeros = 0;
+   NALU_HYPRE_Int  coarse_point = 0;
+   NALU_HYPRE_Int  k_size;
+   NALU_HYPRE_Int  k_alloc;
+   NALU_HYPRE_Int  counter;
+   NALU_HYPRE_Int  *piv;
+   NALU_HYPRE_Int  tmp_int;
+   NALU_HYPRE_Int  num_sends;
 
-   HYPRE_Real *alpha;
-   HYPRE_Real *Beta;
-   HYPRE_Real *w;
-   HYPRE_Real *w_old;
-   HYPRE_Real *B_s;
+   NALU_HYPRE_Real *alpha;
+   NALU_HYPRE_Real *Beta;
+   NALU_HYPRE_Real *w;
+   NALU_HYPRE_Real *w_old;
+   NALU_HYPRE_Real *B_s;
 
-   HYPRE_Real tmp_double;
-   HYPRE_Real one = 1.0;
-   HYPRE_Real mone = -1.0;;
-   HYPRE_Real *vec_data;
+   NALU_HYPRE_Real tmp_double;
+   NALU_HYPRE_Real one = 1.0;
+   NALU_HYPRE_Real mone = -1.0;;
+   NALU_HYPRE_Real *vec_data;
 
-   hypre_CSRMatrix *P_diag = hypre_ParCSRMatrixDiag(*P);
-   hypre_CSRMatrix *P_offd = hypre_ParCSRMatrixOffd(*P);
-   HYPRE_Real      *P_diag_data = hypre_CSRMatrixData(P_diag);
-   HYPRE_Int       *P_diag_i = hypre_CSRMatrixI(P_diag);
-   HYPRE_Int       *P_diag_j = hypre_CSRMatrixJ(P_diag);
-   HYPRE_Real      *P_offd_data = hypre_CSRMatrixData(P_offd);
-   HYPRE_Int       *P_offd_i = hypre_CSRMatrixI(P_offd);
-   HYPRE_Int       *P_offd_j = hypre_CSRMatrixJ(P_offd);
-   HYPRE_Int       num_rows_P = hypre_CSRMatrixNumRows(P_diag);
-   HYPRE_Int        P_diag_size = P_diag_i[num_rows_P];
-   HYPRE_Int        P_offd_size = P_offd_i[num_rows_P];
-   HYPRE_Int        num_cols_P_offd = hypre_CSRMatrixNumCols(P_offd);
-   HYPRE_BigInt    *col_map_offd_P = NULL;
+   nalu_hypre_CSRMatrix *P_diag = nalu_hypre_ParCSRMatrixDiag(*P);
+   nalu_hypre_CSRMatrix *P_offd = nalu_hypre_ParCSRMatrixOffd(*P);
+   NALU_HYPRE_Real      *P_diag_data = nalu_hypre_CSRMatrixData(P_diag);
+   NALU_HYPRE_Int       *P_diag_i = nalu_hypre_CSRMatrixI(P_diag);
+   NALU_HYPRE_Int       *P_diag_j = nalu_hypre_CSRMatrixJ(P_diag);
+   NALU_HYPRE_Real      *P_offd_data = nalu_hypre_CSRMatrixData(P_offd);
+   NALU_HYPRE_Int       *P_offd_i = nalu_hypre_CSRMatrixI(P_offd);
+   NALU_HYPRE_Int       *P_offd_j = nalu_hypre_CSRMatrixJ(P_offd);
+   NALU_HYPRE_Int       num_rows_P = nalu_hypre_CSRMatrixNumRows(P_diag);
+   NALU_HYPRE_Int        P_diag_size = P_diag_i[num_rows_P];
+   NALU_HYPRE_Int        P_offd_size = P_offd_i[num_rows_P];
+   NALU_HYPRE_Int        num_cols_P_offd = nalu_hypre_CSRMatrixNumCols(P_offd);
+   NALU_HYPRE_BigInt    *col_map_offd_P = NULL;
 
-   hypre_CSRMatrix  *A_offd = hypre_ParCSRMatrixOffd(A);
-   HYPRE_Int         num_cols_A_offd = hypre_CSRMatrixNumCols(A_offd);
+   nalu_hypre_CSRMatrix  *A_offd = nalu_hypre_ParCSRMatrixOffd(A);
+   NALU_HYPRE_Int         num_cols_A_offd = nalu_hypre_CSRMatrixNumCols(A_offd);
 
-   hypre_ParCSRCommPkg     *comm_pkg = hypre_ParCSRMatrixCommPkg(*P);
-   hypre_ParCSRCommHandle  *comm_handle;
+   nalu_hypre_ParCSRCommPkg     *comm_pkg = nalu_hypre_ParCSRMatrixCommPkg(*P);
+   nalu_hypre_ParCSRCommHandle  *comm_handle;
    MPI_Comm                 comm;
 
 
-   HYPRE_Real  *dbl_buf_data;
-   HYPRE_Real  *smooth_vec_offd = NULL;
-   HYPRE_Real  *offd_vec_data;
+   NALU_HYPRE_Real  *dbl_buf_data;
+   NALU_HYPRE_Real  *smooth_vec_offd = NULL;
+   NALU_HYPRE_Real  *offd_vec_data;
 
-   HYPRE_Int   index, start;
-   HYPRE_Int  *P_marker;
-   HYPRE_Int   num_procs;
+   NALU_HYPRE_Int   index, start;
+   NALU_HYPRE_Int  *P_marker;
+   NALU_HYPRE_Int   num_procs;
 
-   hypre_ParVector *vector;
+   nalu_hypre_ParVector *vector;
 
-   HYPRE_Int   new_nnz, orig_start, j_pos, fcn_num, num_elements;
-   HYPRE_Int  *P_diag_j_new;
-   HYPRE_Real *P_diag_data_new;
-   HYPRE_Int   adjust_3D[] = {1, 2, -1, 1, -2, -1};
-   HYPRE_Int   adjust_2D[] = {1, -1};
-   HYPRE_Int  *adjust_list;
+   NALU_HYPRE_Int   new_nnz, orig_start, j_pos, fcn_num, num_elements;
+   NALU_HYPRE_Int  *P_diag_j_new;
+   NALU_HYPRE_Real *P_diag_data_new;
+   NALU_HYPRE_Int   adjust_3D[] = {1, 2, -1, 1, -2, -1};
+   NALU_HYPRE_Int   adjust_2D[] = {1, -1};
+   NALU_HYPRE_Int  *adjust_list;
 
    if (variant == 1 && num_functions > 1)
    {
@@ -128,8 +128,8 @@ HYPRE_Int hypre_BoomerAMGFitInterpVectors( hypre_ParCSRMatrix *A,
       /* Loop through each row */
 
       new_nnz = P_diag_size * num_functions; /* this is an over-estimate */
-      P_diag_j_new = hypre_CTAlloc(HYPRE_Int,  new_nnz, HYPRE_MEMORY_HOST);
-      P_diag_data_new = hypre_CTAlloc(HYPRE_Real,  new_nnz, HYPRE_MEMORY_HOST);
+      P_diag_j_new = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  new_nnz, NALU_HYPRE_MEMORY_HOST);
+      P_diag_data_new = nalu_hypre_CTAlloc(NALU_HYPRE_Real,  new_nnz, NALU_HYPRE_MEMORY_HOST);
 
 
       if (num_functions == 2)
@@ -146,7 +146,7 @@ HYPRE_Int hypre_BoomerAMGFitInterpVectors( hypre_ParCSRMatrix *A,
       /* loop through rows */
       for (i = 0; i < num_rows_P; i++)
       {
-         fcn_num = (HYPRE_Int) fmod(i, num_functions);
+         fcn_num = (NALU_HYPRE_Int) fmod(i, num_functions);
          if (fcn_num != dof_func[i])
          {
             printf("WARNING - ROWS incorrectly ordered!\n");
@@ -191,18 +191,18 @@ HYPRE_Int hypre_BoomerAMGFitInterpVectors( hypre_ParCSRMatrix *A,
       }/* end loop through rows */
 
       /* modify P */
-      hypre_TFree(P_diag_j, HYPRE_MEMORY_HOST);
-      hypre_TFree(P_diag_data, HYPRE_MEMORY_HOST);
-      hypre_CSRMatrixJ(P_diag) = P_diag_j_new;
-      hypre_CSRMatrixData(P_diag) = P_diag_data_new;
-      hypre_CSRMatrixNumNonzeros(P_diag) = P_diag_i[num_rows_P];
+      nalu_hypre_TFree(P_diag_j, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(P_diag_data, NALU_HYPRE_MEMORY_HOST);
+      nalu_hypre_CSRMatrixJ(P_diag) = P_diag_j_new;
+      nalu_hypre_CSRMatrixData(P_diag) = P_diag_data_new;
+      nalu_hypre_CSRMatrixNumNonzeros(P_diag) = P_diag_i[num_rows_P];
       P_diag_j = P_diag_j_new;
       P_diag_data = P_diag_data_new;
 
       /* check if there is already a comm pkg - if so, destroy*/
       if (comm_pkg)
       {
-         hypre_MatvecCommPkgDestroy(comm_pkg );
+         nalu_hypre_MatvecCommPkgDestroy(comm_pkg );
          comm_pkg = NULL;
 
       }
@@ -235,7 +235,7 @@ HYPRE_Int hypre_BoomerAMGFitInterpVectors( hypre_ParCSRMatrix *A,
       for (i = 0; i < num_smooth_vecs; i++)
       {
          sprintf(new_file, "%s.%d.level.%d", "smoothvec", i, level );
-         hypre_ParVectorPrint(smooth_vecs[i], new_file);
+         nalu_hypre_ParVectorPrint(smooth_vecs[i], new_file);
       }
    }
 
@@ -244,74 +244,74 @@ HYPRE_Int hypre_BoomerAMGFitInterpVectors( hypre_ParCSRMatrix *A,
    /*initial*/
    if (num_smooth_vecs == 0)
    {
-      return hypre_error_flag;
+      return nalu_hypre_error_flag;
    }
 
    if (!comm_pkg)
    {
-      hypre_MatvecCommPkgCreate ( *P );
-      comm_pkg = hypre_ParCSRMatrixCommPkg(*P);
+      nalu_hypre_MatvecCommPkgCreate ( *P );
+      comm_pkg = nalu_hypre_ParCSRMatrixCommPkg(*P);
    }
 
 
-   comm      = hypre_ParCSRCommPkgComm(comm_pkg);
+   comm      = nalu_hypre_ParCSRCommPkgComm(comm_pkg);
 
-   hypre_MPI_Comm_size(comm, &num_procs);
+   nalu_hypre_MPI_Comm_size(comm, &num_procs);
 
-   num_nonzeros = hypre_CSRMatrixNumNonzeros(P_diag)
-                  + hypre_CSRMatrixNumNonzeros(P_offd);
+   num_nonzeros = nalu_hypre_CSRMatrixNumNonzeros(P_diag)
+                  + nalu_hypre_CSRMatrixNumNonzeros(P_offd);
 
    /* number of coarse points = number of cols */
-   coarse_points = hypre_CSRMatrixNumCols(P_diag) + hypre_CSRMatrixNumCols(P_offd);
+   coarse_points = nalu_hypre_CSRMatrixNumCols(P_diag) + nalu_hypre_CSRMatrixNumCols(P_offd);
 
    /* allocate */
-   alpha = hypre_CTAlloc(HYPRE_Real,  num_smooth_vecs, HYPRE_MEMORY_HOST);
-   piv = hypre_CTAlloc(HYPRE_Int,  num_smooth_vecs, HYPRE_MEMORY_HOST);
-   B_s = hypre_CTAlloc(HYPRE_Real,  num_smooth_vecs * num_smooth_vecs, HYPRE_MEMORY_HOST);
+   alpha = nalu_hypre_CTAlloc(NALU_HYPRE_Real,  num_smooth_vecs, NALU_HYPRE_MEMORY_HOST);
+   piv = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  num_smooth_vecs, NALU_HYPRE_MEMORY_HOST);
+   B_s = nalu_hypre_CTAlloc(NALU_HYPRE_Real,  num_smooth_vecs * num_smooth_vecs, NALU_HYPRE_MEMORY_HOST);
 
    /*estimate the max number of weights per row (coarse points only have one weight)*/
    k_alloc = (num_nonzeros - coarse_points) / (num_rows_P - coarse_points);
    k_alloc += 5;
 
-   Beta = hypre_CTAlloc(HYPRE_Real,  k_alloc * num_smooth_vecs, HYPRE_MEMORY_HOST);
-   w = hypre_CTAlloc(HYPRE_Real,  k_alloc, HYPRE_MEMORY_HOST);
-   w_old = hypre_CTAlloc(HYPRE_Real,  k_alloc, HYPRE_MEMORY_HOST);
+   Beta = nalu_hypre_CTAlloc(NALU_HYPRE_Real,  k_alloc * num_smooth_vecs, NALU_HYPRE_MEMORY_HOST);
+   w = nalu_hypre_CTAlloc(NALU_HYPRE_Real,  k_alloc, NALU_HYPRE_MEMORY_HOST);
+   w_old = nalu_hypre_CTAlloc(NALU_HYPRE_Real,  k_alloc, NALU_HYPRE_MEMORY_HOST);
 
    /* Get smooth vec components for the off-processor columns */
 
    if (num_procs > 1)
    {
 
-      smooth_vec_offd =  hypre_CTAlloc(HYPRE_Real,  num_cols_P_offd * num_smooth_vecs, HYPRE_MEMORY_HOST);
+      smooth_vec_offd =  nalu_hypre_CTAlloc(NALU_HYPRE_Real,  num_cols_P_offd * num_smooth_vecs, NALU_HYPRE_MEMORY_HOST);
 
       /* for now, do a seperate comm for each smooth vector */
       for (k = 0; k < num_smooth_vecs; k++)
       {
 
          vector = smooth_vecs[k];
-         vec_data = hypre_VectorData(hypre_ParVectorLocalVector(vector));
+         vec_data = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(vector));
 
-         num_sends = hypre_ParCSRCommPkgNumSends(comm_pkg);
-         dbl_buf_data = hypre_CTAlloc(HYPRE_Real,  hypre_ParCSRCommPkgSendMapStart(comm_pkg,
-                                                                                   num_sends), HYPRE_MEMORY_HOST);
+         num_sends = nalu_hypre_ParCSRCommPkgNumSends(comm_pkg);
+         dbl_buf_data = nalu_hypre_CTAlloc(NALU_HYPRE_Real,  nalu_hypre_ParCSRCommPkgSendMapStart(comm_pkg,
+                                                                                   num_sends), NALU_HYPRE_MEMORY_HOST);
          /* point into smooth_vec_offd */
          offd_vec_data =  smooth_vec_offd + k * num_cols_P_offd;
 
          index = 0;
          for (i = 0; i < num_sends; i++)
          {
-            start = hypre_ParCSRCommPkgSendMapStart(comm_pkg, i);
-            for (j = start; j < hypre_ParCSRCommPkgSendMapStart(comm_pkg, i + 1); j++)
+            start = nalu_hypre_ParCSRCommPkgSendMapStart(comm_pkg, i);
+            for (j = start; j < nalu_hypre_ParCSRCommPkgSendMapStart(comm_pkg, i + 1); j++)
                dbl_buf_data[index++]
-                  = vec_data[hypre_ParCSRCommPkgSendMapElmt(comm_pkg, j)];
+                  = vec_data[nalu_hypre_ParCSRCommPkgSendMapElmt(comm_pkg, j)];
          }
 
-         comm_handle = hypre_ParCSRCommHandleCreate( 1, comm_pkg, dbl_buf_data,
+         comm_handle = nalu_hypre_ParCSRCommHandleCreate( 1, comm_pkg, dbl_buf_data,
                                                      offd_vec_data);
 
-         hypre_ParCSRCommHandleDestroy(comm_handle);
+         nalu_hypre_ParCSRCommHandleDestroy(comm_handle);
 
-         hypre_TFree(dbl_buf_data, HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(dbl_buf_data, NALU_HYPRE_MEMORY_HOST);
       }
    }/*end num procs > 1 */
    /* now off-proc smooth vec data is in smoothvec_offd */
@@ -355,9 +355,9 @@ HYPRE_Int hypre_BoomerAMGFitInterpVectors( hypre_ParCSRMatrix *A,
       {
          k_alloc = k_size + 2;
 
-         Beta = hypre_TReAlloc(Beta,  HYPRE_Real,  k_alloc * num_smooth_vecs, HYPRE_MEMORY_HOST);
-         w = hypre_TReAlloc(w,  HYPRE_Real,  k_alloc, HYPRE_MEMORY_HOST);
-         w_old = hypre_TReAlloc(w_old,  HYPRE_Real,  k_alloc, HYPRE_MEMORY_HOST);
+         Beta = nalu_hypre_TReAlloc(Beta,  NALU_HYPRE_Real,  k_alloc * num_smooth_vecs, NALU_HYPRE_MEMORY_HOST);
+         w = nalu_hypre_TReAlloc(w,  NALU_HYPRE_Real,  k_alloc, NALU_HYPRE_MEMORY_HOST);
+         w_old = nalu_hypre_TReAlloc(w_old,  NALU_HYPRE_Real,  k_alloc, NALU_HYPRE_MEMORY_HOST);
       }
 
       /* put current weights into w*/
@@ -388,14 +388,14 @@ HYPRE_Int hypre_BoomerAMGFitInterpVectors( hypre_ParCSRMatrix *A,
       for (j = 0; j < num_smooth_vecs; j++)
       {
          vector = smooth_vecs[j];
-         vec_data = hypre_VectorData(hypre_ParVectorLocalVector(vector));
+         vec_data = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(vector));
          /* point into smooth_vec_offd */
          offd_vec_data = smooth_vec_offd + j * num_cols_P_offd;
 
          alpha[j] = vec_data[i];
 
          vector = coarse_smooth_vecs[j];
-         vec_data = hypre_VectorData(hypre_ParVectorLocalVector(vector));
+         vec_data = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(vector));
          /* on processor */
          counter = 0;
 
@@ -433,7 +433,7 @@ HYPRE_Int hypre_BoomerAMGFitInterpVectors( hypre_ParCSRMatrix *A,
       /* now  B_s <-delta*Beta*Beta^T + B_s */
       /* usage: DGEMM(TRANSA,TRANSB,M,N,K,ALPHA,A,LDA,B,LDB,BETA,C,LDC)
                 C := alpha*op( A )*op( B ) + beta*C */
-      hypre_dgemm("N", "T", &num_smooth_vecs,
+      nalu_hypre_dgemm("N", "T", &num_smooth_vecs,
                   &num_smooth_vecs, &k_size,
                   &delta, Beta, &num_smooth_vecs, Beta,
                   &num_smooth_vecs, &one, B_s, &num_smooth_vecs);
@@ -441,22 +441,22 @@ HYPRE_Int hypre_BoomerAMGFitInterpVectors( hypre_ParCSRMatrix *A,
       /* now do alpha <- (alpha - beta*w)*/
       /* usage: DGEMV(TRANS,M,N,ALPHA,A,LDA,X,INCX,BETA,Y,INCY)
                 y := alpha*A*x + beta*y */
-      hypre_dgemv("N", &num_smooth_vecs, &k_size, &mone,
+      nalu_hypre_dgemv("N", &num_smooth_vecs, &k_size, &mone,
                   Beta, &num_smooth_vecs, w_old, &one_i,
                   &one, alpha, &one_i);
 
       /* now get alpha <- inv(B_s)*alpha */
       /*write over B_s with LU */
-      hypre_dgetrf(&num_smooth_vecs, &num_smooth_vecs,
+      nalu_hypre_dgetrf(&num_smooth_vecs, &num_smooth_vecs,
                    B_s, &num_smooth_vecs, piv, &info);
 
       /*now get alpha  */
-      hypre_dgetrs("N", &num_smooth_vecs, &one_i, B_s,
+      nalu_hypre_dgetrs("N", &num_smooth_vecs, &one_i, B_s,
                    &num_smooth_vecs, piv, alpha,
                    &num_smooth_vecs, &info);
 
       /* now w <- w + (delta)*(Beta)^T*(alpha) */
-      hypre_dgemv("T", &num_smooth_vecs, &k_size, &delta,
+      nalu_hypre_dgemv("T", &num_smooth_vecs, &k_size, &delta,
                   Beta, &num_smooth_vecs, alpha, &one_i,
                   &one, w, &one_i);
 
@@ -477,13 +477,13 @@ HYPRE_Int hypre_BoomerAMGFitInterpVectors( hypre_ParCSRMatrix *A,
 
 
    /* clean up from L.S. fitting*/
-   hypre_TFree(alpha, HYPRE_MEMORY_HOST);
-   hypre_TFree(Beta, HYPRE_MEMORY_HOST);
-   hypre_TFree(w, HYPRE_MEMORY_HOST);
-   hypre_TFree(w_old, HYPRE_MEMORY_HOST);
-   hypre_TFree(piv, HYPRE_MEMORY_HOST);
-   hypre_TFree(B_s, HYPRE_MEMORY_HOST);
-   hypre_TFree(smooth_vec_offd, HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(alpha, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(Beta, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(w, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(w_old, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(piv, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(B_s, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(smooth_vec_offd, NALU_HYPRE_MEMORY_HOST);
 
    /* Now we truncate here (instead of after forming the interp matrix) */
 
@@ -498,13 +498,13 @@ HYPRE_Int hypre_BoomerAMGFitInterpVectors( hypre_ParCSRMatrix *A,
 
       tmp_int =  P_offd_size;
 
-      hypre_BoomerAMGInterpTruncation(*P, trunc_factor, max_elmts);
-      P_diag_data = hypre_CSRMatrixData(P_diag);
-      P_diag_i = hypre_CSRMatrixI(P_diag);
-      P_diag_j = hypre_CSRMatrixJ(P_diag);
-      P_offd_data = hypre_CSRMatrixData(P_offd);
-      P_offd_i = hypre_CSRMatrixI(P_offd);
-      P_offd_j = hypre_CSRMatrixJ(P_offd);
+      nalu_hypre_BoomerAMGInterpTruncation(*P, trunc_factor, max_elmts);
+      P_diag_data = nalu_hypre_CSRMatrixData(P_diag);
+      P_diag_i = nalu_hypre_CSRMatrixI(P_diag);
+      P_diag_j = nalu_hypre_CSRMatrixJ(P_diag);
+      P_offd_data = nalu_hypre_CSRMatrixData(P_offd);
+      P_offd_i = nalu_hypre_CSRMatrixI(P_offd);
+      P_offd_j = nalu_hypre_CSRMatrixJ(P_offd);
       P_diag_size = P_diag_i[num_rows_P];
 
       P_offd_size = P_offd_i[num_rows_P];
@@ -513,9 +513,9 @@ HYPRE_Int hypre_BoomerAMGFitInterpVectors( hypre_ParCSRMatrix *A,
       /* if truncation occurred, we need to re-do the col_map_offd... */
       if (tmp_int != P_offd_size)
       {
-         HYPRE_Int *tmp_map_offd;
+         NALU_HYPRE_Int *tmp_map_offd;
          num_cols_P_offd = 0;
-         P_marker = hypre_CTAlloc(HYPRE_Int,  num_cols_A_offd, HYPRE_MEMORY_HOST);
+         P_marker = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  num_cols_A_offd, NALU_HYPRE_MEMORY_HOST);
 
          for (i = 0; i < num_cols_A_offd; i++)
          {
@@ -533,8 +533,8 @@ HYPRE_Int hypre_BoomerAMGFitInterpVectors( hypre_ParCSRMatrix *A,
             }
          }
 
-         col_map_offd_P = hypre_CTAlloc(HYPRE_BigInt, num_cols_P_offd, HYPRE_MEMORY_HOST);
-         tmp_map_offd = hypre_CTAlloc(HYPRE_Int, num_cols_P_offd, HYPRE_MEMORY_HOST);
+         col_map_offd_P = nalu_hypre_CTAlloc(NALU_HYPRE_BigInt, num_cols_P_offd, NALU_HYPRE_MEMORY_HOST);
+         tmp_map_offd = nalu_hypre_CTAlloc(NALU_HYPRE_Int, num_cols_P_offd, NALU_HYPRE_MEMORY_HOST);
 
          index = 0;
          for (i = 0; i < num_cols_P_offd; i++)
@@ -543,27 +543,27 @@ HYPRE_Int hypre_BoomerAMGFitInterpVectors( hypre_ParCSRMatrix *A,
             tmp_map_offd[i] = index++;
          }
          for (i = 0; i < P_offd_size; i++)
-            P_offd_j[i] = hypre_BinarySearch(tmp_map_offd,
+            P_offd_j[i] = nalu_hypre_BinarySearch(tmp_map_offd,
                                              P_offd_j[i],
                                              num_cols_P_offd);
-         hypre_TFree(P_marker, HYPRE_MEMORY_HOST);
-         hypre_TFree( hypre_ParCSRMatrixColMapOffd(*P), HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree(P_marker, NALU_HYPRE_MEMORY_HOST);
+         nalu_hypre_TFree( nalu_hypre_ParCSRMatrixColMapOffd(*P), NALU_HYPRE_MEMORY_HOST);
 
          /* assign new col map */
-         hypre_ParCSRMatrixColMapOffd(*P) = col_map_offd_P;
-         hypre_CSRMatrixNumCols(P_offd) = num_cols_P_offd;
+         nalu_hypre_ParCSRMatrixColMapOffd(*P) = col_map_offd_P;
+         nalu_hypre_CSRMatrixNumCols(P_offd) = num_cols_P_offd;
 
 
          /* destroy the old and get a new commpkg....*/
-         hypre_MatvecCommPkgDestroy(comm_pkg);
-         hypre_MatvecCommPkgCreate ( *P );
-         hypre_TFree(tmp_map_offd);
+         nalu_hypre_MatvecCommPkgDestroy(comm_pkg);
+         nalu_hypre_MatvecCommPkgCreate ( *P );
+         nalu_hypre_TFree(tmp_map_offd);
 
       }/*end re-do col_map_offd */
 
    }/*end trucation */
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 
 
 }

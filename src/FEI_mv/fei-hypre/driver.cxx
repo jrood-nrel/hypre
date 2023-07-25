@@ -6,7 +6,7 @@
  ******************************************************************************/
 
 // *************************************************************************
-// test program for HYPRE_LinSysCore
+// test program for NALU_HYPRE_LinSysCore
 // *************************************************************************
 
 //***************************************************************************
@@ -21,25 +21,25 @@
 // HYPRE includes
 //---------------------------------------------------------------------------
 
-#include "HYPRE.h"
-#include "utilities/_hypre_utilities.h"
-#include "IJ_mv/HYPRE_IJ_mv.h"
-#include "parcsr_mv/HYPRE_parcsr_mv.h"
-#include "parcsr_ls/HYPRE_parcsr_ls.h"
-#include "HYPRE_FEI_includes.h"
-#include "HYPRE_LinSysCore.h"
+#include "NALU_HYPRE.h"
+#include "utilities/_nalu_hypre_utilities.h"
+#include "IJ_mv/NALU_HYPRE_IJ_mv.h"
+#include "parcsr_mv/NALU_HYPRE_parcsr_mv.h"
+#include "parcsr_ls/NALU_HYPRE_parcsr_ls.h"
+#include "NALU_HYPRE_FEI_includes.h"
+#include "NALU_HYPRE_LinSysCore.h"
 
 //**************************************************************************
 // local defines and local and external functions
 //---------------------------------------------------------------------------
 
-void fei_hypre_domaindecomposition(int, char **);
-void fei_hypre_test(int, char **);
+void fei_nalu_hypre_domaindecomposition(int, char **);
+void fei_nalu_hypre_test(int, char **);
 
 extern "C" {
-int  HYPRE_LSI_DDAMGSolve(HYPRE_ParCSRMatrix A_csr, HYPRE_ParVector x_csr,
-                         HYPRE_ParVector b_csr );
-void HYPRE_LSI_Get_IJAMatrixFromFile(double **val, int **ia,
+int  NALU_HYPRE_LSI_DDAMGSolve(NALU_HYPRE_ParCSRMatrix A_csr, NALU_HYPRE_ParVector x_csr,
+                         NALU_HYPRE_ParVector b_csr );
+void NALU_HYPRE_LSI_Get_IJAMatrixFromFile(double **val, int **ia,
      int **ja, int *N, double **rhs, char *matfile, char *rhsfile);
 }
 
@@ -49,14 +49,14 @@ void HYPRE_LSI_Get_IJAMatrixFromFile(double **val, int **ia,
 
 main(int argc, char *argv[])
 {
-    fei_hypre_test(argc, argv);
+    fei_nalu_hypre_test(argc, argv);
 }
 
 //***************************************************************************
 // a test program
 //***************************************************************************
 
-void fei_hypre_test(int argc, char *argv[])
+void fei_nalu_hypre_test(int argc, char *argv[])
 {
     int    i, j, k, my_rank, num_procs, nrows, nnz, mybegin, myend, status;
     int    *ia, *ja, ncnt, index, chunksize, iterations, local_nrows;
@@ -71,14 +71,14 @@ void fei_hypre_test(int argc, char *argv[])
     MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
     MPI_Comm_size(MPI_COMM_WORLD, &num_procs);
 
-    HYPRE_LinSysCore H(MPI_COMM_WORLD);
+    NALU_HYPRE_LinSysCore H(MPI_COMM_WORLD);
 
     //------------------------------------------------------------------
     // read the matrix and rhs and broadcast
     //------------------------------------------------------------------
 
     if ( my_rank == 0 ) {
-       HYPRE_LSI_Get_IJAMatrixFromFile(&val, &ia, &ja, &nrows,
+       NALU_HYPRE_LSI_Get_IJAMatrixFromFile(&val, &ia, &ja, &nrows,
                                 &rhs, "matrix.data", "rhs.data");
        nnz = ia[nrows];
        MPI_Bcast(&nrows, 1, MPI_INT, 0, MPI_COMM_WORLD);
@@ -267,11 +267,11 @@ void fei_hypre_test(int argc, char *argv[])
 
     if ( status != 1 )
     {
-       printf("%4d : HYPRE_LinSysCore : solve unsuccessful.\n", my_rank);
+       printf("%4d : NALU_HYPRE_LinSysCore : solve unsuccessful.\n", my_rank);
     }
     else if ( my_rank == 0 )
     {
-       printf("HYPRE_LinSysCore : solve successful.\n", my_rank);
+       printf("NALU_HYPRE_LinSysCore : solve successful.\n", my_rank);
        printf("              iteration count = %4d\n", iterations);
     }
 
@@ -279,7 +279,7 @@ void fei_hypre_test(int argc, char *argv[])
     {
        //for ( i = H.localStartRow_-1; i < H.localEndRow_; i++ )
        //{
-       //   HYPRE_IJVectorGetLocalComponents(H.currX_,1,&i, NULL, &ddata);
+       //   NALU_HYPRE_IJVectorGetLocalComponents(H.currX_,1,&i, NULL, &ddata);
        //   //H.getSolnEntry(i, ddata);
        //   printf("sol(%d): %e\n", i, ddata);
        //}
@@ -296,7 +296,7 @@ void fei_hypre_test(int argc, char *argv[])
 // driver program for domain decomposition
 //***************************************************************************
 
-void fei_hypre_domaindecomposition(int argc, char *argv[])
+void fei_nalu_hypre_domaindecomposition(int argc, char *argv[])
 {
     int                i, j, k, nrows, nnz, global_nrows;
     int                num_procs, status, rowCnt, relaxType[4];
@@ -308,12 +308,12 @@ void fei_hypre_domaindecomposition(int argc, char *argv[])
     double             *val, *rhs, *colVal, *newColVal, ddata;
     MPI_Comm           newComm, dummyComm;
 
-    HYPRE_Solver       SeqPrecon;
-    HYPRE_Solver       PSolver;
-    HYPRE_ParCSRMatrix A_csr;
-    HYPRE_ParVector    x_csr;
-    HYPRE_ParVector    b_csr;
-    HYPRE_ParVector    r_csr;
+    NALU_HYPRE_Solver       SeqPrecon;
+    NALU_HYPRE_Solver       PSolver;
+    NALU_HYPRE_ParCSRMatrix A_csr;
+    NALU_HYPRE_ParVector    x_csr;
+    NALU_HYPRE_ParVector    b_csr;
+    NALU_HYPRE_ParVector    r_csr;
 
     //******************************************************************
     // initialize parallel platform
@@ -323,14 +323,14 @@ void fei_hypre_domaindecomposition(int argc, char *argv[])
     MPI_Comm_rank(MPI_COMM_WORLD, &myRank);
     MPI_Comm_size(MPI_COMM_WORLD, &num_procs);
 
-    HYPRE_LinSysCore H(MPI_COMM_WORLD);
+    NALU_HYPRE_LinSysCore H(MPI_COMM_WORLD);
 
     //******************************************************************
     // read the matrix and rhs and broadcast
     //------------------------------------------------------------------
 
     if ( myRank == 0 ) {
-       HYPRE_LSI_Get_IJAMatrixFromFile(&val, &ia, &ja, &nrows,
+       NALU_HYPRE_LSI_Get_IJAMatrixFromFile(&val, &ia, &ja, &nrows,
                                 &rhs, "matrix.data", "rhs.data");
        nnz = ia[nrows];
        MPI_Bcast(&nrows, 1, MPI_INT, 0, MPI_COMM_WORLD);
@@ -419,16 +419,16 @@ void fei_hypre_domaindecomposition(int argc, char *argv[])
     //------------------------------------------------------------------
 
     //---old_IJ---------------------------------------------------------
-    //x_csr  = (HYPRE_ParVector)    HYPRE_IJVectorGetLocalStorage(H.HYx_);
-    //b_csr  = (HYPRE_ParVector)    HYPRE_IJVectorGetLocalStorage(H.HYb_);
-    //A_csr  = (HYPRE_ParCSRMatrix) HYPRE_IJMatrixGetLocalStorage(H.HYA_);
+    //x_csr  = (NALU_HYPRE_ParVector)    NALU_HYPRE_IJVectorGetLocalStorage(H.HYx_);
+    //b_csr  = (NALU_HYPRE_ParVector)    NALU_HYPRE_IJVectorGetLocalStorage(H.HYb_);
+    //A_csr  = (NALU_HYPRE_ParCSRMatrix) NALU_HYPRE_IJMatrixGetLocalStorage(H.HYA_);
     //---new_IJ---------------------------------------------------------
-    HYPRE_IJVectorGetObject(H.HYx_, (void**) &x_csr);
-    HYPRE_IJVectorGetObject(H.HYb_, (void**) &b_csr);
-    HYPRE_IJMatrixGetObject(H.HYA_, (void**) &A_csr);
+    NALU_HYPRE_IJVectorGetObject(H.HYx_, (void**) &x_csr);
+    NALU_HYPRE_IJVectorGetObject(H.HYb_, (void**) &b_csr);
+    NALU_HYPRE_IJMatrixGetObject(H.HYA_, (void**) &A_csr);
     //------------------------------------------------------------------
 
-    HYPRE_LSI_DDAMGSolve(A_csr,x_csr,b_csr);
+    NALU_HYPRE_LSI_DDAMGSolve(A_csr,x_csr,b_csr);
 
     MPI_Finalize();
 }

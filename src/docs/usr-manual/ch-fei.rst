@@ -57,7 +57,7 @@ first:
 
 .. code-block:: c++
    
-   LinearSystemCore   *solver = HYPRE_base_create(mpiComm);
+   LinearSystemCore   *solver = NALU_HYPRE_base_create(mpiComm);
    FEI_Implementation *feiPtr = FEI_Implementation(solver,mpiComm,rank);
 
 where ``rank`` is the number of the master processor (used only to identify

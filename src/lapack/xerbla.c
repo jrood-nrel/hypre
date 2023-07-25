@@ -6,7 +6,7 @@ extern "C" {
 #endif
 
 #include "f2c.h"
-#include "hypre_lapack.h"
+#include "nalu_hypre_lapack.h"
 
 /* Subroutine */ integer xerbla_(const char *srname, integer *info)
 {
@@ -40,7 +40,7 @@ extern "C" {
    ===================================================================== 
 */
 
-    hypre_printf("** On entry to %6s, parameter number %2i had an illegal value\n",
+    nalu_hypre_printf("** On entry to %6s, parameter number %2i had an illegal value\n",
 		srname, (integer)*info);
 
 /*     End of XERBLA */

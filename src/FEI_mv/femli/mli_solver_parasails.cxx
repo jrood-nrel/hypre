@@ -7,7 +7,7 @@
 
 #include <string.h>
 
-#include "_hypre_parcsr_mv.h"
+#include "_nalu_hypre_parcsr_mv.h"
 #include "mli_solver_parasails.h"
 
 /******************************************************************************
@@ -66,7 +66,7 @@ MLI_Solver_ParaSails::~MLI_Solver_ParaSails()
 int MLI_Solver_ParaSails::setup(MLI_Matrix *Amat_in)
 {
 #ifdef MLI_PARASAILS
-   hypre_ParCSRMatrix *A;
+   nalu_hypre_ParCSRMatrix *A;
    int                *partition, mypid, nprocs, start_row, end_row;
    int                row, row_length, *col_indices, globalNRows;
    double             *col_values;
@@ -74,18 +74,18 @@ int MLI_Solver_ParaSails::setup(MLI_Matrix *Amat_in)
    Matrix             *mat;
    MPI_Comm           comm;
    MLI_Function       *funcPtr;
-   hypre_ParVector    *hypreVec;
+   nalu_hypre_ParVector    *hypreVec;
 
    /*-----------------------------------------------------------------
     * fetch machine and matrix parameters
     *-----------------------------------------------------------------*/
 
    Amat_ = Amat_in;
-   A = (hypre_ParCSRMatrix *) Amat_->getMatrix();
-   comm = hypre_ParCSRMatrixComm(A);
+   A = (nalu_hypre_ParCSRMatrix *) Amat_->getMatrix();
+   comm = nalu_hypre_ParCSRMatrixComm(A);
    MPI_Comm_rank(comm,&mypid);  
    MPI_Comm_size(comm,&nprocs);  
-   HYPRE_ParCSRMatrixGetRowPartitioning((HYPRE_ParCSRMatrix) A, &partition);
+   NALU_HYPRE_ParCSRMatrixGetRowPartitioning((NALU_HYPRE_ParCSRMatrix) A, &partition);
    start_row = partition[mypid];
    end_row   = partition[mypid+1] - 1;
    globalNRows = partition[nprocs];
@@ -97,9 +97,9 @@ int MLI_Solver_ParaSails::setup(MLI_Matrix *Amat_in)
    mat = MatrixCreate(comm, start_row, end_row);
    for (row = start_row; row <= end_row; row++)
    {
-      hypre_ParCSRMatrixGetRow(A, row, &row_length, &col_indices, &col_values);
+      nalu_hypre_ParCSRMatrixGetRow(A, row, &row_length, &col_indices, &col_values);
       MatrixSetRow(mat, row, row_length, col_indices, col_values);
-      hypre_ParCSRMatrixRestoreRow(A,row,&row_length,&col_indices,&col_values);
+      nalu_hypre_ParCSRMatrixRestoreRow(A,row,&row_length,&col_indices,&col_values);
    }
    MatrixComplete(mat);
 
@@ -124,19 +124,19 @@ int MLI_Solver_ParaSails::setup(MLI_Matrix *Amat_in)
     * set up other auxiliary vectors
     *-----------------------------------------------------------------*/
 
-   funcPtr = hypre_TAlloc( MLI_Function , 1, HYPRE_MEMORY_HOST);
+   funcPtr = nalu_hypre_TAlloc( MLI_Function , 1, NALU_HYPRE_MEMORY_HOST);
    MLI_Utils_HypreParVectorGetDestroyFunc(funcPtr);
    paramString = new char[20];
-   strcpy( paramString, "HYPRE_ParVector" );
+   strcpy( paramString, "NALU_HYPRE_ParVector" );
 
-   HYPRE_ParCSRMatrixGetRowPartitioning((HYPRE_ParCSRMatrix) A, &partition);
-   hypreVec = hypre_ParVectorCreate(comm, globalNRows, partition);
-   hypre_ParVectorInitialize(hypreVec);
+   NALU_HYPRE_ParCSRMatrixGetRowPartitioning((NALU_HYPRE_ParCSRMatrix) A, &partition);
+   hypreVec = nalu_hypre_ParVectorCreate(comm, globalNRows, partition);
+   nalu_hypre_ParVectorInitialize(hypreVec);
    auxVec2_ = new MLI_Vector(hypreVec, paramString, funcPtr);
 
-   HYPRE_ParCSRMatrixGetRowPartitioning((HYPRE_ParCSRMatrix) A, &partition);
-   hypreVec = hypre_ParVectorCreate(comm, globalNRows, partition);
-   hypre_ParVectorInitialize(hypreVec);
+   NALU_HYPRE_ParCSRMatrixGetRowPartitioning((NALU_HYPRE_ParCSRMatrix) A, &partition);
+   hypreVec = nalu_hypre_ParVectorCreate(comm, globalNRows, partition);
+   nalu_hypre_ParVectorInitialize(hypreVec);
    auxVec3_ = new MLI_Vector(hypreVec, paramString, funcPtr);
 
    delete [] paramString;
@@ -161,7 +161,7 @@ int MLI_Solver_ParaSails::solve(MLI_Vector *f_in, MLI_Vector *u_in)
 {
    int             i;
    double          *fData, *f2Data, *u2Data, *uData;
-   hypre_ParVector *f2, *u2, *f, *u;
+   nalu_hypre_ParVector *f2, *u2, *f, *u;
 #ifdef MLI_PARASAILS
    if (numFpts_ == 0)
    {
@@ -170,14 +170,14 @@ int MLI_Solver_ParaSails::solve(MLI_Vector *f_in, MLI_Vector *u_in)
    }
    else
    {
-      f2 = (hypre_ParVector *) auxVec2_->getVector();
-      u2 = (hypre_ParVector *) auxVec3_->getVector();
-      f  = (hypre_ParVector *) f_in->getVector();
-      u  = (hypre_ParVector *) u_in->getVector();
-      fData  = hypre_VectorData(hypre_ParVectorLocalVector(f));
-      uData  = hypre_VectorData(hypre_ParVectorLocalVector(u));
-      f2Data = hypre_VectorData(hypre_ParVectorLocalVector(f2));
-      u2Data = hypre_VectorData(hypre_ParVectorLocalVector(u2));
+      f2 = (nalu_hypre_ParVector *) auxVec2_->getVector();
+      u2 = (nalu_hypre_ParVector *) auxVec3_->getVector();
+      f  = (nalu_hypre_ParVector *) f_in->getVector();
+      u  = (nalu_hypre_ParVector *) u_in->getVector();
+      fData  = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(f));
+      uData  = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(u));
+      f2Data = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(f2));
+      u2Data = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(u2));
       for (i = 0; i < numFpts_; i++) f2Data[i] = fData[fpList_[i]]; 
       for (i = 0; i < numFpts_; i++) u2Data[i] = uData[fpList_[i]]; 
       if (transpose_) applyParaSailsTrans(auxVec2_, auxVec3_);
@@ -270,52 +270,52 @@ int MLI_Solver_ParaSails::setParams(char *paramString, int argc, char **argv)
 int MLI_Solver_ParaSails::applyParaSails(MLI_Vector *f_in, MLI_Vector *u_in)
 {
 #ifdef MLI_PARASAILS
-   hypre_ParCSRMatrix *A;
-   hypre_CSRMatrix    *A_diag;
-   hypre_ParVector    *Vtemp;
-   hypre_Vector       *u_local, *Vtemp_local;
+   nalu_hypre_ParCSRMatrix *A;
+   nalu_hypre_CSRMatrix    *A_diag;
+   nalu_hypre_ParVector    *Vtemp;
+   nalu_hypre_Vector       *u_local, *Vtemp_local;
    double             *u_data, *Vtemp_data;
    int                i, n, relax_error = 0, global_size;
    int                num_procs, *partition1, *partition2;
    double             *tmp_data;
    MPI_Comm           comm;
-   hypre_ParVector    *u, *f;
+   nalu_hypre_ParVector    *u, *f;
 
    /*-----------------------------------------------------------------
     * fetch machine and smoother parameters
     *-----------------------------------------------------------------*/
 
-   A       = (hypre_ParCSRMatrix *) Amat_->getMatrix();
-   comm    = hypre_ParCSRMatrixComm(A);
-   A_diag  = hypre_ParCSRMatrixDiag(A);
-   n       = hypre_CSRMatrixNumRows(A_diag);
-   u       = (hypre_ParVector *) u_in->getVector();
-   u_local = hypre_ParVectorLocalVector(u);
-   u_data  = hypre_VectorData(u_local);
+   A       = (nalu_hypre_ParCSRMatrix *) Amat_->getMatrix();
+   comm    = nalu_hypre_ParCSRMatrixComm(A);
+   A_diag  = nalu_hypre_ParCSRMatrixDiag(A);
+   n       = nalu_hypre_CSRMatrixNumRows(A_diag);
+   u       = (nalu_hypre_ParVector *) u_in->getVector();
+   u_local = nalu_hypre_ParVectorLocalVector(u);
+   u_data  = nalu_hypre_VectorData(u_local);
    MPI_Comm_size(comm,&num_procs);  
 
    /*-----------------------------------------------------------------
     * create temporary vector
     *-----------------------------------------------------------------*/
 
-   f           = (hypre_ParVector *) f_in->getVector();
-   global_size = hypre_ParVectorGlobalSize(f);
-   partition1  = hypre_ParVectorPartitioning(f);
-   partition2  = hypre_CTAlloc( int, num_procs+1 , HYPRE_MEMORY_HOST);
+   f           = (nalu_hypre_ParVector *) f_in->getVector();
+   global_size = nalu_hypre_ParVectorGlobalSize(f);
+   partition1  = nalu_hypre_ParVectorPartitioning(f);
+   partition2  = nalu_hypre_CTAlloc( int, num_procs+1 , NALU_HYPRE_MEMORY_HOST);
    for ( i = 0; i <= num_procs; i++ ) partition2[i] = partition1[i];
-   Vtemp = hypre_ParVectorCreate(comm, global_size, partition2);
-   hypre_ParVectorInitialize(Vtemp);
-   Vtemp_local = hypre_ParVectorLocalVector(Vtemp);
-   Vtemp_data  = hypre_VectorData(Vtemp_local);
+   Vtemp = nalu_hypre_ParVectorCreate(comm, global_size, partition2);
+   nalu_hypre_ParVectorInitialize(Vtemp);
+   Vtemp_local = nalu_hypre_ParVectorLocalVector(Vtemp);
+   Vtemp_data  = nalu_hypre_VectorData(Vtemp_local);
 
    /*-----------------------------------------------------------------
     * perform smoothing
     *-----------------------------------------------------------------*/
 
    tmp_data = new double[n];
-   hypre_ParVectorCopy(f, Vtemp);
+   nalu_hypre_ParVectorCopy(f, Vtemp);
    if ( zeroInitialGuess_ == 0 )
-      hypre_ParCSRMatrixMatvec(-1.0, A, u, 1.0, Vtemp);
+      nalu_hypre_ParCSRMatrixMatvec(-1.0, A, u, 1.0, Vtemp);
 
    ParaSailsApply(ps_, Vtemp_data, tmp_data);
 
@@ -351,51 +351,51 @@ int MLI_Solver_ParaSails::applyParaSailsTrans(MLI_Vector *f_in,
                                               MLI_Vector *u_in)
 {
 #ifdef MLI_PARASAILS
-   hypre_ParCSRMatrix *A;
-   hypre_CSRMatrix    *A_diag;
-   hypre_ParVector    *Vtemp;
-   hypre_Vector       *u_local, *Vtemp_local;
+   nalu_hypre_ParCSRMatrix *A;
+   nalu_hypre_CSRMatrix    *A_diag;
+   nalu_hypre_ParVector    *Vtemp;
+   nalu_hypre_Vector       *u_local, *Vtemp_local;
    double             *u_data, *Vtemp_data;
    int                i, n, relax_error = 0, global_size;
    int                num_procs, *partition1, *partition2;
    double             *tmp_data;
    MPI_Comm           comm;
-   hypre_ParVector    *u, *f;
+   nalu_hypre_ParVector    *u, *f;
 
    /*-----------------------------------------------------------------
     * fetch machine and smoother parameters
     *-----------------------------------------------------------------*/
 
-   A       = (hypre_ParCSRMatrix *) Amat_->getMatrix();
-   comm    = hypre_ParCSRMatrixComm(A);
-   A_diag  = hypre_ParCSRMatrixDiag(A);
-   n       = hypre_CSRMatrixNumRows(A_diag);
-   u       = (hypre_ParVector *) u_in->getVector();
-   u_local = hypre_ParVectorLocalVector(u);
-   u_data  = hypre_VectorData(u_local);
+   A       = (nalu_hypre_ParCSRMatrix *) Amat_->getMatrix();
+   comm    = nalu_hypre_ParCSRMatrixComm(A);
+   A_diag  = nalu_hypre_ParCSRMatrixDiag(A);
+   n       = nalu_hypre_CSRMatrixNumRows(A_diag);
+   u       = (nalu_hypre_ParVector *) u_in->getVector();
+   u_local = nalu_hypre_ParVectorLocalVector(u);
+   u_data  = nalu_hypre_VectorData(u_local);
    MPI_Comm_size(comm,&num_procs);  
 
    /*-----------------------------------------------------------------
     * create temporary vector
     *-----------------------------------------------------------------*/
 
-   f           = (hypre_ParVector *) f_in->getVector();
-   global_size = hypre_ParVectorGlobalSize(f);
-   partition1  = hypre_ParVectorPartitioning(f);
-   partition2  = hypre_CTAlloc( int, num_procs+1 , HYPRE_MEMORY_HOST);
+   f           = (nalu_hypre_ParVector *) f_in->getVector();
+   global_size = nalu_hypre_ParVectorGlobalSize(f);
+   partition1  = nalu_hypre_ParVectorPartitioning(f);
+   partition2  = nalu_hypre_CTAlloc( int, num_procs+1 , NALU_HYPRE_MEMORY_HOST);
    for ( i = 0; i <= num_procs; i++ ) partition2[i] = partition1[i];
-   Vtemp = hypre_ParVectorCreate(comm, global_size, partition2);
-   Vtemp_local = hypre_ParVectorLocalVector(Vtemp);
-   Vtemp_data  = hypre_VectorData(Vtemp_local);
+   Vtemp = nalu_hypre_ParVectorCreate(comm, global_size, partition2);
+   Vtemp_local = nalu_hypre_ParVectorLocalVector(Vtemp);
+   Vtemp_data  = nalu_hypre_VectorData(Vtemp_local);
 
    /*-----------------------------------------------------------------
     * perform smoothing
     *-----------------------------------------------------------------*/
 
    tmp_data = new double[n];
-   hypre_ParVectorCopy(f, Vtemp);
+   nalu_hypre_ParVectorCopy(f, Vtemp);
    if ( zeroInitialGuess_ == 0 )
-      hypre_ParCSRMatrixMatvec(-1.0, A, u, 1.0, Vtemp);
+      nalu_hypre_ParCSRMatrixMatvec(-1.0, A, u, 1.0, Vtemp);
 
    ParaSailsApplyTrans(ps_, Vtemp_data, tmp_data);
 

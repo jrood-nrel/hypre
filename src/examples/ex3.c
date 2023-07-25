@@ -47,10 +47,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-#include "HYPRE_struct_ls.h"
+#include "NALU_HYPRE_struct_ls.h"
 #include "ex.h"
 
-#ifdef HYPRE_EXVIS
+#ifdef NALU_HYPRE_EXVIS
 #include "vis.c"
 #endif
 
@@ -67,13 +67,13 @@ int main (int argc, char *argv[])
    int solver_id;
    int n_pre, n_post;
 
-   HYPRE_StructGrid     grid;
-   HYPRE_StructStencil  stencil;
-   HYPRE_StructMatrix   A;
-   HYPRE_StructVector   b;
-   HYPRE_StructVector   x;
-   HYPRE_StructSolver   solver;
-   HYPRE_StructSolver   precond;
+   NALU_HYPRE_StructGrid     grid;
+   NALU_HYPRE_StructStencil  stencil;
+   NALU_HYPRE_StructMatrix   A;
+   NALU_HYPRE_StructVector   b;
+   NALU_HYPRE_StructVector   x;
+   NALU_HYPRE_StructSolver   solver;
+   NALU_HYPRE_StructSolver   precond;
 
    int num_iterations;
    double final_res_norm;
@@ -153,10 +153,10 @@ int main (int argc, char *argv[])
    }
 
    /* Initialize HYPRE */
-   HYPRE_Initialize();
+   NALU_HYPRE_Initialize();
 
    /* Print GPU info */
-   /* HYPRE_PrintDeviceInfo(); */
+   /* NALU_HYPRE_PrintDeviceInfo(); */
 
    /* Figure out the processor grid (N x N).  The local problem
       size for the interior nodes is indicated by n (n x n).
@@ -178,20 +178,20 @@ int main (int argc, char *argv[])
    /* 1. Set up a grid */
    {
       /* Create an empty 2D grid object */
-      HYPRE_StructGridCreate(MPI_COMM_WORLD, 2, &grid);
+      NALU_HYPRE_StructGridCreate(MPI_COMM_WORLD, 2, &grid);
 
       /* Add a new box to the grid */
-      HYPRE_StructGridSetExtents(grid, ilower, iupper);
+      NALU_HYPRE_StructGridSetExtents(grid, ilower, iupper);
 
       /* This is a collective call finalizing the grid assembly.
          The grid is now ``ready to be used'' */
-      HYPRE_StructGridAssemble(grid);
+      NALU_HYPRE_StructGridAssemble(grid);
    }
 
    /* 2. Define the discretization stencil */
    {
       /* Create an empty 2D, 5-pt stencil object */
-      HYPRE_StructStencilCreate(2, 5, &stencil);
+      NALU_HYPRE_StructStencilCreate(2, 5, &stencil);
 
       /* Define the geometry of the stencil */
       {
@@ -200,7 +200,7 @@ int main (int argc, char *argv[])
 
          for (entry = 0; entry < 5; entry++)
          {
-            HYPRE_StructStencilSetElement(stencil, entry, offsets[entry]);
+            NALU_HYPRE_StructStencilSetElement(stencil, entry, offsets[entry]);
          }
       }
    }
@@ -213,10 +213,10 @@ int main (int argc, char *argv[])
       int stencil_indices[5];
 
       /* Create an empty matrix object */
-      HYPRE_StructMatrixCreate(MPI_COMM_WORLD, grid, stencil, &A);
+      NALU_HYPRE_StructMatrixCreate(MPI_COMM_WORLD, grid, stencil, &A);
 
       /* Indicate that the matrix coefficients are ready to be set */
-      HYPRE_StructMatrixInitialize(A);
+      NALU_HYPRE_StructMatrixInitialize(A);
 
       values = (double*) calloc(nvalues, sizeof(double));
 
@@ -236,7 +236,7 @@ int main (int argc, char *argv[])
          }
       }
 
-      HYPRE_StructMatrixSetBoxValues(A, ilower, iupper, nentries,
+      NALU_HYPRE_StructMatrixSetBoxValues(A, ilower, iupper, nentries,
                                      stencil_indices, values);
 
       free(values);
@@ -272,7 +272,7 @@ int main (int argc, char *argv[])
 
          stencil_indices[0] = 3;
 
-         HYPRE_StructMatrixSetBoxValues(A, bc_ilower, bc_iupper, nentries,
+         NALU_HYPRE_StructMatrixSetBoxValues(A, bc_ilower, bc_iupper, nentries,
                                         stencil_indices, values);
       }
 
@@ -287,7 +287,7 @@ int main (int argc, char *argv[])
 
          stencil_indices[0] = 4;
 
-         HYPRE_StructMatrixSetBoxValues(A, bc_ilower, bc_iupper, nentries,
+         NALU_HYPRE_StructMatrixSetBoxValues(A, bc_ilower, bc_iupper, nentries,
                                         stencil_indices, values);
       }
 
@@ -302,7 +302,7 @@ int main (int argc, char *argv[])
 
          stencil_indices[0] = 1;
 
-         HYPRE_StructMatrixSetBoxValues(A, bc_ilower, bc_iupper, nentries,
+         NALU_HYPRE_StructMatrixSetBoxValues(A, bc_ilower, bc_iupper, nentries,
                                         stencil_indices, values);
       }
 
@@ -317,7 +317,7 @@ int main (int argc, char *argv[])
 
          stencil_indices[0] = 2;
 
-         HYPRE_StructMatrixSetBoxValues(A, bc_ilower, bc_iupper, nentries,
+         NALU_HYPRE_StructMatrixSetBoxValues(A, bc_ilower, bc_iupper, nentries,
                                         stencil_indices, values);
       }
 
@@ -326,7 +326,7 @@ int main (int argc, char *argv[])
 
    /* This is a collective call finalizing the matrix assembly.
       The matrix is now ``ready to be used'' */
-   HYPRE_StructMatrixAssemble(A);
+   NALU_HYPRE_StructMatrixAssemble(A);
 
    /* 5. Set up Struct Vectors for b and x */
    {
@@ -336,98 +336,98 @@ int main (int argc, char *argv[])
       values = (double*) calloc(nvalues, sizeof(double));
 
       /* Create an empty vector object */
-      HYPRE_StructVectorCreate(MPI_COMM_WORLD, grid, &b);
-      HYPRE_StructVectorCreate(MPI_COMM_WORLD, grid, &x);
+      NALU_HYPRE_StructVectorCreate(MPI_COMM_WORLD, grid, &b);
+      NALU_HYPRE_StructVectorCreate(MPI_COMM_WORLD, grid, &x);
 
       /* Indicate that the vector coefficients are ready to be set */
-      HYPRE_StructVectorInitialize(b);
-      HYPRE_StructVectorInitialize(x);
+      NALU_HYPRE_StructVectorInitialize(b);
+      NALU_HYPRE_StructVectorInitialize(x);
 
       /* Set the values */
       for (i = 0; i < nvalues; i ++)
       {
          values[i] = h2;
       }
-      HYPRE_StructVectorSetBoxValues(b, ilower, iupper, values);
+      NALU_HYPRE_StructVectorSetBoxValues(b, ilower, iupper, values);
 
       for (i = 0; i < nvalues; i ++)
       {
          values[i] = 0.0;
       }
-      HYPRE_StructVectorSetBoxValues(x, ilower, iupper, values);
+      NALU_HYPRE_StructVectorSetBoxValues(x, ilower, iupper, values);
 
       free(values);
 
       /* This is a collective call finalizing the vector assembly.
          The vector is now ``ready to be used'' */
-      HYPRE_StructVectorAssemble(b);
-      HYPRE_StructVectorAssemble(x);
+      NALU_HYPRE_StructVectorAssemble(b);
+      NALU_HYPRE_StructVectorAssemble(x);
    }
 
    /* 6. Set up and use a struct solver
       (Solver options can be found in the Reference Manual.) */
    if (solver_id == 0)
    {
-      HYPRE_StructPCGCreate(MPI_COMM_WORLD, &solver);
-      HYPRE_StructPCGSetMaxIter(solver, 50 );
-      HYPRE_StructPCGSetTol(solver, 1.0e-06 );
-      HYPRE_StructPCGSetTwoNorm(solver, 1 );
-      HYPRE_StructPCGSetRelChange(solver, 0 );
-      HYPRE_StructPCGSetPrintLevel(solver, 2 ); /* print each CG iteration */
-      HYPRE_StructPCGSetLogging(solver, 1);
+      NALU_HYPRE_StructPCGCreate(MPI_COMM_WORLD, &solver);
+      NALU_HYPRE_StructPCGSetMaxIter(solver, 50 );
+      NALU_HYPRE_StructPCGSetTol(solver, 1.0e-06 );
+      NALU_HYPRE_StructPCGSetTwoNorm(solver, 1 );
+      NALU_HYPRE_StructPCGSetRelChange(solver, 0 );
+      NALU_HYPRE_StructPCGSetPrintLevel(solver, 2 ); /* print each CG iteration */
+      NALU_HYPRE_StructPCGSetLogging(solver, 1);
 
       /* Use symmetric SMG as preconditioner */
-      HYPRE_StructSMGCreate(MPI_COMM_WORLD, &precond);
-      HYPRE_StructSMGSetMemoryUse(precond, 0);
-      HYPRE_StructSMGSetMaxIter(precond, 1);
-      HYPRE_StructSMGSetTol(precond, 0.0);
-      HYPRE_StructSMGSetZeroGuess(precond);
-      HYPRE_StructSMGSetNumPreRelax(precond, 1);
-      HYPRE_StructSMGSetNumPostRelax(precond, 1);
+      NALU_HYPRE_StructSMGCreate(MPI_COMM_WORLD, &precond);
+      NALU_HYPRE_StructSMGSetMemoryUse(precond, 0);
+      NALU_HYPRE_StructSMGSetMaxIter(precond, 1);
+      NALU_HYPRE_StructSMGSetTol(precond, 0.0);
+      NALU_HYPRE_StructSMGSetZeroGuess(precond);
+      NALU_HYPRE_StructSMGSetNumPreRelax(precond, 1);
+      NALU_HYPRE_StructSMGSetNumPostRelax(precond, 1);
 
       /* Set the preconditioner and solve */
-      HYPRE_StructPCGSetPrecond(solver, HYPRE_StructSMGSolve,
-                                HYPRE_StructSMGSetup, precond);
-      HYPRE_StructPCGSetup(solver, A, b, x);
-      HYPRE_StructPCGSolve(solver, A, b, x);
+      NALU_HYPRE_StructPCGSetPrecond(solver, NALU_HYPRE_StructSMGSolve,
+                                NALU_HYPRE_StructSMGSetup, precond);
+      NALU_HYPRE_StructPCGSetup(solver, A, b, x);
+      NALU_HYPRE_StructPCGSolve(solver, A, b, x);
 
       /* Get some info on the run */
-      HYPRE_StructPCGGetNumIterations(solver, &num_iterations);
-      HYPRE_StructPCGGetFinalRelativeResidualNorm(solver, &final_res_norm);
+      NALU_HYPRE_StructPCGGetNumIterations(solver, &num_iterations);
+      NALU_HYPRE_StructPCGGetFinalRelativeResidualNorm(solver, &final_res_norm);
 
       /* Clean up */
-      HYPRE_StructPCGDestroy(solver);
-      HYPRE_StructSMGDestroy(precond);
+      NALU_HYPRE_StructPCGDestroy(solver);
+      NALU_HYPRE_StructSMGDestroy(precond);
    }
 
    if (solver_id == 1)
    {
-      HYPRE_StructSMGCreate(MPI_COMM_WORLD, &solver);
-      HYPRE_StructSMGSetMemoryUse(solver, 0);
-      HYPRE_StructSMGSetMaxIter(solver, 50);
-      HYPRE_StructSMGSetTol(solver, 1.0e-06);
-      HYPRE_StructSMGSetRelChange(solver, 0);
-      HYPRE_StructSMGSetNumPreRelax(solver, n_pre);
-      HYPRE_StructSMGSetNumPostRelax(solver, n_post);
+      NALU_HYPRE_StructSMGCreate(MPI_COMM_WORLD, &solver);
+      NALU_HYPRE_StructSMGSetMemoryUse(solver, 0);
+      NALU_HYPRE_StructSMGSetMaxIter(solver, 50);
+      NALU_HYPRE_StructSMGSetTol(solver, 1.0e-06);
+      NALU_HYPRE_StructSMGSetRelChange(solver, 0);
+      NALU_HYPRE_StructSMGSetNumPreRelax(solver, n_pre);
+      NALU_HYPRE_StructSMGSetNumPostRelax(solver, n_post);
       /* Logging must be on to get iterations and residual norm info below */
-      HYPRE_StructSMGSetLogging(solver, 1);
+      NALU_HYPRE_StructSMGSetLogging(solver, 1);
 
       /* Setup and solve */
-      HYPRE_StructSMGSetup(solver, A, b, x);
-      HYPRE_StructSMGSolve(solver, A, b, x);
+      NALU_HYPRE_StructSMGSetup(solver, A, b, x);
+      NALU_HYPRE_StructSMGSolve(solver, A, b, x);
 
       /* Get some info on the run */
-      HYPRE_StructSMGGetNumIterations(solver, &num_iterations);
-      HYPRE_StructSMGGetFinalRelativeResidualNorm(solver, &final_res_norm);
+      NALU_HYPRE_StructSMGGetNumIterations(solver, &num_iterations);
+      NALU_HYPRE_StructSMGGetFinalRelativeResidualNorm(solver, &final_res_norm);
 
       /* Clean up */
-      HYPRE_StructSMGDestroy(solver);
+      NALU_HYPRE_StructSMGDestroy(solver);
    }
 
    /* Save the solution for GLVis visualization, see vis/glvis-ex3.sh */
    if (vis)
    {
-#ifdef HYPRE_EXVIS
+#ifdef NALU_HYPRE_EXVIS
       FILE *file;
       char filename[255];
 
@@ -435,7 +435,7 @@ int main (int argc, char *argv[])
       double *values = (double*) calloc(nvalues, sizeof(double));
 
       /* get the local solution */
-      HYPRE_StructVectorGetBoxValues(x, ilower, iupper, values);
+      NALU_HYPRE_StructVectorGetBoxValues(x, ilower, iupper, values);
 
       sprintf(filename, "%s.%06d", "vis/ex3.sol", myid);
       if ((file = fopen(filename, "w")) == NULL)
@@ -474,14 +474,14 @@ int main (int argc, char *argv[])
    }
 
    /* Free memory */
-   HYPRE_StructGridDestroy(grid);
-   HYPRE_StructStencilDestroy(stencil);
-   HYPRE_StructMatrixDestroy(A);
-   HYPRE_StructVectorDestroy(b);
-   HYPRE_StructVectorDestroy(x);
+   NALU_HYPRE_StructGridDestroy(grid);
+   NALU_HYPRE_StructStencilDestroy(stencil);
+   NALU_HYPRE_StructMatrixDestroy(A);
+   NALU_HYPRE_StructVectorDestroy(b);
+   NALU_HYPRE_StructVectorDestroy(x);
 
    /* Finalize HYPRE */
-   HYPRE_Finalize();
+   NALU_HYPRE_Finalize();
 
    /* Finalize MPI */
    MPI_Finalize();

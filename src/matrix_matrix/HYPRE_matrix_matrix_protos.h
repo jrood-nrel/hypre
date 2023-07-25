@@ -5,15 +5,15 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "HYPRE_distributed_matrix_types.h"
+#include "NALU_HYPRE_distributed_matrix_types.h"
 
 #ifdef PETSC_AVAILABLE
-/* HYPRE_ConvertPETScMatrixToDistributedMatrix.c */
-HYPRE_Int HYPRE_ConvertPETScMatrixToDistributedMatrix (Mat PETSc_matrix,
-                                                       HYPRE_DistributedMatrix *DistributedMatrix );
+/* NALU_HYPRE_ConvertPETScMatrixToDistributedMatrix.c */
+NALU_HYPRE_Int NALU_HYPRE_ConvertPETScMatrixToDistributedMatrix (Mat PETSc_matrix,
+                                                       NALU_HYPRE_DistributedMatrix *DistributedMatrix );
 #endif
 
-/* HYPRE_ConvertParCSRMatrixToDistributedMatrix.c */
-HYPRE_Int HYPRE_ConvertParCSRMatrixToDistributedMatrix (HYPRE_ParCSRMatrix parcsr_matrix,
-                                                        HYPRE_DistributedMatrix *DistributedMatrix );
+/* NALU_HYPRE_ConvertParCSRMatrixToDistributedMatrix.c */
+NALU_HYPRE_Int NALU_HYPRE_ConvertParCSRMatrixToDistributedMatrix (NALU_HYPRE_ParCSRMatrix parcsr_matrix,
+                                                        NALU_HYPRE_DistributedMatrix *DistributedMatrix );
 

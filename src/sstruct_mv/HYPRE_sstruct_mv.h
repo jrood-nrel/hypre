@@ -5,13 +5,13 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#ifndef HYPRE_SSTRUCT_MV_HEADER
-#define HYPRE_SSTRUCT_MV_HEADER
+#ifndef NALU_HYPRE_SSTRUCT_MV_HEADER
+#define NALU_HYPRE_SSTRUCT_MV_HEADER
 
-#include "HYPRE_utilities.h"
-#include "HYPRE.h"
-#include "HYPRE_struct_mv.h"
-#include "HYPRE_IJ_mv.h"
+#include "NALU_HYPRE_utilities.h"
+#include "NALU_HYPRE.h"
+#include "NALU_HYPRE_struct_mv.h"
+#include "NALU_HYPRE_IJ_mv.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -38,13 +38,13 @@ extern "C" {
  * @{
  **/
 
-struct hypre_SStructGrid_struct;
+struct nalu_hypre_SStructGrid_struct;
 /**
  * A grid object is constructed out of several structured "parts" and an
  * optional unstructured "part".  Each structured part has its own abstract
  * index space.
  **/
-typedef struct hypre_SStructGrid_struct *HYPRE_SStructGrid;
+typedef struct nalu_hypre_SStructGrid_struct *NALU_HYPRE_SStructGrid;
 
 /**
  * An enumerated type that supports cell centered, node centered, face centered,
@@ -67,14 +67,14 @@ typedef struct hypre_SStructGrid_struct *HYPRE_SStructGrid;
  *      and (1/2, 1/2, 0), respectively.
  *
  * The supported identifiers are:
- *    - \c HYPRE_SSTRUCT_VARIABLE_CELL
- *    - \c HYPRE_SSTRUCT_VARIABLE_NODE
- *    - \c HYPRE_SSTRUCT_VARIABLE_XFACE
- *    - \c HYPRE_SSTRUCT_VARIABLE_YFACE
- *    - \c HYPRE_SSTRUCT_VARIABLE_ZFACE
- *    - \c HYPRE_SSTRUCT_VARIABLE_XEDGE
- *    - \c HYPRE_SSTRUCT_VARIABLE_YEDGE
- *    - \c HYPRE_SSTRUCT_VARIABLE_ZEDGE
+ *    - \c NALU_HYPRE_SSTRUCT_VARIABLE_CELL
+ *    - \c NALU_HYPRE_SSTRUCT_VARIABLE_NODE
+ *    - \c NALU_HYPRE_SSTRUCT_VARIABLE_XFACE
+ *    - \c NALU_HYPRE_SSTRUCT_VARIABLE_YFACE
+ *    - \c NALU_HYPRE_SSTRUCT_VARIABLE_ZFACE
+ *    - \c NALU_HYPRE_SSTRUCT_VARIABLE_XEDGE
+ *    - \c NALU_HYPRE_SSTRUCT_VARIABLE_YEDGE
+ *    - \c NALU_HYPRE_SSTRUCT_VARIABLE_ZEDGE
  *
  * NOTE: Although variables are referenced relative to a unique abstract
  * cell-centered index, some variables are associated with multiple grid cells.
@@ -83,27 +83,27 @@ typedef struct hypre_SStructGrid_struct *HYPRE_SStructGrid;
  * processes, variables may be owned by multiple processes because they may be
  * associated with multiple cells.
  **/
-typedef HYPRE_Int HYPRE_SStructVariable;
+typedef NALU_HYPRE_Int NALU_HYPRE_SStructVariable;
 
-#define HYPRE_SSTRUCT_VARIABLE_UNDEFINED -1
-#define HYPRE_SSTRUCT_VARIABLE_CELL       0
-#define HYPRE_SSTRUCT_VARIABLE_NODE       1
-#define HYPRE_SSTRUCT_VARIABLE_XFACE      2
-#define HYPRE_SSTRUCT_VARIABLE_YFACE      3
-#define HYPRE_SSTRUCT_VARIABLE_ZFACE      4
-#define HYPRE_SSTRUCT_VARIABLE_XEDGE      5
-#define HYPRE_SSTRUCT_VARIABLE_YEDGE      6
-#define HYPRE_SSTRUCT_VARIABLE_ZEDGE      7
+#define NALU_HYPRE_SSTRUCT_VARIABLE_UNDEFINED -1
+#define NALU_HYPRE_SSTRUCT_VARIABLE_CELL       0
+#define NALU_HYPRE_SSTRUCT_VARIABLE_NODE       1
+#define NALU_HYPRE_SSTRUCT_VARIABLE_XFACE      2
+#define NALU_HYPRE_SSTRUCT_VARIABLE_YFACE      3
+#define NALU_HYPRE_SSTRUCT_VARIABLE_ZFACE      4
+#define NALU_HYPRE_SSTRUCT_VARIABLE_XEDGE      5
+#define NALU_HYPRE_SSTRUCT_VARIABLE_YEDGE      6
+#define NALU_HYPRE_SSTRUCT_VARIABLE_ZEDGE      7
 
 /**
  * Create an <em>ndim</em>-dimensional grid object with \e nparts structured
  * parts.
  **/
-HYPRE_Int
-HYPRE_SStructGridCreate(MPI_Comm           comm,
-                        HYPRE_Int          ndim,
-                        HYPRE_Int          nparts,
-                        HYPRE_SStructGrid *grid);
+NALU_HYPRE_Int
+NALU_HYPRE_SStructGridCreate(MPI_Comm           comm,
+                        NALU_HYPRE_Int          ndim,
+                        NALU_HYPRE_Int          nparts,
+                        NALU_HYPRE_SStructGrid *grid);
 
 /**
  * Destroy a grid object.  An object should be explicitly destroyed using this
@@ -113,40 +113,40 @@ HYPRE_SStructGridCreate(MPI_Comm           comm,
  * internal package references to the object.  The object will then be destroyed
  * when all internal reference counts go to zero.
  **/
-HYPRE_Int
-HYPRE_SStructGridDestroy(HYPRE_SStructGrid grid);
+NALU_HYPRE_Int
+NALU_HYPRE_SStructGridDestroy(NALU_HYPRE_SStructGrid grid);
 
 /**
  * Set the extents for a box on a structured part of the grid.
  **/
-HYPRE_Int
-HYPRE_SStructGridSetExtents(HYPRE_SStructGrid  grid,
-                            HYPRE_Int          part,
-                            HYPRE_Int         *ilower,
-                            HYPRE_Int         *iupper);
+NALU_HYPRE_Int
+NALU_HYPRE_SStructGridSetExtents(NALU_HYPRE_SStructGrid  grid,
+                            NALU_HYPRE_Int          part,
+                            NALU_HYPRE_Int         *ilower,
+                            NALU_HYPRE_Int         *iupper);
 
 /**
  * Describe the variables that live on a structured part of the grid.
  **/
-HYPRE_Int
-HYPRE_SStructGridSetVariables(HYPRE_SStructGrid      grid,
-                              HYPRE_Int              part,
-                              HYPRE_Int              nvars,
-                              HYPRE_SStructVariable *vartypes);
+NALU_HYPRE_Int
+NALU_HYPRE_SStructGridSetVariables(NALU_HYPRE_SStructGrid      grid,
+                              NALU_HYPRE_Int              part,
+                              NALU_HYPRE_Int              nvars,
+                              NALU_HYPRE_SStructVariable *vartypes);
 
 /**
  * Describe additional variables that live at a particular index.  These
  * variables are appended to the array of variables set in
- * \ref HYPRE_SStructGridSetVariables, and are referenced as such.
+ * \ref NALU_HYPRE_SStructGridSetVariables, and are referenced as such.
  *
  * NOTE: This routine is not yet supported.
  **/
-HYPRE_Int
-HYPRE_SStructGridAddVariables(HYPRE_SStructGrid      grid,
-                              HYPRE_Int              part,
-                              HYPRE_Int             *index,
-                              HYPRE_Int              nvars,
-                              HYPRE_SStructVariable *vartypes);
+NALU_HYPRE_Int
+NALU_HYPRE_SStructGridAddVariables(NALU_HYPRE_SStructGrid      grid,
+                              NALU_HYPRE_Int              part,
+                              NALU_HYPRE_Int             *index,
+                              NALU_HYPRE_Int              nvars,
+                              NALU_HYPRE_SStructVariable *vartypes);
 
 /**
  * Set the ordering of variables in a finite element problem.  This overrides
@@ -160,7 +160,7 @@ HYPRE_SStructGridAddVariables(HYPRE_SStructGrid      grid,
  * located in the (1, -1, 0) direction from the center of the element.  Note
  * that here variable 2 must be of type \c ZEDGE for this to make sense.  The
  * \e ordering array must account for all variables in the element.  This
- * routine can only be called after \ref HYPRE_SStructGridSetVariables.
+ * routine can only be called after \ref NALU_HYPRE_SStructGridSetVariables.
  *
  * The default ordering for element variables (var, i, j, k) varies fastest in
  * index i, followed by j, then k, then var.  For example, if var 0, var 1, and
@@ -170,10 +170,10 @@ HYPRE_SStructGridAddVariables(HYPRE_SStructGrid      grid,
  *
  * (0,-1,0), (0,1,0), (1,0,-1), (1,0,1), (2,-1,-1), (2,1,-1), (2,-1,1), (2,1,1)
  **/
-HYPRE_Int
-HYPRE_SStructGridSetFEMOrdering(HYPRE_SStructGrid  grid,
-                                HYPRE_Int          part,
-                                HYPRE_Int         *ordering);
+NALU_HYPRE_Int
+NALU_HYPRE_SStructGridSetFEMOrdering(NALU_HYPRE_SStructGrid  grid,
+                                NALU_HYPRE_Int          part,
+                                NALU_HYPRE_Int         *ordering);
 
 /**
  * Describe how regions just outside of a part relate to other parts.  This is
@@ -209,16 +209,16 @@ HYPRE_SStructGridSetFEMOrdering(HYPRE_SStructGrid  grid,
  * tranformation, and the code determines this association by assuming that the
  * variable lists are as noted here.
  **/
-HYPRE_Int
-HYPRE_SStructGridSetNeighborPart(HYPRE_SStructGrid  grid,
-                                 HYPRE_Int          part,
-                                 HYPRE_Int         *ilower,
-                                 HYPRE_Int         *iupper,
-                                 HYPRE_Int          nbor_part,
-                                 HYPRE_Int         *nbor_ilower,
-                                 HYPRE_Int         *nbor_iupper,
-                                 HYPRE_Int         *index_map,
-                                 HYPRE_Int         *index_dir);
+NALU_HYPRE_Int
+NALU_HYPRE_SStructGridSetNeighborPart(NALU_HYPRE_SStructGrid  grid,
+                                 NALU_HYPRE_Int          part,
+                                 NALU_HYPRE_Int         *ilower,
+                                 NALU_HYPRE_Int         *iupper,
+                                 NALU_HYPRE_Int          nbor_part,
+                                 NALU_HYPRE_Int         *nbor_ilower,
+                                 NALU_HYPRE_Int         *nbor_iupper,
+                                 NALU_HYPRE_Int         *index_map,
+                                 NALU_HYPRE_Int         *index_dir);
 
 /**
  * Describe how regions inside a part are shared with regions in other parts.
@@ -271,18 +271,18 @@ HYPRE_SStructGridSetNeighborPart(HYPRE_SStructGrid  grid,
  * particular tranformation, and the code determines this association by
  * assuming that the variable lists are as noted here.
  **/
-HYPRE_Int
-HYPRE_SStructGridSetSharedPart(HYPRE_SStructGrid  grid,
-                               HYPRE_Int          part,
-                               HYPRE_Int         *ilower,
-                               HYPRE_Int         *iupper,
-                               HYPRE_Int         *offset,
-                               HYPRE_Int          shared_part,
-                               HYPRE_Int         *shared_ilower,
-                               HYPRE_Int         *shared_iupper,
-                               HYPRE_Int         *shared_offset,
-                               HYPRE_Int         *index_map,
-                               HYPRE_Int         *index_dir);
+NALU_HYPRE_Int
+NALU_HYPRE_SStructGridSetSharedPart(NALU_HYPRE_SStructGrid  grid,
+                               NALU_HYPRE_Int          part,
+                               NALU_HYPRE_Int         *ilower,
+                               NALU_HYPRE_Int         *iupper,
+                               NALU_HYPRE_Int         *offset,
+                               NALU_HYPRE_Int          shared_part,
+                               NALU_HYPRE_Int         *shared_ilower,
+                               NALU_HYPRE_Int         *shared_iupper,
+                               NALU_HYPRE_Int         *shared_offset,
+                               NALU_HYPRE_Int         *index_map,
+                               NALU_HYPRE_Int         *index_dir);
 
 /**
  * Add an unstructured part to the grid.  The variables in the unstructured part
@@ -292,16 +292,16 @@ HYPRE_SStructGridSetSharedPart(HYPRE_SStructGrid  grid,
  *
  * NOTE: This is just a placeholder.  This part of the interface is not finished.
  **/
-HYPRE_Int
-HYPRE_SStructGridAddUnstructuredPart(HYPRE_SStructGrid grid,
-                                     HYPRE_Int         ilower,
-                                     HYPRE_Int         iupper);
+NALU_HYPRE_Int
+NALU_HYPRE_SStructGridAddUnstructuredPart(NALU_HYPRE_SStructGrid grid,
+                                     NALU_HYPRE_Int         ilower,
+                                     NALU_HYPRE_Int         iupper);
 
 /**
  * Finalize the construction of the grid before using.
  **/
-HYPRE_Int
-HYPRE_SStructGridAssemble(HYPRE_SStructGrid grid);
+NALU_HYPRE_Int
+NALU_HYPRE_SStructGridAssemble(NALU_HYPRE_SStructGrid grid);
 
 /**
  * Set the periodicity on a particular part.
@@ -315,16 +315,16 @@ HYPRE_SStructGridAssemble(HYPRE_SStructGrid grid);
  * NOTE: Some of the solvers in hypre have power-of-two restrictions on the size
  * of the periodic dimensions.
  **/
-HYPRE_Int
-HYPRE_SStructGridSetPeriodic(HYPRE_SStructGrid  grid,
-                             HYPRE_Int          part,
-                             HYPRE_Int         *periodic);
+NALU_HYPRE_Int
+NALU_HYPRE_SStructGridSetPeriodic(NALU_HYPRE_SStructGrid  grid,
+                             NALU_HYPRE_Int          part,
+                             NALU_HYPRE_Int         *periodic);
 /**
  * Setting ghost in the sgrids.
  **/
-HYPRE_Int
-HYPRE_SStructGridSetNumGhost(HYPRE_SStructGrid  grid,
-                             HYPRE_Int         *num_ghost);
+NALU_HYPRE_Int
+NALU_HYPRE_SStructGridSetNumGhost(NALU_HYPRE_SStructGrid  grid,
+                             NALU_HYPRE_Int         *num_ghost);
 
 /**@}*/
 
@@ -337,35 +337,35 @@ HYPRE_SStructGridSetNumGhost(HYPRE_SStructGrid  grid,
  * @{
  **/
 
-struct hypre_SStructStencil_struct;
+struct nalu_hypre_SStructStencil_struct;
 /**
  * The stencil object.
  **/
-typedef struct hypre_SStructStencil_struct *HYPRE_SStructStencil;
+typedef struct nalu_hypre_SStructStencil_struct *NALU_HYPRE_SStructStencil;
 
 /**
  * Create a stencil object for the specified number of spatial dimensions and
  * stencil entries.
  **/
-HYPRE_Int
-HYPRE_SStructStencilCreate(HYPRE_Int             ndim,
-                           HYPRE_Int             size,
-                           HYPRE_SStructStencil *stencil);
+NALU_HYPRE_Int
+NALU_HYPRE_SStructStencilCreate(NALU_HYPRE_Int             ndim,
+                           NALU_HYPRE_Int             size,
+                           NALU_HYPRE_SStructStencil *stencil);
 
 /**
  * Destroy a stencil object.
  **/
-HYPRE_Int
-HYPRE_SStructStencilDestroy(HYPRE_SStructStencil stencil);
+NALU_HYPRE_Int
+NALU_HYPRE_SStructStencilDestroy(NALU_HYPRE_SStructStencil stencil);
 
 /**
  * Set a stencil entry.
  **/
-HYPRE_Int
-HYPRE_SStructStencilSetEntry(HYPRE_SStructStencil  stencil,
-                             HYPRE_Int             entry,
-                             HYPRE_Int            *offset,
-                             HYPRE_Int             var);
+NALU_HYPRE_Int
+NALU_HYPRE_SStructStencilSetEntry(NALU_HYPRE_SStructStencil  stencil,
+                             NALU_HYPRE_Int             entry,
+                             NALU_HYPRE_Int            *offset,
+                             NALU_HYPRE_Int             var);
 
 /**@}*/
 
@@ -378,48 +378,48 @@ HYPRE_SStructStencilSetEntry(HYPRE_SStructStencil  stencil,
  * @{
  **/
 
-struct hypre_SStructGraph_struct;
+struct nalu_hypre_SStructGraph_struct;
 /**
  * The graph object is used to describe the nonzero structure of a matrix.
  **/
-typedef struct hypre_SStructGraph_struct *HYPRE_SStructGraph;
+typedef struct nalu_hypre_SStructGraph_struct *NALU_HYPRE_SStructGraph;
 
 /**
  * Create a graph object.
  **/
-HYPRE_Int
-HYPRE_SStructGraphCreate(MPI_Comm             comm,
-                         HYPRE_SStructGrid    grid,
-                         HYPRE_SStructGraph  *graph);
+NALU_HYPRE_Int
+NALU_HYPRE_SStructGraphCreate(MPI_Comm             comm,
+                         NALU_HYPRE_SStructGrid    grid,
+                         NALU_HYPRE_SStructGraph  *graph);
 
 /**
  * Destroy a graph object.
  **/
-HYPRE_Int
-HYPRE_SStructGraphDestroy(HYPRE_SStructGraph graph);
+NALU_HYPRE_Int
+NALU_HYPRE_SStructGraphDestroy(NALU_HYPRE_SStructGraph graph);
 
 /**
  * Set the domain grid.
  **/
-HYPRE_Int
-HYPRE_SStructGraphSetDomainGrid(HYPRE_SStructGraph graph,
-                                HYPRE_SStructGrid  domain_grid);
+NALU_HYPRE_Int
+NALU_HYPRE_SStructGraphSetDomainGrid(NALU_HYPRE_SStructGraph graph,
+                                NALU_HYPRE_SStructGrid  domain_grid);
 
 /**
  * Set the stencil for a variable on a structured part of the grid.
  **/
-HYPRE_Int
-HYPRE_SStructGraphSetStencil(HYPRE_SStructGraph   graph,
-                             HYPRE_Int            part,
-                             HYPRE_Int            var,
-                             HYPRE_SStructStencil stencil);
+NALU_HYPRE_Int
+NALU_HYPRE_SStructGraphSetStencil(NALU_HYPRE_SStructGraph   graph,
+                             NALU_HYPRE_Int            part,
+                             NALU_HYPRE_Int            var,
+                             NALU_HYPRE_SStructStencil stencil);
 
 /**
  * Indicate that an FEM approach will be used to set matrix values on this part.
  **/
-HYPRE_Int
-HYPRE_SStructGraphSetFEM(HYPRE_SStructGraph graph,
-                         HYPRE_Int          part);
+NALU_HYPRE_Int
+NALU_HYPRE_SStructGraphSetFEM(NALU_HYPRE_SStructGraph graph,
+                         NALU_HYPRE_Int          part);
 
 /**
  * Set the finite element stiffness matrix sparsity.  This overrides the default
@@ -427,18 +427,18 @@ HYPRE_SStructGraphSetFEM(HYPRE_SStructGraph graph,
  *
  * Array \e sparsity contains \e nsparse row/column tuples (I,J) that
  * indicate the nonzeroes of the local stiffness matrix.  The layout of the
- * values passed into the routine \ref HYPRE_SStructMatrixAddFEMValues is
+ * values passed into the routine \ref NALU_HYPRE_SStructMatrixAddFEMValues is
  * determined here.
  *
  * The default sparsity is full (each variable is coupled to all others), and
- * the values passed into the routine \ref HYPRE_SStructMatrixAddFEMValues are
+ * the values passed into the routine \ref NALU_HYPRE_SStructMatrixAddFEMValues are
  * assumed to be by rows (that is, column indices vary fastest).
  **/
-HYPRE_Int
-HYPRE_SStructGraphSetFEMSparsity(HYPRE_SStructGraph  graph,
-                                 HYPRE_Int           part,
-                                 HYPRE_Int           nsparse,
-                                 HYPRE_Int          *sparsity);
+NALU_HYPRE_Int
+NALU_HYPRE_SStructGraphSetFEMSparsity(NALU_HYPRE_SStructGraph  graph,
+                                 NALU_HYPRE_Int           part,
+                                 NALU_HYPRE_Int           nsparse,
+                                 NALU_HYPRE_Int          *sparsity);
 
 /**
  * Add a non-stencil graph entry at a particular index.  This graph entry is
@@ -447,20 +447,20 @@ HYPRE_SStructGraphSetFEMSparsity(HYPRE_SStructGraph  graph,
  * NOTE: Users are required to set graph entries on all processes that own the
  * associated variables.  This means that some data will be multiply defined.
  **/
-HYPRE_Int
-HYPRE_SStructGraphAddEntries(HYPRE_SStructGraph   graph,
-                             HYPRE_Int            part,
-                             HYPRE_Int           *index,
-                             HYPRE_Int            var,
-                             HYPRE_Int            to_part,
-                             HYPRE_Int           *to_index,
-                             HYPRE_Int            to_var);
+NALU_HYPRE_Int
+NALU_HYPRE_SStructGraphAddEntries(NALU_HYPRE_SStructGraph   graph,
+                             NALU_HYPRE_Int            part,
+                             NALU_HYPRE_Int           *index,
+                             NALU_HYPRE_Int            var,
+                             NALU_HYPRE_Int            to_part,
+                             NALU_HYPRE_Int           *to_index,
+                             NALU_HYPRE_Int            to_var);
 
 /**
  * Finalize the construction of the graph before using.
  **/
-HYPRE_Int
-HYPRE_SStructGraphAssemble(HYPRE_SStructGraph graph);
+NALU_HYPRE_Int
+NALU_HYPRE_SStructGraphAssemble(NALU_HYPRE_SStructGraph graph);
 
 /**
  * Set the storage type of the associated matrix object.  It is used before
@@ -469,11 +469,11 @@ HYPRE_SStructGraphAssemble(HYPRE_SStructGraph graph);
  * NOTE: This routine is only necessary for implementation reasons, and will
  * eventually be removed.
  *
- * @see HYPRE_SStructMatrixSetObjectType
+ * @see NALU_HYPRE_SStructMatrixSetObjectType
  **/
-HYPRE_Int
-HYPRE_SStructGraphSetObjectType(HYPRE_SStructGraph  graph,
-                                HYPRE_Int           type);
+NALU_HYPRE_Int
+NALU_HYPRE_SStructGraphSetObjectType(NALU_HYPRE_SStructGraph  graph,
+                                NALU_HYPRE_Int           type);
 /**@}*/
 
 /*--------------------------------------------------------------------------
@@ -485,37 +485,37 @@ HYPRE_SStructGraphSetObjectType(HYPRE_SStructGraph  graph,
  * @{
  **/
 
-struct hypre_SStructMatrix_struct;
+struct nalu_hypre_SStructMatrix_struct;
 /**
  * The matrix object.
  **/
-typedef struct hypre_SStructMatrix_struct *HYPRE_SStructMatrix;
+typedef struct nalu_hypre_SStructMatrix_struct *NALU_HYPRE_SStructMatrix;
 
 /**
  * Create a matrix object.
  **/
-HYPRE_Int
-HYPRE_SStructMatrixCreate(MPI_Comm              comm,
-                          HYPRE_SStructGraph    graph,
-                          HYPRE_SStructMatrix  *matrix);
+NALU_HYPRE_Int
+NALU_HYPRE_SStructMatrixCreate(MPI_Comm              comm,
+                          NALU_HYPRE_SStructGraph    graph,
+                          NALU_HYPRE_SStructMatrix  *matrix);
 
 /**
  * Destroy a matrix object.
  **/
-HYPRE_Int
-HYPRE_SStructMatrixDestroy(HYPRE_SStructMatrix matrix);
+NALU_HYPRE_Int
+NALU_HYPRE_SStructMatrixDestroy(NALU_HYPRE_SStructMatrix matrix);
 
 /**
  * Prepare a matrix object for setting coefficient values.
  **/
-HYPRE_Int
-HYPRE_SStructMatrixInitialize(HYPRE_SStructMatrix matrix);
+NALU_HYPRE_Int
+NALU_HYPRE_SStructMatrixInitialize(NALU_HYPRE_SStructMatrix matrix);
 
 /**
  * Set matrix coefficients index by index.  The \e values array is of length
  * \e nentries.
  *
- * NOTE: For better efficiency, use \ref HYPRE_SStructMatrixSetBoxValues to set
+ * NOTE: For better efficiency, use \ref NALU_HYPRE_SStructMatrixSetBoxValues to set
  * coefficients a box at a time.
  *
  * NOTE: Users are required to set values on all processes that own the
@@ -526,20 +526,20 @@ HYPRE_SStructMatrixInitialize(HYPRE_SStructMatrix matrix);
  * they must all represent couplings to the same variable type (there are no
  * such restrictions for non-stencil entries).
  **/
-HYPRE_Int
-HYPRE_SStructMatrixSetValues(HYPRE_SStructMatrix  matrix,
-                             HYPRE_Int            part,
-                             HYPRE_Int           *index,
-                             HYPRE_Int            var,
-                             HYPRE_Int            nentries,
-                             HYPRE_Int           *entries,
-                             HYPRE_Complex       *values);
+NALU_HYPRE_Int
+NALU_HYPRE_SStructMatrixSetValues(NALU_HYPRE_SStructMatrix  matrix,
+                             NALU_HYPRE_Int            part,
+                             NALU_HYPRE_Int           *index,
+                             NALU_HYPRE_Int            var,
+                             NALU_HYPRE_Int            nentries,
+                             NALU_HYPRE_Int           *entries,
+                             NALU_HYPRE_Complex       *values);
 
 /**
  * Add to matrix coefficients index by index.  The \e values array is of
  * length \e nentries.
  *
- * NOTE: For better efficiency, use \ref HYPRE_SStructMatrixAddToBoxValues to
+ * NOTE: For better efficiency, use \ref NALU_HYPRE_SStructMatrixAddToBoxValues to
  * set coefficients a box at a time.
  *
  * NOTE: Users are required to set values on all processes that own the
@@ -549,34 +549,34 @@ HYPRE_SStructMatrixSetValues(HYPRE_SStructMatrix  matrix,
  * stencil or non-stencil, but not both.  Also, if they are stencil entries,
  * they must all represent couplings to the same variable type.
  **/
-HYPRE_Int
-HYPRE_SStructMatrixAddToValues(HYPRE_SStructMatrix  matrix,
-                               HYPRE_Int            part,
-                               HYPRE_Int           *index,
-                               HYPRE_Int            var,
-                               HYPRE_Int            nentries,
-                               HYPRE_Int           *entries,
-                               HYPRE_Complex       *values);
+NALU_HYPRE_Int
+NALU_HYPRE_SStructMatrixAddToValues(NALU_HYPRE_SStructMatrix  matrix,
+                               NALU_HYPRE_Int            part,
+                               NALU_HYPRE_Int           *index,
+                               NALU_HYPRE_Int            var,
+                               NALU_HYPRE_Int            nentries,
+                               NALU_HYPRE_Int           *entries,
+                               NALU_HYPRE_Complex       *values);
 
 /**
  * Add finite element stiffness matrix coefficients index by index.  The layout
  * of the data in \e values is determined by the routines \ref
- * HYPRE_SStructGridSetFEMOrdering and \ref HYPRE_SStructGraphSetFEMSparsity.
+ * NALU_HYPRE_SStructGridSetFEMOrdering and \ref NALU_HYPRE_SStructGraphSetFEMSparsity.
  *
- * NOTE: For better efficiency, use \ref HYPRE_SStructMatrixAddFEMBoxValues to
+ * NOTE: For better efficiency, use \ref NALU_HYPRE_SStructMatrixAddFEMBoxValues to
  * set coefficients a box at a time.
  **/
-HYPRE_Int
-HYPRE_SStructMatrixAddFEMValues(HYPRE_SStructMatrix  matrix,
-                                HYPRE_Int            part,
-                                HYPRE_Int           *index,
-                                HYPRE_Complex       *values);
+NALU_HYPRE_Int
+NALU_HYPRE_SStructMatrixAddFEMValues(NALU_HYPRE_SStructMatrix  matrix,
+                                NALU_HYPRE_Int            part,
+                                NALU_HYPRE_Int           *index,
+                                NALU_HYPRE_Complex       *values);
 
 /**
  * Get matrix coefficients index by index.  The \e values array is of length
  * \e nentries.
  *
- * NOTE: For better efficiency, use \ref HYPRE_SStructMatrixGetBoxValues to get
+ * NOTE: For better efficiency, use \ref NALU_HYPRE_SStructMatrixGetBoxValues to get
  * coefficients a box at a time.
  *
  * NOTE: Users may get values on any process that owns the associated variables.
@@ -586,26 +586,26 @@ HYPRE_SStructMatrixAddFEMValues(HYPRE_SStructMatrix  matrix,
  * they must all represent couplings to the same variable type (there are no
  * such restrictions for non-stencil entries).
  **/
-HYPRE_Int
-HYPRE_SStructMatrixGetValues(HYPRE_SStructMatrix  matrix,
-                             HYPRE_Int            part,
-                             HYPRE_Int           *index,
-                             HYPRE_Int            var,
-                             HYPRE_Int            nentries,
-                             HYPRE_Int           *entries,
-                             HYPRE_Complex       *values);
+NALU_HYPRE_Int
+NALU_HYPRE_SStructMatrixGetValues(NALU_HYPRE_SStructMatrix  matrix,
+                             NALU_HYPRE_Int            part,
+                             NALU_HYPRE_Int           *index,
+                             NALU_HYPRE_Int            var,
+                             NALU_HYPRE_Int            nentries,
+                             NALU_HYPRE_Int           *entries,
+                             NALU_HYPRE_Complex       *values);
 
 /**
  * Get finite element stiffness matrix coefficients index by index.  The layout
  * of the data in \e values is determined by the routines
- * \ref HYPRE_SStructGridSetFEMOrdering and
- * \ref HYPRE_SStructGraphSetFEMSparsity.
+ * \ref NALU_HYPRE_SStructGridSetFEMOrdering and
+ * \ref NALU_HYPRE_SStructGraphSetFEMSparsity.
  **/
-HYPRE_Int
-HYPRE_SStructMatrixGetFEMValues(HYPRE_SStructMatrix  matrix,
-                                HYPRE_Int            part,
-                                HYPRE_Int           *index,
-                                HYPRE_Complex       *values);
+NALU_HYPRE_Int
+NALU_HYPRE_SStructMatrixGetFEMValues(NALU_HYPRE_SStructMatrix  matrix,
+                                NALU_HYPRE_Int            part,
+                                NALU_HYPRE_Int           *index,
+                                NALU_HYPRE_Complex       *values);
 
 /**
  * Set matrix coefficients a box at a time.  The data in \e values is ordered
@@ -631,19 +631,19 @@ HYPRE_SStructMatrixGetFEMValues(HYPRE_SStructMatrix  matrix,
  * they must all represent couplings to the same variable type (there are no
  * such restrictions for non-stencil entries).
  **/
-HYPRE_Int
-HYPRE_SStructMatrixSetBoxValues(HYPRE_SStructMatrix  matrix,
-                                HYPRE_Int            part,
-                                HYPRE_Int           *ilower,
-                                HYPRE_Int           *iupper,
-                                HYPRE_Int            var,
-                                HYPRE_Int            nentries,
-                                HYPRE_Int           *entries,
-                                HYPRE_Complex       *values);
+NALU_HYPRE_Int
+NALU_HYPRE_SStructMatrixSetBoxValues(NALU_HYPRE_SStructMatrix  matrix,
+                                NALU_HYPRE_Int            part,
+                                NALU_HYPRE_Int           *ilower,
+                                NALU_HYPRE_Int           *iupper,
+                                NALU_HYPRE_Int            var,
+                                NALU_HYPRE_Int            nentries,
+                                NALU_HYPRE_Int           *entries,
+                                NALU_HYPRE_Complex       *values);
 
 /**
  * Add to matrix coefficients a box at a time.  The data in \e values is
- * ordered as in \ref HYPRE_SStructMatrixSetBoxValues.
+ * ordered as in \ref NALU_HYPRE_SStructMatrixSetBoxValues.
  *
  * NOTE: Users are required to set values on all processes that own the
  * associated variables.  This means that some data will be multiply defined.
@@ -651,115 +651,115 @@ HYPRE_SStructMatrixSetBoxValues(HYPRE_SStructMatrix  matrix,
  * NOTE: The entries in this routine must all be of stencil type.  Also, they
  * must all represent couplings to the same variable type.
  **/
-HYPRE_Int
-HYPRE_SStructMatrixAddToBoxValues(HYPRE_SStructMatrix  matrix,
-                                  HYPRE_Int            part,
-                                  HYPRE_Int           *ilower,
-                                  HYPRE_Int           *iupper,
-                                  HYPRE_Int            var,
-                                  HYPRE_Int            nentries,
-                                  HYPRE_Int           *entries,
-                                  HYPRE_Complex       *values);
+NALU_HYPRE_Int
+NALU_HYPRE_SStructMatrixAddToBoxValues(NALU_HYPRE_SStructMatrix  matrix,
+                                  NALU_HYPRE_Int            part,
+                                  NALU_HYPRE_Int           *ilower,
+                                  NALU_HYPRE_Int           *iupper,
+                                  NALU_HYPRE_Int            var,
+                                  NALU_HYPRE_Int            nentries,
+                                  NALU_HYPRE_Int           *entries,
+                                  NALU_HYPRE_Complex       *values);
 
 /**
  * Set matrix coefficients a box at a time.  The \e values array is logically
  * box shaped with value-box extents \e vilower and \e viupper that must
  * contain the set-box extents \e ilower and \e iupper .  The data in the
- * \e values array is ordered as in \ref HYPRE_SStructMatrixSetBoxValues,
+ * \e values array is ordered as in \ref NALU_HYPRE_SStructMatrixSetBoxValues,
  * but based on the value-box extents.
  **/
-HYPRE_Int
-HYPRE_SStructMatrixSetBoxValues2(HYPRE_SStructMatrix  matrix,
-                                 HYPRE_Int            part,
-                                 HYPRE_Int           *ilower,
-                                 HYPRE_Int           *iupper,
-                                 HYPRE_Int            var,
-                                 HYPRE_Int            nentries,
-                                 HYPRE_Int           *entries,
-                                 HYPRE_Int           *vilower,
-                                 HYPRE_Int           *viupper,
-                                 HYPRE_Complex       *values);
+NALU_HYPRE_Int
+NALU_HYPRE_SStructMatrixSetBoxValues2(NALU_HYPRE_SStructMatrix  matrix,
+                                 NALU_HYPRE_Int            part,
+                                 NALU_HYPRE_Int           *ilower,
+                                 NALU_HYPRE_Int           *iupper,
+                                 NALU_HYPRE_Int            var,
+                                 NALU_HYPRE_Int            nentries,
+                                 NALU_HYPRE_Int           *entries,
+                                 NALU_HYPRE_Int           *vilower,
+                                 NALU_HYPRE_Int           *viupper,
+                                 NALU_HYPRE_Complex       *values);
 
 /**
  * Add to matrix coefficients a box at a time.  The data in \e values is
- * ordered as in \ref HYPRE_SStructMatrixSetBoxValues2.
+ * ordered as in \ref NALU_HYPRE_SStructMatrixSetBoxValues2.
  **/
-HYPRE_Int
-HYPRE_SStructMatrixAddToBoxValues2(HYPRE_SStructMatrix  matrix,
-                                   HYPRE_Int            part,
-                                   HYPRE_Int           *ilower,
-                                   HYPRE_Int           *iupper,
-                                   HYPRE_Int            var,
-                                   HYPRE_Int            nentries,
-                                   HYPRE_Int           *entries,
-                                   HYPRE_Int           *vilower,
-                                   HYPRE_Int           *viupper,
-                                   HYPRE_Complex       *values);
+NALU_HYPRE_Int
+NALU_HYPRE_SStructMatrixAddToBoxValues2(NALU_HYPRE_SStructMatrix  matrix,
+                                   NALU_HYPRE_Int            part,
+                                   NALU_HYPRE_Int           *ilower,
+                                   NALU_HYPRE_Int           *iupper,
+                                   NALU_HYPRE_Int            var,
+                                   NALU_HYPRE_Int            nentries,
+                                   NALU_HYPRE_Int           *entries,
+                                   NALU_HYPRE_Int           *vilower,
+                                   NALU_HYPRE_Int           *viupper,
+                                   NALU_HYPRE_Complex       *values);
 
 /**
  * Add finite element stiffness matrix coefficients a box at a time.  The data
  * in \e values is organized as an array of element matrices ordered as in \ref
- * HYPRE_SStructMatrixSetBoxValues.  The layout of the data entries of each
+ * NALU_HYPRE_SStructMatrixSetBoxValues.  The layout of the data entries of each
  * element matrix is determined by the routines \ref
- * HYPRE_SStructGridSetFEMOrdering and \ref HYPRE_SStructGraphSetFEMSparsity.
+ * NALU_HYPRE_SStructGridSetFEMOrdering and \ref NALU_HYPRE_SStructGraphSetFEMSparsity.
  **/
-HYPRE_Int
-HYPRE_SStructMatrixAddFEMBoxValues(HYPRE_SStructMatrix  matrix,
-                                   HYPRE_Int            part,
-                                   HYPRE_Int           *ilower,
-                                   HYPRE_Int           *iupper,
-                                   HYPRE_Complex       *values);
+NALU_HYPRE_Int
+NALU_HYPRE_SStructMatrixAddFEMBoxValues(NALU_HYPRE_SStructMatrix  matrix,
+                                   NALU_HYPRE_Int            part,
+                                   NALU_HYPRE_Int           *ilower,
+                                   NALU_HYPRE_Int           *iupper,
+                                   NALU_HYPRE_Complex       *values);
 
 /**
  * Finalize the construction of the matrix before using.
  **/
-HYPRE_Int
-HYPRE_SStructMatrixAssemble(HYPRE_SStructMatrix matrix);
+NALU_HYPRE_Int
+NALU_HYPRE_SStructMatrixAssemble(NALU_HYPRE_SStructMatrix matrix);
 
 /**
  * Get matrix coefficients a box at a time.  The data in \e values is
- * ordered as in \ref HYPRE_SStructMatrixSetBoxValues.
+ * ordered as in \ref NALU_HYPRE_SStructMatrixSetBoxValues.
  *
  * NOTE: Users may get values on any process that owns the associated variables.
  *
  * NOTE: The entries in this routine must all be of stencil type.  Also, they
  * must all represent couplings to the same variable type.
  **/
-HYPRE_Int
-HYPRE_SStructMatrixGetBoxValues(HYPRE_SStructMatrix  matrix,
-                                HYPRE_Int            part,
-                                HYPRE_Int           *ilower,
-                                HYPRE_Int           *iupper,
-                                HYPRE_Int            var,
-                                HYPRE_Int            nentries,
-                                HYPRE_Int           *entries,
-                                HYPRE_Complex       *values);
+NALU_HYPRE_Int
+NALU_HYPRE_SStructMatrixGetBoxValues(NALU_HYPRE_SStructMatrix  matrix,
+                                NALU_HYPRE_Int            part,
+                                NALU_HYPRE_Int           *ilower,
+                                NALU_HYPRE_Int           *iupper,
+                                NALU_HYPRE_Int            var,
+                                NALU_HYPRE_Int            nentries,
+                                NALU_HYPRE_Int           *entries,
+                                NALU_HYPRE_Complex       *values);
 
 /**
  * Get matrix coefficients a box at a time.  The data in \e values is
- * ordered as in \ref HYPRE_SStructMatrixSetBoxValues2.
+ * ordered as in \ref NALU_HYPRE_SStructMatrixSetBoxValues2.
  **/
-HYPRE_Int
-HYPRE_SStructMatrixGetBoxValues2(HYPRE_SStructMatrix  matrix,
-                                 HYPRE_Int            part,
-                                 HYPRE_Int           *ilower,
-                                 HYPRE_Int           *iupper,
-                                 HYPRE_Int            var,
-                                 HYPRE_Int            nentries,
-                                 HYPRE_Int           *entries,
-                                 HYPRE_Int           *vilower,
-                                 HYPRE_Int           *viupper,
-                                 HYPRE_Complex       *values);
+NALU_HYPRE_Int
+NALU_HYPRE_SStructMatrixGetBoxValues2(NALU_HYPRE_SStructMatrix  matrix,
+                                 NALU_HYPRE_Int            part,
+                                 NALU_HYPRE_Int           *ilower,
+                                 NALU_HYPRE_Int           *iupper,
+                                 NALU_HYPRE_Int            var,
+                                 NALU_HYPRE_Int            nentries,
+                                 NALU_HYPRE_Int           *entries,
+                                 NALU_HYPRE_Int           *vilower,
+                                 NALU_HYPRE_Int           *viupper,
+                                 NALU_HYPRE_Complex       *values);
 
 /**
  * Does this even make sense to implement?
  */
-HYPRE_Int
-HYPRE_SStructMatrixGetFEMBoxValues(HYPRE_SStructMatrix  matrix,
-                                   HYPRE_Int            part,
-                                   HYPRE_Int           *ilower,
-                                   HYPRE_Int           *iupper,
-                                   HYPRE_Complex       *values);
+NALU_HYPRE_Int
+NALU_HYPRE_SStructMatrixGetFEMBoxValues(NALU_HYPRE_SStructMatrix  matrix,
+                                   NALU_HYPRE_Int            part,
+                                   NALU_HYPRE_Int           *ilower,
+                                   NALU_HYPRE_Int           *iupper,
+                                   NALU_HYPRE_Complex       *values);
 
 /**
  * Define symmetry properties for the stencil entries in the matrix.  The
@@ -773,55 +773,55 @@ HYPRE_SStructMatrixGetFEMBoxValues(HYPRE_SStructMatrix  matrix,
  * By default, matrices are assumed to be nonsymmetric.  Significant
  * storage savings can be made if the matrix is symmetric.
  **/
-HYPRE_Int
-HYPRE_SStructMatrixSetSymmetric(HYPRE_SStructMatrix matrix,
-                                HYPRE_Int           part,
-                                HYPRE_Int           var,
-                                HYPRE_Int           to_var,
-                                HYPRE_Int           symmetric);
+NALU_HYPRE_Int
+NALU_HYPRE_SStructMatrixSetSymmetric(NALU_HYPRE_SStructMatrix matrix,
+                                NALU_HYPRE_Int           part,
+                                NALU_HYPRE_Int           var,
+                                NALU_HYPRE_Int           to_var,
+                                NALU_HYPRE_Int           symmetric);
 
 /**
  * Define symmetry properties for all non-stencil matrix entries.
  **/
-HYPRE_Int
-HYPRE_SStructMatrixSetNSSymmetric(HYPRE_SStructMatrix matrix,
-                                  HYPRE_Int           symmetric);
+NALU_HYPRE_Int
+NALU_HYPRE_SStructMatrixSetNSSymmetric(NALU_HYPRE_SStructMatrix matrix,
+                                  NALU_HYPRE_Int           symmetric);
 
 /**
  * Set the storage type of the matrix object to be constructed.  Currently, \e
- * type can be either \c HYPRE_SSTRUCT (the default), \c HYPRE_STRUCT,
- * or \c HYPRE_PARCSR.
+ * type can be either \c NALU_HYPRE_SSTRUCT (the default), \c NALU_HYPRE_STRUCT,
+ * or \c NALU_HYPRE_PARCSR.
  *
- * @see HYPRE_SStructMatrixGetObject
+ * @see NALU_HYPRE_SStructMatrixGetObject
  **/
-HYPRE_Int
-HYPRE_SStructMatrixSetObjectType(HYPRE_SStructMatrix  matrix,
-                                 HYPRE_Int            type);
+NALU_HYPRE_Int
+NALU_HYPRE_SStructMatrixSetObjectType(NALU_HYPRE_SStructMatrix  matrix,
+                                 NALU_HYPRE_Int            type);
 
 /**
  * Get a reference to the constructed matrix object.
  *
- * @see HYPRE_SStructMatrixSetObjectType
+ * @see NALU_HYPRE_SStructMatrixSetObjectType
  **/
-HYPRE_Int
-HYPRE_SStructMatrixGetObject(HYPRE_SStructMatrix   matrix,
+NALU_HYPRE_Int
+NALU_HYPRE_SStructMatrixGetObject(NALU_HYPRE_SStructMatrix   matrix,
                              void                **object);
 
 /**
  * Print the matrix to file.  This is mainly for debugging purposes.
  **/
-HYPRE_Int
-HYPRE_SStructMatrixPrint(const char          *filename,
-                         HYPRE_SStructMatrix  matrix,
-                         HYPRE_Int            all);
+NALU_HYPRE_Int
+NALU_HYPRE_SStructMatrixPrint(const char          *filename,
+                         NALU_HYPRE_SStructMatrix  matrix,
+                         NALU_HYPRE_Int            all);
 
 /**
  * Read the matrix from file.  This is mainly for debugging purposes.
  **/
-HYPRE_Int
-HYPRE_SStructMatrixRead( MPI_Comm              comm,
+NALU_HYPRE_Int
+NALU_HYPRE_SStructMatrixRead( MPI_Comm              comm,
                          const char           *filename,
-                         HYPRE_SStructMatrix  *matrix_ptr );
+                         NALU_HYPRE_SStructMatrix  *matrix_ptr );
 
 /**@}*/
 
@@ -834,108 +834,108 @@ HYPRE_SStructMatrixRead( MPI_Comm              comm,
  * @{
  **/
 
-struct hypre_SStructVector_struct;
+struct nalu_hypre_SStructVector_struct;
 /**
  * The vector object.
  **/
-typedef struct hypre_SStructVector_struct *HYPRE_SStructVector;
+typedef struct nalu_hypre_SStructVector_struct *NALU_HYPRE_SStructVector;
 
 /**
  * Create a vector object.
  **/
-HYPRE_Int
-HYPRE_SStructVectorCreate(MPI_Comm              comm,
-                          HYPRE_SStructGrid     grid,
-                          HYPRE_SStructVector  *vector);
+NALU_HYPRE_Int
+NALU_HYPRE_SStructVectorCreate(MPI_Comm              comm,
+                          NALU_HYPRE_SStructGrid     grid,
+                          NALU_HYPRE_SStructVector  *vector);
 
 /**
  * Destroy a vector object.
  **/
-HYPRE_Int
-HYPRE_SStructVectorDestroy(HYPRE_SStructVector vector);
+NALU_HYPRE_Int
+NALU_HYPRE_SStructVectorDestroy(NALU_HYPRE_SStructVector vector);
 
 /**
  * Prepare a vector object for setting coefficient values.
  **/
-HYPRE_Int
-HYPRE_SStructVectorInitialize(HYPRE_SStructVector vector);
+NALU_HYPRE_Int
+NALU_HYPRE_SStructVectorInitialize(NALU_HYPRE_SStructVector vector);
 
 /**
  * Set vector coefficients index by index.
  *
- * NOTE: For better efficiency, use \ref HYPRE_SStructVectorSetBoxValues to set
+ * NOTE: For better efficiency, use \ref NALU_HYPRE_SStructVectorSetBoxValues to set
  * coefficients a box at a time.
  *
  * NOTE: Users are required to set values on all processes that own the
  * associated variables.  This means that some data will be multiply defined.
  **/
-HYPRE_Int
-HYPRE_SStructVectorSetValues(HYPRE_SStructVector  vector,
-                             HYPRE_Int            part,
-                             HYPRE_Int           *index,
-                             HYPRE_Int            var,
-                             HYPRE_Complex       *value);
+NALU_HYPRE_Int
+NALU_HYPRE_SStructVectorSetValues(NALU_HYPRE_SStructVector  vector,
+                             NALU_HYPRE_Int            part,
+                             NALU_HYPRE_Int           *index,
+                             NALU_HYPRE_Int            var,
+                             NALU_HYPRE_Complex       *value);
 
 /**
  * Add to vector coefficients index by index.
  *
- * NOTE: For better efficiency, use \ref HYPRE_SStructVectorAddToBoxValues to
+ * NOTE: For better efficiency, use \ref NALU_HYPRE_SStructVectorAddToBoxValues to
  * set coefficients a box at a time.
  *
  * NOTE: Users are required to set values on all processes that own the
  * associated variables.  This means that some data will be multiply defined.
  **/
-HYPRE_Int
-HYPRE_SStructVectorAddToValues(HYPRE_SStructVector  vector,
-                               HYPRE_Int            part,
-                               HYPRE_Int           *index,
-                               HYPRE_Int            var,
-                               HYPRE_Complex       *value);
+NALU_HYPRE_Int
+NALU_HYPRE_SStructVectorAddToValues(NALU_HYPRE_SStructVector  vector,
+                               NALU_HYPRE_Int            part,
+                               NALU_HYPRE_Int           *index,
+                               NALU_HYPRE_Int            var,
+                               NALU_HYPRE_Complex       *value);
 
 /**
  * Add finite element vector coefficients index by index.  The layout of the
  * data in \e values is determined by the routine
- * \ref HYPRE_SStructGridSetFEMOrdering.
+ * \ref NALU_HYPRE_SStructGridSetFEMOrdering.
  *
- * NOTE: For better efficiency, use \ref HYPRE_SStructVectorAddFEMBoxValues to
+ * NOTE: For better efficiency, use \ref NALU_HYPRE_SStructVectorAddFEMBoxValues to
  * set coefficients a box at a time.
  **/
-HYPRE_Int
-HYPRE_SStructVectorAddFEMValues(HYPRE_SStructVector  vector,
-                                HYPRE_Int            part,
-                                HYPRE_Int           *index,
-                                HYPRE_Complex       *values);
+NALU_HYPRE_Int
+NALU_HYPRE_SStructVectorAddFEMValues(NALU_HYPRE_SStructVector  vector,
+                                NALU_HYPRE_Int            part,
+                                NALU_HYPRE_Int           *index,
+                                NALU_HYPRE_Complex       *values);
 
 /**
  * Get vector coefficients index by index.  Users must first call the routine
- * \ref HYPRE_SStructVectorGather to ensure that data owned by multiple
+ * \ref NALU_HYPRE_SStructVectorGather to ensure that data owned by multiple
  * processes is correct.
  *
- * NOTE: For better efficiency, use \ref HYPRE_SStructVectorGetBoxValues to get
+ * NOTE: For better efficiency, use \ref NALU_HYPRE_SStructVectorGetBoxValues to get
  * coefficients a box at a time.
  *
  * NOTE: Users may only get values on processes that own the associated
  * variables.
  **/
-HYPRE_Int
-HYPRE_SStructVectorGetValues(HYPRE_SStructVector  vector,
-                             HYPRE_Int            part,
-                             HYPRE_Int           *index,
-                             HYPRE_Int            var,
-                             HYPRE_Complex       *value);
+NALU_HYPRE_Int
+NALU_HYPRE_SStructVectorGetValues(NALU_HYPRE_SStructVector  vector,
+                             NALU_HYPRE_Int            part,
+                             NALU_HYPRE_Int           *index,
+                             NALU_HYPRE_Int            var,
+                             NALU_HYPRE_Complex       *value);
 
 /**
  * Get finite element vector coefficients index by index.  The layout of the
  * data in \e values is determined by the routine
- * \ref HYPRE_SStructGridSetFEMOrdering.  Users must first call the routine
- * \ref HYPRE_SStructVectorGather to ensure that data owned by multiple
+ * \ref NALU_HYPRE_SStructGridSetFEMOrdering.  Users must first call the routine
+ * \ref NALU_HYPRE_SStructVectorGather to ensure that data owned by multiple
  * processes is correct.
  **/
-HYPRE_Int
-HYPRE_SStructVectorGetFEMValues(HYPRE_SStructVector  vector,
-                                HYPRE_Int            part,
-                                HYPRE_Int           *index,
-                                HYPRE_Complex       *values);
+NALU_HYPRE_Int
+NALU_HYPRE_SStructVectorGetFEMValues(NALU_HYPRE_SStructVector  vector,
+                                NALU_HYPRE_Int            part,
+                                NALU_HYPRE_Int           *index,
+                                NALU_HYPRE_Complex       *values);
 
 /**
  * Set vector coefficients a box at a time.  The data in \e values is ordered
@@ -955,120 +955,120 @@ HYPRE_SStructVectorGetFEMValues(HYPRE_SStructVector  vector,
  * NOTE: Users are required to set values on all processes that own the
  * associated variables.  This means that some data will be multiply defined.
  **/
-HYPRE_Int
-HYPRE_SStructVectorSetBoxValues(HYPRE_SStructVector  vector,
-                                HYPRE_Int            part,
-                                HYPRE_Int           *ilower,
-                                HYPRE_Int           *iupper,
-                                HYPRE_Int            var,
-                                HYPRE_Complex       *values);
+NALU_HYPRE_Int
+NALU_HYPRE_SStructVectorSetBoxValues(NALU_HYPRE_SStructVector  vector,
+                                NALU_HYPRE_Int            part,
+                                NALU_HYPRE_Int           *ilower,
+                                NALU_HYPRE_Int           *iupper,
+                                NALU_HYPRE_Int            var,
+                                NALU_HYPRE_Complex       *values);
 
 /**
  * Add to vector coefficients a box at a time.  The data in \e values is
- * ordered as in \ref HYPRE_SStructVectorSetBoxValues.
+ * ordered as in \ref NALU_HYPRE_SStructVectorSetBoxValues.
  *
  * NOTE: Users are required to set values on all processes that own the
  * associated variables.  This means that some data will be multiply defined.
  **/
-HYPRE_Int
-HYPRE_SStructVectorAddToBoxValues(HYPRE_SStructVector  vector,
-                                  HYPRE_Int            part,
-                                  HYPRE_Int           *ilower,
-                                  HYPRE_Int           *iupper,
-                                  HYPRE_Int            var,
-                                  HYPRE_Complex       *values);
+NALU_HYPRE_Int
+NALU_HYPRE_SStructVectorAddToBoxValues(NALU_HYPRE_SStructVector  vector,
+                                  NALU_HYPRE_Int            part,
+                                  NALU_HYPRE_Int           *ilower,
+                                  NALU_HYPRE_Int           *iupper,
+                                  NALU_HYPRE_Int            var,
+                                  NALU_HYPRE_Complex       *values);
 
 /**
  * Set vector coefficients a box at a time.  The \e values array is logically
  * box shaped with value-box extents \e vilower and \e viupper that must
  * contain the set-box extents \e ilower and \e iupper .  The data in the
- * \e values array is ordered as in \ref HYPRE_SStructVectorSetBoxValues,
+ * \e values array is ordered as in \ref NALU_HYPRE_SStructVectorSetBoxValues,
  * but based on the value-box extents.
  **/
-HYPRE_Int
-HYPRE_SStructVectorSetBoxValues2(HYPRE_SStructVector  vector,
-                                 HYPRE_Int            part,
-                                 HYPRE_Int           *ilower,
-                                 HYPRE_Int           *iupper,
-                                 HYPRE_Int            var,
-                                 HYPRE_Int           *vilower,
-                                 HYPRE_Int           *viupper,
-                                 HYPRE_Complex       *values);
+NALU_HYPRE_Int
+NALU_HYPRE_SStructVectorSetBoxValues2(NALU_HYPRE_SStructVector  vector,
+                                 NALU_HYPRE_Int            part,
+                                 NALU_HYPRE_Int           *ilower,
+                                 NALU_HYPRE_Int           *iupper,
+                                 NALU_HYPRE_Int            var,
+                                 NALU_HYPRE_Int           *vilower,
+                                 NALU_HYPRE_Int           *viupper,
+                                 NALU_HYPRE_Complex       *values);
 
 /**
  * Add to vector coefficients a box at a time.  The data in \e values is
- * ordered as in \ref HYPRE_SStructVectorSetBoxValues2.
+ * ordered as in \ref NALU_HYPRE_SStructVectorSetBoxValues2.
  **/
-HYPRE_Int
-HYPRE_SStructVectorAddToBoxValues2(HYPRE_SStructVector  vector,
-                                   HYPRE_Int            part,
-                                   HYPRE_Int           *ilower,
-                                   HYPRE_Int           *iupper,
-                                   HYPRE_Int            var,
-                                   HYPRE_Int           *vilower,
-                                   HYPRE_Int           *viupper,
-                                   HYPRE_Complex       *values);
+NALU_HYPRE_Int
+NALU_HYPRE_SStructVectorAddToBoxValues2(NALU_HYPRE_SStructVector  vector,
+                                   NALU_HYPRE_Int            part,
+                                   NALU_HYPRE_Int           *ilower,
+                                   NALU_HYPRE_Int           *iupper,
+                                   NALU_HYPRE_Int            var,
+                                   NALU_HYPRE_Int           *vilower,
+                                   NALU_HYPRE_Int           *viupper,
+                                   NALU_HYPRE_Complex       *values);
 
 /**
  * Add finite element vector coefficients a box at a time.  The data in \e
  * values is organized as an array of element vectors ordered as in \ref
- * HYPRE_SStructVectorSetBoxValues.  The layout of the data entries of each
+ * NALU_HYPRE_SStructVectorSetBoxValues.  The layout of the data entries of each
  * element vector is determined by the routine \ref
- * HYPRE_SStructGridSetFEMOrdering.
+ * NALU_HYPRE_SStructGridSetFEMOrdering.
  **/
-HYPRE_Int
-HYPRE_SStructVectorAddFEMBoxValues(HYPRE_SStructVector  vector,
-                                   HYPRE_Int            part,
-                                   HYPRE_Int           *ilower,
-                                   HYPRE_Int           *iupper,
-                                   HYPRE_Complex       *values);
+NALU_HYPRE_Int
+NALU_HYPRE_SStructVectorAddFEMBoxValues(NALU_HYPRE_SStructVector  vector,
+                                   NALU_HYPRE_Int            part,
+                                   NALU_HYPRE_Int           *ilower,
+                                   NALU_HYPRE_Int           *iupper,
+                                   NALU_HYPRE_Complex       *values);
 
 /**
  * Finalize the construction of the vector before using.
  **/
-HYPRE_Int
-HYPRE_SStructVectorAssemble(HYPRE_SStructVector vector);
+NALU_HYPRE_Int
+NALU_HYPRE_SStructVectorAssemble(NALU_HYPRE_SStructVector vector);
 
 /**
  * Get vector coefficients a box at a time.  The data in \e values is ordered
- * as in \ref HYPRE_SStructVectorSetBoxValues.  Users must first call the
- * routine \ref HYPRE_SStructVectorGather to ensure that data owned by multiple
+ * as in \ref NALU_HYPRE_SStructVectorSetBoxValues.  Users must first call the
+ * routine \ref NALU_HYPRE_SStructVectorGather to ensure that data owned by multiple
  * processes is correct.
  *
  * NOTE: Users may only get values on processes that own the associated
  * variables.
  **/
-HYPRE_Int
-HYPRE_SStructVectorGetBoxValues(HYPRE_SStructVector  vector,
-                                HYPRE_Int            part,
-                                HYPRE_Int           *ilower,
-                                HYPRE_Int           *iupper,
-                                HYPRE_Int            var,
-                                HYPRE_Complex       *values);
+NALU_HYPRE_Int
+NALU_HYPRE_SStructVectorGetBoxValues(NALU_HYPRE_SStructVector  vector,
+                                NALU_HYPRE_Int            part,
+                                NALU_HYPRE_Int           *ilower,
+                                NALU_HYPRE_Int           *iupper,
+                                NALU_HYPRE_Int            var,
+                                NALU_HYPRE_Complex       *values);
 
 /**
  * Get vector coefficients a box at a time.  The data in \e values is ordered
- * as in \ref HYPRE_SStructVectorSetBoxValues2.
+ * as in \ref NALU_HYPRE_SStructVectorSetBoxValues2.
  **/
-HYPRE_Int
-HYPRE_SStructVectorGetBoxValues2(HYPRE_SStructVector  vector,
-                                 HYPRE_Int            part,
-                                 HYPRE_Int           *ilower,
-                                 HYPRE_Int           *iupper,
-                                 HYPRE_Int            var,
-                                 HYPRE_Int           *vilower,
-                                 HYPRE_Int           *viupper,
-                                 HYPRE_Complex       *values);
+NALU_HYPRE_Int
+NALU_HYPRE_SStructVectorGetBoxValues2(NALU_HYPRE_SStructVector  vector,
+                                 NALU_HYPRE_Int            part,
+                                 NALU_HYPRE_Int           *ilower,
+                                 NALU_HYPRE_Int           *iupper,
+                                 NALU_HYPRE_Int            var,
+                                 NALU_HYPRE_Int           *vilower,
+                                 NALU_HYPRE_Int           *viupper,
+                                 NALU_HYPRE_Complex       *values);
 
 /**
  * Does this even make sense to implement?
  */
-HYPRE_Int
-HYPRE_SStructVectorGetFEMBoxValues(HYPRE_SStructVector  vector,
-                                   HYPRE_Int            part,
-                                   HYPRE_Int           *ilower,
-                                   HYPRE_Int           *iupper,
-                                   HYPRE_Complex       *values);
+NALU_HYPRE_Int
+NALU_HYPRE_SStructVectorGetFEMBoxValues(NALU_HYPRE_SStructVector  vector,
+                                   NALU_HYPRE_Int            part,
+                                   NALU_HYPRE_Int           *ilower,
+                                   NALU_HYPRE_Int           *iupper,
+                                   NALU_HYPRE_Complex       *values);
 
 /**
  * Gather vector data so that efficient \c GetValues can be done.  This
@@ -1076,44 +1076,44 @@ HYPRE_SStructVectorGetFEMBoxValues(HYPRE_SStructVector  vector,
  * correct and consistent values are returned, especially for non cell-centered
  * data that is shared between more than one processor.
  **/
-HYPRE_Int
-HYPRE_SStructVectorGather(HYPRE_SStructVector vector);
+NALU_HYPRE_Int
+NALU_HYPRE_SStructVectorGather(NALU_HYPRE_SStructVector vector);
 
 /**
  * Set the storage type of the vector object to be constructed.  Currently, \e
- * type can be either \c HYPRE_SSTRUCT (the default), \c HYPRE_STRUCT,
- * or \c HYPRE_PARCSR.
+ * type can be either \c NALU_HYPRE_SSTRUCT (the default), \c NALU_HYPRE_STRUCT,
+ * or \c NALU_HYPRE_PARCSR.
  *
- * @see HYPRE_SStructVectorGetObject
+ * @see NALU_HYPRE_SStructVectorGetObject
  **/
-HYPRE_Int
-HYPRE_SStructVectorSetObjectType(HYPRE_SStructVector  vector,
-                                 HYPRE_Int            type);
+NALU_HYPRE_Int
+NALU_HYPRE_SStructVectorSetObjectType(NALU_HYPRE_SStructVector  vector,
+                                 NALU_HYPRE_Int            type);
 
 /**
  * Get a reference to the constructed vector object.
  *
- * @see HYPRE_SStructVectorSetObjectType
+ * @see NALU_HYPRE_SStructVectorSetObjectType
  **/
-HYPRE_Int
-HYPRE_SStructVectorGetObject(HYPRE_SStructVector   vector,
+NALU_HYPRE_Int
+NALU_HYPRE_SStructVectorGetObject(NALU_HYPRE_SStructVector   vector,
                              void                **object);
 
 /**
  * Print the vector to file.  This is mainly for debugging purposes.
  **/
-HYPRE_Int
-HYPRE_SStructVectorPrint(const char          *filename,
-                         HYPRE_SStructVector  vector,
-                         HYPRE_Int            all);
+NALU_HYPRE_Int
+NALU_HYPRE_SStructVectorPrint(const char          *filename,
+                         NALU_HYPRE_SStructVector  vector,
+                         NALU_HYPRE_Int            all);
 
 /**
  * Read the vector from file.  This is mainly for debugging purposes.
  **/
-HYPRE_Int
-HYPRE_SStructVectorRead( MPI_Comm             comm,
+NALU_HYPRE_Int
+NALU_HYPRE_SStructVectorRead( MPI_Comm             comm,
                          const char          *filename,
-                         HYPRE_SStructVector *vector_ptr );
+                         NALU_HYPRE_SStructVector *vector_ptr );
 
 /**@}*/
 /**@}*/

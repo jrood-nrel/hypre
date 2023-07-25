@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_Euclid.h"
+#include "_nalu_hypre_Euclid.h"
 /* #include "Numbering_dh.h" */
 /* #include "Mat_dh.h" */
 /* #include "Hash_i_dh.h" */
@@ -63,14 +63,14 @@ Then in the matvec, no reordering of the data is needed.
 void Numbering_dhSetup(Numbering_dh numb, Mat_dh mat)
 {
   START_FUNC_DH
-  HYPRE_Int       i, len, *cval = mat->cval;
-  HYPRE_Int       num_ext, num_extLo, num_extHi;
-  HYPRE_Int       m = mat->m, size;
+  NALU_HYPRE_Int       i, len, *cval = mat->cval;
+  NALU_HYPRE_Int       num_ext, num_extLo, num_extHi;
+  NALU_HYPRE_Int       m = mat->m, size;
   Hash_i_dh global_to_local_hash;
-  HYPRE_Int       first = mat->beg_row, last  = first+m;
-  HYPRE_Int       *idx_ext;
-  HYPRE_Int       data;
-/*  HYPRE_Int       debug = false; */
+  NALU_HYPRE_Int       first = mat->beg_row, last  = first+m;
+  NALU_HYPRE_Int       *idx_ext;
+  NALU_HYPRE_Int       data;
+/*  NALU_HYPRE_Int       debug = false; */
 
 /*   if (logFile != NULL && numb->debug) debug = true; */
 
@@ -84,7 +84,7 @@ void Numbering_dhSetup(Numbering_dh numb, Mat_dh mat)
   Hash_i_dhCreate(&(numb->global_to_local), m); CHECK_V_ERROR;
 
   global_to_local_hash = numb->global_to_local;
-  idx_ext = numb->idx_ext = (HYPRE_Int*)MALLOC_DH(size*sizeof(HYPRE_Int)); CHECK_V_ERROR;
+  idx_ext = numb->idx_ext = (NALU_HYPRE_Int*)MALLOC_DH(size*sizeof(NALU_HYPRE_Int)); CHECK_V_ERROR;
   
   /* find all external indices; at the end of this block, 
      idx_ext[] will contain an unsorted list of external indices.
@@ -92,7 +92,7 @@ void Numbering_dhSetup(Numbering_dh numb, Mat_dh mat)
   len = mat->rp[m];
   num_ext = num_extLo = num_extHi = 0;
   for (i=0; i<len; i++) {       /* for each nonzero "index" in the matrix */
-    HYPRE_Int index = cval[i];
+    NALU_HYPRE_Int index = cval[i];
 
     /* Only interested in external indices */
     if (index < first || index >= last) {
@@ -108,9 +108,9 @@ void Numbering_dhSetup(Numbering_dh numb, Mat_dh mat)
          */
         /* RL : why ``m+num_ext'' instead of ``num_ext+1'' ??? */
         if (m+num_ext >= size) {
-          HYPRE_Int newSize = (HYPRE_Int)hypre_max(m+num_ext+1, size*1.5);  /* heuristic */
-          HYPRE_Int *tmp = (HYPRE_Int*)MALLOC_DH(newSize*sizeof(HYPRE_Int)); CHECK_V_ERROR;
-          hypre_TMemcpy(tmp,  idx_ext, size, size, HYPRE_MEMORY_HOST, HYPRE_MEMORY_HOST);
+          NALU_HYPRE_Int newSize = (NALU_HYPRE_Int)nalu_hypre_max(m+num_ext+1, size*1.5);  /* heuristic */
+          NALU_HYPRE_Int *tmp = (NALU_HYPRE_Int*)MALLOC_DH(newSize*sizeof(NALU_HYPRE_Int)); CHECK_V_ERROR;
+          nalu_hypre_TMemcpy(tmp,  idx_ext, size, size, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_HOST);
           FREE_DH(idx_ext); CHECK_V_ERROR;
           size = numb->size = newSize;
           numb->idx_ext = idx_ext = tmp;
@@ -149,25 +149,25 @@ void Numbering_dhSetup(Numbering_dh numb, Mat_dh mat)
 
 #undef __FUNC__
 #define __FUNC__ "Numbering_dhGlobalToLocal"
-void Numbering_dhGlobalToLocal(Numbering_dh numb, HYPRE_Int len, 
-                                      HYPRE_Int *global, HYPRE_Int *local)
+void Numbering_dhGlobalToLocal(Numbering_dh numb, NALU_HYPRE_Int len, 
+                                      NALU_HYPRE_Int *global, NALU_HYPRE_Int *local)
 {
   START_FUNC_DH
-  HYPRE_Int i;
-  HYPRE_Int first = numb->first;
-  HYPRE_Int last = first + numb->m;
-  HYPRE_Int data;
+  NALU_HYPRE_Int i;
+  NALU_HYPRE_Int first = numb->first;
+  NALU_HYPRE_Int last = first + numb->m;
+  NALU_HYPRE_Int data;
   Hash_i_dh  global_to_local = numb->global_to_local;
 
   for (i=0; i<len; i++) {
-    HYPRE_Int idxGlobal = global[i];
+    NALU_HYPRE_Int idxGlobal = global[i];
     if (idxGlobal >= first && idxGlobal < last) {
       local[i] = idxGlobal - first;
        /* note: for matvec setup, numb->num_extLo = 0. */
     } else {
       data = Hash_i_dhLookup(global_to_local, idxGlobal); CHECK_V_ERROR;
       if (data == -1) {
-        hypre_sprintf(msgBuf_dh, "global index %i not found in map\n", idxGlobal);
+        nalu_hypre_sprintf(msgBuf_dh, "global index %i not found in map\n", idxGlobal);
         SET_V_ERROR(msgBuf_dh);
       } else {
         local[i] = data;

@@ -5,14 +5,14 @@
 
 include ../config/Makefile.config
 
-HYPRE_DIST_LS_DIRS =\
+NALU_HYPRE_DIST_LS_DIRS =\
  pilut\
  ParaSails\
  Euclid
 
 all:
 	@ \
-	for i in ${HYPRE_DIST_LS_DIRS}; \
+	for i in ${NALU_HYPRE_DIST_LS_DIRS}; \
 	do \
 	  if [ -d $$i ]; \
 	  then \
@@ -23,7 +23,7 @@ all:
 
 install:
 	@ \
-	for i in ${HYPRE_DIST_LS_DIRS}; \
+	for i in ${NALU_HYPRE_DIST_LS_DIRS}; \
 	do \
 	  if [ -d $$i ]; \
 	  then \
@@ -34,7 +34,7 @@ install:
 
 clean:
 	@ \
-	for i in ${HYPRE_DIST_LS_DIRS}; \
+	for i in ${NALU_HYPRE_DIST_LS_DIRS}; \
 	do \
 	  if [ -d $$i ]; \
 	  then \
@@ -44,7 +44,7 @@ clean:
 
 distclean:
 	@ \
-	for i in ${HYPRE_DIST_LS_DIRS}; \
+	for i in ${NALU_HYPRE_DIST_LS_DIRS}; \
 	do \
 	  if [ -d $$i ]; \
 	  then \

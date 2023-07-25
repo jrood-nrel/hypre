@@ -5,12 +5,12 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#ifndef HYPRE_STRUCT_LS_HEADER
-#define HYPRE_STRUCT_LS_HEADER
+#ifndef NALU_HYPRE_STRUCT_LS_HEADER
+#define NALU_HYPRE_STRUCT_LS_HEADER
 
-#include "HYPRE_utilities.h"
-#include "HYPRE_struct_mv.h"
-#include "HYPRE_lobpcg.h"
+#include "NALU_HYPRE_utilities.h"
+#include "NALU_HYPRE_struct_mv.h"
+#include "NALU_HYPRE_lobpcg.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -37,30 +37,30 @@ extern "C" {
  * @{
  **/
 
-struct hypre_StructSolver_struct;
+struct nalu_hypre_StructSolver_struct;
 /**
  * The solver object.
  **/
-typedef struct hypre_StructSolver_struct *HYPRE_StructSolver;
+typedef struct nalu_hypre_StructSolver_struct *NALU_HYPRE_StructSolver;
 
-typedef HYPRE_Int (*HYPRE_PtrToStructSolverFcn)(HYPRE_StructSolver,
-                                                HYPRE_StructMatrix,
-                                                HYPRE_StructVector,
-                                                HYPRE_StructVector);
+typedef NALU_HYPRE_Int (*NALU_HYPRE_PtrToStructSolverFcn)(NALU_HYPRE_StructSolver,
+                                                NALU_HYPRE_StructMatrix,
+                                                NALU_HYPRE_StructVector,
+                                                NALU_HYPRE_StructVector);
 
-#ifndef HYPRE_MODIFYPC
-#define HYPRE_MODIFYPC
-/* if pc not defined, then may need HYPRE_SOLVER also */
+#ifndef NALU_HYPRE_MODIFYPC
+#define NALU_HYPRE_MODIFYPC
+/* if pc not defined, then may need NALU_HYPRE_SOLVER also */
 
-#ifndef HYPRE_SOLVER_STRUCT
-#define HYPRE_SOLVER_STRUCT
-struct hypre_Solver_struct;
-typedef struct hypre_Solver_struct *HYPRE_Solver;
+#ifndef NALU_HYPRE_SOLVER_STRUCT
+#define NALU_HYPRE_SOLVER_STRUCT
+struct nalu_hypre_Solver_struct;
+typedef struct nalu_hypre_Solver_struct *NALU_HYPRE_Solver;
 #endif
 
-typedef HYPRE_Int (*HYPRE_PtrToModifyPCFcn)(HYPRE_Solver,
-                                            HYPRE_Int,
-                                            HYPRE_Real);
+typedef NALU_HYPRE_Int (*NALU_HYPRE_PtrToModifyPCFcn)(NALU_HYPRE_Solver,
+                                            NALU_HYPRE_Int,
+                                            NALU_HYPRE_Real);
 #endif
 
 /**@}*/
@@ -77,8 +77,8 @@ typedef HYPRE_Int (*HYPRE_PtrToModifyPCFcn)(HYPRE_Solver,
 /**
  * Create a solver object.
  **/
-HYPRE_Int HYPRE_StructJacobiCreate(MPI_Comm            comm,
-                                   HYPRE_StructSolver *solver);
+NALU_HYPRE_Int NALU_HYPRE_StructJacobiCreate(MPI_Comm            comm,
+                                   NALU_HYPRE_StructSolver *solver);
 
 /**
  * Destroy a solver object.  An object should be explicitly destroyed
@@ -89,71 +89,71 @@ HYPRE_Int HYPRE_StructJacobiCreate(MPI_Comm            comm,
  * references to the object.  The object will then be destroyed when
  * all internal reference counts go to zero.
  **/
-HYPRE_Int HYPRE_StructJacobiDestroy(HYPRE_StructSolver solver);
+NALU_HYPRE_Int NALU_HYPRE_StructJacobiDestroy(NALU_HYPRE_StructSolver solver);
 
 /**
  * Prepare to solve the system.  The coefficient data in \e b and \e x is
  * ignored here, but information about the layout of the data may be used.
  **/
-HYPRE_Int HYPRE_StructJacobiSetup(HYPRE_StructSolver solver,
-                                  HYPRE_StructMatrix A,
-                                  HYPRE_StructVector b,
-                                  HYPRE_StructVector x);
+NALU_HYPRE_Int NALU_HYPRE_StructJacobiSetup(NALU_HYPRE_StructSolver solver,
+                                  NALU_HYPRE_StructMatrix A,
+                                  NALU_HYPRE_StructVector b,
+                                  NALU_HYPRE_StructVector x);
 
 /**
  * Solve the system.
  **/
-HYPRE_Int HYPRE_StructJacobiSolve(HYPRE_StructSolver solver,
-                                  HYPRE_StructMatrix A,
-                                  HYPRE_StructVector b,
-                                  HYPRE_StructVector x);
+NALU_HYPRE_Int NALU_HYPRE_StructJacobiSolve(NALU_HYPRE_StructSolver solver,
+                                  NALU_HYPRE_StructMatrix A,
+                                  NALU_HYPRE_StructVector b,
+                                  NALU_HYPRE_StructVector x);
 
 /**
  * (Optional) Set the convergence tolerance.
  **/
-HYPRE_Int HYPRE_StructJacobiSetTol(HYPRE_StructSolver solver,
-                                   HYPRE_Real         tol);
+NALU_HYPRE_Int NALU_HYPRE_StructJacobiSetTol(NALU_HYPRE_StructSolver solver,
+                                   NALU_HYPRE_Real         tol);
 
 
-HYPRE_Int HYPRE_StructJacobiGetTol(HYPRE_StructSolver solver,
-                                   HYPRE_Real *tol );
+NALU_HYPRE_Int NALU_HYPRE_StructJacobiGetTol(NALU_HYPRE_StructSolver solver,
+                                   NALU_HYPRE_Real *tol );
 
 /**
  * (Optional) Set maximum number of iterations.
  **/
-HYPRE_Int HYPRE_StructJacobiSetMaxIter(HYPRE_StructSolver solver,
-                                       HYPRE_Int          max_iter);
+NALU_HYPRE_Int NALU_HYPRE_StructJacobiSetMaxIter(NALU_HYPRE_StructSolver solver,
+                                       NALU_HYPRE_Int          max_iter);
 
-HYPRE_Int HYPRE_StructJacobiGetMaxIter(HYPRE_StructSolver solver,
-                                       HYPRE_Int *max_iter );
+NALU_HYPRE_Int NALU_HYPRE_StructJacobiGetMaxIter(NALU_HYPRE_StructSolver solver,
+                                       NALU_HYPRE_Int *max_iter );
 
 /**
  * (Optional) Use a zero initial guess.  This allows the solver to cut corners
  * in the case where a zero initial guess is needed (e.g., for preconditioning)
  * to reduce compuational cost.
  **/
-HYPRE_Int HYPRE_StructJacobiSetZeroGuess(HYPRE_StructSolver solver);
+NALU_HYPRE_Int NALU_HYPRE_StructJacobiSetZeroGuess(NALU_HYPRE_StructSolver solver);
 
-HYPRE_Int HYPRE_StructJacobiGetZeroGuess(HYPRE_StructSolver solver,
-                                         HYPRE_Int *zeroguess );
+NALU_HYPRE_Int NALU_HYPRE_StructJacobiGetZeroGuess(NALU_HYPRE_StructSolver solver,
+                                         NALU_HYPRE_Int *zeroguess );
 
 /**
  * (Optional) Use a nonzero initial guess.  This is the default behavior, but
  * this routine allows the user to switch back after using \e SetZeroGuess.
  **/
-HYPRE_Int HYPRE_StructJacobiSetNonZeroGuess(HYPRE_StructSolver solver);
+NALU_HYPRE_Int NALU_HYPRE_StructJacobiSetNonZeroGuess(NALU_HYPRE_StructSolver solver);
 
 /**
  * Return the number of iterations taken.
  **/
-HYPRE_Int HYPRE_StructJacobiGetNumIterations(HYPRE_StructSolver  solver,
-                                             HYPRE_Int          *num_iterations);
+NALU_HYPRE_Int NALU_HYPRE_StructJacobiGetNumIterations(NALU_HYPRE_StructSolver  solver,
+                                             NALU_HYPRE_Int          *num_iterations);
 
 /**
  * Return the norm of the final relative residual.
  **/
-HYPRE_Int HYPRE_StructJacobiGetFinalRelativeResidualNorm(HYPRE_StructSolver  solver,
-                                                         HYPRE_Real         *norm);
+NALU_HYPRE_Int NALU_HYPRE_StructJacobiGetFinalRelativeResidualNorm(NALU_HYPRE_StructSolver  solver,
+                                                         NALU_HYPRE_Real         *norm);
 
 /**@}*/
 
@@ -176,83 +176,83 @@ HYPRE_Int HYPRE_StructJacobiGetFinalRelativeResidualNorm(HYPRE_StructSolver  sol
 /**
  * Create a solver object.
  **/
-HYPRE_Int HYPRE_StructPFMGCreate(MPI_Comm            comm,
-                                 HYPRE_StructSolver *solver);
+NALU_HYPRE_Int NALU_HYPRE_StructPFMGCreate(MPI_Comm            comm,
+                                 NALU_HYPRE_StructSolver *solver);
 
 /**
  * Destroy a solver object.
  **/
-HYPRE_Int HYPRE_StructPFMGDestroy(HYPRE_StructSolver solver);
+NALU_HYPRE_Int NALU_HYPRE_StructPFMGDestroy(NALU_HYPRE_StructSolver solver);
 
 /**
  * Prepare to solve the system.  The coefficient data in \e b and \e x is
  * ignored here, but information about the layout of the data may be used.
  **/
-HYPRE_Int HYPRE_StructPFMGSetup(HYPRE_StructSolver solver,
-                                HYPRE_StructMatrix A,
-                                HYPRE_StructVector b,
-                                HYPRE_StructVector x);
+NALU_HYPRE_Int NALU_HYPRE_StructPFMGSetup(NALU_HYPRE_StructSolver solver,
+                                NALU_HYPRE_StructMatrix A,
+                                NALU_HYPRE_StructVector b,
+                                NALU_HYPRE_StructVector x);
 
 /**
  * Solve the system.
  **/
-HYPRE_Int HYPRE_StructPFMGSolve(HYPRE_StructSolver solver,
-                                HYPRE_StructMatrix A,
-                                HYPRE_StructVector b,
-                                HYPRE_StructVector x);
+NALU_HYPRE_Int NALU_HYPRE_StructPFMGSolve(NALU_HYPRE_StructSolver solver,
+                                NALU_HYPRE_StructMatrix A,
+                                NALU_HYPRE_StructVector b,
+                                NALU_HYPRE_StructVector x);
 
 /**
  * (Optional) Set the convergence tolerance.
  **/
-HYPRE_Int HYPRE_StructPFMGSetTol(HYPRE_StructSolver solver,
-                                 HYPRE_Real         tol);
+NALU_HYPRE_Int NALU_HYPRE_StructPFMGSetTol(NALU_HYPRE_StructSolver solver,
+                                 NALU_HYPRE_Real         tol);
 
-HYPRE_Int HYPRE_StructPFMGGetTol (HYPRE_StructSolver solver,
-                                  HYPRE_Real *tol);
+NALU_HYPRE_Int NALU_HYPRE_StructPFMGGetTol (NALU_HYPRE_StructSolver solver,
+                                  NALU_HYPRE_Real *tol);
 
 /**
  * (Optional) Set maximum number of iterations.
  **/
-HYPRE_Int HYPRE_StructPFMGSetMaxIter(HYPRE_StructSolver solver,
-                                     HYPRE_Int          max_iter);
+NALU_HYPRE_Int NALU_HYPRE_StructPFMGSetMaxIter(NALU_HYPRE_StructSolver solver,
+                                     NALU_HYPRE_Int          max_iter);
 
-HYPRE_Int HYPRE_StructPFMGGetMaxIter(HYPRE_StructSolver solver,
-                                     HYPRE_Int *max_iter);
+NALU_HYPRE_Int NALU_HYPRE_StructPFMGGetMaxIter(NALU_HYPRE_StructSolver solver,
+                                     NALU_HYPRE_Int *max_iter);
 
 /**
  * (Optional) Set maximum number of multigrid grid levels.
  **/
-HYPRE_Int HYPRE_StructPFMGSetMaxLevels(HYPRE_StructSolver solver,
-                                       HYPRE_Int          max_levels);
+NALU_HYPRE_Int NALU_HYPRE_StructPFMGSetMaxLevels(NALU_HYPRE_StructSolver solver,
+                                       NALU_HYPRE_Int          max_levels);
 
-HYPRE_Int HYPRE_StructPFMGGetMaxLevels (HYPRE_StructSolver solver,
-                                        HYPRE_Int *max_levels );
+NALU_HYPRE_Int NALU_HYPRE_StructPFMGGetMaxLevels (NALU_HYPRE_StructSolver solver,
+                                        NALU_HYPRE_Int *max_levels );
 
 /**
  * (Optional) Additionally require that the relative difference in
  * successive iterates be small.
  **/
-HYPRE_Int HYPRE_StructPFMGSetRelChange(HYPRE_StructSolver solver,
-                                       HYPRE_Int          rel_change);
+NALU_HYPRE_Int NALU_HYPRE_StructPFMGSetRelChange(NALU_HYPRE_StructSolver solver,
+                                       NALU_HYPRE_Int          rel_change);
 
-HYPRE_Int HYPRE_StructPFMGGetRelChange (HYPRE_StructSolver solver,
-                                        HYPRE_Int *rel_change);
+NALU_HYPRE_Int NALU_HYPRE_StructPFMGGetRelChange (NALU_HYPRE_StructSolver solver,
+                                        NALU_HYPRE_Int *rel_change);
 
 /**
  * (Optional) Use a zero initial guess.  This allows the solver to cut corners
  * in the case where a zero initial guess is needed (e.g., for preconditioning)
  * to reduce compuational cost.
  **/
-HYPRE_Int HYPRE_StructPFMGSetZeroGuess(HYPRE_StructSolver solver);
+NALU_HYPRE_Int NALU_HYPRE_StructPFMGSetZeroGuess(NALU_HYPRE_StructSolver solver);
 
-HYPRE_Int HYPRE_StructPFMGGetZeroGuess(HYPRE_StructSolver solver,
-                                       HYPRE_Int *zeroguess);
+NALU_HYPRE_Int NALU_HYPRE_StructPFMGGetZeroGuess(NALU_HYPRE_StructSolver solver,
+                                       NALU_HYPRE_Int *zeroguess);
 
 /**
  * (Optional) Use a nonzero initial guess.  This is the default behavior, but
  * this routine allows the user to switch back after using \e SetZeroGuess.
  **/
-HYPRE_Int HYPRE_StructPFMGSetNonZeroGuess(HYPRE_StructSolver solver);
+NALU_HYPRE_Int NALU_HYPRE_StructPFMGSetNonZeroGuess(NALU_HYPRE_StructSolver solver);
 
 /**
  * (Optional) Set relaxation type.
@@ -264,19 +264,19 @@ HYPRE_Int HYPRE_StructPFMGSetNonZeroGuess(HYPRE_StructSolver solver);
  *    - 2 : Red/Black Gauss-Seidel (symmetric: RB pre-relaxation, BR post-relaxation)
  *    - 3 : Red/Black Gauss-Seidel (nonsymmetric: RB pre- and post-relaxation)
  **/
-HYPRE_Int HYPRE_StructPFMGSetRelaxType(HYPRE_StructSolver solver,
-                                       HYPRE_Int          relax_type);
+NALU_HYPRE_Int NALU_HYPRE_StructPFMGSetRelaxType(NALU_HYPRE_StructSolver solver,
+                                       NALU_HYPRE_Int          relax_type);
 
-HYPRE_Int HYPRE_StructPFMGGetRelaxType(HYPRE_StructSolver solver,
-                                       HYPRE_Int *relax_type);
+NALU_HYPRE_Int NALU_HYPRE_StructPFMGGetRelaxType(NALU_HYPRE_StructSolver solver,
+                                       NALU_HYPRE_Int *relax_type);
 
 /*
  * (Optional) Set Jacobi weight (this is purposely not documented)
  */
-HYPRE_Int HYPRE_StructPFMGSetJacobiWeight(HYPRE_StructSolver solver,
-                                          HYPRE_Real         weight);
-HYPRE_Int HYPRE_StructPFMGGetJacobiWeight(HYPRE_StructSolver solver,
-                                          HYPRE_Real        *weight);
+NALU_HYPRE_Int NALU_HYPRE_StructPFMGSetJacobiWeight(NALU_HYPRE_StructSolver solver,
+                                          NALU_HYPRE_Real         weight);
+NALU_HYPRE_Int NALU_HYPRE_StructPFMGGetJacobiWeight(NALU_HYPRE_StructSolver solver,
+                                          NALU_HYPRE_Real        *weight);
 
 
 /**
@@ -291,81 +291,81 @@ HYPRE_Int HYPRE_StructPFMGGetJacobiWeight(HYPRE_StructSolver solver,
  * maintains a 5-pt stencil in 2D and a 7-pt stencil in 3D on all grid levels.
  * The stencil coefficients are computed by averaging techniques.
  **/
-HYPRE_Int HYPRE_StructPFMGSetRAPType(HYPRE_StructSolver solver,
-                                     HYPRE_Int          rap_type);
+NALU_HYPRE_Int NALU_HYPRE_StructPFMGSetRAPType(NALU_HYPRE_StructSolver solver,
+                                     NALU_HYPRE_Int          rap_type);
 
-HYPRE_Int HYPRE_StructPFMGGetRAPType(HYPRE_StructSolver solver,
-                                     HYPRE_Int *rap_type );
+NALU_HYPRE_Int NALU_HYPRE_StructPFMGGetRAPType(NALU_HYPRE_StructSolver solver,
+                                     NALU_HYPRE_Int *rap_type );
 
 /**
  * (Optional) Set number of relaxation sweeps before coarse-grid correction.
  **/
-HYPRE_Int HYPRE_StructPFMGSetNumPreRelax(HYPRE_StructSolver solver,
-                                         HYPRE_Int          num_pre_relax);
+NALU_HYPRE_Int NALU_HYPRE_StructPFMGSetNumPreRelax(NALU_HYPRE_StructSolver solver,
+                                         NALU_HYPRE_Int          num_pre_relax);
 
-HYPRE_Int HYPRE_StructPFMGGetNumPreRelax(HYPRE_StructSolver solver,
-                                         HYPRE_Int *num_pre_relax);
+NALU_HYPRE_Int NALU_HYPRE_StructPFMGGetNumPreRelax(NALU_HYPRE_StructSolver solver,
+                                         NALU_HYPRE_Int *num_pre_relax);
 
 /**
  * (Optional) Set number of relaxation sweeps after coarse-grid correction.
  **/
-HYPRE_Int HYPRE_StructPFMGSetNumPostRelax(HYPRE_StructSolver solver,
-                                          HYPRE_Int          num_post_relax);
+NALU_HYPRE_Int NALU_HYPRE_StructPFMGSetNumPostRelax(NALU_HYPRE_StructSolver solver,
+                                          NALU_HYPRE_Int          num_post_relax);
 
-HYPRE_Int HYPRE_StructPFMGGetNumPostRelax(HYPRE_StructSolver solver,
-                                          HYPRE_Int *num_post_relax);
+NALU_HYPRE_Int NALU_HYPRE_StructPFMGGetNumPostRelax(NALU_HYPRE_StructSolver solver,
+                                          NALU_HYPRE_Int *num_post_relax);
 
 /**
  * (Optional) Skip relaxation on certain grids for isotropic problems.  This can
  * greatly improve efficiency by eliminating unnecessary relaxations when the
  * underlying problem is isotropic.
  **/
-HYPRE_Int HYPRE_StructPFMGSetSkipRelax(HYPRE_StructSolver solver,
-                                       HYPRE_Int          skip_relax);
+NALU_HYPRE_Int NALU_HYPRE_StructPFMGSetSkipRelax(NALU_HYPRE_StructSolver solver,
+                                       NALU_HYPRE_Int          skip_relax);
 
-HYPRE_Int HYPRE_StructPFMGGetSkipRelax(HYPRE_StructSolver solver,
-                                       HYPRE_Int *skip_relax);
+NALU_HYPRE_Int NALU_HYPRE_StructPFMGGetSkipRelax(NALU_HYPRE_StructSolver solver,
+                                       NALU_HYPRE_Int *skip_relax);
 
 /*
  * RE-VISIT
  **/
-HYPRE_Int HYPRE_StructPFMGSetDxyz(HYPRE_StructSolver  solver,
-                                  HYPRE_Real         *dxyz);
+NALU_HYPRE_Int NALU_HYPRE_StructPFMGSetDxyz(NALU_HYPRE_StructSolver  solver,
+                                  NALU_HYPRE_Real         *dxyz);
 
 /**
  * (Optional) Set the amount of logging to do.
  **/
-HYPRE_Int HYPRE_StructPFMGSetLogging(HYPRE_StructSolver solver,
-                                     HYPRE_Int          logging);
+NALU_HYPRE_Int NALU_HYPRE_StructPFMGSetLogging(NALU_HYPRE_StructSolver solver,
+                                     NALU_HYPRE_Int          logging);
 
-HYPRE_Int HYPRE_StructPFMGGetLogging(HYPRE_StructSolver solver,
-                                     HYPRE_Int *logging);
+NALU_HYPRE_Int NALU_HYPRE_StructPFMGGetLogging(NALU_HYPRE_StructSolver solver,
+                                     NALU_HYPRE_Int *logging);
 
 /**
  * (Optional) Set the amount of printing to do to the screen.
  **/
-HYPRE_Int HYPRE_StructPFMGSetPrintLevel(HYPRE_StructSolver solver,
-                                        HYPRE_Int          print_level);
+NALU_HYPRE_Int NALU_HYPRE_StructPFMGSetPrintLevel(NALU_HYPRE_StructSolver solver,
+                                        NALU_HYPRE_Int          print_level);
 
-HYPRE_Int HYPRE_StructPFMGGetPrintLevel(HYPRE_StructSolver solver,
-                                        HYPRE_Int *print_level);
+NALU_HYPRE_Int NALU_HYPRE_StructPFMGGetPrintLevel(NALU_HYPRE_StructSolver solver,
+                                        NALU_HYPRE_Int *print_level);
 
 /**
  * Return the number of iterations taken.
  **/
-HYPRE_Int HYPRE_StructPFMGGetNumIterations(HYPRE_StructSolver  solver,
-                                           HYPRE_Int          *num_iterations);
+NALU_HYPRE_Int NALU_HYPRE_StructPFMGGetNumIterations(NALU_HYPRE_StructSolver  solver,
+                                           NALU_HYPRE_Int          *num_iterations);
 
 /**
  * Return the norm of the final relative residual.
  **/
-HYPRE_Int HYPRE_StructPFMGGetFinalRelativeResidualNorm(HYPRE_StructSolver  solver,
-                                                       HYPRE_Real         *norm);
+NALU_HYPRE_Int NALU_HYPRE_StructPFMGGetFinalRelativeResidualNorm(NALU_HYPRE_StructSolver  solver,
+                                                       NALU_HYPRE_Real         *norm);
 
-#if 0 //defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP)
-HYPRE_Int
-HYPRE_StructPFMGSetDeviceLevel( HYPRE_StructSolver  solver,
-                                HYPRE_Int   device_level  );
+#if 0 //defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
+NALU_HYPRE_Int
+NALU_HYPRE_StructPFMGSetDeviceLevel( NALU_HYPRE_StructSolver  solver,
+                                NALU_HYPRE_Int   device_level  );
 #endif
 /**@}*/
 
@@ -386,136 +386,136 @@ HYPRE_StructPFMGSetDeviceLevel( HYPRE_StructSolver  solver,
 /**
  * Create a solver object.
  **/
-HYPRE_Int HYPRE_StructSMGCreate(MPI_Comm            comm,
-                                HYPRE_StructSolver *solver);
+NALU_HYPRE_Int NALU_HYPRE_StructSMGCreate(MPI_Comm            comm,
+                                NALU_HYPRE_StructSolver *solver);
 
 /**
  * Destroy a solver object.
  **/
-HYPRE_Int HYPRE_StructSMGDestroy(HYPRE_StructSolver solver);
+NALU_HYPRE_Int NALU_HYPRE_StructSMGDestroy(NALU_HYPRE_StructSolver solver);
 
 /**
  * Prepare to solve the system.  The coefficient data in \e b and \e x is
  * ignored here, but information about the layout of the data may be used.
  **/
-HYPRE_Int HYPRE_StructSMGSetup(HYPRE_StructSolver solver,
-                               HYPRE_StructMatrix A,
-                               HYPRE_StructVector b,
-                               HYPRE_StructVector x);
+NALU_HYPRE_Int NALU_HYPRE_StructSMGSetup(NALU_HYPRE_StructSolver solver,
+                               NALU_HYPRE_StructMatrix A,
+                               NALU_HYPRE_StructVector b,
+                               NALU_HYPRE_StructVector x);
 
 /**
  * Solve the system.
  **/
-HYPRE_Int HYPRE_StructSMGSolve(HYPRE_StructSolver solver,
-                               HYPRE_StructMatrix A,
-                               HYPRE_StructVector b,
-                               HYPRE_StructVector x);
+NALU_HYPRE_Int NALU_HYPRE_StructSMGSolve(NALU_HYPRE_StructSolver solver,
+                               NALU_HYPRE_StructMatrix A,
+                               NALU_HYPRE_StructVector b,
+                               NALU_HYPRE_StructVector x);
 
 /*
  * RE-VISIT
  **/
-HYPRE_Int HYPRE_StructSMGSetMemoryUse(HYPRE_StructSolver solver,
-                                      HYPRE_Int          memory_use);
+NALU_HYPRE_Int NALU_HYPRE_StructSMGSetMemoryUse(NALU_HYPRE_StructSolver solver,
+                                      NALU_HYPRE_Int          memory_use);
 
-HYPRE_Int HYPRE_StructSMGGetMemoryUse(HYPRE_StructSolver solver,
-                                      HYPRE_Int *memory_use);
+NALU_HYPRE_Int NALU_HYPRE_StructSMGGetMemoryUse(NALU_HYPRE_StructSolver solver,
+                                      NALU_HYPRE_Int *memory_use);
 
 /**
  * (Optional) Set the convergence tolerance.
  **/
-HYPRE_Int HYPRE_StructSMGSetTol(HYPRE_StructSolver solver,
-                                HYPRE_Real         tol);
+NALU_HYPRE_Int NALU_HYPRE_StructSMGSetTol(NALU_HYPRE_StructSolver solver,
+                                NALU_HYPRE_Real         tol);
 
-HYPRE_Int HYPRE_StructSMGGetTol(HYPRE_StructSolver solver,
-                                HYPRE_Real *tol);
+NALU_HYPRE_Int NALU_HYPRE_StructSMGGetTol(NALU_HYPRE_StructSolver solver,
+                                NALU_HYPRE_Real *tol);
 
 /**
  * (Optional) Set maximum number of iterations.
  **/
-HYPRE_Int HYPRE_StructSMGSetMaxIter(HYPRE_StructSolver solver,
-                                    HYPRE_Int          max_iter);
+NALU_HYPRE_Int NALU_HYPRE_StructSMGSetMaxIter(NALU_HYPRE_StructSolver solver,
+                                    NALU_HYPRE_Int          max_iter);
 
-HYPRE_Int HYPRE_StructSMGGetMaxIter(HYPRE_StructSolver solver,
-                                    HYPRE_Int *max_iter);
+NALU_HYPRE_Int NALU_HYPRE_StructSMGGetMaxIter(NALU_HYPRE_StructSolver solver,
+                                    NALU_HYPRE_Int *max_iter);
 
 /**
  * (Optional) Additionally require that the relative difference in
  * successive iterates be small.
  **/
-HYPRE_Int HYPRE_StructSMGSetRelChange(HYPRE_StructSolver solver,
-                                      HYPRE_Int          rel_change);
+NALU_HYPRE_Int NALU_HYPRE_StructSMGSetRelChange(NALU_HYPRE_StructSolver solver,
+                                      NALU_HYPRE_Int          rel_change);
 
-HYPRE_Int HYPRE_StructSMGGetRelChange(HYPRE_StructSolver solver,
-                                      HYPRE_Int *rel_change);
+NALU_HYPRE_Int NALU_HYPRE_StructSMGGetRelChange(NALU_HYPRE_StructSolver solver,
+                                      NALU_HYPRE_Int *rel_change);
 
 /**
  * (Optional) Use a zero initial guess.  This allows the solver to cut corners
  * in the case where a zero initial guess is needed (e.g., for preconditioning)
  * to reduce compuational cost.
  **/
-HYPRE_Int HYPRE_StructSMGSetZeroGuess(HYPRE_StructSolver solver);
+NALU_HYPRE_Int NALU_HYPRE_StructSMGSetZeroGuess(NALU_HYPRE_StructSolver solver);
 
-HYPRE_Int HYPRE_StructSMGGetZeroGuess(HYPRE_StructSolver solver,
-                                      HYPRE_Int *zeroguess);
+NALU_HYPRE_Int NALU_HYPRE_StructSMGGetZeroGuess(NALU_HYPRE_StructSolver solver,
+                                      NALU_HYPRE_Int *zeroguess);
 
 /**
  * (Optional) Use a nonzero initial guess.  This is the default behavior, but
  * this routine allows the user to switch back after using \e SetZeroGuess.
  **/
-HYPRE_Int HYPRE_StructSMGSetNonZeroGuess(HYPRE_StructSolver solver);
+NALU_HYPRE_Int NALU_HYPRE_StructSMGSetNonZeroGuess(NALU_HYPRE_StructSolver solver);
 
 /**
  * (Optional) Set number of relaxation sweeps before coarse-grid correction.
  **/
-HYPRE_Int HYPRE_StructSMGSetNumPreRelax(HYPRE_StructSolver solver,
-                                        HYPRE_Int          num_pre_relax);
+NALU_HYPRE_Int NALU_HYPRE_StructSMGSetNumPreRelax(NALU_HYPRE_StructSolver solver,
+                                        NALU_HYPRE_Int          num_pre_relax);
 
-HYPRE_Int HYPRE_StructSMGGetNumPreRelax(HYPRE_StructSolver solver,
-                                        HYPRE_Int *num_pre_relax);
+NALU_HYPRE_Int NALU_HYPRE_StructSMGGetNumPreRelax(NALU_HYPRE_StructSolver solver,
+                                        NALU_HYPRE_Int *num_pre_relax);
 
 /**
  * (Optional) Set number of relaxation sweeps after coarse-grid correction.
  **/
-HYPRE_Int HYPRE_StructSMGSetNumPostRelax(HYPRE_StructSolver solver,
-                                         HYPRE_Int          num_post_relax);
+NALU_HYPRE_Int NALU_HYPRE_StructSMGSetNumPostRelax(NALU_HYPRE_StructSolver solver,
+                                         NALU_HYPRE_Int          num_post_relax);
 
-HYPRE_Int HYPRE_StructSMGGetNumPostRelax(HYPRE_StructSolver solver,
-                                         HYPRE_Int *num_post_relax);
+NALU_HYPRE_Int NALU_HYPRE_StructSMGGetNumPostRelax(NALU_HYPRE_StructSolver solver,
+                                         NALU_HYPRE_Int *num_post_relax);
 
 /**
  * (Optional) Set the amount of logging to do.
  **/
-HYPRE_Int HYPRE_StructSMGSetLogging(HYPRE_StructSolver solver,
-                                    HYPRE_Int          logging);
+NALU_HYPRE_Int NALU_HYPRE_StructSMGSetLogging(NALU_HYPRE_StructSolver solver,
+                                    NALU_HYPRE_Int          logging);
 
-HYPRE_Int HYPRE_StructSMGGetLogging(HYPRE_StructSolver solver,
-                                    HYPRE_Int *logging);
+NALU_HYPRE_Int NALU_HYPRE_StructSMGGetLogging(NALU_HYPRE_StructSolver solver,
+                                    NALU_HYPRE_Int *logging);
 
 /**
  * (Optional) Set the amount of printing to do to the screen.
  **/
-HYPRE_Int HYPRE_StructSMGSetPrintLevel(HYPRE_StructSolver solver,
-                                       HYPRE_Int          print_level);
+NALU_HYPRE_Int NALU_HYPRE_StructSMGSetPrintLevel(NALU_HYPRE_StructSolver solver,
+                                       NALU_HYPRE_Int          print_level);
 
-HYPRE_Int HYPRE_StructSMGGetPrintLevel(HYPRE_StructSolver solver,
-                                       HYPRE_Int *print_level);
+NALU_HYPRE_Int NALU_HYPRE_StructSMGGetPrintLevel(NALU_HYPRE_StructSolver solver,
+                                       NALU_HYPRE_Int *print_level);
 
 /**
  * Return the number of iterations taken.
  **/
-HYPRE_Int HYPRE_StructSMGGetNumIterations(HYPRE_StructSolver  solver,
-                                          HYPRE_Int          *num_iterations);
+NALU_HYPRE_Int NALU_HYPRE_StructSMGGetNumIterations(NALU_HYPRE_StructSolver  solver,
+                                          NALU_HYPRE_Int          *num_iterations);
 
 /**
  * Return the norm of the final relative residual.
  **/
-HYPRE_Int HYPRE_StructSMGGetFinalRelativeResidualNorm(HYPRE_StructSolver  solver,
-                                                      HYPRE_Real         *norm);
+NALU_HYPRE_Int NALU_HYPRE_StructSMGGetFinalRelativeResidualNorm(NALU_HYPRE_StructSolver  solver,
+                                                      NALU_HYPRE_Real         *norm);
 
-#if 0 //defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP)
-HYPRE_Int
-HYPRE_StructSMGSetDeviceLevel( HYPRE_StructSolver  solver,
-                               HYPRE_Int   device_level  );
+#if 0 //defined(NALU_HYPRE_USING_CUDA) || defined(NALU_HYPRE_USING_HIP)
+NALU_HYPRE_Int
+NALU_HYPRE_StructSMGSetDeviceLevel( NALU_HYPRE_StructSolver  solver,
+                               NALU_HYPRE_Int   device_level  );
 #endif
 
 /**@}*/
@@ -535,48 +535,48 @@ HYPRE_StructSMGSetDeviceLevel( HYPRE_StructSolver  solver,
 /**
  * Create a solver object.
  **/
-HYPRE_Int HYPRE_StructCycRedCreate(MPI_Comm            comm,
-                                   HYPRE_StructSolver *solver);
+NALU_HYPRE_Int NALU_HYPRE_StructCycRedCreate(MPI_Comm            comm,
+                                   NALU_HYPRE_StructSolver *solver);
 
 /**
  * Destroy a solver object.
  **/
-HYPRE_Int HYPRE_StructCycRedDestroy(HYPRE_StructSolver solver);
+NALU_HYPRE_Int NALU_HYPRE_StructCycRedDestroy(NALU_HYPRE_StructSolver solver);
 
 /**
  * Prepare to solve the system.  The coefficient data in \e b and \e x is
  * ignored here, but information about the layout of the data may be used.
  **/
-HYPRE_Int HYPRE_StructCycRedSetup(HYPRE_StructSolver solver,
-                                  HYPRE_StructMatrix A,
-                                  HYPRE_StructVector b,
-                                  HYPRE_StructVector x);
+NALU_HYPRE_Int NALU_HYPRE_StructCycRedSetup(NALU_HYPRE_StructSolver solver,
+                                  NALU_HYPRE_StructMatrix A,
+                                  NALU_HYPRE_StructVector b,
+                                  NALU_HYPRE_StructVector x);
 
 /**
  * Solve the system.
  **/
-HYPRE_Int HYPRE_StructCycRedSolve(HYPRE_StructSolver solver,
-                                  HYPRE_StructMatrix A,
-                                  HYPRE_StructVector b,
-                                  HYPRE_StructVector x);
+NALU_HYPRE_Int NALU_HYPRE_StructCycRedSolve(NALU_HYPRE_StructSolver solver,
+                                  NALU_HYPRE_StructMatrix A,
+                                  NALU_HYPRE_StructVector b,
+                                  NALU_HYPRE_StructVector x);
 
 /**
  *
  * (Optional) Set the dimension number for the embedded 1D tridiagonal systems.
  * The default is \e tdim = 0.
  **/
-HYPRE_Int HYPRE_StructCycRedSetTDim(HYPRE_StructSolver solver,
-                                    HYPRE_Int          tdim);
+NALU_HYPRE_Int NALU_HYPRE_StructCycRedSetTDim(NALU_HYPRE_StructSolver solver,
+                                    NALU_HYPRE_Int          tdim);
 
 /**
  * (Optional) Set the base index and stride for the embedded 1D systems.  The
  * stride must be equal one in the dimension corresponding to the 1D systems
- * (see \ref HYPRE_StructCycRedSetTDim).
+ * (see \ref NALU_HYPRE_StructCycRedSetTDim).
  **/
-HYPRE_Int HYPRE_StructCycRedSetBase(HYPRE_StructSolver solver,
-                                    HYPRE_Int          ndim,
-                                    HYPRE_Int         *base_index,
-                                    HYPRE_Int         *base_stride);
+NALU_HYPRE_Int NALU_HYPRE_StructCycRedSetBase(NALU_HYPRE_StructSolver solver,
+                                    NALU_HYPRE_Int          ndim,
+                                    NALU_HYPRE_Int         *base_index,
+                                    NALU_HYPRE_Int         *base_stride);
 
 /**@}*/
 
@@ -595,74 +595,74 @@ HYPRE_Int HYPRE_StructCycRedSetBase(HYPRE_StructSolver solver,
 /**
  * Create a solver object.
  **/
-HYPRE_Int HYPRE_StructPCGCreate(MPI_Comm            comm,
-                                HYPRE_StructSolver *solver);
+NALU_HYPRE_Int NALU_HYPRE_StructPCGCreate(MPI_Comm            comm,
+                                NALU_HYPRE_StructSolver *solver);
 
 /**
  * Destroy a solver object.
  **/
-HYPRE_Int HYPRE_StructPCGDestroy(HYPRE_StructSolver solver);
+NALU_HYPRE_Int NALU_HYPRE_StructPCGDestroy(NALU_HYPRE_StructSolver solver);
 
-HYPRE_Int HYPRE_StructPCGSetup(HYPRE_StructSolver solver,
-                               HYPRE_StructMatrix A,
-                               HYPRE_StructVector b,
-                               HYPRE_StructVector x);
+NALU_HYPRE_Int NALU_HYPRE_StructPCGSetup(NALU_HYPRE_StructSolver solver,
+                               NALU_HYPRE_StructMatrix A,
+                               NALU_HYPRE_StructVector b,
+                               NALU_HYPRE_StructVector x);
 
-HYPRE_Int HYPRE_StructPCGSolve(HYPRE_StructSolver solver,
-                               HYPRE_StructMatrix A,
-                               HYPRE_StructVector b,
-                               HYPRE_StructVector x);
+NALU_HYPRE_Int NALU_HYPRE_StructPCGSolve(NALU_HYPRE_StructSolver solver,
+                               NALU_HYPRE_StructMatrix A,
+                               NALU_HYPRE_StructVector b,
+                               NALU_HYPRE_StructVector x);
 
-HYPRE_Int HYPRE_StructPCGSetTol(HYPRE_StructSolver solver,
-                                HYPRE_Real         tol);
+NALU_HYPRE_Int NALU_HYPRE_StructPCGSetTol(NALU_HYPRE_StructSolver solver,
+                                NALU_HYPRE_Real         tol);
 
-HYPRE_Int HYPRE_StructPCGSetAbsoluteTol(HYPRE_StructSolver solver,
-                                        HYPRE_Real         tol);
+NALU_HYPRE_Int NALU_HYPRE_StructPCGSetAbsoluteTol(NALU_HYPRE_StructSolver solver,
+                                        NALU_HYPRE_Real         tol);
 
-HYPRE_Int HYPRE_StructPCGSetMaxIter(HYPRE_StructSolver solver,
-                                    HYPRE_Int          max_iter);
+NALU_HYPRE_Int NALU_HYPRE_StructPCGSetMaxIter(NALU_HYPRE_StructSolver solver,
+                                    NALU_HYPRE_Int          max_iter);
 
-HYPRE_Int HYPRE_StructPCGSetTwoNorm(HYPRE_StructSolver solver,
-                                    HYPRE_Int          two_norm);
+NALU_HYPRE_Int NALU_HYPRE_StructPCGSetTwoNorm(NALU_HYPRE_StructSolver solver,
+                                    NALU_HYPRE_Int          two_norm);
 
-HYPRE_Int HYPRE_StructPCGSetRelChange(HYPRE_StructSolver solver,
-                                      HYPRE_Int          rel_change);
+NALU_HYPRE_Int NALU_HYPRE_StructPCGSetRelChange(NALU_HYPRE_StructSolver solver,
+                                      NALU_HYPRE_Int          rel_change);
 
-HYPRE_Int HYPRE_StructPCGSetPrecond(HYPRE_StructSolver         solver,
-                                    HYPRE_PtrToStructSolverFcn precond,
-                                    HYPRE_PtrToStructSolverFcn precond_setup,
-                                    HYPRE_StructSolver         precond_solver);
+NALU_HYPRE_Int NALU_HYPRE_StructPCGSetPrecond(NALU_HYPRE_StructSolver         solver,
+                                    NALU_HYPRE_PtrToStructSolverFcn precond,
+                                    NALU_HYPRE_PtrToStructSolverFcn precond_setup,
+                                    NALU_HYPRE_StructSolver         precond_solver);
 
-HYPRE_Int HYPRE_StructPCGSetLogging(HYPRE_StructSolver solver,
-                                    HYPRE_Int          logging);
+NALU_HYPRE_Int NALU_HYPRE_StructPCGSetLogging(NALU_HYPRE_StructSolver solver,
+                                    NALU_HYPRE_Int          logging);
 
-HYPRE_Int HYPRE_StructPCGSetPrintLevel(HYPRE_StructSolver solver,
-                                       HYPRE_Int          level);
+NALU_HYPRE_Int NALU_HYPRE_StructPCGSetPrintLevel(NALU_HYPRE_StructSolver solver,
+                                       NALU_HYPRE_Int          level);
 
-HYPRE_Int HYPRE_StructPCGGetNumIterations(HYPRE_StructSolver  solver,
-                                          HYPRE_Int          *num_iterations);
+NALU_HYPRE_Int NALU_HYPRE_StructPCGGetNumIterations(NALU_HYPRE_StructSolver  solver,
+                                          NALU_HYPRE_Int          *num_iterations);
 
-HYPRE_Int HYPRE_StructPCGGetFinalRelativeResidualNorm(HYPRE_StructSolver  solver,
-                                                      HYPRE_Real         *norm);
+NALU_HYPRE_Int NALU_HYPRE_StructPCGGetFinalRelativeResidualNorm(NALU_HYPRE_StructSolver  solver,
+                                                      NALU_HYPRE_Real         *norm);
 
-HYPRE_Int HYPRE_StructPCGGetResidual(HYPRE_StructSolver   solver,
+NALU_HYPRE_Int NALU_HYPRE_StructPCGGetResidual(NALU_HYPRE_StructSolver   solver,
                                      void               **residual);
 
 /**
  * Setup routine for diagonal preconditioning.
  **/
-HYPRE_Int HYPRE_StructDiagScaleSetup(HYPRE_StructSolver solver,
-                                     HYPRE_StructMatrix A,
-                                     HYPRE_StructVector y,
-                                     HYPRE_StructVector x);
+NALU_HYPRE_Int NALU_HYPRE_StructDiagScaleSetup(NALU_HYPRE_StructSolver solver,
+                                     NALU_HYPRE_StructMatrix A,
+                                     NALU_HYPRE_StructVector y,
+                                     NALU_HYPRE_StructVector x);
 
 /**
  * Solve routine for diagonal preconditioning.
  **/
-HYPRE_Int HYPRE_StructDiagScale(HYPRE_StructSolver solver,
-                                HYPRE_StructMatrix HA,
-                                HYPRE_StructVector Hy,
-                                HYPRE_StructVector Hx);
+NALU_HYPRE_Int NALU_HYPRE_StructDiagScale(NALU_HYPRE_StructSolver solver,
+                                NALU_HYPRE_StructMatrix HA,
+                                NALU_HYPRE_StructVector Hy,
+                                NALU_HYPRE_StructVector Hx);
 
 /**@}*/
 
@@ -681,55 +681,55 @@ HYPRE_Int HYPRE_StructDiagScale(HYPRE_StructSolver solver,
 /**
  * Create a solver object.
  **/
-HYPRE_Int HYPRE_StructGMRESCreate(MPI_Comm            comm,
-                                  HYPRE_StructSolver *solver);
+NALU_HYPRE_Int NALU_HYPRE_StructGMRESCreate(MPI_Comm            comm,
+                                  NALU_HYPRE_StructSolver *solver);
 
 
 /**
  * Destroy a solver object.
  **/
-HYPRE_Int HYPRE_StructGMRESDestroy(HYPRE_StructSolver solver);
+NALU_HYPRE_Int NALU_HYPRE_StructGMRESDestroy(NALU_HYPRE_StructSolver solver);
 
-HYPRE_Int HYPRE_StructGMRESSetup(HYPRE_StructSolver solver,
-                                 HYPRE_StructMatrix A,
-                                 HYPRE_StructVector b,
-                                 HYPRE_StructVector x);
+NALU_HYPRE_Int NALU_HYPRE_StructGMRESSetup(NALU_HYPRE_StructSolver solver,
+                                 NALU_HYPRE_StructMatrix A,
+                                 NALU_HYPRE_StructVector b,
+                                 NALU_HYPRE_StructVector x);
 
-HYPRE_Int HYPRE_StructGMRESSolve(HYPRE_StructSolver solver,
-                                 HYPRE_StructMatrix A,
-                                 HYPRE_StructVector b,
-                                 HYPRE_StructVector x);
+NALU_HYPRE_Int NALU_HYPRE_StructGMRESSolve(NALU_HYPRE_StructSolver solver,
+                                 NALU_HYPRE_StructMatrix A,
+                                 NALU_HYPRE_StructVector b,
+                                 NALU_HYPRE_StructVector x);
 
-HYPRE_Int HYPRE_StructGMRESSetTol(HYPRE_StructSolver solver,
-                                  HYPRE_Real         tol);
+NALU_HYPRE_Int NALU_HYPRE_StructGMRESSetTol(NALU_HYPRE_StructSolver solver,
+                                  NALU_HYPRE_Real         tol);
 
-HYPRE_Int HYPRE_StructGMRESSetAbsoluteTol(HYPRE_StructSolver solver,
-                                          HYPRE_Real         tol);
+NALU_HYPRE_Int NALU_HYPRE_StructGMRESSetAbsoluteTol(NALU_HYPRE_StructSolver solver,
+                                          NALU_HYPRE_Real         tol);
 
-HYPRE_Int HYPRE_StructGMRESSetMaxIter(HYPRE_StructSolver solver,
-                                      HYPRE_Int          max_iter);
+NALU_HYPRE_Int NALU_HYPRE_StructGMRESSetMaxIter(NALU_HYPRE_StructSolver solver,
+                                      NALU_HYPRE_Int          max_iter);
 
-HYPRE_Int HYPRE_StructGMRESSetKDim(HYPRE_StructSolver solver,
-                                   HYPRE_Int          k_dim);
+NALU_HYPRE_Int NALU_HYPRE_StructGMRESSetKDim(NALU_HYPRE_StructSolver solver,
+                                   NALU_HYPRE_Int          k_dim);
 
-HYPRE_Int HYPRE_StructGMRESSetPrecond(HYPRE_StructSolver         solver,
-                                      HYPRE_PtrToStructSolverFcn precond,
-                                      HYPRE_PtrToStructSolverFcn precond_setup,
-                                      HYPRE_StructSolver         precond_solver);
+NALU_HYPRE_Int NALU_HYPRE_StructGMRESSetPrecond(NALU_HYPRE_StructSolver         solver,
+                                      NALU_HYPRE_PtrToStructSolverFcn precond,
+                                      NALU_HYPRE_PtrToStructSolverFcn precond_setup,
+                                      NALU_HYPRE_StructSolver         precond_solver);
 
-HYPRE_Int HYPRE_StructGMRESSetLogging(HYPRE_StructSolver solver,
-                                      HYPRE_Int          logging);
+NALU_HYPRE_Int NALU_HYPRE_StructGMRESSetLogging(NALU_HYPRE_StructSolver solver,
+                                      NALU_HYPRE_Int          logging);
 
-HYPRE_Int HYPRE_StructGMRESSetPrintLevel(HYPRE_StructSolver solver,
-                                         HYPRE_Int          level);
+NALU_HYPRE_Int NALU_HYPRE_StructGMRESSetPrintLevel(NALU_HYPRE_StructSolver solver,
+                                         NALU_HYPRE_Int          level);
 
-HYPRE_Int HYPRE_StructGMRESGetNumIterations(HYPRE_StructSolver  solver,
-                                            HYPRE_Int          *num_iterations);
+NALU_HYPRE_Int NALU_HYPRE_StructGMRESGetNumIterations(NALU_HYPRE_StructSolver  solver,
+                                            NALU_HYPRE_Int          *num_iterations);
 
-HYPRE_Int HYPRE_StructGMRESGetFinalRelativeResidualNorm(HYPRE_StructSolver  solver,
-                                                        HYPRE_Real         *norm);
+NALU_HYPRE_Int NALU_HYPRE_StructGMRESGetFinalRelativeResidualNorm(NALU_HYPRE_StructSolver  solver,
+                                                        NALU_HYPRE_Real         *norm);
 
-HYPRE_Int HYPRE_StructGMRESGetResidual(HYPRE_StructSolver   solver,
+NALU_HYPRE_Int NALU_HYPRE_StructGMRESGetResidual(NALU_HYPRE_StructSolver   solver,
                                        void               **residual);
 /**@}*/
 
@@ -748,58 +748,58 @@ HYPRE_Int HYPRE_StructGMRESGetResidual(HYPRE_StructSolver   solver,
 /**
  * Create a solver object.
  **/
-HYPRE_Int HYPRE_StructFlexGMRESCreate(MPI_Comm            comm,
-                                      HYPRE_StructSolver *solver);
+NALU_HYPRE_Int NALU_HYPRE_StructFlexGMRESCreate(MPI_Comm            comm,
+                                      NALU_HYPRE_StructSolver *solver);
 
 /**
  * Destroy a solver object.
  **/
-HYPRE_Int HYPRE_StructFlexGMRESDestroy(HYPRE_StructSolver solver);
+NALU_HYPRE_Int NALU_HYPRE_StructFlexGMRESDestroy(NALU_HYPRE_StructSolver solver);
 
-HYPRE_Int HYPRE_StructFlexGMRESSetup(HYPRE_StructSolver solver,
-                                     HYPRE_StructMatrix A,
-                                     HYPRE_StructVector b,
-                                     HYPRE_StructVector x);
+NALU_HYPRE_Int NALU_HYPRE_StructFlexGMRESSetup(NALU_HYPRE_StructSolver solver,
+                                     NALU_HYPRE_StructMatrix A,
+                                     NALU_HYPRE_StructVector b,
+                                     NALU_HYPRE_StructVector x);
 
-HYPRE_Int HYPRE_StructFlexGMRESSolve(HYPRE_StructSolver solver,
-                                     HYPRE_StructMatrix A,
-                                     HYPRE_StructVector b,
-                                     HYPRE_StructVector x);
+NALU_HYPRE_Int NALU_HYPRE_StructFlexGMRESSolve(NALU_HYPRE_StructSolver solver,
+                                     NALU_HYPRE_StructMatrix A,
+                                     NALU_HYPRE_StructVector b,
+                                     NALU_HYPRE_StructVector x);
 
-HYPRE_Int HYPRE_StructFlexGMRESSetTol(HYPRE_StructSolver solver,
-                                      HYPRE_Real         tol);
+NALU_HYPRE_Int NALU_HYPRE_StructFlexGMRESSetTol(NALU_HYPRE_StructSolver solver,
+                                      NALU_HYPRE_Real         tol);
 
-HYPRE_Int HYPRE_StructFlexGMRESSetAbsoluteTol(HYPRE_StructSolver solver,
-                                              HYPRE_Real         tol);
+NALU_HYPRE_Int NALU_HYPRE_StructFlexGMRESSetAbsoluteTol(NALU_HYPRE_StructSolver solver,
+                                              NALU_HYPRE_Real         tol);
 
-HYPRE_Int HYPRE_StructFlexGMRESSetMaxIter(HYPRE_StructSolver solver,
-                                          HYPRE_Int          max_iter);
+NALU_HYPRE_Int NALU_HYPRE_StructFlexGMRESSetMaxIter(NALU_HYPRE_StructSolver solver,
+                                          NALU_HYPRE_Int          max_iter);
 
-HYPRE_Int HYPRE_StructFlexGMRESSetKDim(HYPRE_StructSolver solver,
-                                       HYPRE_Int          k_dim);
+NALU_HYPRE_Int NALU_HYPRE_StructFlexGMRESSetKDim(NALU_HYPRE_StructSolver solver,
+                                       NALU_HYPRE_Int          k_dim);
 
-HYPRE_Int HYPRE_StructFlexGMRESSetPrecond(HYPRE_StructSolver         solver,
-                                          HYPRE_PtrToStructSolverFcn precond,
-                                          HYPRE_PtrToStructSolverFcn precond_setup,
-                                          HYPRE_StructSolver         precond_solver);
+NALU_HYPRE_Int NALU_HYPRE_StructFlexGMRESSetPrecond(NALU_HYPRE_StructSolver         solver,
+                                          NALU_HYPRE_PtrToStructSolverFcn precond,
+                                          NALU_HYPRE_PtrToStructSolverFcn precond_setup,
+                                          NALU_HYPRE_StructSolver         precond_solver);
 
-HYPRE_Int HYPRE_StructFlexGMRESSetLogging(HYPRE_StructSolver solver,
-                                          HYPRE_Int          logging);
+NALU_HYPRE_Int NALU_HYPRE_StructFlexGMRESSetLogging(NALU_HYPRE_StructSolver solver,
+                                          NALU_HYPRE_Int          logging);
 
-HYPRE_Int HYPRE_StructFlexGMRESSetPrintLevel(HYPRE_StructSolver solver,
-                                             HYPRE_Int          level);
+NALU_HYPRE_Int NALU_HYPRE_StructFlexGMRESSetPrintLevel(NALU_HYPRE_StructSolver solver,
+                                             NALU_HYPRE_Int          level);
 
-HYPRE_Int HYPRE_StructFlexGMRESGetNumIterations(HYPRE_StructSolver  solver,
-                                                HYPRE_Int          *num_iterations);
+NALU_HYPRE_Int NALU_HYPRE_StructFlexGMRESGetNumIterations(NALU_HYPRE_StructSolver  solver,
+                                                NALU_HYPRE_Int          *num_iterations);
 
-HYPRE_Int HYPRE_StructFlexGMRESGetFinalRelativeResidualNorm(HYPRE_StructSolver  solver,
-                                                            HYPRE_Real         *norm);
+NALU_HYPRE_Int NALU_HYPRE_StructFlexGMRESGetFinalRelativeResidualNorm(NALU_HYPRE_StructSolver  solver,
+                                                            NALU_HYPRE_Real         *norm);
 
-HYPRE_Int HYPRE_StructFlexGMRESGetResidual(HYPRE_StructSolver   solver,
+NALU_HYPRE_Int NALU_HYPRE_StructFlexGMRESGetResidual(NALU_HYPRE_StructSolver   solver,
                                            void               **residual);
 
-HYPRE_Int HYPRE_StructFlexGMRESSetModifyPC(HYPRE_StructSolver     solver,
-                                           HYPRE_PtrToModifyPCFcn modify_pc);
+NALU_HYPRE_Int NALU_HYPRE_StructFlexGMRESSetModifyPC(NALU_HYPRE_StructSolver     solver,
+                                           NALU_HYPRE_PtrToModifyPCFcn modify_pc);
 
 /**@}*/
 
@@ -818,57 +818,57 @@ HYPRE_Int HYPRE_StructFlexGMRESSetModifyPC(HYPRE_StructSolver     solver,
 /**
  * Create a solver object.
  **/
-HYPRE_Int HYPRE_StructLGMRESCreate(MPI_Comm            comm,
-                                   HYPRE_StructSolver *solver);
+NALU_HYPRE_Int NALU_HYPRE_StructLGMRESCreate(MPI_Comm            comm,
+                                   NALU_HYPRE_StructSolver *solver);
 
 /**
  * Destroy a solver object.
  **/
-HYPRE_Int HYPRE_StructLGMRESDestroy(HYPRE_StructSolver solver);
+NALU_HYPRE_Int NALU_HYPRE_StructLGMRESDestroy(NALU_HYPRE_StructSolver solver);
 
-HYPRE_Int HYPRE_StructLGMRESSetup(HYPRE_StructSolver solver,
-                                  HYPRE_StructMatrix A,
-                                  HYPRE_StructVector b,
-                                  HYPRE_StructVector x);
+NALU_HYPRE_Int NALU_HYPRE_StructLGMRESSetup(NALU_HYPRE_StructSolver solver,
+                                  NALU_HYPRE_StructMatrix A,
+                                  NALU_HYPRE_StructVector b,
+                                  NALU_HYPRE_StructVector x);
 
-HYPRE_Int HYPRE_StructLGMRESSolve(HYPRE_StructSolver solver,
-                                  HYPRE_StructMatrix A,
-                                  HYPRE_StructVector b,
-                                  HYPRE_StructVector x);
+NALU_HYPRE_Int NALU_HYPRE_StructLGMRESSolve(NALU_HYPRE_StructSolver solver,
+                                  NALU_HYPRE_StructMatrix A,
+                                  NALU_HYPRE_StructVector b,
+                                  NALU_HYPRE_StructVector x);
 
-HYPRE_Int HYPRE_StructLGMRESSetTol(HYPRE_StructSolver solver,
-                                   HYPRE_Real         tol);
+NALU_HYPRE_Int NALU_HYPRE_StructLGMRESSetTol(NALU_HYPRE_StructSolver solver,
+                                   NALU_HYPRE_Real         tol);
 
-HYPRE_Int HYPRE_StructLGMRESSetAbsoluteTol(HYPRE_StructSolver solver,
-                                           HYPRE_Real         tol);
+NALU_HYPRE_Int NALU_HYPRE_StructLGMRESSetAbsoluteTol(NALU_HYPRE_StructSolver solver,
+                                           NALU_HYPRE_Real         tol);
 
-HYPRE_Int HYPRE_StructLGMRESSetMaxIter(HYPRE_StructSolver solver,
-                                       HYPRE_Int          max_iter);
+NALU_HYPRE_Int NALU_HYPRE_StructLGMRESSetMaxIter(NALU_HYPRE_StructSolver solver,
+                                       NALU_HYPRE_Int          max_iter);
 
-HYPRE_Int HYPRE_StructLGMRESSetKDim(HYPRE_StructSolver solver,
-                                    HYPRE_Int          k_dim);
+NALU_HYPRE_Int NALU_HYPRE_StructLGMRESSetKDim(NALU_HYPRE_StructSolver solver,
+                                    NALU_HYPRE_Int          k_dim);
 
-HYPRE_Int HYPRE_StructLGMRESSetAugDim(HYPRE_StructSolver solver,
-                                      HYPRE_Int          aug_dim);
+NALU_HYPRE_Int NALU_HYPRE_StructLGMRESSetAugDim(NALU_HYPRE_StructSolver solver,
+                                      NALU_HYPRE_Int          aug_dim);
 
-HYPRE_Int HYPRE_StructLGMRESSetPrecond(HYPRE_StructSolver         solver,
-                                       HYPRE_PtrToStructSolverFcn precond,
-                                       HYPRE_PtrToStructSolverFcn precond_setup,
-                                       HYPRE_StructSolver         precond_solver);
+NALU_HYPRE_Int NALU_HYPRE_StructLGMRESSetPrecond(NALU_HYPRE_StructSolver         solver,
+                                       NALU_HYPRE_PtrToStructSolverFcn precond,
+                                       NALU_HYPRE_PtrToStructSolverFcn precond_setup,
+                                       NALU_HYPRE_StructSolver         precond_solver);
 
-HYPRE_Int HYPRE_StructLGMRESSetLogging(HYPRE_StructSolver solver,
-                                       HYPRE_Int          logging);
+NALU_HYPRE_Int NALU_HYPRE_StructLGMRESSetLogging(NALU_HYPRE_StructSolver solver,
+                                       NALU_HYPRE_Int          logging);
 
-HYPRE_Int HYPRE_StructLGMRESSetPrintLevel(HYPRE_StructSolver solver,
-                                          HYPRE_Int          level);
+NALU_HYPRE_Int NALU_HYPRE_StructLGMRESSetPrintLevel(NALU_HYPRE_StructSolver solver,
+                                          NALU_HYPRE_Int          level);
 
-HYPRE_Int HYPRE_StructLGMRESGetNumIterations(HYPRE_StructSolver  solver,
-                                             HYPRE_Int          *num_iterations);
+NALU_HYPRE_Int NALU_HYPRE_StructLGMRESGetNumIterations(NALU_HYPRE_StructSolver  solver,
+                                             NALU_HYPRE_Int          *num_iterations);
 
-HYPRE_Int HYPRE_StructLGMRESGetFinalRelativeResidualNorm(HYPRE_StructSolver  solver,
-                                                         HYPRE_Real         *norm);
+NALU_HYPRE_Int NALU_HYPRE_StructLGMRESGetFinalRelativeResidualNorm(NALU_HYPRE_StructSolver  solver,
+                                                         NALU_HYPRE_Real         *norm);
 
-HYPRE_Int HYPRE_StructLGMRESGetResidual(HYPRE_StructSolver   solver,
+NALU_HYPRE_Int NALU_HYPRE_StructLGMRESGetResidual(NALU_HYPRE_StructSolver   solver,
                                         void               **residual);
 /**@}*/
 
@@ -887,51 +887,51 @@ HYPRE_Int HYPRE_StructLGMRESGetResidual(HYPRE_StructSolver   solver,
 /**
  * Create a solver object.
  **/
-HYPRE_Int HYPRE_StructBiCGSTABCreate(MPI_Comm            comm,
-                                     HYPRE_StructSolver *solver);
+NALU_HYPRE_Int NALU_HYPRE_StructBiCGSTABCreate(MPI_Comm            comm,
+                                     NALU_HYPRE_StructSolver *solver);
 
 /**
  * Destroy a solver object.
  **/
-HYPRE_Int HYPRE_StructBiCGSTABDestroy(HYPRE_StructSolver solver);
+NALU_HYPRE_Int NALU_HYPRE_StructBiCGSTABDestroy(NALU_HYPRE_StructSolver solver);
 
-HYPRE_Int HYPRE_StructBiCGSTABSetup(HYPRE_StructSolver solver,
-                                    HYPRE_StructMatrix A,
-                                    HYPRE_StructVector b,
-                                    HYPRE_StructVector x);
+NALU_HYPRE_Int NALU_HYPRE_StructBiCGSTABSetup(NALU_HYPRE_StructSolver solver,
+                                    NALU_HYPRE_StructMatrix A,
+                                    NALU_HYPRE_StructVector b,
+                                    NALU_HYPRE_StructVector x);
 
-HYPRE_Int HYPRE_StructBiCGSTABSolve(HYPRE_StructSolver solver,
-                                    HYPRE_StructMatrix A,
-                                    HYPRE_StructVector b,
-                                    HYPRE_StructVector x);
+NALU_HYPRE_Int NALU_HYPRE_StructBiCGSTABSolve(NALU_HYPRE_StructSolver solver,
+                                    NALU_HYPRE_StructMatrix A,
+                                    NALU_HYPRE_StructVector b,
+                                    NALU_HYPRE_StructVector x);
 
-HYPRE_Int HYPRE_StructBiCGSTABSetTol(HYPRE_StructSolver solver,
-                                     HYPRE_Real         tol);
+NALU_HYPRE_Int NALU_HYPRE_StructBiCGSTABSetTol(NALU_HYPRE_StructSolver solver,
+                                     NALU_HYPRE_Real         tol);
 
-HYPRE_Int HYPRE_StructBiCGSTABSetAbsoluteTol(HYPRE_StructSolver solver,
-                                             HYPRE_Real         tol);
+NALU_HYPRE_Int NALU_HYPRE_StructBiCGSTABSetAbsoluteTol(NALU_HYPRE_StructSolver solver,
+                                             NALU_HYPRE_Real         tol);
 
-HYPRE_Int HYPRE_StructBiCGSTABSetMaxIter(HYPRE_StructSolver solver,
-                                         HYPRE_Int          max_iter);
+NALU_HYPRE_Int NALU_HYPRE_StructBiCGSTABSetMaxIter(NALU_HYPRE_StructSolver solver,
+                                         NALU_HYPRE_Int          max_iter);
 
-HYPRE_Int HYPRE_StructBiCGSTABSetPrecond(HYPRE_StructSolver         solver,
-                                         HYPRE_PtrToStructSolverFcn precond,
-                                         HYPRE_PtrToStructSolverFcn precond_setup,
-                                         HYPRE_StructSolver         precond_solver);
+NALU_HYPRE_Int NALU_HYPRE_StructBiCGSTABSetPrecond(NALU_HYPRE_StructSolver         solver,
+                                         NALU_HYPRE_PtrToStructSolverFcn precond,
+                                         NALU_HYPRE_PtrToStructSolverFcn precond_setup,
+                                         NALU_HYPRE_StructSolver         precond_solver);
 
-HYPRE_Int HYPRE_StructBiCGSTABSetLogging(HYPRE_StructSolver solver,
-                                         HYPRE_Int          logging);
+NALU_HYPRE_Int NALU_HYPRE_StructBiCGSTABSetLogging(NALU_HYPRE_StructSolver solver,
+                                         NALU_HYPRE_Int          logging);
 
-HYPRE_Int HYPRE_StructBiCGSTABSetPrintLevel(HYPRE_StructSolver solver,
-                                            HYPRE_Int          level);
+NALU_HYPRE_Int NALU_HYPRE_StructBiCGSTABSetPrintLevel(NALU_HYPRE_StructSolver solver,
+                                            NALU_HYPRE_Int          level);
 
-HYPRE_Int HYPRE_StructBiCGSTABGetNumIterations(HYPRE_StructSolver  solver,
-                                               HYPRE_Int          *num_iterations);
+NALU_HYPRE_Int NALU_HYPRE_StructBiCGSTABGetNumIterations(NALU_HYPRE_StructSolver  solver,
+                                               NALU_HYPRE_Int          *num_iterations);
 
-HYPRE_Int HYPRE_StructBiCGSTABGetFinalRelativeResidualNorm(HYPRE_StructSolver  solver,
-                                                           HYPRE_Real         *norm);
+NALU_HYPRE_Int NALU_HYPRE_StructBiCGSTABGetFinalRelativeResidualNorm(NALU_HYPRE_StructSolver  solver,
+                                                           NALU_HYPRE_Real         *norm);
 
-HYPRE_Int HYPRE_StructBiCGSTABGetResidual( HYPRE_StructSolver   solver,
+NALU_HYPRE_Int NALU_HYPRE_StructBiCGSTABGetResidual( NALU_HYPRE_StructSolver   solver,
                                            void               **residual);
 /**@}*/
 
@@ -947,74 +947,74 @@ HYPRE_Int HYPRE_StructBiCGSTABGetResidual( HYPRE_StructSolver   solver,
 /**
  * Create a solver object.
  **/
-HYPRE_Int HYPRE_StructHybridCreate(MPI_Comm            comm,
-                                   HYPRE_StructSolver *solver);
+NALU_HYPRE_Int NALU_HYPRE_StructHybridCreate(MPI_Comm            comm,
+                                   NALU_HYPRE_StructSolver *solver);
 
 /**
  * Destroy a solver object.
  **/
-HYPRE_Int HYPRE_StructHybridDestroy(HYPRE_StructSolver solver);
+NALU_HYPRE_Int NALU_HYPRE_StructHybridDestroy(NALU_HYPRE_StructSolver solver);
 
 /**
  * Prepare to solve the system.  The coefficient data in \e b and \e x is
  * ignored here, but information about the layout of the data may be used.
  **/
-HYPRE_Int HYPRE_StructHybridSetup(HYPRE_StructSolver solver,
-                                  HYPRE_StructMatrix A,
-                                  HYPRE_StructVector b,
-                                  HYPRE_StructVector x);
+NALU_HYPRE_Int NALU_HYPRE_StructHybridSetup(NALU_HYPRE_StructSolver solver,
+                                  NALU_HYPRE_StructMatrix A,
+                                  NALU_HYPRE_StructVector b,
+                                  NALU_HYPRE_StructVector x);
 
 /**
  * Solve the system.
  **/
-HYPRE_Int HYPRE_StructHybridSolve(HYPRE_StructSolver solver,
-                                  HYPRE_StructMatrix A,
-                                  HYPRE_StructVector b,
-                                  HYPRE_StructVector x);
+NALU_HYPRE_Int NALU_HYPRE_StructHybridSolve(NALU_HYPRE_StructSolver solver,
+                                  NALU_HYPRE_StructMatrix A,
+                                  NALU_HYPRE_StructVector b,
+                                  NALU_HYPRE_StructVector x);
 
 /**
  * (Optional) Set the convergence tolerance.
  **/
-HYPRE_Int HYPRE_StructHybridSetTol(HYPRE_StructSolver solver,
-                                   HYPRE_Real         tol);
+NALU_HYPRE_Int NALU_HYPRE_StructHybridSetTol(NALU_HYPRE_StructSolver solver,
+                                   NALU_HYPRE_Real         tol);
 
 /**
  * (Optional) Set an accepted convergence tolerance for diagonal scaling (DS).
  * The solver will switch preconditioners if the convergence of DS is slower
  * than \e cf_tol.
  **/
-HYPRE_Int HYPRE_StructHybridSetConvergenceTol(HYPRE_StructSolver solver,
-                                              HYPRE_Real         cf_tol);
+NALU_HYPRE_Int NALU_HYPRE_StructHybridSetConvergenceTol(NALU_HYPRE_StructSolver solver,
+                                              NALU_HYPRE_Real         cf_tol);
 
 /**
  * (Optional) Set maximum number of iterations for diagonal scaling (DS).  The
  * solver will switch preconditioners if DS reaches \e ds_max_its.
  **/
-HYPRE_Int HYPRE_StructHybridSetDSCGMaxIter(HYPRE_StructSolver solver,
-                                           HYPRE_Int          ds_max_its);
+NALU_HYPRE_Int NALU_HYPRE_StructHybridSetDSCGMaxIter(NALU_HYPRE_StructSolver solver,
+                                           NALU_HYPRE_Int          ds_max_its);
 
 /**
  * (Optional) Set maximum number of iterations for general preconditioner (PRE).
  * The solver will stop if PRE reaches \e pre_max_its.
  **/
-HYPRE_Int HYPRE_StructHybridSetPCGMaxIter(HYPRE_StructSolver solver,
-                                          HYPRE_Int          pre_max_its);
+NALU_HYPRE_Int NALU_HYPRE_StructHybridSetPCGMaxIter(NALU_HYPRE_StructSolver solver,
+                                          NALU_HYPRE_Int          pre_max_its);
 
 /**
  * (Optional) Use the two-norm in stopping criteria.
  **/
-HYPRE_Int HYPRE_StructHybridSetTwoNorm(HYPRE_StructSolver solver,
-                                       HYPRE_Int          two_norm);
+NALU_HYPRE_Int NALU_HYPRE_StructHybridSetTwoNorm(NALU_HYPRE_StructSolver solver,
+                                       NALU_HYPRE_Int          two_norm);
 
-HYPRE_Int HYPRE_StructHybridSetStopCrit(HYPRE_StructSolver solver,
-                                        HYPRE_Int          stop_crit);
+NALU_HYPRE_Int NALU_HYPRE_StructHybridSetStopCrit(NALU_HYPRE_StructSolver solver,
+                                        NALU_HYPRE_Int          stop_crit);
 
 /**
  * (Optional) Additionally require that the relative difference in
  * successive iterates be small.
  **/
-HYPRE_Int HYPRE_StructHybridSetRelChange(HYPRE_StructSolver solver,
-                                         HYPRE_Int          rel_change);
+NALU_HYPRE_Int NALU_HYPRE_StructHybridSetRelChange(NALU_HYPRE_StructSolver solver,
+                                         NALU_HYPRE_Int          rel_change);
 
 /**
  * (Optional) Set the type of Krylov solver to use.
@@ -1025,91 +1025,91 @@ HYPRE_Int HYPRE_StructHybridSetRelChange(HYPRE_StructSolver solver,
  *    - 1 : GMRES
  *    - 2 : BiCGSTAB
  **/
-HYPRE_Int HYPRE_StructHybridSetSolverType(HYPRE_StructSolver solver,
-                                          HYPRE_Int          solver_type);
+NALU_HYPRE_Int NALU_HYPRE_StructHybridSetSolverType(NALU_HYPRE_StructSolver solver,
+                                          NALU_HYPRE_Int          solver_type);
 
 /**
  * (Optional) Set recompute residual (don't rely on 3-term recurrence).
  **/
-HYPRE_Int
-HYPRE_StructHybridSetRecomputeResidual( HYPRE_StructSolver  solver,
-                                        HYPRE_Int           recompute_residual );
+NALU_HYPRE_Int
+NALU_HYPRE_StructHybridSetRecomputeResidual( NALU_HYPRE_StructSolver  solver,
+                                        NALU_HYPRE_Int           recompute_residual );
 
 /**
  * (Optional) Get recompute residual option.
  **/
-HYPRE_Int
-HYPRE_StructHybridGetRecomputeResidual( HYPRE_StructSolver  solver,
-                                        HYPRE_Int          *recompute_residual );
+NALU_HYPRE_Int
+NALU_HYPRE_StructHybridGetRecomputeResidual( NALU_HYPRE_StructSolver  solver,
+                                        NALU_HYPRE_Int          *recompute_residual );
 
 /**
  * (Optional) Set recompute residual period (don't rely on 3-term recurrence).
  *
  * Recomputes residual after every specified number of iterations.
  **/
-HYPRE_Int
-HYPRE_StructHybridSetRecomputeResidualP( HYPRE_StructSolver  solver,
-                                         HYPRE_Int           recompute_residual_p );
+NALU_HYPRE_Int
+NALU_HYPRE_StructHybridSetRecomputeResidualP( NALU_HYPRE_StructSolver  solver,
+                                         NALU_HYPRE_Int           recompute_residual_p );
 
 /**
  * (Optional) Get recompute residual period option.
  **/
-HYPRE_Int
-HYPRE_StructHybridGetRecomputeResidualP( HYPRE_StructSolver  solver,
-                                         HYPRE_Int          *recompute_residual_p );
+NALU_HYPRE_Int
+NALU_HYPRE_StructHybridGetRecomputeResidualP( NALU_HYPRE_StructSolver  solver,
+                                         NALU_HYPRE_Int          *recompute_residual_p );
 
 /**
  * (Optional) Set the maximum size of the Krylov space when using GMRES.
  **/
-HYPRE_Int HYPRE_StructHybridSetKDim(HYPRE_StructSolver solver,
-                                    HYPRE_Int          k_dim);
+NALU_HYPRE_Int NALU_HYPRE_StructHybridSetKDim(NALU_HYPRE_StructSolver solver,
+                                    NALU_HYPRE_Int          k_dim);
 
 /**
  * (Optional) Set the preconditioner to use.
  **/
-HYPRE_Int HYPRE_StructHybridSetPrecond(HYPRE_StructSolver         solver,
-                                       HYPRE_PtrToStructSolverFcn precond,
-                                       HYPRE_PtrToStructSolverFcn precond_setup,
-                                       HYPRE_StructSolver         precond_solver);
+NALU_HYPRE_Int NALU_HYPRE_StructHybridSetPrecond(NALU_HYPRE_StructSolver         solver,
+                                       NALU_HYPRE_PtrToStructSolverFcn precond,
+                                       NALU_HYPRE_PtrToStructSolverFcn precond_setup,
+                                       NALU_HYPRE_StructSolver         precond_solver);
 
 /**
  * (Optional) Set the amount of logging to do.
  **/
-HYPRE_Int HYPRE_StructHybridSetLogging(HYPRE_StructSolver solver,
-                                       HYPRE_Int          logging);
+NALU_HYPRE_Int NALU_HYPRE_StructHybridSetLogging(NALU_HYPRE_StructSolver solver,
+                                       NALU_HYPRE_Int          logging);
 
 /**
  * (Optional) Set the amount of printing to do to the screen.
  **/
-HYPRE_Int HYPRE_StructHybridSetPrintLevel(HYPRE_StructSolver solver,
-                                          HYPRE_Int          print_level);
+NALU_HYPRE_Int NALU_HYPRE_StructHybridSetPrintLevel(NALU_HYPRE_StructSolver solver,
+                                          NALU_HYPRE_Int          print_level);
 
 /**
  * Return the number of iterations taken.
  **/
-HYPRE_Int HYPRE_StructHybridGetNumIterations(HYPRE_StructSolver  solver,
-                                             HYPRE_Int          *num_its);
+NALU_HYPRE_Int NALU_HYPRE_StructHybridGetNumIterations(NALU_HYPRE_StructSolver  solver,
+                                             NALU_HYPRE_Int          *num_its);
 
 /**
  * Return the number of diagonal scaling iterations taken.
  **/
-HYPRE_Int HYPRE_StructHybridGetDSCGNumIterations(HYPRE_StructSolver  solver,
-                                                 HYPRE_Int          *ds_num_its);
+NALU_HYPRE_Int NALU_HYPRE_StructHybridGetDSCGNumIterations(NALU_HYPRE_StructSolver  solver,
+                                                 NALU_HYPRE_Int          *ds_num_its);
 
 /**
  * Return the number of general preconditioning iterations taken.
  **/
-HYPRE_Int HYPRE_StructHybridGetPCGNumIterations(HYPRE_StructSolver  solver,
-                                                HYPRE_Int          *pre_num_its);
+NALU_HYPRE_Int NALU_HYPRE_StructHybridGetPCGNumIterations(NALU_HYPRE_StructSolver  solver,
+                                                NALU_HYPRE_Int          *pre_num_its);
 
 /**
  * Return the norm of the final relative residual.
  **/
-HYPRE_Int HYPRE_StructHybridGetFinalRelativeResidualNorm(HYPRE_StructSolver  solver,
-                                                         HYPRE_Real         *norm);
+NALU_HYPRE_Int NALU_HYPRE_StructHybridGetFinalRelativeResidualNorm(NALU_HYPRE_StructSolver  solver,
+                                                         NALU_HYPRE_Real         *norm);
 
-HYPRE_Int HYPRE_StructHybridSetPCGAbsoluteTolFactor(HYPRE_StructSolver solver,
-                                                    HYPRE_Real pcg_atolf );
+NALU_HYPRE_Int NALU_HYPRE_StructHybridSetPCGAbsoluteTolFactor(NALU_HYPRE_StructSolver solver,
+                                                    NALU_HYPRE_Real pcg_atolf );
 
 /**@}*/
 
@@ -1120,64 +1120,64 @@ HYPRE_Int HYPRE_StructHybridSetPCGAbsoluteTolFactor(HYPRE_StructSolver solver,
  * @name Struct SparseMSG Solver
  **/
 
-HYPRE_Int HYPRE_StructSparseMSGCreate(MPI_Comm            comm,
-                                      HYPRE_StructSolver *solver);
+NALU_HYPRE_Int NALU_HYPRE_StructSparseMSGCreate(MPI_Comm            comm,
+                                      NALU_HYPRE_StructSolver *solver);
 
-HYPRE_Int HYPRE_StructSparseMSGDestroy(HYPRE_StructSolver solver);
+NALU_HYPRE_Int NALU_HYPRE_StructSparseMSGDestroy(NALU_HYPRE_StructSolver solver);
 
-HYPRE_Int HYPRE_StructSparseMSGSetup(HYPRE_StructSolver solver,
-                                     HYPRE_StructMatrix A,
-                                     HYPRE_StructVector b,
-                                     HYPRE_StructVector x);
+NALU_HYPRE_Int NALU_HYPRE_StructSparseMSGSetup(NALU_HYPRE_StructSolver solver,
+                                     NALU_HYPRE_StructMatrix A,
+                                     NALU_HYPRE_StructVector b,
+                                     NALU_HYPRE_StructVector x);
 
-HYPRE_Int HYPRE_StructSparseMSGSolve(HYPRE_StructSolver solver,
-                                     HYPRE_StructMatrix A,
-                                     HYPRE_StructVector b,
-                                     HYPRE_StructVector x);
+NALU_HYPRE_Int NALU_HYPRE_StructSparseMSGSolve(NALU_HYPRE_StructSolver solver,
+                                     NALU_HYPRE_StructMatrix A,
+                                     NALU_HYPRE_StructVector b,
+                                     NALU_HYPRE_StructVector x);
 
-HYPRE_Int HYPRE_StructSparseMSGSetTol(HYPRE_StructSolver solver,
-                                      HYPRE_Real         tol);
+NALU_HYPRE_Int NALU_HYPRE_StructSparseMSGSetTol(NALU_HYPRE_StructSolver solver,
+                                      NALU_HYPRE_Real         tol);
 
-HYPRE_Int HYPRE_StructSparseMSGSetMaxIter(HYPRE_StructSolver solver,
-                                          HYPRE_Int          max_iter);
+NALU_HYPRE_Int NALU_HYPRE_StructSparseMSGSetMaxIter(NALU_HYPRE_StructSolver solver,
+                                          NALU_HYPRE_Int          max_iter);
 
-HYPRE_Int HYPRE_StructSparseMSGSetJump(HYPRE_StructSolver solver,
-                                       HYPRE_Int          jump);
+NALU_HYPRE_Int NALU_HYPRE_StructSparseMSGSetJump(NALU_HYPRE_StructSolver solver,
+                                       NALU_HYPRE_Int          jump);
 
-HYPRE_Int HYPRE_StructSparseMSGSetRelChange(HYPRE_StructSolver solver,
-                                            HYPRE_Int          rel_change);
+NALU_HYPRE_Int NALU_HYPRE_StructSparseMSGSetRelChange(NALU_HYPRE_StructSolver solver,
+                                            NALU_HYPRE_Int          rel_change);
 
-HYPRE_Int HYPRE_StructSparseMSGSetZeroGuess(HYPRE_StructSolver solver);
+NALU_HYPRE_Int NALU_HYPRE_StructSparseMSGSetZeroGuess(NALU_HYPRE_StructSolver solver);
 
-HYPRE_Int HYPRE_StructSparseMSGSetNonZeroGuess(HYPRE_StructSolver solver);
+NALU_HYPRE_Int NALU_HYPRE_StructSparseMSGSetNonZeroGuess(NALU_HYPRE_StructSolver solver);
 
-HYPRE_Int HYPRE_StructSparseMSGSetRelaxType(HYPRE_StructSolver solver,
-                                            HYPRE_Int          relax_type);
+NALU_HYPRE_Int NALU_HYPRE_StructSparseMSGSetRelaxType(NALU_HYPRE_StructSolver solver,
+                                            NALU_HYPRE_Int          relax_type);
 
-HYPRE_Int HYPRE_StructSparseMSGSetJacobiWeight(HYPRE_StructSolver solver,
-                                               HYPRE_Real         weight);
+NALU_HYPRE_Int NALU_HYPRE_StructSparseMSGSetJacobiWeight(NALU_HYPRE_StructSolver solver,
+                                               NALU_HYPRE_Real         weight);
 
-HYPRE_Int HYPRE_StructSparseMSGSetNumPreRelax(HYPRE_StructSolver solver,
-                                              HYPRE_Int          num_pre_relax);
+NALU_HYPRE_Int NALU_HYPRE_StructSparseMSGSetNumPreRelax(NALU_HYPRE_StructSolver solver,
+                                              NALU_HYPRE_Int          num_pre_relax);
 
-HYPRE_Int HYPRE_StructSparseMSGSetNumPostRelax(HYPRE_StructSolver solver,
-                                               HYPRE_Int          num_post_relax);
+NALU_HYPRE_Int NALU_HYPRE_StructSparseMSGSetNumPostRelax(NALU_HYPRE_StructSolver solver,
+                                               NALU_HYPRE_Int          num_post_relax);
 
-HYPRE_Int HYPRE_StructSparseMSGSetNumFineRelax(HYPRE_StructSolver solver,
-                                               HYPRE_Int          num_fine_relax);
+NALU_HYPRE_Int NALU_HYPRE_StructSparseMSGSetNumFineRelax(NALU_HYPRE_StructSolver solver,
+                                               NALU_HYPRE_Int          num_fine_relax);
 
-HYPRE_Int HYPRE_StructSparseMSGSetLogging(HYPRE_StructSolver solver,
-                                          HYPRE_Int          logging);
+NALU_HYPRE_Int NALU_HYPRE_StructSparseMSGSetLogging(NALU_HYPRE_StructSolver solver,
+                                          NALU_HYPRE_Int          logging);
 
-HYPRE_Int HYPRE_StructSparseMSGSetPrintLevel(HYPRE_StructSolver solver,
-                                             HYPRE_Int   print_level);
+NALU_HYPRE_Int NALU_HYPRE_StructSparseMSGSetPrintLevel(NALU_HYPRE_StructSolver solver,
+                                             NALU_HYPRE_Int   print_level);
 
 
-HYPRE_Int HYPRE_StructSparseMSGGetNumIterations(HYPRE_StructSolver  solver,
-                                                HYPRE_Int          *num_iterations);
+NALU_HYPRE_Int NALU_HYPRE_StructSparseMSGGetNumIterations(NALU_HYPRE_StructSolver  solver,
+                                                NALU_HYPRE_Int          *num_iterations);
 
-HYPRE_Int HYPRE_StructSparseMSGGetFinalRelativeResidualNorm(HYPRE_StructSolver  solver,
-                                                            HYPRE_Real         *norm);
+NALU_HYPRE_Int NALU_HYPRE_StructSparseMSGGetFinalRelativeResidualNorm(NALU_HYPRE_StructSolver  solver,
+                                                            NALU_HYPRE_Real         *norm);
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
@@ -1192,17 +1192,17 @@ HYPRE_Int HYPRE_StructSparseMSGGetFinalRelativeResidualNorm(HYPRE_StructSolver  
  **/
 
 /**
- * Load interface interpreter. Vector part loaded with hypre_StructKrylov
+ * Load interface interpreter. Vector part loaded with nalu_hypre_StructKrylov
  * functions and multivector part loaded with mv_TempMultiVector functions.
  **/
-HYPRE_Int
-HYPRE_StructSetupInterpreter(mv_InterfaceInterpreter *i);
+NALU_HYPRE_Int
+NALU_HYPRE_StructSetupInterpreter(mv_InterfaceInterpreter *i);
 
 /**
- * Load Matvec interpreter with hypre_StructKrylov functions.
+ * Load Matvec interpreter with nalu_hypre_StructKrylov functions.
  **/
-HYPRE_Int
-HYPRE_StructSetupMatvec(HYPRE_MatvecFunctions *mv);
+NALU_HYPRE_Int
+NALU_HYPRE_StructSetupMatvec(NALU_HYPRE_MatvecFunctions *mv);
 
 /**@}*/
 

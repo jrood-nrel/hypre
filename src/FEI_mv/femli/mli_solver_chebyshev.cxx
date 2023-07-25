@@ -18,7 +18,7 @@
 
 #include "mli_solver_jacobi.h"
 #include "mli_solver_chebyshev.h"
-#include "_hypre_parcsr_mv.h"
+#include "_nalu_hypre_parcsr_mv.h"
 
 /******************************************************************************
  * constructor
@@ -58,20 +58,20 @@ int MLI_Solver_Chebyshev::setup(MLI_Matrix *mat)
 {
    int                i, j, localNRows, *ADiagI, *ADiagJ;
    double             *ADiagA, *ritzValues, omega=3.0/3.0, scale;
-   hypre_ParCSRMatrix *A;
-   hypre_CSRMatrix    *ADiag;
+   nalu_hypre_ParCSRMatrix *A;
+   nalu_hypre_CSRMatrix    *ADiag;
 
    /*-----------------------------------------------------------------
     * fetch parameters
     *-----------------------------------------------------------------*/
 
    Amat_      = mat;
-   A          = (hypre_ParCSRMatrix *) Amat_->getMatrix();
-   ADiag      = hypre_ParCSRMatrixDiag(A);
-   ADiagI     = hypre_CSRMatrixI(ADiag);
-   ADiagJ     = hypre_CSRMatrixJ(ADiag);
-   ADiagA     = hypre_CSRMatrixData(ADiag);
-   localNRows = hypre_CSRMatrixNumRows(ADiag);
+   A          = (nalu_hypre_ParCSRMatrix *) Amat_->getMatrix();
+   ADiag      = nalu_hypre_ParCSRMatrixDiag(A);
+   ADiagI     = nalu_hypre_CSRMatrixI(ADiag);
+   ADiagJ     = nalu_hypre_CSRMatrixJ(ADiag);
+   ADiagA     = nalu_hypre_CSRMatrixData(ADiag);
+   localNRows = nalu_hypre_CSRMatrixNumRows(ADiag);
 
    /*-----------------------------------------------------------------
     * compute spectral radius of scaled Amat
@@ -127,25 +127,25 @@ int MLI_Solver_Chebyshev::solve(MLI_Vector *f_in, MLI_Vector *u_in)
    int                i, j, localNRows;
    double             *pData, *zData, alpha, beta, cValue, dValue;
    double             *rData, lambdaMax, lambdaMin, omega=2.0/3.0;
-   hypre_ParCSRMatrix *A;
-   hypre_CSRMatrix    *ADiag;
-   hypre_ParVector    *r, *z, *p, *u, *f;
+   nalu_hypre_ParCSRMatrix *A;
+   nalu_hypre_CSRMatrix    *ADiag;
+   nalu_hypre_ParVector    *r, *z, *p, *u, *f;
 
    /*-----------------------------------------------------------------
     * fetch machine and smoother parameters
     *-----------------------------------------------------------------*/
 
-   A          = (hypre_ParCSRMatrix *) Amat_->getMatrix();
-   ADiag      = hypre_ParCSRMatrixDiag(A);
-   localNRows = hypre_CSRMatrixNumRows(ADiag);
-   u          = (hypre_ParVector *) u_in->getVector();
-   f          = (hypre_ParVector *) f_in->getVector();
-   r          = (hypre_ParVector *) rVec_->getVector();
-   z          = (hypre_ParVector *) zVec_->getVector();
-   p          = (hypre_ParVector *) pVec_->getVector();
-   rData      = hypre_VectorData(hypre_ParVectorLocalVector(r));
-   zData      = hypre_VectorData(hypre_ParVectorLocalVector(z));
-   pData      = hypre_VectorData(hypre_ParVectorLocalVector(p));
+   A          = (nalu_hypre_ParCSRMatrix *) Amat_->getMatrix();
+   ADiag      = nalu_hypre_ParCSRMatrixDiag(A);
+   localNRows = nalu_hypre_CSRMatrixNumRows(ADiag);
+   u          = (nalu_hypre_ParVector *) u_in->getVector();
+   f          = (nalu_hypre_ParVector *) f_in->getVector();
+   r          = (nalu_hypre_ParVector *) rVec_->getVector();
+   z          = (nalu_hypre_ParVector *) zVec_->getVector();
+   p          = (nalu_hypre_ParVector *) pVec_->getVector();
+   rData      = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(r));
+   zData      = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(z));
+   pData      = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(p));
    lambdaMin  = omega * minEigen_ / maxEigen_;
    lambdaMax  = omega;
    dValue     = 0.5 * (lambdaMax + lambdaMin);
@@ -155,9 +155,9 @@ int MLI_Solver_Chebyshev::solve(MLI_Vector *f_in, MLI_Vector *u_in)
     * Perform Chebyshev iterations
     *-----------------------------------------------------------------*/
  
-   hypre_ParVectorCopy( f, r );
+   nalu_hypre_ParVectorCopy( f, r );
    if ( zeroInitialGuess_ == 0 )
-      hypre_ParCSRMatrixMatvec( -1.0, A, u, 1.0, r ); 
+      nalu_hypre_ParCSRMatrixMatvec( -1.0, A, u, 1.0, r ); 
    zeroInitialGuess_ = 0;
    for ( i = 1; i <= degree_; i++ )
    {
@@ -165,7 +165,7 @@ int MLI_Solver_Chebyshev::solve(MLI_Vector *f_in, MLI_Vector *u_in)
          zData[j] = diagonal_[j] * rData[j];
       if ( i == 1 ) 
       {
-         hypre_ParVectorCopy( z, p );
+         nalu_hypre_ParVectorCopy( z, p );
          alpha = 2.0 / dValue;
       }
       else
@@ -176,8 +176,8 @@ int MLI_Solver_Chebyshev::solve(MLI_Vector *f_in, MLI_Vector *u_in)
          for ( j = 0 ; j < localNRows; j++ ) 
             pData[j] = zData[j] + beta * pData[j];
       }
-      hypre_ParVectorAxpy( alpha, p, u );
-      hypre_ParCSRMatrixMatvec( -alpha, A, p, 1.0, r ); 
+      nalu_hypre_ParVectorAxpy( alpha, p, u );
+      nalu_hypre_ParCSRMatrixMatvec( -alpha, A, p, 1.0, r ); 
    }
    return(0); 
 }

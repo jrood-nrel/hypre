@@ -27,20 +27,20 @@ HEADERS =\
  int_array.h\
  memory.h\
  memory_tracker.h\
- HYPRE_utilities.h\
+ NALU_HYPRE_utilities.h\
  mpistubs.h\
  threading.h\
  timing.h\
  magma.h\
- _hypre_onedpl.hpp\
- _hypre_utilities.h\
- _hypre_utilities.hpp
+ _nalu_hypre_onedpl.hpp\
+ _nalu_hypre_utilities.h\
+ _nalu_hypre_utilities.hpp
 
 FILES =\
- F90_HYPRE_error.c\
- F90_HYPRE_general.c\
- HYPRE_handle.c\
- HYPRE_version.c\
+ F90_NALU_HYPRE_error.c\
+ F90_NALU_HYPRE_general.c\
+ NALU_NALU_HYPRE.handle.c\
+ NALU_HYPRE_version.c\
  amg_linklist.c\
  binsearch.c\
  exchange_data.c\
@@ -81,25 +81,25 @@ COBJS = ${FILES:.c=.o}
 CUOBJS = ${CUFILES:.c=.obj}
 OBJS = ${COBJS} ${CUOBJS}
 
-SONAME = libHYPRE_utilities-${HYPRE_RELEASE_VERSION}${HYPRE_LIB_SUFFIX}
+SONAME = libNALU_HYPRE_utilities-${NALU_HYPRE_RELEASE_VERSION}${NALU_HYPRE_LIB_SUFFIX}
 
 ##################################################################
 # Targets
 ##################################################################
 
-all: libHYPRE_utilities${HYPRE_LIB_SUFFIX}
-	cp -fR $(srcdir)/HYPRE_*.h $(HYPRE_BUILD_DIR)/include
-	cp -fR $(srcdir)/_hypre_onedpl.hpp $(HYPRE_BUILD_DIR)/include
-	cp -fR $(srcdir)/_hypre_utilities.h $(HYPRE_BUILD_DIR)/include
-	cp -fR $(srcdir)/_hypre_utilities.hpp $(HYPRE_BUILD_DIR)/include
-	cp -fR $(srcdir)/fortran*.h $(HYPRE_BUILD_DIR)/include
-#	cp -fR libHYPRE* $(HYPRE_BUILD_DIR)/lib
+all: libNALU_HYPRE_utilities${NALU_HYPRE_LIB_SUFFIX}
+	cp -fR $(srcdir)/NALU_HYPRE_*.h $(NALU_HYPRE_BUILD_DIR)/include
+	cp -fR $(srcdir)/_nalu_hypre_onedpl.hpp $(NALU_HYPRE_BUILD_DIR)/include
+	cp -fR $(srcdir)/_nalu_hypre_utilities.h $(NALU_HYPRE_BUILD_DIR)/include
+	cp -fR $(srcdir)/_nalu_hypre_utilities.hpp $(NALU_HYPRE_BUILD_DIR)/include
+	cp -fR $(srcdir)/fortran*.h $(NALU_HYPRE_BUILD_DIR)/include
+#	cp -fR libHYPRE* $(NALU_HYPRE_BUILD_DIR)/lib
 
-install: libHYPRE_utilities${HYPRE_LIB_SUFFIX}
-	cp -fR $(srcdir)/HYPRE_*.h $(HYPRE_INC_INSTALL)
-	cp -fR $(srcdir)/_hypre_utilities.h $(HYPRE_INC_INSTALL)
-	cp -fR $(srcdir)/fortran*.h $(HYPRE_INC_INSTALL)
-#	cp -fR libHYPRE* $(HYPRE_LIB_INSTALL)
+install: libNALU_HYPRE_utilities${NALU_HYPRE_LIB_SUFFIX}
+	cp -fR $(srcdir)/NALU_HYPRE_*.h $(NALU_HYPRE_INC_INSTALL)
+	cp -fR $(srcdir)/_nalu_hypre_utilities.h $(NALU_HYPRE_INC_INSTALL)
+	cp -fR $(srcdir)/fortran*.h $(NALU_HYPRE_INC_INSTALL)
+#	cp -fR libHYPRE* $(NALU_HYPRE_LIB_INSTALL)
 
 clean:
 	rm -f *.o *.obj libHYPRE*
@@ -111,12 +111,12 @@ distclean: clean
 # Rules
 ##################################################################
 
-libHYPRE_utilities.a: ${OBJS}
+libNALU_HYPRE_utilities.a: ${OBJS}
 	@echo  "Building $@ ... "
 	${AR} $@ ${OBJS}
 	${RANLIB} $@
 
-libHYPRE_utilities.so libHYPRE_utilities.dylib: ${OBJS}
+libNALU_HYPRE_utilities.so libNALU_HYPRE_utilities.dylib: ${OBJS}
 	@echo  "Building $@ ... "
 	${BUILD_CC_SHARED} -o ${SONAME} ${OBJS} ${SHARED_SET_SONAME}${SONAME}
 	ln -s -f ${SONAME} $@

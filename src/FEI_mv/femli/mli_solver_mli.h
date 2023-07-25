@@ -9,8 +9,8 @@
 #define __MLI_SOLVER_MLI_H__
 
 #include <stdio.h>
-#include "HYPRE_config.h"
-#include "_hypre_utilities.h"
+#include "NALU_HYPRE_config.h"
+#include "_nalu_hypre_utilities.h"
 #include "mli_matrix.h"
 #include "mli_vector.h"
 #include "mli_solver.h"

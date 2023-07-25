@@ -27,16 +27,16 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-#include "HYPRE_krylov.h"
-#include "HYPRE.h"
-#include "HYPRE_parcsr_ls.h"
+#include "NALU_HYPRE_krylov.h"
+#include "NALU_HYPRE.h"
+#include "NALU_HYPRE_parcsr_ls.h"
 #include "ex.h"
 
-#ifdef HYPRE_EXVIS
+#ifdef NALU_HYPRE_EXVIS
 #include "vis.c"
 #endif
 
-int hypre_FlexGMRESModifyPCAMGExample(void *precond_data, int iterations,
+int nalu_hypre_FlexGMRESModifyPCAMGExample(void *precond_data, int iterations,
                                       double rel_residual_norm);
 
 #define my_min(a,b)  (((a)<(b)) ? (a) : (b))
@@ -55,14 +55,14 @@ int main (int argc, char *argv[])
 
    double h, h2;
 
-   HYPRE_IJMatrix A;
-   HYPRE_ParCSRMatrix parcsr_A;
-   HYPRE_IJVector b;
-   HYPRE_ParVector par_b;
-   HYPRE_IJVector x;
-   HYPRE_ParVector par_x;
+   NALU_HYPRE_IJMatrix A;
+   NALU_HYPRE_ParCSRMatrix parcsr_A;
+   NALU_HYPRE_IJVector b;
+   NALU_HYPRE_ParVector par_b;
+   NALU_HYPRE_IJVector x;
+   NALU_HYPRE_ParVector par_x;
 
-   HYPRE_Solver solver, precond;
+   NALU_HYPRE_Solver solver, precond;
 
    /* Initialize MPI */
    MPI_Init(&argc, &argv);
@@ -70,13 +70,13 @@ int main (int argc, char *argv[])
    MPI_Comm_size(MPI_COMM_WORLD, &num_procs);
 
    /* Initialize HYPRE */
-   HYPRE_Initialize();
+   NALU_HYPRE_Initialize();
 
    /* Print GPU info */
-   /* HYPRE_PrintDeviceInfo(); */
-#if defined(HYPRE_USING_GPU)
+   /* NALU_HYPRE_PrintDeviceInfo(); */
+#if defined(NALU_HYPRE_USING_GPU)
    /* use vendor implementation for SpGEMM */
-   HYPRE_SetSpGemmUseVendor(0);
+   NALU_HYPRE_SetSpGemmUseVendor(0);
 #endif
 
    /* Default problem parameters */
@@ -173,13 +173,13 @@ int main (int argc, char *argv[])
    /* Create the matrix.
       Note that this is a square matrix, so we indicate the row partition
       size twice (since number of rows = number of cols) */
-   HYPRE_IJMatrixCreate(MPI_COMM_WORLD, ilower, iupper, ilower, iupper, &A);
+   NALU_HYPRE_IJMatrixCreate(MPI_COMM_WORLD, ilower, iupper, ilower, iupper, &A);
 
    /* Choose a parallel csr format storage (see the User's Manual) */
-   HYPRE_IJMatrixSetObjectType(A, HYPRE_PARCSR);
+   NALU_HYPRE_IJMatrixSetObjectType(A, NALU_HYPRE_PARCSR);
 
    /* Initialize before setting coefficients */
-   HYPRE_IJMatrixInitialize(A);
+   NALU_HYPRE_IJMatrixInitialize(A);
 
    /* Now go through my local rows and set the matrix entries.
       Each row has at most 5 entries. For example, if n=3:
@@ -244,7 +244,7 @@ int main (int argc, char *argv[])
          /* Set the values for row i */
          tmp[0] = nnz;
          tmp[1] = i;
-         HYPRE_IJMatrixSetValues(A, 1, &tmp[0], &tmp[1], cols, values);
+         NALU_HYPRE_IJMatrixSetValues(A, 1, &tmp[0], &tmp[1], cols, values);
       }
 
       free(values);
@@ -253,34 +253,34 @@ int main (int argc, char *argv[])
    }
 
    /* Assemble after setting the coefficients */
-   HYPRE_IJMatrixAssemble(A);
+   NALU_HYPRE_IJMatrixAssemble(A);
 
    /* Note: for the testing of small problems, one may wish to read
       in a matrix in IJ format (for the format, see the output files
       from the -print_system option).
       In this case, one would use the following routine:
-      HYPRE_IJMatrixRead( <filename>, MPI_COMM_WORLD,
-                          HYPRE_PARCSR, &A );
+      NALU_HYPRE_IJMatrixRead( <filename>, MPI_COMM_WORLD,
+                          NALU_HYPRE_PARCSR, &A );
       <filename>  = IJ.A.out to read in what has been printed out
       by -print_system (processor numbers are omitted).
-      A call to HYPRE_IJMatrixRead is an *alternative* to the
-      following sequence of HYPRE_IJMatrix calls:
+      A call to NALU_HYPRE_IJMatrixRead is an *alternative* to the
+      following sequence of NALU_HYPRE_IJMatrix calls:
       Create, SetObjectType, Initialize, SetValues, and Assemble
    */
 
 
    /* Get the parcsr matrix object to use */
-   HYPRE_IJMatrixGetObject(A, (void**) &parcsr_A);
+   NALU_HYPRE_IJMatrixGetObject(A, (void**) &parcsr_A);
 
 
    /* Create the rhs and solution */
-   HYPRE_IJVectorCreate(MPI_COMM_WORLD, ilower, iupper, &b);
-   HYPRE_IJVectorSetObjectType(b, HYPRE_PARCSR);
-   HYPRE_IJVectorInitialize(b);
+   NALU_HYPRE_IJVectorCreate(MPI_COMM_WORLD, ilower, iupper, &b);
+   NALU_HYPRE_IJVectorSetObjectType(b, NALU_HYPRE_PARCSR);
+   NALU_HYPRE_IJVectorInitialize(b);
 
-   HYPRE_IJVectorCreate(MPI_COMM_WORLD, ilower, iupper, &x);
-   HYPRE_IJVectorSetObjectType(x, HYPRE_PARCSR);
-   HYPRE_IJVectorInitialize(x);
+   NALU_HYPRE_IJVectorCreate(MPI_COMM_WORLD, ilower, iupper, &x);
+   NALU_HYPRE_IJVectorSetObjectType(x, NALU_HYPRE_PARCSR);
+   NALU_HYPRE_IJVectorInitialize(x);
 
    /* Set the rhs values to h^2 and the solution to zero */
    {
@@ -298,8 +298,8 @@ int main (int argc, char *argv[])
          rows[i] = ilower + i;
       }
 
-      HYPRE_IJVectorSetValues(b, local_size, rows, rhs_values);
-      HYPRE_IJVectorSetValues(x, local_size, rows, x_values);
+      NALU_HYPRE_IJVectorSetValues(b, local_size, rows, rhs_values);
+      NALU_HYPRE_IJVectorSetValues(x, local_size, rows, x_values);
 
       free(x_values);
       free(rhs_values);
@@ -307,26 +307,26 @@ int main (int argc, char *argv[])
    }
 
 
-   HYPRE_IJVectorAssemble(b);
+   NALU_HYPRE_IJVectorAssemble(b);
    /*  As with the matrix, for testing purposes, one may wish to read in a rhs:
-       HYPRE_IJVectorRead( <filename>, MPI_COMM_WORLD,
-                                 HYPRE_PARCSR, &b );
+       NALU_HYPRE_IJVectorRead( <filename>, MPI_COMM_WORLD,
+                                 NALU_HYPRE_PARCSR, &b );
        as an alternative to the
-       following sequence of HYPRE_IJVectors calls:
+       following sequence of NALU_HYPRE_IJVectors calls:
        Create, SetObjectType, Initialize, SetValues, and Assemble
    */
-   HYPRE_IJVectorGetObject(b, (void **) &par_b);
+   NALU_HYPRE_IJVectorGetObject(b, (void **) &par_b);
 
-   HYPRE_IJVectorAssemble(x);
-   HYPRE_IJVectorGetObject(x, (void **) &par_x);
+   NALU_HYPRE_IJVectorAssemble(x);
+   NALU_HYPRE_IJVectorGetObject(x, (void **) &par_x);
 
 
    /*  Print out the system  - files names will be IJ.out.A.XXXXX
         and IJ.out.b.XXXXX, where XXXXX = processor id */
    if (print_system)
    {
-      HYPRE_IJMatrixPrint(A, "IJ.out.A");
-      HYPRE_IJVectorPrint(b, "IJ.out.b");
+      NALU_HYPRE_IJMatrixPrint(A, "IJ.out.A");
+      NALU_HYPRE_IJVectorPrint(b, "IJ.out.b");
    }
 
 
@@ -339,24 +339,24 @@ int main (int argc, char *argv[])
       double final_res_norm;
 
       /* Create solver */
-      HYPRE_BoomerAMGCreate(&solver);
+      NALU_HYPRE_BoomerAMGCreate(&solver);
 
       /* Set some parameters (See Reference Manual for more parameters) */
-      HYPRE_BoomerAMGSetPrintLevel(solver, 3);  /* print solve info + parameters */
-      HYPRE_BoomerAMGSetOldDefault(solver); /* Falgout coarsening with modified classical interpolaiton */
-      HYPRE_BoomerAMGSetRelaxType(solver, 3);   /* G-S/Jacobi hybrid relaxation */
-      HYPRE_BoomerAMGSetRelaxOrder(solver, 1);   /* uses C/F relaxation */
-      HYPRE_BoomerAMGSetNumSweeps(solver, 1);   /* Sweeeps on each level */
-      HYPRE_BoomerAMGSetMaxLevels(solver, 20);  /* maximum number of levels */
-      HYPRE_BoomerAMGSetTol(solver, 1e-7);      /* conv. tolerance */
+      NALU_HYPRE_BoomerAMGSetPrintLevel(solver, 3);  /* print solve info + parameters */
+      NALU_HYPRE_BoomerAMGSetOldDefault(solver); /* Falgout coarsening with modified classical interpolaiton */
+      NALU_HYPRE_BoomerAMGSetRelaxType(solver, 3);   /* G-S/Jacobi hybrid relaxation */
+      NALU_HYPRE_BoomerAMGSetRelaxOrder(solver, 1);   /* uses C/F relaxation */
+      NALU_HYPRE_BoomerAMGSetNumSweeps(solver, 1);   /* Sweeeps on each level */
+      NALU_HYPRE_BoomerAMGSetMaxLevels(solver, 20);  /* maximum number of levels */
+      NALU_HYPRE_BoomerAMGSetTol(solver, 1e-7);      /* conv. tolerance */
 
       /* Now setup and solve! */
-      HYPRE_BoomerAMGSetup(solver, parcsr_A, par_b, par_x);
-      HYPRE_BoomerAMGSolve(solver, parcsr_A, par_b, par_x);
+      NALU_HYPRE_BoomerAMGSetup(solver, parcsr_A, par_b, par_x);
+      NALU_HYPRE_BoomerAMGSolve(solver, parcsr_A, par_b, par_x);
 
       /* Run info - needed logging turned on */
-      HYPRE_BoomerAMGGetNumIterations(solver, &num_iterations);
-      HYPRE_BoomerAMGGetFinalRelativeResidualNorm(solver, &final_res_norm);
+      NALU_HYPRE_BoomerAMGGetNumIterations(solver, &num_iterations);
+      NALU_HYPRE_BoomerAMGGetFinalRelativeResidualNorm(solver, &final_res_norm);
       if (myid == 0)
       {
          printf("\n");
@@ -366,7 +366,7 @@ int main (int argc, char *argv[])
       }
 
       /* Destroy solver */
-      HYPRE_BoomerAMGDestroy(solver);
+      NALU_HYPRE_BoomerAMGDestroy(solver);
    }
    /* PCG */
    else if (solver_id == 50)
@@ -375,22 +375,22 @@ int main (int argc, char *argv[])
       double final_res_norm;
 
       /* Create solver */
-      HYPRE_ParCSRPCGCreate(MPI_COMM_WORLD, &solver);
+      NALU_HYPRE_ParCSRPCGCreate(MPI_COMM_WORLD, &solver);
 
       /* Set some parameters (See Reference Manual for more parameters) */
-      HYPRE_PCGSetMaxIter(solver, 1000); /* max iterations */
-      HYPRE_PCGSetTol(solver, 1e-7); /* conv. tolerance */
-      HYPRE_PCGSetTwoNorm(solver, 1); /* use the two norm as the stopping criteria */
-      HYPRE_PCGSetPrintLevel(solver, 2); /* prints out the iteration info */
-      HYPRE_PCGSetLogging(solver, 1); /* needed to get run info later */
+      NALU_HYPRE_PCGSetMaxIter(solver, 1000); /* max iterations */
+      NALU_HYPRE_PCGSetTol(solver, 1e-7); /* conv. tolerance */
+      NALU_HYPRE_PCGSetTwoNorm(solver, 1); /* use the two norm as the stopping criteria */
+      NALU_HYPRE_PCGSetPrintLevel(solver, 2); /* prints out the iteration info */
+      NALU_HYPRE_PCGSetLogging(solver, 1); /* needed to get run info later */
 
       /* Now setup and solve! */
-      HYPRE_ParCSRPCGSetup(solver, parcsr_A, par_b, par_x);
-      HYPRE_ParCSRPCGSolve(solver, parcsr_A, par_b, par_x);
+      NALU_HYPRE_ParCSRPCGSetup(solver, parcsr_A, par_b, par_x);
+      NALU_HYPRE_ParCSRPCGSolve(solver, parcsr_A, par_b, par_x);
 
       /* Run info - needed logging turned on */
-      HYPRE_PCGGetNumIterations(solver, &num_iterations);
-      HYPRE_PCGGetFinalRelativeResidualNorm(solver, &final_res_norm);
+      NALU_HYPRE_PCGGetNumIterations(solver, &num_iterations);
+      NALU_HYPRE_PCGGetFinalRelativeResidualNorm(solver, &final_res_norm);
       if (myid == 0)
       {
          printf("\n");
@@ -400,7 +400,7 @@ int main (int argc, char *argv[])
       }
 
       /* Destroy solver */
-      HYPRE_ParCSRPCGDestroy(solver);
+      NALU_HYPRE_ParCSRPCGDestroy(solver);
    }
    /* PCG with AMG preconditioner */
    else if (solver_id == 1)
@@ -409,36 +409,36 @@ int main (int argc, char *argv[])
       double final_res_norm;
 
       /* Create solver */
-      HYPRE_ParCSRPCGCreate(MPI_COMM_WORLD, &solver);
+      NALU_HYPRE_ParCSRPCGCreate(MPI_COMM_WORLD, &solver);
 
       /* Set some parameters (See Reference Manual for more parameters) */
-      HYPRE_PCGSetMaxIter(solver, 1000); /* max iterations */
-      HYPRE_PCGSetTol(solver, 1e-7); /* conv. tolerance */
-      HYPRE_PCGSetTwoNorm(solver, 1); /* use the two norm as the stopping criteria */
-      HYPRE_PCGSetPrintLevel(solver, 2); /* print solve info */
-      HYPRE_PCGSetLogging(solver, 1); /* needed to get run info later */
+      NALU_HYPRE_PCGSetMaxIter(solver, 1000); /* max iterations */
+      NALU_HYPRE_PCGSetTol(solver, 1e-7); /* conv. tolerance */
+      NALU_HYPRE_PCGSetTwoNorm(solver, 1); /* use the two norm as the stopping criteria */
+      NALU_HYPRE_PCGSetPrintLevel(solver, 2); /* print solve info */
+      NALU_HYPRE_PCGSetLogging(solver, 1); /* needed to get run info later */
 
       /* Now set up the AMG preconditioner and specify any parameters */
-      HYPRE_BoomerAMGCreate(&precond);
-      HYPRE_BoomerAMGSetPrintLevel(precond, 1); /* print amg solution info */
-      HYPRE_BoomerAMGSetCoarsenType(precond, 6);
-      HYPRE_BoomerAMGSetOldDefault(precond);
-      HYPRE_BoomerAMGSetRelaxType(precond, 6); /* Sym G.S./Jacobi hybrid */
-      HYPRE_BoomerAMGSetNumSweeps(precond, 1);
-      HYPRE_BoomerAMGSetTol(precond, 0.0); /* conv. tolerance zero */
-      HYPRE_BoomerAMGSetMaxIter(precond, 1); /* do only one iteration! */
+      NALU_HYPRE_BoomerAMGCreate(&precond);
+      NALU_HYPRE_BoomerAMGSetPrintLevel(precond, 1); /* print amg solution info */
+      NALU_HYPRE_BoomerAMGSetCoarsenType(precond, 6);
+      NALU_HYPRE_BoomerAMGSetOldDefault(precond);
+      NALU_HYPRE_BoomerAMGSetRelaxType(precond, 6); /* Sym G.S./Jacobi hybrid */
+      NALU_HYPRE_BoomerAMGSetNumSweeps(precond, 1);
+      NALU_HYPRE_BoomerAMGSetTol(precond, 0.0); /* conv. tolerance zero */
+      NALU_HYPRE_BoomerAMGSetMaxIter(precond, 1); /* do only one iteration! */
 
       /* Set the PCG preconditioner */
-      HYPRE_PCGSetPrecond(solver, (HYPRE_PtrToSolverFcn) HYPRE_BoomerAMGSolve,
-                          (HYPRE_PtrToSolverFcn) HYPRE_BoomerAMGSetup, precond);
+      NALU_HYPRE_PCGSetPrecond(solver, (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_BoomerAMGSolve,
+                          (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_BoomerAMGSetup, precond);
 
       /* Now setup and solve! */
-      HYPRE_ParCSRPCGSetup(solver, parcsr_A, par_b, par_x);
-      HYPRE_ParCSRPCGSolve(solver, parcsr_A, par_b, par_x);
+      NALU_HYPRE_ParCSRPCGSetup(solver, parcsr_A, par_b, par_x);
+      NALU_HYPRE_ParCSRPCGSolve(solver, parcsr_A, par_b, par_x);
 
       /* Run info - needed logging turned on */
-      HYPRE_PCGGetNumIterations(solver, &num_iterations);
-      HYPRE_PCGGetFinalRelativeResidualNorm(solver, &final_res_norm);
+      NALU_HYPRE_PCGGetNumIterations(solver, &num_iterations);
+      NALU_HYPRE_PCGGetFinalRelativeResidualNorm(solver, &final_res_norm);
       if (myid == 0)
       {
          printf("\n");
@@ -448,8 +448,8 @@ int main (int argc, char *argv[])
       }
 
       /* Destroy solver and preconditioner */
-      HYPRE_ParCSRPCGDestroy(solver);
-      HYPRE_BoomerAMGDestroy(precond);
+      NALU_HYPRE_ParCSRPCGDestroy(solver);
+      NALU_HYPRE_BoomerAMGDestroy(precond);
    }
    /* PCG with Parasails Preconditioner */
    else if (solver_id == 8)
@@ -463,36 +463,36 @@ int main (int argc, char *argv[])
       int      sai_sym = 1;
 
       /* Create solver */
-      HYPRE_ParCSRPCGCreate(MPI_COMM_WORLD, &solver);
+      NALU_HYPRE_ParCSRPCGCreate(MPI_COMM_WORLD, &solver);
 
       /* Set some parameters (See Reference Manual for more parameters) */
-      HYPRE_PCGSetMaxIter(solver, 1000); /* max iterations */
-      HYPRE_PCGSetTol(solver, 1e-7); /* conv. tolerance */
-      HYPRE_PCGSetTwoNorm(solver, 1); /* use the two norm as the stopping criteria */
-      HYPRE_PCGSetPrintLevel(solver, 2); /* print solve info */
-      HYPRE_PCGSetLogging(solver, 1); /* needed to get run info later */
+      NALU_HYPRE_PCGSetMaxIter(solver, 1000); /* max iterations */
+      NALU_HYPRE_PCGSetTol(solver, 1e-7); /* conv. tolerance */
+      NALU_HYPRE_PCGSetTwoNorm(solver, 1); /* use the two norm as the stopping criteria */
+      NALU_HYPRE_PCGSetPrintLevel(solver, 2); /* print solve info */
+      NALU_HYPRE_PCGSetLogging(solver, 1); /* needed to get run info later */
 
       /* Now set up the ParaSails preconditioner and specify any parameters */
-      HYPRE_ParaSailsCreate(MPI_COMM_WORLD, &precond);
+      NALU_HYPRE_ParaSailsCreate(MPI_COMM_WORLD, &precond);
 
       /* Set some parameters (See Reference Manual for more parameters) */
-      HYPRE_ParaSailsSetParams(precond, sai_threshold, sai_max_levels);
-      HYPRE_ParaSailsSetFilter(precond, sai_filter);
-      HYPRE_ParaSailsSetSym(precond, sai_sym);
-      HYPRE_ParaSailsSetLogging(precond, 3);
+      NALU_HYPRE_ParaSailsSetParams(precond, sai_threshold, sai_max_levels);
+      NALU_HYPRE_ParaSailsSetFilter(precond, sai_filter);
+      NALU_HYPRE_ParaSailsSetSym(precond, sai_sym);
+      NALU_HYPRE_ParaSailsSetLogging(precond, 3);
 
       /* Set the PCG preconditioner */
-      HYPRE_PCGSetPrecond(solver, (HYPRE_PtrToSolverFcn) HYPRE_ParaSailsSolve,
-                          (HYPRE_PtrToSolverFcn) HYPRE_ParaSailsSetup, precond);
+      NALU_HYPRE_PCGSetPrecond(solver, (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_ParaSailsSolve,
+                          (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_ParaSailsSetup, precond);
 
       /* Now setup and solve! */
-      HYPRE_ParCSRPCGSetup(solver, parcsr_A, par_b, par_x);
-      HYPRE_ParCSRPCGSolve(solver, parcsr_A, par_b, par_x);
+      NALU_HYPRE_ParCSRPCGSetup(solver, parcsr_A, par_b, par_x);
+      NALU_HYPRE_ParCSRPCGSolve(solver, parcsr_A, par_b, par_x);
 
 
       /* Run info - needed logging turned on */
-      HYPRE_PCGGetNumIterations(solver, &num_iterations);
-      HYPRE_PCGGetFinalRelativeResidualNorm(solver, &final_res_norm);
+      NALU_HYPRE_PCGGetNumIterations(solver, &num_iterations);
+      NALU_HYPRE_PCGGetFinalRelativeResidualNorm(solver, &final_res_norm);
       if (myid == 0)
       {
          printf("\n");
@@ -502,8 +502,8 @@ int main (int argc, char *argv[])
       }
 
       /* Destory solver and preconditioner */
-      HYPRE_ParCSRPCGDestroy(solver);
-      HYPRE_ParaSailsDestroy(precond);
+      NALU_HYPRE_ParCSRPCGDestroy(solver);
+      NALU_HYPRE_ParaSailsDestroy(precond);
    }
    /* Flexible GMRES with  AMG Preconditioner */
    else if (solver_id == 61)
@@ -515,48 +515,48 @@ int main (int argc, char *argv[])
 
 
       /* Create solver */
-      HYPRE_ParCSRFlexGMRESCreate(MPI_COMM_WORLD, &solver);
+      NALU_HYPRE_ParCSRFlexGMRESCreate(MPI_COMM_WORLD, &solver);
 
       /* Set some parameters (See Reference Manual for more parameters) */
-      HYPRE_FlexGMRESSetKDim(solver, restart);
-      HYPRE_FlexGMRESSetMaxIter(solver, 1000); /* max iterations */
-      HYPRE_FlexGMRESSetTol(solver, 1e-7); /* conv. tolerance */
-      HYPRE_FlexGMRESSetPrintLevel(solver, 2); /* print solve info */
-      HYPRE_FlexGMRESSetLogging(solver, 1); /* needed to get run info later */
+      NALU_HYPRE_FlexGMRESSetKDim(solver, restart);
+      NALU_HYPRE_FlexGMRESSetMaxIter(solver, 1000); /* max iterations */
+      NALU_HYPRE_FlexGMRESSetTol(solver, 1e-7); /* conv. tolerance */
+      NALU_HYPRE_FlexGMRESSetPrintLevel(solver, 2); /* print solve info */
+      NALU_HYPRE_FlexGMRESSetLogging(solver, 1); /* needed to get run info later */
 
 
       /* Now set up the AMG preconditioner and specify any parameters */
-      HYPRE_BoomerAMGCreate(&precond);
-      HYPRE_BoomerAMGSetPrintLevel(precond, 1); /* print amg solution info */
-      HYPRE_BoomerAMGSetCoarsenType(precond, 6);
-      HYPRE_BoomerAMGSetOldDefault(precond);
-      HYPRE_BoomerAMGSetRelaxType(precond, 6); /* Sym G.S./Jacobi hybrid */
-      HYPRE_BoomerAMGSetNumSweeps(precond, 1);
-      HYPRE_BoomerAMGSetTol(precond, 0.0); /* conv. tolerance zero */
-      HYPRE_BoomerAMGSetMaxIter(precond, 1); /* do only one iteration! */
+      NALU_HYPRE_BoomerAMGCreate(&precond);
+      NALU_HYPRE_BoomerAMGSetPrintLevel(precond, 1); /* print amg solution info */
+      NALU_HYPRE_BoomerAMGSetCoarsenType(precond, 6);
+      NALU_HYPRE_BoomerAMGSetOldDefault(precond);
+      NALU_HYPRE_BoomerAMGSetRelaxType(precond, 6); /* Sym G.S./Jacobi hybrid */
+      NALU_HYPRE_BoomerAMGSetNumSweeps(precond, 1);
+      NALU_HYPRE_BoomerAMGSetTol(precond, 0.0); /* conv. tolerance zero */
+      NALU_HYPRE_BoomerAMGSetMaxIter(precond, 1); /* do only one iteration! */
 
       /* Set the FlexGMRES preconditioner */
-      HYPRE_FlexGMRESSetPrecond(solver, (HYPRE_PtrToSolverFcn) HYPRE_BoomerAMGSolve,
-                                (HYPRE_PtrToSolverFcn) HYPRE_BoomerAMGSetup, precond);
+      NALU_HYPRE_FlexGMRESSetPrecond(solver, (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_BoomerAMGSolve,
+                                (NALU_HYPRE_PtrToSolverFcn) NALU_HYPRE_BoomerAMGSetup, precond);
 
 
       if (modify)
       {
-         /* this is an optional call  - if you don't call it, hypre_FlexGMRESModifyPCDefault
+         /* this is an optional call  - if you don't call it, nalu_hypre_FlexGMRESModifyPCDefault
             is used - which does nothing.  Otherwise, you can define your own, similar to
             the one used here */
-         HYPRE_FlexGMRESSetModifyPC(
-            solver, (HYPRE_PtrToModifyPCFcn) hypre_FlexGMRESModifyPCAMGExample);
+         NALU_HYPRE_FlexGMRESSetModifyPC(
+            solver, (NALU_HYPRE_PtrToModifyPCFcn) nalu_hypre_FlexGMRESModifyPCAMGExample);
       }
 
 
       /* Now setup and solve! */
-      HYPRE_ParCSRFlexGMRESSetup(solver, parcsr_A, par_b, par_x);
-      HYPRE_ParCSRFlexGMRESSolve(solver, parcsr_A, par_b, par_x);
+      NALU_HYPRE_ParCSRFlexGMRESSetup(solver, parcsr_A, par_b, par_x);
+      NALU_HYPRE_ParCSRFlexGMRESSolve(solver, parcsr_A, par_b, par_x);
 
       /* Run info - needed logging turned on */
-      HYPRE_FlexGMRESGetNumIterations(solver, &num_iterations);
-      HYPRE_FlexGMRESGetFinalRelativeResidualNorm(solver, &final_res_norm);
+      NALU_HYPRE_FlexGMRESGetNumIterations(solver, &num_iterations);
+      NALU_HYPRE_FlexGMRESGetFinalRelativeResidualNorm(solver, &final_res_norm);
       if (myid == 0)
       {
          printf("\n");
@@ -566,8 +566,8 @@ int main (int argc, char *argv[])
       }
 
       /* Destory solver and preconditioner */
-      HYPRE_ParCSRFlexGMRESDestroy(solver);
-      HYPRE_BoomerAMGDestroy(precond);
+      NALU_HYPRE_ParCSRFlexGMRESDestroy(solver);
+      NALU_HYPRE_BoomerAMGDestroy(precond);
 
    }
    else
@@ -578,7 +578,7 @@ int main (int argc, char *argv[])
    /* Save the solution for GLVis visualization, see vis/glvis-ex5.sh */
    if (vis)
    {
-#ifdef HYPRE_EXVIS
+#ifdef NALU_HYPRE_EXVIS
       FILE *file;
       char filename[255];
 
@@ -592,7 +592,7 @@ int main (int argc, char *argv[])
       }
 
       /* get the local solution */
-      HYPRE_IJVectorGetValues(x, nvalues, rows, values);
+      NALU_HYPRE_IJVectorGetValues(x, nvalues, rows, values);
 
       sprintf(filename, "%s.%06d", "vis/ex5.sol", myid);
       if ((file = fopen(filename, "w")) == NULL)
@@ -623,12 +623,12 @@ int main (int argc, char *argv[])
    }
 
    /* Clean up */
-   HYPRE_IJMatrixDestroy(A);
-   HYPRE_IJVectorDestroy(b);
-   HYPRE_IJVectorDestroy(x);
+   NALU_HYPRE_IJMatrixDestroy(A);
+   NALU_HYPRE_IJVectorDestroy(b);
+   NALU_HYPRE_IJVectorDestroy(x);
 
    /* Finalize HYPRE */
-   HYPRE_Finalize();
+   NALU_HYPRE_Finalize();
 
    /* Finalize MPI*/
    MPI_Finalize();
@@ -637,7 +637,7 @@ int main (int argc, char *argv[])
 }
 
 /*--------------------------------------------------------------------------
-   hypre_FlexGMRESModifyPCAMGExample -
+   nalu_hypre_FlexGMRESModifyPCAMGExample -
 
     This is an example (not recommended)
    of how we can modify things about AMG that
@@ -646,18 +646,18 @@ int main (int argc, char *argv[])
 
  *--------------------------------------------------------------------------*/
 
-int hypre_FlexGMRESModifyPCAMGExample(void *precond_data, int iterations,
+int nalu_hypre_FlexGMRESModifyPCAMGExample(void *precond_data, int iterations,
                                       double rel_residual_norm)
 {
 
 
    if (rel_residual_norm > .1)
    {
-      HYPRE_BoomerAMGSetNumSweeps((HYPRE_Solver)precond_data, 10);
+      NALU_HYPRE_BoomerAMGSetNumSweeps((NALU_HYPRE_Solver)precond_data, 10);
    }
    else
    {
-      HYPRE_BoomerAMGSetNumSweeps((HYPRE_Solver)precond_data, 1);
+      NALU_HYPRE_BoomerAMGSetNumSweeps((NALU_HYPRE_Solver)precond_data, 1);
    }
 
 

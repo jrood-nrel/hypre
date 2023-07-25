@@ -7,10 +7,10 @@
 
 /******************************************************************************
  *
- * HYPRE_SStructSplit solver interface
+ * NALU_HYPRE_SStructSplit solver interface
  *****************************************************************************/
 
-#include "_hypre_sstruct_ls.h"
+#include "_nalu_hypre_sstruct_ls.h"
 #include "fortran.h"
 
 #ifdef __cplusplus
@@ -18,181 +18,181 @@ extern "C" {
 #endif
 
 /*--------------------------------------------------------------------------
- *  HYPRE_SStructSplitCreate
+ *  NALU_HYPRE_SStructSplitCreate
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_sstructsplitcreate, HYPRE_SSTRUCTSPLITCREATE)
-(hypre_F90_Comm *comm,
- hypre_F90_Obj *solver_ptr,
- hypre_F90_Int *ierr)
+nalu_hypre_F90_IFACE(nalu_hypre_sstructsplitcreate, NALU_HYPRE_SSTRUCTSPLITCREATE)
+(nalu_hypre_F90_Comm *comm,
+ nalu_hypre_F90_Obj *solver_ptr,
+ nalu_hypre_F90_Int *ierr)
 {
-   *ierr = (hypre_F90_Int)
-           (HYPRE_SStructSplitCreate(
-               hypre_F90_PassComm (comm),
-               hypre_F90_PassObjRef (HYPRE_SStructSolver, solver_ptr) ) );
+   *ierr = (nalu_hypre_F90_Int)
+           (NALU_HYPRE_SStructSplitCreate(
+               nalu_hypre_F90_PassComm (comm),
+               nalu_hypre_F90_PassObjRef (NALU_HYPRE_SStructSolver, solver_ptr) ) );
 }
 
 /*--------------------------------------------------------------------------
- *  HYPRE_SStructSplitDestroy
+ *  NALU_HYPRE_SStructSplitDestroy
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_sstructsplitdestroy, HYPRE_SSTRUCTSPLITDESTROY)
-(hypre_F90_Obj *solver,
- hypre_F90_Int *ierr)
+nalu_hypre_F90_IFACE(nalu_hypre_sstructsplitdestroy, NALU_HYPRE_SSTRUCTSPLITDESTROY)
+(nalu_hypre_F90_Obj *solver,
+ nalu_hypre_F90_Int *ierr)
 {
-   *ierr = (hypre_F90_Int)
-           (HYPRE_SStructSplitDestroy(
-               hypre_F90_PassObj (HYPRE_SStructSolver, solver) ) );
+   *ierr = (nalu_hypre_F90_Int)
+           (NALU_HYPRE_SStructSplitDestroy(
+               nalu_hypre_F90_PassObj (NALU_HYPRE_SStructSolver, solver) ) );
 }
 
 /*--------------------------------------------------------------------------
- *  HYPRE_SStructSplitSetup
+ *  NALU_HYPRE_SStructSplitSetup
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_sstructsplitsetup, HYPRE_SSTRUCTSPLITSETUP)
-(hypre_F90_Obj *solver,
- hypre_F90_Obj *A,
- hypre_F90_Obj *b,
- hypre_F90_Obj *x,
- hypre_F90_Int *ierr)
+nalu_hypre_F90_IFACE(nalu_hypre_sstructsplitsetup, NALU_HYPRE_SSTRUCTSPLITSETUP)
+(nalu_hypre_F90_Obj *solver,
+ nalu_hypre_F90_Obj *A,
+ nalu_hypre_F90_Obj *b,
+ nalu_hypre_F90_Obj *x,
+ nalu_hypre_F90_Int *ierr)
 {
-   *ierr = (hypre_F90_Int)
-           (HYPRE_SStructSplitSetup(
-               hypre_F90_PassObj (HYPRE_SStructSolver, solver),
-               hypre_F90_PassObj (HYPRE_SStructMatrix, A),
-               hypre_F90_PassObj (HYPRE_SStructVector, b),
-               hypre_F90_PassObj (HYPRE_SStructVector, x) ) );
+   *ierr = (nalu_hypre_F90_Int)
+           (NALU_HYPRE_SStructSplitSetup(
+               nalu_hypre_F90_PassObj (NALU_HYPRE_SStructSolver, solver),
+               nalu_hypre_F90_PassObj (NALU_HYPRE_SStructMatrix, A),
+               nalu_hypre_F90_PassObj (NALU_HYPRE_SStructVector, b),
+               nalu_hypre_F90_PassObj (NALU_HYPRE_SStructVector, x) ) );
 }
 
 /*--------------------------------------------------------------------------
- *  HYPRE_SStructSplitSolve
+ *  NALU_HYPRE_SStructSplitSolve
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_sstructsplitsolve, HYPRE_SSTRUCTSPLITSOLVE)
-(hypre_F90_Obj *solver,
- hypre_F90_Obj *A,
- hypre_F90_Obj *b,
- hypre_F90_Obj *x,
- hypre_F90_Int *ierr)
+nalu_hypre_F90_IFACE(nalu_hypre_sstructsplitsolve, NALU_HYPRE_SSTRUCTSPLITSOLVE)
+(nalu_hypre_F90_Obj *solver,
+ nalu_hypre_F90_Obj *A,
+ nalu_hypre_F90_Obj *b,
+ nalu_hypre_F90_Obj *x,
+ nalu_hypre_F90_Int *ierr)
 {
-   *ierr = (hypre_F90_Int)
-           (HYPRE_SStructSplitSolve(
-               hypre_F90_PassObj (HYPRE_SStructSolver, solver),
-               hypre_F90_PassObj (HYPRE_SStructMatrix, A),
-               hypre_F90_PassObj (HYPRE_SStructVector, b),
-               hypre_F90_PassObj (HYPRE_SStructVector, x) ) );
+   *ierr = (nalu_hypre_F90_Int)
+           (NALU_HYPRE_SStructSplitSolve(
+               nalu_hypre_F90_PassObj (NALU_HYPRE_SStructSolver, solver),
+               nalu_hypre_F90_PassObj (NALU_HYPRE_SStructMatrix, A),
+               nalu_hypre_F90_PassObj (NALU_HYPRE_SStructVector, b),
+               nalu_hypre_F90_PassObj (NALU_HYPRE_SStructVector, x) ) );
 }
 
 /*--------------------------------------------------------------------------
- *  HYPRE_SStructSplitSetTol
+ *  NALU_HYPRE_SStructSplitSetTol
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_sstructsplitsettol, HYPRE_SSTRUCTSPLITSETTOL)
-(hypre_F90_Obj *solver,
- hypre_F90_Real *tol,
- hypre_F90_Int *ierr)
+nalu_hypre_F90_IFACE(nalu_hypre_sstructsplitsettol, NALU_HYPRE_SSTRUCTSPLITSETTOL)
+(nalu_hypre_F90_Obj *solver,
+ nalu_hypre_F90_Real *tol,
+ nalu_hypre_F90_Int *ierr)
 {
-   *ierr = (hypre_F90_Int)
-           (HYPRE_SStructSplitSetTol(
-               hypre_F90_PassObj (HYPRE_SStructSolver, solver),
-               hypre_F90_PassReal (tol) ) );
+   *ierr = (nalu_hypre_F90_Int)
+           (NALU_HYPRE_SStructSplitSetTol(
+               nalu_hypre_F90_PassObj (NALU_HYPRE_SStructSolver, solver),
+               nalu_hypre_F90_PassReal (tol) ) );
 }
 
 /*--------------------------------------------------------------------------
- *  HYPRE_SStructSplitSetMaxIter
+ *  NALU_HYPRE_SStructSplitSetMaxIter
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_sstructsplitsetmaxiter, HYPRE_SSTRUCTSPLITSETMAXITER)
-(hypre_F90_Obj *solver,
- hypre_F90_Int *max_iter,
- hypre_F90_Int *ierr)
+nalu_hypre_F90_IFACE(nalu_hypre_sstructsplitsetmaxiter, NALU_HYPRE_SSTRUCTSPLITSETMAXITER)
+(nalu_hypre_F90_Obj *solver,
+ nalu_hypre_F90_Int *max_iter,
+ nalu_hypre_F90_Int *ierr)
 {
-   *ierr = (hypre_F90_Int)
-           (HYPRE_SStructSplitSetMaxIter(
-               hypre_F90_PassObj (HYPRE_SStructSolver, solver),
-               hypre_F90_PassInt (max_iter) ) );
+   *ierr = (nalu_hypre_F90_Int)
+           (NALU_HYPRE_SStructSplitSetMaxIter(
+               nalu_hypre_F90_PassObj (NALU_HYPRE_SStructSolver, solver),
+               nalu_hypre_F90_PassInt (max_iter) ) );
 }
 
 /*--------------------------------------------------------------------------
- *  HYPRE_SStructSplitSetZeroGuess
+ *  NALU_HYPRE_SStructSplitSetZeroGuess
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_sstructsplitsetzeroguess, HYPRE_SSTRUCTSPLITSETZEROGUESS)
-(hypre_F90_Obj *solver,
- hypre_F90_Int *ierr)
+nalu_hypre_F90_IFACE(nalu_hypre_sstructsplitsetzeroguess, NALU_HYPRE_SSTRUCTSPLITSETZEROGUESS)
+(nalu_hypre_F90_Obj *solver,
+ nalu_hypre_F90_Int *ierr)
 {
-   *ierr = (hypre_F90_Int)
-           (HYPRE_SStructSplitSetZeroGuess(
-               hypre_F90_PassObj (HYPRE_SStructSolver, solver) ) );
+   *ierr = (nalu_hypre_F90_Int)
+           (NALU_HYPRE_SStructSplitSetZeroGuess(
+               nalu_hypre_F90_PassObj (NALU_HYPRE_SStructSolver, solver) ) );
 }
 
 /*--------------------------------------------------------------------------
- *  HYPRE_SStructSplitSetNonZeroGuess
+ *  NALU_HYPRE_SStructSplitSetNonZeroGuess
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_sstructsplitsetnonzerogue, HYPRE_SSTRUCTSPLITSETNONZEROGUE)
-(hypre_F90_Obj *solver,
- hypre_F90_Int *ierr)
+nalu_hypre_F90_IFACE(nalu_hypre_sstructsplitsetnonzerogue, NALU_HYPRE_SSTRUCTSPLITSETNONZEROGUE)
+(nalu_hypre_F90_Obj *solver,
+ nalu_hypre_F90_Int *ierr)
 {
-   *ierr = (hypre_F90_Int)
-           (HYPRE_SStructSplitSetNonZeroGuess(
-               hypre_F90_PassObj (HYPRE_SStructSolver, solver) ));
+   *ierr = (nalu_hypre_F90_Int)
+           (NALU_HYPRE_SStructSplitSetNonZeroGuess(
+               nalu_hypre_F90_PassObj (NALU_HYPRE_SStructSolver, solver) ));
 }
 
 /*--------------------------------------------------------------------------
- *  HYPRE_SStructSplitSetStructSolver
+ *  NALU_HYPRE_SStructSplitSetStructSolver
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_sstructsplitsetstructsolv, HYPRE_SSTRUCTSPLITSETSTRUCTSOLV)
-(hypre_F90_Obj *solver,
- hypre_F90_Int *ssolver,
- hypre_F90_Int *ierr)
+nalu_hypre_F90_IFACE(nalu_hypre_sstructsplitsetstructsolv, NALU_HYPRE_SSTRUCTSPLITSETSTRUCTSOLV)
+(nalu_hypre_F90_Obj *solver,
+ nalu_hypre_F90_Int *ssolver,
+ nalu_hypre_F90_Int *ierr)
 {
-   *ierr = (hypre_F90_Int)
-           (HYPRE_SStructSplitSetStructSolver(
-               hypre_F90_PassObj (HYPRE_SStructSolver, solver),
-               hypre_F90_PassInt (ssolver) ) );
+   *ierr = (nalu_hypre_F90_Int)
+           (NALU_HYPRE_SStructSplitSetStructSolver(
+               nalu_hypre_F90_PassObj (NALU_HYPRE_SStructSolver, solver),
+               nalu_hypre_F90_PassInt (ssolver) ) );
 }
 
 /*--------------------------------------------------------------------------
- *  HYPRE_SStructSplitGetNumIterations
+ *  NALU_HYPRE_SStructSplitGetNumIterations
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_sstructsplitgetnumiterati, HYPRE_SSTRUCTSPLITGETNUMITERATI)
-(hypre_F90_Obj *solver,
- hypre_F90_Int *num_iterations,
- hypre_F90_Int *ierr)
+nalu_hypre_F90_IFACE(nalu_hypre_sstructsplitgetnumiterati, NALU_HYPRE_SSTRUCTSPLITGETNUMITERATI)
+(nalu_hypre_F90_Obj *solver,
+ nalu_hypre_F90_Int *num_iterations,
+ nalu_hypre_F90_Int *ierr)
 {
-   *ierr = (hypre_F90_Int)
-           (HYPRE_SStructSplitGetNumIterations(
-               hypre_F90_PassObj (HYPRE_SStructSolver, solver),
-               hypre_F90_PassIntRef (num_iterations) ) );
+   *ierr = (nalu_hypre_F90_Int)
+           (NALU_HYPRE_SStructSplitGetNumIterations(
+               nalu_hypre_F90_PassObj (NALU_HYPRE_SStructSolver, solver),
+               nalu_hypre_F90_PassIntRef (num_iterations) ) );
 }
 
 /*--------------------------------------------------------------------------
- *  HYPRE_SStructSplitGetFinalRelativeResidualNorm
+ *  NALU_HYPRE_SStructSplitGetFinalRelativeResidualNorm
  *--------------------------------------------------------------------------*/
 
 void
-hypre_F90_IFACE(hypre_sstructsplitgetfinalrelat, HYPRE_SSTRUCTSPLITGETFINALRELAT)
-(hypre_F90_Obj *solver,
- hypre_F90_Real *norm,
- hypre_F90_Int *ierr)
+nalu_hypre_F90_IFACE(nalu_hypre_sstructsplitgetfinalrelat, NALU_HYPRE_SSTRUCTSPLITGETFINALRELAT)
+(nalu_hypre_F90_Obj *solver,
+ nalu_hypre_F90_Real *norm,
+ nalu_hypre_F90_Int *ierr)
 {
-   *ierr = (hypre_F90_Int)
-           (HYPRE_SStructSplitGetFinalRelativeResidualNorm(
-               hypre_F90_PassObj (HYPRE_SStructSolver, solver),
-               hypre_F90_PassRealRef (norm) ) );
+   *ierr = (nalu_hypre_F90_Int)
+           (NALU_HYPRE_SStructSplitGetFinalRelativeResidualNorm(
+               nalu_hypre_F90_PassObj (NALU_HYPRE_SStructSolver, solver),
+               nalu_hypre_F90_PassRealRef (norm) ) );
 }
 
 #ifdef __cplusplus

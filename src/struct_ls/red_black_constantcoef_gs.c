@@ -5,80 +5,80 @@
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
-#include "_hypre_struct_ls.h"
-#include "_hypre_struct_mv.hpp"
+#include "_nalu_hypre_struct_ls.h"
+#include "_nalu_hypre_struct_mv.hpp"
 #include "red_black_gs.h"
 
-#ifndef hypre_abs
-#define hypre_abs(a)  (((a)>0) ? (a) : -(a))
+#ifndef nalu_hypre_abs
+#define nalu_hypre_abs(a)  (((a)>0) ? (a) : -(a))
 #endif
 
 /*--------------------------------------------------------------------------
  *--------------------------------------------------------------------------*/
 
-HYPRE_Int
-hypre_RedBlackConstantCoefGS( void               *relax_vdata,
-                              hypre_StructMatrix *A,
-                              hypre_StructVector *b,
-                              hypre_StructVector *x )
+NALU_HYPRE_Int
+nalu_hypre_RedBlackConstantCoefGS( void               *relax_vdata,
+                              nalu_hypre_StructMatrix *A,
+                              nalu_hypre_StructVector *b,
+                              nalu_hypre_StructVector *x )
 {
-   hypre_RedBlackGSData  *relax_data = (hypre_RedBlackGSData  *)relax_vdata;
+   nalu_hypre_RedBlackGSData  *relax_data = (nalu_hypre_RedBlackGSData  *)relax_vdata;
 
-   HYPRE_Int              max_iter    = (relax_data -> max_iter);
-   HYPRE_Int              zero_guess  = (relax_data -> zero_guess);
-   HYPRE_Int              rb_start    = (relax_data -> rb_start);
-   HYPRE_Int              diag_rank   = (relax_data -> diag_rank);
-   hypre_ComputePkg      *compute_pkg = (relax_data -> compute_pkg);
-   HYPRE_Int              ndim = hypre_StructMatrixNDim(A);
+   NALU_HYPRE_Int              max_iter    = (relax_data -> max_iter);
+   NALU_HYPRE_Int              zero_guess  = (relax_data -> zero_guess);
+   NALU_HYPRE_Int              rb_start    = (relax_data -> rb_start);
+   NALU_HYPRE_Int              diag_rank   = (relax_data -> diag_rank);
+   nalu_hypre_ComputePkg      *compute_pkg = (relax_data -> compute_pkg);
+   NALU_HYPRE_Int              ndim = nalu_hypre_StructMatrixNDim(A);
 
-   hypre_CommHandle      *comm_handle;
+   nalu_hypre_CommHandle      *comm_handle;
 
-   hypre_BoxArrayArray   *compute_box_aa;
-   hypre_BoxArray        *compute_box_a;
-   hypre_Box             *compute_box;
+   nalu_hypre_BoxArrayArray   *compute_box_aa;
+   nalu_hypre_BoxArray        *compute_box_a;
+   nalu_hypre_Box             *compute_box;
 
-   hypre_Box             *A_dbox;
-   hypre_Box             *b_dbox;
-   hypre_Box             *x_dbox;
+   nalu_hypre_Box             *A_dbox;
+   nalu_hypre_Box             *b_dbox;
+   nalu_hypre_Box             *x_dbox;
 
-   HYPRE_Int              Ai, Astart, Ani, Anj;
-   HYPRE_Int              bstart, bni, bnj;
-   HYPRE_Int              xstart, xni, xnj;
-   HYPRE_Int              xoff0, xoff1, xoff2, xoff3, xoff4, xoff5;
+   NALU_HYPRE_Int              Ai, Astart, Ani, Anj;
+   NALU_HYPRE_Int              bstart, bni, bnj;
+   NALU_HYPRE_Int              xstart, xni, xnj;
+   NALU_HYPRE_Int              xoff0, xoff1, xoff2, xoff3, xoff4, xoff5;
 
-   HYPRE_Real            *Ap;
-   HYPRE_Real            *App;
-   HYPRE_Real            *bp;
-   HYPRE_Real            *xp;
+   NALU_HYPRE_Real            *Ap;
+   NALU_HYPRE_Real            *App;
+   NALU_HYPRE_Real            *bp;
+   NALU_HYPRE_Real            *xp;
 
    /* constant coefficient */
-   HYPRE_Int              constant_coeff = hypre_StructMatrixConstantCoefficient(A);
-   HYPRE_Real             App0, App1, App2, App3, App4, App5, AApd;
+   NALU_HYPRE_Int              constant_coeff = nalu_hypre_StructMatrixConstantCoefficient(A);
+   NALU_HYPRE_Real             App0, App1, App2, App3, App4, App5, AApd;
 
-   hypre_IndexRef         start;
-   hypre_Index            loop_size;
+   nalu_hypre_IndexRef         start;
+   nalu_hypre_Index            loop_size;
 
-   hypre_StructStencil   *stencil;
-   hypre_Index           *stencil_shape;
-   HYPRE_Int              stencil_size;
-   HYPRE_Int              offd[6];
+   nalu_hypre_StructStencil   *stencil;
+   nalu_hypre_Index           *stencil_shape;
+   NALU_HYPRE_Int              stencil_size;
+   NALU_HYPRE_Int              offd[6];
 
-   HYPRE_Int              iter, rb, redblack, d;
-   HYPRE_Int              compute_i, i, j;
-   HYPRE_Int              ni, nj, nk;
+   NALU_HYPRE_Int              iter, rb, redblack, d;
+   NALU_HYPRE_Int              compute_i, i, j;
+   NALU_HYPRE_Int              ni, nj, nk;
 
    /*----------------------------------------------------------
     * Initialize some things and deal with special cases
     *----------------------------------------------------------*/
 
-   hypre_BeginTiming(relax_data -> time_index);
+   nalu_hypre_BeginTiming(relax_data -> time_index);
 
-   hypre_StructMatrixDestroy(relax_data -> A);
-   hypre_StructVectorDestroy(relax_data -> b);
-   hypre_StructVectorDestroy(relax_data -> x);
-   (relax_data -> A) = hypre_StructMatrixRef(A);
-   (relax_data -> x) = hypre_StructVectorRef(x);
-   (relax_data -> b) = hypre_StructVectorRef(b);
+   nalu_hypre_StructMatrixDestroy(relax_data -> A);
+   nalu_hypre_StructVectorDestroy(relax_data -> b);
+   nalu_hypre_StructVectorDestroy(relax_data -> x);
+   (relax_data -> A) = nalu_hypre_StructMatrixRef(A);
+   (relax_data -> x) = nalu_hypre_StructVectorRef(x);
+   (relax_data -> b) = nalu_hypre_StructVectorRef(b);
 
    (relax_data -> num_iterations) = 0;
 
@@ -88,17 +88,17 @@ hypre_RedBlackConstantCoefGS( void               *relax_vdata,
       /* if using a zero initial guess, return zero */
       if (zero_guess)
       {
-         hypre_StructVectorSetConstantValues(x, 0.0);
+         nalu_hypre_StructVectorSetConstantValues(x, 0.0);
       }
 
-      hypre_EndTiming(relax_data -> time_index);
-      return hypre_error_flag;
+      nalu_hypre_EndTiming(relax_data -> time_index);
+      return nalu_hypre_error_flag;
    }
    else
    {
-      stencil       = hypre_StructMatrixStencil(A);
-      stencil_shape = hypre_StructStencilShape(stencil);
-      stencil_size  = hypre_StructStencilSize(stencil);
+      stencil       = nalu_hypre_StructMatrixStencil(A);
+      stencil_shape = nalu_hypre_StructStencilShape(stencil);
+      stencil_size  = nalu_hypre_StructStencilSize(stencil);
 
       /* get off-diag entry ranks ready */
       i = 0;
@@ -112,7 +112,7 @@ hypre_RedBlackConstantCoefGS( void               *relax_vdata,
       }
    }
 
-   hypre_StructVectorClearBoundGhostValues(x, 0);
+   nalu_hypre_StructVectorClearBoundGhostValues(x, 0);
 
    /*----------------------------------------------------------
     * Do zero_guess iteration
@@ -129,53 +129,53 @@ hypre_RedBlackConstantCoefGS( void               *relax_vdata,
          {
             case 0:
             {
-               compute_box_aa = hypre_ComputePkgIndtBoxes(compute_pkg);
+               compute_box_aa = nalu_hypre_ComputePkgIndtBoxes(compute_pkg);
             }
             break;
 
             case 1:
             {
-               compute_box_aa = hypre_ComputePkgDeptBoxes(compute_pkg);
+               compute_box_aa = nalu_hypre_ComputePkgDeptBoxes(compute_pkg);
             }
             break;
          }
 
-         hypre_ForBoxArrayI(i, compute_box_aa)
+         nalu_hypre_ForBoxArrayI(i, compute_box_aa)
          {
-            compute_box_a = hypre_BoxArrayArrayBoxArray(compute_box_aa, i);
+            compute_box_a = nalu_hypre_BoxArrayArrayBoxArray(compute_box_aa, i);
 
-            A_dbox = hypre_BoxArrayBox(hypre_StructMatrixDataSpace(A), i);
-            b_dbox = hypre_BoxArrayBox(hypre_StructVectorDataSpace(b), i);
-            x_dbox = hypre_BoxArrayBox(hypre_StructVectorDataSpace(x), i);
+            A_dbox = nalu_hypre_BoxArrayBox(nalu_hypre_StructMatrixDataSpace(A), i);
+            b_dbox = nalu_hypre_BoxArrayBox(nalu_hypre_StructVectorDataSpace(b), i);
+            x_dbox = nalu_hypre_BoxArrayBox(nalu_hypre_StructVectorDataSpace(x), i);
 
-            Ap = hypre_StructMatrixBoxData(A, i, diag_rank);
-            bp = hypre_StructVectorBoxData(b, i);
-            xp = hypre_StructVectorBoxData(x, i);
+            Ap = nalu_hypre_StructMatrixBoxData(A, i, diag_rank);
+            bp = nalu_hypre_StructVectorBoxData(b, i);
+            xp = nalu_hypre_StructVectorBoxData(x, i);
 
-            hypre_ForBoxI(j, compute_box_a)
+            nalu_hypre_ForBoxI(j, compute_box_a)
             {
-               compute_box = hypre_BoxArrayBox(compute_box_a, j);
+               compute_box = nalu_hypre_BoxArrayBox(compute_box_a, j);
 
-               start  = hypre_BoxIMin(compute_box);
-               hypre_BoxGetSize(compute_box, loop_size);
+               start  = nalu_hypre_BoxIMin(compute_box);
+               nalu_hypre_BoxGetSize(compute_box, loop_size);
 
                /* Are we relaxing index start or start+(1,0,0)? */
                redblack = rb;
                for (d = 0; d < ndim; d++)
                {
-                  redblack += hypre_IndexD(start, d);
+                  redblack += nalu_hypre_IndexD(start, d);
                }
-               redblack = hypre_abs(redblack) % 2;
+               redblack = nalu_hypre_abs(redblack) % 2;
 
-               bstart = hypre_BoxIndexRank(b_dbox, start);
-               xstart = hypre_BoxIndexRank(x_dbox, start);
-               ni = hypre_IndexX(loop_size);
-               nj = hypre_IndexY(loop_size);
-               nk = hypre_IndexZ(loop_size);
-               bni = hypre_BoxSizeX(b_dbox);
-               xni = hypre_BoxSizeX(x_dbox);
-               bnj = hypre_BoxSizeY(b_dbox);
-               xnj = hypre_BoxSizeY(x_dbox);
+               bstart = nalu_hypre_BoxIndexRank(b_dbox, start);
+               xstart = nalu_hypre_BoxIndexRank(x_dbox, start);
+               ni = nalu_hypre_IndexX(loop_size);
+               nj = nalu_hypre_IndexY(loop_size);
+               nk = nalu_hypre_IndexZ(loop_size);
+               bni = nalu_hypre_BoxSizeX(b_dbox);
+               xni = nalu_hypre_BoxSizeX(x_dbox);
+               bnj = nalu_hypre_BoxSizeY(b_dbox);
+               xnj = nalu_hypre_BoxSizeY(x_dbox);
                if (ndim < 3)
                {
                   nk = 1;
@@ -187,38 +187,38 @@ hypre_RedBlackConstantCoefGS( void               *relax_vdata,
 
                if (constant_coeff == 1)
                {
-                  Ai = hypre_CCBoxIndexRank(A_dbox, start);
+                  Ai = nalu_hypre_CCBoxIndexRank(A_dbox, start);
                   AApd = 1.0 / Ap[Ai];
 
-                  hypre_RedBlackLoopInit();
+                  nalu_hypre_RedBlackLoopInit();
 
 #define DEVICE_VAR is_device_ptr(xp,bp)
-                  hypre_RedBlackConstantcoefLoopBegin(ni, nj, nk, redblack,
+                  nalu_hypre_RedBlackConstantcoefLoopBegin(ni, nj, nk, redblack,
                                                       bstart, bni, bnj, bi,
                                                       xstart, xni, xnj, xi);
                   {
                      xp[xi] = bp[bi] * AApd;
                   }
-                  hypre_RedBlackConstantcoefLoopEnd();
+                  nalu_hypre_RedBlackConstantcoefLoopEnd();
 #undef DEVICE_VAR
                }
 
                else      /* variable coefficient diag */
                {
-                  Astart = hypre_BoxIndexRank(A_dbox, start);
-                  Ani = hypre_BoxSizeX(A_dbox);
-                  Anj = hypre_BoxSizeY(A_dbox);
+                  Astart = nalu_hypre_BoxIndexRank(A_dbox, start);
+                  Ani = nalu_hypre_BoxSizeX(A_dbox);
+                  Anj = nalu_hypre_BoxSizeY(A_dbox);
 
-                  hypre_RedBlackLoopInit();
+                  nalu_hypre_RedBlackLoopInit();
 #define DEVICE_VAR is_device_ptr(xp,bp,Ap)
-                  hypre_RedBlackLoopBegin(ni, nj, nk, redblack,
+                  nalu_hypre_RedBlackLoopBegin(ni, nj, nk, redblack,
                                           Astart, Ani, Anj, Ai,
                                           bstart, bni, bnj, bi,
                                           xstart, xni, xnj, xi);
                   {
                      xp[xi] = bp[bi] / Ap[Ai];
                   }
-                  hypre_RedBlackLoopEnd();
+                  nalu_hypre_RedBlackLoopEnd();
 #undef DEVICE_VAR
                }
 
@@ -242,57 +242,57 @@ hypre_RedBlackConstantCoefGS( void               *relax_vdata,
          {
             case 0:
             {
-               xp = hypre_StructVectorData(x);
-               hypre_InitializeIndtComputations(compute_pkg, xp, &comm_handle);
-               compute_box_aa = hypre_ComputePkgIndtBoxes(compute_pkg);
+               xp = nalu_hypre_StructVectorData(x);
+               nalu_hypre_InitializeIndtComputations(compute_pkg, xp, &comm_handle);
+               compute_box_aa = nalu_hypre_ComputePkgIndtBoxes(compute_pkg);
             }
             break;
 
             case 1:
             {
-               hypre_FinalizeIndtComputations(comm_handle);
-               compute_box_aa = hypre_ComputePkgDeptBoxes(compute_pkg);
+               nalu_hypre_FinalizeIndtComputations(comm_handle);
+               compute_box_aa = nalu_hypre_ComputePkgDeptBoxes(compute_pkg);
             }
             break;
          }
 
-         hypre_ForBoxArrayI(i, compute_box_aa)
+         nalu_hypre_ForBoxArrayI(i, compute_box_aa)
          {
-            compute_box_a = hypre_BoxArrayArrayBoxArray(compute_box_aa, i);
+            compute_box_a = nalu_hypre_BoxArrayArrayBoxArray(compute_box_aa, i);
 
-            A_dbox = hypre_BoxArrayBox(hypre_StructMatrixDataSpace(A), i);
-            b_dbox = hypre_BoxArrayBox(hypre_StructVectorDataSpace(b), i);
-            x_dbox = hypre_BoxArrayBox(hypre_StructVectorDataSpace(x), i);
+            A_dbox = nalu_hypre_BoxArrayBox(nalu_hypre_StructMatrixDataSpace(A), i);
+            b_dbox = nalu_hypre_BoxArrayBox(nalu_hypre_StructVectorDataSpace(b), i);
+            x_dbox = nalu_hypre_BoxArrayBox(nalu_hypre_StructVectorDataSpace(x), i);
 
-            Ap = hypre_StructMatrixBoxData(A, i, diag_rank);
-            bp = hypre_StructVectorBoxData(b, i);
-            xp = hypre_StructVectorBoxData(x, i);
+            Ap = nalu_hypre_StructMatrixBoxData(A, i, diag_rank);
+            bp = nalu_hypre_StructVectorBoxData(b, i);
+            xp = nalu_hypre_StructVectorBoxData(x, i);
 
-            hypre_ForBoxI(j, compute_box_a)
+            nalu_hypre_ForBoxI(j, compute_box_a)
             {
-               compute_box = hypre_BoxArrayBox(compute_box_a, j);
+               compute_box = nalu_hypre_BoxArrayBox(compute_box_a, j);
 
-               start  = hypre_BoxIMin(compute_box);
-               hypre_BoxGetSize(compute_box, loop_size);
+               start  = nalu_hypre_BoxIMin(compute_box);
+               nalu_hypre_BoxGetSize(compute_box, loop_size);
 
                /* Are we relaxing index start or start+(1,0,0)? */
                redblack = rb;
                for (d = 0; d < ndim; d++)
                {
-                  redblack += hypre_IndexD(start, d);
+                  redblack += nalu_hypre_IndexD(start, d);
                }
-               redblack = hypre_abs(redblack) % 2;
+               redblack = nalu_hypre_abs(redblack) % 2;
 
-               bstart = hypre_BoxIndexRank(b_dbox, start);
-               xstart = hypre_BoxIndexRank(x_dbox, start);
-               ni = hypre_IndexX(loop_size);
-               nj = hypre_IndexY(loop_size);
-               nk = hypre_IndexZ(loop_size);
-               bni = hypre_BoxSizeX(b_dbox);
-               xni = hypre_BoxSizeX(x_dbox);
-               bnj = hypre_BoxSizeY(b_dbox);
-               xnj = hypre_BoxSizeY(x_dbox);
-               Ai = hypre_CCBoxIndexRank(A_dbox, start);
+               bstart = nalu_hypre_BoxIndexRank(b_dbox, start);
+               xstart = nalu_hypre_BoxIndexRank(x_dbox, start);
+               ni = nalu_hypre_IndexX(loop_size);
+               nj = nalu_hypre_IndexY(loop_size);
+               nk = nalu_hypre_IndexZ(loop_size);
+               bni = nalu_hypre_BoxSizeX(b_dbox);
+               xni = nalu_hypre_BoxSizeX(x_dbox);
+               bnj = nalu_hypre_BoxSizeY(b_dbox);
+               xnj = nalu_hypre_BoxSizeY(x_dbox);
+               Ai = nalu_hypre_CCBoxIndexRank(A_dbox, start);
                if (ndim < 3)
                {
                   nk = 1;
@@ -305,33 +305,33 @@ hypre_RedBlackConstantCoefGS( void               *relax_vdata,
                switch (stencil_size)
                {
                   case 7:
-                     App = hypre_StructMatrixBoxData(A, i, offd[5]);
+                     App = nalu_hypre_StructMatrixBoxData(A, i, offd[5]);
                      App5 = App[Ai];
-                     App = hypre_StructMatrixBoxData(A, i, offd[4]);
+                     App = nalu_hypre_StructMatrixBoxData(A, i, offd[4]);
                      App4 = App[Ai];
-                     xoff5 = hypre_BoxOffsetDistance(
+                     xoff5 = nalu_hypre_BoxOffsetDistance(
                                 x_dbox, stencil_shape[offd[5]]);
-                     xoff4 = hypre_BoxOffsetDistance(
+                     xoff4 = nalu_hypre_BoxOffsetDistance(
                                 x_dbox, stencil_shape[offd[4]]);
 
                   case 5:
-                     App = hypre_StructMatrixBoxData(A, i, offd[3]);
+                     App = nalu_hypre_StructMatrixBoxData(A, i, offd[3]);
                      App3 = App[Ai];
-                     App = hypre_StructMatrixBoxData(A, i, offd[2]);
+                     App = nalu_hypre_StructMatrixBoxData(A, i, offd[2]);
                      App2 = App[Ai];
-                     xoff3 = hypre_BoxOffsetDistance(
+                     xoff3 = nalu_hypre_BoxOffsetDistance(
                                 x_dbox, stencil_shape[offd[3]]);
-                     xoff2 = hypre_BoxOffsetDistance(
+                     xoff2 = nalu_hypre_BoxOffsetDistance(
                                 x_dbox, stencil_shape[offd[2]]);
 
                   case 3:
-                     App = hypre_StructMatrixBoxData(A, i, offd[1]);
+                     App = nalu_hypre_StructMatrixBoxData(A, i, offd[1]);
                      App1 = App[Ai];
-                     App = hypre_StructMatrixBoxData(A, i, offd[0]);
+                     App = nalu_hypre_StructMatrixBoxData(A, i, offd[0]);
                      App0 = App[Ai];
-                     xoff1 = hypre_BoxOffsetDistance(
+                     xoff1 = nalu_hypre_BoxOffsetDistance(
                                 x_dbox, stencil_shape[offd[1]]);
-                     xoff0 = hypre_BoxOffsetDistance(
+                     xoff0 = nalu_hypre_BoxOffsetDistance(
                                 x_dbox, stencil_shape[offd[0]]);
                      break;
                }
@@ -343,9 +343,9 @@ hypre_RedBlackConstantCoefGS( void               *relax_vdata,
                   switch (stencil_size)
                   {
                      case 7:
-                        hypre_RedBlackLoopInit();
+                        nalu_hypre_RedBlackLoopInit();
 #define DEVICE_VAR is_device_ptr(xp,bp)
-                        hypre_RedBlackConstantcoefLoopBegin(ni, nj, nk, redblack,
+                        nalu_hypre_RedBlackConstantcoefLoopBegin(ni, nj, nk, redblack,
                                                             bstart, bni, bnj, bi,
                                                             xstart, xni, xnj, xi);
                         {
@@ -358,15 +358,15 @@ hypre_RedBlackConstantCoefGS( void               *relax_vdata,
                                App4 * xp[xi + xoff4] -
                                App5 * xp[xi + xoff5]) * AApd;
                         }
-                        hypre_RedBlackConstantcoefLoopEnd();
+                        nalu_hypre_RedBlackConstantcoefLoopEnd();
 #undef DEVICE_VAR
 
                         break;
 
                      case 5:
-                        hypre_RedBlackLoopInit();
+                        nalu_hypre_RedBlackLoopInit();
 #define DEVICE_VAR is_device_ptr(xp,bp)
-                        hypre_RedBlackConstantcoefLoopBegin(ni, nj, nk, redblack,
+                        nalu_hypre_RedBlackConstantcoefLoopBegin(ni, nj, nk, redblack,
                                                             bstart, bni, bnj, bi,
                                                             xstart, xni, xnj, xi);
                         {
@@ -377,14 +377,14 @@ hypre_RedBlackConstantCoefGS( void               *relax_vdata,
                                App2 * xp[xi + xoff2] -
                                App3 * xp[xi + xoff3]) * AApd;
                         }
-                        hypre_RedBlackConstantcoefLoopEnd();
+                        nalu_hypre_RedBlackConstantcoefLoopEnd();
 #undef DEVICE_VAR
                         break;
 
                      case 3:
-                        hypre_RedBlackLoopInit();
+                        nalu_hypre_RedBlackLoopInit();
 #define DEVICE_VAR is_device_ptr(xp,bp)
-                        hypre_RedBlackConstantcoefLoopBegin(ni, nj, nk, redblack,
+                        nalu_hypre_RedBlackConstantcoefLoopBegin(ni, nj, nk, redblack,
                                                             bstart, bni, bnj, bi,
                                                             xstart, xni, xnj, xi);
                         {
@@ -393,7 +393,7 @@ hypre_RedBlackConstantCoefGS( void               *relax_vdata,
                                App0 * xp[xi + xoff0] -
                                App1 * xp[xi + xoff1]) * AApd;
                         }
-                        hypre_RedBlackConstantcoefLoopEnd();
+                        nalu_hypre_RedBlackConstantcoefLoopEnd();
 #undef DEVICE_VAR
                         break;
                   }
@@ -402,16 +402,16 @@ hypre_RedBlackConstantCoefGS( void               *relax_vdata,
 
                else /* variable diagonal */
                {
-                  Astart = hypre_BoxIndexRank(A_dbox, start);
-                  Ani = hypre_BoxSizeX(A_dbox);
-                  Anj = hypre_BoxSizeY(A_dbox);
+                  Astart = nalu_hypre_BoxIndexRank(A_dbox, start);
+                  Ani = nalu_hypre_BoxSizeX(A_dbox);
+                  Anj = nalu_hypre_BoxSizeY(A_dbox);
 
                   switch (stencil_size)
                   {
                      case 7:
-                        hypre_RedBlackLoopInit();
+                        nalu_hypre_RedBlackLoopInit();
 #define DEVICE_VAR is_device_ptr(xp,bp,Ap)
-                        hypre_RedBlackLoopBegin(ni, nj, nk, redblack,
+                        nalu_hypre_RedBlackLoopBegin(ni, nj, nk, redblack,
                                                 Astart, Ani, Anj, Ai,
                                                 bstart, bni, bnj, bi,
                                                 xstart, xni, xnj, xi);
@@ -425,14 +425,14 @@ hypre_RedBlackConstantCoefGS( void               *relax_vdata,
                                App4 * xp[xi + xoff4] -
                                App5 * xp[xi + xoff5]) / Ap[Ai];
                         }
-                        hypre_RedBlackLoopEnd();
+                        nalu_hypre_RedBlackLoopEnd();
 #undef DEVICE_VAR
                         break;
 
                      case 5:
-                        hypre_RedBlackLoopInit();
+                        nalu_hypre_RedBlackLoopInit();
 #define DEVICE_VAR is_device_ptr(xp,bp,Ap)
-                        hypre_RedBlackLoopBegin(ni, nj, nk, redblack,
+                        nalu_hypre_RedBlackLoopBegin(ni, nj, nk, redblack,
                                                 Astart, Ani, Anj, Ai,
                                                 bstart, bni, bnj, bi,
                                                 xstart, xni, xnj, xi);
@@ -444,14 +444,14 @@ hypre_RedBlackConstantCoefGS( void               *relax_vdata,
                                App2 * xp[xi + xoff2] -
                                App3 * xp[xi + xoff3]) / Ap[Ai];
                         }
-                        hypre_RedBlackLoopEnd();
+                        nalu_hypre_RedBlackLoopEnd();
 #undef DEVICE_VAR
                         break;
 
                      case 3:
-                        hypre_RedBlackLoopInit();
+                        nalu_hypre_RedBlackLoopInit();
 #define DEVICE_VAR is_device_ptr(xp,bp,Ap)
-                        hypre_RedBlackLoopBegin(ni, nj, nk, redblack,
+                        nalu_hypre_RedBlackLoopBegin(ni, nj, nk, redblack,
                                                 Astart, Ani, Anj, Ai,
                                                 bstart, bni, bnj, bi,
                                                 xstart, xni, xnj, xi);
@@ -461,7 +461,7 @@ hypre_RedBlackConstantCoefGS( void               *relax_vdata,
                                App0 * xp[xi + xoff0] -
                                App1 * xp[xi + xoff1]) / Ap[Ai];
                         }
-                        hypre_RedBlackLoopEnd();
+                        nalu_hypre_RedBlackLoopEnd();
 #undef DEVICE_VAR
                         break;
 
@@ -481,10 +481,10 @@ hypre_RedBlackConstantCoefGS( void               *relax_vdata,
     * Return
     *-----------------------------------------------------------------------*/
 
-   hypre_IncFLOPCount(relax_data -> flops);
-   hypre_EndTiming(relax_data -> time_index);
+   nalu_hypre_IncFLOPCount(relax_data -> flops);
+   nalu_hypre_EndTiming(relax_data -> time_index);
 
-   return hypre_error_flag;
+   return nalu_hypre_error_flag;
 }
 
 

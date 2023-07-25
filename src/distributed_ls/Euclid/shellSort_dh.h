@@ -10,13 +10,13 @@
 
 /* #include "euclid_common.h" */
 
-extern void shellSort_int(const HYPRE_Int n, HYPRE_Int *x);
-extern void shellSort_float(HYPRE_Int n, HYPRE_Real *v);
+extern void shellSort_int(const NALU_HYPRE_Int n, NALU_HYPRE_Int *x);
+extern void shellSort_float(NALU_HYPRE_Int n, NALU_HYPRE_Real *v);
 
 /*
-extern void shellSort_int_int(const HYPRE_Int n, HYPRE_Int *x, HYPRE_Int *y);
-extern void shellSort_int_float(HYPRE_Int n, HYPRE_Int *x, HYPRE_Real *v);
-extern void shellSort_int_int_float(HYPRE_Int n, HYPRE_Int *x, HYPRE_Int *y, HYPRE_Real *v);
+extern void shellSort_int_int(const NALU_HYPRE_Int n, NALU_HYPRE_Int *x, NALU_HYPRE_Int *y);
+extern void shellSort_int_float(NALU_HYPRE_Int n, NALU_HYPRE_Int *x, NALU_HYPRE_Real *v);
+extern void shellSort_int_int_float(NALU_HYPRE_Int n, NALU_HYPRE_Int *x, NALU_HYPRE_Int *y, NALU_HYPRE_Real *v);
 */
 
 #endif

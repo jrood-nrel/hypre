@@ -9,8 +9,8 @@
 #define __MLI_SOLVER_HSCHWARZ_H__
 
 #include <stdio.h>
-#include "_hypre_parcsr_ls.h"
-#include "_hypre_parcsr_mv.h"
+#include "_nalu_hypre_parcsr_ls.h"
+#include "_nalu_hypre_parcsr_mv.h"
 #include "mli_matrix.h"
 #include "mli_vector.h"
 #include "mli_solver.h"
@@ -27,7 +27,7 @@ class MLI_Solver_HSchwarz : public MLI_Solver
    int          blkSize_;
    double       relaxWeight_;
    MLI_Vector   *mliVec_;
-   HYPRE_Solver smoother_;
+   NALU_HYPRE_Solver smoother_;
 
 public :
 

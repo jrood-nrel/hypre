@@ -10,13 +10,13 @@
 
 #include "temp_multivector.h"
 #include "interpreter.h"
-#include "_hypre_utilities.h"
+#include "_nalu_hypre_utilities.h"
 
 static void
-mv_collectVectorPtr( HYPRE_Int* mask, mv_TempMultiVector* x, void** px )
+mv_collectVectorPtr( NALU_HYPRE_Int* mask, mv_TempMultiVector* x, void** px )
 {
 
-   HYPRE_Int ix, jx;
+   NALU_HYPRE_Int ix, jx;
 
    if ( mask != NULL )
    {
@@ -34,11 +34,11 @@ mv_collectVectorPtr( HYPRE_Int* mask, mv_TempMultiVector* x, void** px )
 
 }
 
-static HYPRE_Int
-aux_maskCount( HYPRE_Int n, HYPRE_Int* mask )
+static NALU_HYPRE_Int
+aux_maskCount( NALU_HYPRE_Int n, NALU_HYPRE_Int* mask )
 {
 
-   HYPRE_Int i, m;
+   NALU_HYPRE_Int i, m;
 
    if ( mask == NULL )
    {
@@ -55,10 +55,10 @@ aux_maskCount( HYPRE_Int n, HYPRE_Int* mask )
 }
 
 static void
-aux_indexFromMask( HYPRE_Int n, HYPRE_Int* mask, HYPRE_Int* index )
+aux_indexFromMask( NALU_HYPRE_Int n, NALU_HYPRE_Int* mask, NALU_HYPRE_Int* index )
 {
 
-   HYPRE_Int i, j;
+   NALU_HYPRE_Int i, j;
 
    if ( mask != NULL )
    {
@@ -78,10 +78,10 @@ aux_indexFromMask( HYPRE_Int n, HYPRE_Int* mask, HYPRE_Int* index )
 
 /* ------- here goes simple random number generator --------- */
 
-static hypre_ulongint next = 1;
+static nalu_hypre_ulongint next = 1;
 
 /* RAND_MAX assumed to be 32767 */
-static HYPRE_Int myrand(void)
+static NALU_HYPRE_Int myrand(void)
 {
    next = next * 1103515245 + 12345;
    return ((unsigned)(next / 65536) % 32768);
@@ -94,21 +94,21 @@ static void mysrand(unsigned seed)
 
 
 void*
-mv_TempMultiVectorCreateFromSampleVector( void* ii_, HYPRE_Int n, void* sample )
+mv_TempMultiVectorCreateFromSampleVector( void* ii_, NALU_HYPRE_Int n, void* sample )
 {
 
-   HYPRE_Int i;
+   NALU_HYPRE_Int i;
    mv_TempMultiVector* x;
    mv_InterfaceInterpreter* ii = (mv_InterfaceInterpreter*)ii_;
 
-   x = hypre_TAlloc(mv_TempMultiVector, 1, HYPRE_MEMORY_HOST);
-   hypre_assert( x != NULL );
+   x = nalu_hypre_TAlloc(mv_TempMultiVector, 1, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_assert( x != NULL );
 
    x->interpreter = ii;
    x->numVectors = n;
 
-   x->vector = hypre_CTAlloc(void*,  n, HYPRE_MEMORY_HOST);
-   hypre_assert( x->vector != NULL );
+   x->vector = nalu_hypre_CTAlloc(void*,  n, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_assert( x->vector != NULL );
 
    x->ownsVectors = 1;
    x->mask = NULL;
@@ -124,16 +124,16 @@ mv_TempMultiVectorCreateFromSampleVector( void* ii_, HYPRE_Int n, void* sample )
 }
 
 void*
-mv_TempMultiVectorCreateCopy( void* src_, HYPRE_Int copyValues )
+mv_TempMultiVectorCreateCopy( void* src_, NALU_HYPRE_Int copyValues )
 {
 
-   HYPRE_Int i, n;
+   NALU_HYPRE_Int i, n;
 
    mv_TempMultiVector* src;
    mv_TempMultiVector* dest;
 
    src = (mv_TempMultiVector*)src_;
-   hypre_assert( src != NULL );
+   nalu_hypre_assert( src != NULL );
 
    n = src->numVectors;
 
@@ -152,7 +152,7 @@ void
 mv_TempMultiVectorDestroy( void* x_ )
 {
 
-   HYPRE_Int i;
+   NALU_HYPRE_Int i;
    mv_TempMultiVector* x = (mv_TempMultiVector*)x_;
 
    if ( x == NULL )
@@ -166,16 +166,16 @@ mv_TempMultiVectorDestroy( void* x_ )
       {
          (x->interpreter->DestroyVector)(x->vector[i]);
       }
-      hypre_TFree(x->vector, HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(x->vector, NALU_HYPRE_MEMORY_HOST);
    }
    if ( x->mask && x->ownsMask )
    {
-      hypre_TFree(x->mask, HYPRE_MEMORY_HOST);
+      nalu_hypre_TFree(x->mask, NALU_HYPRE_MEMORY_HOST);
    }
-   hypre_TFree(x, HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(x, NALU_HYPRE_MEMORY_HOST);
 }
 
-HYPRE_Int
+NALU_HYPRE_Int
 mv_TempMultiVectorWidth( void* x_ )
 {
 
@@ -189,7 +189,7 @@ mv_TempMultiVectorWidth( void* x_ )
    return x->numVectors;
 }
 
-HYPRE_Int
+NALU_HYPRE_Int
 mv_TempMultiVectorHeight( void* x_ )
 {
 
@@ -206,12 +206,12 @@ mv_TempMultiVectorHeight( void* x_ )
 /* this shallow copy of the mask is convenient but not safe;
    a proper copy should be considered */
 void
-mv_TempMultiVectorSetMask( void* x_, HYPRE_Int* mask )
+mv_TempMultiVectorSetMask( void* x_, NALU_HYPRE_Int* mask )
 {
 
    mv_TempMultiVector* x = (mv_TempMultiVector*)x_;
 
-   hypre_assert( x != NULL );
+   nalu_hypre_assert( x != NULL );
    x->mask = mask;
    x->ownsMask = 0;
 }
@@ -220,10 +220,10 @@ void
 mv_TempMultiVectorClear( void* x_ )
 {
 
-   HYPRE_Int i;
+   NALU_HYPRE_Int i;
    mv_TempMultiVector* x = (mv_TempMultiVector*)x_;
 
-   hypre_assert( x != NULL );
+   nalu_hypre_assert( x != NULL );
 
    for ( i = 0; i < x->numVectors; i++ )
       if ( x->mask == NULL || (x->mask)[i] )
@@ -233,13 +233,13 @@ mv_TempMultiVectorClear( void* x_ )
 }
 
 void
-mv_TempMultiVectorSetRandom( void* x_, HYPRE_Int seed )
+mv_TempMultiVectorSetRandom( void* x_, NALU_HYPRE_Int seed )
 {
 
-   HYPRE_Int i;
+   NALU_HYPRE_Int i;
    mv_TempMultiVector* x = (mv_TempMultiVector*)x_;
 
-   hypre_assert( x != NULL );
+   nalu_hypre_assert( x != NULL );
 
    mysrand(seed);
 
@@ -259,22 +259,22 @@ void
 mv_TempMultiVectorCopy( void* src_, void* dest_ )
 {
 
-   HYPRE_Int i, ms, md;
+   NALU_HYPRE_Int i, ms, md;
    void** ps;
    void** pd;
    mv_TempMultiVector* src = (mv_TempMultiVector*)src_;
    mv_TempMultiVector* dest = (mv_TempMultiVector*)dest_;
 
-   hypre_assert( src != NULL && dest != NULL );
+   nalu_hypre_assert( src != NULL && dest != NULL );
 
    ms = aux_maskCount( src->numVectors, src->mask );
    md = aux_maskCount( dest->numVectors, dest->mask );
-   hypre_assert( ms == md );
+   nalu_hypre_assert( ms == md );
 
-   ps = hypre_CTAlloc(void*,  ms, HYPRE_MEMORY_HOST);
-   hypre_assert( ps != NULL );
-   pd = hypre_CTAlloc(void*,  md, HYPRE_MEMORY_HOST);
-   hypre_assert( pd != NULL );
+   ps = nalu_hypre_CTAlloc(void*,  ms, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_assert( ps != NULL );
+   pd = nalu_hypre_CTAlloc(void*,  md, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_assert( pd != NULL );
 
    mv_collectVectorPtr( src->mask, src, ps );
    mv_collectVectorPtr( dest->mask, dest, pd );
@@ -284,15 +284,15 @@ mv_TempMultiVectorCopy( void* src_, void* dest_ )
       (src->interpreter->CopyVector)(ps[i], pd[i]);
    }
 
-   hypre_TFree(ps, HYPRE_MEMORY_HOST);
-   hypre_TFree(pd, HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(ps, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(pd, NALU_HYPRE_MEMORY_HOST);
 }
 
 void
-mv_TempMultiVectorAxpy( HYPRE_Complex a, void* x_, void* y_ )
+mv_TempMultiVectorAxpy( NALU_HYPRE_Complex a, void* x_, void* y_ )
 {
 
-   HYPRE_Int i, mx, my;
+   NALU_HYPRE_Int i, mx, my;
    void** px;
    void** py;
    mv_TempMultiVector* x;
@@ -300,16 +300,16 @@ mv_TempMultiVectorAxpy( HYPRE_Complex a, void* x_, void* y_ )
 
    x = (mv_TempMultiVector*)x_;
    y = (mv_TempMultiVector*)y_;
-   hypre_assert( x != NULL && y != NULL );
+   nalu_hypre_assert( x != NULL && y != NULL );
 
    mx = aux_maskCount( x->numVectors, x->mask );
    my = aux_maskCount( y->numVectors, y->mask );
-   hypre_assert( mx == my );
+   nalu_hypre_assert( mx == my );
 
-   px = hypre_CTAlloc(void*,  mx, HYPRE_MEMORY_HOST);
-   hypre_assert( px != NULL );
-   py = hypre_CTAlloc(void*,  my, HYPRE_MEMORY_HOST);
-   hypre_assert( py != NULL );
+   px = nalu_hypre_CTAlloc(void*,  mx, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_assert( px != NULL );
+   py = nalu_hypre_CTAlloc(void*,  my, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_assert( py != NULL );
 
    mv_collectVectorPtr( x->mask, x, px );
    mv_collectVectorPtr( y->mask, y, py );
@@ -319,19 +319,19 @@ mv_TempMultiVectorAxpy( HYPRE_Complex a, void* x_, void* y_ )
       (x->interpreter->Axpy)(a, px[i], py[i]);
    }
 
-   hypre_TFree(px, HYPRE_MEMORY_HOST);
-   hypre_TFree(py, HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(px, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(py, NALU_HYPRE_MEMORY_HOST);
 }
 
 void
 mv_TempMultiVectorByMultiVector( void* x_, void* y_,
-                                 HYPRE_Int xyGHeight, HYPRE_Int xyHeight,
-                                 HYPRE_Int xyWidth, HYPRE_Complex* xyVal )
+                                 NALU_HYPRE_Int xyGHeight, NALU_HYPRE_Int xyHeight,
+                                 NALU_HYPRE_Int xyWidth, NALU_HYPRE_Complex* xyVal )
 {
    /* xy = x'*y */
 
-   HYPRE_Int ix, iy, mx, my, jxy;
-   HYPRE_Complex* p;
+   NALU_HYPRE_Int ix, iy, mx, my, jxy;
+   NALU_HYPRE_Complex* p;
    void** px;
    void** py;
    mv_TempMultiVector* x;
@@ -339,18 +339,18 @@ mv_TempMultiVectorByMultiVector( void* x_, void* y_,
 
    x = (mv_TempMultiVector*)x_;
    y = (mv_TempMultiVector*)y_;
-   hypre_assert( x != NULL && y != NULL );
+   nalu_hypre_assert( x != NULL && y != NULL );
 
    mx = aux_maskCount( x->numVectors, x->mask );
-   hypre_assert( mx == xyHeight );
+   nalu_hypre_assert( mx == xyHeight );
 
    my = aux_maskCount( y->numVectors, y->mask );
-   hypre_assert( my == xyWidth );
+   nalu_hypre_assert( my == xyWidth );
 
-   px = hypre_CTAlloc(void*,  mx, HYPRE_MEMORY_HOST);
-   hypre_assert( px != NULL );
-   py = hypre_CTAlloc(void*,  my, HYPRE_MEMORY_HOST);
-   hypre_assert( py != NULL );
+   px = nalu_hypre_CTAlloc(void*,  mx, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_assert( px != NULL );
+   py = nalu_hypre_CTAlloc(void*,  my, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_assert( py != NULL );
 
    mv_collectVectorPtr( x->mask, x, px );
    mv_collectVectorPtr( y->mask, y, py );
@@ -365,42 +365,42 @@ mv_TempMultiVectorByMultiVector( void* x_, void* y_,
       p += jxy;
    }
 
-   hypre_TFree(px, HYPRE_MEMORY_HOST);
-   hypre_TFree(py, HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(px, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(py, NALU_HYPRE_MEMORY_HOST);
 
 }
 
 void
 mv_TempMultiVectorByMultiVectorDiag( void* x_, void* y_,
-                                     HYPRE_Int* mask, HYPRE_Int n, HYPRE_Complex* diag )
+                                     NALU_HYPRE_Int* mask, NALU_HYPRE_Int n, NALU_HYPRE_Complex* diag )
 {
    /* diag = diag(x'*y) */
 
-   HYPRE_Int i, mx, my, m;
+   NALU_HYPRE_Int i, mx, my, m;
    void** px;
    void** py;
-   HYPRE_Int* index;
+   NALU_HYPRE_Int* index;
    mv_TempMultiVector* x;
    mv_TempMultiVector* y;
 
    x = (mv_TempMultiVector*)x_;
    y = (mv_TempMultiVector*)y_;
-   hypre_assert( x != NULL && y != NULL );
+   nalu_hypre_assert( x != NULL && y != NULL );
 
    mx = aux_maskCount( x->numVectors, x->mask );
    my = aux_maskCount( y->numVectors, y->mask );
    m = aux_maskCount( n, mask );
-   hypre_assert( mx == my && mx == m );
+   nalu_hypre_assert( mx == my && mx == m );
 
-   px = hypre_CTAlloc(void*,  mx, HYPRE_MEMORY_HOST);
-   hypre_assert( px != NULL );
-   py = hypre_CTAlloc(void*,  my, HYPRE_MEMORY_HOST);
-   hypre_assert( py != NULL );
+   px = nalu_hypre_CTAlloc(void*,  mx, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_assert( px != NULL );
+   py = nalu_hypre_CTAlloc(void*,  my, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_assert( py != NULL );
 
    mv_collectVectorPtr( x->mask, x, px );
    mv_collectVectorPtr( y->mask, y, py );
 
-   index = hypre_CTAlloc(HYPRE_Int,  m, HYPRE_MEMORY_HOST);
+   index = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  m, NALU_HYPRE_MEMORY_HOST);
    aux_indexFromMask( n, mask, index );
 
    for ( i = 0; i < m; i++ )
@@ -408,22 +408,22 @@ mv_TempMultiVectorByMultiVectorDiag( void* x_, void* y_,
       *(diag + index[i] - 1) = (x->interpreter->InnerProd)(px[i], py[i]);
    }
 
-   hypre_TFree(index, HYPRE_MEMORY_HOST);
-   hypre_TFree(px, HYPRE_MEMORY_HOST);
-   hypre_TFree(py, HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(index, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(px, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(py, NALU_HYPRE_MEMORY_HOST);
 
 }
 
 void
 mv_TempMultiVectorByMatrix( void* x_,
-                            HYPRE_Int rGHeight, HYPRE_Int rHeight,
-                            HYPRE_Int rWidth, HYPRE_Complex* rVal,
+                            NALU_HYPRE_Int rGHeight, NALU_HYPRE_Int rHeight,
+                            NALU_HYPRE_Int rWidth, NALU_HYPRE_Complex* rVal,
                             void* y_ )
 {
 
-   HYPRE_Int i, j, jump;
-   HYPRE_Int mx, my;
-   HYPRE_Complex* p;
+   NALU_HYPRE_Int i, j, jump;
+   NALU_HYPRE_Int mx, my;
+   NALU_HYPRE_Complex* p;
    void** px;
    void** py;
    mv_TempMultiVector* x;
@@ -431,17 +431,17 @@ mv_TempMultiVectorByMatrix( void* x_,
 
    x = (mv_TempMultiVector*)x_;
    y = (mv_TempMultiVector*)y_;
-   hypre_assert( x != NULL && y != NULL );
+   nalu_hypre_assert( x != NULL && y != NULL );
 
    mx = aux_maskCount( x->numVectors, x->mask );
    my = aux_maskCount( y->numVectors, y->mask );
 
-   hypre_assert( mx == rHeight && my == rWidth );
+   nalu_hypre_assert( mx == rHeight && my == rWidth );
 
-   px = hypre_CTAlloc(void*,  mx, HYPRE_MEMORY_HOST);
-   hypre_assert( px != NULL );
-   py = hypre_CTAlloc(void*,  my, HYPRE_MEMORY_HOST);
-   hypre_assert( py != NULL );
+   px = nalu_hypre_CTAlloc(void*,  mx, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_assert( px != NULL );
+   py = nalu_hypre_CTAlloc(void*,  my, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_assert( py != NULL );
 
    mv_collectVectorPtr( x->mask, x, px );
    mv_collectVectorPtr( y->mask, y, py );
@@ -457,20 +457,20 @@ mv_TempMultiVectorByMatrix( void* x_,
       p += jump;
    }
 
-   hypre_TFree(px, HYPRE_MEMORY_HOST);
-   hypre_TFree(py, HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(px, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(py, NALU_HYPRE_MEMORY_HOST);
 }
 
 void
 mv_TempMultiVectorXapy( void* x_,
-                        HYPRE_Int rGHeight, HYPRE_Int rHeight,
-                        HYPRE_Int rWidth, HYPRE_Complex* rVal,
+                        NALU_HYPRE_Int rGHeight, NALU_HYPRE_Int rHeight,
+                        NALU_HYPRE_Int rWidth, NALU_HYPRE_Complex* rVal,
                         void* y_ )
 {
 
-   HYPRE_Int i, j, jump;
-   HYPRE_Int mx, my;
-   HYPRE_Complex* p;
+   NALU_HYPRE_Int i, j, jump;
+   NALU_HYPRE_Int mx, my;
+   NALU_HYPRE_Complex* p;
    void** px;
    void** py;
    mv_TempMultiVector* x;
@@ -478,17 +478,17 @@ mv_TempMultiVectorXapy( void* x_,
 
    x = (mv_TempMultiVector*)x_;
    y = (mv_TempMultiVector*)y_;
-   hypre_assert( x != NULL && y != NULL );
+   nalu_hypre_assert( x != NULL && y != NULL );
 
    mx = aux_maskCount( x->numVectors, x->mask );
    my = aux_maskCount( y->numVectors, y->mask );
 
-   hypre_assert( mx == rHeight && my == rWidth );
+   nalu_hypre_assert( mx == rHeight && my == rWidth );
 
-   px = hypre_CTAlloc(void*,  mx, HYPRE_MEMORY_HOST);
-   hypre_assert( px != NULL );
-   py = hypre_CTAlloc(void*,  my, HYPRE_MEMORY_HOST);
-   hypre_assert( py != NULL );
+   px = nalu_hypre_CTAlloc(void*,  mx, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_assert( px != NULL );
+   py = nalu_hypre_CTAlloc(void*,  my, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_assert( py != NULL );
 
    mv_collectVectorPtr( x->mask, x, px );
    mv_collectVectorPtr( y->mask, y, py );
@@ -503,45 +503,45 @@ mv_TempMultiVectorXapy( void* x_,
       p += jump;
    }
 
-   hypre_TFree(px, HYPRE_MEMORY_HOST);
-   hypre_TFree(py, HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(px, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(py, NALU_HYPRE_MEMORY_HOST);
 }
 
 void
 mv_TempMultiVectorByDiagonal( void* x_,
-                              HYPRE_Int* mask, HYPRE_Int n, HYPRE_Complex* diag,
+                              NALU_HYPRE_Int* mask, NALU_HYPRE_Int n, NALU_HYPRE_Complex* diag,
                               void* y_ )
 {
 
-   HYPRE_Int j;
-   HYPRE_Int mx, my, m;
+   NALU_HYPRE_Int j;
+   NALU_HYPRE_Int mx, my, m;
    void** px;
    void** py;
-   HYPRE_Int* index;
+   NALU_HYPRE_Int* index;
    mv_TempMultiVector* x;
    mv_TempMultiVector* y;
 
    x = (mv_TempMultiVector*)x_;
    y = (mv_TempMultiVector*)y_;
-   hypre_assert( x != NULL && y != NULL );
+   nalu_hypre_assert( x != NULL && y != NULL );
 
    mx = aux_maskCount( x->numVectors, x->mask );
    my = aux_maskCount( y->numVectors, y->mask );
    m = aux_maskCount( n, mask );
 
-   hypre_assert( mx == m && my == m );
+   nalu_hypre_assert( mx == m && my == m );
 
    if ( m < 1 )
    {
       return;
    }
 
-   px = hypre_CTAlloc(void*,  mx, HYPRE_MEMORY_HOST);
-   hypre_assert( px != NULL );
-   py = hypre_CTAlloc(void*,  my, HYPRE_MEMORY_HOST);
-   hypre_assert( py != NULL );
+   px = nalu_hypre_CTAlloc(void*,  mx, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_assert( px != NULL );
+   py = nalu_hypre_CTAlloc(void*,  my, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_assert( py != NULL );
 
-   index = hypre_CTAlloc(HYPRE_Int,  m, HYPRE_MEMORY_HOST);
+   index = nalu_hypre_CTAlloc(NALU_HYPRE_Int,  m, NALU_HYPRE_MEMORY_HOST);
    aux_indexFromMask( n, mask, index );
 
    mv_collectVectorPtr( x->mask, x, px );
@@ -553,9 +553,9 @@ mv_TempMultiVectorByDiagonal( void* x_,
       (x->interpreter->Axpy)(diag[index[j] - 1], px[j], py[j]);
    }
 
-   hypre_TFree(px, HYPRE_MEMORY_HOST);
-   hypre_TFree(py, HYPRE_MEMORY_HOST);
-   hypre_TFree( index, HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(px, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(py, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree( index, NALU_HYPRE_MEMORY_HOST);
 }
 
 void
@@ -563,7 +563,7 @@ mv_TempMultiVectorEval( void (*f)( void*, void*, void* ), void* par,
                         void* x_, void* y_ )
 {
 
-   HYPRE_Int i, mx, my;
+   NALU_HYPRE_Int i, mx, my;
    void** px;
    void** py;
    mv_TempMultiVector* x;
@@ -571,7 +571,7 @@ mv_TempMultiVectorEval( void (*f)( void*, void*, void* ), void* par,
 
    x = (mv_TempMultiVector*)x_;
    y = (mv_TempMultiVector*)y_;
-   hypre_assert( x != NULL && y != NULL );
+   nalu_hypre_assert( x != NULL && y != NULL );
 
    if ( f == NULL )
    {
@@ -581,12 +581,12 @@ mv_TempMultiVectorEval( void (*f)( void*, void*, void* ), void* par,
 
    mx = aux_maskCount( x->numVectors, x->mask );
    my = aux_maskCount( y->numVectors, y->mask );
-   hypre_assert( mx == my );
+   nalu_hypre_assert( mx == my );
 
-   px = hypre_CTAlloc(void*,  mx, HYPRE_MEMORY_HOST);
-   hypre_assert( px != NULL );
-   py = hypre_CTAlloc(void*,  my, HYPRE_MEMORY_HOST);
-   hypre_assert( py != NULL );
+   px = nalu_hypre_CTAlloc(void*,  mx, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_assert( px != NULL );
+   py = nalu_hypre_CTAlloc(void*,  my, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_assert( py != NULL );
 
    mv_collectVectorPtr( x->mask, x, px );
    mv_collectVectorPtr( y->mask, y, py );
@@ -596,6 +596,6 @@ mv_TempMultiVectorEval( void (*f)( void*, void*, void* ), void* par,
       f( par, (void*)px[i], (void*)py[i] );
    }
 
-   hypre_TFree(px, HYPRE_MEMORY_HOST);
-   hypre_TFree(py, HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(px, NALU_HYPRE_MEMORY_HOST);
+   nalu_hypre_TFree(py, NALU_HYPRE_MEMORY_HOST);
 }

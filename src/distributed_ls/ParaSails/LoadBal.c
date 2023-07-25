@@ -29,13 +29,13 @@
  * beta - target load balance factor
  *--------------------------------------------------------------------------*/
 
-void LoadBalInit(MPI_Comm comm, HYPRE_Real local_cost, HYPRE_Real beta,
-  HYPRE_Int *num_given, HYPRE_Int *donor_data_pe, HYPRE_Real *donor_data_cost,
-  HYPRE_Int *num_taken)
+void LoadBalInit(MPI_Comm comm, NALU_HYPRE_Real local_cost, NALU_HYPRE_Real beta,
+  NALU_HYPRE_Int *num_given, NALU_HYPRE_Int *donor_data_pe, NALU_HYPRE_Real *donor_data_cost,
+  NALU_HYPRE_Int *num_taken)
 {
-    HYPRE_Int mype, npes;
-    HYPRE_Real *cost, average, upper, move, accept;
-    HYPRE_Int i, jj, j;
+    NALU_HYPRE_Int mype, npes;
+    NALU_HYPRE_Real *cost, average, upper, move, accept;
+    NALU_HYPRE_Int i, jj, j;
 
     *num_given = 0;
     *num_taken = 0;
@@ -43,12 +43,12 @@ void LoadBalInit(MPI_Comm comm, HYPRE_Real local_cost, HYPRE_Real beta,
     if (beta == 0.0)
 	return;
 
-    hypre_MPI_Comm_rank(comm, &mype);
-    hypre_MPI_Comm_size(comm, &npes);
+    nalu_hypre_MPI_Comm_rank(comm, &mype);
+    nalu_hypre_MPI_Comm_size(comm, &npes);
 
-    cost = hypre_TAlloc(HYPRE_Real, npes , HYPRE_MEMORY_HOST);
+    cost = nalu_hypre_TAlloc(NALU_HYPRE_Real, npes , NALU_HYPRE_MEMORY_HOST);
 
-    hypre_MPI_Allgather(&local_cost, 1, hypre_MPI_REAL, cost, 1, hypre_MPI_REAL, comm);
+    nalu_hypre_MPI_Allgather(&local_cost, 1, nalu_hypre_MPI_REAL, cost, 1, nalu_hypre_MPI_REAL, comm);
 
     /* Compute the average cost */
     average = 0.0;
@@ -96,7 +96,7 @@ void LoadBalInit(MPI_Comm comm, HYPRE_Real local_cost, HYPRE_Real beta,
                         cost[j] = cost[j] + move;
 #ifdef PARASAILS_DEBUG
 			if (mype == 0)
-                            hypre_printf("moved from %d to %d (%7.1e)\n", i,j,move);
+                            nalu_hypre_printf("moved from %d to %d (%7.1e)\n", i,j,move);
 #endif
                         /*nummoves = nummoves + 1;*/
                         break;
@@ -107,7 +107,7 @@ void LoadBalInit(MPI_Comm comm, HYPRE_Real local_cost, HYPRE_Real beta,
                         cost[j] = cost[j] + accept;
 #ifdef PARASAILS_DEBUG
 			if (mype == 0)
-                            hypre_printf("moved from %d to %d (%7.1e)\n", i,j,accept);
+                            nalu_hypre_printf("moved from %d to %d (%7.1e)\n", i,j,accept);
 #endif
                         /*nummoves = nummoves + 1;*/
                         move = cost[i] - upper;
@@ -117,7 +117,7 @@ void LoadBalInit(MPI_Comm comm, HYPRE_Real local_cost, HYPRE_Real beta,
         }
     }
 
-    hypre_TFree(cost,HYPRE_MEMORY_HOST);
+    nalu_hypre_TFree(cost,NALU_HYPRE_MEMORY_HOST);
 }
 
 /*--------------------------------------------------------------------------
@@ -127,16 +127,16 @@ void LoadBalInit(MPI_Comm comm, HYPRE_Real local_cost, HYPRE_Real beta,
  *--------------------------------------------------------------------------*/
 
 void LoadBalDonorSend(MPI_Comm comm, Matrix *mat, Numbering *numb,
-  HYPRE_Int num_given, const HYPRE_Int *donor_data_pe, const HYPRE_Real *donor_data_cost,
-  DonorData *donor_data, HYPRE_Int *local_beg_row, hypre_MPI_Request *request)
+  NALU_HYPRE_Int num_given, const NALU_HYPRE_Int *donor_data_pe, const NALU_HYPRE_Real *donor_data_cost,
+  DonorData *donor_data, NALU_HYPRE_Int *local_beg_row, nalu_hypre_MPI_Request *request)
 {
-    HYPRE_Int send_beg_row, send_end_row;
-    HYPRE_Int i, row;
-    HYPRE_Real accum;
-    HYPRE_Int buflen;
-    HYPRE_Int *bufferp;
-    HYPRE_Int len, *ind;
-    HYPRE_Real *val;
+    NALU_HYPRE_Int send_beg_row, send_end_row;
+    NALU_HYPRE_Int i, row;
+    NALU_HYPRE_Real accum;
+    NALU_HYPRE_Int buflen;
+    NALU_HYPRE_Int *bufferp;
+    NALU_HYPRE_Int len, *ind;
+    NALU_HYPRE_Real *val;
 
     send_end_row = mat->beg_row - 1; /* imaginary end of previous block */
 
@@ -154,9 +154,9 @@ void LoadBalDonorSend(MPI_Comm comm, Matrix *mat, Numbering *numb,
         do
         {
             send_end_row++;
-            hypre_assert(send_end_row <= mat->end_row);
+            nalu_hypre_assert(send_end_row <= mat->end_row);
             MatrixGetRow(mat, send_end_row - mat->beg_row, &len, &ind, &val);
-            accum += (HYPRE_Real) len*len*len;
+            accum += (NALU_HYPRE_Real) len*len*len;
             buflen += (len+1); /* additional one for row length */
         }
         while (accum < donor_data_cost[i]);
@@ -166,7 +166,7 @@ void LoadBalDonorSend(MPI_Comm comm, Matrix *mat, Numbering *numb,
         donor_data[i].pe      = donor_data_pe[i];
         donor_data[i].beg_row = send_beg_row;
         donor_data[i].end_row = send_end_row;
-        donor_data[i].buffer  = hypre_TAlloc(HYPRE_Int, (buflen) , HYPRE_MEMORY_HOST);
+        donor_data[i].buffer  = nalu_hypre_TAlloc(NALU_HYPRE_Int, (buflen) , NALU_HYPRE_MEMORY_HOST);
 
 	/* Construct send buffer */
 
@@ -178,12 +178,12 @@ void LoadBalDonorSend(MPI_Comm comm, Matrix *mat, Numbering *numb,
         {
             MatrixGetRow(mat, row - mat->beg_row, &len, &ind, &val);
             *bufferp++ = len;
-            /* memcpy(bufferp, ind, len*sizeof(HYPRE_Int)); */ /* copy into buffer */
+            /* memcpy(bufferp, ind, len*sizeof(NALU_HYPRE_Int)); */ /* copy into buffer */
 	    NumberingLocalToGlobal(numb, len, ind, bufferp);
             bufferp += len;
         }
 
-        hypre_MPI_Isend(donor_data[i].buffer, buflen, HYPRE_MPI_INT, donor_data[i].pe,
+        nalu_hypre_MPI_Isend(donor_data[i].buffer, buflen, NALU_HYPRE_MPI_INT, donor_data[i].pe,
             LOADBAL_REQ_TAG, comm, &request[i]);
     }
 
@@ -196,23 +196,23 @@ void LoadBalDonorSend(MPI_Comm comm, Matrix *mat, Numbering *numb,
  *--------------------------------------------------------------------------*/
 
 void LoadBalRecipRecv(MPI_Comm comm, Numbering *numb,
-  HYPRE_Int num_taken, RecipData *recip_data)
+  NALU_HYPRE_Int num_taken, RecipData *recip_data)
 {
-    HYPRE_Int i, row;
-    HYPRE_Int count;
-    hypre_MPI_Status status;
-    HYPRE_Int *buffer, *bufferp;
-    HYPRE_Int beg_row, end_row;
-    HYPRE_Int len;
+    NALU_HYPRE_Int i, row;
+    NALU_HYPRE_Int count;
+    nalu_hypre_MPI_Status status;
+    NALU_HYPRE_Int *buffer, *bufferp;
+    NALU_HYPRE_Int beg_row, end_row;
+    NALU_HYPRE_Int len;
 
     for (i=0; i<num_taken; i++)
     {
-        hypre_MPI_Probe(hypre_MPI_ANY_SOURCE, LOADBAL_REQ_TAG, comm, &status);
-        recip_data[i].pe = status.hypre_MPI_SOURCE;
-        hypre_MPI_Get_count(&status, HYPRE_MPI_INT, &count);
+        nalu_hypre_MPI_Probe(nalu_hypre_MPI_ANY_SOURCE, LOADBAL_REQ_TAG, comm, &status);
+        recip_data[i].pe = status.nalu_hypre_MPI_SOURCE;
+        nalu_hypre_MPI_Get_count(&status, NALU_HYPRE_MPI_INT, &count);
 
-        buffer = hypre_TAlloc(HYPRE_Int, count , HYPRE_MEMORY_HOST);
-        hypre_MPI_Recv(buffer, count, HYPRE_MPI_INT, recip_data[i].pe, LOADBAL_REQ_TAG,
+        buffer = nalu_hypre_TAlloc(NALU_HYPRE_Int, count , NALU_HYPRE_MEMORY_HOST);
+        nalu_hypre_MPI_Recv(buffer, count, NALU_HYPRE_MPI_INT, recip_data[i].pe, LOADBAL_REQ_TAG,
            comm, &status);
 
 	bufferp =  buffer;
@@ -231,7 +231,7 @@ void LoadBalRecipRecv(MPI_Comm comm, Numbering *numb,
             bufferp += len;
         }
 
-	hypre_TFree(buffer,HYPRE_MEMORY_HOST);
+	nalu_hypre_TFree(buffer,NALU_HYPRE_MEMORY_HOST);
     }
 }
 
@@ -242,14 +242,14 @@ void LoadBalRecipRecv(MPI_Comm comm, Numbering *numb,
  * Caller must free the allocated buffers.
  *--------------------------------------------------------------------------*/
 
-void LoadBalRecipSend(MPI_Comm comm, HYPRE_Int num_taken,
-  RecipData *recip_data, hypre_MPI_Request *request)
+void LoadBalRecipSend(MPI_Comm comm, NALU_HYPRE_Int num_taken,
+  RecipData *recip_data, nalu_hypre_MPI_Request *request)
 {
-    HYPRE_Int i, row, buflen;
-    HYPRE_Real *bufferp;
+    NALU_HYPRE_Int i, row, buflen;
+    NALU_HYPRE_Real *bufferp;
     Matrix *mat;
-    HYPRE_Int len, *ind;
-    HYPRE_Real *val;
+    NALU_HYPRE_Int len, *ind;
+    NALU_HYPRE_Real *val;
 
     for (i=0; i<num_taken; i++)
     {
@@ -263,7 +263,7 @@ void LoadBalRecipSend(MPI_Comm comm, HYPRE_Int num_taken,
 	    buflen += len;
 	}
 
-	recip_data[i].buffer = hypre_TAlloc(HYPRE_Real, buflen , HYPRE_MEMORY_HOST);
+	recip_data[i].buffer = nalu_hypre_TAlloc(NALU_HYPRE_Real, buflen , NALU_HYPRE_MEMORY_HOST);
 
 	/* Construct send buffer */
 
@@ -271,11 +271,11 @@ void LoadBalRecipSend(MPI_Comm comm, HYPRE_Int num_taken,
         for (row=0; row<=mat->end_row - mat->beg_row; row++)
         {
             MatrixGetRow(mat, row, &len, &ind, &val);
-            hypre_TMemcpy(bufferp,  val, HYPRE_Real, len, HYPRE_MEMORY_HOST, HYPRE_MEMORY_HOST); /* copy into buffer */
+            nalu_hypre_TMemcpy(bufferp,  val, NALU_HYPRE_Real, len, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_HOST); /* copy into buffer */
             bufferp += len;
         }
 
-        hypre_MPI_Isend(recip_data[i].buffer, buflen, hypre_MPI_REAL, recip_data[i].pe,
+        nalu_hypre_MPI_Isend(recip_data[i].buffer, buflen, nalu_hypre_MPI_REAL, recip_data[i].pe,
             LOADBAL_REP_TAG, comm, &request[i]);
 
         MatrixDestroy(mat);
@@ -289,23 +289,23 @@ void LoadBalRecipSend(MPI_Comm comm, HYPRE_Int num_taken,
  *--------------------------------------------------------------------------*/
 
 void LoadBalDonorRecv(MPI_Comm comm, Matrix *mat,
-  HYPRE_Int num_given, DonorData *donor_data)
+  NALU_HYPRE_Int num_given, DonorData *donor_data)
 {
-    HYPRE_Int i, j, row;
-    HYPRE_Int source, count;
-    hypre_MPI_Status status;
-    HYPRE_Real *buffer, *bufferp;
-    HYPRE_Int len, *ind;
-    HYPRE_Real *val;
+    NALU_HYPRE_Int i, j, row;
+    NALU_HYPRE_Int source, count;
+    nalu_hypre_MPI_Status status;
+    NALU_HYPRE_Real *buffer, *bufferp;
+    NALU_HYPRE_Int len, *ind;
+    NALU_HYPRE_Real *val;
 
     for (i=0; i<num_given; i++)
     {
-        hypre_MPI_Probe(hypre_MPI_ANY_SOURCE, LOADBAL_REP_TAG, comm, &status);
-        source = status.hypre_MPI_SOURCE;
-        hypre_MPI_Get_count(&status, hypre_MPI_REAL, &count);
+        nalu_hypre_MPI_Probe(nalu_hypre_MPI_ANY_SOURCE, LOADBAL_REP_TAG, comm, &status);
+        source = status.nalu_hypre_MPI_SOURCE;
+        nalu_hypre_MPI_Get_count(&status, nalu_hypre_MPI_REAL, &count);
 
-        buffer = hypre_TAlloc(HYPRE_Real, count , HYPRE_MEMORY_HOST);
-        hypre_MPI_Recv(buffer, count, hypre_MPI_REAL, source, LOADBAL_REP_TAG,
+        buffer = nalu_hypre_TAlloc(NALU_HYPRE_Real, count , NALU_HYPRE_MEMORY_HOST);
+        nalu_hypre_MPI_Recv(buffer, count, nalu_hypre_MPI_REAL, source, LOADBAL_REP_TAG,
            comm, &status);
 
 	/* search for which entry in donor_data this message corresponds to */
@@ -314,18 +314,18 @@ void LoadBalDonorRecv(MPI_Comm comm, Matrix *mat,
 	    if (donor_data[j].pe == source)
 		break;
 	}
-	hypre_assert(j < num_given);
+	nalu_hypre_assert(j < num_given);
 
         /* Parse the message and put row values into local matrix */
 	bufferp = buffer;
         for (row=donor_data[j].beg_row; row<=donor_data[j].end_row; row++)
         {
             MatrixGetRow(mat, row - mat->beg_row, &len, &ind, &val);
-			hypre_TMemcpy(val,  bufferp, HYPRE_Real, len, HYPRE_MEMORY_HOST, HYPRE_MEMORY_HOST); /* copy into matrix */
+			nalu_hypre_TMemcpy(val,  bufferp, NALU_HYPRE_Real, len, NALU_HYPRE_MEMORY_HOST, NALU_HYPRE_MEMORY_HOST); /* copy into matrix */
             bufferp += len;
         }
 
-	hypre_TFree(buffer,HYPRE_MEMORY_HOST);
+	nalu_hypre_TFree(buffer,NALU_HYPRE_MEMORY_HOST);
     }
 }
 
@@ -334,21 +334,21 @@ void LoadBalDonorRecv(MPI_Comm comm, Matrix *mat,
  *--------------------------------------------------------------------------*/
 
 LoadBal *LoadBalDonate(MPI_Comm comm, Matrix *mat, Numbering *numb,
-  HYPRE_Real local_cost, HYPRE_Real beta)
+  NALU_HYPRE_Real local_cost, NALU_HYPRE_Real beta)
 {
     LoadBal *p;
-    HYPRE_Int i, npes;
-    HYPRE_Int    *donor_data_pe;
-    HYPRE_Real *donor_data_cost;
-    hypre_MPI_Request *requests = NULL;
-    hypre_MPI_Status  *statuses = NULL;
+    NALU_HYPRE_Int i, npes;
+    NALU_HYPRE_Int    *donor_data_pe;
+    NALU_HYPRE_Real *donor_data_cost;
+    nalu_hypre_MPI_Request *requests = NULL;
+    nalu_hypre_MPI_Status  *statuses = NULL;
 
-    p = hypre_TAlloc(LoadBal, 1, HYPRE_MEMORY_HOST);
+    p = nalu_hypre_TAlloc(LoadBal, 1, NALU_HYPRE_MEMORY_HOST);
 
-    hypre_MPI_Comm_size(comm, &npes);
+    nalu_hypre_MPI_Comm_size(comm, &npes);
 
-    donor_data_pe   = hypre_TAlloc(HYPRE_Int, npes , HYPRE_MEMORY_HOST);
-    donor_data_cost = hypre_TAlloc(HYPRE_Real, npes , HYPRE_MEMORY_HOST);
+    donor_data_pe   = nalu_hypre_TAlloc(NALU_HYPRE_Int, npes , NALU_HYPRE_MEMORY_HOST);
+    donor_data_cost = nalu_hypre_TAlloc(NALU_HYPRE_Real, npes , NALU_HYPRE_MEMORY_HOST);
 
     LoadBalInit(comm, local_cost, beta, &p->num_given,
         donor_data_pe, donor_data_cost, &p->num_taken);
@@ -357,31 +357,31 @@ LoadBal *LoadBalDonate(MPI_Comm comm, Matrix *mat, Numbering *numb,
     p->donor_data = NULL;
 
     if (p->num_taken)
-        p->recip_data = hypre_TAlloc(RecipData, p->num_taken , HYPRE_MEMORY_HOST);
+        p->recip_data = nalu_hypre_TAlloc(RecipData, p->num_taken , NALU_HYPRE_MEMORY_HOST);
 
     if (p->num_given)
     {
-        p->donor_data = hypre_TAlloc(DonorData, p->num_given , HYPRE_MEMORY_HOST);
-        requests = hypre_TAlloc(hypre_MPI_Request, p->num_given , HYPRE_MEMORY_HOST);
-        statuses = hypre_TAlloc(hypre_MPI_Status, p->num_given , HYPRE_MEMORY_HOST);
+        p->donor_data = nalu_hypre_TAlloc(DonorData, p->num_given , NALU_HYPRE_MEMORY_HOST);
+        requests = nalu_hypre_TAlloc(nalu_hypre_MPI_Request, p->num_given , NALU_HYPRE_MEMORY_HOST);
+        statuses = nalu_hypre_TAlloc(nalu_hypre_MPI_Status, p->num_given , NALU_HYPRE_MEMORY_HOST);
     }
 
     LoadBalDonorSend(comm, mat, numb, p->num_given,
         donor_data_pe, donor_data_cost, p->donor_data, &p->beg_row, requests);
 
-    hypre_TFree(donor_data_pe,HYPRE_MEMORY_HOST);
-    hypre_TFree(donor_data_cost,HYPRE_MEMORY_HOST);
+    nalu_hypre_TFree(donor_data_pe,NALU_HYPRE_MEMORY_HOST);
+    nalu_hypre_TFree(donor_data_cost,NALU_HYPRE_MEMORY_HOST);
 
     LoadBalRecipRecv(comm, numb, p->num_taken, p->recip_data);
 
-    hypre_MPI_Waitall(p->num_given, requests, statuses);
+    nalu_hypre_MPI_Waitall(p->num_given, requests, statuses);
 
-    hypre_TFree(requests,HYPRE_MEMORY_HOST);
-    hypre_TFree(statuses,HYPRE_MEMORY_HOST);
+    nalu_hypre_TFree(requests,NALU_HYPRE_MEMORY_HOST);
+    nalu_hypre_TFree(statuses,NALU_HYPRE_MEMORY_HOST);
 
     /* Free the send buffers which were allocated by LoadBalDonorSend */
     for (i=0; i<p->num_given; i++)
-	hypre_TFree(p->donor_data[i].buffer,HYPRE_MEMORY_HOST);
+	nalu_hypre_TFree(p->donor_data[i].buffer,NALU_HYPRE_MEMORY_HOST);
 
     return p;
 }
@@ -392,33 +392,33 @@ LoadBal *LoadBalDonate(MPI_Comm comm, Matrix *mat, Numbering *numb,
 
 void LoadBalReturn(LoadBal *p, MPI_Comm comm, Matrix *mat)
 {
-    HYPRE_Int i;
+    NALU_HYPRE_Int i;
 
-    hypre_MPI_Request *requests = NULL;
-    hypre_MPI_Status  *statuses = NULL;
+    nalu_hypre_MPI_Request *requests = NULL;
+    nalu_hypre_MPI_Status  *statuses = NULL;
 
     if (p->num_taken)
     {
-        requests = hypre_TAlloc(hypre_MPI_Request, p->num_taken , HYPRE_MEMORY_HOST);
-        statuses = hypre_TAlloc(hypre_MPI_Status, p->num_taken , HYPRE_MEMORY_HOST);
+        requests = nalu_hypre_TAlloc(nalu_hypre_MPI_Request, p->num_taken , NALU_HYPRE_MEMORY_HOST);
+        statuses = nalu_hypre_TAlloc(nalu_hypre_MPI_Status, p->num_taken , NALU_HYPRE_MEMORY_HOST);
     }
 
     LoadBalRecipSend(comm, p->num_taken, p->recip_data, requests);
 
     LoadBalDonorRecv(comm, mat, p->num_given, p->donor_data);
 
-    hypre_MPI_Waitall(p->num_taken, requests, statuses);
+    nalu_hypre_MPI_Waitall(p->num_taken, requests, statuses);
 
-    hypre_TFree(requests,HYPRE_MEMORY_HOST);
-    hypre_TFree(statuses,HYPRE_MEMORY_HOST);
+    nalu_hypre_TFree(requests,NALU_HYPRE_MEMORY_HOST);
+    nalu_hypre_TFree(statuses,NALU_HYPRE_MEMORY_HOST);
 
     /* Free the send buffers which were allocated by LoadBalRecipSend */
     for (i=0; i<p->num_taken; i++)
-	hypre_TFree(p->recip_data[i].buffer,HYPRE_MEMORY_HOST);
+	nalu_hypre_TFree(p->recip_data[i].buffer,NALU_HYPRE_MEMORY_HOST);
 
-    hypre_TFree(p->donor_data,HYPRE_MEMORY_HOST);
-    hypre_TFree(p->recip_data,HYPRE_MEMORY_HOST);
+    nalu_hypre_TFree(p->donor_data,NALU_HYPRE_MEMORY_HOST);
+    nalu_hypre_TFree(p->recip_data,NALU_HYPRE_MEMORY_HOST);
 
-    hypre_TFree(p,HYPRE_MEMORY_HOST);
+    nalu_hypre_TFree(p,NALU_HYPRE_MEMORY_HOST);
 }
 

@@ -102,12 +102,12 @@ int MLI_Solver_BJacobi::solve(MLI_Vector *f_in, MLI_Vector *u_in)
    double  *dbleX=NULL, *dbleB=NULL;
    char    vecName[30];
    MPI_Comm               comm;
-   hypre_ParCSRMatrix     *A;
-   hypre_CSRMatrix        *ADiag, *AOffd;
-   hypre_ParCSRCommPkg    *commPkg;
-   hypre_ParCSRCommHandle *commHandle;
-   hypre_ParVector        *f, *u;
-   hypre_Vector           *sluB=NULL, *sluX=NULL;
+   nalu_hypre_ParCSRMatrix     *A;
+   nalu_hypre_CSRMatrix        *ADiag, *AOffd;
+   nalu_hypre_ParCSRCommPkg    *commPkg;
+   nalu_hypre_ParCSRCommHandle *commHandle;
+   nalu_hypre_ParVector        *f, *u;
+   nalu_hypre_Vector           *sluB=NULL, *sluX=NULL;
    MLI_Vector             *mliX, *mliB;
 #if HAVE_ESSL
    int                    info;
@@ -117,24 +117,24 @@ int MLI_Solver_BJacobi::solve(MLI_Vector *f_in, MLI_Vector *u_in)
     * fetch machine and matrix parameters
     *-----------------------------------------------------------------*/
 
-   A           = (hypre_ParCSRMatrix *) Amat_->getMatrix();
-   comm        = hypre_ParCSRMatrixComm(A);
-   commPkg     = hypre_ParCSRMatrixCommPkg(A);
-   ADiag       = hypre_ParCSRMatrixDiag(A);
-   localNRows  = hypre_CSRMatrixNumRows(ADiag);
-   ADiagI      = hypre_CSRMatrixI(ADiag);
-   ADiagJ      = hypre_CSRMatrixJ(ADiag);
-   ADiagA      = hypre_CSRMatrixData(ADiag);
-   AOffd       = hypre_ParCSRMatrixOffd(A);
-   numColsOffd = hypre_CSRMatrixNumCols(AOffd);
-   AOffdI      = hypre_CSRMatrixI(AOffd);
-   AOffdJ      = hypre_CSRMatrixJ(AOffd);
-   AOffdA      = hypre_CSRMatrixData(AOffd);
-   u           = (hypre_ParVector *) u_in->getVector();
-   uData       = hypre_VectorData(hypre_ParVectorLocalVector(u));
-   f           = (hypre_ParVector *) f_in->getVector();
-   fData       = hypre_VectorData(hypre_ParVectorLocalVector(f));
-   partition   = hypre_ParVectorPartitioning(f);
+   A           = (nalu_hypre_ParCSRMatrix *) Amat_->getMatrix();
+   comm        = nalu_hypre_ParCSRMatrixComm(A);
+   commPkg     = nalu_hypre_ParCSRMatrixCommPkg(A);
+   ADiag       = nalu_hypre_ParCSRMatrixDiag(A);
+   localNRows  = nalu_hypre_CSRMatrixNumRows(ADiag);
+   ADiagI      = nalu_hypre_CSRMatrixI(ADiag);
+   ADiagJ      = nalu_hypre_CSRMatrixJ(ADiag);
+   ADiagA      = nalu_hypre_CSRMatrixData(ADiag);
+   AOffd       = nalu_hypre_ParCSRMatrixOffd(A);
+   numColsOffd = nalu_hypre_CSRMatrixNumCols(AOffd);
+   AOffdI      = nalu_hypre_CSRMatrixI(AOffd);
+   AOffdJ      = nalu_hypre_CSRMatrixJ(AOffd);
+   AOffdA      = nalu_hypre_CSRMatrixData(AOffd);
+   u           = (nalu_hypre_ParVector *) u_in->getVector();
+   uData       = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(u));
+   f           = (nalu_hypre_ParVector *) f_in->getVector();
+   fData       = nalu_hypre_VectorData(nalu_hypre_ParVectorLocalVector(f));
+   partition   = nalu_hypre_ParVectorPartitioning(f);
    MPI_Comm_rank(comm,&mypid);  
    MPI_Comm_size(comm,&nprocs);  
    startRow    = partition[mypid];
@@ -142,9 +142,9 @@ int MLI_Solver_BJacobi::solve(MLI_Vector *f_in, MLI_Vector *u_in)
    nRecvBefore = 0;
    if ( nprocs > 1 )
    {
-      nRecvs      = hypre_ParCSRCommPkgNumRecvs(commPkg);
-      recvProcs   = hypre_ParCSRCommPkgRecvProcs(commPkg);
-      recvStarts  = hypre_ParCSRCommPkgRecvVecStarts(commPkg);
+      nRecvs      = nalu_hypre_ParCSRCommPkgNumRecvs(commPkg);
+      recvProcs   = nalu_hypre_ParCSRCommPkgRecvProcs(commPkg);
+      recvStarts  = nalu_hypre_ParCSRCommPkgRecvVecStarts(commPkg);
       if ( useOverlap_ )
       {
          for ( iP = 0; iP < nRecvs; iP++ )
@@ -159,8 +159,8 @@ int MLI_Solver_BJacobi::solve(MLI_Vector *f_in, MLI_Vector *u_in)
 
    if (nprocs > 1)
    {
-      nSends = hypre_ParCSRCommPkgNumSends(commPkg);
-      length = hypre_ParCSRCommPkgSendMapStart(commPkg,nSends);
+      nSends = nalu_hypre_ParCSRCommPkgNumSends(commPkg);
+      length = nalu_hypre_ParCSRCommPkgSendMapStart(commPkg,nSends);
       if ( length > 0 ) vBufData = new double[length];
       if ( numColsOffd > 0 )
       {
@@ -179,17 +179,17 @@ int MLI_Solver_BJacobi::solve(MLI_Vector *f_in, MLI_Vector *u_in)
       index = 0;
       for (iP = 0; iP < nSends; iP++)
       {
-         start = hypre_ParCSRCommPkgSendMapStart(commPkg, iP);
-         for (jP=start;jP<hypre_ParCSRCommPkgSendMapStart(commPkg,iP+1);jP++)
+         start = nalu_hypre_ParCSRCommPkgSendMapStart(commPkg, iP);
+         for (jP=start;jP<nalu_hypre_ParCSRCommPkgSendMapStart(commPkg,iP+1);jP++)
          {
             vBufData[index++]
-                      = 0.5 * fData[hypre_ParCSRCommPkgSendMapElmt(commPkg,jP)];
-            fData[hypre_ParCSRCommPkgSendMapElmt(commPkg,jP)] *= 0.5;
+                      = 0.5 * fData[nalu_hypre_ParCSRCommPkgSendMapElmt(commPkg,jP)];
+            fData[nalu_hypre_ParCSRCommPkgSendMapElmt(commPkg,jP)] *= 0.5;
          }
       }
-      commHandle = hypre_ParCSRCommHandleCreate(1,commPkg,vBufData,
+      commHandle = nalu_hypre_ParCSRCommHandleCreate(1,commPkg,vBufData,
                                                 fExtData);
-      hypre_ParCSRCommHandleDestroy(commHandle);
+      nalu_hypre_ParCSRCommHandleDestroy(commHandle);
       commHandle = NULL;
    }
 
@@ -202,11 +202,11 @@ int MLI_Solver_BJacobi::solve(MLI_Vector *f_in, MLI_Vector *u_in)
    {
       if ( maxBlkLeng_ > 0 )
       {
-         sluB  = hypre_SeqVectorCreate( maxBlkLeng_ );
-         sluX  = hypre_SeqVectorCreate( maxBlkLeng_ );
+         sluB  = nalu_hypre_SeqVectorCreate( maxBlkLeng_ );
+         sluX  = nalu_hypre_SeqVectorCreate( maxBlkLeng_ );
       }
-      hypre_VectorData(sluB) = dbleB;
-      hypre_VectorData(sluX) = dbleX;
+      nalu_hypre_VectorData(sluB) = dbleB;
+      nalu_hypre_VectorData(sluX) = dbleX;
    }
 
    /*-----------------------------------------------------------------
@@ -226,15 +226,15 @@ int MLI_Solver_BJacobi::solve(MLI_Vector *f_in, MLI_Vector *u_in)
             index = 0;
             for (iP = 0; iP < nSends; iP++)
             {
-               start = hypre_ParCSRCommPkgSendMapStart(commPkg, iP);
+               start = nalu_hypre_ParCSRCommPkgSendMapStart(commPkg, iP);
                for (jP=start;
-                    jP<hypre_ParCSRCommPkgSendMapStart(commPkg,iP+1); jP++)
+                    jP<nalu_hypre_ParCSRCommPkgSendMapStart(commPkg,iP+1); jP++)
                   vBufData[index++]
-                      = uData[hypre_ParCSRCommPkgSendMapElmt(commPkg,jP)];
+                      = uData[nalu_hypre_ParCSRCommPkgSendMapElmt(commPkg,jP)];
             }
-            commHandle = hypre_ParCSRCommHandleCreate(1,commPkg,vBufData,
+            commHandle = nalu_hypre_ParCSRCommHandleCreate(1,commPkg,vBufData,
                                                       vExtData);
-            hypre_ParCSRCommHandleDestroy(commHandle);
+            nalu_hypre_ParCSRCommHandleDestroy(commHandle);
             commHandle = NULL;
          }
       }
@@ -307,9 +307,9 @@ int MLI_Solver_BJacobi::solve(MLI_Vector *f_in, MLI_Vector *u_in)
          }
          if ( blkScheme_ == 0 )
          {
-            hypre_VectorSize(sluB) = blkLeng;
-            hypre_VectorSize(sluX) = blkLeng;
-            strcpy( vecName, "HYPRE_Vector" );
+            nalu_hypre_VectorSize(sluB) = blkLeng;
+            nalu_hypre_VectorSize(sluX) = blkLeng;
+            strcpy( vecName, "NALU_HYPRE_Vector" );
             mliB = new MLI_Vector((void*) sluB, vecName, NULL);
             mliX = new MLI_Vector((void*) sluX, vecName, NULL);
 
@@ -344,17 +344,17 @@ int MLI_Solver_BJacobi::solve(MLI_Vector *f_in, MLI_Vector *u_in)
 
    if (nprocs > 1 && useOverlap_)
    {
-      commHandle = hypre_ParCSRCommHandleCreate(2,commPkg,vExtData,
+      commHandle = nalu_hypre_ParCSRCommHandleCreate(2,commPkg,vExtData,
                                                 vBufData);
-      hypre_ParCSRCommHandleDestroy(commHandle);
+      nalu_hypre_ParCSRCommHandleDestroy(commHandle);
       commHandle = NULL;
       index = 0;
       for (iP = 0; iP < nSends; iP++)
       {
-         start = hypre_ParCSRCommPkgSendMapStart(commPkg, iP);
-         for (jP=start;jP<hypre_ParCSRCommPkgSendMapStart(commPkg,iP+1);jP++)
+         start = nalu_hypre_ParCSRCommPkgSendMapStart(commPkg, iP);
+         for (jP=start;jP<nalu_hypre_ParCSRCommPkgSendMapStart(commPkg,iP+1);jP++)
          {
-            iS = hypre_ParCSRCommPkgSendMapElmt(commPkg,jP); 
+            iS = nalu_hypre_ParCSRCommPkgSendMapElmt(commPkg,jP); 
             uData[iS] = (uData[iS] + vBufData[index++]) * 0.5; 
             fData[iS] *= 2.0;
          }
@@ -368,8 +368,8 @@ int MLI_Solver_BJacobi::solve(MLI_Vector *f_in, MLI_Vector *u_in)
    if ( vExtData != NULL ) delete [] vExtData;
    if ( vBufData != NULL ) delete [] vBufData;
    if ( fExtData != NULL ) delete [] fExtData;
-   if ( sluX != NULL ) hypre_SeqVectorDestroy( sluX );
-   if ( sluB != NULL ) hypre_SeqVectorDestroy( sluB );
+   if ( sluX != NULL ) nalu_hypre_SeqVectorDestroy( sluX );
+   if ( sluB != NULL ) nalu_hypre_SeqVectorDestroy( sluB );
 
    return(relaxError); 
 }
@@ -429,7 +429,7 @@ int MLI_Solver_BJacobi::setParams(char *paramString, int argc, char **argv)
 
 int MLI_Solver_BJacobi::composeOverlappedMatrix()
 {
-   hypre_ParCSRMatrix *A;
+   nalu_hypre_ParCSRMatrix *A;
    MPI_Comm    comm;
    MPI_Request *requests;
    MPI_Status  *status;
@@ -440,18 +440,18 @@ int MLI_Solver_BJacobi::composeOverlappedMatrix()
    int         totalRecvs, rowNum, rowSize, *colInd, *sendStarts;
    int         limit, *iSendBuf, curNnz, *recvIndices, colIndex; 
    double      *dSendBuf, *colVal;
-   hypre_ParCSRCommPkg *commPkg;
+   nalu_hypre_ParCSRCommPkg *commPkg;
 
    /*-----------------------------------------------------------------
     * fetch machine and matrix parameters 
     *-----------------------------------------------------------------*/
 
-   A = (hypre_ParCSRMatrix *) Amat_->getMatrix();
-   comm = hypre_ParCSRMatrixComm(A);
+   A = (nalu_hypre_ParCSRMatrix *) Amat_->getMatrix();
+   comm = nalu_hypre_ParCSRMatrixComm(A);
    MPI_Comm_rank(comm,&mypid);  
    MPI_Comm_size(comm,&nprocs);  
    if ( ! useOverlap_ || nprocs <= 1 ) return 0;
-   HYPRE_ParCSRMatrixGetRowPartitioning((HYPRE_ParCSRMatrix) A, &partition);
+   NALU_HYPRE_ParCSRMatrixGetRowPartitioning((NALU_HYPRE_ParCSRMatrix) A, &partition);
    startRow   = partition[mypid];
    endRow     = partition[mypid+1] - 1;
    localNRows = endRow - startRow + 1;
@@ -464,13 +464,13 @@ int MLI_Solver_BJacobi::composeOverlappedMatrix()
    extNRows = localNRows;
    if ( nprocs > 1 && useOverlap_ )
    {
-      commPkg    = hypre_ParCSRMatrixCommPkg(A);
-      nSends     = hypre_ParCSRCommPkgNumSends(commPkg);
-      sendProcs  = hypre_ParCSRCommPkgSendProcs(commPkg);
-      sendStarts = hypre_ParCSRCommPkgSendMapStarts(commPkg);
-      nRecvs     = hypre_ParCSRCommPkgNumRecvs(commPkg);
-      recvProcs  = hypre_ParCSRCommPkgRecvProcs(commPkg);
-      recvStarts = hypre_ParCSRCommPkgRecvVecStarts(commPkg);
+      commPkg    = nalu_hypre_ParCSRMatrixCommPkg(A);
+      nSends     = nalu_hypre_ParCSRCommPkgNumSends(commPkg);
+      sendProcs  = nalu_hypre_ParCSRCommPkgSendProcs(commPkg);
+      sendStarts = nalu_hypre_ParCSRCommPkgSendMapStarts(commPkg);
+      nRecvs     = nalu_hypre_ParCSRCommPkgNumRecvs(commPkg);
+      recvProcs  = nalu_hypre_ParCSRCommPkgRecvProcs(commPkg);
+      recvStarts = nalu_hypre_ParCSRCommPkgRecvVecStarts(commPkg);
       for ( i = 0; i < nRecvs; i++ ) 
          extNRows += ( recvStarts[i+1] - recvStarts[i] );
       requests = new MPI_Request[nRecvs+nSends];
@@ -478,7 +478,7 @@ int MLI_Solver_BJacobi::composeOverlappedMatrix()
       totalRecvs  = recvStarts[nRecvs];
       if ( totalRecvs > 0 ) offRowLengths_ = new int[totalRecvs];
       else                  offRowLengths_ = NULL;
-      recvIndices = hypre_ParCSRMatrixColMapOffd(A);
+      recvIndices = nalu_hypre_ParCSRMatrixColMapOffd(A);
       if ( totalRecvs > 0 ) offRowIndices_ = new int[totalRecvs];
       else                  offRowIndices_ = NULL;
       for ( i = 0; i < totalRecvs; i++ ) 
@@ -511,11 +511,11 @@ int MLI_Solver_BJacobi::composeOverlappedMatrix()
       length = limit - offset;
       for (j = offset; j < limit; j++)
       {
-         rowNum = hypre_ParCSRCommPkgSendMapElmt(commPkg,j) + startRow;
-         hypre_ParCSRMatrixGetRow(A,rowNum,&rowSize,&colInd,NULL);
+         rowNum = nalu_hypre_ParCSRCommPkgSendMapElmt(commPkg,j) + startRow;
+         nalu_hypre_ParCSRMatrixGetRow(A,rowNum,&rowSize,&colInd,NULL);
          iSendBuf[index++] = rowSize;
          totalSendNnz += rowSize;
-         hypre_ParCSRMatrixRestoreRow(A,rowNum,&rowSize,&colInd,NULL);
+         nalu_hypre_ParCSRMatrixRestoreRow(A,rowNum,&rowSize,&colInd,NULL);
       }
       MPI_Isend(&(iSendBuf[offset]), length, MPI_INT, proc, 17304, comm, 
                 &(requests[reqNum++]));
@@ -560,11 +560,11 @@ int MLI_Solver_BJacobi::composeOverlappedMatrix()
       base   = totalSendNnz;
       for (j = offset; j < limit; j++)
       {
-         rowNum = hypre_ParCSRCommPkgSendMapElmt(commPkg,j) + startRow;
-         hypre_ParCSRMatrixGetRow(A,rowNum,&rowSize,&colInd,NULL);
+         rowNum = nalu_hypre_ParCSRCommPkgSendMapElmt(commPkg,j) + startRow;
+         nalu_hypre_ParCSRMatrixGetRow(A,rowNum,&rowSize,&colInd,NULL);
          for (k = 0; k < rowSize; k++) 
             iSendBuf[totalSendNnz++] = colInd[k];
-         hypre_ParCSRMatrixRestoreRow(A,rowNum,&rowSize,&colInd,NULL);
+         nalu_hypre_ParCSRMatrixRestoreRow(A,rowNum,&rowSize,&colInd,NULL);
       }
       length = totalSendNnz - base;
       MPI_Isend(&(iSendBuf[base]), length, MPI_INT, proc, 17305, comm, 
@@ -603,11 +603,11 @@ int MLI_Solver_BJacobi::composeOverlappedMatrix()
       base   = totalSendNnz;
       for (j = offset; j < limit; j++)
       {
-         rowNum = hypre_ParCSRCommPkgSendMapElmt(commPkg,j) + startRow;
-         hypre_ParCSRMatrixGetRow(A,rowNum,&rowSize,NULL,&colVal);
+         rowNum = nalu_hypre_ParCSRCommPkgSendMapElmt(commPkg,j) + startRow;
+         nalu_hypre_ParCSRMatrixGetRow(A,rowNum,&rowSize,NULL,&colVal);
          for (k = 0; k < rowSize; k++) 
             dSendBuf[totalSendNnz++] = colVal[k];
-         hypre_ParCSRMatrixRestoreRow(A,rowNum,&rowSize,NULL,&colVal);
+         nalu_hypre_ParCSRMatrixRestoreRow(A,rowNum,&rowSize,NULL,&colVal);
       }
       length = totalSendNnz - base;
       MPI_Isend(&(dSendBuf[base]), length, MPI_DOUBLE, proc, 17306, comm, 
@@ -658,9 +658,9 @@ int MLI_Solver_BJacobi::buildBlocks()
    double   *colVal, *csrAA, *esslMatrix;
    char     sName[20];
    MPI_Comm comm;
-   hypre_ParCSRCommPkg *commPkg;
-   hypre_ParCSRMatrix  *A = (hypre_ParCSRMatrix *) Amat_->getMatrix();
-   hypre_CSRMatrix     *seqA;
+   nalu_hypre_ParCSRCommPkg *commPkg;
+   nalu_hypre_ParCSRMatrix  *A = (nalu_hypre_ParCSRMatrix *) Amat_->getMatrix();
+   nalu_hypre_CSRMatrix     *seqA;
    MLI_Matrix          *mliMat;
    MLI_Function        *funcPtr=NULL;
 
@@ -668,20 +668,20 @@ int MLI_Solver_BJacobi::buildBlocks()
     * fetch matrix information 
     *-----------------------------------------------------------------*/
 
-   comm = hypre_ParCSRMatrixComm(A);
+   comm = nalu_hypre_ParCSRMatrixComm(A);
    MPI_Comm_rank(comm,&mypid);  
    MPI_Comm_size(comm,&nprocs);  
-   HYPRE_ParCSRMatrixGetRowPartitioning((HYPRE_ParCSRMatrix) A, &partition);
+   NALU_HYPRE_ParCSRMatrixGetRowPartitioning((NALU_HYPRE_ParCSRMatrix) A, &partition);
    startRow   = partition[mypid];
    endRow     = partition[mypid+1] - 1;
    localNRows = endRow - startRow + 1;
    free( partition );
    if ( nprocs > 1 && useOverlap_ )
    {
-      commPkg     = hypre_ParCSRMatrixCommPkg(A);
-      nRecvs      = hypre_ParCSRCommPkgNumRecvs(commPkg);
-      recvProcs   = hypre_ParCSRCommPkgRecvProcs(commPkg);
-      recvStarts  = hypre_ParCSRCommPkgRecvVecStarts(commPkg);
+      commPkg     = nalu_hypre_ParCSRMatrixCommPkg(A);
+      nRecvs      = nalu_hypre_ParCSRCommPkgNumRecvs(commPkg);
+      recvProcs   = nalu_hypre_ParCSRCommPkgRecvProcs(commPkg);
+      recvStarts  = nalu_hypre_ParCSRCommPkgRecvVecStarts(commPkg);
       nRecvBefore = 0;
       for ( iP = 0; iP < nRecvs; iP++ )
          if ( recvProcs[iP] > mypid ) break;
@@ -713,7 +713,7 @@ int MLI_Solver_BJacobi::buildBlocks()
       blockSolvers_ = new MLI_Solver_SeqSuperLU*[nBlocks_];
       for ( iB = 0; iB < nBlocks_; iB++ ) 
          blockSolvers_[iB] = new MLI_Solver_SeqSuperLU(sName);
-      funcPtr = hypre_TAlloc(MLI_Function, 1, HYPRE_MEMORY_HOST);
+      funcPtr = nalu_hypre_TAlloc(MLI_Function, 1, NALU_HYPRE_MEMORY_HOST);
    }
    else
    {
@@ -735,13 +735,13 @@ int MLI_Solver_BJacobi::buildBlocks()
          {
             if ( irow >= startRow && irow <= endRow )
             {
-               hypre_ParCSRMatrixGetRow(A, irow, &rowSize, &colInd, &colVal);
+               nalu_hypre_ParCSRMatrixGetRow(A, irow, &rowSize, &colInd, &colVal);
                localNnz += rowSize;
-               hypre_ParCSRMatrixRestoreRow(A,irow,&rowSize,&colInd,&colVal);
+               nalu_hypre_ParCSRMatrixRestoreRow(A,irow,&rowSize,&colInd,&colVal);
             }
             else localNnz += offRowLengths_[offRowOffset+irow-blockStartRow];
          }
-         seqA = hypre_CSRMatrixCreate( blkLeng, blkLeng, localNnz );
+         seqA = nalu_hypre_CSRMatrixCreate( blkLeng, blkLeng, localNnz );
          csrIA = new int[blkLeng+1];
          csrJA = new int[localNnz];
          csrAA = new double[localNnz];
@@ -753,7 +753,7 @@ int MLI_Solver_BJacobi::buildBlocks()
          {
             if ( irow >= startRow && irow <= endRow )
             {
-               hypre_ParCSRMatrixGetRow(A, irow, &rowSize, &colInd, &colVal);
+               nalu_hypre_ParCSRMatrixGetRow(A, irow, &rowSize, &colInd, &colVal);
                for ( jcol = 0; jcol < rowSize; jcol++ )
                {
                   colIndex = colInd[jcol];
@@ -763,7 +763,7 @@ int MLI_Solver_BJacobi::buildBlocks()
                      csrAA[localNnz++] = colVal[jcol];
                   }
                }
-               hypre_ParCSRMatrixRestoreRow(A,irow,&rowSize,&colInd,&colVal);
+               nalu_hypre_ParCSRMatrixRestoreRow(A,irow,&rowSize,&colInd,&colVal);
             }
             else
             {
@@ -785,11 +785,11 @@ int MLI_Solver_BJacobi::buildBlocks()
             localRow++;
             csrIA[localRow] = localNnz;
          }
-         hypre_CSRMatrixI(seqA)    = csrIA;
-         hypre_CSRMatrixJ(seqA)    = csrJA;
-         hypre_CSRMatrixData(seqA) = csrAA;
+         nalu_hypre_CSRMatrixI(seqA)    = csrIA;
+         nalu_hypre_CSRMatrixJ(seqA)    = csrJA;
+         nalu_hypre_CSRMatrixData(seqA) = csrAA;
          MLI_Utils_HypreCSRMatrixGetDestroyFunc(funcPtr);
-         strcpy( sName, "HYPRE_CSR" );
+         strcpy( sName, "NALU_HYPRE_CSR" );
          mliMat = new MLI_Matrix((void*) seqA, sName, funcPtr);
          blockSolvers_[iB]->setup( mliMat );
          delete mliMat;
@@ -806,7 +806,7 @@ int MLI_Solver_BJacobi::buildBlocks()
             rowIndex = irow - blockStartRow;
             if ( irow >= startRow && irow <= endRow )
             {
-               hypre_ParCSRMatrixGetRow(A, irow, &rowSize, &colInd, &colVal);
+               nalu_hypre_ParCSRMatrixGetRow(A, irow, &rowSize, &colInd, &colVal);
                for ( jcol = 0; jcol < rowSize; jcol++ )
                {
                   colIndex = colInd[jcol] - blockStartRow;
@@ -816,7 +816,7 @@ int MLI_Solver_BJacobi::buildBlocks()
                      esslMatrix[offset+index] = colVal[jcol];
                   }
                }
-               hypre_ParCSRMatrixRestoreRow(A,irow,&rowSize,&colInd,&colVal);
+               nalu_hypre_ParCSRMatrixRestoreRow(A,irow,&rowSize,&colInd,&colVal);
             }
             else
             {
@@ -855,17 +855,17 @@ int MLI_Solver_BJacobi::adjustOffColIndices()
 {
    int                mypid, *partition, startRow, endRow, localNRows;
    int                offset, index, colIndex, irow, jcol;
-   hypre_ParCSRMatrix *A;
+   nalu_hypre_ParCSRMatrix *A;
    MPI_Comm           comm;
 
    /*-----------------------------------------------------------------
     * fetch machine and matrix parameters 
     *-----------------------------------------------------------------*/
 
-   A = (hypre_ParCSRMatrix *) Amat_->getMatrix();
-   comm = hypre_ParCSRMatrixComm(A);
+   A = (nalu_hypre_ParCSRMatrix *) Amat_->getMatrix();
+   comm = nalu_hypre_ParCSRMatrixComm(A);
    MPI_Comm_rank(comm,&mypid);  
-   HYPRE_ParCSRMatrixGetRowPartitioning((HYPRE_ParCSRMatrix) A, &partition);
+   NALU_HYPRE_ParCSRMatrixGetRowPartitioning((NALU_HYPRE_ParCSRMatrix) A, &partition);
    startRow   = partition[mypid];
    endRow     = partition[mypid+1] - 1;
    localNRows = endRow - startRow + 1;

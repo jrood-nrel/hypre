@@ -9,4 +9,4 @@ add_subdirectory(Euclid)
 add_subdirectory(ParaSails)
 add_subdirectory(pilut)
 
-set(HYPRE_HEADERS ${HYPRE_HEADERS} ${HDRS} PARENT_SCOPE)
+set(NALU_HYPRE_HEADERS ${NALU_HYPRE_HEADERS} ${HDRS} PARENT_SCOPE)

@@ -435,7 +435,7 @@ set(NALU_HYPRE_HEADERS "")
 # Headers and sources: .
 set(NALU_HYPRE_MAIN_HEADERS
   ${CMAKE_CURRENT_BINARY_DIR}/NALU_HYPRE_config.h
-  HYPREf.h
+  NALU_HYPREf.h
   NALU_HYPRE.h
   )
 

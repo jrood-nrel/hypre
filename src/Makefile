@@ -88,7 +88,7 @@ all:
 	mkdir -p ${NALU_HYPRE_BUILD_DIR}/lib; \
 	cp -fR NALU_HYPRE_config.h ${NALU_HYPRE_BUILD_DIR}/include/.; \
 	cp -fR $(srcdir)/NALU_HYPRE.h ${NALU_HYPRE_BUILD_DIR}/include/.; \
-	cp -fR $(srcdir)/HYPREf.h ${NALU_HYPRE_BUILD_DIR}/include/.; \
+	cp -fR $(srcdir)/NALU_HYPREf.h ${NALU_HYPRE_BUILD_DIR}/include/.; \
 	for i in ${NALU_HYPRE_DIRS}; \
 	do \
 	  echo "Making $$i ..."; \

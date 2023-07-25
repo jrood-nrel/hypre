@@ -33,7 +33,7 @@
       implicit none
 
       include 'mpif.h'
-      include 'HYPREf.h'
+      include 'NALU_HYPREf.h'
 
       integer    ierr
       integer    i, j, myid, num_procs

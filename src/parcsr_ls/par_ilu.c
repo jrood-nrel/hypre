@@ -1,6 +1,6 @@
 /******************************************************************************
  * Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
- * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+ * NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
@@ -2083,7 +2083,7 @@ nalu_hypre_ILUBuildRASExternalMatrix(nalu_hypre_ParCSRMatrix  *A,
    NALU_HYPRE_BigInt              big_col;
 
    /* 1: Set up phase and get external rows
-    * Use the HYPRE build-in function
+    * Use the NALU_HYPRE build-in function
     */
 
    /* MPI stuff */

@@ -1,6 +1,6 @@
 /******************************************************************************
  * Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
- * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+ * NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
@@ -26,9 +26,9 @@ LLNL_FEI_LSCore::LLNL_FEI_LSCore(SolverLib_t solverLib)
 
    switch (solverLib)
    {
-      case HYPRE:
+      case NALU_HYPRE:
            lsc_ = NALU_HYPRE_base_create(MPI_COMM_WORLD );
-           if ( lsc_ == NULL ) printf("problem building HYPRE\n");
+           if ( lsc_ == NULL ) printf("problem building NALU_HYPRE\n");
            break;
       default:
            printf("unable to determine library type in LLNL_FEI_LSCore.");

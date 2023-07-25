@@ -1,6 +1,6 @@
 /******************************************************************************
  * Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
- * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+ * NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
@@ -114,7 +114,7 @@ nalu_hypre_IJMatrixSetObject( NALU_HYPRE_IJMatrix  matrix,
 }
 
 /*--------------------------------------------------------------------------
- * nalu_hypre_IJMatrixRead: Read from file, HYPRE's IJ format or MM format
+ * nalu_hypre_IJMatrixRead: Read from file, NALU_HYPRE's IJ format or MM format
  * create IJMatrix on host memory
  *--------------------------------------------------------------------------*/
 

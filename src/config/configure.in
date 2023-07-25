@@ -1,5 +1,5 @@
 dnl Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
-dnl HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+dnl NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
 dnl
 dnl SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
@@ -64,7 +64,7 @@ AC_REVISION($Id$)
 AC_INIT(M4_NALU_HYPRE_NAME, M4_NALU_HYPRE_VERSION)
 AC_CONFIG_HEADERS([NALU_HYPRE_config.h:config/NALU_HYPRE_config.h.in])
 AC_COPYRIGHT([Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
-HYPRE Project Developers. See the top-level COPYRIGHT file for details.])
+NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.])
 
 AC_CONFIG_AUX_DIR(config)
 AC_CONFIG_SRCDIR([NALU_HYPRE.h])
@@ -1006,19 +1006,19 @@ AC_DEFINE_UNQUOTED(NALU_HYPRE_FMANGLE_LAPACK, [$nalu_hypre_fmangle_lapack], [LAP
 
 AC_ARG_WITH(print-errors,
 AS_HELP_STRING([--with-print-errors],
-               [Print HYPRE errors.]),
+               [Print NALU_HYPRE errors.]),
 [if test "$withval" = "yes"
  then
-    AC_DEFINE(NALU_HYPRE_PRINT_ERRORS,1,[Print HYPRE errors])
+    AC_DEFINE(NALU_HYPRE_PRINT_ERRORS,1,[Print NALU_HYPRE errors])
  fi]
 )
 
 AC_ARG_WITH(timing,
 AS_HELP_STRING([--with-timing],
-               [Use HYPRE timing routines.]),
+               [Use NALU_HYPRE timing routines.]),
 [if test "$withval" = "yes"
  then
-    AC_DEFINE(NALU_HYPRE_TIMING,1,[Using HYPRE timing routines])
+    AC_DEFINE(NALU_HYPRE_TIMING,1,[Using NALU_HYPRE timing routines])
  fi]
 )
 
@@ -1943,7 +1943,7 @@ fi
 dnl *********************************************************************
 dnl * Find BLAS library if not already set by the user
 dnl * If user specified --without-blas or a system one cannot be found,
-dnl * default to internal HYPRE routines
+dnl * default to internal NALU_HYPRE routines
 dnl *********************************************************************
 if test "$nalu_hypre_user_chose_blas" = "no"
 then
@@ -1966,7 +1966,7 @@ then
    then
       BLASLIBDIRS=""
       BLASLIBS=""
-      AC_DEFINE(NALU_HYPRE_USING_NALU_HYPRE_BLAS, 1, [Using internal HYPRE routines])
+      AC_DEFINE(NALU_HYPRE_USING_NALU_HYPRE_BLAS, 1, [Using internal NALU_HYPRE routines])
    fi
 fi
 
@@ -1986,7 +1986,7 @@ fi
 dnl *********************************************************************
 dnl * Find LAPACK library if not already set by the user
 dnl * If user specified --without-lapack or a system one cannot be found,
-dnl * default to internal HYPRE routines
+dnl * default to internal NALU_HYPRE routines
 dnl *********************************************************************
 if test "$nalu_hypre_user_chose_lapack" = "no"
 then
@@ -2009,7 +2009,7 @@ then
    then
       LAPACKLIBDIRS=""
       LAPACKLIBS=""
-      AC_DEFINE(NALU_HYPRE_USING_NALU_HYPRE_LAPACK, 1, [Using internal HYPRE routines])
+      AC_DEFINE(NALU_HYPRE_USING_NALU_HYPRE_LAPACK, 1, [Using internal NALU_HYPRE routines])
    fi
 fi
 

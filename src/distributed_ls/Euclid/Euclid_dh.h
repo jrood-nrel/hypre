@@ -1,6 +1,6 @@
 /******************************************************************************
  * Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
- * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+ * NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
@@ -108,7 +108,7 @@ struct _mpi_interface_dh {
   NALU_HYPRE_Int m;         /* local rows in matrix */
   NALU_HYPRE_Int n;         /* global rows in matrix */
   NALU_HYPRE_Real *rhs;   /* used for debugging; this vector is not owned! */
-  void *A;       /*  PETSc, HYPRE, Euclid, or other matrix object. */
+  void *A;       /*  PETSc, NALU_HYPRE, Euclid, or other matrix object. */
   Factor_dh F;   /* data structure for the factor, F = L+U-I */
   SubdomainGraph_dh sg; 
 

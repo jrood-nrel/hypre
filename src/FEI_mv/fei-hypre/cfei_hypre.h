@@ -1,6 +1,6 @@
 /******************************************************************************
  * Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
- * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+ * NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
@@ -9,7 +9,7 @@
 #define _cfei_nalu_hypre_h_
 
 /*
-   This header defines the prototype for the HYPRE-specific functions that
+   This header defines the prototype for the NALU_HYPRE-specific functions that
    uses the LinSysCore struct pointer, which is used by FEI_create.
 */
 

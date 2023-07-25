@@ -1,6 +1,6 @@
 /******************************************************************************
  * Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
- * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+ * NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
@@ -18,7 +18,7 @@
 #include <stdio.h>
 
 //**************************************************************************
-// HYPRE includes
+// NALU_HYPRE includes
 //---------------------------------------------------------------------------
 
 #include "NALU_HYPRE.h"
@@ -117,7 +117,7 @@ void fei_nalu_hypre_test(int argc, char *argv[])
     fflush(stdout);
 
     //------------------------------------------------------------------
-    // create matrix in the HYPRE context
+    // create matrix in the NALU_HYPRE context
     //------------------------------------------------------------------
 
     local_nrows = myend - mybegin + 1;
@@ -368,7 +368,7 @@ void fei_nalu_hypre_domaindecomposition(int argc, char *argv[])
     fflush(stdout);
 
     //******************************************************************
-    // create and load the global matrix in the HYPRE context
+    // create and load the global matrix in the NALU_HYPRE context
     //------------------------------------------------------------------
 
     local_nrows = myEnd - myBegin + 1;

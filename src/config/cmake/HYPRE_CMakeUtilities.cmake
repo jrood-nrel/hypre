@@ -1,5 +1,5 @@
 # Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
-# HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+# NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
@@ -36,7 +36,7 @@ function(add_nalu_hypre_executables EXE_SRCS)
     add_executable(${EXE_NAME} ${SRC_FILE})
 
     # Link libraries
-    set(NALU_HYPRE_LIBS "HYPRE")
+    set(NALU_HYPRE_LIBS "NALU_HYPRE")
 
     # Link libraries for Unix systems
     if (UNIX)

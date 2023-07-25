@@ -1,6 +1,6 @@
 /******************************************************************************
  * Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
- * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+ * NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
@@ -146,7 +146,7 @@ int NALU_HYPRE_FEMatrixAssemble(NALU_HYPRE_FEMatrix matrix);
    
 /**
  * Set the storage type of the matrix object to be constructed.
- * Currently, {\tt type} can only be {\tt HYPRE\_PARCSR} (default).
+ * Currently, {\tt type} can only be {\tt NALU_HYPRE\_PARCSR} (default).
  *
  **/
 int NALU_HYPRE_FEMatrixSetObjectType(NALU_HYPRE_FEMatrix  matrix, int type);
@@ -198,7 +198,7 @@ int NALU_HYPRE_FEVectorAssemble(NALU_HYPRE_FEVector vector);
 
 /**
  * Set the storage type of the vector object to be constructed.
- * Currently, {\tt type} can only be {\tt HYPRE\_PARCSR} (default).
+ * Currently, {\tt type} can only be {\tt NALU_HYPRE\_PARCSR} (default).
  **/
 int NALU_HYPRE_FEVectorSetObjectType(NALU_HYPRE_FEVector vector, int type);
 

@@ -1,6 +1,6 @@
 /******************************************************************************
  * Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
- * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+ * NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
@@ -91,14 +91,14 @@ typedef struct nalu_hypre_FEVector_struct *NALU_HYPRE_FEVector;
 #endif
 
 /**
- * @name HYPRE's Finite Element Interface
+ * @name NALU_HYPRE's Finite Element Interface
  *
  * @memo A finite element-based conceptual interface
  **/
 /*@{*/
                                                                                 
 /**
- * @name HYPRE FEI functions
+ * @name NALU_HYPRE FEI functions
  **/
 /*@{*/
                                                                                 
@@ -108,7 +108,7 @@ typedef struct nalu_hypre_FEVector_struct *NALU_HYPRE_FEVector;
 
 /**
   * Finite element interface constructor: this function creates an
-  * instantiation of the HYPRE fei class.
+  * instantiation of the NALU_HYPRE fei class.
   * @param comm - an MPI communicator
   * @param mesh - upon return, contains a pointer to the finite element mesh
  **/
@@ -129,8 +129,8 @@ int NALU_HYPRE_FEMeshDestroy( NALU_HYPRE_FEMesh mesh );
   * LinearSystemCore object. 
   * @param mesh - a pointer to the finite element mesh 
   * @param externFEI - a pointer to the externally built finite element object 
-  * @param linSys - a pointer to the HYPRE linear system solver object built
-  *                 using the HYPRE\_base\_create function.
+  * @param linSys - a pointer to the NALU_HYPRE linear system solver object built
+  *                 using the NALU_HYPRE\_base\_create function.
  **/
 
 int NALU_HYPRE_FEMeshSetFEObject(NALU_HYPRE_FEMesh mesh, void *externFEI, void *linSys);
@@ -316,7 +316,7 @@ int NALU_HYPRE_FEMeshGetBlockNodeSolution( NALU_HYPRE_FEMesh mesh, int blockID,
 /*@}*/
 
 /**
- * @name HYPRE FEI Matrix functions
+ * @name NALU_HYPRE FEI Matrix functions
  **/
 /*@{*/
                                                                                 
@@ -340,9 +340,9 @@ int NALU_HYPRE_FEMatrixCreate( MPI_Comm comm, NALU_HYPRE_FEMesh mesh,
 int NALU_HYPRE_FEMatrixDestroy( NALU_HYPRE_FEMatrix matrix );
 
 /**
-  * This function gets the underlying HYPRE parcsr matrix from the FE mesh
+  * This function gets the underlying NALU_HYPRE parcsr matrix from the FE mesh
   * @param matrix - a pointer to the FE matrix
-  * @param object - a pointer to the HYPRE parcsr matrix
+  * @param object - a pointer to the NALU_HYPRE parcsr matrix
  **/
 
 int NALU_HYPRE_FEMatrixGetObject( NALU_HYPRE_FEMatrix matrix, void **object );
@@ -350,7 +350,7 @@ int NALU_HYPRE_FEMatrixGetObject( NALU_HYPRE_FEMatrix matrix, void **object );
 /*@}*/
 
 /**
- * @name HYPRE FEI Vector functions
+ * @name NALU_HYPRE FEI Vector functions
  **/
 /*@{*/
                                                                                 

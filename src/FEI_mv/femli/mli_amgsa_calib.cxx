@@ -1,6 +1,6 @@
 /******************************************************************************
  * Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
- * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+ * NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
@@ -13,7 +13,7 @@
 // *********************************************************************
 
 // *********************************************************************
-// This file is customized to use HYPRE matrix format
+// This file is customized to use NALU_HYPRE matrix format
 // *********************************************************************
 
 // *********************************************************************

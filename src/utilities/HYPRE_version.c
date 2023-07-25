@@ -1,6 +1,6 @@
 /******************************************************************************
  * Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
- * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+ * NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
@@ -27,7 +27,7 @@ NALU_HYPRE_Version( char **version_ptr )
 
    version = nalu_hypre_CTAlloc(char, len, NALU_HYPRE_MEMORY_HOST);
 
-   nalu_hypre_sprintf(version, "HYPRE Release Version %s", NALU_HYPRE_RELEASE_VERSION);
+   nalu_hypre_sprintf(version, "NALU_HYPRE Release Version %s", NALU_HYPRE_RELEASE_VERSION);
 
    *version_ptr = version;
 

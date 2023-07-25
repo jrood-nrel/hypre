@@ -36,9 +36,9 @@ Iters       ||r||_2     conv.rate  ||r||_2/||b||_2
 ***************************************************
 *                Solver Statistics                *
 *-------------------------------------------------*
-** HYPRE preconditioner setup time = 3.092300e-02
-** HYPRE solution time             = 2.983800e-02
-** HYPRE total time                = 6.076100e-02
-** HYPRE number of iterations      = 6
-** HYPRE final residual norm       = 5.026712e-10
+** NALU_HYPRE preconditioner setup time = 3.092300e-02
+** NALU_HYPRE solution time             = 2.983800e-02
+** NALU_HYPRE total time                = 6.076100e-02
+** NALU_HYPRE number of iterations      = 6
+** NALU_HYPRE final residual norm       = 5.026712e-10
 ***************************************************

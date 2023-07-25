@@ -1,6 +1,6 @@
 /******************************************************************************
  * Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
- * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+ * NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
@@ -1231,7 +1231,7 @@ nalu_hypre_MGRCycle( void              *mgr_vdata,
             }
             else if (level_smooth_type[fine_grid] == 16)
             {
-               /* HYPRE ILU */
+               /* NALU_HYPRE ILU */
                NALU_HYPRE_ILUSolve((mgr_data -> level_smoother)[fine_grid],
                               A_array[fine_grid], F_array[fine_grid],
                               U_array[fine_grid]);

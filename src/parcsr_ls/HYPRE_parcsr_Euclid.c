@@ -1,6 +1,6 @@
 /******************************************************************************
  * Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
- * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+ * NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
@@ -38,7 +38,7 @@
           }
 
 /* What is best to do here?
- * What is HYPRE's error checking strategy?
+ * What is NALU_HYPRE's error checking strategy?
  * The shadow knows . . .
  *
  * Note: NALU_HYPRE_EUCLID_ERRCHKA macro is only used within this file.

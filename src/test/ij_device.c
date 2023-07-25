@@ -1,6 +1,6 @@
 /******************************************************************************
  * Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
- * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+ * NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
@@ -121,7 +121,7 @@ main( nalu_hypre_int argc,
    nalu_hypre_bind_device(myid, num_procs, nalu_hypre_MPI_COMM_WORLD);
 
    /*-----------------------------------------------------------
-    * Initialize : must be the first HYPRE function to call
+    * Initialize : must be the first NALU_HYPRE function to call
     *-----------------------------------------------------------*/
    NALU_HYPRE_Initialize();
 

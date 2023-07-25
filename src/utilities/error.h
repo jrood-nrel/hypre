@@ -1,6 +1,6 @@
 /******************************************************************************
  * Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
- * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+ * NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
@@ -28,7 +28,7 @@ extern nalu_hypre_Error nalu_hypre__global_error;
 #define nalu_hypre_error_flag  nalu_hypre__global_error.error_flag
 
 /*--------------------------------------------------------------------------
- * HYPRE error macros
+ * NALU_HYPRE error macros
  *--------------------------------------------------------------------------*/
 
 void nalu_hypre_error_handler(const char *filename, NALU_HYPRE_Int line, NALU_HYPRE_Int ierr, const char *msg);

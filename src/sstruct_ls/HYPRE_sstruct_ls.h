@@ -1,6 +1,6 @@
 /******************************************************************************
  * Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
- * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+ * NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
@@ -321,7 +321,7 @@ NALU_HYPRE_SStructSplitSetNonZeroGuess(NALU_HYPRE_SStructSolver solver);
 
 /**
  * (Optional) Set up the type of diagonal struct solver.  Either \e ssolver is
- * set to \e HYPRE\_SMG or \e HYPRE\_PFMG.
+ * set to \e NALU_HYPRE\_SMG or \e NALU_HYPRE\_PFMG.
  **/
 NALU_HYPRE_Int
 NALU_HYPRE_SStructSplitSetStructSolver(NALU_HYPRE_SStructSolver solver,

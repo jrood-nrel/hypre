@@ -1,6 +1,6 @@
 /******************************************************************************
  * Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
- * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+ * NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
@@ -66,7 +66,7 @@ void MLI_FEDataConstructElemNodeMatrix(MPI_Comm comm, MLI_FEData *fedata,
    fedata->impSpecificRequests(paramString, 1, targv);
 
    /* ------------------------------------------------------------ */
-   /* create HYPRE IJ matrix                                       */
+   /* create NALU_HYPRE IJ matrix                                       */
    /* ------------------------------------------------------------ */
 
    NALU_HYPRE_IJMatrixCreate(comm, elemOffset, elemOffset + nElems - 1, 
@@ -172,7 +172,7 @@ void MLI_FEDataConstructElemFaceMatrix(MPI_Comm comm, MLI_FEData *fedata,
    fedata->impSpecificRequests(param_string, 1, targv);
 
    /* ------------------------------------------------------------ */
-   /* create HYPRE IJ matrix                                       */
+   /* create NALU_HYPRE IJ matrix                                       */
    /* ------------------------------------------------------------ */
 
    NALU_HYPRE_IJMatrixCreate(comm, elemOffset, elemOffset + nElems - 1, 
@@ -261,7 +261,7 @@ void MLI_FEDataConstructFaceNodeMatrix(MPI_Comm comm, MLI_FEData *fedata,
    fedata->impSpecificRequests(param_string, 1, targv);
 
    /* ------------------------------------------------------------ */
-   /* create HYPRE IJ matrix                                       */
+   /* create NALU_HYPRE IJ matrix                                       */
    /* ------------------------------------------------------------ */
 
    NALU_HYPRE_IJMatrixCreate(comm, faceOffset, faceOffset + lfaces - 1, 
@@ -386,7 +386,7 @@ void MLI_FEDataConstructNodeElemMatrix(MPI_Comm comm, MLI_FEData *fedata,
    fedata->impSpecificRequests(param_string, 2, targv);
  
    /* ------------------------------------------------------------ */
-   /* create HYPRE IJ matrix                                       */
+   /* create NALU_HYPRE IJ matrix                                       */
    /* ------------------------------------------------------------ */
 
    NALU_HYPRE_IJMatrixCreate(comm, nodeOffset, nodeOffset + nLocal - 1, 
@@ -504,7 +504,7 @@ void MLI_FEDataConstructFaceElemMatrix(MPI_Comm comm, MLI_FEData *fedata,
    fedata->impSpecificRequests(param_string, 2, targv);
  
    /* ------------------------------------------------------------ */
-   /* create HYPRE IJ matrix                                       */
+   /* create NALU_HYPRE IJ matrix                                       */
    /* ------------------------------------------------------------ */
 
    NALU_HYPRE_IJMatrixCreate(comm, faceOffset, faceOffset + nlocal - 1, 
@@ -625,7 +625,7 @@ void MLI_FEDataConstructNodeFaceMatrix(MPI_Comm comm, MLI_FEData *fedata,
    fedata->impSpecificRequests(param_string, 2, targv);
  
    /* ------------------------------------------------------------ */
-   /* create HYPRE IJ matrix                                       */
+   /* create NALU_HYPRE IJ matrix                                       */
    /* ------------------------------------------------------------ */
 
    NALU_HYPRE_IJMatrixCreate(comm, nodeOffset, nodeOffset + nlocal - 1, 

@@ -1,6 +1,6 @@
 /******************************************************************************
  * Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
- * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+ * NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
@@ -27,7 +27,7 @@ extern "C" {
 /*--------------------------------------------------------------------------
  * Change all MPI names to nalu_hypre_MPI names to avoid link conflicts.
  *
- * NOTE: MPI_Comm is the only MPI symbol in the HYPRE user interface,
+ * NOTE: MPI_Comm is the only MPI symbol in the NALU_HYPRE user interface,
  * and is defined in `NALU_HYPRE_utilities.h'.
  *--------------------------------------------------------------------------*/
 

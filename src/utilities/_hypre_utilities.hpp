@@ -11,7 +11,7 @@ extern "C++" {
 
 /******************************************************************************
  * Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
- * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+ * NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
@@ -52,7 +52,7 @@ struct nalu_hypre_device_allocator
 #endif
 /******************************************************************************
  * Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
- * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+ * NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
@@ -283,7 +283,7 @@ using nalu_hypre_DeviceItem = sycl::nd_item<3>;
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  *       macro for launching GPU kernels
- *       NOTE: IN HYPRE'S DEFAULT STREAM
+ *       NOTE: IN NALU_HYPRE'S DEFAULT STREAM
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #if defined(NALU_HYPRE_DEBUG)
@@ -1981,7 +1981,7 @@ cusparseIndexType_t nalu_hypre_HYPREIntToCusparseIndexType();
 #endif /* #ifndef NALU_HYPRE_CUDA_UTILS_H */
 /******************************************************************************
  * Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
- * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+ * NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/

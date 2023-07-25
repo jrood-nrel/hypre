@@ -1,5 +1,5 @@
 .. Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
-   HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+   NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
 
    SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
@@ -188,7 +188,7 @@ on GPUs is shown below.
 
  cudaSetDevice(device_id); /* GPU binding */
  ...
- NALU_HYPRE_Initialize(); /* must be the first HYPRE function call */
+ NALU_HYPRE_Initialize(); /* must be the first NALU_HYPRE function call */
  ...
  /* AMG in GPU memory (default) */
  NALU_HYPRE_SetMemoryLocation(NALU_HYPRE_MEMORY_DEVICE);
@@ -237,7 +237,7 @@ on GPUs is shown below.
  /* solve */
  NALU_HYPRE_PCGSolve(solver, parcsr_A, b, x);
  ...
- NALU_HYPRE_Finalize(); /* must be the last HYPRE function call */
+ NALU_HYPRE_Finalize(); /* must be the last NALU_HYPRE function call */
 
 ``NALU_HYPRE_Initialize()`` must be called and precede all the other ``NALU_HYPRE_`` functions, and
 ``NALU_HYPRE_Finalize()`` must be called before exiting.

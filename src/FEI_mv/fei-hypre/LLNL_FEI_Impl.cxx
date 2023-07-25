@@ -1,6 +1,6 @@
 /******************************************************************************
  * Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
- * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+ * NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
@@ -68,7 +68,7 @@ int LLNL_FEI_Impl::parameters(int numParams, char **paramString)
          if ( (FLAG_SolverLib_ & SOLVERLOCK) == 0 )
          {
             sscanf(paramString[i], "%s %s", param1, param2);
-            if ( !strcmp( param2, "HYPRE" ) ) FLAG_SolverLib_ = 1;
+            if ( !strcmp( param2, "NALU_HYPRE" ) ) FLAG_SolverLib_ = 1;
             else                              FLAG_SolverLib_ = 0;
          }
       }
@@ -90,7 +90,7 @@ int LLNL_FEI_Impl::parameters(int numParams, char **paramString)
       strcpy( param3, "matrixNoOverlap" );
       feiPtr_->parameters(iOne,&param3);
       delete [] param3;
-      solver = HYPRE;
+      solver = NALU_HYPRE;
       lscPtr_ = new LLNL_FEI_LSCore(solver);
    }
    else
@@ -136,7 +136,7 @@ int LLNL_FEI_Impl::solve(int *status)
       char   format[20];
 
       MPI_Comm_rank(mpiComm_, &mypid);
-      strcpy( format, "HYPRE" );
+      strcpy( format, "NALU_HYPRE" );
       matPtr_->getLocalMatrix(&localNRows, &diagIA, &diagJA, &diagAA);
       matPtr_->getExtMatrix(&extNRows, &offdIA, &offdJA, &offdAA, &colMap);
       offsets = matPtr_->getEqnOffsets();

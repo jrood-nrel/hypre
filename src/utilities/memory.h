@@ -1,6 +1,6 @@
 /******************************************************************************
  * Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
- * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+ * NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
@@ -130,7 +130,7 @@ nalu_hypre_GetActualMemLocation(NALU_HYPRE_MemoryLocation location)
 #elif defined(NALU_HYPRE_USING_UNIFIED_MEMORY)
       return nalu_hypre_MEMORY_UNIFIED;
 #else
-#error Wrong HYPRE memory setting.
+#error Wrong NALU_HYPRE memory setting.
 #endif
    }
 

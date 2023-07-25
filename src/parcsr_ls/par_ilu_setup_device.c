@@ -1,6 +1,6 @@
 /******************************************************************************
  * Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
- * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+ * NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
@@ -135,7 +135,7 @@ nalu_hypre_ILUSetupILUDevice(NALU_HYPRE_Int               ilu_type,
        *
        * Extract submatrix L_B U_B, L_S U_S, EU_B^{-1}, L_B^{-1}F
        * Note that in this function after ILU, all rows are sorted
-       * in a way different than HYPRE. Diagonal is not listed in the front
+       * in a way different than NALU_HYPRE. Diagonal is not listed in the front
        */
 
       if (ilu_type == 0)

@@ -1,6 +1,6 @@
 /******************************************************************************
  * Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
- * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+ * NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
@@ -31,7 +31,7 @@
 //#define HAVE_SYSPDE
 
 //---------------------------------------------------------------------------
-// HYPRE include files
+// NALU_HYPRE include files
 //---------------------------------------------------------------------------
 
 #include "NALU_HYPRE.h"
@@ -5322,7 +5322,7 @@ void NALU_HYPRE_LinSysCore::loadConstraintNumbers(int nConstr, int *constrList)
 }
 
 //***************************************************************************
-// this function extracts the the version number from HYPRE
+// this function extracts the the version number from NALU_HYPRE
 //---------------------------------------------------------------------------
 
 char *NALU_HYPRE_LinSysCore::getVersion()

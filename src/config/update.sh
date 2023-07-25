@@ -1,6 +1,6 @@
 #!/bin/sh
 # Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
-# HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+# NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
@@ -16,12 +16,12 @@ source config/version.sh
 # Check that the version number is not smaller than before
 currentnum=`grep "NALU_HYPRE_NUMBER=" configure | cut -d= -f 2`
 if [ $nalu_hypre_number -lt $currentnum ]; then
-  echo "ERROR: HYPRE version number is smaller than the current version!"
+  echo "ERROR: NALU_HYPRE version number is smaller than the current version!"
   exit
 elif [ $nalu_hypre_number -gt $currentnum ]; then
-  echo "HYPRE version number is greater than the current version"
+  echo "NALU_HYPRE version number is greater than the current version"
 else
-  echo "HYPRE version number is the same as the current version"
+  echo "NALU_HYPRE version number is the same as the current version"
 fi
 
 ##### Update release information and configure script for Linux build system

@@ -1,6 +1,6 @@
 /******************************************************************************
  * Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
- * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+ * NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
@@ -204,7 +204,7 @@ int nalu_hypre_LSICGSolve(void  *lsicg_vdata, void  *A, void  *b, void  *x)
          alpha  = rho / sigma;
          if ( sigma == 0.0 )
          {
-            printf("HYPRE::LSICG ERROR - sigma = 0.0.\n");
+            printf("NALU_HYPRE::LSICG ERROR - sigma = 0.0.\n");
             ierr = 2;
             return ierr;
          }

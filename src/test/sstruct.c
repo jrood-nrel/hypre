@@ -1,6 +1,6 @@
 /******************************************************************************
  * Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
- * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+ * NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
@@ -2278,7 +2278,7 @@ PrintUsage( char *progname,
       nalu_hypre_printf("\n");
       nalu_hypre_printf("  -lobpcg            : run LOBPCG instead of PCG\n");
       nalu_hypre_printf("\n");
-      nalu_hypre_printf("  -solver none       : no HYPRE preconditioner is used\n");
+      nalu_hypre_printf("  -solver none       : no NALU_HYPRE preconditioner is used\n");
       nalu_hypre_printf("\n");
       nalu_hypre_printf("  -itr <val>         : maximal number of LOBPCG iterations (default 100);\n");
       nalu_hypre_printf("\n");
@@ -2474,7 +2474,7 @@ main( nalu_hypre_int argc,
    nalu_hypre_bind_device(myid, num_procs, comm);
 
    /*-----------------------------------------------------------
-    * Initialize : must be the first HYPRE function to call
+    * Initialize : must be the first NALU_HYPRE function to call
     *-----------------------------------------------------------*/
    NALU_HYPRE_Initialize();
 
@@ -2558,8 +2558,8 @@ main( nalu_hypre_int argc,
       {
          NALU_HYPRE_Int major, minor, patch, single;
          NALU_HYPRE_VersionNumber(&major, &minor, &patch, &single);
-         nalu_hypre_printf("HYPRE Version %d.%d.%d\n", major, minor, patch);
-         nalu_hypre_printf("HYPRE Single = %d\n", single);
+         nalu_hypre_printf("NALU_HYPRE Version %d.%d.%d\n", major, minor, patch);
+         nalu_hypre_printf("NALU_HYPRE Single = %d\n", single);
          exit(1);
       }
       else

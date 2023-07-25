@@ -1,6 +1,6 @@
 /******************************************************************************
  * Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
- * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+ * NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
@@ -582,7 +582,7 @@ int MLI_Method_AMGSA::setup( MLI *mli )
          for (jj = 0; jj < ANRows; jj++) XData[jj] = nullspaceVec_[ii*ANRows+jj];
          nalu_hypre_ParCSRMatrixMatvec(1.0, hypreA, hypreX, 0.0, hypreY);
          rnorm = sqrt(nalu_hypre_ParVectorInnerProd(hypreY, hypreY));
-         if (mypid == 0) printf("HYPRE FEI: check null space = %e\n", rnorm);
+         if (mypid == 0) printf("NALU_HYPRE FEI: check null space = %e\n", rnorm);
       }
       NALU_HYPRE_IJVectorDestroy(IJX);
       NALU_HYPRE_IJVectorDestroy(IJY);

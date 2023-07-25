@@ -1,6 +1,6 @@
 /******************************************************************************
  * Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
- * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+ * NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
@@ -16,9 +16,9 @@
 //    (2b) precond->setSchemeBlockTriangular(), or
 //    (2c) precond->setSchemeBlockInverse()
 //    (3)  If lumped mass matrix is to be loaded, do the following :
-//         -- call directly to HYPRE : beginCreateMapFromSoln 
+//         -- call directly to NALU_HYPRE : beginCreateMapFromSoln 
 //         -- use FEI function to load initial guess with map
-//         -- call directly to HYPRE : endCreateMapFromSoln 
+//         -- call directly to NALU_HYPRE : endCreateMapFromSoln 
 //    (4)  precond->setup(mapFromSolnList_,mapFromSolnList2_,mapFromSolnLeng_)
 //    (5)  precond->solve( NALU_HYPRE_IJVector x, NALU_HYPRE_IJVector f )
 // 
@@ -40,7 +40,7 @@
 #endif
 
 //******************************************************************************
-// HYPRE include files
+// NALU_HYPRE include files
 //------------------------------------------------------------------------------
 
 #include "NALU_HYPRE.h"

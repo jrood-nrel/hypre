@@ -1,6 +1,6 @@
 /******************************************************************************
  * Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
- * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+ * NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
@@ -93,7 +93,7 @@ nalu_hypre_ComputeInfoDestroy( nalu_hypre_ComputeInfo  *compute_info )
 
 /*--------------------------------------------------------------------------
  * Return descriptions of communications and computations patterns for
- * a given grid-stencil computation.  If HYPRE\_OVERLAP\_COMM\_COMP is
+ * a given grid-stencil computation.  If NALU_HYPRE\_OVERLAP\_COMM\_COMP is
  * defined, then the patterns are computed to allow for overlapping
  * communications and computations.  The default is no overlap.
  *

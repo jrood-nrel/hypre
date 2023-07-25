@@ -1,6 +1,6 @@
 /******************************************************************************
  * Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
- * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+ * NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
@@ -53,7 +53,7 @@
 /* Compile without MPI */
 #cmakedefine NALU_HYPRE_SEQUENTIAL 1
 
-/* Use HYPRE timing routines */
+/* Use NALU_HYPRE timing routines */
 #cmakedefine NALU_HYPRE_TIMING 1
 
 /* Use internal BLAS library */
@@ -62,7 +62,7 @@
 /* Use internal LAPACK library */
 #cmakedefine NALU_HYPRE_USING_NALU_HYPRE_LAPACK 1
 
-/* Print HYPRE errors */
+/* Print NALU_HYPRE errors */
 #cmakedefine NALU_HYPRE_PRINT_ERRORS 1
 
 /* Use OpenMP */

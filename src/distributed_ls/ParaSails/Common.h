@@ -1,6 +1,6 @@
 /******************************************************************************
  * Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
- * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+ * NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
@@ -8,20 +8,20 @@
 /******************************************************************************
  *
  * Common.h header file - common definitions and parameters; also hides
- * HYPRE-specific definitions
+ * NALU_HYPRE-specific definitions
  *
  *****************************************************************************/
 
 #include <stdio.h>
 
-#if 1 /* HYPRE */
+#if 1 /* NALU_HYPRE */
 #include "NALU_HYPRE_config.h"
 #include "_nalu_hypre_utilities.h"
 #include "fortran.h"
 #ifdef NALU_HYPRE_USING_ESSL
 #define ESSL
 #endif
-#else /* not HYPRE */
+#else /* not NALU_HYPRE */
 #include "mpi.h"
 #endif
 

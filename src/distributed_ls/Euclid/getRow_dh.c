@@ -1,6 +1,6 @@
 /******************************************************************************
  * Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
- * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+ * NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
@@ -12,7 +12,7 @@
 /* #include "Mem_dh.h" */
 
 /*-------------------------------------------------------------------
- *  HYPRE
+ *  NALU_HYPRE
  *-------------------------------------------------------------------*/
 #if defined(NALU_HYPRE_GET_ROW)
 
@@ -47,7 +47,7 @@ void EuclidRestoreRow(void *A, NALU_HYPRE_Int row, NALU_HYPRE_Int *len, NALU_HYP
 }
 
 #undef __FUNC__
-#define __FUNC__ "EuclidGetDimensions (HYPRE)"
+#define __FUNC__ "EuclidGetDimensions (NALU_HYPRE)"
 void EuclidGetDimensions(void *A, NALU_HYPRE_Int *beg_row, NALU_HYPRE_Int *rowsLocal, NALU_HYPRE_Int *rowsGlobal)
 {
   START_FUNC_DH
@@ -80,7 +80,7 @@ void EuclidGetDimensions(void *A, NALU_HYPRE_Int *beg_row, NALU_HYPRE_Int *rowsL
 
 /*
 #undef __FUNC__
-#define __FUNC__ "EuclidReadLocalNz (HYPRE)"
+#define __FUNC__ "EuclidReadLocalNz (NALU_HYPRE)"
 NALU_HYPRE_Int EuclidReadLocalNz(void *A)
 {
   START_FUNC_DH

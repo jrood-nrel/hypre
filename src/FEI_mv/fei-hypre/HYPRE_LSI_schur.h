@@ -1,12 +1,12 @@
 /******************************************************************************
  * Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
- * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+ * NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
 // *************************************************************************
-// This is the HYPRE implementation of Schur reduction
+// This is the NALU_HYPRE implementation of Schur reduction
 // *************************************************************************
 
 #ifndef __NALU_HYPRE_LSI_SCHURH__

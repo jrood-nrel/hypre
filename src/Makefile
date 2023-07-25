@@ -1,5 +1,5 @@
 # Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
-# HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+# NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
@@ -60,7 +60,7 @@ NALU_HYPRE_TEST_DIRS = test
 #This is the examples directory
 NALU_HYPRE_EXAMPLE_DIRS = examples
 
-# These are directories that are officially in HYPRE
+# These are directories that are officially in NALU_HYPRE
 NALU_HYPRE_DIRS =\
  ${NALU_HYPRE_BASIC_DIRS}\
  ${NALU_HYPRE_MULTIVEC_DIRS}\
@@ -72,7 +72,7 @@ NALU_HYPRE_DIRS =\
  ${NALU_HYPRE_FEI_DIRS}\
  ${NALU_HYPRE_LIBS_DIRS}
 
-# These are directories that are not yet officially in HYPRE
+# These are directories that are not yet officially in NALU_HYPRE
 NALU_HYPRE_EXTRA_DIRS =\
  ${NALU_HYPRE_DOCS_DIRS}\
  ${NALU_HYPRE_TEST_DIRS}\
@@ -99,7 +99,7 @@ all:
 help:
 	@echo "     "
 	@echo "************************************************************"
-	@echo " HYPRE Make System Targets"
+	@echo " NALU_HYPRE Make System Targets"
 	@echo "   (using GNU-standards)"
 	@echo "     "
 	@echo "all:"
@@ -133,7 +133,7 @@ help:
 	@echo "     creates a temporary installation sub-directory"
 	@echo "     copies all libHYPRE* and *.h files to the temporary locations"
 	@echo "     builds the test drivers; linking to the temporary installation"
-	@echo "        directories to simulate how application codes will link to HYPRE"
+	@echo "        directories to simulate how application codes will link to NALU_HYPRE"
 	@echo "     "
 	@echo "check:"
 	@echo "     runs a small driver test to verify a working library"

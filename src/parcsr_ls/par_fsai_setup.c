@@ -1,6 +1,6 @@
 /******************************************************************************
  *  Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
- *  HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+ *  NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
  *  SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
@@ -1091,7 +1091,7 @@ nalu_hypre_FSAIPrintStats( void *fsai_vdata,
    if (!my_id)
    {
       nalu_hypre_printf("*************************\n");
-      nalu_hypre_printf("* HYPRE FSAI Setup Info *\n");
+      nalu_hypre_printf("* NALU_HYPRE FSAI Setup Info *\n");
       nalu_hypre_printf("*************************\n\n");
 
       nalu_hypre_printf("+---------------------------+\n");

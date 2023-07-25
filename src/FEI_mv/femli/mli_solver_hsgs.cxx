@@ -1,6 +1,6 @@
 /******************************************************************************
  * Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
- * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+ * NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
@@ -172,7 +172,7 @@ int MLI_Solver_HSGS::calcOmega()
    amgData->smooth_num_levels = 0;
    amgData->smooth_type = 0;
    nalu_hypre_BoomerAMGCGRelaxWt((void *) amgData,level,numCGSweeps,&relaxOmega_);
-   //printf("HYPRE/FEI/MLI HSGS : relaxOmega = %e\n", relaxOmega_);
+   //printf("NALU_HYPRE/FEI/MLI HSGS : relaxOmega = %e\n", relaxOmega_);
    delete [] amgData->A_array;
    delete [] amgData->CF_marker_array;
    nalu_hypre_TFree(amgData, NALU_HYPRE_MEMORY_HOST);

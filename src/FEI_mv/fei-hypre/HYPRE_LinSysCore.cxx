@@ -1,6 +1,6 @@
 /******************************************************************************
  * Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
- * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+ * NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
@@ -22,7 +22,7 @@
 #endif
 
 //***************************************************************************
-// HYPRE includes
+// NALU_HYPRE includes
 //---------------------------------------------------------------------------
 
 #include "NALU_HYPRE.h"
@@ -1266,7 +1266,7 @@ int NALU_HYPRE_LinSysCore::resetMatrixAndVector(double setValue)
    }
 
    //-------------------------------------------------------------------
-   // for now, since HYPRE does not yet support
+   // for now, since NALU_HYPRE does not yet support
    // re-initializing the matrix, restart the whole thing
    //-------------------------------------------------------------------
 
@@ -1369,7 +1369,7 @@ int NALU_HYPRE_LinSysCore::resetMatrix(double setValue)
    A21NRows_ = A21NCols_ = reducedAStartRow_ = 0;
 
    //-------------------------------------------------------------------
-   // for now, since HYPRE does not yet support
+   // for now, since NALU_HYPRE does not yet support
    // re-initializing the matrix, restart the whole thing
    //-------------------------------------------------------------------
 
@@ -1945,7 +1945,7 @@ int NALU_HYPRE_LinSysCore::getMatrixRow(int row, double* coefs, int* indices,
 }
 
 //***************************************************************************
-// input is 1-based, but HYPRE vectors are 0-based
+// input is 1-based, but NALU_HYPRE vectors are 0-based
 //---------------------------------------------------------------------------
 
 int NALU_HYPRE_LinSysCore::sumIntoRHSVector(int num, const double* values,
@@ -2106,7 +2106,7 @@ int NALU_HYPRE_LinSysCore::matrixLoadComplete()
       NALU_HYPRE_IJMatrixInitialize(HYA_);
 
       //----------------------------------------------------------------
-      // load the matrix stored locally to a HYPRE matrix
+      // load the matrix stored locally to a NALU_HYPRE matrix
       //----------------------------------------------------------------
 
       numLocalEqns = localEndRow_ - localStartRow_ + 1;
@@ -3903,7 +3903,7 @@ int NALU_HYPRE_LinSysCore::putInitialGuess(const int* eqnNumbers,
       printf("%4d : NALU_HYPRE_LSC::entering putInitalGuess.\n",mypid_);
 
    //-------------------------------------------------------------------
-   // this is to create a FEI to HYPRE equation node map
+   // this is to create a FEI to NALU_HYPRE equation node map
    //-------------------------------------------------------------------
 
    if ( mapFromSolnFlag_ == 1 )
@@ -4987,7 +4987,7 @@ int NALU_HYPRE_LinSysCore::launchSolver(int& solveStatus, int &iterations)
       for (i = 0; i < MLI_NumNodes_; i++)
       {
          if (MLI_NodalCoord_[i] == -99999.0)
-            printf("%d : HYPRE launchSolver ERROR - coord %d not filled.\n",
+            printf("%d : NALU_HYPRE launchSolver ERROR - coord %d not filled.\n",
                    mypid_, i);
       }
       NALU_HYPRE_LSI_MLILoadNodalCoordinates(HYPrecon_, MLI_NumNodes_,
@@ -5883,14 +5883,14 @@ int NALU_HYPRE_LinSysCore::launchSolver(int& solveStatus, int &iterations)
       printf("*                Solver Statistics                *\n");
       printf("*-------------------------------------------------*\n");
       if ( slideReduction_ || schurReduction_ )
-         printf("** HYPRE matrix reduction time     = %e\n",rtime2-rtime1);
-      printf("** HYPRE preconditioner setup time = %e\n", ptime - stime);
-      printf("** HYPRE solution time             = %e\n", etime - ptime);
-      printf("** HYPRE total time                = %e\n", etime - stime);
-      printf("** HYPRE number of iterations      = %d\n", numIterations);
+         printf("** NALU_HYPRE matrix reduction time     = %e\n",rtime2-rtime1);
+      printf("** NALU_HYPRE preconditioner setup time = %e\n", ptime - stime);
+      printf("** NALU_HYPRE solution time             = %e\n", etime - ptime);
+      printf("** NALU_HYPRE total time                = %e\n", etime - stime);
+      printf("** NALU_HYPRE number of iterations      = %d\n", numIterations);
       if ( slideReduction_ || schurReduction_ )
-         printf("** HYPRE reduced residual norm     = %e\n", newnorm);
-      printf("** HYPRE final residual norm       = %e\n", rnorm);
+         printf("** NALU_HYPRE reduced residual norm     = %e\n", newnorm);
+      printf("** NALU_HYPRE final residual norm       = %e\n", rnorm);
       printf("***************************************************\n");
    }
 

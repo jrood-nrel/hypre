@@ -1,6 +1,6 @@
 /******************************************************************************
  * Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
- * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+ * NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
@@ -1215,7 +1215,7 @@ main( NALU_HYPRE_Int   argc,
       nalu_hypre_printf("  -con                    : solve constrained EVP using 'vectors.*.*'\n");
       nalu_hypre_printf("                            as constraints (see -vout 1 below)\n");
       nalu_hypre_printf("\n");
-      nalu_hypre_printf("  -solver none            : no HYPRE preconditioner is used\n");
+      nalu_hypre_printf("  -solver none            : no NALU_HYPRE preconditioner is used\n");
       nalu_hypre_printf("\n");
       nalu_hypre_printf("  -itr <val>              : maximal number of LOBPCG iterations\n");
       nalu_hypre_printf("                            (default 100);\n");

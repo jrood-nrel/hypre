@@ -1,5 +1,5 @@
 # Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
-# HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+# NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
@@ -58,7 +58,7 @@ ref:
 vref_manual.tex: vref_manual.dxx
 	doc++ -t -o vref_manual.tex vref_manual.dxx
 	mv vref_manual.tex vref_manual.tmp
-	sed 's/HYPRE\\_Int\([^a-zA-Z_0-9]\)/int\1/g' vref_manual.tmp > vref_manual.tex
+	sed 's/NALU_HYPRE\\_Int\([^a-zA-Z_0-9]\)/int\1/g' vref_manual.tmp > vref_manual.tex
 
 vref_manual.dxx: ref_manual.dxx
 	@ \

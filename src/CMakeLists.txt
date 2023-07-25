@@ -1,5 +1,5 @@
 # Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
-# HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+# NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
@@ -19,7 +19,7 @@ set(NALU_HYPRE_TIME    00:00:00)
 set(NALU_HYPRE_BUGS    https://github.com/hypre-space/hypre/issues)
 set(NALU_HYPRE_SRCDIR  "${PROJECT_SOURCE_DIR}")
 
-set(PROJECT_NAME HYPRE)
+set(PROJECT_NAME NALU_HYPRE)
 project(${PROJECT_NAME}
   VERSION ${NALU_HYPRE_VERSION}
   LANGUAGES C)
@@ -63,7 +63,7 @@ include(NALU_HYPRE_CMakeUtilities)
 
 # Set default installation directory, but provide a means for users to change
 set(NALU_HYPRE_INSTALL_PREFIX "${PROJECT_SOURCE_DIR}/hypre" CACHE PATH
-    "Installation directory for HYPRE")
+    "Installation directory for NALU_HYPRE")
 if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
   set(CMAKE_INSTALL_PREFIX "${NALU_HYPRE_INSTALL_PREFIX}" CACHE INTERNAL "" FORCE)
 endif ()
@@ -98,8 +98,8 @@ option(NALU_HYPRE_WITH_SUPERLU            "Use TPL SuperLU" OFF)
 option(NALU_HYPRE_WITH_DSUPERLU           "Use TPL SuperLU_Dist" OFF)
 option(NALU_HYPRE_WITH_MAGMA              "Use TPL MAGMA" OFF)
 option(NALU_HYPRE_WITH_CALIPER            "Use Caliper" OFF)
-option(NALU_HYPRE_PRINT_ERRORS            "Print HYPRE errors" OFF)
-option(NALU_HYPRE_TIMING                  "Use HYPRE timing routines" OFF)
+option(NALU_HYPRE_PRINT_ERRORS            "Print NALU_HYPRE errors" OFF)
+option(NALU_HYPRE_TIMING                  "Use NALU_HYPRE timing routines" OFF)
 option(NALU_HYPRE_BUILD_EXAMPLES          "Build examples" OFF)
 option(NALU_HYPRE_BUILD_TESTS             "Build tests" OFF)
 option(NALU_HYPRE_USING_HOST_MEMORY       "Use host memory" ON)
@@ -426,7 +426,7 @@ else ()
   set(BUILD_SHARED_LIBS OFF CACHE INTERNAL "" FORCE)
 endif ()
 
-# Create the HYPRE library object
+# Create the NALU_HYPRE library object
 add_library(${PROJECT_NAME})
 
 # Headers and sources
@@ -732,8 +732,8 @@ write_basic_package_version_file(
 
 install(EXPORT HYPRETargets
   FILE HYPRETargets.cmake
-  NAMESPACE HYPRE::
-  DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/HYPRE"
+  NAMESPACE NALU_HYPRE::
+  DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/NALU_HYPRE"
   )
 
 configure_package_config_file(
@@ -744,16 +744,16 @@ install(
   FILES
       "${CMAKE_CURRENT_BINARY_DIR}/HYPREConfig.cmake"
       "${CMAKE_CURRENT_BINARY_DIR}/HYPREConfigVersion.cmake"
-  DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/HYPRE"
+  DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/NALU_HYPRE"
   )
 
 export(EXPORT HYPRETargets
   FILE "${CMAKE_CURRENT_BINARY_DIR}/HYPRETargets.cmake"
-  NAMESPACE HYPRE::
+  NAMESPACE NALU_HYPRE::
   )
 
-# Declare an alias so that consumers can depend on HYPRE::HYPRE target
-# also when using HYPRE via add_directory or FetchContent
-add_library(HYPRE::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
+# Declare an alias so that consumers can depend on NALU_HYPRE::NALU_HYPRE target
+# also when using NALU_HYPRE via add_directory or FetchContent
+add_library(NALU_HYPRE::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 
 export(PACKAGE ${PROJECT_NAME})

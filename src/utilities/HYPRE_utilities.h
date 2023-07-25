@@ -1,6 +1,6 @@
 /******************************************************************************
  * Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
- * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+ * NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
@@ -108,7 +108,7 @@ typedef NALU_HYPRE_Int MPI_Comm;
 #endif
 
 /*--------------------------------------------------------------------------
- * HYPRE error codes
+ * NALU_HYPRE error codes
  *--------------------------------------------------------------------------*/
 
 #define NALU_HYPRE_ERROR_GENERIC         1   /* generic error */
@@ -119,7 +119,7 @@ typedef NALU_HYPRE_Int MPI_Comm;
 #define NALU_HYPRE_MAX_FILE_NAME_LEN  1024   /* longest filename length used in hypre */
 
 /*--------------------------------------------------------------------------
- * HYPRE init/finalize
+ * NALU_HYPRE init/finalize
  *--------------------------------------------------------------------------*/
 
 /**
@@ -154,7 +154,7 @@ NALU_HYPRE_Int NALU_HYPRE_Initialized(void);
 NALU_HYPRE_Int NALU_HYPRE_Finalized(void);
 
 /*--------------------------------------------------------------------------
- * HYPRE error user functions
+ * NALU_HYPRE error user functions
  *--------------------------------------------------------------------------*/
 
 /* Return the current hypre error flag */
@@ -189,7 +189,7 @@ NALU_HYPRE_Int NALU_HYPRE_PrintErrorMessages(MPI_Comm comm);
 NALU_HYPRE_Int NALU_HYPRE_PrintDeviceInfo(void);
 
 /*--------------------------------------------------------------------------
- * HYPRE Version routines
+ * NALU_HYPRE Version routines
  *--------------------------------------------------------------------------*/
 
 /* RDF: This macro is used by the FEI code.  Want to eventually remove. */
@@ -213,14 +213,14 @@ NALU_HYPRE_VersionNumber( NALU_HYPRE_Int  *major_ptr,
                      NALU_HYPRE_Int  *single_ptr );
 
 /*--------------------------------------------------------------------------
- * HYPRE AP user functions
+ * NALU_HYPRE AP user functions
  *--------------------------------------------------------------------------*/
 
 /*Checks whether the AP is on */
 NALU_HYPRE_Int NALU_HYPRE_AssumedPartitionCheck(void);
 
 /*--------------------------------------------------------------------------
- * HYPRE memory location
+ * NALU_HYPRE memory location
  *--------------------------------------------------------------------------*/
 
 typedef enum _NALU_HYPRE_MemoryLocation
@@ -236,7 +236,7 @@ NALU_HYPRE_Int NALU_HYPRE_GetMemoryLocation(NALU_HYPRE_MemoryLocation *memory_lo
 #include <stdlib.h>
 
 /*--------------------------------------------------------------------------
- * HYPRE execution policy
+ * NALU_HYPRE execution policy
  *--------------------------------------------------------------------------*/
 
 typedef enum _NALU_HYPRE_ExecutionPolicy
@@ -250,7 +250,7 @@ NALU_HYPRE_Int NALU_HYPRE_SetExecutionPolicy(NALU_HYPRE_ExecutionPolicy exec_pol
 NALU_HYPRE_Int NALU_HYPRE_GetExecutionPolicy(NALU_HYPRE_ExecutionPolicy *exec_policy);
 
 /*--------------------------------------------------------------------------
- * HYPRE UMPIRE
+ * NALU_HYPRE UMPIRE
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int NALU_HYPRE_SetUmpireDevicePoolSize(size_t nbytes);
@@ -263,7 +263,7 @@ NALU_HYPRE_Int NALU_HYPRE_SetUmpireHostPoolName(const char *pool_name);
 NALU_HYPRE_Int NALU_HYPRE_SetUmpirePinnedPoolName(const char *pool_name);
 
 /*--------------------------------------------------------------------------
- * HYPRE GPU memory pool
+ * NALU_HYPRE GPU memory pool
  *--------------------------------------------------------------------------*/
 
 NALU_HYPRE_Int NALU_HYPRE_SetGPUMemoryPoolSize(NALU_HYPRE_Int bin_growth, NALU_HYPRE_Int min_bin, NALU_HYPRE_Int max_bin,

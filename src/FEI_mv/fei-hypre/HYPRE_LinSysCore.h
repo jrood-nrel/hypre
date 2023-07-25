@@ -1,18 +1,18 @@
 /******************************************************************************
  * Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
- * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+ * NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
 // *************************************************************************
-// This is the HYPRE implementation of LinearSystemCore.
+// This is the NALU_HYPRE implementation of LinearSystemCore.
 // *************************************************************************
 
 #ifndef _NALU_HYPRE_LinSysCore_h_
 #define _NALU_HYPRE_LinSysCore_h_
 
-#define NALU_HYPRE_FEI_Version() "FEI/HYPRE 2.7.0R1"
+#define NALU_HYPRE_FEI_Version() "FEI/NALU_HYPRE 2.7.0R1"
 
 // *************************************************************************
 // system libraries used
@@ -393,7 +393,7 @@ class NALU_HYPRE_LinSysCore
                             const int* scatterIndices);
 
    // ----------------------------------------------------------------------
-   // HYPRE-specific public functions
+   // NALU_HYPRE-specific public functions
    // ----------------------------------------------------------------------
 
    void   loadConstraintNumbers(int length, int *list);
@@ -428,7 +428,7 @@ class NALU_HYPRE_LinSysCore
  private: //functions
 
    // ----------------------------------------------------------------------
-   // HYPRE specific private functions
+   // NALU_HYPRE specific private functions
    // ----------------------------------------------------------------------
 
    void   setupPCGPrecon();

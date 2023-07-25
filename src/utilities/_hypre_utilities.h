@@ -16,7 +16,7 @@ extern "C" {
 
 /******************************************************************************
  * Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
- * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+ * NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
@@ -40,7 +40,7 @@ extern nalu_hypre_State nalu_hypre__global_state;
 #endif /* nalu_hypre_STATE_HEADER */
 /******************************************************************************
  * Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
- * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+ * NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
@@ -196,7 +196,7 @@ typedef double                 nalu_hypre_double;
 #endif /* nalu_hypre_GENERAL_HEADER */
 /******************************************************************************
  * Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
- * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+ * NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
@@ -236,7 +236,7 @@ extern "C++"
 #endif /* NALU_HYPRE_MAGMA_HEADER */
 /******************************************************************************
  * Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
- * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+ * NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
@@ -269,7 +269,7 @@ NALU_HYPRE_Int nalu_hypre_ParPrintf(MPI_Comm comm, const char *format, ...);
 #endif
 /******************************************************************************
  * Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
- * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+ * NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
@@ -297,7 +297,7 @@ extern nalu_hypre_Error nalu_hypre__global_error;
 #define nalu_hypre_error_flag  nalu_hypre__global_error.error_flag
 
 /*--------------------------------------------------------------------------
- * HYPRE error macros
+ * NALU_HYPRE error macros
  *--------------------------------------------------------------------------*/
 
 void nalu_hypre_error_handler(const char *filename, NALU_HYPRE_Int line, NALU_HYPRE_Int ierr, const char *msg);
@@ -332,7 +332,7 @@ void nalu_hypre_error_handler(const char *filename, NALU_HYPRE_Int line, NALU_HY
 
 /******************************************************************************
  * Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
- * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+ * NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
@@ -359,7 +359,7 @@ extern "C" {
 /*--------------------------------------------------------------------------
  * Change all MPI names to nalu_hypre_MPI names to avoid link conflicts.
  *
- * NOTE: MPI_Comm is the only MPI symbol in the HYPRE user interface,
+ * NOTE: MPI_Comm is the only MPI symbol in the NALU_HYPRE user interface,
  * and is defined in `NALU_HYPRE_utilities.h'.
  *--------------------------------------------------------------------------*/
 
@@ -686,7 +686,7 @@ NALU_HYPRE_Int nalu_hypre_MPI_Info_free( nalu_hypre_MPI_Info *info );
 #endif
 /******************************************************************************
  * Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
- * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+ * NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
@@ -699,7 +699,7 @@ NALU_HYPRE_Int nalu_hypre_MPI_Info_free( nalu_hypre_MPI_Info *info );
 
 /******************************************************************************
  * Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
- * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+ * NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
@@ -829,7 +829,7 @@ nalu_hypre_GetActualMemLocation(NALU_HYPRE_MemoryLocation location)
 #elif defined(NALU_HYPRE_USING_UNIFIED_MEMORY)
       return nalu_hypre_MEMORY_UNIFIED;
 #else
-#error Wrong HYPRE memory setting.
+#error Wrong NALU_HYPRE memory setting.
 #endif
    }
 
@@ -923,7 +923,7 @@ typedef void (*GPUMfreeFunc)(void *);
 #endif /* nalu_hypre_MEMORY_HEADER */
 /******************************************************************************
  * Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
- * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+ * NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
@@ -1099,7 +1099,7 @@ extern nalu_hypre_MemoryTracker *_nalu_hypre_memory_tracker;
 
 /******************************************************************************
  * Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
- * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+ * NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
@@ -1213,7 +1213,7 @@ NALU_HYPRE_Int NALU_HYPRE_OMPOffloadStatPrint(void);
 
 /******************************************************************************
  * Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
- * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+ * NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
@@ -1243,7 +1243,7 @@ void nalu_hypre_GetSimpleThreadPartition( NALU_HYPRE_Int *begin, NALU_HYPRE_Int 
 
 /******************************************************************************
  * Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
- * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+ * NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
@@ -1363,7 +1363,7 @@ NALU_HYPRE_Int nalu_hypre_GetTiming( const char *heading, NALU_HYPRE_Real *wall_
 
 /******************************************************************************
  * Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
- * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+ * NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
@@ -1405,7 +1405,7 @@ typedef nalu_hypre_ListElement *nalu_hypre_LinkList;
 
 /******************************************************************************
  * Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
- * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+ * NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
@@ -1457,7 +1457,7 @@ NALU_HYPRE_Int nalu_hypre_DataExchangeList(NALU_HYPRE_Int num_contacts, NALU_HYP
 
 /******************************************************************************
  * Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
- * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+ * NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
@@ -1536,7 +1536,7 @@ extern "C++"
 #endif /* CALIPER_INSTRUMENTATION_HEADER */
 /******************************************************************************
  * Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
- * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+ * NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
@@ -1661,7 +1661,7 @@ typedef struct
 #endif
 /******************************************************************************
  * Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
- * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+ * NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
@@ -1730,7 +1730,7 @@ typedef struct
 
 /******************************************************************************
  * Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
- * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+ * NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
@@ -1769,7 +1769,7 @@ typedef struct
 #endif
 /******************************************************************************
  * Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
- * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+ * NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
@@ -2201,7 +2201,7 @@ NALU_HYPRE_Int nalu_hypre_MagmaFinalize(void);
 #endif
 /******************************************************************************
  * Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
- * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+ * NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
@@ -3496,7 +3496,7 @@ nalu_hypre_UnorderedBigIntMapPutIfAbsent( nalu_hypre_UnorderedBigIntMap *m,
 #endif // nalu_hypre_HOPSCOTCH_HASH_HEADER
 /******************************************************************************
  * Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
- * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+ * NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/

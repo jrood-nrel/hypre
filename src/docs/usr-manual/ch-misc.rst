@@ -1,5 +1,5 @@
 .. Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
-   HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+   NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
 
    SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
@@ -98,7 +98,7 @@ Some of the commonly used options include:
                                         libraries the user MUST have the path to
                                         the libraries defined in the environment
                                         variable LD_LIBRARY_PATH.
-   --with-print-errors            Print HYPRE errors
+   --with-print-errors            Print NALU_HYPRE errors
    --with-openmp                  Use OpenMP. This may affect which compiler is
                                   chosen.
    --enable-bigint                Use long long int for NALU_HYPRE_Int (default is NO).
@@ -158,7 +158,7 @@ include:
                 creates temporary installation directories
                 copies all libHYPRE* and *.h files to the temporary locations
                 builds the test drivers; linking to the temporary locations to
-                   simulate how application codes will link to HYPRE
+                   simulate how application codes will link to NALU_HYPRE
 
 GPU build
 ------------------------------------------------------------------------------
@@ -304,7 +304,7 @@ have occurred:
 
 .. code-block:: c
 
-   /* call some HYPRE functions */
+   /* call some NALU_HYPRE functions */
    int  nalu_hypre_ierr;
    nalu_hypre_ierr = NALU_HYPRE_Function();
 
@@ -320,7 +320,7 @@ The corresponding FORTRAN code is
    ! header file with hypre error codes
    include 'NALU_HYPRE_error_f.h'
 
-   ! call some HYPRE functions
+   ! call some NALU_HYPRE functions
    integer  nalu_hypre_ierr
    call NALU_HYPRE_Function(nalu_hypre_ierr)
 
@@ -362,7 +362,7 @@ system, MPI implementation, compiler, and any error messages produced.
 
 .. _LSI_install:
 
-Using HYPRE in External FEI Implementations
+Using NALU_HYPRE in External FEI Implementations
 ==============================================================================
 
 To set up hypre for use in external, e.g. Sandia's, FEI implementations one
@@ -403,7 +403,7 @@ functions, it is recommended that the offending library files be stripped of the
 BLAS functions.
 
 
-Calling HYPRE from Other Languages
+Calling NALU_HYPRE from Other Languages
 ==============================================================================
 
 The hypre library currently supports two languages: C (native) and Fortran (in

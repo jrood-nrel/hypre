@@ -1,6 +1,6 @@
 /******************************************************************************
  * Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
- * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+ * NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
@@ -56,7 +56,7 @@ int main(int argc, char *argv[])
    MPI_Comm_size(MPI_COMM_WORLD, &nprocs);
    MPI_Comm_rank(MPI_COMM_WORLD, &mypid);
 
-   /* Initialize HYPRE */
+   /* Initialize NALU_HYPRE */
    NALU_HYPRE_Initialize();
 
    /* Print GPU info */
@@ -141,11 +141,11 @@ int main(int argc, char *argv[])
    // Instantiate the FEI object
    LLNL_FEI_Impl *feiPtr = new LLNL_FEI_Impl(MPI_COMM_WORLD);
 
-   // Set the matrix storage type to HYPRE
+   // Set the matrix storage type to NALU_HYPRE
    {
       char **paramStrings = new char*[1];
       paramStrings[0] = new char[100];
-      strcpy(paramStrings[0], "externalSolver HYPRE");
+      strcpy(paramStrings[0], "externalSolver NALU_HYPRE");
       feiPtr->parameters(1, paramStrings);
       delete [] paramStrings[0];
       delete [] paramStrings;
@@ -572,7 +572,7 @@ int main(int argc, char *argv[])
    }
    delete feiPtr;
 
-   /* Finalize HYPRE */
+   /* Finalize NALU_HYPRE */
    NALU_HYPRE_Finalize();
 
    // Finalize MPI

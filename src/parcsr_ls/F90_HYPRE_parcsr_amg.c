@@ -1,6 +1,6 @@
 /******************************************************************************
  * Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
- * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+ * NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
@@ -1828,7 +1828,7 @@ nalu_hypre_F90_IFACE(nalu_hypre_boomeramggetadditive, NALU_HYPRE_BOOMERAMGGETADD
 }
 
 /*--------------------------------------------------------------------------
- * NALU_HYPRE_BoomerAMGSetMultAdditive, HYPRE BoomerAMGGetMultAdditive
+ * NALU_HYPRE_BoomerAMGSetMultAdditive, NALU_HYPRE BoomerAMGGetMultAdditive
  *--------------------------------------------------------------------------*/
 
 void

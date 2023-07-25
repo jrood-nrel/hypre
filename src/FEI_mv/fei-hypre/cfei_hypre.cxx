@@ -1,6 +1,6 @@
 /******************************************************************************
  * Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
- * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+ * NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
@@ -373,7 +373,7 @@ extern "C" int NALU_HYPRE_LSC_enforceOtherBC(LinSysCore *lsc, int* globalEqn,
 }
 
 /******************************************************************************/
-/* put initial guess into HYPRE                                               */
+/* put initial guess into NALU_HYPRE                                               */
 /*----------------------------------------------------------------------------*/
 
 extern "C" int NALU_HYPRE_LSC_putInitialGuess(LinSysCore *lsc, const int* eqnNumbers, 

@@ -1,6 +1,6 @@
 /******************************************************************************
  * Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
- * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+ * NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
@@ -95,7 +95,7 @@ NALU_HYPRE_FEMeshSetFEIObject(NALU_HYPRE_FEMesh mesh, void *feiObj, void *lscObj
       {
          fei = (LLNL_FEI_Impl *) new LLNL_FEI_Impl(mesh->comm_);
          paramString[0] = new char[100];
-         strcpy(paramString[0], "externalSolver HYPRE");
+         strcpy(paramString[0], "externalSolver NALU_HYPRE");
          fei->parameters(numParams, paramString);
          mesh->linSys_ = (void *) fei->lscPtr_->lsc_;
          mesh->feiPtr_ = (void *) fei;
@@ -105,7 +105,7 @@ NALU_HYPRE_FEMeshSetFEIObject(NALU_HYPRE_FEMesh mesh, void *feiObj, void *lscObj
 #else
       fei = (LLNL_FEI_Impl *) new LLNL_FEI_Impl(mesh->comm_);
       paramString[0] = new char[100];
-      strcpy(paramString[0], "externalSolver HYPRE");
+      strcpy(paramString[0], "externalSolver NALU_HYPRE");
       fei->parameters(numParams, paramString);
       mesh->linSys_ = (void *) fei->lscPtr_->lsc_;
       mesh->feiPtr_ = (void *) fei;

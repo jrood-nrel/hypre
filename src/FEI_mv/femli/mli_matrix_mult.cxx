@@ -1,6 +1,6 @@
 /******************************************************************************
  * Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
- * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+ * NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
@@ -642,7 +642,7 @@ void MLI_Matrix_GetExtRows( MLI_Matrix *Amat, MLI_Matrix *Bmat, int *extNRowsP,
 #endif
 
    /* -----------------------------------------------------------------------
-    * fetch HYPRE matrices and machine information
+    * fetch NALU_HYPRE matrices and machine information
     * ----------------------------------------------------------------------*/
 
    hypreA     = (nalu_hypre_ParCSRMatrix *) Amat->getMatrix();

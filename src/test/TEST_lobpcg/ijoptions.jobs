@@ -1,6 +1,6 @@
 #!/bin/sh
 # Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
-# HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+# NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
@@ -12,7 +12,7 @@
 # All default parameters
 mpirun -np 2  ./ij  -lobpcg -seed 1 > ijoptions.out.default 
 
-#-solver none : no HYPRE preconditioner is used  (default -solver 1)
+#-solver none : no NALU_HYPRE preconditioner is used  (default -solver 1)
 mpirun -np 2  ./ij  -lobpcg -solver none -seed 1 >  ijoptions.out.solver.none 
 
 # maximum number of LOBPCG iterations (default 100)

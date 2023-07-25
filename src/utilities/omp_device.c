@@ -1,6 +1,6 @@
 /******************************************************************************
  * Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
- * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+ * NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
@@ -40,7 +40,7 @@ NALU_HYPRE_OMPPtrIsMapped(void *p, NALU_HYPRE_Int device_num)
 {
    if (nalu_hypre__global_offload && !omp_target_is_present(p, device_num))
    {
-      printf("HYPRE mapping error: %p has not been mapped to device %d!\n", p, device_num);
+      printf("NALU_HYPRE mapping error: %p has not been mapped to device %d!\n", p, device_num);
       return 1;
    }
    return 0;

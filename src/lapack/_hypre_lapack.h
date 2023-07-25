@@ -1,13 +1,13 @@
 /******************************************************************************
  * Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
- * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+ * NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
 
 /******************************************************************************
  *
- * Header file for HYPRE LAPACK
+ * Header file for NALU_HYPRE LAPACK
  *
  *****************************************************************************/
 
@@ -22,7 +22,7 @@ extern "C" {
 #endif
 
 /*--------------------------------------------------------------------------
- * Change all 'nalu_hypre_' names based on using HYPRE or external library
+ * Change all 'nalu_hypre_' names based on using NALU_HYPRE or external library
  *--------------------------------------------------------------------------*/
 
 #ifndef NALU_HYPRE_USING_NALU_HYPRE_LAPACK

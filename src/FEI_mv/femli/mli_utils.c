@@ -1,6 +1,6 @@
 /******************************************************************************
  * Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
- * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+ * NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
@@ -2078,7 +2078,7 @@ int MLI_Utils_DoubleParVectorRead(char *filename, MPI_Comm mpiComm,
 }
 
 /***************************************************************************
- * conform to the preconditioner set up from HYPRE
+ * conform to the preconditioner set up from NALU_HYPRE
  *--------------------------------------------------------------------------*/
 
 int MLI_Utils_ParCSRMLISetup( NALU_HYPRE_Solver solver, NALU_HYPRE_ParCSRMatrix A,
@@ -2095,7 +2095,7 @@ int MLI_Utils_ParCSRMLISetup( NALU_HYPRE_Solver solver, NALU_HYPRE_ParCSRMatrix 
 }
 
 /***************************************************************************
- * conform to the preconditioner apply from HYPRE
+ * conform to the preconditioner apply from NALU_HYPRE
  *--------------------------------------------------------------------------*/
 
 int MLI_Utils_ParCSRMLISolve( NALU_HYPRE_Solver solver, NALU_HYPRE_ParCSRMatrix A,
@@ -2165,7 +2165,7 @@ int MLI_Utils_mJacobiSetParams(NALU_HYPRE_Solver solver, int degree)
 }
 
 /***************************************************************************
- * conform to the preconditioner set up from HYPRE
+ * conform to the preconditioner set up from NALU_HYPRE
  *--------------------------------------------------------------------------*/
 
 int MLI_Utils_mJacobiSetup(NALU_HYPRE_Solver solver, NALU_HYPRE_ParCSRMatrix A,
@@ -2226,7 +2226,7 @@ int MLI_Utils_mJacobiSetup(NALU_HYPRE_Solver solver, NALU_HYPRE_ParCSRMatrix A,
 }
 
 /***************************************************************************
- * conform to the preconditioner apply from HYPRE
+ * conform to the preconditioner apply from NALU_HYPRE
  *--------------------------------------------------------------------------*/
 
 int MLI_Utils_mJacobiSolve(NALU_HYPRE_Solver solver, NALU_HYPRE_ParCSRMatrix A,
@@ -2260,7 +2260,7 @@ int MLI_Utils_mJacobiSolve(NALU_HYPRE_Solver solver, NALU_HYPRE_ParCSRMatrix A,
 }
 
 /***************************************************************************
- * solve the system using HYPRE pcg
+ * solve the system using NALU_HYPRE pcg
  *--------------------------------------------------------------------------*/
 
 int MLI_Utils_HyprePCGSolve( CMLI *cmli, NALU_HYPRE_Matrix A,
@@ -2314,7 +2314,7 @@ int MLI_Utils_HyprePCGSolve( CMLI *cmli, NALU_HYPRE_Matrix A,
 }
 
 /***************************************************************************
- * solve the system using HYPRE gmres
+ * solve the system using NALU_HYPRE gmres
  *--------------------------------------------------------------------------*/
 
 int MLI_Utils_HypreGMRESSolve(void *precon, NALU_HYPRE_Matrix A,
@@ -2417,7 +2417,7 @@ int MLI_Utils_HypreGMRESSolve(void *precon, NALU_HYPRE_Matrix A,
 }
 
 /***************************************************************************
- * solve the system using HYPRE fgmres
+ * solve the system using NALU_HYPRE fgmres
  *--------------------------------------------------------------------------*/
 
 int MLI_Utils_HypreFGMRESSolve(void *precon, NALU_HYPRE_Matrix A,
@@ -2514,7 +2514,7 @@ int MLI_Utils_HypreFGMRESSolve(void *precon, NALU_HYPRE_Matrix A,
 }
 
 /***************************************************************************
- * solve the system using HYPRE bicgstab
+ * solve the system using NALU_HYPRE bicgstab
  *--------------------------------------------------------------------------*/
 
 int MLI_Utils_HypreBiCGSTABSolve( CMLI *cmli, NALU_HYPRE_Matrix A,

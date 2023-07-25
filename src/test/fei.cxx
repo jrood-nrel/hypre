@@ -1,6 +1,6 @@
 /******************************************************************************
  * Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
- * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+ * NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
@@ -102,7 +102,7 @@ NALU_HYPRE_Int main(NALU_HYPRE_Int argc, char *argv[])
    nParams = 18;
    paramStrings = new char*[nParams];
    for (i = 0; i < nParams; i++) { paramStrings[i] = new char[100]; }
-   strcpy(paramStrings[0], "externalSolver HYPRE");
+   strcpy(paramStrings[0], "externalSolver NALU_HYPRE");
    strcpy(paramStrings[1], "outputLevel 0");
    switch (solverID)
    {

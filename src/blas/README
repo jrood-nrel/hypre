@@ -1,11 +1,11 @@
 # Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
-# HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+# NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-HYPRE BLAS README file
+NALU_HYPRE BLAS README file
 
-The source in the HYPRE BLAS and LAPACK is taken from CLAPACK and most recently
+The source in the NALU_HYPRE BLAS and LAPACK is taken from CLAPACK and most recently
 based on release 3.2.1 (though many of the files here are much older).  To add a
 new BLAS or LAPACK routine, copy the file to the appropriate directory, then do
 the following:

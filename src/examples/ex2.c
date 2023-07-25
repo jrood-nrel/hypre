@@ -1,6 +1,6 @@
 /******************************************************************************
  * Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
- * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+ * NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
@@ -66,7 +66,7 @@ int main (int argc, char *argv[])
       return (0);
    }
 
-   /* Initialize HYPRE */
+   /* Initialize NALU_HYPRE */
    NALU_HYPRE_Initialize();
 
    /* Print GPU info */
@@ -546,7 +546,7 @@ int main (int argc, char *argv[])
    NALU_HYPRE_StructPCGDestroy(solver);
    NALU_HYPRE_StructSMGDestroy(precond);
 
-   /* Finalize HYPRE */
+   /* Finalize NALU_HYPRE */
    NALU_HYPRE_Finalize();
 
    /* Finalize MPI */

@@ -1,6 +1,6 @@
 /******************************************************************************
  * Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
- * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+ * NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
@@ -133,7 +133,7 @@ NALU_HYPRE_Int NALU_HYPRE_StructStencilDestroy(NALU_HYPRE_StructStencil stencil)
  * Set a stencil entry.
  *
  * NOTE: The name of this routine will eventually be changed to \e
- * HYPRE\_StructStencilSetEntry.
+ * NALU_HYPRE\_StructStencilSetEntry.
  **/
 NALU_HYPRE_Int NALU_HYPRE_StructStencilSetElement(NALU_HYPRE_StructStencil  stencil,
                                         NALU_HYPRE_Int            entry,

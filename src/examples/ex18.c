@@ -1,6 +1,6 @@
 /******************************************************************************
  * Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
- * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+ * NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
@@ -57,7 +57,7 @@ int main (int argc, char *argv[])
    MPI_Comm_rank(MPI_COMM_WORLD, &myid);
    MPI_Comm_size(MPI_COMM_WORLD, &num_procs);
 
-   /* Initialize HYPRE */
+   /* Initialize NALU_HYPRE */
    NALU_HYPRE_Initialize();
 
    /* Print GPU info */
@@ -445,7 +445,7 @@ int main (int argc, char *argv[])
    NALU_HYPRE_SStructVectorDestroy(b);
    NALU_HYPRE_SStructVectorDestroy(x);
 
-   /* Finalize HYPRE */
+   /* Finalize NALU_HYPRE */
    NALU_HYPRE_Finalize();
 
    /* Finalize MPI */

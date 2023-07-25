@@ -12,3 +12,6 @@ git clean -df
 find src -type f -exec sed -i.bak 's/HYPREf.h/NALU_HYPREf.h/g' {} \;
 find . -name \*.bak | xargs rm
 git clean -df
+find src -type f -exec sed -i.bak 's/[[:<:]]HYPRE[[:>:]]/NALU_HYPRE/g' {} \;
+find . -name \*.bak | xargs rm
+git clean -df

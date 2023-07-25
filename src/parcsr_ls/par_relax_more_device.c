@@ -1,6 +1,6 @@
 /******************************************************************************
  * Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
- * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+ * NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
@@ -412,7 +412,7 @@ nalu_hypre_ParCSRMaxEigEstimateCGDevice(nalu_hypre_ParCSRMatrix *A,     /* matri
     * I believe the applicable license is available at
     * https://docs.nvidia.com/cuda/eula/index.html#license-driver
     * but I am not certain, nor do I have the legal knowledge to know if the
-    * license is compatible with that which HYPRE is released under.
+    * license is compatible with that which NALU_HYPRE is released under.
     */
    nalu_hypre_GpuProfilingPopRange();
    nalu_hypre_GpuProfilingPushRange("ParCSRMaxEigEstimate_TriDiagEigenSolve");

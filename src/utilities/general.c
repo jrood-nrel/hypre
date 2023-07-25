@@ -1,6 +1,6 @@
 /******************************************************************************
  * Copyright (c) 1998 Lawrence Livermore National Security, LLC and other
- * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
+ * NALU_HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
  ******************************************************************************/
@@ -621,7 +621,7 @@ NALU_HYPRE_SetUmpirePinnedPoolName(const char *pool_name)
 
 /******************************************************************************
  *
- * HYPRE memory location
+ * NALU_HYPRE memory location
  *
  *****************************************************************************/
 
@@ -643,7 +643,7 @@ NALU_HYPRE_GetMemoryLocation(NALU_HYPRE_MemoryLocation *memory_location)
 
 /******************************************************************************
  *
- * HYPRE execution policy
+ * NALU_HYPRE execution policy
  *
  *****************************************************************************/
 

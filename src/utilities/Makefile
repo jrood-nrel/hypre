@@ -39,7 +39,7 @@ HEADERS =\
 FILES =\
  F90_NALU_HYPRE_error.c\
  F90_NALU_HYPRE_general.c\
- NALU_NALU_HYPRE.handle.c\
+ NALU_HYPRE.handle.c\
  NALU_HYPRE_version.c\
  amg_linklist.c\
  binsearch.c\

@@ -13,7 +13,7 @@ set(HDRS
 )
 
 set(SRCS
-  NALU_NALU_HYPRE.handle.c
+  NALU_HYPRE.handle.c
   NALU_HYPRE_version.c
   amg_linklist.c
   binsearch.c
@@ -67,7 +67,7 @@ if (NALU_HYPRE_USING_CUDA OR NALU_HYPRE_USING_SYCL)
     memory_tracker.c
     nvtx.c
     omp_device.c
-    NALU_NALU_HYPRE.handle.c
+    NALU_HYPRE.handle.c
   )
   convert_filenames_to_full_paths(GPU_SRCS)
   set(NALU_HYPRE_GPU_SOURCES ${NALU_HYPRE_GPU_SOURCES} ${GPU_SRCS} PARENT_SCOPE)

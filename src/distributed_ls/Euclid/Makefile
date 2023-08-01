@@ -87,13 +87,13 @@ SONAME = libNALU_HYPRE_Euclid-${NALU_HYPRE_RELEASE_VERSION}${NALU_HYPRE_LIB_SUFF
 ##################################################################
 
 all: libNALU_HYPRE_Euclid${NALU_HYPRE_LIB_SUFFIX}
-#	cp -fR libHYPRE* $(NALU_HYPRE_BUILD_DIR)/lib
+#	cp -fR libNALU_HYPRE* $(NALU_HYPRE_BUILD_DIR)/lib
 
 install: libNALU_HYPRE_Euclid${NALU_HYPRE_LIB_SUFFIX}
-#	cp -fR libHYPRE* $(NALU_HYPRE_LIB_INSTALL)
+#	cp -fR libNALU_HYPRE* $(NALU_HYPRE_LIB_INSTALL)
 
 clean:
-	rm -f *.o libHYPRE*
+	rm -f *.o libNALU_HYPRE*
 	rm -rf pchdir tca.map *inslog*
 
 distclean: clean

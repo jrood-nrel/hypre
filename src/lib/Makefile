@@ -69,7 +69,7 @@ $(STRUCTLSOBJFILES)\
 $(STRUCTMVOBJFILES)\
 $(UTILITIESOBJFILES)
 
-SONAME = libHYPRE-${NALU_HYPRE_RELEASE_VERSION}${NALU_HYPRE_LIB_SUFFIX}
+SONAME = libNALU_HYPRE-${NALU_HYPRE_RELEASE_VERSION}${NALU_HYPRE_LIB_SUFFIX}
 SOLIBS = ${DSUPERLU_LIBS} ${MAGMA_LIBS} ${MPILIBDIRS} ${MPILIBS} ${LAPACKLIBDIRS} ${LAPACKLIBS}\
  ${BLASLIBDIRS} ${BLASLIBS} ${LIBS} ${FLIBS}
 
@@ -78,14 +78,14 @@ SOLIBS = ${DSUPERLU_LIBS} ${MAGMA_LIBS} ${MPILIBDIRS} ${MPILIBS} ${LAPACKLIBDIRS
 # Targets
 ##################################################################
 
-all: libHYPRE${NALU_HYPRE_LIB_SUFFIX}
-	cp -fR libHYPRE* ${NALU_HYPRE_BUILD_DIR}/lib
+all: libNALU_HYPRE${NALU_HYPRE_LIB_SUFFIX}
+	cp -fR libNALU_HYPRE* ${NALU_HYPRE_BUILD_DIR}/lib
 
 install: all
-	cp -fR libHYPRE* ${NALU_HYPRE_LIB_INSTALL}
+	cp -fR libNALU_HYPRE* ${NALU_HYPRE_LIB_INSTALL}
 
 clean:
-	rm -f *.o libHYPRE*
+	rm -f *.o libNALU_HYPRE*
 	rm -rf pchdir tca.map *inslog*
 
 distclean: clean
@@ -96,8 +96,8 @@ distclean: clean
 
 # NOTE: Some of the FILES symbols below can be empty, so they are listed on an
 # AR line with at least one nonempty symbol
-libHYPRE.a: ${FILES_HYPRE}
-	@echo  "Building libHYPRE ... "
+libNALU_HYPRE.a: ${FILES_HYPRE}
+	@echo  "Building libNALU_HYPRE ... "
 	rm -f $@
 	${AR} $@ $(FEIHYPREFILES) $(FEMLIFILES) $(IJMVFILES)
 	${AR} $@ $(EUCLIDFILES) $(PARASAILSFILES) $(PILUTFILES) $(DISTMATRIXFILES)
@@ -124,7 +124,7 @@ libHYPRE.a: ${FILES_HYPRE}
 	${AR} $@ $(UTILITIESOBJFILES)
 	${RANLIB} $@
 
-libHYPRE.so libHYPRE.dylib: ${FILES_HYPRE}
+libNALU_HYPRE.so libNALU_HYPRE.dylib: ${FILES_HYPRE}
 	@echo  "Building $@ ... "
 	${BUILD_CC_SHARED} -o ${SONAME} ${FILES_HYPRE} ${SOLIBS} ${SHARED_SET_SONAME}${SONAME} ${SHARED_OPTIONS} ${LDFLAGS}
 	ln -s -f ${SONAME} $@

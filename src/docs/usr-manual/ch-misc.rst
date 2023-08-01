@@ -156,7 +156,7 @@ include:
    test         depends on the all target to be completed
                 removes existing temporary installation directories
                 creates temporary installation directories
-                copies all libHYPRE* and *.h files to the temporary locations
+                copies all libNALU_HYPRE* and *.h files to the temporary locations
                 builds the test drivers; linking to the temporary locations to
                    simulate how application codes will link to NALU_HYPRE
 

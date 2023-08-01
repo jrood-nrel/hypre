@@ -131,7 +131,7 @@ help:
 	@echo "     depends on the all target to be completed"
 	@echo "     removes existing temporary installation sub-directory"
 	@echo "     creates a temporary installation sub-directory"
-	@echo "     copies all libHYPRE* and *.h files to the temporary locations"
+	@echo "     copies all libNALU_HYPRE* and *.h files to the temporary locations"
 	@echo "     builds the test drivers; linking to the temporary installation"
 	@echo "        directories to simulate how application codes will link to NALU_HYPRE"
 	@echo "     "

@@ -182,7 +182,7 @@ install: libNALU_HYPRE_FEI${NALU_HYPRE_LIB_SUFFIX}
 	@echo  ""
 
 clean:
-	rm -rf *.o libHYPRE* 
+	rm -rf *.o libNALU_HYPRE* 
 	rm -rf pchdir tca.map *inslog*
 
 distclean: clean

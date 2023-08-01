@@ -22,3 +22,6 @@ git mv src/NALU_NALU_HYPREf.h src/NALU_HYPREf.h
 find src -type f -exec sed -i.bak 's/NALU_NALU/NALU/g' {} \;
 find . -name \*.bak | xargs rm
 git clean -df
+find src -type f -exec sed -i.bak 's/NALU_HYPRE.handle.c/NALU_HYPRE_handle.c/g' {} \;
+find . -name \*.bak | xargs rm
+git clean -df

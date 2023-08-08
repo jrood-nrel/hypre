@@ -178,7 +178,7 @@ nalu_hypre_fprintf( FILE *stream, const char *format, ...)
 NALU_HYPRE_Int
 nalu_hypre_sprintf( char *s, const char *format, ...)
 {
-   va_list   ap;
+/*   va_list   ap;
    char     *newformat;
    NALU_HYPRE_Int ierr = 0;
 
@@ -188,7 +188,7 @@ nalu_hypre_sprintf( char *s, const char *format, ...)
    free_format(newformat);
    va_end(ap);
 
-   return ierr;
+   return ierr;*/
 }
 
 NALU_HYPRE_Int

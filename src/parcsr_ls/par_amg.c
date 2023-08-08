@@ -288,7 +288,7 @@ nalu_hypre_BoomerAMGCreate( void )
    /* output params */
    print_level = 0;
    logging = 0;
-   //nalu_hypre_sprintf(log_file_name, "%s", "amg.out.log"); // commented out for exawind
+   nalu_hypre_sprintf(log_file_name, "%s", "amg.out.log"); // commented out for exawind
    /* cycle_op_count = 0; */
    debug_flag = 0;
 

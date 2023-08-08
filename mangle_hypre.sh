@@ -25,3 +25,6 @@ git clean -df
 find src -type f -exec sed -i.bak 's/NALU_HYPRE.handle.c/NALU_HYPRE_handle.c/g' {} \;
 find . -name \*.bak | xargs rm
 git clean -df
+find src -type f -exec sed -i.bak 's/libHYPRE/libNALU_HYPRE/g' {} \;
+find . -name \*.bak | xargs rm
+git clean -df
